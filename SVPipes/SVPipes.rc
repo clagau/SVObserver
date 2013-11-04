@@ -1,0 +1,118 @@
+//Microsoft Developer Studio generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_PIPES_SETUP DIALOG DISCARDABLE  0, 0, 259, 151
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Named Pipe Setup"
+FONT 10, "Arial"
+BEGIN
+    EDITTEXT        IDC_PIPE,103,48,112,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_PIPE_SERVER,103,73,112,14,ES_AUTOHSCROLL
+    PUSHBUTTON      "Help\n  F1",IDC_SVHELP,43,117,47,27,BS_MULTILINE
+    PUSHBUTTON      "Cancel\n    F2",IDCANCEL,106,117,47,27,BS_MULTILINE
+    DEFPUSHBUTTON   "OK\n F3",IDOK,169,117,47,27,BS_MULTILINE
+    LTEXT           "Connection:",IDC_STATIC,55,27,38,8
+    LTEXT           "Pipe Name:",IDC_STATIC,53,51,40,8
+    LTEXT           "Server Name:",IDC_STATIC,47,76,46,8
+    EDITTEXT        IDC_CONNECTION,103,24,112,14,ES_AUTOHSCROLL | 
+                    ES_READONLY
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO DISCARDABLE 
+BEGIN
+    IDD_PIPES_SETUP, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 252
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 144
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Accelerator
+//
+
+IDD_PIPES_SETUP ACCELERATORS DISCARDABLE 
+BEGIN
+    VK_F1,          IDC_SVHELP,             VIRTKEY, NOINVERT
+    VK_F2,          IDCANCEL,               VIRTKEY, NOINVERT
+    VK_F3,          IDOK,                   VIRTKEY, NOINVERT
+END
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

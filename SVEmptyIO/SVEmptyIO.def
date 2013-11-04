@@ -1,0 +1,59 @@
+; SVEmptyIO.def : Declares the module parameters for the DLL.
+
+LIBRARY      "SVEmptyIO"
+
+EXPORTS
+	SVCreate @1
+	SVDestroy @2
+	SVInputGetCount @20
+	SVInputGetValue @21
+	SVInputSetValue @22
+	SVInputGetPortCount @30
+	SVInputGetPortValue @31
+	SVInputSetPortValue @32
+	SVOutputGetCount @40
+	SVOutputGetValue @41
+	SVOutputSetValue @42
+	SVOutputGetPortCount @50
+	SVOutputGetPortValue @51
+	SVOutputSetPortValue @52
+	SVTriggerGetCount @60
+	SVTriggerGetHandle @61
+	SVTriggerGetName @62
+	SVTriggerRegister @64
+	SVTriggerUnregister @65
+	SVTriggerUnregisterAll @66
+	SVTriggerStart @68
+	SVTriggerStop @69
+	SVTriggerGetParameterCount @70
+	SVTriggerGetParameterName @71
+	SVTriggerGetParameterValue @72
+	SVTriggerSetParameterValue @73
+
+	SVDigitizerGetCount @100
+	SVDigitizerGetHandle @101
+	SVDigitizerGetName @102
+	SVDigitizerLoadCameraFiles @110
+	SVDigitizerGetBufferWidth @111
+	SVDigitizerGetBufferHeight @112
+	SVDigitizerGetBufferFormat @113
+	SVDigitizerUnloadCameraFile @114
+	SVDigitizerCreateBuffers @120
+	SVDigitizerDestroyBuffers @121
+	SVDigitizerRegisterBufferInterface @125
+	SVDigitizerUnregisterBufferInterface @126
+	SVDigitizerStart @130
+	SVDigitizerStop @131
+	
+	SVDigitizerInternalTriggerEnable @132
+	SVDigitizerInternalTrigger @133
+	SVDigitizerInternalTriggerRegister @134
+	SVDigitizerInternalTriggerUnregister @135
+	SVDigitizerInternalTriggerUnregisterAll @136
+	
+	SVDigitizerGetRawParameter @140
+	SVDigitizerSetRawParameter @141
+	SVDigitizerSetParameters @150
+	SVDigitizerSetParameter @151
+	SVDigitizerGetParameter @155
+	SVDigitizerDestroyParameter @156

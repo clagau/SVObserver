@@ -1,0 +1,25 @@
+HKCR
+{
+	SVObserver.SVRemoteCommand.1 = s 'SVRemoteCommand Class'
+	{
+		CLSID = s '{32E71194-EDC0-4f65-8237-84EF98C5BEEB}'
+	}
+	SVObserver.SVRemoteCommand = s 'SVRemoteCommand Class'
+	{
+		CLSID = s '{32E71194-EDC0-4f65-8237-84EF98C5BEEB}'
+		CurVer = s 'SVObserver.SVRemoteCommand.1'
+	}
+	NoRemove CLSID
+	{
+		ForceRemove {32E71194-EDC0-4f65-8237-84EF98C5BEEB} = s 'SVRemoteCommand Class'
+		{
+			ProgID = s 'SVObserver.SVRemoteCommand.1'
+			VersionIndependentProgID = s 'SVObserver.SVRemoteCommand'
+			ForceRemove 'Programmable'
+			LocalServer32 = s '%MODULE%'
+			val AppID = s '{08B70D3F-F12C-11D4-A927-00106F0309AB}'
+			'TypeLib' = s '{F4C4D492-D660-11D0-9B52-00805F717DCE}'
+		}
+	}
+}
+

@@ -1,0 +1,307 @@
+//******************************************************************************
+//* COPYRIGHT (c) 2003 by SVResearch, Harrisburg
+//* All Rights Reserved
+//******************************************************************************
+//* .Module Name     : SVConfigurationPrint
+//* .File Name       : $Workfile:   SVConfigurationPrint.h  $
+//* ----------------------------------------------------------------------------
+//* .Current Version : $Revision:   1.0  $
+//* .Check In Date   : $Date:   23 Apr 2013 10:03:00  $
+//******************************************************************************
+
+#ifndef SVCONFIGURATIONPRINT_H
+#define SVCONFIGURATIONPRINT_H
+
+#include "SVFileNameClass.h"  // SES 11-Jan-2001
+#include "SVInfoStructs.h"
+
+enum
+{
+	SV_PRINT_LINES_PER_PAGE                     = 70,	// Sri 2/16/00
+	SV_DEFAULT_PRINT_TITLE_FONT_HEIGHT          = 100,
+
+	SV_DEFAULT_PRINT_SUB_TITLE_FONT_HEIGHT      = 90,
+
+	SV_DEFAULT_PRINT_TEXT_FONT_HEIGHT           = 80,
+
+	SV_DEFAULT_PAGE_TEXT_FONT_HEIGHT            = 80,
+};
+
+class SVObjectClass;
+class SVDiscreteInputsView;
+class SVDiscreteOutputsView;
+
+class SVDeviceParamConfigPrintHelper;
+
+/////////////////////////////////////////////////////////////////////////////
+// SVConfigurationPrint command target
+
+class SVConfigurationPrint : public CCmdTarget
+{
+	DECLARE_DYNCREATE(SVConfigurationPrint)
+		
+public:
+	SVConfigurationPrint();           // protected constructor used by dynamic creation
+	virtual ~SVConfigurationPrint();
+	
+	// Attributes
+public:
+	
+protected:
+	CDWordArray virtualPrintPageInfoList; 
+	
+	int		nNPArraySize;
+	int     nToolNumber;
+	int     nIPDNumber;
+	
+	int     nShortTabPixels;
+	int     nSECTabPixels;
+	int     nPageCenter;
+	
+	CFont   fontTitle;
+	CFont   fontSection;
+	CFont   fontSubSection;
+	CFont	fontText;
+	CFont   fontPageNbr;
+	
+	int nHeightPageNumberPixels;
+	
+	CPrintInfo  printInfo;
+	CDC     printDC;
+	
+	BOOL    bRealPrint;
+	
+	SVFileNameClass   msvfnFileName;    // SES 11-Jan-2001
+	
+	bool mbPrintToStringBuffer;
+	CString* mpsBuffer;
+
+	// Operations
+public:
+    void DoPrintSEC();
+    void PrintSECToStringBuffer(CString& rsBuffer);
+    void PrintSECToStringBuffer(SVString& rsBuffer);
+		void PrintSECToStringBuffer(std::string& rsBuffer);
+	
+	// Overrides
+	// ClassWizard generated virtual function overrides
+	//{{AFX_VIRTUAL(SVConfigurationPrint)
+	//}}AFX_VIRTUAL
+	
+	// Implementation
+protected:
+	BOOL  DoPreparePrinting(CPrintInfo* PInfo);
+	// Special for SEC printing...
+	void OnPrepareDC();
+	void OnBeginPrinting();
+	void OnVirtualPrint(BOOL BRealPrint = FALSE);
+	void PrintPage();
+	void OnEndPrinting();
+
+	void PrintFriends(CDC* pDC, SVObjectClass* pObj, CPoint& ptCurPos, int nIndentLevel);
+	void PrintChildren(CDC* pDC, SVObjectClass* pObj, CPoint& ptCurPos, int nIndentLevel);
+	void PrintDetails(CDC* pDC, SVObjectClass* pObj, CPoint& ptCurPos, int nIndentLevel);
+	void PrintObject(CDC* pDC, SVObjectClass* pObj, CPoint& ptCurPos, int nIndentLevel);
+
+	int  PrintString(CDC* pDC, CPoint& ptCurPos, LPCTSTR lpszStr);
+	void PrintValueObject(CDC* pDC, CPoint& ptCurPos, LPCTSTR lpszName, LPCTSTR lpszValue);
+
+	void PrintCameraSummary(CDC* pDC, CPoint& ptCurPos, int nIndentLevel);
+	void PrintTriggerSummary(CDC* pDC, CPoint& ptCurPos, int nIndentLevel);
+	void PrintInspectionSummary(CDC* pDC, CPoint& ptCurPos, int nIndentLevel);
+	void PrintPPQSummary(CDC* pDC, CPoint& ptCurPos, int nIndentLevel);
+
+	void PrintInputOutputList(CDC* pDC, SVObjectClass* pObj, CPoint& ptCurPos, int nIndentLevel);
+	void PrintOCRParameters(CDC* pDC, CString strParameters, CPoint &ptCurPos, int nIndentLevel);
+	void PrintOCRGrayScaleParameters(CDC* pDC, CString strParameters, CPoint &ptCurPos, int nIndentLevel);
+	void PrintIOEntryObject(CDC* pDC, CPoint& ptCurPos, int nIndentLevel, LPCTSTR lpszName, SVIOEntryHostStructPtr IOEntry);
+	void PrintIOSection(CDC* pDC, CPoint& ptCurPos, int nIndentLevel);
+	void PrintModuleIO(CDC* pDC, CPoint& ptCurPos, int nIndentLevel);
+	void PrintResultIO(CDC* pDC, CPoint& ptCurPos, int nIndentLevel);
+	void PrintPPQBarSection(CDC* pDC, CPoint& ptCurPos, int nIndentLevel);
+	void PrintInspectionToolSet(CDC* pDC, CPoint& ptCurPos, int nIndentLevel);
+
+	// Generated message map functions
+	//{{AFX_MSG(SVConfigurationPrint)
+	// NOTE - the ClassWizard will add and remove member functions here.
+	//}}AFX_MSG
+	
+	DECLARE_MESSAGE_MAP()
+
+	friend class SVDeviceParamConfigPrintHelper;
+};
+
+/////////////////////////////////////////////////////////////////////////////
+
+//{{AFX_INSERT_LOCATION}}
+// Microsoft Visual C++ will insert additional declarations immediately before the previous line.
+
+#endif
+
+//******************************************************************************
+//* LOG HISTORY:
+//******************************************************************************
+/*
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVConfigurationPrint.h_v  $
+ * 
+ *    Rev 1.0   23 Apr 2013 10:03:00   bWalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  814
+ * SCR Title:  Upgrade SVObserver to Compile Using Visual Studio 2010
+ * Checked in by:  bWalter;  Ben Walter
+ * Change Description:  
+ *   Initial check in to SVObserver_src.  (Merged with svo_src label SVO 6.10 Beta 008.)
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.12   11 Feb 2013 14:16:42   jspila
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  812
+ * SCR Title:  Add New Remote Command Functionality
+ * Checked in by:  Joe;  Joe Spila
+ * Change Description:  
+ *   Updated source code to use the new framework for the remote socket interface.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.11   19 Apr 2011 16:07:16   jspila
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  707
+ * SCR Title:  Change Inspection Display Functionality to Force Display of Last Inspected
+ * Checked in by:  Joe;  Joe Spila
+ * Change Description:  
+ *   Updated code to fix issues with IO Assignment.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.10   18 Apr 2011 09:22:12   jspila
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  707
+ * SCR Title:  Change Inspection Display Functionality to Force Display of Last Inspected
+ * Checked in by:  Joe;  Joe Spila
+ * Change Description:  
+ *   Updated code to move the shared data for the IO Entry data to a different class to fix issues with PPQ and Inspection shared data.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.9   08 Dec 2010 07:51:16   jspila
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  707
+ * SCR Title:  Change Inspection Display Functionality to Force Display of Last Inspected
+ * Checked in by:  Joe;  Joe Spila
+ * Change Description:  
+ *   Updated source code to include changes in notification functionality using the Observer Design Pattern.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.8   14 Nov 2008 13:56:38   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  615
+ * SCR Title:  Integrate PLC Classes into SVObserver Outputs
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Added IOView Tabs
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.7   08 Oct 2003 16:23:02   rschock
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  385
+ * SCR Title:  Expose additional parameters for SIAC
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Made more changes to the line analyzers to support printing and correct use of the edge related value objects.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.6   27 Aug 2003 10:19:32   ebeyeler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  320
+ * SCR Title:  Integrate Matrox Meteor II / 1394 Board and 1394 camera into SVObserver
+ * Checked in by:  eBeyeler;  Eric Beyeler
+ * Change Description:  
+ *   cleaned up file
+ * added friend class SVDeviceParamConfigPrintHelper
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.5   17 Apr 2003 17:25:02   rschock
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  346
+ * SCR Title:  Update SVObserver to Version 4.21 Release
+ * Checked in by:  Joe;  Joe Spila
+ * Change Description:  
+ *   Redid the #include defines and standardized the Tracker log headers and removed warning from release mode builds.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.4   13 Nov 2002 11:53:04   cschmittinger
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  256
+ * SCR Title:  Improvements to SVObserver's Configuration Report layout.
+ * Checked in by:  cSchmittinger;  Carl Schmittinger
+ * Change Description:  
+ *   The whole report layout was changed.
+ * This is a complete restructuring of SVConfigurationPrint.
+ * New sections were added.
+ * Some of the additions to the report make reference to the following SCR's:
+ * SVObserver #226
+ * SVObserver #254
+ * SVObserver #272 
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.3   Apr 17 2001 15:30:46   steve
+ * Project:  SVObserver
+ * Change Request(SCR) nbr:  196
+ * SCR Title:  Restructure Scripted Load/Save Procedures Functional Requirement
+ * Checked in by:  Steve;  Stephen S. Steffan
+ * Change Description:  
+ *   Header file chages due to restructuring of include files.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.2   01 Feb 2001 11:55:08   Steve
+ * Project:  SVObserver
+ * Change Request(SCR) nbr:  191
+ * SCR Title:  Restructure File Management
+ * Checked in by:  Steve;  Stephen S. Steffan
+ * Change Description:  
+ *   Modified files to use the SVFileNameClass and the SVFileNameManagerClass if applicable, if the object refers to a filename.  The SVFileNameManagerClass is used if the Object is a persistant file object, that is, if the file object is saved as part of the configuration data.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.1   24 Feb 2000 17:12:50   sMarakkath
+ * Project:  SVObserver
+ * Change Request(SCR) nbr:  110
+ * SCR Title:  Change Configuration Printout to print Tool "extents".
+ * Checked in by:  sMarakkath;  Srithaj Marakkath
+ * Change Description:  
+ *    Modified SV_PRINT_LINES_PER_PAGE, Added the variable 'nSECTabShiftPixels' and  Modified function declaration 'PrintString'.
+ * 
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.1   feb 24 2000 15:31:30   Sri
+ * Project:  SVObserver
+ * Change Request(SCR) nbr:  110
+ * SCR Title:  Change Configuration Printout to print Tool "extents".
+ * Checked in by:  Sri;  Srithaj Marakkath
+ * Change Description:  
+ *    Modified SV_PRINT_LINES_PER_PAGE, Added the variable 'nSECTabShiftPixels' and 
+ *	  Modified function declaration 'PrintString'.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVO_SRC\SVConfigurationPrint.h_v  $
+ * 
+ *    Rev 1.0   Jan 04 2000 09:21:18   Nick
+ * Project:  SVObserver
+ * Change Request(SCR) nbr:  82
+ * SCR Title:  Configuration Printing
+ * Checked in by:  Nick;  F Roland "Nick" Bjorklund
+ * Change Description:  
+ *   New class to encapsulate the configuration printing function.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+*/
+

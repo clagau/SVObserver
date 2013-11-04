@@ -1,0 +1,102 @@
+//******************************************************************************
+//* COPYRIGHT (c) 2013 by Seidenader, Harrisburg
+//* All Rights Reserved
+//******************************************************************************
+//* .Module Name     : 
+//* .File Name       : $Workfile:   SVFilterListBoxClass.cpp  $
+//* ----------------------------------------------------------------------------
+//* .Current Version : $Revision:   1.0  $
+//* .Check In Date   : $Date:   12 Aug 2013 16:22:20  $
+//******************************************************************************
+
+#include "stdafx.h"
+#include "SVFilterListBoxClass.h"
+#include "SVOperator.h"
+#include "SVUnaryImageOperatorList.h"
+
+BEGIN_MESSAGE_MAP(SVFilterListBoxClass, CListBox)
+	//{{AFX_MSG_MAP(SVFilterListBoxClass)
+	ON_WM_CREATE()
+	//}}AFX_MSG_MAP
+END_MESSAGE_MAP()
+
+SVFilterListBoxClass::SVFilterListBoxClass()
+{
+}
+
+SVFilterListBoxClass::~SVFilterListBoxClass()
+{
+}
+
+void SVFilterListBoxClass::init( SVUnaryImageOperatorListClass* List )
+{
+	int index;
+
+	ResetContent();
+	
+	for( int i = 0;i < List->GetSize(); ++i )
+	{
+		SVOperatorClass *pOperator;
+		pOperator = (SVOperatorClass *)List->GetAt( i );
+
+		
+		if( pOperator && pOperator->GetObjectType() == SVFilterObjectType ) // Only Filter!
+		{
+			index = AddString( pOperator->GetName() );
+			SetItemData( index, ( DWORD ) pOperator );
+		}
+	}
+
+	if( GetCount() <= 0 )
+	{
+		SetItemData( AddString( _T( "(No Filter)" ) ), NULL );
+		index = 0;
+	}
+	else
+	{
+		index = AddString( _T( "--------------------------------------------" ) );
+		SetItemData( index, NULL );
+	}
+	
+	if( index >= GetCount() )
+		index = GetCount() - 1;
+
+	if( index == LB_ERR ) // First init, but existing Filter
+		index = 0;
+
+	SetCurSel( index );
+}
+
+BOOL SVFilterListBoxClass::PreCreateWindow(CREATESTRUCT& cs) 
+{
+	cs.style ^= LBS_SORT;
+	return CListBox::PreCreateWindow(cs);
+}
+
+int SVFilterListBoxClass::OnCreate(LPCREATESTRUCT lpCreateStruct) 
+{
+	if (CListBox::OnCreate(lpCreateStruct) == -1)
+		return -1;
+	
+	lpCreateStruct->style ^= LBS_SORT;
+	
+
+	return 0;
+}
+
+//******************************************************************************
+//* LOG HISTORY:
+//******************************************************************************
+/*
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVFilterListBoxClass.cpp_v  $
+ * 
+ *    Rev 1.0   12 Aug 2013 16:22:20   bWalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  814
+ * SCR Title:  Upgrade SVObserver to Compile Using Visual Studio 2010
+ * Checked in by:  bWalter;  Ben Walter
+ * Change Description:  
+ *   Created from SVOperator.cpp.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+*/

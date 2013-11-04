@@ -1,0 +1,17 @@
+; SVSOFTWARETRIGGERDEVICE.def : Declares the module parameters for the DLL.
+
+EXPORTS
+	SVCreate @1
+	SVDestroy @2
+	SVTriggerGetCount @60
+	SVTriggerGetHandle @61
+	SVTriggerGetName @62
+	SVTriggerRegister @64
+	SVTriggerUnregister @65
+	SVTriggerUnregisterAll @66
+	SVTriggerStart @68
+	SVTriggerStop @69
+	SVTriggerGetParameterCount @70
+	SVTriggerGetParameterName @71
+	SVTriggerGetParameterValue @72
+	SVTriggerSetParameterValue @73

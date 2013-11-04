@@ -1,0 +1,221 @@
+//Microsoft Developer Studio generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#define _AFX_NO_SPLITTER_RESOURCES\r\n"
+    "#define _AFX_NO_OLE_RESOURCES\r\n"
+    "#define _AFX_NO_TRACKER_RESOURCES\r\n"
+    "#define _AFX_NO_PROPERTY_RESOURCES\r\n"
+    "\r\n"
+    "#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)\r\n"
+    "#ifdef _WIN32\r\n"
+    "LANGUAGE 9, 1\r\n"
+    "#pragma code_page(1252)\r\n"
+    "#endif //_WIN32\r\n"
+    "#include ""res\\SVImageCompression.rc2""  // non-Microsoft Visual C++ edited resources\r\n"
+    "#include ""afxres.rc""         // Standard components\r\n"
+    "#endif\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+#ifndef _MAC
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 1,0,0,1
+ PRODUCTVERSION 1,0,0,1
+ FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x4L
+ FILETYPE 0x2L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904B0"
+        BEGIN
+            VALUE "CompanyName", "\0"
+            VALUE "FileDescription", "SVImageCompression DLL\0"
+            VALUE "FileVersion", "1, 0, 0, 1\0"
+            VALUE "InternalName", "SVImageCompression\0"
+            VALUE "LegalCopyright", "Copyright (C) 2002\0"
+            VALUE "LegalTrademarks", "\0"
+            VALUE "OriginalFilename", "SVImageCompression.DLL\0"
+            VALUE "ProductName", "SVImageCompression Dynamic Link Library\0"
+            VALUE "ProductVersion", "1, 0, 0, 1\0"
+            VALUE "OLESelfRegister", "\0"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1200
+    END
+END
+
+#endif    // !_MAC
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_SVCOMPRESSION_DLG DIALOG DISCARDABLE  0, 0, 323, 107
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Image Compression"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,266,7,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,266,24,50,14
+    CONTROL         "",IDC_LEADCTRL1,"{00130000-B1BA-11CE-ABC6-F5B2E79D9E3F}",
+                    WS_TABSTOP,19,18,61,39
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO DISCARDABLE 
+BEGIN
+    IDD_SVCOMPRESSION_DLG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 316
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 100
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog Info
+//
+
+IDD_SVCOMPRESSION_DLG DLGINIT
+BEGIN
+    IDC_LEADCTRL1, 0x376, 540, 0
+0x003e, 0x0000, 0x004c, 0x0045, 0x0041, 0x0044, 0x0054, 0x004f, 0x004f, 
+0x004c, 0x0053, 0x0020, 0x004f, 0x0043, 0x0058, 0x0020, 0x0043, 0x006f, 
+0x0070, 0x0079, 0x0072, 0x0069, 0x0067, 0x0068, 0x0074, 0x0020, 0x0028, 
+0x0063, 0x0029, 0x0020, 0x0031, 0x0039, 0x0039, 0x0031, 0x002d, 0x0032, 
+0x0030, 0x0030, 0x0031, 0x0020, 0x004c, 0x0045, 0x0041, 0x0044, 0x0020, 
+0x0054, 0x0065, 0x0063, 0x0068, 0x006e, 0x006f, 0x006c, 0x006f, 0x0067, 
+0x0069, 0x0065, 0x0073, 0x002c, 0x0020, 0x0049, 0x006e, 0x0063, 0x002e, 
+0x000d, 0x0004, 0x0001, 0x0982, 0x0000, 0x0683, 0x0000, 0x00e5, 0x0000, 
+0xbfc2, 0x00a5, 0x00ff, 0x0100, 0x0000, 0x0101, 0x0001, 0x0000, 0x0001, 
+0x0000, 0x00ff, 0x0000, 0xe800, 0x0003, 0x0000, 0x0000, 0x0000, 0x0000, 
+0x0000, 0x0003, 0x0000, 0x0000, 0x0000, 0x0000, 0x1800, 0x1800, 0x0500, 
+0xff00, 0x00ff, 0x0000, 0x0000, 0xc800, 0x0042, 0x0000, 0x0000, 0x0000, 
+0x000d, 0x0000, 0x0001, 0x0001, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 
+0x0000, 0x0000, 0x0064, 0x0000, 0x0100, 0x0000, 0x03e8, 0x0000, 0x0000, 
+0x00ff, 0x0000, 0x0000, 0x0010, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 
+0x0001, 0x0001, 0x0005, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 
+0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0xff00, 
+0xffff, 0x8000, 0x8080, 0x0000, 0x0000, 0xff00, 0xffff, 0x8000, 0x8080, 
+0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 
+0xff00, 0xffff, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 
+0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0xffff, 0x00ff, 0x8080, 
+0x0080, 0x0000, 0x0000, 0xffff, 0x00ff, 0x8080, 0x0080, 0x0000, 0x0100, 
+0x0100, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x4316, 0x0000, 0x4316, 
+0x00ff, 0x0000, 0x5009, 0x6e61, 0x6957, 0x646e, 0x776f, 0x0001, 0x0000, 
+0x0000, 0xff00, 0x0000, 0x00ff, 0x0000, 0x0100, 0x0000, 0x0100, 0x0000, 
+0x0000, 0x0100, 0x0000, 0x4000, 0x0000, 0x0000, 0x0000, 0x0100, 0xff00, 
+0x0000, 0x0000, 0x0000, 0x0000, 0x0001, 0x0060, 0x0000, 0x0060, 0x0000, 
+0x0018, 0x0000, 0x0004, 0x0000, 0x0001, 0x0000, 0x8001, 0xe002, 0x0001, 
+0x0100, 0x6401, 0x0000, 0x6400, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 
+0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x6400, 0x0000, 0x0000, 
+
+    0
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDP_SOCKETS_INIT_FAILED "Windows sockets initialization failed."
+END
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+#define _AFX_NO_SPLITTER_RESOURCES
+#define _AFX_NO_OLE_RESOURCES
+#define _AFX_NO_TRACKER_RESOURCES
+#define _AFX_NO_PROPERTY_RESOURCES
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE 9, 1
+#pragma code_page(1252)
+#endif //_WIN32
+#include "res\SVImageCompression.rc2"  // non-Microsoft Visual C++ edited resources
+#include "afxres.rc"         // Standard components
+#endif
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

@@ -1,0 +1,247 @@
+//Microsoft Developer Studio generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#define _AFX_NO_SPLITTER_RESOURCES\r\n"
+    "#define _AFX_NO_OLE_RESOURCES\r\n"
+    "#define _AFX_NO_TRACKER_RESOURCES\r\n"
+    "#define _AFX_NO_PROPERTY_RESOURCES\r\n"
+    "\r\n"
+    "#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)\r\n"
+    "#ifdef _WIN32\r\n"
+    "LANGUAGE 9, 1\r\n"
+    "#pragma code_page(1252)\r\n"
+    "#endif //_WIN32\r\n"
+    "#include ""res\\SVSecurity.rc2""  // non-Microsoft Visual C++ edited resources\r\n"
+    "#include ""afxres.rc""         // Standard components\r\n"
+    "#endif\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_SECURITY_PAGE DIALOGEX 0, 0, 291, 250
+STYLE DS_CONTEXTHELP | WS_CHILD | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_CONTEXTHELP
+CAPTION "Configure"
+FONT 10, "Arial"
+BEGIN
+    GROUPBOX        "&Groups",IDC_STATIC,7,134,100,109,BS_FLAT | WS_TABSTOP
+    LISTBOX         IDC_NET_GROUPS,15,143,80,92,LBS_SORT | 
+                    LBS_NOINTEGRALHEIGHT | LBS_EXTENDEDSEL | WS_VSCROLL | 
+                    WS_TABSTOP,WS_EX_DLGMODALFRAME
+    CONTROL         "Log-On \\ Log-Off Mode",IDC_LOG_MODE,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,123,206,93,10
+    GROUPBOX        "Security Behavior",IDC_STATIC,111,192,174,51
+    GROUPBOX        "Access Point Settings",IDC_DESCRIPTION,110,133,174,54
+    EDITTEXT        IDC_TIMEOUT_MINUTES,122,219,41,12,ES_AUTOHSCROLL
+    LTEXT           "User Timeout Minutes ( 0 = No Timeout )",IDC_STATIC,168,
+                    217,74,17
+    CONTROL         "Force Prompt",IDC_FORCE_PROMPT,"Button",BS_AUTOCHECKBOX | 
+                    WS_DISABLED | WS_TABSTOP,122,169,67,11
+    CONTROL         "Tree1",IDC_ACCESS_TREE,"SysTreeView32",TVS_HASBUTTONS | 
+                    TVS_HASLINES | TVS_LINESATROOT | TVS_SHOWSELALWAYS | 
+                    WS_BORDER | WS_TABSTOP,18,17,256,102
+    GROUPBOX        "Access Points",IDC_STATIC,7,3,278,126
+    EDITTEXT        IDC_GROUP_EDIT,121,151,149,13,ES_AUTOHSCROLL | 
+                    ES_READONLY | WS_DISABLED
+    LTEXT           "Group('s)",IDC_STATIC,121,141,31,8
+    PUSHBUTTON      "Clear Group",IDC_CLEAR_GRP,225,168,45,9
+END
+
+IDD_PASSWORD_DLG DIALOGEX 0, 0, 180, 98
+STYLE DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_CONTEXTHELP
+CAPTION "Security"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,7,58,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,123,58,50,14
+    EDITTEXT        IDC_USER_NAME_EDIT,7,11,166,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_PASSWORD_EDIT,7,40,166,14,ES_PASSWORD | 
+                    ES_AUTOHSCROLL
+    LTEXT           "User Name",IDC_STATIC,71,1,36,8
+    LTEXT           "Password",IDC_STATIC,73,30,32,8
+    EDITTEXT        IDC_STATUS,7,77,166,14,ES_AUTOHSCROLL | ES_READONLY | 
+                    NOT WS_TABSTOP
+END
+
+IDD_GENERAL_SECURITY_PAGE DIALOGEX 0, 0, 277, 177
+STYLE DS_MODALFRAME | DS_CONTEXTHELP | WS_POPUP | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_CONTEXTHELP
+CAPTION "General"
+FONT 8, "MS Sans Serif"
+BEGIN
+    PUSHBUTTON      "User Manager",IDC_USER_MGR_BTN,46,39,70,21
+    PUSHBUTTON      "Event Viewer",IDC_EVENT_VIEWER_BTN,46,76,70,21
+    PUSHBUTTON      "Test Login",IDC_LOGIN_BTN,46,113,70,21
+    GROUPBOX        "Utilities",IDC_STATIC,31,24,98,124
+    GROUPBOX        "Reset Security Options ",IDC_STATIC,148,24,97,89
+    PUSHBUTTON      "No Security",IDC_NO_SECURITY_BTN,163,39,70,21
+    PUSHBUTTON      "Traditional Security",IDC_TRADITIONAL_SECURITY_BTN,163,
+                    77,70,21
+END
+
+
+#ifndef _MAC
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 1,0,0,2
+ PRODUCTVERSION 1,0,0,2
+ FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x4L
+ FILETYPE 0x1L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904b0"
+        BEGIN
+            VALUE "Comments", "\0"
+            VALUE "CompanyName", "\0"
+            VALUE "FileDescription", "SetupSecurityTest MFC Application\0"
+            VALUE "FileVersion", "1, 0, 0, 2\0"
+            VALUE "InternalName", "SetupSecurityTest\0"
+            VALUE "LegalCopyright", "Copyright (C) 2004\0"
+            VALUE "LegalTrademarks", "\0"
+            VALUE "OriginalFilename", "SetupSecurityTest.EXE\0"
+            VALUE "PrivateBuild", "\0"
+            VALUE "ProductName", "SetupSecurityTest Application\0"
+            VALUE "ProductVersion", "1, 0, 0, 2\0"
+            VALUE "SpecialBuild", "\0"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1200
+    END
+END
+
+#endif    // !_MAC
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO DISCARDABLE 
+BEGIN
+    IDD_SECURITY_PAGE, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 284
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 243
+    END
+
+    IDD_PASSWORD_DLG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 173
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 91
+    END
+
+    IDD_GENERAL_SECURITY_PAGE, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 270
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 170
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Accelerator
+//
+
+IDR_ACCELERATOR1 ACCELERATORS DISCARDABLE 
+BEGIN
+    VK_F1,          ID_HELP,                VIRTKEY, NOINVERT
+END
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+#define _AFX_NO_SPLITTER_RESOURCES
+#define _AFX_NO_OLE_RESOURCES
+#define _AFX_NO_TRACKER_RESOURCES
+#define _AFX_NO_PROPERTY_RESOURCES
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE 9, 1
+#pragma code_page(1252)
+#endif //_WIN32
+#include "res\SVSecurity.rc2"  // non-Microsoft Visual C++ edited resources
+#include "afxres.rc"         // Standard components
+#endif
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

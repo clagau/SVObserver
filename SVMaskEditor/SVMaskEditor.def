@@ -1,0 +1,9 @@
+; SVMaskEditor.def : Declares the module parameters.
+
+LIBRARY      "SVMASKEDITOR.OCX"
+
+EXPORTS
+	DllCanUnloadNow     PRIVATE
+	DllGetClassObject   PRIVATE
+	DllRegisterServer   PRIVATE
+	DllUnregisterServer PRIVATE

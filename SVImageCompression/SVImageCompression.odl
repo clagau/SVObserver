@@ -1,0 +1,44 @@
+// SVImageCompression.odl : type library source for SVImageCompression.dll
+
+// This file will be processed by the MIDL compiler to produce the
+// type library (SVImageCompression.tlb).
+
+[ uuid(EE2F8982-349D-4F3A-A86B-45A550304E54), version(1.0) ]
+library SVImageCompression
+{
+	importlib("stdole32.tlb");
+	importlib("stdole2.tlb");
+
+
+
+
+	//  Primary dispatch interface for SVCompressionDlg
+	
+	[ uuid(5189AC74-EE8B-4842-B8B9-CFFD67D56A25) ]
+	dispinterface ISVCompressionDlg
+	{
+		properties:
+			// NOTE - ClassWizard will maintain property information here.
+			//    Use extreme caution when editing this section.
+			//{{AFX_ODL_PROP(SVCompressionDlg)
+			//}}AFX_ODL_PROP
+			
+		methods:
+			// NOTE - ClassWizard will maintain method information here.
+			//    Use extreme caution when editing this section.
+			//{{AFX_ODL_METHOD(SVCompressionDlg)
+			//}}AFX_ODL_METHOD
+
+	};
+
+	//  Class information for SVCompressionDlg
+
+	[ uuid(5E4CBDFF-4CB1-4202-87F3-5B956F582E62) ]
+	coclass SVCompressionDlg
+	{
+		[default] dispinterface ISVCompressionDlg;
+	};
+
+	//{{AFX_APPEND_ODL}}
+	//}}AFX_APPEND_ODL}}
+};

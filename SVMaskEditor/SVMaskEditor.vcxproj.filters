@@ -1,0 +1,146 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{56451510-19a9-4db5-9980-782ecf6dd014}</UniqueIdentifier>
+      <Extensions>cpp;c;cxx;rc;def;r;odl;idl;hpj;bat</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{f035078d-2024-458e-8c9a-d3a1d3f51fb4}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{d4477bd3-eeb1-46f0-b7cf-75028dd21d37}</UniqueIdentifier>
+      <Extensions>ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe</Extensions>
+    </Filter>
+    <Filter Include="Extern Libraries">
+      <UniqueIdentifier>{fb98117b-3fd9-4db3-86c6-3349cfee07fe}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="StdAfx.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SVMaskEditor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SVMaskEditorCtl.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SVMaskEditorDialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SVMaskEditorPpg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SVMaskEditorWnd.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SVScrollWnd1Ctl.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SVScrollWnd1Ppg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="SVMaskEditor.def">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="res\bitmap1.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="RES\Bullet.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\ellipse_.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\ellipse_.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\filled_e.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\filled_r.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\ico00001.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\pen_bitm.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\pen_icon.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\polygon_.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\polygon_.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\polyline.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\rect_bit.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\rect_ico.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="SVMaskEditor.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="SVMaskEditorCtl.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\svr.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="SVScrollWnd1Ctl.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Midl Include="SVMaskEditor.odl">
+      <Filter>Source Files</Filter>
+    </Midl>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="SVMaskEditor.rc">
+      <Filter>Source Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="StdAfx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVMaskEditor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVMaskEditorCtl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVMaskEditorDialog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVMaskEditorPpg.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVMaskEditorWnd.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVScrollWnd1Ctl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVScrollWnd1Ppg.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="Resource.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+  </ItemGroup>
+</Project>

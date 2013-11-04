@@ -1,0 +1,9 @@
+; SVOCRFontTraining.def : Declares the module parameters.
+
+LIBRARY      "SVOCRFONTTRAINING.OCX"
+
+EXPORTS
+	DllCanUnloadNow     PRIVATE
+	DllGetClassObject   PRIVATE
+	DllRegisterServer   PRIVATE
+	DllUnregisterServer PRIVATE

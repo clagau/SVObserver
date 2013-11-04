@@ -1,0 +1,9 @@
+; SVOCRGrayFontTrain.def : Declares the module parameters.
+
+LIBRARY      "SVOCRGRAYFONTTRAIN.OCX"
+
+EXPORTS
+	DllCanUnloadNow     PRIVATE
+	DllGetClassObject   PRIVATE
+	DllRegisterServer   PRIVATE
+	DllUnregisterServer PRIVATE

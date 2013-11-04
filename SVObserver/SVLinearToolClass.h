@@ -1,0 +1,140 @@
+// ******************************************************************************
+// * COPYRIGHT (c) 2002 by SVResearch, Harrisburg
+// * All Rights Reserved
+// ******************************************************************************
+// * .Module Name     : SVLinearToolClass.h
+// * .File Name       : $Workfile:   SVLinearToolClass.h  $
+// * ----------------------------------------------------------------------------
+// * .Current Version : $Revision:   1.0  $
+// * .Check In Date   : $Date:   23 Apr 2013 12:04:32  $
+// ******************************************************************************
+
+#ifndef SV_LINEAR_TOOL_CLASS_H
+#define SV_LINEAR_TOOL_CLASS_H
+
+#include "SVTool.h"
+#include "SVImageClass.h"
+
+const LPCSTR g_strOrientationEnums = _T( "Horizontal=0,Vertical=90" );
+
+class SVLinearToolClass : public SVToolClass , public OperatorMovable
+{
+	SV_DECLARE_CLASS( SVLinearToolClass );
+
+public:
+	SVLinearToolClass( BOOL BCreateDefaultTaskList = FALSE, SVObjectClass* POwner = NULL, int StringResourceID = IDS_CLASSNAME_SVLINEARTOOL );
+	virtual ~SVLinearToolClass();
+
+	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure );
+	virtual BOOL CloseObject();
+
+	virtual HRESULT ResetObject();
+
+	virtual SVTaskObjectClass *GetObjectAtPoint( const SVExtentPointStruct &p_rsvPoint );
+	virtual HRESULT DoesObjectHaveExtents() const;
+
+	CString GetProfileOrientation();
+	BOOL GetRotation();
+
+	BOOL IsToolRotated();
+
+	virtual HRESULT GetInputImageNames( SVStringValueObjectClass*& p_pSourceNames );
+
+	//Embedded Object : Profile Orientation
+	SVEnumerateValueObjectClass m_voProfileOrientation;
+	SVBoolValueObjectClass m_voUseProfileRotation;
+	SVStringValueObjectClass m_svSourceImageNames;
+
+protected:
+	virtual BOOL onRun( SVRunStatusClass& RRunStatus );
+	virtual DWORD processMessage( DWORD DwMessageID, DWORD DwMessageValue, DWORD DwMessageContext );
+
+	SVDoubleValueObjectClass m_svRotationAngle;
+	SVDoubleValueObjectClass m_svRotationPointX;
+	SVDoubleValueObjectClass m_svRotationPointY;
+
+private:
+	virtual void init();
+
+};
+
+#endif
+
+// ******************************************************************************
+// * LOG HISTORY:
+// ******************************************************************************
+/*
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVLinearToolClass.h_v  $
+ * 
+ *    Rev 1.0   23 Apr 2013 12:04:32   bWalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  814
+ * SCR Title:  Upgrade SVObserver to Compile Using Visual Studio 2010
+ * Checked in by:  bWalter;  Ben Walter
+ * Change Description:  
+ *   Initial check in to SVObserver_src.  (Merged with svo_src label SVO 6.10 Beta 008.)
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.5   03 Aug 2012 11:12:22   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  764
+ * SCR Title:  Add tool comments to all tools in SVObserver
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Added OperatorMovable base to check for operator move context menu option
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.4   16 Jul 2012 09:01:30   jspila
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  769
+ * SCR Title:  Fix Problems and Crashes with Inspection Document Display Updates
+ * Checked in by:  Joe;  Joe Spila
+ * Change Description:  
+ *   Updated overlay collection functionality and removed duplicate fucntionality by consolidating it to the task object class.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.3   21 Mar 2011 12:11:46   jspila
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  712
+ * SCR Title:  Fix issues with black images when using command interface (SIAC)
+ * Checked in by:  Joe;  Joe Spila
+ * Change Description:  
+ *   Updated system to fix performance issues with extent checks and updates.  Added additional methods to determine if object has extents and moved extent updated to  associated children.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.2   06 Mar 2008 16:05:36   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  616
+ * SCR Title:  Add Server-side Configuration Data Def Lists to the SVObserver program
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Added Code to collect source Image Names for Image Tools.
+ * and
+ * Added Attributes to support Image Definition Lists.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.1   08 Aug 2005 16:07:14   Joe
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  500
+ * SCR Title:  Reduce delay when adjusting tool parameters with a large toolset
+ * Checked in by:  Joe;  Joe Spila
+ * Change Description:  
+ *   Updated objects and dialogs to use the ActiveX Interface to update inspection data.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.0   18 Feb 2005 10:49:44   Joe
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  463
+ * SCR Title:  Add new Linear Measurement Tool to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Adding new files for the new linear tool.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+*/

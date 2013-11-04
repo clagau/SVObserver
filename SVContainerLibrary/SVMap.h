@@ -1,0 +1,140 @@
+//******************************************************************************
+//* COPYRIGHT (c) 2008 by Seidenader Vision Inc., Harrisburg
+//* All Rights Reserved
+//******************************************************************************
+//* .Module Name     : SVMap
+//* .File Name       : $Workfile:   SVMap.h  $
+//* ----------------------------------------------------------------------------
+//* .Current Version : $Revision:   1.0  $
+//* .Check In Date   : $Date:   22 Apr 2013 07:44:14  $
+//******************************************************************************
+
+#ifndef SVMAP_H
+#define SVMAP_H
+
+#include <map>
+
+/**
+@SVObjectName Map
+
+@SVObjectOverview This is the Seidenader Vision Inc. wrapper for map.
+
+@SVObjectOperations Available operations include multiple constructors, a virtual destructor, address of operators, assignment operators, begin and end interators, MFC style operators (including IsEmpty, GetCount, and GetSize), GetStartPosition, GetNextAssoc, Lookup, SetAt, the [] operator, RemoveKey, and RemoveAll operations.
+
+*/
+template <typename SVT_KEY, typename SVT_VALUE>
+class SVMap
+{
+public:
+	typedef std::map< SVT_KEY, SVT_VALUE > SVMapBase;
+	typedef typename SVMapBase::key_type key_type;
+	typedef typename SVMapBase::mapped_type mapped_type;
+	typedef typename SVMapBase::value_type value_type;
+	typedef typename SVMapBase::size_type size_type;
+	typedef typename SVMapBase::const_iterator const_iterator;
+	typedef typename SVMapBase::iterator iterator;
+	typedef typename SVMapBase::_Pairib SVIteratorBoolPair;
+
+	SVMap();
+	SVMap( const SVMap& p_rObject );
+	SVMap( const SVMapBase& p_rObject );
+
+	virtual ~SVMap();
+
+	operator SVMapBase const & () const;
+	operator SVMapBase & ();
+
+	const SVMap& operator=( const SVMap& p_rObject );
+	const SVMap& operator=( const SVMapBase& p_rObject );
+
+	virtual bool empty() const;
+
+	virtual void clear();
+
+	virtual size_type size() const;
+
+	virtual iterator begin();
+	virtual const_iterator begin() const;
+
+	virtual iterator end();
+	virtual const_iterator end() const;
+
+	virtual iterator find( const key_type& p_rKey );
+	virtual const_iterator find( const key_type& p_rKey ) const;
+
+	virtual SVIteratorBoolPair insert( const value_type& p_rKeyValuePair );
+	virtual SVIteratorBoolPair insert( const key_type& p_rKey, const mapped_type& p_rValue );
+
+	template< class InputIterator >
+	void insert( InputIterator p_First, InputIterator p_Last );
+
+	virtual size_type erase( const key_type& p_rKey );
+	virtual iterator erase( iterator p_Where );
+
+
+	// MFC Style Operators
+	virtual bool IsEmpty() const;
+
+	virtual int GetCount() const;
+	virtual int GetSize() const;
+
+	virtual iterator GetStartPosition() const;
+
+	virtual void GetNextAssoc( iterator& rNextPosition, key_type& rKey, mapped_type& rValue ) const;
+
+	virtual bool Lookup( const key_type& key, mapped_type& rValue ) const;
+
+	virtual void SetAt( const key_type& key, mapped_type& newElement );
+
+	virtual mapped_type& operator[]( const key_type& key );
+
+	virtual void RemoveKey( const key_type& key );
+
+	virtual void RemoveAll();
+
+protected:
+	SVMapBase m_Map;
+
+};
+
+#include "SVContainerLibrary/SVMap.inl"
+
+#endif // #ifndef SVMAP_H
+
+//******************************************************************************
+//* LOG HISTORY:
+//******************************************************************************
+/*
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVContainerLibrary\SVMap.h_v  $
+ * 
+ *    Rev 1.0   22 Apr 2013 07:44:14   bWalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  814
+ * SCR Title:  Upgrade SVObserver to Compile Using Visual Studio 2010
+ * Checked in by:  bWalter;  Ben Walter
+ * Change Description:  
+ *   Initial check in to SVObserver_src.  (Merged with svo_src label SVO 6.10 Beta 008.)
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.1   09 Nov 2010 11:49:04   jspila
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  704
+ * SCR Title:  Upgrade SVObserver Version for 5.33 Release
+ * Checked in by:  Joe;  Joe Spila
+ * Change Description:  
+ *   Updated source to add missing type identifiers.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.0   17 Nov 2008 07:21:24   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  615
+ * SCR Title:  Integrate PLC Classes into SVObserver Outputs
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Initial Check-in
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+*/
+

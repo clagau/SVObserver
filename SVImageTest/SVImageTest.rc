@@ -1,0 +1,289 @@
+// Microsoft Visual C++ generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE 
+BEGIN
+    "#define _AFX_NO_SPLITTER_RESOURCES\r\n"
+    "#define _AFX_NO_OLE_RESOURCES\r\n"
+    "#define _AFX_NO_TRACKER_RESOURCES\r\n"
+    "#define _AFX_NO_PROPERTY_RESOURCES\r\n"
+    "\r\n"
+    "#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)\r\n"
+    "#ifdef _WIN32\r\n"
+    "LANGUAGE 9, 1\r\n"
+    "#pragma code_page(1252)\r\n"
+    "#endif //_WIN32\r\n"
+    "#include ""res\\SVImageTest.rc2""  // non-Microsoft Visual C++ edited resources\r\n"
+    "#include ""afxres.rc""         // Standard components\r\n"
+    "#endif\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDR_MAINFRAME           ICON                    "res\\SVImageTest.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_ABOUTBOX DIALOG  0, 0, 235, 55
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "About SVImageTest"
+FONT 8, "MS Sans Serif"
+BEGIN
+    ICON            IDR_MAINFRAME,IDC_STATIC,11,17,20,20
+    LTEXT           "SVImageTest Version 1.0",IDC_STATIC,40,10,119,8,SS_NOPREFIX
+    LTEXT           "Copyright (C) 2004",IDC_STATIC,40,25,119,8
+    DEFPUSHBUTTON   "OK",IDOK,178,7,50,14,WS_GROUP
+END
+
+IDD_SVIMAGETEST_DIALOG DIALOGEX 0, 0, 506, 382
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_APPWINDOW
+CAPTION "SVImageTest"
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    PUSHBUTTON      "Close",IDCANCEL,7,361,151,14
+    LISTBOX         IDC_LIST1,7,17,151,254,LBS_SORT | LBS_NOINTEGRALHEIGHT | LBS_NOSEL | WS_VSCROLL
+    LTEXT           "Cameras",IDC_STATIC,7,7,71,9
+    PUSHBUTTON      "Refresh",IDC_REFRESH,7,303,151,14
+    PUSHBUTTON      "Start All Cameras",IDC_START_ALL_CAMERAS,7,328,73,14
+    LTEXT           "ModelNo:",IDC_MODELNO,7,280,32,14,SS_CENTERIMAGE
+    EDITTEXT        IDC_MODELNOEDIT,43,280,66,14,ES_AUTOHSCROLL
+    PUSHBUTTON      "Update",IDC_UPDATEMODELNO,116,280,42,14
+    CONTROL         "",IDC_CAMERA_TAB_AREA,"Static",SS_BLACKFRAME,165,7,334,368
+    PUSHBUTTON      "Stop All Cameras",IDC_STOP_ALL_CAMERAS,85,328,73,14
+END
+
+IDD_CAMERA_PROP DIALOG  0, 0, 351, 196
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Dialog"
+FONT 8, "MS Sans Serif"
+BEGIN
+    CONTROL         "List1",IDC_LIST1,"SysListView32",LVS_REPORT | WS_BORDER | WS_TABSTOP,7,7,337,157
+    DEFPUSHBUTTON   "OK",IDOK,7,175,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,294,175,50,14
+END
+
+IDD_CAMERAFILE_PROPERTIES_DIALOG DIALOG  0, 0, 488, 254
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION
+CAPTION "Property Settings"
+FONT 8, "MS Sans Serif"
+BEGIN
+    LTEXT           "",IDC_PROPERTY_TREE,7,7,474,214,WS_BORDER | WS_TABSTOP
+    PUSHBUTTON      "Ok",IDOK,189,230,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,255,230,50,14
+END
+
+IDD_UNLOADDEVICE_DIALOG DIALOGEX 0, 0, 166, 70
+STYLE DS_SETFONT | DS_SETFOREGROUND | DS_3DLOOK | DS_CENTER | WS_POPUP | WS_VISIBLE | WS_BORDER
+EXSTYLE WS_EX_CLIENTEDGE | WS_EX_STATICEDGE
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    LTEXT           "Unloading Acquisition Device...",IDC_STATIC,33,27,100,8
+END
+
+IDD_CAMERA_PAGE DIALOGEX 0, 0, 334, 358
+STYLE DS_SETFONT | WS_CHILD | WS_DISABLED | WS_CAPTION | WS_SYSMENU
+CAPTION "Camera"
+FONT 8, "MS Sans Serif", 0, 0, 0x0
+BEGIN
+    CONTROL         "",IDC_CAMERA_IMAGE,"Static",SS_BLACKFRAME,7,7,320,240
+    LTEXT           "Camera File:",IDC_STATIC,7,260,40,13,SS_CENTERIMAGE
+    LTEXT           "",IDC_CAMERA_FILE_NAME,51,260,259,13,SS_CENTERIMAGE | SS_SUNKEN
+    PUSHBUTTON      "...",IDC_CAMERA_FILE_BROWSE,311,260,16,13
+    LTEXT           "Start Frame Count:",IDC_STATIC,7,335,60,16,SS_CENTERIMAGE
+    RTEXT           "",IDC_START_FRAME_COUNT,69,335,91,16,SS_CENTERIMAGE | SS_SUNKEN
+    LTEXT           "End Frame Count:",IDC_STATIC,175,335,58,16,SS_CENTERIMAGE
+    RTEXT           "",IDC_END_FRAME_COUNT,236,335,91,16,SS_CENTERIMAGE | SS_SUNKEN
+    PUSHBUTTON      "Start",IDC_START_STOP_BUTTON,7,282,68,23
+    PUSHBUTTON      "Properties",IDC_PROPERITIES,91,282,68,23
+    PUSHBUTTON      "Advanced",IDC_ADVANCED,175,282,68,23
+    PUSHBUTTON      "Details",IDC_DETAILS,259,282,68,23
+    CONTROL         "Use Software Trigger",IDC_USE_SOFTWARETRIGGER,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,16,315,83,10
+    EDITTEXT        IDC_PERIOD,150,313,40,14,ES_AUTOHSCROLL
+    LTEXT           "Period (ms) :",IDC_STATIC,105,316,40,8
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 1,0,0,1
+ PRODUCTVERSION 1,0,0,1
+ FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x4L
+ FILETYPE 0x1L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904B0"
+        BEGIN
+            VALUE "FileDescription", "SVImageTest MFC Application"
+            VALUE "FileVersion", "1, 0, 0, 1"
+            VALUE "InternalName", "SVImageTest"
+            VALUE "LegalCopyright", "Copyright (C) 2004"
+            VALUE "OriginalFilename", "SVImageTest.EXE"
+            VALUE "ProductName", "SVImageTest Application"
+            VALUE "ProductVersion", "1, 0, 0, 1"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1200
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO 
+BEGIN
+    IDD_ABOUTBOX, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 228
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 48
+    END
+
+    IDD_SVIMAGETEST_DIALOG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 499
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 375
+    END
+
+    IDD_CAMERA_PROP, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 344
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 189
+    END
+
+    IDD_CAMERAFILE_PROPERTIES_DIALOG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 481
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 244
+    END
+
+    IDD_UNLOADDEVICE_DIALOG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 159
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 63
+    END
+
+    IDD_CAMERA_PAGE, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 327
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 351
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE 
+BEGIN
+    IDS_ABOUTBOX            "&About SVImageTest..."
+END
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+#define _AFX_NO_SPLITTER_RESOURCES
+#define _AFX_NO_OLE_RESOURCES
+#define _AFX_NO_TRACKER_RESOURCES
+#define _AFX_NO_PROPERTY_RESOURCES
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE 9, 1
+#pragma code_page(1252)
+#endif //_WIN32
+#include "res\SVImageTest.rc2"  // non-Microsoft Visual C++ edited resources
+#include "afxres.rc"         // Standard components
+#endif
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

@@ -1,0 +1,311 @@
+// ******************************************************************************
+// * COPYRIGHT (c) 2005 by SVResearch, Harrisburg
+// * All Rights Reserved
+// ******************************************************************************
+// * .Module Name     : SVLinearEdgePositionLineAnalyzerClass
+// * .File Name       : $Workfile:   SVLinearLineEdgePositionAnalyzer.cpp  $
+// * ----------------------------------------------------------------------------
+// * .Current Version : $Revision:   1.0  $
+// * .Check In Date   : $Date:   23 Apr 2013 11:59:10  $
+// ******************************************************************************
+
+#include "stdafx.h"
+#include "SVLinearLineEdgePositionAnalyzer.h"
+#include "SVMeasureAnalyzerAdjustment.h"
+#include "SVProfileEdgeMarkerAdjustmentPage.h"
+#include "SVLine.h"
+#include "SVImageLibrary/SVImageInfoClass.h"
+#include "SVImageClass.h"
+#include "SVLinearEdgeAProcessingClass.h"
+#include "SVTool.h"
+
+
+SV_IMPLEMENT_CLASS( SVLinearEdgePositionLineAnalyzerClass, SVLinearEdgePositionLineAnalyzerClassGuid );
+
+SVLinearEdgePositionLineAnalyzerClass::SVLinearEdgePositionLineAnalyzerClass( BOOL BCreateDefaultTaskList, SVObjectClass* POwner, int StringResourceID )
+								:SVLinearAnalyzerClass( BCreateDefaultTaskList, POwner, StringResourceID ) 
+{
+	init();
+}
+
+void SVLinearEdgePositionLineAnalyzerClass::init()
+{
+	// Identify our type
+	outObjectInfo.ObjectTypeInfo.SubType = SVLinearEdgePositionAnalyzerObjectType;
+
+	SVLinearEdgeProcessingClass *l_pEdge = new SVLinearEdgeAProcessingClass( this );
+
+	AddFriend( l_pEdge->GetUniqueObjectID() );
+
+	RegisterEmbeddedObject( &dpEdge, SVDPEdgeAObjectGuid, IDS_OBJECTNAME_DPEDGE, false, SVResetItemNone );
+	RegisterEmbeddedObject( &m_svLinearDistance, SVLinearDistanceEdgeAObjectGuid, IDS_OBJECTNAME_LINEAR_DISTANCE_EDGE_A, false, SVResetItemNone );
+	RegisterEmbeddedObject( &m_svShowAllEdgeAOverlays, SVShowAllEdgeAOverlaysGuid, IDS_OBJECTNAME_SHOW_ALL_EDGE_A_OVERLAYS, false, SVResetItemNone );
+
+	m_bEnableDirection = TRUE;
+	m_bEnableEdgeSelect = TRUE;
+	m_bEnablePolarisation = TRUE;
+	m_bEnablePosition = TRUE;
+	m_bEnableThreshold = TRUE;
+
+	// Set Embedded defaults
+	POINT defaultPoint;
+	defaultPoint.x = 0;
+	defaultPoint.y = 0;
+
+	dpEdge.SetDefaultValue( defaultPoint, TRUE );
+
+	// Populate the available result list
+	SVClassInfoStruct resultClassInfo;
+	CString strTitle;
+	SVObjectTypeInfoStruct interfaceInfo;
+
+	// Declare Input Interface of Sub-pixel Edge Result...
+	resultClassInfo.DesiredInputInterface.RemoveAll();
+	interfaceInfo.EmbeddedID = SVDPEdgeAObjectGuid;
+	resultClassInfo.DesiredInputInterface.Add( interfaceInfo );
+	
+	// Add the Sub-pixel Edge X Result...
+	resultClassInfo.ObjectTypeInfo.ObjectType = SVResultObjectType;
+	resultClassInfo.ObjectTypeInfo.SubType	= SVResultDPointXObjectType;
+	resultClassInfo.ClassId = SVDPointXResultClassGuid;
+	resultClassInfo.ClassName.LoadString( IDS_OBJECTNAME_DPEDGE );
+	strTitle.LoadString( IDS_CLASSNAME_RESULT_POINT_X );
+	resultClassInfo.ClassName += SV_TSTR_SPACE + strTitle;
+	availableChildren.Add( resultClassInfo );
+
+	// Add the Sub-pixel Edge Y Result...
+	resultClassInfo.ObjectTypeInfo.ObjectType = SVResultObjectType;
+	resultClassInfo.ObjectTypeInfo.SubType	= SVResultDPointYObjectType;
+	resultClassInfo.ClassId = SVDPointYResultClassGuid;
+	resultClassInfo.ClassName.LoadString( IDS_OBJECTNAME_DPEDGE );
+	strTitle.LoadString( IDS_CLASSNAME_RESULT_POINT_Y );
+	resultClassInfo.ClassName += SV_TSTR_SPACE + strTitle;
+	availableChildren.Add( resultClassInfo );
+
+	resultClassInfo.DesiredInputInterface.RemoveAll();
+	interfaceInfo.EmbeddedID = SVLinearDistanceEdgeAObjectGuid;
+	resultClassInfo.DesiredInputInterface.Add( interfaceInfo );
+
+	// Add the Linear Distance Result...
+	resultClassInfo.ObjectTypeInfo.ObjectType = SVResultObjectType;
+	resultClassInfo.ObjectTypeInfo.SubType	= SVResultDoubleObjectType;
+	resultClassInfo.ClassId = SVDoubleResultClassGuid;
+	resultClassInfo.ClassName.LoadString( IDS_OBJECTNAME_LINEAR_DISTANCE_EDGE_A );
+	strTitle.LoadString( IDS_OBJECTNAME_LINEAR_DISTANCE_EDGE_A_RESULT );
+	resultClassInfo.ClassName += SV_TSTR_SPACE + strTitle;
+	availableChildren.Add( resultClassInfo );
+
+	// Set default inputs and outputs
+	addDefaultInputObjects();
+}
+
+
+SVLinearEdgePositionLineAnalyzerClass::~SVLinearEdgePositionLineAnalyzerClass()
+{
+	CloseObject();
+}
+
+
+BOOL SVLinearEdgePositionLineAnalyzerClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
+{
+	BOOL bOk = FALSE;
+
+	bOk = SVLinearAnalyzerClass::CreateObject( PCreateStructure );
+
+	dpEdge.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;	// Point
+	m_svLinearDistance.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
+
+	isCreated = bOk;
+
+	return bOk;
+}
+
+BOOL SVLinearEdgePositionLineAnalyzerClass::CloseObject()
+{
+	return SVLinearAnalyzerClass::CloseObject();
+}
+
+BOOL SVLinearEdgePositionLineAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
+{
+	SVDPointClass l_svDPoint;
+	SVExtentPointStruct l_svEdgePoint;
+	double l_dDistance = 0.0;
+
+	// All inputs and outputs must be validated first
+	BOOL l_bOk = SVLinearAnalyzerClass::onRun( RRunStatus );
+
+	l_bOk = l_bOk && GetEdgeA() != NULL && GetTool() != NULL;
+
+	if( l_bOk )
+	{
+		SVImageExtentClass l_svExtents;
+
+		if( GetEdgeA()->GetOutputEdgePoint( l_svEdgePoint ) != S_OK )
+		{
+			RRunStatus.SetFailed();	
+		}
+
+		if( GetEdgeA()->GetOutputEdgeDistance( l_dDistance ) != S_OK )
+		{
+			RRunStatus.SetFailed();	
+		}
+
+		l_bOk &= GetImageExtent( l_svExtents ) == S_OK &&
+		         l_svExtents.TranslateFromOutputSpace( l_svEdgePoint, l_svEdgePoint ) == S_OK;
+
+		l_bOk &= GetTool()->GetImageExtent( l_svExtents ) == S_OK &&
+		         l_svExtents.TranslateFromOutputSpace( l_svEdgePoint, l_svEdgePoint ) == S_OK;
+	}
+
+	l_svDPoint.x = l_svEdgePoint.m_dPositionX;
+	l_svDPoint.y = l_svEdgePoint.m_dPositionY;
+
+	l_bOk = ( m_svLinearDistance.SetValue( RRunStatus.m_lResultDataIndex, l_dDistance )== S_OK ) && l_bOk;
+	l_bOk = ( dpEdge.SetValue( RRunStatus.m_lResultDataIndex, l_svDPoint ) == S_OK ) && l_bOk;
+	
+	if( ! l_bOk )
+	{
+		SetInvalid();
+		RRunStatus.SetInvalid();	
+	}
+
+	return l_bOk;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// .Title       : Validate
+// -----------------------------------------------------------------------------
+// .Description : ...
+//              :
+// -----------------------------------------------------------------------------
+// .Input(s)
+//	 Type				Name				Description
+//	: 
+//  :
+// .Output(s)
+//	:
+//  :
+// .Return Value
+//	: BOOL
+// -----------------------------------------------------------------------------
+// .Import Function Reference(s)
+//	:
+// -----------------------------------------------------------------------------
+// .Import Variable Reference(s)
+//	:
+////////////////////////////////////////////////////////////////////////////////
+// .History
+//	 Date		Author		Comment                                       
+//  :20.08.1999 RO			First Implementation
+////////////////////////////////////////////////////////////////////////////////
+BOOL SVLinearEdgePositionLineAnalyzerClass::OnValidate()
+{
+	BOOL retVal = SVLinearAnalyzerClass::OnValidate();
+	
+	retVal &= GetEdgeA() != NULL;
+
+	if( ! retVal )
+	{
+		SetInvalid();
+	}
+
+	return retVal;
+}
+
+// ******************************************************************************
+// * LOG HISTORY:
+// ******************************************************************************
+/*
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVLinearLineEdgePositionAnalyzer.cpp_v  $
+ * 
+ *    Rev 1.0   23 Apr 2013 11:59:10   bWalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  814
+ * SCR Title:  Upgrade SVObserver to Compile Using Visual Studio 2010
+ * Checked in by:  bWalter;  Ben Walter
+ * Change Description:  
+ *   Initial check in to SVObserver_src.  (Merged with svo_src label SVO 6.10 Beta 008.)
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.10   01 Aug 2012 12:56:40   jspila
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  769
+ * SCR Title:  Fix Problems and Crashes with Inspection Document Display Updates
+ * Checked in by:  Joe;  Joe Spila
+ * Change Description:  
+ *   Removed all overlay collection functionality that uses data at a particular index.  The current overlay collection functionality collects the data in the inspection thread, so that all data is consistant based on the last executed inspection.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.9   08 Dec 2010 12:56:38   jspila
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  707
+ * SCR Title:  Change Inspection Display Functionality to Force Display of Last Inspected
+ * Checked in by:  Joe;  Joe Spila
+ * Change Description:  
+ *   Updated source code to include changes in notification functionality using the Observer Design Pattern.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.8   01 Jun 2010 14:44:34   jspila
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  693
+ * SCR Title:  Fix Performance Issue with Inspection Process
+ * Checked in by:  Joe;  Joe Spila
+ * Change Description:  
+ *   Updated source code to improve ability to track performance.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.7   16 Dec 2009 11:28:38   jspila
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  677
+ * SCR Title:  Fix problem in camera notify thread
+ * Checked in by:  Joe;  Joe Spila
+ * Change Description:  
+ *   Fix issues with includes and comments.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.6   01 Aug 2005 11:59:06   ebeyeler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  464
+ * SCR Title:  Add array indexing for value objects
+ * Checked in by:  eBeyeler;  Eric Beyeler
+ * Change Description:  
+ *   changed VectorObject to ValueObject
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.5   29 Jul 2005 12:39:52   Joe
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  500
+ * SCR Title:  Reduce delay when adjusting tool parameters with a large toolset
+ * Checked in by:  Joe;  Joe Spila
+ * Change Description:  
+ *   Updated object initialization to change the parameters for RegisterEmbeddedObject for a SVValueObjectClass.  The two additional parameters will inform the preperation process before toolset execution.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.4   21 Jun 2005 08:11:52   ebeyeler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  464
+ * SCR Title:  Add array indexing for value objects
+ * Checked in by:  eBeyeler;  Eric Beyeler
+ * Change Description:  
+ *   object attributes now use accessor methods
+ * value object functions now use HRESULT
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.3   22 Mar 2005 07:52:36   ryoho
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  463
+ * SCR Title:  Add new Linear Measurement Tool to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   added PVCS header
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+*/

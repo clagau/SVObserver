@@ -1,0 +1,106 @@
+//******************************************************************************
+//* COPYRIGHT (c) 2013 by Seidenader Vision Inc., Harrisburg
+//* All Rights Reserved
+//******************************************************************************
+//* .Module Name     : SVScrollWnd1Ctl
+//* .File Name       : $Workfile:   SVScrollWnd1Ctl.h  $
+//* ----------------------------------------------------------------------------
+//* .Current Version : $Revision:   1.0  $
+//* .Check In Date   : $Date:   26 Apr 2013 14:09:24  $
+//******************************************************************************
+
+#if !defined(AFX_SVSCROLLWND1CTL_H__6DF99A47_EBB8_11D2_A759_00106F000C7A__INCLUDED_)
+#define AFX_SVSCROLLWND1CTL_H__6DF99A47_EBB8_11D2_A759_00106F000C7A__INCLUDED_
+
+#if _MSC_VER > 1000
+#pragma once
+#endif // _MSC_VER > 1000
+
+// SVScrollWnd1Ctl.h : Declaration of the SVScrollWnd1Ctrl ActiveX Control class.
+
+/////////////////////////////////////////////////////////////////////////////
+// SVScrollWnd1Ctrl : See SVScrollWnd1Ctl.cpp for implementation.
+
+class SVScrollWnd1Ctrl : public COleControl
+{
+	DECLARE_DYNCREATE(SVScrollWnd1Ctrl)
+
+// Constructor
+public:
+	SVScrollWnd1Ctrl();
+
+// Overrides
+	// ClassWizard generated virtual function overrides
+	//{{AFX_VIRTUAL(SVScrollWnd1Ctrl)
+	public:
+	virtual void OnDraw(CDC* pdc, const CRect& rcBounds, const CRect& rcInvalid);
+	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
+	virtual void DoPropExchange(CPropExchange* pPX);
+	virtual void OnResetState();
+	//}}AFX_VIRTUAL
+
+// Implementation
+protected:
+	~SVScrollWnd1Ctrl();
+
+	DECLARE_OLECREATE_EX(SVScrollWnd1Ctrl)    // Class factory and guid
+	DECLARE_OLETYPELIB(SVScrollWnd1Ctrl)      // GetTypeInfo
+	DECLARE_PROPPAGEIDS(SVScrollWnd1Ctrl)     // Property page IDs
+	DECLARE_OLECTLTYPE(SVScrollWnd1Ctrl)		// Type name and misc status
+
+	// Subclassed control support
+	BOOL IsSubclassedControl();
+	LRESULT OnOcmCommand(WPARAM wParam, LPARAM lParam);
+
+// Message maps
+	//{{AFX_MSG(SVScrollWnd1Ctrl)
+		// NOTE - ClassWizard will add and remove member functions here.
+		//    DO NOT EDIT what you see in these blocks of generated code !
+	//}}AFX_MSG
+	DECLARE_MESSAGE_MAP()
+
+// Dispatch maps
+	//{{AFX_DISPATCH(SVScrollWnd1Ctrl)
+		// NOTE - ClassWizard will add and remove member functions here.
+		//    DO NOT EDIT what you see in these blocks of generated code !
+	//}}AFX_DISPATCH
+	DECLARE_DISPATCH_MAP()
+
+// Event maps
+	//{{AFX_EVENT(SVScrollWnd1Ctrl)
+		// NOTE - ClassWizard will add and remove member functions here.
+		//    DO NOT EDIT what you see in these blocks of generated code !
+	//}}AFX_EVENT
+	DECLARE_EVENT_MAP()
+
+// Dispatch and event IDs
+public:
+	enum {
+	//{{AFX_DISP_ID(SVScrollWnd1Ctrl)
+		// NOTE: ClassWizard will add and remove enumeration elements here.
+		//    DO NOT EDIT what you see in these blocks of generated code !
+	//}}AFX_DISP_ID
+	};
+};
+
+//{{AFX_INSERT_LOCATION}}
+// Microsoft Visual C++ will insert additional declarations immediately before the previous line.
+
+#endif // !defined(AFX_SVSCROLLWND1CTL_H__6DF99A47_EBB8_11D2_A759_00106F000C7A__INCLUDED)
+
+//******************************************************************************
+//* LOG HISTORY:
+//******************************************************************************
+/*
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVMaskEditor\SVScrollWnd1Ctl.h_v  $
+ * 
+ *    Rev 1.0   26 Apr 2013 14:09:24   bWalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  814
+ * SCR Title:  Upgrade SVObserver to Compile Using Visual Studio 2010
+ * Checked in by:  bWalter;  Ben Walter
+ * Change Description:  
+ *   Initial check in to SVObserver_src.  (Merged with svo_src label SVO 6.10 Beta 008.)
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+*/

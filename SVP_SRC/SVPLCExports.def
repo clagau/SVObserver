@@ -1,0 +1,18 @@
+
+EXPORTS
+	SVSetupConnection @1
+	SVConstruct @2
+	SVDestroy @3
+	SVSetParameterValue @4
+	SVGetParameterCount @5
+	SVGetParameterName @6
+	SVGetParameterValue @7
+	SVSendBlock @8
+	SVGetPLCDataType @9
+	SVGetInfoFromAddress @10
+	SVAddOffsetToAddress @11
+	SVSetHeartBeatCallback @12
+	SVGetMaxDTSize @13
+	SVGetDefaultPLCAddress @14
+	SVTestCommunications @15
+; LIBRARY	"plc_interface"

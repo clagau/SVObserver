@@ -1,0 +1,338 @@
+// Microsoft Visual C++ generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE 
+BEGIN
+    "#define _AFX_NO_SPLITTER_RESOURCES\r\n"
+    "#define _AFX_NO_OLE_RESOURCES\r\n"
+    "#define _AFX_NO_TRACKER_RESOURCES\r\n"
+    "#define _AFX_NO_PROPERTY_RESOURCES\r\n"
+    "\r\n"
+    "#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)\r\n"
+    "#ifdef _WIN32\r\n"
+    "LANGUAGE 9, 1\r\n"
+    "#pragma code_page(1252)\r\n"
+    "#endif //_WIN32\r\n"
+    "#include ""res\\SVIOTEST.rc2""  // non-Microsoft Visual C++ edited resources\r\n"
+    "#include ""afxres.rc""         // Standard components\r\n"
+    "#endif\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDR_MAINFRAME           ICON                    "res\\SVIOTEST.ico"
+IDI_ICON1               ICON                    "res\\MISC13.ICO"
+IDI_ICON3               ICON                    "res\\MISC15.ICO"
+IDI_ICON4               ICON                    "res\\icon4.ico"
+IDI_ICON5               ICON                    "res\\icon5.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_ABOUTBOX DIALOG  0, 0, 235, 55
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "About SVIOTEST"
+FONT 8, "MS Sans Serif"
+BEGIN
+    ICON            IDR_MAINFRAME,IDC_STATIC,11,17,20,20
+    LTEXT           "SVIOTEST Version 1.0",IDC_STATIC,40,10,119,8,SS_NOPREFIX
+    LTEXT           "Copyright (C) 2003",IDC_STATIC,40,25,119,8
+    DEFPUSHBUTTON   "OK",IDOK,178,7,50,14,WS_GROUP
+END
+
+IDD_SVIOTEST_DIALOG DIALOGEX 0, 0, 421, 330
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_APPWINDOW
+CAPTION "SVIOTest"
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    LTEXT           "TEST APP, I/O CONFIGURED PER SVIM REQUIREMENTS",IDC_STATIC,7,7,198,9
+    LTEXT           "Board Model",IDC_SYSTEM_TEXT,9,24,41,8
+    GROUPBOX        "Trigger Information",IDC_STATIC,7,41,404,140
+    PUSHBUTTON      "Start Triggers",IDC_START_TRIGGERS,20,55,82,18
+    PUSHBUTTON      "Stop Triggers",IDC_STOP_TRIGGERS,117,55,82,18
+    PUSHBUTTON      "Trigger Parameters",IDC_TRIGGER_PARAM,214,55,82,18
+    CTEXT           "Trigger Name",IDC_STATIC,17,85,48,9,SS_CENTERIMAGE
+    RTEXT           "Trigger 1 : ",IDC_STATIC,17,101,48,9,SS_CENTERIMAGE
+    RTEXT           "Trigger 2 : ",IDC_STATIC,17,120,48,9,SS_CENTERIMAGE
+    RTEXT           "Trigger 3 : ",IDC_STATIC,17,137,48,9,SS_CENTERIMAGE
+    RTEXT           "Trigger 4 : ",IDC_STATIC,17,157,48,9,SS_CENTERIMAGE
+    CTEXT           "Count",IDC_STATIC,79,85,48,9,SS_CENTERIMAGE
+    RTEXT           "0",IDC_TRIGGER1_COUNT,79,101,48,9,SS_CENTERIMAGE | SS_SUNKEN
+    RTEXT           "0",IDC_TRIGGER2_COUNT,79,120,48,9,SS_CENTERIMAGE | SS_SUNKEN
+    RTEXT           "0",IDC_TRIGGER3_COUNT,79,137,48,9,SS_CENTERIMAGE | SS_SUNKEN
+    RTEXT           "0",IDC_TRIGGER4_COUNT,79,157,48,9,SS_CENTERIMAGE | SS_SUNKEN
+    CTEXT           "Distance (탎)",IDC_STATIC,143,85,48,9,SS_CENTERIMAGE
+    RTEXT           "0",IDC_TRIGGER1_DISTANCE,143,101,48,9,SS_CENTERIMAGE | SS_SUNKEN
+    RTEXT           "0",IDC_TRIGGER2_DISTANCE,143,120,48,9,SS_CENTERIMAGE | SS_SUNKEN
+    RTEXT           "0",IDC_TRIGGER3_DISTANCE,143,137,48,9,SS_CENTERIMAGE | SS_SUNKEN
+    RTEXT           "0",IDC_TRIGGER4_DISTANCE,143,157,48,9,SS_CENTERIMAGE | SS_SUNKEN
+    CTEXT           "Minimum (탎)",IDC_STATIC,208,85,48,9,SS_CENTERIMAGE
+    RTEXT           "0",IDC_TRIGGER1_MINIMUM,208,102,48,9,SS_CENTERIMAGE | SS_SUNKEN
+    RTEXT           "0",IDC_TRIGGER2_MINIMUM,208,120,48,9,SS_CENTERIMAGE | SS_SUNKEN
+    RTEXT           "0",IDC_TRIGGER3_MINIMUM,208,138,48,9,SS_CENTERIMAGE | SS_SUNKEN
+    RTEXT           "0",IDC_TRIGGER4_MINIMUM,208,157,48,9,SS_CENTERIMAGE | SS_SUNKEN
+    CTEXT           "Maximum (탎)",IDC_STATIC,269,85,48,9,SS_CENTERIMAGE
+    RTEXT           "0",IDC_TRIGGER1_MAXIMUM,269,102,48,9,SS_CENTERIMAGE | SS_SUNKEN
+    RTEXT           "0",IDC_TRIGGER2_MAXIMUM,269,120,48,9,SS_CENTERIMAGE | SS_SUNKEN
+    RTEXT           "0",IDC_TRIGGER3_MAXIMUM,269,138,48,9,SS_CENTERIMAGE | SS_SUNKEN
+    RTEXT           "0",IDC_TRIGGER4_MAXIMUM,269,157,48,9,SS_CENTERIMAGE | SS_SUNKEN
+    CTEXT           "Average (탎)",IDC_STATIC,329,85,48,9,SS_CENTERIMAGE
+    RTEXT           "0",IDC_TRIGGER1_AVERAGE,329,101,48,9,SS_CENTERIMAGE | SS_SUNKEN
+    RTEXT           "0",IDC_TRIGGER2_AVERAGE,329,120,48,9,SS_CENTERIMAGE | SS_SUNKEN
+    RTEXT           "0",IDC_TRIGGER3_AVERAGE,329,139,48,9,SS_CENTERIMAGE | SS_SUNKEN
+    RTEXT           "0",IDC_TRIGGER4_AVERAGE,329,157,48,9,SS_CENTERIMAGE | SS_SUNKEN
+    LTEXT           "INPUTS",IDC_STATIC,75,187,26,8
+    LTEXT           "1",IDC_STATIC,18,198,8,8
+    ICON            IDI_ICON1,IDC_INPUT1,13,208,20,20
+    LTEXT           "2",IDC_STATIC,38,198,8,8
+    ICON            IDI_ICON1,IDC_INPUT2,33,208,20,20
+    LTEXT           "3",IDC_STATIC,58,198,8,8
+    ICON            IDI_ICON1,IDC_INPUT3,53,208,20,20
+    LTEXT           "4",IDC_STATIC,78,198,8,8
+    ICON            IDI_ICON1,IDC_INPUT4,73,208,20,20
+    LTEXT           "5",IDC_STATIC,98,198,8,8
+    ICON            IDI_ICON1,IDC_INPUT5,93,208,20,20
+    LTEXT           "6",IDC_STATIC,118,198,8,8
+    ICON            IDI_ICON1,IDC_INPUT6,113,208,20,20
+    LTEXT           "7",IDC_STATIC,138,198,8,8
+    ICON            IDI_ICON1,IDC_INPUT7,133,208,20,20
+    LTEXT           "8",IDC_STATIC,158,198,8,8
+    ICON            IDI_ICON1,IDC_INPUT8,153,208,20,20
+    PUSHBUTTON      "TURN ON ALL\r OUTPUTS",IDC_BUTTON1,189,199,64,24,BS_CENTER | BS_VCENTER | BS_MULTILINE
+    PUSHBUTTON      "TURN OFF ALL\r OUTPUTS",IDC_BUTTON2,264,199,64,24,BS_CENTER | BS_VCENTER | BS_MULTILINE
+    PUSHBUTTON      "TEST OUTPUTS",IDC_TEST_OUTPUTS,335,199,64,24
+    PUSHBUTTON      "SEQUENCE INPUTS USING OUTPUTS",IDC_BUTTON4,189,234,78,26,BS_MULTILINE
+    CONTROL         "SLOW",IDC_RADIO1,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,281,241,36,10
+    CONTROL         "FAST",IDC_RADIO2,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,327,241,34,10
+    GROUPBOX        "Test Outputs  -  with one channel static",IDC_STATIC,13,236,168,59
+    CONTROL         "Start",IDC_START_OUTPUTS,"Button",BS_AUTOCHECKBOX | BS_PUSHLIKE | WS_TABSTOP,20,252,46,18
+    CONTROL         "Random",IDC_RANDOM_BUTTON,"Button",BS_AUTOCHECKBOX | BS_PUSHLIKE | WS_TABSTOP,73,252,46,18
+    CONTROL         "Fast",IDC_FAST_BUTTON,"Button",BS_AUTOCHECKBOX | BS_PUSHLIKE | WS_TABSTOP,126,252,46,18
+    LTEXT           "Static Channel ( 0 - 15 )",IDC_STATIC,50,281,74,8
+    EDITTEXT        IDC_STATIC_CHANNEL,130,280,35,12,ES_AUTOHSCROLL
+    ICON            IDI_ICON1,IDC_FAN1,226,275,20,20
+    ICON            IDI_ICON1,IDC_FAN2,264,275,20,20
+    ICON            IDI_ICON1,IDC_FAN3,303,275,20,20
+    ICON            IDI_ICON1,IDC_FAN4,342,275,20,20
+    LTEXT           "Fan 1",IDC_FAN1_TXT,227,266,19,8
+    LTEXT           "Fan 2",IDC_FAN2_TXT,266,266,19,8
+    LTEXT           "Fan 3",IDC_FAN3_TXT,302,266,19,8
+    LTEXT           "Fan 4",IDC_FAN4_TXT,342,266,19,8
+    COMBOBOX        IDC_BOARD_MODEL_COMBO,57,22,116,60,CBS_DROPDOWN | WS_VSCROLL | WS_TABSTOP
+    EDITTEXT        IDC_FAN_FREQ1,222,295,26,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_FAN_FREQ2,261,295,26,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_FAN_FREQ3,300,295,26,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_FAN_FREQ4,339,295,26,14,ES_AUTOHSCROLL
+END
+
+IDD_TRIG_SETUP_DLG DIALOG  0, 0, 234, 133
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Trigger Setup"
+FONT 8, "MS Sans Serif"
+BEGIN
+    LTEXT           "Trigger 1",IDC_STATIC,12,27,30,8
+    LTEXT           "Trigger 2",IDC_STATIC,12,49,30,8
+    LTEXT           "Trigger 3",IDC_STATIC,12,71,30,8
+    LTEXT           "Trigger 4",IDC_STATIC,12,93,30,8
+    CONTROL         "Rising",IDC_TRIG1_RISING_CHECK,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,172,24,35,14
+    CONTROL         "Rising",IDC_TRIG2_RISING_CHECK,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,172,46,35,14
+    CONTROL         "Rising",IDC_TRIG3_RISING_CHECK,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,172,68,35,14
+    CONTROL         "Rising",IDC_TRIG4_RISING_CHECK,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,172,90,35,14
+    DEFPUSHBUTTON   "OK",IDOK,177,112,50,14
+    GROUPBOX        "Trigger Edge",IDC_STATIC,164,13,55,98
+    GROUPBOX        "---- Trigger -------------- Strobe",IDC_STATIC,46,13,110,98
+    CONTROL         "Invert",IDC_TRIG1_INV_BTN,"Button",BS_AUTOCHECKBOX | BS_PUSHLIKE,60,24,36,14
+    CONTROL         "Invert",IDC_TRIG2_INV_BTN,"Button",BS_AUTOCHECKBOX | BS_PUSHLIKE,60,46,36,14
+    CONTROL         "Invert",IDC_TRIG3_INV_BTN,"Button",BS_AUTOCHECKBOX | BS_PUSHLIKE,60,68,36,14
+    CONTROL         "Invert",IDC_TRIG4_INV_BTN,"Button",BS_AUTOCHECKBOX | BS_PUSHLIKE,60,90,36,14
+    CONTROL         "Invert",IDC_STROBE1_INV_BTN,"Button",BS_AUTOCHECKBOX | BS_PUSHLIKE,107,24,36,14
+    CONTROL         "Invert",IDC_STROBE2_INV_BTN,"Button",BS_AUTOCHECKBOX | BS_PUSHLIKE,107,46,36,14
+    CONTROL         "Invert",IDC_STROBE3_INV_BTN,"Button",BS_AUTOCHECKBOX | BS_PUSHLIKE,107,68,36,14
+    CONTROL         "Invert",IDC_STROBE4_INV_BTN,"Button",BS_AUTOCHECKBOX | BS_PUSHLIKE,107,90,36,14
+END
+
+IDD_SOFTWARETRIGGER_SETUP_DLG DIALOGEX 0, 0, 173, 134
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Trigger Setup"
+FONT 8, "MS Sans Serif", 0, 0, 0x0
+BEGIN
+    LTEXT           "Trigger 1",-1,12,27,30,8
+    LTEXT           "Trigger 2",-1,12,49,30,8
+    LTEXT           "Trigger 3",-1,12,71,30,8
+    LTEXT           "Trigger 4",-1,12,93,30,8
+    DEFPUSHBUTTON   "OK",IDOK,105,113,50,14
+    GROUPBOX        "---- Period (in ms) --------",-1,46,13,110,98
+    EDITTEXT        IDC_PERIOD1,64,26,40,14,ES_AUTOHSCROLL | ES_NUMBER
+    EDITTEXT        IDC_PERIOD2,64,46,40,14,ES_AUTOHSCROLL | ES_NUMBER
+    EDITTEXT        IDC_PERIOD3,64,66,40,14,ES_AUTOHSCROLL | ES_NUMBER
+    EDITTEXT        IDC_PERIOD4,64,87,40,14,ES_AUTOHSCROLL | ES_NUMBER
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 1,0,0,1
+ PRODUCTVERSION 1,0,0,1
+ FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x4L
+ FILETYPE 0x1L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904B0"
+        BEGIN
+            VALUE "FileDescription", "SVIOTEST MFC Application"
+            VALUE "FileVersion", "1, 0, 0, 1"
+            VALUE "InternalName", "SVIOTEST"
+            VALUE "LegalCopyright", "Copyright (C) 2003"
+            VALUE "OriginalFilename", "SVIOTEST.EXE"
+            VALUE "ProductName", "SVIOTEST Application"
+            VALUE "ProductVersion", "1, 0, 0, 1"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1200
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO 
+BEGIN
+    IDD_ABOUTBOX, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 228
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 48
+    END
+
+    IDD_SVIOTEST_DIALOG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 411
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 323
+    END
+
+    IDD_TRIG_SETUP_DLG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 227
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 126
+    END
+
+    IDD_SOFTWARETRIGGER_SETUP_DLG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 166
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 127
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE 
+BEGIN
+    IDS_ABOUTBOX            "&About SVIOTEST..."
+END
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+#define _AFX_NO_SPLITTER_RESOURCES
+#define _AFX_NO_OLE_RESOURCES
+#define _AFX_NO_TRACKER_RESOURCES
+#define _AFX_NO_PROPERTY_RESOURCES
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE 9, 1
+#pragma code_page(1252)
+#endif //_WIN32
+#include "res\SVIOTEST.rc2"  // non-Microsoft Visual C++ edited resources
+#include "afxres.rc"         // Standard components
+#endif
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+
