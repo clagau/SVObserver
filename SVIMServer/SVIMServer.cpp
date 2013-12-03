@@ -5,8 +5,8 @@
 // * .Module Name     : SVIMServer
 // * .File Name       : $Workfile:   SVIMServer.cpp  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.0  $
-// * .Check In Date   : $Date:   22 Apr 2013 12:07:28  $
+// * .Current Version : $Revision:   1.1  $
+// * .Check In Date   : $Date:   01 Oct 2013 09:05:48  $
 // ******************************************************************************
 
 #include "stdafx.h"
@@ -73,7 +73,7 @@ BOOL SVIMServer::OnSVIMData(char * pBuffer, UINT NumBytes)
 			if (mpFile->Open(szPackedFile, CFile::modeWrite | CFile::typeBinary))
 			{
 				mpFile->SeekToEnd();
-				cmdSize = strlen (Command.GetCommandText(SVDATA));
+				cmdSize = static_cast<int>(strlen (Command.GetCommandText(SVDATA)));
 				pTemp = pBuffer + cmdSize;
 				try
 				{
@@ -255,7 +255,7 @@ BOOL SVIMServer::OnWriteBlockComplete(SVException *psvException, char *pBuffer, 
 		if (mpFile)
 		{
 			strcpy (pBuffer, Command.GetCommandText (SVDATA));
-			cmdlen = strlen (pBuffer);
+			cmdlen = static_cast<int>(strlen (pBuffer));
 			size = cbBuffer - cmdlen;
 			pTemp = pBuffer + cmdlen;
 
@@ -349,6 +349,16 @@ BOOL SVIMServer::IsStarted ()
 // ******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVIMServer\SVIMServer.cpp_v  $
+ * 
+ *    Rev 1.1   01 Oct 2013 09:05:48   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   22 Apr 2013 12:07:28   bWalter
  * Project:  SVObserver

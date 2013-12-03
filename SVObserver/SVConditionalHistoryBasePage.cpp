@@ -5,8 +5,8 @@
 //* .Module Name     : SVConditionalHistoryBasePage
 //* .File Name       : $Workfile:   SVConditionalHistoryBasePage.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 10:00:12  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   01 Oct 2013 12:16:28  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -199,7 +199,7 @@ void SVConditionalHistoryBasePage::OnBtnClear()
 		int iItems = m_lbSelected.GetSelItems(m_lbSelected.GetCount(), &vecIndexes[0]);
 		for ( int i = iItems-1; i >= 0; --i )
 		{
-			int iIndex = m_lbSelected.GetItemData(vecIndexes.at(i));
+			int iIndex = static_cast< int >( m_lbSelected.GetItemData( vecIndexes.at( i ) ) );
 			m_Tree.SelectItemByIndex( iIndex, false );
 		}
 	}
@@ -213,7 +213,7 @@ void SVConditionalHistoryBasePage::OnBtnClearAll()
 	int iItems = m_lbSelected.GetCount();
 	for ( int i = iItems-1; i >= 0; --i )
 	{
-		int iIndex = m_lbSelected.GetItemData(i);
+		int iIndex = static_cast< int >( m_lbSelected.GetItemData( i ) );
 		m_Tree.SelectItemByIndex( iIndex, false );
 	}
 	// send ppq -> set_ch_list
@@ -261,7 +261,17 @@ BOOL SVConditionalHistoryBasePage::OnKillActive()
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVConditionalHistoryBasePage.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVConditionalHistoryBasePage.cpp_v  $
+ * 
+ *    Rev 1.1   01 Oct 2013 12:16:28   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 10:00:12   bWalter
  * Project:  SVObserver

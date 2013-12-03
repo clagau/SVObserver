@@ -5,8 +5,8 @@
 //* .Module Name     : SVImageArithmetic
 //* .File Name       : $Workfile:   SVImageArithmetic.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   13 May 2013 12:16:06  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   01 Oct 2013 14:19:30  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -397,8 +397,10 @@ void SVImageArithmeticClass::ScaleWithAveraging( SVImageClass* pInputImage, SVIm
 		LPVOID pDstHostBuffer = NULL;
 		unsigned char *srcLinePtr,*srcLinePtr1,*dstLinePtr;
 	
-		long srcPitch,dstPitch;
-		int row,col;
+		long srcPitch = 0;
+		long dstPitch = 0;
+		int row = 0;
+		int col = 0;
 
 		SVImageInfoClass InputImageInfo = pInputImage->GetImageInfo();
 		SVImageInfoClass OutputImageInfo = pOutputImage->GetImageInfo();
@@ -532,7 +534,17 @@ HRESULT SVImageArithmeticClass::CollectInputImageNames( SVRunStatusClass& RRunSt
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVImageArithmetic.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVImageArithmetic.cpp_v  $
+ * 
+ *    Rev 1.2   01 Oct 2013 14:19:30   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   13 May 2013 12:16:06   bWalter
  * Project:  SVObserver

@@ -2,8 +2,8 @@
 //* .Module Name     : CFireBus
 //* .File Name       : $Workfile:   firebus.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   29 Apr 2013 10:08:10  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   03 Oct 2013 11:42:14  $
 //******************************************************************************
 
 //* This file include changes of original package code to allow this driver
@@ -134,12 +134,12 @@ UINT32 CFireBus::Run(UINT8 CardNumber,FBCALLBACK *pCallback,FBPARMS *pParms,
   // Open card
   if(Result==FCE_NOERROR)
    Result=FCTLOpenCard(m_CardNumber,&m_hCard);
-
+#ifndef _WIN64
 	// SVR - deviation from Standard Intek FireBus API (licensing)
 	if(Result==FCE_NOERROR)
 	 Result=EnableDriver(m_hCard);
 	// SVR - end deviation from Standard Intek FireBus API
-
+#endif
   // Get Card Id
   if(Result==FCE_NOERROR)
    Result=FCTLGetCardSystemId(m_CardNumber,&m_CardId);
@@ -1105,7 +1105,17 @@ UINT8 GetSysInfo(FBSYSINFO *pInfo)
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\Intek\firebus.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\Intek\firebus.cpp_v  $
+ * 
+ *    Rev 1.1   03 Oct 2013 11:42:14   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Disable Special License code - EnableDriver( for 64-bit
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   29 Apr 2013 10:08:10   bWalter
  * Project:  SVObserver

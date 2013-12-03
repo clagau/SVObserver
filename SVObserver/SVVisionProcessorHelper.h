@@ -5,8 +5,8 @@
 //* .Module Name     : SVVisionProcessorHelper
 //* .File Name       : $Workfile:   SVVisionProcessorHelper.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   18 Jun 2013 19:23:24  $
+//* .Current Version : $Revision:   1.4  $
+//* .Check In Date   : $Date:   30 Oct 2013 15:43:26  $
 //******************************************************************************
 
 #ifndef SVVISIONPROCESSORHELPER_H
@@ -19,9 +19,25 @@
 #include <boost/function.hpp>
 #include "SVSystemLibrary/SVAsyncProcedure.h"
 #include "SVUtilityLibrary/SVString.h"
+#include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVStorage.h"
 #include "SVStorageResult.h"
 #include "SVVisionProcessorConstants.h"
+#include "SVDataDefinitionStruct.h"
+
+//This enum is the same as the client interface of the SVRC
+enum SVDataDefinitionListType
+{
+	UnknownDataDefinition			= 0,
+	SelectedValues					= 1,
+	SelectedImages					= 2,
+	SelectedValuesAndSelectedImages = 3,
+	AllValues						= 4,
+	AllValuesAndSelectedImages		= 6,
+	AllImages						= 8,
+	SelectedValuesAndAllImages		= 9,
+	AllValuesAndAllImages			= 12,
+};
 
 class SVVisionProcessorHelper
 {
@@ -48,6 +64,8 @@ public:
 
 	HRESULT GetConfigurationPrintReport( SVString& p_rReport ) const;
 
+	HRESULT GetDataDefinitionList( const SVString& p_rInspectionName, const SVDataDefinitionListType& p_rListType, SVDataDefinitionStructArray& p_rDataDefinitionArray) const;
+
 	HRESULT GetItems( const SVNameSet& p_rNames, SVNameStorageResultMap& p_rItems ) const;
 	HRESULT SetItems( const SVNameStorageMap& p_rItems, SVNameStatusMap& p_rStatus );
 
@@ -58,10 +76,10 @@ protected:
 	typedef boost::function< HRESULT ( const SVNameStorageMap&, SVNameStatusMap& ) > SVSetItemsFunctor;
 	typedef std::map< SVString, SVGetItemsFunctor > SVGetItemsFunctorMap;
 	typedef std::map< SVString, SVSetItemsFunctor > SVSetItemsFunctorMap;
-	typedef void (CALLBACK * SVAPCSignalHandler)(DWORD);
+	typedef void ( CALLBACK * SVAPCSignalHandler )( DWORD_PTR );
 	typedef boost::function<void ( bool& )> SVThreadProcessHandler;
 
-	static void CALLBACK APCThreadProcess( DWORD dwParam );
+	static void CALLBACK APCThreadProcess( DWORD_PTR dwParam );
 
 	SVVisionProcessorHelper();
 
@@ -75,6 +93,8 @@ protected:
 
 	HRESULT SetInspectionItems( const SVNameStorageMap& p_rItems, SVNameStatusMap& p_rStatus );
 	HRESULT SetRemoteInputItems( const SVNameStorageMap& p_rItems, SVNameStatusMap& p_rStatus );
+
+	HRESULT GetObjectDefinition( const SVObjectClass& p_rObj, const long p_Filter, SVDataDefinitionStruct& p_rDataDef ) const;
 
 	void ThreadProcess( bool& p_WaitForEvents );
 
@@ -100,7 +120,29 @@ private:
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVVisionProcessorHelper.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVVisionProcessorHelper.h_v  $
+ * 
+ *    Rev 1.4   30 Oct 2013 15:43:26   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  866
+ * SCR Title:  Add GetDataDefinitionList Command to SVObserver's Remote Command Socket
+ * Checked in by:  bWalter;  Ben Walter
+ * Change Description:  
+ *   Added include of SVObjectManagerClass.h from SVVisionProcessorHelper.cpp.
+ *   Added SVDataDefinitionListType enum.
+ *   Added GetDataDefinitionList and GetObjectDefinition.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.3   02 Oct 2013 08:39:02   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   18 Jun 2013 19:23:24   bwalter
  * Project:  SVObserver

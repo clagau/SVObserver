@@ -5,8 +5,8 @@
 //* .Module Name     : SVBarCodeGeneralDialog
 //* .File Name       : $Workfile:   svbarcodegeneraldialog.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 09:39:52  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   01 Oct 2013 11:54:40  $
 //******************************************************************************
 
 // SVBarCodeGeneralDialog.cpp : implementation file
@@ -444,7 +444,7 @@ BOOL SVBarCodeGeneralDialog::OnInitDialog()
 
 	// String Format 
 	m_StringFormatCombo.ResetContent();
-	for( size_t i = 0 ; i < m_EnumVect.size() ; i++ )
+	for( int i = 0 ; i < static_cast< int >( m_EnumVect.size() ); i++ )
 	{
 		m_StringFormatCombo.InsertString( i, m_EnumVect[i].first );
 	}
@@ -836,7 +836,17 @@ void SVBarCodeGeneralDialog::UpdateUnEvenGrid()
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\svbarcodegeneraldialog.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\svbarcodegeneraldialog.cpp_v  $
+ * 
+ *    Rev 1.1   01 Oct 2013 11:54:40   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 09:39:52   bWalter
  * Project:  SVObserver

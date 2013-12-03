@@ -5,8 +5,8 @@
 // * .Module Name     : PropertyItemFile.cpp
 // * .File Name       : $Workfile:   PropTreeItemFile.cpp  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.0  $
-// * .Check In Date   : $Date:   18 Apr 2013 16:42:04  $
+// * .Current Version : $Revision:   1.1  $
+// * .Check In Date   : $Date:   30 Sep 2013 14:07:26  $
 // ******************************************************************************
 
 // PropertyItemFile.cpp : implementation file
@@ -418,14 +418,14 @@ bool SVRPropertyItemFile::SVRBrowseForFolder()
 		m_pBROWSEINFO->lpfn = SVRFolderProc;	// set the callback procedure
 	}
 
-	ITEMIDLIST *idl = SHBrowseForFolder(m_pBROWSEINFO);
+	ITEMIDLIST __unaligned *idl = SHBrowseForFolder(m_pBROWSEINFO);
 	if (idl)
 	{
 		if (SHGetPathFromIDList(idl, lpstrDisplay))	// get path string from ITEMIDLIST
 		{
 			if (m_bTrailingSlash)				// add a trailing slash if it is not already there
 			{
-				int len = _tcslen(lpstrDisplay);
+				size_t len = _tcslen(lpstrDisplay);
 				if (lpstrDisplay[len - 1] != '\\')
 					_tcscat(lpstrDisplay, _T("\\"));
 			}
@@ -777,7 +777,17 @@ bool SVRPropertyItemFile::SetItemValue(LPCTSTR lpszVal)
 // * LOG HISTORY:
 // ******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\PropertyTree\PropTreeItemFile.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\PropertyTree\PropTreeItemFile.cpp_v  $
+ * 
+ *    Rev 1.1   30 Sep 2013 14:07:26   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platforms.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   18 Apr 2013 16:42:04   bWalter
  * Project:  SVObserver

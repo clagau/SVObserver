@@ -5,8 +5,8 @@
 // * .Module Name     : SVIMCommandServer
 // * .File Name       : $Workfile:   SVIMCommandServer.cpp  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.0  $
-// * .Check In Date   : $Date:   22 Apr 2013 12:07:20  $
+// * .Current Version : $Revision:   1.1  $
+// * .Check In Date   : $Date:   01 Oct 2013 09:05:48  $
 // ******************************************************************************
 
 #include "stdafx.h"
@@ -116,7 +116,7 @@ BOOL CALLBACK SVIMServerIOCompleteProc (void *pVoidConnection, int nErrorCode, v
 							if (rc = pServer->OnGetCurrentSVIMConfig (szIMCSVIMConfigName))
 							{
 								strcat_s (pTemp, SVIOBUFFSIZE, " SVIMFile=");
-								int i = strlen (pTemp);
+								int i = static_cast<int>(strlen (pTemp));
 								Command.escape (T2A((TCHAR *)(LPCTSTR)szIMCSVIMConfigName), &pTemp[i], SVIOBUFFSIZE - i);
 							}
 							break;
@@ -173,8 +173,8 @@ BOOL CALLBACK SVIMServerIOCompleteProc (void *pVoidConnection, int nErrorCode, v
 							{
 								*pData = 0;
 								pData++;
-								Command.unescape (pTemp, pTemp, strlen (pTemp));
-								Command.unescape (pData, pData, strlen (pData));
+								Command.unescape (pTemp, pTemp, static_cast<int>(strlen (pTemp)));
+								Command.unescape (pData, pData, static_cast<int>(strlen (pData)));
 								rc = pServer->OnPutFile (pTemp, pData);
 							}
 							else
@@ -193,7 +193,7 @@ BOOL CALLBACK SVIMServerIOCompleteProc (void *pVoidConnection, int nErrorCode, v
 						strcpy_s (pServer->GetWriteDataBuffer(), SVIOBUFFSIZE, Command.GetCommandText (SVCANCEL));
 					}
 
-					if (!pConnection->Write (pServer->GetWriteDataBuffer(), strlen (pServer->GetWriteDataBuffer()) + 1))
+					if (!pConnection->Write (pServer->GetWriteDataBuffer(), static_cast<int>(strlen (pServer->GetWriteDataBuffer()) + 1)))
 					{
 						szErrorMsg.Format (_T("Write Failed"));
 						pServer->GetLastSVIMError()->SetException (SVMSG_PIPES_WRITE_FAILED, _T(__DATE__), _T(__TIME__), szErrorMsg, _T(__FILE__), __LINE__, _T(__TIMESTAMP__));
@@ -489,6 +489,16 @@ BOOL SVIMCommandServer::OnPutFile(char* szFileName, char * pData  )
 // ******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVIMServer\SVIMCommandServer.cpp_v  $
+ * 
+ *    Rev 1.1   01 Oct 2013 09:05:48   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   22 Apr 2013 12:07:20   bWalter
  * Project:  SVObserver

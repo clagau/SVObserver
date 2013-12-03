@@ -5,8 +5,8 @@
 // * .Module Name     : SVMatroxResourceMonitor
 // * .File Name       : $Workfile:   SVMatroxResourceMonitor.h  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.0  $
-// * .Check In Date   : $Date:   22 Apr 2013 15:27:10  $
+// * .Current Version : $Revision:   1.1  $
+// * .Check In Date   : $Date:   01 Oct 2013 11:16:50  $
 // ******************************************************************************
 #ifndef SVMATROXRESOURCEMONITOR_H
 #define SVMATROXRESOURCEMONITOR_H
@@ -23,13 +23,13 @@ class SVMatroxResourceMonitor
 public:
 	typedef SVMatroxStatusInformation::SVStatusCode SVStatusCode;
 	typedef SVAutoLockAndReleaseTemplate< SVCriticalSection > SVAutoLock;
-	static HRESULT InsertIdentifier( SVMatroxIdentifierEnum p_IdentifierType, long p_Identifier );
-	static HRESULT EraseIdentifier( SVMatroxIdentifierEnum p_IdentifierType, long p_Identifier );
+	static HRESULT InsertIdentifier( SVMatroxIdentifierEnum p_IdentifierType, SVMatroxIdentifier p_Identifier );
+	static HRESULT EraseIdentifier( SVMatroxIdentifierEnum p_IdentifierType, SVMatroxIdentifier p_Identifier );
 
 	static SVStatusCode GetAutoLock( SVAutoLock& p_rAutoLock );
 
 protected:
-	typedef std::set< long > SVIdentifierSet;
+	typedef std::set< SVMatroxIdentifier > SVIdentifierSet;
 	mutable SVCriticalSectionPtr m_CriticalSectionPtr;
 	std::vector< SVIdentifierSet > m_Identifiers;
 	SVIdentifierSet m_AllIdentifiers;
@@ -49,6 +49,16 @@ private:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVMatroxLibrary\SVMatroxResourceMonitor.h_v  $
+ * 
+ *    Rev 1.1   01 Oct 2013 11:16:50   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   22 Apr 2013 15:27:10   bWalter
  * Project:  SVObserver

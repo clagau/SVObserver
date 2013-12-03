@@ -5,8 +5,8 @@
 //* .Module Name     : SVGlobal Function Module
 //* .File Name       : $Workfile:   SVGlobal.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   12 Jun 2013 15:19:58  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   01 Oct 2013 14:19:30  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -377,7 +377,7 @@ double SVGetDataTypeRange( DWORD DataType )
 
 void SVSimpleEncrypt( LPTSTR LPCHCode, int CodeLength, LPCTSTR LPCHKey )
 {
-	int keyLength = _tcslen( LPCHKey );
+	int keyLength = static_cast<int>(_tcslen( LPCHKey ));
 	int j = 0;
 	TCHAR tch;
 	for( int i = 0; i < CodeLength; ++i )
@@ -705,7 +705,7 @@ BOOL SVGetRelativeFilePathName( CString& RStrOutputPath, LPCTSTR TStrAbsoluteInp
 										pIter2 = _tcschr( &tStrPathProcess[ count + index ], _TCHAR( '\\' ) );
 										if( pIter2 )
 										{
-											index = pIter2 - &tStrPathProcess[ count ] + 1;
+											index = static_cast<int>(pIter2 - &tStrPathProcess[ count ]) + 1;
 											// Append go backward...
 											_tcscat( tStrPathOut, _T( "..\\" ) );
 										}
@@ -717,7 +717,7 @@ BOOL SVGetRelativeFilePathName( CString& RStrOutputPath, LPCTSTR TStrAbsoluteInp
 								{
 									oldCount = count;
 									// Move to the next valid position...
-									count = pIter - tStrPathProcess + 1;
+									count = static_cast<int>(pIter - tStrPathProcess) + 1;
 
 									if( _tcsnicmp( tStrPathProcess, tStrPathProcess2, count ) )
 									{
@@ -733,7 +733,7 @@ BOOL SVGetRelativeFilePathName( CString& RStrOutputPath, LPCTSTR TStrAbsoluteInp
 											pIter2 = _tcschr( &tStrPathProcess[ count + index ], _TCHAR( '\\' ) );
 											if( pIter2 )
 											{
-												index = pIter2 - &tStrPathProcess[ count ] + 1;
+												index = static_cast<int>(pIter2 - &tStrPathProcess[ count ]) + 1;
 												// Append go backward...
 												_tcscat( tStrPathOut, _T( "..\\" ) );
 											}
@@ -1040,7 +1040,7 @@ int SVCompareNoCase( LPCTSTR TStrString1, LPCTSTR TStrString2 )
 	if( ! TStrString2 )
 		return 1;
 	
-	int count = __max( _tcslen( TStrString1 ), _tcslen( TStrString2 ) );
+	size_t count = __max( _tcslen( TStrString1 ), _tcslen( TStrString2 ) );
 	return _tcsnicmp( TStrString1, TStrString2, count );
 }
 
@@ -1599,7 +1599,17 @@ void SVRCSetSVCPathName( LPCTSTR TStrPathName )
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVGlobal.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVGlobal.cpp_v  $
+ * 
+ *    Rev 1.2   01 Oct 2013 14:19:30   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   12 Jun 2013 15:19:58   bWalter
  * Project:  SVObserver

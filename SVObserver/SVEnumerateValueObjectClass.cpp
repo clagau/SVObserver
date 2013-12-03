@@ -5,8 +5,8 @@
 //* .Module Name     : SVEnumerateValueObjectClass
 //* .File Name       : $Workfile:   SVEnumerateValueObjectClass.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   30 Jul 2013 12:28:28  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   01 Oct 2013 14:12:24  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -189,7 +189,7 @@ HRESULT SVEnumerateValueObjectClass::GetObjectValue( const SVString& p_rValueNam
 
 			// First Dimension number of objects in list..
 			l_Bounds[ 0 ].lLbound = 0;
-			l_Bounds[ 0 ].cElements = l_Enums.size();
+			l_Bounds[ 0 ].cElements = static_cast< ULONG >( l_Enums.size() );
 
 			// Second Dimension is the Enumeration Value
 			// 0 = Name, 1 = Enum Value
@@ -200,7 +200,7 @@ HRESULT SVEnumerateValueObjectClass::GetObjectValue( const SVString& p_rValueNam
 			SVSAFEARRAY l_Temp( VT_VARIANT, l_Bounds );
 			SVSAFEARRAY::SVIndex l_Index( 2 );
 
-			for( size_t i = 0; i < l_Enums.size(); ++i )
+			for( int i = 0; i < static_cast< int >( l_Enums.size() ); ++i )
 			{
 				_variant_t l_Name = l_Enums[i].first;
 				_variant_t l_Value = l_Enums[i].second;
@@ -249,7 +249,7 @@ HRESULT SVEnumerateValueObjectClass::SetObjectValue( const SVString& p_rValueNam
 
 				l_Enums.resize( l_SafeArray.size() );
 
-				for( size_t i = 0; i < l_SafeArray.size(); i++ )
+				for( int i = 0; i < static_cast< int >( l_SafeArray.size() ); i++ )
 				{
 					SVSAFEARRAY::SVIndex l_Index( 2 );
 					_variant_t l_Value;
@@ -788,7 +788,17 @@ void SVEnumerateValueObjectClass::LocalInitialize()
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVEnumerateValueObjectClass.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVEnumerateValueObjectClass.cpp_v  $
+ * 
+ *    Rev 1.2   01 Oct 2013 14:12:24   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   30 Jul 2013 12:28:28   tbair
  * Project:  SVObserver

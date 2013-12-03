@@ -5,8 +5,8 @@
 //* .Module Name     : SVConfigXMLPrint
 //* .File Name       : $Workfile:   SVConfigXMLPrint.inl  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.5  $
-//* .Check In Date   : $Date:   13 Aug 2013 09:52:56  $
+//* .Current Version : $Revision:   1.6  $
+//* .Check In Date   : $Date:   01 Oct 2013 12:48:18  $
 //******************************************************************************
 
 #include "SVObjectLibrary/SVObjectLibrary.h"
@@ -509,7 +509,7 @@ inline void SVConfigXMLPrint::WriteResultIO(Writer writer) const
 					long	lIOEntries = 0;
 					if (pPPQ->GetAllOutputs( ppIOEntries ))
 					{
-						lIOEntries = ppIOEntries.size();
+						lIOEntries = static_cast< long >( ppIOEntries.size() );
 						
 						// Find each digital output
 						for (int k = 0; k < lIOEntries; k++)
@@ -566,8 +566,7 @@ inline void SVConfigXMLPrint::WriteModuleIO(Writer writer) const
 		// Get list of available inputs
 		if (pConfig->GetInputObjectList(&pInputList) && pInputList->FillInputs( ppIOEntries ))
 		{
-
-			lSize = ppIOEntries.size();
+			lSize = static_cast< long >( ppIOEntries.size() );
 			
 			// Print module input title...
 			DWORD dwMaxInput = 0;
@@ -698,7 +697,7 @@ inline void SVConfigXMLPrint::WritePPQBar(Writer writer) const
 				
 				pPPQ->GetAllInputs( ppIOEntries );
 
-				lIOEntries = ppIOEntries.size();
+				lIOEntries = static_cast< long >( ppIOEntries.size() );
 
 				if (0 == lIOEntries)
 				{
@@ -1079,7 +1078,7 @@ void SVConfigXMLPrint::WriteChildren( Writer writer, SVObjectClass* pObj ) const
 void SVConfigXMLPrint::WriteFriends( Writer writer, SVObjectClass* pObj ) const
 {
 	const SVObjectInfoArrayClass&   rFriendList = pObj->GetFriendList();
-	int sz = rFriendList.GetSize();
+	int sz = static_cast< long >( rFriendList.GetSize() );
 
 	if (sz > 0)
 	{
@@ -1428,6 +1427,16 @@ inline HRESULT SVDeviceParamConfigXMLHelper::Visit(SVCustomDeviceParam& param)
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVConfigXMLPrint.inl_v  $
+ * 
+ *    Rev 1.6   01 Oct 2013 12:48:18   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.5   13 Aug 2013 09:52:56   bWalter
  * Project:  SVObserver

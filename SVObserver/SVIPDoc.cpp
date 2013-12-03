@@ -5,8 +5,8 @@
 //* .Module Name     : SVIPDoc
 //* .File Name       : $Workfile:   SVIPDoc.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.4  $
-//* .Check In Date   : $Date:   12 Jun 2013 15:20:04  $
+//* .Current Version : $Revision:   1.7  $
+//* .Check In Date   : $Date:   04 Oct 2013 12:51:06  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -1997,8 +1997,7 @@ void SVIPDoc::OnResultsPicker()
 	title.Format(_T("%s - %s"), ResultString, inspectionName);
 	dlg.SetCaptionTitle(title);
 
-	int nResult = dlg.DoModal();
-	if( nResult == IDOK )
+	if( dlg.DoModal() == IDOK )
 	{
 		// Set the Document as modified
 		SetModifiedFlag();
@@ -2033,8 +2032,7 @@ void SVIPDoc::OnPublishedResultsPicker()
 	title.Format(_T("%s - %s"), publishedResultString, inspectionName);
 	dlg.SetCaptionTitle(title);
 
-	int nResult = dlg.DoModal();
-	if( nResult == IDOK )
+	if( dlg.DoModal() == IDOK )
 	{
 		l_pInspection->GetPublishList().Refresh( GetToolSet() );
 
@@ -2086,8 +2084,7 @@ void SVIPDoc::OnPublishedResultImagesPicker()
 	title.Format(_T("%s - %s"), publishedResultString, inspectionName);
 	dlg.SetCaptionTitle(title);
 
-	int nResult = dlg.DoModal();
-	if( nResult == IDOK )
+	if( dlg.DoModal() == IDOK )
 	{
 		//!!! m_publishList.Refresh( m_pToolSet );
 
@@ -2183,12 +2180,11 @@ void SVIPDoc::OnSelectPPQVariable()
 		dlg.m_ppPPQInputs[ z ] = l_pInspection->m_PPQInputs[ z ].m_IOEntryPtr;
 	}
 	
-	int nResult = dlg.DoModal();
-	if( nResult == IDOK )
+	if( dlg.DoModal() == IDOK )
 	{
-		long l;
+		size_t l;
 		size_t k;
-		long lSize;
+		size_t lSize;
 		BOOL bFound;
 		CString strName;
 
@@ -2259,9 +2255,7 @@ void SVIPDoc::EditToolSetCondition()
 
 	dlg.m_psh.dwFlags |= PSH_NOAPPLYNOW;
 	
-	int rc = dlg.DoModal();
-
-	if( rc == IDOK )
+	if( dlg.DoModal() == IDOK )
 	{
 		SetModifiedFlag();
 	}
@@ -2441,9 +2435,7 @@ BOOL SVIPDoc::checkOkToDelete( SVTaskObjectClass* pTaskObject )
 	SVShowDependentsDialog dlg;
 	dlg.PTaskObject = pTaskObject;
 		
-	int rc = dlg.DoModal();
-
-	if( rc == IDCANCEL )
+	if( dlg.DoModal() == IDCANCEL )
 		bRetVal = FALSE;
 
 	return bRetVal;
@@ -2452,7 +2444,33 @@ BOOL SVIPDoc::checkOkToDelete( SVTaskObjectClass* pTaskObject )
 
 void SVIPDoc::RunRegressionTest()
 {
+	bool l_bWasRunMode = false;
+	bool l_bWasTestMode = false;
+
+	if ( SVSVIMStateClass::CheckState(SV_STATE_REGRESSION) )
+	{  // already in regression mode, do nothing...
+		return;
+	}
+
+	//check to see if in Run Mode, if so stop
+	if (SVSVIMStateClass::CheckState( SV_STATE_RUNNING ))
+	{
+		l_bWasRunMode = true;
+	}
+
+	if (SVSVIMStateClass::CheckState( SV_STATE_TEST) )
+	{
+		l_bWasTestMode = true;
+	}
+
+	if ( l_bWasRunMode || l_bWasTestMode )
+	{
+		TheSVObserverApp.OnStop();
+	}
+	
+
 	SVInspectionProcess* l_pInspection( GetInspectionProcess() );
+
 
 	if( l_pInspection == NULL )
 	{
@@ -2466,18 +2484,12 @@ void SVIPDoc::RunRegressionTest()
 
 		bool l_bAllowAccess = false;
 
-		if ( SVSVIMStateClass::CheckState(SV_STATE_REGRESSION) )
-		{  // already in regression mode, do nothing...
-			return;
-		}
-
-		if ( SVSVIMStateClass::CheckState( SV_STATE_RUNNING ) )
+		if ( l_bWasRunMode )
 		{
 			// Dual Security access point
 			if( TheSVObserverApp.m_svSecurityMgr.SVValidate( SECURITY_POINT_MODE_MENU_REGRESSION_TEST, 
 				SECURITY_POINT_MODE_MENU_EXIT_RUN_MODE ) == S_OK )
 			{
-				TheSVObserverApp.OnStop();
 				l_bAllowAccess = true;
 			}
 			else
@@ -2493,11 +2505,6 @@ void SVIPDoc::RunRegressionTest()
 
 		if( l_bAllowAccess )
 		{
-			if ( SVSVIMStateClass::CheckState( SV_STATE_TEST ) )
-			{
-				TheSVObserverApp.OnStop();
-			}
-			
 			if ( SVSVIMStateClass::CheckState( SV_STATE_TEST ) )
 			{
 				SVSVIMStateClass::RemoveState( SV_STATE_TEST );
@@ -2522,7 +2529,7 @@ void SVIPDoc::RunRegressionTest()
 
 			// check to see if the list of files are the same...
 			m_bRegressionTestRunning = true;
-			int iNumCameras = m_listRegCameras.GetCount();
+			int iNumCameras = static_cast< int >( m_listRegCameras.GetCount() );
 
 			( ( SVMainFrame* ) AfxGetApp()->m_pMainWnd )->m_pregTestDlg = new CSVRegressionRunDlg;
 
@@ -2737,7 +2744,7 @@ void SVIPDoc::RefreshDocument()
 {
 	SVCommandInspectionCollectImageData::SVImageIdSet l_ImageIds;
 
-	for( size_t i = 0; i < 8; ++i )
+	for( int i = 0; i < 8; ++i )
 	{
 		SVImageViewClass* l_pImageView = GetImageView( i );
 
@@ -3792,12 +3799,12 @@ DWORD WINAPI SVIPDoc::SVRegressionTestRunThread( LPVOID lpParam )
 		RegressionRunFileStruct *ptmpRunFileStruct;
 		RegressionTestStruct *ptmpRegTestStruct;
 
-		int iListCnt = l_IPDoc->m_listRegCameras.GetCount();
+		INT_PTR iListCnt = l_IPDoc->m_listRegCameras.GetCount();
 		bool l_bDone = false;
 		bool l_bListDone = false;
 		int l_iNumSingleFile = 0;
 
-		for ( int i = 0; i < iListCnt; i++ )
+		for ( INT_PTR i = 0; i < iListCnt; i++ )
 		{
 			POSITION posCamera = l_IPDoc->m_listRegCameras.FindIndex(i);
 			
@@ -4003,9 +4010,9 @@ DWORD WINAPI SVIPDoc::SVRegressionTestRunThread( LPVOID lpParam )
 
 //////////////////////////////////////////////////////////////////////////////////
 		//clean up 
-			int iNumList = l_lstFileNames.GetCount();
+			INT_PTR iNumList = l_lstFileNames.GetCount();
 			//delete l_lstFileNames
-			for ( int iNumDel = iNumList - 1; iNumDel >= 0; iNumDel-- )
+			for ( int iNumDel = static_cast<int>(iNumList) - 1; iNumDel >= 0; iNumDel-- )
 			{
 				POSITION posDel = l_lstFileNames.FindIndex(iNumDel);
 				if ( posDel != NULL )
@@ -4143,12 +4150,12 @@ void SVIPDoc::OnUpdateViewResetcountscurrentip(CCmdUI* pCmdUI)
 
 void SVIPDoc::ClearRegressionTestStructures()
 {
-	int iCnt = m_listRegCameras.GetCount();
+	INT_PTR iCnt = m_listRegCameras.GetCount();
 	if ( iCnt > 0 )
 	{
 		//empty list
 		RegressionTestStruct *pTmpStruct = NULL;
-		for ( int i = iCnt-1; i >= 0; i-- )
+		for ( INT_PTR i = iCnt - 1; i >= 0; i-- )
 		{
 			POSITION pos = m_listRegCameras.FindIndex(i);
 			pTmpStruct = m_listRegCameras.GetAt(pos);
@@ -4728,7 +4735,37 @@ BOOL SVIPDoc::RunOnce( SVToolClass* p_pTool )
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVIPDoc.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVIPDoc.cpp_v  $
+ * 
+ *    Rev 1.7   04 Oct 2013 12:51:06   ryoho
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  868
+ * SCR Title:  Fix issue with switching from Run Mode to Regression Mode (eRoom 88)
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   fixed the logic of RunRegressionTest to "Stop" the regression if it is already in Run or Test mode
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.6   03 Oct 2013 13:31:06   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   64 bit platform types.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.5   01 Oct 2013 14:57:18   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.4   12 Jun 2013 15:20:04   bWalter
  * Project:  SVObserver

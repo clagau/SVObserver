@@ -5,8 +5,8 @@
 // * .Module Name     : SVIOTESTDlg
 // * .File Name       : $Workfile:   SVIOTESTDlg.cpp  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.1  $
-// * .Check In Date   : $Date:   08 May 2013 15:01:12  $
+// * .Current Version : $Revision:   1.2  $
+// * .Check In Date   : $Date:   01 Oct 2013 09:21:32  $
 // ******************************************************************************
 
 #include "stdafx.h"
@@ -24,7 +24,7 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-UINT m_nTimer;
+UINT_PTR m_nTimer;
 extern CSVIOTESTApp theApp;
 
 /////////////////////////////////////////////////////////////////////////////
@@ -450,7 +450,7 @@ void CSVIOTESTDlg::OnButton2()
 
 }
 
-void CSVIOTESTDlg::OnTimer(UINT nIDEvent) 
+void CSVIOTESTDlg::OnTimer( UINT_PTR nIDEvent )
 {
 	DWORD Channel =0;
 	bool bValue = 0;
@@ -1327,7 +1327,17 @@ void CSVIOTESTDlg::OnSelchangeBoardModelCombo()
 // * LOG HISTORY:
 // ******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVIOTest\SVIOTESTDlg.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVIOTest\SVIOTESTDlg.cpp_v  $
+ * 
+ *    Rev 1.2   01 Oct 2013 09:21:32   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   08 May 2013 15:01:12   bWalter
  * Project:  SVObserver

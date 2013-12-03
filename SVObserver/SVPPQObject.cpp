@@ -5,8 +5,8 @@
 //* .Module Name     : SVPPQObject
 //* .File Name       : $Workfile:   SVPPQObject.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.8  $
-//* .Check In Date   : $Date:   09 Aug 2013 10:23:08  $
+//* .Current Version : $Revision:   1.11  $
+//* .Check In Date   : $Date:   25 Nov 2013 12:44:20  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -440,10 +440,6 @@ BOOL SVPPQObject::Create()
 	if( m_bCreated )
 		return FALSE;
 
-	// Create a managed index for the input circle buffer
-	strName = _T( "PPQ Input Data" );
-	bstrName = strName.AllocSysString();
-
 	strName = _T( "PPQ Result Data" );
 	bstrName = strName.AllocSysString();
 
@@ -557,10 +553,12 @@ BOOL SVPPQObject::Create()
 	SVConfigurationObject* pConfig = NULL;
 	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
+#ifndef _WIN64
 	if( pConfig != NULL )
 	{
 		m_strPLCId = pConfig->AssociatePPQToPLC( GetName() );
 	}
+#endif
 
 	m_TriggerToggle = false;
 	m_OutputToggle = false;
@@ -2271,13 +2269,14 @@ BOOL SVPPQObject::WriteOutputs( SVProductInfoStruct *pProduct )
 			SVConfigurationObject* pConfig = NULL;
 			SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
+#ifndef _WIN64
 			// Do not call the PLC write Outputs if it is empty.
 			if( 0 < pConfig->GetPLCCount() )
 			{
 				// PLC Outputs......
 				HRESULT l_hr = pConfig->WriteOutputs( GetPLCName(), pProduct );
 			}
-
+#endif
 			if( !m_pDataValid.empty() )
 			{
 				bool l_bValue=false;
@@ -3285,7 +3284,7 @@ HRESULT SVPPQObject::ProcessCameraResponse( const SVCameraQueueElement& p_rEleme
 
 		if( l_PPQIndex < m_ppPPQPositions.size() )
 		{
-			long l_Position = m_ppPPQPositions.size();
+			long l_Position = static_cast<long>(m_ppPPQPositions.size());
 
 			GetProductIndex( l_Position, l_StartTick );
 
@@ -3695,7 +3694,7 @@ void SVPPQObject::DumpDMInfo( LPCTSTR p_szName ) const
 	}
 }
 
-void CALLBACK SVPPQObject::OutputTimerCallback( UINT uTimerID, UINT uRsvd, DWORD dwUser, DWORD dwRsvd1, DWORD dwRsvd2 )
+void CALLBACK SVPPQObject::OutputTimerCallback( UINT uTimerID, UINT uRsvd, DWORD_PTR dwUser, DWORD_PTR dwRsvd1, DWORD_PTR dwRsvd2 )
 {
 	SVPPQObject* l_pPPQ = reinterpret_cast< SVPPQObject* >( dwUser );
 
@@ -3749,7 +3748,7 @@ HRESULT SVPPQObject::MarkProductInspectionsMissingAcquisiton( SVProductInfoStruc
 	return l_Status;
 }
 
-void CALLBACK SVPPQObject::APCThreadProcess( DWORD dwParam )
+void CALLBACK SVPPQObject::APCThreadProcess( DWORD_PTR dwParam )
 {
 }
 
@@ -4103,7 +4102,7 @@ HRESULT SVPPQObject::ProcessCameraInputs( bool& p_rProcessed )
 		if( p_rProcessed )
 		{
 			SVProductInfoStruct* l_pProduct = NULL;
-			long l_PPQIndex = m_ppPPQPositions.size();
+			long l_PPQIndex = static_cast<long>(m_ppPPQPositions.size());
 
 			while( 0 < m_oCamerasQueue.GetCount() && l_pProduct == NULL )
 			{
@@ -4166,7 +4165,7 @@ HRESULT SVPPQObject::ProcessCompleteInspections( bool& p_rProcessed )
 		{
 			SVInspectionInfoPair l_Info;
 			SVProductInfoStruct* l_pPPQProduct = NULL;
-			long l_PPQIndex = m_ppPPQPositions.size();
+			long l_PPQIndex = static_cast<long>(m_ppPPQPositions.size());
 
 			for( int i = 0; i < m_oInspectionQueue.GetCount(); ++i )
 			{
@@ -4246,7 +4245,7 @@ HRESULT SVPPQObject::ProcessCompleteInspections( bool& p_rProcessed )
 
 						if( l_pPPQProduct != NULL && l_pPPQProduct->IsProductActive() )
 						{
-							SetProductIncomplete( i );
+							SetProductIncomplete( static_cast<long>(i) );
 						}
 						else
 						{
@@ -4356,6 +4355,7 @@ HRESULT SVPPQObject::GetProduct( SVProductInfoStruct& p_rProduct, long lProcessC
 	return l_Status;
 }
 
+#ifndef _WIN64
 HRESULT SVPPQObject::SetPLCName( CString p_rstrName )
 {
 	m_strPLCId = p_rstrName;
@@ -4371,6 +4371,7 @@ const CString& SVPPQObject::GetPLCName( )
 {
 	return m_strPLCId;
 }
+#endif
 
 void SVPPQObject::PersistInputs(SVObjectWriter& rWriter)
 {
@@ -4382,7 +4383,7 @@ void SVPPQObject::PersistInputs(SVObjectWriter& rWriter)
 
 	GetAllInputs( ppIOEntries );
 	
-	long lCount = ppIOEntries.size();
+	long lCount = static_cast<long>(ppIOEntries.size());
 	
 	for(long lInput = 0; lInput < lCount; lInput++ )
 	{
@@ -4631,6 +4632,37 @@ void SVPPQObject::SVPPQTracking::IncrementTimeCount( const SVString& p_rName, si
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVPPQObject.cpp_v  $
+ * 
+ *    Rev 1.11   25 Nov 2013 12:44:20   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  875
+ * SCR Title:  Cleanup Memory Leak in SVPPQObject's Create Method
+ * Checked in by:  bWalter;  Ben Walter
+ * Change Description:  
+ *   Removed unnecessary string assignment:  "PPQ Input Data" 
+ * 
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.10   30 Oct 2013 11:00:32   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Added #ifndef _WIN64 to remove deprecated code from the 64bit solution.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.9   02 Oct 2013 07:12:20   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.8   09 Aug 2013 10:23:08   sjones
  * Project:  SVObserver

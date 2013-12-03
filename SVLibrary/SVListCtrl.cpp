@@ -5,8 +5,8 @@
 // * .Module Name     : SVListCtrl
 // * .File Name       : $Workfile:   SVListCtrl.cpp  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.0  $
-// * .Check In Date   : $Date:   22 Apr 2013 13:34:14  $
+// * .Current Version : $Revision:   1.1  $
+// * .Check In Date   : $Date:   01 Oct 2013 09:57:46  $
 // ******************************************************************************
 
 #include "stdafx.h"
@@ -356,7 +356,7 @@ void SVListCtrl::MeasureItem(LPMEASUREITEMSTRUCT lpMeasureItemStruct)
 }
 
 
-void SVListCtrl::OnTimer(UINT nIDEvent) 
+void SVListCtrl::OnTimer(UINT_PTR nIDEvent) 
 {
 	CListCtrl::OnTimer(nIDEvent);
 	
@@ -918,6 +918,16 @@ LRESULT SVListCtrl::OnSetFont(WPARAM wParam, LPARAM)
 // ******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVLibrary\SVListCtrl.cpp_v  $
+ * 
+ *    Rev 1.1   01 Oct 2013 09:57:46   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   22 Apr 2013 13:34:14   bWalter
  * Project:  SVObserver

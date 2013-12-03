@@ -5,8 +5,8 @@
 //* .Module Name     : SVMatroxDigitizerHookEnums
 //* .File Name       : $Workfile:   SVMatroxDigitizerHookEnums.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   22 Apr 2013 14:26:50  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   01 Oct 2013 10:45:28  $
 //******************************************************************************
 
 #ifndef SVMATROXDIGITIZERHOOKENUMS_H
@@ -128,7 +128,7 @@ struct SVMatroxDigitizerHook
 		SVGigeEventType, // M_GC_EVENT_TYPE
 	};
 	// define convertor for from/to SVEnum/Matrox types
-	typedef SVMatroxEnumConvertor<SVHookInfoEnum, long> SVHookInfoEnumMap;
+	typedef SVMatroxEnumConvertor< SVHookInfoEnum, SVMatroxInt > SVHookInfoEnumMap;
 	static SVHookInfoEnumMap m_HookInfoEnumConvertor;
 };
 
@@ -139,6 +139,16 @@ struct SVMatroxDigitizerHook
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVMatroxDigitizerLibrary\SVMatroxDigitizerHookEnums.h_v  $
+ * 
+ *    Rev 1.1   01 Oct 2013 10:45:28   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   22 Apr 2013 14:26:50   bWalter
  * Project:  SVObserver

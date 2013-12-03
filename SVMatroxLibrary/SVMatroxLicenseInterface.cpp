@@ -5,13 +5,14 @@
 //* .Module Name     : SVMatroxLicenseInterface
 //* .File Name       : $Workfile:   SVMatroxLicenseInterface.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   22 Apr 2013 15:22:04  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   01 Oct 2013 11:08:08  $
 //******************************************************************************
 
 #include "stdafx.h"
 #include "SVMatroxLicenseInterface.h"
 #include "SVMatroxImagingLibrary.h"
+#include "SVMatroxTypedefs.h"
 
 SVMatroxLicenseInterface::SVMatroxLicenseInterface(void)
 {
@@ -34,11 +35,11 @@ HRESULT SVMatroxLicenseInterface::InitMatroxLicense()
 	try
 	{
 #if SV_CURRENT_MIL_VERSION == 0x0900
-		MIL_INT LicenseModules=0;
-		MIL_INT milInquire = MsysInquire(milID, M_LICENSE_MODULES, &LicenseModules);//get all licenses off dongle, dev dongle
+		SVMatroxInt LicenseModules=0;
+		SVMatroxInt milInquire = MsysInquire(milID, M_LICENSE_MODULES, &LicenseModules);//get all licenses off dongle, dev dongle
 																					//only have M_LICENSE_DEBUG
 
-		MIL_INT milVal = MappInquire(M_HW_LIC_KEY_FINGERPRINT ,M_NULL); //check to see if dongle has any fingerprint/dev dongle have
+		SVMatroxInt milVal = MappInquire(M_HW_LIC_KEY_FINGERPRINT ,M_NULL); //check to see if dongle has any fingerprint/dev dongle have
 																 //no fingerprint
 
 		if ( !milVal ) 
@@ -112,6 +113,16 @@ bool SVMatroxLicenseInterface::HasMatroxGigELicense()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVMatroxLibrary\SVMatroxLicenseInterface.cpp_v  $
+ * 
+ *    Rev 1.1   01 Oct 2013 11:08:08   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   22 Apr 2013 15:22:04   bWalter
  * Project:  SVObserver

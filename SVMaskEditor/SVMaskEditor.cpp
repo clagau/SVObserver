@@ -5,8 +5,8 @@
 // * .Module Name     : SVMaskeditor
 // * .File Name       : $Workfile:   SVMaskEditor.cpp  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.0  $
-// * .Check In Date   : $Date:   26 Apr 2013 14:06:34  $
+// * .Current Version : $Revision:   1.1  $
+// * .Check In Date   : $Date:   01 Oct 2013 10:22:32  $
 // ******************************************************************************
 
 
@@ -134,7 +134,7 @@ AfxMessageBox( strText );
         return l_MilBuffer;
 
     // Try to get device context of mil buffer...
-	l_Code = l_BufIntf.Set( l_MilBuffer, SVBufWindowDCAlloc, (long)SVValueDefault );
+	l_Code = l_BufIntf.Set( l_MilBuffer, SVBufWindowDCAlloc, (SVMatroxInt)SVValueDefault );
 
     HDC hDC;
 
@@ -160,16 +160,16 @@ AfxMessageBox( strText );
             ::DeleteDC( hMemDC );
 
             // Release mil buffer dc...
-			l_BufIntf.Set( l_MilBuffer, SVBufWindowDCFree, (long)SVValueDefault );
+			l_BufIntf.Set( l_MilBuffer, SVBufWindowDCFree, (SVMatroxInt)SVValueDefault );
 
 
-			l_BufIntf.Set( l_MilBuffer, SVBufModified, (long)SVValueDefault );
+			l_BufIntf.Set( l_MilBuffer, SVBufModified, (SVMatroxInt)SVValueDefault );
 
             return l_MilBuffer;
         }
 
         // Release mil buffer dc...
-		l_BufIntf.Set( l_MilBuffer, SVBufWindowDCFree, (long)SVValueDefault );
+		l_BufIntf.Set( l_MilBuffer, SVBufWindowDCFree, (SVMatroxInt)SVValueDefault );
 	}
 
 	l_MilBuffer.clear();
@@ -182,7 +182,17 @@ AfxMessageBox( strText );
 // * LOG HISTORY:
 // ******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVMaskEditor\SVMaskEditor.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVMaskEditor\SVMaskEditor.cpp_v  $
+ * 
+ *    Rev 1.1   01 Oct 2013 10:22:32   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   26 Apr 2013 14:06:34   bWalter
  * Project:  SVObserver

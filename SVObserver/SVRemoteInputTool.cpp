@@ -5,8 +5,8 @@
 //* .Module Name     : SVRemoteInputTool
 //* .File Name       : $Workfile:   SVRemoteInputTool.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 14:48:36  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   02 Oct 2013 07:58:46  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -371,7 +371,7 @@ HRESULT SVRemoteInputTool::ProcessCommandQueue()
 						{
 							HRESULT l_Temp = S_OK;
 
-							const Json::Value& l_JsonItem = l_JsonDataItems[i];
+							const Json::Value& l_JsonItem = l_JsonDataItems[static_cast<Json::Value::UInt>(i)];
 
 							if( l_JsonItem.isObject() )
 							{
@@ -565,7 +565,17 @@ bool SVRemoteInputTool::SVDataElement::operator<( const SVDataElement& p_rObject
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVRemoteInputTool.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVRemoteInputTool.cpp_v  $
+ * 
+ *    Rev 1.1   02 Oct 2013 07:58:46   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 14:48:36   bWalter
  * Project:  SVObserver

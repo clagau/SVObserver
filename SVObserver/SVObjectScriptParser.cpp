@@ -5,8 +5,8 @@
 //* .Module Name     : SVObjectScriptParser
 //* .File Name       : $Workfile:   SVObjectScriptParser.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 12:40:36  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   01 Oct 2013 15:24:36  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -55,7 +55,7 @@ SVObjectClass* SVObjectScriptParserClass::GetOwnerObject()
 
 unsigned long SVObjectScriptParserClass::GetTotal() const
 {
-	return m_pParser->GetTotal();
+	return static_cast<int>(m_pParser->GetTotal());
 }
 
 HRESULT SVObjectScriptParserClass::Parse()
@@ -77,7 +77,17 @@ void SVObjectScriptParserClass::Complete()
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVObjectScriptParser.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVObjectScriptParser.cpp_v  $
+ * 
+ *    Rev 1.1   01 Oct 2013 15:24:36   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 12:40:36   bWalter
  * Project:  SVObserver

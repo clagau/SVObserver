@@ -5,8 +5,8 @@
 //* .Module Name     : SVMaskEditorDialog
 //* .File Name       : $Workfile:   SVMaskEditorDialog.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   26 Apr 2013 14:07:34  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   01 Oct 2013 10:22:32  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -219,7 +219,7 @@ BOOL SVMaskEditorDialogClass::OnInitDialog()
 
 // Set Default Mask size to image size...
 // NOTE: Mask size can differ from image size, using the default overlay mode ( e.g. stretch, etc. )
-CRect graRect( 0, 0, width, height );
+CRect graRect( 0, 0, static_cast< int >( width ), static_cast< int >( height ) );
 GraphixObject.SetGraphixRect( graRect );
 
             // Update mask and perform first masking...
@@ -412,7 +412,7 @@ void SVMaskEditorDialogClass::prepareMaskBuffer()
 {
     // Get DC...
 	SVMatroxBufferInterface l_BufIntf;
-	l_BufIntf.Set( milMaskBuffer, SVBufWindowDCAlloc, (long)SVValueDefault );
+	l_BufIntf.Set( milMaskBuffer, SVBufWindowDCAlloc, (SVMatroxInt)SVValueDefault );
 	long l_lDC = 0;
 	l_BufIntf.Get( milMaskBuffer, SVWindowDC, l_lDC );
 	HDC dc = reinterpret_cast<HDC>( l_lDC );
@@ -421,12 +421,15 @@ void SVMaskEditorDialogClass::prepareMaskBuffer()
         RECT rect;
         rect.left = 0;
         rect.top  = 0;
-		l_BufIntf.Get( milMaskBuffer, SVSizeX, rect.right );
-		l_BufIntf.Get( milMaskBuffer, SVSizeY, rect.bottom );
+		long l_Temp = 0;
+		l_BufIntf.Get( milMaskBuffer, SVSizeX, l_Temp );
+		rect.right = static_cast< LONG >( l_Temp );
+		l_BufIntf.Get( milMaskBuffer, SVSizeY, l_Temp );
+		rect.bottom = static_cast< LONG >( l_Temp );
 
         GraphixObject.Draw( dc, rect );
 
-		l_BufIntf.Set( milMaskBuffer, SVBufWindowDCFree, static_cast<long>(SVValueDefault) );
+		l_BufIntf.Set( milMaskBuffer, SVBufWindowDCFree, static_cast<SVMatroxInt>(SVValueDefault) );
     }
 }
 
@@ -552,7 +555,7 @@ void SVMaskEditorDialogClass::zoom( int ZoomOperand )
         DisplayWndCtl.ShowScrollBar( SB_HORZ, bHorz );
         if( bHorz )
         {
-            sInfo.nMax   = bufWidth;
+            sInfo.nMax   = static_cast< int >( bufWidth );
             DisplayWndCtl.SetScrollInfo( SB_HORZ, &sInfo );
         }
 		else
@@ -566,7 +569,7 @@ void SVMaskEditorDialogClass::zoom( int ZoomOperand )
 		DisplayWndCtl.ShowScrollBar( SB_VERT, bVert );
         if( bVert )
         {
-            sInfo.nMax   = bufHeight;
+            sInfo.nMax   = static_cast< int >( bufHeight );
             DisplayWndCtl.SetScrollInfo( SB_VERT, &sInfo );
         }
 		else
@@ -1077,7 +1080,17 @@ StrZoom.Format( _T( "X: %d, Y: %d" ), point.x, point.y );
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVMaskEditor\SVMaskEditorDialog.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVMaskEditor\SVMaskEditorDialog.cpp_v  $
+ * 
+ *    Rev 1.1   01 Oct 2013 10:22:32   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   26 Apr 2013 14:07:34   bWalter
  * Project:  SVObserver

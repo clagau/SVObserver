@@ -5,8 +5,8 @@
 //* .Module Name     : CSVOEditorWnd
 //* .File Name       : $Workfile:   SVOEditorWnd.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 13:03:44  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   02 Oct 2013 06:48:22  $
 //******************************************************************************
 
 //@doc
@@ -197,7 +197,7 @@ void CSVOEditorWnd::EndEditing(
 		GetWindowText( s ) ;
         if ( m_pLB->FindStringExact(-1,s) == LB_ERR )
         {
-            DWORD pointer = m_pLB->GetItemData(m_edit_index);
+            DWORD pointer = static_cast<DWORD>(m_pLB->GetItemData(m_edit_index));
 		    m_pLB->DeleteString( m_edit_index ) ;
 		    m_pLB->InsertString( m_edit_index, s ) ;
             m_pLB->SetItemData(m_edit_index,pointer);
@@ -261,7 +261,17 @@ void CSVOEditorWnd::OnLButtonDblClk(UINT nFlags, CPoint point)
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVOEditorWnd.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVOEditorWnd.cpp_v  $
+ * 
+ *    Rev 1.1   02 Oct 2013 06:48:22   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 13:03:44   bWalter
  * Project:  SVObserver

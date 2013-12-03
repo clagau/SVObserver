@@ -5,8 +5,8 @@
 //* .Module Name     : SVResultView
 //* .File Name       : $Workfile:   SVResultView.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.3  $
-//* .Check In Date   : $Date:   23 Sep 2013 11:58:34  $
+//* .Current Version : $Revision:   1.4  $
+//* .Check In Date   : $Date:   02 Oct 2013 12:05:42  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -74,7 +74,7 @@ BOOL SVResultViewClass::OnEraseBkgnd( CDC* p_pDC )
 	return l_bOk;
 }
 
-void SVResultViewClass::OnTimer(UINT nIDEvent) 
+void SVResultViewClass::OnTimer( UINT_PTR nIDEvent ) 
 {
 	CListView::OnTimer(nIDEvent);
 }
@@ -562,7 +562,7 @@ void SVResultViewClass::DrawItem( LPDRAWITEMSTRUCT lpDrawItemStruct )
 	listCtrl.GetItemRect( nItem, rcIcon, LVIR_ICON );
 	CRect rcCol( rcBounds ); 	
 	CString sLabel = listCtrl.GetItemText( nItem, 0 );
-	DWORD dwColor  = listCtrl.GetItemData( nItem );
+	DWORD_PTR dwColor = listCtrl.GetItemData( nItem );
 
 	// Labels are offset by a certain amount  
 	// This offset is related to the width of a space character
@@ -707,7 +707,7 @@ void SVResultViewClass::DrawItem( LPDRAWITEMSTRUCT lpDrawItemStruct )
 			int h = rcLabel.Height();
 			CRect rcState( rcLabel.left, rcLabel.top + 2, rcLabel.left + h, rcLabel.bottom - 2 );
 			
-			pDC->FillSolidRect( rcState, dwColor );
+			pDC->FillSolidRect( rcState, static_cast<COLORREF>(dwColor ));
 			rcLabel.left += (h + 4);
 		}
 		
@@ -862,6 +862,16 @@ BOOL SVResultViewClass::CheckParameters( SVTreeType& rTree, SVTreeType::SVBranch
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVResultView.cpp_v  $
+ * 
+ *    Rev 1.4   02 Oct 2013 12:05:42   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platforms.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   23 Sep 2013 11:58:34   bwalter
  * Project:  SVObserver

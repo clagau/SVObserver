@@ -5,8 +5,8 @@
 //* .Module Name     : SVMatroxSystemInterface
 //* .File Name       : $Workfile:   SVMatroxSystemInterface.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   22 Apr 2013 15:29:04  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   01 Oct 2013 11:15:32  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -24,7 +24,7 @@
 
 */
 
-SVMatroxSystemInterface::SVStatusCode SVMatroxSystemInterface::Allocate(const SVMatroxString& SystemDescriptor, long SystemNum, SVMatroxSystem& p_rSystem)
+SVMatroxSystemInterface::SVStatusCode SVMatroxSystemInterface::Allocate(const SVMatroxString& SystemDescriptor, SVMatroxInt SystemNum, SVMatroxSystem& p_rSystem)
 {
 	SVStatusCode l_Code( SVMEE_STATUS_OK );
 #ifdef USE_TRY_BLOCKS
@@ -39,7 +39,7 @@ SVMatroxSystemInterface::SVStatusCode SVMatroxSystemInterface::Allocate(const SV
 		{
 			SVMatroxIdentifier systemID;
 
-			int len = SystemDescriptor.length() + 1;
+			size_t len = SystemDescriptor.length() + 1;
 			char* tmp = new char[len];
 			strcpy_s(tmp, len, SystemDescriptor.c_str());
 
@@ -178,11 +178,13 @@ SVMatroxSystemInterface::SVStatusCode SVMatroxSystemInterface::Get(const SVMatro
 	try
 #endif
 	{
-		long l_MatroxType = 0;
-		HRESULT hr = SVMatroxSystemInquire::m_convertor.ConvertEnumToMatroxType(InquireType, l_MatroxType);
+		SVMatroxInt l_MatroxType = 0;
+		HRESULT hr = SVMatroxSystemInquire::m_convertor.ConvertEnumToMatroxType( InquireType, l_MatroxType );
 		if (hr == S_OK)
 		{
-			MsysInquire( SystemId.m_SystemIdentifier, l_MatroxType, reinterpret_cast<void *>(&InquireValue) );
+			MIL_INT l_Value = 0;
+			MsysInquire( SystemId.m_SystemIdentifier, l_MatroxType, &l_Value );
+			InquireValue = static_cast<long>( l_Value );
 			l_Code = SVMatroxApplicationInterface::GetLastStatus();
 		}
 		else
@@ -266,8 +268,8 @@ SVMatroxSystemInterface::SVStatusCode SVMatroxSystemInterface::SetHookFunction(c
 	SVStatusCode l_Code( SVMEE_STATUS_OK );
 
 	// Convert Enum
-	long l_MatroxType = 0;
-	HRESULT hr = SVMatroxSystemHook::m_convertor.ConvertEnumToMatroxType(HookType, l_MatroxType);
+	SVMatroxInt l_MatroxType = 0;
+	HRESULT hr = SVMatroxSystemHook::m_convertor.ConvertEnumToMatroxType( HookType, l_MatroxType );
 	if (hr == S_OK)
 	{
 		MsysHookFunction( SystemId.m_SystemIdentifier, l_MatroxType, HookHandlerPtr, UserDataPtr );
@@ -292,8 +294,8 @@ SVMatroxSystemInterface::SVStatusCode SVMatroxSystemInterface::ReleaseHookFuncti
 	SVStatusCode l_Code( SVMEE_STATUS_OK );
 
 	// Convert Enum
-	long l_MatroxType = 0;
-	HRESULT hr = SVMatroxSystemHook::m_convertor.ConvertEnumToMatroxType(HookType, l_MatroxType);
+	SVMatroxInt l_MatroxType = 0;
+	HRESULT hr = SVMatroxSystemHook::m_convertor.ConvertEnumToMatroxType( HookType, l_MatroxType );
 	if (hr == S_OK)
 	{
 		MsysHookFunction( SystemId.m_SystemIdentifier, l_MatroxType | M_UNHOOK, HookHandlerPtr, UserDataPtr);
@@ -313,12 +315,12 @@ SVMatroxSystemInterface::SVStatusCode SVMatroxSystemInterface::ReleaseHookFuncti
 @SVOperationDescription This method gets the hook info for the Matrox System.
 
 */
-SVMatroxSystemInterface::SVStatusCode SVMatroxSystemInterface::GetHookInfo(const SVMatroxSystem& SystemId, long p_EventId, SVMatroxSystemHookInfo::SVMatroxSystemHookInfoEnum HookInfoType, long& value)
+SVMatroxSystemInterface::SVStatusCode SVMatroxSystemInterface::GetHookInfo(const SVMatroxSystem& SystemId, SVMatroxIdentifier p_EventId, SVMatroxSystemHookInfo::SVMatroxSystemHookInfoEnum HookInfoType, long& value)
 {
 	SVStatusCode l_Code( SVMEE_STATUS_OK );
 	
 	// Convert Enum
-	long l_MatroxType = 0;
+	SVMatroxInt l_MatroxType = 0;
 	HRESULT hr = SVMatroxSystemHookInfo::m_convertor.ConvertEnumToMatroxType(HookInfoType, l_MatroxType);
 	if (hr == S_OK)
 	{
@@ -339,12 +341,12 @@ SVMatroxSystemInterface::SVStatusCode SVMatroxSystemInterface::GetHookInfo(const
 @SVOperationDescription This method gets the hook info for the Matrox System.
 
 */
-SVMatroxSystemInterface::SVStatusCode SVMatroxSystemInterface::GetHookInfo(const SVMatroxSystem& SystemId, long p_EventId, SVMatroxSystemHookInfo::SVMatroxSystemHookInfoEnum HookInfoType, unsigned __int64& value)
+SVMatroxSystemInterface::SVStatusCode SVMatroxSystemInterface::GetHookInfo(const SVMatroxSystem& SystemId, SVMatroxIdentifier p_EventId, SVMatroxSystemHookInfo::SVMatroxSystemHookInfoEnum HookInfoType, unsigned __int64& value)
 {
 	SVStatusCode l_Code( SVMEE_STATUS_OK );
 
 	// Convert Enum
-	long l_MatroxType = 0;
+	SVMatroxInt l_MatroxType = 0;
 	HRESULT hr = SVMatroxSystemHookInfo::m_convertor.ConvertEnumToMatroxType(HookInfoType, l_MatroxType);
 	if (hr == S_OK)
 	{
@@ -364,6 +366,16 @@ SVMatroxSystemInterface::SVStatusCode SVMatroxSystemInterface::GetHookInfo(const
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVMatroxLibrary\SVMatroxSystemInterface.cpp_v  $
+ * 
+ *    Rev 1.1   01 Oct 2013 11:15:32   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   22 Apr 2013 15:29:04   bWalter
  * Project:  SVObserver

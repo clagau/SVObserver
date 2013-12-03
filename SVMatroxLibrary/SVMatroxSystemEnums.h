@@ -5,8 +5,8 @@
 //* .Module Name     : SVMatroxSystemEnums
 //* .File Name       : $Workfile:   SVMatroxSystemEnums.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   22 Apr 2013 15:26:32  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   01 Oct 2013 11:15:32  $
 //******************************************************************************
 
 #ifndef SVMATROXSYSTEMENUMS_H
@@ -234,7 +234,7 @@ struct SVMatroxSystemInquire
 									// Returns the maximum amount of time, in secs, for the Host to wait for a synchronous function to return before generating a time-out error
 	};
 	// define convertor for from/to SVEnum/Matrox types
-	typedef SVMatroxEnumConvertor<SVMatroxSystemInquireEnum, long> SVMatroxSystemInquireEnumMap;
+	typedef SVMatroxEnumConvertor< SVMatroxSystemInquireEnum, SVMatroxInt > SVMatroxSystemInquireEnumMap;
 	static SVMatroxSystemInquireEnumMap m_convertor;
 };
 
@@ -253,7 +253,7 @@ struct SVMatroxSystemHook
 		SVCameraPresent
 	};
 
-	typedef SVMatroxEnumConvertor<SVMatroxSystemHookEnum, long> SVMatroxSystemHookEnumMap;
+	typedef SVMatroxEnumConvertor< SVMatroxSystemHookEnum, SVMatroxInt > SVMatroxSystemHookEnumMap;
 	static SVMatroxSystemHookEnumMap m_convertor;
 };
 
@@ -274,7 +274,7 @@ struct SVMatroxSystemHookInfo
 		SVGigeMacAddress
 	};
 
-	typedef SVMatroxEnumConvertor<SVMatroxSystemHookInfoEnum, long> SVMatroxSystemHookInfoEnumMap;
+	typedef SVMatroxEnumConvertor< SVMatroxSystemHookInfoEnum, SVMatroxInt > SVMatroxSystemHookInfoEnumMap;
 	static SVMatroxSystemHookInfoEnumMap m_convertor;
 };
 
@@ -285,6 +285,16 @@ struct SVMatroxSystemHookInfo
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVMatroxLibrary\SVMatroxSystemEnums.h_v  $
+ * 
+ *    Rev 1.1   01 Oct 2013 11:15:32   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   22 Apr 2013 15:26:32   bWalter
  * Project:  SVObserver

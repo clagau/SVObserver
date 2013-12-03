@@ -5,8 +5,8 @@
 //* .Module Name     : SVIOAdjustDialogClass
 //* .File Name       : $Workfile:   SVIOAdjustDialog.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.4  $
-//* .Check In Date   : $Date:   07 Aug 2013 13:27:30  $
+//* .Current Version : $Revision:   1.5  $
+//* .Check In Date   : $Date:   01 Oct 2013 14:31:02  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -214,7 +214,7 @@ BOOL SVIOAdjustDialogClass::OnInitDialog()
 			if( !pPPQ->GetAllOutputs( ppIOEntries ) )
 				DebugBreak();
 
-			lSize = ppIOEntries.size();
+			lSize = static_cast< long >( ppIOEntries.size() );
 
 			// Init IO combo from m_ppIOEntries;
 			for( i = 0; i < lSize; i++ )
@@ -253,7 +253,7 @@ void SVIOAdjustDialogClass::OnSelChangeIOCombo()
 	if( dwData != CB_ERR )
 	{
 		SVIOEntryHostStructPtr pIOEntry;
-		SVDataItemManager::iterator l_Iter = m_Items.GetItemData( dwData );
+		SVDataItemManager::iterator l_Iter = m_Items.GetItemData( static_cast< int >( dwData ) );
 
 		if( l_Iter != m_Items.end() )
 		{
@@ -370,6 +370,16 @@ void SVIOAdjustDialogClass::OnSelChangeIOCombo()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVIOAdjustDialog.cpp_v  $
+ * 
+ *    Rev 1.5   01 Oct 2013 14:31:02   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.4   07 Aug 2013 13:27:30   sjones
  * Project:  SVObserver

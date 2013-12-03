@@ -5,8 +5,8 @@
 //* .Module Name     : SVMatroxDigitizerInterface
 //* .File Name       : $Workfile:   SVMatroxDigitizerInterface.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   22 Apr 2013 14:29:06  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   01 Oct 2013 10:45:30  $
 //******************************************************************************
 
 #ifndef SVMATROXDIGITIZERINTERFACE_H
@@ -40,11 +40,11 @@ public:
 
 	static SVStatusCode Channel(const SVMatroxDigitizer& DigitizerID, long Channel);
 
-	static SVStatusCode IsCorruptedFrame(long milEventID, bool& bIsCorrupted);
+	static SVStatusCode IsCorruptedFrame(SVMatroxIdentifier milEventID, bool& bIsCorrupted);
 	static SVStatusCode GetGrabTimeStamp(const SVMatroxDigitizer& DigitizerID, double& timestamp);
-	static SVStatusCode GetGrabBuffer(long milEventID, SVMatroxIdentifier& bufferID);
+	static SVStatusCode GetGrabBuffer(SVMatroxIdentifier milEventID, SVMatroxIdentifier& bufferID);
 
-	static SVStatusCode GetHookInfo(long milEventID, SVMatroxDigitizerHook::SVHookInfoEnum InfoType, void* UserPtr);
+	static SVStatusCode GetHookInfo(SVMatroxIdentifier milEventID, SVMatroxDigitizerHook::SVHookInfoEnum InfoType, void* UserPtr);
 	
 	static SVStatusCode SetHookFunction(const SVMatroxDigitizer& DigitizerID,
                                   SVMatroxDigitizerHook::SVHookTypeEnum HookType,
@@ -56,10 +56,10 @@ public:
                                   SVMatroxHookFunctionPtr HookHandlerPtr,
 								  void* UserDataPtr);
 
-	static bool IsEventGrabFrameStart(long EventType);
-	static bool IsEventGrabFrameEnd(long EventType);
-	static bool IsEventErrorFrameNotify(long EventType);
-	static bool IsEventDevicePresentNotify(long EventType);
+	static bool IsEventGrabFrameStart(SVMatroxIdentifier EventType);
+	static bool IsEventGrabFrameEnd(SVMatroxIdentifier EventType);
+	static bool IsEventErrorFrameNotify(SVMatroxIdentifier EventType);
+	static bool IsEventDevicePresentNotify(SVMatroxIdentifier EventType);
 
 	// Getters
 	// Board
@@ -154,8 +154,8 @@ public:
 	// helper
 	static SVStatusCode Destroy(SVMatroxDigitizer& p_rDigitizer);
 
-	static SVStatusCode GetGigeCameraTimestamp(long milEventID, double& timestamp);
-	static SVStatusCode GetGigeEventType(long milEventID, long& p_rEventType);
+	static SVStatusCode GetGigeCameraTimestamp(SVMatroxIdentifier milEventID, double& timestamp);
+	static SVStatusCode GetGigeEventType(SVMatroxIdentifier milEventID, long& p_rEventType);
 	static SVStatusCode SetGigeEvent(const SVMatroxDigitizer& DigitizerID, const SVMatroxString& name, const SVMatroxString& value);
 	static SVStatusCode GetGigeEventList(const SVMatroxDigitizer& DigitizerID, SVGigeEventList& list);
 };
@@ -167,6 +167,16 @@ public:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVMatroxDigitizerLibrary\SVMatroxDigitizerInterface.h_v  $
+ * 
+ *    Rev 1.1   01 Oct 2013 10:45:30   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   22 Apr 2013 14:29:06   bWalter
  * Project:  SVObserver

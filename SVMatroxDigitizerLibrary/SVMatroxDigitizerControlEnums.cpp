@@ -5,8 +5,8 @@
 //* .Module Name     : SVMatroxDigitizerControlEnums
 //* .File Name       : $Workfile:   SVMatroxDigitizerControlEnums.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   22 Apr 2013 14:27:16  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   01 Oct 2013 10:45:26  $
 //******************************************************************************
 #include "stdafx.h"
 #include "SVMatroxDigitizerControlEnums.h"
@@ -22,7 +22,7 @@ SVMatroxDigitizerControl::SVCameraEnumMap SVMatroxDigitizerControl::m_CameraEnum
 (SVMatroxDigitizerControl::SVSourceSizeY,			M_SOURCE_SIZE_Y);
 
 // Assign mappings for Control UserBit Types
-SVMatroxDigitizerControl::SVUserBitEnumMap SVMatroxDigitizerControl::m_UserBitEnumConvertor = boost::assign::map_list_of<SVMatroxDigitizerControl::SVUserBitEnum,long>
+SVMatroxDigitizerControl::SVUserBitEnumMap SVMatroxDigitizerControl::m_UserBitEnumConvertor = boost::assign::map_list_of< SVMatroxDigitizerControl::SVUserBitEnum, SVMatroxIdentifier >
 (SVMatroxDigitizerControl::SVUserBitInterruptMode,	M_USER_BIT_INTERRUPT_MODE)
 (SVMatroxDigitizerControl::SVUserBitInterruptState,	M_USER_BIT_INTERRUPT_STATE)
 (SVMatroxDigitizerControl::SVUserBitMode,			M_USER_BIT_MODE)
@@ -34,6 +34,16 @@ SVMatroxDigitizerControl::SVUserBitEnumMap SVMatroxDigitizerControl::m_UserBitEn
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVMatroxDigitizerLibrary\SVMatroxDigitizerControlEnums.cpp_v  $
+ * 
+ *    Rev 1.1   01 Oct 2013 10:45:26   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   22 Apr 2013 14:27:16   bWalter
  * Project:  SVObserver

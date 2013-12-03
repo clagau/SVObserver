@@ -5,8 +5,8 @@
 //* .Module Name     : SVRemoteOutputDataController
 //* .File Name       : $Workfile:   SVRemoteOutputDataController.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 14:49:26  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   02 Oct 2013 07:58:46  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -504,11 +504,14 @@ HRESULT SVRemoteOutputDataController::WriteOutputs( const CString& p_strRemoteGr
 
 	if( pProduct && (m_RemoteGroupParameters.find(p_strRemoteGroupID) != m_RemoteGroupParameters.end()) )
 	{
-		long l_lMaxDTSize = TheSVObserverApp.m_PLCManager.GetMaxDTSize();
-		std::vector<LPCTSTR> l_pAddressStrings;			// place to collect Address pointers
+		// BRW - PLC has been deprecated.
+		//long l_lMaxDTSize = TheSVObserverApp.m_PLCManager.GetMaxDTSize();
+
+		// BRW - l_pAddressStrings and l_pStringValues were never used again.
+		/*std::vector<LPCTSTR> l_pAddressStrings;			// place to collect Address pointers
 		std::vector<LPCTSTR> l_pStringValues;
 		l_pAddressStrings.resize(l_lMaxDTSize);
-		l_pStringValues.resize(l_lMaxDTSize);
+		l_pStringValues.resize(l_lMaxDTSize);*/
 		long l_lOutputIndex=-1;
 		l_lOutputIndex = pProduct->oPPQInfo.m_ResultDataDMIndexHandle.GetIndex();
 		std::vector<CString> l_strAddresses;  // place to collect address strings
@@ -516,8 +519,9 @@ HRESULT SVRemoteOutputDataController::WriteOutputs( const CString& p_strRemoteGr
 
 //		char l_pTmpBuf[256];
 
-		std::vector<VARIANT> l_pvData;
-		l_pvData.resize(l_lMaxDTSize);
+		// BRW - l_pvData was never used again.
+		/*std::vector<VARIANT> l_pvData;
+		l_pvData.resize(l_lMaxDTSize);*/
 
 		// parameters for a Remote Output Group
 		SVRemoteOutputGroup* l_RemoteGroupPar = m_RemoteGroupParameters[p_strRemoteGroupID];
@@ -883,7 +887,7 @@ HRESULT SVRemoteOutputDataController::ValidateInputs()
 	for( ; l_it!= m_RemoteGroupParameters.end() ; ++l_it )
 	{
 		SVRemoteOutputGroup* l_pGroup = l_it->second;
-		for( int i = l_pGroup->RemoteOutputListSize()-1 ; i > -1  ; i-- )
+		for( int i = static_cast<int>(l_pGroup->RemoteOutputListSize()-1) ; i > -1  ; i-- )
 		{
 			SVRemoteOutputObject* l_pOutput = l_pGroup->GetItem( i );
 			if( l_pOutput )
@@ -1036,7 +1040,17 @@ bool SVRemoteOutputDataController::RenameGroup( CString oldName, CString newName
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVRemoteOutputDataController.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVRemoteOutputDataController.cpp_v  $
+ * 
+ *    Rev 1.1   02 Oct 2013 07:58:46   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 14:49:26   bWalter
  * Project:  SVObserver

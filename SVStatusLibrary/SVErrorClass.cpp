@@ -5,8 +5,8 @@
 //* .Module Name     : SVErrorClass
 //* .File Name       : $Workfile:   SVErrorClass.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   25 Apr 2013 17:41:32  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   02 Oct 2013 10:08:10  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -356,7 +356,7 @@ unsigned long SVErrorClass::LogError ()
                               msvErrorData.ToString()) *
                    lx_TCHARSize;
 
-        lx_logRecord.NTDef.DataLength = msvErrorData.size();
+        lx_logRecord.NTDef.DataLength = static_cast<DWORD>(msvErrorData.size());
         
         *((long *) (&lx_logRecord.buffer [lx_index])) = lx_index + 4;
 
@@ -504,7 +504,17 @@ int SVErrorClass::ClearLastErrorCd ()
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVStatusLibrary\SVErrorClass.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVStatusLibrary\SVErrorClass.cpp_v  $
+ * 
+ *    Rev 1.1   02 Oct 2013 10:08:10   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   25 Apr 2013 17:41:32   bWalter
  * Project:  SVObserver

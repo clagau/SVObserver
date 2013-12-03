@@ -5,8 +5,8 @@
 //* .Module Name     : SVDoubleValueObjectClass
 //* .File Name       : $Workfile:   SVDoubleValueObjectClass.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   30 Jul 2013 12:28:30  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   01 Oct 2013 14:12:22  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -169,7 +169,7 @@ HRESULT SVDoubleValueObjectClass::SetObjectValue( SVObjectAttributeClass* pDataO
 		else if (    SVObjectAttributeClassHelper::GetAttributeData(pDataObject, "pArray", svArray)
 		          || SVObjectAttributeClassHelper::GetAttributeData(pDataObject, BUCKET_TAG_LOAD, svArray) )
 		{
-			SetArraySize( svArray.size() );
+			SetArraySize( static_cast<int>(svArray.size()) );
 			hr = SetArrayValues(1, svArray.begin(), svArray.end());
 			return hr;
 		}
@@ -274,7 +274,17 @@ void SVDoubleValueObjectClass::LocalInitialize()
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVDoubleValueObjectClass.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVDoubleValueObjectClass.cpp_v  $
+ * 
+ *    Rev 1.2   01 Oct 2013 14:12:22   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   30 Jul 2013 12:28:30   tbair
  * Project:  SVObserver

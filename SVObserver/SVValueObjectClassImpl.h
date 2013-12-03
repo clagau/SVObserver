@@ -5,8 +5,8 @@
 //* .Module Name     : SVValueObjectClassImpl
 //* .File Name       : $Workfile:   SVValueObjectClassImpl.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 16:17:20  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   02 Oct 2013 08:24:44  $
 //******************************************************************************
 
 #ifndef SVVALUEOBJECTCLASSIMPL_H
@@ -67,8 +67,7 @@ public:
 		HRESULT hr = ValidateIndexes(iBucket,0);
 		if ( hr == S_OK || hr == SVMSG_SVO_34_OBJECT_INDEX_OUT_OF_RANGE )
 		{
-			//int iSize = std::distance(begin, end);
-			int iSize = end - begin;	// std::distance could not deduce type; VC6 bug
+			int iSize = static_cast< int >( std::distance(begin, end));
 			ASSERT( iSize <= ArraySize() );
 			if ( iSize <= ArraySize() )
 			{
@@ -255,7 +254,17 @@ namespace std
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVValueObjectClassImpl.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVValueObjectClassImpl.h_v  $
+ * 
+ *    Rev 1.1   02 Oct 2013 08:24:44   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 16:17:20   bWalter
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : SVMatroxGige
 //* .File Name       : $Workfile:   SVMatroxGige.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   12 Jun 2013 15:13:28  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   01 Oct 2013 10:49:00  $
 //******************************************************************************
 
 #ifndef SVMATROXGIGE_H
@@ -160,15 +160,15 @@ private:
 
 	HRESULT IsAcquisitionTriggered(unsigned long p_ulHandle, bool& bAcquisitionTriggered) const;
 	HRESULT SetAcquisitionTriggered(unsigned long p_ulHandle, bool bAcquisitionTriggered);
-	void DoAcquisitionTrigger(const SVMatroxGigeDigitizer& p_rCamera, long HookId);
+	void DoAcquisitionTrigger( const SVMatroxGigeDigitizer& p_rCamera, SVMatroxIdentifier HookId );
 
 	// Matrox Hooks
-	static long __stdcall DigitizerStartFrameCallback(long HookType, SVMatroxIdentifier EventId, void* p_pvContext);
-	static long __stdcall DigitizerEndFrameCallback(long HookType, SVMatroxIdentifier EventId, void* p_pvContext);
-	static long __stdcall ProcessFrame(long HookType, long HookId, void* p_pvContext);
-	static long __stdcall DigitizerCallback(long HookType, SVMatroxIdentifier EventId, void* p_pvContext);
-	static long __stdcall CameraPresentCallback(long HookType, long EventId, void* p_pvContext);
-	static long __stdcall LineEdgeEventCallback(long HookType, SVMatroxIdentifier EventId, void* p_pvContext);
+	static SVMatroxIdentifier __stdcall DigitizerStartFrameCallback( SVMatroxIdentifier HookType, SVMatroxIdentifier EventId, void* p_pvContext );
+	static SVMatroxIdentifier __stdcall DigitizerEndFrameCallback( SVMatroxIdentifier HookType, SVMatroxIdentifier EventId, void* p_pvContext );
+	static SVMatroxIdentifier __stdcall ProcessFrame( SVMatroxIdentifier HookType, SVMatroxIdentifier HookId, void* p_pvContext );
+	static SVMatroxIdentifier __stdcall DigitizerCallback( SVMatroxIdentifier HookType, SVMatroxIdentifier EventId, void* p_pvContext );
+	static SVMatroxIdentifier __stdcall CameraPresentCallback( SVMatroxIdentifier HookType, SVMatroxIdentifier EventId, void* p_pvContext );
+	static SVMatroxIdentifier __stdcall LineEdgeEventCallback( SVMatroxIdentifier HookType, SVMatroxIdentifier EventId, void* p_pvContext );
 };
 
 #endif
@@ -177,7 +177,17 @@ private:
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVMatroxGige\SVMatroxGige.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVMatroxGige\SVMatroxGige.h_v  $
+ * 
+ *    Rev 1.2   01 Oct 2013 10:49:00   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   12 Jun 2013 15:13:28   bWalter
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : SVMatroxSystemEnums
 //* .File Name       : $Workfile:   SVMatroxSystemEnums.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   22 Apr 2013 15:27:40  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   01 Oct 2013 11:15:30  $
 //******************************************************************************
 #include "stdafx.h"
 #include "SVMatroxSystemEnums.h"
@@ -26,7 +26,8 @@ SVMatroxSystemControl::SVMatroxSystemControlEnumMap SVMatroxSystemControl::m_con
 (SVMatroxSystemControl::SVTimeout,					M_TIMEOUT);
 
 // Assign mappings for Inquire Types
-SVMatroxSystemInquire::SVMatroxSystemInquireEnumMap SVMatroxSystemInquire::m_convertor = boost::assign::map_list_of<>
+// BRW - Types for map were implicit for in 32-bit, but must be explicitly specified for 64-bit.
+SVMatroxSystemInquire::SVMatroxSystemInquireEnumMap SVMatroxSystemInquire::m_convertor = boost::assign::map_list_of< SVMatroxSystemInquireEnum, SVMatroxInt >
 (SVMatroxSystemInquire::SVAcceleratorPresent,		M_ACCELERATOR_PRESENT)
 (SVMatroxSystemInquire::SVAllocationOverscanSize,	M_ALLOCATION_OVERSCAN_SIZE)
 (SVMatroxSystemInquire::SVAsynchronousCallSupport,	M_ASYNCHRONOUS_CALL_SUPPORT)
@@ -57,11 +58,13 @@ SVMatroxSystemInquire::SVMatroxSystemInquireEnumMap SVMatroxSystemInquire::m_con
 (SVMatroxSystemInquire::SVTimeout,					M_TIMEOUT);
 
 // Assign mappings for Hook Types
-SVMatroxSystemHook::SVMatroxSystemHookEnumMap SVMatroxSystemHook::m_convertor = boost::assign::map_list_of<>
+// BRW - Types for map were implicit for in 32-bit, but must be explicitly specified for 64-bit.
+SVMatroxSystemHook::SVMatroxSystemHookEnumMap SVMatroxSystemHook::m_convertor = boost::assign::map_list_of< SVMatroxSystemHookEnum, SVMatroxInt >
 (SVMatroxSystemHook::SVCameraPresent,				M_CAMERA_PRESENT);
 
 // Assign mappings for Hook Info Types
-SVMatroxSystemHookInfo::SVMatroxSystemHookInfoEnumMap SVMatroxSystemHookInfo::m_convertor = boost::assign::map_list_of<>
+// BRW - Types for map were implicit for in 32-bit, but must be explicitly specified for 64-bit.
+SVMatroxSystemHookInfo::SVMatroxSystemHookInfoEnumMap SVMatroxSystemHookInfo::m_convertor = boost::assign::map_list_of< SVMatroxSystemHookInfoEnum, SVMatroxInt >
 (SVMatroxSystemHookInfo::SVCameraNumber,			M_NUMBER)
 (SVMatroxSystemHookInfo::SVCameraPresent,			M_CAMERA_PRESENT)
 (SVMatroxSystemHookInfo::SVGigeMacAddress,			M_GC_MAC_ADDRESS);
@@ -71,6 +74,16 @@ SVMatroxSystemHookInfo::SVMatroxSystemHookInfoEnumMap SVMatroxSystemHookInfo::m_
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVMatroxLibrary\SVMatroxSystemEnums.cpp_v  $
+ * 
+ *    Rev 1.1   01 Oct 2013 11:15:30   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   22 Apr 2013 15:27:40   bWalter
  * Project:  SVObserver

@@ -61,9 +61,6 @@
     <ClInclude Include="SVTestIOExports.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVTestIOCallback.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="SVTestIO.rc">

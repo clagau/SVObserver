@@ -5,8 +5,8 @@
 // * .Module Name     : SVCameraPage
 // * .File Name       : $Workfile:   SVCameraPage.h  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.0  $
-// * .Check In Date   : $Date:   22 Apr 2013 11:08:22  $
+// * .Current Version : $Revision:   1.1  $
+// * .Check In Date   : $Date:   01 Oct 2013 08:25:58  $
 // ******************************************************************************
 
 #ifndef SVCAMERAPAGE_H
@@ -109,7 +109,7 @@ private:
 
 	void EnableViewCameraFileButton(bool bAnalogDigitizer);
 
-	UINT m_timerID;
+	UINT_PTR m_timerID;
 };
 
 //{{AFX_INSERT_LOCATION}}
@@ -122,6 +122,17 @@ private:
 // ******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVImageTest\SVCameraPage.h_v  $
+ * 
+ *    Rev 1.1   01 Oct 2013 08:25:58   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add X64 Platform
+ * 
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   22 Apr 2013 11:08:22   bWalter
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 // * .Module Name     : SVDLLToolLoadLibraryClass
 // * .File Name       : $Workfile:   SVDLLToolLoadLibraryClass.h  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.1  $
-// * .Check In Date   : $Date:   08 May 2013 16:16:04  $
+// * .Current Version : $Revision:   1.2  $
+// * .Check In Date   : $Date:   21 Oct 2013 08:21:26  $
 // ******************************************************************************
 
 #ifndef SVDLLToolLOADLIBRARYCLASS_H
@@ -21,6 +21,30 @@
 #include "SVLoki/functor.h"
 
 struct SVImageDefinitionStruct;
+
+enum SVMachineTypeEnum
+{
+	ImageFileUnknownMachine = 0x0,
+	ImageFileMachineAM33 = 0x1d3,
+	ImageFileMachineAMD64 = 0x8664,
+	ImageFileMachineARM = 0x1c0,
+	ImageFileMachineEBC = 0xebc,
+	ImageFileMachineI386 = 0x14c,
+	ImageFileMachineIA64 = 0x200,
+	ImageFileMachineM32R = 0x9041,
+	ImageFileMachineMIPS16 = 0x266,
+	ImageFileMachineMIPSFPU = 0x366,
+	ImageFileMachineMIPSFPU16 = 0x466,
+	ImageFileMachinePowerPC = 0x1f0,
+	ImageFileMachinePowerPCFP = 0x1f1,
+	ImageFileMachineR4000 = 0x166,
+	ImageFileMachineSH3 = 0x1a2,
+	ImageFileMachineSH3DSP = 0x1a3,
+	ImageFileMachineSH4 = 0x1a6,
+	ImageFileMachineSH5 = 0x1a8,
+	ImageFileMachineThumb = 0x1c2,
+	ImageFileMachineWCEMIPSV2 = 0x169
+};
 
 typedef long    (__stdcall *SimpleTestPtr) (long lValue1, long lValue2);
 typedef HRESULT (__stdcall *GetToolNamePtr) (BSTR* pbstrToolName);
@@ -111,6 +135,7 @@ private:
 	SetMILResultImagesPtr m_pfnSetMILResultImages;
 	GetResultImageDefinitionsPtr m_pfnGetResultImageDefinitions;
 	DestroyImageDefinitionStructurePtr m_pfnDestroyImageDefinitionStructure;
+	SVMachineTypeEnum CheckBitness( LPCTSTR p_szFile );
 
 };
 
@@ -123,7 +148,17 @@ private:
 // * LOG HISTORY:
 // ******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVDLLToolLoadLibraryClass.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVDLLToolLoadLibraryClass.h_v  $
+ * 
+ *    Rev 1.2   21 Oct 2013 08:21:26   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Added check for Bitness on External Tool DLL.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   08 May 2013 16:16:04   bWalter
  * Project:  SVObserver

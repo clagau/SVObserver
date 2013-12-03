@@ -5,8 +5,8 @@
 //* .Module Name     : SVCommand.cpp
 //* .File Name       : $Workfile:   SVCommand.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   06 May 2013 14:38:08  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   01 Oct 2013 12:16:26  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -23,7 +23,8 @@
 #include "SVCmnLib/Utilities.h"
 #include "SVDataManagerLibrary/DataManager.h"
 #include "SVFileSystemLibrary/SVFileSystemCommandFactory.h"
-#include "SVImageCompression/SVImageCompressionClass.h"
+// BRW - SVImageCompression has been deprecated.
+//#include "SVImageCompression/SVImageCompressionClass.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "SVImageLibrary/SVImageBufferHandleStruct.h"
 #include "SVLibrary/SVPackedFile.h"
@@ -1836,7 +1837,8 @@ STDMETHODIMP CSVCommand::SVGetImageList(SAFEARRAY* psaNames, long lCompression, 
 
 
 
-		SVImageCompressionClass mainCompressionObject(SERVER_COMPRESSION_POOL_SIZE);
+		// BRW - SVImageCompression has been deprecated.
+		/*SVImageCompressionClass mainCompressionObject(SERVER_COMPRESSION_POOL_SIZE);
 
 		if (lCompression != 0)
 		{
@@ -1850,7 +1852,7 @@ STDMETHODIMP CSVCommand::SVGetImageList(SAFEARRAY* psaNames, long lCompression, 
 				//--------- acceptable response.
 				throw -1558;
 			}
-		}
+		}*/
 		
 
 
@@ -1988,16 +1990,17 @@ STDMETHODIMP CSVCommand::SVGetImageList(SAFEARRAY* psaNames, long lCompression, 
 
 					char* pDIB = NULL;
 
-					if (lCompression != 0)
+					// BRW - SVImageCompression has been deprecated.
+					/*if (lCompression != 0)
 					{
 						hr = mainCompressionObject.GetAndLockInputDIBBuffer(&pDIB);
 					}
-					else 
+					else */
 					{
 						//------ An alCompression of 0 indicates that no compression will be used. 
 						//------ For purposes of speed, our implementation will not tie up a LeadTool
 						//------ resource.
-						bstrImage = SysAllocStringByteLen(NULL, l_ImageIter->second.m_ImageDIB.size());
+						bstrImage = SysAllocStringByteLen( NULL, static_cast< UINT >( l_ImageIter->second.m_ImageDIB.size() ) );
 						if (bstrImage == NULL)
 						{
 							hr = -1568;
@@ -2015,7 +2018,8 @@ STDMETHODIMP CSVCommand::SVGetImageList(SAFEARRAY* psaNames, long lCompression, 
 						// Copy data to DIB memory locations
 						memcpy( pDIB, &(l_ImageIter->second.m_ImageDIB[0]), l_ImageIter->second.m_ImageDIB.size() );
 
-						if (lCompression != 0)
+						// BRW - SVImageCompression has been deprecated.
+						/*if (lCompression != 0)
 						{
 							mainCompressionObject.UnLockInputDIBBuffer ();
 
@@ -2036,7 +2040,7 @@ STDMETHODIMP CSVCommand::SVGetImageList(SAFEARRAY* psaNames, long lCompression, 
 									hr = -1567;
 								}
 							}
-						}
+						}*/
 					}
 
 					if ( hr == S_OK )
@@ -2208,7 +2212,7 @@ STDMETHODIMP CSVCommand::SVRegisterStream(SAFEARRAY* psaName, VARIANT vtInterfac
 			}// end for
 			
 			//go through list of inspection names and make sure they are all on same PPQ
-			int iInspectionCnt = m_cslInspectionNames.GetCount();
+			int iInspectionCnt = static_cast< int >( m_cslInspectionNames.GetCount() );
 
 			SVGUID l_PPQId;
 			POSITION posIns;
@@ -2436,7 +2440,7 @@ STDMETHODIMP CSVCommand::SVUnRegisterStream(VARIANT vtInterface)
 			m_cslInspectionNames.RemoveAll();
 			m_dwStreamDataProcessId = 0;
 
-			lSize = m_arStreamList.GetSize();
+			lSize = static_cast< long >( m_arStreamList.GetSize() );
 			for( l = 0; l < lSize; l++ )
 			{
 				pStream = m_arStreamList.GetAt( l );
@@ -2444,7 +2448,7 @@ STDMETHODIMP CSVCommand::SVUnRegisterStream(VARIANT vtInterface)
 			}// end for
 			m_arStreamList.RemoveAll();
 
-			lSize = m_arProductList.GetSize();
+			lSize = static_cast< long >( m_arProductList.GetSize() );
 			for( l = 0; l < lSize; l++ )
 			{
 				pProduct = m_arProductList.GetAt( l );
@@ -2464,7 +2468,7 @@ STDMETHODIMP CSVCommand::SVUnRegisterStream(VARIANT vtInterface)
 	return hr;
 }
 
-VOID CALLBACK SVStreamingDataAPCProc( DWORD dwParam )
+VOID CALLBACK SVStreamingDataAPCProc( DWORD_PTR dwParam )
 {
 	// do nothing ...
 	// let the APC cause the waiting object to return
@@ -2488,7 +2492,7 @@ HRESULT CSVCommand::StreamingDataCallback( const SVInspectionCompleteInfoStruct&
 		// search the list for this product
 		bFound = FALSE;
 		pProductData = NULL;
-		lSize = m_arProductList.GetSize();
+		lSize = static_cast< long >( m_arProductList.GetSize() );
 		
 		for( l = 0; l < lSize; l++ )
 		{
@@ -2509,14 +2513,14 @@ HRESULT CSVCommand::StreamingDataCallback( const SVInspectionCompleteInfoStruct&
 		{
 			pProductData = new ProductDataStruct;
 			pProductData->lProductCount = p_rData.m_ProductInfo.ProcessCount();
-			pProductData->arPacketData.SetSize( m_arStreamList.GetSize() );
+			pProductData->arPacketData.SetSize( static_cast< int >( m_arStreamList.GetSize() ) );
 			
 			// add the product to the outgoing list
 			m_arProductList.Add( pProductData );
 		}// end if
 		
 		// We will go ahead and make a copy of the data now
-		lSize = m_arStreamList.GetSize();
+		lSize = static_cast< long >( m_arStreamList.GetSize() );
 		for( l = 0; l < lSize; l++ )
 		{
 			pStreamData = m_arStreamList.GetAt( l );
@@ -2574,9 +2578,8 @@ HRESULT CSVCommand::StreamingDataCallback( const SVInspectionCompleteInfoStruct&
 		{
 			::SetThreadPriority( m_hStreamingThread, THREAD_PRIORITY_NORMAL );
 		}// end if
-		
-		::QueueUserAPC( SVStreamingDataAPCProc, m_hStreamingThread, (DWORD) NULL );
-		
+
+		::QueueUserAPC( SVStreamingDataAPCProc, m_hStreamingThread, ( DWORD_PTR ) NULL );
 	}// end if
 	
 	return S_OK;
@@ -2609,7 +2612,7 @@ DWORD WINAPI CSVCommand::SVStreamDataThread(LPVOID lpParam)
 	long k;
 	
 	CSVCommand *pThis = (CSVCommand*) lpParam;
-	lStreamSize = pThis->m_arStreamList.GetSize();
+	lStreamSize = static_cast< long >( pThis->m_arStreamList.GetSize() );
 	lStreamCount = 0;
 	lNoProduct = -1;
 	bRunning = TRUE;
@@ -2635,7 +2638,7 @@ DWORD WINAPI CSVCommand::SVStreamDataThread(LPVOID lpParam)
 			break;
 		case WAIT_IO_COMPLETION :
 			// pass one - check for products to stream now that we are awake
-			lProductCount = pThis->m_arProductList.GetSize();
+			lProductCount = static_cast< long >( pThis->m_arProductList.GetSize() );
 			lStreamCount = 0;
 			hr = S_OK;
 		
@@ -2662,7 +2665,7 @@ DWORD WINAPI CSVCommand::SVStreamDataThread(LPVOID lpParam)
 				saValues		= ::SafeArrayCreate( VT_BSTR, 1, sabound );
 				saProcessCount	= ::SafeArrayCreate( VT_I4, 1, sabound );
 				
-				lProductCount = pThis->m_arProductList.GetSize();
+				lProductCount = static_cast< long >( pThis->m_arProductList.GetSize() );
 				for( l = 0; lStreamCount && l < lProductCount; l++ )
 				{
 					pProductData = pThis->m_arProductList.GetAt( l );
@@ -2719,7 +2722,7 @@ DWORD WINAPI CSVCommand::SVStreamDataThread(LPVOID lpParam)
 					} // end for
 
 					m_lLastStreamedProduct = pProductData->lProductCount;
-					lProductCount = pThis->m_arProductList.GetSize();
+					lProductCount = static_cast< long >( pThis->m_arProductList.GetSize() );
 					lStreamCount--;
 
 					::EnterCriticalSection( &m_hProductCritSect );
@@ -2746,7 +2749,7 @@ DWORD WINAPI CSVCommand::SVStreamDataThread(LPVOID lpParam)
 			}// end if
 
 			// pass three - check for products to stream before we go back to sleep
-			lProductCount = pThis->m_arProductList.GetSize();
+			lProductCount = static_cast< long >( pThis->m_arProductList.GetSize() );
 			lStreamCount = 0;
 		
 			for( l = 0; l < lProductCount; l++ )
@@ -2769,7 +2772,7 @@ DWORD WINAPI CSVCommand::SVStreamDataThread(LPVOID lpParam)
 				m_cslInspectionNames.RemoveAll();
 				m_dwStreamDataProcessId = 0;
 
-				lSize = m_arStreamList.GetSize();
+				lSize = static_cast< long >( m_arStreamList.GetSize() );
 				for( l = 0; l < lSize; l++ )
 				{
 					pStreamData = m_arStreamList.GetAt( l );
@@ -2777,7 +2780,7 @@ DWORD WINAPI CSVCommand::SVStreamDataThread(LPVOID lpParam)
 				}// end for
 				m_arStreamList.RemoveAll();
 
-				lSize = m_arProductList.GetSize();
+				lSize = static_cast< long >( m_arProductList.GetSize() );
 				for( l = 0; l < lSize; l++ )
 				{
 					pProductData = m_arProductList.GetAt( l );
@@ -3108,7 +3111,8 @@ STDMETHODIMP CSVCommand::SVGetProductImageList(long lProcessCount, SAFEARRAY* ps
 			throw SVMSG_CONFIGURATION_NOT_LOADED;
 		}
 		
-		SVImageCompressionClass mainCompressionObject (SERVER_COMPRESSION_POOL_SIZE);
+		// BRW - SVImageCompression has been deprecated.
+		/*SVImageCompressionClass mainCompressionObject (SERVER_COMPRESSION_POOL_SIZE);
 
 		if (lCompression != 0)
 		{
@@ -3122,7 +3126,7 @@ STDMETHODIMP CSVCommand::SVGetProductImageList(long lProcessCount, SAFEARRAY* ps
 				//--------- acceptable response.
 				throw -1606;
 			}
-		}
+		}*/
 		
 		
 
@@ -3246,7 +3250,8 @@ STDMETHODIMP CSVCommand::SVGetProductImageList(long lProcessCount, SAFEARRAY* ps
 							// put image in return array
 							BSTR bstrTemp = NULL;
 							
-							HRESULT hr = SafeImageToBSTR( pImage, svIndex, &bstrTemp, lCompression, &mainCompressionObject);
+																						// BRW - SVImageCompression has been deprecated.
+							HRESULT hr = SafeImageToBSTR( pImage, svIndex, &bstrTemp );	//, lCompression, &mainCompressionObject);
 
 							if ( SUCCEEDED( hr ) )
 							{
@@ -3395,9 +3400,10 @@ STDMETHODIMP CSVCommand::SVGetLUT(BSTR bstrCameraName, SAFEARRAY** ppaulLUTTable
 
 HRESULT CSVCommand::ImageToBSTR(SVImageInfoClass&  rImageInfo, 
                                 SVSmartHandlePointer rImageHandle,
-                                BSTR*              pbstr, 
-                                long               alCompression, 
-                                SVImageCompressionClass* apCompressionObject)
+                                BSTR*              pbstr ) //, 
+								// BRW - SVImageCompression has been deprecated.
+                                //long               alCompression, 
+                                //SVImageCompressionClass* apCompressionObject)
 {
 	HRESULT hr = S_OK;
 	
@@ -3411,7 +3417,8 @@ HRESULT CSVCommand::ImageToBSTR(SVImageInfoClass&  rImageInfo,
 	{
 		hr = -1578;
 	}
-	else
+	// BRW - SVImageCompression has been deprecated.
+	/*else
 	{
 		//--- It's not acceptable to specify a compression and not provide a 
 		//--- compression object.  
@@ -3422,7 +3429,7 @@ HRESULT CSVCommand::ImageToBSTR(SVImageInfoClass&  rImageInfo,
 		{
 			hr = -1579;
 		}
-	}
+	}*/
 
 	if ( hr == S_OK )
 	{
@@ -3536,7 +3543,8 @@ HRESULT CSVCommand::ImageToBSTR(SVImageInfoClass&  rImageInfo,
 		// Calculate total size buffer needed for image
 		lBufSize = sizeof( BITMAPINFOHEADER ) + lTabSize + pbmhInfo->biSizeImage;
 		
-		if (alCompression != 0)
+		// BRW - SVImageCompression has been deprecated.
+		/*if (alCompression != 0)
 		{
 			hr = apCompressionObject->GetAndLockInputDIBBuffer(&pDIB);
 			if (pDIB == NULL)
@@ -3544,7 +3552,7 @@ HRESULT CSVCommand::ImageToBSTR(SVImageInfoClass&  rImageInfo,
 				hr = -1561;
 			}
 		}
-		else 
+		else*/
 		{
 			//------ An alCompression of 0 indicates that no compression will be used. 
 			//------ For purposes of speed, our implementation will not tie up a LeadTool
@@ -3575,7 +3583,8 @@ HRESULT CSVCommand::ImageToBSTR(SVImageInfoClass&  rImageInfo,
 				oChildHandle->GetBufferAddress(), 
 				pbmhInfo->biSizeImage );
 
-			if (alCompression != 0)
+			// BRW - SVImageCompression has been deprecated.
+			/*if (alCompression != 0)
 			{
 				apCompressionObject->UnLockInputDIBBuffer ();
 
@@ -3594,7 +3603,7 @@ HRESULT CSVCommand::ImageToBSTR(SVImageInfoClass&  rImageInfo,
 						hr = -1567;
 					}
 				}
-			}
+			}*/
 		}
 		
 		
@@ -3610,7 +3619,8 @@ HRESULT CSVCommand::ImageToBSTR(SVImageInfoClass&  rImageInfo,
 }
 
 HRESULT CSVCommand::SafeImageToBSTR( SVImageClass *p_pImage, SVImageIndexStruct p_svIndex, 
-                                     BSTR *pbstr, long alCompression, SVImageCompressionClass *apCompressionObject)
+					// BRW - SVImageCompression has been deprecated.
+	BSTR *pbstr )	//, long alCompression, SVImageCompressionClass *apCompressionObject)
 {
 	HRESULT hr = S_OK;
 
@@ -3631,7 +3641,8 @@ HRESULT CSVCommand::SafeImageToBSTR( SVImageClass *p_pImage, SVImageIndexStruct 
 			p_pImage->SafeImageCopyToHandle( p_svIndex, oChildHandle );
 		}
 
-		hr = ImageToBSTR( oChildInfo, oChildHandle, pbstr, alCompression, apCompressionObject );
+																// BRW - SVImageCompression has been deprecated.
+		hr = ImageToBSTR( oChildInfo, oChildHandle, pbstr );	//, alCompression, apCompressionObject );
 	}
 	else
 	{
@@ -4040,7 +4051,7 @@ STDMETHODIMP CSVCommand::SVSetInputs(SAFEARRAY* psaNames, SAFEARRAY* psaValues, 
 				pInspection->AddInputRequest( ref, W2T( bstrValue ) );
 
 				bool l_bFound = false;
-				long lSize = l_arInspections.GetSize();
+				long lSize = static_cast< long >( l_arInspections.GetSize() );
 				for( long k = 0; k < lSize; k++ )
 				{
 					if( pInspection == l_arInspections[k] )
@@ -4063,7 +4074,7 @@ STDMETHODIMP CSVCommand::SVSetInputs(SAFEARRAY* psaNames, SAFEARRAY* psaValues, 
 		// New delimiter added after each SVSetToolParameterList call
 		// This breaks the list into pieces and we are only processing
 		// 1 piece of the list per inspection iteration
-		long lSize = l_arInspections.GetSize();
+		long lSize = static_cast< long >( l_arInspections.GetSize() );
 		for( long j = 0; j < lSize; j++ )
 		{
 			//add request to inspection process
@@ -4368,7 +4379,7 @@ HRESULT CSVCommand::SVSetToolParameterList(SAFEARRAY* psaNames, SAFEARRAY* psaVa
 				pInspection->AddInputRequest( ref, W2T( bstrValue ) );
 
 				bool l_bFound = false;
-				long lSize = l_arInspections.GetSize();
+				long lSize = static_cast< long >( l_arInspections.GetSize() );
 				for( long k = 0; k < lSize; k++ )
 				{
 					if( pInspection == l_arInspections[k] )
@@ -4391,7 +4402,7 @@ HRESULT CSVCommand::SVSetToolParameterList(SAFEARRAY* psaNames, SAFEARRAY* psaVa
 		// New delimiter added after each SVSetToolParameterList call
 		// This breaks the list into pieces and we are only processing
 		// 1 piece of the list per inspection iteration
-		long lSize = l_arInspections.GetSize();
+		long lSize = static_cast< long >( l_arInspections.GetSize() );
 		for( long j = 0; j < lSize; j++ )
 		{
 			//add request to inspection process
@@ -4551,11 +4562,13 @@ HRESULT CSVCommand::SVGetLockedImage(long p_lIndex, long p_lCompression, BSTR* p
 	SVActiveXLockStruct SVaxls;
 	HRESULT hr = S_FALSE;
 	
-	SVImageCompressionClass mainCompressionObject (SERVER_COMPRESSION_POOL_SIZE);
+	// BRW - SVImageCompression has been deprecated.
+	//SVImageCompressionClass mainCompressionObject (SERVER_COMPRESSION_POOL_SIZE);
 
 	do
 	{
-		if ( p_lCompression != 0 )
+		// BRW - SVImageCompression has been deprecated.
+		/*if ( p_lCompression != 0 )
 		{
 			//------ An lCompression of 0 indicates that no compression will be used.
 			//------ For purposes of speed, our implementation will not tie up a LeadTool
@@ -4568,7 +4581,7 @@ HRESULT CSVCommand::SVGetLockedImage(long p_lIndex, long p_lCompression, BSTR* p
 				hr = -1605;
 				break;
 			}
-		}
+		}*/
 
 		SVConfigurationObject* l_pConfig = NULL;
 		SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
@@ -4604,7 +4617,8 @@ HRESULT CSVCommand::SVGetLockedImage(long p_lIndex, long p_lCompression, BSTR* p
 		SVImageInfoClass l_ImageInfo;
 				
 		// put image in return array
-		hr = ImageToBSTR( l_ImageInfo, SVaxls.m_ImageHandlePtr, p_pbstrImage, p_lCompression, &mainCompressionObject);
+																				// BRW - SVImageCompression has been deprecated.
+		hr = ImageToBSTR( l_ImageInfo, SVaxls.m_ImageHandlePtr, p_pbstrImage );	//, p_lCompression, &mainCompressionObject);
 
 		break;
 	} while (false);
@@ -4639,7 +4653,7 @@ HRESULT CSVCommand::SVUnlockAllImages()
 	SVActiveXLockStruct SVaxls;
 	HRESULT hr = S_OK;
 	
-	for(int x = m_aSVActXLock.GetSize() - 1 ;  x > -1 ; x--)
+	for( int x = static_cast< int >( m_aSVActXLock.GetSize() - 1 );  x > -1; x-- )
 	{
 		SVaxls = m_aSVActXLock.GetAt(x);
 		if(SVaxls.Valid())
@@ -5771,7 +5785,8 @@ STDMETHODIMP CSVCommand::SVGetFontCharacter(long lFontIdentifier, long  lCharID,
 
 				SVSmartHandlePointer ImageBufferHandle = new SVImageBufferHandleStruct( lCharHandle );
 
-				ImageToBSTR(ImageInfo,ImageBufferHandle,pbstrLabelImage,0,NULL);
+																			// BRW - SVImageCompression has been deprecated.
+			ImageToBSTR( ImageInfo, ImageBufferHandle, pbstrLabelImage );	//,0,NULL);
 
 				lCharHandle.clear();
 
@@ -5966,9 +5981,7 @@ HRESULT CSVCommand::RebuildStreamingDataList()
 	StreamDataStruct *pStreamData;
 	SVObjectClass* pTempObject;
 	long l;
-	long lSize;
-
-	lSize = m_arStreamList.GetSize();
+	long lSize = static_cast< long >( m_arStreamList.GetSize() );
 	for( l = 0; l < lSize; l++ )
 	{
 		pStreamData = m_arStreamList.GetAt( l );
@@ -6031,7 +6044,7 @@ BOOL CSVCommand::ResetStreamingDataAndLockedImages()
 	long l;
 	long lSize;
 	
-	for( int x = m_aSVActXLock.GetSize() - 1;  x > -1; x-- )
+	for( int x = static_cast< int >( m_aSVActXLock.GetSize() - 1 );  x > -1; x-- )
 	{
 		SVaxls = m_aSVActXLock.GetAt( x );
 		if( SVaxls.Valid() )
@@ -6062,7 +6075,7 @@ BOOL CSVCommand::ResetStreamingDataAndLockedImages()
 	SVCommandStreamManager::Instance().EraseCommandCallback();
 	m_dwStreamDataProcessId = 0;
 
-	lSize = m_arStreamList.GetSize();
+	lSize = static_cast< long >( m_arStreamList.GetSize() );
 	for( l = 0; l < lSize; l++ )
 	{
 		pStream = m_arStreamList.GetAt( l );
@@ -6070,7 +6083,7 @@ BOOL CSVCommand::ResetStreamingDataAndLockedImages()
 	}// end for
 	m_arStreamList.RemoveAll();
 
-	lSize = m_arProductList.GetSize();
+	lSize = static_cast< long >( m_arProductList.GetSize() );
 	for( l = 0; l < lSize; l++ )
 	{
 		pProduct = m_arProductList.GetAt( l );
@@ -6124,7 +6137,7 @@ namespace local
 
 		SAFEARRAYBOUND saBounds[1];
 		saBounds[0].lLbound=0;
-		saBounds[0].cElements = rvec.size();
+		saBounds[0].cElements = static_cast< ULONG >( rvec.size() );
 
 		if ( ppsaNames )
 			*ppsaNames  = ::SafeArrayCreate( VT_BSTR, 1, saBounds);
@@ -6162,7 +6175,7 @@ namespace local
 
 		SAFEARRAYBOUND saBounds[1];
 		saBounds[0].lLbound=0;
-		saBounds[0].cElements = rvec.size();
+		saBounds[0].cElements = static_cast< ULONG >( rvec.size() );
 
 		if ( ppsaProcessCount )
 			*ppsaProcessCount  = ::SafeArrayCreate( VT_I4, 1, saBounds);
@@ -6183,8 +6196,8 @@ namespace local
 	{
 		HRESULT hr = S_FALSE;
 
-		long lNumEntries = rvec.size();
-		long lNumValues = lNumEntries > 0 ? rvec.at(0).size() : 0;	// all entries have same num values
+		long lNumEntries = static_cast< long >( rvec.size() );
+		long lNumValues = lNumEntries > 0 ? static_cast< long >( rvec.at(0).size() ) : 0;	// all entries have same num values
 
 		SAFEARRAYBOUND saBounds[2];
 		saBounds[0].lLbound=0;
@@ -6238,7 +6251,7 @@ namespace local
 
 		SAFEARRAYBOUND saBounds[1];
 		saBounds[0].lLbound=0;
-		saBounds[0].cElements = rvec.size();
+		saBounds[0].cElements = static_cast< ULONG >( rvec.size() );
 
 		if ( ppsaImageNames )
 			*ppsaImageNames  = ::SafeArrayCreate( VT_BSTR, 1, saBounds);
@@ -6249,7 +6262,8 @@ namespace local
 		if ( ppsaStatus )
 			*ppsaStatus = ::SafeArrayCreate( VT_I4,   1, saBounds);
 
-		SVImageCompressionClass mainCompressionObject (SERVER_COMPRESSION_POOL_SIZE);
+		// BRW - SVImageCompression has been deprecated.
+		/*SVImageCompressionClass mainCompressionObject (SERVER_COMPRESSION_POOL_SIZE);
 
 		if (lCompression != 0)
 		{
@@ -6263,7 +6277,7 @@ namespace local
 				//--------- acceptable response.
 				hrResult = -12391;//!!!
 			}
-		}
+		}*/
 
 		for ( long l = 0; l < static_cast<long>(rvec.size()); ++l )
 		{
@@ -6277,7 +6291,8 @@ namespace local
 			if ( ppsaImages )
 			{
 				BSTR bstrImage = NULL;
-				CSVCommand::ImageToBSTR( rImage.info, rImage.handle, &bstrImage, lCompression, &mainCompressionObject );
+																					// BRW - SVImageCompression has been deprecated.
+				CSVCommand::ImageToBSTR( rImage.info, rImage.handle, &bstrImage );	//, lCompression, &mainCompressionObject );
 				CSVCommand::SafeArrayPutElementNoCopy( *ppsaImages, &l, bstrImage );
 			}
 			if ( ppsaOverlays )
@@ -6307,8 +6322,8 @@ namespace local
 	{
 		HRESULT hr = S_FALSE;
 
-		long lNumEntries = rvec.size();
-		long lNumValues = lNumEntries > 0 ? rvec.at(0).size() : 0;	// all entries have same num values
+		long lNumEntries = static_cast< long >( rvec.size() );
+		long lNumValues = lNumEntries > 0 ? static_cast< long >( rvec.at( 0 ).size() ) : 0;	// all entries have same num values
 
 		SAFEARRAYBOUND saBounds[2];
 		saBounds[0].lLbound=0;
@@ -6326,7 +6341,8 @@ namespace local
 		if ( ppsaStatus )
 			*ppsaStatus = ::SafeArrayCreate( VT_I4,   2, saBounds);
 
-		SVImageCompressionClass mainCompressionObject (SERVER_COMPRESSION_POOL_SIZE);
+		// BRW - SVImageCompression has been deprecated.
+		/*SVImageCompressionClass mainCompressionObject (SERVER_COMPRESSION_POOL_SIZE);
 
 		if (lCompression != 0)
 		{
@@ -6340,7 +6356,7 @@ namespace local
 				//--------- acceptable response.
 				hrResult = -12391;//!!!
 			}
-		}
+		}*/
 
 		long alDimIndex[2]={0};
 		for ( long lEntry = 0; lEntry < lNumEntries; ++lEntry )
@@ -6362,7 +6378,8 @@ namespace local
 				if ( ppsaImages )
 				{
 					BSTR bstrImage = NULL;
-					CSVCommand::ImageToBSTR( rImage.info, rImage.handle, &bstrImage, lCompression, &mainCompressionObject );
+																						// BRW - SVImageCompression has been deprecated.
+					CSVCommand::ImageToBSTR( rImage.info, rImage.handle, &bstrImage );	//, lCompression, &mainCompressionObject );
 					CSVCommand::SafeArrayPutElementNoCopy( *ppsaImages, alDimIndex, bstrImage );
 				}
 				if ( ppsaOverlays )
@@ -6686,7 +6703,7 @@ STDMETHODIMP CSVCommand::SVGetTransferValueDefinitionList(BSTR p_bstrInspectionN
 
 		size_t nCount = l_OutputList.GetSize();
 
-		for( size_t i = 0 ; i < nCount ; i++ )
+		for( int i = 0 ; i < static_cast< int >( nCount ); i++ )
 		{
 			// Get OutObjectInfoStruct...
 			SVOutObjectInfoStruct* pInfoItem = NULL;
@@ -6727,7 +6744,7 @@ STDMETHODIMP CSVCommand::SVGetTransferValueDefinitionList(BSTR p_bstrInspectionN
 		SAFEARRAYBOUND l_saBounds[2];
 
 		// First Dimension number of objects in list..
-		l_saBounds[0].cElements = l_pSelectedObjects.size();
+		l_saBounds[0].cElements = static_cast< ULONG >( l_pSelectedObjects.size() );
 		l_saBounds[0].lLbound = 0;
 
 		// Second Dimension is the parts fo the Transfer Definition
@@ -6740,7 +6757,7 @@ STDMETHODIMP CSVCommand::SVGetTransferValueDefinitionList(BSTR p_bstrInspectionN
 		long  l_Index[2];
 		for( size_t i = 0 ; i < l_pSelectedObjects.size() ; i++ )
 		{
-			l_Index[0] = i;
+			l_Index[0] = static_cast< long >( i );
 			// Name
 			l_Index[1] = 0;
 			_variant_t l_vTmp;
@@ -6776,7 +6793,7 @@ STDMETHODIMP CSVCommand::SVGetTransferValueDefinitionList(BSTR p_bstrInspectionN
 					SVEnumerateVector l_enumVect;
 					l_pEnumVO->GetEnumTypes( l_enumVect );
 					SAFEARRAYBOUND l_rgsabound[1];
-					l_rgsabound[0].cElements = l_enumVect.size();
+					l_rgsabound[0].cElements = static_cast< ULONG >( l_enumVect.size() );
 					l_rgsabound[0].lLbound = 0;
 					SAFEARRAY *l_psaTemp = SafeArrayCreate( VT_BSTR, 1, l_rgsabound );
 					for( long i = 0; i < static_cast<long>(l_enumVect.size()) ; i++ )
@@ -6800,7 +6817,7 @@ STDMETHODIMP CSVCommand::SVGetTransferValueDefinitionList(BSTR p_bstrInspectionN
 					std::vector<CString> l_StringVect;
 					l_pBoolVO->GetValidTypes( l_StringVect );
 					SAFEARRAYBOUND l_rgsabound[1];
-					l_rgsabound[0].cElements = l_StringVect.size();
+					l_rgsabound[0].cElements = static_cast< ULONG >( l_StringVect.size() );
 					l_rgsabound[0].lLbound = 0;
 					SAFEARRAY *l_psaTemp = SafeArrayCreate( VT_BSTR, 1, l_rgsabound );
 					for( long i = 0; i < static_cast<long>(l_StringVect.size()) ; i++ )
@@ -6859,8 +6876,8 @@ STDMETHODIMP CSVCommand::SVGetTransferImageDefinitionList(BSTR p_bstrInspectionN
 
 		std::vector<SVImageClass*> objectList;
 
-		size_t nCount = l_ImageList.GetSize();
-		for( size_t i=0; i<nCount; i++)
+		int nCount = static_cast< int >( l_ImageList.GetSize() );
+		for( int i = 0; i < nCount; i++ )
 		{
 			SVImageClass* pImage = l_ImageList.GetAt(i);
 			
@@ -6882,7 +6899,7 @@ STDMETHODIMP CSVCommand::SVGetTransferImageDefinitionList(BSTR p_bstrInspectionN
 		SAFEARRAYBOUND l_saBounds[2];
 
 		// First Dimension number of objects in list..
-		l_saBounds[0].cElements = objectList.size();
+		l_saBounds[0].cElements = static_cast< ULONG >( objectList.size() );
 		l_saBounds[0].lLbound = 0;
 
 		// Second Dimension is the parts fo the Transfer Definition
@@ -6895,7 +6912,7 @@ STDMETHODIMP CSVCommand::SVGetTransferImageDefinitionList(BSTR p_bstrInspectionN
 		long l_Index[2];
 		for( size_t i = 0 ; i < objectList.size() ; i++ )
 		{
-			l_Index[0] = i;
+			l_Index[0] = static_cast< long >( i );
 			// Name
 			l_Index[1] = 0;
 			_variant_t l_vTmp;
@@ -7054,7 +7071,17 @@ STDMETHODIMP CSVCommand::SVIsAvailiable()
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVCommand.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVCommand.cpp_v  $
+ * 
+ *    Rev 1.2   01 Oct 2013 12:16:26   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   06 May 2013 14:38:08   bWalter
  * Project:  SVObserver

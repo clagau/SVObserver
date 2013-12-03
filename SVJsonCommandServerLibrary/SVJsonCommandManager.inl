@@ -5,8 +5,8 @@
 //* .Module Name     : SVJsonCommandManager
 //* .File Name       : $Workfile:   SVJsonCommandManager.inl  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   18 Jun 2013 17:15:28  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   01 Oct 2013 09:26:18  $
 //******************************************************************************
 
 #ifndef SVJSONCOMMANDMANAGER_INL
@@ -81,7 +81,7 @@ void SVJsonCommandManager< SVCommandProcessor >::Shutdown()
 }
 
 template< typename SVCommandProcessor >
-void CALLBACK SVJsonCommandManager< SVCommandProcessor >::APCThreadProcess( DWORD dwParam )
+void CALLBACK SVJsonCommandManager< SVCommandProcessor >::APCThreadProcess( DWORD_PTR dwParam )
 {
 }
 
@@ -157,7 +157,17 @@ void SVJsonCommandManager< SVCommandProcessor >::ThreadProcess( bool& p_WaitForE
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVJsonCommandServerLibrary\SVJsonCommandManager.inl_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVJsonCommandServerLibrary\SVJsonCommandManager.inl_v  $
+ * 
+ *    Rev 1.2   01 Oct 2013 09:26:18   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   18 Jun 2013 17:15:28   bwalter
  * Project:  SVObserver

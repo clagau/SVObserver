@@ -5,8 +5,8 @@
 // * .Module Name     : SVTestIntekDCamDriverProxy.h
 // * .File Name       : $Workfile:   SVTestIntekDCamDriverProxy.h  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.0  $
-// * .Check In Date   : $Date:   22 Apr 2013 11:15:36  $
+// * .Current Version : $Revision:   1.1  $
+// * .Check In Date   : $Date:   02 Oct 2013 11:47:20  $
 // ******************************************************************************
 
 #ifndef INCL_SVTESTINTEKDCAMDRIVERPROXY_H
@@ -19,7 +19,7 @@ class SVDCamDriver;
 class SVDigitizerLoadLibraryClass;
 class SVTestAcquisitionClass;
 
-#define SVMSG_SVO_20_INCORRECT_CAMERA_FILE 20
+#include "SVMessage/SVMessage.h" // for SVMSG_SVO_20_INCORRECT_CAMERA_FILE
 
 class SVTestIntekDCamDriverProxy : public SVDCamDriverProxy
 {
@@ -57,6 +57,16 @@ public:
 // ******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVImageTest\SVTestIntekDCamDriverProxy.h_v  $
+ * 
+ *    Rev 1.1   02 Oct 2013 11:47:20   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platforms.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   22 Apr 2013 11:15:36   bWalter
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : SVRankingFilterDlg
 //* .File Name       : $Workfile:   SVRankingFilterDlg.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 14:39:12  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   02 Oct 2013 07:12:22  $
 //******************************************************************************
 
 
@@ -200,7 +200,7 @@ void SVRankingFilterDlg::OnSelchangeRankingRank()
 
 	if( lIndex != LB_ERR )
 	{
-		m_lRankingRank = m_ctlRankingRank.GetItemData( lIndex );
+		m_lRankingRank = static_cast<long>(m_ctlRankingRank.GetItemData( lIndex ));
 	}// end if
 
 }// end OnSelchangeRankingRank
@@ -267,7 +267,17 @@ void SVRankingFilterDlg::OnOK()
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVRankingFilterDlg.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVRankingFilterDlg.cpp_v  $
+ * 
+ *    Rev 1.1   02 Oct 2013 07:12:22   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 14:39:12   bWalter
  * Project:  SVObserver

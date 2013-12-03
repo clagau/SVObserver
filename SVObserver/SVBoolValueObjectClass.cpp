@@ -5,8 +5,8 @@
 //* .Module Name     : SVBoolValueObjectClass
 //* .File Name       : $Workfile:   SVBoolValueObjectClass.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   30 Jul 2013 12:28:30  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   30 Oct 2013 15:18:36  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -175,7 +175,7 @@ void SVBoolValueObjectClass::Persist(SVObjectWriter& rWriter)
 	rWriter.EndElement();
 }
 
-HRESULT SVBoolValueObjectClass::GetValidTypes( SVValidTypesVector& p_astrTypes )
+HRESULT SVBoolValueObjectClass::GetValidTypes( SVValidTypesVector& p_astrTypes ) const
 {
 	p_astrTypes.push_back(scTrue);
 	p_astrTypes.push_back(scFalse);
@@ -310,7 +310,17 @@ void SVBoolValueObjectClass::LocalInitialize()
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVBoolValueObjectClass.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVBoolValueObjectClass.cpp_v  $
+ * 
+ *    Rev 1.2   30 Oct 2013 15:18:36   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  866
+ * SCR Title:  Add GetDataDefinitionList Command to SVObserver's Remote Command Socket
+ * Checked in by:  bWalter;  Ben Walter
+ * Change Description:  
+ *   Made GetValidType method const.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   30 Jul 2013 12:28:30   tbair
  * Project:  SVObserver

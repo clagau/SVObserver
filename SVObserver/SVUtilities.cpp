@@ -5,8 +5,8 @@
 //* .Module Name     : SVUtilitiesClass
 //* .File Name       : $Workfile:   SVUtilities.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 15:56:58  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   02 Oct 2013 08:24:44  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -514,7 +514,7 @@ BOOL SVUtilitiesClass::UpdateIni()
 	SVOINIClass l_svIni;
 	CString csIniName = "C:\\SVObserver\\bin\\SVUtility.ini";
 
-	int iMapSize = pApp->m_UtilityMenu.size();
+	int iMapSize = static_cast<int>(pApp->m_UtilityMenu.size());
 
 	iter = pApp->m_UtilityMenu.begin();
 
@@ -542,7 +542,17 @@ BOOL SVUtilitiesClass::UpdateIni()
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVUtilities.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVUtilities.cpp_v  $
+ * 
+ *    Rev 1.1   02 Oct 2013 08:24:44   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 15:56:58   bWalter
  * Project:  SVObserver

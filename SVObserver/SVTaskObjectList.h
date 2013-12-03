@@ -5,8 +5,8 @@
 //* .Module Name     : SVTaskObjectList
 //* .File Name       : $Workfile:   SVTaskObjectList.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   08 May 2013 16:43:54  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   02 Oct 2013 08:17:46  $
 //******************************************************************************
 
 #ifndef SVTASKOBJECTLIST_H
@@ -61,7 +61,7 @@ private:
 	void cleanUpEmptyEntries();
 
 public:
-	int GetSize() const {return m_aTaskObjects.GetSize();}
+	int GetSize() const;
 	int GetUpperBound() const {return GetSize()-1;}
 	virtual void InsertAt( int nIndex, SVTaskObjectClass* PTaskObject, int nCount = 1 );
 	void SetAt( int nIndex, SVTaskObjectClass* PTaskObject );
@@ -137,7 +137,17 @@ protected:
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVTaskObjectList.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVTaskObjectList.h_v  $
+ * 
+ *    Rev 1.2   02 Oct 2013 08:17:46   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   08 May 2013 16:43:54   bWalter
  * Project:  SVObserver

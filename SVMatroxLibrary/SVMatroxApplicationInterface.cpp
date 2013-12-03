@@ -5,8 +5,8 @@
 // * .Module Name     : SVMatroxApplicationInterface
 // * .File Name       : $Workfile:   SVMatroxApplicationInterface.cpp  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.0  $
-// * .Check In Date   : $Date:   22 Apr 2013 14:56:20  $
+// * .Current Version : $Revision:   1.1  $
+// * .Check In Date   : $Date:   01 Oct 2013 11:08:08  $
 // ******************************************************************************
 
 #include "stdafx.h"
@@ -18,13 +18,14 @@
 
 #include <assert.h>
 
-long _stdcall SVMatroxApplicationInterface::SVMatroxHookHandler( long HookType, SVMatroxIdentifier EventId, void* UserDataPtr )
+SVMatroxInt _stdcall SVMatroxApplicationInterface::SVMatroxHookHandler( SVMatroxInt HookType, SVMatroxIdentifier EventId, void* UserDataPtr )
 {
 	MIL_TEXT_CHAR l_strMilText[M_ERROR_MESSAGE_SIZE];
 	SVMatroxStatusInformation l_StatusInfo;
 
-//	assert (0);
-	MappGetHookInfo( EventId, M_CURRENT, &( l_StatusInfo.m_StatusCode ) );
+	SVMatroxInt l_TempCode = 0;
+	MappGetHookInfo( EventId, M_CURRENT, &l_TempCode );
+	l_StatusInfo.m_StatusCode = SVMatroxIntToHRESULT( l_TempCode );
 	MappGetHookInfo( EventId, M_CURRENT + M_MESSAGE, l_strMilText );
 	l_StatusInfo.m_StatusString = l_strMilText;
 	
@@ -38,21 +39,30 @@ long _stdcall SVMatroxApplicationInterface::SVMatroxHookHandler( long HookType, 
 	{
 		case 3:
 		{
-			MappGetHookInfo( EventId, M_CURRENT_SUB_3, &( l_StatusInfo.m_StatusSubCode[ 2 ] ) );
+			l_TempCode = 0;
+			MappGetHookInfo( EventId, M_CURRENT_SUB_3, &l_TempCode );
+			l_StatusInfo.m_StatusSubCode[ 2 ] = SVMatroxIntToHRESULT( l_TempCode );
 			MappGetHookInfo( EventId, M_CURRENT_SUB_3 + M_MESSAGE, l_strMilText );
 			l_StatusInfo.m_StatusSubString[ 2 ] = l_strMilText;
+			// no break
 		}
 		case 2:
 		{
-			MappGetHookInfo( EventId, M_CURRENT_SUB_2, &( l_StatusInfo.m_StatusSubCode[ 1 ] ) );
+			l_TempCode = 0;
+			MappGetHookInfo( EventId, M_CURRENT_SUB_2, &l_TempCode );
+			l_StatusInfo.m_StatusSubCode[ 1 ] = SVMatroxIntToHRESULT( l_TempCode );
 			MappGetHookInfo( EventId, M_CURRENT_SUB_2 + M_MESSAGE, l_strMilText );
 			l_StatusInfo.m_StatusSubString[ 1 ] = l_strMilText;
+			// no break
 		}
 		case 1:
 		{
-			MappGetHookInfo( EventId, M_CURRENT_SUB_1, &( l_StatusInfo.m_StatusSubCode[ 0 ] ) );
+			l_TempCode = 0;
+			MappGetHookInfo( EventId, M_CURRENT_SUB_1, &l_TempCode );
+			l_StatusInfo.m_StatusSubCode[ 0 ] = SVMatroxIntToHRESULT( l_TempCode );
 			MappGetHookInfo( EventId, M_CURRENT_SUB_1 + M_MESSAGE, l_strMilText );
 			l_StatusInfo.m_StatusSubString[ 0 ] = l_strMilText;
+			// no break
 		}
 		default:
 		{
@@ -94,11 +104,11 @@ void SVMatroxApplicationInterface::Log( SVMatroxStatusInformation &p_rStatusInfo
 
 		if( SUCCEEDED( p_rStatusInfo.m_StatusCode ) )
 		{
-			e.SetException( SVMSG_SVMATROXLIBRARY_NO_ERROR, -15408, p_rStatusInfo.m_StatusCode  );
+			e.SetException( SVMSG_SVMATROXLIBRARY_NO_ERROR, -15408, static_cast< DWORD >( p_rStatusInfo.m_StatusCode ) );
 		}
 		else
 		{
-			e.SetException( SVMSG_SVMATROXLIBRARY_UNKNOWN_FATAL_ERROR, -15408, p_rStatusInfo.m_StatusCode  );
+			e.SetException( SVMSG_SVMATROXLIBRARY_UNKNOWN_FATAL_ERROR, -15408, static_cast< DWORD >( p_rStatusInfo.m_StatusCode ) );
 		}
 
 		e.LogException( p_rStatusInfo.GetCompleteString().c_str() );
@@ -144,11 +154,11 @@ void SVMatroxApplicationInterface::Startup()
 SVMatroxApplicationInterface::SVStatusCode SVMatroxApplicationInterface::GetLastStatus()
 {
 	SVStatusCode l_Status( SVMEE_STATUS_OK );
-	long appID = MappInquire(M_CURRENT_APPLICATION, M_NULL);
+	SVMatroxInt appID = MappInquire( M_CURRENT_APPLICATION, M_NULL );
 
 	if( appID != M_NULL )
 	{
-		l_Status = MappGetError( M_THREAD_CURRENT + M_CURRENT, NULL );
+		l_Status = SVMatroxIntToHRESULT( MappGetError( M_THREAD_CURRENT + M_CURRENT, NULL ) );
 
 		#ifdef _DEBUG
 		if( l_Status != M_NULL_ERROR )
@@ -183,7 +193,7 @@ SVMatroxApplicationInterface::SVStatusCode SVMatroxApplicationInterface::GetLast
 SVMatroxApplicationInterface::SVStatusCode SVMatroxApplicationInterface::GetLastStatus( SVMatroxStatusInformation& p_rStatus )
 {
 	SVStatusCode l_Status( M_NULL_ERROR );
-	long appID = MappInquire(M_CURRENT_APPLICATION, M_NULL);
+	SVMatroxInt appID = MappInquire( M_CURRENT_APPLICATION, M_NULL );
 
 	if( appID != M_NULL )
 	{
@@ -191,7 +201,9 @@ SVMatroxApplicationInterface::SVStatusCode SVMatroxApplicationInterface::GetLast
 
 		p_rStatus.clear();
 
-		l_Status = MappGetError( M_THREAD_CURRENT + M_CURRENT, &( p_rStatus.m_StatusCode ) );
+		SVMatroxInt l_TempStatus = 0;
+		l_Status = SVMatroxIntToHRESULT( MappGetError( M_THREAD_CURRENT + M_CURRENT, &l_TempStatus ) );
+		p_rStatus.m_StatusCode = SVMatroxIntToHRESULT( l_TempStatus );
 		MappGetError( M_THREAD_CURRENT + M_CURRENT + M_MESSAGE, l_strMilText );
 		p_rStatus.m_StatusString = l_strMilText;
 
@@ -205,21 +217,30 @@ SVMatroxApplicationInterface::SVStatusCode SVMatroxApplicationInterface::GetLast
 		{
 			case 3:
 			{
-				MappGetError( M_THREAD_CURRENT + M_CURRENT_SUB_3, &( p_rStatus.m_StatusSubCode[ 2 ] ) );
+				SVMatroxInt l_TempCode = 0;
+				MappGetError( M_THREAD_CURRENT + M_CURRENT_SUB_3, &l_TempCode );
+				p_rStatus.m_StatusSubCode[ 2 ] = SVMatroxIntToHRESULT( l_TempCode );
 				MappGetError( M_THREAD_CURRENT + M_CURRENT_SUB_3 + M_MESSAGE, l_strMilText );
 				p_rStatus.m_StatusSubString[ 2 ] = l_strMilText;
+				// no break;
 			}
 			case 2:
 			{
-				MappGetError( M_THREAD_CURRENT + M_CURRENT_SUB_2, &( p_rStatus.m_StatusSubCode[ 1 ] ) );
+				SVMatroxInt l_TempCode = 0;
+				MappGetError( M_THREAD_CURRENT + M_CURRENT_SUB_2, &l_TempCode );
+				p_rStatus.m_StatusSubCode[ 1 ] = SVMatroxIntToHRESULT( l_TempCode );
 				MappGetError( M_THREAD_CURRENT + M_CURRENT_SUB_2 + M_MESSAGE, l_strMilText );
 				p_rStatus.m_StatusSubString[ 1 ] = l_strMilText;
+				// no break
 			}
 			case 1:
 			{
-				MappGetError( M_THREAD_CURRENT + M_CURRENT_SUB_1, &( p_rStatus.m_StatusSubCode[ 0 ] ) );
+				SVMatroxInt l_TempCode = 0;
+				MappGetError( M_THREAD_CURRENT + M_CURRENT_SUB_1, &l_TempCode );
+				p_rStatus.m_StatusSubCode[ 0 ] = SVMatroxIntToHRESULT( l_TempCode );
 				MappGetError( M_THREAD_CURRENT + M_CURRENT_SUB_1 + M_MESSAGE, l_strMilText );
 				p_rStatus.m_StatusSubString[ 0 ] = l_strMilText;
+				// no break
 			}
 			default:
 			{
@@ -244,11 +265,11 @@ SVMatroxApplicationInterface::SVStatusCode SVMatroxApplicationInterface::GetLast
 SVMatroxApplicationInterface::SVStatusCode SVMatroxApplicationInterface::GetFirstError()
 {
 	SVStatusCode l_Code( SVMEE_STATUS_OK );
-	long appID = MappInquire(M_CURRENT_APPLICATION, M_NULL);
+	SVMatroxInt appID = MappInquire( M_CURRENT_APPLICATION, M_NULL );
 
 	if( appID != M_NULL )
 	{
-		l_Code = MappGetError( M_THREAD_CURRENT + M_GLOBAL, NULL );
+		l_Code = SVMatroxIntToHRESULT( MappGetError( M_THREAD_CURRENT + M_GLOBAL, NULL ) );
 	}
 	else
 	{
@@ -267,7 +288,7 @@ SVMatroxApplicationInterface::SVStatusCode SVMatroxApplicationInterface::GetFirs
 SVMatroxApplicationInterface::SVStatusCode SVMatroxApplicationInterface::GetFirstError( SVMatroxStatusInformation& p_rStatus )
 {
 	SVStatusCode l_Status( M_NULL_ERROR );
-	long appID = MappInquire(M_CURRENT_APPLICATION, M_NULL);
+	SVMatroxInt appID = MappInquire(M_CURRENT_APPLICATION, M_NULL);
 
 	if( appID != M_NULL )
 	{
@@ -275,7 +296,10 @@ SVMatroxApplicationInterface::SVStatusCode SVMatroxApplicationInterface::GetFirs
 
 		p_rStatus.clear();
 
-		l_Status = MappGetError( M_THREAD_CURRENT + M_GLOBAL, &( p_rStatus.m_StatusCode ) );
+		SVMatroxIdentifier l_TempStatus = 0;
+		SVMatroxIdentifier l_Error = MappGetError( M_THREAD_CURRENT + M_GLOBAL, &l_TempStatus );
+		p_rStatus.m_StatusCode = SVMatroxIntToHRESULT( l_TempStatus );
+		l_Status = SVMatroxIntToHRESULT( l_Error );
 		MappGetError( M_THREAD_CURRENT + M_GLOBAL + M_MESSAGE, l_strMilText );
 		p_rStatus.m_StatusString = l_strMilText;
 
@@ -289,19 +313,25 @@ SVMatroxApplicationInterface::SVStatusCode SVMatroxApplicationInterface::GetFirs
 		{
 			case 3:
 			{
-				MappGetError( M_THREAD_CURRENT + M_GLOBAL_SUB_3, &( p_rStatus.m_StatusSubCode[ 2 ] ) );
+				SVMatroxIdentifier l_TempCode = 0;
+				MappGetError( M_THREAD_CURRENT + M_GLOBAL_SUB_3, &l_TempCode );
+				p_rStatus.m_StatusSubCode[ 2 ] = SVMatroxIntToHRESULT( l_TempCode );
 				MappGetError( M_THREAD_CURRENT + M_GLOBAL_SUB_3 + M_MESSAGE, l_strMilText );
 				p_rStatus.m_StatusSubString[ 2 ] = l_strMilText;
 			}
 			case 2:
 			{
-				MappGetError( M_THREAD_CURRENT + M_GLOBAL_SUB_2, &( p_rStatus.m_StatusSubCode[ 1 ] ) );
+				SVMatroxIdentifier l_TempCode = 0;
+				MappGetError( M_THREAD_CURRENT + M_GLOBAL_SUB_2, &l_TempCode );
+				p_rStatus.m_StatusSubCode[ 1 ] = SVMatroxIntToHRESULT( l_TempCode );
 				MappGetError( M_THREAD_CURRENT + M_GLOBAL_SUB_2 + M_MESSAGE, l_strMilText );
 				p_rStatus.m_StatusSubString[ 1 ] = l_strMilText;
 			}
 			case 1:
 			{
-				MappGetError( M_THREAD_CURRENT + M_GLOBAL_SUB_1, &( p_rStatus.m_StatusSubCode[ 0 ] ) );
+				SVMatroxIdentifier l_TempCode = 0;
+				MappGetError( M_THREAD_CURRENT + M_GLOBAL_SUB_1, &l_TempCode );
+				p_rStatus.m_StatusSubCode[ 0 ] = SVMatroxIntToHRESULT( l_TempCode );
 				MappGetError( M_THREAD_CURRENT + M_GLOBAL_SUB_1 + M_MESSAGE, l_strMilText );
 				p_rStatus.m_StatusSubString[ 0 ] = l_strMilText;
 			}
@@ -323,14 +353,14 @@ SVMatroxApplicationInterface::SVStatusCode SVMatroxApplicationInterface::GetSyst
 {
 	SVStatusCode l_Code( SVMEE_STATUS_OK );
 
-	long appID = MappInquire(M_CURRENT_APPLICATION, M_NULL);
+	SVMatroxInt appID = MappInquire( M_CURRENT_APPLICATION, M_NULL );
 	if( appID != M_NULL )
 	{
 		#ifdef USE_TRY_BLOCKS
 		try
 		#endif
 		{
-			MappInquire(M_INSTALLED_SYSTEM_COUNT, &p_lCount);
+			p_lCount = static_cast< long >( MappInquire( M_INSTALLED_SYSTEM_COUNT, M_NULL ) );
 			l_Code = SVMatroxApplicationInterface::GetLastStatus();
 		}
 		#ifdef USE_TRY_BLOCKS
@@ -351,10 +381,10 @@ SVMatroxApplicationInterface::SVStatusCode SVMatroxApplicationInterface::GetSyst
 	return l_Code;
 }
 
-SVMatroxApplicationInterface::SVStatusCode SVMatroxApplicationInterface::GetSystemName( long p_lSystemNumber, SVMatroxString& p_rSystemName )
+SVMatroxApplicationInterface::SVStatusCode SVMatroxApplicationInterface::GetSystemName( SVMatroxInt p_lSystemNumber, SVMatroxString& p_rSystemName )
 {
 	SVStatusCode l_Code( SVMEE_STATUS_OK );
-	long appID = MappInquire(M_CURRENT_APPLICATION, M_NULL);
+	SVMatroxInt appID = MappInquire( M_CURRENT_APPLICATION, M_NULL );
 
 	if( appID != M_NULL )
 	{
@@ -395,7 +425,8 @@ SVMatroxApplicationInterface::SVStatusCode SVMatroxApplicationInterface::GetSyst
 */
 void SVMatroxApplicationInterface::LocalInitialize()
 {
-	long appID = MappInquire(M_CURRENT_APPLICATION, M_NULL);
+	//long appID = MappInquire(M_CURRENT_APPLICATION, M_NULL);
+	SVMatroxInt appID = MappInquire( M_CURRENT_APPLICATION, 0 );
 	if( appID == M_NULL )
 	{
 		appID = MappAlloc( M_DEFAULT, M_NULL );
@@ -442,7 +473,7 @@ void SVMatroxApplicationInterface::LocalInitialize()
 		}
 		else
 		{
-			long l_Status = MappGetError( M_THREAD_CURRENT + M_CURRENT, NULL );
+			SVMatroxIdentifier l_Status = MappGetError( M_THREAD_CURRENT + M_CURRENT, NULL );
 
 			#ifdef _DEBUG
 			if( l_Status != M_NULL_ERROR )
@@ -466,7 +497,7 @@ void SVMatroxApplicationInterface::LocalInitialize()
 */
 void SVMatroxApplicationInterface::LocalClear()
 {
-	long appID = MappInquire(M_CURRENT_APPLICATION, M_NULL);
+	SVMatroxInt appID = MappInquire( M_CURRENT_APPLICATION, M_NULL );
 	if( appID != M_NULL )
 	{
 		// Disable MIL error message to be displayed by MIL
@@ -479,11 +510,33 @@ void SVMatroxApplicationInterface::LocalClear()
 	}
 }
 
+HRESULT SVMatroxApplicationInterface::SVMatroxIntToHRESULT( SVMatroxIdentifier p_Int )
+{
+	HRESULT l_Retval = E_UNEXPECTED;
+
+	if ( ( p_Int & 0x1111111100000000 ) == 0 )
+	{
+		l_Retval = static_cast< HRESULT >( p_Int );
+	}
+
+	return l_Retval;
+}
+
 // ******************************************************************************
 // * LOG HISTORY:
 // ******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVMatroxLibrary\SVMatroxApplicationInterface.cpp_v  $
+ * 
+ *    Rev 1.1   01 Oct 2013 11:08:08   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   22 Apr 2013 14:56:20   bWalter
  * Project:  SVObserver

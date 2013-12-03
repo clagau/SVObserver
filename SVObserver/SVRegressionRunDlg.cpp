@@ -5,8 +5,8 @@
 // * .Module Name     : SVRegressionRunDlg
 // * .File Name       : $Workfile:   SVRegressionRunDlg.cpp  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.0  $
-// * .Check In Date   : $Date:   23 Apr 2013 14:42:08  $
+// * .Current Version : $Revision:   1.1  $
+// * .Check In Date   : $Date:   02 Oct 2013 08:00:12  $
 // ******************************************************************************
 // SVRegressionRunDlg.cpp : implementation file
 //
@@ -311,7 +311,7 @@ LRESULT  CSVRegressionRunDlg::SetNextFiles(WPARAM wParam, LPARAM lParam)
 	//clear contents of list control
 	//m_lstCameraImages.DeleteAllItems();
 
-	int iCount = RegressionFileList->GetCount();	
+	int iCount = static_cast<int>(RegressionFileList->GetCount());	
 
 	int iMaxStringSize = 0;
 	CString sTmpString;
@@ -362,7 +362,7 @@ LRESULT  CSVRegressionRunDlg::SetNextFiles(WPARAM wParam, LPARAM lParam)
 	CClientDC dc(this);
 	CSize Extent;
 
-	Extent = dc.GetTextExtent(sTmpString, _tcslen(sTmpString));
+	Extent = dc.GetTextExtent(sTmpString, static_cast<int>(_tcslen(sTmpString)));
 
 	Extent.cx += 3 * ::GetSystemMetrics(SM_CXBORDER);
 
@@ -546,7 +546,17 @@ void CSVRegressionRunDlg::OnBtnExit()
 // * LOG HISTORY:
 // ******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVRegressionRunDlg.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVRegressionRunDlg.cpp_v  $
+ * 
+ *    Rev 1.1   02 Oct 2013 08:00:12   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 14:42:08   bWalter
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 // * .Module Name     : StringMunge
 // * .File Name       : $Workfile:   StringMunge.cpp  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.0  $
-// * .Check In Date   : $Date:   25 Apr 2013 12:58:06  $
+// * .Current Version : $Revision:   1.1  $
+// * .Check In Date   : $Date:   02 Oct 2013 08:55:16  $
 // ******************************************************************************
 
 #include "stdafx.h"
@@ -25,7 +25,7 @@
 	bool bModified=false;
 
 //	while ((t=strcspn(*psString, szChars)) < psString->GetLength())
-	while ((t=_tcscspn(*psString, tszChars)) < psString->GetLength())
+	while ( ( t = static_cast< int >( _tcscspn( *psString, tszChars ) ) ) < psString->GetLength() )
 		{
 		bModified=true;
 		*psString=psString->Left(t)+psString->Mid(t+1);
@@ -65,7 +65,7 @@
 
 #if 1
 //	while ((t=strspn(*psString, szChars)) < psString->GetLength())
-	while ((t=_tcsspn(*psString, tszChars)) < psString->GetLength())
+	while ( ( t = static_cast< int >( _tcsspn( *psString, tszChars ) ) ) < psString->GetLength() )
 		{
 		bModified=true;
 		*psString=psString->Left(t)+psString->Mid(t+1);
@@ -119,7 +119,7 @@
 	TCHAR tc;
 	TCHAR tszTemp[2]=_T(" ");
 	long nPos;
-	int len=_tcslen(tszFrom);
+	int len = static_cast< int >( _tcslen( tszFrom ) );
 
 	int i,s=psString->GetLength();
 	for (i=0; i<s; i++)
@@ -127,7 +127,7 @@
 		tc=psString->GetAt(i);
 		tszTemp[0]=tc;
 //		if (((nPos=strcspn(szFrom, szTemp)) < len) && (nPos >=0) )	
-		if (((nPos=_tcscspn(tszFrom, tszTemp)) < len) && (nPos >= 0) )	
+		if ( ( ( nPos = static_cast< long >( _tcscspn( tszFrom, tszTemp ) ) ) < len ) && ( nPos >= 0 ) )
 			{
 //			c=*(szTo+nPos);
 			tc=tszTo[nPos];
@@ -193,7 +193,7 @@
 			ptszFromSet=&(tszFrom[nFromPos]);
 //			pszToSet=szTo+nToPos;
 			ptszToSet=&(tszTo[nToPos]);
-			len=_tcslen(ptszFromSet)+1;
+			len = static_cast< int >( _tcslen( ptszFromSet ) + 1 );
 			nFromPos+=len;
 			nToPos+=len;
 
@@ -385,7 +385,17 @@
 // * LOG HISTORY:
 // ******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVOMFCLibrary\StringMunge.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVOMFCLibrary\StringMunge.cpp_v  $
+ * 
+ *    Rev 1.1   02 Oct 2013 08:55:16   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   25 Apr 2013 12:58:06   bWalter
  * Project:  SVObserver

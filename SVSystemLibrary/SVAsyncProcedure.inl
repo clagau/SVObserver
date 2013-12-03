@@ -5,8 +5,8 @@
 //* .Module Name     : SVAsyncProcedure
 //* .File Name       : $Workfile:   SVAsyncProcedure.inl  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   25 Apr 2013 17:48:38  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   02 Oct 2013 10:12:40  $
 //******************************************************************************
 
 #include "SVStatusLibrary/SVException.h"
@@ -50,7 +50,7 @@ HRESULT SVAsyncProcedure<SVAPCSignalHandler, SVThreadSignalHandler>::Signal(void
 
 	if( l_Status == S_OK )
 	{
-		if( ::QueueUserAPC( m_apcHandler, m_thread.GetThreadHandle(), (DWORD)pData ) == 0 )
+		if( ::QueueUserAPC( m_apcHandler, m_thread.GetThreadHandle(), ( ULONG_PTR )pData ) == 0 )
 		{
 			l_svLog.SetException(SV_FATAL_SVSYSTEMLIBRARY_0001, _T(__DATE__), _T(__TIME__), m_tag.c_str(), _T(__FILE__), _T(__LINE__), _T(__TIMESTAMP__), 672, 0 );
 			l_svLog.LogException();
@@ -59,7 +59,7 @@ HRESULT SVAsyncProcedure<SVAPCSignalHandler, SVThreadSignalHandler>::Signal(void
 
 			if( l_Status == S_OK )
 			{
-				if( ::QueueUserAPC( m_apcHandler, m_thread.GetThreadHandle(), (DWORD)pData ) == 0 )
+				if( ::QueueUserAPC( m_apcHandler, m_thread.GetThreadHandle(), ( ULONG_PTR )pData ) == 0 )
 				{
 					l_Status = SV_FATAL_SVSYSTEMLIBRARY_0001;
 
@@ -117,7 +117,17 @@ bool SVAsyncProcedure<SVAPCSignalHandler, SVThreadSignalHandler>::IsActive() con
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVSystemLibrary\SVAsyncProcedure.inl_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVSystemLibrary\SVAsyncProcedure.inl_v  $
+ * 
+ *    Rev 1.1   02 Oct 2013 10:12:40   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   25 Apr 2013 17:48:38   bWalter
  * Project:  SVObserver

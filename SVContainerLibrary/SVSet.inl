@@ -5,8 +5,8 @@
 //* .Module Name     : SVSet
 //* .File Name       : $Workfile:   SVSet.inl  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   22 Apr 2013 07:44:22  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   30 Sep 2013 14:41:50  $
 //******************************************************************************
 
 template
@@ -133,7 +133,7 @@ typename SVSet< SVT_KEY >::key_type& SVSet< SVT_KEY >::GetAt( INT_PTR nIndex )
 
 	std::advance( l_Iter, nIndex );
 
-	return const_cast< key_type& >( *l_Iter );
+	return const_cast< SVSet< SVT_KEY >::key_type& >( *l_Iter );
 }
 
 template
@@ -187,7 +187,17 @@ INT_PTR SVSet< SVT_KEY >::Find( key_type searchValue ) const
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVContainerLibrary\SVSet.inl_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVContainerLibrary\SVSet.inl_v  $
+ * 
+ *    Rev 1.1   30 Sep 2013 14:41:50   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platforms.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   22 Apr 2013 07:44:22   bWalter
  * Project:  SVObserver
@@ -219,4 +229,3 @@ $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVContainerLibrary\SV
  * 
  * /////////////////////////////////////////////////////////////////////////////////////
 */
-

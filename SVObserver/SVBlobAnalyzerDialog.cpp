@@ -5,8 +5,8 @@
 //* .Module Name     : SVBlobAnalyzerDialog
 //* .File Name       : $Workfile:   SVBlobAnalyzerDialog.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 09:43:34  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   01 Oct 2013 12:16:24  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -249,7 +249,7 @@ void SVBlobAnalyzeFeatureDialogClass::EnableButtons()
 	if( count ) 
 	{
 		// Check for the "No Feature" string
-		long newIndex = m_lbSelectedFeatures.GetItemData( 0 );
+		long newIndex = static_cast< long >( m_lbSelectedFeatures.GetItemData( 0 ) );
 		if( newIndex != LB_ERR)
 		{
 			state = TRUE;
@@ -298,24 +298,14 @@ void SVBlobAnalyzeFeatureDialogClass::EnableButtons()
 	}
 }
 
-/////////////////////////////////////////////////////////////////////////////
-//
-//
 void SVBlobAnalyzeFeatureDialogClass::OnButtonAdd() 
 {
-	long    lAvailableIndex;
-	long    lCurrentIndex;
-	//long    lFeatureCount;
-
-	lAvailableIndex = m_lbAvailableFeatures.GetItemData( m_lbAvailableFeatures.GetCurSel() );
-
-	lCurrentIndex = m_lbSelectedFeatures.GetItemData( m_lbSelectedFeatures.GetCurSel() );
+	long lAvailableIndex = static_cast< long >( m_lbAvailableFeatures.GetItemData( m_lbAvailableFeatures.GetCurSel() ) );
+	long lCurrentIndex = static_cast< long >( m_lbSelectedFeatures.GetItemData( m_lbSelectedFeatures.GetCurSel() ) );
 
 	if( lAvailableIndex != LB_ERR &&
 		lAvailableIndex >= 0)
 	{
-//        lFeatureCount = m_lbSelectedFeatures.GetCount ();
-
 		if (lCurrentIndex == LB_ERR)
 		{
 			m_pCurrentAnalyzer->msvSortFeature.SetValue (1, lAvailableIndex);
@@ -336,14 +326,10 @@ void SVBlobAnalyzeFeatureDialogClass::OnButtonAdd()
 	UpdateData (FALSE);
 }
 
-/////////////////////////////////////////////////////////////////////////////
-//
-//
 void SVBlobAnalyzeFeatureDialogClass::OnButtonRemove() 
 {
-
-	long index = m_lbSelectedFeatures.GetItemData( 
-		m_lbSelectedFeatures.GetCurSel() );
+	long index = static_cast< long >( m_lbSelectedFeatures.GetItemData( 
+		m_lbSelectedFeatures.GetCurSel() ) );
 
 	if( index != LB_ERR && 
 		index >= 0 )
@@ -367,7 +353,7 @@ void SVBlobAnalyzeFeatureDialogClass::OnButtonRemove()
 			// Only one Entry and it may be the "No Feature" string
 			if( count )
 			{
-				long newIndex = m_lbSelectedFeatures.GetItemData( 0 );
+				long newIndex = static_cast< long >( m_lbSelectedFeatures.GetItemData( 0 ) );
 				if( newIndex == LB_ERR)
 				{
 					m_pCurrentAnalyzer->msvSortFeature.SetValue (1, -1L);
@@ -390,7 +376,7 @@ void SVBlobAnalyzeFeatureDialogClass::OnButtonRemove()
 			// Only one Entry and it may be the "No Feature" string
 			else if( count == 1 )
 			{
-				long newIndex = m_lbSelectedFeatures.GetItemData( 0 );
+				long newIndex = static_cast< long >( m_lbSelectedFeatures.GetItemData( 0 ) );
 				if( newIndex == LB_ERR)
 				{
 					m_pCurrentAnalyzer->msvSortFeature.SetValue (1, -1L);
@@ -464,9 +450,7 @@ void SVBlobAnalyzeFeatureDialogClass::OnCancel()
 
 void SVBlobAnalyzeFeatureDialogClass::OnSetSortBtn() 
 {
-	long    lCurrentIndex;
-
-	lCurrentIndex = m_lbSelectedFeatures.GetItemData( m_lbSelectedFeatures.GetCurSel() );
+	long lCurrentIndex = static_cast< long >( m_lbSelectedFeatures.GetItemData( m_lbSelectedFeatures.GetCurSel() ) );
 
 	if( lCurrentIndex != LB_ERR && lCurrentIndex >= 0)
 	{
@@ -621,7 +605,17 @@ void SVBlobAnalyzeFeatureDialogClass::OnButtonSetFeatureProperties()
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVBlobAnalyzerDialog.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVBlobAnalyzerDialog.cpp_v  $
+ * 
+ *    Rev 1.1   01 Oct 2013 12:16:24   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 09:43:34   bWalter
  * Project:  SVObserver

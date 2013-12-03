@@ -5,8 +5,8 @@
 // * .Module Name     : SVCameraPage
 // * .File Name       : $Workfile:   SVCameraPage.cpp  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.0  $
-// * .Check In Date   : $Date:   22 Apr 2013 11:08:18  $
+// * .Current Version : $Revision:   1.1  $
+// * .Check In Date   : $Date:   01 Oct 2013 08:25:58  $
 // ******************************************************************************
 
 #include "stdafx.h"
@@ -21,6 +21,7 @@
 #include "SVTestAcquisitionSubsystem.h"
 #include "SVTestIntekDCamDriverProxy.h"
 #include "SVImageLibrary/SVImagingDeviceParams.h"
+#include "SVMessage/SVMessage.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -115,9 +116,7 @@ void SVCameraPage::OnAdvancedButtonClick()
 
 	dlg.m_pAcquisition = m_pAcquisition;
 
-	int rc = dlg.DoModal();
-
-	if (rc == IDOK)
+	if ( dlg.DoModal() == IDOK )
 	{
 		if (m_pAcquisition)
 		{
@@ -526,6 +525,17 @@ void SVCameraPage::OnDestroy()
 // ******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVImageTest\SVCameraPage.cpp_v  $
+ * 
+ *    Rev 1.1   01 Oct 2013 08:25:58   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add X64 Platform
+ * 
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   22 Apr 2013 11:08:18   bWalter
  * Project:  SVObserver

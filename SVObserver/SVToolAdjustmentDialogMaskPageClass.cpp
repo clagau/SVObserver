@@ -5,8 +5,8 @@
 //* .Module Name     : SVToolAdjustmentDialogMaskPageClass
 //* .File Name       : $Workfile:   SVToolAdjustmentDialogMaskPageClass.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   13 Aug 2013 10:40:50  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   02 Oct 2013 08:24:42  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -140,7 +140,7 @@ HRESULT SVToolAdjustmentDialogMaskPageClass::SetInspectionData()
 
 		if( l_hrOk == S_OK )
 		{
-			l_hrOk = AddInputRequest( &( m_pMask->m_Data.evoCurrentMaskOperator ), m_cbMaskOperator.GetItemData( m_cbMaskOperator.GetCurSel() ) );
+			l_hrOk = AddInputRequest( &( m_pMask->m_Data.evoCurrentMaskOperator ), static_cast<double>(m_cbMaskOperator.GetItemData( m_cbMaskOperator.GetCurSel() )) );
 		}
 
 		if( l_hrOk == S_OK )
@@ -158,7 +158,7 @@ HRESULT SVToolAdjustmentDialogMaskPageClass::SetInspectionData()
 			int iSel = m_cbFillOptions.GetCurSel();
 			if ( iSel != CB_ERR )
 			{
-				long lValue = m_cbFillOptions.GetItemData(iSel);
+				long lValue = static_cast<long>(m_cbFillOptions.GetItemData(iSel));
 
 				l_hrOk = AddInputRequest( &( m_pMask->m_Data.evoFillArea ), lValue );
 			}
@@ -1039,6 +1039,16 @@ void SVToolAdjustmentDialogMaskPageClass::OnSelchangeDrawMaskCriteria()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVToolAdjustmentDialogMaskPageClass.cpp_v  $
+ * 
+ *    Rev 1.2   02 Oct 2013 08:24:42   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   13 Aug 2013 10:40:50   bWalter
  * Project:  SVObserver

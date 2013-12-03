@@ -5,8 +5,8 @@
 // * .Module Name     : SVMatroxBlobInterface
 // * .File Name       : $Workfile:   SVMatroxBlobInterface.cpp  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.0  $
-// * .Check In Date   : $Date:   22 Apr 2013 14:59:24  $
+// * .Current Version : $Revision:   1.1  $
+// * .Check In Date   : $Date:   01 Oct 2013 11:08:10  $
 // ******************************************************************************
 
 #include "stdafx.h"
@@ -464,7 +464,7 @@ SVMatroxBlobInterface::SVStatusCode SVMatroxBlobInterface::Create( SVMatroxBlobF
 
 		if( l_Code == SVMEE_STATUS_OK )
 		{
-			MIL_ID l_NewId = MblobAllocFeatureList(M_DEFAULT_HOST, M_NULL );
+			SVMatroxIdentifier l_NewId = MblobAllocFeatureList(M_DEFAULT_HOST, M_NULL );
 			l_Code = SVMatroxApplicationInterface::GetLastStatus();
 			if( l_Code == SVMEE_STATUS_OK )
 			{
@@ -511,7 +511,7 @@ SVMatroxBlobInterface::SVStatusCode SVMatroxBlobInterface::Create( SVMatroxBlobR
 
 		if( l_Code == SVMEE_STATUS_OK )
 		{
-			MIL_ID l_NewId = MblobAllocResult(M_DEFAULT_HOST, M_NULL );
+			SVMatroxIdentifier l_NewId = MblobAllocResult(M_DEFAULT_HOST, M_NULL );
 			l_Code = SVMatroxApplicationInterface::GetLastStatus();
 			if( l_Code == SVMEE_STATUS_OK )
 			{
@@ -808,8 +808,11 @@ SVMatroxBlobInterface::SVStatusCode SVMatroxBlobInterface::GetNumber( const SVMa
 	{
 		if( !p_rResultId.empty() )
 		{
+			SVMatroxInt l_Number = 0;
 			long l_lValue;
-			MblobGetNumber( p_rResultId.m_BlobResultId, &l_lValue );
+			//MblobGetNumber( p_rResultId.m_BlobResultId, &l_lValue );
+			MblobGetNumber( p_rResultId.m_BlobResultId, &l_Number );
+			l_lValue = SVMatroxApplicationInterface::SVMatroxIntToHRESULT( l_Number );
 			l_Code = SVMatroxApplicationInterface::GetLastStatus();
 			if( l_Code == SVMEE_STATUS_OK )
 			{
@@ -1707,6 +1710,16 @@ HRESULT SVMatroxBlobInterface::CreateBlobOffsetResultList(const SVBlobList& resu
 // ******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVMatroxLibrary\SVMatroxBlobInterface.cpp_v  $
+ * 
+ *    Rev 1.1   01 Oct 2013 11:08:10   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   22 Apr 2013 14:59:24   bWalter
  * Project:  SVObserver

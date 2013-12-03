@@ -5,8 +5,8 @@
 // * .Module Name     : SVRegressionFileSelectSheet
 // * .File Name       : $Workfile:   SVRegressionFileSelectSheet.cpp  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.0  $
-// * .Check In Date   : $Date:   23 Apr 2013 14:41:44  $
+// * .Current Version : $Revision:   1.1  $
+// * .Check In Date   : $Date:   02 Oct 2013 07:12:18  $
 // ******************************************************************************
 
 #include "stdafx.h"
@@ -48,7 +48,7 @@ CSVRegressionFileSelectSheet::~CSVRegressionFileSelectSheet()
 			delete pPage;
 	}
 
-	int iStructCnt = m_pRegressionList->GetCount();
+	int iStructCnt = static_cast<int>(m_pRegressionList->GetCount());
 }
 
 
@@ -202,7 +202,7 @@ RegressionFileSelectCode CSVRegressionFileSelectSheet::ValidateList()
 
 	long l_lTotalNumFiles = 0;
 
-	int iCount = m_pRegressionList->GetCount();
+	int iCount = static_cast<int>(m_pRegressionList->GetCount());
 	long lListCountSize = 0;
 
 	for ( int i = 0; i < iCount; i++ )
@@ -319,7 +319,7 @@ BOOL CSVRegressionFileSelectSheet::ValidateMask(CString sMask)
 
 void CSVRegressionFileSelectSheet::ClearRegressionList()
 {
-	int iCount = m_pRegressionList->GetCount();
+	int iCount = static_cast<int>(m_pRegressionList->GetCount());
 	for ( int i = iCount-1; i >= 0; i-- )
 	{
 		POSITION pos = m_pRegressionList->FindIndex(i);
@@ -333,7 +333,7 @@ void CSVRegressionFileSelectSheet::ClearRegressionList()
 
 void CSVRegressionFileSelectSheet::FillFileList()
 {
-	int iCnt = m_pRegressionList->GetCount();
+	int iCnt = static_cast<int>(m_pRegressionList->GetCount());
 
 	for ( int i = 0; i <= iCnt; i++ )
 	{
@@ -400,7 +400,7 @@ BOOL CSVRegressionFileSelectSheet::OnInitDialog()
 
 
 	CSVRegressionFileSelectDlg *pPage;
-	int iRegListCnt = m_pRegressionList->GetCount();
+	int iRegListCnt = static_cast<int>(m_pRegressionList->GetCount());
 	if ( iRegListCnt > 0 )
 	{
 		for ( int l_iCount = 0; l_iCount <= iPageCnt-1; l_iCount++ )
@@ -435,7 +435,17 @@ BOOL CSVRegressionFileSelectSheet::OnInitDialog()
 // * LOG HISTORY:
 // ******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVRegressionFileSelectSheet.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVRegressionFileSelectSheet.cpp_v  $
+ * 
+ *    Rev 1.1   02 Oct 2013 07:12:18   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 14:41:44   bWalter
  * Project:  SVObserver

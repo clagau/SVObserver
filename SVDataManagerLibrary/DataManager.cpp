@@ -5,8 +5,8 @@
 // * .Module Name     : SVDataManager
 // * .File Name       : $Workfile:   DataManager.cpp  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.2  $
-// * .Check In Date   : $Date:   13 May 2013 10:55:06  $
+// * .Current Version : $Revision:   1.3  $
+// * .Check In Date   : $Date:   30 Sep 2013 14:50:26  $
 // ******************************************************************************
 
 #include "stdafx.h"
@@ -200,8 +200,8 @@ HRESULT SVDataManager::CreateManagedIndexArray (BSTR  aIndexArrayName,
 		if (svmlFirstUnusedIndex == -1)
 		{
 			//------ There are no unused indexes. ---------------------------------------
-			*alpIndexArrayHandle = 
-				svmManagedIndexArrayList.Add (pNewManagedIndexArray);
+			*alpIndexArrayHandle = static_cast< long >( 
+				svmManagedIndexArrayList.Add( pNewManagedIndexArray ) );
 			
 		}
 		else
@@ -575,7 +575,7 @@ HRESULT SVDataManager::ValidateIndexArrayHandle (long   alIndexArrayHandle) cons
 			break;
 		}
 		
-		lNbrOfElements = svmManagedIndexArrayList.GetSize ();
+		lNbrOfElements = static_cast< long >( svmManagedIndexArrayList.GetSize() );
 		
 		if (alIndexArrayHandle >= lNbrOfElements)
 		{
@@ -871,7 +871,17 @@ BOOL SVDataManager::Unlock() const
 // * LOG HISTORY:
 // ******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVDataManagerLibrary\DataManager.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVDataManagerLibrary\DataManager.cpp_v  $
+ * 
+ *    Rev 1.3   30 Sep 2013 14:50:26   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platforms.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   13 May 2013 10:55:06   bWalter
  * Project:  SVObserver

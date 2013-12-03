@@ -5,8 +5,8 @@
 //* .Module Name     : SVOCVAnalyzerResult
 //* .File Name       : $Workfile:   SVOCVAnalyzerResult.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   13 May 2013 12:36:56  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   02 Oct 2013 06:48:22  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -676,7 +676,7 @@ HRESULT SVOCVAnalyzeResultClass::LoadMatchString()
 					 SV_TRAP_ERROR_BRK_TSTFIRST (msvError, 25052);
 				 }
 			 
-				m_lMatchStringLength = strlen( m_pDataArr[0] );
+				m_lMatchStringLength = static_cast< long >( strlen( m_pDataArr[ 0 ] ) );
 			 }
 			 else
 			 {
@@ -1470,7 +1470,7 @@ BOOL SVOCVAnalyzeResultClass::BuildHashTable( char *pBuffer )
 		for(short Count = 0; Count < m_nTotalCount ; Count++)
 		{
 			char *pData = m_pDataArr[Count];
-			int nCharCount = strlen(pData);
+			int nCharCount = static_cast< int >( strlen( pData ) );
 			long lIndexValue = 0;
 			for (int i = 0; i < nCharCount; i++)
 			{
@@ -1634,7 +1634,17 @@ HRESULT SVOCVAnalyzeResultClass::onCollectOverlays(SVImageClass* p_pImage, SVExt
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVOCVAnalyzerResult.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVOCVAnalyzerResult.cpp_v  $
+ * 
+ *    Rev 1.3   02 Oct 2013 06:48:22   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   13 May 2013 12:36:56   bWalter
  * Project:  SVObserver

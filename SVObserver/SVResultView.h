@@ -5,8 +5,8 @@
 //* .Module Name     : SVResultView
 //* .File Name       : $Workfile:   SVResultView.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   23 Sep 2013 11:58:34  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   02 Oct 2013 12:05:38  $
 //******************************************************************************
 
 #ifndef SVRESULTVIEW_H
@@ -40,7 +40,7 @@ public:
 	protected:
 	afx_msg void OnWindowPosChanged(WINDOWPOS FAR* lpwndpos);
 	afx_msg void OnDestroy();
-	afx_msg void OnTimer(UINT nIDEvent);
+	afx_msg void OnTimer( UINT_PTR nIDEvent );
 	afx_msg void OnRButtonUp(UINT nFlags, CPoint point);
 	afx_msg void OnRButtonDown(UINT nFlags, CPoint point);
 	afx_msg BOOL OnEraseBkgnd( CDC* p_pDC );
@@ -106,6 +106,16 @@ protected:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVResultView.h_v  $
+ * 
+ *    Rev 1.2   02 Oct 2013 12:05:38   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platforms.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   23 Sep 2013 11:58:34   bwalter
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : SVFile
 //* .File Name       : $Workfile:   SVFile.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   25 Apr 2013 17:51:18  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   02 Oct 2013 10:12:42  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -71,7 +71,7 @@ UINT SVFile::Read( void* lpBuf, UINT nCount )
 
 	if( m_pFile != NULL )
 	{
-		l_BytesRead = ::fread( lpBuf, 1, nCount, m_pFile );
+		l_BytesRead = static_cast<UINT>(::fread( lpBuf, 1, nCount, m_pFile ));
 	}
 
 	return l_BytesRead;
@@ -265,7 +265,17 @@ HRESULT SVFile::GetAccessMode( SVString& p_rAccessMode, int& p_rShareMode, UINT 
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVSystemLibrary\SVFile.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVSystemLibrary\SVFile.cpp_v  $
+ * 
+ *    Rev 1.1   02 Oct 2013 10:12:42   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   25 Apr 2013 17:51:18   bWalter
  * Project:  SVObserver

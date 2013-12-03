@@ -5,8 +5,8 @@
 //* .Module Name     : SVParserProgressDialog
 //* .File Name       : $Workfile:   SVParserProgressDialog.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 13:14:08  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   02 Oct 2013 07:01:54  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -247,8 +247,8 @@ END_MESSAGE_MAP()
 LRESULT SVParserProgressDialog::OnUpdateProgress( WPARAM wParam, LPARAM lParam )
 {
 	SVParserProgressStruct* pParserProgress = reinterpret_cast<SVParserProgressStruct *>(lParam);
-	int cnt = pParserProgress->amtProcessed; //(int)wParam;
-	int total = pParserProgress->amtTotal; //(int)lParam;
+	int cnt = static_cast<int>(pParserProgress->amtProcessed); //(int)wParam;
+	int total = static_cast<int>(pParserProgress->amtTotal); //(int)lParam;
 
 	CProgressCtrl* pProgressCtrl = GetProgressControl( pParserProgress->parserHandle );
 
@@ -315,14 +315,14 @@ LRESULT SVParserProgressDialog::OnEndProgressDialog( WPARAM wParam, LPARAM lPara
 				for( SVParserControlList::iterator it = m_parserControlList.begin();it != m_parserControlList.end();++it )
 				{
 					SVParserProgressControlStruct& parserControl = it->second;
-					parserControl.bValidate = pWnd->SendMessage( SV_PARSE_OBJECT_SCRIPT_END, 0, ( LPARAM )&parserControl.OwnerGuid );
+					parserControl.bValidate = static_cast<BOOL>(pWnd->SendMessage( SV_PARSE_OBJECT_SCRIPT_END, 0, ( LPARAM )&parserControl.OwnerGuid ));
 				}
 
 				// Validate and init all objects
 				for( SVParserControlList::iterator it = m_parserControlList.begin();it != m_parserControlList.end();++it )
 				{
 					SVParserProgressControlStruct& parserControl = it->second;
-					parserControl.bValidate = pWnd->SendMessage( SV_PARSE_OBJECT_CREATE_DONE, 0, ( LPARAM )&parserControl.OwnerGuid );
+					parserControl.bValidate = static_cast<int>(pWnd->SendMessage( SV_PARSE_OBJECT_CREATE_DONE, 0, ( LPARAM )&parserControl.OwnerGuid ));
 				}
 			}
 			EndDialog( IDOK );
@@ -366,8 +366,8 @@ void SVParserProgressDialog::SetProgressLocations()
 		CProgressCtrl* pProgressCtrl = NULL;
 		CStatic* pStaticTextCtrl = NULL;
 
-		int columnNo = i / MAX_VISIBLE_PROGRESS_ROWS;
-		int rowNo = i % MAX_VISIBLE_PROGRESS_ROWS;
+		int columnNo = static_cast<int>(i / MAX_VISIBLE_PROGRESS_ROWS);
+		int rowNo = static_cast<int>(i % MAX_VISIBLE_PROGRESS_ROWS);
 
 		CRect rect,textRect;
 		CPoint textPos;
@@ -423,11 +423,11 @@ void SVParserProgressDialog::SetProgressLocations()
 		}
 
 		// Check if Dialog Needs resizing/moving
-		resizeAndMoveDialog( rect, i );
+		resizeAndMoveDialog( rect, static_cast<int>(i) );
 
 		// Create a new progress bar control
 		pProgressCtrl = new CProgressCtrl();
-		pProgressCtrl->Create( WS_VISIBLE | WS_CHILD, rect, this, i );
+		pProgressCtrl->Create( WS_VISIBLE | WS_CHILD, rect, this, static_cast<int>(i) );
 
 		// Init the progress bar control
 		pProgressCtrl->SetStep(1);
@@ -565,7 +565,17 @@ void SVParserProgressDialog::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScr
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVParserProgressDialog.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVParserProgressDialog.cpp_v  $
+ * 
+ *    Rev 1.1   02 Oct 2013 07:01:54   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 13:14:08   bWalter
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : SVVisionProcessorHelper
 //* .File Name       : $Workfile:   SVVisionProcessorHelper.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   18 Jun 2013 19:23:22  $
+//* .Current Version : $Revision:   1.5  $
+//* .Check In Date   : $Date:   18 Nov 2013 12:44:20  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -17,7 +17,6 @@
 
 #include "JsonLib/include/json.h"
 #include "SVIMCommand/SVIMCommand.h"
-#include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVSystemLibrary/SVVersionInfo.h"
 
 #include "SVConfigurationObject.h"
@@ -221,6 +220,106 @@ HRESULT SVVisionProcessorHelper::GetConfigurationPrintReport( SVString& p_rRepor
 
 	return l_Status;
 }
+
+HRESULT SVVisionProcessorHelper::GetDataDefinitionList( const SVString& p_rInspectionName, const SVDataDefinitionListType& p_rListType, SVDataDefinitionStructArray& p_rDataDefinitionArray) const
+{
+	HRESULT l_Status = S_OK;
+	long l_ValueFilter = -1;
+	long l_ImageFilter = -1;
+
+	if(0 != ( p_rListType & SelectedValues))
+	{
+		l_ValueFilter = SV_DD_VALUE;
+	}
+	if(0 != ( p_rListType & AllValues))
+	{
+		l_ValueFilter = SV_DD_VALUE | SV_VIEWABLE;
+	}
+	if(0 != ( p_rListType & SelectedImages))
+	{
+		l_ImageFilter = SV_DD_IMAGE;
+	}
+	if(0 != ( p_rListType & AllImages))
+	{
+		l_ImageFilter = SV_DD_IMAGE | SV_VIEWABLE;
+	}
+
+	SVInspectionProcess* pInspection = NULL;
+	SVConfigurationObject* l_pConfig = NULL;
+	SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
+
+	if ( (NULL != l_pConfig) && l_pConfig->GetInspectionObject(p_rInspectionName.c_str(), &pInspection) )
+	{
+		// Get Data Definition list from inspection
+		SVToolSetClass* pToolSet = pInspection->GetToolSet();
+		SVTaskObjectListClass* pTaskObjectList = dynamic_cast <SVTaskObjectListClass*> ( pToolSet );
+
+		if( l_ValueFilter != -1 )
+		{
+			//Add value definition list
+			SVOutputInfoListClass l_OutputList;
+
+			pTaskObjectList->GetOutputList( l_OutputList );
+
+			int nCount = l_OutputList.GetSize();
+
+			for( size_t i = 0 ; i < nCount ; i++ )
+			{
+				// Get OutObjectInfoStruct...
+				SVOutObjectInfoStruct* pInfoItem = NULL;
+
+				pInfoItem = l_OutputList.GetAt(static_cast<int>(i));
+
+				SVObjectReference l_ObjRef;
+				if( NULL != pInfoItem )
+				{
+					l_ObjRef = pInfoItem->GetObjectReference();
+				}
+				else
+				{
+					ASSERT(0);
+					break;
+				}
+
+				SVObjectClass* l_pObject = l_ObjRef.Object();
+
+				if( l_pObject )
+				{
+					SVDataDefinitionStruct l_DataDefinition;
+					if(S_OK == GetObjectDefinition(*l_pObject, l_ValueFilter, l_DataDefinition))
+					{
+						p_rDataDefinitionArray.push_back(l_DataDefinition);
+					}
+				}
+			}
+		}
+
+		if( l_ImageFilter != -1)
+		{
+			//Add image definition list
+			SVImageListClass l_ImageList;
+			pToolSet->GetImageList( l_ImageList );
+
+			size_t nCount = l_ImageList.GetSize();
+			for( size_t i=0; i<nCount; i++)
+			{
+				SVImageClass* l_pImage = l_ImageList.GetAt(static_cast<int>(i));
+			
+				if ( l_pImage )
+				{
+					SVDataDefinitionStruct l_DataDefinition;
+					if(S_OK == GetObjectDefinition(*l_pImage, l_ImageFilter, l_DataDefinition))
+					{
+						p_rDataDefinitionArray.push_back(l_DataDefinition);
+					}
+				}
+			}
+		}
+	}
+
+	return l_Status;
+}
+
 HRESULT SVVisionProcessorHelper::GetItems( const SVNameSet& p_rNames, SVNameStorageResultMap& p_rItems ) const
 {
 	typedef std::map< SVString, SVNameSet > SVNameSetMap;
@@ -487,6 +586,108 @@ HRESULT SVVisionProcessorHelper::SetRemoteInputItems( const SVNameStorageMap& p_
 	return l_Status;
 }
 
+HRESULT SVVisionProcessorHelper::GetObjectDefinition( const SVObjectClass& p_rObj, const long p_Filter, SVDataDefinitionStruct& p_rDataDef ) const
+{
+	HRESULT l_Status = S_OK;
+
+	//Check using the filter if object should be included
+	bool l_bValueIncluded = false;
+	if((SV_DD_VALUE == p_Filter) || (SV_DD_IMAGE == p_Filter))
+	{
+		//This is called when selected values or images
+		l_bValueIncluded = (p_rObj.ObjectAttributesSet() & p_Filter) != 0;
+	}
+	else
+	{
+		//This is called when all values or all images
+		l_bValueIncluded = (p_rObj.ObjectAttributesAllowed() & p_Filter) != 0;
+	}
+	l_bValueIncluded = l_bValueIncluded && ( (p_rObj.ObjectAttributesAllowed() & SV_HIDDEN) == 0 );
+	if( l_bValueIncluded )
+	{
+		CString l_String;
+		l_String = _T("Inspections.") + p_rObj.GetCompleteObjectName();
+		p_rDataDef.m_Name = l_String;
+		p_rDataDef.m_Writable = (p_rObj.ObjectAttributesAllowed() & SV_REMOTELY_SETABLE) == SV_REMOTELY_SETABLE;
+		p_rDataDef.m_Published = (p_rObj.ObjectAttributesSet() & SV_PUBLISHABLE) != 0;
+		const SVValueObjectClass* l_pValueObject = dynamic_cast<const SVValueObjectClass*> (&p_rObj);
+		//If null we assume its an image
+		if( NULL != l_pValueObject)
+		{
+			l_pValueObject->GetTypeName(l_String);
+			p_rDataDef.m_Type = l_String;
+		}
+		else
+		{
+			//For now we are setting the type to a generic "Image" could change in the future
+			p_rDataDef.m_Type = _T("Image");
+		}
+		//This part fills the additional info section
+		if( SVEnumValueObjectType == p_rObj.GetObjectType() )
+		{
+			// Get the strings from the enumeration value object class.
+			const SVEnumerateValueObjectClass* l_pEnumVO = dynamic_cast<const SVEnumerateValueObjectClass*> (&p_rObj);
+			if( NULL != l_pEnumVO )
+			{
+				SVEnumerateVector l_EnumVect;
+				SVEnumerateVector::iterator l_EnumIter;
+
+				l_pEnumVO->GetEnumTypes( l_EnumVect );
+				for( l_EnumIter = l_EnumVect.begin(); l_EnumIter != l_EnumVect.end(); l_EnumIter++)
+				{
+					p_rDataDef.m_AdditionalInfo.push_back(l_EnumIter->first);
+				}
+			}
+		}
+		else if( SVBoolValueObjectType == p_rObj.GetObjectType() )
+		{
+			// Get the strings from the enumeration value object class.
+			const SVBoolValueObjectClass* l_pBoolVO = dynamic_cast<const SVBoolValueObjectClass*> (&p_rObj);
+			if( NULL != l_pBoolVO)
+			{
+				SVBoolValueObjectClass::SVValidTypesVector l_StringVect;
+				SVBoolValueObjectClass::SVValidTypesVector::iterator l_StringIter;
+				l_pBoolVO->GetValidTypes(l_StringVect);
+				for( l_StringIter = l_StringVect.begin(); l_StringIter != l_StringVect.end(); l_StringIter++)
+				{
+					p_rDataDef.m_AdditionalInfo.push_back(*l_StringIter);
+				}
+			}
+		}
+		else
+		//This should be an image so check for its additional info
+		{
+			const SVImageClass* l_pImage = dynamic_cast<const SVImageClass*> (&p_rObj);
+			if(NULL != l_pImage)
+			{
+				SVToolClass* l_pTool = l_pImage->GetTool();
+				if( NULL != l_pTool )
+				{
+					SVStringValueObjectClass* l_pSourceNames=NULL;
+					l_pTool->GetInputImageNames( l_pSourceNames );
+					if( l_pSourceNames )
+					{
+						long l_lSize = l_pSourceNames->GetArraySize();
+						for( long l_lIndex = 0; l_lIndex < l_lSize ; l_lIndex++ )
+						{
+							HRESULT l_hr = l_pSourceNames->GetValue( l_pSourceNames->GetLastSetIndex(), l_lIndex, l_String );
+							// Prepend the "Inspections." prefix for use with SVRC.
+							l_String = _T( "Inspections." ) + l_String;
+							p_rDataDef.m_AdditionalInfo.push_back(l_String);
+						}
+					}
+				}
+			}
+		}
+	}
+	else
+	{
+		l_Status = S_FALSE;
+	}
+
+	return l_Status;
+}
+
 void SVVisionProcessorHelper::Startup()
 {
 	m_AsyncProcedure.Create( &SVVisionProcessorHelper::APCThreadProcess, boost::bind(&SVVisionProcessorHelper::ThreadProcess, this, _1), "SVVisionProcessorHelper" );
@@ -513,7 +714,7 @@ HRESULT SVVisionProcessorHelper::SetLastModifiedTime()
 	return l_Status;
 }
 
-void CALLBACK SVVisionProcessorHelper::APCThreadProcess( DWORD dwParam )
+void CALLBACK SVVisionProcessorHelper::APCThreadProcess( DWORD_PTR dwParam )
 {
 }
 
@@ -548,7 +749,38 @@ void SVVisionProcessorHelper::ProcessLastModified( bool& p_WaitForEvents )
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVVisionProcessorHelper.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVVisionProcessorHelper.cpp_v  $
+ * 
+ *    Rev 1.5   18 Nov 2013 12:44:20   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Added static_casts to build without warnings.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.4   30 Oct 2013 15:42:42   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  866
+ * SCR Title:  Add GetDataDefinitionList Command to SVObserver's Remote Command Socket
+ * Checked in by:  bWalter;  Ben Walter
+ * Change Description:  
+ *   Moved include of SVObjectManagerClass.h to SVVisionProcessorHelper.h.
+ *   Added GetDataDefinitionList and GetObjectDefinition.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.3   02 Oct 2013 08:39:02   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   18 Jun 2013 19:23:22   bwalter
  * Project:  SVObserver

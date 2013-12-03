@@ -5,8 +5,8 @@
 //* .Module Name     : SVConfigurationObject
 //* .File Name       : $Workfile:   SVConfigurationObject.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.12  $
-//* .Check In Date   : $Date:   07 Aug 2013 13:31:58  $
+//* .Current Version : $Revision:   1.14  $
+//* .Check In Date   : $Date:   30 Oct 2013 10:45:18  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -412,7 +412,8 @@ BOOL SVConfigurationObject::RemovePPQ( SVPPQObject *pPPQ )
 	int i;
 	int iSize;
 
-	TheSVObserverApp.m_PLCManager.DestroyPLC( pPPQ->GetPLCName());
+	// BRW - PLC has been deprecated.
+	//TheSVObserverApp.m_PLCManager.DestroyPLC( pPPQ->GetPLCName());
 
 	iSize = m_arPPQArray.GetSize();
 	for( i = 0; i < iSize; i++ )
@@ -1235,7 +1236,7 @@ HRESULT SVConfigurationObject::LoadConfiguration(SVTreeType& rTree)
 											{
 												l_BandData = svValue;
 
-												int lSize = l_BandData.size();
+												int lSize = static_cast< int >( l_BandData.size() );
 
 												if (!bLutCreated)
 												{
@@ -1249,7 +1250,7 @@ HRESULT SVConfigurationObject::LoadConfiguration(SVTreeType& rTree)
 											{
 												SVSAFEARRAY l_Param( svValue );
 
-												int lSize = l_Param.size();
+												long lSize = static_cast< long >( l_Param.size() );
 												// copy safearray to SVLutTransformParameters
 												for (long l=0; l < lSize; l++)
 												{
@@ -2161,7 +2162,8 @@ HRESULT SVConfigurationObject::LoadConfiguration(SVTreeType& rTree)
 						}// end while ( bOk && htiDataChild != NULL )
 					}// end if SVNavigateTreeClass::GetItem( rTree, CTAG_INPUT, htiSubChild, &htiDeviceChild )
 
-					BOOL l_bTmp = SVNavigateTreeClass::GetItem( rTree, CTAG_PLC_ID, htiSubChild, svValue );
+					// BRW - PLC has been deprecated.
+					/*BOOL l_bTmp = SVNavigateTreeClass::GetItem( rTree, CTAG_PLC_ID, htiSubChild, svValue );
 					if( l_bTmp )
 					{
 						CString csName = svValue;
@@ -2170,7 +2172,7 @@ HRESULT SVConfigurationObject::LoadConfiguration(SVTreeType& rTree)
 						{
 							pPPQ->SetPLCName( csName );
 						}
-					}// end if SVNavigateTreeClass::GetItem( rTree, CTAG_PLC_Id, htiSubChild, &htiDeviceChild );
+					}*/
 
 					if ( bOk )
 					{
@@ -2286,7 +2288,6 @@ HRESULT SVConfigurationObject::ValidateOutputList( )
 			l_aPPQNames.push_back((*it)->GetName());
 		}
 	}
-	
 
 	l_Status = m_pOutputObjectList->RemoveUnusedOutputs( l_aInspNames, l_aPPQNames );
 
@@ -2799,7 +2800,7 @@ BOOL SVConfigurationObject::SaveIO(SVTreeType& rTree)
 			m_pInputObjectList->FillInputs( ppInList );
 		}
 
-		lInSize = ppInList.size();
+		lInSize = static_cast< long >( ppInList.size() );
 
 		for ( long lIn = 0; lIn < lInSize; lIn++ )
 		{
@@ -2857,7 +2858,7 @@ BOOL SVConfigurationObject::SaveIO(SVTreeType& rTree)
 		{
 			m_pOutputObjectList->FillOutputs( ppOutList );
 
-			lOutSize = ppOutList.size();
+			lOutSize = static_cast< long >( ppOutList.size() );
 		}
 
 		for ( long lOut = 0; lOut < lOutSize; lOut++ )
@@ -3309,7 +3310,7 @@ BOOL SVConfigurationObject::SaveInspection(SVTreeType& rTree)
 					SVNavigateTreeClass::SetBranch( rTree, hInspection, CTAG_VIEWED_INPUTS, &htiViewed );
 
 					svVariant.SetString( _T("") );
-					lSize = pInspection->m_arViewedInputNames.GetSize();
+					lSize = static_cast< long >( pInspection->m_arViewedInputNames.GetSize() );
 					for( l = 0; l < lSize; l++ )
 					{							
 						SVNavigateTreeClass::AddBranch( rTree, htiViewed, pInspection->m_arViewedInputNames[l] );
@@ -3513,7 +3514,8 @@ BOOL SVConfigurationObject::SavePPQ(SVTreeType& rTree)
 				// SEJ - 102
 				SVConfigurationTreeWriter< SVTreeType > writer(rTree, htiSubChild);
 				pPPQ->PersistInputs(writer);
-				if( bOk )
+				// BRW - PLC has been deprecated.
+				/*if( bOk )
 				{
 					_variant_t svVariant;
 					CString csPLCId;
@@ -3521,7 +3523,7 @@ BOOL SVConfigurationObject::SavePPQ(SVTreeType& rTree)
 					svVariant.SetString( csPLCId );
 					SVNavigateTreeClass::AddItem( rTree, htiSubChild, CTAG_PLC_ID, svVariant );
 					svVariant.Clear();
-				}
+				}*/
 			}// end if bOk = this->GetPPQ( lPPQ, &pPPQ );
 		}// end for( lPPQ = 0; lPPQ < lPPQCount; lPPQ++ )
 	}// end if ( hBranch != NULL )  // CTAG_PPQ
@@ -4112,6 +4114,7 @@ SVGUID SVConfigurationObject::GetIOControllerID() const
 	return l_ObjectId;
 }
 
+#ifndef _WIN64
 SVPLCDataController* SVConfigurationObject::GetPLCData()
 {
 	SVPLCDataController* l_pObject = NULL;
@@ -4275,6 +4278,7 @@ HRESULT SVConfigurationObject::WriteOutputs( const CString& p_strPLCName, SVProd
 
 	return l_Status;
 }
+#endif
 
 SVGUID SVConfigurationObject::GetRemoteOutputController() const
 {
@@ -4512,7 +4516,7 @@ HRESULT SVConfigurationObject::GetMode( unsigned long& p_rMode ) const
 
 HRESULT SVConfigurationObject::SetMode( unsigned long p_Mode )
 {
-	HRESULT l_Status = SendMessage( AfxGetApp()->m_pMainWnd->m_hWnd, SV_SET_MODE, 0, ( LPARAM )p_Mode );
+	HRESULT l_Status = static_cast< HRESULT >( SendMessage( AfxGetApp()->m_pMainWnd->m_hWnd, SV_SET_MODE, 0, ( LPARAM )p_Mode ) );
 
 	return l_Status;
 }
@@ -5129,6 +5133,26 @@ bool SVConfigurationObject::HasCameraTrigger(SVPPQObject* p_pPPQ) const
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVConfigurationObject.cpp_v  $
+ * 
+ *    Rev 1.14   30 Oct 2013 10:45:18   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Added #ifndef _WIN64 to prevent depricated PLC code from compiling in 64bit.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.13   01 Oct 2013 12:16:24   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.12   07 Aug 2013 13:31:58   sjones
  * Project:  SVObserver

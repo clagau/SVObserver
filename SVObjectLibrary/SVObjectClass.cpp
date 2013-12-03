@@ -5,8 +5,8 @@
 //* .Module Name     : SVObject
 //* .File Name       : $Workfile:   SVObjectClass.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   22 Apr 2013 16:46:52  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   01 Oct 2013 11:27:02  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -296,7 +296,7 @@ BOOL SVObjectClass::CloseObject()
 
 	SVAutoLockAndReleaseTemplate< SVOutObjectInfoStruct > l_AutoLock;
 
-	long l_lCount = outObjectInfo.GetInputSize();
+	long l_lCount = static_cast<long>(outObjectInfo.GetInputSize());
 
 	if( 0 < l_lCount && l_AutoLock.Assign( &outObjectInfo ) )
 	{
@@ -986,7 +986,7 @@ LPTSTR SVObjectClass::GetCompleteObjectName2( LPCTSTR LPSZCompleteName )
 {
 	int Length = 0;
 	if( LPSZCompleteName )
-		Length += _tcslen( LPSZCompleteName ) + 2;
+		Length += static_cast<int>(_tcslen( LPSZCompleteName ) + 2);
 
 	Length += GetNameLength() + 2;
 
@@ -1707,7 +1707,17 @@ void SVObjectClass::SetDefaultObjectAttributesSet(UINT uAttributes)
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObjectLibrary\SVObjectClass.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObjectLibrary\SVObjectClass.cpp_v  $
+ * 
+ *    Rev 1.1   01 Oct 2013 11:27:02   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   22 Apr 2013 16:46:52   bWalter
  * Project:  SVObserver

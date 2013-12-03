@@ -5,8 +5,8 @@
 // * .Module Name     : SVMatroxBufferInterface
 // * .File Name       : $Workfile:   SVMatroxBufferInterface.cpp  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.0  $
-// * .Check In Date   : $Date:   22 Apr 2013 15:02:10  $
+// * .Current Version : $Revision:   1.2  $
+// * .Check In Date   : $Date:   23 Oct 2013 08:50:48  $
 // ******************************************************************************
 
 #include "stdafx.h"
@@ -848,11 +848,11 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::Create( SVMatroxB
 	try
 #endif
 	{
-		long l_lType;
+		MIL_INT l_lType;
 		MIL_INT64 l_lAttrib;
-		long l_lBandSize;
-		long l_lSizeX;
-		long l_lSizeY;
+		MIL_INT l_lBandSize;
+		MIL_INT l_lSizeX;
+		MIL_INT l_lSizeY;
 
 		// Clear first error...
 		l_Code = SVMatroxApplicationInterface::GetFirstError();
@@ -1246,7 +1246,7 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::GetPositionPoint(
 
 					if( l_Status == SVMEE_STATUS_OK )
 					{
-						p_rPoint = SVPOINT( l_OffsetX, l_OffsetY );
+						p_rPoint = SVPOINT( static_cast< long >( l_OffsetX ), static_cast< long >( l_OffsetY ) );
 					}
 				}
 				else
@@ -1378,7 +1378,7 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::GetBitmapInfo( SV
 
 		if( l_Status  == SVMEE_STATUS_OK )
 		{
-			p_rBitmapInfo = SVBitmapInfo( l_Width, l_Height, l_BitCount, SVBitmapInfo::GetDefaultColorTable( l_BitCount ) );
+			p_rBitmapInfo = SVBitmapInfo( static_cast< long >( l_Width ), static_cast< long >( l_Height ), l_BitCount, SVBitmapInfo::GetDefaultColorTable( l_BitCount ) );
 		}
 	}
 	else
@@ -1950,10 +1950,10 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::CopyBufferToFileD
 			BITMAPFILEHEADER hdr;
 
 			hdr.bfType = 0x4d42;        // 0x42 = "B" 0x4d = "M"  
-			hdr.bfSize = sizeof( BITMAPFILEHEADER ) + l_InfoSize + l_ImageSize; 
+			hdr.bfSize = static_cast< DWORD >( sizeof( BITMAPFILEHEADER ) + l_InfoSize + l_ImageSize );
 			hdr.bfReserved1 = 0; 
 			hdr.bfReserved2 = 0; 
-			hdr.bfOffBits = sizeof( BITMAPFILEHEADER ) + l_InfoSize;
+			hdr.bfOffBits = static_cast< DWORD >( sizeof( BITMAPFILEHEADER ) + l_InfoSize );
 
 			p_rToDIB.resize( hdr.bfSize );
 
@@ -2178,11 +2178,11 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::PutLine( SVMatrox
 
 */
 SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::GetLine( SVMatroxBuffer& p_rBuf, 
-																	   long p_lXStart, 
-																	   long p_lYStart, 
-																	   long p_lXEnd, 
-																	   long p_lYEnd, 
-																	   long& p_rlNbrPixels, 
+																	   SVMatroxInt p_lXStart, 
+																	   SVMatroxInt p_lYStart, 
+																	   SVMatroxInt p_lXEnd, 
+																	   SVMatroxInt p_lYEnd, 
+																	   SVMatroxInt& p_rlNbrPixels, 
 																	   void* p_pUserArray)
 {
 	SVStatusCode l_Code( SVMEE_STATUS_OK );
@@ -2252,7 +2252,7 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::Get( const SVMatr
 	{
 		if( !p_rBuf.empty() )
 		{
-			long l_lMatroxType = Convert2MatroxType(p_eWhat);
+			MIL_INT l_lMatroxType = Convert2MatroxType(p_eWhat);
 			if( l_lMatroxType != 0 )
 			{
 				MbufInquire( p_rBuf.GetIdentifier(),
@@ -2299,12 +2299,20 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::Get( const SVMatr
 	{
 		if( !p_rBuf.empty() )
 		{
-			long l_lMatroxType = Convert2MatroxType(p_eWhat);
+			MIL_INT l_lMatroxType = Convert2MatroxType(p_eWhat);
 			if( l_lMatroxType != 0 )
 			{
+				SVMatroxInt l_Temp = 0;
+
 				MbufInquire( p_rBuf.GetIdentifier(),
 					l_lMatroxType,
-					&p_rlResult);
+					&l_Temp );
+
+				// Matrox uses 64 bits for all parameters, but we probably don't need to worry about more that 32 bits of actual data.
+				p_rlResult = static_cast< long >( l_Temp );
+
+				// Break if there is more data here than 32 bits.
+				assert( static_cast< SVMatroxInt >( p_rlResult ) == l_Temp );
 
 				l_Code = SVMatroxApplicationInterface::GetLastStatus();
 			}
@@ -2386,11 +2394,10 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::Set(const SVMatro
 */
 SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::Set(const SVMatroxBuffer& p_rBuf, 
 																   SVMatroxBufferInfoEnum p_eWhat, 
-																   const long p_rlValue)
+																   const SVMatroxInt p_rlValue )
 {
-	return Set( p_rBuf, p_eWhat, static_cast<const double>(p_rlValue) );
+	return Set( p_rBuf, p_eWhat, static_cast< const double >( p_rlValue ) );
 }
-
 
 /**
 @SVOperationName ControlNeighborhood
@@ -2665,6 +2672,26 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::Export(const SVMa
 // ******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVMatroxLibrary\SVMatroxBufferInterface.cpp_v  $
+ * 
+ *    Rev 1.2   23 Oct 2013 08:50:48   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Modified types to be compatible with 32 and 64bit librarys.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.1   01 Oct 2013 11:08:10   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   22 Apr 2013 15:02:10   bWalter
  * Project:  SVObserver

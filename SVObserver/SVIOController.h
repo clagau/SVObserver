@@ -5,8 +5,8 @@
 //* .Module Name     : SVIOController
 //* .File Name       : $Workfile:   SVIOController.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 11:08:58  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   30 Oct 2013 10:45:20  $
 //******************************************************************************
 
 #ifndef SVIOCONTROLLER_H
@@ -14,11 +14,13 @@
 
 #include "SVObjectLibrary/SVObjectClass.h"
 #include "SVObjectLibrary/SVObserverTemplate.h"
+#ifndef _WIN64
 #include "SVP_SRC/SVPLCInterfaceClass.h"
+#include "SVPLCDataController.h"
+#endif
 #include "SVXMLLibrary/SVXMLMaterialsTree.h"
 
 #include "SVInfoStructs.h"
-#include "SVPLCDataController.h"
 #include "SVRemoteOutputDataController.h"
 #include "SVRemoteOutputObject.h"
 
@@ -62,6 +64,7 @@ public:
 
 	SVIODoc* GetIODoc() const;
 
+#ifndef _WIN64
 	SVPLCDataController* GetPLCData();
 	size_t GetPLCCount() const;
 	void SetupPLC(SVConfigurationObject* p_pConfig );
@@ -74,6 +77,7 @@ public:
 	HRESULT SetPLCControlData( SVMaterials& p_rMaterials, const CString& p_strPLC );
 	CString AssociatePPQToPLC( const CString& p_strPPQ );
 	HRESULT WriteOutputs( const CString& p_strPLCName, SVProductInfoStruct *pProduct);
+#endif
 
 	SVGUID GetRemoteOutputController() const;
 	size_t GetRemoteOutputGroupCount() const;
@@ -92,8 +96,9 @@ public:
 protected:
 	SVIOEntryHostStructPtr m_pModuleReady;
 	SVIOEntryHostStructPtr m_pRaidErrorBit;
-
+#ifndef _WIN64
 	SVPLCDataController m_PLCData;
+#endif
 	SVRemoteOutputDataController* m_pRemoteOutputController;
 
 private:
@@ -108,7 +113,27 @@ private:
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVIOController.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVIOController.h_v  $
+ * 
+ *    Rev 1.2   30 Oct 2013 10:45:20   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Added #ifndef _WIN64 to prevent depricated PLC code from compiling in 64bit.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.1   01 Oct 2013 14:31:02   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 11:08:58   bWalter
  * Project:  SVObserver

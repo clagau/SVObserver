@@ -5,8 +5,8 @@
 //* .Module Name     : SVDiscreteInputsView.cpp
 //* .File Name       : $Workfile:   SVDiscreteInputsView.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.3  $
-//* .Check In Date   : $Date:   07 Aug 2013 13:25:12  $
+//* .Current Version : $Revision:   1.4  $
+//* .Check In Date   : $Date:   01 Oct 2013 12:48:26  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -144,7 +144,7 @@ void SVDiscreteInputsView::OnUpdate( CView* pSender, LPARAM lHint, CObject* pHin
 		if( !pInputList->FillInputs( ppIOEntries ) )
 			DebugBreak();
 
-		lSize = ppIOEntries.size();
+		lSize = static_cast< long >( ppIOEntries.size() );
 
 		// Module Inputs
 		DWORD maxInput = 0;
@@ -232,7 +232,7 @@ void SVDiscreteInputsView::OnLButtonDblClk( UINT nFlags, CPoint point )
 			if( !pInputList->FillInputs( ppIOEntries ) )
 				DebugBreak();
 
-			lSize = ppIOEntries.size();
+			lSize = static_cast< long >( ppIOEntries.size() );
 
 			SVDataItemManager::const_iterator l_Iter = m_Items.GetItemData( item );
 
@@ -252,9 +252,8 @@ void SVDiscreteInputsView::OnLButtonDblClk( UINT nFlags, CPoint point )
 				dlg.m_bInputMode = TRUE;
 
 				SVSVIMStateClass::AddState( SV_STATE_EDITING );
-				int nResult = dlg.DoModal();
 
-				switch(nResult)
+				switch( dlg.DoModal() )
 				{
 				case IDOK:
 					SVSVIMStateClass::AddState( SV_STATE_MODIFIED );
@@ -283,6 +282,16 @@ void SVDiscreteInputsView::OnDestroy()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVDiscreteInputsView.cpp_v  $
+ * 
+ *    Rev 1.4   01 Oct 2013 12:48:26   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   07 Aug 2013 13:25:12   sjones
  * Project:  SVObserver

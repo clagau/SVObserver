@@ -5,8 +5,8 @@
 // * .Module Name     : SVDLLToolLoadLibraryClass
 // * .File Name       : $Workfile:   SVDLLToolLoadLibraryClass.inl  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.1  $
-// * .Check In Date   : $Date:   08 May 2013 16:16:06  $
+// * .Current Version : $Revision:   1.2  $
+// * .Check In Date   : $Date:   21 Oct 2013 08:21:26  $
 // ******************************************************************************
 
 //////////////////////////////////////////////////////////////////////
@@ -58,6 +58,25 @@ inline HRESULT SVDLLToolLoadLibraryClass::Open(LPCTSTR p_szLibrary, SVDllLoadLib
 
 	if ( m_hmHandle == NULL )
 	{
+		if(PathFileExists(p_szLibrary))
+		{
+			// Check bitness
+#ifdef _WIN64
+			if( CheckBitness( p_szLibrary ) != ImageFileMachineAMD64 )
+			{
+				CString l_strTmp;
+				l_strTmp.Format(_T("External Tool %s is not 64Bit"),p_szLibrary);
+				fnNotifyProgress( l_strTmp);
+			}
+#else
+			if( CheckBitness( p_szLibrary ) != ImageFileMachineI386 )
+			{
+				CString l_strTmp;
+				l_strTmp.Format(_T("External Tool %s is not 32Bit"),p_szLibrary);
+				fnNotifyProgress( l_strTmp);
+			}
+#endif
+		}
 		fnNotifyProgress( _T("Attempting LoadLibrary"));
 		m_hmHandle = ::LoadLibrary( p_szLibrary );
 		Sleep(0);
@@ -822,7 +841,17 @@ inline bool SVDLLToolLoadLibraryClass::IsOpen()
 // * LOG HISTORY:
 // ******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVDLLToolLoadLibraryClass.inl_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVDLLToolLoadLibraryClass.inl_v  $
+ * 
+ *    Rev 1.2   21 Oct 2013 08:21:26   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Added check for Bitness on External Tool DLL.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   08 May 2013 16:16:06   bWalter
  * Project:  SVObserver

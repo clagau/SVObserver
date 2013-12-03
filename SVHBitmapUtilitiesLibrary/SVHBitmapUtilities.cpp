@@ -5,8 +5,8 @@
 //* .Module Name     : HBitmapUtilities
 //* .File Name       : $Workfile:   SVHBitmapUtilities.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   22 Apr 2013 10:10:56  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   01 Oct 2013 06:32:04  $
 //******************************************************************************
 
 
@@ -150,7 +150,7 @@ BITMAPINFO* SVIHBitmapUtilities::CreateBitmapInfoStruct( SVImageDefinitionStruct
 	
 	if (wClrBits == 8) 
 	{
-		pbmi = (PBITMAPINFO) new BYTE[sizeof(BITMAPINFOHEADER) + sizeof(RGBQUAD) * (1<< wClrBits)]; 
+		pbmi = ( PBITMAPINFO ) new BYTE[ sizeof( BITMAPINFOHEADER ) + sizeof( RGBQUAD ) * static_cast< DWORD >( 1 << wClrBits ) ]; 
 	}
 	else // There is no RGBQUAD array for the 24-bit-per-pixel format. 
 	{
@@ -310,6 +310,16 @@ HRESULT SVIHBitmapUtilities::SVHBitmapToDC(const SVDIBITMAPINFO svSrcDIB, HDC hD
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVHBitmapUtilitiesLibrary\SVHBitmapUtilities.cpp_v  $
+ * 
+ *    Rev 1.1   01 Oct 2013 06:32:04   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platforms.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   22 Apr 2013 10:10:56   bWalter
  * Project:  SVObserver

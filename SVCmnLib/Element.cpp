@@ -5,8 +5,8 @@
 // * .Module Name     : Element
 // * .File Name       : $Workfile:   Element.cpp  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.0  $
-// * .Check In Date   : $Date:   18 Apr 2013 18:10:00  $
+// * .Current Version : $Revision:   1.1  $
+// * .Check In Date   : $Date:   30 Sep 2013 14:24:30  $
 // ******************************************************************************
 
 // Element.cpp: implementation of the Element,Attribute, 
@@ -33,7 +33,7 @@ SchemaElement::SchemaElement(SchemaElement& source)
 {
 	HRESULT hr = S_OK;
 	//copy the string
-	int nLength = _tcsclen(source.m_lpszName);
+	size_t nLength = _tcsclen(source.m_lpszName);
 	//create storage
 	m_lpszName = (TCHAR *)malloc((nLength + 1) * sizeof(TCHAR));
 	//copy the data in
@@ -52,11 +52,11 @@ SchemaElement::SchemaElement(SchemaElement& source)
 SchemaElement::~SchemaElement()
 {
 	if(m_lpszName)
-		{
-		int x = _tcsclen(m_lpszName);
+	{
+		size_t x = _tcsclen(m_lpszName);
 		if(x>0)free(m_lpszName);
 		m_lpszName = NULL;
-		}
+	}
 /*	if(m_var.vt == VT_BSTR)
 		{
 		UINT uLen = SysStringLen(m_var.bstrVal);
@@ -75,11 +75,11 @@ SchemaElement::~SchemaElement()
 void SchemaElement::DeleteContent()
 {
 	if(m_lpszName)
-		{
-		int x = _tcsclen(m_lpszName);
+	{
+		size_t x = _tcsclen(m_lpszName);
 		if(x>0)free(m_lpszName);
 		m_lpszName = NULL;
-		}
+	}
 	VariantClear(&m_var); 
 }
 
@@ -104,11 +104,11 @@ SchemaElement* SchemaElement::operator=(const SchemaElement* source)
 void SchemaElement::SetName(LPTSTR szName)
 {
 	if(m_lpszName != NULL)
-		{
-		int x = _tcsclen(m_lpszName);
+	{
+		size_t x = _tcsclen(m_lpszName);
 		if(x>0)free(m_lpszName);
 		m_lpszName = NULL;
-		}
+	}
 
 	//create storage
 	m_lpszName = (TCHAR *)malloc((_tcslen(szName) + 1) * sizeof(TCHAR));
@@ -751,7 +751,17 @@ void Element::DeleteChildElement(Element * pElement)
 // * LOG HISTORY:
 // ******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVCmnLib\Element.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVCmnLib\Element.cpp_v  $
+ * 
+ *    Rev 1.1   30 Sep 2013 14:24:30   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platforms.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   18 Apr 2013 18:10:00   bWalter
  * Project:  SVObserver

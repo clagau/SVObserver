@@ -5,8 +5,8 @@
 //* .Module Name     : SVConfigurationObject
 //* .File Name       : $Workfile:   SVConfigurationObject.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.3  $
-//* .Check In Date   : $Date:   07 Aug 2013 13:31:58  $
+//* .Current Version : $Revision:   1.5  $
+//* .Check In Date   : $Date:   30 Oct 2013 10:45:18  $
 //******************************************************************************
 
 #ifndef INC_SVCONFIGURATIONOBJECT_INCLUDED
@@ -161,7 +161,7 @@ public:
 
 	SVIOController* GetIOController() const;
 	SVGUID GetIOControllerID() const;
-
+#ifndef _WIN64
 	SVPLCDataController* GetPLCData();
 	size_t GetPLCCount();
 	void SetupPLC();
@@ -174,7 +174,7 @@ public:
 	HRESULT SetPLCControlData( SVMaterials& p_rMaterials, const CString& p_strPLC );
 	CString AssociatePPQToPLC( const CString& p_strPPQ );
 	HRESULT WriteOutputs( const CString& p_strPLCName, SVProductInfoStruct *pProduct);
-
+#endif
 	SVGUID GetRemoteOutputController() const;
 	size_t GetRemoteOutputGroupCount() const;
 	void SetupRemoteOutput();
@@ -254,6 +254,26 @@ private:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVConfigurationObject.h_v  $
+ * 
+ *    Rev 1.5   30 Oct 2013 10:45:18   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Added #ifndef _WIN64 to prevent depricated PLC code from compiling in 64bit.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.4   01 Oct 2013 12:48:18   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   07 Aug 2013 13:31:58   sjones
  * Project:  SVObserver

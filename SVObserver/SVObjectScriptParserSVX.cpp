@@ -5,8 +5,8 @@
 //* .Module Name     : SVObjectScriptParser
 //* .File Name       : $Workfile:   SVObjectScriptParserSVX.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 12:41:40  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   01 Oct 2013 15:24:38  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -515,7 +515,7 @@ CString SVObjectScriptParserSVXClass::ExtractGUIDToken( LPCTSTR TStrTokenString,
 
 			if( tStrFinal )
 			{
-				rCount = tStrFinal - TStrTokenString + 1;
+				rCount = static_cast<int>(tStrFinal - TStrTokenString + 1);
 
 				if( bCType )
 				{
@@ -537,7 +537,7 @@ CString SVObjectScriptParserSVXClass::ExtractGUIDToken( LPCTSTR TStrTokenString,
 					{
 						// Make upper case...
 						_tcsupr( szToken );
-						int len = _tcslen( szToken );
+						int len = static_cast<int>(_tcslen( szToken ));
 						switch( dataCount )
 						{
 							case 1:
@@ -672,7 +672,7 @@ BOOL SVObjectScriptParserSVXClass::EvaluateOperandExpression( int OperandType, c
 #ifndef SMALLMEMORYMANAGER
 				//rOperand.PValue = _tcsdup( rExpressionStack.GetAt( riIndex ) );
 				//rOperand.ValueSize = _tcslen( rExpressionStack.GetAt( riIndex ) ) + 1;
-				rOperand.SetValue(_tcsdup( rExpressionStack.GetAt( riIndex ) ), _tcslen( rExpressionStack.GetAt( riIndex ) ) + 1);
+				rOperand.SetValue(_tcsdup( rExpressionStack.GetAt( riIndex ) ), static_cast<int>(_tcslen( rExpressionStack.GetAt( riIndex ) ) + 1));
 #else
 				int iLen = _tcslen( rExpressionStack.GetAt( riIndex ) ) + 1;
 				char* pNewMem = (char*)SmallMemoryMalloc(iLen);
@@ -848,7 +848,7 @@ BOOL SVObjectScriptParserSVXClass::EvaluateOperandExpression( int OperandType, c
 #ifndef SMALLMEMORYMANAGER
 						//rOperand.PValue = _tcsdup( rExpressionStack.GetAt( riIndex ) );
 						//rOperand.ValueSize = _tcslen( rExpressionStack.GetAt( riIndex ) ) + 1;
-						rOperand.SetValue(_tcsdup( rExpressionStack.GetAt( riIndex ) ), _tcslen( rExpressionStack.GetAt( riIndex ) ) + 1);
+						rOperand.SetValue(_tcsdup( rExpressionStack.GetAt( riIndex ) ), static_cast<int>(_tcslen( rExpressionStack.GetAt( riIndex ) ) + 1));
 #else
 						int iLen = _tcslen( rExpressionStack.GetAt( riIndex ) ) + 1;
 						char* pNewMem = (char*)SmallMemoryMalloc(iLen);
@@ -1363,7 +1363,7 @@ BOOL SVObjectScriptParserSVXClass::CheckString( LPCTSTR tstrToken )
 {
 	//static SVFunctionProfiler profile(_T("SVObjectScriptParserSVXClass::CheckString"));
 	//SVFunctionProfilerLocal profiler(profile);
-	int len = _tcslen( tstrToken );
+	int len = static_cast<int>(_tcslen( tstrToken ));
 	
 	// check for double quote at beginning
 	// check for double quote at end
@@ -1379,7 +1379,7 @@ BOOL SVObjectScriptParserSVXClass::CheckString( LPCTSTR tstrToken )
 
 BOOL SVObjectScriptParserSVXClass::CheckNumber( LPCTSTR tstrToken )
 {
-	int len = _tcslen( tstrToken );
+	int len = static_cast<int>(_tcslen( tstrToken ));
 	BOOL decimalPoint = FALSE;
 	BOOL minusSign = FALSE;
 	
@@ -1518,7 +1518,7 @@ LPCTSTR SVObjectScriptParserSVXClass::Parse( SVObjectClass* pOwner, LPCTSTR tstr
 		localOwnerInfo = pOwner;
 		SVObjectScriptAliasListClass localAliasTable;
 
-		int parseLength = _tcslen( tStrParse );
+		int parseLength = static_cast<int>(_tcslen( tStrParse ));
 
 		while( currentParseState != PARSER_ERROR && currentParseState != PARSE_END && 
 				currentTokenIndex < parseLength )
@@ -1736,7 +1736,7 @@ LPCTSTR SVObjectScriptParserSVXClass::Parse( SVObjectClass* pOwner, LPCTSTR tstr
 								}
 								else
 								{
-									currentTokenIndex = (tStrNewParsPos - tStrParse);
+									currentTokenIndex = static_cast<int>(tStrNewParsPos - tStrParse);
 
 									currentParseState = PARSE;
 								}
@@ -1835,7 +1835,7 @@ void SVObjectScriptParserSVXClass::RemoveExternalDependencies( CString& script )
 			// Build the list of known Object GUIDs
 			
 			// Find the ending braces
-			loc = pos + _tcsclen( keyWord );
+			loc = pos + static_cast<int>(_tcsclen( keyWord ));
 			if( ( endGuidPos = script.Find( endGuidIdentifier, loc ) ) != -1 )
 			{
 				endGuidPos += endGuidIdentifier.GetLength();
@@ -1856,7 +1856,7 @@ void SVObjectScriptParserSVXClass::RemoveExternalDependencies( CString& script )
 			scriptStack.Add( keyWord );
 			
 			// Find the ending braces
-			loc = pos + _tcsclen( keyWord );
+			loc = pos + static_cast<int>(_tcsclen( keyWord ));
 			if( ( endGuidPos = script.Find( endGuidIdentifier, loc ) ) != -1 )
 			{
 				endGuidPos += endGuidIdentifier.GetLength();
@@ -1866,7 +1866,7 @@ void SVObjectScriptParserSVXClass::RemoveExternalDependencies( CString& script )
 				guidStr = script.Mid( loc, len );
 				
 				// Add the Guid to the Script Stack
-				int index = scriptStack.Add( guidStr );
+				int index = static_cast<int>(scriptStack.Add( guidStr ));
 
 				// Save it's Guid and Location in the Script Stack
 				SVObjectScriptInputObjectTokenStruct token;
@@ -1942,7 +1942,7 @@ bool SVObjectScriptParserSVXClass::FindCharacters(LPCTSTR tStr, int tStrLen, int
 	//SVFunctionProfilerLocal profiler(profile);
 	bool found = false;
 	
-	int numChars = _tcsclen( characters );
+	int numChars = static_cast<int>(_tcsclen( characters ));
 
 	if( reverse )
 	{
@@ -2154,7 +2154,7 @@ bool SVObjectScriptParserSVXClass::ParseStatements( LPCTSTR ParseStr, int parseL
 							
 						if( currentChar == TCHAR( ';' ) ||
 							currentChar == TCHAR( '{' ) ||
-							( index = rExpressionStack.GetUpperBound() ) >= 0 && 
+							( index = static_cast<int>(rExpressionStack.GetUpperBound()) ) >= 0 && 
 							rExpressionStack.GetAt( index ) && 
 							*rExpressionStack.GetAt( index ) == TCHAR( ')' ) 
 						  )
@@ -2528,7 +2528,7 @@ bool SVObjectScriptParserSVXClass::ProcessAlias( SVExpressionStack& rExpressionS
 	SVObjectScriptOperandStruct operand1, operand2;
 
 	// Check operands and operators...
-	int numberOfExpressions = rExpressionStack.GetSize();
+	int numberOfExpressions = static_cast<int>(rExpressionStack.GetSize());
 	int index = 1;
 
 	// operand1
@@ -2593,7 +2593,7 @@ bool SVObjectScriptParserSVXClass::ProcessAlias( SVExpressionStack& rExpressionS
 
 #ifndef SMALLMEMORYMANAGER
 		//operand1.PValue = _tcsdup( strName );
-		operand1.SetValue(_tcsdup( strName ), _tcslen( strName ) + 1);
+		operand1.SetValue(_tcsdup( strName ), static_cast<int>(_tcslen( strName ) + 1));
 #else
 		int iLen = _tcslen( strName ) + 1;
 		char* pNewMem = (char*)SmallMemoryMalloc(iLen);
@@ -3037,7 +3037,17 @@ HRESULT SVObjectScriptParserSVXClass::DoParse()
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVObjectScriptParserSVX.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVObjectScriptParserSVX.cpp_v  $
+ * 
+ *    Rev 1.1   01 Oct 2013 15:24:38   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 12:41:40   bWalter
  * Project:  SVObserver

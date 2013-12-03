@@ -5,8 +5,8 @@
 //* .Module Name     : SVJsonCommandServerSocket
 //* .File Name       : $Workfile:   SVJsonCommandServerSocket.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   06 Aug 2013 11:09:26  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   01 Oct 2013 09:26:18  $
 //******************************************************************************
 
 #ifndef SVJSONCOMMANDSERVERSOCKET_H
@@ -42,7 +42,7 @@ private:
 	typedef std::deque< std::string > SVWriteDeque;
 	typedef boost::function<void ( bool& )> SVThreadProcessHandler;
 
-	static void CALLBACK OnAPCEvent(DWORD data);
+	static void CALLBACK OnAPCEvent( ULONG_PTR data );
 
 	void OnAccept();
 	void OnDataReceived(const std::string& data);
@@ -73,6 +73,16 @@ private:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVJsonCommandServerLibrary\SVJsonCommandServerSocket.h_v  $
+ * 
+ *    Rev 1.3   01 Oct 2013 09:26:18   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   06 Aug 2013 11:09:26   jHanebach
  * Project:  SVObserver

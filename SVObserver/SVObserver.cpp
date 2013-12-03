@@ -5,8 +5,8 @@
 //* .Module Name     : SVObserver
 //* .File Name       : $Workfile:   SVObserver.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.12  $
-//* .Check In Date   : $Date:   23 Sep 2013 12:28:18  $
+//* .Current Version : $Revision:   1.14  $
+//* .Check In Date   : $Date:   30 Oct 2013 10:45:20  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -69,8 +69,8 @@
 
 #include "SVConfigurationLibrary/SVConfigurationTags.h"
 #include "SVConfigurationObject.h"
-#include "SVImageCompression/SVImageCompressionClass.h"
-
+// BRW - SVImageCompression has been deprecated.
+//#include "SVImageCompression/SVImageCompressionClass.h"
 #include "SVUserMessage.h"
 #include "SVOMFCLibrary/SVOINIClass.h"
 #include "SVOMFCLibrary/SVOIniLoader.h"
@@ -97,9 +97,10 @@
 #include "SV1394CameraFileLibrary/SVDCamFactoryRegistrar.h"
 
 #include "SVIOController.h"
-
+#ifndef _WIN64
 #include "SVPLCOutputsView.h"
 #include "SVPLCAddRemoveDlg.h"
+#endif
 #include "SVDirectX.h"
 #include "SVHardwareManifest.h"
 #include "SVTriggerProcessingClass.h"
@@ -275,7 +276,7 @@ BOOL GlobalRCGoOffline()
 
 HRESULT GlobalRCSetMode( unsigned long p_lNewMode )
 {
-	return SendMessage( AfxGetApp()->m_pMainWnd->m_hWnd, SV_SET_MODE, 0, ( LPARAM )p_lNewMode );
+	return static_cast<HRESULT>(SendMessage( AfxGetApp()->m_pMainWnd->m_hWnd, SV_SET_MODE, 0, ( LPARAM )p_lNewMode ));
 }
 
 HRESULT GlobalRCGetMode( unsigned long* p_plMode )
@@ -602,9 +603,10 @@ BEGIN_MESSAGE_MAP(SVObserverApp, CWinApp)
     ON_COMMAND( SV_AUTO_RUN_LAST_MRU, OnRunMostRecentMRU )
 	ON_COMMAND(ID_RC_CLOSE, OnRCClose)
 
+#ifndef _WIN64
 	ON_COMMAND(ID_EDIT_EDITPLCOUTPUTS, &SVObserverApp::OnEditplcoutputs)
-
 	ON_UPDATE_COMMAND_UI(ID_EDIT_EDITPLCOUTPUTS, &SVObserverApp::OnUpdateEditEditplcoutputs)
+#endif
 	ON_COMMAND(ID_EDIT_ADD_REMOTE_OUTPUTS, &SVObserverApp::OnEditRemoteOutputs)
 	ON_UPDATE_COMMAND_UI(ID_EDIT_ADD_REMOTE_OUTPUTS, &SVObserverApp::OnUpdateEditAddRemoteOutputs)
 	END_MESSAGE_MAP()
@@ -631,8 +633,9 @@ BEGIN_MESSAGE_MAP(SVObserverApp, CWinApp)
 //	:15.06.1999 FRB         View window sizes saved
 ////////////////////////////////////////////////////////////////////////////////
 SVObserverApp::SVObserverApp()
-: m_bImageCompressionStarted( FALSE )
-, m_gigePacketSize( 0 )
+// BRW - SVImageCompression has been deprecated.
+: /*m_bImageCompressionStarted( FALSE )
+,*/ m_gigePacketSize( 0 )
 , m_InputStreamPortNumber( 32100 )
 , m_OutputStreamPortNumber( 32101 )
 , m_RemoteCommandsPortNumber( 28960 )
@@ -800,7 +803,7 @@ HRESULT SVObserverApp::LoadPackedConfiguration( const CString& p_rPackedFileName
 		{
 			SVRCSetSVCPathName(strSecFile);
 
-			l_Status = SendMessage( m_pMainWnd->m_hWnd, SV_LOAD_CONFIGURATION, 0, 0 );
+			l_Status = static_cast<HRESULT>(SendMessage( m_pMainWnd->m_hWnd, SV_LOAD_CONFIGURATION, 0, 0 ));
 		}
 	}
 				
@@ -1184,12 +1187,12 @@ BOOL SVObserverApp::InitInstance()
 	//check to see what licenses are available before setting up any documents
  	TheSVOLicenseManager().InitLicenseManager();
 	
-
-	SVImageCompressionClass mainCompressionObject (SERVER_COMPRESSION_POOL_SIZE);
+	// BRW - SVImageCompression has been deprecated.
+	/*SVImageCompressionClass mainCompressionObject (SERVER_COMPRESSION_POOL_SIZE);
 
 	HRESULT hr = mainCompressionObject.CreateResourcePool ();
 
-	m_bImageCompressionStarted = hr == S_OK;
+	m_bImageCompressionStarted = hr == S_OK;*/
 
 	m_mgrRemoteFonts.Startup();
 
@@ -1705,12 +1708,13 @@ int SVObserverApp::ExitInstance()
 
 	m_mgrRemoteFonts.Shutdown();
 
-	if ( m_bImageCompressionStarted )
+	// BRW - SVImageCompression has been deprecated.
+	/*if ( m_bImageCompressionStarted )
 	{
 		SVImageCompressionClass mainCompressionObject (SERVER_COMPRESSION_POOL_SIZE);
 
 		mainCompressionObject.DestroyResourcePool ();
-	}
+	}*/
 
 	SVTriggerProcessingClass::Instance().Shutdown();
 	SVDigitizerProcessingClass::Instance().Shutdown();
@@ -1990,10 +1994,11 @@ HRESULT SVObserverApp::DestroySEC( BOOL AskForSavingOrClosing /* = TRUE */,
 
 				wait.Restore();
 
+#ifndef _WIN64
 				// PLC stop and close.
 				m_PLCManager.Shutdown();
-
 				wait.Restore();
+#endif
 
 				SVConfigurationObject* l_pConfig = NULL;
 				SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
@@ -2880,13 +2885,12 @@ CDocument* SVObserverApp::OpenDocumentFile( LPCTSTR LPSZFileName )
 ////////////////////////////////////////////////////////////////////////////////
 void SVObserverApp::OnFileNewSEC() 
 {
-	BOOL l_OK = false;
 	if( m_svSecurityMgr.SVValidate( SECURITY_POINT_FILE_MENU_NEW ) == S_OK )
 	{
-		l_OK = ShowConfigurationAssistant( 0, TRUE );
+		ShowConfigurationAssistant( 0, TRUE );
 	}
 
-	if( l_OK && ( OkToEdit() || !m_svSecurityMgr.SVIsSecured( SECURITY_POINT_MODE_MENU_EDIT_TOOLSET ) ) )
+	if( OkToEdit() || !m_svSecurityMgr.SVIsSecured( SECURITY_POINT_MODE_MENU_EDIT_TOOLSET ) )
 	{
 		SetModeEdit( true );
 	}
@@ -2901,10 +2905,12 @@ void SVObserverApp::OnFileNewSEC()
 
 	if( l_pConfig )
 	{
+#ifndef _WIN64
 		if( l_pConfig->GetPLCCount() == 0 )
 		{
 			HideIOTab( SVIOPLCOutputsViewID );
 		}
+#endif
 		if( l_pConfig->GetRemoteOutputGroupCount() == 0)
 		{
 			HideIOTab( SVRemoteOutputsViewID );
@@ -2912,7 +2918,9 @@ void SVObserverApp::OnFileNewSEC()
 	}
 	else
 	{
+#ifndef _WIN64
 		HideIOTab( SVIOPLCOutputsViewID );
+#endif
 		HideIOTab( SVRemoteOutputsViewID );
 	}
 
@@ -3651,11 +3659,13 @@ HRESULT SVObserverApp::OpenSVXFile(LPCTSTR LPSZPathName)
 
 				GetMainFrame()->OnConfigurationFinishedInitializing();
 
+#ifndef _WIN64
 				if( l_pConfig != NULL )
 				{
 					// Initialize the PLC...
 					m_PLCManager.Startup( l_pConfig );
 				}
+#endif
 
 				l_FinishLoad = SVClock::GetTimeStamp();
 				long l_lTime = static_cast<long>(l_FinishLoad - l_StartLoading);
@@ -3759,10 +3769,12 @@ HRESULT SVObserverApp::OpenSVXFile(LPCTSTR LPSZPathName)
 
 	if( l_pConfig != NULL )
 	{
+#ifndef _WIN64
 		if( l_pConfig->GetPLCCount() == 0 )
 		{
 			HideIOTab( SVIOPLCOutputsViewID );
 		}
+#endif
 		if( l_pConfig->GetRemoteOutputGroupCount() == 0)
 		{
 			HideIOTab( SVRemoteOutputsViewID );
@@ -4637,6 +4649,7 @@ HRESULT SVObserverApp::Start()
 
 	SVConfigurationObject* l_pConfig = NULL;
 	SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
+#ifndef _WIN64
 	if( l_pConfig->GetPLCCount() > 0 )
 	{
 		 if( m_PLCManager.TestConnections() == false )
@@ -4644,6 +4657,7 @@ HRESULT SVObserverApp::Start()
 			 return SV_GO_ONLINE_FAILURE_PLC;
 		 }
 	}
+#endif
 
 	if ( m_pMainWnd )
 	{
@@ -7148,9 +7162,10 @@ long SVObserverApp::UpdateAndGetLogDataManager()
     return m_LogDataManager;
 }
 	
-BEGIN_OBJECT_MAP(ObjectMap)
+// BRW - PLC has been deprecated.
+/*BEGIN_OBJECT_MAP(ObjectMap)
 OBJECT_ENTRY(CLSID_SVCommand, CSVCommand)
-END_OBJECT_MAP()
+END_OBJECT_MAP()*/
 
 BOOL SVObserverApp::InitATL()
 {
@@ -7598,10 +7613,12 @@ SVIMProductEnum SVObserverApp::GetSVIMType() const
 	return eType;
 }
 
+#ifndef _WIN64
 CString SVObserverApp::GetPLCDLL()
 {
 	return m_csPLCDLL;
 }
+#endif
 
 HRESULT SVObserverApp::INILoad()
 {
@@ -7656,8 +7673,9 @@ HRESULT SVObserverApp::INILoad()
 		m_csTriggerDLL = l_iniLoader.m_csTriggerDLL;
 		m_csSoftwareTriggerDLL = l_iniLoader.m_csSoftwareTriggerDLL;
 		m_csAcquisitionTriggerDLL = l_iniLoader.m_csAcquisitionTriggerDLL;
+#ifndef _WIN64
 		m_csPLCDLL = l_iniLoader.m_csPLCDLL;
-		
+#endif
 		m_csReloadDigitalDLL = l_iniLoader.m_csReloadDigitalDLL;
 		m_csReloadAcquisitionDLL = l_iniLoader.m_csReloadAcquisitionDLL;
 		m_csReloadTriggerDLL = l_iniLoader.m_csReloadTriggerDLL;
@@ -9031,6 +9049,7 @@ bool SVObserverApp::IsProductTypeRAID() const
 	return bRet;
 }
 
+#ifndef _WIN64
 void SVObserverApp::OnEditplcoutputs()
 {
 	SVConfigurationObject* l_pConfig = NULL;
@@ -9041,6 +9060,7 @@ void SVObserverApp::OnEditplcoutputs()
 		l_pConfig->SetupPLC();
 	}
 }
+#endif
 
 void SVObserverApp::OnEditRemoteOutputs()
 {
@@ -9071,11 +9091,13 @@ bool SVObserverApp::SetActiveIOTabView( SVTabbedViewSplitterIDEnum p_eTabbedID )
 		{
 			TVisualObject* l_VisObj = pIOView->m_Framework.Get(p_eTabbedID);
 			pIOView->m_Framework.SetActiveTab( l_VisObj );
+#ifndef _WIN64
 			SVPLCOutputsView* l_pPLCView =  dynamic_cast<SVPLCOutputsView*>(pIOView->GetWindow( GW_HWNDFIRST ));
 			if( l_pPLCView )
 			{
 				OnUpdateAllIOViews(); // OnUpdate( NULL, NULL, NULL );
 			}
+#endif
 			l_bRet = true;
 		}
 	}// end if( PIODoc
@@ -9083,6 +9105,7 @@ bool SVObserverApp::SetActiveIOTabView( SVTabbedViewSplitterIDEnum p_eTabbedID )
 }
 
 
+#ifndef _WIN64
 // This function Sets the active Tab to inputs view and 
 // Hides the PLC tab
 void SVObserverApp::HidePLCTab()
@@ -9092,6 +9115,7 @@ void SVObserverApp::HidePLCTab()
 
 	pWndMain->PostMessage( SV_IOVIEW_HIDE_TAB, SVIOPLCOutputsViewID );
 }
+#endif
 
 void SVObserverApp::HideRemoteOutputTab()
 {
@@ -9148,11 +9172,13 @@ void SVObserverApp::ShowIOTab( DWORD p_dwID )
 				if( l_VisObj )
 				{
 					l_VisObj->ShowTab( true );
+#ifndef _WIN64
 					SVPLCOutputsView* l_pPLCView =  dynamic_cast<SVPLCOutputsView*>(l_VisObj->GetWnd());
 					if( l_pPLCView )
 					{
 						OnUpdateAllIOViews(); // OnUpdate( NULL, NULL, NULL );
 					}
+#endif
 				}
 				break;
 			}
@@ -9192,6 +9218,7 @@ DWORD SVObserverApp::GetActiveIOTab()
 return l_dwRet;
 }
 
+#ifndef _WIN64
 void SVObserverApp::OnUpdateEditEditplcoutputs(CCmdUI *pCmdUI)
 {
 	pCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) &&	
@@ -9209,6 +9236,7 @@ void SVObserverApp::OnUpdateEditEditplcoutputs(CCmdUI *pCmdUI)
 		pCmdUI->SetText( "Edit PLC" );
 	}
 }
+#endif
 
 void SVObserverApp::OnUpdateEditAddRemoteOutputs(CCmdUI *pCmdUI)
 {
@@ -9309,6 +9337,26 @@ void SVObserverApp::OnTriggerSettings()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVObserver.cpp_v  $
+ * 
+ *    Rev 1.14   30 Oct 2013 10:45:20   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Added #ifndef _WIN64 to prevent depricated PLC code from compiling in 64bit.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.13   02 Oct 2013 12:05:42   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platforms.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.12   23 Sep 2013 12:28:18   tbair
  * Project:  SVObserver

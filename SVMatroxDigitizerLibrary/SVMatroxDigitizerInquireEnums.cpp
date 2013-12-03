@@ -5,8 +5,8 @@
 //* .Module Name     : SVMatroxDigitizerInquireEnums
 //* .File Name       : $Workfile:   SVMatroxDigitizerInquireEnums.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   22 Apr 2013 14:28:50  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   01 Oct 2013 10:45:28  $
 //******************************************************************************
 #include "stdafx.h"
 #include "SVMatroxDigitizerInquireEnums.h"
@@ -71,7 +71,7 @@ SVMatroxDigitizerInquire::SVGrabEnumMap SVMatroxDigitizerInquire::m_GrabEnumConv
 */
 
 // Assign mappings for Inquire UserBit Types
-SVMatroxDigitizerInquire::SVUserBitEnumMap SVMatroxDigitizerInquire::m_UserBitEnumConvertor = boost::assign::map_list_of<>
+SVMatroxDigitizerInquire::SVUserBitEnumMap SVMatroxDigitizerInquire::m_UserBitEnumConvertor = boost::assign::map_list_of< SVMatroxDigitizerInquire::SVUserBitEnum, SVMatroxInt >
 (SVMatroxDigitizerInquire::SVUserBitCount,			M_USER_BIT_COUNT)
 (SVMatroxDigitizerInquire::SVUserBitCountIn,		M_USER_BIT_COUNT_IN)
 (SVMatroxDigitizerInquire::SVUserBitCountOut,		M_USER_BIT_COUNT_OUT)
@@ -86,6 +86,16 @@ SVMatroxDigitizerInquire::SVUserBitEnumMap SVMatroxDigitizerInquire::m_UserBitEn
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVMatroxDigitizerLibrary\SVMatroxDigitizerInquireEnums.cpp_v  $
+ * 
+ *    Rev 1.1   01 Oct 2013 10:45:28   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   22 Apr 2013 14:28:50   bWalter
  * Project:  SVObserver

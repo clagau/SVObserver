@@ -5,8 +5,8 @@
 //* .Module Name     : SVInspectionProcess
 //* .File Name       : $Workfile:   SVInspectionProcess.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   08 May 2013 16:16:30  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   01 Oct 2013 14:31:02  $
 //******************************************************************************
 
 #ifndef INC_SVINSPECTIONPROCESS_INCLUDED
@@ -266,7 +266,7 @@ protected:
 
 	};
 
-	typedef void (CALLBACK * SVAPCSignalHandler)(DWORD);
+	typedef void ( CALLBACK * SVAPCSignalHandler )( DWORD_PTR );
 	typedef boost::function<void ( bool& )> SVThreadProcessHandler;
 
 	typedef SVTQueueObject< SVCommandTemplatePtr > SVCommandQueue;
@@ -320,7 +320,7 @@ protected:
 
 	HRESULT CreateResultImageIndexManager() const;
 
-	static void CALLBACK APCThreadProcess( DWORD dwParam );
+	static void CALLBACK APCThreadProcess( DWORD_PTR dwParam );
 
 	void ThreadProcess( bool& p_WaitForEvents );
 
@@ -531,7 +531,17 @@ inline HRESULT SVInspectionProcess::SetObjectArrayValues(SVValueObjectReference 
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVInspectionProcess.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVInspectionProcess.h_v  $
+ * 
+ *    Rev 1.3   01 Oct 2013 14:31:02   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   08 May 2013 16:16:30   bWalter
  * Project:  SVObserver

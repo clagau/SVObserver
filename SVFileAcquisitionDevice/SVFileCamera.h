@@ -5,8 +5,8 @@
 //* .Module Name     : SVFileCamera
 //* .File Name       : $Workfile:   SVFileCamera.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   07 May 2013 20:04:58  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   01 Oct 2013 06:14:50  $
 //******************************************************************************
 #ifndef SVFILECAMERA_H
 #define SVFILECAMERA_H
@@ -36,7 +36,7 @@ private:
 	typedef SVFileList::const_iterator FileListIterator;
 	typedef std::insert_iterator<SVFileList> Insertor;
 
-	typedef void (CALLBACK *APCSignalHandler)(DWORD);
+	typedef void ( CALLBACK *APCSignalHandler )( ULONG_PTR );
 	typedef boost::function<void ( bool& )> ThreadSignalHandler;
 	
 public:
@@ -55,7 +55,7 @@ private:
 	SVFrameEventHandler m_endFrameEvent;
 	bool m_lineState;
 
-	static void CALLBACK OnAPCEvent(DWORD data);
+	static void CALLBACK OnAPCEvent( ULONG_PTR data );
 	void OnThreadEvent( bool& p_WaitForEvents );
 
 	SVString GetNextFilename();
@@ -123,7 +123,17 @@ typedef std::vector<SVFileCamera> SVFileCameraList;
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVFileAcquisitionDevice\SVFileCamera.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVFileAcquisitionDevice\SVFileCamera.h_v  $
+ * 
+ *    Rev 1.2   01 Oct 2013 06:14:50   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platforms.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   07 May 2013 20:04:58   bWalter
  * Project:  SVObserver

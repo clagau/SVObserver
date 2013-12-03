@@ -5,8 +5,8 @@
 //* .Module Name     : SVMatroxSystemInterface
 //* .File Name       : $Workfile:   SVMatroxSystemInterface.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   22 Apr 2013 15:29:10  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   01 Oct 2013 11:15:32  $
 //******************************************************************************
 
 #ifndef SVMATROXSYSTEMINTERFACE_H
@@ -21,7 +21,7 @@ class SVMatroxSystemInterface
 public:
 	typedef SVMatroxStatusInformation::SVStatusCode SVStatusCode;
 
-	static SVStatusCode Allocate(const SVMatroxString& SystemDescriptor, long SystemNum, SVMatroxSystem& system);
+	static SVStatusCode Allocate(const SVMatroxString& SystemDescriptor, SVMatroxInt SystemNum, SVMatroxSystem& system);
 	static SVStatusCode Release(SVMatroxSystem& SystemId);
 
 	static SVStatusCode Get(const SVMatroxSystem& SystemId, SVMatroxSystemInquire::SVMatroxSystemInquireEnum InquireType, long& value);
@@ -35,8 +35,8 @@ public:
 	static SVStatusCode SetHookFunction(const SVMatroxSystem& SystemId, SVMatroxSystemHook::SVMatroxSystemHookEnum HookType, SVMatroxHookFunctionPtr HookHandlerPtr, void* UserDataPtr);
 	static SVStatusCode ReleaseHookFunction(const SVMatroxSystem& SystemId, SVMatroxSystemHook::SVMatroxSystemHookEnum HookType, SVMatroxHookFunctionPtr HookHandlerPtr, void* UserDataPtr);
 
-	static SVStatusCode GetHookInfo(const SVMatroxSystem& SystemId, long p_EventId, SVMatroxSystemHookInfo::SVMatroxSystemHookInfoEnum HookInfoType, long& value);
-	static SVStatusCode GetHookInfo(const SVMatroxSystem& SystemId, long p_EventId, SVMatroxSystemHookInfo::SVMatroxSystemHookInfoEnum HookInfoType, unsigned __int64& value);
+	static SVStatusCode GetHookInfo(const SVMatroxSystem& SystemId, SVMatroxIdentifier p_EventId, SVMatroxSystemHookInfo::SVMatroxSystemHookInfoEnum HookInfoType, long& value);
+	static SVStatusCode GetHookInfo(const SVMatroxSystem& SystemId, SVMatroxIdentifier p_EventId, SVMatroxSystemHookInfo::SVMatroxSystemHookInfoEnum HookInfoType, unsigned __int64& value);
 };
 
 #endif
@@ -46,6 +46,16 @@ public:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVMatroxLibrary\SVMatroxSystemInterface.h_v  $
+ * 
+ *    Rev 1.1   01 Oct 2013 11:15:32   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   22 Apr 2013 15:29:10   bWalter
  * Project:  SVObserver

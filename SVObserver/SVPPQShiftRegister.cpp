@@ -5,8 +5,8 @@
 //* .Module Name     : SVPPQShiftRegister
 //* .File Name       : $Workfile:   SVPPQShiftRegister.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   08 May 2013 16:31:14  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   02 Oct 2013 07:12:20  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -158,7 +158,7 @@ HRESULT SVPPQShiftRegister::GetIndexByTriggerCount( long& p_rIndex, long p_Trigg
 {
 	HRESULT l_Status = S_OK;
 
-	p_rIndex = m_Products.size();
+	p_rIndex = static_cast<long>(m_Products.size());
 
 	if( 0 < p_TriggerCount )
 	{
@@ -174,7 +174,7 @@ HRESULT SVPPQShiftRegister::GetIndexByTriggerCount( long& p_rIndex, long p_Trigg
 		{
 			if( p_TriggerCount == ( *l_Iter )->ProcessCount() )
 			{
-				p_rIndex = std::distance( m_Products.begin(), l_Iter );
+				p_rIndex = static_cast<long>(std::distance( m_Products.begin(), l_Iter ));
 			}
 			else if( l_Iter == m_Products.begin() && p_TriggerCount > ( *l_Iter )->ProcessCount() )
 			{
@@ -272,7 +272,7 @@ HRESULT SVPPQShiftRegister::GetIndexByTriggerTimeStamp( long& p_rIndex, SVClock:
 {
 	HRESULT l_Status = S_OK;
 
-	p_rIndex = m_Products.size();
+	p_rIndex = static_cast<long>(m_Products.size());
 
 	if( 0 < p_TimeStamp )
 	{
@@ -290,7 +290,7 @@ HRESULT SVPPQShiftRegister::GetIndexByTriggerTimeStamp( long& p_rIndex, SVClock:
 
 			if( p_TimeStamp >= ( l_ProductTS + p_LowerThresholdInMilliseconds ) )
 			{
-				p_rIndex = std::distance( m_Products.begin(), l_Iter );
+				p_rIndex = static_cast<long>(std::distance( m_Products.begin(), l_Iter ));
 			}
 			else
 			{
@@ -314,7 +314,7 @@ HRESULT SVPPQShiftRegister::GetIndexByTriggerTimeStamp( long& p_rIndex, SVClock:
 {
 	HRESULT l_Status = S_OK;
 
-	p_rIndex = m_Products.size();
+	p_rIndex = static_cast<long>(m_Products.size());
 
 	if( 0 < p_TimeStamp )
 	{
@@ -343,7 +343,7 @@ HRESULT SVPPQShiftRegister::GetIndexByTriggerTimeStamp( long& p_rIndex, SVClock:
 			}
 			else if( p_TimeStamp >= l_Lower )
 			{
-				p_rIndex = std::distance( m_Products.begin(), l_Iter );
+				p_rIndex = static_cast<long>(std::distance( m_Products.begin(), l_Iter ));
 			}
 			else
 			{
@@ -393,7 +393,17 @@ HRESULT SVPPQShiftRegister::GetProductStates( SVString& p_rProductStates ) const
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVPPQShiftRegister.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVPPQShiftRegister.cpp_v  $
+ * 
+ *    Rev 1.2   02 Oct 2013 07:12:20   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   08 May 2013 16:31:14   bWalter
  * Project:  SVObserver

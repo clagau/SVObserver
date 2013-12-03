@@ -5,8 +5,8 @@
 //* .Module Name     : SVTADlgLUTPage
 //* .File Name       : $Workfile:   SVTADlgLUTPage.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   24 Apr 2013 11:15:34  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   02 Oct 2013 08:17:50  $
 //******************************************************************************
 
 //******************************************************************************
@@ -71,7 +71,7 @@ protected:
 	afx_msg void OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
 	afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
 	//}}AFX_MSG
-	afx_msg long OnGraphRefresh(WPARAM mp1, LPARAM mp2);
+	afx_msg LRESULT OnGraphRefresh( WPARAM mp1, LPARAM mp2 );
 	DECLARE_MESSAGE_MAP()
 
 //******************************************************************************
@@ -118,7 +118,17 @@ protected:
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVTADlgLUTPage.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVTADlgLUTPage.h_v  $
+ * 
+ *    Rev 1.1   02 Oct 2013 08:17:50   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   24 Apr 2013 11:15:34   bWalter
  * Project:  SVObserver

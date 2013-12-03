@@ -5,8 +5,8 @@
 // * .Module Name     : SVIntekFireStackClass
 // * .File Name       : $Workfile:   SVIntekFireStackClass.cpp  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.1  $
-// * .Check In Date   : $Date:   08 May 2013 14:56:00  $
+// * .Current Version : $Revision:   1.2  $
+// * .Check In Date   : $Date:   01 Oct 2013 09:09:48  $
 // ******************************************************************************
 
 #include "stdafx.h"
@@ -302,7 +302,7 @@ DWORD WINAPI SVCFireBusThreadOpenProc( LPVOID p_lpParam )
 	return l_hrOk;
 }
 
-VOID CALLBACK SVIntekEndFrameAPCProc( DWORD dwParam )
+VOID CALLBACK SVIntekEndFrameAPCProc( ULONG_PTR dwParam )
 {
 }
 
@@ -4100,7 +4100,17 @@ void SVIntekFireStackClass::DoAcquisitionTrigger(const SVIntekCameraStruct& p_rC
 // * LOG HISTORY:
 // ******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVIntek\SVIntekFireStackClass.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVIntek\SVIntekFireStackClass.cpp_v  $
+ * 
+ *    Rev 1.2   01 Oct 2013 09:09:48   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   08 May 2013 14:56:00   bWalter
  * Project:  SVObserver

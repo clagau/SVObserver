@@ -5,8 +5,8 @@
 //* .Module Name     : SVMMTimer
 //* .File Name       : $Workfile:   SVMMTimer.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   25 Apr 2013 18:35:54  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   02 Oct 2013 10:18:18  $
 //******************************************************************************
 
 #ifndef SVMMTIMER_H
@@ -19,7 +19,7 @@
 
 class SVMMTimer
 {
-	typedef void (CALLBACK *APCSignalHandler)(DWORD);
+	typedef void (CALLBACK *APCSignalHandler)( ULONG_PTR );
 	typedef boost::function<void ( bool& )> ThreadSignalHandler;
 
 public:
@@ -40,8 +40,8 @@ private:
 	SVMMTimer();
 	~SVMMTimer();
 
-	static void CALLBACK TimerProc( UINT uTimerID, UINT uRsvd, DWORD dwUser, DWORD dwRsvd1, DWORD dwRsvd2 );
-	static void CALLBACK TimerAPCProc( DWORD dwParam );
+	static void CALLBACK TimerProc( UINT uTimerID, UINT uRsvd, DWORD_PTR dwUser, DWORD_PTR dwRsvd1, DWORD_PTR dwRsvd2 );
+	static void CALLBACK TimerAPCProc( ULONG_PTR dwParam );
 
 	void Dispatch( bool& p_WaitForEvents );
 };
@@ -52,7 +52,17 @@ private:
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVTimerLibrary\SVMMTimer.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVTimerLibrary\SVMMTimer.h_v  $
+ * 
+ *    Rev 1.1   02 Oct 2013 10:18:18   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   25 Apr 2013 18:35:54   bWalter
  * Project:  SVObserver

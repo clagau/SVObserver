@@ -5,8 +5,8 @@
 //* .Module Name     : SVTADlgLUTPage
 //* .File Name       : $Workfile:   SVTADlgLUTPage.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   24 Apr 2013 11:15:20  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   02 Oct 2013 08:17:48  $
 //******************************************************************************
 
 //******************************************************************************
@@ -165,7 +165,7 @@ void SVToolAdjustmentDialogLUTPageClass::refresh( bool p_bSave = true )
 			std::vector<BYTE> byteVector;
 			SVObjectByteArrayClass byteArray;
 			m_pLUTVector->GetValues( byteVector );
-			int nSize = byteVector.size();
+			int nSize = static_cast<int>(byteVector.size());
 			for( int j = 0; j < nSize; j++ )
 			{
 				BYTE byte;
@@ -614,7 +614,7 @@ void SVToolAdjustmentDialogLUTPageClass::OnContinuousRecalcCheck()
 	refresh();
 }
 
-long SVToolAdjustmentDialogLUTPageClass::OnGraphRefresh( WPARAM mp1, LPARAM mp2 )
+LRESULT SVToolAdjustmentDialogLUTPageClass::OnGraphRefresh( WPARAM mp1, LPARAM mp2 )
 {
 	refresh();
 
@@ -708,7 +708,17 @@ void SVToolAdjustmentDialogLUTPageClass::OnHScroll(UINT nSBCode, UINT nPos, CScr
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVTADlgLUTPage.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVTADlgLUTPage.cpp_v  $
+ * 
+ *    Rev 1.1   02 Oct 2013 08:17:48   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   24 Apr 2013 11:15:20   bWalter
  * Project:  SVObserver

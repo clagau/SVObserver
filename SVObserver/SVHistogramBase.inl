@@ -5,8 +5,8 @@
 //* .Module Name     : SVHistogramBase
 //* .File Name       : $Workfile:   SVHistogramBase.inl  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 10:45:24  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   01 Oct 2013 14:19:30  $
 //******************************************************************************
 
 // convert position of the bar into its screen rectangle
@@ -119,7 +119,7 @@ inline void SVHistogramBase::SetOptions(unsigned opt)
 
 inline int SVHistogramBase::valley() const
 {
-	int l_valley = m_stats.valley(&m_values[m_highPeak], &m_values[m_lowPeak]) - &m_values[0];
+	int l_valley = static_cast<int>(m_stats.valley(&m_values[m_highPeak], &m_values[m_lowPeak]) - &m_values[0]);
 	return (valley_low <= l_valley && l_valley <= valley_high)?l_valley:valley_default;
 }
 
@@ -178,7 +178,17 @@ inline bool SVHistogramBase::SetProperty(histogram::height_options & prop, histo
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVHistogramBase.inl_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVHistogramBase.inl_v  $
+ * 
+ *    Rev 1.1   01 Oct 2013 14:19:30   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 10:45:24   bWalter
  * Project:  SVObserver

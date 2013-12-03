@@ -5,8 +5,8 @@
 //* .Module Name     : SVToolAdjustmentArchivePage
 //* .File Name       : $Workfile:   SVToolArchivePage.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 15:41:36  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   11 Nov 2013 07:37:58  $
 //******************************************************************************
 
 #ifndef __SVTOOLARCHIVEPAGE_INCLUDED__
@@ -18,6 +18,8 @@
 #include "SVEditNumbers.h"
 #include "SVImageListClass.h"
 #include "SVArchiveTool.h"
+#include "SVGlobal.h"
+
 
 class SVToolAdjustmentDialogSheetClass;
 
@@ -87,10 +89,18 @@ protected:
 	afx_msg void OnBrowse2();
 	afx_msg void OnSelchangeModeCombo();
 	afx_msg void OnChangeEditMaxImages();
+	afx_msg void OnBnClickedHeaderCheck();
+	afx_msg void OnBnClickedHeaderBtn();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 
+	bool GetSelectedHeaderNamePairs( StringPairVect& HeaderPairs );
+	bool StoreHeaderValuesToTool( StringPairVect& HeaderPairs );
+
 	bool CanSelectObjectCallback( SVObjectReference refObject, bool bCurrentState, int );
+private:
+	BOOL m_bUseComumnHeaders;
+
 };
 
 #endif //__SVTOOLARCHIVEPAGE_INCLUDED__
@@ -99,7 +109,17 @@ protected:
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVToolArchivePage.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVToolArchivePage.h_v  $
+ * 
+ *    Rev 1.1   11 Nov 2013 07:37:58   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  872
+ * SCR Title:  Add Archive Tool Headers to Archive File
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Added header support functions.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 15:41:36   bWalter
  * Project:  SVObserver

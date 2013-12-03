@@ -5,8 +5,8 @@
 //* .Module Name     : SVPPQEntryDialogRemotePageClass
 //* .File Name       : $Workfile:   SVPPQEntryDialogRemotePage.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.3  $
-//* .Check In Date   : $Date:   07 Aug 2013 13:23:12  $
+//* .Current Version : $Revision:   1.4  $
+//* .Check In Date   : $Date:   02 Oct 2013 07:12:20  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -99,7 +99,7 @@ BOOL SVPPQEntryDialogRemotePageClass::OnInitDialog()
 	if( !m_pSheet->m_pPPQ->GetAllInputs( ppIOEntries ) )
 		DebugBreak();
 
-	lSize = ppIOEntries.size();
+	lSize = static_cast<long>(ppIOEntries.size());
 
 	for( j = 0; j < lSize; ++ j )
 	{
@@ -267,6 +267,16 @@ BOOL SVPPQEntryDialogRemotePageClass::OnApply()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVPPQEntryDialogRemotePage.cpp_v  $
+ * 
+ *    Rev 1.4   02 Oct 2013 07:12:20   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   07 Aug 2013 13:23:12   sjones
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 // * .Module Name     : SVCameraPropDlgClass.cpp
 // * .File Name       : $Workfile:   SVCameraPropDlgClass.cpp  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.0  $
-// * .Check In Date   : $Date:   22 Apr 2013 11:08:24  $
+// * .Current Version : $Revision:   1.1  $
+// * .Check In Date   : $Date:   01 Oct 2013 08:25:58  $
 // ******************************************************************************
 
 #include "stdafx.h"
@@ -169,7 +169,7 @@ void SVCameraPropDlgClass::OnOK()
 	for( int i = 0; i < l_iCount; i++ )
 	{
 		CString l_csData = m_svListCtrl.GetItemText( i, 1 );
-		long l_lParameterID = m_svListCtrl.GetItemData( i );
+		long l_lParameterID = static_cast<long>(m_svListCtrl.GetItemData( i ));
 		long l_lParameterTypeID = 0;
 
 		VARIANT l_varValue;
@@ -191,6 +191,17 @@ void SVCameraPropDlgClass::OnOK()
 // ******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVImageTest\SVCameraPropDlgClass.cpp_v  $
+ * 
+ *    Rev 1.1   01 Oct 2013 08:25:58   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add X64 Platform
+ * 
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   22 Apr 2013 11:08:24   bWalter
  * Project:  SVObserver

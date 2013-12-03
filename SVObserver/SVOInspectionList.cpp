@@ -5,8 +5,8 @@
 //* .Module Name     : SVOInspectionList
 //* .File Name       : $Workfile:   SVOInspectionList.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 13:04:06  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   02 Oct 2013 06:48:22  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -288,7 +288,7 @@ CSVOInspectionList::iterator CSVOInspectionList::FindInspectionPositionFromName(
 //////////////////////
 int CSVOInspectionList::GetInspectionListCount() const
 {
-    return m_InspectionList.GetCount();
+    return static_cast<int>(m_InspectionList.GetCount());
 }
 
 void CSVOInspectionList::ResetContent()
@@ -309,7 +309,17 @@ void CSVOInspectionList::ResetContent()
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVOInspectionList.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVOInspectionList.cpp_v  $
+ * 
+ *    Rev 1.1   02 Oct 2013 06:48:22   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 13:04:06   bWalter
  * Project:  SVObserver

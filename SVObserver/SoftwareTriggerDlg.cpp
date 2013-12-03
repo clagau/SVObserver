@@ -5,8 +5,8 @@
 //* .Module Name     : SVSoftwareTriggerDlg
 //* .File Name       : $Workfile:   SoftwareTriggerDlg.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 09:17:24  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   01 Oct 2013 11:54:38  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -186,21 +186,21 @@ LRESULT SVSoftwareTriggerDlg::OnTriggerChange(WPARAM wParam, LPARAM lParam)
 	CString str;
 	str.Format("%d", wParam);
 	m_intervalEdit.SetWindowText(str);
-	m_spins->SetValue(wParam);
+	m_spins->SetValue( static_cast< int >( wParam ) );
 	double l_freq = 1000.0 / wParam;
 	str.Format("%.4fHz", l_freq);
 	m_frequency.SetWindowText(str);
 	l_freq *= 60;
 	str.Format("%.2f/min", l_freq);
 	m_ppmLabel.SetWindowText(str);
-	SetTriggerPeriod(wParam);
+	SetTriggerPeriod( static_cast< int >( wParam ) );
 	return TRUE;
 }
 
 void SVSoftwareTriggerDlg::OnDeltaposSpin(NMHDR *pNMHDR, LRESULT *pResult)
 {
 	LPNMUPDOWN pNMUpDown = reinterpret_cast<LPNMUPDOWN>(pNMHDR);
-	SVSpinGroup * l_spin = m_spins->find(pNMUpDown->hdr.idFrom);
+	SVSpinGroup * l_spin = m_spins->find( static_cast< int >( pNMUpDown->hdr.idFrom ) );
 	*pResult = 0;
 	if (l_spin)
 	{
@@ -370,7 +370,17 @@ void SVSoftwareTriggerDlg::OnBnClickedPausebutton()
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SoftwareTriggerDlg.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SoftwareTriggerDlg.cpp_v  $
+ * 
+ *    Rev 1.1   01 Oct 2013 11:54:38   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 09:17:24   bWalter
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : SVPatAdvancedPageClass
 //* .File Name       : $Workfile:   SVPatAdvancedPageClass.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 13:18:28  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   02 Oct 2013 07:01:54  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -157,7 +157,7 @@ void SVPatAdvancedPageClass::SetSelection(CComboBox& rComboBox, long value)
 	// set selection based on value matched against item data
 	for (int index = 0;index < rComboBox.GetCount();index++)
 	{
-		long data = rComboBox.GetItemData(index);
+		long data = static_cast<int>(rComboBox.GetItemData(index));
 		if (data == value)
 		{
 			rComboBox.SetCurSel(index);
@@ -291,7 +291,7 @@ void SVPatAdvancedPageClass::OnSelchangeFastFind()
 	int	nSel = m_FastFindComboBox.GetCurSel();
 	if (nSel != CB_ERR)
 	{
-		m_lFastFind = m_FastFindComboBox.GetItemData(nSel);
+		m_lFastFind = static_cast<long>(m_FastFindComboBox.GetItemData(nSel));
 	}
 }
 
@@ -377,7 +377,7 @@ void SVPatAdvancedPageClass::OnSelchangeModelStep()
 	int	nSel = m_ModelStepComboBox.GetCurSel();
 	if (nSel != CB_ERR)
 	{
-		m_lModelStep = m_ModelStepComboBox.GetItemData(nSel);
+		m_lModelStep = static_cast<long>(m_ModelStepComboBox.GetItemData(nSel));
 	}
 }
 
@@ -386,7 +386,7 @@ void SVPatAdvancedPageClass::OnSelchangeBeginningResolutionLevel()
 	int	nSel = m_BeginningResolutionLevelComboBox.GetCurSel();
 	if (nSel != CB_ERR)
 	{
-		m_lBeginningResolutionLevel = m_BeginningResolutionLevelComboBox.GetItemData(nSel);
+		m_lBeginningResolutionLevel = static_cast<long>(m_BeginningResolutionLevelComboBox.GetItemData(nSel));
 	}
 }
 
@@ -395,7 +395,7 @@ void SVPatAdvancedPageClass::OnSelchangeFinalResolutionLevel()
 	int	nSel = m_FinalResolutionLevelComboBox.GetCurSel();
 	if (nSel != CB_ERR)
 	{
-		m_lFinalResolutionLevel = m_FinalResolutionLevelComboBox.GetItemData(nSel);
+		m_lFinalResolutionLevel = static_cast<long>(m_FinalResolutionLevelComboBox.GetItemData(nSel));
 	}
 }
 
@@ -738,7 +738,17 @@ void SVPatAdvancedPageClass::SetSliderPosition(UINT nId)
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVPatAdvancedPageClass.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVPatAdvancedPageClass.cpp_v  $
+ * 
+ *    Rev 1.1   02 Oct 2013 07:01:54   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 13:18:28   bWalter
  * Project:  SVObserver

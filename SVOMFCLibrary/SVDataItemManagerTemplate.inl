@@ -5,8 +5,8 @@
 // * .Module Name     : SVDataItemManagerTemplate
 // * .File Name       : $Workfile:   SVDataItemManagerTemplate.inl  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.1  $
-// * .Check In Date   : $Date:   13 May 2013 16:23:04  $
+// * .Current Version : $Revision:   1.2  $
+// * .Check In Date   : $Date:   02 Oct 2013 08:55:16  $
 // ******************************************************************************
 
 #ifndef SVDATAITEMMANAGERTEMPLATE_INL
@@ -93,7 +93,7 @@ template< typename SVItemData, typename SVIndexType >
 typename SVDataItemManagerTemplate< SVItemData, SVIndexType >::iterator SVDataItemManagerTemplate< SVItemData, SVIndexType >::GetItemData( const SVIndexType& p_IndexVal )
 {
 	iterator l_Iter = end();
-	unsigned long l_Identifer = m_GetFunctor( p_IndexVal );
+	unsigned long l_Identifer = static_cast< unsigned long >( m_GetFunctor( p_IndexVal ) );
 
 	if( l_Identifer != 0 )
 	{
@@ -108,7 +108,7 @@ typename SVDataItemManagerTemplate< SVItemData, SVIndexType >::const_iterator SV
 {
 	const_iterator l_Iter = end();
 
-	unsigned long l_Identifer = m_GetFunctor( p_IndexVal );
+	unsigned long l_Identifer = static_cast< unsigned long >( m_GetFunctor( p_IndexVal ) );
 
 	if( l_Identifer != 0 )
 	{
@@ -123,22 +123,22 @@ bool SVDataItemManagerTemplate< SVItemData, SVIndexType >::SetItemData( const SV
 {
 	ClearItemData( p_IndexVal );
 
-	unsigned long l_NewIdentifier = static_cast< unsigned long >( ::InterlockedIncrement( &m_LastUsedIdentifier ) );
+	unsigned long l_NewIdentifier = ++m_LastUsedIdentifier;
 
 	if( l_NewIdentifier == 0 )
 	{
-		l_NewIdentifier = static_cast< unsigned long >( ::InterlockedIncrement( &m_LastUsedIdentifier ) );
+		l_NewIdentifier = ++m_LastUsedIdentifier;
 	}
 
 	m_Items[ l_NewIdentifier ] = p_rItem;
 
-	return ( m_SetFunctor( p_IndexVal, l_NewIdentifier ) != FALSE );
+	return ( m_SetFunctor( p_IndexVal, static_cast< DWORD_PTR >( l_NewIdentifier ) ) != FALSE );
 }
 
 template< typename SVItemData, typename SVIndexType >
 void SVDataItemManagerTemplate< SVItemData, SVIndexType >::ClearItemData( const SVIndexType& p_IndexVal )
 {
-	unsigned long l_Identifer = m_GetFunctor( p_IndexVal );
+	unsigned long l_Identifer = static_cast< unsigned long >( m_GetFunctor( p_IndexVal ) );
 
 	if( l_Identifer != 0 )
 	{
@@ -159,7 +159,17 @@ void SVDataItemManagerTemplate< SVItemData, SVIndexType >::ClearItemData( const 
 // * LOG HISTORY:
 // ******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVOMFCLibrary\SVDataItemManagerTemplate.inl_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVOMFCLibrary\SVDataItemManagerTemplate.inl_v  $
+ * 
+ *    Rev 1.2   02 Oct 2013 08:55:16   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   13 May 2013 16:23:04   bWalter
  * Project:  SVObserver

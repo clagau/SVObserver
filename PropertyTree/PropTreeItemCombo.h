@@ -5,8 +5,8 @@
 // * .Module Name     : PropertyItemCombo.h
 // * .File Name       : $Workfile:   PropTreeItemCombo.h  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.0  $
-// * .Check In Date   : $Date:   18 Apr 2013 16:42:04  $
+// * .Current Version : $Revision:   1.2  $
+// * .Check In Date   : $Date:   30 Oct 2013 10:21:56  $
 // ******************************************************************************
 
 // PropertyItemCombo.h : header file
@@ -54,7 +54,8 @@ public:
 	virtual void DrawAttribute(CDC* pDC, const RECT& rc);
 
 	// Retrieve the item's attribute value
-	virtual bool GetItemValue(LPARAM& lParam);
+	virtual bool GetItemValue( long& l_Value );
+	virtual bool GetItemValue( UINT& p_Value );
     virtual bool GetItemValue(VARIANT& vtVal);
 
 	// Set the item's attribute value
@@ -147,7 +148,27 @@ private:
 // * LOG HISTORY:
 // ******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\PropertyTree\PropTreeItemCombo.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\PropertyTree\PropTreeItemCombo.h_v  $
+ * 
+ *    Rev 1.2   30 Oct 2013 10:21:56   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Added GetItemValue( UINT
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.1   30 Sep 2013 14:07:26   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platforms.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   18 Apr 2013 16:42:04   bWalter
  * Project:  SVObserver

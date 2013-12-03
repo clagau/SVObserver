@@ -5,8 +5,8 @@
 //* .Module Name     : SVPLCAddRemoveDlg
 //* .File Name       : $Workfile:   SVPLCAddRemoveDlg.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 13:23:20  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   18 Nov 2013 12:44:20  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -77,7 +77,7 @@ void SVPLCAddRemoveDlg::OnBnClickedOk()
 	for( int i = 0 ; i < m_UsedList.GetCount() ; i++ )
 	{
 		CString l_strTmp;
-		long l = m_UsedList.GetItemData( i );
+		long l = static_cast<long>(m_UsedList.GetItemData( i ));
 		m_astrSetupPPQs.push_back( m_astrAvailablePPQs[ l ]);
 	}
 	OnOK();
@@ -164,7 +164,17 @@ HRESULT SVPLCAddRemoveDlg::GetNewItems( CStringVec& OutputList )
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVPLCAddRemoveDlg.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVPLCAddRemoveDlg.cpp_v  $
+ * 
+ *    Rev 1.1   18 Nov 2013 12:44:20   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Added static_casts to build without warnings.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 13:23:20   bWalter
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : SVDrawObject
 //* .File Name       : $Workfile:   SVDrawObject.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 10:20:06  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   01 Oct 2013 14:12:22  $
 //******************************************************************************
 
 #ifndef SVDRAWOBJECT_H
@@ -131,7 +131,7 @@ public:
 
 	virtual void AddExtentMultiLineData( SVExtentMultiLineStruct p_svMultiLine, bool p_bDoNotUseLineColor = false )
 	{
-		long l_lCount = p_svMultiLine.m_svLineArray.GetSize();
+		long l_lCount = static_cast< long >( p_svMultiLine.m_svLineArray.GetSize() );
 
 		for( long l = 0; l < l_lCount; l++ )
 		{
@@ -150,7 +150,7 @@ public:
 
 	virtual void AddExtentMultiLineData( SVExtentMultiLineStruct p_svMultiLine, int PenStyle )
 	{
-		long l_lCount = p_svMultiLine.m_svLineArray.GetSize();
+		long l_lCount = static_cast< long >( p_svMultiLine.m_svLineArray.GetSize() );
 
 		for( long l = 0; l < l_lCount; l++ )
 		{
@@ -196,7 +196,7 @@ public:
 
 	int GetSize() const
 	{
-		return m_svDrawObjectArray.GetSize();
+		return static_cast< int >( m_svDrawObjectArray.GetSize() );
 	}
 
 	virtual SVDrawObjectClass GetAt( int i ) const
@@ -219,7 +219,17 @@ protected:
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVDrawObject.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVDrawObject.h_v  $
+ * 
+ *    Rev 1.1   01 Oct 2013 14:12:22   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 10:20:06   bWalter
  * Project:  SVObserver

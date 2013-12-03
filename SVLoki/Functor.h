@@ -5,8 +5,8 @@
 //* .Module Name     : Functor.h
 //* .File Name       : $Workfile:   Functor.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   22 Apr 2013 13:55:04  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   01 Oct 2013 10:05:30  $
 //******************************************************************************
 
 #ifdef USE_FUNCTOR_OLD_VERSION
@@ -1641,6 +1641,8 @@ namespace Private
 			: ImplBase(p, Type2Type<Functor>())
 		{}
 
+// BRW - __stdcall is ignored for x64.  These overloads only matter for x86.
+#if defined( _M_IX86 )
 		// EB 20040604 - added overloads for __stdcall functions
 		template <class Ret>
 		Functor(Ret (__stdcall *p)()) : ImplBase(p, Type2Type<Functor>())
@@ -1765,7 +1767,8 @@ namespace Private
 		Functor(Ret (__stdcall *p)(A0, A1, A2, A3, A4, A5, A6, A7, A8, A9, A10, A11, A12, A13, A14)) 
 			: ImplBase(p, Type2Type<Functor>())
 		{}
-		
+#endif
+
         template <class PtrObj, typename MemFn>
         Functor(const PtrObj& p, MemFn memFn)
         : ImplBase(p, memFn, Type2Type<Functor>())
@@ -2693,6 +2696,16 @@ namespace Private
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVLoki\Functor.h_v  $
+ * 
+ *    Rev 1.1   01 Oct 2013 10:05:30   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   22 Apr 2013 13:55:04   bWalter
  * Project:  SVObserver

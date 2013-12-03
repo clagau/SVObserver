@@ -5,8 +5,8 @@
 //* .Module Name     : SVClsids
 //* .File Name       : $Workfile:   SVClsids.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 09:53:50  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   11 Nov 2013 07:10:46  $
 //******************************************************************************
 
 #ifndef SVCLSIDS_H
@@ -46,6 +46,9 @@ extern /*const*/ GUID SVByteValueObjectClassGuid;
 
 // GUID for the SVStringValueObjectClass
 extern /*const*/ GUID SVStringValueObjectClassGuid;  // 16 Aug 1999 - frb.
+
+// GUID for the SVStringValueObjectClass
+extern /*const*/ GUID SVStaticStringValueObjectClassGuid;
 
 // GUID for the SVFileNameValueObjectClass
 extern /*const*/ GUID SVFileNameValueObjectClassGuid;	//	11-Apr-2001 - SES
@@ -545,6 +548,9 @@ extern /*const*/ GUID SVArchiveAppendArchiveFileGuid;
 extern /*const*/ GUID SVArchiveStopAtMaxImagesGuid;
 extern /*const*/ GUID SVArchiveMaxImagesCountGuid;
 extern /*const*/ GUID SVArchiveMethodGuid;
+extern /*const*/ GUID SVArchiveUseHeadersGUID;
+extern /*const*/ GUID SVArchiveHeaderLabelGUID;
+extern /*const*/ GUID SVArchiveHeaderObjectGUID;
 extern /*const*/ GUID SVArchiveResultNamesObjectGuid;
 extern /*const*/ GUID SVArchiveImageNamesObjectGuid;
 
@@ -1233,6 +1239,7 @@ extern /*const*/ GUID SVToolCommentTypeObjectGuid;
 
 extern /*const*/ GUID SVCameraTriggerTimestampGuid;
 extern /*const*/ GUID SVCameraTriggerLineInStateGuid;
+extern /*const*/ GUID SVStringHeaderGuid;
 ////////////////////////////////////////////////////////////////////////////////
 // Insert new GUIDs immediately before the previous line.
 ////////////////////////////////////////////////////////////////////////////////
@@ -1243,7 +1250,17 @@ extern /*const*/ GUID SVCameraTriggerLineInStateGuid;
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVClsids.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVClsids.h_v  $
+ * 
+ *    Rev 1.1   11 Nov 2013 07:10:46   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  872
+ * SCR Title:  Add Archive Tool Headers to Archive File
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add new Guids for StaticStringValueObject
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 09:53:50   bWalter
  * Project:  SVObserver

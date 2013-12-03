@@ -5,8 +5,8 @@
 //* .Module Name     : SVMaskEditorCtl
 //* .File Name       : $Workfile:   SVMaskEditorCtl.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   26 Apr 2013 14:07:20  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   01 Oct 2013 10:22:34  $
 //******************************************************************************
 
 #if !defined(AFX_SVMASKEDITORCTL_H__C87C9B82_E6DC_11D2_A77B_00106F000C7D__INCLUDED_)
@@ -67,7 +67,7 @@ protected:
 	afx_msg void SetMaskOperator(long nNewValue);
 	afx_msg OLE_HANDLE GetMaskData();
 	afx_msg void SetMaskData(OLE_HANDLE nNewValue);
-	afx_msg long DoEditMaskModal();
+	afx_msg INT_PTR DoEditMaskModal();
 	afx_msg void Refresh();
 	//}}AFX_DISPATCH
 	DECLARE_DISPATCH_MAP()
@@ -105,7 +105,17 @@ protected:
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVMaskEditor\SVMaskEditorCtl.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVMaskEditor\SVMaskEditorCtl.h_v  $
+ * 
+ *    Rev 1.1   01 Oct 2013 10:22:34   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   26 Apr 2013 14:07:20   bWalter
  * Project:  SVObserver

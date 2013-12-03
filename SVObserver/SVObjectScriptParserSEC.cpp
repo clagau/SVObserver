@@ -5,8 +5,8 @@
 //* .Module Name     : SVObjectScriptParser
 //* .File Name       : $Workfile:   SVObjectScriptParserSEC.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 12:41:20  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   01 Oct 2013 15:24:38  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -508,7 +508,7 @@ LPTSTR SVObjectScriptParserSECClass::ExtractGUIDToken( LPCTSTR TStrTokenString, 
 
 			if( tStrFinal )
 			{
-				RCount = tStrFinal - TStrTokenString + 1;
+				RCount = static_cast<int>(tStrFinal - TStrTokenString + 1);
 
 				if( bCType )
 				{
@@ -530,7 +530,7 @@ LPTSTR SVObjectScriptParserSECClass::ExtractGUIDToken( LPCTSTR TStrTokenString, 
 					{
 						// Make upper case...
 						_tcsupr( szToken );
-						int len = _tcslen( szToken );
+						int len = static_cast<int>(_tcslen( szToken ));
 						switch( dataCount )
 						{
 							case 1:
@@ -661,7 +661,7 @@ BOOL SVObjectScriptParserSECClass::EvaluateOperandExpression( int OperandType, c
 				ROperand.PValue = _tcsdup( RExpressionStack.GetAt( RIndex ) );
 				if( ROperand.PValue )
 				{
-					ROperand.ValueSize = _tcslen( RExpressionStack.GetAt( RIndex ) ) + 1;
+					ROperand.ValueSize = static_cast<int>(_tcslen( RExpressionStack.GetAt( RIndex ) ) + 1);
 					ROperand.Type = NAME;
 					// Success...
 					return TRUE;
@@ -813,7 +813,7 @@ BOOL SVObjectScriptParserSECClass::EvaluateOperandExpression( int OperandType, c
 						ROperand.PValue = _tcsdup( RExpressionStack.GetAt( RIndex ) );
 						if( ROperand.PValue )
 						{
-							ROperand.ValueSize = _tcslen( RExpressionStack.GetAt( RIndex ) ) + 1;
+							ROperand.ValueSize = static_cast<int>(_tcslen( RExpressionStack.GetAt( RIndex ) ) + 1);
 							ROperand.Type = MEMBER_NAME;
 
 							// Success...
@@ -1297,7 +1297,7 @@ BOOL SVObjectScriptParserSECClass::CheckValue( SVObjectAttributeClass& dataObjec
 /* Do not use - Delimiters have been removed already !!! */
 BOOL SVObjectScriptParserSECClass::CheckString( LPCTSTR tokenStr )
 {
-	int len = _tcslen( tokenStr );
+	int len = static_cast<int>(_tcslen( tokenStr ));
 	
 	// check for double quote at beginning
 	// check for double quote at end
@@ -1313,7 +1313,7 @@ BOOL SVObjectScriptParserSECClass::CheckString( LPCTSTR tokenStr )
 
 BOOL SVObjectScriptParserSECClass::CheckNumber( LPCTSTR tokenStr )
 {
-	int len = _tcslen( tokenStr );
+	int len = static_cast<int>(_tcslen( tokenStr ));
 	BOOL decimalPoint = FALSE;
 	BOOL minusSign = FALSE;
 	
@@ -1448,7 +1448,7 @@ LPCTSTR SVObjectScriptParserSECClass::Parse( SVObjectClass* POwner, LPCTSTR TStr
 		localOwnerInfo = POwner;
 		SVObjectScriptAliasListClassSEC localAliasTable;
 
-		int parseLength = _tcslen( tStrParse );
+		int parseLength = static_cast<int>(_tcslen( tStrParse ));
 
 		while( currentParseState != PARSER_ERROR && currentParseState != PARSE_END && 
 				currentTokenIndex < parseLength )
@@ -1564,7 +1564,7 @@ LPCTSTR SVObjectScriptParserSECClass::Parse( SVObjectClass* POwner, LPCTSTR TStr
 								}
 								else
 								{
-									currentTokenIndex = (tStrNewParsPos - tStrParse);
+									currentTokenIndex = static_cast<int>(tStrNewParsPos - tStrParse);
 
 									currentParseState = PARSE;
 								}
@@ -1663,7 +1663,7 @@ void SVObjectScriptParserSECClass::RemoveExternalDependencies( CString& script )
 			// Build the list of known Object GUIDs
 			
 			// Find the ending braces
-			loc = pos + _tcsclen( keyWord );
+			loc = static_cast<int>(pos + _tcsclen( keyWord ));
 			if( ( endGuidPos = script.Find( endGuidIdentifier, loc ) ) != -1 )
 			{
 				endGuidPos += endGuidIdentifier.GetLength();
@@ -1684,7 +1684,7 @@ void SVObjectScriptParserSECClass::RemoveExternalDependencies( CString& script )
 			scriptStack.Add( keyWord );
 			
 			// Find the ending braces
-			loc = pos + _tcsclen( keyWord );
+			loc = static_cast<int>(pos + _tcsclen( keyWord ));
 			if( ( endGuidPos = script.Find( endGuidIdentifier, loc ) ) != -1 )
 			{
 				endGuidPos += endGuidIdentifier.GetLength();
@@ -1768,7 +1768,7 @@ bool SVObjectScriptParserSECClass::findCharacters(LPCTSTR tStr, int tStrLen, int
 {
 	bool found = false;
 	
-	int numChars = _tcsclen( characters );
+	int numChars = static_cast<int>(_tcsclen( characters ));
 
 	if( reverse )
 	{
@@ -1974,7 +1974,7 @@ bool SVObjectScriptParserSECClass::parseStatements( LPCTSTR ParseStr, int parseL
 							
 						if( currentChar == TCHAR( ';' ) ||
 							currentChar == TCHAR( '{' ) ||
-							( index = RExpressionStack.GetUpperBound() ) >= 0 && 
+							( index = static_cast<int>(RExpressionStack.GetUpperBound()) ) >= 0 && 
 							RExpressionStack.GetAt( index ) && 
 							*RExpressionStack.GetAt( index ) == TCHAR( ')' ) 
 						  )
@@ -2790,7 +2790,17 @@ HRESULT SVObjectScriptParserSECClass::DoParse()
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVObjectScriptParserSEC.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVObjectScriptParserSEC.cpp_v  $
+ * 
+ *    Rev 1.1   01 Oct 2013 15:24:38   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 12:41:20   bWalter
  * Project:  SVObserver

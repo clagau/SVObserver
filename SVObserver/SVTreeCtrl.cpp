@@ -5,8 +5,8 @@
 //* .Module Name     : SVTreeCtrl
 //* .File Name       : $Workfile:   SVTreeCtrl.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   24 Apr 2013 12:27:28  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   02 Oct 2013 08:24:42  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -106,7 +106,7 @@ void SVTreeCtrlClass::OnLButtonDown(UINT nFlags, CPoint point)
 
 	if (hItem)
 	{
-		DWORD dwItemData = GetItemData(hItem);
+		DWORD dwItemData = static_cast<DWORD>(GetItemData(hItem));
 		if( dwItemData )
 		{
 			BOOL bCheckState = GetCheckState(hItem);
@@ -124,7 +124,17 @@ void SVTreeCtrlClass::OnLButtonDown(UINT nFlags, CPoint point)
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVTreeCtrl.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVTreeCtrl.cpp_v  $
+ * 
+ *    Rev 1.1   02 Oct 2013 08:24:42   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   24 Apr 2013 12:27:28   bWalter
  * Project:  SVObserver

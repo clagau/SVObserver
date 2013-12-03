@@ -5,8 +5,8 @@
 //* .Module Name     : SVToolBuildReference
 //* .File Name       : $Workfile:   SVToolBuildReference.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   08 May 2013 16:44:00  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   02 Oct 2013 08:24:42  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -148,9 +148,7 @@ BOOL SVBuildReferenceToolClass::IsOkToEdit()
 	dlg.OnlyImageDependencies = TRUE;
 	dlg.StrMessageID = IDS_EDIT_CHECK_DEPENDENTS;
 
-	int rc = dlg.DoModal();
-
-	if( rc == IDCANCEL )
+	if( dlg.DoModal() == IDCANCEL )
 		return FALSE;
 
 	if( dlg.NumberOfDependents)
@@ -200,7 +198,17 @@ HRESULT SVBuildReferenceToolClass::ResetObject()
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVToolBuildReference.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVToolBuildReference.cpp_v  $
+ * 
+ *    Rev 1.2   02 Oct 2013 08:24:42   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   08 May 2013 16:44:00   bWalter
  * Project:  SVObserver

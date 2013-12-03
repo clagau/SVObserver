@@ -5,8 +5,8 @@
 //* .Module Name     : SVLineEdgeCountingAnalyzer
 //* .File Name       : $Workfile:   SVLinearLineEdgeCountingAnalyzer.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 11:52:46  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   02 Oct 2013 12:05:40  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -111,7 +111,7 @@ BOOL SVLinearEdgeCountingLineAnalyzerClass::onRun( SVRunStatusClass& RRunStatus 
 
 		l_bOk = ( GetEdgeA()->m_svLinearEdges.GetValues( RRunStatus.m_lResultDataIndex, l_svEdges ) == S_OK );
 
-		long l_lCount = l_svEdges.size();
+		long l_lCount = static_cast<int>(l_svEdges.size());
 
 		l_bOk = l_bOk && ( m_svEdgeCount.SetValue( RRunStatus.m_lResultDataIndex, l_lCount )== S_OK ); 
 	}
@@ -186,7 +186,17 @@ HRESULT SVLinearEdgeCountingLineAnalyzerClass::GetSelectedEdgeOverlays( SVExtent
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVLinearLineEdgeCountingAnalyzer.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVLinearLineEdgeCountingAnalyzer.cpp_v  $
+ * 
+ *    Rev 1.1   02 Oct 2013 12:05:40   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platforms.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 11:52:46   bWalter
  * Project:  SVObserver

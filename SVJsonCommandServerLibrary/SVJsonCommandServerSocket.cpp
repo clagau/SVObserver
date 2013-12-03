@@ -5,8 +5,8 @@
 //* .Module Name     : SVJsonCommandServerSocket
 //* .File Name       : $Workfile:   SVJsonCommandServerSocket.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   06 Aug 2013 11:09:26  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   01 Oct 2013 09:26:18  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -110,7 +110,7 @@ void SVJsonCommandServerSocket::OnDataReceived(const std::string& data)
 	}
 }
 
-void CALLBACK SVJsonCommandServerSocket::OnAPCEvent(DWORD data)
+void CALLBACK SVJsonCommandServerSocket::OnAPCEvent( ULONG_PTR data )
 {
 }
 
@@ -303,6 +303,16 @@ void SVJsonCommandServerSocket::CloseClient()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVJsonCommandServerLibrary\SVJsonCommandServerSocket.cpp_v  $
+ * 
+ *    Rev 1.3   01 Oct 2013 09:26:18   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   06 Aug 2013 11:09:26   jHanebach
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 // * .Module Name     : SVMatroxBufferCreateStruct
 // * .File Name       : $Workfile:   SVMatroxBufferCreateStruct.h  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.0  $
-// * .Check In Date   : $Date:   22 Apr 2013 15:01:52  $
+// * .Current Version : $Revision:   1.1  $
+// * .Check In Date   : $Date:   01 Oct 2013 11:08:10  $
 // ******************************************************************************
 
 #ifndef SV_MATROX_BUFFER_CREATE_STRUCT_H
@@ -17,6 +17,7 @@
 #endif // _MSC_VER > 1000
 
 #include "SVMatroxLibrary/SVMatroxEnums.h"
+#include "SVMatroxLibrary/SVMatroxTypedefs.h"
 
 /**
 @SVObjectName Matrox Buffer Create Structure
@@ -49,6 +50,16 @@ public:
 // ******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVMatroxLibrary\SVMatroxBufferCreateStruct.h_v  $
+ * 
+ *    Rev 1.1   01 Oct 2013 11:08:10   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   22 Apr 2013 15:01:52   bWalter
  * Project:  SVObserver

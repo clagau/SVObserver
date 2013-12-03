@@ -5,8 +5,8 @@
 //* .Module Name     : SVMatroxDigitizerControlEnums
 //* .File Name       : $Workfile:   SVMatroxDigitizerControlEnums.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   22 Apr 2013 14:27:20  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   01 Oct 2013 10:45:28  $
 //******************************************************************************
 
 #ifndef SVMATROXDIGITIZERCONTROLENUMS_H
@@ -99,7 +99,7 @@ struct SVMatroxDigitizerControl
 									// M_DEFAULT (M_USER_BIT).
 	};
 	// define convertor for from/to SVEnum/Matrox types
-	typedef SVMatroxEnumConvertor<SVUserBitEnum, long> SVUserBitEnumMap;
+	typedef SVMatroxEnumConvertor< SVUserBitEnum, SVMatroxInt > SVUserBitEnumMap;
 	static SVUserBitEnumMap m_UserBitEnumConvertor;
 };
 
@@ -118,6 +118,16 @@ struct SVMatroxDigitizerFormat
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVMatroxDigitizerLibrary\SVMatroxDigitizerControlEnums.h_v  $
+ * 
+ *    Rev 1.1   01 Oct 2013 10:45:28   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   22 Apr 2013 14:27:20   bWalter
  * Project:  SVObserver

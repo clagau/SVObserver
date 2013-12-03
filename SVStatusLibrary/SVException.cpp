@@ -5,8 +5,8 @@
 //* .Module Name     : SVException
 //* .File Name       : $Workfile:   SVException.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   25 Apr 2013 17:43:14  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   02 Oct 2013 10:08:12  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -67,9 +67,7 @@ void SVException::SetException(long ErrorCode, TCHAR* szCompileDate, TCHAR* szCo
 							   TCHAR* szSourceFile, long SourceLine, TCHAR* szSourceDateTime, DWORD dwProgramCode)
 {
 	SVString errorText(pszErrorText);
-	UINT cbErrorData;
-
-	cbErrorData = errorText.size() * sizeof (TCHAR);
+	UINT cbErrorData = static_cast< UINT >( errorText.size() * sizeof( TCHAR ) );
 
 	SetException(ErrorCode, szCompileDate, szCompileTime,  (LPVOID) pszErrorText, cbErrorData, szSourceFile, SourceLine, szSourceDateTime, dwProgramCode);
 }
@@ -150,8 +148,7 @@ Sets values in an SVException object.
 void SVException::SetException(long ErrorCode, TCHAR* szCompileDate, TCHAR* szCompileTime, LPCTSTR tszErrorText, TCHAR* szSourceFile, long SourceLine, TCHAR* szSourceDateTime , DWORD dwProgramCode, DWORD dwOsErrorCode)
 {
 	SVString sErrorText(tszErrorText);
-	UINT cbErrorData;
-	cbErrorData = sErrorText.size() * sizeof (TCHAR);
+	UINT cbErrorData = static_cast< UINT >( sErrorText.size() * sizeof( TCHAR ) );
 	SetException(ErrorCode, szCompileDate, szCompileTime, (LPVOID)sErrorText.ToString(), cbErrorData, szSourceFile, SourceLine, szSourceDateTime ,dwProgramCode, dwOsErrorCode);
 }
 
@@ -317,7 +314,6 @@ void SVException::Format(SVString &szMsg , LPCTSTR pszMessage , LANGID Language)
 	SVString szSourceLine, szOSErrorCode, szOSErrorCodeHex;
 	SVString szProgramCode, szProgramCodeHex;
 	const TCHAR *szSubstituteString[11];
-	int iIndex;
 
 	if (Language == 0)
 	{
@@ -387,7 +383,7 @@ void SVException::Format(SVString &szMsg , LPCTSTR pszMessage , LANGID Language)
 													 Language, (LPTSTR) &pszTemp, 11, (va_list *) szSubstituteString))
 				{
 					szMsg = (TCHAR *) pszTemp;
-					iIndex = szMsg.find_first_of(_T("\r\n"));
+					size_t iIndex = szMsg.find_first_of(_T("\r\n"));
 					if (iIndex != -1)
 					{
 						szMsg.erase(iIndex, (szMsg.size() - iIndex));
@@ -579,7 +575,17 @@ void SVException::DeleteBinData()
 // * LOG HISTORY:
 // ******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVStatusLibrary\SVException.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVStatusLibrary\SVException.cpp_v  $
+ * 
+ *    Rev 1.1   02 Oct 2013 10:08:12   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   25 Apr 2013 17:43:14   bWalter
  * Project:  SVObserver

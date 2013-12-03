@@ -5,8 +5,8 @@
 // * .Module Name     : SVIOTESTDlg.h
 // * .File Name       : $Workfile:   SVIOTESTDlg.h  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.1  $
-// * .Check In Date   : $Date:   08 May 2013 15:01:16  $
+// * .Current Version : $Revision:   1.2  $
+// * .Check In Date   : $Date:   01 Oct 2013 09:21:30  $
 // ******************************************************************************
 
 #ifndef SVIOTESTDLG_H
@@ -133,7 +133,7 @@ protected:
 	afx_msg HCURSOR OnQueryDragIcon();
 	afx_msg void OnButton1();
 	afx_msg void OnButton2();
-	afx_msg void OnTimer(UINT nIDEvent);
+	afx_msg void OnTimer( UINT_PTR nIDEvent );
 	afx_msg void OnClose();
 	afx_msg void OnSequence();
 	afx_msg void OnSlow();
@@ -182,7 +182,17 @@ public:
 // * LOG HISTORY:
 // ******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVIOTest\SVIOTESTDlg.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVIOTest\SVIOTESTDlg.h_v  $
+ * 
+ *    Rev 1.2   01 Oct 2013 09:21:30   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   08 May 2013 15:01:16   bWalter
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : SVTADlgColorThresholdBasePage
 //* .File Name       : $Workfile:   SVTADlgColorThresholdBasePage.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 15:19:44  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   02 Oct 2013 08:17:48  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -94,7 +94,7 @@ BOOL SVTADlgColorThresholdBasePage::OnSetActive()
 void SVTADlgColorThresholdBasePage::OnSelchangeComboZoom() 
 {
 	UpdateData();
-	int iZoom = m_cbZoom.GetItemData( m_cbZoom.GetCurSel() );
+	int iZoom = static_cast<int>(m_cbZoom.GetItemData( m_cbZoom.GetCurSel() ));
 	//CString sText;
 	//m_cbZoom.GetWindowText( sText );
 	//StringMunge::KeepChars(&sText, _T("0123456789"));
@@ -107,7 +107,17 @@ void SVTADlgColorThresholdBasePage::OnSelchangeComboZoom()
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVTADlgColorThresholdBasePage.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVTADlgColorThresholdBasePage.cpp_v  $
+ * 
+ *    Rev 1.1   02 Oct 2013 08:17:48   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 15:19:44   bWalter
  * Project:  SVObserver

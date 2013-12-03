@@ -5,8 +5,8 @@
 //* .Module Name     : SVOPropertyPageDlg
 //* .File Name       : $Workfile:   SVOPropertyPageDlg.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   11 Jun 2013 15:26:40  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   02 Oct 2013 12:05:42  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -1526,9 +1526,10 @@ void CSVOPropertyPageDlg::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResult)
 
 				case PROP_TRG_TYPE:
 				{
-					long lType;
-					m_Tree.FindItem(ctrlID)->GetItemValue(lType);
-					m_pTriggerObj->SetSoftwareTrigger(lType ? true : false);
+					UINT lType = 0;
+					SVRPropertyItem* l_Item = m_Tree.FindItem( ctrlID );
+					l_Item->GetItemValue( lType );
+					m_pTriggerObj->SetSoftwareTrigger( lType ? true : false );
 					break;
 				}
 
@@ -2262,7 +2263,17 @@ bool CSVOPropertyPageDlg::IsGigeSystem() const
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVOPropertyPageDlg.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVOPropertyPageDlg.cpp_v  $
+ * 
+ *    Rev 1.3   02 Oct 2013 12:05:42   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platforms.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   11 Jun 2013 15:26:40   bWalter
  * Project:  SVObserver

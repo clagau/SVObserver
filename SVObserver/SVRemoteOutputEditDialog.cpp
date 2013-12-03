@@ -5,8 +5,8 @@
 //* .Module Name     : SVRemoteOutputEditDialog
 //* .File Name       : $Workfile:   SVRemoteOutputEditDialog.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.5  $
-//* .Check In Date   : $Date:   07 Aug 2013 13:21:48  $
+//* .Current Version : $Revision:   1.6  $
+//* .Check In Date   : $Date:   02 Oct 2013 07:58:46  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -87,7 +87,7 @@ BOOL SVRemoteOutputEditDialog::OnInitDialog()
 			if( !pPPQ->GetAllOutputs( ppIOEntries ) )
 				DebugBreak();
 
-			lSize = ppIOEntries.size();
+			lSize = static_cast<long>(ppIOEntries.size());
 
 			// Put the Trigger Count in the list.
 			SVValueObjectClass* l_pCurrentObject = &pPPQ->m_voTriggerCount;
@@ -224,6 +224,16 @@ BOOL SVRemoteOutputEditDialog::PreTranslateMessage(MSG* pMsg)
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVRemoteOutputEditDialog.cpp_v  $
+ * 
+ *    Rev 1.6   02 Oct 2013 07:58:46   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.5   07 Aug 2013 13:21:48   sjones
  * Project:  SVObserver

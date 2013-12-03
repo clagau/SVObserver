@@ -5,8 +5,8 @@
 //* .Module Name     : SVAdjustToolSizePositionDlg
 //* .File Name       : $Workfile:   SVAdjustToolSizePositionDlg.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.3  $
-//* .Check In Date   : $Date:   24 Sep 2013 16:13:46  $
+//* .Current Version : $Revision:   1.5  $
+//* .Check In Date   : $Date:   03 Oct 2013 13:31:02  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -299,7 +299,6 @@ BOOL SVAdjustToolSizePositionMainPage::OnInitDialog()
 
 LRESULT SVAdjustToolSizePositionMainPage::OnNotifyLButtonDown( WPARAM wParam, LPARAM lParam )
 {
-	UINT nFlags = wParam;
 	SVUpDownButton* pButton = reinterpret_cast <SVUpDownButton*> (lParam);
 	m_pButton = pButton;
 
@@ -311,7 +310,6 @@ LRESULT SVAdjustToolSizePositionMainPage::OnNotifyLButtonDown( WPARAM wParam, LP
 
 LRESULT SVAdjustToolSizePositionMainPage::OnNotifyLButtonUp( WPARAM wParam, LPARAM lParam )
 {
-	UINT nFlags = wParam;
 	SVUpDownButton* pButton = reinterpret_cast <SVUpDownButton*> (lParam);
 	KillTimer( TIMER_PAUSE  );
 	KillTimer( TIMER_REPEAT );
@@ -320,7 +318,7 @@ LRESULT SVAdjustToolSizePositionMainPage::OnNotifyLButtonUp( WPARAM wParam, LPAR
 }
 
 
-void SVAdjustToolSizePositionMainPage::OnTimer(UINT nIDEvent) 
+void SVAdjustToolSizePositionMainPage::OnTimer( UINT_CUSTOM nIDEvent )
 {
 	switch ( nIDEvent )
 	{
@@ -884,6 +882,26 @@ bool SVAdjustToolSizePositionPropertiesPage::IsFullSize()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVAdjustToolSizePositionDlg.cpp_v  $
+ * 
+ *    Rev 1.5   03 Oct 2013 13:31:02   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   64 bit platform types.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.4   02 Oct 2013 12:05:38   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platforms.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   24 Sep 2013 16:13:46   bwalter
  * Project:  SVObserver

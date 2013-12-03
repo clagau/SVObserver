@@ -5,8 +5,8 @@
 //* .Module Name     : SVDDEInputsView.cpp
 //* .File Name       : $Workfile:   VisualFx.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 16:32:36  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   02 Oct 2013 08:39:00  $
 //******************************************************************************
 
 /*#############################################################################
@@ -322,7 +322,7 @@ int TTabWnd::GetTabIndex(void)
 // Get number of tabs
 int TTabWnd::GetTabCount(void)
 {
-  return m_TabList.size();
+  return static_cast<int>(m_TabList.size());
 }
 
 // Get index of the tab associated with specified window
@@ -1014,7 +1014,7 @@ TTabItem *TTabWnd::CreatePane(LPCTSTR lpszLabel, CRuntimeClass *pViewClass,
     dwStyle &= ~WS_BORDER;
   }
 
-  if (!pWnd->Create(NULL, NULL, dwStyle, rect, this, 13576+m_TabList.size(), pContext))
+  if (!pWnd->Create(NULL, NULL, dwStyle, rect, this, static_cast<UINT>( 13576 + m_TabList.size()), pContext))
   {
     TRACE0("Warning: couldn't create client area for tab view\n");
     // pWnd will be cleaned up by PostNcDestroy
@@ -2090,7 +2090,7 @@ BOOL TVisualFramework::IsView(TVisualObject *pObject)
 // Get the count of visual objects
 int TVisualFramework::GetCount(void)
 {
-  return m_ObjectMap.size();
+  return static_cast<int>(m_ObjectMap.size());
 }
 
 // Set font for complete framework
@@ -2431,7 +2431,17 @@ BOOL __stdcall setChildEnabled(HWND hwnd, LPARAM lparam)
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\VisualFx.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\VisualFx.cpp_v  $
+ * 
+ *    Rev 1.1   02 Oct 2013 08:39:00   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 16:32:36   bWalter
  * Project:  SVObserver

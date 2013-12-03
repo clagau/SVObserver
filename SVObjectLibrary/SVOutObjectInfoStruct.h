@@ -5,8 +5,8 @@
 //* .Module Name     : SVOutObjectInfoStruct
 //* .File Name       : $Workfile:   SVOutObjectInfoStruct.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   22 Apr 2013 17:20:44  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   01 Oct 2013 11:29:20  $
 //******************************************************************************
 
 #ifndef SVOUTOBJECTINFOSTRUCT_H
@@ -38,7 +38,7 @@ struct SVOutObjectInfoStruct : public SVObjectInfoStruct
 	HRESULT DisconnectAllInputs();
 	HRESULT GetDependentsList( SVObjectClass* p_psvObject, SVObjectPairVector& rListOfDependents );
 
-	long GetInputSize() { return UserInfoList.GetSize(); }
+	INT_PTR GetInputSize() { return UserInfoList.GetSize(); }
 	SVInObjectInfoStruct& GetInputAt( long p_lIndex ) { return UserInfoList[ p_lIndex ]; }
 
 	BOOL Lock( DWORD p_TimeOutMilliseconds = INFINITE ) const;
@@ -64,7 +64,17 @@ typedef SVVector< SVOutObjectInfoStruct* > SVOutObjectInfoStructPtrArray;
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObjectLibrary\SVOutObjectInfoStruct.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObjectLibrary\SVOutObjectInfoStruct.h_v  $
+ * 
+ *    Rev 1.1   01 Oct 2013 11:29:20   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   22 Apr 2013 17:20:44   bWalter
  * Project:  SVObserver

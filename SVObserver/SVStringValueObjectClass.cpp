@@ -5,8 +5,8 @@
 //* .Module Name     : SVStringValueObjectClass
 //* .File Name       : $Workfile:   SVStringValueObjectClass.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   30 Jul 2013 12:29:28  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   02 Oct 2013 08:17:48  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -228,7 +228,7 @@ HRESULT  SVStringValueObjectClass::SetObjectValue(SVObjectAttributeClass* pDataO
 			SVRemoveEscapedSpecialCharacters(l_Array[i], true);
 		}
 
-		SetArraySize( l_Array.size() );
+		SetArraySize( static_cast<int>(l_Array.size()) );
 		if ( ArraySize() == 1 )
 		{
 			ScalarBucket(1)=l_Array[0];
@@ -344,7 +344,17 @@ void SVStringValueObjectClass::LocalInitialize()
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVStringValueObjectClass.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVStringValueObjectClass.cpp_v  $
+ * 
+ *    Rev 1.2   02 Oct 2013 08:17:48   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   30 Jul 2013 12:29:28   tbair
  * Project:  SVObserver

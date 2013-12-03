@@ -5,8 +5,8 @@
 //* .Module Name     : SVExternalToolTask
 //* .File Name       : $Workfile:   SVExternalToolTask.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   24 Sep 2013 12:36:48  $
+//* .Current Version : $Revision:   1.4  $
+//* .Check In Date   : $Date:   03 Oct 2013 13:31:04  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -143,7 +143,7 @@ SVExternalToolTask::SVExternalToolTask( SVObjectClass* POwner, int StringResourc
 	m_Data.m_aDllDependencies.resize(SVExternalToolTaskData::NUM_TOOL_DEPENDENCIES);
 	for ( i=0; i < m_Data.m_aDllDependencies.size(); i++)
 	{
-		RegisterEmbeddedObject( &m_Data.m_aDllDependencies[i], aSVDllDependencyFileNameGuid[i], IDS_OBJECTNAME_DLL_DEP_FILE_01 + i, false, SVResetItemTool );
+		RegisterEmbeddedObject( &m_Data.m_aDllDependencies[i], aSVDllDependencyFileNameGuid[i], IDS_OBJECTNAME_DLL_DEP_FILE_01 + static_cast<int>(i), false, SVResetItemTool );
 	}
 
 	// init Tool Name
@@ -167,8 +167,8 @@ SVExternalToolTask::SVExternalToolTask( SVObjectClass* POwner, int StringResourc
 		m_Data.m_aInputObjectInfo[i].SetObject( GetObjectInfo() );
 		RegisterInputObject( &m_Data.m_aInputObjectInfo[i], l_Name );
 
-		RegisterEmbeddedObject( &m_Data.m_aInputObjects[i], aSVVariantInputObjectGuid[i], IDS_OBJECTNAME_INPUT_01 + i, false, SVResetItemNone );
-		RegisterEmbeddedObject( &m_Data.m_aInputObjectNames[i], aSVVariantInputObjectNameGuid[i], IDS_OBJECTNAME_INPUT_01_NAME + i, false, SVResetItemNone );
+		RegisterEmbeddedObject( &m_Data.m_aInputObjects[i], aSVVariantInputObjectGuid[i], IDS_OBJECTNAME_INPUT_01 + static_cast<int>(i), false, SVResetItemNone );
+		RegisterEmbeddedObject( &m_Data.m_aInputObjectNames[i], aSVVariantInputObjectNameGuid[i], IDS_OBJECTNAME_INPUT_01_NAME + static_cast<int>(i), false, SVResetItemNone );
 
 		// set default values
 		VARIANT vtTemp;
@@ -211,8 +211,8 @@ SVExternalToolTask::SVExternalToolTask( SVObjectClass* POwner, int StringResourc
 	for ( i=0; i < SVExternalToolTaskData::NUM_RESULT_OBJECTS; i++)
 	{
 		// Register
-		RegisterEmbeddedObject( &m_Data.m_aResultObjects[i], aSVVariantResultObjectGuid[i], IDS_OBJECTNAME_RESULT_01 + i, false, SVResetItemNone );
-		RegisterEmbeddedObject( &m_Data.m_aResultObjectNames[i], aSVVariantResultObjectNameGuid[i], IDS_OBJECTNAME_RESULT_01_NAME + i, false, SVResetItemNone );
+		RegisterEmbeddedObject( &m_Data.m_aResultObjects[i], aSVVariantResultObjectGuid[i], IDS_OBJECTNAME_RESULT_01 + static_cast<int>(i), false, SVResetItemNone );
+		RegisterEmbeddedObject( &m_Data.m_aResultObjectNames[i], aSVVariantResultObjectNameGuid[i], IDS_OBJECTNAME_RESULT_01_NAME + static_cast<int>(i), false, SVResetItemNone );
 
 		// Defaults
 		VARIANT vtTemp;
@@ -515,7 +515,8 @@ HRESULT SVExternalToolTask::Initialize(	SVDllLoadLibraryCallback fnNotify )// th
 					{
 						l_ImageBuffer->GetData( l_MilHandle );
 
-						m_aInspectionInputImages[i] = l_MilHandle.GetBuffer().GetIdentifier();
+						// this cast assumes that a mil handle will never be larger 32 bits.
+						m_aInspectionInputImages[i] = static_cast<long>(l_MilHandle.GetBuffer().GetIdentifier());
 
 						if( !m_dll.UseMil() )
 						{
@@ -968,7 +969,8 @@ BOOL SVExternalToolTask::onRun( SVRunStatusClass& RRunStatus )
 						{
 							if( !m_bUseImageCopies )
 							{
-								m_aInspectionInputImages[i] = l_MilHandle.GetBuffer().GetIdentifier();	// assign to internal buffer handle
+								// This cast assumes that a mil handle will never get larger than a 32 bit long.
+								m_aInspectionInputImages[i] = static_cast<long>(l_MilHandle.GetBuffer().GetIdentifier());	// assign to internal buffer handle
 								if( m_aInspectionInputImages[i] == 0 )
 								{
 									l_bOkToRun = FALSE;
@@ -989,7 +991,8 @@ BOOL SVExternalToolTask::onRun( SVRunStatusClass& RRunStatus )
 								{
 									l_Code = SVMatroxBufferInterface::CopyBuffer( l_CopyMilHandle.GetBuffer(), l_MilHandle.GetBuffer());
 									
-									m_aInspectionInputImages[i] = l_CopyMilHandle.GetBuffer().GetIdentifier();	// assign to copy handle
+									// This cast assumes that a Mil Id will never get larger than 32 bits in size.
+									m_aInspectionInputImages[i] = static_cast<long>(l_CopyMilHandle.GetBuffer().GetIdentifier());	// assign to copy handle
 									if( m_aInspectionInputImages[i] == 0 )
 									{
 										l_bOkToRun = FALSE;
@@ -1057,7 +1060,8 @@ BOOL SVExternalToolTask::onRun( SVRunStatusClass& RRunStatus )
 							l_ImageBuffer->GetData( l_MilHandle );
 						}
 
-						m_aInspectionResultImages[i] = l_MilHandle.GetBuffer().GetIdentifier();
+						// this cast assumes that a mil handle will never be larger 32 bits.
+						m_aInspectionResultImages[i] = static_cast<long>(l_MilHandle.GetBuffer().GetIdentifier());
 						if( m_aInspectionResultImages[i] == 0 )
 						{
 							l_bOkToRun = FALSE;
@@ -1080,7 +1084,8 @@ BOOL SVExternalToolTask::onRun( SVRunStatusClass& RRunStatus )
 							l_ImageBuffer->GetData( l_MilHandle );
 						}
 
-						m_aInspectionResultImages[i] = l_MilHandle.GetBuffer().GetIdentifier();
+						// this cast assumes that a mil handle will never be larger 32 bits.
+						m_aInspectionResultImages[i] = static_cast<long>(l_MilHandle.GetBuffer().GetIdentifier());
 						if( m_aInspectionResultImages[i] == 0 )
 						{
 							l_bOkToRun = FALSE;
@@ -2054,7 +2059,8 @@ HRESULT SVExternalToolTask::ConnectInputImages()
 				l_ImageBuffer->GetData( l_MilHandle );
 			}
 
-			m_aInspectionInputImages[i] = l_MilHandle.GetBuffer().GetIdentifier();
+			// this cast assumes that a mil handle will never be larger 32 bits.
+			m_aInspectionInputImages[i] = static_cast<long>(l_MilHandle.GetBuffer().GetIdentifier());
 
 			if( m_bUseImageCopies )
 			{
@@ -2176,6 +2182,26 @@ HRESULT SVExternalToolTask::CollectInputImageNames( SVRunStatusClass& RRunStatus
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVExternalToolTask.cpp_v  $
+ * 
+ *    Rev 1.4   03 Oct 2013 13:31:04   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   64 bit platform types.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.3   02 Oct 2013 12:05:40   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platforms.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   24 Sep 2013 12:36:48   tbair
  * Project:  SVObserver

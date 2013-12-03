@@ -5,8 +5,8 @@
 //* .Module Name     : SVExternalToolInputSelectPage
 //* .File Name       : $Workfile:   SVExternalToolInputSelectPage.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   24 Sep 2013 12:37:46  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   03 Oct 2013 13:31:04  $
 //******************************************************************************
 
 // SVExternalToolInputSelectPage.cpp : implementation file
@@ -286,7 +286,7 @@ int SVExternalToolInputSelectPage::SelectObject(CString& rsObjectName, SVRProper
 
 	dlg.m_treeOutputList.SetSelection(selectedInputs);
 
-	int nResult = dlg.DoModal();
+	UINT_PTR nResult = dlg.DoModal();
 	if( nResult == IDOK )
 	{
 		CString strTmp = dlg.m_sSelectedOutputName;
@@ -300,7 +300,7 @@ int SVExternalToolInputSelectPage::SelectObject(CString& rsObjectName, SVRProper
 
 	rsObjectName = sObjectName;
 
-	return nResult;
+	return static_cast<int>(nResult);
 }
 
 void SVExternalToolInputSelectPage::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResult)
@@ -465,6 +465,26 @@ int SVExternalToolInputSelectPage::GetItemIndex(SVRPropertyItem* pItem)
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVExternalToolInputSelectPage.cpp_v  $
+ * 
+ *    Rev 1.3   03 Oct 2013 13:31:04   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   64 bit platform types.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.2   02 Oct 2013 12:05:40   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platforms.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   24 Sep 2013 12:37:46   tbair
  * Project:  SVObserver

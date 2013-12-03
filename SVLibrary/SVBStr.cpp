@@ -5,8 +5,8 @@
 // * .Module Name     : SVBStr
 // * .File Name       : $Workfile:   SVBStr.cpp  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.0  $
-// * .Check In Date   : $Date:   22 Apr 2013 13:31:00  $
+// * .Current Version : $Revision:   1.1  $
+// * .Check In Date   : $Date:   01 Oct 2013 09:57:48  $
 // ******************************************************************************
 
 #include "stdafx.h"
@@ -387,7 +387,7 @@ long SVBStr::CopyFromWChar (const WCHAR* awcpSource)
 		}
 
 //--- This string length does not include the terminating NULL.
-      lSourceLength = wcslen (awcpSource);
+      lSourceLength = static_cast<long>(wcslen (awcpSource));
 
       EnterCriticalSection();
 
@@ -395,7 +395,7 @@ long SVBStr::CopyFromWChar (const WCHAR* awcpSource)
 //--- old buffer.  If it is neccessary to copy, then please do so.  The
 //--- calling function MUST delete the returned pointer.  A returned 
 //--- value of NULL means that a new buffer was not neccessary.
-		lpTemp = DoWeNeedNewBuffer (lSourceLength * sizeof (WCHAR));
+		lpTemp = DoWeNeedNewBuffer (lSourceLength * static_cast<long>(sizeof (WCHAR)));
 
       delete [] lpTemp;
 
@@ -415,7 +415,7 @@ long SVBStr::CopyFromWChar (const WCHAR* awcpSource)
 
  	   svmwcBStringBuffer [lMaxNbrOfCharacters] = NULL;
 
-      svmlLength = wcslen (svmwcBStringBuffer);
+      svmlLength = static_cast<long>(wcslen (svmwcBStringBuffer));
 
       *svmlpBStringLength = svmlLength * sizeof (WCHAR);
 
@@ -763,7 +763,17 @@ long SVBStr::CharHexDump (char*	p_csHexDump,
 // * LOG HISTORY:
 // ******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVLibrary\SVBStr.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVLibrary\SVBStr.cpp_v  $
+ * 
+ *    Rev 1.1   01 Oct 2013 09:57:48   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   22 Apr 2013 13:31:00   bWalter
  * Project:  SVObserver

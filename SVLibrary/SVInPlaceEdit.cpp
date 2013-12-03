@@ -5,8 +5,8 @@
 // * .Module Name     : PropertyItemEdit.cpp
 // * .File Name       : $Workfile:   SVInPlaceEdit.cpp  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.0  $
-// * .Check In Date   : $Date:   22 Apr 2013 13:36:58  $
+// * .Current Version : $Revision:   1.1  $
+// * .Check In Date   : $Date:   01 Oct 2013 09:57:48  $
 // ******************************************************************************
 
 #include "stdafx.h"
@@ -97,7 +97,7 @@ BOOL SVInPlaceEdit::PreTranslateMessage(MSG* pMsg)
 	// Make sure that the keystrokes continue to the appropriate handlers
 	if( pMsg->message == WM_KEYDOWN )
 	{
-		UINT nChar = pMsg->wParam;
+		UINT nChar = static_cast<UINT>(pMsg->wParam);
 
 		if ((nChar == VK_PRIOR || nChar == VK_NEXT ||
 				nChar == VK_DOWN  || nChar == VK_UP   ||
@@ -113,7 +113,7 @@ BOOL SVInPlaceEdit::PreTranslateMessage(MSG* pMsg)
 		{
 			if (nChar == VK_ESCAPE)
 				SetWindowText(m_sInitText);
-			m_nLastChar = pMsg->wParam;
+			m_nLastChar = static_cast<UINT>(pMsg->wParam);
 			GetParent()->SetFocus();
 			return TRUE;
 		}
@@ -216,6 +216,16 @@ void SVInPlaceEdit::OnUpdate()
 // ******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVLibrary\SVInPlaceEdit.cpp_v  $
+ * 
+ *    Rev 1.1   01 Oct 2013 09:57:48   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   22 Apr 2013 13:36:58   bWalter
  * Project:  SVObserver

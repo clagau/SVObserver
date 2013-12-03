@@ -5,8 +5,8 @@
 // * .Module Name     : PropertyItemCombo.cpp
 // * .File Name       : $Workfile:   SVPropertyItemCombo.cpp  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.0  $
-// * .Check In Date   : $Date:   22 Apr 2013 13:46:36  $
+// * .Current Version : $Revision:   1.1  $
+// * .Check In Date   : $Date:   01 Oct 2013 10:02:46  $
 // ******************************************************************************
 
 #include "stdafx.h"
@@ -213,7 +213,7 @@ BOOL SVPropertyItemCombo::HitTest(CRect rect, CPoint point)
 void SVPropertyItemCombo::Serialize(CArchive& ar) 
 {
 	CString	str;
-	int			size;
+	INT_PTR	size;
 
 	SVPropertyItem::Serialize(ar);
 	if (ar.IsStoring())
@@ -222,7 +222,7 @@ void SVPropertyItemCombo::Serialize(CArchive& ar)
 		ar << m_dwStyle;
 		size = m_Strings.GetSize();
 		ar << size;
-		for (int i=0; i<size; i++)
+		for (INT_PTR i=0; i<size; i++)
 		{
 			str = m_Strings.GetAt(i);
 			ar << str;
@@ -247,12 +247,12 @@ int SVPropertyItemCombo::GetDataIndex(void) const
 {
 	int	index = -1;
 
-	int x = m_Strings.GetSize();
-	for (int i=0; i<x; i++)
+	INT_PTR x = m_Strings.GetSize();
+	for (INT_PTR i=0; i<x; i++)
 	{
 		if (m_Strings.GetAt(i) == m_strText)
 		{
-			index = i;
+			index = static_cast<int>(i);
 			break;
 		}
 	}
@@ -265,6 +265,16 @@ int SVPropertyItemCombo::GetDataIndex(void) const
 // ******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVLibrary\SVPropertyItemCombo.cpp_v  $
+ * 
+ *    Rev 1.1   01 Oct 2013 10:02:46   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   22 Apr 2013 13:46:36   bWalter
  * Project:  SVObserver

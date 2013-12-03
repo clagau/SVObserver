@@ -5,8 +5,8 @@
 //* .Module Name     : SVTaskObjectList
 //* .File Name       : $Workfile:   SVTaskObjectList.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   08 May 2013 16:43:50  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   02 Oct 2013 08:17:50  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -191,6 +191,11 @@ void SVTaskObjectListClass::cleanUpEmptyEntries()
 			m_aTaskObjects.RemoveAt(i--);
 	}
 	m_LastListUpdateTimestamp = SVClock::GetTimeStamp();
+}
+
+int SVTaskObjectListClass::GetSize() const
+{
+	return static_cast< int >( m_aTaskObjects.GetSize() );
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -1662,7 +1667,17 @@ HRESULT SVTaskObjectListClass::onCollectOverlays(SVImageClass *p_Image, SVExtent
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVTaskObjectList.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVTaskObjectList.cpp_v  $
+ * 
+ *    Rev 1.2   02 Oct 2013 08:17:50   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   08 May 2013 16:43:50   bWalter
  * Project:  SVObserver

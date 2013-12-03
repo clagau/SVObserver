@@ -5,8 +5,8 @@
 //* .Module Name     : SVOutputInfoListTreeCtrl
 //* .File Name       : $Workfile:   SVOutputInfoListTreeCtrl.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 13:15:16  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   02 Oct 2013 07:01:54  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -313,7 +313,7 @@ void SVOutputInfoListTreeCtrlClass::RebuildTree
 	// Build the tree from the 'dotted' names of each output object.
 	//
 
-	int nCount = p_rObjectVector.size();
+	int nCount = static_cast<int>(p_rObjectVector.size());
 	for ( int i = 0; i < nCount; i++ )
 	{
 
@@ -351,7 +351,7 @@ void SVOutputInfoListTreeCtrlClass::RebuildTree
 			//
 			HTREEITEM hChild = hRoot;
 
-			int nCountTokens = arrayCSNames.GetSize();
+			int nCountTokens = static_cast<int>(arrayCSNames.GetSize());
 			for ( int nLevel = 0; nLevel < nCountTokens; nLevel++ )
 			{
 				//
@@ -492,7 +492,7 @@ void SVOutputInfoListTreeCtrlClass::RebuildTree
 						//
 						if ( csNewChild == csNameLeaf )
 						{
-							int iItemIndex = m_ObjectList.size();
+							int iItemIndex = static_cast<int>(m_ObjectList.size());
 							bResult = SetItemData ( hNewChild, iItemIndex );
 							m_ObjectList.push_back(object);
 							m_mapIndexes[iItemIndex] = hNewChild;
@@ -629,12 +629,12 @@ UINT SVOutputInfoListTreeCtrlClass::TokenizeName
 	if ( bArraySubscript )
 	{
 		// the last token should be Name[1], not [1]
-		int iCount = astrNames.GetSize();
+		int iCount = static_cast<int>(astrNames.GetSize());
 		if ( iCount > 1 )
 			astrNames[iCount-1] = astrNames[iCount-2] + astrNames[iCount-1];
 	}
 
-	return astrNames.GetSize();
+	return static_cast<int>(astrNames.GetSize());
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -715,7 +715,7 @@ SVObjectReference SVOutputInfoListTreeCtrlClass::ObjectFromItem( HTREEITEM ht )
 {
 	if( ht )
 	{
-		int iIndex = GetItemData(ht);
+		int iIndex = static_cast<int>(GetItemData(ht));
 		return m_ObjectList.at(iIndex);
 	}
 	else
@@ -886,7 +886,7 @@ void SVOutputInfoListTreeCtrlClass::UpdateNodeStateColor( HTREEITEM hItem, long&
 //
 void SVOutputInfoListTreeCtrlClass::ProcessItemAttributes( HTREEITEM hItem, void* )
 {
-	DWORD dwItemData = GetItemData(hItem);
+	DWORD dwItemData = static_cast<DWORD>(GetItemData(hItem));
 	if( dwItemData )
 	{
 		bool bCheckState = GetCheckState( hItem );
@@ -935,7 +935,7 @@ void SVOutputInfoListTreeCtrlClass::SelectObjectFilterItemProc( HTREEITEM hItem,
 	ASSERT( pData );
 	if ( pData )
 	{
-		int iIndex = GetItemData(hItem);
+		int iIndex = static_cast<int>(GetItemData(hItem));
 		SVObjectReference refObject = m_ObjectList.at(iIndex);
 		if ( refObject.Object() )
 		{
@@ -1011,7 +1011,7 @@ HRESULT SVOutputInfoListTreeCtrlClass::GetSelectedObjectsInTreeOrder( SVObjectRe
 		if ( m_setNewSelected.find( rObject ) != m_setNewSelected.end() )
 		{
 			p_rvecSelectedObjects.push_back( rObject );
-			p_rvecIndexes.push_back( i );
+			p_rvecIndexes.push_back( static_cast<int>(i) );
 		}
 	}
 	return S_OK;
@@ -1025,7 +1025,7 @@ bool SVOutputInfoListTreeCtrlClass::SelectItemByIndex( int iIndex, bool bSelect 
 
 bool SVOutputInfoListTreeCtrlClass::Click( HTREEITEM hItem )
 {
-	DWORD dwItemData = GetItemData(hItem);
+	DWORD dwItemData = static_cast<DWORD>(GetItemData(hItem));
 	if ( dwItemData )
 	{
 		bool bCheckState = GetCheckState( hItem );
@@ -1033,7 +1033,7 @@ bool SVOutputInfoListTreeCtrlClass::Click( HTREEITEM hItem )
 		bool bCanSelect = true;
 		if ( m_fnCanSelectObject )
 		{
-			int iIndex = GetItemData(hItem);
+			int iIndex = static_cast<int>(GetItemData(hItem));
 			SVObjectReference refObject = m_ObjectList.at(iIndex);
 			bCanSelect = m_fnCanSelectObject(refObject, bCheckState, iIndex);
 		}
@@ -1088,7 +1088,7 @@ void SVOutputInfoListTreeCtrlClass::SetBranchChecks( HTREEITEM hItem , bool p_bN
 				bool bCanSelect = true;
 				if ( m_fnCanSelectObject )
 				{
-					int iIndex = GetItemData(l_hItem);
+					int iIndex = static_cast<int>(GetItemData(l_hItem));
 					SVObjectReference refObject = m_ObjectList.at(iIndex);
 					bCanSelect = m_fnCanSelectObject(refObject, l_bThisState, iIndex);
 				}
@@ -1106,7 +1106,17 @@ void SVOutputInfoListTreeCtrlClass::SetBranchChecks( HTREEITEM hItem , bool p_bN
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVOutputInfoListTreeCtrl.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVOutputInfoListTreeCtrl.cpp_v  $
+ * 
+ *    Rev 1.1   02 Oct 2013 07:01:54   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 13:15:16   bWalter
  * Project:  SVObserver

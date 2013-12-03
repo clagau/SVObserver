@@ -5,8 +5,8 @@
 //* .Module Name     : SVLineROI
 //* .File Name       : $Workfile:   SVLineROI.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   13 May 2013 12:16:36  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   01 Oct 2013 14:57:22  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -199,21 +199,22 @@ BOOL SVLineROIClass::onRun( SVRunStatusClass& RRunStatus )
 			
 			if( l_bOk )
 			{
-				
-				
 				SVMatroxBufferInterface::SVStatusCode l_Code;
 				
 				SVImageBufferHandleImage l_MilHandle;
 				ImageHandle->GetData( l_MilHandle );
+
+				SVMatroxIdentifier l_ArrayLength = 0;
 
 				l_Code = SVMatroxBufferInterface::GetLine( l_MilHandle.GetBuffer(), 
 					l_oHeadPoint.x,
 					l_oHeadPoint.y, 
 					l_oTailPoint.x - 1, 
 					l_oTailPoint.y - 1, 
-					l_pLine->mlLineArrayLength, 
+					l_ArrayLength, 
 					l_pLine->GetDataBuffer() );
-				
+
+				l_pLine->mlLineArrayLength = static_cast< long >( l_ArrayLength );
 				
 				l_bOk = l_bOk && l_pLine->ReadLine();
 			}
@@ -259,7 +260,17 @@ DWORD SVLineROIClass::processMessage(DWORD DwMessageID, DWORD DwMessageValue, DW
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVLineROI.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVLineROI.cpp_v  $
+ * 
+ *    Rev 1.2   01 Oct 2013 14:57:22   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   13 May 2013 12:16:36   bWalter
  * Project:  SVObserver

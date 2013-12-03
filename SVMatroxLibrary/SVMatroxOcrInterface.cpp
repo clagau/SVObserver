@@ -5,8 +5,8 @@
 // * .Module Name     : SVMatroxOcrInterface
 // * .File Name       : $Workfile:   SVMatroxOcrInterface.cpp  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.0  $
-// * .Check In Date   : $Date:   22 Apr 2013 15:24:46  $
+// * .Current Version : $Revision:   1.1  $
+// * .Check In Date   : $Date:   01 Oct 2013 11:15:30  $
 // ******************************************************************************
 
 #include "stdafx.h"
@@ -1250,12 +1250,16 @@ HRESULT SVMatroxOcrInterface::FindFontCharacters( const SVCommandDataHolder& p_r
 
 	if( l_Status == S_OK )
 	{
-		l_Status = SVMatroxBufferInterface::Get( l_SourceImage.m_Buffer, SVSizeX, imageSize.cx );
+		long l_Temp = 0;
+		l_Status = SVMatroxBufferInterface::Get( l_SourceImage.m_Buffer, SVSizeX, l_Temp );
+		imageSize.cx = static_cast< LONG >( l_Temp );
 	}
 
 	if( l_Status == S_OK )
 	{
-		l_Status = SVMatroxBufferInterface::Get( l_SourceImage.m_Buffer, SVSizeY, imageSize.cy );
+		long l_Temp = 0;
+		l_Status = SVMatroxBufferInterface::Get( l_SourceImage.m_Buffer, SVSizeY, l_Temp );
+		imageSize.cy = static_cast< LONG >( l_Temp );
 	}
 
 	if( l_Status == S_OK )
@@ -3088,6 +3092,16 @@ HRESULT SVMatroxOcrInterface::ThicknessCalculation( SVMatroxBuffer p_ThresholdIm
 // ******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVMatroxLibrary\SVMatroxOcrInterface.cpp_v  $
+ * 
+ *    Rev 1.1   01 Oct 2013 11:15:30   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   22 Apr 2013 15:24:46   bWalter
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : SVAccessClass.cpp
 //* .File Name       : $Workfile:   SVAccessClass.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   25 Apr 2013 16:59:56  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   02 Oct 2013 10:00:48  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -145,8 +145,7 @@ HRESULT SVAccessClass::PasswordDialog(CString& strUser, CString& strPassword, LP
 	SVPasswordDlg dlg;
 	dlg.m_strStatus = p_strStatus;
 	//dlg.m_strUser = strUser;  // Jim does not want to default the User name
-	int iRet = dlg.DoModal();
-	if( iRet == IDOK )
+	if( dlg.DoModal() == IDOK )
 	{
 		SVException svE;
 		if( IsMasterPassword( dlg.m_strUser, dlg.m_strPassword ) )
@@ -831,7 +830,7 @@ HRESULT SVAccessClass::Save()
 // This function calls the security setup dialog
 int SVAccessClass::SetupDialog()
 {
-	int iRet = IDCANCEL;
+	INT_PTR iRet = IDCANCEL;
 
 	SVSecuritySetupSheet oDlg;
 	oDlg.m_pAccess = this;
@@ -849,8 +848,8 @@ int SVAccessClass::SetupDialog()
 	{
 		Save();
 	}
-	return iRet;
 
+	return static_cast< int >( iRet );
 }
 
 // GetCurrentUser returns the current logged on user.
@@ -1041,7 +1040,7 @@ HRESULT SVAccessClass::CreateProcess( const wchar_t* const p_wstrAppName, const 
 	{
 		// Check if path plus the File is valid
 		wcscpy( wstrAppPathName, p_wstrPath );
-		int l_iLen = wcslen( p_wstrPath );
+		size_t l_iLen = wcslen( p_wstrPath );
 		if( l_iLen > 0 )                          // Check if the last charactor is a backslash
 		{                                         // if not then append a backslash.
 			if( wstrAppPathName[l_iLen - 1] != L'\\' )
@@ -1061,8 +1060,8 @@ HRESULT SVAccessClass::CreateProcess( const wchar_t* const p_wstrAppName, const 
 			else
 			{                                     // We found the correct path
 				wcscpy( wstrDirPath, wstrAppPathName );
-				int iLen = wcslen( wstrDirPath ); 
-				for( int i = iLen ; i > -1 ; i-- )// get rid of the name
+				size_t iLen = wcslen( wstrDirPath ); 
+				for( size_t i = iLen ; i > -1 ; i-- )// get rid of the name
 				{                                 // so we only have the directory
 					if( wstrDirPath[i] == '\\' )  // path portion.
 					{
@@ -1081,8 +1080,8 @@ HRESULT SVAccessClass::CreateProcess( const wchar_t* const p_wstrAppName, const 
 	{                                             // We found the correct path
 		_close( l_handle );
 		wcscpy( wstrDirPath, wstrAppPathName );
-		int iLen = wcslen( wstrDirPath );
-		for( int i = iLen ; i > -1 ; i-- )        // get rid of the name
+		size_t iLen = wcslen( wstrDirPath );
+		for( size_t i = iLen ; i > -1 ; i-- )        // get rid of the name
 		{                                         // so we only have the directory
 			if( wstrDirPath[i] == '\\' )          // path portion.
 			{
@@ -1194,7 +1193,17 @@ bool SVAccessClass::IsLoggedOn()
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVSecurity\SVAccessClass.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVSecurity\SVAccessClass.cpp_v  $
+ * 
+ *    Rev 1.1   02 Oct 2013 10:00:48   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   25 Apr 2013 16:59:56   bWalter
  * Project:  SVObserver

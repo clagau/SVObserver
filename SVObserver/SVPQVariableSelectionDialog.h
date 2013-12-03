@@ -5,8 +5,8 @@
 //* .Module Name     : <SVPQVariableSelectionDialog>
 //* .File Name       : $Workfile:   SVPQVariableSelectionDialog.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   07 Aug 2013 13:23:12  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   02 Oct 2013 07:41:06  $
 //******************************************************************************
 
 #ifndef SVPQVARIABLESELECTIONDIALOG_H
@@ -21,7 +21,7 @@ public:
 	CString csAvailableText;
 
 	SVIOEntryHostStructPtrList m_ppPPQInputs;
-	long				m_lPPQInputsSize;
+	size_t m_lPPQInputsSize;
 
 public:
 	SVPQVariableSelectionDialog(CWnd* pParent = NULL);   // standard constructor
@@ -64,6 +64,16 @@ protected:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVPQVariableSelectionDialog.h_v  $
+ * 
+ *    Rev 1.2   02 Oct 2013 07:41:06   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   07 Aug 2013 13:23:12   sjones
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : SVFileAcquisitionDevcieExports
 //* .File Name       : $Workfile:   SVFileAcquisitionDevice.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   07 May 2013 20:04:34  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   01 Oct 2013 06:14:50  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -123,7 +123,7 @@ HRESULT SVFileAcquisitionDevice::CameraGetCount( unsigned long &p_rulCount )
 {
 	HRESULT l_hrOk = S_OK;
 
-	p_rulCount = m_cameras.size();
+	p_rulCount = static_cast<unsigned long>(m_cameras.size());
 
 	return l_hrOk;
 }
@@ -969,7 +969,17 @@ void SVFileAcquisitionDevice::DoAcquisitionTrigger(SVFileCamera& p_rCamera)
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVFileAcquisitionDevice\SVFileAcquisitionDevice.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVFileAcquisitionDevice\SVFileAcquisitionDevice.cpp_v  $
+ * 
+ *    Rev 1.2   01 Oct 2013 06:14:50   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platforms.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   07 May 2013 20:04:34   bWalter
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : SVFileNameManagerClass
 //* .File Name       : $Workfile:   SVFileNameManagerClass.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 10:35:28  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   01 Oct 2013 14:19:28  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -105,7 +105,7 @@ BOOL SVFileNameManagerClass::FindItem(SVFileNameClass * svpFileNameClass)
 	{
 		BOOL bDone = FALSE;
 
-		miCurrentItem = gsvFileNameArray.GetSize();
+		miCurrentItem = static_cast<int>(gsvFileNameArray.GetSize());
 		
 		for ( int i = 0; !bDone && i < gsvFileNameArray.GetSize(); i++ )
 		{
@@ -171,7 +171,7 @@ BOOL SVFileNameManagerClass::RemoveItem(SVFileNameClass * svpFileName)
 			{
 				if ( gsvFileNameArray.GetSize() <= miCurrentItem )
 				{
-					miCurrentItem = gsvFileNameArray.GetSize() - 1;
+					miCurrentItem = static_cast<int>(gsvFileNameArray.GetSize()) - 1;
 				}
 			}
 			else
@@ -580,7 +580,17 @@ BOOL SVFileNameManagerClass::RemoveUnusedFiles(BOOL bCleanConfigDir)
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVFileNameManagerClass.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVFileNameManagerClass.cpp_v  $
+ * 
+ *    Rev 1.1   01 Oct 2013 14:19:28   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 10:35:28   bWalter
  * Project:  SVObserver

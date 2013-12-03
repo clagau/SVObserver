@@ -5,8 +5,8 @@
 //* .Module Name     : SVMatroxDigitizerHookEnums
 //* .File Name       : $Workfile:   SVMatroxDigitizerHookEnums.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   22 Apr 2013 14:27:46  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   01 Oct 2013 10:45:28  $
 //******************************************************************************
 #include "stdafx.h"
 #include <boost/config.hpp>
@@ -37,7 +37,7 @@ SVMatroxDigitizerHook::SVHookTypeEnumMap SVMatroxDigitizerHook::m_HookTypeEnumCo
 #endif
 ;
 // Assign mappings for Hook Info Types
-SVMatroxDigitizerHook::SVHookInfoEnumMap SVMatroxDigitizerHook::m_HookInfoEnumConvertor = boost::assign::map_list_of<SVMatroxDigitizerHook::SVHookInfoEnum,long>
+SVMatroxDigitizerHook::SVHookInfoEnumMap SVMatroxDigitizerHook::m_HookInfoEnumConvertor = boost::assign::map_list_of< SVMatroxDigitizerHook::SVHookInfoEnum, SVMatroxIdentifier >
 (SVMatroxDigitizerHook::SVUserBit,			M_USER_BIT)
 (SVMatroxDigitizerHook::SVUserBitState,		M_USER_BIT_STATE)
 (SVMatroxDigitizerHook::SVGigeCameraTimeStamp,	M_GC_CAMERA_TIME_STAMP)
@@ -51,6 +51,16 @@ SVMatroxDigitizerHook::SVHookInfoEnumMap SVMatroxDigitizerHook::m_HookInfoEnumCo
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVMatroxDigitizerLibrary\SVMatroxDigitizerHookEnums.cpp_v  $
+ * 
+ *    Rev 1.1   01 Oct 2013 10:45:28   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   22 Apr 2013 14:27:46   bWalter
  * Project:  SVObserver

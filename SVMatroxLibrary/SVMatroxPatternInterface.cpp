@@ -5,8 +5,8 @@
 // * .Module Name     : SVMatroxPatternInterface
 // * .File Name       : $Workfile:   SVMatroxPatternInterface.cpp  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.0  $
-// * .Check In Date   : $Date:   22 Apr 2013 15:25:22  $
+// * .Current Version : $Revision:   1.1  $
+// * .Check In Date   : $Date:   01 Oct 2013 11:15:30  $
 // ******************************************************************************
 
 #include "stdafx.h"
@@ -866,9 +866,10 @@ SVMatroxPatternInterface::SVStatusCode SVMatroxPatternInterface::GetNumber( cons
 	{
 		if( !p_rResultId.empty() )
 		{
+			SVMatroxInt l_Temp = 0;
 			long l_lNumber = 0;
-			MpatGetNumber(p_rResultId.m_PatResultId, 
-				&l_lNumber);
+			MpatGetNumber( p_rResultId.m_PatResultId, &l_Temp );
+			l_lNumber = SVMatroxApplicationInterface::SVMatroxIntToHRESULT( l_Temp );
 			l_Code = SVMatroxApplicationInterface::GetLastStatus();
 			if( l_Code == SVMEE_STATUS_OK )
 			{
@@ -1181,6 +1182,16 @@ RECT SVMatroxPatternInterface::CalculateOverscanInnerRect(const POINT& pos, cons
 // ******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVMatroxLibrary\SVMatroxPatternInterface.cpp_v  $
+ * 
+ *    Rev 1.1   01 Oct 2013 11:15:30   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   22 Apr 2013 15:25:22   bWalter
  * Project:  SVObserver

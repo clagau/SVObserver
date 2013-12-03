@@ -5,8 +5,8 @@
 //* .Module Name     : SVVector
 //* .File Name       : $Workfile:   SVVector.inl  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   22 Apr 2013 07:44:24  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   30 Sep 2013 14:41:50  $
 //******************************************************************************
 
 template< typename SVT_TYPE, typename SVT_ARG_TYPE >
@@ -106,7 +106,7 @@ void SVVector< SVT_TYPE, SVT_ARG_TYPE >::clear()
 }
 
 template< typename SVT_TYPE, typename SVT_ARG_TYPE >
-INT_PTR SVVector< SVT_TYPE, SVT_ARG_TYPE >::GetSize() const
+int SVVector< SVT_TYPE, SVT_ARG_TYPE >::GetSize() const
 {
 	return static_cast< int >( m_Vector.size() );
 }
@@ -188,11 +188,11 @@ void SVVector< SVT_TYPE, SVT_ARG_TYPE >::Fill( SVArgType fillValue )
 }
 
 template< typename SVT_TYPE, typename SVT_ARG_TYPE >
-INT_PTR SVVector< SVT_TYPE, SVT_ARG_TYPE >::Add( SVArgType newElement )
+int SVVector< SVT_TYPE, SVT_ARG_TYPE >::Add( SVArgType newElement )
 {
 	m_Vector.push_back( newElement );
 
-	return GetSize() - 1;
+	return static_cast< int >( GetSize() - 1 );
 }
 
 template< typename SVT_TYPE, typename SVT_ARG_TYPE >
@@ -285,7 +285,17 @@ void SVVector< SVT_TYPE, SVT_ARG_TYPE >::RemoveAll()
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVContainerLibrary\SVVector.inl_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVContainerLibrary\SVVector.inl_v  $
+ * 
+ *    Rev 1.1   30 Sep 2013 14:41:50   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platforms.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   22 Apr 2013 07:44:24   bWalter
  * Project:  SVObserver

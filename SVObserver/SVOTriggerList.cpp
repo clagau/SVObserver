@@ -5,8 +5,8 @@
 //* .Module Name     : SVOTriggerList
 //* .File Name       : $Workfile:   SVOTriggerList.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 13:14:30  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   02 Oct 2013 07:01:52  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -60,7 +60,7 @@ BOOL CSVOTriggerList::RemoveTriggerFromList(const SVString& sTriggerName)
 
 int CSVOTriggerList::GetTriggerListCount() const
 {
-    return m_TriggerList.GetCount();
+    return static_cast<int>(m_TriggerList.GetCount());
 }
 
 CSVOTriggerObj *CSVOTriggerList::GetTriggerObjectByName(const SVString& sTriggerName)
@@ -155,7 +155,17 @@ void CSVOTriggerList::ResetContent()
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVOTriggerList.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVOTriggerList.cpp_v  $
+ * 
+ *    Rev 1.1   02 Oct 2013 07:01:52   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 13:14:30   bWalter
  * Project:  SVObserver

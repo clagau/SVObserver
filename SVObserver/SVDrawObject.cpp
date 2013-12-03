@@ -5,8 +5,8 @@
 //* .Module Name     : SVDrawObject
 //* .File Name       : $Workfile:   SVDrawObject.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 10:21:40  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   01 Oct 2013 14:12:22  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -575,12 +575,12 @@ void SVDrawObjectClass::ClearObject()
 
 int SVDrawObjectClass::AddPoint( const POINT p_oPoint )
 {
-	return points.Add( p_oPoint );
+	return static_cast< int >( points.Add( p_oPoint ) );
 }
 
 int SVDrawObjectClass::AddPoint( const CPoint& RPoint )
 {
-	return points.Add( RPoint );
+	return static_cast< int >( points.Add( RPoint ) );
 }
 
 void SVDrawObjectClass::SetPointAtGrow( int Index, const CPoint& RPoint )
@@ -685,7 +685,17 @@ void SVDrawObjectClass::Transform( SVDrawContext* PDrawContext )
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVDrawObject.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVDrawObject.cpp_v  $
+ * 
+ *    Rev 1.1   01 Oct 2013 14:12:22   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 10:21:40   bWalter
  * Project:  SVObserver

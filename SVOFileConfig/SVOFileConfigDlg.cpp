@@ -5,8 +5,8 @@
 // * .Module Name     : SVOFileConfigDlg
 // * .File Name       : $Workfile:   SVOFileConfigDlg.cpp  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.1  $
-// * .Check In Date   : $Date:   10 Jun 2013 17:54:16  $
+// * .Current Version : $Revision:   1.2  $
+// * .Check In Date   : $Date:   02 Oct 2013 08:43:42  $
 // ******************************************************************************
 
 #include "stdafx.h"
@@ -245,7 +245,7 @@ void SVOFileConfigDlg::OnSelchangedTree1(NMHDR* pNMHDR, LRESULT* pResult)
 			if ( svvData.vt & SVArrayType )
 			{
 				SVSAFEARRAY svArray( svvData );
-				long lSize( svArray.size() );
+				long lSize( static_cast<long>(svArray.size()) );
 
 				for ( long l = 0; l < lSize; l++)
 				{
@@ -500,7 +500,7 @@ void SVOFileConfigDlg::ReIndexIOEntries(HTREEITEM p_Item)
 
 		if( l_strName == "NumberOfIOEntries")
 		{
-			DWORD l_dwCount = mTree.GetItemData( l_Current );
+			DWORD l_dwCount = static_cast<DWORD>(mTree.GetItemData( l_Current ));
 			VARIANT* l_pVt = (VARIANT*)l_dwCount;
 			l_pVt->lVal = count;
 			break;
@@ -637,7 +637,7 @@ void SVOFileConfigDlg::GetIOChildren(HTREEITEM p_Item)
 				CString Name = mTree.GetItemText( l_InspItem );
 				if( Name == "IOEntryName" )
 				{
-					DWORD l_InspData = mTree.GetItemData( l_InspItem );
+					DWORD l_InspData = static_cast<DWORD>(mTree.GetItemData( l_InspItem ));
 					VARIANT* l_vt = (VARIANT*)l_InspData;
 					if( l_vt->vt == VT_BSTR )
 					{
@@ -685,7 +685,17 @@ void SVOFileConfigDlg::GetInspections(HTREEITEM p_Item)
 // * LOG HISTORY:
 // ******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVOFileConfig\SVOFileConfigDlg.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVOFileConfig\SVOFileConfigDlg.cpp_v  $
+ * 
+ *    Rev 1.2   02 Oct 2013 08:43:42   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   10 Jun 2013 17:54:16   bWalter
  * Project:  SVObserver

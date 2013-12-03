@@ -5,8 +5,8 @@
 // * .Module Name     : SVMaskEditorCtl
 // * .File Name       : $Workfile:   SVMaskEditorCtl.cpp  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.0  $
-// * .Check In Date   : $Date:   26 Apr 2013 14:07:04  $
+// * .Current Version : $Revision:   1.1  $
+// * .Check In Date   : $Date:   01 Oct 2013 10:22:34  $
 // ******************************************************************************
 
 // SVMaskEditorCtl.cpp : Implementation of the SVMaskEditorCtrl ActiveX Control class.
@@ -369,7 +369,7 @@ void SVMaskEditorCtrl::SetMaskData(OLE_HANDLE nNewValue)
 		SetModifiedFlag();
 }
 
-long SVMaskEditorCtrl::DoEditMaskModal() 
+INT_PTR SVMaskEditorCtrl::DoEditMaskModal() 
 {
 	// Start Mask Editor Dialog...
     maskEditorDlg.HImageBitmap = HBITMAP( bitmap );
@@ -391,7 +391,17 @@ long SVMaskEditorCtrl::DoEditMaskModal()
 // * LOG HISTORY:
 // ******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVMaskEditor\SVMaskEditorCtl.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVMaskEditor\SVMaskEditorCtl.cpp_v  $
+ * 
+ *    Rev 1.1   01 Oct 2013 10:22:34   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   26 Apr 2013 14:07:04   bWalter
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : SVOPPQObj
 //* .File Name       : $Workfile:   SVOPPQObj.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 13:10:46  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   02 Oct 2013 06:48:20  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -99,7 +99,7 @@ BOOL CSVOPPQObj::DetachCameraFromPPQ(CString sCameraName)
 
 int CSVOPPQObj::GetAttachedCameraCount() const
 {
-	return m_slAttachedCameraList.GetCount();
+	return static_cast<int>(m_slAttachedCameraList.GetCount());
 }
 
 CString CSVOPPQObj::GetAttachedCamera(int iPos) const
@@ -147,7 +147,7 @@ BOOL CSVOPPQObj::DetachInspectionFromPPQ(CString sInspectName)
 
 int CSVOPPQObj::GetAttachedInspectionCount()
 {
-	return m_slAttachedInspectList.GetCount();
+	return static_cast<int>(m_slAttachedInspectList.GetCount());
 }
 
 CString CSVOPPQObj::GetAttachedInspection(int iPos)
@@ -289,7 +289,17 @@ void CSVOPPQObj::ClearImportedInputList()
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVOPPQObj.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVOPPQObj.cpp_v  $
+ * 
+ *    Rev 1.1   02 Oct 2013 06:48:20   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 13:10:46   bWalter
  * Project:  SVObserver

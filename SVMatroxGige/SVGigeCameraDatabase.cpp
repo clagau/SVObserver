@@ -5,8 +5,8 @@
 //* .Module Name     : SVGigeCameraDatabase
 //* .File Name       : $Workfile:   SVGigeCameraDatabase.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   12 Jun 2013 15:13:20  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   01 Oct 2013 10:49:00  $
 //******************************************************************************
 #include "stdafx.h"
 #include <boost/config.hpp>
@@ -60,7 +60,7 @@ SVGigeCameraDatabase::SVGigeCameraDatabase()
 
 long SVGigeCameraDatabase::GetFeatureCount()
 {
-	long count = m_enumToString.size();
+	long count = static_cast< long >( m_enumToString.size() );
 	return count;
 }
 
@@ -79,7 +79,17 @@ HRESULT SVGigeCameraDatabase::GetFeatureNames(SVGigeEnumNameList& list)
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVMatroxGige\SVGigeCameraDatabase.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVMatroxGige\SVGigeCameraDatabase.cpp_v  $
+ * 
+ *    Rev 1.3   01 Oct 2013 10:49:00   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   12 Jun 2013 15:13:20   bWalter
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : SVRemoteOutputPropPageList
 //* .File Name       : $Workfile:   SVRemoteOutputPropPageList.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 14:52:54  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   02 Oct 2013 07:58:48  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -31,7 +31,8 @@ SVRemoteOutputPropPageList::~SVRemoteOutputPropPageList()
 void SVRemoteOutputPropPageList::DoDataExchange(CDataExchange* pDX)
 {
 	CPropertyPage::DoDataExchange(pDX);
-	DDX_Control(pDX, IDC_LIST1, m_AddressList);
+	// BRW - PLC has been deprecated.
+	//DDX_Control(pDX, IDC_LIST1, m_AddressList);
 }
 
 
@@ -81,16 +82,17 @@ BOOL SVRemoteOutputPropPageList::OnWizardFinish()
 	// TODO: Add your specialized code here and/or call the base class
 	// Copy List back to m_pParent->m_ControlParameters.
 //	SVDLLControlPar::VecStringArray l_tempAddresses;
-	HRESULT l_hr = S_OK;
-	for( int i = 0 ; i < m_AddressList.GetItemCount() ; i++ )
-	{
+	// BRW - PLC has been deprecated.
+	//HRESULT l_hr = S_OK;
+	//for( int i = 0 ; i < m_AddressList.GetItemCount() ; i++ )
+	//{
 
 		//_variant_t l_vTemp( m_AddressList.GetItemText( i, 1 ) );
 		//SVString l_strTmp;
 		//l_strTmp.Format( "%s_%d", CTAG_DLL_BLOCK_START, i + 1 );
 		//l_hr = m_pParent->m_ControlMaterials.SetMaterial( l_strTmp, l_vTemp );
 		//ASSERT(l_hr == S_OK );
-	}
+	//}
 
 	//if( (l_hr = m_pParent->m_ValidateBlocks( m_pParent->m_strCurrentDLLId, m_pParent->m_ControlMaterials)) == S_OK ) // validate( SVMaterials )  function here.
 	//{
@@ -137,7 +139,17 @@ LRESULT SVRemoteOutputPropPageList::OnWizardBack()
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVRemoteOutputPropPageList.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVRemoteOutputPropPageList.cpp_v  $
+ * 
+ *    Rev 1.1   02 Oct 2013 07:58:48   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 14:52:54   bWalter
  * Project:  SVObserver

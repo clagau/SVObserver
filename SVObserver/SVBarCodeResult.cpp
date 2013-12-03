@@ -5,8 +5,8 @@
 //* .Module Name     : SVBarCodeResultClass
 //* .File Name       : $Workfile:   SVBarCodeResult.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   13 May 2013 12:15:52  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   01 Oct 2013 11:54:38  $
 //******************************************************************************
 
 // SVBarCodeResult.cpp: implementation of the SVBarCodeResultClass class.
@@ -427,7 +427,7 @@ BOOL SVBarCodeResultClass::BuildHashTable(char *pBuffer)
       for(short Count = 0; Count < m_nTotalCount ; Count++)
       {
          char *pData = m_pDataArr[Count];
-         int nCharCount = strlen(pData);
+         int nCharCount = static_cast< int >( strlen( pData ) );
          long lIndexValue = 0;
          for (int i = 0; i < nCharCount; i++)
          {
@@ -518,7 +518,17 @@ int SVBarCodeResultClass::CheckStringInTable(CString MatchString)
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVBarCodeResult.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVBarCodeResult.cpp_v  $
+ * 
+ *    Rev 1.2   01 Oct 2013 11:54:38   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   13 May 2013 12:15:52   bWalter
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : SVMatroxImageProcessingClass
 //* .File Name       : $Workfile:   SVMatroxImageProcessingClass.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 12:34:08  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   01 Oct 2013 15:24:36  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -218,14 +218,15 @@ HRESULT SVMatroxImageProcessingClass::CreateImageChildBuffer( const SVImageInfoC
 
 		// I don't know why, but rParentInfo contains incorrect info for extent.Height sometimes.
 		// Just get the actual width & height here
-		long lRealParentHeight, lRealParentWidth;
+		long lRealParentHeight;
+		long lRealParentWidth;
 		SVMatroxBufferInterface::SVStatusCode l_Code;
 
 		SVImageBufferHandleImage l_ParentMilHandle;
 		rParentHandle->GetData( l_ParentMilHandle );
 
-		l_Code = SVMatroxBufferInterface::Get( l_ParentMilHandle.GetBuffer(), SVSizeX, lRealParentWidth);
-		l_Code = SVMatroxBufferInterface::Get( l_ParentMilHandle.GetBuffer(), SVSizeY, lRealParentHeight);
+		l_Code = SVMatroxBufferInterface::Get( l_ParentMilHandle.GetBuffer(), SVSizeX, lRealParentWidth );
+		l_Code = SVMatroxBufferInterface::Get( l_ParentMilHandle.GetBuffer(), SVSizeY, lRealParentHeight );
 
 		// EB 2002 10 22
 		// crop child; if camera changes and parent decreases in size, we will have problems
@@ -443,7 +444,7 @@ HDC SVMatroxImageProcessingClass::CreateBufferDC( const SVImageInfoClass& rInfo,
 		// Try using the 'THE' image for the HDC allocation.
 		//
 		long l_lValue = SVValueDefault;
-		l_Code = SVMatroxBufferInterface::Set(l_MilHandle.GetBuffer(), SVBufWindowDCAlloc, l_lValue );
+		l_Code = SVMatroxBufferInterface::Set(l_MilHandle.GetBuffer(), SVBufWindowDCAlloc, static_cast<SVMatroxInt>(l_lValue) );
 
 		//
 		// Check for an error - most likely an 'invalid parameter' since
@@ -479,7 +480,7 @@ HDC SVMatroxImageProcessingClass::CreateBufferDC( const SVImageInfoClass& rInfo,
 				// Now request the HDC from the new image with M_DIB attribute.
 				//
 				long l_lValue = SVValueDefault;
-				l_Code = SVMatroxBufferInterface::Set( imageDIB_MIL, SVBufWindowDCAlloc, l_lValue );
+				l_Code = SVMatroxBufferInterface::Set( imageDIB_MIL, SVBufWindowDCAlloc, static_cast<SVMatroxInt>(l_lValue) );
 
 				l_lValue = 0;
 				l_Code = SVMatroxBufferInterface::Get(imageDIB_MIL, SVWindowDC, l_lValue);
@@ -525,10 +526,10 @@ HRESULT SVMatroxImageProcessingClass::DestroyBufferDC( SVSmartHandlePointer rHan
 
 		// Delete created device context. 
 		long l_lValue = SVValueDefault;
-		l_Code = SVMatroxBufferInterface::Set( l_MilHandle.GetBuffer(), SVBufWindowDCFree, l_lValue );		
+		l_Code = SVMatroxBufferInterface::Set( l_MilHandle.GetBuffer(), SVBufWindowDCFree, static_cast<SVMatroxInt>(l_lValue) );		
 
 		// Signal MIL that the buffer was modified. 
-		l_Code = SVMatroxBufferInterface::Set( l_MilHandle.GetBuffer(), SVBufModified, l_lValue );		
+		l_Code = SVMatroxBufferInterface::Set( l_MilHandle.GetBuffer(), SVBufModified, static_cast<SVMatroxInt>(l_lValue) );		
 		hrOk = (l_Code == SVMEE_STATUS_OK) ? S_OK : l_Code | SVMEE_MATROX_ERROR;
 	}
 	else
@@ -657,10 +658,6 @@ HRESULT SVMatroxImageProcessingClass::LoadImageBuffer( LPCTSTR tstrImagePathName
 					l_Code = SVMatroxBufferInterface::Get( newBuffer, SVType, l_lPixelDepth );
 					l_Code = SVMatroxBufferInterface::Get( newBuffer, SVSizeBand, l_lBandSize );
 					l_Code = SVMatroxBufferInterface::Get( newBuffer, SVDataFormat, l_DataFormat );
-
-					if( l_Code == SVMEE_STATUS_OK )
-					{
-					}
 
 					if( M_EQUIVALENT_INTERNAL_FORMAT( M_BGR24, l_DataFormat ) )
 					{
@@ -1250,7 +1247,17 @@ HRESULT SVMatroxImageProcessingClass::GetChildImageCreateData( const SVImageInfo
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVMatroxImageProcessingClass.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVMatroxImageProcessingClass.cpp_v  $
+ * 
+ *    Rev 1.1   01 Oct 2013 15:24:36   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 12:34:08   bWalter
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : SVToolAdjustmentArchivePage
 //* .File Name       : $Workfile:   SVToolArchivePage.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 15:41:22  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   18 Nov 2013 12:44:22  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -17,13 +17,13 @@
 
 #include "SVArchiveTool.h"
 #include "SVGetObjectDequeByTypeVisitor.h"
-#include "SVGlobal.h"
 #include "SVIPDoc.h"
 #include "SVImageClass.h"
 #include "SVInspectionProcess.h"
 #include "SVMemoryManager.h"
 #include "SVToolAdjustmentDialogSheetClass.h"
 #include "SVToolSet.h"
+#include "SVArchiveHeaderEditDlg.h"
 
 BEGIN_MESSAGE_MAP(SVToolAdjustmentArchivePage, CPropertyPage)
 	//{{AFX_MSG_MAP(SVToolAdjustmentArchivePage)
@@ -32,6 +32,8 @@ BEGIN_MESSAGE_MAP(SVToolAdjustmentArchivePage, CPropertyPage)
 	ON_CBN_SELCHANGE(IDC_MODE_COMBO, OnSelchangeModeCombo)
 	ON_EN_CHANGE(IDC_EDIT_MAX_IMAGES, OnChangeEditMaxImages)
 	//}}AFX_MSG_MAP
+	ON_BN_CLICKED(IDC_HEADER_BTN, &SVToolAdjustmentArchivePage::OnBnClickedHeaderBtn)
+	ON_BN_CLICKED(IDC_HEADER_CHECK, &SVToolAdjustmentArchivePage::OnBnClickedHeaderCheck)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -41,6 +43,7 @@ END_MESSAGE_MAP()
 SVToolAdjustmentArchivePage::SVToolAdjustmentArchivePage( 
 	SVToolAdjustmentDialogSheetClass* Parent ) 
 	: CPropertyPage(SVToolAdjustmentArchivePage::IDD)
+	, m_bUseComumnHeaders(FALSE)
 {
 	//{{AFX_DATA_INIT(SVToolAdjustmentArchivePage)
 	m_checkAppendArchive = 0;
@@ -86,6 +89,7 @@ void SVToolAdjustmentArchivePage::DoDataExchange(CDataExchange* pDX)
 	DDX_Check(pDX, IDC_CHECK_STOP_AT_MAX, m_checkStopAtMaxImages);
 	DDX_CBIndex(pDX, IDC_MODE_COMBO, m_iModeIndex);
 	DDX_Text(pDX, IDC_AVAILABLE_ARCHIVE_IMAGE_MEMORY, m_strAvailableArchiveImageMemory);
+	DDX_Check(pDX, IDC_HEADER_CHECK, m_bUseComumnHeaders);
 	//}}AFX_DATA_MAP
 }
 
@@ -179,7 +183,10 @@ BOOL SVToolAdjustmentArchivePage::OnInitDialog()
 	m_pTool->m_dwArchiveStopAtMaxImages.GetValue( dwTemp );
 	m_checkStopAtMaxImages = (int)dwTemp;
 
-    //
+	bool bTemp = false;
+	m_pTool->m_bvoUseHeaders.GetValue( bTemp );
+	m_bUseComumnHeaders = bTemp ? 1 : 0;
+	//
 	// Build the image list to select archivable images from.
 	//
 	BuildImageList();
@@ -441,6 +448,16 @@ bool SVToolAdjustmentArchivePage::QueryAllowExit()
 		l_pIPDoc->SetModifiedFlag();
 	}
 
+	// Add newly selected values to headers.
+	bool bUseHeaders = false;
+	HRESULT hr = m_pTool->m_bvoUseHeaders.GetValue( bUseHeaders );
+	if( hr == S_OK && bUseHeaders )
+	{
+		StringPairVect l_HeaderPairs;
+		GetSelectedHeaderNamePairs(l_HeaderPairs); // filters by what is selected.
+		StoreHeaderValuesToTool( l_HeaderPairs );
+	}
+
 	SVSendMessage( m_pTool, SVM_RESET_ALL_OBJECTS, NULL, NULL );
 
 	return true;   // Everything is OK
@@ -587,12 +604,169 @@ long SVToolAdjustmentArchivePage::CalculateFreeMem()
 	UpdateData(FALSE);
 	return lFreeMem;
 }
+bool SVToolAdjustmentArchivePage::GetSelectedHeaderNamePairs( StringPairVect& HeaderPairs)
+{
+	if( m_pTool )
+	{
+
+		// Inputs:
+		// Collect and build string pair vector from header Guid and Header Label from the archive tool.
+		// but only add if Guids match the selected object Guids
+		// output a vector of Object Name / Label pairs filtered by the selected objects..
+		SVObjectReferenceVector l_aRefObj;
+		m_treeResultsList.GetSelectedObjects(l_aRefObj);
+		
+		// Get Lists....
+		typedef std::vector<CString> StringVect;
+		StringVect l_HeaderLabelNames;
+		StringVect l_HeaderObjectGUIDs;
+		m_pTool->m_HeaderLabelNames.GetValues( l_HeaderLabelNames );
+		m_pTool->m_HeaderObjectGUIDs.GetValues( l_HeaderObjectGUIDs );
+
+		// Collect Object and Label into pairs.
+		StringVect::iterator it1 = l_HeaderLabelNames.begin();
+		for( StringVect::iterator it = l_HeaderObjectGUIDs.begin() ; it != l_HeaderObjectGUIDs.end() ; )
+		{
+			StrStrPair l_Pair(*it, *it1 );
+			HeaderPairs.push_back(l_Pair);
+			++it1;
+			++it;
+		}
+
+		// ... Add newly selected Items.
+		StringPairVect::iterator NextHdrPair = HeaderPairs.begin();
+		for( SVObjectReferenceVector::iterator l_it = l_aRefObj.begin(); l_it != l_aRefObj.end() ; ++l_it)
+		{
+			SVGUID svGUIDValue;
+			svGUIDValue = l_it->Guid(); //GetCompleteObjectName();
+
+			bool bFound = false;
+			StringPairVect::iterator it;
+			for( it = NextHdrPair ; it != HeaderPairs.end(); ++it)
+			{
+				if( it->first == svGUIDValue.ToString().c_str() )
+				{
+					// Found Stop looking...
+					bFound = true;
+					NextHdrPair = it+1;
+					break;
+				}
+			}
+			if( !bFound )	// Add a new one.
+			{
+				
+				StrStrPair NewPair( svGUIDValue.ToString().c_str(), 
+					SVObjectManagerClass::Instance().GetObject(svGUIDValue)->GetCompleteObjectName() );
+				if( NextHdrPair == HeaderPairs.end())
+				{
+					HeaderPairs.push_back(NewPair);
+					NextHdrPair = HeaderPairs.end();
+				}
+				else
+				{
+					NextHdrPair = HeaderPairs.insert(NextHdrPair, NewPair );
+					++NextHdrPair;
+				}
+			}
+		}
+		// Remove extras...
+		for( StringPairVect::iterator it = HeaderPairs.begin() ; it != HeaderPairs.end(); )
+		{
+			bool bFound = false;
+			for( SVObjectReferenceVector::iterator it2 = l_aRefObj.begin(); it2 != l_aRefObj.end() ; ++it2)
+			{
+				SVGUID svGuidValue = it2->Guid();
+				if( it->first == svGuidValue.ToString().c_str() )
+				{
+					// Found Stop looking...
+					bFound = true;
+					break;
+				}
+			}
+			if( bFound )
+			{
+				++it;
+			}
+			else
+			{
+				it = HeaderPairs.erase( it );
+			}
+		}
+		return true;
+	}
+	return false;
+}
+
+bool SVToolAdjustmentArchivePage::StoreHeaderValuesToTool(StringPairVect& HeaderPairs)
+{
+	if( m_pTool )
+	{
+		std::vector<CString> l_HeaderLabelNames;
+		std::vector<CString> l_HeaderObjectGUIDs;
+		for( StringPairVect::iterator it = HeaderPairs.begin(); it != HeaderPairs.end() ;++it)
+		{
+			l_HeaderObjectGUIDs.push_back( it->first);
+			l_HeaderLabelNames.push_back( it->second);
+		}
+		m_pTool->m_HeaderLabelNames.SetArraySize( static_cast<int>(HeaderPairs.size()) );
+		m_pTool->m_HeaderObjectGUIDs.SetArraySize( static_cast<int>(HeaderPairs.size()) );
+		m_pTool->m_HeaderLabelNames.SetArrayValues(0, l_HeaderLabelNames.begin(), l_HeaderLabelNames.end());
+		m_pTool->m_HeaderObjectGUIDs.SetArrayValues(0, l_HeaderObjectGUIDs.begin(), l_HeaderObjectGUIDs.end());
+		return true;
+	}
+	return false;
+}
+
+void SVToolAdjustmentArchivePage::OnBnClickedHeaderBtn()
+{
+	// Get a collection of header name/Label pairs from this class and the tool.
+	StringPairVect l_HeaderPairs;
+	GetSelectedHeaderNamePairs(l_HeaderPairs); // filters by what is selected.
+
+	SVArchiveHeaderEditDlg l_dlg;
+	l_dlg.SetValues( l_HeaderPairs );
+
+	INT_PTR iRet = l_dlg.DoModal();
+	if( iRet == IDOK)
+	{
+		l_dlg.GetValues( l_HeaderPairs );
+		StoreHeaderValuesToTool( l_HeaderPairs );
+	}
+}
+
+
+// Update tool from checkbox.
+void SVToolAdjustmentArchivePage::OnBnClickedHeaderCheck()
+{
+	UpdateData();
+	m_pTool->m_bvoUseHeaders.SetDefaultValue(m_bUseComumnHeaders, true);
+}
 
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVToolArchivePage.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVToolArchivePage.cpp_v  $
+ * 
+ *    Rev 1.2   18 Nov 2013 12:44:22   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Added static_casts to build without warnings.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.1   11 Nov 2013 07:38:00   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  872
+ * SCR Title:  Add Archive Tool Headers to Archive File
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Added header support functions.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 15:41:22   bWalter
  * Project:  SVObserver

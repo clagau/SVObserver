@@ -5,8 +5,8 @@
 //* .Module Name     : SVLut
 //* .File Name       : $Workfile:   SVLut.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   22 Apr 2013 10:51:42  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   01 Oct 2013 07:16:32  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -187,7 +187,7 @@ bool SVLutInfo::GetTransformParameters(SAFEARRAY*& rpsaParam) const
 		bRet = mpTransform->GetParameters(param);
 		SAFEARRAYBOUND saBounds[1];
 		saBounds[0].lLbound=0;
-		saBounds[0].cElements = param.GetSize();
+		saBounds[0].cElements = static_cast< ULONG >( param.GetSize() );
 		rpsaParam = ::SafeArrayCreate( VT_I4, 1, saBounds);
 		if (rpsaParam != NULL)
 		{
@@ -317,7 +317,7 @@ const SVLutInfo& SVLutBand::Info() const
 
 UINT SVLutBand::Size() const
 {
-	return maTable.size();
+	return static_cast< UINT >( maTable.size() );
 }
 
 const SVLutTransformOperation* SVLutBand::GetTransformOperation() const
@@ -374,7 +374,7 @@ bool SVLutBand::GetBandData(SAFEARRAY*& rpsaBandData) const
 	{
 		SAFEARRAYBOUND saBounds[1];
 		saBounds[0].lLbound=0;
-		saBounds[0].cElements = maTable.size();
+		saBounds[0].cElements = static_cast< ULONG >( maTable.size() );
 		rpsaBandData = ::SafeArrayCreate( VT_I4, 1, saBounds);
 		if (rpsaBandData != NULL)
 		{
@@ -405,7 +405,7 @@ bool SVLutBand::operator == ( const SVLutBand& rhs ) const
 
 	if ( bEqual )
 	{
-		int iSize = maTable.size();
+		size_t iSize = maTable.size();
 		if ( iSize == rhs.maTable.size() )
 		{
 			for ( unsigned int i=0; (i < maTable.size()) && bEqual; i++)
@@ -590,7 +590,7 @@ const SVLutEntry& SVLut::operator () (UINT nBand, UINT nIndex) const
 
 ULONG SVLut::NumBands() const
 {
-	return maBands.size();
+	return static_cast< ULONG >( maBands.size() );
 }
 
 const SVLutInfo& SVLut::Info() const
@@ -846,6 +846,16 @@ SVLutTestCases::SVLutTestCases()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVImageLibrary\SVLut.cpp_v  $
+ * 
+ *    Rev 1.1   01 Oct 2013 07:16:32   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platforms.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   22 Apr 2013 10:51:42   bWalter
  * Project:  SVObserver

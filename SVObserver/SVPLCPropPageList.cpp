@@ -5,8 +5,8 @@
 //* .Module Name     : SVPLCPropPageList
 //* .File Name       : $Workfile:   SVPLCPropPageList.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 13:27:14  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   18 Nov 2013 11:43:42  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -76,7 +76,7 @@ BOOL SVPLCPropPageList::OnInitDialog()
 		l_hr = m_pParent->m_ControlMaterials.GetMaterial( l_strTmp, l_vTemp );
 		CString l_strAddress = l_vTemp;
 		SVString l_strName;
-		l_strName.Format( _T("Block %d"), l_lIndex  );
+		l_strName.Format( _T("Block %d"), l_lIndex + 1 );
 		m_AddressList.InsertItem( l_lIndex, l_strName.ToString() );
 		if( l_strAddress.GetLength() > 0 )
 		{
@@ -157,7 +157,17 @@ LRESULT SVPLCPropPageList::OnWizardBack()
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVPLCPropPageList.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVPLCPropPageList.cpp_v  $
+ * 
+ *    Rev 1.1   18 Nov 2013 11:43:42   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  873
+ * SCR Title:  Fix inconsistant GUI labels and functionality on IO pages
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Fixed PLC Block start to start at 1 instead of 0.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 13:27:14   bWalter
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : SVSocketRemoteCommandManager
 //* .File Name       : $Workfile:   SVSocketRemoteCommandManager.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 15:08:20  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   30 Oct 2013 15:41:46  $
 //******************************************************************************
 
 #ifndef SVSOCKETREMOTECOMMANDMANAGER_H
@@ -18,6 +18,7 @@
 
 #include "SVJsonCommandServerLibrary/SVJsonCommandManager.h"
 #include "SVStorageResult.h"
+#include "SVDataDefinitionStruct.h"
 
 namespace Json
 {
@@ -48,6 +49,8 @@ protected:
 	static HRESULT ConvertStorageResultValueToJsonValue( const SVString& p_rName, const SVStorageResult& p_rStorage, Json::Value& p_rJsonValue );
 	static HRESULT ConvertStorageResultImageFileToJsonValue( const SVString& p_rName, const SVStorageResult& p_rStorage, Json::Value& p_rJsonValue );
 
+	static HRESULT ConvertDataDefinitionToJsonValue( const SVDataDefinitionStruct& p_rDataDefinition , Json::Value& p_rJsonValue );
+
 	static HRESULT AddJsonValuesToStorageItems( const Json::Value& p_rJsonValues, SVNameStorageMap& p_rItems );
 	static HRESULT AddJsonImagesToStorageItems( const Json::Value& p_rJsonImages, SVNameStorageMap& p_rItems );
 	static HRESULT AddResultStatusToJsonValue( const SVNameStorageMap& p_rItems, const SVNameStatusMap& p_rResultStatus, Json::Value& p_rJsonErrors );
@@ -63,10 +66,17 @@ protected:
 	static HRESULT GetItems( const std::string& p_rJsonCommand, std::string& p_rJsonResults );
 	static HRESULT GetDeviceFile( const std::string& p_rJsonCommand, std::string& p_rJsonResults );
 	static HRESULT GetDeviceConfigReport( const std::string& p_rJsonCommand, std::string& p_rJsonResults );
+	static HRESULT GetDataDefinitionList( const std::string& p_rJsonCommand, std::string& p_rJsonResults );
 	static HRESULT PutConfig( const std::string& p_rJsonCommand, std::string& p_rJsonResults );
 	static HRESULT PutDeviceFile( const std::string& p_rJsonCommand, std::string& p_rJsonResults );
 	static HRESULT SetDeviceMode( const std::string& p_rJsonCommand, std::string& p_rJsonResults );
 	static HRESULT SetItems( const std::string& p_rJsonCommand, std::string& p_rJsonResults );
+
+	AFX_INLINE static HRESULT WriteJsonCommandToFile(const Json::Value& p_rJsonValues, const std::string& p_rFileName);
+	AFX_INLINE static HRESULT WriteJsonCommandToFile(const std::string& p_rJsonCommand, const std::string& p_rFileName);
+
+	AFX_INLINE static HRESULT WriteResultToJsonAndFile( const std::string& p_rJsonCommand, std::string& p_rJsonResults, 
+														const Json::Value& p_rJsonResultValue, const std::string& p_rFileName , HRESULT p_Status);
 
 	static SVCommandFunctionMap m_Functions;
 	static SVCommandFunctionMap m_AsyncFunctions;
@@ -89,7 +99,17 @@ typedef SVJsonCommandManager< SVRemoteCommandFunctions > SVSocketRemoteCommandMa
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVSocketRemoteCommandManager.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVSocketRemoteCommandManager.h_v  $
+ * 
+ *    Rev 1.1   30 Oct 2013 15:41:46   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  866
+ * SCR Title:  Add GetDataDefinitionList Command to SVObserver's Remote Command Socket
+ * Checked in by:  bWalter;  Ben Walter
+ * Change Description:  
+ *   Added ConvertDataDefinitionToJsonValue, GetDataDefinitionList, WriteJsonCommandToFile, and WriteResultToJsonAndFile.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 15:08:20   bWalter
  * Project:  SVObserver

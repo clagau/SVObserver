@@ -5,8 +5,8 @@
 //* .Module Name     : SVArchiveTool
 //* .File Name       : $Workfile:   SVArchiveTool.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   08 May 2013 16:01:36  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   11 Nov 2013 07:10:00  $
 //******************************************************************************
 
 #ifndef SVTOOLARCHIVE_H
@@ -246,6 +246,9 @@ public:
 	SVEnumerateValueObjectClass m_evoArchiveMethod;
 
 	SVArchiveMethodEnum         m_eArchiveMethod;
+	SVBoolValueObjectClass      m_bvoUseHeaders;
+	SVStaticStringValueObjectClass m_HeaderLabelNames;
+	SVStaticStringValueObjectClass m_HeaderObjectGUIDs;
 
 protected:
 	SV_DECLARE_CLASS( SVArchiveTool )
@@ -293,7 +296,17 @@ private:
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVArchiveTool.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVArchiveTool.h_v  $
+ * 
+ *    Rev 1.2   11 Nov 2013 07:10:00   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  872
+ * SCR Title:  Add Archive Tool Headers to Archive File
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add functionality for headers in text archive.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   08 May 2013 16:01:36   bWalter
  * Project:  SVObserver

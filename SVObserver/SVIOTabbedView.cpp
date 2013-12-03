@@ -5,8 +5,8 @@
 //* .Module Name     : SVIOTabbedView
 //* .File Name       : $Workfile:   SVIOTabbedView.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   06 May 2013 20:06:26  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   30 Oct 2013 10:45:20  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -14,7 +14,9 @@
 #include "SVIOTabbedView.h"
 #include "SVDiscreteOutputsView.h"
 #include "SVDiscreteInputsView.h"
+#ifndef _WIN64
 #include "SVPLCOutputsView.h"
+#endif
 #include "SVRemoteInputsView.h"
 #include "SVRemoteOutputsView.h"
 
@@ -46,7 +48,9 @@ BOOL SVIOTabbedView::OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext* pContex
 	TVisualObject *pRemoteInputsView = new TVisualObject( SVIORemoteInputsViewID, _T("Remote Inputs"), pContext, RUNTIME_CLASS( SVRemoteInputsView ) );
 
 	TVisualObject *pOutputsView = new TVisualObject( SVIODiscreteOutputsViewID, _T("Discrete Outputs"), pContext, RUNTIME_CLASS( SVDiscreteOutputsView ) );
+#ifndef _WIN64
 	TVisualObject *pPLCOutputsView = new TVisualObject( SVIOPLCOutputsViewID, _T("PLC Outputs"), pContext, RUNTIME_CLASS( SVPLCOutputsView ) );
+#endif
 	TVisualObject *pRemoteOutputsView = new TVisualObject( SVRemoteOutputsViewID, _T("Remote Outputs"), pContext, RUNTIME_CLASS( SVRemoteOutputsView ) );
 
 
@@ -55,7 +59,9 @@ BOOL SVIOTabbedView::OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext* pContex
 	m_Framework.Add( pIOTab, pRemoteInputsView );
 
 	m_Framework.Add( pIOTab, pOutputsView );
+#ifndef _WIN64
 	m_Framework.Add( pIOTab, pPLCOutputsView );
+#endif
 	m_Framework.Add( pIOTab, pRemoteOutputsView );
 
 
@@ -97,7 +103,27 @@ void SVIOTabbedView::OnDestroy()
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVIOTabbedView.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVIOTabbedView.cpp_v  $
+ * 
+ *    Rev 1.3   30 Oct 2013 10:45:20   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Added #ifndef _WIN64 to prevent depricated PLC code from compiling in 64bit.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.2   01 Oct 2013 14:31:00   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   06 May 2013 20:06:26   bWalter
  * Project:  SVObserver

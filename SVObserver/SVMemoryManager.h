@@ -84,6 +84,8 @@ private:
 		{
 			HRESULT hr = S_FALSE;
 			
+			//ASSERT( m_mapEntries.find(owner) != m_mapEntries.end() );
+
 			SVMemoryPoolEntryMap::iterator iter = m_mapEntries.find(owner);
 			if ( iter != m_mapEntries.end() )
 			{
@@ -143,9 +145,10 @@ private:
 		// manages memory in a pool for one owner
 		struct SVMemoryPoolEntry
 		{
+			//OWNERTYPE owner;
 			long   lSize;
 			SVMemoryPoolEntry() : lSize(0) {}
-		};
+		};// end class SVMemoryPoolEntry
 		typedef std::pair <OWNERTYPE, SVMemoryPoolEntry> SVMemoryPoolEntryPair;
 		typedef std::map <OWNERTYPE, SVMemoryPoolEntry> SVMemoryPoolEntryMap;
 
@@ -153,6 +156,11 @@ private:
 		volatile long m_lPoolSize;
 		volatile long m_lUsed;
 		SVContainableCriticalSection m_critsec;
+		//CCriticalSection m_critsec;
+
+		// disable copying this object ( because of the CCriticalSection )
+		//SVMemoryPool( const SVMemoryPool& );                // disable copy constructor
+		//SVMemoryPool& operator = ( const SVMemoryPool& );   // disable operator =
 
 		public:	// we are using SVContainableCriticalSection to allow copying
 		SVMemoryPool( const SVMemoryPool& rhs ) : m_critsec( rhs.m_critsec ), m_mapEntries( rhs.m_mapEntries )
@@ -184,6 +192,7 @@ private:
 typedef TBasicSingletonHolder < SVMemoryManager<void*> > SVMemoryManagerSingleton;
 
 inline SVMemoryManager<void*>& TheSVMemoryManager() {return SVMemoryManagerSingleton::Instance();}
+
 
 #endif
 

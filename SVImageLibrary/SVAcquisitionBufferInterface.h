@@ -5,8 +5,8 @@
 //* .Module Name     : SVAcquisitionBufferInterface
 //* .File Name       : $Workfile:   SVAcquisitionBufferInterface.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   07 May 2013 20:14:40  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   01 Oct 2013 07:16:32  $
 //******************************************************************************
 
 #ifndef SVACQUISITIONBUFFERINTERFACE_H
@@ -22,8 +22,8 @@ public:
 
 	virtual SVClock::SVTimeStamp GetTimeStamp() const = 0;
 	
-	virtual size_t GetBufferWidth() const = 0;
-	virtual size_t GetBufferHeight() const = 0;
+	virtual unsigned long GetBufferWidth() const = 0;
+	virtual unsigned long GetBufferHeight() const = 0;
 	virtual int GetBufferFormat() const = 0;
 
 	virtual HRESULT GetNextBuffer( SVImageBufferInterface& p_rBuffer ) = 0;
@@ -37,7 +37,17 @@ public:
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVImageLibrary\SVAcquisitionBufferInterface.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVImageLibrary\SVAcquisitionBufferInterface.h_v  $
+ * 
+ *    Rev 1.2   01 Oct 2013 07:16:32   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platforms.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   07 May 2013 20:14:40   bWalter
  * Project:  SVObserver

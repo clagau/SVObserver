@@ -5,8 +5,8 @@
 //* .Module Name     : SVRemoteOutputGroupAddRemoveDlg
 //* .File Name       : $Workfile:   SVRemoteOutputGroupAddRemoveDlg.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 14:52:04  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   02 Oct 2013 07:58:48  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -177,7 +177,7 @@ BOOL SVRemoteOutputGroupAddRemoveDlg::OnInitDialog()
 		if( !l_bFound )
 		{
 			int l_iInsert = m_AvailableList.AddString( *l_AvailPPQIt );
-			int lPos = l_AvailPPQIt - m_astrAvailablePPQs.begin();
+			int lPos = static_cast<int>(l_AvailPPQIt - m_astrAvailablePPQs.begin());
 			m_AvailableList.SetItemData( l_iInsert, lPos );
 		}
 	}
@@ -225,7 +225,7 @@ int SVRemoteOutputGroupAddRemoveDlg::StringPosition( CStringVec l_astrArray, CSt
 	{
 		if( *l_it == l_strValue )
 		{
-			iRet = l_it - l_astrArray.begin();
+			iRet = static_cast<int>(l_it - l_astrArray.begin());
 		}
 	}
 	return iRet;
@@ -326,7 +326,7 @@ LRESULT  SVRemoteOutputGroupAddRemoveDlg::OnUsedListEditFinished(WPARAM wPar, LP
 	ClientToScreen(&rec);
 
 	int pos = 0;
-	int index = m_UsedList.GetItemData( pos );
+	int index = static_cast<int>(m_UsedList.GetItemData( pos ));
 	if( index >= 0 )
 	{
 		CString oldName = m_SetupGroup[index].m_strName;
@@ -367,7 +367,17 @@ HRESULT SVRemoteOutputGroupAddRemoveDlg::GetRenamed( CStringPairVect& OutputList
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVRemoteOutputGroupAddRemoveDlg.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVRemoteOutputGroupAddRemoveDlg.cpp_v  $
+ * 
+ *    Rev 1.1   02 Oct 2013 07:58:48   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 14:52:04   bWalter
  * Project:  SVObserver

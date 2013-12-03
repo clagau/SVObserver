@@ -5,8 +5,8 @@
 //* .Module Name     : SVTool
 //* .File Name       : $Workfile:   SVTool.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.3  $
-//* .Check In Date   : $Date:   15 May 2013 19:46:46  $
+//* .Current Version : $Revision:   1.5  $
+//* .Check In Date   : $Date:   11 Nov 2013 07:23:56  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -1208,7 +1208,7 @@ void SVToolClass::UpdateTaskObjectOutputListAttributes( SVObjectReference refTar
 	//
 	// Iterate the toolset output list and reset the attribute
 	//
-	int nCount = vecObjects.size();
+	int nCount = static_cast<int>(vecObjects.size());
 	for (int i = 0; i < nCount; i++)
 	{
 		SVObjectReference ref = vecObjects.at(i);
@@ -1329,7 +1329,7 @@ HRESULT SVToolClass::GetInputImageNames( SVStringValueObjectClass*& p_pSourceNam
 	return S_FALSE;
 }
 
-SVStringValueObjectClass* SVToolClass::GetToolComment()
+SVValueObjectClass* SVToolClass::GetToolComment()
 {
 	return &m_svToolComment;
 }
@@ -1338,7 +1338,27 @@ SVStringValueObjectClass* SVToolClass::GetToolComment()
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVTool.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVTool.cpp_v  $
+ * 
+ *    Rev 1.5   11 Nov 2013 07:23:56   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  872
+ * SCR Title:  Add Archive Tool Headers to Archive File
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Changed tool comment from SVStringvalueobjectclass to SVStaticstringvalueobjectclass.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.4   02 Oct 2013 08:24:40   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   15 May 2013 19:46:46   bWalter
  * Project:  SVObserver

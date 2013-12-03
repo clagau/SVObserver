@@ -5,8 +5,8 @@
 //* .Module Name     : SVObjectAppClass
 //* .File Name       : $Workfile:   SVObjectAppClass.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 12:35:54  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   30 Oct 2013 15:20:44  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -69,17 +69,17 @@ HRESULT SVObjectAppClass::ConnectObject(SVObjectLevelCreateStruct* PCreateStruct
 	return l_Status;	
 }
 
-SVInspectionProcess *SVObjectAppClass::GetInspection()
+SVInspectionProcess *SVObjectAppClass::GetInspection() const
 {
 	return m_psvInspection;
 }
 
-SVToolClass *SVObjectAppClass::GetTool()
+SVToolClass *SVObjectAppClass::GetTool() const
 {
 	return m_psvTool;
 }
 
-SVAnalyzerClass *SVObjectAppClass::GetAnalyzer()
+SVAnalyzerClass *SVObjectAppClass::GetAnalyzer() const
 {
 	return m_psvAnalyzer;
 }
@@ -227,7 +227,17 @@ void SVObjectAppClass::UpdateConnections( SVObjectLevelCreateStruct* PCreateStru
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVObjectAppClass.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVObjectAppClass.cpp_v  $
+ * 
+ *    Rev 1.1   30 Oct 2013 15:20:44   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  866
+ * SCR Title:  Add GetDataDefinitionList Command to SVObserver's Remote Command Socket
+ * Checked in by:  bWalter;  Ben Walter
+ * Change Description:  
+ *   Made GetInspection, GetTool, and GetAnalyzer methods const.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 12:35:54   bWalter
  * Project:  SVObserver

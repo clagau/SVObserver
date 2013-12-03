@@ -5,8 +5,8 @@
 //* .Module Name     : SVBarCodeAnalyzerClass
 //* .File Name       : $Workfile:   SVBarCodeAnalyzerClass.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.7  $
-//* .Check In Date   : $Date:   30 Jul 2013 11:47:48  $
+//* .Current Version : $Revision:   1.8  $
+//* .Check In Date   : $Date:   01 Oct 2013 11:54:40  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -446,9 +446,9 @@ BOOL SVBarCodeAnalyzerClass::onRun (SVRunStatusClass &RRunStatus)
 						// Copy string to Byte Value Object
 						if( l_strBarCodeValue.size() > static_cast<size_t>(msv_RawData.GetArraySize()) )
 						{
-							msv_RawData.SetArraySize( l_strBarCodeValue.size() );
+							msv_RawData.SetArraySize( static_cast< int >( l_strBarCodeValue.size() ) );
 						}
-						l_Code = msv_RawData.SetResultSize( RRunStatus.m_lResultDataIndex, l_strBarCodeValue.size());
+						l_Code = msv_RawData.SetResultSize( RRunStatus.m_lResultDataIndex, static_cast< int >( l_strBarCodeValue.size() ) );
 						msv_RawData.SetArrayValues( RRunStatus.m_lResultDataIndex, l_strBarCodeValue.begin(), l_strBarCodeValue.end() );
 
 						// based on msv_eBarcodeStringFormat replace control characters...
@@ -701,7 +701,17 @@ HRESULT SVBarCodeAnalyzerClass::ResetObject()
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVBarCodeAnalyzerClass.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVBarCodeAnalyzerClass.cpp_v  $
+ * 
+ *    Rev 1.8   01 Oct 2013 11:54:40   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.7   30 Jul 2013 11:47:48   tbair
  * Project:  SVObserver

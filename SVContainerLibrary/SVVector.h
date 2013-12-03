@@ -5,8 +5,8 @@
 //* .Module Name     : SVVector
 //* .File Name       : $Workfile:   SVVector.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   22 Apr 2013 07:44:22  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   30 Sep 2013 14:41:50  $
 //******************************************************************************
 
 #ifndef SVVECTOR_H
@@ -74,7 +74,7 @@ public:
 
 	// MFC Style Operators
 
-	virtual INT_PTR GetSize() const;
+	virtual int GetSize() const;
 
 	virtual INT_PTR GetUpperBound() const;
 
@@ -98,7 +98,7 @@ public:
 
 	virtual void Fill( SVArgType fillValue );
 
-	virtual INT_PTR Add( SVArgType newElement );
+	virtual int Add( SVArgType newElement );
 	virtual INT_PTR Append( const SVVector& src );
 
 	virtual void InsertAt( int nIndex, SVArgType newElement, int nCount = 1 );
@@ -125,7 +125,17 @@ protected:
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVContainerLibrary\SVVector.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVContainerLibrary\SVVector.h_v  $
+ * 
+ *    Rev 1.1   30 Sep 2013 14:41:50   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platforms.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   22 Apr 2013 07:44:22   bWalter
  * Project:  SVObserver

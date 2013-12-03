@@ -5,8 +5,8 @@
 //* .Module Name     : SVFileCamera
 //* .File Name       : $Workfile:   SVFileCamera.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   22 Apr 2013 09:28:54  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   01 Oct 2013 06:14:50  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -346,7 +346,7 @@ bool SVFileCamera::ValidImageFormatForCopy() const
 	return bRetVal;
 }
 
-void SVFileCamera::OnAPCEvent(DWORD data)
+void SVFileCamera::OnAPCEvent( ULONG_PTR data )
 {
 	SVFileCamera* pCamera = (SVFileCamera *)data;
 	SVString filename = pCamera->GetNextFilename();
@@ -426,7 +426,17 @@ void SVFileCamera::ClearTriggerCallback()
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVFileAcquisitionDevice\SVFileCamera.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVFileAcquisitionDevice\SVFileCamera.cpp_v  $
+ * 
+ *    Rev 1.1   01 Oct 2013 06:14:50   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platforms.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   22 Apr 2013 09:28:54   bWalter
  * Project:  SVObserver

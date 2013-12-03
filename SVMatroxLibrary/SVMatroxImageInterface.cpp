@@ -5,8 +5,8 @@
 // * .Module Name     : SVMatroxImageInterface
 // * .File Name       : $Workfile:   SVMatroxImageInterface.cpp  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.0  $
-// * .Check In Date   : $Date:   22 Apr 2013 15:18:24  $
+// * .Current Version : $Revision:   1.2  $
+// * .Check In Date   : $Date:   23 Oct 2013 08:50:50  $
 // ******************************************************************************
 
 #include "stdafx.h"
@@ -761,7 +761,7 @@ HRESULT SVMatroxImageInterface::AdaptiveThreshold( const SVCommandDataHolder& p_
 
 			if( l_Status == S_OK )
 			{
-				AdaptiveThreshold(l_pSource, l_pDest, l_Width, l_Height, l_Stride, 0.15f);
+				AdaptiveThreshold(l_pSource, l_pDest, static_cast< int >( l_Width ), static_cast< int >( l_Height ), static_cast< int >( l_Stride ), 0.15f);
 			}
 
 			if( (bool)l_IsBlack )
@@ -1412,7 +1412,7 @@ SVMatroxImageInterface::SVStatusCode SVMatroxImageInterface::GetResult( const SV
 #endif
 
 	{
-		long l_lSize = 0;
+		MIL_INT l_lSize = 0;
 		if( !p_rResultID.empty() )
 		{
 			MimInquire( p_rResultID.m_ImageResultID,
@@ -1461,7 +1461,7 @@ SVMatroxImageInterface::SVStatusCode SVMatroxImageInterface::GetResult( const SV
 #endif
 
 	{
-		long l_lSize = 0;
+		MIL_INT l_lSize = 0;
 		if( !p_rResultID.empty() )
 		{
 			MimInquire( p_rResultID.m_ImageResultID,
@@ -1474,7 +1474,7 @@ SVMatroxImageInterface::SVStatusCode SVMatroxImageInterface::GetResult( const SV
 			{
 				p_alArray.resize( l_lSize );
 				MimGetResult( p_rResultID.m_ImageResultID,
-					M_VALUE ,
+					M_VALUE | M_TYPE_LONG,
 					&p_alArray[0]);
 				l_Code = SVMatroxApplicationInterface::GetLastStatus();
 			}
@@ -1509,7 +1509,7 @@ SVMatroxImageInterface::SVStatusCode SVMatroxImageInterface::GetResult( const SV
 #endif
 
 	{
-		long l_lSize = 0;
+		MIL_INT l_lSize = 0;
 		if( !p_rResultID.empty() )
 		{
 			MimInquire( p_rResultID.m_ImageResultID,
@@ -1522,7 +1522,7 @@ SVMatroxImageInterface::SVStatusCode SVMatroxImageInterface::GetResult( const SV
 			{
 				p_acArray.resize( l_lSize );
 				MimGetResult( p_rResultID.m_ImageResultID,
-					M_VALUE,
+					M_VALUE + M_TYPE_CHAR,
 					&p_acArray[0]);
 				l_Code = SVMatroxApplicationInterface::GetLastStatus();
 			}
@@ -2258,6 +2258,26 @@ void SVMatroxImageInterface::AdaptiveThreshold(unsigned char* input, unsigned ch
 // ******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVMatroxLibrary\SVMatroxImageInterface.cpp_v  $
+ * 
+ *    Rev 1.2   23 Oct 2013 08:50:50   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Modified types to be compatible with 32 and 64bit librarys.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.1   01 Oct 2013 11:08:12   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   22 Apr 2013 15:18:24   bWalter
  * Project:  SVObserver

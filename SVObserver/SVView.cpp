@@ -5,8 +5,8 @@
 //* .Module Name     : SVView
 //* .File Name       : $Workfile:   SVView.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 16:20:14  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   02 Oct 2013 08:39:02  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -134,7 +134,7 @@ int SVAvailableAnalyzerListComboBoxClass::init( SVClassInfoStructListClass* L, i
 		{
 			for (int i = 0;i < GetCount(); i++ )
 			{
-				int item = GetItemData( i );
+				int item = static_cast<int>(GetItemData( i ));
 				if( item == currentSelection )
 				{
 					selection = i;
@@ -144,7 +144,7 @@ int SVAvailableAnalyzerListComboBoxClass::init( SVClassInfoStructListClass* L, i
 		}
 		SetCurSel( selection );
 
-		return GetItemData( GetCurSel() );
+		return static_cast<int>(GetItemData( GetCurSel() ));
 	}
 	return LB_ERR;
 }
@@ -302,7 +302,17 @@ int SVAvailableSourceImageListComboBoxClass::init( SVImageListClass* pImageList,
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVView.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVView.cpp_v  $
+ * 
+ *    Rev 1.1   02 Oct 2013 08:39:02   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 16:20:14   bWalter
  * Project:  SVObserver

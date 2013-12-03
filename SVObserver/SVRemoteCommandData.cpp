@@ -5,8 +5,8 @@
 //* .Module Name     : SVRemoteCommandData
 //* .File Name       : $Workfile:   SVRemoteCommandData.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 14:43:20  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   03 Oct 2013 13:31:02  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -61,19 +61,19 @@ STDMETHODIMP SVRemoteCommandData::GetDataInformation( VARIANT* p_pInformation )
 
 				// First Dimension number of objects in list..
 				l_Bounds[ 0 ].lLbound = 0;
-				l_Bounds[ 0 ].cElements = l_Info.size();
+				l_Bounds[ 0 ].cElements = static_cast<ULONG>(l_Info.size());
 
 				// Second Dimension is the parts fo the Information Definition
 				// 0 = Name, 1 = Data Type ( see enum SVCommandDataType for values )
 				l_Bounds[ 1 ].lLbound = 0;
 				l_Bounds[ 1 ].cElements = 2;
 
-				size_t i = 0;
+				long i = 0;
 				SVSAFEARRAY l_Temp( VT_VARIANT, l_Bounds );
 				SVSAFEARRAY::SVIndex l_Index( 2 );
 				SVCommandDataHolder::SVNameDataTypeMap::const_iterator l_Iter = l_Info.begin();
 
-				while( l_Status == S_OK && i < l_Info.size() && l_Iter != l_Info.end() )
+				while( l_Status == S_OK && i < static_cast<long>(l_Info.size()) && l_Iter != l_Info.end() )
 				{
 					l_Index[ 0 ] = i;
 					l_Index[ 1 ] = 0;
@@ -393,7 +393,7 @@ STDMETHODIMP SVRemoteCommandData::GetBlock( BSTR p_Name, IStream** p_ppStream )
 				{
 					ULONG l_BytesWritten = 0;
 
-					l_Status = l_StreamPtr->Write( &( l_Block[ 0 ] ), l_Block.size(), &l_BytesWritten );
+					l_Status = l_StreamPtr->Write( &( l_Block[ 0 ] ), static_cast<ULONG>(l_Block.size()), &l_BytesWritten );
 
 					if( l_BytesWritten != l_Block.size() )
 					{
@@ -459,7 +459,7 @@ STDMETHODIMP SVRemoteCommandData::SetBlock( BSTR p_Name, IStream* p_pStream )
 			{
 				ULONG l_BytesRead = 0;
 
-				l_Status = l_StreamPtr->Read( &( l_Block[ 0 ] ), l_Block.size(), &l_BytesRead );
+				l_Status = l_StreamPtr->Read( &( l_Block[ 0 ] ), static_cast<ULONG>(l_Block.size()), &l_BytesRead );
 
 				if( l_Block.size() == static_cast< size_t >( l_BytesRead ) )
 				{
@@ -535,7 +535,7 @@ STDMETHODIMP SVRemoteCommandData::GetImage( BSTR p_Name, IStream** p_ppStream )
 				{
 					ULONG l_BytesWritten = 0;
 
-					l_Status = l_StreamPtr->Write( &( l_Block[ 0 ] ), l_Block.size(), &l_BytesWritten );
+					l_Status = l_StreamPtr->Write( &( l_Block[ 0 ] ), static_cast<ULONG>(l_Block.size()), &l_BytesWritten );
 
 					if( l_BytesWritten != l_Block.size() )
 					{
@@ -601,7 +601,7 @@ STDMETHODIMP SVRemoteCommandData::SetImage( BSTR p_Name, IStream* p_pStream )
 			{
 				ULONG l_BytesRead = 0;
 
-				l_Status = l_StreamPtr->Read( &( l_Block[ 0 ] ), l_Block.size(), &l_BytesRead );
+				l_Status = l_StreamPtr->Read( &( l_Block[ 0 ] ), static_cast<ULONG>(l_Block.size()), &l_BytesRead );
 
 				if( l_Block.size() == static_cast< size_t >( l_BytesRead ) )
 				{
@@ -629,7 +629,27 @@ STDMETHODIMP SVRemoteCommandData::SetImage( BSTR p_Name, IStream* p_pStream )
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVRemoteCommandData.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVRemoteCommandData.cpp_v  $
+ * 
+ *    Rev 1.2   03 Oct 2013 13:31:02   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   64 bit platform types.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.1   02 Oct 2013 07:58:44   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 14:43:20   bWalter
  * Project:  SVObserver

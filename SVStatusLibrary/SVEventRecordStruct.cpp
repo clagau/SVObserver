@@ -5,8 +5,8 @@
 // * .Module Name     : SVEventRecordStruct
 // * .File Name       : $Workfile:   SVEventRecordStruct.cpp  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.0  $
-// * .Check In Date   : $Date:   25 Apr 2013 17:42:44  $
+// * .Current Version : $Revision:   1.1  $
+// * .Check In Date   : $Date:   02 Oct 2013 10:08:10  $
 // ******************************************************************************
 
 #include "stdafx.h"
@@ -78,7 +78,7 @@ LPCTSTR SVEventRecordStruct::GetNextString()
 {
 	if( m_poRecord != NULL && m_ulStringIndex + 1 < m_poRecord->NumStrings )
 	{
-		unsigned long l_ulSize = strlen( m_szCurrentString ) + 1;
+		size_t l_ulSize = strlen( m_szCurrentString ) + 1;
 		
 		m_szCurrentString += l_ulSize;
 
@@ -180,7 +180,17 @@ std::string SVEventRecordStruct::GetDateTime()
 // * LOG HISTORY:
 // ******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVStatusLibrary\SVEventRecordStruct.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVStatusLibrary\SVEventRecordStruct.cpp_v  $
+ * 
+ *    Rev 1.1   02 Oct 2013 10:08:10   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   25 Apr 2013 17:42:44   bWalter
  * Project:  SVObserver

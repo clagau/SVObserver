@@ -5,8 +5,8 @@
 //* .Module Name     : SVRemoteOutputsView
 //* .File Name       : $Workfile:   SVRemoteOutputsView.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   23 Jul 2013 18:14:02  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   02 Oct 2013 08:17:46  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -174,7 +174,7 @@ void SVRemoteOutputsView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 		{
 			CString l_strGroupName = *l_it;
 
-			int lSize = pConfig->GetRemoteOutputGroupItemCount( l_strGroupName );
+			int lSize = static_cast<int>(pConfig->GetRemoteOutputGroupItemCount( l_strGroupName ));
 			if( lSize == 0 )
 			{
 				continue;
@@ -527,7 +527,7 @@ void SVRemoteOutputsView::OnContextMenu(CWnd* /*pWnd*/, CPoint point )
 				{
 					l_pPrevOutput=dynamic_cast<SVRemoteOutputObject*>(reinterpret_cast<SVObjectClass*>(GetListCtrl().GetItemData( m_CurrentItem-1 )));
 				}
-				int pos = l_pOutput->GetInputValueObjectName().find( _T("Trigger Count") );
+				int pos = static_cast<int>(l_pOutput->GetInputValueObjectName().find( _T("Trigger Count") ));
 				if( pos != SVString::npos && (l_pPrevOutput == NULL) ) // If the name is trigger count
 				{
 					pPopup = m_ContextMenuItemNoDelete.GetSubMenu(0);
@@ -570,7 +570,7 @@ void SVRemoteOutputsView::OnRemoteOutputDelete()
 				CString l_strRemoteGroup = pRemoteOutput->GetGroupID().c_str();// GetInputValueObjectName();
 
 				bool bFirst = (pConfig->GetFirstRemoteOutputObject( l_strRemoteGroup ) == pRemoteOutput); 
-				int pos = pRemoteOutput->GetInputValueObjectName().find(_T("Trigger Count") );
+				int pos = static_cast<int>(pRemoteOutput->GetInputValueObjectName().find(_T("Trigger Count") ));
 				if( bFirst && pos != SVString::npos )
 				{
 					AfxMessageBox(_T("Trigger Count Cannot Be deleted"),MB_OK );
@@ -759,7 +759,17 @@ void SVRemoteOutputsView::OnLButtonDown(UINT nFlags, CPoint point)
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSARCH65\PROJECTFILES\ARCHIVES\SVObserver_src\SVObserver\SVRemoteOutputsView.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVRemoteOutputsView.cpp_v  $
+ * 
+ *    Rev 1.2   02 Oct 2013 08:17:46   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   23 Jul 2013 18:14:02   sjones
  * Project:  SVObserver

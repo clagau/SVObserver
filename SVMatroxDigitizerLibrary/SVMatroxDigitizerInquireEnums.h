@@ -5,8 +5,8 @@
 //* .Module Name     : SVMatroxDigitizerInquireEnums
 //* .File Name       : $Workfile:   SVMatroxDigitizerInquireEnums.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   22 Apr 2013 14:28:56  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   01 Oct 2013 10:45:28  $
 //******************************************************************************
 
 #ifndef SVMATROXDIGITIZERINQUIREENUMS_H
@@ -241,7 +241,7 @@ struct SVMatroxDigitizerInquire
 									// Sets the type of signal to be routed to a user-defined output signal or I/O signal set to output.
 	};
 	// define convertor for from/to SVEnum/Matrox types
-	typedef SVMatroxEnumConvertor<SVUserBitEnum, long> SVUserBitEnumMap;
+	typedef SVMatroxEnumConvertor< SVUserBitEnum, SVMatroxInt > SVUserBitEnumMap;
 	static SVUserBitEnumMap m_UserBitEnumConvertor;
 };
 
@@ -252,6 +252,16 @@ struct SVMatroxDigitizerInquire
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVMatroxDigitizerLibrary\SVMatroxDigitizerInquireEnums.h_v  $
+ * 
+ *    Rev 1.1   01 Oct 2013 10:45:28   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   22 Apr 2013 14:28:56   bWalter
  * Project:  SVObserver

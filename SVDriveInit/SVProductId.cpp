@@ -5,8 +5,8 @@
 //* .Module Name     : SVProductId
 //* .File Name       : $Workfile:   SVProductId.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   22 Apr 2013 08:33:30  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   30 Sep 2013 14:58:54  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -50,7 +50,7 @@ bool SVProductId::UpdateProductId() const
 
 		if( l_Status )
 		{
-			for( size_t i = 1; l_Status && i < 30; ++i )
+			for( int i = 1; l_Status && i < 30; ++i )
 			{
 				l_Status = ( ::isalnum( l_ProductId.GetAt( i ) ) != 0 || l_ProductId.GetAt( i ) == '-' );
 			}
@@ -181,7 +181,17 @@ bool SVProductId::PrepareForReseal() const
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVDriveInit\SVProductId.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVDriveInit\SVProductId.cpp_v  $
+ * 
+ *    Rev 1.1   30 Sep 2013 14:58:54   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platforms.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   22 Apr 2013 08:33:30   bWalter
  * Project:  SVObserver

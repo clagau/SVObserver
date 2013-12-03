@@ -5,8 +5,8 @@
 //* .Module Name     : SVSetupDialogManager
 //* .File Name       : $Workfile:   SVSetupDialogManager.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 15:02:46  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   02 Oct 2013 08:17:48  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -350,7 +350,7 @@ HRESULT SVSetupDialogManager::SVBarCodeAnalyzerClassSetupDialog( const SVGUID& p
 		//remove the apply button
 		dlgProp.m_psh.dwFlags |= PSH_NOAPPLYNOW;
 		
-		iResult = dlgProp.DoModal();
+		iResult = static_cast<int>(dlgProp.DoModal());
 		
 		if (iResult == IDOK)
 		{
@@ -1195,7 +1195,7 @@ HRESULT SVSetupDialogManager::SVLineROIClassSetupDialog( const SVGUID& p_rObject
 		{
 			SVOutObjectInfoStruct& rOutInfo = pOutputLine->GetObjectOutputInfo();
 
-			long l_lCount = rOutInfo.GetInputSize();
+			long l_lCount = static_cast<long>(rOutInfo.GetInputSize());
 
 			for( int i = 0; i < l_lCount; ++ i )
 			{
@@ -1741,8 +1741,7 @@ HRESULT SVSetupDialogManager::SVOCRAnalyzerClassSetupDialog( const SVGUID& p_rOb
 			dlg.pOCRAnalyzerResult = pOCRResult;
 			dlg.pDocument = pIPDoc;
 
-			int nResult = dlg.DoModal();
-			if ( nResult == IDOK )
+			if ( dlg.DoModal() == IDOK )
 			{
 				pOCRResult->LoadMatchString();
 
@@ -1824,8 +1823,7 @@ HRESULT SVSetupDialogManager::SVOCRGrayAnalyzerClassSetupDialog( const SVGUID& p
 			dlg.pOCRAnalyzerResult = pOCRResult;
 			dlg.pDocument = pIPDoc;
 
-			int nResult = dlg.DoModal();
-			if ( nResult == IDOK )
+			if ( dlg.DoModal() == IDOK )
 			{
 				pOCRResult->LoadMatchString();
 
@@ -1908,8 +1906,7 @@ HRESULT SVSetupDialogManager::SVOCVAnalyzerClassSetupDialog( const SVGUID& p_rOb
 			dlg.pOCVAnalyzerResult = pOCVResult;
 			dlg.pDocument = pIPDoc;
 			
-			int nResult = dlg.DoModal();
-			if( nResult == IDOK )
+			if( dlg.DoModal() == IDOK )
 			{
 				if ( TheSVOLicenseManager().HasMatroxIdentificationLicense() )
 				{
@@ -2306,7 +2303,17 @@ HRESULT SVSetupDialogManager::SVResultClassSetupDialog( const SVGUID& p_rObjectI
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVSetupDialogManager.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVSetupDialogManager.cpp_v  $
+ * 
+ *    Rev 1.1   02 Oct 2013 08:17:48   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 15:02:46   bWalter
  * Project:  SVObserver

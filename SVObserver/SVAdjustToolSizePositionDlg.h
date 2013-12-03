@@ -5,8 +5,8 @@
 //* .Module Name     : SVAdjustToolSizePositionDlg
 //* .File Name       : $Workfile:   SVAdjustToolSizePositionDlg.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.3  $
-//* .Check In Date   : $Date:   24 Sep 2013 16:16:10  $
+//* .Current Version : $Revision:   1.4  $
+//* .Check In Date   : $Date:   03 Oct 2013 13:31:04  $
 //******************************************************************************
 
 #ifndef SVADJUSTTOOLSIZEPOSITIONDLG_H
@@ -109,7 +109,12 @@ protected:
 	// Generated message map functions
 	//{{AFX_MSG(SVAdjustToolSizePositionMainPage)
 	virtual BOOL OnInitDialog();
-	afx_msg void OnTimer(UINT nIDEvent);
+#ifdef _WIN64
+#define UINT_CUSTOM UINT_PTR
+#else
+#define UINT_CUSTOM UINT
+#endif
+	afx_msg void OnTimer(UINT_CUSTOM nIDEvent);
 	afx_msg void OnModeRadio();
 	virtual BOOL OnSetActive();
 	//}}AFX_MSG
@@ -215,6 +220,16 @@ protected:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVAdjustToolSizePositionDlg.h_v  $
+ * 
+ *    Rev 1.4   03 Oct 2013 13:31:04   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   64 bit platform types.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   24 Sep 2013 16:16:10   bwalter
  * Project:  SVObserver

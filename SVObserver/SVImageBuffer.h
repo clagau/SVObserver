@@ -5,8 +5,8 @@
 //* .Module Name     : SVImageBuffer
 //* .File Name       : $Workfile:   SVImageBuffer.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 10:49:30  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   01 Oct 2013 14:19:28  $
 //******************************************************************************
 
 #ifndef SVIMAGEBUFFER_H
@@ -36,7 +36,9 @@ struct SVOverlayFigureStruct
 		Clear();
 
 		oFigureColor = p_ExtentLineStruct.m_dwColor;
-		lFigureSize = p_ExtentLineStruct.m_svPointArray.GetSize();
+
+		lFigureSize = static_cast< long >( p_ExtentLineStruct.m_svPointArray.GetSize() );
+
 		pFigurePoints = new POINT[lFigureSize];
 		for ( int i = 0; i < lFigureSize; i++ )
 		{
@@ -113,7 +115,8 @@ struct SVOverlayStruct
 		oTextPoint = p_rStruct.m_StringPoint.operator POINT();
 		strText = p_rStruct.m_csString;
 		
-		lFigureSize = p_rStruct.m_svLineArray.GetSize();
+		lFigureSize = static_cast< long >( p_rStruct.m_svLineArray.GetSize() );
+
 		pOverlays = new SVOverlayFigureStruct[lFigureSize];
 
 		for ( int i = 0; i < lFigureSize; i++ )
@@ -179,7 +182,17 @@ private:
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVImageBuffer.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVImageBuffer.h_v  $
+ * 
+ *    Rev 1.1   01 Oct 2013 14:19:28   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 10:49:30   bWalter
  * Project:  SVObserver

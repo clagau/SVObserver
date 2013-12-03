@@ -5,8 +5,8 @@
 //* .Module Name     : SVTool
 //* .File Name       : $Workfile:   SVTool.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   07 May 2013 08:21:18  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   11 Nov 2013 07:23:56  $
 //******************************************************************************
 
 #ifndef SVTOOL_H
@@ -264,7 +264,7 @@ public:
 
 	SVInObjectInfoStruct		m_AuxSourceImageObjectInfo;
 
-	SVStringValueObjectClass*  GetToolComment();
+	SVValueObjectClass*  GetToolComment();
 
 protected:
 	virtual BOOL Run( SVRunStatusClass& RRunStatus );
@@ -333,7 +333,7 @@ protected:
 	//***** New source image extent value objects
 
 	// Tool Comments
-	SVStringValueObjectClass m_svToolComment;
+	SVStaticStringValueObjectClass m_svToolComment;
 
 protected:
 	SVToolExtentClass m_svToolExtent;
@@ -348,7 +348,17 @@ private:
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVTool.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVTool.h_v  $
+ * 
+ *    Rev 1.2   11 Nov 2013 07:23:56   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  872
+ * SCR Title:  Add Archive Tool Headers to Archive File
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Changed tool comment from SVStringvalueobjectclass to SVStaticstringvalueobjectclass.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   07 May 2013 08:21:18   bWalter
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : SVCameraImageTemplate
 //* .File Name       : $Workfile:   SVCameraImageTemplate.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   08 May 2013 16:01:40  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   01 Oct 2013 12:16:26  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -109,7 +109,7 @@ BOOL SVCameraImageTemplate::SetImageDepth( long lDepth )
 
 	if ( !( GetCameraBufferArrayPtr().empty() ) )
 	{
-		l_lNewDepth = GetCameraBufferArrayPtr()->size();
+		l_lNewDepth = static_cast< long >( GetCameraBufferArrayPtr()->size() );
 	}
 	
   return SVImageClass::SetImageDepth( l_lNewDepth );
@@ -466,7 +466,17 @@ HRESULT SVCameraImageTemplate::RebuildCameraImage()
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVCameraImageTemplate.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVCameraImageTemplate.cpp_v  $
+ * 
+ *    Rev 1.2   01 Oct 2013 12:16:26   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   08 May 2013 16:01:40   bWalter
  * Project:  SVObserver

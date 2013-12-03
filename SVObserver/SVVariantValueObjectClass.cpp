@@ -5,8 +5,8 @@
 //* .Module Name     : SVVariantValueObjectClass
 //* .File Name       : $Workfile:   SVVariantValueObjectClass.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 16:19:48  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   02 Oct 2013 08:39:00  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -203,7 +203,7 @@ HRESULT SVVariantValueObjectClass::SetObjectValue(SVObjectAttributeClass* pDataO
 			}
 		}
 
-		SetArraySize( l_Array.size() );
+		SetArraySize( static_cast<int>(l_Array.size()) );
 		if ( ArraySize() == 1 )
 		{
 			ScalarBucket(1)=l_Array[0];
@@ -770,7 +770,17 @@ void SVVariantValueObjectClass::LocalInitialize()
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVVariantValueObjectClass.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVVariantValueObjectClass.cpp_v  $
+ * 
+ *    Rev 1.1   02 Oct 2013 08:39:00   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 16:19:48   bWalter
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : SVDataDefinitionPage
 //* .File Name       : $Workfile:   SVDataDefinitionPage.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 10:05:48  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   01 Oct 2013 13:58:10  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -129,9 +129,9 @@ bool SVDataDefinitionPage::CanSelectObjectCallback( SVObjectReference refObject,
 	if ( bCurrentState == false )// want to select
 	{
 		bool bInserted = false;
-		for ( size_t i=0; i < static_cast<size_t>(m_lbSelected.GetCount()); ++i )
+		for ( int i = 0; i < m_lbSelected.GetCount(); ++i )
 		{
-			if ( m_lbSelected.GetItemData( i ) > static_cast<size_t>(p_iIndex) )
+			if ( static_cast< int >( m_lbSelected.GetItemData( i ) ) > p_iIndex )
 			{
 				m_lbSelected.InsertString( i, strName );
 				m_lbSelected.SetItemData( i, p_iIndex );
@@ -172,7 +172,7 @@ void SVDataDefinitionPage::OnBtnClear()
 		int iItems = m_lbSelected.GetSelItems(m_lbSelected.GetCount(), &vecIndexes[0]);
 		for ( int i = iItems-1; i >= 0; --i )
 		{
-			int iIndex = m_lbSelected.GetItemData(vecIndexes.at(i));
+			int iIndex = static_cast< int >( m_lbSelected.GetItemData( vecIndexes.at( i ) ) );
 			m_Tree.SelectItemByIndex( iIndex, false );
 		}
 	}
@@ -183,7 +183,7 @@ void SVDataDefinitionPage::OnBtnClearAll()
 	int iItems = m_lbSelected.GetCount();
 	for ( int i = iItems-1; i >= 0; --i )
 	{
-		int iIndex = m_lbSelected.GetItemData(i);
+		int iIndex = static_cast< int >( m_lbSelected.GetItemData( i ) );
 		m_Tree.SelectItemByIndex( iIndex, false );
 	}
 }
@@ -253,7 +253,17 @@ void SVDataDefinitionPage::OnOK()
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVDataDefinitionPage.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVDataDefinitionPage.cpp_v  $
+ * 
+ *    Rev 1.1   01 Oct 2013 13:58:10   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 10:05:48   bWalter
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : SVValueObjectImpl
 //* .File Name       : $Workfile:   SVValueObjectImpl.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 16:18:14  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   11 Nov 2013 07:42:24  $
 //******************************************************************************
 
 #ifndef SVVALUEOBJECTIMPL_H
@@ -24,6 +24,7 @@
 #include "SVLongValueObjectClass.h"
 #include "SVPointValueObjectClass.h"
 #include "SVStringValueObjectClass.h"
+#include "SVStaticStringValueObjectClass.h"
 #include "SVTimerValueObjectClass.h"
 #include "SVVariantValueObjectClass.h"
 
@@ -33,7 +34,17 @@
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVValueObjectImpl.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVValueObjectImpl.h_v  $
+ * 
+ *    Rev 1.1   11 Nov 2013 07:42:24   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  872
+ * SCR Title:  Add Archive Tool Headers to Archive File
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Added SVStaticStringValueObjectClass
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 16:18:14   bWalter
  * Project:  SVObserver

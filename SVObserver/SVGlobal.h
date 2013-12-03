@@ -5,8 +5,8 @@
 //* .Module Name     : SVGlobal
 //* .File Name       : $Workfile:   SVGlobal.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   23 Jul 2013 17:53:08  $
+//* .Current Version : $Revision:   1.4  $
+//* .Check In Date   : $Date:   11 Nov 2013 07:12:34  $
 //******************************************************************************
 
 #ifndef SVGLOBAL_H
@@ -19,6 +19,7 @@
 
 typedef std::pair<CString, CString> StrStrPair;
 typedef std::map<int, StrStrPair > IntStrPairMap;
+typedef std::vector<StrStrPair> StringPairVect;
 
 class SVImageClass;
 class SVImageInfoClass;
@@ -372,18 +373,18 @@ const long SV_DEFAULT_CURRENT_RESULT_OUTPUT_TABLE_SIZE   = 4;
 const DWORD SV_1BIT                     = 1;
 const DWORD SV_8BIT_INT                 = ( SV_GET_BIT_NUMBER( __int8 ) );
 const DWORD SV_BYTE                     = SV_8BIT_INT;
-const DWORD SV_SIGNED_8BIT_INT          = ( SV_GET_BIT_NUMBER( __int8 ) + SVBufferSigned );
+const DWORD SV_SIGNED_8BIT_INT          = ( SV_GET_BIT_NUMBER( __int8 ) + static_cast< DWORD >( SVBufferSigned ) );
 const DWORD SV_CHAR                     = SV_SIGNED_8BIT_INT;
 const DWORD SV_16BIT_INT                = ( SV_GET_BIT_NUMBER( __int16 ) + SVBufferUnsigned );
-const DWORD SV_SIGNED_16BIT_INT         = ( SV_GET_BIT_NUMBER( __int16 ) + SVBufferSigned );
+const DWORD SV_SIGNED_16BIT_INT         = ( SV_GET_BIT_NUMBER( __int16 ) + static_cast< DWORD >( SVBufferSigned ) );
 const DWORD SV_32BIT_INT                = ( SV_GET_BIT_NUMBER( __int32 ) + SVBufferUnsigned );
 const DWORD SV_DWORD                    = SV_32BIT_INT;
-const DWORD SV_SIGNED_32BIT_INT         = ( SV_GET_BIT_NUMBER( __int32 ) + SVBufferSigned );
+const DWORD SV_SIGNED_32BIT_INT         = ( SV_GET_BIT_NUMBER( __int32 ) + static_cast< DWORD >( SVBufferSigned ) );
 const DWORD SV_LONG                     = SV_SIGNED_32BIT_INT;
 const DWORD SV_64BIT_INT                = ( SV_GET_BIT_NUMBER( __int64 ) + SVBufferUnsigned );
-const DWORD SV_SIGNED_64BIT_INT         = ( SV_GET_BIT_NUMBER( __int64 ) + SVBufferSigned );
-const DWORD SV_FLOAT                    = ( SV_GET_BIT_NUMBER( float )  + SVBufferFloat );
-const DWORD SV_DOUBLE                   = ( SV_GET_BIT_NUMBER( double ) + SVBufferDouble );
+const DWORD SV_SIGNED_64BIT_INT         = ( SV_GET_BIT_NUMBER( __int64 ) + static_cast< DWORD >( SVBufferSigned ) );
+const DWORD SV_FLOAT                    = ( SV_GET_BIT_NUMBER( float )  + static_cast< DWORD >( SVBufferFloat ) );
+const DWORD SV_DOUBLE                   = ( SV_GET_BIT_NUMBER( double ) + static_cast< DWORD >( SVBufferDouble ) );
 
 
 
@@ -892,7 +893,27 @@ enum svModeEnum
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVGlobal.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVGlobal.h_v  $
+ * 
+ *    Rev 1.4   11 Nov 2013 07:12:34   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  872
+ * SCR Title:  Add Archive Tool Headers to Archive File
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Typedef for string pair vector
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.3   01 Oct 2013 14:19:30   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   23 Jul 2013 17:53:08   sjones
  * Project:  SVObserver

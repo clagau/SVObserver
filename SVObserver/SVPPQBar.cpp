@@ -5,8 +5,8 @@
 //* .Module Name     : SVPPQBar
 //* .File Name       : $Workfile:   SVPPQBar.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 13:30:36  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   02 Oct 2013 07:01:54  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -476,9 +476,7 @@ BOOL SVPPQWindowClass::OnCmdMsg( UINT nID, int nCode, void* pExtra, AFX_CMDHANDL
 			//remove Apply button
 			dlg.m_psh.dwFlags |= PSH_NOAPPLYNOW;
 
-			int iResult = dlg.DoModal();
-
-            if (iResult == IDOK)
+            if ( dlg.DoModal() == IDOK )
             {
 				SVConfigurationObject* l_pConfig = NULL;
 
@@ -616,7 +614,17 @@ BOOL SVPPQWindowClass::Create(LPCTSTR lpszClassName, LPCTSTR lpszWindowName, DWO
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVPPQBar.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVPPQBar.cpp_v  $
+ * 
+ *    Rev 1.1   02 Oct 2013 07:01:54   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 13:30:36   bWalter
  * Project:  SVObserver

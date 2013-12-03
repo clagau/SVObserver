@@ -5,11 +5,12 @@
 //* .Module Name     : SVPLCOutputsView
 //* .File Name       : $Workfile:   SVPLCOutputsView.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 13:26:52  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   18 Nov 2013 11:41:50  $
 //******************************************************************************
 
 #include "stdafx.h"
+#ifndef _WIN64
 #include "SVObserver.h"
 #include "SVPLCOutputsView.h"
 #include "SVPPQObject.h"
@@ -870,11 +871,7 @@ void SVPLCOutputsView::OnAddTransferBlock()
 	SVConfigurationObject* l_pConfig = NULL;
 	SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
 
-	if( l_pConfig == NULL || 0 < l_pConfig->GetPLCCount() )
-	{
-		TheSVObserverApp.HidePLCTab();
-	}
-	else
+	if( l_pConfig != NULL )
 	{
 		l_pConfig->GetPLCData()->GetPPQs( l_OriginalList, l_pConfig );
 		l_pConfig->GetPLCData()->SetupPLCPPQs(l_pConfig, l_OriginalList );
@@ -889,12 +886,33 @@ void SVPLCOutputsView::OnAddTransferBlock()
 		TheSVObserverApp.SetActiveIOTabView( SVIOPLCOutputsViewID );
 	}
 }
+#endif
 
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVPLCOutputsView.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVPLCOutputsView.cpp_v  $
+ * 
+ *    Rev 1.2   18 Nov 2013 11:41:50   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  873
+ * SCR Title:  Fix inconsistant GUI labels and functionality on IO pages
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Fixed PLC behavior when right clicking on plc transfer block. 
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.1   30 Oct 2013 11:00:32   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Added #ifndef _WIN64 to remove deprecated code from the 64bit solution.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 13:26:52   bWalter
  * Project:  SVObserver

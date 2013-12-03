@@ -5,8 +5,8 @@
 //* .Module Name     : SVDlgImageEditor
 //* .File Name       : $Workfile:   SVDlgImageEditor.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 10:15:52  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   01 Oct 2013 12:48:18  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -324,7 +324,7 @@ void SVDlgImageEditor::CopyOverlayPoints( const SVCPointArray& rsvaPoints, std::
 	rvecPoints.resize( rsvaPoints.GetSize() );
 	for ( size_t i=0; i < rvecPoints.size(); ++i )
 	{
-		rvecPoints[i] = rsvaPoints.GetAt(i);
+		rvecPoints[i] = rsvaPoints.GetAt(static_cast<int>(i));
 	}
 
 }
@@ -400,7 +400,7 @@ void SVDlgImageEditor::DrawOverlay(CPaintDC& dc)
 		OverlayStruct& rOverlay = m_drawList[i];
 		std::vector<CPoint>& vecPoints = rOverlay.vecPoints;
 		
-		long size = vecPoints.size();
+		size_t size = vecPoints.size();
 		
 		if( size > 0 )
 		{
@@ -420,7 +420,7 @@ void SVDlgImageEditor::DrawOverlay(CPaintDC& dc)
 			
 			CPen* pOldPen = dc.SelectObject( pPen );
 			
-			dc.Polyline( &(vecPoints[0]), size );
+			dc.Polyline( &(vecPoints[0]), static_cast<int>(size) );
 			
 			dc.SelectObject( pOldPen );
 		}
@@ -440,7 +440,17 @@ void SVDlgImageEditor::OnSetZoom()
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVDlgImageEditor.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVDlgImageEditor.cpp_v  $
+ * 
+ *    Rev 1.1   01 Oct 2013 12:48:18   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 10:15:52   bWalter
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : SVConfigurationPrint
 //* .File Name       : $Workfile:   SVConfigurationPrint.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.4  $
-//* .Check In Date   : $Date:   13 Aug 2013 09:48:48  $
+//* .Current Version : $Revision:   1.5  $
+//* .Check In Date   : $Date:   01 Oct 2013 12:48:18  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -2163,7 +2163,7 @@ void SVConfigurationPrint::PrintPPQBarSection(CDC* pDC, CPoint& ptCurPos, int nI
 			
 			pPPQ->GetAllInputs( ppIOEntries );
 
-			lIOEntries = ppIOEntries.size();
+			lIOEntries = static_cast< long >( ppIOEntries.size() );
 
 			for (int intIOEntry = 0; intIOEntry < lIOEntries; intIOEntry++)
 			{
@@ -2305,7 +2305,7 @@ void SVConfigurationPrint::PrintModuleIO(CDC* pDC, CPoint& ptCurPos, int nIndent
 		if (!pInputList->FillInputs( ppIOEntries ))
 			DebugBreak();
 
-		lSize = ppIOEntries.size();
+		lSize = static_cast< long >( ppIOEntries.size() );
 		
 		// Print module input title...
 		DWORD dwMaxInput = 0;
@@ -2437,7 +2437,7 @@ void SVConfigurationPrint::PrintResultIO(CDC* pDC, CPoint& ptCurPos, int nIndent
 				if (!pPPQ->GetAllOutputs( ppIOEntries ))
 					DebugBreak();
 
-				lIOEntries = ppIOEntries.size();
+				lIOEntries = static_cast< long >( ppIOEntries.size() );
 				
 				// Find each digital output
 				for (int k = 0; k < lIOEntries; k++)
@@ -2611,6 +2611,16 @@ HRESULT SVDeviceParamConfigPrintHelper::Visit(SVCustomDeviceParam& param)
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVConfigurationPrint.cpp_v  $
+ * 
+ *    Rev 1.5   01 Oct 2013 12:48:18   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.4   13 Aug 2013 09:48:48   bWalter
  * Project:  SVObserver

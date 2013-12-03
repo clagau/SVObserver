@@ -5,8 +5,8 @@
 //* .Module Name     : SVToolAdjustmentDialogThresholdPage
 //* .File Name       : $Workfile:   SVTADlgThresholdPage.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   13 Aug 2013 10:35:06  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   02 Oct 2013 08:17:50  $
 //******************************************************************************
 
 //******************************************************************************
@@ -1143,12 +1143,12 @@ LRESULT SVToolAdjustmentDialogThresholdPageClass::OnBoundChange(WPARAM wParam, L
 	switch ( lParam )
 	{
 	case 1:
-		lowerThres = wParam;
+		lowerThres = static_cast<long>(wParam);
 		csLowerThres.Format( _T("%ld") , lowerThres );
 		lowerThreshold.SetPos(lowerThres);
 		break;
 	case 2:
-		upperThres = wParam;
+		upperThres = static_cast<long>(wParam);
 		csUpperThres.Format( _T("%ld") , upperThres );
 		upperThreshold.SetPos(upperThres);
 		break;
@@ -1388,6 +1388,16 @@ void SetThreshold( HWND hWnd, DWORD Value )
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVTADlgThresholdPage.cpp_v  $
+ * 
+ *    Rev 1.3   02 Oct 2013 08:17:50   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   13 Aug 2013 10:35:06   bWalter
  * Project:  SVObserver

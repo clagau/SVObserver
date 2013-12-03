@@ -5,8 +5,8 @@
 //* .Module Name     : SVLUTOperator
 //* .File Name       : $Workfile:   SVLUTOperator.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 12:17:08  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   01 Oct 2013 14:57:22  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -255,7 +255,7 @@ BOOL SVLUTOperatorClass::RecalcLUT( SVRunStatusClass& RRunStatus )
 					byteVec[i] = (BYTE) i;
 				}
 
-				m_lutVector.SetArraySize(byteVec.size());
+				m_lutVector.SetArraySize(static_cast<int>(byteVec.size()));
 				if( S_OK != m_lutVector.SetArrayValues( RRunStatus.m_lResultDataIndex, byteVec ) )
 				{
 					return FALSE;
@@ -541,7 +541,17 @@ BOOL SVLUTOperatorClass::onRun( BOOL First, SVSmartHandlePointer RInputImageHand
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVLUTOperator.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVLUTOperator.cpp_v  $
+ * 
+ *    Rev 1.1   01 Oct 2013 14:57:22   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 12:17:08   bWalter
  * Project:  SVObserver

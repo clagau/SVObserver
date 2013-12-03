@@ -5,8 +5,8 @@
 // * .Module Name     : PropTreeItemCombo.cpp
 // * .File Name       : $Workfile:   PropTreeItemCombo.cpp  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.0  $
-// * .Check In Date   : $Date:   18 Apr 2013 16:42:04  $
+// * .Current Version : $Revision:   1.2  $
+// * .Check In Date   : $Date:   30 Oct 2013 10:21:56  $
 // ******************************************************************************
 
 // PropTreeItemCombo.cpp : implementation file
@@ -358,10 +358,17 @@ LONG SVRPropertyItemCombo::GetDropDownHeight()
 }
 
 
-bool SVRPropertyItemCombo::GetItemValue(LPARAM& lparam)
+bool SVRPropertyItemCombo::GetItemValue( long& p_Value )
 {
 	StoreItemData();
-	lparam = m_lComboData;
+	p_Value = static_cast< long >( m_lComboData );
+	return true;
+}
+
+bool SVRPropertyItemCombo::GetItemValue( UINT& p_Value )
+{
+	StoreItemData();
+	p_Value = static_cast< UINT >( m_lComboData );
 	return true;
 }
 
@@ -370,8 +377,15 @@ bool SVRPropertyItemCombo::GetItemValue(VARIANT& vtVal)
 {
 	StoreItemData();
 	::VariantClear(&vtVal);
-	V_VT(&vtVal) = VT_I4;
-	V_I4(&vtVal) = m_lComboData;
+
+#ifdef _WIN64
+	V_VT( &vtVal ) = VT_I8;
+	V_I8( &vtVal ) = m_lComboData;
+#else
+	V_VT( &vtVal ) = VT_I4;
+	V_I4( &vtVal ) = m_lComboData;
+#endif
+
 	return true;
 }
 
@@ -467,7 +481,27 @@ void SVRPropertyItemCombo::SetButtonText( const CString& sText )
 // * LOG HISTORY:
 // ******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\PropertyTree\PropTreeItemCombo.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\PropertyTree\PropTreeItemCombo.cpp_v  $
+ * 
+ *    Rev 1.2   30 Oct 2013 10:21:56   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Added GetItemValue( UINT
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.1   30 Sep 2013 14:07:24   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platforms.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   18 Apr 2013 16:42:04   bWalter
  * Project:  SVObserver

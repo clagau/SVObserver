@@ -5,8 +5,8 @@
 //* .Module Name     : SVArchiveTool
 //* .File Name       : $Workfile:   SVArchiveTool.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   23 Sep 2013 09:48:52  $
+//* .Current Version : $Revision:   1.4  $
+//* .Check In Date   : $Date:   11 Nov 2013 07:10:00  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -26,6 +26,7 @@
 #include "SVMemoryManager.h"
 #include "SVSVIMStateClass.h"
 #include "SVToolSet.h"
+#include "SVArchiveHeaderEditDlg.h"
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -535,7 +536,7 @@ SVArchiveRecordsArray::~SVArchiveRecordsArray()
 
 void SVArchiveRecordsArray::ResetImageCounts()
 {
-	int nCount = m_vecRecords.size();
+	int nCount = static_cast< int >( m_vecRecords.size() );
 	for (int i = 0; i < nCount; i++)
 	{
 		SVArchiveRecord* pRecord = m_vecRecords.at(i);
@@ -551,7 +552,7 @@ void SVArchiveRecordsArray::ResetImageCounts()
 
 void SVArchiveRecordsArray::ClearArray()
 {
-	int nCount = m_vecRecords.size();
+	int nCount = static_cast< int >( m_vecRecords.size() );
 	for (int i = 0; i < nCount; i++)
 	{
 		SVArchiveRecord* pRecord = m_vecRecords.at(i);
@@ -664,7 +665,7 @@ std::vector<CString> SVArchiveRecordsArray::RemoveDisconnectedObject( const SVOb
 	std::vector<CString> vecRemoved;
 
 	// Effective STL Item 9 p46: forward iteration / erase
-	int nCount = m_vecRecords.size();
+	int nCount = static_cast< int >( m_vecRecords.size() );
 	RecordsType::iterator iter;
 	for ( iter = m_vecRecords.begin(); iter != m_vecRecords.end();  )
 	{
@@ -696,7 +697,7 @@ void SVArchiveRecordsArray::ValidateImageObjects()
 	// Validate the image objects to be archived.
 	//
 	// Effective STL Item 9 p46: forward iteration / erase
-	int nCount = m_vecRecords.size();
+	int nCount = static_cast< int >( m_vecRecords.size() );
 	RecordsType::iterator iter;
 	for ( iter = m_vecRecords.begin(); iter != m_vecRecords.end(); )
 	{
@@ -741,7 +742,7 @@ BOOL SVArchiveRecordsArray::WriteArchiveImageFiles( )
 	BOOL bOk = TRUE;
 	HRESULT	hr = 0;
 	
-	int nCount = m_vecRecords.size();
+	int nCount = static_cast< int >( m_vecRecords.size() );
 	
 	for ( int i = 0; bOk && i < nCount; i++ )
 	{
@@ -807,7 +808,7 @@ int SVArchiveRecordsArray::ValidateResultsObjects()
 	//
 	// return the count of objects to arhive.
 	//
-	return m_vecRecords.size();
+	return static_cast< int >( m_vecRecords.size() );
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -817,7 +818,7 @@ CString SVArchiveRecordsArray::BuildResultsArchiveString()
 	CString csArchive;
 	
 	BOOL bFirst = TRUE;	
-	int nCount = m_vecRecords.size();
+	int nCount = static_cast< int >( m_vecRecords.size() );
 	for (int i = 0; i < nCount; i++)
 	{
 		SVArchiveRecord* pResultRecord = m_vecRecords.at(i);
@@ -858,7 +859,7 @@ CString SVArchiveRecordsArray::BuildResultsArchiveString()
 
 void SVArchiveRecordsArray::DisconnectAllResultObjects()
 {
-	int nCount = m_vecRecords.size();
+	int nCount = static_cast< int >( m_vecRecords.size() );
 	for (int i = 0; i < nCount; i++)
 	{
 		SVArchiveRecord* pResultRecord = m_vecRecords.at(i);
@@ -872,7 +873,7 @@ void SVArchiveRecordsArray::DisconnectAllResultObjects()
 HRESULT SVArchiveRecordsArray::AllocateBuffers( long lBufferSize )
 {
 	HRESULT hr = S_OK;
-	int nCount = m_vecRecords.size();
+	int nCount = static_cast< int >( m_vecRecords.size() );
 	for (int i = 0; i < nCount; i++)
 	{
 		SVArchiveRecord* pResultRecord = m_vecRecords.at(i);
@@ -886,7 +887,7 @@ HRESULT SVArchiveRecordsArray::AllocateBuffers( long lBufferSize )
 HRESULT SVArchiveRecordsArray::WriteImageQueue()
 {
 	HRESULT hr = S_OK;
-	int nCount = m_vecRecords.size();
+	int nCount = static_cast< int >( m_vecRecords.size() );
 	for (int i = 0; i < nCount; i++)
 	{
 		SVArchiveRecord* pResultRecord = m_vecRecords.at(i);
@@ -900,7 +901,7 @@ HRESULT SVArchiveRecordsArray::WriteImageQueue()
 
 int SVArchiveRecordsArray::GetSize()
 {
-	return m_vecRecords.size();
+	return static_cast< int >( m_vecRecords.size() );
 }
 
 SVArchiveRecord* SVArchiveRecordsArray::GetAt(int i)
@@ -911,7 +912,7 @@ SVArchiveRecord* SVArchiveRecordsArray::GetAt(int i)
 int SVArchiveRecordsArray::Add( SVArchiveRecord* pRecord )
 {
 	m_vecRecords.push_back( pRecord );
-	return m_vecRecords.size() - 1;
+	return static_cast< int >( m_vecRecords.size() - 1 );
 }
 
 SVArchiveImageThreadClass::SVArchiveImageThreadClass()
@@ -1260,8 +1261,25 @@ void SVArchiveTool::initializeArchiveTool()
 		IDS_OBJECTNAME_ARCHIVE_TOOL_METHOD,
 		false, SVResetItemNone  );
 
-	// no need to register image buffer
+	RegisterEmbeddedObject(
+		&m_HeaderLabelNames,
+		SVArchiveHeaderLabelGUID,
+		IDS_OBJECTNAME_HEADER_LABELS,
+		false, SVResetItemNone);
+
+	RegisterEmbeddedObject(
+		&m_HeaderObjectGUIDs,
+		SVArchiveHeaderObjectGUID,
+		IDS_OBJECTNAME_HEADER_OBJECT_STRINGS,
+		false, SVResetItemNone);
 	
+	RegisterEmbeddedObject(
+		&m_bvoUseHeaders,
+		SVArchiveUseHeadersGUID,
+		IDS_OBJECTNAME_ENABLE_HEADERS,
+		false, SVResetItemNone);
+
+	// no need to register image buffer
 	
 //EB???	SetObjectDepth(2);
 	
@@ -1299,7 +1317,8 @@ void SVArchiveTool::initializeArchiveTool()
 	m_stringArchiveResultGuids_OBSOLETE.ObjectAttributesAllowedRef() = SV_NO_ATTRIBUTES;
 	m_svoArchiveImageNames.ObjectAttributesAllowedRef() =  SV_REMOTELY_SETABLE;
 	m_svoArchiveResultNames.ObjectAttributesAllowedRef() = SV_REMOTELY_SETABLE;
-	
+	m_HeaderLabelNames.ObjectAttributesAllowedRef() = SV_REMOTELY_SETABLE;
+	m_HeaderObjectGUIDs.ObjectAttributesAllowedRef() = SV_NO_ATTRIBUTES;
 	m_bInitializedForRun = FALSE;
 	m_eArchiveMethod = SVArchiveInvalidMethod;
 	m_uiValidateCount = 0;
@@ -1328,7 +1347,9 @@ BOOL SVArchiveTool::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
 	m_dwArchiveStopAtMaxImages.ObjectAttributesAllowedRef() |= SV_PRINTABLE | SV_REMOTELY_SETABLE;
 	m_dwArchiveMaxImagesCount.ObjectAttributesAllowedRef() |= SV_PRINTABLE | SV_REMOTELY_SETABLE;
 	m_evoArchiveMethod.ObjectAttributesAllowedRef() |= SV_PRINTABLE | SV_REMOTELY_SETABLE;
-
+	m_HeaderLabelNames.ObjectAttributesAllowedRef() |= SV_PRINTABLE | SV_REMOTELY_SETABLE;
+	m_HeaderObjectGUIDs.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
+	m_bvoUseHeaders.ObjectAttributesAllowedRef() |= SV_PRINTABLE;
 	isCreated = bOk;
 
 	return bOk;
@@ -1518,6 +1539,29 @@ BOOL SVArchiveTool::CreateTextArchiveFile()
 		m_fileArchive.SeekToEnd();
 		
 		m_fileArchive.Write( (LPCTSTR)csTimeStamp, csTimeStamp.GetLength() );
+
+		bool bUseHeaders = false;
+		HRESULT hr = m_bvoUseHeaders.GetValue( bUseHeaders );
+		if( hr == S_OK && bUseHeaders )
+		{
+			// Write Header
+			std::vector<CString> astrHeaders;
+			m_HeaderLabelNames.GetValues( astrHeaders );
+			CString strHeader;
+			for( std::vector<CString>::iterator it = astrHeaders.begin() ; it != astrHeaders.end() ; ++it)
+			{
+				strHeader += *it;
+				if( it+1 != astrHeaders.end())
+				{
+					strHeader+= _T(",");
+				}
+			}
+			if( !strHeader.IsEmpty() )
+			{
+				strHeader += _T("\r\n");
+				m_fileArchive.Write( (LPCTSTR) strHeader, strHeader.GetLength() );
+			}
+		}
 	} 
 	catch (CException*)
 	{
@@ -1696,7 +1740,7 @@ DWORD SVArchiveTool::processMessage( DWORD dwMessageID,
 								vecNames.erase( iterName );
 						}
 
-						rvo.SetArraySize( vecNames.size() );
+						rvo.SetArraySize( static_cast< int >( vecNames.size() ) );
 						rvo.SetArrayValues(1, vecNames );
 					}
 				}
@@ -1935,7 +1979,7 @@ void SVArchiveTool::UpdateTaskObjectOutputList()
 	// Iterate the tool set output list and reset the archivable attribute
 	// bits.
 	//
-	int nCount = vecObjects.size();
+	int nCount = static_cast< int >( vecObjects.size() );
 	for (int i = 0; i < nCount; i++)
 	{
 		SVObjectReference ref = vecObjects.at(i);
@@ -1995,9 +2039,9 @@ void SVArchiveTool::RebuildResultsArchiveList()
 
 	l_ToolSetOutputList.GetSetAttributesList( SV_ARCHIVABLE, vecObjects );
 	
-	m_svoArchiveResultNames.SetArraySize( vecObjects.size() );
+	m_svoArchiveResultNames.SetArraySize( static_cast< int >( vecObjects.size() ) );
 
-	for ( size_t i = 0; i < vecObjects.size(); i++ )
+	for ( int i = 0; i < static_cast< int >( vecObjects.size() ); i++ )
 	{
 		SVObjectReference ref = vecObjects[i];
 
@@ -2089,9 +2133,9 @@ void SVArchiveTool::RebuildImageArchiveList()
 	}// end while ( pImage )
 	*/
 	
-	m_svoArchiveImageNames.SetArraySize( vecImages.size() );
+	m_svoArchiveImageNames.SetArraySize( static_cast< int >( vecImages.size() ) );
 
-	for ( size_t i = 0; i < vecImages.size(); i++ )
+	for ( int i = 0; i < static_cast< int >( vecImages.size() ); i++ )
 	{
 		SVObjectReference ref = vecImages[i];
 
@@ -2112,7 +2156,7 @@ void SVArchiveTool::SetImageAttributesFromArchiveList( SVImageListClass* pImageL
 	{
 		return;
 	}
-	int nCount = pImageList->GetSize();
+	int nCount = static_cast< int >( pImageList->GetSize() );
 	for (int i = 0; i < nCount; i++)
 	{
 		SVImageClass* pImage = pImageList->GetAt(i);
@@ -2387,6 +2431,26 @@ BOOL SVArchiveTool::renameToolSetSymbol(SVObjectClass* pObject, LPCTSTR orgName)
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVArchiveTool.cpp_v  $
+ * 
+ *    Rev 1.4   11 Nov 2013 07:10:00   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  872
+ * SCR Title:  Add Archive Tool Headers to Archive File
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add functionality for headers in text archive.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.3   02 Oct 2013 12:05:40   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platforms.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   23 Sep 2013 09:48:52   bwalter
  * Project:  SVObserver

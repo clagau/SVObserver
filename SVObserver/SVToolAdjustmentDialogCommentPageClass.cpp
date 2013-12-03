@@ -5,8 +5,8 @@
 //* .Module Name     : SVToolAdjustmentDialogCommentPageClass
 //* .File Name       : $Workfile:   SVToolAdjustmentDialogCommentPageClass.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 15:33:44  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   11 Nov 2013 07:29:34  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -52,7 +52,7 @@ BOOL SVToolAdjustmentDialogCommentPageClass::OnInitDialog()
 	if( pSheet && ( pTool = pSheet->GetTool() ) )
 	{
 		SetTaskObject( pTool );
-		SVStringValueObjectClass* l_psvComment = pTool->GetToolComment();
+		SVValueObjectClass* l_psvComment = pTool->GetToolComment();
 		if( l_psvComment )
 		{
 			CString l_strValue;
@@ -100,7 +100,17 @@ void SVToolAdjustmentDialogCommentPageClass::OnEnKillfocusEditComment()
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVToolAdjustmentDialogCommentPageClass.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVToolAdjustmentDialogCommentPageClass.cpp_v  $
+ * 
+ *    Rev 1.1   11 Nov 2013 07:29:34   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  872
+ * SCR Title:  Add Archive Tool Headers to Archive File
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Changed tool comment from SVStringValueObjectClass to SVStaticStringValueObjectClass.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 15:33:44   bWalter
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : SVDlgFolder
 //* .File Name       : $Workfile:   SVDlgFolder.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 10:15:04  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   01 Oct 2013 12:48:28  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -144,8 +144,12 @@ void CDlgFolder::OnInitDone()
 	pFD->SetWindowText((LPCTSTR)m_csTextCaptionBar);
 
 	m_wndProc = (WNDPROC)SetWindowLong(
-      pFD->m_hWnd, 
-      GWL_WNDPROC, 
+      pFD->m_hWnd,
+#ifdef _WIN64
+	  GWLP_WNDPROC,
+#else
+      GWL_WNDPROC,
+#endif
       (long)WindowProcNew
    );
 }
@@ -154,7 +158,17 @@ void CDlgFolder::OnInitDone()
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVDlgFolder.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVDlgFolder.cpp_v  $
+ * 
+ *    Rev 1.1   01 Oct 2013 12:48:28   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 10:15:04   bWalter
  * Project:  SVObserver

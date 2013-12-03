@@ -5,8 +5,8 @@
 //* .Module Name     : SubSystemTestMFC
 //* .File Name       : $Workfile:   SubSystemTestMFC.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   18 Apr 2013 17:16:02  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   30 Sep 2013 14:10:00  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -66,17 +66,7 @@ BOOL CSubSystemTestMFCApp::InitInstance()
 
 	CSubSystemTestMFCDlg dlg;
 	m_pMainWnd = &dlg;
-	INT_PTR nResponse = dlg.DoModal();
-	if (nResponse == IDOK)
-	{
-		// TODO: Place code here to handle when the dialog is
-		//  dismissed with OK
-	}
-	else if (nResponse == IDCANCEL)
-	{
-		// TODO: Place code here to handle when the dialog is
-		//  dismissed with Cancel
-	}
+	dlg.DoModal();
 
 	// Since the dialog has been closed, return FALSE so that we exit the
 	//  application, rather than start the application's message pump.
@@ -87,7 +77,17 @@ BOOL CSubSystemTestMFCApp::InitInstance()
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SubSystemTestMFC\SubSystemTestMFC.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SubSystemTestMFC\SubSystemTestMFC.cpp_v  $
+ * 
+ *    Rev 1.1   30 Sep 2013 14:10:00   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platforms.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   18 Apr 2013 17:16:02   bWalter
  * Project:  SVObserver

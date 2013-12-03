@@ -5,8 +5,8 @@
 // * .Module Name     : SVLinearMaximumForegroundObjectLineAnalyzerClass
 // * .File Name       : $Workfile:   SVLinearLineMaximumForegroundObjectAnalyzer.cpp  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.0  $
-// * .Check In Date   : $Date:   23 Apr 2013 11:59:50  $
+// * .Current Version : $Revision:   1.1  $
+// * .Check In Date   : $Date:   01 Oct 2013 14:57:20  $
 // ******************************************************************************
 
 #include "stdafx.h"
@@ -297,8 +297,8 @@ BOOL SVLinearMaximumForegroundObjectLineAnalyzerClass::onRun( SVRunStatusClass& 
 
 		double l_dMaxForegroundDistance = 0.0;
 
-		int l_iACount = l_svAEdges.size();
-		int l_iBCount = l_svBEdges.size();
+		int l_iACount = static_cast<int>(l_svAEdges.size());
+		int l_iBCount = static_cast<int>(l_svBEdges.size());
 
 		// Calc maximum foregoundobject...
 		for( int indexA = 0; indexA < l_iACount && indexA + offsetB < l_iBCount; ++ indexA )
@@ -409,7 +409,17 @@ BOOL SVLinearMaximumForegroundObjectLineAnalyzerClass::OnValidate()
 // * LOG HISTORY:
 // ******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVLinearLineMaximumForegroundObjectAnalyzer.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVLinearLineMaximumForegroundObjectAnalyzer.cpp_v  $
+ * 
+ *    Rev 1.1   01 Oct 2013 14:57:20   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 11:59:50   bWalter
  * Project:  SVObserver

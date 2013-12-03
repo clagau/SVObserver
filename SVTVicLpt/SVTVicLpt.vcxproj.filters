@@ -49,9 +49,6 @@
     <None Include="SVTVicLpt.def">
       <Filter>Source Files</Filter>
     </None>
-    <None Include="res\SVTVicLpt.rc2">
-      <Filter>Resource Files</Filter>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="SVTVicLpt.rc">

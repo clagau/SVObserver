@@ -5,8 +5,8 @@
 // * .Module Name     : SVMatroxBufferInterface
 // * .File Name       : $Workfile:   SVMatroxBufferInterface.h  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.0  $
-// * .Check In Date   : $Date:   22 Apr 2013 15:02:16  $
+// * .Current Version : $Revision:   1.1  $
+// * .Check In Date   : $Date:   01 Oct 2013 11:08:10  $
 // ******************************************************************************
 
 #ifndef SV_MATROX_BUFFER_INTERFACE_H
@@ -128,12 +128,12 @@ public:
 
 	static SVStatusCode GenLutRamp( SVMatroxBuffer& p_rMilId, long StartIndex, double StartValue, long EndIndex, double EndValue );
 
-	static SVStatusCode GetLine( SVMatroxBuffer& p_rBuf, long p_lXStart, long p_lYStart, long p_lXEnd, long p_lYEnd, long& p_rlNbrPixels, void * p_pUserArray);
+	static SVStatusCode GetLine( SVMatroxBuffer& p_rBuf, SVMatroxIdentifier p_lXStart, SVMatroxIdentifier p_lYStart, SVMatroxIdentifier p_lXEnd, SVMatroxIdentifier p_lYEnd, SVMatroxIdentifier& p_rlNbrPixels, void* p_pUserArray );
 
 
 	// ****** Get and Set Functions **********
-	static SVStatusCode Get( const SVMatroxBuffer& p_rBuf, SVMatroxBufferInfoEnum p_eWhat, double& p_rdResult) ; 
-	static SVStatusCode Get( const SVMatroxBuffer& p_rBuf, SVMatroxBufferInfoEnum p_eWhat, long& p_rlResult) ; 
+	static SVStatusCode Get( const SVMatroxBuffer& p_rBuf, SVMatroxBufferInfoEnum p_eWhat, double& p_rdResult );
+	static SVStatusCode Get( const SVMatroxBuffer& p_rBuf, SVMatroxBufferInfoEnum p_eWhat, long& p_rlResult );
 
 	// ****** Put Functions **********
 	// MbufPut
@@ -147,7 +147,8 @@ public:
 	// MbufGet1d
 
 	static SVStatusCode Set(const SVMatroxBuffer& p_rBuf, SVMatroxBufferInfoEnum p_eWhat, const double p_rdValue);
-	static SVStatusCode Set(const SVMatroxBuffer& p_rBuf, SVMatroxBufferInfoEnum p_eWhat, const long p_rlValue);
+	//static SVStatusCode Set(const SVMatroxBuffer& p_rBuf, SVMatroxBufferInfoEnum p_eWhat, const long p_rlValue);
+	static SVStatusCode Set( const SVMatroxBuffer& p_rBuf, SVMatroxBufferInfoEnum p_eWhat, const SVMatroxInt p_rlValue );
 
 	// ****** Miscellaneous *********
 	static SVStatusCode ControlNeighborhood( SVMatroxBuffer& p_rBuf, SVMatroxBufferInfoEnum p_eWhat, const long p_lValue);
@@ -179,6 +180,16 @@ private:
 // ******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVMatroxLibrary\SVMatroxBufferInterface.h_v  $
+ * 
+ *    Rev 1.1   01 Oct 2013 11:08:10   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   22 Apr 2013 15:02:16   bWalter
  * Project:  SVObserver

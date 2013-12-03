@@ -5,8 +5,8 @@
 //* .Module Name     : SVObserver
 //* .File Name       : $Workfile:   SVObserver.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.5  $
-//* .Check In Date   : $Date:   29 Jul 2013 11:40:26  $
+//* .Current Version : $Revision:   1.7  $
+//* .Check In Date   : $Date:   30 Oct 2013 10:45:18  $
 //******************************************************************************
 
 #ifndef SVOBSERVER_H
@@ -29,7 +29,9 @@
 #include "SVOIntelRAIDStatusClass.h"
 #include "SVUtilityIniClass.h"
 #include "SVIOTabbedView.h"
+#ifndef _WIN64
 #include "SVPLCManager.h"
+#endif
 #include "SVConfigurationLibrary/SVObserverEnums.h"
 #include "SVStorage.h"
 #include "SVStorageResult.h"
@@ -136,7 +138,9 @@ public:
 	afx_msg void OnUpdateEditEdittool(CCmdUI* PCmdUI);
 	afx_msg void OnUpdateEditEditToolSetCondition(CCmdUI* PCmdUI);
 	afx_msg void OnUpdateEditRemoteInputs(CCmdUI* PCmdUI);
+#ifndef _WIN64
 	afx_msg void OnUpdateEditEditplcoutputs(CCmdUI *pCmdUI);
+#endif
 	afx_msg void OnUpdateEditAddRemoteOutputs(CCmdUI *pCmdUI);
 	afx_msg void OnUpdateExtrasLightreference(CCmdUI* PCmdUI);
 	afx_msg void OnUpdateExtrasLightreferenceBrightnesscontrast(CCmdUI* PCmdUI);
@@ -226,7 +230,9 @@ public:
 	afx_msg void OnUpdateAddCylindricalWarpTool( CCmdUI* PCmdUI );
 	afx_msg void OnUpdateAddPerspectivetool(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateExtrasSecuritySetup(CCmdUI* pCmdUI);
+#ifndef _WIN64
 	afx_msg void OnEditplcoutputs();
+#endif
 	afx_msg void OnEditRemoteOutputs();
 	afx_msg void OnRCClose();
 	//}}AFX_MSG
@@ -300,8 +306,9 @@ public:
 	BOOL CheckSVIMType();
 
 	SVIMProductEnum GetSVIMType() const;
+#ifndef _WIN64
 	CString GetPLCDLL();
-
+#endif
 	bool IsProductTypeRAID() const;
 
 	void ValidateMRUList();
@@ -425,14 +432,17 @@ public:
 	void ResetAllIPDocModifyFlag(BOOL bModified);
 
 	bool SetActiveIOTabView( SVTabbedViewSplitterIDEnum p_eTabbedID );
+#ifndef _WIN64
 	void HidePLCTab();
+#endif
 	void HideRemoteOutputTab();
 	void HideIOTab( DWORD p_dwID );
 	void ShowIOTab( DWORD p_dwID );
 	void UpdateRemoteInputTabs();
 
+#ifndef _WIN64
 	SVPLCManager m_PLCManager;
-
+#endif
 	SVMaterialsTree m_MaterialsTree;
 	SVXMLMaterialsTree m_XMLTree;
 	SVXMLMaterialsTree::SVBranchHandle m_Inspection;
@@ -567,7 +577,9 @@ private:
 	CString m_csDigitalDLL;
 	CString m_csDigitalOption;			// TRB - Added to have a parameter to send to Rabbit Board.
 
+#ifndef _WIN64
 	CString m_csPLCDLL;
+#endif
 	CString m_csReloadTriggerDLL;
 	CString m_csReloadAcquisitionDLL;
 	CString m_csReloadDigitalDLL;
@@ -609,7 +621,27 @@ extern SVObserverApp TheSVObserverApp;
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVObserver.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVObserver.h_v  $
+ * 
+ *    Rev 1.7   30 Oct 2013 10:45:18   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Added #ifndef _WIN64 to prevent depricated PLC code from compiling in 64bit.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.6   01 Oct 2013 15:24:38   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.5   29 Jul 2013 11:40:26   tbair
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : SVRemoteFontManager
 //* .File Name       : $Workfile:   SVRemoteFontManager.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   08 May 2013 16:31:18  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   02 Oct 2013 07:58:44  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -659,7 +659,7 @@ bool SVRemoteFontManager::CreateCharMapping(long lCurrentFont, CString p_sChars)
 
 	CharMappings::iterator charIterator;
 
-	int iMapSize = m_mpCharMappings.size();
+	int iMapSize = static_cast<int>(m_mpCharMappings.size());
 
 	int iSize = p_sChars.GetLength();
 
@@ -778,7 +778,7 @@ bool SVRemoteFontManager::GetCharIdSafeArray(long lCurrentFont, SAFEARRAY **psaC
 	if ( charIterator != m_mpCharMappings.end() )
 	{
 		l_Map = charIterator->second;
-		long lMapSize = l_Map.size();
+		long lMapSize = static_cast<long>(l_Map.size());
 
 		long lIndex = 0;
 		for ( mapIter = l_Map.begin(); mapIter != l_Map.end(); ++mapIter )
@@ -798,7 +798,7 @@ bool SVRemoteFontManager::DeleteFontChar(long lIdentifier, SVMatroxOcr lCurrentF
 	bool bRet = true;
 	CharMappings::iterator charIterator;
 	CharMap::iterator cIter;
-	int iSize = m_mpCharMappings.size();
+	int iSize = static_cast<int>(m_mpCharMappings.size());
 
 	charIterator = m_mpCharMappings.find(lIdentifier);
 	if ( charIterator != m_mpCharMappings.end() )
@@ -833,7 +833,7 @@ bool SVRemoteFontManager::UpdateCharMapFontId(long lCurrentFont, long NewFont)
 		m_mpCharMappings.erase(charIterator);
 		m_mpCharMappings[NewFont] = l_Map;
 	}
-	int iMapSize = m_mpCharMappings.size();
+	int iMapSize = static_cast<int>(m_mpCharMappings.size());
 
 	return bRet;
 }
@@ -842,7 +842,17 @@ bool SVRemoteFontManager::UpdateCharMapFontId(long lCurrentFont, long NewFont)
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVRemoteFontManager.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVRemoteFontManager.cpp_v  $
+ * 
+ *    Rev 1.2   02 Oct 2013 07:58:44   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   08 May 2013 16:31:18   bWalter
  * Project:  SVObserver

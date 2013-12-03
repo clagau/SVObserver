@@ -5,8 +5,8 @@
 //* .Module Name     : SVMaskShape
 //* .File Name       : $Workfile:   SVMaskShape.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   23 Jul 2013 17:58:38  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   01 Oct 2013 15:24:36  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -546,7 +546,7 @@ HRESULT SVMaskShapeSymmetricTrapezoid::Render( CDC& dc, COLORREF rgbShape, COLOR
 	
 	hr = GetPoints(aPoints);
 
-	BOOL bRet = dc.Polygon( &(aPoints[0]), aPoints.size() );
+	BOOL bRet = dc.Polygon( &(aPoints[0]), static_cast<int>(aPoints.size()) );
 	if ( !bRet )
 	{
 		DWORD dwError = ::GetLastError();
@@ -565,7 +565,7 @@ HRESULT SVMaskShapeSymmetricTrapezoid::RenderOutline( CDC& dc, const CRect rectV
 
 	TranslateToDisplay( rectViewport, rectDisplay, aPoints );
 
-	dc.Polyline( &(aPoints[0]), aPoints.size() );
+	dc.Polyline( &(aPoints[0]), static_cast<int>(aPoints.size()) );
 
 	return hr;
 }
@@ -786,7 +786,17 @@ HRESULT SVMaskShapeDoughnut::ValidateProperties(MapType& p_rmapProperties)
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVMaskShape.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVMaskShape.cpp_v  $
+ * 
+ *    Rev 1.2   01 Oct 2013 15:24:36   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   23 Jul 2013 17:58:38   sjones
  * Project:  SVObserver

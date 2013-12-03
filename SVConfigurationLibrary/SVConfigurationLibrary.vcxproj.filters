@@ -44,9 +44,6 @@
     <ClInclude Include="SVObserverEnums.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVConfigurationTags.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="SVOCMArchive.inl">

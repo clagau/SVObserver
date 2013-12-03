@@ -5,8 +5,8 @@
 //* .Module Name     : SVConditionalDialogClass
 //* .File Name       : $Workfile:   SVConditionalDialog.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 09:59:40  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   01 Oct 2013 12:16:26  $
 //******************************************************************************
 
 
@@ -729,7 +729,7 @@ void SVConditionalDialogClass::OnLocalVariableSelect()
 	dlg.PTaskObjectList = pToolSet;
 	dlg.uAttributesDesired = SV_SELECTABLE_FOR_EQUATION;
 
-	int nResult = dlg.DoModal();
+	INT_PTR nResult = dlg.DoModal();
 	if( nResult == IDOK )
 	{
 		// Get Toolset Output Name
@@ -743,7 +743,17 @@ void SVConditionalDialogClass::OnLocalVariableSelect()
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVConditionalDialog.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVConditionalDialog.cpp_v  $
+ * 
+ *    Rev 1.1   01 Oct 2013 12:16:26   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 09:59:40   bWalter
  * Project:  SVObserver

@@ -5,14 +5,14 @@
 // * .Module Name     : SVODataDeviceClass
 // * .File Name       : $Workfile:   SVODataDeviceClass.cpp  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.1  $
-// * .Check In Date   : $Date:   08 May 2013 15:28:02  $
+// * .Current Version : $Revision:   1.2  $
+// * .Check In Date   : $Date:   02 Oct 2013 08:47:28  $
 // ******************************************************************************
 
 #include "stdafx.h"
 #include "SVODataDeviceClass.h"
 
-VOID CALLBACK SVODataDeviceClass::APCProc( DWORD dwParam )
+VOID CALLBACK SVODataDeviceClass::APCProc( ULONG_PTR dwParam )
 {
 }
 
@@ -636,7 +636,17 @@ bool SVODataDeviceClass::IsStarted() const
 // * LOG HISTORY:
 // ******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVOLibrary\SVODataDeviceClass.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVOLibrary\SVODataDeviceClass.cpp_v  $
+ * 
+ *    Rev 1.2   02 Oct 2013 08:47:28   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   08 May 2013 15:28:02   bWalter
  * Project:  SVObserver

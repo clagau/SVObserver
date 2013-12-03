@@ -5,8 +5,8 @@
 //* .Module Name     : SVSecurityStorage.cpp
 //* .File Name       : $Workfile:   SVSecurityStorage.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   25 Apr 2013 17:04:38  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   02 Oct 2013 10:00:48  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -78,8 +78,8 @@ HRESULT SVSecurityStorage::Add( long lID, LPCTSTR sName)
 // Find by Id starts at the root of the tree.
 SVAccessPointNode* SVSecurityStorage::FindByID( long lId )
 {
-	int iSize = m_aNodes.size();
-	for ( int i = 0 ; i < iSize ; i++ )
+	size_t iSize = m_aNodes.size();
+	for ( size_t i = 0 ; i < iSize ; i++ )
 	{
 		if( m_aNodes[ i ].m_lID == lId)
 			return &(m_aNodes[ i ] );
@@ -241,9 +241,6 @@ HRESULT SVSecurityStorage::Load( LPCTSTR pFileName )
 
 		if( hr == S_OK )
 		{
-			long l_initsize = m_aNodes.size();
-			long l_filesize = l_aNodes.size();
-
 			SVAccessPointNodeVectorArray::iterator iterInitNodes;
 			for( iterInitNodes = m_aNodes.begin() ; iterInitNodes != m_aNodes.end() ; ++iterInitNodes )
 			{
@@ -526,7 +523,17 @@ HRESULT SVSecurityStorage::ProcessRoot( const SVMaterialsTree& p_rMaterialsTree 
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVSecurity\SVSecurityStorage.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVSecurity\SVSecurityStorage.cpp_v  $
+ * 
+ *    Rev 1.1   02 Oct 2013 10:00:48   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   25 Apr 2013 17:04:38   bWalter
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : SVEncodeDecodeUtilities
 //* .File Name       : $Workfile:   SVEncodeDecodeUtilities.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   25 Apr 2013 17:50:20  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   02 Oct 2013 10:12:40  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -23,11 +23,11 @@ HRESULT SVEncodeDecodeUtilities::Base64EncodeToByteBufferFromByteBuffer( int& p_
 	{
 		if( ( 0 < p_InputBufferSize ) && ( p_pInput != NULL ) )
 		{
-			int enc_len = ::Base64EncodeGetRequiredLength(p_InputBufferSize, ATL_BASE64_FLAG_NOCRLF);
+			int enc_len = ::Base64EncodeGetRequiredLength(static_cast<int>(p_InputBufferSize), ATL_BASE64_FLAG_NOCRLF);
 
 			if( enc_len <= p_rOutputBufferSize )
 			{
-				if( !( ::Base64Encode( p_pInput, p_InputBufferSize, p_pOutput, &enc_len, ATL_BASE64_FLAG_NOCRLF) ) )
+				if( !( ::Base64Encode( p_pInput, static_cast<int>(p_InputBufferSize), p_pOutput, &enc_len, ATL_BASE64_FLAG_NOCRLF) ) )
 				{
 					l_Status = E_UNEXPECTED;
 				}
@@ -60,7 +60,7 @@ HRESULT SVEncodeDecodeUtilities::Base64EncodeToStringFromByteBuffer( std::string
 
 	if( ( 0 < p_InputBufferSize ) && ( p_pInput != NULL ) )
 	{
-		int enc_len = ::Base64EncodeGetRequiredLength(p_InputBufferSize, ATL_BASE64_FLAG_NOCRLF);
+		int enc_len = ::Base64EncodeGetRequiredLength(static_cast<int>(p_InputBufferSize), ATL_BASE64_FLAG_NOCRLF);
 		boost::scoped_array<char> enc_buff( new char[enc_len + 1]);
 
 		::memset( enc_buff.get(), '\0', ( enc_len + 1 ) );
@@ -149,10 +149,12 @@ HRESULT SVEncodeDecodeUtilities::Base64DecodeToByteBufferFromString( int& p_rOut
 
 	if( !( p_rInput.empty() ) && ( 0 < p_rOutputBufferSize ) && ( p_pOutput != NULL ) )
 	{
-		if( !( ::Base64Decode( p_rInput.c_str(), p_rInput.size(), p_pOutput, &p_rOutputBufferSize ) ) )
+		int l_BufferSize;
+		if( !( ::Base64Decode( p_rInput.c_str(), static_cast<int>(p_rInput.size()), p_pOutput, &l_BufferSize ) ) )
 		{
 			l_Status = E_UNEXPECTED;
 		}
+		p_rOutputBufferSize = static_cast<int>(l_BufferSize);
 	}
 	else
 	{
@@ -169,8 +171,8 @@ HRESULT SVEncodeDecodeUtilities::Base64DecodeToFileFromString( const SVString& p
 	HANDLE hFile = ::CreateFile(p_rFileName.c_str(), GENERIC_WRITE|GENERIC_READ, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
 	if( hFile != INVALID_HANDLE_VALUE )
 	{
-		int buff_len = ::Base64DecodeGetRequiredLength(p_rInput.size());
-		HANDLE hMapping = ::CreateFileMapping(hFile, NULL, PAGE_READWRITE, 0, buff_len, NULL);
+		int buff_len = ::Base64DecodeGetRequiredLength(static_cast<int>(p_rInput.size()));
+		HANDLE hMapping = ::CreateFileMapping(hFile, NULL, PAGE_READWRITE, 0, static_cast<DWORD>(buff_len), NULL);
 		if( hMapping != NULL )
 		{
 			BYTE * buff = (BYTE *)::MapViewOfFile(hMapping, FILE_MAP_WRITE, 0, 0, buff_len);
@@ -208,7 +210,17 @@ HRESULT SVEncodeDecodeUtilities::Base64DecodeToFileFromString( const SVString& p
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVSystemLibrary\SVEncodeDecodeUtilities.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVSystemLibrary\SVEncodeDecodeUtilities.cpp_v  $
+ * 
+ *    Rev 1.1   02 Oct 2013 10:12:40   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   25 Apr 2013 17:50:20   bWalter
  * Project:  SVObserver

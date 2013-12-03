@@ -5,8 +5,8 @@
 //* .Module Name     : SVRegistry
 //* .File Name       : $Workfile:   SVRegistry.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   25 Apr 2013 17:43:42  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   02 Oct 2013 10:08:12  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -570,14 +570,14 @@ BOOL SVRegistryClass::Import(LPCTSTR szFileName)
 		else
 		{
 			SVException svException;
-			SETEXCEPTION2 (svException, SVMSG_LIB_REGISTRY_INVALID_IMPORT_FILE, (void *) szFileName, _tcslen (szFileName) * sizeof (TCHAR));
+			SETEXCEPTION2 (svException, SVMSG_LIB_REGISTRY_INVALID_IMPORT_FILE, (void *) szFileName, static_cast< UINT >( _tcslen( szFileName ) * sizeof( TCHAR ) ) );
 			svException.LogException ();
 		}
 	}
 	else
 	{
 		SVException svException;
-		SETEXCEPTION2 (svException, SVMSG_LIB_REGISTRY_IMPORT_FAILED, (void *) szFileName, _tcslen (szFileName) * sizeof (TCHAR));
+		SETEXCEPTION2 (svException, SVMSG_LIB_REGISTRY_IMPORT_FAILED, (void *) szFileName, static_cast< UINT >( _tcslen( szFileName ) * sizeof( TCHAR ) ) );
 		svException.LogException ();
 	}
 
@@ -814,7 +814,7 @@ BOOL SVRegistryClass::Export(LPCTSTR szFileName)
 	else
 	{
 		SVException svException;
-		SETEXCEPTION2 (svException, SVMSG_LIB_REGISTRY_EXPORT_FAILED, (void *) szFileName, _tcslen (szFileName) * sizeof (TCHAR));
+		SETEXCEPTION2 (svException, SVMSG_LIB_REGISTRY_EXPORT_FAILED, (void *) szFileName, static_cast< UINT >( _tcslen( szFileName ) * sizeof( TCHAR ) ) );
 		svException.LogException ();
 	}
 
@@ -1069,7 +1069,17 @@ DWORD SVRegistryClass::NumSubKeys()
 // * LOG HISTORY:
 // ******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVStatusLibrary\SVRegistry.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVStatusLibrary\SVRegistry.cpp_v  $
+ * 
+ *    Rev 1.1   02 Oct 2013 10:08:12   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   25 Apr 2013 17:43:42   bWalter
  * Project:  SVObserver

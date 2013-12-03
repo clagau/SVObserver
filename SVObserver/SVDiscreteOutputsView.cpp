@@ -5,8 +5,8 @@
 //* .Module Name     : SVDiscreteOutputsView
 //* .File Name       : $Workfile:   SVDiscreteOutputsView.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.4  $
-//* .Check In Date   : $Date:   07 Aug 2013 13:25:10  $
+//* .Current Version : $Revision:   1.5  $
+//* .Check In Date   : $Date:   01 Oct 2013 12:48:26  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -239,7 +239,7 @@ void SVDiscreteOutputsView::OnUpdate( CView* pSender, LPARAM lHint, CObject* pHi
 				if( !pPPQ->GetAllOutputs( ppIOEntries ) )
 					DebugBreak();
 
-				lSize = ppIOEntries.size();
+				lSize = static_cast< long >( ppIOEntries.size() );
 				
 				// Find each digital output
 				for( j = 0; j < lSize; j++ )
@@ -480,6 +480,16 @@ void SVDiscreteOutputsView::OnLButtonDblClk( UINT nFlags, CPoint point )
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVDiscreteOutputsView.cpp_v  $
+ * 
+ *    Rev 1.5   01 Oct 2013 12:48:26   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.4   07 Aug 2013 13:25:10   sjones
  * Project:  SVObserver

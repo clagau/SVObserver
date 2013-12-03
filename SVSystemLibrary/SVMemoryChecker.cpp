@@ -5,8 +5,8 @@
 //* .Module Name     : SVMemoryChecker
 //* .File Name       : $Workfile:   SVMemoryChecker.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   25 Apr 2013 17:52:16  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   02 Oct 2013 10:12:42  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -51,7 +51,7 @@ size_t SVMemoryChecker::GetFreeProcessMemorySize()
 		// Clear the results structure.
 		memset( &l_Memory, 0, sizeof( MEMORY_BASIC_INFORMATION ) );
 
-		l_Status = VirtualQuery( l_Address, &l_Memory, sizeof( MEMORY_BASIC_INFORMATION ) );
+		l_Status = static_cast<DWORD>(VirtualQuery( l_Address, &l_Memory, sizeof( MEMORY_BASIC_INFORMATION ) ));
 
 		if( 0 < l_Status && ( l_Memory.State & MEM_FREE ) == MEM_FREE )
 		{
@@ -78,7 +78,17 @@ SVMemoryChecker::SVMemoryChecker()
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVSystemLibrary\SVMemoryChecker.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVSystemLibrary\SVMemoryChecker.cpp_v  $
+ * 
+ *    Rev 1.1   02 Oct 2013 10:12:42   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   25 Apr 2013 17:52:16   bWalter
  * Project:  SVObserver

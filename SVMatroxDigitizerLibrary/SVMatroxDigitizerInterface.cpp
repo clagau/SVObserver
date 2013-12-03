@@ -5,8 +5,8 @@
 //* .Module Name     : SVMatroxDigitizerInterface
 //* .File Name       : $Workfile:   SVMatroxDigitizerInterface.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   22 Apr 2013 14:29:00  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   01 Oct 2013 10:45:30  $
 //******************************************************************************
 #include "stdafx.h"
 #include "SVMatroxLibrary/SVMatroxImagingLibrary.h"
@@ -133,7 +133,8 @@ SVMatroxDigitizerInterface::SVStatusCode SVMatroxDigitizerInterface::Channel(con
 	try
 #endif
 	{
-		MdigChannel(DigitizerID.m_DigitizerIdentifier, Channel);
+		DIG_CONTROL_TYPE l_Channel = Channel;
+		MdigChannel(DigitizerID.m_DigitizerIdentifier, l_Channel);
 		l_Code =  SVMatroxApplicationInterface::GetLastStatus();
 	}
 #ifdef USE_TRY_BLOCKS
@@ -153,14 +154,14 @@ SVMatroxDigitizerInterface::SVStatusCode SVMatroxDigitizerInterface::Channel(con
 @SVOperationDescription This method determines if the frame is corrupted
 
 */
-SVMatroxDigitizerInterface::SVStatusCode SVMatroxDigitizerInterface::IsCorruptedFrame(long milEventID, bool& bIsCorrupted)
+SVMatroxDigitizerInterface::SVStatusCode SVMatroxDigitizerInterface::IsCorruptedFrame(SVMatroxIdentifier milEventID, bool& bIsCorrupted)
 {
 	SVStatusCode l_Code( SVMEE_STATUS_OK );
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
 	{
-		long value;
+		MIL_INT value;
 		MdigGetHookInfo(milEventID, M_CORRUPTED_FRAME, &value);
 		l_Code =  SVMatroxApplicationInterface::GetLastStatus();
 
@@ -216,7 +217,7 @@ This method can only be called from the callback func used with MdigProcess
 
 */
 
-SVMatroxDigitizerInterface::SVStatusCode SVMatroxDigitizerInterface::GetGrabBuffer(long milEventID, SVMatroxIdentifier& bufferID)
+SVMatroxDigitizerInterface::SVStatusCode SVMatroxDigitizerInterface::GetGrabBuffer(SVMatroxIdentifier milEventID, SVMatroxIdentifier& bufferID)
 {
 	SVStatusCode l_Code (SVMEE_STATUS_OK );
 #ifdef USE_TRY_BLOCKS
@@ -244,14 +245,14 @@ SVMatroxDigitizerInterface::SVStatusCode SVMatroxDigitizerInterface::GetGrabBuff
 
 */
 
-SVMatroxDigitizerInterface::SVStatusCode SVMatroxDigitizerInterface::GetHookInfo(long milEventID, SVMatroxDigitizerHook::SVHookInfoEnum InfoType, void* UserPtr)
+SVMatroxDigitizerInterface::SVStatusCode SVMatroxDigitizerInterface::GetHookInfo(SVMatroxIdentifier milEventID, SVMatroxDigitizerHook::SVHookInfoEnum InfoType, void* UserPtr)
 {
 	SVStatusCode l_Code( SVMEE_STATUS_OK );
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
 	{
-		long l_matroxType = 0;
+		SVMatroxInt l_matroxType = 0;
 		HRESULT hr = SVMatroxDigitizerHook::m_HookInfoEnumConvertor.ConvertEnumToMatroxType(InfoType, l_matroxType);
 		if (hr == S_OK)
 		{
@@ -281,7 +282,7 @@ SVMatroxDigitizerInterface::SVStatusCode SVMatroxDigitizerInterface::GetHookInfo
 
 */
 
-SVMatroxDigitizerInterface::SVStatusCode SVMatroxDigitizerInterface::GetGigeCameraTimestamp(long milEventID, double& timestamp)
+SVMatroxDigitizerInterface::SVStatusCode SVMatroxDigitizerInterface::GetGigeCameraTimestamp(SVMatroxIdentifier milEventID, double& timestamp)
 {
 	SVStatusCode l_Code (SVMEE_STATUS_OK );
 #ifdef USE_TRY_BLOCKS
@@ -311,7 +312,7 @@ SVMatroxDigitizerInterface::SVStatusCode SVMatroxDigitizerInterface::GetGigeCame
 
 */
 
-SVMatroxDigitizerInterface::SVStatusCode SVMatroxDigitizerInterface::GetGigeEventType(long milEventID, long& p_rEventType)
+SVMatroxDigitizerInterface::SVStatusCode SVMatroxDigitizerInterface::GetGigeEventType(SVMatroxIdentifier milEventID, long& p_rEventType)
 {
 	SVStatusCode l_Code (SVMEE_STATUS_OK );
 #ifdef USE_TRY_BLOCKS
@@ -319,7 +320,7 @@ SVMatroxDigitizerInterface::SVStatusCode SVMatroxDigitizerInterface::GetGigeEven
 #endif
 	{
 #if SV_CURRENT_MIL_VERSION == 0x0900
-		MIL_INT l_EventType;
+		SVMatroxInt l_EventType;
 		MdigGetHookInfo(milEventID, M_GC_EVENT_TYPE, &l_EventType);
 		l_Code =  SVMatroxApplicationInterface::GetLastStatus();
 		// map it to some SVR bullshit...
@@ -427,7 +428,7 @@ SVMatroxDigitizerInterface::SVStatusCode SVMatroxDigitizerInterface::ReleaseHook
 
 */
 
-bool SVMatroxDigitizerInterface::IsEventGrabFrameStart(long EventType)
+bool SVMatroxDigitizerInterface::IsEventGrabFrameStart(SVMatroxIdentifier EventType)
 {
 	return ((EventType & M_GRAB_FRAME_START ) == M_GRAB_FRAME_START);
 }
@@ -439,7 +440,7 @@ bool SVMatroxDigitizerInterface::IsEventGrabFrameStart(long EventType)
 
 */
 
-bool SVMatroxDigitizerInterface::IsEventGrabFrameEnd(long EventType)
+bool SVMatroxDigitizerInterface::IsEventGrabFrameEnd(SVMatroxIdentifier EventType)
 {
 	return ((EventType & M_GRAB_FRAME_END ) == M_GRAB_FRAME_END);
 }
@@ -486,7 +487,7 @@ SVMatroxDigitizerInterface::SVStatusCode SVMatroxDigitizerInterface::SetGrabMode
 	try
 #endif
 	{
-		long l_MatroxType = 0;
+		MIL_INT32 l_MatroxType = 0;
 		HRESULT hr = SVMatroxDigitizerGrab::m_GrabModeEnumConvertor.ConvertEnumToMatroxType(grabMode, l_MatroxType);
 		if (hr == S_OK)
 		{
@@ -524,7 +525,7 @@ SVMatroxDigitizerInterface::SVStatusCode SVMatroxDigitizerInterface::SetGrabTime
 	try
 #endif
 	{
-		MdigControl(DigitizerID.m_DigitizerIdentifier, M_GRAB_TIMEOUT, value);
+		MdigControl(DigitizerID.m_DigitizerIdentifier, M_GRAB_TIMEOUT, static_cast<MIL_INT32>(value));
 		l_Code =  SVMatroxApplicationInterface::GetLastStatus();
 	}
 
@@ -582,7 +583,7 @@ SVMatroxDigitizerInterface::SVStatusCode SVMatroxDigitizerInterface::SetGrabTrig
 	try
 #endif
 	{
-		long l_MatroxGrabTriggerMode = 0;
+		MIL_INT32 l_MatroxGrabTriggerMode = 0;
 		HRESULT hr = SVMatroxDigitizerGrab::m_GrabTriggerModeEnumConvertor.ConvertEnumToMatroxType(grabTriggerMode, l_MatroxGrabTriggerMode);
 		if (hr == S_OK)
 		{
@@ -848,12 +849,12 @@ SVMatroxDigitizerInterface::SVStatusCode SVMatroxDigitizerInterface::GetFormat(c
 	try
 #endif
 	{
-		long len;
+		MIL_INT len;
 		MdigInquire(DigitizerID.m_DigitizerIdentifier, M_FORMAT_SIZE, &len);
 		l_Code =  SVMatroxApplicationInterface::GetLastStatus();
 		if (l_Code == SVMEE_STATUS_OK)
 		{
-			char* pFormat = new char[len + 1];
+			MIL_TEXT_PTR pFormat = new MIL_TEXT_CHAR[len + 1];
 			MdigInquire(DigitizerID.m_DigitizerIdentifier, M_FORMAT, pFormat);
 			l_Code =  SVMatroxApplicationInterface::GetLastStatus();
 			if (l_Code == SVMEE_STATUS_OK)
@@ -979,8 +980,8 @@ SVMatroxDigitizerInterface::SVStatusCode SVMatroxDigitizerInterface::GetBitDepth
 		*/
 		BitDepth = 0;
 
-		char pixelFormat[32];
-		MdigInquireFeature(DigitizerID.m_DigitizerIdentifier, M_DEFAULT, "PixelFormat", M_TYPE_STRING_ENUMERATION, pixelFormat);
+		MIL_TEXT_CHAR pixelFormat[32];
+		MdigInquireFeature(DigitizerID.m_DigitizerIdentifier, M_DEFAULT, MIL_TEXT("PixelFormat"), M_TYPE_STRING_ENUMERATION, pixelFormat);
 		l_Code =  SVMatroxApplicationInterface::GetLastStatus();
 
 		if (l_Code == SVMEE_STATUS_OK)
@@ -1144,12 +1145,12 @@ SVMatroxDigitizerInterface::SVStatusCode SVMatroxDigitizerInterface::GetVendor(c
 	try
 #endif
 	{
-		long len;
+		MIL_INT len;
 		MdigInquire(DigitizerID.m_DigitizerIdentifier, M_VENDOR_LENGTH, &len);
 		l_Code =  SVMatroxApplicationInterface::GetLastStatus();
 		if (l_Code == SVMEE_STATUS_OK)
 		{
-			char* pVendor = new char[len + 1];
+			MIL_TEXT_PTR pVendor = new MIL_TEXT_CHAR[len + 1];
 			MdigInquire(DigitizerID.m_DigitizerIdentifier, M_VENDOR, pVendor);
 			l_Code =  SVMatroxApplicationInterface::GetLastStatus();
 			if (l_Code == SVMEE_STATUS_OK)
@@ -1184,7 +1185,7 @@ SVMatroxDigitizerInterface::SVStatusCode SVMatroxDigitizerInterface::GetModel(co
 	try
 #endif
 	{
-		char Model[256];
+		MIL_TEXT_CHAR Model[256];
 		MdigInquireFeature(DigitizerID.m_DigitizerIdentifier, M_DEFAULT, "DeviceModelName", M_TYPE_STRING, &Model);
 		l_Code =  SVMatroxApplicationInterface::GetLastStatus();
 		if (l_Code == SVMEE_STATUS_OK)
@@ -1217,7 +1218,7 @@ SVMatroxDigitizerInterface::SVStatusCode SVMatroxDigitizerInterface::GrabInProgr
 	try
 #endif
 	{
-		long value = 0;
+		MIL_INT value = 0;
 		MdigInquire(DigitizerID.m_DigitizerIdentifier, M_GRAB_IN_PROGRESS, &value);
 		l_Code =  SVMatroxApplicationInterface::GetLastStatus();
 		if (l_Code == SVMEE_STATUS_OK)
@@ -1328,7 +1329,7 @@ SVMatroxDigitizerInterface::SVStatusCode SVMatroxDigitizerInterface::GetGigeVers
 	try
 #endif
 	{
-		long len;
+		MIL_INT len;
 		MdigInquire(DigitizerID.m_DigitizerIdentifier, M_GC_VERSION_LENGTH, &len);
 		l_Code =  SVMatroxApplicationInterface::GetLastStatus();
 		if (l_Code == SVMEE_STATUS_OK)
@@ -1368,7 +1369,8 @@ SVMatroxDigitizerInterface::SVStatusCode SVMatroxDigitizerInterface::GetGigeSeri
 	try
 #endif
 	{
-		long len;
+		MIL_INT len;
+
 		MdigInquire(DigitizerID.m_DigitizerIdentifier, M_GC_SERIAL_NUMBER_LENGTH, &len);
 		l_Code =  SVMatroxApplicationInterface::GetLastStatus();
 		if (l_Code == SVMEE_STATUS_OK)
@@ -1504,7 +1506,7 @@ SVMatroxDigitizerInterface::SVStatusCode SVMatroxDigitizerInterface::Get(const S
 	try
 #endif
 	{
-		long l_MatroxType = 0;
+		SVMatroxInt l_MatroxType = 0;
 		HRESULT hr = SVMatroxDigitizerInquire::m_UserBitEnumConvertor.ConvertEnumToMatroxType(InquireType, l_MatroxType);
 		if (hr == S_OK)
 		{
@@ -1672,7 +1674,7 @@ SVMatroxDigitizerInterface::SVStatusCode SVMatroxDigitizerInterface::Set(const S
 	try
 #endif
 	{
-		long l_MatroxType = 0;
+		SVMatroxInt l_MatroxType = 0;
 		HRESULT hr = SVMatroxDigitizerControl::m_UserBitEnumConvertor.ConvertEnumToMatroxType(ControlType, l_MatroxType);
 		if (hr == S_OK)
 		{
@@ -2451,16 +2453,16 @@ SVMatroxDigitizerInterface::SVStatusCode SVMatroxDigitizerInterface::GetGigeEven
 {
 	SVStatusCode l_Code( SVMEE_STATUS_OK );
 #if SV_CURRENT_MIL_VERSION == 0x0900
-	MIL_INT EventCnt = 0;
+	SVMatroxInt EventCnt = 0;
 	
 	MdigInquireFeature(DigitizerID.m_DigitizerIdentifier, M_ELEMENT_COUNT, MIL_TEXT("EventSelector"), M_TYPE_STRING_ENUMERATION, &EventCnt);
 	l_Code = SVMatroxApplicationInterface::GetLastStatus();
 
 	if (l_Code == SVMEE_STATUS_OK && EventCnt)
 	{
-		for (MIL_INT i = 0;i < EventCnt && l_Code == SVMEE_STATUS_OK;i++)
+		for ( SVMatroxInt i = 0; i < EventCnt && l_Code == SVMEE_STATUS_OK; i++ )
 		{
-			MIL_INT Len = 0;
+			SVMatroxInt Len = 0;
 			
 			MdigInquireFeature(DigitizerID.m_DigitizerIdentifier, M_ELEMENT + M_LENGTH + i, MIL_TEXT("EventSelector"), M_TYPE_STRING_ENUMERATION, &Len);
 			l_Code = SVMatroxApplicationInterface::GetLastStatus();
@@ -2475,7 +2477,7 @@ SVMatroxDigitizerInterface::SVStatusCode SVMatroxDigitizerInterface::GetGigeEven
 				if (l_Code == SVMEE_STATUS_OK)
 				{
 					SVMatroxString name(pEventName); // MIL_TEXT is null terminated
-					MIL_INT eventType = -1;
+					SVMatroxInt eventType = -1;
 					SVMatroxString evName = "Event";
 					evName += name;
 					MdigInquireFeature(DigitizerID.m_DigitizerIdentifier, M_DEFAULT, evName.c_str(), M_TYPE_MIL_INT, &eventType);
@@ -2497,6 +2499,16 @@ SVMatroxDigitizerInterface::SVStatusCode SVMatroxDigitizerInterface::GetGigeEven
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVMatroxDigitizerLibrary\SVMatroxDigitizerInterface.cpp_v  $
+ * 
+ *    Rev 1.1   01 Oct 2013 10:45:30   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   22 Apr 2013 14:29:00   bWalter
  * Project:  SVObserver

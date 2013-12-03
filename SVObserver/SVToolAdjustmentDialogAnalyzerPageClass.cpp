@@ -5,8 +5,8 @@
 //* .Module Name     : SVToolAdjustmentDialogAnalyzerPageClass
 //* .File Name       : $Workfile:   SVToolAdjustmentDialogAnalyzerPageClass.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 15:33:18  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   02 Oct 2013 08:24:40  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -403,7 +403,7 @@ void SVToolAdjustmentDialogAnalyzerPageClass::OnPublishButton()
 		publishedResultString.LoadString ( IDS_PUBLISHABLE_RESULTS );
 		dlg.SetCaptionTitle (publishedResultString);
 		
-		int rc = dlg.DoModal ();
+		INT_PTR rc = dlg.DoModal ();
 		if( rc == IDOK )
 		{
 			SVInspectionProcess* pInspection = pCurrentAnalyzer->GetInspection();
@@ -431,7 +431,17 @@ void SVToolAdjustmentDialogAnalyzerPageClass::OnPublishButton()
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVToolAdjustmentDialogAnalyzerPageClass.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVToolAdjustmentDialogAnalyzerPageClass.cpp_v  $
+ * 
+ *    Rev 1.1   02 Oct 2013 08:24:40   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 15:33:18   bWalter
  * Project:  SVObserver

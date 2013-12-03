@@ -5,8 +5,8 @@
 //* .Module Name     : SVOCRBlobRecord
 //* .File Name       : $Workfile:   SVOCRBlobRecord.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 12:54:38  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   02 Oct 2013 06:48:20  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -170,7 +170,7 @@ void SVOCRBlobRecordArray::ClearArray()
 
 int SVOCRBlobRecordArray::Add(SVOCRBlobRecord * pRecord)
 {
-	return CObArray::Add((CObject *)pRecord);
+	return static_cast<int>(CObArray::Add((CObject *)pRecord));
 }
 
 SVOCRBlobRecord* SVOCRBlobRecordArray::GetAt(int nIndex) const
@@ -204,7 +204,7 @@ BOOL SVOCRBlobRecordArray::SortArray(enum enumBlobSortDirection eSortDirection)
 	//
 	BOOL bDone = FALSE;
 
-	int nCount = GetSize();
+	int nCount = static_cast<int>(GetSize());
 	while ( !bDone )
 	{
 		bDone = TRUE;
@@ -236,7 +236,7 @@ BOOL SVOCRBlobRecordArray::AnalyzeBlobs( CString& resultStringFromOCR,
 	//
 	// Put a string together after the sort.
 	//
-	int nCount = GetSize();
+	int nCount = static_cast<int>(GetSize());
 	float fSum = 0.0;
 
 	SortArray();
@@ -329,7 +329,17 @@ BOOL SVOCRBlobRecordArray::AnalyzeBlobs( CString& resultStringFromOCR,
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVOCRBlobRecord.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVOCRBlobRecord.cpp_v  $
+ * 
+ *    Rev 1.1   02 Oct 2013 06:48:20   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 12:54:38   bWalter
  * Project:  SVObserver

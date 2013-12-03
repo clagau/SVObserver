@@ -5,8 +5,8 @@
 //* .Module Name     : SVPublishList.cpp
 //* .File Name       : $Workfile:   SVPublishList.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.4  $
-//* .Check In Date   : $Date:   07 Aug 2013 13:23:12  $
+//* .Current Version : $Revision:   1.5  $
+//* .Check In Date   : $Date:   02 Oct 2013 07:12:22  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -126,7 +126,7 @@ void SVPublishListClass::Refresh(SVTaskObjectClass * pRootObject)
 
 			pPPQ->GetAllOutputs( ppPPQEntries );
 
-			lPPQSize = ppPPQEntries.size();
+			lPPQSize = static_cast<long>(ppPPQEntries.size());
 
 			for( lPPQ = 0, found = false; lPPQ < lPPQSize; lPPQ++ )
 			{
@@ -301,7 +301,7 @@ void SVPublishListClass::Release(SVTaskObjectClass * pRootObject)
 		{
 			pPPQ->GetAllOutputs( ppPPQEntries );
 
-			lPPQSize = ppPPQEntries.size();
+			lPPQSize = static_cast<long>(ppPPQEntries.size());
 
 			for( lPPQ = 0, found = false; lPPQ < lPPQSize; lPPQ++ )
 			{
@@ -351,7 +351,7 @@ BOOL SVPublishListClass::RemovePublishedEntry( const SVGUID& RGuid )
 
 			pPPQ->GetAllOutputs( ppPPQEntries );
 
-			lPPQSize = ppPPQEntries.size();
+			lPPQSize = static_cast<long>(ppPPQEntries.size());
 
 			for( lPPQ = 0, found = false; lPPQ < lPPQSize; lPPQ++ )
 			{
@@ -378,6 +378,16 @@ BOOL SVPublishListClass::RemovePublishedEntry( const SVGUID& RGuid )
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVPublishList.cpp_v  $
+ * 
+ *    Rev 1.5   02 Oct 2013 07:12:22   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.4   07 Aug 2013 13:23:12   sjones
  * Project:  SVObserver

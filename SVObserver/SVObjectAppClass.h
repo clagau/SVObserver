@@ -5,8 +5,8 @@
 //* .Module Name     : SVObjectAppClass
 //* .File Name       : $Workfile:   SVObjectAppClass.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 12:39:44  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   30 Oct 2013 15:20:44  $
 //******************************************************************************
 
 #ifndef SVOBJECTAPPCLASS_H
@@ -30,9 +30,9 @@ public:
 	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStruct );
 	virtual HRESULT ConnectObject( SVObjectLevelCreateStruct* PCreateStruct );
 
-	SVInspectionProcess *GetInspection();
-	SVToolClass *GetTool();
-	SVAnalyzerClass *GetAnalyzer();
+	SVInspectionProcess *GetInspection() const;
+	SVToolClass *GetTool() const;
+	SVAnalyzerClass *GetAnalyzer() const;
 
 protected:
 	virtual DWORD processMessage( DWORD DwMessageID, DWORD DwMessageValue, DWORD DwMessageContext );
@@ -56,7 +56,17 @@ private:
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVObjectAppClass.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVObjectAppClass.h_v  $
+ * 
+ *    Rev 1.1   30 Oct 2013 15:20:44   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  866
+ * SCR Title:  Add GetDataDefinitionList Command to SVObserver's Remote Command Socket
+ * Checked in by:  bWalter;  Ben Walter
+ * Change Description:  
+ *   Made GetInspection, GetTool, and GetAnalyzer methods const.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 12:39:44   bWalter
  * Project:  SVObserver

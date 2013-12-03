@@ -5,8 +5,8 @@
 //* .Module Name     : SVInspectionProcess
 //* .File Name       : $Workfile:   SVInspectionProcess.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.5  $
-//* .Check In Date   : $Date:   07 Aug 2013 13:29:42  $
+//* .Current Version : $Revision:   1.6  $
+//* .Check In Date   : $Date:   01 Oct 2013 14:31:00  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -553,7 +553,7 @@ HRESULT SVInspectionProcess::CreateResultImageIndexManager() const
 	return l_Status;
 }
 
-void CALLBACK SVInspectionProcess::APCThreadProcess( DWORD dwParam )
+void CALLBACK SVInspectionProcess::APCThreadProcess( DWORD_PTR dwParam )
 {
 }
 
@@ -891,7 +891,7 @@ BOOL SVInspectionProcess::CanProcess( SVProductInfoStruct *pProduct )
 			pListEntry = m_PPQInputs[iList];
 			if( pListEntry.m_IOEntryPtr->m_Enabled )
 			{
-				iInSize = pProduct->oPPQInfo.m_InputData.size();
+				iInSize = static_cast<int>(pProduct->oPPQInfo.m_InputData.size());
 				for( iIn = 0; bReady && iIn < iInSize; iIn++ )
 				{
 					pInEntry = pProduct->oPPQInfo.m_InputData[iIn];
@@ -1055,7 +1055,7 @@ BOOL SVInspectionProcess::RebuildInspectionInputList()
 	if( !l_pPPQ->GetAvailableInputs( ppIOEntries ) )
 		return FALSE;
 
-	lListSize = ppIOEntries.size();
+	lListSize = static_cast<long>(ppIOEntries.size());
 
 	l_pPPQ->GetPPQLength( lLength );
 
@@ -1145,7 +1145,7 @@ BOOL SVInspectionProcess::RebuildInspectionInputList()
 
 		// We now store whether or not these PPQ inputs were viewed
 		bFound = FALSE;
-		lSize = m_arViewedInputNames.GetSize();
+		lSize = static_cast<long>(m_arViewedInputNames.GetSize());
 		for( l = 0; l < lSize; l++ )
 		{
 			if( m_PPQInputs[iList].m_IOEntryPtr->m_pValueObject && 
@@ -1521,7 +1521,7 @@ HRESULT SVInspectionProcess::RebuildInspection()
 	BuildConditionalHistoryListAfterLoad();
 
 	CString strValueObjects;
-	int iCount = m_mapValueObjects.size();
+	int iCount = static_cast<int>(m_mapValueObjects.size());
 	strValueObjects.Format(_T("%s value object count=%d\n"), GetName(), iCount);
 	::OutputDebugString( strValueObjects );
 
@@ -4460,6 +4460,16 @@ void SVInspectionProcess::Persist(SVObjectWriter& rWriter)
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVInspectionProcess.cpp_v  $
+ * 
+ *    Rev 1.6   01 Oct 2013 14:31:00   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.5   07 Aug 2013 13:29:42   sjones
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : SVExternalToolDlg
 //* .File Name       : $Workfile:   SVExternalToolDlg.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 10:29:12  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   21 Oct 2013 08:21:26  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -137,7 +137,7 @@ BOOL SVExternalToolDlg::OnInitDialog()
 
 	InitializeDll();
 
-	int iDependentsSize = m_pTask->m_Data.m_aDllDependencies.size();
+	int iDependentsSize = static_cast< int >( m_pTask->m_Data.m_aDllDependencies.size() );
 	for( int i = 0 ; i < iDependentsSize ; i++)
 	{
 		CString strTmp;
@@ -204,9 +204,7 @@ void SVExternalToolDlg::OnDetails()
 
 	sheet.CreatePages();
 
-	int iRet = sheet.DoModal();
-
-	if( iRet == IDOK )
+	if( sheet.DoModal() == IDOK )
 	{	// sheet modifies tool; no need to do anything
 	}
 	else
@@ -249,9 +247,7 @@ void SVExternalToolDlg::OnAdd()
 	_tcscpy(tszPath, m_strLastDllPath);
 	cfd.m_ofn.lpstrInitialDir = tszPath;
 	
-	int iRet = cfd.DoModal();
-
-	if( iRet == IDOK)
+	if( cfd.DoModal() == IDOK)
 	{
 		// Extract File Name
 		CString strFileName = cfd.GetPathName();
@@ -285,46 +281,32 @@ void SVExternalToolDlg::OnBrowse()
 	_tcscpy(tszPath, m_strLastDllPath);
 	cfd.m_ofn.lpstrInitialDir = tszPath;
 	
-	int iRet = cfd.DoModal();
-
-	if( iRet == IDOK)
+	if( cfd.DoModal() == IDOK)
 	{
-		/*
-		SVObjectVector list;
-		m_pTask->FindInvalidatedObjects(list, m_pCancelData);
-		
-		SVShowDependentsDialog dlg;
-		dlg.PTaskObject = m_pTask;
-		dlg.m_FilterList = list;
-		iRet = dlg.DoModal();
-		if ( iRet == IDOK )
-		//*/
+		CString strFileName = cfd.GetPathName();
+		m_strLastDllPath = strFileName;
+		int iFind = m_strLastDllPath.ReverseFind('\\');
+		if (iFind >= 0)
 		{
-			CString strFileName = cfd.GetPathName();
-			m_strLastDllPath = strFileName;
-			int iFind = m_strLastDllPath.ReverseFind('\\');
-			if (iFind >= 0)
-			{
-				m_strLastDllPath = m_strLastDllPath.Left(iFind);
-			}
-			AfxGetApp()->WriteProfileString(_T("Settings"), _T("Last External Tool Dll Path"), m_strLastDllPath);
+			m_strLastDllPath = m_strLastDllPath.Left(iFind);
+		}
+		AfxGetApp()->WriteProfileString(_T("Settings"), _T("Last External Tool Dll Path"), m_strLastDllPath);
 
-			m_strDLLPath = cfd.GetPathName();
-			UpdateData(FALSE);
+		m_strDLLPath = cfd.GetPathName();
+		UpdateData(FALSE);
 
-			m_pTask->m_Data.m_voDllPath.SetValue(1, m_strDLLPath);
+		m_pTask->m_Data.m_voDllPath.SetValue(1, m_strDLLPath);
 
-			HRESULT hr;
-			hr = m_pTask->ClearData();
-			hr = m_pTask->SetDefaultValues();
+		HRESULT hr;
+		hr = m_pTask->ClearData();
+		hr = m_pTask->SetDefaultValues();
 
-			m_strStatus = _T("Dll needs to be tested.") + CRLF;
-			UpdateData(FALSE);
+		m_strStatus = _T("Dll needs to be tested.") + CRLF;
+		UpdateData(FALSE);
 
-			m_btnDetails.EnableWindow(FALSE);	// force the user to press Test which will call Initialize
-			EnableDetailTip( true, _T("Dll needs to be tested before Details can be selected"));
-		}// end if ( iRet == IDOK )
-	}// end if( iRet == IDOK)
+		m_btnDetails.EnableWindow(FALSE);	// force the user to press Test which will call Initialize
+		EnableDetailTip( true, _T("Dll needs to be tested before Details can be selected"));
+	}
 }// end void SVExternalToolDlg::OnBrowse() 
 
 void SVExternalToolDlg::OnTest() 
@@ -354,7 +336,7 @@ void SVExternalToolDlg::SetDependencies()
 	int i( 0 );
 
 	// Clear All File Paths
-	int iDepSize = m_pTask->m_Data.m_aDllDependencies.size();
+	int iDepSize = static_cast< int >( m_pTask->m_Data.m_aDllDependencies.size() );
 	for ( i = 0 ; i < iDepSize ; i++)
 	{
 		m_pTask->m_Data.m_aDllDependencies[i].SetDefaultValue( _T("") , TRUE);
@@ -420,7 +402,7 @@ void SVExternalToolDlg::InitializeDll()
 	{
 		// display all sub-errors in box
 		UpdateData(TRUE);
-		m_strStatus = _T("DLL did not pass.") + CRLF;
+		m_strStatus +=  _T("DLL did not pass.") + CRLF;
 
 		if ( !e.info().sErrorMessage.empty() )
 		{
@@ -478,10 +460,8 @@ bool SVExternalToolDlg::ShowDependentsDlg()
 	dlg.StrMessageID = IDS_CHANGE_DLL_EXTERNAL_TOOL;
 	dlg.PTaskObject = m_pTask;
 	dlg.SetFilterList( list );
-	int iRet = dlg.DoModal();
 
-	return (iRet == IDOK);
-
+	return ( dlg.DoModal() == IDOK );
 }
 
 bool SVExternalToolDlg::QueryAllowExit()
@@ -513,14 +493,14 @@ HRESULT SVExternalToolDlg::RestoreOriginalData()
 	// LOAD DEPENDENCIES
 
 	// Clear All File Paths
-	int iDepSize = m_pTask->m_Data.m_aDllDependencies.size();
+	int iDepSize = static_cast< int >( m_pTask->m_Data.m_aDllDependencies.size() );
 	for ( i = 0 ; i < iDepSize ; i++)
 	{
 		m_pTask->m_Data.m_aDllDependencies[i].SetDefaultValue( _T("") , TRUE);
 	}
 
 	// Set all File Paths from listbox
-	int iSize = pOriginalData->m_aDllDependencies.size();
+	int iSize = static_cast< int >( pOriginalData->m_aDllDependencies.size() );
 	for ( i = 0 ; i < iSize ; i++ )
 	{
 		m_pTask->m_Data.m_aDllDependencies[i] = pOriginalData->m_aDllDependencies[i];
@@ -532,7 +512,7 @@ HRESULT SVExternalToolDlg::RestoreOriginalData()
 
 	// update display
 	m_pTask->m_Data.m_voDllPath.GetValue(m_strDLLPath);
-	int iDependentsSize = m_pTask->m_Data.m_aDllDependencies.size();
+	int iDependentsSize = static_cast< int >( m_pTask->m_Data.m_aDllDependencies.size() );
 	for( i = 0 ; i < iDependentsSize ; i++)
 	{
 		CString strTmp;
@@ -579,7 +559,27 @@ HRESULT SVExternalToolDlg::CleanUpOldToolInfo()
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVExternalToolDlg.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVExternalToolDlg.cpp_v  $
+ * 
+ *    Rev 1.2   21 Oct 2013 08:21:26   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Added check for Bitness on External Tool DLL.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.1   01 Oct 2013 14:12:24   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 10:29:12   bWalter
  * Project:  SVObserver

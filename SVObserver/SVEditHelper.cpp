@@ -5,8 +5,8 @@
 //* .Module Name     : SVEditHelper
 //* .File Name       : $Workfile:   SVEditHelper.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 10:24:32  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   01 Oct 2013 14:12:22  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -68,7 +68,7 @@ BOOL SVEditHelper::PreTranslateMessage(MSG* pMsg)
 {
 	if( pMsg->message == WM_KEYDOWN )
 	{
-		UINT nChar = pMsg->wParam;
+		UINT nChar = static_cast<UINT>(pMsg->wParam);
 		if (nChar == VK_ESCAPE || nChar == VK_RETURN || nChar == VK_TAB)
 		{
 			GetParent()->SetFocus();
@@ -83,7 +83,17 @@ BOOL SVEditHelper::PreTranslateMessage(MSG* pMsg)
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVEditHelper.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVEditHelper.cpp_v  $
+ * 
+ *    Rev 1.1   01 Oct 2013 14:12:22   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 10:24:32   bWalter
  * Project:  SVObserver

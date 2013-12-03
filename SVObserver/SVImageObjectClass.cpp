@@ -5,8 +5,8 @@
 //* .Module Name     : SVImageObjectClass
 //* .File Name       : $Workfile:   SVImageObjectClass.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   08 May 2013 16:16:18  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   01 Oct 2013 14:31:00  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -47,12 +47,12 @@ void SVImageObjectClass::clear()
 	DestroyLocal();
 }
 
-size_t SVImageObjectClass::size() const
+unsigned long SVImageObjectClass::size() const
 {
 	return m_HandleCount;
 }
 
-void SVImageObjectClass::resize( size_t p_NewSize )
+void SVImageObjectClass::resize( unsigned long p_NewSize )
 {
 	if( m_HandleCount != p_NewSize )
 	{
@@ -392,8 +392,8 @@ HRESULT SVImageObjectClass::LoadImage( LPCTSTR p_szFileName, SVDataManagerHandle
 
 					if( p_bRestore )
 					{
-						long l_lWidth;
-						long l_lHeight;
+						long l_lWidth = 0;
+						long l_lHeight = 0;
 						SVMatroxBufferInterface::SVStatusCode l_Stat;
 						l_Stat = SVMatroxBufferInterface::Get( l_MilHandle.GetBuffer(), SVSizeX, l_lWidth );
 						l_Stat = SVMatroxBufferInterface::Get( l_MilHandle.GetBuffer(), SVSizeY, l_lHeight );
@@ -745,7 +745,7 @@ BOOL SVImageObjectClass::DestroyImageBuffer(SVImageObjectElementPtr& pHandle)
 	
 	if( !( pHandle.empty() ) )
 	{
-		long l_Index = pHandle->m_MasterIndex;
+		long l_Index = static_cast<long>(pHandle->m_MasterIndex);
 
 		m_ImageIndexPool.erase( l_Index );
 	}
@@ -958,7 +958,7 @@ BOOL SVImageObjectClass::LockIndex(long lIndex)
 
 			if( bOk )
 			{
-				bOk = LockIndex( lIndex, l_MasterIndex );
+				bOk = LockIndex( lIndex, static_cast<long>(l_MasterIndex ));
 			}
 		}
 	}
@@ -980,7 +980,7 @@ BOOL SVImageObjectClass::UnlockIndex(long lIndex)
 		{
 			if( l_Handle.use_count() < 3 )
 			{
-				AddImageHandleToPool( l_Handle->m_MasterIndex );
+				AddImageHandleToPool( static_cast<long>(l_Handle->m_MasterIndex) );
 			}
 		}
 	}
@@ -1008,7 +1008,17 @@ BOOL SVImageObjectClass::DestroyLocal()
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVImageObjectClass.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVImageObjectClass.cpp_v  $
+ * 
+ *    Rev 1.3   01 Oct 2013 14:31:00   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   08 May 2013 16:16:18   bWalter
  * Project:  SVObserver

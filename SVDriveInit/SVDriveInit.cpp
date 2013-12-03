@@ -5,8 +5,8 @@
 //* .Module Name     : SVDriveInitApp
 //* .File Name       : $Workfile:   SVDriveInit.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   22 Apr 2013 08:33:18  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   30 Sep 2013 14:58:52  $
 //******************************************************************************
 
 // SVDriveInit.cpp : Defines the class behaviors for the application.
@@ -52,13 +52,7 @@ BOOL SVDriveInitApp::InitInstance()
 
 	SVDriveInitDlg dlg;
 	m_pMainWnd = &dlg;
-	int nResponse = dlg.DoModal();
-	if (nResponse == IDOK)
-	{
-	}
-	else if (nResponse == IDCANCEL)
-	{
-	}
+	dlg.DoModal();
 
 	// Since the dialog has been closed, return FALSE so that we exit the
 	//  application, rather than start the application's message pump.
@@ -69,7 +63,17 @@ BOOL SVDriveInitApp::InitInstance()
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVDriveInit\SVDriveInit.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVDriveInit\SVDriveInit.cpp_v  $
+ * 
+ *    Rev 1.1   30 Sep 2013 14:58:52   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platforms.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   22 Apr 2013 08:33:18   bWalter
  * Project:  SVObserver

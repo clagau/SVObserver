@@ -5,8 +5,8 @@
 //* .Module Name     : SVChildrenSetupDialog
 //* .File Name       : $Workfile:   SVChildrenSetupDialog.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 09:53:10  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   01 Oct 2013 12:16:26  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -273,7 +273,7 @@ void SVChildrenSetupDialogClass::OnPublishButton()
     publishedResultString.LoadString ( IDS_PUBLISHABLE_RESULTS );
     dlg.SetCaptionTitle (publishedResultString);
 
-    int rc = dlg.DoModal ();
+    INT_PTR rc = dlg.DoModal ();
 	if( rc == IDOK )
 	{
 		// refresh the publish list
@@ -367,7 +367,7 @@ BOOL SVChildrenSetupDialogClass::checkOkToDelete( SVTaskObjectClass* pTaskObject
 	SVShowDependentsDialog dlg;
 	dlg.PTaskObject = pTaskObject;
 		
-	int rc = dlg.DoModal();
+	INT_PTR rc = dlg.DoModal();
 
 	if( rc == IDCANCEL )
 		bRetVal = FALSE;
@@ -379,7 +379,17 @@ BOOL SVChildrenSetupDialogClass::checkOkToDelete( SVTaskObjectClass* pTaskObject
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVChildrenSetupDialog.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVChildrenSetupDialog.cpp_v  $
+ * 
+ *    Rev 1.1   01 Oct 2013 12:16:26   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 09:53:10   bWalter
  * Project:  SVObserver

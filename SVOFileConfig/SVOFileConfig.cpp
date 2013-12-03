@@ -5,8 +5,8 @@
 // * .Module Name     : SVOFileConfig
 // * .File Name       : $Workfile:   SVOFileConfig.cpp  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.0  $
-// * .Check In Date   : $Date:   25 Apr 2013 11:31:20  $
+// * .Current Version : $Revision:   1.1  $
+// * .Check In Date   : $Date:   02 Oct 2013 08:43:42  $
 // ******************************************************************************
 
 // SVOFileConfig.cpp : Defines the class behaviors for the application.
@@ -105,7 +105,7 @@ BOOL SVOFileConfigApp::InitInstance()
 	
 	pdlg = new SVOFileConfigDlg;
 	m_pMainWnd = pdlg;
-	int nResponse = pdlg->DoModal();
+	INT_PTR nResponse = pdlg->DoModal();
 	if (nResponse == IDOK)
 	{
 		// TODO: Place code here to handle when the dialog is
@@ -163,7 +163,17 @@ void SVOFileConfigApp::LoadIPDoc(LPCTSTR szFileName)
 // * LOG HISTORY:
 // ******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVOFileConfig\SVOFileConfig.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVOFileConfig\SVOFileConfig.cpp_v  $
+ * 
+ *    Rev 1.1   02 Oct 2013 08:43:42   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   25 Apr 2013 11:31:20   bWalter
  * Project:  SVObserver

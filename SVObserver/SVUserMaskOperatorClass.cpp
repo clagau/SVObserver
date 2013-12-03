@@ -5,8 +5,8 @@
 //* .Module Name     : 
 //* .File Name       : $Workfile:   SVUserMaskOperatorClass.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   12 Aug 2013 16:23:28  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   02 Oct 2013 08:24:42  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -788,7 +788,7 @@ HRESULT SVUserMaskOperatorClass::GetObjectValue( const SVString& p_rValueName, V
 		std::vector< unsigned char > l_Buffer( len );
 		
 		// get the data
-		maskStorage.Read( &( l_Buffer[0] ), l_Buffer.size() );
+		maskStorage.Read( &( l_Buffer[0] ), static_cast<UINT>(l_Buffer.size()) );
 
 		SVSAFEARRAY l_SafeArray;
 
@@ -843,7 +843,7 @@ HRESULT SVUserMaskOperatorClass::SetObjectValue( const SVString& p_rValueName, c
 				CMemFile maskStorage;
 			
 				// write the data to the memory file
-				maskStorage.Write( &( l_Buffer[ 0 ] ), l_Buffer.size() );
+				maskStorage.Write( &( l_Buffer[ 0 ] ), static_cast<UINT>(l_Buffer.size()) );
 				maskStorage.Flush();
 				maskStorage.SeekToBegin();
 
@@ -1239,6 +1239,16 @@ BOOL SVUserMaskOperatorClass::OnValidate()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVUserMaskOperatorClass.cpp_v  $
+ * 
+ *    Rev 1.1   02 Oct 2013 08:24:42   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   12 Aug 2013 16:23:28   bWalter
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : SVHistogramAnalyzerClass
 //* .File Name       : $Workfile:   SVHistogramAnalyzer.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 10:46:16  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   01 Oct 2013 14:19:30  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -737,7 +737,7 @@ BOOL SVHistogramAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 		m_histogram.Clip(m_rangeStart, m_rangeEnd);
 		m_histogram.CalcStats();
 
-		msvHistogramValue.SetArraySize(msvplHistValues.size());	
+		msvHistogramValue.SetArraySize(static_cast<int>(msvplHistValues.size()));	
 		if ( S_OK != msvHistogramValue.SetArrayValues( RRunStatus.m_lResultDataIndex,  msvplHistValues) )
 		{
 				msvError.msvlErrorCd = -Err_SetArrayValues;
@@ -1113,7 +1113,17 @@ HRESULT SVHistogramAnalyzerClass::paintHistogramImage()
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVHistogramAnalyzer.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVHistogramAnalyzer.cpp_v  $
+ * 
+ *    Rev 1.1   01 Oct 2013 14:19:30   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 10:46:16   bWalter
  * Project:  SVObserver

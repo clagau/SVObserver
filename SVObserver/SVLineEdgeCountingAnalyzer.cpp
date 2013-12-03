@@ -5,8 +5,8 @@
 //* .Module Name     : SVLineEdgeCountingAnalyzer
 //* .File Name       : $Workfile:   SVLineEdgeCountingAnalyzer.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 12:04:42  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   01 Oct 2013 14:57:22  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -170,7 +170,7 @@ BOOL SVEdgeCountingLineAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 		if( edgeControl.CalculateEdgeList( pLine, m_bDisplayAnalyzeLine ) )
 		{
 			// Get edge count...
-			long lEdgeCount = edgeControl.GetEdgeList().GetSize();
+			long lEdgeCount = static_cast<long>(edgeControl.GetEdgeList().GetSize());
 
 			edgeCount.SetValue( RRunStatus.m_lResultDataIndex, lEdgeCount );
 
@@ -302,7 +302,17 @@ HRESULT SVEdgeCountingLineAnalyzerClass::GetSelectedEdgeOverlays( SVExtentMultiL
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVLineEdgeCountingAnalyzer.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVLineEdgeCountingAnalyzer.cpp_v  $
+ * 
+ *    Rev 1.1   01 Oct 2013 14:57:22   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 12:04:42   bWalter
  * Project:  SVObserver

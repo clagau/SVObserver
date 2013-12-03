@@ -5,8 +5,8 @@
 //* .Module Name     : SVEquation.cpp
 //* .File Name       : $Workfile:   SVEquation.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   13 May 2013 12:16:00  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   01 Oct 2013 14:12:24  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -1035,7 +1035,7 @@ SVEquationTestResult SVEquationClass::lexicalScan(LPSTR inBuf)
 	// Find the Tokens and build the token stack for YACC
 	while ((yychar = lex.yylex()) > 0)
 	{
-		yacc.lex_stack[sIndex].position = lex.position;
+		yacc.lex_stack[sIndex].position = static_cast< int >( lex.position );
 		yacc.lex_stack[sIndex].token = yychar;
 		if( yychar == SV_IDENTIFIER )
 			yacc.lex_stack[sIndex].value.index = lex.yylval.index;
@@ -1044,7 +1044,7 @@ SVEquationTestResult SVEquationClass::lexicalScan(LPSTR inBuf)
 		sIndex++;
 	}
 		
-	yacc.lex_stack[sIndex].position = lex.position;
+	yacc.lex_stack[sIndex].position = static_cast< int >( lex.position );
 	yacc.lex_stack[sIndex].token = yychar;
 	if( yychar == SV_IDENTIFIER )
 		yacc.lex_stack[sIndex].value.index = lex.yylval.index;
@@ -1059,7 +1059,7 @@ SVEquationTestResult SVEquationClass::lexicalScan(LPSTR inBuf)
 		CString lexErrorStr,tmp,fullObjectName;
 		fullObjectName = GetCompleteObjectNameToObjectType( NULL, SVInspectionObjectType );
 		ret.bPassed = false;
-		ret.iPositionFailed = lex.position+1;
+		ret.iPositionFailed = static_cast< int >( lex.position + 1 );
 		lexErrorStr.Format( _T( "Syntax Error at position %d\n" ), ret.iPositionFailed );
 		tmp.Format(_T( "%s \n%s" ), fullObjectName, lexErrorStr );
 		ASSERT( FALSE );
@@ -1433,7 +1433,17 @@ HRESULT SVEquationClass::ResetObject()
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVEquation.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVEquation.cpp_v  $
+ * 
+ *    Rev 1.2   01 Oct 2013 14:12:24   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   13 May 2013 12:16:00   bWalter
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : SVRemoteControlConstants
 //* .File Name       : $Workfile:   SVRemoteControlConstants.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 14:46:46  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   30 Oct 2013 15:39:14  $
 //******************************************************************************
 
 #ifndef SVREMOTECONTROLCONSTANTS_H
@@ -40,6 +40,7 @@ namespace SVRC
 		const std::string putFile = "PutDeviceFile";
 		const std::string setItems = "SetItems";
 		const std::string setMode = "SetDeviceMode";
+		const std::string getDefList = "GetDataDefinitionList";
 	}
 
 	namespace arg
@@ -50,12 +51,13 @@ namespace SVRC
 		const std::string desiredMode = "desiredMode";
 		const std::string values = "Values";
 		const std::string images = "Images";
-		const std::string errors = "Errors";
 		const std::string filePath = "filePath";
 		const std::string productName = "productName";
 		const std::string sourcePath = "sourcePath";
 		const std::string sourceFileName = "sourceFileName";
 		const std::string destinationPath = "destinationPath";
+		const std::string inspectionName = "inspectionName";
+		const std::string listType = "listType";
 	}
 
 	namespace result
@@ -77,8 +79,10 @@ namespace SVRC
 		const std::string filePath = "filePath";
 		const std::string destinationPath = "destinationPath";
 		const std::string destinationFileName = "destinationFileName";
+		const std::string entries = "Entries";
 	}
 
+	//Value Object
 	namespace vo
 	{
 		const std::string name = "Name";
@@ -87,6 +91,7 @@ namespace SVRC
 		const std::string status = "Status";
 	}
 
+	//Image Object
 	namespace io
 	{
 		const std::string name = "Name";
@@ -102,6 +107,15 @@ namespace SVRC
 		const std::string status = "Status";
 	}
 
+	//Data Definition List Object
+	namespace ddlo
+	{
+		const std::string name = "Name";
+		const std::string writable = "Writable";
+		const std::string published = "Published";
+		const std::string type = "Type";
+		const std::string add_info = "AdditionalInfo";
+	}
 }
 
 #endif
@@ -110,7 +124,21 @@ namespace SVRC
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVRemoteControlConstants.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVRemoteControlConstants.h_v  $
+ * 
+ *    Rev 1.1   30 Oct 2013 15:39:14   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  866
+ * SCR Title:  Add GetDataDefinitionList Command to SVObserver's Remote Command Socket
+ * Checked in by:  bWalter;  Ben Walter
+ * Change Description:  
+ *   Added "GetDataDefinitionList" to cmdName.
+ *   Removed "Errors" from arg.  ("Errors" was never an argument.)
+ *   Added "inspectionName" and "listType" to arg.
+ *   Added "Entries" to result.
+ *   Added namespace ddlo for Data Definition List Objects.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 14:46:46   bWalter
  * Project:  SVObserver

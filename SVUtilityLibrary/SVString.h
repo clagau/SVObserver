@@ -5,8 +5,8 @@
 //* .Module Name     : SVString
 //* .File Name       : $Workfile:   SVString.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   25 Apr 2013 19:25:14  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   30 Oct 2013 15:46:08  $
 //******************************************************************************
 
 #ifndef SVSTRING_H
@@ -15,6 +15,7 @@
 #include <string>
 #include <tchar.h>
 #include <comdef.h>
+#include <vector>
 
 /**
 @SVObjectName String
@@ -188,13 +189,25 @@ SVString operator+( LPCTSTR psz1, const SVString& str2 );
 bool operator==( LPCTSTR psz1, const SVString& str2 );
 bool operator!=( LPCTSTR psz1, const SVString& str2 );
 
+typedef std::vector< SVString > SVStringArray;
+
 #endif // SVSTRING_H
 
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVUtilityLibrary\SVString.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVUtilityLibrary\SVString.h_v  $
+ * 
+ *    Rev 1.1   30 Oct 2013 15:46:08   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  866
+ * SCR Title:  Add GetDataDefinitionList Command to SVObserver's Remote Command Socket
+ * Checked in by:  bWalter;  Ben Walter
+ * Change Description:  
+ *   Added SVStringArray.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   25 Apr 2013 19:25:14   bWalter
  * Project:  SVObserver

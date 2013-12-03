@@ -5,8 +5,8 @@
 //* .Module Name     : <SVPQVariableSelectionDialog>
 //* .File Name       : $Workfile:   SVPQVariableSelectionDialog.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 14:33:52  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   03 Oct 2013 13:31:06  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -65,7 +65,7 @@ BOOL SVPQVariableSelectionDialog::OnInitDialog()
 	m_treeCtrl.uRequiredAttributes = SV_VIEWABLE;
 	m_treeCtrl.InitTreeCtrl();
 
-	long l;
+	size_t l;
 	SVIOEntryHostStructPtr pIOEntry;
 	HTREEITEM hParent = NULL;       
 	HTREEITEM hChild = NULL;
@@ -123,7 +123,17 @@ void SVPQVariableSelectionDialog::OnCancel()
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVPQVariableSelectionDialog.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVPQVariableSelectionDialog.cpp_v  $
+ * 
+ *    Rev 1.1   03 Oct 2013 13:31:06   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   64 bit platform types.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 14:33:52   bWalter
  * Project:  SVObserver

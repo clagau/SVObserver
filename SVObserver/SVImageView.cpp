@@ -5,8 +5,8 @@
 //* .Module Name     : SVImageView
 //* .File Name       : $Workfile:   SVImageView.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   24 Sep 2013 16:17:44  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   03 Oct 2013 13:31:04  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -2131,7 +2131,7 @@ HRESULT SVImageViewClass::CopyBitsToSurface( const CRect& p_rSourceRect, const S
 		{
 			unsigned short l_BitmapBitCount = p_rBitmapInfo.GetBitCount();
 			unsigned long l_BitmapWidth = p_rBitmapInfo.GetWidth();
-			unsigned long l_BitmapPitch = p_rBitmapInfo.GetBitmapImageStrideInBytes();
+			unsigned long l_BitmapPitch = static_cast<unsigned long>(p_rBitmapInfo.GetBitmapImageStrideInBytes());
 			unsigned long l_VisiblePitch = ( p_rSourceRect.Width() * l_BitmapBitCount / 8 );
 
 			if( ( l_BitmapWidth == l_ddSurfaceDesc.dwWidth ) && 
@@ -2600,6 +2600,16 @@ HRESULT SVImageViewClass::NotifyIPDocDisplayComplete()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVImageView.cpp_v  $
+ * 
+ *    Rev 1.3   03 Oct 2013 13:31:04   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   64 bit platform types.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   24 Sep 2013 16:17:44   bwalter
  * Project:  SVObserver

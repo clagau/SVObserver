@@ -5,8 +5,8 @@
 // * .Module Name     : modulename
 // * .File Name       : $Workfile:   SVPackedFile.cpp  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.0  $
-// * .Check In Date   : $Date:   22 Apr 2013 13:37:42  $
+// * .Current Version : $Revision:   1.1  $
+// * .Check In Date   : $Date:   01 Oct 2013 10:02:46  $
 // ******************************************************************************
 
 #include "stdafx.h"
@@ -178,13 +178,13 @@ BOOL SVPackedFile::UnPackFiles( const CString& szPackedFile, const CString& szUn
 								{
 									for (BytesRead = 0; BytesRead < MAXDWORD ; BytesRead += CountRead)
 									{
-										CountRead = PackedFile.Read (Buffer, std::min ((MAXDWORD - BytesRead), sizeof(Buffer)));
+										CountRead = PackedFile.Read( Buffer, std::min( ( MAXDWORD - BytesRead ), static_cast< UINT >( sizeof( Buffer ) ) ) );
 										SourceFile.Write (Buffer, CountRead);
 									}
 								}
 								for ( ; FindData.nFileSizeLow; FindData.nFileSizeLow -= CountRead)
 								{
-									CountRead = PackedFile.Read( Buffer, std::min< size_t >( FindData.nFileSizeLow, sizeof( Buffer ) ) );
+									CountRead = PackedFile.Read( Buffer, std::min< UINT >( FindData.nFileSizeLow, sizeof( Buffer ) ) );
 									SourceFile.Write( Buffer, CountRead );
 								}
 								SourceFile.Close ();
@@ -243,6 +243,16 @@ const CString& SVPackedFile::GetSecFilePath() const
 // ******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVLibrary\SVPackedFile.cpp_v  $
+ * 
+ *    Rev 1.1   01 Oct 2013 10:02:46   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   22 Apr 2013 13:37:42   bWalter
  * Project:  SVObserver

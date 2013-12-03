@@ -5,8 +5,8 @@
 //* .Module Name     : SVDCamDragonflyDriver
 //* .File Name       : $Workfile:   SVDCamFlea2Driver.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   18 Apr 2013 17:36:40  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   30 Sep 2013 14:15:00  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -181,7 +181,7 @@ HRESULT SVDCamFlea2Driver::SetParameter( const SVDeviceParamWrapper& rw )
 					{
 						for( size_t i = 0; i < ulInfo.m_Bits.l_Entries / 2; ++i )
 						{
-							WriteCameraRegister( l_AdjOffset + i * 4, aData[ i ] );
+							WriteCameraRegister( static_cast<unsigned long>(l_AdjOffset + i) * 4, aData[ i ] );
 						}
 					}
 				}
@@ -373,8 +373,8 @@ HRESULT SVDCamFlea2Driver::NeutralLutToRawLut( const SVLut& rLut, SVLUTVector& r
 	{
 		unsigned short* l_pValue = reinterpret_cast< unsigned short* >( &raData[ i ] );
 
-		l_pValue[ 1 ] = rLut( 0, i * 2 ) << 7;
-		l_pValue[ 0 ] = rLut( 0, i * 2 + 1 ) << 7;
+		l_pValue[ 1 ] = rLut( 0, static_cast<unsigned long>(i) * 2 ) << 7;
+		l_pValue[ 0 ] = rLut( 0, static_cast<unsigned long>(i) * 2 + 1 ) << 7;
 
 		//SwapEndian( raData[ i ], raData[ i ] );
 	}
@@ -425,7 +425,17 @@ unsigned long SVDCamFlea2Driver::GetDCAMTriggerPolarity() const
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SV1394CameraFileLibrary\SVDCamFlea2Driver.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SV1394CameraFileLibrary\SVDCamFlea2Driver.cpp_v  $
+ * 
+ *    Rev 1.1   30 Sep 2013 14:15:00   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platforms.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   18 Apr 2013 17:36:40   bWalter
  * Project:  SVObserver

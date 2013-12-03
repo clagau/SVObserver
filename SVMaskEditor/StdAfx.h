@@ -5,8 +5,8 @@
 //* .Module Name     : stdafx
 //* .File Name       : $Workfile:   StdAfx.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   26 Apr 2013 14:06:18  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   01 Oct 2013 10:22:32  $
 //******************************************************************************
 
 #ifndef STDAFX_H
@@ -53,7 +53,6 @@
 // Delete the two includes below if you do not wish to use the MFC
 //  database classes
 #include <afxdb.h>			// MFC database classes
-#include <afxdao.h>			// MFC DAO database classes
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
@@ -64,7 +63,17 @@
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVMaskEditor\StdAfx.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVMaskEditor\StdAfx.h_v  $
+ * 
+ *    Rev 1.1   01 Oct 2013 10:22:32   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   26 Apr 2013 14:06:18   bWalter
  * Project:  SVObserver

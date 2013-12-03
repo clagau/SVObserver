@@ -5,8 +5,8 @@
 // * .Module Name     : SecuredObject
 // * .File Name       : $Workfile:   SecuredObject.cpp  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.0  $
-// * .Check In Date   : $Date:   22 Apr 2013 13:30:32  $
+// * .Current Version : $Revision:   1.1  $
+// * .Check In Date   : $Date:   01 Oct 2013 09:57:48  $
 // ******************************************************************************
 
 #include "stdafx.h"
@@ -159,7 +159,7 @@ void SVSecuredObject::Save()
 	if (!m_bModified || m_map.IsEmpty())
 		return;
 
-	int count = m_map.GetCount();
+	INT_PTR count = m_map.GetCount();
 	POSITION pos = m_map.GetStartPosition();
 	do
 	{
@@ -251,7 +251,17 @@ BOOL SVSecuredObject::Validate(CString strAccount, CString strPassword, DWORD nP
 // * LOG HISTORY:
 // ******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVLibrary\SecuredObject.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVLibrary\SecuredObject.cpp_v  $
+ * 
+ *    Rev 1.1   01 Oct 2013 09:57:48   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   22 Apr 2013 13:30:32   bWalter
  * Project:  SVObserver

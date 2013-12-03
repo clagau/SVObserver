@@ -5,8 +5,8 @@
 //* .Module Name     : SVPPQEntryDialog
 //* .File Name       : $Workfile:   SVPPQEntryDialog.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   06 May 2013 20:11:54  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   02 Oct 2013 07:01:54  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -249,9 +249,9 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // SVPPQEntryDialogPropertySheetClass message handlers
 
-int SVPPQEntryDialogPropertySheetClass::DoModal() 
+INT_PTR SVPPQEntryDialogPropertySheetClass::DoModal() 
 {
-	int nRetVal = CPropertySheet::DoModal();
+	INT_PTR nRetVal = CPropertySheet::DoModal();
 
 	// Check IsTaken state of pages...
 	m_bIsTaken = m_oCameraPage.m_bIsTaken;
@@ -271,7 +271,17 @@ BOOL SVPPQEntryDialogCameraPageClass::OnApply()
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVPPQEntryDialog.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVPPQEntryDialog.cpp_v  $
+ * 
+ *    Rev 1.2   02 Oct 2013 07:01:54   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   06 May 2013 20:11:54   bWalter
  * Project:  SVObserver

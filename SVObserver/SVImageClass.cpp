@@ -5,8 +5,8 @@
 //* .Module Name     : SVImage
 //* .File Name       : $Workfile:   SVImageClass.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.4  $
-//* .Check In Date   : $Date:   13 Aug 2013 10:04:22  $
+//* .Current Version : $Revision:   1.5  $
+//* .Check In Date   : $Date:   01 Oct 2013 14:31:00  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -2427,7 +2427,7 @@ HRESULT SVImageClass::UpdateChildBuffers( SVImageObjectClassPtr p_psvChildBuffer
 			l_Size = l_BufferPtr->size();
 		}
 
-		p_psvChildBuffers->resize( l_Size );
+		p_psvChildBuffers->resize( static_cast<unsigned long>(l_Size) );
 		p_psvChildBuffers->SetParentImageObject( l_BufferPtr );
 		p_psvChildBuffers->SetImageInfo( p_rImageInfo );
 
@@ -2485,7 +2485,7 @@ HRESULT SVImageClass::UpdateBufferArrays( bool p_ExcludePositionCheck )
 			{
 				if( l_Reset )
 				{
-					m_BufferArrayPtr->resize( l_Size );
+					m_BufferArrayPtr->resize( static_cast<unsigned long>(l_Size) );
 					m_BufferArrayPtr->SetParentImageObject( SVImageObjectClassPtr() );
 				}
 
@@ -2758,6 +2758,16 @@ HRESULT SVImageClass::UnregisterAsSubObject()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVImageClass.cpp_v  $
+ * 
+ *    Rev 1.5   01 Oct 2013 14:31:00   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.4   13 Aug 2013 10:04:22   bWalter
  * Project:  SVObserver

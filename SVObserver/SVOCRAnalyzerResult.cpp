@@ -5,8 +5,8 @@
 //* .Module Name     : SVOCRAnalyzerResult
 //* .File Name       : $Workfile:   SVOCRAnalyzerResult.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   13 May 2013 12:36:50  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   02 Oct 2013 06:48:20  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -1249,10 +1249,10 @@ BOOL SVOCRAnalyzeResultClass::BuildHashTable(char *pBuffer)
 
       m_dFactor = ((double)(m_lHighValue - m_lLowValue)) / (double)m_nTotalCount;
 
-      for(short Count = 0; Count < m_nTotalCount ; Count++)
+      for(int Count = 0; Count < m_nTotalCount ; Count++)
       {
          char *pData = m_pDataArr[Count];
-         int nCharCount = strlen(pData);
+         int nCharCount = static_cast< int >( strlen( pData ) );
          long lIndexValue = 0;
          for (int i = 0; i < nCharCount; i++)
          {
@@ -1367,7 +1367,17 @@ int SVOCRAnalyzeResultClass::CheckStringInTable(CString MatchString)
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVOCRAnalyzerResult.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVOCRAnalyzerResult.cpp_v  $
+ * 
+ *    Rev 1.3   02 Oct 2013 06:48:20   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   13 May 2013 12:36:50   bWalter
  * Project:  SVObserver

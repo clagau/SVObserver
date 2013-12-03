@@ -5,8 +5,8 @@
 //* .Module Name     : SVGigeCameraManager
 //* .File Name       : $Workfile:   SVGigeCameraManager.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   05 Jul 2013 09:11:00  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   01 Oct 2013 14:19:30  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -193,7 +193,7 @@ HRESULT SVGigeCameraManager::OrderCameras( SVConnectedCameraMap& rSVCameraList )
 				l_rCamera.m_ulHandle = NULL;
 			}
 		}
-		l_rCamera.iPosition = i;
+		l_rCamera.iPosition = static_cast<int>(i);
 	}
 
 	for( size_t i = 0; i < l_Size && !( rSVCameraList.empty() ); ++i )
@@ -223,7 +223,7 @@ HRESULT SVGigeCameraManager::OrderCameras( SVConnectedCameraMap& rSVCameraList )
 			}
 		}
 
-		l_rCamera.iPosition = i;
+		l_rCamera.iPosition = static_cast<int>(i);
 	}
 
 	return l_Status;
@@ -234,7 +234,17 @@ HRESULT SVGigeCameraManager::OrderCameras( SVConnectedCameraMap& rSVCameraList )
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVGigeCameraManager.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVGigeCameraManager.cpp_v  $
+ * 
+ *    Rev 1.3   01 Oct 2013 14:19:30   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   05 Jul 2013 09:11:00   bwalter
  * Project:  SVObserver

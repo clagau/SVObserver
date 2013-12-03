@@ -5,8 +5,8 @@
 //* .Module Name     : SVClsids
 //* .File Name       : $Workfile:   SVClsids.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 09:53:42  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   11 Nov 2013 07:10:46  $
 //******************************************************************************
 #include "stdafx.h"
 
@@ -48,6 +48,9 @@ static char THIS_FILE[] = __FILE__;
 
 // GUID for the SVStringValueObjectClass
 /*const*/ GUID SVStringValueObjectClassGuid			= { 0x62fb5910, 0x6528, 0x11d1, { 0x96, 0x11, 0x0, 0x0, 0xf8, 0x5f, 0xd, 0xd } }; //16 Aug 1999 - frb.
+
+// GUID for the SVStaticStringValueObjectClass
+/*const*/ GUID SVStaticStringValueObjectClassGuid	= {0xe9c59b74, 0x2018, 0x47c0, { 0xb4, 0xcb, 0x4b, 0x8e, 0x91, 0x87, 0xa6, 0xf } };
 
 // GUID for the SVFileNameValueObjectClass
 /*const*/ GUID SVFileNameValueObjectClassGuid		= { 0x5b48b354, 0x2eb3, 0x11d5, { 0xa9, 0xb8, 0x0, 0x10, 0x6f, 0x2, 0x17, 0x42 } };	//	12-Apr-2001
@@ -610,6 +613,9 @@ static char THIS_FILE[] = __FILE__;
 /*const*/ GUID SVArchiveStopAtMaxImagesGuid         = { 0x68dcf5d9, 0xc2de, 0x11d2, { 0xac, 0xb9, 0x0, 0xcc, 0x4f, 0xc3, 0x8f, 0x76 } };
 /*const*/ GUID SVArchiveMaxImagesCountGuid          = { 0x68dcf5d9, 0xc2de, 0x11d2, { 0xac, 0xb9, 0x0, 0xcd, 0x4f, 0xc3, 0x8f, 0x76 } };
 /*const*/ GUID SVArchiveMethodGuid                  = { 0x715e7129, 0xba42, 0x47fa, { 0xa3, 0x2e, 0xf2, 0xce, 0xc6, 0x3d, 0xdd, 0xf2 } };
+/*const*/ GUID SVArchiveUseHeadersGUID              = { 0x9e5bb788, 0x8ffb, 0x4182, { 0x88, 0x50, 0x6a, 0x5d, 0x99, 0xf5, 0x9d, 0x12 } };
+/*const*/ GUID SVArchiveHeaderLabelGUID             = { 0x9e5bb788, 0x8ffb, 0x4182, { 0x88, 0x50, 0x6a, 0x5d, 0x99, 0xf5, 0x9d, 0x13 } };
+/*const*/ GUID SVArchiveHeaderObjectGUID            = { 0x9e5bb788, 0x8ffb, 0x4182, { 0x88, 0x50, 0x6a, 0x5d, 0x99, 0xf5, 0x9d, 0x14 } };
 /*const*/ GUID SVArchiveResultNamesObjectGuid       = { 0xd20cc846, 0xb0dc, 0x4b2f, { 0x81, 0x69, 0x4f, 0x88, 0x28, 0x9c, 0xe0, 0xb } };
 /*const*/ GUID SVArchiveImageNamesObjectGuid        = { 0xfa911dab, 0x487e, 0x4297, { 0xa6, 0xb, 0x42, 0xe7, 0x41, 0x86, 0x4e, 0x82 } };
 
@@ -1577,6 +1583,9 @@ static char THIS_FILE[] = __FILE__;
 /*const*/ GUID SVCameraTriggerTimestampGuid				= { 0x4b916de5, 0xbe32, 0x423c, { 0xb3, 0xd4, 0xfd, 0x2a, 0x52, 0xf, 0x24, 0x4f } };
 /*const*/ GUID SVCameraTriggerLineInStateGuid			= { 0xb5c9288b, 0x6827, 0x4301, { 0xbd, 0x74, 0xf1, 0xa8, 0x9f, 0xa1, 0xb4, 0xfc } };
 
+/*const*/ GUID SVStringHeaderGuid						= { 0x62c0ff5c, 0xe431, 0x4341, { 0xa5, 0xe6, 0xbf, 0x61, 0xf, 0x72, 0x8b, 0xd1 } };
+
+
 ////////////////////////////////////////////////////////////////////////////////
 // Insert new GUIDs immediately before the previous line.
 // NOTE: Use GUID Create Tool for new GUIDs.
@@ -1587,7 +1596,17 @@ static char THIS_FILE[] = __FILE__;
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVClsids.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVClsids.cpp_v  $
+ * 
+ *    Rev 1.1   11 Nov 2013 07:10:46   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  872
+ * SCR Title:  Add Archive Tool Headers to Archive File
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add new Guids for StaticStringValueObject
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 09:53:42   bWalter
  * Project:  SVObserver

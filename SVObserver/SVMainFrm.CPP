@@ -5,8 +5,8 @@
 //* .Module Name     : SVMainFrm
 //* .File Name       : $Workfile:   SVMainFrm.CPP  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   15 Aug 2013 06:17:26  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   01 Oct 2013 14:57:18  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -384,7 +384,7 @@ void SVMainFrame::SetStatusInfoText( LPCTSTR SIText )
 	if( 0 < l_Size )
 	{
 		CClientDC DC( NULL );
-		int l_Width = DC.GetTextExtent( SIText, l_Size ).cx - static_cast< int >( static_cast< double >( l_Size ) * 1.5 );
+		int l_Width = DC.GetTextExtent( SIText, static_cast<int>(l_Size) ).cx - static_cast< int >( static_cast< double >( l_Size ) * 1.5 );
 
 		m_wndStatusBar.SetPaneInfo( 1, ID_INDICATOR_INFO, 0, l_Width );
 		m_wndStatusBar.SetPaneText( 1, SIText );
@@ -1826,7 +1826,7 @@ LRESULT SVMainFrame::OnDisplayChange(WPARAM p_p1, LPARAM p_p2)
 
 LRESULT SVMainFrame::OnSetMode( WPARAM wParam, LPARAM lParam )
 {
-	return TheSVObserverApp.SetMode( lParam );
+	return TheSVObserverApp.SetMode( static_cast<unsigned long>(lParam ));
 }
 
 LRESULT SVMainFrame::OnLoadConfiguration( WPARAM wParam, LPARAM lParam )
@@ -1978,7 +1978,7 @@ BOOL SVMainFrame::VerifyBarStates(LPCTSTR lpszProfileName)
 
         ASSERT(pInfo != NULL);
 
-        int nDockedCount = pInfo->m_arrBarID.GetSize();
+        int nDockedCount = static_cast<int>(pInfo->m_arrBarID.GetSize());
         if (nDockedCount > 0)
         { 
             // dockbar
@@ -2067,6 +2067,16 @@ LRESULT SVMainFrame::OnHideIOViewTab( WPARAM p_wParam, LPARAM p_lParam )
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVMainFrm.CPP_v  $
+ * 
+ *    Rev 1.3   01 Oct 2013 14:57:18   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   15 Aug 2013 06:17:26   tbair
  * Project:  SVObserver

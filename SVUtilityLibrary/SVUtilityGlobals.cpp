@@ -15,7 +15,7 @@
 
 const GUID SV_GUID_NULL = GUID_NULL;
 
-/*HRESULT SafeArrayGetElementNoCopy(SAFEARRAY* psa, long* rgIndices, void* pv)
+HRESULT SafeArrayGetElementNoCopy(SAFEARRAY* psa, long* rgIndices, void* pv)
 // Does a blind copy of the requested element.
 // E.G., if the element is a BSTR (wchar_t*), only the value of the pointer is copied,
 //      not the contents of the BSTR.
@@ -64,7 +64,7 @@ HRESULT SafeArrayGetElementPointer(SAFEARRAY* psa, long* rgIndices, void** ppv)
     *ppv = pElement;
 	
     return S_OK;
-}*/
+}
 
 void KeepPrevError( HRESULT& p_rhrPrev, HRESULT p_hrNew )
 {

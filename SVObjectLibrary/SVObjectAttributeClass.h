@@ -5,8 +5,8 @@
 //* .Module Name     : SVObjectAttributeClass
 //* .File Name       : $Workfile:   SVObjectAttributeClass.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   22 Apr 2013 16:38:34  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   01 Oct 2013 11:27:02  $
 //******************************************************************************
 
 #ifndef _INC_SVOBJECTATTRIBUTECLASS_3A76E8C50119_INCLUDED
@@ -89,10 +89,10 @@ public:
 		{
 			int iSourceDataSize = svTempArray.GetSize();
 			int iNewBucketSize = __max(iSourceDataSize, 2);
-			int iOldBucketSize = raaData.size();
+			int iOldBucketSize = static_cast< int >( raaData.size() );
 			int iArraySize = 1;
 			if ( iOldBucketSize > 0 )
-				iArraySize = raaData[0].size();
+				iArraySize = static_cast< int >( raaData[0].size() );
 
 			std::vector<T> aArrayData(iArraySize, defaultValue);
 			std::vector< std::vector<T> > aaNewData(iNewBucketSize, aArrayData);
@@ -215,7 +215,17 @@ private:
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObjectLibrary\SVObjectAttributeClass.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObjectLibrary\SVObjectAttributeClass.h_v  $
+ * 
+ *    Rev 1.1   01 Oct 2013 11:27:02   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   22 Apr 2013 16:38:34   bWalter
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : SVIODoc
 //* .File Name       : $Workfile:   sviodoc.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   07 Aug 2013 13:29:44  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   01 Oct 2013 14:31:02  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -240,7 +240,7 @@ void SVIODoc::OnExtrasEditRemoteInputs()
 		if( !pInputList->FillInputs( ppIOEntries ) )
 			DebugBreak();
 
-		lSize = ppIOEntries.size();
+		lSize = static_cast<long>(ppIOEntries.size());
 
 		pInputList->GetRemoteInputCount( lCount );
 
@@ -471,6 +471,16 @@ SVIOController* SVIODoc::GetIOController() const
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\sviodoc.cpp_v  $
+ * 
+ *    Rev 1.3   01 Oct 2013 14:31:02   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   07 Aug 2013 13:29:44   sjones
  * Project:  SVObserver

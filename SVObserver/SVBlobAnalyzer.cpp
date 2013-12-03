@@ -5,8 +5,8 @@
 //* .Module Name     : SVBlobAnalyzer
 //* .File Name       : $Workfile:   SVBlobAnalyzer.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   13 May 2013 12:15:54  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   01 Oct 2013 12:16:24  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -1390,7 +1390,7 @@ BOOL SVBlobAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 			// otherwise if at least one feature has been selected
 			// lSortFeature will be a valid feature index
 			if( lSortFeature >= SV_AREA && lSortFeature < SV_TOPOF_LIST )
-				SortBlobs (lSortFeature, msvlSortMap.GetData(), msvlSortMap.GetSize() );
+				SortBlobs( lSortFeature, msvlSortMap.GetData(), static_cast< long >( msvlSortMap.GetSize() ) );
 
 			for (eFeature = SV_AREA; eFeature < SV_TOPOF_LIST; eFeature = (SVBlobFeatureEnum) (eFeature + 1))
 			{
@@ -1731,7 +1731,7 @@ BOOL SVBlobAnalyzerClass::IsPtOverResult( CPoint point )
 			double* pyMax = &(m_vec2dBlobResults[SV_BOXY_MAX][0]);
 			double* pyMin = &(m_vec2dBlobResults[SV_BOXY_MIN][0]);
 
-			int iMapSize = msvlSortMap.GetSize();
+			int iMapSize = static_cast< int >( msvlSortMap.GetSize() );
 			
 			for (int i = 0; i < (int)l_lCurrentNbrOfBlobs && i < iMapSize ; i++)
 			{
@@ -1933,7 +1933,17 @@ void SVBlobAnalyzerClass::addDefaultInputObjects( BOOL BCallBaseClass, SVInputIn
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVBlobAnalyzer.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVBlobAnalyzer.cpp_v  $
+ * 
+ *    Rev 1.2   01 Oct 2013 12:16:24   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   13 May 2013 12:15:54   bWalter
  * Project:  SVObserver

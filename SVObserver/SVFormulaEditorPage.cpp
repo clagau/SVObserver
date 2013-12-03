@@ -5,8 +5,8 @@
 //* .Module Name     : SVFormulaEditorPageClass
 //* .File Name       : $Workfile:   SVFormulaEditorPage.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   13 May 2013 16:29:24  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   01 Oct 2013 14:19:28  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -508,8 +508,7 @@ void SVFormulaEditorPageClass::OnLocalVariableSelect()
 	dlg.uAttributesDesired = SV_SELECTABLE_FOR_EQUATION;
 	dlg.m_treeOutputList.SetAllowWholeArray();
 
-	int nResult = dlg.DoModal();
-	if( nResult == IDOK )
+	if( dlg.DoModal() == IDOK )
 	{
 		// Get Toolset Output Name
 		// Update ToolsetOutputVariable
@@ -826,7 +825,17 @@ void SVFormulaEditorPageClass::HandleValidateError( SVEquationTestResult result 
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVFormulaEditorPage.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVFormulaEditorPage.cpp_v  $
+ * 
+ *    Rev 1.3   01 Oct 2013 14:19:28   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   13 May 2013 16:29:24   bWalter
  * Project:  SVObserver

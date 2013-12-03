@@ -5,8 +5,8 @@
 //* .Module Name     : SVDataObjectClass
 //* .File Name       : $Workfile:   SVDataObject.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 10:07:42  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   01 Oct 2013 12:48:26  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -162,11 +162,11 @@ int SVDataObjectClass::Add( double DVal )
 	{
 		case DWordType:
 				data.DWValue = ( DWORD ) DVal;
-				return dataList.Add( data );
+				return static_cast<int>(dataList.Add( data ));
 
 		case DoubleType:
 				data.DValue = DVal;
-				return dataList.Add( data );
+				return static_cast<int>(dataList.Add( data ));
 	}
 
 	return -1;
@@ -286,14 +286,24 @@ SVDataListClass& SVDataObjectClass::GetList()
 
 int SVDataObjectClass::GetSize()
 {
-	return dataList.GetSize();
+	return static_cast<int>(dataList.GetSize());
 }
 
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVDataObject.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVDataObject.cpp_v  $
+ * 
+ *    Rev 1.1   01 Oct 2013 12:48:26   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 10:07:42   bWalter
  * Project:  SVObserver

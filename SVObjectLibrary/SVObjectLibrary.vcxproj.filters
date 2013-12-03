@@ -250,9 +250,6 @@
     <ClInclude Include="SVObjectAsynchronousCommandTemplate.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVToolsetScriptTags.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="SVGetObjectListVisitor.inl">

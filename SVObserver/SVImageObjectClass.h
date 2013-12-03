@@ -5,8 +5,8 @@
 //* .Module Name     : SVImageObjectClass
 //* .File Name       : $Workfile:   SVImageObjectClass.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.3  $
-//* .Check In Date   : $Date:   23 Jul 2013 17:55:10  $
+//* .Current Version : $Revision:   1.4  $
+//* .Check In Date   : $Date:   01 Oct 2013 14:31:00  $
 //******************************************************************************
 
 #ifndef SVIMAGEOBJECTCLASS_H
@@ -34,8 +34,8 @@ public:
 	bool empty() const;
 	void clear();
 
-	size_t size() const;
-	void resize( size_t p_NewSize );
+	unsigned long size() const;
+	void resize( unsigned long p_NewSize );
 
 	SVImageObjectParentPtr GetParentImageObject() const;
 	void SetParentImageObject( SVImageObjectParentPtr p_ParentPtr );
@@ -121,7 +121,7 @@ protected:
 	SVClock::SVTimeStamp m_LastUpdate;
 	SVClock::SVTimeStamp m_LastReset;
 
-	size_t m_HandleCount;
+	long m_HandleCount;
 
 	SVDataManagerHandle	m_CurrentDMIndexHandle;
 
@@ -151,7 +151,17 @@ typedef SVVector< SVImageObjectClassPtr > SVImageObjectClassPtrVector;
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVImageObjectClass.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVImageObjectClass.h_v  $
+ * 
+ *    Rev 1.4   01 Oct 2013 14:31:00   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   23 Jul 2013 17:55:10   sjones
  * Project:  SVObserver

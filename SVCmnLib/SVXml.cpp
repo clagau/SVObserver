@@ -5,8 +5,8 @@
 // * .Module Name     : SVCommRC.cpp
 // * .File Name       : $Workfile:   SVXml.cpp  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.0  $
-// * .Check In Date   : $Date:   18 Apr 2013 18:10:08  $
+// * .Current Version : $Revision:   1.1  $
+// * .Check In Date   : $Date:   30 Sep 2013 14:24:32  $
 // ******************************************************************************
 
 #include "stdafx.h"
@@ -1679,9 +1679,15 @@ CleanUp:
 	RETURN;
 }
 
+int SVXml::GetElementListLength()
+{
+	return static_cast< int >( ElementList.GetCount() );
+}
 
-
-
+int SVXml::GetAttributeListLength()
+{
+	return static_cast< int >( AttributeList.GetCount() );
+}
 
 DWORD SVXml::GetParserErrorCode()
 {
@@ -1692,7 +1698,17 @@ DWORD SVXml::GetParserErrorCode()
 // * LOG HISTORY:
 // ******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVCmnLib\SVXml.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVCmnLib\SVXml.cpp_v  $
+ * 
+ *    Rev 1.1   30 Sep 2013 14:24:32   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platforms.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   18 Apr 2013 18:10:08   bWalter
  * Project:  SVObserver

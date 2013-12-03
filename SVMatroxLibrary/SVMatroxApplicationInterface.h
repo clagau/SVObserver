@@ -5,8 +5,8 @@
 // * .Module Name     : SVMatroxApplicationInterface
 // * .File Name       : $Workfile:   SVMatroxApplicationInterface.h  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.0  $
-// * .Check In Date   : $Date:   22 Apr 2013 14:56:26  $
+// * .Current Version : $Revision:   1.1  $
+// * .Check In Date   : $Date:   01 Oct 2013 11:08:08  $
 // ******************************************************************************
 
 #ifndef SV_MATROX_APPLICATION_INTERFACE_H
@@ -29,23 +29,27 @@ class SVMatroxApplicationInterface
 public:
 	typedef SVMatroxStatusInformation::SVStatusCode SVStatusCode;
 
-
 	static void Startup();
 	static void Shutdown();
 
-	static SVStatusCode GetLastStatus() ;
-	static SVStatusCode GetLastStatus( SVMatroxStatusInformation& p_rStatus ) ;
+	static SVStatusCode GetLastStatus();
+	static SVStatusCode GetLastStatus( SVMatroxStatusInformation& p_rStatus );
 
-	static SVStatusCode GetFirstError() ;
-	static SVStatusCode GetFirstError( SVMatroxStatusInformation& p_rStatus ) ;
+	static SVStatusCode GetFirstError();
+	static SVStatusCode GetFirstError( SVMatroxStatusInformation& p_rStatus );
 
 	static void Log( SVMatroxStatusInformation& p_rStatusInfo );
-	static void LogMatroxException( );
+	static void LogMatroxException();
 	static SVStatusCode GetSystemCount( long& p_lCount );
-	static SVStatusCode GetSystemName( long p_lSystemNumber, SVMatroxString& p_rSystemName );
+	static SVStatusCode GetSystemName( SVMatroxInt p_lSystemNumber, SVMatroxString& p_rSystemName );
+	static HRESULT SVMatroxIntToHRESULT( SVMatroxIdentifier p_Int );
 
 protected:
+#ifdef _WIN64
+   static SVMatroxInt _stdcall SVMatroxHookHandler( SVMatroxInt HookType, SVMatroxIdentifier EventId, void* UserDataPtr );
+#else
 	static long _stdcall SVMatroxHookHandler( long HookType, SVMatroxIdentifier EventId, void* UserDataPtr );
+#endif
 
 private:
 	static void LocalInitialize();
@@ -63,6 +67,16 @@ private:
 // ******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVMatroxLibrary\SVMatroxApplicationInterface.h_v  $
+ * 
+ *    Rev 1.1   01 Oct 2013 11:08:08   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   22 Apr 2013 14:56:26   bWalter
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : SVXml
 //* .File Name       : $Workfile:   SVXml.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   18 Apr 2013 18:10:08  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   30 Sep 2013 14:24:32  $
 //******************************************************************************
 
 #ifndef SVXML_H
@@ -80,8 +80,8 @@ void GetXmlParserError(MSXML2::IXMLDOMParseError *errorObj);
 	BOOL AddChildren(MSXML2::IXMLDOMNode* pSchemaNode, Element * pParent);
 	Element * GetRootFromList();
 	BOOL AddChildrenToLists(MSXML2::IXMLDOMNode * pNode);
-	int GetElementListLength(){return ElementList.GetCount();};
-	int GetAttributeListLength(){return AttributeList.GetCount();};
+	int GetElementListLength();
+	int GetAttributeListLength();
 	void AddElementToList(LPTSTR lpName, LPTSTR lpType);
 	void AddAttributeToList(LPTSTR lpName, LPTSTR lpType);
 	Element* m_pRootElement;
@@ -90,7 +90,6 @@ void GetXmlParserError(MSXML2::IXMLDOMParseError *errorObj);
 
 private:
 	BOOL m_blComInit;
-
 };
 
 #endif
@@ -99,7 +98,17 @@ private:
 // * LOG HISTORY:
 // ******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVCmnLib\SVXml.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVCmnLib\SVXml.h_v  $
+ * 
+ *    Rev 1.1   30 Sep 2013 14:24:32   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platforms.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   18 Apr 2013 18:10:08   bWalter
  * Project:  SVObserver

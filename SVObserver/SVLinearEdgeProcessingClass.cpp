@@ -5,8 +5,8 @@
 // * .Module Name     : SVLinearEdgeProcessingClass
 // * .File Name       : $Workfile:   SVLinearEdgeProcessingClass.cpp  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.1  $
-// * .Check In Date   : $Date:   13 May 2013 12:16:32  $
+// * .Current Version : $Revision:   1.2  $
+// * .Check In Date   : $Date:   01 Oct 2013 14:57:20  $
 // ******************************************************************************
 
 #include "stdafx.h"
@@ -314,8 +314,8 @@ HRESULT SVLinearEdgeProcessingClass::GetOutputEdgeDistance( double &p_rdValue )
 		BOOL l_bIsFixedEdgeMarker = FALSE;
 		DWORD l_dwPosition = 0;
 
-		double l_dWidth = l_svData.size();
-		double l_dEndOfLine = l_svData.size() - 1;
+		double l_dWidth = static_cast<double>(l_svData.size());
+		double l_dEndOfLine = static_cast<double>(l_svData.size() - 1);
 
 		if( ( m_svIsFixedEdgeMarker.GetValue( l_bIsFixedEdgeMarker ) == S_OK ) && 
 				l_bIsFixedEdgeMarker &&
@@ -683,10 +683,10 @@ HRESULT SVLinearEdgeProcessingClass::GetHistogramOverlay( SVExtentLineStruct &p_
 			long l_lPixel = ( long ) ( l_svData[ l ] / divisor * ( ( double ) l_oRect.bottom ) );
 
 			SVExtentPointStruct l_oGraphPoint;
-			l_oGraphPoint.m_dPositionX = l;
+			l_oGraphPoint.m_dPositionX = static_cast<double>(l);
 			l_oGraphPoint.m_dPositionY = l_oRect.bottom - l_lPixel;
 
-			p_rsvLine.m_svPointArray.SetAtGrow( l, l_oGraphPoint );
+			p_rsvLine.m_svPointArray.SetAtGrow( static_cast<int>(l), l_oGraphPoint );
 		}
 	}
 
@@ -729,7 +729,7 @@ HRESULT SVLinearEdgeProcessingClass::GetEdgesOverlay( SVExtentMultiLineStruct &p
 
 			if( l_dwDirection == SV_UNDEFINED_DIRECTION )
 			{
-				l_dX = l;
+				l_dX = static_cast<int>(l);
 
 				if( l_svEdges[ l ] == 0 )
 				{
@@ -1048,7 +1048,7 @@ HRESULT SVLinearEdgeProcessingClass::UpdateEdgeList( long p_lIndex )
 
 	if( l_hrOk == S_OK )
 	{
-		long l_lCount = l_svData.size();
+		long l_lCount = static_cast<long>(l_svData.size());
 
 		switch( l_dwDirection )
 		{
@@ -1382,7 +1382,17 @@ DWORD SVLinearEdgeProcessingClass::processMessage(DWORD DwMessageID, DWORD DwMes
 // * LOG HISTORY:
 // ******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVLinearEdgeProcessingClass.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVLinearEdgeProcessingClass.cpp_v  $
+ * 
+ *    Rev 1.2   01 Oct 2013 14:57:20   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   13 May 2013 12:16:32   bWalter
  * Project:  SVObserver

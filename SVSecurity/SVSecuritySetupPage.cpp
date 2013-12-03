@@ -5,8 +5,8 @@
 //* .Module Name     : SVSecuritySetupPage.cpp
 //* .File Name       : $Workfile:   SVSecuritySetupPage.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   25 Apr 2013 17:03:40  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   02 Oct 2013 10:00:50  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -347,7 +347,7 @@ int SVSecuritySetupPage::GetNodeIndexFromTree()
 	HTREEITEM hItem = m_AccessPointTree.GetSelectedItem();
 	if( hItem )
 	{
-		iRet = m_AccessPointTree.GetItemData(hItem);
+		iRet = static_cast<int>(m_AccessPointTree.GetItemData(hItem));
 	}
 	return iRet;
 }
@@ -380,7 +380,17 @@ void SVSecuritySetupPage::OnHelp()
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVSecurity\SVSecuritySetupPage.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVSecurity\SVSecuritySetupPage.cpp_v  $
+ * 
+ *    Rev 1.1   02 Oct 2013 10:00:50   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   25 Apr 2013 17:03:40   bWalter
  * Project:  SVObserver

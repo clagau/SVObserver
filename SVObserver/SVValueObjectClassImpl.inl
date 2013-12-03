@@ -5,8 +5,8 @@
 //* .Module Name     : SVValueObjectClassImpl
 //* .File Name       : $Workfile:   SVValueObjectClassImpl.inl  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 16:17:34  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   02 Oct 2013 08:24:40  $
 //******************************************************************************
 
 #include <assert.h>
@@ -338,7 +338,7 @@ HRESULT SVValueObjectClassImpl<T>::SetObjectValue( const SVString& p_rValueName,
 		{
 			SVSAFEARRAY l_SafeArray( p_rVariantValue );
 
-			SetArraySize( l_SafeArray.size() );
+			SetArraySize( static_cast< int >( l_SafeArray.size() ) );
 
 			if ( ArraySize() == 1 )
 			{
@@ -429,7 +429,7 @@ HRESULT SVValueObjectClassImpl<T>::SetObjectValue(SVObjectAttributeClass* pDataO
 	// new-style: store all array elements:
 	else if ( SVObjectAttributeClassHelper::GetArrayData(pDataObject, "Array_Elements", l_Array, DefaultValue() ) )
 	{
-		SetArraySize( l_Array.size() );
+		SetArraySize( static_cast< int >( l_Array.size() ) );
 		if ( ArraySize() == 1 )
 		{
 			ScalarBucket(1)=l_Array[0];
@@ -518,7 +518,7 @@ HRESULT SVValueObjectClassImpl<T>::GetArrayValuesAsVariant( int iBucket, VARIANT
 		}
 		else
 		{
-			for( size_t i = 0; i < Array(iBucket).size(); ++i )
+			for( int i = 0; i < static_cast< int >( Array( iBucket ).size() ); ++i )
 			{
 				_variant_t l_Variant;
 
@@ -606,7 +606,17 @@ inline void SVValueObjectClassImpl<T>::swap( SVValueObjectClassImpl<T>& rhs )
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVValueObjectClassImpl.inl_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVValueObjectClassImpl.inl_v  $
+ * 
+ *    Rev 1.1   02 Oct 2013 08:24:40   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 16:17:34   bWalter
  * Project:  SVObserver

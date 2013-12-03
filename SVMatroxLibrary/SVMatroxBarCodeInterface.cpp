@@ -5,8 +5,8 @@
 // * .Module Name     : SVMatroxBarCodeInterface
 // * .File Name       : $Workfile:   SVMatroxBarCodeInterface.cpp  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.0  $
-// * .Check In Date   : $Date:   22 Apr 2013 14:56:42  $
+// * .Current Version : $Revision:   1.2  $
+// * .Check In Date   : $Date:   23 Oct 2013 08:50:48  $
 // ******************************************************************************
 
 #include "stdafx.h"
@@ -371,7 +371,7 @@ SVMatroxBarCodeInterface::SVStatusCode SVMatroxBarCodeInterface::Get( const SVMa
 		{
 			if( (p_eType & SVBCStringType) != SVBCStringType )
 			{
-				long l_lControlType = Convert2MatroxType( p_eType );
+				MIL_INT l_lControlType = Convert2MatroxType( p_eType );
 				if( l_lControlType != M_UNINITIALIZED )
 				{
 					McodeInquire( p_rCodeID.m_BarCodeId, l_lControlType , &p_dValue);
@@ -609,7 +609,7 @@ SVMatroxBarCodeInterface::SVStatusCode SVMatroxBarCodeInterface::Create( SVMatro
 #endif
 	{
 		MIL_ID l_NewID = M_NULL;
-		long l_lCodeType = Convert2MatroxType( p_eType );
+		SVMatroxIdentifier l_lCodeType = Convert2MatroxType( p_eType );
 
 		SVMatroxResourceMonitor::SVAutoLock l_AutoLock;
 
@@ -624,7 +624,8 @@ SVMatroxBarCodeInterface::SVStatusCode SVMatroxBarCodeInterface::Create( SVMatro
 
 			if( l_Code == SVMEE_STATUS_OK )
 			{// Free handle if already filled.
-				SVMatroxResourceMonitor::InsertIdentifier( SVBarCodeID, l_NewID );
+				long l_ID = SVMatroxApplicationInterface::SVMatroxIntToHRESULT( l_NewID );
+				SVMatroxResourceMonitor::InsertIdentifier( SVBarCodeID, l_ID );
 
 				if( !p_rCodeID.empty() )	
 				{
@@ -790,6 +791,26 @@ SVMatroxBarCodeInterface::SVStatusCode SVMatroxBarCodeInterface::Destroy( SVMatr
 // ******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVMatroxLibrary\SVMatroxBarCodeInterface.cpp_v  $
+ * 
+ *    Rev 1.2   23 Oct 2013 08:50:48   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Modified types to be compatible with 32 and 64bit librarys.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.1   01 Oct 2013 11:08:10   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   22 Apr 2013 14:56:42   bWalter
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : SVOPPQList
 //* .File Name       : $Workfile:   SVOPPQList.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 13:10:24  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   02 Oct 2013 06:48:22  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -183,7 +183,7 @@ CSVOPPQObj *CSVOPPQList::GetPPQObjectByPosition(int iPos)
 
 int CSVOPPQList::GetPPQListCount() const
 {
-	return m_PPQList.GetCount();
+	return static_cast<int>(m_PPQList.GetCount());
 }
 
 void CSVOPPQList::ResetContent()
@@ -202,7 +202,17 @@ void CSVOPPQList::ResetContent()
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVOPPQList.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVOPPQList.cpp_v  $
+ * 
+ *    Rev 1.1   02 Oct 2013 06:48:22   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 13:10:24   bWalter
  * Project:  SVObserver

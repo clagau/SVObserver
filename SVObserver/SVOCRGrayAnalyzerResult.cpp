@@ -5,8 +5,8 @@
 //* .Module Name     : SVOCRGrayAnalyzerResult
 //* .File Name       : $Workfile:   SVOCRGrayAnalyzerResult.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   13 May 2013 12:36:52  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   02 Oct 2013 06:48:20  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -1174,10 +1174,10 @@ BOOL SVOCRGrayAnalyzeResultClass::BuildHashTable ( char *pBuffer )
 
       m_dFactor = ((double)(m_lHighValue - m_lLowValue)) / (double)m_nTotalCount;
 
-      for(short Count = 0; Count < m_nTotalCount ; Count++)
+      for(int Count = 0; Count < m_nTotalCount ; Count++)
       {
          char *pData = m_pDataArr[Count];
-         int nCharCount = strlen(pData);
+         int nCharCount = static_cast< int >( strlen( pData ) );
          long lIndexValue = 0;
          for (int i = 0; i < nCharCount; i++)
          {
@@ -1291,7 +1291,17 @@ int SVOCRGrayAnalyzeResultClass::CheckStringInTable(CString MatchString)
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVOCRGrayAnalyzerResult.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVOCRGrayAnalyzerResult.cpp_v  $
+ * 
+ *    Rev 1.2   02 Oct 2013 06:48:20   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   13 May 2013 12:36:52   bWalter
  * Project:  SVObserver

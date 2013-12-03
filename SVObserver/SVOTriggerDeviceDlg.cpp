@@ -5,8 +5,8 @@
 //* .Module Name     : SVOTriggerDeviceDlg
 //* .File Name       : $Workfile:   SVOTriggerDeviceDlg.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   14 Aug 2013 09:43:28  $
+//* .Current Version : $Revision:   1.4  $
+//* .Check In Date   : $Date:   30 Oct 2013 14:49:00  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -141,8 +141,7 @@ void CSVOTriggerDeviceDlg::OnBtnNewTrig()
 	{
 		SVTriggerSelectionDlg dlg(list, this);
 
-		int rc = dlg.DoModal();
-		if (rc == IDOK)
+		if ( dlg.DoModal() == IDOK )
 		{
 			dlg.GetSelectedTrigger(triggerName, iDig);
 		}
@@ -159,7 +158,7 @@ void CSVOTriggerDeviceDlg::OnBtnNewTrig()
 		int pos = -1;
 		for (int i = 0;i < m_ctlTriggerList.GetCount() && pos < 0;i++)
 		{
-			int digitizerNum = m_ctlTriggerList.GetItemData(i);
+			int digitizerNum = static_cast<int>(m_ctlTriggerList.GetItemData(i));
 			if (digitizerNum > iDig)
 			{
 				pos = i;
@@ -200,17 +199,18 @@ void CSVOTriggerDeviceDlg::OnBtnDeleteTrig()
     if (iPos > 0)
     {
         m_ctlTriggerList.SetCurSel(iPos-1);
+		EnablePropertyEdit(m_ctlTriggerList.GetCurSel());
     }
     else
     {
         m_ctlTriggerList.SetCurSel(0);
+		EnableAdvancedPropertyButton(false);
     }
 
     if ( m_ctlTriggerList.GetCount() < m_pParent->GetAllowedNumberOfDigs(TRUE) )
     {
         m_btnNewTrigger.EnableWindow(TRUE);
     }	
-	EnablePropertyEdit(m_ctlTriggerList.GetCurSel());
 }
 
 void CSVOTriggerDeviceDlg::OnBtnPropTrig() 
@@ -323,6 +323,26 @@ void CSVOTriggerDeviceDlg::EnableAdvancedPropertyButton(bool bEnable)
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVOTriggerDeviceDlg.cpp_v  $
+ * 
+ *    Rev 1.4   30 Oct 2013 14:49:00   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  870
+ * SCR Title:  Fix Various Issues in the Edit Configuration Dialog
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Fixed the issue with deleting triggers that caused an error dialog to appear. Modified OnBtnDeleteTrig.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.3   02 Oct 2013 07:01:52   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   14 Aug 2013 09:43:28   tbair
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 // * .Module Name     : SVMatroxTypedefs
 // * .File Name       : $Workfile:   SVMatroxTypedefs.h  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.0  $
-// * .Check In Date   : $Date:   22 Apr 2013 15:28:58  $
+// * .Current Version : $Revision:   1.2  $
+// * .Check In Date   : $Date:   23 Oct 2013 08:50:46  $
 // ******************************************************************************
 
 #ifndef SV_MATROX_TYPEDEFS_H
@@ -27,7 +27,14 @@
 @SVObjectOperations None
 
 */
-typedef long SVMatroxIdentifier;
+#ifdef _WIN64
+   typedef long long SVMatroxIdentifier;
+   typedef long long SVMatroxInt;
+#else
+   typedef long SVMatroxIdentifier;
+   typedef long SVMatroxInt;
+#endif
+
 
 /**
 @SVObjectName Matrox Status Code
@@ -37,7 +44,8 @@ typedef long SVMatroxIdentifier;
 @SVObjectOperations None
 
 */
-typedef long SVMatroxStatusCode;
+//typedef long SVMatroxStatusCode;
+typedef HRESULT SVMatroxStatusCode;
 
 /**
 @SVObjectName Matrox Status String
@@ -67,7 +75,7 @@ typedef std::string SVMatroxString;
 @SVObjectOperations None
 
 */
-typedef long ( _stdcall *SVMatroxHookFunctionPtr )( long, SVMatroxIdentifier, void* );
+typedef SVMatroxIdentifier ( _stdcall *SVMatroxHookFunctionPtr )( SVMatroxIdentifier, SVMatroxIdentifier, void* );
 
 /**
 @SVObjectName Matrox double array
@@ -108,6 +116,26 @@ typedef std::vector<BYTE> SVMatroxByteArray;
 // ******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVMatroxLibrary\SVMatroxTypedefs.h_v  $
+ * 
+ *    Rev 1.2   23 Oct 2013 08:50:46   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Modified types to be compatible with 32 and 64bit librarys.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.1   01 Oct 2013 11:15:30   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   22 Apr 2013 15:28:58   bWalter
  * Project:  SVObserver

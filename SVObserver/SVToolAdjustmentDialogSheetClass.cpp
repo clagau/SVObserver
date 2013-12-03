@@ -5,8 +5,8 @@
 //* .Module Name     : SVToolAdjustmentDialogSheetClass
 //* .File Name       : $Workfile:   SVToolAdjustmentDialogSheetClass.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   09 May 2013 13:26:48  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   09 Oct 2013 10:48:30  $
 //******************************************************************************
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -145,8 +145,8 @@ void SVToolAdjustmentDialogSheetClass::addPages()
 				{
 					// New image tool has also this pages...RO_22Mar2000
 					AddPage( new SVToolAdjustmentDialogFilterPageClass( this ) );
-					AddPage( new SVToolAdjustmentDialogMaskPageClass( this ) );
 					AddPage( new SVToolAdjustmentDialogThresholdPageClass( this ) );
+					AddPage( new SVToolAdjustmentDialogMaskPageClass( this ) );
 					AddPage( new SVToolAdjustmentDialogLUTPageClass( this ) );
 				}
 				AddPage( pConditionalDlg );
@@ -163,8 +163,8 @@ void SVToolAdjustmentDialogSheetClass::addPages()
 			case SVWindowToolObjectType:
 				AddPage( new SVToolAdjustmentDialogImagePageClass( this ) );
 				AddPage( new SVToolAdjustmentDialogFilterPageClass( this ) );
-				AddPage( new SVToolAdjustmentDialogMaskPageClass( this ) );
 				AddPage( new SVToolAdjustmentDialogThresholdPageClass( this ) );
+				AddPage( new SVToolAdjustmentDialogMaskPageClass( this ) );
 				if( bHasLUT )
 				{
 					// To be compatible to old Window Tool...RO_22Mar2000
@@ -462,7 +462,17 @@ SVToolClass* SVToolAdjustmentDialogSheetClass::GetTool() const
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVToolAdjustmentDialogSheetClass.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVToolAdjustmentDialogSheetClass.cpp_v  $
+ * 
+ *    Rev 1.2   09 Oct 2013 10:48:30   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  867
+ * SCR Title:  Change Tab Order for Window Tool and Image tool to match execution.
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Changed order of Mask and Threshold tabs in Add Pages function.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   09 May 2013 13:26:48   bWalter
  * Project:  SVObserver

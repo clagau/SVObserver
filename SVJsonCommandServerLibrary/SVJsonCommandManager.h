@@ -5,8 +5,8 @@
 //* .Module Name     : SVJsonCommandManager
 //* .File Name       : $Workfile:   SVJsonCommandManager.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   18 Jun 2013 17:15:08  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   01 Oct 2013 09:26:18  $
 //******************************************************************************
 
 #ifndef SVJSONCOMMANDMANAGER_H
@@ -35,10 +35,10 @@ public:
 	HRESULT ProcessJsonNotification( const std::string& p_rJsonNotification );
 
 protected:
-	typedef void (CALLBACK * SVAPCSignalHandler)(DWORD);
+	typedef void ( CALLBACK * SVAPCSignalHandler )( DWORD_PTR );
 	typedef boost::function<void ( bool& )> SVThreadProcessHandler;
 
-	static void CALLBACK APCThreadProcess( DWORD dwParam );
+	static void CALLBACK APCThreadProcess( DWORD_PTR dwParam );
 
 	SVJsonCommandManager();
 
@@ -70,7 +70,17 @@ private:
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVJsonCommandServerLibrary\SVJsonCommandManager.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVJsonCommandServerLibrary\SVJsonCommandManager.h_v  $
+ * 
+ *    Rev 1.2   01 Oct 2013 09:26:18   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   18 Jun 2013 17:15:08   bwalter
  * Project:  SVObserver

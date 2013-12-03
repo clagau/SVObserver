@@ -5,8 +5,8 @@
 //* .Module Name     : SVMaskShapeEditorDlg
 //* .File Name       : $Workfile:   SVMaskShapeEditorDlg.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   13 Aug 2013 10:24:58  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   01 Oct 2013 15:24:36  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -642,7 +642,7 @@ void SVMaskShapeEditorDlg::OnZoomInButton()
 		{
 			m_dZoom = *iter /100.0;
 			m_dialogImage.SetZoom( m_dZoom );
-			m_cbZoom.SetCurSel(iter - m_vecZoomLevels.begin());
+			m_cbZoom.SetCurSel(static_cast<int>(iter - m_vecZoomLevels.begin()));
 			break;
 		}
 	}
@@ -666,7 +666,7 @@ void SVMaskShapeEditorDlg::OnZoomOutButton()
 			{
 				m_dZoom = *iter / 100.0;
 				m_dialogImage.SetZoom( m_dZoom );
-				m_cbZoom.SetCurSel(iter.base() - m_vecZoomLevels.begin() - 1);
+				m_cbZoom.SetCurSel(static_cast<int>(iter.base() - m_vecZoomLevels.begin() - 1));
 				break;
 			}
 		}
@@ -736,7 +736,7 @@ void SVMaskShapeEditorDlg::OnSelchangeComboShape()
 		SVMaskShape::MapType mapOldProperties;
 		pOldShape->GetProperties( mapOldProperties );
 
-		DWORD dwType = m_cbMaskShape.GetItemData(iSel);
+		DWORD dwType = static_cast<DWORD>(m_cbMaskShape.GetItemData(iSel));
 		m_eShapeType = static_cast<SVShapeMaskHelperClass::ShapeTypeEnum> (dwType);	// change current shape
 
 		bool bMaintainSizePosition = true;
@@ -854,7 +854,7 @@ void SVMaskShapeEditorDlg::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResult
 
 			if ( lOldValue != lNewValue )
 			{
-				mapProperties[guidProperty] = lNewValue;
+				mapProperties[guidProperty] = static_cast< long >( lNewValue );
 
 				GetCurrentShape()->SetProperties( mapProperties );
 
@@ -1038,6 +1038,16 @@ void SVMaskShapeEditorDlg::OnCheckAutoResize()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVMaskShapeEditorDlg.cpp_v  $
+ * 
+ *    Rev 1.2   01 Oct 2013 15:24:36   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   13 Aug 2013 10:24:58   bWalter
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 // * .Module Name     : DisplayPicture.cpp
 // * .File Name       : $Workfile:   DisplayPicture.cpp  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.0  $
-// * .Check In Date   : $Date:   22 Apr 2013 11:07:50  $
+// * .Current Version : $Revision:   1.1  $
+// * .Check In Date   : $Date:   01 Oct 2013 08:25:50  $
 // ******************************************************************************
 
 #include "stdafx.h"
@@ -66,11 +66,11 @@ void CDisplayPicture::OnPaint()
 									 l_pImage->m_pucImageData, l_pImage->GetBitmapInfo().GetBitmapInfo(),
 									 DIB_RGB_COLORS, SRCCOPY);
 	}
-  else
-  {
-	  char *pStr = "Camera has no valid settings!";
-    dc.TextOut(0,0,pStr,strlen(pStr));
-  }
+	else
+	{
+		char *pStr = "Camera has no valid settings!";
+		dc.TextOut( 0, 0, pStr, static_cast< int >( strlen( pStr ) ) );
+	}
 
 	::InterlockedExchange( &m_BufferInUse, 0 );
 	// Do not call CStatic::OnPaint() for painting messages
@@ -99,6 +99,17 @@ HRESULT CDisplayPicture::GetNextBuffer( SVImageBufferInterface& p_rBuffer )
 // ******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVImageTest\DisplayPicture.cpp_v  $
+ * 
+ *    Rev 1.1   01 Oct 2013 08:25:50   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add X64 Platform
+ * 
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   22 Apr 2013 11:07:50   bWalter
  * Project:  SVObserver

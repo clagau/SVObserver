@@ -5,8 +5,8 @@
 //* .Module Name     : SVToolSetTabView
 //* .File Name       : $Workfile:   SVToolSetTabView.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.3  $
-//* .Check In Date   : $Date:   20 Sep 2013 14:51:06  $
+//* .Current Version : $Revision:   1.4  $
+//* .Check In Date   : $Date:   11 Nov 2013 07:39:48  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -755,7 +755,7 @@ void SVToolSetTabViewClass::OnSelectToolComment()
 				pSelectedTool = pToolSet->GetToolAt( pos );
 				ASSERT(pSelectedTool);
 				CString csToolComment;
-				SVStringValueObjectClass* l_pVo = pSelectedTool->GetToolComment(); 
+				SVValueObjectClass* l_pVo = pSelectedTool->GetToolComment(); 
 				// bring up tool comment edit.
 				HRESULT hr = l_pVo->GetValue( csToolComment );
 				if( hr == S_OK)
@@ -1081,6 +1081,16 @@ BOOL SVToolSetTabViewClass::GetParameters(SVObjectWriter& rWriter)
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVToolSetTabView.cpp_v  $
+ * 
+ *    Rev 1.4   11 Nov 2013 07:39:48   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  872
+ * SCR Title:  Add Archive Tool Headers to Archive File
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Changed tool comment from SVStringValueObjectClass to SVStaticStringValueObjectClass.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   20 Sep 2013 14:51:06   bwalter
  * Project:  SVObserver

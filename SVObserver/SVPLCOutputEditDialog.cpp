@@ -5,11 +5,12 @@
 //* .Module Name     : SVPLCOutputEditDialog
 //* .File Name       : $Workfile:   SVPLCOutputEditDialog.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.3  $
-//* .Check In Date   : $Date:   07 Aug 2013 13:23:10  $
+//* .Current Version : $Revision:   1.4  $
+//* .Check In Date   : $Date:   30 Oct 2013 11:00:30  $
 //******************************************************************************
 
 #include "stdafx.h"
+#ifndef _WIN64
 #include "SVObserver.h"
 #include "SVConfigurationObject.h"
 #include "SVPLCOutputEditDialog.h"
@@ -281,12 +282,23 @@ BOOL SVPLCOutputEditDialog::PreTranslateMessage(MSG* pMsg)
 	return CDialog::PreTranslateMessage(pMsg);
 }
 
+#endif
 
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVPLCOutputEditDialog.cpp_v  $
+ * 
+ *    Rev 1.4   30 Oct 2013 11:00:30   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Added #ifndef _WIN64 to remove deprecated code from the 64bit solution.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   07 Aug 2013 13:23:10   sjones
  * Project:  SVObserver

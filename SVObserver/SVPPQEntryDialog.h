@@ -5,8 +5,8 @@
 //* .Module Name     : SVPPQEntryDialog
 //* .File Name       : $Workfile:   SVPPQEntryDialog.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   06 May 2013 20:11:56  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   02 Oct 2013 07:01:56  $
 //******************************************************************************
 
 #ifndef SVPPQENTRYDIALOG_H
@@ -205,7 +205,7 @@ protected:
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(SVPPQEntryDialogPropertySheetClass)
 	public:
-	virtual int DoModal();
+	virtual INT_PTR DoModal();
 	//}}AFX_VIRTUAL
 
 // Implementation
@@ -241,7 +241,17 @@ protected:
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVPPQEntryDialog.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVPPQEntryDialog.h_v  $
+ * 
+ *    Rev 1.2   02 Oct 2013 07:01:56   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   06 May 2013 20:11:56   bWalter
  * Project:  SVObserver

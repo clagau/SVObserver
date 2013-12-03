@@ -5,8 +5,8 @@
 // * .Module Name     : PropertyItemFile.cpp
 // * .File Name       : $Workfile:   SVFileEditCtrl.cpp  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.0  $
-// * .Check In Date   : $Date:   22 Apr 2013 13:36:40  $
+// * .Current Version : $Revision:   1.1  $
+// * .Check In Date   : $Date:   01 Oct 2013 09:57:48  $
 // ******************************************************************************
 
 #include "stdafx.h"
@@ -199,7 +199,7 @@ BOOL SVFileEditCtrl::FECBrowseForFolder()
 		m_bi.lParam = (LPARAM)(LPCTSTR)Path; // set lParam to point to path
 		m_bi.lpfn = FECCallBackProc;	// set the callback procedure
 	}
-	ITEMIDLIST *idl = SHBrowseForFolder (&m_bi);
+	LPITEMIDLIST idl = SHBrowseForFolder (&m_bi);
 	if (!Display)		// reset m_bi to clear the DisplayName
 		m_bi.pszDisplayName = NULL;
 	if (!Proc)			// reset m_bi to clear the default callback proc.
@@ -348,20 +348,20 @@ CString SVFileEditCtrl::GetNextPathName(POSITION &pos)
 		return (CString)"";
 	}
 
-	UINT x;
+	unsigned long x;
 	TCHAR *str = (TCHAR *)pos;
 	TCHAR *ptr = _tcschr(str, ';');
 	if (ptr)
 	{
-		x = ptr - str;
-		if ((UINT)(str - m_buffer) + x + 1 >= _tcslen(m_buffer))
+		x = static_cast<unsigned long>(ptr - str);
+		if (static_cast<unsigned long>((str - m_buffer)) + x + 1 >= _tcslen(m_buffer))
 			pos = NULL;
 		else
-			pos = (POSITION)((UINT)pos + x + 1);
+			pos = (POSITION)(pos + x + 1);
 	}
 	else
 	{
-		x = _tcslen(str);
+		x = static_cast<unsigned long>(_tcslen(str));
 		pos = NULL;
 	}
 	CString retval = str;
@@ -418,7 +418,7 @@ BOOL SVFileEditCtrl::PreTranslateMessage(MSG* pMsg)
 	// Make sure that the keystrokes continue to the appropriate handlers
 	if( pMsg->message == WM_KEYDOWN )
 	{
-		UINT nChar = pMsg->wParam;
+		UINT nChar = static_cast<UINT>(pMsg->wParam);
 
 		if ((nChar == VK_PRIOR || nChar == VK_NEXT ||
 				nChar == VK_DOWN  || nChar == VK_UP   ||
@@ -509,6 +509,16 @@ void SVFileEditCtrl::AllocateBuffer(int len)
 // ******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVLibrary\SVFileEditCtrl.cpp_v  $
+ * 
+ *    Rev 1.1   01 Oct 2013 09:57:48   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   22 Apr 2013 13:36:40   bWalter
  * Project:  SVObserver

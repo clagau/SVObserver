@@ -5,8 +5,8 @@
 //* .Module Name     : SVSocketRemoteCommandManager
 //* .File Name       : $Workfile:   SVSocketRemoteCommandManager.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.3  $
-//* .Check In Date   : $Date:   05 Jul 2013 09:11:20  $
+//* .Current Version : $Revision:   1.4  $
+//* .Check In Date   : $Date:   30 Oct 2013 15:40:16  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -37,6 +37,7 @@ SVRemoteCommandFunctions::SVCommandFunctionMap SVRemoteCommandFunctions::m_Async
 (SVRC::cmdName::getItems, &SVRemoteCommandFunctions::GetItems)
 (SVRC::cmdName::getFile, &SVRemoteCommandFunctions::GetDeviceFile)
 (SVRC::cmdName::getReport, &SVRemoteCommandFunctions::GetDeviceConfigReport)
+(SVRC::cmdName::getDefList, &SVRemoteCommandFunctions::GetDataDefinitionList)
 (SVRC::cmdName::putConfig, &SVRemoteCommandFunctions::PutConfig)
 (SVRC::cmdName::putFile, &SVRemoteCommandFunctions::PutDeviceFile)
 (SVRC::cmdName::setMode, &SVRemoteCommandFunctions::SetDeviceMode)
@@ -342,6 +343,44 @@ HRESULT SVRemoteCommandFunctions::ConvertStorageResultImageFileToJsonValue( cons
 	return l_Status;
 }
 
+/*####################################################################################################################################
+*	ConvertDataDefinitionToJsonValue	Converts the data definition structure to a Json value
+*	Return: 							The status result of the method  
+*
+*	p_rDataDefinition					The data definition structure to convert
+*	p_rJsonValue						The resulting Json value after conversion
+*#####################################################################################################################################
+*/
+HRESULT SVRemoteCommandFunctions::ConvertDataDefinitionToJsonValue( const SVDataDefinitionStruct& p_rDataDefinition , Json::Value& p_rJsonValue )
+{
+	HRESULT l_Status = S_OK;
+
+	if( p_rJsonValue.isObject() )
+	{
+		p_rJsonValue[SVRC::ddlo::name] = p_rDataDefinition.m_Name.c_str();
+		p_rJsonValue[SVRC::ddlo::writable] = p_rDataDefinition.m_Writable;
+		p_rJsonValue[SVRC::ddlo::published] = p_rDataDefinition.m_Published;
+		p_rJsonValue[SVRC::ddlo::type] = p_rDataDefinition.m_Type.c_str();
+
+		Json::Value l_AddInfoArray(Json::arrayValue);
+		for( SVStringArray::const_iterator l_Iter = p_rDataDefinition.m_AdditionalInfo.begin(); l_Iter != p_rDataDefinition.m_AdditionalInfo.end(); ++l_Iter )
+		{
+			Json::Value l_Value(Json::objectValue);
+			l_Value = l_Iter->c_str();
+			l_AddInfoArray.append(l_Value);
+		}
+		p_rJsonValue[SVRC::ddlo::add_info] = l_AddInfoArray;
+	}
+	else
+	{
+		p_rJsonValue.clear();
+
+		l_Status = E_UNEXPECTED;
+	}
+
+	return l_Status;
+}
+
 HRESULT SVRemoteCommandFunctions::AddJsonValuesToStorageItems( const Json::Value& p_rJsonValues, SVNameStorageMap& p_rItems )
 {
 	HRESULT l_Status = S_OK;
@@ -508,138 +547,57 @@ HRESULT SVRemoteCommandFunctions::CommandNotFound( const std::string& p_rJsonCom
 {
 	HRESULT l_Status = S_FALSE;
 
-	#ifdef SV_OUTPUT_JSON
-		Json::Reader l_Reader;
-		Json::Value l_JsonValues;
+	std::string l_FileName = _T("C:\\temp\\CommandNotFound-cmd");
+	WriteJsonCommandToFile(p_rJsonCommand, l_FileName);
 
-		if( l_Reader.parse( p_rJsonCommand, l_JsonValues, false ) )
-		{
-			std::string l_FileName;
-
-			SVJsonUtilities::GetTempFileNameUsingPrefixAndExt( l_FileName, "C:\\temp\\CommandNotFound-cmd", ".json" );
-			SVJsonUtilities::WriteJsonValueToFile( l_JsonValues, l_FileName );
-		}
-	#endif
-
-	Json::FastWriter l_Writer;
-	Json::Value l_Object(Json::objectValue);
 	Json::Value l_Results(Json::objectValue);
-	std::string l_Name;
-	long l_Id = 0;
 
-	GetCommandName( p_rJsonCommand, l_Name );
-	GetCommandId( p_rJsonCommand, l_Id );
+	l_Status = E_FAIL;
 
-	l_Object[ SVRC::cmd::name ] = l_Name;
-	l_Object[ SVRC::cmd::id ] = l_Id;
-	l_Object[ SVRC::cmd::hr ] = E_FAIL;
-	l_Object[ SVRC::cmd::reslts ] = l_Results;
-
-	p_rJsonResults = l_Writer.write( l_Object ).c_str();
-	
-	#ifdef SV_OUTPUT_JSON
-		std::string l_RspFileNane;
-		SVJsonUtilities::GetTempFileNameUsingPrefixAndExt( l_RspFileNane, "C:\\temp\\CommandNotFound-rsp", ".json" );
-		SVJsonUtilities::WriteJsonValueToFile( l_Object, l_RspFileNane );
-	#endif
+	l_FileName = _T("C:\\temp\\CommandNotFound-rsp");
+	WriteResultToJsonAndFile(p_rJsonCommand, p_rJsonResults, l_Results, l_FileName, l_Status);
 
 	return l_Status;
 }
 
-HRESULT SVRemoteCommandFunctions::GetDeviceMode( const std::string& p_rJsonCommand, std::string& p_rJsonResult )
+HRESULT SVRemoteCommandFunctions::GetDeviceMode( const std::string& p_rJsonCommand, std::string& p_rJsonResults )
 {
 	HRESULT l_Status = S_OK;
 
-	#ifdef SV_OUTPUT_JSON
-		Json::Reader l_Reader;
-		Json::Value l_JsonValues;
-
-		if( l_Reader.parse( p_rJsonCommand, l_JsonValues, false ) )
-		{
-			std::string l_FileName;
-
-			SVJsonUtilities::GetTempFileNameUsingPrefixAndExt( l_FileName, "C:\\temp\\GetDeviceMode-cmd", ".json" );
-			SVJsonUtilities::WriteJsonValueToFile( l_JsonValues, l_FileName );
-		}
-	#endif
+	std::string l_FileName = _T("C:\\temp\\GetDeviceMode-cmd");
+	WriteJsonCommandToFile(p_rJsonCommand, l_FileName);
 
 	unsigned long l_Mode = SVIM_MODE_UNKNOWN;
 
 	l_Status = SVVisionProcessorHelper::Instance().GetConfigurationMode( l_Mode );
 
-	Json::FastWriter l_Writer;
-	Json::Value l_Object(Json::objectValue);
 	Json::Value l_Results(Json::objectValue);
-	std::string l_Name;
-	long l_Id = 0;
-
-	GetCommandName( p_rJsonCommand, l_Name );
-	GetCommandId( p_rJsonCommand, l_Id );
-
-	l_Object[ SVRC::cmd::name ] = l_Name;
-	l_Object[ SVRC::cmd::id ] = l_Id;
-	l_Object[ SVRC::cmd::hr ] = l_Status;
 
 	l_Results[ SVRC::result::mode ] = static_cast< Json::Value::UInt >( l_Mode );
 
-	l_Object[ SVRC::cmd::reslts ] = l_Results;
-
-	p_rJsonResult = l_Writer.write( l_Object ).c_str();
-	
-	#ifdef SV_OUTPUT_JSON
-		std::string l_RspFileNane;
-		SVJsonUtilities::GetTempFileNameUsingPrefixAndExt( l_RspFileNane, "C:\\temp\\GetDeviceMode-rsp", ".json" );
-		SVJsonUtilities::WriteJsonValueToFile( l_Object, l_RspFileNane );
-	#endif
+	l_FileName = _T("C:\\temp\\GetDeviceMode-rsp");
+	WriteResultToJsonAndFile(p_rJsonCommand, p_rJsonResults, l_Results, l_FileName, l_Status);
 
 	return l_Status;
 }
 
-HRESULT SVRemoteCommandFunctions::GetState( const std::string& p_rJsonCommand, std::string& p_rJsonResult )
+HRESULT SVRemoteCommandFunctions::GetState( const std::string& p_rJsonCommand, std::string& p_rJsonResults )
 {
 	HRESULT l_Status = S_OK;
 
-	#ifdef SV_OUTPUT_JSON
-		Json::Reader l_Reader;
-		Json::Value l_JsonValues;
-
-		if( l_Reader.parse( p_rJsonCommand, l_JsonValues, false ) )
-		{
-			std::string l_FileName;
-
-			SVJsonUtilities::GetTempFileNameUsingPrefixAndExt( l_FileName, "C:\\temp\\GetState-cmd", ".json" );
-			SVJsonUtilities::WriteJsonValueToFile( l_JsonValues, l_FileName );
-		}
-	#endif
+	std::string l_FileName = _T("C:\\temp\\GetState-cmd");
+	WriteJsonCommandToFile(p_rJsonCommand, l_FileName);
 
 	unsigned long l_State = 0;
 
 	l_Status = SVVisionProcessorHelper::Instance().GetState( l_State );
 
-	Json::FastWriter l_Writer;
-	Json::Value l_Object(Json::objectValue);
 	Json::Value l_Results(Json::objectValue);
-	std::string l_Name;
-	long l_Id = 0;
-
-	GetCommandName( p_rJsonCommand, l_Name );
-	GetCommandId( p_rJsonCommand, l_Id );
-
-	l_Object[ SVRC::cmd::name ] = l_Name;
-	l_Object[ SVRC::cmd::id ] = l_Id;
-	l_Object[ SVRC::cmd::hr ] = l_Status;
 
 	l_Results[ SVRC::result::state ] = static_cast< Json::Value::UInt >( l_State );
 
-	l_Object[ SVRC::cmd::reslts ] = l_Results;
-
-	p_rJsonResult = l_Writer.write( l_Object ).c_str();
-
-	#ifdef SV_OUTPUT_JSON
-		std::string l_RspFileNane;
-		SVJsonUtilities::GetTempFileNameUsingPrefixAndExt( l_RspFileNane, "C:\\temp\\GetState-rsp", ".json" );
-		SVJsonUtilities::WriteJsonValueToFile( l_Object, l_RspFileNane );
-	#endif
+	l_FileName = _T("C:\\temp\\GetState-rsp");
+	WriteResultToJsonAndFile(p_rJsonCommand, p_rJsonResults, l_Results, l_FileName, l_Status);
 
 	return l_Status;
 }
@@ -648,47 +606,19 @@ HRESULT SVRemoteCommandFunctions::GetVersions( const std::string& p_rJsonCommand
 {
 	HRESULT l_Status = S_OK;
 
-	#ifdef SV_OUTPUT_JSON
-		Json::Reader l_Reader;
-		Json::Value l_JsonValues;
-
-		if( l_Reader.parse( p_rJsonCommand, l_JsonValues, false ) )
-		{
-			std::string l_FileName;
-
-			SVJsonUtilities::GetTempFileNameUsingPrefixAndExt( l_FileName, "C:\\temp\\GetVersions-cmd", ".json" );
-			SVJsonUtilities::WriteJsonValueToFile( l_JsonValues, l_FileName );
-		}
-	#endif
+	std::string l_FileName = _T("C:\\temp\\GetVersions-cmd");
+	WriteJsonCommandToFile(p_rJsonCommand, l_FileName);
 
 	SVString l_Version;
 
 	l_Status = SVVisionProcessorHelper::Instance().GetVersion( l_Version );
 
-	Json::FastWriter l_Writer;
-	Json::Value l_Object(Json::objectValue);
 	Json::Value l_Results(Json::objectValue);
-	std::string l_Name;
-	long l_Id = 0;
-
-	GetCommandName( p_rJsonCommand, l_Name );
-	GetCommandId( p_rJsonCommand, l_Id );
-
-	l_Object[ SVRC::cmd::name ] = l_Name;
-	l_Object[ SVRC::cmd::id ] = l_Id;
-	l_Object[ SVRC::cmd::hr ] = l_Status;
 
 	l_Results[ SVRC::result::SVO_ver ] = l_Version.ToDataType();
 
-	l_Object[ SVRC::cmd::reslts ] = l_Results;
-
-	p_rJsonResults = l_Writer.write( l_Object ).c_str();
-	
-	#ifdef SV_OUTPUT_JSON
-		std::string l_RspFileNane;
-		SVJsonUtilities::GetTempFileNameUsingPrefixAndExt( l_RspFileNane, "C:\\temp\\GetVersions-rsp", ".json" );
-		SVJsonUtilities::WriteJsonValueToFile( l_Object, l_RspFileNane );
-	#endif
+	l_FileName = _T("C:\\temp\\GetVersions-rsp");
+	WriteResultToJsonAndFile(p_rJsonCommand, p_rJsonResults, l_Results, l_FileName, l_Status);
 
 	return l_Status;
 }
@@ -697,47 +627,19 @@ HRESULT SVRemoteCommandFunctions::GetDeviceOfflineCount( const std::string& p_rJ
 {
 	HRESULT l_Status = S_OK;
 
-	#ifdef SV_OUTPUT_JSON
-		Json::Reader l_Reader;
-		Json::Value l_JsonValues;
-
-		if( l_Reader.parse( p_rJsonCommand, l_JsonValues, false ) )
-		{
-			std::string l_FileName;
-
-			SVJsonUtilities::GetTempFileNameUsingPrefixAndExt( l_FileName, "C:\\temp\\GetDeviceOfflineCount-cmd", ".json" );
-			SVJsonUtilities::WriteJsonValueToFile( l_JsonValues, l_FileName );
-		}
-	#endif
+	std::string l_FileName = _T("C:\\temp\\GetDeviceOfflineCount-cmd");
+	WriteJsonCommandToFile(p_rJsonCommand, l_FileName);
 
 	unsigned long l_OfflineCount;
 
 	l_Status = SVVisionProcessorHelper::Instance().GetOfflineCount( l_OfflineCount );
 
-	Json::FastWriter l_Writer;
-	Json::Value l_Object(Json::objectValue);
 	Json::Value l_Results(Json::objectValue);
-	std::string l_Name;
-	long l_Id = 0;
-
-	GetCommandName( p_rJsonCommand, l_Name );
-	GetCommandId( p_rJsonCommand, l_Id );
-
-	l_Object[ SVRC::cmd::name ] = l_Name;
-	l_Object[ SVRC::cmd::id ] = l_Id;
-	l_Object[ SVRC::cmd::hr ] = l_Status;
 
 	l_Results[ SVRC::result::count ] = static_cast< Json::Value::UInt >( l_OfflineCount );
 
-	l_Object[ SVRC::cmd::reslts ] = l_Results;
-
-	p_rJsonResults = l_Writer.write( l_Object ).c_str();
-	
-	#ifdef SV_OUTPUT_JSON
-		std::string l_RspFileNane;
-		SVJsonUtilities::GetTempFileNameUsingPrefixAndExt( l_RspFileNane, "C:\\temp\\GetDeviceOfflineCount-rsp", ".json" );
-		SVJsonUtilities::WriteJsonValueToFile( l_Object, l_RspFileNane );
-	#endif
+	l_FileName = _T("C:\\temp\\GetDeviceOfflineCount-rsp");
+	WriteResultToJsonAndFile(p_rJsonCommand, p_rJsonResults, l_Results, l_FileName, l_Status);
 
 	return l_Status;
 }
@@ -754,22 +656,18 @@ HRESULT SVRemoteCommandFunctions::GetConfig( const std::string& p_rJsonCommand, 
 
 	std::string l_RemoteFilePath;
 	Json::Reader l_Reader;
-	Json::Value l_JsonValues;
+	Json::Value l_JsonCmdValues;
 
-	if( l_Reader.parse( p_rJsonCommand, l_JsonValues, false ) )
+	if( l_Reader.parse( p_rJsonCommand, l_JsonCmdValues, false ) )
 	{
-		#ifdef SV_OUTPUT_JSON
-			std::string l_FileName;
-
-			SVJsonUtilities::GetTempFileNameUsingPrefixAndExt( l_FileName, "C:\\temp\\GetConfig-cmd", ".json" );
-			SVJsonUtilities::WriteJsonValueToFile( l_JsonValues, l_FileName );
-		#endif
+		std::string l_FileName = _T("C:\\temp\\GetConfig-cmd");
+		WriteJsonCommandToFile(l_JsonCmdValues, l_FileName);
 
 		Json::Value l_JsonArguments;
 
-		if( l_JsonValues.isObject() )
+		if( l_JsonCmdValues.isObject() )
 		{
-			l_JsonArguments = l_JsonValues[ SVRC::cmd::arg ];
+			l_JsonArguments = l_JsonCmdValues[ SVRC::cmd::arg ];
 		}
 
 		if( l_JsonArguments.isObject() )
@@ -814,18 +712,7 @@ HRESULT SVRemoteCommandFunctions::GetConfig( const std::string& p_rJsonCommand, 
 		#endif
 	}
 
-	Json::FastWriter l_Writer;
-	Json::Value l_Object(Json::objectValue);
 	Json::Value l_Results(Json::objectValue);
-	std::string l_Name;
-	long l_Id = 0;
-
-	GetCommandName( p_rJsonCommand, l_Name );
-	GetCommandId( p_rJsonCommand, l_Id );
-
-	l_Object[ SVRC::cmd::name ] = l_Name;
-	l_Object[ SVRC::cmd::id ] = l_Id;
-	l_Object[ SVRC::cmd::hr ] = l_Status;
 
 	if( l_Status == S_OK )
 	{
@@ -838,15 +725,8 @@ HRESULT SVRemoteCommandFunctions::GetConfig( const std::string& p_rJsonCommand, 
 		#endif
 	}
 
-	l_Object[ SVRC::cmd::reslts ] = l_Results;
-
-	p_rJsonResults = l_Writer.write( l_Object ).c_str();
-
-	#ifdef SV_OUTPUT_JSON
-		std::string l_RspFileNane;
-		SVJsonUtilities::GetTempFileNameUsingPrefixAndExt( l_RspFileNane, "C:\\temp\\GetConfig-rsp", ".json" );
-		SVJsonUtilities::WriteJsonValueToFile( l_Object, l_RspFileNane );
-	#endif
+	std::string l_FileName = _T("C:\\temp\\GetConfig-rsp");
+	WriteResultToJsonAndFile(p_rJsonCommand, p_rJsonResults, l_Results, l_FileName, l_Status);
 
 	return l_Status;
 }
@@ -859,22 +739,18 @@ HRESULT SVRemoteCommandFunctions::GetItems( const std::string& p_rJsonCommand, s
 	SVNameStorageResultMap l_Items;
 
 	Json::Reader l_Reader;
-	Json::Value l_JsonValues;
+	Json::Value l_JsonCmdValues;
 
-	if( l_Reader.parse( p_rJsonCommand, l_JsonValues, false ) )
+	if( l_Reader.parse( p_rJsonCommand, l_JsonCmdValues, false ) )
 	{
-		#ifdef SV_OUTPUT_JSON
-			std::string l_FileName;
-
-			SVJsonUtilities::GetTempFileNameUsingPrefixAndExt( l_FileName, "C:\\temp\\GetItems-cmd", ".json" );
-			SVJsonUtilities::WriteJsonValueToFile( l_JsonValues, l_FileName );
-		#endif
+		std::string l_FileName = _T("C:\\temp\\GetItems-cmd");
+		WriteJsonCommandToFile(l_JsonCmdValues, l_FileName);
 
 		Json::Value l_JsonArguments;
 
-		if( l_JsonValues.isObject() )
+		if( l_JsonCmdValues.isObject() )
 		{
-			l_JsonArguments = l_JsonValues[ SVRC::cmd::arg ];
+			l_JsonArguments = l_JsonCmdValues[ SVRC::cmd::arg ];
 		}
 
 		if( l_JsonArguments.isObject() )
@@ -1011,26 +887,8 @@ HRESULT SVRemoteCommandFunctions::GetItems( const std::string& p_rJsonCommand, s
 		l_Status = E_INVALIDARG;
 	}
 
-	Json::FastWriter l_Writer;
-	Json::Value l_Object(Json::objectValue);
-	std::string l_Name;
-	long l_Id = 0;
-
-	GetCommandName( p_rJsonCommand, l_Name );
-	GetCommandId( p_rJsonCommand, l_Id );
-
-	l_Object[ SVRC::cmd::name ] = l_Name;
-	l_Object[ SVRC::cmd::id ] = l_Id;
-	l_Object[ SVRC::cmd::hr ] = l_Status;
-	l_Object[ SVRC::cmd::reslts ] = l_Results;
-
-	p_rJsonResults = l_Writer.write( l_Object ).c_str();
-
-	#ifdef SV_OUTPUT_JSON
-		std::string l_RspFileNane;
-		SVJsonUtilities::GetTempFileNameUsingPrefixAndExt( l_RspFileNane, "C:\\temp\\GetItems-rsp", ".json" );
-		SVJsonUtilities::WriteJsonValueToFile( l_Object, l_RspFileNane );
-	#endif
+	std::string l_FileName = _T("C:\\temp\\GetItems-rsp");
+	WriteResultToJsonAndFile(p_rJsonCommand, p_rJsonResults, l_Results, l_FileName, l_Status);
 
 	return l_Status;
 }
@@ -1048,22 +906,18 @@ HRESULT SVRemoteCommandFunctions::GetDeviceFile( const std::string& p_rJsonComma
 	#endif
 
 	Json::Reader l_Reader;
-	Json::Value l_JsonValues;
+	Json::Value l_JsonCmdValues;
 
-	if( l_Reader.parse( p_rJsonCommand, l_JsonValues, false ) )
+	if( l_Reader.parse( p_rJsonCommand, l_JsonCmdValues, false ) )
 	{
-		#ifdef SV_OUTPUT_JSON
-			std::string l_FileName;
-
-			SVJsonUtilities::GetTempFileNameUsingPrefixAndExt( l_FileName, "C:\\temp\\GetDeviceFile-cmd", ".json" );
-			SVJsonUtilities::WriteJsonValueToFile( l_JsonValues, l_FileName );
-		#endif
+		std::string l_FileName = _T("C:\\temp\\GetDeviceFile-cmd");
+		WriteJsonCommandToFile(l_JsonCmdValues, l_FileName);
 
 		Json::Value l_JsonArguments;
 
-		if( l_JsonValues.isObject() )
+		if( l_JsonCmdValues.isObject() )
 		{
-			l_JsonArguments = l_JsonValues[ SVRC::cmd::arg ];
+			l_JsonArguments = l_JsonCmdValues[ SVRC::cmd::arg ];
 		}
 
 		if( l_JsonArguments.isObject() )
@@ -1119,18 +973,7 @@ HRESULT SVRemoteCommandFunctions::GetDeviceFile( const std::string& p_rJsonComma
 		}
 	}
 
-	Json::FastWriter l_Writer;
-	Json::Value l_Object(Json::objectValue);
 	Json::Value l_Results(Json::objectValue);
-	std::string l_Name;
-	long l_Id = 0;
-
-	GetCommandName( p_rJsonCommand, l_Name );
-	GetCommandId( p_rJsonCommand, l_Id );
-
-	l_Object[ SVRC::cmd::name ] = l_Name;
-	l_Object[ SVRC::cmd::id ] = l_Id;
-	l_Object[ SVRC::cmd::hr ] = l_Status;
 
 	if( l_Status == S_OK )
 	{
@@ -1143,15 +986,8 @@ HRESULT SVRemoteCommandFunctions::GetDeviceFile( const std::string& p_rJsonComma
 		#endif
 	}
 
-	l_Object[ SVRC::cmd::reslts ] = l_Results;
-
-	p_rJsonResults = l_Writer.write( l_Object ).c_str();
-
-	#ifdef SV_OUTPUT_JSON
-		std::string l_RspFileNane;
-		SVJsonUtilities::GetTempFileNameUsingPrefixAndExt( l_RspFileNane, "C:\\temp\\GetDeviceFile-rsp", ".json" );
-		SVJsonUtilities::WriteJsonValueToFile( l_Object, l_RspFileNane );
-	#endif
+	std::string l_FileName = _T("C:\\temp\\GetDeviceFile-rsp");
+	WriteResultToJsonAndFile(p_rJsonCommand, p_rJsonResults, l_Results, l_FileName, l_Status);
 
 	return l_Status;
 }
@@ -1160,50 +996,119 @@ HRESULT SVRemoteCommandFunctions::GetDeviceConfigReport( const std::string& p_rJ
 {
 	HRESULT l_Status = S_OK;
 
-	#ifdef SV_OUTPUT_JSON
-		Json::Reader l_Reader;
-		Json::Value l_JsonValues;
-
-		if( l_Reader.parse( p_rJsonCommand, l_JsonValues, false ) )
-		{
-			std::string l_FileName;
-
-			SVJsonUtilities::GetTempFileNameUsingPrefixAndExt( l_FileName, "C:\\temp\\GetDeviceConfigReport-cmd", ".json" );
-			SVJsonUtilities::WriteJsonValueToFile( l_JsonValues, l_FileName );
-		}
-	#endif
+	std::string l_FileName = _T("C:\\temp\\GetDeviceConfigReport-cmd");
+	WriteJsonCommandToFile(p_rJsonCommand, l_FileName);
 
 	SVString l_Report;
 
 	l_Status = SVVisionProcessorHelper::Instance().GetConfigurationPrintReport( l_Report );
 
-	Json::FastWriter l_Writer;
-	Json::Value l_Object(Json::objectValue);
 	Json::Value l_Results(Json::objectValue);
-	std::string l_Name;
-	long l_Id = 0;
-
-	GetCommandName( p_rJsonCommand, l_Name );
-	GetCommandId( p_rJsonCommand, l_Id );
-
-	l_Object[ SVRC::cmd::name ] = l_Name;
-	l_Object[ SVRC::cmd::id ] = l_Id;
-	l_Object[ SVRC::cmd::hr ] = l_Status;
 
 	if( l_Status == S_OK )
 	{
 		l_Results[ SVRC::result::report ] = l_Report.ToDataType();
 	}
 
-	l_Object[ SVRC::cmd::reslts ] = l_Results;
+	l_FileName = _T("C:\\temp\\GetDeviceConfigReport-rsp");
+	WriteResultToJsonAndFile(p_rJsonCommand, p_rJsonResults, l_Results, l_FileName, l_Status);
 
-	p_rJsonResults = l_Writer.write( l_Object ).c_str();
+	return l_Status;
+}
+
+/*####################################################################################################################################
+*	GetDataDefinitionList				Gets the list of data definitions for Value objects or, and Images
+*	Return: 							The status result of the method  
+*
+*	p_rJsonCommand						The original Json command in string format
+*	p_rJsonResults						The string in which the Json results is saved in
+*#####################################################################################################################################
+*/
+HRESULT SVRemoteCommandFunctions::GetDataDefinitionList( const std::string& p_rJsonCommand, std::string& p_rJsonResults )
+{
+	HRESULT l_Status = S_OK;
+
+	std::string l_InspectionName;
+	SVDataDefinitionListType l_DataDefinitionType = UnknownDataDefinition;
+	Json::Reader l_Reader;
+	Json::Value l_JsonCmdValues;
+
+	if( l_Reader.parse( p_rJsonCommand, l_JsonCmdValues, false ) )
+	{
+		std::string l_FileName = _T("C:\\temp\\GetDataDefinitionList-cmd");
+		WriteJsonCommandToFile(l_JsonCmdValues, l_FileName);
+
+		Json::Value l_JsonArguments;
+
+		if( l_JsonCmdValues.isObject() )
+		{
+			l_JsonArguments = l_JsonCmdValues[ SVRC::cmd::arg ];
+		}
+
+		if( l_JsonArguments.isObject() )
+		{
+			Json::Value l_JsonInspectionName;
+			Json::Value l_JsonListType;
+
+			l_JsonInspectionName = l_JsonArguments[ SVRC::arg::inspectionName ];
+
+			if( l_JsonInspectionName.isString() )
+			{
+				l_InspectionName = l_JsonInspectionName.asString();
+			}
+
+			l_JsonListType = l_JsonArguments[ SVRC::arg::listType ];
+
+			if( l_JsonListType.isInt() )
+			{
+				l_DataDefinitionType = (SVDataDefinitionListType) l_JsonListType.asInt();
+			}
+			else if( l_JsonListType.isUInt() )
+			{
+				l_DataDefinitionType = (SVDataDefinitionListType) l_JsonListType.asUInt();
+			}
+			else
+			{
+				l_Status = E_INVALIDARG;
+			}
+		}
+	}
+
+	if( UnknownDataDefinition == l_DataDefinitionType)
+	{
+		l_Status = E_INVALIDARG;
+	}
 	
-	#ifdef SV_OUTPUT_JSON
-		std::string l_RspFileNane;
-		SVJsonUtilities::GetTempFileNameUsingPrefixAndExt( l_RspFileNane, "C:\\temp\\GetDeviceConfigReport-rsp", ".json" );
-		SVJsonUtilities::WriteJsonValueToFile( l_Object, l_RspFileNane );
-	#endif
+
+	SVString l_Report;
+	SVDataDefinitionStructArray l_DataDefinitionArray;
+
+	if( l_Status == S_OK)
+	{
+		l_Status = SVVisionProcessorHelper::Instance().GetDataDefinitionList(l_InspectionName,  l_DataDefinitionType, l_DataDefinitionArray);
+	}
+
+	Json::Value l_Results(Json::objectValue);
+	Json::Value l_EntryArray(Json::arrayValue);
+
+	for( SVDataDefinitionStructArray::const_iterator l_Iter = l_DataDefinitionArray.begin(); l_Iter != l_DataDefinitionArray.end(); ++l_Iter )
+	{
+		HRESULT l_LoopStatus = S_OK;
+		Json::Value l_Element(Json::objectValue);
+		l_LoopStatus = ConvertDataDefinitionToJsonValue(*l_Iter, l_Element);
+		l_EntryArray.append(l_Element);
+	}
+
+	if( l_Status == S_OK )
+	{
+		Json::Value l_JsonItems(Json::objectValue);
+
+		l_JsonItems[ SVRC::result::entries ] = l_EntryArray;
+		l_Results[ SVRC::result::items ] = l_JsonItems;
+	}
+
+	std::string l_FileName = _T("C:\\temp\\GetDataDefinitionList-rsp");
+	WriteResultToJsonAndFile(p_rJsonCommand, p_rJsonResults, l_Results, l_FileName, l_Status);
 
 	return l_Status;
 }
@@ -1214,22 +1119,18 @@ HRESULT SVRemoteCommandFunctions::PutConfig( const std::string& p_rJsonCommand, 
 
 	std::string l_SourceFileName;
 	Json::Reader l_Reader;
-	Json::Value l_JsonValues;
+	Json::Value l_JsonCmdValues;
 
-	if( l_Reader.parse( p_rJsonCommand, l_JsonValues, false ) )
+	if( l_Reader.parse( p_rJsonCommand, l_JsonCmdValues, false ) )
 	{
-		#ifdef SV_OUTPUT_JSON
-			std::string l_FileName;
-
-			SVJsonUtilities::GetTempFileNameUsingPrefixAndExt( l_FileName, "C:\\temp\\PutConfig-cmd", ".json" );
-			SVJsonUtilities::WriteJsonValueToFile( l_JsonValues, l_FileName );
-		#endif
+		std::string l_FileName = _T("C:\\temp\\PutConfig-cmd");
+		WriteJsonCommandToFile(l_JsonCmdValues, l_FileName);
 
 		Json::Value l_JsonArguments;
 
-		if( l_JsonValues.isObject() )
+		if( l_JsonCmdValues.isObject() )
 		{
-			l_JsonArguments = l_JsonValues[ SVRC::cmd::arg ];
+			l_JsonArguments = l_JsonCmdValues[ SVRC::cmd::arg ];
 		}
 
 		if( l_JsonArguments.isObject() )
@@ -1304,27 +1205,10 @@ HRESULT SVRemoteCommandFunctions::PutConfig( const std::string& p_rJsonCommand, 
 		l_Status = E_INVALIDARG;
 	}
 
-	Json::FastWriter l_Writer;
-	Json::Value l_Object(Json::objectValue);
 	Json::Value l_Results(Json::objectValue);
-	std::string l_Name;
-	long l_Id = 0;
 
-	GetCommandName( p_rJsonCommand, l_Name );
-	GetCommandId( p_rJsonCommand, l_Id );
-
-	l_Object[ SVRC::cmd::name ] = l_Name;
-	l_Object[ SVRC::cmd::id ] = l_Id;
-	l_Object[ SVRC::cmd::hr ] = l_Status;
-	l_Object[ SVRC::cmd::reslts ] = l_Results;
-
-	p_rJsonResults = l_Writer.write( l_Object ).c_str();
-
-	#ifdef SV_OUTPUT_JSON
-		std::string l_RspFileNane;
-		SVJsonUtilities::GetTempFileNameUsingPrefixAndExt( l_RspFileNane, "C:\\temp\\PutConfig-rsp", ".json" );
-		SVJsonUtilities::WriteJsonValueToFile( l_Object, l_RspFileNane );
-	#endif
+	std::string l_FileName = _T("C:\\temp\\PutConfig-rsp");
+	WriteResultToJsonAndFile(p_rJsonCommand, p_rJsonResults, l_Results, l_FileName, l_Status);
 
 	return l_Status;
 }
@@ -1334,22 +1218,18 @@ HRESULT SVRemoteCommandFunctions::PutDeviceFile( const std::string& p_rJsonComma
 	HRESULT l_Status = S_OK;
 
 	Json::Reader l_Reader;
-	Json::Value l_JsonValues;
+	Json::Value l_JsonCmdValues;
 
-	if( l_Reader.parse( p_rJsonCommand, l_JsonValues, false ) )
+	if( l_Reader.parse( p_rJsonCommand, l_JsonCmdValues, false ) )
 	{
-		#ifdef SV_OUTPUT_JSON
-			std::string l_FileName;
-
-			SVJsonUtilities::GetTempFileNameUsingPrefixAndExt( l_FileName, "C:\\temp\\PutDeviceFile-cmd", ".json" );
-			SVJsonUtilities::WriteJsonValueToFile( l_JsonValues, l_FileName );
-		#endif	
+		std::string l_FileName = _T("C:\\temp\\PutDeviceFile-cmd");
+		WriteJsonCommandToFile(l_JsonCmdValues, l_FileName);
 
 		Json::Value l_JsonArguments;
 
-		if( l_JsonValues.isObject() )
+		if( l_JsonCmdValues.isObject() )
 		{
-			l_JsonArguments = l_JsonValues[ SVRC::cmd::arg ];
+			l_JsonArguments = l_JsonCmdValues[ SVRC::cmd::arg ];
 		}
 
 		if( l_JsonArguments.isObject() )
@@ -1424,27 +1304,10 @@ HRESULT SVRemoteCommandFunctions::PutDeviceFile( const std::string& p_rJsonComma
 		}
 	}
 
-	Json::FastWriter l_Writer;
-	Json::Value l_Object(Json::objectValue);
 	Json::Value l_Results(Json::objectValue);
-	std::string l_Name;
-	long l_Id = 0;
 
-	GetCommandName( p_rJsonCommand, l_Name );
-	GetCommandId( p_rJsonCommand, l_Id );
-
-	l_Object[ SVRC::cmd::name ] = l_Name;
-	l_Object[ SVRC::cmd::id ] = l_Id;
-	l_Object[ SVRC::cmd::hr ] = l_Status;
-	l_Object[ SVRC::cmd::reslts ] = l_Results;
-
-	p_rJsonResults = l_Writer.write( l_Object ).c_str();
-
-	#ifdef SV_OUTPUT_JSON
-		std::string l_RspFileNane;
-		SVJsonUtilities::GetTempFileNameUsingPrefixAndExt( l_RspFileNane, "C:\\temp\\PutDeviceFile-rsp", ".json" );
-		SVJsonUtilities::WriteJsonValueToFile( l_Object, l_RspFileNane );
-	#endif
+	std::string l_FileName = _T("C:\\temp\\PutDeviceFile-rsp");
+	WriteResultToJsonAndFile(p_rJsonCommand, p_rJsonResults, l_Results, l_FileName, l_Status);
 
 	return l_Status;
 }
@@ -1456,22 +1319,18 @@ HRESULT SVRemoteCommandFunctions::SetDeviceMode( const std::string& p_rJsonComma
 	unsigned long l_Mode = SVIM_MODE_UNKNOWN;
 
 	Json::Reader l_Reader;
-	Json::Value l_JsonValues;
+	Json::Value l_JsonCmdValues;
 
-	if( l_Reader.parse( p_rJsonCommand, l_JsonValues, false ) )
+	if( l_Reader.parse( p_rJsonCommand, l_JsonCmdValues, false ) )
 	{
-		#ifdef SV_OUTPUT_JSON
-			std::string l_FileName;
-
-			SVJsonUtilities::GetTempFileNameUsingPrefixAndExt( l_FileName, "C:\\temp\\SetDeviceMode-cmd", ".json" );
-			SVJsonUtilities::WriteJsonValueToFile( l_JsonValues, l_FileName );
-		#endif
+		std::string l_FileName = _T("C:\\temp\\SetDeviceMode-cmd");
+		WriteJsonCommandToFile(l_JsonCmdValues, l_FileName);
 
 		Json::Value l_JsonArguments;
 
-		if( l_JsonValues.isObject() )
+		if( l_JsonCmdValues.isObject() )
 		{
-			l_JsonArguments = l_JsonValues[ SVRC::cmd::arg ];
+			l_JsonArguments = l_JsonCmdValues[ SVRC::cmd::arg ];
 		}
 
 		if( l_JsonArguments.isObject() )
@@ -1504,27 +1363,10 @@ HRESULT SVRemoteCommandFunctions::SetDeviceMode( const std::string& p_rJsonComma
 		l_Status = E_INVALIDARG;
 	}
 
-	Json::FastWriter l_Writer;
-	Json::Value l_Object(Json::objectValue);
 	Json::Value l_Results(Json::objectValue);
-	std::string l_Name;
-	long l_Id = 0;
 
-	GetCommandName( p_rJsonCommand, l_Name );
-	GetCommandId( p_rJsonCommand, l_Id );
-
-	l_Object[ SVRC::cmd::name ] = l_Name;
-	l_Object[ SVRC::cmd::id ] = l_Id;
-	l_Object[ SVRC::cmd::hr ] = l_Status;
-	l_Object[ SVRC::cmd::reslts ] = l_Results;
-
-	p_rJsonResults = l_Writer.write( l_Object ).c_str();
-
-	#ifdef SV_OUTPUT_JSON
-		std::string l_RspFileNane;
-		SVJsonUtilities::GetTempFileNameUsingPrefixAndExt( l_RspFileNane, "C:\\temp\\SetDeviceMode-rsp", ".json" );
-		SVJsonUtilities::WriteJsonValueToFile( l_Object, l_RspFileNane );
-	#endif
+	std::string l_FileName = _T("C:\\temp\\SetDeviceMode-rsp");
+	WriteResultToJsonAndFile(p_rJsonCommand, p_rJsonResults, l_Results, l_FileName, l_Status);
 
 	return l_Status;
 }
@@ -1541,12 +1383,8 @@ HRESULT SVRemoteCommandFunctions::SetItems( const std::string& p_rJsonCommand, s
 
 	if( l_Reader.parse( p_rJsonCommand, l_JsonCmdValues, false ) )
 	{
-		#ifdef SV_OUTPUT_JSON
-			std::string l_FileName;
-
-			SVJsonUtilities::GetTempFileNameUsingPrefixAndExt( l_FileName, "C:\\temp\\SetItems-cmd", ".json" );
-			SVJsonUtilities::WriteJsonValueToFile( l_JsonCmdValues, l_FileName );
-		#endif
+		std::string l_FileName = _T("C:\\temp\\SetItems-cmd");
+		WriteJsonCommandToFile(l_JsonCmdValues, l_FileName);
 
 		Json::Value l_JsonArguments;
 		Json::Value l_JsonItems;
@@ -1615,6 +1453,78 @@ HRESULT SVRemoteCommandFunctions::SetItems( const std::string& p_rJsonCommand, s
 		l_Status = l_TempStatus;
 	}
 
+	l_JsonFaults[ SVRC::result::errors ] = l_ErrorArray;
+	l_Results[ SVRC::result::faults ] = l_JsonFaults;
+
+	std::string l_FileName = _T("C:\\temp\\SetItems-rsp");
+	WriteResultToJsonAndFile(p_rJsonCommand, p_rJsonResults, l_Results, l_FileName, l_Status);
+	
+	return l_Status;
+}
+
+/*####################################################################################################################################
+*	WriteJsonCommandToFile				This is used to write the Json values into a file if necessary
+*	Return: 							The status result of the method  
+*
+*	p_rJsonCommand						The original command in string format to parse the Json values
+*	p_rFileName							The name of the file to save the Json if necessary
+*#####################################################################################################################################
+*/
+AFX_INLINE HRESULT SVRemoteCommandFunctions::WriteJsonCommandToFile( const std::string& p_rJsonCommand, const std::string& p_rFileName )
+{
+	HRESULT l_Status = S_OK;
+
+	#ifdef SV_OUTPUT_JSON
+		Json::Value l_JsonValues;
+		
+		Json::Reader l_Reader;
+		if( l_Reader.parse( p_rJsonCommand, l_JsonValues, false ) )
+		{
+			WriteJsonCommandToFile(l_JsonValues, p_rFileName);
+		}
+	#endif
+
+	return l_Status;
+}
+
+/*####################################################################################################################################
+*	WriteJsonCommandToFile				This is used to write the Json values into a file if necessary
+*	Return: 							The status result of the method  
+*
+*	p_rJsonValues						The Json values to svae
+*	p_rFileName							The name of the file to save the Json if necessary
+*#####################################################################################################################################
+*/
+AFX_INLINE HRESULT SVRemoteCommandFunctions::WriteJsonCommandToFile( const Json::Value& p_rJsonValues, const std::string& p_rFileName )
+{
+	HRESULT l_Status = S_OK;
+
+	#ifdef SV_OUTPUT_JSON
+		std::string l_FileName;
+
+		SVJsonUtilities::GetTempFileNameUsingPrefixAndExt( l_FileName, p_rFileName.c_str(), ".json" );
+		SVJsonUtilities::WriteJsonValueToFile( p_rJsonValues, l_FileName );
+	#endif
+
+	return l_Status;
+}
+
+/*####################################################################################################################################
+*	WriteResultToJsonAndFile			This is used to write the Json results and if required save it to file
+*	Return: 							The status result of the method  
+*
+*	p_rJsonCommand						The original Json command in string format
+*	p_rJsonResults						The string in which the result is saved to
+*	p_rJsonResultValue					The Json result value
+*	p_rFileName							The name of the file to save the Json if necessary
+*	p_Status							The resulting status of the method being called
+*#####################################################################################################################################
+*/
+AFX_INLINE HRESULT SVRemoteCommandFunctions::WriteResultToJsonAndFile( const std::string& p_rJsonCommand, std::string& p_rJsonResults, 
+																		const Json::Value& p_rJsonResultValue, const std::string& p_rFileName, HRESULT p_Status)
+{
+	HRESULT l_Status = S_OK;
+
 	Json::FastWriter l_Writer;
 	Json::Value l_Object(Json::objectValue);
 	std::string l_Name;
@@ -1625,17 +1535,14 @@ HRESULT SVRemoteCommandFunctions::SetItems( const std::string& p_rJsonCommand, s
 
 	l_Object[ SVRC::cmd::name ] = l_Name;
 	l_Object[ SVRC::cmd::id ] = l_Id;
-	l_Object[ SVRC::cmd::hr ] = l_Status;
-
-	l_JsonFaults[ SVRC::result::errors ] = l_ErrorArray;
-	l_Results[ SVRC::result::faults ] = l_JsonFaults;
-	l_Object[ SVRC::cmd::reslts ] = l_Results;
+	l_Object[ SVRC::cmd::hr ] = p_Status;
+	l_Object[ SVRC::cmd::reslts ] = p_rJsonResultValue;
 
 	p_rJsonResults = l_Writer.write( l_Object ).c_str();
 
 	#ifdef SV_OUTPUT_JSON
 		std::string l_RspFileNane;
-		SVJsonUtilities::GetTempFileNameUsingPrefixAndExt( l_RspFileNane, "C:\\temp\\SetItems-rsp", ".json" );
+		SVJsonUtilities::GetTempFileNameUsingPrefixAndExt( l_RspFileNane, p_rFileName, ".json" );
 		SVJsonUtilities::WriteJsonValueToFile( l_Object, l_RspFileNane );
 	#endif
 
@@ -1646,7 +1553,18 @@ HRESULT SVRemoteCommandFunctions::SetItems( const std::string& p_rJsonCommand, s
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVSocketRemoteCommandManager.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVSocketRemoteCommandManager.cpp_v  $
+ * 
+ *    Rev 1.4   30 Oct 2013 15:40:16   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  866
+ * SCR Title:  Add GetDataDefinitionList Command to SVObserver's Remote Command Socket
+ * Checked in by:  bWalter;  Ben Walter
+ * Change Description:  
+ *   Implemented GetDataDefinitionList.
+ *   Moved common code to WriteJsonCommandToFile and WriteResultToJsonAndFile.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   05 Jul 2013 09:11:20   bwalter
  * Project:  SVObserver

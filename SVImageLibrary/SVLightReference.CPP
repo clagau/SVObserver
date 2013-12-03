@@ -5,8 +5,8 @@
 //* .Module Name     : SVLightReference
 //* .File Name       : $Workfile:   SVLightReference.CPP  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   22 Apr 2013 10:51:36  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   01 Oct 2013 07:16:34  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -167,7 +167,7 @@ int SVLightReferenceBand::AddAttribute(SVLightReferenceAttributeInfo& attribute)
 
 	iIndex = NumAttributes();
 	m_aAttributeInfo.push_back( attribute );
-	m_iNumAttributes = m_aAttributeInfo.size();
+	m_iNumAttributes = static_cast< int >( m_aAttributeInfo.size() );
 
 	return iIndex;
 }
@@ -320,6 +320,16 @@ int SVLightReference::AddAttribute(SVLightReferenceAttributeInfo& attribute)
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVImageLibrary\SVLightReference.CPP_v  $
+ * 
+ *    Rev 1.1   01 Oct 2013 07:16:34   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platforms.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   22 Apr 2013 10:51:36   bWalter
  * Project:  SVObserver

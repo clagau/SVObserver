@@ -5,8 +5,8 @@
 //* .Module Name     : SVDriveInitDlg
 //* .File Name       : $Workfile:   SVDriveInitDlg.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   06 May 2013 14:06:14  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   30 Sep 2013 14:58:52  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -160,7 +160,7 @@ BOOL SVDriveInitDlg::OnInitDialog()
     CCPassDlg dlg;
    	BOOL blValidPassword = FALSE;
     
-    int nResponse = dlg.DoModal();
+    INT_PTR nResponse = dlg.DoModal();
     if (nResponse == IDOK)
     {
     }
@@ -1344,7 +1344,17 @@ HRESULT SVDriveInitDlg::AddCommandBeforeSVObserver( LPCTSTR p_strNewCommand, boo
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVDriveInit\SVDriveInitDlg.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVDriveInit\SVDriveInitDlg.cpp_v  $
+ * 
+ *    Rev 1.2   30 Sep 2013 14:58:52   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platforms.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   06 May 2013 14:06:14   bWalter
  * Project:  SVObserver

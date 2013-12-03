@@ -5,8 +5,8 @@
 //* .Module Name     : SVRemoteInputsView
 //* .File Name       : $Workfile:   SVRemoteInputsView.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.3  $
-//* .Check In Date   : $Date:   07 Aug 2013 13:21:48  $
+//* .Current Version : $Revision:   1.4  $
+//* .Check In Date   : $Date:   02 Oct 2013 07:58:46  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -125,7 +125,7 @@ void SVRemoteInputsView::OnUpdate( CView* pSender, LPARAM lHint, CObject* pHint 
 		if( !pInputList->FillInputs( ppIOEntries ) )
 			DebugBreak();
 
-		lSize = ppIOEntries.size();
+		lSize = static_cast<long>(ppIOEntries.size());
 
 //////////////////////////////////////////////////////////////////
 		h = 0;
@@ -213,7 +213,7 @@ void SVRemoteInputsView::OnLButtonDblClk( UINT nFlags, CPoint point )
 			if( !pInputList->FillInputs( ppIOEntries ) )
 				DebugBreak();
 
-			lSize = ppIOEntries.size();
+			lSize = static_cast<long>(ppIOEntries.size());
 
 			SVDataItemManager::const_iterator l_Iter = m_Items.GetItemData( item );
 
@@ -242,9 +242,7 @@ void SVRemoteInputsView::OnLButtonDblClk( UINT nFlags, CPoint point )
 
 					SVSVIMStateClass::AddState( SV_STATE_EDITING );
 
-					int nResult = dlg.DoModal();
-
-					switch(nResult)
+					switch( dlg.DoModal() )
 					{
 					case IDOK:
 						{
@@ -286,6 +284,16 @@ void SVRemoteInputsView::OnDestroy()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVRemoteInputsView.cpp_v  $
+ * 
+ *    Rev 1.4   02 Oct 2013 07:58:46   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   07 Aug 2013 13:21:48   sjones
  * Project:  SVObserver

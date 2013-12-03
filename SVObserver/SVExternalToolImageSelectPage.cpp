@@ -5,8 +5,8 @@
 //* .Module Name     : SVExternalToolImageSelectPage
 //* .File Name       : $Workfile:   SVExternalToolImageSelectPage.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 10:32:12  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   01 Oct 2013 14:12:24  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -239,7 +239,7 @@ BOOL SVExternalToolImageSelectPage::OnInitDialog()
 			{
 				for (int iComboIndex=0; iComboIndex < m_cbAvailableImages.GetCount(); iComboIndex++)
 				{
-					int iAvailableIndex = m_cbAvailableImages.GetItemData(iComboIndex);
+					int iAvailableIndex = static_cast< int >( m_cbAvailableImages.GetItemData( iComboIndex ) );
 					SVImageClass* pImage = m_AvailableImages.GetAt(iAvailableIndex);
 					if ( pImage == m_pInputImageInfo[iImageIndex]->GetInputObjectInfo().PObject )
 					{
@@ -341,7 +341,7 @@ void SVExternalToolImageSelectPage::OnSelchangeImage()
 void SVExternalToolImageSelectPage::OnSelchangeImageList() 
 {
 	// update image list selection
-	int iIndex = m_lbImageList.GetItemData(m_lbImageList.GetCurSel());
+	int iIndex = static_cast< int >( m_lbImageList.GetItemData( m_lbImageList.GetCurSel() ) );
 	m_cbAvailableImages.SetCurSel(iIndex);
 	OnSelchangeImage();
 }
@@ -350,7 +350,17 @@ void SVExternalToolImageSelectPage::OnSelchangeImageList()
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVExternalToolImageSelectPage.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVExternalToolImageSelectPage.cpp_v  $
+ * 
+ *    Rev 1.1   01 Oct 2013 14:12:24   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 10:32:12   bWalter
  * Project:  SVObserver

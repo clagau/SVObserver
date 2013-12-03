@@ -5,8 +5,8 @@
 // * .Module Name     : SVIOTEST
 // * .File Name       : $Workfile:   SVIOTEST.cpp  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.1  $
-// * .Check In Date   : $Date:   06 May 2013 19:20:20  $
+// * .Current Version : $Revision:   1.2  $
+// * .Check In Date   : $Date:   01 Oct 2013 09:21:32  $
 // ******************************************************************************
 
 #include "stdafx.h"
@@ -93,17 +93,7 @@ BOOL CSVIOTESTApp::InitInstance()
 		dlg.m_csTrigger = l_iniLoader.m_csTrigger;
 		dlg.m_lSystemType = atol(l_iniLoader.m_csIOBoard);
 
-		int nResponse = dlg.DoModal();
-		if (nResponse == IDOK)
-		{
-			// TODO: Place code here to handle when the dialog is
-			//  dismissed with OK
-		}
-		else if (nResponse == IDCANCEL)
-		{
-			// TODO: Place code here to handle when the dialog is
-			//  dismissed with Cancel
-		}
+		dlg.DoModal();
 	}
 
 	#ifdef _DEBUG	
@@ -125,7 +115,17 @@ BOOL CSVIOTESTApp::InitInstance()
 // * LOG HISTORY:
 // ******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVIOTest\SVIOTEST.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVIOTest\SVIOTEST.cpp_v  $
+ * 
+ *    Rev 1.2   01 Oct 2013 09:21:32   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   06 May 2013 19:20:20   bWalter
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 // * .Module Name     : SVInPlaceList
 // * .File Name       : $Workfile:   SVInPlaceList.cpp  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.0  $
-// * .Check In Date   : $Date:   22 Apr 2013 13:37:08  $
+// * .Current Version : $Revision:   1.1  $
+// * .Check In Date   : $Date:   02 Oct 2013 11:49:06  $
 // ******************************************************************************
 
 #include "stdafx.h"
@@ -203,7 +203,7 @@ BOOL SVInPlaceList::PreTranslateMessage(MSG* pMsg)
 {
 	if (pMsg->message == WM_KEYDOWN)
 	{
-		UINT	nChar = pMsg->wParam;
+		UINT	nChar = static_cast<UINT>(pMsg->wParam);
 
 		if (nChar == VK_TAB || nChar == VK_RETURN || nChar == VK_ESCAPE)
 		{
@@ -253,6 +253,16 @@ void SVInPlaceList::OnSelendcancel()
 // ******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVLibrary\SVInPlaceList.cpp_v  $
+ * 
+ *    Rev 1.1   02 Oct 2013 11:49:06   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platforms.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   22 Apr 2013 13:37:08   bWalter
  * Project:  SVObserver

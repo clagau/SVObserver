@@ -5,8 +5,8 @@
 //* .Module Name     : SVOConfigAssistantDlg
 //* .File Name       : $Workfile:   SVOConfigAssistantDlg.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.6  $
-//* .Check In Date   : $Date:   07 Aug 2013 13:54:24  $
+//* .Current Version : $Revision:   1.8  $
+//* .Check In Date   : $Date:   30 Oct 2013 14:51:34  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -1649,7 +1649,7 @@ void CSVOConfigAssistantDlg::RemoveUsedTrigger(CString sTriggerName)
 
 int CSVOConfigAssistantDlg::GetUsedTriggerCount() const
 {
-	return m_slUsedTriggers.GetCount();
+	return static_cast<int>(m_slUsedTriggers.GetCount());
 }
 
 bool CSVOConfigAssistantDlg::IsSoftwareTriggerAllowed(LPCTSTR triggerName) const
@@ -1789,7 +1789,7 @@ void CSVOConfigAssistantDlg::RemoveUsedInspect(CString sInspect)
 
 int CSVOConfigAssistantDlg::GetUsedInspectCount()
 {
-	return m_slUsedInspect.GetCount();
+	return static_cast<int>(m_slUsedInspect.GetCount());
 }
 
 void CSVOConfigAssistantDlg::SetModified(BOOL bModified)
@@ -4441,7 +4441,8 @@ BOOL CSVOConfigAssistantDlg::SystemChangeResetCamera( SVIMProductEnum p_lNewSyst
 				{
 					iCh = pObj->GetBandNumber();
 					pObj->SetBandNumber(0);
-					pObj->SetDigNumber(iCh);
+					//iDig = pObj->GetDigNumber(); // Leave the dig number alone.
+					//pObj->SetDigNumber(iDig);
 					pObj->SetCameraFile("");
 					if (!pObj->IsFileAcquisition())
 					{
@@ -4966,6 +4967,26 @@ bool CSVOConfigAssistantDlg::IsFileAcquisition(int iDig) const
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVOConfigAssistantDlg.cpp_v  $
+ * 
+ *    Rev 1.8   30 Oct 2013 14:51:34   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  870
+ * SCR Title:  Fix Various Issues in the Edit Configuration Dialog
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Changed SystemChangeResetCamera so the camera object is copied correctly.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.7   02 Oct 2013 06:48:20   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.6   07 Aug 2013 13:54:24   tbair
  * Project:  SVObserver

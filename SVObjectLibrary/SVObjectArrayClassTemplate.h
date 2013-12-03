@@ -5,8 +5,8 @@
 //* .Module Name     : SVObjectArrayClassTemplate
 //* .File Name       : $Workfile:   SVObjectArrayClassTemplate.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   22 Apr 2013 16:38:06  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   01 Oct 2013 11:27:02  $
 //******************************************************************************
 
 #ifndef INC_SVOBJECTGENERICARRAYCLASS_3A76FCBB02AF_INCLUDED
@@ -31,7 +31,7 @@ public:
 	template <typename T>
 	SVObjectArrayClassTemplate<TYPE>& operator = ( const SVObjectArrayClassTemplate<T>& rhs )
 	{
-		SetSize( rhs.GetSize() );
+		SetSize( static_cast< int >( rhs.GetSize() ) );
 		for ( int i=0; i < rhs.GetSize(); i++ )
 			ElementAt(i) = rhs.GetAt(i);
 		return *this;
@@ -79,7 +79,17 @@ typedef SVObjectArrayClassTemplate< _variant_t > SVObjectVariantArrayClass;
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObjectLibrary\SVObjectArrayClassTemplate.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObjectLibrary\SVObjectArrayClassTemplate.h_v  $
+ * 
+ *    Rev 1.1   01 Oct 2013 11:27:02   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   22 Apr 2013 16:38:06   bWalter
  * Project:  SVObserver

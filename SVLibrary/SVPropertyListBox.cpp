@@ -5,8 +5,8 @@
 // * .Module Name     : PropertyList.cpp
 // * .File Name       : $Workfile:   SVPropertyListBox.cpp  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.0  $
-// * .Check In Date   : $Date:   22 Apr 2013 13:47:12  $
+// * .Current Version : $Revision:   1.1  $
+// * .Check In Date   : $Date:   01 Oct 2013 10:02:46  $
 // ******************************************************************************
 
 #include "stdafx.h"
@@ -314,7 +314,7 @@ BOOL SVPropertyListBox::PreTranslateMessage(MSG* pMsg)
 				case VK_RIGHT:
 				case VK_RETURN:	// edit itemdata
 					if (GetCurSel() != LB_ERR)
-						OnEditItem(GetCurSel(), CPoint(-1, -1), pMsg->wParam);
+						OnEditItem(GetCurSel(), CPoint(-1, -1), static_cast<UINT>(pMsg->wParam));
 					return TRUE;
 					break;
 				default:
@@ -674,6 +674,16 @@ COLORREF SVPropertyListBox::GetTextColor(void)
 // ******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVLibrary\SVPropertyListBox.cpp_v  $
+ * 
+ *    Rev 1.1   01 Oct 2013 10:02:46   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   22 Apr 2013 13:47:12   bWalter
  * Project:  SVObserver

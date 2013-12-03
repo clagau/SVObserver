@@ -5,8 +5,8 @@
 // * .Module Name     : SVODataDeviceClass
 // * .File Name       : $Workfile:   SVODataDeviceClass.h  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.0  $
-// * .Check In Date   : $Date:   25 Apr 2013 11:54:42  $
+// * .Current Version : $Revision:   1.1  $
+// * .Check In Date   : $Date:   02 Oct 2013 08:47:28  $
 // ******************************************************************************
 
 #ifndef SVODATADEVICECLASS_H
@@ -37,7 +37,7 @@ public:
 
 	friend class SVProcessFunctor< SVODataDeviceClass >;
 
-	static VOID CALLBACK APCProc( DWORD dwParam );
+	static VOID CALLBACK APCProc( ULONG_PTR dwParam );
 
 	SVODataDeviceClass( LPCTSTR deviceName );
 	virtual ~SVODataDeviceClass();
@@ -97,7 +97,7 @@ protected:
 private:
 	SVODataDeviceClass();
 
-	typedef VOID ( CALLBACK* SVAPCFunctionPtr )( DWORD );
+	typedef VOID ( CALLBACK* SVAPCFunctionPtr )( ULONG_PTR );
 
 	HRESULT DestroyLocal();
 
@@ -120,7 +120,17 @@ private:
 // * LOG HISTORY:
 // ******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVOLibrary\SVODataDeviceClass.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVOLibrary\SVODataDeviceClass.h_v  $
+ * 
+ *    Rev 1.1   02 Oct 2013 08:47:28   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   25 Apr 2013 11:54:42   bWalter
  * Project:  SVObserver

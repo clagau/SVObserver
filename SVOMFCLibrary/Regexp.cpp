@@ -5,8 +5,8 @@
 //* .Module Name     : Regexp
 //* .File Name       : $Workfile:   Regexp.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   25 Apr 2013 12:57:02  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   02 Oct 2013 08:55:14  $
 //******************************************************************************
 
 #if defined( _MBCS )
@@ -1557,18 +1557,18 @@ int Regexp::SubStrings() const
 int Regexp::SubStart( unsigned int i ) const
 {
 	ClearErrorString();
-	int ret = -1;
+	size_t ret = -1;
 	if ( rc )
 		ret = rc->startp[safeIndex(i)] - string;
 	else
 		m_szError = CRegErrorHandler::FindErr( REGERR_NO_REGEXP );
-	return ret;
+	return static_cast< int >( ret );
 }
 
 int Regexp::SubLength( unsigned int i ) const
 {
 	ClearErrorString();
-	int ret = -1;
+	size_t ret = -1;
 	if ( rc )
 	{
 		i = safeIndex(i);
@@ -1576,7 +1576,7 @@ int Regexp::SubLength( unsigned int i ) const
 	}
 	else
 		m_szError = CRegErrorHandler::FindErr( REGERR_NO_REGEXP );
-	return ret;
+	return static_cast< int >( ret );
 }
 
 bool Regexp::CompiledOK() const
@@ -1608,8 +1608,8 @@ const CString Regexp::operator[]( unsigned int i ) const
 	if ( rc )
 	{
 		CString buffer;
-		int len = SubLength(i);
-		TCHAR * szbuf = buffer.GetBufferSetLength( len );
+		size_t len = SubLength( i );
+		TCHAR * szbuf = buffer.GetBufferSetLength( static_cast< int >( len ) );
 		memcpy( szbuf, rc->startp[i], len * sizeof(TCHAR) );
 		buffer.ReleaseBuffer();
 		return buffer;
@@ -1670,7 +1670,7 @@ CString regexp::GetReplaceString( const TCHAR* sReplaceExp ) const
 	}
 
 	// First compute the length of the string
-	int replacelen = 0;
+	size_t replacelen = 0;
 	while ((c = *src++) != _T('\0')) 
 	{
 		if (c == _T('&'))
@@ -1698,7 +1698,7 @@ CString regexp::GetReplaceString( const TCHAR* sReplaceExp ) const
 
 	CString szReplace;
 
-	buf = szReplace.GetBufferSetLength( replacelen );
+	buf = szReplace.GetBufferSetLength( static_cast< int >( replacelen ) );
 
 	// Now we can create the string
 	src = (TCHAR *)sReplaceExp;
@@ -1733,7 +1733,7 @@ CString regexp::GetReplaceString( const TCHAR* sReplaceExp ) const
 		}
 	}
 
-	szReplace.ReleaseBuffer( replacelen );
+	szReplace.ReleaseBuffer( static_cast< int >( replacelen ) );
 	return szReplace;
 }
 
@@ -1755,7 +1755,17 @@ void Regexp::ClearErrorString() const
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVOMFCLibrary\Regexp.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVOMFCLibrary\Regexp.cpp_v  $
+ * 
+ *    Rev 1.1   02 Oct 2013 08:55:14   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   25 Apr 2013 12:57:02   bWalter
  * Project:  SVObserver

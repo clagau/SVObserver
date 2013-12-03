@@ -5,8 +5,8 @@
 // * .Module Name     : SVTestAcquisitionClass.cpp
 // * .File Name       : $Workfile:   SVTestAcquisitionClass.cpp  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.1  $
-// * .Check In Date   : $Date:   08 May 2013 14:51:44  $
+// * .Current Version : $Revision:   1.2  $
+// * .Check In Date   : $Date:   01 Oct 2013 08:26:00  $
 // ******************************************************************************
 
 #include "stdafx.h"
@@ -31,7 +31,7 @@ SVClock::SVTimeStamp SVTestAcquisitionClass::GetTimeStamp() const
 	return l_TimeStamp;
 }
 
-size_t SVTestAcquisitionClass::GetBufferWidth() const
+unsigned long SVTestAcquisitionClass::GetBufferWidth() const
 {
 	unsigned long l_Width = 0;
 
@@ -40,7 +40,7 @@ size_t SVTestAcquisitionClass::GetBufferWidth() const
 	return l_Width;
 }
 
-size_t SVTestAcquisitionClass::GetBufferHeight() const
+unsigned long SVTestAcquisitionClass::GetBufferHeight() const
 {
 	unsigned long l_Height = 0;
 
@@ -222,7 +222,18 @@ void SVTestAcquisitionClass::FireSoftwareTrigger()
 // * LOG HISTORY:
 // ******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVImageTest\SVTestAcquisitionClass.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVImageTest\SVTestAcquisitionClass.cpp_v  $
+ * 
+ *    Rev 1.2   01 Oct 2013 08:26:00   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add X64 Platform
+ * 
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   08 May 2013 14:51:44   bWalter
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 // * .Module Name     : SVDataItemManagerTemplate
 // * .File Name       : $Workfile:   SVDataItemManagerTemplate.h  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.1  $
-// * .Check In Date   : $Date:   13 May 2013 16:23:00  $
+// * .Current Version : $Revision:   1.2  $
+// * .Check In Date   : $Date:   02 Oct 2013 08:55:16  $
 // ******************************************************************************
 
 #ifndef SVDATAITEMMANAGERTEMPLATE_H
@@ -55,7 +55,7 @@ protected:
 	SVGetItemDataFunctor m_GetFunctor;
 	SVSetItemDataFunctor m_SetFunctor;
 
-	long m_LastUsedIdentifier;
+	unsigned long m_LastUsedIdentifier;
 	SVItemDataMap m_Items;
 
 };
@@ -68,7 +68,17 @@ protected:
 // * LOG HISTORY:
 // ******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVOMFCLibrary\SVDataItemManagerTemplate.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVOMFCLibrary\SVDataItemManagerTemplate.h_v  $
+ * 
+ *    Rev 1.2   02 Oct 2013 08:55:16   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   13 May 2013 16:23:00   bWalter
  * Project:  SVObserver

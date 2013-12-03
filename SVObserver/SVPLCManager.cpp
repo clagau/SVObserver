@@ -5,11 +5,12 @@
 //* .Module Name     : SVPLCManager
 //* .File Name       : $Workfile:   SVPLCManager.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 13:25:42  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   30 Oct 2013 11:00:30  $
 //******************************************************************************
 
 #include "stdafx.h"
+#ifndef _WIN64
 #include <boost\config.hpp>
 #include <boost\function.hpp>
 #include <boost\bind.hpp>
@@ -266,11 +267,23 @@ HRESULT SVPLCManager::GetDefaultPLCAddress( CString& p_rstrAddress )
 {
 	return m_PLC.GetDefaultPLCAddress( p_rstrAddress );
 }
+#endif
+
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVPLCManager.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVPLCManager.cpp_v  $
+ * 
+ *    Rev 1.1   30 Oct 2013 11:00:30   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Added #ifndef _WIN64 to remove deprecated code from the 64bit solution.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 13:25:42   bWalter
  * Project:  SVObserver

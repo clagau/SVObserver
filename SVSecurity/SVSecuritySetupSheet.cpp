@@ -5,9 +5,11 @@
 //* .Module Name     : SecuritySetupSheet
 //* .File Name       : $Workfile:   SVSecuritySetupSheet.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   25 Apr 2013 17:04:08  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   02 Oct 2013 10:00:50  $
 // ******************************************************************************
+
+#define SECURITY_WIN32
 
 #include "stdafx.h"
 #include "SVSecuritySetupSheet.h"
@@ -71,7 +73,7 @@ BOOL SVSecuritySetupSheet::OnInitDialog()
 	return bResult;
 }
 
-int SVSecuritySetupSheet::DoModal() 
+INT_PTR SVSecuritySetupSheet::DoModal() 
 {
 	SVSecuritySetupPage	page;
 	AddPage(&page);
@@ -79,26 +81,22 @@ int SVSecuritySetupSheet::DoModal()
 	SVSecurityGeneralPage GenPage;
 	AddPage(&GenPage);
 	
-	int result = CPropertySheet::DoModal();
-	if (result == IDOK)
-	{
-		// Save
-	}
+	INT_PTR result = CPropertySheet::DoModal();
 
 	return result;
 }
 
 void SVSecuritySetupSheet::InitializeGroupList(CListBox& list)
 {
-	NET_API_STATUS	nas;
+	DWORD			nas;
 	PGROUP_INFO_0	pBuf = NULL;
 	PGROUP_INFO_0	pTmpBuf = NULL;
 	DWORD			entriesread = 0;
 	DWORD			totalentries = 0;
-	DWORD			resume_handle = 0;
+	PDWORD_PTR		resume_handle = 0;
 
-	list.AddString(_T("Everybody"));
-	nas = NetLocalGroupEnum(NULL, 0, (LPBYTE*)&pBuf, -1, &entriesread, &totalentries, &resume_handle);
+	list.AddString( _T( "Everybody" ) );
+	nas = NetLocalGroupEnum( NULL, 0, ( LPBYTE* )&pBuf, -1, &entriesread, &totalentries, resume_handle );
 	if (nas == NERR_Success)
 	{
 		if ((pTmpBuf = pBuf) != NULL)
@@ -127,7 +125,17 @@ void SVSecuritySetupSheet::OnSize(UINT nType, int cx, int cy)
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVSecurity\SVSecuritySetupSheet.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVSecurity\SVSecuritySetupSheet.cpp_v  $
+ * 
+ *    Rev 1.1   02 Oct 2013 10:00:50   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   25 Apr 2013 17:04:08   bWalter
  * Project:  SVObserver

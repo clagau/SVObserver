@@ -5,8 +5,8 @@
 //* .Module Name     : SVValueObjectReference
 //* .File Name       : $Workfile:   SVValueObjectReference.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 16:18:40  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   02 Oct 2013 08:24:40  $
 //******************************************************************************
 
 #ifndef SVVALUEOBJECTREFERENCE_H_
@@ -62,7 +62,7 @@ public:
 		VOType * obj = dynamic_cast<VOType *>(m_pObject);
 		if (obj)
 		{
-			HRESULT hr = obj->SetArraySize(end - begin);
+			HRESULT hr = obj->SetArraySize(static_cast<int>(end - begin));
 			if (S_OK != hr)
 			{
 				return hr;
@@ -95,7 +95,17 @@ typedef std::vector<SVValueObjectReference> SVValueObjectReferenceVector;
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVValueObjectReference.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVValueObjectReference.h_v  $
+ * 
+ *    Rev 1.1   02 Oct 2013 08:24:40   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 16:18:40   bWalter
  * Project:  SVObserver

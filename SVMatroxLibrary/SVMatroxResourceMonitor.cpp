@@ -5,9 +5,10 @@
 // * .Module Name     : SVMatroxResourceMonitor
 // * .File Name       : $Workfile:   SVMatroxResourceMonitor.cpp  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.0  $
-// * .Check In Date   : $Date:   22 Apr 2013 15:27:04  $
+// * .Current Version : $Revision:   1.1  $
+// * .Check In Date   : $Date:   01 Oct 2013 11:15:30  $
 // ******************************************************************************
+
 #include "stdafx.h"
 #include "SVMatroxResourceMonitor.h"
 #include "SVMatroxErrorEnum.h"
@@ -26,7 +27,7 @@ SVMatroxResourceMonitor& SVMatroxResourceMonitor::Instance()
 	return l_Object;
 }
 
-HRESULT SVMatroxResourceMonitor::InsertIdentifier( SVMatroxIdentifierEnum p_IdentifierType, long p_Identifier )
+HRESULT SVMatroxResourceMonitor::InsertIdentifier( SVMatroxIdentifierEnum p_IdentifierType, SVMatroxIdentifier p_Identifier )
 {
 	HRESULT l_Status = S_OK;
 
@@ -76,7 +77,7 @@ HRESULT SVMatroxResourceMonitor::InsertIdentifier( SVMatroxIdentifierEnum p_Iden
 	return l_Status;
 }
 
-HRESULT SVMatroxResourceMonitor::EraseIdentifier( SVMatroxIdentifierEnum p_IdentifierType, long p_Identifier )
+HRESULT SVMatroxResourceMonitor::EraseIdentifier( SVMatroxIdentifierEnum p_IdentifierType, SVMatroxIdentifier p_Identifier )
 {
 	HRESULT l_Status = S_OK;
 
@@ -164,6 +165,16 @@ SVMatroxResourceMonitor::SVStatusCode SVMatroxResourceMonitor::ValidateCriticalS
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVMatroxLibrary\SVMatroxResourceMonitor.cpp_v  $
  * 
+ *    Rev 1.1   01 Oct 2013 11:15:30   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
  *    Rev 1.0   22 Apr 2013 15:27:04   bWalter
  * Project:  SVObserver
  * Change Request (SCR) nbr:  814
@@ -184,5 +195,3 @@ $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVMatroxLibrary\SVMat
  * 
  * /////////////////////////////////////////////////////////////////////////////////////
 */
-
-

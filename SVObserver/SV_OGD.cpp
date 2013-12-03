@@ -5,8 +5,8 @@
 //* .Module Name     : SV_OGD
 //* .File Name       : $Workfile:   SV_OGD.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 09:19:04  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   02 Oct 2013 12:05:38  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -239,8 +239,8 @@ BOOL SVOCRGeometryDlg::UpdateOCRParameters ()
 	POCRParameters->nMaxPixelsInBlob = atoi( tmp );
 
 	index = m_rotationModeCombo.GetCurSel ();
-	POCRParameters->rotation = 
-		m_rotationModeCombo.GetItemData (index);
+	POCRParameters->rotation = static_cast< int >(
+		m_rotationModeCombo.GetItemData( index ) );
 
 	POCRParameters->scaleInvariant = 
 		m_scaleInvarientButton;
@@ -269,7 +269,27 @@ BOOL SVOCRGeometryDlg::OnKillActive()
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SV_OGD.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SV_OGD.cpp_v  $
+ * 
+ *    Rev 1.2   02 Oct 2013 12:05:38   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platforms.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.1   01 Oct 2013 11:54:38   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 09:19:04   bWalter
  * Project:  SVObserver

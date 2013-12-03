@@ -5,8 +5,8 @@
 //* .Module Name     : SVSimpleIndexQueue
 //* .File Name       : $Workfile:   SVSimpleIndexQueue.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   22 Apr 2013 13:51:24  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   01 Oct 2013 10:02:44  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -101,12 +101,12 @@ bool SVSimpleIndexQueue::get_next_available_index( long& rlNextAvailable ) const
 
 long SVSimpleIndexQueue::get_used_count() const
 {
-	return m_Used.size();
+	return static_cast<long>(m_Used.size());
 }
 
 long SVSimpleIndexQueue::get_available_count() const
 {
-	return m_Available.size();
+	return static_cast<long>(m_Available.size());
 }
 
 //******************************************************************************
@@ -114,6 +114,16 @@ long SVSimpleIndexQueue::get_available_count() const
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVLibrary\SVSimpleIndexQueue.cpp_v  $
+ * 
+ *    Rev 1.1   01 Oct 2013 10:02:44   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   22 Apr 2013 13:51:24   bWalter
  * Project:  SVObserver

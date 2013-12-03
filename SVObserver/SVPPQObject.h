@@ -5,8 +5,8 @@
 //* .Module Name     : SVPPQObject
 //* .File Name       : $Workfile:   SVPPQObject.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.4  $
-//* .Check In Date   : $Date:   07 Aug 2013 13:34:56  $
+//* .Current Version : $Revision:   1.6  $
+//* .Check In Date   : $Date:   30 Oct 2013 11:00:32  $
 //******************************************************************************
 
 #ifndef SVPPQOBJECT_H
@@ -210,13 +210,13 @@ protected:
 	typedef SVTQueueObject< SVInspectionInfoPair > SVInspectionInfoQueue;
 	typedef SVTQueueObject< long > SVProcessCountQueue;
 	typedef SVTQueueObject< SVProductRequestPair > SVProductRequestQueue;
-	typedef void (CALLBACK * SVAPCSignalHandler)(DWORD);
+	typedef void ( CALLBACK * SVAPCSignalHandler )( DWORD_PTR );
 	typedef boost::function<void ( bool& )> SVThreadProcessHandler;
 	typedef std::map< SVVirtualCamera*, SVCameraInfoElement > SVCameraInfoMap;
 	typedef std::map< SVVirtualCamera*, SVCameraQueueElement > SVPendingCameraResponseMap;
 
-	static void CALLBACK OutputTimerCallback( UINT uTimerID, UINT uRsvd, DWORD dwUser, DWORD dwRsvd1, DWORD dwRsvd2 );
-	static void CALLBACK APCThreadProcess( DWORD dwParam );
+	static void CALLBACK OutputTimerCallback( UINT uTimerID, UINT uRsvd, DWORD_PTR dwUser, DWORD_PTR dwRsvd1, DWORD_PTR dwRsvd2 );
+	static void CALLBACK APCThreadProcess( DWORD_PTR dwParam );
 
 	HRESULT MarkProductInspectionsMissingAcquisiton( SVProductInfoStruct& p_rProduct, SVVirtualCamera* p_pCamera );
 
@@ -408,6 +408,26 @@ typedef SVVector< SVPPQObject* > SVPPQObjectArray;
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVPPQObject.h_v  $
+ * 
+ *    Rev 1.6   30 Oct 2013 11:00:32   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Added #ifndef _WIN64 to remove deprecated code from the 64bit solution.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.5   02 Oct 2013 07:12:20   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.4   07 Aug 2013 13:34:56   sjones
  * Project:  SVObserver

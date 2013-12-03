@@ -5,8 +5,8 @@
 //* .Module Name     : SVMatroxGige
 //* .File Name       : $Workfile:   SVMatroxGige.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.3  $
-//* .Check In Date   : $Date:   23 Sep 2013 12:35:42  $
+//* .Current Version : $Revision:   1.4  $
+//* .Check In Date   : $Date:   02 Oct 2013 11:52:32  $
 //******************************************************************************
 
 #include "StdAfx.h"
@@ -67,19 +67,19 @@ bool SVMatroxGige::IsValidDigitizerHandle(unsigned long p_Handle) const
 }
 
 // Callback used for MdigHook - Start Frame
-long SVMatroxGige::DigitizerStartFrameCallback(long HookType, long EventId, void* p_pvContext)
+SVMatroxIdentifier SVMatroxGige::DigitizerStartFrameCallback( SVMatroxIdentifier HookType, SVMatroxIdentifier EventId, void* p_pvContext )
 {
 	return SVMatroxGige::DigitizerCallback(HookType, EventId, p_pvContext);
 }
 
 // Callback used for MdigHook - End Frame
-long SVMatroxGige::DigitizerEndFrameCallback(long HookType, long EventId, void* p_pvContext)
+SVMatroxIdentifier SVMatroxGige::DigitizerEndFrameCallback( SVMatroxIdentifier HookType, SVMatroxIdentifier EventId, void* p_pvContext )
 {
 	return SVMatroxGige::DigitizerCallback(HookType, EventId, p_pvContext);
 }
 
 // Callback used for MdigProcess
-long SVMatroxGige::ProcessFrame(long HookType, long HookId, void* p_pvContext)
+SVMatroxIdentifier SVMatroxGige::ProcessFrame( SVMatroxIdentifier HookType, SVMatroxIdentifier HookId, void* p_pvContext )
 {
 	try
 	{
@@ -142,7 +142,7 @@ long SVMatroxGige::ProcessFrame(long HookType, long HookId, void* p_pvContext)
 }
 
 // General handler for MdigHook callbacks (Indirect)
-long SVMatroxGige::DigitizerCallback(long HookType, long EventId, void* p_pvContext)
+SVMatroxIdentifier SVMatroxGige::DigitizerCallback( SVMatroxIdentifier HookType, SVMatroxIdentifier EventId, void* p_pvContext )
 {
 	try
 	{
@@ -187,7 +187,7 @@ long SVMatroxGige::DigitizerCallback(long HookType, long EventId, void* p_pvCont
 	return 0L;
 }
 
-long __stdcall SVMatroxGige::LineEdgeEventCallback(long HookType, SVMatroxIdentifier EventId, void* p_pvContext)
+SVMatroxIdentifier __stdcall SVMatroxGige::LineEdgeEventCallback( SVMatroxIdentifier HookType, SVMatroxIdentifier EventId, void* p_pvContext )
 {
 	SVMatroxGigeDigitizer* l_pCamera = reinterpret_cast<SVMatroxGigeDigitizer *>(p_pvContext);
 	// Get State of the line
@@ -208,7 +208,7 @@ long __stdcall SVMatroxGige::LineEdgeEventCallback(long HookType, SVMatroxIdenti
 	return 0L;
 }
 
-void SVMatroxGige::DoAcquisitionTrigger(const SVMatroxGigeDigitizer& p_rCamera, long HookId)
+void SVMatroxGige::DoAcquisitionTrigger( const SVMatroxGigeDigitizer& p_rCamera, SVMatroxIdentifier HookId )
 {
 	// Get The Timestamp
 	double timestamp = 0.0;
@@ -520,25 +520,6 @@ HRESULT SVMatroxGige::Close()
 	HRESULT hr = Destroy( true );
 	return hr;
 }
-/* Obsolete
-HRESULT SVMatroxGige::BufferIsLocked( unsigned long p_ulIndex, bool &p_rbIsLocked )
-{
-	HRESULT hr = m_procBufferMgr.IsInUse(p_ulIndex, p_rbIsLocked);
-	return hr;
-}
-
-HRESULT SVMatroxGige::BufferLock( unsigned long p_ulIndex )
-{
-	HRESULT hr = m_procBufferMgr.Acquire(p_ulIndex);
-	return hr;
-}
-
-HRESULT SVMatroxGige::BufferUnlock( unsigned long p_ulIndex )
-{
-	HRESULT hr = m_procBufferMgr.Release(p_ulIndex);
-	return hr;
-}
-*/
 
 HRESULT SVMatroxGige::CameraGetCount( unsigned long &p_rulCount )
 {
@@ -549,7 +530,7 @@ HRESULT SVMatroxGige::CameraGetCount( unsigned long &p_rulCount )
 	// iterate thru systems and associated digitizers
 	for (SVMatroxGigeSystemList::iterator it = m_Systems.begin();it != m_Systems.end();++it)
 	{
-		p_rulCount += it->second.GetDigitizerList().size();
+		p_rulCount += static_cast< unsigned long >( it->second.GetDigitizerList().size() );
 	}
 	return hr;
 }
@@ -1512,7 +1493,7 @@ unsigned long SVMatroxGige::GetDigitizerHandle(unsigned long index) const
 			}
 			else
 			{
-				index -= list.size();
+				index -= static_cast< unsigned long >( list.size() );
 			}
 		}
 	}
@@ -1520,7 +1501,7 @@ unsigned long SVMatroxGige::GetDigitizerHandle(unsigned long index) const
 }
 
 // Handler for camera disconnect/reconnect
-long SVMatroxGige::CameraPresentCallback(long HookType, long EventId, void* p_pvContext)
+SVMatroxIdentifier SVMatroxGige::CameraPresentCallback( SVMatroxIdentifier HookType, SVMatroxIdentifier EventId, void* p_pvContext )
 {
 	unsigned char systemHandle = reinterpret_cast<unsigned char>(p_pvContext);
 	HRESULT hr = S_OK;
@@ -1561,7 +1542,7 @@ long SVMatroxGige::CameraPresentCallback(long HookType, long EventId, void* p_pv
 				SETEXCEPTION1( l_svLog, SVMSG_SVMATROXGIGE_NO_ERROR, l_csbuf );
 				l_svLog.LogException( l_csbuf );
 
-				g_svTheApp.m_svSystem.HandleDisconnect(system, static_cast<unsigned char>(deviceNumber));
+				g_svTheApp.m_svSystem.HandleDisconnect(system, deviceNumber);
 			}
 		}
 	}
@@ -2004,6 +1985,16 @@ HRESULT SVMatroxGige::SetAcquisitionTriggered(unsigned long p_ulHandle, bool bAc
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVMatroxGige\SVMatroxGige.cpp_v  $
+ * 
+ *    Rev 1.4   02 Oct 2013 11:52:32   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platforms.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   23 Sep 2013 12:35:42   tbair
  * Project:  SVObserver

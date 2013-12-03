@@ -5,8 +5,8 @@
 //* .Module Name     : SVRemoteOutputGroup
 //* .File Name       : $Workfile:   SVRemoteOutputGroup.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 14:51:40  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   02 Oct 2013 07:58:46  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -688,7 +688,7 @@ HRESULT SVRemoteOutputGroup::Find( SVRemoteOutputObject* p_pObject, long& p_rlIn
 	{
 		if( m_RemoteOutputs[x] == p_pObject )
 		{
-			p_rlIndex = x;
+			p_rlIndex = static_cast<long>(x);
 			l_hr = S_OK;
 			break;
 		}
@@ -789,7 +789,17 @@ HRESULT SVRemoteOutputGroup::SetGroupName(const SVString& newName)
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVRemoteOutputGroup.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVRemoteOutputGroup.cpp_v  $
+ * 
+ *    Rev 1.1   02 Oct 2013 07:58:46   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 14:51:40   bWalter
  * Project:  SVObserver

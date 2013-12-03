@@ -5,8 +5,8 @@
 //* .Module Name     : SVOCameraList
 //* .File Name       : $Workfile:   SVOCameraList.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 12:48:30  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   01 Oct 2013 15:24:40  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -247,7 +247,7 @@ const CSVOCameraObj *CSVOCameraList::GetCameraObjectByPosition(int iPos) const
 
 int CSVOCameraList::GetCameraListCount() const
 {
-	return m_CameraList.GetCount();
+	return static_cast<int>(m_CameraList.GetCount());
 }
 
 void CSVOCameraList::ResetContent()
@@ -266,7 +266,17 @@ void CSVOCameraList::ResetContent()
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVOCameraList.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVOCameraList.cpp_v  $
+ * 
+ *    Rev 1.1   01 Oct 2013 15:24:40   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 12:48:30   bWalter
  * Project:  SVObserver

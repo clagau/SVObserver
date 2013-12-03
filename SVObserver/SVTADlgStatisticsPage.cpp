@@ -5,8 +5,8 @@
 //* .Module Name     : SVToolAdjustmentDialogStatisticsPageClass
 //* .File Name       : $Workfile:   SVTADlgStatisticsPage.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   24 Apr 2013 11:18:08  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   02 Oct 2013 08:17:50  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -107,8 +107,8 @@ BOOL SVToolAdjustmentDialogStatisticsPageClass::OnInitDialog()
 //
 void SVToolAdjustmentDialogStatisticsPageClass::OnButtonAdd() 
 {
-	long    lAvailableIndex;
-	long    lCurrentIndex;
+	DWORD_PTR    lAvailableIndex;
+	DWORD_PTR    lCurrentIndex;
 
     lAvailableIndex = m_lbAvailableList.GetItemData( m_lbAvailableList.GetCurSel() );
 
@@ -264,7 +264,7 @@ void SVToolAdjustmentDialogStatisticsPageClass::OnSetRange()
 		int item = m_lbSelectedList.GetCurSel();
 		if( item != LB_ERR )
 		{
-			int index = m_lbSelectedList.GetItemData( item );
+			DWORD_PTR index = m_lbSelectedList.GetItemData( item );
 			pResult = m_pTool->GetResultObject( (SVStatisticsFeatureEnum)index );
 
 			if (!pResult)
@@ -297,8 +297,7 @@ void SVToolAdjustmentDialogStatisticsPageClass::OnPublishButton()
     publishedResultString.LoadString ( IDS_PUBLISHABLE_RESULTS );
     dlg.SetCaptionTitle (publishedResultString);
 
-    int rc = dlg.DoModal();
-	if( rc == IDOK )
+	if( dlg.DoModal() == IDOK )
 	{
 		// refresh the publish list
 		SVInspectionProcess* pInspection = m_pTool->GetInspection();
@@ -329,8 +328,7 @@ void SVToolAdjustmentDialogStatisticsPageClass::OnBtnObjectPicker()
 	dlg.uAttributesDesired = SV_SELECTABLE_FOR_STATISTICS;
 	dlg.m_bUpdateObjectAttributes = true;
 
-	int nResult = dlg.DoModal();
-	if( nResult == IDOK )
+	if( dlg.DoModal() == IDOK )
 	{
 		m_strVariableToMonitor = dlg.m_sSelectedOutputName;
 		SVObjectReference refObject = dlg.m_refSelectedObject;
@@ -343,7 +341,17 @@ void SVToolAdjustmentDialogStatisticsPageClass::OnBtnObjectPicker()
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVTADlgStatisticsPage.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVTADlgStatisticsPage.cpp_v  $
+ * 
+ *    Rev 1.1   02 Oct 2013 08:17:50   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add x64 platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   24 Apr 2013 11:18:08   bWalter
  * Project:  SVObserver
