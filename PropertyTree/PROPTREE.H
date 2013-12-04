@@ -67,7 +67,7 @@
 #include "PropTreeItemStatic.h"
 #include "PropTreeItemEdit.h"
 #include "PropTreeItemCombo.h"
-#include "PropTreeItemColor.h"
+//#include "PropTreeItemColor.h"
 #include "PropTreeItemFile.h"
 #include "SVRPropTreeState.h"
 class SVRPropTree;
