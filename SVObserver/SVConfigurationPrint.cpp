@@ -5,8 +5,8 @@
 //* .Module Name     : SVConfigurationPrint
 //* .File Name       : $Workfile:   SVConfigurationPrint.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.5  $
-//* .Check In Date   : $Date:   01 Oct 2013 12:48:18  $
+//* .Current Version : $Revision:   1.6  $
+//* .Check In Date   : $Date:   03 Dec 2013 13:50:48  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -50,6 +50,7 @@
 #include "SVIPDoc.h"
 #include "SVShapeMaskHelperClass.h"
 #include "SVIOController.h"
+#include "SVUserMaskOperatorClass.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -57,8 +58,7 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-
-static GUID*  pguidNonPrintArray[] = 
+static GUID* pguidNonPrintArray[] = 
 {
 	&SVTaskObjectClassIsObjectValidGuid,
 	&SVStatusObjectGuid,
@@ -212,7 +212,6 @@ SVConfigurationPrint::SVConfigurationPrint()
 SVConfigurationPrint::~SVConfigurationPrint()
 {
 }
-
 
 BEGIN_MESSAGE_MAP(SVConfigurationPrint, CCmdTarget)
 	//{{AFX_MSG_MAP(SVConfigurationPrint)
@@ -433,7 +432,6 @@ void SVConfigurationPrint::DoPrintSEC()
 		
 		int   nStep    = (nEndPage >= nStartPage) ? 1 : -1;
 		
-		
 		nEndPage = (nEndPage == 0xffff) ? 0xffff : nEndPage + nStep;
 		
 		VERIFY(strTemp.LoadString(AFX_IDS_PRINTPAGENUM));
@@ -507,7 +505,6 @@ void SVConfigurationPrint::DoPrintSEC()
 	}  // if( OnPreparePrinting( &printInfo ) )
 }  // end function void SVConfigurationPrint:::OnFilePrintSec() 
 
-
 void SVConfigurationPrint::PrintSECToStringBuffer(CString& rsBuffer)
 {
 	mbPrintToStringBuffer = true;
@@ -545,11 +542,6 @@ void SVConfigurationPrint::PrintSECToStringBuffer(std::string& rsBuffer)
 	rsBuffer = static_cast< LPCTSTR >( l_TempString );
 }
 
-/////////////////////////////////////////////////////////////////////////////
-//
-//
-//
-//
 BOOL SVConfigurationPrint::DoPreparePrinting(CPrintInfo* pPrintInfo)
 {
     SVObserverApp* pApp = dynamic_cast <SVObserverApp*> (AfxGetApp());
@@ -601,7 +593,6 @@ BOOL SVConfigurationPrint::DoPreparePrinting(CPrintInfo* pPrintInfo)
 			return FALSE;       // do not print
 	}
 	
-	
 	ASSERT(pPrintInfo->m_pPD != NULL);
 	
 	ASSERT(pPrintInfo->m_pPD->m_pd.hDC != NULL);
@@ -609,16 +600,12 @@ BOOL SVConfigurationPrint::DoPreparePrinting(CPrintInfo* pPrintInfo)
 	if (pPrintInfo->m_pPD->m_pd.hDC == NULL)
 		return FALSE;
 	
-	
 	pPrintInfo->m_nNumPreviewPages = pApp->m_nNumPreviewPages;
 	
 	VERIFY(pPrintInfo->m_strPageDesc.LoadString(AFX_IDS_PREVIEWPAGEDESC));
 	
 	return TRUE;
 }
-
-
-
 
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : SVConfigurationPrint:::PrintObject
@@ -655,14 +642,10 @@ BOOL SVConfigurationPrint::DoPreparePrinting(CPrintInfo* pPrintInfo)
 ////////////////////////////////////////////////////////////////////////////////
 void SVConfigurationPrint::PrintObject( CDC* pDC, SVObjectClass* pObj, CPoint& ptCurPos, int nIndentLevel )
 {
-	//if ( pObj->uObjectAttributesAllowed & SV_PRINTABLE )// EB 20050518; too aggressive
-	{
-		PrintDetails(pDC, pObj, ptCurPos, nIndentLevel);
-		PrintFriends(pDC, pObj, ptCurPos, nIndentLevel + 1);
-		PrintChildren(pDC, pObj, ptCurPos, nIndentLevel + 1);
-	}
-}  // end function void SVConfigurationPrint:::PrintObject( ... )
-
+	PrintDetails(pDC, pObj, ptCurPos, nIndentLevel);
+	PrintFriends(pDC, pObj, ptCurPos, nIndentLevel + 1);
+	PrintChildren(pDC, pObj, ptCurPos, nIndentLevel + 1);
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : SVConfigurationPrint:::PrintDetails
@@ -734,8 +717,6 @@ void SVConfigurationPrint::PrintDetails( CDC* pDC, SVObjectClass* pObj, CPoint& 
 	{
 		return;
 	}
-	
-	
 	
 	// If object is a value object, print name and value.
 	if ( SVValueObjectClass* pValueObject = dynamic_cast<SVValueObjectClass*> (pObj) )
@@ -845,7 +826,7 @@ void SVConfigurationPrint::PrintDetails( CDC* pDC, SVObjectClass* pObj, CPoint& 
 						{
 							pCurrentSourceImage = dynamic_cast <SVImageClass*> (l_psvImageInfo->GetInputObjectInfo().PObject);
 
-							PrintValueObject(pDC, ptCurPos, _T("Image Source"), pCurrentSourceImage->GetCompleteObjectNameToObjectType());
+							PrintValueObject(pDC, ptCurPos, pApp->GetStringResource(IDS_IMAGE_SOURCE_STRING), pCurrentSourceImage->GetCompleteObjectNameToObjectType());
 						}
 					}
 					else
@@ -942,7 +923,19 @@ void SVConfigurationPrint::PrintDetails( CDC* pDC, SVObjectClass* pObj, CPoint& 
 					PrintValueObject(pDC, ptCurPos, _T("Variable"), sName);
 				}
 			}  // end if( SV_IS_KIND_OF( pObj, SVStatisticsToolClass ) )
-			
+
+			if (SV_IS_KIND_OF(pObj, SVUserMaskOperatorClass))
+			{
+				SVUserMaskOperatorClass* maskObj = dynamic_cast <SVUserMaskOperatorClass*>( pObj );
+				if ( NULL != maskObj )
+				{
+					sLabel = pApp->GetStringResource(IDS_IMAGE_SOURCE_STRING) + _T(":");
+					sValue.Format(_T("%s"), maskObj->getMaskInputImage()->GetCompleteObjectName());
+					ptCurPos.x   = (nIndentLevel + 1) * nShortTabPixels;
+					PrintValueObject(pDC, ptCurPos, sLabel, sValue);
+				}
+			}
+
 			if (SV_IS_KIND_OF(pObj, SVLineAnalyzerClass))
 			{
 				SVObjectInfoStruct objectInfo;
@@ -982,14 +975,11 @@ void SVConfigurationPrint::PrintDetails( CDC* pDC, SVObjectClass* pObj, CPoint& 
 		PrintValueObject(pDC, ptCurPos, sLabel, sValue);
 	}  // end if( SV_IS_KIND_OF( pObj, SVEquationClass ) )
 	
-
-	
 	if (SV_IS_KIND_OF(pObj, SVTaskObjectClass))
 	{
 		PrintInputOutputList(pDC, pObj, ptCurPos, nIndentLevel);
 	}  // end if( SV_IS_KIND_OF( pObj, SVTaskObjectClass )
 }  // end function void SVConfigurationPrint:::PrintDetails( ... )
-
 
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : SVConfigurationPrint:::PrintChildren
@@ -1040,7 +1030,6 @@ void SVConfigurationPrint::PrintChildren( CDC* pDC, SVObjectClass* pObj, CPoint&
 	}  // end if( SV_IS_KIND_OF( pObj, SVTaskObjectListClass ) )
 }  // end function void SVConfigurationPrint:::PrintChildren( ... )
 
-
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : SVConfigurationPrint:::PrintFriends
 // -----------------------------------------------------------------------------
@@ -1088,7 +1077,6 @@ void SVConfigurationPrint::PrintFriends( CDC* pDC, SVObjectClass* pObj, CPoint& 
 	}  // end for( int nCnt = 0; nCnt < rFriendList.GetSize (); nCnt++ )
 }  // end function void SVConfigurationPrint:::PrintFriends( ... )
 
-
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : SVConfigurationPrint:::PrintInputOutputList
 // -----------------------------------------------------------------------------
@@ -1127,7 +1115,6 @@ void SVConfigurationPrint::PrintInputOutputList( CDC* pDC, SVObjectClass* pObj, 
 	SVTaskObjectClass*      pTaskObj = dynamic_cast <SVTaskObjectClass*> (pObj);
 
 	SVOutputInfoListClass l_OutputList;
-
 	pTaskObj->GetOutputList( l_OutputList );
 
 	for (int nCnt = 0; nCnt < l_OutputList.GetSize(); nCnt++)
@@ -1140,7 +1127,6 @@ void SVConfigurationPrint::PrintInputOutputList( CDC* pDC, SVObjectClass* pObj, 
 		}  // end if( pOutput->PObject->GetOwner () == pObj )
 	}  // end for( int nCnt = 0; nCnt < pOutputInfoList->GetSize(); nCnt++ )
 }  // end function void SVConfigurationPrint:::PrintInputOutputList( ... )
-
 
 void SVConfigurationPrint::PrintOCRParameters(CDC* pDC,
     CString strParameters,
@@ -1187,7 +1173,6 @@ void SVConfigurationPrint::PrintOCRParameters(CDC* pDC,
 		pOCRParam->STRnoMatchLabel;
 	}
 }
-
 
 void SVConfigurationPrint::PrintOCRGrayScaleParameters(CDC* pDC,
     CString strParameters,
@@ -1245,7 +1230,6 @@ void SVConfigurationPrint::PrintOCRGrayScaleParameters(CDC* pDC,
 		PrintValueObject(pDC, ptCurPos, _T("Output"), sValue);
 	}
 }
-
 
 /////////////////////////////////////////////////////////////////////////////
 //  
@@ -1328,7 +1312,6 @@ int SVConfigurationPrint::PrintString(CDC* pDC, CPoint& ptCurPos, LPCTSTR _lpszO
 	return 0;
 }
 
-
 void SVConfigurationPrint::PrintValueObject(CDC* pDC, CPoint& ptCurPos, LPCTSTR lpszName, LPCTSTR lpszValue)
 {
 	if (mbPrintToStringBuffer)
@@ -1348,7 +1331,6 @@ void SVConfigurationPrint::PrintValueObject(CDC* pDC, CPoint& ptCurPos, LPCTSTR 
 	ptCurPos.y  += max(nFirstHeight, nLastHeight); 
     }
 }
-
 
 void SVConfigurationPrint::PrintIOEntryObject(CDC* pDC, CPoint& ptCurPos, int nIndentLevel, LPCTSTR lpszName, SVIOEntryHostStructPtr IOEntry)
 {
@@ -1401,10 +1383,6 @@ void SVConfigurationPrint::PrintIOEntryObject(CDC* pDC, CPoint& ptCurPos, int nI
 	}
 }
 
-/////////////////////////////////////////////////////////////////////////////
-//
-//
-//
 void SVConfigurationPrint::OnVirtualPrint(BOOL bRealPrintInput /* = FALSE */) 
 {
 	SVObserverApp*         pApp    = dynamic_cast <SVObserverApp*> (AfxGetApp());
@@ -1434,7 +1412,6 @@ void SVConfigurationPrint::OnVirtualPrint(BOOL bRealPrintInput /* = FALSE */)
 	// Exchange font and store old one
 	pcfontOldFont = pDC->SelectObject(&fontTitle);
 	
-	
     // Initialize the Non-Printing GUID pointer array size variable.
     nNPArraySize = sizeof(pguidNonPrintArray) / sizeof(GUID*);
 	
@@ -1450,9 +1427,6 @@ void SVConfigurationPrint::OnVirtualPrint(BOOL bRealPrintInput /* = FALSE */)
 	// Print SEC path
 	PrintValueObject(pDC, ptCurPos, _T("Current Path:"), pApp->GetSECFullFileName());
 	
-//	// Print creation SEC date
-//	PrintValueObject(pDC, ptCurPos, _T("Creation Date:"), pApp->CreationSECDate);
-
 	// Print current date
 	// Get current date
 	LPTSTR pString =  strDate.GetBuffer(32);
@@ -1472,7 +1446,6 @@ void SVConfigurationPrint::OnVirtualPrint(BOOL bRealPrintInput /* = FALSE */)
 		pString[31] = '\0';
 		strDate.ReleaseBuffer();
 	}
-	
 	
     // Get current time
 	pString =  strTime.GetBuffer(32);
@@ -1496,7 +1469,6 @@ void SVConfigurationPrint::OnVirtualPrint(BOOL bRealPrintInput /* = FALSE */)
 	
 	PrintValueObject(pDC, ptCurPos, _T("Current Date:"), sValue);
 	
-	
 	// Print Application Section
 	pDC->SelectObject(&fontSection);
 	ptTemp      = ptCurPos;
@@ -1519,11 +1491,6 @@ void SVConfigurationPrint::OnVirtualPrint(BOOL bRealPrintInput /* = FALSE */)
 	PrintPPQBarSection(pDC, ptCurPos, nIndentLevel);
 }  // end function void SVObserverApp::OnVirtualPrint( ... )
 
-
-/////////////////////////////////////////////////////////////////////////////
-//
-//
-//
 void SVConfigurationPrint::OnPrepareDC() 
 {
     CDC* pDC = &printDC;
@@ -1536,12 +1503,6 @@ void SVConfigurationPrint::OnPrepareDC()
 	printInfo.m_bContinuePrinting = (printInfo.GetMaxPage() != 0xffff) || (printInfo.m_nCurPage == 1);
 }
 
-
-/////////////////////////////////////////////////////////////////////////////
-//
-//
-//
-//
 void SVConfigurationPrint::OnBeginPrinting()
 {
 	CDC*	pDC = &printDC;
@@ -1649,7 +1610,6 @@ void SVConfigurationPrint::OnBeginPrinting()
 			);
 		ASSERT(bResult);
 		
-		
 		// Create sub title font
 		bResult = fontPageNbr.CreateFont(
 			-nHeightPageNumberPixels,						// logical height of font 
@@ -1681,10 +1641,6 @@ void SVConfigurationPrint::OnBeginPrinting()
 	}
 }
 
-/////////////////////////////////////////////////////////////////////////////
-//
-//
-//
 void SVConfigurationPrint::PrintPage() 
 {
     SVObserverApp* pApp = dynamic_cast <SVObserverApp*> (AfxGetApp());
@@ -1693,7 +1649,6 @@ void SVConfigurationPrint::PrintPage()
 	
 	OnVirtualPrint(TRUE);       // Real print
 	
-	
     CString  strPage;
 	
     strPage.Format("%s %u %s %u", 
@@ -1701,7 +1656,6 @@ void SVConfigurationPrint::PrintPage()
 					printInfo.m_nCurPage, 
 					pApp->GetStringResource(IDS_OF_STRING), 
 					printInfo.GetMaxPage());
-	
 	
 	CFont*   pcfontOldFont;
 	
@@ -1718,15 +1672,9 @@ void SVConfigurationPrint::PrintPage()
 	pDC->SelectObject(pcfontOldFont);
 }  // end function void SVObserverApp::OnPrint( CDC* pPrintCDC, CPrintInfo* pPrintInfo )
 
-
-/////////////////////////////////////////////////////////////////////////////
-//
-//
-//
 void SVConfigurationPrint::OnEndPrinting()
 {
 }
-
 
 void SVConfigurationPrint::PrintCameraSummary(CDC* pDC, CPoint& ptCurPos, int nIndentLevel)
 {
@@ -1812,7 +1760,6 @@ void SVConfigurationPrint::PrintCameraSummary(CDC* pDC, CPoint& ptCurPos, int nI
 				{
 					ptCurPos.x = (nIndentLevel+2) * nShortTabPixels;
 
-					// 
 					PrintValueObject(pDC, ptCurPos, _T("Acquisition Type:"), _T("Hardware Acquisition"));
 
 					// print camera file
@@ -2028,7 +1975,6 @@ void SVConfigurationPrint::PrintPPQSummary(CDC* pDC, CPoint& ptCurPos, int nInde
 			sValue.Format(_T("%ld"), lDelayTime);
 			PrintValueObject(pDC, ptCurPos, _T("PPQOutputDelayTime"), sValue);
 			
-			
 			ptCurPos.x  = (nIndentLevel + 1) * nShortTabPixels;
 			ptTemp      = ptCurPos;
 			ptCurPos.y += PrintString(pDC, ptTemp, _T("Trigger:"));
@@ -2038,7 +1984,6 @@ void SVConfigurationPrint::PrintPPQSummary(CDC* pDC, CPoint& ptCurPos, int nInde
 			ptCurPos.x  = (nIndentLevel + 2) * nShortTabPixels;
 			ptTemp      = ptCurPos;
 			ptCurPos.y += PrintString(pDC, ptTemp, pTrigger->GetName());
-			
 			
 			ptCurPos.x  = (nIndentLevel + 1) * nShortTabPixels;
 			ptTemp      = ptCurPos;
@@ -2203,7 +2148,6 @@ void SVConfigurationPrint::PrintPPQBarSection(CDC* pDC, CPoint& ptCurPos, int nI
 	}
 }
 
-
 void SVConfigurationPrint::PrintInspectionToolSet(CDC* pDC, CPoint& ptCurPos, int nIndentLevel)
 {
 	SVConfigurationObject* pConfig = NULL;
@@ -2218,7 +2162,6 @@ void SVConfigurationPrint::PrintInspectionToolSet(CDC* pDC, CPoint& ptCurPos, in
 	
 	SVInspectionProcess*    pInspection = NULL;
 	SVToolSetClass*         pToolset = NULL;
-	
 	
 	// Print all IPDocs
 	pConfig->GetInspectionCount(lSize);
@@ -2257,7 +2200,6 @@ void SVConfigurationPrint::PrintInspectionToolSet(CDC* pDC, CPoint& ptCurPos, in
 	}  // for( int j = 0; j < pApp->pActivatedSystemList->GetAt( i )->GetBoardIPDocNumber();
 }
 
-
 void SVConfigurationPrint::PrintIOSection(CDC* pDC, CPoint& ptCurPos, int nIndentLevel)
 {
 	SVObserverApp* pApp = dynamic_cast <SVObserverApp*> (AfxGetApp());
@@ -2277,7 +2219,6 @@ void SVConfigurationPrint::PrintIOSection(CDC* pDC, CPoint& ptCurPos, int nInden
 	PrintModuleIO(pDC, ptCurPos, nIndentLevel);
 	PrintResultIO(pDC, ptCurPos, nIndentLevel);
 }
-
 
 void SVConfigurationPrint::PrintModuleIO(CDC* pDC, CPoint& ptCurPos, int nIndentLevel)
 {
@@ -2317,63 +2258,55 @@ void SVConfigurationPrint::PrintModuleIO(CDC* pDC, CPoint& ptCurPos, int nIndent
 		
 		
 		// Module Inputs
+		for (long i = 0; i < (long) dwMaxInput; ++i)
 		{
-			for (long i = 0; i < (long) dwMaxInput; ++i)
-			{
-				label.Format(_T("Digital Input %d:"), i+1);
-				//				value.Empty();
+			label.Format(_T("Digital Input %d:"), i+1);
 				
-				// Find each digital input
-				for (int j = 0; j < lSize; j++)
-				{
-					if (ppIOEntries[j]->m_ObjectType != IO_DIGITAL_INPUT)
-						continue;
-
-					SVObjectClass* l_pObject = SVObjectManagerClass::Instance().GetObject( ppIOEntries[j]->m_IOId );
-					
-					pDigInput = dynamic_cast< SVDigitalInputObject* >( l_pObject );
-					
-					if (!pDigInput)
-						continue;
-					
-					if (i == pDigInput->GetChannel())
-					{
-						PrintIOEntryObject(pDC, ptCurPos, nIndentLevel + 1, label, ppIOEntries[j]);
-						break;
-					}// end if
-				}// end for
-			}
-		}
-		
-		{	// Find each Remote input
-			int j = 0;
-			for (int i = 0; i < lSize; i++)
+			// Find each digital input
+			for (int j = 0; j < lSize; j++)
 			{
-				if (ppIOEntries[i]->m_ObjectType == IO_REMOTE_INPUT)
-					++j;
-			}
-			value.Format(_T("%d"), j);
-			ptCurPos.x = nIndentLevel * nShortTabPixels;
-			PrintValueObject(pDC, ptCurPos, _T("Remote Inputs:"), value);
+				if (ppIOEntries[j]->m_ObjectType != IO_DIGITAL_INPUT)
+					continue;
 
-			if (j)
-			{
-				for( int k = 0, l = 0; k < lSize; k++ )
+				SVObjectClass* l_pObject = SVObjectManagerClass::Instance().GetObject( ppIOEntries[j]->m_IOId );
+
+				pDigInput = dynamic_cast< SVDigitalInputObject* >( l_pObject );
+
+				if (!pDigInput)
+					continue;
+
+				if (i == pDigInput->GetChannel())
 				{
-					if (ppIOEntries[k]->m_ObjectType != IO_REMOTE_INPUT)
-						continue;
-
-					label.Format(_T("Remote Input %d"), (l++)+1);
-					PrintIOEntryObject(pDC, ptCurPos, nIndentLevel+1, label, ppIOEntries[k]);
+					PrintIOEntryObject(pDC, ptCurPos, nIndentLevel + 1, label, ppIOEntries[j]);
+					break;
 				}
 			}
 		}
+		
+		// Find each Remote input
+		int j = 0;
+		for (int i = 0; i < lSize; i++)
+		{
+			if (ppIOEntries[i]->m_ObjectType == IO_REMOTE_INPUT)
+				++j;
+		}
+		value.Format(_T("%d"), j);
+		ptCurPos.x = nIndentLevel * nShortTabPixels;
+		PrintValueObject(pDC, ptCurPos, _T("Remote Inputs:"), value);
 
+		if (j)
+		{
+			for( int k = 0, l = 0; k < lSize; k++ )
+			{
+				if (ppIOEntries[k]->m_ObjectType != IO_REMOTE_INPUT)
+					continue;
+
+				label.Format(_T("Remote Input %d"), (l++)+1);
+				PrintIOEntryObject(pDC, ptCurPos, nIndentLevel+1, label, ppIOEntries[k]);
+			}
+		}
 	}
-
 }  // end function void SVObserverApp::PrintModuleIOP( CDC* pDC, ... )
-
-
 
 void SVConfigurationPrint::PrintResultIO(CDC* pDC, CPoint& ptCurPos, int nIndentLevel)
 {
@@ -2405,7 +2338,6 @@ void SVConfigurationPrint::PrintResultIO(CDC* pDC, CPoint& ptCurPos, int nIndent
 		value.Format(_T("%ld"), dwMaxOutput);
 		ptCurPos.x = nIndentLevel * nShortTabPixels;
 		PrintValueObject(pDC, ptCurPos, _T("Result Outputs:"), value);
-//		ptCurPos.x = ++nIndentLevel * nShortTabPixels;
 		
 		// Result Outputs
 		for (long i = 0; i < (long) dwMaxOutput; ++i)
@@ -2460,7 +2392,6 @@ void SVConfigurationPrint::PrintResultIO(CDC* pDC, CPoint& ptCurPos, int nIndent
 				}// end for k
 			}// end for j
 		}// end for
-		
 	}
 }  // end function void SVObserverApp::PrintResultIO( CDC* pDC, ... )
 
@@ -2611,6 +2542,17 @@ HRESULT SVDeviceParamConfigPrintHelper::Visit(SVCustomDeviceParam& param)
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVConfigurationPrint.cpp_v  $
+ * 
+ *    Rev 1.6   03 Dec 2013 13:50:48   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  876
+ * SCR Title:  Add user mask image to print configuration
+ * Checked in by:  bWalter;  Ben Walter
+ * Change Description:  
+ *   Changed PrintDetails method to get "Image Source" from string table (IDS_IMAGE_SOURCE_STRING) and print the image source for SVUserMaskOperatorClass.
+ * Removed empty lines, empty comments, and dead code.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.5   01 Oct 2013 12:48:18   tbair
  * Project:  SVObserver

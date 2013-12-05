@@ -5,8 +5,8 @@
 //* .Module Name     : SVOConfigAssistantDlg
 //* .File Name       : $Workfile:   SVOConfigAssistantDlg.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.8  $
-//* .Check In Date   : $Date:   30 Oct 2013 14:51:34  $
+//* .Current Version : $Revision:   1.9  $
+//* .Check In Date   : $Date:   02 Dec 2013 11:03:18  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -488,15 +488,20 @@ void CSVOConfigAssistantDlg::OnSelchangeComboAvalSys()
 					{
 						ConvertToDigital(m_lConfigurationType);
 						SetupMessages();
+						if( SVHardwareManifest::IsDigitalSVIM( m_lSystemType ))
+						{
+							m_Page2.ShowCameraDlgBtn( SW_SHOW );
+						}
 					}
 					else
 					{
 						if ( SVHardwareManifest::IsDigitalSVIM( eType ) )
 						{
-							ConvertToDigital(eType);
+							ConvertToDigital(m_lConfigurationType); //eType);
 							m_Page2.DisableAdvanceBtn();
 							SetupMessages();
 						}
+						m_Page2.ShowCameraDlgBtn( SW_HIDE );
 					}
 					UpdateAvailableSystems( CurrentType, m_lConfigurationType );
 				}
@@ -4967,6 +4972,16 @@ bool CSVOConfigAssistantDlg::IsFileAcquisition(int iDig) const
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVOConfigAssistantDlg.cpp_v  $
+ * 
+ *    Rev 1.9   02 Dec 2013 11:03:18   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  870
+ * SCR Title:  Fix Various Issues in the Edit Configuration Dialog
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Added logic to show or hide the camera manager button based on system type and configuration type.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.8   30 Oct 2013 14:51:34   tbair
  * Project:  SVObserver

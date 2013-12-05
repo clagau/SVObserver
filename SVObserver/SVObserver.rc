@@ -5494,6 +5494,7 @@ BEGIN
                             "\nInspec\nInspec\nSVObserver Inspec. Process Doc Files (*.ipd)\n.ipd\nSVObserverInspectionProcess.Document\nSVObserver Inspection Process Document"
     IDR_SVOBSERVER_IODOCTYPE 
                             "\nSVIO\nIOList\nSVIO Files (*.iod)\n.iod\nSVObserverInputOutput.Document\nSVObserver Input Output Document"
+    IDS_IMAGE_SOURCE_STRING "Image Source"
 END
 
 STRINGTABLE

@@ -5,8 +5,8 @@
 //* .Module Name     : CSVOCameraDlg
 //* .File Name       : $Workfile:   SVOCameraDlg.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 12:42:44  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   02 Dec 2013 11:03:16  $
 //******************************************************************************
 
 #if !defined(AFX_SVOCAMERADLG_H__1704235F_5930_4698_BEA2_662312DF9EA0__INCLUDED_)
@@ -29,6 +29,7 @@ public:
 
     void SetupList();
 	void DisableAdvanceBtn();
+	void ShowCameraDlgBtn( int iShow );
 // Dialog Data
 	//{{AFX_DATA(CSVOCameraDlg)
 	enum { IDD = IDD_DLG_PROPPAGE_AA_CAMERA };
@@ -82,7 +83,17 @@ private:
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVOCameraDlg.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVOCameraDlg.h_v  $
+ * 
+ *    Rev 1.1   02 Dec 2013 11:03:16   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  870
+ * SCR Title:  Fix Various Issues in the Edit Configuration Dialog
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Added logic to show or hide the camera manager button based on system type and configuration type.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 12:42:44   bWalter
  * Project:  SVObserver

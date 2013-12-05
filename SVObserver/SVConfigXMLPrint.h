@@ -5,8 +5,8 @@
 //* .Module Name     : SVConfigXMLPrint
 //* .File Name       : $Workfile:   SVConfigXMLPrint.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   13 Aug 2013 09:48:52  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   03 Dec 2013 13:54:14  $
 //******************************************************************************
 
 #ifndef SVCONFIGXMLPRINT_H
@@ -57,7 +57,7 @@
 #include "SVShapeMaskHelperClass.h"
 #include "SVIOController.h"
 #include "SVObserver.h"
-
+#include "SVUserMaskOperatorClass.h"
 
 using namespace SVStringConversions;
 
@@ -84,7 +84,6 @@ namespace sv_xml
 		void WriteInspections(Writer  writer) const;
 		void WriteToolSets(Writer writer) const;
 		void WriteToolSet(Writer writer, SVInspectionProcess * insp) const;
-		//void WriteTools(Writer writer, SVToolSetClass * ts) const;
 		void WriteTool(Writer writer, SVToolClass * ts) const;
 		void WriteArchiveTool(Writer writer, SVArchiveTool * ar) const;
 		void WriteModuleIO(Writer writer) const;
@@ -167,12 +166,22 @@ namespace sv_xml
 
 #endif
 
-
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVConfigXMLPrint.h_v  $
+ * 
+ *    Rev 1.3   03 Dec 2013 13:54:14   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  876
+ * SCR Title:  Add user mask image to print configuration
+ * Checked in by:  bWalter;  Ben Walter
+ * Change Description:  
+ *   Added include.
+ * Removed empty lines and dead code.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   13 Aug 2013 09:48:52   bWalter
  * Project:  SVObserver
@@ -223,5 +232,4 @@ $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVConfigXM
  *   Initial check-in.
  * 
  * /////////////////////////////////////////////////////////////////////////////////////
-
 */

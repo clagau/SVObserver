@@ -5,8 +5,8 @@
 //* .Module Name     : AutoBuild
 //* .File Name       : $Workfile:   AutoBuild.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.26  $
-//* .Check In Date   : $Date:   05 Nov 2013 09:44:20  $
+//* .Current Version : $Revision:   1.27  $
+//* .Check In Date   : $Date:   03 Dec 2013 07:20:08  $
 //******************************************************************************
 
 #pragma once
@@ -23,7 +23,7 @@
 //    c is the beta version number - if c equals 0 or is greater than 254 then the application is marked as Released
 //    d is unused
 
-#define FILEVER        6,20,3,0
+#define FILEVER        6,20,4,0
 #define PRODUCTVER     FILEVER
 #define STRFILEVER     SV_STRINGIZE( FILEVER )
 #define STRPRODUCTVER  SV_STRINGIZE( PRODUCTVER )
@@ -33,6 +33,16 @@
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\AutoBuild.h_v  $
+ * 
+ *    Rev 1.27   03 Dec 2013 07:20:08   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  865
+ * SCR Title:  Update SVObserver Version Number for Fletch Release
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Changed version to 6.20 Beta 004
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.26   05 Nov 2013 09:44:20   tbair
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : SVConfigXMLPrint
 //* .File Name       : $Workfile:   SVConfigXMLPrint.inl  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.6  $
-//* .Check In Date   : $Date:   01 Oct 2013 12:48:18  $
+//* .Current Version : $Revision:   1.7  $
+//* .Check In Date   : $Date:   03 Dec 2013 13:55:00  $
 //******************************************************************************
 
 #include "SVObjectLibrary/SVObjectLibrary.h"
@@ -200,7 +200,6 @@ inline void SVConfigXMLPrint::WriteHardwareAcq(Writer writer, SVVirtualCamera * 
 					if ( pCamFileParam->DetailLevel() > iDetailLevel )
 						continue;
 					pParam->Accept(helper);
-
 				}
 			}
 			writer->WriteEndElement();
@@ -365,7 +364,6 @@ inline void SVConfigXMLPrint::WritePPQInspections(Writer writer, SVPPQObject * p
 		writer->WriteAttributeString(NULL, L"Name", NULL, to_utf16(it->second->GetName(), cp_dflt).c_str());
 		writer->WriteEndElement();
 	}
-
 }
 
 inline void SVConfigXMLPrint::WriteInspections(Writer writer) const
@@ -428,20 +426,9 @@ inline void SVConfigXMLPrint::WriteToolSet(Writer writer, SVInspectionProcess * 
 	writer->WriteStartElement(NULL, L"InspectionProcess", NULL);
 	writer->WriteAttributeString(NULL, L"Name", NULL, to_utf16(insp->GetName(), cp_dflt).c_str());
 	WriteObject(writer, insp->GetToolSet());
-	//WriteTools(writer, insp->GetToolSet());
 	
 	writer->WriteEndElement();
 }
-
-//inline void SVConfigXMLPrint::WriteTools(Writer writer, SVToolSetClass * ts) const
-//{
-//	wchar_t buff[64];
-//	writer->WriteStartElement(NULL, L"ToolSet", NULL);
-//	writer->WriteAttributeString(NULL, L"NumberOfTools", NULL, _itow(ts->GetSize(), buff, 10));
-//	writer->WriteAttributeString(NULL, L"Enabled", NULL, ts->IsEnabled()?L"true":L"false");
-//
-//	writer->WriteEndElement();
-//}
 
 inline void SVConfigXMLPrint::WriteIOSection(Writer writer) const
 {
@@ -480,8 +467,6 @@ inline void SVConfigXMLPrint::WriteResultIO(Writer writer) const
 		// Result Outputs
 		for (long i = 0; i < (long) dwMaxOutput; ++i)
 		{
-			//writer->WriteStartElement(NULL, L"DigitalOutput", NULL);
-			//writer->WriteAttributeString(NULL, L"Number", NULL, _itow(i+1, buff, 10));
 			SVIOEntryHostStructPtr l_pModuleReady = pConfig->GetModuleReady();
 
 			SVObjectClass* l_pObject = SVObjectManagerClass::Instance().GetObject( l_pModuleReady->m_IOId );
@@ -530,14 +515,12 @@ inline void SVConfigXMLPrint::WriteResultIO(Writer writer) const
 								writer->WriteAttributeString(NULL, L"Number", NULL, _itow(i+1, buff, 10));
 								WriteIOEntryObject(writer, ppIOEntries[k]);
 								writer->WriteEndElement();
-								//writer->WriteComment(L"Second");
 								continue;
 							}// end if
 						}
 					}
 				}
 			}// end for j
-			//writer->WriteEndElement();
 		}// end for
 		writer->WriteEndElement();
 	}
@@ -576,60 +559,58 @@ inline void SVConfigXMLPrint::WriteModuleIO(Writer writer) const
 			writer->WriteAttributeString(NULL, L"NumberOfInputs", NULL, _itow(dwMaxInput, buff, 10));
 			
 			// Module Inputs
+			for (long i = 0; i < (long) dwMaxInput; ++i)
 			{
-				for (long i = 0; i < (long) dwMaxInput; ++i)
+				writer->WriteStartElement(NULL, L"DigitalInput", NULL);
+				writer->WriteAttributeString(NULL, L"Number", NULL, _itow(i+1, buff, 10));
+				// Find each digital input
+				for (int j = 0; j < lSize; j++)
 				{
-					//				value.Empty();
-					writer->WriteStartElement(NULL, L"DigitalInput", NULL);
-					writer->WriteAttributeString(NULL, L"Number", NULL, _itow(i+1, buff, 10));
-					// Find each digital input
-					for (int j = 0; j < lSize; j++)
+					if (ppIOEntries[j]->m_ObjectType != IO_DIGITAL_INPUT)
+						continue;
+
+					SVObjectClass* l_pObject = SVObjectManagerClass::Instance().GetObject( ppIOEntries[j]->m_IOId );
+
+					pDigInput = dynamic_cast< SVDigitalInputObject* >( l_pObject );
+
+					if (!pDigInput)
+						continue;
+
+					if (i == pDigInput->GetChannel())
 					{
-						if (ppIOEntries[j]->m_ObjectType != IO_DIGITAL_INPUT)
-							continue;
-
-						SVObjectClass* l_pObject = SVObjectManagerClass::Instance().GetObject( ppIOEntries[j]->m_IOId );
-						
-						pDigInput = dynamic_cast< SVDigitalInputObject* >( l_pObject );
-						
-						if (!pDigInput)
-							continue;
-						
-						if (i == pDigInput->GetChannel())
-						{
-							WriteIOEntryObject(writer, ppIOEntries[j]);
-							break;
-						}// end if
-					}// end for
-					writer->WriteEndElement();
-				}
-			}
-			writer->WriteEndElement();
-			{	// Find each Remote input
-				int j = 0;
-				for (int i = 0; i < lSize; i++)
-				{
-					if (ppIOEntries[i]->m_ObjectType == IO_REMOTE_INPUT)
-						++j;
-				}
-				writer->WriteStartElement(NULL, L"RemoteInputs", NULL);
-				writer->WriteAttributeString(NULL, L"NumberOfInputs", NULL, _itow(j, buff, 10));
-
-				if (j)
-				{
-					for( int k = 0, l = 0; k < lSize; k++ )
-					{
-						if (ppIOEntries[k]->m_ObjectType != IO_REMOTE_INPUT)
-							continue;
-
-						writer->WriteStartElement(NULL, L"RemoteInput", NULL);
-						writer->WriteAttributeString(NULL, L"Number", NULL, _itow((l++) + 1, buff, 10));
-						WriteIOEntryObject(writer, ppIOEntries[k]);
-						writer->WriteEndElement();
+						WriteIOEntryObject(writer, ppIOEntries[j]);
+						break;
 					}
 				}
 				writer->WriteEndElement();
 			}
+
+			writer->WriteEndElement();
+
+			// Find each Remote input
+			int j = 0;
+			for (int i = 0; i < lSize; i++)
+			{
+				if (ppIOEntries[i]->m_ObjectType == IO_REMOTE_INPUT)
+					++j;
+			}
+			writer->WriteStartElement(NULL, L"RemoteInputs", NULL);
+			writer->WriteAttributeString(NULL, L"NumberOfInputs", NULL, _itow(j, buff, 10));
+
+			if (j)
+			{
+				for( int k = 0, l = 0; k < lSize; k++ )
+				{
+					if (ppIOEntries[k]->m_ObjectType != IO_REMOTE_INPUT)
+						continue;
+
+					writer->WriteStartElement(NULL, L"RemoteInput", NULL);
+					writer->WriteAttributeString(NULL, L"Number", NULL, _itow((l++) + 1, buff, 10));
+					WriteIOEntryObject(writer, ppIOEntries[k]);
+					writer->WriteEndElement();
+				}
+			}
+			writer->WriteEndElement();
 		}
 	}
 }
@@ -658,8 +639,6 @@ inline void SVConfigXMLPrint::WritePPQBar(Writer writer) const
 			pPPQ->GetPPQLength(lPPQLength);
 			for (int intPPQPos = 0; intPPQPos < lPPQLength; intPPQPos++)
 			{
-				//writer->WriteStartElement(NULL, L"Position", NULL);
-				//writer->WriteAttributeString(NULL, L"Number", NULL, _itow(intPPQPos + 1, buff, 10));
 				bool	bPosPrint = false;
 				std::deque< SVVirtualCamera* > l_Cameras;
 
@@ -745,7 +724,6 @@ inline void SVConfigXMLPrint::WritePPQBar(Writer writer) const
 	writer->WriteEndElement();
 }
 
-
 inline std::wstring utf16(const SVString & str) { return to_utf16(str.c_str(), cp_dflt); }
 
 inline void SVConfigXMLPrint::WriteValueObject( Writer writer, SVValueObjectClass* pObj ) const
@@ -822,7 +800,7 @@ inline void SVConfigXMLPrint::WriteTool(Writer writer, SVToolClass * ts) const
 				{
 					pCurrentSourceImage = dynamic_cast <SVImageClass*> (l_psvImageInfo->GetInputObjectInfo().PObject);
 
-					WriteValueObject(writer, L"Property",  L"Image Source", to_utf16(pCurrentSourceImage->GetCompleteObjectNameToObjectType().GetBuffer(), cp_dflt).c_str());
+					WriteValueObject(writer, L"Property",  utf16(pApp->GetStringResource(IDS_IMAGE_SOURCE_STRING)), to_utf16(pCurrentSourceImage->GetCompleteObjectNameToObjectType().GetBuffer(), cp_dflt).c_str());
 				}
 			}
 			else
@@ -1007,6 +985,15 @@ inline void SVConfigXMLPrint::WriteObject( Writer writer, SVObjectClass* pObj ) 
 				}
 			}  // end if( SV_IS_KIND_OF( pObj, SVStatisticsToolClass ) )
 			
+			if (SV_IS_KIND_OF(pObj, SVUserMaskOperatorClass))
+			{
+				SVUserMaskOperatorClass* maskObj = dynamic_cast <SVUserMaskOperatorClass*>( pObj );
+				if ( NULL != maskObj )
+				{
+					WriteValueObject(writer, L"Property",  utf16(pApp->GetStringResource(IDS_IMAGE_SOURCE_STRING)), to_utf16(maskObj->getMaskInputImage()->GetCompleteObjectName().GetBuffer(), cp_dflt).c_str());
+				}
+			}
+
 			if (SV_IS_KIND_OF(pObj, SVLineAnalyzerClass))
 			{
 				SVObjectInfoStruct objectInfo;
@@ -1055,7 +1042,6 @@ inline void SVConfigXMLPrint::WriteObject( Writer writer, SVObjectClass* pObj ) 
 	//writer->WriteEndElement();
 }  // end function void SVConfigXMLPrint:::PrintDetails( ... )
 
-
 void SVConfigXMLPrint::WriteChildren( Writer writer, SVObjectClass* pObj ) const
 {
 	if ( SVTaskObjectListClass* pTaskObj = dynamic_cast <SVTaskObjectListClass*> (pObj) )
@@ -1073,7 +1059,6 @@ void SVConfigXMLPrint::WriteChildren( Writer writer, SVObjectClass* pObj ) const
 		writer->WriteEndElement();
 	}  // end if( SV_IS_KIND_OF( pObj, SVTaskObjectListClass ) )
 }  // end function void SVConfigXMLPrint:::PrintChildren( ... )
-
 
 void SVConfigXMLPrint::WriteFriends( Writer writer, SVObjectClass* pObj ) const
 {
@@ -1096,7 +1081,6 @@ void SVConfigXMLPrint::WriteFriends( Writer writer, SVObjectClass* pObj ) const
 	}
 }  // end function void SVConfigXMLPrint:::PrintFriends( ... )
 
-
 void SVConfigXMLPrint::WriteInputOutputList( Writer writer, SVObjectClass* pObj ) const
 {
 	SVTaskObjectClass*      pTaskObj = dynamic_cast <SVTaskObjectClass*> (pObj);
@@ -1115,7 +1099,6 @@ void SVConfigXMLPrint::WriteInputOutputList( Writer writer, SVObjectClass* pObj 
 		}  // end if( pOutput->PObject->GetOwner () == pObj )
 	}  // end for( int nCnt = 0; nCnt < pOutputInfoList->GetSize(); nCnt++ )
 }  // end function void SVConfigXMLPrint:::PrintInputOutputList( ... )
-
 
 void SVConfigXMLPrint::WriteOCRParameters(Writer writer, const std::string & strParameters) const
 {
@@ -1156,7 +1139,6 @@ void SVConfigXMLPrint::WriteOCRParameters(Writer writer, const std::string & str
 		writer->WriteEndElement();
 	}
 }
-
 
 void SVConfigXMLPrint::WriteOCRGrayScaleParameters(Writer writer, const std::string & strParameters) const
 {
@@ -1216,7 +1198,6 @@ void SVConfigXMLPrint::WriteValueObject(Writer writer, const std::wstring tag, c
 	writer->WriteAttributeString(NULL, L"Value", NULL, lpszValue.c_str());
 	writer->WriteEndElement();
 }
-
 
 void SVConfigXMLPrint::WriteIOEntryObject(Writer writer, SVIOEntryHostStructPtr IOEntry) const
 {
@@ -1428,6 +1409,17 @@ inline HRESULT SVDeviceParamConfigXMLHelper::Visit(SVCustomDeviceParam& param)
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVConfigXMLPrint.inl_v  $
  * 
+ *    Rev 1.7   03 Dec 2013 13:55:00   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  876
+ * SCR Title:  Add user mask image to print configuration
+ * Checked in by:  bWalter;  Ben Walter
+ * Change Description:  
+ *   Changed WriteTool method to get "Image Source" from string table (IDS_IMAGE_SOURCE_STRING) and print the image source for SVUserMaskOperatorClass.
+ * Removed empty lines and dead code.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
  *    Rev 1.6   01 Oct 2013 12:48:18   tbair
  * Project:  SVObserver
  * Change Request (SCR) nbr:  852
@@ -1519,5 +1511,4 @@ $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVConfigXM
  *   Initial check-in.
  * 
  * /////////////////////////////////////////////////////////////////////////////////////
-
 */

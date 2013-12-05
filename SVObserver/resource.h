@@ -3,6 +3,7 @@
 // Used by SVObserver.rc
 //
 #define IDD_PROPPAGE_REGRESSION_FILESELECT 102
+#define IDS_IMAGE_SOURCE_STRING         103
 #define IDD_MASK_SHAPE_EDITOR           250
 #define IDC_IMAGE_STATIC                251
 #define IDC_ZOOM_IN_BUTTON              252

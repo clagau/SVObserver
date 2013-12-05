@@ -5,8 +5,8 @@
 //* .Module Name     : CSVOCameraDlg
 //* .File Name       : $Workfile:   SVOCameraDlg.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   07 Aug 2013 13:56:34  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   02 Dec 2013 11:03:18  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -80,10 +80,16 @@ BOOL CSVOCameraDlg::OnInitDialog()
 		}
 	}
 
-	if ( SVHardwareManifest::IsDigitalSVIM( TheSVObserverApp.GetSVIMType() ) )
+	if( SVHardwareManifest::IsDigitalSVIM( m_pParent->GetProductType() )
+		&& SVHardwareManifest::IsDigitalSVIM( TheSVObserverApp.GetSVIMType() ))
 	{
 		m_btnCameraManager.ShowWindow(SW_SHOW);
 	}
+	else
+	{
+		m_btnCameraManager.ShowWindow(SW_HIDE);
+	}
+
 	SetWindowContextHelpId(IDD+0x20000);
 
 	return TRUE;  // return TRUE unless you set the focus to a control
@@ -363,11 +369,27 @@ void CSVOCameraDlg::DisableAdvanceBtn()
 	m_btnAdvancedProp.EnableWindow(FALSE);
 }
 
+void CSVOCameraDlg::ShowCameraDlgBtn( int nCmdShow )
+{
+	m_btnCameraManager.ShowWindow( nCmdShow );
+}
+
+
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVOCameraDlg.cpp_v  $
+ * 
+ *    Rev 1.3   02 Dec 2013 11:03:18   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  870
+ * SCR Title:  Fix Various Issues in the Edit Configuration Dialog
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Added logic to show or hide the camera manager button based on system type and configuration type.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   07 Aug 2013 13:56:34   tbair
  * Project:  SVObserver
