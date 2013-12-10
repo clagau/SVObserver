@@ -5,8 +5,8 @@
 //* .Module Name     : SoftwareTriggerDlg
 //* .File Name       : $Workfile:   SoftwareTriggerDlg.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 09:17:32  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   09 Dec 2013 12:16:04  $
 //******************************************************************************
 
 #pragma once
@@ -37,7 +37,7 @@ public:
 	SVTriggerProxy(SVTriggerObject * t): trig(t), m_paused(false), m_period(200)
 	{
 	}
-	int GetSoftwareTriggerPeriod() { m_period = trig->GetSoftwareTriggerPeriod(); return m_period; }
+	int GetSoftwareTriggerPeriod() { if( !m_paused){m_period = trig->GetSoftwareTriggerPeriod();} return m_period; }
 	CString GetName() const { return trig->GetName(); }
 	void SetSoftwareTriggerPeriod(long period, bool setTimer = false) { m_period = period; if (!m_paused) trig->SetSoftwareTriggerPeriod(period, setTimer); }
 	SVTriggerObject * GetTrigger() { return trig; }
@@ -259,7 +259,17 @@ inline bool SVSpinGroup::Increment(int val) //, boost::function<int ()> total)
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SoftwareTriggerDlg.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SoftwareTriggerDlg.h_v  $
+ * 
+ *    Rev 1.1   09 Dec 2013 12:16:04   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  878
+ * SCR Title:  Fix Software Trigger Dialog
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Fixed GetSoftwareTriggerPeriod to return m_period if m_paused.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 09:17:32   bWalter
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : SVObserver
 //* .File Name       : $Workfile:   SVObserver.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.7  $
-//* .Check In Date   : $Date:   30 Oct 2013 10:45:18  $
+//* .Current Version : $Revision:   1.8  $
+//* .Check In Date   : $Date:   09 Dec 2013 07:51:22  $
 //******************************************************************************
 
 #ifndef SVOBSERVER_H
@@ -234,6 +234,7 @@ public:
 	afx_msg void OnEditplcoutputs();
 #endif
 	afx_msg void OnEditRemoteOutputs();
+	afx_msg void OnEditPublishedResults(UINT nID );
 	afx_msg void OnRCClose();
 	//}}AFX_MSG
 
@@ -316,6 +317,8 @@ public:
 	SVOINIClass& INI();
 	void ResetAllCounts();
 	void DisplayAddMenu(bool bShow);
+	bool AddMenuItem(HMENU hTargetMenu, const CString& itemText, UINT itemID);
+	bool RemoveMenu(HMENU hTargetMenu,  const CString& itemText);
 	HRESULT SetMode( unsigned long p_lNewMode );
 	HRESULT LoadConfiguration();
 
@@ -622,6 +625,16 @@ extern SVObserverApp TheSVObserverApp;
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVObserver.h_v  $
+ * 
+ *    Rev 1.8   09 Dec 2013 07:51:22   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  873
+ * SCR Title:  Fix inconsistant GUI labels and functionality on IO pages
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Added dynamic menu option in IO Page - Edit menu - Edit Published Results for each inspection.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.7   30 Oct 2013 10:45:18   tbair
  * Project:  SVObserver

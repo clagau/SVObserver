@@ -5,8 +5,8 @@
 // * .Module Name     : PropertyItemEdit.cpp
 // * .File Name       : $Workfile:   SVInPlaceEdit.cpp  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.1  $
-// * .Check In Date   : $Date:   01 Oct 2013 09:57:48  $
+// * .Current Version : $Revision:   1.2  $
+// * .Check In Date   : $Date:   09 Dec 2013 11:37:54  $
 // ******************************************************************************
 
 #include "stdafx.h"
@@ -100,8 +100,9 @@ BOOL SVInPlaceEdit::PreTranslateMessage(MSG* pMsg)
 		UINT nChar = static_cast<UINT>(pMsg->wParam);
 
 		if ((nChar == VK_PRIOR || nChar == VK_NEXT ||
-				nChar == VK_DOWN  || nChar == VK_UP   ||
-				nChar == VK_RIGHT || nChar == VK_LEFT) &&
+				nChar == VK_DOWN  || nChar == VK_UP   /*|| 
+				// Do not capture right and left messages, let the base edit use these.
+				nChar == VK_RIGHT || nChar == VK_LEFT*/) &&
 				(m_bExitOnArrows || GetKeyState(VK_CONTROL) < 0))
 		{
 			m_nLastChar = nChar;
@@ -216,6 +217,16 @@ void SVInPlaceEdit::OnUpdate()
 // ******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVLibrary\SVInPlaceEdit.cpp_v  $
+ * 
+ *    Rev 1.2   09 Dec 2013 11:37:54   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  829
+ * SCR Title:  Fix tool adjust dialogs to validate all math equations before exiting.
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Modify edit to allow use of right and left arrows to allow navigation while inside the edit.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   01 Oct 2013 09:57:48   tbair
  * Project:  SVObserver

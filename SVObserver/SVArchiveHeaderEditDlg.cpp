@@ -5,8 +5,8 @@
 //* .Module Name     : SVArchiveHeaderEditDlg
 //* .File Name       : $Workfile:   SVArchiveHeaderEditDlg.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   11 Nov 2013 09:25:08  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   09 Dec 2013 11:34:40  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -149,9 +149,8 @@ void SVArchiveHeaderEditDlg::OnOK()
 		int index = 0;
 		for( StringPairVect::iterator it = m_Strings.begin() ; it != m_Strings.end(); ++it )
 		{
-			char Text[128];
-			m_HeaderListCtrl.GetItemText(index,1, Text, 128);
-			it->second = Text;
+			CString strText = m_HeaderListCtrl.GetItemText(index,1);
+			it->second = strText;
 			index++;
 		}
 	}
@@ -263,6 +262,16 @@ void SVArchiveHeaderEditDlg::DisplaySelectedText(  )
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVArchiveHeaderEditDlg.cpp_v  $
+ * 
+ *    Rev 1.1   09 Dec 2013 11:34:40   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  829
+ * SCR Title:  Fix tool adjust dialogs to validate all math equations before exiting.
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Removed unintentional limit on string size for header label.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   11 Nov 2013 09:25:08   tbair
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : SVObserver
 //* .File Name       : $Workfile:   SVObserver.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.14  $
-//* .Check In Date   : $Date:   30 Oct 2013 10:45:20  $
+//* .Current Version : $Revision:   1.15  $
+//* .Check In Date   : $Date:   09 Dec 2013 07:51:24  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -118,6 +118,7 @@
 #include "SVImportedInspectionInfo.h"
 #include "SVIPDocInfoImporter.h"
 #include "SVVisionProcessorHelper.h"
+#include "SVDlgResultPicker.h"
 
 #define ID_TRRIGER_SETTINGS 21017
 
@@ -609,6 +610,7 @@ BEGIN_MESSAGE_MAP(SVObserverApp, CWinApp)
 #endif
 	ON_COMMAND(ID_EDIT_ADD_REMOTE_OUTPUTS, &SVObserverApp::OnEditRemoteOutputs)
 	ON_UPDATE_COMMAND_UI(ID_EDIT_ADD_REMOTE_OUTPUTS, &SVObserverApp::OnUpdateEditAddRemoteOutputs)
+	ON_COMMAND_RANGE(ID_EDIT_PUBLISHEDRESULTS_BASE, ID_EDIT_PUBLISHEDRESULTS_LIMIT, &SVObserverApp::OnEditPublishedResults)
 	END_MESSAGE_MAP()
 
 //******************************************************************************
@@ -5450,6 +5452,293 @@ void SVObserverApp::DisplayAddMenu(bool bShow)
 	pWindow->DrawMenuBar();
 }
 
+// this is a recursive function which will attempt
+// to add the item "itemText" to the menu with the
+// given ID number. The "itemText" will be parsed for
+// delimiting "\" characters for levels between
+// popup menus. If a popup menu does not exist, it will
+// be created and inserted at the end of the menu.
+// ItemID of 0 will cause a separator to be added
+bool SVObserverApp::AddMenuItem(
+        HMENU hTargetMenu, 
+        const CString& itemText, 
+        UINT itemID)
+{
+    bool bSuccess = false;
+
+    ASSERT(itemText.GetLength() > 0);
+    ASSERT(hTargetMenu != NULL);
+
+    // first, does the menu item have
+    // any required submenus to be found/created?
+    if (itemText.Find('\\') >= 0)
+    {
+        // yes, we need to do a recursive call
+        // on a submenu handle and with that sub
+        // menu name removed from itemText
+
+        // 1:get the popup menu name
+        CString popupMenuName = itemText.Left(itemText.Find('\\'));
+
+        // 2:get the rest of the menu item name
+        // minus the delimiting '\' character
+        CString remainingText = 
+            itemText.Right(itemText.GetLength() 
+                   - popupMenuName.GetLength() - 1);
+
+        // 3:See whether the popup menu already exists
+        int itemCount = ::GetMenuItemCount(hTargetMenu);
+        bool bFoundSubMenu = false;
+        MENUITEMINFO menuItemInfo;
+
+        memset(&menuItemInfo, 0, sizeof(MENUITEMINFO));
+        menuItemInfo.cbSize = sizeof(MENUITEMINFO);
+        menuItemInfo.fMask = 
+          MIIM_TYPE | MIIM_STATE | MIIM_ID | MIIM_SUBMENU;
+        for (int itemIndex = 0 ; 
+           itemIndex < itemCount && !bFoundSubMenu ; itemIndex++)
+        {
+            ::GetMenuItemInfo(
+                    hTargetMenu, 
+                    itemIndex, 
+                    TRUE, 
+                    &menuItemInfo);
+            if (menuItemInfo.hSubMenu != 0)
+            {
+                // this menu item is a popup menu (non popups give 0)
+                TCHAR    buffer[MAX_PATH];
+                ::GetMenuString(
+                        hTargetMenu, 
+                        itemIndex, 
+                        buffer, 
+                        MAX_PATH, 
+                        MF_BYPOSITION);
+                if (popupMenuName == buffer)
+                {
+                    // this is the popup menu we have to add to
+                    bFoundSubMenu = true;
+                }
+            }
+        }
+        // 4: If exists, do recursive call,
+        // else create do recursive call
+        // and then insert it
+        if (bFoundSubMenu)
+        {
+			bSuccess = AddMenuItem(
+                menuItemInfo.hSubMenu, 
+                remainingText, 
+                itemID);
+        }
+        else
+        {
+            // we need to create a new sub menu and insert it
+            HMENU hPopupMenu = ::CreatePopupMenu();
+            if (hPopupMenu != NULL)
+            {
+                bSuccess = AddMenuItem(
+                        hPopupMenu, 
+                        remainingText, 
+                        itemID);
+                if (bSuccess)
+                {
+                    if (::AppendMenu(
+                            hTargetMenu, 
+                            MF_POPUP, 
+                            (UINT)hPopupMenu, 
+                            popupMenuName) > 0)
+                    {
+                        bSuccess = true;
+                        // hPopupMenu now owned by hTargetMenu,
+                        // we do not need to destroy it
+                    }
+                    else
+                    {
+                        // failed to insert the popup menu
+                        bSuccess = false;
+                        // stop a resource leak
+                        ::DestroyMenu(hPopupMenu);
+                    }
+                }
+            }
+        }        
+    }
+    else
+    {	
+		// 3:See whether the menu item already exists
+		int itemCount = ::GetMenuItemCount(hTargetMenu);
+		bool bFoundSubMenu = false;
+		MENUITEMINFO menuItemInfo;
+
+		memset(&menuItemInfo, 0, sizeof(MENUITEMINFO));
+		menuItemInfo.cbSize = sizeof(MENUITEMINFO);
+		menuItemInfo.fMask = 
+			MIIM_TYPE | MIIM_STATE | MIIM_ID | MIIM_SUBMENU;
+		for (int itemIndex = 0 ; 
+			itemIndex < itemCount && !bFoundSubMenu ; itemIndex++)
+		{
+			::GetMenuItemInfo(
+					hTargetMenu, 
+					itemIndex, 
+					TRUE, 
+					&menuItemInfo);
+			if (menuItemInfo.wID == itemID)
+			{
+				// Set the inspection name.
+				::ModifyMenuA(hTargetMenu, itemIndex, MF_BYPOSITION | MF_STRING, itemID, itemText);
+				bFoundSubMenu = true;
+			}
+		}
+
+
+		// If not found then append menu.
+		if (!bFoundSubMenu)
+		{
+			if (itemID != 0)
+			{
+				// its a normal menu command
+				if (::AppendMenu(
+						hTargetMenu, 
+						MF_ENABLED, 
+						itemID, 
+						itemText) > 0)
+				{
+					// we successfully added the item to the menu
+					bSuccess = true;
+				}
+			}
+			else
+			{
+				// we are inserting a separator
+				if (::AppendMenu(
+						hTargetMenu, 
+						MF_SEPARATOR, 
+						itemID, 
+						itemText) > 0)
+				{
+					// we successfully added the separator to the menu
+					bSuccess = true;
+				}
+			}
+		}
+    }
+
+    return bSuccess;
+}
+
+
+// this is a recursive function which will attempt
+// to remove the menu item with "itemText" from the menu with the
+// target menu handle. "itemText" will be parsed for
+// delimiting "\" characters for levels between
+// popup menus. If the end popup menu exists, it will be deleted.
+bool SVObserverApp::RemoveMenu(
+        HMENU hTargetMenu, 
+        const CString& itemText)
+{
+    bool bSuccess = false;
+
+    ASSERT(itemText.GetLength() > 0);
+    ASSERT(hTargetMenu != NULL);
+
+    // first, does the menu item have
+    // any required submenus to be found/created?
+    if (itemText.Find('\\') >= 0)
+    {
+        // yes, we need to do a recursive call
+        // on a submenu handle and with that sub
+        // menu name removed from itemText
+
+        // 1:get the popup menu name
+        CString popupMenuName = itemText.Left(itemText.Find('\\'));
+
+        // 2:get the rest of the menu item name
+        // minus the delimiting '\' character
+        CString remainingText = 
+            itemText.Right(itemText.GetLength() 
+                   - popupMenuName.GetLength() - 1);
+
+        // 3:See whether the popup menu already exists
+        int itemCount = ::GetMenuItemCount(hTargetMenu);
+        bool bFoundSubMenu = false;
+        MENUITEMINFO menuItemInfo;
+
+        memset(&menuItemInfo, 0, sizeof(MENUITEMINFO));
+        menuItemInfo.cbSize = sizeof(MENUITEMINFO);
+        menuItemInfo.fMask = 
+          MIIM_TYPE | MIIM_STATE | MIIM_ID | MIIM_SUBMENU;
+        for (int itemIndex = 0 ; 
+           itemIndex < itemCount && !bFoundSubMenu ; itemIndex++)
+        {
+            ::GetMenuItemInfo(
+                    hTargetMenu, 
+                    itemIndex, 
+                    TRUE, 
+                    &menuItemInfo);
+            if (menuItemInfo.hSubMenu != 0)
+            {
+                // this menu item is a popup menu (non popups give 0)
+                TCHAR    buffer[MAX_PATH];
+                ::GetMenuString(
+                        hTargetMenu, 
+                        itemIndex, 
+                        buffer, 
+                        MAX_PATH, 
+                        MF_BYPOSITION);
+                if (popupMenuName == buffer)
+                {
+                    // this is the popup menu we are looking for.
+                    bFoundSubMenu = true;
+                }
+            }
+        }
+        // 4: If exists, do recursive call,
+        if (bFoundSubMenu)
+        {
+			bSuccess = RemoveMenu( menuItemInfo.hSubMenu, remainingText);
+        }
+    }
+    else
+    {
+        // See whether the popup menu exists
+        int itemCount = ::GetMenuItemCount(hTargetMenu);
+        bool bFoundSubMenu = false;
+        MENUITEMINFO menuItemInfo;
+
+        memset(&menuItemInfo, 0, sizeof(MENUITEMINFO));
+        menuItemInfo.cbSize = sizeof(MENUITEMINFO);
+        menuItemInfo.fMask = 
+          MIIM_TYPE | MIIM_STATE | MIIM_ID | MIIM_SUBMENU;
+        for (int itemIndex = 0 ; 
+           itemIndex < itemCount && !bFoundSubMenu ; itemIndex++)
+        {
+            ::GetMenuItemInfo(
+                    hTargetMenu, 
+                    itemIndex, 
+                    TRUE, 
+                    &menuItemInfo);
+            if (menuItemInfo.hSubMenu != 0)
+            {
+                // this menu item is a popup menu (non popups give 0)
+                TCHAR    buffer[MAX_PATH];
+                ::GetMenuString(
+                        hTargetMenu, 
+                        itemIndex, 
+                        buffer, 
+                        MAX_PATH, 
+                        MF_BYPOSITION);
+                if (itemText == buffer)
+                {
+                    // this is the popup menu we have to remove
+                    bSuccess = DeleteMenu( hTargetMenu, itemIndex, MF_BYPOSITION ) ? true : false;
+					break;
+                }
+            }
+        }
+    }
+    return bSuccess;
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : OnRCGoOffline
 // -----------------------------------------------------------------------------
@@ -5859,7 +6148,32 @@ void SVObserverApp::OnUpdateEditRemoteInputs( CCmdUI* PCmdUI )
 		PCmdUI->SetText( "Edit Remote Inputs" );
 	else
 		PCmdUI->SetText( "Add Remote Inputs" );
-		
+
+	//@HACK
+	// This code to add menu items for the Published Results does not belong here
+	// but we need a message when the edit menu is selected.  So this works until we can find a
+	// message for the Edit popup UpdateUI or similar.
+
+	// Get Menu handle
+	HMENU hmen = GetMenu( GetMainWnd()->m_hWnd );
+	if( l_pConfig )
+	{
+		// The IO menu is limited to 100 Published results menu items.
+		// There is no limit to the number of inspections that can be created 
+		// but we are only displaying up to 100 menu items for inspections on the IO page.
+		// If there are more than 100, then the user will have to go to the inspection to edit published results
+		// If more are to be supported, then these resources for the ID_EDIT_PUBLISHEDRESULTS_LIMIT will need changed. 
+		SVInspectionProcessPtrList l_Inspections; // Get Inspections
+		l_pConfig->GetInspections( l_Inspections );
+		RemoveMenu(hmen, "&Edit\\Published Results" ); // start empty.
+		for( size_t i = 0 ; i < l_Inspections.size() && i < (ID_EDIT_PUBLISHEDRESULTS_LIMIT - ID_EDIT_PUBLISHEDRESULTS_BASE + 1); i++)
+		{
+			// Add a menu for each inspection.
+			CString strName;
+			strName.Format("&Edit\\Published Results\\%s",l_Inspections[i]->GetName());
+			AddMenuItem(hmen, strName, ID_EDIT_PUBLISHEDRESULTS_BASE + i);
+		}
+	}
 }
 
 void SVObserverApp::OnUpdateExtrasLightreference( CCmdUI* PCmdUI ) 
@@ -9073,6 +9387,70 @@ void SVObserverApp::OnEditRemoteOutputs()
 	}
 }
 
+// This handler handles a range of Ids based on inspection.
+// It is called from when the IO Page is displayed.
+// The IDR_SVOBSERVER_IODOCTYPE Menu Published Results.
+void SVObserverApp::OnEditPublishedResults( UINT nID )
+{
+	UINT uiInspection = nID - ID_EDIT_PUBLISHEDRESULTS_BASE;
+	// Get list of inspections
+	// edit published results
+	SVConfigurationObject* l_pConfig = NULL;
+	SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
+	if( l_pConfig )
+	{
+		SVInspectionProcessPtrList l_Inspections;
+		l_pConfig->GetInspections( l_Inspections );
+		if( uiInspection < l_Inspections.size())
+		{
+			SVInspectionProcess* pInsp = l_Inspections[uiInspection];
+			SVDlgResultPicker dlg;
+			CString publishedResultString;
+
+			dlg.PTaskObjectList = pInsp->GetToolSet();
+			dlg.uAttributesDesired = SV_PUBLISHABLE;
+
+			publishedResultString.LoadString ( IDS_PUBLISHABLE_RESULTS );
+			CString inspectionName = pInsp->GetName();
+			CString title;
+			title.Format(_T("%s - %s"), publishedResultString, inspectionName);
+			dlg.SetCaptionTitle(title);
+
+			if( dlg.DoModal() == IDOK )
+			{
+				pInsp->GetPublishList().Refresh( pInsp->GetToolSet() );
+
+				// *** // ***
+				long lSize;
+				long l;
+				SVPPQObject *pPPQ;
+
+				SVConfigurationObject* pConfig = NULL;
+				SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
+
+				SVSVIMStateClass::AddState( SV_STATE_MODIFIED );
+	
+				// Force the PPQs to rebuild
+				pConfig->GetPPQCount( lSize );
+
+				for( l = 0; l < lSize; l++ )
+				{
+					pConfig->GetPPQ( l, &pPPQ );
+					if( pPPQ )
+					{
+						pPPQ->RebuildOutputList();
+					}// end if
+				}// end for
+				TheSVObserverApp.GetIODoc()->UpdateAllViews( NULL );
+				// *** // ***
+			}// end if
+
+		}
+	}	
+}
+
+
+
 bool SVObserverApp::SetActiveIOTabView( SVTabbedViewSplitterIDEnum p_eTabbedID )
 {
 	bool l_bRet = false;
@@ -9337,6 +9715,16 @@ void SVObserverApp::OnTriggerSettings()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVObserver.cpp_v  $
+ * 
+ *    Rev 1.15   09 Dec 2013 07:51:24   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  873
+ * SCR Title:  Fix inconsistant GUI labels and functionality on IO pages
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Added dynamic menu option in IO Page - Edit menu - Edit Published Results for each inspection.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.14   30 Oct 2013 10:45:20   tbair
  * Project:  SVObserver
