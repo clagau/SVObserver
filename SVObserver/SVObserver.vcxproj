@@ -66,16 +66,16 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
     <_ProjectFileVersion>10.0.40219.1</_ProjectFileVersion>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)$(Configuration)/$(Platform)/bin\</OutDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)$(Configuration)/$(Platform)/bin\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)$(Configuration)/$(Platform)/$(ProjectName)\</IntDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)$(Configuration)/$(Platform)/$(ProjectName)\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)$(Configuration)\$(Platform)\bin\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)$(Configuration)\$(Platform)\bin\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</LinkIncremental>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</LinkIncremental>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)$(Configuration)/$(Platform)/bin\</OutDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)$(Configuration)/$(Platform)/bin\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)$(Configuration)/$(Platform)/$(ProjectName)\</IntDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)$(Configuration)/$(Platform)/$(ProjectName)\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)$(Configuration)\$(Platform)\bin\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)$(Configuration)\$(Platform)\bin\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkIncremental>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkIncremental>
   </PropertyGroup>
@@ -108,7 +108,7 @@
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <ShowIncludes>false</ShowIncludes>
-      <MultiProcessorCompilation>false</MultiProcessorCompilation>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -164,7 +164,7 @@ echo %time%
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <ShowIncludes>false</ShowIncludes>
-      <MultiProcessorCompilation>false</MultiProcessorCompilation>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -220,7 +220,7 @@ echo %time%
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <WholeProgramOptimization>false</WholeProgramOptimization>
-      <MultiProcessorCompilation>false</MultiProcessorCompilation>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <DisableSpecificWarnings>4101</DisableSpecificWarnings>
     </ClCompile>
     <ResourceCompile>
@@ -283,7 +283,7 @@ echo %time%
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <WholeProgramOptimization>false</WholeProgramOptimization>
-      <MultiProcessorCompilation>false</MultiProcessorCompilation>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <DisableSpecificWarnings>4101;</DisableSpecificWarnings>
     </ClCompile>
     <ResourceCompile>
@@ -683,7 +683,7 @@ echo %time%
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
-    <ClCompile Include="svbarcodegeneraldialog.cpp">
+    <ClCompile Include="SVBarcodeGeneralDialog.cpp">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -713,7 +713,7 @@ echo %time%
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
-    <ClCompile Include="svbarcodestringmatchdialog.cpp">
+    <ClCompile Include="SVBarcodeStringMatchDialog.cpp">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -4333,6 +4333,7 @@ echo %time%
     <ClInclude Include="SVEdgeDetect2FilterClass.h" />
     <ClInclude Include="SVEdgeDetectFilterClass.h" />
     <ClInclude Include="SVErosionFilterClass.h" />
+    <ClInclude Include="SVExtentPropertiesInfoStruct.h" />
     <ClInclude Include="SVFilterClass.h" />
     <ClInclude Include="SVFilterListBoxClass.h" />
     <ClInclude Include="SVGigeCameraListCtrl.h" />
@@ -4351,6 +4352,8 @@ echo %time%
     <ClInclude Include="SVLicenseMgrModelessDlg.h" />
     <ClInclude Include="SVMaxMinusMinFilterClass.h" />
     <ClInclude Include="SVOpeningFilterClass.h" />
+    <ClInclude Include="SVPLCValidateReasons.h" />
+    <ClInclude Include="SVPPQConstants.h" />
     <ClInclude Include="SVRemoteControlConstants.h" />
     <ClInclude Include="SVShapeMaskHelperClass.h" />
     <ClInclude Include="SVSharpen2FilterClass.h" />
@@ -4362,6 +4365,7 @@ echo %time%
     <ClInclude Include="SVStorage.h" />
     <ClInclude Include="SVStorageResult.h" />
     <ClInclude Include="SVThresholdClass.h" />
+    <ClInclude Include="SVTriggerConstants.h" />
     <ClInclude Include="SVTriggerSelectionDlg.h" />
     <ClInclude Include="SVUnaryImageOperatorClass.h" />
     <ClInclude Include="SVUnaryOperatorClass.h" />
@@ -4369,7 +4373,7 @@ echo %time%
     <ClInclude Include="SVVertEdgeFilterClass.h" />
     <ClInclude Include="SVVisionProcessorConstants.h" />
     <ClInclude Include="SVVisionProcessorHelper.h" />
-    <ClInclude Include="SV_match.h" />
+    <ClInclude Include="SV_Match.h" />
     <ClInclude Include="SV_OCMD.h" />
     <ClInclude Include="SV_OGD.h" />
     <ClInclude Include="SV_OMD.h" />
@@ -4396,10 +4400,10 @@ echo %time%
     <ClInclude Include="SVBarCodeAttributesDialog.h" />
     <ClInclude Include="SVBarCodeBuffer.h" />
     <ClInclude Include="SVBarCodeDataMatrixDialog.h" />
-    <ClInclude Include="svbarcodegeneraldialog.h" />
+    <ClInclude Include="SVBarcodeGeneralDialog.h" />
     <ClInclude Include="SVBarCodeProperties.h" />
     <ClInclude Include="SVBarCodeResult.h" />
-    <ClInclude Include="svbarcodestringmatchdialog.h" />
+    <ClInclude Include="SVBarcodeStringMatchDialog.h" />
     <ClInclude Include="SVBlobAnalyzer.h" />
     <ClInclude Include="SVBlobAnalyzerDialog.h" />
     <ClInclude Include="SVBlobAnalyzerFeatureListBox.h" />
@@ -4434,9 +4438,6 @@ echo %time%
     <ClInclude Include="SVConfigurationPrint.h" />
     <ClInclude Include="SVConfigurationTreeWriter.h" />
     <ClInclude Include="SVCorecoAcquisitionClass.h" />
-    <ClInclude Include="SVCorecoDriverClass.h" />
-    <ClInclude Include="SVCorecoDriverManagerClass.h" />
-    <ClInclude Include="SVCorecoMemoryManager.h" />
     <ClInclude Include="SVCustomFilterDlg.h" />
     <ClInclude Include="SVCustomFilters.h" />
     <ClInclude Include="SVCylindricalWarpDlg.h" />
@@ -4611,7 +4612,6 @@ echo %time%
     <ClInclude Include="SVMemoryManager.h" />
     <ClInclude Include="SVMessageWindow.h" />
     <ClInclude Include="SVMultiDocTemplate.h" />
-    <ClInclude Include="SVNavigateTreeClass.h" />
     <ClInclude Include="SVNumericEdit.h" />
     <ClInclude Include="SVOAcquisitionDeviceMapClass.h" />
     <ClInclude Include="SVOAppAssistNewInputDlg.h" />
@@ -4682,11 +4682,11 @@ echo %time%
     <ClInclude Include="SVPatGeneralPageClass.h" />
     <ClInclude Include="SVPatResultDlgClass.h" />
     <ClInclude Include="SVPatSelectModelPageClass.h" />
-    <ClInclude Include="svpatternanalyzerclass.h" />
+    <ClInclude Include="SVPatternAnalyzerClass.h" />
     <ClInclude Include="SVPerspectiveTool.h" />
     <ClInclude Include="SVPerspectiveWarpDlg.h" />
     <ClInclude Include="SVPixelAnalyzer.h" />
-    <ClInclude Include="svpixelanalyzersetup.h" />
+    <ClInclude Include="SVPixelAnalyzerSetup.h" />
     <ClInclude Include="SVPLCAddRemoveDlg.h" />
     <ClInclude Include="SVPLCControlPar.h" />
     <ClInclude Include="SVPLCDataController.h" />
@@ -4753,7 +4753,6 @@ echo %time%
     <ClInclude Include="SVROI.h" />
     <ClInclude Include="SVROIFigureEditor.h" />
     <ClInclude Include="SVRotateReference.h" />
-    <ClInclude Include="SVSaperaCamStruct.h" />
     <ClInclude Include="SVSaveToolSetImageDialog.h" />
     <ClInclude Include="SVScalarValue.h" />
     <ClInclude Include="SVSetupDialogManager.h" />
@@ -4879,7 +4878,6 @@ echo %time%
     <None Include="SVInspectionProcessResetStruct.inl" />
     <None Include="SVInspectionTreeParser.inl" />
     <None Include="SVMemoryManager.inl" />
-    <None Include="SVNavigateTreeClass.inl" />
     <None Include="SVOutputObjectList.inl" />
     <None Include="SVStaticValueObjectClassImpl.inl" />
     <None Include="SVTaskObjectInterfaceInputRequestStruct.inl" />
@@ -4895,11 +4893,8 @@ echo %time%
     <None Include="RES\arrow_right.ico" />
     <None Include="RES\arrow_up.ico" />
     <None Include="RES\beginning.ico" />
-    <None Include="RES\bin00001.bin" />
     <None Include="Res\bmp00001.bmp" />
-    <None Include="RES\DotBrush.bmp" />
     <None Include="RES\downarrow.bmp" />
-    <None Include="RES\Exists1.ico" />
     <None Include="RES\formulaCursor.bmp" />
     <None Include="RES\frame_back.ico" />
     <None Include="RES\frame_up.ico" />
@@ -4915,59 +4910,33 @@ echo %time%
     <None Include="RES\ico_status_yellow.ico" />
     <None Include="Res\icon1.ico" />
     <None Include="Res\icon2.ico" />
-    <None Include="Res\icon3.ico" />
-    <None Include="Res\icon4.ico" />
-    <None Include="Res\icon5.ico" />
-    <None Include="RES\icon6.ico" />
     <None Include="RES\icon_cam.ico" />
-    <None Include="RES\icon_doc.ico" />
     <None Include="RES\icon_exi.ico" />
     <None Include="RES\icon_exist1.ico" />
-    <None Include="RES\icon_io.ico" />
     <None Include="RES\icon_not.ico" />
-    <None Include="RES\icon_poi.ico" />
-    <None Include="RES\icon_ppq.ico" />
-    <None Include="Res\icon_sta.ico" />
-    <None Include="RES\icon_too.ico" />
-    <None Include="Res\iconlist.ico" />
-    <None Include="Res\idr_main.ico" />
     <None Include="RES\input_ic.ico" />
     <None Include="RES\ioitem_i.ico" />
     <None Include="res\IToolbar.bmp" />
-    <None Include="RES\leftarrow.bmp" />
-    <None Include="Res\meteor.ico" />
     <None Include="RES\mode_continue.ico" />
     <None Include="RES\mode_runtoend.ico" />
-    <None Include="Res\noaccess.cur" />
     <None Include="RES\noioitem.ico" />
-    <None Include="Res\nosystem.ico" />
-    <None Include="RES\object_i.ico" />
     <None Include="RES\output_i.ico" />
     <None Include="RES\pause.ico" />
     <None Include="RES\play.ico" />
-    <None Include="Res\Pointer_.cur" />
-    <None Include="Res\pulsar.ico" />
-    <None Include="RES\rightarrow.bmp" />
-    <None Include="RES\sec.ico" />
-    <None Include="Res\slpitter.cur" />
     <None Include="Res\Start.bmp" />
     <None Include="RES\stop.ico" />
-    <None Include="RES\svcomman.bin" />
     <None Include="RES\SVIODoc.ico" />
     <None Include="res\SVIPDoc.ico" />
     <None Include="RES\SVKnob.bmp" />
     <None Include="RES\SVKnob_mask.bmp" />
     <None Include="RES\SVKnobDot.bmp" />
     <None Include="RES\SVKnobDot_mask.bmp" />
-    <None Include="RES\svobserv.bin" />
     <None Include="RES\svobserv.bmp" />
-    <None Include="res\SVObserver.ico" />
     <None Include="res\SVObserver.rc2" />
-    <None Include="Res\SVr.bmp" />
+    <None Include="Res\SVR.bmp" />
     <None Include="res\Toolbar.bmp" />
     <None Include="RES\ToolbarBasic.bmp" />
     <None Include="RES\ToolbarConditional.bmp" />
-    <None Include="RES\ToolbarConstant.bmp" />
     <None Include="RES\ToolbarCursor.bmp" />
     <None Include="RES\ToolbarLogical.bmp" />
     <None Include="RES\ToolbarMisc.bmp" />
@@ -4975,7 +4944,6 @@ echo %time%
     <None Include="RES\ToolbarStat.bmp" />
     <None Include="RES\ToolbarTrig.bmp" />
     <None Include="RES\uparrow.bmp" />
-    <None Include="Res\vga.ico" />
     <None Include="RES\W95MBX03.ICO" />
     <None Include="hlp\AfxCore.rtf" />
     <None Include="hlp\AfxOleCl.rtf" />
@@ -5004,7 +4972,6 @@ echo %time%
     <None Include="hlp\Scmax.bmp" />
     <None Include="hlp\ScMenu.bmp" />
     <None Include="hlp\Scmin.bmp" />
-    <None Include="hlp\SVObserver.cnt" />
     <None Include="SVCommand.rgs" />
     <None Include="SVObserver.rgs" />
     <None Include="SVObserverd.rgs" />

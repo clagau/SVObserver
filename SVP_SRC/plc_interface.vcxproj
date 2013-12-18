@@ -20,7 +20,7 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{BA7A64BF-D46F-4A5B-846E-E9C768873BF6}</ProjectGuid>
-    <RootNamespace>plc_interface</RootNamespace>
+    <RootNamespace>PLC_Interface</RootNamespace>
     <Keyword>MFCProj</Keyword>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -64,16 +64,16 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
     <_ProjectFileVersion>10.0.40219.1</_ProjectFileVersion>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)$(Configuration)/$(Platform)/bin\</OutDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)$(Configuration)/$(Platform)/bin\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)$(Configuration)/$(Platform)/$(ProjectName)\</IntDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)$(Configuration)/$(Platform)/$(ProjectName)\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)$(Configuration)\$(Platform)\bin\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)$(Configuration)\$(Platform)\bin\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</LinkIncremental>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkIncremental>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)$(Configuration)/$(Platform)/bin\</OutDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)$(Configuration)/$(Platform)/bin\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)$(Configuration)/$(Platform)/$(ProjectName)\</IntDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)$(Configuration)/$(Platform)/$(ProjectName)\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)$(Configuration)\$(Platform)\bin\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)$(Configuration)\$(Platform)\bin\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkIncremental>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkIncremental>
   </PropertyGroup>
@@ -83,7 +83,7 @@
       <MkTypLibCompatible>true</MkTypLibCompatible>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <TargetEnvironment>Win32</TargetEnvironment>
-      <TypeLibraryName>.\Debug/plc_interface.tlb</TypeLibraryName>
+      <TypeLibraryName>.\Debug/PLC_Interface.tlb</TypeLibraryName>
       <HeaderFileName>
       </HeaderFileName>
     </Midl>
@@ -106,7 +106,7 @@
       <WarningLevel>Level3</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <MultiProcessorCompilation>false</MultiProcessorCompilation>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -117,22 +117,22 @@
     </ProjectReference>
     <Link>
       <AdditionalDependencies>SVStatusLibrary.lib;SVUtilityLibrary.lib;SVTimerLibrary.lib;delayimp.lib;applicom.lib;dtl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>$(OutDir)plc_interface.dll</OutputFile>
+      <OutputFile>$(OutDir)PLC_Interface.dll</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>$(OutDir);c:\program files\rockwell software\rslinx;C:\Program Files\Applicom;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ModuleDefinitionFile>SVPLCExports.def</ModuleDefinitionFile>
       <DelayLoadDLLs>dtl32.dll;Applicom.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <ProgramDatabaseFile>.\Debug/plc_interface.pdb</ProgramDatabaseFile>
+      <ProgramDatabaseFile>.\Debug/PLC_Interface.pdb</ProgramDatabaseFile>
       <GenerateMapFile>true</GenerateMapFile>
-      <MapFileName>.\Debug/plc_interface.map</MapFileName>
+      <MapFileName>.\Debug/PLC_Interface.map</MapFileName>
       <SubSystem>Windows</SubSystem>
-      <ImportLibrary>.\Debug/plc_interface.lib</ImportLibrary>
+      <ImportLibrary>.\Debug/PLC_Interface.lib</ImportLibrary>
       <TargetMachine>MachineX86</TargetMachine>
     </Link>
     <Bscmake>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <OutputFile>.\Debug/plc_interface.bsc</OutputFile>
+      <OutputFile>.\Debug/PLC_Interface.bsc</OutputFile>
     </Bscmake>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -140,7 +140,7 @@
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MkTypLibCompatible>true</MkTypLibCompatible>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <TypeLibraryName>.\Debug/plc_interface.tlb</TypeLibraryName>
+      <TypeLibraryName>.\Debug/PLC_Interface.tlb</TypeLibraryName>
       <HeaderFileName>
       </HeaderFileName>
     </Midl>
@@ -163,7 +163,7 @@
       <WarningLevel>Level3</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <MultiProcessorCompilation>false</MultiProcessorCompilation>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -174,21 +174,21 @@
     </ProjectReference>
     <Link>
       <AdditionalDependencies>SVStatusLibrary.lib;SVUtilityLibrary.lib;SVTimerLibrary.lib;delayimp.lib;applicom.lib;dtl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>$(OutDir)plc_interface.dll</OutputFile>
+      <OutputFile>$(OutDir)PLC_Interface.dll</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>$(OutDir);c:\program files\rockwell software\rslinx;C:\Program Files\Applicom;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ModuleDefinitionFile>SVPLCExports.def</ModuleDefinitionFile>
       <DelayLoadDLLs>dtl32.dll;Applicom.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <ProgramDatabaseFile>.\Debug/plc_interface.pdb</ProgramDatabaseFile>
+      <ProgramDatabaseFile>.\Debug/PLC_Interface.pdb</ProgramDatabaseFile>
       <GenerateMapFile>true</GenerateMapFile>
-      <MapFileName>.\Debug/plc_interface.map</MapFileName>
+      <MapFileName>.\Debug/PLC_Interface.map</MapFileName>
       <SubSystem>Windows</SubSystem>
-      <ImportLibrary>.\Debug/plc_interface.lib</ImportLibrary>
+      <ImportLibrary>.\Debug/PLC_Interface.lib</ImportLibrary>
     </Link>
     <Bscmake>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <OutputFile>.\Debug/plc_interface.bsc</OutputFile>
+      <OutputFile>.\Debug/PLC_Interface.bsc</OutputFile>
     </Bscmake>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -197,7 +197,7 @@
       <MkTypLibCompatible>true</MkTypLibCompatible>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <TargetEnvironment>Win32</TargetEnvironment>
-      <TypeLibraryName>.\Release/plc_interface.tlb</TypeLibraryName>
+      <TypeLibraryName>.\Release/PLC_Interface.tlb</TypeLibraryName>
       <HeaderFileName>
       </HeaderFileName>
     </Midl>
@@ -221,7 +221,7 @@
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <WholeProgramOptimization>false</WholeProgramOptimization>
       <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
-      <MultiProcessorCompilation>false</MultiProcessorCompilation>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -232,14 +232,14 @@
     </ProjectReference>
     <Link>
       <AdditionalDependencies>SVStatusLibrary.lib;SVUtilityLibrary.lib;SVTimerLibrary.lib;delayimp.lib;applicom.lib;dtl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>$(OutDir)plc_interface.dll</OutputFile>
+      <OutputFile>$(OutDir)PLC_Interface.dll</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>$(OutDir);c:\program files\rockwell software\rslinx;C:\Program Files\Applicom;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ModuleDefinitionFile>SVPLCExports.def</ModuleDefinitionFile>
       <DelayLoadDLLs>dtl32.dll;Applicom.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
-      <ProgramDatabaseFile>.\Release/plc_interface.pdb</ProgramDatabaseFile>
+      <ProgramDatabaseFile>.\Release/PLC_Interface.pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
-      <ImportLibrary>.\Release/plc_interface.lib</ImportLibrary>
+      <ImportLibrary>.\Release/PLC_Interface.lib</ImportLibrary>
       <TargetMachine>MachineX86</TargetMachine>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -247,7 +247,7 @@
     </Link>
     <Bscmake>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <OutputFile>.\Release/plc_interface.bsc</OutputFile>
+      <OutputFile>.\Release/PLC_Interface.bsc</OutputFile>
     </Bscmake>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -255,7 +255,7 @@
       <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MkTypLibCompatible>true</MkTypLibCompatible>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <TypeLibraryName>.\Release/plc_interface.tlb</TypeLibraryName>
+      <TypeLibraryName>.\Release/PLC_Interface.tlb</TypeLibraryName>
       <HeaderFileName>
       </HeaderFileName>
     </Midl>
@@ -279,7 +279,7 @@
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <WholeProgramOptimization>false</WholeProgramOptimization>
       <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
-      <MultiProcessorCompilation>false</MultiProcessorCompilation>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -290,25 +290,25 @@
     </ProjectReference>
     <Link>
       <AdditionalDependencies>SVStatusLibrary.lib;SVUtilityLibrary.lib;SVTimerLibrary.lib;delayimp.lib;applicom.lib;dtl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>$(OutDir)plc_interface.dll</OutputFile>
+      <OutputFile>$(OutDir)PLC_Interface.dll</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>$(OutDir);c:\program files\rockwell software\rslinx;C:\Program Files\Applicom;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ModuleDefinitionFile>SVPLCExports.def</ModuleDefinitionFile>
       <DelayLoadDLLs>dtl32.dll;Applicom.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
-      <ProgramDatabaseFile>.\Release/plc_interface.pdb</ProgramDatabaseFile>
+      <ProgramDatabaseFile>.\Release/PLC_Interface.pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
-      <ImportLibrary>.\Release/plc_interface.lib</ImportLibrary>
+      <ImportLibrary>.\Release/PLC_Interface.lib</ImportLibrary>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <LinkTimeCodeGeneration>Default</LinkTimeCodeGeneration>
     </Link>
     <Bscmake>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <OutputFile>.\Release/plc_interface.bsc</OutputFile>
+      <OutputFile>.\Release/PLC_Interface.bsc</OutputFile>
     </Bscmake>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="plc_interface.cpp">
+    <ClCompile Include="PLC_Interface.cpp">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -481,7 +481,7 @@
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
-    <ClCompile Include="svrslinxsearch.cpp">
+    <ClCompile Include="SVRSLinxSearch.cpp">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -516,7 +516,8 @@
     <None Include="SVPLCExports.def" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="plc_interface.h" />
+    <ClInclude Include="Applicom.h" />
+    <ClInclude Include="PLC_Interface.h" />
     <ClInclude Include="PLCBaseClass.h" />
     <ClInclude Include="SetupDialogSheet.h" />
     <ClInclude Include="SLC500DDEClass.h" />
@@ -533,7 +534,7 @@
     <ClInclude Include="SVASABtcpParametersPage.h" />
     <ClInclude Include="SVASABtcpPLCControl.h" />
     <ClInclude Include="SVASABtcpSLC500API.h" />
-    <ClInclude Include="SVCallbackdef.h" />
+    <ClInclude Include="SVCallbackDef.h" />
     <ClInclude Include="SVHeartBeatPage.h" />
     <ClInclude Include="SVManufacturer.h" />
     <ClInclude Include="SVMicroLogixAPIClass.h" />
@@ -542,7 +543,7 @@
     <ClInclude Include="SVPLCInterfaceClass.h" />
     <ClInclude Include="SVPLCSender.h" />
     <ClInclude Include="SVRSLinxABPLCBaseClass.h" />
-    <ClInclude Include="svrslinxsearch.h" />
+    <ClInclude Include="SVRSLinxSearch.h" />
     <ClInclude Include="SVS7PBFMS.h" />
     <ClInclude Include="SVSiemensS7Applicom.h" />
     <ClInclude Include="TEventHandler.h" />

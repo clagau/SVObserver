@@ -50,12 +50,6 @@
     <None Include="res\bitmap1.bmp">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="RES\Bullet.bmp">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="res\ellipse_.bmp">
-      <Filter>Resource Files</Filter>
-    </None>
     <None Include="res\ellipse_.ico">
       <Filter>Resource Files</Filter>
     </None>
@@ -68,22 +62,13 @@
     <None Include="res\ico00001.ico">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="res\pen_bitm.bmp">
-      <Filter>Resource Files</Filter>
-    </None>
     <None Include="res\pen_icon.ico">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="res\polygon_.bmp">
       <Filter>Resource Files</Filter>
     </None>
     <None Include="res\polygon_.ico">
       <Filter>Resource Files</Filter>
     </None>
     <None Include="res\polyline.ico">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="res\rect_bit.bmp">
       <Filter>Resource Files</Filter>
     </None>
     <None Include="res\rect_ico.ico">

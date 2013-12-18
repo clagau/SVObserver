@@ -148,6 +148,12 @@
     <ClInclude Include="SVDataItemManagerTemplate.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="SVDeviceParam.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVCustomDeviceParam.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="SVOINIClass.inl">

@@ -38,9 +38,6 @@
     <None Include="res\MISC13.ICO">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="res\MISC15.ICO">
-      <Filter>Resource Files</Filter>
-    </None>
     <None Include="res\SVTestIO.rc2">
       <Filter>Resource Files</Filter>
     </None>

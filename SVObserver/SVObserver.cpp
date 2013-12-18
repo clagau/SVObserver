@@ -5,8 +5,8 @@
 //* .Module Name     : SVObserver
 //* .File Name       : $Workfile:   SVObserver.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.15  $
-//* .Check In Date   : $Date:   09 Dec 2013 07:51:24  $
+//* .Current Version : $Revision:   1.16  $
+//* .Check In Date   : $Date:   11 Dec 2013 14:03:00  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -9372,6 +9372,10 @@ void SVObserverApp::OnEditplcoutputs()
 	if( l_pConfig != NULL )
 	{
 		l_pConfig->SetupPLC();
+		if( l_pConfig->GetPLCCount() == 0)
+		{
+			HidePLCTab();
+		}
 	}
 }
 #endif
@@ -9715,6 +9719,16 @@ void SVObserverApp::OnTriggerSettings()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVObserver.cpp_v  $
+ * 
+ *    Rev 1.16   11 Dec 2013 14:03:00   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  873
+ * SCR Title:  Fix inconsistant GUI labels and functionality on IO pages
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Hide PLCIOTab when the last PLC is deleted.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.15   09 Dec 2013 07:51:24   tbair
  * Project:  SVObserver

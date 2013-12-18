@@ -5,8 +5,8 @@
 //* .Module Name     : SVPLCOutputsView
 //* .File Name       : $Workfile:   SVPLCOutputsView.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   18 Nov 2013 11:41:50  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   11 Dec 2013 14:03:50  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -663,17 +663,17 @@ void SVPLCOutputsView::OnPlcDelete()
 				SVPPQObject* pPPQ = dynamic_cast<SVPPQObject*>( reinterpret_cast<SVObjectClass*>(GetListCtrl().GetItemData( l_item )));;
 				if( pPPQ )
 				{
-					CString l_strPlc = pPPQ->GetPLCName();
+					CString l_strPlc = pPPQ->GetName(); 
 					CString l_strMsg;
-					l_strMsg.Format( _T("Are you sure you want to delete All Entries for %s"), l_strPlc );
+					l_strMsg.Format( _T("Are you sure you want to delete All PLC Entries for %s"), l_strPlc );
 					int imbRet = AfxMessageBox( l_strMsg, MB_YESNO );
 					if( imbRet == IDYES )
 					{
 						// Delete all plc entries
-						l_PLCData.DeletePLC( l_strPlc );
+						l_PLCData.DeletePLC( pPPQ->GetPLCName() );
 						SVSVIMStateClass::AddState( SV_STATE_MODIFIED );
 						OnUpdate( NULL, NULL, NULL );
-						if( l_PLCData.IsEmpty() )
+						if( pConfig->GetPLCCount() == 0 )
 						{
 							// Hide the PLC Tab if no outputs exist.
 							TheSVObserverApp.HidePLCTab( );
@@ -880,10 +880,16 @@ void SVPLCOutputsView::OnAddTransferBlock()
 		OnUpdate( NULL, NULL, NULL );
 
 		TheSVObserverApp.GetIODoc()->SetModifiedFlag();
-
-		TheSVObserverApp.ShowIOTab( SVIOPLCOutputsViewID );
-			// Set Active IO Tabbed view to the PLC Outputs Tab
-		TheSVObserverApp.SetActiveIOTabView( SVIOPLCOutputsViewID );
+		if( l_pConfig->GetPLCCount() > 0 )
+		{
+			TheSVObserverApp.ShowIOTab( SVIOPLCOutputsViewID );
+				// Set Active IO Tabbed view to the PLC Outputs Tab
+			TheSVObserverApp.SetActiveIOTabView( SVIOPLCOutputsViewID );
+		}
+		else
+		{
+			TheSVObserverApp.HidePLCTab();
+		}
 	}
 }
 #endif
@@ -893,6 +899,16 @@ void SVPLCOutputsView::OnAddTransferBlock()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVPLCOutputsView.cpp_v  $
+ * 
+ *    Rev 1.3   11 Dec 2013 14:03:50   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  873
+ * SCR Title:  Fix inconsistant GUI labels and functionality on IO pages
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Hide PLCIOTab when PLCs are deleted from the context menu.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   18 Nov 2013 11:41:50   tbair
  * Project:  SVObserver
