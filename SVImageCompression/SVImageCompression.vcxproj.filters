@@ -1,22 +1,22 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="annmenu.cpp">
+    <ClCompile Include="AnnMenu.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="anntoolbar.cpp">
+    <ClCompile Include="AnnToolbar.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="font.cpp">
+    <ClCompile Include="Font.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="lead.cpp">
+    <ClCompile Include="Lead.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="leadscrollinfo.cpp">
+    <ClCompile Include="LeadScrollInfo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="picture.cpp">
+    <ClCompile Include="Picture.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="StaticImageCompressionPool.cpp">
@@ -36,22 +36,22 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="annmenu.h">
+    <ClInclude Include="AnnMenu.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="anntoolbar.h">
+    <ClInclude Include="AnnToolbar.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="font.h">
+    <ClInclude Include="Font.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="lead.h">
+    <ClInclude Include="Lead.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="leadscrollinfo.h">
+    <ClInclude Include="LeadScrollInfo.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="picture.h">
+    <ClInclude Include="Picture.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Resource.h">

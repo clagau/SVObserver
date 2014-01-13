@@ -45,7 +45,7 @@
     <ClCompile Include="SVEncodeDecodeUtilities.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="svcrash.cpp">
+    <ClCompile Include="SVCrash.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -98,7 +98,7 @@
     <ClInclude Include="SVEncodeDecodeUtilities.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="svcrash.h">
+    <ClInclude Include="SVCrash.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

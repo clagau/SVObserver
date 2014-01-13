@@ -18,10 +18,10 @@
     <ClCompile Include="StdAfx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVIOTEST.cpp">
+    <ClCompile Include="SVIOTest.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVIOTESTDlg.cpp">
+    <ClCompile Include="SVIOTestDlg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVSoftwareTriggerSetupDlg.cpp">
@@ -32,7 +32,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="SVIOTEST.rc">
+    <ResourceCompile Include="SVIOTest.rc">
       <Filter>Source Files</Filter>
     </ResourceCompile>
   </ItemGroup>
@@ -43,10 +43,10 @@
     <ClInclude Include="StdAfx.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVIOTEST.h">
+    <ClInclude Include="SVIOTest.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVIOTESTDlg.h">
+    <ClInclude Include="SVIOTestDlg.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVSoftwareTriggerSetupDlg.h">
@@ -69,10 +69,10 @@
     <None Include="res\MISC15.ICO">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="res\SVIOTEST.ico">
+    <None Include="res\SVIOTest.ico">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="res\SVIOTEST.rc2">
+    <None Include="res\SVIOTest.rc2">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>

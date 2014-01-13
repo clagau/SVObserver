@@ -7,11 +7,11 @@ if not exist %2 goto File2NotFound
 fc /b %1 %2 
 if %ERRORLEVEL%==0 GOTO NoCopy
 
-echo Files are not the same.  Copying %1 over %2
+echo Files are not the same.  Copying %1 over %2.
 copy %1 %2 /y & goto END
 
 :NoCopy
-echo Files are the same.  Did nothing
+echo Files are the same.  Did nothing.
 goto END
 
 :File1NotFound

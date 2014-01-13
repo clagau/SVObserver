@@ -5,8 +5,8 @@
 //* .Module Name     : SVExtentMultiLineStruct
 //* .File Name       : $Workfile:   SVExtentMultiLineStruct.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   22 Apr 2013 10:39:54  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   09 Jan 2014 07:40:52  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -264,7 +264,7 @@ void SVExtentMultiLineStruct::AssignExtentFigure( SVExtentFigureStruct &p_rsvVal
 
 			m_svLineArray.SetAtGrow( 2, l_svLine );
 
-			l_dStep = ( l_dEndAngle - l_dStartAngle ) / l_dOuterRadius;
+			l_dStep = ( l_dEndAngle - l_dStartAngle ) /( l_dOuterRadius >= 1 ? l_dOuterRadius : 1 );
 			l_dLoopStep = ::fabs( l_dStep );
 
 			if( l_dLoopStep < 5.0 )
@@ -580,6 +580,16 @@ HRESULT SVExtentMultiLineStruct::Initialize()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVImageLibrary\SVExtentMultiLineStruct.cpp_v  $
+ * 
+ *    Rev 1.1   09 Jan 2014 07:40:52   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Protected AssignExtendFigure where divide by zero could occur.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   22 Apr 2013 10:39:54   bWalter
  * Project:  SVObserver

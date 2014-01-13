@@ -27,10 +27,10 @@
     <ClCompile Include="SVGUID.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVPOINT.cpp">
+    <ClCompile Include="SVPoint.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVSAFEARRAY.cpp">
+    <ClCompile Include="SVSafeArray.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVString.cpp">
@@ -39,10 +39,10 @@
     <ClCompile Include="SVUtilityGlobals.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="unzip.cpp">
+    <ClCompile Include="Unzip.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="zip.cpp">
+    <ClCompile Include="Zip.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -80,10 +80,10 @@
     <ClInclude Include="SVObjectID.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVPOINT.h">
+    <ClInclude Include="SVPoint.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVSAFEARRAY.h">
+    <ClInclude Include="SVSafeArray.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVSharedPtr.h">
@@ -107,13 +107,13 @@
     <ClInclude Include="SVVariantList.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="unzip.h">
+    <ClInclude Include="Unzip.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="XMLWriter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="zip.h">
+    <ClInclude Include="Zip.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVWinHandle.h">
@@ -124,7 +124,7 @@
     <None Include="SVHandleManager.inl">
       <Filter>Header Files</Filter>
     </None>
-    <None Include="SVSAFEARRAY.inl">
+    <None Include="SVSafeArray.inl">
       <Filter>Header Files</Filter>
     </None>
     <None Include="SVStringConversions.inl">

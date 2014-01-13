@@ -11,7 +11,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="PROPTREE.CPP">
+    <ClCompile Include="PropTree.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="PropTreeCtrl.cpp">
@@ -49,7 +49,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="PROPTREE.H">
+    <ClInclude Include="PropTree.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="PropTreeCtrl.h">
