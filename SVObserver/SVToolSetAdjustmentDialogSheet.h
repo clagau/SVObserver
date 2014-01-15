@@ -5,8 +5,8 @@
 //* .Module Name     : SVToolSetAdjustmentDialogSheet
 //* .File Name       : $Workfile:   SVToolSetAdjustmentDialogSheet.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 15:47:24  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   14 Jan 2014 12:33:20  $
 //******************************************************************************
 
 //******************************************************************************
@@ -24,7 +24,9 @@
 //{{AFX_INCLUDES()
 //}}AFX_INCLUDES
 
-#include "SVConditionalDialog.h"
+#include "SVConditional.h"
+#include "ConditionalController.h"
+#include "SVFormulaEditorPage.h"
 
 
 //******************************************************************************
@@ -77,8 +79,8 @@ protected:
 //******************************************************************************
 public:
 // Standard constructor
-	SVToolSetAdjustmentDialogSheetClass( SVConditionalClass* PCondition, UINT nIDCaption, CWnd* pParentWnd = NULL, UINT iSelectPage = 0);
-	SVToolSetAdjustmentDialogSheetClass( SVConditionalClass* PCondition, LPCTSTR pszCaption, CWnd* pParentWnd = NULL, UINT iSelectPage = 0);
+	SVToolSetAdjustmentDialogSheetClass( SVConditionalClass& rCondition, UINT nIDCaption, CWnd* pParentWnd = NULL, UINT iSelectPage = 0 );
+	SVToolSetAdjustmentDialogSheetClass( SVConditionalClass& rCondition, LPCTSTR pszCaption, CWnd* pParentWnd = NULL, UINT iSelectPage = 0 );
 
 //******************************************************************************
 // Destructor(s):
@@ -91,7 +93,7 @@ public:
 // Operator(s):
 //******************************************************************************
 protected:
-	virtual void init( SVConditionalClass* PCondition );
+	virtual void init( SVConditionalClass& rCondition );
 
 //******************************************************************************
 // Operation(s) Of Writing Access And Data Exchange:
@@ -120,19 +122,16 @@ protected:
 //******************************************************************************
 // Data Element(s):
 //******************************************************************************
-public:
-	SVConditionalDialogClass	ConditionalDlg;
-
 private:
-	SVConditionalClass* pCondition;
-	SVToolSetClass* pToolSet;
+	SVFormulaEditorPageClass m_formulaPage;
+	Seidenader::SVObserver::ConditionalController m_conditionalController;
+	SVToolSetClass* m_pToolSet;
 };
 
 ////////////////////////////////////////////////////////////////////////////////
 //{{AFX_INSERT_LOCATION}}
 // DevStudio inserts additional declarations immediate in front of the preceding line
 ////////////////////////////////////////////////////////////////////////////////
-
 
 //******************************************************************************
 //* INCLUDE CONTROL:
@@ -143,7 +142,19 @@ private:
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVToolSetAdjustmentDialogSheet.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVToolSetAdjustmentDialogSheet.h_v  $
+ * 
+ *    Rev 1.1   14 Jan 2014 12:33:20   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  877
+ * SCR Title:  Add undo-button to formula and conditional pages
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   Changed to use SVFormulaEditorPage instead of SVConditionalDialog.
+ * Changed parameters from pointers to references.
+ * Changed member variable names to use m_ prefix.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 15:47:24   bWalter
  * Project:  SVObserver

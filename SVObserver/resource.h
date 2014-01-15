@@ -4,6 +4,7 @@
 //
 #define IDD_PROPPAGE_REGRESSION_FILESELECT 102
 #define IDS_IMAGE_SOURCE_STRING         103
+#define IDS_CONDITIONAL_STRING          104
 #define IDD_MASK_SHAPE_EDITOR           250
 #define IDC_IMAGE_STATIC                251
 #define IDC_ZOOM_IN_BUTTON              252
@@ -29,7 +30,6 @@
 #define IDR_MATH_LOGICAL_TOOLBAR        1006
 #define IDR_MATH_MISC_TOOLBAR           1007
 #define IDR_MATH_TRIGONOMETRIC_TOOLBAR  1008
-#define IDR_MATH_CURSOR_TOOLBAR         1009
 #define IDR_FORMULA_CURSOR_TOOLBAR      1010
 #define IDR_MATH_STATISTICS_TOOLBAR     1011
 #define IDR_MATH_PUNCTUATION_TOOLBAR    1012
@@ -94,7 +94,6 @@
 #define IDD_OCR_CHARMATCH_DIALOG        5035
 #define IDD_TA_MASK_DIALOG              5036
 #define IDD_TA_PASS_FAIL_DIALOG         5037
-#define IDD_CONDITIONAL_DIALOG          5039
 #define IDD_RESULT_PICKER               5040
 #define IDD_PAT_SETUP_MODEL             5041
 #define IDD_PAT_SETUP_GENERAL           5042
@@ -1075,7 +1074,7 @@
 #define IDD_DLG_EXIT_REGRESSION         10912
 #define IDS_PUBLISHABLE_RESULT_IMAGES   10913
 #define IDS_CLASSNAME_SVSTATICSTRINGVALUEOBJECT 10914
-#define IDS_OBJECTNAME_HEADER_LABELS   10915
+#define IDS_OBJECTNAME_HEADER_LABELS    10915
 #define IDS_OBJECTNAME_HEADER_OBJECT_STRINGS 10916
 #define IDS_OBJECTNAME_ENABLE_HEADERS   10917
 #define IDS_OBJECTNAME_UPDATE_AUXILIARY_EXTENTS_OBJECT 11000
@@ -1677,9 +1676,8 @@
 #define IDC_SET_RANGE                   15178
 #define IDC_ACTIVATE_CHECK              15179
 #define IDC_IS_NUMBER_CHECK             15180
-#define IDC_DISABLE                     15181
 #define IDC_CONTINUOUS_RECALC_CHECK     15182
-#define IDC_DISABLE_CONDITION           15183
+#define IDC_DISABLE_EQUATION            15183
 #define IDC_MAX_SIZE_EDIT               15184
 #define IDC_TOOLSET_TAB                 15185
 #define IDC_TREE_RESULTS                15186
@@ -2483,6 +2481,7 @@
 #define IDC_STRING_LIST_EDIT            16021
 #define IDC_HEADER_CHECK                16022
 #define IDC_SELECTED_TEXT               16023
+#define IDC_DISABLE_TOOL                16024
 #define ID_TEST                         20000
 #define ID_BROWSE_BUTTON                20001
 #define ID_PLUSBUTTON                   20002
@@ -2515,10 +2514,9 @@
 #define ID_DELETEBUTTON                 20029
 #define ID_LPARENBUTTON                 20030
 #define ID_RPARENBUTTON                 20031
-#define ID_FORMULA_LARROWBUTTON         20032
-#define ID_FORMULA_RARROWBUTTON         20033
-#define ID_FORMULA_DELETEBUTTON         20034
-#define ID_FORMULA_TEST                 20035
+#define ID_FORMULA_DELETEBUTTON         20032
+#define ID_FORMULA_LARROWBUTTON         20033
+#define ID_FORMULA_RARROWBUTTON         20034
 #define ID_MINBUTTON                    20036
 #define ID_MAXBUTTON                    20037
 #define ID_AVERAGEBUTTON                20038
@@ -2671,9 +2669,10 @@
 #define ID_SELECTTOOL_LEARN             20218
 #define ID_SELECTTOOL_NORMALIZE         20219
 #define ID_EDIT_NAME                    20220
-#define ID_REMOTEOUTPUTGROUP_ADDOUTPUT  20221
+#define ID_FORMULA_UNDO                 20221
 #define ID_EDIT_PUBLISHEDRESULTS_BASE   20222
 #define ID_EDIT_PUBLISHEDRESULTS_LIMIT  20322
+#define ID_FORMULA_TEST                 20323
 #define ID_VIEW_TOOLSETDRAW             32999
 #define ID_VIEW_TOOLSETDRAW_POP_BASE    33000
 #define ID_VIEW_TOOLSETDRAW_POP_MAX     33049
@@ -2706,8 +2705,8 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_3D_CONTROLS                     1
 #define _APS_NEXT_RESOURCE_VALUE        11100
-#define _APS_NEXT_COMMAND_VALUE         20323
-#define _APS_NEXT_CONTROL_VALUE         16024
+#define _APS_NEXT_COMMAND_VALUE         20324
+#define _APS_NEXT_CONTROL_VALUE         16025
 #define _APS_NEXT_SYMED_VALUE           3000
 #endif
 #endif

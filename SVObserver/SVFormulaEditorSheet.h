@@ -5,8 +5,8 @@
 //* .Module Name     : SVFormulaEditorSheet
 //* .File Name       : $Workfile:   SVFormulaEditorSheet.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 10:39:28  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   14 Jan 2014 12:22:38  $
 //******************************************************************************
 
 //******************************************************************************
@@ -25,6 +25,7 @@
 #endif // _MSC_VER > 1000
 
 #include "SVFormulaEditorPage.h"
+#include "FormulaController.h"
 
 class SVTaskObjectClass;
 
@@ -60,7 +61,7 @@ public:
 // Operator(s):
 //******************************************************************************
 public:
-	void SetTaskObject( SVTaskObjectClass* PObject );
+	void SetTaskObject( SVTaskObjectClass* taskObject );
 
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(SVFormulaEditorSheetClass)
@@ -84,15 +85,12 @@ protected:
 //******************************************************************************
 protected:
 
-	SVFormulaEditorPageClass	formulaPage;
-
+	SVFormulaEditorPageClass	m_formulaPage;
+	Seidenader::SVObserver::FormulaController m_formulaController;
 };
-
-
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
 
 //******************************************************************************
 //* INCLUDE CONTROL:
@@ -103,7 +101,18 @@ protected:
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVFormulaEditorSheet.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVFormulaEditorSheet.h_v  $
+ * 
+ *    Rev 1.1   14 Jan 2014 12:22:38   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  877
+ * SCR Title:  Add undo-button to formula and conditional pages
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   Changes to use FormulaController object.
+ * Changed member variable names to use m_ prefix.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 10:39:28   bWalter
  * Project:  SVObserver

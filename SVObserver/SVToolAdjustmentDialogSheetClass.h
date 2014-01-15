@@ -5,13 +5,16 @@
 //* .Module Name     : SVToolAdjustmentDialogSheetClass
 //* .File Name       : $Workfile:   SVToolAdjustmentDialogSheetClass.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 15:35:44  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   14 Jan 2014 12:31:16  $
 //******************************************************************************
 
 #ifndef SVTOOLADJUSTMENTDIALOGSHEETCLASS_H
 #define SVTOOLADJUSTMENTDIALOGSHEETCLASS_H
 
+#include "IFormulaController.h"
+#include "FormulaController.h"
+#include "ConditionalController.h"
 class SVIPDoc;
 class SVToolClass;
 
@@ -34,8 +37,8 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 public:
-	SVToolAdjustmentDialogSheetClass( SVIPDoc* p_pIPDoc, SVToolClass* aPTool, UINT nIDCaption, CWnd* pParentWnd = NULL, UINT iSelectPage = 0);
-	SVToolAdjustmentDialogSheetClass( SVIPDoc* p_pIPDoc, SVToolClass* aPTool, LPCTSTR pszCaption, CWnd* pParentWnd = NULL, UINT iSelectPage = 0);
+	SVToolAdjustmentDialogSheetClass( SVIPDoc* p_pIPDoc, SVToolClass& rTool, UINT nIDCaption, CWnd* pParentWnd = NULL, UINT iSelectPage = 0);
+	SVToolAdjustmentDialogSheetClass( SVIPDoc* p_pIPDoc, SVToolClass& rTool, LPCTSTR pszCaption, CWnd* pParentWnd = NULL, UINT iSelectPage = 0);
 
 	virtual ~SVToolAdjustmentDialogSheetClass();
 
@@ -47,14 +50,7 @@ public:
 	{
 		HRESULT l_Status = S_OK;
 
-		if( PTool != NULL )
-		{
-			p_rpTool = dynamic_cast< SVToolType* >( PTool );
-		}
-		else
-		{
-			p_rpTool = NULL;
-		}
+		p_rpTool = dynamic_cast< SVToolType* >( &m_rTool );
 
 		if( p_rpTool == NULL )
 		{
@@ -65,7 +61,7 @@ public:
 	}
 
 protected:
-	void init( SVToolClass* aPTool );
+	void init();
 	void addPages();
 
 private:
@@ -74,8 +70,9 @@ private:
 	CString alias;
 
 	SVIPDoc* m_pIPDoc;
-	SVToolClass* PTool;
-
+	SVToolClass& m_rTool;
+	Seidenader::SVObserver::FormulaController m_formulaController;
+	Seidenader::SVObserver::ConditionalController m_conditionalController;
 };
 
 //{{AFX_INSERT_LOCATION}}
@@ -87,7 +84,17 @@ private:
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVToolAdjustmentDialogSheetClass.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVToolAdjustmentDialogSheetClass.h_v  $
+ * 
+ *    Rev 1.1   14 Jan 2014 12:31:16   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  877
+ * SCR Title:  Add undo-button to formula and conditional pages
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   Changed to use FormulaController instead of SVConditionalDialog.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 15:35:44   bWalter
  * Project:  SVObserver

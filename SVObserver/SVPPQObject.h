@@ -5,8 +5,8 @@
 //* .Module Name     : SVPPQObject
 //* .File Name       : $Workfile:   SVPPQObject.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.6  $
-//* .Check In Date   : $Date:   30 Oct 2013 11:00:32  $
+//* .Current Version : $Revision:   1.7  $
+//* .Check In Date   : $Date:   13 Jan 2014 12:50:18  $
 //******************************************************************************
 
 #ifndef SVPPQOBJECT_H
@@ -113,6 +113,7 @@ public:
 	BOOL GetAvailableInputs( SVIOEntryHostStructPtrList& p_IOEntries );
 	BOOL GetAllInputs( SVIOEntryHostStructPtrList& p_IOEntries );
 	BOOL AddDefaultInputs();
+	BOOL AddToAvailableInputs(SVIOObjectType eType, CString strName );
 	SVIOEntryHostStructPtr GetInput( const SVString& name ) const;
 
 	void AddCameraDataInputs(SVIOEntryHostStructPtrList& list);
@@ -408,6 +409,16 @@ typedef SVVector< SVPPQObject* > SVPPQObjectArray;
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVPPQObject.h_v  $
+ * 
+ *    Rev 1.7   13 Jan 2014 12:50:18   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  881
+ * SCR Title:  Fix Bug where Remote Inputs are missing after adding a new PPQ (e100)
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Updated AddDefaultInputs to include RemoteInputs.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.6   30 Oct 2013 11:00:32   tbair
  * Project:  SVObserver

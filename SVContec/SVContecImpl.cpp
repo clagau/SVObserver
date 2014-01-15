@@ -5,8 +5,8 @@
 // * .Module Name     : SVContecImpl
 // * .File Name       : $Workfile:   SVContecImpl.cpp  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.0  $
-// * .Check In Date   : $Date:   30 Oct 2013 11:31:30  $
+// * .Current Version : $Revision:   1.1  $
+// * .Check In Date   : $Date:   15 Jan 2014 08:56:30  $
 // ******************************************************************************
 
 #include "stdafx.h"
@@ -110,13 +110,17 @@ SVContecImpl::SVContecImpl()
 
 SVContecImpl::~SVContecImpl()
 {
-	MaskIrq(); // BRW - TVic specific - disables interrupt
-	DioExit( m_DeviceId );
+	MaskIrq(); // BRW - disables interrupt
+	if( m_DeviceId != -1 )
+	{
+		long lRet = DioExit( m_DeviceId );
+	}
 	if( m_bCriticalSectionCreated )
 	{
 		try
 		{
 		  ::DeleteCriticalSection( &m_hCriticalSection );
+		  m_bCriticalSectionCreated = false;
 		}
 		catch( ... )
 		{
@@ -152,8 +156,11 @@ HRESULT SVContecImpl::Initialize( bool bInit )
 
 	if ( bInit && !GetActive() ) // BRW - TVic specific - gets the Active Property
 	{
+		if( m_DeviceId == -1 )
+		{
+			long lRet = DioInit( DEVICENAME, &m_DeviceId);
+		}
 		SetActive( 1 ); // BRW - TVic specific - sets the Active Property
-		//SetCurrentLPT( 1 ); // BRW - TVic specific - sets the LPT number
 
 		if ( !GetActive() ) // BRW - TVic specific - gets the Active Property
 		{
@@ -166,13 +173,6 @@ HRESULT SVContecImpl::Initialize( bool bInit )
 			{
 				hr = S_FALSE;
 			}
-			/*else
-			{
-				if( GetCurrentLptMode() < LPT_PS2_MODE ) // BRW - TVic specific - gets the CurrentLptMode Property
-				{
-					hr = S_FALSE;
-				}
-			}*/
 		}
 
 		// Initialize previous Output States
@@ -251,6 +251,11 @@ HRESULT SVContecImpl::Initialize( bool bInit )
 
 			// Stop all triggers
 			m_triggerList.clear();
+			if( m_DeviceId != -1 )
+			{
+				DioExit( m_DeviceId );
+				m_DeviceId = -1;
+			}
 		}
 	}
 	// BRW - Disable debug strings.
@@ -2039,7 +2044,10 @@ HRESULT SVContecImpl::MaskIrq()
 	HRESULT l_hr = S_OK;
 
 	// Disable interrupt.
-	l_hr = DioNotifyInterrupt( m_DeviceId, 14, 0, NULL );
+	if( m_DeviceId != -1 )
+	{
+		l_hr = DioNotifyInterrupt( m_DeviceId, 14, 0, NULL );
+	}
 
 	return l_hr;
 }
@@ -2051,7 +2059,10 @@ HRESULT SVContecImpl::UnmaskIrq()
 
 	// Enable interrupt on PortNo 1, BitNo 6
 	// 1 or 0?  0->1 or 1->0?
-	l_hr = DioNotifyInterrupt( m_DeviceId, 14, 2, NULL );
+	if( m_DeviceId != -1)
+	{
+		l_hr = DioNotifyInterrupt( m_DeviceId, 14, 2, NULL );
+	}
 
 	return l_hr;
 }
@@ -2309,6 +2320,16 @@ HRESULT SVContecImpl::SetIOPortsModes()
 // ******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVContec\SVContecImpl.cpp_v  $
+ * 
+ *    Rev 1.1   15 Jan 2014 08:56:30   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Added startup shutdown logic for contec dll id.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   30 Oct 2013 11:31:30   tbair
  * Project:  SVObserver

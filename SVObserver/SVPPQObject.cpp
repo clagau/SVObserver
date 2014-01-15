@@ -5,8 +5,8 @@
 //* .Module Name     : SVPPQObject
 //* .File Name       : $Workfile:   SVPPQObject.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.11  $
-//* .Check In Date   : $Date:   25 Nov 2013 12:44:20  $
+//* .Current Version : $Revision:   1.12  $
+//* .Check In Date   : $Date:   13 Jan 2014 12:50:20  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -1986,57 +1986,89 @@ bool SVPPQObject::HasDigitalInputForConditionalOutput() const
 	return (m_conditionalOutputName.find(_T("DIO")) != SVString::npos);
 }
 
+// AddToAvailableInputs searches the m_AllInputs by name. If it does not exist,
+// then the new input is added. Two types are supported: 
+// IO_REMOTE_INPUT and IO_DIGITAL_INPUT.
+// A variant value object is created for the remote input.
+// A Boolean value object is created for the digital input.
+BOOL SVPPQObject::AddToAvailableInputs(SVIOObjectType eType, CString strName )
+{
+	bool bFound = false;
+	BOOL bRet = FALSE;
+
+	// search for the input. 
+	for(size_t k = 0 ; k < m_AllInputs.size(); k++ )
+	{
+		SVIOEntryHostStructPtr pOldInput = m_AllInputs[k];
+		if( 0 == strcmp( strName, pOldInput->m_pValueObject->GetName() ) )
+		{
+			bFound = true;
+			break;
+		}// end if
+
+	}// end for
+
+	if( !bFound )
+	{
+		SVValueObjectClass	*pObject=NULL;
+		if( eType == IO_REMOTE_INPUT )
+		{
+			// new variant value object for Remote Inputs.
+			pObject = new SVVariantValueObjectClass( this );
+		}
+		else
+		{
+			// new Bool Value Object for Digital Inputs.
+			pObject = new SVBoolValueObjectClass( this );
+		}
+
+		pObject->SetName( strName );
+		pObject->SetObjectDepth( m_lPPQLength + g_lPPQExtraBufferSize );
+		pObject->ResetObject();
+
+		SVIOEntryHostStructPtr pIOEntry = new SVIOEntryHostStruct;
+		pIOEntry->m_pValueObject	= pObject;
+		pIOEntry->m_pValueParent	= pObject;
+		pIOEntry->m_ObjectType	= eType;
+		pIOEntry->m_PPQIndex		= -1;
+		pIOEntry->m_Enabled		= FALSE;
+
+		// Add input to PPQ.
+		bRet = AddInput( pIOEntry );
+	}// end if
+	return bRet;
+}
+
+// Add Default Inputs adds inputs to the m_AllInputs 
+// m_AllInputs appears to be the available input list.
 BOOL SVPPQObject::AddDefaultInputs()
 {
-	// Setup the default 8 (usually) digital inputs
-	SVIOEntryHostStructPtr pIOEntry;
-	SVIOEntryHostStructPtr pOldInput;
-	SVValueObjectClass	*pObject;
-	SVIOEntryHostStructPtrList ppNewInputs;
-	SVIOEntryHostStructPtr pNewInput;
 	CString strName;
-	BOOL	bFound;
 	unsigned long	ulCount;
 	unsigned long	l;
-	size_t	k;
 
 	ulCount = 0;
 	SVIOConfigurationInterfaceClass::Instance().GetDigitalInputCount( ulCount );
 
-	// Create all the default inputs
+	// Create all the default Digital Inputs
 	for( l = 0; l < ulCount; l++ )
 	{
 		strName.Format( "DIO.Input%d", l + 1 );
+		AddToAvailableInputs(IO_DIGITAL_INPUT, strName );
+	}// end for
 
-		for( k = 0, bFound = FALSE; !bFound && k < m_AllInputs.size(); k++ )
-		{
-			pOldInput = m_AllInputs[k];
+	SVConfigurationObject* pConfig = NULL;
+	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
+	SVInputObjectList* pInputObjectList=NULL;
+	pConfig->GetInputObjectList(&pInputObjectList);
+	long lCount=0;
+	pInputObjectList->GetRemoteInputCount(lCount);
 
-			if( 0 == strcmp( strName, pOldInput->m_pValueObject->GetName() ) )
-			{
-				bFound = TRUE;
-				break;
-			}// end if
-
-		}// end for
-
-		if( !bFound )
-		{
-			// Add Digital Input to the PPQ
-			pObject = new SVBoolValueObjectClass( this );
-			pObject->SetName( strName );
-			pObject->SetObjectDepth( m_lPPQLength + g_lPPQExtraBufferSize );
-			pObject->ResetObject();
-
-			pIOEntry = new SVIOEntryHostStruct;
-			pIOEntry->m_pValueObject	= pObject;
-			pIOEntry->m_pValueParent	= pObject;
-			pIOEntry->m_ObjectType	= IO_DIGITAL_INPUT;
-			pIOEntry->m_PPQIndex		= -1;
-			pIOEntry->m_Enabled		= FALSE;
-
-			AddInput( pIOEntry );
-		}// end if
+	// Create all the default Remote Inputs
+	for( l = 0; l < static_cast<unsigned long>(lCount); l++ )
+	{
+		strName.Format( "Remote Input %d", l + 1 );
+		AddToAvailableInputs(IO_REMOTE_INPUT, strName);
 	}// end for
 
 	return TRUE;
@@ -4632,6 +4664,16 @@ void SVPPQObject::SVPPQTracking::IncrementTimeCount( const SVString& p_rName, si
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVPPQObject.cpp_v  $
+ * 
+ *    Rev 1.12   13 Jan 2014 12:50:20   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  881
+ * SCR Title:  Fix Bug where Remote Inputs are missing after adding a new PPQ (e100)
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Updated AddDefaultInputs to include RemoteInputs.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.11   25 Nov 2013 12:44:20   bwalter
  * Project:  SVObserver

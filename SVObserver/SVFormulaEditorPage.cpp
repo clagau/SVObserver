@@ -5,8 +5,8 @@
 //* .Module Name     : SVFormulaEditorPageClass
 //* .File Name       : $Workfile:   SVFormulaEditorPage.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.3  $
-//* .Check In Date   : $Date:   01 Oct 2013 14:19:28  $
+//* .Current Version : $Revision:   1.4  $
+//* .Check In Date   : $Date:   14 Jan 2014 12:14:58  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -19,6 +19,7 @@
 #include "SVEquation.h"
 #include "SVToolsetOutputSelectionDialog.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
+using namespace Seidenader::SVObserver;
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -47,29 +48,25 @@ BEGIN_MESSAGE_MAP(SVFormulaEditorPageClass, CPropertyPage)
 	ON_BN_CLICKED(IDC_ADD_CONSTANT_BUTTON, OnAddConstantButton)
 	ON_CBN_DROPDOWN(IDC_PPQ_VARIABLE_COMBO, OnDropdownPpqVariableCombo)
 	ON_BN_CLICKED(IDC_LOCAL_VARIABLE_SELECT, OnLocalVariableSelect)
+	ON_BN_CLICKED(IDC_DISABLE_EQUATION, OnDisable)
+	ON_BN_CLICKED(IDC_DISABLE_TOOL, OnDisable)
+	ON_EN_CHANGE(IDC_MATHCOND_RICHEDIT, OnEquationFieldChanged)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
-
-SVFormulaEditorPageClass::SVFormulaEditorPageClass( SVTaskObjectClass* pTaskObject )
-	: CPropertyPage( SVFormulaEditorPageClass::IDD )
+SVFormulaEditorPageClass::SVFormulaEditorPageClass( IFormulaController& rController, bool isDisableCheckboxesVisible, UINT captionID, UINT disableExtentionID )
+	: CPropertyPage( SVFormulaEditorPageClass::IDD, captionID )
+	, m_rFormulaController( rController )
+	, m_isConditionalPage( isDisableCheckboxesVisible )
+	, m_disableExtentionID( disableExtentionID )
+	, m_StrConstantValue( _T( "" ) )
+	, m_constantType( 0 )
+	, m_strToolsetOutputVariable( _T( "" ) )
+	, m_equationDisabled( FALSE )
+	, m_toolDisabled( FALSE )
+	, m_numChars( 0 )
+	, m_ppqComboExtent( 0 )
 {
-	//{{AFX_DATA_INIT(SVFormulaEditorPageClass)
-	m_StrConstantValue = _T("");
-	m_constantType = 0;
-	m_strToolsetOutputVariable = _T("");
-	//}}AFX_DATA_INIT
-
-	m_pToolSet        = NULL;
-	m_pTool			= NULL;
-	m_pMathContainer  = NULL;
-
-	m_pEquation		= NULL;
-	m_pEquationStruct = NULL;
-	m_numChars = 0;
-	m_ppqComboExtent = 0;
-
-	SetTaskObject( pTaskObject );
 }
 
 void SVFormulaEditorPageClass::DoDataExchange(CDataExchange* pDX)
@@ -81,11 +78,18 @@ void SVFormulaEditorPageClass::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_ADD_PPQ_VARIABLE_BUTTON, m_AddPPQVariableCtrl);
 	DDX_Control(pDX, IDC_ADD_LOCAL_VARIABLE_BUTTON, m_AddLocalVariableCtrl);
 	DDX_Control(pDX, IDC_ADD_CONSTANT_BUTTON, m_AddConstantCtrl);
+	DDX_Control(pDX, IDC_DECIMAL, m_decimalRadioButton);
+	DDX_Control(pDX, IDC_HEXADECIMAL, m_hexadecimalRadioButton);
+	DDX_Control(pDX, IDC_BINARY, m_binaryRadioButton);
 	DDX_Control(pDX, IDC_PPQ_VARIABLE_COMBO, m_PPQVariableComboCtrl);
 	DDX_Control(pDX, IDC_MATHCOND_RICHEDIT, m_MathRichEditCtrl);
+	DDX_Control(pDX, IDC_DISABLE_EQUATION, m_DisableEquationCtrl);
+	DDX_Control(pDX, IDC_DISABLE_TOOL, m_DisableToolCtrl);
 	DDX_Text(pDX, IDC_CONSTANT_EDIT, m_StrConstantValue);
 	DDX_Radio(pDX, IDC_DECIMAL, m_constantType);
 	DDX_Text(pDX, IDC_LOCAL_VARIABLE_EDIT_CTRL, m_strToolsetOutputVariable);
+	DDX_Check(pDX, IDC_DISABLE_EQUATION, m_equationDisabled);
+	DDX_Check(pDX, IDC_DISABLE_TOOL, m_toolDisabled);
 	//}}AFX_DATA_MAP
 }
 
@@ -97,88 +101,70 @@ BOOL SVFormulaEditorPageClass::OnInitDialog()
 	m_downArrowBitmap.LoadOEMBitmap( OBM_DNARROW );
 	m_ToolsetOutputSelectButton.SetBitmap( ( HBITMAP )m_downArrowBitmap );
 
-	if( m_pToolSet || m_pTool || m_pMathContainer )
+	m_MathRichEditCtrl.LimitText( SV_EQUATION_BUFFER_SIZE );
+
+	createToolbars();
+
+	// BRW - What is this doing?
+	CString s, s2;
+	s.LoadString(IDS_DISABLE_STRING);
+	s2.LoadString(m_disableExtentionID);
+	s = s + " " + s2;
+	GetDlgItem(IDC_DISABLE_TOOL)->SetWindowText((LPCTSTR)s);
+
+	setEquationText();
+
+	// Set CombmoBox Horizontal Extent
+	m_ppqComboExtent = 0;
+
+	// Clear ListBox Extents
+	m_PPQVariableComboCtrl.SetHorizontalExtent( m_ppqComboExtent );
+	std::vector<SVString> ppqVariableNames = m_rFormulaController.getPPQVariableNames();
+
+	// populate PPQ Variables ComboBox
+	for( size_t i = 0; i < ppqVariableNames.size(); i++ )
+	{	
+		// get the width of the string
+		int strWidth = GetComboBoxStringExtent( m_PPQVariableComboCtrl, ppqVariableNames[i].ToString() );
+		if( strWidth > m_ppqComboExtent )
+			m_ppqComboExtent = strWidth;
+
+		m_PPQVariableComboCtrl.AddString( ppqVariableNames[i].ToString() );
+	}// end for
+
+	// Disable if no PPQ Inputs
+	if ( m_PPQVariableComboCtrl.GetCount() <= 0 )
 	{
-		ASSERT( m_pEquationStruct );
-	
-		if( m_pEquationStruct )
-		{
-			m_MathRichEditCtrl.LimitText( SV_EQUATION_BUFFER_SIZE );
-
-			createCursorToolbar();
-			createOperatorToolbars();
-
-			setEquationText();
-
-			// Set CombmoBox Horizontal Extent
-			m_ppqComboExtent = 0;
-
-			// Clear ListBox Extents
-			m_PPQVariableComboCtrl.SetHorizontalExtent( m_ppqComboExtent );
-
-			// *** // ***
-			// populate PPQ Variables ComboBox
-			for( size_t i = 0; i < m_pInspection->m_PPQInputs.size(); i++ )
-			{	
-				SVValueObjectClass* pValueObject;
-				
-				pValueObject = m_pInspection->m_PPQInputs[i].m_IOEntryPtr->m_pValueObject;
-
-				if( !m_pInspection->m_PPQInputs[i].m_IOEntryPtr->m_Enabled )
-					continue;
-
-				// get the width of the string
-				int strWidth = GetComboBoxStringExtent( m_PPQVariableComboCtrl, pValueObject->GetName() );
-				if( strWidth > m_ppqComboExtent )
-					m_ppqComboExtent = strWidth;
-
-				m_PPQVariableComboCtrl.AddString( pValueObject->GetName() );
-			}// end for
-			// *** // ***
-
-			// Disable if no PPQ Inputs
-			if ( m_PPQVariableComboCtrl.GetCount() <= 0 )
-			{
-				m_PPQVariableComboCtrl.EnableWindow( false );
-				m_AddPPQVariableCtrl.EnableWindow( false );
-			}
-
-			// Get Tool and Toolset Pointers
-			if( m_pMathContainer )
-			{
-				// Try to get Tool....
-				m_pTool = m_pMathContainer->GetTool();
-			}
-			if( m_pTool )
-			{
-				m_pToolSet = dynamic_cast < SVToolSetClass* > ( m_pTool->GetOwner() );
-			}
-			
-			UpdateData( FALSE );
-			
-			return TRUE;  // return TRUE unless you set the focus to a control
-						  // EXCEPTION: OCX Property Pages should return FALSE
-
-		}
+		m_PPQVariableComboCtrl.EnableWindow( false );
+		m_AddPPQVariableCtrl.EnableWindow( false );
 	}
 
-	if( GetParent() )
-		GetParent()->SendMessage( WM_CLOSE );
+	if (!m_isConditionalPage)
+	{
+		m_DisableEquationCtrl.ShowWindow(SW_HIDE);
+		m_DisableToolCtrl.ShowWindow(SW_HIDE);
+	}
 	else
-		SendMessage( WM_CLOSE );
+	{
+		m_DisableEquationCtrl.ShowWindow(SW_SHOW);
+		m_DisableToolCtrl.ShowWindow(SW_SHOW);
+	}
 
-	return FALSE;
+	enableControls();
+	UpdateData( FALSE );
+
+	return TRUE;  // return TRUE unless you set the focus to a control
+	// EXCEPTION: OCX Property Pages should return FALSE
 }
 
 void SVFormulaEditorPageClass::OnOK() 
 {
-	m_MathRichEditCtrl.GetSel(m_pEquationStruct->StartPos, m_pEquationStruct->EndPos);
-	BOOL l_bPassed = GetEquationText();
+	CString equationText = getEquationText();
 
 	UpdateData( TRUE );
-	
-	SVEquationTestResult result = m_pEquation->Test();
-	if( result.bPassed && l_bPassed )
+	double value = 0;
+	const int result = m_rFormulaController.validateAndSetEquation( equationText, value );
+	if( result == IFormulaController::validateSuccessful )
 	{
 		CPropertyPage::OnOK();
 	}
@@ -189,13 +175,14 @@ void SVFormulaEditorPageClass::OnOK()
 }
 
 /////////////////////////////////////////////////////////////////////////////
-BOOL SVFormulaEditorPageClass::createOperatorToolbars()
+//The function length breaks the programming guidelines, but it is not split because it would reduce the readability.
+BOOL SVFormulaEditorPageClass::createToolbars()
 {
 	CRect	rect;
 	CRect	trect;
 	CSize	size( 28, 28 );
 	int numButtons;
-	BOOL BRetVal = TRUE;
+	BOOL retVal = TRUE;
 
 	// Get base rectangle
 	GetDlgItem( IDC_TOOLBAR_STATIC )->GetWindowRect( &rect );
@@ -207,153 +194,81 @@ BOOL SVFormulaEditorPageClass::createOperatorToolbars()
 	trect.top    = rect.top + SV_TOOLBAR_BORDER_H;
 	trect.right  = trect.left + ( ( size.cx + ( SV_TOOLBAR_BORDER_W * 2 ) ) * numButtons );
 	trect.bottom = trect.top + size.cy + ( SV_TOOLBAR_BORDER_H * 2 );
-	BRetVal = m_logicalOperatorBar.Create( WS_CHILD | WS_VISIBLE | CCS_NODIVIDER | CBRS_SIZE_DYNAMIC,
-										 trect, this, IDR_MATH_LOGICAL_TOOLBAR, ID_ANDBUTTON, numButtons, size ) && BRetVal;
+	retVal = m_logicalOperatorBar.Create( WS_CHILD | WS_VISIBLE | CCS_NODIVIDER | CBRS_SIZE_DYNAMIC,
+		trect, this, IDR_MATH_LOGICAL_TOOLBAR, ID_ANDBUTTON, numButtons, size ) && retVal;
 
 	// Basic Arithmetic Tool Bar
 	numButtons = 4;
 	trect.left	 = trect.right;
 	trect.right  = trect.left + ( ( size.cx + ( SV_TOOLBAR_BORDER_W * 2 ) ) * numButtons );
 	trect.bottom = trect.top + size.cy + ( SV_TOOLBAR_BORDER_H * 2 );
-	BRetVal = m_basicOperatorBar.Create( WS_CHILD | WS_VISIBLE | CCS_NODIVIDER | CBRS_SIZE_DYNAMIC,
-									trect, this, IDR_MATH_BASIC_TOOLBAR, ID_PLUSBUTTON, numButtons, size) && BRetVal;
+	retVal = m_basicOperatorBar.Create( WS_CHILD | WS_VISIBLE | CCS_NODIVIDER | CBRS_SIZE_DYNAMIC,
+		trect, this, IDR_MATH_BASIC_TOOLBAR, ID_PLUSBUTTON, numButtons, size) && retVal;
 
-	// Miscellaineous operators
-	numButtons = 5;
+	// Trigonometric Operators
+	numButtons = 6;
 	trect.left = rect.left;
-	trect.top = trect.bottom + SV_TOOLBAR_BORDER_H;
+	trect.top    = trect.bottom + SV_TOOLBAR_BORDER_H;
 	trect.right = trect.left + ( ( size.cx + ( SV_TOOLBAR_BORDER_W * 2 ) ) * numButtons );
 	trect.bottom = trect.top + size.cy + ( SV_TOOLBAR_BORDER_H * 2 );
-	BRetVal = m_miscOperatorBar.Create( WS_CHILD | WS_VISIBLE | CCS_NODIVIDER | CBRS_SIZE_DYNAMIC,
-									trect, this, IDR_MATH_MISC_TOOLBAR, ID_MODBUTTON, numButtons, size ) && BRetVal;
+	retVal = m_trigOperatorBar.Create( WS_CHILD | WS_VISIBLE | CCS_NODIVIDER | CBRS_SIZE_DYNAMIC,
+		trect, this, IDR_MATH_TRIGONOMETRIC_TOOLBAR, ID_SINBUTTON, numButtons, size ) && retVal;
 
-	// Conditional Tool Bar...
-	numButtons = 6;
-	trect.left   = trect.right;
-	trect.right  = trect.left + ( ( size.cx + ( SV_TOOLBAR_BORDER_W * 2 ) ) * numButtons );
-	trect.bottom = trect.top + size.cy + ( SV_TOOLBAR_BORDER_H * 2 );
-	BRetVal = m_conditionalOperatorBar.Create( WS_CHILD | WS_VISIBLE | CCS_NODIVIDER | CBRS_SIZE_DYNAMIC,
-										     trect, this, IDR_MATH_CONDITIONAL_TOOLBAR, ID_LESSBUTTON, numButtons,
-											 size ) && BRetVal;
-	
-	// Triginometric Operators
-	numButtons = 6;
-	trect.left = trect.right;
-	trect.right = trect.left + ( ( size.cx + ( SV_TOOLBAR_BORDER_W * 2 ) ) * numButtons );
-	trect.bottom = trect.top + size.cy + ( SV_TOOLBAR_BORDER_H * 2 );
-	BRetVal = m_trigOperatorBar.Create( WS_CHILD | WS_VISIBLE | CCS_NODIVIDER | CBRS_SIZE_DYNAMIC,
-									trect, this, IDR_MATH_TRIGONOMETRIC_TOOLBAR, ID_SINBUTTON, numButtons, size ) && BRetVal;
-	
-	// Statistics Tool Bar...
+	// Statistics Toolbar
 	numButtons = 6;
 	trect.left   = rect.left;	
 	trect.top    = trect.bottom + SV_TOOLBAR_BORDER_H;
 	trect.right  = trect.left + ( ( size.cx + ( SV_TOOLBAR_BORDER_W * 2 ) ) * numButtons );
 	trect.bottom = trect.top + size.cy + ( SV_TOOLBAR_BORDER_H * 2 );
-	BRetVal = m_statisticsOperatorBar.Create( WS_CHILD | WS_VISIBLE | CCS_NODIVIDER | CBRS_SIZE_DYNAMIC,
-										 trect, this, IDR_MATH_STATISTICS_TOOLBAR, ID_MINBUTTON, numButtons, size ) && BRetVal;
-	
-	return BRetVal;
-}
+	retVal = m_statisticsOperatorBar.Create( WS_CHILD | WS_VISIBLE | CCS_NODIVIDER | CBRS_SIZE_DYNAMIC,
+		trect, this, IDR_MATH_STATISTICS_TOOLBAR, ID_MINBUTTON, numButtons, size ) && retVal;
 
-/////////////////////////////////////////////////////////////////////////////
-BOOL SVFormulaEditorPageClass::createCursorToolbar()
-{
-	CRect rect,trect;
-	CSize size( 50, 28 );
-	int numButtons = 1;
-
-	// place under the rich edit control
-	GetDlgItem( IDC_TOOLBAR_STATIC )->GetWindowRect( &rect );
-	ScreenToClient( &rect );
-
-	// Validate toolbar
-	trect.right  = rect.right - 1;
-	trect.left   = trect.right - ( ( size.cx + ( SV_TOOLBAR_BORDER_W * 2 ) ) * numButtons );
-	trect.bottom = rect.bottom - ( SV_TOOLBAR_BORDER_H * 2 );
-	trect.top    = trect.bottom - ( size.cy + ( SV_TOOLBAR_BORDER_H * 2 ) );
-	
-	BOOL bRetVal = m_validateBar.Create(	WS_CHILD | WS_VISIBLE | CCS_NODIVIDER | CBRS_SIZE_DYNAMIC,
-								trect, this, IDR_FORMULA_VALIDATE_TOOLBAR, ID_FORMULA_TEST, numButtons, size );
-
-	size = CSize(37,28);
-	numButtons = 3;
-	// Common Cursor movements toolbar
-	trect.right  = trect.left;
-	trect.left   = trect.right - ( ( size.cx + ( SV_TOOLBAR_BORDER_W * 2 ) ) * numButtons );
-	
-	bRetVal = m_cursorBar.Create(	WS_CHILD | WS_VISIBLE | CCS_NODIVIDER | CBRS_SIZE_DYNAMIC,
-								trect, this, IDR_FORMULA_CURSOR_TOOLBAR, ID_FORMULA_LARROWBUTTON, numButtons, size );
+	// Miscellaneous operators
+	numButtons = 5;
+	trect.left = rect.left;
+	trect.top = trect.bottom + SV_TOOLBAR_BORDER_H;
+	trect.right = trect.left + ( ( size.cx + ( SV_TOOLBAR_BORDER_W * 2 ) ) * numButtons );
+	trect.bottom = trect.top + size.cy + ( SV_TOOLBAR_BORDER_H * 2 );
+	retVal = m_miscOperatorBar.Create( WS_CHILD | WS_VISIBLE | CCS_NODIVIDER | CBRS_SIZE_DYNAMIC,
+		trect, this, IDR_MATH_MISC_TOOLBAR, ID_MODBUTTON, numButtons, size ) && retVal;
 
 	// Punctuation toolbar
 	numButtons = 3;
-	size = CSize( 22, 28 );
+	trect.left	 = trect.right;
+	trect.right  = trect.left + ( ( size.cx + ( SV_TOOLBAR_BORDER_W * 2 ) ) * numButtons );
+	trect.bottom = trect.top + size.cy + ( SV_TOOLBAR_BORDER_H * 2 );
+	retVal = m_punctuationBar.Create(	WS_CHILD | WS_VISIBLE | CCS_NODIVIDER | CBRS_SIZE_DYNAMIC,
+		trect, this, IDR_MATH_PUNCTUATION_TOOLBAR, ID_FORMULA_LPARENBUTTON, numButtons, size );
 
-	trect.right = trect.left;
-	trect.left = trect.right - ( ( size.cx + ( SV_TOOLBAR_BORDER_W * 2 ) ) * numButtons );
-	bRetVal = m_punctuationBar.Create(	WS_CHILD | WS_VISIBLE | CCS_NODIVIDER | CBRS_SIZE_DYNAMIC,
-								trect, this, IDR_MATH_PUNCTUATION_TOOLBAR, ID_FORMULA_LPARENBUTTON, numButtons, size );
+	// Conditional Tool Bar...
+	numButtons = 6;
+	trect.left   = rect.left;
+	trect.top    = trect.bottom + SV_TOOLBAR_BORDER_H;
+	trect.right  = trect.left + ( ( size.cx + ( SV_TOOLBAR_BORDER_W * 2 ) ) * numButtons );
+	trect.bottom = trect.top + size.cy + ( SV_TOOLBAR_BORDER_H * 2 );
+	retVal = m_conditionalOperatorBar.Create( WS_CHILD | WS_VISIBLE | CCS_NODIVIDER | CBRS_SIZE_DYNAMIC,
+		trect, this, IDR_MATH_CONDITIONAL_TOOLBAR, ID_LESSBUTTON, numButtons,
+		size ) && retVal;
 
-	/*
-	// Array toolbar
+	// Common Cursor movements toolbar
+	size = CSize( 37, 28 );
+	numButtons = 3;
+	trect.left   = rect.left + 316;
+	trect.right  = trect.left + ( ( size.cx + ( SV_TOOLBAR_BORDER_W * 2 ) ) * numButtons );	
+	retVal = m_cursorBar.Create( WS_CHILD | WS_VISIBLE | CCS_NODIVIDER | CBRS_SIZE_DYNAMIC,
+		trect, this, IDR_FORMULA_CURSOR_TOOLBAR, ID_FORMULA_DELETEBUTTON, numButtons, size ) && retVal;
+
+	// Validate toolbar
+	size = CSize( 50, 28 );
 	numButtons = 2;
-	size = CSize( 45, 28 );
+	trect.right  = rect.right - 1;
+	trect.left   = trect.right - ( ( size.cx + ( SV_TOOLBAR_BORDER_W * 2 ) ) * numButtons );
+	retVal = m_validateBar.Create( WS_CHILD | WS_VISIBLE | CCS_NODIVIDER | CBRS_SIZE_DYNAMIC,
+		trect, this, IDR_FORMULA_VALIDATE_TOOLBAR, ID_FORMULA_UNDO, numButtons, size ) && retVal;
 
-	trect.right = trect.left;
-	trect.left = trect.right - ( ( size.cx + ( SV_TOOLBAR_BORDER_W * 2 ) ) * numButtons );
-	bRetVal = m_ArrayBar.Create(	WS_CHILD | WS_VISIBLE | CCS_NODIVIDER | CBRS_SIZE_DYNAMIC,
-								trect, this, IDR_FORMULA_ARRAY_TOOLBAR, ID_FORMULA_ARRAY_BUTTON, numButtons, size );
-	*/
-
-	return bRetVal;
+	return retVal;
 }
 
-/////////////////////////////////////////////////////////////////////////////
-void SVFormulaEditorPageClass::SetTaskObject( SVTaskObjectClass* pObject )
-{
-	SVObjectTypeInfoStruct info;
-	info.ObjectType = SVEquationObjectType;
-	info.SubType    = SVMathEquationObjectType;	// we are not looking for conditional equation !!!
-
-	if( pObject != NULL )
-	{
-		m_pToolSet = pObject->GetInspection()->GetToolSet();
-		m_pTool = pObject->GetTool();
-		m_pInspection = pObject->GetInspection();
-
-		SVEquationClass* pEquation = dynamic_cast <SVEquationClass*> (pObject);
-		if ( pEquation == NULL )
-		{
-			pEquation = dynamic_cast < SVEquationClass* >
-				( reinterpret_cast < SVObjectClass* > (::SVSendMessage( pObject, SVM_GETFIRST_OBJECT | SVM_NOTIFY_ONLY_FRIENDS, NULL, (DWORD) &info ) ));
-		}
-
-		m_pMathContainer = dynamic_cast < SVMathContainerClass* > ( pObject ); 
-
-		// Set the pointer to the Equation Class Object 
-		setEquation( pEquation );
-	}
-
-
-}
-
-/////////////////////////////////////////////////////////////////////////////
-void SVFormulaEditorPageClass::setEquation( SVEquationClass* p_pEquation )
-{
-	m_pEquation = p_pEquation;
-	if( m_pEquation != NULL )
-	{
-		m_pEquationStruct = m_pEquation->GetEquationStruct();
-	}
-	else
-	{
-		m_pEquationStruct = NULL;
-	}
-}
-
-
-
-/////////////////////////////////////////////////////////////////////////////
 void SVFormulaEditorPageClass::insertIntoRichEdit( LPCTSTR tszValue )
 {
 	int nStart, nEnd;
@@ -361,12 +276,12 @@ void SVFormulaEditorPageClass::insertIntoRichEdit( LPCTSTR tszValue )
 	m_MathRichEditCtrl.GetSel( nStart, nEnd );
 
 	m_MathRichEditCtrl.ReplaceSel( tszValue );
-	
+	enableUndoButton();
+
 	//Update the text Count
 	m_numChars += lstrlen(tszValue);
 }
 
-/////////////////////////////////////////////////////////////////////////////
 void SVFormulaEditorPageClass::backspaceRichEdit( long Pos )
 {
 	int nStart, nEnd;
@@ -374,9 +289,9 @@ void SVFormulaEditorPageClass::backspaceRichEdit( long Pos )
 	m_MathRichEditCtrl.GetSel( nStart, nEnd );
 
 	m_MathRichEditCtrl.SetSel( nEnd - Pos, nEnd - Pos );
+	enableUndoButton();
 }
 
-/////////////////////////////////////////////////////////////////////////////
 void SVFormulaEditorPageClass::advanceRichEdit( long Pos )
 {
 	int nStart, nEnd;
@@ -384,9 +299,9 @@ void SVFormulaEditorPageClass::advanceRichEdit( long Pos )
 	m_MathRichEditCtrl.GetSel( nStart, nEnd );
 
 	m_MathRichEditCtrl.SetSel( nEnd + Pos, nEnd + Pos );
+	enableUndoButton();
 }
 
-/////////////////////////////////////////////////////////////////////////////
 void SVFormulaEditorPageClass::deleteRichEdit( long Pos )
 {
 	int nStart, nEnd;
@@ -412,44 +327,35 @@ void SVFormulaEditorPageClass::deleteRichEdit( long Pos )
 		m_MathRichEditCtrl.ReplaceSel("");
 		m_numChars--;
 	}
+	enableUndoButton();
 }
 
-/////////////////////////////////////////////////////////////////////////////
-BOOL SVFormulaEditorPageClass::GetEquationText()
+CString SVFormulaEditorPageClass::getEquationText()
 {
-	BOOL l_bOK = TRUE;
-	ASSERT( m_pEquationStruct );
-	if( m_pEquationStruct )
-	{
-		// Get text from the RichEdit and place into EquationhStruct
-		CString equationText;
-		m_MathRichEditCtrl.GetWindowText( equationText );
-		m_pEquationStruct->SetEquationText( equationText );
-
-		if( m_pEquation->GetTool() != NULL )
-		{
-			DWORD l_dwRet = ::SVSendMessage( m_pEquation->GetTool(),SVM_RESET_ALL_OBJECTS & ~SVM_NOTIFY_FRIENDS , NULL, NULL); // Do not reset friends because they may be invalid.
-			if( l_dwRet != SVMR_SUCCESS)
-			{
-				l_bOK = FALSE;
-			}
-		}
-	}
-	return l_bOK;
+	int startPos = 0;
+	int endPos = 0;
+	CString equationText( "" );
+	m_MathRichEditCtrl.GetSel( startPos, endPos );
+	m_MathRichEditCtrl.GetWindowText( equationText );
+	return equationText;
 }
 
-/////////////////////////////////////////////////////////////////////////////
 void SVFormulaEditorPageClass::setEquationText()
 {
-	ASSERT( m_pEquationStruct );
-	if( m_pEquationStruct )
+	// Get text from EquationStruct and place into RichEdit
+	SVString equationText = m_rFormulaController.getEquationText();
+	m_MathRichEditCtrl.SetWindowText( equationText.ToString() );
+	m_numChars = lstrlen(equationText.ToString());
+
+	bool toolEnabled = false; 
+	bool equationEnabled = false; 
+	HRESULT result = m_rFormulaController.isToolAndEquationEnabled(toolEnabled, equationEnabled);
+	if (S_OK == result )
 	{
-		// Get text from EquationStruct and place into RichEdit
-		CString equationText;
-		m_pEquationStruct->GetEquationText( equationText );
-		m_MathRichEditCtrl.SetWindowText( equationText );
-		m_numChars = lstrlen(equationText);
+		m_toolDisabled = toolEnabled?FALSE:TRUE;
+		m_equationDisabled = equationEnabled?FALSE:TRUE;
 	}
+	enableUndoButton();
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -493,18 +399,9 @@ void SVFormulaEditorPageClass::OnLocalVariableSelect()
 {
 	UpdateData();
 
-	SVInspectionProcess* pInspection = m_pTool->GetInspection();
-
-	// use inspection to look up instead of TheSVObjectManager because
-	// name does not have Inspection_1 prefix.
-	SVValueObjectReference ref;
-	SVObjectManagerClass::Instance().GetObjectByDottedName( static_cast< LPCTSTR >( m_strToolsetOutputVariable ), ref );
-
-	m_pTool->UpdateTaskObjectOutputListAttributes( ref, SV_SELECTABLE_FOR_EQUATION );
-
 	SVToolsetOutputSelectionDialog dlg;
-	
-	dlg.PTaskObjectList = m_pToolSet;
+
+	dlg.PTaskObjectList = m_rFormulaController.getToolSet();
 	dlg.uAttributesDesired = SV_SELECTABLE_FOR_EQUATION;
 	dlg.m_treeOutputList.SetAllowWholeArray();
 
@@ -552,251 +449,243 @@ void SVFormulaEditorPageClass::OnAddConstantButton()
 	if ( ! m_StrConstantValue.IsEmpty () )
 	{
 		CString TempString = m_StrConstantValue;
-			
+
 		switch ( m_constantType )
 		{
-			case SV_FORMULA_BINARY_CONSTANT_TYPE:
-				TempString += "b";
-				break;
+		case SV_FORMULA_BINARY_CONSTANT_TYPE:
+			TempString += "b";
+			break;
 
-			case SV_FORMULA_HEXADECIMAL_CONSTANT_TYPE:
-				TempString += "h";
-				break;
+		case SV_FORMULA_HEXADECIMAL_CONSTANT_TYPE:
+			TempString += "h";
+			break;
+
+		default:
+			//Do nothing.
+			break;
 		}
 		insertIntoRichEdit( ( LPCTSTR )TempString );
 	}
 }
 
-/////////////////////////////////////////////////////////////////////////////
-//
-/////////////////////////////////////////////////////////////////////////////
+
+void SVFormulaEditorPageClass::OnDisable()
+{
+	if (m_isConditionalPage)
+	{
+		UpdateData( TRUE );
+
+		bool enableTool = (m_toolDisabled != TRUE);
+		bool enableEquation = (m_equationDisabled != TRUE);
+		m_rFormulaController.setToolAndEquationEnabled(enableTool, enableEquation);
+		enableControls();
+	}
+}
+
+//The function length breaks the programming guidelines, but it is only one switch statement.
+//To change this would reduce the understanding of the functionality.
 BOOL SVFormulaEditorPageClass::OnCommand(WPARAM wParam, LPARAM lParam) 
 {
 	// IDs must be sequential within a toolbar!
 	switch (LOWORD(wParam))
 	{
-// Condition operators
-		case ID_LESSBUTTON:
-			insertIntoRichEdit(" LT ");
-			break;
-		
-		case ID_GREATERBUTTON:
-			insertIntoRichEdit(" GT ");
-			break;
-		
-		case ID_LESSEQUALBUTTON:
-			insertIntoRichEdit(" LTE ");
-			break;
-		
-		case ID_GREATEREQUALBUTTON:
-			insertIntoRichEdit(" GTE ");
-			break;
-		
-		case ID_EQUALBUTTON:
-			insertIntoRichEdit(" EQ ");
-			break;
-		
-// Logical operators
-		case ID_NOTEQUALBUTTON:
-			insertIntoRichEdit(" NE ");
-			break;
+		// Condition operators
+	case ID_LESSBUTTON:
+		insertIntoRichEdit(" LT ");
+		break;
+	case ID_GREATERBUTTON:
+		insertIntoRichEdit(" GT ");
+		break;
+	case ID_LESSEQUALBUTTON:
+		insertIntoRichEdit(" LTE ");
+		break;
+	case ID_GREATEREQUALBUTTON:
+		insertIntoRichEdit(" GTE ");
+		break;
+	case ID_EQUALBUTTON:
+		insertIntoRichEdit(" EQ ");
+		break;
 
-		case ID_ANDBUTTON:
-			insertIntoRichEdit(" AND ");
-			break;
-		
-		case ID_ORBUTTON:
-			insertIntoRichEdit(" OR ");
-			break;
-		
-		case ID_NOTBUTTON:
-			insertIntoRichEdit(" NOT ");
-			break;
-		
-		case ID_XORBUTTON:
-			insertIntoRichEdit(" XOR ");
-			break;
+		// Logical operators
+	case ID_NOTEQUALBUTTON:
+		insertIntoRichEdit(" NE ");
+		break;
+	case ID_ANDBUTTON:
+		insertIntoRichEdit(" AND ");
+		break;
+	case ID_ORBUTTON:
+		insertIntoRichEdit(" OR ");
+		break;
+	case ID_NOTBUTTON:
+		insertIntoRichEdit(" NOT ");
+		break;
+	case ID_XORBUTTON:
+		insertIntoRichEdit(" XOR ");
+		break;
 
-// Arithmetic Operators
-			case ID_PLUSBUTTON:
-			insertIntoRichEdit(" + ");
-			break;
-		
-		case ID_MINUSBUTTON:
-			insertIntoRichEdit(" - ");
-			break;
-		
-		case ID_TIMESBUTTON:
-			insertIntoRichEdit(" * ");
-			break;
-		
-		case ID_DIVIDEBUTTON:
-			insertIntoRichEdit(" / ");
-			break;
+		// Arithmetic Operators
+	case ID_PLUSBUTTON:
+		insertIntoRichEdit(" + ");
+		break;
+	case ID_MINUSBUTTON:
+		insertIntoRichEdit(" - ");
+		break;
+	case ID_TIMESBUTTON:
+		insertIntoRichEdit(" * ");
+		break;
+	case ID_DIVIDEBUTTON:
+		insertIntoRichEdit(" / ");
+		break;
 
-// Trig operators
-		case ID_SINBUTTON:
-			insertIntoRichEdit(" SIN() ");
-			backspaceRichEdit(2);
-			break;
+		// Trig operators
+	case ID_SINBUTTON:
+		insertIntoRichEdit(" SIN() ");
+		backspaceRichEdit(2);
+		break;
+	case ID_COSBUTTON:
+		insertIntoRichEdit(" COS() ");
+		backspaceRichEdit(2);
+		break;
+	case ID_TANBUTTON:
+		insertIntoRichEdit(" TAN() ");
+		backspaceRichEdit(2);
+		break;
+	case ID_ARCSINBUTTON:
+		insertIntoRichEdit(" ASIN() ");
+		backspaceRichEdit(2);
+		break;
+	case ID_ARCCOSBUTTON:
+		insertIntoRichEdit(" ACOS() ");
+		backspaceRichEdit(2);
+		break;
+	case ID_ARCTANBUTTON:
+		insertIntoRichEdit(" ATAN() ");
+		backspaceRichEdit(2);
+		break;
 
-		case ID_COSBUTTON:
-			insertIntoRichEdit(" COS() ");
-			backspaceRichEdit(2);
-			break;
+		// Misc Operators
+	case ID_MODBUTTON:
+		insertIntoRichEdit(" MOD(,) ");
+		backspaceRichEdit(3);
+		break;
+	case ID_ABSBUTTON:
+		insertIntoRichEdit(" ABS() ");
+		backspaceRichEdit(2);
+		break;
+	case ID_SQRBUTTON:
+		insertIntoRichEdit(" SQR() ");
+		backspaceRichEdit(2);
+		break;
+	case ID_SQRTBUTTON:
+		insertIntoRichEdit(" SQRT() ");
+		backspaceRichEdit(2);
+		break;
+	case ID_TRUNCBUTTON:
+		insertIntoRichEdit(" TRUNC() ");
+		backspaceRichEdit(2);
+		break;
 
-		case ID_TANBUTTON:
-			insertIntoRichEdit(" TAN() ");
-			backspaceRichEdit(2);
-			break;
+		// Statistics Operators
+	case ID_MINBUTTON:
+		insertIntoRichEdit(" MIN(,) ");
+		backspaceRichEdit(3);
+		break;
+	case ID_MAXBUTTON:
+		insertIntoRichEdit(" MAX(,) ");
+		backspaceRichEdit(3);
+		break;
+	case ID_AVERAGEBUTTON:
+		insertIntoRichEdit(" AVG(,) ");
+		backspaceRichEdit(3);
+		break;
+	case ID_MEDIANBUTTON:
+		insertIntoRichEdit(" MED(,) ");
+		backspaceRichEdit(3);
+		break;
+	case ID_SUM_BUTTON:
+		insertIntoRichEdit(" SUM(,) ");
+		backspaceRichEdit(3);
+		break;
+	case ID_STD_DEV_BUTTON:
+		insertIntoRichEdit(" STDDEV(,) ");
+		backspaceRichEdit(3);
+		break;
 
-		case ID_ARCSINBUTTON:
-			insertIntoRichEdit(" ASIN() ");
-			backspaceRichEdit(2);
-			break;
+		// Punctuation Bar
+	case ID_FORMULA_LPARENBUTTON:
+		insertIntoRichEdit("(");
+		break;
+	case ID_FORMULA_RPARENBUTTON:
+		insertIntoRichEdit(")");
+		break;
+	case ID_FORMULA_COMMABUTTON:
+		insertIntoRichEdit(",");
+		break;
 
-		case ID_ARCCOSBUTTON:
-			insertIntoRichEdit(" ACOS() ");
-			backspaceRichEdit(2);
-			break;
-
-		case ID_ARCTANBUTTON:
-			insertIntoRichEdit(" ATAN() ");
-			backspaceRichEdit(2);
-			break;
-
-// Misc Operators
-		case ID_MODBUTTON:
-			insertIntoRichEdit(" MOD(,) ");
-			backspaceRichEdit(3);
-			break;
-
-		case ID_ABSBUTTON:
-			insertIntoRichEdit(" ABS() ");
-			backspaceRichEdit(2);
-			break;
-
-		case ID_SQRBUTTON:
-			insertIntoRichEdit(" SQR() ");
-			backspaceRichEdit(2);
-			break;
-
-		case ID_SQRTBUTTON:
-			insertIntoRichEdit(" SQRT() ");
-			backspaceRichEdit(2);
-			break;
-
-		case ID_TRUNCBUTTON:
-			insertIntoRichEdit(" TRUNC() ");
-			backspaceRichEdit(2);
-			break;
-
-// Statistics Operators
-		case ID_MINBUTTON:
-			insertIntoRichEdit(" MIN(,) ");
-			backspaceRichEdit(3);
-			break;
-
-		case ID_MAXBUTTON:
-			insertIntoRichEdit(" MAX(,) ");
-			backspaceRichEdit(3);
-			break;
-
-		case ID_AVERAGEBUTTON:
-			insertIntoRichEdit(" AVG(,) ");
-			backspaceRichEdit(3);
-			break;
-
-		case ID_MEDIANBUTTON:
-			insertIntoRichEdit(" MED(,) ");
-			backspaceRichEdit(3);
-			break;
-
-		case ID_SUM_BUTTON:
-			insertIntoRichEdit(" SUM(,) ");
-			backspaceRichEdit(3);
-			break;
-
-		case ID_STD_DEV_BUTTON:
-			insertIntoRichEdit(" STDDEV(,) ");
-			backspaceRichEdit(3);
-			break;
-
-// Punctuation Bar
-		case ID_FORMULA_LPARENBUTTON:
-			insertIntoRichEdit("(");
-			break;
-
-		case ID_FORMULA_RPARENBUTTON:
-			insertIntoRichEdit(")");
-			break;
-
-		case ID_FORMULA_COMMABUTTON:
-			insertIntoRichEdit(",");
-			break;
-
-// Cursor Bar
-		case ID_FORMULA_LARROWBUTTON:
-			backspaceRichEdit(1);
-			break;
-
-		case ID_FORMULA_RARROWBUTTON:
-			advanceRichEdit(1);
-			break;
-
-		case ID_FORMULA_DELETEBUTTON:
-			deleteRichEdit(1);
-			break;
-		
-		case ID_FORMULA_TEST:
-			onValidate();
-			break;
-
-		case ID_FORMULA_ARRAY_BUTTON:
-			insertIntoRichEdit(" [ ] ");
-			break;
-
-		case ID_FORMULA_ARRAY_INDEX_BUTTON:
-			insertIntoRichEdit(" [ 1 { -1 } ] ");
-			backspaceRichEdit(10);
-			break;
-
-}// end switch (LOWORD(wParam))
+		// Cursor Bar
+	case ID_FORMULA_LARROWBUTTON:
+		backspaceRichEdit(1);
+		break;
+	case ID_FORMULA_RARROWBUTTON:
+		advanceRichEdit(1);
+		break;
+	case ID_FORMULA_DELETEBUTTON:
+		deleteRichEdit(1);
+		break;
+	case ID_FORMULA_TEST:
+		onValidate();
+		break;
+	case ID_FORMULA_UNDO:
+		onUndo();
+		break;
+	case ID_FORMULA_ARRAY_BUTTON:
+		insertIntoRichEdit(" [ ] ");
+		break;
+	case ID_FORMULA_ARRAY_INDEX_BUTTON:
+		insertIntoRichEdit(" [ 1 { -1 } ] ");
+		backspaceRichEdit(10);
+		break;
+	}// end switch (LOWORD(wParam))
 
 	return CPropertyPage::OnCommand(wParam, lParam);
 }
 
-BOOL SVFormulaEditorPageClass::ValidateEquation() 
+bool SVFormulaEditorPageClass::validateAndSetEquation() 
 {
-	BOOL l_bValid = TRUE;
 	if( GetSafeHwnd() )
 	{
-		m_MathRichEditCtrl.GetSel(m_pEquationStruct->StartPos, m_pEquationStruct->EndPos);
-		l_bValid = GetEquationText();
+		CString equationText = getEquationText();
 
 		UpdateData( TRUE ); // Update the variables
-	
-		SVEquationTestResult result = m_pEquation->Test();
-		return result.bPassed && l_bValid;
+
+		double value = 0;
+		const int result = m_rFormulaController.validateAndSetEquation( equationText, value );
+		enableUndoButton();
+		return result == IFormulaController::validateSuccessful;
 	}
-	return l_bValid;
+	return true;
 }
 
 void SVFormulaEditorPageClass::onValidate() 
 {
-	m_MathRichEditCtrl.GetSel(m_pEquationStruct->StartPos, m_pEquationStruct->EndPos);
-	GetEquationText();
+	SVString equationText = getEquationText();
 
 	UpdateData( TRUE ); // Update the variables
-	
-	SVEquationTestResult result = m_pEquation->Test();
-	if( result.bPassed )
+	double value = 0;
+	const int result = m_rFormulaController.validateEquation( equationText, value );
+	if( result == IFormulaController::validateSuccessful )
 	{
 		CString tmp;
-		double value = m_pEquation->GetYACCResult();
+		if (m_isConditionalPage)
+		{
+			CString boolStr = ( ( value ) ? _T( "TRUE" ) : _T( "FALSE" ) );
 
-		tmp.Format("Formula Validated Successfully\n Value = %lf", value); 
-
+			tmp.Format("Conditional Equation Validated Successfully\n Condition = %s", boolStr); 
+		}
+		else
+		{
+			tmp.Format("Formula Validated Successfully\n Value = %lf", value); 
+		}
 		AfxMessageBox(tmp);
 	}
 	else // Something is wrong
@@ -805,6 +694,32 @@ void SVFormulaEditorPageClass::onValidate()
 	}
 }
 
+void SVFormulaEditorPageClass::onUndo()
+{
+	setEquationText();
+	enableUndoButton();
+}
+
+void SVFormulaEditorPageClass::OnEquationFieldChanged()
+{
+	enableUndoButton();
+}
+
+BOOL SVFormulaEditorPageClass::OnKillActive()
+{
+	if( !validateAndSetEquation() )
+	{
+		// Equation must be valid or disabled
+		CString tmp;
+		tmp.LoadString(IDS_INVALID_FORMULA);
+		AfxMessageBox(tmp);
+		return FALSE;
+	}
+	else
+	{
+		return CPropertyPage::OnKillActive();
+	}
+}
 
 int SVFormulaEditorPageClass::GetComboBoxStringExtent( CComboBox& rComboBox, LPCTSTR szStr ) 
 { 
@@ -812,13 +727,86 @@ int SVFormulaEditorPageClass::GetComboBoxStringExtent( CComboBox& rComboBox, LPC
 	pDC = rComboBox.GetDC(); 
 
 	CSize size = pDC->GetOutputTextExtent( szStr ); 
-	
+
 	return (int)(size.cx * 0.80); 
 } 
 
-void SVFormulaEditorPageClass::HandleValidateError( SVEquationTestResult result )
+void SVFormulaEditorPageClass::HandleValidateError( int posFailed )
 {
-	m_MathRichEditCtrl.SetSel( result.iPositionFailed, result.iPositionFailed );
+	m_MathRichEditCtrl.SetSel( posFailed, posFailed );
+}
+
+void SVFormulaEditorPageClass::enableUndoButton()
+{
+	CString equationText("");
+	m_MathRichEditCtrl.GetWindowText( equationText );
+	if (equationText == m_rFormulaController.getEquationText())
+	{
+		m_validateBar.EnableButton(ID_FORMULA_UNDO, false);
+	}
+	else
+	{
+		m_validateBar.EnableButton(ID_FORMULA_UNDO, true);
+	}
+}
+
+void SVFormulaEditorPageClass::enableControls()
+{
+	//all buttons enabled if it is not the conditional page
+	BOOL state = !m_isConditionalPage; 
+		
+	if (m_isConditionalPage)
+	{   //if conditional page, set state depends on if tool or equation is enabled or disabled
+		state = !m_toolDisabled;
+		//disable equation checkbox if tool is disabled
+		m_DisableEquationCtrl.EnableWindow( state );
+		//if tool or equation disabled, all buttons should be disabled
+		state = ( !m_toolDisabled && !m_equationDisabled );
+	}
+
+	if (state == TRUE)
+	{
+		// Disable if no PPQ Inputs
+		if (m_PPQVariableComboCtrl.GetCount() <= 0)
+		{
+			m_PPQVariableComboCtrl.EnableWindow( false );
+			m_AddPPQVariableCtrl.EnableWindow( false );
+		}
+		else
+		{
+			m_PPQVariableComboCtrl.EnableWindow( true );
+			m_AddPPQVariableCtrl.EnableWindow( true );
+		}
+		m_validateBar.EnableWindow( true );
+		m_validateBar.EnableButton(ID_FORMULA_TEST, true);
+		enableUndoButton();
+	}
+	else
+	{
+		m_PPQVariableComboCtrl.EnableWindow( state );
+		m_AddPPQVariableCtrl.EnableWindow( state );
+		m_validateBar.EnableWindow( state );
+	}
+	
+	m_ToolsetOutputSelectButton.EnableWindow( state );
+	m_AddLocalVariableCtrl.EnableWindow( state );
+	
+	m_ConstantEditCtrl.EnableWindow( state );
+	m_AddConstantCtrl.EnableWindow( state );
+	m_decimalRadioButton.EnableWindow( state );
+	m_hexadecimalRadioButton.EnableWindow( state );
+	m_binaryRadioButton.EnableWindow( state );
+
+	m_MathRichEditCtrl.EnableWindow( state );
+
+	m_logicalOperatorBar.EnableWindow( state );
+	m_conditionalOperatorBar.EnableWindow( state );
+	m_cursorBar.EnableWindow( state );
+	m_trigOperatorBar.EnableWindow( state );
+	m_miscOperatorBar.EnableWindow( state );
+	m_basicOperatorBar.EnableWindow( state );
+	m_punctuationBar.EnableWindow( state );
+	m_statisticsOperatorBar.EnableWindow( state );
 }
 
 //******************************************************************************
@@ -826,6 +814,38 @@ void SVFormulaEditorPageClass::HandleValidateError( SVEquationTestResult result 
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVFormulaEditorPage.cpp_v  $
+ * 
+ *    Rev 1.4   14 Jan 2014 12:14:58   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  877
+ * SCR Title:  Add undo-button to formula and conditional pages
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   Added using namespace.
+ * Added IDC_DISABLE_EQUATION.
+ * Added IDC_DISABLE_TOOL.
+ * Added IDC_DECIMAL.
+ * Added IDC_HEXADECIMAL.
+ * Added IDC_BINARY.
+ * Changed to use IFormulaController.
+ * Added Undo All button.
+ * Combined createOperatorToolbars and createCursorToolbar methods into createToolbars method.
+ * Corrected spelling of "Triginometric" and "Miscellaineous".
+ * Removed createCursorToolbar, SetTaskObject, and setEquation methods.
+ * Delete BOOL GetEquationText method.
+ * Add CString getEquationText method.
+ * Changed setEquationText method to support undo button.
+ * Changed OnLocalVariableSelect method to use formula controller.
+ * Changed OnAddConstantButton method to include a default case for the switch statement.
+ * Added OnDisable method.
+ * Changed OnCommand method to include a default case and an ID_FORMULA_UNDO case for the switch statement.
+ * Changed ValidateEquation method to validateAndSetEquation.
+ * Changed onValidate method to use formula controller.
+ * Added onUndo, OnEquationFieldChanged, and OnKillActive methods.
+ * Changed parameter type for HandleValidateError.
+ * Added enableUndoButton and enableControls methods.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   01 Oct 2013 14:19:28   tbair
  * Project:  SVObserver

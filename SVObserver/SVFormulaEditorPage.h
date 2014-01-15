@@ -5,8 +5,8 @@
 //* .Module Name     : SVFormulaEditorPageClass
 //* .File Name       : $Workfile:   SVFormulaEditorPage.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   09 May 2013 13:26:38  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   14 Jan 2014 12:19:12  $
 //******************************************************************************
 
 #ifndef SVFORMULAEDITORPAGE_H
@@ -15,6 +15,7 @@
 #include "SVObjectLibrary/SVInputInfoListClass.h"
 #include "SVToolBar.h"
 #include "SVObjectLibrary/SVObjectClass.h"
+#include "IFormulaController.h"
 #include "SVEquation.h"
 
 class SVInspectionProcess;
@@ -27,11 +28,9 @@ class SVFormulaEditorPageClass : public CPropertyPage
 {
 // Construction
 public:
-	SVFormulaEditorPageClass( SVTaskObjectClass* pObject = NULL );   // standard constructor
+	SVFormulaEditorPageClass( Seidenader::SVObserver::IFormulaController& rController, bool isDisableCheckboxesVisible = false, UINT captionID = IDS_FORMULA_STRING, UINT disableExtentionID = IDS_TOOL_STRING );   // standard constructor
 
-	void SetTaskObject( SVTaskObjectClass* pTaskObject );
-	BOOL GetEquationText();
-	BOOL ValidateEquation();
+	bool validateAndSetEquation();
 
 // Dialog Data
 	//{{AFX_DATA(SVFormulaEditorPageClass)
@@ -44,25 +43,34 @@ public:
 	CEdit	m_MathRichEditCtrl;
 	CString	m_StrConstantValue;
 	int		m_constantType;
+	CButton m_decimalRadioButton;
+	CButton m_hexadecimalRadioButton;
+	CButton m_binaryRadioButton;
 	CString	m_strToolsetOutputVariable;
 	CButton	m_ToolsetOutputSelectButton;
+	CButton m_DisableEquationCtrl;
+	CButton m_DisableToolCtrl;
+	BOOL	m_equationDisabled;
+	BOOL	m_toolDisabled;
 	//}}AFX_DATA
 
 protected:
-	void setEquation( SVEquationClass* pEquation );
-
 	void backspaceRichEdit( long Pos );
 	void insertIntoRichEdit( LPCTSTR tszValue );
 	void advanceRichEdit( long Pos );
 	void deleteRichEdit( long Pos );
+	CString getEquationText();
 	void setEquationText();
-	BOOL createCursorToolbar();
-	BOOL createOperatorToolbars();
+	BOOL createToolbars();
 	int GetComboBoxStringExtent( CComboBox& rComboBox, LPCTSTR szStr );
 
-	void HandleValidateError( SVEquationTestResult result );
+	void HandleValidateError( int posFailed );
 
 	void onValidate();
+	void onUndo();
+
+	void enableControls();
+	void enableUndoButton();
 
 // Overrides
 	// ClassWizard generated virtual function overrides
@@ -81,13 +89,15 @@ protected:
 	virtual BOOL OnInitDialog();
 	afx_msg void OnDropdownPpqVariableCombo();
 	afx_msg void OnLocalVariableSelect();
+	afx_msg void OnDisable();
+	afx_msg void OnEquationFieldChanged();
+	virtual BOOL OnKillActive( );
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 
 protected:
 	SVToolBarClass m_logicalOperatorBar;
 	SVToolBarClass m_conditionalOperatorBar;
-	SVToolBarClass m_constantOperatorBar;
 	SVToolBarClass m_trigOperatorBar;
 	SVToolBarClass m_miscOperatorBar;
 	SVToolBarClass m_basicOperatorBar;
@@ -95,21 +105,13 @@ protected:
 	SVToolBarClass m_validateBar;
 	SVToolBarClass m_punctuationBar;
 	SVToolBarClass m_statisticsOperatorBar;
-	SVToolBarClass m_ArrayBar;
 
 private:
-	SVInspectionProcess*   m_pInspection;
-	SVToolSetClass*        m_pToolSet;
-	SVToolClass*           m_pTool;
-	SVMathContainerClass*  m_pMathContainer;
-
-	SVEquationClass*   m_pEquation;
-	SVEquationStruct*  m_pEquationStruct;
+	Seidenader::SVObserver::IFormulaController& m_rFormulaController;
 	int m_numChars;
-	SVInputInfoListClass m_varList;
-
 	int m_ppqComboExtent;
-
+	bool m_isConditionalPage;
+	UINT m_disableExtentionID;
 	CBitmap m_downArrowBitmap;
 };
 
@@ -122,7 +124,18 @@ private:
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVFormulaEditorPage.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVFormulaEditorPage.h_v  $
+ * 
+ *    Rev 1.2   14 Jan 2014 12:19:12   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  877
+ * SCR Title:  Add undo-button to formula and conditional pages
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   Removed and added the same methods listed in the .cpp.
+ * Moved all object with not need for GUI to formulaController (m_pInspection, m_pToolSet etc.).
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   09 May 2013 13:26:38   bWalter
  * Project:  SVObserver

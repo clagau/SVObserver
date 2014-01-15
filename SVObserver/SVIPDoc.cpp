@@ -5,8 +5,8 @@
 //* .Module Name     : SVIPDoc
 //* .File Name       : $Workfile:   SVIPDoc.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.7  $
-//* .Check In Date   : $Date:   04 Oct 2013 12:51:06  $
+//* .Current Version : $Revision:   1.8  $
+//* .Check In Date   : $Date:   14 Jan 2014 12:24:24  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -1883,11 +1883,9 @@ void SVIPDoc::OnEditTool()
 			// to check if anyone is using the output image
 			if( l_pTool->IsOkToEdit() )
 			{
-				SVToolAdjustmentDialogSheetClass* toolAdjustmentDialog = NULL;
-				toolAdjustmentDialog = new SVToolAdjustmentDialogSheetClass( this, l_pTool, "Tool Adjustment" );
-				toolAdjustmentDialog->DoModal();
-				delete toolAdjustmentDialog;
-				toolAdjustmentDialog = NULL;
+				SVToolAdjustmentDialogSheetClass toolAdjustmentDialog( this, *l_pTool, "Tool Adjustment" );
+				toolAdjustmentDialog.DoModal();
+
 				l_pTool->ResetObject();
 			}
 		}
@@ -1997,7 +1995,8 @@ void SVIPDoc::OnResultsPicker()
 	title.Format(_T("%s - %s"), ResultString, inspectionName);
 	dlg.SetCaptionTitle(title);
 
-	if( dlg.DoModal() == IDOK )
+	INT_PTR dlgResult = dlg.DoModal();
+	if( dlgResult == IDOK )	
 	{
 		// Set the Document as modified
 		SetModifiedFlag();
@@ -2008,9 +2007,6 @@ void SVIPDoc::OnResultsPicker()
 	UpdateAllViews( NULL );
 }
 
-/////////////////////////////////////////////////////////////////////////////
-//
-//
 void SVIPDoc::OnPublishedResultsPicker() 
 {
 	SVInspectionProcess* l_pInspection( GetInspectionProcess() );
@@ -2032,7 +2028,8 @@ void SVIPDoc::OnPublishedResultsPicker()
 	title.Format(_T("%s - %s"), publishedResultString, inspectionName);
 	dlg.SetCaptionTitle(title);
 
-	if( dlg.DoModal() == IDOK )
+	INT_PTR dlgResult = dlg.DoModal();
+	if( dlgResult == IDOK )
 	{
 		l_pInspection->GetPublishList().Refresh( GetToolSet() );
 
@@ -2084,7 +2081,8 @@ void SVIPDoc::OnPublishedResultImagesPicker()
 	title.Format(_T("%s - %s"), publishedResultString, inspectionName);
 	dlg.SetCaptionTitle(title);
 
-	if( dlg.DoModal() == IDOK )
+	INT_PTR dlgResult = dlg.DoModal();
+	if( dlgResult == IDOK )	
 	{
 		//!!! m_publishList.Refresh( m_pToolSet );
 
@@ -2180,7 +2178,8 @@ void SVIPDoc::OnSelectPPQVariable()
 		dlg.m_ppPPQInputs[ z ] = l_pInspection->m_PPQInputs[ z ].m_IOEntryPtr;
 	}
 	
-	if( dlg.DoModal() == IDOK )
+	INT_PTR dlgResult = dlg.DoModal();
+	if( dlgResult == IDOK )
 	{
 		size_t l;
 		size_t k;
@@ -2251,11 +2250,14 @@ void SVIPDoc::OnSelectPPQVariable()
 ////////////////////////////////////////////////////////////////////////////////
 void SVIPDoc::EditToolSetCondition()
 {
-	SVToolSetAdjustmentDialogSheetClass dlg( GetToolSetCondition(), GetToolSet()->GetName() );
+	SVConditionalClass* pCondition = GetToolSetCondition();
+	ASSERT( pCondition );
+	SVToolSetAdjustmentDialogSheetClass dlg( *pCondition, GetToolSet()->GetName() );
 
 	dlg.m_psh.dwFlags |= PSH_NOAPPLYNOW;
 	
-	if( dlg.DoModal() == IDOK )
+	INT_PTR dlgResult = dlg.DoModal();
+	if( dlgResult == IDOK )
 	{
 		SetModifiedFlag();
 	}
@@ -2435,12 +2437,14 @@ BOOL SVIPDoc::checkOkToDelete( SVTaskObjectClass* pTaskObject )
 	SVShowDependentsDialog dlg;
 	dlg.PTaskObject = pTaskObject;
 		
-	if( dlg.DoModal() == IDCANCEL )
+	INT_PTR dlgResult = dlg.DoModal();
+	if( dlgResult == IDCANCEL )
+	{
 		bRetVal = FALSE;
+	}
 
 	return bRetVal;
 }
-
 
 void SVIPDoc::RunRegressionTest()
 {
@@ -2468,9 +2472,7 @@ void SVIPDoc::RunRegressionTest()
 		TheSVObserverApp.OnStop();
 	}
 	
-
 	SVInspectionProcess* l_pInspection( GetInspectionProcess() );
-
 
 	if( l_pInspection == NULL )
 	{
@@ -4736,6 +4738,17 @@ BOOL SVIPDoc::RunOnce( SVToolClass* p_pTool )
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVIPDoc.cpp_v  $
+ * 
+ *    Rev 1.8   14 Jan 2014 12:24:24   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  877
+ * SCR Title:  Add undo-button to formula and conditional pages
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   Changed method OnEditTool to avoid use of new and create object on stack.
+ * Moved command out of IF statement to separate line for better debugging and to match the coding guidelines.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.7   04 Oct 2013 12:51:06   ryoho
  * Project:  SVObserver

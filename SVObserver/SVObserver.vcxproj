@@ -318,6 +318,7 @@ echo %time%
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="ConditionalController.cpp" />
     <ClCompile Include="CSVOCRFontTraining.cpp">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -338,6 +339,7 @@ echo %time%
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
+    <ClCompile Include="FormulaController.cpp" />
     <ClCompile Include="HLB.CPP">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -398,6 +400,7 @@ echo %time%
     <ClCompile Include="SVCameraTriggerData.cpp" />
     <ClCompile Include="SVClosingFilterClass.cpp" />
     <ClCompile Include="SVCommandInspectionGetItems.cpp" />
+    <ClCompile Include="SVConditional.cpp" />
     <ClCompile Include="SVDataDefinitionStruct.cpp" />
     <ClCompile Include="SVDilationFilterClass.cpp" />
     <ClCompile Include="SVDLLToolLoadLibraryClass.cpp" />
@@ -866,26 +869,6 @@ echo %time%
     <ClCompile Include="SVCommandInspectionCollectImageData.cpp" />
     <ClCompile Include="SVCommandInspectionRunOnce.cpp" />
     <ClCompile Include="SVCommandStreamManager.cpp" />
-    <ClCompile Include="SVConditional.cpp">
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-    </ClCompile>
-    <ClCompile Include="SVConditionalDialog.cpp">
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-    </ClCompile>
     <ClCompile Include="SVConditionalHistory.cpp">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -4307,9 +4290,12 @@ echo %time%
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AutoBuild.h" />
+    <ClInclude Include="ConditionalController.h" />
     <ClInclude Include="CSVOCRFontTraining.h" />
     <ClInclude Include="CSVOCRGrayFontTrain.h" />
+    <ClInclude Include="FormulaController.h" />
     <ClInclude Include="HLB.H" />
+    <ClInclude Include="IFormulaController.h" />
     <ClInclude Include="ISVCancel.h" />
     <ClInclude Include="ISVPropertyPageDialog.h" />
     <ClInclude Include="ModelessMessageBox.h" />
@@ -4327,6 +4313,7 @@ echo %time%
     <ClInclude Include="SVCameraTriggerData.h" />
     <ClInclude Include="SVClosingFilterClass.h" />
     <ClInclude Include="SVCommandInspectionGetItems.h" />
+    <ClInclude Include="SVConditional.h" />
     <ClInclude Include="SVConfigXMLPrint.h" />
     <ClInclude Include="SVDataDefinitionStruct.h" />
     <ClInclude Include="SVDilationFilterClass.h" />
@@ -4426,8 +4413,6 @@ echo %time%
     <ClInclude Include="SVCommandInspectionCollectImageData.h" />
     <ClInclude Include="SVCommandInspectionRunOnce.h" />
     <ClInclude Include="SVCommandStreamManager.h" />
-    <ClInclude Include="SVConditional.h" />
-    <ClInclude Include="SVConditionalDialog.h" />
     <ClInclude Include="SVConditionalHistory.h" />
     <ClInclude Include="SVConditionalHistoryBasePage.h" />
     <ClInclude Include="SVConditionalHistoryConditionalPage.h" />

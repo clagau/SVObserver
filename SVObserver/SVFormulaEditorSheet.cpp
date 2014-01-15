@@ -5,8 +5,8 @@
 //* .Module Name     : SVFormulaEditorSheet
 //* .File Name       : $Workfile:   SVFormulaEditorSheet.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 10:39:18  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   14 Jan 2014 12:21:10  $
 //******************************************************************************
 
 //******************************************************************************
@@ -28,6 +28,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "SVFormulaEditorSheet.h"
+#include "FormulaController.h"
+using namespace Seidenader::SVObserver;
 
 //******************************************************************************
 //* DEFINITIONS OF MODULE-LOCAL VARIABLES:
@@ -51,12 +53,14 @@ static char THIS_FILE[] = __FILE__;
 
 SVFormulaEditorSheetClass::SVFormulaEditorSheetClass(UINT nIDCaption, CWnd* pParentWnd, UINT iSelectPage)
 	:CPropertySheet(nIDCaption, pParentWnd, iSelectPage)
+	, m_formulaPage(m_formulaController)
 {
 	init();
 }
 
 SVFormulaEditorSheetClass::SVFormulaEditorSheetClass(LPCTSTR pszCaption, CWnd* pParentWnd, UINT iSelectPage)
 	:CPropertySheet(pszCaption, pParentWnd, iSelectPage)
+	, m_formulaPage(m_formulaController)
 {
 	init();
 }
@@ -68,12 +72,15 @@ SVFormulaEditorSheetClass::~SVFormulaEditorSheetClass()
 void SVFormulaEditorSheetClass::init()
 {
 	m_psh.dwFlags |= PSH_NOAPPLYNOW;
-	AddPage( &formulaPage );
+	AddPage( &m_formulaPage );
 }
 
-void SVFormulaEditorSheetClass::SetTaskObject( SVTaskObjectClass* PObject )
+void SVFormulaEditorSheetClass::SetTaskObject( SVTaskObjectClass* pObject )
 {
-	formulaPage.SetTaskObject( PObject );
+	if ( pObject != nullptr )
+	{
+		m_formulaController.setTaskObject( *pObject );
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -120,7 +127,7 @@ void SVFormulaEditorSheetClass::OnOK()
 		{
 			if( SV_IS_KIND_OF( pPage, SVFormulaEditorPageClass ) )
 			{
-				if( !( ( SVFormulaEditorPageClass* )pPage)->ValidateEquation() )
+				if( !( ( SVFormulaEditorPageClass* )pPage)->validateAndSetEquation() )
 				{
 					// Equation must be valid or disabled
 					CString tmp;
@@ -151,7 +158,20 @@ void SVFormulaEditorSheetClass::OnSysCommand(UINT nID, LPARAM lParam)
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVFormulaEditorSheet.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVFormulaEditorSheet.cpp_v  $
+ * 
+ *    Rev 1.1   14 Jan 2014 12:21:10   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  877
+ * SCR Title:  Add undo-button to formula and conditional pages
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   Added using namespace Seidenader::SVObserver.
+ * Changed to use FormulaController object.
+ * Changed member variable names to use m_ prefix.
+ * In OnOK method using validateAndSetEquation method instead of validateEquation.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 10:39:18   bWalter
  * Project:  SVObserver

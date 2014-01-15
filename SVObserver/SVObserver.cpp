@@ -5,8 +5,8 @@
 //* .Module Name     : SVObserver
 //* .File Name       : $Workfile:   SVObserver.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.16  $
-//* .Check In Date   : $Date:   11 Dec 2013 14:03:00  $
+//* .Current Version : $Revision:   1.17  $
+//* .Check In Date   : $Date:   15 Jan 2014 08:50:46  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -4139,7 +4139,14 @@ BOOL SVObserverApp::ShowConfigurationAssistant( int Page /*= 3*/,
 
 	if( l_pConfig != NULL )
 	{
-		cDlg.SetConfigurationSystem( l_pConfig->GetProductType() );
+		if( l_pConfig->GetProductType() != SVIM_PRODUCT_TYPE_UNKNOWN )
+		{
+			cDlg.SetConfigurationSystem( l_pConfig->GetProductType() );
+		}
+		else
+		{
+			cDlg.SetConfigurationSystem( eSVIMType );
+		}
 	}
 	else
 	{
@@ -6171,7 +6178,7 @@ void SVObserverApp::OnUpdateEditRemoteInputs( CCmdUI* PCmdUI )
 			// Add a menu for each inspection.
 			CString strName;
 			strName.Format("&Edit\\Published Results\\%s",l_Inspections[i]->GetName());
-			AddMenuItem(hmen, strName, ID_EDIT_PUBLISHEDRESULTS_BASE + i);
+			AddMenuItem(hmen, strName, static_cast<UINT>(ID_EDIT_PUBLISHEDRESULTS_BASE + i));
 		}
 	}
 }
@@ -9719,6 +9726,16 @@ void SVObserverApp::OnTriggerSettings()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVObserver.cpp_v  $
+ * 
+ *    Rev 1.17   15 Jan 2014 08:50:46   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  870
+ * SCR Title:  Fix Various Issues in the Edit Configuration Dialog
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Added logic to set the svim type to the svim hardware if the configuration svim type is unknown. This happens with a new configuration.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.16   11 Dec 2013 14:03:00   tbair
  * Project:  SVObserver

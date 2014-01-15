@@ -5,8 +5,8 @@
 //* .Module Name     : SVEquation.h
 //* .File Name       : $Workfile:   SVEquation.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 10:27:24  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   14 Jan 2014 12:09:22  $
 //******************************************************************************
 
 #ifndef SVEQUATIONCLASS_H
@@ -140,9 +140,19 @@ struct SVEquationStruct
 		text = EquationBuffer;	
 	};
 
-	void SetEquationText(CString &text)
+	void GetEquationText(SVString &text)
+	{
+		text = EquationBuffer;	
+	};
+
+	void SetEquationText(const CString text)
 	{
 		EquationBuffer = text;
+	};
+
+	void SetEquationText(const SVString text)
+	{
+		EquationBuffer = text.ToString();
 	};
 
 	CString EquationBuffer;
@@ -276,7 +286,18 @@ protected:
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVEquation.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVEquation.h_v  $
+ * 
+ *    Rev 1.1   14 Jan 2014 12:09:22   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  877
+ * SCR Title:  Add undo-button to formula and conditional pages
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   Changed parameter for SetEquationText from CString & to const CString.
+ * Added SVString versions of SetEquationText and GetEquationText.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 10:27:24   bWalter
  * Project:  SVObserver

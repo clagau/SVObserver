@@ -197,12 +197,6 @@
     <ClCompile Include="SVCommandStreamManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVConditional.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVConditionalDialog.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVConditionalHistory.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -1598,6 +1592,15 @@
     <ClCompile Include="SVDataDefinitionStruct.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="FormulaController.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SVConditional.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ConditionalController.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Midl Include="SVObserver.odl">
@@ -1791,12 +1794,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVCommandStreamManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVConditional.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVConditionalDialog.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVConditionalHistory.h">
@@ -3291,6 +3288,18 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVDataDefinitionStruct.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IFormulaController.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FormulaController.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVConditional.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ConditionalController.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVExtentPropertiesInfoStruct.h">
