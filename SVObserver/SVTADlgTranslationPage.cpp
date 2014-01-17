@@ -5,10 +5,11 @@
 //* .Module Name     : SVTADlgTranslationPage
 //* .File Name       : $Workfile:   SVTADlgTranslationPage.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   24 Apr 2013 11:24:14  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   15 Jan 2014 16:49:24  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVTADlgTranslationPage.h"
 
@@ -18,6 +19,7 @@
 #include "SVTool.h"
 #include "SVToolAdjustmentDialogSheetClass.h"
 #include "SVTransformationTool.h"
+#pragma endregion
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -30,180 +32,78 @@ BEGIN_MESSAGE_MAP(SVToolAdjustmentDialogTranslationPageClass, CPropertyPage)
 	ON_BN_CLICKED(IDC_TRANSLATION_X_FORMULA_BUTTON, OnXFormulaButton)
 	ON_BN_CLICKED(IDC_TRANSLATION_Y_FORMULA_BUTTON, OnYFormulaButton)
 	ON_BN_CLICKED(IDC_PERFORM_TRANSLATION, OnPerformTranslation)
+	ON_CBN_SELCHANGE(IDC_INTERPOLATION_MODE_COMBO, OnSelChangeInterpolationModeCombo)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
+#pragma region Constructor
 SVToolAdjustmentDialogTranslationPageClass::SVToolAdjustmentDialogTranslationPageClass(SVToolAdjustmentDialogSheetClass* Parent)
 : CPropertyPage(SVToolAdjustmentDialogTranslationPageClass::IDD)
 {
 	//{{AFX_DATA_INIT(SVToolAdjustmentDialogTranslationPageClass)
-	StrTranslationXValue = _T("");
-	StrTranslationYValue = _T("");
+	m_strTranslationXValue = _T("");
+	m_strTranslationYValue = _T("");
 	m_performTranslation = FALSE;
 	//}}AFX_DATA_INIT
 	
-	pParentDialog	= Parent;
-	pTool = NULL;
-	
-	pEvaluateTranslationX	= NULL;
-	//pTranslationXResult = NULL;
-	
-	pEvaluateTranslationY	= NULL;
-	//pTranslationYResult = NULL;
+	m_pParentDialog	= Parent;
+	m_pTool = nullptr;
+	m_pEvaluateTranslationX	= nullptr;
+	m_pEvaluateTranslationY	= nullptr;
+	m_pInterpolationMode	= nullptr;
 }
+#pragma endregion
 
-
-HRESULT SVToolAdjustmentDialogTranslationPageClass::SetInspectionData()
-{
-	HRESULT l_hrOk = S_FALSE;
-
-	if( pTool )
-	{
-		UpdateData( TRUE ); // get data from dialog
-
-		SVTransformationToolClass* l_pTool = NULL;
-
-		pParentDialog->GetToolByType( l_pTool );
-
-		l_hrOk = AddInputRequest( pTool->GetUniqueObjectID(), SVPerformTranslationObjectGuid, m_performTranslation );
-
-
-		if( l_hrOk == S_OK )
-		{
-			l_hrOk = AddInputRequestMarker();
-		}
-
-		if( l_hrOk == S_OK )
-		{
-			l_hrOk = RunOnce( pTool );
-		}
-
-		UpdateData( FALSE );
-	}
-
-	return l_hrOk;
-}
-
-void SVToolAdjustmentDialogTranslationPageClass::refresh()
-{
-	if (pTool)
-	{
-		CWnd* pWnd = NULL;
-
-		SetInspectionData();
-
-		_variant_t l_Variant;
-
-		if( GetValue( pTool->GetUniqueObjectID(), SVOutputEvaluateTranslationXResultObjectGuid, l_Variant.GetVARIANT() ) == S_OK )
-		{
-			StrTranslationXValue = static_cast< LPCTSTR >( _bstr_t( l_Variant ) );
-		}
-		else
-		{
-			StrTranslationXValue = _T("");
-		}
-		
-		if( GetValue( pTool->GetUniqueObjectID(), SVOutputEvaluateTranslationYResultObjectGuid, l_Variant.GetVARIANT() ) == S_OK )
-		{
-			StrTranslationYValue = static_cast< LPCTSTR >( _bstr_t( l_Variant ) );
-		}
-		else
-		{
-			StrTranslationYValue = _T("");
-		}
-		
-		UpdateData(FALSE); // set data to dialog
-	}
-}
-
-void SVToolAdjustmentDialogTranslationPageClass::DoDataExchange(CDataExchange* pDX)
-{
-	CPropertyPage::DoDataExchange(pDX);
-	//{{AFX_DATA_MAP(SVToolAdjustmentDialogTranslationPageClass)
-	DDX_Text(pDX, IDC_TRANSLATION_X_EDIT, StrTranslationXValue);
-	DDX_Text(pDX, IDC_TRANSLATION_Y_EDIT, StrTranslationYValue);
-	DDX_Check(pDX, IDC_PERFORM_TRANSLATION, m_performTranslation);
-	//}}AFX_DATA_MAP
-}
-
-
+#pragma region Protected Methods
+#pragma region MFC Methods
 /////////////////////////////////////////////////////////////////////////////
 // SVToolAdjustmentDialogTranslationPageClass message handlers
-
 BOOL SVToolAdjustmentDialogTranslationPageClass::OnInitDialog() 
 {
 	CPropertyPage::OnInitDialog();
 	
-	if (pParentDialog && (pTool = pParentDialog->GetTool()))
+	if (m_pParentDialog && (m_pTool = m_pParentDialog->GetTool()))
 	{
-		SetTaskObject( pTool );
+		SetTaskObject( m_pTool );
 
 		// Get Evaluate Object...
 		SVObjectTypeInfoStruct evaluateObjectInfo;
 		evaluateObjectInfo.ObjectType = SVMathContainerObjectType;
 		
-		/*
-		// Set up the requestor for the Evaluate result
-		SVObjectTypeInfoStruct resultObjectInfo;
-		resultObjectInfo.ObjectType = SVDoubleValueObjectType;
-		*/
-		
 		// Get Evaluate Object for the X coordinate...
 		evaluateObjectInfo.SubType = SVEvaluateTranslationXObjectType;		
-		pEvaluateTranslationX = (SVEvaluateClass*) ::SVSendMessage(pTool, SVM_GETFIRST_OBJECT, NULL, (DWORD) &evaluateObjectInfo);
-
-		/*
-		if (pEvaluateTranslationX)
-		{
-			// Get Evaluate Result Object for the X coordinate...
-			resultObjectInfo.EmbeddedID = SVOutputEvaluateTranslationXResultObjectGuid;
-			pTranslationXResult = (SVDoubleValueObjectClass*) ::SVSendMessage(pEvaluateTranslationX, SVM_GETFIRST_OBJECT, NULL, (DWORD) &resultObjectInfo);
-		}
-		*/
+		m_pEvaluateTranslationX = (SVEvaluateClass*) ::SVSendMessage(m_pTool, SVM_GETFIRST_OBJECT, NULL, (DWORD) &evaluateObjectInfo);
 		
 		// Get Evaluate Object for the Y coordinate...
 		evaluateObjectInfo.SubType = SVEvaluateTranslationYObjectType;
-		pEvaluateTranslationY = (SVEvaluateClass*) ::SVSendMessage(pTool, SVM_GETFIRST_OBJECT, NULL, (DWORD) &evaluateObjectInfo);
+		m_pEvaluateTranslationY = (SVEvaluateClass*) ::SVSendMessage(m_pTool, SVM_GETFIRST_OBJECT, NULL, (DWORD) &evaluateObjectInfo);
 
-		/*
-		if (pEvaluateTranslationY)
-		{
-			// Get Evaluate Result Object for the Y coordinate...
-			resultObjectInfo.EmbeddedID = SVOutputEvaluateTranslationYResultObjectGuid;
-			pTranslationYResult = (SVDoubleValueObjectClass*) ::SVSendMessage(pEvaluateTranslationY, SVM_GETFIRST_OBJECT, NULL, (DWORD) &resultObjectInfo);
-		}
-		*/
-		
-		/*
-		// Get Translation enabled...
+		// Interpolation Mode
 		SVObjectTypeInfoStruct objectInfo;
-		objectInfo.ObjectType = SVBoolValueObjectType;
-		objectInfo.EmbeddedID = SVPerformTranslationObjectGuid;
-		pPerformTranslation = (SVBoolValueObjectClass*) ::SVSendMessage(pTool, SVM_GETFIRST_OBJECT, NULL, (DWORD) &objectInfo);
-		*/
-
-		/*
-		SVObjectTypeInfoStruct objectInfoMode;
-		objectInfoMode.ObjectType = SVLongValueObjectType;
-		objectInfoMode.EmbeddedID = SVTranslationModeGuid;
-		pTranslationMode = (SVLongValueObjectClass*) ::SVSendMessage(pTool, SVM_GETFIRST_OBJECT, NULL, (DWORD) &objectInfoMode);
-
-		long lModeValue = 0;
-		if ( pTranslationMode )
+		objectInfo.ObjectType = SVEnumValueObjectType;
+		objectInfo.EmbeddedID = SVOutputInterpolationModeObjectGuid;
+		m_pInterpolationMode = ( SVEnumerateValueObjectClass* ) ::SVSendMessage( m_pTool, SVM_GETFIRST_OBJECT, NULL, ( DWORD ) &objectInfo );
+		if( m_pInterpolationMode )
 		{
-			pTranslationMode->GetValue(lModeValue);
+			CString l_strEnumList;
+
+			m_pInterpolationMode->GetEnumTypes( l_strEnumList );
+			m_cbInterpolation.SetEnumTypes( l_strEnumList );
+
+			CString strEnum;
+			m_pInterpolationMode->GetValue( strEnum );
+			m_cbInterpolation.SelectString( -1, strEnum );
 		}
-		*/
 
 		SVTransformationToolClass* l_pTool = NULL;
 
-		pParentDialog->GetToolByType( l_pTool );
+		m_pParentDialog->GetToolByType( l_pTool );
 		// Check...
-		if( pEvaluateTranslationX != NULL && pEvaluateTranslationY != NULL )
+		if( m_pEvaluateTranslationX != NULL && m_pEvaluateTranslationY != NULL )
 		{
 			_variant_t l_Variant = 0;
 
-			GetValue( pTool->GetUniqueObjectID(), SVPerformTranslationObjectGuid, l_Variant.GetVARIANT() );
+			GetValue( m_pTool->GetUniqueObjectID(), SVPerformTranslationObjectGuid, l_Variant.GetVARIANT() );
 
 			m_performTranslation = static_cast< bool >( l_Variant );
 
@@ -216,23 +116,49 @@ BOOL SVToolAdjustmentDialogTranslationPageClass::OnInitDialog()
 	
 	// Not valid call...
 	if (GetParent())
+	{
 		GetParent()->SendMessage(WM_CLOSE);
+	}
 	else
+	{
 		SendMessage(WM_CLOSE);
+	}
 	
 	return TRUE;  // return TRUE unless you set the focus to a control
 	// EXCEPTION: OCX-Eigenschaftenseiten sollten FALSE zurückgeben
 }
 
+void SVToolAdjustmentDialogTranslationPageClass::DoDataExchange(CDataExchange* pDX)
+{
+	CPropertyPage::DoDataExchange(pDX);
+	//{{AFX_DATA_MAP(SVToolAdjustmentDialogTranslationPageClass)
+	DDX_Control(pDX, IDC_INTERPOLATION_MODE_COMBO, m_cbInterpolation);
+	DDX_Text(pDX, IDC_TRANSLATION_X_EDIT, m_strTranslationXValue);
+	DDX_Text(pDX, IDC_TRANSLATION_Y_EDIT, m_strTranslationYValue);
+	DDX_Check(pDX, IDC_PERFORM_TRANSLATION, m_performTranslation);
+	//}}AFX_DATA_MAP
+}
+
+BOOL SVToolAdjustmentDialogTranslationPageClass::OnSetActive()
+{
+	if( m_pInterpolationMode )
+	{
+		CString strEnum;
+		m_pInterpolationMode->GetValue( strEnum );
+		m_cbInterpolation.SelectString( -1, strEnum );
+	}
+
+	return CPropertyPage::OnSetActive();
+}
 
 void SVToolAdjustmentDialogTranslationPageClass::OnXFormulaButton() 
 {
-	if (pEvaluateTranslationX)
+	if (m_pEvaluateTranslationX)
 	{
-		CString strCaption = pEvaluateTranslationX->GetName();
+		CString strCaption = m_pEvaluateTranslationX->GetName();
 		strCaption += _T(" Formula");
 		SVFormulaEditorSheetClass dlg(strCaption);
-		dlg.SetTaskObject(pEvaluateTranslationX);
+		dlg.SetTaskObject(m_pEvaluateTranslationX);
 		
 		dlg.DoModal();
 		
@@ -242,12 +168,12 @@ void SVToolAdjustmentDialogTranslationPageClass::OnXFormulaButton()
 
 void SVToolAdjustmentDialogTranslationPageClass::OnYFormulaButton() 
 {
-	if (pEvaluateTranslationY)
+	if (m_pEvaluateTranslationY)
 	{
-		CString strCaption = pEvaluateTranslationY->GetName();
+		CString strCaption = m_pEvaluateTranslationY->GetName();
 		strCaption += _T(" Formula");
 		SVFormulaEditorSheetClass dlg(strCaption);
-		dlg.SetTaskObject(pEvaluateTranslationY);
+		dlg.SetTaskObject(m_pEvaluateTranslationY);
 		
 		dlg.DoModal();
 		
@@ -260,11 +186,104 @@ void SVToolAdjustmentDialogTranslationPageClass::OnPerformTranslation()
 	refresh();
 }
 
+void SVToolAdjustmentDialogTranslationPageClass::OnSelChangeInterpolationModeCombo() 
+{
+	SetInspectionData();
+}
+#pragma endregion MFC Methods
+
+HRESULT SVToolAdjustmentDialogTranslationPageClass::SetInspectionData()
+{
+	HRESULT l_hrOk = S_FALSE;
+
+	if( m_pTool )
+	{
+		UpdateData( TRUE ); // get data from dialog
+
+		SVTransformationToolClass* l_pTool = NULL;
+
+		m_pParentDialog->GetToolByType( l_pTool );
+
+		l_hrOk = AddInputRequest( m_pTool->GetUniqueObjectID(), SVPerformTranslationObjectGuid, m_performTranslation );
+
+		int sel = m_cbInterpolation.GetCurSel();
+		if( sel >= 0 )
+		{
+			long lValue = ( long ) m_cbInterpolation.GetItemData( sel );
+			if( l_hrOk == S_OK )
+			{
+				l_hrOk = AddInputRequest( m_pInterpolationMode, lValue );
+			}
+		}
+
+		if( l_hrOk == S_OK )
+		{
+			l_hrOk = AddInputRequestMarker();
+		}
+
+		if( l_hrOk == S_OK )
+		{
+			l_hrOk = RunOnce( m_pTool );
+		}
+
+		UpdateData( FALSE );
+	}
+
+	return l_hrOk;
+}
+
+void SVToolAdjustmentDialogTranslationPageClass::refresh()
+{
+	if (m_pTool)
+	{
+		CWnd* pWnd = NULL;
+
+		SetInspectionData();
+
+		_variant_t l_Variant;
+
+		if( GetValue( m_pTool->GetUniqueObjectID(), SVOutputEvaluateTranslationXResultObjectGuid, l_Variant.GetVARIANT() ) == S_OK )
+		{
+			m_strTranslationXValue = static_cast< LPCTSTR >( _bstr_t( l_Variant ) );
+		}
+		else
+		{
+			m_strTranslationXValue = _T("");
+		}
+		
+		if( GetValue( m_pTool->GetUniqueObjectID(), SVOutputEvaluateTranslationYResultObjectGuid, l_Variant.GetVARIANT() ) == S_OK )
+		{
+			m_strTranslationYValue = static_cast< LPCTSTR >( _bstr_t( l_Variant ) );
+		}
+		else
+		{
+			m_strTranslationYValue = _T("");
+		}
+		
+		UpdateData(FALSE); // set data to dialog
+	}
+}
+#pragma endregion
+
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVTADlgTranslationPage.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVTADlgTranslationPage.cpp_v  $
+ * 
+ *    Rev 1.1   15 Jan 2014 16:49:24   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  879
+ * SCR Title:  Add interpolation mode to transformation tool
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   Changed code to conform with guidelines.
+ * Changed OnInitDialog to initialize Interpolation Mode member variables.
+ * Changed DoDataExchange method to include m_cbInterpolation.
+ * Added protected MFC methods OnSetActive and OnSelChangeInterpolationModeCombo.
+ * Changed SetInspectionData to check interpolation setting.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   24 Apr 2013 11:24:14   bWalter
  * Project:  SVObserver

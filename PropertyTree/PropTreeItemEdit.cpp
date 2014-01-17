@@ -5,8 +5,8 @@
 // * .Module Name     : D:\...\PropTreeItemEdit.cpp
 // * .File Name       : $Workfile:   PropTreeItemEdit.cpp  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.3  $
-// * .Check In Date   : $Date:   05 Jul 2013 14:35:48  $
+// * .Current Version : $Revision:   1.4  $
+// * .Check In Date   : $Date:   17 Jan 2014 09:22:16  $
 // ******************************************************************************
 
 // PropTreeItemEdit.cpp : implementation file
@@ -202,7 +202,6 @@ void SVRPropertyItemEdit::OnKillFocus(CWnd *pNewWnd)
 {
 	m_bKillFocusWorkaround = true;	// prevent this edit from setting focus again on Activate during Commit
 	CommitChanges();
-	m_bKillFocusWorkaround = false;
 	if ( pNewWnd != &m_btnDots )
 	{
 		ShowWindow( SW_HIDE );
@@ -224,6 +223,7 @@ void SVRPropertyItemEdit::OnKillFocus(CWnd *pNewWnd)
 		// The super class is not called so the button will still work.
 		HideCaret();
 	}
+	m_bKillFocusWorkaround = false;
 }
 
 void SVRPropertyItemEdit::OnEnable(BOOL bEnable) 
@@ -851,7 +851,17 @@ bool SVRPropertyItemEdit::SetItemValuePtr(CString& strVal)
 // * LOG HISTORY:
 // ******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\PropertyTree\PropTreeItemEdit.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\PropertyTree\PropTreeItemEdit.cpp_v  $
+ * 
+ *    Rev 1.4   17 Jan 2014 09:22:16   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   modified on kill focus. Position of workaround flag.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   05 Jul 2013 14:35:48   bwalter
  * Project:  SVObserver

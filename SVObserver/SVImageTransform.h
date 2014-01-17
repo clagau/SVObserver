@@ -5,8 +5,8 @@
 //* .Module Name     : SVImageTransform
 //* .File Name       : $Workfile:   SVImageTransform.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 10:56:02  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   15 Jan 2014 16:43:36  $
 //******************************************************************************
 
 //******************************************************************************
@@ -39,44 +39,60 @@ class SVImageTransformClass : public SVTransformClass
 {
 	SV_DECLARE_CLASS( SVImageTransformClass )
 
+#pragma region Constructor
 public:
 	SVImageTransformClass( SVObjectClass* POwner = NULL, int StringResourceID = IDS_CLASSNAME_SVIMAGETRANSFORM );
 	virtual ~SVImageTransformClass();
+#pragma endregion
 
+#pragma region Public Methods
+public:
+#pragma region virtual
 	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure );
 	virtual HRESULT IsInputImage( SVImageClass *p_psvImage );
 
 	virtual BOOL OnValidate();
+	virtual HRESULT ResetObject( );
+#pragma endregion
 
 	SVImageClass* getInputImage();
 	SVImageClass* getOutputImage();
-	virtual HRESULT ResetObject( );
+#pragma endregion
 
+#pragma region Protected Methods
 protected:
-	virtual BOOL onRun( SVRunStatusClass& RRunStatus );
+	virtual BOOL onRun( SVRunStatusClass& runStatus );
 	virtual DWORD processMessage( DWORD DwMessageID, DWORD DwMessageValue, DWORD DwMessageContext );
 
 	virtual HRESULT UpdateTransformData( long p_lIndex );
+#pragma endregion
 
+#pragma region Private Methods
+private:
+	HRESULT CollectInputImageNames( SVRunStatusClass& runStatus );
+#pragma endregion
+
+#pragma region Member variables
+protected:
 	// Embedded Object: ( Outputs )
-	SVImageClass				outputImageObject;
-	SVBoolValueObjectClass		useExtentsOnly;
+	SVImageClass				m_outputImageObject;
+	SVBoolValueObjectClass		m_useExtentsOnly;
 
 	// Inputs
-	SVInObjectInfoStruct		inputImageObjectInfo;
+	SVInObjectInfoStruct		m_inputImageObjectInfo;
 
-	SVDoubleValueObjectClass	extentWidth;
-	SVDoubleValueObjectClass	extentHeight;
+	SVDoubleValueObjectClass	m_extentWidth;
+	SVDoubleValueObjectClass	m_extentHeight;
 
-	SVDoubleValueObjectClass	extentDisplacementX;
-	SVDoubleValueObjectClass	extentDisplacementY;
+	SVDoubleValueObjectClass	m_extentDisplacementX;
+	SVDoubleValueObjectClass	m_extentDisplacementY;
 	
-	SVDoubleValueObjectClass	extentSourceX;
-	SVDoubleValueObjectClass	extentSourceY;
+	SVDoubleValueObjectClass	m_extentSourceX;
+	SVDoubleValueObjectClass	m_extentSourceY;
 
-	SVDoubleValueObjectClass	extentRotationAngle;
-private:
-	HRESULT CollectInputImageNames( SVRunStatusClass& RRunStatus );
+	SVDoubleValueObjectClass	m_extentRotationAngle;
+	SVEnumerateValueObjectClass m_interpolationMode;
+#pragma region
 };
 
 //******************************************************************************
@@ -88,7 +104,18 @@ private:
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVImageTransform.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVImageTransform.h_v  $
+ * 
+ *    Rev 1.1   15 Jan 2014 16:43:36   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  879
+ * SCR Title:  Add interpolation mode to transformation tool
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   Changed code to conform with guidelines.
+ * Added m_interpolationMode.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 10:56:02   bWalter
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : SVDrawObject
 //* .File Name       : $Workfile:   SVDrawObject.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   01 Oct 2013 14:12:22  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   15 Jan 2014 11:32:46  $
 //******************************************************************************
 
 #ifndef SVDRAWOBJECT_H
@@ -52,6 +52,7 @@ public:
 	virtual void AddExtentFigureData( SVExtentFigureStruct p_svFigure );
 
 	virtual BOOL Draw( SVDrawContext* PDrawContext );
+	virtual BOOL DrawHatch( SVDrawContext* PDrawContext, SVCPointArray& Last );
 
 	// If BUseThisPen == FALSE, the current selected Pen 
 	// of the DC will be used to Draw.
@@ -168,11 +169,13 @@ public:
 
 		if( m_bDrawFigureHatched )
 		{
+			long iLastYPointDrawn = -9999; // force the first line to be drawn.
+			SVCPointArray Last;
 			for( int i = 0; i < m_svDrawObjectArray.GetSize(); ++i )
 			{
-				if( PDrawContext->ShouldDrawPoints( m_svDrawObjectArray[i].GetPointAt(0).y ) )
+				if( PDrawContext->ShouldDrawPoints( iLastYPointDrawn, m_svDrawObjectArray[i].GetPointAt(0).y  ) )
 				{
-					RetVal = m_svDrawObjectArray[ i ].Draw( PDrawContext ) && RetVal; 
+					RetVal = m_svDrawObjectArray[ i ].DrawHatch( PDrawContext, Last ) && RetVal; 
 				}
 			}
 		}
@@ -220,6 +223,16 @@ protected:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVDrawObject.h_v  $
+ * 
+ *    Rev 1.2   15 Jan 2014 11:32:46   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  882
+ * SCR Title:  Fix Mask - Zoom bug (e109)
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Added DrawHatch function for drawing mask overlay.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   01 Oct 2013 14:12:22   tbair
  * Project:  SVObserver

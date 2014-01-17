@@ -5,10 +5,13 @@
 //* .Module Name     : SVTaskObjectList
 //* .File Name       : $Workfile:   SVTaskObjectList.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   02 Oct 2013 08:17:50  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   15 Jan 2014 16:52:38  $
 //******************************************************************************
 
+// @WARNING:  This filename (SVTaskObjectList) does not match the class name (SVTaskObjectListClass).
+
+#pragma region Includes
 #include "stdafx.h"
 #include "SVTaskObjectList.h"
 #include "SVObjectLibrary/SVObjectLevelCreateStruct.h"
@@ -18,6 +21,7 @@
 #include "SVInspectionProcess.h"
 #include "SVAnalyzer.h"
 #include "SVTool.h"
+#pragma endregion
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -27,6 +31,7 @@ static char THIS_FILE[] = __FILE__;
 
 SV_IMPLEMENT_CLASS(SVTaskObjectListClass, SVTaskObjectListClassGuid)
 
+#pragma region Constructor
 SVTaskObjectListClass::SVTaskObjectListClass(LPCSTR ObjectName)
 				      :SVTaskObjectClass(ObjectName), m_LastListUpdateTimestamp( 0 ) 
 {
@@ -41,10 +46,9 @@ SVTaskObjectListClass::SVTaskObjectListClass(BOOL BCreateDefaultTaskList, SVObje
 
 SVTaskObjectListClass::~SVTaskObjectListClass()
 {
-	// SV_FORMAT_MESSAGE( "%s - > vor DeleteAll() SVTaskObjectListClass::~SVTaskObjectListClass", GetName() );
 	DeleteAll();
-	// SV_FORMAT_MESSAGE( "%s - > nach DeleteAll() SVTaskObjectListClass::~SVTaskObjectListClass", GetName() );
 }
+#pragma endregion
 
 HRESULT SVTaskObjectListClass::GetOutputList( SVOutputInfoListClass& p_rOutputInfoList )
 {
@@ -80,7 +84,9 @@ void SVTaskObjectListClass::AppendInputObjects()
 	for (int i = 0; i < m_aTaskObjects.GetSize(); ++ i)
 	{
 		if (m_aTaskObjects.GetAt(i))
+		{
 			m_aTaskObjects.GetAt(i)->GetInputObjects(m_InputObjectList);
+		}
 	}
 }
 
@@ -106,7 +112,9 @@ void SVTaskObjectListClass::GetAllInputObjects()
 	for (int i = 0; i < m_aTaskObjects.GetSize(); ++ i)
 	{
 		if (m_aTaskObjects.GetAt(i))
+		{
 			m_aTaskObjects.GetAt(i)->GetAllInputObjects();
+		}
 	}
 	
 	// Finally append all objects to my lists...
@@ -135,7 +143,9 @@ void SVTaskObjectListClass::GetObjectScript(CString& RStrScript, CString& RStrAl
 	// Overwrite task object termination termination...
 	int last = script.ReverseFind(TCHAR('}'));
 	if (last >= 0)
+	{
 		script = script.Left(last);
+	}
 
 	// Set up further object definitions...
 
@@ -188,7 +198,9 @@ void SVTaskObjectListClass::cleanUpEmptyEntries()
 	for (int i = 0; i < m_aTaskObjects.GetSize(); ++ i)
 	{
 		if (! m_aTaskObjects.GetAt(i))
+		{
 			m_aTaskObjects.RemoveAt(i--);
+		}
 	}
 	m_LastListUpdateTimestamp = SVClock::GetTimeStamp();
 }
@@ -198,10 +210,7 @@ int SVTaskObjectListClass::GetSize() const
 	return static_cast< int >( m_aTaskObjects.GetSize() );
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// Other Operators
-////////////////////////////////////////////////////////////////////////////////
-
+// @WARNING:  checkName method 	doesn't only check the name, but it also changes the name if neccessary.
 void SVTaskObjectListClass::checkName(SVTaskObjectClass* PTaskObject)
 {
 	CString name = PTaskObject->GetName();
@@ -304,9 +313,9 @@ HRESULT SVTaskObjectListClass::IsInputImage( SVImageClass *p_psvImage )
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : Validate member function of class SVTaskObjectListClass
 // -----------------------------------------------------------------------------
-// .Description : Validates the inputs of this object and it's children
+// .Description : Validates the inputs of this object and its children
 //				: Only Override in Special Cases
-//				: NOte: Normally Override OnValidate
+//				: Note: Normally Override OnValidate
 // -----------------------------------------------------------------------------
 // .Input(s)
 //	 Type				Name				Description
@@ -372,7 +381,9 @@ BOOL SVTaskObjectListClass::OnValidate()
 	BOOL retVal = SVTaskObjectClass::OnValidate();
 	
 	if (! retVal)
+	{
 		SetInvalid();
+	}
 	
 	return retVal;
 }
@@ -391,9 +402,12 @@ void SVTaskObjectListClass::RemoveAt( int nIndex, int nCount )
 int SVTaskObjectListClass::Add(SVTaskObjectClass* PTaskObject)
 {
 	if (! PTaskObject)
+	{
 		return -1;
+	}
 	
-	// Check for Unique names
+	// Check for Unique names 
+	// MZA: It doesn't check only the name, it also changes the name if neccessary.
 	checkName(PTaskObject);
 	
 	// SEJ Aug 10,1999
@@ -466,7 +480,9 @@ BOOL SVTaskObjectListClass::SetObjectDepth(int NewObjectDepth)
 	// Set object depth of all task list members...
 	for (int j = 0; j < m_aTaskObjects.GetSize(); ++ j)
 		if (m_aTaskObjects.GetAt(j))
+		{
 			m_aTaskObjects.GetAt(j)->SetObjectDepth(NewObjectDepth);
+		}
 		
 		return SVTaskObjectClass::SetObjectDepth(NewObjectDepth);
 }
@@ -479,7 +495,9 @@ BOOL SVTaskObjectListClass::SetObjectDepthWithIndex(int NewObjectDepth, int NewL
 	// Set object depth of all task list members...
 	for (int j = 0; j < m_aTaskObjects.GetSize(); ++ j)
 		if (m_aTaskObjects.GetAt(j))
+		{
 			m_aTaskObjects.GetAt(j)->SetObjectDepthWithIndex(NewObjectDepth, NewLastSetIndex);
+		}
 		
 		return SVTaskObjectClass::SetObjectDepthWithIndex(NewObjectDepth, NewLastSetIndex);
 }
@@ -491,7 +509,9 @@ BOOL SVTaskObjectListClass::SetImageDepth(long lDepth)
 	// Set object depth of all task list members...
 	for (int j = 0; j < m_aTaskObjects.GetSize(); ++ j)
 		if (m_aTaskObjects.GetAt(j))
+		{
 			m_aTaskObjects.GetAt(j)->SetImageDepth(lDepth);
+		}
 		
 		return SVTaskObjectClass::SetImageDepth(lDepth);
 }
@@ -507,7 +527,9 @@ void SVTaskObjectListClass::SetInvalid()
 	{
 		SVTaskObjectClass* pObject = m_aTaskObjects.GetAt(j);
 		if (pObject)
+		{
 			pObject->SetInvalid();
+		}
 	}
 }
 
@@ -523,10 +545,11 @@ void SVTaskObjectListClass::SetDisabled()
 	{
 		SVTaskObjectClass* pObject = m_aTaskObjects.GetAt(j);
 		if (pObject)
+		{
 			pObject->SetDisabled();
+		}
 	}
 }
-
 
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : DeleteAt
@@ -556,7 +579,9 @@ void SVTaskObjectListClass::DeleteAt(int Index, int Count /*= 1*/)
 	// SV_FORMAT_MESSAGE_5( "%s - > SVTaskObjectListClass::DeleteAt( int Index, int Count /*= 1*/ )\nSize: %d\nIndex: %d\nCount: %d", GetName(), GetSize(), Index, Count, NULL );
 	
 	if (Count < 1)
+	{
 		return;
+	}
 	
 	if (Index < 0)
 	{
@@ -644,7 +669,6 @@ void SVTaskObjectListClass::Delete(GUID& objectID)
 	ASSERT(0);
 }
 
-
 // Calls DeleteAt( 0, GetSize() )...
 void SVTaskObjectListClass::DeleteAll()
 {
@@ -652,18 +676,6 @@ void SVTaskObjectListClass::DeleteAll()
 
 	m_LastListUpdateTimestamp = SVClock::GetTimeStamp();
 }
-
-//******************************************************************************
-// Operation(s) Of Reading Access:
-//******************************************************************************
-
-//******************************************************************************
-// Operation(s) Of Representation:
-//******************************************************************************
-
-//******************************************************************************
-// Operation(s) Of Process:
-//******************************************************************************
 
 BOOL SVTaskObjectListClass::Run(SVRunStatusClass& RRunStatus)
 {
@@ -687,28 +699,20 @@ BOOL SVTaskObjectListClass::Run(SVRunStatusClass& RRunStatus)
 				
 				BOOL l_bTemp = pTaskObject->Run(ChildRunStatus);
 
-				//ASSERT( l_bTemp );
-
 				bRetVal &= l_bTemp;
 				
 				// Update our Run Status
-				if (ChildRunStatus.IsDisabled())
-					RRunStatus.SetDisabled();
+				if ( ChildRunStatus.IsDisabled() ) { RRunStatus.SetDisabled(); }
 				
-				if (ChildRunStatus.IsDisabledByCondition())
-					RRunStatus.SetDisabledByCondition();
+				if ( ChildRunStatus.IsDisabledByCondition() ) { RRunStatus.SetDisabledByCondition(); }
 				
-				if (ChildRunStatus.IsWarned())
-					RRunStatus.SetWarned();
+				if ( ChildRunStatus.IsWarned() ) { RRunStatus.SetWarned(); }
 				
-				if (ChildRunStatus.IsFailed())
-					RRunStatus.SetFailed();
+				if ( ChildRunStatus.IsFailed() ) { RRunStatus.SetFailed(); }
 				
-				if (ChildRunStatus.IsPassed())
-					RRunStatus.SetPassed();
+				if ( ChildRunStatus.IsPassed() ) { RRunStatus.SetPassed(); }
 
-				if (ChildRunStatus.IsCriticalFailure())
-					RRunStatus.SetCriticalFailure();
+				if ( ChildRunStatus.IsCriticalFailure() ) { RRunStatus.SetCriticalFailure(); }
 			}
 		}
 	}
@@ -754,7 +758,6 @@ BOOL SVTaskObjectListClass::onRun(SVRunStatusClass& RRunStatus)
 {
 	return SVTaskObjectClass::onRun(RRunStatus);
 }
-
 
 SVObjectClass *SVTaskObjectListClass::UpdateObject( const GUID &p_oFriendGuid, SVObjectClass *p_psvObject, SVObjectClass *p_psvNewOwner )
 {
@@ -847,36 +850,33 @@ DWORD SVTaskObjectListClass::processMessage(DWORD DwMessageID, DWORD DwMessageVa
 	//		Opening Direction ==> 1. Friends, 2. You ( and Your embeddeds ), 3. Children
 	//		Closing Direction ==> 1. Children, 2. You ( and Your embeddeds ), 3. Friends
 	//
-	
+
 	DWORD DwResult = SVMR_NOT_PROCESSED;
-	
+
 	// Check if friend should process this message first....
 	if ((DwMessageID & SVM_NOTIFY_FRIENDS) == SVM_NOTIFY_FRIENDS)
 	{
 		//
 		// NOTE: Beware to route Create Object Messages here !!!
 		//
-		
+
 		// Let Base Class process Friend Notifications.
 		// Make sure that only friends get this message.
 		DwResult = SVTaskObjectClass::processMessage(DwMessageID | SVM_NOTIFY_ONLY_FRIENDS, DwMessageValue, DwMessageContext);
-		
+
 		// Check if processed and Notify First Responding...
 		if (DwResult != SVMR_NOT_PROCESSED && (DwMessageID & SVM_NOTIFY_FIRST_RESPONDING) == SVM_NOTIFY_FIRST_RESPONDING)
 		{
 			return DwResult;
 		}
-		
+
 		// Check if Notify Only Friends...
 		if ((DwMessageID & SVM_NOTIFY_ONLY_FRIENDS) == SVM_NOTIFY_ONLY_FRIENDS)
 		{
 			return DwResult;
 		}
-		
-		// if( ( DwMessageID & SVM_NOTIFY_ONLY_THIS ) != SVM_NOTIFY_ONLY_THIS )
 	}
-	
-	
+
 	SVAnalyzerLevelCreateStruct createStruct;
 
 	// Try to process message by yourself...
@@ -884,7 +884,7 @@ DWORD SVTaskObjectListClass::processMessage(DWORD DwMessageID, DWORD DwMessageVa
 	DWORD dwPureMessageID = DwMessageID & SVM_PURE_MESSAGE;
 	switch (dwPureMessageID)
 	{
-		case SVMSGID_CREATE_ALL_OBJECTS:
+	case SVMSGID_CREATE_ALL_OBJECTS:
 		{
 			if( !IsCreated() && !CreateObject( ( SVObjectLevelCreateStruct* ) DwMessageValue ) )
 			{
@@ -900,14 +900,14 @@ DWORD SVTaskObjectListClass::processMessage(DWORD DwMessageID, DWORD DwMessageVa
 			createStruct.OwnerObjectInfo = this;
 			createStruct.AnalyzerObjectInfo = GetAnalyzer();
 			createStruct.ToolObjectInfo	= GetTool();
-			createStruct.InspectionObjectInfo	= GetInspection();
+			createStruct.InspectionObjectInfo = GetInspection();
 
 			DwMessageValue = (DWORD)&createStruct;
 
 			break;
 		}
 
-		case SVMSGID_CONNECT_ALL_OBJECTS:
+	case SVMSGID_CONNECT_ALL_OBJECTS:
 		{
 			if( ConnectObject( ( SVObjectLevelCreateStruct* ) DwMessageValue ) != S_OK )
 			{
@@ -930,80 +930,53 @@ DWORD SVTaskObjectListClass::processMessage(DWORD DwMessageID, DWORD DwMessageVa
 			break;
 		}
 
-		case SVMSGID_GET_IMAGE_BAND0_OBJECT:
+	case SVMSGID_GET_IMAGE_BAND0_OBJECT:
+		{
+			// ...use third message parameter ( DwMessageContext ) to specify the objectTypeInfo!
+			//( SVObjectTypeInfoStruct->objectType => SVObjectTypeEnum )
+			SVObjectTypeInfoStruct* pObjectTypeInfo = (SVObjectTypeInfoStruct*)DwMessageContext;
+				
+			// ...use second message parameter ( DwMessageValue ) to specify the requesting object
+			// Note: if second parameter is specified - stop when requesting object encountered.
+			// Optional - to get an input
+			SVObjectClass* pRequestor = (SVObjectClass*)DwMessageValue;
+
+			if (pRequestor)
 			{
-				// ...use third message parameter ( DwMessageContext ) to specify the objectTypeInfo!
-				//( SVObjectTypeInfoStruct->objectType => SVObjectTypeEnum )
-				SVObjectTypeInfoStruct* pObjectTypeInfo = (SVObjectTypeInfoStruct*)DwMessageContext;
-				
-				// ...use second message parameter ( DwMessageValue ) to specify the requesting object
-				// Note: if second parameter is specified - stop when requesting object encountered.
-				// Optional - to get an input
-				SVObjectClass* pRequestor = (SVObjectClass*)DwMessageValue;
-				
-				if (pRequestor)
+				if (pRequestor == this || pRequestor == GetOwner())
 				{
-					if (pRequestor == this || pRequestor == GetOwner())
-					{
-						return NULL;
-						//::SVSendMessage( GetOwner(), DwMessageID, pRequestor, DwMessageContext );
-					}
-					SVObjectClass* pObject = NULL;
+					return NULL;
+					//::SVSendMessage( GetOwner(), DwMessageID, pRequestor, DwMessageContext );
+				}
+				SVObjectClass* pObject = NULL;
 					
-					SVOutputInfoListClass l_OutputInfoList;
+				SVOutputInfoListClass l_OutputInfoList;
 
-					GetOutputList( l_OutputInfoList );
+				GetOutputList( l_OutputInfoList );
 
-					// look at outputs first
-					for (int oIndex = 0; !DwResult && oIndex < l_OutputInfoList.GetSize(); oIndex++)
+				// look at outputs first
+				for (int oIndex = 0; !DwResult && oIndex < l_OutputInfoList.GetSize(); oIndex++)
+				{
+					SVOutObjectInfoStruct* pOutputInfo = l_OutputInfoList.GetAt(oIndex);
+
+					if (pOutputInfo)
 					{
-						SVOutObjectInfoStruct* pOutputInfo = l_OutputInfoList.GetAt(oIndex);
-						
-						if (pOutputInfo)
+						pObject = pOutputInfo->PObject;
+
+						if (!pObject)
 						{
-							pObject = pOutputInfo->PObject;
-							
-							if (!pObject)
-							{
-								pObject = SVObjectManagerClass::Instance().GetObject(pOutputInfo->UniqueObjectID);
-							}
-							
-							if (pObject && pObject->GetOwner() != pRequestor && pObject != pRequestor)
-							{
-								// Don't send to requestor owned outputs
-								DwResult = ::SVSendMessage(pObject, SVM_GETFIRST_OBJECT, DwMessageValue, DwMessageContext);
-								if (DwResult)
-								{
-									SVObjectClass* pObject1;
-									pObject1 = (SVObjectClass*)DwResult;
-									
-									if( ( ::strcmp( pObject1->GetObjectName(), _T("Band 0 Image") ) == 0 ) && ( ::strcmp( pObject1->GetOwner()->GetObjectName(), _T("Color Tool") ) == 0 ) )
-									{
-										break;
-									}
-									else
-									{
-										DwResult = 0;
-									}
-								}
-							}
-							else
-								break; // stop looking at outputs
+							pObject = SVObjectManagerClass::Instance().GetObject(pOutputInfo->UniqueObjectID);
 						}
-					}
-					// look at children
-					// Try to send message to list members, if not already processed...
-					for (int i = 0; !DwResult && i < m_aTaskObjects.GetSize(); i++)
-					{
-						pObject = m_aTaskObjects.GetAt(i);
-						if (pObject && pObject != pRequestor)
+
+						if (pObject && pObject->GetOwner() != pRequestor && pObject != pRequestor)
 						{
+							// Don't send to requestor owned outputs
 							DwResult = ::SVSendMessage(pObject, SVM_GETFIRST_OBJECT, DwMessageValue, DwMessageContext);
 							if (DwResult)
 							{
 								SVObjectClass* pObject1;
 								pObject1 = (SVObjectClass*)DwResult;
-								
+
 								if( ( ::strcmp( pObject1->GetObjectName(), _T("Band 0 Image") ) == 0 ) && ( ::strcmp( pObject1->GetOwner()->GetObjectName(), _T("Color Tool") ) == 0 ) )
 								{
 									break;
@@ -1015,489 +988,335 @@ DWORD SVTaskObjectListClass::processMessage(DWORD DwMessageID, DWORD DwMessageVa
 							}
 						}
 						else
-							break; // encountered requestor Object
+						{
+							break; // stop looking at outputs
+						}
 					}
-					return DwResult;
 				}
-				
-				DwResult = SVObjectClass::processMessage(SVM_GETFIRST_OBJECT, DwMessageValue, DwMessageContext);
-				if (DwResult)
+				// look at children
+				// Try to send message to list members, if not already processed...
+				for (int i = 0; !DwResult && i < m_aTaskObjects.GetSize(); i++)
 				{
-					SVObjectClass* pObject1;
-					pObject1 = (SVObjectClass*)DwResult;
-					
-					if( ( ::strcmp( pObject1->GetObjectName(), _T("Band 0 Image") ) == 0 ) && ( ::strcmp( pObject1->GetOwner()->GetObjectName(), _T("Color Tool") ) == 0 ) )
+					pObject = m_aTaskObjects.GetAt(i);
+					if (pObject && pObject != pRequestor)
 					{
-						break;
+						DwResult = ::SVSendMessage(pObject, SVM_GETFIRST_OBJECT, DwMessageValue, DwMessageContext);
+						if (DwResult)
+						{
+							SVObjectClass* pObject1;
+							pObject1 = (SVObjectClass*)DwResult;
+
+							if( ( ::strcmp( pObject1->GetObjectName(), _T("Band 0 Image") ) == 0 ) && ( ::strcmp( pObject1->GetOwner()->GetObjectName(), _T("Color Tool") ) == 0 ) )
+							{
+								break;
+							}
+							else
+							{
+								DwResult = 0;
+							}
+						}
 					}
 					else
 					{
-						DwResult = 0;
+						break; // encountered requestor Object
 					}
 				}
-				if (DwResult != SVMR_NOT_PROCESSED)
-					return DwResult;
-				break;
-				}
-			case SVMSGID_GETFIRST_OBJECT:
-				{
-					// ...use third message parameter ( DwMessageContext ) to specify the objectTypeInfo!
-					//( SVObjectTypeInfoStruct->objectType => SVObjectTypeEnum )
-					SVObjectTypeInfoStruct* pObjectTypeInfo = (SVObjectTypeInfoStruct*)DwMessageContext;
-					
-					// ...use second message parameter ( DwMessageValue ) to specify the requesting object
-					// Note: if second parameter is specified - stop when requesting object encountered.
-					// Optional - to get an input
-					SVObjectClass* pRequestor = (SVObjectClass*)DwMessageValue;
-					
-					if (pRequestor)
-					{
-						if (pRequestor == this || pRequestor == GetOwner())
-						{
-							return NULL;
-							//::SVSendMessage( GetOwner(), DwMessageID, pRequestor, DwMessageContext );
-						}
-						SVObjectClass* pObject = NULL;
-						
-						// look at outputs first
-						SVOutputInfoListClass l_OutputInfoList;
-
-						GetOutputList( l_OutputInfoList );
-
-						for (int oIndex = 0; !DwResult && oIndex < l_OutputInfoList.GetSize(); oIndex++)
-						{
-							SVOutObjectInfoStruct* pOutputInfo = l_OutputInfoList.GetAt(oIndex);
-							
-							if (pOutputInfo)
-							{
-								pObject = pOutputInfo->PObject;
-								
-								if (!pObject)
-								{
-									pObject = SVObjectManagerClass::Instance().GetObject(pOutputInfo->UniqueObjectID);
-								}
-								
-								if (pObject && pObject->GetOwner() != pRequestor && pObject != pRequestor)
-								{
-									// Don't send to requestor owned outputs
-									DwResult = ::SVSendMessage(pObject, DwMessageID, DwMessageValue, DwMessageContext);
-								}
-								else
-									break; // stop looking at outputs
-							}
-						}
-						// look at children
-						// Try to send message to list members, if not already processed...
-						for (int i = 0; !DwResult && i < m_aTaskObjects.GetSize(); i++)
-						{
-							pObject = m_aTaskObjects.GetAt(i);
-							if (pObject && pObject != pRequestor)
-							{
-								DwResult = ::SVSendMessage(pObject, DwMessageID, DwMessageValue, DwMessageContext);
-							}
-							else
-								break; // encountered requestor Object
-						}
-						return DwResult;
-					}
-					
-					DwResult = SVObjectClass::processMessage(DwMessageID, DwMessageValue, DwMessageContext);
-					if (DwResult != SVMR_NOT_PROCESSED)
-						return DwResult;
-					break;
-				}
-			/*	
-			case SVMSGID_GETNEXT_OBJECT:
-				{
-					// Search in your TaskObjectList:
-					// ...use result of SVM_GETFIRST_OBJECT as second message parameter ( DwMessageValue ) to find next specified object!
-					// ...use third message parameter ( DwMessageContext ) to specify the objectTypeInfo!
-					//( SVObjectTypeInfoStruct->objectType => SVObjectTypeEnum )
-					SVObjectTypeInfoStruct* pObjectTypeInfo = (SVObjectTypeInfoStruct*)DwMessageContext;
-					SVObjectClass* pPrevious = (SVObjectClass*) DwMessageValue;
-					SVObjectClass* pOwnerOfPrevious = NULL;
-					
-					if (pObjectTypeInfo)
-					{
-						// Check first owner of previous,
-						//	then check against this object ( yourself ), 
-						//	then check friends and
-						//	finally check outputs...
-
-						//if (pOwnerOfPrevious != this)
-						//{
-						//if (pPrevious && pPrevious != this && pOwnerOfPrevious)
-						//{
-						// Send message to owner of previous to let him check if he has another one...
-						//DWORD dwResult = ::SVSendMessage(pOwnerOfPrevious, DwMessageID, DwMessageValue, DwMessageContext);
-						//if (dwResult != SVMR_NOT_PROCESSED)
-						//{
-						//return dwResult;
-						//}
-						
-						  // Make ready to check yourself...
-						  //pPrevious = NULL;
-						  //}
-						  //}
-						
-						if (pPrevious)
-						{
-							if (! SV_IS_KIND_OF(pPrevious, SVObjectClass))
-							{
-								ASSERT(0);
-								return SVMR_NOT_PROCESSED;
-							}
-							
-							pOwnerOfPrevious = pPrevious->GetOwner();
-							if (! SV_IS_KIND_OF(pOwnerOfPrevious, SVObjectClass))
-							{
-								ASSERT(0);
-								return SVMR_NOT_PROCESSED;
-							}
-						}
-						
-						if (! pPrevious || ! pPrevious->IsDescendantOf(this))
-						{
-							// Call TaskObject's GET_NEXT_OBJECT Message Handler...
-							// But don't notify friends here.
-							// ( They will be checked by TaskObject 's GET_NEXT_OBJECT Message Handler ! )
-							DWORD dwMaskID = DwMessageID & ~(SVM_NOTIFY_ONLY_FRIENDS | SVM_NOTIFY_FRIENDS);
-							DWORD dwResult = (DWORD) SVTaskObjectClass::processMessage(dwMaskID, DwMessageValue, DwMessageContext);
-							if (dwResult != SVMR_NOT_PROCESSED)
-								return dwResult;
-							
-							// At this point the owner of the previous is checked,
-							//	this object is checked,
-							//	the friends are checked,
-							//	and the outputs are checked !
-							
-							// Make ready to check first child...
-							pPrevious = NULL;
-						}
-						
-						// Check here only children...
-						
-						// Check children...
-						BOOL bProcessed = FALSE;
-						for (int i = 0; i < m_aTaskObjects.GetSize(); ++ i)
-						{
-							SVObjectClass* pChild = m_aTaskObjects.ElementAt(i);
-							if (pChild)
-							{
-								if (pPrevious)
-								{
-									// Check, if previous was this child...
-									if (pPrevious == pChild)
-									{
-										bProcessed = TRUE;
-										
-										// Send message to child to let him check if he has another one...
-										DWORD dwResult = ::SVSendMessage(pChild, DwMessageID, DwMessageValue, DwMessageContext);
-										if (dwResult != SVMR_NOT_PROCESSED)
-										{
-											return dwResult;
-										}
-										
-										// Make ready to check next child...
-										pPrevious = NULL;
-										
-										continue;
-									}
-									
-									// Check, if previous is descendant of this child...
-									if (pPrevious->IsDescendantOf(pChild))
-									{
-										bProcessed = TRUE;
-										
-										// Send message to child to let him check if he has another one...
-										DWORD dwResult = ::SVSendMessage(pChild, DwMessageID, DwMessageValue, DwMessageContext);
-										if (dwResult != SVMR_NOT_PROCESSED)
-										{
-											return dwResult;
-										}
-										
-										// Make ready to check next child...
-										pPrevious = NULL;
-									}
-									
-									continue;
-								}
-								
-								// Check child...
-								DWORD dwResult = ::SVSendMessage(pChild, DwMessageID, (DWORD) pPrevious, DwMessageContext);
-								if (dwResult != SVMR_NOT_PROCESSED)
-								{
-									return dwResult;
-								}
-							}
-							else
-							{
-								ASSERT(0);
-							}
-						}
-						
-						if (! bProcessed && pPrevious && pPrevious->IsDescendantOf(this))
-						{
-							// Previous was not processed, that means he has nothing to do with
-							//	the children, but is related to us. He must be a friend or an
-							//	output...
-							
-							// Call TaskObject's GET_NEXT_OBJECT Message Handler...
-							// But don't notify friends here.
-							// ( They will be checked by TaskObject 's GET_NEXT_OBJECT Message Handler ! )
-							DWORD dwMaskID = DwMessageID & ~(SVM_NOTIFY_ONLY_FRIENDS | SVM_NOTIFY_FRIENDS);
-							DWORD dwResult = (DWORD) SVTaskObjectClass::processMessage(dwMaskID, DwMessageValue, DwMessageContext);
-							if (dwResult != SVMR_NOT_PROCESSED)
-								return dwResult;
-							
-							// No friend and no output is doing well...
-							
-							// Make ready for first child...
-							pPrevious = NULL;
-							
-							// Send it to children again...
-							BOOL bProcessed = FALSE;
-							for (int i = 0; i < m_aTaskObjects.GetSize(); ++ i)
-							{
-								SVObjectClass* pChild = m_aTaskObjects.ElementAt(i);
-								if (pChild)
-								{
-									// Check child...
-									DWORD dwResult = ::SVSendMessage(pChild, DwMessageID, (DWORD) pPrevious, DwMessageContext);
-									if (dwResult != SVMR_NOT_PROCESSED)
-									{
-										return dwResult;
-									}
-								}
-							}
-						}
-						
-						// No next...
-						return SVMR_NOT_PROCESSED;
-						
-						//SVObjectClass* pFirst;
-						// Iterate thru Children
-						//for (int i = 0; i < m_aTaskObjects.GetSize(); i++)
-						{
-						//pFirst = m_aTaskObjects.GetAt(i);
-						//if (pPrevious == pFirst && ++i < m_aTaskObjects.GetSize())
-						//{
-						//pFirst = m_aTaskObjects.GetAt(i);
-						//if (pFirst && (pFirst ==(SVObjectClass*) ::SVSendMessage(pFirst, SVM_GETFIRST_OBJECT, NULL, DwMessageContext)))
-						//{
-						//return (DWORD) pFirst;
-						//}
-						
-						  // Still not found...
-						  //for (int j = ++ i; j < m_aTaskObjects.GetSize(); ++ j, ++ i)
-						  //{
-						  //pFirst = m_aTaskObjects.GetAt(j);
-						  //if (pFirst && (pFirst ==(SVObjectClass*) ::SVSendMessage(pFirst, SVM_GETFIRST_OBJECT, NULL, DwMessageContext)))
-						  //{
-						  //return (DWORD) pFirst;
-						  //}
-						  //}
-						  //}	
-						  //}
-						  // No next...
-						  //return SVMR_NOT_PROCESSED;
-				}
-				
-				ASSERT(0);
-				// No next...
-				return SVMR_NOT_PROCESSED;
+				return DwResult;
 			}
-			*/
-			case SVMSGID_GETAVAILABLE_OBJECTS: // Only SVTaskObjectListClasses have available objects (currently)
+
+			DwResult = SVObjectClass::processMessage(SVM_GETFIRST_OBJECT, DwMessageValue, DwMessageContext);
+			if (DwResult)
+			{
+				SVObjectClass* pObject1;
+				pObject1 = (SVObjectClass*)DwResult;
+
+				if( ( ::strcmp( pObject1->GetObjectName(), _T("Band 0 Image") ) == 0 ) && ( ::strcmp( pObject1->GetOwner()->GetObjectName(), _T("Color Tool") ) == 0 ) )
 				{
-					SVClassInfoStructListClass* pList = (SVClassInfoStructListClass *)DwMessageValue;
-					SVObjectTypeInfoStruct* pObjectTypeInfo = (SVObjectTypeInfoStruct *)DwMessageContext;
-					
-					if (getAvailableObjects(pList, pObjectTypeInfo))
-						return SVMR_SUCCESS;
-					
-					return SVMR_NOT_PROCESSED;
-					
 					break;
 				}
-				
-			case SVMSGID_REPLACE_OBJECT:
+				else
 				{
-					// ...use second message parameter ( DwMessageValue ) as objectID ( GUID* )
-					// ...use third message parameter ( DwMessageContext ) as SVObjectClass*
-					// ...returns SVMR_SUCCESS, SVMR_NO_SUCCESS
-					const GUID taskObjectID = * ((GUID*) DwMessageValue);
-					SVTaskObjectClass* pTaskObject = (SVTaskObjectClass*) DwMessageContext;
-					if (pTaskObject && SV_IS_KIND_OF(pTaskObject, SVTaskObjectClass))
+					DwResult = 0;
+				}
+			}
+			if (DwResult != SVMR_NOT_PROCESSED)
+			{
+				return DwResult;
+			}
+
+			break;
+		}
+
+	case SVMSGID_GETFIRST_OBJECT:
+		{
+			// ...use third message parameter ( DwMessageContext ) to specify the objectTypeInfo!
+			//( SVObjectTypeInfoStruct->objectType => SVObjectTypeEnum )
+			SVObjectTypeInfoStruct* pObjectTypeInfo = (SVObjectTypeInfoStruct*)DwMessageContext;
+
+			// ...use second message parameter ( DwMessageValue ) to specify the requesting object
+			// Note: if second parameter is specified - stop when requesting object encountered.
+			// Optional - to get an input
+			SVObjectClass* pRequestor = (SVObjectClass*)DwMessageValue;
+
+			if (pRequestor)
+			{
+				if (pRequestor == this || pRequestor == GetOwner())
+				{
+					return NULL;
+				}
+				SVObjectClass* pObject = NULL;
+
+				// look at outputs first
+				SVOutputInfoListClass l_OutputInfoList;
+
+				GetOutputList( l_OutputInfoList );
+
+				for (int oIndex = 0; !DwResult && oIndex < l_OutputInfoList.GetSize(); oIndex++)
+				{
+					SVOutObjectInfoStruct* pOutputInfo = l_OutputInfoList.GetAt(oIndex);
+
+					if (pOutputInfo)
 					{
-						// NOTE:	Only dynamically generated objects could be replaced, 
-						//			embedded objects must be overwritten using SVM_OVERWRITE_OBJECT!!!
-						
-						// SEJ (July 15 1999) - Remove All Dynamic Children (they will be constructed anew)
-						if (SV_IS_KIND_OF(pTaskObject, SVTaskObjectListClass))
+						pObject = pOutputInfo->PObject;
+
+						if (!pObject)
 						{
-							SVTaskObjectListClass* pTaskObjectList = (SVTaskObjectListClass*) DwMessageContext;
-							
-							// Kill the Friends
-							pTaskObjectList->DestroyFriends();
-							
-							// Kill all the Dynamic Children
-							pTaskObjectList->DeleteAll();
+							pObject = SVObjectManagerClass::Instance().GetObject(pOutputInfo->UniqueObjectID);
+						}
+
+						if (pObject && pObject->GetOwner() != pRequestor && pObject != pRequestor)
+						{
+							// Don't send to requestor owned outputs
+							DwResult = ::SVSendMessage(pObject, DwMessageID, DwMessageValue, DwMessageContext);
 						}
 						else
 						{
-							// Kill the Friends
-							// Both SVTaskObjectListClass and SVTaskObjectClass can have Friends
-							pTaskObject->DestroyFriends();
+							break; // stop looking at outputs
 						}
-						// Check task list members...
-						for (int i = 0; i < m_aTaskObjects.GetSize(); i++)
-						{
-							if (m_aTaskObjects.GetAt(i) && m_aTaskObjects.GetAt(i)->GetUniqueObjectID() == taskObjectID)
-							{
-								// Delete this list member... the destructors will send SVM_OBJECT_CLOSED!
-								SVObjectClass* l_pObject = m_aTaskObjects.GetAt(i);
-								delete l_pObject;
+					}
+				}
+				// look at children
+				// Try to send message to list members, if not already processed...
+				for (int i = 0; !DwResult && i < m_aTaskObjects.GetSize(); i++)
+				{
+					pObject = m_aTaskObjects.GetAt(i);
+					if (pObject && pObject != pRequestor)
+					{
+						DwResult = ::SVSendMessage(pObject, DwMessageID, DwMessageValue, DwMessageContext);
+					}
+					else
+					{
+						break; // encountered requestor Object
+					}
+				}
+				return DwResult;
+			}
 
-								// delete( m_aTaskObjects.GetAt( i ) );
-								m_aTaskObjects.SetAt(i, NULL);
-								
-								// Replace list member...
-								m_aTaskObjects.SetAt(i, pTaskObject);
+			DwResult = SVObjectClass::processMessage(DwMessageID, DwMessageValue, DwMessageContext);
+			if (DwResult != SVMR_NOT_PROCESSED)
+			{
+				return DwResult;
+			}
 
-								m_LastListUpdateTimestamp = SVClock::GetTimeStamp();
+			break;
+		}
 
-								// Set unique object ID...
-								if (SVObjectManagerClass::Instance().ChangeUniqueObjectID(pTaskObject, taskObjectID))
-								{
-									//::SVSendMessage( pTaskObject, SVM_CONNECT_ALL_INPUTS, NULL, NULL );
+	case SVMSGID_GETAVAILABLE_OBJECTS: // Only SVTaskObjectListClasses have available objects (currently)
+		{
+			SVClassInfoStructListClass* pList = (SVClassInfoStructListClass *)DwMessageValue;
+			SVObjectTypeInfoStruct* pObjectTypeInfo = (SVObjectTypeInfoStruct *)DwMessageContext;
+					
+			if (getAvailableObjects(pList, pObjectTypeInfo))
+			{
+				return SVMR_SUCCESS;
+			}
+					
+			return SVMR_NOT_PROCESSED;
+					
+			break;
+		}
 
-									::SVSendMessage( this, SVM_CONNECT_CHILD_OBJECT, ( DWORD ) pTaskObject, NULL );
-								
-									return SVMR_SUCCESS;
-								}
-								
-								return SVMR_NO_SUCCESS;
-							}
-						}
-						
-						// Special code for Duplicates!!
-						SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObject(taskObjectID);
-						if (pObject)
-						{
-							// Get the Owner
-							SVObjectInfoStruct ownerInfo = pObject->GetOwnerInfo();
-							SVObjectClass* pOwner = SVObjectManagerClass::Instance().GetObject(ownerInfo.UniqueObjectID);
-							if (pOwner)
-							{
-								// Ask the owner to kill the imposter!
-								if (::SVSendMessage(pOwner, SVM_DESTROY_CHILD_OBJECT, (DWORD)pObject, NULL) == SVMR_NO_SUCCESS)
-								{
-									// must be a Friend
-									pOwner->DestroyFriends();
-								}
-							}
-						}
-						
-						// If this object not already exists, add it to the task list...
-						Add(pTaskObject);
+	case SVMSGID_REPLACE_OBJECT:
+		{
+			// ...use second message parameter ( DwMessageValue ) as objectID ( GUID* )
+			// ...use third message parameter ( DwMessageContext ) as SVObjectClass*
+			// ...returns SVMR_SUCCESS, SVMR_NO_SUCCESS
+			const GUID taskObjectID = * ((GUID*) DwMessageValue);
+			SVTaskObjectClass* pTaskObject = (SVTaskObjectClass*) DwMessageContext;
+			if (pTaskObject && SV_IS_KIND_OF(pTaskObject, SVTaskObjectClass))
+			{
+				// NOTE:	Only dynamically generated objects could be replaced, 
+				//			embedded objects must be overwritten using SVM_OVERWRITE_OBJECT!!!
 
-						// SEJ - Sep 28,1999
-						// Special code for Objects that allocate Friends on SetOwner()
-						pTaskObject->DestroyFriends();
-						
+				// SEJ (July 15 1999) - Remove All Dynamic Children (they will be constructed anew)
+				if (SV_IS_KIND_OF(pTaskObject, SVTaskObjectListClass))
+				{
+					SVTaskObjectListClass* pTaskObjectList = (SVTaskObjectListClass*) DwMessageContext;
+
+					// Kill the Friends
+					pTaskObjectList->DestroyFriends();
+
+					// Kill all the Dynamic Children
+					pTaskObjectList->DeleteAll();
+				}
+				else
+				{
+					// Kill the Friends
+					// Both SVTaskObjectListClass and SVTaskObjectClass can have Friends
+					pTaskObject->DestroyFriends();
+				}
+				// Check task list members...
+				for (int i = 0; i < m_aTaskObjects.GetSize(); i++)
+				{
+					if (m_aTaskObjects.GetAt(i) && m_aTaskObjects.GetAt(i)->GetUniqueObjectID() == taskObjectID)
+					{
+						// Delete this list member... the destructors will send SVM_OBJECT_CLOSED!
+						SVObjectClass* l_pObject = m_aTaskObjects.GetAt(i);
+						delete l_pObject;
+
+						// delete( m_aTaskObjects.GetAt( i ) );
+						m_aTaskObjects.SetAt(i, NULL);
+
+						// Replace list member...
+						m_aTaskObjects.SetAt(i, pTaskObject);
+
+						m_LastListUpdateTimestamp = SVClock::GetTimeStamp();
+
+						// Set unique object ID...
 						if (SVObjectManagerClass::Instance().ChangeUniqueObjectID(pTaskObject, taskObjectID))
 						{
-							//::SVSendMessage( pTaskObject, SVM_CONNECT_ALL_INPUTS, NULL, NULL );
-
 							::SVSendMessage( this, SVM_CONNECT_CHILD_OBJECT, ( DWORD ) pTaskObject, NULL );
-						
+								
 							return SVMR_SUCCESS;
 						}
+
+						return SVMR_NO_SUCCESS;
 					}
-					return SVMR_NO_SUCCESS;
 				}
-				
-			case SVMSGID_OVERWRITE_OBJECT:
+
+				// Special code for Duplicates!!
+				SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObject(taskObjectID);
+				if (pObject)
 				{
-					// ...use second message parameter ( DwMessageValue ) as objectID ( GUID* )
-					// ...use third message parameter ( DwMessageContext ) as embeddedID ( GUID* ) 
-					// ...returns pointer to embedded SVObjectClass
-					//			const GUID taskObjectID = *( ( GUID* ) DwMessageValue );
-					//			const GUID embeddedID	= *( ( GUID* ) DwMessageContext );
-					// NOTE:	Only for embedded objects !!! 
-					//			Dynamically generated objects must be replaced,
-					//			using SVM_REPLACE_OBJECT!!!
-					
-					// Check here all embedded members ( embedded objects could be only identified by embeddedID!!!! )... 
-					// ... and if object could not be identified then call base class processMessage member function!!!
-					
-					return SVTaskObjectClass::processMessage(DwMessageID, DwMessageValue, DwMessageContext);
-				}
-				
-			case SVMSGID_DESTROY_CHILD_OBJECT:		// SEJ Aug 6,1999 New Message
-				{
-					SVTaskObjectClass* pTaskObject = (SVTaskObjectClass*) DwMessageValue;
-					
-					// Kill the Object
-					if (pTaskObject)
+					// Get the Owner
+					SVObjectInfoStruct ownerInfo = pObject->GetOwnerInfo();
+					SVObjectClass* pOwner = SVObjectManagerClass::Instance().GetObject(ownerInfo.UniqueObjectID);
+					if (pOwner)
 					{
-						// if the object is a Child of this
-						for (int i = 0; i < m_aTaskObjects.GetSize(); i++)
+						// Ask the owner to kill the imposter!
+						if (::SVSendMessage(pOwner, SVM_DESTROY_CHILD_OBJECT, (DWORD)pObject, NULL) == SVMR_NO_SUCCESS)
 						{
-							SVObjectClass* pObject = m_aTaskObjects.GetAt(i);
-							if (pObject && pObject == pTaskObject)
-							{
-								// Notify the Owner of our inputs that they are not needed anymore
-								pTaskObject->Disconnect();
-								
-								// Close the Object
-								pTaskObject->CloseObject();
-								
-								// Get the object's uniqueID
-								GUID objectID = pTaskObject->GetUniqueObjectID();
-								
-								// Destroy our Friends
-								pTaskObject->DestroyFriends();
-								
-								// Remove it from the SVTaskObjectList ( Destruct it )
-								Delete(objectID);
-
-
-								if( GetInspection() != NULL )
-								{
-									if( ( DwMessageContext & SVMFSetDefaultInputs ) == SVMFSetDefaultInputs )
-									{
-										GetInspection()->SetDefaultInputs();
-									}
-
-									if( ( DwMessageContext & SVMFResetInspection ) == SVMFResetInspection )
-									{
-										::SVSendMessage( GetInspection(), SVM_RESET_ALL_OBJECTS, NULL, NULL );
-									}
-								}
-								
-								return SVMR_SUCCESS;
-							}
+							// must be a Friend
+							pOwner->DestroyFriends();
 						}
 					}
-					return SVMR_NO_SUCCESS;
 				}
-				
-			case SVMSGID_CLOSE_OBJECT:
+
+				// If this object not already exists, add it to the task list...
+				Add(pTaskObject);
+
+				// SEJ - Sep 28,1999
+				// Special code for Objects that allocate Friends on SetOwner()
+				pTaskObject->DestroyFriends();
+
+				if (SVObjectManagerClass::Instance().ChangeUniqueObjectID(pTaskObject, taskObjectID))
 				{
-					if (CloseObject())
-						return SVMR_SUCCESS;
+					//::SVSendMessage( pTaskObject, SVM_CONNECT_ALL_INPUTS, NULL, NULL );
+
+					::SVSendMessage( this, SVM_CONNECT_CHILD_OBJECT, ( DWORD ) pTaskObject, NULL );
+
+					return SVMR_SUCCESS;
+				}
+			}
+
+			return SVMR_NO_SUCCESS;
+		}
+
+	case SVMSGID_OVERWRITE_OBJECT:
+		{
+			// ...use second message parameter ( DwMessageValue ) as objectID ( GUID* )
+			// ...use third message parameter ( DwMessageContext ) as embeddedID ( GUID* ) 
+			// ...returns pointer to embedded SVObjectClass
+			//			const GUID taskObjectID = *( ( GUID* ) DwMessageValue );
+			//			const GUID embeddedID	= *( ( GUID* ) DwMessageContext );
+			// NOTE:	Only for embedded objects !!! 
+			//			Dynamically generated objects must be replaced,
+			//			using SVM_REPLACE_OBJECT!!!
 					
-					return SVMR_NO_SUCCESS;
-				}
-				
-			case SVMSGID_SET_OBJECT_VALUE:
+			// Check here all embedded members ( embedded objects could be only identified by embeddedID!!!! )... 
+			// ... and if object could not be identified then call base class processMessage member function!!!
+					
+			return SVTaskObjectClass::processMessage(DwMessageID, DwMessageValue, DwMessageContext);
+		}
+
+	case SVMSGID_DESTROY_CHILD_OBJECT:		// SEJ Aug 6,1999 New Message
+		{
+			SVTaskObjectClass* pTaskObject = (SVTaskObjectClass*) DwMessageValue;
+
+			// Kill the Object
+			if (pTaskObject)
+			{
+				// if the object is a Child of this
+				for (int i = 0; i < m_aTaskObjects.GetSize(); i++)
 				{
-					return SVTaskObjectClass::processMessage(DwMessageID, DwMessageValue, DwMessageContext);
+					SVObjectClass* pObject = m_aTaskObjects.GetAt(i);
+					if (pObject && pObject == pTaskObject)
+					{
+						// Notify the Owner of our inputs that they are not needed anymore
+						pTaskObject->Disconnect();
+
+						// Close the Object
+						pTaskObject->CloseObject();
+
+						// Get the object's uniqueID
+						GUID objectID = pTaskObject->GetUniqueObjectID();
+
+						// Destroy our Friends
+						pTaskObject->DestroyFriends();
+
+						// Remove it from the SVTaskObjectList ( Destruct it )
+						Delete(objectID);
+
+						if( GetInspection() != NULL )
+						{
+							if( ( DwMessageContext & SVMFSetDefaultInputs ) == SVMFSetDefaultInputs )
+							{
+								GetInspection()->SetDefaultInputs();
+							}
+
+							if( ( DwMessageContext & SVMFResetInspection ) == SVMFResetInspection )
+							{
+								::SVSendMessage( GetInspection(), SVM_RESET_ALL_OBJECTS, NULL, NULL );
+							}
+						}
+
+						return SVMR_SUCCESS;
+					}
 				}
-	}
-	
+			}
+
+			return SVMR_NO_SUCCESS;
+		}
+
+	case SVMSGID_CLOSE_OBJECT:
+		{
+			if ( CloseObject() ) { return SVMR_SUCCESS; }
+
+			return SVMR_NO_SUCCESS;
+		}
+
+	case SVMSGID_SET_OBJECT_VALUE:
+		{
+			return SVTaskObjectClass::processMessage(DwMessageID, DwMessageValue, DwMessageContext);
+		}
+
+	default:
+		{
+			// Do nothing.
+			break;
+		}
+	} // switch
+
 	if ((DwMessageID & SVM_NOTIFY_ONLY_THIS) != SVM_NOTIFY_ONLY_THIS)
 	{
 		// Try to send message to list members, if not already processed...
@@ -1507,7 +1326,7 @@ DWORD SVTaskObjectListClass::processMessage(DWORD DwMessageID, DWORD DwMessageVa
 			// But don't notify friends again...
 			DWORD dwMaskID = DwMessageID & ~(SVM_NOTIFY_ONLY_FRIENDS | SVM_NOTIFY_FRIENDS);
 			DwResult = SVTaskObjectClass::processMessage(dwMaskID, DwMessageValue, DwMessageContext);
-			
+
 			// Stop queueing, if DwResult is not NULL...
 			// Try to send message to list members, if not already processed...
 			for (int i = 0; ! DwResult && i < m_aTaskObjects.GetSize(); i++)
@@ -1524,7 +1343,7 @@ DWORD SVTaskObjectListClass::processMessage(DWORD DwMessageID, DWORD DwMessageVa
 			// But don't notify friends again...
 			DWORD dwMaskID = DwMessageID & ~(SVM_NOTIFY_ONLY_FRIENDS | SVM_NOTIFY_FRIENDS);
 			DwResult = SVTaskObjectClass::processMessage(dwMaskID, DwMessageValue, DwMessageContext) | DwResult;
-			
+
 			// Notify all...
 			for (int i = 0; i < m_aTaskObjects.GetSize(); i++)
 			{
@@ -1613,7 +1432,7 @@ DWORD SVTaskObjectListClass::ChildrenOutputListProcessMessage( DWORD DwMessageID
 BOOL SVTaskObjectListClass::getAvailableObjects(SVClassInfoStructListClass* pList, SVObjectTypeInfoStruct* pObjectTypeInfo)
 {
 	BOOL rc = FALSE;
-	
+
 	for (int i = 0; i < availableChildren.GetSize(); i++)
 	{
 		SVClassInfoStruct classInfo = availableChildren.GetAt(i);
@@ -1651,7 +1470,6 @@ HRESULT SVTaskObjectListClass::CollectOverlays( SVImageClass *p_Image, SVExtentM
 	}
 
 	return hrRet;
-
 }
 
 HRESULT SVTaskObjectListClass::onCollectOverlays(SVImageClass *p_Image, SVExtentMultiLineStructCArray &p_MultiLineArray )
@@ -1668,6 +1486,17 @@ HRESULT SVTaskObjectListClass::onCollectOverlays(SVImageClass *p_Image, SVExtent
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVTaskObjectList.cpp_v  $
+ * 
+ *    Rev 1.3   15 Jan 2014 16:52:38   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  879
+ * SCR Title:  Add interpolation mode to transformation tool
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   Changed code to conform with guidelines.
+ * In the Add method, created a comment to explain what checkName does.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   02 Oct 2013 08:17:50   tbair
  * Project:  SVObserver

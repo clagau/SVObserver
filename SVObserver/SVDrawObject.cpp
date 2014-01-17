@@ -5,8 +5,8 @@
 //* .Module Name     : SVDrawObject
 //* .File Name       : $Workfile:   SVDrawObject.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   01 Oct 2013 14:12:22  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   15 Jan 2014 11:32:46  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -550,6 +550,47 @@ BOOL SVDrawObjectClass::Draw( SVDrawContext* PDrawContext )
 	return BRetVal;
 }
 
+BOOL SVDrawObjectClass::DrawHatch( SVDrawContext* PDrawContext, SVCPointArray& Last )
+{
+	BOOL BRetVal = FALSE;
+	HDC DC = PDrawContext->DC;
+	SVCPointArray l_NewPoints;
+	if( beginDraw( PDrawContext ) )
+	{
+		int l_iSize = calcPoints.GetSize();
+		// Draw the first line.
+		if( l_iSize > 1 && Last.size() == 0)
+		{
+			BRetVal = ::Polyline( DC, calcPoints.GetData(), calcPoints.GetSize() );
+			Last = calcPoints;
+		}
+		else
+		{
+			// Draw second line and fill every other line.
+			if( l_iSize > 1 && Last.GetSize() > 1)
+			{
+				long distance = calcPoints[0].y - Last[0].y;
+				if( distance >= 2 )
+				{
+					POINT Points[2];
+					for( long y = 2 ; y <= distance ; y+=2 )
+					{
+						Points[0].y = Last[0].y + y;
+						Points[1].y = Points[0].y;
+						Points[0].x = calcPoints[0].x;
+						Points[1].x = calcPoints[1].x;
+						BRetVal = ::Polyline( DC, Points, 2 );  
+					}
+					Last[0] = Points[0];
+					Last[1] = Points[1];
+				}
+			}
+		}
+	}
+	endDraw( DC );
+	return BRetVal;
+}
+
 
 BOOL SVDrawObjectClass::SetDrawPen( BOOL BUseThisPen, int PenStyle, int PenWidth, COLORREF PenColor )
 {
@@ -686,6 +727,16 @@ void SVDrawObjectClass::Transform( SVDrawContext* PDrawContext )
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVDrawObject.cpp_v  $
+ * 
+ *    Rev 1.2   15 Jan 2014 11:32:46   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  882
+ * SCR Title:  Fix Mask - Zoom bug (e109)
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Added DrawHatch function for drawing mask overlay.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   01 Oct 2013 14:12:22   tbair
  * Project:  SVObserver

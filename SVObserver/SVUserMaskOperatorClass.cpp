@@ -5,8 +5,8 @@
 //* .Module Name     : 
 //* .File Name       : $Workfile:   SVUserMaskOperatorClass.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   02 Oct 2013 08:24:42  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   15 Jan 2014 11:36:14  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -371,6 +371,7 @@ HRESULT SVUserMaskOperatorClass::onCollectOverlays(SVImageClass *p_Image, SVExte
 
 		BuildMaskLines( l_MultiLine );
 		l_MultiLine.m_Color = RGB( 0, 255, 255 );
+		l_MultiLine.m_ObjectID = SVUserMaskOperatorClassGuid;
 		p_MultiLineArray.Add( l_MultiLine );
 		l_hr = S_OK;
 	}
@@ -1239,6 +1240,16 @@ BOOL SVUserMaskOperatorClass::OnValidate()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVUserMaskOperatorClass.cpp_v  $
+ * 
+ *    Rev 1.2   15 Jan 2014 11:36:14   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  882
+ * SCR Title:  Fix Mask - Zoom bug (e109)
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Modified OnCollectOverlays to mark mask lines with the GUID of the userMaskOperatorClass so the drawing logic will know how to draw this figure.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   02 Oct 2013 08:24:42   tbair
  * Project:  SVObserver

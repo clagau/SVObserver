@@ -5,8 +5,8 @@
 //* .Module Name     : SVImageTransform
 //* .File Name       : $Workfile:   SVImageTransform.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   13 May 2013 12:16:14  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   15 Jan 2014 16:40:16  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -23,8 +23,9 @@
 
 SV_IMPLEMENT_CLASS( SVImageTransformClass, SVImageTransformClassGuid )
 
+#pragma region Constructor
 SVImageTransformClass::SVImageTransformClass( SVObjectClass* POwner, int StringResourceID )
-				 :SVTransformClass( POwner, StringResourceID ) 
+	:SVTransformClass( POwner, StringResourceID ) 
 {
 
 	// Identify yourself
@@ -32,35 +33,52 @@ SVImageTransformClass::SVImageTransformClass( SVObjectClass* POwner, int StringR
 
 	// Identify our input type needs...
 	// Image
-	inputImageObjectInfo.SetInputObjectType( SVImageObjectType );
-	inputImageObjectInfo.SetObject( GetObjectInfo() );
-	RegisterInputObject( &inputImageObjectInfo, _T( "ImageTransformImage" ) );
-
+	m_inputImageObjectInfo.SetInputObjectType( SVImageObjectType );
+	m_inputImageObjectInfo.SetObject( GetObjectInfo() );
+	RegisterInputObject( &m_inputImageObjectInfo, _T( "ImageTransformImage" ) );
 
 	// Register Embedded Objects
-	RegisterEmbeddedObject( &outputImageObject, SVOutputImageObjectGuid, IDS_OBJECTNAME_IMAGE1 );
-
-	RegisterEmbeddedObject( &useExtentsOnly, SVUseExtentsOnlyObjectGuid, IDS_OBJECTNAME_USE_EXTENTS_ONLY, false, SVResetItemNone );
-	RegisterEmbeddedObject( &extentWidth, SVExtentWidthObjectGuid, IDS_OBJECTNAME_EXTENT_WIDTH, false, SVResetItemNone, _T("Extent Width") );
-	RegisterEmbeddedObject( &extentHeight, SVExtentHeightObjectGuid, IDS_OBJECTNAME_EXTENT_HEIGHT, false, SVResetItemNone, _T("Extent Height") );
-
+	RegisterEmbeddedObject( &m_outputImageObject, SVOutputImageObjectGuid, IDS_OBJECTNAME_IMAGE1 );
+	RegisterEmbeddedObject( &m_useExtentsOnly, SVUseExtentsOnlyObjectGuid, IDS_OBJECTNAME_USE_EXTENTS_ONLY, false, SVResetItemNone );
+	RegisterEmbeddedObject( &m_extentWidth, SVExtentWidthObjectGuid, IDS_OBJECTNAME_EXTENT_WIDTH, false, SVResetItemNone, _T("Extent Width") );
+	RegisterEmbeddedObject( &m_extentHeight, SVExtentHeightObjectGuid, IDS_OBJECTNAME_EXTENT_HEIGHT, false, SVResetItemNone, _T("Extent Height") );
 
 	//Register new value objects for displacementX and displacementY
-	RegisterEmbeddedObject( &extentDisplacementX, SVImageTransformDisplacementXGuid, IDS_TRANSFORM_DISPLACEMENTX, false, SVResetItemNone, _T("Extent X") );
-	RegisterEmbeddedObject( &extentDisplacementY, SVImageTransformDisplacementYGuid, IDS_TRANSFORM_DISPLACEMENTY, false, SVResetItemNone, _T("Extent Y") );
-	RegisterEmbeddedObject( &extentSourceX, SVImageTransformSourceXGuid, IDS_TRANSFORM_SOURCE_X, false, SVResetItemNone, _T("Extent X") );
-	RegisterEmbeddedObject( &extentSourceY, SVImageTransformSourceYGuid, IDS_TRANSFORM_SOURCE_Y, false, SVResetItemNone, _T("Extent Y") );
-	RegisterEmbeddedObject( &extentRotationAngle, SVRotationAngleObjectGuid, IDS_OBJECTNAME_ROTATION_ANGLE, false, SVResetItemNone, _T("Extent Angle") );
+	RegisterEmbeddedObject( &m_extentDisplacementX, SVImageTransformDisplacementXGuid, IDS_TRANSFORM_DISPLACEMENTX, false, SVResetItemNone, _T("Extent X") );
+	RegisterEmbeddedObject( &m_extentDisplacementY, SVImageTransformDisplacementYGuid, IDS_TRANSFORM_DISPLACEMENTY, false, SVResetItemNone, _T("Extent Y") );
+	RegisterEmbeddedObject( &m_extentSourceX, SVImageTransformSourceXGuid, IDS_TRANSFORM_SOURCE_X, false, SVResetItemNone, _T("Extent X") );
+	RegisterEmbeddedObject( &m_extentSourceY, SVImageTransformSourceYGuid, IDS_TRANSFORM_SOURCE_Y, false, SVResetItemNone, _T("Extent Y") );
+	RegisterEmbeddedObject( &m_extentRotationAngle, SVRotationAngleObjectGuid, IDS_OBJECTNAME_ROTATION_ANGLE, false, SVResetItemNone, _T("Extent Angle") );
 
-
+	// Interpolation mode object
+	// Set Default Interpolation Mode to use Nearest Neighbor
+	CString strMode("");
+	CString strPrepare("");
+	CString strEnumTypes("");
+	// M_NEAREST_NEIGHBOR 
+	strMode.LoadString( IDS_NEAREST_NEIGHBOR_STRING );
+	strPrepare.Format( _T( "%s=%d," ), strMode, SVNearestNeighOverScanClear); // M_NEAREST_NEIGHBOR);
+	strEnumTypes += strPrepare;
+	// M_BILINEAR
+	strMode.LoadString( IDS_BILINEAR_STRING );
+	strPrepare.Format( _T( "%s=%d," ), strMode, SVBilinear);		// M_BILINEAR );
+	strEnumTypes += strPrepare;
+	// M_BICUBIC
+	strMode.LoadString( IDS_BICUBIC_STRING );
+	strPrepare.Format( _T( "%s=%d," ), strMode, SVBiCubic);			// M_BICUBIC );
+	strEnumTypes += strPrepare;
+	// And now set enum types...
+	m_interpolationMode.SetEnumTypes( strEnumTypes );
+	m_interpolationMode.SetDefaultValue( SVNearestNeighOverScanClear, TRUE );	// Refer to MIL...
+	RegisterEmbeddedObject( &m_interpolationMode, SVOutputInterpolationModeObjectGuid, IDS_OBJECTNAME_INTERPOLATION_MODE, false, SVResetItemNone );
 
 	// Set Embedded defaults
-	useExtentsOnly.SetDefaultValue( FALSE, TRUE );
+	m_useExtentsOnly.SetDefaultValue( FALSE, TRUE );
 
-	extentWidth.SetDefaultValue( SV_DEFAULT_WINDOWTOOL_WIDTH, TRUE );
-	extentHeight.SetDefaultValue( SV_DEFAULT_WINDOWTOOL_HEIGHT, TRUE );
+	m_extentWidth.SetDefaultValue( SV_DEFAULT_WINDOWTOOL_WIDTH, TRUE );
+	m_extentHeight.SetDefaultValue( SV_DEFAULT_WINDOWTOOL_HEIGHT, TRUE );
 
-	outputImageObject.InitializeImage( SVImageTypePhysical );
+	m_outputImageObject.InitializeImage( SVImageTypePhysical );
 
 	// Add Default Inputs and Outputs
 	addDefaultInputObjects();
@@ -70,34 +88,37 @@ SVImageTransformClass::~SVImageTransformClass()
 {
 	CloseObject();
 }
+#pragma endregion
 
+#pragma region Public Methods
+#pragma region virtual
 BOOL SVImageTransformClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
 {
 	BOOL l_bOk = SVTransformClass::CreateObject( PCreateStructure );
 
 	l_bOk = l_bOk && GetTool() != NULL;
 
-	l_bOk = l_bOk && GetTool()->SetImageExtentProperty( SVExtentPropertyWidth, &extentWidth ) == S_OK;
-	l_bOk = l_bOk && GetTool()->SetImageExtentProperty( SVExtentPropertyHeight, &extentHeight ) == S_OK;
-	l_bOk = l_bOk && GetTool()->SetImageExtentProperty( SVExtentPropertyTranslationOffsetX, &extentDisplacementX ) == S_OK;
-	l_bOk = l_bOk && GetTool()->SetImageExtentProperty( SVExtentPropertyTranslationOffsetY, &extentDisplacementY ) == S_OK;
-	l_bOk = l_bOk && GetTool()->SetImageExtentProperty( SVExtentPropertyPositionPointX, &extentSourceX ) == S_OK;
-	l_bOk = l_bOk && GetTool()->SetImageExtentProperty( SVExtentPropertyPositionPointY, &extentSourceY ) == S_OK;
-	l_bOk = l_bOk && GetTool()->SetImageExtentProperty( SVExtentPropertyRotationAngle, &extentRotationAngle ) == S_OK;
+	l_bOk = l_bOk && GetTool()->SetImageExtentProperty( SVExtentPropertyWidth, &m_extentWidth ) == S_OK;
+	l_bOk = l_bOk && GetTool()->SetImageExtentProperty( SVExtentPropertyHeight, &m_extentHeight ) == S_OK;
+	l_bOk = l_bOk && GetTool()->SetImageExtentProperty( SVExtentPropertyTranslationOffsetX, &m_extentDisplacementX ) == S_OK;
+	l_bOk = l_bOk && GetTool()->SetImageExtentProperty( SVExtentPropertyTranslationOffsetY, &m_extentDisplacementY ) == S_OK;
+	l_bOk = l_bOk && GetTool()->SetImageExtentProperty( SVExtentPropertyPositionPointX, &m_extentSourceX ) == S_OK;
+	l_bOk = l_bOk && GetTool()->SetImageExtentProperty( SVExtentPropertyPositionPointY, &m_extentSourceY ) == S_OK;
+	l_bOk = l_bOk && GetTool()->SetImageExtentProperty( SVExtentPropertyRotationAngle, &m_extentRotationAngle ) == S_OK;
 
 	l_bOk = l_bOk && UpdateTransformData( 1 ) == S_OK;
 
 	isCreated = l_bOk;
 
 	// Set / Reset Printable Flags
-	useExtentsOnly.ObjectAttributesAllowedRef() |= SV_PRINTABLE;
-	extentWidth.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
-	extentHeight.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
-	extentDisplacementX.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
-	extentDisplacementY.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
-	extentSourceX.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
-	extentSourceY.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
-	extentRotationAngle.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
+	m_useExtentsOnly.ObjectAttributesAllowedRef() |= SV_PRINTABLE;
+	m_extentWidth.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
+	m_extentHeight.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
+	m_extentDisplacementX.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
+	m_extentDisplacementY.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
+	m_extentSourceX.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
+	m_extentSourceY.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
+	m_extentRotationAngle.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
 
 	return l_bOk;
 }
@@ -112,19 +133,6 @@ HRESULT SVImageTransformClass::IsInputImage( SVImageClass *p_psvImage )
 	}
 
 	return l_hrOk;
-}
-
-SVImageClass* SVImageTransformClass::getInputImage()
-{
-	if( inputImageObjectInfo.IsConnected() && inputImageObjectInfo.GetInputObjectInfo().PObject )
-		return ( SVImageClass* ) inputImageObjectInfo.GetInputObjectInfo().PObject;
-
-	return NULL;
-}
-
-SVImageClass* SVImageTransformClass::getOutputImage()
-{
-	return &outputImageObject;
 }
 
 BOOL SVImageTransformClass::OnValidate()
@@ -143,9 +151,34 @@ BOOL SVImageTransformClass::OnValidate()
 	return bRetVal;
 }
 
-BOOL SVImageTransformClass::onRun( SVRunStatusClass& RRunStatus )
+HRESULT SVImageTransformClass::ResetObject( )
 {
-	BOOL bRetVal = SVTransformClass::onRun( RRunStatus );
+	HRESULT l_hrOk = UpdateTransformData( 1 );
+
+	::KeepPrevError( l_hrOk, SVTransformClass::ResetObject() );
+
+	return l_hrOk;
+}
+#pragma endregion
+
+SVImageClass* SVImageTransformClass::getInputImage()
+{
+	if( m_inputImageObjectInfo.IsConnected() && m_inputImageObjectInfo.GetInputObjectInfo().PObject )
+		return ( SVImageClass* ) m_inputImageObjectInfo.GetInputObjectInfo().PObject;
+
+	return NULL;
+}
+
+SVImageClass* SVImageTransformClass::getOutputImage()
+{
+	return &m_outputImageObject;
+}
+#pragma endregion
+
+#pragma region Protected Methods
+BOOL SVImageTransformClass::onRun( SVRunStatusClass& runStatus )
+{
+	BOOL bRetVal = SVTransformClass::onRun( runStatus );
 
 	BOOL l_bUseExtentsOnly = FALSE;
 	BOOL l_bTranslationEnabled = FALSE;
@@ -165,17 +198,17 @@ BOOL SVImageTransformClass::onRun( SVRunStatusClass& RRunStatus )
 
 	bRetVal = bRetVal && l_psvInputImage != NULL;
 
-	bRetVal = bRetVal && UpdateTransformData( RRunStatus.m_lResultDataIndex ) == S_OK;
+	bRetVal = bRetVal && UpdateTransformData( runStatus.m_lResultDataIndex ) == S_OK;
 
-	bRetVal = bRetVal && useExtentsOnly.GetValue( l_bUseExtentsOnly ) == S_OK;
+	bRetVal = bRetVal && m_useExtentsOnly.GetValue( l_bUseExtentsOnly ) == S_OK;
 	bRetVal = bRetVal && performTranslation.GetValue( l_bTranslationEnabled ) == S_OK;
 	bRetVal = bRetVal && performRotation.GetValue( l_bRotationEnabled ) == S_OK;
 
 	if( bRetVal )
 	{
-		CollectInputImageNames(RRunStatus);
+		CollectInputImageNames(runStatus);
 
-		SVImageExtentClass l_svExtents = outputImageObject.GetImageExtents();
+		SVImageExtentClass l_svExtents = m_outputImageObject.GetImageExtents();
 
 		if( l_bTranslationEnabled )
 		{
@@ -198,12 +231,14 @@ BOOL SVImageTransformClass::onRun( SVRunStatusClass& RRunStatus )
 
 	if( bRetVal )
 	{
-	  SVSmartHandlePointer InImageHandle;
-    SVSmartHandlePointer OutImageHandle;
+		SVSmartHandlePointer InImageHandle;
+		SVSmartHandlePointer OutImageHandle;
 
-		SVImageOperationTypeEnum interpolationType = SVNearestNeighOverScanClear; 
+		bRetVal = bRetVal && l_psvInputImage->GetImageHandle( InImageHandle ) && !( InImageHandle.empty() );
 
-    bRetVal = bRetVal && l_psvInputImage->GetImageHandle( InImageHandle ) && !( InImageHandle.empty() );
+		long intpolType = 0;
+		m_interpolationMode.GetValue(runStatus.m_lResultDataIndex, intpolType);
+		SVImageOperationTypeEnum interpolationType = static_cast<SVImageOperationTypeEnum>(intpolType);
 
 		// Check if using Source Image for Extents only
 		if( l_bUseExtentsOnly )
@@ -211,7 +246,7 @@ BOOL SVImageTransformClass::onRun( SVRunStatusClass& RRunStatus )
 			POINT l_oPoint;
 			SVImageInfoClass InImageInfo = l_psvInputImage->GetImageInfo();
 
-	    if( InImageInfo.GetExtentProperty( SVExtentPropertyPositionPoint, l_oPoint ) == S_OK )
+			if( InImageInfo.GetExtentProperty( SVExtentPropertyPositionPoint, l_oPoint ) == S_OK )
 			{
 				// Get Root Image from our Input Image
 				SVImageClass* l_psvRootImage = dynamic_cast<SVImageClass*>( l_psvInputImage->GetRootImage() );
@@ -222,8 +257,8 @@ BOOL SVImageTransformClass::onRun( SVRunStatusClass& RRunStatus )
 			}
 		}
 
-		bRetVal = bRetVal && outputImageObject.SetImageHandleIndex( RRunStatus.Images );
-		bRetVal = bRetVal && outputImageObject.GetImageHandle( OutImageHandle ) && !( OutImageHandle.empty() );
+		bRetVal = bRetVal && m_outputImageObject.SetImageHandleIndex( runStatus.Images );
+		bRetVal = bRetVal && m_outputImageObject.GetImageHandle( OutImageHandle ) && !( OutImageHandle.empty() );
 
 		if( bRetVal && OutImageHandle->GetBufferAddress() != NULL )
 		{
@@ -247,7 +282,6 @@ BOOL SVImageTransformClass::onRun( SVRunStatusClass& RRunStatus )
 
 		if( bRetVal )
 		{
-			
 			SVMatroxImageInterface::SVStatusCode l_Code;
 
 			SVMatroxImageRotateStruct l_Rotate(l_InMilHandle.GetBuffer());
@@ -264,33 +298,24 @@ BOOL SVImageTransformClass::onRun( SVRunStatusClass& RRunStatus )
 
 			if( l_Code != SVMEE_STATUS_OK )
 			{
-					bRetVal = FALSE;
+				bRetVal = FALSE;
 			}
 		}
 	}
 
 	if( bRetVal )
 	{
-		RRunStatus.SetPassed();
+		runStatus.SetPassed();
 	}
 	else
 	{
-		RRunStatus.SetFailed();
-		RRunStatus.SetInvalid();
+		runStatus.SetFailed();
+		runStatus.SetInvalid();
 
 		SetInvalid();
 	}
 
 	return bRetVal;
-}
-
-HRESULT SVImageTransformClass::ResetObject( )
-{
-	HRESULT l_hrOk = UpdateTransformData( 1 );
-
-	::KeepPrevError( l_hrOk, SVTransformClass::ResetObject() );
-
-	return l_hrOk;
 }
 
 DWORD SVImageTransformClass::processMessage( DWORD DwMessageID, DWORD DwMessageValue, DWORD DwMessageContext )
@@ -326,7 +351,7 @@ HRESULT SVImageTransformClass::UpdateTransformData( long p_lIndex )
 
 	SVImageClass* l_psvInputImage = getInputImage();
 	SVToolClass* l_psvTool = GetTool();
-		
+
 	if( l_psvInputImage != NULL && l_psvTool != NULL )
 	{
 		POINT l_oUseExtentsOnlyPoint;
@@ -338,7 +363,7 @@ HRESULT SVImageTransformClass::UpdateTransformData( long p_lIndex )
 		SVDoubleValueObjectClass* l_pRotationXResult = getInputRotationXResult();
 		SVDoubleValueObjectClass* l_pRotationYResult = getInputRotationYResult();
 		SVDoubleValueObjectClass* l_pRotationAngleResult = getInputRotationAngleResult();
-		
+
 		BOOL l_bTranslationEnabled = FALSE;
 		BOOL l_bRotationEnabled = FALSE;
 		BOOL l_bUseExtentsOnly = FALSE;
@@ -361,7 +386,7 @@ HRESULT SVImageTransformClass::UpdateTransformData( long p_lIndex )
 
 		::KeepPrevError( l_hrOk, performTranslation.GetValue( l_bTranslationEnabled ) );
 		::KeepPrevError( l_hrOk, performRotation.GetValue( l_bRotationEnabled ) );
-		::KeepPrevError( l_hrOk, useExtentsOnly.GetValue( l_bUseExtentsOnly ) );
+		::KeepPrevError( l_hrOk, m_useExtentsOnly.GetValue( l_bUseExtentsOnly ) );
 
 		::KeepPrevError( l_hrOk, l_svExtents.GetExtentProperty( SVExtentPropertyWidth, l_dWidth ) );
 		::KeepPrevError( l_hrOk, l_svExtents.GetExtentProperty( SVExtentPropertyHeight, l_dHeight ) );
@@ -413,7 +438,7 @@ HRESULT SVImageTransformClass::UpdateTransformData( long p_lIndex )
 				xDisplacement = ( l_dTranslationXResult - l_dLearnedTranslationXValue );
 				yDisplacement = ( l_dTranslationYResult - l_dLearnedTranslationYValue );
 			}
-		
+
 			if( l_bRotationEnabled )
 			{
 				srcX = ( l_dRotationXResult - l_dLearnedRotationXValue );
@@ -445,7 +470,7 @@ HRESULT SVImageTransformClass::UpdateTransformData( long p_lIndex )
 
 		::KeepPrevError( l_hrOk, l_psvTool->SetImageExtent( p_lIndex, l_svExtents ) );
 
-		::KeepPrevError( l_hrOk, outputImageObject.InitializeImage( getInputImage() ) );
+		::KeepPrevError( l_hrOk, m_outputImageObject.InitializeImage( getInputImage() ) );
 
 		// Return code for UpdateImageWithExtend not being checked because it may not be valid the first time.
 		l_psvTool->UpdateImageWithExtent( p_lIndex );
@@ -457,9 +482,11 @@ HRESULT SVImageTransformClass::UpdateTransformData( long p_lIndex )
 
 	return l_hrOk;
 }
+#pragma endregion
 
+#pragma region Private Methods
 // Set String value object for Source Image Names
-HRESULT SVImageTransformClass::CollectInputImageNames( SVRunStatusClass& RRunStatus )
+HRESULT SVImageTransformClass::CollectInputImageNames( SVRunStatusClass& runStatus )
 {
 	HRESULT l_hr = S_FALSE;
 	SVImageClass* l_pInputImage = getInputImage();
@@ -468,18 +495,31 @@ HRESULT SVImageTransformClass::CollectInputImageNames( SVRunStatusClass& RRunSta
 	{
 		CString l_strName = l_pInputImage->GetCompleteObjectName();
 
-		l_pTool->m_svSourceImageNames.SetValue( RRunStatus.m_lResultDataIndex, 0, l_strName );
+		l_pTool->m_svSourceImageNames.SetValue( runStatus.m_lResultDataIndex, 0, l_strName );
 
 		l_hr = S_OK;
 	}
 	return l_hr;
 }
+#pragma endregion
 
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVImageTransform.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVImageTransform.cpp_v  $
+ * 
+ *    Rev 1.2   15 Jan 2014 16:40:16   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  879
+ * SCR Title:  Add interpolation mode to transformation tool
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   Changed code to conform with guidelines.
+ * Changed constructor to initialize values for interpolation mode.
+ * Changed onRun to set interpolationType based on the Interpolation Mode option.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   13 May 2013 12:16:14   bWalter
  * Project:  SVObserver

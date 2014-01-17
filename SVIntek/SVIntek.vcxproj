@@ -88,7 +88,7 @@
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
-      <AdditionalIncludeDirectories>..;..\Intek;C:\Program Files\FirePackage2v32\FireStack\Lib;C:\Program Files\FirePackage2V32\FireStack\Classes;C:\Program Files\FirePackage2V32\FireStack\Classes\Win32;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..;..\Intek;$(ProgramFiles)\FirePackage2v32\FireStack\Lib;$(ProgramFiles)\FirePackage2V32\FireStack\Classes;$(ProgramFiles)\FirePackage2V32\FireStack\Classes\Win32;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>NDEBUG;WIN32;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
@@ -110,7 +110,7 @@
     <Link>
       <AdditionalDependencies>SVTriggerLibrary.lib;SVMaterialsLibrary.lib;SVUtilityLibrary.lib;SVStatusLibrary.lib;SVImageLibrary.lib;SVOMFCLibrary.lib;FCTLMAIN.lib;FCTLEnable.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>$(OutDir);..\Intek;C:\Program Files\FirePackage2v32\FireStack\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(OutDir);..\Intek;$(ProgramFiles)\FirePackage2v32\FireStack\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ModuleDefinitionFile>.\SVIntek.def</ModuleDefinitionFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <GenerateMapFile>true</GenerateMapFile>
@@ -189,7 +189,7 @@
     </Midl>
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..;..\Intek;C:\Program Files\FirePackage2V32\FireStack\Lib;C:\Program Files\FirePackage2V32\FireStack\Classes;C:\Program Files\FirePackage2V32\FireStack\Classes\Win32;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..;..\Intek;$(ProgramFiles)\FirePackage2v32\FireStack\Lib;$(ProgramFiles)\FirePackage2V32\FireStack\Classes;$(ProgramFiles)\FirePackage2V32\FireStack\Classes\Win32;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -209,7 +209,7 @@
     <Link>
       <AdditionalDependencies>SVTriggerLibrary.lib;SVMaterialsLibrary.lib;SVUtilityLibrary.lib;SVStatusLibrary.lib;SVImageLibrary.lib;SVOMFCLibrary.lib;FCTLMAIN.lib;FCTLEnable.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>$(OutDir);..\Intek;C:\Program Files\FirePackage2v32\FireStack\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(OutDir);..\Intek;$(ProgramFiles)\FirePackage2v32\FireStack\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ModuleDefinitionFile>.\SVIntek.def</ModuleDefinitionFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>

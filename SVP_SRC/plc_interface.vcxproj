@@ -89,7 +89,7 @@
     </Midl>
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..;c:\program files\rockwell software\rslinx;C:\Program Files\Applicom;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..;$(ProgramFiles)\rockwell software\rslinx;$(ProgramFiles)\Automated Solutions\Asabtcp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_DEBUG;BUILD_PLCAPI_DLL;WIN32;_WINDOWS;_USRDLL;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -119,7 +119,7 @@
       <AdditionalDependencies>SVStatusLibrary.lib;SVUtilityLibrary.lib;SVTimerLibrary.lib;delayimp.lib;applicom.lib;dtl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)PLC_Interface.dll</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>$(OutDir);c:\program files\rockwell software\rslinx;C:\Program Files\Applicom;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(OutDir);$(ProgramFiles)\rockwell software\rslinx;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ModuleDefinitionFile>SVPLCExports.def</ModuleDefinitionFile>
       <DelayLoadDLLs>dtl32.dll;Applicom.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -146,7 +146,7 @@
     </Midl>
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..;c:\program files\rockwell software\rslinx;C:\Program Files\Applicom;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..;$(ProgramFiles)\rockwell software\rslinx;$(ProgramFiles)\Automated Solutions\Asabtcp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_DEBUG;BUILD_PLCAPI_DLL;WIN32;_WINDOWS;_USRDLL;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -176,7 +176,7 @@
       <AdditionalDependencies>SVStatusLibrary.lib;SVUtilityLibrary.lib;SVTimerLibrary.lib;delayimp.lib;applicom.lib;dtl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)PLC_Interface.dll</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>$(OutDir);c:\program files\rockwell software\rslinx;C:\Program Files\Applicom;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(OutDir);$(ProgramFiles)\rockwell software\rslinx;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ModuleDefinitionFile>SVPLCExports.def</ModuleDefinitionFile>
       <DelayLoadDLLs>dtl32.dll;Applicom.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -204,7 +204,7 @@
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
-      <AdditionalIncludeDirectories>..;c:\program files\rockwell software\rslinx;C:\Program Files\Applicom;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..;$(ProgramFiles)\rockwell software\rslinx;$(ProgramFiles)\Automated Solutions\Asabtcp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>NDEBUG;BUILD_PLCAPI_DLL;WIN32;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
@@ -234,7 +234,7 @@
       <AdditionalDependencies>SVStatusLibrary.lib;SVUtilityLibrary.lib;SVTimerLibrary.lib;delayimp.lib;applicom.lib;dtl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)PLC_Interface.dll</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>$(OutDir);c:\program files\rockwell software\rslinx;C:\Program Files\Applicom;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(OutDir);$(ProgramFiles)\rockwell software\rslinx;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ModuleDefinitionFile>SVPLCExports.def</ModuleDefinitionFile>
       <DelayLoadDLLs>dtl32.dll;Applicom.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
       <ProgramDatabaseFile>.\Release/PLC_Interface.pdb</ProgramDatabaseFile>
@@ -262,7 +262,7 @@
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
-      <AdditionalIncludeDirectories>..;c:\program files\rockwell software\rslinx;C:\Program Files\Applicom;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..;$(ProgramFiles)\rockwell software\rslinx;$(ProgramFiles)\Automated Solutions\Asabtcp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>NDEBUG;BUILD_PLCAPI_DLL;WIN32;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
@@ -292,7 +292,7 @@
       <AdditionalDependencies>SVStatusLibrary.lib;SVUtilityLibrary.lib;SVTimerLibrary.lib;delayimp.lib;applicom.lib;dtl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)PLC_Interface.dll</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>$(OutDir);c:\program files\rockwell software\rslinx;C:\Program Files\Applicom;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(OutDir);$(ProgramFiles)\rockwell software\rslinx;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ModuleDefinitionFile>SVPLCExports.def</ModuleDefinitionFile>
       <DelayLoadDLLs>dtl32.dll;Applicom.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
       <ProgramDatabaseFile>.\Release/PLC_Interface.pdb</ProgramDatabaseFile>

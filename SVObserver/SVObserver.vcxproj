@@ -96,7 +96,7 @@
     </Midl>
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..;C:\Program Files\Matrox Imaging\mil\include;C:\Program Files\Logical Vision\h;C:\Program Files\Logical Vision\G\h;C:\Program Files\Microsoft DirectX 9.0 SDK (April 2005)\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..;$(ProgramFiles)\Matrox Imaging\mil\include;$(ProgramFiles)\Logical Vision\h;$(ProgramFiles)\Logical Vision\G\h;$(ProgramFiles)\Microsoft DirectX 9.0 SDK (April 2005)\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_DEBUG;WIN32;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -121,7 +121,7 @@
     <Link>
       <AdditionalDependencies>SVConfigurationLibrary.lib;SVSocketLibrary.lib;SVGigeCameraFileLibrary.lib;SV1394CameraFileLibrary.lib;SVIMServer.lib;SVSecurity.lib;SVHBitmapUtilitiesLibrary.lib;SVEquationLibrary.lib;SVFileSystemLibrary.lib;SVImageCompression.lib;SVLibrary.lib;SVCmnLib.lib;SVOLicenseManager.lib;PropTree.lib;SVIOLibrary.lib;SVRunControlLibrary.lib;SVStatusLibrary.lib;SVXMLLibrary.lib;SVCommandLibrary.lib;JsonLib.lib;SVJsonCommandServerLibrary.lib;SVMatroxLibrary.lib;SVImageLibrary.lib;SVOMFCLibrary.lib;SVMaterialsLibrary.lib;SVOLibrary.lib;SVUtilityLibrary.lib;SVObjectLibrary.lib;Winmm.lib;Rpcrt4.lib;ddraw.lib;dxguid.lib;xmllite.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>$(OutDir);C:\Program Files\Microsoft DirectX 9.0 SDK (April 2005)\Lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(OutDir);$(ProgramFiles)\Microsoft DirectX 9.0 SDK (April 2005)\Lib\x86;$(ProgramFiles)\Matrox Imaging\mil\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <LargeAddressAware>true</LargeAddressAware>
@@ -152,7 +152,7 @@ echo %time%
     </Midl>
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..;C:\Program Files\Matrox Imaging\mil\include;C:\Program Files (x86)\Logical Vision\h;C:\Program Files (x86)\Logical Vision\G\h;C:\Program Files\Microsoft DirectX 9.0 SDK (April 2005)\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..;C:\Program Files\Matrox Imaging\mil\include;$(ProgramFiles)\Logical Vision\h;$(ProgramFiles)\Logical Vision\G\h;$(ProgramFiles)\Microsoft DirectX 9.0 SDK (April 2005)\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_WIN64;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -177,7 +177,7 @@ echo %time%
     <Link>
       <AdditionalDependencies>SVConfigurationLibrary.lib;SVSocketLibrary.lib;SVGigeCameraFileLibrary.lib;SV1394CameraFileLibrary.lib;SVIMServer.lib;SVSecurity.lib;SVHBitmapUtilitiesLibrary.lib;SVEquationLibrary.lib;SVFileSystemLibrary.lib;SVLibrary.lib;SVCmnLib.lib;SVOLicenseManager.lib;PropTree.lib;SVIOLibrary.lib;SVRunControlLibrary.lib;SVStatusLibrary.lib;SVXMLLibrary.lib;SVCommandLibrary.lib;JsonLib.lib;SVJsonCommandServerLibrary.lib;SVMatroxLibrary.lib;SVImageLibrary.lib;SVOMFCLibrary.lib;SVMaterialsLibrary.lib;SVOLibrary.lib;SVUtilityLibrary.lib;SVObjectLibrary.lib;Winmm.lib;Rpcrt4.lib;ddraw.lib;dxguid.lib;xmllite.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>$(OutDir);C:\Program Files (x86)\Microsoft DirectX 9.0 SDK (April 2005)\Lib\x64;C:\Program Files %28x86%29\Microsoft SDKs\Windows\v7.0A\Lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(OutDir);$(ProgramFiles)\Microsoft DirectX 9.0 SDK (April 2005)\Lib\x64;$(ProgramFiles)\Microsoft SDKs\Windows\v7.0A\Lib\x64;C:\Program Files\Matrox Imaging\mil\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <LargeAddressAware>true</LargeAddressAware>
@@ -210,7 +210,7 @@ echo %time%
       <Optimization>MaxSpeed</Optimization>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
-      <AdditionalIncludeDirectories>..;C:\Program Files\Matrox Imaging\mil\include;C:\Program Files\Logical Vision\h;C:\Program Files\Logical Vision\G\h;C:\Program Files\Microsoft DirectX 9.0 SDK (April 2005)\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..;$(ProgramFiles)\Matrox Imaging\mil\include;$(ProgramFiles)\Logical Vision\h;$(ProgramFiles)\Logical Vision\G\h;$(ProgramFiles)\Microsoft DirectX 9.0 SDK (April 2005)\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>NDEBUG;WIN32;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <StructMemberAlignment>Default</StructMemberAlignment>
@@ -234,7 +234,7 @@ echo %time%
     <Link>
       <AdditionalDependencies>SVConfigurationLibrary.lib;SVSocketLibrary.lib;SVGigeCameraFileLibrary.lib;SV1394CameraFileLibrary.lib;SVIMServer.lib;SVSecurity.lib;SVHBitmapUtilitiesLibrary.lib;SVEquationLibrary.lib;SVFileSystemLibrary.lib;SVImageCompression.lib;SVLibrary.lib;SVCmnLib.lib;SVOLicenseManager.lib;PropTree.lib;SVIOLibrary.lib;SVRunControlLibrary.lib;SVStatusLibrary.lib;SVXMLLibrary.lib;SVCommandLibrary.lib;JsonLib.lib;SVJsonCommandServerLibrary.lib;SVMatroxLibrary.lib;SVImageLibrary.lib;SVOMFCLibrary.lib;SVMaterialsLibrary.lib;SVOLibrary.lib;SVUtilityLibrary.lib;SVObjectLibrary.lib;Winmm.lib;Rpcrt4.lib;ddraw.lib;dxguid.lib;xmllite.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>$(OutDir);C:\Program Files\Microsoft DirectX 9.0 SDK (April 2005)\Lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(OutDir);$(ProgramFiles)\Microsoft DirectX 9.0 SDK (April 2005)\Lib\x86;$(ProgramFiles)\Matrox Imaging\mil\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <GenerateMapFile>true</GenerateMapFile>
       <MapFileName>$(TargetDir)$(TargetName).map</MapFileName>
@@ -273,7 +273,7 @@ echo %time%
       <Optimization>MaxSpeed</Optimization>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
-      <AdditionalIncludeDirectories>..;C:\Program Files\Matrox Imaging\mil\include;C:\Program Files (x86)\Logical Vision\h;C:\Program Files (x86)\Logical Vision\G\h;C:\Program Files\Microsoft DirectX 9.0 SDK (April 2005)\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..;C:\Program Files\Matrox Imaging\mil\include;$(ProgramFiles)\Logical Vision\h;$(ProgramFiles)\Logical Vision\G\h;$(ProgramFiles)\Microsoft DirectX 9.0 SDK (April 2005)\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>NDEBUG;_WIN64;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <StructMemberAlignment>Default</StructMemberAlignment>
@@ -297,7 +297,7 @@ echo %time%
     <Link>
       <AdditionalDependencies>SVConfigurationLibrary.lib;SVSocketLibrary.lib;SVGigeCameraFileLibrary.lib;SV1394CameraFileLibrary.lib;SVIMServer.lib;SVSecurity.lib;SVHBitmapUtilitiesLibrary.lib;SVEquationLibrary.lib;SVFileSystemLibrary.lib;SVLibrary.lib;SVCmnLib.lib;SVOLicenseManager.lib;PropTree.lib;SVIOLibrary.lib;SVRunControlLibrary.lib;SVStatusLibrary.lib;SVXMLLibrary.lib;SVCommandLibrary.lib;JsonLib.lib;SVJsonCommandServerLibrary.lib;SVMatroxLibrary.lib;SVImageLibrary.lib;SVOMFCLibrary.lib;SVMaterialsLibrary.lib;SVOLibrary.lib;SVUtilityLibrary.lib;SVObjectLibrary.lib;Winmm.lib;Rpcrt4.lib;ddraw.lib;dxguid.lib;xmllite.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>$(OutDir);C:\Program Files (x86)\Microsoft DirectX 9.0 SDK (April 2005)\Lib\x64;C:\Program Files %28x86%29\Microsoft SDKs\Windows\v7.0A\Lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(OutDir);$(ProgramFiles)\Microsoft DirectX 9.0 SDK (April 2005)\Lib\x64;$(ProgramFiles)\Microsoft SDKs\Windows\v7.0A\Lib\x64;C:\Program Files\Matrox Imaging\mil\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <GenerateMapFile>true</GenerateMapFile>
       <MapFileName>$(TargetDir)$(TargetName).map</MapFileName>

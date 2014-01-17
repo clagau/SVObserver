@@ -5,8 +5,8 @@
 // * .Module Name     : SVContecImpl
 // * .File Name       : $Workfile:   SVContecImpl.h  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.1  $
-// * .Check In Date   : $Date:   06 Nov 2013 08:07:50  $
+// * .Current Version : $Revision:   1.2  $
+// * .Check In Date   : $Date:   16 Jan 2014 10:20:04  $
 // ******************************************************************************
 
 #ifndef SVCONTECIMPL_H
@@ -22,11 +22,7 @@
 #include "SVOLibrary/SVQueueObject.h"
 #include "SVUtilityLibrary/SVString.h"
 
-#ifdef _WIN64
-#pragma comment( lib, "C:\\Program Files (x86)\\CONTEC\\API-PAC(W32)\\DIOWDM\\Samples\\Lib_amd64\\CDIO.lib" )
-#else
-#pragma comment( lib, "C:\\Program Files\\CONTEC\\DRV-PAC(W32)\\DIOWDM\\Sample\\Lib\\CDIO.lib" )
-#endif
+#pragma comment( lib, "CDIO.lib" )
 						
 struct SVContecTriggerStruct
 {
@@ -209,6 +205,16 @@ public:
 // ******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVContec\SVContecImpl.h_v  $
+ * 
+ *    Rev 1.2   16 Jan 2014 10:20:04   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Multi Platform Path Changes
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   06 Nov 2013 08:07:50   tbair
  * Project:  SVObserver

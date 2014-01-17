@@ -5,8 +5,8 @@
 // * .Module Name     : SVMaskEditor
 // * .File Name       : $Workfile:   SVMaskEditor.h  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.0  $
-// * .Check In Date   : $Date:   26 Apr 2013 14:06:48  $
+// * .Current Version : $Revision:   1.1  $
+// * .Check In Date   : $Date:   16 Jan 2014 10:31:38  $
 // ******************************************************************************
 
 #if !defined(AFX_SVMASKEDITOR_H__C87C9B7A_E6DC_11D2_A77B_00106F000C7D__INCLUDED_)
@@ -27,9 +27,8 @@
 #include "SVOMFCLibrary\SVGraphix.h"   // Loacted in SVObserver Source Code!
 #include "SVMatroxLibrary\SVMatroxLibrary.h"
 
-
-#pragma comment( lib, "C:/Program Files/Matrox Imaging/Mil/LIB/mil" )
-#pragma comment( lib, "C:/Program Files/Matrox Imaging/Mil/LIB/milim" )
+#pragma comment( lib, "mil" )
+#pragma comment( lib, "milim" )
 
 /////////////////////////////////////////////////////////////////////////////
 // SVMaskEditorApp : See SVMaskEditor.cpp for implementation.
@@ -70,7 +69,17 @@ SVMatroxBuffer SVBitmapToMilBuffer( HBITMAP HBM );
 // * LOG HISTORY:
 // ******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVMaskEditor\SVMaskEditor.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVMaskEditor\SVMaskEditor.h_v  $
+ * 
+ *    Rev 1.1   16 Jan 2014 10:31:38   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Multi Platform Path Changes
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   26 Apr 2013 14:06:48   bWalter
  * Project:  SVObserver

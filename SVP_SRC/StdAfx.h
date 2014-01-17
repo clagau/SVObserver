@@ -5,8 +5,8 @@
 // * .Module Name     : StdAfx
 // * .File Name       : $Workfile:   StdAfx.h  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.0  $
-// * .Check In Date   : $Date:   25 Apr 2013 15:37:50  $
+// * .Current Version : $Revision:   1.1  $
+// * .Check In Date   : $Date:   16 Jan 2014 10:50:54  $
 // ******************************************************************************
 
 #ifndef STDAFX_H
@@ -50,7 +50,7 @@
 #include <afxdisp.h>        // MFC Automation classes
 
 // ***** import the COM object's type library as usual. *****
-#import "C:\Program Files\Automated Solutions\Asabtcp\Asabtcp.ocx"
+#import "Asabtcp.ocx"
 using namespace ASABTCPLib;
 
 // ***** include our TEventHandler.h header class and use the TEventHandlerNamespace namespace. *****
@@ -66,7 +66,17 @@ using namespace TEventHandlerNamespace;
 // * LOG HISTORY:
 // ******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVP_SRC\StdAfx.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVP_SRC\StdAfx.h_v  $
+ * 
+ *    Rev 1.1   16 Jan 2014 10:50:54   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Multi Platform Path Changes
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   25 Apr 2013 15:37:50   bWalter
  * Project:  SVObserver

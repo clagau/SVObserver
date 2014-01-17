@@ -5,84 +5,103 @@
 //* .Module Name     : SVTADlgTranslationPage
 //* .File Name       : $Workfile:   SVTADlgTranslationPage.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   24 Apr 2013 11:24:26  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   15 Jan 2014 16:51:54  $
 //******************************************************************************
 
 #ifndef SVTADLGTRANSLATIONPAGE_H
 #define SVTADLGTRANSLATIONPAGE_H
 
+#pragma region Includes
 #include "SVTaskObjectInterfaceClass.h"
+#include "SVEnumerateCombo.h"
+#pragma endregion
 
+#pragma region Declarations
 class SVToolAdjustmentDialogSheetClass;
 class SVToolClass;
 class SVEvaluateClass;
 class SVDoubleValueObjectClass;
 class SVBoolValueObjectClass;
+#pragma endregion
 
 class SVToolAdjustmentDialogTranslationPageClass : public CPropertyPage, public SVTaskObjectInterfaceClass
 {
+#pragma region Constructor
+public:
+	SVToolAdjustmentDialogTranslationPageClass( SVToolAdjustmentDialogSheetClass* Parent );
+#pragma endregion
+
+#pragma region Protected Methods
+protected:
+#pragma region MFC Methods
 	// ClassWizard generate virtual function overrides
 	//{{AFX_VIRTUAL(SVToolAdjustmentDialogTranslationPageClass)
 protected:
 	virtual BOOL OnInitDialog();
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+	virtual BOOL OnSetActive();
 	//}}AFX_VIRTUAL
 
 	// Generated message map functions
 	//{{AFX_MSG(SVToolAdjustmentDialogTranslationPageClass)
-protected:
 	afx_msg void OnXFormulaButton();
 	afx_msg void OnYFormulaButton();
 	afx_msg void OnPerformTranslation();
+	afx_msg void OnSelChangeInterpolationModeCombo();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
+#pragma endregion MFC Methods
+	virtual HRESULT SetInspectionData();
+	void refresh();
+#pragma endregion
 
+#pragma region Member variables
+#pragma region Data Elements
 	//{{AFX_DATA(SVToolAdjustmentDialogTranslationPageClass)
 public:
 	enum { IDD = IDD_TA_TRANSLATION_DIALOG };
-	CString	StrTranslationXValue;
-	CString	StrTranslationYValue;
+	SVEnumerateComboClass	m_cbInterpolation;
+	CString	m_strTranslationXValue;
+	CString	m_strTranslationYValue;
 	BOOL	m_performTranslation;
 	//}}AFX_DATA
-
-public:
-	SVToolAdjustmentDialogTranslationPageClass( SVToolAdjustmentDialogSheetClass* Parent );
-
-	virtual HRESULT SetInspectionData();
+#pragma endregion Data Elements
 
 protected:
-	void refresh();
+	SVToolAdjustmentDialogSheetClass* m_pParentDialog;
+	SVToolClass* m_pTool;
 
-	SVToolAdjustmentDialogSheetClass* pParentDialog;
-	SVToolClass* pTool;
-
-	SVEvaluateClass* pEvaluateTranslationX;
-	SVEvaluateClass* pEvaluateTranslationY;
-
-	//SVDoubleValueObjectClass*	pTranslationXResult;
-	//SVDoubleValueObjectClass*	pTranslationYResult;
-	//SVBoolValueObjectClass* pPerformTranslation;
-	//SVLongValueObjectClass* pTranslationMode;
-
+	SVEvaluateClass* m_pEvaluateTranslationX;
+	SVEvaluateClass* m_pEvaluateTranslationY;
+	SVEnumerateValueObjectClass* m_pInterpolationMode;
+#pragma endregion
 };
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
 
-
-//******************************************************************************
-//* INCLUDE CONTROL:
-//******************************************************************************
 #endif	// SVTADLGTRANSLATIONPAGE_H
-
-//** EOF **
 
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVTADlgTranslationPage.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVTADlgTranslationPage.h_v  $
+ * 
+ *    Rev 1.1   15 Jan 2014 16:51:54   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  879
+ * SCR Title:  Add interpolation mode to transformation tool
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   Changed code to conform with guidelines.
+ * Added SVEnumerateCombo.h.
+ * Added protected MFC methods OnSetActive and OnSelChangeInterpolationModeCombo.
+ * Changed SetInspectionData method from public to protected.
+ * Added members m_cbInterpolation (public) and m_pInterpolationMode (protected).
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   24 Apr 2013 11:24:26   bWalter
  * Project:  SVObserver

@@ -118,7 +118,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <LinkTimeCodeGeneration>Default</LinkTimeCodeGeneration>
-      <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(OutDir);$(ProgramFiles)\Matrox Imaging\mil\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>SVMaterialsLibrary.lib;SVMatroxLibrary.lib;SVImageLibrary.lib;SVLibrary.lib;SVOMFCLibrary.lib;SVGigeCameraFileLibrary.lib;SV1394CameraFileLibrary.lib;PropTree.lib;SVDataManagerLibrary.lib;SVUtilityLibrary.lib;SVStatusLibrary.lib</AdditionalDependencies>
     </Link>
     <Bscmake>
@@ -166,7 +166,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <LinkTimeCodeGeneration>Default</LinkTimeCodeGeneration>
-      <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(OutDir);C:\Program Files\Matrox Imaging\mil\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>SVMaterialsLibrary.lib;SVMatroxLibrary.lib;SVImageLibrary.lib;SVLibrary.lib;SVOMFCLibrary.lib;SVGigeCameraFileLibrary.lib;SV1394CameraFileLibrary.lib;PropTree.lib;SVDataManagerLibrary.lib;SVUtilityLibrary.lib;SVStatusLibrary.lib</AdditionalDependencies>
     </Link>
     <Bscmake>
@@ -207,7 +207,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <TargetMachine>MachineX86</TargetMachine>
-      <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(OutDir);$(ProgramFiles)\Matrox Imaging\mil\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>SVMaterialsLibrary.lib;SVMatroxLibrary.lib;SVImageLibrary.lib;SVLibrary.lib;SVOMFCLibrary.lib;SVGigeCameraFileLibrary.lib;SV1394CameraFileLibrary.lib;PropTree.lib;SVDataManagerLibrary.lib;SVUtilityLibrary.lib;SVStatusLibrary.lib</AdditionalDependencies>
     </Link>
     <Bscmake>
@@ -246,7 +246,7 @@
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
-      <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(OutDir);C:\Program Files\Matrox Imaging\mil\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>SVMaterialsLibrary.lib;SVMatroxLibrary.lib;SVImageLibrary.lib;SVLibrary.lib;SVOMFCLibrary.lib;SVGigeCameraFileLibrary.lib;SV1394CameraFileLibrary.lib;PropTree.lib;SVDataManagerLibrary.lib;SVUtilityLibrary.lib;SVStatusLibrary.lib</AdditionalDependencies>
     </Link>
     <Bscmake>

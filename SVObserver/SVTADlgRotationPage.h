@@ -5,55 +5,46 @@
 //* .Module Name     : SVTADlgRotationPage
 //* .File Name       : $Workfile:   SVTADlgRotationPage.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   24 Apr 2013 11:17:54  $
-//******************************************************************************
-
-//******************************************************************************
-//* INCLUDE CONTROL:
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   15 Jan 2014 16:47:56  $
 //******************************************************************************
 
 #ifndef SVTADLGROTATIONPAGE_H
 #define SVTADLGROTATIONPAGE_H
 
-//******************************************************************************
-//* INCLUDE(S):
-//******************************************************************************
-
 #if _MSC_VER > 1000
 #pragma once
 #endif // _MSC_VER > 1000
 
+#pragma region Includes
 #include "SVTaskObjectInterfaceClass.h"
+#include "SVEnumerateCombo.h"
+#pragma endregion
 
+#pragma region Declarations
 class SVEvaluateClass;
 class SVToolAdjustmentDialogSheetClass;
 class SVToolClass;
 class SVDoubleValueObjectClass;
 class SVBoolValueObjectClass;
+#pragma endregion;
 
 class SVToolAdjustmentDialogRotationPageClass : public CPropertyPage, public SVTaskObjectInterfaceClass
 {
-
-// Construction
+#pragma region Constructor
 public:
 	SVToolAdjustmentDialogRotationPageClass( SVToolAdjustmentDialogSheetClass* Parent );
+#pragma endregion
 
-	virtual HRESULT SetInspectionData();
-
-//******************************************************************************
-// Operator(s):
-//******************************************************************************
-public:
+#pragma region Protected Methods
+protected:
+#pragma region MFC Methods
 	// ClassWizard generate virtual function overrides
 	//{{AFX_VIRTUAL(SVToolAdjustmentDialogRotationPageClass)
 	protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+	virtual BOOL OnSetActive();
 	//}}AFX_VIRTUAL
-	
-protected:
-	
-	void refresh();
 
 	// Generated message map functions
 	//{{AFX_MSG(SVToolAdjustmentDialogRotationPageClass)
@@ -62,52 +53,72 @@ protected:
 	afx_msg void OnXFormulaButton();
 	afx_msg void OnYFormulaButton();
 	afx_msg void OnPerformRotation();
+	afx_msg void OnSelChangeInterpolationModeCombo();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
+#pragma endregion MFC Methods
 
-//******************************************************************************
-// Data Element(s):
-//******************************************************************************
+	virtual HRESULT SetInspectionData();
+	void refresh();
+#pragma endregion
+
+#pragma region Member variables
+#pragma region Data Elements
 public:
 	//{{AFX_DATA(SVToolAdjustmentDialogRotationPageClass)
 	enum { IDD = IDD_TA_ROTATION_DIALOG };
-	CString	StrRotationAngleValue;
-	CString	StrRotationXValue;
-	CString	StrRotationYValue;
+	SVEnumerateComboClass	m_cbInterpolation;
+	CString	m_strRotationAngleValue;
+	CString	m_strRotationXValue;
+	CString	m_strRotationYValue;
 	BOOL	m_performRotation;
 	//}}AFX_DATA
+#pragma endregion Data Elements
 
 protected:
-	SVToolAdjustmentDialogSheetClass* pParentDialog;
-	SVToolClass* pTool;
+	SVToolAdjustmentDialogSheetClass* m_pParentDialog;
+	SVToolClass* m_pTool;
 
-	SVEvaluateClass*			pEvaluateRotationX;
-	SVDoubleValueObjectClass*	pRotationXResult;
+	SVEvaluateClass*			m_pEvaluateRotationX;
+	SVDoubleValueObjectClass*	m_pRotationXResult;
 
-	SVEvaluateClass*			pEvaluateRotationY;
-	SVDoubleValueObjectClass*	pRotationYResult;
+	SVEvaluateClass*			m_pEvaluateRotationY;
+	SVDoubleValueObjectClass*	m_pRotationYResult;
 
-	SVEvaluateClass*			pEvaluateRotationAngle;
-	SVDoubleValueObjectClass*	pRotationAngleResult;
+	SVEvaluateClass*			m_pEvaluateRotationAngle;
+	SVDoubleValueObjectClass*	m_pRotationAngleResult;
 
-	SVBoolValueObjectClass*		pPerformRotation;
+	SVBoolValueObjectClass*		m_pPerformRotation;
+	SVEnumerateValueObjectClass* m_pInterpolationMode;
 
 	CFont angleFont;
+#pragma endregion
 };
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
 
-//******************************************************************************
-//* INCLUDE CONTROL:
-//******************************************************************************
 #endif	// SVTADLGROTATIONPAGE_H
 
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVTADlgRotationPage.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVTADlgRotationPage.h_v  $
+ * 
+ *    Rev 1.1   15 Jan 2014 16:47:56   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  879
+ * SCR Title:  Add interpolation mode to transformation tool
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   Changed code to conform with guidelines.
+ * Added SVEnumerateCombo.h.
+ * Changed SetInspectionData method from public to protected.
+ * Added protected MFC methods OnSelChangeInterpolationModeCombo and OnSetActive.
+ * Added members m_cbInterpolation (public) and m_pInterpolationMode (protected).
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   24 Apr 2013 11:17:54   bWalter
  * Project:  SVObserver

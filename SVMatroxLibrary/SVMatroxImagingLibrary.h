@@ -5,8 +5,8 @@
 // * .Module Name     : SVMatroxImagingLibrary
 // * .File Name       : $Workfile:   SVMatroxImagingLibrary.h  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.0  $
-// * .Check In Date   : $Date:   22 Apr 2013 15:21:34  $
+// * .Current Version : $Revision:   1.1  $
+// * .Check In Date   : $Date:   16 Jan 2014 10:40:58  $
 // ******************************************************************************
 
 #ifndef SV_MATROX_IMAGING_LIBRARY_H
@@ -20,14 +20,12 @@
 
 #include <mil.h>
 
-//#define USE_TRY_BLOCKS
-
-#pragma comment( lib, "C:/Program Files/Matrox Imaging/Mil/LIB/mil" )
-#pragma comment( lib, "C:/Program Files/Matrox Imaging/Mil/LIB/milblob" )
-#pragma comment( lib, "C:/Program Files/Matrox Imaging/Mil/LIB/milcode" )
-#pragma comment( lib, "C:/Program Files/Matrox Imaging/Mil/LIB/milim" )
-#pragma comment( lib, "C:/Program Files/Matrox Imaging/Mil/LIB/milocr" )
-#pragma comment( lib, "C:/Program Files/Matrox Imaging/Mil/LIB/milpat" )
+#pragma comment( lib, "mil" )
+#pragma comment( lib, "milblob" )
+#pragma comment( lib, "milcode" )
+#pragma comment( lib, "milim" )
+#pragma comment( lib, "milocr" )
+#pragma comment( lib, "milpat" )
 
 #ifdef M_MIL_CURRENT_ASCII_VERSION
  	#pragma message ( "MIL Version " M_MIL_CURRENT_ASCII_VERSION )
@@ -58,6 +56,16 @@
 // ******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVMatroxLibrary\SVMatroxImagingLibrary.h_v  $
+ * 
+ *    Rev 1.1   16 Jan 2014 10:40:58   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Multi Platform Path Changes
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   22 Apr 2013 15:21:34   bWalter
  * Project:  SVObserver

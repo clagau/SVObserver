@@ -5,8 +5,8 @@
 //* .Module Name     : SVImageView
 //* .File Name       : $Workfile:   SVImageView.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.3  $
-//* .Check In Date   : $Date:   03 Oct 2013 13:31:04  $
+//* .Current Version : $Revision:   1.4  $
+//* .Check In Date   : $Date:   15 Jan 2014 11:43:42  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -1621,6 +1621,11 @@ void SVImageViewClass::DrawOverlay( SVDrawContext* PDrawContext, const SVExtentM
 		SVDrawObjectListClass l_DrawClass;
 
 		l_DrawClass.AddExtentMultiLineData( p_rMultiLine, l_PenStyle );
+		if( p_rMultiLine.m_ObjectID == SVUserMaskOperatorClassGuid)
+		{
+			l_DrawClass.m_bDrawFigureHatched = true;
+		}
+
 		l_DrawClass.Draw( PDrawContext );
 
 		SelectObject( PDrawContext->DC, hPenOld );
@@ -2600,6 +2605,16 @@ HRESULT SVImageViewClass::NotifyIPDocDisplayComplete()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVImageView.cpp_v  $
+ * 
+ *    Rev 1.4   15 Jan 2014 11:43:42   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  882
+ * SCR Title:  Fix Mask - Zoom bug (e109)
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Modified DrawOverlay function to set the hatch flag for Mask figures.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   03 Oct 2013 13:31:04   tbair
  * Project:  SVObserver

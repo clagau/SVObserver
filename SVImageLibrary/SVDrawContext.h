@@ -5,8 +5,8 @@
 //* .Module Name     : SVDrawContext
 //* .File Name       : $Workfile:   SVDrawContext.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   22 Apr 2013 10:37:30  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   15 Jan 2014 11:30:30  $
 //******************************************************************************
 
 #ifndef SVDRAWCONTEXT_H
@@ -39,7 +39,7 @@ public:
 	// Usage p_lIndex is used with the y component of the first point of a polyline
 	// when drawing horizontal lines to skip lines when zoomed in.
 	// called from SVDrawObjectListClass::Draw when used for drawing mask overlays.
-	bool ShouldDrawPoints( long p_lIndex )
+	bool ShouldDrawPoints( long& p_lLastPointDrawn, long p_lIndex )
 	{
 		bool l_bOk = false;
 
@@ -55,12 +55,20 @@ public:
 			{
 				l_bOk = true;
 			}
+			else if( p_lIndex - p_lLastPointDrawn > p_lIndex % lFactor )
+			{
+				l_bOk = true;
+			}
 		}
 		else
 		{
 			l_bOk = true;
 		}
 
+		if( l_bOk )
+		{
+			p_lLastPointDrawn = p_lIndex;
+		}
 		return l_bOk;
 	};
 
@@ -77,6 +85,16 @@ public:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVImageLibrary\SVDrawContext.h_v  $
+ * 
+ *    Rev 1.1   15 Jan 2014 11:30:30   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  882
+ * SCR Title:  Fix Mask - Zoom bug (e109)
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Modified should draw points so the mask lines will work when zoomed in.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   22 Apr 2013 10:37:30   bWalter
  * Project:  SVObserver

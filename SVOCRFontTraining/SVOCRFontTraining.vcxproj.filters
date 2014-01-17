@@ -62,23 +62,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="C:\Program Files\Logical Vision\lib\wdisplay.lib">
-      <Filter>Libraries</Filter>
-    </CustomBuild>
-    <CustomBuild Include="C:\Program Files\Logical Vision\lib\wObj.lib">
-      <Filter>Libraries</Filter>
-    </CustomBuild>
-    <CustomBuild Include="C:\Program Files\Logical Vision\lib\wobjman.lib">
-      <Filter>Libraries</Filter>
-    </CustomBuild>
-    <CustomBuild Include="C:\Program Files\Logical Vision\lib\wocr.lib">
-      <Filter>Libraries</Filter>
-    </CustomBuild>
-    <CustomBuild Include="C:\Program Files\Logical Vision\lib\wsystem.lib">
-      <Filter>Libraries</Filter>
-    </CustomBuild>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="SVOCRFontTrainingCtl.bmp">
       <Filter>Resource Files</Filter>
     </None>
@@ -92,9 +75,6 @@
     </Filter>
     <Filter Include="Resource Files">
       <UniqueIdentifier>{42868d8f-5e12-4ac7-bd84-c26970dbd991}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Libraries">
-      <UniqueIdentifier>{7c6bbe09-a8d1-48a2-a129-b79d6b690de8}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files">
       <UniqueIdentifier>{1b885470-2013-4922-9d2a-32657a48d27c}</UniqueIdentifier>

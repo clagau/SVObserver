@@ -120,7 +120,7 @@ echo regsvr32 exec. time &gt; "$(OutDir)regsvr32.trg"
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <TargetMachine>MachineX86</TargetMachine>
-      <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(OutDir);$(ProgramFiles)\Matrox Imaging\mil\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>SVMatroxLibrary.lib;SVOMFCLibrary.lib;SVSystemLibrary.lib;SVCommandLibrary.lib;SVStatusLibrary.lib;SVTimerLibrary.lib</AdditionalDependencies>
     </Link>
     <Bscmake>
@@ -166,7 +166,7 @@ echo regsvr32 exec. time &gt; "$(OutDir)regsvr32.trg"
       <ModuleDefinitionFile>.\SVMaskEditor.def</ModuleDefinitionFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
-      <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(OutDir);C:\Program Files\Matrox Imaging\mil\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>SVMatroxLibrary.lib;SVOMFCLibrary.lib;SVSystemLibrary.lib;SVCommandLibrary.lib;SVStatusLibrary.lib;SVTimerLibrary.lib</AdditionalDependencies>
     </Link>
     <Bscmake>
@@ -224,7 +224,7 @@ echo regsvr32 exec. time &gt; "$(OutDir)regsvr32.trg"
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <LinkTimeCodeGeneration>Default</LinkTimeCodeGeneration>
-      <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(OutDir);$(ProgramFiles)\Matrox Imaging\mil\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>SVMatroxLibrary.lib;SVOMFCLibrary.lib;SVSystemLibrary.lib;SVCommandLibrary.lib;SVStatusLibrary.lib;SVTimerLibrary.lib</AdditionalDependencies>
     </Link>
     <Bscmake>
@@ -280,7 +280,7 @@ echo regsvr32 exec. time &gt; "$(OutDir)regsvr32.trg"
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <LinkTimeCodeGeneration>Default</LinkTimeCodeGeneration>
-      <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(OutDir);C:\Program Files\Matrox Imaging\mil\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>SVMatroxLibrary.lib;SVOMFCLibrary.lib;SVSystemLibrary.lib;SVCommandLibrary.lib;SVStatusLibrary.lib;SVTimerLibrary.lib</AdditionalDependencies>
     </Link>
     <Bscmake>
