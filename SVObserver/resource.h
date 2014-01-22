@@ -2669,10 +2669,10 @@
 #define ID_SELECTTOOL_LEARN             20218
 #define ID_SELECTTOOL_NORMALIZE         20219
 #define ID_EDIT_NAME                    20220
-#define ID_FORMULA_UNDO                 20221
 #define ID_EDIT_PUBLISHEDRESULTS_BASE   20222
 #define ID_EDIT_PUBLISHEDRESULTS_LIMIT  20322
-#define ID_FORMULA_TEST                 20323
+#define ID_FORMULA_UNDO                 20323
+#define ID_FORMULA_TEST                 20324
 #define ID_VIEW_TOOLSETDRAW             32999
 #define ID_VIEW_TOOLSETDRAW_POP_BASE    33000
 #define ID_VIEW_TOOLSETDRAW_POP_MAX     33049
