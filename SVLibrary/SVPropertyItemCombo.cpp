@@ -5,8 +5,8 @@
 // * .Module Name     : PropertyItemCombo.cpp
 // * .File Name       : $Workfile:   SVPropertyItemCombo.cpp  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.1  $
-// * .Check In Date   : $Date:   01 Oct 2013 10:02:46  $
+// * .Current Version : $Revision:   1.2  $
+// * .Check In Date   : $Date:   23 Jan 2014 07:37:26  $
 // ******************************************************************************
 
 #include "stdafx.h"
@@ -213,7 +213,7 @@ BOOL SVPropertyItemCombo::HitTest(CRect rect, CPoint point)
 void SVPropertyItemCombo::Serialize(CArchive& ar) 
 {
 	CString	str;
-	INT_PTR	size;
+	__int32	size;
 
 	SVPropertyItem::Serialize(ar);
 	if (ar.IsStoring())
@@ -222,7 +222,7 @@ void SVPropertyItemCombo::Serialize(CArchive& ar)
 		ar << m_dwStyle;
 		size = m_Strings.GetSize();
 		ar << size;
-		for (INT_PTR i=0; i<size; i++)
+		for (__int32 i=0; i<size; i++)
 		{
 			str = m_Strings.GetAt(i);
 			ar << str;
@@ -234,7 +234,7 @@ void SVPropertyItemCombo::Serialize(CArchive& ar)
 		ar >> m_dwStyle;
 		ar >> size;
 		m_Strings.RemoveAll();
-		for (int i=0; i<size; i++)
+		for (__int32 i=0; i<size; i++)
 		{
 			ar >> str;
 			m_Strings.Add(str);
@@ -265,6 +265,16 @@ int SVPropertyItemCombo::GetDataIndex(void) const
 // ******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVLibrary\SVPropertyItemCombo.cpp_v  $
+ * 
+ *    Rev 1.2   23 Jan 2014 07:37:26   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Changed type used for size to __int32 in serialize.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   01 Oct 2013 10:02:46   tbair
  * Project:  SVObserver

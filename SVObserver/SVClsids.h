@@ -5,8 +5,8 @@
 //* .Module Name     : SVClsids
 //* .File Name       : $Workfile:   SVClsids.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   11 Nov 2013 07:10:46  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   27 Jan 2014 15:33:58  $
 //******************************************************************************
 
 #ifndef SVCLSIDS_H
@@ -1089,6 +1089,7 @@ extern /*const*/ GUID SVExtentLengthObjectGuid;
 extern /*const*/ GUID SVLUTEquationClassGuid;
 extern /*const*/ GUID SVLUTIndexVariableObjectGuid;
 extern /*const*/ GUID SVLUTEquationResultObjectGuid;
+extern /*const*/ GUID SVLUTEquationClipFlagObjectGuid;
 
 // GUIDs for SVLUTOperatorClass and its outputs...
 extern /*const*/ GUID SVLUTOperatorClassGuid;
@@ -1251,6 +1252,16 @@ extern /*const*/ GUID SVStringHeaderGuid;
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVClsids.h_v  $
+ * 
+ *    Rev 1.2   27 Jan 2014 15:33:58   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  883
+ * SCR Title:  Clip-mode for LUT formula mode
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   Added SVLUTEquationClipFlagObjectGuid.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   11 Nov 2013 07:10:46   tbair
  * Project:  SVObserver

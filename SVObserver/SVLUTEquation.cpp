@@ -5,25 +5,13 @@
 //* .Module Name     : SVLUTEquation
 //* .File Name       : $Workfile:   SVLUTEquation.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 12:19:20  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   27 Jan 2014 15:36:30  $
 //******************************************************************************
 
 #include "stdafx.h"
 #include "SVLUTEquation.h"
-
-
-//******************************************************************************
-//* DEFINITIONS OF MODULE-LOCAL VARIABLES:
-//******************************************************************************
-
-
-//******************************************************************************
-//* CLASS METHOD IMPLEMENTATION(S):
-//******************************************************************************
-
-
-
+#include "SVObserver.h"
 
 //*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/
 //* Class Name : SVLUTEquationClass
@@ -35,9 +23,6 @@
 //******************************************************************************
 SV_IMPLEMENT_CLASS( SVLUTEquationClass, SVLUTEquationClassGuid );
 
-////////////////////////////////////////////////////////////////////////////////
-// 
-////////////////////////////////////////////////////////////////////////////////
 SVLUTEquationClass::SVLUTEquationClass( SVObjectClass* POwner, int StringResourceID )
 				   :SVEquationClass( POwner, StringResourceID )
 {
@@ -55,7 +40,6 @@ SVLUTEquationClass::SVLUTEquationClass( SVObjectClass* POwner, int StringResourc
 ////////////////////////////////////////////////////////////////////////////////
 void SVLUTEquationClass::init()
 {
-
 	// Identify our output type
 	outObjectInfo.ObjectTypeInfo.ObjectType = SVEquationObjectType;
 	outObjectInfo.ObjectTypeInfo.SubType = SVLUTEquationObjectType;
@@ -70,9 +54,19 @@ void SVLUTEquationClass::init()
 	m_byteVectorResult.SetLegacyVectorObjectCompatibility();
 	RegisterEmbeddedObject( &m_lutIndex, SVLUTIndexVariableObjectGuid, IDS_OBJECTNAME_LUTINDEXVARIABLE, false, SVResetItemNone  );
 	RegisterEmbeddedObject( &m_byteVectorResult, SVLUTEquationResultObjectGuid, IDS_OBJECTNAME_LUTRESULT, false, SVResetItemNone  );
+	RegisterEmbeddedObject( &m_isLUTFormulaClipped, SVLUTEquationClipFlagObjectGuid, IDS_OBJECTNAME_LUT_EQUATION_CLIP, false, SVResetItemTool  );
 
 	// Set Embedded defaults
 	m_byteVectorResult.SetDefaultValue( 0, TRUE );
+	
+	if ( TheSVObserverApp.DwCurrentLoadingVersion > 0x60A00 ) //0x60A00 is the version 6.10
+	{  //the default value should be for new tools TRUE
+		m_isLUTFormulaClipped.SetDefaultValue( TRUE, TRUE );
+	}
+	else
+	{  //the default value should be for old configurations FALSE
+		m_isLUTFormulaClipped.SetDefaultValue( FALSE, TRUE );
+	}
 	// NOTE: Vector Size Setting...
 	// Set default vector size in CreateObject, since objectDepth must be set before!!!
 	//m_byteVectorResult.SetSize( 256, TRUE );
@@ -84,13 +78,9 @@ void SVLUTEquationClass::init()
 	addDefaultInputObjects();
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// 
-////////////////////////////////////////////////////////////////////////////////
 SVLUTEquationClass::~SVLUTEquationClass()
 {
 }
-
 
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : CreateObject
@@ -114,7 +104,6 @@ BOOL SVLUTEquationClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructu
 	return bOk;
 }
 
-
 HRESULT SVLUTEquationClass::ResetObject()
 {
 	HRESULT l_hrOk = SVEquationClass::ResetObject();
@@ -128,9 +117,6 @@ HRESULT SVLUTEquationClass::ResetObject()
 	return l_hrOk;
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// 
-////////////////////////////////////////////////////////////////////////////////
 BOOL SVLUTEquationClass::OnValidate()
 {
 	BOOL retVal = TRUE;
@@ -190,7 +176,6 @@ BOOL SVLUTEquationClass::SetDefaultFormula()
 	return FALSE;
 }
 
-
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : onRun
 // -----------------------------------------------------------------------------
@@ -234,6 +219,21 @@ BOOL SVLUTEquationClass::onRun( SVRunStatusClass& RRunStatus )
 		else
 			dResult = 0.0;
 
+		//Clip result if required
+		bool isClipped = false;
+		m_isLUTFormulaClipped.GetValue(isClipped);
+		if (isClipped)
+		{
+			if (UCHAR_MAX < dResult)
+			{
+				dResult = (double)UCHAR_MAX;
+			}
+			else if (0.0 > dResult)
+			{
+				dResult = 0.0;
+			}
+		}
+
 		// Put result into LUT vector at m_lutIndex position...
 		m_byteVectorResult.SetValue( RRunStatus.m_lResultDataIndex, lLUTIndex, ( BYTE ) dResult );
 
@@ -251,15 +251,22 @@ BOOL SVLUTEquationClass::onRun( SVRunStatusClass& RRunStatus )
 	return bRetVal;
 }
 
-
-
-
-
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVLUTEquation.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVLUTEquation.cpp_v  $
+ * 
+ *    Rev 1.1   27 Jan 2014 15:36:30   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  883
+ * SCR Title:  Clip-mode for LUT formula mode
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   Changed init method to register and initialize m_isLUTFormulaClipped.
+ * Changed onRun method to support Clip Mode.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 12:19:20   bWalter
  * Project:  SVObserver

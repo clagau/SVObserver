@@ -5,8 +5,8 @@
 //* .Module Name     : SVClsids
 //* .File Name       : $Workfile:   SVClsids.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   11 Nov 2013 07:10:46  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   27 Jan 2014 15:33:58  $
 //******************************************************************************
 #include "stdafx.h"
 
@@ -1172,6 +1172,7 @@ static char THIS_FILE[] = __FILE__;
 /*const*/ GUID SVLUTEquationClassGuid				= { 0x4c478d7f, 0xfbf9, 0x11d3, { 0xa9, 0x6a, 0x0, 0x10, 0x6f, 0x0, 0x18, 0x36 } };
 /*const*/ GUID SVLUTIndexVariableObjectGuid			= { 0x8519dc8d, 0xfda3, 0x11d3, { 0xa9, 0x6b, 0x0, 0x10, 0x6f, 0x0, 0x18, 0x36 } };
 /*const*/ GUID SVLUTEquationResultObjectGuid		= { 0x8519dc9a, 0xfda3, 0x11d3, { 0xa9, 0x6b, 0x0, 0x10, 0x6f, 0x0, 0x18, 0x36 } };
+/*const*/ GUID SVLUTEquationClipFlagObjectGuid		= { 0x4c9c1dd6, 0x5163, 0x40fe, { 0x8d, 0xe6, 0x59, 0x8a, 0x0, 0x2c, 0x1c, 0x57 } };
 
 // GUIDs for SVLUTOperatorClass and its outputs...
 /*const*/ GUID SVLUTOperatorClassGuid				= { 0x4c478d96, 0xfbf9, 0x11d3, { 0xa9, 0x6a, 0x0, 0x10, 0x6f, 0x0, 0x18, 0x36 } };
@@ -1597,6 +1598,16 @@ static char THIS_FILE[] = __FILE__;
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVClsids.cpp_v  $
+ * 
+ *    Rev 1.2   27 Jan 2014 15:33:58   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  883
+ * SCR Title:  Clip-mode for LUT formula mode
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   Added SVLUTEquationClipFlagObjectGuid.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   11 Nov 2013 07:10:46   tbair
  * Project:  SVObserver

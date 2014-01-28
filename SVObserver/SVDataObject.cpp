@@ -5,8 +5,8 @@
 //* .Module Name     : SVDataObjectClass
 //* .File Name       : $Workfile:   SVDataObject.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   01 Oct 2013 12:48:26  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   23 Jan 2014 07:33:46  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -88,7 +88,7 @@ void SVDataObjectClass::Serialize( CArchive& Archive )
     else
 	{
 		RemoveAll();
-		int size;
+		__int32 size;
 		Archive >> size >> objectType;
 
 		switch( objectType )
@@ -96,7 +96,7 @@ void SVDataObjectClass::Serialize( CArchive& Archive )
 			case DWordType:
 			{
 				DWORD dwDummy;
-				for( int i = 0; i < size; ++i )
+				for( __int32 i = 0; i < size; ++i )
 				{
 					Archive >> dwDummy;
 					Add( dwDummy );
@@ -107,7 +107,7 @@ void SVDataObjectClass::Serialize( CArchive& Archive )
 			case DoubleType:
 			{
 				double dDummy;
-				for( int i = 0; i < size; ++i )
+				for( __int32 i = 0; i < size; ++i )
 				{
 					Archive >> dDummy;
 					Add( dDummy );
@@ -294,6 +294,16 @@ int SVDataObjectClass::GetSize()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVDataObject.cpp_v  $
+ * 
+ *    Rev 1.2   23 Jan 2014 07:33:46   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Change type used for size in serialize to __int32.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   01 Oct 2013 12:48:26   tbair
  * Project:  SVObserver

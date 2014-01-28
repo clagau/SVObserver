@@ -5,29 +5,15 @@
 //* .Module Name     : SVLUTEquation
 //* .File Name       : $Workfile:   SVLUTEquation.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 12:19:30  $
-//******************************************************************************
-
-//******************************************************************************
-//* INCLUDE CONTROL:
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   27 Jan 2014 15:44:20  $
 //******************************************************************************
 
 #ifndef SVLUTEQUATION_H
 #define SVLUTEQUATION_H
 
-//******************************************************************************
-//* INCLUDE(S):
-//******************************************************************************
 #include "SVEquation.h"
 #include "SVValueObject.h"
-
-//******************************************************************************
-//* CLASS(ES) & TYPE(S):
-//* STRUCTURE(S) & TYPE(S):
-//* UNION(S) & TYPE(S):
-//******************************************************************************
-
 
 class SVLUTEquationClass : public SVEquationClass
 {
@@ -54,6 +40,8 @@ protected:
 // Data Element(s):
 //******************************************************************************
 protected:
+	// Flag if the values should be clipped (> 255 -> 255 and < 0 -> 0) 
+	SVBoolValueObjectClass m_isLUTFormulaClipped;
 
 	// Contains the new LUT values after running.
 	// Provides a LUT table size of 256!
@@ -65,19 +53,25 @@ protected:
 	// If Equation supports vector calculations also in future time,
 	// can be replaced with a vector with 256 elements [0...255].
 	SVLongValueObjectClass	m_lutIndex;
-
 };
 
-/**************************************************************************/
-/* INCLUDE CONTROL:
-/**************************************************************************/
 #endif	// SVLUTEQUATION_H
 
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVLUTEquation.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVLUTEquation.h_v  $
+ * 
+ *    Rev 1.1   27 Jan 2014 15:44:20   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  883
+ * SCR Title:  Clip-mode for LUT formula mode
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   Added member m_isLUTFormulaClipped.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 12:19:30   bWalter
  * Project:  SVObserver

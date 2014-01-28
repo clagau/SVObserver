@@ -5,6 +5,7 @@
 #define IDD_PROPPAGE_REGRESSION_FILESELECT 102
 #define IDS_IMAGE_SOURCE_STRING         103
 #define IDS_CONDITIONAL_STRING          104
+#define IDS_OBJECTNAME_LUT_EQUATION_CLIP 105
 #define IDD_MASK_SHAPE_EDITOR           250
 #define IDC_IMAGE_STATIC                251
 #define IDC_ZOOM_IN_BUTTON              252
@@ -1676,6 +1677,7 @@
 #define IDC_SET_RANGE                   15178
 #define IDC_ACTIVATE_CHECK              15179
 #define IDC_IS_NUMBER_CHECK             15180
+#define IDC_CLIP_MODE_CHECK             15181
 #define IDC_CONTINUOUS_RECALC_CHECK     15182
 #define IDC_DISABLE_EQUATION            15183
 #define IDC_MAX_SIZE_EDIT               15184
@@ -2705,7 +2707,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_3D_CONTROLS                     1
 #define _APS_NEXT_RESOURCE_VALUE        11100
-#define _APS_NEXT_COMMAND_VALUE         20324
+#define _APS_NEXT_COMMAND_VALUE         20325
 #define _APS_NEXT_CONTROL_VALUE         16025
 #define _APS_NEXT_SYMED_VALUE           3000
 #endif

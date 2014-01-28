@@ -5,8 +5,8 @@
 //* .Module Name     : SVGraphixDrawObjectClass
 //* .File Name       : $Workfile:   SVGraphix.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   25 Apr 2013 13:06:14  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   27 Jan 2014 07:33:36  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -40,8 +40,8 @@ void SVGraphixClass::Serialize( CArchive& RArchive )
 {
 	if( RArchive.IsStoring() )
 	{
-		INT_PTR i( 0 );
-		INT_PTR size = drawObjectArray.GetSize();
+		__int32 i( 0 );
+		__int32 size = static_cast<__int32>(drawObjectArray.GetSize());
 		// Clean up NULL pointer...
 		for( i = size - 1 ; i >= 0; -- i )
 		{
@@ -50,7 +50,7 @@ void SVGraphixClass::Serialize( CArchive& RArchive )
 		}
 
 		// Serialize draw objects...
-		size = drawObjectArray.GetSize();
+		size = static_cast<__int32>(drawObjectArray.GetSize());
 		RArchive << size;
 		for( i = 0; i < size; ++i )
 		{
@@ -74,12 +74,12 @@ void SVGraphixClass::Serialize( CArchive& RArchive )
 	{
 		FlushDrawObjects();
 		
-		int size = 0;
-		int objectType = 0;
+		__int32 size = 0;
+		__int32 objectType = 0;
 		SVGraphixDrawObjectClass* pNewObject = NULL;
 		// Serialize draw objects...
 		RArchive >> size;
-		for( int i = 0; i < size; ++i )
+		for( __int32 i = 0; i < size; ++i )
 		{
 			RArchive >> objectType;
 			// Create and insert draw object...
@@ -377,7 +377,27 @@ BOOL SVGraphixClass::SetGraphixData( HGLOBAL HGlobalMem )
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVOMFCLibrary\SVGraphix.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVOMFCLibrary\SVGraphix.cpp_v  $
+ * 
+ *    Rev 1.2   27 Jan 2014 07:33:36   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Added static_cast in serialize to remove warning.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.1   23 Jan 2014 07:40:38   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Changed type used for size to __int32 in serialize.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   25 Apr 2013 13:06:14   bWalter
  * Project:  SVObserver
