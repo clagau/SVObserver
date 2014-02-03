@@ -5,8 +5,8 @@
 // * .Module Name     : SVMatroxBufferInterface
 // * .File Name       : $Workfile:   SVMatroxBufferInterface.cpp  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.2  $
-// * .Check In Date   : $Date:   23 Oct 2013 08:50:48  $
+// * .Current Version : $Revision:   1.3  $
+// * .Check In Date   : $Date:   29 Jan 2014 10:23:24  $
 // ******************************************************************************
 
 #include "stdafx.h"
@@ -2255,10 +2255,21 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::Get( const SVMatr
 			MIL_INT l_lMatroxType = Convert2MatroxType(p_eWhat);
 			if( l_lMatroxType != 0 )
 			{
-				MbufInquire( p_rBuf.GetIdentifier(),
-					l_lMatroxType,
-					&p_rdResult);
-
+				// MbufInquire is expecting MIL_INT except for M_MIN or M_MAX will use double
+				if( (l_lMatroxType & M_MIN) == M_MIN || (l_lMatroxType & M_MAX) == M_MAX)
+				{
+					MbufInquire( p_rBuf.GetIdentifier(),
+						l_lMatroxType,
+						&p_rdResult);
+				}
+				else
+				{
+					MIL_INT mValue = 0;
+					MbufInquire( p_rBuf.GetIdentifier(),
+						l_lMatroxType,
+						&mValue);
+					p_rdResult = static_cast<double>(mValue);
+				}
 				l_Code = SVMatroxApplicationInterface::GetLastStatus();
 			}
 			else
@@ -2672,6 +2683,16 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::Export(const SVMa
 // ******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVMatroxLibrary\SVMatroxBufferInterface.cpp_v  $
+ * 
+ *    Rev 1.3   29 Jan 2014 10:23:24   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Use of proper matrox types for Inquire function.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   23 Oct 2013 08:50:48   tbair
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : SVPerspectiveWarpDlg
 //* .File Name       : $Workfile:   SVPerspectiveWarpDlg.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 13:22:10  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   01 Feb 2014 12:00:00  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -126,7 +126,7 @@ BOOL SVPerspectiveWarpDlg::OnInitDialog()
 
 		SVObjectTypeInfoStruct objectInfo;
 		objectInfo.EmbeddedID = SVWarpTypeObjectGuid;
-		m_pWarpType = ( SVEnumerateValueObjectClass* ) ::SVSendMessage( m_pTool, SVM_GETFIRST_OBJECT, NULL, ( DWORD ) &objectInfo );
+		m_pWarpType = ( SVEnumerateValueObjectClass* ) ::SVSendMessage( m_pTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>(&objectInfo) );
 		if( m_pWarpType )
 		{
 			
@@ -143,7 +143,7 @@ BOOL SVPerspectiveWarpDlg::OnInitDialog()
 
 		// Interpolation Mode
 		objectInfo.EmbeddedID = SVOutputInterpolationModeObjectGuid;
-		m_pInterpolationMode = ( SVEnumerateValueObjectClass* ) ::SVSendMessage( m_pTool, SVM_GETFIRST_OBJECT, NULL, ( DWORD ) &objectInfo );
+		m_pInterpolationMode = ( SVEnumerateValueObjectClass* ) ::SVSendMessage( m_pTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>(&objectInfo) );
 		if( m_pInterpolationMode )
 		{
 			CString l_strEnumList;
@@ -209,7 +209,17 @@ void SVPerspectiveWarpDlg::OnSelchangeInterpolationModeCombo()
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVPerspectiveWarpDlg.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVPerspectiveWarpDlg.cpp_v  $
+ * 
+ *    Rev 1.1   01 Feb 2014 12:00:00   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Changed SVSendmessage and processmessage to use LONG_PTR instead of DWORD.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 13:22:10   bWalter
  * Project:  SVObserver

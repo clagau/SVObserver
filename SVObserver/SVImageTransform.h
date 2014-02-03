@@ -5,8 +5,8 @@
 //* .Module Name     : SVImageTransform
 //* .File Name       : $Workfile:   SVImageTransform.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   15 Jan 2014 16:43:36  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   01 Feb 2014 10:48:52  $
 //******************************************************************************
 
 //******************************************************************************
@@ -62,7 +62,7 @@ public:
 #pragma region Protected Methods
 protected:
 	virtual BOOL onRun( SVRunStatusClass& runStatus );
-	virtual DWORD processMessage( DWORD DwMessageID, DWORD DwMessageValue, DWORD DwMessageContext );
+	virtual LONG_PTR processMessage( DWORD DwMessageID, LONG_PTR DwMessageValue, LONG_PTR DwMessageContext );
 
 	virtual HRESULT UpdateTransformData( long p_lIndex );
 #pragma endregion
@@ -105,6 +105,16 @@ protected:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVImageTransform.h_v  $
+ * 
+ *    Rev 1.2   01 Feb 2014 10:48:52   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Changed SVSendmessage and processmessage to use LONG_PTR instead of DWORD.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   15 Jan 2014 16:43:36   bwalter
  * Project:  SVObserver

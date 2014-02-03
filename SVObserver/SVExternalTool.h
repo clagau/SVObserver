@@ -5,8 +5,8 @@
 //* .Module Name     : SVExternalTool
 //* .File Name       : $Workfile:   SVExternalTool.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 10:30:30  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   01 Feb 2014 10:36:44  $
 //******************************************************************************
 
 #ifndef SVEXTERNALTOOL_H
@@ -32,7 +32,7 @@ public:
 protected:
 	virtual HRESULT UpdateImageWithExtent( unsigned long p_Index );
 
-	virtual DWORD processMessage( DWORD DwMessageID, DWORD DwMessageValue, DWORD DwMessageContext );
+	virtual LONG_PTR processMessage( DWORD DwMessageID, LONG_PTR DwMessageValue, LONG_PTR DwMessageContext );
 
 	SVBoolValueObjectClass m_svPerformTranslation;
 
@@ -54,7 +54,17 @@ public:
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVExternalTool.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVExternalTool.h_v  $
+ * 
+ *    Rev 1.1   01 Feb 2014 10:36:44   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Changed sendmessage to use LONG_PTR instead of DWORD.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 10:30:30   bWalter
  * Project:  SVObserver

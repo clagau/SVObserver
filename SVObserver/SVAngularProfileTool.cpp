@@ -5,8 +5,8 @@
 //* .Module Name     : SVAngularProfileTool
 //* .File Name       : $Workfile:   SVAngularProfileTool.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.3  $
-//* .Check In Date   : $Date:   13 Aug 2013 09:46:08  $
+//* .Current Version : $Revision:   1.4  $
+//* .Check In Date   : $Date:   01 Feb 2014 10:16:30  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -360,9 +360,9 @@ HRESULT SVAngularProfileToolClass::DoesObjectHaveExtents() const
 	return S_OK;
 }
 
-DWORD SVAngularProfileToolClass::processMessage( DWORD DwMessageID, DWORD DwMessageValue, DWORD DwMessageContext )
+LONG_PTR SVAngularProfileToolClass::processMessage( DWORD DwMessageID, LONG_PTR DwMessageValue, LONG_PTR DwMessageContext )
 {
-	DWORD DwResult = NULL;
+	LONG_PTR DwResult = NULL;
 
 	// Try to process message by yourself...
 	DWORD dwPureMessageID = DwMessageID & SVM_PURE_MESSAGE;
@@ -447,7 +447,7 @@ SVObjectClass* SVAngularProfileToolClass::getImageToLineProject()
 
 	objectInfo.ObjectType = SVImageToLineProjectObjectType;
 
-	SVObjectClass* pProject = (SVObjectClass *)::SVSendMessage( this, SVM_GETFIRST_OBJECT, NULL, ( DWORD )&objectInfo );
+	SVObjectClass* pProject = (SVObjectClass *)::SVSendMessage( this, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>(&objectInfo) );
 
 	return pProject;
 }
@@ -462,7 +462,7 @@ SVLineClass* SVAngularProfileToolClass::getOutputLine()
 		
 		objectInfo.ObjectType = SVLineObjectType;
 
-		SVLineClass* pLine = (SVLineClass *)::SVSendMessage( pProject, SVM_GETFIRST_OBJECT, NULL, ( DWORD )&objectInfo );
+		SVLineClass* pLine = (SVLineClass *)::SVSendMessage( pProject, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>(&objectInfo) );
 	
 		return pLine;
 	}
@@ -521,6 +521,16 @@ BOOL SVAngularProfileToolClass::OnValidate()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVAngularProfileTool.cpp_v  $
+ * 
+ *    Rev 1.4   01 Feb 2014 10:16:30   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Changed sendmessage to use LONG_PTR instead of DWORD.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   13 Aug 2013 09:46:08   bWalter
  * Project:  SVObserver

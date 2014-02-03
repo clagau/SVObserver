@@ -5,8 +5,8 @@
 //* .Module Name     : SVOCRGrayDialog
 //* .File Name       : $Workfile:   SVOCRGrayDialog.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 12:56:26  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   01 Feb 2014 11:55:20  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -248,7 +248,7 @@ void SVOCRGrayDialogClass::OnFontTraining()
 	SVObjectTypeInfoStruct info;
 	info.ObjectType = SVUnaryImageOperatorListObjectType;
 	SVObjectClass* pObject = ( SVObjectClass* ) ::SVSendMessage( 
-		pTool, SVM_GETFIRST_OBJECT, NULL, ( DWORD ) &info );
+		pTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>(&info) );
 	if( ! SV_IS_KIND_OF( pObject, SVUnaryImageOperatorListClass ) )
     {
        AfxMessageBox( _T( "ERROR: Font Training Setup: No OperatorList specified" ));
@@ -257,7 +257,7 @@ void SVOCRGrayDialogClass::OnFontTraining()
 
 	info.ObjectType = SVImageObjectType;
 	pObject = ( SVObjectClass* ) ::SVSendMessage( 
-		pObject, SVM_GETFIRST_OBJECT, NULL, ( DWORD ) &info );
+		pObject, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>(&info) );
 	if( ! SV_IS_KIND_OF( pObject, SVImageClass ) )
     {
        AfxMessageBox( _T( "ERROR: Font Training Setup: No Image specified" ));
@@ -404,7 +404,17 @@ void SVOCRGrayDialogClass::AddButtons()
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVOCRGrayDialog.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVOCRGrayDialog.cpp_v  $
+ * 
+ *    Rev 1.1   01 Feb 2014 11:55:20   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Changed SVSendmessage and processmessage to use LONG_PTR instead of DWORD.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 12:56:26   bWalter
  * Project:  SVObserver

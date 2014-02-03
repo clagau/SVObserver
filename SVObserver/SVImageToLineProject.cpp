@@ -5,8 +5,8 @@
 //* .Module Name     : SVImageToLineProject
 //* .File Name       : $Workfile:   SVImageToLineProject.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   13 May 2013 12:16:12  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   01 Feb 2014 10:48:50  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -271,9 +271,9 @@ BOOL SVImageToLineProjectClass::OnValidate()
 }
 
 
-DWORD SVImageToLineProjectClass::processMessage( DWORD DwMessageID, DWORD DwMessageValue, DWORD DwMessageContext )
+LONG_PTR SVImageToLineProjectClass::processMessage( DWORD DwMessageID, LONG_PTR DwMessageValue, LONG_PTR DwMessageContext )
 {
-	DWORD DwResult = NULL;
+	LONG_PTR DwResult = NULL;
 	// Try to process message by yourself...
 	DWORD dwPureMessageID = DwMessageID & SVM_PURE_MESSAGE;
 	switch( dwPureMessageID )
@@ -546,7 +546,17 @@ HRESULT SVImageToLineProjectClass::UpdateLineExtentData()
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVImageToLineProject.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVImageToLineProject.cpp_v  $
+ * 
+ *    Rev 1.2   01 Feb 2014 10:48:50   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Changed SVSendmessage and processmessage to use LONG_PTR instead of DWORD.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   13 May 2013 12:16:12   bWalter
  * Project:  SVObserver

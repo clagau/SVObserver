@@ -5,8 +5,8 @@
 //* .Module Name     : 
 //* .File Name       : $Workfile:   SVUserMaskOperatorClass.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   15 Jan 2014 11:36:14  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   01 Feb 2014 12:26:12  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -257,7 +257,7 @@ SVShapeMaskHelperClass* SVUserMaskOperatorClass::GetShapeHelper()
 		BOOL bAddFriend = AddFriend( pShapeHelper->GetUniqueObjectID() );
 		ASSERT( bAddFriend );
 
-		if( ::SVSendMessage( this, SVM_CREATE_CHILD_OBJECT, ( DWORD ) pShapeHelper, NULL ) == SVMR_SUCCESS )
+		if( ::SVSendMessage( this, SVM_CREATE_CHILD_OBJECT, reinterpret_cast<LONG_PTR>(pShapeHelper), NULL ) == SVMR_SUCCESS )
 		{
 			pMaskHelper = pShapeHelper;
 		}
@@ -972,7 +972,7 @@ BOOL SVUserMaskOperatorClass::ConnectAllInputs()
 							for (int j = 0; j < friendList.GetSize(); ++ j)
 							{
 								SVObjectInfoStruct& rFriend = friendList[j];
-								pObject = (SVObjectClass *)::SVSendMessage(rFriend.UniqueObjectID, SVM_GETFIRST_OBJECT, NULL, (DWORD) &info);
+								pObject = (SVObjectClass *)::SVSendMessage(rFriend.UniqueObjectID, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>(&info));
 								if (pObject)
 								{
 									// Connect input ...
@@ -994,11 +994,11 @@ BOOL SVUserMaskOperatorClass::ConnectAllInputs()
 							// if color system & pOwner == SVToolSetClass
 							if (TheSVObserverApp.IsColorSVIM() && (SV_IS_KIND_OF(pOwner, SVToolSetClass)) && info.ObjectType == SVImageObjectType)
 							{
-								pObject = (SVObjectClass *)::SVSendMessage(pOwner, SVM_GET_IMAGE_BAND0_OBJECT, (DWORD)pRequestor, (DWORD)&info);
+								pObject = (SVObjectClass *)::SVSendMessage(pOwner, SVM_GET_IMAGE_BAND0_OBJECT, reinterpret_cast<LONG_PTR>(pRequestor), reinterpret_cast<LONG_PTR>(&info));
 							}
 							else
 							{
-								pObject = (SVObjectClass *)::SVSendMessage(pOwner, SVM_GETFIRST_OBJECT, (DWORD)pRequestor, (DWORD)&info);
+								pObject = (SVObjectClass *)::SVSendMessage(pOwner, SVM_GETFIRST_OBJECT, reinterpret_cast<LONG_PTR>(pRequestor), reinterpret_cast<LONG_PTR>(&info));
 							}
 							if (pObject)
 							{
@@ -1016,7 +1016,7 @@ BOOL SVUserMaskOperatorClass::ConnectAllInputs()
 				}
 				
 				// Finally try to connect...
-				DWORD dwConnectResult = ::SVSendMessage(pInInfo->GetInputObjectInfo().UniqueObjectID, SVM_CONNECT_OBJECT_INPUT, (DWORD) pInInfo, NULL);
+				DWORD dwConnectResult = ::SVSendMessage(pInInfo->GetInputObjectInfo().UniqueObjectID, SVM_CONNECT_OBJECT_INPUT, reinterpret_cast<LONG_PTR>(pInInfo), NULL);
 
 				dwResult = dwConnectResult | dwResult;
 			}
@@ -1240,6 +1240,16 @@ BOOL SVUserMaskOperatorClass::OnValidate()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVUserMaskOperatorClass.cpp_v  $
+ * 
+ *    Rev 1.3   01 Feb 2014 12:26:12   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Changed SVSendmessage and processmessage to use LONG_PTR instead of DWORD.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   15 Jan 2014 11:36:14   tbair
  * Project:  SVObserver

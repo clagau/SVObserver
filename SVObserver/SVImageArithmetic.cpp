@@ -5,8 +5,8 @@
 //* .Module Name     : SVImageArithmetic
 //* .File Name       : $Workfile:   SVImageArithmetic.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   01 Oct 2013 14:19:30  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   01 Feb 2014 10:42:28  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -362,9 +362,9 @@ BOOL SVImageArithmeticClass::OnValidate()
 }
 
 
-DWORD SVImageArithmeticClass::processMessage( DWORD DwMessageID, DWORD DwMessageValue, DWORD DwMessageContext )
+LONG_PTR SVImageArithmeticClass::processMessage( DWORD DwMessageID, LONG_PTR DwMessageValue, LONG_PTR DwMessageContext )
 {
-	DWORD DwResult = NULL;
+	LONG_PTR DwResult = NULL;
 	// Try to process message by yourself...
 	DWORD dwPureMessageID = DwMessageID & SVM_PURE_MESSAGE;
 	switch( dwPureMessageID )
@@ -535,6 +535,16 @@ HRESULT SVImageArithmeticClass::CollectInputImageNames( SVRunStatusClass& RRunSt
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVImageArithmetic.cpp_v  $
+ * 
+ *    Rev 1.3   01 Feb 2014 10:42:28   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Changed sendmessage to use LONG_PTR instead of DWORD.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   01 Oct 2013 14:19:30   tbair
  * Project:  SVObserver

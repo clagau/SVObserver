@@ -5,8 +5,8 @@
 //* .Module Name     : SVLUTEquation
 //* .File Name       : $Workfile:   SVLUTEquation.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   27 Jan 2014 15:36:30  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   31 Jan 2014 17:16:30  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -59,7 +59,7 @@ void SVLUTEquationClass::init()
 	// Set Embedded defaults
 	m_byteVectorResult.SetDefaultValue( 0, TRUE );
 	
-	if ( TheSVObserverApp.DwCurrentLoadingVersion > 0x60A00 ) //0x60A00 is the version 6.10
+	if ( TheSVObserverApp.getLoadingVersion() > 0x60A00 ) //0x60A00 is the version 6.10
 	{  //the default value should be for new tools TRUE
 		m_isLUTFormulaClipped.SetDefaultValue( TRUE, TRUE );
 	}
@@ -256,6 +256,16 @@ BOOL SVLUTEquationClass::onRun( SVRunStatusClass& RRunStatus )
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVLUTEquation.cpp_v  $
+ * 
+ *    Rev 1.2   31 Jan 2014 17:16:30   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  884
+ * SCR Title:  Update Source Code Files to Follow New Programming Standards and Guidelines
+ * Checked in by:  bWalter;  Ben Walter
+ * Change Description:  
+ *   Changed to follow guidelines more closely.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   27 Jan 2014 15:36:30   bwalter
  * Project:  SVObserver

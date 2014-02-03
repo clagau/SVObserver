@@ -5,8 +5,8 @@
 //* .Module Name     : SVPPQObject
 //* .File Name       : $Workfile:   SVPPQObject.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.12  $
-//* .Check In Date   : $Date:   13 Jan 2014 12:50:20  $
+//* .Current Version : $Revision:   1.13  $
+//* .Check In Date   : $Date:   01 Feb 2014 12:00:04  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -3533,9 +3533,9 @@ BOOL SVPPQObject::FinishTrigger( void *pCaller, SVTriggerInfoStruct& p_rTriggerI
 	return l_Status;
 }
 
-DWORD SVPPQObject::processMessage( DWORD DwMessageID, DWORD DwMessageValue, DWORD DwMessageContext )
+LONG_PTR SVPPQObject::processMessage( DWORD DwMessageID, LONG_PTR DwMessageValue, LONG_PTR DwMessageContext )
 {
-	DWORD DwResult = NULL;
+	LONG_PTR DwResult = NULL;
 	// Try to process message by yourself...
 
 	DWORD dwPureMessageID = DwMessageID & SVM_PURE_MESSAGE;
@@ -4664,6 +4664,16 @@ void SVPPQObject::SVPPQTracking::IncrementTimeCount( const SVString& p_rName, si
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVPPQObject.cpp_v  $
+ * 
+ *    Rev 1.13   01 Feb 2014 12:00:04   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Changed SVSendmessage and processmessage to use LONG_PTR instead of DWORD.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.12   13 Jan 2014 12:50:20   tbair
  * Project:  SVObserver

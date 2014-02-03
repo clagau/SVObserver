@@ -5,8 +5,8 @@
 //* .Module Name     : SVTADlgTranslationShiftPage
 //* .File Name       : $Workfile:   SVTADlgTranslationShiftPage.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   24 Apr 2013 11:24:40  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   01 Feb 2014 12:14:26  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -89,12 +89,12 @@ BOOL SVTADlgTranslationShiftPageClass::OnInitDialog()
 
 		// Get Evaluate Object for the X coordinate...
 		evaluateObjectInfo.SubType = SVEvaluateTranslationXObjectType;		
-		pEvaluateTranslationX = (SVEvaluateClass*) ::SVSendMessage(pTool, SVM_GETFIRST_OBJECT, NULL, (DWORD) &evaluateObjectInfo);
+		pEvaluateTranslationX = (SVEvaluateClass*) ::SVSendMessage(pTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>(&evaluateObjectInfo));
 
 		
 		// Get Evaluate Object for the Y coordinate...
 		evaluateObjectInfo.SubType = SVEvaluateTranslationYObjectType;
-		pEvaluateTranslationY = (SVEvaluateClass*) ::SVSendMessage(pTool, SVM_GETFIRST_OBJECT, NULL, (DWORD) &evaluateObjectInfo);
+		pEvaluateTranslationY = (SVEvaluateClass*) ::SVSendMessage(pTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>(&evaluateObjectInfo));
 
 		SVShiftTool* l_pTool = NULL;
 
@@ -482,7 +482,17 @@ void SVTADlgTranslationShiftPageClass::OnBnClickedChkEnableSourceImageExtents()
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVTADlgTranslationShiftPage.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVTADlgTranslationShiftPage.cpp_v  $
+ * 
+ *    Rev 1.1   01 Feb 2014 12:14:26   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Changed SVSendmessage and processmessage to use LONG_PTR instead of DWORD.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   24 Apr 2013 11:24:40   bWalter
  * Project:  SVObserver

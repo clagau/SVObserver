@@ -5,8 +5,8 @@
 //* .Module Name     : SVOutputObjectList
 //* .File Name       : $Workfile:   SVOutputObjectList.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.5  $
-//* .Check In Date   : $Date:   07 Aug 2013 13:24:24  $
+//* .Current Version : $Revision:   1.6  $
+//* .Check In Date   : $Date:   01 Feb 2014 11:55:26  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -810,9 +810,9 @@ bool SVOutputObjectList::OutputIsNotValid( SVString p_strName )
 	return l_bRet;
 }
 
-DWORD SVOutputObjectList::processMessage( DWORD DwMessageID, DWORD DwMessageValue, DWORD DwMessageContext )
+LONG_PTR SVOutputObjectList::processMessage( DWORD DwMessageID, LONG_PTR DwMessageValue, LONG_PTR DwMessageContext )
 {
-	DWORD DwResult = NULL;
+	LONG_PTR DwResult = NULL;
 	// Try to process message by yourself...
 
 	DWORD dwPureMessageID = DwMessageID & SVM_PURE_MESSAGE;
@@ -968,6 +968,16 @@ void SVOutputObjectList::ClearOutputList()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVOutputObjectList.cpp_v  $
+ * 
+ *    Rev 1.6   01 Feb 2014 11:55:26   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Changed SVSendmessage and processmessage to use LONG_PTR instead of DWORD.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.5   07 Aug 2013 13:24:24   sjones
  * Project:  SVObserver

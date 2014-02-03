@@ -5,8 +5,8 @@
 //* .Module Name     : SVLine
 //* .File Name       : $Workfile:   SVLine.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   13 May 2013 12:16:26  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   01 Feb 2014 10:48:58  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -565,9 +565,9 @@ HRESULT SVLineClass::SetObjectValue( SVObjectAttributeClass* PDataObject )
 	return hr;
 }
 
-DWORD SVLineClass::processMessage(DWORD DwMessageID, DWORD DwMessageValue, DWORD DwMessageContext)
+LONG_PTR SVLineClass::processMessage(DWORD DwMessageID, LONG_PTR DwMessageValue, LONG_PTR DwMessageContext)
 {
-	DWORD DwResult = 0L;
+	LONG_PTR DwResult = 0L;
 
 	switch (DwMessageID & SVM_PURE_MESSAGE)
 	{
@@ -594,7 +594,17 @@ DWORD SVLineClass::processMessage(DWORD DwMessageID, DWORD DwMessageValue, DWORD
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVLine.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVLine.cpp_v  $
+ * 
+ *    Rev 1.2   01 Feb 2014 10:48:58   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Changed SVSendmessage and processmessage to use LONG_PTR instead of DWORD.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   13 May 2013 12:16:26   bWalter
  * Project:  SVObserver

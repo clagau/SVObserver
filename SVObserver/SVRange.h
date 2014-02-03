@@ -5,8 +5,8 @@
 //* .Module Name     : SVRangeClass
 //* .File Name       : $Workfile:   SVRange.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 14:39:00  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   01 Feb 2014 12:03:56  $
 //******************************************************************************
 
 #ifndef SVRANGE_H
@@ -39,7 +39,7 @@ protected:
 	virtual void init();
 	BOOL getInputValue( double& RVal );
 	BOOL onRun(SVRunStatusClass& RRunStatus);
-	DWORD processMessage( DWORD DwMessageID, DWORD DwMessageValue, DWORD DwMessageContext );
+	LONG_PTR processMessage( DWORD DwMessageID, LONG_PTR DwMessageValue, LONG_PTR DwMessageContext );
 
 public:
 	SVDoubleValueObjectClass FailLow;
@@ -58,7 +58,17 @@ protected:
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVRange.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVRange.h_v  $
+ * 
+ *    Rev 1.1   01 Feb 2014 12:03:56   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Changed SVSendmessage and processmessage to use LONG_PTR instead of DWORD.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 14:39:00   bWalter
  * Project:  SVObserver

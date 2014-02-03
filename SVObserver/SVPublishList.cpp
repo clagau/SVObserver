@@ -5,8 +5,8 @@
 //* .Module Name     : SVPublishList.cpp
 //* .File Name       : $Workfile:   SVPublishList.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.5  $
-//* .Check In Date   : $Date:   02 Oct 2013 07:12:22  $
+//* .Current Version : $Revision:   1.6  $
+//* .Check In Date   : $Date:   01 Feb 2014 12:03:54  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -108,7 +108,7 @@ void SVPublishListClass::Refresh(SVTaskObjectClass * pRootObject)
 			InObjectInfo.SetInputObject( pPublishedOutObjectInfo->UniqueObjectID );
 
 			// Disconnect
-			::SVSendMessage(pPublishedOutObjectInfo->UniqueObjectID, SVM_DISCONNECT_OBJECT_INPUT, ( DWORD )&InObjectInfo, NULL );
+			::SVSendMessage(pPublishedOutObjectInfo->UniqueObjectID, SVM_DISCONNECT_OBJECT_INPUT, reinterpret_cast<LONG_PTR>(&InObjectInfo), NULL );
 			
 			//if( should not be anymore published )
 			SVPublicAttributeEntryStruct* pPublicAttribute = pPublishedOutObjectInfo->PObject->GetPublicAttribute();
@@ -176,7 +176,7 @@ void SVPublishListClass::Refresh(SVTaskObjectClass * pRootObject)
 			InObjectInfo.SetInputObject( pOutObjectInfo->UniqueObjectID );
 
 			// connect to the object
-			if( ::SVSendMessage( pOutObjectInfo->PObject, SVM_CONNECT_OBJECT_INPUT, (DWORD) &InObjectInfo, NULL ) == SVMR_SUCCESS )
+			if( ::SVSendMessage( pOutObjectInfo->PObject, SVM_CONNECT_OBJECT_INPUT,reinterpret_cast<LONG_PTR>(&InObjectInfo), NULL ) == SVMR_SUCCESS )
 			{
 				// *** // ***
 				SVValueObjectClass* pValueObject = dynamic_cast< SVValueObjectClass* >( SVObjectManagerClass::Instance().GetObject( pOutObjectInfo->UniqueObjectID ) );
@@ -279,7 +279,7 @@ void SVPublishListClass::Release(SVTaskObjectClass * pRootObject)
 		InObjectInfo.SetInputObject( pPublishedOutObjectInfo->UniqueObjectID );
 
 		// Disconnect
-		::SVSendMessage(pPublishedOutObjectInfo->UniqueObjectID, SVM_DISCONNECT_OBJECT_INPUT, ( DWORD )&InObjectInfo, NULL );
+		::SVSendMessage(pPublishedOutObjectInfo->UniqueObjectID, SVM_DISCONNECT_OBJECT_INPUT, reinterpret_cast<LONG_PTR>(&InObjectInfo), NULL );
 		
 		//if( should not be anymore published )
 		SVPublicAttributeEntryStruct* pPublicAttribute = pPublishedOutObjectInfo->PObject->GetPublicAttribute();
@@ -378,6 +378,16 @@ BOOL SVPublishListClass::RemovePublishedEntry( const SVGUID& RGuid )
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVPublishList.cpp_v  $
+ * 
+ *    Rev 1.6   01 Feb 2014 12:03:54   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Changed SVSendmessage and processmessage to use LONG_PTR instead of DWORD.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.5   02 Oct 2013 07:12:22   tbair
  * Project:  SVObserver

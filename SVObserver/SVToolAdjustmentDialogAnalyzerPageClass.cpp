@@ -5,8 +5,8 @@
 //* .Module Name     : SVToolAdjustmentDialogAnalyzerPageClass
 //* .File Name       : $Workfile:   SVToolAdjustmentDialogAnalyzerPageClass.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   02 Oct 2013 08:24:40  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   01 Feb 2014 12:18:28  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -57,9 +57,9 @@ SVToolAdjustmentDialogAnalyzerPageClass::SVToolAdjustmentDialogAnalyzerPageClass
 			SVObjectTypeInfoStruct info;
 			info.ObjectType = SVAnalyzerObjectType;
 
-			SVSendMessage( pTool, SVM_GETAVAILABLE_OBJECTS, ( DWORD )&availableAnalyzers, ( DWORD )&info );
+			SVSendMessage( pTool, SVM_GETAVAILABLE_OBJECTS, reinterpret_cast<LONG_PTR>(&availableAnalyzers), reinterpret_cast<LONG_PTR>(&info) );
 
-			pCurrentAnalyzer = (SVAnalyzerClass *)SVSendMessage( pTool, SVM_GETFIRST_OBJECT, NULL, ( DWORD )&info );
+			pCurrentAnalyzer = (SVAnalyzerClass *)SVSendMessage( pTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>(&info) );
 		}
 	}
 }
@@ -305,9 +305,9 @@ void SVToolAdjustmentDialogAnalyzerPageClass::DestroyAnalyzer()
 			availableAnalyzerListBox.remove(pCurrentAnalyzer->GetObjectName());
 		}
 
-		::SVSendMessage( pTool, SVMSGID_DISCONNECT_IMAGE_OBJECT, ( DWORD )pCurrentAnalyzer, NULL );
+		::SVSendMessage( pTool, SVMSGID_DISCONNECT_IMAGE_OBJECT, reinterpret_cast<LONG_PTR>(pCurrentAnalyzer), NULL );
 		// Close, Disconnect and Delete the Object
-		::SVSendMessage( pTool, SVM_DESTROY_CHILD_OBJECT, ( DWORD )pCurrentAnalyzer, SVMFSetDefaultInputs | SVMFResetInspection );
+		::SVSendMessage( pTool, SVM_DESTROY_CHILD_OBJECT, reinterpret_cast<LONG_PTR>(pCurrentAnalyzer), SVMFSetDefaultInputs | SVMFResetInspection );
 
 		pCurrentAnalyzer = NULL;
 	}
@@ -350,7 +350,7 @@ void SVToolAdjustmentDialogAnalyzerPageClass::OnResultButton()
 		SVClassInfoStructListClass	availableResults;
 		SVObjectTypeInfoStruct		resultTypeInfo;
 		resultTypeInfo.ObjectType = SVResultObjectType;
-		::SVSendMessage( pCurrentAnalyzer, SVM_GETAVAILABLE_OBJECTS, ( DWORD ) &availableResults, ( DWORD ) &resultTypeInfo );
+		::SVSendMessage( pCurrentAnalyzer, SVM_GETAVAILABLE_OBJECTS, reinterpret_cast<LONG_PTR>(&availableResults), reinterpret_cast<LONG_PTR>(&resultTypeInfo) );
 
 		// Get Dialog Title...
 		CString strTitle;
@@ -432,6 +432,16 @@ void SVToolAdjustmentDialogAnalyzerPageClass::OnPublishButton()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVToolAdjustmentDialogAnalyzerPageClass.cpp_v  $
+ * 
+ *    Rev 1.2   01 Feb 2014 12:18:28   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Changed SVSendmessage and processmessage to use LONG_PTR instead of DWORD.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   02 Oct 2013 08:24:40   tbair
  * Project:  SVObserver

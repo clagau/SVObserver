@@ -5,8 +5,8 @@
 //* .Module Name     : SVTADlgColorThresholdOutput
 //* .File Name       : $Workfile:   SVTADlgColorThresholdOutput.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 15:20:08  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   01 Feb 2014 12:09:00  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -64,7 +64,7 @@ BOOL SVTADlgColorThresholdOutput::OnInitDialog()
 	objectInfo.ObjectType = SVOperatorObjectType;
 	objectInfo.SubType = SVColorThresholdObjectType;
 
-	mpThreshold = reinterpret_cast <SVColorThresholdClass*> ( ::SVSendMessage( mpTool, SVM_GETFIRST_OBJECT, NULL, ( DWORD ) &objectInfo ) );
+	mpThreshold = reinterpret_cast <SVColorThresholdClass*> ( ::SVSendMessage( mpTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>(&objectInfo) ) );
 
 	if( mpThreshold )
 	{
@@ -85,7 +85,17 @@ BOOL SVTADlgColorThresholdOutput::OnInitDialog()
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVTADlgColorThresholdOutput.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVTADlgColorThresholdOutput.cpp_v  $
+ * 
+ *    Rev 1.1   01 Feb 2014 12:09:00   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Changed SVSendmessage and processmessage to use LONG_PTR instead of DWORD.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 15:20:08   bWalter
  * Project:  SVObserver

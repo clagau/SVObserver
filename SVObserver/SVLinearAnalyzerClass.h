@@ -5,8 +5,8 @@
 // * .Module Name     : SVLinearAnalyzerClass
 // * .File Name       : $Workfile:   SVLinearAnalyzerClass.h  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.0  $
-// * .Check In Date   : $Date:   23 Apr 2013 11:45:34  $
+// * .Current Version : $Revision:   1.1  $
+// * .Check In Date   : $Date:   01 Feb 2014 11:13:10  $
 // ******************************************************************************
 
 #ifndef _SVLINEARANALYZERCLASS_H
@@ -56,7 +56,7 @@ public:
 	SVBoolValueObjectClass m_svShowAllEdgeBOverlays;
 
 protected:
-	virtual DWORD processMessage( DWORD DwMessageID, DWORD DwMessageValue, DWORD DwMessageContext );
+	virtual LONG_PTR processMessage( DWORD DwMessageID, LONG_PTR DwMessageValue, LONG_PTR DwMessageContext );
 	virtual HRESULT onCollectOverlays(SVImageClass *p_Image, SVExtentMultiLineStructCArray &p_MultiLineArray );
 
 	HRESULT GetProjectedExtent( long p_lIndex, long &p_rlBottom, SVImageExtentClass &p_rsvImageExtent );
@@ -90,7 +90,17 @@ protected:
 // * LOG HISTORY:
 // ******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVLinearAnalyzerClass.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVLinearAnalyzerClass.h_v  $
+ * 
+ *    Rev 1.1   01 Feb 2014 11:13:10   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Changed SVSendmessage and processmessage to use LONG_PTR instead of DWORD.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 11:45:34   bWalter
  * Project:  SVObserver

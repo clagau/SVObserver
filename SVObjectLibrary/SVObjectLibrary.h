@@ -5,8 +5,8 @@
 //* .Module Name     : SVObjectLibrary
 //* .File Name       : $Workfile:   SVObjectLibrary.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   22 Apr 2013 16:51:14  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   01 Feb 2014 10:09:16  $
 //******************************************************************************
 
 #ifndef SVOBJECTLIBRARY_H
@@ -434,8 +434,8 @@ typedef DWORD SVProductCountType;
 //* FUNCTION DECLARATION(S):
 //******************************************************************************
 
-DWORD SVSendMessage( SVObjectClass* PObject, DWORD DwMessageID, DWORD DwMessageValue, DWORD DwMessageContext );
-DWORD SVSendMessage( const GUID& RUniqueObjectID, DWORD DwMessageID, DWORD DwMessageValue, DWORD DwMessageContext );
+LONG_PTR SVSendMessage( SVObjectClass* PObject, DWORD DwMessageID, LONG_PTR DwMessageValue, LONG_PTR DwMessageContext );
+LONG_PTR SVSendMessage( const GUID& RUniqueObjectID, DWORD DwMessageID, LONG_PTR DwMessageValue, LONG_PTR DwMessageContext );
 
 //******************************************************************************
 //* CONSTANT VARIABLE(S):
@@ -452,7 +452,17 @@ DWORD SVSendMessage( const GUID& RUniqueObjectID, DWORD DwMessageID, DWORD DwMes
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObjectLibrary\SVObjectLibrary.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObjectLibrary\SVObjectLibrary.h_v  $
+ * 
+ *    Rev 1.1   01 Feb 2014 10:09:16   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Changed sendmessage to use LONG_PTR instead of DWORD.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   22 Apr 2013 16:51:14   bWalter
  * Project:  SVObserver

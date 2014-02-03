@@ -5,8 +5,8 @@
 //* .Module Name     : SVLineAnalyzer
 //* .File Name       : $Workfile:   SVLineAnalyzer.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   13 May 2013 12:16:28  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   01 Feb 2014 11:13:08  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -576,9 +576,9 @@ void SVLineAnalyzerClass::GetOverlayDrawlingAdjustments( bool& p_rIsGageTool, do
 //	 Date		Author		Comment
 //  :02.03.2000 SEJ			First Implementation
 ////////////////////////////////////////////////////////////////////////////////
-DWORD SVLineAnalyzerClass::processMessage( DWORD DwMessageID, DWORD DwMessageValue, DWORD DwMessageContext )
+LONG_PTR SVLineAnalyzerClass::processMessage( DWORD DwMessageID, LONG_PTR DwMessageValue, LONG_PTR DwMessageContext )
 {
-	DWORD DwResult = NULL;
+	LONG_PTR DwResult = NULL;
 
 	// Try to process message by yourself...
 	DWORD dwPureMessageID = DwMessageID & SVM_PURE_MESSAGE;
@@ -834,7 +834,17 @@ SVTaskObjectClass *SVLineAnalyzerClass::GetObjectAtPoint( const SVExtentPointStr
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVLineAnalyzer.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVLineAnalyzer.cpp_v  $
+ * 
+ *    Rev 1.2   01 Feb 2014 11:13:08   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Changed SVSendmessage and processmessage to use LONG_PTR instead of DWORD.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   13 May 2013 12:16:28   bWalter
  * Project:  SVObserver

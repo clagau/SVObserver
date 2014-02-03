@@ -5,8 +5,8 @@
 //* .Module Name     : SVTADlgTransformImagePage
 //* .File Name       : $Workfile:   SVTADlgTransformImagePage.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   24 Apr 2013 11:23:48  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   01 Feb 2014 12:14:34  $
 //******************************************************************************
 
 //******************************************************************************
@@ -140,7 +140,7 @@ BOOL SVToolAdjustmentDialogTransformImagePageClass::OnInitDialog()
 		SVObjectTypeInfoStruct objectInfo;
 		objectInfo.ObjectType = SVBoolValueObjectType;
 		objectInfo.EmbeddedID = SVUseExtentsOnlyObjectGuid;
-		pUseExtentsOnly = ( SVBoolValueObjectClass* ) ::SVSendMessage( pTool, SVM_GETFIRST_OBJECT, NULL, ( DWORD ) &objectInfo );
+		pUseExtentsOnly = ( SVBoolValueObjectClass* ) ::SVSendMessage( pTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>(&objectInfo) );
 		
 		if( pUseExtentsOnly )
 		{
@@ -223,7 +223,17 @@ void SVToolAdjustmentDialogTransformImagePageClass::OnUseExtentsOnly()
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVTADlgTransformImagePage.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVTADlgTransformImagePage.cpp_v  $
+ * 
+ *    Rev 1.1   01 Feb 2014 12:14:34   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Changed SVSendmessage and processmessage to use LONG_PTR instead of DWORD.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   24 Apr 2013 11:23:48   bWalter
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : SVOCRAnalyzerResult
 //* .File Name       : $Workfile:   SVOCRAnalyzerResult.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   06 May 2013 14:38:28  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   01 Feb 2014 11:39:22  $
 //******************************************************************************
 #ifndef SV_OCR_ANALYZER_RESULT_H
 #define SV_OCR_ANALYZER_RESULT_H
@@ -74,7 +74,7 @@ public:
 
 protected:
 	virtual BOOL onRun( SVRunStatusClass& RRunStatus );
-	virtual DWORD processMessage( DWORD DwMessageID, DWORD DwMessageValue, DWORD DwMessageContext );
+	virtual LONG_PTR processMessage( DWORD DwMessageID, LONG_PTR DwMessageValue, LONG_PTR DwMessageContext );
 
 private:
 	void clearAll();
@@ -196,7 +196,17 @@ private:
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVOCRAnalyzerResult.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVOCRAnalyzerResult.h_v  $
+ * 
+ *    Rev 1.2   01 Feb 2014 11:39:22   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Changed SVSendmessage and processmessage to use LONG_PTR instead of DWORD.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   06 May 2013 14:38:28   bWalter
  * Project:  SVObserver

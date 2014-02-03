@@ -5,8 +5,8 @@
 //* .Module Name     : SVTool
 //* .File Name       : $Workfile:   SVTool.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.5  $
-//* .Check In Date   : $Date:   11 Nov 2013 07:23:56  $
+//* .Current Version : $Revision:   1.6  $
+//* .Check In Date   : $Date:   01 Feb 2014 12:18:38  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -696,9 +696,9 @@ bool SVToolClass::getConditionalResult(long p_lIndex) const
 	return value;
 }
 
-DWORD SVToolClass::processMessage( DWORD DwMessageID, DWORD DwMessageValue, DWORD DwMessageContext )
+LONG_PTR SVToolClass::processMessage( DWORD DwMessageID, LONG_PTR DwMessageValue, LONG_PTR DwMessageContext )
 {
-	DWORD DwResult = NULL;
+	LONG_PTR DwResult = NULL;
 
 	SVToolLevelCreateStruct createStruct;
 
@@ -807,7 +807,7 @@ DWORD SVToolClass::processMessage( DWORD DwMessageID, DWORD DwMessageValue, DWOR
 				createStruct.ToolObjectInfo			= this;
 				createStruct.InspectionObjectInfo	= GetInspection();
 
-				DWORD l_Return = SVSendMessage( pChildObject, SVM_CREATE_ALL_OBJECTS, ( DWORD ) &createStruct, NULL );
+				DWORD l_Return = SVSendMessage( pChildObject, SVM_CREATE_ALL_OBJECTS, reinterpret_cast<LONG_PTR>(&createStruct), NULL );
 
 				if( ( DwMessageContext & SVMFResetObject ) == SVMFResetObject )
 				{
@@ -843,7 +843,7 @@ DWORD SVToolClass::processMessage( DWORD DwMessageID, DWORD DwMessageValue, DWOR
 				createStruct.ToolObjectInfo			= this;
 				createStruct.InspectionObjectInfo	= GetInspection();
 
-				DWORD l_Return = SVSendMessage( pChildObject, SVM_CONNECT_ALL_OBJECTS, ( DWORD ) &createStruct, NULL );
+				DWORD l_Return = SVSendMessage( pChildObject, SVM_CONNECT_ALL_OBJECTS, reinterpret_cast<LONG_PTR>(&createStruct), NULL );
 
 				return l_Return;
 			}
@@ -1339,6 +1339,16 @@ SVValueObjectClass* SVToolClass::GetToolComment()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVTool.cpp_v  $
+ * 
+ *    Rev 1.6   01 Feb 2014 12:18:38   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Changed SVSendmessage and processmessage to use LONG_PTR instead of DWORD.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.5   11 Nov 2013 07:23:56   tbair
  * Project:  SVObserver

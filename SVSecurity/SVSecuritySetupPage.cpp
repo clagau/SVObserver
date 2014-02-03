@@ -5,8 +5,8 @@
 //* .Module Name     : SVSecuritySetupPage.cpp
 //* .File Name       : $Workfile:   SVSecuritySetupPage.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   02 Oct 2013 10:00:50  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   29 Jan 2014 06:48:36  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -247,6 +247,7 @@ void SVSecuritySetupPage::OnSelchangedAccessTree(NMHDR* pNMHDR, LRESULT* pResult
 
 	SVSecurityStorage& svStore = m_pAccess->m_svStorage;
 
+	UpdateData();
 	int iNodeIndex = GetNodeIndexFromTree();
 
 	if( static_cast<unsigned int>(iNodeIndex) < svStore.m_aNodes.size() && iNodeIndex > 0 )
@@ -381,6 +382,16 @@ void SVSecuritySetupPage::OnHelp()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVSecurity\SVSecuritySetupPage.cpp_v  $
+ * 
+ *    Rev 1.2   29 Jan 2014 06:48:36   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  878
+ * SCR Title:  Fix Software Trigger Dialog
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Added UpdataData() to onSelChangedAccessTree so data from other parts of the dialog will not be lost when clicking on the security tree.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   02 Oct 2013 10:00:50   tbair
  * Project:  SVObserver

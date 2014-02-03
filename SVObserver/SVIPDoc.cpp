@@ -5,10 +5,11 @@
 //* .Module Name     : SVIPDoc
 //* .File Name       : $Workfile:   SVIPDoc.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.8  $
-//* .Check In Date   : $Date:   14 Jan 2014 12:24:24  $
+//* .Current Version : $Revision:   1.9  $
+//* .Check In Date   : $Date:   31 Jan 2014 17:16:28  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include <comdef.h>
 #include "SVIPDoc.h"
@@ -87,7 +88,9 @@
 #include "SVCommandInspectionRunOnce.h"
 #include "SVGuiExtentUpdater.h"
 #include "SVShiftTool.h"
+#pragma endregion Includes
 
+#pragma region Declarations
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #undef THIS_FILE
@@ -102,6 +105,7 @@ union SVViewUnion
 	SVToolSetTabViewClass *pToolSetTabView;
 	SVResultViewClass *pResultView;
 };
+#pragma endregion Declarations
 
 //*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/
 //* Class Name : Class SVIPDoc
@@ -141,7 +145,7 @@ BEGIN_MESSAGE_MAP(SVIPDoc, CDocument)
 	ON_COMMAND(ID_PUBLISHED_RESULTS_PICKER, OnPublishedResultsPicker)
 	ON_COMMAND(ID_PUBLISHED_RESULT_IMAGES_PICKER, OnPublishedResultImagesPicker)
 	ON_COMMAND(ID_EDIT_CONDITIONAL_HISTORY, OnConditionalHistory)
-    ON_UPDATE_COMMAND_UI(ID_EDIT_CONDITIONAL_HISTORY, OnUpdateConditionalHistory)
+	ON_UPDATE_COMMAND_UI(ID_EDIT_CONDITIONAL_HISTORY, OnUpdateConditionalHistory)
 	ON_COMMAND(ID_ADD_LOADIMAGETOOL, OnAddLoadImageTool)
 	ON_COMMAND(ID_RUN_REGRESSIONTEST, RunRegressionTest)
 	ON_COMMAND(ID_ADD_ACQUISITIONTOOL, OnAddAcquisitionTool)
@@ -164,7 +168,7 @@ BEGIN_MESSAGE_MAP(SVIPDoc, CDocument)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_RESETCOUNTSALLIPS, OnUpdateViewResetcountsallips)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_RESETCOUNTSCURRENTIP, OnUpdateViewResetcountscurrentip)
 	//}}AFX_MSG_MAP
-    ON_UPDATE_COMMAND_UI(ID_RUN_REGRESSIONTEST, OnUpdateRunRegressionTest)
+	ON_UPDATE_COMMAND_UI(ID_RUN_REGRESSIONTEST, OnUpdateRunRegressionTest)
 	ON_UPDATE_COMMAND_UI(ID_INDICATOR_INFO, OnUpdateStatusInfo)
 	// Dynamic Enumerated Tool Set Draw Flags
 	ON_COMMAND_RANGE( ID_VIEW_TOOLSETDRAW_POP_BASE, ID_VIEW_TOOLSETDRAW_POP_MAX, OnChangeToolSetDrawFlag )
@@ -175,10 +179,7 @@ BEGIN_MESSAGE_MAP(SVIPDoc, CDocument)
 	ON_UPDATE_COMMAND_UI(ID_EDIT_ADJUSTLUT, OnAllowAdjustLut)
 END_MESSAGE_MAP()
 
-//******************************************************************************
-// Constructor(s):
-//******************************************************************************
-
+#pragma region Constructor
 SVIPDoc::SVIPDoc()
 : CDocument()
 , m_NewProductData( 1 )
@@ -192,6 +193,7 @@ SVIPDoc::SVIPDoc()
 {
 	init();
 }
+#pragma endregion Constructor
 
 const GUID& SVIPDoc::GetInspectionID() const
 {
@@ -251,7 +253,7 @@ void SVIPDoc::init()
 
 	IsNew = true;
 
-	TheSVObserverApp.pCurrentDocument	= this;
+	TheSVObserverApp.setCurrentDocument( this );
 	
 	//
 	// Default result height and tool set view width.
@@ -283,7 +285,7 @@ SVIPDoc::~SVIPDoc()
 
 	ClearRegressionTestStructures();
 
-	TheSVObserverApp.pCurrentDocument = NULL;
+	TheSVObserverApp.setCurrentDocument( NULL );
 }
 
 //******************************************************************************
@@ -788,58 +790,12 @@ BOOL SVIPDoc::SaveModified()
 
 	int index = 0;
 	if( ( index = m_strTitle.Find( _TCHAR( '.' ) ) ) >= 0 )
-		m_strTitle = m_strTitle.Left( index );
-
-	return CDocument::SaveModified();
-
-	// At this time not reachable code!!!!!
-
-	if( ! TheSVObserverApp.IsSECMemorySaving  )
 	{
-		// Check for saving.
-		CString message;
-		AfxFormatString1( message, IDS_USER_QUESTION_SAVE_CHANGES, GetTitle() );
-		switch( AfxMessageBox( message, MB_YESNOCANCEL | MB_ICONQUESTION ) )
-		{
-			case IDYES:	// Save the modified IPDoc
-			{
-				// Do not save unsaved IPDoc without saving unsaved SEC first
-				if( CString( TheSVObserverApp.GetSECFullFileName() ).IsEmpty() )
-				{
-					if( AfxMessageBox( IDS_USER_QUESTION_SAVE_UNSAVED_IPD, MB_YESNOCANCEL | MB_ICONQUESTION ) == IDYES )
-					{
-						TheSVObserverApp.OnFileSaveSec();
-						// Check if an error or an user cancel command occured
-					}
-					return FALSE;
-				}
-
-				break;
-			}
-			case IDNO:	// Don´t save the modified IPDoc
-			{
-				// If IPDoc is unsaved, we have to change the SEC
-				//AfxMessageBox( "Hallo" );
-
-// If the SEC was already saved regarding the last changes and
-// - the IPDoc is still unsaved ( new! ), we have to remove this IPDoc from his
-//   current system first
-// - the IPDoc name was changed by user, we have to rename the IPDoc´s system 
-//   entry first
-// and then we have to store the complete SEC again.
-			
-				
-				// IPDoc->IsCanceling = TRUE;		
-				return TRUE;	// Don´t save, but work
-			}
-			case IDCANCEL:	// Don´t save, cancel the closing
-			default:
-							return FALSE;
-		}
+		m_strTitle = m_strTitle.Left( index );
 	}
+
 	return CDocument::SaveModified();
 }
-
 
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : OnNewDocument
@@ -912,7 +868,7 @@ void SVIPDoc::OnCloseDocument()
 	{
 		// Do not save unsaved IPDoc without updating SEC
 		if( CString( TheSVObserverApp.GetSECFullFileName() ).IsEmpty() && 
-		     !SVSVIMStateClass::CheckState( SV_STATE_CANCELING ) )
+			!SVSVIMStateClass::CheckState( SV_STATE_CANCELING ) )
 		{
 			TheSVObserverApp.OnFileSaveSec();
 		}
@@ -2801,7 +2757,7 @@ void SVIPDoc::OnUpdateFileExit( CCmdUI* pCmdUI )
 CFile* SVIPDoc::GetFile( LPCTSTR lpszFileName, UINT nOpenFlags, CFileException* pError )
 {
 	UINT nNewFlags = nOpenFlags & ~( CFile::shareDenyRead | CFile::shareDenyWrite ) |
-	                              CFile::shareDenyNone;
+		CFile::shareDenyNone;
 
 	return CDocument::GetFile( lpszFileName, nNewFlags, pError );
 }
@@ -4738,6 +4694,16 @@ BOOL SVIPDoc::RunOnce( SVToolClass* p_pTool )
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVIPDoc.cpp_v  $
+ * 
+ *    Rev 1.9   31 Jan 2014 17:16:28   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  884
+ * SCR Title:  Update Source Code Files to Follow New Programming Standards and Guidelines
+ * Checked in by:  bWalter;  Ben Walter
+ * Change Description:  
+ *   Changed to follow guidelines more closely.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.8   14 Jan 2014 12:24:24   bwalter
  * Project:  SVObserver
@@ -8016,4 +7982,3 @@ $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVIPDoc.cp
    
    /////////////////////////////////////////////////////////////////////////////////////
 */
-

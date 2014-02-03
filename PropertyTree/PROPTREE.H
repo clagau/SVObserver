@@ -5,8 +5,8 @@
 // * .Module Name     : PropTree.h
 // * .File Name       : $Workfile:   PROPTREE.H  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.1  $
-// * .Check In Date   : $Date:   03 Jul 2013 16:26:20  $
+// * .Current Version : $Revision:   1.2  $
+// * .Check In Date   : $Date:   29 Jan 2014 08:42:02  $
 // ******************************************************************************
 
 // PropertyTreeCtrl.h : header file
@@ -33,33 +33,7 @@
 #if _MSC_VER > 1000
 #pragma once
 #endif // _MSC_VER > 1000
-/*
-#ifdef _PROPTREE_EXPORT
-#define PROPTREE_API __declspec(dllexport)
-#else
-#define PROPTREE_API __declspec(dllimport)
-#endif
 
-#ifndef _PROPTREE_DLL
-	#ifdef _UNICODE
-		#ifdef _DEBUG
-			#pragma comment(lib, "PropTreeDU")
-			#pragma message("Automatically linking with PropTreeDU.dll (Debug Unicode)")
-		#else
-			#pragma comment(lib, "PropTreeU")
-			#pragma message("Automatically linking with PropTreeU.dll (Release Unicode)")
-		#endif
-	#else
-		#ifdef _DEBUG
-			#pragma comment(lib, "PropTreeD")
-			#pragma message("Automatically linking with PropTreeD.dll (Debug)")
-		#else
-			#pragma comment(lib, "PropTree")
-			#pragma message("Automatically linking with PropTree.dll (Release)")
-		#endif
-	#endif // _UNICODE
-#endif // _PROPTREE_DLL
-*/
 #include "PropTreeCtrl.h"
 #include "PropTreeInfo.h"
 
@@ -67,7 +41,6 @@
 #include "PropTreeItemStatic.h"
 #include "PropTreeItemEdit.h"
 #include "PropTreeItemCombo.h"
-#include "PropTreeItemColor.h"
 #include "PropTreeItemFile.h"
 #include "SVRPropTreeState.h"
 class SVRPropTree;
@@ -175,11 +148,6 @@ public:
 
 	// find an item by item id
 	SVRPropertyItem* FindItem(UINT nCtrlID);
-
-/*
-	BOOL LockWindowUpdate();
-	void UnlockWindowUpdate();
-*/
 
 	//
 	// functions used by SVRPropertyItem (you normally dont need to call these directly)
@@ -319,11 +287,9 @@ protected:
 	afx_msg void OnSysColorChange();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
-
 };
 
 /////////////////////////////////////////////////////////////////////////////
-
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
 
@@ -333,7 +299,18 @@ protected:
 // * LOG HISTORY:
 // ******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\PropertyTree\PROPTREE.H_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\PropertyTree\PROPTREE.H_v  $
+ * 
+ *    Rev 1.2   29 Jan 2014 08:42:02   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  874
+ * SCR Title:  Cleanup Visual Studio Project Files
+ * Checked in by:  bWalter;  Ben Walter
+ * Change Description:  
+ *   Removed unnecessary include PropTreeItemColor.h.
+ * Removed dead (commented out) code.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   03 Jul 2013 16:26:20   bwalter
  * Project:  SVObserver

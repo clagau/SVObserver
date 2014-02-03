@@ -5,8 +5,8 @@
 //* .Module Name     : SVDualLineAnalyzer
 //* .File Name       : $Workfile:   SVDualLineAnalyzer.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 10:23:08  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   01 Feb 2014 10:32:26  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -679,11 +679,11 @@ void SVDualLineAnalyzerClass::DisableThresholdOutputs()
 	// Disconnect the Inputs
 	::SVSendMessage( inputMinThresholdObjectInfo.GetInputObjectInfo().UniqueObjectID,
 										SVM_DISCONNECT_OBJECT_INPUT, 
-										( DWORD ) &inputMinThresholdObjectInfo, NULL );
+										reinterpret_cast<LONG_PTR>(&inputMinThresholdObjectInfo), NULL );
 	
 	::SVSendMessage( inputMaxThresholdObjectInfo.GetInputObjectInfo().UniqueObjectID,
 										SVM_DISCONNECT_OBJECT_INPUT, 
-										( DWORD ) &inputMaxThresholdObjectInfo, NULL );
+										reinterpret_cast<LONG_PTR>(&inputMaxThresholdObjectInfo), NULL );
 	
 	// Remove from the Required Input List
 	for( int i = inputInterfaceList.GetSize() - 1; i >= 0; i-- )
@@ -814,7 +814,17 @@ HRESULT SVDualLineAnalyzerClass::GetSelectedEdgeOverlays( SVExtentMultiLineStruc
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVDualLineAnalyzer.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVDualLineAnalyzer.cpp_v  $
+ * 
+ *    Rev 1.1   01 Feb 2014 10:32:26   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Changed sendmessage to use LONG_PTR instead of DWORD.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 10:23:08   bWalter
  * Project:  SVObserver

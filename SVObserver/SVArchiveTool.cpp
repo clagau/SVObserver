@@ -5,8 +5,8 @@
 //* .Module Name     : SVArchiveTool
 //* .File Name       : $Workfile:   SVArchiveTool.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.4  $
-//* .Check In Date   : $Date:   11 Nov 2013 07:10:00  $
+//* .Current Version : $Revision:   1.5  $
+//* .Check In Date   : $Date:   01 Feb 2014 10:16:32  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -228,9 +228,9 @@ void SVArchiveRecord::ConnectInputObject()
 		InObjectInfo.UniqueObjectID             = m_pArchiveTool->GetUniqueObjectID();
 		InObjectInfo.ObjectTypeInfo.ObjectType  = SVToolObjectType;
 		
-		DWORD rc = ::SVSendMessage( m_svObjectReference.Guid(), 
+		LONG_PTR rc = ::SVSendMessage( m_svObjectReference.Guid(), 
 		                            SVM_CONNECT_OBJECT_INPUT, 
-		                            reinterpret_cast <DWORD> (&InObjectInfo), 
+		                            reinterpret_cast <LONG_PTR> (&InObjectInfo), 
 		                            NULL );
 
 		ASSERT(rc == SVMR_SUCCESS );
@@ -247,9 +247,9 @@ void SVArchiveRecord::DisconnectInputObject()
 		InObjectInfo.UniqueObjectID            = m_pArchiveTool->GetUniqueObjectID();
 		InObjectInfo.ObjectTypeInfo.ObjectType = SVToolObjectType;
 		
-		DWORD rc = ::SVSendMessage(	m_svObjectReference.Guid(), 
+		LONG_PTR rc = ::SVSendMessage(	m_svObjectReference.Guid(), 
 		                            SVM_DISCONNECT_OBJECT_INPUT, 
-		                            reinterpret_cast <DWORD> (&InObjectInfo), 
+		                            reinterpret_cast <LONG_PTR> (&InObjectInfo), 
 		                            NULL );
 	}
 }
@@ -1668,12 +1668,12 @@ BOOL SVArchiveTool::OnValidate()	// called each onRun
 
 /////////////////////////////////////////////////////////////////////////////
 //
-DWORD SVArchiveTool::processMessage( DWORD dwMessageID, 
-                                     DWORD dwMessageValue, 
-                                     DWORD dwMessageContext )
+LONG_PTR SVArchiveTool::processMessage( DWORD dwMessageID, 
+                                     LONG_PTR dwMessageValue, 
+                                     LONG_PTR dwMessageContext )
 {
 	//BOOL bResult;
-	DWORD dwResult = NULL;
+	LONG_PTR dwResult = NULL;
 	// Try to process message by yourself...
 	DWORD dwPureMessageID = dwMessageID & SVM_PURE_MESSAGE;
 	switch (dwPureMessageID)
@@ -2108,30 +2108,6 @@ void SVArchiveTool::RebuildImageArchiveList()
 		}
 	}
 	
-	/*
-	pImage = dynamic_cast <SVImageClass*> ( reinterpret_cast <SVObjectClass*> (
-	         ( SVSendMessage ( static_cast <SVObjectClass*> (pToolSet),
-	                           SVM_GETFIRST_OBJECT,NULL,
-	                           reinterpret_cast <DWORD> (&info) ) ) ) );
-	
-	while ( pImage )
-	{
-		if (pImage->ObjectAttributesSet() & SV_ARCHIVABLE_IMAGE)
-		{
-			AddImageToArray(pImage);
-			pImage->ObjectAttributesSetRef() &= ~SV_ARCHIVABLE_IMAGE;	// WHY??
-
-			vecImages.push_back( pImage );
-		}
-
-		pImage = dynamic_cast <SVImageClass*>  ( reinterpret_cast <SVObjectClass*> (
-		         ( SVSendMessage ( static_cast <SVObjectClass*> (pToolSet),
-		                           SVM_GETNEXT_OBJECT,
-		                           reinterpret_cast <DWORD> (pImage),
-		                           reinterpret_cast <DWORD> (&info) ) ) ) );
-
-	}// end while ( pImage )
-	*/
 	
 	m_svoArchiveImageNames.SetArraySize( static_cast< int >( vecImages.size() ) );
 
@@ -2239,45 +2215,6 @@ void SVArchiveTool::UpdateImagePointerInImageArray(	SVArchiveRecord* pImageRecor
 			}
 		}
 	}
-
-	/*
-	info.ObjectType = SVImageObjectType;
-	info.SubType = SVNotSetSubObjectType;
-	
-	pImage = dynamic_cast <SVImageClass*> ( reinterpret_cast <SVObjectClass*> (
-	        ( SVSendMessage ( static_cast <SVObjectClass*> (pToolSet),
-	                          SVM_GETFIRST_OBJECT, NULL,
-	                          reinterpret_cast <DWORD> (&info) ) ) ) );
-	
-	if (pImage)
-	{
-		CString csDottedNameToCheck = pImage->GetCompleteObjectName();
-		if (csImageDottedName == csDottedNameToCheck)
-		{
-			pImageRecord->GetObjectReference() = pImage->GetObjectInfo().GetObjectReference();
-			return;
-		}
-	}
-	
-	while (pImage && !lDone)
-	{
-		pImage = dynamic_cast <SVImageClass*> ( reinterpret_cast <SVObjectClass*> (
-		         ( SVSendMessage ( static_cast <SVObjectClass*> (pToolSet),
-		                           SVM_GETNEXT_OBJECT,
-		                           reinterpret_cast <DWORD> (pImage),
-		                           reinterpret_cast <DWORD> (&info) ) ) ) );
-
-		if (pImage)
-		{
-			CString csDottedNameToCheck = pImage->GetCompleteObjectName();
-			if (csImageDottedName == csDottedNameToCheck)
-			{
-				pImageRecord->GetObjectReference() = pImage->GetObjectInfo().GetObjectReference();
-				return;
-			}
-		}
-	}
-	*/
 }
 
 // Check for duplicate archive result file path in some other tool or 
@@ -2431,6 +2368,16 @@ BOOL SVArchiveTool::renameToolSetSymbol(SVObjectClass* pObject, LPCTSTR orgName)
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVArchiveTool.cpp_v  $
+ * 
+ *    Rev 1.5   01 Feb 2014 10:16:32   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Changed sendmessage to use LONG_PTR instead of DWORD.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.4   11 Nov 2013 07:10:00   tbair
  * Project:  SVObserver

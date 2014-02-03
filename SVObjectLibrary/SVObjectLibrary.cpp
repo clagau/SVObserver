@@ -5,8 +5,8 @@
 //* .Module Name     : SVObjectLibrary
 //* .File Name       : $Workfile:   SVObjectLibrary.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   22 Apr 2013 16:51:08  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   01 Feb 2014 10:09:14  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -29,7 +29,7 @@ const SVObjectTypeInfoStruct	SVInvalidObjectTypeInfo;
 //* FUNCTION IMPLEMENTATION(S):
 //******************************************************************************
 
-DWORD SVSendMessage( SVObjectClass* PObject, DWORD DwMessageID, DWORD DwMessageValue, DWORD DwMessageContext )
+LONG_PTR SVSendMessage( SVObjectClass* PObject, DWORD DwMessageID, LONG_PTR DwMessageValue, LONG_PTR DwMessageContext )
 {
 	if( PObject != NULL )
 	{
@@ -39,7 +39,7 @@ DWORD SVSendMessage( SVObjectClass* PObject, DWORD DwMessageID, DWORD DwMessageV
 }
 
 
-DWORD SVSendMessage( const GUID& RUniqueObjectID, DWORD DwMessageID, DWORD DwMessageValue, DWORD DwMessageContext )
+LONG_PTR SVSendMessage( const GUID& RUniqueObjectID, DWORD DwMessageID, LONG_PTR DwMessageValue, LONG_PTR DwMessageContext )
 {
 	SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObject( RUniqueObjectID );
 
@@ -56,7 +56,17 @@ DWORD SVSendMessage( const GUID& RUniqueObjectID, DWORD DwMessageID, DWORD DwMes
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObjectLibrary\SVObjectLibrary.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObjectLibrary\SVObjectLibrary.cpp_v  $
+ * 
+ *    Rev 1.1   01 Feb 2014 10:09:14   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Changed sendmessage to use LONG_PTR instead of DWORD.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   22 Apr 2013 16:51:08   bWalter
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : SVLineROI
 //* .File Name       : $Workfile:   SVLineROI.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   01 Oct 2013 14:57:22  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   01 Feb 2014 11:15:32  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -231,9 +231,9 @@ BOOL SVLineROIClass::onRun( SVRunStatusClass& RRunStatus )
 	return l_bOk;
 }
 
-DWORD SVLineROIClass::processMessage(DWORD DwMessageID, DWORD DwMessageValue, DWORD DwMessageContext)
+LONG_PTR SVLineROIClass::processMessage(DWORD DwMessageID, LONG_PTR DwMessageValue, LONG_PTR DwMessageContext)
 {
-	DWORD DwResult = 0L;
+	LONG_PTR DwResult = 0L;
 
 	switch (DwMessageID & SVM_PURE_MESSAGE)
 	{
@@ -261,6 +261,16 @@ DWORD SVLineROIClass::processMessage(DWORD DwMessageID, DWORD DwMessageValue, DW
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVLineROI.cpp_v  $
+ * 
+ *    Rev 1.3   01 Feb 2014 11:15:32   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Changed SVSendmessage and processmessage to use LONG_PTR instead of DWORD.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   01 Oct 2013 14:57:22   tbair
  * Project:  SVObserver

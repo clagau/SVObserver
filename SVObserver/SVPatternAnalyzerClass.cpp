@@ -5,8 +5,8 @@
 //* .Module Name     : SVPatternAnalyzerClass
 //* .File Name       : $Workfile:   SVPatternAnalyzerClass.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   13 May 2013 12:37:00  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   01 Feb 2014 11:59:58  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -801,7 +801,7 @@ BOOL SVPatternAnalyzerClass::CreateObject(SVObjectLevelCreateStruct* pCreateStru
 		// Ensure this Object's inputs get connected
 		::SVSendMessage( pAnalyzerResult, SVM_CONNECT_ALL_INPUTS, NULL, NULL );
 
-		::SVSendMessage( this, SVM_CREATE_CHILD_OBJECT, (DWORD)pAnalyzerResult, NULL );
+		::SVSendMessage( this, SVM_CREATE_CHILD_OBJECT,reinterpret_cast<LONG_PTR>(pAnalyzerResult), NULL );
 	}
 
 	isCreated = bOk;
@@ -1016,9 +1016,9 @@ BOOL SVPatternAnalyzerClass::onRun (SVRunStatusClass &RRunStatus)
 	return TRUE;
 }
 
-DWORD SVPatternAnalyzerClass::processMessage(DWORD DwMessageID, DWORD DwMessageValue, DWORD DwMessageContext)
+LONG_PTR SVPatternAnalyzerClass::processMessage(DWORD DwMessageID, LONG_PTR DwMessageValue, LONG_PTR DwMessageContext)
 {
-	DWORD DwResult = 0L;
+	LONG_PTR DwResult = 0L;
 
 	switch (DwMessageID & SVM_PURE_MESSAGE)
 	{
@@ -1402,7 +1402,17 @@ BOOL SVPatternAnalyzerClass::GetModelImageFileName( CString &csFileName )
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVPatternAnalyzerClass.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVPatternAnalyzerClass.cpp_v  $
+ * 
+ *    Rev 1.2   01 Feb 2014 11:59:58   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Changed SVSendmessage and processmessage to use LONG_PTR instead of DWORD.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   13 May 2013 12:37:00   bWalter
  * Project:  SVObserver

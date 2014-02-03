@@ -5,8 +5,8 @@
 //* .Module Name     : SVAngularProfileTool
 //* .File Name       : $Workfile:   SVAngularProfileTool.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   15 May 2013 19:45:38  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   01 Feb 2014 10:16:30  $
 //******************************************************************************
 
 #ifndef SVANGULARPROFILETOOL_H
@@ -49,7 +49,7 @@ public:
 	virtual BOOL OnValidate();
 protected:
 	virtual void init();
-	virtual DWORD processMessage( DWORD DwMessageID, DWORD DwMessageValue, DWORD DwMessageContext );
+	virtual LONG_PTR processMessage( DWORD DwMessageID, LONG_PTR DwMessageValue, LONG_PTR DwMessageContext );
 	BOOL onRun( SVRunStatusClass& RRunStatus );
 
 	SVDoubleValueObjectClass m_svRotationAngle;
@@ -77,7 +77,17 @@ private:
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVAngularProfileTool.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVAngularProfileTool.h_v  $
+ * 
+ *    Rev 1.2   01 Feb 2014 10:16:30   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Changed sendmessage to use LONG_PTR instead of DWORD.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   15 May 2013 19:45:38   bWalter
  * Project:  SVObserver

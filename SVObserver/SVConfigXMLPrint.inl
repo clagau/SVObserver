@@ -5,8 +5,8 @@
 //* .Module Name     : SVConfigXMLPrint
 //* .File Name       : $Workfile:   SVConfigXMLPrint.inl  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.7  $
-//* .Check In Date   : $Date:   03 Dec 2013 13:55:00  $
+//* .Current Version : $Revision:   1.8  $
+//* .Check In Date   : $Date:   01 Feb 2014 10:32:24  $
 //******************************************************************************
 
 #include "SVObjectLibrary/SVObjectLibrary.h"
@@ -999,7 +999,7 @@ inline void SVConfigXMLPrint::WriteObject( Writer writer, SVObjectClass* pObj ) 
 				SVObjectInfoStruct objectInfo;
 				objectInfo.ObjectTypeInfo.ObjectType = SVLineObjectType;
 				
-				SVLineClass* pLineClass = dynamic_cast <SVLineClass*> (reinterpret_cast<SVObjectClass*> (SVSendMessage( pObj, SVM_GETFIRST_OBJECT, reinterpret_cast <DWORD> (&objectInfo), NULL) ) );
+				SVLineClass* pLineClass = dynamic_cast <SVLineClass*> (reinterpret_cast<SVObjectClass*> (SVSendMessage( pObj, SVM_GETFIRST_OBJECT, reinterpret_cast<LONG_PTR>(&objectInfo), NULL) ) );
 				
 				POINT l_oHeadPoint;
 				POINT l_oTailPoint;
@@ -1408,6 +1408,16 @@ inline HRESULT SVDeviceParamConfigXMLHelper::Visit(SVCustomDeviceParam& param)
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVConfigXMLPrint.inl_v  $
+ * 
+ *    Rev 1.8   01 Feb 2014 10:32:24   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Changed sendmessage to use LONG_PTR instead of DWORD.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.7   03 Dec 2013 13:55:00   bwalter
  * Project:  SVObserver

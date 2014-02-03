@@ -5,8 +5,8 @@
 //* .Module Name     : SVToolBuildReference
 //* .File Name       : $Workfile:   SVToolBuildReference.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   02 Oct 2013 08:24:42  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   01 Feb 2014 12:22:14  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -177,9 +177,9 @@ BOOL SVBuildReferenceToolClass::IsOkToEdit()
 	return TRUE;		
 }
 
-DWORD SVBuildReferenceToolClass::processMessage( DWORD DwMessageID, DWORD DwMessageValue, DWORD DwMessageContext )
+LONG_PTR SVBuildReferenceToolClass::processMessage( DWORD DwMessageID, LONG_PTR DwMessageValue, LONG_PTR DwMessageContext )
 {
-	DWORD DwResult = NULL;
+	LONG_PTR DwResult = NULL;
 
 	return( SVToolClass::processMessage( DwMessageID, DwMessageValue, DwMessageContext ) | DwResult );
 }
@@ -199,6 +199,16 @@ HRESULT SVBuildReferenceToolClass::ResetObject()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVToolBuildReference.cpp_v  $
+ * 
+ *    Rev 1.3   01 Feb 2014 12:22:14   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Changed SVSendmessage and processmessage to use LONG_PTR instead of DWORD.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   02 Oct 2013 08:24:42   tbair
  * Project:  SVObserver

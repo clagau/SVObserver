@@ -5,8 +5,8 @@
 //* .Module Name     : SVOCRDialog
 //* .File Name       : $Workfile:   SVOCRDialog.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 12:54:58  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   01 Feb 2014 11:39:22  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -259,7 +259,7 @@ void SVOCRDialogClass::OnFontTraining()
 	SVObjectTypeInfoStruct info;
 	info.ObjectType = SVUnaryImageOperatorListObjectType;
 	SVObjectClass* pObject = ( SVObjectClass* ) ::SVSendMessage( 
-		pTool, SVM_GETFIRST_OBJECT, NULL, ( DWORD ) &info );
+		pTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>(&info) );
 	if( ! SV_IS_KIND_OF( pObject, SVUnaryImageOperatorListClass ) )
     {
        AfxMessageBox( _T( "ERROR: Font Training Setup: No OperatorList specified" ));
@@ -268,7 +268,7 @@ void SVOCRDialogClass::OnFontTraining()
 
 	info.ObjectType = SVImageObjectType;
 	pObject = ( SVObjectClass* ) ::SVSendMessage( 
-		pObject, SVM_GETFIRST_OBJECT, NULL, ( DWORD ) &info );
+		pObject, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>( &info ));
 	if( ! SV_IS_KIND_OF( pObject, SVImageClass ) )
     {
        AfxMessageBox( _T( "ERROR: Font Training Setup: No Image specified" ));
@@ -412,7 +412,17 @@ void SVOCRDialogClass::AddButtons()
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVOCRDialog.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVOCRDialog.cpp_v  $
+ * 
+ *    Rev 1.1   01 Feb 2014 11:39:22   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Changed SVSendmessage and processmessage to use LONG_PTR instead of DWORD.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 12:54:58   bWalter
  * Project:  SVObserver

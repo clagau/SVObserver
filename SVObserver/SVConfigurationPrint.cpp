@@ -5,8 +5,8 @@
 //* .Module Name     : SVConfigurationPrint
 //* .File Name       : $Workfile:   SVConfigurationPrint.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.6  $
-//* .Check In Date   : $Date:   03 Dec 2013 13:50:48  $
+//* .Current Version : $Revision:   1.7  $
+//* .Check In Date   : $Date:   01 Feb 2014 10:32:22  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -941,7 +941,7 @@ void SVConfigurationPrint::PrintDetails( CDC* pDC, SVObjectClass* pObj, CPoint& 
 				SVObjectInfoStruct objectInfo;
 				objectInfo.ObjectTypeInfo.ObjectType = SVLineObjectType;
 				
-				SVLineClass* pLineClass = dynamic_cast <SVLineClass*> (reinterpret_cast<SVObjectClass*> (SVSendMessage( pObj, SVM_GETFIRST_OBJECT, reinterpret_cast <DWORD> (&objectInfo), NULL) ) );
+				SVLineClass* pLineClass = dynamic_cast <SVLineClass*> (reinterpret_cast<SVObjectClass*> (SVSendMessage( pObj, SVM_GETFIRST_OBJECT, reinterpret_cast<LONG_PTR>( &objectInfo ), NULL) ) );
 				
 				POINT l_oHeadPoint;
 				POINT l_oTailPoint;
@@ -2542,6 +2542,16 @@ HRESULT SVDeviceParamConfigPrintHelper::Visit(SVCustomDeviceParam& param)
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVConfigurationPrint.cpp_v  $
+ * 
+ *    Rev 1.7   01 Feb 2014 10:32:22   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Changed sendmessage to use LONG_PTR instead of DWORD.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.6   03 Dec 2013 13:50:48   bwalter
  * Project:  SVObserver

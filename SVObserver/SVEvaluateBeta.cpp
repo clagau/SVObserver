@@ -5,8 +5,8 @@
 //* .Module Name     : SVEvaluateBeta
 //* .File Name       : $Workfile:   SVEvaluateBeta.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 10:29:20  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   01 Feb 2014 10:36:38  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -126,9 +126,9 @@ BOOL SVEvaluateBetaClass::onRun( SVRunStatusClass& RRunStatus )
 }
 
 
-DWORD SVEvaluateBetaClass::processMessage( DWORD DwMessageID, DWORD DwMessageValue, DWORD DwMessageContext )
+LONG_PTR SVEvaluateBetaClass::processMessage( DWORD DwMessageID, LONG_PTR DwMessageValue, LONG_PTR DwMessageContext )
 {
-	DWORD DwResult = NULL;
+	LONG_PTR DwResult = NULL;
 
 	return( SVMathContainerClass::processMessage( DwMessageID, DwMessageValue, DwMessageContext ) | DwResult );
 }
@@ -137,7 +137,17 @@ DWORD SVEvaluateBetaClass::processMessage( DWORD DwMessageID, DWORD DwMessageVal
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVEvaluateBeta.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVEvaluateBeta.cpp_v  $
+ * 
+ *    Rev 1.1   01 Feb 2014 10:36:38   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Changed sendmessage to use LONG_PTR instead of DWORD.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 10:29:20   bWalter
  * Project:  SVObserver

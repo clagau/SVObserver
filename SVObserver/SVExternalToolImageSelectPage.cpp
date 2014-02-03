@@ -5,8 +5,8 @@
 //* .Module Name     : SVExternalToolImageSelectPage
 //* .File Name       : $Workfile:   SVExternalToolImageSelectPage.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   01 Oct 2013 14:12:24  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   01 Feb 2014 10:42:24  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -175,60 +175,6 @@ BOOL SVExternalToolImageSelectPage::OnInitDialog()
 					}
 				}
 			}
-			/*
-			// Find all available Images...
-			SVObjectTypeInfoStruct imageObjectInfo;
-			imageObjectInfo.ObjectType = SVImageObjectType;
-			
-			int iIndex = 0;
-
-			// Search for first...
-			SVImageClass* pImage = dynamic_cast <SVImageClass*> ((SVObjectClass*) ::SVSendMessage( pToolSet, SVM_GETFIRST_OBJECT, NULL, ( DWORD ) &imageObjectInfo ) );
-			while( pImage )
-			{
-				SVImageInfoClass l_ImageInfo = pImage->GetImageInfo();
-
-				bool bUseImage = true;
-				SVToolClass* pImageOwnerTool = dynamic_cast<SVToolClass *>(l_ImageInfo.GetOwner());
-
-				if( pImageOwnerTool )
-				{
-					bUseImage = bUseImage && !SV_IS_KIND_OF(pImageOwnerTool, SVGageToolClass);
-				}
-
-				long l_lBandNumber = 1;
-
-				l_ImageInfo.GetImageProperty( SVImagePropertyBandNumber, l_lBandNumber );
-
-				bUseImage = bUseImage && (l_lBandNumber == 1);
-
-				bUseImage = bUseImage && !(pImage->ObjectAttributesAllowed() & SV_HIDDEN);
-
-				if ( bUseImage )
-				{
-					m_AvailableImages.Add( pImage );
-					++iIndex;
-				}// end if ( bUseImage )
-
-				// Search for next image...
-				pImage = dynamic_cast <SVImageClass*> ( (SVObjectClass*) ::SVSendMessage( pToolSet, SVM_GETNEXT_OBJECT, ( DWORD ) pImage, ( DWORD ) &imageObjectInfo ) );
-
-				// Ensure only image sources which are produced by tools above the current tool....
-				if( pImage )
-				{
-					SVToolClass* pImageOwnerTool = dynamic_cast <SVToolClass*> ( pImage->GetAncestor( SVToolObjectType ) );
-
-					if( pImageOwnerTool != NULL )
-					{
-						if( !( l_pIPDoc->IsToolPreviousToSelected( pImageOwnerTool->GetUniqueObjectID() ) ) )
-						{
-							break;
-						}
-					}
-				}// end if( pImage )
-
-			}// end while( pImage )
-			*/
 			// Init source image list box...
 			// the item data is the index (same as position)
 			m_iOldIndex = m_cbAvailableImages.init( &m_AvailableImages, m_pCurrentSourceImage );
@@ -323,7 +269,7 @@ void SVExternalToolImageSelectPage::OnSelchangeImage()
 
 		SVInObjectInfoStruct& rInfo = *(m_pInputImageInfo[iCurrentImage]);
 		rInfo.SetInputObject( m_pCurrentSourceImage );
-		BOOL bSuccess = ::SVSendMessage( rInfo.GetInputObjectInfo().PObject, SVM_CONNECT_OBJECT_INPUT, ( DWORD )&rInfo, NULL );
+		BOOL bSuccess = ::SVSendMessage( rInfo.GetInputObjectInfo().PObject, SVM_CONNECT_OBJECT_INPUT, reinterpret_cast<LONG_PTR>(&rInfo), NULL );
 		ASSERT( bSuccess );
 
 		// Tell Tool image source has changed
@@ -351,6 +297,16 @@ void SVExternalToolImageSelectPage::OnSelchangeImageList()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVExternalToolImageSelectPage.cpp_v  $
+ * 
+ *    Rev 1.2   01 Feb 2014 10:42:24   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Changed sendmessage to use LONG_PTR instead of DWORD.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   01 Oct 2013 14:12:24   tbair
  * Project:  SVObserver

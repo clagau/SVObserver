@@ -5,8 +5,8 @@
 //* .Module Name     : SVDigitizerProcessingClass
 //* .File Name       : $Workfile:   SVDigitizerProcessingClass.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   12 Jun 2013 15:19:44  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   31 Jan 2014 17:16:28  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -104,7 +104,6 @@ void SVDigitizerProcessingClass::Shutdown()
 		m_AcquisitionDevices.clear();
 	}
 }
-
 
 void SVDigitizerProcessingClass::clear()
 {
@@ -557,15 +556,6 @@ HRESULT SVDigitizerProcessingClass::UpdateIntekDevices()
 				{
 					_variant_t l_oValue;
 
-					/*
-					SVIntekParameterDCamVendorId = 100,         // 100 - Read Only parameter
-					SVIntekParameterDCamVendorName,             // 101 - Read Only parameter
-					SVIntekParameterDCamModelName,              // 102 - Read Only parameter
-					SVIntekParameterDCamSerialNumberHigh,       // 103 - Read Only parameter
-					SVIntekParameterDCamSerialNumberLow,        // 104 - Read Only parameter
-					SVIntekParameterDCamSerialNumberString,     // 105 - Read Only parameter
-					//*/
-
 					camera.iPosition = i;
 					camera.m_ulHandle = l_ulHandle;
 
@@ -729,7 +719,7 @@ HRESULT SVDigitizerProcessingClass::UpdateMatroxDevices()
 				params.SetParameter( DeviceParamIPAddress, SVStringValueDeviceParam( l_rsvItem.strIPAddress ) );
 
 				// Set packetSize if specified via hardware.ini file
-				if (TheSVObserverApp.m_gigePacketSize != 0)
+				if (TheSVObserverApp.getGigePacketSize() != 0)
 				{
 					TheSVObserverApp.SetGigePacketSizeDeviceParam(&params);
 				}
@@ -742,12 +732,21 @@ HRESULT SVDigitizerProcessingClass::UpdateMatroxDevices()
 	return l_Status;
 }
 
-
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVDigitizerProcessingClass.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVDigitizerProcessingClass.cpp_v  $
+ * 
+ *    Rev 1.2   31 Jan 2014 17:16:28   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  884
+ * SCR Title:  Update Source Code Files to Follow New Programming Standards and Guidelines
+ * Checked in by:  bWalter;  Ben Walter
+ * Change Description:  
+ *   Changed to follow guidelines more closely.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   12 Jun 2013 15:19:44   bWalter
  * Project:  SVObserver

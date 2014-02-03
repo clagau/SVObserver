@@ -5,8 +5,8 @@
 //* .Module Name     : SVExternalToolTask
 //* .File Name       : $Workfile:   SVExternalToolTask.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.4  $
-//* .Check In Date   : $Date:   03 Oct 2013 13:31:04  $
+//* .Current Version : $Revision:   1.5  $
+//* .Check In Date   : $Date:   01 Feb 2014 10:42:26  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -284,9 +284,9 @@ SVExternalToolTask::~SVExternalToolTask()
 	embeddedList.RemoveAll();
 }
 
-DWORD SVExternalToolTask::processMessage( DWORD DwMessageID, DWORD DwMessageValue, DWORD DwMessageContext )
+LONG_PTR SVExternalToolTask::processMessage( DWORD DwMessageID, LONG_PTR DwMessageValue, LONG_PTR DwMessageContext )
 {
-	DWORD dwResult = NULL;
+	LONG_PTR dwResult = NULL;
 
 	// Try to process message by yourself...
 	DWORD dwPureMessageID = DwMessageID & SVM_PURE_MESSAGE;
@@ -337,10 +337,10 @@ DWORD SVExternalToolTask::processMessage( DWORD DwMessageID, DWORD DwMessageValu
 						SVToolSetClass* pToolSet = GetInspection()->GetToolSet();
 						SVObjectTypeInfoStruct imageObjectInfo;
 						imageObjectInfo.ObjectType = SVImageObjectType;
-						SVImageClass* pToolSetImage = dynamic_cast <SVImageClass*> ((SVObjectClass*) ::SVSendMessage( pToolSet, SVM_GETFIRST_OBJECT, NULL, ( DWORD ) &imageObjectInfo ) );
+						SVImageClass* pToolSetImage = dynamic_cast <SVImageClass*> ((SVObjectClass*) ::SVSendMessage( pToolSet, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>(&imageObjectInfo) ) );
 
 						rInfo.SetInputObject( pToolSetImage );
-						BOOL bSuccess = ::SVSendMessage( rInfo.GetInputObjectInfo().PObject, SVM_CONNECT_OBJECT_INPUT, ( DWORD )&rInfo, NULL );
+						LONG_PTR bSuccess = ::SVSendMessage( rInfo.GetInputObjectInfo().PObject, SVM_CONNECT_OBJECT_INPUT, reinterpret_cast<LONG_PTR>(&rInfo), NULL );
 						break;
 					}
 				}
@@ -358,7 +358,7 @@ DWORD SVExternalToolTask::processMessage( DWORD DwMessageID, DWORD DwMessageValu
 					{
 						// set input to NULL
 						rInfo.SetInputObject( NULL );
-						BOOL bSuccess = ::SVSendMessage( rInfo.GetInputObjectInfo().PObject, SVM_CONNECT_OBJECT_INPUT, ( DWORD )&rInfo, NULL );
+						LONG_PTR bSuccess = ::SVSendMessage( rInfo.GetInputObjectInfo().PObject, SVM_CONNECT_OBJECT_INPUT, reinterpret_cast<LONG_PTR>(&rInfo), NULL );
 
 						// set value to default
 						m_Data.m_aInputObjects[i].SetDefaultValue(m_Data.m_aInputValueDefinitions[i].vDefaultValue, TRUE);
@@ -1353,7 +1353,7 @@ HRESULT SVExternalToolTask::SetCancelData(SVCancelData* pCancelData)
 				// Send to the Object we are using
 				::SVSendMessage( pImageInfo->GetInputObjectInfo().UniqueObjectID, 
 								 SVM_DISCONNECT_OBJECT_INPUT, 
-								 ( DWORD ) pImageInfo, 
+								 reinterpret_cast<LONG_PTR>(pImageInfo), 
 								 NULL );
 			}
 
@@ -1377,7 +1377,7 @@ HRESULT SVExternalToolTask::SetCancelData(SVCancelData* pCancelData)
 			SVInObjectInfoStruct* pImageInfo = &m_Data.m_aInputImageInfo[i];
 			// reconnect changed objects
 			// Connect input info to new input object...
-			DWORD dwConnectResult = ::SVSendMessage( pImageInfo->GetInputObjectInfo().UniqueObjectID, SVM_CONNECT_OBJECT_INPUT, ( DWORD ) pImageInfo, NULL );
+			LONG_PTR dwConnectResult = ::SVSendMessage( pImageInfo->GetInputObjectInfo().UniqueObjectID, SVM_CONNECT_OBJECT_INPUT, reinterpret_cast<LONG_PTR>(pImageInfo), NULL );
 		}
 
 		SVToolClass* pTool = NULL;
@@ -1593,7 +1593,7 @@ HRESULT SVExternalToolTask::AllocateResult (int iIndex)
 			dynamic_cast<SVVariantValueObjectClass*>(( SVObjectClass* )SVSendMessage(pResult,
 			SVM_GETFIRST_OBJECT, 
 			NULL, 
-			(DWORD)&info));
+			reinterpret_cast<LONG_PTR>(&info)));
 		
 		if (!pValue)
 		{
@@ -1610,7 +1610,7 @@ HRESULT SVExternalToolTask::AllocateResult (int iIndex)
 		if( ! pResult->IsCreated() )
 		{
 			// And finally try to create the child object...
-			if( ::SVSendMessage( this, SVM_CREATE_CHILD_OBJECT, ( DWORD ) pResult, SVMFResetObject ) != SVMR_SUCCESS )
+			if( ::SVSendMessage( this, SVM_CREATE_CHILD_OBJECT, reinterpret_cast<LONG_PTR>(pResult), SVMFResetObject ) != SVMR_SUCCESS )
 			{
 				//ASSERT(FALSE);					
 				// Remove it from the TaskObjectList ( Destruct it )
@@ -1709,24 +1709,6 @@ std::vector<SVResultClass*> SVExternalToolTask::GetResultRangeObjects()
 		aObjects.push_back( pResult );
 	}
 
-	/*
-	info.ObjectType = SVResultObjectType;
-	info.SubType = SVResultVariantObjectType;
-	
-	pResult = dynamic_cast<SVVariantResultClass*>
-		      ((SVObjectClass*) SVSendMessage
-		         (this, SVM_GETFIRST_OBJECT, NULL, (DWORD) &info));
-	
-	while (pResult)
-	{
-		aObjects.push_back( pResult );
-
-		pResult = dynamic_cast<SVVariantResultClass*>
-			      ((SVObjectClass*) SVSendMessage
-			         (this, SVM_GETNEXT_OBJECT, (DWORD) pResult, (DWORD) &info));
-	}
-	*/
-	
 	return aObjects;
 }
 
@@ -1857,7 +1839,7 @@ HRESULT SVExternalToolTask::SetInput( const CString& rstrInputName, const CStrin
 
 			if ( rInfo.GetInputObjectInfo().PObject )
 			{	// disconnect existing connection
-				BOOL bSuccess = ::SVSendMessage( rInfo.GetInputObjectInfo().PObject, SVM_DISCONNECT_OBJECT_INPUT, ( DWORD )&rInfo, NULL );
+				LONG_PTR bSuccess = ::SVSendMessage( rInfo.GetInputObjectInfo().PObject, SVM_DISCONNECT_OBJECT_INPUT, reinterpret_cast<LONG_PTR>(&rInfo), NULL );
 				rInfo.SetInputObject( NULL );
 			}
 
@@ -1868,7 +1850,7 @@ HRESULT SVExternalToolTask::SetInput( const CString& rstrInputName, const CStrin
 				rValue.SetValue(iBucket, rstrValue);
 
 				rInfo.SetInputObject( pObject );
-				BOOL bSuccess = ::SVSendMessage( rInfo.GetInputObjectInfo().PObject, SVM_CONNECT_OBJECT_INPUT, ( DWORD )&rInfo, NULL );
+				LONG_PTR bSuccess = ::SVSendMessage( rInfo.GetInputObjectInfo().PObject, SVM_CONNECT_OBJECT_INPUT, reinterpret_cast<LONG_PTR>(&rInfo), NULL );
 				//ASSERT( bSuccess );
 			}
 			else
@@ -2121,7 +2103,7 @@ HRESULT SVExternalToolTask::ConnectInputs()
 			rInfo.SetInputObject( pObject );
 			if ( !rInfo.IsConnected() )
 			{
-				BOOL bSuccess = ::SVSendMessage( rInfo.GetInputObjectInfo().PObject, SVM_CONNECT_OBJECT_INPUT, ( DWORD )&rInfo, NULL );
+				LONG_PTR bSuccess = ::SVSendMessage( rInfo.GetInputObjectInfo().PObject, SVM_CONNECT_OBJECT_INPUT, reinterpret_cast<LONG_PTR>(&rInfo), NULL );
 				//ASSERT( bSuccess );
 				if( !bSuccess )
 				{
@@ -2182,6 +2164,16 @@ HRESULT SVExternalToolTask::CollectInputImageNames( SVRunStatusClass& RRunStatus
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVExternalToolTask.cpp_v  $
+ * 
+ *    Rev 1.5   01 Feb 2014 10:42:26   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Changed sendmessage to use LONG_PTR instead of DWORD.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.4   03 Oct 2013 13:31:04   tbair
  * Project:  SVObserver

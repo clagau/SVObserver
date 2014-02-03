@@ -5,8 +5,8 @@
 //* .Module Name     : SVEquation.h
 //* .File Name       : $Workfile:   SVEquation.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   14 Jan 2014 12:09:22  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   01 Feb 2014 10:32:28  $
 //******************************************************************************
 
 #ifndef SVEQUATIONCLASS_H
@@ -260,7 +260,7 @@ protected:
 
 	virtual BOOL onRun( SVRunStatusClass& RRunStatus );
 
-	virtual DWORD processMessage( DWORD DwMessageID, DWORD DwMessageValue, DWORD DwMessageContext );
+	virtual LONG_PTR processMessage( DWORD DwMessageID, LONG_PTR DwMessageValue, LONG_PTR DwMessageContext );
 	
 private:
 	SVEquationTestResult lexicalScan( LPSTR buffer );		// perform lexical scan
@@ -287,6 +287,16 @@ protected:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVEquation.h_v  $
+ * 
+ *    Rev 1.2   01 Feb 2014 10:32:28   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Changed sendmessage to use LONG_PTR instead of DWORD.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   14 Jan 2014 12:09:22   bwalter
  * Project:  SVObserver

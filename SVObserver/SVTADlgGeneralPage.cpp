@@ -5,8 +5,8 @@
 //* .Module Name     : SVTADlgGeneralPage
 //* .File Name       : $Workfile:   SVTADlgGeneralPage.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   24 Apr 2013 11:14:52  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   01 Feb 2014 12:08:54  $
 //******************************************************************************
 
 //******************************************************************************
@@ -177,7 +177,7 @@ BOOL SVToolAdjustmentDialogGeneralPageClass::OnInitDialog()
 		// Get tool's draw flag object...
 		SVObjectTypeInfoStruct drawFlagObjectInfo;
 		drawFlagObjectInfo.EmbeddedID = SVConditionalToolDrawFlagObjectGuid;
-		pToolDrawFlag = ( SVEnumerateValueObjectClass* ) ::SVSendMessage( pTool, SVM_GETFIRST_OBJECT, NULL, ( DWORD ) &drawFlagObjectInfo );
+		pToolDrawFlag = ( SVEnumerateValueObjectClass* ) ::SVSendMessage( pTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>(&drawFlagObjectInfo) );
 		if( pToolDrawFlag )
 		{
 			// Populate Draw Flag combo...
@@ -209,7 +209,7 @@ BOOL SVToolAdjustmentDialogGeneralPageClass::OnInitDialog()
 
 			SVObjectTypeInfoStruct l_svObjectInfo;
 			l_svObjectInfo.EmbeddedID = SVUpdateAuxilliaryExtentsObjectGuid;
-			m_pUpdateAuxilliary = ( SVBoolValueObjectClass* ) ::SVSendMessage( pTool, SVM_GETFIRST_OBJECT, NULL, ( DWORD ) &l_svObjectInfo );
+			m_pUpdateAuxilliary = ( SVBoolValueObjectClass* ) ::SVSendMessage( pTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>(&l_svObjectInfo) );
 			if( m_pUpdateAuxilliary )
 			{
 				m_pUpdateAuxilliary->GetValue( m_bUpdateAuxilliaryExtents );
@@ -313,7 +313,17 @@ BOOL SVToolAdjustmentDialogGeneralPageClass::OnSetActive()
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVTADlgGeneralPage.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVTADlgGeneralPage.cpp_v  $
+ * 
+ *    Rev 1.1   01 Feb 2014 12:08:54   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Changed SVSendmessage and processmessage to use LONG_PTR instead of DWORD.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   24 Apr 2013 11:14:52   bWalter
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : SVUtilitiesClass
 //* .File Name       : $Workfile:   SVUtilities.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   02 Oct 2013 08:24:44  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   31 Jan 2014 17:16:38  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -17,7 +17,6 @@
 #include "SVOMFCLibrary/SVOINIClass.h"
 #include "SVUtilityIniClass.h"
 #include "SVObserver.h"
-
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -34,13 +33,13 @@ CString gmszIdValueName;
 
 typedef struct UtilityInfoTag
 {
-  BOOL    bUtilityFound;
-  CString szUtilityName;
-  CString szCommand;
-  CString szArguments;
-  CString szWorkingDirectory;
-  BOOL    bPromptForArguments;
-  UINT    uiId;
+	BOOL    bUtilityFound;
+	CString szUtilityName;
+	CString szCommand;
+	CString szArguments;
+	CString szWorkingDirectory;
+	BOOL    bPromptForArguments;
+	UINT    uiId;
 } UTILITYINFO, *PUTILITYINFO;
 
 //////////////////////////////////////////////////////////////////////
@@ -49,20 +48,19 @@ typedef struct UtilityInfoTag
 
 SVUtilitiesClass::SVUtilitiesClass()
 {
-  gmszUtilityKey.Format (_T("HKEY_CURRENT_USER\\Software\\%s\\%s\\Utilities"),
-                          AfxGetApp()->m_pszRegistryKey,
-                          AfxGetApp()->m_pszAppName);
+	gmszUtilityKey.Format( _T( "HKEY_CURRENT_USER\\Software\\%s\\%s\\Utilities" ),
+		AfxGetApp()->m_pszRegistryKey,
+		AfxGetApp()->m_pszAppName );
 
 	gmszCommandValueName = _T("Command");
-  gmszArgumentsValueName = _T("Arguments");
-  gmszWorkingDirectoryValueName = _T("Working Directory");
-  gmszPromptValueName = _T("Prompt For Arguments");
-  gmszIdValueName = _T("Menu Id");
+	gmszArgumentsValueName = _T("Arguments");
+	gmszWorkingDirectoryValueName = _T("Working Directory");
+	gmszPromptValueName = _T("Prompt For Arguments");
+	gmszIdValueName = _T("Menu Id");
 }
 
 SVUtilitiesClass::~SVUtilitiesClass()
 {
-
 }
 
 BOOL CALLBACK FindUtilityById (CString &szKeyName, LPVOID pVoid)
@@ -112,8 +110,6 @@ void SVUtilitiesClass::RunUtility(SVSecurityManager* pAccess, UINT uiUtilityId)
   utilInfo.bUtilityFound = FALSE;
   utilInfo.uiId = uiUtilityId;
   
-//  reg.EnumKeys (FindUtilityById, (LPVOID) &utilInfo);
-
   if ( uiUtilityId == ID_EXTRAS_UTILITIES_LIMIT )
   {
 	  // do the firmware stuff...
@@ -122,12 +118,9 @@ void SVUtilitiesClass::RunUtility(SVSecurityManager* pAccess, UINT uiUtilityId)
 	  utilInfo.szCommand = pApp->m_csFirmwareCommand;
 	  utilInfo.szWorkingDirectory = pApp->m_csFirmwareWorkingDir;
 	  utilInfo.bPromptForArguments = FALSE;
-
-	  
   }
   else
   {
-
 	  std::map<UINT, SVUtilityIniClass>::iterator iter;
 
 	  iter = pApp->m_UtilityMenu.find(uiUtilityId);
@@ -152,12 +145,7 @@ void SVUtilitiesClass::RunUtility(SVSecurityManager* pAccess, UINT uiUtilityId)
 	  }
   }
 
-
-
-
-  BOOL bUpdateFirmware = pApp->m_bShowUpdateFirmwareInMenu;
-
-
+  BOOL bUpdateFirmware = pApp->getShowUpdateFirmwareInMenu();
 
   //note: need to prompt for arguments!
   if (utilInfo.bUtilityFound)
@@ -172,13 +160,6 @@ void SVUtilitiesClass::RunUtility(SVSecurityManager* pAccess, UINT uiUtilityId)
     }
 	
 	if( pAccess->SVCreateProcess(utilInfo.szCommand, utilInfo.szWorkingDirectory, utilInfo.szArguments ) )
-	/*
-    if (33 >  (int) ShellExecute (HWND_DESKTOP,
-                                  "open",
-                                  utilInfo.szCommand,
-                                  utilInfo.szArguments,
-                                  utilInfo.szWorkingDirectory,
-                                  SW_SHOWNORMAL))*/
     {
       CString msg;
       msg.Format (_T("Unable to start %s\n(%s).\n\nCheck Utility Properties."),
@@ -201,9 +182,7 @@ BOOL SVUtilitiesClass::SetupUtilities(CMenu *pMenu)
   dlg.mszUtilityKey = gmszUtilityKey;
   if ( dlg.DoModal () == IDOK )
   {	
-	//CleanupIni();
 	UpdateIni();
-
   }
 
   return LoadMenu (pMenu);
@@ -239,11 +218,6 @@ BOOL CALLBACK LoadMenuItem (CString &szKeyName, LPVOID pVoid)
 
 BOOL SVUtilitiesClass::LoadMenu(CMenu *pMenu)
 {
-/*  SVRegistryClass reg( gmszUtilityKey );
-
-  ClearMenu( pMenu );
-  reg.EnumKeys( LoadMenuItem, pMenu );
-*/
 	if ( !LoadMenuFromINI(pMenu) )
 	{
 		CleanupIni();
@@ -353,7 +327,7 @@ BOOL SVUtilitiesClass::LoadMenuFromINI(CMenu *pMenu)
 	{
 		if ( !pApp->m_csFirmwareCommand.IsEmpty() )
 		{
-			if ( pApp->m_bShowUpdateFirmwareInMenu )
+			if ( pApp->getShowUpdateFirmwareInMenu() )
 			{
 				iId++;
 				dwId = iId;
@@ -367,11 +341,8 @@ BOOL SVUtilitiesClass::LoadMenuFromINI(CMenu *pMenu)
 	return bRet;
 }
 
-
 BOOL SVUtilitiesClass::CleanupIni()
 {  //this function will cleanup the utility ini file.  
-
-
 	SVOINIClass l_svIni;
 	int l_iHighestIndex =0;
 
@@ -483,11 +454,8 @@ BOOL SVUtilitiesClass::CleanupIni()
 		iter = pApp->m_UtilityMenu.find((UINT)(iId+i-1));
 		if ( iter != pApp->m_UtilityMenu.end() )
 		{
-//		l_Struct = pApp->m_UtilityMenu.at(i-1);
-
 			l_Struct = iter->second;
 		
-
 			l_svIni.SetValue(csStanza,"DisplayName",l_Struct.m_csDisplayName,csIniFile);
 			l_svIni.SetValue(csStanza,"Command",l_Struct.m_csCommand,csIniFile);
 			l_svIni.SetValue(csStanza,"Arguments",l_Struct.m_csArguments,csIniFile);
@@ -495,12 +463,6 @@ BOOL SVUtilitiesClass::CleanupIni()
 			l_svIni.SetValue(csStanza,"PromptForArguments",l_Struct.m_csPromptForArguments,csIniFile);
 		}
 	}
-
-			
-
-
-
-
 
 	return TRUE;
 }
@@ -543,6 +505,16 @@ BOOL SVUtilitiesClass::UpdateIni()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVUtilities.cpp_v  $
+ * 
+ *    Rev 1.2   31 Jan 2014 17:16:38   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  884
+ * SCR Title:  Update Source Code Files to Follow New Programming Standards and Guidelines
+ * Checked in by:  bWalter;  Ben Walter
+ * Change Description:  
+ *   Changed to follow guidelines more closely.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   02 Oct 2013 08:24:44   tbair
  * Project:  SVObserver

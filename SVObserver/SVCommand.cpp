@@ -5,8 +5,8 @@
 //* .Module Name     : SVCommand.cpp
 //* .File Name       : $Workfile:   SVCommand.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   01 Oct 2013 12:16:26  $
+//* .Current Version : $Revision:   1.4  $
+//* .Check In Date   : $Date:   01 Feb 2014 10:23:16  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -365,7 +365,6 @@ STDMETHODIMP CSVCommand::PutSVIMConfig(BSTR szXMLData, BSTR* pXMLError)
 	SVPackedFile svPackedFile;
 	HRESULT hrResult = S_OK;
 	BSTR XMLError;
-	
 	
 	do
 	{
@@ -1711,7 +1710,7 @@ STDMETHODIMP CSVCommand::SVGetSVIMOfflineCount(unsigned long *ulOfflineCount)
 		
 		try
 		{
-			*ulOfflineCount = TheSVObserverApp.m_lOfflineCount;
+			*ulOfflineCount = TheSVObserverApp.getOfflineCount();
 			bSuccess = TRUE;
 		}
 		catch (...)
@@ -1743,7 +1742,7 @@ STDMETHODIMP CSVCommand::SVGetSVIMVersion(unsigned long *ulVersion)
 		
 		try
 		{
-			*ulVersion = TheSVObserverApp.DwCurrentVersion;
+			*ulVersion = TheSVObserverApp.getCurrentVersion();
 			bSuccess = TRUE;
 		}
 		catch (...)
@@ -3399,11 +3398,11 @@ STDMETHODIMP CSVCommand::SVGetLUT(BSTR bstrCameraName, SAFEARRAY** ppaulLUTTable
 
 
 HRESULT CSVCommand::ImageToBSTR(SVImageInfoClass&  rImageInfo, 
-                                SVSmartHandlePointer rImageHandle,
-                                BSTR*              pbstr ) //, 
-								// BRW - SVImageCompression has been deprecated.
-                                //long               alCompression, 
-                                //SVImageCompressionClass* apCompressionObject)
+	SVSmartHandlePointer rImageHandle,
+	BSTR*              pbstr ) //, 
+	// BRW - SVImageCompression has been deprecated.
+	//long               alCompression, 
+	//SVImageCompressionClass* apCompressionObject)
 {
 	HRESULT hr = S_OK;
 	
@@ -4181,9 +4180,9 @@ HRESULT CSVCommand::SVSetImageList(SAFEARRAY *psaNames, SAFEARRAY *psaImages, SA
 				l_ImageInfo = l_pImageObject->GetImageInfo();
 
 				if ( S_OK == SVImageProcessingClass::Instance().LoadImageBuffer( (void*)bstrImage, 
-				                                                    pInRequest->m_ImageInfo, 
-																														pInRequest->m_ImageHandlePtr, 
-				                                                    l_ImageInfo ) )
+					pInRequest->m_ImageInfo, 
+					pInRequest->m_ImageHandlePtr, 
+					l_ImageInfo ) )
 				{
 					//add request to inspection process
 					pInspection->AddInputImageRequest(pInRequest);
@@ -5374,7 +5373,7 @@ STDMETHODIMP CSVCommand::SVReadString(long lFontIdentifier, BSTR* bstrFoundStrin
 			}// end else
 
 			l_milImage.clear();
-  			if( l_Code != SVMEE_STATUS_OK )
+			if( l_Code != SVMEE_STATUS_OK )
 			{
 				
 				SVMatroxStatusInformation l_info;
@@ -5387,7 +5386,7 @@ STDMETHODIMP CSVCommand::SVReadString(long lFontIdentifier, BSTR* bstrFoundStrin
 			}
 
 			l_Code = SVMatroxOcrInterface::Destroy( l_milResult );
-  			if( l_Code != SVMEE_STATUS_OK )
+			if( l_Code != SVMEE_STATUS_OK )
 			{
 				
 				SVMatroxStatusInformation l_info;
@@ -5999,7 +5998,7 @@ HRESULT CSVCommand::RebuildStreamingDataList()
 				{
 					pTempObject = reinterpret_cast <SVObjectClass*> (::SVSendMessage( SVObjectManagerClass::Instance().GetObject( pStreamData->m_InspectionID ),
 						( SVM_GET_OBJECT_BY_NAME | SVM_PARENT_TO_CHILD | SVM_NOTIFY_FRIENDS ) & ~SVM_NOTIFY_ONLY_THIS, 
-						reinterpret_cast <DWORD> ((LPCSTR) l_NameInfo.GetObjectName().c_str()), NULL ) );
+						reinterpret_cast <LONG_PTR> (static_cast<LPCSTR>(l_NameInfo.GetObjectName().c_str())), NULL ) );
 
 					pStreamData->pValueObject = dynamic_cast <SVValueObjectClass*> ( pTempObject );
 
@@ -7067,11 +7066,32 @@ STDMETHODIMP CSVCommand::SVIsAvailiable()
 {
 	return S_OK;
 }
+
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVCommand.cpp_v  $
+ * 
+ *    Rev 1.4   01 Feb 2014 10:23:16   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Changed sendmessage to use LONG_PTR instead of DWORD.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.3   31 Jan 2014 17:16:26   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  884
+ * SCR Title:  Update Source Code Files to Follow New Programming Standards and Guidelines
+ * Checked in by:  bWalter;  Ben Walter
+ * Change Description:  
+ *   Changed to follow guidelines more closely.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   01 Oct 2013 12:16:26   tbair
  * Project:  SVObserver

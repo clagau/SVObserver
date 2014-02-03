@@ -5,8 +5,8 @@
 //* .Module Name     : SVRemoteInputTool
 //* .File Name       : $Workfile:   SVRemoteInputTool.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   02 Oct 2013 07:58:46  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   01 Feb 2014 12:03:56  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -278,10 +278,10 @@ BOOL SVRemoteInputTool::onRun( SVRunStatusClass& RRunStatus )
 	return l_Status;
 }
 
-DWORD SVRemoteInputTool::processMessage( DWORD DwMessageID, DWORD DwMessageValue, DWORD DwMessageContext )
+LONG_PTR SVRemoteInputTool::processMessage( DWORD DwMessageID, LONG_PTR DwMessageValue, LONG_PTR DwMessageContext )
 {
 	//BOOL bResult;
-	DWORD l_Status = NULL;
+	LONG_PTR l_Status = NULL;
 
 	// Try to process message by yourself...
 	DWORD dwPureMessageID = DwMessageID & SVM_PURE_MESSAGE;
@@ -566,6 +566,16 @@ bool SVRemoteInputTool::SVDataElement::operator<( const SVDataElement& p_rObject
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVRemoteInputTool.cpp_v  $
+ * 
+ *    Rev 1.2   01 Feb 2014 12:03:56   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Changed SVSendmessage and processmessage to use LONG_PTR instead of DWORD.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   02 Oct 2013 07:58:46   tbair
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : SVMatroxSystemInterface
 //* .File Name       : $Workfile:   SVMatroxSystemInterface.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   01 Oct 2013 11:15:32  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   29 Jan 2014 10:23:22  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -119,7 +119,9 @@ SVMatroxSystemInterface::SVStatusCode SVMatroxSystemInterface::Get(const SVMatro
 	try
 #endif
 	{
-		MsysInquire( SystemId.m_SystemIdentifier, InquireType, reinterpret_cast<void *>(&value));
+		MIL_INT mValue;
+		MsysInquire( SystemId.m_SystemIdentifier, InquireType, &mValue);
+		value = static_cast<double>(mValue);
 		l_Code =  SVMatroxApplicationInterface::GetLastStatus();
 	}
 #ifdef USE_TRY_BLOCKS
@@ -146,7 +148,7 @@ SVMatroxSystemInterface::SVStatusCode SVMatroxSystemInterface::Get(const SVMatro
 	try
 #endif
 	{
-		char l_String[256];
+		MIL_TEXT_CHAR l_String[256];
 		MsysInquire( SystemId.m_SystemIdentifier, InquireType, reinterpret_cast<void *>(l_String));
 		l_Code =  SVMatroxApplicationInterface::GetLastStatus();
 		if (l_Code == SVMEE_STATUS_OK)
@@ -324,7 +326,9 @@ SVMatroxSystemInterface::SVStatusCode SVMatroxSystemInterface::GetHookInfo(const
 	HRESULT hr = SVMatroxSystemHookInfo::m_convertor.ConvertEnumToMatroxType(HookInfoType, l_MatroxType);
 	if (hr == S_OK)
 	{
-		MsysGetHookInfo(SystemId.m_SystemIdentifier, p_EventId, l_MatroxType, &value);
+		MIL_INT mValue;
+		MsysGetHookInfo(SystemId.m_SystemIdentifier, p_EventId, l_MatroxType, &mValue);
+		value = static_cast<long>(mValue);
 		l_Code =  SVMatroxApplicationInterface::GetLastStatus();
 	}
 	else
@@ -366,6 +370,16 @@ SVMatroxSystemInterface::SVStatusCode SVMatroxSystemInterface::GetHookInfo(const
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVMatroxLibrary\SVMatroxSystemInterface.cpp_v  $
+ * 
+ *    Rev 1.2   29 Jan 2014 10:23:22   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Use of proper matrox types for Inquire function.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   01 Oct 2013 11:15:32   tbair
  * Project:  SVObserver

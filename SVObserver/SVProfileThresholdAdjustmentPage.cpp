@@ -5,8 +5,8 @@
 //* .Module Name     : SVProfileThresholdAdjustmentPage
 //* .File Name       : $Workfile:   SVProfileThresholdAdjustmentPage.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 14:37:12  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   01 Feb 2014 11:59:58  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -668,7 +668,7 @@ BOOL SVProfileThresholdAdjustmentPageClass::OnInitDialog()
 	SVObjectTypeInfoStruct info;
 	info.ObjectType = SVImageToLineProjectObjectType;
 
-	pProject = ( SVImageToLineProjectClass * )SVSendMessage( PCurrentAnalyzer, SVM_GETFIRST_OBJECT, NULL, ( DWORD )&info );
+	pProject = ( SVImageToLineProjectClass * )SVSendMessage( PCurrentAnalyzer, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>(&info) );
 	
 	if( !pProject )
 	{
@@ -960,7 +960,17 @@ void SVProfileThresholdAdjustmentPageClass::updateGraphDisplay()
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVProfileThresholdAdjustmentPage.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVProfileThresholdAdjustmentPage.cpp_v  $
+ * 
+ *    Rev 1.1   01 Feb 2014 11:59:58   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Changed SVSendmessage and processmessage to use LONG_PTR instead of DWORD.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 14:37:12   bWalter
  * Project:  SVObserver

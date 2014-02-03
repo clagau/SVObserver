@@ -5,8 +5,8 @@
 //* .Module Name     : SVOCVBlobRecord
 //* .File Name       : $Workfile:   SVOCVBlobRecord.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 13:01:26  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   01 Feb 2014 11:55:24  $
 //******************************************************************************
 
 #include "SVTaskObject.h"
@@ -33,7 +33,7 @@ public:
 
 protected:
 	virtual BOOL onRun( SVRunStatusClass& RRunStatus );
-	virtual DWORD processMessage( DWORD DwMessageID, DWORD DwMessageValue, DWORD DwMessageContext );
+	virtual LONG_PTR processMessage( DWORD DwMessageID, LONG_PTR DwMessageValue, LONG_PTR DwMessageContext );
 
 //Attributes
 public:
@@ -54,7 +54,17 @@ typedef SVVector< SVOCVCharacterResultClass* > SVOCVCharacterResultArray;
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVOCVBlobRecord.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVOCVBlobRecord.h_v  $
+ * 
+ *    Rev 1.1   01 Feb 2014 11:55:24   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Changed SVSendmessage and processmessage to use LONG_PTR instead of DWORD.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 13:01:26   bWalter
  * Project:  SVObserver

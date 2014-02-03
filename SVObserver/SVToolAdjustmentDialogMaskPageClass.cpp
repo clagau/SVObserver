@@ -5,8 +5,8 @@
 //* .Module Name     : SVToolAdjustmentDialogMaskPageClass
 //* .File Name       : $Workfile:   SVToolAdjustmentDialogMaskPageClass.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   02 Oct 2013 08:24:42  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   01 Feb 2014 12:22:00  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -97,14 +97,14 @@ SVToolAdjustmentDialogMaskPageClass::SVToolAdjustmentDialogMaskPageClass( SVTool
 
 			// Get The UnaryImageOperatorList
 			m_pUnaryImageOperatorList = dynamic_cast <SVUnaryImageOperatorListClass*>
-				 ( reinterpret_cast<SVObjectClass*> ( SVSendMessage( m_pTool, SVM_GETFIRST_OBJECT, NULL, ( DWORD )&info ) ) );
+				 ( reinterpret_cast<SVObjectClass*> ( SVSendMessage( m_pTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>(&info) ) ) );
 
 			if( m_pUnaryImageOperatorList )
 			{
 				info.ObjectType = SVUnaryImageOperatorObjectType;
 				info.SubType = SVUserMaskOperatorObjectType;
 				m_pMask = dynamic_cast <SVUserMaskOperatorClass*>
-					( reinterpret_cast <SVObjectClass*> ( SVSendMessage( m_pUnaryImageOperatorList, SVM_GETFIRST_OBJECT, NULL, ( DWORD )&info ) ) );
+					( reinterpret_cast <SVObjectClass*> ( SVSendMessage( m_pUnaryImageOperatorList, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>(&info) ) ) );
 			}
 		}
 	}
@@ -762,58 +762,6 @@ void SVToolAdjustmentDialogMaskPageClass::SetupImageMaskCombo()
 					}
 				}
 			}
-			/*
-			SVImageClass *pImage = (SVImageClass*) ::SVSendMessage( pToolSet, SVM_GETFIRST_OBJECT,NULL,(DWORD)&imageObjectInfo);
-			while ( pImage )
-			{
-				SVImageInfoClass ImageInfo = pImage->GetImageInfo();
-
-				long l_lBandNumber = 1;
-				long l_lPixelDepth = 8;
-
-				ImageInfo.GetImageProperty( SVImagePropertyBandNumber, l_lBandNumber );
-				ImageInfo.GetImageProperty( SVImagePropertyPixelDepth, l_lPixelDepth );
-
-				SVToolClass *pImageOwnerTool = dynamic_cast<SVToolClass *>( ImageInfo.GetOwner() );
-				if ( pImageOwnerTool )
-				{
-					if ( l_lBandNumber == 1 )
-					{
-						if ( l_lPixelDepth == 8 )
-						{
-							m_imageList.Add(pImage);
-						}
-					}
-				}
-				else
-				{
-					if ( l_lBandNumber == 1 )
-					{
-						if ( l_lPixelDepth == 8 )
-						{
-							m_imageList.Add(pImage);
-						}
-					}
-				}
-
-				// Search for next image...
-				pImage = ( SVImageClass *) ::SVSendMessage( pToolSet, SVM_GETNEXT_OBJECT, ( DWORD ) pImage, ( DWORD ) &imageObjectInfo );
-
-				// Ensure only image sources which are produced by tools above the current tool....
-				if( pImage )
-				{
-					SVToolClass* pImageOwnerTool = ( SVToolClass* ) pImage->GetAncestor( SVToolObjectType );
-
-					if( pImageOwnerTool != NULL )
-					{
-						if( !( l_pIPDoc->IsToolPreviousToSelected( pImageOwnerTool->GetUniqueObjectID() ) ) )
-						{
-							break;
-						}
-					}
-				}
-			}
-			*/
 		}
 	}
 	// add image from the mask
@@ -1039,6 +987,16 @@ void SVToolAdjustmentDialogMaskPageClass::OnSelchangeDrawMaskCriteria()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVToolAdjustmentDialogMaskPageClass.cpp_v  $
+ * 
+ *    Rev 1.3   01 Feb 2014 12:22:00   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Changed SVSendmessage and processmessage to use LONG_PTR instead of DWORD.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   02 Oct 2013 08:24:42   tbair
  * Project:  SVObserver

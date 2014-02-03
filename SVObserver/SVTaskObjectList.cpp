@@ -5,8 +5,8 @@
 //* .Module Name     : SVTaskObjectList
 //* .File Name       : $Workfile:   SVTaskObjectList.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.3  $
-//* .Check In Date   : $Date:   15 Jan 2014 16:52:38  $
+//* .Current Version : $Revision:   1.4  $
+//* .Check In Date   : $Date:   01 Feb 2014 12:18:36  $
 //******************************************************************************
 
 // @WARNING:  This filename (SVTaskObjectList) does not match the class name (SVTaskObjectListClass).
@@ -423,9 +423,9 @@ HRESULT SVTaskObjectListClass::RemoveChild( SVTaskObjectClass* pChildObject )
 {
 	HRESULT hr = S_OK;
 
-	UINT uRetCode = SVSendMessage (this, 
+	LONG_PTR uRetCode = SVSendMessage (this, 
 	               SVM_DESTROY_CHILD_OBJECT,
-	               (DWORD) pChildObject,
+	               reinterpret_cast<LONG_PTR>(pChildObject),
 	               SVMFSetDefaultInputs);
 
 	if( uRetCode != SVMR_SUCCESS )
@@ -610,7 +610,7 @@ void SVTaskObjectListClass::DeleteAt(int Index, int Count /*= 1*/)
 		if (pTaskObject)
 		{
 			// delete( pTaskObject );
-			::SVSendMessage(this, SVM_DESTROY_CHILD_OBJECT, (DWORD)pTaskObject, NULL);
+			::SVSendMessage(this, SVM_DESTROY_CHILD_OBJECT, reinterpret_cast<LONG_PTR>(pTaskObject), NULL);
 		}
 	}
 }
@@ -792,7 +792,7 @@ SVObjectClass *SVTaskObjectListClass::UpdateObject( const GUID &p_oFriendGuid, S
 
 BOOL SVTaskObjectListClass::CloseObject()
 {
-	DWORD DwResult;
+	LONG_PTR DwResult;
 	BOOL retVal = TRUE;
 	
 	// Close our children
@@ -842,7 +842,7 @@ const SVClock::SVTimeStamp& SVTaskObjectListClass::GetLastListUpdateTimestamp() 
 	return m_LastListUpdateTimestamp;
 }
 	
-DWORD SVTaskObjectListClass::processMessage(DWORD DwMessageID, DWORD DwMessageValue, DWORD DwMessageContext)
+LONG_PTR SVTaskObjectListClass::processMessage(DWORD DwMessageID, LONG_PTR DwMessageValue, LONG_PTR DwMessageContext)
 {
 	//
 	// NOTE: 
@@ -851,7 +851,7 @@ DWORD SVTaskObjectListClass::processMessage(DWORD DwMessageID, DWORD DwMessageVa
 	//		Closing Direction ==> 1. Children, 2. You ( and Your embeddeds ), 3. Friends
 	//
 
-	DWORD DwResult = SVMR_NOT_PROCESSED;
+	LONG_PTR DwResult = SVMR_NOT_PROCESSED;
 
 	// Check if friend should process this message first....
 	if ((DwMessageID & SVM_NOTIFY_FRIENDS) == SVM_NOTIFY_FRIENDS)
@@ -946,7 +946,6 @@ DWORD SVTaskObjectListClass::processMessage(DWORD DwMessageID, DWORD DwMessageVa
 				if (pRequestor == this || pRequestor == GetOwner())
 				{
 					return NULL;
-					//::SVSendMessage( GetOwner(), DwMessageID, pRequestor, DwMessageContext );
 				}
 				SVObjectClass* pObject = NULL;
 					
@@ -1185,7 +1184,7 @@ DWORD SVTaskObjectListClass::processMessage(DWORD DwMessageID, DWORD DwMessageVa
 						// Set unique object ID...
 						if (SVObjectManagerClass::Instance().ChangeUniqueObjectID(pTaskObject, taskObjectID))
 						{
-							::SVSendMessage( this, SVM_CONNECT_CHILD_OBJECT, ( DWORD ) pTaskObject, NULL );
+							::SVSendMessage( this, SVM_CONNECT_CHILD_OBJECT, reinterpret_cast<LONG_PTR>(pTaskObject), NULL );
 								
 							return SVMR_SUCCESS;
 						}
@@ -1204,7 +1203,7 @@ DWORD SVTaskObjectListClass::processMessage(DWORD DwMessageID, DWORD DwMessageVa
 					if (pOwner)
 					{
 						// Ask the owner to kill the imposter!
-						if (::SVSendMessage(pOwner, SVM_DESTROY_CHILD_OBJECT, (DWORD)pObject, NULL) == SVMR_NO_SUCCESS)
+						if (::SVSendMessage(pOwner, SVM_DESTROY_CHILD_OBJECT, reinterpret_cast<LONG_PTR>(pObject), NULL) == SVMR_NO_SUCCESS)
 						{
 							// must be a Friend
 							pOwner->DestroyFriends();
@@ -1221,9 +1220,7 @@ DWORD SVTaskObjectListClass::processMessage(DWORD DwMessageID, DWORD DwMessageVa
 
 				if (SVObjectManagerClass::Instance().ChangeUniqueObjectID(pTaskObject, taskObjectID))
 				{
-					//::SVSendMessage( pTaskObject, SVM_CONNECT_ALL_INPUTS, NULL, NULL );
-
-					::SVSendMessage( this, SVM_CONNECT_CHILD_OBJECT, ( DWORD ) pTaskObject, NULL );
+					::SVSendMessage( this, SVM_CONNECT_CHILD_OBJECT, reinterpret_cast<LONG_PTR>(pTaskObject), NULL );
 
 					return SVMR_SUCCESS;
 				}
@@ -1368,9 +1365,9 @@ DWORD SVTaskObjectListClass::processMessage(DWORD DwMessageID, DWORD DwMessageVa
 	return DwResult;
 }
 
-DWORD SVTaskObjectListClass::OutputListProcessMessage( DWORD DwMessageID, DWORD DwMessageValue, DWORD DwMessageContext )
+LONG_PTR SVTaskObjectListClass::OutputListProcessMessage( DWORD DwMessageID, LONG_PTR DwMessageValue, LONG_PTR DwMessageContext )
 {
-	DWORD DwResult = SVTaskObjectClass::OutputListProcessMessage( DwMessageID, DwMessageValue, DwMessageContext );
+	LONG_PTR DwResult = SVTaskObjectClass::OutputListProcessMessage( DwMessageID, DwMessageValue, DwMessageContext );
 
 	// Try to send message to outputObjectList members, if not already processed...
 	if( (DwMessageID & SVM_NOTIFY_FIRST_RESPONDING) == SVM_NOTIFY_FIRST_RESPONDING )
@@ -1388,9 +1385,9 @@ DWORD SVTaskObjectListClass::OutputListProcessMessage( DWORD DwMessageID, DWORD 
 	return DwResult;
 }
 
-DWORD SVTaskObjectListClass::ChildrenOutputListProcessMessage( DWORD DwMessageID, DWORD DwMessageValue, DWORD DwMessageContext )
+LONG_PTR SVTaskObjectListClass::ChildrenOutputListProcessMessage( DWORD DwMessageID, LONG_PTR DwMessageValue, LONG_PTR DwMessageContext )
 {
-	DWORD DwResult = SVMR_NOT_PROCESSED;
+	LONG_PTR DwResult = SVMR_NOT_PROCESSED;
 
 	// Try to send message to outputObjectList members, if not already processed...
 	if( (DwMessageID & SVM_NOTIFY_FIRST_RESPONDING) == SVM_NOTIFY_FIRST_RESPONDING )
@@ -1486,6 +1483,16 @@ HRESULT SVTaskObjectListClass::onCollectOverlays(SVImageClass *p_Image, SVExtent
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVTaskObjectList.cpp_v  $
+ * 
+ *    Rev 1.4   01 Feb 2014 12:18:36   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Changed SVSendmessage and processmessage to use LONG_PTR instead of DWORD.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   15 Jan 2014 16:52:38   bwalter
  * Project:  SVObserver

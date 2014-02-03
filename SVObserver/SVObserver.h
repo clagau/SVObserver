@@ -5,17 +5,17 @@
 //* .Module Name     : SVObserver
 //* .File Name       : $Workfile:   SVObserver.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.8  $
-//* .Check In Date   : $Date:   09 Dec 2013 07:51:22  $
+//* .Current Version : $Revision:   1.9  $
+//* .Check In Date   : $Date:   31 Jan 2014 17:16:34  $
 //******************************************************************************
 
 #ifndef SVOBSERVER_H
 #define SVOBSERVER_H
 
+#pragma region Includes
 #include <deque>
 
 #include "SVMaterialsLibrary/SVMaterialsTree.h"
-#include "SVContainerLibrary/SVVector.h"
 #include "SVImageLibrary/SVDigitizerLoadLibraryClass.h"
 #include "SVIOLibrary/SVIOTriggerLoadLibraryClass.h"
 #include "SVOMFCLibrary/SVOINIClass.h"
@@ -24,8 +24,8 @@
 #include "SVUtilityLibrary/SVString.h"
 #include "SVXMLLibrary/SVXMLMaterialsTree.h"
 
-#include "SVFileNameClass.h"   // SVFileNameClass
-#include "SVRemoteFontManager.h" //rpy
+#include "SVFileNameClass.h"
+#include "SVRemoteFontManager.h"
 #include "SVOIntelRAIDStatusClass.h"
 #include "SVUtilityIniClass.h"
 #include "SVIOTabbedView.h"
@@ -33,9 +33,10 @@
 #include "SVPLCManager.h"
 #endif
 #include "SVConfigurationLibrary/SVObserverEnums.h"
-#include "SVStorage.h"
 #include "SVStorageResult.h"
+#pragma endregion Includes
 
+#pragma region Declarations
 class SVConfigurationObject;
 class SVIMServerWrapper;
 class SVInspectionProcess;
@@ -86,20 +87,25 @@ enum SVHardwareErrorEnums
 
 LPCTSTR const SVTOOLPARAMETERLIST_MARKER = (_T( "** SVSetToolParameterList MARKER **" ));
 
-// pre-4.60 exclude strings
-//LPCTSTR const SVEXCLUDECHARS_TOOL_NAME =       (_T(",.$@'\"{}()[]\\;:+-*/"));
-//LPCTSTR const SVEXCLUDECHARS_CONFIG_NAME =     (_T("\\/:*\"<>|;&$@`[]{}()^~!#%"));
-//LPCTSTR const SVEXCLUDECHARS_INSPECTION_NAME = (_T("\\/:*\"<>|."));
-
 LPCTSTR const SVEXCLUDECHARS_CONFIG_NAME =     (_T("\\/:*\"<>|;&$@`[]{}()^~!#%"));
 LPCTSTR const SVEXCLUDECHARS_TOOL_NAME =       (_T("\\/:*\";,.+-$@'[]{}()<>|!%&~^\327\367"));
 LPCTSTR const SVEXCLUDECHARS_INSPECTION_NAME = (_T("\\/:*\";,.+-$@'[]{}()<>|"));
+
+typedef SVXMLMaterialsTree SVTreeType;
+#pragma endregion Declarations
 
 class SVObserverApp : public CWinApp
 {
 	DECLARE_SERIAL( SVObserverApp )
 
 public:
+#pragma region Constructor
+	SVObserverApp();
+	virtual ~SVObserverApp();
+#pragma endregion Constructor
+
+#pragma region Public Methods
+#pragma region AFX_MSG Methods
 	//{{AFX_MSG(SVObserverApp)
 	afx_msg void OnAppAbout();
 	afx_msg void OnFileNewSEC();
@@ -135,22 +141,21 @@ public:
 	afx_msg void OnUpdateExtrasAdditionalEnvironmentSettings(CCmdUI* PCmdUI);
 	afx_msg void OnStop();
 	afx_msg void OnUpdateEditDelete(CCmdUI* PCmdUI);
-	afx_msg void OnUpdateEditEdittool(CCmdUI* PCmdUI);
+	afx_msg void OnUpdateEditEditTool(CCmdUI* PCmdUI);
 	afx_msg void OnUpdateEditEditToolSetCondition(CCmdUI* PCmdUI);
 	afx_msg void OnUpdateEditRemoteInputs(CCmdUI* PCmdUI);
 #ifndef _WIN64
-	afx_msg void OnUpdateEditEditplcoutputs(CCmdUI *pCmdUI);
+	afx_msg void OnUpdateEditEditPLCOutputs(CCmdUI *pCmdUI);
 #endif
 	afx_msg void OnUpdateEditAddRemoteOutputs(CCmdUI *pCmdUI);
-	afx_msg void OnUpdateExtrasLightreference(CCmdUI* PCmdUI);
-	afx_msg void OnUpdateExtrasLightreferenceBrightnesscontrast(CCmdUI* PCmdUI);
+	afx_msg void OnUpdateExtrasLightReference(CCmdUI* PCmdUI);
 	afx_msg void OnUpdateFilePrint(CCmdUI* PCmdUI);
 	afx_msg void OnUpdateFilePrintPreview(CCmdUI* PCmdUI);
 	afx_msg void OnUpdateFilePrintSetup(CCmdUI* PCmdUI);
-	afx_msg void OnUpdateExtrasTestoutputs(CCmdUI* PCmdUI);
+	afx_msg void OnUpdateExtrasTestOutputs(CCmdUI* PCmdUI);
 	afx_msg void OnUpdateHelp(CCmdUI* PCmdUI);
 	afx_msg void OnUpdateHelpFinder(CCmdUI* PCmdUI);
-	afx_msg void OnUpdateModeStoptest(CCmdUI* PCmdUI);
+	afx_msg void OnUpdateModeStopTest(CCmdUI* PCmdUI);
 	afx_msg void OnUpdateModeTest(CCmdUI* PCmdUI);
 	afx_msg void OnUpdateModeTestBtn(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateNextPane(CCmdUI* PCmdUI);
@@ -161,7 +166,7 @@ public:
 	afx_msg void OnUpdateWindowTileHorz(CCmdUI* PCmdUI);
 	afx_msg void OnUpdateWindowTileVert(CCmdUI* PCmdUI);
 	afx_msg void OnUpdateAddShiftTool(CCmdUI* PCmdUI);
-	afx_msg void OnUpdateAddWindowtool(CCmdUI* PCmdUI);
+	afx_msg void OnUpdateAddWindowTool(CCmdUI* PCmdUI);
 	afx_msg void OnUpdateAppExit(CCmdUI* PCmdUI);
 	afx_msg void OnUpdateAppAbout(CCmdUI* PCmdUI);
 	afx_msg void OnUpdateAddGageTool(CCmdUI* PCmdUI);
@@ -202,7 +207,7 @@ public:
 	afx_msg void OnUpdateAddAcquisitionTool(CCmdUI* PCmdUI);
 	afx_msg void OnUpdateResumeFreeze(CCmdUI* PCmdUI);
 	afx_msg void OnUpdateSelectPPQVariable(CCmdUI* pCmdUI);
-	afx_msg void OnUpdateAddColortool(CCmdUI* PCmdUI);
+	afx_msg void OnUpdateAddColorTool(CCmdUI* PCmdUI);
 	afx_msg void OnUpdateRegressionTest(CCmdUI* pCmdUI);
 
 	// Special catch in Run Mode...
@@ -210,11 +215,10 @@ public:
 
 	// Special for SVRCComm.DLL
 	afx_msg void OnRCGoOffline();
-	afx_msg void OnRCGoOnline() ;
+	afx_msg void OnRCGoOnline();
 	afx_msg void OnRCLoadSEC();
 	afx_msg void OnRCSaveAllAndGetSEC();
 	afx_msg void OnRCCloseAndCleanUpDownloadDirectory();
-
 	afx_msg void OnUpdateAllIOViews();
 	afx_msg void OnUpdateAddExternalTool(CCmdUI* pCmdUI);
 	afx_msg void OnExtrasSecuritySetup();
@@ -228,35 +232,42 @@ public:
 	afx_msg void OnUpdateAddLinearTool(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateAddRemoteInputTool(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateAddCylindricalWarpTool( CCmdUI* PCmdUI );
-	afx_msg void OnUpdateAddPerspectivetool(CCmdUI* pCmdUI);
+	afx_msg void OnUpdateAddPerspectiveTool(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateExtrasSecuritySetup(CCmdUI* pCmdUI);
 #ifndef _WIN64
-	afx_msg void OnEditplcoutputs();
+	afx_msg void OnEditPLCOutputs();
 #endif
 	afx_msg void OnEditRemoteOutputs();
-	afx_msg void OnEditPublishedResults(UINT nID );
+	afx_msg void OnEditPublishedResults( UINT nID );
 	afx_msg void OnRCClose();
 	//}}AFX_MSG
+#pragma endregion AFX_MSG Methods
 
 	DECLARE_MESSAGE_MAP()
 
+#pragma region AFX_VIRTUAL Methods
 	//{{AFX_VIRTUAL(SVObserverApp)
 	public:
 	virtual BOOL InitInstance();
 	virtual BOOL OnIdle(LONG lCount);
-	virtual CDocument* OpenDocumentFile(LPCTSTR lpszFileName);
+	virtual CDocument* OpenDocumentFile(LPCTSTR FileName);
 	virtual void Serialize(CArchive& ar);
 	virtual int ExitInstance();
 	virtual void WinHelp(DWORD dwData, UINT nCmd = HELP_CONTEXT);
 	//}}AFX_VIRTUAL
+#pragma endregion AFX_VIRTUAL Methods
 
 	//{{AFX_DATA(SVObserverApp)
 	//}}AFX_DATA
 
 public:
-	SVObserverApp();
-
-	virtual ~SVObserverApp();
+#pragma region virtual
+	virtual HRESULT OpenSVXFile( LPCTSTR PathName );
+	virtual void LoadTempIODoc( LPCTSTR FileName );
+	virtual void LoadTempIPDoc( LPCTSTR FileName );
+	virtual SVIODoc* NewSVIODoc( LPCTSTR DocName, SVIOController& Controller );	
+	virtual SVIPDoc* NewSVIPDoc( LPCTSTR DocName, SVInspectionProcess& Inspection );
+#pragma endregion virtual
 
 	CString GetConfigurationName() const;
 
@@ -266,32 +277,16 @@ public:
 	HRESULT GetWindowsItems( const SVNameSet& p_rNames, SVNameStorageResultMap& p_rItems ) const;
 	HRESULT GetEnvironmentItems( const SVNameSet& p_rNames, SVNameStorageResultMap& p_rItems ) const;
 
-	// *** // ***
-	HANDLE m_hAppThread;
-	// *** // ***
-
 	SVMainFrame* GetMainFrame() const;
-
 	HRESULT CanCloseMainFrame();
 	BOOL CreateSEC( BOOL NewSEC = TRUE );
-
-	virtual HRESULT OpenSVXFile( LPCTSTR LPSZPathName );
-	HRESULT OpenSECFile( LPCTSTR LPSZPathName );
-
+	HRESULT OpenSECFile( LPCTSTR PathName );
 	HRESULT DestroySEC( BOOL AskForSavingOrClosing = TRUE, BOOL CloseWithoutHint = FALSE );
 	void RemoveUnusedFiles();
-
-	virtual void LoadTempIODoc( LPCTSTR szFileName );
-	virtual void LoadTempIPDoc( LPCTSTR szFileName );
-
 	SVIODoc* GetIODoc() const;
-
-	virtual SVIODoc* NewSVIODoc( LPCTSTR szDocName, SVIOController& p_rIOController );
-	virtual SVIPDoc* NewSVIPDoc( LPCTSTR szDocName, SVInspectionProcess& p_rInspection );
 
 	BOOL Login();
 	BOOL Logout( BOOL BForceLogout = FALSE );
-
 	BOOL InitPath( LPCTSTR TStrPathName, BOOL BCreateIfNotExists = TRUE, BOOL BDeleteContents = TRUE );
 
 	BOOL InitSVIMServer();
@@ -304,14 +299,12 @@ public:
 	bool IsCoreco() const;
 	bool IsMatroxGige() const;
 
-	BOOL CheckSVIMType();
-
+	BOOL CheckSVIMType() const;
 	SVIMProductEnum GetSVIMType() const;
 #ifndef _WIN64
 	CString GetPLCDLL();
 #endif
 	bool IsProductTypeRAID() const;
-
 	void ValidateMRUList();
 
 	SVOINIClass& INI();
@@ -323,90 +316,37 @@ public:
 	HRESULT LoadConfiguration();
 
 	void SetSelectedToolForOperatorMove( BOOL bSetTool );
-
 	HRESULT RenameObject( const SVString& p_rOldName, const SVString& p_rNewName, const SVGUID& p_rObjectId );
-
 	HRESULT RebuildOutputList();
-
-	SVOIntelRAIDStatusClass m_svIntelRAID;
-
 	BOOL SetStatusText( LPCTSTR PStrStatusText );
-
 	void UpdatePPQBar();
 
-	LPCTSTR GetSECFileNameOnly();
-	LPCTSTR GetSECPathName();
-	LPCTSTR GetSECFileName();
+	LPCTSTR GetSECFileNameOnly() const;
+	LPCTSTR GetSECPathName() const;
+	LPCTSTR GetSECFileName() const;
 	LPCTSTR GetSECFullFileName() const;
-
 	BOOL SetSECFullFileName(LPCTSTR csFullFileName, DWORD bLoadFile = TRUE);
-	SVIPDoc* GetIPDoc( LPCTSTR StrIPDocPathName );
+
+	SVIPDoc* GetIPDoc( LPCTSTR StrIPDocPathName ) const;
 	BOOL AlreadyExistsIPDocTitle( LPCTSTR StrIPDocTitle );
 	CString GetStringResource( int ResourceID );
 
 	BOOL ShowConfigurationAssistant( int Page = 3, BOOL bFileNewConfiguration = FALSE );
 
-	CMemFile SECMemoryCopyFile;
-	BOOL IsSECMemoryCopyAvailable;
-	BOOL IsSECMemorySaving;
-	BOOL IsSECMemoryLoading;
-	CString MemorySECDataPath;
-	CString MemorySECPathName;
-	CString MemorySECTitle;
-
-	SVLVFastOCR *psvlvFastOcr;
-
-	BOOL ViewToolBuffers;
-
-	SVIPDoc*	pCurrentDocument;
-	long m_lOfflineCount;
-
-	// old
-	int RefreshRate;
-
-	// SEC File Attributes
-	GUID CurrentSECID;
-	CString CreationSECDate;
-	CString CurrentSECDate;
-
-	BOOL ShouldRunLastEnvironmentAutomatically;
-	DWORD DwAutoRunDelayTime;
-
-	// Version numbering code:
-	//
-	// DwCurrentVersion, Type DWORD
-	// Meaning:		0x00mmssbb => Version m.s  - Subversion b 
-	// EXCEPTION:	if m == 0 then s = b and b = 0 !!! 
-	//					No Subversion number in not releasable
-	//					versions!
-	//	e.g.
-	//				0x00000002 => Version 0.2  - Subversion 00 ( Subversion 'a' )
-	//				0x00010000 => Version 1.0  - Subversion 00 ( Subversion 'a' )
-	//		        0x00011219 => Version 1.18 - Subversion 25 ( Subversion 'z' )
-	//				0x00020001 => Version 2.0  - Subversion 01 ( Subversion 'b' )
-	DWORD	DwCurrentVersion;
-	// Refer to DwCurrentVersion
-	// Version of the file, 
-	//  which SVObserver is now loading
-	DWORD	DwCurrentLoadingVersion;
-
-	// For managing remotely created/edited fonts through the SIAC
-	SVRemoteFontManager m_mgrRemoteFonts;
-
 	bool OkToEdit();
 	bool OkToEditMove();
-	BOOL IsMonochromeImageAvailiable();
-	void SVGetCurrentConfigName(CString &szConfigName);
+	BOOL IsMonochromeImageAvailable();
+	void SVGetCurrentConfigName( CString &ConfigName ) const;
 	void OnRCOpenCurrentSEC();
 	void OnRCOpenCurrentSVX();
 	void SetupSVIMServer();
 	void UpdateAllMenuExtrasUtilities();
 
-	long GetSourceImageDepth();
-	long GetMaxPPQLength();
+	long GetSourceImageDepth() const;
+	long GetMaxPPQLength() const;
 
-	long GetResultImageDepth();
-	long GetLogDataManager();
+	long GetResultImageDepth() const;
+	long GetLogDataManager() const;
 	long UpdateAndGetLogDataManager();
 
 	void DeselectTool();
@@ -423,8 +363,8 @@ public:
 
 	void SetGigePacketSizeDeviceParam(SVDeviceParamCollection* pDeviceParams);
 
-	HRESULT SetModeEdit( bool p_bState ) ;
-	HRESULT SetModeEditMove( bool l_bState ) ;
+	HRESULT SetModeEdit( bool p_bState );
+	HRESULT SetModeEditMove( bool l_bState );
 	void SetTestMode(bool p_bNoSecurity = false);
 	HRESULT GetTriggersAndCounts( CString& p_strTrigCnts );
 
@@ -443,39 +383,27 @@ public:
 	void ShowIOTab( DWORD p_dwID );
 	void UpdateRemoteInputTabs();
 
-#ifndef _WIN64
-	SVPLCManager m_PLCManager;
-#endif
-	SVMaterialsTree m_MaterialsTree;
-	SVXMLMaterialsTree m_XMLTree;
-	SVXMLMaterialsTree::SVBranchHandle m_Inspection;
-
-	CString m_csDigitizerDLL;
-	SVDigitizerLoadLibraryClass m_svDLLDigitizers;
-
-	CString m_csFileAcquisitionDLL;
-	SVDigitizerLoadLibraryClass m_svDLLFileAcquisition;
-
-	SVIOTriggerLoadLibraryClass m_svDLLTriggers;
-	SVIOTriggerLoadLibraryClass m_svDLLSoftwareTriggers;
-	SVIOTriggerLoadLibraryClass m_svDLLAcquisitionTriggers;
-
-	SVSecurityManager m_svSecurityMgr;	// Security
-
-	long m_gigePacketSize; 
-	//firmware command strings
-	CString m_csFirmwareCommand;
-	CString m_csFirmwareWorkingDir;
-	CString m_csFirmwareArguments;
-
-	CString m_csShowUpdateFirmware;
-
-	BOOL m_bShowUpdateFirmwareInMenu;
-
-	typedef std::map<UINT, SVUtilityIniClass> UtilityMenuMap;
-	UtilityMenuMap m_UtilityMenu;
 	HRESULT CheckDrive(const CString& p_strDrive) const;
 
+#pragma region Encapsulation Methods
+	BOOL getShowUpdateFirmwareInMenu() const { return m_ShowUpdateFirmwareInMenu; }
+	void setShowUpdateFirmwareInMenu(BOOL val) { m_ShowUpdateFirmwareInMenu = val; }
+	long getGigePacketSize() const { return m_gigePacketSize; }
+	//void setGigePacketSize(long val) { m_gigePacketSize = val; }
+	long getOfflineCount() const { return m_OfflineCount; }
+	//void setOfflineCount(long val) { m_OfflineCount = val; }
+	SVIPDoc* getCurrentDocument() const { return m_pCurrentDocument; }
+	void setCurrentDocument(SVIPDoc* pIPDoc) { m_pCurrentDocument = pIPDoc; }
+	BOOL getShouldRunLastEnvironmentAutomatically() const { return m_ShouldRunLastEnvironmentAutomatically; }
+	//void setShouldRunLastEnvironmentAutomatically(BOOL val) { m_ShouldRunLastEnvironmentAutomatically = val; }
+	DWORD getCurrentVersion() const { return m_CurrentVersion; }
+	//void setCurrentVersion(DWORD val) { m_CurrentVersion = val; }
+	DWORD getLoadingVersion() const { return m_LoadingVersion; }
+	void setLoadingVersion(DWORD version) { m_LoadingVersion = version; }
+#pragma endregion
+#pragma endregion Public Methods
+
+#pragma region Protected Methods
 protected:
 	HRESULT Start();
 
@@ -497,14 +425,14 @@ protected:
 	HRESULT LoadDigitalDLL();
 	HRESULT CloseDigitalDLL();
 
-	LPCTSTR GetProcessorBoardName();
-	LPCTSTR GetTriggerBoardName();
+	LPCTSTR GetProcessorBoardName() const;
+	LPCTSTR GetTriggerBoardName() const;
 	LPCTSTR GetSoftwareTriggerBoardName() const;
-	LPCTSTR GetAcquisitionBoardName();
+	LPCTSTR GetAcquisitionBoardName() const;
 	LPCTSTR GetFileAcquisitionBoardName() const;
-	LPCTSTR GetDigitalBoardName();
+	LPCTSTR GetDigitalBoardName() const;
 
-	LPCTSTR GetRAIDBoardName();
+	LPCTSTR GetRAIDBoardName() const;
 
 	HRESULT DisconnectAllCameraBuffers( CStringArray& rDisconnectedCameras );
 	HRESULT ConnectCameraBuffers( const CStringArray& rCamerasToConnect );
@@ -514,11 +442,7 @@ protected:
     BOOL OpenSECFileFromMostRecentList(int nID);
 	void EnableTriggerSettings();
 	void DisableTriggerSettings();
-	std::set<SVTriggerObject *> m_dirty_triggers;
-
 	void SaveIPDoc(SVObjectWriter& rWriter, SVIPDoc* pDoc);
-
-	typedef SVXMLMaterialsTree SVTreeType;
 
 	HRESULT SaveDocuments( SVTreeType& p_rTree );
 
@@ -527,40 +451,141 @@ protected:
 	HRESULT ConstructMissingDocuments();
 
 	BOOL DestroyMessageWindow();
+#pragma endregion Protected Methods
+
+#pragma region Private Methods
+private:
+	void OnStopAll();
+	BOOL InitATL();
+	void StopRegression();
+	DWORD GetActiveIOTab() const;
+	
+	bool AddSecurityNode(HMODULE hMessageDll, long lId, CString sNTGroup, bool bForcePrompt = false);
+	bool AddSecurityNode( HMODULE hMessageDll, long lId );
+
+	static int FindMenuItem(CMenu* Menu, LPCTSTR MenuString);
+#pragma endregion Private Methods
+
+//@HACK Public Member variables
+#pragma region Public Member variables
+public:
+	//firmware command strings
+	CString m_csFirmwareCommand;
+	CString m_csFirmwareWorkingDir;
+	CString m_csFirmwareArguments;
+
+	SVSecurityManager m_svSecurityMgr;	// Security
+	// For managing remotely created/edited fonts through the SIAC
+	SVRemoteFontManager m_mgrRemoteFonts;
+
+	typedef std::map<UINT, SVUtilityIniClass> UtilityMenuMap;
+	UtilityMenuMap m_UtilityMenu;
+	//@WARNING m_MaterialsTree MUST be before m_XMLTree in this file, 
+	// because it must be initialized in this order. (m_XMLTree need m_MaterialsTree in the constructor)
+	SVMaterialsTree m_MaterialsTree;
+	SVXMLMaterialsTree m_XMLTree;
+	SVXMLMaterialsTree::SVBranchHandle m_Inspection;
+
+#ifndef _WIN64
+	SVPLCManager m_PLCManager;
+#endif
+#pragma endregion Public Member variables
+
+#pragma region Member variables
+private:
+	// *** // ***
+	HANDLE m_hAppThread;
+	// *** // ***
+
+	CMemFile SECMemoryCopyFile;
+	BOOL IsSECMemoryCopyAvailable;
+	BOOL IsSECMemorySaving;
+	BOOL IsSECMemoryLoading;
+	CString MemorySECDataPath;
+	CString MemorySECPathName;
+	CString MemorySECTitle;
+
+	SVOIntelRAIDStatusClass m_IntelRAID;
+
+	SVLVFastOCR* m_pFastOcr;
+	BOOL ViewToolBuffers;
+	SVIPDoc* m_pCurrentDocument;
+	long m_OfflineCount;
+
+	// old
+	int RefreshRate;
+
+	// SEC File Attributes
+	GUID CurrentSECID;
+	CString CreationSECDate;
+	CString CurrentSECDate;
+
+	BOOL m_ShouldRunLastEnvironmentAutomatically;
+	DWORD m_AutoRunDelayTime;
+
+	// Version numbering code:
+	//
+	// m_CurrentVersion, Type DWORD
+	// Meaning:		0x00mmssbb => Version m.s  - Subversion b 
+	// EXCEPTION:	if m == 0 then s = b and b = 0 !!! 
+	//					No Subversion number in not releasable
+	//					versions!
+	//	e.g.
+	//				0x00000002 => Version 0.2  - Subversion 00 ( Subversion 'a' )
+	//				0x00010000 => Version 1.0  - Subversion 00 ( Subversion 'a' )
+	//		        0x00011219 => Version 1.18 - Subversion 25 ( Subversion 'z' )
+	//				0x00020001 => Version 2.0  - Subversion 01 ( Subversion 'b' )
+	DWORD m_CurrentVersion;
+	// Refer to m_CurrentVersion
+	// Version of the file, 
+	//  which SVObserver is now loading
+	DWORD m_LoadingVersion;
+
+	CString m_csDigitizerDLL;
+	SVDigitizerLoadLibraryClass m_svDLLDigitizers;
+
+	CString m_csFileAcquisitionDLL;
+	SVDigitizerLoadLibraryClass m_svDLLFileAcquisition;
+
+	SVIOTriggerLoadLibraryClass m_svDLLTriggers;
+	SVIOTriggerLoadLibraryClass m_svDLLSoftwareTriggers;
+	SVIOTriggerLoadLibraryClass m_svDLLAcquisitionTriggers;
+
+	long m_gigePacketSize; 
+
+	CString m_csShowUpdateFirmware;
+	BOOL m_ShowUpdateFirmwareInMenu;
+	std::set<SVTriggerObject *> m_dirty_triggers;
 
 	// The Standard Configuration Execution Directory
-	LPCTSTR tStrConfExePNVariableName;
-	LPCTSTR tStrConfExePNVariableDefaultValue;
-	CString strConfExePNVariableValue;
+	// PN -> Path Name
+	LPCTSTR m_ConfigExePNVariableName;
+	LPCTSTR m_ConfigExePNVariableDefaultValue;
+	CString m_ConfigExePNVariableValue;
 
 	// The Standard Last Valid Configuration Directory
-	LPCTSTR tStrLastValidConfPNVariableName;
-	LPCTSTR tStrLastValidConfPNVariableDefaultValue;
-	CString strLastValidConfPNVariableValue;
+	// PN -> Path Name
+	LPCTSTR m_LastValidConfigPNVariableName;
+	LPCTSTR m_LastValidConfigPNVariableDefaultValue;
+	CString m_LastValidConfigPNVariableValue;
 
 	long m_lSouceImageDepth;
 	long m_lResultImageDepth;
 	long m_LogDataManager;
 
-	SVMessageWindowClass* pMessageWindow;
+	SVMessageWindowClass* m_pMessageWindow;
 
-private:
 	typedef SVVector< SVFileNameClass* > SVFileNamePtrVector;
 
-	void OnStopAll();
-	BOOL InitATL();
-	void StopRegression();
-	DWORD GetActiveIOTab();
-	
-	SVIMServerWrapper *mpSVIMServerWrapper;
+	SVIMServerWrapper* m_pSVIMServerWrapper;
 
 	SVFileNamePtrVector m_svFileNames;
 
-	BOOL m_bOpeningSEC;
+	BOOL m_OpeningSEC;
 
-	BOOL m_bATLInited;
+	BOOL m_ATLInited;
 
-	mutable SVFileNameClass msvSECFileName;	// JMS - Added for File Management
+	mutable SVFileNameClass m_SECFileName;	// JMS - Added for File Management
 
 	CString m_WinKey;
 	CString m_ModelNumber;
@@ -598,9 +623,6 @@ private:
 	HRESULT m_hrHardwareFailure;
 
 	SVOINIClass m_SvimIni;
-	bool AddSecurityNode(HMODULE hMessageDll, long lId, CString sNTGroup, bool bForcePrompt = false);
-	bool AddSecurityNode( HMODULE hMessageDll, long lId );
-
 	BOOL m_bImageCompressionStarted;
 	HMENU m_hAddMenu;
 	HANDLE m_hEvent;
@@ -608,7 +630,7 @@ private:
 	short m_InputStreamPortNumber;
 	short m_OutputStreamPortNumber;
 	short m_RemoteCommandsPortNumber;
-
+#pragma endregion Member variables
 };
 
 extern SVObserverApp TheSVObserverApp;
@@ -625,6 +647,16 @@ extern SVObserverApp TheSVObserverApp;
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVObserver.h_v  $
+ * 
+ *    Rev 1.9   31 Jan 2014 17:16:34   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  884
+ * SCR Title:  Update Source Code Files to Follow New Programming Standards and Guidelines
+ * Checked in by:  bWalter;  Ben Walter
+ * Change Description:  
+ *   Changed to follow guidelines more closely.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.8   09 Dec 2013 07:51:22   tbair
  * Project:  SVObserver

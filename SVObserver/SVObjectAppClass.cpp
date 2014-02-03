@@ -5,8 +5,8 @@
 //* .Module Name     : SVObjectAppClass
 //* .File Name       : $Workfile:   SVObjectAppClass.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   30 Oct 2013 15:20:44  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   01 Feb 2014 11:39:16  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -84,9 +84,9 @@ SVAnalyzerClass *SVObjectAppClass::GetAnalyzer() const
 	return m_psvAnalyzer;
 }
 
-DWORD SVObjectAppClass::processMessage( DWORD DwMessageID, DWORD DwMessageValue, DWORD DwMessageContext )
+LONG_PTR SVObjectAppClass::processMessage( DWORD DwMessageID, LONG_PTR DwMessageValue, LONG_PTR DwMessageContext )
 {
-	DWORD DwResult = NULL;
+	LONG_PTR DwResult = NULL;
 
 	// Try to process message by yourself...
 	DWORD dwPureMessageID = DwMessageID & SVM_PURE_MESSAGE;
@@ -131,7 +131,7 @@ DWORD SVObjectAppClass::processMessage( DWORD DwMessageID, DWORD DwMessageValue,
 				createStruct.ToolObjectInfo	= GetTool();
 				createStruct.InspectionObjectInfo	= GetInspection();
 				
-				DWORD l_Return = SVSendMessage( pChildObject, SVM_CREATE_ALL_OBJECTS, ( DWORD ) &createStruct, NULL );
+				DWORD l_Return = SVSendMessage( pChildObject, SVM_CREATE_ALL_OBJECTS, reinterpret_cast<LONG_PTR>(&createStruct), NULL );
 
 				if( ( DwMessageContext & SVMFResetObject ) == SVMFResetObject )
 				{
@@ -172,7 +172,7 @@ DWORD SVObjectAppClass::processMessage( DWORD DwMessageID, DWORD DwMessageValue,
 				createStruct.ToolObjectInfo	= GetTool();
 				createStruct.InspectionObjectInfo	= GetInspection();
 				
-				DWORD l_Return = SVSendMessage( pChildObject, SVM_CONNECT_ALL_OBJECTS, ( DWORD ) &createStruct, NULL );
+				DWORD l_Return = SVSendMessage( pChildObject, SVM_CONNECT_ALL_OBJECTS, reinterpret_cast<LONG_PTR>(&createStruct), NULL );
 
 				return l_Return;
 			}
@@ -228,6 +228,16 @@ void SVObjectAppClass::UpdateConnections( SVObjectLevelCreateStruct* PCreateStru
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVObjectAppClass.cpp_v  $
+ * 
+ *    Rev 1.2   01 Feb 2014 11:39:16   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Changed SVSendmessage and processmessage to use LONG_PTR instead of DWORD.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   30 Oct 2013 15:20:44   bwalter
  * Project:  SVObserver

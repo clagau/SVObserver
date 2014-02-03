@@ -5,8 +5,8 @@
 // * .Module Name     : SVLinearAnalyzerClass
 // * .File Name       : $Workfile:   SVLinearAnalyzerClass.cpp  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.1  $
-// * .Check In Date   : $Date:   13 May 2013 12:16:30  $
+// * .Current Version : $Revision:   1.2  $
+// * .Check In Date   : $Date:   01 Feb 2014 11:13:10  $
 // ******************************************************************************
 
 #include "stdafx.h"
@@ -315,9 +315,9 @@ SVLinearEdgeProcessingClass *SVLinearAnalyzerClass::GetEdgeA()
 	info.SubType = SVLinearEdgeAProcessingObjectType;
 
 	l_psvEdge = (SVLinearEdgeProcessingClass *) SVSendMessage( this, 
-																									           SVM_GETFIRST_OBJECT,
-																									           NULL,
-																									           (DWORD) &info);
+																SVM_GETFIRST_OBJECT,
+																NULL,
+																reinterpret_cast<LONG_PTR>(&info));
 
 	return l_psvEdge;
 }
@@ -332,9 +332,9 @@ SVLinearEdgeProcessingClass *SVLinearAnalyzerClass::GetEdgeB()
 	info.SubType = SVLinearEdgeBProcessingObjectType;
 
 	l_psvEdge = (SVLinearEdgeProcessingClass *) SVSendMessage( this, 
-																									           SVM_GETFIRST_OBJECT,
-																									           NULL,
-																									           (DWORD) &info);
+																	SVM_GETFIRST_OBJECT,
+																	NULL,
+																	reinterpret_cast<LONG_PTR>(&info));
 
 	return l_psvEdge;
 }
@@ -519,9 +519,9 @@ HRESULT SVLinearAnalyzerClass::onCollectOverlays(SVImageClass *p_Image,SVExtentM
 	}
 	return l_hrRet;
 }
-DWORD SVLinearAnalyzerClass::processMessage(DWORD DwMessageID, DWORD DwMessageValue, DWORD DwMessageContext)
+LONG_PTR SVLinearAnalyzerClass::processMessage(DWORD DwMessageID, LONG_PTR DwMessageValue, LONG_PTR DwMessageContext)
 {
-	DWORD DwResult = 0L;
+	LONG_PTR DwResult = 0L;
 
 	switch (DwMessageID & SVM_PURE_MESSAGE)
 	{
@@ -548,7 +548,17 @@ DWORD SVLinearAnalyzerClass::processMessage(DWORD DwMessageID, DWORD DwMessageVa
 // * LOG HISTORY:
 // ******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVLinearAnalyzerClass.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVLinearAnalyzerClass.cpp_v  $
+ * 
+ *    Rev 1.2   01 Feb 2014 11:13:10   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Changed SVSendmessage and processmessage to use LONG_PTR instead of DWORD.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   13 May 2013 12:16:30   bWalter
  * Project:  SVObserver

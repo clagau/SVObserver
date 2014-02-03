@@ -5,8 +5,8 @@
 //* .Module Name     : SVTaskObjectList
 //* .File Name       : $Workfile:   SVTaskObjectList.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   02 Oct 2013 08:17:46  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   01 Feb 2014 12:18:36  $
 //******************************************************************************
 
 #ifndef SVTASKOBJECTLIST_H
@@ -120,9 +120,9 @@ protected:
 	// He will call OnValidate() for you!
 	virtual BOOL onRun( SVRunStatusClass& RRunStatus );
 
-	virtual DWORD	processMessage( DWORD DwMessageID, DWORD DwMessageValue, DWORD DwMessageContext );
-	virtual DWORD	OutputListProcessMessage( DWORD DwMessageID, DWORD DwMessageValue, DWORD DwMessageContext );
-	virtual DWORD	ChildrenOutputListProcessMessage( DWORD DwMessageID, DWORD DwMessageValue, DWORD DwMessageContext );
+	virtual LONG_PTR	processMessage( DWORD DwMessageID, LONG_PTR DwMessageValue, LONG_PTR DwMessageContext );
+	virtual LONG_PTR	OutputListProcessMessage( DWORD DwMessageID, LONG_PTR DwMessageValue, LONG_PTR DwMessageContext );
+	virtual LONG_PTR	ChildrenOutputListProcessMessage( DWORD DwMessageID, LONG_PTR DwMessageValue, LONG_PTR DwMessageContext );
 
 	SVClassInfoStructListClass availableChildren; // available children classes (not instantiated)
 
@@ -138,6 +138,16 @@ protected:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVTaskObjectList.h_v  $
+ * 
+ *    Rev 1.3   01 Feb 2014 12:18:36   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Changed SVSendmessage and processmessage to use LONG_PTR instead of DWORD.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   02 Oct 2013 08:17:46   tbair
  * Project:  SVObserver

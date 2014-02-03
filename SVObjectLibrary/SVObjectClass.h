@@ -5,8 +5,8 @@
 //* .Module Name     : SVObjectClass
 //* .File Name       : $Workfile:   SVObjectClass.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   22 Apr 2013 16:46:58  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   01 Feb 2014 10:09:14  $
 //******************************************************************************
 
 #ifndef SVOBJECTCLASS_H
@@ -47,8 +47,8 @@ public:
 	friend class SVPPQObject;
 	friend class SVConfigurationObject;
 
-	friend DWORD SVSendMessage( SVObjectClass* PObject, DWORD DwMessageID, DWORD DwMessageValue, DWORD DwMessageContext );
-	friend DWORD SVSendMessage( const GUID& RUniqueObjectID, DWORD DwMessageID, DWORD DwMessageValue, DWORD DwMessageContext );
+	friend LONG_PTR SVSendMessage( SVObjectClass* PObject, DWORD DwMessageID, LONG_PTR DwMessageValue, LONG_PTR DwMessageContext );
+	friend LONG_PTR SVSendMessage( const GUID& RUniqueObjectID, DWORD DwMessageID, LONG_PTR DwMessageValue, LONG_PTR DwMessageContext );
 
 	SVObjectClass();
 	SVObjectClass( LPCSTR ObjectName );
@@ -159,7 +159,7 @@ protected:
 
 	virtual SVObjectClass *UpdateObject( const GUID &friendGuid, SVObjectClass *p_psvObject, SVObjectClass *p_psvNewOwner );
 	
-	virtual DWORD processMessage( DWORD DwMessageID, DWORD DwMessageValue, DWORD DwMessageContext );
+	virtual LONG_PTR processMessage( DWORD DwMessageID, LONG_PTR DwMessageValue, LONG_PTR DwMessageContext );
 
 	void buildCompleteObjectName( LPTSTR LPSZCompleteName, int MaxLength );
 
@@ -248,7 +248,17 @@ typedef SVVector< SVObjectClass* > SVObjectClassPtrArray;
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObjectLibrary\SVObjectClass.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObjectLibrary\SVObjectClass.h_v  $
+ * 
+ *    Rev 1.1   01 Feb 2014 10:09:14   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Changed sendmessage to use LONG_PTR instead of DWORD.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   22 Apr 2013 16:46:58   bWalter
  * Project:  SVObserver

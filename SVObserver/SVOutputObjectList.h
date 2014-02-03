@@ -5,8 +5,8 @@
 //* .Module Name     : SVOutputObjectList
 //* .File Name       : $Workfile:   SVOutputObjectList.h  $
 //* ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.4  $
-// * .Check In Date   : $Date:   07 Aug 2013 13:24:24  $
+// * .Current Version : $Revision:   1.5  $
+// * .Check In Date   : $Date:   01 Feb 2014 11:55:18  $
 //******************************************************************************
 
 #ifndef INC_SVOUTPUTOBJECTLIST_INCLUDED
@@ -54,7 +54,7 @@ public:
 
 	BOOL FillOutputs( SVIOEntryHostStructPtrList& p_IOEntries );
 
-	DWORD processMessage( DWORD DwMessageID, DWORD DwMessageValue, DWORD DwMessageContext );
+	LONG_PTR processMessage( DWORD DwMessageID, LONG_PTR DwMessageValue, LONG_PTR DwMessageContext );
 
 	bool OutputIsNotValid( SVString p_strName );
 
@@ -82,6 +82,16 @@ private:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVOutputObjectList.h_v  $
+ * 
+ *    Rev 1.5   01 Feb 2014 11:55:18   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Changed SVSendmessage and processmessage to use LONG_PTR instead of DWORD.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.4   07 Aug 2013 13:24:24   sjones
  * Project:  SVObserver

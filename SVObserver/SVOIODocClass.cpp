@@ -5,8 +5,8 @@
 //* .Module Name     : SVOIODocClass
 //* .File Name       : $Workfile:   SVOIODocClass.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 13:06:24  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   31 Jan 2014 17:16:36  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -35,7 +35,10 @@ SVOIODocClass::SVOIODocClass()
 BOOL SVOIODocClass::OnNewDocument()
 {
 	if (!COleServerDoc::OnNewDocument())
+	{
 		return FALSE;
+	}
+
 	return TRUE;
 }
 
@@ -75,7 +78,7 @@ void SVOIODocClass::Serialize(CArchive& ar)
 
 	unsigned __int64 lPos = ar.GetFile()->Seek( 0, CFile::current );
 
-	SVOCMArchiveIOD( TheSVObserverApp.DwCurrentVersion, ulIODVersion, ar, TheSVObserverApp.m_XMLTree );
+	SVOCMArchiveIOD( TheSVObserverApp.getCurrentVersion(), ulIODVersion, ar, TheSVObserverApp.m_XMLTree );
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -142,7 +145,17 @@ void SVOIODocClass::CloseDocument()
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVOIODocClass.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVOIODocClass.cpp_v  $
+ * 
+ *    Rev 1.1   31 Jan 2014 17:16:36   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  884
+ * SCR Title:  Update Source Code Files to Follow New Programming Standards and Guidelines
+ * Checked in by:  bWalter;  Ben Walter
+ * Change Description:  
+ *   Changed to follow guidelines more closely.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 13:06:24   bWalter
  * Project:  SVObserver

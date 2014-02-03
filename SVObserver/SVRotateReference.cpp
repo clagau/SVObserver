@@ -5,8 +5,8 @@
 //* .Module Name     : SVRotateReference
 //* .File Name       : $Workfile:   SVRotateReference.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   13 May 2013 12:37:04  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   01 Feb 2014 12:04:02  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -135,9 +135,9 @@ HRESULT SVRotateReferenceClass::IsInputImage( SVImageClass *p_psvImage )
 }
 
 
-DWORD SVRotateReferenceClass::processMessage( DWORD DwMessageID, DWORD DwMessageValue, DWORD DwMessageContext )
+LONG_PTR SVRotateReferenceClass::processMessage( DWORD DwMessageID, LONG_PTR DwMessageValue, LONG_PTR DwMessageContext )
 {
-	DWORD DwResult = NULL;
+	LONG_PTR DwResult = NULL;
 	// Try to process message by yourself...
 	DWORD dwPureMessageID = DwMessageID & SVM_PURE_MESSAGE;
 	switch( dwPureMessageID )
@@ -441,7 +441,17 @@ BOOL SVRotateReferenceClass::OnValidate()
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVRotateReference.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVRotateReference.cpp_v  $
+ * 
+ *    Rev 1.2   01 Feb 2014 12:04:02   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Changed SVSendmessage and processmessage to use LONG_PTR instead of DWORD.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   13 May 2013 12:37:04   bWalter
  * Project:  SVObserver

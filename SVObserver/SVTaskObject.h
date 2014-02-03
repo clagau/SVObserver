@@ -5,8 +5,8 @@
 //* .Module Name     : SVTaskObject
 //* .File Name       : $Workfile:   SVTaskObject.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   07 May 2013 08:21:14  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   01 Feb 2014 12:18:34  $
 //******************************************************************************
 
 #ifndef SVTASKOBJECT_H
@@ -188,10 +188,10 @@ protected:
 	virtual BOOL onRun( SVRunStatusClass& RRunStatus );
 	virtual BOOL runFriends( SVRunStatusClass& RRunStatus );
 
-	virtual DWORD	processMessage( DWORD DwMessageID, DWORD DwMessageValue, DWORD DwMessageContext );
-	virtual DWORD	OutputListProcessMessage( DWORD DwMessageID, DWORD DwMessageValue, DWORD DwMessageContext );
-	virtual DWORD	FriendOutputListProcessMessage( DWORD DwMessageID, DWORD DwMessageValue, DWORD DwMessageContext );
-	virtual DWORD	EmbeddedOutputListProcessMessage( DWORD DwMessageID, DWORD DwMessageValue, DWORD DwMessageContext );
+	virtual LONG_PTR	processMessage( DWORD DwMessageID, LONG_PTR DwMessageValue, LONG_PTR DwMessageContext );
+	virtual LONG_PTR	OutputListProcessMessage( DWORD DwMessageID, LONG_PTR DwMessageValue, LONG_PTR DwMessageContext );
+	virtual LONG_PTR	FriendOutputListProcessMessage( DWORD DwMessageID, LONG_PTR DwMessageValue, LONG_PTR DwMessageContext );
+	virtual LONG_PTR	EmbeddedOutputListProcessMessage( DWORD DwMessageID, LONG_PTR DwMessageValue, LONG_PTR DwMessageContext );
 
 //******************************************************************************
 // Data Element(s):
@@ -246,7 +246,17 @@ private:
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVTaskObject.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVTaskObject.h_v  $
+ * 
+ *    Rev 1.2   01 Feb 2014 12:18:34   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Changed SVSendmessage and processmessage to use LONG_PTR instead of DWORD.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   07 May 2013 08:21:14   bWalter
  * Project:  SVObserver

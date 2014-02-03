@@ -5,8 +5,8 @@
 //* .Module Name     : SVToolAdjustmentDialogMultipleAnalyzerPage
 //* .File Name       : $Workfile:   SVTADlgMultipleAnalyzerPage.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   24 Apr 2013 11:15:48  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   01 Feb 2014 12:14:28  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -95,9 +95,9 @@ SVToolAdjustmentDialogMultipleAnalyzerPageClass::SVToolAdjustmentDialogMultipleA
 			SVObjectTypeInfoStruct info;
 			info.ObjectType = SVAnalyzerObjectType;
 
-			::SVSendMessage( pTool, SVM_GETAVAILABLE_OBJECTS, ( DWORD ) &availableAnalyzers, ( DWORD ) &info );
+			::SVSendMessage( pTool, SVM_GETAVAILABLE_OBJECTS, ( LONG_PTR ) &availableAnalyzers, reinterpret_cast<LONG_PTR>(&info) );
 
-			pCurrentAnalyzer = ( SVAnalyzerClass *) ::SVSendMessage( pTool, SVM_GETFIRST_OBJECT, NULL, ( DWORD ) &info );
+			pCurrentAnalyzer = ( SVAnalyzerClass *) ::SVSendMessage( pTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>(&info) );
 		}
 	}
 	else
@@ -202,27 +202,6 @@ void SVToolAdjustmentDialogMultipleAnalyzerPageClass::redrawList()
 		resultInfo.ObjectType = SVResultObjectType;
 
 
-		/*
-		SVAnalyzerClass* pAnalyzer = ( SVAnalyzerClass *) ::SVSendMessage( pTool, SVM_GETFIRST_OBJECT, NULL, ( DWORD ) &analyzerInfo );
-
-		if( ! pAnalyzer )
-		{
-			// No Analyzer selected...
-			multipleAnalyzerListCtrl.SetItemData( multipleAnalyzerListCtrl.InsertItem( 0, _T( "(No Analyzer)" ) ), ( DWORD ) NULL );
-
-			// Disable buttons...
-			if( pWnd = GetDlgItem( IDC_RESULT_BUTTON ) )
-			pWnd->EnableWindow( FALSE );
-
-			if( pWnd = GetDlgItem( IDC_DETAILS_BUTTON ) )
-				pWnd->EnableWindow( FALSE );
-
-			// Set data to dialog...
-			UpdateData( FALSE ); 
-
-			return;
-		}
-		*/
 
 		int i = 0;
 		int item;
@@ -281,17 +260,6 @@ void SVToolAdjustmentDialogMultipleAnalyzerPageClass::redrawList()
 					}
 				}
 
-				/*
-				// Get all Result Objects of this Analyzer...
-				SVResultClass* pResult = ( SVResultClass* ) ::SVSendMessage( pAnalyzer, SVM_GETFIRST_OBJECT, NULL, ( DWORD ) &resultInfo );
-				while( pResult )
-				{
-					strText += pResult->GetName();
-					strText += _T( ", " );
-
-					pResult = ( SVResultClass* ) ::SVSendMessage( pAnalyzer, SVM_GETNEXT_OBJECT, ( DWORD ) pResult, ( DWORD ) &resultInfo );
-				}
-				*/
 
 				multipleAnalyzerListCtrl.SetItemText( item, 2, strText );
 
@@ -301,11 +269,6 @@ void SVToolAdjustmentDialogMultipleAnalyzerPageClass::redrawList()
 					multipleAnalyzerListCtrl.SetItemState( item, LVIS_SELECTED | multipleAnalyzerListCtrl.GetItemState( item, 0xFFFF ), LVIS_SELECTED );
 				}
 			}
-
-			/*
-			// Get next analyzer...
-			pAnalyzer = ( SVAnalyzerClass *) ::SVSendMessage( pTool, SVM_GETNEXT_OBJECT, ( DWORD ) pAnalyzer, ( DWORD ) &analyzerInfo );
-			*/
 		}
 
 		SetInspectionData();
@@ -480,7 +443,7 @@ void SVToolAdjustmentDialogMultipleAnalyzerPageClass::OnInsertAnalyzerButton()
 				if( ! pAnalyzer->IsCreated() )
 				{
 					// And finally try to create the child object...
-					if( ::SVSendMessage( pTool, SVM_CREATE_CHILD_OBJECT, ( DWORD ) pAnalyzer, SVMFSetDefaultInputs | SVMFResetInspection ) != SVMR_SUCCESS )
+					if( ::SVSendMessage( pTool, SVM_CREATE_CHILD_OBJECT, reinterpret_cast<LONG_PTR>(pAnalyzer), SVMFSetDefaultInputs | SVMFResetInspection ) != SVMR_SUCCESS )
 					{
 						AfxMessageBox( _T( "Creation of Analyzer Failed" ) );
 						
@@ -540,7 +503,7 @@ void SVToolAdjustmentDialogMultipleAnalyzerPageClass::OnResultButton()
 		SVClassInfoStructListClass	availableResults;
 		SVObjectTypeInfoStruct		resultTypeInfo;
 		resultTypeInfo.ObjectType = SVResultObjectType;
-		::SVSendMessage( pCurrentAnalyzer, SVM_GETAVAILABLE_OBJECTS, ( DWORD ) &availableResults, ( DWORD ) &resultTypeInfo );
+		::SVSendMessage( pCurrentAnalyzer, SVM_GETAVAILABLE_OBJECTS, reinterpret_cast<LONG_PTR>(&availableResults), reinterpret_cast<LONG_PTR>(&resultTypeInfo) );
 
 		// Get Dialog Title...
 		CString strTitle;
@@ -599,7 +562,7 @@ void SVToolAdjustmentDialogMultipleAnalyzerPageClass::OnKeyDownMultipleAnalyzerL
 				if( pCurrentAnalyzer )
 				{
 					// Close, Disconnect and Delete the Object
-					::SVSendMessage( pTool, SVM_DESTROY_CHILD_OBJECT, ( DWORD ) pCurrentAnalyzer, SVMFSetDefaultInputs );
+					::SVSendMessage( pTool, SVM_DESTROY_CHILD_OBJECT, reinterpret_cast<LONG_PTR>(pCurrentAnalyzer), SVMFSetDefaultInputs );
 
 					pCurrentAnalyzer = NULL;
 
@@ -619,7 +582,17 @@ void SVToolAdjustmentDialogMultipleAnalyzerPageClass::OnKeyDownMultipleAnalyzerL
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVTADlgMultipleAnalyzerPage.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVTADlgMultipleAnalyzerPage.cpp_v  $
+ * 
+ *    Rev 1.1   01 Feb 2014 12:14:28   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Changed SVSendmessage and processmessage to use LONG_PTR instead of DWORD.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   24 Apr 2013 11:15:48   bWalter
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : SVValueObjectClass
 //* .File Name       : $Workfile:   SVValueObjectClass.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   13 May 2013 12:37:16  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   01 Feb 2014 12:26:14  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -170,9 +170,9 @@ void SVValueObjectClass::GetObjectScript(CString& rstrScript, CString& rstrAlias
 }
 #endif
 
-DWORD SVValueObjectClass::processMessage(DWORD DwMessageID, DWORD DwMessageValue, DWORD DwMessageContext)
+LONG_PTR SVValueObjectClass::processMessage(DWORD DwMessageID, LONG_PTR DwMessageValue, LONG_PTR DwMessageContext)
 {
-	DWORD DwResult = SVMR_NOT_PROCESSED;
+	LONG_PTR DwResult = SVMR_NOT_PROCESSED;
 
 	// Try to process message by yourself...
 	DWORD dwPureMessageID = DwMessageID & SVM_PURE_MESSAGE;
@@ -196,7 +196,7 @@ DWORD SVValueObjectClass::processMessage(DWORD DwMessageID, DWORD DwMessageValue
 		}
 
 	case SVMSGID_COPY_RESULT_DATA_FORWARD:
-		HRESULT hrRet = CopyLastSetValue( DwMessageValue );
+		HRESULT hrRet = CopyLastSetValue( static_cast<int>(DwMessageValue) );
 
 		return (hrRet == S_OK) ? SVMR_SUCCESS : SVMR_NO_SUCCESS;
 		break;
@@ -341,7 +341,17 @@ void SVValueObjectClass::Initialize()
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVValueObjectClass.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVValueObjectClass.cpp_v  $
+ * 
+ *    Rev 1.2   01 Feb 2014 12:26:14   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Changed SVSendmessage and processmessage to use LONG_PTR instead of DWORD.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   13 May 2013 12:37:16   bWalter
  * Project:  SVObserver

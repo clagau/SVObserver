@@ -5,8 +5,8 @@
 //* .Module Name     : SVBlobAnalyzer
 //* .File Name       : $Workfile:   SVBlobAnalyzer.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   01 Oct 2013 12:16:24  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   01 Feb 2014 10:23:12  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -399,7 +399,7 @@ DWORD SVBlobAnalyzerClass::AllocateResult (SVBlobFeatureEnum aFeatureIndex)
 		      (SVDoubleValueObjectClass*)SVSendMessage(pResult, 
 		                                               SVM_GETFIRST_OBJECT, 
 		                                               NULL, 
-		                                               (DWORD)&info);
+		                                              reinterpret_cast<LONG_PTR>(&info));
 
 		if (!pValue)
 		{
@@ -417,7 +417,7 @@ DWORD SVBlobAnalyzerClass::AllocateResult (SVBlobFeatureEnum aFeatureIndex)
 		if( ! pResult->IsCreated() )
 		{
 			// And finally try to create the child object...
-			if( ::SVSendMessage( this, SVM_CREATE_CHILD_OBJECT, ( DWORD ) pResult, NULL ) != SVMR_SUCCESS )
+			if( ::SVSendMessage( this, SVM_CREATE_CHILD_OBJECT, reinterpret_cast<LONG_PTR>(pResult), NULL ) != SVMR_SUCCESS )
 			{
 				AfxMessageBox("Creation of Blob Analyzer Result Failed");
 					
@@ -490,7 +490,7 @@ DWORD SVBlobAnalyzerClass::AllocateBlobResult ()
 			(SVLongValueObjectClass*)SVSendMessage(m_pResultBlob, 
 			SVM_GETFIRST_OBJECT, 
 			NULL, 
-			(DWORD)&info);
+			reinterpret_cast<LONG_PTR>(&info));
 		
 		if (!pValue)
 		{
@@ -547,7 +547,7 @@ DWORD SVBlobAnalyzerClass::FreeResult (SVBlobFeatureEnum aFeatureIndex)
 		
 		SVSendMessage (this, 
 		               SVM_DESTROY_CHILD_OBJECT,
-		               (DWORD) pResult,
+		              reinterpret_cast<LONG_PTR>(pResult),
 		               SVMFSetDefaultInputs);
 		
 		pResult = NULL;
@@ -605,39 +605,6 @@ void SVBlobAnalyzerClass::RebuildResultObjectArray()
 		}
 	}
 
-	/*
-	SVObjectTypeInfoStruct  info;
-
-	info.ObjectType = SVResultObjectType;
-	info.SubType = SVResultDoubleObjectType;
-	
-	pResult = dynamic_cast <SVDoubleResultClass*>
-	//pResult = static_cast <SVDoubleResultClass*>	// for speed
-			      ( reinterpret_cast <SVObjectClass*>
-			            ( SVSendMessage(  this, SVM_GETFIRST_OBJECT, NULL, (DWORD) &info ) ) );
-
-	while ( pResult )
-	{
-		pResult->GetPrivateInputList (resultInputList);
-
-		pResultInputInfo = resultInputList.GetAt (0);
-
-		pSVObject = pResultInputInfo->GetInputObjectInfo().PObject;
-
-		for ( int iFeature = SV_AREA; iFeature < SV_NUMBER_OF_BLOB_FEATURES; iFeature++ )
-		{
-			if (&msvValue[iFeature] == pSVObject)
-			{
-				m_guidResults[iFeature] = pResult->GetUniqueObjectID();
-				break;
-			}
-		}
-		pResult = dynamic_cast <SVDoubleResultClass*>
-		//pResult = static_cast <SVDoubleResultClass*>	// for speed
-			          ( reinterpret_cast <SVObjectClass*>
-			                ( SVSendMessage(  this, SVM_GETNEXT_OBJECT, (DWORD) pResult, (DWORD) &info ) ) );
-	}
-	*/
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -686,39 +653,6 @@ SVLongResultClass* SVBlobAnalyzerClass::GetBlobResultObject()
 			break;
 		}
 	}
-
-	/*
-	SVObjectTypeInfoStruct  info;
-
-	info.ObjectType = SVResultObjectType;
-	info.SubType = SVResultLongObjectType;
-
-	pResult = (SVLongResultClass*) SVSendMessage (this, 
-	                                              SVM_GETFIRST_OBJECT,
-	                                              NULL,
-	                                              (DWORD) &info);
-
-	while (pResult)
-	{
-		pResult->GetPrivateInputList (resultInputList);
-
-		pResultInputInfo = resultInputList.GetAt (0);
-
-		pSVObject = pResultInputInfo->GetInputObjectInfo().PObject;
-
-		if (&m_lvoNumberOfBlobsFound == pSVObject)
-		{
-			break;
-		}
-		else
-		{
-			pResult = (SVLongResultClass *) SVSendMessage (this, 
-			                                               SVM_GETNEXT_OBJECT,
-			                                               (DWORD) pResult,
-			                                               (DWORD) &info);
-		}
-	}// end while (pResult)
-	*/
 
 	return pResult;
 }
@@ -884,7 +818,7 @@ BOOL SVBlobAnalyzerClass::CreateObject(SVObjectLevelCreateStruct* PCreateStructu
 	{
 		if( !msvValue[i].IsCreated() )
 		{
-			::SVSendMessage( this, SVM_CREATE_CHILD_OBJECT, (DWORD)( msvValue + i ), NULL );
+			::SVSendMessage( this, SVM_CREATE_CHILD_OBJECT,reinterpret_cast<LONG_PTR>( msvValue + i ), NULL );
 		}
 
 		if ( msvszFeaturesEnabled[i] != _T('1') )
@@ -955,32 +889,9 @@ DWORD SVBlobAnalyzerClass::DisableFeature (SVBlobFeatureEnum aIndex)
 	RemoveEmbeddedObject (&msvValue[aIndex]);
 	GetInspection()->SetDefaultInputs();
 
-	// check to see if SV_CENTER_BOUNDING_BOX
-	// if so, return.  Not a MIL feature
-/*	if ( aIndex == SV_CENTER_X_SOURCE || aIndex == SV_CENTER_Y_SOURCE )
-		return 0;*/
 
 	BuildFeatureListID ();
 
-	// Get this object's outputInfo
-//	SVOutObjectInfoStruct& valueOutObjectInfo = msvValue [aIndex].GetObjectOutputInfo();
-
-	// Notify all Objects dependent on this Output that is not available anymore
-//	for( int i = valueOutObjectInfo.UserInfoList.GetSize() - 1; i >= 0; i-- )
-//	{
-//		SVInObjectInfoStruct& inObjectInfo = valueOutObjectInfo.UserInfoList.GetAt( i );
-//		inObjectInfo.InputObjectInfo.UniqueObjectID = valueOutObjectInfo.UniqueObjectID;
-//
-//		if( inObjectInfo.UniqueObjectID != SVInvalidGUID )
-//		{
-//			// Send to the Object that is using this output
-//			::SVSendMessage(inObjectInfo.UniqueObjectID,
-//							SVM_DISCONNECT_OBJECT_INPUT, 
-//							( DWORD ) &inObjectInfo, NULL );
-//		}
-//		// Remove the input from the list
-//		valueOutObjectInfo.UserInfoList.RemoveAt( i );
-//	}
 	return 0;
 }
 
@@ -1011,9 +922,9 @@ BOOL SVBlobAnalyzerClass::OnValidate()
 	return TRUE;
 }
 
-DWORD SVBlobAnalyzerClass::processMessage(DWORD DwMessageID, DWORD DwMessageValue, DWORD DwMessageContext)
+LONG_PTR SVBlobAnalyzerClass::processMessage(DWORD DwMessageID, LONG_PTR DwMessageValue, LONG_PTR DwMessageContext)
 {
-	DWORD dwResult = 0L;
+	LONG_PTR dwResult = 0L;
 
 	switch (DwMessageID & SVM_PURE_MESSAGE)
 	{
@@ -1934,6 +1845,16 @@ void SVBlobAnalyzerClass::addDefaultInputObjects( BOOL BCallBaseClass, SVInputIn
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVBlobAnalyzer.cpp_v  $
+ * 
+ *    Rev 1.3   01 Feb 2014 10:23:12   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Changed sendmessage to use LONG_PTR instead of DWORD.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   01 Oct 2013 12:16:24   tbair
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : SVToolBuildReference
 //* .File Name       : $Workfile:   SVToolBuildReference.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   08 May 2013 16:44:02  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   01 Feb 2014 12:22:14  $
 //******************************************************************************
 
 #ifndef SVTOOLBUILDREFERENCE_H
@@ -35,7 +35,7 @@ public:
 protected:
 	virtual void init();
 
-	virtual DWORD processMessage( DWORD DwMessageID, DWORD DwMessageValue, DWORD DwMessageContext );
+	virtual LONG_PTR processMessage( DWORD DwMessageID, LONG_PTR DwMessageValue, LONG_PTR DwMessageContext );
 
 	virtual BOOL onRun( SVRunStatusClass& RRunStatus );
 
@@ -53,7 +53,17 @@ protected:
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVToolBuildReference.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVToolBuildReference.h_v  $
+ * 
+ *    Rev 1.2   01 Feb 2014 12:22:14   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Changed SVSendmessage and processmessage to use LONG_PTR instead of DWORD.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   08 May 2013 16:44:02   bWalter
  * Project:  SVObserver

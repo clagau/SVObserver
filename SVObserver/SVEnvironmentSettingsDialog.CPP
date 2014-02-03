@@ -5,13 +5,12 @@
 //* .Module Name     : SVEnvironmentSettingsDialog
 //* .File Name       : $Workfile:   SVEnvironmentSettingsDialog.CPP  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   06 May 2013 20:06:02  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   31 Jan 2014 17:16:28  $
 //******************************************************************************
 
 #include "stdafx.h"
 #include "SVObserver.h"
-
 
 #include "SVEnvironmentSettingsDialog.h"
 #include "SVUserMessage.h"
@@ -35,7 +34,6 @@ SVEnvironmentSettingsDialogClass::SVEnvironmentSettingsDialogClass(CWnd* pParent
 	//}}AFX_DATA_INIT
 }
 
-
 void SVEnvironmentSettingsDialogClass::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
@@ -45,7 +43,6 @@ void SVEnvironmentSettingsDialogClass::DoDataExchange(CDataExchange* pDX)
 	DDX_Check(pDX, IDC_ENABLE_REMOTE_COMMANDS, m_enableRemoteCommands);
 	//}}AFX_DATA_MAP
 }
-
 
 BEGIN_MESSAGE_MAP(SVEnvironmentSettingsDialogClass, CDialog)
 	//{{AFX_MSG_MAP(SVEnvironmentSettingsDialogClass)
@@ -82,7 +79,6 @@ BOOL SVEnvironmentSettingsDialogClass::OnInitDialog()
 			m_ctlUpdateFirmware.SetCheck(0);
 		}
 	}
-
 
 	UpdateRemoteCommandSetupButton();
 
@@ -131,7 +127,6 @@ void SVEnvironmentSettingsDialogClass::OnEnableRemoteCommands()
 	pApp->WriteProfileInt( _T( "Settings" ), _T( "Enable Remote Commands" ), (DWORD)m_enableRemoteCommands );
 }
 
-
 void SVEnvironmentSettingsDialogClass::UpdateRemoteCommandSetupButton()
 {
 	CWnd* pItem = GetDlgItem( IDC_SETUP_SVIM_SERVER );
@@ -155,14 +150,24 @@ void SVEnvironmentSettingsDialogClass::OnChkUpdateFirmware()
 	{
 		bChecked = TRUE;
 	}
-	pApp->m_bShowUpdateFirmwareInMenu = bChecked;
+	pApp->setShowUpdateFirmwareInMenu( bChecked );
 }
 
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVEnvironmentSettingsDialog.CPP_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVEnvironmentSettingsDialog.CPP_v  $
+ * 
+ *    Rev 1.2   31 Jan 2014 17:16:28   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  884
+ * SCR Title:  Update Source Code Files to Follow New Programming Standards and Guidelines
+ * Checked in by:  bWalter;  Ben Walter
+ * Change Description:  
+ *   Changed to follow guidelines more closely.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   06 May 2013 20:06:02   bWalter
  * Project:  SVObserver

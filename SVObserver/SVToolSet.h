@@ -5,8 +5,8 @@
 //* .Module Name     : SVToolSet
 //* .File Name       : $Workfile:   SVToolSet.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   08 May 2013 16:44:10  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   01 Feb 2014 12:22:16  $
 //******************************************************************************
 
 #ifndef SVTOOLSET_H
@@ -111,7 +111,7 @@ protected:
 	virtual BOOL RunWithNewDisable( SVRunStatusClass& RRunStatus );
 
 	virtual BOOL onRun( SVRunStatusClass& RRunStatus );
-	virtual DWORD processMessage( DWORD DwMessageID, DWORD DwMessageValue, DWORD DwMessageContext );
+	virtual LONG_PTR processMessage( DWORD DwMessageID, LONG_PTR DwMessageValue, LONG_PTR DwMessageContext );
 	virtual HRESULT onCollectOverlays(SVImageClass *p_Image, SVExtentMultiLineStructCArray &p_MultiLineArray );
 
 	SVResultListClass	m_ResultList;
@@ -163,7 +163,17 @@ private:
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVToolSet.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVToolSet.h_v  $
+ * 
+ *    Rev 1.2   01 Feb 2014 12:22:16   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Changed SVSendmessage and processmessage to use LONG_PTR instead of DWORD.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   08 May 2013 16:44:10   bWalter
  * Project:  SVObserver

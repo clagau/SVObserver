@@ -5,8 +5,8 @@
 //* .Module Name     : FormulaController
 //* .File Name       : $Workfile:   FormulaController.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   14 Jan 2014 12:04:04  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   01 Feb 2014 10:16:28  $
 //******************************************************************************
 //Description:  FormulaController is the class to get/set and
 //              validate equation objects inside SVObserver.
@@ -111,7 +111,7 @@ namespace Seidenader
 				info.ObjectType = SVEquationObjectType;
 				info.SubType    = SVMathEquationObjectType;	// we are not looking for conditional equation !!!
 				pEquation = dynamic_cast < SVEquationClass* >
-					( reinterpret_cast < SVObjectClass* > (::SVSendMessage( &pObject, SVM_GETFIRST_OBJECT | SVM_NOTIFY_ONLY_FRIENDS, 0, (DWORD) &info ) ));
+					( reinterpret_cast < SVObjectClass* > (::SVSendMessage( &pObject, SVM_GETFIRST_OBJECT | SVM_NOTIFY_ONLY_FRIENDS, 0,reinterpret_cast<LONG_PTR>( &info ) )));
 			}
 			// Set the pointer to the Equation Class Object 
 			setEquation( pEquation );
@@ -151,7 +151,7 @@ namespace Seidenader
 				SVObjectClass* object = dynamic_cast<SVObjectClass*>(m_pEquation->GetTool());
 				if( object != nullptr )
 				{
-					DWORD l_dwRet = ::SVSendMessage( object, SVM_RESET_ALL_OBJECTS & ~SVM_NOTIFY_FRIENDS , 0, 0); // Do not reset friends because they may be invalid.
+					LONG_PTR l_dwRet = ::SVSendMessage( object, SVM_RESET_ALL_OBJECTS & ~SVM_NOTIFY_FRIENDS , 0, 0); // Do not reset friends because they may be invalid.
 					if( l_dwRet != SVMR_SUCCESS)
 					{
 						return setFailed;
@@ -189,6 +189,16 @@ namespace Seidenader
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\FormulaController.cpp_v  $
+ * 
+ *    Rev 1.1   01 Feb 2014 10:16:28   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Changed sendmessage to use LONG_PTR instead of DWORD.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   14 Jan 2014 12:04:04   bwalter
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : SVToolAdjustmentDialogFilterPageClass
 //* .File Name       : $Workfile:   SVToolAdjustmentDialogFilterPageClass.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 15:31:38  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   01 Feb 2014 12:21:56  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -64,12 +64,12 @@ SVToolAdjustmentDialogFilterPageClass::SVToolAdjustmentDialogFilterPageClass( SV
 
 			// Get The UnaryImageOperatorList
 			pUnaryImageOperatorList = 
-				( SVUnaryImageOperatorListClass* )SVSendMessage( pTool, SVM_GETFIRST_OBJECT, NULL, ( DWORD )&info );
+				( SVUnaryImageOperatorListClass* )SVSendMessage( pTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>(&info) );
 
 			if( pUnaryImageOperatorList )
 			{
 				info.ObjectType = SVFilterObjectType;
-				SVSendMessage( pUnaryImageOperatorList, SVM_GETAVAILABLE_OBJECTS, ( DWORD )&availableFilters, ( DWORD )&info );
+				SVSendMessage( pUnaryImageOperatorList, SVM_GETAVAILABLE_OBJECTS, reinterpret_cast<LONG_PTR>(&availableFilters), reinterpret_cast<LONG_PTR>(&info) );
 			}
 		}
 	}
@@ -227,7 +227,7 @@ void SVToolAdjustmentDialogFilterPageClass::OnButtonInsertNewFilter()
 					{
 						// SEJ 
 						// And finally try to create the child object...
-						if( ::SVSendMessage( pUnaryImageOperatorList, SVM_CREATE_CHILD_OBJECT, ( DWORD ) pFilter, SVMFResetObject ) != SVMR_SUCCESS )
+						if( ::SVSendMessage( pUnaryImageOperatorList, SVM_CREATE_CHILD_OBJECT, reinterpret_cast<LONG_PTR>(pFilter), SVMFResetObject ) != SVMR_SUCCESS )
 						{
 							AfxMessageBox("Creation of Filter Failed");
 							
@@ -281,7 +281,7 @@ void SVToolAdjustmentDialogFilterPageClass::OnButtonClearAll()
 				l_bReset |= l_pFilter->ShouldResetIPDoc();
 
 				// Close, Disconnect and Delete it
-				::SVSendMessage( pUnaryImageOperatorList, SVM_DESTROY_CHILD_OBJECT, ( DWORD )l_pFilter, NULL );
+				::SVSendMessage( pUnaryImageOperatorList, SVM_DESTROY_CHILD_OBJECT, reinterpret_cast<LONG_PTR>(l_pFilter), NULL );
 			}
 		}
 
@@ -331,7 +331,7 @@ void SVToolAdjustmentDialogFilterPageClass::OnButtonDeleteCurrentFilter()
 				}
 
 				// Close, Disconnect and Delete it
-				::SVSendMessage( pUnaryImageOperatorList, SVM_DESTROY_CHILD_OBJECT, ( DWORD )l_pFilter, l_Context );
+				::SVSendMessage( pUnaryImageOperatorList, SVM_DESTROY_CHILD_OBJECT, reinterpret_cast<LONG_PTR>(l_pFilter), l_Context );
 			}
 
 			// Do not delete empty item '(No Filter)'
@@ -427,7 +427,17 @@ void SVToolAdjustmentDialogFilterPageClass::OnButtonProperties()
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVToolAdjustmentDialogFilterPageClass.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVToolAdjustmentDialogFilterPageClass.cpp_v  $
+ * 
+ *    Rev 1.1   01 Feb 2014 12:21:56   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Changed SVSendmessage and processmessage to use LONG_PTR instead of DWORD.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 15:31:38   bWalter
  * Project:  SVObserver

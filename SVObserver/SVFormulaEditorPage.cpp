@@ -5,8 +5,8 @@
 //* .Module Name     : SVFormulaEditorPageClass
 //* .File Name       : $Workfile:   SVFormulaEditorPage.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.4  $
-//* .Check In Date   : $Date:   14 Jan 2014 12:14:58  $
+//* .Current Version : $Revision:   1.5  $
+//* .Check In Date   : $Date:   28 Jan 2014 11:18:36  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -661,7 +661,9 @@ bool SVFormulaEditorPageClass::validateAndSetEquation()
 		double value = 0;
 		const int result = m_rFormulaController.validateAndSetEquation( equationText, value );
 		enableUndoButton();
-		return result == IFormulaController::validateSuccessful;
+		//@Info (MZA): send only true if setFailed, because the set failed is maybe happen by a other page.
+		//By leaving the sheet it will reset objects and check if it works
+		return result == IFormulaController::validateSuccessful || result == IFormulaController::setFailed;
 	}
 	return true;
 }
@@ -814,6 +816,17 @@ void SVFormulaEditorPageClass::enableControls()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVFormulaEditorPage.cpp_v  $
+ * 
+ *    Rev 1.5   28 Jan 2014 11:18:36   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  877
+ * SCR Title:  Add undo-button to formula and conditional pages
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   Changed method validateAndSetEquation to address issue from eRoom 113.
+ * 
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.4   14 Jan 2014 12:14:58   bwalter
  * Project:  SVObserver

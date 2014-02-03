@@ -5,8 +5,8 @@
 //* .Module Name     : SVTransform
 //* .File Name       : $Workfile:   SVTransform.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   24 Apr 2013 12:26:32  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   01 Feb 2014 12:22:18  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -168,9 +168,9 @@ BOOL SVTransformClass::OnValidate()
 	return bRetVal;
 }
 
-DWORD SVTransformClass::processMessage( DWORD DwMessageID, DWORD DwMessageValue, DWORD DwMessageContext )
+LONG_PTR SVTransformClass::processMessage( DWORD DwMessageID, LONG_PTR DwMessageValue, LONG_PTR DwMessageContext )
 {
-	DWORD DwResult = NULL;
+	LONG_PTR DwResult = NULL;
 
 	return( SVTaskObjectClass::processMessage( DwMessageID, DwMessageValue, DwMessageContext ) | DwResult );
 }
@@ -179,7 +179,17 @@ DWORD SVTransformClass::processMessage( DWORD DwMessageID, DWORD DwMessageValue,
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVTransform.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVTransform.cpp_v  $
+ * 
+ *    Rev 1.1   01 Feb 2014 12:22:18   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Changed SVSendmessage and processmessage to use LONG_PTR instead of DWORD.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   24 Apr 2013 12:26:32   bWalter
  * Project:  SVObserver

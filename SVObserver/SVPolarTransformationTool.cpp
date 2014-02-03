@@ -5,8 +5,8 @@
 //* .Module Name     : SVPolarTransformationTool
 //* .File Name       : $Workfile:   SVPolarTransformationTool.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 13:30:12  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   01 Feb 2014 12:00:02  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -152,7 +152,7 @@ BOOL SVPolarTransformationToolClass::SetDefaultFormulas()
 	// Find image polar transform child...
 	SVObjectTypeInfoStruct objectInfo;
 	objectInfo.SubType = SVImagePolarTransformObjectType;
-	SVImagePolarTransformClass* pImagePolarTransform = ( SVImagePolarTransformClass* ) ::SVSendMessage( this, SVM_GETFIRST_OBJECT, NULL, ( DWORD ) &objectInfo );
+	SVImagePolarTransformClass* pImagePolarTransform = ( SVImagePolarTransformClass* ) ::SVSendMessage( this, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>(&objectInfo) );
 	if( pImagePolarTransform )
 	{
 		return pImagePolarTransform->SetDefaultFormulas();
@@ -190,7 +190,17 @@ HRESULT SVPolarTransformationToolClass::GetInputImageNames( SVStringValueObjectC
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVPolarTransformationTool.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVPolarTransformationTool.cpp_v  $
+ * 
+ *    Rev 1.1   01 Feb 2014 12:00:02   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Changed SVSendmessage and processmessage to use LONG_PTR instead of DWORD.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 13:30:12   bWalter
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : SVIOController
 //* .File Name       : $Workfile:   SVIOController.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.4  $
-//* .Check In Date   : $Date:   30 Oct 2013 10:45:20  $
+//* .Current Version : $Revision:   1.5  $
+//* .Check In Date   : $Date:   01 Feb 2014 10:48:56  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -254,9 +254,9 @@ void SVIOController::SetName( const CString& StrString )
 	}
 }
 
-DWORD SVIOController::processMessage( DWORD DwMessageID, DWORD DwMessageValue, DWORD DwMessageContext )
+LONG_PTR SVIOController::processMessage( DWORD DwMessageID, LONG_PTR DwMessageValue, LONG_PTR DwMessageContext )
 {
-	DWORD DwResult = NULL;
+	LONG_PTR DwResult = NULL;
 
 	// Try to process message by yourself...
 	DWORD dwPureMessageID = DwMessageID & SVM_PURE_MESSAGE;
@@ -652,6 +652,16 @@ HRESULT SVIOController::RemoteOutputValidateInputs()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVIOController.cpp_v  $
+ * 
+ *    Rev 1.5   01 Feb 2014 10:48:56   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Changed SVSendmessage and processmessage to use LONG_PTR instead of DWORD.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.4   30 Oct 2013 10:45:20   tbair
  * Project:  SVObserver

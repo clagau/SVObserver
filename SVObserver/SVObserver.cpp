@@ -5,10 +5,11 @@
 //* .Module Name     : SVObserver
 //* .File Name       : $Workfile:   SVObserver.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.17  $
-//* .Check In Date   : $Date:   15 Jan 2014 08:50:46  $
+//* .Current Version : $Revision:   1.18  $
+//* .Check In Date   : $Date:   31 Jan 2014 17:16:32  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include <iostream>
 #include "SVObserver.h"
@@ -30,7 +31,6 @@
 #include "SVIMServerWrapper.h"
 #include "SVIOChildFrm.h"
 #include "SVIPChildFrm.h"
-#include "SVLoginPasswordDialog.h"
 #include "SVMainFrm.h"
 #include "SVDiscreteInputsView.h"
 #include "SVMultiDocTemplate.h"
@@ -52,12 +52,10 @@
 #include "SVIO.h"
 #include "SVToolSet.h"
 
-// *** // ***
 #include "SVInputObjectList.h"
 #include "SVOutputObjectList.h"
 #include "SVDigitalInputObject1.h"
 #include "SVDigitalOutputObject1.h"
-// *** // ***
 
 #include "SVConfigurationLibrary/SVOCMGlobals.h"
 #include "SVImageProcessingClass.h"
@@ -119,10 +117,10 @@
 #include "SVIPDocInfoImporter.h"
 #include "SVVisionProcessorHelper.h"
 #include "SVDlgResultPicker.h"
+#pragma endregion Includes
 
+#pragma region Declarations
 #define ID_TRRIGER_SETTINGS 21017
-
-int FindMenuItem(CMenu* Menu, LPCTSTR MenuString);
 
 LPCTSTR const FRAME_GRABBER_VIPER_QUAD                    = (_T("01"));
 LPCTSTR const FRAME_GRABBER_VIPER_RGB                     = (_T("02"));
@@ -155,23 +153,7 @@ struct SVIM_MODEL	// just to enclose the enums
 		PROCESSOR_SINGLE_1_8_GHZ_ROCKY_4783 = 31,
 		PROCESSOR_SINGLE_3_06_ROCKY_4783_BIOS_1_2 = 35,
 		PROCESSOR_SINGLE_3_06_ROCKY_4783_BIOS_1_4 = 36,
-
 	};
-
-	/*
-	enum FRAME_GRABBER
-	{
-		FRAME_GRABBER_NONE                  = 0,
-		FRAME_GRABBER_VIPER_QUAD            = 1,
-		FRAME_GRABBER_VIPER_RGB             = 2,
-		FRAME_GRABBER_VIPER_DIGITAL         = 3,
-		FRAME_GRABBER_DUAL_VIPER            = 4,
-		FRAME_GRABBER_1_MATROX_METEOR2_1394 = 5,
-		FRAME_GRABBER_2_MATROX_METEOR2_1394 = 6,
-		FRAME_GRABBER_3_MATROX_METEOR2_1394 = 7,
-	};
-	*/
-
 
 	enum IO_BOARD
 	{
@@ -206,6 +188,8 @@ struct SVIM_MODEL	// just to enclose the enums
 		OPTIONS_2_GB_RAM_FAST_OCR = 26,
 	};
 };
+extern bool g_bUseCorrectListRecursion;
+#pragma endregion Declarations
 
 /**
 @SVObjectName SVObserver COM Module
@@ -219,12 +203,11 @@ class CSVObserverModule : public CAtlMfcModule
 {
 public:
 	DECLARE_LIBID(LIBID_SVObserver)
-	#ifdef _DEBUG
-		DECLARE_REGISTRY_APPID_RESOURCEID(IDR_SVOBSERVER_DEBUG, "{08B70D3F-F12C-11D4-A927-00106F0309AB}")
-	#else
-		DECLARE_REGISTRY_APPID_RESOURCEID(IDR_SVOBSERVER, "{08B70D3F-F12C-11D4-A927-00106F0309AB}")
-	#endif
-
+#ifdef _DEBUG
+	DECLARE_REGISTRY_APPID_RESOURCEID(IDR_SVOBSERVER_DEBUG, "{08B70D3F-F12C-11D4-A927-00106F0309AB}")
+#else
+	DECLARE_REGISTRY_APPID_RESOURCEID(IDR_SVOBSERVER, "{08B70D3F-F12C-11D4-A927-00106F0309AB}")
+#endif
 };
 
 CSVObserverModule _Module;
@@ -239,8 +222,6 @@ SVObserverApp TheSVObserverApp;
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
-
-extern bool g_bUseCorrectListRecursion;
 
 // Global functions for SVFocusNT Remote Commands
 BOOL GlobalRCGetConfigurationName( char *pszConfigName )
@@ -442,6 +423,11 @@ BOOL GlobalRCCloseConfiguration()
 
 // End Global functions for SVFocusNT
 
+class CMdiChildWorkaround : public CMDIChildWnd
+{
+public:
+	HMENU GetMenu() {return m_hMenuShared;}
+};
 
 // Dieser Bezeichner wurde als statistisch eindeutig für Ihre Anwendung generiert.
 // Sie können ihn ändern, wenn Sie einen bestimmten Bezeichnernamen bevorzugen.
@@ -464,10 +450,6 @@ static const CLSID clsid =
 //******************************************************************************
 
 IMPLEMENT_SERIAL( SVObserverApp, CWinApp, 0 );
-void SVObserverApp::Serialize(CArchive& ar) 
-{
-	CWinApp::Serialize( ar );
-}
 
 //******************************************************************************
 // Message Map Entries
@@ -522,7 +504,7 @@ BEGIN_MESSAGE_MAP(SVObserverApp, CWinApp)
 	ON_UPDATE_COMMAND_UI(ID_TRRIGER_SETTINGS, OnUpdateTriggerSettings)
 	ON_UPDATE_COMMAND_UI(ID_MODE_RUN, OnUpdateModeRun)
 
-	ON_UPDATE_COMMAND_UI(ID_MODE_STOPTEST, OnUpdateModeStoptest)
+	ON_UPDATE_COMMAND_UI(ID_MODE_STOPTEST, OnUpdateModeStopTest)
 	ON_UPDATE_COMMAND_UI(ID_MODE_TEST, OnUpdateModeTest)
 	ON_UPDATE_COMMAND_UI(ID_MODE_TEST_BTN, OnUpdateModeTestBtn)
 	ON_UPDATE_COMMAND_UI(ID_MODE_EDIT_MOVE, OnUpdateModeEditMove)
@@ -553,15 +535,15 @@ BEGIN_MESSAGE_MAP(SVObserverApp, CWinApp)
 	ON_UPDATE_COMMAND_UI(ID_EDIT_DELETE, OnUpdateEditDelete)
 	ON_UPDATE_COMMAND_UI(ID_EDIT_EDITIOLIST, OnUpdateEditIOList)
 	ON_UPDATE_COMMAND_UI(ID_EDIT_EDITENVIRONMENT, OnUpdateEditEnvironment)
-	ON_UPDATE_COMMAND_UI(ID_EDIT_EDITTOOL, OnUpdateEditEdittool)
+	ON_UPDATE_COMMAND_UI(ID_EDIT_EDITTOOL, OnUpdateEditEditTool)
 	ON_UPDATE_COMMAND_UI(ID_EDIT_EDITTOOLSETCONDITION, OnUpdateEditEditToolSetCondition)
 	ON_UPDATE_COMMAND_UI(ID_RESULTS_PICKER, OnUpdateResultsPicker)
 	ON_UPDATE_COMMAND_UI(ID_PUBLISHED_RESULTS_PICKER, OnUpdatePublishedResultsPicker)
 	ON_UPDATE_COMMAND_UI(ID_PUBLISHED_RESULT_IMAGES_PICKER, OnUpdatePublishedImagesPicker)
 	ON_UPDATE_COMMAND_UI(ID_SELECT_PPQVARIABLE, OnUpdateSelectPPQVariable)
 	ON_UPDATE_COMMAND_UI(ID_EDIT_EDITREMOTEINPUTS, OnUpdateEditRemoteInputs)
-	ON_UPDATE_COMMAND_UI(ID_EXTRAS_LIGHTREFERENCE, OnUpdateExtrasLightreference)
-	ON_UPDATE_COMMAND_UI(ID_EXTRAS_TESTOUTPUTS, OnUpdateExtrasTestoutputs)
+	ON_UPDATE_COMMAND_UI(ID_EXTRAS_LIGHTREFERENCE, OnUpdateExtrasLightReference)
+	ON_UPDATE_COMMAND_UI(ID_EXTRAS_TESTOUTPUTS, OnUpdateExtrasTestOutputs)
 	ON_UPDATE_COMMAND_UI(ID_HELP, OnUpdateHelp)
 	ON_UPDATE_COMMAND_UI(ID_HELP_FINDER, OnUpdateHelpFinder)
 	ON_UPDATE_COMMAND_UI(ID_WINDOW_ARRANGE, OnUpdateWindowArrange)
@@ -570,7 +552,7 @@ BEGIN_MESSAGE_MAP(SVObserverApp, CWinApp)
 	ON_UPDATE_COMMAND_UI(ID_WINDOW_TILE_HORZ, OnUpdateWindowTileHorz)
 	ON_UPDATE_COMMAND_UI(ID_WINDOW_TILE_VERT, OnUpdateWindowTileVert)
 	ON_UPDATE_COMMAND_UI(ID_ADD_SHIFTTOOL, OnUpdateAddShiftTool)
-	ON_UPDATE_COMMAND_UI(ID_ADD_WINDOWTOOL, OnUpdateAddWindowtool)
+	ON_UPDATE_COMMAND_UI(ID_ADD_WINDOWTOOL, OnUpdateAddWindowTool)
 	ON_UPDATE_COMMAND_UI(ID_ADD_CYLINDRICALWARPTOOL, OnUpdateAddCylindricalWarpTool)
 	ON_UPDATE_COMMAND_UI(ID_APP_ABOUT, OnUpdateAppAbout)
 	ON_UPDATE_COMMAND_UI(ID_ADD_GAGETOOL, OnUpdateAddGageTool)
@@ -585,10 +567,10 @@ BEGIN_MESSAGE_MAP(SVObserverApp, CWinApp)
 	ON_UPDATE_COMMAND_UI(ID_ADD_EXTERNAL_TOOL, OnUpdateAddExternalTool)
 	ON_UPDATE_COMMAND_UI(ID_ADD_POLARUNWRAPTOOL, OnUpdateAddPolarUnwrapTool)
 	ON_UPDATE_COMMAND_UI(ID_ADD_ACQUISITIONTOOL, OnUpdateAddAcquisitionTool)
-	ON_UPDATE_COMMAND_UI(ID_ADD_COLORTOOL, OnUpdateAddColortool)
+	ON_UPDATE_COMMAND_UI(ID_ADD_COLORTOOL, OnUpdateAddColorTool)
 	ON_UPDATE_COMMAND_UI(ID_ADD_LINEARTOOL, OnUpdateAddLinearTool)
 	ON_UPDATE_COMMAND_UI(ID_ADD_REMOTEINPUTTOOL, OnUpdateAddRemoteInputTool)
-	ON_UPDATE_COMMAND_UI(ID_ADD_PERSPECTIVEWARPTOOL, OnUpdateAddPerspectivetool)
+	ON_UPDATE_COMMAND_UI(ID_ADD_PERSPECTIVEWARPTOOL, OnUpdateAddPerspectiveTool)
 	ON_UPDATE_COMMAND_UI(ID_EXTRAS_LOGIN, OnUpdateExtrasLogin)
 	ON_UPDATE_COMMAND_UI(ID_EXTRAS_USERMANAGER, OnUpdateExtrasUserManager)
 	ON_UPDATE_COMMAND_UI(ID_EXTRAS_ENVIRONMENTSETTINGS, OnUpdateExtrasAdditionalEnvironmentSettings)
@@ -601,47 +583,27 @@ BEGIN_MESSAGE_MAP(SVObserverApp, CWinApp)
 	ON_UPDATE_COMMAND_UI(ID_APP_EXIT, OnUpdateAppExit)
 	ON_UPDATE_COMMAND_UI(ID_EXTRAS_SECURITY_SETUP, OnUpdateExtrasSecuritySetup)
 	//}}AFX_MSG_MAP
-    ON_COMMAND( SV_AUTO_RUN_LAST_MRU, OnRunMostRecentMRU )
+	ON_COMMAND( SV_AUTO_RUN_LAST_MRU, OnRunMostRecentMRU )
 	ON_COMMAND(ID_RC_CLOSE, OnRCClose)
 
 #ifndef _WIN64
-	ON_COMMAND(ID_EDIT_EDITPLCOUTPUTS, &SVObserverApp::OnEditplcoutputs)
-	ON_UPDATE_COMMAND_UI(ID_EDIT_EDITPLCOUTPUTS, &SVObserverApp::OnUpdateEditEditplcoutputs)
+	ON_COMMAND(ID_EDIT_EDITPLCOUTPUTS, &SVObserverApp::OnEditPLCOutputs)
+	ON_UPDATE_COMMAND_UI(ID_EDIT_EDITPLCOUTPUTS, &SVObserverApp::OnUpdateEditEditPLCOutputs)
 #endif
 	ON_COMMAND(ID_EDIT_ADD_REMOTE_OUTPUTS, &SVObserverApp::OnEditRemoteOutputs)
 	ON_UPDATE_COMMAND_UI(ID_EDIT_ADD_REMOTE_OUTPUTS, &SVObserverApp::OnUpdateEditAddRemoteOutputs)
 	ON_COMMAND_RANGE(ID_EDIT_PUBLISHEDRESULTS_BASE, ID_EDIT_PUBLISHEDRESULTS_LIMIT, &SVObserverApp::OnEditPublishedResults)
-	END_MESSAGE_MAP()
+END_MESSAGE_MAP()
 
-//******************************************************************************
-// Constructor(s):
-//******************************************************************************
-
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : Standard constructor of class SVObserverApp
-// -----------------------------------------------------------------------------
-// .Description : This constructor inits ...
-//              :
-// -----------------------------------------------------------------------------
-// .Import Function Reference(s)
-//	:
-// -----------------------------------------------------------------------------
-// .Import Variable Reference(s)
-//	:
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :27.05.1997 RO			First Implementation
-//	:15.06.1999 FRB         View window sizes saved
-////////////////////////////////////////////////////////////////////////////////
+#pragma region Constructor
 SVObserverApp::SVObserverApp()
-// BRW - SVImageCompression has been deprecated.
-: /*m_bImageCompressionStarted( FALSE )
-,*/ m_gigePacketSize( 0 )
-, m_InputStreamPortNumber( 32100 )
-, m_OutputStreamPortNumber( 32101 )
-, m_RemoteCommandsPortNumber( 28960 )
-, m_XMLTree( m_MaterialsTree )
+	// BRW - SVImageCompression has been deprecated.
+	: /*m_bImageCompressionStarted( FALSE )
+	  ,*/ m_gigePacketSize( 0 )
+	  , m_InputStreamPortNumber( 32100 )
+	  , m_OutputStreamPortNumber( 32101 )
+	  , m_RemoteCommandsPortNumber( 28960 )
+	  , m_XMLTree( m_MaterialsTree )
 {
 	::OutputDebugString( _T( "Executing => SVObserverApp::SVObserverApp()\n" ) );
 
@@ -668,14 +630,14 @@ SVObserverApp::SVObserverApp()
 	m_csReloadDigitalDLL = _T( "Y" );
 
 	// The Standard Configuration Execution Directory
-	tStrConfExePNVariableName		  = _T( "ConfigurationExecutionPathName" );	// LPCTSTR
-	tStrConfExePNVariableDefaultValue = _T( "C:\\RUN\\" );						// LPCTSTR
-	strConfExePNVariableValue		  = _T( "" );								// CString
+	m_ConfigExePNVariableName			= _T( "ConfigurationExecutionPathName" );	// LPCTSTR
+	m_ConfigExePNVariableDefaultValue	= _T( "C:\\RUN\\" );						// LPCTSTR
+	m_ConfigExePNVariableValue			= _T( "" );									// CString
 
 	// The Standard Last Valid Configuration Directory
-	tStrLastValidConfPNVariableName			= _T( "LastValidConfigurationPathName" );	// LPCTSTR
-	tStrLastValidConfPNVariableDefaultValue = _T( "C:\\Last Valid\\" );					// LPCTSTR
-	strLastValidConfPNVariableValue			= _T( "" );									// CString
+	m_LastValidConfigPNVariableName			= _T( "LastValidConfigurationPathName" );	// LPCTSTR
+	m_LastValidConfigPNVariableDefaultValue	= _T( "C:\\Last Valid\\" );					// LPCTSTR
+	m_LastValidConfigPNVariableValue		= _T( "" );									// CString
 
 	IsSECMemoryCopyAvailable = FALSE;
 	IsSECMemorySaving        = FALSE;
@@ -684,7 +646,7 @@ SVObserverApp::SVObserverApp()
 	MemorySECPathName		 = _T( "" );
 	MemorySECTitle			 = _T( "" );
 
-	m_bOpeningSEC = FALSE;
+	m_OpeningSEC = FALSE;
 
 	m_csProcessor.Empty();
 	m_csFrameGrabber.Empty();
@@ -698,59 +660,3749 @@ SVObserverApp::SVObserverApp()
 	ViewToolBuffers	= FALSE;
 
 	CurrentSECID		= SVInvalidGUID;
-	m_lOfflineCount		= 0;
+	m_OfflineCount = 0;
 
-	ShouldRunLastEnvironmentAutomatically = FALSE;
-	DwAutoRunDelayTime = 1000;
+	m_ShouldRunLastEnvironmentAutomatically = FALSE;
+	m_AutoRunDelayTime = 1000;
 
-	DwCurrentVersion = SeidenaderVision::SVVersionInfo::GetLongVersion();
-	DwCurrentLoadingVersion = 0L;
-	
-	pCurrentDocument		= NULL;			// Set by current Document!!!
+	m_CurrentVersion = SeidenaderVision::SVVersionInfo::GetLongVersion();
+	m_LoadingVersion = 0L;
+
+	m_pCurrentDocument = nullptr;	// Set by current Document!!!
 
 	RefreshRate		= SV_DEFAULT_VIEW_REFRESH_RATE;
 
-	
-	pMessageWindow = NULL;
+	m_pMessageWindow = nullptr;
 
-  //
-  // For GetFirstExisitingIPDoc() and GetNextExistingIPDoc()
-  //
-	psvlvFastOcr = NULL;
+	//
+	// For GetFirstExisitingIPDoc() and GetNextExistingIPDoc()
+	//
+	m_pFastOcr = nullptr;
 
 	// File management for SEC file.
-	msvSECFileName.SetFileType( SV_SEC_CONFIGURATION_FILE_TYPE );
+	m_SECFileName.SetFileType( SV_SEC_CONFIGURATION_FILE_TYPE );
 
 	SVFileNameManagerClass svFileManager;
-	svFileManager.AddItem( &msvSECFileName );
-
-	// *** // ***
-	//m_pConfiguration = NULL;
-	// *** // ***
-
+	svFileManager.AddItem( &m_SECFileName );
 }// end SVObserver ctor
 
-//******************************************************************************
-// Destructor(s):
-//******************************************************************************
+SVObserverApp::~SVObserverApp()
+{
+	// File management for SEC file.
+	SVFileNameManagerClass svFileManager;
+	svFileManager.RemoveItem( &m_SECFileName );
+}
+#pragma endregion Constructor
 
+#pragma region Public Methods
+#pragma region AFX_MSG Methods
 ////////////////////////////////////////////////////////////////////////////////
-// .Title       : // e.g. Standard destructor of class ...
+// .Title       : OnAppAbout
 // -----------------------------------------------------------------------------
-// .Description : This destructor deletes ...
+// .Description : ...
 //              :
+// -----------------------------------------------------------------------------
+// .Input(s)
+//	 Type				Name				Description
+//	: 
+//  :
+// .Output(s)
+//	:
+//  :
+// .Return Value
+//	: 
+// -----------------------------------------------------------------------------
+// .Import Function Reference(s)
+//	:
+// -----------------------------------------------------------------------------
+// .Import Variable Reference(s)
+//	:
 ////////////////////////////////////////////////////////////////////////////////
 // .History
 //	 Date		Author		Comment                                       
 //  :27.05.1997 RO			First Implementation
 //	:
 ////////////////////////////////////////////////////////////////////////////////
-SVObserverApp::~SVObserverApp()
+void SVObserverApp::OnAppAbout()
 {
-	// File management for SEC file.
-	SVFileNameManagerClass svFileManager;
-	svFileManager.RemoveItem( &msvSECFileName );
+	SVAboutDialogClass aboutDlg;
+	aboutDlg.DoModal();
 }
+
+////////////////////////////////////////////////////////////////////////////////
+// .Title       : OnFileNewSEC - calls the SVApplicationAssistant Dialog
+// -----------------------------------------------------------------------------
+// .Description : OnFileNewSEC - calls the SVApplicationAssistant Dialog to get
+//              : correct systems for opening new IPDocuments
+// -----------------------------------------------------------------------------
+// .Input(s)
+//	 Type				Name				Description
+//	: 
+//  :
+// .Output(s)
+//	:
+//  :
+// .Return Value
+//	: 
+// -----------------------------------------------------------------------------
+// .Import Function Reference(s)
+//	:
+// -----------------------------------------------------------------------------
+// .Import Variable Reference(s)
+//	:
+////////////////////////////////////////////////////////////////////////////////
+// .History
+//	 Date		Author		Comment                                       
+//  :27.05.1997 RO			First Implementation
+//  :30.06.1999 FRB         Wait cursor
+//	:20.10.1999 RO			Merged to ShowConfigurationAssistant().
+////////////////////////////////////////////////////////////////////////////////
+void SVObserverApp::OnFileNewSEC() 
+{
+	if( m_svSecurityMgr.SVValidate( SECURITY_POINT_FILE_MENU_NEW ) == S_OK )
+	{
+		ShowConfigurationAssistant( 0, TRUE );
+	}
+
+	if( OkToEdit() || !m_svSecurityMgr.SVIsSecured( SECURITY_POINT_MODE_MENU_EDIT_TOOLSET ) )
+	{
+		SetModeEdit( true );
+	}
+	else
+	{
+		SetModeEdit( false );
+	}
+	// Logic to remove unused IO Tabs PLC and Remote inputs.
+	// PLC Inputs
+	SVConfigurationObject* l_pConfig = NULL;
+	SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
+
+	if( l_pConfig )
+	{
+#ifndef _WIN64
+		if( l_pConfig->GetPLCCount() == 0 )
+		{
+			HideIOTab( SVIOPLCOutputsViewID );
+		}
+#endif
+		if( l_pConfig->GetRemoteOutputGroupCount() == 0)
+		{
+			HideIOTab( SVRemoteOutputsViewID );
+		}
+	}
+	else
+	{
+#ifndef _WIN64
+		HideIOTab( SVIOPLCOutputsViewID );
+#endif
+		HideIOTab( SVRemoteOutputsViewID );
+	}
+
+	// Update Remote Inputs Tab
+	UpdateRemoteInputTabs();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// .Title       : OnFileSaveConfig
+// -----------------------------------------------------------------------------
+// .Description : ...
+//              :
+// -----------------------------------------------------------------------------
+// .Input(s)
+//	 Type				Name				Description
+//	: 
+//  :
+// .Output(s)
+//	:
+//  :
+// .Return Value
+//	: 
+// -----------------------------------------------------------------------------
+// .Import Function Reference(s)
+//	:
+// -----------------------------------------------------------------------------
+// .Import Variable Reference(s)
+//	:
+////////////////////////////////////////////////////////////////////////////////
+// .History
+//	 Date		Author		Comment                                       
+//  :27.05.1997 RO			First Implementation
+//	:
+////////////////////////////////////////////////////////////////////////////////
+void SVObserverApp::OnFileSaveSec()
+{
+	if( CString( GetSECFullFileName() ).IsEmpty() || 
+		CString( GetSECPathName() ).IsEmpty() )
+	{
+		fileSaveAsSec();
+	}
+	else
+	{
+		SVFileNameManagerClass svFileManager;
+
+		CString csTempName = svFileManager.GetConfigurationPathName();
+
+		if ( csTempName.IsEmpty() )
+		{
+			csTempName = GetSECFullFileName();
+		}
+		else
+		{
+			csTempName += _T( "\\" );
+			csTempName += GetSECFileName();
+		}
+
+		fileSaveAsSec( csTempName );
+	}
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// .Title       : OnFileOpenSVC
+// -----------------------------------------------------------------------------
+// .Description : General - Opens a SEC File.
+//				: - Calls a SEC File Open Dialog 
+//				: - If a SEC already exists, calls the SEC saving procedure
+//              : - Calls the SEC loading procedure
+// -----------------------------------------------------------------------------
+// .Input(s)
+//	 Type				Name				Description
+//	: 
+//  :
+// .Output(s)
+//	:
+//  :
+// .Return Value
+//	: void
+// -----------------------------------------------------------------------------
+// .Import Function Reference(s)
+//	:
+// -----------------------------------------------------------------------------
+// .Import Variable Reference(s)
+//	:
+////////////////////////////////////////////////////////////////////////////////
+// .History
+//	 Date		Author		Comment                                       
+//  :15.10.1998	RO			First Implementation
+////////////////////////////////////////////////////////////////////////////////
+void SVObserverApp::OnFileOpenSVC() 
+{
+	ValidateMRUList();
+	// Proof user rights...
+
+	if ( m_svSecurityMgr.SVValidate( SECURITY_POINT_FILE_MENU_SELECT_CONFIGURATION) == S_OK )
+	{
+		SVFileNameClass svFileName;
+
+		svFileName.SetFileType( SV_SEC_CONFIGURATION_FILE_TYPE );
+		//
+		// Try to read the current image file path name from registry...
+		//
+		svFileName.SetPathName( AfxGetApp()->GetProfileString( _T( "Settings" ), 
+			_T( "SVCFilePath" ), 
+			_T( "C:\\RUN" ) ) );
+		if ( svFileName.SelectFile() )
+		{
+			//
+			// Write this path name back to registry...to initialize registry.
+			//
+			AfxGetApp()->WriteProfileString( _T( "Settings" ),
+				_T( "SVCFilePath" ),
+				svFileName.GetPathName() );
+
+			// Check for SEC file...
+			if ( CString( svFileName.GetExtension() ).CompareNoCase( _T( ".sec" ) ) == 0 )
+			{
+				//
+				// Open the configuration file (.sec) and read it and
+				// all the associated files for this configuration.
+				//
+				TheSVOLicenseManager().ClearLicenseErrors();
+				if ( OpenSECFile( svFileName.GetFullFileName() ) == S_OK )
+				{
+					if ( TheSVOLicenseManager().HasToolErrors() )
+					{
+						TheSVOLicenseManager().ShowLicenseManagerErrors();
+					}
+				}
+			}
+			else if ( CString( svFileName.GetExtension() ).CompareNoCase( _T( ".svx" ) ) == 0 )
+			{
+				//
+				// Open the configuration file (.svx) and read it and
+				// all the associated files for this configuration.
+				//
+				TheSVOLicenseManager().ClearLicenseErrors();
+				if ( OpenSVXFile( svFileName.GetFullFileName() ) == S_OK )
+				{
+					if ( TheSVOLicenseManager().HasToolErrors() )
+					{
+						TheSVOLicenseManager().ShowLicenseManagerErrors();
+					}
+				}
+			}
+			if( !m_svSecurityMgr.SVIsSecured( SECURITY_POINT_MODE_MENU_EDIT_TOOLSET ) )
+			{
+				SetModeEdit( true ); // Set Edit mode
+			}
+		}// end if ( svFileName.SelectFile() )
+	}// end if ( m_svSecurityMgr.Validate( SECURITY_POINT_FILE_MENU_SELECT_CONFIGURATION) == S_OK )
+	// Update Remote Inputs Tab
+	UpdateRemoteInputTabs();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// .Title       : OnFileSaveAsSec()
+// -----------------------------------------------------------------------------
+// .Description : ...
+//              :
+// -----------------------------------------------------------------------------
+// .Input(s)
+//	 Type				Name				Description
+//	: 
+//  :
+// .Output(s)
+//	:
+//  :
+// .Return Value
+//	: 
+// -----------------------------------------------------------------------------
+// .Import Function Reference(s)
+//	:
+// -----------------------------------------------------------------------------
+// .Import Variable Reference(s)
+//	:
+////////////////////////////////////////////////////////////////////////////////
+// .History
+//	 Date		Author		Comment                                       
+//  :27.05.1997 RO			First Implementation
+//	:
+////////////////////////////////////////////////////////////////////////////////
+void SVObserverApp::OnFileSaveAsSec()
+{
+	if( m_svSecurityMgr.SVValidate( SECURITY_POINT_FILE_MENU_SAVE_CONFIGURATION_AS ) == S_OK )
+	{
+		fileSaveAsSec();
+	}
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// .Title       : OnEditEnvironment
+// -----------------------------------------------------------------------------
+// .Description : ...
+//              :
+// -----------------------------------------------------------------------------
+// .Input(s)
+//	 Type				Name				Description
+//	: 
+//  :
+// .Output(s)
+//	:
+//  :
+// .Return Value
+//	: 
+// -----------------------------------------------------------------------------
+// .Import Function Reference(s)
+//	:
+// -----------------------------------------------------------------------------
+// .Import Variable Reference(s)
+//	:
+////////////////////////////////////////////////////////////////////////////////
+// .History
+//	 Date		Author		Comment                                       
+//  :27.05.1997 RO			First Implementation
+//	:04.03.1999 RO			Body outlayed to ShowConfigurationAssistant();
+////////////////////////////////////////////////////////////////////////////////
+void SVObserverApp::OnEditEnvironment() 
+{
+	ShowConfigurationAssistant();
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+// .Title       : OnTestMode
+// -----------------------------------------------------------------------------
+// .Description : OnTestMode calls SetTestMode
+//              :
+// -----------------------------------------------------------------------------
+// .Input(s)
+//	 Type				Name				Description
+//	: 
+//  :
+// .Output(s)
+//	:
+//  :
+// .Return Value
+//	: 
+// -----------------------------------------------------------------------------
+// .Import Function Reference(s)
+//	:
+// -----------------------------------------------------------------------------
+// .Import Variable Reference(s)
+//	:
+////////////////////////////////////////////////////////////////////////////////
+// .History
+//	 Date		Author		Comment                                       
+//  :27.05.1997 RO			First Implementation
+//	:
+////////////////////////////////////////////////////////////////////////////////
+void SVObserverApp::OnTestMode( ) 
+{
+	SetTestMode();
+}
+
+void SVObserverApp::OnModeTestBtn() 
+{
+	OnTestMode();
+}
+
+void SVObserverApp::OnRunMode() 
+{
+	Start();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// .Title       : OnStopTestMode
+// -----------------------------------------------------------------------------
+// .Description : ...
+//              :
+// -----------------------------------------------------------------------------
+// .Input(s)
+//	 Type				Name				Description
+//	: 
+//  :
+// .Output(s)
+//	:
+//  :
+// .Return Value
+//	: 
+// -----------------------------------------------------------------------------
+// .Import Function Reference(s)
+//	:
+// -----------------------------------------------------------------------------
+// .Import Variable Reference(s)
+//	:
+////////////////////////////////////////////////////////////////////////////////
+// .History
+//	 Date		Author		Comment                                       
+//  :27.05.1997 RO			First Implementation
+//	:
+////////////////////////////////////////////////////////////////////////////////
+void SVObserverApp::OnStopTestMode() 
+{
+	if( !SVSVIMStateClass::CheckState( SV_STATE_EDIT_MOVE 
+		| SV_STATE_EDIT 
+		| SV_STATE_REGRESSION
+		| SV_STATE_TEST
+		| SV_STATE_RUNNING ))
+	{
+		return;
+	}
+
+	if( m_svSecurityMgr.SVValidate( SECURITY_POINT_MODE_MENU_STOP ) == S_OK )
+	{
+		OnStop();
+	}
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// .Title       : OnEnvironmentSettings
+// -----------------------------------------------------------------------------
+// .Description : ...
+//              :
+// -----------------------------------------------------------------------------
+// .Input(s)
+//	 Type				Name				Description
+//	: 
+//  :
+// .Output(s)
+//	:
+//  :
+// .Return Value
+//	: 
+// -----------------------------------------------------------------------------
+// .Import Function Reference(s)
+//	:
+// -----------------------------------------------------------------------------
+// .Import Variable Reference(s)
+//	:
+////////////////////////////////////////////////////////////////////////////////
+// .History
+//	 Date		Author		Comment                                       
+//  :27.05.1997 RO			First Implementation
+//	:
+////////////////////////////////////////////////////////////////////////////////
+void SVObserverApp::OnEnvironmentSettings() 
+{
+	bool l_bShowDDETabs = false;
+
+	if( m_svSecurityMgr.SVValidate( SECURITY_POINT_EXTRAS_MENU_ADDITIONAL_ENVIRON ) == S_OK )
+	{
+		SVEnvironmentSettingsDialogClass cfdDlg;
+
+		BOOL bUpdateMenu = m_ShowUpdateFirmwareInMenu;
+
+		cfdDlg.StartLastAutomatically = m_ShouldRunLastEnvironmentAutomatically;
+		cfdDlg.m_bUpdateFirmwareCheck = m_ShowUpdateFirmwareInMenu;
+
+		if( cfdDlg.DoModal() == IDOK )
+		{
+			m_ShouldRunLastEnvironmentAutomatically = cfdDlg.StartLastAutomatically;
+
+			WriteProfileInt( _T( "Settings" ), 
+				_T( "Run Last Configuration Automatically" ), 
+				m_ShouldRunLastEnvironmentAutomatically ? 1 : 0
+				);
+
+			if( bUpdateMenu != m_ShowUpdateFirmwareInMenu )
+			{
+				SVOINIClass l_svIni;
+				CString csIni = "C:\\SVObserver\\bin\\svim.ini";
+				if ( m_ShowUpdateFirmwareInMenu )
+				{
+					l_svIni.SetValue("SVIM Information", "ShowUpdateFirmware", "Y", csIni);
+				}
+				else
+				{
+					l_svIni.SetValue("SVIM Information", "ShowUpdateFirmware", "N", csIni);
+				}
+				SVUtilitiesClass util;
+				CWnd *pWindow;
+				CMenu *pMenu;
+				CString szMenuText;
+
+				pWindow = AfxGetMainWnd ();
+				pMenu = pWindow->GetMenu();
+				szMenuText = _T("&Utilities");
+
+				if (pMenu = util.FindSubMenuByName (pMenu, szMenuText))
+				{
+					util.LoadMenu (pMenu);
+				}
+
+				//rebuild menu
+				// @WARNING - This comment indicates the menu should be rebuilt, but there is no code here to do this.
+			}
+		}
+	}
+}
+
+void SVObserverApp::OnUpdateModeRun( CCmdUI* PCmdUI ) 
+{
+	PCmdUI->Enable( SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION | SV_STATE_EDIT | SV_STATE_EDIT_MOVE | SV_STATE_READY )  &&	
+		! SVSVIMStateClass::CheckState( SV_STATE_RUNNING ) &&
+		m_svSecurityMgr.SVIsDisplayable( SECURITY_POINT_MODE_MENU_RUN ));
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// .Title       : OnFileCloseSec
+// -----------------------------------------------------------------------------
+// .Description : ...
+//              :
+// -----------------------------------------------------------------------------
+// .Input(s)
+//	 Type				Name				Description
+//	: 
+//  :
+// .Output(s)
+//	:
+//  :
+// .Return Value
+//	: 
+// -----------------------------------------------------------------------------
+// .Import Function Reference(s)
+//	:
+// -----------------------------------------------------------------------------
+// .Import Variable Reference(s)
+//	:
+////////////////////////////////////////////////////////////////////////////////
+// .History
+//	 Date		Author		Comment                                       
+//  :27.05.1997 RO			First Implementation
+//	:
+////////////////////////////////////////////////////////////////////////////////
+void SVObserverApp::OnFileCloseSec() 
+{
+	if( m_svSecurityMgr.SVValidate( SECURITY_POINT_FILE_MENU_CLOSE_CONFIGURATION ) == S_OK )
+	{
+		SVSVIMStateClass::RemoveState( SV_STATE_EDIT );
+
+		ValidateMRUList();
+
+		// Check if current SEC is modified, ask for saving and try to close
+		DestroySEC();
+		//	UpdateApplicationBar();
+
+		ValidateMRUList();
+	}
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// .Title       : OnFileOpen
+// -----------------------------------------------------------------------------
+// .Description : 
+// -----------------------------------------------------------------------------
+// .Input(s)
+//	 Type				Name				Description
+//	: 
+//  :
+// .Output(s)
+//	:
+//  :
+// .Return Value
+//	: 
+// -----------------------------------------------------------------------------
+// .Import Function Reference(s)
+//	:
+// -----------------------------------------------------------------------------
+// .Import Variable Reference(s)
+//	:
+////////////////////////////////////////////////////////////////////////////////
+// .History
+//	 Date		Author		Comment                                       
+//  :27.05.1997 RO			First Implementation
+//	:
+////////////////////////////////////////////////////////////////////////////////
+void SVObserverApp::OnFileOpen() 
+{
+	if( m_svSecurityMgr.SVValidate( SECURITY_POINT_FILE_MENU_SELECT_CONFIGURATION ) == S_OK )
+	{
+		CWinApp::OnFileOpen();
+	}
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// .Title       : OnFileSaveAll
+// -----------------------------------------------------------------------------
+// .Description : ...
+//              :
+// -----------------------------------------------------------------------------
+// .Input(s)
+//	 Type				Name				Description
+//	: 
+//  :
+// .Output(s)
+//	:
+//  :
+// .Return Value
+//	: 
+// -----------------------------------------------------------------------------
+// .Import Function Reference(s)
+//	:
+// -----------------------------------------------------------------------------
+// .Import Variable Reference(s)
+//	:
+////////////////////////////////////////////////////////////////////////////////
+// .History
+//	 Date		Author		Comment                                       
+//  :27.05.1997 RO			First Implementation
+//	:
+////////////////////////////////////////////////////////////////////////////////
+void SVObserverApp::OnFileSaveAll() 
+{
+	if( m_svSecurityMgr.SVValidate( SECURITY_POINT_FILE_MENU_SAVE_CONFIGURATION ) == S_OK )
+	{
+		OnFileSaveSec();
+	}
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// .Title       : OnEditIOList
+// -----------------------------------------------------------------------------
+// .Description : ...
+//              :
+// -----------------------------------------------------------------------------
+// .Input(s)
+//	 Type				Name				Description
+//	: 
+//  :
+// .Output(s)
+//	:
+//  :
+// .Return Value
+//	: 
+// -----------------------------------------------------------------------------
+// .Import Function Reference(s)
+//	:
+// -----------------------------------------------------------------------------
+// .Import Variable Reference(s)
+//	:
+////////////////////////////////////////////////////////////////////////////////
+// .History
+//	 Date		Author		Comment                                       
+//  :27.05.1997 RO			First Implementation
+//	:
+////////////////////////////////////////////////////////////////////////////////
+void SVObserverApp::OnEditIOList() 
+{
+	if( GetIODoc() )
+	{
+		// Get the active MDI child window.             
+		POSITION pos = GetIODoc()->GetFirstViewPosition();
+		CView *pView = GetIODoc()->GetNextView( pos );
+
+		CMDIChildWnd *pFrame = (CMDIChildWnd*) pView->GetParentFrame();
+		pFrame->MDIActivate();
+	}// end if
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// .Title       : OnUpdateEditEnvironment
+// -----------------------------------------------------------------------------
+// .Description : ...
+//              :
+// -----------------------------------------------------------------------------
+// .Input(s)
+//	 Type				Name				Description
+//	: 
+//  :
+// .Output(s)
+//	:
+//  :
+// .Return Value
+//	: 
+// -----------------------------------------------------------------------------
+// .Import Function Reference(s)
+//	:
+// -----------------------------------------------------------------------------
+// .Import Variable Reference(s)
+//	:
+////////////////////////////////////////////////////////////////////////////////
+// .History
+//	 Date		Author		Comment                                       
+//  :27.05.1997 RO			First Implementation
+//	:
+////////////////////////////////////////////////////////////////////////////////
+void SVObserverApp::OnUpdateEditEnvironment( CCmdUI* PCmdUI ) 
+{
+	PCmdUI->Enable( SVSVIMStateClass::CheckState( SV_STATE_READY ) &&
+		! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION )  &&
+		OkToEdit() );
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// .Title       : OnUpdateEditIOList
+// -----------------------------------------------------------------------------
+// .Description : ...
+//              :
+// -----------------------------------------------------------------------------
+// .Input(s)
+//	 Type				Name				Description
+//	: 
+//  :
+// .Output(s)
+//	:
+//  :
+// .Return Value
+//	: 
+// -----------------------------------------------------------------------------
+// .Import Function Reference(s)
+//	:
+// -----------------------------------------------------------------------------
+// .Import Variable Reference(s)
+//	:
+////////////////////////////////////////////////////////////////////////////////
+// .History
+//	 Date		Author		Comment                                       
+//  :27.05.1997 RO			First Implementation
+//	:
+////////////////////////////////////////////////////////////////////////////////
+void SVObserverApp::OnUpdateEditIOList( CCmdUI* PCmdUI ) 
+{
+	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST  | SV_STATE_REGRESSION ) &&
+		SVSVIMStateClass::CheckState( SV_STATE_EDIT ) && GetIODoc() != NULL );
+}
+
+void SVObserverApp::OnUpdateFileClose( CCmdUI* PCmdUI ) 
+{
+	PCmdUI->Enable( !SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION )
+		&& m_svSecurityMgr.SVIsDisplayable( SECURITY_POINT_FILE_MENU_CLOSE_CONFIGURATION ) );
+}
+
+void SVObserverApp::OnUpdateFileCloseSec( CCmdUI* PCmdUI )
+{
+	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION )
+		&& m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_FILE_MENU_CLOSE_CONFIGURATION ));
+}
+
+void SVObserverApp::OnUpdateFileNew( CCmdUI* PCmdUI ) 
+{
+	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST  | SV_STATE_REGRESSION) &&
+		m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_FILE_MENU_NEW )  && (TheSVOLicenseManager().HasMatroxLicense()) );
+}
+
+void SVObserverApp::OnUpdateFileOpen( CCmdUI* PCmdUI ) 
+{
+	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST  | SV_STATE_REGRESSION)
+		&& m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_FILE_MENU_SELECT_CONFIGURATION )  && (TheSVOLicenseManager().HasMatroxLicense()) );
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// .Title       : OnUpdateFileOpenSVC
+// -----------------------------------------------------------------------------
+// .Description : 
+// -----------------------------------------------------------------------------
+// .Input(s)
+//	 Type				Name				Description
+//	: 
+//  :
+// .Output(s)
+//	:
+//  :
+// .Return Value
+//	: void
+// -----------------------------------------------------------------------------
+// .Import Function Reference(s)
+//	:
+// -----------------------------------------------------------------------------
+// .Import Variable Reference(s)
+//	:
+////////////////////////////////////////////////////////////////////////////////
+// .History
+//	 Date		Author		Comment                                       
+//  :15.10.1998	RO			First Implementation
+////////////////////////////////////////////////////////////////////////////////
+void SVObserverApp::OnUpdateFileOpenSVC( CCmdUI* PCmdUI ) 
+{
+	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION)
+		&& m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_FILE_MENU_SELECT_CONFIGURATION ) && (TheSVOLicenseManager().HasMatroxLicense()) );
+}
+
+void SVObserverApp::OnUpdateFileSave( CCmdUI* PCmdUI ) 
+{
+	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST  | SV_STATE_REGRESSION)  
+		&& SVSVIMStateClass::CheckState( SV_STATE_READY )
+		&& m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_FILE_MENU_SAVE_CONFIGURATION ));
+}
+
+void SVObserverApp::OnUpdateFileSaveAll( CCmdUI* PCmdUI ) 
+{
+	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION )
+		&& SVSVIMStateClass::CheckState( SV_STATE_READY )
+		&& m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_FILE_MENU_SAVE_CONFIGURATION ));
+}
+
+void SVObserverApp::OnUpdateFileSaveAs( CCmdUI* PCmdUI ) 
+{
+	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST  | SV_STATE_REGRESSION)
+		&& SVSVIMStateClass::CheckState( SV_STATE_READY )
+		&& m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_FILE_MENU_SAVE_CONFIGURATION_AS ));
+}
+
+void SVObserverApp::OnUpdateFileSaveAsSec( CCmdUI* PCmdUI ) 
+{
+	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST  | SV_STATE_REGRESSION)
+		&& SVSVIMStateClass::CheckState( SV_STATE_READY )
+		&& m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_FILE_MENU_SAVE_CONFIGURATION_AS ));
+}
+
+void SVObserverApp::OnUpdateFileSaveCopyAs( CCmdUI* PCmdUI ) 
+{
+	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST  | SV_STATE_REGRESSION)  );
+}
+
+void SVObserverApp::OnUpdateFileSaveImage( CCmdUI* PCmdUI ) 
+{
+	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING  | SV_STATE_REGRESSION | SV_STATE_TEST)
+		&& SVSVIMStateClass::CheckState( SV_STATE_READY )
+		&& m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_FILE_MENU_SAVE_IMAGE ));
+}
+
+void SVObserverApp::OnUpdateFileSaveSec( CCmdUI* PCmdUI ) 
+{
+	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION )
+		&& SVSVIMStateClass::CheckState( SV_STATE_READY )
+		&& m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_FILE_MENU_SAVE_CONFIGURATION ));
+}
+
+void SVObserverApp::OnUpdateFileUpdate( CCmdUI* PCmdUI ) 
+{
+	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION ) );
+}
+
+void SVObserverApp::OnUpdateExtrasAdditionalEnvironmentSettings( CCmdUI* PCmdUI ) 
+{
+	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION ) 
+		&& m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_EXTRAS_MENU_ADDITIONAL_ENVIRON )  && (TheSVOLicenseManager().HasMatroxLicense()) );
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// .Title       : OnStop
+// -----------------------------------------------------------------------------
+// .Description : ...
+//              :
+// -----------------------------------------------------------------------------
+// .Input(s)
+//	 Type				Name				Description
+//	: 
+//  :
+// .Output(s)
+//	:
+//  :
+// .Return Value
+//	: 
+// -----------------------------------------------------------------------------
+// .Import Function Reference(s)
+//	:
+// -----------------------------------------------------------------------------
+// .Import Variable Reference(s)
+//	:
+////////////////////////////////////////////////////////////////////////////////
+// .History
+//	 Date		Author		Comment                                       
+//  :27.05.1997 RO			First Implementation
+//	:
+////////////////////////////////////////////////////////////////////////////////
+void SVObserverApp::OnStop() 
+{
+	CWaitCursor wait;
+
+	SVArchiveWritingDlg *pArchiveWriteDlg = nullptr;
+
+	GetMainFrame()->SetStatusInfoText(_T(""));
+
+	DisableTriggerSettings();
+
+	if( !SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) )
+	{
+		return;
+	}
+
+	if ( SVSVIMStateClass::CheckState( SV_STATE_STOPING ) )
+	{
+		if ( SVSVIMStateClass::CheckState( SV_STATE_STOP_PENDING ) )
+		{
+			SVSVIMStateClass::RemoveState( SV_STATE_STOP_PENDING );
+		}
+		return;
+	}
+
+	if ( SVSVIMStateClass::CheckState( SV_STATE_STARTING ) )
+	{
+		SVSVIMStateClass::AddState( SV_STATE_STOP_PENDING );
+		return;
+	}
+
+	if ( TheSVMemoryManager().ReservedBytes( ARCHIVE_TOOL_MEMORY_POOL_GO_OFFLINE_NAME ) > 0 )
+	{
+		pArchiveWriteDlg = new SVArchiveWritingDlg;
+		pArchiveWriteDlg->Create(IDD_DLG_ARCHIVETOOL_CLOSE_PROGRESS);
+		pArchiveWriteDlg->ShowWindow(SW_SHOW);
+		SVYieldPaintMessages();
+	}
+
+	SVSVIMStateClass::AddState( SV_STATE_UNAVAILABLE | SV_STATE_STOPING );
+	SVSVIMStateClass::RemoveState( SV_STATE_READY | SV_STATE_RUNNING | SV_STATE_STOP_PENDING );
+
+	SVObjectManagerClass::Instance().SetState( SVObjectManagerClass::ReadWrite );
+
+	SetThreadPriority( THREAD_PRIORITY_NORMAL );
+
+	SVConfigurationObject* l_pConfig = NULL;
+	SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
+
+	if( l_pConfig != NULL )
+	{
+		l_pConfig->SetModuleReady( false );
+	}
+
+	// Signal Module Stop...
+	OnStopAll();
+
+	// Increment Offline Count
+	m_OfflineCount++;
+
+	SVDigitizerProcessingClass::Instance().RestoreLastCameraImage();
+
+	SVPPQObject *pPPQ = NULL;
+	long l;
+	long lSize;
+
+	l_pConfig->GetPPQCount( lSize );
+	for( l = 0; l < lSize; l++ )
+	{
+		l_pConfig->GetPPQ( l, &pPPQ );
+		pPPQ->GoOffline();
+	}
+
+	SetAllIPDocumentsOffline();
+
+	m_dirty_triggers.clear();
+
+	if( IsProductTypeRAID() )
+	{
+		m_IntelRAID.UpdateStatus();
+
+		if ( SVSVIMStateClass::CheckState( SV_STATE_RAID_FAILURE ) )
+		{
+			l_pConfig->SetRaidErrorBit( true );
+		}
+		else
+		{
+			l_pConfig->SetRaidErrorBit( false );
+		}
+	}
+	else
+	{
+		l_pConfig->SetRaidErrorBit( true );
+	}
+
+	CString l_strTrigCnts;
+	GetTriggersAndCounts( l_strTrigCnts );
+
+	//add message to event viewer - gone off-line
+	SVException svE;
+	SETEXCEPTION1(svE,SVMSG_SVO_28_SVOBSERVER_GO_OFFLINE, l_strTrigCnts);
+	svE.LogException(l_strTrigCnts);
+
+	SVSVIMStateClass::AddState( SV_STATE_READY );
+	SVSVIMStateClass::RemoveState( SV_STATE_UNAVAILABLE | SV_STATE_STOPING );
+	SVSVIMStateClass::RemoveState( SV_STATE_TEST );
+	SVSVIMStateClass::RemoveState( SV_STATE_REGRESSION );
+
+	SVCommandStreamManager::Instance().DisableAllInspections();
+
+	if ( SVSVIMStateClass::CheckState( SV_STATE_START_PENDING ) )
+	{
+		PostMessage ( m_pMainWnd->m_hWnd, WM_COMMAND, MAKEWPARAM (ID_MODE_RUN, 0), 0);
+	}
+
+	if ( pArchiveWriteDlg )
+	{
+		pArchiveWriteDlg->DestroyWindow();
+		delete pArchiveWriteDlg;
+	}
+}
+
+void SVObserverApp::OnUpdateEditDelete( CCmdUI* PCmdUI ) 
+{
+	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_REGRESSION )  &&
+		OkToEdit() );
+}
+
+void SVObserverApp::OnUpdateEditEditTool( CCmdUI* PCmdUI ) 
+{
+	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST  | SV_STATE_REGRESSION) &&
+		OkToEdit() );
+}
+
+void SVObserverApp::OnUpdateEditEditToolSetCondition( CCmdUI* PCmdUI ) 
+{
+	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION )  &&
+		OkToEdit() );
+}
+
+void SVObserverApp::OnUpdateEditRemoteInputs( CCmdUI* PCmdUI ) 
+{
+	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION ) &&
+		OkToEdit() );
+	SVInputObjectList* l_pInputs = nullptr;
+	SVConfigurationObject* l_pConfig = nullptr;
+	SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
+
+	if( l_pConfig != nullptr )
+	{
+		l_pConfig->GetInputObjectList( &l_pInputs );
+	}
+
+	bool l_bRemoteInputsExits = false;
+	if( l_pInputs != nullptr )
+	{
+		long lSize = 0;
+		l_pInputs->GetRemoteInputCount( lSize );
+		if( lSize > 0 )
+		{
+			l_bRemoteInputsExits = true;
+			PCmdUI->SetText( "Edit Remote Inputs" );
+		}
+	}
+	if( l_bRemoteInputsExits )
+		PCmdUI->SetText( "Edit Remote Inputs" );
+	else
+		PCmdUI->SetText( "Add Remote Inputs" );
+
+	//@HACK
+	// This code to add menu items for the Published Results does not belong here
+	// but we need a message when the edit menu is selected.  So this works until we can find a
+	// message for the Edit popup UpdateUI or similar.
+
+	// Get Menu handle
+	HMENU hmen = GetMenu( GetMainWnd()->m_hWnd );
+	if( l_pConfig )
+	{
+		// The IO menu is limited to 100 Published results menu items.
+		// There is no limit to the number of inspections that can be created 
+		// but we are only displaying up to 100 menu items for inspections on the IO page.
+		// If there are more than 100, then the user will have to go to the inspection to edit published results
+		// If more are to be supported, then these resources for the ID_EDIT_PUBLISHEDRESULTS_LIMIT will need changed. 
+		SVInspectionProcessPtrList l_Inspections; // Get Inspections
+		l_pConfig->GetInspections( l_Inspections );
+		RemoveMenu(hmen, "&Edit\\Published Results" ); // start empty.
+		for( UINT i = 0; i < static_cast< UINT >( l_Inspections.size() ) && i < (ID_EDIT_PUBLISHEDRESULTS_LIMIT - ID_EDIT_PUBLISHEDRESULTS_BASE + 1); i++ )
+		{
+			// Add a menu for each inspection.
+			CString strName;
+			strName.Format("&Edit\\Published Results\\%s",l_Inspections[i]->GetName());
+			AddMenuItem(hmen, strName, static_cast< UINT >( ID_EDIT_PUBLISHEDRESULTS_BASE + i ) );
+		}
+	}
+}
+
+#ifndef _WIN64
+void SVObserverApp::OnUpdateEditEditPLCOutputs( CCmdUI* pCmdUI )
+{
+	pCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) &&	
+		SVSVIMStateClass::CheckState( SV_STATE_EDIT ) );
+
+	SVConfigurationObject* l_pConfig = NULL;
+	SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
+
+	if( l_pConfig != NULL && l_pConfig->GetPLCCount() == 0 )
+	{
+		pCmdUI->SetText( "Add PLC" );
+	}
+	else
+	{
+		pCmdUI->SetText( "Edit PLC" );
+	}
+}
+#endif
+
+void SVObserverApp::OnUpdateEditAddRemoteOutputs(CCmdUI *pCmdUI)
+{
+	pCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) &&	
+		SVSVIMStateClass::CheckState( SV_STATE_EDIT ) );
+
+	SVConfigurationObject* l_pConfig = NULL;
+	SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
+
+	if( l_pConfig != NULL && l_pConfig->GetRemoteOutputGroupCount() == 0 )
+	{
+		pCmdUI->SetText( "Add Remote Output" );
+	}
+	else
+	{
+		pCmdUI->SetText( "Edit Remote Output" );
+	}
+}
+
+void SVObserverApp::OnUpdateExtrasLightReference( CCmdUI* PCmdUI ) 
+{
+	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_REGRESSION ) &&
+		OkToEdit());
+}
+
+void SVObserverApp::OnUpdateFilePrint( CCmdUI* PCmdUI ) 
+{
+	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_REGRESSION )  
+		&& m_svSecurityMgr.SVIsDisplayable( SECURITY_POINT_FILE_MENU_PRINT ) );
+}
+
+void SVObserverApp::OnUpdateFilePrintPreview( CCmdUI* PCmdUI ) 
+{
+	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_REGRESSION ) 
+		&& m_svSecurityMgr.SVIsDisplayable( SECURITY_POINT_FILE_MENU_PRINT ) );
+}
+
+void SVObserverApp::OnUpdateFilePrintSetup( CCmdUI* PCmdUI ) 
+{
+	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_REGRESSION | SV_STATE_TEST ) 
+		&& m_svSecurityMgr.SVIsDisplayable( SECURITY_POINT_FILE_MENU_PRINT_SETUP ) );
+}
+
+void SVObserverApp::OnUpdateExtrasTestOutputs( CCmdUI* PCmdUI ) 
+{
+	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION )
+		&& m_svSecurityMgr.SVIsDisplayable( SECURITY_POINT_EXTRAS_MENU_TEST_OUTPUTS ) );
+}
+
+void SVObserverApp::OnUpdateHelp( CCmdUI* PCmdUI ) 
+{
+	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING ) );
+}
+
+void SVObserverApp::OnUpdateHelpFinder( CCmdUI* PCmdUI ) 
+{
+	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING  ) );
+}
+
+void SVObserverApp::OnUpdateModeStopTest( CCmdUI* PCmdUI ) 
+{
+	PCmdUI->Enable( SVSVIMStateClass::CheckState( SV_STATE_TEST )  
+		&& m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_MODE_MENU_TEST ) );
+}
+
+void SVObserverApp::OnUpdateModeTest( CCmdUI* PCmdUI ) 
+{
+	PCmdUI->Enable( ( SVSVIMStateClass::CheckState( SV_STATE_TEST | SV_STATE_REGRESSION | SV_STATE_EDIT | SV_STATE_EDIT_MOVE | SV_STATE_READY | SV_STATE_RUNNING  ) ) &&
+		m_svSecurityMgr.SVIsDisplayable( SECURITY_POINT_MODE_MENU_TEST ) );
+
+	PCmdUI->SetCheck( SVSVIMStateClass::CheckState( SV_STATE_TEST ) && 
+		!SVSVIMStateClass::CheckState( SV_STATE_REGRESSION ) );
+}
+
+void SVObserverApp::OnUpdateModeTestBtn(CCmdUI* pCmdUI) 
+{
+	pCmdUI->Enable(( SVSVIMStateClass::CheckState( SV_STATE_REGRESSION | SV_STATE_EDIT | SV_STATE_EDIT_MOVE | SV_STATE_READY ) ) &&	 
+		SVSVIMStateClass::CheckState( SV_STATE_READY ) &&
+		!SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) &&
+		m_svSecurityMgr.SVIsDisplayable( SECURITY_POINT_MODE_MENU_TEST ));
+}
+
+void SVObserverApp::OnUpdateNextPane( CCmdUI* PCmdUI ) 
+{
+	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_REGRESSION ) );
+}
+
+void SVObserverApp::OnUpdatePrevPane( CCmdUI* PCmdUI ) 
+{
+	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_REGRESSION ) );
+}
+
+void SVObserverApp::OnUpdateWindowArrange( CCmdUI* PCmdUI ) 
+{
+	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_REGRESSION ) );
+}
+
+void SVObserverApp::OnUpdateWindowCascade( CCmdUI* PCmdUI ) 
+{
+	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_REGRESSION ) );
+}
+
+void SVObserverApp::OnUpdateWindowNew( CCmdUI* PCmdUI ) 
+{
+	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_REGRESSION ) );
+}
+
+void SVObserverApp::OnUpdateWindowTileHorz( CCmdUI* PCmdUI ) 
+{
+	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_REGRESSION ) );
+}
+
+void SVObserverApp::OnUpdateWindowTileVert( CCmdUI* PCmdUI ) 
+{
+	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_REGRESSION ) );
+}
+
+void SVObserverApp::OnUpdateAddShiftTool( CCmdUI* PCmdUI ) 
+{
+	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) &&	
+		OkToEdit() &&
+		IsMonochromeImageAvailable() );
+}
+
+void SVObserverApp::OnUpdateAddWindowTool( CCmdUI* PCmdUI ) 
+{
+	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) &&	
+		OkToEdit() &&
+		IsMonochromeImageAvailable() );
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// .Title       : OnUpdateAppExit
+// -----------------------------------------------------------------------------
+// .Description : ...
+//              :
+// -----------------------------------------------------------------------------
+// .Input(s)
+//	 Type				Name				Description
+//	: 
+//  :
+// .Output(s)
+//	:
+//  :
+// .Return Value
+//	: 
+// -----------------------------------------------------------------------------
+// .Import Function Reference(s)
+//	:
+// -----------------------------------------------------------------------------
+// .Import Variable Reference(s)
+//	:
+////////////////////////////////////////////////////////////////////////////////
+// .History
+//	 Date		Author		Comment                                       
+//  :16.10.1998 RO			First Implementation
+////////////////////////////////////////////////////////////////////////////////
+void SVObserverApp::OnUpdateAppExit( CCmdUI* PCmdUI ) 
+{
+	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_REGRESSION ) 
+		&& m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_FILE_MENU_EXIT ));	
+}
+
+void SVObserverApp::OnUpdateAppAbout( CCmdUI* PCmdUI ) 
+{
+	// BRW - Can we delete this method?
+	//PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING ) );
+}
+
+// @WARNING - Addition of a Gage Tool is no longer supported.
+void SVObserverApp::OnUpdateAddGageTool( CCmdUI* pCmdUI ) 
+{
+	bool l_bEnable  = !SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) &&	
+		OkToEdit() &&
+		IsMonochromeImageAvailable() ;
+	if( pCmdUI->m_pSubMenu )
+	{
+		unsigned int l_uiGray = l_bEnable ? 0 : MF_GRAYED;
+		pCmdUI->m_pMenu->EnableMenuItem( pCmdUI->m_nIndex, MF_BYPOSITION | l_uiGray);
+	}
+	else
+	{
+		pCmdUI->Enable( l_bEnable );
+	}
+}
+
+// @WARNING - Addition of a Profile Tool is no longer supported.
+void SVObserverApp::OnUpdateAddProfileTool( CCmdUI* pCmdUI ) 
+{
+	bool l_bEnable  = !SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) &&	
+		OkToEdit() &&
+		IsMonochromeImageAvailable() ;
+	pCmdUI->Enable( l_bEnable );
+}
+
+void SVObserverApp::OnUpdateAddLoadImageTool( CCmdUI* PCmdUI ) 
+{
+	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) &&	
+		OkToEdit() &&
+		IsMonochromeImageAvailable()  );
+}
+
+void SVObserverApp::OnUpdateAddImageTool( CCmdUI* PCmdUI ) 
+{
+	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) &&	
+		OkToEdit() &&
+		IsMonochromeImageAvailable());
+}
+
+void SVObserverApp::OnUpdateAddArchiveTool( CCmdUI* PCmdUI ) 
+{
+	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) &&	
+		OkToEdit() &&
+		IsMonochromeImageAvailable() );
+}
+
+void SVObserverApp::OnUpdateAddMathTool( CCmdUI* PCmdUI ) 
+{
+	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) &&	
+		OkToEdit() &&
+		IsMonochromeImageAvailable() );
+}
+
+void SVObserverApp::OnUpdateAddStatisticsTool( CCmdUI* PCmdUI ) 
+{
+	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) &&	
+		OkToEdit() &&
+		IsMonochromeImageAvailable() );
+}
+
+void SVObserverApp::OnFilePrintSec() 
+{
+	if ( ! SVSVIMStateClass::CheckState( SV_STATE_READY | SV_STATE_RUNNING ) || 
+	     CString( GetSECFullFileName() ).IsEmpty() )
+	{
+		return;
+	}
+
+	SVConfigurationPrint printSEC;
+	printSEC.DoPrintSEC();
+}
+
+/////////////////////////////////////////////////////////////////////////////
+//
+//
+//  Not Called..  BRW - We should delete this.
+//
+void SVObserverApp::OnFilePrintPreviewSec() 
+{
+	CMDIChildWnd* pMDIChild;
+	if( m_pMainWnd && ( pMDIChild = ( ( CMDIFrameWnd* ) m_pMainWnd )->MDIGetActive() ) )
+	{
+		CDocument* pCurrentDocument;
+		if( ( pCurrentDocument = pMDIChild->GetActiveDocument() ) )
+		{
+			CRect    defaultRect;
+
+			pMDIChild->GetClientRect( &defaultRect );
+
+		}
+	}
+}
+
+void SVObserverApp::OnExtrasLogin() 
+{
+	HRESULT hr = m_svSecurityMgr.SVLogon();
+
+	// Check if Edit Mode should continue.
+	if( SVSVIMStateClass::CheckState( SV_STATE_EDIT ) )
+	{	// If this user is not allowed to edit then remove the edit mode
+		if( !m_svSecurityMgr.SVIsDisplayable( SECURITY_POINT_MODE_MENU_EDIT_TOOLSET ))
+		{
+			SVSVIMStateClass::RemoveState( SV_STATE_EDIT );
+		}
+		else
+		{	// If they are still allowed then select the current tool.
+			SVMainFrame * pWndMain = (SVMainFrame *)GetMainWnd( );
+			if(pWndMain)
+			{
+				pWndMain->PostMessage(SV_SET_TOOL_SELECTED_IN_TOOL_VIEW, (WPARAM)TRUE);
+				// Logged on User changed
+				pWndMain->PostMessage( SV_LOGGED_ON_USER_CHANGED, 0 );
+			}
+		}
+	}
+	// Check if Edit Move Tool selected
+	if( SVSVIMStateClass::CheckState( SV_STATE_EDIT_MOVE ) )
+	{   // if this user is not allowed to have move privileges then remove the state
+		if( !m_svSecurityMgr.SVIsDisplayable( SECURITY_POINT_MODE_MENU_EDIT_MOVE_TOOL ) )
+		{
+			SVSVIMStateClass::RemoveState( SV_STATE_EDIT_MOVE );
+		}
+		else
+		{	// If they are still allowed then select the current tool.
+			SVMainFrame * pWndMain = (SVMainFrame *)GetMainWnd( );
+			if(pWndMain)
+			{
+				pWndMain->PostMessage(SV_SET_TOOL_SELECTED_IN_TOOL_VIEW, (WPARAM)TRUE);
+				// Logged on User changed
+				pWndMain->PostMessage( SV_LOGGED_ON_USER_CHANGED, 0 );
+			}
+		}
+	}
+}
+
+void SVObserverApp::OnUpdateExtrasLogin( CCmdUI* PCmdUI ) 
+{
+	PCmdUI->Enable( SVSVIMStateClass::CheckState( SV_STATE_AVAILABLE | SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_READY | SV_STATE_REGRESSION) );
+
+	if( !m_svSecurityMgr.SVGetUseLogon() )
+	{	// If not logon mode then remove the login and logout menu items.
+		CMenu *pMenu;
+		CWnd* pWindow = AfxGetMainWnd();
+		pMenu = pWindow->GetMenu();
+		pMenu->RemoveMenu( ID_EXTRAS_LOGIN, MF_BYCOMMAND );
+		pMenu->RemoveMenu( ID_EXTRAS_LOGOUT, MF_BYCOMMAND );
+	}
+}
+
+void SVObserverApp::OnUpdateExtrasUserManager( CCmdUI* PCmdUI ) 
+{
+	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION )  );
+}
+
+void SVObserverApp::OnViewToolBuffers() 
+{
+}
+
+void SVObserverApp::OnUpdateViewToolBuffers( CCmdUI* PCmdUI ) 
+{
+	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING )  );
+	PCmdUI->SetCheck( 0 );
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// .Title       : OnUpdateSetupMode
+// -----------------------------------------------------------------------------
+// .Description : ...
+//              :
+// -----------------------------------------------------------------------------
+// .Input(s)
+//	 Type				Name				Description
+//	: 
+//  :
+// .Output(s)
+//	:
+//  :
+// .Return Value
+//	: 
+// -----------------------------------------------------------------------------
+// .Import Function Reference(s)
+//	:
+// -----------------------------------------------------------------------------
+// .Import Variable Reference(s)
+//	:
+////////////////////////////////////////////////////////////////////////////////
+// .History
+//	 Date		Author		Comment                                       
+//  :15.10.1998 RO			First Implementation
+////////////////////////////////////////////////////////////////////////////////
+void SVObserverApp::OnUpdateSetupMode( CCmdUI* PCmdUI ) 
+{
+	PCmdUI->Enable( SVSVIMStateClass::CheckState( SV_STATE_READY ) &&
+		!SVSVIMStateClass::CheckState( SV_STATE_SECURED | SV_STATE_REGRESSION ) );
+}
+
+void SVObserverApp::OnUpdateAddRotateTool( CCmdUI* PCmdUI ) 
+{
+	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) &&	
+		OkToEdit() &&
+		IsMonochromeImageAvailable()  );
+}
+
+void SVObserverApp::OnUpdateAddTransformationTool( CCmdUI* PCmdUI ) 
+{
+	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) &&	
+		OkToEdit() &&
+		IsMonochromeImageAvailable() );
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// .Title       : OnGoOffline
+// -----------------------------------------------------------------------------
+// .Description : ...
+//              :
+// -----------------------------------------------------------------------------
+// .Input(s)
+//	 Type				Name				Description
+//	: 
+//  :
+// .Output(s)
+//	:
+//  :
+// .Return Value
+//	: 
+// -----------------------------------------------------------------------------
+// .Import Function Reference(s)
+//	:
+// -----------------------------------------------------------------------------
+// .Import Variable Reference(s)
+//	:
+////////////////////////////////////////////////////////////////////////////////
+// .History
+//	 Date		Author		Comment                                       
+//  :15.10.1998 RO			First Implementation
+////////////////////////////////////////////////////////////////////////////////
+void SVObserverApp::OnGoOffline() 
+{
+	if( !SVSVIMStateClass::CheckState( SV_STATE_EDIT_MOVE 
+		| SV_STATE_EDIT 
+		| SV_STATE_REGRESSION
+		| SV_STATE_TEST
+		| SV_STATE_RUNNING ))
+	{
+		return;
+	}
+
+	SVSVIMStateClass::RemoveState( SV_STATE_EDIT | SV_STATE_EDIT_MOVE );
+
+	DeselectTool();
+
+	GetMainFrame()->SetStatusInfoText(_T(""));
+
+	if ( SVSVIMStateClass::CheckState( SV_STATE_RUNNING ) )
+	{
+		// Dual Security access point
+		if( m_svSecurityMgr.SVValidate( SECURITY_POINT_MODE_MENU_STOP, 
+			SECURITY_POINT_MODE_MENU_EXIT_RUN_MODE ) == S_OK )
+		{
+			OnStop();
+		}
+	}
+	else if( m_svSecurityMgr.SVValidate( SECURITY_POINT_MODE_MENU_STOP ) == S_OK )
+	{
+		if ( SVSVIMStateClass::CheckState( SV_STATE_REGRESSION ) )
+		{
+			StopRegression();
+		}
+
+		if ( SVSVIMStateClass::CheckState( SV_STATE_TEST ) )
+		{
+			OnStop();
+		}
+
+		if( SVSVIMStateClass::CheckState( SV_STATE_EDIT_MOVE ) )
+		{
+			SetModeEditMove( false );
+		}
+	}// end if ( SVSVIMStateClass::CheckState( SV_STATE_RUNNING ) )
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// .Title       : OnUpdateGoOffline
+// -----------------------------------------------------------------------------
+// .Description : ...
+//              :
+// -----------------------------------------------------------------------------
+// .Input(s)
+//	 Type				Name				Description
+//	: 
+//  :
+// .Output(s)
+//	:
+//  :
+// .Return Value
+//	: 
+// -----------------------------------------------------------------------------
+// .Import Function Reference(s)
+//	:
+// -----------------------------------------------------------------------------
+// .Import Variable Reference(s)
+//	:
+////////////////////////////////////////////////////////////////////////////////
+// .History
+//	 Date		Author		Comment                                       
+//  :15.10.1998 RO			First Implementation
+////////////////////////////////////////////////////////////////////////////////
+void SVObserverApp::OnUpdateGoOffline( CCmdUI* PCmdUI ) 
+{
+	PCmdUI->Enable( ( SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION | SV_STATE_EDIT | SV_STATE_EDIT_MOVE | SV_STATE_READY ) ) &&	
+		SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_READY ) &&
+		( m_svSecurityMgr.SVIsDisplayable( SECURITY_POINT_MODE_MENU_EXIT_RUN_MODE ) || 
+		m_svSecurityMgr.SVIsDisplayable( SECURITY_POINT_MODE_MENU_STOP ) ));
+
+	PCmdUI->SetCheck( !SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_EDIT | SV_STATE_EDIT_MOVE | SV_STATE_REGRESSION ));
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// .Title       : OnGoOnline
+// -----------------------------------------------------------------------------
+// .Description : ...
+//              :
+// -----------------------------------------------------------------------------
+// .Input(s)
+//	 Type				Name				Description
+//	: 
+//  :
+// .Output(s)
+//	:
+//  :
+// .Return Value
+//	: 
+// -----------------------------------------------------------------------------
+// .Import Function Reference(s)
+//	:
+// -----------------------------------------------------------------------------
+// .Import Variable Reference(s)
+//	:
+////////////////////////////////////////////////////////////////////////////////
+// .History
+//	 Date		Author		Comment                                       
+//  :15.10.1998 RO			First Implementation
+////////////////////////////////////////////////////////////////////////////////
+void SVObserverApp::OnGoOnline() 
+{
+	long l_lPrevState = 0;
+
+	if( SVSVIMStateClass::CheckState( SV_STATE_EDIT_MOVE ))
+	{
+		l_lPrevState = SV_STATE_EDIT_MOVE;
+	}
+
+	if( SVSVIMStateClass::CheckState( SV_STATE_EDIT ))
+	{
+		l_lPrevState = SV_STATE_EDIT;
+	}
+
+	if( SVSVIMStateClass::CheckState( SV_STATE_RUNNING ) ) { return; }
+
+	if( m_svSecurityMgr.SVValidate( SECURITY_POINT_MODE_MENU_RUN ) == S_OK )
+	{
+		if ( SVSVIMStateClass::CheckState( SV_STATE_REGRESSION ) )
+		{
+			StopRegression();
+		}
+
+		if( SVSVIMStateClass::CheckState( SV_STATE_TEST ) )
+		{
+			OnStop();
+		}
+
+		if ( SVSVIMStateClass::CheckState( SV_STATE_READY ) && 
+			!SVSVIMStateClass::CheckState( SV_STATE_TEST | SV_STATE_RUNNING ))
+		{
+
+			HRESULT l_hrStatus = S_OK;
+
+			SVSVIMStateClass::RemoveState( SV_STATE_EDIT );
+			SVSVIMStateClass::RemoveState( SV_STATE_EDIT_MOVE );
+			DisplayAddMenu(false);
+			DeselectTool();
+
+			if ( m_hrHardwareFailure == S_OK )
+			{
+				if ( CheckSVIMType() )
+				{
+					CWaitCursor wait;
+
+					l_hrStatus = Start();
+				}
+				else
+				{
+					CString l_csMessage;
+
+					l_csMessage.Format( _T( "Configuration cannot enter Run.  The "
+						"current configuration hardware does not match system hardware.  "
+						"The system's Model Number is ( Model # %s %s %s %s ).  "
+						"Please verify that the shown model number is correct "
+						"and contact your system administrator." ),
+						m_csProcessor, m_csFrameGrabber, m_csIOBoard, m_csOptions );
+
+					::AfxMessageBox( l_csMessage, MB_OK | MB_ICONERROR ); 
+					SVSVIMStateClass::AddState( l_lPrevState );
+				}
+			}
+			else
+			{
+				CString l_csItem;
+				CString l_csMessage;
+
+				if ( ( m_hrHardwareFailure & SV_HARDWARE_FAILURE_IO ) == SV_HARDWARE_FAILURE_IO )
+				{
+					l_csItem = GetDigitalBoardName();
+				}
+				else if ( ( m_hrHardwareFailure & SV_HARDWARE_FAILURE_TRIGGER ) == SV_HARDWARE_FAILURE_TRIGGER )
+				{
+					l_csItem = GetTriggerBoardName();
+				}
+				else if ( ( m_hrHardwareFailure & SV_HARDWARE_FAILURE_SOFTWARETRIGGER ) == SV_HARDWARE_FAILURE_SOFTWARETRIGGER )
+				{
+					l_csItem = GetSoftwareTriggerBoardName();
+				}
+				else if ( ( m_hrHardwareFailure & SV_HARDWARE_FAILURE_ACQUISITION ) == SV_HARDWARE_FAILURE_ACQUISITION )
+				{
+					l_csItem = GetAcquisitionBoardName();
+				}
+				else if ( ( m_hrHardwareFailure & SV_HARDWARE_FAILURE_FILEACQUISITION ) == SV_HARDWARE_FAILURE_FILEACQUISITION )
+				{
+					l_csItem = GetFileAcquisitionBoardName();
+				}
+				else
+				{
+					l_csItem = _T( "Unknown Item" );
+				}
+
+				l_csMessage.Format( _T( "Hardware configuration error. The SVIM hardware "
+					"does not match the Model Number ( Model # %s %s %s %s ).  "
+					"%s is either not availiable or malfunctioning.  "
+					"Please verify that the shown model number is correct "
+					"and contact your system administrator." ),
+					m_csProcessor, m_csFrameGrabber, m_csIOBoard, m_csOptions,
+					l_csItem );
+
+				::AfxMessageBox( l_csMessage, MB_OK | MB_ICONERROR ); 
+				SVSVIMStateClass::AddState( l_lPrevState );
+			}
+
+			if ( SVSVIMStateClass::CheckState( SV_STATE_STOP_PENDING ) )
+			{
+				PostMessage( m_pMainWnd->m_hWnd, WM_COMMAND, MAKEWPARAM (ID_STOP, 0), 0);
+			}
+			else if ( l_hrStatus != S_OK )
+			{
+				CString l_csMessage;
+
+				if ( ( l_hrStatus & SV_CAN_GO_ONLINE_FAILURE_TRIGGER ) == 
+					SV_CAN_GO_ONLINE_FAILURE_TRIGGER )
+				{
+					l_csMessage =  _T( "Configuration cannot enter Run.  There is an "
+						"unknown error with a Trigger when the system attempted to enter Run." );
+				}
+				else if ( ( l_hrStatus & SV_CAN_GO_ONLINE_FAILURE_ACQUISITION ) == 
+					SV_CAN_GO_ONLINE_FAILURE_ACQUISITION )
+				{
+					l_csMessage =  _T( "Configuration cannot enter Run.  There is an "
+						"unknown error with a Camera when the system attempted to enter Run." );
+				}
+				else if ( ( l_hrStatus & SV_CAN_GO_ONLINE_FAILURE_INSPECTION ) == 
+					SV_CAN_GO_ONLINE_FAILURE_INSPECTION )
+				{
+					l_csMessage =  _T( "Configuration cannot enter Run.  There is an "
+						"unknown error with an inspection when the system attempted to enter Run." );
+				}
+				else if ( ( l_hrStatus & SV_GO_ONLINE_FAILURE_RECYCLE_PRODUCT ) == 
+					SV_GO_ONLINE_FAILURE_RECYCLE_PRODUCT )
+				{
+					l_csMessage =  _T( "Configuration cannot enter Run.  There is an "
+						"unknown error with a PPQ when it attempted to recycle a product "
+						"when the system was going online." );
+				}
+				else if ( ( l_hrStatus & SV_GO_ONLINE_FAILURE_INSPECTION ) == 
+					SV_GO_ONLINE_FAILURE_INSPECTION )
+				{
+					l_csMessage =  _T( "Configuration cannot enter Run.  There is an "
+						"unknown error with an Inspection when the system was going online." );
+				}
+				else if ( ( l_hrStatus & SV_GO_ONLINE_FAILURE_ACQUISITION ) == 
+					SV_GO_ONLINE_FAILURE_ACQUISITION )
+				{
+					l_csMessage =  _T( "Configuration cannot enter Run.  There is an "
+						"unknown error with a Camera when the system was going online." );
+				}
+				else if ( ( l_hrStatus & SV_GO_ONLINE_FAILURE_TRIGGER ) == 
+					SV_GO_ONLINE_FAILURE_TRIGGER )
+				{
+					l_csMessage =  _T( "Configuration cannot enter Run.  There is an "
+						"unknown error with a Trigger when the system was going online." );
+				}
+				else if ( ( l_hrStatus & SV_GO_ONLINE_FAILURE_PLC ) == 
+					SV_GO_ONLINE_FAILURE_PLC )
+				{
+					l_csMessage =  _T( "Configuration cannot enter Run.  There is an "
+						"unknown error with a PLC." );
+				}
+				else
+				{
+					l_csMessage =  _T( "Configuration cannot enter Run.  There is an "
+						"unknown error when the system was going online." );
+				}
+
+				::AfxMessageBox( l_csMessage, MB_OK | MB_ICONERROR ); 
+				SVSVIMStateClass::AddState( l_lPrevState );
+			}
+		}
+	}
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// .Title       : OnUpdateGoOnline
+// -----------------------------------------------------------------------------
+// .Description : ...
+//              :
+// -----------------------------------------------------------------------------
+// .Input(s)
+//	 Type				Name				Description
+//	: 
+//  :
+// .Output(s)
+//	:
+//  :
+// .Return Value
+//	: 
+// -----------------------------------------------------------------------------
+// .Import Function Reference(s)
+//	:
+// -----------------------------------------------------------------------------
+// .Import Variable Reference(s)
+//	:
+////////////////////////////////////////////////////////////////////////////////
+// .History
+//	 Date		Author		Comment                                       
+//  :15.10.1998 RO			First Implementation
+////////////////////////////////////////////////////////////////////////////////
+void SVObserverApp::OnUpdateGoOnline( CCmdUI* PCmdUI ) 
+{
+	PCmdUI->Enable( SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION | SV_STATE_EDIT | SV_STATE_EDIT_MOVE | SV_STATE_READY ) &&	
+		SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_READY ) &&
+		m_svSecurityMgr.SVIsDisplayable( SECURITY_POINT_MODE_MENU_RUN ) );
+
+	PCmdUI->SetCheck( SVSVIMStateClass::CheckState( SV_STATE_RUNNING ) );
+}
+
+void SVObserverApp::OnUpdateFilePrintSec( CCmdUI* PCmdUI ) 
+{
+	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_REGRESSION | SV_STATE_TEST )  
+		&& m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_FILE_MENU_PRINT ));
+}
+
+void SVObserverApp::OnExtrasLogout() 
+{
+	// Force log out, regardless auto login mode...
+	m_svSecurityMgr.SVLogout();
+
+	if( SVSVIMStateClass::CheckState( SV_STATE_EDIT_MOVE ) )
+	{
+		SetModeEditMove( false );
+	}
+
+	if( SVSVIMStateClass::CheckState( SV_STATE_EDIT ) )
+	{
+		SVSVIMStateClass::RemoveState( SV_STATE_EDIT );
+	}
+
+	if ( SVSVIMStateClass::CheckState( SV_STATE_REGRESSION ) )
+	{
+		StopRegression();
+	}
+
+	//
+	// We need to deselect any tool that might be set for operator move.
+	//
+	SVMainFrame* pWndMain = ( SVMainFrame* )GetMainWnd();
+	if( nullptr != pWndMain )
+	{
+		pWndMain->PostMessage( SV_SET_TOOL_SELECTED_IN_TOOL_VIEW, ( WPARAM )FALSE );   // Deselect any tool selected for move.
+	}
+}
+
+void SVObserverApp::OnUpdateExtrasLogout( CCmdUI* PCmdUI ) 
+{
+	PCmdUI->Enable( m_svSecurityMgr.SVIsLoggedOn());
+}
+
+/////////////////////////////////////////////////////////////////////////////
+//
+//
+// Command message processor for range: ID_FILE_MRU_FILE1, ID_FILE_MRU_FILE16
+//
+BOOL SVObserverApp::OnOpenRecentFile( UINT nID ) 
+{
+	BOOL l_bOk = FALSE;
+	if( m_svSecurityMgr.SVValidate( SECURITY_POINT_FILE_MENU_RECENT_CONFIGURATIONS ) == S_OK)
+	{
+		ValidateMRUList();
+
+		if ( !SVSVIMStateClass::CheckState( SV_STATE_UNAVAILABLE ) )
+		{
+			BOOL bRunning = SVSVIMStateClass::CheckState( SV_STATE_RUNNING );
+
+			if ( !bRunning )
+			{
+				l_bOk = OpenSECFileFromMostRecentList(nID);
+				if( l_bOk && !m_svSecurityMgr.SVIsSecured( SECURITY_POINT_MODE_MENU_EDIT_TOOLSET ) )
+				{
+					SetModeEdit( true ); // Set Edit mode
+				}
+			}
+		}
+	}
+
+	// @HACK - This method is always returning TRUE.
+	return TRUE;
+}
+
+// This function is used when the m_ShouldRunLastEnvironmentAutomatically is set.
+void SVObserverApp::OnRunMostRecentMRU()
+{
+	ValidateMRUList();
+
+	if ( !SVSVIMStateClass::CheckState( SV_STATE_UNAVAILABLE ) )
+	{
+		BOOL bRunning = SVSVIMStateClass::CheckState( SV_STATE_RUNNING );
+
+		if ( !bRunning )
+		{
+			OpenSECFileFromMostRecentList(ID_FILE_MRU_FILE1);
+		}
+	}
+}
+
+void SVObserverApp::OnUpdateRecentFileMenu( CCmdUI* PCmdUI ) 
+{
+	CWinApp::OnUpdateRecentFileMenu( PCmdUI );
+
+	BOOL bEnable = ( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_REGRESSION | SV_STATE_TEST )
+		&& m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_FILE_MENU_RECENT_CONFIGURATIONS ) && (TheSVOLicenseManager().HasMatroxLicense()) );
+
+	for( long l = ID_FILE_MRU_FILE1; !bEnable && l < (long)(PCmdUI->m_nID); l++ )
+		PCmdUI->m_pMenu->EnableMenuItem( l, MF_BYCOMMAND | MF_GRAYED );
+}
+
+void SVObserverApp::OnUpdateExtraUtilities( CCmdUI* PCmdUI ) 
+{
+	PCmdUI->Enable( m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_EXTRAS_MENU_UTILITIES_RUN ) );
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// .Title       : OnAppExit
+// -----------------------------------------------------------------------------
+// .Description : ...
+//              :
+// -----------------------------------------------------------------------------
+// .Input(s)
+//	 Type				Name				Description
+//	: 
+//  :
+// .Output(s)
+//	:
+//  :
+// .Return Value
+//	: 
+// -----------------------------------------------------------------------------
+// .Import Function Reference(s)
+//	:
+// -----------------------------------------------------------------------------
+// .Import Variable Reference(s)
+//	:
+////////////////////////////////////////////////////////////////////////////////
+// .History
+//	 Date		Author		Comment                                       
+//  :16.10.1998 RO			First Implementation
+////////////////////////////////////////////////////////////////////////////////
+void SVObserverApp::OnAppExit() 
+{
+	bool l_bAllowAccess = false;
+
+	if ( SVSVIMStateClass::CheckState(SV_STATE_REGRESSION) )
+	{
+		return;
+	}
+
+	if(SVSVIMStateClass::CheckState( SV_STATE_RUNNING ) )
+	{
+		if( m_svSecurityMgr.SVValidate( SECURITY_POINT_MODE_MENU_EXIT_RUN_MODE, 
+			SECURITY_POINT_FILE_MENU_EXIT ) == S_OK )
+		{
+			OnStop();
+			l_bAllowAccess = true;
+		}
+	}
+	else
+	{
+		if( m_svSecurityMgr.SVValidate( SECURITY_POINT_FILE_MENU_EXIT ) == S_OK )
+		{
+			l_bAllowAccess = true;
+		}
+	}
+
+	if( l_bAllowAccess )
+	{
+		if( m_svSecurityMgr.SVValidate( SECURITY_POINT_FILE_MENU_EXIT ) == S_OK )
+		{
+			CWinApp::OnAppExit();
+		}
+	}
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// .Title       : OnFileSaveAsSVC
+// -----------------------------------------------------------------------------
+// .Description : 
+// -----------------------------------------------------------------------------
+// .Input(s)
+//	 Type				Name				Description
+//	: 
+//  :
+// .Output(s)
+//	:
+//  :
+// .Return Value
+//	: void
+// -----------------------------------------------------------------------------
+// .Import Function Reference(s)
+//	:
+// -----------------------------------------------------------------------------
+// .Import Variable Reference(s)
+//	:
+////////////////////////////////////////////////////////////////////////////////
+// .History
+//	 Date		Author		Comment                                       
+//  :15.10.1998	RO			First Implementation
+////////////////////////////////////////////////////////////////////////////////
+void SVObserverApp::OnFileSaveAsSVC() 
+{
+	if( m_svSecurityMgr.SVValidate( SECURITY_POINT_FILE_MENU_SAVE_CONFIGURATION_AS ) == S_OK )
+	{
+		if ( SVSVIMStateClass::CheckState( SV_STATE_READY ) )
+		{
+			// Call save as sec with file dialog...
+			fileSaveAsSec();
+		}
+	}
+}
+
+void SVObserverApp::OnUpdatePublishedResultsPicker(CCmdUI* PCmdUI) 
+{
+	PCmdUI->Enable( SVSVIMStateClass::CheckState( SV_STATE_READY )
+		&& SVSVIMStateClass::CheckState( SV_STATE_EDIT ) );
+}
+
+void SVObserverApp::OnUpdatePublishedImagesPicker(CCmdUI* PCmdUI) 
+{
+	PCmdUI->Enable( SVSVIMStateClass::CheckState( SV_STATE_READY )
+		&& SVSVIMStateClass::CheckState( SV_STATE_EDIT ) );
+}
+
+void SVObserverApp::OnUpdateResultsPicker(CCmdUI* PCmdUI) 
+{
+	PCmdUI->Enable( SVSVIMStateClass::CheckState( SV_STATE_READY ) 
+		&& SVSVIMStateClass::CheckState( SV_STATE_EDIT ) );
+}
+
+void SVObserverApp::OnExtrasUtilitiesEdit() 
+{
+	SVUtilitiesClass util;
+	CWnd* pWindow;
+	CMenu* pMenu;
+	CString szMenuText;
+
+	if( m_svSecurityMgr.SVValidate( SECURITY_POINT_EXTRAS_MENU_UTILITIES_SETUP ) == S_OK )
+	{
+		pWindow = AfxGetMainWnd();
+		pMenu = pWindow->GetMenu();
+		szMenuText = _T( "&Utilities" );
+
+		if ( pMenu = util.FindSubMenuByName( pMenu, szMenuText ) )
+		{
+			util.SetupUtilities( pMenu );
+			UpdateAllMenuExtrasUtilities();
+		}
+	}
+	else
+	{
+		AfxMessageBox( _T( "Authorization Failed.\n\nUtility Modification requires 'User Manager' privilege." ), MB_OK );
+	}
+}
+
+void SVObserverApp::OnUpdateAddPolarUnwrapTool(CCmdUI* PCmdUI) 
+{
+	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) &&	
+		OkToEdit() &&
+		IsMonochromeImageAvailable() );
+}
+
+void SVObserverApp::OnUpdateAddAcquisitionTool( CCmdUI* PCmdUI ) 
+{
+	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) &&	
+		OkToEdit() &&
+		IsMonochromeImageAvailable() );
+}
+
+void SVObserverApp::OnUpdateResumeFreeze( CCmdUI* PCmdUI )  
+{
+	PCmdUI->Enable( TRUE );
+}
+
+void SVObserverApp::OnUpdateSelectPPQVariable(CCmdUI* PCmdUI) 
+{
+	PCmdUI->Enable( SVSVIMStateClass::CheckState( SV_STATE_READY )
+		&& SVSVIMStateClass::CheckState( SV_STATE_EDIT ) );
+}
+
+void SVObserverApp::OnUpdateAddColorTool( CCmdUI* PCmdUI ) 
+{
+	if( IsColorSVIM() )
+	{
+		CMDIChildWnd* pMDIChild;
+		if( m_pMainWnd && ( pMDIChild = ( ( CMDIFrameWnd* ) m_pMainWnd )->MDIGetActive() ) )
+		{
+			CDocument* pCurrentDocument;
+			if( ( pCurrentDocument = pMDIChild->GetActiveDocument() ) )
+			{
+				if( ( dynamic_cast< SVIPDoc* >( pCurrentDocument ) )->IsColorInspectionDocument() )
+				{
+					PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) &&
+						OkToEdit());
+				}
+				else
+				{
+					// Disable
+					PCmdUI->Enable( FALSE );
+				}
+			}
+		}
+	}
+	else
+	{
+		CMenu *pMenu;
+		CWnd* pWindow = AfxGetMainWnd();
+		pMenu = pWindow->GetMenu();
+
+		// remove from menu...
+		pMenu->RemoveMenu( ID_ADD_COLORTOOL, MF_BYCOMMAND );
+	}
+}
+
+void SVObserverApp::OnUpdateRegressionTest(CCmdUI *pCmdUI)
+{
+	pCmdUI->SetCheck( SVSVIMStateClass::CheckState( SV_STATE_REGRESSION ) );
+}
+
+void SVObserverApp::OnRunUtility( UINT uiId )
+{
+	SVUtilitiesClass util;
+
+	if( m_svSecurityMgr.SVValidate( SECURITY_POINT_EXTRAS_MENU_UTILITIES_RUN ) == S_OK )
+	{
+		util.RunUtility (&m_svSecurityMgr, uiId);
+	}
+	else
+	{
+		AfxMessageBox( _T("Authorization Failed.\n\nUtility Execution requires 'User Manager' privilege."), MB_OK );
+	}
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// .Title       : OnRCGoOffline
+// -----------------------------------------------------------------------------
+// .Description : ...
+//              : NOTE: Be careful by implementing an update function for
+//				:		for this command! RC should be able to have access
+//				:		all the time!
+// -----------------------------------------------------------------------------
+// .Input(s)
+//	 Type				Name				Description
+//	: 
+//  :
+// .Output(s)
+//	:
+//  :
+// .Return Value
+//	: 
+// -----------------------------------------------------------------------------
+// .Import Function Reference(s)
+//	:
+// -----------------------------------------------------------------------------
+// .Import Variable Reference(s)
+//	:
+////////////////////////////////////////////////////////////////////////////////
+// .History
+//	 Date		Author		Comment                                       
+//  :17.10.1998 RO			First Implementation
+//	:11.10.1999 RO			BugFix: OnStop() must be called! Otherwise even if
+//							we are offline this function is not setting the 
+//							SVRCVariable right!
+////////////////////////////////////////////////////////////////////////////////
+void SVObserverApp::OnRCGoOffline() 
+{
+	if ( SVSVIMStateClass::CheckState( SV_STATE_RUNNING ) )
+	{
+		OnStop();
+
+		Sleep (1000);  // wait for running threads to quiesce
+	}
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// .Title       : OnRCGoOnline
+// -----------------------------------------------------------------------------
+void SVObserverApp::OnRCGoOnline() 
+{
+	if ( !SVSVIMStateClass::CheckState( SV_STATE_RUNNING ) )
+	{
+		SetMode( SVIM_MODE_ONLINE );
+	}
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// .Title       : OnRCLoadSEC
+// -----------------------------------------------------------------------------
+// .Description : ...
+//              :
+// -----------------------------------------------------------------------------
+// .Input(s)
+//	 Type				Name				Description
+//	: 
+//  :
+// .Output(s)
+//	:
+//  :
+// .Return Value
+//	: 
+// -----------------------------------------------------------------------------
+// .Import Function Reference(s)
+//	:
+// -----------------------------------------------------------------------------
+// .Import Variable Reference(s)
+//	:
+////////////////////////////////////////////////////////////////////////////////
+// .History
+//	 Date		Author		Comment                                       
+//  :27.05.1997 RO			First Implementation
+//	:
+////////////////////////////////////////////////////////////////////////////////
+void SVObserverApp::OnRCLoadSEC()
+{
+	SVFileNameClass svFileName( SVRCGetSVCPathName() );
+
+  if ( ! CString( svFileName.GetFullFileName() ).IsEmpty() )
+	{
+		BOOL bIsSEC = CString( svFileName.GetExtension() ).CompareNoCase( _T( ".sec" ) ) == 0;
+		BOOL bIsSVX = CString( svFileName.GetExtension() ).CompareNoCase( _T( ".svx" ) ) == 0;
+
+		// Check for SEC file...
+		if ( bIsSEC || bIsSVX )
+		{
+			if ( S_OK != DestroySEC( FALSE, TRUE ) )
+			{
+				AfxMessageBox( "Failed to destroy SEC, try it manual!" );
+			}
+			else
+			{
+				BOOL bOk = FALSE;
+
+				if ( bIsSEC )
+				{	
+					bOk = S_OK == OpenSECFile( svFileName.GetFullFileName() );
+
+					if ( ! bOk )
+					{
+						AfxMessageBox( "Failed to restart SEC, try it manual!" );
+					}
+				}
+				else if ( bIsSVX )
+				{
+					bOk = S_OK == OpenSVXFile( svFileName.GetFullFileName() );
+
+					if ( ! bOk )
+					{
+						AfxMessageBox( "Failed to restart SVX, try it manual!" );
+					}
+				}
+
+				if ( bOk )
+				{
+					GetMainFrame()->SetNotifyCommRC ();
+				}
+			}
+		
+			return;
+		}
+	}
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// .Title       : OnRCSaveAllAndGetSEC
+// -----------------------------------------------------------------------------
+// .Description : ...
+//              :
+// -----------------------------------------------------------------------------
+// .Input(s)
+//	 Type				Name				Description
+//	: 
+//  :
+// .Output(s)
+//	:
+//  :
+// .Return Value
+//	: 
+// -----------------------------------------------------------------------------
+// .Import Function Reference(s)
+//	:
+// -----------------------------------------------------------------------------
+// .Import Variable Reference(s)
+//	:
+////////////////////////////////////////////////////////////////////////////////
+// .History
+//	 Date		Author		Comment                                       
+//  :27.05.1997 RO			First Implementation
+//	:
+////////////////////////////////////////////////////////////////////////////////
+void SVObserverApp::OnRCSaveAllAndGetSEC()
+{
+	// Saves the current loaded SEC completely, transfers the CurrentPathName to 
+	// SVRCComm.Dll and at least closes the current SEC, because the opened 
+	// SVObserver documents cannot be transfered to SVFocus!
+
+	BOOL bRunning = SVSVIMStateClass::CheckState( SV_STATE_RUNNING );
+
+	if ( bRunning )
+	{
+		OnRCGoOffline();
+	}
+
+	if ( SVSVIMStateClass::CheckState( SV_STATE_READY ) )
+	{
+		CString csConfigPath;
+		SVFileNameManagerClass svFileManager;
+
+		BOOL bModified = SVSVIMStateClass::CheckState( SV_STATE_MODIFIED );
+
+		csConfigPath = svFileManager.GetConfigurationPathName();
+
+		if ( ! csConfigPath.IsEmpty() )
+		{
+			svFileManager.SetConfigurationPathName( NULL );
+		}
+
+		SVFileNameClass svFileName;
+
+		svFileName.SetFullFileName( GetSECFullFileName() );
+		svFileName.SetPathName( _T( "C:\\RUN" ) );
+		svFileName.SetExtension( _T( ".svx" ) );
+
+		fileSaveAsSec( svFileName.GetFullFileName() );
+
+		SVRCSetSVCPathName( GetSECFullFileName() );
+
+		if ( ! csConfigPath.IsEmpty() )
+		{
+			svFileManager.SetConfigurationPathName( csConfigPath );
+		}
+
+		if ( bModified )
+		{
+			SVSVIMStateClass::AddState( SV_STATE_MODIFIED );
+		}
+
+		if ( bRunning )
+		{
+			OnRunMode();
+		}
+	}
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// .Title       : OnRCCloseAndCleanUpDownloadDirectory
+// -----------------------------------------------------------------------------
+// .Description : ...
+//              :
+// -----------------------------------------------------------------------------
+// .Input(s)
+//	 Type				Name				Description
+//	: 
+//  :
+// .Output(s)
+//	:
+//  :
+// .Return Value
+//	: 
+// -----------------------------------------------------------------------------
+// .Import Function Reference(s)
+//	:
+// -----------------------------------------------------------------------------
+// .Import Variable Reference(s)
+//	:
+////////////////////////////////////////////////////////////////////////////////
+// .History
+//	 Date		Author		Comment                                       
+//  :27.05.1997 RO			First Implementation
+//	:
+////////////////////////////////////////////////////////////////////////////////
+void SVObserverApp::OnRCCloseAndCleanUpDownloadDirectory()
+{
+	// Returns Nonzero to SVRC Module via SVRCResult, if it is successfully.
+	// Otherwise it returns 0.
+
+	// Closes loaded configuration
+	// Cleans up execution directory ( download directory )
+
+		// Close SEC immediately, without hint or user message...
+		DestroySEC( FALSE, TRUE );	// Close SEC immediately
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// .Title       : OnUpdateAllIOViews
+// -----------------------------------------------------------------------------
+// .Description : ...
+//              :
+// -----------------------------------------------------------------------------
+// .Input(s)
+//	 Type				Name				Description
+//	: 
+//  :
+// .Output(s)
+//	:
+//  :
+// .Return Value
+//	: 
+// -----------------------------------------------------------------------------
+// .Import Function Reference(s)
+//	:
+// -----------------------------------------------------------------------------
+// .Import Variable Reference(s)
+//	:
+////////////////////////////////////////////////////////////////////////////////
+// .History
+//	 Date		Author		Comment                                       
+//  :27.05.1997 RO			First Implementation
+//	:
+////////////////////////////////////////////////////////////////////////////////
+void SVObserverApp::OnUpdateAllIOViews()
+{
+	if ( GetIODoc() && 
+		SVSVIMStateClass::CheckState( SV_STATE_READY | SV_STATE_RUNNING ) &&
+		!SVSVIMStateClass::CheckState( SV_STATE_CANCELING ) )
+	{
+		GetIODoc()->UpdateAllViews( NULL );
+	}
+}
+
+void SVObserverApp::OnUpdateAddExternalTool(CCmdUI* PCmdUI) 
+{
+	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) &&	
+		OkToEdit() &&
+		IsMonochromeImageAvailable() );
+}
+
+void SVObserverApp::OnExtrasSecuritySetup() 
+{
+	if( m_svSecurityMgr.SVValidate( SECURITY_POINT_EXTRAS_MENU_SECURITY_MANAGER ) == S_OK)
+	{
+		m_svSecurityMgr.SVSetupDialog();
+		if( m_svSecurityMgr.SVGetUseLogon() )
+		{
+			CMenu *pMenu;
+			CWnd* pWindow = AfxGetMainWnd();
+			pMenu = pWindow->GetMenu();
+
+			// Look for "Extras" menu.
+			int pos = FindMenuItem( pMenu, "E&xtras");
+			if( pos == -1 )
+			{
+				return;
+			}
+
+			CMenu* submenu = pMenu->GetSubMenu(pos);
+			pos = FindMenuItem(submenu, "&Security Setup");
+			if (pos > -1)
+			{
+				if( FindMenuItem( submenu, "User Log&out" ) == -1 )
+				{
+					submenu->InsertMenu(pos , MF_BYPOSITION, ID_EXTRAS_LOGOUT, "User Log&out");
+					submenu->InsertMenu(pos , MF_BYPOSITION, ID_EXTRAS_LOGIN, "User &Login");
+				}
+			}
+		}
+
+		if( SVSVIMStateClass::CheckState( SV_STATE_EDIT_MOVE ) )
+		{
+			SetModeEditMove( false );
+		}
+
+		if( SVSVIMStateClass::CheckState( SV_STATE_EDIT ))
+		{
+			SVSVIMStateClass::RemoveState( SV_STATE_EDIT );
+		}
+
+		if ( SVSVIMStateClass::CheckState( SV_STATE_REGRESSION ) )
+		{
+			StopRegression();
+		}
+	}
+}
+
+void SVObserverApp::OnModeEdit() 
+{
+	bool l_bAllowAccess = false;
+
+	if( SVSVIMStateClass::CheckState( SV_STATE_EDIT ) )
+	{
+		return;
+	}
+
+	// If Running, check if access to exit run.
+	if ( SVSVIMStateClass::CheckState( SV_STATE_RUNNING ) )
+	{
+		if( m_svSecurityMgr.SVValidate( SECURITY_POINT_MODE_MENU_EXIT_RUN_MODE, 
+			SECURITY_POINT_MODE_MENU_EDIT_TOOLSET ) == S_OK )
+		{
+			OnStop();
+			l_bAllowAccess = true;
+		}
+	}
+	else if( m_svSecurityMgr.SVValidate( SECURITY_POINT_MODE_MENU_EDIT_TOOLSET ) == S_OK )
+	{
+		l_bAllowAccess = true;
+	}
+
+	if( l_bAllowAccess )
+	{
+		if ( !SVSVIMStateClass::CheckState( SV_STATE_EDIT ) )
+		{
+			if ( SVSVIMStateClass::CheckState( SV_STATE_REGRESSION ) )
+			{
+				StopRegression();
+			}
+
+			if( SVSVIMStateClass::CheckState( SV_STATE_TEST ) )
+			{
+				OnStop();
+			}
+			
+			if ( SVSVIMStateClass::CheckState( SV_STATE_READY ) )
+			{
+				SetModeEdit( true ); // Set Edit mode
+			}
+		}
+	}
+}
+
+void SVObserverApp::OnUpdateModeEdit(CCmdUI* pCmdUI) 
+{
+	pCmdUI->Enable( (SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION | SV_STATE_EDIT | SV_STATE_EDIT_MOVE | SV_STATE_READY ) ) &&	
+		SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_READY ) &&
+		m_svSecurityMgr.SVIsDisplayable( SECURITY_POINT_MODE_MENU_EDIT_TOOLSET ) );
+
+	pCmdUI->SetCheck( SVSVIMStateClass::CheckState( SV_STATE_EDIT ) );
+}
+
+void SVObserverApp::OnModeEditMove() 
+{
+	bool l_bAllowAccess = false;
+
+	if ( SVSVIMStateClass::CheckState( SV_STATE_EDIT_MOVE ) )
+	{
+		return;
+	}
+
+	// If Running, check if access to exit run.
+	if ( SVSVIMStateClass::CheckState( SV_STATE_RUNNING ) )
+	{
+		if( m_svSecurityMgr.SVValidate( SECURITY_POINT_MODE_MENU_EXIT_RUN_MODE, 
+			SECURITY_POINT_MODE_MENU_EDIT_MOVE_TOOL ) == S_OK )
+		{
+			OnStop();
+			l_bAllowAccess = true;
+		}
+	}
+	else
+	{
+		if( m_svSecurityMgr.SVValidate( SECURITY_POINT_MODE_MENU_EDIT_MOVE_TOOL ) == S_OK )
+		{
+			l_bAllowAccess = true;
+		}
+	}
+
+	if( l_bAllowAccess )
+	{
+		if ( !SVSVIMStateClass::CheckState( SV_STATE_EDIT_MOVE ) )
+		{
+			if ( SVSVIMStateClass::CheckState( SV_STATE_REGRESSION ) )
+			{
+				StopRegression();
+			}
+
+			if( SVSVIMStateClass::CheckState( SV_STATE_TEST ) )
+			{
+				OnStop();
+			}
+
+			SetModeEditMove( true );
+		}
+	}
+}
+
+void SVObserverApp::OnUpdateModeEditMove(CCmdUI* pCmdUI) 
+{
+	pCmdUI->Enable(( SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION | SV_STATE_EDIT | SV_STATE_EDIT_MOVE | SV_STATE_READY ) ) &&	
+		SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_READY ) &&
+		m_svSecurityMgr.SVIsDisplayable( SECURITY_POINT_MODE_MENU_EDIT_MOVE_TOOL ));
+
+	pCmdUI->SetCheck( SVSVIMStateClass::CheckState( SV_STATE_EDIT_MOVE ));
+}
+
+void SVObserverApp::OnTriggerSettings()
+{
+	SVSoftwareTriggerDlg::Instance().ShowWindow(SW_SHOW);
+	// set dirty handler to the insert method of m_dirty_triggers set
+	SVSoftwareTriggerDlg::Instance().SetDirtyHandler(boost::bind(&std::set<SVTriggerObject *>::insert, &m_dirty_triggers, _1));
+}
+
+void SVObserverApp::OnUpdateTriggerSettings(CCmdUI *pCmdUI)
+{
+	pCmdUI->Enable();
+}
+
+void SVObserverApp::OnUpdateExtrasUtilitiesEdit(CCmdUI* pCmdUI) 
+{
+	if( pCmdUI->m_pSubMenu )
+	{
+		bool l_bEnable = m_svSecurityMgr.SVIsDisplayable( SECURITY_POINT_EXTRAS_MENU_UTILITIES_SETUP ) ||
+			(m_svSecurityMgr.SVIsDisplayable( SECURITY_POINT_EXTRAS_MENU_UTILITIES_RUN ) && 
+			!SVSVIMStateClass::CheckState( SV_STATE_RUNNING ));
+		unsigned int l_uiGray = l_bEnable ? 0 : MF_GRAYED;
+		pCmdUI->m_pMenu->EnableMenuItem( pCmdUI->m_nIndex, MF_BYPOSITION | l_uiGray);
+	}
+	else
+	{
+		pCmdUI->Enable( m_svSecurityMgr.SVIsDisplayable( SECURITY_POINT_EXTRAS_MENU_UTILITIES_SETUP ) && 
+			!SVSVIMStateClass::CheckState( SV_STATE_RUNNING ) );
+	}
+}
+
+void SVObserverApp::OnUpdateAddLinearTool( CCmdUI* PCmdUI ) 
+{
+	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) &&	
+		IsMonochromeImageAvailable() &&
+		OkToEdit());
+}
+
+void SVObserverApp::OnUpdateAddRemoteInputTool( CCmdUI* PCmdUI ) 
+{
+	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) &&	
+		IsMonochromeImageAvailable() &&
+		OkToEdit());
+}
+
+void SVObserverApp::OnUpdateAddCylindricalWarpTool( CCmdUI* pCmdUI ) 
+{
+	bool l_bEnable = ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) &&	
+		OkToEdit() &&
+		IsMonochromeImageAvailable() ;
+
+	if( pCmdUI->m_pSubMenu )
+	{
+		unsigned int l_uiGray = l_bEnable ? 0 : MF_GRAYED;
+		pCmdUI->m_pMenu->EnableMenuItem( pCmdUI->m_nIndex, MF_BYPOSITION | l_uiGray);
+	}
+	else
+	{
+		pCmdUI->Enable( l_bEnable );
+	}
+}
+
+void SVObserverApp::OnUpdateAddPerspectiveTool(CCmdUI* pCmdUI)
+{
+	pCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) &&	
+		SVSVIMStateClass::CheckState( SV_STATE_EDIT ) &&
+		IsMonochromeImageAvailable() );
+}
+
+void SVObserverApp::OnUpdateExtrasSecuritySetup(CCmdUI* pCmdUI) 
+{
+	pCmdUI->Enable( !SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_REGRESSION | SV_STATE_TEST ) );
+}
+
+#ifndef _WIN64
+void SVObserverApp::OnEditPLCOutputs()
+{
+	SVConfigurationObject* l_pConfig = NULL;
+	SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
+
+	if( l_pConfig != NULL )
+	{
+		l_pConfig->SetupPLC();
+		if( l_pConfig->GetPLCCount() == 0)
+		{
+			HidePLCTab();
+		}
+	}
+}
+#endif
+
+void SVObserverApp::OnEditRemoteOutputs()
+{
+	SVConfigurationObject* l_pConfig = NULL;
+	SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
+
+	if( l_pConfig != NULL )
+	{
+		l_pConfig->SetupRemoteOutput();
+	}
+}
+
+// This handler handles a range of Ids based on inspection.
+// It is called from when the IO Page is displayed.
+// The IDR_SVOBSERVER_IODOCTYPE Menu Published Results.
+void SVObserverApp::OnEditPublishedResults( UINT nID )
+{
+	UINT uiInspection = nID - ID_EDIT_PUBLISHEDRESULTS_BASE;
+	// Get list of inspections
+	// edit published results
+	SVConfigurationObject* l_pConfig = NULL;
+	SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
+	if( l_pConfig )
+	{
+		SVInspectionProcessPtrList l_Inspections;
+		l_pConfig->GetInspections( l_Inspections );
+		if( uiInspection < l_Inspections.size())
+		{
+			SVInspectionProcess* pInsp = l_Inspections[uiInspection];
+			SVDlgResultPicker dlg;
+			CString publishedResultString;
+
+			dlg.PTaskObjectList = pInsp->GetToolSet();
+			dlg.uAttributesDesired = SV_PUBLISHABLE;
+
+			publishedResultString.LoadString ( IDS_PUBLISHABLE_RESULTS );
+			CString inspectionName = pInsp->GetName();
+			CString title;
+			title.Format(_T("%s - %s"), publishedResultString, inspectionName);
+			dlg.SetCaptionTitle(title);
+
+			INT_PTR dlgResult = dlg.DoModal();
+			if( dlgResult == IDOK )
+			{
+				pInsp->GetPublishList().Refresh( pInsp->GetToolSet() );
+
+				long lSize;
+				long l;
+				SVPPQObject *pPPQ;
+
+				SVConfigurationObject* pConfig = NULL;
+				SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
+
+				SVSVIMStateClass::AddState( SV_STATE_MODIFIED );
+
+				// Force the PPQs to rebuild
+				pConfig->GetPPQCount( lSize );
+
+				for( l = 0; l < lSize; l++ )
+				{
+					pConfig->GetPPQ( l, &pPPQ );
+					if( pPPQ )
+					{
+						pPPQ->RebuildOutputList();
+					}// end if
+				}// end for
+				TheSVObserverApp.GetIODoc()->UpdateAllViews( NULL );
+			}// end if
+		}
+	}	
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// .Title       : OnRCClose
+// -----------------------------------------------------------------------------
+// .Description : ...
+//              :
+// -----------------------------------------------------------------------------
+// .Input(s)
+//	 Type				Name				Description
+//	: 
+//  :
+// .Output(s)
+//	:
+//  :
+// .Return Value
+//	: 
+// -----------------------------------------------------------------------------
+// .Import Function Reference(s)
+//	:
+// -----------------------------------------------------------------------------
+// .Import Variable Reference(s)
+//	:
+////////////////////////////////////////////////////////////////////////////////
+// .History
+//	 Date		Author		Comment                                       
+//  :21.05.2001 EJC			First Implementation
+//	:
+////////////////////////////////////////////////////////////////////////////////
+void SVObserverApp::OnRCClose()
+{
+	// Returns Nonzero to SVRC Module via SVRCResult, if it is successfully.
+	// Otherwise it returns 0.
+
+	// Closes loaded configuration
+	// Cleans up execution directory ( download directory )
+
+	// Close SEC immediately, without hint or user message...
+	DestroySEC( FALSE, TRUE );	// Close SEC immediately
+}
+#pragma endregion AFX_MSG Methods
+
+#pragma region AFX_VIRTUAL Methods
+////////////////////////////////////////////////////////////////////////////////
+// .Title       : // e.g. Compare member function of class ...
+// -----------------------------------------------------------------------------
+// .Description : ...
+//              :
+// -----------------------------------------------------------------------------
+// .Input(s)
+//	 Type				Name				Description
+//	: 
+//  :
+// .Output(s)
+//	:
+//  :
+// .Return Value
+//	: 
+// -----------------------------------------------------------------------------
+// .Import Function Reference(s)
+//	:
+// -----------------------------------------------------------------------------
+// .Import Variable Reference(s)
+//	:
+////////////////////////////////////////////////////////////////////////////////
+// .History
+//	 Date		Author		Comment                                       
+//  :27.05.1997 RO			First Implementation
+//	:
+////////////////////////////////////////////////////////////////////////////////
+BOOL SVObserverApp::InitInstance()
+{
+	CWinApp::InitInstance();
+
+	m_hEvent = CreateEvent(NULL, FALSE, TRUE, AfxGetAppName()); 
+
+	if ( GetLastError()==ERROR_ALREADY_EXISTS )
+	{ 
+		return FALSE; 
+	} 
+
+	// OLE-Bibliotheken initialisieren
+	if( !AfxOleInit() )
+	{
+		AfxMessageBox( IDP_OLE_INIT_FAILED );
+
+		return FALSE;
+	}
+
+	if( !InitATL() )
+	{
+		return FALSE;
+	}
+
+	// Check for proper setup of V: for SVRemoteControl
+	if( CheckDrive(_T("v:\\")) != S_OK)
+	{
+		return FALSE;
+	}
+
+	#ifdef _DEBUG
+		long l_CrtVal = GetPrivateProfileInt( _T( "Memory" ), _T( "CrtSetBreakAlloc" ), 0, _T( "c:\\SVObserver\\Bin\\SVDebug.ini" ) );
+
+		if( 0 < l_CrtVal )
+		{
+			::_CrtSetBreakAlloc( l_CrtVal );
+		}
+	#endif
+
+	EnableCrashFilter();
+
+	SetThreadType( APPLICATIONTHREAD );
+
+	#ifdef __USE_TRACEWIN
+		afxTraceEnabled = TRUE;
+		PxlTraceInit();                                    // 13 May 1999 - frb.
+	#endif //__USE_TRACEWIN
+	TRACE0("..SVObserver - InitInstance()\n");         // 13 May 1999 - frb.
+
+	// EB 2002 11 19
+	// added to ensure C:\TEMP always exists;
+	// bad things happen if it doesn't
+	// example of symptom: crash when SVFocus tries to connect
+	if (_taccess(_T("c:\\TEMP"), 0) != 0)
+	{
+		_tmkdir(_T("c:\\TEMP"));
+	}
+
+	// EB 2005 08 01
+	// archive tool default storage
+	// is now e:\temp
+	if (_taccess(_T("D:\\TEMP"), 0) != 0)
+	{
+		_tmkdir(_T("D:\\TEMP"));
+	}
+
+	// Startup Matrox App
+	SVMatroxApplicationInterface::Startup();
+
+	SVHardwareManifest::Instance().Startup();
+	SVTriggerProcessingClass::Instance().Startup();
+	SVDigitizerProcessingClass::Instance().Startup();
+
+	InitializeSecurity();
+
+	int nRet = 0;
+
+	// the SVIPDoc constructor will create
+	//
+	// Make sure the dialog color matches 'system' choice.
+	//
+	#ifdef _DEBUG
+		SetPriorityClass( GetCurrentProcess(), NORMAL_PRIORITY_CLASS );
+	#else
+		SetPriorityClass( GetCurrentProcess(), HIGH_PRIORITY_CLASS );
+	#endif
+
+	SetThreadPriority( THREAD_PRIORITY_NORMAL );
+
+	// The start window	
+	SVStartWindowClass sWin;
+#ifndef _DEBUG                    // 23 Mar 1999 - frb.
+	if( sWin.Create( IDD_START ) )
+	{
+		sWin.ShowWindow( SW_SHOW );
+	}
+	else
+		return FALSE;
+#endif //_DEBUG                  // 23 Mar 1999 - frb.
+
+	AfxEnableControlContainer();
+
+	// Registry Key...
+	SetRegistryKey( _T( "SVR Gesellschaft für Bildverarbeitung mbH" ) );
+
+	LoadStdProfileSettings( 7 );  // Standard-INI-Dateioptionen einlesen (einschließlich MRU)
+
+	m_SvimIni.SetFile(_T("C:\\SVObserver\\bin\\SVIM.INI"));
+
+	ValidateMRUList();
+
+	// JMS - Add Color SVIM Mode Active Flag
+	BOOL l_bIsColorSVIM = GetProfileInt(_T( "Settings" ),_T( "Color SVIM Mode Active" ), -1 );
+	if ( l_bIsColorSVIM == -1)
+	{
+		WriteProfileInt(_T( "Settings" ),_T( "Color SVIM Mode Active" ), false );
+
+		l_bIsColorSVIM = false;
+	}
+
+	SVObjectManagerClass::Instance().m_bIsColorSVIM = (l_bIsColorSVIM) ? true : false;
+
+	// Get SourceImageDepth
+	m_lSouceImageDepth = GetProfileInt(_T( "Settings" ),_T( "Source Image Depth" ), -1 );
+	if ( m_lSouceImageDepth == -1 )
+	{
+		WriteProfileInt(_T( "Settings" ),_T( "Source Image Depth" ), 15 );
+
+		m_lSouceImageDepth = 15;
+	}
+
+	// Get SourceImageDepth
+	m_lResultImageDepth = GetProfileInt(_T( "Settings" ),_T( "Result Image Depth" ), -1 );
+	if ( m_lResultImageDepth == -1 )
+	{
+		WriteProfileInt(_T( "Settings" ),_T( "Result Image Depth" ), 5 );
+
+		m_lResultImageDepth = 5;
+	}
+
+	// Get LogDataManager
+	m_LogDataManager = UpdateAndGetLogDataManager();
+
+	// Supplement for SVObserver 2.0
+	// Set up path name environment variables...
+
+	// Configuration Execution Path Name... ( "Run Directory" )
+	m_ConfigExePNVariableValue = GetProfileString( _T( "Settings" ), m_ConfigExePNVariableName );
+	if( m_ConfigExePNVariableValue.IsEmpty() )
+	{
+		m_ConfigExePNVariableValue = m_ConfigExePNVariableDefaultValue;
+		// Update registry...
+		WriteProfileString( _T( "Settings" ), m_ConfigExePNVariableName, m_ConfigExePNVariableValue );
+	}
+	// Check path, create if necessary but don't delete contents...
+	InitPath( m_ConfigExePNVariableValue, TRUE, FALSE );
+	SetEnvironmentVariable( m_ConfigExePNVariableName, m_ConfigExePNVariableValue );
+
+	// Last Valid Configuration Path Name... ( "Last Valid Directory" )
+	m_LastValidConfigPNVariableValue = GetProfileString( _T( "Settings" ), m_LastValidConfigPNVariableName );
+	if( m_LastValidConfigPNVariableValue.IsEmpty() )
+	{
+		m_LastValidConfigPNVariableValue = m_LastValidConfigPNVariableDefaultValue;
+		// Update registry...
+		WriteProfileString( _T( "Settings" ), m_LastValidConfigPNVariableName, m_LastValidConfigPNVariableValue );
+	}
+	// Check path, create if necessary but don't delete contents...
+	InitPath( m_LastValidConfigPNVariableValue, TRUE, FALSE );
+	SetEnvironmentVariable( m_LastValidConfigPNVariableName, m_LastValidConfigPNVariableValue );
+
+	// Load special profile settings
+	if( GetProfileInt( _T( "Settings" ), _T( "Run Last Configuration Automatically" ), 0 ) )
+		m_ShouldRunLastEnvironmentAutomatically = TRUE;
+	else
+		m_ShouldRunLastEnvironmentAutomatically = FALSE;
+
+	// Get AutoRunDelay from Registry...
+	m_AutoRunDelayTime = GetProfileInt( _T( "Settings" ), _T( "Auto Run Delay Time" ), m_AutoRunDelayTime );
+	WriteProfileInt( _T( "Settings" ), _T( "Auto Run Delay Time" ), m_AutoRunDelayTime );
+
+	HRESULT l_hrLoad = INILoad();
+	if ( l_hrLoad != S_OK )
+	{
+		CString l_csItem;
+		CString l_csMessage;
+
+		if ( ( l_hrLoad & SV_HARDWARE_FAILURE_IO ) == SV_HARDWARE_FAILURE_IO )
+		{
+			l_csItem = GetDigitalBoardName();
+		}
+		else if ( ( l_hrLoad & SV_HARDWARE_FAILURE_TRIGGER ) == SV_HARDWARE_FAILURE_TRIGGER )
+		{
+			l_csItem = GetTriggerBoardName();
+		}
+		else if ( ( l_hrLoad & SV_HARDWARE_FAILURE_SOFTWARETRIGGER ) == SV_HARDWARE_FAILURE_SOFTWARETRIGGER )
+		{
+			l_csItem = GetSoftwareTriggerBoardName();
+		}
+		else if ( ( l_hrLoad & SV_HARDWARE_FAILURE_ACQUISITION ) == SV_HARDWARE_FAILURE_ACQUISITION )
+		{
+			l_csItem = GetAcquisitionBoardName();
+		}
+		else if ( ( l_hrLoad & SV_HARDWARE_FAILURE_FILEACQUISITION ) == SV_HARDWARE_FAILURE_FILEACQUISITION )
+		{
+			l_csItem = GetFileAcquisitionBoardName();
+		}
+		else
+		{
+			l_csItem = _T( "Unknown Item" );
+		}
+
+		l_csMessage.Format( _T( "Hardware configuration error. The SVIM hardware "
+			"does not match the Model Number ( Model # %s %s %s %s ).  "
+			"%s is either not availiable or malfunctioning.  "
+			"Please verify that the shown model number is correct "
+			"and contact your system administrator." ),
+			m_csProcessor, m_csFrameGrabber, m_csIOBoard, m_csOptions,
+			l_csItem );
+
+		#ifndef _DEBUG                    // 23 Mar 1999 - frb.
+		#ifndef _MINDEBUG
+			sWin.ShowWindow( SW_HIDE );
+		#endif
+		#endif //_DEBUG                  // 23 Mar 1999 - frb.
+
+		::AfxMessageBox( l_csMessage, MB_OK | MB_ICONERROR ); 
+	}
+
+	//check to see what licenses are available before setting up any documents
+	TheSVOLicenseManager().InitLicenseManager();
+	
+	// BRW - SVImageCompression has been deprecated.
+	/*SVImageCompressionClass mainCompressionObject (SERVER_COMPRESSION_POOL_SIZE);
+
+	HRESULT hr = mainCompressionObject.CreateResourcePool ();
+
+	m_bImageCompressionStarted = hr == S_OK;*/
+
+	m_mgrRemoteFonts.Startup();
+
+#ifdef LUT_DEBUG
+	// temp debugging code EB 2002 12 20
+	SVLutTestCases test;
+#endif
+
+	// Dokumentvorlagen der Anwendung registrieren. Dokumentvorlagen
+	//  dienen als Verbindung zwischen Dokumenten, Rahmenfenstern und Ansichten.
+	SVMultiDocTemplateClass* pDocTemplate;
+	pDocTemplate = new SVMultiDocTemplateClass( IDR_SVOBSERVER_IPDOCTYPE,
+		RUNTIME_CLASS( SVIPDoc ),			 // Doc
+		RUNTIME_CLASS( SVIPSplitterFrame ),  // Frame
+		RUNTIME_CLASS( SVImageViewScroll ) );// View
+
+	AddDocTemplate( pDocTemplate );
+
+	// IODoc
+	SVMultiDocTemplateClass* pDocTemplate1;
+	pDocTemplate1 = new SVMultiDocTemplateClass( IDR_SVOBSERVER_IODOCTYPE,
+		RUNTIME_CLASS( SVIODoc ),
+		RUNTIME_CLASS( SVIOTabbedView ), // The SVIOTabbedView allows tabbed views using TVisualFramework. TRB
+		RUNTIME_CLASS( SVDiscreteInputsView ) );
+
+	AddDocTemplate( pDocTemplate1 );
+
+	CMultiDocTemplate *pDocTemp2 = new CMultiDocTemplate( IDR_IPDOC_MENU,
+		RUNTIME_CLASS( SVOIPDocClass ),
+		RUNTIME_CLASS( SVOIPFrameWndClass ),
+		RUNTIME_CLASS( SVOIPViewClass ) );
+
+	AddDocTemplate( pDocTemp2 );
+
+	CMultiDocTemplate *pDocTemp3 = new CMultiDocTemplate( IDR_IODOC_MENU,
+		RUNTIME_CLASS( SVOIODocClass ),
+		RUNTIME_CLASS( SVOIOFrameWndClass ),
+		RUNTIME_CLASS( SVOIOViewClass ) );
+	AddDocTemplate( pDocTemp3 );
+
+	// Haupt-MDI-Rahmenfenster erzeugen
+	SVMainFrame* pMainFrame = new SVMainFrame;
+	if( ! pMainFrame ) { return FALSE; }
+
+	if ( !pMainFrame->LoadFrame( IDR_MAINFRAME ) ) { return FALSE; }
+	m_pMainWnd = pMainFrame;
+
+	// Load Utilities Menu
+	SVUtilitiesClass util;
+	CWnd *pWindow;
+	CMenu *pMenu;
+	CString szMenuText;
+
+	pWindow = AfxGetMainWnd();
+	pMenu = pWindow->GetMenu();
+	szMenuText = _T("&Utilities");
+
+	if ( pMenu = util.FindSubMenuByName( pMenu, szMenuText ) )
+	{
+		util.LoadMenu( pMenu );
+	}
+
+	// Create IO Control Class
+	IOControl.Create( m_pMainWnd->m_hWnd );
+
+	// DDE-Execute-Open aktivieren
+	EnableShellOpen();
+	RegisterShellFileTypes(TRUE);
+
+	// Close Start Window
+	sWin.DestroyWindow();
+
+	// allocate pools in the memory manager
+	int iGoOfflineBufferSize = INI().GetValueInt( _T("Settings"), _T("ArchiveToolGoOfflineBufferSize"), 300 );
+	int iAsyncBufferSize = INI().GetValueInt( _T("Settings"), _T("ArchiveToolAsyncBufferSize"), 50 );
+	TheSVMemoryManager().CreatePool(ARCHIVE_TOOL_MEMORY_POOL_GO_OFFLINE_NAME, iGoOfflineBufferSize * 1024);
+	TheSVMemoryManager().CreatePool(ARCHIVE_TOOL_MEMORY_POOL_ONLINE_ASYNC_NAME, iAsyncBufferSize * 1024);
+
+	// Das Hauptfenster ist initialisiert und kann jetzt angezeigt und aktualisiert werden.
+#ifdef _DEBUG
+	//pMainFrame->ShowWindow(SW_SHOWNORMAL);           // 29 Mar 1999 - frb.
+	pMainFrame->ShowWindow( SW_SHOWMAXIMIZED );  //m_nCmdShow
+#else
+	pMainFrame->ShowWindow( SW_SHOWMAXIMIZED );  //m_nCmdShow
+#endif
+	pMainFrame->UpdateWindow();
+
+	// Initialize SVIM Server component
+	// Check Registry for Enable Remote Commands
+	if(  GetProfileInt( _T( "Settings" ), _T( "Enable Remote Commands" ), 0 ) )
+	{
+		InitSVIMServer();
+	}
+
+	//
+	// Init user list...
+
+	Logout();
+
+	if( IsProductTypeRAID() )
+	{
+		m_IntelRAID.UpdateStatus();
+	}
+	else
+	{
+		SVSVIMStateClass::RemoveState( SV_STATE_RAID_FAILURE );
+	}
+
+	// Load last loaded configuration, if necessary...
+	if( m_ShouldRunLastEnvironmentAutomatically )
+	{
+		// Delay Auto Run to allow other applications to start...
+		Sleep( m_AutoRunDelayTime );
+		// Load Last Configuration...
+		::PostMessage( m_pMainWnd->m_hWnd, WM_COMMAND, SV_AUTO_RUN_LAST_MRU, 0 );
+		// Start Configuration...
+		//::PostMessage( m_pMainWnd->m_hWnd, SV_AUTO_RUN_LAST_CONFIGURATION, 0, 0 ); 03 Dec 1999 - frb.
+	}
+
+	// *** // ***
+	SVObjectManagerClass::Instance().ConstructConfigurationObject( SVConfigurationObjectGuid );
+	// *** // ***
+
+	// add message to event viewer - SVObserver Started
+	CString l_strTmp = "\nVersion ";
+	if( (m_CurrentVersion & 0xff) == 0xff )
+	{
+		l_strTmp += SeidenaderVision::SVVersionInfo::GetShortTitleVersion().c_str();
+	}
+	else
+	{
+		l_strTmp += SeidenaderVision::SVVersionInfo::GetTitleVersion().c_str();
+	}
+	SVException svE;
+	SETEXCEPTION1( svE, SVMSG_SVO_25_SVOBSERVER_STARTED, l_strTmp );
+	svE.LogException( l_strTmp );
+
+	SVDirectX::Instance().Initialize();
+
+	SVSocketLibrary::Init();
+	
+	m_RemoteCommandsPortNumber = INI().GetValueInt( _T("Settings"), _T("RemoteCommandsPortNumber"), -1 );
+	if ( m_RemoteCommandsPortNumber == -1 )
+	{
+		m_RemoteCommandsPortNumber = 28960;
+
+		INI().SetValue(_T( "Settings" ),_T( "RemoteCommandsPortNumber" ), m_RemoteCommandsPortNumber );
+	}
+
+	m_InputStreamPortNumber = INI().GetValueInt( _T("Settings"), _T("InputStreamPortNumber"), -1 );
+	if ( m_InputStreamPortNumber == -1 )
+	{
+		m_InputStreamPortNumber = 32100;
+
+		INI().SetValue(_T( "Settings" ),_T( "InputStreamPortNumber" ), m_InputStreamPortNumber );
+	}
+
+	m_OutputStreamPortNumber = INI().GetValueInt( _T("Settings"), _T("OutputStreamPortNumber"), -1 );
+	if ( m_OutputStreamPortNumber == -1 )
+	{
+		m_OutputStreamPortNumber = 32101;
+
+		INI().SetValue(_T( "Settings" ),_T( "OutputStreamPortNumber" ), m_OutputStreamPortNumber );
+	}
+
+	SVSocketRemoteCommandManager::Instance().Startup( m_RemoteCommandsPortNumber );
+	SVInputStreamManager::Instance().Startup( m_InputStreamPortNumber );
+	SVOutputStreamManager::Instance().Startup( m_OutputStreamPortNumber );
+
+	if ( !TheSVOLicenseManager().HasMatroxLicense() )
+	{
+		AfxMessageBox("No Matrox dongle found.  \nOnly limited functionality is available. \nPlease exit SVObserver, insert a Matrox dongle and restart for full functionality.");
+	}
+
+	if ( TheSVOLicenseManager().HasMatroxLicense() && (!TheSVOLicenseManager().HasMatroxGigELicense()) && IsMatroxGige()  )
+	{
+		AfxMessageBox("Matrox GigE License not found");
+	}
+
+	SVVisionProcessorHelper::Instance().Startup();
+
+	return TRUE;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// .Title       : OnIdle(LONG lCount)
+// -----------------------------------------------------------------------------
+// .Description : ...
+//              :
+// -----------------------------------------------------------------------------
+// .Input(s)
+//	 Type				Name				Description
+//	: 
+//  :
+// .Output(s)
+//	:
+//  :
+// .Return Value
+//	: 
+// -----------------------------------------------------------------------------
+// .Import Function Reference(s)
+//	:
+// -----------------------------------------------------------------------------
+// .Import Variable Reference(s)
+//	:
+////////////////////////////////////////////////////////////////////////////////
+// .History
+//	 Date		Author		Comment                                       
+//  :27.05.1997 RO			First Implementation
+//	:
+////////////////////////////////////////////////////////////////////////////////
+BOOL SVObserverApp::OnIdle(LONG lCount) 
+{
+	BOOL bMore = CWinApp::OnIdle(lCount);
+
+	return bMore;
+}
+
+CDocument* SVObserverApp::OpenDocumentFile( LPCTSTR FileName ) 
+{
+	return nullptr;
+}
+
+void SVObserverApp::Serialize(CArchive& ar) 
+{
+	CWinApp::Serialize( ar );
+}
+
+int SVObserverApp::ExitInstance() 
+{
+	SVDirectX::Instance().clear();
+
+	SVVisionProcessorHelper::Instance().Shutdown();
+	SVOutputStreamManager::Instance().Shutdown();
+	SVInputStreamManager::Instance().Shutdown();
+	SVSocketRemoteCommandManager::Instance().Shutdown();
+
+	SVSocketLibrary::Destroy();
+
+	ValidateMRUList();
+
+	// Destroy still open message windows
+	DestroyMessageWindow();
+
+	#if !defined( _DEBUG ) && !defined( _MINDEBUG )
+		// Display close window	
+		m_pMessageWindow = new SVMessageWindowClass;
+		if( m_pMessageWindow && m_pMessageWindow->Create( IDD_MESSAGE_DIALOG ) )
+		{
+			m_pMessageWindow->ShowWindow( SW_SHOW );
+		}
+	#else
+		m_pMessageWindow = NULL;
+	#endif
+
+	// *** // ***
+	SVObjectManagerClass::Instance().DestroyConfigurationObject();
+	// *** // ***
+
+	DestroySVIMServer();
+	
+	INIClose();
+
+	m_mgrRemoteFonts.Shutdown();
+
+	// BRW - SVImageCompression has been deprecated.
+	/*if ( m_bImageCompressionStarted )
+	{
+		SVImageCompressionClass mainCompressionObject (SERVER_COMPRESSION_POOL_SIZE);
+
+		mainCompressionObject.DestroyResourcePool ();
+	}*/
+
+	SVTriggerProcessingClass::Instance().Shutdown();
+	SVDigitizerProcessingClass::Instance().Shutdown();
+	SVHardwareManifest::Instance().Shutdown();
+
+	SVObjectManagerClass::Instance().Shutdown();
+	SVClassRegisterListClass::Instance().Shutdown();
+
+	SVIOConfigurationInterfaceClass::Instance().Shutdown();
+
+	// Shutdown MIL
+	SVMatroxApplicationInterface::Shutdown();
+
+	//add message to event viewer - SVObserver stopped
+	SVException svE;
+	SETEXCEPTION0(svE,SVMSG_SVO_26_SVOBSERVER_STOPPED);
+	svE.LogException();
+	CloseHandle( m_hEvent );
+	DisableCrashFilter();
+
+	#if !defined(_WIN32_WCE) || defined(_CE_DCOM)
+		if( m_ATLInited )
+		{
+			_Module.RevokeClassObjects();
+		}
+	#endif
+
+	return CWinApp::ExitInstance();
+}
+
+void SVObserverApp::WinHelp( DWORD dwData, UINT nCmd ) 
+{
+	CWinApp::WinHelp( dwData, nCmd );
+}
+#pragma endregion AFX_Virtual methods
+
+#pragma region virtual
+HRESULT SVObserverApp::OpenSVXFile(LPCTSTR PathName)
+{
+	CWaitCursor wait;
+
+	HRESULT hr;
+	HRESULT	hrDestroyed;
+	SVClock::SVTimeStamp l_StartLoading;
+	SVClock::SVTimeStamp l_FinishLoad;
+
+	BOOL bOk;
+
+	hr = S_OK;
+	hrDestroyed = S_OK;
+	bOk = 0;
+
+	while (1)
+	{
+		hrDestroyed = DestroySEC();
+		if (hrDestroyed != S_OK)
+		{
+			hr = hrDestroyed; //keep the cancel state so it does not remove from MRU
+			break;
+		}
+
+		TheSVOLicenseManager().ClearLicenseErrors();
+
+		bOk = SVSVIMStateClass::AddState( SV_STATE_UNAVAILABLE | SV_STATE_LOADING );
+
+		if (!bOk)
+		{
+			break;
+		}
+
+		bOk = SVSVIMStateClass::RemoveState( SV_STATE_AVAILABLE );
+
+		if (!bOk)
+		{
+			break;
+		}
+
+		SVFileNameManagerClass svFileManager;
+		SVFileNameClass svFileName( PathName );
+
+		//
+		// Check if we tried to load the SVC from 
+		// Execution path...("C:\RUN\")
+		//
+		if ( CString( svFileName.GetPathName() ).CompareNoCase( svFileManager.GetRunPathName() ) )
+		{
+			// Clean up Execution Directory...
+			// Check path, create if necessary and delete contents...
+			InitPath( CString( svFileManager.GetRunPathName() ) + "\\", TRUE, TRUE );
+		} // if ( CString
+
+		try
+		{
+			CString csFullFileName;
+
+			BSTR bStr = NULL;
+			unsigned long SECVer = 0;
+
+			SetSECFullFileName( PathName );
+
+			SVRCSetSVCPathName( GetSECFullFileName() );
+
+			csFullFileName = GetSECFullFileName();
+
+			bStr = csFullFileName.AllocSysString();
+
+			while (1)
+			{
+				hr = SVOCMLoadConfiguration( m_CurrentVersion, SECVer, bStr, m_XMLTree );
+				if (hr & 0xc0000000)
+				{
+					break;
+				}
+
+				if ( SECVer > m_CurrentVersion )
+				{
+					CString strText, strFile, strApp;
+
+					::SVGetVersionString( strApp, m_CurrentVersion );
+					::SVGetVersionString( strFile, SECVer );
+					strText.Format( _T( "This configuration was created by SVObserver %s.\n"
+						"You are currently running SVObserver %s.\n"
+						"This configuration version may be incompatible with\n"
+						"the version of SVObserver that you are running.\n"
+						"Are you sure you wish to continue ?" ), 
+						strFile, strApp );
+
+					if( AfxMessageBox( strText, MB_YESNO ) == IDNO )
+					{
+						hr = -1801;
+						break;
+					}
+				}
+
+				l_StartLoading = SVClock::GetTimeStamp();
+
+				SVConfigurationObject* l_pConfig = NULL;
+				SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
+
+				if( l_pConfig != NULL )
+				{
+					hr = l_pConfig->LoadConfiguration( m_XMLTree );
+				}
+
+				if (hr & 0xc0000000)
+				{
+					break;
+				}
+
+				GetMainFrame()->ParseToolsetScripts( m_XMLTree );
+
+				if( l_pConfig != NULL )
+				{
+					l_pConfig->RebuildInputOutputLists();
+
+					// Removes any invalid entries in the output list.
+					if( l_pConfig->IsConfigurationLoaded() )
+					{
+						if( l_pConfig->ValidateOutputList( ) == SV_FATAL_SVOBSERVER_2006_DUPLICATE_DISCRETE_OUTPUT )
+						{
+							::AfxMessageBox( "Invalid Discrete Outputs: Remove all Discrete Outputs and re-add them.", MB_ICONEXCLAMATION );
+						}
+					}
+				}
+
+				ConstructDocuments( m_XMLTree );
+
+				GetMainFrame()->OnConfigurationFinishedInitializing();
+
+#ifndef _WIN64
+				if( l_pConfig != NULL )
+				{
+					// Initialize the PLC...
+					m_PLCManager.Startup( l_pConfig );
+				}
+#endif
+
+				l_FinishLoad = SVClock::GetTimeStamp();
+				long l_lTime = static_cast<long>(l_FinishLoad - l_StartLoading);
+
+				SVException svE;
+				CString sExcTxt; //(PathName);
+				sExcTxt.Format( "%s\nload time %d ms", PathName, l_lTime );
+				SETEXCEPTION1(svE,SVMSG_SVO_29_SVOBSERVER_CONFIG_LOADED,sExcTxt);
+				svE.LogException(sExcTxt);
+
+				break;
+			} // while (1)
+			
+			SysFreeString (bStr);
+			bStr = NULL;
+
+			m_XMLTree.Clear();
+
+			if (hr & 0xc0000000)
+			{
+				// If there was an error during configuration loading...
+				SVSVIMStateClass::AddState( SV_STATE_AVAILABLE );
+				SVSVIMStateClass::RemoveState(SV_STATE_UNAVAILABLE | SV_STATE_LOADING);
+				m_XMLTree.Clear();
+
+				if (hr != -1801) // -1801 means the user aborted because 
+								//  configuration versions were different.
+				{
+					CString strText;
+					strText.Format( _T( "The configuration could not succussfully load.\n"
+						"hr = %d.\n"), 
+						hr);
+
+					AfxMessageBox( strText, MB_OK );
+				}
+				return S_FALSE;
+			} // if (hr & 0xc000)
+
+			// ************************************* JMS
+
+			// IsSECModified = FALSE; 03 Dec 1999 - frb. delay until 
+			// .ipd parsing is completed.
+
+			if ( CString( svFileManager.GetConfigurationPathName() ).IsEmpty() )
+			{
+				AddToRecentFileList( GetSECFullFileName() );
+			}
+			else
+			{
+				AddToRecentFileList( CString( svFileManager.GetConfigurationPathName() ) + 
+					"\\" + GetSECFileName() );
+			}
+
+			UpdatePPQBar();
+		} // try
+
+		catch( CUserException* pUE )
+		{
+			delete pUE;
+
+			bOk = FALSE;
+
+			SVSVIMStateClass::RemoveState( SV_STATE_LOADING );
+
+			DestroySEC( FALSE, TRUE );
+
+			SetSECFullFileName( (LPCTSTR)NULL );
+
+			UpdatePPQBar();
+
+			SVSVIMStateClass::AddState( SV_STATE_AVAILABLE );
+			SVSVIMStateClass::RemoveState( SV_STATE_UNAVAILABLE );
+		}  // catch
+
+		m_OpeningSEC = FALSE;
+
+		break;
+	} // while (1)
+
+	if ( ! bOk && hrDestroyed == S_OK )
+	{
+		SetSECFullFileName( (LPCTSTR)NULL );
+
+		SVSVIMStateClass::AddState( SV_STATE_AVAILABLE );
+		SVSVIMStateClass::RemoveState( SV_STATE_UNAVAILABLE | SV_STATE_LOADING );
+	}
+
+	if (hr == S_OK)
+	{
+		hr = bOk ? S_OK : S_FALSE;
+	}
+
+	// Logic to remove unused IO Tabs PLC and Remote inputs.
+	// PLC Inputs
+	SVConfigurationObject* l_pConfig = NULL;
+	SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
+
+	if( l_pConfig != NULL )
+	{
+#ifndef _WIN64
+		if( l_pConfig->GetPLCCount() == 0 )
+		{
+			HideIOTab( SVIOPLCOutputsViewID );
+		}
+#endif
+		if( l_pConfig->GetRemoteOutputGroupCount() == 0)
+		{
+			HideIOTab( SVRemoteOutputsViewID );
+		}
+	}
+	else
+	{
+		HideIOTab( SVIOPLCOutputsViewID );
+		HideIOTab( SVRemoteOutputsViewID );
+	}
+
+	// Update Remote Inputs Tab
+	UpdateRemoteInputTabs();
+	return hr;
+}
+
+//******************************************************************************
+// Message Operation(s):
+//******************************************************************************
+void SVObserverApp::LoadTempIODoc(LPCTSTR FileName)
+{
+	CDocTemplate* pDocTemplate = NULL;
+	POSITION pos = GetFirstDocTemplatePosition();
+	if( pos )
+	{
+		pDocTemplate = GetNextDocTemplate( pos );
+		if( pDocTemplate )
+		{
+			pDocTemplate = GetNextDocTemplate( pos );
+			if( pDocTemplate )
+			{
+				pDocTemplate = GetNextDocTemplate( pos );
+				if( pDocTemplate )
+				{
+					pDocTemplate = GetNextDocTemplate( pos );
+					if( pDocTemplate )
+					{
+						SVOIODocClass *pDoc = (SVOIODocClass *)pDocTemplate->OpenDocumentFile( FileName, FALSE );
+						pDoc->CloseDocument();
+					}
+				}
+			}
+		}
+	}
+}
+
+void SVObserverApp::LoadTempIPDoc(LPCTSTR FileName)
+{
+	CDocTemplate* pDocTemplate = nullptr;
+	POSITION pos = GetFirstDocTemplatePosition();
+	if( pos )
+	{
+		pDocTemplate = GetNextDocTemplate( pos );
+		if( pDocTemplate )
+		{
+			pDocTemplate = GetNextDocTemplate( pos );
+			if( pDocTemplate )
+			{
+				pDocTemplate = GetNextDocTemplate( pos );
+				if( pDocTemplate )
+				{
+					SVOIPDocClass *pDoc = (SVOIPDocClass *)pDocTemplate->OpenDocumentFile( FileName, FALSE );
+					pDoc->CloseDocument();
+				}
+			}
+		}
+	}
+}
+
+SVIODoc *SVObserverApp::NewSVIODoc( LPCTSTR DocName, SVIOController& IOController )
+{
+	SVIODoc* pDoc = nullptr;
+	CDocTemplate* pDocTemplate = nullptr;
+	POSITION pos = GetFirstDocTemplatePosition();
+	if( pos )
+	{
+		pDocTemplate = GetNextDocTemplate( pos );
+		if( pDocTemplate )
+		{
+			pDocTemplate = GetNextDocTemplate( pos );
+			if( pDocTemplate )
+			{
+				// Create a new empty visible document
+				pDoc = dynamic_cast< SVIODoc* >( pDocTemplate->OpenDocumentFile( nullptr, TRUE ) );   // Make visible
+
+				if( pDoc != nullptr )
+				{
+					pDoc->m_pIOController = &IOController;
+
+					pDoc->SetTitle( DocName );
+
+					SVObjectManagerClass::Instance().RegisterIODoc( IOController.GetUniqueObjectID(), pDoc );
+				}
+			}
+		}
+	}
+
+	return pDoc;
+}
+
+SVIPDoc* SVObserverApp::NewSVIPDoc( LPCTSTR DocName, SVInspectionProcess& Inspection )
+{
+	SVIPDoc* pDoc = nullptr;
+	CDocTemplate* pDocTemplate = nullptr;
+	POSITION pos = GetFirstDocTemplatePosition();
+	if( pos )
+	{
+		pDocTemplate = GetNextDocTemplate( pos );
+		if( pDocTemplate )
+		{
+			pDoc = dynamic_cast<SVIPDoc* >( pDocTemplate->OpenDocumentFile( nullptr, TRUE ) );   // Make visible
+
+			if( pDoc != nullptr )
+			{
+				pDoc->SetInspectionID( Inspection.GetUniqueObjectID() );
+
+				pDoc->SetTitle( DocName );
+			}
+		}
+	}
+
+	return pDoc;
+}
+#pragma endregion virtual
 
 CString SVObserverApp::GetConfigurationName() const
 {
@@ -916,16 +4568,45 @@ HRESULT SVObserverApp::GetEnvironmentItems( const SVNameSet& p_rNames, SVNameSto
 	return l_Status;
 }
 
-//******************************************************************************
-// Operator(s):
-//******************************************************************************
+SVMainFrame* SVObserverApp::GetMainFrame() const
+{
+	return dynamic_cast< SVMainFrame* >( m_pMainWnd );
+}
 
 ////////////////////////////////////////////////////////////////////////////////
-// Init Instance Operator
+// .Title       : .
+// -----------------------------------------------------------------------------
+// .Description : ...
+//              : CanClose Operator
+// -----------------------------------------------------------------------------
+// .Input(s)
+//	 Type				Name				Description
+//	: 
+//  :
+// .Output(s)
+//	:
+//  :
+// .Return Value
+//	: 
+// -----------------------------------------------------------------------------
+// .Import Function Reference(s)
+//	:
+// -----------------------------------------------------------------------------
+// .Import Variable Reference(s)
+//	:
 ////////////////////////////////////////////////////////////////////////////////
+// .History
+//	 Date		Author		Comment                                       
+//  :27.05.1997 RO			First Implementation
+//	:
+////////////////////////////////////////////////////////////////////////////////
+HRESULT SVObserverApp::CanCloseMainFrame()
+{
+	return DestroySEC();
+}
 
 ////////////////////////////////////////////////////////////////////////////////
-// .Title       : // e.g. Compare member function of class ...
+// .Title       : CreateSEC
 // -----------------------------------------------------------------------------
 // .Description : ...
 //              :
@@ -951,502 +4632,2960 @@ HRESULT SVObserverApp::GetEnvironmentItems( const SVNameSet& p_rNames, SVNameSto
 //  :27.05.1997 RO			First Implementation
 //	:
 ////////////////////////////////////////////////////////////////////////////////
-BOOL SVObserverApp::InitInstance()
+BOOL SVObserverApp::CreateSEC( BOOL NewSEC )
 {
-	CWinApp::InitInstance();
+	BOOL bOk = FALSE;
 
-	m_hEvent = CreateEvent(NULL, FALSE, TRUE, AfxGetAppName()); 
-
-	if ( GetLastError()==ERROR_ALREADY_EXISTS )
-	{ 
-		return FALSE; 
-	} 
-
-	// OLE-Bibliotheken initialisieren
-	if( !AfxOleInit() )
+	if( NewSEC )
 	{
-		AfxMessageBox( IDP_OLE_INIT_FAILED );
+		SetSECFullFileName( (LPCTSTR)NULL );
 
-		return FALSE;
-	}
+		// Get SEC creation date...
+		LPTSTR pString = CreationSECDate.GetBuffer( 32 );
 
-	if( !InitATL() )
-	{
-		return FALSE;
-	}
-
-	// Check for proper setup of V: for SVRemoteControl
-	if( CheckDrive(_T("v:\\")) != S_OK)
-	{
-		return FALSE;
-	}
-
-	#ifdef _DEBUG
-		long l_CrtVal = GetPrivateProfileInt( _T( "Memory" ), _T( "CrtSetBreakAlloc" ), 0, _T( "c:\\SVObserver\\Bin\\SVDebug.ini" ) );
-
-		if( 0 < l_CrtVal )
+		if ( GetDateFormat( LOCALE_SYSTEM_DEFAULT,	// locale for which date is to be formatted 
+				0,									// flags specifying function options 
+				NULL,								// date to be formatted
+				_T( "ddd',' dd'.' MMM'.' yyyy" ),	// date format string
+				pString,							// buffer for storing formatted string
+				31 ) == 0 )							// size of buffer
 		{
-			::_CrtSetBreakAlloc( l_CrtVal );
-		}
-	#endif
-
-	EnableCrashFilter();
-
-	SetThreadType( APPLICATIONTHREAD );
-
-	#ifdef __USE_TRACEWIN
-		afxTraceEnabled = TRUE;
-		PxlTraceInit();                                    // 13 May 1999 - frb.
-	#endif //__USE_TRACEWIN
-	TRACE0("..SVObserver - InitInstance()\n");         // 13 May 1999 - frb.
-
-
-	// EB 2002 11 19
-	// added to ensure C:\TEMP always exists;
-	// bad things happen if it doesn't
-	// example of symptom: crash when SVFocus tries to connect
-	if (_taccess(_T("c:\\TEMP"), 0) != 0)
-	{
-		_tmkdir(_T("c:\\TEMP"));
-	}
-
-	// EB 2005 08 01
-	// archive tool default storage
-	// is now e:\temp
-	if (_taccess(_T("D:\\TEMP"), 0) != 0)
-	{
-		_tmkdir(_T("D:\\TEMP"));
-	}
-
-	// Startup Matrox App
-	SVMatroxApplicationInterface::Startup();
-
-	SVHardwareManifest::Instance().Startup();
-	SVTriggerProcessingClass::Instance().Startup();
-	SVDigitizerProcessingClass::Instance().Startup();
-
-	InitializeSecurity();
-
-	int nRet = 0;
-
-	// the SVIPDoc constructor will create
-	//
-	// Make sure the dialog color matches 'system' choice.
-	//
-	#ifdef _DEBUG
-		SetPriorityClass( GetCurrentProcess(), NORMAL_PRIORITY_CLASS );
-	#else
-		SetPriorityClass( GetCurrentProcess(), HIGH_PRIORITY_CLASS );
-	#endif
-
-	SetThreadPriority( THREAD_PRIORITY_NORMAL );
-
-	// The start window	
-	SVStartWindowClass sWin;
-#ifndef _DEBUG                    // 23 Mar 1999 - frb.
-	if( sWin.Create( IDD_START ) )
-	{
-		sWin.ShowWindow( SW_SHOW );
-	}
-	else
-		return FALSE;
-#endif //_DEBUG                  // 23 Mar 1999 - frb.
-
-	AfxEnableControlContainer();
-
-	// Registry Key...
-	SetRegistryKey( _T( "SVR Gesellschaft für Bildverarbeitung mbH" ) );
-
-	LoadStdProfileSettings( 7 );  // Standard-INI-Dateioptionen einlesen (einschließlich MRU)
-
-	m_SvimIni.SetFile(_T("C:\\SVObserver\\bin\\SVIM.INI"));
-
-	ValidateMRUList();
-
-	// JMS - Add Color SVIM Mode Active Flag
-	BOOL l_bIsColorSVIM = GetProfileInt(_T( "Settings" ),_T( "Color SVIM Mode Active" ), -1 );
-	if ( l_bIsColorSVIM == -1)
-	{
-		WriteProfileInt(_T( "Settings" ),_T( "Color SVIM Mode Active" ), false );
-
-		l_bIsColorSVIM = false;
-	}
-
-	SVObjectManagerClass::Instance().m_bIsColorSVIM = (l_bIsColorSVIM) ? true : false;
-
-	// Get SourceImageDepth
-	m_lSouceImageDepth = GetProfileInt(_T( "Settings" ),_T( "Source Image Depth" ), -1 );
-	if ( m_lSouceImageDepth == -1 )
-	{
-		WriteProfileInt(_T( "Settings" ),_T( "Source Image Depth" ), 15 );
-
-		m_lSouceImageDepth = 15;
-	}
-
-	// Get SourceImageDepth
-	m_lResultImageDepth = GetProfileInt(_T( "Settings" ),_T( "Result Image Depth" ), -1 );
-	if ( m_lResultImageDepth == -1 )
-	{
-		WriteProfileInt(_T( "Settings" ),_T( "Result Image Depth" ), 5 );
-
-		m_lResultImageDepth = 5;
-	}
-
-	// Get LogDataManager
-	m_LogDataManager = UpdateAndGetLogDataManager();
-
-	// Supplement for SVObserver 2.0
-	// Set up path name environment variables...
-
-	// Configuration Execution Path Name... ( "Run Directory" )
-	strConfExePNVariableValue = GetProfileString( _T( "Settings" ), tStrConfExePNVariableName );
-	if( strConfExePNVariableValue.IsEmpty() )
-	{
-		strConfExePNVariableValue = tStrConfExePNVariableDefaultValue;
-		// Update registry...
-		WriteProfileString( _T( "Settings" ), tStrConfExePNVariableName, strConfExePNVariableValue );
-	}
-	// Check path, create if necessary but don't delete contents...
-	InitPath( strConfExePNVariableValue, TRUE, FALSE );
-	SetEnvironmentVariable( tStrConfExePNVariableName, strConfExePNVariableValue );
-
-
-	// Last Valid Configuration Path Name... ( "Last Valid Directory" )
-	strLastValidConfPNVariableValue = GetProfileString( _T( "Settings" ), tStrLastValidConfPNVariableName );
-	if( strLastValidConfPNVariableValue.IsEmpty() )
-	{
-		strLastValidConfPNVariableValue = tStrLastValidConfPNVariableDefaultValue;
-		// Update registry...
-		WriteProfileString( _T( "Settings" ), tStrLastValidConfPNVariableName, strLastValidConfPNVariableValue );
-	}
-	// Check path, create if necessary but don't delete contents...
-	InitPath( strLastValidConfPNVariableValue, TRUE, FALSE );
-	SetEnvironmentVariable( tStrLastValidConfPNVariableName, strLastValidConfPNVariableValue );
-
-
-	// Load special profile settings
-	if( GetProfileInt( _T( "Settings" ), _T( "Run Last Configuration Automatically" ), 0 ) )
-		ShouldRunLastEnvironmentAutomatically = TRUE;
-	else
-		ShouldRunLastEnvironmentAutomatically = FALSE;
-
-	// Get AutoRunDelay from Registry...
-	DwAutoRunDelayTime = GetProfileInt( _T( "Settings" ), _T( "Auto Run Delay Time" ), DwAutoRunDelayTime );
-	WriteProfileInt( _T( "Settings" ), _T( "Auto Run Delay Time" ), DwAutoRunDelayTime );
-
-	HRESULT l_hrLoad = INILoad();
-	if ( l_hrLoad != S_OK )
-	{
-		CString l_csItem;
-		CString l_csMessage;
-
-		if ( ( l_hrLoad & SV_HARDWARE_FAILURE_IO ) == SV_HARDWARE_FAILURE_IO )
-		{
-			l_csItem = GetDigitalBoardName();
-		}
-		else if ( ( l_hrLoad & SV_HARDWARE_FAILURE_TRIGGER ) == SV_HARDWARE_FAILURE_TRIGGER )
-		{
-			l_csItem = GetTriggerBoardName();
-		}
-		else if ( ( l_hrLoad & SV_HARDWARE_FAILURE_SOFTWARETRIGGER ) == SV_HARDWARE_FAILURE_SOFTWARETRIGGER )
-		{
-			l_csItem = GetSoftwareTriggerBoardName();
-		}
-/*		else if ( ( l_hrLoad & SV_HARDWARE_FAILURE_NO_CAMAERAS ) == SV_HARDWARE_FAILURE_NO_CAMAERAS )
-		{
-			l_csItem = _T( "A Camera" );
-		}*/
-		else if ( ( l_hrLoad & SV_HARDWARE_FAILURE_ACQUISITION ) == SV_HARDWARE_FAILURE_ACQUISITION )
-		{
-			l_csItem = GetAcquisitionBoardName();
-		}
-		else if ( ( l_hrLoad & SV_HARDWARE_FAILURE_FILEACQUISITION ) == SV_HARDWARE_FAILURE_FILEACQUISITION )
-		{
-			l_csItem = GetFileAcquisitionBoardName();
+			CreationSECDate.ReleaseBuffer();
+			CreationSECDate = _T( "(Unknown)" );
 		}
 		else
 		{
-			l_csItem = _T( "Unknown Item" );
+			pString[ 31 ] = '\0';
+			CreationSECDate.ReleaseBuffer();
 		}
 
-		l_csMessage.Format( _T( "Hardware configuration error. The SVIM hardware "
-			"does not match the Model Number ( Model # %s %s %s %s ).  "
-			"%s is either not availiable or malfunctioning.  "
-			"Please verify that the shown model number is correct "
-			"and contact your system administrator." ),
-			m_csProcessor, m_csFrameGrabber, m_csIOBoard, m_csOptions,
-			l_csItem );
-
-		#ifndef _DEBUG                    // 23 Mar 1999 - frb.
-		#ifndef _MINDEBUG
-			sWin.ShowWindow( SW_HIDE );
-		#endif
-		#endif //_DEBUG                  // 23 Mar 1999 - frb.
-
-		::AfxMessageBox( l_csMessage, MB_OK | MB_ICONERROR ); 
+		CurrentSECDate = CreationSECDate;
 	}
 
-	//check to see what licenses are available before setting up any documents
- 	TheSVOLicenseManager().InitLicenseManager();
-	
-	// BRW - SVImageCompression has been deprecated.
-	/*SVImageCompressionClass mainCompressionObject (SERVER_COMPRESSION_POOL_SIZE);
+	bOk = TRUE;
 
-	HRESULT hr = mainCompressionObject.CreateResourcePool ();
-
-	m_bImageCompressionStarted = hr == S_OK;*/
-
-	m_mgrRemoteFonts.Startup();
-
-#ifdef LUT_DEBUG
-	// temp debugging code EB 2002 12 20
-	SVLutTestCases test;
-#endif
-
-	// Dokumentvorlagen der Anwendung registrieren. Dokumentvorlagen
-	//  dienen als Verbindung zwischen Dokumenten, Rahmenfenstern und Ansichten.
-	SVMultiDocTemplateClass* pDocTemplate;
-	pDocTemplate = new SVMultiDocTemplateClass( IDR_SVOBSERVER_IPDOCTYPE,
-		RUNTIME_CLASS( SVIPDoc ),			 // Doc
-		RUNTIME_CLASS( SVIPSplitterFrame ),  // Frame
-		RUNTIME_CLASS( SVImageViewScroll ) );// View
-
-	AddDocTemplate( pDocTemplate );
-
-	// IODoc
-	SVMultiDocTemplateClass* pDocTemplate1;
-	pDocTemplate1 = new SVMultiDocTemplateClass( IDR_SVOBSERVER_IODOCTYPE,
-		RUNTIME_CLASS( SVIODoc ),
-		RUNTIME_CLASS( SVIOTabbedView ), // The SVIOTabbedView allows tabbed views using TVisualFramework. TRB
-		RUNTIME_CLASS( SVDiscreteInputsView ) );
-
-	AddDocTemplate( pDocTemplate1 );
-
-	CMultiDocTemplate *pDocTemp2 = new CMultiDocTemplate( IDR_IPDOC_MENU,
-		RUNTIME_CLASS( SVOIPDocClass ),
-		RUNTIME_CLASS( SVOIPFrameWndClass ),
-		RUNTIME_CLASS( SVOIPViewClass ) );
-
-	AddDocTemplate( pDocTemp2 );
-
-	CMultiDocTemplate *pDocTemp3 = new CMultiDocTemplate( IDR_IODOC_MENU,
-		RUNTIME_CLASS( SVOIODocClass ),
-		RUNTIME_CLASS( SVOIOFrameWndClass ),
-		RUNTIME_CLASS( SVOIOViewClass ) );
-	AddDocTemplate( pDocTemp3 );
-
-	// Haupt-MDI-Rahmenfenster erzeugen
-	SVMainFrame* pMainFrame = new SVMainFrame;
-	if( ! pMainFrame )
-		return FALSE;
-
-	if (!pMainFrame->LoadFrame(IDR_MAINFRAME))
-		return FALSE;
-	m_pMainWnd = pMainFrame;
-
-	// Load Utilities Menu
-	SVUtilitiesClass util;
-	CWnd *pWindow;
-	CMenu *pMenu;
-	CString szMenuText;
-
-	pWindow = AfxGetMainWnd ();
-	pMenu = pWindow->GetMenu();
-	szMenuText = _T("&Utilities");
-
-	if (pMenu = util.FindSubMenuByName (pMenu, szMenuText))
-	{
-		util.LoadMenu (pMenu);
-	}
-
-	// Create IO Control Class
-	IOControl.Create( m_pMainWnd->m_hWnd );
-
-	// DDE-Execute-Open aktivieren
-	EnableShellOpen();
-	RegisterShellFileTypes(TRUE);
-
-	// Close Start Window
-	sWin.DestroyWindow();
-
-	// allocate pools in the memory manager
-	int iGoOfflineBufferSize = INI().GetValueInt( _T("Settings"), _T("ArchiveToolGoOfflineBufferSize"), 300 );
-	int iAsyncBufferSize = INI().GetValueInt( _T("Settings"), _T("ArchiveToolAsyncBufferSize"), 50 );
-	TheSVMemoryManager().CreatePool(ARCHIVE_TOOL_MEMORY_POOL_GO_OFFLINE_NAME, iGoOfflineBufferSize * 1024);
-	TheSVMemoryManager().CreatePool(ARCHIVE_TOOL_MEMORY_POOL_ONLINE_ASYNC_NAME, iAsyncBufferSize * 1024);
-
-	// Das Hauptfenster ist initialisiert und kann jetzt angezeigt und aktualisiert werden.
-#ifdef _DEBUG
-	//pMainFrame->ShowWindow(SW_SHOWNORMAL);           // 29 Mar 1999 - frb.
-	pMainFrame->ShowWindow( SW_SHOWMAXIMIZED );  //m_nCmdShow
-#else
-	pMainFrame->ShowWindow( SW_SHOWMAXIMIZED );  //m_nCmdShow
-#endif
-	pMainFrame->UpdateWindow();
-
-	// Initialize SVIM Server component
-	// Check Registry for Enable Remote Commands
-	if(  GetProfileInt( _T( "Settings" ), _T( "Enable Remote Commands" ), 0 ) )
-	{
-		InitSVIMServer();
-	}
-
-	//
-	// Init user list...
-
-	Logout();
-
-
-	if( IsProductTypeRAID() )
-	{
-		m_svIntelRAID.UpdateStatus();
-	}
-	else
-	{
-		SVSVIMStateClass::RemoveState( SV_STATE_RAID_FAILURE );
-	}
-
-	// Load last loaded configuration, if necessary...
-	if( ShouldRunLastEnvironmentAutomatically )
-	{
-		// Delay Auto Run to allow other applications to start...
-		Sleep( DwAutoRunDelayTime );
-		// Load Last Configuration...
-		::PostMessage( m_pMainWnd->m_hWnd, WM_COMMAND, SV_AUTO_RUN_LAST_MRU, 0 );
-		// Start Configuration...
-		//::PostMessage( m_pMainWnd->m_hWnd, SV_AUTO_RUN_LAST_CONFIGURATION, 0, 0 ); 03 Dec 1999 - frb.
-	}
-
-	// *** // ***
-	SVObjectManagerClass::Instance().ConstructConfigurationObject( SVConfigurationObjectGuid );
-	// *** // ***
-
-	// add message to event viewer - SVObserver Started
-	CString l_strTmp = "\nVersion ";
-	if( (DwCurrentVersion & 0xff) == 0xff )
-	{
-		l_strTmp += SeidenaderVision::SVVersionInfo::GetShortTitleVersion().c_str();
-	}
-	else
-	{
-		l_strTmp += SeidenaderVision::SVVersionInfo::GetTitleVersion().c_str();
-	}
-	SVException svE;
-	SETEXCEPTION1( svE, SVMSG_SVO_25_SVOBSERVER_STARTED, l_strTmp );
-	svE.LogException( l_strTmp );
-
-
-	SVDirectX::Instance().Initialize();
-
-	SVSocketLibrary::Init();
-	
-	m_RemoteCommandsPortNumber = INI().GetValueInt( _T("Settings"), _T("RemoteCommandsPortNumber"), -1 );
-	if ( m_RemoteCommandsPortNumber == -1 )
-	{
-		m_RemoteCommandsPortNumber = 28960;
-
-		INI().SetValue(_T( "Settings" ),_T( "RemoteCommandsPortNumber" ), m_RemoteCommandsPortNumber );
-	}
-
-	m_InputStreamPortNumber = INI().GetValueInt( _T("Settings"), _T("InputStreamPortNumber"), -1 );
-	if ( m_InputStreamPortNumber == -1 )
-	{
-		m_InputStreamPortNumber = 32100;
-
-		INI().SetValue(_T( "Settings" ),_T( "InputStreamPortNumber" ), m_InputStreamPortNumber );
-	}
-
-	m_OutputStreamPortNumber = INI().GetValueInt( _T("Settings"), _T("OutputStreamPortNumber"), -1 );
-	if ( m_OutputStreamPortNumber == -1 )
-	{
-		m_OutputStreamPortNumber = 32101;
-
-		INI().SetValue(_T( "Settings" ),_T( "OutputStreamPortNumber" ), m_OutputStreamPortNumber );
-	}
-
-	SVSocketRemoteCommandManager::Instance().Startup( m_RemoteCommandsPortNumber );
-	SVInputStreamManager::Instance().Startup( m_InputStreamPortNumber );
-	SVOutputStreamManager::Instance().Startup( m_OutputStreamPortNumber );
-
-	if ( !TheSVOLicenseManager().HasMatroxLicense() )
-	{
-		AfxMessageBox("No Matrox dongle found.  \nOnly limited functionality is available. \nPlease exit SVObserver, insert a Matrox dongle and restart for full functionality.");
-	}
-
-	if ( TheSVOLicenseManager().HasMatroxLicense() && (!TheSVOLicenseManager().HasMatroxGigELicense()) && IsMatroxGige()  )
-	{
-		AfxMessageBox("Matrox GigE License not found");
-	}
-
-	SVVisionProcessorHelper::Instance().Startup();
-
-	return TRUE;
+	return bOk;
 }
 
-HRESULT SVObserverApp::InitializeSecurity() 
+////////////////////////////////////////////////////////////////////////////////
+// .Title       : OpenSECFile
+// -----------------------------------------------------------------------------
+// .Description : 
+// -----------------------------------------------------------------------------
+// .Input(s)
+//	 Type				Name				Description
+//	: 
+//  :
+// .Output(s)
+//	:
+//  :
+// .Return Value
+//	: void
+// -----------------------------------------------------------------------------
+// .Import Function Reference(s)
+//	:
+// -----------------------------------------------------------------------------
+// .Import Variable Reference(s)
+//	:
+////////////////////////////////////////////////////////////////////////////////
+// .History
+//	 Date		Author		Comment                                       
+//  :dd.mm.yyyy	RO			First Implementation
+////////////////////////////////////////////////////////////////////////////////
+HRESULT SVObserverApp::OpenSECFile( LPCTSTR PathName )
 {
-	HMODULE hMessageDll;
+    CWaitCursor wait;
+	SVClock::SVTimeStamp l_StartLoading;
+	SVClock::SVTimeStamp l_FinishLoad;
 
-	if (hMessageDll = LoadLibraryEx (_T("SVMessage.dll"), NULL, LOAD_LIBRARY_AS_DATAFILE))
+    HRESULT hr=S_OK;
+	BOOL bOk;
+    HRESULT hrDestroyed = DestroySEC();
+    hr = hrDestroyed;
+    bOk = (hrDestroyed == S_OK);
+
+	// TRB *******************
+	if ( bOk )
 	{
-		// This sleep(0) was added after the LoadLibrary to fix a bug where the system ran out of resources.
-		Sleep(0);
-		// Add function with two parameters does not have Data.
-		// Add Function with more than two parameters are data nodes.
-		// These are the Security defaults if the file fails to load.
-		AddSecurityNode(hMessageDll, SECURITY_POINT_FILE_MENU ); // First Position in Array Not used because position 0 is not valid in the XML Security Wrapper.
+		TheSVOLicenseManager().ClearLicenseErrors();
 
-		AddSecurityNode(hMessageDll, SECURITY_POINT_ROOT );
-		AddSecurityNode(hMessageDll, SECURITY_POINT_FILE_MENU );     // First Child off Root
-		AddSecurityNode(hMessageDll, SECURITY_POINT_FILE_MENU_NEW                   , _T("") );
-		AddSecurityNode(hMessageDll, SECURITY_POINT_FILE_MENU_SELECT_CONFIGURATION  , _T("") );
-		AddSecurityNode(hMessageDll, SECURITY_POINT_FILE_MENU_CLOSE_CONFIGURATION   , _T("") );
-		AddSecurityNode(hMessageDll, SECURITY_POINT_FILE_MENU_SAVE_CONFIGURATION_AS , _T("") );
-		AddSecurityNode(hMessageDll, SECURITY_POINT_FILE_MENU_SAVE_CONFIGURATION    , _T("") );
-		AddSecurityNode(hMessageDll, SECURITY_POINT_FILE_MENU_PRINT                 , _T("") );
-		AddSecurityNode(hMessageDll, SECURITY_POINT_FILE_MENU_PRINT_SETUP           , _T("") );
-		AddSecurityNode(hMessageDll, SECURITY_POINT_FILE_MENU_SAVE_IMAGE            , _T("") );
-		AddSecurityNode(hMessageDll, SECURITY_POINT_FILE_MENU_RECENT_CONFIGURATIONS , _T("") );
-		AddSecurityNode(hMessageDll, SECURITY_POINT_FILE_MENU_EXIT                  , _T("") );
-		AddSecurityNode(hMessageDll, SECURITY_POINT_UNRESTRICTED_FILE_ACCESS        , _T("") );
+		bOk = SVSVIMStateClass::AddState( SV_STATE_UNAVAILABLE | SV_STATE_LOADING );
 
-		AddSecurityNode(hMessageDll, SECURITY_POINT_VIEW_MENU );     // Second Child From Root
-		AddSecurityNode(hMessageDll, SECURITY_POINT_VIEW_MENU_PPQ_BAR       , _T("") );
-		AddSecurityNode(hMessageDll, SECURITY_POINT_VIEW_MENU_ONLINE_DISPLAY, _T("") );
-		AddSecurityNode(hMessageDll, SECURITY_POINT_VIEW_MENU_RESET_COUNTS_CURRENT, _T("") );
-		AddSecurityNode(hMessageDll, SECURITY_POINT_VIEW_MENU_RESET_COUNTS_ALL, _T("") );
-
-		AddSecurityNode(hMessageDll, SECURITY_POINT_MODE_MENU );     // Third Child From Root
-		AddSecurityNode(hMessageDll, SECURITY_POINT_MODE_MENU_RUN,        _T("") );
-		AddSecurityNode(hMessageDll, SECURITY_POINT_MODE_MENU_STOP,       _T("") );
-		AddSecurityNode(hMessageDll, SECURITY_POINT_MODE_MENU_REGRESSION_TEST,  _T("") );
-		AddSecurityNode(hMessageDll, SECURITY_POINT_MODE_MENU_TEST,             _T("") );
-		AddSecurityNode(hMessageDll, SECURITY_POINT_MODE_MENU_EDIT_TOOLSET,     _T("") );
-		AddSecurityNode(hMessageDll, SECURITY_POINT_MODE_MENU_EDIT_MOVE_TOOL,   _T("") );
-		AddSecurityNode(hMessageDll, SECURITY_POINT_MODE_MENU_EXIT_RUN_MODE,    _T("") );
-
-		AddSecurityNode(hMessageDll, SECURITY_POINT_EXTRAS_MENU );   // Forth Child From Root
-		AddSecurityNode(hMessageDll, SECURITY_POINT_EXTRAS_MENU_ADDITIONAL_ENVIRON, _T("") );
-		AddSecurityNode(hMessageDll, SECURITY_POINT_EXTRAS_MENU_SECURITY_MANAGER,   _T("Administrators"), true);
-		AddSecurityNode(hMessageDll, SECURITY_POINT_EXTRAS_MENU_TEST_OUTPUTS,       _T("") );
-		AddSecurityNode(hMessageDll, SECURITY_POINT_EXTRAS_MENU_UTILITIES_SETUP,    _T("") );
-		AddSecurityNode(hMessageDll, SECURITY_POINT_EXTRAS_MENU_UTILITIES_RUN,      _T("") );
-		m_svSecurityMgr.SVProtectData( SECURITY_POINT_EXTRAS_MENU_SECURITY_MANAGER ); // Sets Flag that will prevent data from being changed.
+		if ( bOk )
+		{
+			bOk = SVSVIMStateClass::RemoveState( SV_STATE_AVAILABLE );
+		}
 	}
 
-	char szGetBuf[256];
-	GetPrivateProfileString(_T("Security"), _T("Security File Path"), _T("c:\\SVObserver\\bin\\Gatekpr.xml"), szGetBuf, 256, "c:\\SVObserver\\Bin\\SVIM.ini");
-
-	if( m_svSecurityMgr.SVLoad(szGetBuf) != S_OK )
+	if ( bOk )
 	{
-		AfxMessageBox("Security File Failed to Load\n Using Default Security" );
+		SVFileNameManagerClass svFileManager;
+		SVFileNameClass svFileName( PathName );
+
+		//
+		// Check if we tried to load the SVC from 
+		// Execution path...("C:\RUN\")
+		//
+		if ( CString( svFileName.GetPathName() ).CompareNoCase( svFileManager.GetRunPathName() ) )
+		{
+			// Clean up Execution Directory...
+			// Check path, create if necessary and delete contents...
+			InitPath( CString( svFileManager.GetRunPathName() ) + "\\", TRUE, TRUE );
+		}
+
+		try
+		{
+			SetSECFullFileName( PathName );
+
+			SVRCSetSVCPathName( GetSECFullFileName() );
+
+			CFile secFile;
+			if( ( bOk = secFile.Open( GetSECFullFileName(),
+			                          CFile::modeRead | CFile::shareExclusive ) ) )
+			{
+				// Create a temporary archive in order to serialize in the configuration
+				// version number. If the configuration is created with a future version of
+				// SVObserver, ask if they want to continue at their own risk. ow exit nicely.
+				CArchive tempArc( &secFile, CArchive::load );
+
+				CString strDummy;
+				tempArc >> strDummy;	// SVObserver System Environment Configuration File
+				tempArc >> strDummy;	// Version #
+				DWORD dwFileVersion;
+				tempArc >> dwFileVersion;
+				if( dwFileVersion > m_CurrentVersion )
+				{
+					CString strText, strFile, strApp;
+					::SVGetVersionString( strApp, m_CurrentVersion );
+					::SVGetVersionString( strFile, dwFileVersion );
+					strText.Format( _T( "This configuration was created by SVObserver %s.\n"
+									"You are currently running SVObserver %s.\n"
+									"This configuration version may be incompatible with\n"
+									"the version of SVObserver that you are running.\n"
+									"Are you sure you wish to continue ?" ), 
+									strFile, strApp );
+					if( IDNO == AfxMessageBox( strText, MB_YESNO ) )
+						return FALSE;
+				}// end if
+
+				l_StartLoading = SVClock::GetTimeStamp();
+
+				tempArc.Close();
+				secFile.SeekToBegin();
+
+// ************************************* JMS
+
+				CString csIODocName;
+				BSTR bStr = NULL;
+				CArchive archive( &secFile, CArchive::load );
+
+				unsigned long SECVer = 0;
+
+				// SEC will be created in SVObserverApp::Serialize( archive );
+				Serialize( archive );
+
+				SVOCMArchiveSEC( m_CurrentVersion, SECVer, archive, m_XMLTree, &bStr );
+
+				archive.Close();
+				secFile.Close();
+
+				csIODocName = bStr;
+				LoadTempIODoc( csIODocName );
+
+				// TRB *******************
+				// *************** Add IO Doc to local List 
+				SVFileNameClass * l_psvFileName = new SVFileNameClass( csIODocName );
+				m_svFileNames.Add( l_psvFileName );
+				svFileManager.AddItem(l_psvFileName);
+
+				SVTreeType::SVBranchHandle htiRoot;
+				SVTreeType::SVBranchHandle htiChild;
+
+				m_XMLTree.GetRoot( htiRoot );
+
+				if( m_XMLTree.FindBranch( htiRoot, _bstr_t( CTAG_INSPECTION ), htiChild ) == S_OK )
+				{
+					SVTreeType::SVBranchHandle htiIPChild;
+
+					m_XMLTree.GetFirstBranch( htiChild, htiIPChild );
+
+					while ( m_XMLTree.IsValidBranch( htiIPChild ) == S_OK )
+					{
+						SVTreeType::SVLeafHandle htiIPDataChild;
+
+						if( m_XMLTree.FindLeaf( htiIPChild, _bstr_t( CTAG_INSPECTION_FILE_NAME ), htiIPDataChild ) == S_OK )
+						{
+							_variant_t l_Variant;
+
+							if( m_XMLTree.GetLeafData( htiIPDataChild, l_Variant.GetVARIANT() ) == S_OK )
+							{
+								_bstr_t l_Name = l_Variant;
+
+								if( 0 < l_Name.length() )
+								{
+									l_psvFileName = new SVFileNameClass( static_cast< LPCTSTR >( l_Name ) );
+									m_svFileNames.Add( l_psvFileName );
+									svFileManager.AddItem( l_psvFileName );
+
+									m_Inspection = htiIPChild;
+
+									LoadTempIPDoc( static_cast< LPCTSTR >( l_Name ) );
+								}
+							}
+						}
+
+						m_XMLTree.GetNextBranch( htiChild, htiIPChild );
+					}
+				}
+
+				CloseAllDocuments(FALSE);
+
+				SVConfigurationObject* l_pConfig = NULL;
+				SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
+
+				if( l_pConfig != NULL )
+				{
+					hr = l_pConfig->LoadConfiguration( m_XMLTree );
+				}
+
+				GetMainFrame()->ParseToolsetScripts( m_XMLTree );
+
+				if( l_pConfig != NULL )
+				{
+					l_pConfig->RebuildInputOutputLists();
+
+					// Removes any invalid entries in the output list.
+					if( l_pConfig->IsConfigurationLoaded() )
+					{
+						if( l_pConfig->ValidateOutputList( ) == SV_FATAL_SVOBSERVER_2006_DUPLICATE_DISCRETE_OUTPUT )
+						{
+							::AfxMessageBox( "Invalid Discrete Outputs: Remove all Discrete Outputs and re-add them.", MB_ICONEXCLAMATION );
+						}
+					}
+				}
+
+				ConstructDocuments( m_XMLTree );
+
+				GetMainFrame()->OnConfigurationFinishedInitializing();
+
+				l_FinishLoad = SVClock::GetTimeStamp();
+				long l_lTime = static_cast<long>(l_FinishLoad - l_StartLoading);
+
+				SVException svE;
+				CString sExcTxt; 
+				sExcTxt.Format( "%s\nload time %d ms", PathName, l_lTime );
+				SETEXCEPTION1(svE,SVMSG_SVO_29_SVOBSERVER_CONFIG_LOADED,sExcTxt);
+				svE.LogException(sExcTxt);
+
+				m_XMLTree.Clear();
+
+// ************************************* JMS
+
+				// IsSECModified = FALSE; 03 Dec 1999 - frb. delay until 
+				// .ipd parsing is completed.
+
+				if ( CString( svFileManager.GetConfigurationPathName() ).IsEmpty() )
+				{
+					AddToRecentFileList( GetSECFullFileName() );
+				}
+				else
+				{
+					AddToRecentFileList( CString( svFileManager.GetConfigurationPathName() ) + 
+															 "\\" + GetSECFileName() );
+				}
+	
+				UpdatePPQBar();
+			}
+			else
+			{
+				SetSECFullFileName( (LPCTSTR)NULL );
+
+				SVSVIMStateClass::AddState( SV_STATE_AVAILABLE );
+				SVSVIMStateClass::RemoveState( SV_STATE_UNAVAILABLE | SV_STATE_LOADING );
+			}
+		}
+		catch( CUserException* pUE )
+		{
+			delete pUE;
+
+			bOk = FALSE;
+
+			SVSVIMStateClass::RemoveState( SV_STATE_LOADING );
+
+			
+			DestroySEC( FALSE, TRUE );
+
+			SetSECFullFileName( (LPCTSTR)NULL );
+
+			UpdatePPQBar();
+
+			SVSVIMStateClass::AddState( SV_STATE_AVAILABLE );
+			SVSVIMStateClass::RemoveState( SV_STATE_UNAVAILABLE );
+		}
+		m_OpeningSEC = TRUE;
 	}
 
-	FreeLibrary (hMessageDll);
-	// This sleep(0) was added after the FreeLibrary to fix a bug where the system ran out of resources.
-	Sleep(0);
+    if (hr == S_OK)
+        hr = bOk ? S_OK : S_FALSE;
+
+	// Update Remote Inputs Tab
+	UpdateRemoteInputTabs();
+
+	return hr;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// .Title       : DestroyConfig
+// -----------------------------------------------------------------------------
+// .Description : ...
+//              :
+// -----------------------------------------------------------------------------
+// .Input(s)
+//	 Type				Name				Description
+//	: 
+//  :
+// .Output(s)
+//	:
+//  :
+// .Return Value
+//	: 
+// -----------------------------------------------------------------------------
+// .Import Function Reference(s)
+//	:
+// -----------------------------------------------------------------------------
+// .Import Variable Reference(s)
+//	:
+////////////////////////////////////////////////////////////////////////////////
+// .History
+//	 Date		Author		Comment                                       
+//  :27.05.1997 RO			First Implementation
+//	:
+////////////////////////////////////////////////////////////////////////////////
+HRESULT SVObserverApp::DestroySEC( BOOL AskForSavingOrClosing /* = TRUE */, 
+	BOOL CloseWithoutHint /* = FALSE */ )
+{
+	BOOL bCancel = FALSE;
+
+	BOOL bOk = ! SVSVIMStateClass::CheckState( SV_STATE_READY | SV_STATE_RUNNING | SV_STATE_TEST );
+	HRESULT hr= S_OK;
+
+	if ( ! bOk )
+	{
+		CString message;
+		BOOL bClose = TRUE;
+
+		if ( CloseWithoutHint )
+		{
+			SVSVIMStateClass::AddState( SV_STATE_CANCELING );
+		}
+		else
+		{
+			AfxFormatString1( message, IDS_USER_QUESTION_CLOSE_SEC, GetSECFileName() ); 
+			bClose = AfxMessageBox( message, MB_YESNO | MB_ICONQUESTION ) == IDYES;
+			if (bClose == FALSE)
+				hr = ERROR_CANCELLED;
+		}
+
+		if ( bClose )
+		{
+			if ( SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) )
+			{
+				OnStop();
+			}
+
+			if ( AskForSavingOrClosing )
+			{
+				// Check if current SEC is modified and ask for saving
+				if ( SVSVIMStateClass::CheckState( SV_STATE_MODIFIED ) )
+				{
+					AfxFormatString1( message, IDS_USER_QUESTION_SAVE_CHANGES, GetSECFileName() ); 
+					switch( AfxMessageBox( message, MB_YESNOCANCEL | MB_ICONQUESTION ) )
+					{
+					case IDNO:
+						{
+							SVSVIMStateClass::AddState( SV_STATE_CANCELING );
+							ResetAllIPDocModifyFlag(FALSE);
+							break;
+						}
+					case IDYES:
+						{
+							if( m_svSecurityMgr.SVValidate( SECURITY_POINT_FILE_MENU_SAVE_CONFIGURATION ) == S_OK )
+							{
+								OnFileSaveSec();
+								ResetAllIPDocModifyFlag(FALSE);
+
+								// Check whether config saving is done.
+								// If not, an error or an user cancel
+								// command occured!
+								bClose = ! CString( GetSECFullFileName() ).IsEmpty() &&
+									! SVSVIMStateClass::CheckState( SV_STATE_MODIFIED );
+							}
+							break;
+						}
+					case IDCANCEL:  // Fall through to default case.
+					default:	// Don´t close SEC!
+						{
+							bCancel = TRUE;
+							bClose = FALSE;
+							break;
+						}
+					}// end switch( AfxMessageBox( message, MB_YESNOCANCEL | MB_ICONQUESTION ) )
+				}// end if ( SVSVIMStateClass::CheckState( SV_STATE_MODIFIED ) )
+			}
+			else
+			{
+				SVSVIMStateClass::AddState( SV_STATE_CANCELING );
+			}
+		}// end if ( bClose )
+
+		if ( bClose )
+		{
+			bOk = bClose = SVSVIMStateClass::CheckState( SV_STATE_READY );
+		}
+
+		if ( bClose )
+		{
+			TheSVOLicenseManager().ClearLicenseErrors();
+
+			// Disallow Client Connections
+			SVInputStreamManager::Instance().Shutdown();
+			SVOutputStreamManager::Instance().Shutdown();
+
+			bOk = SVSVIMStateClass::AddState( SV_STATE_UNAVAILABLE | SV_STATE_CLOSING );
+
+			if ( bOk )
+			{
+				bOk = SVSVIMStateClass::RemoveState( SV_STATE_READY | SV_STATE_MODIFIED | SV_STATE_EDIT | SV_STATE_EDIT_MOVE );
+			}
+
+			if ( bOk )
+			{
+				CWaitCursor wait;
+
+				wait.Restore();
+
+				// First remove all ActiveX server things associated with this config
+				CSVCommand::ResetStreamingDataAndLockedImages();
+
+				wait.Restore();
+
+#ifndef _WIN64
+				// PLC stop and close.
+				m_PLCManager.Shutdown();
+				wait.Restore();
+#endif
+
+				SVConfigurationObject* l_pConfig = NULL;
+				SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
+
+				if( l_pConfig != NULL )
+				{
+					bOk = l_pConfig->DestroyConfiguration();
+				}
+
+				wait.Restore();
+
+				(( SVMainFrame* )m_pMainWnd)->SetStatusInfoText(_T(""));
+
+				wait.Restore();
+
+				// Destroy the current PPQ
+				( ( SVMainFrame* ) m_pMainWnd )->DestroyPPQButtons();
+
+				wait.Restore();
+
+				UpdatePPQBar();
+
+				wait.Restore();
+
+				bOk = SVSVIMStateClass::AddState( SV_STATE_AVAILABLE ) && bOk;
+				bOk = SVSVIMStateClass::RemoveState( SV_STATE_UNAVAILABLE | SV_STATE_CLOSING | SV_STATE_CANCELING ) && bOk;
+				bOk = SetSECFullFileName( (LPCTSTR) NULL ) && bOk;
+
+				wait.Restore();
+
+				INIReset();
+			}// end if ( bOk )
+		}// end if ( bClose )
+
+	}// end if bOk = ! SVSVIMStateClass::CheckState( SV_STATE_READY | SV_STATE_RUNNING );
+	else
+	{
+		// First remove all ActiveX server things associated with this config
+		CSVCommand::ResetStreamingDataAndLockedImages();
+
+		SVConfigurationObject* l_pConfig = NULL;
+		SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
+
+		if( l_pConfig != NULL )
+		{
+			bOk = l_pConfig->DestroyConfiguration();
+		}
+
+		(( SVMainFrame* )m_pMainWnd)->SetStatusInfoText(_T(""));
+	}
+
+	if (hr == S_OK)
+	{
+		hr = bOk ? S_OK : S_FALSE;
+	}
+
+	if ( bCancel )
+	{
+		hr = ERROR_CANCELLED;
+	}
+	else
+	{
+		CStringArray saCameras;
+
+		DisconnectCameras( saCameras );
+		ConnectCameras( saCameras );
+	}
+
+	return hr;
+}
+
+void SVObserverApp::RemoveUnusedFiles()
+{
+	SVFileNameManagerClass svFileManager;
+	svFileManager.RemoveUnusedFiles( FALSE );
+
+	if( m_OpeningSEC )
+	{
+		SVFileNamePtrVector::iterator l_Iter = m_svFileNames.begin();
+
+		while( l_Iter != m_svFileNames.end() )
+		{
+			SVFileNameClass* l_pName = ( *l_Iter );
+
+			l_Iter = m_svFileNames.erase( l_Iter );
+
+			svFileManager.RemoveItem( l_pName );
+
+			if( l_pName )
+			{
+				delete l_pName;
+			}
+		}
+	}
+}
+
+SVIODoc* SVObserverApp::GetIODoc() const
+{
+	SVIODoc* l_pIODoc( NULL );
+
+	SVConfigurationObject* l_pConfig = NULL;
+	SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
+
+	if( l_pConfig != NULL && !( l_pConfig->GetIOControllerID().empty() ) )
+	{
+		l_pIODoc = SVObjectManagerClass::Instance().GetIODoc( l_pConfig->GetIOControllerID() );
+	}
+
+	return l_pIODoc;
+}
+
+BOOL SVObserverApp::Login()
+{
+	ASSERT(FALSE);
+
+	return FALSE;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// .Title       : Logout
+// -----------------------------------------------------------------------------
+// .Description : Log the current user out...
+// -----------------------------------------------------------------------------
+// .Input(s)
+//	 Type				Name				Description
+//	: 
+// .Output(s)
+//	:
+// .Return Value
+//	: 
+// -----------------------------------------------------------------------------
+// .Import Function Reference(s)
+//	:
+// -----------------------------------------------------------------------------
+// .Import Variable Reference(s)
+//	:
+////////////////////////////////////////////////////////////////////////////////
+// .History
+//	 Date		Author		Comment                                       
+//  :15.10.1998 RO			First Implementation
+////////////////////////////////////////////////////////////////////////////////
+BOOL SVObserverApp::Logout( BOOL BForceLogout )
+{
+	SVSVIMStateClass::RemoveState( SV_STATE_SECURED );
+
+	//
+	// We need to deselect any tool that might be set for operator move.
+	//
+	SVMainFrame* pWndMain = ( SVMainFrame* )GetMainWnd();
+	if(pWndMain)
+	{
+		DeselectTool();
+
+		// Logged on User changed
+		pWndMain->PostMessage( SV_LOGGED_ON_USER_CHANGED, 0 );
+	}
+	return FALSE;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// .Title       : InitPath
+// -----------------------------------------------------------------------------
+// .Description : 
+// -----------------------------------------------------------------------------
+// .Input(s)
+//	 Type				Name				Description
+//	: 
+//  :
+// .Output(s)
+//	:
+//  :
+// .Return Value
+//	: 
+// -----------------------------------------------------------------------------
+// .Import Function Reference(s)
+//	:
+// -----------------------------------------------------------------------------
+// .Import Variable Reference(s)
+//	:
+////////////////////////////////////////////////////////////////////////////////
+// .History
+//	 Date		Author		Comment                                       
+//  :13.10.1998 RO			First Implementation
+////////////////////////////////////////////////////////////////////////////////
+BOOL SVObserverApp::InitPath( LPCTSTR TStrPathName, BOOL BCreateIfNotExists /*= TRUE*/, BOOL BDeleteContents /*= TRUE*/ )
+{
+	if( TStrPathName )
+	{
+		if( SVCheckPathDir( TStrPathName, BCreateIfNotExists ) )
+		{
+			if( BDeleteContents )
+			{
+				// Get Delete Directory...
+				CString strDelName;
+				SVGetPathInformation( strDelName, TStrPathName, SVDRIVE | SVDIR );
+
+				// Be sure that this is not the boot, system or windows directory...
+				TCHAR dirBuf[ _MAX_PATH ];
+				dirBuf[ 0 ] = _TCHAR( '\0' );
+				GetWindowsDirectory( dirBuf, _MAX_PATH );
+				if( strDelName.CompareNoCase( dirBuf ) )
+				{
+					// Not identical with windows directory...
+					GetSystemDirectory( dirBuf, _MAX_PATH );
+					if( strDelName.CompareNoCase( dirBuf ) )
+					{
+						// Not identical with system directory...
+						if( strDelName.CompareNoCase( _T( "C:\\" ) ) )
+						{
+							// Not identical with boot directory...
+
+							// Delete contents of this directory...
+							return SVDeleteFiles( strDelName + _T( "*.*" ), TRUE );
+						}
+					}
+				}
+			}
+			else
+			{
+				return TRUE;
+			}
+		}
+	}
+
+	return FALSE;
+}
+
+BOOL SVObserverApp::InitSVIMServer()
+{
+	if(  !IsSVIMServerEnabled() ) // if not already allocated
+	{
+		// Initialize SVIMServer for SVFocusNT
+		if (m_pSVIMServerWrapper = new SVIMServerWrapper)
+		{
+			// Check if Connection Failed
+			if( !m_pSVIMServerWrapper->mSVIMServer.IsStarted() )
+			{
+				// Allow user to change params
+				SetupSVIMServer();
+
+				// Try to create again
+				DestroySVIMServer();
+
+				if (m_pSVIMServerWrapper = new SVIMServerWrapper)
+				{
+					// Still failed ?
+					if( !m_pSVIMServerWrapper->mSVIMServer.IsStarted() )
+					{
+						DestroySVIMServer();
+					}
+				}
+			}
+		}
+		// Success
+		if( m_pSVIMServerWrapper && m_pSVIMServerWrapper->mSVIMServer.IsStarted() )
+		{
+			m_pSVIMServerWrapper->mSVIMServer.SetSVObserverWnd( m_pMainWnd->m_hWnd );
+			m_pSVIMServerWrapper->mSVIMServer.SetGoOffline( ::GlobalRCGoOffline );
+			m_pSVIMServerWrapper->mSVIMServer.SetGoOnline( ::GlobalRCGoOnline );
+			m_pSVIMServerWrapper->mSVIMServer.SetGetConfigurationName( ::GlobalRCGetConfigurationName );
+			m_pSVIMServerWrapper->mSVIMServer.SetGetState( ::GlobalRCGetState );
+			m_pSVIMServerWrapper->mSVIMServer.SetOpenConfiguration( ::GlobalRCOpenConfiguration );
+			m_pSVIMServerWrapper->mSVIMServer.SetSaveConfiguration( ::GlobalRCSaveConfiguration );
+			m_pSVIMServerWrapper->mSVIMServer.SetCloseConfiguration( ::GlobalRCCloseAndCleanConfiguration );
+			return TRUE;
+		}
+	}
+	return FALSE;
+}
+
+void SVObserverApp::DestroySVIMServer()
+{
+	if( m_pSVIMServerWrapper )
+	{
+		// Should we call some method to shutdown the server ?
+		delete m_pSVIMServerWrapper;
+		m_pSVIMServerWrapper = NULL;
+	}
+}
+
+BOOL SVObserverApp::IsSVIMServerEnabled()
+{
+	return (m_pSVIMServerWrapper) ? TRUE : FALSE;
+}
+
+bool SVObserverApp::IsColorSVIM() const
+{
+	return SVObjectManagerClass::Instance().m_bIsColorSVIM;
+}
+
+bool SVObserverApp::IsMatrox1394() const
+{
+	bool l_bOk = false;
+
+	if ( m_csDigitizerDLL.IsEmpty() )	// only true Matrox has empty dll name
+	{
+		l_bOk |= m_csProductName.CompareNoCase( SVO_PRODUCT_MATROX_D1 ) == 0;
+		l_bOk |= m_csProductName.CompareNoCase( SVO_PRODUCT_MATROX_D2 ) == 0;
+		l_bOk |= m_csProductName.CompareNoCase( SVO_PRODUCT_MATROX_D3 ) == 0;
+	}
+	return l_bOk;
+}
+
+bool SVObserverApp::IsCoreco() const
+{
+	bool l_bOk = false;
+
+	l_bOk |= m_csProductName.CompareNoCase( SVO_PRODUCT_CORECO_A4_MONO ) == 0;
+	l_bOk |= m_csProductName.CompareNoCase( SVO_PRODUCT_CORECO_A2_MONO ) == 0;
+	l_bOk |= m_csProductName.CompareNoCase( SVO_PRODUCT_CORECO_A1_RGB ) == 0;
+
+	return l_bOk;
+}
+
+bool SVObserverApp::IsMatroxGige() const
+{
+	bool l_bOk = false;
+
+	l_bOk = (m_csProductName.CompareNoCase( SVO_PRODUCT_KONTRON_X2_GD2A ) == 0
+		|| m_csProductName.CompareNoCase( SVO_PRODUCT_KONTRON_X2_GD4A ) == 0
+		|| m_csProductName.CompareNoCase( SVO_PRODUCT_KONTRON_X2_GD8A ) == 0
+		|| m_csProductName.CompareNoCase( SVO_PRODUCT_KONTRON_X2_GD8A_NONIO ) == 0
+		);
+
+	return l_bOk;
+}
+
+BOOL SVObserverApp::CheckSVIMType() const
+{
+	BOOL l_bOk = FALSE;
+
+	SVConfigurationObject* l_pConfig = NULL;
+	SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
+
+	SVIMProductEnum l_eSVIMType = GetSVIMType();
+	SVIMProductEnum l_eProductType = l_pConfig->GetProductType();
+
+	l_bOk = l_eSVIMType == l_eProductType;
+
+	// Exceptions
+	if( ! l_bOk )
+	{
+		switch( l_eSVIMType )
+		{
+		case SVIM_PRODUCT_FULL:
+			{
+				l_bOk = l_eProductType == SVIM_PRODUCT_05;
+
+				break;
+			}
+		case SVIM_PRODUCT_D3:
+			{
+				l_bOk |= l_eProductType == SVIM_PRODUCT_D3_HUB;
+				l_bOk |= l_eProductType == SVIM_PRODUCT_D2;
+				l_bOk |= l_eProductType == SVIM_PRODUCT_D2_HUB;
+				l_bOk |= l_eProductType == SVIM_PRODUCT_D1;
+				l_bOk |= l_eProductType == SVIM_PRODUCT_D1_HUB;
+				l_bOk |= l_eProductType == SVIM_PRODUCT_X1;
+				l_bOk |= l_eProductType == SVIM_PRODUCT_X1_HUB;
+				l_bOk |= l_eProductType == SVIM_PRODUCT_X3;
+
+				break;
+			}
+		case SVIM_PRODUCT_D3_COLOR:
+			{
+				l_bOk |= l_eProductType == SVIM_PRODUCT_D2_COLOR;
+				l_bOk |= l_eProductType == SVIM_PRODUCT_D1_COLOR;
+				l_bOk |= l_eProductType == SVIM_PRODUCT_X1_COLOR;
+				l_bOk |= l_eProductType == SVIM_PRODUCT_X3_COLOR;
+
+				break;
+			}
+		case SVIM_PRODUCT_D3_HUB:
+			{
+				l_bOk |= l_eProductType == SVIM_PRODUCT_D3;
+				l_bOk |= l_eProductType == SVIM_PRODUCT_D2_HUB;
+				l_bOk |= l_eProductType == SVIM_PRODUCT_D2;
+				l_bOk |= l_eProductType == SVIM_PRODUCT_D1_HUB;
+				l_bOk |= l_eProductType == SVIM_PRODUCT_D1;
+				l_bOk |= l_eProductType == SVIM_PRODUCT_X1_HUB;
+				l_bOk |= l_eProductType == SVIM_PRODUCT_X1;
+				l_bOk |= l_eProductType == SVIM_PRODUCT_X3;
+
+				break;
+			}
+		case SVIM_PRODUCT_D2:
+			{
+				l_bOk |= l_eProductType == SVIM_PRODUCT_D2_HUB;
+				l_bOk |= l_eProductType == SVIM_PRODUCT_D1;
+				l_bOk |= l_eProductType == SVIM_PRODUCT_D1_HUB;
+				l_bOk |= l_eProductType == SVIM_PRODUCT_X1;
+				l_bOk |= l_eProductType == SVIM_PRODUCT_X1_HUB;
+
+				break;
+			}
+		case SVIM_PRODUCT_D2_COLOR:
+			{
+				l_bOk |= l_eProductType == SVIM_PRODUCT_D1_COLOR;
+				l_bOk |= l_eProductType == SVIM_PRODUCT_X1_COLOR;
+
+				break;
+			}
+		case SVIM_PRODUCT_D2_HUB:
+			{
+				l_bOk |= l_eProductType == SVIM_PRODUCT_D2;
+				l_bOk |= l_eProductType == SVIM_PRODUCT_D1_HUB;
+				l_bOk |= l_eProductType == SVIM_PRODUCT_D1;
+				l_bOk |= l_eProductType == SVIM_PRODUCT_X1_HUB;
+				l_bOk |= l_eProductType == SVIM_PRODUCT_X1;
+
+				break;
+			}
+		case SVIM_PRODUCT_D1:
+			{
+				l_bOk |= l_eProductType == SVIM_PRODUCT_D1_HUB;
+				l_bOk |= l_eProductType == SVIM_PRODUCT_X1;
+				l_bOk |= l_eProductType == SVIM_PRODUCT_X1_HUB;
+
+				break;
+			}
+		case SVIM_PRODUCT_D1_COLOR:
+			{
+				l_bOk |= l_eProductType == SVIM_PRODUCT_X1_COLOR;
+
+				break;
+			}
+		case SVIM_PRODUCT_D1_HUB:
+			{
+				l_bOk |= l_eProductType == SVIM_PRODUCT_D1;
+				l_bOk |= l_eProductType == SVIM_PRODUCT_X1_HUB;
+				l_bOk |= l_eProductType == SVIM_PRODUCT_X1;
+
+				break;
+			}
+		case SVIM_PRODUCT_X1:
+			{
+				l_bOk |= l_eProductType == SVIM_PRODUCT_D1_HUB;
+				l_bOk |= l_eProductType == SVIM_PRODUCT_D1;
+				l_bOk |= l_eProductType == SVIM_PRODUCT_X1_HUB;
+
+				break;
+			}
+		case SVIM_PRODUCT_X2:
+			{
+				l_bOk |= l_eProductType == SVIM_PRODUCT_D1_HUB;
+				l_bOk |= l_eProductType == SVIM_PRODUCT_D1;
+				l_bOk |= l_eProductType == SVIM_PRODUCT_D2;
+				l_bOk |= l_eProductType == SVIM_PRODUCT_D3;
+				l_bOk |= l_eProductType == SVIM_PRODUCT_X1_HUB;
+				break;
+			}
+
+		case SVIM_PRODUCT_X3:
+			{
+				l_bOk |= l_eProductType == SVIM_PRODUCT_D1_HUB;
+				l_bOk |= l_eProductType == SVIM_PRODUCT_D1;
+				l_bOk |= l_eProductType == SVIM_PRODUCT_D2;
+				l_bOk |= l_eProductType == SVIM_PRODUCT_D3;
+				l_bOk |= l_eProductType == SVIM_PRODUCT_X1_HUB;
+
+				break;
+			}
+		case SVIM_PRODUCT_X1_COLOR:
+			{
+				l_bOk |= l_eProductType == SVIM_PRODUCT_D1_COLOR;
+
+				break;
+			}
+		case SVIM_PRODUCT_X2_COLOR:
+			{
+				l_bOk |= l_eProductType == SVIM_PRODUCT_D1_COLOR;
+				l_bOk |= l_eProductType == SVIM_PRODUCT_D2_COLOR;
+				l_bOk |= l_eProductType == SVIM_PRODUCT_X1_COLOR;
+				break;
+			}
+		case SVIM_PRODUCT_X3_COLOR:
+			{
+				l_bOk |= l_eProductType == SVIM_PRODUCT_X1_COLOR;
+				l_bOk |= l_eProductType == SVIM_PRODUCT_X2_COLOR;
+				l_bOk |= l_eProductType == SVIM_PRODUCT_D1_COLOR;
+				l_bOk |= l_eProductType == SVIM_PRODUCT_D2_COLOR;
+				l_bOk |= l_eProductType == SVIM_PRODUCT_D3_COLOR;
+				break;
+			}
+		case SVIM_PRODUCT_X1_HUB:
+			{
+				l_bOk |= l_eProductType == SVIM_PRODUCT_D1;
+				l_bOk |= l_eProductType == SVIM_PRODUCT_D1_HUB;
+				l_bOk |= l_eProductType == SVIM_PRODUCT_X1;
+
+				break;
+			}
+		case SVIM_PRODUCT_X2_GD1A_COLOR:
+		case SVIM_PRODUCT_X2_GD2A_COLOR:
+		case SVIM_PRODUCT_X2_GD4A_COLOR:
+		case SVIM_PRODUCT_X2_GD8A_COLOR:
+		case SVIM_PRODUCT_X2_GD8A_NONIO_COLOR:
+			{
+				l_bOk |= l_eProductType == SVIM_PRODUCT_X2_GD1A_COLOR;
+				l_bOk |= l_eProductType == SVIM_PRODUCT_X2_GD2A_COLOR;
+				l_bOk |= l_eProductType == SVIM_PRODUCT_X2_GD4A_COLOR;
+				l_bOk |= l_eProductType == SVIM_PRODUCT_X2_GD8A_COLOR;
+				l_bOk |= l_eProductType == SVIM_PRODUCT_X2_GD8A_NONIO_COLOR;
+				break;
+			}
+		case SVIM_PRODUCT_X2_GD1A:
+		case SVIM_PRODUCT_X2_GD2A:
+		case SVIM_PRODUCT_X2_GD4A:
+		case SVIM_PRODUCT_X2_GD8A:
+		case SVIM_PRODUCT_X2_GD8A_NONIO:
+			{
+				l_bOk |= l_eProductType == SVIM_PRODUCT_X2_GD1A;
+				l_bOk |= l_eProductType == SVIM_PRODUCT_X2_GD2A;
+				l_bOk |= l_eProductType == SVIM_PRODUCT_X2_GD4A;
+				l_bOk |= l_eProductType == SVIM_PRODUCT_X2_GD8A;
+				l_bOk |= l_eProductType == SVIM_PRODUCT_X2_GD8A_NONIO;
+				break;
+			}
+		default:
+			{
+				// Do nothing.
+				break;
+			}
+		}
+	}
+	return l_bOk;
+}
+
+SVIMProductEnum SVObserverApp::GetSVIMType() const
+{
+	SVIMProductEnum eType = SVIM_PRODUCT_TYPE_UNKNOWN;
+	bool bIsColor = IsColorSVIM();
+
+	if( m_csProductName.CompareNoCase( SVO_PRODUCT_CORECO_A4_MONO ) == 0 )
+	{
+		eType = SVIM_PRODUCT_FULL;
+	}
+	else if( m_csProductName.CompareNoCase( SVO_PRODUCT_CORECO_A2_MONO ) == 0 )
+	{
+		eType = SVIM_PRODUCT_05;
+	}
+	else if( m_csProductName.CompareNoCase( SVO_PRODUCT_CORECO_A1_RGB ) == 0 )
+	{
+		if ( bIsColor )
+		{
+			eType = SVIM_PRODUCT_RGB_COLOR;
+		}
+		else
+		{
+			eType = SVIM_PRODUCT_RGB_MONO;
+		}
+	}
+	else if( m_csProductName.CompareNoCase( SVO_PRODUCT_MATROX_D1 ) == 0 )
+	{
+		if ( bIsColor )
+		{
+			eType = SVIM_PRODUCT_D1_COLOR;
+		}
+		else
+		{
+			eType = SVIM_PRODUCT_D1;
+		}
+	}
+	else if( m_csProductName.CompareNoCase( SVO_PRODUCT_MATROX_D2 ) == 0 )
+	{
+		if ( bIsColor )
+		{
+			eType = SVIM_PRODUCT_D2_COLOR;
+		}
+		else
+		{
+			eType = SVIM_PRODUCT_D2;
+		}
+	}
+	else if( m_csProductName.CompareNoCase( SVO_PRODUCT_MATROX_D3 ) == 0 )
+	{
+		if ( bIsColor )
+		{
+			eType = SVIM_PRODUCT_D3_COLOR;
+		}
+		else
+		{
+			eType = SVIM_PRODUCT_D3;
+		}
+	}
+	else if( m_csProductName.CompareNoCase( SVO_PRODUCT_INTEK_D1 ) == 0 )
+	{
+		if ( bIsColor )
+		{
+			eType = SVIM_PRODUCT_X1_COLOR;
+		}
+		else
+		{
+			eType = SVIM_PRODUCT_X1;
+		}
+	}
+	else if( m_csProductName.CompareNoCase( SVO_PRODUCT_INTEK_D3 ) == 0 )
+	{
+		if ( bIsColor )
+		{
+			eType = SVIM_PRODUCT_X3_COLOR;
+		}
+		else
+		{
+			eType = SVIM_PRODUCT_X3;
+		}
+	}
+	else if ( m_csProductName.CompareNoCase(SVO_PRODUCT_KONTRON_X2) == 0 )
+	{
+		if ( bIsColor )
+		{
+			eType = SVIM_PRODUCT_X2_COLOR;
+		}
+		else
+		{
+			eType = SVIM_PRODUCT_X2;
+		}
+	}
+	else if ( m_csProductName.CompareNoCase(SVO_PRODUCT_KONTRON_X2_GD1A) == 0 )
+	{
+		if ( bIsColor )
+		{
+			eType = SVIM_PRODUCT_X2_GD1A_COLOR;
+		}
+		else
+		{
+			eType = SVIM_PRODUCT_X2_GD1A;
+		}
+	}
+	else if ( m_csProductName.CompareNoCase(SVO_PRODUCT_KONTRON_X2_GD2A) == 0 )
+	{
+		if ( bIsColor )
+		{
+			eType = SVIM_PRODUCT_X2_GD2A_COLOR;
+		}
+		else
+		{
+			eType = SVIM_PRODUCT_X2_GD2A;
+		}
+	}
+	else if (m_csProductName.CompareNoCase(SVO_PRODUCT_KONTRON_X2_GD4A) == 0 )
+	{
+		if( bIsColor )
+		{
+			eType = SVIM_PRODUCT_X2_GD4A_COLOR;
+		}
+		else
+		{
+			eType = SVIM_PRODUCT_X2_GD4A;
+		}
+	}
+	else if (m_csProductName.CompareNoCase(SVO_PRODUCT_KONTRON_X2_GD8A) == 0 )
+	{
+		if( bIsColor )
+		{
+			eType = SVIM_PRODUCT_X2_GD8A_COLOR;
+		}
+		else
+		{
+			eType = SVIM_PRODUCT_X2_GD8A;
+		}
+	}
+	else if (m_csProductName.CompareNoCase(SVO_PRODUCT_KONTRON_X2_GD8A_NONIO) == 0 )
+	{
+		eType = (( bIsColor ) ? SVIM_PRODUCT_X2_GD8A_NONIO_COLOR : SVIM_PRODUCT_X2_GD8A_NONIO);
+	}
+	else if( m_csFrameGrabber.CompareNoCase( FRAME_GRABBER_VIPER_DIGITAL ) == 0 )
+	{
+		eType = SVIM_PRODUCT_DIGITAL;
+	}
+
+	return eType;
+}
+
+#ifndef _WIN64
+CString SVObserverApp::GetPLCDLL()
+{
+	return m_csPLCDLL;
+}
+#endif
+
+bool SVObserverApp::IsProductTypeRAID() const
+{
+	bool bRet = ( m_csRAIDBoardName.CompareNoCase( "Intel" ) == 0 );
+	return bRet;
+}
+
+void SVObserverApp::ValidateMRUList()
+{
+	int i, iSize;
+	if( !::IsBadReadPtr( m_pRecentFileList, sizeof(LPVOID) ) )
+	{
+		iSize = m_pRecentFileList->GetSize();
+		for( i = iSize - 1; i >= 0; i-- )
+		{
+			BOOL bGone = ( _access( m_pRecentFileList->m_arrNames[i], 0 ) != 0 );
+			if( bGone )
+				m_pRecentFileList->Remove( i );
+		}// end for
+	}// end if
+}
+
+SVOINIClass& SVObserverApp::INI()
+{
+	return m_SvimIni;
+}
+
+void SVObserverApp::ResetAllCounts()
+{
+	SVInspectionProcess *pIP;
+	long l;
+	long lSize;
+
+	SVConfigurationObject* l_pConfig = NULL;
+	SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
+
+	l_pConfig->GetInspectionCount( lSize );
+	for( l = 0; l < lSize; l++ )
+	{
+		l_pConfig->GetInspection( l, &pIP );
+
+		pIP->GetToolSet()->ResetCounts();
+	}// end for
+
+	if( !SVSVIMStateClass::CheckState( SV_STATE_RUNNING ) )
+	{
+		for( l = 0; l < lSize; l++ )
+		{
+			l_pConfig->GetInspection( l, &pIP );
+
+			SVCommandInspectionRunOncePtr l_CommandPtr = new SVCommandInspectionRunOnce( pIP->GetUniqueObjectID() );
+			SVObjectSynchronousCommandTemplate< SVCommandInspectionRunOncePtr > l_Command( pIP->GetUniqueObjectID(), l_CommandPtr );
+
+			l_Command.Execute( 120000 );
+		}
+	}
+}
+
+void SVObserverApp::DisplayAddMenu(bool bShow)
+{
+	return;
+}
+
+// this is a recursive function which will attempt
+// to add the item "itemText" to the menu with the
+// given ID number. The "itemText" will be parsed for
+// delimiting "\" characters for levels between
+// popup menus. If a popup menu does not exist, it will
+// be created and inserted at the end of the menu.
+// ItemID of 0 will cause a separator to be added
+bool SVObserverApp::AddMenuItem(
+	HMENU hTargetMenu, 
+	const CString& itemText, 
+	UINT itemID)
+{
+	bool bSuccess = false;
+
+	ASSERT(itemText.GetLength() > 0);
+	ASSERT(hTargetMenu != NULL);
+
+	// first, does the menu item have
+	// any required submenus to be found/created?
+	if (itemText.Find('\\') >= 0)
+	{
+		// yes, we need to do a recursive call
+		// on a submenu handle and with that sub
+		// menu name removed from itemText
+
+		// 1:get the popup menu name
+		CString popupMenuName = itemText.Left(itemText.Find('\\'));
+
+		// 2:get the rest of the menu item name
+		// minus the delimiting '\' character
+		CString remainingText = 
+			itemText.Right(itemText.GetLength() 
+			- popupMenuName.GetLength() - 1);
+
+		// 3:See whether the popup menu already exists
+		int itemCount = ::GetMenuItemCount(hTargetMenu);
+		bool bFoundSubMenu = false;
+		MENUITEMINFO menuItemInfo;
+
+		memset(&menuItemInfo, 0, sizeof(MENUITEMINFO));
+		menuItemInfo.cbSize = sizeof(MENUITEMINFO);
+		menuItemInfo.fMask = 
+			MIIM_TYPE | MIIM_STATE | MIIM_ID | MIIM_SUBMENU;
+		for (int itemIndex = 0 ; 
+			itemIndex < itemCount && !bFoundSubMenu ; itemIndex++)
+		{
+			::GetMenuItemInfo(
+				hTargetMenu, 
+				itemIndex, 
+				TRUE, 
+				&menuItemInfo);
+			if (menuItemInfo.hSubMenu != 0)
+			{
+				// this menu item is a popup menu (non popups give 0)
+				TCHAR    buffer[MAX_PATH];
+				::GetMenuString(
+					hTargetMenu, 
+					itemIndex, 
+					buffer, 
+					MAX_PATH, 
+					MF_BYPOSITION);
+				if (popupMenuName == buffer)
+				{
+					// this is the popup menu we have to add to
+					bFoundSubMenu = true;
+				}
+			}
+		}
+		// 4: If exists, do recursive call,
+		// else create do recursive call
+		// and then insert it
+		if (bFoundSubMenu)
+		{
+			bSuccess = AddMenuItem(
+				menuItemInfo.hSubMenu, 
+				remainingText, 
+				itemID);
+		}
+		else
+		{
+			// we need to create a new sub menu and insert it
+			HMENU hPopupMenu = ::CreatePopupMenu();
+			if (hPopupMenu != NULL)
+			{
+				bSuccess = AddMenuItem(
+					hPopupMenu, 
+					remainingText, 
+					itemID);
+				if (bSuccess)
+				{
+					if (::AppendMenu(
+						hTargetMenu, 
+						MF_POPUP, 
+						(UINT)hPopupMenu, 
+						popupMenuName) > 0)
+					{
+						bSuccess = true;
+						// hPopupMenu now owned by hTargetMenu,
+						// we do not need to destroy it
+					}
+					else
+					{
+						// failed to insert the popup menu
+						bSuccess = false;
+						// stop a resource leak
+						::DestroyMenu(hPopupMenu);
+					}
+				}
+			}
+		}        
+	}
+	else
+	{	
+		// 3:See whether the menu item already exists
+		int itemCount = ::GetMenuItemCount(hTargetMenu);
+		bool bFoundSubMenu = false;
+		MENUITEMINFO menuItemInfo;
+
+		memset(&menuItemInfo, 0, sizeof(MENUITEMINFO));
+		menuItemInfo.cbSize = sizeof(MENUITEMINFO);
+		menuItemInfo.fMask = 
+			MIIM_TYPE | MIIM_STATE | MIIM_ID | MIIM_SUBMENU;
+		for (int itemIndex = 0 ; 
+			itemIndex < itemCount && !bFoundSubMenu ; itemIndex++)
+		{
+			::GetMenuItemInfo(
+				hTargetMenu, 
+				itemIndex, 
+				TRUE, 
+				&menuItemInfo);
+			if (menuItemInfo.wID == itemID)
+			{
+				// Set the inspection name.
+				::ModifyMenuA(hTargetMenu, itemIndex, MF_BYPOSITION | MF_STRING, itemID, itemText);
+				bFoundSubMenu = true;
+			}
+		}
+
+		// If not found then append menu.
+		if (!bFoundSubMenu)
+		{
+			if (itemID != 0)
+			{
+				// its a normal menu command
+				if (::AppendMenu(
+					hTargetMenu, 
+					MF_ENABLED, 
+					itemID, 
+					itemText) > 0)
+				{
+					// we successfully added the item to the menu
+					bSuccess = true;
+				}
+			}
+			else
+			{
+				// we are inserting a separator
+				if (::AppendMenu(
+					hTargetMenu, 
+					MF_SEPARATOR, 
+					itemID, 
+					itemText) > 0)
+				{
+					// we successfully added the separator to the menu
+					bSuccess = true;
+				}
+			}
+		}
+	}
+
+	return bSuccess;
+}
+
+// this is a recursive function which will attempt
+// to remove the menu item with "itemText" from the menu with the
+// target menu handle. "itemText" will be parsed for
+// delimiting "\" characters for levels between
+// popup menus. If the end popup menu exists, it will be deleted.
+bool SVObserverApp::RemoveMenu(
+	HMENU hTargetMenu, 
+	const CString& itemText)
+{
+	bool bSuccess = false;
+
+	ASSERT(itemText.GetLength() > 0);
+	ASSERT(hTargetMenu != NULL);
+
+	// first, does the menu item have
+	// any required submenus to be found/created?
+	if (itemText.Find('\\') >= 0)
+	{
+		// yes, we need to do a recursive call
+		// on a submenu handle and with that sub
+		// menu name removed from itemText
+
+		// 1:get the popup menu name
+		CString popupMenuName = itemText.Left(itemText.Find('\\'));
+
+		// 2:get the rest of the menu item name
+		// minus the delimiting '\' character
+		CString remainingText = 
+			itemText.Right(itemText.GetLength() 
+			- popupMenuName.GetLength() - 1);
+
+		// 3:See whether the popup menu already exists
+		int itemCount = ::GetMenuItemCount(hTargetMenu);
+		bool bFoundSubMenu = false;
+		MENUITEMINFO menuItemInfo;
+
+		memset(&menuItemInfo, 0, sizeof(MENUITEMINFO));
+		menuItemInfo.cbSize = sizeof(MENUITEMINFO);
+		menuItemInfo.fMask = 
+			MIIM_TYPE | MIIM_STATE | MIIM_ID | MIIM_SUBMENU;
+		for (int itemIndex = 0 ; 
+			itemIndex < itemCount && !bFoundSubMenu ; itemIndex++)
+		{
+			::GetMenuItemInfo(
+				hTargetMenu, 
+				itemIndex, 
+				TRUE, 
+				&menuItemInfo);
+			if (menuItemInfo.hSubMenu != 0)
+			{
+				// this menu item is a popup menu (non popups give 0)
+				TCHAR    buffer[MAX_PATH];
+				::GetMenuString(
+					hTargetMenu, 
+					itemIndex, 
+					buffer, 
+					MAX_PATH, 
+					MF_BYPOSITION);
+				if (popupMenuName == buffer)
+				{
+					// this is the popup menu we are looking for.
+					bFoundSubMenu = true;
+				}
+			}
+		}
+		// 4: If exists, do recursive call,
+		if (bFoundSubMenu)
+		{
+			bSuccess = RemoveMenu( menuItemInfo.hSubMenu, remainingText);
+		}
+	}
+	else
+	{
+		// See whether the popup menu exists
+		int itemCount = ::GetMenuItemCount(hTargetMenu);
+		bool bFoundSubMenu = false;
+		MENUITEMINFO menuItemInfo;
+
+		memset(&menuItemInfo, 0, sizeof(MENUITEMINFO));
+		menuItemInfo.cbSize = sizeof(MENUITEMINFO);
+		menuItemInfo.fMask = 
+			MIIM_TYPE | MIIM_STATE | MIIM_ID | MIIM_SUBMENU;
+		for (int itemIndex = 0 ; 
+			itemIndex < itemCount && !bFoundSubMenu ; itemIndex++)
+		{
+			::GetMenuItemInfo(
+				hTargetMenu, 
+				itemIndex, 
+				TRUE, 
+				&menuItemInfo);
+			if (menuItemInfo.hSubMenu != 0)
+			{
+				// this menu item is a popup menu (non popups give 0)
+				TCHAR    buffer[MAX_PATH];
+				::GetMenuString(
+					hTargetMenu, 
+					itemIndex, 
+					buffer, 
+					MAX_PATH, 
+					MF_BYPOSITION);
+				if (itemText == buffer)
+				{
+					// this is the popup menu we have to remove
+					bSuccess = DeleteMenu( hTargetMenu, itemIndex, MF_BYPOSITION ) ? true : false;
+					break;
+				}
+			}
+		}
+	}
+	return bSuccess;
+}
+
+HRESULT SVObserverApp::SetMode( unsigned long p_lNewMode )
+{
+	HRESULT l_hr = S_OK;
+
+	svModeEnum l_svMode = (svModeEnum) p_lNewMode;
+
+	if( SVSVIMStateClass::CheckState( SV_STATE_START_PENDING | 
+		SV_STATE_STARTING |
+		SV_STATE_STOP_PENDING |
+		SV_STATE_STOPING ))
+	{
+		l_hr = SVMSG_50_MODE_CHANGING_ERROR;
+	}
+	else if( SVSVIMStateClass::CheckState( SV_STATE_LOADING ) )
+	{
+		l_hr = SVMSG_51_MODE_CONFIGURATION_LOADING_ERROR;
+	}
+	else if( SVSVIMStateClass::CheckState( SV_STATE_EDITING ) )
+	{
+		l_hr = SVMSG_52_MODE_GUI_IN_USE_ERROR;
+	}
+	else if( l_svMode == SVIM_MODE_ONLINE )
+	{
+		if( SVSVIMStateClass::CheckState( SV_STATE_TEST ) ||
+			SVSVIMStateClass::CheckState( SV_STATE_RUNNING ) )
+		{
+			OnStop();
+		}
+		// Try to go online...
+		if( !SVSVIMStateClass::CheckState( SV_STATE_REGRESSION ) &&
+			SVSVIMStateClass::CheckState( SV_STATE_READY ) )
+		{
+			if( Start() != S_OK )
+				l_hr = SVMSG_SVIMCMD_GO_ONLINE_FAILED;
+		}
+		else
+		{
+			l_hr = SVMSG_SVIMCMD_GO_ONLINE_FAILED;
+		}
+	}
+	else if( l_svMode == SVIM_MODE_OFFLINE )
+	{
+		// Go offline
+		if( SVSVIMStateClass::CheckState( SV_STATE_RUNNING ) ||
+			SVSVIMStateClass::CheckState( SV_STATE_TEST ) )
+		{
+			OnStop();
+		}
+
+		// Cancel edit mode
+		if( SVSVIMStateClass::CheckState( SV_STATE_EDIT ) )
+		{
+			SetModeEdit( false );
+		}
+
+		// Cancel edit move mode
+		if( SVSVIMStateClass::CheckState( SV_STATE_EDIT_MOVE ) )
+		{
+			SetModeEditMove( false );
+		}
+	}
+	else if( l_svMode == SVIM_MODE_TEST )
+	{
+		// If the previous mode was running then we cannot stop and 
+		// go straight into test mode.  This has caused a crash in testing 
+		// when two IPDs are present.  Therefore the activeX user must first
+		// put the system in some offline mode and then put it into test mode
+		// in two steps.  If running then return request rejected.
+		if( SVSVIMStateClass::CheckState( SV_STATE_RUNNING ) )
+		{
+			l_hr = SVMSG_SVIMCMD_REQUEST_REJECTED;
+		}
+		else if( SVSVIMStateClass::CheckState( SV_STATE_REGRESSION ) )
+		{
+			OnStop();
+		}
+
+		if( !SVSVIMStateClass::CheckState( SV_STATE_TEST ) &&
+			SVSVIMStateClass::CheckState( SV_STATE_READY ) )
+		{
+			SetTestMode(true);
+		}
+		else
+		{
+			l_hr = SVMSG_SVIMCMD_REQUEST_REJECTED;
+		}
+	}
+	else if( l_svMode == SVIM_MODE_REGRESSION )
+	{
+		// Later Currently not supported through the Control
+		l_hr = SVMSG_SVIMCMD_REQUEST_REJECTED;
+	}
+	else if( l_svMode == SVIM_MODE_EDIT )
+	{
+		if( SVSVIMStateClass::CheckState( SV_STATE_TEST ) ||
+			SVSVIMStateClass::CheckState( SV_STATE_RUNNING ) )
+		{
+			OnStop();
+		}
+
+		if( !SVSVIMStateClass::CheckState( SV_STATE_REGRESSION ) &&
+			SVSVIMStateClass::CheckState( SV_STATE_READY ) )
+		{
+			SetModeEdit( true );
+		}
+		else
+		{
+			l_hr = SVMSG_SVIMCMD_REQUEST_REJECTED;
+		}
+	}
+	else if( l_svMode == SVIM_MODE_EDIT_MOVE )
+	{
+		if( SVSVIMStateClass::CheckState( SV_STATE_TEST ) ||
+			SVSVIMStateClass::CheckState( SV_STATE_RUNNING ) )
+		{
+			OnStop();
+		}
+
+		if( !SVSVIMStateClass::CheckState( SV_STATE_REGRESSION ) &&
+			SVSVIMStateClass::CheckState( SV_STATE_READY ) )
+		{
+			SetModeEditMove( true );
+		}
+		else
+		{
+			l_hr = SVMSG_SVIMCMD_REQUEST_REJECTED;
+		}
+	}
+	else
+	{
+		l_hr = SVMSG_SVIMCMD_REQUEST_REJECTED;
+	}
+
+	PostMessage( m_pMainWnd->m_hWnd, SV_REFRESH_STATUS_BAR, 0, 0 );
+	return l_hr;
+}
+
+HRESULT SVObserverApp::LoadConfiguration()
+{
+	HRESULT l_Status = S_OK;
+
+	CString szConfigName = SVRCGetSVCPathName();
+
+	TCHAR szDrive[_MAX_DRIVE];
+	TCHAR szDir[_MAX_DIR];
+	TCHAR szFile[_MAX_FNAME];
+	TCHAR szExt[_MAX_EXT];
+	CString sComp;
+
+	_tsplitpath( szConfigName, szDrive, szDir, szFile, szExt );
+	sComp = szExt;
+
+	if( sComp.CompareNoCase(_T(".sec"))==0 )
+	{
+		l_Status = OpenSECFile( szConfigName );
+	}
+	else if( sComp.CompareNoCase(_T(".svx"))==0 )
+	{
+		l_Status = OpenSVXFile( szConfigName );
+	}
+	else
+	{
+		l_Status = E_INVALIDARG;
+	}
+
+	return l_Status;
+}
+
+void SVObserverApp::SetSelectedToolForOperatorMove( BOOL bSetTool )
+{
+	POSITION pos = GetFirstDocTemplatePosition();
+	if( pos )
+	{
+		do
+		{
+			CDocTemplate* pDocTemplate = GetNextDocTemplate( pos );
+			if( pDocTemplate )
+			{
+				POSITION posDoc = pDocTemplate->GetFirstDocPosition();
+				if ( posDoc )
+				{
+					do
+					{
+						CDocument* newDoc = pDocTemplate->GetNextDoc(posDoc);
+						if ( newDoc )
+						{
+							SVIPDoc* pTmpDoc = dynamic_cast <SVIPDoc*> (newDoc);
+
+							if( pTmpDoc != NULL )
+							{
+								pTmpDoc->SetSelectedToolForOperatorMove( bSetTool );
+							}
+						}
+					}
+					while( posDoc );
+				}
+			}
+		}
+		while( pos );
+	}
+}
+
+HRESULT SVObserverApp::RenameObject( const SVString& p_rOldName, const SVString& p_rNewName, const SVGUID& p_rObjectId )
+{
+	HRESULT l_Status = S_OK;
+
+	SVObjectAppClass* l_pObject = dynamic_cast< SVObjectAppClass* >( SVObjectManagerClass::Instance().GetObject( p_rObjectId ) );
+
+	if( l_pObject != NULL )
+	{
+		SVRenameObject l_RenameObject( p_rOldName, p_rNewName, p_rObjectId );
+
+		SVInspectionProcess* l_pInspect = l_pObject->GetInspection();
+
+		if( l_pInspect != NULL )
+		{
+			SVObjectManagerClass::Instance().UpdateObserver( l_pInspect->GetUniqueObjectID(), l_RenameObject );
+		}
+		else
+		{
+			l_Status = E_FAIL;
+		}
+
+		SVConfigurationObject* l_pConfig = NULL;
+		SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
+
+		if( l_pConfig != NULL )
+		{
+			SVObjectManagerClass::Instance().UpdateObserver( l_pConfig->GetUniqueObjectID(), l_RenameObject );
+		}
+		else
+		{
+			l_Status = E_FAIL;
+		}
+
+		GetIODoc()->UpdateAllViews( NULL );
+	}
+	else
+	{
+		l_Status = E_FAIL;
+	}
+
+	return l_Status;
+}
+
+HRESULT SVObserverApp::RebuildOutputList()
+{
+	HRESULT l_Status = S_OK;
+
+	SVConfigurationObject* l_pConfig = NULL;
+	SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
+
+	if( l_pConfig != NULL )
+	{
+		l_pConfig->RebuildOutputObjectList();
+
+		GetIODoc()->UpdateAllViews( NULL );
+	}
+	else
+	{
+		l_Status = E_FAIL;
+	}
+
+	return l_Status;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// .Title       : SetStatusText
+// -----------------------------------------------------------------------------
+// .Description : ...
+//              :
+// -----------------------------------------------------------------------------
+// .Input(s)
+//	 Type				Name				Description
+//	: 
+//  :
+// .Output(s)
+//	:
+//  :
+// .Return Value
+//	: 
+// -----------------------------------------------------------------------------
+// .Import Function Reference(s)
+//	:
+// -----------------------------------------------------------------------------
+// .Import Variable Reference(s)
+//	:
+////////////////////////////////////////////////////////////////////////////////
+// .History
+//	 Date		Author		Comment                                       
+//  :27.05.1997 RO			First Implementation
+//	:
+////////////////////////////////////////////////////////////////////////////////
+BOOL SVObserverApp::SetStatusText( LPCTSTR PStrStatusText )
+{
+	// If PStrStatusText is NULL, the Main Frame deletes the last status info.
+	// If no Main Frame exists, the function returns FALSE.
+	// Otherwise ( and this should always be ) it returns TRUE!
+	if( m_pMainWnd )
+	{
+		GetMainFrame()->SetStatusInfoText( PStrStatusText );
+		return TRUE;
+	}
+	return FALSE;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// .Title       : UpdatePPQBar()
+// -----------------------------------------------------------------------------
+// .Description : ...
+//              :
+// -----------------------------------------------------------------------------
+// .Input(s)
+//	 Type				Name				Description
+//	: 
+//  :
+// .Output(s)
+//	:
+//  :
+// .Return Value
+//	: 
+// -----------------------------------------------------------------------------
+// .Import Function Reference(s)
+//	:
+// -----------------------------------------------------------------------------
+// .Import Variable Reference(s)
+//	:
+////////////////////////////////////////////////////////////////////////////////
+// .History
+//	 Date		Author		Comment                                       
+//  :27.05.1997 RO			First Implementation
+//	:
+////////////////////////////////////////////////////////////////////////////////
+void SVObserverApp::UpdatePPQBar()
+{
+	GetMainFrame()->OnViewPPQBar();
+}
+
+LPCTSTR SVObserverApp::GetSECFileNameOnly() const
+{
+	return m_SECFileName.GetFileNameOnly();
+}
+
+LPCTSTR SVObserverApp::GetSECPathName() const
+{
+	return m_SECFileName.GetPathName();
+}
+
+LPCTSTR SVObserverApp::GetSECFileName() const
+{
+	return m_SECFileName.GetFileName();
+}
+
+LPCTSTR SVObserverApp::GetSECFullFileName() const
+{
+	return m_SECFileName.GetFullFileName();
+}
+
+BOOL SVObserverApp::SetSECFullFileName(LPCTSTR csFullFileName, DWORD dwAction)
+{
+	BOOL bOk = FALSE;
+
+	SVFileNameManagerClass svFileManager;
+
+	bOk = m_SECFileName.SetFullFileName( csFullFileName );
+
+	if ( bOk )
+	{
+		if ( CString( m_SECFileName.GetPathName() ).IsEmpty() )
+		{
+			svFileManager.SetConfigurationPathName( NULL );
+		}
+		else
+		{
+			if ( CString( m_SECFileName.GetPathName() ).CompareNoCase( _T( "C:\\RUN" ) ) == 0 )
+			{
+				svFileManager.SetConfigurationPathName( NULL );
+			}
+			else
+			{
+				bOk = svFileManager.SetConfigurationPathName( m_SECFileName.GetPathName() );
+				// if this returns FALSE, unable to access specified path!
+				if ( !bOk )
+				{
+					ASSERT( dwAction == SAVE_CONFIG ||
+						dwAction == LOAD_CONFIG ||
+						dwAction == RENAME_CONFIG );
+
+					CString sMsg;
+					sMsg.Format(_T("Unable to %s configuration %s !"),
+						dwAction == LOAD_CONFIG ? _T("load") : _T("save"),
+						m_SECFileName.GetPathName());
+					ASSERT(FALSE);
+					AfxMessageBox(sMsg);
+				}
+			}
+		}
+
+		if ( bOk )
+		{
+			switch( dwAction )
+			{
+			case LOAD_CONFIG:
+				{
+					bOk = svFileManager.LoadItem( &m_SECFileName );
+					break;
+				}
+			case SAVE_CONFIG:
+				{
+					bOk = svFileManager.SaveItem( &m_SECFileName );
+					break;
+				}
+			case RENAME_CONFIG:
+				{
+					bOk = svFileManager.RenameItem( &m_SECFileName );
+					break;
+				}
+			default:
+				{
+					// Do nothing.
+					break;
+				}
+			}
+		}
+	}
+
+	if ( bOk )
+	{
+		if ( !CString( svFileManager.GetConfigurationPathName() ).IsEmpty() )
+		{
+			AfxGetApp()->WriteProfileString( _T( "Settings" ), 
+				_T( "ConfigurationFilePath" ), 
+				svFileManager.GetConfigurationPathName() );
+		}
+	}
+
+	return bOk;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// .Title       : GetIPDoc
+// -----------------------------------------------------------------------------
+// .Description : ...
+//              :
+// -----------------------------------------------------------------------------
+// .Input(s)
+//	 Type				Name				Description
+//	: 
+//  :
+// .Output(s)
+//	:
+//  :
+// .Return Value
+//	: 
+// -----------------------------------------------------------------------------
+// .Import Function Reference(s)
+//	:
+// -----------------------------------------------------------------------------
+// .Import Variable Reference(s)
+//	:
+////////////////////////////////////////////////////////////////////////////////
+// .History
+//	 Date		Author		Comment                                       
+//  :27.05.1997 RO			First Implementation
+//	:
+////////////////////////////////////////////////////////////////////////////////
+SVIPDoc* SVObserverApp::GetIPDoc( LPCTSTR StrIPDocPathName ) const
+{
+	// If the function succeeds, it returns a pointer to the found IPDoc.
+	// If the function succeeds and the IPDoc is not currently loaded or
+	// if the function fails, it returns NULL !!!
+	// !!! The function doesn´t care about lowercase or uppercase strings !!!
+
+	if( SVSVIMStateClass::CheckState( SV_STATE_READY | SV_STATE_RUNNING ) && StrIPDocPathName )
+	{
+		CString lowerIPDocName = StrIPDocPathName;
+		lowerIPDocName = lowerIPDocName.Left( lowerIPDocName.Find( '.' ) );
+
+		POSITION pos = GetFirstDocTemplatePosition();
+		if( pos )
+		{
+			do
+			{
+				CDocTemplate* pDocTemplate = GetNextDocTemplate( pos );
+				if( pDocTemplate )
+				{
+					POSITION posDoc = pDocTemplate->GetFirstDocPosition();
+					if ( posDoc )
+					{
+						do
+						{
+							CDocument* newDoc = pDocTemplate->GetNextDoc(posDoc);
+							if ( newDoc )
+							{
+								SVIPDoc* pTmpDoc = dynamic_cast <SVIPDoc*> (newDoc);
+
+								if( pTmpDoc != NULL )
+								{
+									CString strName = pTmpDoc->GetTitle();
+
+									if( strName.CompareNoCase( lowerIPDocName ) == 0 )
+									{
+										return pTmpDoc;
+									}
+								}
+							}
+						}
+						while( posDoc );
+					}
+				}
+			}
+			while( pos );
+		}
+	}
+
+	return NULL;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// .Title       : AlreadyExistsIPDocTitle
+// -----------------------------------------------------------------------------
+// .Description : ...
+//              :
+// -----------------------------------------------------------------------------
+// .Input(s)
+//	 Type				Name				Description
+//	: 
+//  :
+// .Output(s)
+//	:
+//  :
+// .Return Value
+//	: 
+// -----------------------------------------------------------------------------
+// .Import Function Reference(s)
+//	:
+// -----------------------------------------------------------------------------
+// .Import Variable Reference(s)
+//	:
+////////////////////////////////////////////////////////////////////////////////
+// .History
+//	 Date		Author		Comment                                       
+//  :17.07.1998 RO			First Implementation
+////////////////////////////////////////////////////////////////////////////////
+BOOL SVObserverApp::AlreadyExistsIPDocTitle( LPCTSTR StrIPDocTitle )
+{
+	return FALSE;
+}
+
+CString SVObserverApp::GetStringResource( int ResourceID )
+{
+	CString strResource;
+	if( ! strResource.LoadString( ResourceID ) ) { strResource = _T( " " ); }
+
+	return strResource;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// .Title       : ShowConfigurationAssistant
+// -----------------------------------------------------------------------------
+// .Description : ...
+//              :
+// -----------------------------------------------------------------------------
+// .Input(s)
+//	 Type				Name				Description
+//	: 
+//  :
+// .Output(s)
+//	:
+//  :
+// .Return Value
+//	: 
+// -----------------------------------------------------------------------------
+// .Import Function Reference(s)
+//	:
+// -----------------------------------------------------------------------------
+// .Import Variable Reference(s)
+//	:
+////////////////////////////////////////////////////////////////////////////////
+// .History
+//	 Date		Author		Comment                                       
+//  :04.03.1999 RO			First Implementation
+//	:20.10.1999 RO			Added File New Configuration Capability
+////////////////////////////////////////////////////////////////////////////////
+BOOL SVObserverApp::ShowConfigurationAssistant( int Page /*= 3*/, 
+	BOOL bFileNewConfiguration /*= FALSE*/ )
+{
+	BOOL bOk = FALSE;
+	BOOL bWasSECLoaded = FALSE;
+
+	// Access denied, if... // Check Edit Mode
+	if( SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) )
+		return FALSE;
+
+	if ( bFileNewConfiguration )
+	{
+		SVFileNameManagerClass svFileManager;
+
+		// Clean up SVObserver
+		if( S_OK != DestroySEC() )
+		{
+			// Needs Attention !!!
+			// Should get error code if returned S_FALSE; 
+			// If returned ERROR_CANCELLED, user cancelled
+			return FALSE;
+		}
+
+		if (bFileNewConfiguration)
+		{
+			SVObjectManagerClass::Instance().ConstructConfigurationObject( SVConfigurationObjectGuid );
+		}
+
+		// Clean up Execution Directory...
+		// Check path, create if necessary and delete contents...
+		InitPath( CString( svFileManager.GetRunPathName() ) + "\\", TRUE, TRUE );
+
+		// Ensure that DestroySEC() can do his work...
+		SVSVIMStateClass::AddState( SV_STATE_READY );
+	}
+	else
+	{
+		CWaitCursor wait;
+
+		// Store old state
+		bWasSECLoaded = SVSVIMStateClass::CheckState( SV_STATE_READY );
+		ResetAllIPDocModifyFlag(FALSE);
+	}
+
+	//****RPY - Start - added new AppAssistant
+
+	CSVOConfigAssistantDlg cDlg;
+
+	SVIMProductEnum eSVIMType = GetSVIMType();
+
+	cDlg.SetCurrentSystem( eSVIMType );
+
+	SVConfigurationObject* l_pConfig = NULL;
+	SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
+
+	if( l_pConfig != NULL )
+	{
+		if( l_pConfig->GetProductType() != SVIM_PRODUCT_TYPE_UNKNOWN )
+		{
+			cDlg.SetConfigurationSystem( l_pConfig->GetProductType() );
+		}
+		else
+		{
+			cDlg.SetConfigurationSystem( eSVIMType );
+		}
+	}
+	else
+	{
+		cDlg.SetConfigurationSystem( eSVIMType );
+	}
+
+	SVIOBoardCapabilities l_svCapable;
+	unsigned long l_lCount;
+	SVIOConfigurationInterfaceClass::Instance().GetDigitalInputCount( l_lCount );
+	l_svCapable.SetInputCount( l_lCount );
+	SVIOConfigurationInterfaceClass::Instance().GetDigitalOutputCount( l_lCount );
+	l_svCapable.SetOutputCount( l_lCount );
+
+	// Special code to determine the inverters 
+	// and triggers based on IO board
+	if( m_csIOBoard.Compare( "10" ) == 0 )
+	{
+		l_svCapable.SetStrobeInverters( 1 );
+		l_svCapable.SetTriggerInverters( 1 );
+		l_svCapable.SetTriggerCount( 1 );
+	}
+	else if( m_csIOBoard.Compare("12") == 0 )
+	{
+		l_svCapable.SetStrobeInverters( 1 );
+		l_svCapable.SetTriggerInverters( 1 );
+		l_svCapable.SetTriggerCount( 3 );
+	}
+	else if( m_csIOBoard.Compare("00") == 0 )
+	{
+		// SEJ 303 - Get Trigger count from the TriggerDLL (in this case the DigitizerDLL)
+		int numTriggers = 0;
+		const SVIMTypeInfoStruct& info = SVHardwareManifest::GetSVIMTypeInfo(eSVIMType);
+		l_svCapable.SetNonIOSVIM(info.m_MaxTriggers);
+	}
+	else 
+	{
+		l_svCapable.SetStrobeInverters( 3 );
+		l_svCapable.SetTriggerInverters( 3 );
+		l_svCapable.SetTriggerCount( 3 );
+	}
+
+	cDlg.SetIOBoardCapabilities( l_svCapable );
+
+	cDlg.SetNewConfiguration( bFileNewConfiguration );
+
+	SVSVIMStateClass::AddState( SV_STATE_EDITING );
+	if (cDlg.DoModal() == IDOK)
+	{
+		bOk = TRUE;
+		if (cDlg.Modified())
+		{
+			SVSVIMStateClass::AddState( SV_STATE_MODIFIED );
+		}
+		l_pConfig->ClearRemoteOutputUnUsedData();
+	}
+	SVSVIMStateClass::RemoveState( SV_STATE_EDITING );
+
+	CString sNewName;
+
+	//****RPY - End - added new AppAssistant
+
+	// Call the application assistant dialog...
+
+	if ( bOk )
+	{
+		CWaitCursor wait;
+
+		sNewName = cDlg.GetConfigurationName();
+		if( bFileNewConfiguration )
+		{
+			m_SECFileName.SetFileNameOnly( sNewName );
+			m_SECFileName.SetExtension( ".svx" );
+
+			SVInputObjectList	*pInputObjectList = NULL;
+			SVOutputObjectList	*pOutputObjectList = NULL;
+			SVDigitalOutputObject *pOutput = NULL;
+			SVDigitalInputObject *pInput = NULL;
+			SVPPQObject			 *pPPQ = NULL;
+			CString strName;
+			unsigned long ulCount = 0;
+			unsigned long l = 0;
+			long lPPQ = 0;
+			long lPPQCount = 0;
+
+			SVIOConfigurationInterfaceClass::Instance().GetDigitalInputCount( ulCount );
+
+			// Create all the default inputs
+			l_pConfig->GetInputObjectList( &pInputObjectList );
+
+			for( l = 0; l < ulCount; l++ )
+			{
+				pInput = NULL;
+
+				strName.Format( "DIO.Input%d", l+1 );
+
+				pInputObjectList->GetInputFlyweight( static_cast< LPCTSTR >( strName ), pInput );
+
+				if( pInput != NULL )
+				{
+					pInput->SetChannel( l );
+				}
+			}// end for
+
+			// Make all the PPQs build their default digital inputs
+			l_pConfig->GetPPQCount( lPPQCount );
+			for( lPPQ = 0; lPPQ < lPPQCount; lPPQ++ )
+			{
+				l_pConfig->GetPPQ( lPPQ, &pPPQ );
+
+				pPPQ->RebuildInputList(l_pConfig->HasCameraTrigger(pPPQ));
+				pPPQ->RebuildOutputList();
+			}// end for
+
+			// Create all the default outputs
+			l_pConfig->GetOutputObjectList( &pOutputObjectList );
+
+			pOutputObjectList->GetOutputFlyweight( "Module Ready", pOutput );
+
+			// @HACK:  JAB082212 HACK!!!!!
+			if( pOutput != NULL )
+			{
+				pOutput->SetChannel( 15 );
+
+				l_pConfig->GetModuleReady()->m_IOId = pOutput->GetUniqueObjectID();
+
+				SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputIsInverted (15, pOutput->IsInverted ());
+				SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputIsForced (15, pOutput->IsForced ());
+				SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputForcedValue (15, pOutput->GetForcedValue ());
+			}
+		}
+
+		if ( l_pConfig != NULL )
+		{
+			bOk = l_pConfig->RebuildInputOutputLists();
+
+			ConstructMissingDocuments();
+
+			// Check for Imported Inspection and adjust views, window placement and conditional history
+			const SVImportedInspectionInfoList& infoList = cDlg.GetImportedInspectionInfoList();
+			for (SVImportedInspectionInfoList::const_iterator it = infoList.begin();it != infoList.end();++it)
+			{
+				const SVImportedInspectionInfo& info = (*it);
+				SVIPDoc* pDoc = SVObjectManagerClass::Instance().GetIPDoc(info.m_inspectionGuid);
+				if (pDoc)
+				{
+					SVIPDocInfoImporter::Import(pDoc, info);
+				}
+			}
+			cDlg.ClearImportedInspectionInfoList();
+
+			if ( TheSVOLicenseManager().HasToolErrors() )
+			{
+				TheSVOLicenseManager().ShowLicenseManagerErrors();
+			}
+			else
+			{
+				//close dialog if it is up and has no errors
+				TheSVOLicenseManager().ClearLicenseErrors();
+			}
+
+			//
+			// Set the tool selected for an operator to move if any.
+			// 26 Jan 2000 - frb.
+			//
+			AfxGetMainWnd()->PostMessage( SV_SET_TOOL_SELECTED_IN_TOOL_VIEW, (WPARAM) TRUE );
+
+			bOk = l_pConfig->Activate() && bOk;
+		}
+
+		if( bFileNewConfiguration )
+		{
+			UpdateAllMenuExtrasUtilities();
+			SVSVIMStateClass::AddState( SV_STATE_READY );
+			SVSVIMStateClass::RemoveState( SV_STATE_AVAILABLE );
+		}
+
+		// Rebuild PPQBar Buttons
+		GetMainFrame()->DestroyPPQButtons();
+		GetMainFrame()->BuildPPQButtons();
+
+		// Validate Output List TB
+		if( l_pConfig->ValidateOutputList( ) == SV_FATAL_SVOBSERVER_2006_DUPLICATE_DISCRETE_OUTPUT )
+		{
+			::AfxMessageBox( "Invalid Discrete Outputs: Remove all Discrete Outputs and re-add them.", MB_ICONEXCLAMATION );
+		}
+	}// end if DoModal == IDOK
+
+	if ( ! bOk )
+	{
+		if( bFileNewConfiguration )
+		{
+			SVSVIMStateClass::AddState( SV_STATE_AVAILABLE );
+			SVSVIMStateClass::RemoveState( SV_STATE_READY );
+			SVSVIMStateClass::RemoveState( SV_STATE_MODIFIED );
+		}
+	}
+
+	return bOk;
+}
+
+bool SVObserverApp::OkToEdit()
+{
+	bool l_bOk = false;
+	if( SVSVIMStateClass::CheckState( SV_STATE_EDIT ))
+	{
+		if( m_svSecurityMgr.SVIsDisplayable( SECURITY_POINT_MODE_MENU_EDIT_TOOLSET ))
+		{
+			l_bOk = true;
+		}
+	}
+	return l_bOk;
+}
+
+bool SVObserverApp::OkToEditMove()
+{
+	bool l_bOk = false;
+	if( SVSVIMStateClass::CheckState( SV_STATE_EDIT_MOVE ))
+	{
+		if( m_svSecurityMgr.SVIsDisplayable( SECURITY_POINT_MODE_MENU_EDIT_MOVE_TOOL ))
+		{
+			l_bOk = true;
+		}
+	}
+	return l_bOk;
+}
+
+BOOL SVObserverApp::IsMonochromeImageAvailable()
+{
+	BOOL bOk = !IsColorSVIM();
+
+	CMDIChildWnd* pMDIChild;
+	if( m_pMainWnd && ( pMDIChild = ( ( CMDIFrameWnd* ) m_pMainWnd )->MDIGetActive() ) )
+	{
+		m_pCurrentDocument = dynamic_cast< SVIPDoc* >( pMDIChild->GetActiveDocument() );
+	}
+	else
+	{
+		return bOk;
+	}
+
+	if ( !bOk && m_pCurrentDocument )
+	{
+		SVObjectTypeInfoStruct info;
+
+		info.ObjectType = SVImageObjectType;
+		info.SubType = SVNotSetSubObjectType;
+
+		SVGetObjectDequeByTypeVisitor l_Visitor( info );
+
+		SVObjectManagerClass::Instance().VisitElements( l_Visitor, m_pCurrentDocument->GetInspectionID() );
+
+		SVGetObjectDequeByTypeVisitor::SVObjectPtrDeque::const_iterator l_Iter;
+
+		for( l_Iter = l_Visitor.GetObjects().begin(); !bOk && l_Iter != l_Visitor.GetObjects().end(); ++l_Iter )
+		{
+			SVImageClass* pImage = dynamic_cast< SVImageClass* >( const_cast< SVObjectClass* >( *l_Iter ) );
+
+			if( pImage != NULL && pImage->GetTool() != NULL )
+			{
+				if( m_pCurrentDocument->GetSelectedToolID() != pImage->GetTool()->GetUniqueObjectID() )
+				{
+					SVImageInfoClass ImageInfo = pImage->GetImageInfo();
+
+					long l_lBandNumber = 1;
+
+					bOk = ImageInfo.GetImageProperty( SVImagePropertyBandNumber, l_lBandNumber ) == S_OK && l_lBandNumber == 1;
+				}
+				else
+				{
+					break;
+				}
+			}
+		}
+	}
+
+	return bOk;
+}
+
+void SVObserverApp::SVGetCurrentConfigName(CString &ConfigName) const
+{
+	ConfigName = GetSECFullFileName();
+}
+
+void SVObserverApp::OnRCOpenCurrentSEC()
+{
+	OpenSECFile( SVRCGetSVCPathName() );
+}
+
+void SVObserverApp::OnRCOpenCurrentSVX()
+{
+	OpenSVXFile( SVRCGetSVCPathName() );
+}
+
+void SVObserverApp::SetupSVIMServer()
+{
+	if ( m_pSVIMServerWrapper ) { m_pSVIMServerWrapper->mSVIMServer.SetupConnection(); }
+}
+
+void SVObserverApp::UpdateAllMenuExtrasUtilities()
+{
+	SVUtilitiesClass util;
+	CMDIFrameWnd* pMainFrame;
+	CMenu* pMenu;
+	CString sMenuText;
+	HMENU hMenu=NULL;
+	CMenu menu;
+
+	pMainFrame = (CMDIFrameWnd*) AfxGetMainWnd ();
+	hMenu = pMainFrame->m_hMenuDefault;    // default menu
+	menu.Attach(hMenu);
+	pMenu = &menu;
+	sMenuText = _T("&Utilities");
+
+	if (pMenu = util.FindSubMenuByName (pMenu, sMenuText))
+	{
+		menu.Detach();
+		util.LoadMenu(pMenu);
+	}
+	else
+	{
+		menu.Detach();
+	}
+
+	// now cycle through all child MDI windows
+	CMDIChildWnd* pMdiChild = pMainFrame->MDIGetActive();
+
+	while (pMdiChild != NULL)
+	{
+		hMenu = ((CMdiChildWorkaround*)pMdiChild)->GetMenu();
+		menu.Attach(hMenu);
+		pMenu = &menu;
+
+		if (pMenu = util.FindSubMenuByName (pMenu, sMenuText))
+		{
+			menu.Detach();
+			util.LoadMenu(pMenu);
+		}
+		else
+		{
+			menu.Detach();
+		}
+		pMdiChild = (CMDIChildWnd*) pMdiChild->GetWindow(GW_HWNDNEXT);
+	}
+}
+
+// Source Image Depth plus 2 - adjusted length to handle 
+// locking issues with runonce and MaintainImages
+long SVObserverApp::GetSourceImageDepth() const
+{
+	return m_lSouceImageDepth + 2;
+}
+
+// Returns sourceImageDepth for the PPQ Length
+// This is not the real sourceImageDepth.
+long SVObserverApp::GetMaxPPQLength() const
+{
+	return m_lSouceImageDepth;
+}
+
+long SVObserverApp::GetResultImageDepth() const
+{
+	return m_lResultImageDepth;
+}
+
+long SVObserverApp::GetLogDataManager() const
+{
+	return m_LogDataManager;
+}
+
+long SVObserverApp::UpdateAndGetLogDataManager()
+{
+	m_LogDataManager = GetProfileInt(_T( "Settings" ),_T( "Log Data Manager" ), -1 );
+	if ( m_LogDataManager == -1 )
+	{
+		WriteProfileInt(_T( "Settings" ),_T( "Log Data Manager" ), 0 );
+
+		m_LogDataManager = 0;
+	}
+
+	return m_LogDataManager;
+}
+
+void SVObserverApp::DeselectTool()
+{
+	SVMainFrame * pWndMain = (SVMainFrame *)GetMainWnd( );
+	if(pWndMain)
+	{
+		pWndMain->PostMessage( SV_SET_TOOL_SELECTED_IN_TOOL_VIEW, (WPARAM)FALSE );   // Deselect any tool selected for move.
+	}
+}
+
+HRESULT SVObserverApp::DisplayCameraManager(SVIMProductEnum eProductType) 
+{
+	HRESULT hr = S_OK;
+
+	CStringArray saCameras;
+	HCURSOR hCursor=NULL;
+	hCursor = ::LoadCursor( NULL, IDC_WAIT );
+	hCursor = ::SetCursor( hCursor );
+
+	try
+	{
+		hr = DisconnectCameras( saCameras );
+	}
+	catch (...)
+	{
+		ASSERT(FALSE);
+	}
+
+	try
+	{
+		::SetCursor( hCursor );
+
+		if ( hr == S_OK )
+		{
+			if (SVHardwareManifest::IsMatroxGige(eProductType))
+			{
+				SVGigeCameraManagerDlg dlg;
+				dlg.DoModal();
+			}
+			else
+			{
+				SV1394CameraManagerDlg dlg;
+				dlg.DoModal();				
+			}
+		}
+	}
+	catch (...)
+	{
+		ASSERT(FALSE);
+	}
+
+	hCursor = ::LoadCursor( NULL, IDC_WAIT );
+	hCursor = ::SetCursor( hCursor );
+
+	ConnectCameras( saCameras );
+	SendCameraParameters( saCameras );
+
+	::SetCursor( hCursor );
+
+	return hr;
+}
+
+HRESULT SVObserverApp::DisconnectToolsetBuffers()
+{
+	// EB 2002 02 28
+	// Added this to fix memory leak freeing MIL buffers
+	// before we close Acq devices, we need to tell all toolsets to Close
+	// this closes the connection between toolset images and the MIL acq image.
+
+	SVConfigurationObject* l_pConfig = NULL;
+	SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
+
+	long lInspectionCount = 0;
+	SVInspectionProcess* pInspection = NULL;
+	l_pConfig->GetInspectionCount( lInspectionCount );
+
+	for ( long lInspection = 0; lInspection < lInspectionCount; lInspection++ )
+	{
+		l_pConfig->GetInspection( lInspection, &pInspection );
+		if ( pInspection != NULL )
+		{
+			if ( pInspection->GetToolSet() != NULL )
+			{
+				pInspection->DisconnectToolSetMainImage();
+			}
+		}
+	}
 
 	return S_OK;
+}
+
+HRESULT SVObserverApp::ConnectToolsetBuffers()
+{
+	// EB 2002 02 28
+	// Added this to fix memory leak freeing MIL buffers
+	// before we close Acq devices, we need to tell all toolsets to Close
+	// reopen the connection between toolset images and the MIL acq image here.
+
+	SVConfigurationObject* l_pConfig = NULL;
+	SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
+
+	long lInspectionCount = 0;
+	SVInspectionProcess* pInspection = NULL;
+	l_pConfig->GetInspectionCount( lInspectionCount );
+
+	for ( long lInspection = 0; lInspection < lInspectionCount; lInspection++ )
+	{
+		l_pConfig->GetInspection( lInspection, &pInspection );
+		if ( pInspection != NULL )
+		{
+			if ( pInspection->GetToolSet() != NULL )
+			{
+				pInspection->ConnectToolSetMainImage();
+			}
+		}
+	}
+
+	return S_OK;
+}
+
+HRESULT SVObserverApp::DisconnectCameras( CStringArray& rDisconnectedCameras )
+{
+	HRESULT hr = S_OK;
+
+	try
+	{
+		hr = DisconnectAllCameraBuffers( rDisconnectedCameras );
+	}
+	catch (...)
+	{
+		ASSERT(FALSE);
+		hr = SV_FALSE;
+	}
+
+	SVDigitizerProcessingClass::Instance().DisconnectDevices();
+
+	return hr;
+}
+
+HRESULT SVObserverApp::ConnectCameras( const CStringArray& rCamerasToConnect )
+{
+	HRESULT hr = S_OK;
+
+	SVDigitizerProcessingClass::Instance().ConnectDevices();
+
+	try
+	{
+		hr = ConnectCameraBuffers( rCamerasToConnect );
+	}
+	catch (...)
+	{
+		ASSERT(FALSE);
+		hr = SV_FALSE;
+	}
+
+	return hr;
+}
+
+HRESULT SVObserverApp::SendCameraParameters( const CStringArray& rCameras )
+{
+	HRESULT hr = S_OK;
+	SVConfigurationObject* l_pConfig = NULL;
+	SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
+
+	for ( int i=0; i < rCameras.GetSize(); i++ )
+	{
+		SVAcquisitionClassPtr pDevice;
+		SVDeviceParamCollection* pDeviceParams = NULL;
+
+		SVFileNameArrayClass* pDummyFiles = NULL;
+		SVLightReference* pDummyLight = NULL;
+		SVLut* pDummyLut = NULL;
+
+		if ( SVImageProcessingClass::Instance().GetAcquisitionDevice( rCameras.GetAt(i), pDevice ) == S_OK
+			&& l_pConfig->GetAcquisitionDevice(rCameras.GetAt(i), pDummyFiles, pDummyLight, pDummyLut, pDeviceParams ) )
+		{
+			// Check for the camera file and camera to match.
+			if( hr == S_OK )
+			{
+				HRESULT l_hrTmp = pDevice->IsValidCameraFileParameters( *pDeviceParams );
+				if( l_hrTmp != E_NOTIMPL && l_hrTmp != S_OK)
+				{
+					hr = SV_CAN_GO_ONLINE_FAILURE_ACQUISITION;
+				}
+			}
+
+			// Send GIGE packet size if was set from hardware.ini
+			if (IsMatroxGige() && m_gigePacketSize != 0)
+			{
+				SetGigePacketSizeDeviceParam(pDeviceParams);
+			}
+
+			if (pDeviceParams)
+			{
+				pDevice->SetDeviceParameters( *pDeviceParams );	// must be done before CreateBuffers for 1394 (in case CameraFormat changes) - EB 20030714
+			}
+
+			if (pDummyLight)
+			{
+				pDevice->SetLightReference( *pDummyLight );	// I HATE LIGHT REFERENCE
+			}
+			// LR needs to be redone so that it does not contain values, only references to device params.
+		}
+	}
+
+	return hr;
+}
+
+void SVObserverApp::SetGigePacketSizeDeviceParam(SVDeviceParamCollection* pDeviceParams)
+{
+	// check if Packet Size Device Param exists
+	SVDeviceParam* l_pGigePacketSize = pDeviceParams->GetParameter( DeviceParamGigePacketSize );
+	// if found - update it
+	// else - add it
+	if ( l_pGigePacketSize != NULL )
+	{
+		l_pGigePacketSize->SetValue(_variant_t(m_gigePacketSize));
+	}
+	else // add it
+	{
+		pDeviceParams->SetParameter( DeviceParamGigePacketSize, (const SVDeviceParam*) SVDeviceParamTempWrapper(SVDeviceParam::Create( DeviceParamGigePacketSize )) );
+		SVLongValueDeviceParam* pParam = pDeviceParams->GetParameter( DeviceParamGigePacketSize ).DerivedValue(pParam);
+		ASSERT( pParam );
+		pParam->lValue = m_gigePacketSize;
+		pParam->SetName(DeviceParamGigePacketSize_String);
+	}
+}
+
+HRESULT SVObserverApp::SetModeEdit( bool p_bState ) 
+{
+	HRESULT l_hr = S_OK;
+	if( p_bState )
+	{
+		SVSVIMStateClass::AddState( SV_STATE_EDIT );
+		SVSVIMStateClass::AddState( SV_STATE_SECURED );
+		SVSVIMStateClass::RemoveState( SV_STATE_EDIT_MOVE );
+		DisplayAddMenu(true);
+	}
+	else
+	{
+		SVSVIMStateClass::RemoveState( SV_STATE_EDIT );
+		SVSVIMStateClass::RemoveState( SV_STATE_SECURED );
+		//
+		// We need to deselect any tool that might be set for operator move.
+		//
+		DeselectTool();
+
+		DisplayAddMenu(false);
+	}
+	return l_hr;
+}
+
+HRESULT SVObserverApp::SetModeEditMove( bool l_bState ) 
+{
+	HRESULT l_hr = S_OK;
+
+	if( l_bState )
+	{
+		SVSVIMStateClass::AddState( SV_STATE_EDIT_MOVE );
+		SVSVIMStateClass::RemoveState( SV_STATE_EDIT );
+		SVSVIMStateClass::RemoveState( SV_STATE_SECURED );
+		SVMainFrame * pWndMain = (SVMainFrame *)GetMainWnd( );
+		if(pWndMain)
+		{
+			pWndMain->PostMessage(SV_SET_TOOL_SELECTED_IN_TOOL_VIEW, (WPARAM)TRUE);
+		}
+	}
+	else
+	{
+		// We need to deselect any tool that might be set for operator move.
+		DeselectTool();
+		SVSVIMStateClass::RemoveState( SV_STATE_SECURED );
+		SVSVIMStateClass::RemoveState( SV_STATE_EDIT_MOVE );
+	}
+	return l_hr;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// .Title       : SetTestMode
+// -----------------------------------------------------------------------------
+// .Description : ...
+//              :
+// -----------------------------------------------------------------------------
+// .Input(s)
+//	 Type				Name				Description
+//	: 
+//  :
+// .Output(s)
+//	:
+//  :
+// .Return Value
+//	: 
+// -----------------------------------------------------------------------------
+// .Import Function Reference(s)
+//	:
+// -----------------------------------------------------------------------------
+// .Import Variable Reference(s)
+//	:
+////////////////////////////////////////////////////////////////////////////////
+// .History
+//	 Date		Author		Comment                                       
+//  :27.05.1997 RO			First Implementation
+//	:
+////////////////////////////////////////////////////////////////////////////////
+void SVObserverApp::SetTestMode(bool p_bNoSecurity ) 
+{
+	bool l_bAllowAccess = false;
+
+	if ( SVSVIMStateClass::CheckState( SV_STATE_TEST ) )
+	{
+		if ( !SVSVIMStateClass::CheckState( SV_STATE_REGRESSION ) )
+		{
+			return;
+		}
+	}
+
+	if ( SVSVIMStateClass::CheckState( SV_STATE_RUNNING ) )
+	{
+		if( p_bNoSecurity || m_svSecurityMgr.SVValidate( SECURITY_POINT_MODE_MENU_EXIT_RUN_MODE, 
+			SECURITY_POINT_MODE_MENU_TEST ) == S_OK )
+		{
+			OnStop();
+			l_bAllowAccess = true;
+		}
+	}
+	else if( p_bNoSecurity || m_svSecurityMgr.SVValidate( SECURITY_POINT_MODE_MENU_TEST ) == S_OK )
+	{
+		l_bAllowAccess = true;
+	}
+
+	if( l_bAllowAccess )
+	{
+		if ( SVSVIMStateClass::CheckState( SV_STATE_REGRESSION ) )
+		{
+			StopRegression();
+		}
+
+		if( !SVSVIMStateClass::CheckState( SV_STATE_TEST ) && 
+			!SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_STOP_PENDING | SV_STATE_STOPING ) )
+		{
+			UpdateAndGetLogDataManager();
+
+			if( m_pMainWnd )
+			{
+				SVPPQObject *pPPQ = NULL;
+				long l;
+				long lSize;
+				HRESULT hrReady = S_OK;
+
+				SVConfigurationObject* l_pConfig = NULL;
+				SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
+
+				SVSoftwareTriggerDlg & l_trgrDlg = SVSoftwareTriggerDlg::Instance();
+				l_trgrDlg.ShowWindow(SW_HIDE);
+				l_trgrDlg.ClearTriggers();
+				l_pConfig->GetPPQCount( lSize );
+				HRESULT l_hrOk = S_OK;
+				for( l = 0; l_hrOk == S_OK && l < lSize; l++ )
+				{
+					l_pConfig->GetPPQ( l, &pPPQ );
+					l_hrOk = pPPQ->CanGoOnline();
+					SVTriggerObject * l_trigger = NULL;
+					pPPQ->GetTrigger(l_trigger);
+					if (l_trigger->IsSoftwareTrigger())
+					{
+						l_trgrDlg.AddTrigger(l_trigger);
+					}
+				}// end for
+
+				if (l_trgrDlg.HasTriggers())
+				{
+					l_trgrDlg.SelectTrigger();
+				}
+
+				l_pConfig->GetPPQCount( lSize );
+				for( l = 0; hrReady == S_OK && l < lSize; l++ )
+				{
+					l_pConfig->GetPPQ( l, &pPPQ );
+					hrReady = pPPQ->CanGoOnline();
+				}// end for
+
+				if( hrReady != S_OK )
+				{
+					return;
+				}
+
+				for( l = 0; hrReady == S_OK && l < lSize; l++ )
+				{
+					l_pConfig->GetPPQ( l, &pPPQ );
+					hrReady = pPPQ->GoOnline();
+				}// end for
+
+				if( hrReady != S_OK )
+				{
+					for( l = 0; l < lSize; l++ )
+					{
+						l_pConfig->GetPPQ( l, &pPPQ );
+						pPPQ->GoOffline();
+					}// end for
+
+					SetAllIPDocumentsOffline();
+					return;
+				}// end if
+
+				SetAllIPDocumentsOnline();
+
+				SVSVIMStateClass::AddState( SV_STATE_TEST );
+				SVSVIMStateClass::RemoveState( SV_STATE_EDIT );
+				SVSVIMStateClass::RemoveState( SV_STATE_EDIT_MOVE );
+
+				l_pConfig->SetModuleReady( true );
+
+				SVObjectManagerClass::Instance().SetState( SVObjectManagerClass::ReadOnly );
+
+				if (SVSoftwareTriggerDlg::Instance().HasTriggers())
+				{
+					EnableTriggerSettings();
+				}
+				else
+				{
+					DisableTriggerSettings();
+				}
+			}// end if
+		}
+	}
+}
+
+HRESULT SVObserverApp::GetTriggersAndCounts( CString& p_strTrigCnts )
+{
+	HRESULT l_hr = S_FALSE;
+	long l_lCount = 0;
+	SVConfigurationObject* l_pConfig = NULL;
+	SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
+
+	if( l_pConfig != NULL && l_pConfig->GetPPQCount(l_lCount))
+	{
+		for( int l_lPPQ = 0 ; l_lPPQ < l_lCount; l_lPPQ++)
+		{
+			SVPPQObject* l_pPPQ = NULL;
+			if( l_pConfig->GetPPQ(l_lPPQ, &l_pPPQ ) )
+			{
+				CString l_strTmp;
+				SVTriggerObject* l_pTrigger=NULL;
+				if( l_pPPQ->GetTrigger( l_pTrigger ))
+				{
+					l_hr = S_OK;
+					l_pTrigger->m_lTriggerCount;
+					l_strTmp.Format( "\n%s count-%d", l_pTrigger->GetName(), l_pTrigger->m_lTriggerCount );
+					p_strTrigCnts += l_strTmp;
+				}
+			}
+		}
+	}
+	return l_hr;
 }
 
 void SVObserverApp::RefreshAllIPDocuments()
@@ -1555,42 +7694,6 @@ void SVObserverApp::SetAllIPDocumentsOnline()
 	}
 }
 
-void SVObserverApp::ResetAllIPDocModifyFlag(BOOL bModified)
-{
-	POSITION pos = GetFirstDocTemplatePosition();
-	if( pos )
-	{
-		do
-		{
-			CDocTemplate* pDocTemplate = GetNextDocTemplate( pos );
-			if( pDocTemplate )
-			{
-				POSITION posDoc = pDocTemplate->GetFirstDocPosition();
-				if ( posDoc )
-				{
-					do
-					{
-						CDocument* newDoc = pDocTemplate->GetNextDoc(posDoc);
-						if ( newDoc )
-						{
-							SVIPDoc* pTmpDoc = dynamic_cast <SVIPDoc*> (newDoc);
-
-							if( pTmpDoc != NULL )
-							{
-								pTmpDoc->SetModifiedFlag(bModified);
-							}
-						}
-					}
-					while( posDoc );
-				}
-			}
-		}
-		while( pos );
-	}
-	//also set the IODoc Modified flag
-	GetIODoc()->SetModifiedFlag(bModified);
-}
-
 void SVObserverApp::SetAllIPDocumentsOffline()
 {
 	//get list of IPDoc's.
@@ -1627,856 +7730,1228 @@ void SVObserverApp::SetAllIPDocumentsOffline()
 	}
 }
 
-bool SVObserverApp::AddSecurityNode( HMODULE hMessageDll, long lId )
+void SVObserverApp::ResetAllIPDocModifyFlag(BOOL bModified)
 {
-
-	bool l_bRet = true;
-	LPTSTR pszTmp;
-	
-	if (FormatMessage (FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_IGNORE_INSERTS |
-			FORMAT_MESSAGE_FROM_HMODULE,
-			(LPCVOID) hMessageDll, lId,
-			MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), // Default language
-			(LPTSTR) &pszTmp, 0, NULL))
+	POSITION pos = GetFirstDocTemplatePosition();
+	if( pos )
 	{
+		do
+		{
+			CDocTemplate* pDocTemplate = GetNextDocTemplate( pos );
+			if( pDocTemplate )
+			{
+				POSITION posDoc = pDocTemplate->GetFirstDocPosition();
+				if ( posDoc )
+				{
+					do
+					{
+						CDocument* newDoc = pDocTemplate->GetNextDoc(posDoc);
+						if ( newDoc )
+						{
+							SVIPDoc* pTmpDoc = dynamic_cast <SVIPDoc*> (newDoc);
 
-		CString strTmp = pszTmp;
-		int l_pos = strTmp.Find('\n',0);
-		if( l_pos > 0 )
-		{
-			m_svSecurityMgr.SVAdd( lId, strTmp.Left( l_pos -1) );
+							if( pTmpDoc != NULL )
+							{
+								pTmpDoc->SetModifiedFlag(bModified);
+							}
+						}
+					}
+					while( posDoc );
+				}
+			}
 		}
-		else
-		{
-			l_bRet = false;
-		}
-		LocalFree( pszTmp );
+		while( pos );
 	}
+	//also set the IODoc Modified flag
+	GetIODoc()->SetModifiedFlag(bModified);
+}
+
+bool SVObserverApp::SetActiveIOTabView( SVTabbedViewSplitterIDEnum p_eTabbedID )
+{
+	bool l_bRet = false;
+
+	SVIODoc* l_pIODoc = GetIODoc();
+
+	if( l_pIODoc != NULL )
+	{
+		// Get the active MDI child window.             
+		POSITION pos = l_pIODoc->GetFirstViewPosition();
+		CView *pView = l_pIODoc->GetNextView( pos );
+
+		CMDIChildWnd *pFrame = (CMDIChildWnd*) pView->GetParentFrame();
+		SVIOTabbedView* pIOView = dynamic_cast<SVIOTabbedView*>( pFrame );
+		if( pIOView )
+		{
+			TVisualObject* l_VisObj = pIOView->m_Framework.Get(p_eTabbedID);
+			pIOView->m_Framework.SetActiveTab( l_VisObj );
+#ifndef _WIN64
+			SVPLCOutputsView* l_pPLCView =  dynamic_cast<SVPLCOutputsView*>(pIOView->GetWindow( GW_HWNDFIRST ));
+			if( l_pPLCView )
+			{
+				OnUpdateAllIOViews(); // OnUpdate( NULL, NULL, NULL );
+			}
+#endif
+			l_bRet = true;
+		}
+	}// end if( PIODoc
 	return l_bRet;
 }
 
-bool SVObserverApp::AddSecurityNode( HMODULE hMessageDll, long lId ,CString sNTGroup, bool bForcePrompt)
+#ifndef _WIN64
+// This function Sets the active Tab to inputs view and 
+// Hides the PLC tab
+void SVObserverApp::HidePLCTab()
 {
+	SVMainFrame* pWndMain = ( SVMainFrame* )GetMainWnd();
+	SetActiveIOTabView( SVIODiscreteInputsViewID );
 
-	LPTSTR pszTmp;
-	
-	if (FormatMessage (FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_IGNORE_INSERTS |
-			FORMAT_MESSAGE_FROM_HMODULE,
-			(LPCVOID) hMessageDll, lId,
-			MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), // Default language
-			(LPTSTR) &pszTmp, 0, NULL))
+	pWndMain->PostMessage( SV_IOVIEW_HIDE_TAB, SVIOPLCOutputsViewID );
+}
+#endif
+
+void SVObserverApp::HideRemoteOutputTab()
+{
+	SVMainFrame* pWndMain = ( SVMainFrame* )GetMainWnd();
+	SetActiveIOTabView( SVIODiscreteInputsViewID );
+
+	pWndMain->PostMessage( SV_IOVIEW_HIDE_TAB, SVRemoteOutputsViewID );
+}
+
+void SVObserverApp::HideIOTab( DWORD p_dwID )
+{
+	SVIODoc* l_pIODoc = GetIODoc();
+
+	if( l_pIODoc != NULL )
 	{
-
-		CString strTmp = pszTmp;
-		m_svSecurityMgr.SVAdd( lId, strTmp.Left( strTmp.Find('\n',0) -1), sNTGroup, bForcePrompt);
-		LocalFree( pszTmp );
-		return true;
-	}
-	return false;
-}
-
-int SVObserverApp::ExitInstance() 
-{
-	SVDirectX::Instance().clear();
-
-	SVVisionProcessorHelper::Instance().Shutdown();
-	SVOutputStreamManager::Instance().Shutdown();
-	SVInputStreamManager::Instance().Shutdown();
-	SVSocketRemoteCommandManager::Instance().Shutdown();
-
-	SVSocketLibrary::Destroy();
-
-	ValidateMRUList();
-
-	// Destroy still open message windows
-	DestroyMessageWindow();
-
-	#if !defined( _DEBUG ) && !defined( _MINDEBUG )
-		// Display close window	
-		pMessageWindow = new SVMessageWindowClass;
-		if( pMessageWindow && pMessageWindow->Create( IDD_MESSAGE_DIALOG ) )
-			pMessageWindow->ShowWindow( SW_SHOW );
-	#else
-		pMessageWindow = NULL;
-	#endif
-
-	// *** // ***
-	SVObjectManagerClass::Instance().DestroyConfigurationObject();
-	// *** // ***
-
-	DestroySVIMServer();
-	
-	INIClose();
-
-	m_mgrRemoteFonts.Shutdown();
-
-	// BRW - SVImageCompression has been deprecated.
-	/*if ( m_bImageCompressionStarted )
-	{
-		SVImageCompressionClass mainCompressionObject (SERVER_COMPRESSION_POOL_SIZE);
-
-		mainCompressionObject.DestroyResourcePool ();
-	}*/
-
-	SVTriggerProcessingClass::Instance().Shutdown();
-	SVDigitizerProcessingClass::Instance().Shutdown();
-	SVHardwareManifest::Instance().Shutdown();
-
-	SVObjectManagerClass::Instance().Shutdown();
-	SVClassRegisterListClass::Instance().Shutdown();
-
-	SVIOConfigurationInterfaceClass::Instance().Shutdown();
-
-	// Shutdown MIL
-	SVMatroxApplicationInterface::Shutdown();
-
-	//add message to event viewer - SVObserver stopped
-	SVException svE;
-	SETEXCEPTION0(svE,SVMSG_SVO_26_SVOBSERVER_STOPPED);
-	svE.LogException();
-	CloseHandle( m_hEvent );
-	DisableCrashFilter();
-
-	#if !defined(_WIN32_WCE) || defined(_CE_DCOM)
-		if( m_bATLInited )
+		POSITION lViewPos = l_pIODoc->GetFirstViewPosition();
+		do 
 		{
-			_Module.RevokeClassObjects();
-		}
-	#endif
+			CView* pView = l_pIODoc->GetNextView( lViewPos );
 
-	return CWinApp::ExitInstance();
-}
-
-SVMainFrame* SVObserverApp::GetMainFrame() const
-{
-	return dynamic_cast< SVMainFrame* >( m_pMainWnd );
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// CanClose Operator
-////////////////////////////////////////////////////////////////////////////////
-
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : // e.g. Compare member function of class ...
-// -----------------------------------------------------------------------------
-// .Description : ...
-//              :
-// -----------------------------------------------------------------------------
-// .Input(s)
-//	 Type				Name				Description
-//	: 
-//  :
-// .Output(s)
-//	:
-//  :
-// .Return Value
-//	: 
-// -----------------------------------------------------------------------------
-// .Import Function Reference(s)
-//	:
-// -----------------------------------------------------------------------------
-// .Import Variable Reference(s)
-//	:
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :27.05.1997 RO			First Implementation
-//	:
-////////////////////////////////////////////////////////////////////////////////
-HRESULT SVObserverApp::CanCloseMainFrame()
-{
-	return DestroySEC();
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// Create Operator
-////////////////////////////////////////////////////////////////////////////////
-
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : CreateSEC
-// -----------------------------------------------------------------------------
-// .Description : ...
-//              :
-// -----------------------------------------------------------------------------
-// .Input(s)
-//	 Type				Name				Description
-//	: 
-//  :
-// .Output(s)
-//	:
-//  :
-// .Return Value
-//	: 
-// -----------------------------------------------------------------------------
-// .Import Function Reference(s)
-//	:
-// -----------------------------------------------------------------------------
-// .Import Variable Reference(s)
-//	:
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :27.05.1997 RO			First Implementation
-//	:
-////////////////////////////////////////////////////////////////////////////////
-BOOL SVObserverApp::CreateSEC( BOOL NewSEC )
-{
-	BOOL bOk = FALSE;
-
-	// &&&
-	if( NewSEC )
-	{
-		SetSECFullFileName( (LPCTSTR)NULL );
-
-		// Get SEC creation date...
-		LPTSTR pString = CreationSECDate.GetBuffer( 32 );
-
-		if ( GetDateFormat( LOCALE_SYSTEM_DEFAULT,				    // locale for which date is to be formatted 
-							        0,									              // flags specifying function options 
-							        NULL,								              // date to be formatted
-							        _T( "ddd',' dd'.' MMM'.' yyyy" ),	// date format string
-							        pString,								          // buffer for storing formatted string
-							        31 ) == 0 )					              // size of buffer
-		{
-			CreationSECDate.ReleaseBuffer();
-			CreationSECDate = _T( "(Unknown)" );
-		}
-		else
-		{
-			pString[ 31 ] = '\0';
-			CreationSECDate.ReleaseBuffer();
-		}
-
-		CurrentSECDate = CreationSECDate;
-	}
-
-	bOk = TRUE;
-
-	return bOk;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// Destroy Operator
-////////////////////////////////////////////////////////////////////////////////
-
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : DestroySEC
-// -----------------------------------------------------------------------------
-// .Description : ...
-//              :
-// -----------------------------------------------------------------------------
-// .Input(s)
-//	 Type				Name				Description
-//	: 
-//  :
-// .Output(s)
-//	:
-//  :
-// .Return Value
-//	: 
-// -----------------------------------------------------------------------------
-// .Import Function Reference(s)
-//	:
-// -----------------------------------------------------------------------------
-// .Import Variable Reference(s)
-//	:
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :27.05.1997 RO			First Implementation
-//	:
-////////////////////////////////////////////////////////////////////////////////
-HRESULT SVObserverApp::DestroySEC( BOOL AskForSavingOrClosing /* = TRUE */, 
-																	BOOL CloseWithoutHint /* = FALSE */ )
-{
-	BOOL bCancel = FALSE;
-	
-	BOOL bOk = ! SVSVIMStateClass::CheckState( SV_STATE_READY | SV_STATE_RUNNING | SV_STATE_TEST );
-	HRESULT hr= S_OK;
-	
-	// &&&
-	if ( ! bOk )
-	{
-		CString message;
-		BOOL bClose = TRUE;
-		
-		if ( CloseWithoutHint )
-		{
-			SVSVIMStateClass::AddState( SV_STATE_CANCELING );
-		}
-		else
-		{
-			AfxFormatString1( message, IDS_USER_QUESTION_CLOSE_SEC, GetSECFileName() ); 
-			bClose = AfxMessageBox( message, MB_YESNO | MB_ICONQUESTION ) == IDYES;
-			if (bClose == FALSE)
-				hr = ERROR_CANCELLED;
-		}
-		
-		if ( bClose )
-		{
-			if ( SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) )
+			CMDIChildWnd *pFrame = (CMDIChildWnd*) pView->GetParentFrame();
+			SVIOTabbedView* pIOView = dynamic_cast<SVIOTabbedView*>( pFrame );
+			if( pIOView )
 			{
-				OnStop();
+				TVisualObject* l_VisObj = pIOView->m_Framework.Get( p_dwID );
+				l_VisObj->ShowTab( false );
+				break;
 			}
-			
-			if ( AskForSavingOrClosing )
+		}
+		while ( lViewPos );
+	}
+}
+
+void SVObserverApp::ShowIOTab( DWORD p_dwID )
+{
+	SVIODoc* l_pIODoc = GetIODoc();
+
+	if( l_pIODoc != NULL )
+	{
+		POSITION lViewPos = l_pIODoc->GetFirstViewPosition();
+		do 
+		{
+			CView* pView = l_pIODoc->GetNextView( lViewPos );
+
+			CMDIChildWnd *pFrame = (CMDIChildWnd*) pView->GetParentFrame();
+			SVIOTabbedView* pIOView = dynamic_cast<SVIOTabbedView*>( pFrame );
+			if( pIOView )
 			{
-				// Check if current SEC is modified and ask for saving
-				if ( SVSVIMStateClass::CheckState( SV_STATE_MODIFIED ) )
+				TVisualObject* l_VisObj = pIOView->m_Framework.Get( p_dwID );
+				if( l_VisObj )
 				{
-					AfxFormatString1( message, IDS_USER_QUESTION_SAVE_CHANGES, GetSECFileName() ); 
-					switch( AfxMessageBox( message, MB_YESNOCANCEL | MB_ICONQUESTION ) )
+					l_VisObj->ShowTab( true );
+#ifndef _WIN64
+					SVPLCOutputsView* l_pPLCView =  dynamic_cast<SVPLCOutputsView*>(l_VisObj->GetWnd());
+					if( l_pPLCView )
 					{
-					case IDNO:
-						{
-							SVSVIMStateClass::AddState( SV_STATE_CANCELING );
-							ResetAllIPDocModifyFlag(FALSE);
-							break;
-						}
-					case IDYES:
-						{
-							if( m_svSecurityMgr.SVValidate( SECURITY_POINT_FILE_MENU_SAVE_CONFIGURATION ) == S_OK )
-							{
-									OnFileSaveSec();
-									ResetAllIPDocModifyFlag(FALSE);
-						
-								// Check whether SEC saving is done.
-								// If not, an error or an user cancel
-								// command occured!
-								bClose = ! CString( GetSECFullFileName() ).IsEmpty() &&
-									! SVSVIMStateClass::CheckState( SV_STATE_MODIFIED );
-							}
-							break;
-						}
-					case IDCANCEL:
-					default:	// Don´t close SEC!
-						{
-							bCancel = TRUE;
-							bClose = FALSE;
-							break;
-						}
-					}// end switch( AfxMessageBox( message, MB_YESNOCANCEL | MB_ICONQUESTION ) )
-				}// end if ( SVSVIMStateClass::CheckState( SV_STATE_MODIFIED ) )
+						OnUpdateAllIOViews(); // OnUpdate( NULL, NULL, NULL );
+					}
+#endif
+				}
+				break;
+			}
+		}
+		while ( lViewPos );
+	}
+}
+
+void SVObserverApp::UpdateRemoteInputTabs()
+{
+	// Remote Inputs
+	bool l_bHideIOTab = true;
+	SVConfigurationObject* l_pConfig = NULL;
+	SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
+
+	if( l_pConfig != NULL )
+	{
+		SVInputObjectList* l_pList=NULL;
+		l_pConfig->GetInputObjectList( &l_pList );
+		if( l_pList != NULL )
+		{
+			long lSize;
+			l_pList->GetRemoteInputCount( lSize );
+			if( lSize > 0 )
+			{
+				l_bHideIOTab = false;
+			}
+		}
+	}
+
+	if( l_bHideIOTab )
+	{
+		HideIOTab( SVIORemoteInputsViewID );
+	}
+}
+
+HRESULT SVObserverApp::CheckDrive(const CString& p_strDrive) const
+{
+	HRESULT l_hr = S_OK;
+	// Check if exists
+	if( PathFileExists(p_strDrive) == FALSE )
+	{
+		CString l_strTmp;
+		CString l_strDrive;
+		l_strDrive = p_strDrive;
+		l_strDrive.MakeUpper();
+		l_strDrive = l_strDrive.Left(1);
+		l_strTmp.Format(_T("%s - Drive does not exist"), l_strDrive);
+		SVException svE;
+		SETEXCEPTION1(svE,SVMSG_SVO_47_EXCEPTION_SYSTEM_SETUP,l_strTmp);
+		svE.LogException(l_strTmp);
+
+		AfxMessageBox(l_strTmp);
+	}
+	TCHAR szVolumeName[100];
+	TCHAR szFileSystemName[32];
+	DWORD dwSerialNumber;
+	DWORD dwMaxFileNameLength;
+	DWORD dwFileSystemFlags;
+
+	if( GetVolumeInformation( p_strDrive,
+		szVolumeName,
+		sizeof( szVolumeName),
+		&dwSerialNumber,
+		&dwMaxFileNameLength,
+		&dwFileSystemFlags,
+		szFileSystemName,
+		sizeof(szFileSystemName)))
+	{
+		CString l_strName(szFileSystemName);
+		if( l_strName.Find(_T("NTFS")) < 0)
+		{
+			CString l_strDrive ;
+			CString l_strTmp;
+			l_strDrive = p_strDrive;
+			l_strDrive.MakeUpper();
+			l_strDrive = l_strDrive.Left(1);
+			l_strTmp.Format(_T("%s - Drive is not NTFS"), l_strDrive);
+			SVException svE;
+			SETEXCEPTION1(svE,SVMSG_SVO_47_EXCEPTION_SYSTEM_SETUP,l_strTmp);
+			svE.LogException(l_strTmp);
+			AfxMessageBox( l_strTmp );
+		}
+	}
+
+	return l_hr;
+}
+#pragma endregion Public Methods
+
+#pragma region Protected Methods
+HRESULT SVObserverApp::Start() 
+{
+	HRESULT l_hrOk = S_OK;
+
+	SVSVIMStateClass::RemoveState( SV_STATE_EDIT | SV_STATE_EDIT_MOVE );
+
+	if ( SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_STARTING ) )
+	{
+		if ( SVSVIMStateClass::CheckState( SV_STATE_START_PENDING ) )
+		{
+			SVSVIMStateClass::RemoveState( SV_STATE_START_PENDING );
+		}
+
+		return S_OK;
+	}
+
+	if ( SVSVIMStateClass::CheckState( SV_STATE_LOADING | SV_STATE_STOPING ) )
+	{
+		SVSVIMStateClass::AddState( SV_STATE_START_PENDING );
+
+		return S_OK;
+	}
+
+	UpdateAndGetLogDataManager();
+
+	SVClock::SVTimeStamp l_StartLoading;
+	SVClock::SVTimeStamp l_FinishLoad;
+
+	l_StartLoading = SVClock::GetTimeStamp();
+
+	SVConfigurationObject* l_pConfig = NULL;
+	SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
+#ifndef _WIN64
+	if( l_pConfig->GetPLCCount() > 0 )
+	{
+		if( m_PLCManager.TestConnections() == false )
+		{
+			return SV_GO_ONLINE_FAILURE_PLC;
+		}
+	}
+#endif
+
+	if ( m_pMainWnd )
+	{
+		SVPPQObject *pPPQ = NULL;
+		long l;
+		long lSize;
+		CStringArray saCameras;
+
+		SVDigitizerProcessingClass::Instance().StoreLastCameraImage();
+
+		DisconnectCameras( saCameras );
+		ConnectCameras( saCameras );
+		l_hrOk = SendCameraParameters( saCameras );
+
+		SVSoftwareTriggerDlg & l_trgrDlg = SVSoftwareTriggerDlg::Instance();
+		l_trgrDlg.ShowWindow(SW_HIDE);
+		l_trgrDlg.ClearTriggers();
+
+		l_pConfig->GetPPQCount( lSize );
+		for( l = 0; l_hrOk == S_OK && l < lSize; l++ )
+		{
+			l_pConfig->GetPPQ( l, &pPPQ );
+			l_hrOk = pPPQ->CanGoOnline();
+			SVTriggerObject * l_trigger = NULL;
+			pPPQ->GetTrigger(l_trigger);
+			if (l_trigger->IsSoftwareTrigger())
+			{
+				l_trgrDlg.AddTrigger(l_trigger);
+			}
+		}// end for
+		if (l_trgrDlg.HasTriggers())
+		{
+			l_trgrDlg.SelectTrigger();
+		}
+		if( l_hrOk != S_OK )
+		{
+			SVSVIMStateClass::RemoveState( SV_STATE_START_PENDING );
+
+			RunAllIPDocuments();
+
+			return l_hrOk; // JMS ERROR - Cannot send PPQ on-line.
+		}// end if
+
+		if( SVSVIMStateClass::CheckState( SV_STATE_READY ) )
+		{
+			for( l = 0; l_hrOk == S_OK && l < lSize; l++ )
+			{
+				l_pConfig->GetPPQ( l, &pPPQ );
+				l_hrOk = pPPQ->GoOnline();
+			}// end for
+
+			if( l_hrOk != S_OK )
+			{
+				for( l = 0; l < lSize; l++ )
+				{
+					l_pConfig->GetPPQ( l, &pPPQ );
+					pPPQ->GoOffline();
+				}// end for
+
+				SVSVIMStateClass::RemoveState( SV_STATE_START_PENDING );
+
+				RunAllIPDocuments();
+				SetAllIPDocumentsOffline();
+
+				return l_hrOk;
+			}// end if
+
+			SetAllIPDocumentsOnline();
+
+			SVSVIMStateClass::AddState( SV_STATE_UNAVAILABLE | SV_STATE_STARTING );
+			SVSVIMStateClass::RemoveState( SV_STATE_READY | SV_STATE_START_PENDING );
+
+			GetMainFrame()->ShowAllBars( FALSE, TRUE );
+
+			SetPriorityClass( GetCurrentProcess(), REALTIME_PRIORITY_CLASS );
+
+			SVSVIMStateClass::AddState( SV_STATE_RUNNING );
+
+			SVCommandStreamManager::Instance().RebuildCommandObserver();
+			m_mgrRemoteFonts.GoOnline();
+
+			if( IsProductTypeRAID() )
+			{
+				m_IntelRAID.UpdateStatus();
+
+				if ( SVSVIMStateClass::CheckState( SV_STATE_RAID_FAILURE ) )
+				{
+					if( l_pConfig->SetRaidErrorBit( true ) != S_OK )
+					{
+						return S_FALSE;
+					}
+				}
+				else
+				{
+					if( l_pConfig->SetRaidErrorBit( false ) != S_OK )
+					{
+						return S_FALSE;
+					}
+				}
 			}
 			else
 			{
-				SVSVIMStateClass::AddState( SV_STATE_CANCELING );
-			}
-		}// end if ( bClose )
-		
-		if ( bClose )
-		{
-			bOk = bClose = SVSVIMStateClass::CheckState( SV_STATE_READY );
-		}
-		
-		if ( bClose )
-		{
-			TheSVOLicenseManager().ClearLicenseErrors();
-
-			// Disallow Client Connections
-			SVInputStreamManager::Instance().Shutdown();
-			SVOutputStreamManager::Instance().Shutdown();
-			
-			bOk = SVSVIMStateClass::AddState( SV_STATE_UNAVAILABLE | SV_STATE_CLOSING );
-			
-			if ( bOk )
-			{
-				bOk = SVSVIMStateClass::RemoveState( SV_STATE_READY | SV_STATE_MODIFIED | SV_STATE_EDIT | SV_STATE_EDIT_MOVE );
-			}
-			
-			// &&& 
-			if ( bOk )
-			{
-				CWaitCursor wait;
-
-				wait.Restore();
-
-				// First remove all ActiveX server things associated with this config
-				CSVCommand::ResetStreamingDataAndLockedImages();
-
-				wait.Restore();
-
-#ifndef _WIN64
-				// PLC stop and close.
-				m_PLCManager.Shutdown();
-				wait.Restore();
-#endif
-
-				SVConfigurationObject* l_pConfig = NULL;
-				SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
-
-				if( l_pConfig != NULL )
+				if( l_pConfig->SetRaidErrorBit( true ) != S_OK )
 				{
-					bOk = l_pConfig->DestroyConfiguration();
+					return S_FALSE;
 				}
-				
-				wait.Restore();
+			}
 
-				(( SVMainFrame* )m_pMainWnd)->SetStatusInfoText(_T(""));
+			if( l_pConfig->SetModuleReady( true ) != S_OK )
+			{
+				RunAllIPDocuments();
 
-				wait.Restore();
+				return S_FALSE; // JMS ERROR - Cannot write to module ready output.
+			}// end if
 
-				// Destroy the current PPQ
-				( ( SVMainFrame* ) m_pMainWnd )->DestroyPPQButtons();
-				
-				wait.Restore();
+			SVObjectManagerClass::Instance().SetState( SVObjectManagerClass::ReadOnly );
 
-				UpdatePPQBar();
-				
-				wait.Restore();
+			CString l_strTrigCnts;
+			GetTriggersAndCounts( l_strTrigCnts );
 
-				bOk = SVSVIMStateClass::AddState( SV_STATE_AVAILABLE ) && bOk;
-				bOk = SVSVIMStateClass::RemoveState( SV_STATE_UNAVAILABLE | SV_STATE_CLOSING | SV_STATE_CANCELING ) && bOk;
-				bOk = SetSECFullFileName( (LPCTSTR) NULL ) && bOk;
-				
-				wait.Restore();
+			CString l_strTime;
+			l_FinishLoad = SVClock::GetTimeStamp();
+			long l_lTime = static_cast<long>(l_FinishLoad - l_StartLoading);
+			l_strTime.Format( "\nGoOnline time %d ms", l_lTime );
+			l_strTrigCnts += l_strTime;
 
-				INIReset();
-			}// end if ( bOk )
-		}// end if ( bClose )
-		
-	}// end if bOk = ! SVSVIMStateClass::CheckState( SV_STATE_READY | SV_STATE_RUNNING );
+			//add go-online message to the event viewer.
+			SVException svE;
+			SETEXCEPTION1(svE,SVMSG_SVO_27_SVOBSERVER_GO_ONLINE, l_strTrigCnts );
+			svE.LogException(l_strTrigCnts);
+
+			SVSVIMStateClass::RemoveState( SV_STATE_UNAVAILABLE | SV_STATE_STARTING );
+			if (SVSoftwareTriggerDlg::Instance().HasTriggers())
+			{
+				EnableTriggerSettings();
+			}
+			else
+			{
+				DisableTriggerSettings();
+			}
+
+			SetThreadPriority( THREAD_PRIORITY_BELOW_NORMAL );
+		}// end if
+	}// end if
 	else
 	{
-		// First remove all ActiveX server things associated with this config
-		CSVCommand::ResetStreamingDataAndLockedImages();
-		
+		RunAllIPDocuments();
+
+		l_hrOk = S_FALSE;
+	}
+
+	if ( SVSVIMStateClass::CheckState( SV_STATE_STOP_PENDING ) )
+	{
+		PostMessage( m_pMainWnd->m_hWnd, WM_COMMAND, MAKEWPARAM (ID_STOP, 0), 0);
+	}
+
+	return l_hrOk;
+}
+
+HRESULT SVObserverApp::INILoad()
+{
+	SVOIniLoader l_iniLoader;
+
+	TCHAR l_szSystemDir[ MAX_PATH + 1 ];
+	CString l_csSystemDir;
+
+	::GetSystemDirectory( l_szSystemDir, MAX_PATH + 1 );
+	l_csSystemDir.Format( "%s\\OEMINFO.INI", l_szSystemDir );
+
+	// clear these variables
+	m_WinKey.Empty();
+	m_ModelNumber.Empty();
+	m_SerialNumber.Empty();
+	m_csProductName.Empty();
+
+	m_csProcessorBoardName = _T( "Unknown board" );
+	m_csTriggerBoardName = _T( "Unknown board" );
+	m_csAcquisitionBoardName = _T( "Unknown board" );
+	m_csDigitalBoardName = _T( "Unknown board" );
+	m_csRAIDBoardName = _T( "Unknown board" );
+
+	m_csProcessor.Empty();
+	m_csFrameGrabber.Empty();
+	m_csIOBoard.Empty();
+	m_csOptions.Empty();
+
+	// load the SVIM.ini, OEMINFO.ini, and HARDWARE.ini
+	HRESULT l_hrOk = l_iniLoader.Load("C:\\SVObserver\\bin\\SVIM.INI", l_csSystemDir, "C:\\SVObserver\\bin\\HARDWARE.INI");
+
+	if (l_hrOk == S_OK)
+	{
+		// copy settings from the SVOIniLoader class for now
+		g_bUseCorrectListRecursion = l_iniLoader.m_bUseCorrectListRecursion;
+
+		m_WinKey = l_iniLoader.m_csWinKey;
+		m_ModelNumber = l_iniLoader.m_csModelNumber;
+		m_SerialNumber = l_iniLoader.m_csSerialNumber;
+		m_csProductName = l_iniLoader.m_csProductName;
+
+		m_csProcessorBoardName = l_iniLoader.m_csProcessorBoardName;
+		m_csTriggerBoardName = l_iniLoader.m_csTriggerBoardName;
+		m_csAcquisitionBoardName = l_iniLoader.m_csAcquisitionBoardName;
+		m_csDigitalBoardName = l_iniLoader.m_csDigitalBoardName;
+		m_csRAIDBoardName = l_iniLoader.m_csRAIDBoardName;
+
+		m_csDigitalDLL = l_iniLoader.m_csDigitalDLL;
+		m_csDigitalOption = l_iniLoader.m_csIOBoardOption;
+		m_csDigitizerDLL = l_iniLoader.m_csDigitizerDLL;
+		m_csFileAcquisitionDLL = l_iniLoader.m_csFileAcquisitionDLL;
+		m_csTriggerDLL = l_iniLoader.m_csTriggerDLL;
+		m_csSoftwareTriggerDLL = l_iniLoader.m_csSoftwareTriggerDLL;
+		m_csAcquisitionTriggerDLL = l_iniLoader.m_csAcquisitionTriggerDLL;
+#ifndef _WIN64
+		m_csPLCDLL = l_iniLoader.m_csPLCDLL;
+#endif
+		m_csReloadDigitalDLL = l_iniLoader.m_csReloadDigitalDLL;
+		m_csReloadAcquisitionDLL = l_iniLoader.m_csReloadAcquisitionDLL;
+		m_csReloadTriggerDLL = l_iniLoader.m_csReloadTriggerDLL;
+
+		m_csOptions = l_iniLoader.m_csOptions;
+		m_csProcessor = l_iniLoader.m_csProcessor;
+		m_csFrameGrabber = l_iniLoader.m_csFrameGrabber;
+		m_csIOBoard = l_iniLoader.m_csIOBoard;
+
+		m_csTrigger = l_iniLoader.m_csTrigger;
+
+		// Get GIGE packet Size
+		m_gigePacketSize = l_iniLoader.m_gigePacketSize;
+
+		//get firmware options
+		m_csShowUpdateFirmware = l_iniLoader.m_csShowUpdateFirmware;
+		m_csFirmwareCommand = l_iniLoader.m_csFirmwareCommand;
+		m_csFirmwareWorkingDir = l_iniLoader.m_csFirmwareWorkingDir;
+		m_csFirmwareArguments = l_iniLoader.m_csFirmwareArguments;
+
+		m_ShowUpdateFirmwareInMenu = FALSE;
+		if ( m_csShowUpdateFirmware.CompareNoCase("Y") == 0 )
+		{
+			m_ShowUpdateFirmwareInMenu = TRUE;
+		}
+
+		for ( int i = 0; i < 4; i++ )
+		{
+			SVIOConfigurationInterfaceClass::Instance().SetSVIMTriggerValue( i, l_iniLoader.m_csTriggerEdge[i].CompareNoCase( "R" ) == 0 );
+			SVIOConfigurationInterfaceClass::Instance().SetSVIMStrobeValue( i, l_iniLoader.m_csStrobeEdge[i].CompareNoCase( "R" ) == 0 );
+			SVIOConfigurationInterfaceClass::Instance().SetSVIMStrobeStartFrameActive( i, l_iniLoader.m_csStartFrameType[i].CompareNoCase( "Y" ) == 0 );
+		}
+
+		l_hrOk = l_hrOk | LoadDigitalDLL();
+		l_hrOk = l_hrOk | LoadTriggerDLL();
+		l_hrOk = l_hrOk | LoadSoftwareTriggerDLL();
+		l_hrOk = l_hrOk | LoadAcquisitionTriggerDLL();
+		l_hrOk = l_hrOk | LoadAcquisitionDLL();
+		l_hrOk = l_hrOk | LoadFileAcquisitionDLL();
+
+		if( -1 < l_iniLoader.m_csHardwareOptions.Find( "FastOCR" ) )
+		{
+			TheSVOLicenseManager().SetFastOCRLicense(true);
+			if ( m_pFastOcr == NULL )
+			{
+				m_pFastOcr = new SVLVFastOCR();
+			}
+		}
+		else
+		{
+			if ( m_pFastOcr != NULL )
+			{
+				delete m_pFastOcr;
+				m_pFastOcr = NULL;
+			}
+		}
+	}
+	else
+	{
+		if (l_iniLoader.m_hrOEMFailure != S_OK)
+		{
+			ASSERT( FALSE );
+			::MessageBox(NULL, _T("The model number specified in OEMINFO.INI is invalid."), _T("SVObserver"), MB_OK | MB_ICONERROR | MB_SYSTEMMODAL);
+		}
+
+	}
+	m_hrHardwareFailure = l_hrOk;
+	return l_hrOk;
+}
+
+HRESULT SVObserverApp::INIClose()
+{
+	m_hrHardwareFailure = SV_HARDWARE_FAILURE_ALL;
+
+	m_csProductName.Empty();
+
+	m_csProcessor.Empty();
+	m_csFrameGrabber.Empty();
+	m_csIOBoard.Empty();
+	m_csOptions.Empty();
+
+	m_csProcessorBoardName = _T( "Unknown board" );
+	m_csTriggerBoardName = _T( "Unknown board" );
+	m_csAcquisitionBoardName = _T( "Unknown board" );
+	m_csDigitalBoardName = _T( "Unknown board" );
+	m_csRAIDBoardName = _T( "Unknown board" );
+
+	if ( m_pFastOcr )
+	{
+		delete m_pFastOcr;
+		m_pFastOcr = NULL;
+	}
+
+	CloseAcquisitionDLL();
+
+	CloseTriggerDLL();
+
+	CloseDigitalDLL();
+
+	return S_OK;
+}
+
+HRESULT SVObserverApp::INIReset()
+{
+	HRESULT l_hrOk = S_OK;
+
+	if( m_csReloadAcquisitionDLL.CompareNoCase( _T( "Y" ) ) == 0 )
+	{
+		CloseAcquisitionDLL();
+	}
+
+	if( m_csReloadTriggerDLL.CompareNoCase( _T( "Y" ) ) == 0 )
+	{
+		CloseTriggerDLL();
+	}
+
+	if( m_csReloadDigitalDLL.CompareNoCase( _T( "Y" ) ) == 0 )
+	{
+		CloseDigitalDLL();
+	}
+
+	if( m_csReloadDigitalDLL.CompareNoCase( _T( "Y" ) ) == 0 )
+	{
+		l_hrOk = l_hrOk | LoadDigitalDLL();
+	}
+
+	if( m_csReloadTriggerDLL.CompareNoCase( _T( "Y" ) ) == 0 )
+	{
+		l_hrOk = l_hrOk | LoadTriggerDLL();
+		l_hrOk = l_hrOk | LoadSoftwareTriggerDLL();
+		l_hrOk = l_hrOk | LoadAcquisitionTriggerDLL();
+	}
+
+	if( m_csReloadAcquisitionDLL.CompareNoCase( _T( "Y" ) ) == 0 )
+	{
+		l_hrOk = l_hrOk | LoadAcquisitionDLL();
+		l_hrOk = l_hrOk | LoadFileAcquisitionDLL();
+	}
+
+	return l_hrOk;
+}
+
+HRESULT SVObserverApp::LoadTriggerDLL()
+{
+	HRESULT l_hrOk = S_OK ;
+
+	if ( ! m_csTriggerDLL.IsEmpty() )
+	{
+		VARIANT l_varValue;
+
+		::VariantInit( &l_varValue );
+
+		l_varValue.vt = VT_I4;
+
+		if ( m_svDLLTriggers.Open( m_csTriggerDLL ) != S_OK )
+		{
+			l_hrOk = l_hrOk | SV_HARDWARE_FAILURE_TRIGGER;
+		}
+
+		if ( SVTriggerProcessingClass::Instance().UpdateTriggerSubsystem( &m_svDLLTriggers ) != S_OK )
+		{
+			l_hrOk = l_hrOk | SV_HARDWARE_FAILURE_TRIGGER;
+		}
+
+		for ( int i = 0; i < 4; i++ )
+		{
+			unsigned long l_ulHandle;
+
+			if ( m_svDLLTriggers.GetHandle( &l_ulHandle, i ) == S_OK )
+			{
+				bool l_bRising;
+
+				SVIOConfigurationInterfaceClass::Instance().GetIOTriggerValue( i, l_bRising );
+
+				if ( l_bRising )
+				{
+					l_varValue.lVal = 1;
+				}
+				else
+				{
+					l_varValue.lVal = -1;
+				}
+				// SVSignalEdge enum is used here to make the code more clear.
+				// however at some time in the future the Dll parameters may be implemented
+				// as an array and therefore this enum may not apply.
+				m_svDLLTriggers.SetParameterValue( l_ulHandle, SVSignalEdge, &l_varValue );
+			}
+		}
+	}
+	else
+	{
+		if( m_csTrigger != _T( "00" ) )
+		{
+			l_hrOk = l_hrOk | SV_HARDWARE_FAILURE_TRIGGER;
+		}
+	}
+
+	return l_hrOk;
+}
+
+HRESULT SVObserverApp::CloseTriggerDLL()
+{
+	SVTriggerProcessingClass::Instance().clear();
+
+	m_svDLLTriggers.Close();
+	m_svDLLSoftwareTriggers.Close();
+	m_svDLLAcquisitionTriggers.Close();
+
+	return S_OK;
+}
+
+HRESULT SVObserverApp::LoadSoftwareTriggerDLL()
+{
+	HRESULT l_hrOk = S_OK;
+
+	if ( ! m_csSoftwareTriggerDLL.IsEmpty() )
+	{
+		if ( m_svDLLSoftwareTriggers.Open( m_csSoftwareTriggerDLL ) != S_OK )
+		{
+			l_hrOk = l_hrOk | SV_HARDWARE_FAILURE_SOFTWARETRIGGER;
+		}
+
+		if ( SVTriggerProcessingClass::Instance().UpdateTriggerSubsystem( &m_svDLLSoftwareTriggers ) != S_OK )
+		{
+			l_hrOk = l_hrOk | SV_HARDWARE_FAILURE_SOFTWARETRIGGER;
+		}
+	}
+	return l_hrOk;
+}
+
+HRESULT SVObserverApp::LoadAcquisitionTriggerDLL()
+{
+	HRESULT l_hrOk = S_OK;
+
+	if ( ! m_csAcquisitionTriggerDLL .IsEmpty() )
+	{
+		if ( m_svDLLAcquisitionTriggers.Open( m_csAcquisitionTriggerDLL ) != S_OK )
+		{
+			l_hrOk = l_hrOk | SV_HARDWARE_FAILURE_CAMERATRIGGER;
+		}
+
+		if ( SVTriggerProcessingClass::Instance().UpdateTriggerSubsystem( &m_svDLLAcquisitionTriggers ) != S_OK )
+		{
+			l_hrOk = l_hrOk | SV_HARDWARE_FAILURE_CAMERATRIGGER;
+		}
+	}
+	return l_hrOk;
+}
+
+HRESULT SVObserverApp::LoadAcquisitionDLL()
+{
+	HRESULT l_hrOk = S_OK;
+
+	if( ! m_csDigitizerDLL.IsEmpty() )
+	{
+		if( m_svDLLDigitizers.Open( m_csDigitizerDLL ) != S_OK )
+		{
+			l_hrOk = l_hrOk | SV_HARDWARE_FAILURE_ACQUISITION;
+		}
+
+		if( SVDigitizerProcessingClass::Instance().UpdateDigitizerSubsystem( &m_svDLLDigitizers ) != S_OK )
+		{
+			l_hrOk = l_hrOk | SV_HARDWARE_FAILURE_ACQUISITION;
+		}
+
+		if( IsCoreco() )
+		{
+			if( ! SVDigitizerProcessingClass::Instance().IsValidDigitizerSubsystem( _T( "Viper_Quad_1.Dig_0" ) ) &&
+				! SVDigitizerProcessingClass::Instance().IsValidDigitizerSubsystem( _T( "Viper_RGB_1.Dig_0" ) ) )
+			{
+				l_hrOk = l_hrOk | SV_HARDWARE_FAILURE_ACQUISITION;
+			}
+		}
+		else
+		{
+			l_hrOk = l_hrOk;
+		}
+	}
+	else
+	{
+		if( m_csFrameGrabber != _T( "00" ) )
+		{
+			l_hrOk = l_hrOk | SV_HARDWARE_FAILURE_ACQUISITION;
+		}
+	}
+
+	return l_hrOk;
+}
+
+HRESULT SVObserverApp::CloseAcquisitionDLL()
+{
+	SVDigitizerProcessingClass::Instance().clear();
+
+	m_svDLLDigitizers.Close();
+
+	m_svDLLFileAcquisition.Close();
+
+	return S_OK;
+}
+
+HRESULT SVObserverApp::LoadFileAcquisitionDLL()
+{
+	HRESULT l_hrOk = S_OK;
+
+	if( ! m_csFileAcquisitionDLL.IsEmpty() )
+	{
+		if( m_svDLLFileAcquisition.Open( m_csFileAcquisitionDLL ) != S_OK )
+		{
+			l_hrOk = l_hrOk | SV_HARDWARE_FAILURE_FILEACQUISITION;
+		}
+
+		if( SVDigitizerProcessingClass::Instance().UpdateDigitizerSubsystem( &m_svDLLFileAcquisition ) != S_OK )
+		{
+			l_hrOk = l_hrOk | SV_HARDWARE_FAILURE_FILEACQUISITION;
+		}
+	}
+	return l_hrOk;
+}
+
+HRESULT SVObserverApp::LoadDigitalDLL()
+{
+	HRESULT l_hrOk = S_OK;
+
+	if ( ! m_csDigitalDLL.IsEmpty() )
+	{
+		if ( SVIOConfigurationInterfaceClass::Instance().OpenDigital( m_csDigitalDLL ) != S_OK )
+		{
+			l_hrOk = l_hrOk | SV_HARDWARE_FAILURE_IO;
+		}
+		else
+		{	// Send the System type to the IO Board.
+			VARIANT l_vt;
+			l_vt.vt = VT_I4;
+
+			// Hardware.ini has the new IOBoardOption.
+			if( !m_csDigitalOption.IsEmpty() )
+			{
+				l_vt.lVal = atol( m_csDigitalOption );
+				SVIOConfigurationInterfaceClass::Instance().SetParameterValue( SVBoardType, &l_vt );
+			}
+			else
+			{	// Legacy behavior.... Hardware.Ini file does not have new entry...
+				l_vt.lVal = atol( m_csIOBoard );
+				SVIOConfigurationInterfaceClass::Instance().SetParameterValue( SVBoardType, &l_vt );
+			}
+		}
+	}
+	else
+	{
+		if( m_csIOBoard != _T( "00" ) )
+		{
+			l_hrOk = l_hrOk | SV_HARDWARE_FAILURE_IO;
+		}
+	}
+
+	return l_hrOk;
+}
+
+HRESULT SVObserverApp::CloseDigitalDLL()
+{
+	SVIOConfigurationInterfaceClass::Instance().CloseDigital();
+
+	return S_OK;
+}
+
+LPCTSTR SVObserverApp::GetProcessorBoardName() const
+{
+	return m_csProcessorBoardName;
+}
+
+LPCTSTR SVObserverApp::GetTriggerBoardName() const
+{
+	return m_csTriggerBoardName;
+}
+
+LPCTSTR SVObserverApp::GetSoftwareTriggerBoardName() const
+{
+	return m_csSoftwareTriggerDLL;
+}
+
+LPCTSTR SVObserverApp::GetAcquisitionBoardName() const
+{
+	return m_csAcquisitionBoardName;
+}
+
+LPCTSTR SVObserverApp::GetFileAcquisitionBoardName() const
+{
+	return m_csFileAcquisitionBoardName;
+}
+
+LPCTSTR SVObserverApp::GetDigitalBoardName() const
+{
+	return m_csDigitalBoardName;
+}
+
+LPCTSTR SVObserverApp::GetRAIDBoardName() const
+{
+	return m_csRAIDBoardName;
+}
+
+HRESULT SVObserverApp::DisconnectAllCameraBuffers( CStringArray& rDisconnectedCameras )
+{
+	HRESULT hr = DisconnectToolsetBuffers();
+
+	if( hr == S_OK )
+	{
+		HRESULT l_Temp = SVDigitizerProcessingClass::Instance().GetAcquisitionDeviceList( rDisconnectedCameras );
+
+		hr = SVDigitizerProcessingClass::Instance().DestroyBuffers();
+
+		if( l_Temp != S_OK )
+		{
+			hr = l_Temp;
+		}
+	}
+
+	return hr;
+}
+
+HRESULT SVObserverApp::ConnectCameraBuffers( const CStringArray& rCamerasToConnect )
+{
+	HRESULT hr = S_OK;
+
+	SVConfigurationObject* l_pConfig = NULL;
+	SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
+
+	if( l_pConfig != NULL )
+	{
+		for ( int i=0; i < rCamerasToConnect.GetSize(); i++)
+		{
+			CString sDigName = rCamerasToConnect.GetAt( i );
+			SVAcquisitionClassPtr pAcqDevice;
+
+			if ( S_OK == SVImageProcessingClass::Instance().GetAcquisitionDevice( sDigName, pAcqDevice ) )
+			{
+				if ( !( pAcqDevice.empty() ) )
+				{
+					// dummy vars
+					SVLightReference* pLR;
+					SVFileNameArrayClass* pFiles;
+					SVLut* pLut;
+					SVDeviceParamCollection* pParams;
+
+					if ( l_pConfig->GetAcquisitionDevice( sDigName, pFiles, pLR, pLut, pParams ) )
+					{
+						SVImageInfoClass svImageInfo;
+						pAcqDevice->GetImageInfo(&svImageInfo);
+						hr = pAcqDevice->CreateBuffers( svImageInfo, TheSVObserverApp.GetSourceImageDepth() );
+					}
+				}
+			}// end if ( S_OK == TheSVObserverApp.mpsvImaging->GetAcquisitionDevice( sDigName, pAcqDevice ) )
+		}// end for ( int i=0; i < rCamerasToConnect.GetSize(); i++)
+
+		hr = ConnectToolsetBuffers();
+	}
+
+	return hr;
+}
+
+HRESULT SVObserverApp::InitializeSecurity() 
+{
+	HMODULE hMessageDll;
+
+	if (hMessageDll = LoadLibraryEx (_T("SVMessage.dll"), NULL, LOAD_LIBRARY_AS_DATAFILE))
+	{
+		// This sleep(0) was added after the LoadLibrary to fix a bug where the system ran out of resources.
+		Sleep(0);
+		// Add function with two parameters does not have Data.
+		// Add Function with more than two parameters are data nodes.
+		// These are the Security defaults if the file fails to load.
+		AddSecurityNode(hMessageDll, SECURITY_POINT_FILE_MENU ); // First Position in Array Not used because position 0 is not valid in the XML Security Wrapper.
+
+		AddSecurityNode(hMessageDll, SECURITY_POINT_ROOT );
+		AddSecurityNode(hMessageDll, SECURITY_POINT_FILE_MENU );     // First Child off Root
+		AddSecurityNode(hMessageDll, SECURITY_POINT_FILE_MENU_NEW                   , _T("") );
+		AddSecurityNode(hMessageDll, SECURITY_POINT_FILE_MENU_SELECT_CONFIGURATION  , _T("") );
+		AddSecurityNode(hMessageDll, SECURITY_POINT_FILE_MENU_CLOSE_CONFIGURATION   , _T("") );
+		AddSecurityNode(hMessageDll, SECURITY_POINT_FILE_MENU_SAVE_CONFIGURATION_AS , _T("") );
+		AddSecurityNode(hMessageDll, SECURITY_POINT_FILE_MENU_SAVE_CONFIGURATION    , _T("") );
+		AddSecurityNode(hMessageDll, SECURITY_POINT_FILE_MENU_PRINT                 , _T("") );
+		AddSecurityNode(hMessageDll, SECURITY_POINT_FILE_MENU_PRINT_SETUP           , _T("") );
+		AddSecurityNode(hMessageDll, SECURITY_POINT_FILE_MENU_SAVE_IMAGE            , _T("") );
+		AddSecurityNode(hMessageDll, SECURITY_POINT_FILE_MENU_RECENT_CONFIGURATIONS , _T("") );
+		AddSecurityNode(hMessageDll, SECURITY_POINT_FILE_MENU_EXIT                  , _T("") );
+		AddSecurityNode(hMessageDll, SECURITY_POINT_UNRESTRICTED_FILE_ACCESS        , _T("") );
+
+		AddSecurityNode(hMessageDll, SECURITY_POINT_VIEW_MENU );     // Second Child From Root
+		AddSecurityNode(hMessageDll, SECURITY_POINT_VIEW_MENU_PPQ_BAR       , _T("") );
+		AddSecurityNode(hMessageDll, SECURITY_POINT_VIEW_MENU_ONLINE_DISPLAY, _T("") );
+		AddSecurityNode(hMessageDll, SECURITY_POINT_VIEW_MENU_RESET_COUNTS_CURRENT, _T("") );
+		AddSecurityNode(hMessageDll, SECURITY_POINT_VIEW_MENU_RESET_COUNTS_ALL, _T("") );
+
+		AddSecurityNode(hMessageDll, SECURITY_POINT_MODE_MENU );     // Third Child From Root
+		AddSecurityNode(hMessageDll, SECURITY_POINT_MODE_MENU_RUN,        _T("") );
+		AddSecurityNode(hMessageDll, SECURITY_POINT_MODE_MENU_STOP,       _T("") );
+		AddSecurityNode(hMessageDll, SECURITY_POINT_MODE_MENU_REGRESSION_TEST,  _T("") );
+		AddSecurityNode(hMessageDll, SECURITY_POINT_MODE_MENU_TEST,             _T("") );
+		AddSecurityNode(hMessageDll, SECURITY_POINT_MODE_MENU_EDIT_TOOLSET,     _T("") );
+		AddSecurityNode(hMessageDll, SECURITY_POINT_MODE_MENU_EDIT_MOVE_TOOL,   _T("") );
+		AddSecurityNode(hMessageDll, SECURITY_POINT_MODE_MENU_EXIT_RUN_MODE,    _T("") );
+
+		AddSecurityNode(hMessageDll, SECURITY_POINT_EXTRAS_MENU );   // Forth Child From Root
+		AddSecurityNode(hMessageDll, SECURITY_POINT_EXTRAS_MENU_ADDITIONAL_ENVIRON, _T("") );
+		AddSecurityNode(hMessageDll, SECURITY_POINT_EXTRAS_MENU_SECURITY_MANAGER,   _T("Administrators"), true);
+		AddSecurityNode(hMessageDll, SECURITY_POINT_EXTRAS_MENU_TEST_OUTPUTS,       _T("") );
+		AddSecurityNode(hMessageDll, SECURITY_POINT_EXTRAS_MENU_UTILITIES_SETUP,    _T("") );
+		AddSecurityNode(hMessageDll, SECURITY_POINT_EXTRAS_MENU_UTILITIES_RUN,      _T("") );
+		m_svSecurityMgr.SVProtectData( SECURITY_POINT_EXTRAS_MENU_SECURITY_MANAGER ); // Sets Flag that will prevent data from being changed.
+	}
+
+	char szGetBuf[256];
+	GetPrivateProfileString(_T("Security"), _T("Security File Path"), _T("c:\\SVObserver\\bin\\Gatekpr.xml"), szGetBuf, 256, "c:\\SVObserver\\Bin\\SVIM.ini");
+
+	if( m_svSecurityMgr.SVLoad(szGetBuf) != S_OK )
+	{
+		AfxMessageBox("Security File Failed to Load\n Using Default Security" );
+	}
+
+	FreeLibrary (hMessageDll);
+	// This sleep(0) was added after the FreeLibrary to fix a bug where the system ran out of resources.
+	Sleep(0);
+
+	return S_OK;
+}
+
+void SVObserverApp::fileSaveAsSec( CString StrSaveAsPathName ) 
+{
+	SVFileNameManagerClass svFileManager;
+	CWaitCursor wait;
+	long hr;
+
+	BOOL bOk=TRUE;
+
+	ResetAllIPDocModifyFlag(FALSE);
+	//
+	// Is the input parameter for save as path empty?
+	//
+	if ( StrSaveAsPathName.IsEmpty() )
+	{
+		SVFileNameClass svFileName = m_SECFileName;
+
+		svFileName.SetFileType( SV_SVX_CONFIGURATION_FILE_TYPE );
+
+		if ( CString( GetSECPathName() ).IsEmpty() ||
+				 CString( GetSECPathName() ).CompareNoCase( "C:\\RUN" ) == 0 )
+		{
+			svFileName.SetPathName( AfxGetApp()->GetProfileString( _T( "Settings" ), 
+				_T( "ConfigurationFilePath" ), 
+				_T( "C:\\RUN" ) ) );
+
+			if ( CString( svFileName.GetPathName() ).CompareNoCase( "C:\\RUN" ) == 0 )
+			{
+				if ( ! CString( svFileManager.GetConfigurationPathName() ).IsEmpty() )
+				{
+					svFileName.SetPathName( svFileManager.GetConfigurationPathName() );
+				}
+			}
+		}
+
+		if ( svFileName.SaveFile() )
+		{
+			bOk = SetSECFullFileName( svFileName.GetFullFileName(), RENAME );
+			if ( bOk )
+			{
+				AfxGetApp()->WriteProfileString( _T( "Settings" ), 
+					_T( "ConfigurationFilePath" ), 
+					svFileName.GetPathName() );
+			}
+		}
+		else
+		{
+			return;
+		}
+	}// end if ( StrSaveAsPathName.IsEmpty() )
+	else
+	{
+		SetSECFullFileName( StrSaveAsPathName, FALSE );
+	}
+
+	if ( !CString( m_SECFileName.GetExtension() ).CompareNoCase( ".svx" ) )
+	{
+		CString csFileName;
+
+		BSTR bStr = NULL;
+		unsigned long ulVer = 0;
+
 		SVConfigurationObject* l_pConfig = NULL;
 		SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
 
 		if( l_pConfig != NULL )
 		{
-			bOk = l_pConfig->DestroyConfiguration();
+			l_pConfig->SaveConfiguration( m_XMLTree );
 		}
-				
-		(( SVMainFrame* )m_pMainWnd)->SetStatusInfoText(_T(""));
-	}
-	
-	if (hr == S_OK)
-		hr = bOk ? S_OK : S_FALSE;
 
-	if ( bCancel )
+		SaveDocuments( m_XMLTree );
+
+		csFileName = m_SECFileName.GetFullFileName();
+
+		bStr = csFileName.AllocSysString();
+
+		hr = SVOCMSaveConfiguration( m_CurrentVersion, ulVer, bStr, m_XMLTree );
+		if (hr & 0xc0000000)
+		{
+			CString	csErrorMessage;
+			csErrorMessage.Format ("Error: Could not save configuration. Error Nbr: %d", hr);
+			AfxMessageBox (csErrorMessage);
+		}
+
+		SysFreeString( bStr );
+
+		svFileManager.SaveItem( &m_SECFileName );
+		svFileManager.SaveItems();
+		svFileManager.RemoveUnusedFiles();
+
+		SVSVIMStateClass::RemoveState( SV_STATE_MODIFIED );
+
+		SVNavigateTreeClass::DeleteAllItems( m_XMLTree );
+
+		if ( bOk )
+		{
+			if ( CString( svFileManager.GetConfigurationPathName() ).IsEmpty() )
+			{
+				AddToRecentFileList( GetSECFullFileName() );
+			}
+			else
+			{
+				AddToRecentFileList( CString( svFileManager.GetConfigurationPathName() ) + 
+					"\\" + GetSECFileName() );
+			}
+		}
+
+		( (CMDIFrameWnd*) AfxGetMainWnd() )->OnUpdateFrameTitle(TRUE);
+
+		// Success...
+		return;
+	}// end if ( !CString( m_SECFileName.GetExtension() ).CompareNoCase( ".svx" ) )
+	else
 	{
-		hr = ERROR_CANCELLED;
+		AfxMessageBox( IDS_USER_INFORMATION_WRONG_PATHNAME_ENTERED );
+	}
+}
+
+/////////////////////////////////////////////////////////////////////////////
+//
+//  An intermediate method called when user selects a configuration (.sec)
+//  file from the Most Recent Used (MRU) list under menu File.\
+//  Calls OpenSECFile(..)
+//
+//
+BOOL SVObserverApp::OpenSECFileFromMostRecentList(int nID)
+{
+	ASSERT_VALID(this);
+	ASSERT(m_pRecentFileList != NULL);
+
+	ASSERT(nID >= ID_FILE_MRU_FILE1);
+	ASSERT(nID < ID_FILE_MRU_FILE1 + (int)m_pRecentFileList->GetSize());
+	int nIndex = nID - ID_FILE_MRU_FILE1;
+	ASSERT((*m_pRecentFileList)[nIndex].GetLength() != 0);
+
+	TRACE2("MRU: open file (%d) '%s'.\n", (nIndex) + 1,
+		(LPCTSTR)(*m_pRecentFileList)[nIndex]);
+
+	BOOL bResult = FALSE;
+
+	// Check Security to see if save is allowed
+
+	//if (OpenDocumentFile((*m_pRecentFileList)[nIndex]) == NULL)
+	//
+	// Open and read the Configuration (.sec) from the Most Recent Used
+	// List under the menu File.
+	//
+	SVFileNameClass svFileName;
+
+	svFileName.SetFullFileName( (*m_pRecentFileList)[nIndex] );
+
+	bResult = FALSE;
+
+	HRESULT hr = S_FALSE;
+
+	if ( CString( svFileName.GetExtension() ).CollateNoCase( ".svx" ) == 0 )
+	{
+		hr = OpenSVXFile((*m_pRecentFileList)[nIndex]);
 	}
 	else
 	{
-		CStringArray saCameras;
-
-		DisconnectCameras( saCameras );
-		ConnectCameras( saCameras );
+		hr = OpenSECFile((*m_pRecentFileList)[nIndex]);
 	}
 	
-	return hr;
-}
-
-//******************************************************************************
-// Operation(s) Of Writing Access:
-//******************************************************************************
-
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : SetStatusText
-// -----------------------------------------------------------------------------
-// .Description : ...
-//              :
-// -----------------------------------------------------------------------------
-// .Input(s)
-//	 Type				Name				Description
-//	: 
-//  :
-// .Output(s)
-//	:
-//  :
-// .Return Value
-//	: 
-// -----------------------------------------------------------------------------
-// .Import Function Reference(s)
-//	:
-// -----------------------------------------------------------------------------
-// .Import Variable Reference(s)
-//	:
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :27.05.1997 RO			First Implementation
-//	:
-////////////////////////////////////////////////////////////////////////////////
-BOOL SVObserverApp::SetStatusText( LPCTSTR PStrStatusText )
-{
-	// If PStrStatusText is NULL, the Main Frame deletes the last status info.
-	// If no Main Frame exists, the function returns FALSE.
-	// Otherwise ( and this should always be ) it returns TRUE!
-	if( m_pMainWnd )
+	//if S_OK, check to see if it has any tool errors in the license manager
+	if ( hr == S_OK )
 	{
-		GetMainFrame()->SetStatusInfoText( PStrStatusText );
-		return TRUE;
-	}
-	return FALSE;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : GetIPDoc
-// -----------------------------------------------------------------------------
-// .Description : ...
-//              :
-// -----------------------------------------------------------------------------
-// .Input(s)
-//	 Type				Name				Description
-//	: 
-//  :
-// .Output(s)
-//	:
-//  :
-// .Return Value
-//	: 
-// -----------------------------------------------------------------------------
-// .Import Function Reference(s)
-//	:
-// -----------------------------------------------------------------------------
-// .Import Variable Reference(s)
-//	:
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :27.05.1997 RO			First Implementation
-//	:
-////////////////////////////////////////////////////////////////////////////////
-SVIPDoc* SVObserverApp::GetIPDoc( LPCTSTR StrIPDocPathName )
-{
-	// If the function succeeds, it returns a pointer to the found IPDoc.
-	// If the function succeeds and the IPDoc is not currently loaded or
-	// if the function fails, it returns NULL !!!
-	// !!! The function doesn´t care about lowercase or uppercase strings !!!
-
-	// &&&
-	//*
-	if( SVSVIMStateClass::CheckState( SV_STATE_READY | SV_STATE_RUNNING ) && StrIPDocPathName )
-	{
-		CString lowerIPDocName = StrIPDocPathName;
-		lowerIPDocName = lowerIPDocName.Left( lowerIPDocName.Find( '.' ) );
-
-		POSITION pos = GetFirstDocTemplatePosition();
-		if( pos )
+		if ( TheSVOLicenseManager().HasToolErrors() )
 		{
-			do
-			{
-				CDocTemplate* pDocTemplate = GetNextDocTemplate( pos );
-				if( pDocTemplate )
-				{
-					POSITION posDoc = pDocTemplate->GetFirstDocPosition();
-					if ( posDoc )
-					{
-						do
-						{
-							CDocument* newDoc = pDocTemplate->GetNextDoc(posDoc);
-							if ( newDoc )
-							{
-								SVIPDoc* pTmpDoc = dynamic_cast <SVIPDoc*> (newDoc);
-
-								if( pTmpDoc != NULL )
-								{
-									CString strName = pTmpDoc->GetTitle();
-
-									if( strName.CompareNoCase( lowerIPDocName ) == 0 )
-									{
-										return pTmpDoc;
-									}
-								}
-							}
-						}
-						while( posDoc );
-					}
-				}
-			}
-			while( pos );
+			TheSVOLicenseManager().ShowLicenseManagerErrors();
 		}
 	}
 
-	return NULL;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : AlreadyExistsIPDocTitle
-// -----------------------------------------------------------------------------
-// .Description : ...
-//              :
-// -----------------------------------------------------------------------------
-// .Input(s)
-//	 Type				Name				Description
-//	: 
-//  :
-// .Output(s)
-//	:
-//  :
-// .Return Value
-//	: 
-// -----------------------------------------------------------------------------
-// .Import Function Reference(s)
-//	:
-// -----------------------------------------------------------------------------
-// .Import Variable Reference(s)
-//	:
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :17.07.1998 RO			First Implementation
-////////////////////////////////////////////////////////////////////////////////
-BOOL SVObserverApp::AlreadyExistsIPDocTitle( LPCTSTR StrIPDocTitle )
-{
-	return FALSE;
-}
-
-CString SVObserverApp::GetStringResource( int ResourceID )
-{
-	CString strResource;
-	if( ! strResource.LoadString( ResourceID ) )
-		strResource = _T( " " );
-
-	return strResource;
-}
-
-//******************************************************************************
-// Operation(s) Of Representation:
-//******************************************************************************
-
-//******************************************************************************
-// Operation(s) Of Process:
-//******************************************************************************
-
-//******************************************************************************
-// Message Operation(s):
-//******************************************************************************
-void SVObserverApp::LoadTempIPDoc(LPCTSTR szFileName)
-{
-	CDocTemplate* pDocTemplate = NULL;
-	POSITION pos = GetFirstDocTemplatePosition();
-	if( pos )
+	if ( hr == S_FALSE )    // don't do on ERROR_CANCELLED
 	{
-		pDocTemplate = GetNextDocTemplate( pos );
-		if( pDocTemplate )
-		{
-			pDocTemplate = GetNextDocTemplate( pos );
-			if( pDocTemplate )
-			{
-				pDocTemplate = GetNextDocTemplate( pos );
-				if( pDocTemplate )
-				{
-					SVOIPDocClass *pDoc = (SVOIPDocClass *)pDocTemplate->OpenDocumentFile( szFileName, FALSE );
-					pDoc->CloseDocument();
-				}
-			}
-		}
+		m_pRecentFileList->Remove(nIndex);
+	}
+	bResult = (hr == S_OK);
+
+	return bResult;
+}
+
+void SVObserverApp::EnableTriggerSettings()
+{
+	SVUtilitiesClass util;
+	CWnd *pWindow;
+	CMenu *pMenu;
+	CString szMenuText;
+
+	pWindow = AfxGetMainWnd ();
+	pMenu = pWindow->GetMenu();
+	szMenuText = _T("&View");
+	if (pMenu = util.FindSubMenuByName (pMenu, szMenuText))
+	{
+		pMenu->AppendMenu(MF_STRING, ID_TRRIGER_SETTINGS, _T("Software Trigger")); 
+		pWindow->DrawMenuBar();
 	}
 }
 
-void SVObserverApp::LoadTempIODoc(LPCTSTR szFileName)
+void SVObserverApp::DisableTriggerSettings()
 {
-	CDocTemplate* pDocTemplate = NULL;
-	POSITION pos = GetFirstDocTemplatePosition();
-	if( pos )
+	SVSoftwareTriggerDlg::Instance().ShowWindow(SW_HIDE);
+	SVUtilitiesClass util;
+	CWnd *pWindow;
+	CMenu *pMenu;
+	CString szMenuText;
+
+	pWindow = AfxGetMainWnd ();
+	pMenu = pWindow->GetMenu();
+	szMenuText = _T("&View");
+	if (pMenu = util.FindSubMenuByName (pMenu, szMenuText))
 	{
-		pDocTemplate = GetNextDocTemplate( pos );
-		if( pDocTemplate )
-		{
-			pDocTemplate = GetNextDocTemplate( pos );
-			if( pDocTemplate )
-			{
-				pDocTemplate = GetNextDocTemplate( pos );
-				if( pDocTemplate )
-				{
-					pDocTemplate = GetNextDocTemplate( pos );
-					if( pDocTemplate )
-					{
-						SVOIODocClass *pDoc = (SVOIODocClass *)pDocTemplate->OpenDocumentFile( szFileName, FALSE );
-						pDoc->CloseDocument();
-					}
-				}
-			}
-		}
+		pMenu->RemoveMenu(ID_TRRIGER_SETTINGS, MF_BYCOMMAND); 
+		pWindow->DrawMenuBar();
 	}
-}
-
-SVIODoc* SVObserverApp::GetIODoc() const
-{
-	SVIODoc* l_pIODoc( NULL );
-
-	SVConfigurationObject* l_pConfig = NULL;
-	SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
-
-	if( l_pConfig != NULL && !( l_pConfig->GetIOControllerID().empty() ) )
-	{
-		l_pIODoc = SVObjectManagerClass::Instance().GetIODoc( l_pConfig->GetIOControllerID() );
-	}
-
-	return l_pIODoc;
-}
-
-SVIPDoc* SVObserverApp::NewSVIPDoc( LPCTSTR szDocName, SVInspectionProcess& p_rInspection )
-{
-	SVIPDoc* pDoc = NULL;
-	CDocTemplate* pDocTemplate = NULL;
-	POSITION pos = GetFirstDocTemplatePosition();
-	if( pos )
-	{
-		pDocTemplate = GetNextDocTemplate( pos );
-		if( pDocTemplate )
-		{
-			pDoc = dynamic_cast<SVIPDoc* >( pDocTemplate->OpenDocumentFile( NULL, TRUE ) );   // Make visible
-
-			if( pDoc != NULL )
-			{
-				pDoc->SetInspectionID( p_rInspection.GetUniqueObjectID() );
-
-				pDoc->SetTitle( szDocName );
-			}
-		}
-	}
-
-	return pDoc;
-}
-
-SVIODoc *SVObserverApp::NewSVIODoc( LPCTSTR szDocName, SVIOController& p_rIOController )
-{
-	SVIODoc *pDoc = NULL;
-	CDocTemplate* pDocTemplate = NULL;
-	POSITION pos = GetFirstDocTemplatePosition();
-	if( pos )
-	{
-		pDocTemplate = GetNextDocTemplate( pos );
-		if( pDocTemplate )
-		{
-			pDocTemplate = GetNextDocTemplate( pos );
-			if( pDocTemplate )
-			{
-				// Create a new empty visible document
-				pDoc = dynamic_cast< SVIODoc* >( pDocTemplate->OpenDocumentFile( NULL, TRUE ) );   // Make visible
-
-				if( pDoc != NULL )
-				{
-					pDoc->m_pIOController = &p_rIOController;
-
-					pDoc->SetTitle( szDocName );
-
-					SVObjectManagerClass::Instance().RegisterIODoc( p_rIOController.GetUniqueObjectID(), pDoc );
-				}
-			}
-		}
-	}
-
-	return pDoc;
-}
-
-BOOL SVObserverApp::Login()
-{
-	ASSERT(FALSE);
-
-	return FALSE;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : Logout
-// -----------------------------------------------------------------------------
-// .Description : Log the current user out...
-// -----------------------------------------------------------------------------
-// .Input(s)
-//	 Type				Name				Description
-//	: 
-// .Output(s)
-//	:
-// .Return Value
-//	: 
-// -----------------------------------------------------------------------------
-// .Import Function Reference(s)
-//	:
-// -----------------------------------------------------------------------------
-// .Import Variable Reference(s)
-//	:
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :15.10.1998 RO			First Implementation
-////////////////////////////////////////////////////////////////////////////////
-BOOL SVObserverApp::Logout( BOOL BForceLogout )
-{
-	SVSVIMStateClass::RemoveState( SV_STATE_SECURED );
-
-    //
-    // We need to deselect any tool that might be set for operator move.
-    //
-    SVMainFrame * pWndMain = (SVMainFrame *)GetMainWnd( );
-    if(pWndMain)
-    {
-		DeselectTool();
-
-		// Logged on User changed
-		pWndMain->PostMessage( SV_LOGGED_ON_USER_CHANGED, 0 );
-    }
-	return FALSE;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : InitPath
-// -----------------------------------------------------------------------------
-// .Description : 
-// -----------------------------------------------------------------------------
-// .Input(s)
-//	 Type				Name				Description
-//	: 
-//  :
-// .Output(s)
-//	:
-//  :
-// .Return Value
-//	: 
-// -----------------------------------------------------------------------------
-// .Import Function Reference(s)
-//	:
-// -----------------------------------------------------------------------------
-// .Import Variable Reference(s)
-//	:
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :13.10.1998 RO			First Implementation
-////////////////////////////////////////////////////////////////////////////////
-BOOL SVObserverApp::InitPath( LPCTSTR TStrPathName, BOOL BCreateIfNotExists /*= TRUE*/, BOOL BDeleteContents /*= TRUE*/ )
-{
-	if( TStrPathName )
-	{
-		if( SVCheckPathDir( TStrPathName, BCreateIfNotExists ) )
-		{
-			if( BDeleteContents )
-			{
-				// Get Delete Directory...
-				CString strDelName;
-				SVGetPathInformation( strDelName, TStrPathName, SVDRIVE | SVDIR );
-
-				// Be sure that this is not the boot, system or windows directory...
-				TCHAR dirBuf[ _MAX_PATH ];
-				dirBuf[ 0 ] = _TCHAR( '\0' );
-				GetWindowsDirectory( dirBuf, _MAX_PATH );
-				if( strDelName.CompareNoCase( dirBuf ) )
-				{
-					// Not identical with windows directory...
-					GetSystemDirectory( dirBuf, _MAX_PATH );
-					if( strDelName.CompareNoCase( dirBuf ) )
-					{
-						// Not identical with system directory...
-						if( strDelName.CompareNoCase( _T( "C:\\" ) ) )
-						{
-							// Not identical with boot directory...
-
-							// Delete contents of this directory...
-							return SVDeleteFiles( strDelName + _T( "*.*" ), TRUE );
-						}
-					}
-				}
-			}
-			else
-				return TRUE;
-		}
-	}
-	return FALSE;
 }
 
 void SVObserverApp::SaveIPDoc(SVObjectWriter& rWriter, SVIPDoc* pDoc)
@@ -2615,7 +9090,7 @@ HRESULT SVObserverApp::ConstructDocuments( SVTreeType& p_rTree )
 	if( l_Status == S_OK && SVNavigateTreeClass::GetItemBranch( p_rTree, CTAG_INSPECTION, NULL, htiChild ) )
 	{
 		SVTreeType::SVBranchHandle htiSubChild = NULL;
-		
+
 		p_rTree.GetFirstBranch( htiChild, htiSubChild );
 
 		while( l_Status == S_OK && htiSubChild != NULL )
@@ -2806,2188 +9281,22 @@ HRESULT SVObserverApp::ConstructMissingDocuments()
 ////////////////////////////////////////////////////////////////////////////////
 BOOL SVObserverApp::DestroyMessageWindow()
 {
-	if( pMessageWindow )
+	if( m_pMessageWindow )
 	{
-		if( ::IsWindow( pMessageWindow->m_hWnd ) )
-			pMessageWindow->DestroyWindow();
+		if( ::IsWindow( m_pMessageWindow->m_hWnd ) )
+		{
+			m_pMessageWindow->DestroyWindow();
+		}
 
-		delete pMessageWindow;
-		pMessageWindow = NULL;
+		delete m_pMessageWindow;
+		m_pMessageWindow = NULL;
 		return TRUE;
 	}
 	return FALSE;
 }
+#pragma endregion Protected Methods
 
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : OnFileOpen
-// -----------------------------------------------------------------------------
-// .Description : 
-// -----------------------------------------------------------------------------
-// .Input(s)
-//	 Type				Name				Description
-//	: 
-//  :
-// .Output(s)
-//	:
-//  :
-// .Return Value
-//	: 
-// -----------------------------------------------------------------------------
-// .Import Function Reference(s)
-//	:
-// -----------------------------------------------------------------------------
-// .Import Variable Reference(s)
-//	:
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :27.05.1997 RO			First Implementation
-//	:
-////////////////////////////////////////////////////////////////////////////////
-void SVObserverApp::OnFileOpen() 
-{
-	if( m_svSecurityMgr.SVValidate( SECURITY_POINT_FILE_MENU_SELECT_CONFIGURATION ) == S_OK )
-	{
-		CWinApp::OnFileOpen();
-	}
-}
-
-CDocument* SVObserverApp::OpenDocumentFile( LPCTSTR LPSZFileName ) 
-{
-	return NULL;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : OnFileNewSEC - calls the SVApplicationAssistant Dialog
-// -----------------------------------------------------------------------------
-// .Description : OnFileNewSEC - calls the SVApplicationAssistant Dialog to get
-//              : correct systems for opening new IPDocuments
-// -----------------------------------------------------------------------------
-// .Input(s)
-//	 Type				Name				Description
-//	: 
-//  :
-// .Output(s)
-//	:
-//  :
-// .Return Value
-//	: 
-// -----------------------------------------------------------------------------
-// .Import Function Reference(s)
-//	:
-// -----------------------------------------------------------------------------
-// .Import Variable Reference(s)
-//	:
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :27.05.1997 RO			First Implementation
-//  :30.06.1999 FRB         Wait cursor
-//	:20.10.1999 RO			Merged to ShowConfigurationAssistant().
-////////////////////////////////////////////////////////////////////////////////
-void SVObserverApp::OnFileNewSEC() 
-{
-	if( m_svSecurityMgr.SVValidate( SECURITY_POINT_FILE_MENU_NEW ) == S_OK )
-	{
-		ShowConfigurationAssistant( 0, TRUE );
-	}
-
-	if( OkToEdit() || !m_svSecurityMgr.SVIsSecured( SECURITY_POINT_MODE_MENU_EDIT_TOOLSET ) )
-	{
-		SetModeEdit( true );
-	}
-	else
-	{
-		SetModeEdit( false );
-	}
-	// Logic to remove unused IO Tabs PLC and Remote inputs.
-	// PLC Inputs
-	SVConfigurationObject* l_pConfig = NULL;
-	SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
-
-	if( l_pConfig )
-	{
-#ifndef _WIN64
-		if( l_pConfig->GetPLCCount() == 0 )
-		{
-			HideIOTab( SVIOPLCOutputsViewID );
-		}
-#endif
-		if( l_pConfig->GetRemoteOutputGroupCount() == 0)
-		{
-			HideIOTab( SVRemoteOutputsViewID );
-		}
-	}
-	else
-	{
-#ifndef _WIN64
-		HideIOTab( SVIOPLCOutputsViewID );
-#endif
-		HideIOTab( SVRemoteOutputsViewID );
-	}
-
-	// Update Remote Inputs Tab
-	UpdateRemoteInputTabs();
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : OnIdle(LONG lCount)
-// -----------------------------------------------------------------------------
-// .Description : ...
-//              :
-// -----------------------------------------------------------------------------
-// .Input(s)
-//	 Type				Name				Description
-//	: 
-//  :
-// .Output(s)
-//	:
-//  :
-// .Return Value
-//	: 
-// -----------------------------------------------------------------------------
-// .Import Function Reference(s)
-//	:
-// -----------------------------------------------------------------------------
-// .Import Variable Reference(s)
-//	:
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :27.05.1997 RO			First Implementation
-//	:
-////////////////////////////////////////////////////////////////////////////////
-BOOL SVObserverApp::OnIdle(LONG lCount) 
-{
-	BOOL bMore = CWinApp::OnIdle(lCount);
-
-	return bMore;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : OnFileSaveAll
-// -----------------------------------------------------------------------------
-// .Description : ...
-//              :
-// -----------------------------------------------------------------------------
-// .Input(s)
-//	 Type				Name				Description
-//	: 
-//  :
-// .Output(s)
-//	:
-//  :
-// .Return Value
-//	: 
-// -----------------------------------------------------------------------------
-// .Import Function Reference(s)
-//	:
-// -----------------------------------------------------------------------------
-// .Import Variable Reference(s)
-//	:
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :27.05.1997 RO			First Implementation
-//	:
-////////////////////////////////////////////////////////////////////////////////
-void SVObserverApp::OnFileSaveAll() 
-{
-	if( m_svSecurityMgr.SVValidate( SECURITY_POINT_FILE_MENU_SAVE_CONFIGURATION ) == S_OK )
-	{
-		OnFileSaveSec();
-	}
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : OnFileSaveSec
-// -----------------------------------------------------------------------------
-// .Description : ...
-//              :
-// -----------------------------------------------------------------------------
-// .Input(s)
-//	 Type				Name				Description
-//	: 
-//  :
-// .Output(s)
-//	:
-//  :
-// .Return Value
-//	: 
-// -----------------------------------------------------------------------------
-// .Import Function Reference(s)
-//	:
-// -----------------------------------------------------------------------------
-// .Import Variable Reference(s)
-//	:
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :27.05.1997 RO			First Implementation
-//	:
-////////////////////////////////////////////////////////////////////////////////
-void SVObserverApp::OnFileSaveSec()
-{
-	if( CString( GetSECFullFileName() ).IsEmpty() || 
-	    CString( GetSECPathName() ).IsEmpty() )
-	{
-		fileSaveAsSec();
-	}
-	else
-	{
-		SVFileNameManagerClass svFileManager;
-
-		CString csTempName = svFileManager.GetConfigurationPathName();
-
-		if ( csTempName.IsEmpty() )
-		{
-			csTempName = GetSECFullFileName();
-		}
-		else
-		{
-			csTempName += _T( "\\" );
-			csTempName += GetSECFileName();
-		}
-
-		fileSaveAsSec( csTempName );
-	}
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : OnFileSaveAsSec()
-// -----------------------------------------------------------------------------
-// .Description : ...
-//              :
-// -----------------------------------------------------------------------------
-// .Input(s)
-//	 Type				Name				Description
-//	: 
-//  :
-// .Output(s)
-//	:
-//  :
-// .Return Value
-//	: 
-// -----------------------------------------------------------------------------
-// .Import Function Reference(s)
-//	:
-// -----------------------------------------------------------------------------
-// .Import Variable Reference(s)
-//	:
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :27.05.1997 RO			First Implementation
-//	:
-////////////////////////////////////////////////////////////////////////////////
-void SVObserverApp::OnFileSaveAsSec() 
-{
-	if( m_svSecurityMgr.SVValidate( SECURITY_POINT_FILE_MENU_SAVE_CONFIGURATION_AS ) == S_OK )
-	{
-		fileSaveAsSec();
-	}
-}
-
-void SVObserverApp::fileSaveAsSec( CString StrSaveAsPathName ) 
-{
-	// &&&
-	SVFileNameManagerClass svFileManager;
-    CWaitCursor wait;
-	long	hr;
-
-	BOOL bOk=TRUE;
-
-	ResetAllIPDocModifyFlag(FALSE);
-	//
-	// Is the input parameter for save as path empty?
-	//
-	if ( StrSaveAsPathName.IsEmpty() )
-	{
-		SVFileNameClass svFileName = msvSECFileName;
-
-		svFileName.SetFileType( SV_SVX_CONFIGURATION_FILE_TYPE );
-
-		if ( CString( GetSECPathName() ).IsEmpty() ||
-				 CString( GetSECPathName() ).CompareNoCase( "C:\\RUN" ) == 0 )
-		{
-			svFileName.SetPathName( AfxGetApp()->GetProfileString( _T( "Settings" ), 
-									 _T( "ConfigurationFilePath" ), 
-									 _T( "C:\\RUN" ) ) );
-
-			if ( CString( svFileName.GetPathName() ).CompareNoCase( "C:\\RUN" ) == 0 )
-			{
-				if ( ! CString( svFileManager.GetConfigurationPathName() ).IsEmpty() )
-                {
-                    svFileName.SetPathName( svFileManager.GetConfigurationPathName() );
-                }
-			}
-		}
-
-		if ( svFileName.SaveFile() )
-		{
-			bOk = SetSECFullFileName( svFileName.GetFullFileName(), RENAME );
-			if ( bOk )
-			{
-				AfxGetApp()->WriteProfileString( _T( "Settings" ), 
-											   _T( "ConfigurationFilePath" ), 
-											   svFileName.GetPathName() );
-			}
-		}
-		else
-		{
-			return;
-		}
-	}// end if ( StrSaveAsPathName.IsEmpty() )
-	else
-	{
-		SetSECFullFileName( StrSaveAsPathName, FALSE );
-	}
-
-	if ( !CString( msvSECFileName.GetExtension() ).CompareNoCase( ".svx" ) )
-	{
-		CString csFileName;
-
-		BSTR bStr = NULL;
-		unsigned long ulVer = 0;
-
-		SVConfigurationObject* l_pConfig = NULL;
-		SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
-
-		if( l_pConfig != NULL )
-		{
-			l_pConfig->SaveConfiguration( m_XMLTree );
-		}
-
-		SaveDocuments( m_XMLTree );
-
-		csFileName = msvSECFileName.GetFullFileName();
-
-		bStr = csFileName.AllocSysString();
-
-		hr = SVOCMSaveConfiguration( DwCurrentVersion, ulVer, bStr, m_XMLTree );
-		if (hr & 0xc0000000)
-		{
-			CString	csErrorMessage;
-			csErrorMessage.Format ("Error: Could not save configuration. Error Nbr: %d", hr);
-			AfxMessageBox (csErrorMessage);
-		
-		}
-
-		SysFreeString( bStr );
-
-		svFileManager.SaveItem( &msvSECFileName );
-		svFileManager.SaveItems();
-		svFileManager.RemoveUnusedFiles();
-
-		SVSVIMStateClass::RemoveState( SV_STATE_MODIFIED );
-
-		SVNavigateTreeClass::DeleteAllItems( m_XMLTree );
-
-		if ( bOk )
-		{
-			if ( CString( svFileManager.GetConfigurationPathName() ).IsEmpty() )
-			{
-				AddToRecentFileList( GetSECFullFileName() );
-			}
-			else
-			{
-				AddToRecentFileList( CString( svFileManager.GetConfigurationPathName() ) + 
-									 "\\" + GetSECFileName() );
-			}
-		}
-			
-        ( (CMDIFrameWnd*) AfxGetMainWnd() )->OnUpdateFrameTitle(TRUE);
-
-		// Success...
-		return;
-	}// end if ( !CString( msvSECFileName.GetExtension() ).CompareNoCase( ".svx" ) )
-	else
-	{
-		AfxMessageBox( IDS_USER_INFORMATION_WRONG_PATHNAME_ENTERED );
-	}
-}
-
-
-HRESULT SVObserverApp::CheckDrive(const CString& p_strDrive) const
-{
-	HRESULT l_hr = S_OK;
-	// Check if exists
-	if( PathFileExists(p_strDrive) == FALSE )
-	{
-		CString l_strTmp;
-		CString l_strDrive;
-		l_strDrive = p_strDrive;
-		l_strDrive.MakeUpper();
-		l_strDrive = l_strDrive.Left(1);
-		l_strTmp.Format(_T("%s - Drive does not exist"), l_strDrive);
-		SVException svE;
-		SETEXCEPTION1(svE,SVMSG_SVO_47_EXCEPTION_SYSTEM_SETUP,l_strTmp);
-		svE.LogException(l_strTmp);
-
-		AfxMessageBox(l_strTmp);
-	
-	}
-	TCHAR szVolumeName[100];
-	TCHAR szFileSystemName[32];
-	DWORD dwSerialNumber;
-	DWORD dwMaxFileNameLength;
-	DWORD dwFileSystemFlags;
-
-	if( GetVolumeInformation( p_strDrive,
-		szVolumeName,
-		sizeof( szVolumeName),
-		&dwSerialNumber,
-		&dwMaxFileNameLength,
-		&dwFileSystemFlags,
-		szFileSystemName,
-		sizeof(szFileSystemName)))
-	{
-		CString l_strName(szFileSystemName);
-		if( l_strName.Find(_T("NTFS")) < 0)
-		{
-			CString l_strDrive ;
-			CString l_strTmp;
-			l_strDrive = p_strDrive;
-			l_strDrive.MakeUpper();
-			l_strDrive = l_strDrive.Left(1);
-			l_strTmp.Format(_T("%s - Drive is not NTFS"), l_strDrive);
-			SVException svE;
-			SETEXCEPTION1(svE,SVMSG_SVO_47_EXCEPTION_SYSTEM_SETUP,l_strTmp);
-			svE.LogException(l_strTmp);
-			AfxMessageBox( l_strTmp );
-		}
-	}
-
-	return l_hr;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : OpenSECFile
-// -----------------------------------------------------------------------------
-// .Description : 
-// -----------------------------------------------------------------------------
-// .Input(s)
-//	 Type				Name				Description
-//	: 
-//  :
-// .Output(s)
-//	:
-//  :
-// .Return Value
-//	: void
-// -----------------------------------------------------------------------------
-// .Import Function Reference(s)
-//	:
-// -----------------------------------------------------------------------------
-// .Import Variable Reference(s)
-//	:
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :dd.mm.yyyy	RO			First Implementation
-////////////////////////////////////////////////////////////////////////////////
-HRESULT SVObserverApp::OpenSECFile( LPCTSTR LPSZPathName )
-{
-    CWaitCursor wait;
-	SVClock::SVTimeStamp l_StartLoading;
-	SVClock::SVTimeStamp l_FinishLoad;
-
-    HRESULT hr=S_OK;
-	BOOL bOk;
-    HRESULT hrDestroyed = DestroySEC();
-    hr = hrDestroyed;
-    bOk = (hrDestroyed == S_OK);
-
-	// TRB *******************
-	if ( bOk )
-	{
-		TheSVOLicenseManager().ClearLicenseErrors();
-
-		bOk = SVSVIMStateClass::AddState( SV_STATE_UNAVAILABLE | SV_STATE_LOADING );
-
-		if ( bOk )
-		{
-			bOk = SVSVIMStateClass::RemoveState( SV_STATE_AVAILABLE );
-		}
-	}
-
-	if ( bOk )
-	{
-		SVFileNameManagerClass svFileManager;
-		SVFileNameClass svFileName( LPSZPathName );
-
-		//
-		// Check if we tried to load the SVC from 
-		// Execution path...("C:\RUN\")
-		//
-		if ( CString( svFileName.GetPathName() ).CompareNoCase( svFileManager.GetRunPathName() ) )
-		{
-			// Clean up Execution Directory...
-			// Check path, create if necessary and delete contents...
-			InitPath( CString( svFileManager.GetRunPathName() ) + "\\", TRUE, TRUE );
-		}
-
-		try
-		{
-			SetSECFullFileName( LPSZPathName );
-
-			SVRCSetSVCPathName( GetSECFullFileName() );
-
-			CFile secFile;
-			if( ( bOk = secFile.Open( GetSECFullFileName(),
-			                          CFile::modeRead | CFile::shareExclusive ) ) )
-			{
-				// Create a temporary archive in order to serialize in the configuration
-				// version number. If the configuration is created with a future version of
-				// SVObserver, ask if they want to continue at their own risk. ow exit nicely.
-				CArchive tempArc( &secFile, CArchive::load );
-
-				CString strDummy;
-				tempArc >> strDummy;	// SVObserver System Environment Configuration File
-				tempArc >> strDummy;	// Version #
-				DWORD dwFileVersion;
-				tempArc >> dwFileVersion;
-				if( dwFileVersion > DwCurrentVersion )
-				{
-					CString strText, strFile, strApp;
-					::SVGetVersionString( strApp, DwCurrentVersion );
-					::SVGetVersionString( strFile, dwFileVersion );
-					strText.Format( _T( "This configuration was created by SVObserver %s.\n"
-									"You are currently running SVObserver %s.\n"
-									"This configuration version may be incompatible with\n"
-									"the version of SVObserver that you are running.\n"
-									"Are you sure you wish to continue ?" ), 
-									strFile, strApp );
-					if( IDNO == AfxMessageBox( strText, MB_YESNO ) )
-						return FALSE;
-				}// end if
-
-				l_StartLoading = SVClock::GetTimeStamp();
-
-				tempArc.Close();
-				secFile.SeekToBegin();
-
-// ************************************* JMS
-
-				CString csIODocName;
-				BSTR bStr = NULL;
-				CArchive archive( &secFile, CArchive::load );
-
-				unsigned long SECVer = 0;
-
-				// SEC will be created in SVObserverApp::Serialize( archive );
-				Serialize( archive );
-
-				SVOCMArchiveSEC( DwCurrentVersion, SECVer, archive, m_XMLTree, &bStr );
-
-				archive.Close();
-				secFile.Close();
-
-				csIODocName = bStr;
-				LoadTempIODoc( csIODocName );
-
-				// TRB *******************
-				// *************** Add IO Doc to local List 
-				SVFileNameClass * l_psvFileName = new SVFileNameClass( csIODocName );
-				m_svFileNames.Add( l_psvFileName );
-				svFileManager.AddItem(l_psvFileName);
-
-				SVTreeType::SVBranchHandle htiRoot;
-				SVTreeType::SVBranchHandle htiChild;
-
-				m_XMLTree.GetRoot( htiRoot );
-
-				if( m_XMLTree.FindBranch( htiRoot, _bstr_t( CTAG_INSPECTION ), htiChild ) == S_OK )
-				{
-					SVTreeType::SVBranchHandle htiIPChild;
-
-					m_XMLTree.GetFirstBranch( htiChild, htiIPChild );
-
-					while ( m_XMLTree.IsValidBranch( htiIPChild ) == S_OK )
-					{
-						SVTreeType::SVLeafHandle htiIPDataChild;
-
-						if( m_XMLTree.FindLeaf( htiIPChild, _bstr_t( CTAG_INSPECTION_FILE_NAME ), htiIPDataChild ) == S_OK )
-						{
-							_variant_t l_Variant;
-
-							if( m_XMLTree.GetLeafData( htiIPDataChild, l_Variant.GetVARIANT() ) == S_OK )
-							{
-								_bstr_t l_Name = l_Variant;
-
-								if( 0 < l_Name.length() )
-								{
-									l_psvFileName = new SVFileNameClass( static_cast< LPCTSTR >( l_Name ) );
-									m_svFileNames.Add( l_psvFileName );
-									svFileManager.AddItem( l_psvFileName );
-
-									m_Inspection = htiIPChild;
-
-									LoadTempIPDoc( static_cast< LPCTSTR >( l_Name ) );
-								}
-							}
-						}
-
-						m_XMLTree.GetNextBranch( htiChild, htiIPChild );
-					}
-				}
-
-				CloseAllDocuments(FALSE);
-
-				SVConfigurationObject* l_pConfig = NULL;
-				SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
-
-				if( l_pConfig != NULL )
-				{
-					hr = l_pConfig->LoadConfiguration( m_XMLTree );
-				}
-
-				GetMainFrame()->ParseToolsetScripts( m_XMLTree );
-
-				if( l_pConfig != NULL )
-				{
-					l_pConfig->RebuildInputOutputLists();
-
-					// Removes any invalid entries in the output list.
-					if( l_pConfig->IsConfigurationLoaded() )
-					{
-						if( l_pConfig->ValidateOutputList( ) == SV_FATAL_SVOBSERVER_2006_DUPLICATE_DISCRETE_OUTPUT )
-						{
-							::AfxMessageBox( "Invalid Discrete Outputs: Remove all Discrete Outputs and re-add them.", MB_ICONEXCLAMATION );
-						}
-					}
-				}
-
-				ConstructDocuments( m_XMLTree );
-
-				GetMainFrame()->OnConfigurationFinishedInitializing();
-
-				l_FinishLoad = SVClock::GetTimeStamp();
-				long l_lTime = static_cast<long>(l_FinishLoad - l_StartLoading);
-
-				SVException svE;
-				CString sExcTxt; 
-				sExcTxt.Format( "%s\nload time %d ms", LPSZPathName, l_lTime );
-				SETEXCEPTION1(svE,SVMSG_SVO_29_SVOBSERVER_CONFIG_LOADED,sExcTxt);
-				svE.LogException(sExcTxt);
-
-				m_XMLTree.Clear();
-
-// ************************************* JMS
-
-				// IsSECModified = FALSE; 03 Dec 1999 - frb. delay until 
-				// .ipd parsing is completed.
-
-				if ( CString( svFileManager.GetConfigurationPathName() ).IsEmpty() )
-				{
-					AddToRecentFileList( GetSECFullFileName() );
-				}
-				else
-				{
-					AddToRecentFileList( CString( svFileManager.GetConfigurationPathName() ) + 
-															 "\\" + GetSECFileName() );
-				}
-	
-//				UpdateApplicationBar();
-				UpdatePPQBar();
-			}
-			else
-			{
-				SetSECFullFileName( (LPCTSTR)NULL );
-
-				SVSVIMStateClass::AddState( SV_STATE_AVAILABLE );
-				SVSVIMStateClass::RemoveState( SV_STATE_UNAVAILABLE | SV_STATE_LOADING );
-			}
-		}
-		catch( CUserException* pUE )
-		{
-			delete pUE;
-
-			bOk = FALSE;
-
-			SVSVIMStateClass::RemoveState( SV_STATE_LOADING );
-
-			
-			DestroySEC( FALSE, TRUE );
-
-			SetSECFullFileName( (LPCTSTR)NULL );
-
-			UpdatePPQBar();
-
-			SVSVIMStateClass::AddState( SV_STATE_AVAILABLE );
-			SVSVIMStateClass::RemoveState( SV_STATE_UNAVAILABLE );
-		}
-		m_bOpeningSEC = TRUE;
-	}
-
-    if (hr == S_OK)
-        hr = bOk ? S_OK : S_FALSE;
-
-	// Update Remote Inputs Tab
-	UpdateRemoteInputTabs();
-
-	return hr;
-}
-
-HRESULT SVObserverApp::OpenSVXFile(LPCTSTR LPSZPathName)
-{
-    CWaitCursor wait;
-
-   HRESULT hr;
-	HRESULT	hrDestroyed;
-	SVClock::SVTimeStamp l_StartLoading;
-	SVClock::SVTimeStamp l_FinishLoad;
-
-	BOOL bOk;
-	
-	hr = S_OK;
-	hrDestroyed = S_OK;
-	bOk = 0;
-
-	while (1)
-	{
-		hrDestroyed = DestroySEC();
-		if (hrDestroyed != S_OK)
-		{
-			hr = hrDestroyed; //keep the cancel state so it does not remove from MRU
-			break;
-		}
-
-		TheSVOLicenseManager().ClearLicenseErrors();
-
-		bOk = SVSVIMStateClass::AddState( SV_STATE_UNAVAILABLE | SV_STATE_LOADING );
-
-		if (!bOk)
-		{
-			break;
-		}
-
-		bOk = SVSVIMStateClass::RemoveState( SV_STATE_AVAILABLE );
-
-		if (!bOk)
-		{
-			break;
-		}
-
-		SVFileNameManagerClass svFileManager;
-		SVFileNameClass svFileName( LPSZPathName );
-
-		//
-		// Check if we tried to load the SVC from 
-		// Execution path...("C:\RUN\")
-		//
-		if ( CString( svFileName.GetPathName() ).CompareNoCase( svFileManager.GetRunPathName() ) )
-		{
-			// Clean up Execution Directory...
-			// Check path, create if necessary and delete contents...
-			InitPath( CString( svFileManager.GetRunPathName() ) + "\\", TRUE, TRUE );
-		} // if ( CString
-
-		try
-		{
-			CString csFullFileName;
-
-			BSTR bStr = NULL;
-			unsigned long SECVer = 0;
-
-			SetSECFullFileName( LPSZPathName );
-
-			SVRCSetSVCPathName( GetSECFullFileName() );
-
-			csFullFileName = GetSECFullFileName();
-
-			bStr = csFullFileName.AllocSysString();
-
-			while (1)
-			{
-				hr = SVOCMLoadConfiguration( DwCurrentVersion, SECVer, bStr, m_XMLTree );
-				if (hr & 0xc0000000)
-				{
-					break;
-				}
-
-				if ( SECVer > DwCurrentVersion )
-				{
-					CString strText, strFile, strApp;
-					
-					::SVGetVersionString( strApp, DwCurrentVersion );
-					::SVGetVersionString( strFile, SECVer );
-					strText.Format( _T( "This configuration was created by SVObserver %s.\n"
-										"You are currently running SVObserver %s.\n"
-										"This configuration version may be incompatible with\n"
-										"the version of SVObserver that you are running.\n"
-										"Are you sure you wish to continue ?" ), 
-										strFile, strApp );
-
-					if( AfxMessageBox( strText, MB_YESNO ) == IDNO )
-					{
-						hr = -1801;
-						break;
-					}
-				} // if ( SECVer > DwCurrentVersion )
-
-				l_StartLoading = SVClock::GetTimeStamp();
-
-				SVConfigurationObject* l_pConfig = NULL;
-				SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
-
-				if( l_pConfig != NULL )
-				{
-					hr = l_pConfig->LoadConfiguration( m_XMLTree );
-				}
-
-				if (hr & 0xc0000000)
-				{
-					break;
-				}
-
-				GetMainFrame()->ParseToolsetScripts( m_XMLTree );
-
-				if( l_pConfig != NULL )
-				{
-					l_pConfig->RebuildInputOutputLists();
-
-					// Removes any invalid entries in the output list.
-					if( l_pConfig->IsConfigurationLoaded() )
-					{
-						if( l_pConfig->ValidateOutputList( ) == SV_FATAL_SVOBSERVER_2006_DUPLICATE_DISCRETE_OUTPUT )
-						{
-							::AfxMessageBox( "Invalid Discrete Outputs: Remove all Discrete Outputs and re-add them.", MB_ICONEXCLAMATION );
-						}
-					}
-				}
-
-				ConstructDocuments( m_XMLTree );
-
-				GetMainFrame()->OnConfigurationFinishedInitializing();
-
-#ifndef _WIN64
-				if( l_pConfig != NULL )
-				{
-					// Initialize the PLC...
-					m_PLCManager.Startup( l_pConfig );
-				}
-#endif
-
-				l_FinishLoad = SVClock::GetTimeStamp();
-				long l_lTime = static_cast<long>(l_FinishLoad - l_StartLoading);
-
-				SVException svE;
-				CString sExcTxt; //(LPSZPathName);
-				sExcTxt.Format( "%s\nload time %d ms", LPSZPathName, l_lTime );
-				SETEXCEPTION1(svE,SVMSG_SVO_29_SVOBSERVER_CONFIG_LOADED,sExcTxt);
-				svE.LogException(sExcTxt);
-
-				break;
-			} // while (1)
-			
-			SysFreeString (bStr);
-			bStr = NULL;
-
-			m_XMLTree.Clear();
-
-			if (hr & 0xc0000000)
-			{
-//-			If there was an error during configuration loading.
-				SVSVIMStateClass::AddState( SV_STATE_AVAILABLE );
-				SVSVIMStateClass::RemoveState(SV_STATE_UNAVAILABLE | SV_STATE_LOADING);
-				m_XMLTree.Clear();
-
-				if (hr != -1801) // -1801 means the user aborted because 
-									  //  configuration versions were different.
-				{
-					CString strText;
-
-					
-					strText.Format( _T( "The configuration could not succussfully load.\n"
-										     "hr = %d.\n"), 
-										hr);
-
-
-					AfxMessageBox( strText, MB_OK );
-				}
-				return S_FALSE;
-			} // if (hr & 0xc000)
-
-
-// ************************************* JMS
-
-			// IsSECModified = FALSE; 03 Dec 1999 - frb. delay until 
-			// .ipd parsing is completed.
-
-			if ( CString( svFileManager.GetConfigurationPathName() ).IsEmpty() )
-			{
-				AddToRecentFileList( GetSECFullFileName() );
-			}
-			else
-			{
-				AddToRecentFileList( CString( svFileManager.GetConfigurationPathName() ) + 
-														 "\\" + GetSECFileName() );
-			}
-
-//				UpdateApplicationBar();
-			UpdatePPQBar();
-		} // try
-
-		catch( CUserException* pUE )
-		{
-			delete pUE;
-
-			bOk = FALSE;
-
-			SVSVIMStateClass::RemoveState( SV_STATE_LOADING );
-
-			
-			DestroySEC( FALSE, TRUE );
-
-			SetSECFullFileName( (LPCTSTR)NULL );
-
-			UpdatePPQBar();
-
-			SVSVIMStateClass::AddState( SV_STATE_AVAILABLE );
-			SVSVIMStateClass::RemoveState( SV_STATE_UNAVAILABLE );
-		}  // catch
-
-		m_bOpeningSEC = FALSE;
-
-		break;
-	} // while (1)
-
-	if ( ! bOk && hrDestroyed == S_OK )
-	{
-		SetSECFullFileName( (LPCTSTR)NULL );
-
-		SVSVIMStateClass::AddState( SV_STATE_AVAILABLE );
-		SVSVIMStateClass::RemoveState( SV_STATE_UNAVAILABLE | SV_STATE_LOADING );
-	}
-
-    if (hr == S_OK)
-        hr = bOk ? S_OK : S_FALSE;
-
-	// Logic to remove unused IO Tabs PLC and Remote inputs.
-	// PLC Inputs
-	SVConfigurationObject* l_pConfig = NULL;
-	SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
-
-	if( l_pConfig != NULL )
-	{
-#ifndef _WIN64
-		if( l_pConfig->GetPLCCount() == 0 )
-		{
-			HideIOTab( SVIOPLCOutputsViewID );
-		}
-#endif
-		if( l_pConfig->GetRemoteOutputGroupCount() == 0)
-		{
-			HideIOTab( SVRemoteOutputsViewID );
-		}
-	}
-	else
-	{
-		HideIOTab( SVIOPLCOutputsViewID );
-		HideIOTab( SVRemoteOutputsViewID );
-	}
-
-	// Update Remote Inputs Tab
-	UpdateRemoteInputTabs();
-	return hr;
-}
-
-void SVObserverApp::RemoveUnusedFiles()
-{
-	SVFileNameManagerClass svFileManager;
-	svFileManager.RemoveUnusedFiles( FALSE );
-
-	if( m_bOpeningSEC )
-	{
-		SVFileNamePtrVector::iterator l_Iter = m_svFileNames.begin();
-
-		while( l_Iter != m_svFileNames.end() )
-		{
-			SVFileNameClass* l_pName = ( *l_Iter );
-
-			l_Iter = m_svFileNames.erase( l_Iter );
-
-			svFileManager.RemoveItem( l_pName );
-
-			if( l_pName )
-			{
-				delete l_pName;
-			}
-		}
-	}
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : OnFileOpenSVC
-// -----------------------------------------------------------------------------
-// .Description : General - Opens a SEC File.
-//				: - Calls a SEC File Open Dialog 
-//				: - If a SEC already exists, calls the SEC saving procedure
-//              : - Calls the SEC loading procedure
-// -----------------------------------------------------------------------------
-// .Input(s)
-//	 Type				Name				Description
-//	: 
-//  :
-// .Output(s)
-//	:
-//  :
-// .Return Value
-//	: void
-// -----------------------------------------------------------------------------
-// .Import Function Reference(s)
-//	:
-// -----------------------------------------------------------------------------
-// .Import Variable Reference(s)
-//	:
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :15.10.1998	RO			First Implementation
-////////////////////////////////////////////////////////////////////////////////
-void SVObserverApp::OnFileOpenSVC() 
-{
-	ValidateMRUList();
-	// Proof user rights...
-
-    if ( m_svSecurityMgr.SVValidate( SECURITY_POINT_FILE_MENU_SELECT_CONFIGURATION) == S_OK )
-    {
-		SVFileNameClass svFileName;
-
-		svFileName.SetFileType( SV_SEC_CONFIGURATION_FILE_TYPE );
-		//
-		// Try to read the current image file path name from registry...
-		//
-		svFileName.SetPathName( AfxGetApp()->GetProfileString( _T( "Settings" ), 
-			                                                    _T( "SVCFilePath" ), 
-			                                                    _T( "C:\\RUN" ) ) );
-		if ( svFileName.SelectFile() )
-		{
-			//
-			// Write this path name back to registry...to initialize registry.
-			//
-			AfxGetApp()->WriteProfileString( _T( "Settings" ),
-				                              _T( "SVCFilePath" ),
-														svFileName.GetPathName() );
-
-			// Check for SEC file...
-			if ( CString( svFileName.GetExtension() ).CompareNoCase( _T( ".sec" ) ) == 0 )
-			{
-				//
-				// Open the configuration file (.sec) and read it and
-				// all the associated files for this configuration.
-				//
-				TheSVOLicenseManager().ClearLicenseErrors();
-				if ( OpenSECFile( svFileName.GetFullFileName() ) == S_OK )
-				{
-					if ( TheSVOLicenseManager().HasToolErrors() )
-					{
-						TheSVOLicenseManager().ShowLicenseManagerErrors();
-					}
-				}
-			}
-			else if ( CString( svFileName.GetExtension() ).CompareNoCase( _T( ".svx" ) ) == 0 )
-			{
-				//
-				// Open the configuration file (.svx) and read it and
-				// all the associated files for this configuration.
-				//
-				TheSVOLicenseManager().ClearLicenseErrors();
-				if ( OpenSVXFile( svFileName.GetFullFileName() ) == S_OK )
-				{
-					if ( TheSVOLicenseManager().HasToolErrors() )
-					{
-						TheSVOLicenseManager().ShowLicenseManagerErrors();
-					}
-				}
-			}
-			if( !m_svSecurityMgr.SVIsSecured( SECURITY_POINT_MODE_MENU_EDIT_TOOLSET ) )
-			{
-				SetModeEdit( true ); // Set Edit mode
-			}
-		}// end if ( svFileName.SelectFile() )
-    }// end if ( m_svSecurityMgr.Validate( SECURITY_POINT_FILE_MENU_SELECT_CONFIGURATION) == S_OK )
-	// Update Remote Inputs Tab
-	UpdateRemoteInputTabs();
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : OnUpdateFileOpenSVC
-// -----------------------------------------------------------------------------
-// .Description : 
-// -----------------------------------------------------------------------------
-// .Input(s)
-//	 Type				Name				Description
-//	: 
-//  :
-// .Output(s)
-//	:
-//  :
-// .Return Value
-//	: void
-// -----------------------------------------------------------------------------
-// .Import Function Reference(s)
-//	:
-// -----------------------------------------------------------------------------
-// .Import Variable Reference(s)
-//	:
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :15.10.1998	RO			First Implementation
-////////////////////////////////////////////////////////////////////////////////
-void SVObserverApp::OnUpdateFileOpenSVC( CCmdUI* PCmdUI ) 
-{
-	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION)
-		&& m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_FILE_MENU_SELECT_CONFIGURATION ) && (TheSVOLicenseManager().HasMatroxLicense()) );
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : OnFileSaveAsSVC
-// -----------------------------------------------------------------------------
-// .Description : 
-// -----------------------------------------------------------------------------
-// .Input(s)
-//	 Type				Name				Description
-//	: 
-//  :
-// .Output(s)
-//	:
-//  :
-// .Return Value
-//	: void
-// -----------------------------------------------------------------------------
-// .Import Function Reference(s)
-//	:
-// -----------------------------------------------------------------------------
-// .Import Variable Reference(s)
-//	:
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :15.10.1998	RO			First Implementation
-////////////////////////////////////////////////////////////////////////////////
-void SVObserverApp::OnFileSaveAsSVC() 
-{
-	if( m_svSecurityMgr.SVValidate( SECURITY_POINT_FILE_MENU_SAVE_CONFIGURATION_AS ) == S_OK )
-	{
-		if ( SVSVIMStateClass::CheckState( SV_STATE_READY ) )
-		{
-			// Call save as sec with file dialog...
-			fileSaveAsSec();
-		}
-	}
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : OnFileCloseSec
-// -----------------------------------------------------------------------------
-// .Description : ...
-//              :
-// -----------------------------------------------------------------------------
-// .Input(s)
-//	 Type				Name				Description
-//	: 
-//  :
-// .Output(s)
-//	:
-//  :
-// .Return Value
-//	: 
-// -----------------------------------------------------------------------------
-// .Import Function Reference(s)
-//	:
-// -----------------------------------------------------------------------------
-// .Import Variable Reference(s)
-//	:
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :27.05.1997 RO			First Implementation
-//	:
-////////////////////////////////////////////////////////////////////////////////
-void SVObserverApp::OnFileCloseSec() 
-{
-	if( m_svSecurityMgr.SVValidate( SECURITY_POINT_FILE_MENU_CLOSE_CONFIGURATION ) == S_OK )
-	{
-		SVSVIMStateClass::RemoveState( SV_STATE_EDIT );
-
-		ValidateMRUList();
-
-		// Check if current SEC is modified, ask for saving and try to close
-		DestroySEC();
-		//	UpdateApplicationBar();
-
-		ValidateMRUList();
-	}
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : OnEditEnvironment
-// -----------------------------------------------------------------------------
-// .Description : ...
-//              :
-// -----------------------------------------------------------------------------
-// .Input(s)
-//	 Type				Name				Description
-//	: 
-//  :
-// .Output(s)
-//	:
-//  :
-// .Return Value
-//	: 
-// -----------------------------------------------------------------------------
-// .Import Function Reference(s)
-//	:
-// -----------------------------------------------------------------------------
-// .Import Variable Reference(s)
-//	:
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :27.05.1997 RO			First Implementation
-//	:04.03.1999 RO			Body outlayed to ShowConfigurationAssistant();
-////////////////////////////////////////////////////////////////////////////////
-void SVObserverApp::OnEditEnvironment() 
-{
-	ShowConfigurationAssistant();
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : ShowConfigurationAssistant
-// -----------------------------------------------------------------------------
-// .Description : ...
-//              :
-// -----------------------------------------------------------------------------
-// .Input(s)
-//	 Type				Name				Description
-//	: 
-//  :
-// .Output(s)
-//	:
-//  :
-// .Return Value
-//	: 
-// -----------------------------------------------------------------------------
-// .Import Function Reference(s)
-//	:
-// -----------------------------------------------------------------------------
-// .Import Variable Reference(s)
-//	:
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :04.03.1999 RO			First Implementation
-//	:20.10.1999 RO			Added File New Configuration Capability
-////////////////////////////////////////////////////////////////////////////////
-BOOL SVObserverApp::ShowConfigurationAssistant( int Page /*= 3*/, 
-                                                BOOL bFileNewConfiguration /*= FALSE*/ )
-{
-	BOOL bOk = FALSE;
-	BOOL bWasSECLoaded = FALSE;
-
-	// Access denied, if... // Check Edit Mode
-	if( SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) )
-		return FALSE;
-
-	if ( bFileNewConfiguration )
-	{
-		SVFileNameManagerClass svFileManager;
-
-		// Clean up SVObserver
-		if( S_OK != DestroySEC() )
-		{
-			// Needs Attention !!!
-			// Should get error code if returned S_FALSE; 
-            // If returned ERROR_CANCELLED, user cancelled
-			return FALSE;
-		}
-
-		if (bFileNewConfiguration)
-		{
-			SVObjectManagerClass::Instance().ConstructConfigurationObject( SVConfigurationObjectGuid );
-		}
-
-		// Clean up Execution Directory...
-		// Check path, create if necessary and delete contents...
-		InitPath( CString( svFileManager.GetRunPathName() ) + "\\", TRUE, TRUE );
-
-		// Ensure that DestroySEC() can do his work...
-		SVSVIMStateClass::AddState( SV_STATE_READY );
-	}
-	else
-	{
-		CWaitCursor wait;
-
-		// Store old state
-		bWasSECLoaded = SVSVIMStateClass::CheckState( SV_STATE_READY );
-		ResetAllIPDocModifyFlag(FALSE);
-	}
-
-//****RPY - Start - added new AppAssistant
-
-	CSVOConfigAssistantDlg cDlg;
-
-	SVIMProductEnum eSVIMType = GetSVIMType();
-
-	cDlg.SetCurrentSystem( eSVIMType );
-
-	SVConfigurationObject* l_pConfig = NULL;
-	SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
-
-	if( l_pConfig != NULL )
-	{
-		if( l_pConfig->GetProductType() != SVIM_PRODUCT_TYPE_UNKNOWN )
-		{
-			cDlg.SetConfigurationSystem( l_pConfig->GetProductType() );
-		}
-		else
-		{
-			cDlg.SetConfigurationSystem( eSVIMType );
-		}
-	}
-	else
-	{
-		cDlg.SetConfigurationSystem( eSVIMType );
-	}
-	
-	SVIOBoardCapabilities l_svCapable;
-	unsigned long l_lCount;
-	SVIOConfigurationInterfaceClass::Instance().GetDigitalInputCount( l_lCount );
-	l_svCapable.SetInputCount( l_lCount );
-	SVIOConfigurationInterfaceClass::Instance().GetDigitalOutputCount( l_lCount );
-	l_svCapable.SetOutputCount( l_lCount );
-
-	// Special code to determine the inverters 
-	// and triggers based on IO board
-	if( m_csIOBoard.Compare( "10" ) == 0 )
-	{
-		l_svCapable.SetStrobeInverters( 1 );
-		l_svCapable.SetTriggerInverters( 1 );
-		l_svCapable.SetTriggerCount( 1 );
-	}
-	else if( m_csIOBoard.Compare("12") == 0 )
-	{
-		l_svCapable.SetStrobeInverters( 1 );
-		l_svCapable.SetTriggerInverters( 1 );
-		l_svCapable.SetTriggerCount( 3 );
-	}
-	else if( m_csIOBoard.Compare("00") == 0 )
-	{
-		// SEJ 303 - Get Trigger count from the TriggerDLL (in this case the DigitizerDLL)
-		int numTriggers = 0;
-		const SVIMTypeInfoStruct& info = SVHardwareManifest::GetSVIMTypeInfo(eSVIMType);
-		l_svCapable.SetNonIOSVIM(info.m_MaxTriggers);
-	}
-	else 
-	{
-		l_svCapable.SetStrobeInverters( 3 );
-		l_svCapable.SetTriggerInverters( 3 );
-		l_svCapable.SetTriggerCount( 3 );
-	}
-
-	cDlg.SetIOBoardCapabilities( l_svCapable );
-
-    cDlg.SetNewConfiguration( bFileNewConfiguration );
-
-	SVSVIMStateClass::AddState( SV_STATE_EDITING );
-    if (cDlg.DoModal() == IDOK)
-    {
-        bOk = TRUE;
-        if (cDlg.Modified())
-        {
-            SVSVIMStateClass::AddState( SV_STATE_MODIFIED );
-        }
-		l_pConfig->ClearRemoteOutputUnUsedData();
-    }
-	SVSVIMStateClass::RemoveState( SV_STATE_EDITING );
-
-	CString sNewName;
-
-//****RPY - End - added new AppAssistant
-
-	// Call the application assistant dialog...
-
-	if ( bOk )
-	{
-        CWaitCursor wait;
-
-        sNewName = cDlg.GetConfigurationName();
-		if( bFileNewConfiguration )
-		{
-			msvSECFileName.SetFileNameOnly( sNewName );
-			msvSECFileName.SetExtension( ".svx" );
-
-			SVInputObjectList	*pInputObjectList = NULL;
-			SVOutputObjectList	*pOutputObjectList = NULL;
-			SVDigitalOutputObject *pOutput = NULL;
-			SVDigitalInputObject *pInput = NULL;
-			SVPPQObject			 *pPPQ = NULL;
-			CString strName;
-			unsigned long ulCount = 0;
-			unsigned long l = 0;
-			long lPPQ = 0;
-			long lPPQCount = 0;
-
-			SVIOConfigurationInterfaceClass::Instance().GetDigitalInputCount( ulCount );
-
-			// Create all the default inputs
-			l_pConfig->GetInputObjectList( &pInputObjectList );
-
-			for( l = 0; l < ulCount; l++ )
-			{
-				pInput = NULL;
-
-				strName.Format( "DIO.Input%d", l+1 );
-
-				pInputObjectList->GetInputFlyweight( static_cast< LPCTSTR >( strName ), pInput );
-
-				if( pInput != NULL )
-				{
-					pInput->SetChannel( l );
-				}
-			}// end for
-
-			// Make all the PPQs build their default digital inputs
-			l_pConfig->GetPPQCount( lPPQCount );
-			for( lPPQ = 0; lPPQ < lPPQCount; lPPQ++ )
-			{
-				l_pConfig->GetPPQ( lPPQ, &pPPQ );
-				
-				pPPQ->RebuildInputList(l_pConfig->HasCameraTrigger(pPPQ));
-				pPPQ->RebuildOutputList();
-			}// end for
-
-			// Create all the default outputs
-			l_pConfig->GetOutputObjectList( &pOutputObjectList );
-
-			pOutputObjectList->GetOutputFlyweight( "Module Ready", pOutput );
-
-//JAB082212 HACK!!!!!
-			if( pOutput != NULL )
-			{
-//				pOutput->SetChannel( ( bFileNewConfiguration ) ? 15 : -1 );
-				pOutput->SetChannel( 15 );
-
-				l_pConfig->GetModuleReady()->m_IOId = pOutput->GetUniqueObjectID();
-
-				SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputIsInverted (15, pOutput->IsInverted ());
-				SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputIsForced (15, pOutput->IsForced ());
-				SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputForcedValue (15, pOutput->GetForcedValue ());
-
-			}
-		}
-
-		if ( l_pConfig != NULL )
-		{
-			bOk = l_pConfig->RebuildInputOutputLists();
-
-			ConstructMissingDocuments();
-
-			// Check for Imported Inspection and adjust views, window placement and conditional history
-			const SVImportedInspectionInfoList& infoList = cDlg.GetImportedInspectionInfoList();
-			for (SVImportedInspectionInfoList::const_iterator it = infoList.begin();it != infoList.end();++it)
-			{
-				const SVImportedInspectionInfo& info = (*it);
-				SVIPDoc* pDoc = SVObjectManagerClass::Instance().GetIPDoc(info.m_inspectionGuid);
-				if (pDoc)
-				{
-					SVIPDocInfoImporter::Import(pDoc, info);
-				}
-			}
-			cDlg.ClearImportedInspectionInfoList();
-
-			if ( TheSVOLicenseManager().HasToolErrors() )
-			{
-				TheSVOLicenseManager().ShowLicenseManagerErrors();
-			}
-			else
-			{
-				//close dialog if it is up and has no errors
-				TheSVOLicenseManager().ClearLicenseErrors();
-			}
-
-			//
-			// Set the tool selected for an operator to move if any.
-			// 26 Jan 2000 - frb.
-			//
-			AfxGetMainWnd()->PostMessage( SV_SET_TOOL_SELECTED_IN_TOOL_VIEW, (WPARAM) TRUE );
-
-			bOk = l_pConfig->Activate() && bOk;
-		}
-
-		if( bFileNewConfiguration )
-		{
-            UpdateAllMenuExtrasUtilities();
-			SVSVIMStateClass::AddState( SV_STATE_READY );
-			SVSVIMStateClass::RemoveState( SV_STATE_AVAILABLE );
-		}
-
-		// Rebuild PPQBar Buttons
-		GetMainFrame()->DestroyPPQButtons();
-		GetMainFrame()->BuildPPQButtons();
-
-		// Validate Output List TB
-		if( l_pConfig->ValidateOutputList( ) == SV_FATAL_SVOBSERVER_2006_DUPLICATE_DISCRETE_OUTPUT )
-		{
-			::AfxMessageBox( "Invalid Discrete Outputs: Remove all Discrete Outputs and re-add them.", MB_ICONEXCLAMATION );
-		}
-	}// end if DoModal == IDOK
-
-	if ( ! bOk )
-	{
-		if( bFileNewConfiguration )
-		{
-			SVSVIMStateClass::AddState( SV_STATE_AVAILABLE );
-			SVSVIMStateClass::RemoveState( SV_STATE_READY );
-			SVSVIMStateClass::RemoveState( SV_STATE_MODIFIED );
-		}
-	}
-
-	return bOk;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : OnUpdateEditEnvironment
-// -----------------------------------------------------------------------------
-// .Description : ...
-//              :
-// -----------------------------------------------------------------------------
-// .Input(s)
-//	 Type				Name				Description
-//	: 
-//  :
-// .Output(s)
-//	:
-//  :
-// .Return Value
-//	: 
-// -----------------------------------------------------------------------------
-// .Import Function Reference(s)
-//	:
-// -----------------------------------------------------------------------------
-// .Import Variable Reference(s)
-//	:
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :27.05.1997 RO			First Implementation
-//	:
-////////////////////////////////////////////////////////////////////////////////
-void SVObserverApp::OnUpdateEditEnvironment( CCmdUI* PCmdUI ) 
-{
-	PCmdUI->Enable( SVSVIMStateClass::CheckState( SV_STATE_READY ) &&
-		! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION )  &&
-		OkToEdit() );
-}
-
-void SVObserverApp::OnModeTestBtn() 
-{
-	OnTestMode();
-}
-
-// OnTestMode calls SetTestMode
-//
-void SVObserverApp::OnTestMode( ) 
-{
-	SetTestMode();
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : OnTestMode
-// -----------------------------------------------------------------------------
-// .Description : ...
-//              :
-// -----------------------------------------------------------------------------
-// .Input(s)
-//	 Type				Name				Description
-//	: 
-//  :
-// .Output(s)
-//	:
-//  :
-// .Return Value
-//	: 
-// -----------------------------------------------------------------------------
-// .Import Function Reference(s)
-//	:
-// -----------------------------------------------------------------------------
-// .Import Variable Reference(s)
-//	:
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :27.05.1997 RO			First Implementation
-//	:
-////////////////////////////////////////////////////////////////////////////////
-void SVObserverApp::SetTestMode(bool p_bNoSecurity ) 
-{
-	bool l_bAllowAccess = false;
-
-	if ( SVSVIMStateClass::CheckState( SV_STATE_TEST ) )
-	{
-		if ( !SVSVIMStateClass::CheckState( SV_STATE_REGRESSION ) )
-		{
-			return;
-		}
-	}
-
-	if ( SVSVIMStateClass::CheckState( SV_STATE_RUNNING ) )
-	{
-		if( p_bNoSecurity || m_svSecurityMgr.SVValidate( SECURITY_POINT_MODE_MENU_EXIT_RUN_MODE, 
-			SECURITY_POINT_MODE_MENU_TEST ) == S_OK )
-		{
-			OnStop();
-			l_bAllowAccess = true;
-		}
-	}
-	else
-	if( p_bNoSecurity || m_svSecurityMgr.SVValidate( SECURITY_POINT_MODE_MENU_TEST ) == S_OK)
-	{
-		l_bAllowAccess = true;
-	}
-
-	if( l_bAllowAccess )
-	{
-		if ( SVSVIMStateClass::CheckState( SV_STATE_REGRESSION ) )
-		{
-			StopRegression();
-		}
-
-		if( !SVSVIMStateClass::CheckState( SV_STATE_TEST ) && 
-			!SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_STOP_PENDING | SV_STATE_STOPING ) )
-		{
-			UpdateAndGetLogDataManager();
-
-			if( m_pMainWnd )
-			{
-				SVPPQObject *pPPQ = NULL;
-				long l;
-				long lSize;
-				HRESULT hrReady = S_OK;
-
-				SVConfigurationObject* l_pConfig = NULL;
-				SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
-
-				//mpsvImaging->BoardSubsystem()->ConnectDevices();
-
-				SVSoftwareTriggerDlg & l_trgrDlg = SVSoftwareTriggerDlg::Instance();
-				l_trgrDlg.ShowWindow(SW_HIDE);
-				l_trgrDlg.ClearTriggers();
-				l_pConfig->GetPPQCount( lSize );
-				HRESULT l_hrOk = S_OK;
-				for( l = 0; l_hrOk == S_OK && l < lSize; l++ )
-				{
-					l_pConfig->GetPPQ( l, &pPPQ );
-					l_hrOk = pPPQ->CanGoOnline();
-					SVTriggerObject * l_trigger = NULL;
-					pPPQ->GetTrigger(l_trigger);
-					if (l_trigger->IsSoftwareTrigger())
-					{
-						l_trgrDlg.AddTrigger(l_trigger);
-					}
-				}// end for
-				if (l_trgrDlg.HasTriggers())
-				{
-					l_trgrDlg.SelectTrigger();
-				}
-				l_pConfig->GetPPQCount( lSize );
-				for( l = 0; hrReady == S_OK && l < lSize; l++ )
-				{
-					l_pConfig->GetPPQ( l, &pPPQ );
-					hrReady = pPPQ->CanGoOnline();
-				}// end for
-
-				if( hrReady != S_OK )
-				{
-					//mpsvImaging->BoardSubsystem()->DisconnectDevices();
-					return;
-				}
-
-				for( l = 0; hrReady == S_OK && l < lSize; l++ )
-				{
-					l_pConfig->GetPPQ( l, &pPPQ );
-					hrReady = pPPQ->GoOnline();
-				}// end for
-
-				if( hrReady != S_OK )
-				{
-					for( l = 0; l < lSize; l++ )
-					{
-						l_pConfig->GetPPQ( l, &pPPQ );
-						pPPQ->GoOffline();
-					}// end for
-
-					SetAllIPDocumentsOffline();
-					//mpsvImaging->BoardSubsystem()->DisconnectDevices();
-					return;
-				}// end if
-
-				SetAllIPDocumentsOnline();
-
-				SVSVIMStateClass::AddState( SV_STATE_TEST );
-				SVSVIMStateClass::RemoveState( SV_STATE_EDIT );
-				SVSVIMStateClass::RemoveState( SV_STATE_EDIT_MOVE );
-
-				l_pConfig->SetModuleReady( true );
-
-				SVObjectManagerClass::Instance().SetState( SVObjectManagerClass::ReadOnly );
-
-				if (SVSoftwareTriggerDlg::Instance().HasTriggers())
-				{
-					EnableTriggerSettings();
-				}
-				else
-				{
-					DisableTriggerSettings();
-				}
-			}// end if
-		}
-	}
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : OnStopTestMode
-// -----------------------------------------------------------------------------
-// .Description : ...
-//              :
-// -----------------------------------------------------------------------------
-// .Input(s)
-//	 Type				Name				Description
-//	: 
-//  :
-// .Output(s)
-//	:
-//  :
-// .Return Value
-//	: 
-// -----------------------------------------------------------------------------
-// .Import Function Reference(s)
-//	:
-// -----------------------------------------------------------------------------
-// .Import Variable Reference(s)
-//	:
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :27.05.1997 RO			First Implementation
-//	:
-////////////////////////////////////////////////////////////////////////////////
-void SVObserverApp::OnStopTestMode() 
-{
-	if( !SVSVIMStateClass::CheckState( SV_STATE_EDIT_MOVE 
-							| SV_STATE_EDIT 
-							| SV_STATE_REGRESSION
-							| SV_STATE_TEST
-							| SV_STATE_RUNNING ))
-	{
-		return;
-	}
-
-	if( m_svSecurityMgr.SVValidate( SECURITY_POINT_MODE_MENU_STOP ) == S_OK )
-	{
-		OnStop();
-	}
-}
-
-void SVObserverApp::OnRunMode() 
-{
-	Start();
-}
-
-HRESULT SVObserverApp::GetTriggersAndCounts( CString& p_strTrigCnts )
-{
-	HRESULT l_hr = S_FALSE;
-	long l_lCount = 0;
-	SVConfigurationObject* l_pConfig = NULL;
-	SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
-
-	if( l_pConfig != NULL && l_pConfig->GetPPQCount(l_lCount))
-	{
-		for( int l_lPPQ = 0 ; l_lPPQ < l_lCount; l_lPPQ++)
-		{
-			SVPPQObject* l_pPPQ = NULL;
-			if( l_pConfig->GetPPQ(l_lPPQ, &l_pPPQ ) )
-			{
-				CString l_strTmp;
-				SVTriggerObject* l_pTrigger=NULL;
-				if( l_pPPQ->GetTrigger( l_pTrigger ))
-				{
-					l_hr = S_OK;
-					l_pTrigger->m_lTriggerCount;
-					l_strTmp.Format( "\n%s count-%d", l_pTrigger->GetName(), l_pTrigger->m_lTriggerCount );
-					p_strTrigCnts += l_strTmp;
-				}
-			}
-		}
-	}
-	return l_hr;
-}
-
-HRESULT SVObserverApp::Start() 
-{
-	HRESULT l_hrOk = S_OK;
-
-	SVSVIMStateClass::RemoveState( SV_STATE_EDIT | SV_STATE_EDIT_MOVE );
-
-	if ( SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_STARTING ) )
-	{
-		if ( SVSVIMStateClass::CheckState( SV_STATE_START_PENDING ) )
-		{
-			SVSVIMStateClass::RemoveState( SV_STATE_START_PENDING );
-		}
-
-		return S_OK;
-	}
-
-	if ( SVSVIMStateClass::CheckState( SV_STATE_LOADING | SV_STATE_STOPING ) )
-	{
-		SVSVIMStateClass::AddState( SV_STATE_START_PENDING );
-
-		return S_OK;
-	}
-
-	UpdateAndGetLogDataManager();
-
-	SVClock::SVTimeStamp l_StartLoading;
-	SVClock::SVTimeStamp l_FinishLoad;
-	
-	l_StartLoading = SVClock::GetTimeStamp();
-
-	SVConfigurationObject* l_pConfig = NULL;
-	SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
-#ifndef _WIN64
-	if( l_pConfig->GetPLCCount() > 0 )
-	{
-		 if( m_PLCManager.TestConnections() == false )
-		 {
-			 return SV_GO_ONLINE_FAILURE_PLC;
-		 }
-	}
-#endif
-
-	if ( m_pMainWnd )
-	{
-		SVPPQObject *pPPQ = NULL;
-		long l;
-		long lSize;
-		CStringArray saCameras;
-
-		SVDigitizerProcessingClass::Instance().StoreLastCameraImage();
-
-		DisconnectCameras( saCameras );
-		ConnectCameras( saCameras );
-		l_hrOk = SendCameraParameters( saCameras );
-
-		SVSoftwareTriggerDlg & l_trgrDlg = SVSoftwareTriggerDlg::Instance();
-		l_trgrDlg.ShowWindow(SW_HIDE);
-		l_trgrDlg.ClearTriggers();
-
-		l_pConfig->GetPPQCount( lSize );
-		for( l = 0; l_hrOk == S_OK && l < lSize; l++ )
-		{
-			l_pConfig->GetPPQ( l, &pPPQ );
-			l_hrOk = pPPQ->CanGoOnline();
-			SVTriggerObject * l_trigger = NULL;
-			pPPQ->GetTrigger(l_trigger);
-			if (l_trigger->IsSoftwareTrigger())
-			{
-				l_trgrDlg.AddTrigger(l_trigger);
-			}
-		}// end for
-		if (l_trgrDlg.HasTriggers())
-		{
-			l_trgrDlg.SelectTrigger();
-		}
-		if( l_hrOk != S_OK )
-		{
-			SVSVIMStateClass::RemoveState( SV_STATE_START_PENDING );
-
-			RunAllIPDocuments();
-
-			//mpsvImaging->BoardSubsystem()->DisconnectDevices();
-			return l_hrOk; // JMS ERROR - Cannot send PPQ on-line.
-		}// end if
-
-		if( SVSVIMStateClass::CheckState( SV_STATE_READY ) )
-		{
-			for( l = 0; l_hrOk == S_OK && l < lSize; l++ )
-			{
-				l_pConfig->GetPPQ( l, &pPPQ );
-				l_hrOk = pPPQ->GoOnline();
-			}// end for
-
-			if( l_hrOk != S_OK )
-			{
-				for( l = 0; l < lSize; l++ )
-				{
-					l_pConfig->GetPPQ( l, &pPPQ );
-					pPPQ->GoOffline();
-				}// end for
-
-				SVSVIMStateClass::RemoveState( SV_STATE_START_PENDING );
-
-				RunAllIPDocuments();
-				SetAllIPDocumentsOffline();
-
-				//mpsvImaging->BoardSubsystem()->DisconnectDevices();
-				return l_hrOk;
-			}// end if
-
-			SetAllIPDocumentsOnline();
-
-			SVSVIMStateClass::AddState( SV_STATE_UNAVAILABLE | SV_STATE_STARTING );
-			SVSVIMStateClass::RemoveState( SV_STATE_READY | SV_STATE_START_PENDING );
-
-			GetMainFrame()->ShowAllBars( FALSE, TRUE );
-
-			SetPriorityClass( GetCurrentProcess(), REALTIME_PRIORITY_CLASS );
-
-			SVSVIMStateClass::AddState( SV_STATE_RUNNING );
-
-			SVCommandStreamManager::Instance().RebuildCommandObserver();
-			m_mgrRemoteFonts.GoOnline();
-
-			if( IsProductTypeRAID() )
-			{
-				m_svIntelRAID.UpdateStatus();
-
-				if ( SVSVIMStateClass::CheckState( SV_STATE_RAID_FAILURE ) )
-				{
-					if( l_pConfig->SetRaidErrorBit( true ) != S_OK )
-					{
-						return S_FALSE;
-					}
-				}
-				else
-				{
-					if( l_pConfig->SetRaidErrorBit( false ) != S_OK )
-					{
-						return S_FALSE;
-					}
-				}
-			}
-			else
-			{
-				if( l_pConfig->SetRaidErrorBit( true ) != S_OK )
-				{
-					return S_FALSE;
-				}
-			}
-
-			if( l_pConfig->SetModuleReady( true ) != S_OK )
-			{
-				RunAllIPDocuments();
-
-				return S_FALSE; // JMS ERROR - Cannot write to module ready output.
-			}// end if
-
-			SVObjectManagerClass::Instance().SetState( SVObjectManagerClass::ReadOnly );
-
-			CString l_strTrigCnts;
-			GetTriggersAndCounts( l_strTrigCnts );
-
-			CString l_strTime;
-			l_FinishLoad = SVClock::GetTimeStamp();
-			long l_lTime = static_cast<long>(l_FinishLoad - l_StartLoading);
-			l_strTime.Format( "\nGoOnline time %d ms", l_lTime );
-			l_strTrigCnts += l_strTime;
-
-			//add go-online message to the event viewer.
-			SVException svE;
-			SETEXCEPTION1(svE,SVMSG_SVO_27_SVOBSERVER_GO_ONLINE, l_strTrigCnts );
-			svE.LogException(l_strTrigCnts);
-
-			SVSVIMStateClass::RemoveState( SV_STATE_UNAVAILABLE | SV_STATE_STARTING );
-			if (SVSoftwareTriggerDlg::Instance().HasTriggers())
-			{
-				EnableTriggerSettings();
-			}
-			else
-			{
-				DisableTriggerSettings();
-			}
-
-			SetThreadPriority( THREAD_PRIORITY_BELOW_NORMAL );
-		}// end if
-
-	}// end if
-	else
-	{
-		RunAllIPDocuments();
-
-		l_hrOk = S_FALSE;
-	}
-
-	if ( SVSVIMStateClass::CheckState( SV_STATE_STOP_PENDING ) )
-	{
-		PostMessage( m_pMainWnd->m_hWnd, WM_COMMAND, MAKEWPARAM (ID_STOP, 0), 0);
-	}
-
-	return l_hrOk;
-}
-
-void SVObserverApp::OnUpdateModeRun( CCmdUI* PCmdUI ) 
-{
-	PCmdUI->Enable( SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION | SV_STATE_EDIT | SV_STATE_EDIT_MOVE | SV_STATE_READY )  &&	
-	                ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING ) &&
-					m_svSecurityMgr.SVIsDisplayable( SECURITY_POINT_MODE_MENU_RUN ));
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : OnStop
-// -----------------------------------------------------------------------------
-// .Description : ...
-//              :
-// -----------------------------------------------------------------------------
-// .Input(s)
-//	 Type				Name				Description
-//	: 
-//  :
-// .Output(s)
-//	:
-//  :
-// .Return Value
-//	: 
-// -----------------------------------------------------------------------------
-// .Import Function Reference(s)
-//	:
-// -----------------------------------------------------------------------------
-// .Import Variable Reference(s)
-//	:
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :27.05.1997 RO			First Implementation
-//	:
-////////////////////////////////////////////////////////////////////////////////
-void SVObserverApp::OnStop() 
-{
-	CWaitCursor wait;
-
-	SVArchiveWritingDlg *pArchiveWriteDlg = NULL;
-
-	GetMainFrame()->SetStatusInfoText(_T(""));
-
-	DisableTriggerSettings();
-
-	if( !SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) )
-	{
-		return;
-	}
-
-	if ( SVSVIMStateClass::CheckState( SV_STATE_STOPING ) )
-	{
-		if ( SVSVIMStateClass::CheckState( SV_STATE_STOP_PENDING ) )
-		{
-			SVSVIMStateClass::RemoveState( SV_STATE_STOP_PENDING );
-		}
-		return;
-	}
-
-	if ( SVSVIMStateClass::CheckState( SV_STATE_STARTING ) )
-	{
-		SVSVIMStateClass::AddState( SV_STATE_STOP_PENDING );
-		return;
-	}
-
-	if ( TheSVMemoryManager().ReservedBytes( ARCHIVE_TOOL_MEMORY_POOL_GO_OFFLINE_NAME ) > 0 )
-	{
-		pArchiveWriteDlg = new SVArchiveWritingDlg;
-		pArchiveWriteDlg->Create(IDD_DLG_ARCHIVETOOL_CLOSE_PROGRESS);
-		pArchiveWriteDlg->ShowWindow(SW_SHOW);
-		SVYieldPaintMessages();
-
-	}
-
-
-	SVSVIMStateClass::AddState( SV_STATE_UNAVAILABLE | SV_STATE_STOPING );
-	SVSVIMStateClass::RemoveState( SV_STATE_READY | SV_STATE_RUNNING | SV_STATE_STOP_PENDING );
-
-	SVObjectManagerClass::Instance().SetState( SVObjectManagerClass::ReadWrite );
-
-	SetThreadPriority( THREAD_PRIORITY_NORMAL );
-
-	SVConfigurationObject* l_pConfig = NULL;
-	SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
-
-	if( l_pConfig != NULL )
-	{
-		l_pConfig->SetModuleReady( false );
-	}
-
-	// Signal Module Stop...
-	OnStopAll();
-
-	// Increment Offline Count
-	m_lOfflineCount++;
-
-	SVDigitizerProcessingClass::Instance().RestoreLastCameraImage();
-
-	SVPPQObject *pPPQ = NULL;
-	long l;
-	long lSize;
-
-	l_pConfig->GetPPQCount( lSize );
-	for( l = 0; l < lSize; l++ )
-	{
-		l_pConfig->GetPPQ( l, &pPPQ );
-		pPPQ->GoOffline();
-	}
-
-	SetAllIPDocumentsOffline();
-
-	m_dirty_triggers.clear();
-
-	if( IsProductTypeRAID() )
-	{
-		m_svIntelRAID.UpdateStatus();
-
-		if ( SVSVIMStateClass::CheckState( SV_STATE_RAID_FAILURE ) )
-		{
-			l_pConfig->SetRaidErrorBit( true );
-		}
-		else
-		{
-			l_pConfig->SetRaidErrorBit( false );
-		}
-	}
-	else
-	{
-		l_pConfig->SetRaidErrorBit( true );
-	}
-
-	CString l_strTrigCnts;
-	GetTriggersAndCounts( l_strTrigCnts );
-
-	//add message to event viewer - gone off-line
-	SVException svE;
-	SETEXCEPTION1(svE,SVMSG_SVO_28_SVOBSERVER_GO_OFFLINE, l_strTrigCnts);
-	svE.LogException(l_strTrigCnts);
-
-
-	SVSVIMStateClass::AddState( SV_STATE_READY );
-	SVSVIMStateClass::RemoveState( SV_STATE_UNAVAILABLE | SV_STATE_STOPING );
-	SVSVIMStateClass::RemoveState( SV_STATE_TEST );
-	SVSVIMStateClass::RemoveState( SV_STATE_REGRESSION );
-
-	SVCommandStreamManager::Instance().DisableAllInspections();
-
-	if ( SVSVIMStateClass::CheckState( SV_STATE_START_PENDING ) )
-	{
-		PostMessage ( m_pMainWnd->m_hWnd, WM_COMMAND, MAKEWPARAM (ID_MODE_RUN, 0), 0);
-	}
-
-	if ( pArchiveWriteDlg )
-	{
-		//pArchiveWriteDlg->CloseWindow();
-		pArchiveWriteDlg->DestroyWindow();
-		delete pArchiveWriteDlg;
-	}
-}
-
+#pragma region Private Methods
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : OnStopAll
 // -----------------------------------------------------------------------------
@@ -5017,8 +9326,6 @@ void SVObserverApp::OnStop()
 ////////////////////////////////////////////////////////////////////////////////
 void SVObserverApp::OnStopAll() 
 {
-	// &&&
-	//*
 	if( m_pMainWnd )
 	{
 		GetMainFrame()->SetStatusInfoText(_T(""));
@@ -5029,7 +9336,7 @@ void SVObserverApp::OnStopAll()
 			if( pMainMenu )
 			{
 				pMainMenu->ModifyMenu( ID_MODE_STOPTEST, MF_BYCOMMAND | MF_STRING, 
-				                       ID_MODE_TEST, _T( "&Test" ) );
+					ID_MODE_TEST, _T( "&Test" ) );
 			}
 
 			SVSVIMStateClass::RemoveState( SV_STATE_TEST );
@@ -5041,2448 +9348,8 @@ void SVObserverApp::OnStopAll()
 
 		SetPriorityClass( GetCurrentProcess(), NORMAL_PRIORITY_CLASS );
 	}
-	//*/
 }// end OnStopAll
 
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : OnUpdateSetupMode
-// -----------------------------------------------------------------------------
-// .Description : ...
-//              :
-// -----------------------------------------------------------------------------
-// .Input(s)
-//	 Type				Name				Description
-//	: 
-//  :
-// .Output(s)
-//	:
-//  :
-// .Return Value
-//	: 
-// -----------------------------------------------------------------------------
-// .Import Function Reference(s)
-//	:
-// -----------------------------------------------------------------------------
-// .Import Variable Reference(s)
-//	:
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :15.10.1998 RO			First Implementation
-////////////////////////////////////////////////////////////////////////////////
-void SVObserverApp::OnUpdateSetupMode( CCmdUI* PCmdUI ) 
-{
-	PCmdUI->Enable( SVSVIMStateClass::CheckState( SV_STATE_READY ) &&
-	                !SVSVIMStateClass::CheckState( SV_STATE_SECURED | SV_STATE_REGRESSION ) );
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : OnGoOffline
-// -----------------------------------------------------------------------------
-// .Description : ...
-//              :
-// -----------------------------------------------------------------------------
-// .Input(s)
-//	 Type				Name				Description
-//	: 
-//  :
-// .Output(s)
-//	:
-//  :
-// .Return Value
-//	: 
-// -----------------------------------------------------------------------------
-// .Import Function Reference(s)
-//	:
-// -----------------------------------------------------------------------------
-// .Import Variable Reference(s)
-//	:
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :15.10.1998 RO			First Implementation
-////////////////////////////////////////////////////////////////////////////////
-void SVObserverApp::OnGoOffline() 
-{
-	if( !SVSVIMStateClass::CheckState( SV_STATE_EDIT_MOVE 
-							| SV_STATE_EDIT 
-							| SV_STATE_REGRESSION
-							| SV_STATE_TEST
-							| SV_STATE_RUNNING ))
-	{
-		return;
-	}
-
-	SVSVIMStateClass::RemoveState( SV_STATE_EDIT | SV_STATE_EDIT_MOVE );
-
-	DeselectTool();
-
-	GetMainFrame()->SetStatusInfoText(_T(""));
-
-	if ( SVSVIMStateClass::CheckState( SV_STATE_RUNNING ) )
-	{
-		// Dual Security access point
-		if( m_svSecurityMgr.SVValidate( SECURITY_POINT_MODE_MENU_STOP, 
-			SECURITY_POINT_MODE_MENU_EXIT_RUN_MODE ) == S_OK )
-		{
-			OnStop();
-		}
-	}
-	else
-	if( m_svSecurityMgr.SVValidate( SECURITY_POINT_MODE_MENU_STOP ) == S_OK )
-	{
-		if ( SVSVIMStateClass::CheckState( SV_STATE_REGRESSION ) )
-		{
-			StopRegression();
-		}
-
-		if ( SVSVIMStateClass::CheckState( SV_STATE_TEST ) )
-		{
-			OnStop();
-		}
-
-		if( SVSVIMStateClass::CheckState( SV_STATE_EDIT_MOVE ) )
-		{
-			SetModeEditMove( false );
-		}
-
-	}// end if ( SVSVIMStateClass::CheckState( SV_STATE_RUNNING ) )
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : OnUpdateGoOffline
-// -----------------------------------------------------------------------------
-// .Description : ...
-//              :
-// -----------------------------------------------------------------------------
-// .Input(s)
-//	 Type				Name				Description
-//	: 
-//  :
-// .Output(s)
-//	:
-//  :
-// .Return Value
-//	: 
-// -----------------------------------------------------------------------------
-// .Import Function Reference(s)
-//	:
-// -----------------------------------------------------------------------------
-// .Import Variable Reference(s)
-//	:
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :15.10.1998 RO			First Implementation
-////////////////////////////////////////////////////////////////////////////////
-void SVObserverApp::OnUpdateGoOffline( CCmdUI* PCmdUI ) 
-{
-	PCmdUI->Enable( ( SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION | SV_STATE_EDIT | SV_STATE_EDIT_MOVE | SV_STATE_READY ) ) &&	
-		SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_READY ) &&
-		( m_svSecurityMgr.SVIsDisplayable( SECURITY_POINT_MODE_MENU_EXIT_RUN_MODE ) || 
-		m_svSecurityMgr.SVIsDisplayable( SECURITY_POINT_MODE_MENU_STOP ) ));
-
-	PCmdUI->SetCheck( !SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_EDIT | SV_STATE_EDIT_MOVE | SV_STATE_REGRESSION ));
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : OnGoOnline
-// -----------------------------------------------------------------------------
-// .Description : ...
-//              :
-// -----------------------------------------------------------------------------
-// .Input(s)
-//	 Type				Name				Description
-//	: 
-//  :
-// .Output(s)
-//	:
-//  :
-// .Return Value
-//	: 
-// -----------------------------------------------------------------------------
-// .Import Function Reference(s)
-//	:
-// -----------------------------------------------------------------------------
-// .Import Variable Reference(s)
-//	:
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :15.10.1998 RO			First Implementation
-////////////////////////////////////////////////////////////////////////////////
-void SVObserverApp::OnGoOnline() 
-{
-	long l_lPrevState = 0;
-
-	if( SVSVIMStateClass::CheckState( SV_STATE_EDIT_MOVE ))
-	{
-		l_lPrevState = SV_STATE_EDIT_MOVE;
-	}
-
-	if( SVSVIMStateClass::CheckState( SV_STATE_EDIT ))
-	{
-		l_lPrevState = SV_STATE_EDIT;
-	}
-
-	if( SVSVIMStateClass::CheckState( SV_STATE_RUNNING ) )
-		return;
-
-	
-	if( m_svSecurityMgr.SVValidate( SECURITY_POINT_MODE_MENU_RUN ) == S_OK )
-	{
-		if ( SVSVIMStateClass::CheckState( SV_STATE_REGRESSION ) )
-		{
-			StopRegression();
-		}
-
-		if( SVSVIMStateClass::CheckState( SV_STATE_TEST ) )
-		{
-			OnStop();
-		}
-
-		if ( SVSVIMStateClass::CheckState( SV_STATE_READY ) && 
-			!SVSVIMStateClass::CheckState( SV_STATE_TEST | SV_STATE_RUNNING ))
-		{
-
-			HRESULT l_hrStatus = S_OK;
-
-			SVSVIMStateClass::RemoveState( SV_STATE_EDIT );
-//			SVSVIMStateClass::RemoveState( SV_STATE_SECURED );
-			SVSVIMStateClass::RemoveState( SV_STATE_EDIT_MOVE );
-			DisplayAddMenu(false);
-			DeselectTool();
-
-			if ( m_hrHardwareFailure == S_OK )
-			{
-				if ( CheckSVIMType() )
-				{
-					CWaitCursor wait;
-
-					l_hrStatus = Start();
-				}
-				else
-				{
-					CString l_csMessage;
-
-							l_csMessage.Format( _T( "Configuration cannot enter Run.  The "
-								"current configuration hardware does not match system hardware.  "
-								"The system's Model Number is ( Model # %s %s %s %s ).  "
-								"Please verify that the shown model number is correct "
-								"and contact your system administrator." ),
-								m_csProcessor, m_csFrameGrabber, m_csIOBoard, m_csOptions );
-					
-					::AfxMessageBox( l_csMessage, MB_OK | MB_ICONERROR ); 
-					SVSVIMStateClass::AddState( l_lPrevState );
-				}
-			}
-			else
-			{
-				CString l_csItem;
-				CString l_csMessage;
-				
-				if ( ( m_hrHardwareFailure & SV_HARDWARE_FAILURE_IO ) == SV_HARDWARE_FAILURE_IO )
-				{
-					l_csItem = GetDigitalBoardName();
-				}
-				else if ( ( m_hrHardwareFailure & SV_HARDWARE_FAILURE_TRIGGER ) == SV_HARDWARE_FAILURE_TRIGGER )
-				{
-					l_csItem = GetTriggerBoardName();
-				}
-				else if ( ( m_hrHardwareFailure & SV_HARDWARE_FAILURE_SOFTWARETRIGGER ) == SV_HARDWARE_FAILURE_SOFTWARETRIGGER )
-				{
-					l_csItem = GetSoftwareTriggerBoardName();
-				}
-/*				else if ( ( m_hrHardwareFailure & SV_HARDWARE_FAILURE_NO_CAMAERAS ) == SV_HARDWARE_FAILURE_NO_CAMAERAS )
-				{
-					l_csItem = _T( "A Camera" );
-				}*/
-				else if ( ( m_hrHardwareFailure & SV_HARDWARE_FAILURE_ACQUISITION ) == SV_HARDWARE_FAILURE_ACQUISITION )
-				{
-					l_csItem = GetAcquisitionBoardName();
-				}
-				else if ( ( m_hrHardwareFailure & SV_HARDWARE_FAILURE_FILEACQUISITION ) == SV_HARDWARE_FAILURE_FILEACQUISITION )
-				{
-					l_csItem = GetFileAcquisitionBoardName();
-				}
-				else
-				{
-					l_csItem = _T( "Unknown Item" );
-				}
-				
-						l_csMessage.Format( _T( "Hardware configuration error. The SVIM hardware "
-							"does not match the Model Number ( Model # %s %s %s %s ).  "
-							"%s is either not availiable or malfunctioning.  "
-							"Please verify that the shown model number is correct "
-							"and contact your system administrator." ),
-							m_csProcessor, m_csFrameGrabber, m_csIOBoard, m_csOptions,
-							l_csItem );
-				
-				::AfxMessageBox( l_csMessage, MB_OK | MB_ICONERROR ); 
-				SVSVIMStateClass::AddState( l_lPrevState );
-			}
-
-			if ( SVSVIMStateClass::CheckState( SV_STATE_STOP_PENDING ) )
-			{
-				PostMessage( m_pMainWnd->m_hWnd, WM_COMMAND, MAKEWPARAM (ID_STOP, 0), 0);
-			}
-			else if ( l_hrStatus != S_OK )
-			{
-				CString l_csMessage;
-
-				if ( ( l_hrStatus & SV_CAN_GO_ONLINE_FAILURE_TRIGGER ) == 
-					   SV_CAN_GO_ONLINE_FAILURE_TRIGGER )
-				{
-					l_csMessage =  _T( "Configuration cannot enter Run.  There is an "
-						"unknown error with a Trigger when the system attempted to enter Run." );
-				}
-				else if ( ( l_hrStatus & SV_CAN_GO_ONLINE_FAILURE_ACQUISITION ) == 
-							SV_CAN_GO_ONLINE_FAILURE_ACQUISITION )
-				{
-					l_csMessage =  _T( "Configuration cannot enter Run.  There is an "
-						"unknown error with a Camera when the system attempted to enter Run." );
-				}
-				else if ( ( l_hrStatus & SV_CAN_GO_ONLINE_FAILURE_INSPECTION ) == 
-							SV_CAN_GO_ONLINE_FAILURE_INSPECTION )
-				{
-					l_csMessage =  _T( "Configuration cannot enter Run.  There is an "
-						"unknown error with an inspection when the system attempted to enter Run." );
-				}
-				else if ( ( l_hrStatus & SV_GO_ONLINE_FAILURE_RECYCLE_PRODUCT ) == 
-							SV_GO_ONLINE_FAILURE_RECYCLE_PRODUCT )
-				{
-					l_csMessage =  _T( "Configuration cannot enter Run.  There is an "
-						"unknown error with a PPQ when it attempted to recycle a product "
-						"when the system was going online." );
-				}
-				else if ( ( l_hrStatus & SV_GO_ONLINE_FAILURE_INSPECTION ) == 
-							SV_GO_ONLINE_FAILURE_INSPECTION )
-				{
-					l_csMessage =  _T( "Configuration cannot enter Run.  There is an "
-						"unknown error with an Inspection when the system was going online." );
-				}
-				else if ( ( l_hrStatus & SV_GO_ONLINE_FAILURE_ACQUISITION ) == 
-							SV_GO_ONLINE_FAILURE_ACQUISITION )
-				{
-					l_csMessage =  _T( "Configuration cannot enter Run.  There is an "
-						"unknown error with a Camera when the system was going online." );
-				}
-				else if ( ( l_hrStatus & SV_GO_ONLINE_FAILURE_TRIGGER ) == 
-							SV_GO_ONLINE_FAILURE_TRIGGER )
-				{
-					l_csMessage =  _T( "Configuration cannot enter Run.  There is an "
-						"unknown error with a Trigger when the system was going online." );
-				} else if ( ( l_hrStatus & SV_GO_ONLINE_FAILURE_PLC ) == 
-							SV_GO_ONLINE_FAILURE_PLC )
-				{
-					l_csMessage =  _T( "Configuration cannot enter Run.  There is an "
-						"unknown error with a PLC." );
-				}
-				else
-				{
-					l_csMessage =  _T( "Configuration cannot enter Run.  There is an "
-						"unknown error when the system was going online." );
-				}
-				
-				::AfxMessageBox( l_csMessage, MB_OK | MB_ICONERROR ); 
-				SVSVIMStateClass::AddState( l_lPrevState );
-			}
-		}
-	}
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : OnUpdateGoOnline
-// -----------------------------------------------------------------------------
-// .Description : ...
-//              :
-// -----------------------------------------------------------------------------
-// .Input(s)
-//	 Type				Name				Description
-//	: 
-//  :
-// .Output(s)
-//	:
-//  :
-// .Return Value
-//	: 
-// -----------------------------------------------------------------------------
-// .Import Function Reference(s)
-//	:
-// -----------------------------------------------------------------------------
-// .Import Variable Reference(s)
-//	:
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :15.10.1998 RO			First Implementation
-////////////////////////////////////////////////////////////////////////////////
-void SVObserverApp::OnUpdateGoOnline( CCmdUI* PCmdUI ) 
-{
-	PCmdUI->Enable( SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION | SV_STATE_EDIT | SV_STATE_EDIT_MOVE | SV_STATE_READY ) &&	
-		SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_READY ) &&
-		m_svSecurityMgr.SVIsDisplayable( SECURITY_POINT_MODE_MENU_RUN ) );
-
-	PCmdUI->SetCheck( SVSVIMStateClass::CheckState( SV_STATE_RUNNING ));
-}
-
-void SVObserverApp::DisplayAddMenu(bool bShow)
-{
-	return;
-
-	// Not Implemented because had problems getting the correct menu assocated with the 
-	// IPDoc instead of the IO Doc.
-	CMenu *pMenu;
-	CWnd* pWindow = AfxGetMainWnd();
-
-	pMenu = pWindow->GetMenu();
-	if( bShow )
-	{
-		if( FindMenuItem( pMenu, "&Add") < 0 )
-		{
-			int pos = FindMenuItem( pMenu, "&Edit" );
-			if( pos > -1 )
-			{
-				pMenu->InsertMenu( pos + 1, MF_BYPOSITION | MF_POPUP, ( UINT )m_hAddMenu, _T("&Add") );
-			}
-		}
-	}
-	else
-	{
-		int pos = FindMenuItem( pMenu, "&Add");
-		if( pos > -1 )
-		{
-			m_hAddMenu = pMenu->GetSubMenu(pos )->m_hMenu;
-			pMenu->RemoveMenu( pos ,MF_BYPOSITION );
-		}
-	}
-	pWindow->DrawMenuBar();
-}
-
-// this is a recursive function which will attempt
-// to add the item "itemText" to the menu with the
-// given ID number. The "itemText" will be parsed for
-// delimiting "\" characters for levels between
-// popup menus. If a popup menu does not exist, it will
-// be created and inserted at the end of the menu.
-// ItemID of 0 will cause a separator to be added
-bool SVObserverApp::AddMenuItem(
-        HMENU hTargetMenu, 
-        const CString& itemText, 
-        UINT itemID)
-{
-    bool bSuccess = false;
-
-    ASSERT(itemText.GetLength() > 0);
-    ASSERT(hTargetMenu != NULL);
-
-    // first, does the menu item have
-    // any required submenus to be found/created?
-    if (itemText.Find('\\') >= 0)
-    {
-        // yes, we need to do a recursive call
-        // on a submenu handle and with that sub
-        // menu name removed from itemText
-
-        // 1:get the popup menu name
-        CString popupMenuName = itemText.Left(itemText.Find('\\'));
-
-        // 2:get the rest of the menu item name
-        // minus the delimiting '\' character
-        CString remainingText = 
-            itemText.Right(itemText.GetLength() 
-                   - popupMenuName.GetLength() - 1);
-
-        // 3:See whether the popup menu already exists
-        int itemCount = ::GetMenuItemCount(hTargetMenu);
-        bool bFoundSubMenu = false;
-        MENUITEMINFO menuItemInfo;
-
-        memset(&menuItemInfo, 0, sizeof(MENUITEMINFO));
-        menuItemInfo.cbSize = sizeof(MENUITEMINFO);
-        menuItemInfo.fMask = 
-          MIIM_TYPE | MIIM_STATE | MIIM_ID | MIIM_SUBMENU;
-        for (int itemIndex = 0 ; 
-           itemIndex < itemCount && !bFoundSubMenu ; itemIndex++)
-        {
-            ::GetMenuItemInfo(
-                    hTargetMenu, 
-                    itemIndex, 
-                    TRUE, 
-                    &menuItemInfo);
-            if (menuItemInfo.hSubMenu != 0)
-            {
-                // this menu item is a popup menu (non popups give 0)
-                TCHAR    buffer[MAX_PATH];
-                ::GetMenuString(
-                        hTargetMenu, 
-                        itemIndex, 
-                        buffer, 
-                        MAX_PATH, 
-                        MF_BYPOSITION);
-                if (popupMenuName == buffer)
-                {
-                    // this is the popup menu we have to add to
-                    bFoundSubMenu = true;
-                }
-            }
-        }
-        // 4: If exists, do recursive call,
-        // else create do recursive call
-        // and then insert it
-        if (bFoundSubMenu)
-        {
-			bSuccess = AddMenuItem(
-                menuItemInfo.hSubMenu, 
-                remainingText, 
-                itemID);
-        }
-        else
-        {
-            // we need to create a new sub menu and insert it
-            HMENU hPopupMenu = ::CreatePopupMenu();
-            if (hPopupMenu != NULL)
-            {
-                bSuccess = AddMenuItem(
-                        hPopupMenu, 
-                        remainingText, 
-                        itemID);
-                if (bSuccess)
-                {
-                    if (::AppendMenu(
-                            hTargetMenu, 
-                            MF_POPUP, 
-                            (UINT)hPopupMenu, 
-                            popupMenuName) > 0)
-                    {
-                        bSuccess = true;
-                        // hPopupMenu now owned by hTargetMenu,
-                        // we do not need to destroy it
-                    }
-                    else
-                    {
-                        // failed to insert the popup menu
-                        bSuccess = false;
-                        // stop a resource leak
-                        ::DestroyMenu(hPopupMenu);
-                    }
-                }
-            }
-        }        
-    }
-    else
-    {	
-		// 3:See whether the menu item already exists
-		int itemCount = ::GetMenuItemCount(hTargetMenu);
-		bool bFoundSubMenu = false;
-		MENUITEMINFO menuItemInfo;
-
-		memset(&menuItemInfo, 0, sizeof(MENUITEMINFO));
-		menuItemInfo.cbSize = sizeof(MENUITEMINFO);
-		menuItemInfo.fMask = 
-			MIIM_TYPE | MIIM_STATE | MIIM_ID | MIIM_SUBMENU;
-		for (int itemIndex = 0 ; 
-			itemIndex < itemCount && !bFoundSubMenu ; itemIndex++)
-		{
-			::GetMenuItemInfo(
-					hTargetMenu, 
-					itemIndex, 
-					TRUE, 
-					&menuItemInfo);
-			if (menuItemInfo.wID == itemID)
-			{
-				// Set the inspection name.
-				::ModifyMenuA(hTargetMenu, itemIndex, MF_BYPOSITION | MF_STRING, itemID, itemText);
-				bFoundSubMenu = true;
-			}
-		}
-
-
-		// If not found then append menu.
-		if (!bFoundSubMenu)
-		{
-			if (itemID != 0)
-			{
-				// its a normal menu command
-				if (::AppendMenu(
-						hTargetMenu, 
-						MF_ENABLED, 
-						itemID, 
-						itemText) > 0)
-				{
-					// we successfully added the item to the menu
-					bSuccess = true;
-				}
-			}
-			else
-			{
-				// we are inserting a separator
-				if (::AppendMenu(
-						hTargetMenu, 
-						MF_SEPARATOR, 
-						itemID, 
-						itemText) > 0)
-				{
-					// we successfully added the separator to the menu
-					bSuccess = true;
-				}
-			}
-		}
-    }
-
-    return bSuccess;
-}
-
-
-// this is a recursive function which will attempt
-// to remove the menu item with "itemText" from the menu with the
-// target menu handle. "itemText" will be parsed for
-// delimiting "\" characters for levels between
-// popup menus. If the end popup menu exists, it will be deleted.
-bool SVObserverApp::RemoveMenu(
-        HMENU hTargetMenu, 
-        const CString& itemText)
-{
-    bool bSuccess = false;
-
-    ASSERT(itemText.GetLength() > 0);
-    ASSERT(hTargetMenu != NULL);
-
-    // first, does the menu item have
-    // any required submenus to be found/created?
-    if (itemText.Find('\\') >= 0)
-    {
-        // yes, we need to do a recursive call
-        // on a submenu handle and with that sub
-        // menu name removed from itemText
-
-        // 1:get the popup menu name
-        CString popupMenuName = itemText.Left(itemText.Find('\\'));
-
-        // 2:get the rest of the menu item name
-        // minus the delimiting '\' character
-        CString remainingText = 
-            itemText.Right(itemText.GetLength() 
-                   - popupMenuName.GetLength() - 1);
-
-        // 3:See whether the popup menu already exists
-        int itemCount = ::GetMenuItemCount(hTargetMenu);
-        bool bFoundSubMenu = false;
-        MENUITEMINFO menuItemInfo;
-
-        memset(&menuItemInfo, 0, sizeof(MENUITEMINFO));
-        menuItemInfo.cbSize = sizeof(MENUITEMINFO);
-        menuItemInfo.fMask = 
-          MIIM_TYPE | MIIM_STATE | MIIM_ID | MIIM_SUBMENU;
-        for (int itemIndex = 0 ; 
-           itemIndex < itemCount && !bFoundSubMenu ; itemIndex++)
-        {
-            ::GetMenuItemInfo(
-                    hTargetMenu, 
-                    itemIndex, 
-                    TRUE, 
-                    &menuItemInfo);
-            if (menuItemInfo.hSubMenu != 0)
-            {
-                // this menu item is a popup menu (non popups give 0)
-                TCHAR    buffer[MAX_PATH];
-                ::GetMenuString(
-                        hTargetMenu, 
-                        itemIndex, 
-                        buffer, 
-                        MAX_PATH, 
-                        MF_BYPOSITION);
-                if (popupMenuName == buffer)
-                {
-                    // this is the popup menu we are looking for.
-                    bFoundSubMenu = true;
-                }
-            }
-        }
-        // 4: If exists, do recursive call,
-        if (bFoundSubMenu)
-        {
-			bSuccess = RemoveMenu( menuItemInfo.hSubMenu, remainingText);
-        }
-    }
-    else
-    {
-        // See whether the popup menu exists
-        int itemCount = ::GetMenuItemCount(hTargetMenu);
-        bool bFoundSubMenu = false;
-        MENUITEMINFO menuItemInfo;
-
-        memset(&menuItemInfo, 0, sizeof(MENUITEMINFO));
-        menuItemInfo.cbSize = sizeof(MENUITEMINFO);
-        menuItemInfo.fMask = 
-          MIIM_TYPE | MIIM_STATE | MIIM_ID | MIIM_SUBMENU;
-        for (int itemIndex = 0 ; 
-           itemIndex < itemCount && !bFoundSubMenu ; itemIndex++)
-        {
-            ::GetMenuItemInfo(
-                    hTargetMenu, 
-                    itemIndex, 
-                    TRUE, 
-                    &menuItemInfo);
-            if (menuItemInfo.hSubMenu != 0)
-            {
-                // this menu item is a popup menu (non popups give 0)
-                TCHAR    buffer[MAX_PATH];
-                ::GetMenuString(
-                        hTargetMenu, 
-                        itemIndex, 
-                        buffer, 
-                        MAX_PATH, 
-                        MF_BYPOSITION);
-                if (itemText == buffer)
-                {
-                    // this is the popup menu we have to remove
-                    bSuccess = DeleteMenu( hTargetMenu, itemIndex, MF_BYPOSITION ) ? true : false;
-					break;
-                }
-            }
-        }
-    }
-    return bSuccess;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : OnRCGoOffline
-// -----------------------------------------------------------------------------
-// .Description : ...
-//              : NOTE: Be careful by implementing an update function for
-//				:		for this command! RC should be able to have access
-//				:		all the time!
-// -----------------------------------------------------------------------------
-// .Input(s)
-//	 Type				Name				Description
-//	: 
-//  :
-// .Output(s)
-//	:
-//  :
-// .Return Value
-//	: 
-// -----------------------------------------------------------------------------
-// .Import Function Reference(s)
-//	:
-// -----------------------------------------------------------------------------
-// .Import Variable Reference(s)
-//	:
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :17.10.1998 RO			First Implementation
-//	:11.10.1999 RO			BugFix: OnStop() must be called! Otherwise even if
-//							we are offline this function is not setting the 
-//							SVRCVariable right!
-////////////////////////////////////////////////////////////////////////////////
-void SVObserverApp::OnRCGoOffline() 
-{
-	if ( SVSVIMStateClass::CheckState( SV_STATE_RUNNING ) )
-	{
-		OnStop();
-
-		Sleep (1000);  // wait for running threads to quiesce
-	}
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : OnRCGoOnline
-// -----------------------------------------------------------------------------
-void SVObserverApp::OnRCGoOnline() 
-{
-	if ( !SVSVIMStateClass::CheckState( SV_STATE_RUNNING ) )
-	{
-		SetMode( SVIM_MODE_ONLINE );
-	}
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : OnAppExit
-// -----------------------------------------------------------------------------
-// .Description : ...
-//              :
-// -----------------------------------------------------------------------------
-// .Input(s)
-//	 Type				Name				Description
-//	: 
-//  :
-// .Output(s)
-//	:
-//  :
-// .Return Value
-//	: 
-// -----------------------------------------------------------------------------
-// .Import Function Reference(s)
-//	:
-// -----------------------------------------------------------------------------
-// .Import Variable Reference(s)
-//	:
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :16.10.1998 RO			First Implementation
-////////////////////////////////////////////////////////////////////////////////
-void SVObserverApp::OnAppExit() 
-{
-	bool l_bAllowAccess = false;
-
-	if ( SVSVIMStateClass::CheckState(SV_STATE_REGRESSION) )
-	{
-		return;
-	}
-
-	if(SVSVIMStateClass::CheckState( SV_STATE_RUNNING ) )
-	{
-		if( m_svSecurityMgr.SVValidate( SECURITY_POINT_MODE_MENU_EXIT_RUN_MODE, 
-			SECURITY_POINT_FILE_MENU_EXIT ) == S_OK )
-		{
-			OnStop();
-			l_bAllowAccess = true;
-		}
-
-	}
-	else
-	{
-		if( m_svSecurityMgr.SVValidate( SECURITY_POINT_FILE_MENU_EXIT ) == S_OK )
-		{
-			l_bAllowAccess = true;
-		}
-	}
-
-	if( l_bAllowAccess )
-	{
-		if( m_svSecurityMgr.SVValidate( SECURITY_POINT_FILE_MENU_EXIT ) == S_OK )
-		{
-			CWinApp::OnAppExit();
-		}
-	}
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : OnUpdateAppExit
-// -----------------------------------------------------------------------------
-// .Description : ...
-//              :
-// -----------------------------------------------------------------------------
-// .Input(s)
-//	 Type				Name				Description
-//	: 
-//  :
-// .Output(s)
-//	:
-//  :
-// .Return Value
-//	: 
-// -----------------------------------------------------------------------------
-// .Import Function Reference(s)
-//	:
-// -----------------------------------------------------------------------------
-// .Import Variable Reference(s)
-//	:
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :16.10.1998 RO			First Implementation
-////////////////////////////////////////////////////////////////////////////////
-void SVObserverApp::OnUpdateAppExit( CCmdUI* PCmdUI ) 
-{
-	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_REGRESSION ) 
-		&& m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_FILE_MENU_EXIT ));	
-}
-
-void SVObserverApp::OnUpdateFileClose( CCmdUI* PCmdUI ) 
-{
-	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION )  
-		&& m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_FILE_MENU_CLOSE_CONFIGURATION ));
-}
-
-void SVObserverApp::OnUpdateFileCloseSec( CCmdUI* PCmdUI ) 
-{
-	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION )
-		&& m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_FILE_MENU_CLOSE_CONFIGURATION ));
-}
-
-void SVObserverApp::OnUpdateExtrasAdditionalEnvironmentSettings( CCmdUI* PCmdUI ) 
-{
-	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION ) 
-		&& m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_EXTRAS_MENU_ADDITIONAL_ENVIRON )  && (TheSVOLicenseManager().HasMatroxLicense()) );
-}
-
-void SVObserverApp::OnUpdateFileNew( CCmdUI* PCmdUI ) 
-{
-	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST  | SV_STATE_REGRESSION) &&
-		m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_FILE_MENU_NEW )  && (TheSVOLicenseManager().HasMatroxLicense()) );
-}
-
-void SVObserverApp::OnUpdateFileOpen( CCmdUI* PCmdUI ) 
-{
-	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST  | SV_STATE_REGRESSION)
-		&& m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_FILE_MENU_SELECT_CONFIGURATION )  && (TheSVOLicenseManager().HasMatroxLicense()) );
-}
-
-void SVObserverApp::OnUpdateFileSave( CCmdUI* PCmdUI ) 
-{
-	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST  | SV_STATE_REGRESSION)  
-		&& SVSVIMStateClass::CheckState( SV_STATE_READY )
-		&& m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_FILE_MENU_SAVE_CONFIGURATION ));
-}
-
-void SVObserverApp::OnUpdateFileSaveAll( CCmdUI* PCmdUI ) 
-{
-	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION )
-		&& SVSVIMStateClass::CheckState( SV_STATE_READY )
-		&& m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_FILE_MENU_SAVE_CONFIGURATION ));
-}
-
-void SVObserverApp::OnUpdateFileSaveAs( CCmdUI* PCmdUI ) 
-{
-	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST  | SV_STATE_REGRESSION)
-		&& SVSVIMStateClass::CheckState( SV_STATE_READY )
-		&& m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_FILE_MENU_SAVE_CONFIGURATION_AS ));
-}
-
-void SVObserverApp::OnUpdateFileSaveAsSec( CCmdUI* PCmdUI ) 
-{
-	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST  | SV_STATE_REGRESSION)
-		&& SVSVIMStateClass::CheckState( SV_STATE_READY )
-		&& m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_FILE_MENU_SAVE_CONFIGURATION_AS ));
-}
-
-void SVObserverApp::OnUpdateFileSaveCopyAs( CCmdUI* PCmdUI ) 
-{
-	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST  | SV_STATE_REGRESSION)  );
-}
-
-void SVObserverApp::OnUpdateFileSaveImage( CCmdUI* PCmdUI ) 
-{
-	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING  | SV_STATE_REGRESSION | SV_STATE_TEST)
-		&& SVSVIMStateClass::CheckState( SV_STATE_READY )
-		&& m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_FILE_MENU_SAVE_IMAGE ));
-}
-
-void SVObserverApp::OnUpdateFileSaveSec( CCmdUI* PCmdUI ) 
-{
-	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION )
-		&& SVSVIMStateClass::CheckState( SV_STATE_READY )
-		&& m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_FILE_MENU_SAVE_CONFIGURATION ));
-}
-
-void SVObserverApp::OnUpdateFileUpdate( CCmdUI* PCmdUI ) 
-{
-	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION ) );
-}
-
-void SVObserverApp::OnUpdateExtrasTestoutputs( CCmdUI* PCmdUI ) 
-{
-	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION )
-		&& m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_EXTRAS_MENU_TEST_OUTPUTS ));
-}
-
-// This function is used when the ShouldRunLastEnvironmentAutomatically is set.
-void SVObserverApp::OnRunMostRecentMRU( )
-{
-	ValidateMRUList();
-
-	if ( !SVSVIMStateClass::CheckState( SV_STATE_UNAVAILABLE ) )
-	{
-		BOOL bRunning = SVSVIMStateClass::CheckState( SV_STATE_RUNNING );
-
-		if ( !bRunning )
-		{
-			OpenSECFileFromMostRecentList(ID_FILE_MRU_FILE1);
-		}
-	}
-}
-
-/////////////////////////////////////////////////////////////////////////////
-//
-//
-// Command message processor for range: ID_FILE_MRU_FILE1, ID_FILE_MRU_FILE16
-//
-BOOL SVObserverApp::OnOpenRecentFile( UINT nID ) 
-{
-    BOOL l_bOk = FALSE;
-	if( m_svSecurityMgr.SVValidate( SECURITY_POINT_FILE_MENU_RECENT_CONFIGURATIONS ) == S_OK)
-	{
-		ValidateMRUList();
-
-		if ( !SVSVIMStateClass::CheckState( SV_STATE_UNAVAILABLE ) )
-		{
-			BOOL bRunning = SVSVIMStateClass::CheckState( SV_STATE_RUNNING );
-
-			if ( !bRunning )
-			{
-				l_bOk = OpenSECFileFromMostRecentList(nID);
-				if( l_bOk && !m_svSecurityMgr.SVIsSecured( SECURITY_POINT_MODE_MENU_EDIT_TOOLSET ) )
-				{
-					SetModeEdit( true ); // Set Edit mode
-				}
-			}
-		}
-	}
-
-	return TRUE;
-//	return bOk;
-}
-
-/////////////////////////////////////////////////////////////////////////////
-//
-//  An intermediate method called when user selects a configuration (.sec)
-//  file from the Most Recent Used (MRU) list under menu File.\
-//  Calls OpenSECFile(..)
-//
-//
-BOOL SVObserverApp::OpenSECFileFromMostRecentList(int nID)
-{
-	ASSERT_VALID(this);
-	ASSERT(m_pRecentFileList != NULL);
-
-	ASSERT(nID >= ID_FILE_MRU_FILE1);
-	ASSERT(nID < ID_FILE_MRU_FILE1 + (int)m_pRecentFileList->GetSize());
-	int nIndex = nID - ID_FILE_MRU_FILE1;
-	ASSERT((*m_pRecentFileList)[nIndex].GetLength() != 0);
-
-	TRACE2("MRU: open file (%d) '%s'.\n", (nIndex) + 1,
-			(LPCTSTR)(*m_pRecentFileList)[nIndex]);
-
-	BOOL bResult = FALSE;
-
-	// Check Security to see if save is allowed
-
-	//if (OpenDocumentFile((*m_pRecentFileList)[nIndex]) == NULL)
-	//
-	// Open and read the Configuration (.sec) from the Most Recent Used
-	// List under the menu File.
-	//
-	SVFileNameClass svFileName;
-
-	svFileName.SetFullFileName( (*m_pRecentFileList)[nIndex] );
-
-	bResult = FALSE;
-
-    HRESULT hr = S_FALSE;
-
-	if ( CString( svFileName.GetExtension() ).CollateNoCase( ".svx" ) == 0 )
-	{
-		hr = OpenSVXFile((*m_pRecentFileList)[nIndex]);
-	}
-	else
-	{
-		hr = OpenSECFile((*m_pRecentFileList)[nIndex]);
-	}
-	
-	//if S_OK, check to see if it has any tool errors in the license manager
-	if ( hr == S_OK )
-	{
-		if ( TheSVOLicenseManager().HasToolErrors() )
-		{
-			TheSVOLicenseManager().ShowLicenseManagerErrors();
-		}
-	}
-
-	if ( hr == S_FALSE )    // don't do on ERROR_CANCELLED
-	{
-		m_pRecentFileList->Remove(nIndex);
-	}
-    bResult = (hr == S_OK);
-
-	return bResult;
-}
-
-void SVObserverApp::OnUpdateRecentFileMenu( CCmdUI* PCmdUI ) 
-{
-	CWinApp::OnUpdateRecentFileMenu( PCmdUI );
-
-	BOOL bEnable = ( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_REGRESSION | SV_STATE_TEST )
-		&& m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_FILE_MENU_RECENT_CONFIGURATIONS ) && (TheSVOLicenseManager().HasMatroxLicense()) );
-
-
-	for( long l = ID_FILE_MRU_FILE1; !bEnable && l < (long)(PCmdUI->m_nID); l++ )
-		PCmdUI->m_pMenu->EnableMenuItem( l, MF_BYCOMMAND | MF_GRAYED );
-}
-
-void SVObserverApp::OnUpdateExtraUtilities( CCmdUI* PCmdUI ) 
-{
-	PCmdUI->Enable( m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_EXTRAS_MENU_UTILITIES_RUN ));
-
-}
-
-void SVObserverApp::OnUpdateEditDelete( CCmdUI* PCmdUI ) 
-{
-	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_REGRESSION )  &&
-					OkToEdit() );
-}
-
-void SVObserverApp::OnUpdateEditEdittool( CCmdUI* PCmdUI ) 
-{
-	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST  | SV_STATE_REGRESSION) &&
-					OkToEdit() );
-}
-
-void SVObserverApp::OnUpdateEditEditToolSetCondition( CCmdUI* PCmdUI ) 
-{
-	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION )  &&
-					OkToEdit() );
-}
-
-void SVObserverApp::OnUpdateEditRemoteInputs( CCmdUI* PCmdUI ) 
-{
-	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION ) &&
-					OkToEdit() );
-	SVInputObjectList* l_pInputs=NULL;
-	SVConfigurationObject* l_pConfig = NULL;
-	SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
-
-	if( l_pConfig != NULL )
-	{
-		l_pConfig->GetInputObjectList( &l_pInputs );
-	}
-
-	bool l_bRemoteInputsExits = false;
-	if( l_pInputs != NULL )
-	{
-		long lSize = 0;
-		l_pInputs->GetRemoteInputCount( lSize );
-		if( lSize > 0 )
-		{
-			l_bRemoteInputsExits = true;
-			PCmdUI->SetText( "Edit Remote Inputs" );
-		}
-	}
-	if( l_bRemoteInputsExits )
-		PCmdUI->SetText( "Edit Remote Inputs" );
-	else
-		PCmdUI->SetText( "Add Remote Inputs" );
-
-	//@HACK
-	// This code to add menu items for the Published Results does not belong here
-	// but we need a message when the edit menu is selected.  So this works until we can find a
-	// message for the Edit popup UpdateUI or similar.
-
-	// Get Menu handle
-	HMENU hmen = GetMenu( GetMainWnd()->m_hWnd );
-	if( l_pConfig )
-	{
-		// The IO menu is limited to 100 Published results menu items.
-		// There is no limit to the number of inspections that can be created 
-		// but we are only displaying up to 100 menu items for inspections on the IO page.
-		// If there are more than 100, then the user will have to go to the inspection to edit published results
-		// If more are to be supported, then these resources for the ID_EDIT_PUBLISHEDRESULTS_LIMIT will need changed. 
-		SVInspectionProcessPtrList l_Inspections; // Get Inspections
-		l_pConfig->GetInspections( l_Inspections );
-		RemoveMenu(hmen, "&Edit\\Published Results" ); // start empty.
-		for( size_t i = 0 ; i < l_Inspections.size() && i < (ID_EDIT_PUBLISHEDRESULTS_LIMIT - ID_EDIT_PUBLISHEDRESULTS_BASE + 1); i++)
-		{
-			// Add a menu for each inspection.
-			CString strName;
-			strName.Format("&Edit\\Published Results\\%s",l_Inspections[i]->GetName());
-			AddMenuItem(hmen, strName, static_cast<UINT>(ID_EDIT_PUBLISHEDRESULTS_BASE + i));
-		}
-	}
-}
-
-void SVObserverApp::OnUpdateExtrasLightreference( CCmdUI* PCmdUI ) 
-{
-	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_REGRESSION ) &&
-					OkToEdit());
-}
-
-void SVObserverApp::OnUpdateFilePrint( CCmdUI* PCmdUI ) 
-{
-	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_REGRESSION )  
-		&& m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_FILE_MENU_PRINT ));
-}
-
-void SVObserverApp::OnUpdateFilePrintSec( CCmdUI* PCmdUI ) 
-{
-	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_REGRESSION | SV_STATE_TEST )  
-		&& m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_FILE_MENU_PRINT ));
-}
-
-void SVObserverApp::OnUpdateFilePrintPreview( CCmdUI* PCmdUI ) 
-{
-	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_REGRESSION ) 
-		&& m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_FILE_MENU_PRINT ));
-}
-
-void SVObserverApp::OnUpdateFilePrintSetup( CCmdUI* PCmdUI ) 
-{
-	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_REGRESSION | SV_STATE_TEST ) 
-		&& m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_FILE_MENU_PRINT_SETUP ));
-}
-
-void SVObserverApp::OnUpdateHelp( CCmdUI* PCmdUI ) 
-{
-	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING ) );
-}
-
-void SVObserverApp::OnUpdateHelpFinder( CCmdUI* PCmdUI ) 
-{
-	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING  ) );
-}
-
-void SVObserverApp::OnUpdateNextPane( CCmdUI* PCmdUI ) 
-{
-	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_REGRESSION ) );
-}
-
-void SVObserverApp::OnUpdatePrevPane( CCmdUI* PCmdUI ) 
-{
-	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_REGRESSION ) );
-}
-
-void SVObserverApp::OnUpdateWindowArrange( CCmdUI* PCmdUI ) 
-{
-	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_REGRESSION ) );
-}
-
-void SVObserverApp::OnUpdateWindowCascade( CCmdUI* PCmdUI ) 
-{
-	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_REGRESSION ) );
-}
-
-void SVObserverApp::OnUpdateWindowNew( CCmdUI* PCmdUI ) 
-{
-	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_REGRESSION )  );
-}
-
-void SVObserverApp::OnUpdateWindowTileHorz( CCmdUI* PCmdUI ) 
-{
-	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_REGRESSION ) );
-}
-
-void SVObserverApp::OnUpdateWindowTileVert( CCmdUI* PCmdUI ) 
-{
-	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_REGRESSION ) );
-}
-
-void SVObserverApp::OnUpdateAddShiftTool( CCmdUI* PCmdUI ) 
-{
-	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) &&	
-					OkToEdit() &&
-	                IsMonochromeImageAvailiable() );
-}
-
-void SVObserverApp::OnUpdateAddWindowtool( CCmdUI* PCmdUI ) 
-{
-	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) &&	
-					OkToEdit() &&
-	                IsMonochromeImageAvailiable() );
-}
-
-void SVObserverApp::OnUpdateAddCylindricalWarpTool( CCmdUI* pCmdUI ) 
-{
-	bool l_bEnable = ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) &&	
-					OkToEdit() &&
-	                IsMonochromeImageAvailiable() ;
-
-	if( pCmdUI->m_pSubMenu )
-	{
-		unsigned int l_uiGray = l_bEnable ? 0 : MF_GRAYED;
-		pCmdUI->m_pMenu->EnableMenuItem( pCmdUI->m_nIndex, MF_BYPOSITION | l_uiGray);
-	}
-	else
-	{
-		pCmdUI->Enable( l_bEnable );
-	}
-}
-
-void SVObserverApp::OnUpdateAddPolarUnwrapTool(CCmdUI* PCmdUI) 
-{
-	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) &&	
-					OkToEdit() &&
-	                IsMonochromeImageAvailiable() );
-}
-
-void SVObserverApp::OnUpdateAddGageTool( CCmdUI* pCmdUI ) 
-{
-	bool l_bEnable  = !SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) &&	
-				OkToEdit() &&
-	            IsMonochromeImageAvailiable() ;
-	if( pCmdUI->m_pSubMenu )
-	{
-		unsigned int l_uiGray = l_bEnable ? 0 : MF_GRAYED;
-		pCmdUI->m_pMenu->EnableMenuItem( pCmdUI->m_nIndex, MF_BYPOSITION | l_uiGray);
-	}
-	else
-	{
-		pCmdUI->Enable( l_bEnable );
-	}
-}
-
-
-void SVObserverApp::OnUpdateAddProfileTool( CCmdUI* pCmdUI ) 
-{
-	bool l_bEnable  = !SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) &&	
-				OkToEdit() &&
-	            IsMonochromeImageAvailiable() ;
-	pCmdUI->Enable( l_bEnable );
-}
-
-void SVObserverApp::OnUpdateAddLoadImageTool( CCmdUI* PCmdUI ) 
-{
-	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) &&	
-					OkToEdit() &&
-	                IsMonochromeImageAvailiable()  );
-}
-
-void SVObserverApp::OnUpdateAddImageTool( CCmdUI* PCmdUI ) 
-{
-	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) &&	
-					OkToEdit() &&
-	                IsMonochromeImageAvailiable());
-}
-
-void SVObserverApp::OnUpdateAddArchiveTool( CCmdUI* PCmdUI ) 
-{
-	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) &&	
-					OkToEdit() &&
-	                IsMonochromeImageAvailiable() );
-}
-
-void SVObserverApp::OnUpdateAddAcquisitionTool( CCmdUI* PCmdUI ) 
-{
-	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) &&	
-					OkToEdit() &&
-	                IsMonochromeImageAvailiable()  );
-}
-
-void SVObserverApp::OnUpdateResumeFreeze( CCmdUI* PCmdUI )  
-{
-	PCmdUI->Enable( TRUE );
-}
-
-void SVObserverApp::OnUpdateAddRotateTool( CCmdUI* PCmdUI ) 
-{
-	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) &&	
-					OkToEdit() &&
-	                IsMonochromeImageAvailiable()  );
-}
-
-void SVObserverApp::OnUpdateAddMathTool( CCmdUI* PCmdUI ) 
-{
-	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) &&	
-					OkToEdit() &&
-	                IsMonochromeImageAvailiable() );
-}
-
-void SVObserverApp::OnUpdateAddStatisticsTool( CCmdUI* PCmdUI ) 
-{
-	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) &&	
-					OkToEdit() &&
-	                IsMonochromeImageAvailiable() );
-}
-
-void SVObserverApp::OnUpdateAddTransformationTool( CCmdUI* PCmdUI ) 
-{
-	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) &&	
-					OkToEdit() &&
-	                IsMonochromeImageAvailiable() );
-}
-
-void SVObserverApp::OnUpdateAddExternalTool(CCmdUI* PCmdUI) 
-{
-	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) &&	
-					OkToEdit() &&
-	                IsMonochromeImageAvailiable() );
-}
-
-void SVObserverApp::OnUpdateAddColortool( CCmdUI* PCmdUI ) 
-{
-	if( IsColorSVIM() )
-	{
-		CMDIChildWnd* pMDIChild;
-		if( m_pMainWnd && ( pMDIChild = ( ( CMDIFrameWnd* ) m_pMainWnd )->MDIGetActive() ) )
-		{
-			CDocument* pCurrentDocument;
-			if( ( pCurrentDocument = pMDIChild->GetActiveDocument() ) )
-			{
-				
-				if( ( dynamic_cast< SVIPDoc* >( pCurrentDocument ) )->IsColorInspectionDocument() )
-				{
-					PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) &&
-					OkToEdit());
-				}
-				else
-				{
-					// Disable
-					PCmdUI->Enable( FALSE );
-				}
-			}
-		}
-	}
-	else
-	{
-		CMenu *pMenu;
-	    CWnd* pWindow = AfxGetMainWnd();
-		pMenu = pWindow->GetMenu();
-  
-		// remove from menu...
-		pMenu->RemoveMenu( ID_ADD_COLORTOOL, MF_BYCOMMAND );
-	}
-}
-
-void SVObserverApp::OnViewToolBuffers() 
-{
-}
-
-void SVObserverApp::OnUpdateViewToolBuffers( CCmdUI* PCmdUI ) 
-{
-	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING )  );
-	PCmdUI->SetCheck( ViewToolBuffers ? 1 : 0 );
-}
-
-void SVObserverApp::OnUpdateAppAbout( CCmdUI* PCmdUI ) 
-{
-	//PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING ) );
-}
-
-void SVObserverApp::OnUpdateAddLinearTool( CCmdUI* PCmdUI ) 
-{
-	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) &&	
-	                IsMonochromeImageAvailiable() &&
-					OkToEdit());
-}
-
-void SVObserverApp::OnUpdateAddRemoteInputTool( CCmdUI* PCmdUI ) 
-{
-	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) &&	
-	                IsMonochromeImageAvailiable() &&
-					OkToEdit());
-}
-
-void SVObserverApp::OnExtrasLogin() 
-{
-	HRESULT hr = m_svSecurityMgr.SVLogon();
-
-	// Check if Edit Mode should continue.
-	if( SVSVIMStateClass::CheckState( SV_STATE_EDIT ) )
-	{	// If this user is not allowed to edit then remove the edit mode
-		if( !m_svSecurityMgr.SVIsDisplayable( SECURITY_POINT_MODE_MENU_EDIT_TOOLSET ))
-		{
-			SVSVIMStateClass::RemoveState( SV_STATE_EDIT );
-		}
-		else
-		{	// If they are still allowed then select the current tool.
-			SVMainFrame * pWndMain = (SVMainFrame *)GetMainWnd( );
-			if(pWndMain)
-			{
-				pWndMain->PostMessage(SV_SET_TOOL_SELECTED_IN_TOOL_VIEW, (WPARAM)TRUE);
-				// Logged on User changed
-				pWndMain->PostMessage( SV_LOGGED_ON_USER_CHANGED, 0 );
-			}
-		}
-	}
-	// Check if Edit Move Tool selected
-	if( SVSVIMStateClass::CheckState( SV_STATE_EDIT_MOVE ) )
-	{   // if this user is not allowed to have move privileges then remove the state
-		if( !m_svSecurityMgr.SVIsDisplayable( SECURITY_POINT_MODE_MENU_EDIT_MOVE_TOOL ) )
-		{
-			SVSVIMStateClass::RemoveState( SV_STATE_EDIT_MOVE );
-		}
-		else
-		{	// If they are still allowed then select the current tool.
-			SVMainFrame * pWndMain = (SVMainFrame *)GetMainWnd( );
-			if(pWndMain)
-			{
-				pWndMain->PostMessage(SV_SET_TOOL_SELECTED_IN_TOOL_VIEW, (WPARAM)TRUE);
-				// Logged on User changed
-				pWndMain->PostMessage( SV_LOGGED_ON_USER_CHANGED, 0 );
-			}
-		}
-	}
-}
-
-void SVObserverApp::OnUpdateExtrasLogin( CCmdUI* PCmdUI ) 
-{
-	PCmdUI->Enable( SVSVIMStateClass::CheckState( SV_STATE_AVAILABLE | SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_READY | SV_STATE_REGRESSION) );
-
-	if( !m_svSecurityMgr.SVGetUseLogon() )
-	{	// If not logon mode then remove the login and logout menu items.
-		CMenu *pMenu;
-		CWnd* pWindow = AfxGetMainWnd();
-		pMenu = pWindow->GetMenu();
-		pMenu->RemoveMenu( ID_EXTRAS_LOGIN, MF_BYCOMMAND );
-		pMenu->RemoveMenu( ID_EXTRAS_LOGOUT, MF_BYCOMMAND );
-	}
-}
-
-void SVObserverApp::OnExtrasLogout() 
-{
-	// Force log out, regardless auto login mode...
-	//Logout( TRUE );
-	m_svSecurityMgr.SVLogout();
-
-	if( SVSVIMStateClass::CheckState( SV_STATE_EDIT_MOVE ) )
-	{
-		SetModeEditMove( false );
-	}
-
-	if( SVSVIMStateClass::CheckState( SV_STATE_EDIT ) )
-	{
-		SVSVIMStateClass::RemoveState( SV_STATE_EDIT );
-	}
-
-	if ( SVSVIMStateClass::CheckState( SV_STATE_REGRESSION ) )
-	{
-		StopRegression();
-	}
-
-    //
-    // We need to deselect any tool that might be set for operator move.
-    //
-    SVMainFrame * pWndMain = (SVMainFrame *)GetMainWnd( );
-    if(pWndMain)
-    {
-        pWndMain->PostMessage( SV_SET_TOOL_SELECTED_IN_TOOL_VIEW, (WPARAM)FALSE );   // Deselect any tool selected for move.
-    }
-}
-
-void SVObserverApp::OnUpdateExtrasLogout( CCmdUI* PCmdUI ) 
-{
-	PCmdUI->Enable( m_svSecurityMgr.SVIsLoggedOn());
-}
-
-void SVObserverApp::OnUpdateExtrasUserManager( CCmdUI* PCmdUI ) 
-{
-	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION )  );
-}
-
-void SVObserverApp::WinHelp( DWORD dwData, UINT nCmd ) 
-{
-	
-	CWinApp::WinHelp( dwData, nCmd );
-}
-
-/////////////////////////////////////////////////////////////////////////////
-//
-//
-//  Not Called..
-//
-void SVObserverApp::OnFilePrintPreviewSec() 
-{
-	CMDIChildWnd* pMDIChild;
-	if( m_pMainWnd && ( pMDIChild = ( ( CMDIFrameWnd* ) m_pMainWnd )->MDIGetActive() ) )
-	{
-		CDocument* pCurrentDocument;
-		if( ( pCurrentDocument = pMDIChild->GetActiveDocument() ) )
-		{
-			CRect    defaultRect;
-
-
-			pMDIChild->GetClientRect( &defaultRect );
-
-		}
-	}
-}
-
-/////////////////////////////////////////////////////////////////////////////
-//
-//
-//
-//
-void SVObserverApp::OnFilePrintSec() 
-{
-	if ( ! SVSVIMStateClass::CheckState( SV_STATE_READY | SV_STATE_RUNNING ) || 
-	     CString( GetSECFullFileName() ).IsEmpty() )
-	{
-		return;
-	}
-
-	SVConfigurationPrint printSEC;
-	printSEC.DoPrintSEC();
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : OnRCLoadSEC
-// -----------------------------------------------------------------------------
-// .Description : ...
-//              :
-// -----------------------------------------------------------------------------
-// .Input(s)
-//	 Type				Name				Description
-//	: 
-//  :
-// .Output(s)
-//	:
-//  :
-// .Return Value
-//	: 
-// -----------------------------------------------------------------------------
-// .Import Function Reference(s)
-//	:
-// -----------------------------------------------------------------------------
-// .Import Variable Reference(s)
-//	:
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :27.05.1997 RO			First Implementation
-//	:
-////////////////////////////////////////////////////////////////////////////////
-void SVObserverApp::OnRCLoadSEC()
-{
-	SVFileNameClass svFileName( SVRCGetSVCPathName() );
-
-  if ( ! CString( svFileName.GetFullFileName() ).IsEmpty() )
-	{
-		BOOL bIsSEC = CString( svFileName.GetExtension() ).CompareNoCase( _T( ".sec" ) ) == 0;
-		BOOL bIsSVX = CString( svFileName.GetExtension() ).CompareNoCase( _T( ".svx" ) ) == 0;
-
-		// Check for SEC file...
-		if ( bIsSEC || bIsSVX )
-		{
-			if ( S_OK != DestroySEC( FALSE, TRUE ) )
-			{
-				AfxMessageBox( "Failed to destroy SEC, try it manual!" );
-			}
-			else
-			{
-				BOOL bOk = FALSE;
-
-				if ( bIsSEC )
-				{	
-					bOk = S_OK == OpenSECFile( svFileName.GetFullFileName() );
-
-					if ( ! bOk )
-					{
-						AfxMessageBox( "Failed to restart SEC, try it manual!" );
-					}
-				}
-				else if ( bIsSVX )
-				{
-					bOk = S_OK == OpenSVXFile( svFileName.GetFullFileName() );
-
-					if ( ! bOk )
-					{
-						AfxMessageBox( "Failed to restart SVX, try it manual!" );
-					}
-				}
-
-				if ( bOk )
-				{
-					GetMainFrame()->SetNotifyCommRC ();
-				}
-			}
-		
-//			UpdateApplicationBar();
-			return;
-		}
-	}
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : OnRCSaveAllAndGetSEC
-// -----------------------------------------------------------------------------
-// .Description : ...
-//              :
-// -----------------------------------------------------------------------------
-// .Input(s)
-//	 Type				Name				Description
-//	: 
-//  :
-// .Output(s)
-//	:
-//  :
-// .Return Value
-//	: 
-// -----------------------------------------------------------------------------
-// .Import Function Reference(s)
-//	:
-// -----------------------------------------------------------------------------
-// .Import Variable Reference(s)
-//	:
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :27.05.1997 RO			First Implementation
-//	:
-////////////////////////////////////////////////////////////////////////////////
-void SVObserverApp::OnRCSaveAllAndGetSEC()
-{
-	// Saves the current loaded SEC completely, transfers the CurrentPathName to 
-	// SVRCComm.Dll and at least closes the current SEC, because the opened 
-	// SVObserver documents cannot be transfered to SVFocus!
-
-	BOOL bRunning = SVSVIMStateClass::CheckState( SV_STATE_RUNNING );
-
-	if ( bRunning )
-	{
-    OnRCGoOffline();
-	}
-
-	if ( SVSVIMStateClass::CheckState( SV_STATE_READY ) )
-	{
-		CString csConfigPath;
-		SVFileNameManagerClass svFileManager;
-
-		BOOL bModified = SVSVIMStateClass::CheckState( SV_STATE_MODIFIED );
-
-		csConfigPath = svFileManager.GetConfigurationPathName();
-
-		if ( ! csConfigPath.IsEmpty() )
-		{
-			svFileManager.SetConfigurationPathName( NULL );
-		}
-
-		SVFileNameClass svFileName;
-
-		svFileName.SetFullFileName( GetSECFullFileName() );
-		svFileName.SetPathName( _T( "C:\\RUN" ) );
-		svFileName.SetExtension( _T( ".svx" ) );
-
-		fileSaveAsSec( svFileName.GetFullFileName() );
-
-		SVRCSetSVCPathName( GetSECFullFileName() );
-
-		if ( ! csConfigPath.IsEmpty() )
-		{
-			svFileManager.SetConfigurationPathName( csConfigPath );
-		}
-
-		if ( bModified )
-		{
-			SVSVIMStateClass::AddState( SV_STATE_MODIFIED );
-		}
-
-		if ( bRunning )
-		{
-			OnRunMode();
-		}
-	}
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : OnRCClose
-// -----------------------------------------------------------------------------
-// .Description : ...
-//              :
-// -----------------------------------------------------------------------------
-// .Input(s)
-//	 Type				Name				Description
-//	: 
-//  :
-// .Output(s)
-//	:
-//  :
-// .Return Value
-//	: 
-// -----------------------------------------------------------------------------
-// .Import Function Reference(s)
-//	:
-// -----------------------------------------------------------------------------
-// .Import Variable Reference(s)
-//	:
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :21.05.2001 EJC			First Implementation
-//	:
-////////////////////////////////////////////////////////////////////////////////
-void SVObserverApp::OnRCClose()
-{
-	// Returns Nonzero to SVRC Module via SVRCResult, if it is successfully.
-	// Otherwise it returns 0.
-
-	// Closes loaded configuration
-	// Cleans up execution directory ( download directory )
-
-	// Close SEC immediately, without hint or user message...
-	DestroySEC( FALSE, TRUE );	// Close SEC immediately
-
-//	UpdateApplicationBar();
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : OnRCCloseAndCleanUpDownloadDirectory
-// -----------------------------------------------------------------------------
-// .Description : ...
-//              :
-// -----------------------------------------------------------------------------
-// .Input(s)
-//	 Type				Name				Description
-//	: 
-//  :
-// .Output(s)
-//	:
-//  :
-// .Return Value
-//	: 
-// -----------------------------------------------------------------------------
-// .Import Function Reference(s)
-//	:
-// -----------------------------------------------------------------------------
-// .Import Variable Reference(s)
-//	:
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :27.05.1997 RO			First Implementation
-//	:
-////////////////////////////////////////////////////////////////////////////////
-void SVObserverApp::OnRCCloseAndCleanUpDownloadDirectory()
-{
-	// Returns Nonzero to SVRC Module via SVRCResult, if it is successfully.
-	// Otherwise it returns 0.
-
-	// Closes loaded configuration
-	// Cleans up execution directory ( download directory )
-
-		// Close SEC immediately, without hint or user message...
-		DestroySEC( FALSE, TRUE );	// Close SEC immediately
-
-//	UpdateApplicationBar();
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : OnUpdateAllIOViews
-// -----------------------------------------------------------------------------
-// .Description : ...
-//              :
-// -----------------------------------------------------------------------------
-// .Input(s)
-//	 Type				Name				Description
-//	: 
-//  :
-// .Output(s)
-//	:
-//  :
-// .Return Value
-//	: 
-// -----------------------------------------------------------------------------
-// .Import Function Reference(s)
-//	:
-// -----------------------------------------------------------------------------
-// .Import Variable Reference(s)
-//	:
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :27.05.1997 RO			First Implementation
-//	:
-////////////////////////////////////////////////////////////////////////////////
-void SVObserverApp::OnUpdateAllIOViews()
-{
-	if ( GetIODoc() && 
-	     SVSVIMStateClass::CheckState( SV_STATE_READY | SV_STATE_RUNNING ) &&
-			 !SVSVIMStateClass::CheckState( SV_STATE_CANCELING ) )
-	{
-		GetIODoc()->UpdateAllViews( NULL );
-	}
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : UpdatePPQBar()
-// -----------------------------------------------------------------------------
-// .Description : ...
-//              :
-// -----------------------------------------------------------------------------
-// .Input(s)
-//	 Type				Name				Description
-//	: 
-//  :
-// .Output(s)
-//	:
-//  :
-// .Return Value
-//	: 
-// -----------------------------------------------------------------------------
-// .Import Function Reference(s)
-//	:
-// -----------------------------------------------------------------------------
-// .Import Variable Reference(s)
-//	:
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :27.05.1997 RO			First Implementation
-//	:
-////////////////////////////////////////////////////////////////////////////////
-void SVObserverApp::UpdatePPQBar()
-{
-	GetMainFrame()->OnViewPPQBar();
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : OnEnvironmentSettings
-// -----------------------------------------------------------------------------
-// .Description : ...
-//              :
-// -----------------------------------------------------------------------------
-// .Input(s)
-//	 Type				Name				Description
-//	: 
-//  :
-// .Output(s)
-//	:
-//  :
-// .Return Value
-//	: 
-// -----------------------------------------------------------------------------
-// .Import Function Reference(s)
-//	:
-// -----------------------------------------------------------------------------
-// .Import Variable Reference(s)
-//	:
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :27.05.1997 RO			First Implementation
-//	:
-////////////////////////////////////////////////////////////////////////////////
-void SVObserverApp::OnEnvironmentSettings() 
-{
-	bool l_bShowDDETabs = false;
-
-	if( m_svSecurityMgr.SVValidate( SECURITY_POINT_EXTRAS_MENU_ADDITIONAL_ENVIRON ) == S_OK )
-	{
-		SVEnvironmentSettingsDialogClass cfdDlg;
-
-		BOOL bUpdateMenu = m_bShowUpdateFirmwareInMenu;
-
-		cfdDlg.StartLastAutomatically = ShouldRunLastEnvironmentAutomatically;
-		cfdDlg.m_bUpdateFirmwareCheck = m_bShowUpdateFirmwareInMenu;
-
-		if( cfdDlg.DoModal() == IDOK )
-		{
-			ShouldRunLastEnvironmentAutomatically = cfdDlg.StartLastAutomatically;
-
-			WriteProfileInt( _T( "Settings" ), 
-							 _T( "Run Last Configuration Automatically" ), 
-							 ShouldRunLastEnvironmentAutomatically ? 1 : 0
-							 );
-
-			if( bUpdateMenu != m_bShowUpdateFirmwareInMenu )
-			{
-				SVOINIClass l_svIni;
-				CString csIni = "C:\\SVObserver\\bin\\svim.ini";
-				if ( m_bShowUpdateFirmwareInMenu )
-				{
-					l_svIni.SetValue("SVIM Information", "ShowUpdateFirmware", "Y", csIni);
-				}
-				else
-				{
-					l_svIni.SetValue("SVIM Information", "ShowUpdateFirmware", "N", csIni);
-				}
-				SVUtilitiesClass util;
-				CWnd *pWindow;
-				CMenu *pMenu;
-				CString szMenuText;
-
-				pWindow = AfxGetMainWnd ();
-				pMenu = pWindow->GetMenu();
-				szMenuText = _T("&Utilities");
-
-				if (pMenu = util.FindSubMenuByName (pMenu, szMenuText))
-				{
-					util.LoadMenu (pMenu);
-				}
-
-				//rebuild menu
-			}
-		}
-	}
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : OnEditIOList
-// -----------------------------------------------------------------------------
-// .Description : ...
-//              :
-// -----------------------------------------------------------------------------
-// .Input(s)
-//	 Type				Name				Description
-//	: 
-//  :
-// .Output(s)
-//	:
-//  :
-// .Return Value
-//	: 
-// -----------------------------------------------------------------------------
-// .Import Function Reference(s)
-//	:
-// -----------------------------------------------------------------------------
-// .Import Variable Reference(s)
-//	:
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :27.05.1997 RO			First Implementation
-//	:
-////////////////////////////////////////////////////////////////////////////////
-void SVObserverApp::OnEditIOList() 
-{
-	if( GetIODoc() )
-	{
-		// Get the active MDI child window.             
-		POSITION pos = GetIODoc()->GetFirstViewPosition();
-		CView *pView = GetIODoc()->GetNextView( pos );
-
-		CMDIChildWnd *pFrame = (CMDIChildWnd*) pView->GetParentFrame();
-		pFrame->MDIActivate();
-
-	}// end if
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : OnUpdateEditIOList
-// -----------------------------------------------------------------------------
-// .Description : ...
-//              :
-// -----------------------------------------------------------------------------
-// .Input(s)
-//	 Type				Name				Description
-//	: 
-//  :
-// .Output(s)
-//	:
-//  :
-// .Return Value
-//	: 
-// -----------------------------------------------------------------------------
-// .Import Function Reference(s)
-//	:
-// -----------------------------------------------------------------------------
-// .Import Variable Reference(s)
-//	:
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :27.05.1997 RO			First Implementation
-//	:
-////////////////////////////////////////////////////////////////////////////////
-void SVObserverApp::OnUpdateEditIOList( CCmdUI* PCmdUI ) 
-{
-	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST  | SV_STATE_REGRESSION ) &&
-					SVSVIMStateClass::CheckState( SV_STATE_EDIT ) && GetIODoc() != NULL );
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : OnAppAbout
-// -----------------------------------------------------------------------------
-// .Description : ...
-//              :
-// -----------------------------------------------------------------------------
-// .Input(s)
-//	 Type				Name				Description
-//	: 
-//  :
-// .Output(s)
-//	:
-//  :
-// .Return Value
-//	: 
-// -----------------------------------------------------------------------------
-// .Import Function Reference(s)
-//	:
-// -----------------------------------------------------------------------------
-// .Import Variable Reference(s)
-//	:
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :27.05.1997 RO			First Implementation
-//	:
-////////////////////////////////////////////////////////////////////////////////
-void SVObserverApp::OnAppAbout()
-{
-	SVAboutDialogClass aboutDlg;
-	aboutDlg.DoModal();
-}
-
-void SVObserverApp::OnUpdatePublishedImagesPicker(CCmdUI* PCmdUI) 
-{
-	PCmdUI->Enable( SVSVIMStateClass::CheckState( SV_STATE_READY )
-		&& SVSVIMStateClass::CheckState( SV_STATE_EDIT ) );
-}
-
-void SVObserverApp::OnUpdatePublishedResultsPicker(CCmdUI* PCmdUI) 
-{
-	PCmdUI->Enable( SVSVIMStateClass::CheckState( SV_STATE_READY )
-		&& SVSVIMStateClass::CheckState( SV_STATE_EDIT ) );
-}
-
-void SVObserverApp::OnUpdateResultsPicker(CCmdUI* PCmdUI) 
-{
-	PCmdUI->Enable( SVSVIMStateClass::CheckState( SV_STATE_READY ) 
-		&& SVSVIMStateClass::CheckState( SV_STATE_EDIT ) );
-}
-
-void SVObserverApp::OnUpdateSelectPPQVariable(CCmdUI* PCmdUI) 
-{
-	PCmdUI->Enable( SVSVIMStateClass::CheckState( SV_STATE_READY )
-		&& SVSVIMStateClass::CheckState( SV_STATE_EDIT ));
-}
-
-void SVObserverApp::OnRunUtility( UINT uiId )
-{
-  SVUtilitiesClass util;
-
-	if( m_svSecurityMgr.SVValidate( SECURITY_POINT_EXTRAS_MENU_UTILITIES_RUN ) == S_OK )
-	{
-		util.RunUtility (&m_svSecurityMgr, uiId);
-	}
-	else
-	{
-		AfxMessageBox( _T("Authorization Failed.\n\nUtility Execution requires 'User Manager' privilege."), MB_OK );
-	}
-}
-
-void SVObserverApp::OnExtrasUtilitiesEdit() 
-{
-    SVUtilitiesClass util;
-    CWnd *pWindow;
-    CMenu *pMenu;
-    CString szMenuText;
-
-    if( m_svSecurityMgr.SVValidate( SECURITY_POINT_EXTRAS_MENU_UTILITIES_SETUP ) == S_OK )
-    {
-        pWindow = AfxGetMainWnd ();
-        pMenu = pWindow->GetMenu();
-        szMenuText = _T("&Utilities");
-
-        if (pMenu = util.FindSubMenuByName (pMenu, szMenuText))
-        {
-            util.SetupUtilities (pMenu);
-            UpdateAllMenuExtrasUtilities();
-        }
-    }
-    else
-    {
-        AfxMessageBox( _T("Authorization Failed.\n\nUtility Modification requires 'User Manager' privilege."), MB_OK );
-    }
-}
-
-class CMdiChildWorkaround : public CMDIChildWnd
-{
-public:
-    HMENU GetMenu() {return m_hMenuShared;}
-};
-
-void SVObserverApp::UpdateAllMenuExtrasUtilities()
-{
-    SVUtilitiesClass util;
-    CMDIFrameWnd* pMainFrame;
-    CMenu* pMenu;
-    CString sMenuText;
-    HMENU hMenu=NULL;
-    CMenu menu;
-
-    pMainFrame = (CMDIFrameWnd*) AfxGetMainWnd ();
-    hMenu = pMainFrame->m_hMenuDefault;    // default menu
-    menu.Attach(hMenu);
-    pMenu = &menu;
-    sMenuText = _T("&Utilities");
-
-    if (pMenu = util.FindSubMenuByName (pMenu, sMenuText))
-    {
-        menu.Detach();
-        util.LoadMenu(pMenu);
-    }
-    else
-    {
-        menu.Detach();
-    }
-
-    // now cycle through all child MDI windows
-    CMDIChildWnd* pMdiChild = pMainFrame->MDIGetActive();
-
-    while (pMdiChild != NULL)
-    {
-
-		hMenu = ((CMdiChildWorkaround*)pMdiChild)->GetMenu();
-        menu.Attach(hMenu);
-        pMenu = &menu;
-        
-        if (pMenu = util.FindSubMenuByName (pMenu, sMenuText))
-        {
-            menu.Detach();
-            util.LoadMenu(pMenu);
-        }
-        else
-        {
-            menu.Detach();
-        }
-        pMdiChild = (CMDIChildWnd*) pMdiChild->GetWindow(GW_HWNDNEXT);
-    }
-}
-
-void SVObserverApp::SetupSVIMServer()
-{
-	if (mpSVIMServerWrapper)
-		mpSVIMServerWrapper->mSVIMServer.SetupConnection();
-}
-
-void SVObserverApp::OnRCOpenCurrentSEC()
-{
-	OpenSECFile (SVRCGetSVCPathName());
-}
-
-void SVObserverApp::OnRCOpenCurrentSVX()
-{
-    OpenSVXFile (SVRCGetSVCPathName());
-}
-
-void SVObserverApp::SVGetCurrentConfigName(CString &szConfigName)
-{
-	szConfigName = GetSECFullFileName();
-}
-
-BOOL SVObserverApp::IsSVIMServerEnabled()
-{
-	return (mpSVIMServerWrapper) ? TRUE : FALSE;
-}
-
-BOOL SVObserverApp::InitSVIMServer()
-{
-	if(  !IsSVIMServerEnabled() ) // if not already allocated
-	{
-		// Initialize SVIMServer for SVFocusNT
-		if (mpSVIMServerWrapper = new SVIMServerWrapper)
-		{
-			// Check if Connection Failed
-			if( !mpSVIMServerWrapper->mSVIMServer.IsStarted() )
-			{
-				// Allow user to change params
-				SetupSVIMServer();
-
-				// Try to create again
-				DestroySVIMServer();
-
-				if (mpSVIMServerWrapper = new SVIMServerWrapper)
-				{
-					// Still failed ?
-					if( !mpSVIMServerWrapper->mSVIMServer.IsStarted() )
-						DestroySVIMServer();
-				}
-			}
-		}
-		// Success
-		if( mpSVIMServerWrapper && mpSVIMServerWrapper->mSVIMServer.IsStarted() )
-		{
-			mpSVIMServerWrapper->mSVIMServer.SetSVObserverWnd (m_pMainWnd->m_hWnd);
-			mpSVIMServerWrapper->mSVIMServer.SetGoOffline (::GlobalRCGoOffline);
-			mpSVIMServerWrapper->mSVIMServer.SetGoOnline (::GlobalRCGoOnline);
-			mpSVIMServerWrapper->mSVIMServer.SetGetConfigurationName (::GlobalRCGetConfigurationName);
-			mpSVIMServerWrapper->mSVIMServer.SetGetState (::GlobalRCGetState);
-			mpSVIMServerWrapper->mSVIMServer.SetOpenConfiguration (::GlobalRCOpenConfiguration);
-			mpSVIMServerWrapper->mSVIMServer.SetSaveConfiguration (::GlobalRCSaveConfiguration);
-			mpSVIMServerWrapper->mSVIMServer.SetCloseConfiguration (::GlobalRCCloseAndCleanConfiguration);
-			return TRUE;
-		}
-	}
-	return FALSE;
-}
-
-void SVObserverApp::DestroySVIMServer()
-{
-	if( mpSVIMServerWrapper )
-	{
-		// Should we call some method to shutdown the server ?
-		delete mpSVIMServerWrapper;
-		mpSVIMServerWrapper = NULL;
-	}
-}
-
-bool SVObserverApp::IsColorSVIM() const
-{
-	return SVObjectManagerClass::Instance().m_bIsColorSVIM;
-}
-
-void SVObserverApp::ValidateMRUList()
-{
-	int i, iSize;
-	if( !::IsBadReadPtr( m_pRecentFileList, sizeof(LPVOID) ) )
-	{
-		iSize = m_pRecentFileList->GetSize();
-		for( i = iSize - 1; i >= 0; i-- )
-		{
-			BOOL bGone = ( _access( m_pRecentFileList->m_arrNames[i], 0 ) != 0 );
-			if( bGone )
-				m_pRecentFileList->Remove( i );
-		}// end for
-	}// end if
-}
-
-BOOL SVObserverApp::IsMonochromeImageAvailiable()
-{
-	BOOL bOk = !IsColorSVIM();
-
-	CMDIChildWnd* pMDIChild;
-	if( m_pMainWnd && ( pMDIChild = ( ( CMDIFrameWnd* ) m_pMainWnd )->MDIGetActive() ) )
-	{
-		pCurrentDocument = dynamic_cast< SVIPDoc* >( pMDIChild->GetActiveDocument() );
-	}
-	else
-	{
-		return bOk;
-	}
-
-	if ( !bOk && pCurrentDocument )
-	{
-		SVObjectTypeInfoStruct info;
-
-		info.ObjectType = SVImageObjectType;
-		info.SubType = SVNotSetSubObjectType;
-
-		SVGetObjectDequeByTypeVisitor l_Visitor( info );
-
-		SVObjectManagerClass::Instance().VisitElements( l_Visitor, pCurrentDocument->GetInspectionID() );
-
-		SVGetObjectDequeByTypeVisitor::SVObjectPtrDeque::const_iterator l_Iter;
-
-		for( l_Iter = l_Visitor.GetObjects().begin(); !bOk && l_Iter != l_Visitor.GetObjects().end(); ++l_Iter )
-		{
-			SVImageClass* pImage = dynamic_cast< SVImageClass* >( const_cast< SVObjectClass* >( *l_Iter ) );
-
-			if( pImage != NULL && pImage->GetTool() != NULL )
-			{
-				if( pCurrentDocument->GetSelectedToolID() != pImage->GetTool()->GetUniqueObjectID() )
-				{
-					SVImageInfoClass ImageInfo = pImage->GetImageInfo();
-
-					long l_lBandNumber = 1;
-
-					bOk = ImageInfo.GetImageProperty( SVImagePropertyBandNumber, l_lBandNumber ) == S_OK && l_lBandNumber == 1;
-				}
-				else
-				{
-					break;
-				}
-			}
-		}
-	}
-
-	return bOk;
-}
-
-LPCTSTR SVObserverApp::GetSECFullFileName() const
-{
-	return msvSECFileName.GetFullFileName();
-}
-
-LPCTSTR SVObserverApp::GetSECPathName()
-{
-	return msvSECFileName.GetPathName();
-}
-
-LPCTSTR SVObserverApp::GetSECFileName()
-{
-	return msvSECFileName.GetFileName();
-}
-
-LPCTSTR SVObserverApp::GetSECFileNameOnly()
-{
-	return msvSECFileName.GetFileNameOnly();
-}
-
-BOOL SVObserverApp::SetSECFullFileName(LPCTSTR csFullFileName, DWORD dwAction)
-{
-	BOOL bOk = FALSE;
-
-	SVFileNameManagerClass svFileManager;
-
-	bOk = msvSECFileName.SetFullFileName( csFullFileName );
-
-	if ( bOk )
-	{
-		if ( CString( msvSECFileName.GetPathName() ).IsEmpty() )
-		{
-			svFileManager.SetConfigurationPathName( NULL );
-		}
-		else
-		{
-			if ( CString( msvSECFileName.GetPathName() ).CompareNoCase( _T( "C:\\RUN" ) ) == 0 )
-			{
-				svFileManager.SetConfigurationPathName( NULL );
-			}
-			else
-			{
-				bOk = svFileManager.SetConfigurationPathName( msvSECFileName.GetPathName() );
-				// if this returns FALSE, unable to access specified path!
-				if ( !bOk )
-				{
-					ASSERT( dwAction == SAVE_CONFIG ||
-							dwAction == LOAD_CONFIG ||
-							dwAction == RENAME_CONFIG );
-
-					CString sMsg;
-					sMsg.Format(_T("Unable to %s configuration %s !"),
-								dwAction == LOAD_CONFIG ? _T("load") : _T("save"),
-								msvSECFileName.GetPathName());
-					ASSERT(FALSE);
-					AfxMessageBox(sMsg);
-				}
-			}
-		}
-
-		if ( bOk )
-		{
-			switch( dwAction )
-			{
-				case LOAD_CONFIG : bOk = svFileManager.LoadItem( &msvSECFileName );
-							break;
-				case SAVE_CONFIG : bOk = svFileManager.SaveItem( &msvSECFileName );
-							break;
-				case RENAME_CONFIG : bOk = svFileManager.RenameItem( &msvSECFileName );
-							break;
-			}
-		}
-	}
-
-	if ( bOk )
-	{
-		if ( !CString( svFileManager.GetConfigurationPathName() ).IsEmpty() )
-		{
-			AfxGetApp()->WriteProfileString( _T( "Settings" ), 
-																			 _T( "ConfigurationFilePath" ), 
-																			 svFileManager.GetConfigurationPathName() );
-		}
-	}
-	
-	return bOk;
-}
-
-// Source Image Depth plus 2 - adjusted length to handle 
-// locking issues with runonce and MaintainImages
-long SVObserverApp::GetSourceImageDepth()
-{
-    return m_lSouceImageDepth + 2;
-}
-
-// Returns sourceImageDepth for the PPQ Length
-// This is not the real sourceImageDepth.
-long SVObserverApp::GetMaxPPQLength()
-{
-	return m_lSouceImageDepth;
-}
-
-long SVObserverApp::GetResultImageDepth()
-{
-    return m_lResultImageDepth;
-}
-
-long SVObserverApp::GetLogDataManager()
-{
-    return m_LogDataManager;
-}
-
-long SVObserverApp::UpdateAndGetLogDataManager()
-{
-	m_LogDataManager = GetProfileInt(_T( "Settings" ),_T( "Log Data Manager" ), -1 );
-	if ( m_LogDataManager == -1 )
-	{
-		WriteProfileInt(_T( "Settings" ),_T( "Log Data Manager" ), 0 );
-
-		m_LogDataManager = 0;
-	}
-
-    return m_LogDataManager;
-}
-	
 // BRW - PLC has been deprecated.
 /*BEGIN_OBJECT_MAP(ObjectMap)
 OBJECT_ENTRY(CLSID_SVCommand, CSVCommand)
@@ -7495,54 +9362,54 @@ BOOL SVObserverApp::InitATL()
 	bool l_AppRegister( false );
 	bool l_AppUnregister( false );
 
-	m_bATLInited = FALSE;
+	m_ATLInited = FALSE;
 
 	// Parse command line for standard shell commands, DDE, file open
 	CCommandLineInfo cmdInfo;
 	ParseCommandLine(cmdInfo);
 
-		LPTSTR lpCmdLine = GetCommandLine(); //this line necessary for _ATL_MIN_CRT
-		TCHAR szTokens[] = _T("-/");
+	LPTSTR lpCmdLine = GetCommandLine(); //this line necessary for _ATL_MIN_CRT
+	TCHAR szTokens[] = _T("-/");
 
-		BOOL bRun = TRUE;
-		LPCTSTR lpszToken = _Module.FindOneOf(lpCmdLine, szTokens);
-		while (lpszToken != NULL)
+	BOOL bRun = TRUE;
+	LPCTSTR lpszToken = _Module.FindOneOf(lpCmdLine, szTokens);
+	while (lpszToken != NULL)
+	{
+		if (lstrcmpi(lpszToken, _T("UnregServer"))==0)
 		{
-			if (lstrcmpi(lpszToken, _T("UnregServer"))==0)
-			{
-				l_AppUnregister = true;
-			}
-			else if (lstrcmpi(lpszToken, _T("RegServer"))==0)
-			{
-				l_AppRegister = true;
-			}
-
-			lpszToken = _Module.FindOneOf(lpszToken, szTokens);
+			l_AppUnregister = true;
+		}
+		else if (lstrcmpi(lpszToken, _T("RegServer"))==0)
+		{
+			l_AppRegister = true;
 		}
 
-	#if !defined(_WIN32_WCE) || defined(_CE_DCOM)
+		lpszToken = _Module.FindOneOf(lpszToken, szTokens);
+	}
+
+#if !defined(_WIN32_WCE) || defined(_CE_DCOM)
 	// Register class factories via CoRegisterClassObject().
 	l_Status = _Module.RegisterClassObjects( CLSCTX_LOCAL_SERVER, REGCLS_MULTIPLEUSE );
-	#endif // !defined(_WIN32_WCE) || defined(_CE_DCOM)
+#endif // !defined(_WIN32_WCE) || defined(_CE_DCOM)
 
 	if( FAILED( l_Status ) )
 	{
 		CString szTemp;
 
-		#ifdef _DEBUG
-			if( ! l_AppRegister && ! l_AppUnregister )
-			{
-				szTemp.Format( _T( "(hr=0x%08X), "
-					"Unable to register class objects. "
-					"COM interface ISVCommand unavailable. "
-					"Do you want to exit?"), 
-					l_Status );
+#ifdef _DEBUG
+		if( ! l_AppRegister && ! l_AppUnregister )
+		{
+			szTemp.Format( _T( "(hr=0x%08X), "
+				"Unable to register class objects. "
+				"COM interface ISVCommand unavailable. "
+				"Do you want to exit?"), 
+				l_Status );
 
-				if( AfxMessageBox( szTemp, MB_YESNO ) == IDYES )
-					return FALSE;
-			}
-			else
-		#endif
+			if( AfxMessageBox( szTemp, MB_YESNO ) == IDYES )
+				return FALSE;
+		}
+		else
+#endif
 		{
 			szTemp.Format( _T( "(hr=0x%08X), "
 				"Unable to register class objects. "
@@ -7590,1691 +9457,10 @@ BOOL SVObserverApp::InitATL()
 
 	// Dispatch commands specified on the command line.  Will return FALSE if
 	// app was launched with /RegServer, /Register, /Unregserver or /Unregister.
-	if( !ProcessShellCommand( cmdInfo ) )
-		return FALSE;
+	if( !ProcessShellCommand( cmdInfo ) ) { return FALSE; }
 
 	return TRUE;
 }
-
-bool SVObserverApp::IsMatrox1394() const
-{
-	bool l_bOk = false;
-
-	if ( m_csDigitizerDLL.IsEmpty() )	// only true Matrox has empty dll name
-	{
-		l_bOk |= m_csProductName.CompareNoCase( SVO_PRODUCT_MATROX_D1 ) == 0;
-		l_bOk |= m_csProductName.CompareNoCase( SVO_PRODUCT_MATROX_D2 ) == 0;
-		l_bOk |= m_csProductName.CompareNoCase( SVO_PRODUCT_MATROX_D3 ) == 0;
-	}
-	return l_bOk;
-}
-
-bool SVObserverApp::IsCoreco() const
-{
-	bool l_bOk = false;
-
-	l_bOk |= m_csProductName.CompareNoCase( SVO_PRODUCT_CORECO_A4_MONO ) == 0;
-	l_bOk |= m_csProductName.CompareNoCase( SVO_PRODUCT_CORECO_A2_MONO ) == 0;
-	l_bOk |= m_csProductName.CompareNoCase( SVO_PRODUCT_CORECO_A1_RGB ) == 0;
-
-	return l_bOk;
-}
-
-bool SVObserverApp::IsMatroxGige() const
-{
-	bool l_bOk = false;
-
-	l_bOk = (m_csProductName.CompareNoCase( SVO_PRODUCT_KONTRON_X2_GD2A ) == 0
-			|| m_csProductName.CompareNoCase( SVO_PRODUCT_KONTRON_X2_GD4A ) == 0
-			|| m_csProductName.CompareNoCase( SVO_PRODUCT_KONTRON_X2_GD8A ) == 0
-			|| m_csProductName.CompareNoCase( SVO_PRODUCT_KONTRON_X2_GD8A_NONIO ) == 0
-			);
-
-	return l_bOk;
-}
-
-BOOL SVObserverApp::CheckSVIMType()
-{
-	BOOL l_bOk = FALSE;
-
-	SVConfigurationObject* l_pConfig = NULL;
-	SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
-
-	SVIMProductEnum l_eSVIMType = GetSVIMType();
-	SVIMProductEnum l_eProductType = l_pConfig->GetProductType();
-
-	l_bOk = l_eSVIMType == l_eProductType;
-
-	// Exceptions
-	if( ! l_bOk )
-	{
-		switch( l_eSVIMType )
-		{
-			case SVIM_PRODUCT_FULL:
-			{
-				l_bOk = l_eProductType == SVIM_PRODUCT_05;
-
-				break;
-			}
-			case SVIM_PRODUCT_D3:
-			{
-					l_bOk |= l_eProductType == SVIM_PRODUCT_D3_HUB;
-					l_bOk |= l_eProductType == SVIM_PRODUCT_D2;
-					l_bOk |= l_eProductType == SVIM_PRODUCT_D2_HUB;
-					l_bOk |= l_eProductType == SVIM_PRODUCT_D1;
-					l_bOk |= l_eProductType == SVIM_PRODUCT_D1_HUB;
-					l_bOk |= l_eProductType == SVIM_PRODUCT_X1;
-					l_bOk |= l_eProductType == SVIM_PRODUCT_X1_HUB;
-					l_bOk |= l_eProductType == SVIM_PRODUCT_X3;
-
-				break;
-			}
-			case SVIM_PRODUCT_D3_COLOR:
-			{
-					l_bOk |= l_eProductType == SVIM_PRODUCT_D2_COLOR;
-					l_bOk |= l_eProductType == SVIM_PRODUCT_D1_COLOR;
-					l_bOk |= l_eProductType == SVIM_PRODUCT_X1_COLOR;
-					l_bOk |= l_eProductType == SVIM_PRODUCT_X3_COLOR;
-
-				break;
-			}
-			case SVIM_PRODUCT_D3_HUB:
-			{
-					l_bOk |= l_eProductType == SVIM_PRODUCT_D3;
-					l_bOk |= l_eProductType == SVIM_PRODUCT_D2_HUB;
-					l_bOk |= l_eProductType == SVIM_PRODUCT_D2;
-					l_bOk |= l_eProductType == SVIM_PRODUCT_D1_HUB;
-					l_bOk |= l_eProductType == SVIM_PRODUCT_D1;
-					l_bOk |= l_eProductType == SVIM_PRODUCT_X1_HUB;
-					l_bOk |= l_eProductType == SVIM_PRODUCT_X1;
-					l_bOk |= l_eProductType == SVIM_PRODUCT_X3;
-
-				break;
-			}
-			case SVIM_PRODUCT_D2:
-			{
-					l_bOk |= l_eProductType == SVIM_PRODUCT_D2_HUB;
-					l_bOk |= l_eProductType == SVIM_PRODUCT_D1;
-					l_bOk |= l_eProductType == SVIM_PRODUCT_D1_HUB;
-					l_bOk |= l_eProductType == SVIM_PRODUCT_X1;
-					l_bOk |= l_eProductType == SVIM_PRODUCT_X1_HUB;
-
-				break;
-			}
-			case SVIM_PRODUCT_D2_COLOR:
-			{
-					l_bOk |= l_eProductType == SVIM_PRODUCT_D1_COLOR;
-					l_bOk |= l_eProductType == SVIM_PRODUCT_X1_COLOR;
-
-				break;
-			}
-			case SVIM_PRODUCT_D2_HUB:
-			{
-					l_bOk |= l_eProductType == SVIM_PRODUCT_D2;
-					l_bOk |= l_eProductType == SVIM_PRODUCT_D1_HUB;
-					l_bOk |= l_eProductType == SVIM_PRODUCT_D1;
-					l_bOk |= l_eProductType == SVIM_PRODUCT_X1_HUB;
-					l_bOk |= l_eProductType == SVIM_PRODUCT_X1;
-
-				break;
-			}
-			case SVIM_PRODUCT_D1:
-			{
-					l_bOk |= l_eProductType == SVIM_PRODUCT_D1_HUB;
-					l_bOk |= l_eProductType == SVIM_PRODUCT_X1;
-					l_bOk |= l_eProductType == SVIM_PRODUCT_X1_HUB;
-
-				break;
-			}
-			case SVIM_PRODUCT_D1_COLOR:
-			{
-					l_bOk |= l_eProductType == SVIM_PRODUCT_X1_COLOR;
-
-				break;
-			}
-			case SVIM_PRODUCT_D1_HUB:
-			{
-					l_bOk |= l_eProductType == SVIM_PRODUCT_D1;
-					l_bOk |= l_eProductType == SVIM_PRODUCT_X1_HUB;
-					l_bOk |= l_eProductType == SVIM_PRODUCT_X1;
-
-				break;
-			}
-			case SVIM_PRODUCT_X1:
-			{
-					l_bOk |= l_eProductType == SVIM_PRODUCT_D1_HUB;
-					l_bOk |= l_eProductType == SVIM_PRODUCT_D1;
-					l_bOk |= l_eProductType == SVIM_PRODUCT_X1_HUB;
-
-				break;
-			}
-			case SVIM_PRODUCT_X2:
-			{
-					l_bOk |= l_eProductType == SVIM_PRODUCT_D1_HUB;
-					l_bOk |= l_eProductType == SVIM_PRODUCT_D1;
-					l_bOk |= l_eProductType == SVIM_PRODUCT_D2;
-					l_bOk |= l_eProductType == SVIM_PRODUCT_D3;
-					l_bOk |= l_eProductType == SVIM_PRODUCT_X1_HUB;
-				break;
-			}
-
-			case SVIM_PRODUCT_X3:
-			{
-					l_bOk |= l_eProductType == SVIM_PRODUCT_D1_HUB;
-					l_bOk |= l_eProductType == SVIM_PRODUCT_D1;
-					l_bOk |= l_eProductType == SVIM_PRODUCT_D2;
-					l_bOk |= l_eProductType == SVIM_PRODUCT_D3;
-					l_bOk |= l_eProductType == SVIM_PRODUCT_X1_HUB;
-
-				break;
-			}
-			case SVIM_PRODUCT_X1_COLOR:
-			{
-					l_bOk |= l_eProductType == SVIM_PRODUCT_D1_COLOR;
-
-				break;
-			}
-			case SVIM_PRODUCT_X2_COLOR:
-			{
-					l_bOk |= l_eProductType == SVIM_PRODUCT_D1_COLOR;
-					l_bOk |= l_eProductType == SVIM_PRODUCT_D2_COLOR;
-					l_bOk |= l_eProductType == SVIM_PRODUCT_X1_COLOR;
-				break;
-			}
-			case SVIM_PRODUCT_X3_COLOR:
-			{
-					l_bOk |= l_eProductType == SVIM_PRODUCT_X1_COLOR;
-					l_bOk |= l_eProductType == SVIM_PRODUCT_X2_COLOR;
-					l_bOk |= l_eProductType == SVIM_PRODUCT_D1_COLOR;
-					l_bOk |= l_eProductType == SVIM_PRODUCT_D2_COLOR;
-					l_bOk |= l_eProductType == SVIM_PRODUCT_D3_COLOR;
-				break;
-			}
-			case SVIM_PRODUCT_X1_HUB:
-			{
-					l_bOk |= l_eProductType == SVIM_PRODUCT_D1;
-					l_bOk |= l_eProductType == SVIM_PRODUCT_D1_HUB;
-					l_bOk |= l_eProductType == SVIM_PRODUCT_X1;
-
-				break;
-			}
-			case SVIM_PRODUCT_X2_GD1A_COLOR:
-			case SVIM_PRODUCT_X2_GD2A_COLOR:
-			case SVIM_PRODUCT_X2_GD4A_COLOR:
-			case SVIM_PRODUCT_X2_GD8A_COLOR:
-			case SVIM_PRODUCT_X2_GD8A_NONIO_COLOR:
-			{
-				l_bOk |= l_eProductType == SVIM_PRODUCT_X2_GD1A_COLOR;
-				l_bOk |= l_eProductType == SVIM_PRODUCT_X2_GD2A_COLOR;
-				l_bOk |= l_eProductType == SVIM_PRODUCT_X2_GD4A_COLOR;
-				l_bOk |= l_eProductType == SVIM_PRODUCT_X2_GD8A_COLOR;
-				l_bOk |= l_eProductType == SVIM_PRODUCT_X2_GD8A_NONIO_COLOR;
-				break;
-			}
-			case SVIM_PRODUCT_X2_GD1A:
-			case SVIM_PRODUCT_X2_GD2A:
-			case SVIM_PRODUCT_X2_GD4A:
-			case SVIM_PRODUCT_X2_GD8A:
-			case SVIM_PRODUCT_X2_GD8A_NONIO:
-			{
-				l_bOk |= l_eProductType == SVIM_PRODUCT_X2_GD1A;
-				l_bOk |= l_eProductType == SVIM_PRODUCT_X2_GD2A;
-				l_bOk |= l_eProductType == SVIM_PRODUCT_X2_GD4A;
-				l_bOk |= l_eProductType == SVIM_PRODUCT_X2_GD8A;
-				l_bOk |= l_eProductType == SVIM_PRODUCT_X2_GD8A_NONIO;
-				break;
-			}
-		}
-	}
-	return l_bOk;
-}
-
-SVIMProductEnum SVObserverApp::GetSVIMType() const
-{
-	SVIMProductEnum eType = SVIM_PRODUCT_TYPE_UNKNOWN;
-	bool bIsColor = IsColorSVIM();
-
-	if( m_csProductName.CompareNoCase( SVO_PRODUCT_CORECO_A4_MONO ) == 0 )
-	{
-		eType = SVIM_PRODUCT_FULL;
-	}
-	else if( m_csProductName.CompareNoCase( SVO_PRODUCT_CORECO_A2_MONO ) == 0 )
-	{
-		eType = SVIM_PRODUCT_05;
-	}
-	else if( m_csProductName.CompareNoCase( SVO_PRODUCT_CORECO_A1_RGB ) == 0 )
-	{
-		if ( bIsColor )
-		{
-			eType = SVIM_PRODUCT_RGB_COLOR;
-		}
-		else
-		{
-			eType = SVIM_PRODUCT_RGB_MONO;
-		}
-	}
-	else if( m_csProductName.CompareNoCase( SVO_PRODUCT_MATROX_D1 ) == 0 )
-	{
-		if ( bIsColor )
-			eType = SVIM_PRODUCT_D1_COLOR;
-		else
-			eType = SVIM_PRODUCT_D1;
-	}
-	else if( m_csProductName.CompareNoCase( SVO_PRODUCT_MATROX_D2 ) == 0 )
-	{
-		if ( bIsColor )
-			eType = SVIM_PRODUCT_D2_COLOR;
-		else
-			eType = SVIM_PRODUCT_D2;
-	}
-	else if( m_csProductName.CompareNoCase( SVO_PRODUCT_MATROX_D3 ) == 0 )
-	{
-		if ( bIsColor )
-			eType = SVIM_PRODUCT_D3_COLOR;
-		else
-			eType = SVIM_PRODUCT_D3;
-	}
-	else if( m_csProductName.CompareNoCase( SVO_PRODUCT_INTEK_D1 ) == 0 )
-	{
-		if ( bIsColor )
-			eType = SVIM_PRODUCT_X1_COLOR;
-		else
-			eType = SVIM_PRODUCT_X1;
-	}
-	else if( m_csProductName.CompareNoCase( SVO_PRODUCT_INTEK_D3 ) == 0 )
-	{
-		if ( bIsColor )
-			eType = SVIM_PRODUCT_X3_COLOR;
-		else
-			eType = SVIM_PRODUCT_X3;
-	}
-	else if ( m_csProductName.CompareNoCase(SVO_PRODUCT_KONTRON_X2) == 0 )
-	{
-		if ( bIsColor )
-			eType = SVIM_PRODUCT_X2_COLOR;
-		else
-			eType = SVIM_PRODUCT_X2;
-	}
-	else if ( m_csProductName.CompareNoCase(SVO_PRODUCT_KONTRON_X2_GD1A) == 0 )
-	{
-		if ( bIsColor )
-			eType = SVIM_PRODUCT_X2_GD1A_COLOR;
-		else
-			eType = SVIM_PRODUCT_X2_GD1A;
-	}
-	else if ( m_csProductName.CompareNoCase(SVO_PRODUCT_KONTRON_X2_GD2A) == 0 )
-	{
-		if ( bIsColor )
-			eType = SVIM_PRODUCT_X2_GD2A_COLOR;
-		else
-			eType = SVIM_PRODUCT_X2_GD2A;
-	}
-	else if (m_csProductName.CompareNoCase(SVO_PRODUCT_KONTRON_X2_GD4A) == 0 )
-	{
-		if( bIsColor )
-			eType = SVIM_PRODUCT_X2_GD4A_COLOR;
-		else
-			eType = SVIM_PRODUCT_X2_GD4A;
-	}
-	else if (m_csProductName.CompareNoCase(SVO_PRODUCT_KONTRON_X2_GD8A) == 0 )
-	{
-		if( bIsColor )
-			eType = SVIM_PRODUCT_X2_GD8A_COLOR;
-		else
-			eType = SVIM_PRODUCT_X2_GD8A;
-	}
-	else if (m_csProductName.CompareNoCase(SVO_PRODUCT_KONTRON_X2_GD8A_NONIO) == 0 )
-	{
-		eType = (( bIsColor ) ? SVIM_PRODUCT_X2_GD8A_NONIO_COLOR : SVIM_PRODUCT_X2_GD8A_NONIO);
-	}
-	else if( m_csFrameGrabber.CompareNoCase( FRAME_GRABBER_VIPER_DIGITAL ) == 0 )
-	{
-		eType = SVIM_PRODUCT_DIGITAL;
-	}
-	return eType;
-}
-
-#ifndef _WIN64
-CString SVObserverApp::GetPLCDLL()
-{
-	return m_csPLCDLL;
-}
-#endif
-
-HRESULT SVObserverApp::INILoad()
-{
-	SVOIniLoader l_iniLoader;
-
-	TCHAR l_szSystemDir[ MAX_PATH + 1 ];
-	CString l_csSystemDir;
-
-	::GetSystemDirectory( l_szSystemDir, MAX_PATH + 1 );
-	l_csSystemDir.Format( "%s\\OEMINFO.INI", l_szSystemDir );
-
-	// clear these variables
-	m_WinKey.Empty();
-	m_ModelNumber.Empty();
-	m_SerialNumber.Empty();
-	m_csProductName.Empty();
-
-	m_csProcessorBoardName = _T( "Unknown board" );
-	m_csTriggerBoardName = _T( "Unknown board" );
-	m_csAcquisitionBoardName = _T( "Unknown board" );
-	m_csDigitalBoardName = _T( "Unknown board" );
-	m_csRAIDBoardName = _T( "Unknown board" );
-
-	m_csProcessor.Empty();
-	m_csFrameGrabber.Empty();
-	m_csIOBoard.Empty();
-	m_csOptions.Empty();
-
-	// load the SVIM.ini, OEMINFO.ini, and HARDWARE.ini
-	HRESULT l_hrOk = l_iniLoader.Load("C:\\SVObserver\\bin\\SVIM.INI", l_csSystemDir, "C:\\SVObserver\\bin\\HARDWARE.INI");
-
-	if (l_hrOk == S_OK)
-	{
-		// copy settings from the SVOIniLoader class for now
-		g_bUseCorrectListRecursion = l_iniLoader.m_bUseCorrectListRecursion;
-
-		m_WinKey = l_iniLoader.m_csWinKey;
-		m_ModelNumber = l_iniLoader.m_csModelNumber;
-		m_SerialNumber = l_iniLoader.m_csSerialNumber;
-		m_csProductName = l_iniLoader.m_csProductName;
-		
-		m_csProcessorBoardName = l_iniLoader.m_csProcessorBoardName;
-		m_csTriggerBoardName = l_iniLoader.m_csTriggerBoardName;
-		m_csAcquisitionBoardName = l_iniLoader.m_csAcquisitionBoardName;
-		m_csDigitalBoardName = l_iniLoader.m_csDigitalBoardName;
-		m_csRAIDBoardName = l_iniLoader.m_csRAIDBoardName;
-		
-		m_csDigitalDLL = l_iniLoader.m_csDigitalDLL;
-		m_csDigitalOption = l_iniLoader.m_csIOBoardOption;
-		m_csDigitizerDLL = l_iniLoader.m_csDigitizerDLL;
-		m_csFileAcquisitionDLL = l_iniLoader.m_csFileAcquisitionDLL;
-		m_csTriggerDLL = l_iniLoader.m_csTriggerDLL;
-		m_csSoftwareTriggerDLL = l_iniLoader.m_csSoftwareTriggerDLL;
-		m_csAcquisitionTriggerDLL = l_iniLoader.m_csAcquisitionTriggerDLL;
-#ifndef _WIN64
-		m_csPLCDLL = l_iniLoader.m_csPLCDLL;
-#endif
-		m_csReloadDigitalDLL = l_iniLoader.m_csReloadDigitalDLL;
-		m_csReloadAcquisitionDLL = l_iniLoader.m_csReloadAcquisitionDLL;
-		m_csReloadTriggerDLL = l_iniLoader.m_csReloadTriggerDLL;
-
-		m_csOptions = l_iniLoader.m_csOptions;
-//		m_csOptions = l_iniLoader.m_csHardwareOptions;
-		m_csProcessor = l_iniLoader.m_csProcessor;
-		m_csFrameGrabber = l_iniLoader.m_csFrameGrabber;
-		m_csIOBoard = l_iniLoader.m_csIOBoard;
-
-		m_csTrigger = l_iniLoader.m_csTrigger;
-
-		// Get GIGE packet Size
-		m_gigePacketSize = l_iniLoader.m_gigePacketSize;
-
-		//get firmware options
-		m_csShowUpdateFirmware = l_iniLoader.m_csShowUpdateFirmware;
-		m_csFirmwareCommand = l_iniLoader.m_csFirmwareCommand;
-		m_csFirmwareWorkingDir = l_iniLoader.m_csFirmwareWorkingDir;
-		m_csFirmwareArguments = l_iniLoader.m_csFirmwareArguments;
-
-		m_bShowUpdateFirmwareInMenu = FALSE;
-		if ( m_csShowUpdateFirmware.CompareNoCase("Y") == 0 )
-		{
-			m_bShowUpdateFirmwareInMenu = TRUE;
-		}
-
-		for ( int i = 0; i < 4; i++ )
-		{
-			SVIOConfigurationInterfaceClass::Instance().SetSVIMTriggerValue( i, l_iniLoader.m_csTriggerEdge[i].CompareNoCase( "R" ) == 0 );
-			SVIOConfigurationInterfaceClass::Instance().SetSVIMStrobeValue( i, l_iniLoader.m_csStrobeEdge[i].CompareNoCase( "R" ) == 0 );
-			SVIOConfigurationInterfaceClass::Instance().SetSVIMStrobeStartFrameActive( i, l_iniLoader.m_csStartFrameType[i].CompareNoCase( "Y" ) == 0 );
-		}
-
-		l_hrOk = l_hrOk | LoadDigitalDLL();
-		l_hrOk = l_hrOk | LoadTriggerDLL();
-		l_hrOk = l_hrOk | LoadSoftwareTriggerDLL();
-		l_hrOk = l_hrOk | LoadAcquisitionTriggerDLL();
-		l_hrOk = l_hrOk | LoadAcquisitionDLL();
-		l_hrOk = l_hrOk | LoadFileAcquisitionDLL();
-
-		if( -1 < l_iniLoader.m_csHardwareOptions.Find( "FastOCR" ) )
-		{
-			TheSVOLicenseManager().SetFastOCRLicense(true);
-			if ( psvlvFastOcr == NULL )
-			{
-				psvlvFastOcr = new SVLVFastOCR();
-			}
-		}
-		else
-		{
-			if ( psvlvFastOcr != NULL )
-			{
-				delete psvlvFastOcr;
-				psvlvFastOcr = NULL;
-			}
-		}
-	}
-	else
-	{
-		if (l_iniLoader.m_hrOEMFailure != S_OK)
-		{
-			ASSERT( FALSE );
-			::MessageBox(NULL, _T("The model number specified in OEMINFO.INI is invalid."), _T("SVObserver"), MB_OK | MB_ICONERROR | MB_SYSTEMMODAL);
-		}
-
-	}
-	m_hrHardwareFailure = l_hrOk;
-	return l_hrOk;
-}
-
-//*
-HRESULT SVObserverApp::LoadDigitalDLL()
-{
-	HRESULT l_hrOk = S_OK;
-
-	if ( ! m_csDigitalDLL.IsEmpty() )
-	{
-		if ( SVIOConfigurationInterfaceClass::Instance().OpenDigital( m_csDigitalDLL ) != S_OK )
-		{
-			l_hrOk = l_hrOk | SV_HARDWARE_FAILURE_IO;
-		}
-		else
-		{	// Send the System type to the IO Board.
-			VARIANT l_vt;
-			l_vt.vt = VT_I4;
-
-			// Hardware.ini has the new IOBoardOption.
-			if( !m_csDigitalOption.IsEmpty() )
-			{
-				l_vt.lVal = atol( m_csDigitalOption );
-				SVIOConfigurationInterfaceClass::Instance().SetParameterValue( SVBoardType, &l_vt );
-			}
-			else
-			{	// Legacy behavior.... Hardware.Ini file does not have new entry...
-				l_vt.lVal = atol( m_csIOBoard );
-				SVIOConfigurationInterfaceClass::Instance().SetParameterValue( SVBoardType, &l_vt );
-			}
-		}
-	}
-	else
-	{
-		if( m_csIOBoard != _T( "00" ) )
-		{
-			l_hrOk = l_hrOk | SV_HARDWARE_FAILURE_IO;
-		}
-	}
-
-	return l_hrOk;
-}
-//*/
-
-//*
-HRESULT SVObserverApp::LoadTriggerDLL()
-{
-	HRESULT l_hrOk = S_OK ;
-
-	if ( ! m_csTriggerDLL.IsEmpty() )
-	{
-		VARIANT l_varValue;
-
-		::VariantInit( &l_varValue );
-
-		l_varValue.vt = VT_I4;
-
-		if ( m_svDLLTriggers.Open( m_csTriggerDLL ) != S_OK )
-		{
-			l_hrOk = l_hrOk | SV_HARDWARE_FAILURE_TRIGGER;
-		}
-
-		if ( SVTriggerProcessingClass::Instance().UpdateTriggerSubsystem( &m_svDLLTriggers ) != S_OK )
-		{
-			l_hrOk = l_hrOk | SV_HARDWARE_FAILURE_TRIGGER;
-		}
-
-		for ( int i = 0; i < 4; i++ )
-		{
-			unsigned long l_ulHandle;
-			
-			if ( m_svDLLTriggers.GetHandle( &l_ulHandle, i ) == S_OK )
-			{
-				bool l_bRising;
-
-				SVIOConfigurationInterfaceClass::Instance().GetIOTriggerValue( i, l_bRising );
-
-				if ( l_bRising )
-				{
-					l_varValue.lVal = 1;
-				}
-				else
-				{
-					l_varValue.lVal = -1;
-				}
-				// SVSignalEdge enum is used here to make the code more clear.
-				// however at some time in the future the Dll parameters may be implemented
-				// as an array and therefore this enum may not apply.
-				m_svDLLTriggers.SetParameterValue( l_ulHandle, SVSignalEdge, &l_varValue );
-			}
-		}
-	}
-	else
-	{
-		if( m_csTrigger != _T( "00" ) )
-		{
-			l_hrOk = l_hrOk | SV_HARDWARE_FAILURE_TRIGGER;
-		}
-	}
-
-	return l_hrOk;
-}
-//*/
-
-HRESULT SVObserverApp::LoadSoftwareTriggerDLL()
-{
-	HRESULT l_hrOk = S_OK;
-
-	if ( ! m_csSoftwareTriggerDLL.IsEmpty() )
-	{
-		if ( m_svDLLSoftwareTriggers.Open( m_csSoftwareTriggerDLL ) != S_OK )
-		{
-			l_hrOk = l_hrOk | SV_HARDWARE_FAILURE_SOFTWARETRIGGER;
-		}
-
-		if ( SVTriggerProcessingClass::Instance().UpdateTriggerSubsystem( &m_svDLLSoftwareTriggers ) != S_OK )
-		{
-			l_hrOk = l_hrOk | SV_HARDWARE_FAILURE_SOFTWARETRIGGER;
-		}
-	}
-	return l_hrOk;
-}
-
-HRESULT SVObserverApp::LoadAcquisitionTriggerDLL()
-{
-	HRESULT l_hrOk = S_OK;
-
-	if ( ! m_csAcquisitionTriggerDLL .IsEmpty() )
-	{
-		if ( m_svDLLAcquisitionTriggers.Open( m_csAcquisitionTriggerDLL ) != S_OK )
-		{
-			l_hrOk = l_hrOk | SV_HARDWARE_FAILURE_CAMERATRIGGER;
-		}
-
-		if ( SVTriggerProcessingClass::Instance().UpdateTriggerSubsystem( &m_svDLLAcquisitionTriggers ) != S_OK )
-		{
-			l_hrOk = l_hrOk | SV_HARDWARE_FAILURE_CAMERATRIGGER;
-		}
-	}
-	return l_hrOk;
-}
-
-//*
-HRESULT SVObserverApp::LoadAcquisitionDLL()
-{
-	HRESULT l_hrOk = S_OK;
-
-	if( ! m_csDigitizerDLL.IsEmpty() )
-	{
-		if( m_svDLLDigitizers.Open( m_csDigitizerDLL ) != S_OK )
-		{
-			l_hrOk = l_hrOk | SV_HARDWARE_FAILURE_ACQUISITION;
-		}
-
-		if( SVDigitizerProcessingClass::Instance().UpdateDigitizerSubsystem( &m_svDLLDigitizers ) != S_OK )
-		{
-			l_hrOk = l_hrOk | SV_HARDWARE_FAILURE_ACQUISITION;
-		}
-
-		if( IsCoreco() )
-		{
-			if( ! SVDigitizerProcessingClass::Instance().IsValidDigitizerSubsystem( _T( "Viper_Quad_1.Dig_0" ) ) &&
-				! SVDigitizerProcessingClass::Instance().IsValidDigitizerSubsystem( _T( "Viper_RGB_1.Dig_0" ) ) )
-			{
-				l_hrOk = l_hrOk | SV_HARDWARE_FAILURE_ACQUISITION;
-			}
-		}
-		else
-		{
-			l_hrOk = l_hrOk;
-		}
-	}
-	else
-	{
-		if( m_csFrameGrabber != _T( "00" ) )
-		{
-			l_hrOk = l_hrOk | SV_HARDWARE_FAILURE_ACQUISITION;
-		}
-	}
-
-	return l_hrOk;
-}
-
-HRESULT SVObserverApp::LoadFileAcquisitionDLL()
-{
-	HRESULT l_hrOk = S_OK;
-
-	if( ! m_csFileAcquisitionDLL.IsEmpty() )
-	{
-		if( m_svDLLFileAcquisition.Open( m_csFileAcquisitionDLL ) != S_OK )
-		{
-			l_hrOk = l_hrOk | SV_HARDWARE_FAILURE_FILEACQUISITION;
-		}
-
-		if( SVDigitizerProcessingClass::Instance().UpdateDigitizerSubsystem( &m_svDLLFileAcquisition ) != S_OK )
-		{
-			l_hrOk = l_hrOk | SV_HARDWARE_FAILURE_FILEACQUISITION;
-		}
-	}
-	return l_hrOk;
-}
-
-//*/
-
-HRESULT SVObserverApp::INIClose()
-{
-	m_hrHardwareFailure = SV_HARDWARE_FAILURE_ALL;
-
-	m_csProductName.Empty();
-
-	m_csProcessor.Empty();
-	m_csFrameGrabber.Empty();
-	m_csIOBoard.Empty();
-	m_csOptions.Empty();
-
-	m_csProcessorBoardName = _T( "Unknown board" );
-	m_csTriggerBoardName = _T( "Unknown board" );
-	m_csAcquisitionBoardName = _T( "Unknown board" );
-	m_csDigitalBoardName = _T( "Unknown board" );
-	m_csRAIDBoardName = _T( "Unknown board" );
-
-	if ( psvlvFastOcr )
-	{
-		delete psvlvFastOcr;
-		psvlvFastOcr = NULL;
-	}
-
-	CloseAcquisitionDLL();
-
-	CloseTriggerDLL();
-	
-	CloseDigitalDLL();
-
-	return S_OK;
-}
-
-//*
-HRESULT SVObserverApp::CloseAcquisitionDLL()
-{
-	SVDigitizerProcessingClass::Instance().clear();
-
-	m_svDLLDigitizers.Close();
-
-	m_svDLLFileAcquisition.Close();
-
-	return S_OK;
-}
-//*/
-
-//*
-HRESULT SVObserverApp::CloseTriggerDLL()
-{
-	SVTriggerProcessingClass::Instance().clear();
-
-	m_svDLLTriggers.Close();
-	m_svDLLSoftwareTriggers.Close();
-	m_svDLLAcquisitionTriggers.Close();
-
-	return S_OK;
-}
-//*/
-
-//*
-HRESULT SVObserverApp::CloseDigitalDLL()
-{
-	SVIOConfigurationInterfaceClass::Instance().CloseDigital();
-
-	return S_OK;
-}
-//*/
-
-HRESULT SVObserverApp::INIReset()
-{
-	HRESULT l_hrOk = S_OK;
-
-	if( m_csReloadAcquisitionDLL.CompareNoCase( _T( "Y" ) ) == 0 )
-	{
-		CloseAcquisitionDLL();
-	}
-
-	if( m_csReloadTriggerDLL.CompareNoCase( _T( "Y" ) ) == 0 )
-	{
-		CloseTriggerDLL();
-	}
-	
-	if( m_csReloadDigitalDLL.CompareNoCase( _T( "Y" ) ) == 0 )
-	{
-		CloseDigitalDLL();
-	}
-
-	if( m_csReloadDigitalDLL.CompareNoCase( _T( "Y" ) ) == 0 )
-	{
-		l_hrOk = l_hrOk | LoadDigitalDLL();
-	}
-
-	if( m_csReloadTriggerDLL.CompareNoCase( _T( "Y" ) ) == 0 )
-	{
-		l_hrOk = l_hrOk | LoadTriggerDLL();
-		l_hrOk = l_hrOk | LoadSoftwareTriggerDLL();
-		l_hrOk = l_hrOk | LoadAcquisitionTriggerDLL();
-	}
-
-	if( m_csReloadAcquisitionDLL.CompareNoCase( _T( "Y" ) ) == 0 )
-	{
-		l_hrOk = l_hrOk | LoadAcquisitionDLL();
-		l_hrOk = l_hrOk | LoadFileAcquisitionDLL();
-	}
-
-	return l_hrOk;
-}
-
-LPCTSTR SVObserverApp::GetProcessorBoardName()
-{
-	return m_csProcessorBoardName;
-}
-
-LPCTSTR SVObserverApp::GetTriggerBoardName()
-{
-	return m_csTriggerBoardName;
-}
-
-LPCTSTR SVObserverApp::GetSoftwareTriggerBoardName() const
-{
-	return m_csSoftwareTriggerDLL;
-}
-
-LPCTSTR SVObserverApp::GetAcquisitionBoardName()
-{
-	return m_csAcquisitionBoardName;
-}
-
-LPCTSTR SVObserverApp::GetFileAcquisitionBoardName() const
-{
-	return m_csFileAcquisitionBoardName;
-}
-
-LPCTSTR SVObserverApp::GetDigitalBoardName()
-{
-	return m_csDigitalBoardName;
-}
-
-LPCTSTR SVObserverApp::GetRAIDBoardName()
-{
-	return m_csRAIDBoardName;
-}
-
-HRESULT SVObserverApp::DisplayCameraManager(SVIMProductEnum eProductType) 
-{
-	HRESULT hr = S_OK;
-
-	CStringArray saCameras;
-	HCURSOR hCursor=NULL;
-	hCursor = ::LoadCursor( NULL, IDC_WAIT );
-	hCursor = ::SetCursor( hCursor );
-
-	try
-	{
-		hr = DisconnectCameras( saCameras );
-	}
-	catch (...)
-	{
-		ASSERT(FALSE);
-	}
-
-	try
-	{
-		::SetCursor( hCursor );
-
-		if ( hr == S_OK )
-		{
-			if (SVHardwareManifest::IsMatroxGige(eProductType))
-			{
-				SVGigeCameraManagerDlg dlg;
-				dlg.DoModal();
-			}
-			else
-			{
-				SV1394CameraManagerDlg dlg;
-				dlg.DoModal();				
-			}
-		}
-	}
-	catch (...)
-	{
-		ASSERT(FALSE);
-	}
-
-	hCursor = ::LoadCursor( NULL, IDC_WAIT );
-	hCursor = ::SetCursor( hCursor );
-
-	ConnectCameras( saCameras );
-	SendCameraParameters( saCameras );
-
-	::SetCursor( hCursor );
-
-	return hr;
-}
-
-HRESULT SVObserverApp::DisconnectCameras( CStringArray& rDisconnectedCameras )
-{
-	HRESULT hr = S_OK;
-
-	try
-	{
-		hr = DisconnectAllCameraBuffers( rDisconnectedCameras );
-	}
-	catch (...)
-	{
-		ASSERT(FALSE);
-		hr = SV_FALSE;
-	}
-
-	SVDigitizerProcessingClass::Instance().DisconnectDevices();
-
-	return hr;
-}
-
-HRESULT SVObserverApp::ConnectCameras( const CStringArray& rCamerasToConnect )
-{
-	HRESULT hr = S_OK;
-
-	SVDigitizerProcessingClass::Instance().ConnectDevices();
-
-	try
-	{
-		hr = ConnectCameraBuffers( rCamerasToConnect );
-	}
-	catch (...)
-	{
-		ASSERT(FALSE);
-		hr = SV_FALSE;
-	}
-
-	return hr;
-}
-
-HRESULT SVObserverApp::DisconnectAllCameraBuffers( CStringArray& rDisconnectedCameras )
-{
-	HRESULT hr = DisconnectToolsetBuffers();
-
-	if( hr == S_OK )
-	{
-		HRESULT l_Temp = SVDigitizerProcessingClass::Instance().GetAcquisitionDeviceList( rDisconnectedCameras );
-
-		hr = SVDigitizerProcessingClass::Instance().DestroyBuffers();
-
-		if( l_Temp != S_OK )
-		{
-			hr = l_Temp;
-		}
-	}
-
-	return hr;
-}
-
-HRESULT SVObserverApp::ConnectCameraBuffers( const CStringArray& rCamerasToConnect )
-{
-	HRESULT hr = S_OK;
-
-	SVConfigurationObject* l_pConfig = NULL;
-	SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
-
-	if( l_pConfig != NULL )
-	{
-		for ( int i=0; i < rCamerasToConnect.GetSize(); i++)
-		{
-			CString sDigName = rCamerasToConnect.GetAt( i );
-			SVAcquisitionClassPtr pAcqDevice;
-
-			if ( S_OK == SVImageProcessingClass::Instance().GetAcquisitionDevice( sDigName, pAcqDevice ) )
-			{
-				if ( !( pAcqDevice.empty() ) )
-				{
-					// dummy vars
-					SVLightReference* pLR;
-					SVFileNameArrayClass* pFiles;
-					SVLut* pLut;
-					SVDeviceParamCollection* pParams;
-
-					if ( l_pConfig->GetAcquisitionDevice( sDigName, pFiles, pLR, pLut, pParams ) )
-					{
-						SVImageInfoClass svImageInfo;
-						pAcqDevice->GetImageInfo(&svImageInfo);
-						hr = pAcqDevice->CreateBuffers( svImageInfo, TheSVObserverApp.GetSourceImageDepth() );
-					}
-				}
-			}// end if ( S_OK == TheSVObserverApp.mpsvImaging->GetAcquisitionDevice( sDigName, pAcqDevice ) )
-		}// end for ( int i=0; i < rCamerasToConnect.GetSize(); i++)
-
-		hr = ConnectToolsetBuffers();
-	}
-
-	return hr;
-}
-
-HRESULT SVObserverApp::SendCameraParameters( const CStringArray& rCameras )
-{
-	HRESULT hr = S_OK;
-	SVConfigurationObject* l_pConfig = NULL;
-	SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
-
-	for ( int i=0; i < rCameras.GetSize(); i++ )
-	{
-		SVAcquisitionClassPtr pDevice;
-		SVDeviceParamCollection* pDeviceParams = NULL;
-
-		SVFileNameArrayClass* pDummyFiles = NULL;
-		SVLightReference* pDummyLight = NULL;
-		SVLut* pDummyLut = NULL;
-
-		if ( SVImageProcessingClass::Instance().GetAcquisitionDevice( rCameras.GetAt(i), pDevice ) == S_OK
-			&& l_pConfig->GetAcquisitionDevice(rCameras.GetAt(i), pDummyFiles, pDummyLight, pDummyLut, pDeviceParams ) )
-		{
-			// Check for the camera file and camera to match.
-			if( hr == S_OK )
-			{
-				HRESULT l_hrTmp = pDevice->IsValidCameraFileParameters( *pDeviceParams );
-				if( l_hrTmp != E_NOTIMPL && l_hrTmp != S_OK)
-				{
-					hr = SV_CAN_GO_ONLINE_FAILURE_ACQUISITION;
-				}
-			}
-
-			// Send GIGE packet size if was set from hardware.ini
-			if (IsMatroxGige() && m_gigePacketSize != 0)
-			{
-				SetGigePacketSizeDeviceParam(pDeviceParams);
-			}
-			if (pDeviceParams)
-			{
-				pDevice->SetDeviceParameters( *pDeviceParams );	// must be done before CreateBuffers for 1394 (in case CameraFormat changes) - EB 20030714
-			}
-			if (pDummyLight)
-			{
-				pDevice->SetLightReference( *pDummyLight );	// I HATE LIGHT REFERENCE
-			}
-			// LR needs to be redone so that it does not contain values, only references to device params.
-		}
-	}
-
-	return hr;
-}
-
-void SVObserverApp::SetGigePacketSizeDeviceParam(SVDeviceParamCollection* pDeviceParams)
-{
-	// check if Packet Size Device Param exists
-	SVDeviceParam* l_pGigePacketSize = pDeviceParams->GetParameter( DeviceParamGigePacketSize );
-	// if found - update it
-	// else - add it
-	if ( l_pGigePacketSize != NULL )
-	{
-		l_pGigePacketSize->SetValue(_variant_t(m_gigePacketSize));
-	}
-	else // add it
-	{
-		pDeviceParams->SetParameter( DeviceParamGigePacketSize, (const SVDeviceParam*) SVDeviceParamTempWrapper(SVDeviceParam::Create( DeviceParamGigePacketSize )) );
-		SVLongValueDeviceParam* pParam = pDeviceParams->GetParameter( DeviceParamGigePacketSize ).DerivedValue(pParam);
-		ASSERT( pParam );
-		pParam->lValue = m_gigePacketSize;
-		pParam->SetName(DeviceParamGigePacketSize_String);
-	}
-}
-
-HRESULT SVObserverApp::DisconnectToolsetBuffers()
-{
-	// EB 2002 02 28
-	// Added this to fix memory leak freeing MIL buffers
-	// before we close Acq devices, we need to tell all toolsets to Close
-	// this closes the connection between toolset images and the MIL acq image.
-
-	SVConfigurationObject* l_pConfig = NULL;
-	SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
-
-	long lInspectionCount = 0;
-	SVInspectionProcess* pInspection = NULL;
-	l_pConfig->GetInspectionCount( lInspectionCount );
-
-	for ( long lInspection = 0; lInspection < lInspectionCount; lInspection++ )
-	{
-		l_pConfig->GetInspection( lInspection, &pInspection );
-		if ( pInspection != NULL )
-		{
-			if ( pInspection->GetToolSet() != NULL )
-			{
-				pInspection->DisconnectToolSetMainImage();
-			}
-		}
-	}
-
-	return S_OK;
-}
-
-HRESULT SVObserverApp::ConnectToolsetBuffers()
-{
-	// EB 2002 02 28
-	// Added this to fix memory leak freeing MIL buffers
-	// before we close Acq devices, we need to tell all toolsets to Close
-	// reopen the connection between toolset images and the MIL acq image here.
-
-	SVConfigurationObject* l_pConfig = NULL;
-	SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
-
-	long lInspectionCount = 0;
-	SVInspectionProcess* pInspection = NULL;
-	l_pConfig->GetInspectionCount( lInspectionCount );
-
-	for ( long lInspection = 0; lInspection < lInspectionCount; lInspection++ )
-	{
-		l_pConfig->GetInspection( lInspection, &pInspection );
-		if ( pInspection != NULL )
-		{
-			if ( pInspection->GetToolSet() != NULL )
-			{
-				pInspection->ConnectToolSetMainImage();
-			}
-		}
-	}
-
-	return S_OK;
-}
-
-SVOINIClass& SVObserverApp::INI()
-{
-	return m_SvimIni;
-}
-
-void SVObserverApp::OnUpdateAddPerspectivetool(CCmdUI* pCmdUI) 
-{
-	pCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) &&	
-					SVSVIMStateClass::CheckState( SV_STATE_EDIT ) &&
-	                IsMonochromeImageAvailiable() );
-}
-
-void SVObserverApp::ResetAllCounts()
-{
-	SVInspectionProcess *pIP;
-	long l;
-	long lSize;
-
-	SVConfigurationObject* l_pConfig = NULL;
-	SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
-
-	l_pConfig->GetInspectionCount( lSize );
-	for( l = 0; l < lSize; l++ )
-	{
-		l_pConfig->GetInspection( l, &pIP );
-
-		pIP->GetToolSet()->ResetCounts();
-	}// end for
-
-	if( !SVSVIMStateClass::CheckState( SV_STATE_RUNNING ) )
-	{
-		for( l = 0; l < lSize; l++ )
-		{
-			l_pConfig->GetInspection( l, &pIP );
-
-			SVCommandInspectionRunOncePtr l_CommandPtr = new SVCommandInspectionRunOnce( pIP->GetUniqueObjectID() );
-			SVObjectSynchronousCommandTemplate< SVCommandInspectionRunOncePtr > l_Command( pIP->GetUniqueObjectID(), l_CommandPtr );
-
-			l_Command.Execute( 120000 );
-		}
-	}
-}
-
-int FindMenuItem(CMenu* Menu, LPCTSTR MenuString)
-{
-   ASSERT(Menu);
-   ASSERT(::IsMenu(Menu->GetSafeHmenu()));
-
-   int count = Menu->GetMenuItemCount();
-   for (int i = 0; i < count; i++)
-   {
-      CString str;
-      if (Menu->GetMenuString(i, str, MF_BYPOSITION) &&
-         (strcmp(str, MenuString) == 0))
-         return i;
-   }
-
-   return -1;
-}
-
-void SVObserverApp::OnUpdateExtrasSecuritySetup(CCmdUI* pCmdUI) 
-{
-	pCmdUI->Enable( !SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_REGRESSION | SV_STATE_TEST ) );
-}
-
-void SVObserverApp::OnExtrasSecuritySetup() 
-{
-	if( m_svSecurityMgr.SVValidate( SECURITY_POINT_EXTRAS_MENU_SECURITY_MANAGER ) == S_OK)
-	{
-		m_svSecurityMgr.SVSetupDialog();
-		if( m_svSecurityMgr.SVGetUseLogon() )
-		{
-			CMenu *pMenu;
-			CWnd* pWindow = AfxGetMainWnd();
-			pMenu = pWindow->GetMenu();
-
-		   // Look for "Extras" menu.
-		   int pos = FindMenuItem( pMenu, "E&xtras");
-		   if( pos == -1 )
-				return;
-			CMenu* submenu = pMenu->GetSubMenu(pos);
-			pos = FindMenuItem(submenu, "&Security Setup");
-			if (pos > -1)
-			{
-				if( FindMenuItem( submenu, "User Log&out" ) == -1 )
-				{
-					submenu->InsertMenu(pos , MF_BYPOSITION, ID_EXTRAS_LOGOUT, "User Log&out");
-					submenu->InsertMenu(pos , MF_BYPOSITION, ID_EXTRAS_LOGIN, "User &Login");
-				}
-			}
-		}
-
-		if( SVSVIMStateClass::CheckState( SV_STATE_EDIT_MOVE ) )
-		{
-			SetModeEditMove( false );
-		}
-
-		if( SVSVIMStateClass::CheckState( SV_STATE_EDIT ))
-		{
-			SVSVIMStateClass::RemoveState( SV_STATE_EDIT );
-		}
-
-		if ( SVSVIMStateClass::CheckState( SV_STATE_REGRESSION ) )
-		{
-			StopRegression();
-		}
-
-	}
-}
-
-void SVObserverApp::OnUpdateExtrasUtilitiesEdit(CCmdUI* pCmdUI) 
-{
-	if( pCmdUI->m_pSubMenu )
-	{
-		bool l_bEnable = m_svSecurityMgr.SVIsDisplayable( SECURITY_POINT_EXTRAS_MENU_UTILITIES_SETUP ) ||
-			(m_svSecurityMgr.SVIsDisplayable( SECURITY_POINT_EXTRAS_MENU_UTILITIES_RUN ) && 
-			!SVSVIMStateClass::CheckState( SV_STATE_RUNNING ));
-		unsigned int l_uiGray = l_bEnable ? 0 : MF_GRAYED;
-		pCmdUI->m_pMenu->EnableMenuItem( pCmdUI->m_nIndex, MF_BYPOSITION | l_uiGray);
-	}
-	else
-	{
-		pCmdUI->Enable( m_svSecurityMgr.SVIsDisplayable( SECURITY_POINT_EXTRAS_MENU_UTILITIES_SETUP ) && 
-			!SVSVIMStateClass::CheckState( SV_STATE_RUNNING ) );
-	}
-}
-
-void SVObserverApp::OnModeEdit() 
-{
-	bool l_bAllowAccess = false;
-
-	if( SVSVIMStateClass::CheckState( SV_STATE_EDIT ) )
-		return;
-
-		// If Running, check if access to exit run.
-	if ( SVSVIMStateClass::CheckState( SV_STATE_RUNNING ) )
-	{
-		if( m_svSecurityMgr.SVValidate( SECURITY_POINT_MODE_MENU_EXIT_RUN_MODE, 
-			SECURITY_POINT_MODE_MENU_EDIT_TOOLSET ) == S_OK )
-		{
-			OnStop();
-			l_bAllowAccess = true;
-		}
-	}
-	else
-	if( m_svSecurityMgr.SVValidate( SECURITY_POINT_MODE_MENU_EDIT_TOOLSET ) == S_OK )
-	{
-		l_bAllowAccess = true;
-	}
-
-
-	if( l_bAllowAccess )
-	{
-		if ( !SVSVIMStateClass::CheckState( SV_STATE_EDIT ) )
-		{
-			if ( SVSVIMStateClass::CheckState( SV_STATE_REGRESSION ) )
-			{
-				StopRegression();
-			}
-
-			if( SVSVIMStateClass::CheckState( SV_STATE_TEST ) )
-			{
-				OnStop();
-			}
-			
-			if ( SVSVIMStateClass::CheckState( SV_STATE_READY ) )
-			{
-				SetModeEdit( true ); // Set Edit mode
-			}
-		}
-	}
-}
-
-HRESULT SVObserverApp::SetModeEdit( bool p_bState ) 
-{
-	HRESULT l_hr = S_OK;
-	if( p_bState )
-	{
-		SVSVIMStateClass::AddState( SV_STATE_EDIT );
-		SVSVIMStateClass::AddState( SV_STATE_SECURED );
-		SVSVIMStateClass::RemoveState( SV_STATE_EDIT_MOVE );
-		DisplayAddMenu(true);
-	}
-	else
-	{
-		SVSVIMStateClass::RemoveState( SV_STATE_EDIT );
-		SVSVIMStateClass::RemoveState( SV_STATE_SECURED );
-		//
-		// We need to deselect any tool that might be set for operator move.
-		//
-		DeselectTool();
-
-		DisplayAddMenu(false);
-	}
-	return l_hr;
-}
-
-void SVObserverApp::OnModeEditMove() 
-{
-	bool l_bAllowAccess = false;
-
-	if ( SVSVIMStateClass::CheckState( SV_STATE_EDIT_MOVE ) )
-	{
-		return;
-	}
-
-	// If Running, check if access to exit run.
-	if ( SVSVIMStateClass::CheckState( SV_STATE_RUNNING ) )
-	{
-		if( m_svSecurityMgr.SVValidate( SECURITY_POINT_MODE_MENU_EXIT_RUN_MODE, 
-			SECURITY_POINT_MODE_MENU_EDIT_MOVE_TOOL ) == S_OK )
-		{
-			OnStop();
-			l_bAllowAccess = true;
-		}
-	}
-	else
-	{
-		if( m_svSecurityMgr.SVValidate( SECURITY_POINT_MODE_MENU_EDIT_MOVE_TOOL ) == S_OK )
-		{
-			l_bAllowAccess = true;
-		}
-	}
-
-	if( l_bAllowAccess )
-	{
-		if ( !SVSVIMStateClass::CheckState( SV_STATE_EDIT_MOVE ) )
-		{
-			if ( SVSVIMStateClass::CheckState( SV_STATE_REGRESSION ) )
-			{
-				StopRegression();
-			}
-
-			if( SVSVIMStateClass::CheckState( SV_STATE_TEST ) )
-			{
-				OnStop();
-			}
-
-			SetModeEditMove( true );
-		}
-	}
-}
-
-HRESULT SVObserverApp::SetModeEditMove( bool l_bState ) 
-{
-	HRESULT l_hr = S_OK;
-
-	if( l_bState )
-	{
-		SVSVIMStateClass::AddState( SV_STATE_EDIT_MOVE );
-		SVSVIMStateClass::RemoveState( SV_STATE_EDIT );
-		SVSVIMStateClass::RemoveState( SV_STATE_SECURED );
-		SVMainFrame * pWndMain = (SVMainFrame *)GetMainWnd( );
-		if(pWndMain)
-		{
-			pWndMain->PostMessage(SV_SET_TOOL_SELECTED_IN_TOOL_VIEW, (WPARAM)TRUE);
-		}
-	}
-	else
-	{
-		// We need to deselect any tool that might be set for operator move.
-		//
-		DeselectTool();
-		SVSVIMStateClass::RemoveState( SV_STATE_SECURED );
-		SVSVIMStateClass::RemoveState( SV_STATE_EDIT_MOVE );
-	}
-	return l_hr;
-}
-
-void SVObserverApp::OnUpdateModeEdit(CCmdUI* pCmdUI) 
-{
-	pCmdUI->Enable( (SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION | SV_STATE_EDIT | SV_STATE_EDIT_MOVE | SV_STATE_READY ) ) &&	
-					SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_READY ) &&
-					m_svSecurityMgr.SVIsDisplayable( SECURITY_POINT_MODE_MENU_EDIT_TOOLSET ) );
-
-	pCmdUI->SetCheck( SVSVIMStateClass::CheckState( SV_STATE_EDIT ) );
-}
-
-void SVObserverApp::OnUpdateModeEditMove(CCmdUI* pCmdUI) 
-{
-	pCmdUI->Enable(( SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION | SV_STATE_EDIT | SV_STATE_EDIT_MOVE | SV_STATE_READY ) ) &&	
-					SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_READY ) &&
-					m_svSecurityMgr.SVIsDisplayable( SECURITY_POINT_MODE_MENU_EDIT_MOVE_TOOL ));
-
-	pCmdUI->SetCheck( SVSVIMStateClass::CheckState( SV_STATE_EDIT_MOVE ));
-}
-
-void SVObserverApp::OnUpdateModeStoptest( CCmdUI* PCmdUI ) 
-{
-	PCmdUI->Enable( SVSVIMStateClass::CheckState( SV_STATE_TEST )  
-		&& m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_MODE_MENU_TEST ));
-}
-
-void SVObserverApp::OnUpdateModeTest( CCmdUI* PCmdUI ) 
-{
-	PCmdUI->Enable(( SVSVIMStateClass::CheckState( SV_STATE_TEST | SV_STATE_REGRESSION | SV_STATE_EDIT | SV_STATE_EDIT_MOVE | SV_STATE_READY | SV_STATE_RUNNING  ) ) &&	 
-		m_svSecurityMgr.SVIsDisplayable( SECURITY_POINT_MODE_MENU_TEST ));
-
-	PCmdUI->SetCheck( SVSVIMStateClass::CheckState( SV_STATE_TEST ) && 
-		!SVSVIMStateClass::CheckState( SV_STATE_REGRESSION ));
-}
-
-void SVObserverApp::OnUpdateModeTestBtn(CCmdUI* pCmdUI) 
-{
-	pCmdUI->Enable(( SVSVIMStateClass::CheckState( SV_STATE_REGRESSION | SV_STATE_EDIT | SV_STATE_EDIT_MOVE | SV_STATE_READY ) ) &&	 
-		SVSVIMStateClass::CheckState( SV_STATE_READY ) &&
-		!SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) &&
-		m_svSecurityMgr.SVIsDisplayable( SECURITY_POINT_MODE_MENU_TEST ));
-}
-
-void SVObserverApp::OnUpdateRegressionTest(CCmdUI *pCmdUI)
-{
-	pCmdUI->SetCheck( SVSVIMStateClass::CheckState( SV_STATE_REGRESSION ) );
-}
-
-HRESULT SVObserverApp::SetMode( unsigned long p_lNewMode )
-{
-	HRESULT l_hr = S_OK;
-
-	svModeEnum l_svMode = (svModeEnum) p_lNewMode;
-
-	if( SVSVIMStateClass::CheckState( SV_STATE_START_PENDING | 
-		SV_STATE_STARTING |
-		SV_STATE_STOP_PENDING |
-		SV_STATE_STOPING ))
-	{
-		l_hr = SVMSG_50_MODE_CHANGING_ERROR;
-	}
-	else
-	if( SVSVIMStateClass::CheckState( SV_STATE_LOADING ))
-	{
-		l_hr = SVMSG_51_MODE_CONFIGURATION_LOADING_ERROR;
-	}
-	else
-	if( SVSVIMStateClass::CheckState( SV_STATE_EDITING ))
-	{
-		l_hr = SVMSG_52_MODE_GUI_IN_USE_ERROR;
-	}
-	else
-	if( l_svMode == SVIM_MODE_ONLINE )
-	{
-
-		if( SVSVIMStateClass::CheckState( SV_STATE_TEST ) ||
-			SVSVIMStateClass::CheckState( SV_STATE_RUNNING ) )
-		{
-			OnStop();
-		}
-		// Try to go online...
-		if( !SVSVIMStateClass::CheckState( SV_STATE_REGRESSION ) &&
-			SVSVIMStateClass::CheckState( SV_STATE_READY ) )
-		{
-			if( Start() != S_OK )
-				l_hr = SVMSG_SVIMCMD_GO_ONLINE_FAILED;
-		}
-		else
-		{
-			l_hr = SVMSG_SVIMCMD_GO_ONLINE_FAILED;
-		}
-	}
-	else
-	if( l_svMode == SVIM_MODE_OFFLINE )
-	{
-		// Go offline
-		if( SVSVIMStateClass::CheckState( SV_STATE_RUNNING ) ||
-			SVSVIMStateClass::CheckState( SV_STATE_TEST ) )
-		{
-			OnStop();
-		}
-		// Cancel edit mode
-		if( SVSVIMStateClass::CheckState( SV_STATE_EDIT ) )
-		{
-			SetModeEdit( false );
-		}
-		// Cancel edit move mode
-		if( SVSVIMStateClass::CheckState( SV_STATE_EDIT_MOVE ) )
-		{
-			SetModeEditMove( false );
-		}
-	}
-	else
-	if( l_svMode == SVIM_MODE_TEST )
-	{
-		// If the previous mode was running then we cannot stop and 
-		// go straight into test mode.  This has caused a crash in testing 
-		// when two IPDs are present.  Therefore the activeX user must first
-		// put the system in some offline mode and then put it into test mode
-		// in two steps.  If running then return request rejected.
-		if( SVSVIMStateClass::CheckState( SV_STATE_RUNNING ) )
-		{
-			l_hr = SVMSG_SVIMCMD_REQUEST_REJECTED;
-		}
-		else
-		if( SVSVIMStateClass::CheckState( SV_STATE_REGRESSION ))
-		{
-			OnStop();
-		}
-
-		if( !SVSVIMStateClass::CheckState( SV_STATE_TEST ) &&
-			SVSVIMStateClass::CheckState( SV_STATE_READY ) )
-		{
-			SetTestMode(true);
-		}
-		else
-		{
-			l_hr = SVMSG_SVIMCMD_REQUEST_REJECTED;
-		}
-	}
-	else
-	if( l_svMode == SVIM_MODE_REGRESSION )
-	{
-		// Later Currently not supported through the Control
-		l_hr = SVMSG_SVIMCMD_REQUEST_REJECTED;
-	}
-	else
-	if( l_svMode == SVIM_MODE_EDIT )
-	{
-		if( SVSVIMStateClass::CheckState( SV_STATE_TEST ) ||
-			SVSVIMStateClass::CheckState( SV_STATE_RUNNING ) )
-		{
-			OnStop();
-		}
-
-		if( !SVSVIMStateClass::CheckState( SV_STATE_REGRESSION ) &&
-			SVSVIMStateClass::CheckState( SV_STATE_READY ) )
-		{
-			SetModeEdit( true );
-		}
-		else
-		{
-			l_hr = SVMSG_SVIMCMD_REQUEST_REJECTED;
-		}
-	}
-	else
-	if( l_svMode == SVIM_MODE_EDIT_MOVE )
-	{
-		if( SVSVIMStateClass::CheckState( SV_STATE_TEST ) ||
-			SVSVIMStateClass::CheckState( SV_STATE_RUNNING ) )
-		{
-			OnStop();
-		}
-
-		if( !SVSVIMStateClass::CheckState( SV_STATE_REGRESSION ) &&
-			SVSVIMStateClass::CheckState( SV_STATE_READY ) )
-		{
-			SetModeEditMove( true );
-		}
-		else
-		{
-			l_hr = SVMSG_SVIMCMD_REQUEST_REJECTED;
-		}
-	}
-	else
-	{
-		l_hr = SVMSG_SVIMCMD_REQUEST_REJECTED;
-	}
-
-	PostMessage( m_pMainWnd->m_hWnd, SV_REFRESH_STATUS_BAR, 0, 0 );
-	return l_hr;
-}
-
-HRESULT SVObserverApp::LoadConfiguration()
-{
-	HRESULT l_Status = S_OK;
-
-	CString szConfigName = SVRCGetSVCPathName();
-
-	TCHAR szDrive[_MAX_DRIVE];
-	TCHAR szDir[_MAX_DIR];
-	TCHAR szFile[_MAX_FNAME];
-	TCHAR szExt[_MAX_EXT];
-	CString sComp;
-
-  _tsplitpath( szConfigName, szDrive, szDir, szFile, szExt );
-  sComp = szExt;
-
-	if( sComp.CompareNoCase(_T(".sec"))==0 )
-	{
-		l_Status = OpenSECFile( szConfigName );
-	}
-	else if( sComp.CompareNoCase(_T(".svx"))==0 )
-	{
-		l_Status = OpenSVXFile( szConfigName );
-	}
-	else
-	{
-		l_Status = E_INVALIDARG;
-	}
-
-	return l_Status;
-}
-
-void SVObserverApp::SetSelectedToolForOperatorMove( BOOL bSetTool )
-{
-	POSITION pos = GetFirstDocTemplatePosition();
-	if( pos )
-	{
-		do
-		{
-			CDocTemplate* pDocTemplate = GetNextDocTemplate( pos );
-			if( pDocTemplate )
-			{
-				POSITION posDoc = pDocTemplate->GetFirstDocPosition();
-				if ( posDoc )
-				{
-					do
-					{
-						CDocument* newDoc = pDocTemplate->GetNextDoc(posDoc);
-						if ( newDoc )
-						{
-							SVIPDoc* pTmpDoc = dynamic_cast <SVIPDoc*> (newDoc);
-
-							if( pTmpDoc != NULL )
-							{
-								pTmpDoc->SetSelectedToolForOperatorMove( bSetTool );
-							}
-						}
-					}
-					while( posDoc );
-				}
-			}
-		}
-		while( pos );
-	}
-}
-
-HRESULT SVObserverApp::RenameObject( const SVString& p_rOldName, const SVString& p_rNewName, const SVGUID& p_rObjectId )
-{
-	HRESULT l_Status = S_OK;
-
-	SVObjectAppClass* l_pObject = dynamic_cast< SVObjectAppClass* >( SVObjectManagerClass::Instance().GetObject( p_rObjectId ) );
-
-	if( l_pObject != NULL )
-	{
-		SVRenameObject l_RenameObject( p_rOldName, p_rNewName, p_rObjectId );
-
-		SVInspectionProcess* l_pInspect = l_pObject->GetInspection();
-
-		if( l_pInspect != NULL )
-		{
-			SVObjectManagerClass::Instance().UpdateObserver( l_pInspect->GetUniqueObjectID(), l_RenameObject );
-		}
-		else
-		{
-			l_Status = E_FAIL;
-		}
-
-		SVConfigurationObject* l_pConfig = NULL;
-		SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
-
-		if( l_pConfig != NULL )
-		{
-			SVObjectManagerClass::Instance().UpdateObserver( l_pConfig->GetUniqueObjectID(), l_RenameObject );
-		}
-		else
-		{
-			l_Status = E_FAIL;
-		}
-
-		GetIODoc()->UpdateAllViews( NULL );
-	}
-	else
-	{
-		l_Status = E_FAIL;
-	}
-
-	return l_Status;
-}
-
-HRESULT SVObserverApp::RebuildOutputList()
-{
-	HRESULT l_Status = S_OK;
-
-	SVConfigurationObject* l_pConfig = NULL;
-	SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
-
-	if( l_pConfig != NULL )
-	{
-		l_pConfig->RebuildOutputObjectList();
-
-		GetIODoc()->UpdateAllViews( NULL );
-	}
-	else
-	{
-		l_Status = E_FAIL;
-	}
-
-	return l_Status;
-}
-
 
 void SVObserverApp::StopRegression()
 {
@@ -9324,267 +9510,17 @@ void SVObserverApp::StopRegression()
 		}
 		while( pos && !bDone );
 	}
-	
+
 	OnStop();
-	
-}
-void SVObserverApp::DeselectTool()
-{
-	SVMainFrame * pWndMain = (SVMainFrame *)GetMainWnd( );
-	if(pWndMain)
-	{
-        pWndMain->PostMessage( SV_SET_TOOL_SELECTED_IN_TOOL_VIEW, (WPARAM)FALSE );   // Deselect any tool selected for move.
-	}
 }
 
-bool SVObserverApp::OkToEdit()
-{
-	bool l_bOk = false;
-	if( SVSVIMStateClass::CheckState( SV_STATE_EDIT ))
-	{
-		if( m_svSecurityMgr.SVIsDisplayable( SECURITY_POINT_MODE_MENU_EDIT_TOOLSET ))
-		{
-			l_bOk = true;
-		}
-	}
-	return l_bOk;
-}
-
-
-bool SVObserverApp::OkToEditMove()
-{
-	bool l_bOk = false;
-	if( SVSVIMStateClass::CheckState( SV_STATE_EDIT_MOVE ))
-	{
-		if( m_svSecurityMgr.SVIsDisplayable( SECURITY_POINT_MODE_MENU_EDIT_MOVE_TOOL ))
-		{
-			l_bOk = true;
-		}
-	}
-	return l_bOk;
-}
-
-bool SVObserverApp::IsProductTypeRAID() const
-{
-	bool bRet = ( m_csRAIDBoardName.CompareNoCase( "Intel" ) == 0 );
-	return bRet;
-}
-
-#ifndef _WIN64
-void SVObserverApp::OnEditplcoutputs()
-{
-	SVConfigurationObject* l_pConfig = NULL;
-	SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
-
-	if( l_pConfig != NULL )
-	{
-		l_pConfig->SetupPLC();
-		if( l_pConfig->GetPLCCount() == 0)
-		{
-			HidePLCTab();
-		}
-	}
-}
-#endif
-
-void SVObserverApp::OnEditRemoteOutputs()
-{
-	SVConfigurationObject* l_pConfig = NULL;
-	SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
-
-	if( l_pConfig != NULL )
-	{
-		l_pConfig->SetupRemoteOutput();
-	}
-}
-
-// This handler handles a range of Ids based on inspection.
-// It is called from when the IO Page is displayed.
-// The IDR_SVOBSERVER_IODOCTYPE Menu Published Results.
-void SVObserverApp::OnEditPublishedResults( UINT nID )
-{
-	UINT uiInspection = nID - ID_EDIT_PUBLISHEDRESULTS_BASE;
-	// Get list of inspections
-	// edit published results
-	SVConfigurationObject* l_pConfig = NULL;
-	SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
-	if( l_pConfig )
-	{
-		SVInspectionProcessPtrList l_Inspections;
-		l_pConfig->GetInspections( l_Inspections );
-		if( uiInspection < l_Inspections.size())
-		{
-			SVInspectionProcess* pInsp = l_Inspections[uiInspection];
-			SVDlgResultPicker dlg;
-			CString publishedResultString;
-
-			dlg.PTaskObjectList = pInsp->GetToolSet();
-			dlg.uAttributesDesired = SV_PUBLISHABLE;
-
-			publishedResultString.LoadString ( IDS_PUBLISHABLE_RESULTS );
-			CString inspectionName = pInsp->GetName();
-			CString title;
-			title.Format(_T("%s - %s"), publishedResultString, inspectionName);
-			dlg.SetCaptionTitle(title);
-
-			if( dlg.DoModal() == IDOK )
-			{
-				pInsp->GetPublishList().Refresh( pInsp->GetToolSet() );
-
-				// *** // ***
-				long lSize;
-				long l;
-				SVPPQObject *pPPQ;
-
-				SVConfigurationObject* pConfig = NULL;
-				SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
-
-				SVSVIMStateClass::AddState( SV_STATE_MODIFIED );
-	
-				// Force the PPQs to rebuild
-				pConfig->GetPPQCount( lSize );
-
-				for( l = 0; l < lSize; l++ )
-				{
-					pConfig->GetPPQ( l, &pPPQ );
-					if( pPPQ )
-					{
-						pPPQ->RebuildOutputList();
-					}// end if
-				}// end for
-				TheSVObserverApp.GetIODoc()->UpdateAllViews( NULL );
-				// *** // ***
-			}// end if
-
-		}
-	}	
-}
-
-
-
-bool SVObserverApp::SetActiveIOTabView( SVTabbedViewSplitterIDEnum p_eTabbedID )
-{
-	bool l_bRet = false;
-
-	SVIODoc* l_pIODoc = GetIODoc();
-
-	if( l_pIODoc != NULL )
-	{
-		// Get the active MDI child window.             
-		POSITION pos = l_pIODoc->GetFirstViewPosition();
-		CView *pView = l_pIODoc->GetNextView( pos );
-
-		CMDIChildWnd *pFrame = (CMDIChildWnd*) pView->GetParentFrame();
-		SVIOTabbedView* pIOView = dynamic_cast<SVIOTabbedView*>( pFrame );
-		if( pIOView )
-		{
-			TVisualObject* l_VisObj = pIOView->m_Framework.Get(p_eTabbedID);
-			pIOView->m_Framework.SetActiveTab( l_VisObj );
-#ifndef _WIN64
-			SVPLCOutputsView* l_pPLCView =  dynamic_cast<SVPLCOutputsView*>(pIOView->GetWindow( GW_HWNDFIRST ));
-			if( l_pPLCView )
-			{
-				OnUpdateAllIOViews(); // OnUpdate( NULL, NULL, NULL );
-			}
-#endif
-			l_bRet = true;
-		}
-	}// end if( PIODoc
-	return l_bRet;
-}
-
-
-#ifndef _WIN64
-// This function Sets the active Tab to inputs view and 
-// Hides the PLC tab
-void SVObserverApp::HidePLCTab()
-{
-    SVMainFrame * pWndMain = (SVMainFrame *)GetMainWnd( );
-	SetActiveIOTabView( SVIODiscreteInputsViewID );
-
-	pWndMain->PostMessage( SV_IOVIEW_HIDE_TAB, SVIOPLCOutputsViewID );
-}
-#endif
-
-void SVObserverApp::HideRemoteOutputTab()
-{
-    SVMainFrame * pWndMain = (SVMainFrame *)GetMainWnd( );
-	SetActiveIOTabView( SVIODiscreteInputsViewID );
-
-	pWndMain->PostMessage( SV_IOVIEW_HIDE_TAB, SVRemoteOutputsViewID );
-}
-
-
-void SVObserverApp::HideIOTab( DWORD p_dwID )
-{
-	SVIODoc* l_pIODoc = GetIODoc();
-
-	if( l_pIODoc != NULL )
-	{
-
-		POSITION lViewPos = l_pIODoc->GetFirstViewPosition();
-		do 
-		{
-			CView* pView = l_pIODoc->GetNextView( lViewPos );
-
-			CMDIChildWnd *pFrame = (CMDIChildWnd*) pView->GetParentFrame();
-			SVIOTabbedView* pIOView = dynamic_cast<SVIOTabbedView*>( pFrame );
-			if( pIOView )
-			{
-				TVisualObject* l_VisObj = pIOView->m_Framework.Get( p_dwID );
-				l_VisObj->ShowTab( false );
-				break;
-			}
-		}
-		while ( lViewPos );
-	}
-
-}
-
-void SVObserverApp::ShowIOTab( DWORD p_dwID )
-{
-	SVIODoc* l_pIODoc = GetIODoc();
-
-	if( l_pIODoc != NULL )
-	{
-
-		POSITION lViewPos = l_pIODoc->GetFirstViewPosition();
-		do 
-		{
-			CView* pView = l_pIODoc->GetNextView( lViewPos );
-
-			CMDIChildWnd *pFrame = (CMDIChildWnd*) pView->GetParentFrame();
-			SVIOTabbedView* pIOView = dynamic_cast<SVIOTabbedView*>( pFrame );
-			if( pIOView )
-			{
-				TVisualObject* l_VisObj = pIOView->m_Framework.Get( p_dwID );
-				if( l_VisObj )
-				{
-					l_VisObj->ShowTab( true );
-#ifndef _WIN64
-					SVPLCOutputsView* l_pPLCView =  dynamic_cast<SVPLCOutputsView*>(l_VisObj->GetWnd());
-					if( l_pPLCView )
-					{
-						OnUpdateAllIOViews(); // OnUpdate( NULL, NULL, NULL );
-					}
-#endif
-				}
-				break;
-			}
-		}
-		while ( lViewPos );
-	}
-
-}
-
-DWORD SVObserverApp::GetActiveIOTab()
+DWORD SVObserverApp::GetActiveIOTab() const
 {
 	DWORD l_dwRet = 0;
 	SVIODoc* l_pIODoc = GetIODoc();
 
 	if( l_pIODoc != NULL )
 	{
-
 		POSITION lViewPos = l_pIODoc->GetFirstViewPosition();
 		do 
 		{
@@ -9604,122 +9540,73 @@ DWORD SVObserverApp::GetActiveIOTab()
 		}
 		while ( lViewPos );
 	}
-return l_dwRet;
+	return l_dwRet;
 }
 
-#ifndef _WIN64
-void SVObserverApp::OnUpdateEditEditplcoutputs(CCmdUI *pCmdUI)
+bool SVObserverApp::AddSecurityNode( HMODULE hMessageDll, long lId ,CString sNTGroup, bool bForcePrompt)
 {
-	pCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) &&	
-					SVSVIMStateClass::CheckState( SV_STATE_EDIT ) );
+	LPTSTR pszTmp;
 
-	SVConfigurationObject* l_pConfig = NULL;
-	SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
-
-	if( l_pConfig != NULL && l_pConfig->GetPLCCount() == 0 )
+	if (FormatMessage (FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_IGNORE_INSERTS |
+		FORMAT_MESSAGE_FROM_HMODULE,
+		(LPCVOID) hMessageDll, lId,
+		MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), // Default language
+		(LPTSTR) &pszTmp, 0, NULL))
 	{
-		pCmdUI->SetText( "Add PLC" );
-	}
-	else
-	{
-		pCmdUI->SetText( "Edit PLC" );
-	}
-}
-#endif
 
-void SVObserverApp::OnUpdateEditAddRemoteOutputs(CCmdUI *pCmdUI)
-{
-	pCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) &&	
-					SVSVIMStateClass::CheckState( SV_STATE_EDIT ) );
-
-	SVConfigurationObject* l_pConfig = NULL;
-	SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
-
-	if( l_pConfig != NULL && l_pConfig->GetRemoteOutputGroupCount() == 0 )
-	{
-		pCmdUI->SetText( "Add Remote Output" );
+		CString strTmp = pszTmp;
+		m_svSecurityMgr.SVAdd( lId, strTmp.Left( strTmp.Find('\n',0) -1), sNTGroup, bForcePrompt);
+		LocalFree( pszTmp );
+		return true;
 	}
-	else
-	{
-		pCmdUI->SetText( "Edit Remote Output" );
-	}
+	return false;
 }
 
-
-void SVObserverApp::UpdateRemoteInputTabs()
+bool SVObserverApp::AddSecurityNode( HMODULE hMessageDll, long lId )
 {
-	// Remote Inputs
-	bool l_bHideIOTab = true;
-	SVConfigurationObject* l_pConfig = NULL;
-	SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
+	bool l_bRet = true;
+	LPTSTR pszTmp;
 
-	if( l_pConfig != NULL )
+	if (FormatMessage (FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_IGNORE_INSERTS |
+		FORMAT_MESSAGE_FROM_HMODULE,
+		(LPCVOID) hMessageDll, lId,
+		MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), // Default language
+		(LPTSTR) &pszTmp, 0, NULL))
 	{
-		SVInputObjectList* l_pList=NULL;
-		l_pConfig->GetInputObjectList( &l_pList );
-		if( l_pList != NULL )
+		CString strTmp = pszTmp;
+		int l_pos = strTmp.Find('\n',0);
+		if( l_pos > 0 )
 		{
-			long lSize;
-			l_pList->GetRemoteInputCount( lSize );
-			if( lSize > 0 )
-			{
-				l_bHideIOTab = false;
-			}
+			m_svSecurityMgr.SVAdd( lId, strTmp.Left( l_pos -1) );
+		}
+		else
+		{
+			l_bRet = false;
+		}
+		LocalFree( pszTmp );
+	}
+	return l_bRet;
+}
+
+int SVObserverApp::FindMenuItem(CMenu* Menu, LPCTSTR MenuString)
+{
+	ASSERT(Menu);
+	ASSERT(::IsMenu(Menu->GetSafeHmenu()));
+
+	int count = Menu->GetMenuItemCount();
+	for (int i = 0; i < count; i++)
+	{
+		CString str;
+		if (Menu->GetMenuString(i, str, MF_BYPOSITION) &&
+			(strcmp(str, MenuString) == 0))
+		{
+			return i;
 		}
 	}
 
-	if( l_bHideIOTab )
-	{
-		HideIOTab( SVIORemoteInputsViewID );
-	}
+	return -1;
 }
-
-void SVObserverApp::EnableTriggerSettings()
-{
-  SVUtilitiesClass util;
-  CWnd *pWindow;
-  CMenu *pMenu;
-  CString szMenuText;
-
-  pWindow = AfxGetMainWnd ();
-  pMenu = pWindow->GetMenu();
-  szMenuText = _T("&View");
-  if (pMenu = util.FindSubMenuByName (pMenu, szMenuText))
-  {
-	  pMenu->AppendMenu(MF_STRING, ID_TRRIGER_SETTINGS, _T("Software Trigger")); 
-	  pWindow->DrawMenuBar();
-  }
-}
-
-void SVObserverApp::DisableTriggerSettings()
-{
-  SVSoftwareTriggerDlg::Instance().ShowWindow(SW_HIDE);
-  SVUtilitiesClass util;
-  CWnd *pWindow;
-  CMenu *pMenu;
-  CString szMenuText;
-
-  pWindow = AfxGetMainWnd ();
-  pMenu = pWindow->GetMenu();
-  szMenuText = _T("&View");
-  if (pMenu = util.FindSubMenuByName (pMenu, szMenuText))
-  {
-	  pMenu->RemoveMenu(ID_TRRIGER_SETTINGS, MF_BYCOMMAND); 
-	  pWindow->DrawMenuBar();
-  }
-}
-
-void SVObserverApp::OnUpdateTriggerSettings(CCmdUI *pCmdUI)
-{
-	pCmdUI->Enable();
-}
-
-void SVObserverApp::OnTriggerSettings()
-{
-	SVSoftwareTriggerDlg::Instance().ShowWindow(SW_SHOW);
-	// set dirty handler to the insert method of m_dirty_triggers set
-	SVSoftwareTriggerDlg::Instance().SetDirtyHandler(boost::bind(&std::set<SVTriggerObject *>::insert, &m_dirty_triggers, _1));
-}
+#pragma endregion Private Methods
 
 //******************************************************************************
 //* LOG HISTORY:
@@ -9727,23 +9614,13 @@ void SVObserverApp::OnTriggerSettings()
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVObserver.cpp_v  $
  * 
- *    Rev 1.17   15 Jan 2014 08:50:46   tbair
+ *    Rev 1.18   31 Jan 2014 17:16:32   bwalter
  * Project:  SVObserver
- * Change Request (SCR) nbr:  870
- * SCR Title:  Fix Various Issues in the Edit Configuration Dialog
- * Checked in by:  tBair;  Tom Bair
+ * Change Request (SCR) nbr:  884
+ * SCR Title:  Update Source Code Files to Follow New Programming Standards and Guidelines
+ * Checked in by:  bWalter;  Ben Walter
  * Change Description:  
- *   Added logic to set the svim type to the svim hardware if the configuration svim type is unknown. This happens with a new configuration.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.16   11 Dec 2013 14:03:00   tbair
- * Project:  SVObserver
- * Change Request (SCR) nbr:  873
- * SCR Title:  Fix inconsistant GUI labels and functionality on IO pages
- * Checked in by:  tBair;  Tom Bair
- * Change Description:  
- *   Hide PLCIOTab when the last PLC is deleted.
+ *   Changed to follow guidelines more closely.
  * 
  * /////////////////////////////////////////////////////////////////////////////////////
  * 

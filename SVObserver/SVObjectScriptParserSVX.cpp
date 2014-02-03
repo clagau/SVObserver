@@ -5,8 +5,8 @@
 //* .Module Name     : SVObjectScriptParser
 //* .File Name       : $Workfile:   SVObjectScriptParserSVX.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   01 Oct 2013 15:24:38  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   01 Feb 2014 11:39:18  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -798,7 +798,7 @@ BOOL SVObjectScriptParserSVXClass::EvaluateOperandExpression( int OperandType, c
 				SVObjectClass* pObject = NULL;
 				if( rOwnerInfo.UniqueObjectID != SVInvalidGUID )
 				{
-					pObject = ( SVObjectClass* ) ::SVSendMessage( rOwnerInfo.UniqueObjectID, SVM_GET_OBJECT_BY_NAME, ( DWORD ) (LPCTSTR) rExpressionStack.GetAt( riIndex ), NULL );
+					pObject = ( SVObjectClass* ) ::SVSendMessage( rOwnerInfo.UniqueObjectID, SVM_GET_OBJECT_BY_NAME, reinterpret_cast<LONG_PTR>( static_cast<LPCTSTR>( rExpressionStack.GetAt( riIndex ))), NULL );
 				}
 				if( SV_IS_KIND_OF( pObject, SVObjectClass ) )
 				{
@@ -1152,8 +1152,8 @@ BOOL SVObjectScriptParserSVXClass::ReadValues( SVObjectAttributeClass& dataObjec
 }
 
 BOOL SVObjectScriptParserSVXClass::ExtractValue( SVObjectAttributeClass& dataObject, 
-                                              SVExpressionStack& rExpressionStack, 
-                                              int& riIndex )
+	SVExpressionStack& rExpressionStack, 
+	int& riIndex )
 {
 	BOOL bOk = FALSE;
 
@@ -1996,7 +1996,7 @@ bool SVObjectScriptParserSVXClass::ReattachInputs( SVObjectClass* pObject, SVObj
 	//SVFunctionProfilerLocal profiler(profile);
 	SVInputInfoListClass inputInfoList;
 
-	::SVSendMessage(pObject, SVM_GET_INPUT_INTERFACE, ( DWORD )&inputInfoList, NULL );
+	::SVSendMessage(pObject, SVM_GET_INPUT_INTERFACE, reinterpret_cast<LONG_PTR>(&inputInfoList), NULL );
 
 	// Input List and requiredInputList must be the same size
 	// and In the same Order !!!
@@ -2033,7 +2033,7 @@ bool SVObjectScriptParserSVXClass::ReattachInputs( SVObjectClass* pObject, SVObj
 					{
 						pInInfo = inputInfoList.GetAt( i + l_lOffset );
 
-						if( TheSVObserverApp.DwCurrentLoadingVersion < 0x00044B00 && pInInfo == l_pAuxInfo )
+						if( TheSVObserverApp.getLoadingVersion() < 0x00044B00 && pInInfo == l_pAuxInfo )
 						{
 							pInInfo = NULL;
 
@@ -2069,7 +2069,6 @@ bool SVObjectScriptParserSVXClass::ReattachInputs( SVObjectClass* pObject, SVObj
 
 	return l_bOk;
 }
-
 
 ///////////////////////////////////////////////////////////////
 // Find and parse Statements - delimited by new line
@@ -2811,10 +2810,10 @@ SVObjectClass* SVObjectScriptParserSVXClass::ProcessDefineObject( SVExpressionSt
 
 			// Send to Owner of Embedded Object
 			// Try to overwrite object...
-			if( pObject = ( SVObjectClass* ) ::SVSendMessage( ownerObjectInfo.PObject, 
+			if( pObject = reinterpret_cast<SVObjectClass*>( ::SVSendMessage( ownerObjectInfo.PObject, 
 			                                                  SVM_OVERWRITE_OBJECT, 
-			                                                 ( DWORD ) objectOperand.Value(), 
-			                                                 ( DWORD ) embeddedOperand.Value() ) )
+			                                                 reinterpret_cast<LONG_PTR>(objectOperand.Value()), 
+			                                                 reinterpret_cast<LONG_PTR>(embeddedOperand.Value()) )) )
 			{
 #ifdef SVOBJECTSCRIPTPARSER_DEBUG
 				TRACE( "OverWriteObject %.80s\n", pObject->GetName() );
@@ -2841,7 +2840,7 @@ SVObjectClass* SVObjectScriptParserSVXClass::ProcessDefineObject( SVExpressionSt
 		if( pObject && objectOwnerOperand.Value() )
 		{
 			// Try to replace or add object...
-			if( ::SVSendMessage( ownerObjectInfo.PObject, SVM_REPLACE_OBJECT, ( DWORD ) objectOperand.Value(), ( DWORD ) pObject ) != SVMR_SUCCESS )
+			if( ::SVSendMessage( ownerObjectInfo.PObject, SVM_REPLACE_OBJECT, reinterpret_cast<LONG_PTR>(objectOperand.Value()), reinterpret_cast<LONG_PTR>(pObject) ) != SVMR_SUCCESS )
 			{
 				ASSERT( FALSE );
 				TRACE( "ReplaceObject %.80s\n", rLocalOwnerInfo.PObject->GetName() );
@@ -3012,7 +3011,7 @@ bool SVObjectScriptParserSVXClass::ProcessMemberAssignment( SVExpressionStack& r
 
 		// try to set the object's member value...
 		// Note:: Send this message to the Object's Owner
-		if( ::SVSendMessage( ownerObjectInfo.PObject, SVM_SET_OBJECT_VALUE, ( DWORD )&objectInfo.UniqueObjectID, ( DWORD ) &dataObject ) != SVMR_SUCCESS )
+		if( ::SVSendMessage( ownerObjectInfo.PObject, SVM_SET_OBJECT_VALUE, reinterpret_cast<LONG_PTR>(&objectInfo.UniqueObjectID), reinterpret_cast<LONG_PTR>(&dataObject) ) != SVMR_SUCCESS )
 		{
 			AfxMessageBox( "Parser Error:\n Set Object Member Value failed!" );
 			return rc;
@@ -3038,6 +3037,26 @@ HRESULT SVObjectScriptParserSVXClass::DoParse()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVObjectScriptParserSVX.cpp_v  $
+ * 
+ *    Rev 1.3   01 Feb 2014 11:39:18   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Changed SVSendmessage and processmessage to use LONG_PTR instead of DWORD.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.2   31 Jan 2014 17:16:32   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  884
+ * SCR Title:  Update Source Code Files to Follow New Programming Standards and Guidelines
+ * Checked in by:  bWalter;  Ben Walter
+ * Change Description:  
+ *   Changed to follow guidelines more closely.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   01 Oct 2013 15:24:38   tbair
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : SVColorThreshold
 //* .File Name       : $Workfile:   SVColorThreshold.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 09:53:58  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   01 Feb 2014 10:23:14  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -187,9 +187,9 @@ BOOL SVColorThresholdClass::CreateObject( SVObjectLevelCreateStruct* PCreateStru
 				  // Create 4 Output Images and 3 Histogram Images
 				  bOk = createImages();
 				  
-				  ::SVSendMessage( this, SVM_CREATE_CHILD_OBJECT, (DWORD)&band0HistogramImage, NULL );
-				  ::SVSendMessage( this, SVM_CREATE_CHILD_OBJECT, (DWORD)&band1HistogramImage, NULL );
-				  ::SVSendMessage( this, SVM_CREATE_CHILD_OBJECT, (DWORD)&band2HistogramImage, NULL );
+				  ::SVSendMessage( this, SVM_CREATE_CHILD_OBJECT,reinterpret_cast<LONG_PTR>(&band0HistogramImage), NULL );
+				  ::SVSendMessage( this, SVM_CREATE_CHILD_OBJECT,reinterpret_cast<LONG_PTR>(&band1HistogramImage), NULL );
+				  ::SVSendMessage( this, SVM_CREATE_CHILD_OBJECT,reinterpret_cast<LONG_PTR>(&band2HistogramImage), NULL );
 			  }
 			  catch(...)
 			  {
@@ -824,7 +824,17 @@ SVDrawObjectListClass* SVColorThresholdClass::GetThresholdBarsFigure( int bandNu
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVColorThreshold.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVColorThreshold.cpp_v  $
+ * 
+ *    Rev 1.1   01 Feb 2014 10:23:14   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Changed sendmessage to use LONG_PTR instead of DWORD.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 09:53:58   bWalter
  * Project:  SVObserver

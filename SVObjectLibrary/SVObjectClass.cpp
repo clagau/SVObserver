@@ -5,8 +5,8 @@
 //* .Module Name     : SVObject
 //* .File Name       : $Workfile:   SVObjectClass.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   01 Oct 2013 11:27:02  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   01 Feb 2014 10:09:14  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -133,8 +133,7 @@ void SVObjectClass::DestroyFriends()
 				if( pOwner )
 				{
 					// Close, Disconnect and Delete Friend...
-					//::SVSendMessage( pOwner, SVM_DESTROY_CHILD_OBJECT, ( DWORD ) pFriend, NULL );
-					::SVSendMessage( pOwner, SVM_DESTROY_FRIEND_OBJECT, ( DWORD ) pFriend, NULL );
+					::SVSendMessage( pOwner, SVM_DESTROY_FRIEND_OBJECT, reinterpret_cast<LONG_PTR>(pFriend), NULL );
 				}
 				else
 				{
@@ -307,7 +306,7 @@ BOOL SVObjectClass::CloseObject()
 			if( pObject && pObject->IsCreated() )
 			{
 				// Close only user of our output which are still not closed!
-				dwResult = ::SVSendMessage( pObject, SVM_CLOSE_OBJECT, reinterpret_cast<DWORD> (static_cast<SVObjectClass*> (this)), NULL ) | dwResult;
+				dwResult = static_cast<DWORD>(::SVSendMessage( pObject, SVM_CLOSE_OBJECT, reinterpret_cast<LONG_PTR> (static_cast<SVObjectClass*> (this)), NULL ) | dwResult);
 			}
 		}
 	}
@@ -1061,7 +1060,7 @@ SVM_ message process function, should be overridden in derived classes. Refer to
 DWORD SVSendMessage( SVObjectClass* PObject, DWORD DwMessageID, DWORD DwMessageValue, DWORD DwMessageContext );
 DWORD SVSendMessage( const GUID& RUniqueObjectID, DWORD DwMessageID, DWORD DwMessageValue, DWORD DwMessageContext );
 */
-DWORD SVObjectClass::processMessage( DWORD DwMessageID, DWORD DwMessageValue, DWORD DwMessageContext )
+LONG_PTR SVObjectClass::processMessage( DWORD DwMessageID, LONG_PTR DwMessageValue, LONG_PTR DwMessageContext )
 {
 	DWORD DwResult = SVMR_NOT_PROCESSED;
 	// Try to process message by yourself...
@@ -1584,7 +1583,7 @@ BOOL SVObjectClass::GetChildObjectByName( LPCTSTR tszChildName, SVObjectClass** 
 		{
 			*ppObject = reinterpret_cast<SVObjectClass*>( ::SVSendMessage( this, 
 					( SVM_GET_OBJECT_BY_NAME | SVM_PARENT_TO_CHILD ) & ~SVM_NOTIFY_ONLY_THIS, 
-					(DWORD) tszChildName, NULL ) );
+					reinterpret_cast<LONG_PTR>(tszChildName), NULL ) );
 			bReturn = ( *ppObject != NULL );
 		}
 	}
@@ -1708,6 +1707,16 @@ void SVObjectClass::SetDefaultObjectAttributesSet(UINT uAttributes)
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObjectLibrary\SVObjectClass.cpp_v  $
+ * 
+ *    Rev 1.2   01 Feb 2014 10:09:14   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Changed sendmessage to use LONG_PTR instead of DWORD.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   01 Oct 2013 11:27:02   tbair
  * Project:  SVObserver

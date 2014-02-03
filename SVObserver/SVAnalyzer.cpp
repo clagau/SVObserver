@@ -5,8 +5,8 @@
 //* .Module Name     : SVAnalyzer.cpp
 //* .File Name       : $Workfile:   SVAnalyzer.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 09:27:26  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   01 Feb 2014 10:16:28  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -89,13 +89,13 @@ SVResultClass* SVAnalyzerClass::GetResultObject()
 {
 	SVObjectTypeInfoStruct info;
 	info.ObjectType = SVResultObjectType;
-	SVResultClass* pResult = ( SVResultClass* )SVSendMessage( this, SVM_GETFIRST_OBJECT, NULL, ( DWORD )&info );
+	SVResultClass* pResult = ( SVResultClass* )SVSendMessage( this, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>(&info) );
 	return pResult;
 }
 
-DWORD SVAnalyzerClass::processMessage( DWORD DwMessageID, DWORD DwMessageValue, DWORD DwMessageContext )
+LONG_PTR SVAnalyzerClass::processMessage( DWORD DwMessageID, LONG_PTR DwMessageValue, LONG_PTR DwMessageContext )
 {
-	DWORD DwResult = NULL;
+	LONG_PTR DwResult = NULL;
 
 	SVAnalyzerLevelCreateStruct createStruct;
 
@@ -186,7 +186,7 @@ DWORD SVAnalyzerClass::processMessage( DWORD DwMessageID, DWORD DwMessageValue, 
 				createStruct.ToolObjectInfo			= GetTool();
 				createStruct.InspectionObjectInfo	= GetInspection();
 				
-				DWORD l_Return = SVSendMessage( pChildObject, SVM_CREATE_ALL_OBJECTS, ( DWORD ) &createStruct, NULL );
+				LONG_PTR l_Return = SVSendMessage( pChildObject, SVM_CREATE_ALL_OBJECTS, reinterpret_cast<LONG_PTR>(&createStruct), NULL );
 
 				if( ( DwMessageContext & SVMFResetObject ) == SVMFResetObject )
 				{
@@ -224,7 +224,7 @@ DWORD SVAnalyzerClass::processMessage( DWORD DwMessageID, DWORD DwMessageValue, 
 				createStruct.ToolObjectInfo			= GetTool();
 				createStruct.InspectionObjectInfo	= GetInspection();
 				
-				DWORD l_Return = SVSendMessage( pChildObject, SVM_CONNECT_ALL_OBJECTS, ( DWORD ) &createStruct, NULL );
+				LONG_PTR l_Return = SVSendMessage( pChildObject, SVM_CONNECT_ALL_OBJECTS, reinterpret_cast<LONG_PTR>(&createStruct), NULL );
 
 				return l_Return;
 			}
@@ -337,7 +337,17 @@ BOOL SVImageAnalyzerClass::OnValidate()
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVAnalyzer.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVAnalyzer.cpp_v  $
+ * 
+ *    Rev 1.1   01 Feb 2014 10:16:28   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Changed sendmessage to use LONG_PTR instead of DWORD.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 09:27:26   bWalter
  * Project:  SVObserver

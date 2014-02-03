@@ -5,8 +5,8 @@
 //* .Module Name     : SVToolImage
 //* .File Name       : $Workfile:   SVToolImage.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   13 Aug 2013 10:44:20  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   01 Feb 2014 12:22:16  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -248,7 +248,7 @@ BOOL SVImageToolClass::SetDefaultFormulas()
 	SVObjectTypeInfoStruct lutEquationInfo;
 	lutEquationInfo.ObjectType	= SVEquationObjectType;
 	lutEquationInfo.SubType		= SVLUTEquationObjectType;
-	SVLUTEquationClass* pLUTEquation = ( SVLUTEquationClass* ) ::SVSendMessage( this, SVM_GETFIRST_OBJECT, NULL, ( DWORD ) &lutEquationInfo );
+	SVLUTEquationClass* pLUTEquation = ( SVLUTEquationClass* ) ::SVSendMessage( this, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>(&lutEquationInfo) );
 	if( pLUTEquation )
 	{
 		bRetVal = pLUTEquation->SetDefaultFormula() && bRetVal;
@@ -340,6 +340,16 @@ HRESULT SVImageToolClass::SetImageExtentToParent(unsigned long p_ulIndex )
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVToolImage.cpp_v  $
+ * 
+ *    Rev 1.3   01 Feb 2014 12:22:16   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Changed SVSendmessage and processmessage to use LONG_PTR instead of DWORD.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   13 Aug 2013 10:44:20   bWalter
  * Project:  SVObserver

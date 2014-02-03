@@ -5,8 +5,8 @@
 // * .Module Name     : D:\...\PropTreeItemEdit.cpp
 // * .File Name       : $Workfile:   PropTreeItemEdit.cpp  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.4  $
-// * .Check In Date   : $Date:   17 Jan 2014 09:22:16  $
+// * .Current Version : $Revision:   1.5  $
+// * .Check In Date   : $Date:   29 Jan 2014 11:09:14  $
 // ******************************************************************************
 
 // PropTreeItemEdit.cpp : implementation file
@@ -297,17 +297,7 @@ void SVRPropertyItemEdit::OnActivate()
 		int iButtonWidth = size.cx + 4;
 
 		SetWindowPos(NULL, m_rc.left, m_rc.top, m_rc.Width()-iButtonWidth, m_rc.Height(), SWP_NOZORDER | SWP_SHOWWINDOW);
-		CString strTmp;
-		m_vtData.toString(strTmp);
-		int iPos = strTmp.Find( _T('.')); // if numeric then position the cursor left of the decimal.
-		if( iPos > 0 && isdigit( strTmp[0]))
-		{
-			SetSel(iPos,iPos,-1);
-		}
-		else
-		{
-			SetSel(0,-1);
-		}
+		SetSel(0,-1);
 		DisplayButton();
 
 		SetFocus();
@@ -852,6 +842,16 @@ bool SVRPropertyItemEdit::SetItemValuePtr(CString& strVal)
 // ******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\PropertyTree\PropTreeItemEdit.cpp_v  $
+ * 
+ *    Rev 1.5   29 Jan 2014 11:09:14   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  873
+ * SCR Title:  Fix inconsistant GUI labels and functionality on IO pages
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Removed code that positions the cursor on the decimal of floating point numbers.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.4   17 Jan 2014 09:22:16   tbair
  * Project:  SVObserver

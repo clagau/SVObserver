@@ -5,8 +5,8 @@
 //* .Module Name     : SVToolAdjustmentDialogTwoImagePage
 //* .File Name       : $Workfile:   SVToolAdjustmentDialogTwoImagePage.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 15:40:56  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   01 Feb 2014 12:22:08  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -235,84 +235,6 @@ BOOL SVToolAdjustmentDialogTwoImagePageClass::OnInitDialog()
 				}
 			}
 
-			/*
-			// Search for first...
-			SVImageClass* pImage = ( SVImageClass* ) ::SVSendMessage( pToolSet, SVM_GETFIRST_OBJECT, NULL, ( DWORD ) &imageObjectInfo );
-			while( pImage )
-			{
-				SVImageInfoClass ImageInfo = pImage->GetImageInfo();
-
-				if( ( pImage->ObjectAttributesAllowed() & SV_HIDDEN ) == 0 )
-				{
-					long l_lBandNumber = 1;
-
-					ImageInfo.GetImageProperty( SVImagePropertyBandNumber, l_lBandNumber );
-
-#define __REMOVE_GAGE_TOOL_IMAGE
-#ifdef __REMOVE_GAGE_TOOL_IMAGE   //27 Oct 1999 - frb.
-					//
-					// Check for unwanted images here.
-					//
-					SVToolClass * pImageOwnerTool = dynamic_cast<SVToolClass *>(ImageInfo.GetOwner());
-					if(pImageOwnerTool)
-					{
-						if(!SV_IS_KIND_OF(pImageOwnerTool, SVGageToolClass))
-						{
-							// Insert Image into combo box...
-							if ( l_lBandNumber == 1)
-							{
-								imageList.Add( pImage );
-							}
-						}
-					}
-					else
-					{
-						// Insert Image into combo box...
-						if ( l_lBandNumber == 1)
-						{
-							imageList.Add( pImage );
-						}
-					}
-#else
-					// Insert Image into combo box...
-					if ( l_lBandNumber == 1)
-					{
-						imageList.Add( pImage );
-					}
-#endif
-				}
-
-				// Search for next image...
-				pImage = ( SVImageClass *) ::SVSendMessage( pToolSet, SVM_GETNEXT_OBJECT, ( DWORD ) pImage, ( DWORD ) &imageObjectInfo );
-
-				//
-				//   JMS - 01/18/2002
-				//   This section of code was removed to allow the combo boxes to contain all
-				//   images contained within the tool set.  This section of code should never be
-				//   added to this method due to existing specifications of this tool's
-				//   functionality.
-				//			
-				// Ensure only image sources which are produced by tools above the current tool....
-				//if( pImage )
-				//{
-				//	SVToolClass* pImageOwnerTool = ( SVToolClass* ) pImage->GetAncestor( SVToolObjectType );
-				//	ASSERT( pImageOwnerTool );
-				//	BOOL bPrevious = FALSE;
-				//	for( int i = 0; i < pToolSet->getCurrentIndex(); ++ i )
-				//	{
-				//		if( pToolSet->GetAt( i ) == pImageOwnerTool )
-				//		{
-				//			bPrevious = TRUE;
-				//			break;
-				//		}
-				//	}
-				//
-				//	if( ! bPrevious )
-				//		break;
-				//}
-
-			}
-			*/
 
 			firstImageCtrl.UpdateImageInfo( pFirstSourceImage );
 			firstImageCtrl.refresh();
@@ -331,7 +253,7 @@ BOOL SVToolAdjustmentDialogTwoImagePageClass::OnInitDialog()
 			SVObjectTypeInfoStruct operatorObjectInfo;
 			operatorObjectInfo.ObjectType = SVLongValueObjectType;
 			operatorObjectInfo.EmbeddedID = SVArithmeticOperatorObjectGuid;
-			pArithmeticOperator = ( SVLongValueObjectClass* ) ::SVSendMessage( pTool, SVM_GETFIRST_OBJECT, NULL, ( DWORD ) &operatorObjectInfo );
+			pArithmeticOperator = ( SVLongValueObjectClass* ) ::SVSendMessage( pTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>(&operatorObjectInfo) );
 			// Fill Arithmetic Combo...
 			operatorCtrl.SetItemData( operatorCtrl.AddString( _T( "AND" ) ), ( DWORD ) SVImageAnd );
 			operatorCtrl.SetItemData( operatorCtrl.AddString( _T( "OR" ) ),  ( DWORD ) SVImageOr );	
@@ -435,7 +357,17 @@ void SVToolAdjustmentDialogTwoImagePageClass::OnSelchangeOperatorCombo()
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVToolAdjustmentDialogTwoImagePage.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVToolAdjustmentDialogTwoImagePage.cpp_v  $
+ * 
+ *    Rev 1.1   01 Feb 2014 12:22:08   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Changed SVSendmessage and processmessage to use LONG_PTR instead of DWORD.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 15:40:56   bWalter
  * Project:  SVObserver

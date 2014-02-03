@@ -5,8 +5,8 @@
 //* .Module Name     : SVBlobAnalyzer
 //* .File Name       : $Workfile:   SVBlobAnalyzer.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 09:43:26  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   01 Feb 2014 10:23:12  $
 //******************************************************************************
 
 #ifndef SVBLOBANALYZERCLASS__INCLUDED
@@ -174,7 +174,7 @@ public:
 	virtual BOOL onRun( SVRunStatusClass& RRunStatus );
 	virtual BOOL OnValidate();
 
-	virtual DWORD processMessage( DWORD DwMessageID, DWORD DwMessageValue, DWORD DwMessageContext );
+	virtual LONG_PTR processMessage( DWORD DwMessageID, LONG_PTR DwMessageValue, LONG_PTR DwMessageContext );
 
 	virtual BOOL IsPtOverResult(CPoint point );
 	virtual	void DisplayAnalyzerResult( void);
@@ -268,7 +268,17 @@ private:
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVBlobAnalyzer.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVBlobAnalyzer.h_v  $
+ * 
+ *    Rev 1.1   01 Feb 2014 10:23:12   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Changed sendmessage to use LONG_PTR instead of DWORD.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 09:43:26   bWalter
  * Project:  SVObserver

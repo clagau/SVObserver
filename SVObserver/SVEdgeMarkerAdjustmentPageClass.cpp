@@ -5,8 +5,8 @@
 //* .Module Name     : SVEdgeMarkerAdjustmentPageClass
 //* .File Name       : $Workfile:   SVEdgeMarkerAdjustmentPageClass.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 10:23:58  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   01 Feb 2014 10:32:26  $
 //******************************************************************************
 
 
@@ -608,7 +608,7 @@ BOOL SVEdgeMarkerAdjustmentPageClass::OnInitDialog()
 		SVObjectTypeInfoStruct lineObjectInfo;
 		lineObjectInfo.ObjectType = SVLineObjectType;
 
-		pLine = ( SVLineClass* )::SVSendMessage( PCurrentAnalyzer, SVM_GETFIRST_OBJECT, NULL, ( DWORD )&lineObjectInfo );
+		pLine = ( SVLineClass* )::SVSendMessage( PCurrentAnalyzer, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>(&lineObjectInfo) );
 	}
 
 	setScrollRange( &UpperSliderCtrl, static_cast<int>(Normalizer.GetRealRangeMin()), static_cast<int>(Normalizer.GetRealRangeMax()) );
@@ -787,7 +787,17 @@ BOOL SVEdgeMarkerAdjustmentPageClass::OnSetActive()
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVEdgeMarkerAdjustmentPageClass.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVEdgeMarkerAdjustmentPageClass.cpp_v  $
+ * 
+ *    Rev 1.1   01 Feb 2014 10:32:26   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Changed sendmessage to use LONG_PTR instead of DWORD.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 10:23:58   bWalter
  * Project:  SVObserver

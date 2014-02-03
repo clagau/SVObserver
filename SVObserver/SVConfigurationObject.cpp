@@ -5,8 +5,8 @@
 //* .Module Name     : SVConfigurationObject
 //* .File Name       : $Workfile:   SVConfigurationObject.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.14  $
-//* .Check In Date   : $Date:   30 Oct 2013 10:45:18  $
+//* .Current Version : $Revision:   1.16  $
+//* .Check In Date   : $Date:   01 Feb 2014 10:23:10  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -812,9 +812,9 @@ HRESULT SVConfigurationObject::LoadConfiguration(SVTreeType& rTree)
 
 			if( bOk )
 			{
-				TheSVObserverApp.DwCurrentLoadingVersion = svValue;
+				TheSVObserverApp.setLoadingVersion( svValue );
 
-				m_ulVersion = TheSVObserverApp.DwCurrentLoadingVersion;
+				m_ulVersion = TheSVObserverApp.getLoadingVersion();
 			}
 
 			if (SVNavigateTreeClass::GetItem( rTree, CTAG_ONLINE_DISPLAY, htiChild, svValue) )
@@ -1140,8 +1140,6 @@ HRESULT SVConfigurationObject::LoadConfiguration(SVTreeType& rTree)
 											if ( SVNavigateTreeClass::GetItem( rTree, CTAG_SIZE, htiBand, svValue ) )
 											{
 												int iSize = svValue;
-
-												//ASSERT( iSize > 0 );
 
 												if ( svLight.Band( i ).Create( iSize ) )
 												{
@@ -2121,7 +2119,7 @@ HRESULT SVConfigurationObject::LoadConfiguration(SVTreeType& rTree)
 								AddDigitalInput(pPPQ, csDataName, lPPQPosition);
 							}// end if
 
-							// This means it is a Digital input
+							// This means it is a Remote input
 							if( _T("Remote") == strType )
 							{								
 								_variant_t l_Variant = 0.0;
@@ -2613,8 +2611,8 @@ HRESULT SVConfigurationObject::ObserverUpdate( const SVRenameObject& p_rData )
 		if( pOutputs )
 		{
 			::SVSendMessage( pOutputs, SVM_OBJECT_RENAMED,
-				reinterpret_cast <DWORD> ( l_pObject ),
-				(DWORD) (LPCTSTR) p_rData.m_OldName.c_str() );
+				reinterpret_cast<LONG_PTR>( l_pObject ),
+				reinterpret_cast<LONG_PTR>( static_cast<LPCTSTR>( p_rData.m_OldName.c_str() )) );
 		}
 		else
 		{
@@ -2629,8 +2627,8 @@ HRESULT SVConfigurationObject::ObserverUpdate( const SVRenameObject& p_rData )
 			if( pPPQ )
 			{
 				::SVSendMessage( pPPQ, SVM_OBJECT_RENAMED,
-					reinterpret_cast <DWORD> ( l_pObject ),
-					(DWORD) (LPCTSTR) p_rData.m_OldName.c_str() );
+					reinterpret_cast<LONG_PTR>( l_pObject ),
+					reinterpret_cast<LONG_PTR>( static_cast<LPCTSTR>( p_rData.m_OldName.c_str() )));
 
 				pPPQ->RebuildOutputList();
 			}
@@ -2746,7 +2744,7 @@ BOOL SVConfigurationObject::SaveEnvironment(SVTreeType& rTree)
 
 		if( bOk )
 		{
-			_variant_t svValue = TheSVObserverApp.DwCurrentVersion;
+			_variant_t svValue = TheSVObserverApp.getCurrentVersion();
 			bOk = SVNavigateTreeClass::AddItem( rTree, hEnvBranch, CTAG_VERSION_NUMBER, svValue );
 		}
 
@@ -2756,16 +2754,6 @@ BOOL SVConfigurationObject::SaveEnvironment(SVTreeType& rTree)
 			_variant_t svValue = iType;
 			bOk = SVNavigateTreeClass::AddItem( rTree, hEnvBranch, CTAG_CONFIGURATION_TYPE, svValue );
 		}
-
-		/*
-		if( bOk )
-		{
-			bool bIsColorMode = TheSVObserverApp.IsColorSVIM;	// garbage flag!!! saving a function pointer... never used anyway... replaced by CTAG_CONFIGURATION_TYPE
-
-			svValue.SetValue( bIsColorMode );
-			bOk = SVNavigateTreeClass::AddItem( rTree, hEnvBranch, CTAG_COLOR_SVIM_MODE_ACTIVE, svValue );
-		}
-		*/
 
 		if ( bOk )
 		{
@@ -5133,6 +5121,26 @@ bool SVConfigurationObject::HasCameraTrigger(SVPPQObject* p_pPPQ) const
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVConfigurationObject.cpp_v  $
+ * 
+ *    Rev 1.16   01 Feb 2014 10:23:10   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Changed sendmessage to use LONG_PTR instead of DWORD.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.15   31 Jan 2014 17:16:26   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  884
+ * SCR Title:  Update Source Code Files to Follow New Programming Standards and Guidelines
+ * Checked in by:  bWalter;  Ben Walter
+ * Change Description:  
+ *   Changed to follow guidelines more closely.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.14   30 Oct 2013 10:45:18   tbair
  * Project:  SVObserver

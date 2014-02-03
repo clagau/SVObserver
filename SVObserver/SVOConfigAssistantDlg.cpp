@@ -5,8 +5,8 @@
 //* .Module Name     : SVOConfigAssistantDlg
 //* .File Name       : $Workfile:   SVOConfigAssistantDlg.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.9  $
-//* .Check In Date   : $Date:   02 Dec 2013 11:03:18  $
+//* .Current Version : $Revision:   1.11  $
+//* .Check In Date   : $Date:   01 Feb 2014 11:39:20  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -817,7 +817,7 @@ void CSVOConfigAssistantDlg::CreateDefaultFor05SVIM()
 		sInspectionName = GetNextInspectionName();
 		m_InspectList.AddInspectionToList(sInspectionName,sInspectionName);
 		m_InspectList.SetToolsetImage(sInspectionName,sCameraName);
-        m_InspectList.SetNewDisableMethod(sInspectionName,_T( "Method 1" ));
+		m_InspectList.SetNewDisableMethod( sInspectionName, _T( "Method 1" ) );
 		m_InspectList.SetEnableAuxiliaryExtent( sInspectionName, 0 );
 		m_slInspectionNamesUsed.AddTail(sInspectionName);
 		m_slInspectionLabelsUsed.AddTail(sInspectionName);
@@ -855,7 +855,7 @@ void CSVOConfigAssistantDlg::CreateDefaultForRGBSVIM()
 		sInspectionName = GetNextInspectionName();
 		m_InspectList.AddInspectionToList(sInspectionName,sInspectionName);
 		m_InspectList.SetToolsetImage(sInspectionName,sCameraName);
-        m_InspectList.SetNewDisableMethod(sInspectionName,_T( "Method 1" ));
+		m_InspectList.SetNewDisableMethod( sInspectionName, _T( "Method 1" ) );
 		m_InspectList.SetEnableAuxiliaryExtent( sInspectionName, 0 );
 		m_slInspectionNamesUsed.AddTail(sInspectionName);
 		m_slInspectionLabelsUsed.AddTail(sInspectionName);
@@ -975,11 +975,11 @@ void CSVOConfigAssistantDlg::CreateDefaultForSVIMDigitalHub(int iNumber)
 	CString sInspectionName;
 	CString sPPQName;
 
-	ASSERT(    GetProductType() == SVIM_PRODUCT_D1_HUB
-	        || GetProductType() == SVIM_PRODUCT_D2_HUB
-	        || GetProductType() == SVIM_PRODUCT_D3_HUB
-	        || GetProductType() == SVIM_PRODUCT_X1_HUB
-	       );
+	ASSERT( GetProductType() == SVIM_PRODUCT_D1_HUB
+		|| GetProductType() == SVIM_PRODUCT_D2_HUB
+		|| GetProductType() == SVIM_PRODUCT_D3_HUB
+		|| GetProductType() == SVIM_PRODUCT_X1_HUB
+	);
 
 	const int NUM_CAMERAS_PER_BOARD = 3;
 
@@ -2742,7 +2742,7 @@ BOOL CSVOConfigAssistantDlg::SendInspectionDataToConfiguration()
 				const CString& importFilename = pInsObj->GetImportFilename();
 				if (!importFilename.IsEmpty())
 				{
-					unsigned long ulVersion = TheSVObserverApp.DwCurrentVersion;
+					unsigned long ulVersion = TheSVObserverApp.getCurrentVersion();
 
 					SVInspectionImportHelper importer(importFilename, sFileName, sToolsetImage, ulVersion);
 					SVString title = _T( "Importing Inspection..." );
@@ -3192,8 +3192,8 @@ BOOL CSVOConfigAssistantDlg::SendDataToConfiguration()
 				if (pTmpObj->HasInspectionNameChange())
 				{
 					::SVSendMessage( pcfgInsPro,SVM_OBJECT_RENAMED,
-						reinterpret_cast <DWORD> ( static_cast <SVObjectClass*> (pcfgInsPro) ), 
-						(DWORD) (LPCTSTR) pTmpObj->GetOrginalInspectionName() );
+						reinterpret_cast<LONG_PTR>( static_cast<SVObjectClass*>(pcfgInsPro) ), 
+						reinterpret_cast<LONG_PTR>( static_cast<LPCTSTR>(pTmpObj->GetOrginalInspectionName())) );
 					SVPPQObject *pPPQ;
 					SVOutputObjectList *pOutputObjList;
 					long lCount;
@@ -3204,8 +3204,8 @@ BOOL CSVOConfigAssistantDlg::SendDataToConfiguration()
 					if (pOutputObjList)
 					{
 						::SVSendMessage( pOutputObjList, SVM_OBJECT_RENAMED,
-							reinterpret_cast<DWORD> (static_cast <SVObjectClass*> (pcfgInsPro)),
-							(DWORD) (LPCTSTR) pTmpObj->GetOrginalInspectionName() );
+							reinterpret_cast<LONG_PTR>(static_cast <SVObjectClass*> (pcfgInsPro)),
+							reinterpret_cast<LONG_PTR>(static_cast<LPCTSTR>( pTmpObj->GetOrginalInspectionName())) );
 					}
 					
 					pConfig->GetPPQCount(lCount);
@@ -3215,8 +3215,8 @@ BOOL CSVOConfigAssistantDlg::SendDataToConfiguration()
 						if (pPPQ)
 						{
 							::SVSendMessage( pPPQ, SVM_OBJECT_RENAMED,
-								reinterpret_cast<DWORD> (static_cast<SVObjectClass*>(pcfgInsPro)),
-								(DWORD) (LPCTSTR) pTmpObj->GetOrginalInspectionName() );
+								reinterpret_cast<LONG_PTR>(static_cast<SVObjectClass*>(pcfgInsPro)),
+								reinterpret_cast<LONG_PTR>(static_cast<LPCTSTR>( pTmpObj->GetOrginalInspectionName())) );
 						} //if (pPPQ)
 					} //for ppqcount
 				} // if name has changed
@@ -3410,10 +3410,9 @@ BOOL CSVOConfigAssistantDlg::GetConfigurationForExisting()
 				l_lEnable = 0;
 			}
 			m_InspectList.SetEnableAuxiliaryExtent( sInspectLabel, l_lEnable );
-        }
-    }
+		}
+	}
 	//end of inspection section...
-	
 	
 	//load PPQ section...
 	pConfig->GetPPQCount(lCfgPPQCnt);
@@ -4972,6 +4971,26 @@ bool CSVOConfigAssistantDlg::IsFileAcquisition(int iDig) const
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVOConfigAssistantDlg.cpp_v  $
+ * 
+ *    Rev 1.11   01 Feb 2014 11:39:20   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Changed SVSendmessage and processmessage to use LONG_PTR instead of DWORD.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.10   31 Jan 2014 17:16:36   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  884
+ * SCR Title:  Update Source Code Files to Follow New Programming Standards and Guidelines
+ * Checked in by:  bWalter;  Ben Walter
+ * Change Description:  
+ *   Changed to follow guidelines more closely.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.9   02 Dec 2013 11:03:18   tbair
  * Project:  SVObserver

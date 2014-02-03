@@ -5,8 +5,8 @@
 //* .Module Name     : SVToolAdjustmentDialogSheetClass
 //* .File Name       : $Workfile:   SVToolAdjustmentDialogSheetClass.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.3  $
-//* .Check In Date   : $Date:   14 Jan 2014 12:31:18  $
+//* .Current Version : $Revision:   1.4  $
+//* .Check In Date   : $Date:   01 Feb 2014 12:22:06  $
 //******************************************************************************
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -122,7 +122,7 @@ void SVToolAdjustmentDialogSheetClass::addPages()
 	SVObjectTypeInfoStruct lutObjectInfo;
 	lutObjectInfo.ObjectType = SVUnaryImageOperatorObjectType;
 	lutObjectInfo.SubType	 = SVLUTOperatorObjectType;
-	if( ::SVSendMessage( &m_rTool, SVM_GETFIRST_OBJECT, NULL, ( DWORD ) &lutObjectInfo ) )
+	if( ::SVSendMessage( &m_rTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>(&lutObjectInfo) ) )
 	{
 		bHasLUT = TRUE;
 	}
@@ -430,6 +430,16 @@ SVToolClass* SVToolAdjustmentDialogSheetClass::GetTool() const
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVToolAdjustmentDialogSheetClass.cpp_v  $
+ * 
+ *    Rev 1.4   01 Feb 2014 12:22:06   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Changed SVSendmessage and processmessage to use LONG_PTR instead of DWORD.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   14 Jan 2014 12:31:18   bwalter
  * Project:  SVObserver

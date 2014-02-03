@@ -5,8 +5,8 @@
 //* .Module Name     : SVOperator
 //* .File Name       : $Workfile:   SVOperator.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   13 Aug 2013 10:30:00  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   01 Feb 2014 11:55:26  $
 //******************************************************************************
 
 #ifndef SVOPERATOR_H
@@ -38,7 +38,7 @@ public:
 	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure );
 
 protected:
-	virtual DWORD processMessage(DWORD DwMessageID, DWORD DwMessageValue, DWORD DwMessageContext);
+	virtual LONG_PTR processMessage(DWORD DwMessageID, DWORD DwMessageValue, DWORD DwMessageContext);
 
 private:
 	void init();
@@ -52,6 +52,16 @@ private:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVOperator.h_v  $
+ * 
+ *    Rev 1.2   01 Feb 2014 11:55:26   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Changed SVSendmessage and processmessage to use LONG_PTR instead of DWORD.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   13 Aug 2013 10:30:00   bWalter
  * Project:  SVObserver

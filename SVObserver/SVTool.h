@@ -5,8 +5,8 @@
 //* .Module Name     : SVTool
 //* .File Name       : $Workfile:   SVTool.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   11 Nov 2013 07:23:56  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   01 Feb 2014 12:18:40  $
 //******************************************************************************
 
 #ifndef SVTOOL_H
@@ -276,7 +276,7 @@ protected:
 	virtual void removeEmbeddedExtents( bool p_DisconnectExtents = true );
 
 	virtual BOOL onRun( SVRunStatusClass& RRunStatus );
-	virtual DWORD processMessage( DWORD DwMessageID, DWORD DwMessageValue, DWORD DwMessageContext );
+	virtual LONG_PTR processMessage( DWORD DwMessageID, LONG_PTR DwMessageValue, LONG_PTR DwMessageContext );
 
 	virtual HRESULT UpdateOverlayIDs( SVExtentMultiLineStruct& p_rMultiLine );
 
@@ -349,6 +349,16 @@ private:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVTool.h_v  $
+ * 
+ *    Rev 1.3   01 Feb 2014 12:18:40   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Changed SVSendmessage and processmessage to use LONG_PTR instead of DWORD.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   11 Nov 2013 07:23:56   tbair
  * Project:  SVObserver

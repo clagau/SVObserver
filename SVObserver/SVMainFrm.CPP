@@ -5,10 +5,11 @@
 //* .Module Name     : SVMainFrm
 //* .File Name       : $Workfile:   SVMainFrm.CPP  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.3  $
-//* .Check In Date   : $Date:   01 Oct 2013 14:57:18  $
+//* .Current Version : $Revision:   1.4  $
+//* .Check In Date   : $Date:   31 Jan 2014 17:16:30  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVMainFrm.h"
 #include "SVSystemLibrary/SVMemoryChecker.h"
@@ -37,14 +38,14 @@
 #include "SVObjectScriptParserSEC.h"	// old and clunky
 #include "SVObjectScriptParserSVX.h"	// new speedy
 #include "SVInspectionTreeParser.h"		// new Inspection XML (NOT object script)
-
 #include "SVOLicenseManager/SVOLicenseManager.h"
+#pragma endregion Includes
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
-
 
 extern HRESULT GlobalRCGetMode( unsigned long* p_plMode );
 
@@ -104,10 +105,7 @@ BEGIN_MESSAGE_MAP(SVMainFrame, CMDIFrameWnd)
 	ON_MESSAGE(SV_REFRESH_STATUS_BAR, InvalidateStatusBar )
 END_MESSAGE_MAP()
 
-//******************************************************************************
-// Constructor(s):
-//******************************************************************************
-
+#pragma region Constructor
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : // e.g. Standard constructor of class ...
 // -----------------------------------------------------------------------------
@@ -146,10 +144,6 @@ SVMainFrame::SVMainFrame()
 	m_hDisplayChangedEvent = ::CreateEvent( NULL, TRUE, FALSE, NULL );
 }
 
-//******************************************************************************
-// Destructor(s):
-//******************************************************************************
-
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : // e.g. Standard destructor of class ...
 // -----------------------------------------------------------------------------
@@ -177,6 +171,7 @@ SVMainFrame::~SVMainFrame()
 
 	m_BackgroundBrush.DeleteObject();
 }
+#pragma endregion Constructor
 
 ////////////////////////////////////////////////////////////////////////////////
 // Load OEM Icon
@@ -210,7 +205,6 @@ void SVMainFrame::LoadOEMIcon()
 		{
 			SetIcon( m_oemSmallIcon,FALSE );
 		}
-
 	}// end if
 }
 
@@ -226,20 +220,6 @@ BOOL SVMainFrame::Create( LPCTSTR lpszClassName, LPCTSTR lpszWindowName, DWORD d
 {
 	return CWnd::Create( lpszClassName, lpszWindowName, dwStyle, rect, pParentWnd, nID, pContext );
 }
-
-
-
-//******************************************************************************
-// Operation(s) Of Writing Access And Data Exchange:
-//******************************************************************************
-
-//******************************************************************************
-// Operation(s) Of Reading Access:
-//******************************************************************************
-
-//******************************************************************************
-// Operation(s) Of Representation:
-//******************************************************************************
 
 ////////////////////////////////////////////////////////////////////////////////
 // Creating Operations(s)
@@ -307,12 +287,7 @@ BOOL SVMainFrame::CreateClient(LPCREATESTRUCT lpCreateStruct, CMenu* pWindowMenu
 	::BringWindowToTop( m_hWndMDIClient );
 
 	return TRUE;
-
 };
-
-//******************************************************************************
-// Operation(s) Of Process:
-//******************************************************************************
 
 //******************************************************************************
 // Class Wizard Generated Virtual Function(s):
@@ -396,7 +371,6 @@ void SVMainFrame::SetStatusInfoText( LPCTSTR SIText )
 	}
 }
 
-
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : ShowAllBars
 // -----------------------------------------------------------------------------
@@ -426,7 +400,6 @@ void SVMainFrame::SetStatusInfoText( LPCTSTR SIText )
 ////////////////////////////////////////////////////////////////////////////////
 void SVMainFrame::ShowAllBars( BOOL Show, BOOL RememberOldState /*= FALSE*/ )
 {
-
 	ShowControlBar( &m_wndStatusBar, TRUE, FALSE ); //statusBarWasShown, FALSE );
 
 	if( Show )
@@ -456,43 +429,6 @@ void SVMainFrame::ShowAllBars( BOOL Show, BOOL RememberOldState /*= FALSE*/ )
 
 	RecalcLayout();
 }
-
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : UpdateApplicationBar
-// -----------------------------------------------------------------------------
-// .Description : ...
-//              :
-// -----------------------------------------------------------------------------
-// .Input(s)
-//	 Type				Name				Description
-//	: 
-//  :
-// .Output(s)
-//	:
-//  :
-// .Return Value
-//	: 
-// -----------------------------------------------------------------------------
-// .Import Function Reference(s)
-//	:
-// -----------------------------------------------------------------------------
-// .Import Variable Reference(s)
-//	:
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :27.05.1997 RO			First Implementation
-//	:
-////////////////////////////////////////////////////////////////////////////////
-/*
-void SVMainFrame::UpdateApplicationBar()
-{
-	applicationBar.UpdateBar();
-
-	OnUpdateFrameTitle( TRUE );
-}
-*/
-
 
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : OnUpdateFrameTitle
@@ -529,10 +465,10 @@ void SVMainFrame::OnUpdateFrameTitle( BOOL bAddToTitle )
 	CMDIChildWnd* pActiveChild;
 	CDocument* pDocument = GetActiveDocument();
 	if ( bAddToTitle &&
-	     ( pActiveChild = MDIGetActive() ) != NULL &&
-	     ( pActiveChild->GetStyle() & WS_MAXIMIZE ) == 0 &&
-	     ( pDocument != NULL || 
-	      ( pDocument = pActiveChild->GetActiveDocument() ) != NULL ) )
+		( pActiveChild = MDIGetActive() ) != NULL &&
+		( pActiveChild->GetStyle() & WS_MAXIMIZE ) == 0 &&
+		( pDocument != NULL || 
+			( pDocument = pActiveChild->GetActiveDocument() ) != NULL ) )
 	{
 		UpdateFrameTitleForDocument( pDocument->GetTitle() );
 	}
@@ -541,7 +477,6 @@ void SVMainFrame::OnUpdateFrameTitle( BOOL bAddToTitle )
 		UpdateFrameTitleForDocument( NULL );
 	}
 }
-
 
 void SVMainFrame::UpdateFrameTitleForDocument( LPCTSTR lpszDocName )
 {
@@ -606,11 +541,9 @@ void SVMainFrame::UpdateFrameTitleForDocument( LPCTSTR lpszDocName )
 	}
 }
 
-
 //******************************************************************************
 // Message Operation(s):
 //******************************************************************************
-
 
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : // e.g. Run member function of class ...
@@ -646,7 +579,6 @@ BOOL SVMainFrame::OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext* pContext)
 	// SVMainFrame::CreateClient function to perform the MDIClient window
 }
 
-
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : // e.g. Run member function of class ...
 // -----------------------------------------------------------------------------
@@ -677,7 +609,9 @@ BOOL SVMainFrame::OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext* pContext)
 int SVMainFrame::OnCreate( LPCREATESTRUCT lpCreateStruct )
 {
 	if( CMDIFrameWnd::OnCreate( lpCreateStruct ) == -1 )
+	{
 		return -1;
+	}
 
 	if( !m_wndToolBar.Create( this ) ||
 		!m_wndToolBar.LoadToolBar( IDR_MAINFRAME ) )
@@ -709,7 +643,6 @@ int SVMainFrame::OnCreate( LPCREATESTRUCT lpCreateStruct )
 	PPQBar.SetBarStyle( PPQBar.GetBarStyle() | CBRS_SIZE_DYNAMIC | CBRS_TOOLTIPS | CBRS_GRIPPER | CBRS_FLYBY );
 	PPQBar.EnableDocking( CBRS_ALIGN_BOTTOM | CBRS_ALIGN_TOP );
 
-
 	DockControlBar( &m_wndToolBar );
 	DockControlBar( &PPQBar, AFX_IDW_DOCKBAR_BOTTOM );
 
@@ -718,7 +651,6 @@ int SVMainFrame::OnCreate( LPCREATESTRUCT lpCreateStruct )
 	{
 		LoadBarState(_T("Bar States"));
 	}
-
 
 	ShowAllBars(TRUE, TRUE);
 
@@ -828,7 +760,6 @@ void SVMainFrame::OnSetFocus(CWnd* pOldWnd)
 	CMDIFrameWnd::OnSetFocus(pOldWnd);
 	
 	// TODO: Code für die Behandlungsroutine für Nachrichten hier einfügen
-	
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -912,7 +843,6 @@ void SVMainFrame::OnClose()
 		l_bAllowAccess = true;
 	}
 
-	
 	if( l_bAllowAccess )
 	{
 		if ( SVSVIMStateClass::CheckState( SV_STATE_REGRESSION ) )
@@ -924,7 +854,6 @@ void SVMainFrame::OnClose()
 		{
 			TheSVObserverApp.OnStop();
 		}
-
 
 		// Store current bar state...
 		SaveBarState( _T( "Bar States" ) );
@@ -1072,7 +1001,7 @@ void SVMainFrame::OnUpdateStatusInfo( CCmdUI *pCmdUI )
 					l_strMode += _T("Changing ");
 					break;
 				}
-				default :
+				default:
 				{
 					l_strMode += _T("Undefined");
 				}
@@ -1090,26 +1019,6 @@ void SVMainFrame::OnUpdateStatusInfo( CCmdUI *pCmdUI )
 
 			break;
 		}
-		/*
-		case ID_INDICATOR_FREE_MEMORY:  // Status Bar Free Memory
-		{
-			__int64 l_FreeMemory = SVMemoryChecker::GetFreeProcessMemorySize();
-
-			CString l_strFreeMemory;
-			l_strFreeMemory.Format( _T( "Free: %I64dMB" ), l_FreeMemory );
-
-			pCmdUI->Enable();
-
-			CClientDC DC( NULL );
-			int l_Width = DC.GetTextExtent( l_strFreeMemory ).cx - ( l_strFreeMemory.GetLength() * 2 );
-
-			m_wndStatusBar.SetPaneInfo( pCmdUI->m_nIndex, ID_INDICATOR_FREE_MEMORY, 0, l_Width );
-			pCmdUI->SetText( l_strFreeMemory );
-
-			break;
-		}
-		*/
-
 		case ID_INDICATOR_GIGE_LICENSE_ERROR:
 		{
 			bool l_bMatroxError = false;
@@ -1161,11 +1070,14 @@ void SVMainFrame::OnUpdateStatusInfo( CCmdUI *pCmdUI )
 			}
 			break;
 		}
-
+		default:
+		{
+			// Do nothing.
+			break;
+		}
 	}
 	m_wndStatusBar.Invalidate();
 }
-
 
 LRESULT SVMainFrame::InvalidateStatusBar( WPARAM wParam, LPARAM lParam)
 {
@@ -1255,7 +1167,6 @@ void SVMainFrame::OnViewPPQBar()
 	RecalcLayout();
 }
 
-
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : OnViewToolBar
 // -----------------------------------------------------------------------------
@@ -1300,8 +1211,6 @@ void SVMainFrame::OnViewToolBar()
 	RecalcLayout();
 }
 
-
-
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : OnUpdateViewPPQBar
 // -----------------------------------------------------------------------------
@@ -1338,11 +1247,14 @@ void SVMainFrame::OnUpdateViewPPQBar( CCmdUI* pCmdUI )
 	pCmdUI->Enable(bEnable);
 
 	if( PPQBar.IsWindowVisible() )
+	{
 		pCmdUI->SetCheck( 1 );
+	}
 	else
+	{
 		pCmdUI->SetCheck( 0 );
+	}
 }
-
 
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : OnUpdateViewToolbar
@@ -1384,7 +1296,6 @@ void SVMainFrame::OnUpdateViewToolbar( CCmdUI* pCmdUI )
 		pCmdUI->SetCheck( 0 );
 	}
 }
-
 
 HRESULT SVMainFrame::ParseToolsetScripts( SVTreeType& p_rTree )
 {
@@ -1633,63 +1544,63 @@ LRESULT SVMainFrame::OnEndObjectCreation(WPARAM wParam, LPARAM lParam)
 void SVMainFrame::OnConfigurationFinishedInitializing()
 {
 	//
-    // Finally indicate to the 'world' that the configuration is loaded
-    // and ready to run or test.
-    //
-    // All operations that need to happen after the configuration is fully
-    // loaded and initialized should go here
+	// Finally indicate to the 'world' that the configuration is loaded
+	// and ready to run or test.
+	//
+	// All operations that need to happen after the configuration is fully
+	// loaded and initialized should go here
 
-    //
-    // Update the IO views.  13 Jan 2000 - frb.
-    //
+	//
+	// Update the IO views.  13 Jan 2000 - frb.
+	//
 
 	SVIODoc* l_pIODoc( TheSVObserverApp.GetIODoc() );
 
-    if( l_pIODoc != NULL )
-    {
-			SVIOController* l_pIOController( l_pIODoc->GetIOController() );
+	if( l_pIODoc != NULL )
+	{
+		SVIOController* l_pIOController( l_pIODoc->GetIOController() );
 
-			if( l_pIOController != NULL )
-			{
-				l_pIOController->RebuildOutputList();
-			}
+		if( l_pIOController != NULL )
+		{
+			l_pIOController->RebuildOutputList();
+		}
 
-			l_pIODoc->UpdateAllViews( NULL );
-    }// end if
+		l_pIODoc->UpdateAllViews( NULL );
+	}// end if
 
-    TheSVObserverApp.UpdateAllMenuExtrasUtilities();
+	TheSVObserverApp.UpdateAllMenuExtrasUtilities();
 
-    //
-    // Set the tool selected for an operator to move if any.
-    // 26 Jan 2000 - frb.
-    //
-    PostMessage( SV_SET_TOOL_SELECTED_IN_TOOL_VIEW, (WPARAM) TRUE );
+	//
+	// Set the tool selected for an operator to move if any.
+	// 26 Jan 2000 - frb.
+	//
+	PostMessage( SV_SET_TOOL_SELECTED_IN_TOOL_VIEW, (WPARAM) TRUE );
 
-    //
-    // Indicate to the world that a configuration is loaded, parsed,
-    // and is ready to run.
-    //
-    SVSVIMStateClass::AddState( SV_STATE_READY );
-    SVSVIMStateClass::RemoveState( SV_STATE_UNAVAILABLE | SV_STATE_LOADING );
+	//
+	// Indicate to the world that a configuration is loaded, parsed,
+	// and is ready to run.
+	//
+	SVSVIMStateClass::AddState( SV_STATE_READY );
+	SVSVIMStateClass::RemoveState( SV_STATE_UNAVAILABLE | SV_STATE_LOADING );
 
-    //
-    // If the configuration is required to start immediately after loading
-    // or a GoOnline command was received from SVFocusNT,
-    // then start the toolset, i.e. go 'online'.
-    //
-    if ( TheSVObserverApp.ShouldRunLastEnvironmentAutomatically ||
-	    SVSVIMStateClass::CheckState( SV_STATE_START_PENDING ) )
-    {
-	    PostMessage ( WM_COMMAND, MAKEWPARAM (ID_MODE_RUN, 0), 0 );
-    }
+	//
+	// If the configuration is required to start immediately after loading
+	// or a GoOnline command was received from SVFocusNT,
+	// then start the toolset, i.e. go 'online'.
+	//
+	if ( TheSVObserverApp.getShouldRunLastEnvironmentAutomatically() ||
+		SVSVIMStateClass::CheckState( SV_STATE_START_PENDING ) )
+	{
+		PostMessage ( WM_COMMAND, MAKEWPARAM (ID_MODE_RUN, 0), 0 );
+	}
 
-    //
-    // See if this configuration was downloaded from a remote computer.
-    //
-    if ( mbNotifyCommRC )
-    {
-	    mbNotifyCommRC = FALSE;
-    }
+	//
+	// See if this configuration was downloaded from a remote computer.
+	//
+	if ( mbNotifyCommRC )
+	{
+		mbNotifyCommRC = FALSE;
+	}
 
 	TheSVObserverApp.RemoveUnusedFiles();
 }
@@ -1914,15 +1825,15 @@ void SVMainFrame::SetNotifyCommRC()
 // 
 //
 LRESULT SVMainFrame::OnMsgSetToolSelected( 
-    WPARAM wParam,       // TRUE to set tool, FALSE to clear tool
-    LPARAM lParam
+	WPARAM wParam,       // TRUE to set tool, FALSE to clear tool
+	LPARAM lParam
 )
 {
-    BOOL bSetTool = (BOOL)wParam;
+	BOOL bSetTool = (BOOL)wParam;
 
 	TheSVObserverApp.SetSelectedToolForOperatorMove( bSetTool );
 
-  	return (LRESULT)TRUE;
+	return (LRESULT)TRUE;
 }
 
 LRESULT SVMainFrame::OnUserChanged( WPARAM wParam, LPARAM lParam )
@@ -1949,8 +1860,6 @@ LRESULT SVMainFrame::OnUserChanged( WPARAM wParam, LPARAM lParam )
 	return (LRESULT)TRUE;
 }
 
-//** EOF **
-
 void SVMainFrame::OnViewOnlineDisplay() 
 {
 	SVSVIMStateClass::AddState( SV_STATE_MODIFIED );
@@ -1966,41 +1875,49 @@ void SVMainFrame::OnUpdateViewOnlineDisplay( CCmdUI* pCmdUI )
 	pCmdUI->SetCheck( SVObjectManagerClass::Instance().GetOnlineDisplay() );
 }
 
-
 BOOL SVMainFrame::VerifyBarStates(LPCTSTR lpszProfileName)
 {
-    CDockState state;
-    state.LoadState(lpszProfileName);
+	CDockState state;
+	state.LoadState(lpszProfileName);
 
-    for (int i = 0; i < state.m_arrBarInfo.GetSize(); i++)
-    {
-        CControlBarInfo* pInfo = (CControlBarInfo*)state.m_arrBarInfo[i];
+	for (int i = 0; i < state.m_arrBarInfo.GetSize(); i++)
+	{
+		CControlBarInfo* pInfo = (CControlBarInfo*)state.m_arrBarInfo[i];
 
-        ASSERT(pInfo != NULL);
+		ASSERT(pInfo != NULL);
 
-        int nDockedCount = static_cast<int>(pInfo->m_arrBarID.GetSize());
-        if (nDockedCount > 0)
-        { 
-            // dockbar
-            for (int j = 0; j < nDockedCount; j++)
-            {
-                UINT nID = (UINT) pInfo->m_arrBarID[j];
-                if (nID == 0) continue; // row separator
-                if (nID > 0xFFFF)
-                    nID &= 0xFFFF; // placeholder - get the ID
-                if (GetControlBar(nID) == NULL)
-                    return FALSE;
-            }
-        }
-        
-        if (!pInfo->m_bFloating) // floating dockbars can be created later
-            if (GetControlBar(pInfo->m_nBarID) == NULL)
-                return FALSE; // invalid bar ID
-    }
+		int nDockedCount = static_cast<int>(pInfo->m_arrBarID.GetSize());
+		if (nDockedCount > 0)
+		{ 
+			// dockbar
+			for (int j = 0; j < nDockedCount; j++)
+			{
+				UINT nID = (UINT) pInfo->m_arrBarID[j];
+				if (nID == 0) { continue; } // row separator
 
-    return TRUE;
+				if (nID > 0xFFFF)
+				{
+					nID &= 0xFFFF; // placeholder - get the ID
+				}
+
+				if (GetControlBar(nID) == NULL)
+				{
+					return FALSE;
+				}
+			}
+		}
+		
+		if (!pInfo->m_bFloating) // floating dockbars can be created later
+		{
+			if (GetControlBar(pInfo->m_nBarID) == NULL)
+			{
+				return FALSE; // invalid bar ID
+			}
+		}
+	}
+
+	return TRUE;
 }
-
 
 void SVMainFrame::OnSize(UINT nType, int cx, int cy) 
 {
@@ -2008,7 +1925,7 @@ void SVMainFrame::OnSize(UINT nType, int cx, int cy)
 
 	if ( nType == SIZE_MINIMIZED ) 
 	{
-		//do nothing else just return
+		// Do nothing else.  Just return.
 		return;
 	}
 
@@ -2021,17 +1938,15 @@ void SVMainFrame::OnSize(UINT nType, int cx, int cy)
 		m_bSizeChanged = FALSE;
 	}
 
-
 	if ( nType == SIZE_MAXIMIZED )
 	{  //only do something if SIZE_RESTORED
- 		if ( m_PosSize == SIZE_RESTORED )
+		if ( m_PosSize == SIZE_RESTORED )
 		{
 			m_PosSize = SIZE_MAXIMIZED;
 		}
 		return;
 	}
 	
-	//if ( (nType != SIZE_MAXIMIZED)  && (nType != SIZE_MINIMIZED) )
 	if ( nType == SIZE_RESTORED )
 	{ 
 		WINDOWPLACEMENT *lwp;
@@ -2067,6 +1982,16 @@ LRESULT SVMainFrame::OnHideIOViewTab( WPARAM p_wParam, LPARAM p_lParam )
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVMainFrm.CPP_v  $
+ * 
+ *    Rev 1.4   31 Jan 2014 17:16:30   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  884
+ * SCR Title:  Update Source Code Files to Follow New Programming Standards and Guidelines
+ * Checked in by:  bWalter;  Ben Walter
+ * Change Description:  
+ *   Changed to follow guidelines more closely.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   01 Oct 2013 14:57:18   tbair
  * Project:  SVObserver

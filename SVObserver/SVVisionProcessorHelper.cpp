@@ -5,8 +5,8 @@
 //* .Module Name     : SVVisionProcessorHelper
 //* .File Name       : $Workfile:   SVVisionProcessorHelper.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.5  $
-//* .Check In Date   : $Date:   18 Nov 2013 12:44:20  $
+//* .Current Version : $Revision:   1.6  $
+//* .Check In Date   : $Date:   31 Jan 2014 17:16:24  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -139,7 +139,7 @@ HRESULT SVVisionProcessorHelper::GetOfflineCount( unsigned long& p_rCount ) cons
 {
 	HRESULT l_Status = S_OK;
 
-	p_rCount = TheSVObserverApp.m_lOfflineCount;
+	p_rCount = TheSVObserverApp.getOfflineCount();
 
 	return l_Status;
 }
@@ -750,6 +750,16 @@ void SVVisionProcessorHelper::ProcessLastModified( bool& p_WaitForEvents )
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVVisionProcessorHelper.cpp_v  $
+ * 
+ *    Rev 1.6   31 Jan 2014 17:16:24   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  884
+ * SCR Title:  Update Source Code Files to Follow New Programming Standards and Guidelines
+ * Checked in by:  bWalter;  Ben Walter
+ * Change Description:  
+ *   Changed to follow guidelines more closely.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.5   18 Nov 2013 12:44:20   tbair
  * Project:  SVObserver
