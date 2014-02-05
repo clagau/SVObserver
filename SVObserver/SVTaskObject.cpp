@@ -5,8 +5,8 @@
 //* .Module Name     : SVTaskObject
 //* .File Name       : $Workfile:   SVTaskObject.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.3  $
-//* .Check In Date   : $Date:   01 Feb 2014 12:18:34  $
+//* .Current Version : $Revision:   1.4  $
+//* .Check In Date   : $Date:   05 Feb 2014 09:35:22  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -1736,7 +1736,7 @@ LONG_PTR SVTaskObjectClass::processMessage(DWORD DwMessageID, LONG_PTR DwMessage
 	//		Closing Direction ==> 1. You ( and Your embeddeds ), 2. Friends
 	//
 	
-	DWORD DwResult = SVMR_NOT_PROCESSED;
+	LONG_PTR DwResult = SVMR_NOT_PROCESSED;
 	
 	SVAnalyzerLevelCreateStruct createStruct;
 
@@ -1763,7 +1763,7 @@ LONG_PTR SVTaskObjectClass::processMessage(DWORD DwMessageID, LONG_PTR DwMessage
 			createStruct.ToolObjectInfo	= GetTool();
 			createStruct.InspectionObjectInfo	= GetInspection();
 
-			DwMessageValue = (DWORD)&createStruct;
+			DwMessageValue = (LONG_PTR)&createStruct;
 
 			break;
 		}
@@ -1786,7 +1786,7 @@ LONG_PTR SVTaskObjectClass::processMessage(DWORD DwMessageID, LONG_PTR DwMessage
 			createStruct.ToolObjectInfo	= GetTool();
 			createStruct.InspectionObjectInfo	= GetInspection();
 
-			DwMessageValue = (DWORD)&createStruct;
+			DwMessageValue = (LONG_PTR)&createStruct;
 
 			break;
 		}
@@ -1801,7 +1801,7 @@ LONG_PTR SVTaskObjectClass::processMessage(DWORD DwMessageID, LONG_PTR DwMessage
 		
 		if (friendList.Lock())
 		{
-			DWORD l_dwTmp = 0;
+			LONG_PTR l_dwTmp = 0;
 			// Notify friends...
 			for (int i = 0; i < friendList.GetSize(); ++ i)
 			{
@@ -2013,7 +2013,7 @@ LONG_PTR SVTaskObjectClass::processMessage(DWORD DwMessageID, LONG_PTR DwMessage
 
 LONG_PTR SVTaskObjectClass::OutputListProcessMessage( DWORD DwMessageID, LONG_PTR DwMessageValue, LONG_PTR DwMessageContext )
 {
-	DWORD DwResult = FriendOutputListProcessMessage( DwMessageID, DwMessageValue, DwMessageContext );
+	LONG_PTR DwResult = FriendOutputListProcessMessage( DwMessageID, DwMessageValue, DwMessageContext );
 
 	// Try to send message to outputObjectList members, if not already processed...
 	if( (DwMessageID & SVM_NOTIFY_FIRST_RESPONDING) == SVM_NOTIFY_FIRST_RESPONDING )
@@ -2033,7 +2033,7 @@ LONG_PTR SVTaskObjectClass::OutputListProcessMessage( DWORD DwMessageID, LONG_PT
 
 LONG_PTR SVTaskObjectClass::FriendOutputListProcessMessage( DWORD DwMessageID, LONG_PTR DwMessageValue, LONG_PTR DwMessageContext )
 {
-	DWORD DwResult = SVMR_NOT_PROCESSED;
+	LONG_PTR DwResult = SVMR_NOT_PROCESSED;
 
 	// Try to send message to outputObjectList members, if not already processed...
 	if( (DwMessageID & SVM_NOTIFY_FIRST_RESPONDING) == SVM_NOTIFY_FIRST_RESPONDING )
@@ -2094,7 +2094,7 @@ LONG_PTR SVTaskObjectClass::FriendOutputListProcessMessage( DWORD DwMessageID, L
 
 LONG_PTR SVTaskObjectClass::EmbeddedOutputListProcessMessage( DWORD DwMessageID, LONG_PTR DwMessageValue, LONG_PTR DwMessageContext )
 {
-	DWORD DwResult = SVMR_NOT_PROCESSED;
+	LONG_PTR DwResult = SVMR_NOT_PROCESSED;
 
 	// Try to send message to outputObjectList members, if not already processed...
 	if ((DwMessageID & SVM_NOTIFY_FIRST_RESPONDING) == SVM_NOTIFY_FIRST_RESPONDING)
@@ -2672,6 +2672,16 @@ HRESULT SVTaskObjectClass::ResetObjectInputs()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVTaskObject.cpp_v  $
+ * 
+ *    Rev 1.4   05 Feb 2014 09:35:22   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Modifications to processMessage to use LONG_PTR  instead of DWORD.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   01 Feb 2014 12:18:34   tbair
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : SVInspectionProcess
 //* .File Name       : $Workfile:   SVInspectionProcess.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.7  $
-//* .Check In Date   : $Date:   01 Feb 2014 10:48:54  $
+//* .Current Version : $Revision:   1.8  $
+//* .Check In Date   : $Date:   05 Feb 2014 09:35:18  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -1131,7 +1131,7 @@ BOOL SVInspectionProcess::RebuildInspectionInputList()
 			pValueObject->ObjectAttributesSetRef() &= SV_PUBLISHABLE;
 			pValueObject->ResetObject();
 
-			::SVSendMessage( this, SVM_CREATE_CHILD_OBJECT, ( LONG_PTR ) pValueObject, NULL );
+			::SVSendMessage( this, SVM_CREATE_CHILD_OBJECT, reinterpret_cast< LONG_PTR>(pValueObject), NULL );
 
 			pIOEntry.m_IOEntryPtr = new SVIOEntryHostStruct;
 			pIOEntry.m_IOEntryPtr->m_pValueObject = pValueObject;
@@ -1498,7 +1498,7 @@ HRESULT SVInspectionProcess::RebuildInspection()
 		}
 		else
 		{
-			if( ::SVSendMessage( this, SVM_CREATE_CHILD_OBJECT, ( LONG_PTR ) &m_rgbMainImageObject, NULL ) != SVMR_SUCCESS )
+			if( ::SVSendMessage( this, SVM_CREATE_CHILD_OBJECT, reinterpret_cast<LONG_PTR>(&m_rgbMainImageObject), NULL ) != SVMR_SUCCESS )
 			{
 				l_Status = E_FAIL;
 			}
@@ -1694,7 +1694,7 @@ LONG_PTR SVInspectionProcess::processMessage(DWORD DwMessageID, LONG_PTR DwMessa
 					createStruct.OwnerObjectInfo = this;
 					createStruct.InspectionObjectInfo = this;
 
-					DWORD l_Return = SVSendMessage( pChildObject, SVM_CREATE_ALL_OBJECTS, ( LONG_PTR ) &createStruct, NULL );
+					DWORD l_Return = SVSendMessage( pChildObject, SVM_CREATE_ALL_OBJECTS, reinterpret_cast<LONG_PTR>(&createStruct), NULL );
 
 					if( ( DwMessageContext & SVMFResetObject ) == SVMFResetObject )
 					{
@@ -1734,7 +1734,7 @@ LONG_PTR SVInspectionProcess::processMessage(DWORD DwMessageID, LONG_PTR DwMessa
 					createStruct.OwnerObjectInfo = this;
 					createStruct.InspectionObjectInfo = this;
 
-					DWORD l_Return = SVSendMessage( pChildObject, SVM_CONNECT_ALL_OBJECTS, ( LONG_PTR ) &createStruct, NULL );
+					DWORD l_Return = SVSendMessage( pChildObject, SVM_CONNECT_ALL_OBJECTS, reinterpret_cast<LONG_PTR>(&createStruct), NULL );
 
 					return l_Return;
 				}
@@ -1803,13 +1803,13 @@ LONG_PTR SVInspectionProcess::processMessage(DWORD DwMessageID, LONG_PTR DwMessa
 
 							m_pCurrentToolset->SetObjectOwner( this );
 
-							::SVSendMessage( this, SVM_CREATE_CHILD_OBJECT, ( LONG_PTR ) m_pCurrentToolset, NULL );
+							::SVSendMessage( this, SVM_CREATE_CHILD_OBJECT, reinterpret_cast<LONG_PTR>(m_pCurrentToolset), NULL );
 
 							if( m_pToolSetConditional != NULL )
 							{
 								m_pCurrentToolset->AddFriend( m_pToolSetConditional->GetUniqueObjectID() );
 
-								::SVSendMessage( m_pCurrentToolset, SVM_CREATE_CHILD_OBJECT, ( LONG_PTR ) m_pToolSetConditional, NULL );
+								::SVSendMessage( m_pCurrentToolset, SVM_CREATE_CHILD_OBJECT, reinterpret_cast<LONG_PTR>(m_pToolSetConditional), NULL );
 
 								m_pToolSetConditional = NULL;
 							}
@@ -1927,7 +1927,7 @@ BOOL SVInspectionProcess::GetChildObjectByName( LPCTSTR tszChildName, SVObjectCl
 		{
 			*ppObject = (SVObjectClass*) ::SVSendMessage( this, 
 					( SVM_GET_OBJECT_BY_NAME | SVM_PARENT_TO_CHILD ) & ~SVM_NOTIFY_ONLY_THIS, 
-					(LONG_PTR) tszChildName, NULL );
+					reinterpret_cast<LONG_PTR>(tszChildName), NULL );
 			bReturn = ( *ppObject != NULL );
 		}
 	}
@@ -2008,7 +2008,7 @@ HRESULT SVInspectionProcess::ObserverUpdate( const SVAddTool& p_rData )
 		GetToolSet()->InsertAt( p_rData.m_Index, p_rData.m_pTool );
 
 		// And finally try to create the object...
-		if( ::SVSendMessage( GetToolSet(), SVM_CREATE_CHILD_OBJECT, ( LONG_PTR ) p_rData.m_pTool, SVMFResetObject ) == SVMR_SUCCESS ) 
+		if( ::SVSendMessage( GetToolSet(), SVM_CREATE_CHILD_OBJECT, reinterpret_cast<LONG_PTR>(p_rData.m_pTool), SVMFResetObject ) == SVMR_SUCCESS ) 
 		{
 			BuildValueObjectMap();
 
@@ -2044,7 +2044,7 @@ HRESULT SVInspectionProcess::ObserverUpdate( const SVDeleteTool& p_rData )
 		m_ConditionalHistory.DeleteTool( l_strToolName );
 		
 		// Delete the Tool Object
-		::SVSendMessage( GetToolSet(), SVM_DESTROY_CHILD_OBJECT, ( LONG_PTR ) p_rData.m_pTool, NULL );
+		::SVSendMessage( GetToolSet(), SVM_DESTROY_CHILD_OBJECT, reinterpret_cast<LONG_PTR>(p_rData.m_pTool), NULL );
 
 		// Refresh Lists ( inputs,outputs,results,published )
 		SetDefaultInputs();
@@ -4460,6 +4460,16 @@ void SVInspectionProcess::Persist(SVObjectWriter& rWriter)
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVInspectionProcess.cpp_v  $
+ * 
+ *    Rev 1.8   05 Feb 2014 09:35:18   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Modifications to processMessage to use LONG_PTR  instead of DWORD.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.7   01 Feb 2014 10:48:54   tbair
  * Project:  SVObserver

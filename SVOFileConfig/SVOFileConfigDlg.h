@@ -5,8 +5,8 @@
 // * .Module Name     : SVOFileConfigDlg
 // * .File Name       : $Workfile:   SVOFileConfigDlg.h  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.0  $
-// * .Check In Date   : $Date:   25 Apr 2013 11:32:54  $
+// * .Current Version : $Revision:   1.1  $
+// * .Check In Date   : $Date:   03 Feb 2014 17:07:36  $
 // ******************************************************************************
 
 #ifndef SVOFILECONFIGDLG_H
@@ -67,8 +67,6 @@ protected:
 	virtual BOOL OnInitDialog();
 	afx_msg void OnPaint();
 	afx_msg HCURSOR OnQueryDragIcon();
-	afx_msg void OnButtonLoad();
-	afx_msg void OnButtonSave();
 	afx_msg void OnSelchangedTree1(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnButtonloadSvx();
 	afx_msg void OnButtonsaveSvx();
@@ -85,7 +83,17 @@ protected:
 // * LOG HISTORY:
 // ******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVOFileConfig\SVOFileConfigDlg.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVOFileConfig\SVOFileConfigDlg.h_v  $
+ * 
+ *    Rev 1.1   03 Feb 2014 17:07:36   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  880
+ * SCR Title:  Remove .SEC
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   Removed OnButtonLoad and OnButtonSave (SEC functions).
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   25 Apr 2013 11:32:54   bWalter
  * Project:  SVObserver

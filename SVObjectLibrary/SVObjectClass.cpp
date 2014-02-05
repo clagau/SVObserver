@@ -5,8 +5,8 @@
 //* .Module Name     : SVObject
 //* .File Name       : $Workfile:   SVObjectClass.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   01 Feb 2014 10:09:14  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   05 Feb 2014 09:20:42  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -291,7 +291,7 @@ This method executes the close object method on all objects that use this object
 */
 BOOL SVObjectClass::CloseObject()
 {
-	DWORD dwResult = SVMR_NOT_PROCESSED;
+	LONG_PTR dwResult = SVMR_NOT_PROCESSED;
 
 	SVAutoLockAndReleaseTemplate< SVOutObjectInfoStruct > l_AutoLock;
 
@@ -306,7 +306,7 @@ BOOL SVObjectClass::CloseObject()
 			if( pObject && pObject->IsCreated() )
 			{
 				// Close only user of our output which are still not closed!
-				dwResult = static_cast<DWORD>(::SVSendMessage( pObject, SVM_CLOSE_OBJECT, reinterpret_cast<LONG_PTR> (static_cast<SVObjectClass*> (this)), NULL ) | dwResult);
+				dwResult = ::SVSendMessage( pObject, SVM_CLOSE_OBJECT, reinterpret_cast<LONG_PTR> (static_cast<SVObjectClass*> (this)), NULL ) | dwResult;
 			}
 		}
 	}
@@ -1062,7 +1062,7 @@ DWORD SVSendMessage( const GUID& RUniqueObjectID, DWORD DwMessageID, DWORD DwMes
 */
 LONG_PTR SVObjectClass::processMessage( DWORD DwMessageID, LONG_PTR DwMessageValue, LONG_PTR DwMessageContext )
 {
-	DWORD DwResult = SVMR_NOT_PROCESSED;
+	LONG_PTR DwResult = SVMR_NOT_PROCESSED;
 	// Try to process message by yourself...
 	// ( if necessary process here the incoming messages )
 	DWORD dwPureMessageID = DwMessageID & SVM_PURE_MESSAGE;
@@ -1123,7 +1123,7 @@ LONG_PTR SVObjectClass::processMessage( DWORD DwMessageID, LONG_PTR DwMessageVal
 					  )
 					{
 						// But object must be specified!
-						return reinterpret_cast<DWORD> (static_cast<SVObjectClass*> (this));
+						return reinterpret_cast<LONG_PTR> (static_cast<SVObjectClass*> (this));
 					}
 				}
 			}
@@ -1146,7 +1146,7 @@ LONG_PTR SVObjectClass::processMessage( DWORD DwMessageID, LONG_PTR DwMessageVal
 			if( GetEmbeddedID() == l_guidEmbeddedID )
 			{
 				SVObjectManagerClass::Instance().ChangeUniqueObjectID( this, taskObjectID );
-				return reinterpret_cast<DWORD> (static_cast<SVObjectClass*> (this));
+				return reinterpret_cast<LONG_PTR> (static_cast<SVObjectClass*> (this));
 
 			}
 			return ( DWORD )NULL; //SVMR_NOT_PROCESSED;
@@ -1202,7 +1202,7 @@ LONG_PTR SVObjectClass::processMessage( DWORD DwMessageID, LONG_PTR DwMessageVal
 
 			if( strName == GetCompleteObjectName() )
 			{
-				return reinterpret_cast<DWORD> (static_cast<SVObjectClass*> (this));
+				return reinterpret_cast<LONG_PTR> (static_cast<SVObjectClass*> (this));
 			}
 			else
 			{
@@ -1707,6 +1707,16 @@ void SVObjectClass::SetDefaultObjectAttributesSet(UINT uAttributes)
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObjectLibrary\SVObjectClass.cpp_v  $
+ * 
+ *    Rev 1.3   05 Feb 2014 09:20:42   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Process Message to use LONG_PTR instead of DWORD
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   01 Feb 2014 10:09:14   tbair
  * Project:  SVObserver

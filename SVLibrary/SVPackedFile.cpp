@@ -5,8 +5,8 @@
 // * .Module Name     : modulename
 // * .File Name       : $Workfile:   SVPackedFile.cpp  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.1  $
-// * .Check In Date   : $Date:   01 Oct 2013 10:02:46  $
+// * .Current Version : $Revision:   1.2  $
+// * .Check In Date   : $Date:   03 Feb 2014 16:36:04  $
 // ******************************************************************************
 
 #include "stdafx.h"
@@ -139,7 +139,7 @@ BOOL SVPackedFile::UnPackFiles( const CString& szPackedFile, const CString& szUn
 
 	USES_CONVERSION;
 
-	m_SecFilePath.Empty();
+	m_configFilePath.Empty();
 
 	if (PackedFile.Open (szPackedFile, CFile::shareDenyNone | CFile::modeRead | CFile::typeBinary, &FileException))
 	{
@@ -165,9 +165,9 @@ BOOL SVPackedFile::UnPackFiles( const CString& szPackedFile, const CString& szUn
 								}
 
 							_tsplitpath (szPath, szDrive, szDir, szFName, szExt);
-							if( _tcscmp(szExt, _T(".sec")) == 0 || _tcscmp(szExt, _T(".svx")) == 0 )
+							if( _tcscmp(szExt, _T(".svx")) == 0 )
 							{
-								m_SecFilePath = szPath;
+								m_configFilePath = szPath;
 							}
 
 							CreateDirectoryW ((WCHAR *) Buffer, NULL);
@@ -233,9 +233,9 @@ SVPackedFile::~SVPackedFile()
 {
 }
 
-const CString& SVPackedFile::GetSecFilePath() const
+const CString& SVPackedFile::getConfigFilePath() const
 {
-	return m_SecFilePath;
+	return m_configFilePath;
 }
 
 // ******************************************************************************
@@ -243,6 +243,17 @@ const CString& SVPackedFile::GetSecFilePath() const
 // ******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVLibrary\SVPackedFile.cpp_v  $
+ * 
+ *    Rev 1.2   03 Feb 2014 16:36:04   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  880
+ * SCR Title:  Remove .SEC
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   Removed SEC-part from method UnPackFiles.
+ * Changed name of public method GetSecFilePath to getConfigFilePath.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   01 Oct 2013 10:02:46   tbair
  * Project:  SVObserver

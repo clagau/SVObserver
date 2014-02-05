@@ -5,8 +5,8 @@
 // * .Module Name     : SVOFileConfigDlg
 // * .File Name       : $Workfile:   SVOFileConfigDlg.cpp  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.2  $
-// * .Check In Date   : $Date:   02 Oct 2013 08:43:42  $
+// * .Current Version : $Revision:   1.3  $
+// * .Check In Date   : $Date:   03 Feb 2014 17:07:36  $
 // ******************************************************************************
 
 #include "stdafx.h"
@@ -58,8 +58,6 @@ BEGIN_MESSAGE_MAP(SVOFileConfigDlg, CDialog)
 	//{{AFX_MSG_MAP(SVOFileConfigDlg)
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
-	ON_BN_CLICKED(IDC_BUTTON_LOAD, OnButtonLoad)
-	ON_BN_CLICKED(IDC_BUTTON_SAVE, OnButtonSave)
 	ON_NOTIFY(TVN_SELCHANGED, IDC_TREE1, OnSelchangedTree1)
 	ON_BN_CLICKED(IDC_BUTTONLOAD_SVX, OnButtonloadSvx)
 	ON_BN_CLICKED(IDC_BUTTONSAVE_SVX, OnButtonsaveSvx)
@@ -121,111 +119,6 @@ void SVOFileConfigDlg::OnPaint()
 HCURSOR SVOFileConfigDlg::OnQueryDragIcon()
 {
 	return (HCURSOR) m_hIcon;
-}
-
-void SVOFileConfigDlg::OnButtonLoad() 
-{
-
-	CFileDialog dlg( TRUE, ".sec", NULL, 
-									 OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | 
-									 OFN_ENABLESIZING | OFN_EXPLORER,
-									 "SVObserver Environment Configuration Files (*.sec)|*.sec||", this );
-
-	dlg.m_ofn.lpstrTitle = "Select Configuration File";
-	dlg.m_ofn.lpstrInitialDir = "C:\\RUN";
-
-	if ( dlg.DoModal() == IDOK )
-	{
-		mTree.SetRedraw( false );
-
-		CFile secFile;
-		if( secFile.Open( dlg.GetPathName(), CFile::modeRead | CFile::shareExclusive ) )
-		{
-			CString csIODocName;
-			BSTR bStr = NULL;
-			CArchive archive( &secFile, CArchive::load );
-
-			unsigned long SECVer = 0;
-
-			// SEC will be created in SVObserverApp::Serialize( archive );
-			AfxGetApp()->Serialize( archive );
-
-			m_XMLCTree.Clear();
-
-			SVOCMArchiveSEC( ((SVOFileConfigApp *)AfxGetApp())->ulVersion, 
-			                 SECVer, archive, m_XMLCTree, &bStr );
-
-			archive.Close();
-			secFile.Close();
-
-			csIODocName = bStr;
-			((SVOFileConfigApp *)AfxGetApp())->LoadIODoc( csIODocName );
-
-			HTREEITEM htiChild = mTree.GetChildItem( NULL );
-
-			while ( htiChild != NULL )
-			{
-				HTREEITEM htiNext = mTree.GetNextSiblingItem( htiChild );
-
-				CString csName = mTree.GetItemText( htiChild );
-
-				if ( csName.Compare( CTAG_INSPECTION ) == 0 )
-				{
-					HTREEITEM htiIPChild = mTree.GetChildItem( htiChild );
-
-					while ( htiIPChild != NULL )
-					{
-						CString csIPName;
-
-						HTREEITEM htiIPNext = mTree.GetNextSiblingItem( htiIPChild );
-						HTREEITEM htiIPDataChild = mTree.GetChildItem( htiIPChild );
-
-						while ( htiIPDataChild != NULL )
-						{
-							HTREEITEM htiIPDataNext = mTree.GetNextSiblingItem( htiIPDataChild );
-
-							csName = mTree.GetItemText( htiIPDataChild );
-
-							if ( csName.Compare( CTAG_INSPECTION_FILE_NAME ) == 0 )
-							{
-								VARIANT *pvValue = (VARIANT *)mTree.GetItemData( htiIPDataChild );
-								if ( pvValue )
-								{
-									_bstr_t svValue( *pvValue );
-
-									csIPName = static_cast< LPCTSTR >( svValue );
-								}
-							}
-
-							htiIPDataChild = htiIPDataNext;
-						}
-
-						if ( ! csIPName.IsEmpty() )
-						{
-							((SVOFileConfigApp *)AfxGetApp())->m_Inspection = htiIPChild;
-
-							((SVOFileConfigApp *)AfxGetApp())->LoadIPDoc( csIPName );
-						}
-
-						htiIPChild = htiIPNext;
-					}
-
-					htiChild = NULL;
-				}
-				else
-				{
-					htiChild = htiNext;
-				}
-			}
-		}
-	}
-	mTree.SetRedraw( true );
-}
-
-void SVOFileConfigDlg::OnButtonSave() 
-{
-	// TODO: Add your control notification handler code here
-	
 }
 
 void SVOFileConfigDlg::OnSelchangedTree1(NMHDR* pNMHDR, LRESULT* pResult) 
@@ -686,6 +579,16 @@ void SVOFileConfigDlg::GetInspections(HTREEITEM p_Item)
 // ******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVOFileConfig\SVOFileConfigDlg.cpp_v  $
+ * 
+ *    Rev 1.3   03 Feb 2014 17:07:36   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  880
+ * SCR Title:  Remove .SEC
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   Removed OnButtonLoad and OnButtonSave (SEC functions).
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   02 Oct 2013 08:43:42   tbair
  * Project:  SVObserver

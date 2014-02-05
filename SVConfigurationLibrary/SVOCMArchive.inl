@@ -5,8 +5,8 @@
 // * .Module Name     : SVOCMArchive
 // * .File Name       : $Workfile:   SVOCMArchive.inl  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.1  $
-// * .Check In Date   : $Date:   10 Jun 2013 16:44:20  $
+// * .Current Version : $Revision:   1.2  $
+// * .Check In Date   : $Date:   03 Feb 2014 16:11:30  $
 // ******************************************************************************
 
 #ifndef SVOCMARCHIVE_INL
@@ -26,70 +26,6 @@
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
-
-template< typename SVTreeType >
-HRESULT SVOCMArchive::ArchiveSEC(   unsigned long ulSVOVersion, 
-																 unsigned long &ulSECVersion, 
-																 CArchive &rArchive, 
-																 SVTreeType& p_rTree,
-																 BSTR *pIODocName)
-{
-	HRESULT hrOk = S_FALSE;
-
-	// EB 2002 08 08
-	// added exception handling to loading configs
-	// the error numbers (all 324 of them) were added with the help of Perl
-
-	SVTreeType::SVBranchHandle l_pBranch( NULL );
-
-	try
-	{
-
-		hrOk = GetEnvironmentBranch( p_rTree, l_pBranch );
-		HandleErrorCondition(12000, hrOk);
-
-		if ( hrOk == S_OK )
-		{
-			if ( l_pBranch != NULL )
-			{
-				CString csIOD;
-
-				hrOk = ArchiveSVObserverApp( ulSVOVersion, 
-					ulSECVersion, 
-					rArchive, 
-					p_rTree,
-					csIOD,
-					l_pBranch );
-				HandleErrorCondition(12001, hrOk);
-
-				csIOD.SetSysString( pIODocName );
-
-			}
-		}
-	}// end try
-	catch (SVException& e) // only on severe errors which prevent further loading
-	{
-		hrOk = e.GetErrorCode();
-		e.LogException();
-	}
-
-	if (hrOk != S_OK)
-	{
-		switch (hrOk)
-		{
-		case SVMSG_SVO_17_NO_MEMORY_ERROR:
-			// we need to clean up the tree and all the memory that was allocated in it.
-			p_rTree.Clear();
-			break;
-		default:
-			p_rTree.Clear();
-			break;
-		}
-	}
-
-
-	return hrOk;
-}
 
 template< typename SVTreeType >
 HRESULT SVOCMArchive::ArchiveSVObserverApp( unsigned long ulSVOVersion, 
@@ -4435,7 +4371,17 @@ HRESULT SVOCMArchive::CreateConfigurationFileFromTree(unsigned long ulSVOVersion
 // * LOG HISTORY:
 // ******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVConfigurationLibrary\SVOCMArchive.inl_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVConfigurationLibrary\SVOCMArchive.inl_v  $
+ * 
+ *    Rev 1.2   03 Feb 2014 16:11:30   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  880
+ * SCR Title:  Remove .SEC
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   Removed method ArchiveSEC.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   10 Jun 2013 16:44:20   bWalter
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : SVTaskObjectList
 //* .File Name       : $Workfile:   SVTaskObjectList.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.4  $
-//* .Check In Date   : $Date:   01 Feb 2014 12:18:36  $
+//* .Current Version : $Revision:   1.5  $
+//* .Check In Date   : $Date:   05 Feb 2014 09:35:18  $
 //******************************************************************************
 
 // @WARNING:  This filename (SVTaskObjectList) does not match the class name (SVTaskObjectListClass).
@@ -902,7 +902,7 @@ LONG_PTR SVTaskObjectListClass::processMessage(DWORD DwMessageID, LONG_PTR DwMes
 			createStruct.ToolObjectInfo	= GetTool();
 			createStruct.InspectionObjectInfo = GetInspection();
 
-			DwMessageValue = (DWORD)&createStruct;
+			DwMessageValue = (LONG_PTR)&createStruct;
 
 			break;
 		}
@@ -925,7 +925,7 @@ LONG_PTR SVTaskObjectListClass::processMessage(DWORD DwMessageID, LONG_PTR DwMes
 			createStruct.ToolObjectInfo	= GetTool();
 			createStruct.InspectionObjectInfo	= GetInspection();
 
-			DwMessageValue = (DWORD)&createStruct;
+			DwMessageValue = (LONG_PTR)&createStruct;
 
 			break;
 		}
@@ -1483,6 +1483,16 @@ HRESULT SVTaskObjectListClass::onCollectOverlays(SVImageClass *p_Image, SVExtent
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVTaskObjectList.cpp_v  $
+ * 
+ *    Rev 1.5   05 Feb 2014 09:35:18   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Modifications to processMessage to use LONG_PTR  instead of DWORD.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.4   01 Feb 2014 12:18:36   tbair
  * Project:  SVObserver

@@ -7,8 +7,6 @@
 #define IDR_IODOC_MENU                  131
 #define IDR_IPDOC_MENU                  132
 #define IDC_TREE1                       1000
-#define IDC_BUTTON_LOAD                 1001
-#define IDC_BUTTON_SAVE                 1002
 #define IDC_LIST1                       1003
 #define IDC_BUTTONLOAD_SVX              1004
 #define IDC_BUTTONSAVE_SVX              1005

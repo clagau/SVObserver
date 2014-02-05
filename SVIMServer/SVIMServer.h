@@ -5,8 +5,8 @@
 // * .Module Name     : SVIMServer
 // * .File Name       : $Workfile:   SVIMServer.h  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.0  $
-// * .Check In Date   : $Date:   22 Apr 2013 12:07:32  $
+// * .Current Version : $Revision:   1.1  $
+// * .Check In Date   : $Date:   03 Feb 2014 16:31:02  $
 // ******************************************************************************
 
 #if defined (_MSC_VER) && (_MSC_VER >= 1000)
@@ -46,7 +46,7 @@ public:
 	//##ModelId=38E8FF8B008C
 	void SV_EXPORTDLL SetGetState (PFN_BOOLPDWORD pfnGetSVIMState);
 	//##ModelId=38E8FF8B006F
-	void SV_EXPORTDLL SetOpenConfiguration (PFN_BOOLCHAR pfnOpenSECFile);
+	void SV_EXPORTDLL SetOpenConfiguration (PFN_BOOLCHAR pfnOpenConfiguration);
 	void SV_EXPORTDLL SetSaveConfiguration (PFN_BOOLVOID pfnSaveConfiguration);
 
 	void SV_EXPORTDLL SetCloseConfiguration (PFN_BOOLVOID pfnCloseConfiguration);
@@ -159,6 +159,16 @@ private:
 // ******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVIMServer\SVIMServer.h_v  $
+ * 
+ *    Rev 1.1   03 Feb 2014 16:31:02   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  880
+ * SCR Title:  Remove .SEC
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   Changed parameter name from pfnOpenSECFile to pfnOpenConfiguration in the SetOpenConfiguration method.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   22 Apr 2013 12:07:32   bWalter
  * Project:  SVObserver

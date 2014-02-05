@@ -5,8 +5,8 @@
 // * .Module Name     : SVIMServer
 // * .File Name       : $Workfile:   SVIMServer.cpp  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.1  $
-// * .Check In Date   : $Date:   01 Oct 2013 09:05:48  $
+// * .Current Version : $Revision:   1.2  $
+// * .Check In Date   : $Date:   03 Feb 2014 16:29:30  $
 // ******************************************************************************
 
 #include "stdafx.h"
@@ -47,11 +47,11 @@ BOOL SVIMServer::OnPutSVIMConfig(CString& szIMCSVIMConfigName)
 	szPackedFile = CString(_T("c:\\temp\\temp")) + _T(".svf");
 
 	//create the file
-		if (mpFile = new CFile (szPackedFile, CFile::modeCreate | CFile::modeWrite | CFile::typeBinary))
-		{
-			mpFile->Close();
-			return TRUE;
-		}
+	if (mpFile = new CFile (szPackedFile, CFile::modeCreate | CFile::modeWrite | CFile::typeBinary))
+	{
+		mpFile->Close();
+		return TRUE;
+	}
 
 	return FALSE;
 }
@@ -59,7 +59,7 @@ BOOL SVIMServer::OnPutSVIMConfig(CString& szIMCSVIMConfigName)
 BOOL SVIMServer::OnSVIMData(char * pBuffer, UINT NumBytes)
 {
 	SVIMCommand Command;
-	CString szPackedFile, szSecFile;
+	CString szPackedFile, configFilePath;
 	int cmdSize;
 	char *pTemp;
 
@@ -97,44 +97,43 @@ BOOL SVIMServer::OnSVIMData(char * pBuffer, UINT NumBytes)
 		}
 		else
 		{
-
 			// file receipt completed.
 			SVPackedFile svPackedFile;
 
-		//global function to close sec and clean up c:\run dir
-		if(mpfnCloseConfiguration)
+			//global function to close config and clean up c:\run dir
+			if(mpfnCloseConfiguration)
 			{
-			if(!mpfnCloseConfiguration())return FALSE;
+				if(!mpfnCloseConfiguration())return FALSE;
 			}
-		else
+			else
 			{
-			return FALSE;
+				return FALSE;
 			}
 
-		//unpack the files in the c:\run directory
-		if(!svPackedFile.UnPackFiles (szPackedFile, _T("C:\\RUN")))return FALSE;
-		//remove the temporary file
-		CFile::Remove(szPackedFile);
-		
-		szSecFile = svPackedFile.GetSecFilePath();
-		if(szSecFile.IsEmpty())
+			//unpack the files in the c:\run directory
+			if(!svPackedFile.UnPackFiles (szPackedFile, _T("C:\\RUN")))return FALSE;
+			//remove the temporary file
+			CFile::Remove(szPackedFile);
+
+			configFilePath = svPackedFile.getConfigFilePath();
+			if(configFilePath.IsEmpty())
 			{
 #ifdef _DEBUG
-			AfxMessageBox(_T("No SEC file found!"));
+				AfxMessageBox( _T( "No config file found." ) );
 #endif
-			return FALSE;
+				return FALSE;
 			}
 
-		//load the config
-		if(mpfnOpenConfiguration)
+			//load the config
+			if(mpfnOpenConfiguration)
 			{
-			if(!mpfnOpenConfiguration((char*)((LPCTSTR)szSecFile)))return FALSE;
+				if(!mpfnOpenConfiguration((char*)((LPCTSTR)configFilePath)))return FALSE;
 			}
-		else
+			else
 			{
-			return FALSE;
+				return FALSE;
 			}
-			
+
 			delete mpFile;
 			mpFile = NULL;
 			return TRUE;
@@ -155,39 +154,39 @@ BOOL SVIMServer::OnGetSVIMConfig(CString& szIMCSVIMConfigName)
 	szPackedFile = szIMCSVIMConfigName;
 	szPackedFile += _T(".svf");
 
-	//global function to close sec and clean up c:\run dir
+	//global function to close config and clean up c:\run dir
 	if(mpfnSaveConfiguration)
-		{
-		if (rc = mpfnSaveConfiguration ())
 	{
-		try
+		if (rc = mpfnSaveConfiguration ())
 		{
-			if (PackedFile.PackFiles (szIMCSVIMConfigName, szPackedFile))
+			try
 			{
-				mpFile = new CFile (szPackedFile, CFile::modeRead | CFile::typeBinary);
+				if (PackedFile.PackFiles (szIMCSVIMConfigName, szPackedFile))
+				{
+					mpFile = new CFile (szPackedFile, CFile::modeRead | CFile::typeBinary);
+				}
+				else
+				{
+					mpFile = NULL;
+					rc = FALSE;
+				}
 			}
-			else
+			catch (...)
 			{
 				mpFile = NULL;
 				rc = FALSE;
 			}
 		}
-		catch (...)
+		else
 		{
-			mpFile = NULL;
 			rc = FALSE;
 		}
 	}
-		else
-			{
-			rc = FALSE;
-			}
-		}
 	else
-		{
+	{
 		rc = FALSE;
-		}
-  return rc;
+	}
+	return rc;
 }
 
 BOOL SVIMServer::OnGetCurrentSVIMConfig(CString &szIMCSVIMConfigName)
@@ -349,6 +348,18 @@ BOOL SVIMServer::IsStarted ()
 // ******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVIMServer\SVIMServer.cpp_v  $
+ * 
+ *    Rev 1.2   03 Feb 2014 16:29:30   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  880
+ * SCR Title:  Remove .SEC
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   Renamed variable from szSecFile to configFilePath in the OnSVIMData method.
+ * Changed debug messagebox text from "No SEC file found!" to "No config file found." in the OnSVIMData method.
+ * Changed comment from "close sec" to "close config" in the OnGetSVIMConfig method.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   01 Oct 2013 09:05:48   tbair
  * Project:  SVObserver

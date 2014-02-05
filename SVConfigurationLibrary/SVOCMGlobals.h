@@ -5,19 +5,12 @@
 // * .Module Name     : SVOCMGlobals
 // * .File Name       : $Workfile:   SVOCMGlobals.h  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.0  $
-// * .Check In Date   : $Date:   18 Apr 2013 18:39:42  $
+// * .Current Version : $Revision:   1.1  $
+// * .Check In Date   : $Date:   03 Feb 2014 16:14:34  $
 // ******************************************************************************
 
 #ifndef SVOCMGLOBALS_H
 #define SVOCMGLOBALS_H
-
-template< typename SVTreeType >
-HRESULT SVOCMArchiveSEC( unsigned long ulSVOVersion, 
-                         unsigned long &ulSECVersion, 
-                         CArchive &rArchive, 
-                         SVTreeType& p_rTree,
-												 BSTR *pIODocName );
 
 template< typename SVTreeType >
 HRESULT SVOCMArchiveIOD( unsigned long ulSVOVersion, 
@@ -52,7 +45,17 @@ HRESULT SVOCMSaveConfiguration( unsigned long ulSVOVersion,
 // * LOG HISTORY:
 // ******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVConfigurationLibrary\SVOCMGlobals.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVConfigurationLibrary\SVOCMGlobals.h_v  $
+ * 
+ *    Rev 1.1   03 Feb 2014 16:14:34   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  880
+ * SCR Title:  Remove .SEC
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   Removed method SVOCMArchiveSEC.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   18 Apr 2013 18:39:42   bWalter
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 // * .Module Name     : modulename
 // * .File Name       : $Workfile:   SVPackedFile.h  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.0  $
-// * .Check In Date   : $Date:   22 Apr 2013 13:37:48  $
+// * .Current Version : $Revision:   1.1  $
+// * .Check In Date   : $Date:   03 Feb 2014 16:37:30  $
 // ******************************************************************************
 
 #ifndef INC_SVPACKEDFILE_38E35C6502FD_INCLUDED
@@ -19,10 +19,10 @@
 class SVPackedFile 
 {
 private:
-	CString m_SecFilePath;
+	CString m_configFilePath;
 
 public:
-	const CString& GetSecFilePath() const;
+	const CString& getConfigFilePath() const;
 	//Adds the file(s) specified by szFile to the packed file 
 	//specified by szPackedFile. The szFile parameter may 
 	//specify one file or may contain wildcard characters to 
@@ -48,6 +48,17 @@ protected:
 // ******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVLibrary\SVPackedFile.h_v  $
+ * 
+ *    Rev 1.1   03 Feb 2014 16:37:30   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  880
+ * SCR Title:  Remove .SEC
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   Changed name of private member variable from m_SecFilePath to m_configFilePath.
+ * Changed name of public method GetSecFilePath to getConfigFilePath.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   22 Apr 2013 13:37:48   bWalter
  * Project:  SVObserver
