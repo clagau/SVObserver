@@ -4133,7 +4133,7 @@ BEGIN
         MENUITEM "&Save Configuration",         ID_FILE_SAVE_ALL,MFT_STRING,MFS_ENABLED
         MENUITEM "Save Configuration &As...",   ID_FILE_SAVE_AS_SVC,MFT_STRING,MFS_ENABLED
         MENUITEM MFT_SEPARATOR
-        MENUITEM "&Print...\tCtrl+P",           ID_FILE_PRINT_SEC,MFT_STRING,MFS_ENABLED
+        MENUITEM "&Print...\tCtrl+P",           ID_FILE_PRINT_CONFIG,MFT_STRING,MFS_ENABLED
         MENUITEM "P&rint Setup...",             ID_FILE_PRINT_SETUP,MFT_STRING,MFS_ENABLED
         MENUITEM MFT_SEPARATOR
         MENUITEM "Recent File",                 ID_FILE_MRU_FILE1,MFT_STRING,MFS_GRAYED
@@ -4204,7 +4204,7 @@ BEGIN
         MENUITEM "&Save Configuration\tCtrl+S", ID_FILE_SAVE_ALL,MFT_STRING,MFS_ENABLED
         MENUITEM "Save Configuration &As...",   ID_FILE_SAVE_AS_SVC,MFT_STRING,MFS_ENABLED
         MENUITEM MFT_SEPARATOR
-        MENUITEM "&Print...\tCtrl+P",           ID_FILE_PRINT_SEC,MFT_STRING,MFS_ENABLED
+        MENUITEM "&Print...\tCtrl+P",           ID_FILE_PRINT_CONFIG,MFT_STRING,MFS_ENABLED
         MENUITEM "P&rint Setup...",             ID_FILE_PRINT_SETUP,MFT_STRING,MFS_ENABLED
         MENUITEM MFT_SEPARATOR
         MENUITEM "Save &Image",                 ID_FILE_SAVE_IMAGE,MFT_STRING,MFS_ENABLED
@@ -4668,30 +4668,15 @@ END
 
 STRINGTABLE
 BEGIN
-    IDS_CRITICAL_NO_DDRAW_IN_FREEZE_MODE 
-                            "Cannot use DDraw for Freeze Modes..."
-    IDS_USER_QUESTION_CLOSE_IPD 
-                            "Are you sure you want to close this Inspection Process Document?\n%1\n\nThe application will be stopped and this document cannot\n be executed in the future until you load it again"
-    IDS_USER_QUESTION_CLOSE_SEC 
+    IDS_USER_QUESTION_CLOSE_CONFIG 
                             "Are you sure you want to close the current SVObserver application  %1?\n\nALL CURRENT RUNNING INSPECTIONS WILL BE STOPPED!"
     IDS_USER_QUESTION_SAVE_CHANGES "Save changes to %1?"
-    IDS_USER_QUESTION_SAVE_UNSAVED_IPD 
-                            "You are trying to save an unsaved inspection process document and the correlated environment file is still unsaved, too!\n\nNOTE: An inspection document can´t stay for itself, it should only \nbe saved as a referenced part of a valid environment file (*.SEC)!\nYou have to save the unsaved environment first\n\nDo you want to save all together?"
-    IDS_USER_INFORMATION_ACCESS_DENIED "Access Denied!\n\nTry it again..."
     IDS_USER_INFORMATION_NO_ACCESS_DURING_TEST_RUN_MODE 
                             "No access during Test or Run Mode!"
     IDS_USER_INFORMATION_NO_ANALYZER_DETAILS 
                             "No Analyzer Details available!\nTry to select an Analyzer first.\nNOTICE: Some Tools don´t have an Analyzer!"
     IDS_USER_INFORMATION_WRONG_PATHNAME_ENTERED 
                             "Invalid path or file name found\n\nCheck your  inputs and try it again!"
-    IDS_USER_WARNING_LAST_SUPERVISOR_KILLING 
-                            "You try to delete or deactivate  the last user with supervisor privileges!\nDON´T DO THAT!\nYou will completely lose access to the user manager! ! !\n\nNOTE: You have to contact to SVResarch Munich for ordering a service man if this nevertheless happens! "
-    IDS_USER_WARNING_PASSWORD_CHECK_FAILED 
-                            "Password Checking Fails!\n\nThe repeated password must be exactly the same as the original.\nTry it again..."
-    IDS_USER_WARNING_NO_LOGIN_ENTERED 
-                            "No Login was entered!\n\nYou lose to fill the new login name.\nTry it again..."
-    IDS_USER_WARNING_USER_ALREADY_EXISTS 
-                            "User already exists! Try it again..."
     IDS_STATTOOL_INVALID_VARIABLE 
                             "Error - The Selected Variable To Monitor does not exist."
     IDS_EQUATION_PARSER_ERROR "Equation Parser Error!"
@@ -5787,8 +5772,8 @@ BEGIN
                             "Show or hide the inspection tool bar\nToggle Inspection Tool Bar"
     ID_ADD_GAGETOOL         "Insert a blank Gage Tool!\nAdd Gage Tool"
     ID_ADD_PROFILETOOL      "Insert a blank Profile Tool!\nAdd Profile Tool"
-    ID_FILE_PRINT_SEC       "Print the active configuration\nPrint"
-    ID_FILE_PRINT_PREVIEW_SEC "Display full pages\nPrint Preview"
+    ID_FILE_PRINT_CONFIG    "Print the active configuration\nPrint"
+    ID_FILE_PRINT_PREVIEW_CONFIG "Display full pages\nPrint Preview"
     ID_EXTRAS_USERMANAGER   "Opens the SVObserver user manager."
     ID_ADD_ROUNDWINDOWTOOL  "Insert a blank Round Window Tool!\nAdd Round Window Tool"
     ID_ADD_ROTATETOOL       "Insert a blank Rotate Tool!\nAdd Rotate Tool"

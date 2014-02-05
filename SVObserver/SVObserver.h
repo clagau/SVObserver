@@ -5,8 +5,8 @@
 //* .Module Name     : SVObserver
 //* .File Name       : $Workfile:   SVObserver.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.9  $
-//* .Check In Date   : $Date:   31 Jan 2014 17:16:34  $
+//* .Current Version : $Revision:   1.10  $
+//* .Check In Date   : $Date:   04 Feb 2014 15:33:28  $
 //******************************************************************************
 
 #ifndef SVOBSERVER_H
@@ -108,10 +108,9 @@ public:
 #pragma region AFX_MSG Methods
 	//{{AFX_MSG(SVObserverApp)
 	afx_msg void OnAppAbout();
-	afx_msg void OnFileNewSEC();
-	afx_msg void OnFileSaveSec();
+	afx_msg void OnFileNewConfig();
+	afx_msg void OnFileSaveConfig();
 	afx_msg void OnFileOpenSVC();
-	afx_msg void OnFileSaveAsSec();
 	afx_msg void OnEditEnvironment();
 	afx_msg void OnTestMode();
 	afx_msg void OnModeTestBtn();
@@ -119,24 +118,21 @@ public:
 	afx_msg void OnStopTestMode();
 	afx_msg void OnEnvironmentSettings();
 	afx_msg void OnUpdateModeRun(CCmdUI* PCmdUI);
-	afx_msg void OnFileCloseSec();
+	afx_msg void OnFileCloseConfig();
 	afx_msg void OnFileOpen();
 	afx_msg void OnFileSaveAll();
 	afx_msg void OnEditIOList();
 	afx_msg void OnUpdateEditEnvironment(CCmdUI* PCmdUI);
 	afx_msg void OnUpdateEditIOList(CCmdUI* PCmdUI);
 	afx_msg void OnUpdateFileClose(CCmdUI* PCmdUI);
-	afx_msg void OnUpdateFileCloseSec(CCmdUI* PCmdUI);
 	afx_msg void OnUpdateFileNew(CCmdUI* PCmdUI);
 	afx_msg void OnUpdateFileOpen(CCmdUI* PCmdUI);
 	afx_msg void OnUpdateFileOpenSVC(CCmdUI* PCmdUI);
 	afx_msg void OnUpdateFileSave(CCmdUI* PCmdUI);
 	afx_msg void OnUpdateFileSaveAll(CCmdUI* PCmdUI);
 	afx_msg void OnUpdateFileSaveAs(CCmdUI* PCmdUI);
-	afx_msg void OnUpdateFileSaveAsSec(CCmdUI* PCmdUI);
 	afx_msg void OnUpdateFileSaveCopyAs(CCmdUI* PCmdUI);
 	afx_msg void OnUpdateFileSaveImage(CCmdUI* PCmdUI);
-	afx_msg void OnUpdateFileSaveSec(CCmdUI* PCmdUI);
 	afx_msg void OnUpdateFileUpdate(CCmdUI* PCmdUI);
 	afx_msg void OnUpdateExtrasAdditionalEnvironmentSettings(CCmdUI* PCmdUI);
 	afx_msg void OnStop();
@@ -176,8 +172,8 @@ public:
 	afx_msg void OnUpdateAddArchiveTool(CCmdUI* PCmdUI);
 	afx_msg void OnUpdateAddMathTool(CCmdUI* PCmdUI);
 	afx_msg void OnUpdateAddStatisticsTool(CCmdUI* PCmdUI);
-	afx_msg void OnFilePrintSec();
-	afx_msg void OnFilePrintPreviewSec();
+	afx_msg void OnFilePrintConfig();
+	afx_msg void OnFilePrintPreviewConfig();
 	afx_msg void OnExtrasLogin();
 	afx_msg void OnUpdateExtrasLogin(CCmdUI* PCmdUI);
 	afx_msg void OnUpdateExtrasUserManager(CCmdUI* PCmdUI);
@@ -190,7 +186,7 @@ public:
 	afx_msg void OnUpdateGoOffline(CCmdUI* PCmdUI);
 	afx_msg void OnGoOnline();
 	afx_msg void OnUpdateGoOnline(CCmdUI* PCmdUI);
-	afx_msg void OnUpdateFilePrintSec(CCmdUI* PCmdUI);
+	afx_msg void OnUpdateFilePrintConfig(CCmdUI* PCmdUI);
 	afx_msg void OnExtrasLogout();
 	afx_msg void OnUpdateExtrasLogout(CCmdUI* PCmdUI);
 	afx_msg BOOL OnOpenRecentFile(UINT NID);
@@ -216,8 +212,7 @@ public:
 	// Special for SVRCComm.DLL
 	afx_msg void OnRCGoOffline();
 	afx_msg void OnRCGoOnline();
-	afx_msg void OnRCLoadSEC();
-	afx_msg void OnRCSaveAllAndGetSEC();
+	afx_msg void OnRCSaveAllAndGetConfig();
 	afx_msg void OnRCCloseAndCleanUpDownloadDirectory();
 	afx_msg void OnUpdateAllIOViews();
 	afx_msg void OnUpdateAddExternalTool(CCmdUI* pCmdUI);
@@ -279,9 +274,7 @@ public:
 
 	SVMainFrame* GetMainFrame() const;
 	HRESULT CanCloseMainFrame();
-	BOOL CreateSEC( BOOL NewSEC = TRUE );
-	HRESULT OpenSECFile( LPCTSTR PathName );
-	HRESULT DestroySEC( BOOL AskForSavingOrClosing = TRUE, BOOL CloseWithoutHint = FALSE );
+	HRESULT DestroyConfig( BOOL AskForSavingOrClosing = TRUE, BOOL CloseWithoutHint = FALSE );
 	void RemoveUnusedFiles();
 	SVIODoc* GetIODoc() const;
 
@@ -321,11 +314,11 @@ public:
 	BOOL SetStatusText( LPCTSTR PStrStatusText );
 	void UpdatePPQBar();
 
-	LPCTSTR GetSECFileNameOnly() const;
-	LPCTSTR GetSECPathName() const;
-	LPCTSTR GetSECFileName() const;
-	LPCTSTR GetSECFullFileName() const;
-	BOOL SetSECFullFileName(LPCTSTR csFullFileName, DWORD bLoadFile = TRUE);
+	LPCTSTR getConfigFileNameOnly() const;
+	LPCTSTR getConfigPathName() const;
+	LPCTSTR getConfigFileName() const;
+	LPCTSTR getConfigFullFileName() const;
+	BOOL setConfigFullFileName(LPCTSTR csFullFileName, DWORD bLoadFile = TRUE);
 
 	SVIPDoc* GetIPDoc( LPCTSTR StrIPDocPathName ) const;
 	BOOL AlreadyExistsIPDocTitle( LPCTSTR StrIPDocTitle );
@@ -337,7 +330,6 @@ public:
 	bool OkToEditMove();
 	BOOL IsMonochromeImageAvailable();
 	void SVGetCurrentConfigName( CString &ConfigName ) const;
-	void OnRCOpenCurrentSEC();
 	void OnRCOpenCurrentSVX();
 	void SetupSVIMServer();
 	void UpdateAllMenuExtrasUtilities();
@@ -438,8 +430,8 @@ protected:
 	HRESULT ConnectCameraBuffers( const CStringArray& rCamerasToConnect );
 	HRESULT InitializeSecurity();
 
-	void fileSaveAsSec( CString StrSaveAsPathName = _T( "" ) );
-    BOOL OpenSECFileFromMostRecentList(int nID);
+	void fileSaveAsSVX( CString StrSaveAsPathName = _T( "" ) );
+    BOOL OpenConfigFileFromMostRecentList(int nID);
 	void EnableTriggerSettings();
 	void DisableTriggerSettings();
 	void SaveIPDoc(SVObjectWriter& rWriter, SVIPDoc* pDoc);
@@ -497,29 +489,11 @@ private:
 	HANDLE m_hAppThread;
 	// *** // ***
 
-	CMemFile SECMemoryCopyFile;
-	BOOL IsSECMemoryCopyAvailable;
-	BOOL IsSECMemorySaving;
-	BOOL IsSECMemoryLoading;
-	CString MemorySECDataPath;
-	CString MemorySECPathName;
-	CString MemorySECTitle;
-
 	SVOIntelRAIDStatusClass m_IntelRAID;
 
 	SVLVFastOCR* m_pFastOcr;
-	BOOL ViewToolBuffers;
 	SVIPDoc* m_pCurrentDocument;
 	long m_OfflineCount;
-
-	// old
-	int RefreshRate;
-
-	// SEC File Attributes
-	GUID CurrentSECID;
-	CString CreationSECDate;
-	CString CurrentSECDate;
-
 	BOOL m_ShouldRunLastEnvironmentAutomatically;
 	DWORD m_AutoRunDelayTime;
 
@@ -581,11 +555,9 @@ private:
 
 	SVFileNamePtrVector m_svFileNames;
 
-	BOOL m_OpeningSEC;
-
 	BOOL m_ATLInited;
 
-	mutable SVFileNameClass m_SECFileName;	// JMS - Added for File Management
+	mutable SVFileNameClass m_ConfigFileName;	// JMS - Added for File Management
 
 	CString m_WinKey;
 	CString m_ModelNumber;
@@ -647,6 +619,58 @@ extern SVObserverApp TheSVObserverApp;
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVObserver.h_v  $
+ * 
+ *    Rev 1.10   04 Feb 2014 15:33:28   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  880
+ * SCR Title:  Remove .SEC
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   Removed unused includes for SVVector.h and SVStorage.h.
+ * Reordered methods to group them to public, protected and private.
+ * Changed member variables to private and encapsulated with access methods if needed.
+ * Removed methods:
+ *  - OnFileSaveAsSec
+ *  - OnUpdateFileCloseSec
+ *  - OnUpdateFileSaveAsSec
+ *  - OnUpdateFileSaveSec
+ *  - OnRCLoadSEC
+ *  - CreateSEC
+ *  - OpenSECFile
+ *  - OnRCOpenCurrentSEC
+ * Removed member variables:
+ *  - SECMemoryCopyFile
+ *  - IsSECMemoryCopyAvailable
+ *  - IsSECMemorySaving
+ *  - IsSECMemoryLoading
+ *  - MemorySECDataPath
+ *  - MemorySECPathName
+ *  - MemorySECTitle
+ *  - ViewToolBuffers
+ *  - RefreshRate
+ *  - CurrentSECID
+ *  - CreationSECDate
+ *  - CurrentSECDate
+ *  - m_bOpeningSEC
+ * Renamed methods as follows:
+ *  - OnFileNewSEC -> OnFileNewConfig
+ *  - OnFileSaveSec -> OnFileSaveConfig
+ *  - OnFileCloseSec -> OnFileCloseConfig
+ *  - OnFilePrintSec -> OnFilePrintConfig
+ *  - OnFilePrintPreviewSec -> OnFilePrintPreviewConfig
+ *  - OnUpdateFilePrintSec -> OnUpdateFilePrintConfig
+ *  - OnRCSaveAllAndGetSEC -> OnRCSaveAllAndGetConfig
+ *  - DestroySEC -> DestroyConfig
+ *  - GetSECFileNameOnly -> getConfigFileNameOnly
+ *  - GetSECPathName -> getConfigPathName
+ *  - GetSECFileName -> getConfigFileName
+ *  - GetSECFullFileName -> getConfigFullFileName
+ *  - SetSECFullFileName -> setConfigFullFileName
+ *  - fileSaveAsSec -> fileSaveAsSVX
+ *  - OpenSECFileFromMostRecentList -> OpenConfigFileFromMostRecentList
+ * Renamed member variable msvSECFileName -> m_ConfigFileName.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.9   31 Jan 2014 17:16:34   bwalter
  * Project:  SVObserver

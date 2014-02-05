@@ -5,8 +5,8 @@
 //* .Module Name     : SVImageArchive
 //* .File Name       : $Workfile:   SVImageArchive.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 10:48:44  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   04 Feb 2014 15:21:20  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -38,8 +38,8 @@ void SVImageArchiveClass::Init (CString &szStartFileName)
 {
   SetImageArchiveFileTemplate (szStartFileName);
   mszCurrentFileName.Empty ();
-  mszImageArchivePath = CString( TheSVObserverApp.GetSECPathName() ) + "\\" + 
-	                      CString( TheSVObserverApp.GetSECFileNameOnly() );
+  mszImageArchivePath = CString( TheSVObserverApp.getConfigPathName() ) + "\\" + 
+	                      CString( TheSVObserverApp.getConfigFileNameOnly() );
   if ( mszImageArchivePath.IsEmpty () || mszImageArchivePath.Right(1) != _T("\\") )
   {
     mszImageArchivePath += (TCHAR)'\\';
@@ -300,7 +300,17 @@ BOOL SVImageArchiveClass::SelectImageArchivePath()
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVImageArchive.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVImageArchive.cpp_v  $
+ * 
+ *    Rev 1.1   04 Feb 2014 15:21:20   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  880
+ * SCR Title:  Remove .SEC
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   Changed the Init method to use the method getConfigPathName and getConfigFileNameOnly instead of GetSECPathName and GetSECFileNameOnly from TheSVObserverApp.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 10:48:44   bWalter
  * Project:  SVObserver

@@ -632,9 +632,6 @@
     <ClCompile Include="SVLineROI.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVLoginPasswordDialog.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVLongValueObjectClass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -723,9 +720,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVObjectScriptParserBase.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVObjectScriptParserSEC.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVObjectScriptParserSVX.cpp">
@@ -2267,9 +2261,6 @@
     <ClInclude Include="SVLineROI.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVLoginPasswordDialog.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVLongValueObjectClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -2358,9 +2349,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVObjectScriptParserBase.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVObjectScriptParserSEC.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVObjectScriptParserSVX.h">
@@ -3303,6 +3291,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVExtentPropertiesInfoStruct.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RemoteCommand.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVPLCValidateReasons.h">

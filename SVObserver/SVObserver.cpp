@@ -5,8 +5,8 @@
 //* .Module Name     : SVObserver
 //* .File Name       : $Workfile:   SVObserver.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.18  $
-//* .Check In Date   : $Date:   31 Jan 2014 17:16:32  $
+//* .Current Version : $Revision:   1.19  $
+//* .Check In Date   : $Date:   04 Feb 2014 15:30:18  $
 //******************************************************************************
 
 #pragma region Includes
@@ -17,6 +17,7 @@
 #include "SVIOLibrary/SVIOConfigurationInterfaceClass.h"
 #include "SVLibrary/SVPackedFile.h"
 #include "SVObjectLibrary/SVObjectSynchronousCommandTemplate.h"
+#include "SVOMFCLibrary/SVDeviceParam.h"
 #include "SVOMFCLibrary/SVDeviceParams.h"
 #include "SVOMFCLibrary/SVLongValueDeviceParam.h"
 #include "SVTimerLibrary/SVClock.h"
@@ -29,7 +30,6 @@
 #include "SVFileNameManagerClass.h"
 #include "SVImageViewScroll.h"
 #include "SVIMServerWrapper.h"
-#include "SVIOChildFrm.h"
 #include "SVIPChildFrm.h"
 #include "SVMainFrm.h"
 #include "SVDiscreteInputsView.h"
@@ -38,7 +38,6 @@
 #include "SVSVIMStateClass.h"
 #include "SVUtilities.h"
 #include "SVSystemLibrary/SVCrash.h"
-#include "SVObjectLibrary/SVObjectClass.h"
 #include "SVLVFastOCR.h"
 #include "SVIPDoc.h"
 #include "SVIODoc.h"
@@ -59,13 +58,11 @@
 
 #include "SVConfigurationLibrary/SVOCMGlobals.h"
 #include "SVImageProcessingClass.h"
-#include "SVAcquisitionClass.h"
 
 #include "SVOConfigAssistantDlg.h"
 
 #include "SVXMLLibrary/SVNavigateTreeClass.h"
 
-#include "SVConfigurationLibrary/SVConfigurationTags.h"
 #include "SVConfigurationObject.h"
 // BRW - SVImageCompression has been deprecated.
 //#include "SVImageCompression/SVImageCompressionClass.h"
@@ -83,21 +80,13 @@
 #include "SVIOLibrary/SVIOParameterEnum.h"
 #include "SoftwareTriggerDlg.h"
 
-#ifdef _DEBUG
-	// temp testing code EB 2002 12 20
-	#include "SVImageLibrary/SVLut.h"
-#endif
-
 #include "SVGlobal.h"
-
-#include "SVMessage/SVMessage.h"
 
 #include "SV1394CameraFileLibrary/SVDCamFactoryRegistrar.h"
 
 #include "SVIOController.h"
 #ifndef _WIN64
 #include "SVPLCOutputsView.h"
-#include "SVPLCAddRemoveDlg.h"
 #endif
 #include "SVDirectX.h"
 #include "SVHardwareManifest.h"
@@ -117,77 +106,17 @@
 #include "SVIPDocInfoImporter.h"
 #include "SVVisionProcessorHelper.h"
 #include "SVDlgResultPicker.h"
+#include "RemoteCommand.h"
+#include "SVIOBoardCapabilities.h"
+#include "SVInspectionProcess.h"
+#include "SVPPQObject.h"
 #pragma endregion Includes
 
 #pragma region Declarations
 #define ID_TRRIGER_SETTINGS 21017
 
-LPCTSTR const FRAME_GRABBER_VIPER_QUAD                    = (_T("01"));
-LPCTSTR const FRAME_GRABBER_VIPER_RGB                     = (_T("02"));
 LPCTSTR const FRAME_GRABBER_VIPER_DIGITAL                 = (_T("03"));
-LPCTSTR const FRAME_GRABBER_DUAL_VIPER                    = (_T("04"));
-LPCTSTR const FRAME_GRABBER_1_MATROX_METEOR2_1394         = (_T("05"));
-LPCTSTR const FRAME_GRABBER_2_MATROX_METEOR2_1394         = (_T("06"));
-LPCTSTR const FRAME_GRABBER_3_MATROX_METEOR2_1394         = (_T("07"));
-LPCTSTR const FRAME_GRABBER_1_MATROX_METEOR2_1394_MOD_452 = (_T("08"));
-LPCTSTR const FRAME_GRABBER_2_MATROX_METEOR2_1394_MOD_452 = (_T("09"));
-LPCTSTR const FRAME_GRABBER_3_MATROX_METEOR2_1394_MOD_452 = (_T("0A"));
-LPCTSTR const FRAME_GRABBER_MATROX_GIGE					  = (_T("50"));
 
-struct SVIM_MODEL	// just to enclose the enums
-{
-	enum PROCESSOR
-	{
-		PROCESSOR_350_MHZ_P2_TRENTON = 1,
-		PROCESSOR_500_MHZ_P3_TRENTON = 2,
-		PROCESSOR_450_MHZ_P2_TRENTON = 3,
-		PROCESSOR_800_MHZ_P3_TRENTON = 4,
-		PROCESSOR_SINGLE_850_ROCKY_3722 = 10,
-		PROCESSOR_SINGLE_850_ROCKY_3732 = 11,
-		PROCESSOR_SINGLE_CUSTOM = 12,
-		PROCESSOR_DUAL_850_ROCKY_3722 = 20,
-		PROCESSOR_DUAL_850_ROCKY_3732 = 21,
-		PROCESSOR_DUAL_1_GHZ_ROCKY_3732 = 22,
-		PROCESSOR_DUAL_1_4_GHZ_ROCKY_3732 = 23,
-		PROCESSOR_SINGLE_3_06_GHZ_ANT_FA_43 = 30,
-		PROCESSOR_SINGLE_1_8_GHZ_ROCKY_4783 = 31,
-		PROCESSOR_SINGLE_3_06_ROCKY_4783_BIOS_1_2 = 35,
-		PROCESSOR_SINGLE_3_06_ROCKY_4783_BIOS_1_4 = 36,
-	};
-
-	enum IO_BOARD
-	{
-		IO_BOARD_NONE           =  0,
-		IO_BOARD_MEILHAUS_24    =  1,
-		IO_BOARD_MEILHAUS_48    =  2,
-		IO_BOARD_NI_PCI_6527    =  3,
-		IO_BOARD_UEI_PD2_DIO_64 =  4,
-		IO_BOARD_ENTECH_LPT			= 10,
-	};
-
-	enum OPTIONS
-	{
-		OPTIONS_NONE = 0,
-		OPTIONS_FAST_OCR = 1,
-		OPTIONS_ISA_BACKPLANE = 2,
-		OPTIONS_CUSTOM_IO_OPTO_MODULES = 3,
-		OPTIONS_256_MB_RAM = 4,
-		OPTIONS_512_MB_RAM = 5,
-		OPTIONS_768_MB_RAM = 6,
-		OPTIONS_1_GB_RAM = 7,
-		OPTIONS_1_25_GB_RAM = 8,
-		OPTIONS_1_50_GB_RAM = 9,
-		OPTIONS_CUSTOM_RAM = 10,
-		OPTIONS_2_GB_RAM = 11,
-		OPTIONS_256_MB_RAM_FAST_OCR = 20,
-		OPTIONS_512_MB_RAM_FAST_OCR = 21,
-		OPTIONS_768_MB_RAM_FAST_OCR = 22,
-		OPTIONS_1_GB_RAM_FAST_OCR = 23,
-		OPTIONS_1_25_GB_RAM_FAST_OCR = 24,
-		OPTIONS_1_50_GB_RAM_FAST_OCR = 25,
-		OPTIONS_2_GB_RAM_FAST_OCR = 26,
-	};
-};
 extern bool g_bUseCorrectListRecursion;
 #pragma endregion Declarations
 
@@ -223,206 +152,6 @@ SVObserverApp TheSVObserverApp;
 static char THIS_FILE[] = __FILE__;
 #endif
 
-// Global functions for SVFocusNT Remote Commands
-BOOL GlobalRCGetConfigurationName( char *pszConfigName )
-{
-	BOOL bOk = FALSE;
-
-	SVFileNameClass svFileName;
-
-	svFileName.SetFullFileName( ((SVObserverApp *)AfxGetApp())->GetSECFullFileName() );
-
-	if ( !CString( svFileName.GetFileNameOnly() ).IsEmpty() )
-	{
-		svFileName.SetPathName( _T( "C:\\RUN" ) );
-
-		strcpy( pszConfigName, svFileName.GetFullFileName() );
-
-		bOk = TRUE;
-	}
-
-	return bOk;
-}
-
-BOOL GlobalRCGoOnline()
-{
-	SendMessage (AfxGetApp()->m_pMainWnd->m_hWnd, WM_COMMAND, MAKEWPARAM (ID_RC_GO_ONLINE, 0), 0);
-	return TRUE;
-}
-
-BOOL GlobalRCGoOffline()
-{
-	SendMessage (AfxGetApp()->m_pMainWnd->m_hWnd, WM_COMMAND, MAKEWPARAM (ID_RC_GO_OFFLINE, 0), 0);
-	return TRUE;
-}
-
-HRESULT GlobalRCSetMode( unsigned long p_lNewMode )
-{
-	return static_cast<HRESULT>(SendMessage( AfxGetApp()->m_pMainWnd->m_hWnd, SV_SET_MODE, 0, ( LPARAM )p_lNewMode ));
-}
-
-HRESULT GlobalRCGetMode( unsigned long* p_plMode )
-{
-	HRESULT hr = S_OK;
-	if( SVSVIMStateClass::CheckState( SV_STATE_EDIT ))
-	{
-		*p_plMode = SVIM_MODE_EDIT;
-	}
-	else
-	if( SVSVIMStateClass::CheckState( SV_STATE_RUNNING ))
-	{
-		*p_plMode = SVIM_MODE_ONLINE;
-	}
-	else
-	if( SVSVIMStateClass::CheckState( SV_STATE_EDIT_MOVE ))
-	{
-		*p_plMode = SVIM_MODE_EDIT_MOVE;
-	}
-	else
-	if( SVSVIMStateClass::CheckState( SV_STATE_REGRESSION ))
-	{
-		*p_plMode = SVIM_MODE_REGRESSION;
-	}
-	else
-	if( SVSVIMStateClass::CheckState( SV_STATE_TEST ))
-	{
-		*p_plMode = SVIM_MODE_TEST;
-	}
-	else // Pending conditions...
-	if( SVSVIMStateClass::CheckState( SV_STATE_START_PENDING ) ||
-		SVSVIMStateClass::CheckState( SV_STATE_STARTING ) ||
-		SVSVIMStateClass::CheckState( SV_STATE_STOP_PENDING ) ||
-		SVSVIMStateClass::CheckState( SV_STATE_STOPING ))
-	{
-		*p_plMode = SVIM_MODE_CHANGING;
-	}
-	else
-	if( SVSVIMStateClass::CheckState( SV_STATE_READY) && 
-		!SVSVIMStateClass::CheckState( SV_STATE_EDIT ) &&
-		!SVSVIMStateClass::CheckState( SV_STATE_EDIT_MOVE ))
-	{
-		*p_plMode = SVIM_MODE_OFFLINE;
-	}
-	else
-	{
-		*p_plMode = 0;
-	}
-	
-	return hr;
-}
-
-BOOL GlobalRCGetState(DWORD *pdwSVIMState)
-{
-	*pdwSVIMState = 0;
-
-	BOOL bOk = SVSVIMStateClass::CheckState( SV_STATE_AVAILABLE );
-
-	if ( SVSVIMStateClass::CheckState( SV_STATE_READY ) )
-	{
-		*pdwSVIMState |= SVIM_CONFIG_LOADED;
-	}
-
-	if ( SVSVIMStateClass::CheckState( SV_STATE_SAVING ) )
-	{
-		*pdwSVIMState |= SVIM_SAVING_CONFIG;
-	}
-
-	if ( SVSVIMStateClass::CheckState( SV_STATE_LOADING ) )
-	{
-		*pdwSVIMState |= SVIM_CONFIG_LOADING;
-	}
-
-	if ( SVSVIMStateClass::CheckState( SV_STATE_RUNNING ) )
-	{
-		*pdwSVIMState |= SVIM_ONLINE;
-
-        if (! SVSVIMStateClass::CheckState( SV_STATE_TEST ) ) // testing (but not regression testing) sets the running flag
-    		*pdwSVIMState |= SVIM_RUNNING;
-	}
-	
-    if ( SVSVIMStateClass::CheckState( SV_STATE_REGRESSION ) )
-	{
-		*pdwSVIMState |= SVIM_REGRESSION_TEST;
-	}
-	else if ( SVSVIMStateClass::CheckState( SV_STATE_TEST ) )// can be testing without regression testing, but can't be regression testing without testing
-	{
-		*pdwSVIMState |= SVIM_RUNNING_TEST;
-	}
-
-	if ( SVSVIMStateClass::CheckState( SV_STATE_EDIT ) )
-	{
-		*pdwSVIMState |= SVIM_SETUPMODE;
-	}
-
-	if ( SVSVIMStateClass::CheckState( SV_STATE_CLOSING ) )
-	{
-		*pdwSVIMState |= SVIM_STOPPING;
-	}
-
-	if ( SVSVIMStateClass::CheckState( SV_STATE_START_PENDING ) )
-	{
-		*pdwSVIMState |= SVIM_ONLINE_PENDING;
-	}
-
-	if ( SVSVIMStateClass::CheckState( SV_STATE_RAID_FAILURE ) )
-	{
-		*pdwSVIMState |= SVIM_RAID_FAILURE;
-	}
-
-	bOk = *pdwSVIMState != 0 || bOk;
-
-	return bOk;
-}
-
-BOOL GlobalRCOpenConfiguration( char *pszConfigName )
-{
-	CString szConfigName(pszConfigName);
-
-	SVRCSetSVCPathName(szConfigName);
-
-    TCHAR szDrive[_MAX_DRIVE];
-	TCHAR szDir[_MAX_DIR];
-	TCHAR szFile[_MAX_FNAME];
-	TCHAR szExt[_MAX_EXT];
-    CString sComp;
-
-    _tsplitpath( pszConfigName, szDrive, szDir, szFile, szExt );
-    sComp = szExt;
-
-    if (sComp.CompareNoCase(_T(".sec"))==0)
-    {
-        SendMessage (AfxGetApp()->m_pMainWnd->m_hWnd, WM_COMMAND, MAKEWPARAM (ID_RC_OPEN_CURRENT_SEC, 0), 0);
-    }
-    else if (sComp.CompareNoCase(_T(".svx"))==0)
-    {
-        SendMessage (AfxGetApp()->m_pMainWnd->m_hWnd, WM_COMMAND, MAKEWPARAM (ID_RC_OPEN_CURRENT_SVX, 0), 0);
-    }
-	else
-		return FALSE;
-
-	return TRUE;
-}
-
-BOOL GlobalRCSaveConfiguration()
-{
-	SendMessage (AfxGetApp()->m_pMainWnd->m_hWnd, WM_COMMAND, MAKEWPARAM (ID_RC_SAVE_ALL_AND_GET_SEC, 0), 0);
-	return TRUE;
-}
-
-BOOL GlobalRCCloseAndCleanConfiguration()
-{
-	SendMessage (AfxGetApp()->m_pMainWnd->m_hWnd, WM_COMMAND, MAKEWPARAM (ID_RC_CLOSE_AND_CLEAN_RUN_DIR, 0), 0);
-	return TRUE;
-}
-
-BOOL GlobalRCCloseConfiguration()
-{
-	SendMessage (AfxGetApp()->m_pMainWnd->m_hWnd, WM_COMMAND, MAKEWPARAM (ID_RC_CLOSE, 0), 0);
-	return TRUE;
-}
-
-// End Global functions for SVFocusNT
-
 class CMdiChildWorkaround : public CMDIChildWnd
 {
 public:
@@ -457,15 +186,15 @@ IMPLEMENT_SERIAL( SVObserverApp, CWinApp, 0 );
 BEGIN_MESSAGE_MAP(SVObserverApp, CWinApp)
 	//{{AFX_MSG_MAP(SVObserverApp)
 	ON_COMMAND(ID_APP_ABOUT, OnAppAbout)
-	ON_COMMAND(ID_FILE_NEW, OnFileNewSEC)
-	ON_COMMAND(ID_FILE_SAVE_SVC, OnFileSaveSec)
+	ON_COMMAND(ID_FILE_NEW, OnFileNewConfig)
+	ON_COMMAND(ID_FILE_SAVE_SVC, OnFileSaveConfig)
 	ON_COMMAND(ID_FILE_OPEN_SVC, OnFileOpenSVC)
-	ON_COMMAND(ID_FILE_CLOSE_SVC, OnFileCloseSec)
+	ON_COMMAND(ID_FILE_CLOSE_SVC, OnFileCloseConfig)
 	ON_COMMAND(ID_FILE_OPEN, OnFileOpen)
 	ON_COMMAND(ID_FILE_SAVE_ALL, OnFileSaveAll)
 	ON_COMMAND(ID_FILE_PRINT_SETUP, OnFilePrintSetup)
-	ON_COMMAND(ID_FILE_PRINT_SEC, OnFilePrintSec)
-	ON_COMMAND(ID_FILE_PRINT_PREVIEW_SEC, OnFilePrintPreviewSec)
+	ON_COMMAND(ID_FILE_PRINT_CONFIG, OnFilePrintConfig)
+	ON_COMMAND(ID_FILE_PRINT_PREVIEW_CONFIG, OnFilePrintPreviewConfig)
 	ON_COMMAND(ID_FILE_SAVE_AS_SVC, OnFileSaveAsSVC)
 	ON_COMMAND_EX_RANGE(ID_FILE_MRU_FILE1, ID_FILE_MRU_FILE16, OnOpenRecentFile)
 
@@ -490,11 +219,9 @@ BEGIN_MESSAGE_MAP(SVObserverApp, CWinApp)
 
 	ON_COMMAND(ID_RC_GO_OFFLINE, OnRCGoOffline)
 	ON_COMMAND(ID_RC_GO_ONLINE, OnRCGoOnline)
-	ON_COMMAND(ID_RC_LOAD_SEC, OnRCLoadSEC)
-	ON_COMMAND(ID_RC_SAVE_ALL_AND_GET_SEC, OnRCSaveAllAndGetSEC)
+	ON_COMMAND(ID_RC_SAVE_ALL_AND_GET_CONFIG, OnRCSaveAllAndGetConfig)
 	ON_COMMAND(ID_RC_CLOSE_AND_CLEAN_RUN_DIR, OnRCCloseAndCleanUpDownloadDirectory)
-	ON_COMMAND(ID_RC_OPEN_CURRENT_SEC, OnRCOpenCurrentSEC)
-    ON_COMMAND(ID_RC_OPEN_CURRENT_SVX, OnRCOpenCurrentSVX)
+	ON_COMMAND(ID_RC_OPEN_CURRENT_SVX, OnRCOpenCurrentSVX)
 
 	ON_COMMAND(ID_STOP, OnStop)
 	ON_COMMAND(ID_UPDATE_ALL_IOVIEWS, OnUpdateAllIOViews )
@@ -513,21 +240,18 @@ BEGIN_MESSAGE_MAP(SVObserverApp, CWinApp)
 	ON_UPDATE_COMMAND_UI(ID_GO_ONLINE, OnUpdateGoOnline)
 	ON_UPDATE_COMMAND_UI(ID_RUN_REGRESSIONTEST, OnUpdateRegressionTest)
 
-	ON_UPDATE_COMMAND_UI(ID_FILE_CLOSE, OnUpdateFileClose)
-	ON_UPDATE_COMMAND_UI(ID_FILE_CLOSE_SVC, OnUpdateFileCloseSec)
+	ON_UPDATE_COMMAND_UI(ID_FILE_CLOSE_SVC, OnUpdateFileClose)
 	ON_UPDATE_COMMAND_UI(ID_FILE_NEW, OnUpdateFileNew)
 	ON_UPDATE_COMMAND_UI(ID_FILE_OPEN, OnUpdateFileOpen)
 	ON_UPDATE_COMMAND_UI(ID_FILE_OPEN_SVC, OnUpdateFileOpenSVC)
-	ON_UPDATE_COMMAND_UI(ID_FILE_SAVE, OnUpdateFileSave)
+	ON_UPDATE_COMMAND_UI(ID_FILE_SAVE_SVC, OnUpdateFileSave)
 	ON_UPDATE_COMMAND_UI(ID_FILE_SAVE_ALL, OnUpdateFileSaveAll)
-	ON_UPDATE_COMMAND_UI(ID_FILE_SAVE_AS, OnUpdateFileSaveAs)
-	ON_UPDATE_COMMAND_UI(ID_FILE_SAVE_AS_SVC, OnUpdateFileSaveAsSec)
+	ON_UPDATE_COMMAND_UI(ID_FILE_SAVE_AS_SVC, OnUpdateFileSaveAs)
 	ON_UPDATE_COMMAND_UI(ID_FILE_SAVE_COPY_AS, OnUpdateFileSaveCopyAs)
 	ON_UPDATE_COMMAND_UI(ID_FILE_SAVE_IMAGE, OnUpdateFileSaveImage)
-	ON_UPDATE_COMMAND_UI(ID_FILE_SAVE_SVC, OnUpdateFileSaveSec)
 	ON_UPDATE_COMMAND_UI(ID_FILE_UPDATE, OnUpdateFileUpdate)
 	ON_UPDATE_COMMAND_UI(ID_FILE_PRINT, OnUpdateFilePrint)
-	ON_UPDATE_COMMAND_UI(ID_FILE_PRINT_SEC, OnUpdateFilePrintSec)
+	ON_UPDATE_COMMAND_UI(ID_FILE_PRINT_CONFIG, OnUpdateFilePrintConfig)
 	ON_UPDATE_COMMAND_UI(ID_FILE_PRINT_PREVIEW, OnUpdateFilePrintPreview)
 	ON_UPDATE_COMMAND_UI(ID_FILE_PRINT_SETUP, OnUpdateFilePrintSetup)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_FILE_MRU_FILE1, ID_FILE_MRU_FILE16, OnUpdateRecentFileMenu)
@@ -604,6 +328,7 @@ SVObserverApp::SVObserverApp()
 	  , m_OutputStreamPortNumber( 32101 )
 	  , m_RemoteCommandsPortNumber( 28960 )
 	  , m_XMLTree( m_MaterialsTree )
+	  , m_MaterialsTree()
 {
 	::OutputDebugString( _T( "Executing => SVObserverApp::SVObserverApp()\n" ) );
 
@@ -639,15 +364,6 @@ SVObserverApp::SVObserverApp()
 	m_LastValidConfigPNVariableDefaultValue	= _T( "C:\\Last Valid\\" );					// LPCTSTR
 	m_LastValidConfigPNVariableValue		= _T( "" );									// CString
 
-	IsSECMemoryCopyAvailable = FALSE;
-	IsSECMemorySaving        = FALSE;
-	IsSECMemoryLoading       = FALSE;
-	MemorySECDataPath		 = _T( "" );
-	MemorySECPathName		 = _T( "" );
-	MemorySECTitle			 = _T( "" );
-
-	m_OpeningSEC = FALSE;
-
 	m_csProcessor.Empty();
 	m_csFrameGrabber.Empty();
 	m_csIOBoard.Empty();
@@ -656,12 +372,7 @@ SVObserverApp::SVObserverApp()
 	m_csTrigger.Empty();
 
 	m_hrHardwareFailure = SV_HARDWARE_FAILURE_ALL;
-
-	ViewToolBuffers	= FALSE;
-
-	CurrentSECID		= SVInvalidGUID;
 	m_OfflineCount = 0;
-
 	m_ShouldRunLastEnvironmentAutomatically = FALSE;
 	m_AutoRunDelayTime = 1000;
 
@@ -669,9 +380,6 @@ SVObserverApp::SVObserverApp()
 	m_LoadingVersion = 0L;
 
 	m_pCurrentDocument = nullptr;	// Set by current Document!!!
-
-	RefreshRate		= SV_DEFAULT_VIEW_REFRESH_RATE;
-
 	m_pMessageWindow = nullptr;
 
 	//
@@ -679,18 +387,17 @@ SVObserverApp::SVObserverApp()
 	//
 	m_pFastOcr = nullptr;
 
-	// File management for SEC file.
-	m_SECFileName.SetFileType( SV_SEC_CONFIGURATION_FILE_TYPE );
+	m_ConfigFileName.SetFileType( SV_SVX_CONFIGURATION_FILE_TYPE );
 
 	SVFileNameManagerClass svFileManager;
-	svFileManager.AddItem( &m_SECFileName );
+	svFileManager.AddItem( &m_ConfigFileName );
 }// end SVObserver ctor
 
 SVObserverApp::~SVObserverApp()
 {
-	// File management for SEC file.
+	// File management for config file.
 	SVFileNameManagerClass svFileManager;
-	svFileManager.RemoveItem( &m_SECFileName );
+	svFileManager.RemoveItem( &m_ConfigFileName );
 }
 #pragma endregion Constructor
 
@@ -730,9 +437,9 @@ void SVObserverApp::OnAppAbout()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// .Title       : OnFileNewSEC - calls the SVApplicationAssistant Dialog
+// .Title       : OnFileNewConfig - calls the SVApplicationAssistant Dialog
 // -----------------------------------------------------------------------------
-// .Description : OnFileNewSEC - calls the SVApplicationAssistant Dialog to get
+// .Description : OnFileNewConfig - calls the SVApplicationAssistant Dialog to get
 //              : correct systems for opening new IPDocuments
 // -----------------------------------------------------------------------------
 // .Input(s)
@@ -757,7 +464,7 @@ void SVObserverApp::OnAppAbout()
 //  :30.06.1999 FRB         Wait cursor
 //	:20.10.1999 RO			Merged to ShowConfigurationAssistant().
 ////////////////////////////////////////////////////////////////////////////////
-void SVObserverApp::OnFileNewSEC() 
+void SVObserverApp::OnFileNewConfig() 
 {
 	if( m_svSecurityMgr.SVValidate( SECURITY_POINT_FILE_MENU_NEW ) == S_OK )
 	{
@@ -829,12 +536,12 @@ void SVObserverApp::OnFileNewSEC()
 //  :27.05.1997 RO			First Implementation
 //	:
 ////////////////////////////////////////////////////////////////////////////////
-void SVObserverApp::OnFileSaveSec()
+void SVObserverApp::OnFileSaveConfig()
 {
-	if( CString( GetSECFullFileName() ).IsEmpty() || 
-		CString( GetSECPathName() ).IsEmpty() )
+	if( CString( getConfigFullFileName() ).IsEmpty() || 
+		CString( getConfigPathName() ).IsEmpty() )
 	{
-		fileSaveAsSec();
+		fileSaveAsSVX();
 	}
 	else
 	{
@@ -844,25 +551,25 @@ void SVObserverApp::OnFileSaveSec()
 
 		if ( csTempName.IsEmpty() )
 		{
-			csTempName = GetSECFullFileName();
+			csTempName = getConfigFullFileName();
 		}
 		else
 		{
 			csTempName += _T( "\\" );
-			csTempName += GetSECFileName();
+			csTempName += getConfigFileName();
 		}
 
-		fileSaveAsSec( csTempName );
+		fileSaveAsSVX( csTempName );
 	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : OnFileOpenSVC
 // -----------------------------------------------------------------------------
-// .Description : General - Opens a SEC File.
-//				: - Calls a SEC File Open Dialog 
-//				: - If a SEC already exists, calls the SEC saving procedure
-//              : - Calls the SEC loading procedure
+// .Description : General - Opens a config File.
+//				: - Calls a config File Open Dialog 
+//				: - If a config already exists, calls the config saving procedure
+//              : - Calls the config loading procedure
 // -----------------------------------------------------------------------------
 // .Input(s)
 //	 Type				Name				Description
@@ -893,7 +600,7 @@ void SVObserverApp::OnFileOpenSVC()
 	{
 		SVFileNameClass svFileName;
 
-		svFileName.SetFileType( SV_SEC_CONFIGURATION_FILE_TYPE );
+		svFileName.SetFileType( SV_SVX_CONFIGURATION_FILE_TYPE );
 		//
 		// Try to read the current image file path name from registry...
 		//
@@ -909,23 +616,8 @@ void SVObserverApp::OnFileOpenSVC()
 				_T( "SVCFilePath" ),
 				svFileName.GetPathName() );
 
-			// Check for SEC file...
-			if ( CString( svFileName.GetExtension() ).CompareNoCase( _T( ".sec" ) ) == 0 )
-			{
-				//
-				// Open the configuration file (.sec) and read it and
-				// all the associated files for this configuration.
-				//
-				TheSVOLicenseManager().ClearLicenseErrors();
-				if ( OpenSECFile( svFileName.GetFullFileName() ) == S_OK )
-				{
-					if ( TheSVOLicenseManager().HasToolErrors() )
-					{
-						TheSVOLicenseManager().ShowLicenseManagerErrors();
-					}
-				}
-			}
-			else if ( CString( svFileName.GetExtension() ).CompareNoCase( _T( ".svx" ) ) == 0 )
+			// Check for SVX file...
+			if ( CString( svFileName.GetExtension() ).CompareNoCase( _T( ".svx" ) ) == 0 )
 			{
 				//
 				// Open the configuration file (.svx) and read it and
@@ -948,41 +640,6 @@ void SVObserverApp::OnFileOpenSVC()
 	}// end if ( m_svSecurityMgr.Validate( SECURITY_POINT_FILE_MENU_SELECT_CONFIGURATION) == S_OK )
 	// Update Remote Inputs Tab
 	UpdateRemoteInputTabs();
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : OnFileSaveAsSec()
-// -----------------------------------------------------------------------------
-// .Description : ...
-//              :
-// -----------------------------------------------------------------------------
-// .Input(s)
-//	 Type				Name				Description
-//	: 
-//  :
-// .Output(s)
-//	:
-//  :
-// .Return Value
-//	: 
-// -----------------------------------------------------------------------------
-// .Import Function Reference(s)
-//	:
-// -----------------------------------------------------------------------------
-// .Import Variable Reference(s)
-//	:
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :27.05.1997 RO			First Implementation
-//	:
-////////////////////////////////////////////////////////////////////////////////
-void SVObserverApp::OnFileSaveAsSec()
-{
-	if( m_svSecurityMgr.SVValidate( SECURITY_POINT_FILE_MENU_SAVE_CONFIGURATION_AS ) == S_OK )
-	{
-		fileSaveAsSec();
-	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -1170,11 +827,11 @@ void SVObserverApp::OnEnvironmentSettings()
 				CMenu *pMenu;
 				CString szMenuText;
 
-				pWindow = AfxGetMainWnd ();
+				pWindow = AfxGetMainWnd();
 				pMenu = pWindow->GetMenu();
 				szMenuText = _T("&Utilities");
 
-				if (pMenu = util.FindSubMenuByName (pMenu, szMenuText))
+				if ( pMenu = util.FindSubMenuByName( pMenu, szMenuText ) )
 				{
 					util.LoadMenu (pMenu);
 				}
@@ -1194,7 +851,7 @@ void SVObserverApp::OnUpdateModeRun( CCmdUI* PCmdUI )
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// .Title       : OnFileCloseSec
+// .Title       : OnFileCloseConfig
 // -----------------------------------------------------------------------------
 // .Description : ...
 //              :
@@ -1220,7 +877,7 @@ void SVObserverApp::OnUpdateModeRun( CCmdUI* PCmdUI )
 //  :27.05.1997 RO			First Implementation
 //	:
 ////////////////////////////////////////////////////////////////////////////////
-void SVObserverApp::OnFileCloseSec() 
+void SVObserverApp::OnFileCloseConfig() 
 {
 	if( m_svSecurityMgr.SVValidate( SECURITY_POINT_FILE_MENU_CLOSE_CONFIGURATION ) == S_OK )
 	{
@@ -1228,9 +885,8 @@ void SVObserverApp::OnFileCloseSec()
 
 		ValidateMRUList();
 
-		// Check if current SEC is modified, ask for saving and try to close
-		DestroySEC();
-		//	UpdateApplicationBar();
+		// Check if current config is modified, ask for saving and try to close
+		DestroyConfig();
 
 		ValidateMRUList();
 	}
@@ -1301,7 +957,7 @@ void SVObserverApp::OnFileSaveAll()
 {
 	if( m_svSecurityMgr.SVValidate( SECURITY_POINT_FILE_MENU_SAVE_CONFIGURATION ) == S_OK )
 	{
-		OnFileSaveSec();
+		OnFileSaveConfig();
 	}
 }
 
@@ -1418,12 +1074,6 @@ void SVObserverApp::OnUpdateFileClose( CCmdUI* PCmdUI )
 		&& m_svSecurityMgr.SVIsDisplayable( SECURITY_POINT_FILE_MENU_CLOSE_CONFIGURATION ) );
 }
 
-void SVObserverApp::OnUpdateFileCloseSec( CCmdUI* PCmdUI )
-{
-	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION )
-		&& m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_FILE_MENU_CLOSE_CONFIGURATION ));
-}
-
 void SVObserverApp::OnUpdateFileNew( CCmdUI* PCmdUI ) 
 {
 	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST  | SV_STATE_REGRESSION) &&
@@ -1488,13 +1138,6 @@ void SVObserverApp::OnUpdateFileSaveAs( CCmdUI* PCmdUI )
 		&& m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_FILE_MENU_SAVE_CONFIGURATION_AS ));
 }
 
-void SVObserverApp::OnUpdateFileSaveAsSec( CCmdUI* PCmdUI ) 
-{
-	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST  | SV_STATE_REGRESSION)
-		&& SVSVIMStateClass::CheckState( SV_STATE_READY )
-		&& m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_FILE_MENU_SAVE_CONFIGURATION_AS ));
-}
-
 void SVObserverApp::OnUpdateFileSaveCopyAs( CCmdUI* PCmdUI ) 
 {
 	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST  | SV_STATE_REGRESSION)  );
@@ -1505,13 +1148,6 @@ void SVObserverApp::OnUpdateFileSaveImage( CCmdUI* PCmdUI )
 	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING  | SV_STATE_REGRESSION | SV_STATE_TEST)
 		&& SVSVIMStateClass::CheckState( SV_STATE_READY )
 		&& m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_FILE_MENU_SAVE_IMAGE ));
-}
-
-void SVObserverApp::OnUpdateFileSaveSec( CCmdUI* PCmdUI ) 
-{
-	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION )
-		&& SVSVIMStateClass::CheckState( SV_STATE_READY )
-		&& m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_FILE_MENU_SAVE_CONFIGURATION ));
 }
 
 void SVObserverApp::OnUpdateFileUpdate( CCmdUI* PCmdUI ) 
@@ -1996,16 +1632,16 @@ void SVObserverApp::OnUpdateAddStatisticsTool( CCmdUI* PCmdUI )
 		IsMonochromeImageAvailable() );
 }
 
-void SVObserverApp::OnFilePrintSec() 
+void SVObserverApp::OnFilePrintConfig() 
 {
 	if ( ! SVSVIMStateClass::CheckState( SV_STATE_READY | SV_STATE_RUNNING ) || 
-	     CString( GetSECFullFileName() ).IsEmpty() )
+		CString( getConfigFullFileName() ).IsEmpty() )
 	{
 		return;
 	}
 
-	SVConfigurationPrint printSEC;
-	printSEC.DoPrintSEC();
+	SVConfigurationPrint printConfig;
+	printConfig.DoPrintConfig();
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -2013,7 +1649,7 @@ void SVObserverApp::OnFilePrintSec()
 //
 //  Not Called..  BRW - We should delete this.
 //
-void SVObserverApp::OnFilePrintPreviewSec() 
+void SVObserverApp::OnFilePrintPreviewConfig() 
 {
 	CMDIChildWnd* pMDIChild;
 	if( m_pMainWnd && ( pMDIChild = ( ( CMDIFrameWnd* ) m_pMainWnd )->MDIGetActive() ) )
@@ -2488,7 +2124,7 @@ void SVObserverApp::OnUpdateGoOnline( CCmdUI* PCmdUI )
 	PCmdUI->SetCheck( SVSVIMStateClass::CheckState( SV_STATE_RUNNING ) );
 }
 
-void SVObserverApp::OnUpdateFilePrintSec( CCmdUI* PCmdUI ) 
+void SVObserverApp::OnUpdateFilePrintConfig( CCmdUI* PCmdUI ) 
 {
 	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_REGRESSION | SV_STATE_TEST )  
 		&& m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_FILE_MENU_PRINT ));
@@ -2547,7 +2183,7 @@ BOOL SVObserverApp::OnOpenRecentFile( UINT nID )
 
 			if ( !bRunning )
 			{
-				l_bOk = OpenSECFileFromMostRecentList(nID);
+				l_bOk = OpenConfigFileFromMostRecentList(nID);
 				if( l_bOk && !m_svSecurityMgr.SVIsSecured( SECURITY_POINT_MODE_MENU_EDIT_TOOLSET ) )
 				{
 					SetModeEdit( true ); // Set Edit mode
@@ -2571,7 +2207,7 @@ void SVObserverApp::OnRunMostRecentMRU()
 
 		if ( !bRunning )
 		{
-			OpenSECFileFromMostRecentList(ID_FILE_MRU_FILE1);
+			OpenConfigFileFromMostRecentList(ID_FILE_MRU_FILE1);
 		}
 	}
 }
@@ -2684,8 +2320,8 @@ void SVObserverApp::OnFileSaveAsSVC()
 	{
 		if ( SVSVIMStateClass::CheckState( SV_STATE_READY ) )
 		{
-			// Call save as sec with file dialog...
-			fileSaveAsSec();
+			// Call save as svx with file dialog...
+			fileSaveAsSVX();
 		}
 	}
 }
@@ -2864,7 +2500,7 @@ void SVObserverApp::OnRCGoOnline()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// .Title       : OnRCLoadSEC
+// .Title       : OnRCSaveAllAndGetConfig
 // -----------------------------------------------------------------------------
 // .Description : ...
 //              :
@@ -2890,87 +2526,10 @@ void SVObserverApp::OnRCGoOnline()
 //  :27.05.1997 RO			First Implementation
 //	:
 ////////////////////////////////////////////////////////////////////////////////
-void SVObserverApp::OnRCLoadSEC()
+void SVObserverApp::OnRCSaveAllAndGetConfig()
 {
-	SVFileNameClass svFileName( SVRCGetSVCPathName() );
-
-  if ( ! CString( svFileName.GetFullFileName() ).IsEmpty() )
-	{
-		BOOL bIsSEC = CString( svFileName.GetExtension() ).CompareNoCase( _T( ".sec" ) ) == 0;
-		BOOL bIsSVX = CString( svFileName.GetExtension() ).CompareNoCase( _T( ".svx" ) ) == 0;
-
-		// Check for SEC file...
-		if ( bIsSEC || bIsSVX )
-		{
-			if ( S_OK != DestroySEC( FALSE, TRUE ) )
-			{
-				AfxMessageBox( "Failed to destroy SEC, try it manual!" );
-			}
-			else
-			{
-				BOOL bOk = FALSE;
-
-				if ( bIsSEC )
-				{	
-					bOk = S_OK == OpenSECFile( svFileName.GetFullFileName() );
-
-					if ( ! bOk )
-					{
-						AfxMessageBox( "Failed to restart SEC, try it manual!" );
-					}
-				}
-				else if ( bIsSVX )
-				{
-					bOk = S_OK == OpenSVXFile( svFileName.GetFullFileName() );
-
-					if ( ! bOk )
-					{
-						AfxMessageBox( "Failed to restart SVX, try it manual!" );
-					}
-				}
-
-				if ( bOk )
-				{
-					GetMainFrame()->SetNotifyCommRC ();
-				}
-			}
-		
-			return;
-		}
-	}
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : OnRCSaveAllAndGetSEC
-// -----------------------------------------------------------------------------
-// .Description : ...
-//              :
-// -----------------------------------------------------------------------------
-// .Input(s)
-//	 Type				Name				Description
-//	: 
-//  :
-// .Output(s)
-//	:
-//  :
-// .Return Value
-//	: 
-// -----------------------------------------------------------------------------
-// .Import Function Reference(s)
-//	:
-// -----------------------------------------------------------------------------
-// .Import Variable Reference(s)
-//	:
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :27.05.1997 RO			First Implementation
-//	:
-////////////////////////////////////////////////////////////////////////////////
-void SVObserverApp::OnRCSaveAllAndGetSEC()
-{
-	// Saves the current loaded SEC completely, transfers the CurrentPathName to 
-	// SVRCComm.Dll and at least closes the current SEC, because the opened 
+	// Saves the current loaded config completely, transfers the CurrentPathName to 
+	// SVRCComm.Dll and at least closes the current config, because the opened 
 	// SVObserver documents cannot be transfered to SVFocus!
 
 	BOOL bRunning = SVSVIMStateClass::CheckState( SV_STATE_RUNNING );
@@ -2996,13 +2555,13 @@ void SVObserverApp::OnRCSaveAllAndGetSEC()
 
 		SVFileNameClass svFileName;
 
-		svFileName.SetFullFileName( GetSECFullFileName() );
+		svFileName.SetFullFileName( getConfigFullFileName() );
 		svFileName.SetPathName( _T( "C:\\RUN" ) );
 		svFileName.SetExtension( _T( ".svx" ) );
 
-		fileSaveAsSec( svFileName.GetFullFileName() );
+		fileSaveAsSVX( svFileName.GetFullFileName() );
 
-		SVRCSetSVCPathName( GetSECFullFileName() );
+		SVRCSetSVCPathName( getConfigFullFileName() );
 
 		if ( ! csConfigPath.IsEmpty() )
 		{
@@ -3056,8 +2615,8 @@ void SVObserverApp::OnRCCloseAndCleanUpDownloadDirectory()
 	// Closes loaded configuration
 	// Cleans up execution directory ( download directory )
 
-		// Close SEC immediately, without hint or user message...
-		DestroySEC( FALSE, TRUE );	// Close SEC immediately
+	// Close config immediately, without hint or user message...
+	DestroyConfig( FALSE, TRUE );	// Close config immediately
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -3456,8 +3015,8 @@ void SVObserverApp::OnRCClose()
 	// Closes loaded configuration
 	// Cleans up execution directory ( download directory )
 
-	// Close SEC immediately, without hint or user message...
-	DestroySEC( FALSE, TRUE );	// Close SEC immediately
+	// Close config immediately, without hint or user message...
+	DestroyConfig( FALSE, TRUE );	// Close config immediately
 }
 #pragma endregion AFX_MSG Methods
 
@@ -4052,7 +3611,7 @@ HRESULT SVObserverApp::OpenSVXFile(LPCTSTR PathName)
 
 	while (1)
 	{
-		hrDestroyed = DestroySEC();
+		hrDestroyed = DestroyConfig();
 		if (hrDestroyed != S_OK)
 		{
 			hr = hrDestroyed; //keep the cancel state so it does not remove from MRU
@@ -4094,30 +3653,30 @@ HRESULT SVObserverApp::OpenSVXFile(LPCTSTR PathName)
 			CString csFullFileName;
 
 			BSTR bStr = NULL;
-			unsigned long SECVer = 0;
+			unsigned long configVer = 0;
 
-			SetSECFullFileName( PathName );
+			setConfigFullFileName( PathName );
 
-			SVRCSetSVCPathName( GetSECFullFileName() );
+			SVRCSetSVCPathName( getConfigFullFileName() );
 
-			csFullFileName = GetSECFullFileName();
+			csFullFileName = getConfigFullFileName();
 
 			bStr = csFullFileName.AllocSysString();
 
 			while (1)
 			{
-				hr = SVOCMLoadConfiguration( m_CurrentVersion, SECVer, bStr, m_XMLTree );
+				hr = SVOCMLoadConfiguration( m_CurrentVersion, configVer, bStr, m_XMLTree );
 				if (hr & 0xc0000000)
 				{
 					break;
 				}
 
-				if ( SECVer > m_CurrentVersion )
+				if ( configVer > m_CurrentVersion )
 				{
 					CString strText, strFile, strApp;
 
 					::SVGetVersionString( strApp, m_CurrentVersion );
-					::SVGetVersionString( strFile, SECVer );
+					::SVGetVersionString( strFile, configVer );
 					strText.Format( _T( "This configuration was created by SVObserver %s.\n"
 						"You are currently running SVObserver %s.\n"
 						"This configuration version may be incompatible with\n"
@@ -4219,12 +3778,12 @@ HRESULT SVObserverApp::OpenSVXFile(LPCTSTR PathName)
 
 			if ( CString( svFileManager.GetConfigurationPathName() ).IsEmpty() )
 			{
-				AddToRecentFileList( GetSECFullFileName() );
+				AddToRecentFileList( getConfigFullFileName() );
 			}
 			else
 			{
 				AddToRecentFileList( CString( svFileManager.GetConfigurationPathName() ) + 
-					"\\" + GetSECFileName() );
+					"\\" + getConfigFileName() );
 			}
 
 			UpdatePPQBar();
@@ -4238,9 +3797,9 @@ HRESULT SVObserverApp::OpenSVXFile(LPCTSTR PathName)
 
 			SVSVIMStateClass::RemoveState( SV_STATE_LOADING );
 
-			DestroySEC( FALSE, TRUE );
+			DestroyConfig( FALSE, TRUE );
 
-			SetSECFullFileName( (LPCTSTR)NULL );
+			setConfigFullFileName( ( LPCTSTR )NULL );
 
 			UpdatePPQBar();
 
@@ -4248,14 +3807,12 @@ HRESULT SVObserverApp::OpenSVXFile(LPCTSTR PathName)
 			SVSVIMStateClass::RemoveState( SV_STATE_UNAVAILABLE );
 		}  // catch
 
-		m_OpeningSEC = FALSE;
-
 		break;
 	} // while (1)
 
 	if ( ! bOk && hrDestroyed == S_OK )
 	{
-		SetSECFullFileName( (LPCTSTR)NULL );
+		setConfigFullFileName( ( LPCTSTR )NULL );
 
 		SVSVIMStateClass::AddState( SV_STATE_AVAILABLE );
 		SVSVIMStateClass::RemoveState( SV_STATE_UNAVAILABLE | SV_STATE_LOADING );
@@ -4410,7 +3967,7 @@ CString SVObserverApp::GetConfigurationName() const
 
 	SVFileNameClass svFileName;
 
-	svFileName.SetFullFileName( GetSECFullFileName() );
+	svFileName.SetFullFileName( getConfigFullFileName() );
 
 	if( 0 < strlen( svFileName.GetFileNameOnly() ) )
 	{
@@ -4447,20 +4004,20 @@ HRESULT SVObserverApp::LoadPackedConfiguration( const CString& p_rPackedFileName
 
 	if( l_Status == S_OK )
 	{
-		CString strSecFile = PackedFile.GetSecFilePath();
+		CString configFilePath = PackedFile.getConfigFilePath();
 
-		if( strSecFile.IsEmpty() || ( _access( strSecFile, 0 ) != 0 ) )
+		if( configFilePath.IsEmpty() || ( _access( configFilePath, 0 ) != 0 ) )
 		{
 			l_Status = E_UNEXPECTED;
 		}
 		else
 		{
-			SVRCSetSVCPathName(strSecFile);
+			SVRCSetSVCPathName(configFilePath);
 
 			l_Status = static_cast<HRESULT>(SendMessage( m_pMainWnd->m_hWnd, SV_LOAD_CONFIGURATION, 0, 0 ));
 		}
 	}
-				
+
 	return l_Status;
 }
 
@@ -4468,7 +4025,7 @@ HRESULT SVObserverApp::SavePackedConfiguration( const CString& p_rPackedFileName
 {
 	HRESULT l_Status = S_OK;
 
-	SendMessage( m_pMainWnd->m_hWnd, WM_COMMAND, MAKEWPARAM (ID_RC_SAVE_ALL_AND_GET_SEC, 0), 0 );
+	SendMessage( m_pMainWnd->m_hWnd, WM_COMMAND, MAKEWPARAM (ID_RC_SAVE_ALL_AND_GET_CONFIG, 0), 0 );
 
 	SVPackedFile PackedFile;
 
@@ -4602,336 +4159,7 @@ SVMainFrame* SVObserverApp::GetMainFrame() const
 ////////////////////////////////////////////////////////////////////////////////
 HRESULT SVObserverApp::CanCloseMainFrame()
 {
-	return DestroySEC();
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : CreateSEC
-// -----------------------------------------------------------------------------
-// .Description : ...
-//              :
-// -----------------------------------------------------------------------------
-// .Input(s)
-//	 Type				Name				Description
-//	: 
-//  :
-// .Output(s)
-//	:
-//  :
-// .Return Value
-//	: 
-// -----------------------------------------------------------------------------
-// .Import Function Reference(s)
-//	:
-// -----------------------------------------------------------------------------
-// .Import Variable Reference(s)
-//	:
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :27.05.1997 RO			First Implementation
-//	:
-////////////////////////////////////////////////////////////////////////////////
-BOOL SVObserverApp::CreateSEC( BOOL NewSEC )
-{
-	BOOL bOk = FALSE;
-
-	if( NewSEC )
-	{
-		SetSECFullFileName( (LPCTSTR)NULL );
-
-		// Get SEC creation date...
-		LPTSTR pString = CreationSECDate.GetBuffer( 32 );
-
-		if ( GetDateFormat( LOCALE_SYSTEM_DEFAULT,	// locale for which date is to be formatted 
-				0,									// flags specifying function options 
-				NULL,								// date to be formatted
-				_T( "ddd',' dd'.' MMM'.' yyyy" ),	// date format string
-				pString,							// buffer for storing formatted string
-				31 ) == 0 )							// size of buffer
-		{
-			CreationSECDate.ReleaseBuffer();
-			CreationSECDate = _T( "(Unknown)" );
-		}
-		else
-		{
-			pString[ 31 ] = '\0';
-			CreationSECDate.ReleaseBuffer();
-		}
-
-		CurrentSECDate = CreationSECDate;
-	}
-
-	bOk = TRUE;
-
-	return bOk;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : OpenSECFile
-// -----------------------------------------------------------------------------
-// .Description : 
-// -----------------------------------------------------------------------------
-// .Input(s)
-//	 Type				Name				Description
-//	: 
-//  :
-// .Output(s)
-//	:
-//  :
-// .Return Value
-//	: void
-// -----------------------------------------------------------------------------
-// .Import Function Reference(s)
-//	:
-// -----------------------------------------------------------------------------
-// .Import Variable Reference(s)
-//	:
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :dd.mm.yyyy	RO			First Implementation
-////////////////////////////////////////////////////////////////////////////////
-HRESULT SVObserverApp::OpenSECFile( LPCTSTR PathName )
-{
-    CWaitCursor wait;
-	SVClock::SVTimeStamp l_StartLoading;
-	SVClock::SVTimeStamp l_FinishLoad;
-
-    HRESULT hr=S_OK;
-	BOOL bOk;
-    HRESULT hrDestroyed = DestroySEC();
-    hr = hrDestroyed;
-    bOk = (hrDestroyed == S_OK);
-
-	// TRB *******************
-	if ( bOk )
-	{
-		TheSVOLicenseManager().ClearLicenseErrors();
-
-		bOk = SVSVIMStateClass::AddState( SV_STATE_UNAVAILABLE | SV_STATE_LOADING );
-
-		if ( bOk )
-		{
-			bOk = SVSVIMStateClass::RemoveState( SV_STATE_AVAILABLE );
-		}
-	}
-
-	if ( bOk )
-	{
-		SVFileNameManagerClass svFileManager;
-		SVFileNameClass svFileName( PathName );
-
-		//
-		// Check if we tried to load the SVC from 
-		// Execution path...("C:\RUN\")
-		//
-		if ( CString( svFileName.GetPathName() ).CompareNoCase( svFileManager.GetRunPathName() ) )
-		{
-			// Clean up Execution Directory...
-			// Check path, create if necessary and delete contents...
-			InitPath( CString( svFileManager.GetRunPathName() ) + "\\", TRUE, TRUE );
-		}
-
-		try
-		{
-			SetSECFullFileName( PathName );
-
-			SVRCSetSVCPathName( GetSECFullFileName() );
-
-			CFile secFile;
-			if( ( bOk = secFile.Open( GetSECFullFileName(),
-			                          CFile::modeRead | CFile::shareExclusive ) ) )
-			{
-				// Create a temporary archive in order to serialize in the configuration
-				// version number. If the configuration is created with a future version of
-				// SVObserver, ask if they want to continue at their own risk. ow exit nicely.
-				CArchive tempArc( &secFile, CArchive::load );
-
-				CString strDummy;
-				tempArc >> strDummy;	// SVObserver System Environment Configuration File
-				tempArc >> strDummy;	// Version #
-				DWORD dwFileVersion;
-				tempArc >> dwFileVersion;
-				if( dwFileVersion > m_CurrentVersion )
-				{
-					CString strText, strFile, strApp;
-					::SVGetVersionString( strApp, m_CurrentVersion );
-					::SVGetVersionString( strFile, dwFileVersion );
-					strText.Format( _T( "This configuration was created by SVObserver %s.\n"
-									"You are currently running SVObserver %s.\n"
-									"This configuration version may be incompatible with\n"
-									"the version of SVObserver that you are running.\n"
-									"Are you sure you wish to continue ?" ), 
-									strFile, strApp );
-					if( IDNO == AfxMessageBox( strText, MB_YESNO ) )
-						return FALSE;
-				}// end if
-
-				l_StartLoading = SVClock::GetTimeStamp();
-
-				tempArc.Close();
-				secFile.SeekToBegin();
-
-// ************************************* JMS
-
-				CString csIODocName;
-				BSTR bStr = NULL;
-				CArchive archive( &secFile, CArchive::load );
-
-				unsigned long SECVer = 0;
-
-				// SEC will be created in SVObserverApp::Serialize( archive );
-				Serialize( archive );
-
-				SVOCMArchiveSEC( m_CurrentVersion, SECVer, archive, m_XMLTree, &bStr );
-
-				archive.Close();
-				secFile.Close();
-
-				csIODocName = bStr;
-				LoadTempIODoc( csIODocName );
-
-				// TRB *******************
-				// *************** Add IO Doc to local List 
-				SVFileNameClass * l_psvFileName = new SVFileNameClass( csIODocName );
-				m_svFileNames.Add( l_psvFileName );
-				svFileManager.AddItem(l_psvFileName);
-
-				SVTreeType::SVBranchHandle htiRoot;
-				SVTreeType::SVBranchHandle htiChild;
-
-				m_XMLTree.GetRoot( htiRoot );
-
-				if( m_XMLTree.FindBranch( htiRoot, _bstr_t( CTAG_INSPECTION ), htiChild ) == S_OK )
-				{
-					SVTreeType::SVBranchHandle htiIPChild;
-
-					m_XMLTree.GetFirstBranch( htiChild, htiIPChild );
-
-					while ( m_XMLTree.IsValidBranch( htiIPChild ) == S_OK )
-					{
-						SVTreeType::SVLeafHandle htiIPDataChild;
-
-						if( m_XMLTree.FindLeaf( htiIPChild, _bstr_t( CTAG_INSPECTION_FILE_NAME ), htiIPDataChild ) == S_OK )
-						{
-							_variant_t l_Variant;
-
-							if( m_XMLTree.GetLeafData( htiIPDataChild, l_Variant.GetVARIANT() ) == S_OK )
-							{
-								_bstr_t l_Name = l_Variant;
-
-								if( 0 < l_Name.length() )
-								{
-									l_psvFileName = new SVFileNameClass( static_cast< LPCTSTR >( l_Name ) );
-									m_svFileNames.Add( l_psvFileName );
-									svFileManager.AddItem( l_psvFileName );
-
-									m_Inspection = htiIPChild;
-
-									LoadTempIPDoc( static_cast< LPCTSTR >( l_Name ) );
-								}
-							}
-						}
-
-						m_XMLTree.GetNextBranch( htiChild, htiIPChild );
-					}
-				}
-
-				CloseAllDocuments(FALSE);
-
-				SVConfigurationObject* l_pConfig = NULL;
-				SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
-
-				if( l_pConfig != NULL )
-				{
-					hr = l_pConfig->LoadConfiguration( m_XMLTree );
-				}
-
-				GetMainFrame()->ParseToolsetScripts( m_XMLTree );
-
-				if( l_pConfig != NULL )
-				{
-					l_pConfig->RebuildInputOutputLists();
-
-					// Removes any invalid entries in the output list.
-					if( l_pConfig->IsConfigurationLoaded() )
-					{
-						if( l_pConfig->ValidateOutputList( ) == SV_FATAL_SVOBSERVER_2006_DUPLICATE_DISCRETE_OUTPUT )
-						{
-							::AfxMessageBox( "Invalid Discrete Outputs: Remove all Discrete Outputs and re-add them.", MB_ICONEXCLAMATION );
-						}
-					}
-				}
-
-				ConstructDocuments( m_XMLTree );
-
-				GetMainFrame()->OnConfigurationFinishedInitializing();
-
-				l_FinishLoad = SVClock::GetTimeStamp();
-				long l_lTime = static_cast<long>(l_FinishLoad - l_StartLoading);
-
-				SVException svE;
-				CString sExcTxt; 
-				sExcTxt.Format( "%s\nload time %d ms", PathName, l_lTime );
-				SETEXCEPTION1(svE,SVMSG_SVO_29_SVOBSERVER_CONFIG_LOADED,sExcTxt);
-				svE.LogException(sExcTxt);
-
-				m_XMLTree.Clear();
-
-// ************************************* JMS
-
-				// IsSECModified = FALSE; 03 Dec 1999 - frb. delay until 
-				// .ipd parsing is completed.
-
-				if ( CString( svFileManager.GetConfigurationPathName() ).IsEmpty() )
-				{
-					AddToRecentFileList( GetSECFullFileName() );
-				}
-				else
-				{
-					AddToRecentFileList( CString( svFileManager.GetConfigurationPathName() ) + 
-															 "\\" + GetSECFileName() );
-				}
-	
-				UpdatePPQBar();
-			}
-			else
-			{
-				SetSECFullFileName( (LPCTSTR)NULL );
-
-				SVSVIMStateClass::AddState( SV_STATE_AVAILABLE );
-				SVSVIMStateClass::RemoveState( SV_STATE_UNAVAILABLE | SV_STATE_LOADING );
-			}
-		}
-		catch( CUserException* pUE )
-		{
-			delete pUE;
-
-			bOk = FALSE;
-
-			SVSVIMStateClass::RemoveState( SV_STATE_LOADING );
-
-			
-			DestroySEC( FALSE, TRUE );
-
-			SetSECFullFileName( (LPCTSTR)NULL );
-
-			UpdatePPQBar();
-
-			SVSVIMStateClass::AddState( SV_STATE_AVAILABLE );
-			SVSVIMStateClass::RemoveState( SV_STATE_UNAVAILABLE );
-		}
-		m_OpeningSEC = TRUE;
-	}
-
-    if (hr == S_OK)
-        hr = bOk ? S_OK : S_FALSE;
-
-	// Update Remote Inputs Tab
-	UpdateRemoteInputTabs();
-
-	return hr;
+	return DestroyConfig();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -4961,7 +4189,7 @@ HRESULT SVObserverApp::OpenSECFile( LPCTSTR PathName )
 //  :27.05.1997 RO			First Implementation
 //	:
 ////////////////////////////////////////////////////////////////////////////////
-HRESULT SVObserverApp::DestroySEC( BOOL AskForSavingOrClosing /* = TRUE */, 
+HRESULT SVObserverApp::DestroyConfig( BOOL AskForSavingOrClosing /* = TRUE */, 
 	BOOL CloseWithoutHint /* = FALSE */ )
 {
 	BOOL bCancel = FALSE;
@@ -4980,7 +4208,7 @@ HRESULT SVObserverApp::DestroySEC( BOOL AskForSavingOrClosing /* = TRUE */,
 		}
 		else
 		{
-			AfxFormatString1( message, IDS_USER_QUESTION_CLOSE_SEC, GetSECFileName() ); 
+			AfxFormatString1( message, IDS_USER_QUESTION_CLOSE_CONFIG, getConfigFileName() ); 
 			bClose = AfxMessageBox( message, MB_YESNO | MB_ICONQUESTION ) == IDYES;
 			if (bClose == FALSE)
 				hr = ERROR_CANCELLED;
@@ -4995,10 +4223,10 @@ HRESULT SVObserverApp::DestroySEC( BOOL AskForSavingOrClosing /* = TRUE */,
 
 			if ( AskForSavingOrClosing )
 			{
-				// Check if current SEC is modified and ask for saving
+				// Check if current config is modified and ask for saving
 				if ( SVSVIMStateClass::CheckState( SV_STATE_MODIFIED ) )
 				{
-					AfxFormatString1( message, IDS_USER_QUESTION_SAVE_CHANGES, GetSECFileName() ); 
+					AfxFormatString1( message, IDS_USER_QUESTION_SAVE_CHANGES, getConfigFileName() ); 
 					switch( AfxMessageBox( message, MB_YESNOCANCEL | MB_ICONQUESTION ) )
 					{
 					case IDNO:
@@ -5011,19 +4239,19 @@ HRESULT SVObserverApp::DestroySEC( BOOL AskForSavingOrClosing /* = TRUE */,
 						{
 							if( m_svSecurityMgr.SVValidate( SECURITY_POINT_FILE_MENU_SAVE_CONFIGURATION ) == S_OK )
 							{
-								OnFileSaveSec();
+								OnFileSaveConfig();
 								ResetAllIPDocModifyFlag(FALSE);
 
 								// Check whether config saving is done.
 								// If not, an error or an user cancel
 								// command occured!
-								bClose = ! CString( GetSECFullFileName() ).IsEmpty() &&
+								bClose = ! CString( getConfigFullFileName() ).IsEmpty() &&
 									! SVSVIMStateClass::CheckState( SV_STATE_MODIFIED );
 							}
 							break;
 						}
 					case IDCANCEL:  // Fall through to default case.
-					default:	// Don´t close SEC!
+					default:	// Don´t close config!
 						{
 							bCancel = TRUE;
 							bClose = FALSE;
@@ -5100,7 +4328,7 @@ HRESULT SVObserverApp::DestroySEC( BOOL AskForSavingOrClosing /* = TRUE */,
 
 				bOk = SVSVIMStateClass::AddState( SV_STATE_AVAILABLE ) && bOk;
 				bOk = SVSVIMStateClass::RemoveState( SV_STATE_UNAVAILABLE | SV_STATE_CLOSING | SV_STATE_CANCELING ) && bOk;
-				bOk = SetSECFullFileName( (LPCTSTR) NULL ) && bOk;
+				bOk = setConfigFullFileName( ( LPCTSTR )NULL ) && bOk;
 
 				wait.Restore();
 
@@ -5149,25 +4377,6 @@ void SVObserverApp::RemoveUnusedFiles()
 {
 	SVFileNameManagerClass svFileManager;
 	svFileManager.RemoveUnusedFiles( FALSE );
-
-	if( m_OpeningSEC )
-	{
-		SVFileNamePtrVector::iterator l_Iter = m_svFileNames.begin();
-
-		while( l_Iter != m_svFileNames.end() )
-		{
-			SVFileNameClass* l_pName = ( *l_Iter );
-
-			l_Iter = m_svFileNames.erase( l_Iter );
-
-			svFileManager.RemoveItem( l_pName );
-
-			if( l_pName )
-			{
-				delete l_pName;
-			}
-		}
-	}
 }
 
 SVIODoc* SVObserverApp::GetIODoc() const
@@ -5331,13 +4540,13 @@ BOOL SVObserverApp::InitSVIMServer()
 		if( m_pSVIMServerWrapper && m_pSVIMServerWrapper->mSVIMServer.IsStarted() )
 		{
 			m_pSVIMServerWrapper->mSVIMServer.SetSVObserverWnd( m_pMainWnd->m_hWnd );
-			m_pSVIMServerWrapper->mSVIMServer.SetGoOffline( ::GlobalRCGoOffline );
-			m_pSVIMServerWrapper->mSVIMServer.SetGoOnline( ::GlobalRCGoOnline );
-			m_pSVIMServerWrapper->mSVIMServer.SetGetConfigurationName( ::GlobalRCGetConfigurationName );
-			m_pSVIMServerWrapper->mSVIMServer.SetGetState( ::GlobalRCGetState );
-			m_pSVIMServerWrapper->mSVIMServer.SetOpenConfiguration( ::GlobalRCOpenConfiguration );
-			m_pSVIMServerWrapper->mSVIMServer.SetSaveConfiguration( ::GlobalRCSaveConfiguration );
-			m_pSVIMServerWrapper->mSVIMServer.SetCloseConfiguration( ::GlobalRCCloseAndCleanConfiguration );
+			m_pSVIMServerWrapper->mSVIMServer.SetGoOffline( Seidenader::SVObserver::GlobalRCGoOffline );
+			m_pSVIMServerWrapper->mSVIMServer.SetGoOnline( Seidenader::SVObserver::GlobalRCGoOnline );
+			m_pSVIMServerWrapper->mSVIMServer.SetGetConfigurationName( Seidenader::SVObserver::GlobalRCGetConfigurationName );
+			m_pSVIMServerWrapper->mSVIMServer.SetGetState( Seidenader::SVObserver::GlobalRCGetState );
+			m_pSVIMServerWrapper->mSVIMServer.SetOpenConfiguration( Seidenader::SVObserver::GlobalRCOpenConfiguration );
+			m_pSVIMServerWrapper->mSVIMServer.SetSaveConfiguration( Seidenader::SVObserver::GlobalRCSaveConfiguration );
+			m_pSVIMServerWrapper->mSVIMServer.SetCloseConfiguration( Seidenader::SVObserver::GlobalRCCloseAndCleanConfiguration );
 			return TRUE;
 		}
 	}
@@ -6254,11 +5463,7 @@ HRESULT SVObserverApp::LoadConfiguration()
 	_tsplitpath( szConfigName, szDrive, szDir, szFile, szExt );
 	sComp = szExt;
 
-	if( sComp.CompareNoCase(_T(".sec"))==0 )
-	{
-		l_Status = OpenSECFile( szConfigName );
-	}
-	else if( sComp.CompareNoCase(_T(".svx"))==0 )
+	if( sComp.CompareNoCase(_T(".svx"))==0 )
 	{
 		l_Status = OpenSVXFile( szConfigName );
 	}
@@ -6440,49 +5645,49 @@ void SVObserverApp::UpdatePPQBar()
 	GetMainFrame()->OnViewPPQBar();
 }
 
-LPCTSTR SVObserverApp::GetSECFileNameOnly() const
+LPCTSTR SVObserverApp::getConfigFileNameOnly() const
 {
-	return m_SECFileName.GetFileNameOnly();
+	return m_ConfigFileName.GetFileNameOnly();
 }
 
-LPCTSTR SVObserverApp::GetSECPathName() const
+LPCTSTR SVObserverApp::getConfigPathName() const
 {
-	return m_SECFileName.GetPathName();
+	return m_ConfigFileName.GetPathName();
 }
 
-LPCTSTR SVObserverApp::GetSECFileName() const
+LPCTSTR SVObserverApp::getConfigFileName() const
 {
-	return m_SECFileName.GetFileName();
+	return m_ConfigFileName.GetFileName();
 }
 
-LPCTSTR SVObserverApp::GetSECFullFileName() const
+LPCTSTR SVObserverApp::getConfigFullFileName() const
 {
-	return m_SECFileName.GetFullFileName();
+	return m_ConfigFileName.GetFullFileName();
 }
 
-BOOL SVObserverApp::SetSECFullFileName(LPCTSTR csFullFileName, DWORD dwAction)
+BOOL SVObserverApp::setConfigFullFileName(LPCTSTR csFullFileName, DWORD dwAction)
 {
 	BOOL bOk = FALSE;
 
 	SVFileNameManagerClass svFileManager;
 
-	bOk = m_SECFileName.SetFullFileName( csFullFileName );
+	bOk = m_ConfigFileName.SetFullFileName( csFullFileName );
 
 	if ( bOk )
 	{
-		if ( CString( m_SECFileName.GetPathName() ).IsEmpty() )
+		if ( CString( m_ConfigFileName.GetPathName() ).IsEmpty() )
 		{
 			svFileManager.SetConfigurationPathName( NULL );
 		}
 		else
 		{
-			if ( CString( m_SECFileName.GetPathName() ).CompareNoCase( _T( "C:\\RUN" ) ) == 0 )
+			if ( CString( m_ConfigFileName.GetPathName() ).CompareNoCase( _T( "C:\\RUN" ) ) == 0 )
 			{
 				svFileManager.SetConfigurationPathName( NULL );
 			}
 			else
 			{
-				bOk = svFileManager.SetConfigurationPathName( m_SECFileName.GetPathName() );
+				bOk = svFileManager.SetConfigurationPathName( m_ConfigFileName.GetPathName() );
 				// if this returns FALSE, unable to access specified path!
 				if ( !bOk )
 				{
@@ -6493,7 +5698,7 @@ BOOL SVObserverApp::SetSECFullFileName(LPCTSTR csFullFileName, DWORD dwAction)
 					CString sMsg;
 					sMsg.Format(_T("Unable to %s configuration %s !"),
 						dwAction == LOAD_CONFIG ? _T("load") : _T("save"),
-						m_SECFileName.GetPathName());
+						m_ConfigFileName.GetPathName());
 					ASSERT(FALSE);
 					AfxMessageBox(sMsg);
 				}
@@ -6506,17 +5711,17 @@ BOOL SVObserverApp::SetSECFullFileName(LPCTSTR csFullFileName, DWORD dwAction)
 			{
 			case LOAD_CONFIG:
 				{
-					bOk = svFileManager.LoadItem( &m_SECFileName );
+					bOk = svFileManager.LoadItem( &m_ConfigFileName );
 					break;
 				}
 			case SAVE_CONFIG:
 				{
-					bOk = svFileManager.SaveItem( &m_SECFileName );
+					bOk = svFileManager.SaveItem( &m_ConfigFileName );
 					break;
 				}
 			case RENAME_CONFIG:
 				{
-					bOk = svFileManager.RenameItem( &m_SECFileName );
+					bOk = svFileManager.RenameItem( &m_ConfigFileName );
 					break;
 				}
 			default:
@@ -6690,7 +5895,6 @@ BOOL SVObserverApp::ShowConfigurationAssistant( int Page /*= 3*/,
 	BOOL bFileNewConfiguration /*= FALSE*/ )
 {
 	BOOL bOk = FALSE;
-	BOOL bWasSECLoaded = FALSE;
 
 	// Access denied, if... // Check Edit Mode
 	if( SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) )
@@ -6701,7 +5905,7 @@ BOOL SVObserverApp::ShowConfigurationAssistant( int Page /*= 3*/,
 		SVFileNameManagerClass svFileManager;
 
 		// Clean up SVObserver
-		if( S_OK != DestroySEC() )
+		if( S_OK != DestroyConfig() )
 		{
 			// Needs Attention !!!
 			// Should get error code if returned S_FALSE; 
@@ -6718,15 +5922,14 @@ BOOL SVObserverApp::ShowConfigurationAssistant( int Page /*= 3*/,
 		// Check path, create if necessary and delete contents...
 		InitPath( CString( svFileManager.GetRunPathName() ) + "\\", TRUE, TRUE );
 
-		// Ensure that DestroySEC() can do his work...
+		// Ensure that DestroyConfig() can do his work...
 		SVSVIMStateClass::AddState( SV_STATE_READY );
 	}
 	else
 	{
 		CWaitCursor wait;
 
-		// Store old state
-		bWasSECLoaded = SVSVIMStateClass::CheckState( SV_STATE_READY );
+		SVSVIMStateClass::CheckState( SV_STATE_READY );
 		ResetAllIPDocModifyFlag(FALSE);
 	}
 
@@ -6821,8 +6024,8 @@ BOOL SVObserverApp::ShowConfigurationAssistant( int Page /*= 3*/,
 		sNewName = cDlg.GetConfigurationName();
 		if( bFileNewConfiguration )
 		{
-			m_SECFileName.SetFileNameOnly( sNewName );
-			m_SECFileName.SetExtension( ".svx" );
+			m_ConfigFileName.SetFileNameOnly( sNewName );
+			m_ConfigFileName.SetExtension( ".svx" );
 
 			SVInputObjectList	*pInputObjectList = NULL;
 			SVOutputObjectList	*pOutputObjectList = NULL;
@@ -7031,12 +6234,7 @@ BOOL SVObserverApp::IsMonochromeImageAvailable()
 
 void SVObserverApp::SVGetCurrentConfigName(CString &ConfigName) const
 {
-	ConfigName = GetSECFullFileName();
-}
-
-void SVObserverApp::OnRCOpenCurrentSEC()
-{
-	OpenSECFile( SVRCGetSVCPathName() );
+	ConfigName = getConfigFullFileName();
 }
 
 void SVObserverApp::OnRCOpenCurrentSVX()
@@ -8462,6 +7660,7 @@ HRESULT SVObserverApp::LoadAcquisitionTriggerDLL()
 	return l_hrOk;
 }
 
+//*
 HRESULT SVObserverApp::LoadAcquisitionDLL()
 {
 	HRESULT l_hrOk = S_OK;
@@ -8738,7 +7937,7 @@ HRESULT SVObserverApp::InitializeSecurity()
 	return S_OK;
 }
 
-void SVObserverApp::fileSaveAsSec( CString StrSaveAsPathName ) 
+void SVObserverApp::fileSaveAsSVX( CString StrSaveAsPathName ) 
 {
 	SVFileNameManagerClass svFileManager;
 	CWaitCursor wait;
@@ -8752,12 +7951,12 @@ void SVObserverApp::fileSaveAsSec( CString StrSaveAsPathName )
 	//
 	if ( StrSaveAsPathName.IsEmpty() )
 	{
-		SVFileNameClass svFileName = m_SECFileName;
+		SVFileNameClass svFileName = m_ConfigFileName;
 
 		svFileName.SetFileType( SV_SVX_CONFIGURATION_FILE_TYPE );
 
-		if ( CString( GetSECPathName() ).IsEmpty() ||
-				 CString( GetSECPathName() ).CompareNoCase( "C:\\RUN" ) == 0 )
+		if ( CString( getConfigPathName() ).IsEmpty() ||
+			CString( getConfigPathName() ).CompareNoCase( "C:\\RUN" ) == 0 )
 		{
 			svFileName.SetPathName( AfxGetApp()->GetProfileString( _T( "Settings" ), 
 				_T( "ConfigurationFilePath" ), 
@@ -8774,7 +7973,7 @@ void SVObserverApp::fileSaveAsSec( CString StrSaveAsPathName )
 
 		if ( svFileName.SaveFile() )
 		{
-			bOk = SetSECFullFileName( svFileName.GetFullFileName(), RENAME );
+			bOk = setConfigFullFileName( svFileName.GetFullFileName(), RENAME );
 			if ( bOk )
 			{
 				AfxGetApp()->WriteProfileString( _T( "Settings" ), 
@@ -8789,10 +7988,10 @@ void SVObserverApp::fileSaveAsSec( CString StrSaveAsPathName )
 	}// end if ( StrSaveAsPathName.IsEmpty() )
 	else
 	{
-		SetSECFullFileName( StrSaveAsPathName, FALSE );
+		setConfigFullFileName( StrSaveAsPathName, FALSE );
 	}
 
-	if ( !CString( m_SECFileName.GetExtension() ).CompareNoCase( ".svx" ) )
+	if ( !CString( m_ConfigFileName.GetExtension() ).CompareNoCase( ".svx" ) )
 	{
 		CString csFileName;
 
@@ -8809,7 +8008,7 @@ void SVObserverApp::fileSaveAsSec( CString StrSaveAsPathName )
 
 		SaveDocuments( m_XMLTree );
 
-		csFileName = m_SECFileName.GetFullFileName();
+		csFileName = m_ConfigFileName.GetFullFileName();
 
 		bStr = csFileName.AllocSysString();
 
@@ -8823,7 +8022,7 @@ void SVObserverApp::fileSaveAsSec( CString StrSaveAsPathName )
 
 		SysFreeString( bStr );
 
-		svFileManager.SaveItem( &m_SECFileName );
+		svFileManager.SaveItem( &m_ConfigFileName );
 		svFileManager.SaveItems();
 		svFileManager.RemoveUnusedFiles();
 
@@ -8835,12 +8034,12 @@ void SVObserverApp::fileSaveAsSec( CString StrSaveAsPathName )
 		{
 			if ( CString( svFileManager.GetConfigurationPathName() ).IsEmpty() )
 			{
-				AddToRecentFileList( GetSECFullFileName() );
+				AddToRecentFileList( getConfigFullFileName() );
 			}
 			else
 			{
 				AddToRecentFileList( CString( svFileManager.GetConfigurationPathName() ) + 
-					"\\" + GetSECFileName() );
+					"\\" + getConfigFileName() );
 			}
 		}
 
@@ -8848,7 +8047,7 @@ void SVObserverApp::fileSaveAsSec( CString StrSaveAsPathName )
 
 		// Success...
 		return;
-	}// end if ( !CString( m_SECFileName.GetExtension() ).CompareNoCase( ".svx" ) )
+	}// end if ( !CString( m_ConfigFileName.GetExtension() ).CompareNoCase( ".svx" ) )
 	else
 	{
 		AfxMessageBox( IDS_USER_INFORMATION_WRONG_PATHNAME_ENTERED );
@@ -8857,12 +8056,11 @@ void SVObserverApp::fileSaveAsSec( CString StrSaveAsPathName )
 
 /////////////////////////////////////////////////////////////////////////////
 //
-//  An intermediate method called when user selects a configuration (.sec)
+//  An intermediate method called when user selects a configuration 
 //  file from the Most Recent Used (MRU) list under menu File.\
-//  Calls OpenSECFile(..)
 //
 //
-BOOL SVObserverApp::OpenSECFileFromMostRecentList(int nID)
+BOOL SVObserverApp::OpenConfigFileFromMostRecentList(int nID)
 {
 	ASSERT_VALID(this);
 	ASSERT(m_pRecentFileList != NULL);
@@ -8881,7 +8079,7 @@ BOOL SVObserverApp::OpenSECFileFromMostRecentList(int nID)
 
 	//if (OpenDocumentFile((*m_pRecentFileList)[nIndex]) == NULL)
 	//
-	// Open and read the Configuration (.sec) from the Most Recent Used
+	// Open and read the Configuration from the Most Recent Used
 	// List under the menu File.
 	//
 	SVFileNameClass svFileName;
@@ -8896,11 +8094,7 @@ BOOL SVObserverApp::OpenSECFileFromMostRecentList(int nID)
 	{
 		hr = OpenSVXFile((*m_pRecentFileList)[nIndex]);
 	}
-	else
-	{
-		hr = OpenSECFile((*m_pRecentFileList)[nIndex]);
-	}
-	
+
 	//if S_OK, check to see if it has any tool errors in the license manager
 	if ( hr == S_OK )
 	{
@@ -9613,6 +8807,24 @@ int SVObserverApp::FindMenuItem(CMenu* Menu, LPCTSTR MenuString)
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVObserver.cpp_v  $
+ * 
+ *    Rev 1.19   04 Feb 2014 15:30:18   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  880
+ * SCR Title:  Remove .SEC
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   Added regions.
+ * Removed unused includes for SVIOChildFrm.h, SVObjectClass.h, SVAcquisitionClass.h, SVConfigurationTags.h, SVLut.h, SVMessage.h, and SVPLCAddRemoveDlg.h.
+ * Added includes for SVDeviceParam.h, RemoteCommand.h, SVIOBoardCapabilities.h, SVInspectionProcess.h, and SVPPQObject.h.
+ * Deleted unused enums.
+ * Moved the Global functions to RemoteCommand.cpp
+ * Reordered methods to have the same order as the header file.
+ * Renamed member variables as listed in SVObserver.h check in notes.
+ * Set member variables to private and encapsulated with methods if needed.
+ * Remove methods as listed in SVObserver.h check in notes.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.18   31 Jan 2014 17:16:32   bwalter
  * Project:  SVObserver

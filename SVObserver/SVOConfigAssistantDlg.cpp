@@ -5,8 +5,8 @@
 //* .Module Name     : SVOConfigAssistantDlg
 //* .File Name       : $Workfile:   SVOConfigAssistantDlg.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.11  $
-//* .Check In Date   : $Date:   01 Feb 2014 11:39:20  $
+//* .Current Version : $Revision:   1.12  $
+//* .Check In Date   : $Date:   04 Feb 2014 15:42:24  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -320,12 +320,12 @@ BOOL CSVOConfigAssistantDlg::OnInitDialog()
 		m_dlgPropSheet.SetActivePage(1);	// page 2; camera
 	}
 	
-	//Call method to fill Avaliable System...
+	//Call method to fill Available System...
 	if (!m_bNewConfiguration)
 	{
 		m_bConfigName = TRUE;
 		GetConfigurationForExisting();
-		m_ctlConfigurationName.SetWindowText(TheSVObserverApp.GetSECFileName());
+		m_ctlConfigurationName.SetWindowText( TheSVObserverApp.getConfigFileName() );
 		m_ctlConfigurationName.EnableWindow(FALSE);
 	}
 	SetupSystemComboBox();
@@ -1802,13 +1802,14 @@ void CSVOConfigAssistantDlg::SetModified(BOOL bModified)
 	m_bModified = bModified;
 }
 
-
 void CSVOConfigAssistantDlg::OnOK() 
 {
 	CString sTmp = m_sConfigurationName.Right(4);
 	
 	UpdateData(TRUE);
-	if ( (sTmp.CompareNoCase(".svx") == 0) || (sTmp.CompareNoCase(".sec") == 0) )
+
+	//check configuration name.  do not allow name to have extension
+	if ( ( sTmp.CompareNoCase( ".svx" ) == 0) )
 	{
 		int iLen = m_sConfigurationName.GetLength();
 		sTmp = m_sConfigurationName.Left(iLen-4);
@@ -1817,16 +1818,9 @@ void CSVOConfigAssistantDlg::OnOK()
 	UpdateData(FALSE);
 	
 	SendDataToConfiguration();
-
-	
-	//check configuration name.  do not allow name to have extenstion
-	
-	
 	
 	CDialog::OnOK();
 }
-
-
 
 ////////////////////////////////////////////////////////
 ///               Message area 
@@ -4971,6 +4965,17 @@ bool CSVOConfigAssistantDlg::IsFileAcquisition(int iDig) const
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVOConfigAssistantDlg.cpp_v  $
+ * 
+ *    Rev 1.12   04 Feb 2014 15:42:24   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  880
+ * SCR Title:  Remove .SEC
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   Changed OnInitDialog method to use getConfigFileName instead of GetSECFileName
+ * Changed OnOK method to remove .SEC file support.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.11   01 Feb 2014 11:39:20   tbair
  * Project:  SVObserver

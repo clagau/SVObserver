@@ -5,8 +5,8 @@
 //* .Module Name     : SVConfigXMLPrint
 //* .File Name       : $Workfile:   SVConfigXMLPrint.inl  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.8  $
-//* .Check In Date   : $Date:   01 Feb 2014 10:32:24  $
+//* .Current Version : $Revision:   1.9  $
+//* .Check In Date   : $Date:   04 Feb 2014 13:27:20  $
 //******************************************************************************
 
 #include "SVObjectLibrary/SVObjectLibrary.h"
@@ -48,8 +48,8 @@ inline void SVConfigXMLPrint::PrintXMLDoc(Writer writer) const
 	wchar_t head[] = L"<?xml version=\"1.0\"?>";	
 	writer->WriteRaw(head);
 	writer->WriteStartElement(NULL, L"Configuration", NULL);
-	writer->WriteAttributeString(NULL, L"Name", NULL, to_utf16(pApp->GetSECFileName(), cp_dflt).c_str());
-	writer->WriteAttributeString(NULL, L"Path", NULL, to_utf16(pApp->GetSECFullFileName(), cp_dflt).c_str());
+	writer->WriteAttributeString(NULL, L"Name", NULL, to_utf16(pApp->getConfigFileName(), cp_dflt).c_str());
+	writer->WriteAttributeString(NULL, L"Path", NULL, to_utf16(pApp->getConfigFullFileName(), cp_dflt).c_str());
 	writer->WriteAttributeString(NULL, L"Timestamp", NULL, sv_xml::now().c_str());
 	writer->WriteStartElement(NULL, L"Settings", NULL);
 	WriteTriggers(writer);
@@ -1408,6 +1408,16 @@ inline HRESULT SVDeviceParamConfigXMLHelper::Visit(SVCustomDeviceParam& param)
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVConfigXMLPrint.inl_v  $
+ * 
+ *    Rev 1.9   04 Feb 2014 13:27:20   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  880
+ * SCR Title:  Remove .SEC
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   Changed GetSECFileName to getConfigFileName and GetSECFullFileName to getConfigFullFileName in the PrintXMLDoc method.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.8   01 Feb 2014 10:32:24   tbair
  * Project:  SVObserver

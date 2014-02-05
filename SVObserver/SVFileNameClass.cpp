@@ -5,8 +5,8 @@
 //* .Module Name     : SVFileNameClass
 //* .File Name       : $Workfile:   SVFileNameClass.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 10:36:38  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   04 Feb 2014 13:30:58  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -282,21 +282,6 @@ BOOL SVFileNameClass::SetFileType(DWORD dwFileType)
 			SetFileSelectFlags( OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | OFN_ENABLESIZING | OFN_EXPLORER );
 			SetFileSaveFlags( OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | OFN_ENABLESIZING | OFN_EXPLORER );
 			SetFileExtensionFilterList( "WiT Font Files (*.wit)|*.wit||" );
-
-			bOk = TRUE;
-			break;
-		}
-		case SV_SEC_CONFIGURATION_FILE_TYPE:
-		{
-			SetFileSelectDialogTitle( "Select Configuration File" );
-		  SetFileSaveDialogTitle( _T( "Save Configuration File" ) );
-			SetDefaultFileExtension( ".svx" );
-			SetDefaultFileName( (LPCTSTR) NULL );
-			SetDefaultPathName( "C:\\RUN" );
-			SetFileSelectFlags( OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | OFN_ENABLESIZING | OFN_EXPLORER );
-			SetFileSaveFlags( OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | OFN_ENABLESIZING | OFN_EXPLORER );
-			SetFileExtensionFilterList( _T( "SVResearch Configuration Files (*.svx)|*.svx|" \
-			                                "SVObserver Environment Configuration Files (*.sec)|*.sec||" ) );
 
 			bOk = TRUE;
 			break;
@@ -696,7 +681,17 @@ void SVFileNameClass::Init()
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVFileNameClass.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVFileNameClass.cpp_v  $
+ * 
+ *    Rev 1.1   04 Feb 2014 13:30:58   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  880
+ * SCR Title:  Remove .SEC
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   Remove SEC case form method SetFileType.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 10:36:38   bWalter
  * Project:  SVObserver

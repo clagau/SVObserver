@@ -5,8 +5,8 @@
 //* .Module Name     : SVPLCManager
 //* .File Name       : $Workfile:   SVPLCManager.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   30 Oct 2013 11:00:30  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   04 Feb 2014 15:43:36  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -18,12 +18,10 @@
 #include "SVPLCManager.h"
 #include "SVConfigurationObject.h"
 #include "SVObserver.h"
-
-extern BOOL GlobalRCGetState( DWORD* );
+#include "RemoteCommand.h"
 
 SVPLCManager::SVPLCManager()
 {
-
 }
 
 SVPLCManager::~SVPLCManager()
@@ -92,7 +90,7 @@ HRESULT SVPLCManager::DestroyPLC( CString p_strPLCName )
 HRESULT SVPLCManager::GetStateFunction( DWORD* p_pdwState )
 {
 	HRESULT l_hr = -3140;
-	if( GlobalRCGetState( p_pdwState ))
+	if( Seidenader::SVObserver::GlobalRCGetState( p_pdwState ))
 	{
 		l_hr = S_OK;
 	}
@@ -102,7 +100,6 @@ HRESULT SVPLCManager::GetStateFunction( DWORD* p_pdwState )
 HRESULT SVPLCManager::Startup( SVConfigurationObject* p_pConfig )
 {
 	HRESULT l_hr = S_FALSE;
-
 
 	std::vector<CString>::iterator l_it;
 	if( p_pConfig != NULL && p_pConfig->GetPLCCount() > 0 )
@@ -275,6 +272,16 @@ HRESULT SVPLCManager::GetDefaultPLCAddress( CString& p_rstrAddress )
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVPLCManager.cpp_v  $
  * 
+ *    Rev 1.2   04 Feb 2014 15:43:36   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  880
+ * SCR Title:  Remove .SEC
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   Removed extern define of Global function and use instead the RemoteCommand.h.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
  *    Rev 1.1   30 Oct 2013 11:00:30   tbair
  * Project:  SVObserver
  * Change Request (SCR) nbr:  852
@@ -355,4 +362,3 @@ $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVPLCManag
  * 
  * /////////////////////////////////////////////////////////////////////////////////////
 */
-

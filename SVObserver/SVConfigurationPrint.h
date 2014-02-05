@@ -5,16 +5,19 @@
 //* .Module Name     : SVConfigurationPrint
 //* .File Name       : $Workfile:   SVConfigurationPrint.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 10:03:00  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   04 Feb 2014 13:26:08  $
 //******************************************************************************
 
 #ifndef SVCONFIGURATIONPRINT_H
 #define SVCONFIGURATIONPRINT_H
 
+#pragma region Includes
 #include "SVFileNameClass.h"  // SES 11-Jan-2001
 #include "SVInfoStructs.h"
+#pragma region Includes
 
+#pragma region Declarations
 enum
 {
 	SV_PRINT_LINES_PER_PAGE                     = 70,	// Sri 2/16/00
@@ -30,68 +33,35 @@ enum
 class SVObjectClass;
 class SVDiscreteInputsView;
 class SVDiscreteOutputsView;
-
 class SVDeviceParamConfigPrintHelper;
-
-/////////////////////////////////////////////////////////////////////////////
-// SVConfigurationPrint command target
+#pragma endregion Declarations
 
 class SVConfigurationPrint : public CCmdTarget
 {
 	DECLARE_DYNCREATE(SVConfigurationPrint)
 		
+#pragma region Public Methods
 public:
-	SVConfigurationPrint();           // protected constructor used by dynamic creation
+#pragma region Constructor
+	SVConfigurationPrint();
 	virtual ~SVConfigurationPrint();
+#pragma endregion Constructor
 	
-	// Attributes
-public:
-	
-protected:
-	CDWordArray virtualPrintPageInfoList; 
-	
-	int		nNPArraySize;
-	int     nToolNumber;
-	int     nIPDNumber;
-	
-	int     nShortTabPixels;
-	int     nSECTabPixels;
-	int     nPageCenter;
-	
-	CFont   fontTitle;
-	CFont   fontSection;
-	CFont   fontSubSection;
-	CFont	fontText;
-	CFont   fontPageNbr;
-	
-	int nHeightPageNumberPixels;
-	
-	CPrintInfo  printInfo;
-	CDC     printDC;
-	
-	BOOL    bRealPrint;
-	
-	SVFileNameClass   msvfnFileName;    // SES 11-Jan-2001
-	
-	bool mbPrintToStringBuffer;
-	CString* mpsBuffer;
-
-	// Operations
-public:
-    void DoPrintSEC();
-    void PrintSECToStringBuffer(CString& rsBuffer);
-    void PrintSECToStringBuffer(SVString& rsBuffer);
-		void PrintSECToStringBuffer(std::string& rsBuffer);
+    void DoPrintConfig();
+    void printConfigToStringBuffer(CString& rsBuffer);
+    void printConfigToStringBuffer(SVString& rsBuffer);
+	void printConfigToStringBuffer(std::string& rsBuffer);
+#pragma endregion Public Methods
 	
 	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(SVConfigurationPrint)
 	//}}AFX_VIRTUAL
 	
-	// Implementation
+#pragma region Protected Methods
 protected:
 	BOOL  DoPreparePrinting(CPrintInfo* PInfo);
-	// Special for SEC printing...
+	// Special for config printing...
 	void OnPrepareDC();
 	void OnBeginPrinting();
 	void OnVirtualPrint(BOOL BRealPrint = FALSE);
@@ -120,6 +90,7 @@ protected:
 	void PrintResultIO(CDC* pDC, CPoint& ptCurPos, int nIndentLevel);
 	void PrintPPQBarSection(CDC* pDC, CPoint& ptCurPos, int nIndentLevel);
 	void PrintInspectionToolSet(CDC* pDC, CPoint& ptCurPos, int nIndentLevel);
+#pragma endregion Protected Methods
 
 	// Generated message map functions
 	//{{AFX_MSG(SVConfigurationPrint)
@@ -129,9 +100,37 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 	friend class SVDeviceParamConfigPrintHelper;
-};
 
-/////////////////////////////////////////////////////////////////////////////
+#pragma region Member Variables
+protected:
+	CDWordArray m_virtualPrintPageInfoList; 
+
+	int m_NPArraySize;
+	int m_toolNumber;
+
+	int m_shortTabPixels;
+	static const int m_TabPixels = 100;
+	int m_pageCenter;
+
+	CFont m_fontTitle;
+	CFont m_fontSection;
+	CFont m_fontSubSection;
+	CFont m_fontText;
+	CFont m_fontPageNbr;
+
+	int m_heightPageNumberPixels;
+
+	CPrintInfo m_printInfo;
+	CDC m_printDC;
+
+	BOOL m_isRealPrint;
+
+	SVFileNameClass m_svfnFileName;    // SES 11-Jan-2001
+
+	bool m_isPrintToStringBuffer;
+	CString* m_psBuffer;
+#pragma endregion Member Variables
+};
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
@@ -142,7 +141,20 @@ protected:
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVConfigurationPrint.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVConfigurationPrint.h_v  $
+ * 
+ *    Rev 1.1   04 Feb 2014 13:26:08   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  880
+ * SCR Title:  Remove .SEC
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   Added regions.
+ * Changed member variables to follow coding guidelines.
+ * Changed member variable nSECTabPixels to m_TabPixels.
+ * Changed SEC to Config in method names, parameter names, and comments.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 10:03:00   bWalter
  * Project:  SVObserver
@@ -304,4 +316,3 @@ $Log:   N:\PVCSarch65\ProjectFiles\archives\SVO_SRC\SVConfigurationPrint.h_v  $
  * 
  * /////////////////////////////////////////////////////////////////////////////////////
 */
-

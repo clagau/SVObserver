@@ -5,8 +5,8 @@
 //* .Module Name     : SVCommand.cpp
 //* .File Name       : $Workfile:   SVCommand.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.4  $
-//* .Check In Date   : $Date:   01 Feb 2014 10:23:16  $
+//* .Current Version : $Revision:   1.5  $
+//* .Check In Date   : $Date:   04 Feb 2014 13:22:44  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -58,19 +58,8 @@
 #include "SVCommandInspectionRunOnce.h"
 
 #include "SVOlicenseManager/SVOLicenseManager.h"
+#include "RemoteCommand.h"
 
-extern BOOL GlobalRCGoOnline();
-extern BOOL GlobalRCGoOffline();
-extern BOOL GlobalRCGetState(DWORD * pdwSVIMState);
-extern HRESULT GlobalRCSetMode(unsigned long lSVIMNewMode);
-extern HRESULT GlobalRCGetMode( unsigned long* p_plMode );
-extern BOOL GlobalRCGetConfigurationName (char *pszConfigName);
-extern BOOL GlobalRCSaveConfiguration ();
-extern BOOL GlobalRCOpenConfiguration (char *pszConfigName);
-extern BOOL GlobalRCCloseAndCleanConfiguration();
-extern BOOL GlobalRCCloseConfiguration();
-
-//
 volatile BOOL CSVCommand::m_bRunStreamData = FALSE;
 volatile BOOL CSVCommand::m_bRegisteredStream = FALSE;
 volatile DWORD CSVCommand::m_dwStreamDataProcessId = 0;
@@ -116,7 +105,7 @@ STDMETHODIMP CSVCommand::GetSVIMState(BSTR *pszXMLData, BSTR *pXMLError)
 		
 		//BOOL GetSVIMState (DWORD *pdwSVIMState)
 		//more error checking required here!
-		::GlobalRCGetState(&ulState);
+		Seidenader::SVObserver::GlobalRCGetState(&ulState);
 		
 		
 		//ENTER CURRENT STATE OF SVOBSERVER HERE as per the following function
@@ -191,9 +180,13 @@ STDMETHODIMP CSVCommand::SetSVIMState(BSTR szXMLData, BSTR* pXMLError)
 		
 		//more error checking required here!
 		if(ulState)
-			::GlobalRCGoOnline();
+		{
+			Seidenader::SVObserver::GlobalRCGoOnline();
+		}
 		else
-			::GlobalRCGoOffline();
+		{
+			Seidenader::SVObserver::GlobalRCGoOffline();
+		}
 		
 		SETEXCEPTION0 (svException, SVMSG_CMDCOMSRV_NO_ERROR);
 		break;
@@ -252,12 +245,12 @@ STDMETHODIMP CSVCommand::GetSVIMConfig(BSTR* pszXMLData, BSTR* pXMLError)
 		
 		if(!SvXmlCmd.SetCommand(_T("GetSVIMConfig")))goto xmlerror;
 		
-		if(!::GlobalRCGetConfigurationName(szConfigName))goto error;
+		if( !Seidenader::SVObserver::GlobalRCGetConfigurationName( szConfigName ) ) { goto error; }
 		
 		szPackedFile = szConfigName;
 		szPackedFile += _T(".svf");
 		
-		if (::GlobalRCSaveConfiguration ())
+		if ( Seidenader::SVObserver::GlobalRCSaveConfiguration() )
 		{
 			try
 			{
@@ -360,7 +353,7 @@ STDMETHODIMP CSVCommand::PutSVIMConfig(BSTR szXMLData, BSTR* pXMLError)
 	DWORD dwFileLength = 0;
 	BYTE * pBuf = NULL;
 	CFile savFile; //testing only
-	CString szPackedFile, szTemp, szSecFile;
+	CString szPackedFile, szTemp, szConfigFile;
 	int nRet = 0;
 	SVPackedFile svPackedFile;
 	HRESULT hrResult = S_OK;
@@ -392,25 +385,25 @@ STDMETHODIMP CSVCommand::PutSVIMConfig(BSTR szXMLData, BSTR* pXMLError)
 		}
 		else goto error;
 		
-		//global function to close sec and clean up c:\run dir
-		if (!::GlobalRCCloseAndCleanConfiguration ())goto error;
+		//global function to close config and clean up c:\run dir
+		if ( !Seidenader::SVObserver::GlobalRCCloseAndCleanConfiguration() ) { goto error; }
 		
 		//unpack the files in the c:\run directory
 		if(!svPackedFile.UnPackFiles (szPackedFile, _T("C:\\RUN")))goto error;
 		//remove the temporary file
 		CFile::Remove(szPackedFile);
 		
-		szSecFile = svPackedFile.GetSecFilePath();
-		if(szSecFile.IsEmpty())
+		szConfigFile = svPackedFile.getConfigFilePath();
+		if( szConfigFile.IsEmpty() )
 		{
 #ifdef _DEBUG
-			AfxMessageBox(_T("No SEC file found!"));
+			AfxMessageBox( _T( "No config file found!" ) );
 #endif
 			goto error;
 		}
 		
 		//load the config
-		if(!::GlobalRCOpenConfiguration((char*)((LPCTSTR)szSecFile)))goto error;
+		if( !Seidenader::SVObserver::GlobalRCOpenConfiguration( ( char* )( ( LPCTSTR )szConfigFile ) ) ) { goto error; }
 		
 		SETEXCEPTION0 (svException, SVMSG_CMDCOMSRV_NO_ERROR);
 		break;
@@ -652,35 +645,31 @@ STDMETHODIMP CSVCommand::LoadSVIMConfig(BSTR szXMLData, BSTR* pXMLError)
 		
 		if(!SvXmlCmd.GetSVIMfilename(&szConfigFileName))goto xmlerror;
 		
-		//check for existence of sec file
+		//check for existence of config file
 		_tsplitpath (szConfigFileName, szDrive, szDir, szFName, szExt);
 		if(!_tcscmp(szDrive, _T("")))
 		{ //just the file name, search the run directory for the filename
-			if((!_tcscmp(szExt, _T(".sec"))) || (!_tcscmp(szExt,_T(".svx"))) 
-				|| (!_tcscmp(szExt, _T(""))))
+			if( 0 == _tcscmp( szExt,_T(".svx") ) || 0 == _tcscmp( szExt, _T("") ) )
 			{
-				if ( _tcscmp(szExt,_T(".sec")) == 0 )
-					_tmakepath( path_buffer, "C", "\\Run\\", szFName, "sec");
-				else
-					_tmakepath( path_buffer, "C", "\\Run\\", szFName, "svx");
+				_tmakepath( path_buffer, "C", "\\Run\\", szFName, "svx" );
 				//check for existence of file first
 				if(FindFirstFile(path_buffer,&FindData) == INVALID_HANDLE_VALUE)goto error;
 				szConfigFileName = path_buffer;
-				if(!::GlobalRCCloseConfiguration())goto error;
+				if( !Seidenader::SVObserver::GlobalRCCloseConfiguration() ) { goto error; }
 			}
 			else goto error;
 		}
-		else if(!_tcscmp(szExt, _T(".sec")) || (!_tcscmp( szExt, _T(".svx"))) )
-		{ //fully qualified path with sec extension
+		else if( 0 == _tcscmp( szExt, _T( ".svx" ) ) )
+		{ //fully qualified path with svx extension
 			//check for existence of file first
 			if(FindFirstFile(szConfigFileName,&FindData) == INVALID_HANDLE_VALUE)goto error;
-			//global function to close sec and clean up c:\run dir
-			if(!::GlobalRCCloseAndCleanConfiguration ())goto error;
+			//global function to close config and clean up c:\run dir
+			if( !Seidenader::SVObserver::GlobalRCCloseAndCleanConfiguration() ) { goto error; }
 		}
 		else goto error;
 		
 		//load the config
-		if(!::GlobalRCOpenConfiguration(szConfigFileName))goto error;
+		if( !Seidenader::SVObserver::GlobalRCOpenConfiguration( szConfigFileName ) ) { goto error; }
 		
 		SETEXCEPTION0 (svException, SVMSG_CMDCOMSRV_NO_ERROR);
 		break;
@@ -834,7 +823,7 @@ STDMETHODIMP CSVCommand::GetSVIMConfigName(BSTR * pszXMLData, BSTR* pXMLError)
 		
 		if(!SvXmlCmd.SetCommand(_T("GetSVIMConfigName")))goto xmlerror;
 		
-		if(!::GlobalRCGetConfigurationName(szConfigName))
+		if( !Seidenader::SVObserver::GlobalRCGetConfigurationName( szConfigName ) )
 		{
 			goto error;
 		}
@@ -910,7 +899,7 @@ STDMETHODIMP CSVCommand::SVGetSVIMState(unsigned long *ulState)
 		
 		try
 		{
-			bSuccess = ::GlobalRCGetState( ulState );
+			bSuccess = Seidenader::SVObserver::GlobalRCGetState( ulState );
 		}
 		catch (...)
 		{
@@ -939,7 +928,7 @@ STDMETHODIMP CSVCommand::SVSetSVIMMode(unsigned long lSVIMNewMode)
 		
 		try
 		{
-			hrResult = ::GlobalRCSetMode( lSVIMNewMode );
+			hrResult = Seidenader::SVObserver::GlobalRCSetMode( lSVIMNewMode );
 		}
 		catch (...)
 		{
@@ -967,7 +956,7 @@ STDMETHODIMP CSVCommand::SVGetSVIMMode(unsigned long* p_plSVIMMode)
 		
 		try
 		{
-			hrResult = ::GlobalRCGetMode( p_plSVIMMode );
+			hrResult = Seidenader::SVObserver::GlobalRCGetMode( p_plSVIMMode );
 		}
 		catch (...)
 		{
@@ -1003,9 +992,13 @@ STDMETHODIMP CSVCommand::SVSetSVIMState(unsigned long ulSVIMState)
 		try
 		{
 			if( ulSVIMState )
-				bSuccess = ::GlobalRCGoOnline();
+			{
+				bSuccess = Seidenader::SVObserver::GlobalRCGoOnline();
+			}
 			else
-				bSuccess = ::GlobalRCGoOffline();
+			{
+				bSuccess = Seidenader::SVObserver::GlobalRCGoOffline();
+			}
 		}
 		catch (...)
 		{
@@ -1017,7 +1010,6 @@ STDMETHODIMP CSVCommand::SVSetSVIMState(unsigned long ulSVIMState)
 			SETEXCEPTION0(svException, SVMSG_CMDCOMSRV_ERROR);
 			hrResult = S_FALSE;
 		}
-		
 	} while (0);
 	
 	return hrResult;
@@ -1049,16 +1041,13 @@ STDMETHODIMP CSVCommand::SVGetSVIMConfig( long lOffset, long *lBlockSize, BSTR *
 		try
 		{
 			
-			bSuccess = ::GlobalRCGetConfigurationName( szConfigName );
-			
-			
+			bSuccess = Seidenader::SVObserver::GlobalRCGetConfigurationName( szConfigName );
 			
 			if( bSuccess )
 			{	
 				strPackedFile = szConfigName;
 				strPackedFile += _T(".svf");
 			}
-			
 			
 			// check offset: if zero then it is first time in
 			if (lOffset < 1)
@@ -1068,7 +1057,7 @@ STDMETHODIMP CSVCommand::SVGetSVIMConfig( long lOffset, long *lBlockSize, BSTR *
 				
 				if( bSuccess )
 				{
-					bSuccess = ::GlobalRCSaveConfiguration();
+					bSuccess = Seidenader::SVObserver::GlobalRCSaveConfiguration();
 				}
 				if( bSuccess )
 				{
@@ -1077,7 +1066,6 @@ STDMETHODIMP CSVCommand::SVGetSVIMConfig( long lOffset, long *lBlockSize, BSTR *
 			}//offset < 1  end of the fist time
 			//}
 			//send data back to control
-			
 			
 			if (bSuccess)
 			{			
@@ -1090,7 +1078,6 @@ STDMETHODIMP CSVCommand::SVGetSVIMConfig( long lOffset, long *lBlockSize, BSTR *
 					{
 						*lBlockSize = lBytesToGo;
 						*bLastFlag = TRUE;
-						
 					}
 					
 					*bstrFileData = SysAllocStringByteLen(NULL,*lBlockSize);
@@ -1160,7 +1147,7 @@ STDMETHODIMP CSVCommand::SVPutSVIMConfig(long lOffset, long lBlockSize, BSTR *bs
 {
 	SVException svException;
 	CString strPackedFile;
-	CString strSecFile;
+	CString configFileName;
 	SVPackedFile svPackedFile;
 	HRESULT hrResult;
 	BOOL bSuccess;  
@@ -1171,7 +1158,6 @@ STDMETHODIMP CSVCommand::SVPutSVIMConfig(long lOffset, long lBlockSize, BSTR *bs
 	BOOL bRet = FALSE;
 	CFileException *ex;
 	BOOL bHrSet = FALSE;
-	
 	
 	do
 	{
@@ -1194,7 +1180,6 @@ STDMETHODIMP CSVCommand::SVPutSVIMConfig(long lOffset, long lBlockSize, BSTR *bs
 					{
 						throw (ex);
 					}
-					
 				}
 				else
 				{
@@ -1223,9 +1208,8 @@ STDMETHODIMP CSVCommand::SVPutSVIMConfig(long lOffset, long lBlockSize, BSTR *bs
 				// make sure file exists
 				bSuccess = (0 == _access( szPackedFile, 0 ) );
 				
-				
-				// global function to close sec and clean up c:\run dir
-				bSuccess = ::GlobalRCCloseAndCleanConfiguration();
+				// global function to close config and clean up c:\run dir
+				bSuccess = Seidenader::SVObserver::GlobalRCCloseAndCleanConfiguration();
 				
 				if( bSuccess )
 				{
@@ -1237,26 +1221,25 @@ STDMETHODIMP CSVCommand::SVPutSVIMConfig(long lOffset, long lBlockSize, BSTR *bs
 						bHrSet = TRUE;
 						SETEXCEPTION0 (svException, SVMSG_CMDCOMSRV_PACKEDFILE_ERROR);
 					}
-					
 				}
 				
 				if( bSuccess )
 				{
 					// check for a good path on the config in the packed file
-					strSecFile = svPackedFile.GetSecFilePath();
-					bSuccess = !(strSecFile.IsEmpty());
+					configFileName = svPackedFile.getConfigFilePath();
+					bSuccess = !( configFileName.IsEmpty() );
 				}
 				
 				if( bSuccess )
 				{
 					// make sure file exists
-					bSuccess = (0 == _access( strSecFile, 0 ) );
+					bSuccess = ( 0 == _access( configFileName, 0 ) );
 				}
 				
 				if( bSuccess )
 				{
 					//load the config
-					bSuccess = ::GlobalRCOpenConfiguration( (char*) (LPCTSTR) strSecFile );
+					bSuccess = Seidenader::SVObserver::GlobalRCOpenConfiguration( ( char* )( LPCTSTR )configFileName );
 				}
 			}
 		}
@@ -1283,8 +1266,6 @@ STDMETHODIMP CSVCommand::SVPutSVIMConfig(long lOffset, long lBlockSize, BSTR *bs
 			hrResult = S_FALSE;
 		}
 		break;
-		
-		
 	} while (0);
 	
 	return hrResult;
@@ -1508,35 +1489,31 @@ STDMETHODIMP CSVCommand::SVLoadSVIMConfig(BSTR bstrConfigFilename)
 			
 			if( !_tcscmp( szDrive, _T("") ) )
 			{ //just the file name, search the run directory for the filename
-				if((!_tcscmp(szExt, _T(".sec"))) || (!_tcscmp(szExt,_T(".svx"))) 
-					|| (!_tcscmp(szExt, _T(""))))
+				if( 0 == _tcscmp( szExt, _T( ".svx" ) ) || 0 == _tcscmp( szExt, _T( "" ) ) )
 				{
-					if ( _tcscmp(szExt,_T(".sec")) == 0 )
-						_tmakepath( szPath, "C", "\\Run\\", szFile, "sec");
-					else
-						_tmakepath( szPath, "C", "\\Run\\", szFile, "svx");
+					_tmakepath( szPath, "C", "\\Run\\", szFile, "svx" );
 					//check for existence of file first
 					bSuccess = ( 0 == _access( szPath, 0 ) );
 					
 					if( bSuccess )
 					{
 						strConfigFile = szPath;
-						//global function to close sec and clean up c:\run dir
-						bSuccess = ::GlobalRCCloseAndCleanConfiguration();
+						//global function to close config and clean up c:\run dir
+						bSuccess = Seidenader::SVObserver::GlobalRCCloseAndCleanConfiguration();
 					}
 				}
 				else
 					bSuccess = FALSE;
 			}
-			else if( (!_tcscmp( szExt, _T(".sec") )) || (!_tcscmp( szExt, _T(".svx"))) ) //fully qualified path with sec extension
+			else if( 0 == _tcscmp( szExt, _T( ".svx" ) ) ) //fully qualified path with svx extension
 			{
 				//check for existence of file first
 				bSuccess = ( 0 == _access( strConfigFile, 0 ) );
 				
 				if( bSuccess )
 				{
-					//global function to close sec and clean up c:\run dir
-					bSuccess = ::GlobalRCCloseAndCleanConfiguration();
+					//global function to close config and clean up c:\run dir
+					bSuccess = Seidenader::SVObserver::GlobalRCCloseAndCleanConfiguration();
 				}
 				else
 				{ 
@@ -1550,9 +1527,8 @@ STDMETHODIMP CSVCommand::SVLoadSVIMConfig(BSTR bstrConfigFilename)
 			if( bSuccess )
 			{
 				//load the config
-				bSuccess = ::GlobalRCOpenConfiguration( (char*) (LPCTSTR) strConfigFile );
+				bSuccess = Seidenader::SVObserver::GlobalRCOpenConfiguration( ( char* )( LPCTSTR )strConfigFile );
 			}
-			
 		}
 		catch (CFileException* &theEx)
 		{
@@ -1611,7 +1587,7 @@ STDMETHODIMP CSVCommand::SVGetSVIMInspectionResults(BSTR bstrInspection, BSTR *b
 			//Doc will determine the index number that must be used to retreive the data.
 			//i.e first data item added to XML doc will be index zero
 			
-			bSuccess = ::GlobalRCGetState( &ulState );
+			bSuccess = Seidenader::SVObserver::GlobalRCGetState( &ulState );
 			if( bSuccess && (0 == (ulState & SV_STATE_LOADING) ) )
 			{
 				SVIPDoc* pIPDoc = TheSVObserverApp.GetIPDoc( szIPD );
@@ -1673,7 +1649,7 @@ STDMETHODIMP CSVCommand::SVGetSVIMConfigName(BSTR *bstrConfigFilename)
 		
 		try
 		{
-			bSuccess = ::GlobalRCGetConfigurationName( strConfigName.GetBuffer(_MAX_PATH) );
+			bSuccess = Seidenader::SVObserver::GlobalRCGetConfigurationName( strConfigName.GetBuffer( _MAX_PATH ) );
 			strConfigName.ReleaseBuffer();
 			
 			if( bSuccess )
@@ -1775,8 +1751,8 @@ STDMETHODIMP CSVCommand::SVGetSVIMConfigPrint(long lOffset, long *lBlockSize, BS
 		
 		try
 		{
-			SVConfigurationPrint printSEC;
-			printSEC.PrintSECToStringBuffer( strConfigPrint );
+			SVConfigurationPrint printConfig;
+			printConfig.printConfigToStringBuffer( strConfigPrint );
 			
 			*bstrConfigPrint = strConfigPrint.AllocSysString();
 			*lBlockSize = ::SysStringByteLen( *bstrConfigPrint );
@@ -1810,9 +1786,7 @@ struct SVGetImageListImageInfo
 
 	SVGetImageListImageInfo( const _bstr_t& p_rImageName, const SVGUID& p_rImageId, SVInspectionProcess* p_pInspection )
 		: m_ImageName( p_rImageName ), m_ImageId( p_rImageId ), m_pInspection( p_pInspection ) {}
-
 };
-
 
 STDMETHODIMP CSVCommand::SVGetImageList(SAFEARRAY* psaNames, long lCompression, SAFEARRAY** ppsaImages, SAFEARRAY** ppsaOverlays, SAFEARRAY** ppsaStatus, SAFEARRAY** ppsaProcCounts)
 {
@@ -1834,8 +1808,6 @@ STDMETHODIMP CSVCommand::SVGetImageList(SAFEARRAY* psaNames, long lCompression, 
 			throw SVMSG_CONFIGURATION_NOT_LOADED;
 		}
 
-
-
 		// BRW - SVImageCompression has been deprecated.
 		/*SVImageCompressionClass mainCompressionObject(SERVER_COMPRESSION_POOL_SIZE);
 
@@ -1852,8 +1824,6 @@ STDMETHODIMP CSVCommand::SVGetImageList(SAFEARRAY* psaNames, long lCompression, 
 				throw -1558;
 			}
 		}*/
-		
-
 
 		long lNumberOfElements = psaNames->rgsabound[0].cElements;
 		
@@ -2130,7 +2100,6 @@ STDMETHODIMP CSVCommand::SVGetImageList(SAFEARRAY* psaNames, long lCompression, 
 	return hrResult;
 }
 
-
 STDMETHODIMP CSVCommand::SVRegisterStream(SAFEARRAY* psaName, VARIANT vtInterface, SAFEARRAY** ppsaStatus)
 {
 	HRESULT hr = S_OK;
@@ -2207,7 +2176,6 @@ STDMETHODIMP CSVCommand::SVRegisterStream(SAFEARRAY* psaName, VARIANT vtInterfac
 					// add inspection name to list
 					m_cslInspectionNames.AddHead(sInspectionName);
 				}//end if
-				
 			}// end for
 			
 			//go through list of inspection names and make sure they are all on same PPQ
@@ -2320,11 +2288,8 @@ STDMETHODIMP CSVCommand::SVRegisterStream(SAFEARRAY* psaName, VARIANT vtInterfac
 								::SafeArrayPutElement(*ppsaStatus,&x,&hrRet);
 								bNotAllItemsFound = TRUE;                            
 							}// end else
-							
 						}// end else
-						
 					}// end if
-					
 				} // if ( pInspection != NULL )
 				else
 				{   // Inspection Not Found
@@ -2338,7 +2303,6 @@ STDMETHODIMP CSVCommand::SVRegisterStream(SAFEARRAY* psaName, VARIANT vtInterfac
 					hrRet = SVMSG_ONE_OR_MORE_INSPECTIONS_DO_NOT_EXIST;
 					::SafeArrayPutElement(*ppsaStatus,&x,&hrRet);
 				}// end else
-				
 			}// end for
 			
 			for ( int iAdd = 0; iAdd < iInspectionCnt; iAdd++ )
@@ -2355,9 +2319,7 @@ STDMETHODIMP CSVCommand::SVRegisterStream(SAFEARRAY* psaName, VARIANT vtInterfac
 						// add inspections to list
 						m_arInspections.Add( pInspection );
 					}// end if
-					
 				}// end if
-				
 			}// end for
 			
 			RebuildStreamingDataList();
@@ -2371,9 +2333,7 @@ STDMETHODIMP CSVCommand::SVRegisterStream(SAFEARRAY* psaName, VARIANT vtInterfac
 
 			m_hStopStreamEvent = ::CreateEvent( NULL, FALSE, FALSE, NULL );
 			m_hStreamingThread = ::CreateThread( NULL, 0, SVStreamDataThread, this, 0, NULL);					
-			
 		}// end if
-		
 	}//try
 	catch(...)
 	{
@@ -2405,7 +2365,6 @@ STDMETHODIMP CSVCommand::SVRegisterStream(SAFEARRAY* psaName, VARIANT vtInterfac
 	
 	return hr;
 }
-
 
 STDMETHODIMP CSVCommand::SVUnRegisterStream(VARIANT vtInterface)
 {
@@ -2502,9 +2461,7 @@ HRESULT CSVCommand::StreamingDataCallback( const SVInspectionCompleteInfoStruct&
 					bFound = TRUE;
 					break;
 				}// end if
-				
 			}// end if
-			
 		}// end for
 		
 		// it is not in the list then we need to add it
@@ -2564,7 +2521,6 @@ HRESULT CSVCommand::StreamingDataCallback( const SVInspectionCompleteInfoStruct&
 
 				pProductData->arPacketData.SetAt( l, oPacketData );
 			}// end if
-
 		}// end for
 
 		pProductData->lCallbackCount++;
@@ -2583,7 +2539,6 @@ HRESULT CSVCommand::StreamingDataCallback( const SVInspectionCompleteInfoStruct&
 	
 	return S_OK;
 }
-
 
 DWORD WINAPI CSVCommand::SVStreamDataThread(LPVOID lpParam)
 {
@@ -2794,7 +2749,6 @@ DWORD WINAPI CSVCommand::SVStreamDataThread(LPVOID lpParam)
 		default:
 			break;
 		}// end switch
-
 	} while( bRunning );
 	
 	//check to see if handle is still valid.  if it is close it
@@ -2819,7 +2773,6 @@ DWORD WINAPI CSVCommand::SVStreamDataThread(LPVOID lpParam)
 	
 	return 0L;
 }
-
 
 STDMETHODIMP CSVCommand::SVGetProductDataList(long lProcessCount, SAFEARRAY* psaNames, SAFEARRAY** ppsaData, SAFEARRAY** ppsaStatus)
 {
@@ -3052,6 +3005,7 @@ STDMETHODIMP CSVCommand::SVGetProductDataList(long lProcessCount, SAFEARRAY* psa
 	
 	return hr;
 }
+
 STDMETHODIMP CSVCommand::SVGetProductImageList(long lProcessCount, SAFEARRAY* psaNames, long lCompression, SAFEARRAY** ppsaImages, SAFEARRAY** ppsaOverlays, SAFEARRAY** ppsaStatus)
 {
 	HRESULT hrResult = S_OK;
@@ -3126,8 +3080,6 @@ STDMETHODIMP CSVCommand::SVGetProductImageList(long lProcessCount, SAFEARRAY* ps
 				throw -1606;
 			}
 		}*/
-		
-		
 
 		//go through list of names and make sure they are all valid
 		// 1) Inspection exists
@@ -3396,7 +3348,6 @@ STDMETHODIMP CSVCommand::SVGetLUT(BSTR bstrCameraName, SAFEARRAY** ppaulLUTTable
 	return hr;
 }
 
-
 HRESULT CSVCommand::ImageToBSTR(SVImageInfoClass&  rImageInfo, 
 	SVSmartHandlePointer rImageHandle,
 	BSTR*              pbstr ) //, 
@@ -3432,7 +3383,6 @@ HRESULT CSVCommand::ImageToBSTR(SVImageInfoClass&  rImageInfo,
 
 	if ( hr == S_OK )
 	{
-		
 		SVMatroxBufferInterface::SVStatusCode l_Code;
 
 		SVImageInfoClass oChildInfo;
@@ -3521,21 +3471,27 @@ HRESULT CSVCommand::ImageToBSTR(SVImageInfoClass&  rImageInfo,
 		
 		// Source images seem to be flipped even though MIL is not supposed to flip them
 		if( pbmhInfo->biHeight > 0 )
+		{
 			l_BitmapInfo.FlipHeight();
+		}
 		
 		// Calculate the absolute height
 		lHeight = pbmhInfo->biHeight * ( ( pbmhInfo->biHeight < 0 ) ? -1 : 1 );
 		
 		// Make sure image size is calculated
 		if( 0 == pbmhInfo->biSizeImage )
+		{
 			pbmhInfo->biSizeImage = ( ( ( ( pbmhInfo->biWidth * pbmhInfo->biBitCount ) + 31 ) & ~31 ) >> 3 ) * lHeight;
+		}
 		
 		// Make sure color table size is calculated
 		lNumColor = pbmhInfo->biClrUsed;
 		if( 0 == lNumColor )
 		{
 			if( pbmhInfo->biBitCount != 24 )
+			{
 				lNumColor = 1 << pbmhInfo->biBitCount;
+			}
 		}
 		lTabSize = lNumColor * sizeof( RGBQUAD );
 		
@@ -3605,7 +3561,6 @@ HRESULT CSVCommand::ImageToBSTR(SVImageInfoClass&  rImageInfo,
 			}*/
 		}
 		
-		
 		//--- For the case where compression is not zero the pDIB value can no longer
 		//--- be used because the Global Memory Block has been unlocked. When 
 		//--- alCompression equals zero it is set to NULL only for compatabillity. 
@@ -3666,7 +3621,9 @@ HRESULT CSVCommand::SafeArrayGetElementNoCopy(SAFEARRAY* psa, long* rgIndices, v
 	void* pElement;
 	HRESULT hr = SafeArrayGetElementPointer(psa, rgIndices, &pElement);
 	if (hr == S_OK)
+	{
 		memcpy(pv, pElement, psa->cbElements);
+	}
 	
 	return hr;
 }
@@ -3679,7 +3636,9 @@ HRESULT CSVCommand::SafeArrayPutElementNoCopy(SAFEARRAY* psa, long* rgIndices, v
 	void* pElement;
 	HRESULT hr = SafeArrayGetElementPointer(psa, rgIndices, &pElement);
 	if (hr == S_OK)
+	{
 		memcpy(pElement, &pv, psa->cbElements);
+	}
 	
 	return hr;
 }
@@ -3694,7 +3653,9 @@ HRESULT CSVCommand::SafeArrayGetElementPointer(SAFEARRAY* psa, long* rgIndices, 
 		long lIndex = *(rgIndices+i);
 		int iDimensionIndex = psa->cDims-1 - i;
 		if ( lIndex < psa->rgsabound[iDimensionIndex].lLbound || lIndex >= (long)( psa->rgsabound[iDimensionIndex].lLbound + psa->rgsabound[iDimensionIndex].cElements ) )
+		{
 			return DISP_E_BADINDEX;
+		}
 		
 		long dwIndex = (lIndex - psa->rgsabound[iDimensionIndex].lLbound);   // offset index in dimension used for figuring out memory offset
 		
@@ -3708,7 +3669,6 @@ HRESULT CSVCommand::SafeArrayGetElementPointer(SAFEARRAY* psa, long* rgIndices, 
 	
 	return S_OK;
 }
-
 
 HRESULT CSVCommand::SVGetDataList(SAFEARRAY* psaNames, SAFEARRAY** ppsaValues, SAFEARRAY** ppsaStatus, SAFEARRAY** ppsaProcCounts)
 {
@@ -3868,7 +3828,6 @@ HRESULT CSVCommand::SVGetDataList(SAFEARRAY* psaNames, SAFEARRAY** ppsaValues, S
 		}// else inspection not found
 	}// end for (1 thru number of elements)
 
-
 	hr = hrStatus;
 	
 	if ( (l_bItemNotFound) || (l_bInspectionNotFound) )
@@ -3878,7 +3837,6 @@ HRESULT CSVCommand::SVGetDataList(SAFEARRAY* psaNames, SAFEARRAY** ppsaValues, S
 	
 	return hr;
 }
-
 
 STDMETHODIMP CSVCommand::SVRunOnce(BSTR bstrName)
 {
@@ -3897,7 +3855,9 @@ STDMETHODIMP CSVCommand::SVRunOnce(BSTR bstrName)
 
 			l_pConfig->GetInspectionObject(W2T(bstrName), &pInspection);
 			if (pInspection == NULL)
+			{
 				break;
+			}
 
 			SVCommandInspectionRunOncePtr l_CommandPtr = new SVCommandInspectionRunOnce( pInspection->GetUniqueObjectID() );
 			SVObjectSynchronousCommandTemplate< SVCommandInspectionRunOncePtr > l_Command( pInspection->GetUniqueObjectID(), l_CommandPtr );
@@ -3915,7 +3875,6 @@ STDMETHODIMP CSVCommand::SVRunOnce(BSTR bstrName)
 	
 	return hrResult;
 }
-
 
 STDMETHODIMP CSVCommand::SVSetSourceImage(BSTR bstrName, BSTR bstrImage)
 {
@@ -3995,16 +3954,14 @@ STDMETHODIMP CSVCommand::SVSetInputs(SAFEARRAY* psaNames, SAFEARRAY* psaValues, 
 			BOOL bAddRequest = FALSE;
 			
 			hrStatus = SafeArrayGetElementNoCopy(psaNames, &l, &bstrName);
-			if (FAILED(hrStatus))
-				break;
+			if ( FAILED( hrStatus ) ) { break; }
+
 			sTmpName = bstrName;
-			//::SysFreeString(bstrName);
 			
 			hrStatus = SafeArrayGetElementNoCopy(psaValues, &l, &bstrValue);
-			if (FAILED(hrStatus))
-				break;
+			if ( FAILED( hrStatus ) ) { break; }
+
 			sTmpVal = bstrValue;
-			//::SysFreeString(bstrValue);
 			
 			if ( l_pConfig->GetInspectionObject(sTmpName,&pInspection) )
 			{
@@ -4026,7 +3983,6 @@ STDMETHODIMP CSVCommand::SVSetInputs(SAFEARRAY* psaNames, SAFEARRAY* psaValues, 
 						hrStatus = SVMSG_ONE_OR_MORE_REQUESTED_OBJECTS_NOT_AN_INPUT;
 						::SafeArrayPutElement(*ppsaStatus,&l,&hrStatus);
 					}// end else
-					
 				}// end if
 				else
 				{
@@ -4034,7 +3990,6 @@ STDMETHODIMP CSVCommand::SVSetInputs(SAFEARRAY* psaNames, SAFEARRAY* psaValues, 
 					hrStatus = SVMSG_ONE_OR_MORE_REQUESTED_OBJECTS_DO_NOT_EXIST;
 					::SafeArrayPutElement(*ppsaStatus,&l,&hrStatus);
 				}// end else
-				
 			}// end if
 			else
 			{
@@ -4058,16 +4013,13 @@ STDMETHODIMP CSVCommand::SVSetInputs(SAFEARRAY* psaNames, SAFEARRAY* psaValues, 
 						l_bFound = true;
 						break;
 					}// end if
-
 				}// end if
 
 				if( !l_bFound )
 				{
 					l_arInspections.Add( pInspection );
 				}// end if
-
 			}// end if
-			
 		}// end for	
 
 		// New delimiter added after each SVSetToolParameterList call
@@ -4119,15 +4071,13 @@ HRESULT CSVCommand::SVSetImageList(SAFEARRAY *psaNames, SAFEARRAY *psaImages, SA
 			BOOL bAddRequest = FALSE;
 
 			hrStatus = ::SafeArrayGetElement(psaNames, &l, &bstrName);
-			if (FAILED(hrStatus))
-				break;
+			if ( FAILED( hrStatus ) ) { break; }
 
 			sTmpName = bstrName;
 			::SysFreeString(bstrName);
 
 			hrStatus = SafeArrayGetElementNoCopy(psaImages, &l, &bstrImage);
-			if (FAILED(hrStatus))
-				break;
+			if ( FAILED( hrStatus ) ) { break; }
 
 			if ( l_pConfig->GetInspectionObject(sTmpName,&pInspection) )
 			{
@@ -4150,7 +4100,6 @@ HRESULT CSVCommand::SVSetImageList(SAFEARRAY *psaNames, SAFEARRAY *psaImages, SA
 						hrStatus = SVMSG_OBJECT_CANNOT_BE_SET_REMOTELY;
 						::SafeArrayPutElement(*ppsaStatus,&l,&hrStatus);
 					}// end else
-
 				}// end if
 				else
 				{
@@ -4159,7 +4108,6 @@ HRESULT CSVCommand::SVSetImageList(SAFEARRAY *psaNames, SAFEARRAY *psaImages, SA
 					::SafeArrayPutElement(*ppsaStatus,&l,&hrStatus);
 					l_bItemNotFound = TRUE;
 				}// end else
-
 			}// end if
 			else
 			{
@@ -4243,7 +4191,6 @@ HRESULT CSVCommand::SVSetToolParameterList(SAFEARRAY* psaNames, SAFEARRAY* psaVa
 		BOOL                 bStateOnline;
 		CMapStringToString   l_mapParameterList;
 		SVVector< SVInspectionProcess* > l_arInspections;
-
 		
 		bStateOnline = SVSVIMStateClass::CheckState(SV_STATE_RUNNING);
 		long lNumberOfElements = psaNames->rgsabound[0].cElements;
@@ -4269,17 +4216,15 @@ HRESULT CSVCommand::SVSetToolParameterList(SAFEARRAY* psaNames, SAFEARRAY* psaVa
 			
 			BSTR bstrName = NULL;
 			hrStatus = SafeArrayGetElementNoCopy(psaNames, &l, &bstrName);
-			if (FAILED(hrStatus))
-				break;
+			if ( FAILED( hrStatus ) ) { break; }
+
 			strName = bstrName;
-			//::SysFreeString(bstrName);
 			
 			BSTR bstrValue = NULL;
 			hrStatus = SafeArrayGetElementNoCopy(psaValues, &l, &bstrValue);
-			if (FAILED(hrStatus))
-				break;
+			if ( FAILED( hrStatus ) ) { break; }
+
 			strValue = bstrValue;
-			//::SysFreeString(bstrValue);
 			
 			if ( l_pConfig->GetInspectionObject(strName, &pInspection) )
 			{
@@ -4352,7 +4297,6 @@ HRESULT CSVCommand::SVSetToolParameterList(SAFEARRAY* psaNames, SAFEARRAY* psaVa
 						::SafeArrayPutElement(*ppsaStatus, &l, &hrStatus);
 						l_iItemErrorCount++;
 					}
-					
 				}// end if found value object
 				else
 				{
@@ -4361,7 +4305,6 @@ HRESULT CSVCommand::SVSetToolParameterList(SAFEARRAY* psaNames, SAFEARRAY* psaVa
 					::SafeArrayPutElement(*ppsaStatus, &l, &hrStatus);
 					l_iItemErrorCount++;
 				}// end else
-				
 			}// end if found inspection
 			else
 			{
@@ -4386,16 +4329,13 @@ HRESULT CSVCommand::SVSetToolParameterList(SAFEARRAY* psaNames, SAFEARRAY* psaVa
 						l_bFound = true;
 						break;
 					}// end if
-
 				}// end if
 
 				if( !l_bFound )
 				{
 					l_arInspections.Add( pInspection );
 				}// end if
-
 			}// end if ( bAddRequest )
-			
 		}// end for ( long l = 0; l < lNumberOfElements; l++ )
 
 		// New delimiter added after each SVSetToolParameterList call
@@ -4407,7 +4347,6 @@ HRESULT CSVCommand::SVSetToolParameterList(SAFEARRAY* psaNames, SAFEARRAY* psaVa
 			//add request to inspection process
 			l_arInspections[j]->AddInputRequestMarker();
 		}// end for
-		
 	} while(0); // end do
 	
 	if ( l_iItemErrorCount > 0 ) //some error happened
@@ -4460,7 +4399,6 @@ HRESULT CSVCommand::SVLockImage(long p_lProcessCount, long p_lIndex, BSTR p_bsNa
 	
 	if (l_pConfig->GetInspectionObject(CString(p_bsName), &pInspection))
 	{
-		// Get 
 		if (pInspection->GetChildObjectByName(CString(p_bsName), (SVObjectClass**) &pImage))
 		{
 			SVPPQObject* pPPQ = pInspection->GetPPQ();	// inspection can be part of only one PPQ
@@ -4552,7 +4490,6 @@ HRESULT CSVCommand::SVLockImage(long p_lProcessCount, long p_lIndex, BSTR p_bsNa
 	}
 	
 	return hr;
-	
 }
 
 HRESULT CSVCommand::SVGetLockedImage(long p_lIndex, long p_lCompression, BSTR* p_pbstrImage, BSTR* p_pbstrOverlay)
@@ -4591,7 +4528,6 @@ HRESULT CSVCommand::SVGetLockedImage(long p_lIndex, long p_lCompression, BSTR* p
 			break;
 		}
 		
-		
 		if( p_lIndex >= m_aSVActXLock.GetSize() )
 		{
 			hr = SVMSG_IMAGE_NOT_LOCKED;
@@ -4622,10 +4558,8 @@ HRESULT CSVCommand::SVGetLockedImage(long p_lIndex, long p_lCompression, BSTR* p
 		break;
 	} while (false);
 	
-	
 	return hr;
 }
-
 
 HRESULT CSVCommand::SVUnlockImage(long p_lIndex)
 {
@@ -4701,7 +4635,6 @@ STDMETHODIMP CSVCommand::SVGetRemoteInputCount(long *lCount)
 			SETEXCEPTION0 (svException, SVMSG_CMDCOMSRV_ERROR);
 			hrResult = S_FALSE;
 		}
-		
 	} while (0);
 	
 	return hrResult;
@@ -5030,20 +4963,15 @@ STDMETHODIMP CSVCommand::SVLoadFont(long lFontIdentifier, BSTR bstrFontFile, BST
 				if ( !lFontHandle.empty() )
 				{
 					l_Code = SVMatroxOcrInterface::Destroy( lFontHandle );
-	//				MocrFree( lFontHandle );
-	//				lFontHandle = NULL;
 				}
 				SVMatroxString l_strFontFileName = strFontFileName;
 
 				l_Code = SVMatroxOcrInterface::RestoreFont( lFontHandle, l_strFontFileName, SVOcrRestore );
-	//			lFontHandle = MocrRestoreFont( (char*) (LPCTSTR) strFontFileName, M_RESTORE, M_DEFAULT, M_NULL );
-				
 
 				TheSVObserverApp.m_mgrRemoteFonts.UpdateFontHandle( lFontIdentifier, lFontHandle );
 
 				if ( l_Code != SVMEE_STATUS_OK )
 				{
-					
 					SVMatroxStatusInformation l_info;
 					CString l_sErrorStr;
 					SVMatroxApplicationInterface::GetLastStatus( l_info );
@@ -5052,7 +4980,6 @@ STDMETHODIMP CSVCommand::SVLoadFont(long lFontIdentifier, BSTR bstrFontFile, BST
 					svE.LogException(l_sErrorStr);
 					hr = SVMSG_46_LOADFONT_ERROR;
 				}
-
 			}// end if
 			
 			if( bstrFontControls != NULL )
@@ -5065,7 +4992,6 @@ STDMETHODIMP CSVCommand::SVLoadFont(long lFontIdentifier, BSTR bstrFontFile, BST
 				l_Code = SVMatroxOcrInterface::RestoreFont( lFontHandle, l_strControlsFileName, SVOcrLoadControl );
 				if( l_Code != SVMEE_STATUS_OK )
 				{
-					
 					SVMatroxStatusInformation l_info;
 					CString l_sErrorStr;
 					SVMatroxApplicationInterface::GetLastStatus( l_info );
@@ -5074,8 +5000,6 @@ STDMETHODIMP CSVCommand::SVLoadFont(long lFontIdentifier, BSTR bstrFontFile, BST
 					svE.LogException(l_sErrorStr);
 					hr = SVMSG_46_LOADFONT_ERROR;
 				}
-
-
 			}// end if
 
 			if( bstrFontConstraints != NULL )
@@ -5096,10 +5020,7 @@ STDMETHODIMP CSVCommand::SVLoadFont(long lFontIdentifier, BSTR bstrFontFile, BST
 					svE.LogException(l_sErrorStr);
 					hr = SVMSG_46_LOADFONT_ERROR;
 				}
-
-
 			}// end if
-
 
 			// fill the character's / ID mapping for the font
 			double NbChar;		
@@ -5109,8 +5030,6 @@ STDMETHODIMP CSVCommand::SVLoadFont(long lFontIdentifier, BSTR bstrFontFile, BST
 
 			CString sTmp(l_strCharacters.c_str());
 			TheSVObserverApp.m_mgrRemoteFonts.CreateCharMapping(lFontIdentifier, sTmp);
-
-
 		}// end if
 		else
 		{
@@ -5141,7 +5060,6 @@ STDMETHODIMP CSVCommand::SVSaveFont(long lFontIdentifier, BSTR* bstrFontFile, BS
 			SVMatroxString strConstraintsFileName	= _T( "C:\\temp\\svsfstra.mfo" );
 			CFileStatus rStatus;
 			CFile oFile;
-
 			
 			SVMatroxOcrInterface::SVStatusCode l_Code;
 
@@ -5160,7 +5078,6 @@ STDMETHODIMP CSVCommand::SVSaveFont(long lFontIdentifier, BSTR* bstrFontFile, BS
 					hr = SVMSG_47_SAVEFONT_ERROR;
 				}
 
-
 				CFile::GetStatus( strFontFileName.c_str(), rStatus );
 				unsigned long strSize = static_cast<unsigned long>(rStatus.m_size);
 				*bstrFontFile = ::SysAllocStringByteLen( NULL, strSize );
@@ -5168,7 +5085,6 @@ STDMETHODIMP CSVCommand::SVSaveFont(long lFontIdentifier, BSTR* bstrFontFile, BS
 				oFile.Open( strFontFileName.c_str(), CFile::modeRead );
 				oFile.Read( *bstrFontFile, ::SysStringByteLen( *bstrFontFile ) );
 				oFile.Close();
-
 			}// end if
 			
 			if( *bstrFontControls != NULL )
@@ -5176,7 +5092,6 @@ STDMETHODIMP CSVCommand::SVSaveFont(long lFontIdentifier, BSTR* bstrFontFile, BS
 				l_Code = SVMatroxOcrInterface::SaveFont( lFontHandle,  strControlsFileName, SVOcrSaveControl );
 				if ( l_Code != SVMEE_STATUS_OK )
 				{
-					
 					SVMatroxStatusInformation l_info;
 					CString l_sErrorStr;
 					SVMatroxApplicationInterface::GetLastStatus( l_info );
@@ -5185,7 +5100,6 @@ STDMETHODIMP CSVCommand::SVSaveFont(long lFontIdentifier, BSTR* bstrFontFile, BS
 					svE.LogException(l_sErrorStr);
 					hr = SVMSG_47_SAVEFONT_ERROR;
 				}
-
 
 				CFile::GetStatus( strControlsFileName.c_str(), rStatus );
 
@@ -5195,7 +5109,6 @@ STDMETHODIMP CSVCommand::SVSaveFont(long lFontIdentifier, BSTR* bstrFontFile, BS
 				oFile.Open( strControlsFileName.c_str(), CFile::modeRead );
 				oFile.Read( *bstrFontControls, ::SysStringByteLen( *bstrFontControls ) );
 				oFile.Close();
-
 			}// end if
 
 			if( *bstrFontConstraints != NULL )
@@ -5203,7 +5116,6 @@ STDMETHODIMP CSVCommand::SVSaveFont(long lFontIdentifier, BSTR* bstrFontFile, BS
 				l_Code = SVMatroxOcrInterface::SaveFont( lFontHandle, strConstraintsFileName, SVOcrSaveConstraint );
 				if ( l_Code != SVMEE_STATUS_OK )
 				{
-					
 					SVMatroxStatusInformation l_info;
 					CString l_sErrorStr;
 					SVMatroxApplicationInterface::GetLastStatus( l_info );
@@ -5213,7 +5125,6 @@ STDMETHODIMP CSVCommand::SVSaveFont(long lFontIdentifier, BSTR* bstrFontFile, BS
 					hr = SVMSG_47_SAVEFONT_ERROR;
 				}
 
-
 				CFile::GetStatus( strConstraintsFileName.c_str(), rStatus );
 				unsigned long strSize = static_cast<unsigned long>(rStatus.m_size);
 
@@ -5222,9 +5133,7 @@ STDMETHODIMP CSVCommand::SVSaveFont(long lFontIdentifier, BSTR* bstrFontFile, BS
 				oFile.Open( strConstraintsFileName.c_str(), CFile::modeRead );
 				oFile.Read( *bstrFontConstraints, ::SysStringByteLen( *bstrFontConstraints ) );
 				oFile.Close();
-
 			}// end if
-
 		}// end if
 		else
 		{
@@ -5255,12 +5164,8 @@ STDMETHODIMP CSVCommand::SVCalibrateFont(long lFontIdentifier,
 
 	if ( hr == S_OK )
 	{
-		
-		
-
 		SVMatroxOcrInterface::SVStatusCode l_Code;
 		SVMatroxOcr lFontHandle;
-
 
 		if (TheSVOLicenseManager().HasMatroxIdentificationLicense())
 		{
@@ -5282,7 +5187,6 @@ STDMETHODIMP CSVCommand::SVCalibrateFont(long lFontIdentifier,
 				l_Code = SVMatroxOcrInterface::CalibrateFont( lFontHandle, l_CalStruct );
 				if( l_Code != SVMEE_STATUS_OK )
 				{
-					
 					SVMatroxStatusInformation l_info;
 					SVMatroxApplicationInterface::GetLastStatus( l_info );
 					CString l_sErrorStr;
@@ -5295,7 +5199,6 @@ STDMETHODIMP CSVCommand::SVCalibrateFont(long lFontIdentifier,
 				l_milImage.clear();
 				if( l_Code != SVMEE_STATUS_OK )
 				{
-					
 					SVMatroxStatusInformation l_info;
 					SVMatroxApplicationInterface::GetLastStatus( l_info );
 					CString l_sErrorStr;
@@ -5331,8 +5234,6 @@ STDMETHODIMP CSVCommand::SVReadString(long lFontIdentifier, BSTR* bstrFoundStrin
 		if( TheSVObserverApp.m_mgrRemoteFonts.IsValidFont( lFontIdentifier, lFontHandle ) &&
 			TheSVObserverApp.m_mgrRemoteFonts.UpdateFontTime( lFontIdentifier ) )
 		{
-			
-			
 			SVMatroxOcrInterface::SVStatusCode l_Code;
 			SVMatroxBuffer l_milImage = CreateImageFromBSTR( bstrReadImage );
 			SVMatroxOcrResult l_milResult;
@@ -5343,7 +5244,6 @@ STDMETHODIMP CSVCommand::SVReadString(long lFontIdentifier, BSTR* bstrFoundStrin
 
 			if( l_Code != SVMEE_STATUS_OK )
 			{
-				
 				SVMatroxStatusInformation l_info;
 				SVMatroxApplicationInterface::GetLastStatus( l_info );
 				CString l_sErrorStr;
@@ -5375,7 +5275,6 @@ STDMETHODIMP CSVCommand::SVReadString(long lFontIdentifier, BSTR* bstrFoundStrin
 			l_milImage.clear();
 			if( l_Code != SVMEE_STATUS_OK )
 			{
-				
 				SVMatroxStatusInformation l_info;
 				SVMatroxApplicationInterface::GetLastStatus( l_info );
 				CString l_sErrorStr;
@@ -5388,7 +5287,6 @@ STDMETHODIMP CSVCommand::SVReadString(long lFontIdentifier, BSTR* bstrFoundStrin
 			l_Code = SVMatroxOcrInterface::Destroy( l_milResult );
 			if( l_Code != SVMEE_STATUS_OK )
 			{
-				
 				SVMatroxStatusInformation l_info;
 				SVMatroxApplicationInterface::GetLastStatus( l_info );
 				CString l_sErrorStr;
@@ -5397,7 +5295,6 @@ STDMETHODIMP CSVCommand::SVReadString(long lFontIdentifier, BSTR* bstrFoundStrin
 				svE.LogException(l_sErrorStr);
 				hr = SVMSG_48_READSTRING_ERROR;
 			}
-
 		}// end if
 		else
 		{
@@ -5416,7 +5313,6 @@ STDMETHODIMP CSVCommand::SVVerifyString(long lFontIdentifier, BSTR bstrVerifyStr
 	CString strVerify( bstrVerifyString, ::SysStringLen(bstrVerifyString));
 	SVException svE;
 
-
 	HRESULT hr = SVSetStringLength( lFontIdentifier, strVerify.GetLength() );
 
 	if ( hr == S_OK )
@@ -5428,8 +5324,6 @@ STDMETHODIMP CSVCommand::SVVerifyString(long lFontIdentifier, BSTR bstrVerifyStr
 			if( TheSVObserverApp.m_mgrRemoteFonts.IsValidFont( lFontIdentifier, lFontHandle ) &&
 				TheSVObserverApp.m_mgrRemoteFonts.UpdateFontTime( lFontIdentifier ) )
 			{
-				
-				
 				SVMatroxOcrInterface::SVStatusCode l_Code;
 				SVMatroxBuffer l_milImage = CreateImageFromBSTR( bstrVerifyImage );
 				SVMatroxOcrResult l_milResult;
@@ -5437,7 +5331,6 @@ STDMETHODIMP CSVCommand::SVVerifyString(long lFontIdentifier, BSTR bstrVerifyStr
 
 				if( l_Code != SVMEE_STATUS_OK )
 				{
-					
 					SVMatroxStatusInformation l_info;
 					SVMatroxApplicationInterface::GetLastStatus( l_info );
 					CString l_sErrorStr;
@@ -5454,7 +5347,6 @@ STDMETHODIMP CSVCommand::SVVerifyString(long lFontIdentifier, BSTR bstrVerifyStr
 
 				if( l_Code != SVMEE_STATUS_OK )
 				{
-					
 					SVMatroxStatusInformation l_info;
 					SVMatroxApplicationInterface::GetLastStatus( l_info );
 					CString l_sErrorStr;
@@ -5482,7 +5374,6 @@ STDMETHODIMP CSVCommand::SVVerifyString(long lFontIdentifier, BSTR bstrVerifyStr
 
 				if( l_Code != SVMEE_STATUS_OK )
 				{
-					
 					SVMatroxStatusInformation l_info;
 					SVMatroxApplicationInterface::GetLastStatus( l_info );
 					CString l_sErrorStr;
@@ -5496,7 +5387,6 @@ STDMETHODIMP CSVCommand::SVVerifyString(long lFontIdentifier, BSTR bstrVerifyStr
 
 				if( l_Code != SVMEE_STATUS_OK )
 				{
-					
 					SVMatroxStatusInformation l_info;
 					SVMatroxApplicationInterface::GetLastStatus( l_info );
 					CString l_sErrorStr;
@@ -5589,7 +5479,6 @@ STDMETHODIMP CSVCommand::SVAddCharacter(long lFontIdentifier, long lXPosition, l
 	HRESULT hr = SVMSG_FONT_INVALID; // Invalid Font
 	SVMatroxOcr lFontHandle;
 
-
 	CString sTmp(bstrLabel);
 	char cTmp = sTmp.GetAt(0);
 
@@ -5598,7 +5487,6 @@ STDMETHODIMP CSVCommand::SVAddCharacter(long lFontIdentifier, long lXPosition, l
 		if( TheSVObserverApp.m_mgrRemoteFonts.IsValidFont( lFontIdentifier, lFontHandle ) &&
 			TheSVObserverApp.m_mgrRemoteFonts.UpdateFontTime( lFontIdentifier ) )
 		{
-			
 			SVMatroxBuffer milFontImage;
 			if ( TheSVObserverApp.m_mgrRemoteFonts.GetFontImage(lFontIdentifier, milFontImage) )
 			{
@@ -5649,13 +5537,11 @@ STDMETHODIMP CSVCommand::SVAddCharacter(long lFontIdentifier, long lXPosition, l
 						{
 							hr = SVMSG_FONT_COPY_FAIL;
 						}
-						
 					}
 					catch(...)
 					{
 						hr = SVMSG_FONT_COPY_THREW_EXCEPTION;
 					}
-
 				}
 				milTmpID.clear();
 
@@ -5754,7 +5640,6 @@ STDMETHODIMP CSVCommand::SVGetFontCharacter(long lFontIdentifier, long  lCharID,
 {
 	HRESULT hr = SVMSG_FONT_INVALID;
 	SVMatroxOcr lFontHandle;
-	
 	SVMatroxBufferInterface::SVStatusCode l_Code;
 
 	if (TheSVOLicenseManager().HasMatroxIdentificationLicense())
@@ -5785,7 +5670,7 @@ STDMETHODIMP CSVCommand::SVGetFontCharacter(long lFontIdentifier, long  lCharID,
 				SVSmartHandlePointer ImageBufferHandle = new SVImageBufferHandleStruct( lCharHandle );
 
 																			// BRW - SVImageCompression has been deprecated.
-			ImageToBSTR( ImageInfo, ImageBufferHandle, pbstrLabelImage );	//,0,NULL);
+				ImageToBSTR( ImageInfo, ImageBufferHandle, pbstrLabelImage );	//,0,NULL);
 
 				lCharHandle.clear();
 
@@ -5805,7 +5690,6 @@ STDMETHODIMP CSVCommand::SVGetStringLength(long p_lFontIdentifier, double* p_plL
 	HRESULT l_hr = S_FALSE;
 	SVMatroxOcr l_lFontHandle;
 	
-
 	if (TheSVOLicenseManager().HasMatroxIdentificationLicense())
 	{
 		if( TheSVObserverApp.m_mgrRemoteFonts.IsValidFont( p_lFontIdentifier, l_lFontHandle ) &&
@@ -5813,7 +5697,6 @@ STDMETHODIMP CSVCommand::SVGetStringLength(long p_lFontIdentifier, double* p_plL
 		{
 			SVMatroxOcrInterface::Get(l_lFontHandle, SVOcrStringSize, *p_plLength );
 			
-
 			l_hr = S_OK;
 		}// end if
 	}
@@ -5825,7 +5708,6 @@ STDMETHODIMP CSVCommand::SVSetStringLength(long p_lFontIdentifier, double p_dLen
 	HRESULT l_hr = S_FALSE;
 	SVMatroxOcr l_lFontHandle;
 	
-
 	if (TheSVOLicenseManager().HasMatroxIdentificationLicense())
 	{
 		if( TheSVObserverApp.m_mgrRemoteFonts.IsValidFont( p_lFontIdentifier, l_lFontHandle ) &&
@@ -5835,7 +5717,6 @@ STDMETHODIMP CSVCommand::SVSetStringLength(long p_lFontIdentifier, double p_dLen
 
 			SVMatroxOcrInterface::Get(l_lFontHandle, SVOcrStringSizeMax, l_dMaxLength );
 
-
 			if ( l_dMaxLength < p_dLength )
 			{
 				l_hr = SVMSG_43_FONT_STR_LEN_GREATER_THAN_MAX;
@@ -5844,14 +5725,12 @@ STDMETHODIMP CSVCommand::SVSetStringLength(long p_lFontIdentifier, double p_dLen
 			{
 				SVMatroxOcrInterface::Set( l_lFontHandle, SVOcrStringSize, p_dLength );
 				
-
 				l_hr = S_OK;
 			}
 		}// end if
 	}
 	return l_hr;
 };// end SetCellSize
-
 
 // New functions to support Matrox Font Aalyzers - // Stage 1 runtime only, no setup yet.
 
@@ -5881,7 +5760,6 @@ STDMETHODIMP CSVCommand::SVGetFontCharacterList(long p_lFontIdentifier, BSTR *bs
 	HRESULT l_hr = S_OK;
 	SVMatroxOcr lFontHandle;
 	
-
 	if (TheSVOLicenseManager().HasMatroxIdentificationLicense())
 	{
 		if( TheSVObserverApp.m_mgrRemoteFonts.IsValidFont( p_lFontIdentifier, lFontHandle ) &&
@@ -5891,7 +5769,6 @@ STDMETHODIMP CSVCommand::SVGetFontCharacterList(long p_lFontIdentifier, BSTR *bs
 			SVMatroxOcrInterface::Get(lFontHandle, SVCharNumberInFont, NbChar );
 			SVMatroxString Characters;
 			SVMatroxOcrInterface::Get( lFontHandle, SVCharInFont, Characters );
-
 
 			CString sTmp(Characters.c_str());
 
@@ -5922,8 +5799,6 @@ STDMETHODIMP CSVCommand::SVGetExpectedTargetCharacterSize(long p_lFontIdentifier
 	HRESULT l_hr = S_OK;
 	SVMatroxOcr lFontHandle;
 	
-
-
 	if (TheSVOLicenseManager().HasMatroxIdentificationLicense())
 	{
 		if( TheSVObserverApp.m_mgrRemoteFonts.IsValidFont( p_lFontIdentifier, lFontHandle ) &&
@@ -5931,7 +5806,6 @@ STDMETHODIMP CSVCommand::SVGetExpectedTargetCharacterSize(long p_lFontIdentifier
 		{
 			SVMatroxOcrInterface::Get( lFontHandle, SVTargetCharSizeX, *plWidth );
 			SVMatroxOcrInterface::Get( lFontHandle, SVTargetCharSizeY, *plHeight );
-			
 		}
 		else
 		{
@@ -5955,12 +5829,10 @@ STDMETHODIMP CSVCommand::SVGetFontCharacterSize(long p_lFontIdentifier, long *pl
 		if( TheSVObserverApp.m_mgrRemoteFonts.IsValidFont( p_lFontIdentifier, lFontHandle ) &&
 			TheSVObserverApp.m_mgrRemoteFonts.UpdateFontTime( p_lFontIdentifier ) )
 		{
-			
 			SVMatroxOcrInterface::SVStatusCode l_Code;
 
 			l_Code = SVMatroxOcrInterface::Get( lFontHandle, SVCharCellSizeX, *plWidth);
 			l_Code = SVMatroxOcrInterface::Get( lFontHandle, SVCharCellSizeY, *plHeight);
-			
 		}
 		else
 		{
@@ -6051,7 +5923,6 @@ BOOL CSVCommand::ResetStreamingDataAndLockedImages()
 			SVaxls.clear();
 			m_aSVActXLock.SetAt( x, SVaxls );
 		}// end if
-
 	}// end for
 
 	// Do what CSVCommand::SVUnRegisterStream does
@@ -6122,7 +5993,10 @@ namespace local
 				BSTR bstrValue=NULL;
 				CSVCommand::SafeArrayGetElementNoCopy( psaNames,  &l, &bstrName  );
 				if ( psaValues != NULL )
+				{
 					CSVCommand::SafeArrayGetElementNoCopy( psaValues, &l, &bstrValue );
+				}
+
 				rvec.push_back( SVScalarValue( CString(bstrName), CString(bstrValue) ) );
 			}
 			hr = S_OK;
@@ -6139,11 +6013,19 @@ namespace local
 		saBounds[0].cElements = static_cast< ULONG >( rvec.size() );
 
 		if ( ppsaNames )
+		{
 			*ppsaNames  = ::SafeArrayCreate( VT_BSTR, 1, saBounds);
+		}
+
 		if ( ppsaValues )
+		{
 			*ppsaValues = ::SafeArrayCreate( VT_BSTR, 1, saBounds);
+		}
+
 		if ( ppsaStatus )
+		{
 			*ppsaStatus = ::SafeArrayCreate( VT_I4,   1, saBounds);
+		}
 
 		for ( long l = 0; l < static_cast<long>(rvec.size()); ++l )
 		{
@@ -6153,11 +6035,13 @@ namespace local
 				BSTR bstrName  = rValue.strName.AllocSysString();
 				CSVCommand::SafeArrayPutElementNoCopy( *ppsaNames,  &l, bstrName );
 			}
+
 			if ( ppsaValues )
 			{
 				BSTR bstrValue = rValue.strValue.AllocSysString();
 				CSVCommand::SafeArrayPutElementNoCopy( *ppsaValues, &l, bstrValue );
 			}
+
 			if ( ppsaStatus )
 			{
 				long lStatus = rValue.status;
@@ -6177,7 +6061,9 @@ namespace local
 		saBounds[0].cElements = static_cast< ULONG >( rvec.size() );
 
 		if ( ppsaProcessCount )
+		{
 			*ppsaProcessCount  = ::SafeArrayCreate( VT_I4, 1, saBounds);
+		}
 
 		for ( long l = 0; l < static_cast<long>(rvec.size()); ++l )
 		{
@@ -6205,11 +6091,19 @@ namespace local
 		saBounds[1].cElements = lNumEntries;
 
 		if ( ppsaNames )
+		{
 			*ppsaNames  = ::SafeArrayCreate( VT_BSTR, 2, saBounds);
+		}
+
 		if ( ppsaValues )
+		{
 			*ppsaValues = ::SafeArrayCreate( VT_BSTR, 2, saBounds);
+		}
+
 		if ( ppsaStatus )
+		{
 			*ppsaStatus = ::SafeArrayCreate( VT_I4,   2, saBounds);
+		}
 
 		long alDimIndex[2]={0};
 		for ( long lEntry = 0; lEntry < lNumEntries; ++lEntry )
@@ -6228,11 +6122,13 @@ namespace local
 					BSTR bstrName  = rValue.strName.AllocSysString();
 					CSVCommand::SafeArrayPutElementNoCopy( *ppsaNames, alDimIndex, bstrName );
 				}
+
 				if ( ppsaValues )
 				{
 					BSTR bstrValue = rValue.strValue.AllocSysString();
 					CSVCommand::SafeArrayPutElementNoCopy( *ppsaValues, alDimIndex, bstrValue );
 				}
+
 				if ( ppsaStatus )
 				{
 					long lStatus = rValue.status;
@@ -6253,13 +6149,24 @@ namespace local
 		saBounds[0].cElements = static_cast< ULONG >( rvec.size() );
 
 		if ( ppsaImageNames )
+		{
 			*ppsaImageNames  = ::SafeArrayCreate( VT_BSTR, 1, saBounds);
+		}
+
 		if ( ppsaImages )
+		{
 			*ppsaImages = ::SafeArrayCreate( VT_BSTR, 1, saBounds);
+		}
+
 		if ( ppsaOverlays )
+		{
 			*ppsaOverlays = ::SafeArrayCreate( VT_BSTR, 1, saBounds);
+		}
+
 		if ( ppsaStatus )
+		{
 			*ppsaStatus = ::SafeArrayCreate( VT_I4,   1, saBounds);
+		}
 
 		// BRW - SVImageCompression has been deprecated.
 		/*SVImageCompressionClass mainCompressionObject (SERVER_COMPRESSION_POOL_SIZE);
@@ -6287,6 +6194,7 @@ namespace local
 				BSTR bstrName  = rImage.strName.AllocSysString();
 				CSVCommand::SafeArrayPutElementNoCopy( *ppsaImageNames, &l, bstrName );
 			}
+
 			if ( ppsaImages )
 			{
 				BSTR bstrImage = NULL;
@@ -6294,6 +6202,7 @@ namespace local
 				CSVCommand::ImageToBSTR( rImage.info, rImage.handle, &bstrImage );	//, lCompression, &mainCompressionObject );
 				CSVCommand::SafeArrayPutElementNoCopy( *ppsaImages, &l, bstrImage );
 			}
+
 			if ( ppsaOverlays )
 			{
 				BYTE* pBytes = NULL;
@@ -6306,6 +6215,7 @@ namespace local
 				
 				CSVCommand::SafeArrayPutElementNoCopy( *ppsaOverlays, &l, bstrOverlay );
 			}
+
 			if ( ppsaStatus )
 			{
 				//long lStatus = rImage.status;
@@ -6330,15 +6240,25 @@ namespace local
 		saBounds[1].lLbound=0;
 		saBounds[1].cElements = lNumEntries;
 
-
 		if ( ppsaImageNames )
+		{
 			*ppsaImageNames  = ::SafeArrayCreate( VT_BSTR, 2, saBounds);
+		}
+
 		if ( ppsaImages )
+		{
 			*ppsaImages = ::SafeArrayCreate( VT_BSTR, 2, saBounds);
+		}
+
 		if ( ppsaOverlays )
+		{
 			*ppsaOverlays = ::SafeArrayCreate( VT_BSTR, 2, saBounds);
+		}
+
 		if ( ppsaStatus )
+		{
 			*ppsaStatus = ::SafeArrayCreate( VT_I4,   2, saBounds);
+		}
 
 		// BRW - SVImageCompression has been deprecated.
 		/*SVImageCompressionClass mainCompressionObject (SERVER_COMPRESSION_POOL_SIZE);
@@ -6374,6 +6294,7 @@ namespace local
 					BSTR bstrName  = rImage.strName.AllocSysString();
 					CSVCommand::SafeArrayPutElementNoCopy( *ppsaImageNames, alDimIndex, bstrName );
 				}
+
 				if ( ppsaImages )
 				{
 					BSTR bstrImage = NULL;
@@ -6381,6 +6302,7 @@ namespace local
 					CSVCommand::ImageToBSTR( rImage.info, rImage.handle, &bstrImage );	//, lCompression, &mainCompressionObject );
 					CSVCommand::SafeArrayPutElementNoCopy( *ppsaImages, alDimIndex, bstrImage );
 				}
+
 				if ( ppsaOverlays )
 				{
 					BYTE* pBytes = NULL;
@@ -6393,6 +6315,7 @@ namespace local
 					
 					CSVCommand::SafeArrayPutElementNoCopy( *ppsaOverlays, alDimIndex, bstrOverlay );
 				}
+
 				if ( ppsaStatus )
 				{
 					//long lStatus = rImage.status;
@@ -6501,11 +6424,13 @@ STDMETHODIMP CSVCommand::SVSetConditionalHistoryList(BSTR bstrInspectionName, SA
 			pvecValues = &vecValues;
 			hr = local::SafeArrayToScalarValueVector( psaValueNames, NULL, vecValues );
 		}
+
 		if ( psaImageNames )
 		{
 			pvecImages = &vecImages;
 			hr = local::SafeArrayToScalarValueVector( psaImageNames, NULL, vecImages );
 		}
+
 		if ( psaConditionalNames )
 		{
 			pvecConditionals = &vecConditionals;
@@ -6517,11 +6442,19 @@ STDMETHODIMP CSVCommand::SVSetConditionalHistoryList(BSTR bstrInspectionName, SA
 		if ( hr == S_OK )
 		{
 			if ( ppsaValueStatus )
+			{
 				local::SetStatus( vecValues, *ppsaValueStatus );
+			}
+
 			if ( ppsaImageStatus )
+			{
 				local::SetStatus( vecImages, *ppsaImageStatus );
+			}
+
 			if ( ppsaConditionalStatus )
+			{
 				local::SetStatus( vecConditionals, *ppsaConditionalStatus );
+			}
 		}
 	}
 	else
@@ -6670,18 +6603,16 @@ STDMETHODIMP CSVCommand::SVGetMostRecentConditionalHistory(
 	return hr;
 }
 
-
-
-
 // Stub for SVGetTransferValueDefinitionList
 STDMETHODIMP CSVCommand::SVGetTransferValueDefinitionList(BSTR p_bstrInspectionName, 
-														  long* p_plVersion, 
-														  VARIANT* p_pvData )
+	long* p_plVersion,
+	VARIANT* p_pvData )
 {
 	if( p_pvData == NULL )
 	{
 		return S_FALSE;
 	}
+
 	HRESULT hr = S_OK;
 	SVInspectionProcess* pInspection = NULL;
 	CString strInspection(p_bstrInspectionName);
@@ -6804,7 +6735,6 @@ STDMETHODIMP CSVCommand::SVGetTransferValueDefinitionList(BSTR p_bstrInspectionN
 					// Put the Safearray in the Variant.
 					l_vTmp.vt = VT_ARRAY | VT_BSTR;
 					l_vTmp.parray = l_psaTemp;
-					
 				}
 			}
 			else if( l_pSelectedObjects[i]->GetObjectType() == SVBoolValueObjectType)
@@ -6853,13 +6783,14 @@ STDMETHODIMP CSVCommand::SVGetTransferValueDefinitionList(BSTR p_bstrInspectionN
 
 // Stub for SVGetTransferImageDefinitionList
 STDMETHODIMP CSVCommand::SVGetTransferImageDefinitionList(BSTR p_bstrInspectionName, 
-														  long* p_plVersion, 
-														  VARIANT* p_pvData)
+	long* p_plVersion,
+	VARIANT* p_pvData)
 {
 	if( p_pvData == NULL )
 	{
 		return SVMSG_INVALID_VARIANT_PARAMETER;
 	}
+
 	HRESULT hr = S_OK;
 	SVInspectionProcess* pInspection = NULL;
 	CString strInspection(p_bstrInspectionName);
@@ -6891,7 +6822,6 @@ STDMETHODIMP CSVCommand::SVGetTransferImageDefinitionList(BSTR p_bstrInspectionN
 				}
 			}
 		}
-
 
 		// Copy list to Safearray
 
@@ -6947,7 +6877,6 @@ STDMETHODIMP CSVCommand::SVGetTransferImageDefinitionList(BSTR p_bstrInspectionN
 				l_pTool->GetInputImageNames( l_psvSourceNames );
 				if( l_psvSourceNames )
 				{
-
 					SAFEARRAYBOUND l_rgsabound[1];
 					long l_lSize = l_psvSourceNames->GetArraySize();
 					l_rgsabound[0].cElements = l_lSize;
@@ -6966,7 +6895,6 @@ STDMETHODIMP CSVCommand::SVGetTransferImageDefinitionList(BSTR p_bstrInspectionN
 					// Put the Safearray in the Variant.
 					l_vTmp.vt = VT_ARRAY | VT_BSTR;
 					l_vTmp.parray = l_psaTemp;
-
 				}
 			}
 			//l_saData.PutElement( l_Index, l_vTmp );
@@ -7072,6 +7000,24 @@ STDMETHODIMP CSVCommand::SVIsAvailiable()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVCommand.cpp_v  $
+ * 
+ *    Rev 1.5   04 Feb 2014 13:22:44   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  880
+ * SCR Title:  Remove .SEC
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   Moved extern defines of Global functions to RemoteCommand.h.
+ * Added Seidenader::SVObserver namespaces to GlobalRC calls.
+ * Changed variable name from szSecFile to szConfigFile and changed calls to SVPackedFile in the PutSVIMConfig method.
+ * Changed comment from "close sec" to "close config" and debug messagebox text from "No SEC file found!" to "No config file found." in the PutSVIMConfig method.
+ * Removed SEC-part from methods LoadSVIMConfig and SVLoadSVIMConfig.
+ * Changed variable name from strSecFile to configFileName in the SVPutSVIMConfig method.
+ * Changed the SVGetOfflineCount method to call the getOfflineCount method of TheSVObserverApp instead of accessing the public member variable.
+ * Changed the SVGetSVIMVersion method to call the getCurrentVersion method of TheSVObserverApp instead of accessing the public member variable.
+ * Changed printSEC to printConfig in the SVGetSVIMConfigPrint method.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.4   01 Feb 2014 10:23:16   tbair
  * Project:  SVObserver

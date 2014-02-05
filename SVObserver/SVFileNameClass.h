@@ -5,8 +5,8 @@
 //* .Module Name     : SVFileNameClass
 //* .File Name       : $Workfile:   SVFileNameClass.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 10:36:46  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   04 Feb 2014 15:16:00  $
 //******************************************************************************
 
 #if defined (_MSC_VER) && (_MSC_VER >= 1000)
@@ -25,7 +25,7 @@ enum SVFileTypesEnum
 	SV_BAR_CODE_MATCH_STRING_FILE_TYPE = 5,
 	SV_OCR_MATCH_STRING_FILE_TYPE      = 6,
 	SV_OCR_FONT_FILE_TYPE              = 7,
-	SV_SEC_CONFIGURATION_FILE_TYPE     = 8,
+
 	SV_SVX_CONFIGURATION_FILE_TYPE     = 9,
 	SV_OCV_MATCH_STRING_FILE_TYPE      = 10,
 	SV_OCV_FONT_FILE_TYPE              = 11,
@@ -329,7 +329,17 @@ private:
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVFileNameClass.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVFileNameClass.h_v  $
+ * 
+ *    Rev 1.1   04 Feb 2014 15:16:00   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  880
+ * SCR Title:  Remove .SEC
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   Removed SV_SEC_CONFIGURATION_FILE_TYPE from SVFileTypesEnum.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 10:36:46   bWalter
  * Project:  SVObserver

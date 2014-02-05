@@ -5,8 +5,8 @@
 //* .Module Name     : SVGlobal
 //* .File Name       : $Workfile:   SVGlobal.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.4  $
-//* .Check In Date   : $Date:   11 Nov 2013 07:12:34  $
+//* .Current Version : $Revision:   1.5  $
+//* .Check In Date   : $Date:   04 Feb 2014 15:18:50  $
 //******************************************************************************
 
 #ifndef SVGLOBAL_H
@@ -276,18 +276,12 @@ enum SVGetPathInfo
 	AfxMessageBox( text );	\
 };
 
-// Formatted Debug Output
-//#ifdef _DEBUG
 #define SV_FORMAT_DEBUG_OUTPUT( T, P )	\
 {	\
 	TCHAR text[ _MAX_PATH ];	\
 	_stprintf( text, _T( T ), _T( P ) );	\
 	OutputDebugString( text );	\
 };
-//#else
-//#define SV_FORMAT_DEBUG_OUTPUT( T, P )
-//#endif
-
 
 #define SV_FORMAT_MESSAGE_FRB( T, P )
 #define SV_FORMAT_MESSAGE_5_FRB( T, P1, P2, P3, P4, P5 )
@@ -307,8 +301,6 @@ const CString SV_TSTR_TAB                   ( _T( "\t" ) );
 #define SVR_MUNICH
 #define SVR_HARRISBURG
 
-
-// 
 const long SV_DEFAULT_TOOL_UPPER_TRESH              = 255L;
 const long SV_DEFAULT_TOOL_LOWER_TRESH              = 40L;
 const BOOL SV_DEFAULT_TOOL_TRESH_ACTIVATE           = TRUE;
@@ -359,13 +351,6 @@ const long SV_DEFAULT_MAX_OVERLAPPING           = 10;
 
 
 const long SV_DEFAULT_CURRENT_RESULT_OUTPUT_TABLE_SIZE   = 4;
-
-
-// Old! Don´t use!
-#define SV_DEFAULT_VIEW_REFRESH_RATE       10
-
-// Old! Don´t use!
-#define NUM_INTENSITIES  256L
 
 #pragma warning(disable:4308)
 
@@ -716,38 +701,6 @@ BOOL SVSelectListCtrlItem( CListCtrl& RListControl, int Item );
 ////////////////////////////////////////////////////////////////////////////////
 BOOL SVGetVersionString( CString& RSTRCurrentVersion, DWORD dwVersion );
 
-
-
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : sv_strncpy
-// -----------------------------------------------------------------------------
-// .Description : Use this function to copy character strings and assure that
-//				  they are NULL terminated.
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :18.03.1999 JB			First Implementation
-////////////////////////////////////////////////////////////////////////////////
-//int	sv_strncpy (char		*destString,
-//				const char	*sourceString,
-//				int			nbrOfBytes);
-
-
-/*------------- 09 Dec 1999 - frb.
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : SVMilBufferToBitmap
-// -----------------------------------------------------------------------------
-// .Description : Creates a Bitmap, copies the MilBuffer content into the Bitmap
-//				: and returns his Handle, if successfully.
-//				: Otherwise, it returns NULL.
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :17.04.1999 RO			First Implementation
-////////////////////////////////////////////////////////////////////////////////
-HBITMAP SVMilBufferToBitmap( MIL_ID MilBufferID );
-------------*/
-
 HBITMAP SVMilBufferToBitmap2( SVImageClass *pImage );
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -888,12 +841,21 @@ enum svModeEnum
 /**************************************************************************/
 #endif	// SVGLOBAL_H
 
-//** EOF **
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVGlobal.h_v  $
+ * 
+ *    Rev 1.5   04 Feb 2014 15:18:50   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  880
+ * SCR Title:  Remove .SEC
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   Removed dead code and unused SV_DEFAULT_VIEW_REFRESH_RATE and NUM_INTENSITIES.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.4   11 Nov 2013 07:12:34   tbair
  * Project:  SVObserver

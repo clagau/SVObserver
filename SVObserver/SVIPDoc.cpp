@@ -5,8 +5,8 @@
 //* .Module Name     : SVIPDoc
 //* .File Name       : $Workfile:   SVIPDoc.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.9  $
-//* .Check In Date   : $Date:   31 Jan 2014 17:16:28  $
+//* .Current Version : $Revision:   1.10  $
+//* .Check In Date   : $Date:   04 Feb 2014 15:24:14  $
 //******************************************************************************
 
 #pragma region Includes
@@ -866,11 +866,11 @@ void SVIPDoc::OnCloseDocument()
 {
 	if( this )
 	{
-		// Do not save unsaved IPDoc without updating SEC
-		if( CString( TheSVObserverApp.GetSECFullFileName() ).IsEmpty() && 
+		// Do not save unsaved IPDoc without updating config
+		if( CString( TheSVObserverApp.getConfigFullFileName() ).IsEmpty() && 
 			!SVSVIMStateClass::CheckState( SV_STATE_CANCELING ) )
 		{
-			TheSVObserverApp.OnFileSaveSec();
+			TheSVObserverApp.OnFileSaveConfig();
 		}
 
 		Sleep( 100 );
@@ -4694,6 +4694,16 @@ BOOL SVIPDoc::RunOnce( SVToolClass* p_pTool )
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVIPDoc.cpp_v  $
+ * 
+ *    Rev 1.10   04 Feb 2014 15:24:14   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  880
+ * SCR Title:  Remove .SEC
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   Changed method OnCloseDocument to call getConfigFullFileName and OnFileConfigSave instead of GetSECFullFileName and OnFileSaveSec.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.9   31 Jan 2014 17:16:28   bwalter
  * Project:  SVObserver

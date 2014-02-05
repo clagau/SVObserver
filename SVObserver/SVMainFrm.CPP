@@ -5,8 +5,8 @@
 //* .Module Name     : SVMainFrm
 //* .File Name       : $Workfile:   SVMainFrm.CPP  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.4  $
-//* .Check In Date   : $Date:   31 Jan 2014 17:16:30  $
+//* .Current Version : $Revision:   1.5  $
+//* .Check In Date   : $Date:   04 Feb 2014 15:26:08  $
 //******************************************************************************
 
 #pragma region Includes
@@ -35,19 +35,20 @@
 #include "ModelessMessageBox.h"
 #include "SVXMLLibrary/SVNavigateTreeClass.h"
 #include "SVConfigurationLibrary/SVConfigurationTags.h"
-#include "SVObjectScriptParserSEC.h"	// old and clunky
 #include "SVObjectScriptParserSVX.h"	// new speedy
 #include "SVInspectionTreeParser.h"		// new Inspection XML (NOT object script)
+#include "RemoteCommand.h"
+
 #include "SVOLicenseManager/SVOLicenseManager.h"
 #pragma endregion Includes
 
+#pragma region Declarations
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
-
-extern HRESULT GlobalRCGetMode( unsigned long* p_plMode );
+#pragma endregion Declarations
 
 //*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/
 //* Class Name : SVMainFrame
@@ -513,7 +514,7 @@ void SVMainFrame::UpdateFrameTitleForDocument( LPCTSTR lpszDocName )
 		if( SVSVIMStateClass::CheckState( SV_STATE_READY | SV_STATE_RUNNING ) )
 		{
 			lstrcat( szText, _T( " - " ) );
-			lstrcat( szText, TheSVObserverApp.GetSECFileName() );
+			lstrcat( szText, TheSVObserverApp.getConfigFileName() );
 		}
 
 		// get name of currently active view
@@ -943,7 +944,7 @@ void SVMainFrame::OnUpdateStatusInfo( CCmdUI *pCmdUI )
 		{
 			CString l_strMode = _T("Mode: ");
 			unsigned long l_lMode = 0;
-			GlobalRCGetMode( &l_lMode );
+			Seidenader::SVObserver::GlobalRCGetMode( &l_lMode );
 			switch( l_lMode )
 			{
 				case SVIM_MODE_UNKNOWN:
@@ -1820,10 +1821,6 @@ void SVMainFrame::SetNotifyCommRC()
   mbNotifyCommRC = TRUE;
 }
 
-/////////////////////////////////////////////////////////////////////////////
-//
-// 
-//
 LRESULT SVMainFrame::OnMsgSetToolSelected( 
 	WPARAM wParam,       // TRUE to set tool, FALSE to clear tool
 	LPARAM lParam
@@ -1982,6 +1979,20 @@ LRESULT SVMainFrame::OnHideIOViewTab( WPARAM p_wParam, LPARAM p_lParam )
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVMainFrm.CPP_v  $
+ * 
+ *    Rev 1.5   04 Feb 2014 15:26:08   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  880
+ * SCR Title:  Remove .SEC
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   Removed include of SVObjectScriptParserSEC.h.
+ * Removed extern declaration of Global function and instead include RemoteCommand.h.
+ * Added regions for Declarations and Constructor.
+ * Changed method UpdateFrameTitleForDocument to call getConfigFileName instead of GetSECFileName.
+ * Changed method OnUpdateStatusInfo to call GlobalRCGetMode from Seidenader::SVObserver namespace instead of the global namespace.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.4   31 Jan 2014 17:16:30   bwalter
  * Project:  SVObserver

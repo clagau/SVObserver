@@ -5,10 +5,11 @@
 //* .Module Name     : SVInspectionExporter
 //* .File Name       : $Workfile:   SVInspectionExporter.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 11:01:48  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   04 Feb 2014 15:22:46  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include <boost/config.hpp>
 #include <boost/assign/list_of.hpp>
@@ -28,15 +29,17 @@
 #include "SVPPQObject.h"
 #include "SVFileNameManagerClass.h"
 #include "SVIPDoc.h"
+#pragma endregion Includes
 
+#pragma region Declarations
 static LPCTSTR scRunDirectory = _T("C:\\Run");
 static LPCTSTR scAllRunDirectoryFiles = _T("C:\\Run\\*");
-static LPCTSTR scSECConfigExt = _T(".sec");
 static LPCTSTR scSVXConfigExt = _T(".svx");
 static LPCTSTR scDependentsZipExt = _T(".dependents.zip");
 static LPCTSTR scXmlExt = _T(".xml");
 static LPCTSTR scExportExt = _T(".bxp");
 static LPCTSTR scColorExportExt = _T(".cxp");
+#pragma endregion Declarations
 
 static void WriteBaseNode(SVObjectXMLWriter& rWriter)
 {
@@ -125,7 +128,7 @@ static void WriteDependentFileList(SVObjectXMLWriter& rWriter, const SVString& d
 				SVString extStr = ext;
 				SVString lowercaseExt = extStr.MakeLower();
 
-				if (lowercaseExt != scSECConfigExt && lowercaseExt != scSVXConfigExt)
+				if (lowercaseExt != scSVXConfigExt)
 				{
 					_variant_t value;
 					value.SetString(findFileData.cFileName);
@@ -233,6 +236,7 @@ static void PersistDocument(const SVGUID& inspectionGuid, SVObjectWriter& rWrite
 	}
 }
 
+#pragma region Public Methods
 HRESULT SVInspectionExporter::Export(const SVString& filename, const SVString& inspectionName, unsigned long p_version, bool bColor)
 {
 	HRESULT hr = S_OK;
@@ -289,12 +293,24 @@ HRESULT SVInspectionExporter::Export(const SVString& filename, const SVString& i
 	
 	return hr;
 }
+#pragma endregion Public Methods
 
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVInspectionExporter.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVInspectionExporter.cpp_v  $
+ * 
+ *    Rev 1.1   04 Feb 2014 15:22:46   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  880
+ * SCR Title:  Remove .SEC
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   Removed static string scSECConfigExt.
+ * Removed use of scSECConfigExt from the method WriteDependentFileList.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 11:01:48   bWalter
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : SVAnalyzerClass
 //* .File Name       : $Workfile:   SVAnalyzer.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   01 Feb 2014 10:16:30  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   04 Feb 2014 13:21:12  $
 //******************************************************************************
 
 //******************************************************************************
@@ -33,8 +33,6 @@ class SVIPDoc;
 //******************************************************************************
 //* CONSTANT(S):
 //******************************************************************************
-
-#define NUM_INTENSITIES  256L
 
 //******************************************************************************
 //* CLASS(ES) & TYPE(S):
@@ -212,6 +210,16 @@ protected:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVAnalyzer.h_v  $
+ * 
+ *    Rev 1.2   04 Feb 2014 13:21:12   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  880
+ * SCR Title:  Remove .SEC
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   Removed unused define NUM_INTENSITIES.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   01 Feb 2014 10:16:30   tbair
  * Project:  SVObserver
