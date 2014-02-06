@@ -5,13 +5,14 @@
 //* .Module Name     : SVMaskShapeEditorDlg
 //* .File Name       : $Workfile:   SVMaskShapeEditorDlg.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   13 Aug 2013 09:48:54  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   05 Feb 2014 18:31:28  $
 //******************************************************************************
 
 #ifndef SVMASKSHAPEEDITORDLG_H
 #define SVMASKSHAPEEDITORDLG_H
 
+#pragma region Includes
 #include "SVDlgImageEditor.h"
 #include "SVShapeMaskHelperClass.h"
 #include "SVMaskShape.h"
@@ -19,13 +20,17 @@
 #include "PropertyTree/PropTree.h"
 #include "ISVCancel.h"
 #include "SVTaskObjectInterfaceClass.h"
+#pragma endregion Includes
 
 class SVMaskShapeEditorDlg : public CDialog, public ISVCancel, public ISVCancel2, public SVTaskObjectInterfaceClass
 {
-// Construction
+#pragma region Construction
 public:
 	SVMaskShapeEditorDlg(CWnd* pParent = NULL);   // standard constructor
+#pragma endregion Construction
 
+#pragma region Public Methods
+#pragma region Virtual
 	// ISVCancel
 	virtual bool CanCancel();
 	virtual HRESULT GetCancelData(SVCancelData*& rpData);
@@ -36,9 +41,62 @@ public:
 
 	// SVTaskObjectInterfaceClass
 	virtual HRESULT SetInspectionData();
+#pragma endregion Virtual
+	
+	SVMaskShape* GetCurrentShape();	// holds the properties and does the rendering
+	SVMaskShapeFigureEditor* GetCurrentFigureEditor();  // handles GUI feedback ( mouse move, cursor changes, etc. )
+#pragma endregion Public Methods
+	
+#pragma region Protected Methods
+protected:
 
+#pragma region AFX Methods
+	// ClassWizard generated virtual function overrides
+	//{{AFX_VIRTUAL(SVMaskShapeEditorDlg)
+	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+	virtual BOOL OnInitDialog();
+	virtual void OnOK();
+	//}}AFX_VIRTUAL
 
-// Dialog Data
+	// Generated message map functions
+	//{{AFX_MSG(SVMaskShapeEditorDlg)
+	afx_msg void OnSelChangeImageTab(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnBtnFillColorMore();
+	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
+	afx_msg void OnZoomInButton();
+	afx_msg void OnZoomOutButton();
+	afx_msg void OnKillFocus(CWnd* pNewWnd);
+	afx_msg void OnSelChangeComboShape();
+	afx_msg void OnSelChangeComboMaskOperator();
+	afx_msg void OnSelChangeComboMaskArea();
+	afx_msg void OnSelChangeComboFillOptions();
+	afx_msg void OnSelChangeComboZoomScale();
+	afx_msg void OnActivate(UINT nState, CWnd* pWndOther, BOOL bMinimized);
+	afx_msg void OnEditChangeComboZoomScale();
+	afx_msg void OnChangeEditFillColor();
+	afx_msg void OnCheckAutoResize();
+	//}}AFX_MSG
+	void OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResult);
+	DECLARE_MESSAGE_MAP()
+#pragma endregion AFX Methods
+
+	static UINT_PTR CALLBACK ColorDlgHookFn( HWND hdlg, UINT uiMsg, WPARAM wParam, LPARAM lParam );
+#pragma endregion Protected Methods
+
+#pragma region Private Methods
+private:
+	void DisplayImagePage();
+	int GetPropertyID(GUID guidProperty );
+	GUID GetPropertyGuid(int iPropertyID );
+	HRESULT BuildPropertyList();
+	HRESULT RefreshProperties();
+
+	HRESULT UpdateMask(bool bResetObject = false);
+	void FillComboBox(SVEnumerateValueObjectClass& p_rValueObject, CComboBox* p_pCombo);
+#pragma endregion Private Methods
+
+#pragma region Member Variables
+	// Dialog Data
 	//{{AFX_DATA(SVMaskShapeEditorDlg)
 	enum { IDD = IDD_MASK_SHAPE_EDITOR };
 	CComboBox	m_cbZoom;
@@ -50,29 +108,10 @@ public:
 	CString	m_sFillColor;
 	CString	m_sCoordinates;
 	BOOL	m_bAutoResize;
-	//}}AFX_DATA
 	SVDlgImageEditor     m_dialogImage;
 	SVRPropTree          m_Tree;
+	//}}AFX_DATA
 
-	SVShapeMaskHelperClass::ShapeTypeEnum m_eShapeType;
-
-	SVMaskShape* GetCurrentShape();	// holds the properties and does the rendering
-	SVMaskShapeFigureEditor* GetCurrentFigureEditor();  // handles GUI feedback ( mouse move, cursor changes, etc. )
-
-	enum ViewImageEnum
-	{
-		VIEW_SOURCE = 0,
-		VIEW_MASK   = 1,
-		VIEW_RESULT = 2,
-	};
-
-	ViewImageEnum m_ePage;
-
-	SVToolClass*                       m_pTool;
-	SVUserMaskOperatorClass*           m_pMask;
-
-// Implementation
-protected:
 	struct ShapePair
 	{
 		ShapePair(SVMaskShape* p_pShape, SVMaskShapeFigureEditor* p_pFigureEditor)
@@ -94,57 +133,25 @@ protected:
 	typedef std::map<SVShapeMaskHelperClass::ShapeTypeEnum, ShapePair> ShapeMap;
 
 	ShapeMap m_mapShapes;
-
-	void DisplayImagePage();
-	int GetPropertyID(GUID guidProperty );
-	GUID GetPropertyGuid(int iPropertyID );
-	HRESULT BuildPropertyList();
-	HRESULT RefreshProperties();
-
-	HRESULT UpdateMask(bool bResetObject = false);
-
 	std::map<GUID, int> m_mapPropertyIds;
-
+	static SVMaskShapeEditorDlg* m_pThis;
 	double m_dZoom;
 	CRect m_rectViewport;
-
 	std::vector<double> m_vecZoomLevels;
+	SVShapeMaskHelperClass::ShapeTypeEnum m_eShapeType;
 
-// Overrides
-	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(SVMaskShapeEditorDlg)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-	//}}AFX_VIRTUAL
+public: //only for compiling, this will change in the next version
+	enum ViewImageEnum
+	{
+		VIEW_SOURCE = 0,
+		VIEW_MASK   = 1,
+		VIEW_RESULT = 2,
+	};
 
-	// Generated message map functions
-	//{{AFX_MSG(SVMaskShapeEditorDlg)
-	virtual BOOL OnInitDialog();
-	afx_msg void OnSelchangeImageTab(NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg void OnBtnFillColorMore();
-	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
-	afx_msg void OnZoomInButton();
-	afx_msg void OnZoomOutButton();
-	afx_msg void OnKillFocus(CWnd* pNewWnd);
-	virtual void OnOK();
-	afx_msg void OnSelchangeComboShape();
-	afx_msg void OnSelchangeComboMaskOperator();
-	afx_msg void OnSelchangeComboMaskArea();
-	afx_msg void OnSelchangeComboFillOptions();
-	afx_msg void OnSelchangeComboZoomScale();
-	afx_msg void OnActivate(UINT nState, CWnd* pWndOther, BOOL bMinimized);
-	afx_msg void OnEditchangeComboZoomScale();
-	afx_msg void OnChangeEditFillColor();
-	afx_msg void OnCheckAutoResize();
-	//}}AFX_MSG
-	void OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResult);
-	DECLARE_MESSAGE_MAP()
-
-	static UINT_PTR CALLBACK ColorDlgHookFn( HWND hdlg, UINT uiMsg, WPARAM wParam, LPARAM lParam );
-
-private:
-	void FillComboBox(SVEnumerateValueObjectClass& p_rValueObject, CComboBox* p_pCombo);
-	static SVMaskShapeEditorDlg* m_pThis;
+	ViewImageEnum m_ePage;
+	SVToolClass*                       m_pTool;
+	SVUserMaskOperatorClass*           m_pMask;
+#pragma endregion Member Variables
 };
 
 //{{AFX_INSERT_LOCATION}}
@@ -157,6 +164,16 @@ private:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVMaskShapeEditorDlg.h_v  $
+ * 
+ *    Rev 1.2   05 Feb 2014 18:31:28   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  884
+ * SCR Title:  Update Source Code Files to Follow New Programming Standards and Guidelines
+ * Checked in by:  bWalter;  Ben Walter
+ * Change Description:  
+ *   Changed to follow guidelines more closely.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   13 Aug 2013 09:48:54   bWalter
  * Project:  SVObserver
