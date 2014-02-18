@@ -5,8 +5,8 @@
 //* .Module Name     : SVToolSetTabView
 //* .File Name       : $Workfile:   SVToolSetTabView.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.4  $
-//* .Check In Date   : $Date:   11 Nov 2013 07:39:48  $
+//* .Current Version : $Revision:   1.5  $
+//* .Check In Date   : $Date:   13 Feb 2014 12:19:02  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -635,6 +635,13 @@ void SVToolSetTabViewClass::OnEditLabelEnds()
 			TheSVObserverApp.RenameObject( csLabelSaved, csLabelEdited, pTaskObject->GetUniqueObjectID() );
 		}
 	}
+	if(isLabeling)
+	{
+		//
+		// Cause edit control to 'end' editing.
+		//
+		SetFocus();   // Cause edit control to lose 'focus'.
+	}
 
 	isLabeling = FALSE;
 	::ReleaseCapture();     // release the mouse capture
@@ -1081,6 +1088,16 @@ BOOL SVToolSetTabViewClass::GetParameters(SVObjectWriter& rWriter)
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVToolSetTabView.cpp_v  $
+ * 
+ *    Rev 1.5   13 Feb 2014 12:19:02   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  854
+ * SCR Title:  Add HotKey (F2) to Edit a Tool's Name
+ * Checked in by:  bWalter;  Ben Walter
+ * Change Description:  
+ *   Add logic to OnEditLabelEnds to end lable edit.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.4   11 Nov 2013 07:39:48   tbair
  * Project:  SVObserver

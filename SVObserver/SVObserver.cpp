@@ -5,8 +5,8 @@
 //* .Module Name     : SVObserver
 //* .File Name       : $Workfile:   SVObserver.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.19  $
-//* .Check In Date   : $Date:   04 Feb 2014 15:30:18  $
+//* .Current Version : $Revision:   1.20  $
+//* .Check In Date   : $Date:   13 Feb 2014 12:37:54  $
 //******************************************************************************
 
 #pragma region Includes
@@ -1886,7 +1886,8 @@ void SVObserverApp::OnUpdateGoOffline( CCmdUI* PCmdUI )
 		( m_svSecurityMgr.SVIsDisplayable( SECURITY_POINT_MODE_MENU_EXIT_RUN_MODE ) || 
 		m_svSecurityMgr.SVIsDisplayable( SECURITY_POINT_MODE_MENU_STOP ) ));
 
-	PCmdUI->SetCheck( !SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_EDIT | SV_STATE_EDIT_MOVE | SV_STATE_REGRESSION ));
+	PCmdUI->SetCheck( !SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_EDIT | SV_STATE_EDIT_MOVE | SV_STATE_REGRESSION ) 
+		&& SVSVIMStateClass::CheckState( SV_STATE_READY));
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -8807,6 +8808,16 @@ int SVObserverApp::FindMenuItem(CMenu* Menu, LPCTSTR MenuString)
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVObserver.cpp_v  $
+ * 
+ *    Rev 1.20   13 Feb 2014 12:37:54   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  873
+ * SCR Title:  Fix inconsistant GUI labels and functionality on IO pages
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Fix check in mode menu - stop to not display a check if no configuration loaded.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.19   04 Feb 2014 15:30:18   bwalter
  * Project:  SVObserver
