@@ -5,8 +5,8 @@
 //* .Module Name     : SVCommand.h
 //* .File Name       : $Workfile:   SVCommand.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   01 Oct 2013 12:16:26  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   28 Feb 2014 08:05:20  $
 //******************************************************************************
 
 #ifndef SVCOMMAND_H
@@ -18,7 +18,9 @@
 #include "SVInfoStructs.h"
 
 // BRW - SVImageCompression has been deprecated.
-//class SVImageCompressionClass;
+#ifndef _WIN64
+class SVImageCompressionClass;
+#endif
 class SVValueObjectClass;
 class SVInspectionProcess;
 
@@ -657,14 +659,21 @@ public:
 //  be used.  More importantly the apCompressionObject will not be used, so if
 //  alCompression = 0, then it is acceptable for apCompressionObject to equal 
 //  NULL.	
-	static HRESULT ImageToBSTR( SVImageInfoClass &rImageInfo, SVSmartHandlePointer ImageHandle, 
+	static HRESULT ImageToBSTR( SVImageInfoClass &rImageInfo, SVSmartHandlePointer ImageHandle, BSTR *pbstr
 						// BRW - SVImageCompression has been deprecated.
-		BSTR *pbstr );	//, long alCompression, SVImageCompressionClass *apCompressionObject);
+#ifndef _WIN64
+		, long alCompression, SVImageCompressionClass *apCompressionObject);
+#else
+		);
+#endif
 
-	static HRESULT SafeImageToBSTR( SVImageClass *p_pImage, SVImageIndexStruct p_svIndex, 
+	static HRESULT SafeImageToBSTR( SVImageClass *p_pImage, SVImageIndexStruct p_svIndex, BSTR *pbstr
 						// BRW - SVImageCompression has been deprecated.
-		BSTR *pbstr );	//, long alCompression, SVImageCompressionClass *apCompressionObject);
-
+#ifndef _WIN64
+		, long alCompression, SVImageCompressionClass *apCompressionObject);
+#else
+		);
+#endif
 	static HRESULT BSTRToImage(bool bCreateNew, BSTR bstr, SVImageInfoClass& rImageInfo,SVSmartHandlePointer &rImageHandle);
 	static SVMatroxBuffer CreateImageFromBSTR( BSTR bstrImage );
 public:
@@ -709,6 +718,26 @@ OBJECT_ENTRY_AUTO( __uuidof(SVCommand), CSVCommand )
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVCommand.h_v  $
+ * 
+ *    Rev 1.3   28 Feb 2014 08:05:20   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   #ifndef for 64 bit platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.2   27 Feb 2014 14:05:08   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Un-commented Image Compression for 32 bit code.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   01 Oct 2013 12:16:26   tbair
  * Project:  SVObserver

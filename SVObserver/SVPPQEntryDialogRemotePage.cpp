@@ -5,8 +5,8 @@
 //* .Module Name     : SVPPQEntryDialogRemotePageClass
 //* .File Name       : $Workfile:   SVPPQEntryDialogRemotePage.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.4  $
-//* .Check In Date   : $Date:   02 Oct 2013 07:12:20  $
+//* .Current Version : $Revision:   1.5  $
+//* .Check In Date   : $Date:   28 Feb 2014 08:31:08  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -129,6 +129,7 @@ BOOL SVPPQEntryDialogRemotePageClass::OnInitDialog()
 	}// end for
 
 	StrCurPos.Format( "Current PPQ\r\nPosition : %d", m_pSheet->m_lCurrentPosition + 1 );
+	GetDlgItem(IDC_ADD_REMOTE_BUTTON)->EnableWindow(m_pSheet->OkToAdd());
 
 	UpdateData( FALSE );
 	
@@ -267,6 +268,16 @@ BOOL SVPPQEntryDialogRemotePageClass::OnApply()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVPPQEntryDialogRemotePage.cpp_v  $
+ * 
+ *    Rev 1.5   28 Feb 2014 08:31:08   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  888
+ * SCR Title:  Prevent adding inputs to the last position of the PPQ in Next Trigger (e116)
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Added function OkToAdd to enable/disable add button.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.4   02 Oct 2013 07:12:20   tbair
  * Project:  SVObserver

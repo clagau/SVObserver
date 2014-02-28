@@ -5,8 +5,8 @@
 //* .Module Name     : SVPPQEntryDialog
 //* .File Name       : $Workfile:   SVPPQEntryDialog.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   02 Oct 2013 07:01:56  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   28 Feb 2014 08:31:08  $
 //******************************************************************************
 
 #ifndef SVPPQENTRYDIALOG_H
@@ -191,6 +191,7 @@ class SVPPQEntryDialogPropertySheetClass : public CPropertySheet
 public:
 	SVPPQEntryDialogPropertySheetClass(UINT nIDCaption, CWnd* pParentWnd = NULL, UINT iSelectPage = 0);
 	SVPPQEntryDialogPropertySheetClass(LPCTSTR pszCaption, CWnd* pParentWnd = NULL, UINT iSelectPage = 0);
+	virtual ~SVPPQEntryDialogPropertySheetClass();
 
 // Attributes
 public:
@@ -207,10 +208,10 @@ protected:
 	public:
 	virtual INT_PTR DoModal();
 	//}}AFX_VIRTUAL
+	BOOL OkToAdd();
 
 // Implementation
 public:
-	virtual ~SVPPQEntryDialogPropertySheetClass();
 
 	// Generated message map functions
 protected:
@@ -242,6 +243,16 @@ protected:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVPPQEntryDialog.h_v  $
+ * 
+ *    Rev 1.3   28 Feb 2014 08:31:08   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  888
+ * SCR Title:  Prevent adding inputs to the last position of the PPQ in Next Trigger (e116)
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Added function OkToAdd to enable/disable add button.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   02 Oct 2013 07:01:56   tbair
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : SVCommand.cpp
 //* .File Name       : $Workfile:   SVCommand.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.5  $
-//* .Check In Date   : $Date:   04 Feb 2014 13:22:44  $
+//* .Current Version : $Revision:   1.7  $
+//* .Check In Date   : $Date:   28 Feb 2014 08:05:20  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -24,7 +24,9 @@
 #include "SVDataManagerLibrary/DataManager.h"
 #include "SVFileSystemLibrary/SVFileSystemCommandFactory.h"
 // BRW - SVImageCompression has been deprecated.
-//#include "SVImageCompression/SVImageCompressionClass.h"
+#ifndef _WIN64
+#include "SVImageCompression/SVImageCompressionClass.h"
+#endif
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "SVImageLibrary/SVImageBufferHandleStruct.h"
 #include "SVLibrary/SVPackedFile.h"
@@ -1809,7 +1811,8 @@ STDMETHODIMP CSVCommand::SVGetImageList(SAFEARRAY* psaNames, long lCompression, 
 		}
 
 		// BRW - SVImageCompression has been deprecated.
-		/*SVImageCompressionClass mainCompressionObject(SERVER_COMPRESSION_POOL_SIZE);
+#ifndef _WIN64
+		SVImageCompressionClass mainCompressionObject(SERVER_COMPRESSION_POOL_SIZE);
 
 		if (lCompression != 0)
 		{
@@ -1823,7 +1826,9 @@ STDMETHODIMP CSVCommand::SVGetImageList(SAFEARRAY* psaNames, long lCompression, 
 				//--------- acceptable response.
 				throw -1558;
 			}
-		}*/
+		}//*/
+#endif
+
 
 		long lNumberOfElements = psaNames->rgsabound[0].cElements;
 		
@@ -1960,11 +1965,13 @@ STDMETHODIMP CSVCommand::SVGetImageList(SAFEARRAY* psaNames, long lCompression, 
 					char* pDIB = NULL;
 
 					// BRW - SVImageCompression has been deprecated.
-					/*if (lCompression != 0)
+#ifndef _WIN64
+					if (lCompression != 0)
 					{
 						hr = mainCompressionObject.GetAndLockInputDIBBuffer(&pDIB);
 					}
-					else */
+					else
+#endif
 					{
 						//------ An alCompression of 0 indicates that no compression will be used. 
 						//------ For purposes of speed, our implementation will not tie up a LeadTool
@@ -1988,7 +1995,8 @@ STDMETHODIMP CSVCommand::SVGetImageList(SAFEARRAY* psaNames, long lCompression, 
 						memcpy( pDIB, &(l_ImageIter->second.m_ImageDIB[0]), l_ImageIter->second.m_ImageDIB.size() );
 
 						// BRW - SVImageCompression has been deprecated.
-						/*if (lCompression != 0)
+#ifndef _WIN64
+						if (lCompression != 0)
 						{
 							mainCompressionObject.UnLockInputDIBBuffer ();
 
@@ -2009,7 +2017,8 @@ STDMETHODIMP CSVCommand::SVGetImageList(SAFEARRAY* psaNames, long lCompression, 
 									hr = -1567;
 								}
 							}
-						}*/
+						}
+#endif
 					}
 
 					if ( hr == S_OK )
@@ -3065,7 +3074,8 @@ STDMETHODIMP CSVCommand::SVGetProductImageList(long lProcessCount, SAFEARRAY* ps
 		}
 		
 		// BRW - SVImageCompression has been deprecated.
-		/*SVImageCompressionClass mainCompressionObject (SERVER_COMPRESSION_POOL_SIZE);
+#ifndef _WIN64
+		SVImageCompressionClass mainCompressionObject (SERVER_COMPRESSION_POOL_SIZE);
 
 		if (lCompression != 0)
 		{
@@ -3079,7 +3089,9 @@ STDMETHODIMP CSVCommand::SVGetProductImageList(long lProcessCount, SAFEARRAY* ps
 				//--------- acceptable response.
 				throw -1606;
 			}
-		}*/
+		}
+#endif		
+		
 
 		//go through list of names and make sure they are all valid
 		// 1) Inspection exists
@@ -3202,7 +3214,13 @@ STDMETHODIMP CSVCommand::SVGetProductImageList(long lProcessCount, SAFEARRAY* ps
 							BSTR bstrTemp = NULL;
 							
 																						// BRW - SVImageCompression has been deprecated.
-							HRESULT hr = SafeImageToBSTR( pImage, svIndex, &bstrTemp );	//, lCompression, &mainCompressionObject);
+							HRESULT hr = SafeImageToBSTR( pImage, svIndex, &bstrTemp
+								
+#ifndef _WIN64
+								, lCompression, &mainCompressionObject);
+#else
+								);
+#endif
 
 							if ( SUCCEEDED( hr ) )
 							{
@@ -3350,10 +3368,17 @@ STDMETHODIMP CSVCommand::SVGetLUT(BSTR bstrCameraName, SAFEARRAY** ppaulLUTTable
 
 HRESULT CSVCommand::ImageToBSTR(SVImageInfoClass&  rImageInfo, 
 	SVSmartHandlePointer rImageHandle,
-	BSTR*              pbstr ) //, 
+	BSTR*              pbstr
+#ifndef _WIN64
+	, 
+#else
+	)
+#endif
 	// BRW - SVImageCompression has been deprecated.
-	//long               alCompression, 
-	//SVImageCompressionClass* apCompressionObject)
+#ifndef _WIN64
+	long               alCompression, 
+	SVImageCompressionClass* apCompressionObject)
+#endif
 {
 	HRESULT hr = S_OK;
 	
@@ -3368,7 +3393,8 @@ HRESULT CSVCommand::ImageToBSTR(SVImageInfoClass&  rImageInfo,
 		hr = -1578;
 	}
 	// BRW - SVImageCompression has been deprecated.
-	/*else
+#ifndef _WIN64
+	else
 	{
 		//--- It's not acceptable to specify a compression and not provide a 
 		//--- compression object.  
@@ -3379,8 +3405,8 @@ HRESULT CSVCommand::ImageToBSTR(SVImageInfoClass&  rImageInfo,
 		{
 			hr = -1579;
 		}
-	}*/
-
+	}
+#endif
 	if ( hr == S_OK )
 	{
 		SVMatroxBufferInterface::SVStatusCode l_Code;
@@ -3499,7 +3525,8 @@ HRESULT CSVCommand::ImageToBSTR(SVImageInfoClass&  rImageInfo,
 		lBufSize = sizeof( BITMAPINFOHEADER ) + lTabSize + pbmhInfo->biSizeImage;
 		
 		// BRW - SVImageCompression has been deprecated.
-		/*if (alCompression != 0)
+#ifndef _WIN64
+		if (alCompression != 0)
 		{
 			hr = apCompressionObject->GetAndLockInputDIBBuffer(&pDIB);
 			if (pDIB == NULL)
@@ -3507,7 +3534,8 @@ HRESULT CSVCommand::ImageToBSTR(SVImageInfoClass&  rImageInfo,
 				hr = -1561;
 			}
 		}
-		else*/
+		else
+#endif
 		{
 			//------ An alCompression of 0 indicates that no compression will be used. 
 			//------ For purposes of speed, our implementation will not tie up a LeadTool
@@ -3539,7 +3567,8 @@ HRESULT CSVCommand::ImageToBSTR(SVImageInfoClass&  rImageInfo,
 				pbmhInfo->biSizeImage );
 
 			// BRW - SVImageCompression has been deprecated.
-			/*if (alCompression != 0)
+#ifndef _WIN64
+			if (alCompression != 0)
 			{
 				apCompressionObject->UnLockInputDIBBuffer ();
 
@@ -3558,7 +3587,8 @@ HRESULT CSVCommand::ImageToBSTR(SVImageInfoClass&  rImageInfo,
 						hr = -1567;
 					}
 				}
-			}*/
+			}
+#endif
 		}
 		
 		//--- For the case where compression is not zero the pDIB value can no longer
@@ -3572,9 +3602,13 @@ HRESULT CSVCommand::ImageToBSTR(SVImageInfoClass&  rImageInfo,
 	return hr;
 }
 
-HRESULT CSVCommand::SafeImageToBSTR( SVImageClass *p_pImage, SVImageIndexStruct p_svIndex, 
+HRESULT CSVCommand::SafeImageToBSTR( SVImageClass *p_pImage, SVImageIndexStruct p_svIndex, BSTR *pbstr
+#ifndef _WIN64
 					// BRW - SVImageCompression has been deprecated.
-	BSTR *pbstr )	//, long alCompression, SVImageCompressionClass *apCompressionObject)
+	 , long alCompression, SVImageCompressionClass *apCompressionObject)
+#else
+	)
+#endif
 {
 	HRESULT hr = S_OK;
 
@@ -3596,7 +3630,12 @@ HRESULT CSVCommand::SafeImageToBSTR( SVImageClass *p_pImage, SVImageIndexStruct 
 		}
 
 																// BRW - SVImageCompression has been deprecated.
-		hr = ImageToBSTR( oChildInfo, oChildHandle, pbstr );	//, alCompression, apCompressionObject );
+		hr = ImageToBSTR( oChildInfo, oChildHandle, pbstr
+#ifndef _WIN64
+			, alCompression, apCompressionObject );
+#else
+			);
+#endif
 	}
 	else
 	{
@@ -4499,12 +4538,14 @@ HRESULT CSVCommand::SVGetLockedImage(long p_lIndex, long p_lCompression, BSTR* p
 	HRESULT hr = S_FALSE;
 	
 	// BRW - SVImageCompression has been deprecated.
-	//SVImageCompressionClass mainCompressionObject (SERVER_COMPRESSION_POOL_SIZE);
-
+#ifndef _WIN64
+	SVImageCompressionClass mainCompressionObject (SERVER_COMPRESSION_POOL_SIZE);
+#endif
 	do
 	{
+#ifndef _WIN64
 		// BRW - SVImageCompression has been deprecated.
-		/*if ( p_lCompression != 0 )
+		if ( p_lCompression != 0 )
 		{
 			//------ An lCompression of 0 indicates that no compression will be used.
 			//------ For purposes of speed, our implementation will not tie up a LeadTool
@@ -4517,8 +4558,8 @@ HRESULT CSVCommand::SVGetLockedImage(long p_lIndex, long p_lCompression, BSTR* p
 				hr = -1605;
 				break;
 			}
-		}*/
-
+		}
+#endif
 		SVConfigurationObject* l_pConfig = NULL;
 		SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
 
@@ -4553,7 +4594,12 @@ HRESULT CSVCommand::SVGetLockedImage(long p_lIndex, long p_lCompression, BSTR* p
 				
 		// put image in return array
 																				// BRW - SVImageCompression has been deprecated.
-		hr = ImageToBSTR( l_ImageInfo, SVaxls.m_ImageHandlePtr, p_pbstrImage );	//, p_lCompression, &mainCompressionObject);
+		hr = ImageToBSTR( l_ImageInfo, SVaxls.m_ImageHandlePtr, p_pbstrImage
+#ifndef _WIN64
+			, p_lCompression, &mainCompressionObject);
+#else
+			);
+#endif
 
 		break;
 	} while (false);
@@ -5670,8 +5716,13 @@ STDMETHODIMP CSVCommand::SVGetFontCharacter(long lFontIdentifier, long  lCharID,
 				SVSmartHandlePointer ImageBufferHandle = new SVImageBufferHandleStruct( lCharHandle );
 
 																			// BRW - SVImageCompression has been deprecated.
-				ImageToBSTR( ImageInfo, ImageBufferHandle, pbstrLabelImage );	//,0,NULL);
 
+				ImageToBSTR( ImageInfo, ImageBufferHandle, pbstrLabelImage
+#ifndef _WIN64
+					, 0,NULL);
+#else
+					);
+#endif
 				lCharHandle.clear();
 
 				hr = S_OK;
@@ -6169,7 +6220,8 @@ namespace local
 		}
 
 		// BRW - SVImageCompression has been deprecated.
-		/*SVImageCompressionClass mainCompressionObject (SERVER_COMPRESSION_POOL_SIZE);
+#ifndef _WIN64
+		SVImageCompressionClass mainCompressionObject (SERVER_COMPRESSION_POOL_SIZE);
 
 		if (lCompression != 0)
 		{
@@ -6183,8 +6235,8 @@ namespace local
 				//--------- acceptable response.
 				hrResult = -12391;//!!!
 			}
-		}*/
-
+		}
+#endif
 		for ( long l = 0; l < static_cast<long>(rvec.size()); ++l )
 		{
 			SVImageBufferStruct& rImage = rvec.at(l);
@@ -6199,7 +6251,12 @@ namespace local
 			{
 				BSTR bstrImage = NULL;
 																					// BRW - SVImageCompression has been deprecated.
-				CSVCommand::ImageToBSTR( rImage.info, rImage.handle, &bstrImage );	//, lCompression, &mainCompressionObject );
+				CSVCommand::ImageToBSTR( rImage.info, rImage.handle, &bstrImage
+#ifndef _WIN64
+					, lCompression, &mainCompressionObject );
+#else
+				);
+#endif
 				CSVCommand::SafeArrayPutElementNoCopy( *ppsaImages, &l, bstrImage );
 			}
 
@@ -6261,7 +6318,8 @@ namespace local
 		}
 
 		// BRW - SVImageCompression has been deprecated.
-		/*SVImageCompressionClass mainCompressionObject (SERVER_COMPRESSION_POOL_SIZE);
+#ifndef _WIN64
+		SVImageCompressionClass mainCompressionObject (SERVER_COMPRESSION_POOL_SIZE);
 
 		if (lCompression != 0)
 		{
@@ -6275,8 +6333,8 @@ namespace local
 				//--------- acceptable response.
 				hrResult = -12391;//!!!
 			}
-		}*/
-
+		}
+#endif
 		long alDimIndex[2]={0};
 		for ( long lEntry = 0; lEntry < lNumEntries; ++lEntry )
 		{
@@ -6299,7 +6357,12 @@ namespace local
 				{
 					BSTR bstrImage = NULL;
 																						// BRW - SVImageCompression has been deprecated.
-					CSVCommand::ImageToBSTR( rImage.info, rImage.handle, &bstrImage );	//, lCompression, &mainCompressionObject );
+					CSVCommand::ImageToBSTR( rImage.info, rImage.handle, &bstrImage
+#ifndef _WIN64
+						, lCompression, &mainCompressionObject );
+#else
+						);
+#endif
 					CSVCommand::SafeArrayPutElementNoCopy( *ppsaImages, alDimIndex, bstrImage );
 				}
 
@@ -7000,6 +7063,26 @@ STDMETHODIMP CSVCommand::SVIsAvailiable()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVCommand.cpp_v  $
+ * 
+ *    Rev 1.7   28 Feb 2014 08:05:20   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   #ifndef for 64 bit platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.6   27 Feb 2014 14:05:08   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Un-commented Image Compression for 32 bit code.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.5   04 Feb 2014 13:22:44   bwalter
  * Project:  SVObserver

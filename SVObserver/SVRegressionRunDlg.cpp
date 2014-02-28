@@ -5,8 +5,8 @@
 // * .Module Name     : SVRegressionRunDlg
 // * .File Name       : $Workfile:   SVRegressionRunDlg.cpp  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.1  $
-// * .Check In Date   : $Date:   02 Oct 2013 08:00:12  $
+// * .Current Version : $Revision:   1.2  $
+// * .Check In Date   : $Date:   28 Feb 2014 09:22:56  $
 // ******************************************************************************
 // SVRegressionRunDlg.cpp : implementation file
 //
@@ -34,14 +34,67 @@ static char THIS_FILE[] = __FILE__;
 
 CSVRegressionRunDlg::CSVRegressionRunDlg(CWnd* pParent /*=NULL*/)
 	: CDialog(CSVRegressionRunDlg::IDD, pParent)
+	,m_iconPlay(NULL)
+	,m_iconPause(NULL)
+	,m_iconStop(NULL)
+	,m_iconModeContinue(NULL)
+	,m_iconModeRunToEnd(NULL)
+	,m_iconFrameUp(NULL)
+	,m_iconFrameBack(NULL)
 {
 	//{{AFX_DATA_INIT(CSVRegressionRunDlg)
 	m_iNumberSeconds = 0;
 	//}}AFX_DATA_INIT
-
 }
 
+CSVRegressionRunDlg::~CSVRegressionRunDlg()
+{
+	DestroyIcons();
+}
 
+void CSVRegressionRunDlg::DestroyIcons()
+{
+	if( m_iconPlay)
+	{
+		DestroyIcon(m_iconPlay); 
+		m_iconPlay = NULL;
+	}
+	if( m_iconPause)
+	{
+		DestroyIcon(m_iconPause );
+		m_iconPause = NULL;
+	}
+	if( m_iconStop)
+	{
+		DestroyIcon(m_iconStop );
+		m_iconStop = NULL;
+	}
+	if( m_iconModeContinue)
+	{
+		DestroyIcon(m_iconModeContinue );
+		m_iconModeContinue = NULL;
+	}
+	if( m_iconModeRunToEnd)
+	{
+		DestroyIcon(m_iconModeRunToEnd );
+		m_iconModeRunToEnd = NULL;
+	}
+	if( m_iconFrameUp)
+	{
+		DestroyIcon(m_iconFrameUp );
+		m_iconFrameUp = NULL;
+	}
+	if( m_iconFrameBack)
+	{
+		DestroyIcon(m_iconFrameBack);
+		m_iconFrameBack = NULL;
+	}
+	if( m_iconBeginning)
+	{
+		DestroyIcon(m_iconBeginning);
+		m_iconBeginning = NULL;
+	}
+}
 void CSVRegressionRunDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
@@ -431,7 +484,7 @@ LRESULT  CSVRegressionRunDlg::SetPreviousFrameBtn(WPARAM wParam, LPARAM lParam)
 
 void CSVRegressionRunDlg::OnClose() 
 {
-	
+	DestroyIcons();
 	CDialog::OnClose();
 }
 
@@ -547,6 +600,16 @@ void CSVRegressionRunDlg::OnBtnExit()
 // ******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVRegressionRunDlg.cpp_v  $
+ * 
+ *    Rev 1.2   28 Feb 2014 09:22:56   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  890
+ * SCR Title:  Fix SVObserver Memory Leaks
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Delete Icons. Add virtual destructor.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   02 Oct 2013 08:00:12   tbair
  * Project:  SVObserver

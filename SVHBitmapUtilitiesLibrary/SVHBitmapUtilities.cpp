@@ -5,8 +5,8 @@
 //* .Module Name     : HBitmapUtilities
 //* .File Name       : $Workfile:   SVHBitmapUtilities.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   01 Oct 2013 06:32:04  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   28 Feb 2014 09:02:16  $
 //******************************************************************************
 
 
@@ -247,6 +247,11 @@ SVDIBITMAPINFO SVIHBitmapUtilities::SVCreateHBitmap( SVImageDefinitionStruct& rI
 
 	void* pBits = NULL;
 	HBITMAP hbmResult = ::CreateDIBSection( NULL, pbmInfo, DIB_RGB_COLORS, &pBits, NULL, 0 );
+	if(hbmResult == NULL)
+	{
+		delete [] pbmInfo;
+		assert(0);
+	}
 	return SVDIBITMAPINFO( hbmResult, pBits, pbmInfo );
 
 }// end SVCreateHBitmap
@@ -310,6 +315,16 @@ HRESULT SVIHBitmapUtilities::SVHBitmapToDC(const SVDIBITMAPINFO svSrcDIB, HDC hD
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVHBitmapUtilitiesLibrary\SVHBitmapUtilities.cpp_v  $
+ * 
+ *    Rev 1.2   28 Feb 2014 09:02:16   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  890
+ * SCR Title:  Fix SVObserver Memory Leaks
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   delete bitmapInfo if SVCreateDIBSection fails in SVCreateHBitmap.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   01 Oct 2013 06:32:04   tbair
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : SVCustomDeviceParam
 //* .File Name       : $Workfile:   SVCustomDeviceParam.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   13 May 2013 11:10:18  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   28 Feb 2014 09:35:22  $
 //******************************************************************************
 #ifndef INCL_SVCUSTOMDEVICEPARAM_H
 #define INCL_SVCUSTOMDEVICEPARAM_H
@@ -30,7 +30,7 @@ public:
 	template<typename T>
 	SVCustomDeviceParam(const T& value) 
 	: SVDeviceParam(value->Type())
-	, m_holder(SVDeviceParamWrapper(value))
+	, m_holder(value) 
 	{
 		m_eDataType = DeviceDataTypeCustom;
 		// copy attributes from holder
@@ -66,7 +66,17 @@ public:
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVOMFCLibrary\SVCustomDeviceParam.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVOMFCLibrary\SVCustomDeviceParam.h_v  $
+ * 
+ *    Rev 1.2   28 Feb 2014 09:35:22   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  890
+ * SCR Title:  Fix SVObserver Memory Leaks
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   remove unnecessary copy of SVDeviceParamWrapper in constructor of SVCustomDeviceParam.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   13 May 2013 11:10:18   bWalter
  * Project:  SVObserver

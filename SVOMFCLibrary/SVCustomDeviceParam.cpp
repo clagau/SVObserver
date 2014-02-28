@@ -5,8 +5,8 @@
 //* .Module Name     : SVCustomDeviceParam
 //* .File Name       : $Workfile:   SVCustomDeviceParam.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   13 May 2013 11:10:14  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   28 Feb 2014 09:31:46  $
 //******************************************************************************
 #include "Stdafx.h"
 #include "SVCustomDeviceParam.h"
@@ -73,6 +73,7 @@ SVDeviceParam* SVCustomDeviceParam::Create(SVDeviceParamEnum typeEnum, const VAR
 			SVStringValueDeviceParam* pStringValueParam = new SVStringValueDeviceParam(typeEnum);
 			pStringValueParam->SetValue(rv);
 			pParam = new SVCustomDeviceParam(pStringValueParam);
+			delete pStringValueParam;
 		}
 		break;
 			
@@ -81,6 +82,7 @@ SVDeviceParam* SVCustomDeviceParam::Create(SVDeviceParamEnum typeEnum, const VAR
 			SVLongValueDeviceParam* pLongValueParam = new SVLongValueDeviceParam(typeEnum);
 			pLongValueParam->SetValue(rv);
 			pParam = new SVCustomDeviceParam(pLongValueParam);
+			delete pLongValueParam;
 		}
 		break;
 			
@@ -89,6 +91,7 @@ SVDeviceParam* SVCustomDeviceParam::Create(SVDeviceParamEnum typeEnum, const VAR
 			SVBoolValueDeviceParam* pBoolValueParam = new SVBoolValueDeviceParam(typeEnum);
 			pBoolValueParam->SetValue(rv);
 			pParam = new SVCustomDeviceParam(pBoolValueParam);
+			delete pBoolValueParam;
 		}
 		break;
 			
@@ -97,6 +100,7 @@ SVDeviceParam* SVCustomDeviceParam::Create(SVDeviceParamEnum typeEnum, const VAR
 			SVi64ValueDeviceParam* pI64ValueParam = new SVi64ValueDeviceParam(typeEnum);
 			pI64ValueParam->SetValue(rv);
 			pParam = new SVCustomDeviceParam(pI64ValueParam);
+			delete pI64ValueParam;
 		}
 		break;
 	}
@@ -117,7 +121,17 @@ const SVDeviceParamWrapper& SVCustomDeviceParam::GetHeldParam() const
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVOMFCLibrary\SVCustomDeviceParam.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVOMFCLibrary\SVCustomDeviceParam.cpp_v  $
+ * 
+ *    Rev 1.2   28 Feb 2014 09:31:46   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  890
+ * SCR Title:  Fix SVObserver Memory Leaks
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   delete device param leaks.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   13 May 2013 11:10:14   bWalter
  * Project:  SVObserver

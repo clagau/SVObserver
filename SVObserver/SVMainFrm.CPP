@@ -5,8 +5,8 @@
 //* .Module Name     : SVMainFrm
 //* .File Name       : $Workfile:   SVMainFrm.CPP  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.5  $
-//* .Check In Date   : $Date:   04 Feb 2014 15:26:08  $
+//* .Current Version : $Revision:   1.6  $
+//* .Check In Date   : $Date:   28 Feb 2014 09:16:56  $
 //******************************************************************************
 
 #pragma region Includes
@@ -1460,6 +1460,7 @@ HRESULT SVMainFrame::ParseToolsetScripts( SVTreeType& p_rTree )
 						{
 							l_Status = E_FAIL;
 						}
+						delete pToolsetScript;
 					}
 				}
 				p_rTree.GetNextBranch( htiChild, htiSubChild );
@@ -1979,6 +1980,16 @@ LRESULT SVMainFrame::OnHideIOViewTab( WPARAM p_wParam, LPARAM p_lParam )
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVMainFrm.CPP_v  $
+ * 
+ *    Rev 1.6   28 Feb 2014 09:16:56   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  890
+ * SCR Title:  Fix SVObserver Memory Leaks
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Delete toolset script string in ParseToolsetScripts.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.5   04 Feb 2014 15:26:08   bwalter
  * Project:  SVObserver

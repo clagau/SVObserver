@@ -5,8 +5,8 @@
 //* .Module Name     : SVObserver
 //* .File Name       : $Workfile:   SVObserver.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.20  $
-//* .Check In Date   : $Date:   13 Feb 2014 12:37:54  $
+//* .Current Version : $Revision:   1.22  $
+//* .Check In Date   : $Date:   28 Feb 2014 07:57:46  $
 //******************************************************************************
 
 #pragma region Includes
@@ -65,7 +65,9 @@
 
 #include "SVConfigurationObject.h"
 // BRW - SVImageCompression has been deprecated.
-//#include "SVImageCompression/SVImageCompressionClass.h"
+#ifndef _WIN64
+#include "SVImageCompression/SVImageCompressionClass.h"
+#endif
 #include "SVUserMessage.h"
 #include "SVOMFCLibrary/SVOINIClass.h"
 #include "SVOMFCLibrary/SVOIniLoader.h"
@@ -322,8 +324,13 @@ END_MESSAGE_MAP()
 #pragma region Constructor
 SVObserverApp::SVObserverApp()
 	// BRW - SVImageCompression has been deprecated.
-	: /*m_bImageCompressionStarted( FALSE )
-	  ,*/ m_gigePacketSize( 0 )
+#ifndef _WIN64
+	: m_bImageCompressionStarted( FALSE )
+	  , 
+#else
+	:
+#endif
+	  m_gigePacketSize( 0 )
 	  , m_InputStreamPortNumber( 32100 )
 	  , m_OutputStreamPortNumber( 32101 )
 	  , m_RemoteCommandsPortNumber( 28960 )
@@ -3281,12 +3288,13 @@ BOOL SVObserverApp::InitInstance()
 	TheSVOLicenseManager().InitLicenseManager();
 	
 	// BRW - SVImageCompression has been deprecated.
-	/*SVImageCompressionClass mainCompressionObject (SERVER_COMPRESSION_POOL_SIZE);
+#ifndef _WIN64
+	SVImageCompressionClass mainCompressionObject (SERVER_COMPRESSION_POOL_SIZE);
 
 	HRESULT hr = mainCompressionObject.CreateResourcePool ();
 
-	m_bImageCompressionStarted = hr == S_OK;*/
-
+	m_bImageCompressionStarted = hr == S_OK;
+#endif
 	m_mgrRemoteFonts.Startup();
 
 #ifdef LUT_DEBUG
@@ -3552,13 +3560,14 @@ int SVObserverApp::ExitInstance()
 	m_mgrRemoteFonts.Shutdown();
 
 	// BRW - SVImageCompression has been deprecated.
-	/*if ( m_bImageCompressionStarted )
+#ifndef _WIN64
+	if ( m_bImageCompressionStarted )
 	{
 		SVImageCompressionClass mainCompressionObject (SERVER_COMPRESSION_POOL_SIZE);
 
 		mainCompressionObject.DestroyResourcePool ();
-	}*/
-
+	}
+#endif
 	SVTriggerProcessingClass::Instance().Shutdown();
 	SVDigitizerProcessingClass::Instance().Shutdown();
 	SVHardwareManifest::Instance().Shutdown();
@@ -7989,10 +7998,10 @@ void SVObserverApp::fileSaveAsSVX( CString StrSaveAsPathName )
 	}// end if ( StrSaveAsPathName.IsEmpty() )
 	else
 	{
-		setConfigFullFileName( StrSaveAsPathName, FALSE );
+		bOk = setConfigFullFileName( StrSaveAsPathName, FALSE );
 	}
 
-	if ( !CString( m_ConfigFileName.GetExtension() ).CompareNoCase( ".svx" ) )
+	if (bOk &&  !CString( m_ConfigFileName.GetExtension() ).CompareNoCase( ".svx" ) )
 	{
 		CString csFileName;
 
@@ -8808,6 +8817,26 @@ int SVObserverApp::FindMenuItem(CMenu* Menu, LPCTSTR MenuString)
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVObserver.cpp_v  $
+ * 
+ *    Rev 1.22   28 Feb 2014 07:57:46   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  887
+ * SCR Title:  Fix bug where saving can cause a crash (e117)
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Added check to the return of SetConfigFullFileName in the function SaveAsSVX.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.21   27 Feb 2014 14:05:06   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Un-commented Image Compression for 32 bit code.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.20   13 Feb 2014 12:37:54   tbair
  * Project:  SVObserver

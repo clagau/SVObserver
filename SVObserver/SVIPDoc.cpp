@@ -5,8 +5,8 @@
 //* .Module Name     : SVIPDoc
 //* .File Name       : $Workfile:   SVIPDoc.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.10  $
-//* .Check In Date   : $Date:   04 Feb 2014 15:24:14  $
+//* .Current Version : $Revision:   1.11  $
+//* .Check In Date   : $Date:   28 Feb 2014 09:15:20  $
 //******************************************************************************
 
 #pragma region Includes
@@ -4018,6 +4018,7 @@ DWORD WINAPI SVIPDoc::SVRegressionTestRunThread( LPVOID lpParam )
 void SVIPDoc::RegressionTestComplete()
 {
 	( ( SVMainFrame* ) AfxGetApp()->m_pMainWnd )->m_pregTestDlg->DestroyWindow();
+	delete ( ( SVMainFrame* ) AfxGetApp()->m_pMainWnd )->m_pregTestDlg;
 	( ( SVMainFrame* ) AfxGetApp()->m_pMainWnd )->m_pregTestDlg = NULL;
 	
 	SVSVIMStateClass::RemoveState(SV_STATE_REGRESSION);
@@ -4694,6 +4695,16 @@ BOOL SVIPDoc::RunOnce( SVToolClass* p_pTool )
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVIPDoc.cpp_v  $
+ * 
+ *    Rev 1.11   28 Feb 2014 09:15:20   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  890
+ * SCR Title:  Fix SVObserver Memory Leaks
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   delete regression test dialog in RegressionTestComplete.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.10   04 Feb 2014 15:24:14   bwalter
  * Project:  SVObserver

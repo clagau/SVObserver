@@ -336,7 +336,7 @@ STYLE DS_SETFONT | DS_MODALFRAME | DS_SETFOREGROUND | WS_POPUP | WS_CAPTION | WS
 CAPTION "About SVObserver"
 FONT 10, "MS Sans Serif", 0, 0, 0x0
 BEGIN
-    LTEXT           "Copyright (C) 1997 - 2002 by SVResearch Inc.\nAll Rights Reserved.",IDC_COPYRIGHT,16,144,208,16
+    LTEXT           "Copyright (C) 2013 - Seidenader Maschinenbau GmbH, Markt Schwaben\nAll Rights Reserved.",IDC_COPYRIGHT,16,144,208,16
     PUSHBUTTON      "OK",IDOK,238,216,32,14,WS_GROUP
     GROUPBOX        "SVObserver",IDC_CURRENT_VERSION_STATIC,7,27,221,139,BS_CENTER
     LTEXT           "SVResearch Gesellschaft für Bildverarbeitung mbH",IDC_COMPANY2,16,92,208,8
@@ -345,9 +345,8 @@ BEGIN
     LTEXT           "Telefon:  +49  (0)8121 802 - 0  -  Telefax:  +49  (0)8121 802 - 100",IDC_PHONE2,16,122,208,8
     CONTROL         2000,IDC_LOGO,"Static",SS_BITMAP | SS_SUNKEN,16,18,49,25
     LTEXT           "e-mail:  svr@seidenader.de  -  Internet:  http://www.seidenader.com",IDC_EMAIL2,16,132,208,8
-    LTEXT           "SVResearch, Inc.",IDC_COMPANY,16,49,208,8
-    LTEXT           "Harrisburg, PA, USA",IDC_COUNTRY,16,58,208,8
-    LTEXT           "e-mail:  info@svresearch.com  -  Internet:  http://www.svresearch.com",IDC_EMAIL,16,67,208,8
+    LTEXT           "Korber Solutions",IDC_COMPANY,16,49,208,8
+    LTEXT           "Seidenader Maschinenbau GmbH, Markt Schwaben",IDC_COUNTRY,16,58,208,8
     CONTROL         "",IDC_VERSION_LIST,"SysListView32",LVS_REPORT | LVS_ALIGNLEFT | LVS_NOSORTHEADER | WS_BORDER | WS_TABSTOP,10,177,215,49,WS_EX_DLGMODALFRAME | WS_EX_LEFTSCROLLBAR
     GROUPBOX        "Additional Version Information",IDC_STATIC,7,168,221,62
 END

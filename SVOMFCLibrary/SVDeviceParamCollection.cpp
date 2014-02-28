@@ -5,8 +5,8 @@
 // * .Module Name     : SVDeviceParamCollection
 // * .File Name       : $Workfile:   SVDeviceParamCollection.cpp  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.0  $
-// * .Check In Date   : $Date:   25 Apr 2013 13:02:20  $
+// * .Current Version : $Revision:   1.1  $
+// * .Check In Date   : $Date:   28 Feb 2014 09:31:46  $
 // ******************************************************************************
 
 // SVDeviceParamCollection.cpp: definition for the SVDeviceParamCollection struct.
@@ -63,6 +63,10 @@ SVDeviceParamCollection& SVDeviceParamCollection::operator = ( const SVDevicePar
 
 HRESULT SVDeviceParamCollection::Clear()
 {
+	for( SVDeviceParamMap::iterator it = mapParameters.begin(); it != mapParameters.end() ; ++it )
+	{
+		it->second.Clear();
+	}
 	mapParameters.clear();
 	return S_OK;
 }
@@ -71,14 +75,15 @@ HRESULT SVDeviceParamCollection::CreateParameter( SVDeviceParamEnum e, const VAR
 {
 	if (e >= DeviceParamGigeCustom1 && e <= DeviceParamGigeCustom30)
 	{
-		SVDeviceParam* pParam = SVCustomDeviceParam::Create(e, rv);
-		if (pParam)
+		SVDeviceParam* pParam1 = SVCustomDeviceParam::Create(e, rv);
+		if (pParam1)
 		{
-			SetParameter(e, pParam);
-			SVDeviceParam* pParam = GetParameter(e);
-			if (pParam)
+			SetParameter(e, pParam1);
+			delete pParam1;
+			SVDeviceParam* pParam2 = GetParameter(e);
+			if (pParam2)
 			{
-				return pParam->SetValue(rv);
+				return pParam2->SetValue(rv);
 			}
 		}
 	}
@@ -98,7 +103,17 @@ HRESULT SVDeviceParamCollection::CreateParameter( SVDeviceParamEnum e, const VAR
 // * LOG HISTORY:
 // ******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVOMFCLibrary\SVDeviceParamCollection.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVOMFCLibrary\SVDeviceParamCollection.cpp_v  $
+ * 
+ *    Rev 1.1   28 Feb 2014 09:31:46   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  890
+ * SCR Title:  Fix SVObserver Memory Leaks
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   delete device param leaks.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   25 Apr 2013 13:02:20   bWalter
  * Project:  SVObserver

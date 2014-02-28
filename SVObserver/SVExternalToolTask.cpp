@@ -5,8 +5,8 @@
 //* .Module Name     : SVExternalToolTask
 //* .File Name       : $Workfile:   SVExternalToolTask.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.5  $
-//* .Check In Date   : $Date:   01 Feb 2014 10:42:26  $
+//* .Current Version : $Revision:   1.6  $
+//* .Check In Date   : $Date:   28 Feb 2014 09:10:32  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -799,22 +799,24 @@ HRESULT SVExternalToolTask::Uninitialize()
 	HRESULT hr = S_OK;
 
 
-	SVObjectPairVector list;
-	GetDependentsList( list );
 
-	SVObjectPairVector::iterator iter;
-	int iIndex = 0;
-	for ( iter = list.begin(); iter != list.end(); ++iter )
+	for( std::vector<SVDIBITMAPINFO>::iterator it = m_aInspectionInputHBMImages.begin(); it != m_aInspectionInputHBMImages.end(); ++it)
 	{
-		//if ( )
+		if ( it->hbm != NULL )
+		{
+			::DeleteObject(it->hbm);
+			it->FreeBitmapInfo();
+			it->Clear();
+		}
 	}
-
+	m_aInspectionInputHBMImages.clear();
 	return hr;
 }
 
 
 BOOL SVExternalToolTask::CloseObject()
 {
+	Uninitialize();
 	if ( IsCreated() )
 	{
 		HRESULT hr = m_dll.UninitializeRun(GetUniqueObjectID());
@@ -2164,6 +2166,16 @@ HRESULT SVExternalToolTask::CollectInputImageNames( SVRunStatusClass& RRunStatus
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVExternalToolTask.cpp_v  $
+ * 
+ *    Rev 1.6   28 Feb 2014 09:10:32   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  890
+ * SCR Title:  Fix SVObserver Memory Leaks
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Free HBitmap images in UnInitialize.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.5   01 Feb 2014 10:42:26   tbair
  * Project:  SVObserver

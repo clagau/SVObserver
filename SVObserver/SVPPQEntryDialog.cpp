@@ -5,8 +5,8 @@
 //* .Module Name     : SVPPQEntryDialog
 //* .File Name       : $Workfile:   SVPPQEntryDialog.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   02 Oct 2013 07:01:54  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   28 Feb 2014 08:31:08  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -104,6 +104,7 @@ BOOL SVPPQEntryDialogCameraPageClass::OnInitDialog()
 			availableList.SetItemData( index , (DWORD) pCamera );			
 		}// end if
 
+		GetDlgItem(IDC_ADD_BUTTON)->EnableWindow(m_pSheet->OkToAdd());
 		++l_Iter;
 	}// end for
 
@@ -259,6 +260,26 @@ INT_PTR SVPPQEntryDialogPropertySheetClass::DoModal()
 	return nRetVal;
 }// end DoModal
 
+////////////////////////////////////////////////////////////////////////////////
+// This function will check that the position is not the last in next trigger mode.
+// Adding inputs to the last position will result in a NAK in next trigger mode.
+BOOL SVPPQEntryDialogPropertySheetClass::OkToAdd()
+{
+	BOOL bOK = TRUE;
+	SVPPQOutputModeEnum eMode = SVPPQUnknownMode;
+	m_pPPQ->GetPPQOutputMode( eMode );
+	if( eMode == SVPPQNextTriggerMode )
+	{
+		long iLen;
+		m_pPPQ->GetPPQLength(iLen);
+		if( m_lCurrentPosition+1 >= iLen)
+		{
+			bOK = FALSE;
+		}
+	}
+	return bOK;
+}
+
 BOOL SVPPQEntryDialogCameraPageClass::OnApply() 
 {
 	// Set is taken flag...
@@ -272,6 +293,16 @@ BOOL SVPPQEntryDialogCameraPageClass::OnApply()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVPPQEntryDialog.cpp_v  $
+ * 
+ *    Rev 1.3   28 Feb 2014 08:31:08   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  888
+ * SCR Title:  Prevent adding inputs to the last position of the PPQ in Next Trigger (e116)
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Added function OkToAdd to enable/disable add button.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   02 Oct 2013 07:01:54   tbair
  * Project:  SVObserver

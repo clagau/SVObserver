@@ -5,8 +5,8 @@
 //* .Module Name     : SVMatroxGigeAcquisitionClass
 //* .File Name       : $Workfile:   SVMatroxGigeAcquisitionClass.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   05 Jul 2013 09:11:08  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   28 Feb 2014 09:20:12  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -410,6 +410,10 @@ HRESULT SVMatroxGigeAcquisitionClass::UpdateLightReferenceAttributes( const SVDe
 HRESULT SVMatroxGigeAcquisitionClass::UpdateLightReferenceAttributes( int iBand, const SVLongValueDeviceParam* pParam )
 {
 	HRESULT hr = S_FALSE;
+	if( mLightReference.m_aLightReferenceBand.size() == 0 )
+	{
+		return hr;
+	}
 	SVLightReferenceAttributeInfo* pAttribute = mLightReference.Band( iBand ).AttributeByType( (DWORD) pParam->Type() );
 	const SVLongValueDeviceParam* pCFParam = m_CameraFileDeviceParams.Parameter(pParam->Type()).DerivedValue( pCFParam );
 	if ( pAttribute )
@@ -818,7 +822,17 @@ HRESULT SVMatroxGigeAcquisitionClass::StartDigitizer()
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVMatroxGigeAcquisitionClass.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVMatroxGigeAcquisitionClass.cpp_v  $
+ * 
+ *    Rev 1.3   28 Feb 2014 09:20:12   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  890
+ * SCR Title:  Fix SVObserver Memory Leaks
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Prevent crash in updateLightReferenceAttributes.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   05 Jul 2013 09:11:08   bwalter
  * Project:  SVObserver

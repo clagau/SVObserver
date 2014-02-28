@@ -5,8 +5,8 @@
 // * .Module Name     : SVRegressionRunDlg
 // * .File Name       : $Workfile:   SVRegressionRunDlg.h  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.0  $
-// * .Check In Date   : $Date:   23 Apr 2013 14:42:20  $
+// * .Current Version : $Revision:   1.1  $
+// * .Check In Date   : $Date:   28 Feb 2014 09:22:56  $
 // ******************************************************************************
 
 #ifndef SVREGRESSIONRUNDLG_H
@@ -20,6 +20,7 @@ class CSVRegressionRunDlg : public CDialog
 // Construction
 public:
 	CSVRegressionRunDlg(CWnd* pParent = NULL);   // standard constructor
+	virtual ~CSVRegressionRunDlg();
 	void SetIPDocParent(SVIPDoc* pIPDocParent);
 
 	int GetTimeoutPeriod();
@@ -97,6 +98,7 @@ private: // data members
 
 	SVIPDoc* m_pIPDocParent;
 	BOOL EnableButtons(BOOL p_bValue);
+	void DestroyIcons();
 	BOOL m_bFirst;
 };
 
@@ -109,7 +111,17 @@ private: // data members
 // * LOG HISTORY:
 // ******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVRegressionRunDlg.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVRegressionRunDlg.h_v  $
+ * 
+ *    Rev 1.1   28 Feb 2014 09:22:56   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  890
+ * SCR Title:  Fix SVObserver Memory Leaks
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Delete Icons. Add virtual destructor.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 14:42:20   bWalter
  * Project:  SVObserver
