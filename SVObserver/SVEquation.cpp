@@ -5,8 +5,8 @@
 //* .Module Name     : SVEquation.cpp
 //* .File Name       : $Workfile:   SVEquation.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.3  $
-//* .Check In Date   : $Date:   01 Feb 2014 10:32:28  $
+//* .Current Version : $Revision:   1.4  $
+//* .Check In Date   : $Date:   28 Feb 2014 11:28:12  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -176,36 +176,38 @@ int SVEquationSymbolTableClass::addToolSetSymbol( LPCTSTR name, int index, SVObj
 		SVOutObjectInfoStruct* pOutObjectInfo = pAvailToolSetSymbols->GetAt( index );
 		if( pOutObjectInfo )
 		{
-
-			pSymbolStruct = new SVEquationSymbolStruct();
-
-			pSymbolStruct->Type = SV_TOOLSET_SYMBOL_TYPE;
-			pSymbolStruct->Name = name;
-
-			// Set who wants to use the variable
-			pSymbolStruct->InObjectInfo.SetObject( pRequestor->GetObjectInfo() );
-
-			// Set the variable to be used
-			pSymbolStruct->InObjectInfo.SetInputObjectType( pOutObjectInfo->ObjectTypeInfo );
-			pSymbolStruct->InObjectInfo.SetInputObject( pOutObjectInfo->UniqueObjectID );
-			
-			// Try to Connect at this point
-			LONG_PTR rc = ::SVSendMessage(pOutObjectInfo->UniqueObjectID, SVM_CONNECT_OBJECT_INPUT, reinterpret_cast<LONG_PTR>(&pSymbolStruct->InObjectInfo), NULL );
-			if( rc == SVMR_SUCCESS )
-			{
-				pSymbolStruct->IsValid = TRUE;
-			}
-
 			// Add to combined symbol table if not already there
 			symbolIndex = FindSymbol( name );
 
 			if( symbolIndex == -1 )
 			{
-				symbolIndex = Add( pSymbolStruct );
-			}
+
+				pSymbolStruct = new SVEquationSymbolStruct();
+
+				pSymbolStruct->Type = SV_TOOLSET_SYMBOL_TYPE;
+				pSymbolStruct->Name = name;
+
+				// Set who wants to use the variable
+				pSymbolStruct->InObjectInfo.SetObject( pRequestor->GetObjectInfo() );
+
+				// Set the variable to be used
+				pSymbolStruct->InObjectInfo.SetInputObjectType( pOutObjectInfo->ObjectTypeInfo );
+				pSymbolStruct->InObjectInfo.SetInputObject( pOutObjectInfo->UniqueObjectID );
 			
-			// add it to the top
-			toolsetSymbolTable.Add( &pSymbolStruct->InObjectInfo );
+				// Try to Connect at this point
+				LONG_PTR rc = ::SVSendMessage(pOutObjectInfo->UniqueObjectID, SVM_CONNECT_OBJECT_INPUT, reinterpret_cast<LONG_PTR>(&pSymbolStruct->InObjectInfo), NULL );
+				if( rc == SVMR_SUCCESS )
+				{
+					pSymbolStruct->IsValid = TRUE;
+				}
+				else
+				{
+					ASSERT(0);
+				}
+				symbolIndex = Add( pSymbolStruct );
+				// add it to the top
+				toolsetSymbolTable.Add( &pSymbolStruct->InObjectInfo );
+			}
 		}
 	}
 	return symbolIndex;
@@ -1434,6 +1436,16 @@ HRESULT SVEquationClass::ResetObject()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVEquation.cpp_v  $
+ * 
+ *    Rev 1.4   28 Feb 2014 11:28:12   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  890
+ * SCR Title:  Fix SVObserver Memory Leaks
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   prevent leak of toolSet Symbol when already in list.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   01 Feb 2014 10:32:28   tbair
  * Project:  SVObserver
