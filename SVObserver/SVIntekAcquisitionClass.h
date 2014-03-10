@@ -5,20 +5,24 @@
 //* .Module Name     : SVIntekAcquisitionClass
 //* .File Name       : $Workfile:   SVIntekAcquisitionClass.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 11:05:12  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   07 Mar 2014 18:17:04  $
 //******************************************************************************
 
 #ifndef SVINTEKACQUISITIONCLASS_H
 #define SVINTEKACQUISITIONCLASS_H
 
+#pragma region Includes
 #include "SVAcquisitionClass.h"
 #include "SVImageLibrary/SVImagingDeviceParams.h"
 #include "SVIntekDCamAcquisitionProxy.h"
 #include "SVIntekDCamDriverProxy.h"
+#pragma endregion Includes
 
+#pragma region Declarations
 struct SV1394CameraFileInfoStruct;
 class SVLongValueDeviceParam;
+#pragma endregion Declarations
 
 class SVIntekAcquisitionClass : public SVAcquisitionClass  
 {
@@ -26,29 +30,28 @@ public:
 	SVIntekAcquisitionClass( const SVAcquisitionConstructParams& p_rParams );
 	virtual ~SVIntekAcquisitionClass();
 
-	virtual bool IsValid();
-	virtual bool IsValidBoard();
+	virtual bool IsValid() const;
 
 	virtual HRESULT Destroy();
 
-	virtual HRESULT LoadFiles( SVFileNameArrayClass &rArray);
+	virtual HRESULT Start();
+	virtual HRESULT Stop();
+	virtual HRESULT LoadFiles( SVFileNameArrayClass &rArray );
 	virtual HRESULT ReadCameraFile( const CString& sFile, SVDeviceParamCollection& rParams );
 
 	virtual HRESULT CreateLightReference( int iBands, int iBrightness, int iContrast );
-	virtual HRESULT LoadLightReference( SVLightReference& rArray );
 
-	virtual HRESULT GetMaxLightReferenceValue( unsigned long ulType, long &rlValue );
-	virtual HRESULT GetMinLightReferenceValue( unsigned long ulType, long &rlValue );
-	virtual HRESULT GetLightReferenceValueStep( unsigned long ulType, unsigned long &rulValue );
+	virtual HRESULT GetMaxLightReferenceValue( unsigned long ulType, long &rlValue ) const;
+	virtual HRESULT GetMinLightReferenceValue( unsigned long ulType, long &rlValue ) const;
+	virtual HRESULT GetLightReferenceValueStep( unsigned long ulType, unsigned long &rulValue ) const;
 
 	virtual HRESULT CreateLut( const SVLutInfo& info );
-	virtual HRESULT DestroyLut( );
+	virtual HRESULT DestroyLut();
 
-	virtual HRESULT GetImageInfo(SVImageInfoClass *pImageInfo);
+	virtual HRESULT GetImageInfo( SVImageInfoClass* pImageInfo ) const;
 
-	virtual HRESULT Start();
-	virtual HRESULT Stop();
 
+	virtual bool IsValidBoard() const;
 	virtual HRESULT SetDeviceParameters( const SVDeviceParamCollection& rDeviceParams );
 
 	virtual HRESULT IsValidCameraFileParameters( SVDeviceParamCollection& rDeviceParams );
@@ -82,11 +85,9 @@ protected:
 	static HRESULT SetParameterDefaults( SVDeviceParamCollection& rParams );
 
 	virtual HRESULT SetLightReferenceImpl( SVLightReference& rLR );
-
 	virtual HRESULT GetCameraImageInfo(SVImageInfoClass *pImageInfo);
-
-	virtual HRESULT SetLutImpl( const SVLut& lut );
 	virtual HRESULT GetLutImpl( SVLut& lut );
+	virtual HRESULT SetLutImpl( const SVLut& lut );
 
 	virtual HRESULT StartDigitizer();
 
@@ -107,8 +108,7 @@ private:
 	{
 		DEFAULT_CONTRAST          = 10000,    // this is the correct default value, not 100
 		DEFAULT_CONTRAST_RGB_MONO = 8100,
-		DEFAULT_BRIGHTNESS        = 0,
-		CORECO_SCALE_VALUE        = 10    // what this is for, I don't know!
+		DEFAULT_BRIGHTNESS        = 0
 	};
 
 	SVIntekDCamAcquisitionProxy m_DCamAcqProxy;
@@ -121,7 +121,21 @@ private:
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVIntekAcquisitionClass.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVIntekAcquisitionClass.h_v  $
+ * 
+ *    Rev 1.1   07 Mar 2014 18:17:04   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  884
+ * SCR Title:  Update Source Code Files to Follow New Programming Standards and Guidelines
+ * Checked in by:  bWalter;  Ben Walter
+ * Change Description:  
+ *   Added regions.
+ *   Made methods const.
+ *   Removed methods that did not change base class functionality.
+ *   Reordered methods to be consistent with base class.
+ *   Removed unused value CORECO_SCALE_VALUE.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 11:05:12   bWalter
  * Project:  SVObserver

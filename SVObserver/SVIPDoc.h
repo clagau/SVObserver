@@ -5,8 +5,8 @@
 //* .Module Name     : SVIPDoc
 //* .File Name       : $Workfile:   SVIPDoc.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   08 May 2013 16:16:42  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   07 Mar 2014 18:18:26  $
 //******************************************************************************
 
 #ifndef SVIPDOC_H
@@ -110,7 +110,7 @@ public:
 
 	//Regression Test Methods
 	void SetRegressionTestRunMode( RegressionRunModeEnum newMode );
-	void SetRegressionTestPlayMode( RegressionPlayModeEnum newPlayMode);
+	void SetRegressionTestPlayMode( RegressionPlayModeEnum newPlayMode );
 	bool IsRegressionTestRunning();
 
 	RegressionRunModeEnum GetRegressionRunMode();
@@ -145,20 +145,14 @@ public:
 	afx_msg void OnAddCylindricalWarpTool();
 	afx_msg void OnEditTool();
 	afx_msg void OnEditDelete();
-	afx_msg void OnAddReferenceTool();
 	afx_msg void OnAdjustLightReference();
 	afx_msg void OnAdjustLut();
 	afx_msg void OnFileSaveImage();
 	afx_msg void OnAddImageTool();
-	afx_msg void OnAddRoundWindowTool();
-	afx_msg void OnAddRotateTool();
 	afx_msg void OnAddArchiveTool();
 	afx_msg void OnAddMathTool();
 	afx_msg void OnAddStatisticsTool();
 	afx_msg void OnEditToolSetCondition();
-	afx_msg void OnEditPaste();
-	afx_msg void OnEditCut();
-	afx_msg void OnEditCopy();
 	afx_msg void OnResultsPicker();
 	afx_msg void OnPublishedResultsPicker();
 	afx_msg void OnAddLoadImageTool();
@@ -171,21 +165,21 @@ public:
 	afx_msg void OnSelectPPQVariable(); 
 	afx_msg void OnAddColorTool();
 	afx_msg void OnAddExternalTool();
-	afx_msg void OnAddLineartool();
-	afx_msg void OnEditAdjusttoolposition() ;
-	afx_msg void OnUpdateEditAdjusttoolposition(CCmdUI* pCmdUI);
-	afx_msg void OnAddPerspectivetool();
+	afx_msg void OnAddLinearTool();
+	afx_msg void OnEditAdjustToolPosition();
+	afx_msg void OnUpdateEditAdjustToolPosition(CCmdUI* pCmdUI);
+	afx_msg void OnAddPerspectiveTool();
 	afx_msg void OnViewResetAllCounts();
 	afx_msg void OnViewResetCountsCurrentIP();
-	afx_msg void OnUpdateViewResetcountsallips(CCmdUI* pCmdUI);
-	afx_msg void OnUpdateViewResetcountscurrentip(CCmdUI* pCmdUI);
+	afx_msg void OnUpdateViewResetCountsAllIPs(CCmdUI* pCmdUI);
+	afx_msg void OnUpdateViewResetCountsCurrentIP(CCmdUI* pCmdUI);
 	afx_msg void OnConditionalHistory();
 	afx_msg void OnUpdateConditionalHistory( CCmdUI *pCmdUI );
 	afx_msg void OnEditDataDefinitionLists();
 	afx_msg void OnUpdateEditDataDefinitionLists(CCmdUI *pCmdUI);
     afx_msg void OnUpdateRunRegressionTest( CCmdUI *pCmdUI );
 	afx_msg void OnChangeToolSetDrawFlag( UINT nId );
-	afx_msg void OnUpdateViewToolSetDrawSubMenues( CCmdUI* PCmdUI );
+	afx_msg void OnUpdateViewToolSetDrawSubMenus( CCmdUI* PCmdUI );
 	afx_msg void OnPublishedResultImagesPicker();
 	afx_msg void OnAddRemoteInputTool();
 	afx_msg void OnAllowAdjustLightReference(CCmdUI* pCmdUI);
@@ -328,10 +322,7 @@ private:
 	CMDIChildWnd* m_pMDIChildWnd;
 
 	SVGUID m_SelectedToolID;
-
 };
-
-
 
 #endif
 
@@ -339,7 +330,18 @@ private:
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVIPDoc.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVIPDoc.h_v  $
+ * 
+ *    Rev 1.2   07 Mar 2014 18:18:26   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  884
+ * SCR Title:  Update Source Code Files to Follow New Programming Standards and Guidelines
+ * Checked in by:  bWalter;  Ben Walter
+ * Change Description:  
+ *   Removed empty methods.
+ *   Various code changes to better follow coding guidelines.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   08 May 2013 16:16:42   bWalter
  * Project:  SVObserver

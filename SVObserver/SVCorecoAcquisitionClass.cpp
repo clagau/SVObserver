@@ -5,10 +5,11 @@
 //* .Module Name     : SVCorecoAcquisitionClass
 //* .File Name       : $Workfile:   SVCorecoAcquisitionClass.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   08 May 2013 16:02:12  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   07 Mar 2014 18:12:00  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVCorecoAcquisitionClass.h"
 
@@ -21,6 +22,12 @@
 #include "SVImageObjectClass.h"
 #include "SVImageProcessingClass.h"
 #include "SVDigitizerProcessingClass.h"
+#pragma endregion Includes
+
+#pragma region Declarations
+#ifdef _DEBUG
+#define new DEBUG_NEW
+#endif
 
 enum
 {
@@ -41,6 +48,7 @@ enum
 	SV_CORACQ_VAL_OUTPUT_FORMAT_MONO16    = 3,
 	SV_CORACQ_VAL_OUTPUT_FORMAT_MONO32    = 7,
 };
+#pragma endregion Declarations
 
 SVCorecoAcquisitionClass::SVCorecoAcquisitionClass( const SVAcquisitionConstructParams& p_rParams )
 : SVAcquisitionClass( p_rParams )
@@ -53,7 +61,7 @@ SVCorecoAcquisitionClass::~SVCorecoAcquisitionClass()
 	DestroyLocal();
 }
 
-bool SVCorecoAcquisitionClass::IsValid()
+bool SVCorecoAcquisitionClass::IsValid() const
 {
 	bool bOk = FALSE;
 
@@ -64,7 +72,7 @@ bool SVCorecoAcquisitionClass::IsValid()
 	return bOk;
 }
 
-bool SVCorecoAcquisitionClass::IsValidBoard()
+bool SVCorecoAcquisitionClass::IsValidBoard() const
 {
 	bool bOk = TRUE;
 	
@@ -181,26 +189,29 @@ HRESULT SVCorecoAcquisitionClass::LoadFiles(SVFileNameArrayClass& rFiles)
 						SVImageFormatEnum eFormat = SVImageFormatUnknown;
 						switch (iFormat)
 						{
-							case SV_CORACQ_VAL_OUTPUT_FORMAT_RGB5551:
-							case SV_CORACQ_VAL_OUTPUT_FORMAT_RGB565:
-							case SV_CORACQ_VAL_OUTPUT_FORMAT_RGB888:
-							case SV_CORACQ_VAL_OUTPUT_FORMAT_RGB8888:
-							case SV_CORACQ_VAL_OUTPUT_FORMAT_RGB101010:
-							case SV_CORACQ_VAL_OUTPUT_FORMAT_RGB161616:
-							case SV_CORACQ_VAL_OUTPUT_FORMAT_UYVY:
-							case SV_CORACQ_VAL_OUTPUT_FORMAT_YUY2:
-							case SV_CORACQ_VAL_OUTPUT_FORMAT_YVYU:
-							case SV_CORACQ_VAL_OUTPUT_FORMAT_YUYV:
-							case SV_CORACQ_VAL_OUTPUT_FORMAT_Y411:
+							case SV_CORACQ_VAL_OUTPUT_FORMAT_RGB5551: // fall through...
+							case SV_CORACQ_VAL_OUTPUT_FORMAT_RGB565: // fall through...
+							case SV_CORACQ_VAL_OUTPUT_FORMAT_RGB888: // fall through...
+							case SV_CORACQ_VAL_OUTPUT_FORMAT_RGB8888: // fall through...
+							case SV_CORACQ_VAL_OUTPUT_FORMAT_RGB101010: // fall through...
+							case SV_CORACQ_VAL_OUTPUT_FORMAT_RGB161616: // fall through...
+							case SV_CORACQ_VAL_OUTPUT_FORMAT_UYVY: // fall through...
+							case SV_CORACQ_VAL_OUTPUT_FORMAT_YUY2: // fall through...
+							case SV_CORACQ_VAL_OUTPUT_FORMAT_YVYU: // fall through...
+							case SV_CORACQ_VAL_OUTPUT_FORMAT_YUYV: // fall through...
+							case SV_CORACQ_VAL_OUTPUT_FORMAT_Y411: // fall through...
 							case SV_CORACQ_VAL_OUTPUT_FORMAT_Y211:
 								eFormat = SVImageFormatRGB8888;
 								break;
 
-							case SV_CORACQ_VAL_OUTPUT_FORMAT_MONO8:
-							case SV_CORACQ_VAL_OUTPUT_FORMAT_MONO16:
+							case SV_CORACQ_VAL_OUTPUT_FORMAT_MONO8: // fall through...
+							case SV_CORACQ_VAL_OUTPUT_FORMAT_MONO16: // fall through...
 							case SV_CORACQ_VAL_OUTPUT_FORMAT_MONO32:
 								eFormat = SVImageFormatMono8;
 								break;
+
+							default:
+								break; // Do nothing.
 						}
 
 						SVCameraFormat cf;
@@ -296,9 +307,14 @@ HRESULT SVCorecoAcquisitionClass::CreateLightReference(int iBands, int iBrightne
 		if ( BandMaxSize() == 3 )	// RGB
 		{
 			if ( BandSize() == 1 )	// RGB Mono
+			{
 				lDefaultContrast = DEFAULT_CONTRAST_RGB_MONO;
+			}
 			else	// RGB Color
+			{
 				lDefaultContrast = DEFAULT_CONTRAST;
+			}
+
 			lBrightnessMin = -2462;
 			lBrightnessMax = 2371;
 			lContrastMin = 8024;
@@ -383,7 +399,7 @@ HRESULT SVCorecoAcquisitionClass::CreateLightReference(int iBands, int iBrightne
 	return hrOk;
 }
 
-HRESULT SVCorecoAcquisitionClass::GetMaxLightReferenceValue( unsigned long ulType, long &rlValue )
+HRESULT SVCorecoAcquisitionClass::GetMaxLightReferenceValue( unsigned long ulType, long &rlValue ) const
 {
 	HRESULT hrOk = S_FALSE;
 
@@ -396,19 +412,22 @@ HRESULT SVCorecoAcquisitionClass::GetMaxLightReferenceValue( unsigned long ulTyp
 
 		switch ( ulType )
 		{
-			case SVLightReferenceTypeBrightness:	  // Quad
-			case SVLightReferenceTypeBrightnessRed:   // RGB
-			case SVLightReferenceTypeBrightnessGreen: // RGB
+			case SVLightReferenceTypeBrightness:	  // Quad, fall through...
+			case SVLightReferenceTypeBrightnessRed:   // RGB, fall through...
+			case SVLightReferenceTypeBrightnessGreen: // RGB, fall through...
 			case SVLightReferenceTypeBrightnessBlue:  // RGB
 				rlValue = pParam->lr.Band(0).Attribute(LR_BRIGHTNESS).lMax;
 				break;
 
-			case SVLightReferenceTypeContrast:        // Quad
-			case SVLightReferenceTypeContrastRed:     // RGB
-			case SVLightReferenceTypeContrastGreen:   // RGB
+			case SVLightReferenceTypeContrast:        // Quad, fall through...
+			case SVLightReferenceTypeContrastRed:     // RGB, fall through...
+			case SVLightReferenceTypeContrastGreen:   // RGB, fall through...
 			case SVLightReferenceTypeContrastBlue:    // RGB
 				rlValue = pParam->lr.Band(0).Attribute(LR_CONTRAST).lMax;
 				break;
+
+			default:
+				break; // Do nothing.
 		}
 
 		hrOk = SVDigitizerProcessingClass::Instance().GetDigitizerSubsystem(mcsDigName)->DestroyParameter( m_hDigitizer, pw );
@@ -422,11 +441,12 @@ HRESULT SVCorecoAcquisitionClass::GetMaxLightReferenceValue( unsigned long ulTyp
 		// Quad Contrast       8400 ... 10900
 		switch ( ulType )
 		{
-			case SVLightReferenceTypeBrightness:	  // Quad
+			case SVLightReferenceTypeBrightness:	  // Quad, fall through...
 				rlValue = 800;
 				break;
-			case SVLightReferenceTypeBrightnessRed:   // RGB
-			case SVLightReferenceTypeBrightnessGreen: // RGB
+
+			case SVLightReferenceTypeBrightnessRed:   // RGB, fall through...
+			case SVLightReferenceTypeBrightnessGreen: // RGB, fall through...
 			case SVLightReferenceTypeBrightnessBlue:  // RGB
 				rlValue = 2371;
 				break;
@@ -434,11 +454,14 @@ HRESULT SVCorecoAcquisitionClass::GetMaxLightReferenceValue( unsigned long ulTyp
 			case SVLightReferenceTypeContrast:        // Quad
 				rlValue = 10900;
 				break;
-			case SVLightReferenceTypeContrastRed:     // RGB
-			case SVLightReferenceTypeContrastGreen:   // RGB
+			case SVLightReferenceTypeContrastRed:     // RGB, fall through...
+			case SVLightReferenceTypeContrastGreen:   // RGB, fall through...
 			case SVLightReferenceTypeContrastBlue:    // RGB
 				rlValue = 15305;
 				break;
+
+			default:
+				break; // Do nothing.
 		}
 
 		hrOk = S_OK;
@@ -447,7 +470,7 @@ HRESULT SVCorecoAcquisitionClass::GetMaxLightReferenceValue( unsigned long ulTyp
 	return hrOk;
 }
 
-HRESULT SVCorecoAcquisitionClass::GetMinLightReferenceValue( unsigned long ulType, long &rlValue )
+HRESULT SVCorecoAcquisitionClass::GetMinLightReferenceValue( unsigned long ulType, long &rlValue ) const
 {
 	HRESULT hrOk = S_FALSE;
 
@@ -460,19 +483,22 @@ HRESULT SVCorecoAcquisitionClass::GetMinLightReferenceValue( unsigned long ulTyp
 
 		switch ( ulType )
 		{
-			case SVLightReferenceTypeBrightness:	  // Quad
-			case SVLightReferenceTypeBrightnessRed:   // RGB
-			case SVLightReferenceTypeBrightnessGreen: // RGB
+			case SVLightReferenceTypeBrightness:	  // Quad, fall through...
+			case SVLightReferenceTypeBrightnessRed:   // RGB, fall through...
+			case SVLightReferenceTypeBrightnessGreen: // RGB, fall through...
 			case SVLightReferenceTypeBrightnessBlue:  // RGB
 				rlValue = pParam->lr.Band(0).Attribute(LR_BRIGHTNESS).lMin;
 				break;
 
-			case SVLightReferenceTypeContrast:        // Quad
-			case SVLightReferenceTypeContrastRed:     // RGB
-			case SVLightReferenceTypeContrastGreen:   // RGB
+			case SVLightReferenceTypeContrast:        // Quad, fall through...
+			case SVLightReferenceTypeContrastRed:     // RGB, fall through...
+			case SVLightReferenceTypeContrastGreen:   // RGB, fall through...
 			case SVLightReferenceTypeContrastBlue:    // RGB
 				rlValue = pParam->lr.Band(0).Attribute(LR_CONTRAST).lMin;
 				break;
+
+			default:
+				break; // Do nothing.
 		}
 		hrOk = SVDigitizerProcessingClass::Instance().GetDigitizerSubsystem(mcsDigName)->DestroyParameter( m_hDigitizer, pw );
 		
@@ -488,8 +514,8 @@ HRESULT SVCorecoAcquisitionClass::GetMinLightReferenceValue( unsigned long ulTyp
 			case SVLightReferenceTypeBrightness:	  // Quad
 				rlValue = -6700;
 				break;
-			case SVLightReferenceTypeBrightnessRed:   // RGB
-			case SVLightReferenceTypeBrightnessGreen: // RGB
+			case SVLightReferenceTypeBrightnessRed:   // RGB, fall through...
+			case SVLightReferenceTypeBrightnessGreen: // RGB, fall through...
 			case SVLightReferenceTypeBrightnessBlue:  // RGB
 				rlValue = -2462;
 				break;
@@ -497,11 +523,14 @@ HRESULT SVCorecoAcquisitionClass::GetMinLightReferenceValue( unsigned long ulTyp
 			case SVLightReferenceTypeContrast:        // Quad
 				rlValue = 8400;
 				break;
-			case SVLightReferenceTypeContrastRed:     // RGB
-			case SVLightReferenceTypeContrastGreen:   // RGB
+			case SVLightReferenceTypeContrastRed:     // RGB, fall through...
+			case SVLightReferenceTypeContrastGreen:   // RGB, fall through...
 			case SVLightReferenceTypeContrastBlue:    // RGB
 				rlValue = 8024;
 				break;
+
+			default:
+				break; // Do nothing.
 		}
 
 		hrOk = S_OK;
@@ -510,7 +539,7 @@ HRESULT SVCorecoAcquisitionClass::GetMinLightReferenceValue( unsigned long ulTyp
 	return hrOk;
 }
 
-HRESULT SVCorecoAcquisitionClass::GetLightReferenceValueStep( unsigned long ulType, unsigned long &rulValue )
+HRESULT SVCorecoAcquisitionClass::GetLightReferenceValueStep( unsigned long ulType, unsigned long &rulValue ) const
 {
 	HRESULT hrOk = S_FALSE;
 
@@ -523,19 +552,22 @@ HRESULT SVCorecoAcquisitionClass::GetLightReferenceValueStep( unsigned long ulTy
 
 		switch ( ulType )
 		{
-			case SVLightReferenceTypeBrightness:	  // Quad
-			case SVLightReferenceTypeBrightnessRed:   // RGB
-			case SVLightReferenceTypeBrightnessGreen: // RGB
+			case SVLightReferenceTypeBrightness:	  // Quad, fall through...
+			case SVLightReferenceTypeBrightnessRed:   // RGB, fall through...
+			case SVLightReferenceTypeBrightnessGreen: // RGB, fall through...
 			case SVLightReferenceTypeBrightnessBlue:  // RGB
 				rulValue = pParam->lr.Band(0).Attribute(LR_BRIGHTNESS).lStep;
 				break;
 
-			case SVLightReferenceTypeContrast:        // Quad
-			case SVLightReferenceTypeContrastRed:     // RGB
-			case SVLightReferenceTypeContrastGreen:   // RGB
+			case SVLightReferenceTypeContrast:        // Quad, fall through...
+			case SVLightReferenceTypeContrastRed:     // RGB, fall through...
+			case SVLightReferenceTypeContrastGreen:   // RGB, fall through...
 			case SVLightReferenceTypeContrastBlue:    // RGB
 				rulValue = pParam->lr.Band(0).Attribute(LR_CONTRAST).lStep;
 				break;
+
+			default:
+				break; // Do nothing.
 		}
 		hrOk = SVDigitizerProcessingClass::Instance().GetDigitizerSubsystem(mcsDigName)->DestroyParameter( m_hDigitizer, pw );
 		
@@ -567,10 +599,10 @@ HRESULT SVCorecoAcquisitionClass::SetLightReferenceImpl( SVLightReference& rLR )
 	return hrOk;
 }
 
-HRESULT SVCorecoAcquisitionClass::GetImageInfo(SVImageInfoClass *pImageInfo)
+HRESULT SVCorecoAcquisitionClass::GetImageInfo(SVImageInfoClass *pImageInfo) const
 {
 	HRESULT hrOk = S_FALSE;
-	
+
 	if ( pImageInfo != NULL )
 	{
 		*pImageInfo = msvImageInfo;
@@ -653,14 +685,12 @@ HRESULT SVCorecoAcquisitionClass::GetLutImpl( SVLut& lut )
 	return l_hrOk;
 }
 
-
 HRESULT SVCorecoAcquisitionClass::SetLutImpl( const SVLut& lut )
 {
 	HRESULT l_hrOk = S_FALSE;
 
 	if ( IsValidBoard() )
 	{
-
 		SVDeviceParamWrapper w;
 		SVLutDeviceParam param;
 		param.lut = lut;
@@ -715,6 +745,10 @@ HRESULT SVCorecoAcquisitionClass::GetCameraImageInfo(SVImageInfoClass *pImageInf
 			uiBandNumber = 3;
 			break;
 		}
+		default:
+		{
+			break; // Do nothing.
+		}
 	}
 
 	pImageInfo->SetImageProperty( SVImagePropertyFormat, iFormat );
@@ -740,7 +774,20 @@ HRESULT SVCorecoAcquisitionClass::GetCameraImageInfo(SVImageInfoClass *pImageInf
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVCorecoAcquisitionClass.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVCorecoAcquisitionClass.cpp_v  $
+ * 
+ *    Rev 1.2   07 Mar 2014 18:12:00   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  884
+ * SCR Title:  Update Source Code Files to Follow New Programming Standards and Guidelines
+ * Checked in by:  bWalter;  Ben Walter
+ * Change Description:  
+ *   Added regions.
+ *   Added DEBUG_NEW.
+ *   Made methods const.
+ *   Various code changes to better follow coding guidelines.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   08 May 2013 16:02:12   bWalter
  * Project:  SVObserver

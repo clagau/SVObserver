@@ -5,10 +5,11 @@
 //* .Module Name     : SVMatroxGigeAcquisitionClass
 //* .File Name       : $Workfile:   SVMatroxGigeAcquisitionClass.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.3  $
-//* .Check In Date   : $Date:   28 Feb 2014 09:20:12  $
+//* .Current Version : $Revision:   1.4  $
+//* .Check In Date   : $Date:   07 Mar 2014 18:19:00  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVMatroxGigeAcquisitionClass.h"
 #include "SVMessage/SVMessage.h"
@@ -25,12 +26,19 @@
 #include "SVDigitizerProcessingClass.h"
 #include "SVImageProcessingClass.h"
 #include "SVOMFCLibrary/SVOINIClass.h"
+#pragma endregion Includes
 
+#pragma region Declarations
+#ifdef _DEBUG
+#define new DEBUG_NEW
+#endif
+#pragma endregion Declarations
+
+#pragma region Constructor
 SVMatroxGigeAcquisitionClass::SVMatroxGigeAcquisitionClass( const SVAcquisitionConstructParams& p_rParams )
 : SVAcquisitionClass( p_rParams )
 {
 	mbIsCamFilesLoaded = false;
-	mbIsBufferCreated = false;
 	mbIsStarted = false;
 	mbTempOnline = false;
 	mlLastIndex = -1;
@@ -44,11 +52,12 @@ SVMatroxGigeAcquisitionClass::~SVMatroxGigeAcquisitionClass()
 {
 	DestroyLocal();
 }
+#pragma endregion Constructor
 
-bool SVMatroxGigeAcquisitionClass::IsValid()
+bool SVMatroxGigeAcquisitionClass::IsValid() const
 {
 	bool bOk = FALSE;
-	bOk = mbIsBufferCreated;
+	bOk = SVAcquisitionClass::IsBufferCreated();
 
 	bOk = IsValidBoard() && bOk;
 
@@ -57,7 +66,7 @@ bool SVMatroxGigeAcquisitionClass::IsValid()
 	return bOk;
 }
 
-bool SVMatroxGigeAcquisitionClass::IsValidBoard()
+bool SVMatroxGigeAcquisitionClass::IsValidBoard() const
 {
 	bool bOk = TRUE;
 	
@@ -114,7 +123,7 @@ HRESULT SVMatroxGigeAcquisitionClass::Destroy()
 	return hr;
 }
 
-HRESULT SVMatroxGigeAcquisitionClass::GetFileNameArraySize(long &rlSize)
+HRESULT SVMatroxGigeAcquisitionClass::GetFileNameArraySize( long &rlSize ) const
 {
 	HRESULT hr = SVAcquisitionClass::GetFileNameArraySize(rlSize);
 	return hr;
@@ -174,25 +183,6 @@ HRESULT SVMatroxGigeAcquisitionClass::ReadCameraFile( const CString& sFilename, 
 	return hr;
 }
 
-HRESULT SVMatroxGigeAcquisitionClass::LoadLightReference( SVLightReference& rArray )
-{
-	HRESULT hr = S_FALSE;
-
-	// Light Reference needs to be changed in the GIGE before this can work.
-	// returning S_FALSE will be sufficient to prevent bad things from happening
-	// LR really needs to be revamped in the entire system!
-	/*
-	SVLightReferenceDeviceParam* pParam = m_CameraFileDeviceParams.Parameter(DeviceParamLightReference).DerivedValue( pParam );
-	if ( pParam )
-	{
-		rArray = pParam->lr;
-		hr = S_OK;
-	}
-	*/
-
-	return hr;
-}
-
 HRESULT SVMatroxGigeAcquisitionClass::CreateLightReference(int iBands, int iBrightness, int iContrast)
 {
 	ASSERT(iBands > 0);
@@ -216,14 +206,16 @@ HRESULT SVMatroxGigeAcquisitionClass::CreateLightReference(int iBands, int iBrig
 	return hr;
 }
 
-HRESULT SVMatroxGigeAcquisitionClass::GetMaxLightReferenceValue( unsigned long ulType, long &rlValue )
+HRESULT SVMatroxGigeAcquisitionClass::GetMaxLightReferenceValue( unsigned long ulType, long &rlValue ) const
 {
 	HRESULT hr = S_OK;
 
-	SVDeviceParamEnum eParam = (SVDeviceParamEnum) ulType;
+	SVDeviceParamEnum eParam = static_cast< SVDeviceParamEnum >( ulType );
 	const SVLongValueDeviceParam* pParam = m_CameraFileDeviceParams.Parameter( eParam ).DerivedValue( pParam );
 	if ( pParam )
+	{
 		rlValue = pParam->info.max;
+	}
 	else
 	{
 		rlValue = 0;
@@ -233,14 +225,16 @@ HRESULT SVMatroxGigeAcquisitionClass::GetMaxLightReferenceValue( unsigned long u
 	return hr;
 }
 
-HRESULT SVMatroxGigeAcquisitionClass::GetMinLightReferenceValue( unsigned long ulType, long &rlValue )
+HRESULT SVMatroxGigeAcquisitionClass::GetMinLightReferenceValue( unsigned long ulType, long &rlValue ) const
 {
 	HRESULT hr = S_OK;
 
-	const SVDeviceParamEnum eParam = (SVDeviceParamEnum) ulType;
+	const SVDeviceParamEnum eParam = static_cast< SVDeviceParamEnum >( ulType );
 	const SVLongValueDeviceParam* pParam = m_CameraFileDeviceParams.Parameter( eParam ).DerivedValue( pParam );
 	if ( pParam )
+	{
 		rlValue = pParam->info.min;
+	}
 	else
 	{
 		rlValue = 0;
@@ -250,7 +244,7 @@ HRESULT SVMatroxGigeAcquisitionClass::GetMinLightReferenceValue( unsigned long u
 	return hr;
 }
 
-HRESULT SVMatroxGigeAcquisitionClass::GetLightReferenceValueStep( unsigned long ulType, unsigned long &rulValue )
+HRESULT SVMatroxGigeAcquisitionClass::GetLightReferenceValueStep( unsigned long ulType, unsigned long &rulValue ) const
 {
 	HRESULT hr = S_OK;
 	rulValue = 1;
@@ -522,7 +516,7 @@ HRESULT SVMatroxGigeAcquisitionClass::SetLightReferenceImpl( SVLightReference& r
 	return hr;
 }
 
-HRESULT SVMatroxGigeAcquisitionClass::GetImageInfo(SVImageInfoClass *pImageInfo)
+HRESULT SVMatroxGigeAcquisitionClass::GetImageInfo(SVImageInfoClass *pImageInfo) const
 {
 	HRESULT hr = S_FALSE;
 	
@@ -618,7 +612,7 @@ HRESULT SVMatroxGigeAcquisitionClass::SetLutImpl( const SVLut& lut )
 	return hr;
 }
 
-HRESULT SVMatroxGigeAcquisitionClass::GetCameraImageInfo(SVImageInfoClass *pImageInfo)
+HRESULT SVMatroxGigeAcquisitionClass::GetCameraImageInfo( SVImageInfoClass *pImageInfo )
 {
 	HRESULT hr = S_FALSE;
 
@@ -823,6 +817,21 @@ HRESULT SVMatroxGigeAcquisitionClass::StartDigitizer()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVMatroxGigeAcquisitionClass.cpp_v  $
+ * 
+ *    Rev 1.4   07 Mar 2014 18:19:00   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  884
+ * SCR Title:  Update Source Code Files to Follow New Programming Standards and Guidelines
+ * Checked in by:  bWalter;  Ben Walter
+ * Change Description:  
+ *   Added regions.
+ *   Added DEBUG_NEW.
+ *   Made methods const.
+ *   Removed methods that did not change base class functionality.
+ *   Moved mbIsBufferCreated to SVAcquisitionClass.
+ *   Changed IsValid to call SVAcquisitionClass::IsBufferCreated.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   28 Feb 2014 09:20:12   tbair
  * Project:  SVObserver

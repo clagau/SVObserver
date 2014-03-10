@@ -5,8 +5,8 @@
 //* .Module Name     : SVFileAcquisitionClass 
 //* .File Name       : $Workfile:   SVFileAcquisitionClass.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 10:35:38  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   07 Mar 2014 18:15:32  $
 //******************************************************************************
 
 #ifndef SVFILEACQUISITIONCLASS_H
@@ -14,14 +14,13 @@
 
 #include "SVAcquisitionClass.h"
 
-class SVFileAcquisitionClass : public SVAcquisitionClass  
+class SVFileAcquisitionClass : public SVAcquisitionClass
 {
 public:
 	SVFileAcquisitionClass( const SVAcquisitionConstructParams& p_rParams );
 	virtual ~SVFileAcquisitionClass();
 
-	virtual bool IsValid();
-	virtual bool IsValidBoard();
+	virtual bool IsValid() const;
 
 	virtual HRESULT Destroy();
 
@@ -31,37 +30,26 @@ public:
 	virtual HRESULT UnloadFiles();
 
 	virtual HRESULT CreateLightReference( int iBands, int iBrightness, int iContrast );
-	virtual HRESULT LoadLightReference( SVLightReference& rArray );
-	virtual HRESULT GetLightReference( SVLightReference& rArray );
+	virtual HRESULT GetLightReference( SVLightReference& rArray ) const;
 	virtual HRESULT SetLightReference( SVLightReference& rArray, int iBand = -1 );
 	virtual HRESULT ResetLightReference();
 
 	virtual HRESULT CreateLightReferenceBand( int iBand, int iAttributes );
-	virtual HRESULT GetMaxLightReferenceValue( unsigned long ulType, long &rlValue );
-	virtual HRESULT GetMinLightReferenceValue( unsigned long ulType, long &rlValue );
-	virtual HRESULT GetLightReferenceValueStep( unsigned long ulType, unsigned long &rulValue );
 
-protected:
-	virtual HRESULT SetLightReferenceImpl( SVLightReference& rLR );
-
-public:
-	virtual HRESULT CreateLut( const SVLutInfo& info );
-	virtual HRESULT DestroyLut( );
-	virtual HRESULT ResetLut( );
+	virtual HRESULT ResetLut();
 	virtual HRESULT GetLut( SVLut& lut );
-	virtual HRESULT SetLut( const SVLutBand& lutBand );
 	virtual HRESULT SetLut( const SVLut& lut, int iBand = -1 );
+	virtual HRESULT SetLut( const SVLutBand& lutBand );
 
-	virtual HRESULT GetImageInfo(SVImageInfoClass* pImageInfo);
+	virtual HRESULT GetImageInfo( SVImageInfoClass* pImageInfo ) const;
 
+	virtual bool IsValidBoard() const;
 protected:
 	virtual HRESULT GetCameraImageInfo(SVImageInfoClass* pImageInfo);
 
-	virtual HRESULT SetLutImpl( const SVLut& lut );
 	virtual HRESULT GetLutImpl( SVLut& lut );
 
 	HRESULT DestroyLocal();
-
 
 private:
 	bool mbIsFilesLoaded;
@@ -73,7 +61,20 @@ private:
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVFileAcquisitionClass.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVFileAcquisitionClass.h_v  $
+ * 
+ *    Rev 1.1   07 Mar 2014 18:15:32   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  884
+ * SCR Title:  Update Source Code Files to Follow New Programming Standards and Guidelines
+ * Checked in by:  bWalter;  Ben Walter
+ * Change Description:  
+ *   Added regions.
+ *   Made methods const.
+ *   Removed methods that did not change base class functionality.
+ *   Reordered methods to be consistent with base class.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 10:35:38   bWalter
  * Project:  SVObserver
@@ -155,4 +156,3 @@ $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVFileAcqu
  * 
  * /////////////////////////////////////////////////////////////////////////////////////
 */
-

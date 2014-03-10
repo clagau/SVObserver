@@ -5,13 +5,14 @@
 //* .Module Name     : SVPPQObject
 //* .File Name       : $Workfile:   SVPPQObject.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.8  $
-//* .Check In Date   : $Date:   01 Feb 2014 12:00:04  $
+//* .Current Version : $Revision:   1.9  $
+//* .Check In Date   : $Date:   07 Mar 2014 18:23:32  $
 //******************************************************************************
 
 #ifndef SVPPQOBJECT_H
 #define SVPPQOBJECT_H
 
+#pragma region Includes
 #include <boost/config.hpp>
 #include <boost/function.hpp>
 #include "SVContainerLibrary/SVRingBuffer.h"
@@ -27,8 +28,11 @@
 #include "SVValueObject.h"
 #include "SVVirtualCamera.h"
 #include "SVCameraTriggerData.h"
+#pragma endregion Includes
 
+#pragma region Declarations
 class SVInspectionProcess;
+#pragma endregion Declarations
 
 class SVPPQObject : 
 	public SVObjectClass,
@@ -43,6 +47,9 @@ public:
 	SVPPQObject( SVObjectClass *pOwner = NULL, int StringResourceID = IDS_CLASSNAME_SVPPQOBJECT );
 
 	virtual ~SVPPQObject();
+private:
+	void init();
+public:
 
 	virtual HRESULT GetChildObject( SVObjectClass*& p_rpObject, const SVObjectNameInfo& p_rNameInfo, long p_Index = 0 ) const;
 	
@@ -66,6 +73,7 @@ public:
 	BOOL GetOutputDelay( long& rlDelayTime ) const;
 	BOOL GetResetDelay( long& rlResetTime ) const;
 	BOOL GetPPQLength( long& rlPPQLength ) const;
+	long GetPPQLength() const;
 	BOOL GetMaintainSourceImages( bool& rbMaintainImages ) const;
 	BOOL GetInspectionTimeout( long& rlTimeoutMillisec ) const;
 	const SVString& GetConditionalOutputName() const;
@@ -88,7 +96,7 @@ public:
 	BOOL GetTrigger( SVTriggerObject *&ppTrigger );
 	BOOL GetInspection( long lIndex, SVInspectionProcess *&ppInspection );
 
-	HRESULT GetInspections( std::vector< SVInspectionProcess* >& rvecInspections );
+	HRESULT GetInspections( std::vector< SVInspectionProcess* >& rvecInspections ) const;
 
 	// PPQ position management functions
 	BOOL SetCameraPPQPosition( long lPosition, SVVirtualCamera *pCamera );
@@ -110,8 +118,8 @@ public:
 	HRESULT GetInputIOValues( SVVariantBoolVector& p_rInputValues ) const;
 	BOOL AssignInputs( const SVVariantBoolVector& p_rInputValues );
 	BOOL RebuildInputList(bool bHasCameraTrigger);
-	BOOL GetAvailableInputs( SVIOEntryHostStructPtrList& p_IOEntries );
-	BOOL GetAllInputs( SVIOEntryHostStructPtrList& p_IOEntries );
+	BOOL GetAvailableInputs( SVIOEntryHostStructPtrList& p_IOEntries ) const;
+	BOOL GetAllInputs( SVIOEntryHostStructPtrList& p_IOEntries ) const;
 	BOOL AddDefaultInputs();
 	BOOL AddToAvailableInputs(SVIOObjectType eType, CString strName );
 	SVIOEntryHostStructPtr GetInput( const SVString& name ) const;
@@ -127,10 +135,9 @@ public:
 	BOOL WriteOutputs( SVProductInfoStruct *pProduct );
 	BOOL ResetOutputs();
 	BOOL RebuildOutputList();
-	BOOL GetAllOutputs( SVIOEntryHostStructPtrList& p_IOEntries );
+	BOOL GetAllOutputs( SVIOEntryHostStructPtrList& p_IOEntries ) const;
 	BOOL AddDefaultOutputs();
 
-	//BOOL FinishInspection( void *pCaller, SVProductInfoStruct *pProduct );
 	BOOL FinishCamera( void *pCaller, SVODataResponseClass *pResponse );
 	BOOL FinishTrigger( void *pCaller, SVTriggerInfoStruct& p_rTriggerInfo );
 
@@ -147,8 +154,8 @@ public:
 
 	// PLC Connection String
 	HRESULT SetPLCName( CString p_rstrName );
-	HRESULT GetPLCName( CString& p_rstrName );
-	const CString& GetPLCName( );
+	HRESULT GetPLCName( CString& p_rstrName ) const;
+	const CString& GetPLCName() const;
 
 	SVDWordValueObjectClass m_voOutputState;
 	SVLongValueObjectClass m_voTriggerCount;
@@ -381,7 +388,6 @@ private:
 		SVPPQTrackingMap m_Counts;
 		SVQueueTrackingMap m_QueueCounts;
 		SVQueueTrackingMap m_QueueWriteTimeCounts;
-
 	};
 
 	SVPPQOutputModeEnum m_oOutputMode;
@@ -409,6 +415,18 @@ typedef SVVector< SVPPQObject* > SVPPQObjectArray;
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVPPQObject.h_v  $
+ * 
+ *    Rev 1.9   07 Mar 2014 18:23:32   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  884
+ * SCR Title:  Update Source Code Files to Follow New Programming Standards and Guidelines
+ * Checked in by:  bWalter;  Ben Walter
+ * Change Description:  
+ *   Added regions.
+ *   Made methods const.
+ *   Added init() and GetPPQLength() methods.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.8   01 Feb 2014 12:00:04   tbair
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : SVOConfigAssistantDlg
 //* .File Name       : $Workfile:   SVOConfigAssistantDlg.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.12  $
-//* .Check In Date   : $Date:   04 Feb 2014 15:42:24  $
+//* .Current Version : $Revision:   1.13  $
+//* .Check In Date   : $Date:   07 Mar 2014 18:22:14  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -41,8 +41,6 @@
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
-#undef THIS_FILE
-static char THIS_FILE[] = __FILE__;
 #endif
 
 namespace
@@ -2004,11 +2002,6 @@ BOOL CSVOConfigAssistantDlg::SendPPQDataToConfiguration(SVPPQObjectArray& aPPQsT
 
 	SVConfigurationObject* pConfig = NULL;
 	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
-
-	// EB 2004 01 07
-	// a temp solution
-	// the better solution is to have the acqs subscribe/unsubscribe and the triggers provide
-	HRESULT hrDetach = pConfig->DetachAcqFromTriggers();
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// PPQs - pass 1 - detach
@@ -4965,6 +4958,17 @@ bool CSVOConfigAssistantDlg::IsFileAcquisition(int iDig) const
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVOConfigAssistantDlg.cpp_v  $
+ * 
+ *    Rev 1.13   07 Mar 2014 18:22:14   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  884
+ * SCR Title:  Update Source Code Files to Follow New Programming Standards and Guidelines
+ * Checked in by:  bWalter;  Ben Walter
+ * Change Description:  
+ *   Removed THIS_FILE.
+ *   Removed call to DetachAcqFromTriggers.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.12   04 Feb 2014 15:42:24   bwalter
  * Project:  SVObserver

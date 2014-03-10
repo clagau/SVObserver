@@ -5,13 +5,14 @@
 //* .Module Name     : SVVirtualCamera
 //* .File Name       : $Workfile:   SVVirtualCamera.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 16:24:38  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   07 Mar 2014 18:24:44  $
 //******************************************************************************
 
 #ifndef SVVIRTUALCAMERA_H
 #define SVVIRTUALCAMERA_H
 
+#pragma region Includes
 #include "SVInfoStructs.h"
 #include "SVContainerLibrary/SVMap.h"
 #include "SVContainerLibrary/SVSet.h"
@@ -22,16 +23,28 @@
 #include "SVFileAcquisitionInitiator.h"
 #include "SVUtilityLibrary/SVString.h"
 #include "SVAcquisitionClass.h"
+#pragma endregion Includes
+
+#pragma region Declarations
+typedef SVVector< SVVirtualCamera* > SVVirtualCameraArray;
+typedef SVSet< SVVirtualCamera* > SVVirtualCameraSet;
+typedef std::set< SVVirtualCamera* > SVVirtualCameraPtrSet;
+typedef SVSet< SVAcquisitionClassPtr > SVAcquisitionClassSet;
+typedef SVMap< CString, SVVirtualCamera* > SVVirtualCameraMap;
 
 class SVORequestClass;
+#pragma endregion Declarations
 
 class SVVirtualCamera : public SVObjectClass
 {
 public:
+#pragma region Constructor
 	SVVirtualCamera( LPCSTR ObjectName );
 	SVVirtualCamera( SVObjectClass *pOwner = NULL, int StringResourceID = IDS_CLASSNAME_SVCAMERAOBJECT );
 	virtual ~SVVirtualCamera();
+#pragma endregion Constructor
 
+#pragma region Public Methods
 	virtual BOOL GetImageInfo( SVImageInfoClass *pImageInfo );
 
 	virtual long GetImageDepth() const;
@@ -40,19 +53,19 @@ public:
 	BOOL Destroy();
 
 	// Runtime Functions
-	BOOL CanGoOnline();
+	BOOL CanGoOnline() const;
 	BOOL GoOnline();
 	BOOL GoOffline();
 
 	BOOL RegisterFinishProcess( void *pOwner, LPSVFINISHPROC pFunc );
 	BOOL UnregisterFinishProcess( void *pOwner, LPSVFINISHPROC pFunc );
 
-    SVAcquisitionClassPtr GetAcquisitionDevice() {return mpsvDevice;}
+    SVAcquisitionClassPtr GetAcquisitionDevice() const { return mpsvDevice; }
 	
     HRESULT SetLightReference( SVLightReference& rArray );
-	HRESULT GetLightReference( SVLightReference& rArray );
+	HRESULT GetLightReference( SVLightReference& rArray ) const;
 	HRESULT SetLut( const SVLut& lut );
-	HRESULT GetLut( SVLut& lut );
+	HRESULT GetLut( SVLut& lut ) const;
 
 	HRESULT GetSourceImageIndex( SVDataManagerHandle& p_rHandle, const SVProductInfoStruct& p_rProduct ) const;
 
@@ -99,11 +112,22 @@ public:
 	HRESULT RegisterTriggerRelay(SVIOTriggerLoadLibraryClass* triggerDLL, unsigned long ulIndex);
 	HRESULT UnregisterTriggerRelay();
 
+#pragma endregion Public Methods
+
 protected:
+#pragma region Protected Methods
 	static HRESULT CALLBACK SVImageCallback( void *pvOwner, void *pvCaller, void *pvResponse );
 
 	virtual void FinishProcess( SVODataResponseClass *pResponse );
+#pragma endregion Protected Methods
 
+private:
+#pragma region Private Methods
+	BOOL DestroyLocal();
+#pragma endregion Private Methods
+
+#pragma region Member Variables
+protected:
 	long mlBandLink;
 	CStdioFile m_LogFile;
 
@@ -115,15 +139,8 @@ private:
 	long m_imageLoadingMode;
 	SIZE m_imageSize;
 	SVTriggerRelayClass<SVFileAcquisitionInitiator> m_triggerRelay;
-
-	BOOL DestroyLocal();
-
+#pragma endregion Member Variables
 };
-typedef SVVector< SVVirtualCamera* > SVVirtualCameraArray;
-typedef SVSet< SVVirtualCamera* > SVVirtualCameraSet;
-typedef std::set< SVVirtualCamera* > SVVirtualCameraPtrSet;
-typedef SVSet< SVAcquisitionClassPtr > SVAcquisitionClassSet;
-typedef SVMap< CString, SVVirtualCamera* > SVVirtualCameraMap;
 
 #endif
 
@@ -131,7 +148,19 @@ typedef SVMap< CString, SVVirtualCamera* > SVVirtualCameraMap;
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVVirtualCamera.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVVirtualCamera.h_v  $
+ * 
+ *    Rev 1.1   07 Mar 2014 18:24:44   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  884
+ * SCR Title:  Update Source Code Files to Follow New Programming Standards and Guidelines
+ * Checked in by:  bWalter;  Ben Walter
+ * Change Description:  
+ *   Added regions.
+ *   Made methods const.
+ *   Reorganized methods to better follow coding guidelines.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 16:24:38   bWalter
  * Project:  SVObserver

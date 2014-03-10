@@ -5,10 +5,11 @@
 //* .Module Name     : SVDigitizerProcessingClass
 //* .File Name       : $Workfile:   SVDigitizerProcessingClass.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   31 Jan 2014 17:16:28  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   07 Mar 2014 18:14:10  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVDigitizerProcessingClass.h"
 #include "SVGigeCameraParametersLibrary/SVGigeEnums.h"
@@ -25,6 +26,13 @@
 #include "SVGigeCameraStruct.h"
 #include "SVGigeCameraManager.h"
 #include "SVObserver.h"
+#pragma endregion Includes
+
+#pragma region Declarations
+#ifdef _DEBUG
+#define new DEBUG_NEW
+#endif
+#pragma endregion Declarations
 
 SVDigitizerProcessingClass& SVDigitizerProcessingClass::Instance()
 {
@@ -33,6 +41,7 @@ SVDigitizerProcessingClass& SVDigitizerProcessingClass::Instance()
 	return l_Object;
 }
 
+#pragma region Constructor
 SVDigitizerProcessingClass::SVDigitizerProcessingClass()
 {
 }
@@ -41,6 +50,7 @@ SVDigitizerProcessingClass::~SVDigitizerProcessingClass()
 {
 	Shutdown();
 }
+#pragma endregion Constructor
 
 void SVDigitizerProcessingClass::Startup()
 {
@@ -532,204 +542,201 @@ HRESULT SVDigitizerProcessingClass::AddDigitizer( LPCTSTR p_szName, SVDigitizerL
 
 HRESULT SVDigitizerProcessingClass::UpdateIntekDevices()
 {
-	HRESULT l_Status = S_OK;
+	HRESULT Status = S_OK;
 
-	SV1394CameraStructSet l_svCameras;
+	SV1394CameraStructSet Cameras;
 
 	SVString deviceName = _T( "Matrox_1394.Dig_0" ); // just use the first one
 
 	if( IsValidDigitizerSubsystem( deviceName.ToString() ) )
 	{
-		SVDigitizerLoadLibraryClass* l_psvLibrary = GetDigitizerSubsystem( deviceName.ToString() );
+		SVDigitizerLoadLibraryClass* pLibrary = GetDigitizerSubsystem( deviceName.ToString() );
 
-		unsigned long l_ulCount = 0;
+		unsigned long Count = 0;
 
-		if( l_psvLibrary->GetCount( &l_ulCount ) == S_OK )
+		if( pLibrary->GetCount( &Count ) == S_OK )
 		{
-			for( unsigned long i = 0; i < l_ulCount; i++ )
+			for( unsigned long i = 0; i < Count; i++ )
 			{
-				SV1394CameraStruct camera;
+				SV1394CameraStruct Camera;
 
-				unsigned long l_ulHandle = NULL;
+				unsigned long Handle = NULL;
 
-				if( l_psvLibrary->GetHandle( &l_ulHandle, i ) == S_OK )
+				if( pLibrary->GetHandle( &Handle, i ) == S_OK )
 				{
-					_variant_t l_oValue;
+					_variant_t Value;
 
-					camera.iPosition = i;
-					camera.m_ulHandle = l_ulHandle;
+					Camera.iPosition = i;
+					Camera.m_ulHandle = Handle;
 
-					if( l_psvLibrary->ParameterGetValue( l_ulHandle, 100, 0, &l_oValue ) == S_OK )
+					if( pLibrary->ParameterGetValue( Handle, 100, 0, &Value ) == S_OK )
 					{
-						camera.m_csVendorId = l_oValue.bstrVal;
+						Camera.m_csVendorId = Value.bstrVal;
 					}
 
-					if( l_psvLibrary->ParameterGetValue( l_ulHandle, 101, 0, &l_oValue ) == S_OK )
+					if( pLibrary->ParameterGetValue( Handle, 101, 0, &Value ) == S_OK )
 					{
-						camera.strVendorName = l_oValue.bstrVal;
+						Camera.strVendorName = Value.bstrVal;
 					}
 
-					if( l_psvLibrary->ParameterGetValue( l_ulHandle, 102, 0, &l_oValue ) == S_OK )
+					if( pLibrary->ParameterGetValue( Handle, 102, 0, &Value ) == S_OK )
 					{
-						camera.strModelName = l_oValue.bstrVal;
+						Camera.strModelName = Value.bstrVal;
 					}
 
-					if( l_psvLibrary->ParameterGetValue( l_ulHandle, 103, 0, &l_oValue ) == S_OK )
+					if( pLibrary->ParameterGetValue( Handle, 103, 0, &Value ) == S_OK )
 					{
-						unsigned __int64 l_ui64SerialNumber = ( (unsigned __int64)l_oValue.ulVal ) << 32;
+						unsigned __int64 l_ui64SerialNumber = ( (unsigned __int64)Value.ulVal ) << 32;
 
-						if( l_psvLibrary->ParameterGetValue( l_ulHandle, 104, 0, &l_oValue ) == S_OK )
+						if( pLibrary->ParameterGetValue( Handle, 104, 0, &Value ) == S_OK )
 						{
-							camera.m_ui64SerialNumber = l_ui64SerialNumber + l_oValue.ulVal;
+							Camera.m_ui64SerialNumber = l_ui64SerialNumber + Value.ulVal;
 						}
 					}
 
-					if( l_psvLibrary->ParameterGetValue( l_ulHandle, 105, 0, &l_oValue ) == S_OK )
+					if( pLibrary->ParameterGetValue( Handle, 105, 0, &Value ) == S_OK )
 					{
-						camera.strSerialNum = l_oValue.bstrVal;
+						Camera.strSerialNum = Value.bstrVal;
 					}
 				}
 
-				l_svCameras.Add( camera );
+				Cameras.Add( Camera );
 			}
 		}
 	}
 
-	TheSV1394CameraManager.UpdateConnectedCameras( l_svCameras );
-
-	l_svCameras = TheSV1394CameraManager.GetCameraOrder();
+	TheSV1394CameraManager.UpdateConnectedCameras( Cameras );
 	
-	int l_iCount = l_svCameras.GetSize();
+	Cameras = TheSV1394CameraManager.GetCameraOrder();
 
-	for( int j = 0; j < l_iCount; j++ )
+	int Count = Cameras.GetSize();
+
+	for( int j = 0; j < Count; j++ )
 	{
-		SV1394CameraStruct& l_rsvItem = l_svCameras.ElementAt( j );
+		SV1394CameraStruct& Camera = Cameras.ElementAt( j );
 
-		if( l_rsvItem.m_ulHandle != NULL )
+		if( Camera.m_ulHandle != NULL )
 		{
-			SVString l_csDigName;
-			SVAcquisitionClassPtr l_AcqDevicePtr;
+			SVString DigitizerName;
 
-			l_csDigName.Format( _T("Matrox_1394.Dig_%d"), j );
+			DigitizerName.Format( _T("Matrox_1394.Dig_%d"), j );
 
-			l_AcqDevicePtr = GetDigitizer( l_csDigName.ToString() );
+			SVAcquisitionClassPtr pAcquisitionDevice = GetDigitizer( DigitizerName.ToString() );
 
-			if( !( l_AcqDevicePtr.empty() ) )
+			if( !( pAcquisitionDevice.empty() ) )
 			{
-				SVDeviceParamCollection params;
+				SVDeviceParamCollection DeviceParams;
 
-				l_AcqDevicePtr->m_hDigitizer = l_rsvItem.m_ulHandle;
+				pAcquisitionDevice->m_hDigitizer = Camera.m_ulHandle;
 
-				l_AcqDevicePtr->GetDeviceParameters( params );
+				pAcquisitionDevice->GetDeviceParameters( DeviceParams );
 
-				params.SetParameter( DeviceParamSerialNumber, SVi64ValueDeviceParam( l_rsvItem.m_ui64SerialNumber ) );
-				params.SetParameter( DeviceParamSerialNumberString, SVStringValueDeviceParam( l_rsvItem.strSerialNum ) );
+				DeviceParams.SetParameter( DeviceParamSerialNumber, SVi64ValueDeviceParam( Camera.m_ui64SerialNumber ) );
+				DeviceParams.SetParameter( DeviceParamSerialNumberString, SVStringValueDeviceParam( Camera.strSerialNum ) );
 
-				l_AcqDevicePtr->SetDeviceParameters( params );
+				pAcquisitionDevice->SetDeviceParameters( DeviceParams );
 			}
 		}
 	}
 
-	return l_Status;
+	return Status;
 }
 
 HRESULT SVDigitizerProcessingClass::UpdateMatroxDevices()
 {
-	HRESULT l_Status = S_OK;
+	HRESULT Status = S_OK;
 
-	SVGigeCameraStructSet l_svCameras;
+	SVGigeCameraStructSet Cameras;
 
 	CString deviceName = _T("Matrox_GIGE.Dig_0"); // just use the first one
 
 	if( IsValidDigitizerSubsystem( deviceName ) )
 	{
-		SVDigitizerLoadLibraryClass* l_psvLibrary = GetDigitizerSubsystem( deviceName );
+		SVDigitizerLoadLibraryClass* pLibrary = GetDigitizerSubsystem( deviceName );
 
-		unsigned long l_ulCount = 0;
+		unsigned long Count = 0;
 
-		if( l_psvLibrary->GetCount( &l_ulCount ) == S_OK )
+		if( pLibrary->GetCount( &Count ) == S_OK )
 		{
-			for( unsigned long i = 0; i < l_ulCount; i++ )
+			for( unsigned long i = 0; i < Count; i++ )
 			{
-				SVGigeCameraStruct camera;
+				SVGigeCameraStruct Camera;
 
-				unsigned long l_ulHandle = NULL;
+				unsigned long Handle = NULL;
 
-				if( l_psvLibrary->GetHandle( &l_ulHandle, i ) == S_OK )
+				if( pLibrary->GetHandle( &Handle, i ) == S_OK )
 				{
-					_variant_t l_oValue("");
+					_variant_t Value("");
 
-					camera.iPosition = i;
-					camera.m_ulHandle = l_ulHandle;
+					Camera.iPosition = i;
+					Camera.m_ulHandle = Handle;
 
-					if( l_psvLibrary->ParameterGetValue( l_ulHandle, SVGigeParameterVendorName, 0, &l_oValue ) == S_OK )
+					if( pLibrary->ParameterGetValue( Handle, SVGigeParameterVendorName, 0, &Value ) == S_OK )
 					{
-						camera.strVendorName = l_oValue.bstrVal;
+						Camera.strVendorName = Value.bstrVal;
 					}
 
-					if( l_psvLibrary->ParameterGetValue( l_ulHandle, SVGigeParameterModelName, 0, &l_oValue ) == S_OK )
+					if( pLibrary->ParameterGetValue( Handle, SVGigeParameterModelName, 0, &Value ) == S_OK )
 					{
-						camera.strModelName = l_oValue.bstrVal;
+						Camera.strModelName = Value.bstrVal;
 					}
 
-					if( l_psvLibrary->ParameterGetValue( l_ulHandle, SVGigeParameterSerialNumber, 0, &l_oValue ) == S_OK )
+					if( pLibrary->ParameterGetValue( Handle, SVGigeParameterSerialNumber, 0, &Value ) == S_OK )
 					{
-						camera.strSerialNum = l_oValue.bstrVal;
+						Camera.strSerialNum = Value.bstrVal;
 					}
 
-					if( l_psvLibrary->ParameterGetValue( l_ulHandle, SVGigeParameterIPAddress, 0, &l_oValue ) == S_OK )
+					if( pLibrary->ParameterGetValue( Handle, SVGigeParameterIPAddress, 0, &Value ) == S_OK )
 					{
-						camera.strIPAddress = l_oValue.bstrVal;
+						Camera.strIPAddress = Value.bstrVal;
 					}
-
 				}
 
-				l_svCameras.Add( camera );
+				Cameras.Add( Camera );
 			}
 		}
 	}
 
-	TheSVGigeCameraManager.UpdateConnectedCameras( l_svCameras );
+	TheSVGigeCameraManager.UpdateConnectedCameras( Cameras );
+	Cameras = TheSVGigeCameraManager.GetCameraOrder();
 
-	l_svCameras = TheSVGigeCameraManager.GetCameraOrder();
-	
-	int l_iCount = l_svCameras.GetSize();
+	int Count = Cameras.GetSize();
 
-	for( int j = 0; j < l_iCount; j++ )
+	for( int j = 0; j < Count; j++ )
 	{
-		SVGigeCameraStruct& l_rsvItem = l_svCameras.ElementAt( j );
+		SVGigeCameraStruct& Camera = Cameras.ElementAt( j );
 
-		if( l_rsvItem.m_ulHandle != NULL )
+		if( Camera.m_ulHandle != NULL )
 		{
-			CString l_csDigName;
+			CString DigitizerName;
 
-			l_csDigName.Format( _T("Matrox_GIGE.Dig_%d"), j );
+			DigitizerName.Format( _T("Matrox_GIGE.Dig_%d"), j );
 
-			SVAcquisitionClassPtr l_AcqDevicePtr = GetDigitizer( l_csDigName );
+			SVAcquisitionClassPtr pAcquisitionDevice = GetDigitizer( DigitizerName );
 
-			if( !( l_AcqDevicePtr.empty() ) )
+			if( !( pAcquisitionDevice.empty() ) )
 			{
-				SVDeviceParamCollection params;
+				SVDeviceParamCollection DeviceParams;
 
-				l_AcqDevicePtr->m_hDigitizer = l_rsvItem.m_ulHandle;
+				pAcquisitionDevice->m_hDigitizer = Camera.m_ulHandle;
 
-				l_AcqDevicePtr->GetDeviceParameters( params );
+				pAcquisitionDevice->GetDeviceParameters( DeviceParams );
 
-				params.SetParameter( DeviceParamSerialNumberString, SVStringValueDeviceParam( l_rsvItem.strSerialNum ) );
-				params.SetParameter( DeviceParamIPAddress, SVStringValueDeviceParam( l_rsvItem.strIPAddress ) );
+				DeviceParams.SetParameter( DeviceParamSerialNumberString, SVStringValueDeviceParam( Camera.strSerialNum ) );
+				DeviceParams.SetParameter( DeviceParamIPAddress, SVStringValueDeviceParam( Camera.strIPAddress ) );
 
 				// Set packetSize if specified via hardware.ini file
 				if (TheSVObserverApp.getGigePacketSize() != 0)
 				{
-					TheSVObserverApp.SetGigePacketSizeDeviceParam(&params);
+					TheSVObserverApp.SetGigePacketSizeDeviceParam(&DeviceParams);
 				}
 
-				l_AcqDevicePtr->SetDeviceParameters( params );
+				pAcquisitionDevice->SetDeviceParameters( DeviceParams );
 			}
 		}
 	}
 
-	return l_Status;
+	return Status;
 }
 
 //******************************************************************************
@@ -737,6 +744,18 @@ HRESULT SVDigitizerProcessingClass::UpdateMatroxDevices()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVDigitizerProcessingClass.cpp_v  $
+ * 
+ *    Rev 1.3   07 Mar 2014 18:14:10   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  884
+ * SCR Title:  Update Source Code Files to Follow New Programming Standards and Guidelines
+ * Checked in by:  bWalter;  Ben Walter
+ * Change Description:  
+ *   Added regions.
+ *   Added DEBUG_NEW.
+ *   Various code changes to better follow coding guidelines.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   31 Jan 2014 17:16:28   bwalter
  * Project:  SVObserver

@@ -5,13 +5,21 @@
 //* .Module Name     : SVVirtualCamera
 //* .File Name       : $Workfile:   SVVirtualCamera.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   08 May 2013 16:44:16  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   07 Mar 2014 18:24:08  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVVirtualCamera.h"
 #include "SVDigitizerProcessingClass.h"
+#pragma endregion Includes
+
+#pragma region Declarations
+#ifdef _DEBUG
+#define new DEBUG_NEW
+#endif
+#pragma endregion Declarations
 
 HRESULT CALLBACK SVVirtualCamera::SVImageCallback( void *pvOwner, void *pvCaller, void *pvResponse )
 {
@@ -116,7 +124,7 @@ BOOL SVVirtualCamera::Destroy()
 	return bOk;
 }// end Destroy	
 
-BOOL SVVirtualCamera::CanGoOnline()
+BOOL SVVirtualCamera::CanGoOnline() const
 {
 	return mpsvDevice && mpsvDevice->IsValid();
 }// end CanGoOnline
@@ -377,7 +385,7 @@ HRESULT SVVirtualCamera::SetLightReference( SVLightReference& rArray )
 	return hr;
 }
 
-HRESULT SVVirtualCamera::GetLightReference( SVLightReference& rArray )
+HRESULT SVVirtualCamera::GetLightReference( SVLightReference& rArray ) const
 {
 	HRESULT hr = S_FALSE;
 	
@@ -411,7 +419,7 @@ HRESULT SVVirtualCamera::SetLut( const SVLut& lut )
 	return hr;
 }
 
-HRESULT SVVirtualCamera::GetLut( SVLut& lut )
+HRESULT SVVirtualCamera::GetLut( SVLut& lut ) const
 {
 	HRESULT hr=S_FALSE;
 	
@@ -423,7 +431,6 @@ HRESULT SVVirtualCamera::GetLut( SVLut& lut )
 		{
 			int iBand=-1;
 			GetBand(iBand);
-			//hr = GetAcquisitionDevice()->GetLut(lut, iBand);
 			hr = GetAcquisitionDevice()->GetLut( lut );
 		}
 		else
@@ -434,7 +441,6 @@ HRESULT SVVirtualCamera::GetLut( SVLut& lut )
 	
 	return hr;
 }
-
 
 HRESULT SVVirtualCamera::GetSourceImageIndex( SVDataManagerHandle& p_rHandle, const SVProductInfoStruct& p_rProduct ) const
 {
@@ -637,7 +643,19 @@ HRESULT SVVirtualCamera::UnregisterTriggerRelay()
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVVirtualCamera.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVVirtualCamera.cpp_v  $
+ * 
+ *    Rev 1.2   07 Mar 2014 18:24:08   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  884
+ * SCR Title:  Update Source Code Files to Follow New Programming Standards and Guidelines
+ * Checked in by:  bWalter;  Ben Walter
+ * Change Description:  
+ *   Added regions.
+ *   Added DEBUG_NEW.
+ *   Made methods const.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   08 May 2013 16:44:16   bWalter
  * Project:  SVObserver

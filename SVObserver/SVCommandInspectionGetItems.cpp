@@ -5,10 +5,11 @@
 //* .Module Name     : SVCommandInspectionGetItems
 //* .File Name       : $Workfile:   SVCommandInspectionGetItems.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   11 Jun 2013 15:25:58  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   07 Mar 2014 18:09:06  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVCommandInspectionGetItems.h"
 
@@ -19,7 +20,15 @@
 #include "SVInfoStructs.h"
 #include "SVInspectionProcess.h"
 #include "SVValueObjectReference.h"
+#pragma endregion Includes
 
+#pragma region Declarations
+#ifdef _DEBUG
+#define new DEBUG_NEW
+#endif
+#pragma endregion Declarations
+
+#pragma region Constructor
 SVCommandInspectionGetItems::SVCommandInspectionGetItems()
 : m_InspectionId(), m_ItemNames(), m_ResultItems()
 {
@@ -38,6 +47,7 @@ SVCommandInspectionGetItems::SVCommandInspectionGetItems(const SVGUID& p_rInspec
 SVCommandInspectionGetItems::~SVCommandInspectionGetItems()
 {
 }
+#pragma endregion Constructor
 
 HRESULT SVCommandInspectionGetItems::Execute()
 {
@@ -269,7 +279,18 @@ HRESULT SVCommandInspectionGetItems::UpdateResultsWithValueData( const SVString&
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVCommandInspectionGetItems.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVCommandInspectionGetItems.cpp_v  $
+ * 
+ *    Rev 1.2   07 Mar 2014 18:09:06   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  884
+ * SCR Title:  Update Source Code Files to Follow New Programming Standards and Guidelines
+ * Checked in by:  bWalter;  Ben Walter
+ * Change Description:  
+ *   Added regions.
+ *   Added DEBUG_NEW.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   11 Jun 2013 15:25:58   bWalter
  * Project:  SVObserver

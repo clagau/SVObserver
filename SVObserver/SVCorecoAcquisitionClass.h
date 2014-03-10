@@ -5,14 +5,16 @@
 //* .Module Name     : SVCorecoAcquisitionClass
 //* .File Name       : $Workfile:   SVCorecoAcquisitionClass.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 10:01:58  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   07 Mar 2014 18:12:44  $
 //******************************************************************************
 
 #ifndef SVCORECOACQUISITIONCLASS_H
 #define SVCORECOACQUISITIONCLASS_H
 
+#pragma region Includes
 #include "SVAcquisitionClass.h"
+#pragma endregion Includes
 
 class SVCorecoAcquisitionClass : public SVAcquisitionClass  
 {
@@ -20,8 +22,7 @@ public:
 	SVCorecoAcquisitionClass( const SVAcquisitionConstructParams& p_rParams );
 	virtual ~SVCorecoAcquisitionClass();
 
-	virtual bool IsValid();
-	virtual bool IsValidBoard();
+	virtual bool IsValid() const;
 
 	virtual HRESULT Destroy();
 
@@ -32,21 +33,22 @@ public:
 	virtual HRESULT LoadLightReference( SVLightReference& rArray );
 	virtual HRESULT ResetLightReference();
 
-	virtual HRESULT GetMaxLightReferenceValue( unsigned long ulType, long &rlValue );
-	virtual HRESULT GetMinLightReferenceValue( unsigned long ulType, long &rlValue );
-	virtual HRESULT GetLightReferenceValueStep( unsigned long ulType, unsigned long &rulValue );
+	virtual HRESULT GetMaxLightReferenceValue( unsigned long ulType, long &rlValue ) const;
+	virtual HRESULT GetMinLightReferenceValue( unsigned long ulType, long &rlValue ) const;
+	virtual HRESULT GetLightReferenceValueStep( unsigned long ulType, unsigned long &rulValue ) const;
 
 	virtual HRESULT CreateLut( const SVLutInfo& info );
 
-	virtual HRESULT GetImageInfo(SVImageInfoClass *pImageInfo);
+	virtual HRESULT GetImageInfo( SVImageInfoClass* pImageInfo ) const;
 
+	virtual bool IsValidBoard() const;
 protected:
 	virtual HRESULT SetLightReferenceImpl( SVLightReference& rLR );
 
 	virtual HRESULT GetCameraImageInfo(SVImageInfoClass *pImageInfo);
 
-	virtual HRESULT SetLutImpl( const SVLut& lut );
 	virtual HRESULT GetLutImpl( SVLut& lut );
+	virtual HRESULT SetLutImpl( const SVLut& lut );
 
 	HRESULT DestroyLocal();
 
@@ -56,17 +58,14 @@ protected:
 		LR_CONTRAST   = 1
 	};
 	
-
 private:
-
 	bool mbIsCorFilesLoaded;
 
 	enum
 	{
 		DEFAULT_CONTRAST          = 10000,    // this is the correct default value, not 100
 		DEFAULT_CONTRAST_RGB_MONO = 8100,
-		DEFAULT_BRIGHTNESS        = 0,
-		CORECO_SCALE_VALUE        = 10    // what this is for, I don't know!
+		DEFAULT_BRIGHTNESS        = 0
 	};
 };
 
@@ -76,7 +75,20 @@ private:
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVCorecoAcquisitionClass.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVCorecoAcquisitionClass.h_v  $
+ * 
+ *    Rev 1.1   07 Mar 2014 18:12:44   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  884
+ * SCR Title:  Update Source Code Files to Follow New Programming Standards and Guidelines
+ * Checked in by:  bWalter;  Ben Walter
+ * Change Description:  
+ *   Added regions.
+ *   Made methods const.
+ *   Reordered methods to be consistent with base class.
+ *   Removed unused value CORECO_SCALE_VALUE.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 10:01:58   bWalter
  * Project:  SVObserver

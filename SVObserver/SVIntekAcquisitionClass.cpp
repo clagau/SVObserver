@@ -5,10 +5,11 @@
 //* .Module Name     : SVIntekAcquisitionClass
 //* .File Name       : $Workfile:   SVIntekAcquisitionClass.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   08 May 2013 16:16:34  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   07 Mar 2014 18:16:16  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVIntekAcquisitionClass.h"
 #include "SVDataManagerLibrary/DataManager.h"
@@ -26,6 +27,12 @@
 #include "SVMessage/SVMessage.h"
 #include "SV1394CameraFileLibrary/SVDCamFactoryRegistrar.h"
 #include "SVIntek/SVIntekEnums.h"
+#pragma endregion Includes
+
+#pragma region Declarations
+#ifdef _DEBUG
+#define new DEBUG_NEW
+#endif
 
 enum
 {
@@ -46,7 +53,9 @@ enum
 	SV_CORACQ_VAL_OUTPUT_FORMAT_MONO16    = 3,
 	SV_CORACQ_VAL_OUTPUT_FORMAT_MONO32    = 7,
 };
+#pragma endregion Declarations
 
+#pragma region Constructor
 SVIntekAcquisitionClass::SVIntekAcquisitionClass( const SVAcquisitionConstructParams& p_rParams )
 : SVAcquisitionClass( p_rParams )
 {
@@ -61,8 +70,9 @@ SVIntekAcquisitionClass::~SVIntekAcquisitionClass()
 {
 	DestroyLocal();
 }
+#pragma endregion Constructor
 
-bool SVIntekAcquisitionClass::IsValid()
+bool SVIntekAcquisitionClass::IsValid() const
 {
 	bool bOk = FALSE;
 
@@ -73,7 +83,7 @@ bool SVIntekAcquisitionClass::IsValid()
 	return bOk;
 }
 
-bool SVIntekAcquisitionClass::IsValidBoard()
+bool SVIntekAcquisitionClass::IsValidBoard() const
 {
 	bool bOk = TRUE;
 	
@@ -186,13 +196,6 @@ HRESULT SVIntekAcquisitionClass::SetParameterDefaults( SVDeviceParamCollection& 
 	return SVDCamDriverProxy::SetParameterDefaults( rParams );
 }
 
-HRESULT SVIntekAcquisitionClass::LoadLightReference( SVLightReference& rArray )
-{
-	HRESULT hr = S_FALSE;
-
-	return hr;
-}
-
 HRESULT SVIntekAcquisitionClass::CreateLightReference(int iBands, int iBrightness, int iContrast)
 {
 	ASSERT(iBands > 0);
@@ -216,7 +219,7 @@ HRESULT SVIntekAcquisitionClass::CreateLightReference(int iBands, int iBrightnes
 	return hr;
 }
 
-HRESULT SVIntekAcquisitionClass::GetMaxLightReferenceValue( unsigned long ulType, long &rlValue )
+HRESULT SVIntekAcquisitionClass::GetMaxLightReferenceValue( unsigned long ulType, long &rlValue ) const
 {
 	HRESULT hr = S_OK;
 
@@ -233,7 +236,7 @@ HRESULT SVIntekAcquisitionClass::GetMaxLightReferenceValue( unsigned long ulType
 	return hr;
 }
 
-HRESULT SVIntekAcquisitionClass::GetMinLightReferenceValue( unsigned long ulType, long &rlValue )
+HRESULT SVIntekAcquisitionClass::GetMinLightReferenceValue( unsigned long ulType, long &rlValue ) const
 {
 	HRESULT hr = S_OK;
 
@@ -250,7 +253,7 @@ HRESULT SVIntekAcquisitionClass::GetMinLightReferenceValue( unsigned long ulType
 	return hr;
 }
 
-HRESULT SVIntekAcquisitionClass::GetLightReferenceValueStep( unsigned long ulType, unsigned long &rulValue )
+HRESULT SVIntekAcquisitionClass::GetLightReferenceValueStep( unsigned long ulType, unsigned long &rulValue ) const
 {
 	HRESULT hr = S_OK;
 	rulValue = 1;
@@ -336,7 +339,7 @@ HRESULT SVIntekAcquisitionClass::UpdateLightReferenceAttributes( const SVDeviceP
 	{
 		switch ( rwParam->Type() )
 		{
-			case DeviceParamWhiteBalanceUB:
+			case DeviceParamWhiteBalanceUB: //fall through...
 			case DeviceParamWhiteBalanceVR:
 			{
 				
@@ -346,15 +349,15 @@ HRESULT SVIntekAcquisitionClass::UpdateLightReferenceAttributes( const SVDeviceP
 					int iBand = rwParam->Type() == DeviceParamWhiteBalanceVR ? 0 : 2;
 					UpdateLightReferenceAttributes( iBand, pParam );
 				}
-				
-			}
-			break;
 
-			case DeviceParamBrightness:
-			case DeviceParamGain:
-			case DeviceParamExposure:
-			case DeviceParamGamma:
-			case DeviceParamHue:
+				break;
+			}
+
+			case DeviceParamBrightness: //fall through...
+			case DeviceParamGain: //fall through...
+			case DeviceParamExposure: //fall through...
+			case DeviceParamGamma: //fall through...
+			case DeviceParamHue: //fall through...
 			case DeviceParamSaturation:
 			{
 				// update LR
@@ -363,6 +366,13 @@ HRESULT SVIntekAcquisitionClass::UpdateLightReferenceAttributes( const SVDeviceP
 					const SVLongValueDeviceParam* pParam = rwParam.DerivedValue( pParam );
 					UpdateLightReferenceAttributes( iBand, pParam );
 				}
+
+				break;
+			}
+
+			default:
+			{
+				break;  // Do nothing.
 			}
 		}
 	}
@@ -403,10 +413,12 @@ HRESULT SVIntekAcquisitionClass::UpdateLightReferenceAttributes( int iBand, cons
 			case DeviceParamExposure:
 				attribute.strName = pCFParam->VisualName();
 				break;
-			case DeviceParamWhiteBalanceUB:
+			case DeviceParamWhiteBalanceUB: //fall through...
 			case DeviceParamWhiteBalanceVR:
 				attribute.strName = _T("White Balance");
 				break;
+			default:
+				break;  // Do nothing.
 		}
 		
 		attribute.dwType = (DWORD) pParam->Type();
@@ -613,7 +625,7 @@ HRESULT SVIntekAcquisitionClass::SetLightReferenceImpl( SVLightReference& rLR )
 	return hr;
 }
 
-HRESULT SVIntekAcquisitionClass::GetImageInfo(SVImageInfoClass *pImageInfo)
+HRESULT SVIntekAcquisitionClass::GetImageInfo(SVImageInfoClass *pImageInfo) const
 {
 	HRESULT hrOk = S_FALSE;
 	
@@ -719,7 +731,7 @@ HRESULT SVIntekAcquisitionClass::CreateLut( const SVLutInfo& info )
 	return S_OK;
 }
 
-HRESULT SVIntekAcquisitionClass::DestroyLut( )
+HRESULT SVIntekAcquisitionClass::DestroyLut()
 {
 	HRESULT hr = S_OK;
 
@@ -753,7 +765,7 @@ HRESULT SVIntekAcquisitionClass::SetLutImpl( const SVLut& lut )
 	return hr;
 }
 
-HRESULT SVIntekAcquisitionClass::GetCameraImageInfo(SVImageInfoClass *pImageInfo)
+HRESULT SVIntekAcquisitionClass::GetCameraImageInfo( SVImageInfoClass* pImageInfo )
 {
 	HRESULT hrOk = S_FALSE;
 
@@ -773,7 +785,7 @@ HRESULT SVIntekAcquisitionClass::GetCameraImageInfo(SVImageInfoClass *pImageInfo
 	else
 	{
 		SVCameraFormatsDeviceParam* pParam;
-		pParam = m_DeviceParams.GetParameter( DeviceParamCameraFormats).DerivedValue( pParam );
+		pParam = m_DeviceParams.GetParameter( DeviceParamCameraFormats ).DerivedValue( pParam );
 		if ( pParam )
 		{
 			SVCameraFormat& rFormat = pParam->options[ pParam->strValue ];
@@ -796,6 +808,10 @@ HRESULT SVIntekAcquisitionClass::GetCameraImageInfo(SVImageInfoClass *pImageInfo
 		{
 			uiBandNumber = 3;
 			break;
+		}
+		default:
+		{
+			break;  // Do nothing.
 		}
 	}
 
@@ -978,7 +994,20 @@ HRESULT SVIntekAcquisitionClass::StartDigitizer()
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVIntekAcquisitionClass.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVIntekAcquisitionClass.cpp_v  $
+ * 
+ *    Rev 1.2   07 Mar 2014 18:16:16   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  884
+ * SCR Title:  Update Source Code Files to Follow New Programming Standards and Guidelines
+ * Checked in by:  bWalter;  Ben Walter
+ * Change Description:  
+ *   Added regions.
+ *   Added DEBUG_NEW.
+ *   Made methods const.
+ *   Removed methods that did not change base class functionality.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   08 May 2013 16:16:34   bWalter
  * Project:  SVObserver

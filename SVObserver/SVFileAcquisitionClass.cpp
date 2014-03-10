@@ -5,10 +5,11 @@
 //* .Module Name     : SVFileAcquisitionClass 
 //* .File Name       : $Workfile:   SVFileAcquisitionClass.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   08 May 2013 16:16:10  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   07 Mar 2014 18:14:42  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVFileAcquisitionClass.h"
 
@@ -22,6 +23,13 @@
 #include "SVDigitizerProcessingClass.h"
 #include "SVImageObjectClass.h"
 #include "SVImageProcessingClass.h"
+#pragma endregion Includes
+
+#pragma region Declarations
+#ifdef _DEBUG
+#define new DEBUG_NEW
+#endif
+#pragma endregion Declarations
 
 SVFileAcquisitionClass::SVFileAcquisitionClass( const SVAcquisitionConstructParams& p_rParams )
 : SVAcquisitionClass( p_rParams )
@@ -34,7 +42,7 @@ SVFileAcquisitionClass::~SVFileAcquisitionClass()
 	DestroyLocal();
 }
 
-bool SVFileAcquisitionClass::IsValid()
+bool SVFileAcquisitionClass::IsValid() const
 {
 	bool bOk = true;
 
@@ -44,7 +52,7 @@ bool SVFileAcquisitionClass::IsValid()
 	return bOk;
 }
 
-bool SVFileAcquisitionClass::IsValidBoard()
+bool SVFileAcquisitionClass::IsValidBoard() const
 {
 	bool bOk = true;
 	
@@ -89,13 +97,7 @@ HRESULT SVFileAcquisitionClass::UnloadFiles()
 	return hrOk;
 }
 
-HRESULT SVFileAcquisitionClass::LoadLightReference( SVLightReference& rArray )
-{
-	HRESULT l_hrOk = S_FALSE;
-	return l_hrOk;
-}
-
-HRESULT SVFileAcquisitionClass::GetLightReference( SVLightReference& rArray )
+HRESULT SVFileAcquisitionClass::GetLightReference( SVLightReference& rArray ) const
 {
 	HRESULT hr = S_FALSE;
 	return hr;
@@ -119,40 +121,16 @@ HRESULT SVFileAcquisitionClass::CreateLightReferenceBand( int iBand, int iAttrib
 	return hrOk;
 }
 
-HRESULT SVFileAcquisitionClass::GetMaxLightReferenceValue( unsigned long ulType, long &rlValue )
-{
-	HRESULT hrOk = S_FALSE;
-	return hrOk;
-}
-
-HRESULT SVFileAcquisitionClass::GetMinLightReferenceValue( unsigned long ulType, long &rlValue )
-{
-	HRESULT hrOk = S_FALSE;
-	return hrOk;
-}
-
-HRESULT SVFileAcquisitionClass::GetLightReferenceValueStep( unsigned long ulType, unsigned long &rulValue )
-{
-	HRESULT hrOk = S_FALSE;
-	return hrOk;
-}
-
-HRESULT SVFileAcquisitionClass::SetLightReferenceImpl( SVLightReference& rLR )
-{
-	HRESULT hrOk = S_FALSE;
-	return hrOk;
-}
-
 HRESULT SVFileAcquisitionClass::ResetLightReference()
 {
 	HRESULT hrOk = S_FALSE;
 	return hrOk;
 }
 
-HRESULT SVFileAcquisitionClass::GetImageInfo(SVImageInfoClass *pImageInfo)
+HRESULT SVFileAcquisitionClass::GetImageInfo(SVImageInfoClass *pImageInfo) const
 {
 	HRESULT hrOk = S_FALSE;
-	
+
 	if ( pImageInfo != NULL )
 	{
 		*pImageInfo = msvImageInfo;
@@ -210,31 +188,13 @@ HRESULT SVFileAcquisitionClass::SetLut( const SVLut& lut, int iBand )
 	return hr;
 }
 
-HRESULT SVFileAcquisitionClass::ResetLut( )
+HRESULT SVFileAcquisitionClass::ResetLut()
 {
 	HRESULT hr = S_FALSE;
 	return hr;
 }	
 
-HRESULT SVFileAcquisitionClass::CreateLut( const SVLutInfo& info )
-{
-	HRESULT hr = S_FALSE;	
-	return hr;
-}
-
-HRESULT SVFileAcquisitionClass::DestroyLut( )
-{
-	HRESULT hr = S_FALSE;	
-	return hr;
-}
-
 HRESULT SVFileAcquisitionClass::GetLutImpl( SVLut& lut )
-{
-	HRESULT l_hrOk = S_FALSE;
-	return l_hrOk;
-}
-
-HRESULT SVFileAcquisitionClass::SetLutImpl( const SVLut& lut )
 {
 	HRESULT l_hrOk = S_FALSE;
 	return l_hrOk;
@@ -305,7 +265,20 @@ HRESULT SVFileAcquisitionClass::GetCameraImageInfo(SVImageInfoClass *pImageInfo)
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVFileAcquisitionClass.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVFileAcquisitionClass.cpp_v  $
+ * 
+ *    Rev 1.2   07 Mar 2014 18:14:42   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  884
+ * SCR Title:  Update Source Code Files to Follow New Programming Standards and Guidelines
+ * Checked in by:  bWalter;  Ben Walter
+ * Change Description:  
+ *   Added regions.
+ *   Added DEBUG_NEW.
+ *   Made methods const.
+ *   Removed methods that did not change base class functionality.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   08 May 2013 16:16:10   bWalter
  * Project:  SVObserver

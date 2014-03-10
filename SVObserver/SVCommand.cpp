@@ -5,10 +5,11 @@
 //* .Module Name     : SVCommand.cpp
 //* .File Name       : $Workfile:   SVCommand.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.7  $
-//* .Check In Date   : $Date:   28 Feb 2014 08:05:20  $
+//* .Current Version : $Revision:   1.8  $
+//* .Check In Date   : $Date:   07 Mar 2014 18:08:08  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include <boost/config.hpp>
 #include <boost/bind.hpp>
@@ -23,7 +24,7 @@
 #include "SVCmnLib/Utilities.h"
 #include "SVDataManagerLibrary/DataManager.h"
 #include "SVFileSystemLibrary/SVFileSystemCommandFactory.h"
-// BRW - SVImageCompression has been deprecated.
+// BRW - SVImageCompression has been removed for x64.
 #ifndef _WIN64
 #include "SVImageCompression/SVImageCompressionClass.h"
 #endif
@@ -61,6 +62,12 @@
 
 #include "SVOlicenseManager/SVOLicenseManager.h"
 #include "RemoteCommand.h"
+#pragma endregion Includes
+
+#pragma region Declarations
+#ifdef _DEBUG
+#define new DEBUG_NEW
+#endif
 
 volatile BOOL CSVCommand::m_bRunStreamData = FALSE;
 volatile BOOL CSVCommand::m_bRegisteredStream = FALSE;
@@ -76,7 +83,9 @@ SVVector< SVActiveXLockStruct > CSVCommand::m_aSVActXLock;
 SVVector< StreamDataStruct* > CSVCommand::m_arStreamList;
 SVVector< ProductDataStruct* > CSVCommand::m_arProductList;
 SVVector< SVInspectionProcess* > CSVCommand::m_arInspections;
+#pragma endregion Declarations
 
+#pragma region Constructor
 CSVCommand::CSVCommand()
 : m_pStream( NULL )
 {
@@ -86,6 +95,7 @@ CSVCommand::CSVCommand()
 		m_bCriticalSectionInitialized = true;
 	}
 }
+#pragma endregion Constructor
 
 STDMETHODIMP CSVCommand::GetSVIMState(BSTR *pszXMLData, BSTR *pXMLError)
 {
@@ -100,7 +110,6 @@ STDMETHODIMP CSVCommand::GetSVIMState(BSTR *pszXMLData, BSTR *pXMLError)
 	//xml state data
 	do
 	{
-		
 		if(!SvXmlCmd.InitXml())goto xmlerror;
 		
 		if(!SvXmlCmd.SetCommand(_T("GetSVIMState")))goto xmlerror;
@@ -143,7 +152,6 @@ xmlerror:
 		hrResult =  S_FALSE;
 		break;
 	} while (0);
-	
 	
 	if((svXmlException = svException) != TRUE)
 	{ //create an exception object for an XML parse error
@@ -1066,7 +1074,6 @@ STDMETHODIMP CSVCommand::SVGetSVIMConfig( long lOffset, long *lBlockSize, BSTR *
 					bSuccess = PackedFile.PackFiles( CString(szConfigName), strPackedFile );
 				}
 			}//offset < 1  end of the fist time
-			//}
 			//send data back to control
 			
 			if (bSuccess)
@@ -1810,7 +1817,7 @@ STDMETHODIMP CSVCommand::SVGetImageList(SAFEARRAY* psaNames, long lCompression, 
 			throw SVMSG_CONFIGURATION_NOT_LOADED;
 		}
 
-		// BRW - SVImageCompression has been deprecated.
+// BRW - SVImageCompression has been removed for x64.
 #ifndef _WIN64
 		SVImageCompressionClass mainCompressionObject(SERVER_COMPRESSION_POOL_SIZE);
 
@@ -1826,9 +1833,8 @@ STDMETHODIMP CSVCommand::SVGetImageList(SAFEARRAY* psaNames, long lCompression, 
 				//--------- acceptable response.
 				throw -1558;
 			}
-		}//*/
+		}
 #endif
-
 
 		long lNumberOfElements = psaNames->rgsabound[0].cElements;
 		
@@ -1964,7 +1970,7 @@ STDMETHODIMP CSVCommand::SVGetImageList(SAFEARRAY* psaNames, long lCompression, 
 
 					char* pDIB = NULL;
 
-					// BRW - SVImageCompression has been deprecated.
+// BRW - SVImageCompression has been removed for x64.
 #ifndef _WIN64
 					if (lCompression != 0)
 					{
@@ -1994,11 +2000,11 @@ STDMETHODIMP CSVCommand::SVGetImageList(SAFEARRAY* psaNames, long lCompression, 
 						// Copy data to DIB memory locations
 						memcpy( pDIB, &(l_ImageIter->second.m_ImageDIB[0]), l_ImageIter->second.m_ImageDIB.size() );
 
-						// BRW - SVImageCompression has been deprecated.
+// BRW - SVImageCompression has been removed for x64.
 #ifndef _WIN64
 						if (lCompression != 0)
 						{
-							mainCompressionObject.UnLockInputDIBBuffer ();
+							mainCompressionObject.UnLockInputDIBBuffer();
 
 							hr = mainCompressionObject.ImportGlobalAllocDIBData();
 
@@ -2849,7 +2855,7 @@ STDMETHODIMP CSVCommand::SVGetProductDataList(long lProcessCount, SAFEARRAY* psa
 			aInspections.Add(pInspection);	// add inspection object to list
 			
 			SVObjectReference ref;
-			HRESULT hrFind = SVObjectManagerClass::Instance().GetObjectByDottedName( static_cast< LPCTSTR >( saValueNames[i] ), ref );
+			SVObjectManagerClass::Instance().GetObjectByDottedName( static_cast< LPCTSTR >( saValueNames[i] ), ref );
 			if( ref.Object() )
 			{
 				aValueObjects.push_back(ref);	// add data object pointer to the list
@@ -3073,7 +3079,7 @@ STDMETHODIMP CSVCommand::SVGetProductImageList(long lProcessCount, SAFEARRAY* ps
 			throw SVMSG_CONFIGURATION_NOT_LOADED;
 		}
 		
-		// BRW - SVImageCompression has been deprecated.
+// BRW - SVImageCompression has been removed for x64.
 #ifndef _WIN64
 		SVImageCompressionClass mainCompressionObject (SERVER_COMPRESSION_POOL_SIZE);
 
@@ -3082,7 +3088,7 @@ STDMETHODIMP CSVCommand::SVGetProductImageList(long lProcessCount, SAFEARRAY* ps
 			//------ An lCompression of 0 indicates that no compression will be used.
 			//------ For purposes of speed, our implementation will not tie up a LeadTool
 			//------ resource.
-			hrResult = mainCompressionObject.GetAvailableResource ();
+			hrResult = mainCompressionObject.GetAvailableResource();
 			if (hrResult == SVDM_1502NO_INDEXESAVAILABLE_ERROR)
 			{
 				//--------- All resources are currently in use.  This should be considered an
@@ -3091,7 +3097,6 @@ STDMETHODIMP CSVCommand::SVGetProductImageList(long lProcessCount, SAFEARRAY* ps
 			}
 		}
 #endif		
-		
 
 		//go through list of names and make sure they are all valid
 		// 1) Inspection exists
@@ -3213,14 +3218,12 @@ STDMETHODIMP CSVCommand::SVGetProductImageList(long lProcessCount, SAFEARRAY* ps
 							// put image in return array
 							BSTR bstrTemp = NULL;
 							
-																						// BRW - SVImageCompression has been deprecated.
+							// BRW - SVImageCompression has been removed for x64.
 							HRESULT hr = SafeImageToBSTR( pImage, svIndex, &bstrTemp
-								
 #ifndef _WIN64
-								, lCompression, &mainCompressionObject);
-#else
-								);
+								, lCompression, &mainCompressionObject
 #endif
+								);
 
 							if ( SUCCEEDED( hr ) )
 							{
@@ -3251,7 +3254,6 @@ STDMETHODIMP CSVCommand::SVGetProductImageList(long lProcessCount, SAFEARRAY* ps
 							l_bItemNotFound = true;
 						}// end if ( !bImageOk )
 					}// end if ( aInspections[l] != NULL )
-
 				}// end for (long i=0; i < lNumberOfElements; i++)
 			}// end if (pPPQ->GetProductInfoStruct(lProcessCount, &pProductInfoStruct))
 			else
@@ -3369,16 +3371,12 @@ STDMETHODIMP CSVCommand::SVGetLUT(BSTR bstrCameraName, SAFEARRAY** ppaulLUTTable
 HRESULT CSVCommand::ImageToBSTR(SVImageInfoClass&  rImageInfo, 
 	SVSmartHandlePointer rImageHandle,
 	BSTR*              pbstr
+// BRW - SVImageCompression has been removed for x64.
 #ifndef _WIN64
-	, 
-#else
+	, long alCompression
+	, SVImageCompressionClass* apCompressionObject
+#endif
 	)
-#endif
-	// BRW - SVImageCompression has been deprecated.
-#ifndef _WIN64
-	long               alCompression, 
-	SVImageCompressionClass* apCompressionObject)
-#endif
 {
 	HRESULT hr = S_OK;
 	
@@ -3392,7 +3390,7 @@ HRESULT CSVCommand::ImageToBSTR(SVImageInfoClass&  rImageInfo,
 	{
 		hr = -1578;
 	}
-	// BRW - SVImageCompression has been deprecated.
+// BRW - SVImageCompression has been removed for x64.
 #ifndef _WIN64
 	else
 	{
@@ -3407,6 +3405,7 @@ HRESULT CSVCommand::ImageToBSTR(SVImageInfoClass&  rImageInfo,
 		}
 	}
 #endif
+
 	if ( hr == S_OK )
 	{
 		SVMatroxBufferInterface::SVStatusCode l_Code;
@@ -3524,7 +3523,7 @@ HRESULT CSVCommand::ImageToBSTR(SVImageInfoClass&  rImageInfo,
 		// Calculate total size buffer needed for image
 		lBufSize = sizeof( BITMAPINFOHEADER ) + lTabSize + pbmhInfo->biSizeImage;
 		
-		// BRW - SVImageCompression has been deprecated.
+// BRW - SVImageCompression has been removed for x64.
 #ifndef _WIN64
 		if (alCompression != 0)
 		{
@@ -3566,7 +3565,7 @@ HRESULT CSVCommand::ImageToBSTR(SVImageInfoClass&  rImageInfo,
 				oChildHandle->GetBufferAddress(), 
 				pbmhInfo->biSizeImage );
 
-			// BRW - SVImageCompression has been deprecated.
+// BRW - SVImageCompression has been removed for x64.
 #ifndef _WIN64
 			if (alCompression != 0)
 			{
@@ -3603,12 +3602,11 @@ HRESULT CSVCommand::ImageToBSTR(SVImageInfoClass&  rImageInfo,
 }
 
 HRESULT CSVCommand::SafeImageToBSTR( SVImageClass *p_pImage, SVImageIndexStruct p_svIndex, BSTR *pbstr
+// BRW - SVImageCompression has been removed for x64.
 #ifndef _WIN64
-					// BRW - SVImageCompression has been deprecated.
-	 , long alCompression, SVImageCompressionClass *apCompressionObject)
-#else
-	)
+	 , long alCompression, SVImageCompressionClass *apCompressionObject
 #endif
+	)
 {
 	HRESULT hr = S_OK;
 
@@ -3629,13 +3627,12 @@ HRESULT CSVCommand::SafeImageToBSTR( SVImageClass *p_pImage, SVImageIndexStruct 
 			p_pImage->SafeImageCopyToHandle( p_svIndex, oChildHandle );
 		}
 
-																// BRW - SVImageCompression has been deprecated.
 		hr = ImageToBSTR( oChildInfo, oChildHandle, pbstr
+// BRW - SVImageCompression has been removed for x64.
 #ifndef _WIN64
-			, alCompression, apCompressionObject );
-#else
-			);
+			, alCompression, apCompressionObject
 #endif
+			);
 	}
 	else
 	{
@@ -3711,170 +3708,174 @@ HRESULT CSVCommand::SafeArrayGetElementPointer(SAFEARRAY* psa, long* rgIndices, 
 
 HRESULT CSVCommand::SVGetDataList(SAFEARRAY* psaNames, SAFEARRAY** ppsaValues, SAFEARRAY** ppsaStatus, SAFEARRAY** ppsaProcCounts)
 {
-	HRESULT hr = S_OK;
-	HRESULT hrStatus = S_OK;
-	BOOL    l_bItemNotFound = FALSE;
-	BOOL    l_bInspectionNotFound = FALSE;
+	HRESULT Result = S_OK;
+	HRESULT Status = S_OK;
+	BOOL    ItemNotFound = FALSE;
+	BOOL    InspectionNotFound = FALSE;
 	
 	//get number of elements out of the incoming safearray
-	long lSize = psaNames->rgsabound[0].cElements;
+	long Size = psaNames->rgsabound[0].cElements;
 	
 	ASSERT( ppsaStatus != NULL );
 	ASSERT( *ppsaStatus != NULL );	// must provide allocated SafeArray(LONG)
-	ASSERT( (*ppsaStatus)->rgsabound[0].cElements == lSize );
+	ASSERT( (*ppsaStatus)->rgsabound[0].cElements == Size );
 	
 	ASSERT( ppsaValues != NULL );
 	ASSERT( *ppsaValues != NULL );	// must provide allocated SafeArray(LONG)
-	ASSERT( (*ppsaValues)->rgsabound[0].cElements == lSize );
+	ASSERT( (*ppsaValues)->rgsabound[0].cElements == Size );
 	
 	ASSERT( ppsaProcCounts != NULL );
 	ASSERT( *ppsaProcCounts != NULL );// must provide allocated SafeArray(LONG)
-	ASSERT( (*ppsaProcCounts)->rgsabound[0].cElements == lSize );
+	ASSERT( (*ppsaProcCounts)->rgsabound[0].cElements == Size );
 	
-	SVConfigurationObject* l_pConfig = NULL;
-	SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
+	SVConfigurationObject* pConfig = NULL;
+	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
-	for ( long l = 0; l < lSize; l++ )
+	for ( long l = 0; l < Size; l++ )
 	{
-		CString sName;
-		CString sInspectionName;
-		CString sValue;
+		CString Name;
+		CString InspectionName;
+		CString Value;
 		BSTR bstrName = NULL;
-		long lProcessCount = -1;
-		SVInspectionProcess *pInspection;
-		hrStatus = S_OK;
+		long ProcessCount = -1;
+		SVInspectionProcess *pInspection = nullptr;
+
+		Status = S_OK;
 		
 		// Get name of requested value out of the safearray
 		SafeArrayGetElementNoCopy(psaNames,&l,&bstrName);
-		sName = bstrName;
-		lProcessCount = -1;
+		Name = bstrName;
+		ProcessCount = -1;
 		//pull out the inspection
-		sInspectionName = sName.Left(sName.Find('.'));
+		InspectionName = Name.Left(Name.Find('.'));
 		
-		if ( l_pConfig->GetInspectionObject(sInspectionName,&pInspection) )
+		if ( pConfig->GetInspectionObject(InspectionName,&pInspection) )
 		{
 			// able to find the inspection.
 			// get object they are looking for...
-			SVValueObjectReference ref;
-			HRESULT hrFind = SVObjectManagerClass::Instance().GetObjectByDottedName( static_cast< LPCTSTR >( sName ), ref );
-			if( ref.Object() != NULL )
-			{
-				int iBucket = ref.Object()->GetLastSetIndex();
-				lProcessCount = pInspection->LastProductGet( SV_OTHER ).ProcessCount();
+			SVValueObjectReference ValueObjectRef;
+			SVObjectManagerClass::Instance().GetObjectByDottedName( static_cast< LPCTSTR >( Name ), ValueObjectRef );
 
-				if ( !ref.IsEntireArray() )
+			if( NULL != ValueObjectRef.Object() )
+			{
+				int iBucket = ValueObjectRef->GetLastSetIndex();
+				ProcessCount = pInspection->LastProductGet( SV_OTHER ).ProcessCount();
+
+				if ( !ValueObjectRef.IsEntireArray() )
 				{
 					// was able to find the object
-					HRESULT hrGet = ref.GetValue(iBucket, sValue);
-					if ( hrGet == S_OK )
+					HRESULT hrGet = ValueObjectRef.GetValue(iBucket, Value);
+					if ( S_OK == hrGet )
 					{
 						//got value
-						hrStatus = S_OK;
-						BSTR bstrTmpVal = sValue.AllocSysString();
+						Status = S_OK;
+						BSTR bstrTmpVal = Value.AllocSysString();
 						SafeArrayPutElementNoCopy(*ppsaValues, &l, bstrTmpVal);
 						//::SysFreeString(bstrTmpVal);
-						::SafeArrayPutElement(*ppsaStatus, &l, &hrStatus);
-						::SafeArrayPutElement(*ppsaProcCounts, &l, &lProcessCount);
+						::SafeArrayPutElement(*ppsaStatus, &l, &Status);
+						::SafeArrayPutElement(*ppsaProcCounts, &l, &ProcessCount);
 					}// if OK
 					else if (    hrGet == SVMSG_SVO_33_OBJECT_INDEX_INVALID 
 							  || hrGet == SVMSG_SVO_34_OBJECT_INDEX_OUT_OF_RANGE )
 					{
-						hrStatus = hrGet;
+						Status = hrGet;
 						// did not get value.  set value to default
-						sValue = ref.DefaultValue();
-						if ( sValue.IsEmpty() )
+						Value = ValueObjectRef.DefaultValue();
+						if ( Value.IsEmpty() )
 						{
-							sValue.Format("%i",-1);
+							Value.Format("%i",-1);
 						}
-						BSTR bstrTmpVal = sValue.AllocSysString();
+						BSTR bstrTmpVal = Value.AllocSysString();
 						SafeArrayPutElementNoCopy(*ppsaValues, &l, bstrTmpVal);
-						//::SysFreeString(bstrTmpVal);
-						::SafeArrayPutElement(*ppsaStatus, &l, &hrStatus);
-						::SafeArrayPutElement(*ppsaProcCounts, &l, &lProcessCount);
-						l_bItemNotFound = TRUE;
+						::SafeArrayPutElement(*ppsaStatus, &l, &Status);
+						::SafeArrayPutElement(*ppsaProcCounts, &l, &ProcessCount);
+						ItemNotFound = TRUE;
 					}// else invalid or out of range index
 					else	// some generic error; currently should not get here
 					{
 						ASSERT( FALSE );
-						hrStatus = SVMSG_ONE_OR_MORE_REQUESTED_OBJECTS_DO_NOT_EXIST;
+						Status = SVMSG_ONE_OR_MORE_REQUESTED_OBJECTS_DO_NOT_EXIST;
 						// did not get value.  set value to -1
-						sValue.Empty();
-						sValue.Format("%i",-1);
-						BSTR bstrTmpVal = sValue.AllocSysString();
+						Value.Empty();
+						Value.Format("%i",-1);
+						BSTR bstrTmpVal = Value.AllocSysString();
 						SafeArrayPutElementNoCopy(*ppsaValues, &l, bstrTmpVal);
-						//::SysFreeString(bstrTmpVal);
-						::SafeArrayPutElement(*ppsaStatus, &l, &hrStatus);
-						::SafeArrayPutElement(*ppsaProcCounts, &l, &lProcessCount);
-						l_bItemNotFound = TRUE;
+						::SafeArrayPutElement(*ppsaStatus, &l, &Status);
+						::SafeArrayPutElement(*ppsaProcCounts, &l, &ProcessCount);
+						ItemNotFound = TRUE;
 					} //end else generic error
-				}// if ( !ref.IsEntireArray() )
+				}// if ( !ValueObjectRef.IsEntireArray() )
 				else	// GET ENTIRE ARRAY
 				{
 					// get all results and put them into a parsable string
 					int iNumResults = 0;
-					ref.Object()->GetResultSize(iBucket, iNumResults);
+					ValueObjectRef->GetResultSize(iBucket, iNumResults);
 					CString sArrayValues;
 					for ( int iArrayIndex = 0; iArrayIndex < iNumResults; iArrayIndex++ )
 					{
 						CString sValue;
-						HRESULT hrGet = ref.Object()->GetValue( iBucket, iArrayIndex, sValue );
+						HRESULT hrGet = ValueObjectRef->GetValue( iBucket, iArrayIndex, sValue );
 						if ( hrGet == S_OK )
 						{
 							if ( iArrayIndex > 0 )
+							{
 								sArrayValues += _T(",");
+							}
 							sArrayValues += _T("`");
 							sArrayValues += sValue;
 							sArrayValues += _T("`");
 						}
-						else break;
+						else
+						{
+							break;
+						}
 					}
 
-					hrStatus = S_OK;
+					Status = S_OK;
 					BSTR bstrTmpVal = sArrayValues.AllocSysString();
 					SafeArrayPutElementNoCopy(*ppsaValues, &l, bstrTmpVal);
-					//::SysFreeString(bstrTmpVal);
-					::SafeArrayPutElement(*ppsaStatus, &l, &hrStatus);
-					::SafeArrayPutElement(*ppsaProcCounts, &l, &lProcessCount);
-				}// end if ( !ref.IsEntireArray() ) else
-			}// end if( ref.Object() != NULL )
+					::SafeArrayPutElement(*ppsaStatus, &l, &Status);
+					::SafeArrayPutElement(*ppsaProcCounts, &l, &ProcessCount);
+				}// end if ( !ValueObjectRef.IsEntireArray() ) else
+			} // end if found object
 			else
 			{
 				// could not find object
-				hrStatus = SVMSG_ONE_OR_MORE_REQUESTED_OBJECTS_DO_NOT_EXIST;
+				Status = SVMSG_ONE_OR_MORE_REQUESTED_OBJECTS_DO_NOT_EXIST;
 				// did not get value.  set value to -1
-				sValue.Empty();
-				sValue.Format("%i",-1);
-				BSTR bstrTmpVal = sValue.AllocSysString();
-				SafeArrayPutElementNoCopy(*ppsaValues,&l,bstrTmpVal);
-				//::SysFreeString(bstrTmpVal);
-				::SafeArrayPutElement(*ppsaStatus,&l,&hrStatus);
-				::SafeArrayPutElement(*ppsaProcCounts,&l,&lProcessCount);
-				l_bItemNotFound = TRUE;
+				Value.Empty();
+				Value.Format("%i",-1);
+				BSTR bstrTmpVal = Value.AllocSysString();
+				SafeArrayPutElementNoCopy(*ppsaValues, &l, bstrTmpVal);
+				::SafeArrayPutElement(*ppsaStatus, &l, &Status);
+				::SafeArrayPutElement(*ppsaProcCounts, &l, &ProcessCount);
+				ItemNotFound = TRUE;
 			} //else could not find object
 		}//end if get inspection object
 		else
 		{ //inspection not found
-			hrStatus = SVMSG_ONE_OR_MORE_INSPECTIONS_DO_NOT_EXIST;
+			Status = SVMSG_ONE_OR_MORE_INSPECTIONS_DO_NOT_EXIST;
 			// did not get value.  set value to -1
-			sValue.Empty();
-			sValue.Format("%i",-1);
-			BSTR bstrTmpVal = sValue.AllocSysString();
+			Value.Empty();
+			Value.Format("%i",-1);
+			BSTR bstrTmpVal = Value.AllocSysString();
 			SafeArrayPutElementNoCopy(*ppsaValues,&l,bstrTmpVal);
-			//::SysFreeString(bstrTmpVal);
-			::SafeArrayPutElement(*ppsaStatus,&l,&hrStatus);
-			::SafeArrayPutElement(*ppsaProcCounts,&l,&lProcessCount);
-			l_bInspectionNotFound = TRUE;
+			::SafeArrayPutElement(*ppsaStatus, &l, &Status);
+			::SafeArrayPutElement(*ppsaProcCounts, &l, &ProcessCount);
+			InspectionNotFound = TRUE;
 		}// else inspection not found
 	}// end for (1 thru number of elements)
 
-	hr = hrStatus;
-	
-	if ( (l_bItemNotFound) || (l_bInspectionNotFound) )
+	if ( ItemNotFound || InspectionNotFound )
 	{
-		hr = SVMSG_NOT_ALL_LIST_ITEMS_PROCESSED;
+		Result = SVMSG_NOT_ALL_LIST_ITEMS_PROCESSED;
+	}
+	else
+	{
+		Result = Status;
 	}
 	
-	return hr;
+	return Result;
 }
 
 STDMETHODIMP CSVCommand::SVRunOnce(BSTR bstrName)
@@ -4005,7 +4006,7 @@ STDMETHODIMP CSVCommand::SVSetInputs(SAFEARRAY* psaNames, SAFEARRAY* psaValues, 
 			if ( l_pConfig->GetInspectionObject(sTmpName,&pInspection) )
 			{
 				//got the inspection.
-				HRESULT hrFind = SVObjectManagerClass::Instance().GetObjectByDottedName( static_cast< LPCTSTR >( sTmpName ), ref );
+				SVObjectManagerClass::Instance().GetObjectByDottedName( static_cast< LPCTSTR >( sTmpName ), ref );
 				pValueObject = ref.Object();
 				if( pValueObject != NULL )
 				{
@@ -4220,62 +4221,64 @@ HRESULT CSVCommand::SVSetToolParameterList(SAFEARRAY* psaNames, SAFEARRAY* psaVa
 {
 	USES_CONVERSION;
 
-	HRESULT  hr = S_OK;
-	HRESULT  hrStatus = S_OK;
+	HRESULT Result = S_OK;
+	HRESULT Status = S_OK;
 
-	int l_iItemErrorCount = 0;
-	
+	int ItemErrorCount = 0;
+
 	do
 	{
-		BOOL                 bStateOnline;
+		BOOL                 StateOnline;
 		CMapStringToString   l_mapParameterList;
-		SVVector< SVInspectionProcess* > l_arInspections;
+		SVVector< SVInspectionProcess* > Inspections;
 		
-		bStateOnline = SVSVIMStateClass::CheckState(SV_STATE_RUNNING);
-		long lNumberOfElements = psaNames->rgsabound[0].cElements;
-		long lNumberOfElementsValues = psaValues->rgsabound[0].cElements;
+		StateOnline = SVSVIMStateClass::CheckState(SV_STATE_RUNNING);
+		long NumberOfElements = psaNames->rgsabound[0].cElements;
+		long NumberOfElementsValues = psaValues->rgsabound[0].cElements;
 		
-		if ((lNumberOfElements == 0) || (lNumberOfElements != lNumberOfElementsValues))
+		if ((NumberOfElements == 0) || (NumberOfElements != NumberOfElementsValues))
 		{
-			hr = SVMSG_TOO_MANY_REQUESTED_ITEMS;
+			Result = SVMSG_TOO_MANY_REQUESTED_ITEMS;
 			break;
 		}// end if
 		
-		SVConfigurationObject* l_pConfig = NULL;
-		SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
+		SVConfigurationObject*	pConfig = nullptr;
 
-		for ( long l = 0; l < lNumberOfElements; l++ )
+		SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
+
+		for ( long l = 0; l < NumberOfElements; l++ )
 		{
-			CString              strName;
-			CString              strValue;
-			SVInspectionProcess* pInspection = NULL;
+			CString					Name;
+			CString					Value;
+			SVInspectionProcess*	pInspection = nullptr;
 			SVValueObjectReference ref;
 
-			BOOL bAddRequest = FALSE;
+			BOOL AddRequest = FALSE;
 			
 			BSTR bstrName = NULL;
-			hrStatus = SafeArrayGetElementNoCopy(psaNames, &l, &bstrName);
-			if ( FAILED( hrStatus ) ) { break; }
+			Status = SafeArrayGetElementNoCopy(psaNames, &l, &bstrName);
+			if ( FAILED( Status ) ) { break; }
 
-			strName = bstrName;
+			Name = bstrName;
 			
 			BSTR bstrValue = NULL;
-			hrStatus = SafeArrayGetElementNoCopy(psaValues, &l, &bstrValue);
-			if ( FAILED( hrStatus ) ) { break; }
+			Status = SafeArrayGetElementNoCopy(psaValues, &l, &bstrValue);
+			if ( FAILED( Status ) ) { break; }
 
-			strValue = bstrValue;
+			Value = bstrValue;
 			
-			if ( l_pConfig->GetInspectionObject(strName, &pInspection) )
+			if ( pConfig->GetInspectionObject(Name, &pInspection) )
 			{
 				//got the inspection.
-				HRESULT hrFind = SVObjectManagerClass::Instance().GetObjectByDottedName( static_cast< LPCTSTR >( strName ), ref );
+				HRESULT hrFind = SVObjectManagerClass::Instance().GetObjectByDottedName( static_cast< LPCTSTR >( Name ), ref );
+			
 				if ( hrFind == S_OK && ref.ArrayIndex() < 0 && !ref->IsArray())
 				{
-					strName = StripBrackets(strName);
-					hrFind = SVObjectManagerClass::Instance().GetObjectByDottedName( static_cast< LPCTSTR >( strName ), ref );
+					Name = StripBrackets(Name);
+					hrFind = SVObjectManagerClass::Instance().GetObjectByDottedName( static_cast< LPCTSTR >( Name ), ref );
 					if (S_OK == hrFind)
 					{
-						strValue = StripQuotes(strValue);
+						Value = StripQuotes(Value);
 					}
 				}
 
@@ -4284,120 +4287,120 @@ HRESULT CSVCommand::SVSetToolParameterList(SAFEARRAY* psaNames, SAFEARRAY* psaVa
 					// Check if item is already in the list
 					if( ref.Object() != NULL )
 					{
-						CString strCompleteObjectName( ref.GetCompleteObjectName() );
-						CString strDummy;
-						if ( !l_mapParameterList.Lookup( strCompleteObjectName, strDummy ) )	// if not in map already
+						CString CompleteObjectName( ref.GetCompleteObjectName() );
+						CString Dummy;
+						if ( !l_mapParameterList.Lookup( CompleteObjectName, Dummy ) )	// if not in map already
 						{
 							if ( (ref.ObjectAttributesAllowed() & SV_REMOTELY_SETABLE) == SV_REMOTELY_SETABLE )
 							{
 								//Is Online?  if so, can item be set online?
-								if ( bStateOnline )
+								if ( StateOnline )
 								{
 									if ( (ref.ObjectAttributesAllowed() & SV_SETABLE_ONLINE) == SV_SETABLE_ONLINE )
 									{
-										bAddRequest = TRUE;
-										l_mapParameterList.SetAt( strCompleteObjectName, strCompleteObjectName );
+										AddRequest = TRUE;
+										l_mapParameterList.SetAt( CompleteObjectName, CompleteObjectName );
 									}
 									else
 									{
-										hrStatus = SVMSG_OBJECT_CANNOT_BE_SET_WHILE_ONLINE;
-										::SafeArrayPutElement(*ppsaStatus, &l, &hrStatus);
-										l_iItemErrorCount++;
+										Status = SVMSG_OBJECT_CANNOT_BE_SET_WHILE_ONLINE;
+										::SafeArrayPutElement(*ppsaStatus, &l, &Status);
+										ItemErrorCount++;
 									}
 								}// if ( bStateOnline )
 								else
 								{
-									 // currently all SV_REMOTELY_SETABLE parameters are also SV_SETABLE_ONLINE
+									// currently all SV_REMOTELY_SETABLE parameters are also SV_SETABLE_ONLINE
 									// if this changes, this code needs updated
-									bAddRequest = TRUE;
-									l_mapParameterList.SetAt( strCompleteObjectName, strCompleteObjectName );
+									AddRequest = TRUE;
+									l_mapParameterList.SetAt( CompleteObjectName, CompleteObjectName );
 								}// end if ( bStateOnline )else
 							}// if SV_REMOTELY_SETABLE
 							else
 							{
 								// Item is not allowed to be set remotely
-								hrStatus = SVMSG_OBJECT_CANNOT_BE_SET_REMOTELY;
-								::SafeArrayPutElement(*ppsaStatus, &l, &hrStatus);
-								l_iItemErrorCount++;
+								Status = SVMSG_OBJECT_CANNOT_BE_SET_REMOTELY;
+								::SafeArrayPutElement(*ppsaStatus, &l, &Status);
+								ItemErrorCount++;
 							}// end if SV_REMOTELY_SETABLE else
 						}// if not in map
 						else
 						{
 							// Item is already in the list
-							hrStatus = SVMSG_OBJECT_ALREADY_SET_IN_THIS_LIST;
-							::SafeArrayPutElement(*ppsaStatus, &l, &hrStatus);
-							l_iItemErrorCount++;
+							Status = SVMSG_OBJECT_ALREADY_SET_IN_THIS_LIST;
+							::SafeArrayPutElement(*ppsaStatus, &l, &Status);
+							ItemErrorCount++;
 						}// end if not in map else
 					}// end if ( ref.Object() != NULL )	// object not a value object
 					else
 					{
 						// object not found.  send back status
-						hrStatus = SVMSG_ONE_OR_MORE_REQUESTED_OBJECTS_DO_NOT_EXIST;
-						::SafeArrayPutElement(*ppsaStatus, &l, &hrStatus);
-						l_iItemErrorCount++;
+						Status = SVMSG_ONE_OR_MORE_REQUESTED_OBJECTS_DO_NOT_EXIST;
+						::SafeArrayPutElement(*ppsaStatus, &l, &Status);
+						ItemErrorCount++;
 					}
 				}// end if found value object
 				else
 				{
 					// object not found.  send back status
-					hrStatus = SVMSG_ONE_OR_MORE_REQUESTED_OBJECTS_DO_NOT_EXIST;
-					::SafeArrayPutElement(*ppsaStatus, &l, &hrStatus);
-					l_iItemErrorCount++;
+					Status = SVMSG_ONE_OR_MORE_REQUESTED_OBJECTS_DO_NOT_EXIST;
+					::SafeArrayPutElement(*ppsaStatus, &l, &Status);
+					ItemErrorCount++;
 				}// end else
 			}// end if found inspection
 			else
 			{
 				//did not find inspection.
 				//put an error back into the list
-				hrStatus = SVMSG_ONE_OR_MORE_INSPECTIONS_DO_NOT_EXIST;
-				::SafeArrayPutElement(*ppsaStatus, &l, &hrStatus);
-				l_iItemErrorCount++;
+				Status = SVMSG_ONE_OR_MORE_INSPECTIONS_DO_NOT_EXIST;
+				::SafeArrayPutElement(*ppsaStatus, &l, &Status);
+				ItemErrorCount++;
 			} // end else
 			
-			if ( bAddRequest )
+			if ( AddRequest )
 			{
 				//add request to inspection process
 				pInspection->AddInputRequest( ref, W2T( bstrValue ) );
 
-				bool l_bFound = false;
-				long lSize = static_cast< long >( l_arInspections.GetSize() );
-				for( long k = 0; k < lSize; k++ )
+				bool Found = false;
+				long Size = static_cast< long >( Inspections.GetSize() );
+				for( long k = 0; k < Size; k++ )
 				{
-					if( pInspection == l_arInspections[k] )
+					if( pInspection == Inspections[k] )
 					{
-						l_bFound = true;
+						Found = true;
 						break;
 					}// end if
 				}// end if
 
-				if( !l_bFound )
+				if( !Found )
 				{
-					l_arInspections.Add( pInspection );
+					Inspections.Add( pInspection );
 				}// end if
-			}// end if ( bAddRequest )
-		}// end for ( long l = 0; l < lNumberOfElements; l++ )
+			}// end if ( AddRequest )
+		}// end for ( long l = 0; l < NumberOfElements; l++ )
 
 		// New delimiter added after each SVSetToolParameterList call
 		// This breaks the list into pieces and we are only processing
 		// 1 piece of the list per inspection iteration
-		long lSize = static_cast< long >( l_arInspections.GetSize() );
-		for( long j = 0; j < lSize; j++ )
+		long Size = static_cast< long >( Inspections.GetSize() );
+		for( long j = 0; j < Size; j++ )
 		{
 			//add request to inspection process
-			l_arInspections[j]->AddInputRequestMarker();
+			Inspections[j]->AddInputRequestMarker();
 		}// end for
 	} while(0); // end do
 	
-	if ( l_iItemErrorCount > 0 ) //some error happened
+	if ( ItemErrorCount > 0 ) //some error happened
 	{
-		hr = SVMSG_NOT_ALL_LIST_ITEMS_PROCESSED;
+		Result = SVMSG_NOT_ALL_LIST_ITEMS_PROCESSED;
 	}
 	else
 	{
-		hr = S_OK;
+		Result = S_OK;
 	}
 	
-	return hr;
+	return Result;
 }
 
 HRESULT CSVCommand::SVLockImage(long p_lProcessCount, long p_lIndex, BSTR p_bsName)
@@ -4537,20 +4540,20 @@ HRESULT CSVCommand::SVGetLockedImage(long p_lIndex, long p_lCompression, BSTR* p
 	SVActiveXLockStruct SVaxls;
 	HRESULT hr = S_FALSE;
 	
-	// BRW - SVImageCompression has been deprecated.
+// BRW - SVImageCompression has been removed for x64.
 #ifndef _WIN64
-	SVImageCompressionClass mainCompressionObject (SERVER_COMPRESSION_POOL_SIZE);
+	SVImageCompressionClass mainCompressionObject(SERVER_COMPRESSION_POOL_SIZE);
 #endif
 	do
 	{
+// BRW - SVImageCompression has been removed for x64.
 #ifndef _WIN64
-		// BRW - SVImageCompression has been deprecated.
 		if ( p_lCompression != 0 )
 		{
 			//------ An lCompression of 0 indicates that no compression will be used.
 			//------ For purposes of speed, our implementation will not tie up a LeadTool
 			//------ resource.
-			hr = mainCompressionObject.GetAvailableResource ();
+			hr = mainCompressionObject.GetAvailableResource();
 			if (hr == SVDM_1502NO_INDEXESAVAILABLE_ERROR)
 			{
 				//--------- All resources are currently in use.  This should be considered an
@@ -4593,13 +4596,12 @@ HRESULT CSVCommand::SVGetLockedImage(long p_lIndex, long p_lCompression, BSTR* p
 		SVImageInfoClass l_ImageInfo;
 				
 		// put image in return array
-																				// BRW - SVImageCompression has been deprecated.
+		// BRW - SVImageCompression has been removed for x64.
 		hr = ImageToBSTR( l_ImageInfo, SVaxls.m_ImageHandlePtr, p_pbstrImage
 #ifndef _WIN64
-			, p_lCompression, &mainCompressionObject);
-#else
-			);
+			, p_lCompression, &mainCompressionObject
 #endif
+			);
 
 		break;
 	} while (false);
@@ -5715,14 +5717,12 @@ STDMETHODIMP CSVCommand::SVGetFontCharacter(long lFontIdentifier, long  lCharID,
 
 				SVSmartHandlePointer ImageBufferHandle = new SVImageBufferHandleStruct( lCharHandle );
 
-																			// BRW - SVImageCompression has been deprecated.
-
+				// BRW - SVImageCompression has been removed for x64.
 				ImageToBSTR( ImageInfo, ImageBufferHandle, pbstrLabelImage
 #ifndef _WIN64
-					, 0,NULL);
-#else
-					);
+					, 0,NULL
 #endif
+					);
 				lCharHandle.clear();
 
 				hr = S_OK;
@@ -6219,9 +6219,9 @@ namespace local
 			*ppsaStatus = ::SafeArrayCreate( VT_I4,   1, saBounds);
 		}
 
-		// BRW - SVImageCompression has been deprecated.
+// BRW - SVImageCompression has been removed for x64.
 #ifndef _WIN64
-		SVImageCompressionClass mainCompressionObject (SERVER_COMPRESSION_POOL_SIZE);
+		SVImageCompressionClass mainCompressionObject(SERVER_COMPRESSION_POOL_SIZE);
 
 		if (lCompression != 0)
 		{
@@ -6250,13 +6250,12 @@ namespace local
 			if ( ppsaImages )
 			{
 				BSTR bstrImage = NULL;
-																					// BRW - SVImageCompression has been deprecated.
+				// BRW - SVImageCompression has been removed for x64.
 				CSVCommand::ImageToBSTR( rImage.info, rImage.handle, &bstrImage
 #ifndef _WIN64
-					, lCompression, &mainCompressionObject );
-#else
-				);
+					, lCompression, &mainCompressionObject
 #endif
+				);
 				CSVCommand::SafeArrayPutElementNoCopy( *ppsaImages, &l, bstrImage );
 			}
 
@@ -6275,7 +6274,6 @@ namespace local
 
 			if ( ppsaStatus )
 			{
-				//long lStatus = rImage.status;
 				long lStatus = 0;
 				::SafeArrayPutElement( *ppsaStatus, &l, (void*) &lStatus );
 			}
@@ -6356,13 +6354,12 @@ namespace local
 				if ( ppsaImages )
 				{
 					BSTR bstrImage = NULL;
-																						// BRW - SVImageCompression has been deprecated.
+					// BRW - SVImageCompression has been removed for x64.
 					CSVCommand::ImageToBSTR( rImage.info, rImage.handle, &bstrImage
 #ifndef _WIN64
-						, lCompression, &mainCompressionObject );
-#else
-						);
+						, lCompression, &mainCompressionObject
 #endif
+						);
 					CSVCommand::SafeArrayPutElementNoCopy( *ppsaImages, alDimIndex, bstrImage );
 				}
 
@@ -6406,7 +6403,6 @@ namespace local
 		}
 		return hr;
 	}// end SetStatus
-
 }// end namespace local
 
 STDMETHODIMP CSVCommand::SVSetConditionalHistoryProperties(BSTR bstrInspectionName, SAFEARRAY*  psaNames,  SAFEARRAY*  psaValues,  SAFEARRAY** ppsaStatus)
@@ -7063,6 +7059,18 @@ STDMETHODIMP CSVCommand::SVIsAvailiable()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVCommand.cpp_v  $
+ * 
+ *    Rev 1.8   07 Mar 2014 18:08:08   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  884
+ * SCR Title:  Update Source Code Files to Follow New Programming Standards and Guidelines
+ * Checked in by:  bWalter;  Ben Walter
+ * Change Description:  
+ *   Added regions.
+ *   Changed image compression comments.
+ *   Various code changes to better follow coding guidelines.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.7   28 Feb 2014 08:05:20   tbair
  * Project:  SVObserver

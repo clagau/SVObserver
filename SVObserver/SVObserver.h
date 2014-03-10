@@ -5,8 +5,8 @@
 //* .Module Name     : SVObserver
 //* .File Name       : $Workfile:   SVObserver.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.10  $
-//* .Check In Date   : $Date:   04 Feb 2014 15:33:28  $
+//* .Current Version : $Revision:   1.11  $
+//* .Check In Date   : $Date:   07 Mar 2014 18:21:38  $
 //******************************************************************************
 
 #ifndef SVOBSERVER_H
@@ -284,7 +284,7 @@ public:
 
 	BOOL InitSVIMServer();
 	void DestroySVIMServer();
-	BOOL IsSVIMServerEnabled();
+	BOOL IsSVIMServerEnabled() const;
 
 	bool IsColorSVIM() const;
 
@@ -295,14 +295,13 @@ public:
 	BOOL CheckSVIMType() const;
 	SVIMProductEnum GetSVIMType() const;
 #ifndef _WIN64
-	CString GetPLCDLL();
+	CString GetPLCDLL() const;
 #endif
 	bool IsProductTypeRAID() const;
 	void ValidateMRUList();
 
 	SVOINIClass& INI();
 	void ResetAllCounts();
-	void DisplayAddMenu(bool bShow);
 	bool AddMenuItem(HMENU hTargetMenu, const CString& itemText, UINT itemID);
 	bool RemoveMenu(HMENU hTargetMenu,  const CString& itemText);
 	HRESULT SetMode( unsigned long p_lNewMode );
@@ -322,7 +321,7 @@ public:
 
 	SVIPDoc* GetIPDoc( LPCTSTR StrIPDocPathName ) const;
 	BOOL AlreadyExistsIPDocTitle( LPCTSTR StrIPDocTitle );
-	CString GetStringResource( int ResourceID );
+	CString GetStringResource( int ResourceID ) const;
 
 	BOOL ShowConfigurationAssistant( int Page = 3, BOOL bFileNewConfiguration = FALSE );
 
@@ -358,7 +357,7 @@ public:
 	HRESULT SetModeEdit( bool p_bState );
 	HRESULT SetModeEditMove( bool l_bState );
 	void SetTestMode(bool p_bNoSecurity = false);
-	HRESULT GetTriggersAndCounts( CString& p_strTrigCnts );
+	HRESULT GetTriggersAndCounts( CString& p_strTrigCnts ) const;
 
 	void RefreshAllIPDocuments();
 	void RunAllIPDocuments();
@@ -619,6 +618,17 @@ extern SVObserverApp TheSVObserverApp;
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVObserver.h_v  $
+ * 
+ *    Rev 1.11   07 Mar 2014 18:21:38   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  884
+ * SCR Title:  Update Source Code Files to Follow New Programming Standards and Guidelines
+ * Checked in by:  bWalter;  Ben Walter
+ * Change Description:  
+ *   Made methods const.
+ *   Removed empty method DisplayAddMenu.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.10   04 Feb 2014 15:33:28   bwalter
  * Project:  SVObserver

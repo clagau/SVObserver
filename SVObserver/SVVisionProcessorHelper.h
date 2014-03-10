@@ -5,13 +5,14 @@
 //* .Module Name     : SVVisionProcessorHelper
 //* .File Name       : $Workfile:   SVVisionProcessorHelper.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.4  $
-//* .Check In Date   : $Date:   30 Oct 2013 15:43:26  $
+//* .Current Version : $Revision:   1.5  $
+//* .Check In Date   : $Date:   07 Mar 2014 18:25:58  $
 //******************************************************************************
 
 #ifndef SVVISIONPROCESSORHELPER_H
 #define SVVISIONPROCESSORHELPER_H
 
+#pragma region Includes
 #include <comdef.h>
 #include <map>
 #include <set>
@@ -24,7 +25,9 @@
 #include "SVStorageResult.h"
 #include "SVVisionProcessorConstants.h"
 #include "SVDataDefinitionStruct.h"
+#pragma endregion Includes
 
+#pragma region Declarations
 //This enum is the same as the client interface of the SVRC
 enum SVDataDefinitionListType
 {
@@ -38,6 +41,7 @@ enum SVDataDefinitionListType
 	SelectedValuesAndAllImages		= 9,
 	AllValuesAndAllImages			= 12,
 };
+#pragma endregion Declarations
 
 class SVVisionProcessorHelper
 {
@@ -57,7 +61,7 @@ public:
 
 	HRESULT LoadConfiguration( const SVString& p_rPackFileName );
 
-	HRESULT SaveConfiguration( const SVString& p_rPackFileName );
+	HRESULT SaveConfiguration( const SVString& p_rPackFileName ) const;
 
 	HRESULT GetConfigurationMode( unsigned long& p_rMode ) const;
 	HRESULT SetConfigurationMode( unsigned long p_Mode );
@@ -109,9 +113,10 @@ protected:
 	SVAsyncProcedure< SVAPCSignalHandler, SVThreadProcessHandler > m_AsyncProcedure;
 
 private:
+#pragma region Private Methods
 	SVVisionProcessorHelper( const SVVisionProcessorHelper& p_rObject );
 	const SVVisionProcessorHelper& operator=( const SVVisionProcessorHelper& p_rObject );
-
+#pragma endregion Private Methods
 };
 
 #endif
@@ -121,6 +126,17 @@ private:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVVisionProcessorHelper.h_v  $
+ * 
+ *    Rev 1.5   07 Mar 2014 18:25:58   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  884
+ * SCR Title:  Update Source Code Files to Follow New Programming Standards and Guidelines
+ * Checked in by:  bWalter;  Ben Walter
+ * Change Description:  
+ *   Added regions.
+ *   Made methods const.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.4   30 Oct 2013 15:43:26   bwalter
  * Project:  SVObserver

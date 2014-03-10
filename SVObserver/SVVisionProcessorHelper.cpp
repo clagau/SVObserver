@@ -5,10 +5,11 @@
 //* .Module Name     : SVVisionProcessorHelper
 //* .File Name       : $Workfile:   SVVisionProcessorHelper.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.6  $
-//* .Check In Date   : $Date:   31 Jan 2014 17:16:24  $
+//* .Current Version : $Revision:   1.7  $
+//* .Check In Date   : $Date:   07 Mar 2014 18:25:18  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include <boost/config.hpp>
 #include <boost/assign.hpp>
@@ -25,6 +26,13 @@
 #include "SVObserver.h"
 #include "SVSocketRemoteCommandManager.h"
 #include "SVSVIMStateClass.h"
+#pragma endregion Includes
+
+#pragma region Declarations
+#ifdef _DEBUG
+#define new DEBUG_NEW
+#endif
+#pragma endregion Declarations
 
 SVVisionProcessorHelper& SVVisionProcessorHelper::Instance()
 {
@@ -33,6 +41,7 @@ SVVisionProcessorHelper& SVVisionProcessorHelper::Instance()
 	return l_Object;
 }
 
+#pragma region Constructor
 SVVisionProcessorHelper::SVVisionProcessorHelper()
 : m_LastModifiedTime( 0 ), m_PrevModifiedTime( 0 )
 {
@@ -53,6 +62,7 @@ SVVisionProcessorHelper::~SVVisionProcessorHelper()
 {
 	Shutdown();
 }
+#pragma endregion Constructor
 
 HRESULT SVVisionProcessorHelper::GetVersion( unsigned long& p_rVersion ) const
 {
@@ -151,7 +161,7 @@ HRESULT SVVisionProcessorHelper::LoadConfiguration( const SVString& p_rPackFileN
 	return l_Status;
 }
 
-HRESULT SVVisionProcessorHelper::SaveConfiguration( const SVString& p_rPackFileName )
+HRESULT SVVisionProcessorHelper::SaveConfiguration( const SVString& p_rPackFileName ) const
 {
 	HRESULT l_Status = TheSVObserverApp.SavePackedConfiguration( p_rPackFileName.c_str() );
 
@@ -231,14 +241,17 @@ HRESULT SVVisionProcessorHelper::GetDataDefinitionList( const SVString& p_rInspe
 	{
 		l_ValueFilter = SV_DD_VALUE;
 	}
+
 	if(0 != ( p_rListType & AllValues))
 	{
 		l_ValueFilter = SV_DD_VALUE | SV_VIEWABLE;
 	}
+
 	if(0 != ( p_rListType & SelectedImages))
 	{
 		l_ImageFilter = SV_DD_IMAGE;
 	}
+
 	if(0 != ( p_rListType & AllImages))
 	{
 		l_ImageFilter = SV_DD_IMAGE | SV_VIEWABLE;
@@ -263,12 +276,12 @@ HRESULT SVVisionProcessorHelper::GetDataDefinitionList( const SVString& p_rInspe
 
 			int nCount = l_OutputList.GetSize();
 
-			for( size_t i = 0 ; i < nCount ; i++ )
+			for( int i = 0; i < nCount; i++ )
 			{
 				// Get OutObjectInfoStruct...
 				SVOutObjectInfoStruct* pInfoItem = NULL;
 
-				pInfoItem = l_OutputList.GetAt(static_cast<int>(i));
+				pInfoItem = l_OutputList.GetAt( i );
 
 				SVObjectReference l_ObjRef;
 				if( NULL != pInfoItem )
@@ -303,7 +316,7 @@ HRESULT SVVisionProcessorHelper::GetDataDefinitionList( const SVString& p_rInspe
 			size_t nCount = l_ImageList.GetSize();
 			for( size_t i=0; i<nCount; i++)
 			{
-				SVImageClass* l_pImage = l_ImageList.GetAt(static_cast<int>(i));
+				SVImageClass* l_pImage = l_ImageList.GetAt( i );
 			
 				if ( l_pImage )
 				{
@@ -750,6 +763,19 @@ void SVVisionProcessorHelper::ProcessLastModified( bool& p_WaitForEvents )
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVVisionProcessorHelper.cpp_v  $
+ * 
+ *    Rev 1.7   07 Mar 2014 18:25:18   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  884
+ * SCR Title:  Update Source Code Files to Follow New Programming Standards and Guidelines
+ * Checked in by:  bWalter;  Ben Walter
+ * Change Description:  
+ *   Added regions.
+ *   Added DEBUG_NEW.
+ *   Made methods const.
+ *   Various code changes to better follow coding guidelines.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.6   31 Jan 2014 17:16:24   bwalter
  * Project:  SVObserver

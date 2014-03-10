@@ -5,13 +5,14 @@
 //* .Module Name     : SVConfigurationObject
 //* .File Name       : $Workfile:   SVConfigurationObject.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.5  $
-//* .Check In Date   : $Date:   30 Oct 2013 10:45:18  $
+//* .Current Version : $Revision:   1.6  $
+//* .Check In Date   : $Date:   07 Mar 2014 18:11:08  $
 //******************************************************************************
 
 #ifndef INC_SVCONFIGURATIONOBJECT_INCLUDED
 #define INC_SVCONFIGURATIONOBJECT_INCLUDED
 
+#pragma region Includes
 #include "SVContainerLibrary/SVMap.h"
 #include "SVImageLibrary/SVLightReference.h"
 #include "SVImageLibrary/SVLut.h"
@@ -27,7 +28,9 @@
 #include "SVTriggerObject.h"
 #include "SVStorage.h"
 #include "SVStorageResult.h"
+#pragma endregion Includes
 
+#pragma region Declarations
 class SVDeviceParamCollection;
 class SVDeviceParam;
 class SVIOController;
@@ -41,6 +44,7 @@ class SVPPQObject;
 
 struct SVConfigurationAcquisitionDeviceInfoStruct;
 typedef std::vector<SVInspectionProcess *> SVInspectionProcessPtrList;
+#pragma endregion Declarations
 
 class SVConfigurationObject : 
 	public SVObjectClass,
@@ -85,10 +89,10 @@ public:
 	BOOL DestroyConfiguration();
 
 	BOOL SetInputObjectList( SVInputObjectList *pInputObjectList );
-	BOOL GetInputObjectList( SVInputObjectList **ppInputObjectList );
+	BOOL GetInputObjectList( SVInputObjectList **ppInputObjectList ) const;
 
 	BOOL SetOutputObjectList( SVOutputObjectList *pOutputObjectList );
-	BOOL GetOutputObjectList( SVOutputObjectList **ppOutputObjectList );
+	BOOL GetOutputObjectList( SVOutputObjectList **ppOutputObjectList ) const;
 	HRESULT RebuildOutputObjectList();
 
 	BOOL AddAcquisitionDevice( LPCTSTR szName, SVFileNameArrayClass& rsvFiles,
@@ -104,8 +108,8 @@ public:
 	                           SVFileNameArrayClass*& pFiles,
                                SVLightReference*& pLight,
 							   SVLut*& rpLut,
-							   SVDeviceParamCollection*& rpDeviceParams );
-	SVAcquisitionDeviceMap::iterator GetAcquisitionDeviceStartPosition();
+							   SVDeviceParamCollection*& rpDeviceParams ) const;
+	SVAcquisitionDeviceMap::iterator GetAcquisitionDeviceStartPosition() const;
 	SVAcquisitionDeviceMap::iterator GetAcquisitionDeviceEndPosition();
 	void GetAcquisitionDeviceNextAssoc( SVAcquisitionDeviceMap::iterator& rNextPosition, CString& rKey );
 	void GetAcquisitionDeviceNextAssoc( SVAcquisitionDeviceMap::iterator& rNextPosition, CString& rKey, 
@@ -118,40 +122,39 @@ public:
 	BOOL RemoveTrigger( SVTriggerObject *pTrigger );
 	BOOL GetTriggerCount( long &lIndex ) const;
 	BOOL GetTrigger( long lIndex, SVTriggerObject **ppTrigger ) const;
-	BOOL GetChildObjectByName( LPCTSTR tszName, SVTriggerObject **ppTrigger );
+	BOOL GetChildObjectByName( LPCTSTR tszName, SVTriggerObject **ppTrigger ) const;
 
 	BOOL AddPPQ( SVPPQObject *pPPQ );
 	BOOL RemovePPQ( SVPPQObject *pPPQ );
-	BOOL GetPPQCount( long &lIndex );
-	BOOL GetPPQ( long lIndex, SVPPQObject **ppPPQ );
-	BOOL GetChildObjectByName( LPCTSTR tszName, SVPPQObject **ppPPQ );
+	BOOL GetPPQCount( long &lIndex ) const;
+	BOOL GetPPQ( long lIndex, SVPPQObject **ppPPQ ) const;
+	BOOL GetChildObjectByName( LPCTSTR tszName, SVPPQObject **ppPPQ ) const;
 	bool GetPPQByName( LPCTSTR name, SVPPQObject **ppPPQ ) const;
 
 	BOOL AddCamera( SVVirtualCamera *pCamera );
 	BOOL RemoveCamera( SVVirtualCamera *pCamera );
-	BOOL GetCameraCount( long &lIndex );
-	BOOL GetCamera( long lIndex, SVVirtualCamera **ppCamera );
-	BOOL GetChildObjectByName( LPCTSTR tszName, SVVirtualCamera **ppCamera );
+	BOOL GetCameraCount( long &lIndex ) const;
+	BOOL GetCamera( long lIndex, SVVirtualCamera **ppCamera ) const;
+	BOOL GetChildObjectByName( LPCTSTR tszName, SVVirtualCamera **ppCamera ) const;
 
 	BOOL AddInspection( SVInspectionProcess *pInspection );
 	BOOL RemoveInspection( SVInspectionProcess *pInspection );
 	BOOL GetInspectionCount( long &lIndex ) const;
 	BOOL GetInspection( long lIndex, SVInspectionProcess **ppInspection ) const;
-	BOOL GetInspections( std::vector<SVInspectionProcess*>& rvecInspections );
+	BOOL GetInspections( std::vector<SVInspectionProcess*>& rvecInspections ) const;
 	BOOL GetChildObjectByName( LPCTSTR tszName, SVInspectionProcess **ppInspection ) const;
 	BOOL GetInspectionObject( LPCTSTR tszFullyQualifiedNameOfChild, SVInspectionProcess **ppInspection ) const;
 
 	HRESULT AttachAcqToTriggers();
-	HRESULT DetachAcqFromTriggers();
-	HRESULT ValidateOutputList( );
+	HRESULT ValidateOutputList();
 
-	SVIMProductEnum GetProductType();
+	SVIMProductEnum GetProductType() const;
 	void SetProductType( SVIMProductEnum eProductType );
-	bool IsConfigurationLoaded();
+	bool IsConfigurationLoaded() const;
 	void SetConfigurationLoaded();
 	bool RenameOutputListInspectionNames(CString& NewInspectionName, CString& OldInspectionName);
 	
-	unsigned long GetFileVersion();
+	unsigned long GetFileVersion() const;
 
 	HRESULT SetModuleReady( bool p_Value );
 	HRESULT SetRaidErrorBit( bool p_Value );
@@ -162,15 +165,15 @@ public:
 	SVIOController* GetIOController() const;
 	SVGUID GetIOControllerID() const;
 #ifndef _WIN64
-	SVPLCDataController* GetPLCData();
-	size_t GetPLCCount();
+	SVPLCDataController* GetPLCData() const;
+	size_t GetPLCCount() const;
 	void SetupPLC();
-	HRESULT GetPLCs( std::vector<CString>& p_astrPLCIds );
-	LPCSTR GetConnectString();
-	long GetQueueSize( const CString& p_strPLC );
-	HRESULT GetHeartBeatAddress( CString& p_strHeartBeatAddress );
-	HRESULT GetHeartBeatTime( long& p_lTime );
-	HRESULT GetPLCControlData( SVMaterials& p_rMaterials, const CString& p_strPLC );
+	HRESULT GetPLCs( std::vector<CString>& p_astrPLCIds ) const;
+	LPCSTR GetConnectString() const;
+	long GetQueueSize( const CString& p_strPLC ) const;
+	HRESULT GetHeartBeatAddress( CString& p_strHeartBeatAddress ) const;
+	HRESULT GetHeartBeatTime( long& p_lTime ) const;
+	HRESULT GetPLCControlData( SVMaterials& p_rMaterials, const CString& p_strPLC ) const;
 	HRESULT SetPLCControlData( SVMaterials& p_rMaterials, const CString& p_strPLC );
 	CString AssociatePPQToPLC( const CString& p_strPPQ );
 	HRESULT WriteOutputs( const CString& p_strPLCName, SVProductInfoStruct *pProduct);
@@ -179,11 +182,11 @@ public:
 	size_t GetRemoteOutputGroupCount() const;
 	void SetupRemoteOutput();
 	HRESULT ClearRemoteOutputUnUsedData();
-	HRESULT GetRemoteOutputGroupNames( std::vector<CString>& p_astrPPQs );
+	HRESULT GetRemoteOutputGroupNames( std::vector<CString>& p_astrPPQs ) const;
 	SVRemoteOutputGroup* GetRemoteOutputGroup( const CString& p_strRemoteGroupID ) const;
 	size_t GetRemoteOutputGroupItemCount( const CString& p_strRemoteGroupID ) const;
 	HRESULT GetRemoteOutputItem( const CString& p_strRemoteGroupId, long l_lIndex, SVRemoteOutputObject*& p_rItem ) const;
-	SVRemoteOutputObject* GetFirstRemoteOutputObject( const CString& p_strRemoteGroupId );
+	SVRemoteOutputObject* GetFirstRemoteOutputObject( const CString& p_strRemoteGroupId ) const;
 	HRESULT AddRemoteOutputItem( const CString& p_strRemoteGroupId, SVRemoteOutputObject*& p_pNewOutput, GUID p_InputObjectID, const CString p_strPPQ );
 	HRESULT DeleteRemoteOutput( const CString& p_strRemoteGroupId );
 	HRESULT DeleteRemoteOutputEntry( const CString& p_strRemoteGroupId, SVRemoteOutputObject* p_pOutputObject);
@@ -254,6 +257,18 @@ private:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVConfigurationObject.h_v  $
+ * 
+ *    Rev 1.6   07 Mar 2014 18:11:08   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  884
+ * SCR Title:  Update Source Code Files to Follow New Programming Standards and Guidelines
+ * Checked in by:  bWalter;  Ben Walter
+ * Change Description:  
+ *   Added regions.
+ *   Made methods const.
+ *   Removed empty method DetachAcqFromTriggers.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.5   30 Oct 2013 10:45:18   tbair
  * Project:  SVObserver

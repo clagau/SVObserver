@@ -5,20 +5,24 @@
 //* .Module Name     : SVMatroxGigeAcquisitionClass
 //* .File Name       : $Workfile:   SVMatroxGigeAcquisitionClass.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   05 Jul 2013 09:11:10  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   07 Mar 2014 18:20:08  $
 //******************************************************************************
 
 #ifndef SVMATROXGIGEACQUISITIONCLASS_H
 #define SVMATROXGIGEACQUISITIONCLASS_H
 
+#pragma region Includes
 #include "SVAcquisitionClass.h"
 #include "SVImageLibrary/SVImagingDeviceParams.h"
 #include "SVMatroxGigeCameraProxy.h"
+#pragma endregion Includes
 
+#pragma region Declarations
 struct SVGigeCameraFileInfoStruct;
+#pragma endregion Declarations
 
-class SVMatroxGigeAcquisitionClass : public SVAcquisitionClass  
+class SVMatroxGigeAcquisitionClass : public SVAcquisitionClass
 {
 	friend class SVMatroxGigeCameraProxy;
 
@@ -26,34 +30,34 @@ public:
 	SVMatroxGigeAcquisitionClass( const SVAcquisitionConstructParams& p_rParams );
 	virtual ~SVMatroxGigeAcquisitionClass();
 
-	virtual bool IsValid();
+	virtual bool IsValid() const;
 	virtual bool IsStarted() const;
-	virtual bool IsValidBoard();
 
 	virtual HRESULT Create( unsigned long ulSize = 15 );
 	virtual HRESULT Destroy();
 
-	virtual HRESULT GetFileNameArraySize( long &rlSize );
-	virtual HRESULT LoadFiles( SVFileNameArrayClass &rArray);
+	virtual HRESULT GetFileNameArraySize( long &rlSize ) const;
+	virtual HRESULT LoadFiles( SVFileNameArrayClass &rArray );
 	virtual HRESULT ReadCameraFile( const CString& sFile, SVDeviceParamCollection& rParams );
 
 	virtual HRESULT CreateLightReference( int iBands, int iBrightness, int iContrast );
-	virtual HRESULT LoadLightReference( SVLightReference& rArray );
 
-	virtual HRESULT GetMaxLightReferenceValue( unsigned long ulType, long &rlValue );
-	virtual HRESULT GetMinLightReferenceValue( unsigned long ulType, long &rlValue );
-	virtual HRESULT GetLightReferenceValueStep( unsigned long ulType, unsigned long &rulValue );
+	virtual HRESULT GetMaxLightReferenceValue( unsigned long ulType, long &rlValue ) const;
+	virtual HRESULT GetMinLightReferenceValue( unsigned long ulType, long &rlValue ) const;
+	virtual HRESULT GetLightReferenceValueStep( unsigned long ulType, unsigned long &rulValue ) const;
 
 	virtual HRESULT CreateLut( const SVLutInfo& info );
 	virtual HRESULT DestroyLut();
 
-	virtual HRESULT GetImageInfo(SVImageInfoClass *pImageInfo);
+	virtual HRESULT GetImageInfo( SVImageInfoClass* pImageInfo ) const;
+
+	virtual bool IsValidBoard() const;
 
 	virtual HRESULT SetDeviceParameters( const SVDeviceParamCollection& rDeviceParams );
 
+	virtual HRESULT IsValidCameraFileParameters( SVDeviceParamCollection& rDeviceParams );
 	virtual void ClearDeviceIdentifier();
 	virtual HRESULT SingleGrab( SVSmartHandlePointer p_SingleGrabHandle );
-	virtual HRESULT IsValidCameraFileParameters( SVDeviceParamCollection& rDeviceParams );
 
 protected:
 	bool CameraMatchesCameraFile();
@@ -69,16 +73,13 @@ protected:
 
 	virtual bool IsOnline() const;
 	
-//	virtual HRESULT GetCurrentLightReferenceValue( unsigned long ulType, long &rlValue );
 	virtual HRESULT SetLightReferenceImpl( SVLightReference& rLR );
-
-	virtual HRESULT GetCameraImageInfo(SVImageInfoClass *pImageInfo);
-
-	virtual HRESULT SetLutImpl( const SVLut& lut );
 	virtual HRESULT GetLutImpl( SVLut& lut );
+	virtual HRESULT SetLutImpl( const SVLut& lut );
 
 	virtual HRESULT StartDigitizer();
 
+	virtual HRESULT GetCameraImageInfo(SVImageInfoClass *pImageInfo);
 	HRESULT DestroyLocal();
 
 	long mlLastIndex;
@@ -89,18 +90,16 @@ protected:
 		LR_BRIGHTNESS = 0,
 		LR_CONTRAST   = 1
 	};
-	
+
 private:
 	bool mbIsCamFilesLoaded;
-	bool mbIsBufferCreated;
 	bool mbIsStarted;
 
 	enum
 	{
 		DEFAULT_CONTRAST          = 10000,    // this is the correct default value, not 100
 		DEFAULT_CONTRAST_RGB_MONO = 8100,
-		DEFAULT_BRIGHTNESS        = 0,
-		//CORECO_SCALE_VALUE        = 10    // what this is for, I don't know!
+		DEFAULT_BRIGHTNESS        = 0
 	};
 
 	// Callbacks
@@ -111,11 +110,6 @@ private:
 	static HRESULT CALLBACK AcquisitionCallbackProc( void *pvOwner, void *pvCaller, void *pvRequest );
 
 	SVMatroxGigeCameraProxy m_cameraProxy;
-/*
-	//
-	HRESULT SetDigitizerParameters( const SVDeviceParamCollection& rDeviceParams );
-	HRESULT SetDigitizerParameter( const SVDeviceParamWrapper& rw );
-*/
 
 	HRESULT SetGigeFeatureOverrides(const SVString& featureOverrides);
 };
@@ -126,7 +120,21 @@ private:
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVMatroxGigeAcquisitionClass.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVMatroxGigeAcquisitionClass.h_v  $
+ * 
+ *    Rev 1.2   07 Mar 2014 18:20:08   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  884
+ * SCR Title:  Update Source Code Files to Follow New Programming Standards and Guidelines
+ * Checked in by:  bWalter;  Ben Walter
+ * Change Description:  
+ *   Added regions.
+ *   Removed methods that did not change base class functionality.
+ *   Reordered methods to be consistent with base class.
+ *   Moved mbIsBufferCreated to SVAcquisitionClass.
+ *   Removed unused value CORECO_SCALE_VALUE.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   05 Jul 2013 09:11:10   bwalter
  * Project:  SVObserver

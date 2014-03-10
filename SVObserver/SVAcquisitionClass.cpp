@@ -5,10 +5,11 @@
 //* .Module Name     : SVAcquisitionClass
 //* .File Name       : $Workfile:   SVAcquisitionClass.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   01 Oct 2013 11:54:38  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   07 Mar 2014 18:02:16  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include <fstream>
 #include "SVAcquisitionClass.h"
@@ -26,10 +27,18 @@
 #include "SVGlobal.h"
 #include "SVImageObjectClass.h"
 #include "SVImageProcessingClass.h"
+#pragma endregion Includes
+
+#pragma region Declarations
+#ifdef _DEBUG
+#define new DEBUG_NEW
+#endif
+#pragma endregion Declarations
 
 SVAcquisitionClass::SVAcquisitionClass( const SVAcquisitionConstructParams& p_rParams )
 : SVODataDeviceClass( p_rParams.m_DeviceName.ToString() )
 {
+	mbIsBufferCreated = false;
 	mbTempOnline = false;
 	m_ImageAquired = false;
 	m_LastImage = NULL;
@@ -281,7 +290,11 @@ HRESULT SVAcquisitionClass::CreateBuffers( SVImageInfoClass IInfo, unsigned long
 			hrOk = S_FALSE;
 		}
 		
-		if ( hrOk != S_OK )
+		if (S_OK == hrOk  )
+		{
+			mbIsBufferCreated = true;
+		}
+		else
 		{
 			DestroyBuffers();
 		}
@@ -313,6 +326,8 @@ HRESULT SVAcquisitionClass::DestroyBuffers()
 
 	m_pDataManagerHandle.clear();
 
+	mbIsBufferCreated = false;
+
 	return hrOk;
 }
 
@@ -330,7 +345,6 @@ HRESULT SVAcquisitionClass::LoadFiles(SVFileNameArrayClass &rArray)
 	}
 
 	mFiles = rArray;
-	//m_DeviceParams.Clear();
 	m_CameraFileDeviceParams.Clear();
 
 	for ( l = 0; hrOk == S_OK && l < mFiles.GetSize(); l++ )
@@ -375,10 +389,15 @@ HRESULT SVAcquisitionClass::CreateLightReference(int iBands, int iBrightness, in
 	if ( iBands > 0 )
 	{
 		BOOL bResult = (mLightReference.Create( iBands ) == TRUE);
+
         if (bResult == TRUE)
+		{
             hrOk = S_OK;
+		}
         else
+		{
             hrOk = S_FALSE;
+		}
 	}
 
 	return hrOk;
@@ -391,7 +410,7 @@ HRESULT SVAcquisitionClass::LoadLightReference(SVLightReference& rLR)
 	return hrOk;
 }
 
-HRESULT SVAcquisitionClass::GetLightReference(SVLightReference& rLR)
+HRESULT SVAcquisitionClass::GetLightReference( SVLightReference& rLR ) const
 {
 	HRESULT hrOk = S_OK;
 
@@ -436,21 +455,21 @@ HRESULT SVAcquisitionClass::CreateLightReferenceBand( int iBand, int iAttributes
 }
 
 
-HRESULT SVAcquisitionClass::GetMaxLightReferenceValue(unsigned long ulType, long &rlValue)
+HRESULT SVAcquisitionClass::GetMaxLightReferenceValue( unsigned long ulType, long &rlValue ) const
 {
 	HRESULT hrOk = S_FALSE;
 
 	return hrOk;
 }
 
-HRESULT SVAcquisitionClass::GetMinLightReferenceValue(unsigned long ulType, long &rlValue)
+HRESULT SVAcquisitionClass::GetMinLightReferenceValue( unsigned long ulType, long &rlValue ) const
 {
 	HRESULT hrOk = S_FALSE;
 
 	return hrOk;
 }
 
-HRESULT SVAcquisitionClass::GetLightReferenceValueStep(unsigned long ulType, unsigned long &rulValue)
+HRESULT SVAcquisitionClass::GetLightReferenceValueStep( unsigned long ulType, unsigned long &rulValue ) const
 {
 	HRESULT hrOk = S_FALSE;
 
@@ -494,12 +513,14 @@ HRESULT SVAcquisitionClass::SetLightReferenceImpl( SVLightReference& rLR )
 	return hrOk;
 }
 
-HRESULT SVAcquisitionClass::GetImageInfo(SVImageInfoClass *pImageInfo)
+HRESULT SVAcquisitionClass::GetImageInfo( SVImageInfoClass *pImageInfo ) const
 {
 	HRESULT hrOk = S_FALSE;
 
-	*pImageInfo = msvImageInfo;
-
+	if ( pImageInfo != NULL )
+	{
+		*pImageInfo = msvImageInfo;
+	}
 	return hrOk;
 }
 
@@ -526,7 +547,7 @@ HRESULT SVAcquisitionClass::ResetLightReference()
 	return hrOk;
 }
 
-HRESULT SVAcquisitionClass::GetFileNameArraySize(long &rlSize)
+HRESULT SVAcquisitionClass::GetFileNameArraySize( long &rlSize ) const
 {
 	HRESULT hrOk = S_OK;
 
@@ -535,7 +556,7 @@ HRESULT SVAcquisitionClass::GetFileNameArraySize(long &rlSize)
 	return hrOk;
 }
 
-HRESULT SVAcquisitionClass::GetFileName(long lIndex, SVFileNameClass &rFileName)
+HRESULT SVAcquisitionClass::GetFileName( long lIndex, SVFileNameClass &rFileName ) const
 {
 	HRESULT hrOk = S_FALSE;
 
@@ -549,7 +570,7 @@ HRESULT SVAcquisitionClass::GetFileName(long lIndex, SVFileNameClass &rFileName)
 	return hrOk;
 }
 
-CString SVAcquisitionClass::GetRootDeviceName()
+CString SVAcquisitionClass::GetRootDeviceName() const
 {
 	return DeviceName();
 }
@@ -580,11 +601,11 @@ HRESULT SVAcquisitionClass::GetLutImpl( SVLut& lut )
 	return hr;
 }
 
-HRESULT SVAcquisitionClass::SetLut( const SVLutBand& lutband )
+HRESULT SVAcquisitionClass::SetLut( const SVLutBand& lutBand )
 {
 	SVLut lut;
 	GetLut( lut );
-	lut.CopyBandData(lutband);
+	lut.CopyBandData(lutBand);
 	return SetLut( lut );
 }
 
@@ -622,12 +643,19 @@ HRESULT SVAcquisitionClass::SetLut( const SVLut& lut, int iBand )
 	if ( bSuccess && IsValidBoard() )
 	{
 		if (iBand == -1)
+		{
 			hr = SetLutImpl( Lut() );
+		}
 		else
+		{
 			hr = SetLutImpl( Lut() );	// Lut() already has modified band data
+		}
 	}
 	else
+	{
 		hr = bSuccess ? S_OK : S_FALSE;
+	}
+
 	return hr;
 }
 
@@ -644,13 +672,13 @@ HRESULT SVAcquisitionClass::CreateLut( const SVLutInfo& info )
 	return hr;
 }
 
-HRESULT SVAcquisitionClass::DestroyLut( )
+HRESULT SVAcquisitionClass::DestroyLut()
 {
 	HRESULT hr = S_FALSE;
 	return hr;
 }
 
-HRESULT SVAcquisitionClass::ResetLut( )
+HRESULT SVAcquisitionClass::ResetLut()
 {
 	Lut().SetTransformOperation(SVLutTransformOperationNormal());
 	Lut().Transform();
@@ -675,7 +703,7 @@ SVLut& SVAcquisitionClass::Lut()
 	}
 }
 
-bool SVAcquisitionClass::IsValidBoard()
+bool SVAcquisitionClass::IsValidBoard() const
 {
     return false;
 }
@@ -766,7 +794,7 @@ HRESULT SVAcquisitionClass::ReadCameraFile( const CString& sFile, SVDeviceParamC
 	return E_NOTIMPL;
 }
 
-bool SVAcquisitionClass::IsDigitizerSubsystemValid()
+bool SVAcquisitionClass::IsDigitizerSubsystemValid() const
 {
 	return SVDigitizerProcessingClass::Instance().IsValidDigitizerSubsystem(mcsDigName);
 }
@@ -1058,6 +1086,20 @@ HRESULT SVAcquisitionClass::StartDigitizer()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVAcquisitionClass.cpp_v  $
+ * 
+ *    Rev 1.3   07 Mar 2014 18:02:16   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  884
+ * SCR Title:  Update Source Code Files to Follow New Programming Standards and Guidelines
+ * Checked in by:  bWalter;  Ben Walter
+ * Change Description:  
+ *   Added regions.
+ * Added DEBUG_NEW.
+ * Made  methods const.
+ * Moved mbIsBufferCreated here from SVMatroxGigeAcquisitionClass.
+ * Added virtual method IsBufferCreated.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   01 Oct 2013 11:54:38   tbair
  * Project:  SVObserver

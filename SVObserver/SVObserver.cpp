@@ -5,8 +5,8 @@
 //* .Module Name     : SVObserver
 //* .File Name       : $Workfile:   SVObserver.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.22  $
-//* .Check In Date   : $Date:   28 Feb 2014 07:57:46  $
+//* .Current Version : $Revision:   1.23  $
+//* .Check In Date   : $Date:   07 Mar 2014 18:20:46  $
 //******************************************************************************
 
 #pragma region Includes
@@ -64,7 +64,7 @@
 #include "SVXMLLibrary/SVNavigateTreeClass.h"
 
 #include "SVConfigurationObject.h"
-// BRW - SVImageCompression has been deprecated.
+// BRW - SVImageCompression has been removed for x64.
 #ifndef _WIN64
 #include "SVImageCompression/SVImageCompressionClass.h"
 #endif
@@ -115,7 +115,7 @@
 #pragma endregion Includes
 
 #pragma region Declarations
-#define ID_TRRIGER_SETTINGS 21017
+#define ID_TRIGGER_SETTINGS 21017
 
 LPCTSTR const FRAME_GRABBER_VIPER_DIGITAL                 = (_T("03"));
 
@@ -150,8 +150,6 @@ SVObserverApp TheSVObserverApp;
 //******************************************************************************
 #ifdef _DEBUG
 #define new DEBUG_NEW
-#undef THIS_FILE
-static char THIS_FILE[] = __FILE__;
 #endif
 
 class CMdiChildWorkaround : public CMDIChildWnd
@@ -228,9 +226,9 @@ BEGIN_MESSAGE_MAP(SVObserverApp, CWinApp)
 	ON_COMMAND(ID_STOP, OnStop)
 	ON_COMMAND(ID_UPDATE_ALL_IOVIEWS, OnUpdateAllIOViews )
 	ON_COMMAND(ID_APP_EXIT, OnAppExit)
-	ON_COMMAND(ID_TRRIGER_SETTINGS, OnTriggerSettings)
+	ON_COMMAND(ID_TRIGGER_SETTINGS, OnTriggerSettings)
 
-	ON_UPDATE_COMMAND_UI(ID_TRRIGER_SETTINGS, OnUpdateTriggerSettings)
+	ON_UPDATE_COMMAND_UI(ID_TRIGGER_SETTINGS, OnUpdateTriggerSettings)
 	ON_UPDATE_COMMAND_UI(ID_MODE_RUN, OnUpdateModeRun)
 
 	ON_UPDATE_COMMAND_UI(ID_MODE_STOPTEST, OnUpdateModeStopTest)
@@ -323,7 +321,7 @@ END_MESSAGE_MAP()
 
 #pragma region Constructor
 SVObserverApp::SVObserverApp()
-	// BRW - SVImageCompression has been deprecated.
+	// BRW - SVImageCompression has been removed for x64.
 #ifndef _WIN64
 	: m_bImageCompressionStarted( FALSE )
 	  , 
@@ -681,7 +679,6 @@ void SVObserverApp::OnEditEnvironment()
 	ShowConfigurationAssistant();
 }
 
-
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : OnTestMode
 // -----------------------------------------------------------------------------
@@ -709,7 +706,7 @@ void SVObserverApp::OnEditEnvironment()
 //  :27.05.1997 RO			First Implementation
 //	:
 ////////////////////////////////////////////////////////////////////////////////
-void SVObserverApp::OnTestMode( ) 
+void SVObserverApp::OnTestMode() 
 {
 	SetTestMode();
 }
@@ -1685,7 +1682,7 @@ void SVObserverApp::OnExtrasLogin()
 		}
 		else
 		{	// If they are still allowed then select the current tool.
-			SVMainFrame * pWndMain = (SVMainFrame *)GetMainWnd( );
+			SVMainFrame* pWndMain = ( SVMainFrame* )GetMainWnd();
 			if(pWndMain)
 			{
 				pWndMain->PostMessage(SV_SET_TOOL_SELECTED_IN_TOOL_VIEW, (WPARAM)TRUE);
@@ -1703,7 +1700,7 @@ void SVObserverApp::OnExtrasLogin()
 		}
 		else
 		{	// If they are still allowed then select the current tool.
-			SVMainFrame * pWndMain = (SVMainFrame *)GetMainWnd( );
+			SVMainFrame* pWndMain = ( SVMainFrame* )GetMainWnd();
 			if(pWndMain)
 			{
 				pWndMain->PostMessage(SV_SET_TOOL_SELECTED_IN_TOOL_VIEW, (WPARAM)TRUE);
@@ -1959,7 +1956,6 @@ void SVObserverApp::OnGoOnline()
 
 			SVSVIMStateClass::RemoveState( SV_STATE_EDIT );
 			SVSVIMStateClass::RemoveState( SV_STATE_EDIT_MOVE );
-			DisplayAddMenu(false);
 			DeselectTool();
 
 			if ( m_hrHardwareFailure == S_OK )
@@ -2017,7 +2013,7 @@ void SVObserverApp::OnGoOnline()
 
 				l_csMessage.Format( _T( "Hardware configuration error. The SVIM hardware "
 					"does not match the Model Number ( Model # %s %s %s %s ).  "
-					"%s is either not availiable or malfunctioning.  "
+					"%s is either not available or malfunctioning.  "
 					"Please verify that the shown model number is correct "
 					"and contact your system administrator." ),
 					m_csProcessor, m_csFrameGrabber, m_csIOBoard, m_csOptions,
@@ -3269,7 +3265,7 @@ BOOL SVObserverApp::InitInstance()
 
 		l_csMessage.Format( _T( "Hardware configuration error. The SVIM hardware "
 			"does not match the Model Number ( Model # %s %s %s %s ).  "
-			"%s is either not availiable or malfunctioning.  "
+			"%s is either not available or malfunctioning.  "
 			"Please verify that the shown model number is correct "
 			"and contact your system administrator." ),
 			m_csProcessor, m_csFrameGrabber, m_csIOBoard, m_csOptions,
@@ -3287,7 +3283,7 @@ BOOL SVObserverApp::InitInstance()
 	//check to see what licenses are available before setting up any documents
 	TheSVOLicenseManager().InitLicenseManager();
 	
-	// BRW - SVImageCompression has been deprecated.
+	// BRW - SVImageCompression has been removed for x64.
 #ifndef _WIN64
 	SVImageCompressionClass mainCompressionObject (SERVER_COMPRESSION_POOL_SIZE);
 
@@ -3559,7 +3555,7 @@ int SVObserverApp::ExitInstance()
 
 	m_mgrRemoteFonts.Shutdown();
 
-	// BRW - SVImageCompression has been deprecated.
+	// BRW - SVImageCompression has been removed for x64.
 #ifndef _WIN64
 	if ( m_bImageCompressionStarted )
 	{
@@ -3725,7 +3721,7 @@ HRESULT SVObserverApp::OpenSVXFile(LPCTSTR PathName)
 					// Removes any invalid entries in the output list.
 					if( l_pConfig->IsConfigurationLoaded() )
 					{
-						if( l_pConfig->ValidateOutputList( ) == SV_FATAL_SVOBSERVER_2006_DUPLICATE_DISCRETE_OUTPUT )
+						if( l_pConfig->ValidateOutputList() == SV_FATAL_SVOBSERVER_2006_DUPLICATE_DISCRETE_OUTPUT )
 						{
 							::AfxMessageBox( "Invalid Discrete Outputs: Remove all Discrete Outputs and re-add them.", MB_ICONEXCLAMATION );
 						}
@@ -4573,7 +4569,7 @@ void SVObserverApp::DestroySVIMServer()
 	}
 }
 
-BOOL SVObserverApp::IsSVIMServerEnabled()
+BOOL SVObserverApp::IsSVIMServerEnabled() const
 {
 	return (m_pSVIMServerWrapper) ? TRUE : FALSE;
 }
@@ -4968,7 +4964,7 @@ SVIMProductEnum SVObserverApp::GetSVIMType() const
 }
 
 #ifndef _WIN64
-CString SVObserverApp::GetPLCDLL()
+CString SVObserverApp::GetPLCDLL() const
 {
 	return m_csPLCDLL;
 }
@@ -4990,7 +4986,9 @@ void SVObserverApp::ValidateMRUList()
 		{
 			BOOL bGone = ( _access( m_pRecentFileList->m_arrNames[i], 0 ) != 0 );
 			if( bGone )
+			{
 				m_pRecentFileList->Remove( i );
+			}
 		}// end for
 	}// end if
 }
@@ -5029,11 +5027,6 @@ void SVObserverApp::ResetAllCounts()
 			l_Command.Execute( 120000 );
 		}
 	}
-}
-
-void SVObserverApp::DisplayAddMenu(bool bShow)
-{
-	return;
 }
 
 // this is a recursive function which will attempt
@@ -5866,7 +5859,7 @@ BOOL SVObserverApp::AlreadyExistsIPDocTitle( LPCTSTR StrIPDocTitle )
 	return FALSE;
 }
 
-CString SVObserverApp::GetStringResource( int ResourceID )
+CString SVObserverApp::GetStringResource( int ResourceID ) const
 {
 	CString strResource;
 	if( ! strResource.LoadString( ResourceID ) ) { strResource = _T( " " ); }
@@ -6145,7 +6138,7 @@ BOOL SVObserverApp::ShowConfigurationAssistant( int Page /*= 3*/,
 		GetMainFrame()->BuildPPQButtons();
 
 		// Validate Output List TB
-		if( l_pConfig->ValidateOutputList( ) == SV_FATAL_SVOBSERVER_2006_DUPLICATE_DISCRETE_OUTPUT )
+		if( l_pConfig->ValidateOutputList() == SV_FATAL_SVOBSERVER_2006_DUPLICATE_DISCRETE_OUTPUT )
 		{
 			::AfxMessageBox( "Invalid Discrete Outputs: Remove all Discrete Outputs and re-add them.", MB_ICONEXCLAMATION );
 		}
@@ -6343,7 +6336,7 @@ long SVObserverApp::UpdateAndGetLogDataManager()
 
 void SVObserverApp::DeselectTool()
 {
-	SVMainFrame * pWndMain = (SVMainFrame *)GetMainWnd( );
+	SVMainFrame* pWndMain = ( SVMainFrame* )GetMainWnd();
 	if(pWndMain)
 	{
 		pWndMain->PostMessage( SV_SET_TOOL_SELECTED_IN_TOOL_VIEW, (WPARAM)FALSE );   // Deselect any tool selected for move.
@@ -6576,7 +6569,6 @@ HRESULT SVObserverApp::SetModeEdit( bool p_bState )
 		SVSVIMStateClass::AddState( SV_STATE_EDIT );
 		SVSVIMStateClass::AddState( SV_STATE_SECURED );
 		SVSVIMStateClass::RemoveState( SV_STATE_EDIT_MOVE );
-		DisplayAddMenu(true);
 	}
 	else
 	{
@@ -6586,8 +6578,6 @@ HRESULT SVObserverApp::SetModeEdit( bool p_bState )
 		// We need to deselect any tool that might be set for operator move.
 		//
 		DeselectTool();
-
-		DisplayAddMenu(false);
 	}
 	return l_hr;
 }
@@ -6601,7 +6591,7 @@ HRESULT SVObserverApp::SetModeEditMove( bool l_bState )
 		SVSVIMStateClass::AddState( SV_STATE_EDIT_MOVE );
 		SVSVIMStateClass::RemoveState( SV_STATE_EDIT );
 		SVSVIMStateClass::RemoveState( SV_STATE_SECURED );
-		SVMainFrame * pWndMain = (SVMainFrame *)GetMainWnd( );
+		SVMainFrame* pWndMain = ( SVMainFrame* )GetMainWnd();
 		if(pWndMain)
 		{
 			pWndMain->PostMessage(SV_SET_TOOL_SELECTED_IN_TOOL_VIEW, (WPARAM)TRUE);
@@ -6767,7 +6757,7 @@ void SVObserverApp::SetTestMode(bool p_bNoSecurity )
 	}
 }
 
-HRESULT SVObserverApp::GetTriggersAndCounts( CString& p_strTrigCnts )
+HRESULT SVObserverApp::GetTriggersAndCounts( CString& p_strTrigCnts ) const
 {
 	HRESULT l_hr = S_FALSE;
 	long l_lCount = 0;
@@ -8001,7 +7991,7 @@ void SVObserverApp::fileSaveAsSVX( CString StrSaveAsPathName )
 		bOk = setConfigFullFileName( StrSaveAsPathName, FALSE );
 	}
 
-	if (bOk &&  !CString( m_ConfigFileName.GetExtension() ).CompareNoCase( ".svx" ) )
+	if ( bOk && !CString( m_ConfigFileName.GetExtension() ).CompareNoCase( ".svx" ) )
 	{
 		CString csFileName;
 
@@ -8135,7 +8125,7 @@ void SVObserverApp::EnableTriggerSettings()
 	szMenuText = _T("&View");
 	if (pMenu = util.FindSubMenuByName (pMenu, szMenuText))
 	{
-		pMenu->AppendMenu(MF_STRING, ID_TRRIGER_SETTINGS, _T("Software Trigger")); 
+		pMenu->AppendMenu(MF_STRING, ID_TRIGGER_SETTINGS, _T("Software Trigger")); 
 		pWindow->DrawMenuBar();
 	}
 }
@@ -8153,7 +8143,7 @@ void SVObserverApp::DisableTriggerSettings()
 	szMenuText = _T("&View");
 	if (pMenu = util.FindSubMenuByName (pMenu, szMenuText))
 	{
-		pMenu->RemoveMenu(ID_TRRIGER_SETTINGS, MF_BYCOMMAND); 
+		pMenu->RemoveMenu(ID_TRIGGER_SETTINGS, MF_BYCOMMAND); 
 		pWindow->DrawMenuBar();
 	}
 }
@@ -8817,6 +8807,21 @@ int SVObserverApp::FindMenuItem(CMenu* Menu, LPCTSTR MenuString)
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVObserver.cpp_v  $
+ * 
+ *    Rev 1.23   07 Mar 2014 18:20:46   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  884
+ * SCR Title:  Update Source Code Files to Follow New Programming Standards and Guidelines
+ * Checked in by:  bWalter;  Ben Walter
+ * Change Description:  
+ *   Changed image compression comments.
+ *   Corrected spelling of ID_TRRIGER_SETTINGS.
+ *   Removed THIS_FILE.
+ *   Removed empty method DisplayAddMenu.
+ *   Made methods const.
+ *   Corrected spelling of availiable in message text.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.22   28 Feb 2014 07:57:46   tbair
  * Project:  SVObserver

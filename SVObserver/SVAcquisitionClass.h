@@ -5,13 +5,14 @@
 //* .Module Name     : SVAcquisitionClass.h
 //* .File Name       : $Workfile:   SVAcquisitionClass.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   01 Oct 2013 11:54:40  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   07 Mar 2014 18:05:22  $
 //******************************************************************************
 
 #ifndef SVACQUISITIONCLASS_H
 #define SVACQUISITIONCLASS_H
 
+#pragma region Includes
 #include "SVDataManagerLibrary/SVDataManagerHandle.h"
 #include "SVDataManagerLibrary/SVDataManagerIndexArrayHandle.h"
 #include "SVImageLibrary/SVAcquisitionBufferInterface.h"
@@ -25,8 +26,11 @@
 #include "SVFileNameArrayClass.h"
 #include "SVImageObjectClass.h"
 #include "SVSubscriberProviderInterfaces.h"
+#pragma endregion Includes
 
+#pragma region Declarations
 struct SVAcquisitionConstructParams;
+#pragma endregion Declarations
 
 /**
 @SVObjectName Acquisition Class
@@ -36,8 +40,8 @@ struct SVAcquisitionConstructParams;
 @SVObjectOperations This object maintains operations for connecting and configuring the camera device information.  This includes but is not limited to setting up the notification signals, starting the notification process, stopping the notification process, creating buffers based on the image parameters, etc. 
 
 */
-class SVAcquisitionClass : 
-	public SVODataDeviceClass, 
+class SVAcquisitionClass :
+	public SVODataDeviceClass,
 	public SVSubscriberInterface,
 	public SVAcquisitionBufferInterface
 {
@@ -63,46 +67,46 @@ public:
 	virtual HRESULT CreateBuffers( SVImageInfoClass IInfo, unsigned long ulSize );
 	virtual HRESULT DestroyBuffers();
 
-	virtual HRESULT GetFileNameArraySize( long &rlSize );
-	virtual HRESULT GetFileName( long lIndex, SVFileNameClass &rFileName );
+	virtual HRESULT GetFileNameArraySize( long &rlSize ) const;
+	virtual HRESULT GetFileName( long lIndex, SVFileNameClass &rFileName ) const;
 	virtual HRESULT LoadFiles( SVFileNameArrayClass &rArray );
 	virtual HRESULT UnloadFiles();
 	virtual HRESULT ReadCameraFile( const CString& sFile, SVDeviceParamCollection& rParams );
 
 	virtual HRESULT CreateLightReference( int iBands, int iBrightness, int iContrast );
 	virtual HRESULT LoadLightReference( SVLightReference& rArray );
-	virtual HRESULT GetLightReference( SVLightReference& rLR );
+	virtual HRESULT GetLightReference( SVLightReference& rLR ) const;
 	virtual HRESULT SetLightReference( SVLightReference& rLR, int iBand = -1 );
 	virtual HRESULT ResetLightReference();
 
 	virtual HRESULT CreateLightReferenceBand( int iBand, int iAttributes );
-	virtual HRESULT GetMaxLightReferenceValue( unsigned long ulType, long &rlValue );
-	virtual HRESULT GetMinLightReferenceValue( unsigned long ulType, long &rlValue );
-	virtual HRESULT GetLightReferenceValueStep( unsigned long ulType, unsigned long &rulValue );
+	virtual HRESULT GetMaxLightReferenceValue( unsigned long ulType, long &rlValue ) const;
+	virtual HRESULT GetMinLightReferenceValue( unsigned long ulType, long &rlValue ) const;
+	virtual HRESULT GetLightReferenceValueStep( unsigned long ulType, unsigned long &rulValue ) const;
 
 	virtual HRESULT CreateLut( const SVLutInfo& info );
-	virtual HRESULT DestroyLut( );
-	virtual HRESULT ResetLut( );
+	virtual HRESULT DestroyLut();
+	virtual HRESULT ResetLut();
 	virtual HRESULT GetLut( SVLut& lut );
 	virtual HRESULT SetLut( const SVLut& lut, int iBand = -1 );
-	virtual HRESULT SetLut( const SVLutBand& lutband );
+	virtual HRESULT SetLut( const SVLutBand& lutBand );
 
-	virtual HRESULT GetImageInfo( SVImageInfoClass *pImageInfo );
+	virtual HRESULT GetImageInfo( SVImageInfoClass* pImageInfo ) const;
 
 	virtual SVImageObjectClassPtr GetCircleBuffer();
 	virtual long GetCircleBufferSize() const;
 
-	virtual CString GetRootDeviceName();
+	virtual CString GetRootDeviceName() const;
 
 	virtual HRESULT GetNextIndex( SVDataManagerHandle &rDMHandle ) const;
 	virtual HRESULT GetNextIndex( SVDataManagerHandle &rDMHandle, SVDataManagerLockTypeEnum p_LockType ) const;
 
-	inline CString DeviceName() {return mDeviceName.c_str();}
-	inline CString DigName() {return mcsDigName;}
-	inline int     Channel() {return miChannel;}
-	inline int     DigNumber() {return miDigNumber;}
-	inline int     BandSize() {return miBandSize;}
-	inline int     BandMaxSize() {return miBandMaxSize;}
+	inline CString DeviceName() const { return mDeviceName.c_str(); }
+	inline CString DigName() const { return mcsDigName; }
+	inline int Channel() const { return miChannel; }
+	inline int DigNumber() const { return miDigNumber; }
+	inline int BandSize() const { return miBandSize; }
+	inline int BandMaxSize() const { return miBandMaxSize; }
 
 	inline CString SetDigName(const CString& s) {return mcsDigName = s;}
 	inline int     SetChannel(int i) {return miChannel = i;}
@@ -110,7 +114,7 @@ public:
 	inline int     SetBandSize(int i) {return miBandSize = i;}
 	inline int     SetBandMaxSize(int i) {return miBandMaxSize = i;}
 
-	virtual bool IsValidBoard();
+	virtual bool IsValidBoard() const;
 
 	virtual HRESULT GetDeviceParameters( SVDeviceParamCollection& rDeviceParams );
 	virtual HRESULT SetDeviceParameters( const SVDeviceParamCollection& rDeviceParams );
@@ -126,7 +130,7 @@ public:
 	// called from SVImageBoardProcessingClass::DisconnectDevices
 	virtual void ClearDeviceIdentifier();
 
-	bool IsDigitizerSubsystemValid();
+	bool IsDigitizerSubsystemValid() const;
 
 
 	virtual HRESULT SingleGrab( SVSmartHandlePointer p_SingleGrabHandle );
@@ -159,7 +163,6 @@ public:
 protected:
 	static DWORD WINAPI SingleGrabHelperFn(LPVOID lpParameter);
 
-	//friend class SVDCamDriver;	// to access these protected functions
 	friend class SVMatroxDCamAcquisitionProxy;	// to access these protected functions
 	friend class SVIntekDCamAcquisitionProxy;	// to access these protected functions
 	friend class SVMatroxGigeCameraProxy;		// to access these protected functions
@@ -171,6 +174,7 @@ protected:
 	virtual HRESULT SetStandardCameraParameter( const SVDeviceParamWrapper& rwParam );	// for parameters that are settable through MIL (all standard DCAM params)
 
 	virtual bool IsOnline() const;
+	virtual bool IsBufferCreated() const { return mbIsBufferCreated; };
 
 	virtual HRESULT SetLightReferenceImpl( SVLightReference& rLR );
 	virtual SVDeviceParamCollection& HardwareCapabilities();
@@ -199,6 +203,7 @@ protected:
 	long mlStartFrameIndex;
 	long mlDMStartFrameIndex;
 
+	bool mbIsBufferCreated;
 	bool mbTempOnline;
 	SVSmartHandlePointer m_SingleGrabHandle;
 
@@ -220,6 +225,19 @@ typedef SVSharedPtr< SVAcquisitionClass > SVAcquisitionClassPtr;
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVAcquisitionClass.h_v  $
+ * 
+ *    Rev 1.3   07 Mar 2014 18:05:22   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  884
+ * SCR Title:  Update Source Code Files to Follow New Programming Standards and Guidelines
+ * Checked in by:  bWalter;  Ben Walter
+ * Change Description:  
+ *   Added regions.
+ * Made  methods const.
+ * Moved mbIsBufferCreated here from SVMatroxGigeAcquisitionClass.
+ * Added virtual method IsBufferCreated.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   01 Oct 2013 11:54:40   tbair
  * Project:  SVObserver
