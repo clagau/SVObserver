@@ -5,8 +5,8 @@
 //* .Module Name     : SVInspectionProcess
 //* .File Name       : $Workfile:   SVInspectionProcess.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.8  $
-//* .Check In Date   : $Date:   05 Feb 2014 09:35:18  $
+//* .Current Version : $Revision:   1.9  $
+//* .Check In Date   : $Date:   14 Mar 2014 09:12:28  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -63,8 +63,9 @@ HRESULT SVInspectionProcess::ProcessInspection( bool& p_rProcessed, SVProductInf
 
 	if( p_rProcessed )
 	{
+#ifdef EnableTracking
 		m_InspectionTracking.EventStart( _T( "Process Inspections" ) );
-
+#endif
 		SVInspectionInfoStruct*      pIPInfo     = NULL;
 
 		size_t l_InputXferCount = 0;
@@ -235,7 +236,9 @@ HRESULT SVInspectionProcess::ProcessInspection( bool& p_rProcessed, SVProductInf
 
 		m_bInspecting = false;
 
+#ifdef EnableTracking
 		m_InspectionTracking.EventEnd( _T( "Process Inspections" ) );
+#endif
 	}
 
 	return l_Status;
@@ -247,8 +250,9 @@ HRESULT SVInspectionProcess::ProcessNotifyWithLastInspected( bool& p_rProcessed 
 
 	if( 0 < m_NotifyWithLastInspected )
 	{
+#ifdef EnableTracking
 		m_InspectionTracking.EventStart( _T( "Process Notify With Last Inspected" ) );
-
+#endif
 		::InterlockedExchange( &m_NotifyWithLastInspected, 0 );
 
 		SVProductInfoStruct l_Product = LastProductGet( SV_LAST_INSPECTED );
@@ -258,7 +262,9 @@ HRESULT SVInspectionProcess::ProcessNotifyWithLastInspected( bool& p_rProcessed 
 
 		p_rProcessed = true;
 
+#ifdef EnableTracking
 		m_InspectionTracking.EventEnd( _T( "Process Notify With Last Inspected" ) );
+#endif
 	}
 
 	return l_Status;
@@ -270,7 +276,9 @@ HRESULT SVInspectionProcess::ProcessConditionalHistory( bool& p_rProcessed )
 
 	if( !( m_qTransactions.IsEmpty() ) )
 	{
+#ifdef EnableTracking
 		m_InspectionTracking.EventStart( _T( "Process Notify With Last Inspected" ) );
+#endif
 
 		// check the transaction queue
 		SVInspectionTransactionStruct message;
@@ -282,7 +290,9 @@ HRESULT SVInspectionProcess::ProcessConditionalHistory( bool& p_rProcessed )
 
 		p_rProcessed = true;
 
+#ifdef EnableTracking
 		m_InspectionTracking.EventEnd( _T( "Process Notify With Last Inspected" ) );
+#endif
 	}
 
 	return l_Status;
@@ -294,8 +304,9 @@ HRESULT SVInspectionProcess::ProcessCommandQueue( bool& p_rProcessed )
 
 	if( !( m_CommandQueue.IsEmpty() ) )
 	{
+#ifdef EnableTracking
 		m_InspectionTracking.EventStart( _T( "Process Command Queue" ) );
-
+#endif
 		SVCommandTemplatePtr l_CommandPtr;
 
 		if ( m_CommandQueue.RemoveHead( &l_CommandPtr ) )
@@ -308,7 +319,9 @@ HRESULT SVInspectionProcess::ProcessCommandQueue( bool& p_rProcessed )
 
 		p_rProcessed = true;
 
+#ifdef EnableTracking
 		m_InspectionTracking.EventEnd( _T( "Process Command Queue" ) );
+#endif
 	}
 
 	return l_Status;
@@ -560,9 +573,9 @@ void CALLBACK SVInspectionProcess::APCThreadProcess( DWORD_PTR dwParam )
 void SVInspectionProcess::ThreadProcess( bool& p_WaitForEvents )
 {
 	bool l_Processed = false;
-
+#ifdef EnableTracking
 	m_InspectionTracking.SetStartTime();
-
+#endif
 	SVProductInfoStruct l_Product;
 
 	ProcessInspection( l_Processed, l_Product );
@@ -739,7 +752,9 @@ BOOL SVInspectionProcess::CanRegressionGoOnline()
 
 BOOL SVInspectionProcess::GoOnline()
 {
+#ifdef EnableTracking
 	m_InspectionTracking.clear();
+#endif
 
 	LastProductUpdate( NULL );
 
@@ -753,6 +768,7 @@ BOOL SVInspectionProcess::GoOnline()
 
 BOOL SVInspectionProcess::GoOffline()
 {
+#ifdef EnableTracking
 	if( TheSVObserverApp.UpdateAndGetLogDataManager() )
 	{
 		SVString l_FileName;
@@ -835,6 +851,7 @@ BOOL SVInspectionProcess::GoOffline()
 			l_TrackingStream.close();
 		}
 	}
+#endif
 
 	SVObjectManagerClass::Instance().AdjustInspectionIndicator( -( m_qInspectionsQueue.GetCount() ) );
 
@@ -4349,6 +4366,7 @@ HRESULT SVInspectionProcess::GetInspectionImage( const CString& p_strName, SVIma
 	return E_FAIL;
 }
 
+#ifdef EnableTracking
 SVInspectionProcess::SVInspectionTrackingElement::SVInspectionTrackingElement()
 : m_StartTime( 0 ), m_Start(), m_End(), m_Duration()
 {
@@ -4429,6 +4447,7 @@ void SVInspectionProcess::SVInspectionTracking::EventEnd( const SVString& p_rNam
 	++( m_EventCounts[ p_rName ].m_End[ l_EventTime ] );
 	++( m_EventCounts[ p_rName ].m_Duration[ l_Duration ] );
 }
+#endif
 
 void SVInspectionProcess::Persist(SVObjectWriter& rWriter)
 {
@@ -4460,6 +4479,16 @@ void SVInspectionProcess::Persist(SVObjectWriter& rWriter)
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVInspectionProcess.cpp_v  $
+ * 
+ *    Rev 1.9   14 Mar 2014 09:12:28   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  891
+ * SCR Title:  Remove tracking elements that hinder performance in release mode
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Added #ifdef EnableTracking around tracking code so it can be enabled for testing but not in the normal build.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.8   05 Feb 2014 09:35:18   tbair
  * Project:  SVObserver

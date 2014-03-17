@@ -5,8 +5,8 @@
 //* .Module Name     : SVPPQObject
 //* .File Name       : $Workfile:   SVPPQObject.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.14  $
-//* .Check In Date   : $Date:   07 Mar 2014 18:22:58  $
+//* .Current Version : $Revision:   1.15  $
+//* .Check In Date   : $Date:   14 Mar 2014 09:12:30  $
 //******************************************************************************
 
 #pragma region Includes
@@ -1297,11 +1297,11 @@ HRESULT SVPPQObject::GoOnline()
 	{
 		return SV_GO_ONLINE_FAILURE_ALREADY_ONLINE;
 	}
-
+#ifdef EnableTracking
 	m_PPQTracking.clear();
 	m_PPQTracking.m_QueueLength = m_ppPPQPositions.size();
 	m_PPQTracking.m_TimeLength = m_lOutputDelay + 50;
-
+#endif
 	RebuildOutputList();
 
 	// First, make sure the trigger toggle output is set to the right default
@@ -1499,6 +1499,7 @@ BOOL SVPPQObject::GoOffline()
 
 	if( !m_bOnline ) { return FALSE; }
 
+#ifdef EnableTracking
 	if( TheSVObserverApp.UpdateAndGetLogDataManager() )
 	{
 		SVString l_FileName;
@@ -1617,6 +1618,7 @@ BOOL SVPPQObject::GoOffline()
 			l_TrackingStream.close();
 		}
 	}
+#endif EnableTracking
 
 	m_pTrigger->GoOffline();
 
@@ -2273,7 +2275,11 @@ BOOL SVPPQObject::WriteOutputs( SVProductInfoStruct *pProduct )
 			m_voACK.SetValue( lDataIndex, FALSE );
 		}
 
-		m_PPQTracking.IncrementCount( _T( "Product Missing" ) );
+		// Caution! enabling the logging here will cause thread contention because
+		// the tracking class is not lock-less. It needs more work before we can use it here.
+#ifdef EnableTracking
+		//m_PPQTracking.IncrementCount( _T( "Product Missing" ) );
+#endif
 	}
 
 	if( 0 <= lDataIndex )
@@ -2303,7 +2309,11 @@ BOOL SVPPQObject::WriteOutputs( SVProductInfoStruct *pProduct )
 		}
 		pProduct->oTriggerInfo.m_PushedOutputs = SVClock::GetTimeStamp();
 		long l_lTime = static_cast<long>(pProduct->oTriggerInfo.m_PushedOutputs - pProduct->oTriggerInfo.m_ToggleTimeStamp);
-		m_PPQTracking.IncrementTimeCount( _T( "Output Toggle"), l_lTime );
+		// Caution! enabling the logging here will cause thread contention because
+		// the tracking class is not lock-less. It needs more work before we can use it here.
+#ifdef EnableTracking
+		//m_PPQTracking.IncrementTimeCount( _T( "Output Toggle"), l_lTime );
+#endif
 	}
 	else
 	{
@@ -2322,8 +2332,11 @@ BOOL SVPPQObject::WriteOutputs( SVProductInfoStruct *pProduct )
 
 	if( l_NAK )
 	{
-		m_PPQTracking.IncrementCount( _T( "Product NAK" ) );
-
+		// Caution! enabling the logging here will cause thread contention because
+		// the tracking class is not lock-less. It needs more work before we can use it here.
+#ifdef EnableTracking
+		//m_PPQTracking.IncrementCount( _T( "Product NAK" ) );
+#endif
 		::InterlockedIncrement( &m_NAKCount );
 	}
 
@@ -2789,8 +2802,9 @@ HRESULT SVPPQObject::NotifyInspections( long p_Offset )
 						SVString l_Title = m_arInspections[ i ]->GetName();
 
 						l_Title += _T( " CP" );
-
+#ifdef EnableTracking
 						m_PPQTracking.IncrementCount( l_Title, p_Offset );
+#endif
 					}
 				}
 			}
@@ -2870,8 +2884,9 @@ HRESULT SVPPQObject::StartInspection( const SVGUID& p_rInspectionID )
 		SVString l_Title = l_pProduct->m_svInspectionInfos[ p_rInspectionID ].pInspection->GetName();
 
 		l_Title += _T( " Start" );
-
+#ifdef EnableTracking
 		m_PPQTracking.IncrementCount( l_Title, l_ProductIndex );
+#endif
 
 		#ifdef _DEBUG
 			if( TheSVObserverApp.GetLogDataManager() )
@@ -3139,7 +3154,9 @@ bool SVPPQObject::SetProductComplete( long p_PPQIndex )
 	{
 		l_Status = SetProductComplete( *pProduct );
 
+#ifdef EnableTracking
 		m_PPQTracking.IncrementCount( _T( "Product Complete" ), p_PPQIndex );
+#endif
 	}
 
 	return l_Status;
@@ -3193,7 +3210,9 @@ bool SVPPQObject::SetProductIncomplete( long p_PPQIndex )
 	{
 		l_Status = SetProductIncomplete( *pProduct );
 
+#ifdef EnableTracking
 		m_PPQTracking.IncrementCount( _T( "Product Incomplete" ), p_PPQIndex );
+#endif
 	}
 
 	return l_Status;
@@ -3294,7 +3313,9 @@ HRESULT SVPPQObject::ProcessCameraResponse( const SVCameraQueueElement& p_rEleme
 
 				l_Title += p_rElement.m_pCamera->GetName();
 
+#ifdef EnableTracking
 				m_PPQTracking.IncrementCount( l_Title );
+#endif
 			}
 			else
 			{
@@ -3336,16 +3357,20 @@ HRESULT SVPPQObject::ProcessCameraResponse( const SVCameraQueueElement& p_rEleme
 					{
 						l_pProduct->m_ProductState += _T( "=NAK" );
 
+#ifdef EnableTracking
 						SVString l_Title = p_rElement.m_pCamera->GetName();
 
 						l_Title += _T( " Index NAK" );
 
 						m_PPQTracking.IncrementCount( l_Title );
 						m_PPQTracking.IncrementCount( l_Title, l_ProductIndex );
+#endif
 					}
 					else
 					{
+#ifdef EnableTracking
 						m_PPQTracking.IncrementCount( p_rElement.m_pCamera->GetName(), l_ProductIndex );
+#endif
 					}
 
 					for( size_t i = ( l_ProductIndex + 1 ); i < m_ppPPQPositions.size(); ++i )
@@ -3364,13 +3389,14 @@ HRESULT SVPPQObject::ProcessCameraResponse( const SVCameraQueueElement& p_rEleme
 								}
 								l_Iter->second.m_CallbackTimeStamp = SVClock::GetTimeStamp();
 							}
-
+#ifdef EnableTracking
 							SVString l_Title = p_rElement.m_pCamera->GetName();
 
 							l_Title += _T( " NAK" );
 
 							m_PPQTracking.IncrementCount( l_Title );
 							m_PPQTracking.IncrementCount( l_Title, l_ProductIndex );
+#endif
 
 							MarkProductInspectionsMissingAcquisiton( *l_pAcqProduct, p_rElement.m_pCamera );
 						}
@@ -3476,8 +3502,12 @@ BOOL SVPPQObject::FinishTrigger( void *pCaller, SVTriggerInfoStruct& p_rTriggerI
 		l_TriggerInfo.m_TriggerInfo.m_ToggleState = m_TriggerToggle;
 		l_TriggerInfo.m_TriggerInfo.m_ToggleTimeStamp = SVClock::GetTimeStamp();
 
-		long l_lTime = static_cast<long>( l_TriggerInfo.m_TriggerInfo.m_ToggleTimeStamp - l_TriggerInfo.m_TriggerInfo.m_BeginProcess );
-		m_PPQTracking.IncrementTimeCount( _T( "Trigger Toggle"), l_lTime );
+		// Caution! enabling the logging here will cause thread contention because
+		// the tracking class is not lock-less. It needs more work before we can use it here.
+#ifdef EnableTracking
+		//long l_lTime = static_cast<long>( l_TriggerInfo.m_TriggerInfo.m_ToggleTimeStamp - l_TriggerInfo.m_TriggerInfo.m_BeginProcess );
+		//m_PPQTracking.IncrementTimeCount( _T( "Trigger Toggle"), l_lTime );
+#endif
 
 		m_oTriggerQueue.PushTail( l_TriggerInfo );
 
@@ -4214,7 +4244,9 @@ HRESULT SVPPQObject::ProcessCompleteInspections( bool& p_rProcessed )
 
 					l_Title += _T( " Complete" );
 
+#ifdef EnableTracking
 					m_PPQTracking.IncrementCount( l_Title, l_PPQIndex );
+#endif
 
 					// Inspection Process is done, let everyone know.
 					if( ! SetInspectionComplete( l_PPQIndex ) )
@@ -4534,6 +4566,7 @@ SVPPQObject::SVCameraInfoElement::~SVCameraInfoElement()
 }
 #pragma endregion SVCameraInfoElement Constructor
 
+#ifdef EnableTracking
 #pragma region SVPPQTrackingElement Constructor
 SVPPQObject::SVPPQTrackingElement::SVPPQTrackingElement()
 : m_TrackedCounts()
@@ -4629,12 +4662,23 @@ void SVPPQObject::SVPPQTracking::IncrementTimeCount( const SVString& p_rName, si
 {
 	m_QueueWriteTimeCounts[ p_rName ].IncrementCount( p_Index, m_TimeLength );
 }
+#endif //EnableTracking
 
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVPPQObject.cpp_v  $
+ * 
+ *    Rev 1.15   14 Mar 2014 09:12:30   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  891
+ * SCR Title:  Remove tracking elements that hinder performance in release mode
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Added #ifdef EnableTracking around tracking code so it can be enabled for testing but not in the normal build.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.14   07 Mar 2014 18:22:58   bwalter
  * Project:  SVObserver

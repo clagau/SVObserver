@@ -5,8 +5,8 @@
 //* .Module Name     : SVPPQObject
 //* .File Name       : $Workfile:   SVPPQObject.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.9  $
-//* .Check In Date   : $Date:   07 Mar 2014 18:23:32  $
+//* .Current Version : $Revision:   1.10  $
+//* .Check In Date   : $Date:   14 Mar 2014 09:12:28  $
 //******************************************************************************
 
 #ifndef SVPPQOBJECT_H
@@ -349,6 +349,7 @@ private:
 	SVString m_conditionalOutputName; // persist this
 	SVGUID m_conditionalOutputValueID; // do not persist this
 
+#ifdef EnableTracking
 	struct SVPPQTrackingElement
 	{
 		typedef std::vector< long > SVCountVector;
@@ -390,6 +391,9 @@ private:
 		SVQueueTrackingMap m_QueueWriteTimeCounts;
 	};
 
+	SVPPQTracking m_PPQTracking;
+#endif // EnableTracking
+
 	SVPPQOutputModeEnum m_oOutputMode;
 	long				m_lPPQLength;
 	long				m_lOutputDelay;
@@ -401,7 +405,6 @@ private:
 		
 	UINT				m_uOutputTimer;
 
-	SVPPQTracking m_PPQTracking;
 
 	long m_NAKCount;
 };
@@ -415,6 +418,16 @@ typedef SVVector< SVPPQObject* > SVPPQObjectArray;
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVPPQObject.h_v  $
+ * 
+ *    Rev 1.10   14 Mar 2014 09:12:28   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  891
+ * SCR Title:  Remove tracking elements that hinder performance in release mode
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Added #ifdef EnableTracking around tracking code so it can be enabled for testing but not in the normal build.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.9   07 Mar 2014 18:23:32   bwalter
  * Project:  SVObserver

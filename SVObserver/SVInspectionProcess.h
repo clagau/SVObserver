@@ -5,8 +5,8 @@
 //* .Module Name     : SVInspectionProcess
 //* .File Name       : $Workfile:   SVInspectionProcess.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.4  $
-//* .Check In Date   : $Date:   01 Feb 2014 10:48:56  $
+//* .Current Version : $Revision:   1.5  $
+//* .Check In Date   : $Date:   14 Mar 2014 09:12:30  $
 //******************************************************************************
 
 #ifndef INC_SVINSPECTIONPROCESS_INCLUDED
@@ -225,6 +225,7 @@ public:
 	CStringArray m_arViewedInputNames;
 
 protected:
+#ifdef EnableTracking
 	struct SVInspectionTrackingElement
 	{
 		typedef std::map< unsigned __int64, long > SVTimeCountMap;
@@ -265,6 +266,7 @@ protected:
 		SVEventTrackingMap m_EventCounts;
 
 	};
+#endif //EnableTracking
 
 	typedef void ( CALLBACK * SVAPCSignalHandler )( DWORD_PTR );
 	typedef boost::function<void ( bool& )> SVThreadProcessHandler;
@@ -378,7 +380,9 @@ protected:
 	CString m_ToolSetCameraName;
 	CString m_DeviceName;
 
+#ifdef EnableTracking
 	SVInspectionTracking m_InspectionTracking;
+#endif
 
 private:
 	void Init();
@@ -532,6 +536,16 @@ inline HRESULT SVInspectionProcess::SetObjectArrayValues(SVValueObjectReference 
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVInspectionProcess.h_v  $
+ * 
+ *    Rev 1.5   14 Mar 2014 09:12:30   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  891
+ * SCR Title:  Remove tracking elements that hinder performance in release mode
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Added #ifdef EnableTracking around tracking code so it can be enabled for testing but not in the normal build.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.4   01 Feb 2014 10:48:56   tbair
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : SVFileNameClass
 //* .File Name       : $Workfile:   SVFileNameClass.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   04 Feb 2014 13:30:58  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   14 Mar 2014 11:06:28  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -375,6 +375,7 @@ BOOL SVFileNameClass::SetFileName(LPCTSTR szFileName)
 BOOL SVFileNameClass::SetFileNameOnly(LPCTSTR szFileName)
 {
 	mcsFileNameOnly = szFileName;
+	mcsFileNameOnly.TrimRight();
 
 	return TRUE;
 }
@@ -682,6 +683,16 @@ void SVFileNameClass::Init()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVFileNameClass.cpp_v  $
+ * 
+ *    Rev 1.2   14 Mar 2014 11:06:28   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  856
+ * SCR Title:  Fix Bug with Saving config with space at the end of the name
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Removed white space at the end of the filename in the SetFileNameOnly function.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   04 Feb 2014 13:30:58   bwalter
  * Project:  SVObserver
