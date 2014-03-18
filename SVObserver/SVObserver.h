@@ -5,8 +5,8 @@
 //* .Module Name     : SVObserver
 //* .File Name       : $Workfile:   SVObserver.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.11  $
-//* .Check In Date   : $Date:   07 Mar 2014 18:21:38  $
+//* .Current Version : $Revision:   1.12  $
+//* .Check In Date   : $Date:   17 Mar 2014 15:27:18  $
 //******************************************************************************
 
 #ifndef SVOBSERVER_H
@@ -90,6 +90,11 @@ LPCTSTR const SVTOOLPARAMETERLIST_MARKER = (_T( "** SVSetToolParameterList MARKE
 LPCTSTR const SVEXCLUDECHARS_CONFIG_NAME =     (_T("\\/:*\"<>|;&$@`[]{}()^~!#%"));
 LPCTSTR const SVEXCLUDECHARS_TOOL_NAME =       (_T("\\/:*\";,.+-$@'[]{}()<>|!%&~^\327\367"));
 LPCTSTR const SVEXCLUDECHARS_INSPECTION_NAME = (_T("\\/:*\";,.+-$@'[]{}()<>|"));
+
+//Environment variables
+const char			EnvironmentModelNumber[]	= _T("ModelNumber");
+const char			EnvironmentSerialNumber[]	= _T("SerialNumber");
+const char			EnvironmentWinKey[]			= _T("Windows.WinKey");
 
 typedef SVXMLMaterialsTree SVTreeType;
 #pragma endregion Declarations
@@ -266,11 +271,12 @@ public:
 
 	CString GetConfigurationName() const;
 
+	CString getModelNumber() const;
+	CString getSerialNumber() const;
+	CString getWinKey() const;
+
 	HRESULT LoadPackedConfiguration( const CString& p_rPackedFileName );
 	HRESULT SavePackedConfiguration( const CString& p_rPackedFileName );
-
-	HRESULT GetWindowsItems( const SVNameSet& p_rNames, SVNameStorageResultMap& p_rItems ) const;
-	HRESULT GetEnvironmentItems( const SVNameSet& p_rNames, SVNameStorageResultMap& p_rItems ) const;
 
 	SVMainFrame* GetMainFrame() const;
 	HRESULT CanCloseMainFrame();
@@ -558,9 +564,6 @@ private:
 
 	mutable SVFileNameClass m_ConfigFileName;	// JMS - Added for File Management
 
-	CString m_WinKey;
-	CString m_ModelNumber;
-	CString m_SerialNumber;
 	CString m_csProductName;
 
 	CString m_csProcessor;
@@ -618,6 +621,16 @@ extern SVObserverApp TheSVObserverApp;
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVObserver.h_v  $
+ * 
+ *    Rev 1.12   17 Mar 2014 15:27:18   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  869
+ * SCR Title:  Add PPQ and Environment Variables to Object Manager and Update Pickers
+ * Checked in by:  bWalter;  Ben Walter
+ * Change Description:  
+ *   Added Environment strings and accessor functions.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.11   07 Mar 2014 18:21:38   bwalter
  * Project:  SVObserver

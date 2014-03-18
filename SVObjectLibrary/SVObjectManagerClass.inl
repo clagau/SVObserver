@@ -5,8 +5,8 @@
 //* .Module Name     : SVObjectManagerClass
 //* .File Name       : $Workfile:   SVObjectManagerClass.inl  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   22 Apr 2013 16:57:52  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   17 Mar 2014 14:18:34  $
 //******************************************************************************
 
 #ifndef SVOBJECTMANAGERCLASS_INL
@@ -68,15 +68,15 @@ HRESULT SVObjectManagerClass::GetObjectByDottedName( const SVString& p_rFullName
 }
 
 template< typename SVObjectTypeName >
-HRESULT SVObjectManagerClass::GetConfigurationObject( SVObjectTypeName*& p_rpObject )
+HRESULT SVObjectManagerClass::GetRootChildObject( SVObjectTypeName*& rpObject, RootChildObjectEnum RootChild )
 {
 	HRESULT l_Status = S_OK;
 
-	SVObjectClass* l_pObject = GetObject( m_ConfigurationID );
+	SVObjectClass* l_pObject = GetObject( m_RootEnumChildren[RootChild] );
 
 	if( l_pObject != NULL )
 	{
-		p_rpObject = dynamic_cast< SVObjectTypeName* >( l_pObject );
+		rpObject = dynamic_cast< SVObjectTypeName* >( l_pObject );
 	}
 	else
 	{
@@ -84,6 +84,12 @@ HRESULT SVObjectManagerClass::GetConfigurationObject( SVObjectTypeName*& p_rpObj
 	}
 
 	return l_Status;
+}
+
+template< typename SVObjectTypeName >
+HRESULT SVObjectManagerClass::GetConfigurationObject( SVObjectTypeName*& rpObject )
+{
+	return GetRootChildObject(rpObject, Configuration);
 }
 
 template< typename SVNotifyData >
@@ -122,7 +128,8 @@ HRESULT SVObjectManagerClass::VisitElements( ObjectVisitor& p_rVisitor, const SV
 	GUID l_StartingObjectID = p_rStartingObjectID;
 	if (l_StartingObjectID == GUID_NULL)
 	{
-		l_StartingObjectID = GetConfigurationObjectID();
+		//Set to configuration as this used to be the start.
+		l_StartingObjectID = GetChildRootObjectID(Configuration);
 	}
 	SVObjectClass* l_pObject = GetObject( l_StartingObjectID );
 
@@ -291,7 +298,22 @@ HRESULT SVObjectManagerClass::UpdateObservers( const SVString& p_rSubjectDataNam
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObjectLibrary\SVObjectManagerClass.inl_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObjectLibrary\SVObjectManagerClass.inl_v  $
+ * 
+ *    Rev 1.1   17 Mar 2014 14:18:34   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  869
+ * SCR Title:  Add PPQ and Environment Variables to Object Manager and Update Pickers
+ * Checked in by:  bWalter;  Ben Walter
+ * Change Description:  
+ *   Changed that a root object is created as the top object instead of a configuration object
+ * Interface to insert Root child objects into ObjectManager (eg. Configuration and Environment objects)
+ * Access to these objects via GUIDS and name.
+ * Translation function to map Fully Qualified Names to their internal names
+ * Method to access Configuration object
+ * Changed parameter names to follow guidelines.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   22 Apr 2013 16:57:52   bWalter
  * Project:  SVObserver

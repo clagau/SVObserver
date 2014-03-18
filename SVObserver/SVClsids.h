@@ -5,8 +5,8 @@
 //* .Module Name     : SVClsids
 //* .File Name       : $Workfile:   SVClsids.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   27 Jan 2014 15:33:58  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   17 Mar 2014 15:17:22  $
 //******************************************************************************
 
 #ifndef SVCLSIDS_H
@@ -86,6 +86,12 @@ extern /*const*/ GUID SVInspectionProcessGuid;
 
 // GUID for the SVConfigurationObject
 extern /*const*/ GUID SVConfigurationObjectGuid;
+
+// GUID for the RootObject
+extern /*const*/ GUID RootObjectGuid;
+
+// GUID for the EnvironmentObjectGuid
+extern /*const*/ GUID EnvironmentObjectGuid;
 
 // GUID for the SVIOController
 extern /*const*/ GUID SVIOControllerGuid;
@@ -238,7 +244,6 @@ extern /*const*/ GUID SVBlobCenterOfBoundingBoxYGuid;
 extern /*const*/ GUID SVBlobUseFillGuid;
 extern /*const*/ GUID SVBlobFillColorGuid;
 extern /*const*/ GUID SVBlobFillTypeGuid;
-
 
 // GUIDs for the Embedded Objects in the SVStatisticsToolClass
 extern /*const*/ GUID SVStatMinObjectGuid;
@@ -554,7 +559,6 @@ extern /*const*/ GUID SVArchiveHeaderObjectGUID;
 extern /*const*/ GUID SVArchiveResultNamesObjectGuid;
 extern /*const*/ GUID SVArchiveImageNamesObjectGuid;
 
-
 // GUID for the SVEquationClass
 extern /*const*/ GUID SVEquationClassGuid;
 
@@ -817,7 +821,6 @@ extern /*const*/ GUID SVShapeMaskPropertyTopBottomThicknessGuid;
 extern /*const*/ GUID SVShapeMaskPropertyOffsetGuid;
 extern /*const*/ GUID SVShapeMaskPropertySymmetryOrientationGuid;
 extern /*const*/ GUID SVShapeMaskAutoResizeGuid;
-
 
 // GUID for the SVLoadImageToolClass
 extern /*const*/ GUID SVLoadImageToolClassGuid;
@@ -1142,7 +1145,6 @@ extern /*const*/ GUID SVAngularProfileToolClassGuid;
 // GUIDs for Linear   Tool 
 extern /*const*/ GUID SVLinearToolClassGuid;
 
-
 // GUIDs for the Embeddeds of the SVOCRAnalyzeResultClass
 extern /*const*/ GUID SVOCRMatchLineNumberGuid;
 
@@ -1183,7 +1185,6 @@ extern /*const*/ GUID SVEdgeAPositionOffsetGuid;
 extern /*const*/ GUID SVEdgeALowerThresholdValueGuid;
 extern /*const*/ GUID SVEdgeAUpperThresholdValueGuid;
 
-
 // GUIDs for the Embeddeds of the SVOCRGrayParamStruct
 extern /*const*/ GUID SVEdgeBDirectionGuid;
 extern /*const*/ GUID SVEdgeBPolarisationGuid;
@@ -1198,7 +1199,6 @@ extern /*const*/ GUID SVDrawCriteriaObjectGuid;
 extern /*const*/ GUID SVResetInspectionCountsGuid;
 extern /*const*/ GUID SVTriggerCountGuid;
 
-
 extern /*const*/ GUID aSVVariantInputObjectGuid[];
 extern /*const*/ GUID aSVVariantInputObjectNameGuid[];
 extern /*const*/ GUID aSVVariantResultImageObjectGuid[];
@@ -1208,7 +1208,6 @@ extern /*const*/ GUID aSVDllDependencyFileNameGuid[];
 extern /*const*/ GUID SVDllFileNameGuid;
 extern /*const*/ GUID SVDllToolNameGuid;
 extern /*const*/ GUID SVDllToolVersionGuid;
-
 
 extern /*const*/ GUID SVLinearDataClassGuid;
 extern /*const*/ GUID SVLinearAnalyzerClassGuid;
@@ -1241,6 +1240,7 @@ extern /*const*/ GUID SVToolCommentTypeObjectGuid;
 extern /*const*/ GUID SVCameraTriggerTimestampGuid;
 extern /*const*/ GUID SVCameraTriggerLineInStateGuid;
 extern /*const*/ GUID SVStringHeaderGuid;
+
 ////////////////////////////////////////////////////////////////////////////////
 // Insert new GUIDs immediately before the previous line.
 ////////////////////////////////////////////////////////////////////////////////
@@ -1252,6 +1252,16 @@ extern /*const*/ GUID SVStringHeaderGuid;
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVClsids.h_v  $
+ * 
+ *    Rev 1.3   17 Mar 2014 15:17:22   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  869
+ * SCR Title:  Add PPQ and Environment Variables to Object Manager and Update Pickers
+ * Checked in by:  bWalter;  Ben Walter
+ * Change Description:  
+ *   Added Root and Environment objects GUID for the Object Manager.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   27 Jan 2014 15:33:58   bwalter
  * Project:  SVObserver

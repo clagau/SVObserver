@@ -432,6 +432,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="GlobalConst.h" />
     <ClInclude Include="StdAfx.h" />
     <ClInclude Include="SVAnalyzerLevelCreateStruct.h" />
     <ClInclude Include="SVClassRegisterClass.h" />

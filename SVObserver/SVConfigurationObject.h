@@ -5,8 +5,8 @@
 //* .Module Name     : SVConfigurationObject
 //* .File Name       : $Workfile:   SVConfigurationObject.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.6  $
-//* .Check In Date   : $Date:   07 Mar 2014 18:11:08  $
+//* .Current Version : $Revision:   1.7  $
+//* .Check In Date   : $Date:   17 Mar 2014 15:20:50  $
 //******************************************************************************
 
 #ifndef INC_SVCONFIGURATIONOBJECT_INCLUDED
@@ -79,6 +79,7 @@ public:
 
 	HRESULT SetInspectionItems( const SVNameStorageMap& p_rItems, SVNameStatusMap& p_rStatus );
 	HRESULT SetRemoteInputItems( const SVNameStorageMap& p_rItems, SVNameStatusMap& p_rStatus );
+	HRESULT SetCameraItems( const SVNameStorageMap& p_rItems, SVNameStatusMap& p_rStatus );
 
 	BOOL Create();
 	BOOL Destroy();
@@ -257,6 +258,16 @@ private:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVConfigurationObject.h_v  $
+ * 
+ *    Rev 1.7   17 Mar 2014 15:20:50   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  869
+ * SCR Title:  Add PPQ and Environment Variables to Object Manager and Update Pickers
+ * Checked in by:  bWalter;  Ben Walter
+ * Change Description:  
+ *   Added method SetCameraItems.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.6   07 Mar 2014 18:11:08   bwalter
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : SVDigitizerProcessingClass
 //* .File Name       : $Workfile:   SVDigitizerProcessingClass.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.3  $
-//* .Check In Date   : $Date:   07 Mar 2014 18:14:10  $
+//* .Current Version : $Revision:   1.4  $
+//* .Check In Date   : $Date:   17 Mar 2014 15:21:16  $
 //******************************************************************************
 
 #pragma region Includes
@@ -26,6 +26,8 @@
 #include "SVGigeCameraStruct.h"
 #include "SVGigeCameraManager.h"
 #include "SVObserver.h"
+#include "SVObjectLibrary/SVObjectManagerClass.h"
+#include "SVConfigurationObject.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -629,12 +631,18 @@ HRESULT SVDigitizerProcessingClass::UpdateIntekDevices()
 
 				pAcquisitionDevice->m_hDigitizer = Camera.m_ulHandle;
 
-				pAcquisitionDevice->GetDeviceParameters( DeviceParams );
-
 				DeviceParams.SetParameter( DeviceParamSerialNumber, SVi64ValueDeviceParam( Camera.m_ui64SerialNumber ) );
 				DeviceParams.SetParameter( DeviceParamSerialNumberString, SVStringValueDeviceParam( Camera.strSerialNum ) );
 
 				pAcquisitionDevice->SetDeviceParameters( DeviceParams );
+
+				//Modify the configuration copy
+				SVConfigurationObject* pConfig = nullptr;
+				SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
+				if( nullptr != pConfig )
+				{
+					pConfig->ModifyAcquisitionDevice( pAcquisitionDevice->GetRootDeviceName(), &DeviceParams );
+				}
 			}
 		}
 	}
@@ -648,11 +656,11 @@ HRESULT SVDigitizerProcessingClass::UpdateMatroxDevices()
 
 	SVGigeCameraStructSet Cameras;
 
-	CString deviceName = _T("Matrox_GIGE.Dig_0"); // just use the first one
+	SVString deviceName = _T("Matrox_GIGE.Dig_0"); // just use the first one
 
-	if( IsValidDigitizerSubsystem( deviceName ) )
+	if( IsValidDigitizerSubsystem( deviceName.ToString() ) )
 	{
-		SVDigitizerLoadLibraryClass* pLibrary = GetDigitizerSubsystem( deviceName );
+		SVDigitizerLoadLibraryClass* pLibrary = GetDigitizerSubsystem( deviceName.ToString() );
 
 		unsigned long Count = 0;
 
@@ -708,19 +716,17 @@ HRESULT SVDigitizerProcessingClass::UpdateMatroxDevices()
 
 		if( Camera.m_ulHandle != NULL )
 		{
-			CString DigitizerName;
+			SVString DigitizerName;
 
 			DigitizerName.Format( _T("Matrox_GIGE.Dig_%d"), j );
 
-			SVAcquisitionClassPtr pAcquisitionDevice = GetDigitizer( DigitizerName );
+			SVAcquisitionClassPtr pAcquisitionDevice = GetDigitizer( DigitizerName.ToString() );
 
 			if( !( pAcquisitionDevice.empty() ) )
 			{
 				SVDeviceParamCollection DeviceParams;
 
 				pAcquisitionDevice->m_hDigitizer = Camera.m_ulHandle;
-
-				pAcquisitionDevice->GetDeviceParameters( DeviceParams );
 
 				DeviceParams.SetParameter( DeviceParamSerialNumberString, SVStringValueDeviceParam( Camera.strSerialNum ) );
 				DeviceParams.SetParameter( DeviceParamIPAddress, SVStringValueDeviceParam( Camera.strIPAddress ) );
@@ -732,6 +738,14 @@ HRESULT SVDigitizerProcessingClass::UpdateMatroxDevices()
 				}
 
 				pAcquisitionDevice->SetDeviceParameters( DeviceParams );
+
+				//Modify the configuration copy
+				SVConfigurationObject* pConfig = nullptr;
+				SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
+				if( nullptr != pConfig )
+				{
+					pConfig->ModifyAcquisitionDevice( pAcquisitionDevice->GetRootDeviceName(), &DeviceParams );
+				}
 			}
 		}
 	}
@@ -744,6 +758,17 @@ HRESULT SVDigitizerProcessingClass::UpdateMatroxDevices()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVDigitizerProcessingClass.cpp_v  $
+ * 
+ *    Rev 1.4   17 Mar 2014 15:21:16   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  869
+ * SCR Title:  Add PPQ and Environment Variables to Object Manager and Update Pickers
+ * Checked in by:  bWalter;  Ben Walter
+ * Change Description:  
+ *   Made UpdateIntekDevices and UpdateMatroxDevices public and calling them from their respective Acquisition classes when LoadFile is called instead of in ConnectDevices
+ * (this is due to the Device parameters being deleted when configuration loaded)
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   07 Mar 2014 18:14:10   bwalter
  * Project:  SVObserver

@@ -5,22 +5,23 @@
 //* .Module Name     : SVClsids
 //* .File Name       : $Workfile:   SVClsids.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   27 Jan 2014 15:33:58  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   17 Mar 2014 15:15:14  $
 //******************************************************************************
-#include "stdafx.h"
 
+#pragma region Includes
+#include "stdafx.h"
+#pragma endregion Includes
+
+#pragma region Declarations
 #ifdef _DEBUG
 #define new DEBUG_NEW
-#undef THIS_FILE
-static char THIS_FILE[] = __FILE__;
 #endif
-
+#pragma endregion Declarations
 
 ////////////////////////////////////////////////////////////////////////////////
 // NOTE: Add new GUIDs at the bottom.
 ////////////////////////////////////////////////////////////////////////////////
-
 
 // GUID for the SVValueObjectClass
 /*const*/ GUID SVValueObjectClassGuid				= { 0x62fb5910, 0x6528, 0x11d1, { 0x96, 0x11, 0x0, 0x0, 0xf8, 0x2e, 0xd, 0xd } };
@@ -90,6 +91,12 @@ static char THIS_FILE[] = __FILE__;
 
 // GUID for the SVInspectionProcessGuid
 /*const*/ GUID SVConfigurationObjectGuid			= { 0x48622ca9, 0x715f, 0x4123, { 0xb5, 0x13, 0x29, 0x62, 0x17, 0xb0, 0x9f, 0x31 } };
+
+// GUID for the RootObjectGuid
+/*const*/ GUID RootObjectGuid				= { 0xb5107820, 0xe5ce, 0x4ae2, { 0x8f, 0x86, 0x4b, 0xe4, 0x46, 0x5f, 0x47, 0xb7} };
+
+// GUID for the EnvironmentObjectGuid
+/*const*/ GUID EnvironmentObjectGuid		= { 0x3066b69e, 0x17e8, 0x4399, { 0x98, 0x6f, 0x57, 0x31, 0xcc, 0x18, 0x13, 0x35 } };
 
 // GUID for the SVIOController
 /*const*/ GUID SVIOControllerGuid			= { 0xbab48430, 0xc2d8, 0x11d2, { 0x96, 0x11, 0x0, 0x0, 0xf8, 0x1e, 0xd, 0xd } };
@@ -941,10 +948,6 @@ static char THIS_FILE[] = __FILE__;
 /*const*/ GUID SVBCTimeoutGuid =	{ 0x3f8282a1, 0x42c7, 0x4322, { 0x82, 0x47, 0x56, 0x1f, 0x14, 0x2e, 0x62, 0x39 } };
 /*const*/ GUID SVBCUnevenGridGuid = { 0xbabb4fd2, 0xee2e, 0x4662, { 0x84, 0xa2, 0x76, 0x68, 0xb8, 0xc1, 0x16, 0xda } };
 
-
-
-
-
 // GUID for the SVUpperThresholdEquationClass
 /*const*/ GUID SVUpperThresholdEquationClassGuid	= { 0x4598ab0e, 0x7a84, 0x11d3, { 0xa8, 0x93, 0x3f, 0xe0, 0x23, 0x0, 0x10, 0x0 } };
 // GUID for Embedded Objects of SVUpperThresholdEquationClass
@@ -1333,6 +1336,7 @@ static char THIS_FILE[] = __FILE__;
 	{ 0x33d7b49, 0x7d4d, 0x4a77, { 0x90, 0xbb, 0x22, 0xb9, 0xcf, 0x80, 0xff, 0x90 } },
 	{ 0x33d7b50, 0x7d4d, 0x4a77, { 0x90, 0xbb, 0x22, 0xb9, 0xcf, 0x80, 0xff, 0x90 } },
 };
+
 /*const*/ GUID aSVVariantInputObjectNameGuid[] = 
 {
 	{ 0xd26b0e01, 0xead9, 0x40d7, { 0xbe, 0xef, 0xa7, 0x3c, 0x5c, 0x2c, 0x4b, 0xef } },
@@ -1386,6 +1390,7 @@ static char THIS_FILE[] = __FILE__;
 	{ 0xd26b0e49, 0xead9, 0x40d7, { 0xbe, 0xef, 0xa7, 0x3c, 0x5c, 0x2c, 0x4b, 0xef } },
 	{ 0xd26b0e50, 0xead9, 0x40d7, { 0xbe, 0xef, 0xa7, 0x3c, 0x5c, 0x2c, 0x4b, 0xef } },
 };
+
 /*const*/ GUID aSVVariantResultImageObjectGuid[] = 
 {
 	SVOutputImageObjectGuid,
@@ -1393,6 +1398,7 @@ static char THIS_FILE[] = __FILE__;
 	{ 0xc55bc603, 0x3239, 0x4e28, { 0x9d, 0x6b, 0xed, 0x43, 0xdc, 0x58, 0x57, 0xde } },
 	{ 0xc55bc604, 0x3239, 0x4e28, { 0x9d, 0x6b, 0xed, 0x43, 0xdc, 0x58, 0x57, 0xde } },
 };
+
 /*const*/ GUID aSVVariantResultObjectGuid[] = 
 {
 	{ 0x6f882e01, 0xb062, 0x4b38, { 0xa6, 0x1d, 0x10, 0x46, 0x67, 0xd8, 0xdf, 0xe4 } },
@@ -1446,6 +1452,7 @@ static char THIS_FILE[] = __FILE__;
 	{ 0x6f882e49, 0xb062, 0x4b38, { 0xa6, 0x1d, 0x10, 0x46, 0x67, 0xd8, 0xdf, 0xe4 } },
 	{ 0x6f882e50, 0xb062, 0x4b38, { 0xa6, 0x1d, 0x10, 0x46, 0x67, 0xd8, 0xdf, 0xe4 } },
 };
+
 /*const*/ GUID aSVVariantResultObjectNameGuid[] = 
 {
 	{ 0xa863d701, 0xbed4, 0x43a3, { 0xba, 0x7b, 0x22, 0x21, 0x93, 0x2e, 0x9f, 0x3e } },
@@ -1586,7 +1593,6 @@ static char THIS_FILE[] = __FILE__;
 
 /*const*/ GUID SVStringHeaderGuid						= { 0x62c0ff5c, 0xe431, 0x4341, { 0xa5, 0xe6, 0xbf, 0x61, 0xf, 0x72, 0x8b, 0xd1 } };
 
-
 ////////////////////////////////////////////////////////////////////////////////
 // Insert new GUIDs immediately before the previous line.
 // NOTE: Use GUID Create Tool for new GUIDs.
@@ -1598,6 +1604,18 @@ static char THIS_FILE[] = __FILE__;
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVClsids.cpp_v  $
+ * 
+ *    Rev 1.3   17 Mar 2014 15:15:14   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  869
+ * SCR Title:  Add PPQ and Environment Variables to Object Manager and Update Pickers
+ * Checked in by:  bWalter;  Ben Walter
+ * Change Description:  
+ *   Added Includes and Declarations regions.
+ *   Removed THIS_FILE.
+ *   Added Root and Environment objects GUID for the Object Manager.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   27 Jan 2014 15:33:58   bwalter
  * Project:  SVObserver

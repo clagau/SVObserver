@@ -5,8 +5,8 @@
 //* .Module Name     : SVPPQObject
 //* .File Name       : $Workfile:   SVPPQObject.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.10  $
-//* .Check In Date   : $Date:   14 Mar 2014 09:12:28  $
+//* .Current Version : $Revision:   1.11  $
+//* .Check In Date   : $Date:   17 Mar 2014 15:32:44  $
 //******************************************************************************
 
 #ifndef SVPPQOBJECT_H
@@ -28,9 +28,13 @@
 #include "SVValueObject.h"
 #include "SVVirtualCamera.h"
 #include "SVCameraTriggerData.h"
+#include "BasicValueObjects.h"
 #pragma endregion Includes
 
 #pragma region Declarations
+const char			PpqLength[]						= _T("Length");
+const long			StandardPpqLength				= 2;
+
 class SVInspectionProcess;
 #pragma endregion Declarations
 
@@ -394,6 +398,8 @@ private:
 	SVPPQTracking m_PPQTracking;
 #endif // EnableTracking
 
+	Seidenader::SVObserver::BasicValueObjects	m_PpqValues;
+
 	SVPPQOutputModeEnum m_oOutputMode;
 	long				m_lPPQLength;
 	long				m_lOutputDelay;
@@ -404,7 +410,6 @@ private:
 	BOOL				m_bOnline;
 		
 	UINT				m_uOutputTimer;
-
 
 	long m_NAKCount;
 };
@@ -418,6 +423,16 @@ typedef SVVector< SVPPQObject* > SVPPQObjectArray;
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVPPQObject.h_v  $
+ * 
+ *    Rev 1.11   17 Mar 2014 15:32:44   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  869
+ * SCR Title:  Add PPQ and Environment Variables to Object Manager and Update Pickers
+ * Checked in by:  bWalter;  Ben Walter
+ * Change Description:  
+ *   Changed "PPQ Length" to a Basic Value Object for access by Object Manager.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.10   14 Mar 2014 09:12:28   tbair
  * Project:  SVObserver

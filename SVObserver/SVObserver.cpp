@@ -5,8 +5,8 @@
 //* .Module Name     : SVObserver
 //* .File Name       : $Workfile:   SVObserver.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.23  $
-//* .Check In Date   : $Date:   07 Mar 2014 18:20:46  $
+//* .Current Version : $Revision:   1.24  $
+//* .Check In Date   : $Date:   17 Mar 2014 15:26:48  $
 //******************************************************************************
 
 #pragma region Includes
@@ -112,9 +112,13 @@
 #include "SVIOBoardCapabilities.h"
 #include "SVInspectionProcess.h"
 #include "SVPPQObject.h"
+#include "RootObject.h"
+#include "EnvironmentObject.h"
 #pragma endregion Includes
 
 #pragma region Declarations
+using namespace Seidenader::SVObserver;
+
 #define ID_TRIGGER_SETTINGS 21017
 
 LPCTSTR const FRAME_GRABBER_VIPER_DIGITAL                 = (_T("03"));
@@ -3232,6 +3236,10 @@ BOOL SVObserverApp::InitInstance()
 	m_AutoRunDelayTime = GetProfileInt( _T( "Settings" ), _T( "Auto Run Delay Time" ), m_AutoRunDelayTime );
 	WriteProfileInt( _T( "Settings" ), _T( "Auto Run Delay Time" ), m_AutoRunDelayTime );
 
+	// *** // ***
+	SVObjectManagerClass::Instance().ConstructRootObject( RootObjectGuid );
+	// *** // ***
+
 	HRESULT l_hrLoad = INILoad();
 	if ( l_hrLoad != S_OK )
 	{
@@ -3409,10 +3417,6 @@ BOOL SVObserverApp::InitInstance()
 		//::PostMessage( m_pMainWnd->m_hWnd, SV_AUTO_RUN_LAST_CONFIGURATION, 0, 0 ); 03 Dec 1999 - frb.
 	}
 
-	// *** // ***
-	SVObjectManagerClass::Instance().ConstructConfigurationObject( SVConfigurationObjectGuid );
-	// *** // ***
-
 	// add message to event viewer - SVObserver Started
 	CString l_strTmp = "\nVersion ";
 	if( (m_CurrentVersion & 0xff) == 0xff )
@@ -3546,7 +3550,7 @@ int SVObserverApp::ExitInstance()
 	#endif
 
 	// *** // ***
-	SVObjectManagerClass::Instance().DestroyConfigurationObject();
+	SVObjectManagerClass::Instance().DestroyRootObject();
 	// *** // ***
 
 	DestroySVIMServer();
@@ -3985,6 +3989,54 @@ CString SVObserverApp::GetConfigurationName() const
 	return l_ConfigName;
 }
 
+CString SVObserverApp::getModelNumber() const
+{
+	CString ModelNumber;
+
+	EnvironmentObject *pEnvironment = nullptr;
+
+	SVObjectManagerClass::Instance().GetRootChildObject(pEnvironment, SVObjectManagerClass::Environment);
+
+	if(nullptr != pEnvironment)
+	{
+		ModelNumber = pEnvironment->getVariable(::EnvironmentModelNumber);
+	}
+
+	return ModelNumber;
+}
+
+CString SVObserverApp::getSerialNumber() const
+{
+	CString SerialNumber;
+
+	EnvironmentObject *pEnvironment = nullptr;
+
+	SVObjectManagerClass::Instance().GetRootChildObject(pEnvironment, SVObjectManagerClass::Environment);
+
+	if(nullptr != pEnvironment)
+	{
+		SerialNumber = pEnvironment->getVariable(::EnvironmentSerialNumber);
+	}
+
+	return SerialNumber;
+}
+
+CString SVObserverApp::getWinKey() const
+{
+	CString WinKey;
+
+	EnvironmentObject *pEnvironment = nullptr;
+
+	SVObjectManagerClass::Instance().GetRootChildObject(pEnvironment, SVObjectManagerClass::Environment);
+
+	if(nullptr != pEnvironment)
+	{
+		WinKey = pEnvironment->getVariable(::EnvironmentWinKey);
+	}
+
+	return WinKey;
+}
+
 HRESULT SVObserverApp::LoadPackedConfiguration( const CString& p_rPackedFileName )
 {
 	HRESULT l_Status = S_OK;
@@ -4038,94 +4090,6 @@ HRESULT SVObserverApp::SavePackedConfiguration( const CString& p_rPackedFileName
 	if( !( PackedFile.PackFiles( GetConfigurationName(), p_rPackedFileName ) ) )
 	{
 		l_Status = E_UNEXPECTED;
-	}
-
-	return l_Status;
-}
-
-HRESULT SVObserverApp::GetWindowsItems( const SVNameSet& p_rNames, SVNameStorageResultMap& p_rItems ) const
-{
-	HRESULT l_Status = S_OK;
-
-	p_rItems.clear();
-
-	for( SVNameSet::const_iterator l_Iter = p_rNames.begin(); SUCCEEDED( l_Status ) && l_Iter != p_rNames.end(); ++l_Iter )
-	{
-		SVObjectNameInfo l_Info;
-
-		SVObjectNameInfo::ParseObjectName( l_Info, *l_Iter );
-
-		if( ( l_Info.m_NameArray.size() == 2 ) && ( l_Info.m_NameArray[ 0 ] == "Windows" ) )
-		{
-			if( l_Info.m_NameArray[ 1 ] == "WinKey" )
-			{
-				p_rItems[ l_Iter->c_str() ] = SVStorageResult( SVStorage( SVVisionProcessor::SVStorageValue, static_cast< LPCTSTR >( m_WinKey ) ), S_OK, 0 );
-			}
-			else
-			{
-				p_rItems[ l_Iter->c_str() ] = SVStorageResult( SVStorage(), SVMSG_ONE_OR_MORE_REQUESTED_OBJECTS_DO_NOT_EXIST, 0 );
-
-				if( l_Status == S_OK )
-				{
-					l_Status = SVMSG_NOT_ALL_LIST_ITEMS_PROCESSED;
-				}
-			}
-		}
-		else
-		{
-			p_rItems[ l_Iter->c_str() ] = SVStorageResult( SVStorage(), SVMSG_ONE_OR_MORE_REQUESTED_OBJECTS_DO_NOT_EXIST, 0 );
-
-			if( l_Status == S_OK )
-			{
-				l_Status = SVMSG_NOT_ALL_LIST_ITEMS_PROCESSED;
-			}
-		}
-	}
-
-	return l_Status;
-}
-
-HRESULT SVObserverApp::GetEnvironmentItems( const SVNameSet& p_rNames, SVNameStorageResultMap& p_rItems ) const
-{
-	HRESULT l_Status = S_OK;
-
-	p_rItems.clear();
-
-	for( SVNameSet::const_iterator l_Iter = p_rNames.begin(); SUCCEEDED( l_Status ) && l_Iter != p_rNames.end(); ++l_Iter )
-	{
-		SVObjectNameInfo l_Info;
-
-		SVObjectNameInfo::ParseObjectName( l_Info, *l_Iter );
-
-		if( ( l_Info.m_NameArray.size() == 2 ) && ( l_Info.m_NameArray[ 0 ] == "Environment" ) )
-		{
-			if( l_Info.m_NameArray[ 1 ] == "ModelNumber" )
-			{
-				p_rItems[ l_Iter->c_str() ] = SVStorageResult( SVStorage( SVVisionProcessor::SVStorageValue, static_cast< LPCTSTR >( m_ModelNumber ) ), S_OK, 0 );
-			}
-			else if( l_Info.m_NameArray[ 1 ] == "SerialNumber" )
-			{
-				p_rItems[ l_Iter->c_str() ] = SVStorageResult( SVStorage( SVVisionProcessor::SVStorageValue, static_cast< LPCTSTR >( m_SerialNumber ) ), S_OK, 0 );
-			}
-			else
-			{
-				p_rItems[ l_Iter->c_str() ] = SVStorageResult( SVStorage(), SVMSG_ONE_OR_MORE_REQUESTED_OBJECTS_DO_NOT_EXIST, 0 );
-
-				if( l_Status == S_OK )
-				{
-					l_Status = SVMSG_NOT_ALL_LIST_ITEMS_PROCESSED;
-				}
-			}
-		}
-		else
-		{
-			p_rItems[ l_Iter->c_str() ] = SVStorageResult( SVStorage(), SVMSG_ONE_OR_MORE_REQUESTED_OBJECTS_DO_NOT_EXIST, 0 );
-
-			if( l_Status == S_OK )
-			{
-				l_Status = SVMSG_NOT_ALL_LIST_ITEMS_PROCESSED;
-			}
-		}
 	}
 
 	return l_Status;
@@ -5918,7 +5882,13 @@ BOOL SVObserverApp::ShowConfigurationAssistant( int Page /*= 3*/,
 
 		if (bFileNewConfiguration)
 		{
-			SVObjectManagerClass::Instance().ConstructConfigurationObject( SVConfigurationObjectGuid );
+			RootObject *pRoot = nullptr;
+
+			SVObjectManagerClass::Instance().GetRootChildObject(pRoot, SVObjectManagerClass::Root);
+			if(nullptr != pRoot)
+			{
+				pRoot->createConfigurationObject();
+			}
 		}
 
 		// Clean up Execution Directory...
@@ -7366,9 +7336,6 @@ HRESULT SVObserverApp::INILoad()
 	l_csSystemDir.Format( "%s\\OEMINFO.INI", l_szSystemDir );
 
 	// clear these variables
-	m_WinKey.Empty();
-	m_ModelNumber.Empty();
-	m_SerialNumber.Empty();
 	m_csProductName.Empty();
 
 	m_csProcessorBoardName = _T( "Unknown board" );
@@ -7387,12 +7354,19 @@ HRESULT SVObserverApp::INILoad()
 
 	if (l_hrOk == S_OK)
 	{
+		EnvironmentObject *pEnvironment = nullptr;
+
+		SVObjectManagerClass::Instance().GetRootChildObject(pEnvironment, SVObjectManagerClass::Environment);
+
 		// copy settings from the SVOIniLoader class for now
 		g_bUseCorrectListRecursion = l_iniLoader.m_bUseCorrectListRecursion;
 
-		m_WinKey = l_iniLoader.m_csWinKey;
-		m_ModelNumber = l_iniLoader.m_csModelNumber;
-		m_SerialNumber = l_iniLoader.m_csSerialNumber;
+		if(nullptr != pEnvironment)
+		{
+			pEnvironment->setVariable(::EnvironmentModelNumber, l_iniLoader.m_csModelNumber);
+			pEnvironment->setVariable(::EnvironmentSerialNumber ,l_iniLoader.m_csSerialNumber);
+			pEnvironment->setVariable(::EnvironmentWinKey, l_iniLoader.m_csWinKey);
+		}
 		m_csProductName = l_iniLoader.m_csProductName;
 
 		m_csProcessorBoardName = l_iniLoader.m_csProcessorBoardName;
@@ -8584,6 +8558,10 @@ BOOL SVObserverApp::InitATL()
 #if !defined(_WIN32_WCE) || defined(_CE_DCOM)
 	// Register class factories via CoRegisterClassObject().
 	l_Status = _Module.RegisterClassObjects( CLSCTX_LOCAL_SERVER, REGCLS_MULTIPLEUSE );
+	if( SUCCEEDED( l_Status ) )
+	{
+		m_ATLInited = TRUE;
+	}
 #endif // !defined(_WIN32_WCE) || defined(_CE_DCOM)
 
 	if( FAILED( l_Status ) )
@@ -8807,6 +8785,17 @@ int SVObserverApp::FindMenuItem(CMenu* Menu, LPCTSTR MenuString)
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVObserver.cpp_v  $
+ * 
+ *    Rev 1.24   17 Mar 2014 15:26:48   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  869
+ * SCR Title:  Add PPQ and Environment Variables to Object Manager and Update Pickers
+ * Checked in by:  bWalter;  Ben Walter
+ * Change Description:  
+ *   Changed the environment variables ModelNumber SerialNumber and Windows.WinKey to be inserted into the OM using the BasicValueObject.
+ * Removed the methods GetWindowItems and GetEnvironmentItems now using OM for SVRC.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.23   07 Mar 2014 18:20:46   bwalter
  * Project:  SVObserver

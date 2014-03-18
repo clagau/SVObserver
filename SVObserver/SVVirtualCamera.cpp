@@ -5,17 +5,21 @@
 //* .Module Name     : SVVirtualCamera
 //* .File Name       : $Workfile:   SVVirtualCamera.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   07 Mar 2014 18:24:08  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   17 Mar 2014 15:33:06  $
 //******************************************************************************
 
 #pragma region Includes
 #include "stdafx.h"
 #include "SVVirtualCamera.h"
 #include "SVDigitizerProcessingClass.h"
+#include "SVOMFCLibrary/SVDeviceParams.h"
+#include "SVOMFCLibrary/SVLongValueDeviceParam.h"
 #pragma endregion Includes
 
 #pragma region Declarations
+using namespace Seidenader::SVObserver;
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -88,6 +92,15 @@ long SVVirtualCamera::GetImageDepth() const
 	return l_Depth;
 }
 
+HRESULT SVVirtualCamera::RefreshObject()
+{
+	HRESULT Result = S_OK;
+	
+	Result = UpdateCameraParameters();
+	
+	return Result;
+}
+
 BOOL SVVirtualCamera::Create( LPCTSTR p_szDeviceName )
 {
 	BOOL bOk = TRUE;
@@ -108,6 +121,8 @@ BOOL SVVirtualCamera::Create( LPCTSTR p_szDeviceName )
 		outObjectInfo.ObjectTypeInfo.ObjectType = SVVirtualCameraType;
 
 		bOk = m_CallbackList.Create() && bOk;
+
+		UpdateCameraParameters();
 	}
 
 	return bOk;
@@ -123,6 +138,27 @@ BOOL SVVirtualCamera::Destroy()
 
 	return bOk;
 }// end Destroy	
+
+HRESULT SVVirtualCamera::GetChildObject( SVObjectClass*& rpObject, const SVObjectNameInfo& rNameInfo, long Index ) const
+{
+	rpObject = NULL;
+	HRESULT l_Status = SVObjectClass::GetChildObject( rpObject, rNameInfo, Index );
+
+	if( l_Status != S_OK )
+	{
+		if( 0 < rNameInfo.m_NameArray.size() && rNameInfo.m_NameArray[ Index ] == GetName() )
+		{
+			BasicValueObjects::ValueList::const_iterator ValueIter;
+			const BasicValueObjects::ValueList& Values = m_CameraValues.getValueList();
+			for( ValueIter = Values.begin(); rpObject == NULL && ValueIter != Values.end(); ++ValueIter )
+			{
+				l_Status = (*ValueIter)->GetChildObject(rpObject, rNameInfo, Index + 1);
+			}
+		}
+	}
+
+	return l_Status;
+}
 
 BOOL SVVirtualCamera::CanGoOnline() const
 {
@@ -380,6 +416,7 @@ HRESULT SVVirtualCamera::SetLightReference( SVLightReference& rArray )
 		{
 			hr = GetAcquisitionDevice()->SetLightReference(rArray);
 		}
+		UpdateCameraParameters();
 	}
 	
 	return hr;
@@ -639,11 +676,123 @@ HRESULT SVVirtualCamera::UnregisterTriggerRelay()
 	return m_triggerRelay.UnregisterTriggerRelay();
 }
 
+HRESULT SVVirtualCamera::UpdateCameraParameters()
+{
+	HRESULT Status = S_OK;
+
+	if( mpsvDevice.empty())
+	{
+		Status = S_FALSE;
+		return Status;
+	}
+
+	SVDeviceParamCollection CameraParameters;
+	Status = mpsvDevice->GetDeviceParameters( CameraParameters );
+	if(S_OK == Status)
+	{
+		SVDeviceParam* pDeviceParam = nullptr;
+		pDeviceParam = CameraParameters.GetParameter( DeviceParamSerialNumberString );
+
+		if(nullptr != pDeviceParam)
+		{
+			variant_t SerialNumberValue;
+			pDeviceParam->GetValue(SerialNumberValue.GetVARIANT());
+			pDeviceParam = nullptr;
+			m_CameraValues.setValueObject( ::CameraSerialNumber, SerialNumberValue, this );
+		}
+		pDeviceParam = CameraParameters.GetParameter( DeviceParamGain );
+
+		if(nullptr != pDeviceParam)
+		{
+			variant_t GainValue;
+			pDeviceParam->GetValue( GainValue.GetVARIANT() );
+			pDeviceParam = nullptr;
+			BasicValueObject& rValueObject = m_CameraValues.setValueObject( ::CameraGain, GainValue, this );
+			rValueObject.ObjectAttributesAllowedRef() |= SV_REMOTELY_SETABLE | SV_SETABLE_ONLINE;
+		}
+		pDeviceParam = CameraParameters.GetParameter( DeviceParamShutter );
+
+		if(nullptr != pDeviceParam)
+		{
+			variant_t ShutterValue;
+			pDeviceParam->GetValue( ShutterValue.GetVARIANT() );
+			pDeviceParam = nullptr;
+			BasicValueObject& rValueObject = m_CameraValues.setValueObject( ::CameraShutter, ShutterValue, this );
+			rValueObject.ObjectAttributesAllowedRef() |= SV_REMOTELY_SETABLE | SV_SETABLE_ONLINE;
+		}
+	}
+	return Status;
+}
+
+HRESULT SVVirtualCamera::UpdateDeviceParameters(SVDeviceParamCollection& rCameraParameters)
+{
+	HRESULT Status = S_OK;
+
+	if( mpsvDevice.empty())
+	{
+		Status = S_FALSE;
+		return Status;
+	}
+
+	if(mpsvDevice->GetDeviceParameters( rCameraParameters ) == S_OK)
+	{
+		SVDeviceParamCollection	ChangedCameraParameters;
+		SVDeviceParam* pDeviceParam = nullptr;
+		pDeviceParam = rCameraParameters.GetParameter( DeviceParamGain );
+		BasicValueObject* pValueObject;
+		pValueObject = m_CameraValues.getValueObject( ::CameraGain );
+
+		if(nullptr != pValueObject)
+		{
+			Status = pValueObject->updateDeviceParameter( pDeviceParam );
+			ChangedCameraParameters.SetParameter(pDeviceParam);
+		}
+		else
+		{
+			Status = S_FALSE;
+		}
+
+		if(S_OK == Status)
+		{
+			pDeviceParam = rCameraParameters.GetParameter( DeviceParamShutter );
+			pValueObject = m_CameraValues.getValueObject( ::CameraShutter );
+			if(nullptr != pValueObject)
+			{
+				Status = pValueObject->updateDeviceParameter( pDeviceParam );
+				ChangedCameraParameters.SetParameter(pDeviceParam);
+			}
+			else
+			{
+				Status = S_FALSE;
+			}
+		}
+
+		if(S_OK == Status)
+		{
+			mpsvDevice->SetDeviceParameters( ChangedCameraParameters );
+		}
+	}
+
+	return Status;
+}
+
+
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVVirtualCamera.cpp_v  $
+ * 
+ *    Rev 1.3   17 Mar 2014 15:33:06   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  869
+ * SCR Title:  Add PPQ and Environment Variables to Object Manager and Update Pickers
+ * Checked in by:  bWalter;  Ben Walter
+ * Change Description:  
+ *   Added GetChildObject, UpdateDeviceParameters, UpdateCameraParameters methods to get and set the object values "SerialNumber", "Gain" and "Shutter" ("SerialNumber" is read only) which are inserted into the OM.
+ *   Added method RefreshObject.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   07 Mar 2014 18:24:08   bwalter
  * Project:  SVObserver

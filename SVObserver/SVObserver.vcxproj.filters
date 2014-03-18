@@ -1595,6 +1595,18 @@
     <ClCompile Include="ConditionalController.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="RootObject.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BasicValueObject.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BasicValueObjects.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="EnvironmentObject.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Midl Include="SVObserver.odl">
@@ -3305,6 +3317,18 @@
     <ClInclude Include="SVTriggerConstants.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="BasicValueObject.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BasicValueObjects.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="EnvironmentObject.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RootObject.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="SVDLLToolLoadLibraryClass.inl">
@@ -3625,6 +3649,9 @@
       <Filter>Resource Files</Filter>
     </None>
     <None Include="SVStaticValueObjectClassImpl.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="BasicValueObjects.inl">
       <Filter>Header Files</Filter>
     </None>
   </ItemGroup>

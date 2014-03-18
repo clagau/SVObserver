@@ -5,8 +5,8 @@
 //* .Module Name     : SVCommandInspectionGetItems
 //* .File Name       : $Workfile:   SVCommandInspectionGetItems.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   07 Mar 2014 18:09:06  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   17 Mar 2014 15:19:06  $
 //******************************************************************************
 
 #pragma region Includes
@@ -71,7 +71,7 @@ HRESULT SVCommandInspectionGetItems::Execute()
 			{
 				SVObjectReference ref;
 	
-				SVObjectManagerClass::Instance().GetObjectByDottedName( l_Info.GetObjectArrayName( 1 ), ref );
+				SVObjectManagerClass::Instance().GetObjectByDottedName( l_Info.GetObjectArrayName( 0 ), ref );
 
 				if( ref.Object() != NULL )
 				{
@@ -280,6 +280,16 @@ HRESULT SVCommandInspectionGetItems::UpdateResultsWithValueData( const SVString&
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVCommandInspectionGetItems.cpp_v  $
+ * 
+ *    Rev 1.3   17 Mar 2014 15:19:06   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  869
+ * SCR Title:  Add PPQ and Environment Variables to Object Manager and Update Pickers
+ * Checked in by:  bWalter;  Ben Walter
+ * Change Description:  
+ *   Changed the object name access (due to Object manager changes)
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   07 Mar 2014 18:09:06   bwalter
  * Project:  SVObserver

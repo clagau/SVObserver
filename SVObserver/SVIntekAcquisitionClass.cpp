@@ -5,8 +5,8 @@
 //* .Module Name     : SVIntekAcquisitionClass
 //* .File Name       : $Workfile:   SVIntekAcquisitionClass.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   07 Mar 2014 18:16:16  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   17 Mar 2014 15:25:40  $
 //******************************************************************************
 
 #pragma region Includes
@@ -27,6 +27,8 @@
 #include "SVMessage/SVMessage.h"
 #include "SV1394CameraFileLibrary/SVDCamFactoryRegistrar.h"
 #include "SVIntek/SVIntekEnums.h"
+#include "SV1394CameraStruct.h"
+#include "SV1394CameraManager.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -163,10 +165,17 @@ HRESULT SVIntekAcquisitionClass::LoadFiles(SVFileNameArrayClass& rFiles)
 				m_cameraDriverProxy.Init(m_pCameraDriver);
 			}
 
-			if ( hr == SVMSG_INCORRECT_CHECKSUM )
+			SVDeviceParamCollection DeviceParams(m_CameraFileDeviceParams);
+			SV1394CameraStructSet Cameras;
+			Cameras = TheSV1394CameraManager.GetCameraOrder();
+			if(Cameras.GetSize() > DigNumber())
 			{
+				SV1394CameraStruct& Camera = Cameras.ElementAt( DigNumber() );
+				DeviceParams.SetParameter( DeviceParamSerialNumber, SVi64ValueDeviceParam( Camera.m_ui64SerialNumber ) );
+				DeviceParams.SetParameter( DeviceParamSerialNumberString, SVStringValueDeviceParam( Camera.strSerialNum ) );
 			}
-			SetDeviceParameters( m_CameraFileDeviceParams );
+
+			SetDeviceParameters( DeviceParams );
 			GetCameraImageInfo( &msvImageInfo );
 		}
 	}
@@ -408,7 +417,7 @@ HRESULT SVIntekAcquisitionClass::UpdateLightReferenceAttributes( int iBand, cons
 				attribute.strName = pCFParam->VisualName();
 				break;
 			case DeviceParamGain:
-				attribute.strName = _T("Contrast");
+				attribute.strName = pCFParam->VisualName();
 				break;
 			case DeviceParamExposure:
 				attribute.strName = pCFParam->VisualName();
@@ -995,6 +1004,16 @@ HRESULT SVIntekAcquisitionClass::StartDigitizer()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVIntekAcquisitionClass.cpp_v  $
+ * 
+ *    Rev 1.3   17 Mar 2014 15:25:40   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  869
+ * SCR Title:  Add PPQ and Environment Variables to Object Manager and Update Pickers
+ * Checked in by:  bWalter;  Ben Walter
+ * Change Description:  
+ *   UpdateIntekDevices is called in the LoadFiles method to avoid the Device parameters being deleted.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   07 Mar 2014 18:16:16   bwalter
  * Project:  SVObserver

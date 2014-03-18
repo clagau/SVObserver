@@ -5,8 +5,8 @@
 //* .Module Name     : SVCommand.cpp
 //* .File Name       : $Workfile:   SVCommand.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.8  $
-//* .Check In Date   : $Date:   07 Mar 2014 18:08:08  $
+//* .Current Version : $Revision:   1.9  $
+//* .Check In Date   : $Date:   17 Mar 2014 15:18:24  $
 //******************************************************************************
 
 #pragma region Includes
@@ -62,9 +62,14 @@
 
 #include "SVOlicenseManager/SVOLicenseManager.h"
 #include "RemoteCommand.h"
+#include "BasicValueObject.h"
+#include "SVStorageResult.h"
+#include "SVVisionProcessorHelper.h"
 #pragma endregion Includes
 
 #pragma region Declarations
+using namespace Seidenader::SVObserver;
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -152,7 +157,7 @@ xmlerror:
 		hrResult =  S_FALSE;
 		break;
 	} while (0);
-	
+
 	if((svXmlException = svException) != TRUE)
 	{ //create an exception object for an XML parse error
 		SVException XmlException = svXmlException.GetParserError();
@@ -1074,10 +1079,11 @@ STDMETHODIMP CSVCommand::SVGetSVIMConfig( long lOffset, long *lBlockSize, BSTR *
 					bSuccess = PackedFile.PackFiles( CString(szConfigName), strPackedFile );
 				}
 			}//offset < 1  end of the fist time
+
 			//send data back to control
-			
+
 			if (bSuccess)
-			{			
+			{
 				ex = new CFileException;
 				if( binFile.Open( strPackedFile, CFile::shareDenyNone | CFile::modeRead | CFile::typeBinary, ex ) )
 				{
@@ -3734,10 +3740,10 @@ HRESULT CSVCommand::SVGetDataList(SAFEARRAY* psaNames, SAFEARRAY** ppsaValues, S
 	for ( long l = 0; l < Size; l++ )
 	{
 		CString Name;
-		CString InspectionName;
 		CString Value;
 		BSTR bstrName = NULL;
 		long ProcessCount = -1;
+		SVObjectReference ObjectRef;
 		SVInspectionProcess *pInspection = nullptr;
 
 		Status = S_OK;
@@ -3746,125 +3752,128 @@ HRESULT CSVCommand::SVGetDataList(SAFEARRAY* psaNames, SAFEARRAY** ppsaValues, S
 		SafeArrayGetElementNoCopy(psaNames,&l,&bstrName);
 		Name = bstrName;
 		ProcessCount = -1;
-		//pull out the inspection
-		InspectionName = Name.Left(Name.Find('.'));
-		
-		if ( pConfig->GetInspectionObject(InspectionName,&pInspection) )
+		if( NULL != pConfig )
 		{
-			// able to find the inspection.
-			// get object they are looking for...
-			SVValueObjectReference ValueObjectRef;
-			SVObjectManagerClass::Instance().GetObjectByDottedName( static_cast< LPCTSTR >( Name ), ValueObjectRef );
+			pConfig->GetInspectionObject(Name,&pInspection);
+		}
 
-			if( NULL != ValueObjectRef.Object() )
+		SVObjectManagerClass::Instance().GetObjectByDottedName( static_cast< LPCTSTR >( Name ), ObjectRef );
+
+		if ( NULL != ObjectRef.Object() || nullptr != pInspection )
+		{
+			//If inspection  is nullptr then object is of type BasicValueObject
+			if( nullptr == pInspection )
 			{
-				int iBucket = ValueObjectRef->GetLastSetIndex();
-				ProcessCount = pInspection->LastProductGet( SV_OTHER ).ProcessCount();
+				BasicValueObject* pValueObject = dynamic_cast< BasicValueObject* >( ObjectRef.Object() );
+				if( nullptr != pValueObject && !ObjectRef.IsEntireArray() )
+				{
+					HRESULT hrGet = pValueObject->getValue( Value );
 
-				if ( !ValueObjectRef.IsEntireArray() )
-				{
-					// was able to find the object
-					HRESULT hrGet = ValueObjectRef.GetValue(iBucket, Value);
-					if ( S_OK == hrGet )
+					if ( S_OK != hrGet )
 					{
-						//got value
-						Status = S_OK;
-						BSTR bstrTmpVal = Value.AllocSysString();
-						SafeArrayPutElementNoCopy(*ppsaValues, &l, bstrTmpVal);
-						//::SysFreeString(bstrTmpVal);
-						::SafeArrayPutElement(*ppsaStatus, &l, &Status);
-						::SafeArrayPutElement(*ppsaProcCounts, &l, &ProcessCount);
-					}// if OK
-					else if (    hrGet == SVMSG_SVO_33_OBJECT_INDEX_INVALID 
-							  || hrGet == SVMSG_SVO_34_OBJECT_INDEX_OUT_OF_RANGE )
-					{
-						Status = hrGet;
-						// did not get value.  set value to default
-						Value = ValueObjectRef.DefaultValue();
-						if ( Value.IsEmpty() )
-						{
-							Value.Format("%i",-1);
-						}
-						BSTR bstrTmpVal = Value.AllocSysString();
-						SafeArrayPutElementNoCopy(*ppsaValues, &l, bstrTmpVal);
-						::SafeArrayPutElement(*ppsaStatus, &l, &Status);
-						::SafeArrayPutElement(*ppsaProcCounts, &l, &ProcessCount);
 						ItemNotFound = TRUE;
-					}// else invalid or out of range index
-					else	// some generic error; currently should not get here
-					{
-						ASSERT( FALSE );
-						Status = SVMSG_ONE_OR_MORE_REQUESTED_OBJECTS_DO_NOT_EXIST;
-						// did not get value.  set value to -1
-						Value.Empty();
-						Value.Format("%i",-1);
-						BSTR bstrTmpVal = Value.AllocSysString();
-						SafeArrayPutElementNoCopy(*ppsaValues, &l, bstrTmpVal);
-						::SafeArrayPutElement(*ppsaStatus, &l, &Status);
-						::SafeArrayPutElement(*ppsaProcCounts, &l, &ProcessCount);
-						ItemNotFound = TRUE;
-					} //end else generic error
-				}// if ( !ValueObjectRef.IsEntireArray() )
-				else	// GET ENTIRE ARRAY
-				{
-					// get all results and put them into a parsable string
-					int iNumResults = 0;
-					ValueObjectRef->GetResultSize(iBucket, iNumResults);
-					CString sArrayValues;
-					for ( int iArrayIndex = 0; iArrayIndex < iNumResults; iArrayIndex++ )
-					{
-						CString sValue;
-						HRESULT hrGet = ValueObjectRef->GetValue( iBucket, iArrayIndex, sValue );
-						if ( hrGet == S_OK )
-						{
-							if ( iArrayIndex > 0 )
-							{
-								sArrayValues += _T(",");
-							}
-							sArrayValues += _T("`");
-							sArrayValues += sValue;
-							sArrayValues += _T("`");
-						}
-						else
-						{
-							break;
-						}
 					}
-
-					Status = S_OK;
-					BSTR bstrTmpVal = sArrayValues.AllocSysString();
-					SafeArrayPutElementNoCopy(*ppsaValues, &l, bstrTmpVal);
-					::SafeArrayPutElement(*ppsaStatus, &l, &Status);
-					::SafeArrayPutElement(*ppsaProcCounts, &l, &ProcessCount);
-				}// end if ( !ValueObjectRef.IsEntireArray() ) else
-			} // end if found object
+				}
+				else
+				{
+					ItemNotFound = TRUE;
+				}
+			}
 			else
 			{
-				// could not find object
-				Status = SVMSG_ONE_OR_MORE_REQUESTED_OBJECTS_DO_NOT_EXIST;
-				// did not get value.  set value to -1
-				Value.Empty();
-				Value.Format("%i",-1);
-				BSTR bstrTmpVal = Value.AllocSysString();
-				SafeArrayPutElementNoCopy(*ppsaValues, &l, bstrTmpVal);
-				::SafeArrayPutElement(*ppsaStatus, &l, &Status);
-				::SafeArrayPutElement(*ppsaProcCounts, &l, &ProcessCount);
-				ItemNotFound = TRUE;
-			} //else could not find object
-		}//end if get inspection object
+				SVValueObjectReference ValueObjectRef;
+				SVObjectManagerClass::Instance().GetObjectByDottedName( static_cast< LPCTSTR >( Name ), ValueObjectRef );
+
+				if( NULL	!= ValueObjectRef.Object() )
+				{
+					int iBucket = ValueObjectRef->GetLastSetIndex();
+					ProcessCount = pInspection->LastProductGet( SV_OTHER ).ProcessCount();
+
+					if ( !ValueObjectRef.IsEntireArray() )
+					{
+						// was able to find the object
+						HRESULT hrGet = ValueObjectRef.GetValue(iBucket, Value);
+						if ( S_OK == hrGet )
+						{
+							//got value
+							Status = S_OK;
+						}// if OK
+						else if (    hrGet == SVMSG_SVO_33_OBJECT_INDEX_INVALID 
+								  || hrGet == SVMSG_SVO_34_OBJECT_INDEX_OUT_OF_RANGE )
+						{
+							Status = hrGet;
+							// did not get value.  set value to default
+							Value = ValueObjectRef.DefaultValue();
+							if ( Value.IsEmpty() )
+							{
+								Value.Format("%i",-1);
+							}
+							ItemNotFound = TRUE;
+						}// else invalid or out of range index
+						else	// some generic error; currently should not get here
+						{
+							ASSERT( FALSE );
+							Status = SVMSG_ONE_OR_MORE_REQUESTED_OBJECTS_DO_NOT_EXIST;
+							// did not get value.  set value to -1
+							Value.Empty();
+							Value.Format("%i",-1);
+							ItemNotFound = TRUE;
+						} //end else generic error
+					}// if ( !ValueObjectRef.IsEntireArray() )
+					else	// GET ENTIRE ARRAY
+					{
+						// get all results and put them into a parsable string
+						int iNumResults = 0;
+						ValueObjectRef->GetResultSize(iBucket, iNumResults);
+						CString sArrayValues;
+						for ( int iArrayIndex = 0; iArrayIndex < iNumResults; iArrayIndex++ )
+						{
+							CString sValue;
+							HRESULT hrGet = ValueObjectRef->GetValue( iBucket, iArrayIndex, sValue );
+							if ( hrGet == S_OK )
+							{
+								if ( iArrayIndex > 0 )
+									sArrayValues += _T(",");
+								sArrayValues += _T("`");
+								sArrayValues += sValue;
+								sArrayValues += _T("`");
+							}
+							else break;
+							{
+								break;
+							}
+						}
+
+						Status = S_OK;
+						Value = sArrayValues;
+					}// end if ( !ValueObjectRef.IsEntireArray() ) else
+				} // end if found object
+				else
+				{
+					// could not find object
+					Status = SVMSG_ONE_OR_MORE_REQUESTED_OBJECTS_DO_NOT_EXIST;
+					// did not get value.  set value to -1
+					Value.Empty();
+					Value.Format("%i",-1);
+					ItemNotFound = TRUE;
+				} //else could not find object
+			}// else inspection object
+		}//end if object or inspection
 		else
 		{ //inspection not found
 			Status = SVMSG_ONE_OR_MORE_INSPECTIONS_DO_NOT_EXIST;
 			// did not get value.  set value to -1
 			Value.Empty();
 			Value.Format("%i",-1);
-			BSTR bstrTmpVal = Value.AllocSysString();
-			SafeArrayPutElementNoCopy(*ppsaValues,&l,bstrTmpVal);
-			::SafeArrayPutElement(*ppsaStatus, &l, &Status);
-			::SafeArrayPutElement(*ppsaProcCounts, &l, &ProcessCount);
 			InspectionNotFound = TRUE;
 		}// else inspection not found
-	}// end for (1 thru number of elements)
+
+		//Results have been prepared so can place them in the list
+		BSTR bstrTmpVal = Value.AllocSysString();
+		SafeArrayPutElementNoCopy(*ppsaValues,&l,bstrTmpVal);
+		::SafeArrayPutElement(*ppsaStatus,&l,&Status);
+		::SafeArrayPutElement(*ppsaProcCounts,&l,&ProcessCount);
+	}// end for
 
 	if ( ItemNotFound || InspectionNotFound )
 	{
@@ -4224,143 +4233,160 @@ HRESULT CSVCommand::SVSetToolParameterList(SAFEARRAY* psaNames, SAFEARRAY* psaVa
 	HRESULT Result = S_OK;
 	HRESULT Status = S_OK;
 
-	int ItemErrorCount = 0;
+	long NumberOfElements = psaNames->rgsabound[0].cElements;
+	long NumberOfElementsValues = psaValues->rgsabound[0].cElements;
 
-	do
+	if ( 0 == NumberOfElements )
 	{
-		BOOL                 StateOnline;
-		CMapStringToString   l_mapParameterList;
-		SVVector< SVInspectionProcess* > Inspections;
-		
-		StateOnline = SVSVIMStateClass::CheckState(SV_STATE_RUNNING);
-		long NumberOfElements = psaNames->rgsabound[0].cElements;
-		long NumberOfElementsValues = psaValues->rgsabound[0].cElements;
-		
-		if ((NumberOfElements == 0) || (NumberOfElements != NumberOfElementsValues))
+		Result = SVMSG_REQUESTED_LIST_IS_EMPTY;
+		return Result;
+	}
+	else if(NumberOfElements != NumberOfElementsValues)
+	{
+		Result = SVMSG_TOO_MANY_REQUESTED_ITEMS;
+		return Result;
+	}
+
+	int						ItemErrorCount = 0;
+	BOOL					StateOnline;
+	SVNameSet				ParameterNames;
+	SVConfigurationObject*	pConfig = nullptr;
+	SVNameStorageMap		ParameterObjects;
+	SVVector< SVInspectionProcess* > Inspections;
+
+	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
+	StateOnline = SVSVIMStateClass::CheckState(SV_STATE_RUNNING);
+
+	for ( long l = 0; l < NumberOfElements; l++ )
+	{
+		CString					Name;
+		CString					Value;
+		SVInspectionProcess*	pInspection = nullptr;
+		SVObjectReference		ObjectRef;
+
+		BOOL AddRequest = FALSE;
+			
+		BSTR bstrName = NULL;
+		Status = SafeArrayGetElementNoCopy(psaNames, &l, &bstrName);
+		if ( FAILED( Status ) ) { break; }
+
+		Name = bstrName;
+			
+		BSTR bstrValue = NULL;
+		Status = SafeArrayGetElementNoCopy(psaValues, &l, &bstrValue);
+		if ( FAILED( Status ) ) { break; }
+
+		Value = bstrValue;
+		if(nullptr != pConfig)
 		{
-			Result = SVMSG_TOO_MANY_REQUESTED_ITEMS;
-			break;
-		}// end if
-		
-		SVConfigurationObject*	pConfig = nullptr;
-
-		SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
-
-		for ( long l = 0; l < NumberOfElements; l++ )
+			pConfig->GetInspectionObject(Name, &pInspection);
+		}
+		HRESULT hrFind = SVObjectManagerClass::Instance().GetObjectByDottedName( static_cast< LPCTSTR >( Name ), ObjectRef );
+			
+		if ( NULL != ObjectRef.Object() || nullptr != pInspection )
 		{
-			CString					Name;
-			CString					Value;
-			SVInspectionProcess*	pInspection = nullptr;
-			SVValueObjectReference ref;
-
-			BOOL AddRequest = FALSE;
-			
-			BSTR bstrName = NULL;
-			Status = SafeArrayGetElementNoCopy(psaNames, &l, &bstrName);
-			if ( FAILED( Status ) ) { break; }
-
-			Name = bstrName;
-			
-			BSTR bstrValue = NULL;
-			Status = SafeArrayGetElementNoCopy(psaValues, &l, &bstrValue);
-			if ( FAILED( Status ) ) { break; }
-
-			Value = bstrValue;
-			
-			if ( pConfig->GetInspectionObject(Name, &pInspection) )
+			if ( hrFind == S_OK && ObjectRef.ArrayIndex() < 0 && !ObjectRef->IsArray())
 			{
-				//got the inspection.
-				HRESULT hrFind = SVObjectManagerClass::Instance().GetObjectByDottedName( static_cast< LPCTSTR >( Name ), ref );
-			
-				if ( hrFind == S_OK && ref.ArrayIndex() < 0 && !ref->IsArray())
+				Name = StripBrackets(Name);
+				hrFind = SVObjectManagerClass::Instance().GetObjectByDottedName( static_cast< LPCTSTR >( Name ), ObjectRef );
+				if (S_OK == hrFind)
 				{
-					Name = StripBrackets(Name);
-					hrFind = SVObjectManagerClass::Instance().GetObjectByDottedName( static_cast< LPCTSTR >( Name ), ref );
-					if (S_OK == hrFind)
-					{
-						Value = StripQuotes(Value);
-					}
+					Value = StripQuotes(Value);
 				}
+			}
 
-				if ( hrFind == S_OK )
+			if ( S_OK == hrFind )
+			{
+				// Check if item is already in the list
+				if( nullptr != ObjectRef.Object() )
 				{
-					// Check if item is already in the list
-					if( ref.Object() != NULL )
+					SVString strCompleteObjectName( ObjectRef.GetCompleteObjectName() );
+					if ( ParameterNames.find( strCompleteObjectName ) == ParameterNames.end() )
 					{
-						CString CompleteObjectName( ref.GetCompleteObjectName() );
-						CString Dummy;
-						if ( !l_mapParameterList.Lookup( CompleteObjectName, Dummy ) )	// if not in map already
+						if ( (ObjectRef.ObjectAttributesAllowed() & SV_REMOTELY_SETABLE) == SV_REMOTELY_SETABLE )
 						{
-							if ( (ref.ObjectAttributesAllowed() & SV_REMOTELY_SETABLE) == SV_REMOTELY_SETABLE )
+							//Is Online?  if so, can item be set online?
+							if ( StateOnline )
 							{
-								//Is Online?  if so, can item be set online?
-								if ( StateOnline )
+								if ( (ObjectRef.ObjectAttributesAllowed() & SV_SETABLE_ONLINE) == SV_SETABLE_ONLINE )
 								{
-									if ( (ref.ObjectAttributesAllowed() & SV_SETABLE_ONLINE) == SV_SETABLE_ONLINE )
-									{
-										AddRequest = TRUE;
-										l_mapParameterList.SetAt( CompleteObjectName, CompleteObjectName );
-									}
-									else
-									{
-										Status = SVMSG_OBJECT_CANNOT_BE_SET_WHILE_ONLINE;
-										::SafeArrayPutElement(*ppsaStatus, &l, &Status);
-										ItemErrorCount++;
-									}
-								}// if ( bStateOnline )
+									AddRequest = TRUE;
+									ParameterNames.insert( strCompleteObjectName );
+								}
 								else
 								{
-									// currently all SV_REMOTELY_SETABLE parameters are also SV_SETABLE_ONLINE
-									// if this changes, this code needs updated
-									AddRequest = TRUE;
-									l_mapParameterList.SetAt( CompleteObjectName, CompleteObjectName );
-								}// end if ( bStateOnline )else
-							}// if SV_REMOTELY_SETABLE
+									Status = SVMSG_OBJECT_CANNOT_BE_SET_WHILE_ONLINE;
+									::SafeArrayPutElement(*ppsaStatus, &l, &Status);
+									ItemErrorCount++;
+								}
+							}// if ( bStateOnline )
 							else
 							{
-								// Item is not allowed to be set remotely
-								Status = SVMSG_OBJECT_CANNOT_BE_SET_REMOTELY;
-								::SafeArrayPutElement(*ppsaStatus, &l, &Status);
-								ItemErrorCount++;
-							}// end if SV_REMOTELY_SETABLE else
-						}// if not in map
+								// currently all SV_REMOTELY_SETABLE parameters are also SV_SETABLE_ONLINE
+								// if this changes, this code needs updated
+								AddRequest = TRUE;
+								ParameterNames.insert( strCompleteObjectName );
+							}// end if ( bStateOnline )else
+						}// if SV_REMOTELY_SETABLE
 						else
 						{
-							// Item is already in the list
-							Status = SVMSG_OBJECT_ALREADY_SET_IN_THIS_LIST;
+							// Item is not allowed to be set remotely
+							Status = SVMSG_OBJECT_CANNOT_BE_SET_REMOTELY;
 							::SafeArrayPutElement(*ppsaStatus, &l, &Status);
 							ItemErrorCount++;
-						}// end if not in map else
-					}// end if ( ref.Object() != NULL )	// object not a value object
+						}// end if SV_REMOTELY_SETABLE else
+					}// if not in map
 					else
 					{
-						// object not found.  send back status
-						Status = SVMSG_ONE_OR_MORE_REQUESTED_OBJECTS_DO_NOT_EXIST;
+						// Item is already in the list
+						Status = SVMSG_OBJECT_ALREADY_SET_IN_THIS_LIST;
 						::SafeArrayPutElement(*ppsaStatus, &l, &Status);
 						ItemErrorCount++;
-					}
-				}// end if found value object
+					}// end if not in map else
+				}// end if ( nullptr != ObjectRef.Object() )	// object not a value object
 				else
 				{
 					// object not found.  send back status
 					Status = SVMSG_ONE_OR_MORE_REQUESTED_OBJECTS_DO_NOT_EXIST;
 					::SafeArrayPutElement(*ppsaStatus, &l, &Status);
 					ItemErrorCount++;
-				}// end else
-			}// end if found inspection
+				}
+			}// end if found value object
 			else
 			{
-				//did not find inspection.
-				//put an error back into the list
-				Status = SVMSG_ONE_OR_MORE_INSPECTIONS_DO_NOT_EXIST;
+				// object not found.  send back status
+				Status = SVMSG_ONE_OR_MORE_REQUESTED_OBJECTS_DO_NOT_EXIST;
 				::SafeArrayPutElement(*ppsaStatus, &l, &Status);
 				ItemErrorCount++;
-			} // end else
+			}// end else
+		}// end if found inspection
+		else
+		{
+			//did not find inspection.
+			//put an error back into the list
+			Status = SVMSG_ONE_OR_MORE_INSPECTIONS_DO_NOT_EXIST;
+			::SafeArrayPutElement(*ppsaStatus, &l, &Status);
+			ItemErrorCount++;
+		} // end else
 			
-			if ( AddRequest )
+		if ( AddRequest )
+		{
+			//Check if the parameter is for inspection or not
+			if(nullptr == pInspection)
+			{
+				SVStorage		Parameter;
+				SVSAFEARRAY		Values;
+				
+				//Values must be in array format
+				Values.Add(_variant_t( bstrValue ));
+				Parameter.m_StorageType = SVVisionProcessor::SVStorageValue;
+				Parameter.m_Variant = Values;
+				ParameterObjects[Name] =  Parameter;
+			}
+			else
 			{
 				//add request to inspection process
-				pInspection->AddInputRequest( ref, W2T( bstrValue ) );
+				pInspection->AddInputRequest( ObjectRef, W2T( bstrValue ) );
 
 				bool Found = false;
 				long Size = static_cast< long >( Inspections.GetSize() );
@@ -4377,19 +4403,25 @@ HRESULT CSVCommand::SVSetToolParameterList(SAFEARRAY* psaNames, SAFEARRAY* psaVa
 				{
 					Inspections.Add( pInspection );
 				}// end if
-			}// end if ( AddRequest )
-		}// end for ( long l = 0; l < NumberOfElements; l++ )
+			} //end else nullptr == pInspection
+		}// end if ( bAddRequest )
+	}// end for ( long l = 0; l < lNumberOfElements; l++ )
 
-		// New delimiter added after each SVSetToolParameterList call
-		// This breaks the list into pieces and we are only processing
-		// 1 piece of the list per inspection iteration
-		long Size = static_cast< long >( Inspections.GetSize() );
-		for( long j = 0; j < Size; j++ )
-		{
-			//add request to inspection process
-			Inspections[j]->AddInputRequestMarker();
-		}// end for
-	} while(0); // end do
+	//Check if there are parameters other than for the inspection 
+	if(0 != ParameterObjects.size())
+	{
+		SVNameStatusMap SetItemsResult;
+		SVVisionProcessorHelper::Instance().SetItems( ParameterObjects,  SetItemsResult);
+	}
+	// New delimiter added after each SVSetToolParameterList call
+	// This breaks the list into pieces and we are only processing
+	// 1 piece of the list per inspection iteration
+	long Size = static_cast< long >( Inspections.GetSize() );
+	for( long j = 0; j < Size; j++ )
+	{
+		//add request to inspection process
+		Inspections[j]->AddInputRequestMarker();
+	}// end for
 	
 	if ( ItemErrorCount > 0 ) //some error happened
 	{
@@ -7059,6 +7091,16 @@ STDMETHODIMP CSVCommand::SVIsAvailiable()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVCommand.cpp_v  $
+ * 
+ *    Rev 1.9   17 Mar 2014 15:18:24   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  869
+ * SCR Title:  Add PPQ and Environment Variables to Object Manager and Update Pickers
+ * Checked in by:  bWalter;  Ben Walter
+ * Change Description:  
+ *   Changed SVGetDataList and SVSetToolParameterList due to Object Manager changes.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.8   07 Mar 2014 18:08:08   bwalter
  * Project:  SVObserver

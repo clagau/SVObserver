@@ -5,8 +5,8 @@
 //* .Module Name     : SVVisionProcessorHelper
 //* .File Name       : $Workfile:   SVVisionProcessorHelper.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.7  $
-//* .Check In Date   : $Date:   07 Mar 2014 18:25:18  $
+//* .Current Version : $Revision:   1.8  $
+//* .Check In Date   : $Date:   17 Mar 2014 15:34:04  $
 //******************************************************************************
 
 #pragma region Includes
@@ -26,9 +26,14 @@
 #include "SVObserver.h"
 #include "SVSocketRemoteCommandManager.h"
 #include "SVSVIMStateClass.h"
+#include "BasicValueObject.h"
+#include "SVObjectLibrary/GlobalConst.h"
 #pragma endregion Includes
 
 #pragma region Declarations
+using namespace Seidenader::SVObserver;
+using namespace Seidenader::SVObjectLibrary;
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -46,15 +51,15 @@ SVVisionProcessorHelper::SVVisionProcessorHelper()
 : m_LastModifiedTime( 0 ), m_PrevModifiedTime( 0 )
 {
 	m_GetItemsFunctors = boost::assign::map_list_of< SVString, SVGetItemsFunctor >
-		( "Windows", boost::bind( &SVVisionProcessorHelper::GetWindowsItems, this, _1, _2 ) )
-		( "Environment", boost::bind( &SVVisionProcessorHelper::GetEnvironmentItems, this, _1, _2 ) )
-		( "Inspections", boost::bind( &SVVisionProcessorHelper::GetInspectionItems, this, _1, _2 ) )
-		( "RemoteInputs", boost::bind( &SVVisionProcessorHelper::GetRemoteInputItems, this, _1, _2 ) )
+		( "Standard", boost::bind( &SVVisionProcessorHelper::GetStandardItems, this, _1, _2 ) )
+		( FqnInspections, boost::bind( &SVVisionProcessorHelper::GetInspectionItems, this, _1, _2 ) )
+		( FqnRemoteInputs, boost::bind( &SVVisionProcessorHelper::GetRemoteInputItems, this, _1, _2 ) )
 		;
 
 	m_SetItemsFunctors = boost::assign::map_list_of< SVString, SVSetItemsFunctor >
-		( "Inspections", boost::bind( &SVVisionProcessorHelper::SetInspectionItems, this, _1, _2 ) )
-		( "RemoteInputs", boost::bind( &SVVisionProcessorHelper::SetRemoteInputItems, this, _1, _2 ) )
+		( FqnInspections, boost::bind( &SVVisionProcessorHelper::SetInspectionItems, this, _1, _2 ) )
+		( FqnRemoteInputs, boost::bind( &SVVisionProcessorHelper::SetRemoteInputItems, this, _1, _2 ) )
+		( FqnCameras, boost::bind( &SVVisionProcessorHelper::SetCameraItems, this, _1, _2 ) )
 		;
 }
 
@@ -359,12 +364,7 @@ HRESULT SVVisionProcessorHelper::GetItems( const SVNameSet& p_rNames, SVNameStor
 				}
 				else
 				{
-					p_rItems[ l_Iter->c_str() ] = SVStorageResult( SVStorage(), SVMSG_ONE_OR_MORE_INSPECTIONS_DO_NOT_EXIST, 0 );
-
-					if( l_Status == S_OK )
-					{
-						l_Status = SVMSG_NOT_ALL_LIST_ITEMS_PROCESSED;
-					}
+					l_NameSets[ _T("Standard") ].insert( *l_Iter );
 				}
 			}
 			else
@@ -505,16 +505,48 @@ HRESULT SVVisionProcessorHelper::SetItems( const SVNameStorageMap& p_rItems, SVN
 	return l_Status;
 }
 
-HRESULT SVVisionProcessorHelper::GetWindowsItems( const SVNameSet& p_rNames, SVNameStorageResultMap& p_rItems ) const
+HRESULT SVVisionProcessorHelper::GetStandardItems( const SVNameSet& p_rNames, SVNameStorageResultMap& p_rItems ) const
 {
-	HRESULT l_Status = TheSVObserverApp.GetWindowsItems( p_rNames, p_rItems );
+	HRESULT l_Status = S_OK;
 
-	return l_Status;
-}
+	p_rItems.clear();
 
-HRESULT SVVisionProcessorHelper::GetEnvironmentItems( const SVNameSet& p_rNames, SVNameStorageResultMap& p_rItems ) const
-{
-	HRESULT l_Status = TheSVObserverApp.GetEnvironmentItems( p_rNames, p_rItems );
+	for( SVNameSet::const_iterator l_Iter = p_rNames.begin(); SUCCEEDED( l_Status ) && l_Iter != p_rNames.end(); ++l_Iter )
+	{
+		SVObjectReference ref;
+
+		SVObjectManagerClass::Instance().GetObjectByDottedName( *l_Iter, ref );
+
+		if( ref.Object() != NULL )
+		{
+			BasicValueObject* pValueObject = dynamic_cast< BasicValueObject* >( ref.Object() );
+			SVStorage ValueStorage;
+
+			if( NULL != pValueObject )
+			{
+				l_Status = pValueObject->getValue( ValueStorage.m_Variant );
+
+				if( l_Status == S_OK )
+				{
+					ValueStorage.m_StorageType = SVVisionProcessor::SVStorageValue;
+				}
+				else
+				{
+					l_Status = SVMSG_ONE_OR_MORE_REQUESTED_OBJECTS_DO_NOT_EXIST;
+				}
+				p_rItems[ l_Iter->c_str() ] = SVStorageResult(ValueStorage, l_Status, 0);
+			}
+		}
+		else
+		{
+			p_rItems[ l_Iter->c_str() ] = SVStorageResult( SVStorage(), SVMSG_ONE_OR_MORE_REQUESTED_OBJECTS_DO_NOT_EXIST, 0 );
+
+			if( l_Status == S_OK )
+			{
+				l_Status = SVMSG_NOT_ALL_LIST_ITEMS_PROCESSED;
+			}
+		}
+	}
 
 	return l_Status;
 }
@@ -590,6 +622,26 @@ HRESULT SVVisionProcessorHelper::SetRemoteInputItems( const SVNameStorageMap& p_
 	if( l_pConfig != NULL )
 	{
 		l_Status = l_pConfig->SetRemoteInputItems( p_rItems, p_rStatus );
+	}
+	else if( l_Status == S_OK )
+	{
+		l_Status = E_UNEXPECTED;
+	}
+
+	return l_Status;
+}
+
+HRESULT SVVisionProcessorHelper::SetCameraItems( const SVNameStorageMap& p_rItems, SVNameStatusMap& p_rStatus )
+{
+	HRESULT l_Status = S_OK;
+
+	SVConfigurationObject* l_pConfig = NULL;
+
+	l_Status = SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
+
+	if( l_pConfig != NULL )
+	{
+		l_Status = l_pConfig->SetCameraItems( p_rItems, p_rStatus );
 	}
 	else if( l_Status == S_OK )
 	{
@@ -763,6 +815,18 @@ void SVVisionProcessorHelper::ProcessLastModified( bool& p_WaitForEvents )
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVVisionProcessorHelper.cpp_v  $
+ * 
+ *    Rev 1.8   17 Mar 2014 15:34:04   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  869
+ * SCR Title:  Add PPQ and Environment Variables to Object Manager and Update Pickers
+ * Checked in by:  bWalter;  Ben Walter
+ * Change Description:  
+ *   Changed functors to new use Object Manager constants.
+ *   Removed GetWindowItems and GetEnviromentItems and created GetStandardItems and SetCameraItems methods to have SVRC access the new variables in the OM.
+ *   Added method SetCameraItems.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.7   07 Mar 2014 18:25:18   bwalter
  * Project:  SVObserver

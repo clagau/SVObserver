@@ -5,8 +5,8 @@
 //* .Module Name     : SVVirtualCamera
 //* .File Name       : $Workfile:   SVVirtualCamera.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   07 Mar 2014 18:24:44  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   17 Mar 2014 15:33:36  $
 //******************************************************************************
 
 #ifndef SVVIRTUALCAMERA_H
@@ -23,9 +23,16 @@
 #include "SVFileAcquisitionInitiator.h"
 #include "SVUtilityLibrary/SVString.h"
 #include "SVAcquisitionClass.h"
+#include "BasicValueObjects.h"
 #pragma endregion Includes
 
 #pragma region Declarations
+//Camera variables
+const char			CameraSerialNumber[]		= _T( "SerialNumber" );
+const char			CameraShutter[]				= _T( "Shutter" );
+const char			CameraGain[]				= _T( "Gain" );
+const char			CameraContrast[]			= _T( "Contrast" );			//Legacy name for Gain was Contrast.
+
 typedef SVVector< SVVirtualCamera* > SVVirtualCameraArray;
 typedef SVSet< SVVirtualCamera* > SVVirtualCameraSet;
 typedef std::set< SVVirtualCamera* > SVVirtualCameraPtrSet;
@@ -33,6 +40,7 @@ typedef SVSet< SVAcquisitionClassPtr > SVAcquisitionClassSet;
 typedef SVMap< CString, SVVirtualCamera* > SVVirtualCameraMap;
 
 class SVORequestClass;
+class SVDeviceParamCollection;
 #pragma endregion Declarations
 
 class SVVirtualCamera : public SVObjectClass
@@ -48,6 +56,8 @@ public:
 	virtual BOOL GetImageInfo( SVImageInfoClass *pImageInfo );
 
 	virtual long GetImageDepth() const;
+
+	virtual HRESULT RefreshObject();
 
 	BOOL Create( LPCTSTR p_szDeviceName );
 	BOOL Destroy();
@@ -68,6 +78,7 @@ public:
 	HRESULT GetLut( SVLut& lut ) const;
 
 	HRESULT GetSourceImageIndex( SVDataManagerHandle& p_rHandle, const SVProductInfoStruct& p_rProduct ) const;
+	virtual HRESULT GetChildObject( SVObjectClass*& p_rpObject, const SVObjectNameInfo& p_rNameInfo, long p_Index = 0 ) const;
 
 	HRESULT ReserveNextImageHandleIndex( SVDataManagerHandle& p_rDMIndexHandle, SVDataManagerLockTypeEnum p_LockType = SV_ACQUISITION ) const;
 	virtual BOOL ReserveImageHandleIndex( const SVDataManagerHandle& p_rDMIndexHandle ) const;
@@ -112,6 +123,8 @@ public:
 	HRESULT RegisterTriggerRelay(SVIOTriggerLoadLibraryClass* triggerDLL, unsigned long ulIndex);
 	HRESULT UnregisterTriggerRelay();
 
+	HRESULT UpdateCameraParameters();
+	HRESULT UpdateDeviceParameters(SVDeviceParamCollection& rCameraParameters);
 #pragma endregion Public Methods
 
 protected:
@@ -132,6 +145,7 @@ protected:
 	CStdioFile m_LogFile;
 
 private:
+	Seidenader::SVObserver::BasicValueObjects m_CameraValues;
 	bool m_bFileAcquisition;
 	SVString m_imageFilename;
 	SVString m_imageDirectoryName;
@@ -149,6 +163,17 @@ private:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVVirtualCamera.h_v  $
+ * 
+ *    Rev 1.2   17 Mar 2014 15:33:36   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  869
+ * SCR Title:  Add PPQ and Environment Variables to Object Manager and Update Pickers
+ * Checked in by:  bWalter;  Ben Walter
+ * Change Description:  
+ *   Added RefreshObject, GetChildObject, UpdateDeviceParameters, UpdateCameraParameters methods.
+ *   Added m_CameraValues and camera variable constants.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   07 Mar 2014 18:24:44   bwalter
  * Project:  SVObserver

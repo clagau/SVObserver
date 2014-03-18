@@ -5,8 +5,8 @@
 //* .Module Name     : SVObjectManagerClass
 //* .File Name       : $Workfile:   SVObjectManagerClass.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   07 Mar 2014 16:15:38  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   17 Mar 2014 14:18:34  $
 //******************************************************************************
 
 #ifndef SVOBJECTMANAGERCLASS_H
@@ -46,6 +46,16 @@ public:
 		ReadWrite = 2,
 	};
 
+	enum RootChildObjectEnum
+	{
+		Root,
+		Environment,
+		Configuration,
+	};
+	typedef std::map< RootChildObjectEnum, SVGUID > RootEnumChildMap;
+	typedef std::map< SVString, SVGUID > RootNameChildMap;
+	typedef std::map< SVString, SVString > TranslateMap;
+
 	typedef std::set< SVGUID > SVObserverIdSet;
 	typedef std::deque< SVString > SVSubjectDataNameDeque;
 
@@ -56,13 +66,20 @@ public:
 	SVObjectManagerStateEnum GetState() const;
 	HRESULT SetState( SVObjectManagerStateEnum p_State );
 
-	const SVGUID& GetConfigurationObjectID() const;
+	const SVGUID GetChildRootObjectID(const RootChildObjectEnum RootChild) const;
+	const SVGUID GetChildRootObjectID(const SVString& RootName) const;
 
 	template< typename SVObjectTypeName >
-	HRESULT GetConfigurationObject( SVObjectTypeName*& p_rpObject );
+	HRESULT GetRootChildObject( SVObjectTypeName*& rpObject, RootChildObjectEnum RootChild );
 
-	HRESULT ConstructConfigurationObject( const SVGUID& p_rClassID );
-	HRESULT DestroyConfigurationObject();
+	//For backward compatibility
+	template< typename SVObjectTypeName >
+	HRESULT GetConfigurationObject( SVObjectTypeName*& rpObject );
+
+	HRESULT ConstructRootObject( const SVGUID& rClassID );
+	HRESULT DestroyRootObject();
+	void setRootChildID(const RootChildObjectEnum RootChild, const SVGUID& rUniqueID);
+	void Translation(SVString& Name);
 
 	HRESULT ConstructObject( const SVGUID& rClassID, GUID& rObjectID );
 	HRESULT ConstructObject( const SVGUID& rClassID, SVObjectClass*& rpObject );
@@ -262,14 +279,15 @@ protected:
 
 	long m_State;
 
-	SVGUID m_ConfigurationID;
-
 	mutable SVCriticalSection m_Lock;
 
-	SVCookieEntryMap m_CookieEntries;
-	SVUniqueObjectEntryMap m_UniqueObjectEntries;
-	SVIPDocMap m_IPDocs;
-	SVIODocMap m_IODocs;
+	SVCookieEntryMap		m_CookieEntries;
+	SVUniqueObjectEntryMap	m_UniqueObjectEntries;
+	SVIPDocMap				m_IPDocs;
+	SVIODocMap				m_IODocs;
+	RootEnumChildMap		m_RootEnumChildren;
+	RootNameChildMap		m_RootNameChildren;
+	TranslateMap			m_TranslationMap;
 
 	int  m_OnlineDisplay;
 
@@ -301,6 +319,21 @@ private:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObjectLibrary\SVObjectManagerClass.h_v  $
+ * 
+ *    Rev 1.2   17 Mar 2014 14:18:34   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  869
+ * SCR Title:  Add PPQ and Environment Variables to Object Manager and Update Pickers
+ * Checked in by:  bWalter;  Ben Walter
+ * Change Description:  
+ *   Changed that a root object is created as the top object instead of a configuration object
+ * Interface to insert Root child objects into ObjectManager (eg. Configuration and Environment objects)
+ * Access to these objects via GUIDS and name.
+ * Translation function to map Fully Qualified Names to their internal names
+ * Method to access Configuration object
+ * Changed parameter names to follow guidelines.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   07 Mar 2014 16:15:38   bwalter
  * Project:  SVObserver

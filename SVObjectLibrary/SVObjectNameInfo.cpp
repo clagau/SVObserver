@@ -5,12 +5,14 @@
 //* .Module Name     : SVObjectNameInfo
 //* .File Name       : $Workfile:   SVObjectNameInfo.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   10 Jun 2013 17:42:10  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   17 Mar 2014 14:19:08  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVObjectNameInfo.h"
+#pragma endregion Includes
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // indexes are one-based and specified with []
@@ -225,12 +227,38 @@ long SVObjectNameInfo::GetIndexValue() const
 	return l_Index;
 }
 
+void SVObjectNameInfo::RemoveTopName()
+{
+	if(m_NameArray.begin() != m_NameArray.end())
+	{
+		m_NameArray.pop_front();
+	}
+}
+
+void SVObjectNameInfo::RemoveBottomName()
+{
+	if(m_NameArray.begin() != m_NameArray.end())
+	{
+		m_NameArray.pop_back();
+	}
+}
 
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObjectLibrary\SVObjectNameInfo.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObjectLibrary\SVObjectNameInfo.cpp_v  $
+ * 
+ *    Rev 1.2   17 Mar 2014 14:19:08   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  869
+ * SCR Title:  Add PPQ and Environment Variables to Object Manager and Update Pickers
+ * Checked in by:  bWalter;  Ben Walter
+ * Change Description:  
+ *   Added Includes region.
+ *   Added methods to remove either the top or bottom part of an FQN.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   10 Jun 2013 17:42:10   bWalter
  * Project:  SVObserver

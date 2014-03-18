@@ -5,8 +5,8 @@
 //* .Module Name     : SVConfigurationObject
 //* .File Name       : $Workfile:   SVConfigurationObject.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.17  $
-//* .Check In Date   : $Date:   07 Mar 2014 18:09:38  $
+//* .Current Version : $Revision:   1.18  $
+//* .Check In Date   : $Date:   17 Mar 2014 15:20:24  $
 //******************************************************************************
 
 #pragma region Includes
@@ -58,9 +58,14 @@
 #include "SVGlobal.h"
 #include "SVSVIMStateClass.h"
 #include "SVStorageResult.h"
+#include "SVVirtualCamera.h"
+#include "SVObjectLibrary/GlobalConst.h"
 #pragma endregion Includes
 
 #pragma region Declarations
+using namespace Seidenader::SVObserver;
+using namespace Seidenader::SVObjectLibrary;
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -310,13 +315,23 @@ BOOL SVConfigurationObject::ModifyAcquisitionDevice( LPCTSTR szName, const SVDev
 		bOk = pDevice != NULL;
 		if ( bOk )
 		{
-			pDevice->mDeviceParams = *pParams;
+			// don't do a straight assignment ( m_DeviceParams = pParams )
+			// only copy those parameters that are specified.
+			SVDeviceParamMap::const_iterator iter;
+			for (iter = pParams->mapParameters.begin(); iter != pParams->mapParameters.end(); ++iter)
+			{
+				const SVDeviceParamWrapper& w = iter->second;
+
+				if ( ((const SVDeviceParam*) w) != NULL )
+				{
+					pDevice->mDeviceParams.GetParameter( iter->first ) = w;
+				}
+			}
 		}
 	}
 	return bOk;
 
 }
-
 
 BOOL SVConfigurationObject::RemoveAcquisitionDevice( LPCTSTR szName )
 {
@@ -1163,6 +1178,11 @@ HRESULT SVConfigurationObject::LoadConfiguration(SVTreeType& rTree)
 																_bstr_t l_String( svValue );
 
 																svLight.Band( i ).Attribute( j ).strName = static_cast< LPCTSTR >( l_String );
+																//Legacy: changed name from Contrast to Gain
+																if( CameraContrast == svLight.Band( i ).Attribute( j ).strName )
+																{
+																	svLight.Band( i ).Attribute( j ).strName = CameraGain;
+																}
 															}
 															if ( SVNavigateTreeClass::GetItem( rTree, CTAG_RESOURCE_ID, htiLight, svValue ) )
 															{
@@ -2646,7 +2666,15 @@ HRESULT SVConfigurationObject::GetChildObject( SVObjectClass*& rpObject, const S
 	{
 		if( rNameInfo.m_NameArray[ 0 ] == "RemoteInputs" )
 		{
-			m_pInputObjectList->GetInput( rNameInfo.GetObjectName( 1 ), rpObject );
+			if(nullptr != m_pInputObjectList)
+			{
+				m_pInputObjectList->GetInput( rNameInfo.GetObjectName( 1 ), rpObject );
+			}
+			else
+			{
+				l_Status = S_FALSE;
+				return l_Status;
+			}
 		}
 
 		if( rpObject == NULL )
@@ -4513,10 +4541,10 @@ HRESULT SVConfigurationObject::GetInspectionItems( const SVNameSet& p_rNames, SV
 
 			SVObjectNameInfo::ParseObjectName( l_Info, *l_Iter );
 
-			if( "Inspections" == l_Info.m_NameArray[ 0 ] )
+			if( FqnInspections == l_Info.m_NameArray[ 0 ] )
 			{
 				SVObjectReference ref;
-				SVObjectManagerClass::Instance().GetObjectByDottedName( l_Info.GetObjectArrayName( 1 ), ref );
+				SVObjectManagerClass::Instance().GetObjectByDottedName( l_Info.GetObjectArrayName( 0 ), ref );
 
 				if( ref.Object() != NULL )
 				{
@@ -4670,7 +4698,7 @@ HRESULT SVConfigurationObject::GetRemoteInputItems( const SVNameSet& p_rNames, S
 
 			SVObjectNameInfo::ParseObjectName( l_Info, *l_Iter );
 
-			if( "RemoteInputs" == l_Info.m_NameArray[ 0 ] )
+			if( FqnRemoteInputs == l_Info.m_NameArray[ 0 ] )
 			{
 				SVRemoteInputObject* l_pInput = NULL;
 
@@ -4746,10 +4774,10 @@ HRESULT SVConfigurationObject::SetInspectionItems( const SVNameStorageMap& p_rIt
 
 			SVObjectNameInfo::ParseObjectName( l_Info, l_Iter->first );
 
-			if( "Inspections" == l_Info.m_NameArray[ 0 ] )
+			if( FqnInspections == l_Info.m_NameArray[ 0 ] )
 			{
 				SVObjectReference ref;
-				SVObjectManagerClass::Instance().GetObjectByDottedName( l_Info.GetObjectArrayName( 1 ), ref );
+				SVObjectManagerClass::Instance().GetObjectByDottedName( l_Info.GetObjectArrayName( 0 ), ref );
 
 				if( ref.Object() != NULL )
 				{
@@ -4919,7 +4947,7 @@ HRESULT SVConfigurationObject::SetRemoteInputItems( const SVNameStorageMap& p_rI
 
 			SVObjectNameInfo::ParseObjectName( l_Info, l_Iter->first );
 
-			if( "RemoteInputs" == l_Info.m_NameArray[ 0 ] )
+			if( FqnRemoteInputs == l_Info.m_NameArray[ 0 ] )
 			{
 				SVRemoteInputObject* l_pInput = NULL;
 
@@ -5035,6 +5063,118 @@ HRESULT SVConfigurationObject::SetRemoteInputItems( const SVNameStorageMap& p_rI
 	return l_Status;
 }
 
+HRESULT SVConfigurationObject::SetCameraItems( const SVNameStorageMap& rItems, SVNameStatusMap& rStatus )
+{
+	HRESULT Status = S_OK;
+
+	SVVirtualCameraPtrSet CamerasChanged;
+
+	rStatus.clear();
+
+	if( !( rItems.empty() ) )
+	{
+		bool Online = SVSVIMStateClass::CheckState( SV_STATE_RUNNING );
+
+		for( SVNameStorageMap::const_iterator Iter = rItems.begin(); Iter != rItems.end(); ++Iter )
+		{
+			SVObjectNameInfo Info;
+
+			SVObjectNameInfo::ParseObjectName( Info, Iter->first );
+
+			if( FqnCameras == Info.m_NameArray[ 0 ] )
+			{
+				BasicValueObject* pValueObject = NULL;
+
+				SVObjectManagerClass::Instance().GetObjectByDottedName( Iter->first, pValueObject );
+
+				if( pValueObject != NULL )
+				{
+					bool Attribute = ( ( pValueObject->ObjectAttributesAllowed() & SV_REMOTELY_SETABLE ) == SV_REMOTELY_SETABLE );
+
+					if( Attribute )
+					{
+						Attribute = !Online || ( ( pValueObject->ObjectAttributesAllowed() & SV_SETABLE_ONLINE ) == SV_SETABLE_ONLINE );
+
+						if( Attribute )
+						{
+							HRESULT LoopStatus = S_OK;
+							LoopStatus = pValueObject->setValue(Iter->second.m_Variant);
+
+							SVVirtualCamera* pVirtualCamera = dynamic_cast< SVVirtualCamera* > (pValueObject->GetOwner());
+							if( nullptr != pVirtualCamera )
+							{
+								CamerasChanged.insert(pVirtualCamera);
+							}
+							rStatus[ Iter->first ] = LoopStatus;
+							if( Status == S_OK && LoopStatus != S_OK )
+							{
+								Status = SVMSG_NOT_ALL_LIST_ITEMS_PROCESSED;
+							}
+						}
+						else
+						{
+							rStatus[ Iter->first ] = SVMSG_OBJECT_CANNOT_BE_SET_WHILE_ONLINE;
+
+							if( Status == S_OK )
+							{
+								Status = SVMSG_NOT_ALL_LIST_ITEMS_PROCESSED;
+							}
+						}
+					}
+					else
+					{
+						rStatus[ Iter->first ] = SVMSG_OBJECT_CANNOT_BE_SET_REMOTELY;
+
+						if( Status == S_OK )
+						{
+							Status = SVMSG_NOT_ALL_LIST_ITEMS_PROCESSED;
+						}
+					}
+				}
+				else
+				{
+					rStatus[ Iter->first ] = SVMSG_ONE_OR_MORE_REQUESTED_OBJECTS_DO_NOT_EXIST;
+
+					if( Status == S_OK )
+					{
+						Status = SVMSG_NOT_ALL_LIST_ITEMS_PROCESSED;
+					}
+				}
+			}
+			else
+			{
+				rStatus[ Iter->first ] = SVMSG_ONE_OR_MORE_REQUESTED_OBJECTS_DO_NOT_EXIST;
+
+				if( Status == S_OK )
+				{
+					Status = SVMSG_NOT_ALL_LIST_ITEMS_PROCESSED;
+				}
+			}
+		}
+	}
+	else
+	{
+		Status = E_INVALIDARG;
+	}
+
+	//Check which cameras device parameters have changed
+	for( SVVirtualCameraPtrSet::iterator l_Iter = CamerasChanged.begin(); l_Iter != CamerasChanged.end(); ++l_Iter )
+	{
+		SVDeviceParamCollection CameraParameters;
+		HRESULT LoopStatus = (*l_Iter)->UpdateDeviceParameters(CameraParameters);
+		if(S_OK == LoopStatus)
+		{
+			CString DeviceName = (*l_Iter)->GetAcquisitionDevice()->GetRootDeviceName();
+			ModifyAcquisitionDevice(DeviceName, &CameraParameters);
+			SVLightReference LightRef;
+			(*l_Iter)->GetAcquisitionDevice()->GetLightReference(LightRef);
+			ModifyAcquisitionDevice(DeviceName, LightRef );
+		}
+	}
+
+	return Status;
+}
+
 void SVConfigurationObject::GetRemoteInputInspections( const SVString& p_rRemoteInputName, SVInspectionSet& p_rInspections ) const
 {
 	p_rInspections.clear();
@@ -5100,6 +5240,17 @@ bool SVConfigurationObject::HasCameraTrigger(SVPPQObject* p_pPPQ) const
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVConfigurationObject.cpp_v  $
+ * 
+ *    Rev 1.18   17 Mar 2014 15:20:24   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  869
+ * SCR Title:  Add PPQ and Environment Variables to Object Manager and Update Pickers
+ * Checked in by:  bWalter;  Ben Walter
+ * Change Description:  
+ *   Changed ModifyAcquisitionDevice, LoadConfiguration,  GetChildObject, GetInspectionItems, GetRemoteInputItems, SetInspectionItems, SetRemoteInputItems for new objects.
+ *   Added method SetCameraItems.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.17   07 Mar 2014 18:09:38   bwalter
  * Project:  SVObserver

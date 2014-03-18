@@ -5,10 +5,11 @@
 //* .Module Name     : SVObject
 //* .File Name       : $Workfile:   SVObjectClass.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.3  $
-//* .Check In Date   : $Date:   05 Feb 2014 09:20:42  $
+//* .Current Version : $Revision:   1.4  $
+//* .Check In Date   : $Date:   17 Mar 2014 14:14:10  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVObjectClass.h"
 #include "SVOMFCLibrary/SVOMFCLibraryGlobals.h"
@@ -21,12 +22,13 @@
 #include "SVObjectLevelCreateStruct.h"
 #include "SVObjectManagerClass.h"
 #include "SVObjectLibrary/SVToolsetScriptTags.h"
+#pragma endregion Includes
 
+#pragma region Declarations
 #ifdef _DEBUG
 #define new DEBUG_NEW
-#undef THIS_FILE
-static char THIS_FILE[] = __FILE__;
 #endif
+#pragma endregion Declarations
 
 //*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/
 //* Class Name : SVObjectClass
@@ -206,6 +208,13 @@ HRESULT SVObjectClass::ResetObjectInputs()
 	HRESULT l_hrOk = S_OK;
 
 	return l_hrOk;
+}
+
+HRESULT SVObjectClass::RefreshObject()
+{
+	HRESULT Result = S_OK;
+
+	return Result;
 }
 
 // Connect Input from somebody else to my Output...( to me )
@@ -1707,6 +1716,18 @@ void SVObjectClass::SetDefaultObjectAttributesSet(UINT uAttributes)
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObjectLibrary\SVObjectClass.cpp_v  $
+ * 
+ *    Rev 1.4   17 Mar 2014 14:14:10   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  869
+ * SCR Title:  Add PPQ and Environment Variables to Object Manager and Update Pickers
+ * Checked in by:  bWalter;  Ben Walter
+ * Change Description:  
+ *   Added Includes and Declarations regions.
+ *   Removed THIS_FILE.
+ *   Added RefreshObject method.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   05 Feb 2014 09:20:42   tbair
  * Project:  SVObserver

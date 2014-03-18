@@ -5,8 +5,8 @@
 //* .Module Name     : SVMatroxGigeAcquisitionClass
 //* .File Name       : $Workfile:   SVMatroxGigeAcquisitionClass.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.4  $
-//* .Check In Date   : $Date:   07 Mar 2014 18:19:00  $
+//* .Current Version : $Revision:   1.5  $
+//* .Check In Date   : $Date:   17 Mar 2014 15:26:12  $
 //******************************************************************************
 
 #pragma region Includes
@@ -26,6 +26,8 @@
 #include "SVDigitizerProcessingClass.h"
 #include "SVImageProcessingClass.h"
 #include "SVOMFCLibrary/SVOINIClass.h"
+#include "SVGigeCameraStruct.h"
+#include "SVGigeCameraManager.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -157,7 +159,17 @@ HRESULT SVMatroxGigeAcquisitionClass::LoadFiles(SVFileNameArrayClass& rFiles)
 			// Set Gige Feature Overrides
 			hr = SetGigeFeatureOverrides(info.sFeatureOverrides);
 	
-			SetDeviceParameters( m_CameraFileDeviceParams );
+			SVDeviceParamCollection DeviceParams(m_CameraFileDeviceParams);
+			SVGigeCameraStructSet Cameras;
+			Cameras = TheSVGigeCameraManager.GetCameraOrder();
+			if(Cameras.GetSize() > DigNumber())
+			{
+				SVGigeCameraStruct& Camera = Cameras.ElementAt( DigNumber() );
+				DeviceParams.SetParameter( DeviceParamSerialNumberString, SVStringValueDeviceParam( Camera.strSerialNum ) );
+				DeviceParams.SetParameter( DeviceParamIPAddress, SVStringValueDeviceParam( Camera.strIPAddress ) );
+			}
+			SetDeviceParameters( DeviceParams );
+
 			GetCameraImageInfo( &msvImageInfo );
 		}
 	}
@@ -434,7 +446,7 @@ HRESULT SVMatroxGigeAcquisitionClass::UpdateLightReferenceAttributes( int iBand,
 				break;
 
 			case DeviceParamGain:
-				attribute.strName = _T("Contrast");
+				attribute.strName = pCFParam->VisualName();
 				break;
 
 			case DeviceParamExposure:
@@ -817,6 +829,16 @@ HRESULT SVMatroxGigeAcquisitionClass::StartDigitizer()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVMatroxGigeAcquisitionClass.cpp_v  $
+ * 
+ *    Rev 1.5   17 Mar 2014 15:26:12   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  869
+ * SCR Title:  Add PPQ and Environment Variables to Object Manager and Update Pickers
+ * Checked in by:  bWalter;  Ben Walter
+ * Change Description:  
+ *   UpdateMatroxDevices is called in the LoadFiles method to avoid the Device parameters being deleted.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.4   07 Mar 2014 18:19:00   bwalter
  * Project:  SVObserver

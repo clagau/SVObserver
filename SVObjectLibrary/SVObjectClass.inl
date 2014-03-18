@@ -5,8 +5,8 @@
 //* .Module Name     : SVObjectClass
 //* .File Name       : $Workfile:   SVObjectClass.inl  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   22 Apr 2013 16:47:06  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   17 Mar 2014 14:15:02  $
 //******************************************************************************
 
 #ifndef SVOBJECTCLASS_INL
@@ -55,7 +55,7 @@ inline long SVObjectClass::GetObjectSubType() const
 /*
 This metthod return the pointer to the owner object.
 */
-inline SVObjectClass* SVObjectClass::GetOwner()
+inline SVObjectClass* SVObjectClass::GetOwner() const
 {
 	return ownerObjectInfo.PObject;
 }
@@ -132,7 +132,17 @@ HRESULT SVObjectClass::Accept( SVObjectVisitor& p_rVisitor )
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObjectLibrary\SVObjectClass.inl_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObjectLibrary\SVObjectClass.inl_v  $
+ * 
+ *    Rev 1.1   17 Mar 2014 14:15:02   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  869
+ * SCR Title:  Add PPQ and Environment Variables to Object Manager and Update Pickers
+ * Checked in by:  bWalter;  Ben Walter
+ * Change Description:  
+ *   Made GetOwner() const.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   22 Apr 2013 16:47:06   bWalter
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : SVVisionProcessorHelper
 //* .File Name       : $Workfile:   SVVisionProcessorHelper.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.5  $
-//* .Check In Date   : $Date:   07 Mar 2014 18:25:58  $
+//* .Current Version : $Revision:   1.6  $
+//* .Check In Date   : $Date:   17 Mar 2014 15:35:00  $
 //******************************************************************************
 
 #ifndef SVVISIONPROCESSORHELPER_H
@@ -90,13 +90,13 @@ protected:
 	void Startup();
 	void Shutdown();
 
-	HRESULT GetWindowsItems( const SVNameSet& p_rNames, SVNameStorageResultMap& p_rItems ) const;
-	HRESULT GetEnvironmentItems( const SVNameSet& p_rNames, SVNameStorageResultMap& p_rItems ) const;
+	HRESULT GetStandardItems( const SVNameSet& p_rNames, SVNameStorageResultMap& p_rItems ) const;
 	HRESULT GetInspectionItems( const SVNameSet& p_rNames, SVNameStorageResultMap& p_rItems ) const;
 	HRESULT GetRemoteInputItems( const SVNameSet& p_rNames, SVNameStorageResultMap& p_rItems ) const;
 
 	HRESULT SetInspectionItems( const SVNameStorageMap& p_rItems, SVNameStatusMap& p_rStatus );
 	HRESULT SetRemoteInputItems( const SVNameStorageMap& p_rItems, SVNameStatusMap& p_rStatus );
+	HRESULT SetCameraItems( const SVNameStorageMap& p_rItems, SVNameStatusMap& p_rStatus );
 
 	HRESULT GetObjectDefinition( const SVObjectClass& p_rObj, const long p_Filter, SVDataDefinitionStruct& p_rDataDef ) const;
 
@@ -126,6 +126,16 @@ private:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVVisionProcessorHelper.h_v  $
+ * 
+ *    Rev 1.6   17 Mar 2014 15:35:00   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  869
+ * SCR Title:  Add PPQ and Environment Variables to Object Manager and Update Pickers
+ * Checked in by:  bWalter;  Ben Walter
+ * Change Description:  
+ *   Removed GetWindowItems and GetEnviromentItems and created GetStandardItems and SetCameraItems.Added method SetCameraItems.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.5   07 Mar 2014 18:25:58   bwalter
  * Project:  SVObserver

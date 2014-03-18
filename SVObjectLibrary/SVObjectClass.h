@@ -5,13 +5,14 @@
 //* .Module Name     : SVObjectClass
 //* .File Name       : $Workfile:   SVObjectClass.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   01 Feb 2014 10:09:14  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   17 Mar 2014 14:14:38  $
 //******************************************************************************
 
 #ifndef SVOBJECTCLASS_H
 #define SVOBJECTCLASS_H
 
+#pragma region Includes
 #include <set>
 #include <vector>
 
@@ -25,13 +26,16 @@
 #include "SVPublicAttributeEntryStruct.h"
 #include "SVObjectAttributeShim.h"
 #include "SVObjectWriter.h"
+#pragma endregion Includes
 
+#pragma region Declarations
 struct SVInObjectInfoStruct;
 struct SVObjectLevelCreateStruct;
 struct SVObjectNameInfo;
 
 class SVDrawContext;
 class SVObjectAttributeClass;
+#pragma endregion Declarations
 
 /*
 This class is the base class to all configuration level objects.  These objects will get created and managed by the object manager object.
@@ -112,6 +116,8 @@ public:
 	
 	virtual HRESULT ResetObjectInputs();
 
+	virtual HRESULT RefreshObject();
+
 	BOOL ConnectObjectInput( SVInObjectInfoStruct* PObjectInInfo );
 	BOOL DisconnectObjectInput( SVInObjectInfoStruct* PObjectInInfo );
 	BOOL IsObjectValid( GUID& RValidationReferenceID );
@@ -141,7 +147,7 @@ public:
 	LPTSTR GetCompleteObjectName2( LPCTSTR LPSZCompleteName = NULL );
 	int GetCompleteObjectNameLength( int Length );
 	int GetResourceID() const;
-	SVObjectClass* GetOwner();
+	SVObjectClass* GetOwner() const;
 	long GetObjectSubType() const;
 	SVOutObjectInfoStruct& GetObjectOutputInfo();
 
@@ -249,6 +255,18 @@ typedef SVVector< SVObjectClass* > SVObjectClassPtrArray;
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObjectLibrary\SVObjectClass.h_v  $
+ * 
+ *    Rev 1.2   17 Mar 2014 14:14:38   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  869
+ * SCR Title:  Add PPQ and Environment Variables to Object Manager and Update Pickers
+ * Checked in by:  bWalter;  Ben Walter
+ * Change Description:  
+ *   Added Includes and Declarations regions.
+ *   Added RefreshObject method.
+ *   Made GetOwner() const.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   01 Feb 2014 10:09:14   tbair
  * Project:  SVObserver

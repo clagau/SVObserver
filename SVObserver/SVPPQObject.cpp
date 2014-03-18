@@ -5,8 +5,8 @@
 //* .Module Name     : SVPPQObject
 //* .File Name       : $Workfile:   SVPPQObject.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.15  $
-//* .Check In Date   : $Date:   14 Mar 2014 09:12:30  $
+//* .Current Version : $Revision:   1.16  $
+//* .Check In Date   : $Date:   17 Mar 2014 15:32:16  $
 //******************************************************************************
 
 #pragma region Includes
@@ -39,6 +39,8 @@
 #pragma endregion Includes
 
 #pragma region Declarations
+using namespace Seidenader::SVObserver;
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -325,7 +327,7 @@ void SVPPQObject::init()
 	m_pInputList			= NULL;
 	m_pOutputList			= NULL;
 
-	m_lPPQLength = 2;
+	m_PpqValues.setValueObject(PpqLength, StandardPpqLength, this);
 	SVObjectManagerClass::Instance().IncrementShortPPQIndicator();
 }
 
@@ -384,6 +386,15 @@ HRESULT SVPPQObject::GetChildObject( SVObjectClass*& p_rpObject, const SVObjectN
 				if( p_rpObject == NULL )
 				{
 					l_Status = m_voTriggerCount.GetChildObject( p_rpObject, p_rNameInfo, p_Index + 1 );
+				}
+
+				if( p_rpObject == NULL )
+				{
+					BasicValueObject* pValue  = m_PpqValues.getValueObject(PpqLength);
+					if( nullptr != pValue )
+					{
+						l_Status = pValue->GetChildObject( p_rpObject, p_rNameInfo, p_Index + 1 );
+					}
 				}
 			}
 		}
@@ -784,7 +795,7 @@ BOOL SVPPQObject::SetPPQLength( long lPPQLength )
 		}
 	}
 
-	m_lPPQLength = lPPQLength;
+	m_PpqValues.setValueObject(PpqLength, lPPQLength);
 
 	if( GetPPQLength() != m_ppPPQPositions.size() )
 	{
@@ -806,42 +817,48 @@ BOOL SVPPQObject::SetInspectionTimeout( long lTimeoutMillisec )
 	return TRUE;
 }
 
-BOOL SVPPQObject::GetPPQOutputMode( SVPPQOutputModeEnum &oPPQOutputMode ) const 
+BOOL SVPPQObject::GetPPQOutputMode( SVPPQOutputModeEnum &oPPQOutputMode ) const
 {
 	oPPQOutputMode = m_oOutputMode;
 	return TRUE;
 }
 
-BOOL SVPPQObject::GetOutputDelay( long &lDelayTime ) const 
+BOOL SVPPQObject::GetOutputDelay( long &lDelayTime ) const
 {
 	lDelayTime = m_lOutputDelay;
 	return TRUE;
 }
 
-BOOL SVPPQObject::GetResetDelay( long &lResetTime ) const 
+BOOL SVPPQObject::GetResetDelay( long &lResetTime ) const
 {
 	lResetTime = m_lResetDelay;
 	return TRUE;
 }
 
-BOOL SVPPQObject::GetPPQLength( long &lPPQLength ) const 
+BOOL SVPPQObject::GetPPQLength( long &lPPQLength ) const
 {
 	lPPQLength = GetPPQLength();
 	return TRUE;
 }
 
-long SVPPQObject::GetPPQLength() const 
+long SVPPQObject::GetPPQLength() const
 {
-	return m_lPPQLength;
+	long length = 0;
+	BasicValueObject* pValue  = m_PpqValues.getValueObject(PpqLength);
+	if( nullptr != pValue )
+	{
+		pValue->getValue(length);
+	}
+	return length;
 }
 
-BOOL SVPPQObject::GetMaintainSourceImages( bool& bMaintainImages ) const 
+BOOL SVPPQObject::GetMaintainSourceImages( bool& bMaintainImages ) const
 {
 	bMaintainImages = m_bMaintainSourceImages;
 	return TRUE;
 }
 
-BOOL SVPPQObject::GetInspectionTimeout( long& rlTimeoutMillisec ) const 
+BOOL SVPPQObject::GetInspectionTimeout( long& rlTimeoutMillisec ) const
 {
 	rlTimeoutMillisec = m_lInspectionTimeoutMillisec;
 	return TRUE;
@@ -1909,7 +1926,6 @@ static bool CompareCompleteNameWithIOEntry(SVIOEntryHostStructPtr ioEntry, const
 template<typename CompareTo, typename CompareFunc>
 class FindIOEntry
 {
-
 public:
 	FindIOEntry(const CompareTo& data, CompareFunc func)
 		: m_data(data), m_compareFunc(func)	{}
@@ -4669,6 +4685,17 @@ void SVPPQObject::SVPPQTracking::IncrementTimeCount( const SVString& p_rName, si
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVPPQObject.cpp_v  $
+ * 
+ *    Rev 1.16   17 Mar 2014 15:32:16   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  869
+ * SCR Title:  Add PPQ and Environment Variables to Object Manager and Update Pickers
+ * Checked in by:  bWalter;  Ben Walter
+ * Change Description:  
+ *   Changed "PPQ Length" to a Basic Value Object for access by Object Manager.
+ *   Changed GetChildObject to support Basic Value Object.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.15   14 Mar 2014 09:12:30   tbair
  * Project:  SVObserver

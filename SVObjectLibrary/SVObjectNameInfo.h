@@ -5,16 +5,17 @@
 //* .Module Name     : SVObjectNameInfo
 //* .File Name       : $Workfile:   SVObjectNameInfo.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   10 Jun 2013 17:42:12  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   17 Mar 2014 14:19:08  $
 //******************************************************************************
 
 #ifndef SVOBJECTNAMEINFO_H
 #define SVOBJECTNAMEINFO_H
 
+#pragma region Includes
 #include <deque>
-
 #include "SVUtilityLibrary/SVString.h"
+#pragma endregion Includes
 
 struct SVObjectNameInfo
 {
@@ -36,6 +37,8 @@ struct SVObjectNameInfo
 	SVString GetObjectName( size_t p_StartIndex = 0 ) const;
 	SVString GetObjectArrayName( size_t p_StartIndex = 0 ) const;
 
+	void RemoveTopName();
+	void RemoveBottomName();
 	long GetIndexValue() const;
 
 	SVNameDeque m_NameArray;
@@ -45,7 +48,6 @@ struct SVObjectNameInfo
 
 	bool m_DefaultValuePresent;
 	SVString m_DefaultValue;
-
 };
 
 #endif
@@ -54,7 +56,18 @@ struct SVObjectNameInfo
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObjectLibrary\SVObjectNameInfo.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObjectLibrary\SVObjectNameInfo.h_v  $
+ * 
+ *    Rev 1.2   17 Mar 2014 14:19:08   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  869
+ * SCR Title:  Add PPQ and Environment Variables to Object Manager and Update Pickers
+ * Checked in by:  bWalter;  Ben Walter
+ * Change Description:  
+ *   Added Includes region.
+ *   Added methods to remove either the top or bottom part of an FQN.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   10 Jun 2013 17:42:12   bWalter
  * Project:  SVObserver

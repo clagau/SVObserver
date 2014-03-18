@@ -5,12 +5,13 @@
 //* .Module Name     : SVObjectManager
 //* .File Name       : $Workfile:   SVObjectManagerClass.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   07 Mar 2014 16:14:46  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   17 Mar 2014 14:18:34  $
 //******************************************************************************
 
 #pragma region Includes
 #include "stdafx.h"
+#include "GlobalConst.h"
 #include "SVObjectManagerClass.h"
 
 #include "SVSystemLibrary/SVAutoLockAndReleaseTemplate.h"
@@ -26,6 +27,8 @@
 #pragma endregion Includes
 
 #pragma region Declarations
+using namespace Seidenader::SVObjectLibrary;
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -40,7 +43,6 @@ SVObjectManagerClass& SVObjectManagerClass::Instance()
 
 SVObjectManagerClass::SVObjectManagerClass()
 : m_State( ReadWrite )
-, m_ConfigurationID()
 , m_Lock()
 , m_OnlineDisplay( true )
 , m_ShortPPQIndicator( 0 )
@@ -52,6 +54,14 @@ SVObjectManagerClass::SVObjectManagerClass()
 , m_FileSequenceNumber( 0 )
 , m_bIsColorSVIM(false)
 {
+	m_TranslationMap[FqnInspections] = FqnConfiguration;
+	m_TranslationMap[FqnPPQs] = FqnConfiguration;
+	m_TranslationMap[FqnCameras] = FqnConfiguration;
+	SVString ReplaceName;
+	ReplaceName = FqnConfiguration;
+	ReplaceName += _T(".");
+	ReplaceName += FqnRemoteInputs;
+	m_TranslationMap[FqnRemoteInputs] = ReplaceName;
 }
 
 SVObjectManagerClass::~SVObjectManagerClass()
@@ -76,30 +86,68 @@ HRESULT SVObjectManagerClass::SetState( SVObjectManagerStateEnum p_State )
 	return S_OK;
 }
 
-const SVGUID& SVObjectManagerClass::GetConfigurationObjectID() const
+const SVGUID SVObjectManagerClass::GetChildRootObjectID(const RootChildObjectEnum RootChild) const
 {
-	return m_ConfigurationID;
-}
-
-HRESULT SVObjectManagerClass::ConstructConfigurationObject( const SVGUID& p_rClassID )
-{
-	if( !( m_ConfigurationID.empty() ) )
+	SVGUID ObjectID;
+	if(m_RootEnumChildren.find(RootChild) != m_RootEnumChildren.end())
 	{
-		DestroyConfigurationObject();
+		ObjectID = m_RootEnumChildren.at(RootChild);
 	}
-
-	return ConstructObject( p_rClassID, m_ConfigurationID );
+	return ObjectID;
 }
 
-HRESULT SVObjectManagerClass::DestroyConfigurationObject()
+const SVGUID SVObjectManagerClass::GetChildRootObjectID(const SVString& rRootName) const
+{
+	SVGUID ObjectID;
+	if(m_RootNameChildren.find(rRootName) != m_RootNameChildren.end())
+	{
+		ObjectID = m_RootNameChildren.at(rRootName);
+	}
+	//If the root node is not found then return the configuration for backward compatibility
+	else if(m_RootEnumChildren.find(Configuration) != m_RootEnumChildren.end())
+	{
+		ObjectID = m_RootEnumChildren.at(Configuration);
+	}
+	return ObjectID;
+}
+
+HRESULT SVObjectManagerClass::ConstructRootObject( const SVGUID& rClassID )
+{
+	HRESULT Status = S_OK;
+
+	if(m_RootEnumChildren.find(Root) == m_RootEnumChildren.end())
+	{
+		SVGUID RootGuid;
+		m_RootEnumChildren[Root] = RootGuid;
+	}
+	
+	if( !( m_RootEnumChildren[Root].empty() ) )
+	{
+		DestroyRootObject();
+	}
+	
+	Status = ConstructObject( rClassID, m_RootEnumChildren[Root] );
+	if(S_OK == Status)
+	{
+		SVObjectClass* pRootObject;
+		GetObjectByIdentifier(m_RootEnumChildren[Root], pRootObject);
+		if(NULL != pRootObject)
+		{
+			m_RootNameChildren[pRootObject->GetName()] = m_RootEnumChildren[Root];
+		}
+	}
+	
+	return Status;
+}
+
+HRESULT SVObjectManagerClass::DestroyRootObject()
 {
 	HRESULT l_Status = S_OK;
 
-	if( !( m_ConfigurationID.empty() ) )
+	SVGUID RootID = GetChildRootObjectID(Root);
+	if( !( RootID.empty() ) )
 	{
-		SVObjectClass* l_pObject = GetObject( m_ConfigurationID );
-
-		m_ConfigurationID.clear();
+		SVObjectClass* l_pObject = GetObject( RootID );
 
 		if( l_pObject != NULL )
 		{
@@ -108,6 +156,40 @@ HRESULT SVObjectManagerClass::DestroyConfigurationObject()
 	}
 
 	return l_Status;
+}
+
+void SVObjectManagerClass::setRootChildID(const RootChildObjectEnum RootChild, const SVGUID& rUniqueID)
+{
+	m_RootEnumChildren[RootChild] = rUniqueID;
+	SVObjectClass* pRootObject;
+	GetObjectByIdentifier(m_RootEnumChildren[RootChild], pRootObject);
+	if(NULL != pRootObject)
+	{
+		m_RootNameChildren[pRootObject->GetName()] = rUniqueID;
+	}
+}
+
+void SVObjectManagerClass::Translation(SVString& Name)
+{
+	bool NameChanged = false;
+
+	SVObjectNameInfo NameInfo;
+	SVObjectNameInfo::ParseObjectName( NameInfo, Name );
+	SVObjectNameInfo::SVNameDeque::iterator NameIter;
+	for(NameIter = NameInfo.m_NameArray.begin(); NameIter != NameInfo.m_NameArray.end(); NameIter++)
+	{
+		TranslateMap::const_iterator TranslationIter;
+		TranslationIter =  m_TranslationMap.find( *NameIter );
+		if(TranslationIter != m_TranslationMap.end())
+		{
+			NameChanged = true;
+			*NameIter = TranslationIter->second;
+		}
+	}
+	if(NameChanged)
+	{
+		Name = NameInfo.GetObjectArrayName(0);
+	}
 }
 
 void SVObjectManagerClass::Shutdown()
@@ -292,18 +374,39 @@ HRESULT SVObjectManagerClass::GetObjectByDottedName( const SVString& rFullName, 
 
 	if( l_Status )
 	{
-		SVObjectClass* l_pConfig = NULL;
-		
-		Result = GetObjectByIdentifier( m_ConfigurationID, l_pConfig );
+		SVString Name = rFullName;
+		Instance().Translation(Name);
+		SVObjectClass* pChildRootObject = NULL;
+		SVObjectNameInfo NameInfo;
 
-		if( l_pConfig != NULL )
+		NameInfo.ParseObjectName( Name );
+
+		SVGUID ChildRootID = GetChildRootObjectID(NameInfo.m_NameArray[ 0 ]);
+		Result = GetObjectByIdentifier( ChildRootID, pChildRootObject );
+
+		if( pChildRootObject != NULL )
 		{
-			SVObjectNameInfo NameInfo;
+			if( m_RootEnumChildren.find(Configuration) != m_RootEnumChildren.end()) 
+			{
+				//Check if it is configuration object as it may not have the root child name
+				if(ChildRootID == m_RootEnumChildren.at(Configuration))
+				{
+					if(0 != Name.find(pChildRootObject->GetName()))
+					{
+						//Add the configuration name as it is missing
+						Name = pChildRootObject->GetName();
+						Name.append(_T("."));
+						Name.append(NameInfo.GetObjectArrayName(0).c_str());
+						NameInfo.clear();
+						NameInfo.ParseObjectName(Name);
+					}
+				}
+			}
+			//Remove top name as this was only needed to get the child Root object
+			NameInfo.RemoveTopName();
 			SVObjectClass* l_pObject = NULL;
 
-			NameInfo.ParseObjectName( rFullName );
-
-			Result = l_pConfig->GetChildObject( l_pObject, NameInfo );
+			Result = pChildRootObject->GetChildObject( l_pObject, NameInfo);
 
 			if( l_pObject != NULL )
 			{
@@ -485,7 +588,8 @@ SVObjectClass* SVObjectManagerClass::GetObjectCompleteName( LPCTSTR tszName )
 
 	if( l_Status )
 	{
-		SVObjectClass* l_pConfig = GetObject( m_ConfigurationID );
+		SVObjectClass* l_pConfig;
+		GetRootChildObject( l_pConfig, Configuration);
 
 		if( l_pConfig != NULL )
 		{
@@ -1759,6 +1863,21 @@ HRESULT SVObjectManagerClass::GetObservers( const SVString& rSubjectDataName, co
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObjectLibrary\SVObjectManagerClass.cpp_v  $
+ * 
+ *    Rev 1.2   17 Mar 2014 14:18:34   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  869
+ * SCR Title:  Add PPQ and Environment Variables to Object Manager and Update Pickers
+ * Checked in by:  bWalter;  Ben Walter
+ * Change Description:  
+ *   Changed that a root object is created as the top object instead of a configuration object
+ * Interface to insert Root child objects into ObjectManager (eg. Configuration and Environment objects)
+ * Access to these objects via GUIDS and name.
+ * Translation function to map Fully Qualified Names to their internal names
+ * Method to access Configuration object
+ * Changed parameter names to follow guidelines.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   07 Mar 2014 16:14:46   bwalter
  * Project:  SVObserver
