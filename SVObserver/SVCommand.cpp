@@ -5,8 +5,8 @@
 //* .Module Name     : SVCommand.cpp
 //* .File Name       : $Workfile:   SVCommand.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.9  $
-//* .Check In Date   : $Date:   17 Mar 2014 15:18:24  $
+//* .Current Version : $Revision:   1.11  $
+//* .Check In Date   : $Date:   19 Mar 2014 23:17:08  $
 //******************************************************************************
 
 #pragma region Includes
@@ -373,57 +373,81 @@ STDMETHODIMP CSVCommand::PutSVIMConfig(BSTR szXMLData, BSTR* pXMLError)
 	SVPackedFile svPackedFile;
 	HRESULT hrResult = S_OK;
 	BSTR XMLError;
-	
+	HRESULT hrException = S_OK;
+
 	do
 	{
+		SETEXCEPTION0 (svException, SVMSG_CMDCOMSRV_NO_ERROR);
+		svException.LogException(_T("Informational - Starting PutSVIMConfig"));
+		svException.ResetException();
+
 		if(!SvXmlCmd.InitXml())goto xmlerror;
-		
+
 		if(!SvXmlCmd.LoadDoc(&szXMLData))goto xmlerror;
-		
-		
+
 		if(!SvXmlCmd.GetBinData(&pBuf,&dwFileLength))goto xmlerror;
-		
+
 		//For SVObserver implementation:
 		//Unpacked the file and save all files under C:\Run  directory
 		//then load the config
-		
+
 		//create confirm directory c:\temp
-		if(!CreateDirPath(CString(_T("c:\\temp"))))goto error;
-		
+		if(!CreateDirPath(CString(_T("c:\\temp"))))
+		{
+			hrException = SVMSG_ERROR_CREATING_DIRECTORY;
+			goto error;
+		}
+
 		//create a temporary filename and saved file to c:\temp
 		szPackedFile = CString(_T("c:\\temp\\temp")) + _T(".svf");
-		
+
 		if(savFile.Open(szPackedFile, CFile::shareDenyNone | CFile::modeCreate | CFile::modeWrite | CFile::typeBinary))
 		{
 			savFile.Write(pBuf,dwFileLength);
 			savFile.Close();
 		}
-		else goto error;
-		
+		else
+		{
+			hrException = SVMSG_ERROR_OPENING_PACKING_FILE; //Unable to open Pack File
+			goto error;
+		}
+
 		//global function to close config and clean up c:\run dir
 		if ( !Seidenader::SVObserver::GlobalRCCloseAndCleanConfiguration() ) { goto error; }
-		
+
 		//unpack the files in the c:\run directory
-		if(!svPackedFile.UnPackFiles (szPackedFile, _T("C:\\RUN")))goto error;
+		if(!svPackedFile.UnPackFiles (szPackedFile, _T("C:\\RUN")))
+		{
+			hrException = SVMSG_ERROR_UNPACKING_FILE;
+			goto error;
+		}
+
 		//remove the temporary file
 		CFile::Remove(szPackedFile);
-		
+
 		szConfigFile = svPackedFile.getConfigFilePath();
 		if( szConfigFile.IsEmpty() )
 		{
 #ifdef _DEBUG
 			AfxMessageBox( _T( "No config file found!" ) );
 #endif
+			hrException = SVMSG_NO_CONFIGURATION_FOUND; //No Config file in Packed File
 			goto error;
 		}
-		
+
 		//load the config
-		if( !Seidenader::SVObserver::GlobalRCOpenConfiguration( ( char* )( ( LPCTSTR )szConfigFile ) ) ) { goto error; }
-		
+		if( !Seidenader::SVObserver::GlobalRCOpenConfiguration( ( char* )( ( LPCTSTR )szConfigFile ) ) )
+		{ 
+			hrException = SVMSG_ERROR_LOADING_CONFIGURATION;
+			goto error; 
+		}
+
 		SETEXCEPTION0 (svException, SVMSG_CMDCOMSRV_NO_ERROR);
 		break;
 error:
-		SETEXCEPTION0 (svException, SVMSG_CMDCOMSRV_ERROR);
+		//set the excption for the correct reason for breaking
+		SETEXCEPTION0 (svException, hrException); // rpy 13Mar14
+		svException.LogException();
 		hrResult =  S_FALSE;
 		break;
 xmlerror:
@@ -436,26 +460,27 @@ xmlerror:
 		{
 			svException = SvXmlCmd.GetParserError();
 		}
-		
+
 		hrResult =  S_FALSE;
 		break;
 	} while (0);
-	
+
 	if((svXmlException = svException) != TRUE)
 	{ //create an exception object for an XML parse error
 		SVException XmlException = svXmlException.GetParserError();
 		svXmlException = XmlException;
 	}
 	svXmlException.GetXmlDoc(&XMLError);
-	
+
 	*pXMLError = SysAllocString(XMLError);
-	
+
 	if(XMLError)
 	{
 		SysFreeString(XMLError);
 	}
-	
-	if(pBuf)free(pBuf);
+
+	if( pBuf ) { free(pBuf); }
+
 	return hrResult;
 }
 
@@ -2987,18 +3012,23 @@ STDMETHODIMP CSVCommand::SVGetProductDataList(long lProcessCount, SAFEARRAY* psa
 						if ( hrGet == S_OK )
 						{
 							if ( iArrayIndex > 0 )
+							{
 								sArrayValues += _T(",");
+							}
+
 							sArrayValues += _T("`");
 							sArrayValues += sValue;
 							sArrayValues += _T("`");
 						}
-						else break;
+						else
+						{
+							break;
+						}
 					}
 
 					hrStatus = S_OK;
 					BSTR bstrTmpVal = sArrayValues.AllocSysString();
 					SafeArrayPutElementNoCopy(*ppsaData, &i, bstrTmpVal);
-					//::SysFreeString(bstrTmpVal);
 					::SafeArrayPutElement(*ppsaStatus, &i, &hrStatus);
 				}// end if ( !ref.IsEntireArray() ) else
 			}// end if ( ref.Object() != NULL )
@@ -3838,7 +3868,7 @@ HRESULT CSVCommand::SVGetDataList(SAFEARRAY* psaNames, SAFEARRAY** ppsaValues, S
 								sArrayValues += sValue;
 								sArrayValues += _T("`");
 							}
-							else break;
+							else
 							{
 								break;
 							}
@@ -7091,6 +7121,26 @@ STDMETHODIMP CSVCommand::SVIsAvailiable()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVCommand.cpp_v  $
+ * 
+ *    Rev 1.11   19 Mar 2014 23:17:08   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  869
+ * SCR Title:  Add PPQ and Environment Variables to Object Manager and Update Pickers
+ * Checked in by:  bWalter;  Ben Walter
+ * Change Description:  
+ *   Fixed merge error.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.10   19 Mar 2014 12:20:56   ryoho
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  892
+ * SCR Title:  Add Exception Logging for the PutSVIMConfig method
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   put in error logging for PutSVIMConfig
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.9   17 Mar 2014 15:18:24   bwalter
  * Project:  SVObserver

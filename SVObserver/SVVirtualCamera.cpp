@@ -5,8 +5,8 @@
 //* .Module Name     : SVVirtualCamera
 //* .File Name       : $Workfile:   SVVirtualCamera.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.3  $
-//* .Check In Date   : $Date:   17 Mar 2014 15:33:06  $
+//* .Current Version : $Revision:   1.4  $
+//* .Check In Date   : $Date:   19 Mar 2014 23:24:48  $
 //******************************************************************************
 
 #pragma region Includes
@@ -691,9 +691,11 @@ HRESULT SVVirtualCamera::UpdateCameraParameters()
 	if(S_OK == Status)
 	{
 		SVDeviceParam* pDeviceParam = nullptr;
+		SVLongValueDeviceParam* pLongValueDeviceParam = nullptr;
+
 		pDeviceParam = CameraParameters.GetParameter( DeviceParamSerialNumberString );
 
-		if(nullptr != pDeviceParam)
+		if( nullptr != pDeviceParam )
 		{
 			variant_t SerialNumberValue;
 			pDeviceParam->GetValue(SerialNumberValue.GetVARIANT());
@@ -701,22 +703,26 @@ HRESULT SVVirtualCamera::UpdateCameraParameters()
 			m_CameraValues.setValueObject( ::CameraSerialNumber, SerialNumberValue, this );
 		}
 		pDeviceParam = CameraParameters.GetParameter( DeviceParamGain );
+		pLongValueDeviceParam = dynamic_cast< SVLongValueDeviceParam* >( pDeviceParam );
 
-		if(nullptr != pDeviceParam)
+		if( nullptr != pLongValueDeviceParam )
 		{
 			variant_t GainValue;
-			pDeviceParam->GetValue( GainValue.GetVARIANT() );
+			GainValue = pLongValueDeviceParam->GetScaledValue();
 			pDeviceParam = nullptr;
+			pLongValueDeviceParam = nullptr;
 			BasicValueObject& rValueObject = m_CameraValues.setValueObject( ::CameraGain, GainValue, this );
 			rValueObject.ObjectAttributesAllowedRef() |= SV_REMOTELY_SETABLE | SV_SETABLE_ONLINE;
 		}
 		pDeviceParam = CameraParameters.GetParameter( DeviceParamShutter );
+		pLongValueDeviceParam = dynamic_cast< SVLongValueDeviceParam* >( pDeviceParam );
 
-		if(nullptr != pDeviceParam)
+		if( nullptr != pLongValueDeviceParam )
 		{
 			variant_t ShutterValue;
-			pDeviceParam->GetValue( ShutterValue.GetVARIANT() );
+			ShutterValue = pLongValueDeviceParam->GetScaledValue();
 			pDeviceParam = nullptr;
+			pLongValueDeviceParam = nullptr;
 			BasicValueObject& rValueObject = m_CameraValues.setValueObject( ::CameraShutter, ShutterValue, this );
 			rValueObject.ObjectAttributesAllowedRef() |= SV_REMOTELY_SETABLE | SV_SETABLE_ONLINE;
 		}
@@ -776,12 +782,21 @@ HRESULT SVVirtualCamera::UpdateDeviceParameters(SVDeviceParamCollection& rCamera
 	return Status;
 }
 
-
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVVirtualCamera.cpp_v  $
+ * 
+ *    Rev 1.4   19 Mar 2014 23:24:48   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  869
+ * SCR Title:  Add PPQ and Environment Variables to Object Manager and Update Pickers
+ * Checked in by:  bWalter;  Ben Walter
+ * Change Description:  
+ *   Updated UpdateCameraParameters method.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   17 Mar 2014 15:33:06   bwalter
  * Project:  SVObserver

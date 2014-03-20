@@ -5,8 +5,8 @@
 //* .Module Name     : SVOConfigAssistantDlg
 //* .File Name       : $Workfile:   SVOConfigAssistantDlg.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.13  $
-//* .Check In Date   : $Date:   07 Mar 2014 18:22:14  $
+//* .Current Version : $Revision:   1.14  $
+//* .Check In Date   : $Date:   19 Mar 2014 23:21:32  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -4626,8 +4626,13 @@ HRESULT CSVOConfigAssistantDlg::CheckCamera(CSVOCameraObj* pCam)
 		SVImageProcessingClass::Instance().GetAcquisitionDevice( sDigName, pDevice );
 		if( !( pDevice.empty() ) )
 		{
-			SVDeviceParamCollection params;
-			HRESULT hr = pDevice->ReadCameraFile( pCam->GetCameraFile(), params );
+			SVDeviceParamCollection DeviceParams;
+
+			//First save the current device parameters to the camera object
+			pDevice->GetDeviceParameters(DeviceParams);
+			pCam->SetCameraDeviceParams(DeviceParams);
+
+			HRESULT hr = pDevice->ReadCameraFile( pCam->GetCameraFile(), DeviceParams );
 			CString sMessage = BuildDisplayMessage(MESSAGE_TYPE_WARNING, pCam->GetCameraDisplayName(), MESSAGE_UNSUPPORTED_CAM_FILE);
 			if ( hr == SVMSG_INCORRECT_CHECKSUM )
 			{
@@ -4641,12 +4646,12 @@ HRESULT CSVOConfigAssistantDlg::CheckCamera(CSVOCameraObj* pCam)
 			bool bDisplayWarnings = TheSVObserverApp.GetSVIMType() == GetProductType();
 			CString sMessageIncorrectCamFile = BuildDisplayMessage(MESSAGE_TYPE_WARNING, pCam->GetCameraDisplayName(), MESSAGE_INCORRECT_CAM_FILE);
 			RemoveMessageFromList(sMessageIncorrectCamFile);
-			if( params.ParameterExists( DeviceParamVendorId ) || params.ParameterExists( DeviceParamModelName ) )
+			if( DeviceParams.ParameterExists( DeviceParamVendorId ) || DeviceParams.ParameterExists( DeviceParamModelName ) )
 			{
 				// do this only if True SVIM type matches selected product type - do warning
 				if( bDisplayWarnings )
 				{
-					if( pDevice->IsValidCameraFileParameters( params ) != S_OK )
+					if( pDevice->IsValidCameraFileParameters( DeviceParams ) != S_OK )
 					{
 						AddMessageToList( CAMERA_DLG, sMessageIncorrectCamFile );
 					}
@@ -4674,9 +4679,9 @@ HRESULT CSVOConfigAssistantDlg::CheckCamera(CSVOCameraObj* pCam)
 				|| GetProductType() == SVIM_PRODUCT_X2_GD2A_COLOR
 				|| GetProductType() == SVIM_PRODUCT_X2_GD8A_COLOR )
 			{
-				if ( params.ParameterExists( DeviceParamCameraFormats ) )
+				if ( DeviceParams.ParameterExists( DeviceParamCameraFormats ) )
 				{
-					const SVCameraFormatsDeviceParam* pParam = params.Parameter( DeviceParamCameraFormats ).DerivedValue( pParam );
+					const SVCameraFormatsDeviceParam* pParam = DeviceParams.Parameter( DeviceParamCameraFormats ).DerivedValue( pParam );
 					if ( !pParam->SupportsColor() )
 					{
 						if ( AddMessageToList(CAMERA_DLG,sMessageNotColorCamFile) )
@@ -4958,6 +4963,16 @@ bool CSVOConfigAssistantDlg::IsFileAcquisition(int iDig) const
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVOConfigAssistantDlg.cpp_v  $
+ * 
+ *    Rev 1.14   19 Mar 2014 23:21:32   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  869
+ * SCR Title:  Add PPQ and Environment Variables to Object Manager and Update Pickers
+ * Checked in by:  bWalter;  Ben Walter
+ * Change Description:  
+ *   Updated CheckCamera method.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.13   07 Mar 2014 18:22:14   bwalter
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : SVPPQObject
 //* .File Name       : $Workfile:   SVPPQObject.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.11  $
-//* .Check In Date   : $Date:   17 Mar 2014 15:32:44  $
+//* .Current Version : $Revision:   1.12  $
+//* .Check In Date   : $Date:   19 Mar 2014 23:17:06  $
 //******************************************************************************
 
 #ifndef SVPPQOBJECT_H
@@ -401,7 +401,6 @@ private:
 	Seidenader::SVObserver::BasicValueObjects	m_PpqValues;
 
 	SVPPQOutputModeEnum m_oOutputMode;
-	long				m_lPPQLength;
 	long				m_lOutputDelay;
 	long				m_lResetDelay;
 	bool				m_bMaintainSourceImages;
@@ -423,6 +422,16 @@ typedef SVVector< SVPPQObject* > SVPPQObjectArray;
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVPPQObject.h_v  $
+ * 
+ *    Rev 1.12   19 Mar 2014 23:17:06   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  869
+ * SCR Title:  Add PPQ and Environment Variables to Object Manager and Update Pickers
+ * Checked in by:  bWalter;  Ben Walter
+ * Change Description:  
+ *   Fixed merge error.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.11   17 Mar 2014 15:32:44   bwalter
  * Project:  SVObserver
