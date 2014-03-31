@@ -5,8 +5,8 @@
 //* .Module Name     : SVDrawObject
 //* .File Name       : $Workfile:   SVDrawObject.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   15 Jan 2014 11:32:46  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   26 Mar 2014 09:43:24  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -550,39 +550,55 @@ BOOL SVDrawObjectClass::Draw( SVDrawContext* PDrawContext )
 	return BRetVal;
 }
 
-BOOL SVDrawObjectClass::DrawHatch( SVDrawContext* PDrawContext, SVCPointArray& Last )
+BOOL SVDrawObjectClass::DrawHatch( SVDrawContext* PDrawContext, int& LastY )
 {
 	BOOL BRetVal = FALSE;
 	HDC DC = PDrawContext->DC;
 	SVCPointArray l_NewPoints;
+	static int LastRowY=InvalidPoint;
 	if( beginDraw( PDrawContext ) )
 	{
 		int l_iSize = calcPoints.GetSize();
-		// Draw the first line.
-		if( l_iSize > 1 && Last.size() == 0)
+		if( l_iSize > 1 )
 		{
-			BRetVal = ::Polyline( DC, calcPoints.GetData(), calcPoints.GetSize() );
-			Last = calcPoints;
-		}
-		else
-		{
-			// Draw second line and fill every other line.
-			if( l_iSize > 1 && Last.GetSize() > 1)
+			// Logic to reset the lastY point 
+			// if we are drawing a second line in the same row.
+			if( calcPoints[0].y <= LastY)
 			{
-				long distance = calcPoints[0].y - Last[0].y;
-				if( distance >= 2 )
+				LastY = LastRowY;
+			}
+			else
+			{
+				LastRowY = LastY;
+			}
+			// Draw the first line.
+			if(  LastY == InvalidPoint )
+			{
+				BRetVal = ::Polyline( DC, calcPoints.GetData(), calcPoints.GetSize() );
+				LastY = calcPoints[0].y;
+			}
+			else
+			{
+				// Draw the second line and fill in every other line
+				// up to the current line.
+				if( l_iSize > 1 && LastY != InvalidPoint )
 				{
-					POINT Points[2];
-					for( long y = 2 ; y <= distance ; y+=2 )
+					long distance = calcPoints[0].y - LastY;
+					if( distance >= 0 )
 					{
-						Points[0].y = Last[0].y + y;
-						Points[1].y = Points[0].y;
-						Points[0].x = calcPoints[0].x;
-						Points[1].x = calcPoints[1].x;
-						BRetVal = ::Polyline( DC, Points, 2 );  
+						POINT Points[2];
+						for( long y = 0 ; y <= distance ; y+=2 )
+						{
+							Points[0].y = LastY + y;
+							Points[1].y = Points[0].y;
+							Points[0].x = calcPoints[0].x;
+							Points[1].x = calcPoints[1].x;
+							BRetVal = ::Polyline( DC, Points, 2 );  
+						}
+						// Remember the last point as a starting point 
+						// for the next time to fill in between lines.
+						LastY = Points[0].y;
 					}
-					Last[0] = Points[0];
-					Last[1] = Points[1];
 				}
 			}
 		}
@@ -727,6 +743,16 @@ void SVDrawObjectClass::Transform( SVDrawContext* PDrawContext )
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVDrawObject.cpp_v  $
+ * 
+ *    Rev 1.3   26 Mar 2014 09:43:24   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  882
+ * SCR Title:  Fix Mask - Zoom bug (e109)
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Fix DrawHatch to handle multiple lines in the same row.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   15 Jan 2014 11:32:46   tbair
  * Project:  SVObserver

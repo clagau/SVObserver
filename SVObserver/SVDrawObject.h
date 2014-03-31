@@ -5,8 +5,8 @@
 //* .Module Name     : SVDrawObject
 //* .File Name       : $Workfile:   SVDrawObject.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   15 Jan 2014 11:32:46  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   26 Mar 2014 09:43:24  $
 //******************************************************************************
 
 #ifndef SVDRAWOBJECT_H
@@ -38,6 +38,11 @@ POINT SVCalculateRotation( const POINT& RSourcePoint, const POINT& RRotationCent
 
 typedef SVVector< CPoint > SVCPointArray;
 
+enum 
+{
+	InvalidPoint = INT_MIN,
+};
+
 
 class SVDrawObjectClass
 {
@@ -52,7 +57,7 @@ public:
 	virtual void AddExtentFigureData( SVExtentFigureStruct p_svFigure );
 
 	virtual BOOL Draw( SVDrawContext* PDrawContext );
-	virtual BOOL DrawHatch( SVDrawContext* PDrawContext, SVCPointArray& Last );
+	virtual BOOL DrawHatch( SVDrawContext* PDrawContext, int& LastY );
 
 	// If BUseThisPen == FALSE, the current selected Pen 
 	// of the DC will be used to Draw.
@@ -112,7 +117,6 @@ typedef SVVector< SVDrawObjectClass > SVDrawObjectClassArray;
 /////////////////////////////////////////////////////////////////////////////
 // SVPolyLineDrawObjectClass 
 
-
 class SVDrawObjectListClass
 {
 public:
@@ -169,13 +173,13 @@ public:
 
 		if( m_bDrawFigureHatched )
 		{
-			long iLastYPointDrawn = -9999; // force the first line to be drawn.
-			SVCPointArray Last;
+			long iLastYPointDrawn = InvalidPoint; // force the first line to be drawn.
+			int LastLineY = InvalidPoint;
 			for( int i = 0; i < m_svDrawObjectArray.GetSize(); ++i )
 			{
 				if( PDrawContext->ShouldDrawPoints( iLastYPointDrawn, m_svDrawObjectArray[i].GetPointAt(0).y  ) )
 				{
-					RetVal = m_svDrawObjectArray[ i ].DrawHatch( PDrawContext, Last ) && RetVal; 
+					RetVal = m_svDrawObjectArray[ i ].DrawHatch( PDrawContext, LastLineY ) && RetVal; 
 				}
 			}
 		}
@@ -223,6 +227,16 @@ protected:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVDrawObject.h_v  $
+ * 
+ *    Rev 1.3   26 Mar 2014 09:43:24   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  882
+ * SCR Title:  Fix Mask - Zoom bug (e109)
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Fix DrawHatch to handle multiple lines in the same row.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   15 Jan 2014 11:32:46   tbair
  * Project:  SVObserver
