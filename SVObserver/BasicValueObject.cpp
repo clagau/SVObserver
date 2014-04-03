@@ -1,4 +1,3 @@
-Result
 //******************************************************************************
 //* COPYRIGHT (c) 2014 by Seidenader
 //* All Rights Reserved
@@ -6,8 +5,8 @@ Result
 //* .Module Name     : BasicValueObject
 //* .File Name       : $Workfile:   BasicValueObject.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   17 Mar 2014 15:10:18  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   02 Apr 2014 12:48:46  $
 //******************************************************************************
 
 #pragma region Includes
@@ -407,6 +406,16 @@ BOOL BasicValueObject::RefreshOwner() const
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\BasicValueObject.cpp_v  $
+ * 
+ *    Rev 1.1   02 Apr 2014 12:48:46   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  869
+ * SCR Title:  Add PPQ and Environment Variables to Object Manager and Update Pickers
+ * Checked in by:  bWalter;  Ben Walter
+ * Change Description:  
+ *   Removed text "Result" which was a merge error.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   17 Mar 2014 15:10:18   bwalter
  * Project:  SVObserver

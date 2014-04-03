@@ -5,8 +5,8 @@
 //* .Module Name     : SVIPDoc
 //* .File Name       : $Workfile:   SVIPDoc.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.12  $
-//* .Check In Date   : $Date:   07 Mar 2014 18:17:48  $
+//* .Current Version : $Revision:   1.13  $
+//* .Check In Date   : $Date:   02 Apr 2014 14:05:06  $
 //******************************************************************************
 
 #pragma region Includes
@@ -3517,6 +3517,10 @@ DWORD WINAPI SVIPDoc::SVRegressionTestRunThread( LPVOID lpParam )
 			if ( l_IPDoc->m_regtestRunMode == RegModePlay )
 			{
 				int iMS = l_IPDoc->m_iRegessionTimeoutMS*1000;
+				if( iMS < MinRegressionTime )
+				{
+					iMS = MinRegressionTime;
+				}
 				Sleep(iMS);
 			}
 			else 
@@ -4200,6 +4204,16 @@ BOOL SVIPDoc::RunOnce( SVToolClass* p_pTool )
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVIPDoc.cpp_v  $
+ * 
+ *    Rev 1.13   02 Apr 2014 14:05:06   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  868
+ * SCR Title:  Fix issue with switching from Run Mode to Regression Mode (eRoom 88)
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Limit the minimum time for Regression test. Was delaying 0 seconds. The new minimum is now 40ms.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.12   07 Mar 2014 18:17:48   bwalter
  * Project:  SVObserver

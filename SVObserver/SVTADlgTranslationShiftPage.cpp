@@ -5,8 +5,8 @@
 //* .Module Name     : SVTADlgTranslationShiftPage
 //* .File Name       : $Workfile:   SVTADlgTranslationShiftPage.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   01 Feb 2014 12:14:26  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   03 Apr 2014 06:13:06  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -476,6 +476,10 @@ void SVTADlgTranslationShiftPageClass::FillShiftProperties()
 void SVTADlgTranslationShiftPageClass::OnBnClickedChkEnableSourceImageExtents()
 {
 	refresh();
+	if( m_ctlEnableSourceImageExtents.GetCheck()==0)
+	{
+		MessageBox(_T("The Source Image Extents have been disabled for this Shift Tool. The values for any Blob Analyzer \n\"Box X Toolset Image\" & \"Box Y Toolset Image\" results that use this Shift tool as its source will not be \nvalid and should not be used. The Shift tool may run faster with the Source Image Extents disabled."), NULL, MB_OK);
+	}
 }
 
 //******************************************************************************
@@ -483,6 +487,16 @@ void SVTADlgTranslationShiftPageClass::OnBnClickedChkEnableSourceImageExtents()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVTADlgTranslationShiftPage.cpp_v  $
+ * 
+ *    Rev 1.2   03 Apr 2014 06:13:06   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  896
+ * SCR Title:  Add a Warning Message to the Shift Tool Adjustment Dialog
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Added Warning message - displayed when checkbox is unchecked for "Enable Source Image Extents".
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   01 Feb 2014 12:14:26   tbair
  * Project:  SVObserver

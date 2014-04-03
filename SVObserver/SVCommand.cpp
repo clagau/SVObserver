@@ -5,8 +5,8 @@
 //* .Module Name     : SVCommand.cpp
 //* .File Name       : $Workfile:   SVCommand.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.11  $
-//* .Check In Date   : $Date:   19 Mar 2014 23:17:08  $
+//* .Current Version : $Revision:   1.12  $
+//* .Check In Date   : $Date:   01 Apr 2014 15:41:10  $
 //******************************************************************************
 
 #pragma region Includes
@@ -413,7 +413,11 @@ STDMETHODIMP CSVCommand::PutSVIMConfig(BSTR szXMLData, BSTR* pXMLError)
 		}
 
 		//global function to close config and clean up c:\run dir
-		if ( !Seidenader::SVObserver::GlobalRCCloseAndCleanConfiguration() ) { goto error; }
+		if ( !Seidenader::SVObserver::GlobalRCCloseAndCleanConfiguration() )
+		{ 
+			hrException = SVMSG_ERROR_CLOSING_CLEANING_CONFIG;
+			goto error; 
+		}
 
 		//unpack the files in the c:\run directory
 		if(!svPackedFile.UnPackFiles (szPackedFile, _T("C:\\RUN")))
@@ -443,6 +447,7 @@ STDMETHODIMP CSVCommand::PutSVIMConfig(BSTR szXMLData, BSTR* pXMLError)
 		}
 
 		SETEXCEPTION0 (svException, SVMSG_CMDCOMSRV_NO_ERROR);
+		svException.LogException(_T("Informational - Ending PutSVIMConfig"));
 		break;
 error:
 		//set the excption for the correct reason for breaking
@@ -7121,6 +7126,16 @@ STDMETHODIMP CSVCommand::SVIsAvailiable()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVCommand.cpp_v  $
+ * 
+ *    Rev 1.12   01 Apr 2014 15:41:10   ryoho
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  892
+ * SCR Title:  Add Exception Logging for the PutSVIMConfig method
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   put in additional error logging into PutSVIMConfig
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.11   19 Mar 2014 23:17:08   bwalter
  * Project:  SVObserver

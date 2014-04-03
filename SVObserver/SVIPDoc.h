@@ -5,8 +5,8 @@
 //* .Module Name     : SVIPDoc
 //* .File Name       : $Workfile:   SVIPDoc.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   07 Mar 2014 18:18:26  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   02 Apr 2014 14:05:04  $
 //******************************************************************************
 
 #ifndef SVIPDOC_H
@@ -63,6 +63,10 @@ public:
 		ItemRenamed = 0x00000002,
 	};
 
+	enum
+	{
+		MinRegressionTime=40,
+	};
 	SVIPDoc();
 
 	virtual ~SVIPDoc();
@@ -331,6 +335,16 @@ private:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVIPDoc.h_v  $
+ * 
+ *    Rev 1.3   02 Apr 2014 14:05:04   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  868
+ * SCR Title:  Fix issue with switching from Run Mode to Regression Mode (eRoom 88)
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Limit the minimum time for Regression test. Was delaying 0 seconds. The new minimum is now 40ms.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   07 Mar 2014 18:18:26   bwalter
  * Project:  SVObserver
