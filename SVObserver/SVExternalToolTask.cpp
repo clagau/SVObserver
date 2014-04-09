@@ -5,8 +5,8 @@
 //* .Module Name     : SVExternalToolTask
 //* .File Name       : $Workfile:   SVExternalToolTask.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.6  $
-//* .Check In Date   : $Date:   28 Feb 2014 09:10:32  $
+//* .Current Version : $Revision:   1.7  $
+//* .Check In Date   : $Date:   08 Apr 2014 09:44:54  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -2088,13 +2088,13 @@ HRESULT SVExternalToolTask::ConnectInputs()
 
 	for (int i = 0 ; i < m_Data.m_lNumInputValues ; i++)
 	{
-		CString strTmp ; 
-		m_Data.m_aInputObjects[i].GetValue(strTmp);
+		CString strObjectName ; 
+		CString strCompleteObjectName = GetInspection()->GetCompleteObjectName();
+		m_Data.m_aInputObjects[i].GetValue(strObjectName);
+		strCompleteObjectName += "." + strObjectName;
 
-		// does the value specify a valid VO?
-		//pInspection->GetChildObjectByName(strTmp, &pObject);
 		//MZA: change function to find object from inspection child object to anz dotted name
-		SVObjectManagerClass::Instance().GetObjectByDottedName( static_cast< LPCTSTR >( strTmp ), pObject );
+		SVObjectManagerClass::Instance().GetObjectByDottedName( static_cast< LPCTSTR >( strCompleteObjectName ), pObject );
 		//
 		// Inputs that are Variables must be found in the Inspection or the PPQ
 		// otherwise the inputs are just variant inputs.
@@ -2166,6 +2166,16 @@ HRESULT SVExternalToolTask::CollectInputImageNames( SVRunStatusClass& RRunStatus
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVExternalToolTask.cpp_v  $
+ * 
+ *    Rev 1.7   08 Apr 2014 09:44:54   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  863
+ * SCR Title:  Fix Bug in External Tool Inputs with inspection name.
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Modified Connect Inputs to also use the Inspection name along with external tools input object name to find the object by dotted name.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.6   28 Feb 2014 09:10:32   tbair
  * Project:  SVObserver

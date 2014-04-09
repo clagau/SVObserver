@@ -5,8 +5,8 @@
 //* .Module Name     : SVOConfigAssistantDlg
 //* .File Name       : $Workfile:   SVOConfigAssistantDlg.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.14  $
-//* .Check In Date   : $Date:   19 Mar 2014 23:21:32  $
+//* .Current Version : $Revision:   1.15  $
+//* .Check In Date   : $Date:   08 Apr 2014 13:57:14  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -201,9 +201,9 @@ const CSVOConfigAssistantDlg::SVProductStringMap CSVOConfigAssistantDlg::m_Produ
 	( SVIM_PRODUCT_X2_GD4A, SYSTEM_SVIM_X2_GD4A )
 	( SVIM_PRODUCT_X2_GD4A_COLOR, SYSTEM_SVIM_X2_GD4A_COLOR )
 	( SVIM_PRODUCT_X2_GD8A, SYSTEM_SVIM_X2_GD8A )
-	( SVIM_PRODUCT_X2_GD8A_COLOR, SYSTEM_SVIM_X2_GD8A_COLOR )
-	( SVIM_PRODUCT_X2_GD8A_NONIO, SYSTEM_SVIM_X2_GD8A_NONIO )
-	( SVIM_PRODUCT_X2_GD8A_NONIO_COLOR, SYSTEM_SVIM_X2_GD8A_NONIO_COLOR );
+	( SVIM_PRODUCT_X2_GD8A_COLOR, SYSTEM_SVIM_X2_GD8A_COLOR );
+	//( SVIM_PRODUCT_X2_GD8A_NONIO, SYSTEM_SVIM_X2_GD8A_NONIO )
+	//( SVIM_PRODUCT_X2_GD8A_NONIO_COLOR, SYSTEM_SVIM_X2_GD8A_NONIO_COLOR );
 	;
 
 /////////////////////////////////////////////////////////////////////////////
@@ -4828,7 +4828,7 @@ void CSVOConfigAssistantDlg::ClearImportedInspectionInfoList()
 
 CString CSVOConfigAssistantDlg::GetNameFromProductID( SVIMProductEnum p_ID )
 {
-	CString l_Retval = "";
+	CString l_Retval = "Unknown";
 
 	SVProductStringMap::index_iterator< from >::type l_Iter = m_ProductStringMap.get< from >().find( p_ID );
 
@@ -4963,6 +4963,16 @@ bool CSVOConfigAssistantDlg::IsFileAcquisition(int iDig) const
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVOConfigAssistantDlg.cpp_v  $
+ * 
+ *    Rev 1.15   08 Apr 2014 13:57:14   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  899
+ * SCR Title:  Remove "SVIM Non I/O" selection from the configuration assistant
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Removed the type for SVIM Non I/O system type in the ProductStringMap.  Added a default string of Unknown for GetNameFromProductID.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.14   19 Mar 2014 23:21:32   bwalter
  * Project:  SVObserver
