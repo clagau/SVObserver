@@ -5,8 +5,8 @@
 //* .Module Name     : SVIOController
 //* .File Name       : $Workfile:   SVIOController.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.5  $
-//* .Check In Date   : $Date:   01 Feb 2014 10:48:56  $
+//* .Current Version : $Revision:   1.6  $
+//* .Check In Date   : $Date:   17 Apr 2014 16:59:46  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -99,6 +99,8 @@ void SVIOController::LocalDestroy()
 
 		m_pRemoteOutputController = NULL;
 	}
+
+	m_RemoteMonitorListController.Clear();
 
 	m_pModuleReady.clear();
 	m_pRaidErrorBit.clear();
@@ -313,6 +315,9 @@ HRESULT SVIOController::ResetObject()
 	{
 		l_hrOk = S_FALSE;
 	}
+
+	//
+	m_RemoteMonitorListController.ResetObject();
 
 	if( ! RebuildOutputList() )
 	{
@@ -647,11 +652,41 @@ HRESULT SVIOController::RemoteOutputValidateInputs()
 	return l_Status;
 }
 
+bool SVIOController::SetupRemoteMonitorList(SVConfigurationObject* pConfig)
+{
+	return m_RemoteMonitorListController.Setup(pConfig);
+}
+
+void SVIOController::ClearRemoteMonitorList()
+{
+	m_RemoteMonitorListController.Clear();
+}
+
+const RemoteMonitorList& SVIOController::GetRemoteMonitorList() const
+{
+	return m_RemoteMonitorListController.GetRemoteMonitorList();
+}
+
+void SVIOController::SetRemoteMonitorList(const RemoteMonitorList& rList)
+{
+	m_RemoteMonitorListController.SetRemoteMonitorList(rList);
+}
+
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVIOController.cpp_v  $
+ * 
+ *    Rev 1.6   17 Apr 2014 16:59:46   ryoho
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   added functionality for the Remote Monitor List
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.5   01 Feb 2014 10:48:56   tbair
  * Project:  SVObserver

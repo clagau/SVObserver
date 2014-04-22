@@ -5,8 +5,8 @@
 //* .Module Name     : SVRemoteControlConstants
 //* .File Name       : $Workfile:   SVRemoteControlConstants.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   30 Oct 2013 15:39:14  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   17 Apr 2014 17:01:22  $
 //******************************************************************************
 
 #ifndef SVREMOTECONTROLCONSTANTS_H
@@ -22,6 +22,7 @@ namespace SVRC
 		const std::string err = "ErrorText";
 		const std::string arg = "Arguments";
 		const std::string reslts = "Results";
+		const std::string notfctn = "Notification";
 	}
 
 	namespace cmdName
@@ -40,7 +41,13 @@ namespace SVRC
 		const std::string putFile = "PutDeviceFile";
 		const std::string setItems = "SetItems";
 		const std::string setMode = "SetDeviceMode";
+		const std::string regProd = "RegisterProductList";
+		const std::string qryProd = "QueryProductList";
+		const std::string qryRjct = "QueryRejectCondList";
+		const std::string qryFail = "QueryFailStatusList";
+		const std::string getProd = "GetProduct";
 		const std::string getDefList = "GetDataDefinitionList";
+		const std::string getRjct = "GetReject";
 	}
 
 	namespace arg
@@ -51,19 +58,32 @@ namespace SVRC
 		const std::string desiredMode = "desiredMode";
 		const std::string values = "Values";
 		const std::string images = "Images";
+		const std::string errors = "Errors";
 		const std::string filePath = "filePath";
 		const std::string productName = "productName";
 		const std::string sourcePath = "sourcePath";
 		const std::string sourceFileName = "sourceFileName";
 		const std::string destinationPath = "destinationPath";
 		const std::string inspectionName = "inspectionName";
+		const std::string listName = "listName";
+		const std::string ppqName = "ppqName";
+		const std::string prodList = "productItemList";
+		const std::string rjctList = "rejectCondList";
+		const std::string failList = "failStatusList";
+		const std::string trgrCount = "triggerCount";
+		const std::string currentList = "currentViewList";
+		const std::string currentItems = "currentViewItems";
+		const std::string url = "url";
 		const std::string listType = "listType";
+		const std::string id = "id";
 	}
 
 	namespace result
 	{
 		const std::string items = "items";
 		const std::string contents = "contents";
+		const std::string url = "url";
+		const std::string names = "names";
 		const std::string name = "name";
 		const std::string faults = "faults";
 		const std::string mode = "mode";
@@ -117,7 +137,6 @@ namespace SVRC
 		const std::string add_info = "AdditionalInfo";
 	}
 }
-
 #endif
 
 //******************************************************************************
@@ -125,6 +144,16 @@ namespace SVRC
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVRemoteControlConstants.h_v  $
+ * 
+ *    Rev 1.2   17 Apr 2014 17:01:22   ryoho
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   new constants for the Remote Monitor List
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   30 Oct 2013 15:39:14   bwalter
  * Project:  SVObserver

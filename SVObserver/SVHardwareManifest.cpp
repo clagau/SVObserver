@@ -5,8 +5,8 @@
 //* .Module Name     : SVHardwareManifest
 //* .File Name       : $Workfile:   SVHardwareManifest.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 10:45:32  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   09 Apr 2014 10:45:44  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -55,8 +55,8 @@ const SVHardwareManifest::SVIMTypeMap SVHardwareManifest::m_SVIMTypeMap = boost:
 	( SVIM_PRODUCT_X2_GD4A_COLOR, SVIMTypeInfoStruct( true,  false,     4,			3 ) )
 	( SVIM_PRODUCT_X2_GD8A,       SVIMTypeInfoStruct( false, true,      8,			3 ) )
 	( SVIM_PRODUCT_X2_GD8A_COLOR, SVIMTypeInfoStruct( true,  true,      8,			3 ) )
-	( SVIM_PRODUCT_X2_GD8A_NONIO, SVIMTypeInfoStruct( false, true,      8,			3 ) )
-	( SVIM_PRODUCT_X2_GD8A_NONIO_COLOR, SVIMTypeInfoStruct( true, true, 8,			3 ) )
+//	( SVIM_PRODUCT_X2_GD8A_NONIO, SVIMTypeInfoStruct( false, true,      8,			3 ) )
+//	( SVIM_PRODUCT_X2_GD8A_NONIO_COLOR, SVIMTypeInfoStruct( true, true, 8,			3 ) )
 	;
 	
 SVHardwareManifest& SVHardwareManifest::Instance()
@@ -393,7 +393,18 @@ bool SVHardwareManifest::IsNonIOSVIM(SVIMProductEnum p_ProductType)
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVHardwareManifest.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVHardwareManifest.cpp_v  $
+ * 
+ *    Rev 1.1   09 Apr 2014 10:45:44   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  899
+ * SCR Title:  Remove "SVIM Non I/O" selection from the configuration assistant
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Removed the System types SVIM_PRODUCT_X2_GD8A_NONIO and 
+ * SVIM_PRODUCT_X2_GD8A_NONIO_COLOR.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 10:45:32   bWalter
  * Project:  SVObserver

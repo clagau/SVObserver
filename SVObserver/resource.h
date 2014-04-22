@@ -1162,8 +1162,14 @@
 #define IDR_RESULTS_CONTEXT_MENU        11097
 #define IDI_ARROW_ROTATE                11098
 #define IDD_HEADER_DIALOG               11099
-#define IDS_CLASSNAME_ROOTOBJECT        11100
-#define IDS_CLASSNAME_ENVIRONMENTOBJECT 11101
+#define IDD_DLG_ADD_REMOVE_MONITOR_LIST 11100
+#define IDD_DLG_PROP_MON_LIST           11101
+#define IDD_MONITOR_LIST_PAGE           11102
+#define IDS_CLASSNAME_ROOTOBJECT        11106
+#define IDS_CLASSNAME_ENVIRONMENTOBJECT 11107
+#define IDR_MONITOR_LIST_ADD_REMOVE     11108
+#define IDR_MONITOR_SUB_LIST            11109
+#define IDR_MONITOR_LIST_ITEM           11110
 #define IDS_OBJECTNAME_INPUT_01         14001
 #define IDS_OBJECTNAME_INPUT_02         14002
 #define IDS_OBJECTNAME_INPUT_03         14003
@@ -2478,6 +2484,12 @@
 #define IDC_HEADER_CHECK                16022
 #define IDC_SELECTED_TEXT               16023
 #define IDC_DISABLE_TOOL                16024
+#define IDC_AVAILABLE_PPQ_LIST          16025
+#define IDC_STATIC_MONITOR_PROP         16026
+#define IDC_SELECTED_ITEM_TEXT          16027
+#define IDC_BTN_REMOVE                  16028
+#define IDC_BTN_REMOVE_ALL              16029
+#define IDC_BTN_PROPERTIES              16030
 #define ID_TEST                         20000
 #define ID_BROWSE_BUTTON                20001
 #define ID_PLUSBUTTON                   20002
@@ -2562,7 +2574,6 @@
 #define ID_RC_GO_OFFLINE                20086
 #define ID_RC_SAVE_ALL_AND_GET_CONFIG   20087
 #define ID_RC_CLOSE_AND_CLEAN_RUN_DIR   20088
-
 #define ID_RC_GO_ONLINE                 20090
 #define ID_RC_CLOSE                     20092
 #define ID_FONT_TRAINING                20093
@@ -2588,7 +2599,6 @@
 #define ID_ADD_TRANSFORMATIONTOOL       20115
 #define ID_ADD_POLARUNWRAPTOOL          20116
 #define ID_ADJUST_POSITION              20117
-
 #define ID_SELECT_PPQVARIABLE           20119
 #define ID_ANALYZER_RESULT              20120
 #define ID_ADD_COLORTOOL                20121
@@ -2669,6 +2679,11 @@
 #define ID_EDIT_PUBLISHEDRESULTS_LIMIT  20322
 #define ID_FORMULA_UNDO                 20323
 #define ID_FORMULA_TEST                 20324
+#define ID_EDIT_ADD_MONITORLIST         20325
+#define ID_MONITORLIST_EDIT_PROPERTIES  20331
+#define ID_MONITORLIST_ADD_REMOVE_LIST  20332
+#define ID_MONITORLIST_ADD_EDIT_ITEMS   20333
+#define ID_MONITORLIST_REMOVE_ITEM      20334
 #define ID_VIEW_TOOLSETDRAW             32999
 #define ID_VIEW_TOOLSETDRAW_POP_BASE    33000
 #define ID_VIEW_TOOLSETDRAW_POP_MAX     33049
@@ -2700,9 +2715,9 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_3D_CONTROLS                     1
-#define _APS_NEXT_RESOURCE_VALUE        11102
-#define _APS_NEXT_COMMAND_VALUE         20325
-#define _APS_NEXT_CONTROL_VALUE         16025
+#define _APS_NEXT_RESOURCE_VALUE        11111
+#define _APS_NEXT_COMMAND_VALUE         20335
+#define _APS_NEXT_CONTROL_VALUE         16031
 #define _APS_NEXT_SYMED_VALUE           3000
 #endif
 #endif

@@ -5,8 +5,8 @@
 // * .Module Name     : SVConfigurationTags
 // * .File Name       : $Workfile:   SVConfigurationTags.h  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.0  $
-// * .Check In Date   : $Date:   18 Apr 2013 18:39:36  $
+// * .Current Version : $Revision:   1.1  $
+// * .Check In Date   : $Date:   17 Apr 2014 16:45:46  $
 // ******************************************************************************
 // SVConfigurationTags.h
 
@@ -231,7 +231,13 @@ LPCTSTR const CTAG_PPQ                            = (_T("PPQ"));
 LPCTSTR const CTAGF_PPQ_X                         = (_T("PPQ_%d"));
 LPCTSTR const CTAG_IO                             = (_T("IO"));
 LPCTSTR const CTAG_VIEWED_INPUTS                  = (_T("ViewedInputs"));
-
+LPCTSTR const CTAG_MONITOR_LISTS                  = (_T("MonitorLists"));
+LPCTSTR const CTAG_PRODUCTVALUES_LIST             = (_T("ProductValuesList"));
+LPCTSTR const CTAG_PRODUCTIMAGE_LIST              = (_T("ProductImageList"));
+LPCTSTR const CTAG_REJECTCONDITION_LIST           = (_T("RejectConditionList"));
+LPCTSTR const CTAG_FAILSTATUS_LIST                = (_T("FailStatusList"));
+LPCTSTR const CTAG_PPQ_NAME			              = (_T("PPQName"));
+LPCTSTR const CTAG_REJECT_QUEUE_DEPTH             = (_T("RejectQueueDepth"));
 LPCTSTR const CTAG_VERSION_NUMBER                 = (_T("VersionNumber"));
 LPCTSTR const CTAG_COLOR_SVIM_MODE_ACTIVE         = (_T("ColorSVIMModeActive"));
 LPCTSTR const CTAG_CREATION_DATE                  = (_T("CreationDate"));
@@ -314,7 +320,17 @@ LPCTSTR const CTAG_FILENAME						  = _T("Filename");
 // * LOG HISTORY:
 // ******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVConfigurationLibrary\SVConfigurationTags.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVConfigurationLibrary\SVConfigurationTags.h_v  $
+ * 
+ *    Rev 1.1   17 Apr 2014 16:45:46   ryoho
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   New Tags for loading/saving Remote Monitor List
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   18 Apr 2013 18:39:36   bWalter
  * Project:  SVObserver

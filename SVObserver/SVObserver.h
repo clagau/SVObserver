@@ -5,8 +5,8 @@
 //* .Module Name     : SVObserver
 //* .File Name       : $Workfile:   SVObserver.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.12  $
-//* .Check In Date   : $Date:   17 Mar 2014 15:27:18  $
+//* .Current Version : $Revision:   1.13  $
+//* .Check In Date   : $Date:   17 Apr 2014 17:00:30  $
 //******************************************************************************
 
 #ifndef SVOBSERVER_H
@@ -210,6 +210,8 @@ public:
 	afx_msg void OnUpdateSelectPPQVariable(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateAddColorTool(CCmdUI* PCmdUI);
 	afx_msg void OnUpdateRegressionTest(CCmdUI* pCmdUI);
+    afx_msg void OnEditMonitorList();
+    afx_msg void OnUpdateEditAddMonitorList(CCmdUI* pCmdUT);
 
 	// Special catch in Run Mode...
 	afx_msg void OnRunUtility( UINT uiId );
@@ -376,6 +378,7 @@ public:
 	void HidePLCTab();
 #endif
 	void HideRemoteOutputTab();
+	void HideRemoteMonitorListTab();
 	void HideIOTab( DWORD p_dwID );
 	void ShowIOTab( DWORD p_dwID );
 	void UpdateRemoteInputTabs();
@@ -621,6 +624,16 @@ extern SVObserverApp TheSVObserverApp;
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVObserver.h_v  $
+ * 
+ *    Rev 1.13   17 Apr 2014 17:00:30   ryoho
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   added functionality for the Monitor List View
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.12   17 Mar 2014 15:27:18   bwalter
  * Project:  SVObserver

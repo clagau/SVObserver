@@ -363,8 +363,17 @@ echo %time%
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
+    <ClCompile Include="MonitorListBasePage.cpp" />
+    <ClCompile Include="MonitorListImagesPage.cpp" />
+    <ClCompile Include="MonitorListSheet.cpp" />
+    <ClCompile Include="MonitorListValuesPage.cpp" />
     <ClCompile Include="RemoteCommand.cpp" />
+    <ClCompile Include="RemoteMonitorListController.cpp" />
+    <ClCompile Include="RemoteMonitorNamedList.cpp" />
     <ClCompile Include="RootObject.cpp" />
+    <ClCompile Include="MonitorListAddRemoveDlg.cpp" />
+    <ClCompile Include="MonitorListPropertyDlg.cpp" />
+    <ClCompile Include="NameSelectionTreeCtrl.cpp" />
     <ClCompile Include="SoftwareTriggerDlg.cpp" />
     <ClCompile Include="StdAfx.cpp">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -432,6 +441,8 @@ echo %time%
     <ClCompile Include="SVLaplacianEdgeFilterClass.cpp" />
     <ClCompile Include="SVLicenseMgrModelessDlg.cpp" />
     <ClCompile Include="SVMaxMinusMinFilterClass.cpp" />
+    <ClCompile Include="SVMonitorList.cpp" />
+    <ClCompile Include="MonitorListView.cpp" />
     <ClCompile Include="SVObjectScriptParserBase.cpp" />
     <ClCompile Include="SVOpeningFilterClass.cpp" />
     <ClCompile Include="SVShapeMaskHelperClass.cpp" />
@@ -4287,9 +4298,20 @@ echo %time%
     <ClInclude Include="ISVCancel.h" />
     <ClInclude Include="ISVPropertyPageDialog.h" />
     <ClInclude Include="ModelessMessageBox.h" />
+    <ClInclude Include="MonitorListBasePage.h" />
+    <ClInclude Include="MonitorListImagesPage.h" />
+    <ClInclude Include="MonitorListSheet.h" />
+    <ClInclude Include="MonitorListValuesPage.h" />
+    <ClInclude Include="NameSelectionList.h" />
+    <ClInclude Include="RemoteMonitorList.h" />
     <ClInclude Include="RemoteCommand.h" />
+    <ClInclude Include="MonitorListAddRemoveDlg.h" />
+    <ClInclude Include="MonitorListPropertyDlg.h" />
+    <ClInclude Include="RemoteMonitorListController.h" />
+    <ClInclude Include="RemoteMonitorNamedList.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="RootObject.h" />
+    <ClInclude Include="NameSelectionTreeCtrl.h" />
     <ClInclude Include="SoftwareTriggerDlg.h" />
     <ClInclude Include="StdAfx.h" />
     <ClInclude Include="SV1394CameraManager.h" />
@@ -4328,6 +4350,8 @@ echo %time%
     <ClInclude Include="SVLaplacianEdgeFilterClass.h" />
     <ClInclude Include="SVLicenseMgrModelessDlg.h" />
     <ClInclude Include="SVMaxMinusMinFilterClass.h" />
+    <ClInclude Include="SVMonitorList.h" />
+    <ClInclude Include="MonitorListView.h" />
     <ClInclude Include="SVOpeningFilterClass.h" />
     <ClInclude Include="SVPLCValidateReasons.h" />
     <ClInclude Include="SVPPQConstants.h" />

@@ -5,8 +5,8 @@
 //* .Module Name     : SVIOTabbedView
 //* .File Name       : $Workfile:   SVIOTabbedView.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   06 May 2013 20:06:28  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   17 Apr 2014 17:00:30  $
 //******************************************************************************
 
 #pragma once
@@ -22,6 +22,7 @@ enum SVTabbedViewSplitterIDEnum
 	SVIODiscreteOutputsViewID = 5,
 	SVIOPLCOutputsViewID = 6,
 	SVRemoteOutputsViewID = 8,
+	SVRemoteMonitorListViewID = 9,
 };
 
 class SVIOTabbedView : public CMDIChildWnd
@@ -41,12 +42,21 @@ public:
 	afx_msg void OnDestroy();
 };
 
-
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVIOTabbedView.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVIOTabbedView.h_v  $
+ * 
+ *    Rev 1.2   17 Apr 2014 17:00:30   ryoho
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   added functionality for the Monitor List View
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   06 May 2013 20:06:28   bWalter
  * Project:  SVObserver
@@ -98,4 +108,3 @@ $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVIOTabbed
  * 
  * /////////////////////////////////////////////////////////////////////////////////////
 */
-

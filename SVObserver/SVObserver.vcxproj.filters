@@ -1595,7 +1595,16 @@
     <ClCompile Include="ConditionalController.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="RootObject.cpp">
+    <ClCompile Include="MonitorListView.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MonitorListAddRemoveDlg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MonitorListPropertyDlg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RemoteCommand.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="BasicValueObject.cpp">
@@ -1605,6 +1614,33 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="EnvironmentObject.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RootObject.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RemoteMonitorNamedList.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MonitorListSheet.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MonitorListValuesPage.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MonitorListBasePage.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MonitorListImagesPage.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RemoteMonitorListController.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="NameSelectionTreeCtrl.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SVMonitorList.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -3317,6 +3353,15 @@
     <ClInclude Include="SVTriggerConstants.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="MonitorListView.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MonitorListAddRemoveDlg.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MonitorListPropertyDlg.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="BasicValueObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -3327,6 +3372,36 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="RootObject.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RemoteMonitorNamedList.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RemoteMonitorList.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MonitorListSheet.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MonitorListValuesPage.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MonitorListImagesPage.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MonitorListBasePage.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RemoteMonitorListController.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="NameSelectionList.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="NameSelectionTreeCtrl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVMonitorList.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

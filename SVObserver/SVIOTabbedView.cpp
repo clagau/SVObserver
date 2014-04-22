@@ -5,8 +5,8 @@
 //* .Module Name     : SVIOTabbedView
 //* .File Name       : $Workfile:   SVIOTabbedView.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.3  $
-//* .Check In Date   : $Date:   30 Oct 2013 10:45:20  $
+//* .Current Version : $Revision:   1.4  $
+//* .Check In Date   : $Date:   17 Apr 2014 17:00:30  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -19,7 +19,7 @@
 #endif
 #include "SVRemoteInputsView.h"
 #include "SVRemoteOutputsView.h"
-
+#include "MonitorListView.h"
 
 // SVIOTabbedView
 
@@ -27,18 +27,15 @@ IMPLEMENT_DYNCREATE(SVIOTabbedView, CMDIChildWnd)
 
 SVIOTabbedView::SVIOTabbedView()
 {
-
 }
 
 SVIOTabbedView::~SVIOTabbedView()
 {
 }
 
-
 BEGIN_MESSAGE_MAP(SVIOTabbedView, CMDIChildWnd)
 	ON_WM_DESTROY()
 END_MESSAGE_MAP()
-
 
 BOOL SVIOTabbedView::OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext* pContext)
 {
@@ -52,7 +49,7 @@ BOOL SVIOTabbedView::OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext* pContex
 	TVisualObject *pPLCOutputsView = new TVisualObject( SVIOPLCOutputsViewID, _T("PLC Outputs"), pContext, RUNTIME_CLASS( SVPLCOutputsView ) );
 #endif
 	TVisualObject *pRemoteOutputsView = new TVisualObject( SVRemoteOutputsViewID, _T("Remote Outputs"), pContext, RUNTIME_CLASS( SVRemoteOutputsView ) );
-
+	TVisualObject *pRemoteMonitorListView = new TVisualObject( SVRemoteMonitorListViewID, _T("Monitor List"), pContext, RUNTIME_CLASS( MonitorListView ) );
 
 	m_Framework.Add( pIOTab );
 	m_Framework.Add( pIOTab, pInputsView );
@@ -63,13 +60,10 @@ BOOL SVIOTabbedView::OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext* pContex
 	m_Framework.Add( pIOTab, pPLCOutputsView );
 #endif
 	m_Framework.Add( pIOTab, pRemoteOutputsView );
-
+	m_Framework.Add( pIOTab, pRemoteMonitorListView );
 
 	BOOL l_bRet = m_Framework.Create(this);
 
-	//pRemoteInputsView->EnableTab(FALSE); // Grays out the tab so you cannot switch to 
-	//pRemoteInputsView->Enable(FALSE);		// Grays out the entire tabview so you cannot change anything.
-	;
 	return l_bRet;
 }
 
@@ -90,7 +84,6 @@ CWnd* SVIOTabbedView::GetActivePane(int* /*pRow*/, int* /*pCol*/)
 	return pView;
 }
 
-
 // SVIOTabbedView message handlers
 void SVIOTabbedView::OnDestroy()
 {
@@ -98,12 +91,21 @@ void SVIOTabbedView::OnDestroy()
 	m_Framework.Destroy();
 }
 
-
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVIOTabbedView.cpp_v  $
+ * 
+ *    Rev 1.4   17 Apr 2014 17:00:30   ryoho
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   added functionality for the Monitor List View
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   30 Oct 2013 10:45:20   tbair
  * Project:  SVObserver
@@ -195,4 +197,3 @@ $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVIOTabbed
  * 
  * /////////////////////////////////////////////////////////////////////////////////////
 */
-

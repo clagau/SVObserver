@@ -5,8 +5,8 @@
 //* .Module Name     : SVObserver
 //* .File Name       : $Workfile:   SVObserver.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.24  $
-//* .Check In Date   : $Date:   17 Mar 2014 15:26:48  $
+//* .Current Version : $Revision:   1.25  $
+//* .Check In Date   : $Date:   17 Apr 2014 17:00:30  $
 //******************************************************************************
 
 #pragma region Includes
@@ -321,6 +321,10 @@ BEGIN_MESSAGE_MAP(SVObserverApp, CWinApp)
 	ON_COMMAND(ID_EDIT_ADD_REMOTE_OUTPUTS, &SVObserverApp::OnEditRemoteOutputs)
 	ON_UPDATE_COMMAND_UI(ID_EDIT_ADD_REMOTE_OUTPUTS, &SVObserverApp::OnUpdateEditAddRemoteOutputs)
 	ON_COMMAND_RANGE(ID_EDIT_PUBLISHEDRESULTS_BASE, ID_EDIT_PUBLISHEDRESULTS_LIMIT, &SVObserverApp::OnEditPublishedResults)
+
+	ON_COMMAND(ID_EDIT_ADD_MONITORLIST, &SVObserverApp::OnEditMonitorList)
+	ON_UPDATE_COMMAND_UI(ID_EDIT_ADD_MONITORLIST, &SVObserverApp::OnUpdateEditAddMonitorList)
+
 END_MESSAGE_MAP()
 
 #pragma region Constructor
@@ -505,6 +509,7 @@ void SVObserverApp::OnFileNewConfig()
 		{
 			HideIOTab( SVRemoteOutputsViewID );
 		}
+		l_pConfig->ClearRemoteMonitorList();
 	}
 	else
 	{
@@ -513,6 +518,9 @@ void SVObserverApp::OnFileNewConfig()
 #endif
 		HideIOTab( SVRemoteOutputsViewID );
 	}
+
+	// Never any Remotely Monitored Items on a New Configuration...
+	HideIOTab( SVRemoteMonitorListViewID );
 
 	// Update Remote Inputs Tab
 	UpdateRemoteInputTabs();
@@ -1426,6 +1434,43 @@ void SVObserverApp::OnUpdateEditAddRemoteOutputs(CCmdUI *pCmdUI)
 	else
 	{
 		pCmdUI->SetText( "Edit Remote Output" );
+	}
+}
+
+void SVObserverApp::OnEditMonitorList()
+{
+	SVConfigurationObject* l_pConfig = NULL;
+	SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
+
+	if( l_pConfig != NULL )
+	{
+		if (l_pConfig->SetupRemoteMonitorList())
+		{
+			SVSVIMStateClass::AddState(SV_STATE_MODIFIED);
+			SVIODoc* pIODoc = GetIODoc();
+			if (pIODoc)
+			{
+				pIODoc->SetModifiedFlag();
+			}
+		}
+	}
+}
+
+void SVObserverApp::OnUpdateEditAddMonitorList(CCmdUI *pCmdUI)
+{
+	pCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) &&	
+		SVSVIMStateClass::CheckState( SV_STATE_EDIT ) );
+	
+	SVConfigurationObject* pConfig = NULL;
+	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
+
+	if (0 < pConfig->GetRemoteMonitorList().size())
+	{
+		pCmdUI->SetText( _T("Edit Monitor List") );
+	}
+	else
+	{
+		pCmdUI->SetText( _T("Add Monitor List") );
 	}
 }
 
@@ -3718,6 +3763,15 @@ HRESULT SVObserverApp::OpenSVXFile(LPCTSTR PathName)
 
 				GetMainFrame()->ParseToolsetScripts( m_XMLTree );
 
+				if (nullptr != l_pConfig)
+				{
+					hr = l_pConfig->LoadRemoteMonitorList(m_XMLTree);
+					if (hr & SV_ERROR_CONDITION)
+					{
+						break;
+					}
+				}
+
 				if( l_pConfig != NULL )
 				{
 					l_pConfig->RebuildInputOutputLists();
@@ -3849,6 +3903,12 @@ HRESULT SVObserverApp::OpenSVXFile(LPCTSTR PathName)
 		if( l_pConfig->GetRemoteOutputGroupCount() == 0)
 		{
 			HideIOTab( SVRemoteOutputsViewID );
+		}
+
+		const RemoteMonitorList& rList = l_pConfig->GetRemoteMonitorList();
+		if (!rList.size())
+		{
+			HideIOTab( SVRemoteMonitorListViewID );
 		}
 	}
 	else
@@ -4278,6 +4338,7 @@ HRESULT SVObserverApp::DestroyConfig( BOOL AskForSavingOrClosing /* = TRUE */,
 
 				if( l_pConfig != NULL )
 				{
+					l_pConfig->ClearRemoteMonitorList();
 					bOk = l_pConfig->DestroyConfiguration();
 				}
 
@@ -4317,6 +4378,7 @@ HRESULT SVObserverApp::DestroyConfig( BOOL AskForSavingOrClosing /* = TRUE */,
 
 		if( l_pConfig != NULL )
 		{
+			l_pConfig->ClearRemoteMonitorList();
 			bOk = l_pConfig->DestroyConfiguration();
 		}
 
@@ -6985,6 +7047,14 @@ void SVObserverApp::HideRemoteOutputTab()
 	pWndMain->PostMessage( SV_IOVIEW_HIDE_TAB, SVRemoteOutputsViewID );
 }
 
+void SVObserverApp::HideRemoteMonitorListTab()
+{
+	SVMainFrame* pWndMain = ( SVMainFrame* )GetMainWnd();
+	SetActiveIOTabView( SVIODiscreteInputsViewID );
+
+	pWndMain->PostMessage( SV_IOVIEW_HIDE_TAB, SVRemoteMonitorListViewID );
+}
+
 void SVObserverApp::HideIOTab( DWORD p_dwID )
 {
 	SVIODoc* l_pIODoc = GetIODoc();
@@ -8423,6 +8493,11 @@ HRESULT SVObserverApp::ConstructMissingDocuments()
 		l_Status = E_FAIL;
 	}
 
+	if (l_Status == S_OK)
+	{
+		SVInputStreamManager::Instance().Startup( m_InputStreamPortNumber );
+		SVOutputStreamManager::Instance().Startup( m_OutputStreamPortNumber );
+	}
 	return l_Status;
 }
 
@@ -8785,6 +8860,16 @@ int SVObserverApp::FindMenuItem(CMenu* Menu, LPCTSTR MenuString)
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVObserver.cpp_v  $
+ * 
+ *    Rev 1.25   17 Apr 2014 17:00:30   ryoho
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   added functionality for the Monitor List View
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.24   17 Mar 2014 15:26:48   bwalter
  * Project:  SVObserver

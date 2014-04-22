@@ -5,13 +5,14 @@
 //* .Module Name     : SVInspectionProcess
 //* .File Name       : $Workfile:   SVInspectionProcess.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.9  $
-//* .Check In Date   : $Date:   14 Mar 2014 09:12:28  $
+//* .Current Version : $Revision:   1.10  $
+//* .Check In Date   : $Date:   17 Apr 2014 16:59:12  $
 //******************************************************************************
 
 #include "stdafx.h"
 #include <mbstring.h>
 #include <fstream>
+#include <exception>
 #include "SVInspectionProcess.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "SVImageLibrary/SVExtentMultiLineStruct.h"
@@ -240,7 +241,225 @@ HRESULT SVInspectionProcess::ProcessInspection( bool& p_rProcessed, SVProductInf
 		m_InspectionTracking.EventEnd( _T( "Process Inspections" ) );
 #endif
 	}
+	return l_Status;
+}
 
+// Update the list of items being monitored
+HRESULT SVInspectionProcess::ProcessMonitorLists( bool& p_rProcessed )
+{
+	HRESULT l_Status = S_OK;
+	bool l_bNotFound = false;
+
+	SVMonitorList l_MonitorList;
+		
+	if( m_MonitorListQueue.RemoveHead( &l_MonitorList ) )
+	{
+		m_SharedMemoryFilters.clear();
+/* SEJ - Uncomment when shared memory is added
+		// Release entries in Shared Memory (to handle SVControl option LoadVisionConfig Never)
+		if (SVSharedMemorySingleton::Instance().IsEnabled())
+		{
+			SeidenaderVision::SVSharedMemoryWriter& writer = SVSharedMemorySingleton::Instance().Get(GetUniqueObjectID());
+			writer.ReleaseAll();
+		}
+		// clear view of rejects
+		m_RejectIndices.clear();
+*/
+		const SVMonitorItemList& valueList = l_MonitorList.GetDataList();
+
+		for( SVMonitorItemList::const_iterator l_ValueIter = valueList.begin();l_ValueIter != valueList.end();++l_ValueIter )
+		{
+			const SVString& name = (*l_ValueIter);
+			SVValueObjectReference l_RefObject;
+			if ( GetInspectionValueObject( name.c_str(), l_RefObject ) == S_OK)
+			{
+				m_SharedMemoryFilters.m_LastInspectedValues[ name ] = l_RefObject.Guid();
+			}
+			else
+			{
+				l_bNotFound = true;
+			}
+		}
+		if( l_bNotFound )
+		{
+			// Event Log...
+			SVException l_Exception;
+			CString l_Message;
+			l_Message.Format( _T( "Not All Data List items found\n" ) );
+
+			SETEXCEPTION1( l_Exception, SVMSG_SVO_45_SHARED_MEMORY_SETUP_LISTS, l_Message );
+			l_Exception.LogException( l_Message );
+		}
+		l_bNotFound = false;
+
+		const SVMonitorItemList& conditionalList = l_MonitorList.GetConditionalDataList();
+
+		for( SVMonitorItemList::const_iterator l_ConditionalIter = conditionalList.begin();l_ConditionalIter != conditionalList.end();++l_ConditionalIter )
+		{
+			const SVString& name = (*l_ConditionalIter);
+			SVValueObjectReference l_RefObject;
+			if ( GetInspectionValueObject( name.c_str(), l_RefObject ) == S_OK)
+			{
+				m_SharedMemoryFilters.m_ConditionalValues[ name ] = l_RefObject.Guid();
+			}
+			else
+			{
+				l_bNotFound = true;
+			}
+		}
+		if( l_bNotFound )
+		{
+			// Event Log...
+			SVException l_Exception;
+			CString l_Message;
+			l_Message.Format( _T( "Not All Conditional List items found\n" ) );
+
+			SETEXCEPTION1( l_Exception, SVMSG_SVO_45_SHARED_MEMORY_SETUP_LISTS, l_Message );
+			l_Exception.LogException( l_Message );
+		}
+		l_bNotFound = false;
+
+		const SVMonitorItemList& imageList = l_MonitorList.GetImageList();
+
+		long l_ImageSize = 0;
+		for( SVMonitorItemList::const_iterator l_ImageIter = imageList.begin(); l_ImageIter != imageList.end(); ++l_ImageIter )
+		{
+			const SVString& name = (*l_ImageIter);
+			SVImageClass* l_pImage;
+			if ( GetInspectionImage( name.c_str(), l_pImage ) == S_OK)
+			{
+				SVImageExtentClass l_extents = l_pImage->GetImageExtents(); 
+				m_SharedMemoryFilters.m_LastInspectedImages[ name ] = l_pImage->GetUniqueObjectID();
+// SEJ - Uncomment when SharedMemory is added				l_ImageSize += CalculateSize( l_pImage );
+			}
+			else
+			{
+				l_bNotFound = true;
+			}
+		}
+		if( l_bNotFound )
+		{
+			//Event Log...
+			SVException l_Exception;
+			CString l_Message;
+			l_Message.Format( _T( "Not All Image List items found\n" ) );
+
+			SETEXCEPTION1( l_Exception, SVMSG_SVO_45_SHARED_MEMORY_SETUP_LISTS, l_Message );
+			l_Exception.LogException( l_Message );
+		}
+		l_bNotFound = false;
+
+		const SVMonitorItemList& rejectValueList = l_MonitorList.GetRejectDataList();
+
+		for( SVMonitorItemList::const_iterator l_ValueIter = rejectValueList.begin();l_ValueIter != rejectValueList.end();++l_ValueIter )
+		{
+			const SVString& name = (*l_ValueIter);
+			SVValueObjectReference l_RefObject;
+			if ( GetInspectionValueObject( name.c_str(), l_RefObject ) == S_OK)
+			{
+				m_SharedMemoryFilters.m_RejectValues[ name ] = l_RefObject.Guid();
+			}
+			else
+			{
+				l_bNotFound = true;
+			}
+		}
+		if( l_bNotFound )
+		{
+			//Event Log...
+			SVException l_Exception;
+			CString l_Message;
+			l_Message.Format( _T( "Not All Reject Data List items found\n" ) );
+
+			SETEXCEPTION1( l_Exception, SVMSG_SVO_45_SHARED_MEMORY_SETUP_LISTS, l_Message );
+			l_Exception.LogException( l_Message );
+		}
+		l_bNotFound = false;
+
+		const SVMonitorItemList& rejectImageList = l_MonitorList.GetRejectImageList();
+
+		long l_RejectImageSize = 0;
+		for( SVMonitorItemList::const_iterator l_RejectImageIter = rejectImageList.begin(); l_RejectImageIter != rejectImageList.end(); ++l_RejectImageIter )
+		{
+			const SVString& name = (*l_RejectImageIter);
+			SVImageClass* l_pImage;
+			if ( GetInspectionImage( name.c_str(), l_pImage ) == S_OK)
+			{
+				m_SharedMemoryFilters.m_RejectImages[ name ] = l_pImage->GetUniqueObjectID();
+// SEJ - Uncomment when SharedMemory is added				l_RejectImageSize += CalculateSize( l_pImage );
+			}
+			else
+			{
+				l_bNotFound = true;
+			}
+		}
+		if( l_bNotFound )
+		{
+			//Event Log...
+			SVException l_Exception;
+			CString l_Message;
+			l_Message.Format( _T( "Not All Reject Image List items found\n" ) );
+
+			SETEXCEPTION1( l_Exception, SVMSG_SVO_45_SHARED_MEMORY_SETUP_LISTS, l_Message );
+			l_Exception.LogException( l_Message );
+		}
+		l_bNotFound = false;
+
+		::InterlockedIncrement( &m_NotifyWithLastInspected );
+
+		p_rProcessed = true;
+/* SEJ - Uncomment when SharedMemory is added
+		if (SVSharedMemorySingleton::Instance().IsEnabled())
+		{
+			SVSharedMemorySettings l_Settings = SVSharedMemorySingleton::Instance().GetSettings();
+			__int64 lAvailable = static_cast<__int64>(l_Settings.ImageStoreSize()) * statics::M;
+			__int64 lExpected = static_cast<__int64>(l_ImageSize * l_Settings.NumLastInspectedSlots() * 20) 
+							+ static_cast<__int64>(l_RejectImageSize * l_Settings.NumRejectSlots());
+
+			if( lAvailable < lExpected )
+			{
+				// Event Log...
+				SVException l_Exception;
+				CString l_Message;
+				l_Message.Format( "Not enough Image Store in Shared memory. Expected %I64d, Available %I64d. Use SVDriveInit to increase.\n",lExpected, lAvailable );
+				TRACE( l_Message );
+				SETEXCEPTION1( l_Exception, SVMSG_SVO_45_SHARED_MEMORY_SETUP_LISTS, l_Message );
+				l_Exception.LogException( l_Message );
+			}
+			else
+			{
+				TRACE("Image Size %d, Image Reject Size %d\n", l_ImageSize, l_RejectImageSize);
+			}
+		}
+*/
+	}
+	return l_Status;
+}
+
+// Update the List of LastInspected Images being written to shared memory
+HRESULT SVInspectionProcess::ProcessLastInspectedImages( bool& p_rProcessed )
+{
+	HRESULT l_Status = S_OK;
+	SVMonitorItemList l_NameList;
+		
+	if ( m_ImageNameDequeQueue.RemoveHead( &l_NameList ) )
+	{
+		m_SharedMemoryFilters.m_LastInspectedImages.clear();
+
+		for( SVMonitorItemList::const_iterator l_Iter = l_NameList.begin(); l_Iter != l_NameList.end(); ++l_Iter )
+		{
+			const SVString& name = (*l_Iter);
+			SVImageClass* l_pImage;
+			if ( GetInspectionImage( name.c_str(), l_pImage ) == S_OK)
+			{
+				m_SharedMemoryFilters.m_LastInspectedImages[ name ] = l_pImage->GetUniqueObjectID();
+			}
+		}
+
+		::InterlockedIncrement( &m_NotifyWithLastInspected );
+
+		p_rProcessed = true;
+	}
 	return l_Status;
 }
 
@@ -266,7 +485,6 @@ HRESULT SVInspectionProcess::ProcessNotifyWithLastInspected( bool& p_rProcessed 
 		m_InspectionTracking.EventEnd( _T( "Process Notify With Last Inspected" ) );
 #endif
 	}
-
 	return l_Status;
 }
 
@@ -514,6 +732,10 @@ BOOL SVInspectionProcess::CreateInspection( LPCTSTR szDocName )
 	if( !m_CommandQueue.Create() )
 		return false;
 
+	if( !m_MonitorListQueue.Create() ) { return false; }
+
+	if( !m_ImageNameDequeQueue.Create() ) { return false; }
+
 	::InterlockedExchange( &m_NotifyWithLastInspected, 0 );
 
 	if( m_AsyncProcedure.Create( &SVInspectionProcess::APCThreadProcess, boost::bind(&SVInspectionProcess::ThreadProcess, this, _1), GetName() ) != S_OK )
@@ -580,6 +802,10 @@ void SVInspectionProcess::ThreadProcess( bool& p_WaitForEvents )
 
 	ProcessInspection( l_Processed, l_Product );
 
+	ProcessMonitorLists( l_Processed );
+
+	ProcessLastInspectedImages( l_Processed );
+
 	ProcessNotifyWithLastInspected( l_Processed );
 
 	ProcessConditionalHistory( l_Processed );
@@ -628,6 +854,8 @@ BOOL SVInspectionProcess::DestroyInspection()
 	m_InputRequests.Destroy();
 	m_InputImageRequests.Destroy();
 	m_CommandQueue.Destroy();
+	m_MonitorListQueue.Destroy();
+	m_ImageNameDequeQueue.Destroy();
 
 	SVObjectManagerClass::Instance().AdjustInspectionIndicator( -( m_qInspectionsQueue.GetCount() ) );
 
@@ -651,7 +879,7 @@ BOOL SVInspectionProcess::DestroyInspection()
 	//m_pPPQ = NULL;
 
 	m_pResultImageCircleBuffer.clear();
-	
+
 	return TRUE;
 }// end Destroy
 
@@ -707,6 +935,26 @@ HRESULT SVInspectionProcess::GetInspectionValueObject( const CString& p_strName,
 		hr = S_OK;
 	}// end if
 
+	return hr;
+}
+
+HRESULT SVInspectionProcess::GetInspectionObject( const CString& p_strName, SVObjectReference& p_rRefObject )
+{
+	SVValueObjectReference ref;
+	HRESULT hr = GetInspectionValueObject( p_strName, ref );	// try the most efficient one first
+	if ( hr == S_OK )
+	{
+		p_rRefObject = ref;
+	}
+	else	// if not a value object, try getting images
+	{
+		SVImageClass* pImage = NULL;
+		hr = GetInspectionImage( p_strName, pImage );
+		if ( hr == S_OK )
+		{
+			p_rRefObject = pImage;
+		}
+	}
 	return hr;
 }
 
@@ -3615,6 +3863,34 @@ HRESULT SVInspectionProcess::GetMainImages( const CString& p_rCameraName, SVCame
 	return l_Status;
 }
 
+HRESULT SVInspectionProcess::UpdateSharedMemoryFilters( const SVMonitorList& p_rMonitorList )
+{
+	HRESULT l_Status = S_OK;
+
+	m_MonitorListQueue.clear();
+	m_ImageNameDequeQueue.clear();
+
+	m_MonitorListQueue.AddTail( p_rMonitorList );
+
+	m_AsyncProcedure.Signal( NULL );
+
+	return l_Status;
+}
+
+// This method is called from the handling of the JSON Command socket handler
+HRESULT SVInspectionProcess::UpdateSharedMemoryLastInspectedImages( const SVMonitorItemList& p_rImageList )
+{
+	HRESULT l_Status = S_OK;
+
+	m_ImageNameDequeQueue.clear();
+
+	m_ImageNameDequeQueue.AddTail( p_rImageList );
+
+	m_AsyncProcedure.Signal( NULL );
+
+	return l_Status;
+}
+
 HRESULT SVInspectionProcess::AddTransaction( SVInspectionTransactionStruct& p_rMessage )
 {
 	BOOL bAdd = m_qTransactions.AddTail( p_rMessage );
@@ -4366,6 +4642,26 @@ HRESULT SVInspectionProcess::GetInspectionImage( const CString& p_strName, SVIma
 	return E_FAIL;
 }
 
+
+SVInspectionProcess::SVSharedMemoryFilters::SVSharedMemoryFilters()
+: m_LastInspectedValues()
+, m_LastInspectedImages()
+, m_ConditionalValues()
+, m_RejectValues()
+, m_RejectImages()
+{
+}
+
+void SVInspectionProcess::SVSharedMemoryFilters::clear()
+{
+	m_ConditionalValues.clear();
+	m_LastInspectedValues.clear();
+	m_LastInspectedImages.clear();
+	m_RejectValues.clear();
+	m_RejectImages.clear();
+}
+
+// SEJ - this needs to be moved out of here into another more generic class
 #ifdef EnableTracking
 SVInspectionProcess::SVInspectionTrackingElement::SVInspectionTrackingElement()
 : m_StartTime( 0 ), m_Start(), m_End(), m_Duration()
@@ -4479,6 +4775,16 @@ void SVInspectionProcess::Persist(SVObjectWriter& rWriter)
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVInspectionProcess.cpp_v  $
+ * 
+ *    Rev 1.10   17 Apr 2014 16:59:12   ryoho
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   added functionality for the Remote Monitor List and shared memory
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.9   14 Mar 2014 09:12:28   tbair
  * Project:  SVObserver

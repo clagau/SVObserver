@@ -5,8 +5,8 @@
 //* .Module Name     : SVConfigurationObject
 //* .File Name       : $Workfile:   SVConfigurationObject.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.18  $
-//* .Check In Date   : $Date:   17 Mar 2014 15:20:24  $
+//* .Current Version : $Revision:   1.19  $
+//* .Check In Date   : $Date:   17 Apr 2014 16:58:36  $
 //******************************************************************************
 
 #pragma region Includes
@@ -60,6 +60,7 @@
 #include "SVStorageResult.h"
 #include "SVVirtualCamera.h"
 #include "SVObjectLibrary/GlobalConst.h"
+#include "RemoteMonitorNamedList.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -3533,6 +3534,67 @@ BOOL SVConfigurationObject::SavePPQ(SVTreeType& rTree)
 	return bOk;
 }
 
+bool SVConfigurationObject::SaveRemoteMonitorList( SVTreeType& rTree ) const
+{
+	SVTreeType::SVBranchHandle hBranch = nullptr;
+	bool bOk = SVNavigateTreeClass::SetBranch( rTree, nullptr, CTAG_MONITOR_LISTS, &hBranch );
+
+	if ( hBranch != NULL )
+	{
+		const RemoteMonitorList& remoteMonitorLists = GetRemoteMonitorList();
+		RemoteMonitorList::const_iterator iterMonitorList = remoteMonitorLists.begin();
+		while ( bOk && remoteMonitorLists.end() != iterMonitorList )
+		{
+			SVTreeType::SVBranchHandle hBranchChild = nullptr;
+			const SVString& strName = iterMonitorList->first;
+			bOk = SVNavigateTreeClass::SetBranch( rTree, hBranch, strName.c_str(), &hBranchChild );
+			_variant_t svValue;
+			const RemoteMonitorNamedList& monitorList = iterMonitorList->second;
+			svValue.SetString( monitorList.GetPPQName().ToString() );
+			bOk = SVNavigateTreeClass::AddItem( rTree, hBranchChild, CTAG_PPQ_NAME, svValue ) && bOk;
+			svValue.Clear();
+			svValue = monitorList.GetRejectDepthQueue();			
+			bOk = SVNavigateTreeClass::AddItem( rTree, hBranchChild, CTAG_REJECT_QUEUE_DEPTH, svValue ) && bOk;
+			svValue.Clear();
+
+			bOk = SaveMonitoredObjectList( rTree, hBranchChild, CTAG_PRODUCTVALUES_LIST, monitorList.GetProductValuesList() ) && bOk;
+			bOk = SaveMonitoredObjectList( rTree, hBranchChild, CTAG_PRODUCTIMAGE_LIST, monitorList.GetProductImagesList() ) && bOk;
+			bOk = SaveMonitoredObjectList( rTree, hBranchChild, CTAG_REJECTCONDITION_LIST, monitorList.GetRejectConditionList() ) && bOk;
+			bOk = SaveMonitoredObjectList( rTree, hBranchChild, CTAG_FAILSTATUS_LIST, monitorList.GetFailStatusList() ) && bOk;
+			iterMonitorList++;
+		}
+	}
+	return bOk;
+}
+
+bool SVConfigurationObject::SaveMonitoredObjectList( SVTreeType& rTree, SVTreeType::SVBranchHandle hBranch, const SVString& listName, const MonitoredObjectList& rList ) const
+{
+	SVTreeType::SVBranchHandle hBranchChild = nullptr;
+	bool bOk = SVNavigateTreeClass::SetBranch( rTree, hBranch, listName.c_str(), &hBranchChild );
+
+	if ( hBranchChild != NULL )
+	{
+		_variant_t svValue;
+		svValue.SetString( _T("") );
+		MonitoredObjectList::const_iterator iter = rList.begin();
+		while ( bOk && rList.end() != iter )
+		{
+			const SVGUID& guid = *iter;
+			const SVString& objectName = SVObjectManagerClass::Instance().GetCompleteObjectName( guid );
+			if ( !objectName.empty() )
+			{
+				bOk = SVNavigateTreeClass::AddItem( rTree, hBranchChild, objectName.c_str(), svValue );
+			}
+			else
+			{
+				bOk = false;
+			}
+			iter++;
+		}
+	}
+	return bOk;
+}
+
 BOOL SVConfigurationObject::SaveConfiguration(SVTreeType& rTree)
 {
 	BOOL bOk = SaveEnvironment(rTree);
@@ -3542,6 +3604,7 @@ BOOL SVConfigurationObject::SaveConfiguration(SVTreeType& rTree)
 	bOk = SaveTrigger(rTree) && bOk;
 	bOk = SaveInspection(rTree) && bOk;
 	bOk = SavePPQ(rTree) && bOk;
+	bOk = SaveRemoteMonitorList(rTree) && bOk;
 
 	return bOk;
 }
@@ -5235,11 +5298,176 @@ bool SVConfigurationObject::HasCameraTrigger(SVPPQObject* p_pPPQ) const
 	return bRetVal;
 }
 
+bool SVConfigurationObject::SetupRemoteMonitorList()
+{
+	bool bRetVal = false;
+	if (NULL != m_pIOController)
+	{
+		bRetVal = m_pIOController->SetupRemoteMonitorList(this);
+	}
+	return bRetVal;
+}
+
+void SVConfigurationObject::ClearRemoteMonitorList()
+{
+	if (NULL != m_pIOController)
+	{
+		m_pIOController->ClearRemoteMonitorList();
+	}
+}
+
+RemoteMonitorList SVConfigurationObject::GetRemoteMonitorList() const
+{
+	if (NULL != m_pIOController)
+	{
+		return m_pIOController->GetRemoteMonitorList();
+	}
+	return RemoteMonitorList();
+}
+
+void SVConfigurationObject::SetRemoteMonitorList(const RemoteMonitorList& rList)
+{
+	if (NULL != m_pIOController)
+	{
+		m_pIOController->SetRemoteMonitorList(rList);
+	}
+}
+
+HRESULT SVConfigurationObject::LoadRemoteMonitorList( SVTreeType& rTree )
+{
+	HRESULT result = S_OK;
+	SVTreeType::SVBranchHandle htiChild = nullptr;
+	if ( SVNavigateTreeClass::GetItemBranch( rTree, CTAG_MONITOR_LISTS, nullptr, htiChild ) )
+	{
+		RemoteMonitorList lists;
+		SVTreeType::SVBranchHandle htiSubChild = nullptr;
+		rTree.GetFirstBranch( htiChild, htiSubChild );
+		while ( S_OK == result && htiSubChild != nullptr )
+		{
+			_bstr_t listName;
+			SVString ppqName = "";
+			int rejectDepth = 0;
+			result = rTree.GetBranchName( htiSubChild, listName.GetBSTR() );
+			_variant_t svValue = 0.0;
+			if (S_OK == result)
+			{
+				if ( SVNavigateTreeClass::GetItem( rTree, CTAG_PPQ_NAME, htiSubChild, svValue ) )
+				{
+					ppqName = static_cast< LPCTSTR >( static_cast< _bstr_t >( svValue ) );
+				}
+				else
+				{
+					result = SVMSG_SVO_48_LOAD_CONFIGURATION_MONITOR_LIST;
+				}
+			}
+
+			if (S_OK == result)
+			{
+				if ( SVNavigateTreeClass::GetItem( rTree, CTAG_REJECT_QUEUE_DEPTH, htiSubChild, svValue ) )
+				{
+					rejectDepth = svValue;
+				}
+				else
+				{
+					result = SVMSG_SVO_48_LOAD_CONFIGURATION_MONITOR_LIST;
+				}
+			}
+
+			MonitoredObjectList productValueList;
+			if (S_OK == result)
+			{
+				result = LoadMonitoredObjectList( rTree, htiSubChild, CTAG_PRODUCTVALUES_LIST, productValueList );	
+			}
+			MonitoredObjectList productImageList;
+			if (S_OK == result)
+			{
+				result = LoadMonitoredObjectList( rTree, htiSubChild, CTAG_PRODUCTIMAGE_LIST, productImageList );	
+			}
+			MonitoredObjectList rejectConditionList;
+			if (S_OK == result)
+			{
+				result = LoadMonitoredObjectList( rTree, htiSubChild, CTAG_REJECTCONDITION_LIST, rejectConditionList );	
+			}
+			MonitoredObjectList failStatusList;
+			if (S_OK == result)
+			{
+				result = LoadMonitoredObjectList( rTree, htiSubChild, CTAG_FAILSTATUS_LIST, failStatusList );	
+			}
+			if (S_OK == result)
+			{
+				RemoteMonitorNamedList monitorList( ppqName, listName, productValueList, productImageList, rejectConditionList, failStatusList, rejectDepth );
+				lists[listName] = monitorList;
+
+				rTree.GetNextBranch( htiChild, htiSubChild );
+			}
+		}
+		if (S_OK == result)
+		{
+			SetRemoteMonitorList(lists);
+		}
+	}
+	return result;
+}
+
+HRESULT SVConfigurationObject::LoadMonitoredObjectList( SVTreeType& rTree, SVTreeType::SVBranchHandle htiParent, const SVString& listName, MonitoredObjectList& rList )
+{
+	HRESULT retValue = S_OK;
+	SVTreeType::SVBranchHandle htiChild = nullptr;
+	// search for the branch by list name
+	if ( SVNavigateTreeClass::GetItemBranch( rTree, listName.c_str(), htiParent, htiChild ) )
+	{
+		SVTreeType::SVLeafHandle htiLeaf;
+		rTree.GetFirstLeaf(htiChild, htiLeaf);
+		while ( S_OK == retValue && S_OK == rTree.IsValidLeaf( htiChild, htiLeaf ) )
+		{
+			_bstr_t name;
+			rTree.GetLeafName( htiLeaf, name.GetBSTR() );
+
+			GUID guid;
+			// translate entry from DottedName string to GUID
+			retValue = SVObjectManagerClass::Instance().GetObjectByDottedName( name, guid );
+			if (S_OK == retValue)
+			{
+				// add guid for this leaf to the list
+				rList.push_back( SVGUID( guid ) );
+				rTree.GetNextLeaf( htiChild, htiLeaf );
+			}
+/*
+			const SVGUID& guid = SVObjectManagerClass::Instance().GetObjectIdFromCompleteName( name );
+			if (!guid.empty())
+			{
+				rList.push_back( guid );
+				rTree.GetNextLeaf( htiChild, htiLeaf );
+			}
+*/
+			else
+			{
+				retValue = SVMSG_SVO_48_LOAD_CONFIGURATION_MONITOR_LIST;
+			}
+		}
+	}
+	else
+	{
+		retValue = SVMSG_SVO_48_LOAD_CONFIGURATION_MONITOR_LIST;
+	}
+	return retValue;
+}
+
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVConfigurationObject.cpp_v  $
+ * 
+ *    Rev 1.19   17 Apr 2014 16:58:36   ryoho
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   added new methods for the Remote Monitor List
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.18   17 Mar 2014 15:20:24   bwalter
  * Project:  SVObserver

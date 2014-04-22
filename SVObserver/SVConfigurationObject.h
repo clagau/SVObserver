@@ -5,8 +5,8 @@
 //* .Module Name     : SVConfigurationObject
 //* .File Name       : $Workfile:   SVConfigurationObject.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.7  $
-//* .Check In Date   : $Date:   17 Mar 2014 15:20:50  $
+//* .Current Version : $Revision:   1.8  $
+//* .Check In Date   : $Date:   17 Apr 2014 16:58:36  $
 //******************************************************************************
 
 #ifndef INC_SVCONFIGURATIONOBJECT_INCLUDED
@@ -28,6 +28,7 @@
 #include "SVTriggerObject.h"
 #include "SVStorage.h"
 #include "SVStorageResult.h"
+#include "RemoteMonitorList.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -46,9 +47,7 @@ struct SVConfigurationAcquisitionDeviceInfoStruct;
 typedef std::vector<SVInspectionProcess *> SVInspectionProcessPtrList;
 #pragma endregion Declarations
 
-class SVConfigurationObject : 
-	public SVObjectClass,
-	public SVObserverTemplate< SVRenameObject >
+class SVConfigurationObject : public SVObjectClass,	public SVObserverTemplate< SVRenameObject >
 {
 	SV_DECLARE_CLASS( SVConfigurationObject );
 
@@ -199,6 +198,19 @@ public:
 	HRESULT AddDigitalInput(SVPPQObject* p_pPPQ, const SVString& name, long ppqPosition);
 	HRESULT AddCameraDataInput(SVPPQObject* pPPQ, SVIOEntryHostStructPtr pIOEntry);
 
+	bool SetupRemoteMonitorList();
+	void ClearRemoteMonitorList();
+	RemoteMonitorList GetRemoteMonitorList() const;
+	void SetRemoteMonitorList(const RemoteMonitorList& rList);
+
+	//************************************
+	// Method:    LoadRemoteMonitorList
+	// Description: Loads the Remote Monitor List(s) from the configuration file
+	// Parameter: SVTreeType & rTree the XML-tree with the config.
+	// Returns:   HRESULT S_OK, if loading successful.
+	//************************************
+	HRESULT LoadRemoteMonitorList( SVTreeType& rTree );
+
 	bool HasCameraTrigger(SVPPQObject* p_pPPQ) const;
 
 protected:
@@ -220,6 +232,23 @@ private:
 	BOOL SaveTrigger(SVTreeType &rTree);
 	BOOL SaveInspection(SVTreeType &rTree);
 	BOOL SavePPQ(SVTreeType &rTree);
+	//************************************
+	// Method:    SaveMonitorList
+	// Description: Add the current monitor lists to the tree.
+	// Parameter: SVTreeType & rTree XML-tree which will be saved.
+	// Returns:   bool
+	//************************************
+	bool SaveRemoteMonitorList( SVTreeType& rTree ) const;
+	//************************************
+	// Method:    SaveMonitoredObjectList
+	// Description: Add the current sub monitor lists to the tree
+	// Parameter: SVTreeType & rTree XML-tree which will be saved.
+	// Parameter: SVTreeType::SVBranchHandle hBranch Branch of the tree where the sub list should added.
+	// Parameter: const SVString& listName Name of the sublist.
+	// Parameter: const MonitoredObjectList & subList The sublist which should saved.
+	// Returns:   bool
+	//************************************
+	bool SaveMonitoredObjectList( SVTreeType& rTree, SVTreeType::SVBranchHandle hBranch, const SVString& listName, const MonitoredObjectList& subList ) const;
 
 	HRESULT SaveAcquisitionDeviceFilename( SVTreeType& rTree, SVTreeType::SVBranchHandle htiDig, SVFileNameArrayClass* pFiles );
 	HRESULT LoadAcquisitionDeviceFilename( SVTreeType& rTree, SVTreeType::SVBranchHandle htiDig, SVFileNameArrayClass& svFileArray );
@@ -240,6 +269,17 @@ private:
 
 	void GetRemoteInputInspections( const SVString& p_rRemoteInputName, SVInspectionSet& p_rInspections ) const;
 
+	//************************************
+	// Method:    LoadMonitoredObjectList
+	// Description: Load a sub list and return this value. Sub list are e.g. productValue- and productImage-list
+	// Parameter: SVTreeType & rTree the XML-tree with the config.
+	// Parameter: SVTreeType::SVBranchHandle htiParent The parent branch of the monitor list.
+	// Parameter: const SVString& listName Name of the sublist
+	// Parameter: MonitoredObjectList & subList The sublist which is returned.
+	// Returns:   HRESULT S_OK, if loading successful.
+	//************************************
+	HRESULT LoadMonitoredObjectList( SVTreeType& rTree, SVTreeType::SVBranchHandle htiParent, const SVString& listName, MonitoredObjectList& rList );
+
 	SVTriggerObjectArray        m_arTriggerArray;
 	SVPPQObjectArray            m_arPPQArray;
 	SVVirtualCameraArray        m_arCameraArray;
@@ -258,6 +298,16 @@ private:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVConfigurationObject.h_v  $
+ * 
+ *    Rev 1.8   17 Apr 2014 16:58:36   ryoho
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   added new methods for the Remote Monitor List
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.7   17 Mar 2014 15:20:50   bwalter
  * Project:  SVObserver

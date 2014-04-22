@@ -5,8 +5,8 @@
 //* .Module Name     : SVInspectionProcess
 //* .File Name       : $Workfile:   SVInspectionProcess.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.5  $
-//* .Check In Date   : $Date:   14 Mar 2014 09:12:30  $
+//* .Current Version : $Revision:   1.6  $
+//* .Check In Date   : $Date:   17 Apr 2014 16:59:12  $
 //******************************************************************************
 
 #ifndef INC_SVINSPECTIONPROCESS_INCLUDED
@@ -40,6 +40,7 @@
 #include "SVRGBMainImage.h"
 #include "SVValueObjectReference.h"
 #include "SVVirtualCamera.h"
+#include "SVMonitorList.h"
 
 class SVCameraImageTemplate;
 class SVConditionalClass;
@@ -214,6 +215,8 @@ public:
 
 	HRESULT RemoveImage(SVImageClass* pImage);
 
+	HRESULT UpdateSharedMemoryFilters( const SVMonitorList& p_rMonitorList );
+	HRESULT UpdateSharedMemoryLastInspectedImages( const SVMonitorItemList& p_rImageList );
 	virtual void Persist(SVObjectWriter& rWriter);
 
 	// PPQ objects needed for inputs
@@ -225,6 +228,21 @@ public:
 	CStringArray m_arViewedInputNames;
 
 protected:
+	typedef std::map< SVString, SVGUID > SVFilterElementMap;
+
+	struct SVSharedMemoryFilters
+	{
+		SVSharedMemoryFilters();
+
+		void clear();
+		
+		SVFilterElementMap m_LastInspectedValues;
+		SVFilterElementMap m_LastInspectedImages;
+		SVFilterElementMap m_ConditionalValues;
+		SVFilterElementMap m_RejectValues;
+		SVFilterElementMap m_RejectImages;
+	};
+
 #ifdef EnableTracking
 	struct SVInspectionTrackingElement
 	{
@@ -242,7 +260,6 @@ protected:
 		SVTimeCountMap m_Start;
 		SVTimeCountMap m_End;
 		SVTimeCountMap m_Duration;
-
 	};
 
 	struct SVInspectionTracking
@@ -272,6 +289,8 @@ protected:
 	typedef boost::function<void ( bool& )> SVThreadProcessHandler;
 
 	typedef SVTQueueObject< SVCommandTemplatePtr > SVCommandQueue;
+	typedef SVTQueueObject< SVMonitorList > SVMonitorListQueue;
+	typedef SVTQueueObject< SVMonitorItemList > SVImageNameDequeQueue;
 	typedef SVTQueueObject< SVInputRequestInfoStructPtr > SVInputRequestQueue;
 	typedef SVTQueueObject< SVInputImageRequestInfoStructPtr > SVInputImageRequestQueue;
 	typedef SVTQueueObject< SVProductInfoStruct > SVProductQueue;
@@ -296,6 +315,7 @@ protected:
 
 	HRESULT GetInspectionValueObject( const CString& p_strName, SVValueObjectReference& p_rRefObject );
 	HRESULT GetInspectionImage( const CString& p_strName, SVImageClass*& p_rRefObject );
+	HRESULT GetInspectionObject( const CString& p_strName, SVObjectReference& p_rRefObject );
 
 	BOOL AddInputRequest( SVInputRequestInfoStructPtr p_pInRequest );
 
@@ -327,6 +347,8 @@ protected:
 	void ThreadProcess( bool& p_WaitForEvents );
 
 	HRESULT ProcessInspection( bool& p_rProcessed, SVProductInfoStruct& p_rProduct );
+	HRESULT ProcessMonitorLists( bool& p_rProcessed );
+	HRESULT ProcessLastInspectedImages( bool& p_rProcessed );
 	HRESULT ProcessNotifyWithLastInspected( bool& p_rProcessed );
 	HRESULT ProcessConditionalHistory( bool& p_rProcessed );
 	HRESULT ProcessCommandQueue( bool& p_rProcessed );
@@ -408,6 +430,9 @@ private:
 	SVConditionalClass* m_pToolSetConditional;
 
 	SVCommandQueue m_CommandQueue;
+	SVMonitorListQueue m_MonitorListQueue;
+	SVImageNameDequeQueue m_ImageNameDequeQueue;
+	SVSharedMemoryFilters m_SharedMemoryFilters;
 };
 
 typedef SVVector< SVInspectionProcess* > SVInspectionProcessArray;
@@ -536,6 +561,16 @@ inline HRESULT SVInspectionProcess::SetObjectArrayValues(SVValueObjectReference 
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVInspectionProcess.h_v  $
+ * 
+ *    Rev 1.6   17 Apr 2014 16:59:12   ryoho
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   added functionality for the Remote Monitor List and shared memory
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.5   14 Mar 2014 09:12:30   tbair
  * Project:  SVObserver

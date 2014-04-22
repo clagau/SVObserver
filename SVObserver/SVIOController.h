@@ -5,8 +5,8 @@
 //* .Module Name     : SVIOController
 //* .File Name       : $Workfile:   SVIOController.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.3  $
-//* .Check In Date   : $Date:   01 Feb 2014 10:48:56  $
+//* .Current Version : $Revision:   1.4  $
+//* .Check In Date   : $Date:   17 Apr 2014 16:59:46  $
 //******************************************************************************
 
 #ifndef SVIOCONTROLLER_H
@@ -23,6 +23,7 @@
 #include "SVInfoStructs.h"
 #include "SVRemoteOutputDataController.h"
 #include "SVRemoteOutputObject.h"
+#include "RemoteMonitorListController.h"
 
 class SVIODoc;
 
@@ -93,6 +94,11 @@ public:
 	HRESULT DeleteRemoteOutputEntry( const CString& p_strRemoteGroupId, SVRemoteOutputObject* p_pOutputObject );
 	HRESULT RemoteOutputValidateInputs();
 
+	bool SetupRemoteMonitorList(SVConfigurationObject* pConfig);
+	void ClearRemoteMonitorList();
+	const RemoteMonitorList& GetRemoteMonitorList() const;
+	void SetRemoteMonitorList(const RemoteMonitorList& rList);
+
 protected:
 	SVIOEntryHostStructPtr m_pModuleReady;
 	SVIOEntryHostStructPtr m_pRaidErrorBit;
@@ -100,6 +106,7 @@ protected:
 	SVPLCDataController m_PLCData;
 #endif
 	SVRemoteOutputDataController* m_pRemoteOutputController;
+	RemoteMonitorListController m_RemoteMonitorListController;
 
 private:
 	void LocalIntialize();
@@ -114,6 +121,16 @@ private:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVIOController.h_v  $
+ * 
+ *    Rev 1.4   17 Apr 2014 16:59:46   ryoho
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   added functionality for the Remote Monitor List
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   01 Feb 2014 10:48:56   tbair
  * Project:  SVObserver
