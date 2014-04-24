@@ -5,8 +5,8 @@
 //* .Module Name     : SVVisionProcessorHelper
 //* .File Name       : $Workfile:   SVVisionProcessorHelper.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.6  $
-//* .Check In Date   : $Date:   17 Mar 2014 15:35:00  $
+//* .Current Version : $Revision:   1.8  $
+//* .Check In Date   : $Date:   23 Apr 2014 18:04:52  $
 //******************************************************************************
 
 #ifndef SVVISIONPROCESSORHELPER_H
@@ -75,6 +75,11 @@ public:
 
 	HRESULT SetLastModifiedTime();
 
+	HRESULT QueryProductList( const SVString& rListName, SVNameSet& rNames ) const;
+	HRESULT QueryRejectCondList( const SVString& rListName, SVNameSet& rNames ) const;
+	HRESULT QueryFailStatusList( const SVString& rListName, SVNameSet& rNames ) const;
+	HRESULT ActivateMonitorList( const SVString& rListName, bool bActivate );
+
 protected:
 	typedef boost::function< HRESULT ( const SVNameSet&, SVNameStorageResultMap& ) > SVGetItemsFunctor;
 	typedef boost::function< HRESULT ( const SVNameStorageMap&, SVNameStatusMap& ) > SVSetItemsFunctor;
@@ -126,6 +131,28 @@ private:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVVisionProcessorHelper.h_v  $
+ * 
+ *    Rev 1.8   23 Apr 2014 18:04:52   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Removed DeactivateMonitorList method.
+ * Revised ActivateMonitorList method.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.7   23 Apr 2014 10:43:10   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Added QueryProductList, QueryRejectCondList, QueryFailStatusList, ActivateMonitorList, and DeactivateMonitorList methods.
+ * 
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.6   17 Mar 2014 15:35:00   bwalter
  * Project:  SVObserver

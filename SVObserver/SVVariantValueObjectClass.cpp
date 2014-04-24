@@ -5,8 +5,8 @@
 //* .Module Name     : SVVariantValueObjectClass
 //* .File Name       : $Workfile:   SVVariantValueObjectClass.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   02 Oct 2013 08:39:00  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   22 Apr 2014 07:05:58  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -138,7 +138,6 @@ void SVVariantValueObjectClass::Persist(SVObjectWriter& rWriter)
 	
 	rWriter.StartElement(scArrayElementsTag);
 
-	// Where does Object Depth Get put into the Script ??? (maybe at the SVObjectClass)
 	// Object Depth is implicit (it's the count of the values)
 	SVVariantList list;
 
@@ -146,6 +145,31 @@ void SVVariantValueObjectClass::Persist(SVObjectWriter& rWriter)
 	for (int i = 0; i < m_iArraySize; i++)
 	{
 		value = Element(m_iLastSetIndex, i);
+
+		// The parser does not like reading in empty safe array.
+		// Therefore if an empty array is detected then set the variant type to VT_EMPTY.
+		// 
+		if( (value.vt & VT_ARRAY) == VT_ARRAY)
+		{
+			bool bEmpty = true;
+			unsigned int dim = ::SafeArrayGetDim(value.parray);
+			long lBound = 0;
+			long uBound = 0;
+			if( dim > 0 )
+			{
+				HRESULT hr = ::SafeArrayGetLBound( value.parray,1,&lBound);
+				hr = ::SafeArrayGetUBound( value.parray, 1, &uBound);
+				long lSize = uBound-lBound+1;
+				if(hr == S_OK && lSize > 0)
+				{
+					bEmpty = false;
+				}
+			}
+			if( bEmpty)
+			{
+				value.Clear();
+			}
+		}
 		list.push_back( value );
 	}
 	rWriter.WriteAttribute( scElementTag, list );
@@ -771,6 +795,16 @@ void SVVariantValueObjectClass::LocalInitialize()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVVariantValueObjectClass.cpp_v  $
+ * 
+ *    Rev 1.2   22 Apr 2014 07:05:58   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  901
+ * SCR Title:  Fix configuration loading problem with variant value object
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Modified the Persist function to save empty variant value objects that were of type VT_ARRAY with a type of VT_EMPTY.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   02 Oct 2013 08:39:00   tbair
  * Project:  SVObserver

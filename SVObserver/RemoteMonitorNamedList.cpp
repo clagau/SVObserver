@@ -5,8 +5,8 @@
 //* .Module Name     : RemoteMonitorNamedList
 //* .File Name       : $Workfile:   RemoteMonitorNamedList.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   17 Apr 2014 16:26:48  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   23 Apr 2014 10:35:00  $
 //******************************************************************************
 #pragma region Includes
 #include "Stdafx.h"
@@ -15,6 +15,7 @@
 
 RemoteMonitorNamedList::RemoteMonitorNamedList()
 : m_rejectQueueDepth(DefaultRejectQueueDepth)
+, m_bActive(false)
 {
 }
 
@@ -22,6 +23,7 @@ RemoteMonitorNamedList::RemoteMonitorNamedList(const SVString& PPQName, const SV
 : m_PPQName(PPQName)
 , m_name(name)
 , m_rejectQueueDepth(DefaultRejectQueueDepth)
+, m_bActive(false)
 {
 }
 
@@ -33,6 +35,7 @@ RemoteMonitorNamedList::RemoteMonitorNamedList(const SVString& PPQName, const SV
 , m_rejectConditionList(rejectConditionList)
 , m_failStatusList(failStatusList)
 , m_rejectQueueDepth(rejectDepth)
+, m_bActive(false)
 {
 }
 
@@ -106,11 +109,31 @@ void RemoteMonitorNamedList::SetFailStatusList(const MonitoredObjectList& list)
 	m_failStatusList = list;
 }
 
+void RemoteMonitorNamedList::Activate(bool bActivate)
+{
+	m_bActive = bActivate;
+}
+
+bool RemoteMonitorNamedList::IsActive() const
+{
+	return m_bActive;
+}
+
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\RemoteMonitorNamedList.cpp_v  $
+ * 
+ *    Rev 1.1   23 Apr 2014 10:35:00   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Added IsActive and Activate methods.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   17 Apr 2014 16:26:48   ryoho
  * Project:  SVObserver

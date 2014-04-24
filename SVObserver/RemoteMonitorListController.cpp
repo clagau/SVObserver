@@ -5,8 +5,8 @@
 //* .Module Name     : RemoteMonitorListController
 //* .File Name       : $Workfile:   RemoteMonitorListController.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   17 Apr 2014 16:26:12  $
+//* .Current Version : $Revision:   1.5  $
+//* .Check In Date   : $Date:   24 Apr 2014 10:47:34  $
 //******************************************************************************
 
 #pragma region Includes
@@ -22,6 +22,7 @@
 #include "SVObserver.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVUtilityLibrary/SVGUID.h"
+#include "SVMainImageClass.h"
 #pragma endregion Includes
 
 extern SVObserverApp TheSVObserverApp;
@@ -80,7 +81,7 @@ bool RemoteMonitorListController::Setup(SVConfigurationObject* pConfig)
 	const PPQNameListNames& rPPQList = GetPPQMonitorLists(pConfig);
 	MonitorListAddRemoveDlg dlg(m_list, rPPQList);
 	INT_PTR rc = dlg.DoModal();
-	if (rc == IDOK)
+	if (IDOK == rc)
 	{
 		bRetVal = true;
 		SetRemoteMonitorList(dlg.GetRemoteMonitorList()); // Update the list
@@ -109,30 +110,54 @@ void RemoteMonitorListController::HideShowViewTab()
 	{
 		TheSVObserverApp.ShowIOTab(SVRemoteMonitorListViewID);
 		// Set Active IO Tabbed view to the RemoteMonitorListView Tab
-		TheSVObserverApp.SetActiveIOTabView( SVRemoteMonitorListViewID );
+		TheSVObserverApp.SetActiveIOTabView(SVRemoteMonitorListViewID);
 	}
 	TheSVObserverApp.OnUpdateAllIOViews();
 }
 
+// This seems to never be called...
 void RemoteMonitorListController::ResetObject()
 {
 	ValidateInputs();
-	HideShowViewTab();
+}
+
+// must exist and must be published
+static bool IsValidMonitoredObject(SVObjectClass* pObject)
+{
+	bool bRetVal = false;
+	if (nullptr != pObject)
+	{
+		UINT attr = pObject->ObjectAttributesSet();
+		bRetVal = (attr & (SV_PUBLISHABLE | SV_PUBLISH_RESULT_IMAGE) ? true : false);
+		//check to see if MainImageClass or SVRGBMainImageClass
+		if (!bRetVal)
+		{
+			if  ( SV_IS_KIND_OF(pObject, SVMainImageClass) || SV_IS_KIND_OF(pObject, SVRGBMainImageClass) )
+			{
+				bRetVal = true;
+			}
+		}
+	}
+	return bRetVal;
 }
 
 bool RemoteMonitorListController::ValidateMonitoredObject(MonitoredObjectList& rList)
 {
 	bool bModified = false;
 	
-	for (MonitoredObjectList::iterator it = rList.begin();it != rList.end();++it)
+	for (MonitoredObjectList::iterator it = rList.begin();it != rList.end();)
 	{
 		const SVGUID& guid = (*it);
-		SVObjectClass* pInputVO = SVObjectManagerClass::Instance().GetObject(guid);
-		if (nullptr == pInputVO)
+		SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObject(guid);
+		if (!IsValidMonitoredObject(pObject))
 		{
 			::OutputDebugString(_T("MonitorObject reference deleted \n"));
 			it = rList.erase(it);
 			bModified = true;
+		}
+		else
+		{
+			++it;
 		}
 	}
 	return bModified;
@@ -140,7 +165,7 @@ bool RemoteMonitorListController::ValidateMonitoredObject(MonitoredObjectList& r
 
 void RemoteMonitorListController::ValidateInputs()
 {
-	for (RemoteMonitorList::iterator it = m_list.begin();it != m_list.end();++it)
+	for (RemoteMonitorList::iterator it = m_list.begin();it != m_list.end();)
 	{
 		RemoteMonitorNamedList& namedList = it->second;
 		const SVString& ppqName = namedList.GetPPQName();
@@ -153,6 +178,7 @@ void RemoteMonitorListController::ValidateInputs()
 		}
 		else
 		{
+			++it;
 			MonitoredObjectList productValues = namedList.GetProductValuesList();
 			bool bModified = ValidateMonitoredObject(productValues);
 			if (bModified)
@@ -179,6 +205,37 @@ void RemoteMonitorListController::ValidateInputs()
 			}
 		}
 	}
+	if (IsEmpty())
+	{
+		TheSVObserverApp.HideRemoteMonitorListTab();
+	}
+}
+
+HRESULT RemoteMonitorListController::ActivateRemoteMonitorList(const SVString& listName, bool bActivate)
+{
+	HRESULT hr = S_OK;
+	RemoteMonitorList::iterator it = m_list.find(listName);
+	if (it != m_list.end())
+	{
+		it->second.Activate(bActivate);
+	}
+	else
+	{
+		 hr = E_INVALIDARG;
+	}
+	return hr;
+}
+
+ void RemoteMonitorListController::GetActiveRemoteMonitorList(RemoteMonitorList& rActiveList) const
+{
+	// Get all active lists
+	for (RemoteMonitorList::const_iterator it = m_list.begin();it != m_list.end();++it)
+	{
+		if (it->second.IsActive())
+		{
+			rActiveList[it->first] = it->second;
+		}
+	}
 }
 
 //******************************************************************************
@@ -186,6 +243,57 @@ void RemoteMonitorListController::ValidateInputs()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\RemoteMonitorListController.cpp_v  $
+ * 
+ *    Rev 1.5   24 Apr 2014 10:47:34   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Revised the GetActiveRemoteMonitorList method to use a reference rather than return a copy of the list.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.4   23 Apr 2014 14:33:28   ryoho
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Added a check in IsValidMonitorObject to check if the image is a SVMainImageClass or an SVRGBMainImageClass
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.3   23 Apr 2014 10:36:38   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Added ActivateRemoteMonitorList and GetActiveRemoteMonitorList methods.
+ * 
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.2   22 Apr 2014 13:13:22   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Added validation logic for RemoteMonitorList
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.1   22 Apr 2014 09:39:16   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Revised Validation logic.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   17 Apr 2014 16:26:12   ryoho
  * Project:  SVObserver

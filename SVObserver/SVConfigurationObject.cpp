@@ -5,8 +5,8 @@
 //* .Module Name     : SVConfigurationObject
 //* .File Name       : $Workfile:   SVConfigurationObject.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.19  $
-//* .Check In Date   : $Date:   17 Apr 2014 16:58:36  $
+//* .Current Version : $Revision:   1.22  $
+//* .Check In Date   : $Date:   24 Apr 2014 10:47:34  $
 //******************************************************************************
 
 #pragma region Includes
@@ -5301,7 +5301,7 @@ bool SVConfigurationObject::HasCameraTrigger(SVPPQObject* p_pPPQ) const
 bool SVConfigurationObject::SetupRemoteMonitorList()
 {
 	bool bRetVal = false;
-	if (NULL != m_pIOController)
+	if (nullptr != m_pIOController)
 	{
 		bRetVal = m_pIOController->SetupRemoteMonitorList(this);
 	}
@@ -5310,7 +5310,7 @@ bool SVConfigurationObject::SetupRemoteMonitorList()
 
 void SVConfigurationObject::ClearRemoteMonitorList()
 {
-	if (NULL != m_pIOController)
+	if (nullptr != m_pIOController)
 	{
 		m_pIOController->ClearRemoteMonitorList();
 	}
@@ -5318,7 +5318,7 @@ void SVConfigurationObject::ClearRemoteMonitorList()
 
 RemoteMonitorList SVConfigurationObject::GetRemoteMonitorList() const
 {
-	if (NULL != m_pIOController)
+	if (nullptr != m_pIOController)
 	{
 		return m_pIOController->GetRemoteMonitorList();
 	}
@@ -5327,9 +5327,36 @@ RemoteMonitorList SVConfigurationObject::GetRemoteMonitorList() const
 
 void SVConfigurationObject::SetRemoteMonitorList(const RemoteMonitorList& rList)
 {
-	if (NULL != m_pIOController)
+	if (nullptr != m_pIOController)
 	{
 		m_pIOController->SetRemoteMonitorList(rList);
+	}
+}
+
+void SVConfigurationObject::ValidateRemoteMonitorList()
+{
+	if (nullptr != m_pIOController)
+	{
+		m_pIOController->ValidateRemoteMonitorList();
+	}
+}
+
+HRESULT SVConfigurationObject::ActivateRemoteMonitorList(const SVString& listName, bool bActivate)
+{
+	HRESULT hr = E_POINTER;
+	if (nullptr != m_pIOController)
+	{
+		hr = m_pIOController->ActivateRemoteMonitorList(listName, bActivate);
+	}
+	return hr;
+}
+
+void SVConfigurationObject::GetActiveRemoteMonitorList(RemoteMonitorList& rActiveList) const
+{
+	rActiveList.clear();
+	if (nullptr != m_pIOController)
+	{
+		m_pIOController->GetActiveRemoteMonitorList(rActiveList);
 	}
 }
 
@@ -5342,14 +5369,14 @@ HRESULT SVConfigurationObject::LoadRemoteMonitorList( SVTreeType& rTree )
 		RemoteMonitorList lists;
 		SVTreeType::SVBranchHandle htiSubChild = nullptr;
 		rTree.GetFirstBranch( htiChild, htiSubChild );
-		while ( S_OK == result && htiSubChild != nullptr )
+		while ( S_OK == result && nullptr != htiSubChild )
 		{
 			_bstr_t listName;
 			SVString ppqName = "";
 			int rejectDepth = 0;
 			result = rTree.GetBranchName( htiSubChild, listName.GetBSTR() );
 			_variant_t svValue = 0.0;
-			if (S_OK == result)
+			if ( S_OK == result )
 			{
 				if ( SVNavigateTreeClass::GetItem( rTree, CTAG_PPQ_NAME, htiSubChild, svValue ) )
 				{
@@ -5361,7 +5388,7 @@ HRESULT SVConfigurationObject::LoadRemoteMonitorList( SVTreeType& rTree )
 				}
 			}
 
-			if (S_OK == result)
+			if ( S_OK == result )
 			{
 				if ( SVNavigateTreeClass::GetItem( rTree, CTAG_REJECT_QUEUE_DEPTH, htiSubChild, svValue ) )
 				{
@@ -5374,22 +5401,22 @@ HRESULT SVConfigurationObject::LoadRemoteMonitorList( SVTreeType& rTree )
 			}
 
 			MonitoredObjectList productValueList;
-			if (S_OK == result)
+			if ( S_OK == result )
 			{
 				result = LoadMonitoredObjectList( rTree, htiSubChild, CTAG_PRODUCTVALUES_LIST, productValueList );	
 			}
 			MonitoredObjectList productImageList;
-			if (S_OK == result)
+			if ( S_OK == result )
 			{
 				result = LoadMonitoredObjectList( rTree, htiSubChild, CTAG_PRODUCTIMAGE_LIST, productImageList );	
 			}
 			MonitoredObjectList rejectConditionList;
-			if (S_OK == result)
+			if ( S_OK == result )
 			{
 				result = LoadMonitoredObjectList( rTree, htiSubChild, CTAG_REJECTCONDITION_LIST, rejectConditionList );	
 			}
 			MonitoredObjectList failStatusList;
-			if (S_OK == result)
+			if ( S_OK == result )
 			{
 				result = LoadMonitoredObjectList( rTree, htiSubChild, CTAG_FAILSTATUS_LIST, failStatusList );	
 			}
@@ -5401,7 +5428,7 @@ HRESULT SVConfigurationObject::LoadRemoteMonitorList( SVTreeType& rTree )
 				rTree.GetNextBranch( htiChild, htiSubChild );
 			}
 		}
-		if (S_OK == result)
+		if ( S_OK == result )
 		{
 			SetRemoteMonitorList(lists);
 		}
@@ -5417,7 +5444,7 @@ HRESULT SVConfigurationObject::LoadMonitoredObjectList( SVTreeType& rTree, SVTre
 	if ( SVNavigateTreeClass::GetItemBranch( rTree, listName.c_str(), htiParent, htiChild ) )
 	{
 		SVTreeType::SVLeafHandle htiLeaf;
-		rTree.GetFirstLeaf(htiChild, htiLeaf);
+		rTree.GetFirstLeaf( htiChild, htiLeaf );
 		while ( S_OK == retValue && S_OK == rTree.IsValidLeaf( htiChild, htiLeaf ) )
 		{
 			_bstr_t name;
@@ -5426,20 +5453,12 @@ HRESULT SVConfigurationObject::LoadMonitoredObjectList( SVTreeType& rTree, SVTre
 			GUID guid;
 			// translate entry from DottedName string to GUID
 			retValue = SVObjectManagerClass::Instance().GetObjectByDottedName( name, guid );
-			if (S_OK == retValue)
+			if ( S_OK == retValue )
 			{
 				// add guid for this leaf to the list
 				rList.push_back( SVGUID( guid ) );
 				rTree.GetNextLeaf( htiChild, htiLeaf );
 			}
-/*
-			const SVGUID& guid = SVObjectManagerClass::Instance().GetObjectIdFromCompleteName( name );
-			if (!guid.empty())
-			{
-				rList.push_back( guid );
-				rTree.GetNextLeaf( htiChild, htiLeaf );
-			}
-*/
 			else
 			{
 				retValue = SVMSG_SVO_48_LOAD_CONFIGURATION_MONITOR_LIST;
@@ -5458,6 +5477,36 @@ HRESULT SVConfigurationObject::LoadMonitoredObjectList( SVTreeType& rTree, SVTre
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVConfigurationObject.cpp_v  $
+ * 
+ *    Rev 1.22   24 Apr 2014 10:47:34   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Revised the GetActiveRemoteMonitorList method to use a reference rather than return a copy of the list.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.21   23 Apr 2014 10:39:32   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Added ActivateRemoteMonitorList and GetActiveRemoteMonitorList methods.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.20   22 Apr 2014 09:44:38   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Added ValidateRemoteMonitorList method.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.19   17 Apr 2014 16:58:36   ryoho
  * Project:  SVObserver

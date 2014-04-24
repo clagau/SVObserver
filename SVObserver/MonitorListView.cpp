@@ -5,8 +5,8 @@
 //* .Module Name     : SVMonitorListView
 //* .File Name       : $Workfile:   MonitorListView.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   17 Apr 2014 16:25:20  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   23 Apr 2014 16:10:34  $
 //******************************************************************************
 
 #pragma region Includes
@@ -527,8 +527,10 @@ void MonitorListView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 	SVConfigurationObject* pConfig = NULL;
 	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
-	if (pIODoc && ::IsWindow(m_hWnd))
+	if (pIODoc && ::IsWindow(m_hWnd) && pConfig)
 	{
+		pConfig->ValidateRemoteMonitorList(); // prune the list if necessary 
+
 		CListCtrl& rCtrl = GetListCtrl();
 		rCtrl.SetRedraw(false);
 		rCtrl.DeleteAllItems();
@@ -685,6 +687,7 @@ bool MonitorListView::RemoveMonitoredItem(int item)
 	{
 		const SVString& name = GetListName(rCtrl, item);
 		RemoteMonitorList list = pConfig->GetRemoteMonitorList();
+		RemoteMonitorList::iterator it = list.find(name);
 	
 		switch (nodeType)
 		{
@@ -698,12 +701,13 @@ bool MonitorListView::RemoveMonitoredItem(int item)
 
 			case ProductItemListNode:
 				{
-					RemoteMonitorList::iterator it = list.find(name);
-					if (it != list.end())
+					//Bring up ProductItemList to edit
+					MonitorListSheet dlg(_T("Edit ProductItemList"), PRODUCT_OBJECT_LIST, true, it->second, this);
+					UINT_PTR rc = dlg.DoModal();
+					if (IDOK == rc)
 					{
-						// Remove ProductItemList
-						it->second.SetProductValuesList(MonitoredObjectList());
-						it->second.SetProductImagesList(MonitoredObjectList());
+						// Ensure the name didn't change...
+						it->second = dlg.GetMonitorList();
 						pConfig->SetRemoteMonitorList(list);
 						bRetVal = true;
 					}
@@ -712,24 +716,28 @@ bool MonitorListView::RemoveMonitoredItem(int item)
 
 			case ProductItemValuesNode:
 				{
-					RemoteMonitorList::iterator it = list.find(name);
-					if (it != list.end())
+					//Bring up ProductItemList Value Tab to edit
+					MonitorListSheet dlg(_T("Edit ProductItemList"), PRODUCT_OBJECT_LIST, true, it->second, this);
+					UINT_PTR rc = dlg.DoModal();
+					if (IDOK == rc)
 					{
-						// Remove ProductItemList Values
-						it->second.SetProductValuesList(MonitoredObjectList());
+						// Ensure the name didn't change...
+						it->second = dlg.GetMonitorList();
 						pConfig->SetRemoteMonitorList(list);
 						bRetVal = true;
-					}					
+					}				
 				}
 				break;
 
 			case ProductItemImagesNode:
 				{
-					RemoteMonitorList::iterator it = list.find(name);
-					if (it != list.end())
+					//Bring up ProductItemList Image Tab to edit
+					MonitorListSheet dlg(_T("Edit ProductItemList"), PRODUCT_OBJECT_LIST, true, it->second, this, 1);
+					UINT_PTR rc = dlg.DoModal();
+					if (IDOK == rc)
 					{
-						// Remove ProductItemList Images
-						it->second.SetProductImagesList(MonitoredObjectList());
+						// Ensure the name didn't change...
+						it->second = dlg.GetMonitorList();
 						pConfig->SetRemoteMonitorList(list);
 						bRetVal = true;
 					}
@@ -739,7 +747,6 @@ bool MonitorListView::RemoveMonitoredItem(int item)
 			case ProductItemValuesItemNode:
 				{
 					// Remove ProductItemList Value Item
-					RemoteMonitorList::iterator it = list.find(name);
 					if (it != list.end())
 					{
 						// Remove ProductItemList Values Item
@@ -759,8 +766,6 @@ bool MonitorListView::RemoveMonitoredItem(int item)
 
 			case ProductItemImagesItemNode:
 				{
-					// Remove ProductItemList Value Item
-					RemoteMonitorList::iterator it = list.find(name);
 					if (it != list.end())
 					{
 						// Remove ProductItemList Images Item
@@ -781,12 +786,13 @@ bool MonitorListView::RemoveMonitoredItem(int item)
 			case RejectConditionListNode:
 			case RejectConditionValuesNode:
 				{
-					// Remove RejectConditionList
-					RemoteMonitorList::iterator it = list.find(name);
-					if (it != list.end())
+					//Bring up RejectConditionList to edit
+					MonitorListSheet dlg(_T("Edit RejectconditionList"), REJECT_CONDITION_LIST, true, it->second, this);
+					UINT_PTR rc = dlg.DoModal();
+					if (IDOK == rc)
 					{
-						// Remove RejectConditionList
-						it->second.SetRejectConditionList(MonitoredObjectList());
+						// Ensure the name didn't change...
+						it->second = dlg.GetMonitorList();
 						pConfig->SetRemoteMonitorList(list);
 						bRetVal = true;
 					}
@@ -796,10 +802,8 @@ bool MonitorListView::RemoveMonitoredItem(int item)
 			case RejectConditionValuesItemNode:
 				{
 					// remove RejectConditionList Value Item
-					RemoteMonitorList::iterator it = list.find(name);
 					if (it != list.end())
 					{
-						// Remove ProductItemList Values Item
 						MonitoredObjectList valuesList = it->second.GetRejectConditionList();
 						const SVGUID& guid = GetGuidFromObjectName(GetItemName(rCtrl, item));
 						MonitoredObjectList::iterator valueIt = std::find(valuesList.begin(), valuesList.end(), guid);
@@ -817,12 +821,13 @@ bool MonitorListView::RemoveMonitoredItem(int item)
 			case FailStatusListNode:
 			case FailStatusValuesNode:
 				{
-					// remove FailStatusList
-					RemoteMonitorList::iterator it = list.find(name);
-					if (it != list.end())
+					// bring up FailStatusList to edit
+					MonitorListSheet dlg(_T("Edit FailStatusList"), FAIL_STATUS_LIST, true, it->second, this);
+					UINT_PTR rc = dlg.DoModal();
+					if (IDOK == rc)
 					{
-						// Remove FailStatusList
-						it->second.SetFailStatusList(MonitoredObjectList());
+						// Ensure the name didn't change...
+						it->second = dlg.GetMonitorList();
 						pConfig->SetRemoteMonitorList(list);
 						bRetVal = true;
 					}
@@ -832,10 +837,8 @@ bool MonitorListView::RemoveMonitoredItem(int item)
 			case FailStatusValuesItemNode:
 				{
 					// remove FailStatusList Value Item
-					RemoteMonitorList::iterator it = list.find(name);
 					if (it != list.end())
 					{
-						// Remove ProductItemList Values Item
 						MonitoredObjectList valuesList = it->second.GetFailStatusList();
 						const SVGUID& guid = GetGuidFromObjectName(GetItemName(rCtrl, item));
 						MonitoredObjectList::iterator valueIt = std::find(valuesList.begin(), valuesList.end(), guid);
@@ -902,7 +905,7 @@ bool MonitorListView::EditMonitoredItem(int item)
 					{
 						MonitorListSheet dlg(_T("Edit ProductItemList"), PRODUCT_OBJECT_LIST, true, it->second, this);
 						UINT_PTR rc = dlg.DoModal();
-						if (rc == IDOK)
+						if (IDOK == rc)
 						{
 							// Ensure the name didn't change...
 							it->second = dlg.GetMonitorList();
@@ -917,7 +920,7 @@ bool MonitorListView::EditMonitoredItem(int item)
 					{
 						MonitorListSheet dlg(_T("Edit ProductItemList"), PRODUCT_OBJECT_LIST, true, it->second, this, 1);
 						UINT_PTR rc = dlg.DoModal();
-						if (rc == IDOK)
+						if (IDOK == rc)
 						{
 							// Ensure the name didn't change...
 							it->second = dlg.GetMonitorList();
@@ -933,7 +936,7 @@ bool MonitorListView::EditMonitoredItem(int item)
 					{
 						MonitorListSheet dlg(_T("Edit RejectconditionList"), REJECT_CONDITION_LIST, true, it->second, this);
 						UINT_PTR rc = dlg.DoModal();
-						if (rc == IDOK)
+						if (IDOK == rc)
 						{
 							// Ensure the name didn't change...
 							it->second = dlg.GetMonitorList();
@@ -949,7 +952,7 @@ bool MonitorListView::EditMonitoredItem(int item)
 					{
 						MonitorListSheet dlg(_T("Edit FailStatusList"), FAIL_STATUS_LIST, true, it->second, this);
 						UINT_PTR rc = dlg.DoModal();
-						if (rc == IDOK)
+						if (IDOK == rc)
 						{
 							// Ensure the name didn't change...
 							it->second = dlg.GetMonitorList();
@@ -1251,6 +1254,26 @@ void MonitorListView::OnLButtonDown(UINT nFlags, CPoint point)
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\MonitorListView.cpp_v  $
+ * 
+ *    Rev 1.2   23 Apr 2014 16:10:34   ryoho
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   changed behavior of the "Delete" key
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.1   22 Apr 2014 13:15:18   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Added validation logic for RemoteMonitorList
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   17 Apr 2014 16:25:20   ryoho
  * Project:  SVObserver

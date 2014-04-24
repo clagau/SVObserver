@@ -5,8 +5,8 @@
 //* .Module Name     : SVArchiveTool
 //* .File Name       : $Workfile:   SVArchiveTool.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.3  $
-//* .Check In Date   : $Date:   01 Feb 2014 10:16:32  $
+//* .Current Version : $Revision:   1.4  $
+//* .Check In Date   : $Date:   23 Apr 2014 11:17:08  $
 //******************************************************************************
 
 #ifndef SVTOOLARCHIVE_H
@@ -104,7 +104,7 @@ public:
   void ResetImageCounts();
 
 	void ConvertStringToGuids( SVArchiveTool* pToolArchive, LPCTSTR pszStrValue );	// FOR BACKWARD COMPATIBILITY
-	HRESULT InitializeObjects(SVArchiveTool* pToolArchive, const SVStringValueObjectClass& svoObjects );	// use array capability of string vo
+	HRESULT InitializeObjects(SVArchiveTool* pToolArchive, SVStringValueObjectClass& svoObjects );	// use array capability of string vo
 
 	std::vector<CString> RemoveDisconnectedObject(const SVObjectInfoStruct& p_rInfoObject);
 	void ValidateImageObjects();
@@ -297,6 +297,16 @@ private:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVArchiveTool.h_v  $
+ * 
+ *    Rev 1.4   23 Apr 2014 11:17:08   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  903
+ * SCR Title:  Fix Archive Tool Bug where inputs get lost when inspection name changes.
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Removed const from the SVStringValueObjectClass& parameter of InitialezeObjects because this function will modify the class when an inspection is renamed.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   01 Feb 2014 10:16:32   tbair
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : SVObserver
 //* .File Name       : $Workfile:   SVObserver.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.25  $
-//* .Check In Date   : $Date:   17 Apr 2014 17:00:30  $
+//* .Current Version : $Revision:   1.26  $
+//* .Check In Date   : $Date:   22 Apr 2014 13:13:22  $
 //******************************************************************************
 
 #pragma region Includes
@@ -520,7 +520,7 @@ void SVObserverApp::OnFileNewConfig()
 	}
 
 	// Never any Remotely Monitored Items on a New Configuration...
-	HideIOTab( SVRemoteMonitorListViewID );
+	HideRemoteMonitorListTab();
 
 	// Update Remote Inputs Tab
 	UpdateRemoteInputTabs();
@@ -3015,17 +3015,21 @@ void SVObserverApp::OnEditPublishedResults( UINT nID )
 				SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
 				SVSVIMStateClass::AddState( SV_STATE_MODIFIED );
-
-				// Force the PPQs to rebuild
-				pConfig->GetPPQCount( lSize );
-
-				for( l = 0; l < lSize; l++ )
+				if (pConfig)
 				{
-					pConfig->GetPPQ( l, &pPPQ );
-					if( pPPQ )
+					pConfig->ValidateRemoteMonitorList();
+				
+					// Force the PPQs to rebuild
+					pConfig->GetPPQCount( lSize );
+
+					for( l = 0; l < lSize; l++ )
 					{
-						pPPQ->RebuildOutputList();
-					}// end if
+						pConfig->GetPPQ( l, &pPPQ );
+						if( pPPQ )
+						{
+							pPPQ->RebuildOutputList();
+						}// end if
+					}
 				}// end for
 				TheSVObserverApp.GetIODoc()->UpdateAllViews( NULL );
 			}// end if
@@ -3908,7 +3912,7 @@ HRESULT SVObserverApp::OpenSVXFile(LPCTSTR PathName)
 		const RemoteMonitorList& rList = l_pConfig->GetRemoteMonitorList();
 		if (!rList.size())
 		{
-			HideIOTab( SVRemoteMonitorListViewID );
+			HideRemoteMonitorListTab();
 		}
 	}
 	else
@@ -6042,7 +6046,12 @@ BOOL SVObserverApp::ShowConfigurationAssistant( int Page /*= 3*/,
 		{
 			SVSVIMStateClass::AddState( SV_STATE_MODIFIED );
 		}
-		l_pConfig->ClearRemoteOutputUnUsedData();
+		if ( l_pConfig )
+		{
+			l_pConfig->ClearRemoteOutputUnUsedData();
+			l_pConfig->ValidateRemoteMonitorList();
+			GetIODoc()->UpdateAllViews( NULL );
+		}
 	}
 	SVSVIMStateClass::RemoveState( SV_STATE_EDITING );
 
@@ -8045,8 +8054,9 @@ void SVObserverApp::fileSaveAsSVX( CString StrSaveAsPathName )
 		SVConfigurationObject* l_pConfig = NULL;
 		SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
 
-		if( l_pConfig != NULL )
+		if( l_pConfig != nullptr )
 		{
+			l_pConfig->ValidateRemoteMonitorList(); // sanity check
 			l_pConfig->SaveConfiguration( m_XMLTree );
 		}
 
@@ -8860,6 +8870,16 @@ int SVObserverApp::FindMenuItem(CMenu* Menu, LPCTSTR MenuString)
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVObserver.cpp_v  $
+ * 
+ *    Rev 1.26   22 Apr 2014 13:13:22   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Added validation logic for RemoteMonitorList
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.25   17 Apr 2014 17:00:30   ryoho
  * Project:  SVObserver

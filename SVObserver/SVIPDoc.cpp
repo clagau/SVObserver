@@ -5,8 +5,8 @@
 //* .Module Name     : SVIPDoc
 //* .File Name       : $Workfile:   SVIPDoc.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.13  $
-//* .Check In Date   : $Date:   02 Apr 2014 14:05:06  $
+//* .Current Version : $Revision:   1.14  $
+//* .Check In Date   : $Date:   22 Apr 2014 13:13:22  $
 //******************************************************************************
 
 #pragma region Includes
@@ -1523,8 +1523,17 @@ void SVIPDoc::OnEditTool()
 			if( l_pTool->IsOkToEdit() )
 			{
 				SVToolAdjustmentDialogSheetClass toolAdjustmentDialog( this, *l_pTool, "Tool Adjustment" );
-				toolAdjustmentDialog.DoModal();
-
+				INT_PTR dlgResult = toolAdjustmentDialog.DoModal();
+				if ( IDOK == dlgResult )
+				{
+					SVConfigurationObject* pConfig = nullptr;
+					SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
+					if (pConfig)
+					{
+						pConfig->ValidateRemoteMonitorList();
+						TheSVObserverApp.GetIODoc()->UpdateAllViews( NULL );
+					}
+				}
 				l_pTool->ResetObject();
 			}
 		}
@@ -1672,19 +1681,23 @@ void SVIPDoc::OnPublishedResultsPicker()
 		long l;
 		SVPPQObject *pPPQ;
 
-		SVConfigurationObject* pConfig = NULL;
+		SVConfigurationObject* pConfig = nullptr;
 		SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
-
-		// Force the PPQs to rebuild
-		pConfig->GetPPQCount( lSize );
-
-		for( l = 0; l < lSize; l++ )
+		if (pConfig)
 		{
-			pConfig->GetPPQ( l, &pPPQ );
-			if( pPPQ )
+			pConfig->ValidateRemoteMonitorList();
+
+			// Force the PPQs to rebuild
+			pConfig->GetPPQCount( lSize );
+
+			for( l = 0; l < lSize; l++ )
 			{
-				pPPQ->RebuildOutputList();
-			}// end if
+				pConfig->GetPPQ( l, &pPPQ );
+				if( pPPQ )
+				{
+					pPPQ->RebuildOutputList();
+				}// end if
+			}
 		}// end for
 		TheSVObserverApp.GetIODoc()->UpdateAllViews( NULL );
 		// *** // ***
@@ -1724,6 +1737,13 @@ void SVIPDoc::OnPublishedResultImagesPicker()
 		{
 			SVObjectReference object = *iter;
 			SVSendMessage ( object.Object(), SVM_RESET_ALL_OBJECTS, NULL, NULL );
+		}
+		SVConfigurationObject* pConfig = nullptr;
+		SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
+		if (pConfig)
+		{
+			pConfig->ValidateRemoteMonitorList();
+			TheSVObserverApp.GetIODoc()->UpdateAllViews( NULL );
 		}
 	}// end if
 }
@@ -3171,6 +3191,13 @@ HRESULT SVIPDoc::DeleteTool(SVTaskObjectClass* pTaskObject)
 
 			SVObjectManagerClass::Instance().UpdateObserver( GetInspectionID(), l_DeleteTool );
 
+			SVConfigurationObject* pConfig = nullptr;
+			SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
+			if ( pConfig )
+			{
+				pConfig->ValidateRemoteMonitorList();
+				TheSVObserverApp.GetIODoc()->UpdateAllViews( NULL );
+			}
 			TheSVObserverApp.RebuildOutputList();
 		}
 		else
@@ -4204,6 +4231,16 @@ BOOL SVIPDoc::RunOnce( SVToolClass* p_pTool )
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVIPDoc.cpp_v  $
+ * 
+ *    Rev 1.14   22 Apr 2014 13:13:22   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Added validation logic for RemoteMonitorList
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.13   02 Apr 2014 14:05:06   tbair
  * Project:  SVObserver

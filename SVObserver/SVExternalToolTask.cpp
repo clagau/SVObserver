@@ -5,8 +5,8 @@
 //* .Module Name     : SVExternalToolTask
 //* .File Name       : $Workfile:   SVExternalToolTask.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.7  $
-//* .Check In Date   : $Date:   08 Apr 2014 09:44:54  $
+//* .Current Version : $Revision:   1.8  $
+//* .Check In Date   : $Date:   22 Apr 2014 07:26:26  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -1408,7 +1408,7 @@ HRESULT SVExternalToolTask::InspectionInputsToVariantArray()
 	{
 		SVInObjectInfoStruct& rInfo = m_Data.m_aInputObjectInfo[i];
 		_variant_t vtTemp;
-		if( rInfo.GetInputObjectInfo().PObject )
+		if( dynamic_cast<SVValueObjectClass*>(rInfo.GetInputObjectInfo().PObject) != NULL )
 		{
 			SVValueObjectClass* pValueObject = static_cast < SVValueObjectClass* >(rInfo.GetInputObjectInfo().PObject);
 			pValueObject->GetValue( vtTemp );
@@ -1461,7 +1461,7 @@ SVValueObjectClass* SVExternalToolTask::GetInputValueObject(int iIndex)
 	if ( iIndex >= 0 && iIndex < m_Data.m_lNumInputValues )
 	{
 		SVInObjectInfoStruct& rInfo = m_Data.m_aInputObjectInfo[iIndex];
-		if ( rInfo.GetInputObjectInfo().PObject )
+		if ( dynamic_cast<SVValueObjectClass*>(rInfo.GetInputObjectInfo().PObject ))
 		{
 			return static_cast <SVValueObjectClass*> (rInfo.GetInputObjectInfo().PObject);
 		}
@@ -2091,7 +2091,16 @@ HRESULT SVExternalToolTask::ConnectInputs()
 		CString strObjectName ; 
 		CString strCompleteObjectName = GetInspection()->GetCompleteObjectName();
 		m_Data.m_aInputObjects[i].GetValue(strObjectName);
-		strCompleteObjectName += "." + strObjectName;
+		// if the inspection name is found in the object name
+		// then use the object name.
+		if( strObjectName.Find(strCompleteObjectName) == 0)
+		{	// Object name already has inspection name.
+			strCompleteObjectName = strObjectName;
+		}
+		else
+		{	// Inspection name plus object name.
+			strCompleteObjectName += "." + strObjectName;
+		}
 
 		//MZA: change function to find object from inspection child object to anz dotted name
 		SVObjectManagerClass::Instance().GetObjectByDottedName( static_cast< LPCTSTR >( strCompleteObjectName ), pObject );
@@ -2166,6 +2175,18 @@ HRESULT SVExternalToolTask::CollectInputImageNames( SVRunStatusClass& RRunStatus
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVExternalToolTask.cpp_v  $
+ * 
+ *    Rev 1.8   22 Apr 2014 07:26:26   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  901
+ * SCR Title:  Fix configuration loading problem with variant value object
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Modified InspectionInputsToVariantArray and GetInputValueObject to use a dynamic_cast instead of a static cast for better protection against a crash.
+ * 
+ * Modified ConnectInputs to search for the Inspection name in the object name then add the name if it was missing. This is before the object manager lookup.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.7   08 Apr 2014 09:44:54   tbair
  * Project:  SVObserver

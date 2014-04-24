@@ -5,8 +5,8 @@
 //* .Module Name     : SVRemoteControlConstants
 //* .File Name       : $Workfile:   SVRemoteControlConstants.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   17 Apr 2014 17:01:22  $
+//* .Current Version : $Revision:   1.4  $
+//* .Check In Date   : $Date:   23 Apr 2014 18:02:10  $
 //******************************************************************************
 
 #ifndef SVREMOTECONTROLCONSTANTS_H
@@ -48,6 +48,8 @@ namespace SVRC
 		const std::string getProd = "GetProduct";
 		const std::string getDefList = "GetDataDefinitionList";
 		const std::string getRjct = "GetReject";
+		const std::string actvMonList = "ActivateMonitorList";
+		const std::string deactvList = "DeactivateMonitorList";
 	}
 
 	namespace arg
@@ -75,6 +77,7 @@ namespace SVRC
 		const std::string currentItems = "currentViewItems";
 		const std::string url = "url";
 		const std::string listType = "listType";
+		const std::string active = "active";
 		const std::string id = "id";
 	}
 
@@ -144,6 +147,28 @@ namespace SVRC
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVRemoteControlConstants.h_v  $
+ * 
+ *    Rev 1.4   23 Apr 2014 18:02:10   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Added active constant.
+ * Revised activate/deactivate monitor list constants.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.3   23 Apr 2014 10:45:30   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Added ActiveMonitorList command constant.
+ * Added DeactiveMonitorList command constant.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   17 Apr 2014 17:01:22   ryoho
  * Project:  SVObserver

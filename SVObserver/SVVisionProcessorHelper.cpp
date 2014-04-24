@@ -5,8 +5,8 @@
 //* .Module Name     : SVVisionProcessorHelper
 //* .File Name       : $Workfile:   SVVisionProcessorHelper.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.8  $
-//* .Check In Date   : $Date:   17 Mar 2014 15:34:04  $
+//* .Current Version : $Revision:   1.10  $
+//* .Check In Date   : $Date:   23 Apr 2014 18:04:54  $
 //******************************************************************************
 
 #pragma region Includes
@@ -753,6 +753,98 @@ HRESULT SVVisionProcessorHelper::GetObjectDefinition( const SVObjectClass& p_rOb
 	return l_Status;
 }
 
+static void BuildNameSetForMonitoredObjectList( const MonitoredObjectList& rList, SVNameSet& rNames )
+{
+	for (MonitoredObjectList::const_iterator it = rList.begin();it != rList.end();++it)
+	{
+		const SVString& name = SVObjectManagerClass::Instance().GetCompleteObjectName(*it);
+		if (!name.empty())
+		{
+			// prepend "Inspections" ?
+			rNames.insert(name);
+		}
+	}
+}
+
+HRESULT SVVisionProcessorHelper::QueryProductList( const SVString& rListName, SVNameSet& rNames ) const
+{
+	SVConfigurationObject* pConfig = nullptr;
+
+	HRESULT hr = SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
+	if ( nullptr != pConfig )
+	{
+		const RemoteMonitorList& rList = pConfig->GetRemoteMonitorList();
+		RemoteMonitorList::const_iterator it = rList.find( rListName );
+		if ( it != rList.end() )
+		{
+			const RemoteMonitorNamedList& rNamedList = it->second;
+			BuildNameSetForMonitoredObjectList( rNamedList.GetProductValuesList(), rNames );
+			BuildNameSetForMonitoredObjectList( rNamedList.GetProductImagesList(), rNames );
+		}
+		else
+		{
+			hr = E_INVALIDARG;
+		}
+	}
+	return hr;
+}
+
+HRESULT SVVisionProcessorHelper::QueryRejectCondList( const SVString& rListName, SVNameSet& rNames ) const
+{
+	SVConfigurationObject* pConfig = nullptr;
+
+	HRESULT hr = SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
+	if ( nullptr != pConfig )
+	{
+		const RemoteMonitorList& rList = pConfig->GetRemoteMonitorList();
+		RemoteMonitorList::const_iterator it = rList.find( rListName );
+		if ( it != rList.end() )
+		{
+			const RemoteMonitorNamedList& rNamedList = it->second;
+			BuildNameSetForMonitoredObjectList( rNamedList.GetRejectConditionList(), rNames );
+		}
+		else
+		{
+			hr = E_INVALIDARG;
+		}
+	}
+	return hr;
+}
+
+HRESULT SVVisionProcessorHelper::QueryFailStatusList( const SVString& rListName, SVNameSet& rNames ) const
+{
+	SVConfigurationObject* pConfig = nullptr;
+
+	HRESULT hr = SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
+	if ( nullptr != pConfig )
+	{
+		const RemoteMonitorList& rList = pConfig->GetRemoteMonitorList();
+		RemoteMonitorList::const_iterator it = rList.find( rListName );
+		if ( it != rList.end() )
+		{
+			const RemoteMonitorNamedList& rNamedList = it->second;
+			BuildNameSetForMonitoredObjectList( rNamedList.GetRejectConditionList(), rNames );
+		}
+		else
+		{
+			hr = E_INVALIDARG;
+		}
+	}
+	return hr;
+}
+
+HRESULT SVVisionProcessorHelper::ActivateMonitorList( const SVString& rListName, bool bActivate )
+{
+	SVConfigurationObject* pConfig = nullptr;
+
+	HRESULT hr = SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
+	if ( nullptr != pConfig )
+	{
+		hr = pConfig->ActivateRemoteMonitorList( rListName, bActivate );
+	}
+	return hr;
+}
+
 void SVVisionProcessorHelper::Startup()
 {
 	m_AsyncProcedure.Create( &SVVisionProcessorHelper::APCThreadProcess, boost::bind(&SVVisionProcessorHelper::ThreadProcess, this, _1), "SVVisionProcessorHelper" );
@@ -815,6 +907,28 @@ void SVVisionProcessorHelper::ProcessLastModified( bool& p_WaitForEvents )
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVVisionProcessorHelper.cpp_v  $
+ * 
+ *    Rev 1.10   23 Apr 2014 18:04:54   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Removed DeactivateMonitorList method.
+ * Revised ActivateMonitorList method.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.9   23 Apr 2014 10:43:10   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Added QueryProductList, QueryRejectCondList, QueryFailStatusList, ActivateMonitorList, and DeactivateMonitorList methods.
+ * 
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.8   17 Mar 2014 15:34:04   bwalter
  * Project:  SVObserver

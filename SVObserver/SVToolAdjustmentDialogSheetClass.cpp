@@ -5,8 +5,8 @@
 //* .Module Name     : SVToolAdjustmentDialogSheetClass
 //* .File Name       : $Workfile:   SVToolAdjustmentDialogSheetClass.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.4  $
-//* .Check In Date   : $Date:   01 Feb 2014 12:22:06  $
+//* .Current Version : $Revision:   1.5  $
+//* .Check In Date   : $Date:   22 Apr 2014 09:48:54  $
 //******************************************************************************
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -392,9 +392,6 @@ void SVToolAdjustmentDialogSheetClass::addPages()
 		l_psvDocument->RunOnce();
 		
 		EndDialog( IDOK );
-
-
-		EndDialog( IDCANCEL );
 	}
 
 void SVToolAdjustmentDialogSheetClass::OnCancel() 
@@ -430,6 +427,16 @@ SVToolClass* SVToolAdjustmentDialogSheetClass::GetTool() const
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVToolAdjustmentDialogSheetClass.cpp_v  $
+ * 
+ *    Rev 1.5   22 Apr 2014 09:48:54   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Revised the OnOK method to remove the second call to EndDialog with the control id of IDCANCEL.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.4   01 Feb 2014 12:22:06   tbair
  * Project:  SVObserver

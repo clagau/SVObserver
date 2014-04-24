@@ -5,8 +5,8 @@
 //* .Module Name     : SVVirtualCamera
 //* .File Name       : $Workfile:   SVVirtualCamera.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   17 Mar 2014 15:33:36  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   22 Apr 2014 13:26:54  $
 //******************************************************************************
 
 #ifndef SVVIRTUALCAMERA_H
@@ -28,10 +28,10 @@
 
 #pragma region Declarations
 //Camera variables
-const char			CameraSerialNumber[]		= _T( "SerialNumber" );
-const char			CameraShutter[]				= _T( "Shutter" );
-const char			CameraGain[]				= _T( "Gain" );
-const char			CameraContrast[]			= _T( "Contrast" );			//Legacy name for Gain was Contrast.
+const TCHAR CameraSerialNumber[]	= _T( "SerialNumber" );
+const TCHAR CameraShutter[]			= _T( "Shutter" );
+const TCHAR CameraGain[]			= _T( "Gain" );
+const TCHAR CameraContrast[]		= _T( "Contrast" ); //Legacy name for Gain was Contrast.
 
 typedef SVVector< SVVirtualCamera* > SVVirtualCameraArray;
 typedef SVSet< SVVirtualCamera* > SVVirtualCameraSet;
@@ -163,6 +163,16 @@ private:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVVirtualCamera.h_v  $
+ * 
+ *    Rev 1.3   22 Apr 2014 13:26:54   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  869
+ * SCR Title:  Add PPQ and Environment Variables to Object Manager and Update Pickers
+ * Checked in by:  bWalter;  Ben Walter
+ * Change Description:  
+ *   Changed char to TCHAR to match use of _T macro.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   17 Mar 2014 15:33:36   bwalter
  * Project:  SVObserver

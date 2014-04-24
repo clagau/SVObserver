@@ -5,8 +5,8 @@
 //* .Module Name     : RemoteMonitorNamedList
 //* .File Name       : $Workfile:   RemoteMonitorNamedList.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   17 Apr 2014 16:26:48  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   23 Apr 2014 10:34:58  $
 //******************************************************************************
 #pragma once
 
@@ -36,6 +36,7 @@ private:
 	MonitoredObjectList m_productImagesList;
 	MonitoredObjectList m_rejectConditionList;
 	MonitoredObjectList m_failStatusList;
+	bool m_bActive; // do not persist the active state
 #pragma endregion PrivateData
 
 #pragma region PublicMethods
@@ -64,6 +65,9 @@ public:
 
 	const MonitoredObjectList& GetFailStatusList() const;
 	void SetFailStatusList(const MonitoredObjectList& list);
+
+	void Activate(bool bActivate);
+	bool IsActive() const;
 #pragma endregion PublicMethods
 };
 
@@ -72,6 +76,16 @@ public:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\RemoteMonitorNamedList.h_v  $
+ * 
+ *    Rev 1.1   23 Apr 2014 10:34:58   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Added IsActive and Activate methods.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   17 Apr 2014 16:26:48   ryoho
  * Project:  SVObserver

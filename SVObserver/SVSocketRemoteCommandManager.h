@@ -5,8 +5,8 @@
 //* .Module Name     : SVSocketRemoteCommandManager
 //* .File Name       : $Workfile:   SVSocketRemoteCommandManager.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   30 Oct 2013 15:41:46  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   23 Apr 2014 18:07:06  $
 //******************************************************************************
 
 #ifndef SVSOCKETREMOTECOMMANDMANAGER_H
@@ -72,6 +72,11 @@ protected:
 	static HRESULT SetDeviceMode( const std::string& p_rJsonCommand, std::string& p_rJsonResults );
 	static HRESULT SetItems( const std::string& p_rJsonCommand, std::string& p_rJsonResults );
 
+	static HRESULT ActivateMonitorList( const std::string& rJsonCommand, std::string& rJsonResults );
+	static HRESULT QueryProductList( const std::string& rJsonCommand, std::string& rJsonResults );
+	static HRESULT QueryRejectCondList( const std::string& rJsonCommand, std::string& rJsonResults );
+	static HRESULT QueryFailStatusList( const std::string& rJsonCommand, std::string& rJsonResults );
+
 	AFX_INLINE static HRESULT WriteJsonCommandToFile(const Json::Value& p_rJsonValues, const std::string& p_rFileName);
 	AFX_INLINE static HRESULT WriteJsonCommandToFile(const std::string& p_rJsonCommand, const std::string& p_rFileName);
 
@@ -100,6 +105,34 @@ typedef SVJsonCommandManager< SVRemoteCommandFunctions > SVSocketRemoteCommandMa
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVSocketRemoteCommandManager.h_v  $
+ * 
+ *    Rev 1.3   23 Apr 2014 18:07:06   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Removed ConvertNameToJsonValue method.
+ * Removed DeactivateMonitorList method.
+ * Revised ActivateMonitorList method.
+ * 
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.2   23 Apr 2014 10:47:42   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Added ConvertNameToJsonValue method.
+ * Added QueryProductList method.
+ * Added QueryRejectCondList method.
+ * Added QueryFailStatusList method.
+ * Added ActivateMonitorList method.
+ * Added DeactivateMonitorList method.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   30 Oct 2013 15:41:46   bwalter
  * Project:  SVObserver

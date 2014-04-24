@@ -5,8 +5,8 @@
 //* .Module Name     : SVArchiveTool
 //* .File Name       : $Workfile:   SVArchiveTool.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.5  $
-//* .Check In Date   : $Date:   01 Feb 2014 10:16:32  $
+//* .Current Version : $Revision:   1.6  $
+//* .Check In Date   : $Date:   23 Apr 2014 12:34:14  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -569,14 +569,11 @@ void SVArchiveRecordsArray::ClearArray()
 }
 
 
-
-HRESULT SVArchiveRecordsArray::InitializeObjects(SVArchiveTool* p_pToolArchive, const SVStringValueObjectClass& p_svoObjects )	// use array capability of string vo
+HRESULT SVArchiveRecordsArray::InitializeObjects(SVArchiveTool* p_pToolArchive, SVStringValueObjectClass& p_svoObjects )	// use array capability of string vo
 {
 	HRESULT hr = S_OK;
 	ASSERT( m_pArchiveTool != NULL );
-
 	ClearArray();
-
 	SVInspectionProcess* pInspection = m_pArchiveTool->GetInspection();
 	ASSERT( pInspection );
 
@@ -584,18 +581,27 @@ HRESULT SVArchiveRecordsArray::InitializeObjects(SVArchiveTool* p_pToolArchive, 
 	for ( int i = 0; i < iSize; i++ )
 	{
 		CString sName;
-
 		long l_lIndex = p_svoObjects.GetLastSetIndex();
-
 		p_svoObjects.GetValue( l_lIndex, i, sName );
-
 		if ( !sName.IsEmpty() )
 		{
 			SVArchiveRecord* pArchiveRecord = new SVArchiveRecord;
-
 			SVObjectReference ref;
-
-			HRESULT hrGetObject = SVObjectManagerClass::Instance().GetObjectByDottedName( static_cast< LPCTSTR >( sName ), ref );
+			int iPos = sName.Find('.',0);
+			if( iPos > -1)	// This assumes that the first part of the dotted name is the inspection.
+			{				// Build the object name with the current inspection name.
+				CString sNewName = p_pToolArchive->GetInspection()->GetName();
+				sNewName += sName.Mid(iPos); 
+				HRESULT hrGetObject = SVObjectManagerClass::Instance().GetObjectByDottedName( static_cast< LPCTSTR >( sNewName ), ref );
+				if( hrGetObject == S_OK && sNewName != sName)
+				{			// Set value with new inspection name.
+					p_svoObjects.SetValue(l_lIndex, i, sNewName);
+				}
+			}
+			else
+			{				// We should always find a dotted name here.
+				ASSERT(FALSE);
+			}
 
 			if ( ref.Object() == NULL )
 			{
@@ -605,7 +611,6 @@ HRESULT SVArchiveRecordsArray::InitializeObjects(SVArchiveTool* p_pToolArchive, 
 			{
 				pArchiveRecord->InitArchiveRecord( p_pToolArchive, ref );
 			}
-
 			m_vecRecords.push_back(pArchiveRecord);
 		}
 	}
@@ -1362,27 +1367,6 @@ HRESULT SVArchiveTool::ResetObject()
 	m_evoArchiveMethod.GetValue( l_lArchiveMethod );
 
 	m_eArchiveMethod = static_cast<SVArchiveMethodEnum>( l_lArchiveMethod );
-
-	SVInspectionProcess* pInspection = GetInspection();
-
-	int iLastSet = m_svoArchiveResultNames.GetLastSetIndex();
-	int iSize = m_svoArchiveResultNames.GetResultSize();
-	for ( int i = 0; i < iSize; i++ )
-	{
-		CString sName;
-		
-		m_svoArchiveResultNames.GetValue(iLastSet,i,sName);
-
-		if ( !sName.IsEmpty() )
-		{
-			SVValueObjectReference ref;
-			HRESULT hrGetObject = SVObjectManagerClass::Instance().GetObjectByDottedName( static_cast< LPCTSTR >( sName ), ref );
-			if ( ref.Object() == NULL )
-			{
-				m_svoArchiveResultNames.SetValue(iLastSet,i,"");
-			}
-		}
-	}
 
 	CString csTemp;
 	m_stringArchiveImageGuids_OBSOLETE.GetValue(csTemp);
@@ -2368,6 +2352,17 @@ BOOL SVArchiveTool::renameToolSetSymbol(SVObjectClass* pObject, LPCTSTR orgName)
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVArchiveTool.cpp_v  $
+ * 
+ *    Rev 1.6   23 Apr 2014 12:34:14   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  903
+ * SCR Title:  Fix Archive Tool Bug where inputs get lost when inspection name changes.
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Removed un-used code from ResetObject.
+ * Modified SVArchiveRecordsArray::InitializeObjects to use the current inspection name for looking up objects with GetObjectByDottedName(.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.5   01 Feb 2014 10:16:32   tbair
  * Project:  SVObserver

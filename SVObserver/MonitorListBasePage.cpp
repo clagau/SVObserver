@@ -5,8 +5,8 @@
 //* .Module Name     : MonitorListBasePage
 //* .File Name       : $Workfile:   MonitorListBasePage.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   17 Apr 2014 16:22:52  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   23 Apr 2014 10:41:58  $
 //******************************************************************************
 #pragma region Includes
 #include "stdafx.h"
@@ -100,6 +100,7 @@ BOOL MonitorListBasePage::OnInitDialog()
 {
 	CPropertyPage::OnInitDialog();
 
+	m_Tree.AllowNodeItemChecks(true);
 	m_Tree.SetCanSelectObjectCallback(boost::bind(&MonitorListBasePage::CanSelectObjectCallback, this, _1, _2));
 
 	// initialize page
@@ -181,6 +182,16 @@ bool MonitorListBasePage::CanSelectObjectCallback(bool bCurrentState, int index)
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\MonitorListBasePage.cpp_v  $
+ * 
+ *    Rev 1.1   23 Apr 2014 10:41:58   ryoho
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Turned on AllowNodeItemCheck so that the entire branch can be selected at once
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   17 Apr 2014 16:22:52   ryoho
  * Project:  SVObserver

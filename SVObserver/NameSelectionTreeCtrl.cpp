@@ -5,8 +5,8 @@
 //* .Module Name     : NameSelectionTreeCtrl
 //* .File Name       : $Workfile:   NameSelectionTreeCtrl.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   17 Apr 2014 16:25:20  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   23 Apr 2014 14:29:54  $
 //******************************************************************************
 
 #pragma region Includes
@@ -275,6 +275,8 @@ void NameSelectionTreeCtrl::Populate(const NameSelectionList& list)
 										TVI_LAST           // HTREEITEM hInsertAfter 
 									);
 						}
+						// Make sure this item is expanded and visible
+						EnsureVisible(hNewChild);
 					}
 					ASSERT (hNewChild);
 
@@ -317,6 +319,8 @@ void NameSelectionTreeCtrl::Populate(const NameSelectionList& list)
 			UpdateNodeStateColor(hRoot, l_lCheckState); 
 		}
 	}
+	//Set the display to top of the tree
+	SelectSetFirstVisible(GetRootItem());
 }
 
 bool NameSelectionTreeCtrl::SelectItemByIndex(int index)
@@ -503,7 +507,7 @@ void NameSelectionTreeCtrl::SetBranchChecks(HTREEITEM hItem , bool p_bNewBranchS
 				bool bCanSelect = true;
 				if (m_fnCanSelectObject)
 				{
-					int iIndex = static_cast<int>(GetItemData(l_hItem));
+					int iIndex = static_cast<int>(GetItemData(l_hItem)) & ~LeafNodeIndicator;
 					bCanSelect = m_fnCanSelectObject(l_bThisState, iIndex);
 				}
 				if (bCanSelect)
@@ -521,6 +525,26 @@ void NameSelectionTreeCtrl::SetBranchChecks(HTREEITEM hItem , bool p_bNewBranchS
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\NameSelectionTreeCtrl.cpp_v  $
+ * 
+ *    Rev 1.2   23 Apr 2014 14:29:54   ryoho
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Changed Populate method to show the first item in the tree
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.1   23 Apr 2014 10:43:28   ryoho
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   fixed issue to make sure all items are visible when the tree is loaded and fixed an issue with branch selection
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   17 Apr 2014 16:25:20   ryoho
  * Project:  SVObserver

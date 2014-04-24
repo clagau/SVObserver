@@ -5,8 +5,8 @@
 //* .Module Name     : SVConfigurationObject
 //* .File Name       : $Workfile:   SVConfigurationObject.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.8  $
-//* .Check In Date   : $Date:   17 Apr 2014 16:58:36  $
+//* .Current Version : $Revision:   1.11  $
+//* .Check In Date   : $Date:   24 Apr 2014 10:47:36  $
 //******************************************************************************
 
 #ifndef INC_SVCONFIGURATIONOBJECT_INCLUDED
@@ -202,6 +202,9 @@ public:
 	void ClearRemoteMonitorList();
 	RemoteMonitorList GetRemoteMonitorList() const;
 	void SetRemoteMonitorList(const RemoteMonitorList& rList);
+	void ValidateRemoteMonitorList();
+	HRESULT ActivateRemoteMonitorList(const SVString& listName, bool bActivate);
+	void GetActiveRemoteMonitorList(RemoteMonitorList& rActiveList) const;
 
 	//************************************
 	// Method:    LoadRemoteMonitorList
@@ -298,6 +301,36 @@ private:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVConfigurationObject.h_v  $
+ * 
+ *    Rev 1.11   24 Apr 2014 10:47:36   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Revised the GetActiveRemoteMonitorList method to use a reference rather than return a copy of the list.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.10   23 Apr 2014 10:39:30   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Added ActivateRemoteMonitorList and GetActiveRemoteMonitorList methods.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.9   22 Apr 2014 09:44:40   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Added ValidateRemoteMonitorList method.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.8   17 Apr 2014 16:58:36   ryoho
  * Project:  SVObserver
