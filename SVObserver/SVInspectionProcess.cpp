@@ -5,8 +5,8 @@
 //* .Module Name     : SVInspectionProcess
 //* .File Name       : $Workfile:   SVInspectionProcess.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.10  $
-//* .Check In Date   : $Date:   17 Apr 2014 16:59:12  $
+//* .Current Version : $Revision:   1.11  $
+//* .Check In Date   : $Date:   25 Apr 2014 12:30:36  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -1959,7 +1959,7 @@ LONG_PTR SVInspectionProcess::processMessage(DWORD DwMessageID, LONG_PTR DwMessa
 					createStruct.OwnerObjectInfo = this;
 					createStruct.InspectionObjectInfo = this;
 
-					DWORD l_Return = SVSendMessage( pChildObject, SVM_CREATE_ALL_OBJECTS, reinterpret_cast<LONG_PTR>(&createStruct), NULL );
+					LONG_PTR l_Return = SVSendMessage( pChildObject, SVM_CREATE_ALL_OBJECTS, reinterpret_cast<LONG_PTR>(&createStruct), NULL );
 
 					if( ( DwMessageContext & SVMFResetObject ) == SVMFResetObject )
 					{
@@ -1999,7 +1999,7 @@ LONG_PTR SVInspectionProcess::processMessage(DWORD DwMessageID, LONG_PTR DwMessa
 					createStruct.OwnerObjectInfo = this;
 					createStruct.InspectionObjectInfo = this;
 
-					DWORD l_Return = SVSendMessage( pChildObject, SVM_CONNECT_ALL_OBJECTS, reinterpret_cast<LONG_PTR>(&createStruct), NULL );
+					LONG_PTR l_Return = SVSendMessage( pChildObject, SVM_CONNECT_ALL_OBJECTS, reinterpret_cast<LONG_PTR>(&createStruct), NULL );
 
 					return l_Return;
 				}
@@ -4775,6 +4775,16 @@ void SVInspectionProcess::Persist(SVObjectWriter& rWriter)
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVInspectionProcess.cpp_v  $
+ * 
+ *    Rev 1.11   25 Apr 2014 12:30:36   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Changed type of variable used to store return value from SVSendMessage to LONG_PTR in the processMessage method to avoid warning on x64.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.10   17 Apr 2014 16:59:12   ryoho
  * Project:  SVObserver

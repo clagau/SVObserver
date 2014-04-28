@@ -5,8 +5,8 @@
 //* .Module Name     : SVEncodeDecodeUtilities
 //* .File Name       : $Workfile:   SVEncodeDecodeUtilities.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   02 Oct 2013 10:12:40  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   25 Apr 2014 11:12:32  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -149,7 +149,7 @@ HRESULT SVEncodeDecodeUtilities::Base64DecodeToByteBufferFromString( int& p_rOut
 
 	if( !( p_rInput.empty() ) && ( 0 < p_rOutputBufferSize ) && ( p_pOutput != NULL ) )
 	{
-		int l_BufferSize;
+		int l_BufferSize = p_rOutputBufferSize;
 		if( !( ::Base64Decode( p_rInput.c_str(), static_cast<int>(p_rInput.size()), p_pOutput, &l_BufferSize ) ) )
 		{
 			l_Status = E_UNEXPECTED;
@@ -211,6 +211,16 @@ HRESULT SVEncodeDecodeUtilities::Base64DecodeToFileFromString( const SVString& p
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVSystemLibrary\SVEncodeDecodeUtilities.cpp_v  $
+ * 
+ *    Rev 1.2   25 Apr 2014 11:12:32   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Added initialization of l_BufferSize in Base64DecodeToByteBufferFromString to avoid overflow bug on PutConfig.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   02 Oct 2013 10:12:40   tbair
  * Project:  SVObserver

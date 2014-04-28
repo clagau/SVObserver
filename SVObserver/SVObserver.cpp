@@ -5,8 +5,8 @@
 //* .Module Name     : SVObserver
 //* .File Name       : $Workfile:   SVObserver.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.26  $
-//* .Check In Date   : $Date:   22 Apr 2014 13:13:22  $
+//* .Current Version : $Revision:   1.27  $
+//* .Check In Date   : $Date:   24 Apr 2014 14:13:52  $
 //******************************************************************************
 
 #pragma region Includes
@@ -3031,7 +3031,11 @@ void SVObserverApp::OnEditPublishedResults( UINT nID )
 						}// end if
 					}
 				}// end for
-				TheSVObserverApp.GetIODoc()->UpdateAllViews( NULL );
+				SVIODoc* pIODoc = GetIODoc();
+				if (pIODoc)
+				{
+					pIODoc->UpdateAllViews( NULL );
+				}
 			}// end if
 		}
 	}	
@@ -5574,8 +5578,11 @@ HRESULT SVObserverApp::RenameObject( const SVString& p_rOldName, const SVString&
 		{
 			l_Status = E_FAIL;
 		}
-
-		GetIODoc()->UpdateAllViews( NULL );
+		SVIODoc* pIODoc = GetIODoc();
+		if (pIODoc)
+		{
+			pIODoc->UpdateAllViews( NULL );
+		}
 	}
 	else
 	{
@@ -5596,7 +5603,11 @@ HRESULT SVObserverApp::RebuildOutputList()
 	{
 		l_pConfig->RebuildOutputObjectList();
 
-		GetIODoc()->UpdateAllViews( NULL );
+		SVIODoc* pIODoc = GetIODoc();
+		if (pIODoc)
+		{
+			pIODoc->UpdateAllViews( NULL );
+		}
 	}
 	else
 	{
@@ -6050,7 +6061,11 @@ BOOL SVObserverApp::ShowConfigurationAssistant( int Page /*= 3*/,
 		{
 			l_pConfig->ClearRemoteOutputUnUsedData();
 			l_pConfig->ValidateRemoteMonitorList();
-			GetIODoc()->UpdateAllViews( NULL );
+			SVIODoc* pIODoc = GetIODoc();
+			if (pIODoc)
+			{
+				pIODoc->UpdateAllViews( NULL );
+			}
 		}
 	}
 	SVSVIMStateClass::RemoveState( SV_STATE_EDITING );
@@ -7002,7 +7017,11 @@ void SVObserverApp::ResetAllIPDocModifyFlag(BOOL bModified)
 		while( pos );
 	}
 	//also set the IODoc Modified flag
-	GetIODoc()->SetModifiedFlag(bModified);
+	SVIODoc* pIODoc = GetIODoc();
+	if (pIODoc)
+	{
+		pIODoc->SetModifiedFlag(bModified);
+	}
 }
 
 bool SVObserverApp::SetActiveIOTabView( SVTabbedViewSplitterIDEnum p_eTabbedID )
@@ -8870,6 +8889,21 @@ int SVObserverApp::FindMenuItem(CMenu* Menu, LPCTSTR MenuString)
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVObserver.cpp_v  $
+ * 
+ *    Rev 1.27   24 Apr 2014 14:13:52   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Revised OnEditPublishedResults to check for valid poniter to IODoc.
+ * Revised RenameObject to check for valid poniter to IODoc.
+ * Revised RebuildOutputList to check for valid poniter to IODoc.
+ * Revised ShowConfigurationAssistant to check for valid poniter to IODoc.
+ * Revised ResetAllIPDocModifyFlag to check for valid poniter 
+ * to IODoc.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.26   22 Apr 2014 13:13:22   sjones
  * Project:  SVObserver

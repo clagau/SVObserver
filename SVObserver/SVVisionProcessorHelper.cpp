@@ -5,8 +5,8 @@
 //* .Module Name     : SVVisionProcessorHelper
 //* .File Name       : $Workfile:   SVVisionProcessorHelper.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.10  $
-//* .Check In Date   : $Date:   23 Apr 2014 18:04:54  $
+//* .Current Version : $Revision:   1.11  $
+//* .Check In Date   : $Date:   24 Apr 2014 11:29:08  $
 //******************************************************************************
 
 #pragma region Includes
@@ -783,8 +783,12 @@ HRESULT SVVisionProcessorHelper::QueryProductList( const SVString& rListName, SV
 		}
 		else
 		{
-			hr = E_INVALIDARG;
+			hr = MAKE_HRESULT(SEVERITY_ERROR, FACILITY_NT_BIT, ERROR_NOT_FOUND);
 		}
+	}
+	else
+	{
+		hr = E_POINTER;
 	}
 	return hr;
 }
@@ -805,8 +809,12 @@ HRESULT SVVisionProcessorHelper::QueryRejectCondList( const SVString& rListName,
 		}
 		else
 		{
-			hr = E_INVALIDARG;
+			hr = MAKE_HRESULT(SEVERITY_ERROR, FACILITY_NT_BIT, ERROR_NOT_FOUND);
 		}
+	}
+	else
+	{
+		hr = E_POINTER;
 	}
 	return hr;
 }
@@ -827,20 +835,39 @@ HRESULT SVVisionProcessorHelper::QueryFailStatusList( const SVString& rListName,
 		}
 		else
 		{
-			hr = E_INVALIDARG;
+			hr = MAKE_HRESULT(SEVERITY_ERROR, FACILITY_NT_BIT, ERROR_NOT_FOUND);
 		}
+	}
+	else
+	{
+		hr = E_POINTER;
 	}
 	return hr;
 }
 
 HRESULT SVVisionProcessorHelper::ActivateMonitorList( const SVString& rListName, bool bActivate )
 {
-	SVConfigurationObject* pConfig = nullptr;
-
-	HRESULT hr = SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
-	if ( nullptr != pConfig )
+	HRESULT hr = S_OK;
+	DWORD notAllowedStates = SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION | 
+							SV_STATE_START_PENDING | SV_STATE_STARTING | SV_STATE_STOP_PENDING | SV_STATE_STOPING |
+							SV_STATE_CREATING | SV_STATE_LOADING | SV_STATE_SAVING | SV_STATE_CLOSING;
+	if ( !SVSVIMStateClass::CheckState( notAllowedStates ) && SVSVIMStateClass::CheckState( SV_STATE_READY ) )
 	{
-		hr = pConfig->ActivateRemoteMonitorList( rListName, bActivate );
+		SVConfigurationObject* pConfig = nullptr;
+
+		hr = SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
+		if ( nullptr != pConfig )
+		{
+			hr = pConfig->ActivateRemoteMonitorList( rListName, bActivate );
+		}
+		else
+		{
+			hr = E_POINTER;
+		}
+	}
+	else
+	{
+		hr = SVMSG_SVF_ACCESS_DENIED;
 	}
 	return hr;
 }
@@ -907,6 +934,17 @@ void SVVisionProcessorHelper::ProcessLastModified( bool& p_WaitForEvents )
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVVisionProcessorHelper.cpp_v  $
+ * 
+ *    Rev 1.11   24 Apr 2014 11:29:08   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Revised QueryProductList, QueryRejectCondList, and QueryFailStatusList to improve error reporting.
+ * Revised ActivateMonitorList to check for allowed SVIM state.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.10   23 Apr 2014 18:04:54   sjones
  * Project:  SVObserver

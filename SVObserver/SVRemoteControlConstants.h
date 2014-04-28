@@ -5,8 +5,8 @@
 //* .Module Name     : SVRemoteControlConstants
 //* .File Name       : $Workfile:   SVRemoteControlConstants.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.4  $
-//* .Check In Date   : $Date:   23 Apr 2014 18:02:10  $
+//* .Current Version : $Revision:   1.5  $
+//* .Check In Date   : $Date:   24 Apr 2014 11:25:50  $
 //******************************************************************************
 
 #ifndef SVREMOTECONTROLCONSTANTS_H
@@ -49,7 +49,6 @@ namespace SVRC
 		const std::string getDefList = "GetDataDefinitionList";
 		const std::string getRjct = "GetReject";
 		const std::string actvMonList = "ActivateMonitorList";
-		const std::string deactvList = "DeactivateMonitorList";
 	}
 
 	namespace arg
@@ -147,6 +146,16 @@ namespace SVRC
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVRemoteControlConstants.h_v  $
+ * 
+ *    Rev 1.5   24 Apr 2014 11:25:50   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Removed DeactivateMonitorList constant.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.4   23 Apr 2014 18:02:10   sjones
  * Project:  SVObserver

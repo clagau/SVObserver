@@ -5,8 +5,8 @@
 //* .Module Name     : SVSocketRemoteCommandManager
 //* .File Name       : $Workfile:   SVSocketRemoteCommandManager.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.6  $
-//* .Check In Date   : $Date:   23 Apr 2014 18:07:52  $
+//* .Current Version : $Revision:   1.8  $
+//* .Check In Date   : $Date:   25 Apr 2014 13:08:22  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -1577,29 +1577,30 @@ HRESULT SVRemoteCommandFunctions::QueryProductList( const std::string& rJsonComm
 			hr = E_INVALIDARG;
 		}
 	}
-
-	SVNameSet Items;
-
-	if( S_OK == hr )
+	else
 	{
-		hr = SVVisionProcessorHelper::Instance().QueryProductList(ListName, Items);
+		hr = E_INVALIDARG;
 	}
 
 	Json::Value Results(Json::objectValue);
 	Json::Value EntryArray(Json::arrayValue);
 
-	for( SVNameSet::const_iterator it = Items.begin();it != Items.end();++it)
-	{
-		Json::Value Element(Json::objectValue);
-		Element = (*it).c_str();
-		EntryArray.append(Element);
-	}
-
 	if( S_OK == hr )
 	{
-		Results[ SVRC::result::names ] = EntryArray;
+		SVNameSet Items;
+		hr = SVVisionProcessorHelper::Instance().QueryProductList(ListName, Items);
+		if( S_OK == hr )
+		{
+			for( SVNameSet::const_iterator it = Items.begin();it != Items.end();++it)
+			{
+				Json::Value Element(Json::objectValue);
+				Element = (*it).c_str();
+				EntryArray.append(Element);
+			}
+		}
 	}
-
+	// need to set the results even on an error...
+	Results[ SVRC::result::names ] = EntryArray;
 	std::string FileName = "C:\\temp\\QueryProductList-rsp";
 	WriteResultToJsonAndFile(rJsonCommand, rJsonResults, Results, FileName, hr);
 
@@ -1644,29 +1645,30 @@ HRESULT SVRemoteCommandFunctions::QueryRejectCondList( const std::string& rJsonC
 			hr = E_INVALIDARG;
 		}
 	}
-
-	SVNameSet Items;
-
-	if( S_OK == hr )
+	else
 	{
-		hr = SVVisionProcessorHelper::Instance().QueryRejectCondList(ListName, Items);
+		hr = E_INVALIDARG;
 	}
 
 	Json::Value Results(Json::objectValue);
 	Json::Value EntryArray(Json::arrayValue);
 
-	for( SVNameSet::const_iterator it = Items.begin();it != Items.end();++it)
-	{
-		Json::Value Element(Json::objectValue);
-		Element = (*it).c_str();
-		EntryArray.append(Element);
-	}
-
 	if( S_OK == hr )
 	{
-		Results[ SVRC::result::names ] = EntryArray;
+		SVNameSet Items;
+		hr = SVVisionProcessorHelper::Instance().QueryRejectCondList(ListName, Items);
+		if( S_OK == hr )
+		{
+			for( SVNameSet::const_iterator it = Items.begin();it != Items.end();++it)
+			{
+				Json::Value Element(Json::objectValue);
+				Element = (*it).c_str();
+				EntryArray.append(Element);
+			}
+		}
 	}
-
+	// need to set the results even on an error...
+	Results[ SVRC::result::names ] = EntryArray;
 	std::string FileName = "C:\\temp\\QueryRejectCondList-rsp";
 	WriteResultToJsonAndFile(rJsonCommand, rJsonResults, Results, FileName, hr);
 
@@ -1711,29 +1713,30 @@ HRESULT SVRemoteCommandFunctions::QueryFailStatusList( const std::string& rJsonC
 			hr = E_INVALIDARG;
 		}
 	}
-
-	SVNameSet Items;
-
-	if( S_OK == hr )
+	else
 	{
-		hr = SVVisionProcessorHelper::Instance().QueryFailStatusList(ListName, Items);
+		hr = E_INVALIDARG;
 	}
 
 	Json::Value Results(Json::objectValue);
 	Json::Value EntryArray(Json::arrayValue);
 
-	for( SVNameSet::const_iterator it = Items.begin();it != Items.end();++it)
-	{
-		Json::Value Element(Json::objectValue);
-		Element = (*it).c_str();
-		EntryArray.append(Element);
-	}
-
 	if( S_OK == hr )
 	{
-		Results[ SVRC::result::names ] = EntryArray;
+		SVNameSet Items;
+		hr = SVVisionProcessorHelper::Instance().QueryFailStatusList(ListName, Items);
+		if( S_OK == hr )
+		{
+			for( SVNameSet::const_iterator it = Items.begin();it != Items.end();++it)
+			{
+				Json::Value Element(Json::objectValue);
+				Element = (*it).c_str();
+				EntryArray.append(Element);
+			}
+		}
 	}
-
+	// need to set the results even on an error...
+	Results[ SVRC::result::names ] = EntryArray;
 	std::string FileName = "C:\\temp\\QueryFailStatusList-rsp";
 	WriteResultToJsonAndFile(rJsonCommand, rJsonResults, Results, FileName, hr);
 
@@ -1832,6 +1835,28 @@ AFX_INLINE HRESULT SVRemoteCommandFunctions::WriteResultToJsonAndFile( const std
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVSocketRemoteCommandManager.cpp_v  $
+ * 
+ *    Rev 1.8   25 Apr 2014 13:08:22   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Revised QueryProductList to set the results even if an error occurred.
+ * Revised QueryRejectCondList to set the results even if an error occurred.
+ * Revised QueryFailStatusList to set the results even if an error occurred.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.7   24 Apr 2014 11:27:30   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Revised QueryProductList, QueryRejectCondList, and QueryFailStatusList to improve error reporting
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.6   23 Apr 2014 18:07:52   sjones
  * Project:  SVObserver
