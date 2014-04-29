@@ -5,8 +5,8 @@
 //* .Module Name     : SVPPQObject
 //* .File Name       : $Workfile:   SVPPQObject.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.12  $
-//* .Check In Date   : $Date:   19 Mar 2014 23:17:06  $
+//* .Current Version : $Revision:   1.13  $
+//* .Check In Date   : $Date:   28 Apr 2014 14:24:46  $
 //******************************************************************************
 
 #ifndef SVPPQOBJECT_H
@@ -29,6 +29,7 @@
 #include "SVVirtualCamera.h"
 #include "SVCameraTriggerData.h"
 #include "BasicValueObjects.h"
+#include "SVMonitorList.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -169,6 +170,7 @@ public:
 	SVCameraTriggerData& GetCameraInputData();
 	long GetExtraBufferSize() const;
 
+	HRESULT SetMonitorList(const SVMonitorList& rList);
 protected:
 	typedef SVVector< SVInspectionProcess* > SVPPQInspectionProcessVector;
 
@@ -422,6 +424,16 @@ typedef SVVector< SVPPQObject* > SVPPQObjectArray;
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVPPQObject.h_v  $
+ * 
+ *    Rev 1.13   28 Apr 2014 14:24:46   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Added SetMonitorList method.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.12   19 Mar 2014 23:17:06   bwalter
  * Project:  SVObserver

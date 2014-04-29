@@ -5,8 +5,8 @@
 // * .Module Name     : SVOConfigAssistantDlg
 // * .File Name       : $Workfile:   SVOConfigAssistantDlg.h  $
 // * ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   26 Jul 2013 10:17:20  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   28 Apr 2014 17:35:02  $
 // ******************************************************************************
 
 #ifndef SVOCONFIGASSISTANTDLG_H
@@ -75,14 +75,14 @@ public:
 	typedef SVBiUniqueMap< SVIMProductEnum, CString >::type SVProductStringMap;
 
 	CSVOConfigAssistantDlg(CWnd* pParent = NULL);   // standard constructor
-	
+
 	virtual ~CSVOConfigAssistantDlg();
 
 	void SetNewConfiguration(BOOL bNewFlag);
 	bool IsNewConfiguration();
 	void SetCurrentSystem(long lSysValue = SVIM_PRODUCT_FULL);
 	void SetConfigurationSystem(long lSysValue = SVIM_PRODUCT_FULL);
-	
+
 	BOOL AddToCameraList(CString sCameraName, int iDig);
 	BOOL AddToCameraList(CString sCameraName);
 	BOOL AssignCameraFileToCamera(CString sCameraName, CString sCameraFile);
@@ -91,12 +91,12 @@ public:
 	BOOL AddToInspectList(CString sExternal, CString sInternal);
 	BOOL AddToPPQList(CString sPPQ, CString sCamera, CString sTrigger, CString sInspection);
 	BOOL AddToPPQList(CString sPPQ);
-	
+
 	BOOL RemoveCameraFromList(CString sCameraName);
 	BOOL RemoveTriggerFromList(CString sTriggerName);
 	BOOL RemoveInspectionFromList(CString sInspeciton);
 	BOOL RemovePPQFromList(CString sPPQ);
-	
+
 	BOOL IsDigitizerUsed(CString sDigString);
 	BOOL IsTriggerDigUsed(CString sDigString);
 	BOOL IsCameraInList(CString sCameraName);
@@ -107,16 +107,16 @@ public:
 
 	CString BuildDigName(CSVOCameraObj *pObj, bool bIsAcqDev = false );
 	CString BuildTrgDig(CSVOTriggerObj *pObj);
-	
+
 	CString GetInspectionLabelFromName(CString sInspectName);
 	CString GetInspectionNameFromLabel(CString sInspectLabel);
 	BOOL RenameInspection(CString sInspectLabel, CString sNewName);
-	
+
 	int GetCameraListCount() const;
 	int GetInspectionListCount() const;
 	int GetTriggerListCount() const;
 	int GetPPQListCount() const;
-	
+
 	CSVOCameraObj *GetCameraObject(int iPos);
 	const CSVOCameraObj* GetCameraObject(int iPos) const;
 	CSVOCameraObj *GetCameraObjectByName(CString sCameraName);
@@ -126,7 +126,7 @@ public:
 	CSVOInspectionObj *GetInspectionObjectByName(CString sName);
 	CSVOPPQObj *GetPPQObject(int iPos);
 	CSVOPPQObj *GetPPQObjectByName(CString sPPQName);
-	
+
 	CString GetNextCameraName();
 	int GetNextCameraNumber();
 	CString GetNextInspectionName();
@@ -134,12 +134,12 @@ public:
 	CString GetNextTriggerName(const CString& baseName = TRIGGER_FIXED_NAME);
 	int GetNextTriggerID() const;
 	CString GetNextPPQName();
-	
+
 	CStringList m_slUsedTriggers;
 	CStringList m_slUsedInspect;
 	CStringList m_slInspectionNamesUsed;
 	CStringList m_slInspectionLabelsUsed;
-	
+
 	BOOL IsTriggerUsed(CString sTriggerName) const;
 	void AddUsedTrigger(CString sTriggerName);
 	void RemoveUsedTrigger(CString sTriggerName);
@@ -149,24 +149,24 @@ public:
 	bool IsCameraLineInputAllowed(LPCTSTR triggerName) const;
 
 	CSVOPPQObj* GetPPQForAttachedTrigger(const CString& sTriggerName);
-	
+
 	BOOL IsInspectUsed(CString sInspect);
 	void AddUsedInspect(CString sInspect);
 	void RemoveUsedInspect(CString sInspect);
 	int GetUsedInspectCount();
-	
+
 	SVIMProductEnum GetProductType() const;
 	void SetModified(BOOL bModified);
 	BOOL Modified();
-	
+
 	BOOL ItemChanged(int iItemDlg, CString sLabelName, int iAction); 
-	
+
 	CString GetConfigurationName();
-	
+
 	BOOL GetNewConfigFlag();
-	
+
 	int GetAllowedNumberOfDigs(BOOL bTrigger = FALSE);
-	
+
 	void LastInspectionLabelDeleted(CString sInspectionLabel);
 	BOOL CanInspectionLableBeUsed(CString sLabelName);
 	BOOL CanInspectionNameBeUsed(CString sName);
@@ -203,7 +203,7 @@ public:
 	protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 	//}}AFX_VIRTUAL
-		
+
 // Implementation
 protected:
 	CPropertySheet m_dlgPropSheet;
@@ -223,10 +223,10 @@ protected:
 	afx_msg void OnBnClickedCancel();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
-		
+
 private:
 	void UpdateAvailableSystems( SVIMProductEnum p_CurrentConfigurationType, SVIMProductEnum p_SelectedConfigurationType );
-	HRESULT CheckCamera(CSVOCameraObj* pCam);
+	HRESULT CheckCamera(CSVOCameraObj* pCam, bool SetFileParameters = false);
 	void CheckTriggers();
 	BOOL CheckTrigger(CSVOTriggerObj* pTrig);
 	void RemoveFileAcquisitionMessages(CSVOCameraObj* pCam);
@@ -251,7 +251,7 @@ private:
 	BOOL m_bPPQGood;
 	BOOL m_bConfigName;
 	BOOL m_bInspectionDeleted;
-	
+
 	int m_iLastInspectionNum;
 
 	int m_iCameraErrors;
@@ -296,14 +296,14 @@ private:
 	void CreateDefaultFor05SVIM();
 	void CreateDefaultForRGBSVIM();
 	void CreateDefaultForColorSVIM();
-	
+
 	//default methods for 1394 configuration
 	//mono
 	void CreateDefaultForSVIMDigitalNonIO(int iNumber);
 	void CreateDefaultForSVIMDigital(int iNumber);
 	void CreateDefaultForSVIMDigitalHub(int iNumber);
 	void CreateDefaultForSVIMColorDigital(int iNumber);
-	
+
 	void SetCurrentSystemDisplay();
 	CString BuildDisplayMessage(ConfigMsgTypeEnum iErrorFlag, CString sObjectName, CString sMessage);
 
@@ -335,7 +335,7 @@ private:
 	CSVOPPQObj* GetPPQObjectByInspectionName(const SVString& inspectionName);
 
 	void ConvertToDigital(SVIMProductEnum productType);
-	
+
 	bool IsColorConfig() const;
 	void SetupTriggerStrobeMessage();
 
@@ -351,7 +351,18 @@ private:
 // * LOG HISTORY:
 // ******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVOConfigAssistantDlg.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVOConfigAssistantDlg.h_v  $
+ * 
+ *    Rev 1.3   28 Apr 2014 17:35:02   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  869
+ * SCR Title:  Add PPQ and Environment Variables to Object Manager and Update Pickers
+ * Checked in by:  bWalter;  Ben Walter
+ * Change Description:  
+ *   Cleaned up whitespace.
+ * Added parameter to CheckCamera to fix device params bug.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   26 Jul 2013 10:17:20   ryoho
  * Project:  SVObserver

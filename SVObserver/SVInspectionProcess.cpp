@@ -5,8 +5,8 @@
 //* .Module Name     : SVInspectionProcess
 //* .File Name       : $Workfile:   SVInspectionProcess.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.11  $
-//* .Check In Date   : $Date:   25 Apr 2014 12:30:36  $
+//* .Current Version : $Revision:   1.12  $
+//* .Check In Date   : $Date:   28 Apr 2014 15:38:28  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -1121,6 +1121,8 @@ BOOL SVInspectionProcess::GoOffline()
 	{
 		RestoreCameraImages();
 	}
+	// Stop updating Shared Memory
+	UpdateSharedMemoryFilters(SVMonitorList());
 
 	return true;
 }// end GoOffline
@@ -4775,6 +4777,16 @@ void SVInspectionProcess::Persist(SVObjectWriter& rWriter)
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVInspectionProcess.cpp_v  $
+ * 
+ *    Rev 1.12   28 Apr 2014 15:38:28   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Revised the GoOffline method to clear the MonitorList.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.11   25 Apr 2014 12:30:36   bwalter
  * Project:  SVObserver

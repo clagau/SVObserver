@@ -5,8 +5,8 @@
 //* .Module Name     : SVObserver
 //* .File Name       : $Workfile:   SVObserver.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.27  $
-//* .Check In Date   : $Date:   24 Apr 2014 14:13:52  $
+//* .Current Version : $Revision:   1.29  $
+//* .Check In Date   : $Date:   28 Apr 2014 14:29:42  $
 //******************************************************************************
 
 #pragma region Includes
@@ -114,6 +114,7 @@
 #include "SVPPQObject.h"
 #include "RootObject.h"
 #include "EnvironmentObject.h"
+#include "SVMonitorList.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -305,6 +306,7 @@ BEGIN_MESSAGE_MAP(SVObserverApp, CWinApp)
 	ON_UPDATE_COMMAND_UI(ID_EXTRAS_LOGOUT, OnUpdateExtrasLogout)
 	ON_UPDATE_COMMAND_UI(ID_EXTRAS_UTILITIES_EDIT, OnUpdateExtrasUtilitiesEdit)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_EXTRAS_UTILITIES_BASE, ID_EXTRAS_UTILITIES_LIMIT, OnUpdateExtraUtilities)
+	ON_UPDATE_COMMAND_UI_RANGE(ID_EDIT_PUBLISHEDRESULTS_BASE, ID_EDIT_PUBLISHEDRESULTS_LIMIT, &SVObserverApp::OnUpdateEditPublishedResults)
 
 	ON_UPDATE_COMMAND_UI(ID_NEXT_PANE, OnUpdateNextPane)
 	ON_UPDATE_COMMAND_UI(ID_PREV_PANE, OnUpdatePrevPane)
@@ -2280,6 +2282,13 @@ void SVObserverApp::OnUpdateExtraUtilities( CCmdUI* PCmdUI )
 {
 	PCmdUI->Enable( m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_EXTRAS_MENU_UTILITIES_RUN ) );
 }
+					
+void SVObserverApp::OnUpdateEditPublishedResults(CCmdUI* PCmdUI) 
+{
+	PCmdUI->Enable( SVSVIMStateClass::CheckState( SV_STATE_READY )
+		&& SVSVIMStateClass::CheckState( SV_STATE_EDIT ) );
+}
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : OnAppExit
@@ -7205,7 +7214,7 @@ HRESULT SVObserverApp::CheckDrive(const CString& p_strDrive) const
 		CString l_strName(szFileSystemName);
 		if( l_strName.Find(_T("NTFS")) < 0)
 		{
-			CString l_strDrive ;
+			CString l_strDrive;
 			CString l_strTmp;
 			l_strDrive = p_strDrive;
 			l_strDrive.MakeUpper();
@@ -7214,7 +7223,11 @@ HRESULT SVObserverApp::CheckDrive(const CString& p_strDrive) const
 			SVException svE;
 			SETEXCEPTION1(svE,SVMSG_SVO_47_EXCEPTION_SYSTEM_SETUP,l_strTmp);
 			svE.LogException(l_strTmp);
+#ifndef _DEBUG
 			AfxMessageBox( l_strTmp );
+#else
+			::OutputDebugString(l_strTmp);
+#endif
 		}
 	}
 
@@ -7282,6 +7295,9 @@ HRESULT SVObserverApp::Start()
 		l_trgrDlg.ShowWindow(SW_HIDE);
 		l_trgrDlg.ClearTriggers();
 
+		PPQMonitorList ppqMonitorList;
+		l_pConfig->BuildPPQMonitorList(ppqMonitorList);
+
 		l_pConfig->GetPPQCount( lSize );
 		for( l = 0; l_hrOk == S_OK && l < lSize; l++ )
 		{
@@ -7313,6 +7329,10 @@ HRESULT SVObserverApp::Start()
 			{
 				l_pConfig->GetPPQ( l, &pPPQ );
 				l_hrOk = pPPQ->GoOnline();
+				if (S_OK == l_hrOk)
+				{
+					pPPQ->SetMonitorList(ppqMonitorList[pPPQ->GetName()]);
+				}
 			}// end for
 
 			if( l_hrOk != S_OK )
@@ -8889,6 +8909,26 @@ int SVObserverApp::FindMenuItem(CMenu* Menu, LPCTSTR MenuString)
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVObserver.cpp_v  $
+ * 
+ *    Rev 1.29   28 Apr 2014 14:29:42   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Revised Start method to set the MonitorList for the PPQ(s).
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.28   28 Apr 2014 13:38:06   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  873
+ * SCR Title:  Fix inconsistant GUI labels and functionality on IO pages
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Added Update_Command_UI_Range for the Published Results.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.27   24 Apr 2014 14:13:52   sjones
  * Project:  SVObserver

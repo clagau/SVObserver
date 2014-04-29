@@ -5,8 +5,8 @@
 //* .Module Name     : SVIOController
 //* .File Name       : $Workfile:   SVIOController.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.9  $
-//* .Check In Date   : $Date:   24 Apr 2014 10:47:32  $
+//* .Current Version : $Revision:   1.10  $
+//* .Check In Date   : $Date:   28 Apr 2014 14:22:10  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -687,11 +687,26 @@ void SVIOController::GetActiveRemoteMonitorList(RemoteMonitorList& rActiveList) 
 	m_RemoteMonitorListController.GetActiveRemoteMonitorList(rActiveList);
 }
 
+void SVIOController::BuildPPQMonitorList(PPQMonitorList& ppqMonitorList) const
+{
+	m_RemoteMonitorListController.BuildPPQMonitorList(ppqMonitorList);
+}
+
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVIOController.cpp_v  $
+ * 
+ *    Rev 1.10   28 Apr 2014 14:22:10   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Added BuildPPQMonitorList method.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.9   24 Apr 2014 10:47:32   sjones
  * Project:  SVObserver

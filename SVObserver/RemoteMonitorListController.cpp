@@ -5,8 +5,8 @@
 //* .Module Name     : RemoteMonitorListController
 //* .File Name       : $Workfile:   RemoteMonitorListController.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.5  $
-//* .Check In Date   : $Date:   24 Apr 2014 10:47:34  $
+//* .Current Version : $Revision:   1.7  $
+//* .Check In Date   : $Date:   28 Apr 2014 15:32:36  $
 //******************************************************************************
 
 #pragma region Includes
@@ -211,6 +211,45 @@ void RemoteMonitorListController::ValidateInputs()
 	}
 }
 
+void RemoteMonitorListController::BuildPPQMonitorList(PPQMonitorList& ppqMonitorList) const
+{
+	// combine the lists by PPQName
+	for (RemoteMonitorList::const_iterator it = m_list.begin();it != m_list.end();++it)
+	{
+		// Only Activated Lists are sent to the Inspections and Monitor Lists can only be activated when Offline
+		if (it->second.IsActive())
+		{
+			const MonitoredObjectList& values = it->second.GetProductValuesList();
+			const MonitoredObjectList& images = it->second.GetProductImagesList();
+			const MonitoredObjectList& failStatus = it->second.GetFailStatusList();
+			const MonitoredObjectList& rejectCond = it->second.GetRejectConditionList();
+			const SVString& ppqName = it->second.GetPPQName();
+			SVMonitorItemList remoteValueList;
+			SVMonitorItemList remoteImageList;
+			SVMonitorItemList remoteRejectCondList;
+
+			typedef std::insert_iterator<SVMonitorItemList> Insertor;
+			std::transform(values.begin(), values.end(), Insertor(remoteValueList, remoteValueList.begin()), GetObjectNameFromGuid);
+			std::transform(images.begin(), images.end(), Insertor(remoteImageList, remoteImageList.begin()), GetObjectNameFromGuid);
+			std::transform(failStatus.begin(), failStatus.end(), Insertor(remoteValueList, remoteValueList.begin()), GetObjectNameFromGuid);
+			for (MonitoredObjectList::const_iterator rejectCondIt = rejectCond.begin();rejectCondIt != rejectCond.end();++rejectCondIt)
+			{
+				const SVString& name = GetObjectNameFromGuid(*rejectCondIt);
+				if (!name.empty())
+				{
+					remoteValueList.insert(name);
+					remoteRejectCondList.insert(name);
+				}
+			}
+			// If there is something to monitor, add it to the PPQ Monitor List
+			if (!remoteValueList.empty() || !remoteImageList.empty() || !remoteRejectCondList.empty())
+			{
+				ppqMonitorList[ppqName] = SVMonitorList(remoteValueList, remoteImageList, remoteValueList, remoteImageList, remoteRejectCondList);
+			}
+		}
+	}
+}
+
 HRESULT RemoteMonitorListController::ActivateRemoteMonitorList(const SVString& listName, bool bActivate)
 {
 	HRESULT hr = S_OK;
@@ -243,6 +282,26 @@ HRESULT RemoteMonitorListController::ActivateRemoteMonitorList(const SVString& l
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\RemoteMonitorListController.cpp_v  $
+ * 
+ *    Rev 1.7   28 Apr 2014 15:32:36   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Revised BuildPPQMonitorList to only retrieve Activated Monitor Lists.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.6   28 Apr 2014 14:22:08   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Added BuildPPQMonitorList method.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.5   24 Apr 2014 10:47:34   sjones
  * Project:  SVObserver

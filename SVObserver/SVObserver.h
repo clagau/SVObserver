@@ -5,8 +5,8 @@
 //* .Module Name     : SVObserver
 //* .File Name       : $Workfile:   SVObserver.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.13  $
-//* .Check In Date   : $Date:   17 Apr 2014 17:00:30  $
+//* .Current Version : $Revision:   1.14  $
+//* .Check In Date   : $Date:   28 Apr 2014 13:38:06  $
 //******************************************************************************
 
 #ifndef SVOBSERVER_H
@@ -198,6 +198,7 @@ public:
 	afx_msg void OnRunMostRecentMRU( );
 	afx_msg void OnUpdateRecentFileMenu(CCmdUI* PCmdUI);
 	afx_msg void OnUpdateExtraUtilities(CCmdUI* PCmdUI);
+	afx_msg void OnUpdateEditPublishedResults(CCmdUI* PCmdUI);
 	afx_msg void OnAppExit();
 	afx_msg void OnFileSaveAsSVC();
 	afx_msg void OnUpdatePublishedResultsPicker(CCmdUI* pCmdUI);
@@ -624,6 +625,16 @@ extern SVObserverApp TheSVObserverApp;
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVObserver.h_v  $
+ * 
+ *    Rev 1.14   28 Apr 2014 13:38:06   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  873
+ * SCR Title:  Fix inconsistant GUI labels and functionality on IO pages
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Added Update_Command_UI_Range for the Published Results.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.13   17 Apr 2014 17:00:30   ryoho
  * Project:  SVObserver

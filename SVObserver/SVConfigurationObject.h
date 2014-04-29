@@ -5,8 +5,8 @@
 //* .Module Name     : SVConfigurationObject
 //* .File Name       : $Workfile:   SVConfigurationObject.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.11  $
-//* .Check In Date   : $Date:   24 Apr 2014 10:47:36  $
+//* .Current Version : $Revision:   1.12  $
+//* .Check In Date   : $Date:   28 Apr 2014 14:22:10  $
 //******************************************************************************
 
 #ifndef INC_SVCONFIGURATIONOBJECT_INCLUDED
@@ -205,6 +205,7 @@ public:
 	void ValidateRemoteMonitorList();
 	HRESULT ActivateRemoteMonitorList(const SVString& listName, bool bActivate);
 	void GetActiveRemoteMonitorList(RemoteMonitorList& rActiveList) const;
+	void BuildPPQMonitorList(PPQMonitorList& ppqMonitorList) const;
 
 	//************************************
 	// Method:    LoadRemoteMonitorList
@@ -301,6 +302,16 @@ private:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVConfigurationObject.h_v  $
+ * 
+ *    Rev 1.12   28 Apr 2014 14:22:10   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Added BuildPPQMonitorList method.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.11   24 Apr 2014 10:47:36   sjones
  * Project:  SVObserver

@@ -5,17 +5,19 @@
 //* .Module Name     : SVPPQObject
 //* .File Name       : $Workfile:   SVPPQObject.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.16  $
-//* .Check In Date   : $Date:   17 Mar 2014 15:32:16  $
+//* .Current Version : $Revision:   1.18  $
+//* .Check In Date   : $Date:   28 Apr 2014 15:37:08  $
 //******************************************************************************
 
 #pragma region Includes
+#pragma warning (disable: 4996)
 #include "stdafx.h"
 #include <Mmsystem.h>
 #include <fstream>
 #include <algorithm>
 #include <limits>
 #include <boost/bind.hpp>
+#include <boost/algorithm/string.hpp>
 #include "SVPPQObject.h"
 #include "SVDataManagerLibrary/DataManager.h"
 #include "SVIOLibrary/SVIOConfigurationInterfaceClass.h"
@@ -4510,6 +4512,55 @@ long SVPPQObject::GetExtraBufferSize() const
 	return g_lPPQExtraBufferSize;
 }
 
+static bool CompareInspectionName(const SVString& name, const SVString& dottedName)
+{
+	typedef std::deque<std::string> split_container_type;
+	split_container_type splitContainer;
+	boost::algorithm::split(splitContainer, std::string(dottedName.c_str()), boost::algorithm::is_any_of("."), boost::algorithm::token_compress_on);
+	if (splitContainer.size() > 0)
+	{
+		const SVString inspectionName = splitContainer[0];
+		int cmp = inspectionName.Compare(name);
+		return (cmp > 0) ? true : false;
+	}
+	return false;
+}
+
+HRESULT SVPPQObject::SetMonitorList(const SVMonitorList& rList)
+{
+	HRESULT hr = S_OK;
+	// separate the list by Inspection and send to each Inspection
+	const SVMonitorItemList& valList = rList.GetDataList();
+	const SVMonitorItemList& imgList = rList.GetImageList();
+	const SVMonitorItemList& rejectValList = rList.GetRejectDataList();
+	const SVMonitorItemList& rejectImgList = rList.GetRejectImageList();
+	const SVMonitorItemList& rejectCondList = rList.GetConditionalDataList();
+
+	typedef std::pair<SVMonitorItemList::const_iterator, SVMonitorItemList::const_iterator> Bounds;
+  
+	for (SVPPQInspectionProcessVector::iterator it = m_arInspections.begin(); it != m_arInspections.end(); ++it)
+	{
+		SVInspectionProcess* pInspection = (*it);
+		if (pInspection)
+		{
+			const SVString& inspectionName = pInspection->GetName();
+			Bounds valBounds = std::equal_range(valList.begin(), valList.end(), inspectionName, CompareInspectionName);
+			Bounds imgBounds = std::equal_range(imgList.begin(), imgList.end(), inspectionName, CompareInspectionName);
+			Bounds rejectValBounds = std::equal_range(rejectValList.begin(), rejectValList.end(), inspectionName, CompareInspectionName);
+			Bounds rejectImgBounds = std::equal_range(rejectImgList.begin(), rejectImgList.end(), inspectionName, CompareInspectionName);
+			Bounds rejectCondBounds = std::equal_range(rejectCondList.begin(), rejectCondList.end(), inspectionName, CompareInspectionName);
+
+			SVMonitorList inspectionMonitorList(SVMonitorItemList(valBounds.first, valBounds.second),
+												SVMonitorItemList(imgBounds.first, imgBounds.second),
+												SVMonitorItemList(rejectValBounds.first, rejectValBounds.second),
+												SVMonitorItemList(rejectImgBounds.first, rejectImgBounds.second),
+												SVMonitorItemList(rejectCondBounds.first, rejectCondBounds.second));
+			hr = pInspection->UpdateSharedMemoryFilters(inspectionMonitorList);
+		}
+	}
+	return hr;
+}
+
 const SVString& SVPPQObject::GetConditionalOutputName() const
 {
 	return m_conditionalOutputName;
@@ -4685,6 +4736,26 @@ void SVPPQObject::SVPPQTracking::IncrementTimeCount( const SVString& p_rName, si
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVPPQObject.cpp_v  $
+ * 
+ *    Rev 1.18   28 Apr 2014 15:37:08   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Revised SetMonitorList method to check for a valid pointer to the InspectionProcess.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.17   28 Apr 2014 14:24:46   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Added SetMonitorList method.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.16   17 Mar 2014 15:32:16   bwalter
  * Project:  SVObserver
