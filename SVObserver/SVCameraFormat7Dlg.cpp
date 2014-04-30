@@ -5,30 +5,30 @@
 // * .Module Name     : SVCameraFormat7Dlg
 // * .File Name       : $Workfile:   SVCameraFormat7Dlg.cpp  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.1  $
-// * .Check In Date   : $Date:   15 May 2013 19:45:42  $
+// * .Current Version : $Revision:   1.2  $
+// * .Check In Date   : $Date:   29 Apr 2014 19:01:16  $
 // ******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVCameraFormat7Dlg.h"
 #include "svobserver.h"
 #include "SVAcquisitionClass.h"
 #include "SVImageProcessingClass.h"
 #include "SVImageLibrary/SVImageBufferHandleInterface.h"
+#pragma endregion Includes
 
+#pragma region Declarations
 #ifdef _DEBUG
 #define new DEBUG_NEW
-#undef THIS_FILE
-static char THIS_FILE[] = __FILE__;
 #endif
-
 
 BEGIN_MESSAGE_MAP(SVCameraFormat7Dlg, CDialog)
 	//{{AFX_MSG_MAP(SVCameraFormat7Dlg)
-	ON_NOTIFY(UDN_DELTAPOS, IDC_SPIN_HEIGHT, OnDeltaposSpinHeight)
-	ON_NOTIFY(UDN_DELTAPOS, IDC_SPIN_LEFT, OnDeltaposSpinLeft)
-	ON_NOTIFY(UDN_DELTAPOS, IDC_SPIN_TOP, OnDeltaposSpinTop)
-	ON_NOTIFY(UDN_DELTAPOS, IDC_SPIN_WIDTH, OnDeltaposSpinWidth)
+	ON_NOTIFY(UDN_DELTAPOS, IDC_SPIN_HEIGHT, OnDeltaPosSpinHeight)
+	ON_NOTIFY(UDN_DELTAPOS, IDC_SPIN_LEFT, OnDeltaPosSpinLeft)
+	ON_NOTIFY(UDN_DELTAPOS, IDC_SPIN_TOP, OnDeltaPosSpinTop)
+	ON_NOTIFY(UDN_DELTAPOS, IDC_SPIN_WIDTH, OnDeltaPosSpinWidth)
 	ON_BN_CLICKED(IDC_TAKE_PICTURE, OnTakePicture)
 	ON_WM_MOUSEMOVE()
 	ON_EN_CHANGE(IDC_EDIT_TOP, OnChangeROI)
@@ -37,8 +37,9 @@ BEGIN_MESSAGE_MAP(SVCameraFormat7Dlg, CDialog)
 	ON_EN_CHANGE(IDC_EDIT_WIDTH, OnChangeROI)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
+#pragma endregion Declarations
 
-
+#pragma region Construction
 SVCameraFormat7Dlg::SVCameraFormat7Dlg(CWnd* pParent /*=NULL*/)
 	: CDialog(SVCameraFormat7Dlg::IDD, pParent)
 {
@@ -48,15 +49,35 @@ SVCameraFormat7Dlg::SVCameraFormat7Dlg(CWnd* pParent /*=NULL*/)
 	m_iTop = 0;
 	m_iWidth = 0;
 	//}}AFX_DATA_INIT
-	m_pFormat = NULL;
-	m_pDevice = NULL;
+	m_pFormat = nullptr;
+	m_pDevice = nullptr;
 }
 
 SVCameraFormat7Dlg::~SVCameraFormat7Dlg()
 {
 	m_pImageHandle.clear();
 }
+#pragma endregion Construction
 
+#pragma region Public Methods
+void SVCameraFormat7Dlg::SetFormat( SVCameraFormat* pFormat )
+{
+	m_pFormat = pFormat;
+}
+
+void SVCameraFormat7Dlg::SetFormat7Image( const SVImageInfoClass& rInfo)
+{
+	m_ImageInfo = rInfo;
+}
+
+void SVCameraFormat7Dlg::SetAcquisitionDevice( SVAcquisitionClassPtr pDevice )
+{
+	m_pDevice = pDevice;
+}
+#pragma endregion Public Methods
+
+#pragma region Protected Methods
+#pragma region Virtual
 void SVCameraFormat7Dlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
@@ -73,13 +94,12 @@ void SVCameraFormat7Dlg::DoDataExchange(CDataExchange* pDX)
 	//}}AFX_DATA_MAP
 }
 
-
 /////////////////////////////////////////////////////////////////////////////
 // SVCameraFormat7Dlg message handlers
 
-BOOL SVCameraFormat7Dlg::OnInitDialog() 
+BOOL SVCameraFormat7Dlg::OnInitDialog()
 {
-	ASSERT( m_pFormat != NULL );
+	ASSERT( nullptr != m_pFormat );
 
 	m_iLeft = m_pFormat->lHPos;
 	m_iTop = m_pFormat->lVPos;
@@ -87,7 +107,7 @@ BOOL SVCameraFormat7Dlg::OnInitDialog()
 	m_iHeight = m_pFormat->lHeight;
 
 	CDialog::OnInitDialog();
-	
+
 	m_SpinTop.SetRange(0, static_cast<short>(m_pFormat->lHeightMax - m_pFormat->lVPosStep) );
 	m_SpinLeft.SetRange(0, static_cast<short>(m_pFormat->lWidthMax - m_pFormat->lHPosStep) );
 	m_SpinWidth.SetRange( static_cast<short>(m_pFormat->lHStep), static_cast<short>(m_pFormat->lWidthMax) );
@@ -112,7 +132,7 @@ BOOL SVCameraFormat7Dlg::OnInitDialog()
 		SVImageProcessingClass::Instance().CreateImageBuffer( m_ImageInfo, m_pImageHandle );
 	}
 
-	if( m_pDevice != NULL )
+	if( m_pDevice != nullptr )
 	{
 		m_pDevice->SingleGrab( m_pImageHandle );
 	}
@@ -128,12 +148,11 @@ BOOL SVCameraFormat7Dlg::OnInitDialog()
 
 	m_Image.refresh();
 
-
 	return TRUE;  // return TRUE unless you set the focus to a control
 	              // EXCEPTION: OCX Property Pages should return FALSE
 }
 
-void SVCameraFormat7Dlg::OnOK() 
+void SVCameraFormat7Dlg::OnOK()
 {
 	UpdateData(TRUE);
 	m_pFormat->lHPos = m_iLeft;
@@ -143,58 +162,30 @@ void SVCameraFormat7Dlg::OnOK()
 	CDialog::OnOK();
 }
 
-void SVCameraFormat7Dlg::OnCancel() 
+void SVCameraFormat7Dlg::OnCancel()
 {
-	
 	CDialog::OnCancel();
 }
+#pragma endregion Virtual
 
-void SVCameraFormat7Dlg::SetGraphicROI()
-{
-	CRect l_oRect;
-
-	l_oRect.top = m_iTop;
-	l_oRect.left = m_iLeft;
-	l_oRect.bottom = m_iTop + m_iHeight;
-	l_oRect.right = m_iLeft + m_iWidth;
-
-	if ( m_Image.GetSafeHwnd() != NULL )
-	{
-		m_Image.ClearPoints();
-		m_Image.SetROI( l_oRect );
-		m_Image.refresh();
-	}
-}
-
-void SVCameraFormat7Dlg::SetFormat( SVCameraFormat* pFormat )
-{
-	m_pFormat = pFormat;
-}
-
-void SVCameraFormat7Dlg::SetFormat7Image( const SVImageInfoClass& rInfo)
-{
-	m_ImageInfo = rInfo;
-}
-
-void SVCameraFormat7Dlg::SetAcquisitionDevice( SVAcquisitionClassPtr pDevice )
-{
-	m_pDevice = pDevice;
-}
-
-void SVCameraFormat7Dlg::OnDeltaposSpinHeight(NMHDR* pNMHDR, LRESULT* pResult) 
+void SVCameraFormat7Dlg::OnDeltaPosSpinHeight(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	*pResult = S_OK;
 
-	OnDeltaposSpin( pNMHDR );
+	OnDeltaPosSpin( pNMHDR );
 
 	NMUPDOWN* pnm = (NMUPDOWN*) pNMHDR;
 	pnm->iDelta *= m_pFormat->lVStep;
 
 	if ( m_iHeight + pnm->iDelta < m_pFormat->lVStep )
+	{
 		*pResult = S_FALSE;
+	}
 
 	if ( m_iTop + m_iHeight + pnm->iDelta > m_pFormat->lHeightMax )
+	{
 		*pResult = S_FALSE;
+	}
 
 	if ( *pResult == S_OK )
 	{
@@ -204,20 +195,24 @@ void SVCameraFormat7Dlg::OnDeltaposSpinHeight(NMHDR* pNMHDR, LRESULT* pResult)
 	}
 }
 
-void SVCameraFormat7Dlg::OnDeltaposSpinWidth(NMHDR* pNMHDR, LRESULT* pResult) 
+void SVCameraFormat7Dlg::OnDeltaPosSpinWidth(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	*pResult = S_OK;
 
-	OnDeltaposSpin( pNMHDR );
-	
+	OnDeltaPosSpin( pNMHDR );
+
 	NMUPDOWN* pnm = (NMUPDOWN*) pNMHDR;
 	pnm->iDelta *= m_pFormat->lHStep;
 
 	if ( m_iWidth + pnm->iDelta < m_pFormat->lHStep )
+	{
 		*pResult = S_FALSE;
+	}
 
 	if ( m_iLeft + m_iWidth + pnm->iDelta > m_pFormat->lWidthMax )
+	{
 		*pResult = S_FALSE;
+	}
 
 	if ( *pResult == S_OK )
 	{
@@ -227,20 +222,24 @@ void SVCameraFormat7Dlg::OnDeltaposSpinWidth(NMHDR* pNMHDR, LRESULT* pResult)
 	}
 }
 
-void SVCameraFormat7Dlg::OnDeltaposSpinLeft(NMHDR* pNMHDR, LRESULT* pResult) 
+void SVCameraFormat7Dlg::OnDeltaPosSpinLeft(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	*pResult = S_OK;
 
-	OnDeltaposSpin( pNMHDR );
+	OnDeltaPosSpin( pNMHDR );
 
 	NMUPDOWN* pnm = (NMUPDOWN*) pNMHDR;
 	pnm->iDelta *= m_pFormat->lHPosStep;
 
 	if ( m_iLeft + pnm->iDelta < 0 )
+	{
 		*pResult = S_FALSE;
+	}
 
 	if ( m_iLeft + m_iWidth + pnm->iDelta > m_pFormat->lWidthMax )
+	{
 		*pResult = S_FALSE;
+	}
 
 	if ( *pResult == S_OK )
 	{
@@ -250,20 +249,24 @@ void SVCameraFormat7Dlg::OnDeltaposSpinLeft(NMHDR* pNMHDR, LRESULT* pResult)
 	}
 }
 
-void SVCameraFormat7Dlg::OnDeltaposSpinTop(NMHDR* pNMHDR, LRESULT* pResult) 
+void SVCameraFormat7Dlg::OnDeltaPosSpinTop(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	*pResult = S_OK;
 
-	OnDeltaposSpin( pNMHDR );
+	OnDeltaPosSpin( pNMHDR );
 
 	NMUPDOWN* pnm = (NMUPDOWN*) pNMHDR;
 	pnm->iDelta *= m_pFormat->lVPosStep;
 
 	if ( m_iTop + pnm->iDelta < 0 )
+	{
 		*pResult = S_FALSE;
+	}
 
 	if ( m_iTop + m_iHeight + pnm->iDelta > m_pFormat->lHeightMax )
+	{
 		*pResult = S_FALSE;
+	}
 
 	if ( *pResult == S_OK )
 	{
@@ -273,15 +276,9 @@ void SVCameraFormat7Dlg::OnDeltaposSpinTop(NMHDR* pNMHDR, LRESULT* pResult)
 	}
 }
 
-void SVCameraFormat7Dlg::OnDeltaposSpin( NMHDR* pNMHDR )
+void SVCameraFormat7Dlg::OnTakePicture()
 {
-	NMUPDOWN* pnm = (NMUPDOWN*) pNMHDR;
-
-}
-
-void SVCameraFormat7Dlg::OnTakePicture() 
-{
-	if( m_pDevice != NULL )
+	if( m_pDevice != nullptr )
 	{
 		m_pDevice->SingleGrab( m_pImageHandle );
 	}
@@ -289,7 +286,7 @@ void SVCameraFormat7Dlg::OnTakePicture()
 	m_Image.refresh();
 }
 
-void SVCameraFormat7Dlg::OnMouseMove(UINT nFlags, CPoint point) 
+void SVCameraFormat7Dlg::OnMouseMove(UINT nFlags, CPoint point)
 {
 	if ( GetCapture() == &m_Image )
 	{
@@ -298,7 +295,7 @@ void SVCameraFormat7Dlg::OnMouseMove(UINT nFlags, CPoint point)
 		m_Image.GetROI( l_oRect );
 
 		Normalize( l_oRect );
-		
+
 		m_iTop    = l_oRect.top;
 		m_iLeft   = l_oRect.left;
 		m_iWidth  = l_oRect.Width();
@@ -312,12 +309,70 @@ void SVCameraFormat7Dlg::OnMouseMove(UINT nFlags, CPoint point)
 	}
 }
 
+void SVCameraFormat7Dlg::OnChangeROI()
+{
+	if ( nullptr != m_SpinHeight.GetSafeHwnd()
+		&& nullptr != m_SpinWidth.GetSafeHwnd()
+		&& nullptr != m_SpinTop.GetSafeHwnd()
+		&& nullptr != m_SpinLeft.GetSafeHwnd() )
+	{
+		UpdateData();
+
+		CRect l_oRect;
+
+		l_oRect.top = m_iTop;
+		l_oRect.left = m_iLeft;
+		l_oRect.bottom = m_iTop + m_iHeight;
+		l_oRect.right = m_iLeft + m_iWidth;
+
+		Normalize( l_oRect );
+
+		m_iTop    = l_oRect.top;
+		m_iLeft   = l_oRect.left;
+		m_iWidth  = l_oRect.Width();
+		m_iHeight = l_oRect.Height();
+
+		UpdateData(FALSE);
+
+		SetGraphicROI();
+	}
+}
+#pragma endregion Protected Methods
+
+#pragma region Private Methods
+void SVCameraFormat7Dlg::SetGraphicROI()
+{
+	CRect l_oRect;
+
+	l_oRect.top = m_iTop;
+	l_oRect.left = m_iLeft;
+	l_oRect.bottom = m_iTop + m_iHeight;
+	l_oRect.right = m_iLeft + m_iWidth;
+
+	if ( nullptr != m_Image.GetSafeHwnd() )
+	{
+		m_Image.ClearPoints();
+		m_Image.SetROI( l_oRect );
+		m_Image.refresh();
+	}
+}
+
+void SVCameraFormat7Dlg::OnDeltaPosSpin( NMHDR* pNMHDR )
+{
+	NMUPDOWN* pnm = (NMUPDOWN*) pNMHDR;
+}
+
 void SVCameraFormat7Dlg::Normalize( CRect &l_roRect )
 {
 	if ( l_roRect.Width() < m_pFormat->lHStep )
+	{
 		l_roRect.right = m_pFormat->lHStep + l_roRect.left;
+	}
+
 	if ( l_roRect.Height() < m_pFormat->lVStep )
+	{
 		l_roRect.bottom = m_pFormat->lVStep + l_roRect.top;
+	}
 
 	// normalize to step
 	l_roRect.top    = (l_roRect.top / m_pFormat->lVPosStep) * m_pFormat->lVPosStep;
@@ -333,54 +388,40 @@ void SVCameraFormat7Dlg::Normalize( CRect &l_roRect )
 	l_roRect.bottom = __min(m_pFormat->lHeightMax, l_roRect.bottom );
 
 	if ( l_roRect.Width() < m_pFormat->lHStep )
+	{
 		l_roRect.left += l_roRect.Width() - m_pFormat->lHStep;
+	}
+
 	if ( l_roRect.Height() < m_pFormat->lVStep )
+	{
 		l_roRect.top += l_roRect.Height() - m_pFormat->lVStep;
+	}
 
 	ASSERT( l_roRect.Width() >= 0 );
 	ASSERT( l_roRect.Height() >= 0 );
-}
-
-void SVCameraFormat7Dlg::OnChangeROI() 
-{
-	if (   m_SpinHeight.GetSafeHwnd() != NULL
-		&& m_SpinWidth.GetSafeHwnd()  != NULL
-		&& m_SpinTop.GetSafeHwnd()  != NULL
-		&& m_SpinLeft.GetSafeHwnd()   != NULL )
-	{
-		UpdateData();
-
-		CRect l_oRect;
-
-		l_oRect.top = m_iTop;
-		l_oRect.left = m_iLeft;
-		l_oRect.bottom = m_iTop + m_iHeight;
-		l_oRect.right = m_iLeft + m_iWidth;
-
-		Normalize( l_oRect );
-		
-		m_iTop    = l_oRect.top;
-		m_iLeft   = l_oRect.left;
-		m_iWidth  = l_oRect.Width();
-		m_iHeight = l_oRect.Height();
-
-		UpdateData(FALSE);
-
-		SetGraphicROI();
-	}
 }
 
 SVSmartHandlePointer SVCameraFormat7Dlg::GetImageHandle() const
 {
 	return m_pImageHandle;
 }
-
+#pragma endregion Private Methods
 
 // ******************************************************************************
 // * LOG HISTORY:
 // ******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVCameraFormat7Dlg.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVCameraFormat7Dlg.cpp_v  $
+ * 
+ *    Rev 1.2   29 Apr 2014 19:01:16   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  884
+ * SCR Title:  Update Source Code Files to Follow New Programming Standards and Guidelines
+ * Checked in by:  bWalter;  Ben Walter
+ * Change Description:  
+ *   Updated to follow coding standards in preparation for upcoming changes related to SVPictureDisplay ActiveX.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   15 May 2013 19:45:42   bWalter
  * Project:  SVObserver

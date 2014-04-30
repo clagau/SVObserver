@@ -5,78 +5,88 @@
 // * .Module Name     : SVCameraFormat7Dlg
 // * .File Name       : $Workfile:   SVCameraFormat7Dlg.h  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.1  $
-// * .Check In Date   : $Date:   15 May 2013 19:45:44  $
+// * .Current Version : $Revision:   1.2  $
+// * .Check In Date   : $Date:   29 Apr 2014 19:01:14  $
 // ******************************************************************************
 
 #ifndef SVCAMERAFORMAT7DLG_H
 #define SVCAMERAFORMAT7DLG_H
 
+#pragma region Includes
 #include "SVImageLibrary/SVImageInfoClass.h"
 #include "SVImageLibrary/SVImageBufferHandleInterface.h"
 #include "SVDlgImageGraphROI.h"
 #include "SVOMFCLibrary/SVDeviceParams.h"
 #include "SVImageLibrary/SVImagingDeviceParams.h"
 #include "SVAcquisitionClass.h"
+#pragma endregion Includes
 
 class SVCameraFormat7Dlg : public CDialog
 {
+#pragma region Construction
 public:
 	SVCameraFormat7Dlg(CWnd* pParent = NULL);   // standard constructor
 	virtual ~SVCameraFormat7Dlg();
+#pragma endregion Construction
 
-	//{{AFX_DATA(SVCameraFormat7Dlg)
-	enum { IDD = IDD_CAMERA_FORMAT7_DLG };
-	SVDlgImageGraphROI	m_Image;
-	CSpinButtonCtrl	m_SpinHeight;
-	CSpinButtonCtrl	m_SpinLeft;
-	CSpinButtonCtrl	m_SpinWidth;
-	CSpinButtonCtrl	m_SpinTop;
-	int		m_iHeight;
-	int		m_iLeft;
-	int		m_iTop;
-	int		m_iWidth;
-	//}}AFX_DATA
-
+#pragma region Public Methods
 	void SetFormat( SVCameraFormat* pFormat );
 	void SetFormat7Image( const SVImageInfoClass& rInfo );
 	void SetAcquisitionDevice( SVAcquisitionClassPtr pDevice );
+#pragma endregion Public Methods
 
-
+#pragma region Protected Methods
+protected:
+#pragma region Virtual
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(SVCameraFormat7Dlg)
-	protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-	//}}AFX_VIRTUAL
-
-protected:
-	// Generated message map functions
-	//{{AFX_MSG(SVCameraFormat7Dlg)
+	virtual BOOL OnInitDialog();
 	virtual void OnOK();
 	virtual void OnCancel();
-	virtual BOOL OnInitDialog();
-	afx_msg void OnDeltaposSpinHeight(NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg void OnDeltaposSpinLeft(NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg void OnDeltaposSpinTop(NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg void OnDeltaposSpinWidth(NMHDR* pNMHDR, LRESULT* pResult);
+	//}}AFX_VIRTUAL
+#pragma endregion Virtual
+
+	// Generated message map functions
+	//{{AFX_MSG(SVCameraFormat7Dlg)
+	afx_msg void OnDeltaPosSpinHeight(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnDeltaPosSpinWidth(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnDeltaPosSpinLeft(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnDeltaPosSpinTop(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnTakePicture();
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 	afx_msg void OnChangeROI();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
+#pragma endregion Protected Methods
 
-	void OnDeltaposSpin( NMHDR* pNMHDR );
+#pragma region Private Methods
+private:
 	void SetGraphicROI();
+	void OnDeltaPosSpin( NMHDR* pNMHDR );
 	void Normalize(CRect &p_roRect);
-
 	SVSmartHandlePointer GetImageHandle() const;
+#pragma endregion Private Methods
 
+#pragma region Member Variables
+	//{{AFX_DATA(SVCameraFormat7Dlg)
+	enum { IDD = IDD_CAMERA_FORMAT7_DLG };
+	SVDlgImageGraphROI m_Image;
+	CSpinButtonCtrl m_SpinHeight;
+	CSpinButtonCtrl m_SpinLeft;
+	CSpinButtonCtrl m_SpinWidth;
+	CSpinButtonCtrl m_SpinTop;
+	int m_iHeight;
+	int m_iLeft;
+	int m_iTop;
+	int m_iWidth;
+	//}}AFX_DATA
 
 	SVAcquisitionClassPtr m_pDevice;
 	SVCameraFormat* m_pFormat;
 	SVImageInfoClass m_ImageInfo;
 	SVSmartHandlePointer m_pImageHandle;
-
+#pragma endregion Member Variables
 };
 
 //{{AFX_INSERT_LOCATION}}
@@ -88,7 +98,17 @@ protected:
 // * LOG HISTORY:
 // ******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVCameraFormat7Dlg.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVCameraFormat7Dlg.h_v  $
+ * 
+ *    Rev 1.2   29 Apr 2014 19:01:14   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  884
+ * SCR Title:  Update Source Code Files to Follow New Programming Standards and Guidelines
+ * Checked in by:  bWalter;  Ben Walter
+ * Change Description:  
+ *   Updated to follow coding standards in preparation for upcoming changes related to SVPictureDisplay ActiveX.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   15 May 2013 19:45:44   bWalter
  * Project:  SVObserver

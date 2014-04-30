@@ -5,13 +5,14 @@
 //* .Module Name     : SVGigeCameraROIDlg
 //* .File Name       : $Workfile:   SVGigeCameraROIDlg.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   11 Jun 2013 15:26:06  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   29 Apr 2014 19:01:16  $
 //******************************************************************************
 
 #ifndef SVGIGECAMERAROIDLG_H
 #define SVGIGECAMERAROIDLG_H
 
+#pragma region Includes
 #include "resource.h"
 #include "SVImageLibrary/SVImageInfoClass.h"
 #include "SVImageLibrary/SVImageBufferHandleInterface.h"
@@ -22,20 +23,91 @@
 #include "SVImageLibrary/SVImagingDeviceParams.h"
 #include "SVAcquisitionClass.h"
 #include "SVDlgImageGraphROI.h"
+#pragma endregion Includes
 
 class ISVCameraDeviceImageFormatUpdater
 {
 public:
+#pragma region Construction
 	virtual ~ISVCameraDeviceImageFormatUpdater() {}
+#pragma endregion Construction
+
+#pragma region Public Methods
 	virtual void SetXOffset(long xOffset)=0;
 	virtual void SetYOffset(long yOffset)=0;
 	virtual void SetWidth(long width)=0;
 	virtual void SetHeight(long height)=0;
 	virtual void Update(SVAcquisitionClassPtr pAcqDevice)=0;
+#pragma endregion Public Methods
 };
 
 class SVGigeCameraROIDlg : public CDialog
 {
+public:
+#pragma region Construction
+	SVGigeCameraROIDlg(ISVCameraDeviceImageFormatUpdater& rUpdater, CWnd* pParent = NULL);
+	virtual ~SVGigeCameraROIDlg();
+#pragma endregion Construction
+
+#pragma region Public Methods
+	void SetFormat( SVCameraFormat* pFormat );
+	void SetFormatImage( const SVImageInfoClass& rInfo );
+	void SetAcquisitionDevice( SVAcquisitionClassPtr pDevice );
+	const SVLongValueDeviceParam* GetVerticalBinningParam() const;
+	void SetVerticalBinningParam(SVLongValueDeviceParam* pParam);
+	const SVLongValueDeviceParam* GetHorizontalBinningParam() const;
+	void SetHorizontalBinningParam(SVLongValueDeviceParam* pParam);
+#pragma endregion Public Methods
+
+#pragma region Protected Methods
+protected:
+#pragma region Virtual
+	// ClassWizard generated virtual function overrides
+	//{{AFX_VIRTUAL(SVGigeCameraROIDlg)
+	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+	virtual BOOL OnInitDialog();
+	virtual void OnOK();
+	virtual void OnCancel();
+	//}}AFX_VIRTUAL
+#pragma endregion Virtual
+	// Generated message map functions
+	//{{AFX_MSG(SVGigeCameraROIDlg)
+	afx_msg void OnDeltaPosSpinHeight(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnDeltaPosSpinWidth(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnDeltaPosSpinLeft(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnDeltaPosSpinTop(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnDeltaPosSpinBinningVert(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnDeltaPosSpinBinningHoriz(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnTakePicture();
+	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
+	afx_msg void OnChangeROI();
+	afx_msg void OnChangeBinningVert();
+	afx_msg void OnChangeBinningHoriz();
+	//}}AFX_MSG
+	DECLARE_MESSAGE_MAP()
+#pragma endregion Protected Methods
+
+#pragma region Private Methods
+private:
+	void RestoreBinning();
+	void SetGraphicROI();
+	void SetupVerticalBinning();
+	void SetupHorizontalBinning();
+	void ShowBinningGroup();
+	void UpdateImageDisplay();
+	void UpdateDeviceBinningParams();
+	void Normalize(CRect &p_roRect);
+	SVSmartHandlePointer GetImageHandle() const;
+	void UpdateSpinTopRange();
+	void UpdateSpinLeftRange();
+	void UpdateSpinWidthRange();
+	void UpdateSpinHeightRange();
+	long GetScaledMaxWidth() const;
+	long GetScaledMaxHeight() const;
+	double GetScaledValue(long value, double scaleFactor) const;
+#pragma endregion Private Methods
+
+#pragma region Member Variables
 private:
 	struct Binning
 	{
@@ -46,81 +118,27 @@ private:
 		Binning() : bExist(false), minValue(1), maxValue(1), value(1) {}
 	};
 
-public:
-	SVGigeCameraROIDlg(ISVCameraDeviceImageFormatUpdater& rUpdater, CWnd* pParent = NULL);
-	virtual ~SVGigeCameraROIDlg();
-
 	//{{AFX_DATA(SVGigeCameraROIDlg)
 	enum { IDD = IDD_GIGE_CAMERA_ROI_DLG };
-	SVDlgImageGraphROI	m_Image;
-	CSpinButtonCtrl	m_SpinHeight;
-	CSpinButtonCtrl	m_SpinLeft;
-	CSpinButtonCtrl	m_SpinWidth;
-	CSpinButtonCtrl	m_SpinTop;
-	CSpinButtonCtrl	m_SpinVerticalBinning;
+	SVDlgImageGraphROI m_Image;
+	CSpinButtonCtrl m_SpinHeight;
+	CSpinButtonCtrl m_SpinLeft;
+	CSpinButtonCtrl m_SpinWidth;
+	CSpinButtonCtrl m_SpinTop;
+	CSpinButtonCtrl m_SpinVerticalBinning;
 	CEdit m_VerticalBinningEdit;
 	CStatic m_VerticalBinningLabel;
-	CSpinButtonCtrl	m_SpinHorizontalBinning;
+	CSpinButtonCtrl m_SpinHorizontalBinning;
 	CEdit m_HorizontalBinningEdit;
 	CStatic m_HorizontalBinningLabel;
 	CButton m_HQModeCheckBox;
 	CStatic m_BinningGroupBox;
 
-	int		m_iHeight;
-	int		m_iLeft;
-	int		m_iTop;
-	int		m_iWidth;
+	int m_iHeight;
+	int m_iLeft;
+	int m_iTop;
+	int m_iWidth;
 	//}}AFX_DATA
-
-	void SetFormat( SVCameraFormat* pFormat );
-
-	void SetFormatImage( const SVImageInfoClass& rInfo );
-	void SetAcquisitionDevice( SVAcquisitionClassPtr pDevice );
-
-	const SVLongValueDeviceParam* GetVerticalBinningParam() const;
-	void SetVerticalBinningParam(SVLongValueDeviceParam* pParam);
-
-	const SVLongValueDeviceParam* GetHorizontalBinningParam() const;
-	void SetHorizontalBinningParam(SVLongValueDeviceParam* pParam);
-
-	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(SVGigeCameraROIDlg)
-protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-	//}}AFX_VIRTUAL
-
-protected:
-	// Generated message map functions
-	//{{AFX_MSG(SVGigeCameraROIDlg)
-	virtual void OnOK();
-	virtual void OnCancel();
-	virtual BOOL OnInitDialog();
-	afx_msg void OnDeltaposSpinHeight(NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg void OnDeltaposSpinLeft(NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg void OnDeltaposSpinTop(NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg void OnDeltaposSpinWidth(NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg void OnDeltaposSpinBinningVert(NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg void OnDeltaposSpinBinningHoriz(NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg void OnTakePicture();
-	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
-	afx_msg void OnChangeROI();
-	afx_msg void OnChangeBinningVert();
-	afx_msg void OnChangeBinningHoriz();
-	//}}AFX_MSG
-	DECLARE_MESSAGE_MAP()
-
-	void SetGraphicROI();
-	void Normalize(CRect &p_roRect);
-
-	SVSmartHandlePointer GetImageHandle() const;
-	void SetupVerticalBinning();
-	void SetupHorizontalBinning();
-	void ShowBinningGroup();
-	void UpdateDeviceBinningParams();
-	void UpdateSpinTopRange();
-	void UpdateSpinLeftRange();
-	void UpdateSpinWidthRange();
-	void UpdateSpinHeightRange();
 
 	SVAcquisitionClassPtr m_pDevice;
 	SVCameraFormat* m_pFormat;
@@ -134,13 +152,7 @@ protected:
 	long m_verticalBinningOriginalValue;
 	long m_horizontalBinningOriginalValue;
 	ISVCameraDeviceImageFormatUpdater& m_rImageFormatUpdater;
-
-private:
-	void RestoreBinning();
-	void UpdateImageDisplay();
-	long GetScaledMaxWidth() const;
-	long GetScaledMaxHeight() const;
-	double GetScaledValue(long value, double scaleFactor) const;
+#pragma endregion Member Variables
 };
 
 //{{AFX_INSERT_LOCATION}}
@@ -152,7 +164,17 @@ private:
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVGigeCameraROIDlg.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVGigeCameraROIDlg.h_v  $
+ * 
+ *    Rev 1.2   29 Apr 2014 19:01:16   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  884
+ * SCR Title:  Update Source Code Files to Follow New Programming Standards and Guidelines
+ * Checked in by:  bWalter;  Ben Walter
+ * Change Description:  
+ *   Updated to follow coding standards in preparation for upcoming changes related to SVPictureDisplay ActiveX.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   11 Jun 2013 15:26:06   bWalter
  * Project:  SVObserver
