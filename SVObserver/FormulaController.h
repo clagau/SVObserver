@@ -5,8 +5,8 @@
 //* .Module Name     : FormulaController
 //* .File Name       : $Workfile:   FormulaController.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   14 Jan 2014 12:04:06  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   13 May 2014 04:48:44  $
 //******************************************************************************
 //Description:  FormulaController is the class to get/set and
 //              validate equation objects inside SVObserver.
@@ -36,15 +36,15 @@ namespace Seidenader
 		public:
 #pragma region Virtual Methods (IFormulaController)
 			virtual SVString getEquationText() const;
-			virtual const std::vector<SVString> getPPQVariableNames() const;
+			virtual std::vector<SVString> getPPQVariableNames() const;
 			virtual SVToolSetClass* getToolSet() const;
 			virtual HRESULT isToolAndEquationEnabled(bool& toolEnabled, bool& equationEnabled) const;
 
 			virtual HRESULT setToolAndEquationEnabled(bool toolEnabled, bool equationEnabled);
 			virtual void setTaskObject( SVTaskObjectClass& pObject );
 
-			virtual int validateEquation(const SVString equationString, double& result) const;
-			virtual int validateAndSetEquation(const SVString equationString, double& result);
+			virtual int validateEquation(const SVString &equationString, double& result) const;
+			virtual int validateAndSetEquation(const SVString &equationString, double& result);
 #pragma endregion Virtual Methods
 #pragma endregion
 
@@ -73,6 +73,17 @@ namespace Seidenader
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\FormulaController.h_v  $
+ * 
+ *    Rev 1.1   13 May 2014 04:48:44   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  877
+ * SCR Title:  Add undo-button to formula and conditional pages
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   removed const for return value of method getPPQVariableNames
+ * used reference for parameter of method validateEquation and validateAndSetEquation 
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   14 Jan 2014 12:04:06   bwalter
  * Project:  SVObserver

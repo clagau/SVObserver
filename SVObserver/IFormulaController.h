@@ -5,8 +5,8 @@
 //* .Module Name     : IFormulaController
 //* .File Name       : $Workfile:   IFormulaController.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   14 Jan 2014 12:04:02  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   13 May 2014 04:48:44  $
 //******************************************************************************
 //Description: IFormulaController is the interface to get/set and validate equations
 //			   from outside SVObserver (e.q. GUI) to the object inside SVObserver. 
@@ -32,7 +32,7 @@ namespace Seidenader
 			 Get names of all active ppqVarable for the used inspection.
 			 \return vector of names
 			 **********/
-			virtual const std::vector<SVString> getPPQVariableNames() const = 0;
+			virtual std::vector<SVString> getPPQVariableNames() const = 0;
 			/**********
 			 Get the tool set related to the formula
 			 \return point to the tool set.
@@ -67,7 +67,7 @@ namespace Seidenader
 			 \param result [out] return the result of the equation, if the validation is successfully.
 			 \return return the position of the failure. If the validation is successful, the value will be "validateSuccessful".
 			 **********/
-			virtual int validateEquation(const SVString equationString, double& result) const = 0;
+			virtual int validateEquation(const SVString &equationString, double& result) const = 0;
 			/**********
 			 Validate a string and if successful it set the string to the task object..
 			 \param equationString [in] the equation string.
@@ -75,7 +75,7 @@ namespace Seidenader
 			 \return return the position of the failure. If the validation and set is successful, the value will be "validateSuccessful".
 														 If the validation is successful, but the set is not, the value will be "setFailed".
 			 **********/
-			virtual int validateAndSetEquation(const SVString equationString, double& result) = 0;
+			virtual int validateAndSetEquation(const SVString &equationString, double& result) = 0;
 			
 #pragma endregion
 
@@ -95,6 +95,17 @@ namespace Seidenader
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\IFormulaController.h_v  $
+ * 
+ *    Rev 1.1   13 May 2014 04:48:44   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  877
+ * SCR Title:  Add undo-button to formula and conditional pages
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   removed const for return value of method getPPQVariableNames
+ * used reference for parameter of method validateEquation and validateAndSetEquation 
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   14 Jan 2014 12:04:02   bwalter
  * Project:  SVObserver

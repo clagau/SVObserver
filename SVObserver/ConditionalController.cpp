@@ -5,8 +5,8 @@
 //* .Module Name     : ConditionalController
 //* .File Name       : $Workfile:   ConditionalController.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   01 Feb 2014 10:16:26  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   13 May 2014 04:45:08  $
 //******************************************************************************
 //Description:  ConditionalController is the class to get/set and
 //              validate equation objects inside SVObserver.
@@ -22,23 +22,22 @@
 #include "SVToolSet.h"
 #pragma endregion
 
-using std::vector;
-
 namespace Seidenader
 {
 	namespace SVObserver
 	{
 #pragma region Constructor
 		ConditionalController::ConditionalController( SVTaskObjectClass& pObject ) : FormulaController()
+			, m_pTool(nullptr)
+			, m_pIPDoc(nullptr)
 		{
-			ConditionalController();
 			setTaskObject( pObject );
 		}
 
 		ConditionalController::ConditionalController() : FormulaController()
+			, m_pTool(nullptr)
+			, m_pIPDoc(nullptr)
 		{
-			m_pTool = nullptr;
-			m_pIPDoc = nullptr;
 		}
 #pragma endregion
 
@@ -47,15 +46,15 @@ namespace Seidenader
 #pragma region virtual Methods IFormulaController
 		HRESULT ConditionalController::isToolAndEquationEnabled(bool& toolEnabled, bool& equationEnabled) const
 		{
-			if (m_pEquation != nullptr)
+			if ( nullptr != m_pEquation )
 			{
 				equationEnabled = (TRUE == m_pEquation->IsEnabled());
-				if (m_pTool != nullptr)
+				if ( nullptr != m_pTool )
 				{
 					toolEnabled = m_pTool->IsEnabled();		
 					return S_OK;
 				}
-				else if (m_pToolSet != nullptr)
+				else if ( nullptr != m_pToolSet )
 				{
 					toolEnabled = m_pToolSet->IsEnabled();
 					return S_OK;
@@ -68,29 +67,29 @@ namespace Seidenader
 		HRESULT ConditionalController::setToolAndEquationEnabled(bool toolEnabled, bool equationEnabled)
 		{
 			HRESULT retVal = S_FALSE;
-			if (m_pInspection != nullptr && m_pEquation != nullptr)
+			if ( nullptr != m_pInspection && nullptr != m_pEquation )
 			{
 				// Enable/Disable Tool or ToolSet
-				if( m_pTool != nullptr )
+				if( nullptr != m_pTool )
 				{
 					retVal = m_objectValueInterface.AddInputRequest( &( m_pTool->enabled ), toolEnabled );
 				}
-				else if( m_pToolSet != nullptr )
+				else if( nullptr != m_pToolSet )
 				{
 					retVal = m_objectValueInterface.AddInputRequest( &( m_pToolSet->enabled ), toolEnabled );
 				}
 
-				if( retVal == S_OK )
+				if( S_OK == retVal )
 				{
 					retVal = m_objectValueInterface.AddInputRequest( &( m_pEquation->enabled ), equationEnabled );
 				}
 
-				if( retVal == S_OK )
+				if( S_OK == retVal )
 				{
 					retVal = m_objectValueInterface.AddInputRequestMarker();
 				}
 
-				if( retVal == S_OK )
+				if( S_OK == retVal )
 				{
 					retVal = m_objectValueInterface.RunOnce( m_pTool );
 				}
@@ -113,7 +112,7 @@ namespace Seidenader
 			SVObjectTypeInfoStruct info;
 			info.ObjectType = SVEquationObjectType;
 			info.SubType = SVConditionalObjectType;
-			if (m_pTool != nullptr)
+			if ( nullptr != m_pTool )
 			{
 				pCondition = (SVEquationClass*) ::SVSendMessage( m_pTool, SVM_GETFIRST_OBJECT | SVM_NOTIFY_ONLY_FRIENDS, NULL, reinterpret_cast<LONG_PTR>( &info ) );
 			}
@@ -123,7 +122,7 @@ namespace Seidenader
 			}
 			setEquation( pCondition );
 
-			if( m_pInspection != nullptr )
+			if( nullptr != m_pInspection )
 			{
 				m_pIPDoc = SVObjectManagerClass::Instance().GetIPDoc( m_pInspection->GetUniqueObjectID() );
 			}
@@ -145,6 +144,18 @@ namespace Seidenader
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\ConditionalController.cpp_v  $
+ * 
+ *    Rev 1.2   13 May 2014 04:45:08   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  877
+ * SCR Title:  Add undo-button to formula and conditional pages
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   fixed use of the constructor
+ * changed order of if-comparisons 
+ * removed using
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   01 Feb 2014 10:16:26   tbair
  * Project:  SVObserver

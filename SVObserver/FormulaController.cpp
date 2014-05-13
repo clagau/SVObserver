@@ -5,8 +5,8 @@
 //* .Module Name     : FormulaController
 //* .File Name       : $Workfile:   FormulaController.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   01 Feb 2014 10:16:28  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   13 May 2014 04:47:40  $
 //******************************************************************************
 //Description:  FormulaController is the class to get/set and
 //              validate equation objects inside SVObserver.
@@ -21,25 +21,27 @@
 #include "SVToolSet.h"
 #pragma endregion
 
-using std::vector;
-
 namespace Seidenader
 {
 	namespace SVObserver
 	{
 #pragma region Constructor
-		FormulaController::FormulaController( SVTaskObjectClass& pObject )
+		FormulaController::FormulaController( SVTaskObjectClass& pObject ) 
+				: m_pInspection(nullptr) 
+				, m_pToolSet(nullptr)
+				, m_pEquation (nullptr)
+				, m_pEquationStruct (nullptr)
 		{
-			FormulaController();
 			setTaskObject( pObject );
 		}
 
 		FormulaController::FormulaController( )
+			: m_pInspection(nullptr) 
+			, m_pToolSet(nullptr)
+			, m_pEquation (nullptr)
+			, m_pEquationStruct (nullptr)
+
 		{
-			m_pInspection = nullptr;
-			m_pToolSet = nullptr;
-			m_pEquation = nullptr;
-			m_pEquationStruct = nullptr;
 		}
 #pragma endregion
 
@@ -49,17 +51,17 @@ namespace Seidenader
 		{
 			SVString equationText("");
 			ASSERT( m_pEquationStruct );
-			if( m_pEquationStruct != nullptr )
+			if( nullptr != m_pEquationStruct )
 			{
 				m_pEquationStruct->GetEquationText( equationText );
 			}
 			return equationText;
 		}
 
-		const std::vector<SVString> FormulaController::getPPQVariableNames() const
+		std::vector<SVString> FormulaController::getPPQVariableNames() const
 		{
-			vector<SVString> retVals;
-			if (m_pInspection != nullptr)
+			std::vector<SVString> retVals;
+			if ( nullptr != m_pInspection )
 			{
 				for( size_t i = 0; i < m_pInspection->m_PPQInputs.size(); i++ )
 				{	
@@ -83,7 +85,7 @@ namespace Seidenader
 
 		HRESULT FormulaController::isToolAndEquationEnabled(bool& toolEnabled, bool& equationEnabled) const
 		{
-			if (m_pToolSet != nullptr && m_pEquation != nullptr)
+			if ( nullptr != m_pToolSet && nullptr != m_pEquation )
 			{
 				toolEnabled = m_pToolSet->IsEnabled();
 				equationEnabled = (TRUE == m_pEquation->IsEnabled());
@@ -117,8 +119,8 @@ namespace Seidenader
 			setEquation( pEquation );
 		}
 
-		int FormulaController::validateEquation( const SVString equationString, double& result ) const
-		{
+		int FormulaController::validateEquation( const SVString &equationString, double& result ) const
+{
 			int retValue = validateSuccessful;
 			SVString oldString("");
 			//save old string
@@ -140,19 +142,19 @@ namespace Seidenader
 			return retValue;
 		}
 
-		int FormulaController::validateAndSetEquation( const SVString equationString, double& result )
+		int FormulaController::validateAndSetEquation( const SVString &equationString, double& result )
 		{
 			int retValue = validateEquation( equationString, result);
 
-			if (retValue == validateSuccessful)
+			if ( validateSuccessful == retValue )
 			{
 				//set new equation text and reset all objects for using the new value
 				m_pEquationStruct->SetEquationText(equationString);
 				SVObjectClass* object = dynamic_cast<SVObjectClass*>(m_pEquation->GetTool());
-				if( object != nullptr )
+				if( nullptr != object )
 				{
 					LONG_PTR l_dwRet = ::SVSendMessage( object, SVM_RESET_ALL_OBJECTS & ~SVM_NOTIFY_FRIENDS , 0, 0); // Do not reset friends because they may be invalid.
-					if( l_dwRet != SVMR_SUCCESS)
+					if( SVMR_SUCCESS != l_dwRet )
 					{
 						return setFailed;
 					}
@@ -167,7 +169,7 @@ namespace Seidenader
 		void FormulaController::setEquation( SVEquationClass* pEquation )
 		{
 			m_pEquation = pEquation;
-			if( m_pEquation != nullptr )
+			if( nullptr != m_pEquation )
 			{
 				m_pEquationStruct = m_pEquation->GetEquationStruct();
 			}
@@ -189,6 +191,20 @@ namespace Seidenader
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\FormulaController.cpp_v  $
+ * 
+ *    Rev 1.2   13 May 2014 04:47:40   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  877
+ * SCR Title:  Add undo-button to formula and conditional pages
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   fixed use of the constructor
+ * changed order of if-comparisons 
+ * removed using
+ * removed const for return value of method getPPQVariableNames
+ * used reference for parameter of method validateEquation and validateAndSetEquation
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   01 Feb 2014 10:16:28   tbair
  * Project:  SVObserver
