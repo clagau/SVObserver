@@ -5,8 +5,8 @@
 //* .Module Name     : SVTADlgTranslationShiftPage
 //* .File Name       : $Workfile:   SVTADlgTranslationShiftPage.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.3  $
-//* .Check In Date   : $Date:   07 Apr 2014 14:05:30  $
+//* .Current Version : $Revision:   1.4  $
+//* .Check In Date   : $Date:   15 May 2014 13:07:16  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -89,12 +89,11 @@ BOOL SVTADlgTranslationShiftPageClass::OnInitDialog()
 
 		// Get Evaluate Object for the X coordinate...
 		evaluateObjectInfo.SubType = SVEvaluateTranslationXObjectType;		
-		pEvaluateTranslationX = (SVEvaluateClass*) ::SVSendMessage(pTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>(&evaluateObjectInfo));
-
+		pEvaluateTranslationX = reinterpret_cast<SVEvaluateClass*>(::SVSendMessage(pTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&evaluateObjectInfo)));
 		
 		// Get Evaluate Object for the Y coordinate...
 		evaluateObjectInfo.SubType = SVEvaluateTranslationYObjectType;
-		pEvaluateTranslationY = (SVEvaluateClass*) ::SVSendMessage(pTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>(&evaluateObjectInfo));
+		pEvaluateTranslationY = reinterpret_cast<SVEvaluateClass*>(::SVSendMessage(pTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&evaluateObjectInfo)));
 
 		SVShiftTool* l_pTool = NULL;
 
@@ -487,6 +486,16 @@ void SVTADlgTranslationShiftPageClass::OnBnClickedChkEnableSourceImageExtents()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVTADlgTranslationShiftPage.cpp_v  $
+ * 
+ *    Rev 1.4   15 May 2014 13:07:16   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Changed SendMessage to use proper type cast of DWORD_PTR.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   07 Apr 2014 14:05:30   tbair
  * Project:  SVObserver

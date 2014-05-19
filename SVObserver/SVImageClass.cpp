@@ -5,8 +5,8 @@
 //* .Module Name     : SVImage
 //* .File Name       : $Workfile:   SVImageClass.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.6  $
-//* .Check In Date   : $Date:   01 Feb 2014 10:42:30  $
+//* .Current Version : $Revision:   1.7  $
+//* .Check In Date   : $Date:   15 May 2014 12:44:04  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -1836,16 +1836,16 @@ SVImageClass* SVImageClass::GetRootImage()
 	return pRootImage;
 }
 
-LONG_PTR SVImageClass::processMessage( DWORD DwMessageID, LONG_PTR DwMessageValue, LONG_PTR DwMessageContext )
+DWORD_PTR SVImageClass::processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext )
 {
-	LONG_PTR DwResult = NULL;
+	DWORD_PTR DwResult = NULL;
 
 	DWORD dwPureMessageID = DwMessageID & SVM_PURE_MESSAGE;
 
 	switch( dwPureMessageID )
 	{
 	case SVMSGID_GETFIRST_IMAGE_INFO:
-		return ( LONG_PTR ) &m_ImageInfo;
+		return reinterpret_cast<DWORD_PTR>( &m_ImageInfo );
 
 	case SVMSGID_RESET_ALL_OBJECTS:
 		{
@@ -2758,6 +2758,16 @@ HRESULT SVImageClass::UnregisterAsSubObject()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVImageClass.cpp_v  $
+ * 
+ *    Rev 1.7   15 May 2014 12:44:04   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Revised processMessage to use DWORD_PTR
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.6   01 Feb 2014 10:42:30   tbair
  * Project:  SVObserver

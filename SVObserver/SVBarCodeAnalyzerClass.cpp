@@ -5,8 +5,8 @@
 //* .Module Name     : SVBarCodeAnalyzerClass
 //* .File Name       : $Workfile:   SVBarCodeAnalyzerClass.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.9  $
-//* .Check In Date   : $Date:   01 Feb 2014 10:16:34  $
+//* .Current Version : $Revision:   1.10  $
+//* .Check In Date   : $Date:   15 May 2014 10:19:38  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -636,9 +636,9 @@ BOOL SVBarCodeAnalyzerClass::SaveRegExpression()
 	return TRUE;
 }
 
-LONG_PTR SVBarCodeAnalyzerClass::processMessage(DWORD DwMessageID, LONG_PTR DwMessageValue, LONG_PTR DwMessageContext)
+DWORD_PTR SVBarCodeAnalyzerClass::processMessage(DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext)
 {
-	LONG_PTR dwResult = 0L;
+	DWORD_PTR dwResult = 0;
 
 	switch (DwMessageID & SVM_PURE_MESSAGE)
 	{
@@ -702,6 +702,16 @@ HRESULT SVBarCodeAnalyzerClass::ResetObject()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVBarCodeAnalyzerClass.cpp_v  $
+ * 
+ *    Rev 1.10   15 May 2014 10:19:38   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Revised processMessage to use DWORD_PTR
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.9   01 Feb 2014 10:16:34   tbair
  * Project:  SVObserver

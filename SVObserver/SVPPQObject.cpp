@@ -5,8 +5,8 @@
 //* .Module Name     : SVPPQObject
 //* .File Name       : $Workfile:   SVPPQObject.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.18  $
-//* .Check In Date   : $Date:   28 Apr 2014 15:37:08  $
+//* .Current Version : $Revision:   1.19  $
+//* .Check In Date   : $Date:   15 May 2014 11:56:14  $
 //******************************************************************************
 
 #pragma region Includes
@@ -1473,7 +1473,7 @@ HRESULT SVPPQObject::GoOnline()
 
 	if( SVPPQNextTriggerMode != m_oOutputMode || m_lOutputDelay > 0 )
 	{
-		m_uOutputTimer = ::timeSetEvent( 1, 0, SVPPQObject::OutputTimerCallback, (DWORD)this,
+		m_uOutputTimer = ::timeSetEvent( 1, 0, SVPPQObject::OutputTimerCallback, reinterpret_cast<DWORD_PTR>(this),
 			TIME_PERIODIC | TIME_CALLBACK_FUNCTION );
 	}// end if
 
@@ -3535,9 +3535,9 @@ BOOL SVPPQObject::FinishTrigger( void *pCaller, SVTriggerInfoStruct& p_rTriggerI
 	return l_Status;
 }
 
-LONG_PTR SVPPQObject::processMessage( DWORD DwMessageID, LONG_PTR DwMessageValue, LONG_PTR DwMessageContext )
+DWORD_PTR SVPPQObject::processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext )
 {
-	LONG_PTR DwResult = NULL;
+	DWORD_PTR DwResult = NULL;
 	// Try to process message by yourself...
 
 	DWORD dwPureMessageID = DwMessageID & SVM_PURE_MESSAGE;
@@ -4736,6 +4736,16 @@ void SVPPQObject::SVPPQTracking::IncrementTimeCount( const SVString& p_rName, si
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVPPQObject.cpp_v  $
+ * 
+ *    Rev 1.19   15 May 2014 11:56:14   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Changed processMessage signature to use DWORD_PTR.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.18   28 Apr 2014 15:37:08   sjones
  * Project:  SVObserver

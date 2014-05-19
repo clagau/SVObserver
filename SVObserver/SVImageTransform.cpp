@@ -5,8 +5,8 @@
 //* .Module Name     : SVImageTransform
 //* .File Name       : $Workfile:   SVImageTransform.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.3  $
-//* .Check In Date   : $Date:   01 Feb 2014 10:48:52  $
+//* .Current Version : $Revision:   1.4  $
+//* .Check In Date   : $Date:   15 May 2014 12:44:08  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -318,9 +318,9 @@ BOOL SVImageTransformClass::onRun( SVRunStatusClass& runStatus )
 	return bRetVal;
 }
 
-LONG_PTR SVImageTransformClass::processMessage( DWORD DwMessageID, LONG_PTR DwMessageValue, LONG_PTR DwMessageContext )
+DWORD_PTR SVImageTransformClass::processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext )
 {
-	LONG_PTR DwResult = NULL;
+	DWORD_PTR DwResult = NULL;
 
 	// Try to process message by yourself...
 	DWORD dwPureMessageID = DwMessageID & SVM_PURE_MESSAGE;
@@ -508,6 +508,16 @@ HRESULT SVImageTransformClass::CollectInputImageNames( SVRunStatusClass& runStat
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVImageTransform.cpp_v  $
+ * 
+ *    Rev 1.4   15 May 2014 12:44:08   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Revised processMessage to use DWORD_PTR
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   01 Feb 2014 10:48:52   tbair
  * Project:  SVObserver

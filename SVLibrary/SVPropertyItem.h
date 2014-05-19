@@ -5,8 +5,8 @@
 // * .Module Name     : SVPropertyItem.h
 // * .File Name       : $Workfile:   SVPropertyItem.h  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.0  $
-// * .Check In Date   : $Date:   22 Apr 2013 13:46:32  $
+// * .Current Version : $Revision:   1.1  $
+// * .Check In Date   : $Date:   15 May 2014 09:29:00  $
 // ******************************************************************************
 
 #if !defined(AFX_PROPERTYITEM_H__3717E417_70F3_4A34_A541_A13BA22FFD22__INCLUDED_)
@@ -36,13 +36,13 @@ public:
 
 	// Attributes
 	inline void SetName(LPCTSTR lpszName) { m_strName = lpszName; }
-	inline void SetItemData(DWORD dwData) { m_lParam = (LPARAM)dwData; }
+	inline void SetItemData(DWORD_PTR dwData) { m_lParam = (LPARAM)dwData; }
 	inline void SetItemDataPtr(LPVOID pData) { m_lParam = (LPARAM)pData; }
 
 	// Operations
 	inline BOOL    IsEditing(void) const { return m_bEditing; }
 	inline CString GetName(void) const { return m_strName; }
-	inline DWORD   GetItemData(void) const { return (DWORD)m_lParam; }
+	inline DWORD_PTR GetItemData(void) const { return static_cast<DWORD_PTR>(m_lParam); }
 	inline LPVOID  GetItemDataPtr(void) const { return (LPVOID)m_lParam; }
 
 protected:
@@ -69,6 +69,16 @@ private:
 // ******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVLibrary\SVPropertyItem.h_v  $
+ * 
+ *    Rev 1.1   15 May 2014 09:29:00   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Revised SetItemData and GetItemData to use DWORD_PTR instead of DWORD
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   22 Apr 2013 13:46:32   bWalter
  * Project:  SVObserver

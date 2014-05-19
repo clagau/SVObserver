@@ -5,8 +5,8 @@
 //* .Module Name     : SVToolAdjustmentDialogTwoImagePage
 //* .File Name       : $Workfile:   SVToolAdjustmentDialogTwoImagePage.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   01 Feb 2014 12:22:08  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   15 May 2014 14:37:58  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -253,27 +253,27 @@ BOOL SVToolAdjustmentDialogTwoImagePageClass::OnInitDialog()
 			SVObjectTypeInfoStruct operatorObjectInfo;
 			operatorObjectInfo.ObjectType = SVLongValueObjectType;
 			operatorObjectInfo.EmbeddedID = SVArithmeticOperatorObjectGuid;
-			pArithmeticOperator = ( SVLongValueObjectClass* ) ::SVSendMessage( pTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>(&operatorObjectInfo) );
+			pArithmeticOperator = reinterpret_cast<SVLongValueObjectClass*>(::SVSendMessage( pTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&operatorObjectInfo) ));
 			// Fill Arithmetic Combo...
-			operatorCtrl.SetItemData( operatorCtrl.AddString( _T( "AND" ) ), ( DWORD ) SVImageAnd );
-			operatorCtrl.SetItemData( operatorCtrl.AddString( _T( "OR" ) ),  ( DWORD ) SVImageOr );	
-			operatorCtrl.SetItemData( operatorCtrl.AddString( _T( "XOR" ) ), ( DWORD ) SVImageXOr );	
-			operatorCtrl.SetItemData( operatorCtrl.AddString( _T( "NOR" ) ), ( DWORD ) SVImageNor );	
-			operatorCtrl.SetItemData( operatorCtrl.AddString( _T( "XNOR" ) ), ( DWORD ) SVImageXNor );	
-			operatorCtrl.SetItemData( operatorCtrl.AddString( _T( "NAND" ) ), ( DWORD ) SVImageNand );	
-			operatorCtrl.SetItemData( operatorCtrl.AddString( _T( "ADD" ) ), ( DWORD ) SVImageAddSaturation );	
-			operatorCtrl.SetItemData( operatorCtrl.AddString( _T( "SUB" ) ), ( DWORD ) SVImageSubSaturation );	
-			operatorCtrl.SetItemData( operatorCtrl.AddString( _T( "MULT" ) ), ( DWORD ) SVImageMulSaturation );
-			operatorCtrl.SetItemData( operatorCtrl.AddString( _T( "DIV" ) ), ( DWORD ) SVImageDiv );
-			operatorCtrl.SetItemData( operatorCtrl.AddString( _T( "MIN" ) ), ( DWORD ) SVImageMin );	
-			operatorCtrl.SetItemData( operatorCtrl.AddString( _T( "MAX" ) ), ( DWORD ) SVImageMax );	
-			operatorCtrl.SetItemData( operatorCtrl.AddString( _T( "PASS" ) ), ( DWORD ) SVImagePass );	
+			operatorCtrl.SetItemData( operatorCtrl.AddString( _T( "AND" ) ), static_cast<DWORD_PTR>(SVImageAnd) );
+			operatorCtrl.SetItemData( operatorCtrl.AddString( _T( "OR" ) ),  static_cast<DWORD_PTR>(SVImageOr) );	
+			operatorCtrl.SetItemData( operatorCtrl.AddString( _T( "XOR" ) ), static_cast<DWORD_PTR>(SVImageXOr) );	
+			operatorCtrl.SetItemData( operatorCtrl.AddString( _T( "NOR" ) ), static_cast<DWORD_PTR>(SVImageNor) );	
+			operatorCtrl.SetItemData( operatorCtrl.AddString( _T( "XNOR" ) ), static_cast<DWORD_PTR>(SVImageXNor) );	
+			operatorCtrl.SetItemData( operatorCtrl.AddString( _T( "NAND" ) ), static_cast<DWORD_PTR>(SVImageNand) );	
+			operatorCtrl.SetItemData( operatorCtrl.AddString( _T( "ADD" ) ), static_cast<DWORD_PTR>(SVImageAddSaturation) );	
+			operatorCtrl.SetItemData( operatorCtrl.AddString( _T( "SUB" ) ), static_cast<DWORD_PTR>(SVImageSubSaturation) );	
+			operatorCtrl.SetItemData( operatorCtrl.AddString( _T( "MULT" ) ), static_cast<DWORD_PTR>(SVImageMulSaturation) );
+			operatorCtrl.SetItemData( operatorCtrl.AddString( _T( "DIV" ) ), static_cast<DWORD_PTR>(SVImageDiv) );
+			operatorCtrl.SetItemData( operatorCtrl.AddString( _T( "MIN" ) ), static_cast<DWORD_PTR>(SVImageMin) );	
+			operatorCtrl.SetItemData( operatorCtrl.AddString( _T( "MAX" ) ), static_cast<DWORD_PTR>(SVImageMax) );	
+			operatorCtrl.SetItemData( operatorCtrl.AddString( _T( "PASS" ) ), static_cast<DWORD_PTR>(SVImagePass) );	
 			
 			// Special Image Operator... ( not defined by MIL ! )
-			operatorCtrl.SetItemData( operatorCtrl.AddString( _T( "AVERAGE" ) ), ( DWORD ) SV_IMGOP_AVERAGE );	
-			operatorCtrl.SetItemData( operatorCtrl.AddString( _T( "DOUBLE HEIGHT" ) ), ( DWORD ) SV_IMGOP_DOUBLE_HEIGHT );	
-			operatorCtrl.SetItemData( operatorCtrl.AddString( _T( "FLIP VERTICAL" ) ), ( DWORD ) SV_IMGOP_FLIP_VERTICAL );	
-			operatorCtrl.SetItemData( operatorCtrl.AddString( _T( "FLIP HORIZONTAL" ) ), ( DWORD ) SV_IMGOP_FLIP_HORIZONTAL );	
+			operatorCtrl.SetItemData( operatorCtrl.AddString( _T( "AVERAGE" ) ), static_cast<DWORD_PTR>(SV_IMGOP_AVERAGE) );	
+			operatorCtrl.SetItemData( operatorCtrl.AddString( _T( "DOUBLE HEIGHT" ) ), static_cast<DWORD_PTR>(SV_IMGOP_DOUBLE_HEIGHT) );	
+			operatorCtrl.SetItemData( operatorCtrl.AddString( _T( "FLIP VERTICAL" ) ), static_cast<DWORD_PTR>(SV_IMGOP_FLIP_VERTICAL) );	
+			operatorCtrl.SetItemData( operatorCtrl.AddString( _T( "FLIP HORIZONTAL" ) ), static_cast<DWORD_PTR>(SV_IMGOP_FLIP_HORIZONTAL) );
 
 			// Set Default Operator...
 			long lOperator = 0;
@@ -358,6 +358,17 @@ void SVToolAdjustmentDialogTwoImagePageClass::OnSelchangeOperatorCombo()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVToolAdjustmentDialogTwoImagePage.cpp_v  $
+ * 
+ *    Rev 1.2   15 May 2014 14:37:58   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Revised SVSendMessage to use DWORD_PTR
+ * Revised SetItemData to use DWORD_PTR
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   01 Feb 2014 12:22:08   tbair
  * Project:  SVObserver

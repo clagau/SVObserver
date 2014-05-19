@@ -5,8 +5,8 @@
 //* .Module Name     : SVWindowTool
 //* .File Name       : $Workfile:   SVWindowTool.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.5  $
-//* .Check In Date   : $Date:   01 Feb 2014 12:26:10  $
+//* .Current Version : $Revision:   1.6  $
+//* .Check In Date   : $Date:   15 May 2014 15:03:02  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -165,7 +165,7 @@ BOOL SVWindowToolClass::SetDefaultFormulas()
 	SVObjectTypeInfoStruct lutEquationInfo;
 	lutEquationInfo.ObjectType	= SVEquationObjectType;
 	lutEquationInfo.SubType		= SVLUTEquationObjectType;
-	SVLUTEquationClass* pLUTEquation = ( SVLUTEquationClass* ) ::SVSendMessage( this, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>(&lutEquationInfo) );
+	SVLUTEquationClass* pLUTEquation = reinterpret_cast<SVLUTEquationClass*>(::SVSendMessage( this, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&lutEquationInfo) ));
 	if( pLUTEquation )
 	{
 		bRetVal = pLUTEquation->SetDefaultFormula() && bRetVal;
@@ -267,6 +267,16 @@ BOOL SVWindowToolClass::onRun( SVRunStatusClass& RRunStatus )
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVWindowTool.cpp_v  $
+ * 
+ *    Rev 1.6   15 May 2014 15:03:02   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Revised SVSendMessage to use DWORD_PTR
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.5   01 Feb 2014 12:26:10   tbair
  * Project:  SVObserver

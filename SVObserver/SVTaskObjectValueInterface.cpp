@@ -5,8 +5,8 @@
 //* .Module Name     : SVTaskObjectValueInterface
 //* .File Name       : $Workfile:   SVTaskObjectValueInterface.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   01 Feb 2014 12:18:38  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   15 May 2014 13:07:10  $
 //******************************************************************************
 
 #include "StdAfx.h"
@@ -98,7 +98,7 @@ HRESULT SVTaskObjectValueInterface::AddInputRequest( const SVGUID& p_rTaskId, co
 	SVObjectTypeInfoStruct objectInfo;
 	objectInfo.EmbeddedID = p_rEmbeddedId;
 
-	SVObjectClass* l_pObject = ( SVObjectClass* )::SVSendMessage( p_rTaskId, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>(&objectInfo) );
+	SVObjectClass* l_pObject = reinterpret_cast<SVObjectClass*>(::SVSendMessage( p_rTaskId, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&objectInfo) ));
 
 	if( l_pObject != NULL )
 	{
@@ -115,7 +115,7 @@ HRESULT SVTaskObjectValueInterface::AddInputRequest( const SVGUID& p_rTaskId, co
 	SVObjectTypeInfoStruct objectInfo;
 	objectInfo.EmbeddedID = p_rEmbeddedId;
 
-	SVObjectClass* l_pObject = ( SVObjectClass* )::SVSendMessage( p_rTaskId, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>(&objectInfo) );
+	SVObjectClass* l_pObject = reinterpret_cast<SVObjectClass*>(::SVSendMessage( p_rTaskId, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&objectInfo) ));
 
 	if( l_pObject != NULL )
 	{
@@ -196,7 +196,7 @@ HRESULT SVTaskObjectValueInterface::GetValue( const SVGUID& p_rTaskId, const SVG
 	SVObjectTypeInfoStruct objectInfo;
 	objectInfo.EmbeddedID = p_rEmbeddedId;
 
-	SVObjectClass* l_pObject = ( SVObjectClass* )::SVSendMessage( p_rTaskId, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>(&objectInfo) );
+	SVObjectClass* l_pObject = reinterpret_cast<SVObjectClass*>(::SVSendMessage( p_rTaskId, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&objectInfo) ));
 
 	if( l_pObject != NULL )
 	{
@@ -252,6 +252,16 @@ HRESULT SVTaskObjectValueInterface::SetObjectValue( const SVGUID& p_rObjectId, c
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVTaskObjectValueInterface.cpp_v  $
+ * 
+ *    Rev 1.2   15 May 2014 13:07:10   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Changed SendMessage to use proper type cast of DWORD_PTR.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   01 Feb 2014 12:18:38   tbair
  * Project:  SVObserver

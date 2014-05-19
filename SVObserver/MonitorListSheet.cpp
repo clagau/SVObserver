@@ -5,13 +5,16 @@
 //* .Module Name     : MonitorListSheet
 //* .File Name       : $Workfile:   MonitorListSheet.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   17 Apr 2014 16:24:04  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   16 May 2014 14:47:12  $
 //******************************************************************************
 
 #pragma region Includes
 #include "stdafx.h"
+#include <set>
 #include <algorithm>
+#include <boost/function.hpp>
+#include <boost/assign/list_of.hpp>
 #include "resource.h"
 #include "MonitorListSheet.h"
 #include "ISVPropertyPageDialog.h"
@@ -30,6 +33,35 @@ static char THIS_FILE[] = __FILE__;
 
 static const CString ValuesTag(_T("Values"));
 static const CString ImagesTag(_T("Images"));
+
+typedef boost::function<bool(const SVObjectTypeInfoStruct& info)> AllowedFunc;
+
+static bool AllowAll(const SVObjectTypeInfoStruct& info)
+{
+	return true;
+}
+
+static bool AllowOnly(const SVObjectTypeInfoStruct& info)
+{
+	typedef std::set<SVObjectTypeEnum> ObjectTypes;
+	bool bRetVal = false;
+	static ObjectTypes objectTypeList = boost::assign::list_of<>
+	(SVDWordValueObjectType)
+	(SVLongValueObjectType)
+	(SVDoubleValueObjectType)
+	(SVBoolValueObjectType)
+	(SVByteValueObjectType)
+//	(SVEnumValueObjectType)
+	(SVInt64ValueObjectType)
+	;
+
+	ObjectTypes::const_iterator it = objectTypeList.find(info.ObjectType);
+	if (it != objectTypeList.end())
+	{
+		bRetVal = true;
+	}
+	return bRetVal;
+}
 
 static SVString GetObjectName(const SVGUID& rGuid)
 {
@@ -67,7 +99,7 @@ static void SelectItem(NameSelectionList& rList, const SVString& name)
 	}
 }
 
-static NameSelectionList BuildSelectionList(const SVString& PPQName, const MonitoredObjectList& rList, bool bImages=false)
+static NameSelectionList BuildSelectionList(const SVString& PPQName, const MonitoredObjectList& rList, AllowedFunc Allowed, bool bImages=false)
 {
 	NameSelectionList nameList;
 
@@ -99,8 +131,11 @@ static NameSelectionList BuildSelectionList(const SVString& PPQName, const Monit
 							{
 								// Get Object Name
 								SVObjectReference objectRef = pInfo->GetObjectReference();
-								SVString name = objectRef.GetCompleteObjectName();
-								nameList.push_back(std::make_pair(name, false));
+								if (Allowed(pInfo->ObjectTypeInfo))
+								{
+									SVString name = objectRef.GetCompleteObjectName();
+									nameList.push_back(std::make_pair(name, false));
+								}
 							}
 						}
 					}
@@ -180,11 +215,11 @@ HRESULT MonitorListSheet::CreatePages(bool bImageTab)
 		case PRODUCT_OBJECT_LIST:
 		{
 			//SetDialogName = Product Object List
-			const NameSelectionList& valueSelectionList = BuildSelectionList(m_MonitorList.GetPPQName(), m_MonitorList.GetProductValuesList());
+			const NameSelectionList& valueSelectionList = BuildSelectionList(m_MonitorList.GetPPQName(), m_MonitorList.GetProductValuesList(), AllowAll);
 			MonitorListValuesPage* pValuesDlg = new MonitorListValuesPage(valueSelectionList, this, ValuesTag);
 			AddPage(pValuesDlg);
 
-			const NameSelectionList& imageSelectionList = BuildSelectionList(m_MonitorList.GetPPQName(), m_MonitorList.GetProductImagesList(), true);
+			const NameSelectionList& imageSelectionList = BuildSelectionList(m_MonitorList.GetPPQName(), m_MonitorList.GetProductImagesList(), AllowAll, true);
 			MonitorListImagesPage* pImagesDlg = new MonitorListImagesPage(imageSelectionList, this, ImagesTag);
 			AddPage(pImagesDlg);
 
@@ -194,7 +229,7 @@ HRESULT MonitorListSheet::CreatePages(bool bImageTab)
 		case FAIL_STATUS_LIST:
 		{
 			//SetDialogName = Fail Status List
-			const NameSelectionList& valueSelectionList = BuildSelectionList(m_MonitorList.GetPPQName(), m_MonitorList.GetFailStatusList());
+			const NameSelectionList& valueSelectionList = BuildSelectionList(m_MonitorList.GetPPQName(), m_MonitorList.GetFailStatusList(), AllowAll);
 			MonitorListValuesPage* pValuesDlg = new MonitorListValuesPage(valueSelectionList, this, ValuesTag);
 			AddPage(pValuesDlg);
 			break;
@@ -202,7 +237,7 @@ HRESULT MonitorListSheet::CreatePages(bool bImageTab)
 		case REJECT_CONDITION_LIST:
 		{
 			//SetDialogName = Reject Condition List
-			const NameSelectionList& valueSelectionList = BuildSelectionList(m_MonitorList.GetPPQName(), m_MonitorList.GetRejectConditionList());
+			const NameSelectionList& valueSelectionList = BuildSelectionList(m_MonitorList.GetPPQName(), m_MonitorList.GetRejectConditionList(), AllowOnly);
 			MonitorListValuesPage* pValuesDlg = new MonitorListValuesPage(valueSelectionList, this, ValuesTag);
 			AddPage(pValuesDlg);
 			break;
@@ -371,7 +406,19 @@ void MonitorListSheet::DestroyPages()
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\MonitorListSheet.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\MonitorListSheet.cpp_v  $
+ * 
+ *    Rev 1.1   16 May 2014 14:47:12   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Revised BuildSelectionList to use a functor to determine if an item should be added.
+ * Revised CreatePages to restrict selection for the RejectConditionList.
+ * Added AllowAll and AllowOnly functions.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   17 Apr 2014 16:24:04   ryoho
  * Project:  SVObserver

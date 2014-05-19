@@ -5,8 +5,8 @@
 //* .Module Name     : SVIOController
 //* .File Name       : $Workfile:   SVIOController.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.8  $
-//* .Check In Date   : $Date:   28 Apr 2014 14:22:12  $
+//* .Current Version : $Revision:   1.9  $
+//* .Check In Date   : $Date:   15 May 2014 12:50:00  $
 //******************************************************************************
 
 #ifndef SVIOCONTROLLER_H
@@ -44,7 +44,7 @@ public:
 	virtual void ResetName();
 	virtual void SetName( const CString& StrString );
 
-	virtual LONG_PTR processMessage( DWORD DwMessageID, LONG_PTR DwMessageValue, LONG_PTR DwMessageContext );
+	virtual DWORD_PTR processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext );
 
 	virtual HRESULT ResetObject();
 	virtual BOOL OnValidate();
@@ -125,6 +125,16 @@ private:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVIOController.h_v  $
+ * 
+ *    Rev 1.9   15 May 2014 12:50:00   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Revised processMessage to use DWORD_PTR
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.8   28 Apr 2014 14:22:12   sjones
  * Project:  SVObserver

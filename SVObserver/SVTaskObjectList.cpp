@@ -5,8 +5,8 @@
 //* .Module Name     : SVTaskObjectList
 //* .File Name       : $Workfile:   SVTaskObjectList.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.5  $
-//* .Check In Date   : $Date:   05 Feb 2014 09:35:18  $
+//* .Current Version : $Revision:   1.6  $
+//* .Check In Date   : $Date:   15 May 2014 13:10:52  $
 //******************************************************************************
 
 // @WARNING:  This filename (SVTaskObjectList) does not match the class name (SVTaskObjectListClass).
@@ -423,9 +423,9 @@ HRESULT SVTaskObjectListClass::RemoveChild( SVTaskObjectClass* pChildObject )
 {
 	HRESULT hr = S_OK;
 
-	LONG_PTR uRetCode = SVSendMessage (this, 
+	DWORD_PTR uRetCode = SVSendMessage (this, 
 	               SVM_DESTROY_CHILD_OBJECT,
-	               reinterpret_cast<LONG_PTR>(pChildObject),
+	               reinterpret_cast<DWORD_PTR>(pChildObject),
 	               SVMFSetDefaultInputs);
 
 	if( uRetCode != SVMR_SUCCESS )
@@ -610,7 +610,7 @@ void SVTaskObjectListClass::DeleteAt(int Index, int Count /*= 1*/)
 		if (pTaskObject)
 		{
 			// delete( pTaskObject );
-			::SVSendMessage(this, SVM_DESTROY_CHILD_OBJECT, reinterpret_cast<LONG_PTR>(pTaskObject), NULL);
+			::SVSendMessage(this, SVM_DESTROY_CHILD_OBJECT, reinterpret_cast<DWORD_PTR>(pTaskObject), NULL);
 		}
 	}
 }
@@ -792,7 +792,7 @@ SVObjectClass *SVTaskObjectListClass::UpdateObject( const GUID &p_oFriendGuid, S
 
 BOOL SVTaskObjectListClass::CloseObject()
 {
-	LONG_PTR DwResult;
+	DWORD_PTR DwResult = 0;
 	BOOL retVal = TRUE;
 	
 	// Close our children
@@ -842,7 +842,7 @@ const SVClock::SVTimeStamp& SVTaskObjectListClass::GetLastListUpdateTimestamp() 
 	return m_LastListUpdateTimestamp;
 }
 	
-LONG_PTR SVTaskObjectListClass::processMessage(DWORD DwMessageID, LONG_PTR DwMessageValue, LONG_PTR DwMessageContext)
+DWORD_PTR SVTaskObjectListClass::processMessage(DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext)
 {
 	//
 	// NOTE: 
@@ -851,7 +851,7 @@ LONG_PTR SVTaskObjectListClass::processMessage(DWORD DwMessageID, LONG_PTR DwMes
 	//		Closing Direction ==> 1. Children, 2. You ( and Your embeddeds ), 3. Friends
 	//
 
-	LONG_PTR DwResult = SVMR_NOT_PROCESSED;
+	DWORD_PTR DwResult = SVMR_NOT_PROCESSED;
 
 	// Check if friend should process this message first....
 	if ((DwMessageID & SVM_NOTIFY_FRIENDS) == SVM_NOTIFY_FRIENDS)
@@ -886,7 +886,7 @@ LONG_PTR SVTaskObjectListClass::processMessage(DWORD DwMessageID, LONG_PTR DwMes
 	{
 	case SVMSGID_CREATE_ALL_OBJECTS:
 		{
-			if( !IsCreated() && !CreateObject( ( SVObjectLevelCreateStruct* ) DwMessageValue ) )
+			if( !IsCreated() && !CreateObject( reinterpret_cast<SVObjectLevelCreateStruct*>(DwMessageValue) ) )
 			{
 				ASSERT( FALSE );
 
@@ -902,14 +902,14 @@ LONG_PTR SVTaskObjectListClass::processMessage(DWORD DwMessageID, LONG_PTR DwMes
 			createStruct.ToolObjectInfo	= GetTool();
 			createStruct.InspectionObjectInfo = GetInspection();
 
-			DwMessageValue = (LONG_PTR)&createStruct;
+			DwMessageValue = reinterpret_cast<DWORD_PTR>(&createStruct);
 
 			break;
 		}
 
 	case SVMSGID_CONNECT_ALL_OBJECTS:
 		{
-			if( ConnectObject( ( SVObjectLevelCreateStruct* ) DwMessageValue ) != S_OK )
+			if( ConnectObject( reinterpret_cast<SVObjectLevelCreateStruct*>(DwMessageValue) ) != S_OK )
 			{
 				ASSERT( FALSE );
 
@@ -925,7 +925,7 @@ LONG_PTR SVTaskObjectListClass::processMessage(DWORD DwMessageID, LONG_PTR DwMes
 			createStruct.ToolObjectInfo	= GetTool();
 			createStruct.InspectionObjectInfo	= GetInspection();
 
-			DwMessageValue = (LONG_PTR)&createStruct;
+			DwMessageValue = reinterpret_cast<DWORD_PTR>(&createStruct);
 
 			break;
 		}
@@ -934,12 +934,12 @@ LONG_PTR SVTaskObjectListClass::processMessage(DWORD DwMessageID, LONG_PTR DwMes
 		{
 			// ...use third message parameter ( DwMessageContext ) to specify the objectTypeInfo!
 			//( SVObjectTypeInfoStruct->objectType => SVObjectTypeEnum )
-			SVObjectTypeInfoStruct* pObjectTypeInfo = (SVObjectTypeInfoStruct*)DwMessageContext;
+			SVObjectTypeInfoStruct* pObjectTypeInfo = reinterpret_cast<SVObjectTypeInfoStruct*>(DwMessageContext);
 				
 			// ...use second message parameter ( DwMessageValue ) to specify the requesting object
 			// Note: if second parameter is specified - stop when requesting object encountered.
 			// Optional - to get an input
-			SVObjectClass* pRequestor = (SVObjectClass*)DwMessageValue;
+			SVObjectClass* pRequestor = reinterpret_cast<SVObjectClass*>(DwMessageValue);
 
 			if (pRequestor)
 			{
@@ -1050,12 +1050,12 @@ LONG_PTR SVTaskObjectListClass::processMessage(DWORD DwMessageID, LONG_PTR DwMes
 		{
 			// ...use third message parameter ( DwMessageContext ) to specify the objectTypeInfo!
 			//( SVObjectTypeInfoStruct->objectType => SVObjectTypeEnum )
-			SVObjectTypeInfoStruct* pObjectTypeInfo = (SVObjectTypeInfoStruct*)DwMessageContext;
+			SVObjectTypeInfoStruct* pObjectTypeInfo = reinterpret_cast<SVObjectTypeInfoStruct*>(DwMessageContext);
 
 			// ...use second message parameter ( DwMessageValue ) to specify the requesting object
 			// Note: if second parameter is specified - stop when requesting object encountered.
 			// Optional - to get an input
-			SVObjectClass* pRequestor = (SVObjectClass*)DwMessageValue;
+			SVObjectClass* pRequestor = reinterpret_cast<SVObjectClass*>(DwMessageValue);
 
 			if (pRequestor)
 			{
@@ -1122,8 +1122,8 @@ LONG_PTR SVTaskObjectListClass::processMessage(DWORD DwMessageID, LONG_PTR DwMes
 
 	case SVMSGID_GETAVAILABLE_OBJECTS: // Only SVTaskObjectListClasses have available objects (currently)
 		{
-			SVClassInfoStructListClass* pList = (SVClassInfoStructListClass *)DwMessageValue;
-			SVObjectTypeInfoStruct* pObjectTypeInfo = (SVObjectTypeInfoStruct *)DwMessageContext;
+			SVClassInfoStructListClass* pList = reinterpret_cast<SVClassInfoStructListClass *>(DwMessageValue);
+			SVObjectTypeInfoStruct* pObjectTypeInfo = reinterpret_cast<SVObjectTypeInfoStruct *>(DwMessageContext);
 					
 			if (getAvailableObjects(pList, pObjectTypeInfo))
 			{
@@ -1141,7 +1141,7 @@ LONG_PTR SVTaskObjectListClass::processMessage(DWORD DwMessageID, LONG_PTR DwMes
 			// ...use third message parameter ( DwMessageContext ) as SVObjectClass*
 			// ...returns SVMR_SUCCESS, SVMR_NO_SUCCESS
 			const GUID taskObjectID = * ((GUID*) DwMessageValue);
-			SVTaskObjectClass* pTaskObject = (SVTaskObjectClass*) DwMessageContext;
+			SVTaskObjectClass* pTaskObject = reinterpret_cast<SVTaskObjectClass*>(DwMessageContext);
 			if (pTaskObject && SV_IS_KIND_OF(pTaskObject, SVTaskObjectClass))
 			{
 				// NOTE:	Only dynamically generated objects could be replaced, 
@@ -1150,7 +1150,7 @@ LONG_PTR SVTaskObjectListClass::processMessage(DWORD DwMessageID, LONG_PTR DwMes
 				// SEJ (July 15 1999) - Remove All Dynamic Children (they will be constructed anew)
 				if (SV_IS_KIND_OF(pTaskObject, SVTaskObjectListClass))
 				{
-					SVTaskObjectListClass* pTaskObjectList = (SVTaskObjectListClass*) DwMessageContext;
+					SVTaskObjectListClass* pTaskObjectList = reinterpret_cast<SVTaskObjectListClass*>(DwMessageContext);
 
 					// Kill the Friends
 					pTaskObjectList->DestroyFriends();
@@ -1184,7 +1184,7 @@ LONG_PTR SVTaskObjectListClass::processMessage(DWORD DwMessageID, LONG_PTR DwMes
 						// Set unique object ID...
 						if (SVObjectManagerClass::Instance().ChangeUniqueObjectID(pTaskObject, taskObjectID))
 						{
-							::SVSendMessage( this, SVM_CONNECT_CHILD_OBJECT, reinterpret_cast<LONG_PTR>(pTaskObject), NULL );
+							::SVSendMessage( this, SVM_CONNECT_CHILD_OBJECT, reinterpret_cast<DWORD_PTR>(pTaskObject), NULL );
 								
 							return SVMR_SUCCESS;
 						}
@@ -1203,7 +1203,7 @@ LONG_PTR SVTaskObjectListClass::processMessage(DWORD DwMessageID, LONG_PTR DwMes
 					if (pOwner)
 					{
 						// Ask the owner to kill the imposter!
-						if (::SVSendMessage(pOwner, SVM_DESTROY_CHILD_OBJECT, reinterpret_cast<LONG_PTR>(pObject), NULL) == SVMR_NO_SUCCESS)
+						if (::SVSendMessage(pOwner, SVM_DESTROY_CHILD_OBJECT, reinterpret_cast<DWORD_PTR>(pObject), NULL) == SVMR_NO_SUCCESS)
 						{
 							// must be a Friend
 							pOwner->DestroyFriends();
@@ -1220,7 +1220,7 @@ LONG_PTR SVTaskObjectListClass::processMessage(DWORD DwMessageID, LONG_PTR DwMes
 
 				if (SVObjectManagerClass::Instance().ChangeUniqueObjectID(pTaskObject, taskObjectID))
 				{
-					::SVSendMessage( this, SVM_CONNECT_CHILD_OBJECT, reinterpret_cast<LONG_PTR>(pTaskObject), NULL );
+					::SVSendMessage( this, SVM_CONNECT_CHILD_OBJECT, reinterpret_cast<DWORD_PTR>(pTaskObject), NULL );
 
 					return SVMR_SUCCESS;
 				}
@@ -1248,7 +1248,7 @@ LONG_PTR SVTaskObjectListClass::processMessage(DWORD DwMessageID, LONG_PTR DwMes
 
 	case SVMSGID_DESTROY_CHILD_OBJECT:		// SEJ Aug 6,1999 New Message
 		{
-			SVTaskObjectClass* pTaskObject = (SVTaskObjectClass*) DwMessageValue;
+			SVTaskObjectClass* pTaskObject = reinterpret_cast<SVTaskObjectClass*>(DwMessageValue);
 
 			// Kill the Object
 			if (pTaskObject)
@@ -1365,9 +1365,9 @@ LONG_PTR SVTaskObjectListClass::processMessage(DWORD DwMessageID, LONG_PTR DwMes
 	return DwResult;
 }
 
-LONG_PTR SVTaskObjectListClass::OutputListProcessMessage( DWORD DwMessageID, LONG_PTR DwMessageValue, LONG_PTR DwMessageContext )
+DWORD_PTR SVTaskObjectListClass::OutputListProcessMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext )
 {
-	LONG_PTR DwResult = SVTaskObjectClass::OutputListProcessMessage( DwMessageID, DwMessageValue, DwMessageContext );
+	DWORD_PTR DwResult = SVTaskObjectClass::OutputListProcessMessage( DwMessageID, DwMessageValue, DwMessageContext );
 
 	// Try to send message to outputObjectList members, if not already processed...
 	if( (DwMessageID & SVM_NOTIFY_FIRST_RESPONDING) == SVM_NOTIFY_FIRST_RESPONDING )
@@ -1385,9 +1385,9 @@ LONG_PTR SVTaskObjectListClass::OutputListProcessMessage( DWORD DwMessageID, LON
 	return DwResult;
 }
 
-LONG_PTR SVTaskObjectListClass::ChildrenOutputListProcessMessage( DWORD DwMessageID, LONG_PTR DwMessageValue, LONG_PTR DwMessageContext )
+DWORD_PTR SVTaskObjectListClass::ChildrenOutputListProcessMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext )
 {
-	LONG_PTR DwResult = SVMR_NOT_PROCESSED;
+	DWORD_PTR DwResult = SVMR_NOT_PROCESSED;
 
 	// Try to send message to outputObjectList members, if not already processed...
 	if( (DwMessageID & SVM_NOTIFY_FIRST_RESPONDING) == SVM_NOTIFY_FIRST_RESPONDING )
@@ -1483,6 +1483,17 @@ HRESULT SVTaskObjectListClass::onCollectOverlays(SVImageClass *p_Image, SVExtent
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVTaskObjectList.cpp_v  $
+ * 
+ *    Rev 1.6   15 May 2014 13:10:52   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Changed processMessage signature to use DWORD_PTR.
+ * 
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.5   05 Feb 2014 09:35:18   tbair
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : SVToolAdjustmentDialogThresholdPage
 //* .File Name       : $Workfile:   SVTADlgThresholdPage.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.4  $
-//* .Check In Date   : $Date:   01 Feb 2014 12:14:32  $
+//* .Current Version : $Revision:   1.5  $
+//* .Check In Date   : $Date:   15 May 2014 13:07:12  $
 //******************************************************************************
 
 //******************************************************************************
@@ -122,12 +122,12 @@ SVToolAdjustmentDialogThresholdPageClass::SVToolAdjustmentDialogThresholdPageCla
 			SVObjectTypeInfoStruct info;
 			info.ObjectType = SVUnaryImageOperatorListObjectType;
 
-			pUnaryImageOperatorList = ( SVUnaryImageOperatorListClass* )SVSendMessage( pTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>(&info) );
+			pUnaryImageOperatorList = reinterpret_cast<SVUnaryImageOperatorListClass*>(SVSendMessage( pTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&info) ));
 		
 			info.ObjectType = SVUnaryImageOperatorObjectType;
 			info.SubType = SVThresholdObjectType;
 
-			pCurrentThreshold = ( SVThresholdClass * )SVSendMessage( pTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>(&info) );
+			pCurrentThreshold = reinterpret_cast<SVThresholdClass *>(SVSendMessage( pTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&info) ));
 
 			if( pCurrentThreshold )
 			{
@@ -136,17 +136,17 @@ SVToolAdjustmentDialogThresholdPageClass::SVToolAdjustmentDialogThresholdPageCla
 				SVObjectTypeInfoStruct infoATM;
 				infoATM.ObjectType = SVBoolValueObjectType;
 				infoATM.EmbeddedID = SVUseExternalATMObjectGuid;
-				pUseExternATM = ( SVBoolValueObjectClass* ) SVSendMessage( pCurrentThreshold, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>(&infoATM) );
+				pUseExternATM = reinterpret_cast<SVBoolValueObjectClass*>(SVSendMessage( pCurrentThreshold, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&infoATM) ));
 
 				SVObjectTypeInfoStruct infoLT;
 				infoLT.ObjectType = SVBoolValueObjectType;
 				infoLT.EmbeddedID = SVUseExternalLTObjectGuid;
-				pUseExternLT = ( SVBoolValueObjectClass* ) SVSendMessage( pCurrentThreshold, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>(&infoLT) );
+				pUseExternLT = reinterpret_cast<SVBoolValueObjectClass*>(SVSendMessage( pCurrentThreshold, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&infoLT) ));
 
 				SVObjectTypeInfoStruct infoUT;
 				infoUT.ObjectType = SVBoolValueObjectType;
 				infoUT.EmbeddedID = SVUseExternalUTObjectGuid;
-				pUseExternUT = ( SVBoolValueObjectClass* ) SVSendMessage( pCurrentThreshold, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>(&infoUT) );
+				pUseExternUT = reinterpret_cast<SVBoolValueObjectClass*>(SVSendMessage( pCurrentThreshold, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&infoUT) ));
 			}
 
 		}
@@ -1028,7 +1028,7 @@ void SVToolAdjustmentDialogThresholdPageClass::OnUTFormulaButton()
 	SVObjectTypeInfoStruct info;
 	info.ObjectType = SVEquationObjectType;
 	info.SubType    = SVUpperThresholdEquationObjectType;
-	SVUpperThresholdEquationClass* pEquation = ( SVUpperThresholdEquationClass* ) SVSendMessage( pCurrentThreshold, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>(&info) );
+	SVUpperThresholdEquationClass* pEquation = reinterpret_cast<SVUpperThresholdEquationClass*>(SVSendMessage( pCurrentThreshold, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&info) ));
 	if( pEquation )
 	{
 		CString strCaption = pEquation->GetName();
@@ -1052,7 +1052,7 @@ void SVToolAdjustmentDialogThresholdPageClass::UpdateLowerThresholdFromFormula()
 	SVObjectTypeInfoStruct info;
 	info.ObjectType = SVEquationObjectType;
 	info.SubType    = SVLowerThresholdEquationObjectType;
-	SVLowerThresholdEquationClass* pEquation = ( SVLowerThresholdEquationClass* ) SVSendMessage( pCurrentThreshold, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>(&info) );
+	SVLowerThresholdEquationClass* pEquation = reinterpret_cast<SVLowerThresholdEquationClass*>(SVSendMessage( pCurrentThreshold, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&info) ));
 	if( pEquation )
 	{
 		long l_lResult = (long)pEquation->GetYACCResult();
@@ -1065,7 +1065,7 @@ void SVToolAdjustmentDialogThresholdPageClass::UpdateUpperThresholdFromFoumula()
 	SVObjectTypeInfoStruct info;
 	info.ObjectType = SVEquationObjectType;
 	info.SubType    = SVUpperThresholdEquationObjectType;
-	SVUpperThresholdEquationClass* pEquation = ( SVUpperThresholdEquationClass* ) SVSendMessage( pCurrentThreshold, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>(&info) );
+	SVUpperThresholdEquationClass* pEquation = reinterpret_cast<SVUpperThresholdEquationClass*>(SVSendMessage( pCurrentThreshold, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&info) ));
 	if( pEquation )
 	{
 		long l_lResult = (long)pEquation->GetYACCResult();
@@ -1080,7 +1080,7 @@ void SVToolAdjustmentDialogThresholdPageClass::OnATMFormulaButton()
 	SVObjectTypeInfoStruct info;
 	info.ObjectType = SVEquationObjectType;
 	info.SubType    = SVAutoThresholdEquationObjectType;
-	SVAutoThresholdEquationClass* pEquation = ( SVAutoThresholdEquationClass* ) SVSendMessage( pCurrentThreshold, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>(&info) );
+	SVAutoThresholdEquationClass* pEquation = reinterpret_cast<SVAutoThresholdEquationClass*>(SVSendMessage( pCurrentThreshold, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&info) ));
 	if( pEquation )
 	{
 		CString strCaption = pEquation->GetName();
@@ -1101,7 +1101,7 @@ void SVToolAdjustmentDialogThresholdPageClass::OnLTFormulaButton()
 	SVObjectTypeInfoStruct info;
 	info.ObjectType = SVEquationObjectType;
 	info.SubType    = SVLowerThresholdEquationObjectType;
-	SVLowerThresholdEquationClass* pEquation = ( SVLowerThresholdEquationClass* ) SVSendMessage( pCurrentThreshold, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>(&info) );
+	SVLowerThresholdEquationClass* pEquation = reinterpret_cast<SVLowerThresholdEquationClass*>(SVSendMessage( pCurrentThreshold, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&info) ));
 	if( pEquation )
 	{
 		CString strCaption = pEquation->GetName();
@@ -1388,6 +1388,16 @@ void SetThreshold( HWND hWnd, DWORD Value )
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVTADlgThresholdPage.cpp_v  $
+ * 
+ *    Rev 1.5   15 May 2014 13:07:12   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Changed SendMessage to use proper type cast of DWORD_PTR.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.4   01 Feb 2014 12:14:32   tbair
  * Project:  SVObserver

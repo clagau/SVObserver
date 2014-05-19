@@ -5,8 +5,8 @@
 //* .Module Name     : SVOCRAnalyzerResult
 //* .File Name       : $Workfile:   SVOCRAnalyzerResult.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   01 Feb 2014 11:39:22  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   15 May 2014 10:44:26  $
 //******************************************************************************
 #ifndef SV_OCR_ANALYZER_RESULT_H
 #define SV_OCR_ANALYZER_RESULT_H
@@ -74,7 +74,7 @@ public:
 
 protected:
 	virtual BOOL onRun( SVRunStatusClass& RRunStatus );
-	virtual LONG_PTR processMessage( DWORD DwMessageID, LONG_PTR DwMessageValue, LONG_PTR DwMessageContext );
+	virtual DWORD_PTR processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext );
 
 private:
 	void clearAll();
@@ -197,6 +197,16 @@ private:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVOCRAnalyzerResult.h_v  $
+ * 
+ *    Rev 1.3   15 May 2014 10:44:26   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Modified processMessage signature to use DWORD_PTR.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   01 Feb 2014 11:39:22   tbair
  * Project:  SVObserver

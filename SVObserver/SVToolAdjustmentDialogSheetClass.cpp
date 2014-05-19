@@ -5,8 +5,8 @@
 //* .Module Name     : SVToolAdjustmentDialogSheetClass
 //* .File Name       : $Workfile:   SVToolAdjustmentDialogSheetClass.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.5  $
-//* .Check In Date   : $Date:   22 Apr 2014 09:48:54  $
+//* .Current Version : $Revision:   1.6  $
+//* .Check In Date   : $Date:   15 May 2014 14:36:10  $
 //******************************************************************************
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -122,7 +122,7 @@ void SVToolAdjustmentDialogSheetClass::addPages()
 	SVObjectTypeInfoStruct lutObjectInfo;
 	lutObjectInfo.ObjectType = SVUnaryImageOperatorObjectType;
 	lutObjectInfo.SubType	 = SVLUTOperatorObjectType;
-	if( ::SVSendMessage( &m_rTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>(&lutObjectInfo) ) )
+	if( ::SVSendMessage( &m_rTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&lutObjectInfo) ) )
 	{
 		bHasLUT = TRUE;
 	}
@@ -379,7 +379,7 @@ void SVToolAdjustmentDialogSheetClass::addPages()
 		}
 
 		// Reset the tool
-		DWORD l_dwRet = ::SVSendMessage( GetTool(), SVM_RESET_ALL_OBJECTS, NULL, NULL );
+		DWORD_PTR l_dwRet = ::SVSendMessage( GetTool(), SVM_RESET_ALL_OBJECTS, NULL, NULL );
 		if( l_dwRet != SVMR_SUCCESS)
 		{
 			return;
@@ -427,6 +427,16 @@ SVToolClass* SVToolAdjustmentDialogSheetClass::GetTool() const
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVToolAdjustmentDialogSheetClass.cpp_v  $
+ * 
+ *    Rev 1.6   15 May 2014 14:36:10   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Revised SVSendMessage to use DWORD_PTR
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.5   22 Apr 2014 09:48:54   sjones
  * Project:  SVObserver

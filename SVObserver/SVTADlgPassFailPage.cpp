@@ -5,8 +5,8 @@
 //* .Module Name     : SVToolAdjustmentDialogPassFailPageClass
 //* .File Name       : $Workfile:   SVTADlgPassFailPage.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   01 Feb 2014 12:14:28  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   15 May 2014 12:50:44  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -44,11 +44,11 @@ SVToolAdjustmentDialogPassFailPageClass::SVToolAdjustmentDialogPassFailPageClass
 		SVObjectTypeInfoStruct info;
 		info.ObjectType = SVResultObjectType;
 
-		SVResultClass* pResult = ( SVResultClass * )SVSendMessage( pTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>(&info) );
+		SVResultClass* pResult = reinterpret_cast<SVResultClass *>(SVSendMessage( pTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&info) ));
 		if( pResult )
 		{
 			info.ObjectType = SVRangeObjectType;
-			pRange = (SVRangeClass *)SVSendMessage( pResult, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>(&info) );
+			pRange = reinterpret_cast<SVRangeClass *>(SVSendMessage( pResult, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&info) ));
 		}
 	}
 }
@@ -172,6 +172,16 @@ void SVToolAdjustmentDialogPassFailPageClass::UpdateRangeValues()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVTADlgPassFailPage.cpp_v  $
+ * 
+ *    Rev 1.2   15 May 2014 12:50:44   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Changed SendMessage to use proper type cast of DWORD_PTR.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   01 Feb 2014 12:14:28   tbair
  * Project:  SVObserver

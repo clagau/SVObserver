@@ -5,8 +5,8 @@
 //* .Module Name     : SVToolSetListCtrl
 //* .File Name       : $Workfile:   SVToolSetListCtrl.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   13 May 2013 16:29:44  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   15 May 2014 14:51:04  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -107,7 +107,7 @@ void SVToolSetListCtrlClass::Rebuild()
 						0, 0 );						// Set item data to NULL
 				}
 				
-				SetItemData( l_iIndex, (DWORD) l_psvTool );
+				SetItemData( l_iIndex, reinterpret_cast<DWORD_PTR>(l_psvTool) );
 				
 				itemNo++;
 			}
@@ -119,7 +119,7 @@ void SVToolSetListCtrlClass::Rebuild()
 			LVIS_STATEIMAGEMASK,		// stateMask
 			0, 0 );						// Set item data to NULL
 		
-		SetItemData( l_iIndex, (DWORD) NULL );
+		SetItemData( l_iIndex, static_cast<DWORD_PTR>(NULL) );
 	}
 	
 	RebuildImages();
@@ -397,7 +397,17 @@ void SVToolSetListCtrlClass::CreateImageLists()
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVToolSetListCtrl.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVToolSetListCtrl.cpp_v  $
+ * 
+ *    Rev 1.2   15 May 2014 14:51:04   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Revised SetItemData to use DWORD_PTR
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   13 May 2013 16:29:44   bWalter
  * Project:  SVObserver

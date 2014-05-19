@@ -5,8 +5,8 @@
 //* .Module Name     : SVObjectBuilder
 //* .File Name       : $Workfile:   SVObjectBuilder.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   01 Feb 2014 10:09:12  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   15 May 2014 09:42:24  $
 //******************************************************************************
 #include "stdafx.h"
 #pragma warning (push)
@@ -112,7 +112,7 @@ HRESULT SVObjectBuilder::CreateObject(const GUID& classID, const GUID& uniqueID,
 			SVObjectManagerClass::Instance().GetObjectByIdentifier(ownerUniqueID, pOwnerObject);
 			if (pOwnerObject)
 			{
-				if (::SVSendMessage(pOwnerObject, SVM_REPLACE_OBJECT, reinterpret_cast<LONG_PTR>(&uniqueID), reinterpret_cast<LONG_PTR>(pObject)) != SVMR_SUCCESS)
+				if (::SVSendMessage(pOwnerObject, SVM_REPLACE_OBJECT, reinterpret_cast<DWORD_PTR>(&uniqueID), reinterpret_cast<DWORD_PTR>(pObject)) != SVMR_SUCCESS)
 				{
 					ASSERT(false);
 					TRACE("SVObjectBuilder::CreateObject - ReplaceObject %.80s\n", name.c_str());
@@ -188,7 +188,7 @@ HRESULT SVObjectBuilder::CreateFriendObject(const GUID& classID, const GUID& uni
 			SVObjectManagerClass::Instance().GetObjectByIdentifier(ownerUniqueID, pOwnerObject);
 			pOwnerObject->AddFriend(uniqueID);
 
-			::SVSendMessage(pOwnerObject, SVM_CREATE_CHILD_OBJECT, reinterpret_cast<LONG_PTR>(pObject), NULL);
+			::SVSendMessage(pOwnerObject, SVM_CREATE_CHILD_OBJECT, reinterpret_cast<DWORD_PTR>(pObject), NULL);
 		}
 	}
 	return hr;
@@ -205,7 +205,7 @@ HRESULT SVObjectBuilder::CreateEmbeddedObject(const GUID& embeddedID, const GUID
 
 		// Send to Owner of Embedded Object, Try to overwrite object...
 		SVObjectClass* pObject = NULL;
-		if (pObject = (SVObjectClass *)::SVSendMessage(pOwnerObject, SVM_OVERWRITE_OBJECT, reinterpret_cast<LONG_PTR>(&uniqueID), reinterpret_cast<LONG_PTR>(&embeddedID)))
+		if (pObject = (SVObjectClass *)::SVSendMessage(pOwnerObject, SVM_OVERWRITE_OBJECT, reinterpret_cast<DWORD_PTR>(&uniqueID), reinterpret_cast<DWORD_PTR>(&embeddedID)))
 		{
 			pObject->SetName(objectName.c_str());
 		}
@@ -313,7 +313,7 @@ HRESULT SVObjectBuilder::SetObjectValue(const GUID& ownerID, const GUID& objectI
 		SVObjectAttributeClass dataObject;
 		BuildDataArray(dataObject, itemName, values, dstDataType);
 
-		if (::SVSendMessage(pOwnerObject, SVM_SET_OBJECT_VALUE, reinterpret_cast<LONG_PTR>(&objectID), reinterpret_cast<LONG_PTR>(&dataObject)) != SVMR_SUCCESS)
+		if (::SVSendMessage(pOwnerObject, SVM_SET_OBJECT_VALUE, reinterpret_cast<DWORD_PTR>(&objectID), reinterpret_cast<DWORD_PTR>(&dataObject)) != SVMR_SUCCESS)
 		{
 			AfxMessageBox( "SVObjectBuilder::SetObjectValue Error:\n Set Object Member Value failed!" );
 		}
@@ -331,7 +331,7 @@ HRESULT SVObjectBuilder::SetInputs(const GUID& objectID, const SVNameGuidList& g
 	if (pObject)
 	{
 		SVInputInfoListClass inputInfoList;
-		::SVSendMessage(pObject, SVM_GET_INPUT_INTERFACE, reinterpret_cast<LONG_PTR>(&inputInfoList), NULL);
+		::SVSendMessage(pObject, SVM_GET_INPUT_INTERFACE, reinterpret_cast<DWORD_PTR>(&inputInfoList), NULL);
 
 		// reattach inputs
 		for( int i = 0; hr == S_OK && i < inputInfoList.GetSize(); i++ )
@@ -401,6 +401,17 @@ HRESULT SVObjectBuilder::GetObjectDataType(const GUID& ownerID, const GUID& obje
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObjectLibrary\SVObjectBuilder.cpp_v  $
+ * 
+ *    Rev 1.2   15 May 2014 09:42:24   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Revised SVSendMessage to use DWORD_PTR instead of DWORD or LONG_PTR.
+ * Revised processMessage to use DWORD_PTR instead of DWORD or LONG_PTR.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   01 Feb 2014 10:09:12   tbair
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : FormulaController
 //* .File Name       : $Workfile:   FormulaController.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   13 May 2014 04:47:40  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   15 May 2014 10:06:52  $
 //******************************************************************************
 //Description:  FormulaController is the class to get/set and
 //              validate equation objects inside SVObserver.
@@ -40,7 +40,6 @@ namespace Seidenader
 			, m_pToolSet(nullptr)
 			, m_pEquation (nullptr)
 			, m_pEquationStruct (nullptr)
-
 		{
 		}
 #pragma endregion
@@ -113,14 +112,14 @@ namespace Seidenader
 				info.ObjectType = SVEquationObjectType;
 				info.SubType    = SVMathEquationObjectType;	// we are not looking for conditional equation !!!
 				pEquation = dynamic_cast < SVEquationClass* >
-					( reinterpret_cast < SVObjectClass* > (::SVSendMessage( &pObject, SVM_GETFIRST_OBJECT | SVM_NOTIFY_ONLY_FRIENDS, 0,reinterpret_cast<LONG_PTR>( &info ) )));
+					( reinterpret_cast < SVObjectClass* > (::SVSendMessage( &pObject, SVM_GETFIRST_OBJECT | SVM_NOTIFY_ONLY_FRIENDS, 0,reinterpret_cast<DWORD_PTR>( &info ) )));
 			}
 			// Set the pointer to the Equation Class Object 
 			setEquation( pEquation );
 		}
 
 		int FormulaController::validateEquation( const SVString &equationString, double& result ) const
-{
+		{
 			int retValue = validateSuccessful;
 			SVString oldString("");
 			//save old string
@@ -153,7 +152,7 @@ namespace Seidenader
 				SVObjectClass* object = dynamic_cast<SVObjectClass*>(m_pEquation->GetTool());
 				if( nullptr != object )
 				{
-					LONG_PTR l_dwRet = ::SVSendMessage( object, SVM_RESET_ALL_OBJECTS & ~SVM_NOTIFY_FRIENDS , 0, 0); // Do not reset friends because they may be invalid.
+					DWORD_PTR l_dwRet = ::SVSendMessage( object, SVM_RESET_ALL_OBJECTS & ~SVM_NOTIFY_FRIENDS , 0, 0); // Do not reset friends because they may be invalid.
 					if( SVMR_SUCCESS != l_dwRet )
 					{
 						return setFailed;
@@ -191,6 +190,16 @@ namespace Seidenader
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\FormulaController.cpp_v  $
+ * 
+ *    Rev 1.3   15 May 2014 10:06:52   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Revised to correct casting issues
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   13 May 2014 04:47:40   mziegler
  * Project:  SVObserver

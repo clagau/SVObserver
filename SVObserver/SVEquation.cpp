@@ -5,8 +5,8 @@
 //* .Module Name     : SVEquation.cpp
 //* .File Name       : $Workfile:   SVEquation.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.4  $
-//* .Check In Date   : $Date:   28 Feb 2014 11:28:12  $
+//* .Current Version : $Revision:   1.5  $
+//* .Check In Date   : $Date:   15 May 2014 11:21:36  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -45,7 +45,7 @@ void SVEquationSymbolTableClass::ClearAll()
 		SVInObjectInfoStruct* pInObjectInfo = toolsetSymbolTable.GetAt( i );
 		::SVSendMessage(pInObjectInfo->GetInputObjectInfo().UniqueObjectID,
 										SVM_DISCONNECT_OBJECT_INPUT, 
-										reinterpret_cast<LONG_PTR>(pInObjectInfo), NULL );
+										reinterpret_cast<DWORD_PTR>(pInObjectInfo), NULL );
 	}
 	// Empty the ToolSet Symbol table 
 	toolsetSymbolTable.RemoveAll();
@@ -195,7 +195,7 @@ int SVEquationSymbolTableClass::addToolSetSymbol( LPCTSTR name, int index, SVObj
 				pSymbolStruct->InObjectInfo.SetInputObject( pOutObjectInfo->UniqueObjectID );
 			
 				// Try to Connect at this point
-				LONG_PTR rc = ::SVSendMessage(pOutObjectInfo->UniqueObjectID, SVM_CONNECT_OBJECT_INPUT, reinterpret_cast<LONG_PTR>(&pSymbolStruct->InObjectInfo), NULL );
+				DWORD_PTR rc = ::SVSendMessage(pOutObjectInfo->UniqueObjectID, SVM_CONNECT_OBJECT_INPUT, reinterpret_cast<DWORD_PTR>(&pSymbolStruct->InObjectInfo), NULL);
 				if( rc == SVMR_SUCCESS )
 				{
 					pSymbolStruct->IsValid = TRUE;
@@ -876,9 +876,9 @@ SVEquationTestResult SVEquationClass::Test()
 				for( l = 0, pObject = NULL; l < lSize; l++ )
 				{
 					pPPQ->GetInspection( l, pInspect );
-					pObject = (SVObjectClass*) ::SVSendMessage( pInspect->GetToolSet(), 
+					pObject = reinterpret_cast<SVObjectClass *>(::SVSendMessage( pInspect->GetToolSet(), 
 								( SVM_GET_OBJECT_BY_NAME | SVM_PARENT_TO_CHILD | SVM_NOTIFY_FRIENDS ) & ~SVM_NOTIFY_ONLY_THIS, 
-								reinterpret_cast<LONG_PTR>( static_cast<LPCSTR>( strTempName )), NULL );
+								reinterpret_cast<DWORD_PTR>( static_cast<LPCSTR>( strTempName )), NULL ) );
 
 					if( pObject != NULL )
 						break;
@@ -1175,7 +1175,7 @@ BOOL SVEquationClass::buildDynamicInputList()
 		if( !pInObjectInfo->IsConnected() )
 		{
 			// Connect to the Input
-			retVal = ::SVSendMessage( pInObjectInfo->GetInputObjectInfo().UniqueObjectID, SVM_CONNECT_OBJECT_INPUT, reinterpret_cast<LONG_PTR>(pInObjectInfo), NULL ) && retVal;
+			retVal = ::SVSendMessage( pInObjectInfo->GetInputObjectInfo().UniqueObjectID, SVM_CONNECT_OBJECT_INPUT, reinterpret_cast<DWORD_PTR>(pInObjectInfo), NULL ) && retVal;
 		}
 	}
 	return retVal;
@@ -1357,9 +1357,9 @@ double SVEquationClass::GetSubscriptedPropertyValue( int iSymbolIndex, int iInde
 ////////////////////////////////////////////////////////////////////////////////
 // 
 ////////////////////////////////////////////////////////////////////////////////
-LONG_PTR SVEquationClass::processMessage( DWORD DwMessageID, LONG_PTR DwMessageValue, LONG_PTR DwMessageContext )
+DWORD_PTR SVEquationClass::processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext )
 {
-	LONG_PTR DwResult = NULL;
+	DWORD_PTR DwResult = NULL;
 	// Try to process message by yourself...
 	DWORD dwPureMessageID = DwMessageID & SVM_PURE_MESSAGE;
 	switch( dwPureMessageID )
@@ -1436,6 +1436,16 @@ HRESULT SVEquationClass::ResetObject()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVEquation.cpp_v  $
+ * 
+ *    Rev 1.5   15 May 2014 11:21:36   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Revised processMessage to use DWORD_PTR
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.4   28 Feb 2014 11:28:12   tbair
  * Project:  SVObserver

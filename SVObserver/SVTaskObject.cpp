@@ -5,8 +5,8 @@
 //* .Module Name     : SVTaskObject
 //* .File Name       : $Workfile:   SVTaskObject.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.4  $
-//* .Check In Date   : $Date:   05 Feb 2014 09:35:22  $
+//* .Current Version : $Revision:   1.5  $
+//* .Check In Date   : $Date:   15 May 2014 13:10:50  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -221,7 +221,7 @@ HRESULT SVTaskObjectClass::FindNextInputImageInfo( SVInObjectInfoStruct*& p_rpsv
 		m_svToolInputList.RemoveAll();
 
 		// Try to get input interface...
-		::SVSendMessage( this, SVM_GET_INPUT_INTERFACE | SVM_NOTIFY_FRIENDS, reinterpret_cast<LONG_PTR>(&m_svToolInputList), NULL );
+		::SVSendMessage( this, SVM_GET_INPUT_INTERFACE | SVM_NOTIFY_FRIENDS, reinterpret_cast<DWORD_PTR>(&m_svToolInputList), NULL );
 
 		l_lCount = m_svToolInputList.GetSize();
 	}
@@ -523,7 +523,7 @@ BOOL SVTaskObjectClass::ConnectAllInputs()
 							for (int j = 0; j < friendList.GetSize(); ++ j)
 							{
 								SVObjectInfoStruct& rFriend = friendList[j];
-								pObject = (SVObjectClass *)::SVSendMessage(rFriend.UniqueObjectID, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>(&info));
+								pObject = reinterpret_cast<SVObjectClass *>(::SVSendMessage(rFriend.UniqueObjectID, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&info)));
 								if (pObject)
 								{
 									// Connect input ...
@@ -544,11 +544,11 @@ BOOL SVTaskObjectClass::ConnectAllInputs()
 								// if color system & pOwner == SVToolSetClass
 								if (TheSVObserverApp.IsColorSVIM() && (SV_IS_KIND_OF(pOwner, SVToolSetClass)) && info.ObjectType == SVImageObjectType)
 								{
-									pObject = (SVObjectClass *)::SVSendMessage(pOwner, SVM_GET_IMAGE_BAND0_OBJECT, reinterpret_cast<LONG_PTR>(pRequestor), reinterpret_cast<LONG_PTR>(&info));
+									pObject = reinterpret_cast<SVObjectClass *>(::SVSendMessage(pOwner, SVM_GET_IMAGE_BAND0_OBJECT, reinterpret_cast<DWORD_PTR>(pRequestor), reinterpret_cast<DWORD_PTR>(&info)));
 								}
 								else
 								{
-									pObject = (SVObjectClass *)::SVSendMessage(pOwner, SVM_GETFIRST_OBJECT, reinterpret_cast<LONG_PTR>(pRequestor), reinterpret_cast<LONG_PTR>(&info));
+									pObject = reinterpret_cast<SVObjectClass *>(::SVSendMessage(pOwner, SVM_GETFIRST_OBJECT, reinterpret_cast<DWORD_PTR>(pRequestor), reinterpret_cast<DWORD_PTR>(&info)));
 								}
 								if (pObject)
 								{
@@ -573,7 +573,7 @@ BOOL SVTaskObjectClass::ConnectAllInputs()
 				}
 				else
 				{
-					DWORD dwConnectResult = ::SVSendMessage(pInInfo->GetInputObjectInfo().UniqueObjectID, SVM_CONNECT_OBJECT_INPUT, reinterpret_cast<LONG_PTR>(pInInfo), NULL);
+					DWORD_PTR dwConnectResult = ::SVSendMessage(pInInfo->GetInputObjectInfo().UniqueObjectID, SVM_CONNECT_OBJECT_INPUT, reinterpret_cast<DWORD_PTR>(pInInfo), NULL);
 
 					l_bOk = dwConnectResult == SVMR_SUCCESS;
 				}
@@ -602,7 +602,7 @@ HRESULT SVTaskObjectClass::ConnectToImage( SVInObjectInfoStruct* p_psvInputInfo,
 		{
 			// Send to the Object we are using
 			::SVSendMessage( l_guidOldInputObjectID, SVM_DISCONNECT_OBJECT_INPUT, 
-				reinterpret_cast<LONG_PTR>(p_psvInputInfo), NULL );
+				reinterpret_cast<DWORD_PTR>(p_psvInputInfo), NULL );
 		}
 
 		// Set new input...
@@ -611,7 +611,7 @@ HRESULT SVTaskObjectClass::ConnectToImage( SVInObjectInfoStruct* p_psvInputInfo,
 		if( p_psvNewImage != NULL )
 		{
 			// Connect input info to new input object...
-			DWORD dwConnectResult = ::SVSendMessage( p_psvNewImage, SVM_CONNECT_OBJECT_INPUT, reinterpret_cast<LONG_PTR>(p_psvInputInfo), NULL );
+			DWORD_PTR dwConnectResult = ::SVSendMessage( p_psvNewImage, SVM_CONNECT_OBJECT_INPUT, reinterpret_cast<DWORD_PTR>(p_psvInputInfo), NULL );
 			if( dwConnectResult != SVMR_SUCCESS )
 			{
 				// Unable to connect to new input object....
@@ -629,7 +629,7 @@ HRESULT SVTaskObjectClass::ConnectToImage( SVInObjectInfoStruct* p_psvInputInfo,
 				if( l_psvOldImage != NULL )
 				{
 					p_psvInputInfo->SetInputObject( l_psvOldImage );
-					dwConnectResult = ::SVSendMessage( l_psvOldImage, SVM_CONNECT_OBJECT_INPUT, reinterpret_cast<LONG_PTR>(p_psvInputInfo), NULL );			
+					dwConnectResult = ::SVSendMessage( l_psvOldImage, SVM_CONNECT_OBJECT_INPUT, reinterpret_cast<DWORD_PTR>(p_psvInputInfo), NULL );			
 				}
 
 				l_svOk = S_FALSE;
@@ -657,7 +657,7 @@ HRESULT SVTaskObjectClass::ConnectToImage( SVInObjectInfoStruct* p_psvInputInfo,
 
 BOOL SVTaskObjectClass::CreateObject(SVObjectLevelCreateStruct* PCreateStruct)
 {
-	DWORD DwResult;
+	DWORD_PTR DwResult = 0;
 	BOOL retVal = TRUE;
 	
 	if (!PCreateStruct)
@@ -674,7 +674,7 @@ BOOL SVTaskObjectClass::CreateObject(SVObjectLevelCreateStruct* PCreateStruct)
 			SVObjectClass* pFriend = SVObjectManagerClass::Instance().GetObject(rFriend.UniqueObjectID);
 			if (pFriend)
 			{
-				DwResult = ::SVSendMessage( this, SVM_CREATE_CHILD_OBJECT, reinterpret_cast<LONG_PTR>(pFriend), NULL );
+				DwResult = ::SVSendMessage( this, SVM_CREATE_CHILD_OBJECT, reinterpret_cast<DWORD_PTR>(pFriend), NULL );
 
 				ASSERT(DwResult == SVMR_SUCCESS);
 			}
@@ -698,7 +698,7 @@ BOOL SVTaskObjectClass::CreateObject(SVObjectLevelCreateStruct* PCreateStruct)
 		SVObjectClass* pObject = embeddedList.GetAt(i);
 		if (pObject)
 		{
-			DwResult = ::SVSendMessage( this, SVM_CREATE_CHILD_OBJECT, reinterpret_cast<LONG_PTR>(pObject), NULL );
+			DwResult = ::SVSendMessage( this, SVM_CREATE_CHILD_OBJECT, reinterpret_cast<DWORD_PTR>(pObject), NULL );
 
 			ASSERT(DwResult == SVMR_SUCCESS);
 
@@ -1525,7 +1525,7 @@ void SVTaskObjectClass::Disconnect()
 				// Send to the Object we are using
 				::SVSendMessage(pInObjectInfo->GetInputObjectInfo().UniqueObjectID,
 					SVM_DISCONNECT_OBJECT_INPUT, 
-					reinterpret_cast<LONG_PTR>(pInObjectInfo), NULL);
+					reinterpret_cast<DWORD_PTR>(pInObjectInfo), NULL);
 			}
 		}
 		// remove it from the list
@@ -1689,7 +1689,7 @@ BOOL SVTaskObjectClass::CloseObject()
 {
 	BOOL retVal = TRUE;
 
-	DWORD DwResult;
+	DWORD_PTR DwResult = 0;
 	
 	// Close ourself first
 	retVal &= SVObjectAppClass::CloseObject();
@@ -1727,7 +1727,7 @@ BOOL SVTaskObjectClass::CloseObject()
 	return retVal;
 }
 
-LONG_PTR SVTaskObjectClass::processMessage(DWORD DwMessageID, LONG_PTR DwMessageValue, LONG_PTR DwMessageContext)
+DWORD_PTR SVTaskObjectClass::processMessage(DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext)
 {
 	//
 	// NOTE: 
@@ -1736,7 +1736,7 @@ LONG_PTR SVTaskObjectClass::processMessage(DWORD DwMessageID, LONG_PTR DwMessage
 	//		Closing Direction ==> 1. You ( and Your embeddeds ), 2. Friends
 	//
 	
-	LONG_PTR DwResult = SVMR_NOT_PROCESSED;
+	DWORD_PTR DwResult = SVMR_NOT_PROCESSED;
 	
 	SVAnalyzerLevelCreateStruct createStruct;
 
@@ -1747,7 +1747,7 @@ LONG_PTR SVTaskObjectClass::processMessage(DWORD DwMessageID, LONG_PTR DwMessage
 	{
 		case SVMSGID_CREATE_ALL_OBJECTS:
 		{
-			if( !IsCreated() && !CreateObject( ( SVObjectLevelCreateStruct* ) DwMessageValue ) )
+			if( !IsCreated() && !CreateObject( reinterpret_cast<SVObjectLevelCreateStruct*>(DwMessageValue) ) )
 			{
 				ASSERT( FALSE );
 
@@ -1763,14 +1763,14 @@ LONG_PTR SVTaskObjectClass::processMessage(DWORD DwMessageID, LONG_PTR DwMessage
 			createStruct.ToolObjectInfo	= GetTool();
 			createStruct.InspectionObjectInfo	= GetInspection();
 
-			DwMessageValue = (LONG_PTR)&createStruct;
+			DwMessageValue = reinterpret_cast<DWORD_PTR>(&createStruct);
 
 			break;
 		}
 
 		case SVMSGID_CONNECT_ALL_OBJECTS:
 		{
-			if( ConnectObject( ( SVObjectLevelCreateStruct* ) DwMessageValue ) != S_OK )
+			if( ConnectObject( reinterpret_cast<SVObjectLevelCreateStruct*>(DwMessageValue) ) != S_OK )
 			{
 				ASSERT( FALSE );
 
@@ -1786,7 +1786,7 @@ LONG_PTR SVTaskObjectClass::processMessage(DWORD DwMessageID, LONG_PTR DwMessage
 			createStruct.ToolObjectInfo	= GetTool();
 			createStruct.InspectionObjectInfo	= GetInspection();
 
-			DwMessageValue = (LONG_PTR)&createStruct;
+			DwMessageValue = reinterpret_cast<DWORD_PTR>(&createStruct);
 
 			break;
 		}
@@ -1801,7 +1801,7 @@ LONG_PTR SVTaskObjectClass::processMessage(DWORD DwMessageID, LONG_PTR DwMessage
 		
 		if (friendList.Lock())
 		{
-			LONG_PTR l_dwTmp = 0;
+			DWORD_PTR l_dwTmp = 0;
 			// Notify friends...
 			for (int i = 0; i < friendList.GetSize(); ++ i)
 			{
@@ -1847,12 +1847,12 @@ LONG_PTR SVTaskObjectClass::processMessage(DWORD DwMessageID, LONG_PTR DwMessage
 			{
 				// ...use third message parameter ( DwMessageContext ) to specify the objectTypeInfo!
 				//( SVObjectTypeInfoStruct->objectType => SVObjectTypeEnum )
-				SVObjectTypeInfoStruct* pObjectTypeInfo = (SVObjectTypeInfoStruct*)DwMessageContext;
+				SVObjectTypeInfoStruct* pObjectTypeInfo = reinterpret_cast<SVObjectTypeInfoStruct*>(DwMessageContext);
 				
 				// ...use second message parameter ( DwMessageValue ) to specify the object requesting
 				// Note: if second parameter is specified - stop when requesting object encountered.
 				// Optional - to get an input
-				SVObjectClass* pRequestor = (SVObjectClass*)DwMessageValue;
+				SVObjectClass* pRequestor = reinterpret_cast<SVObjectClass*>(DwMessageValue);
 				
 				if (pRequestor && pRequestor == this || pRequestor == GetOwner())
 				{
@@ -1918,7 +1918,7 @@ LONG_PTR SVTaskObjectClass::processMessage(DWORD DwMessageID, LONG_PTR DwMessage
 				// This was Added because SVTaskObjectClasses can also have Friends
 			case SVMSGID_DESTROY_FRIEND_OBJECT:
 				{
-					SVTaskObjectClass* pTaskObject = (SVTaskObjectClass*) DwMessageValue;
+					SVTaskObjectClass* pTaskObject = reinterpret_cast<SVTaskObjectClass*>(DwMessageValue);
 					
 					// Close the Friend Object
 					if (pTaskObject)
@@ -1945,7 +1945,7 @@ LONG_PTR SVTaskObjectClass::processMessage(DWORD DwMessageID, LONG_PTR DwMessage
 				{
 					// check our embedded objects to see if it's the one
 					const GUID objectID = * ((GUID*) DwMessageValue);
-					SVObjectAttributeClass* pDataObject = (SVObjectAttributeClass*)DwMessageContext;
+					SVObjectAttributeClass* pDataObject = reinterpret_cast<SVObjectAttributeClass*>(DwMessageContext);
 					
 					// check if it is for us (Friend assignment)
 					if (objectID == GetUniqueObjectID() && 
@@ -1969,7 +1969,7 @@ LONG_PTR SVTaskObjectClass::processMessage(DWORD DwMessageID, LONG_PTR DwMessage
 				
 			case SVMSGID_GET_INPUT_INTERFACE:
 				{
-					SVInputInfoListClass* pInputList = (SVInputInfoListClass*) DwMessageValue;
+					SVInputInfoListClass* pInputList = reinterpret_cast<SVInputInfoListClass*>(DwMessageValue);
 					if (SV_IS_KIND_OF(pInputList, SVInputInfoListClass))
 					{
 						// Local input list...
@@ -1989,7 +1989,7 @@ LONG_PTR SVTaskObjectClass::processMessage(DWORD DwMessageID, LONG_PTR DwMessage
 				{
 					// ...use second message parameter ( DwMessageValue ) as pointer to InObjectInfo ( SVInObjectInfoStruct* )
 					// ...returns SVMR_SUCCESS, SVMR_NO_SUCCESS or SVMR_NOT_PROCESSED
-					SVInObjectInfoStruct* pInObjectInfo = (SVInObjectInfoStruct*) DwMessageValue;
+					SVInObjectInfoStruct* pInObjectInfo = reinterpret_cast<SVInObjectInfoStruct*>(DwMessageValue);
 					if (DisconnectInput(pInObjectInfo))
 						DwResult = SVMR_SUCCESS;
 				}
@@ -2011,9 +2011,9 @@ LONG_PTR SVTaskObjectClass::processMessage(DWORD DwMessageID, LONG_PTR DwMessage
 	return DwResult;
 }
 
-LONG_PTR SVTaskObjectClass::OutputListProcessMessage( DWORD DwMessageID, LONG_PTR DwMessageValue, LONG_PTR DwMessageContext )
+DWORD_PTR SVTaskObjectClass::OutputListProcessMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext )
 {
-	LONG_PTR DwResult = FriendOutputListProcessMessage( DwMessageID, DwMessageValue, DwMessageContext );
+	DWORD_PTR DwResult = FriendOutputListProcessMessage( DwMessageID, DwMessageValue, DwMessageContext );
 
 	// Try to send message to outputObjectList members, if not already processed...
 	if( (DwMessageID & SVM_NOTIFY_FIRST_RESPONDING) == SVM_NOTIFY_FIRST_RESPONDING )
@@ -2031,9 +2031,9 @@ LONG_PTR SVTaskObjectClass::OutputListProcessMessage( DWORD DwMessageID, LONG_PT
 	return DwResult;
 }
 
-LONG_PTR SVTaskObjectClass::FriendOutputListProcessMessage( DWORD DwMessageID, LONG_PTR DwMessageValue, LONG_PTR DwMessageContext )
+DWORD_PTR SVTaskObjectClass::FriendOutputListProcessMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext )
 {
-	LONG_PTR DwResult = SVMR_NOT_PROCESSED;
+	DWORD_PTR DwResult = SVMR_NOT_PROCESSED;
 
 	// Try to send message to outputObjectList members, if not already processed...
 	if( (DwMessageID & SVM_NOTIFY_FIRST_RESPONDING) == SVM_NOTIFY_FIRST_RESPONDING )
@@ -2092,9 +2092,9 @@ LONG_PTR SVTaskObjectClass::FriendOutputListProcessMessage( DWORD DwMessageID, L
 	return DwResult;
 }
 
-LONG_PTR SVTaskObjectClass::EmbeddedOutputListProcessMessage( DWORD DwMessageID, LONG_PTR DwMessageValue, LONG_PTR DwMessageContext )
+DWORD_PTR SVTaskObjectClass::EmbeddedOutputListProcessMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext )
 {
-	LONG_PTR DwResult = SVMR_NOT_PROCESSED;
+	DWORD_PTR DwResult = SVMR_NOT_PROCESSED;
 
 	// Try to send message to outputObjectList members, if not already processed...
 	if ((DwMessageID & SVM_NOTIFY_FIRST_RESPONDING) == SVM_NOTIFY_FIRST_RESPONDING)
@@ -2434,7 +2434,7 @@ HRESULT SVTaskObjectClass::DisconnectInputsOutputs(SVObjectVector& rListOfObject
 					// Send to the Object we are using
 					::SVSendMessage(pInObjectInfo->GetInputObjectInfo().UniqueObjectID,
 						SVM_DISCONNECT_OBJECT_INPUT, 
-						reinterpret_cast<LONG_PTR>(pInObjectInfo), NULL);
+						reinterpret_cast<DWORD_PTR>(pInObjectInfo), NULL);
 				}
 			}
 			// remove it from the list
@@ -2672,6 +2672,17 @@ HRESULT SVTaskObjectClass::ResetObjectInputs()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVTaskObject.cpp_v  $
+ * 
+ *    Rev 1.5   15 May 2014 13:10:50   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Changed processMessage signature to use DWORD_PTR.
+ * 
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.4   05 Feb 2014 09:35:22   tbair
  * Project:  SVObserver

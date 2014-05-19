@@ -5,8 +5,8 @@
 //* .Module Name     : SVToolAdjustmentDialogStatisticsPageClass
 //* .File Name       : $Workfile:   SVTADlgStatisticsPage.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   02 Oct 2013 08:17:50  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   15 May 2014 13:13:44  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -182,7 +182,7 @@ void SVToolAdjustmentDialogStatisticsPageClass::initListBox(CListBox* pListBox, 
                     break;
                 }
 
-    			lReturned = pListBox->SetItemData( lReturned, (DWORD) i );
+    			lReturned = pListBox->SetItemData( lReturned, static_cast<DWORD_PTR>(i) );
                 if (lReturned == LB_ERR)
                 {
                     lError = -Err_15006;
@@ -342,6 +342,17 @@ void SVToolAdjustmentDialogStatisticsPageClass::OnBtnObjectPicker()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVTADlgStatisticsPage.cpp_v  $
+ * 
+ *    Rev 1.2   15 May 2014 13:13:44   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Changed SetItemData to cast values to DWORD_PTR.
+ * 
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   02 Oct 2013 08:17:50   tbair
  * Project:  SVObserver

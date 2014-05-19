@@ -5,8 +5,8 @@
 //* .Module Name     : SVTransform
 //* .File Name       : $Workfile:   SVTransform.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   01 Feb 2014 12:21:54  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   15 May 2014 14:48:44  $
 //******************************************************************************
 
 //******************************************************************************
@@ -66,7 +66,7 @@ protected:
 	SVDoubleValueObjectClass* getInputRotationYResult();
 	SVDoubleValueObjectClass* getInputRotationAngleResult();
 
-	virtual LONG_PTR processMessage( DWORD DwMessageID, LONG_PTR DwMessageValue, LONG_PTR DwMessageContext );
+	virtual DWORD_PTR processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext );
 
 //******************************************************************************
 // Data Element(s):
@@ -101,6 +101,16 @@ protected:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVTransform.h_v  $
+ * 
+ *    Rev 1.2   15 May 2014 14:48:44   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Revised processMessage to use DWORD_PTR
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   01 Feb 2014 12:21:54   tbair
  * Project:  SVObserver

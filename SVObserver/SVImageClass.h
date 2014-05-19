@@ -5,8 +5,8 @@
 //* .Module Name     : SVImageClass
 //* .File Name       : $Workfile:   SVImageClass.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.3  $
-//* .Check In Date   : $Date:   01 Feb 2014 10:42:30  $
+//* .Current Version : $Revision:   1.4  $
+//* .Check In Date   : $Date:   15 May 2014 12:44:04  $
 //******************************************************************************
 
 #ifndef SVIMAGECLASS_H
@@ -165,7 +165,7 @@ protected:
 
 	virtual HRESULT GetImageIndex( SVDataManagerHandle& p_rHandle, const SVImageIndexStruct& rIndex ) const;
 
-	virtual LONG_PTR processMessage( DWORD DwMessageID, LONG_PTR DwMessageValue, LONG_PTR DwMessageContext );
+	virtual DWORD_PTR processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext );
 
 	virtual bool Lock() const;
 	virtual bool Unlock() const;
@@ -214,6 +214,16 @@ class SVRGBImageClass : public SVImageClass
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVImageClass.h_v  $
+ * 
+ *    Rev 1.4   15 May 2014 12:44:04   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Revised processMessage to use DWORD_PTR
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   01 Feb 2014 10:42:30   tbair
  * Project:  SVObserver

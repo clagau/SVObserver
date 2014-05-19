@@ -5,8 +5,8 @@
 //* .Module Name     : SVDriveInitDlg
 //* .File Name       : $Workfile:   SVDriveInitDlg.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   30 Sep 2013 14:58:52  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   16 May 2014 08:53:52  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -816,7 +816,7 @@ HRESULT SVDriveInitDlg::BackupBootIni()
 	HRESULT l_Status = S_OK;
 	CString l_NewBootName;
 
-	for( size_t i = 0; i < 1000; ++i )
+	for( int i = 0; i < 1000; ++i )
 	{
 		l_NewBootName.Format( _T( "C:\\boot.%03d" ), i );
 
@@ -1114,7 +1114,7 @@ HRESULT SVDriveInitDlg::AddMatroxBootIniMaxMem( size_t p_MILSize )
 							CString l_NewOption;
 
 							l_NewOption.Format( _T( "%s(Memory: NT=%d MB, MIL=%d.0 MB)%c /MAXMEM=%d%s" ), 
-								l_Option.Left( l_Pos ), l_MaxSize, p_MILSize, l_Option[ l_Pos ], p_MILSize, l_Option.Mid( l_Pos + 1 ) );
+								l_Option.Left( l_Pos ), static_cast<int>(l_MaxSize), static_cast<int>(p_MILSize), l_Option[ l_Pos ], static_cast<int>(p_MILSize), l_Option.Mid( l_Pos + 1 ) );
 
 							WritePrivateProfileString( _T("operating systems"), l_Default, l_NewOption, _T( "C:\\boot.ini" ) );
 						}
@@ -1345,6 +1345,17 @@ HRESULT SVDriveInitDlg::AddCommandBeforeSVObserver( LPCTSTR p_strNewCommand, boo
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVDriveInit\SVDriveInitDlg.cpp_v  $
+ * 
+ *    Rev 1.3   16 May 2014 08:53:52   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Revised BackupBootIni to correct type mismatch.
+ * Revised AddMatroxBootIniMaxMem to correct type mismatch.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   30 Sep 2013 14:58:52   tbair
  * Project:  SVObserver

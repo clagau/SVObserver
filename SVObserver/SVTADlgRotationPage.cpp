@@ -5,8 +5,8 @@
 //* .Module Name     : SVTADlgRotaionPage
 //* .File Name       : $Workfile:   SVTADlgRotationPage.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   01 Feb 2014 12:14:30  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   15 May 2014 13:07:12  $
 //******************************************************************************
 
 #pragma region Includes
@@ -126,44 +126,44 @@ BOOL SVToolAdjustmentDialogRotationPageClass::OnInitDialog()
 		
 		// Get Evaluate Object for the X coordinate...
 		evaluateObjectInfo.SubType = SVEvaluateRotationXObjectType;
-		m_pEvaluateRotationX = ( SVEvaluateClass* ) ::SVSendMessage( m_pTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>(&evaluateObjectInfo) );
+		m_pEvaluateRotationX = reinterpret_cast<SVEvaluateClass*>(::SVSendMessage( m_pTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&evaluateObjectInfo) ));
 		if( m_pEvaluateRotationX )
 		{
 			// Get Evaluate Result Object for the X coordinate...
 			resultObjectInfo.EmbeddedID = SVOutputEvaluateRotationXResultObjectGuid;
-			m_pRotationXResult = ( SVDoubleValueObjectClass* ) ::SVSendMessage( m_pEvaluateRotationX, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>(&resultObjectInfo) );
+			m_pRotationXResult = reinterpret_cast<SVDoubleValueObjectClass*>(::SVSendMessage( m_pEvaluateRotationX, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&resultObjectInfo) ));
 		}
 
 		// Get Evaluate Object for the Y coordinate...
 		evaluateObjectInfo.SubType = SVEvaluateRotationYObjectType;
-		m_pEvaluateRotationY = ( SVEvaluateClass* ) ::SVSendMessage( m_pTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>(&evaluateObjectInfo) );
+		m_pEvaluateRotationY = reinterpret_cast<SVEvaluateClass*>(::SVSendMessage( m_pTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&evaluateObjectInfo) ));
 		if( m_pEvaluateRotationY )
 		{
 			// Get Evaluate Result Object for the Y coordinate...
 			resultObjectInfo.EmbeddedID = SVOutputEvaluateRotationYResultObjectGuid;
-			m_pRotationYResult = ( SVDoubleValueObjectClass* ) ::SVSendMessage( m_pEvaluateRotationY, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>(&resultObjectInfo) );
+			m_pRotationYResult = reinterpret_cast<SVDoubleValueObjectClass*>(::SVSendMessage( m_pEvaluateRotationY, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&resultObjectInfo) ));
 		}
 
 		// Get Evaluate Object for the Angle...
 		evaluateObjectInfo.SubType	   = SVEvaluateRotationAngleObjectType;
-		m_pEvaluateRotationAngle = ( SVEvaluateClass* ) ::SVSendMessage( m_pTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>(&evaluateObjectInfo) );
+		m_pEvaluateRotationAngle = reinterpret_cast<SVEvaluateClass*>(::SVSendMessage( m_pTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&evaluateObjectInfo) ));
 		if( m_pEvaluateRotationAngle )
 		{
 			// Get Evaluate Result Object for the Angle...
 			resultObjectInfo.EmbeddedID = SVOutputEvaluateRotationAngleResultObjectGuid;
-			m_pRotationAngleResult = ( SVDoubleValueObjectClass* ) ::SVSendMessage( m_pEvaluateRotationAngle, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>(&resultObjectInfo) );
+			m_pRotationAngleResult = reinterpret_cast<SVDoubleValueObjectClass*>(::SVSendMessage( m_pEvaluateRotationAngle, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&resultObjectInfo) ));
 		}
 		
 		// Get Rotation enabled...
 		SVObjectTypeInfoStruct objectInfo;
 		objectInfo.ObjectType = SVBoolValueObjectType;
 		objectInfo.EmbeddedID = SVPerformRotationObjectGuid;
-		m_pPerformRotation = ( SVBoolValueObjectClass* ) ::SVSendMessage( m_pTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>(&objectInfo) );
+		m_pPerformRotation = reinterpret_cast<SVBoolValueObjectClass*>(::SVSendMessage( m_pTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&objectInfo) ));
 
 		// Interpolation Mode
 		objectInfo.ObjectType = SVEnumValueObjectType;
 		objectInfo.EmbeddedID = SVOutputInterpolationModeObjectGuid;
-		m_pInterpolationMode = ( SVEnumerateValueObjectClass* ) ::SVSendMessage( m_pTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>(&objectInfo) );
+		m_pInterpolationMode = reinterpret_cast<SVEnumerateValueObjectClass*>(::SVSendMessage( m_pTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&objectInfo) ));
 		if( m_pInterpolationMode )
 		{
 			CString l_strEnumList;
@@ -352,6 +352,16 @@ void SVToolAdjustmentDialogRotationPageClass::refresh()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVTADlgRotationPage.cpp_v  $
+ * 
+ *    Rev 1.3   15 May 2014 13:07:12   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Changed SendMessage to use proper type cast of DWORD_PTR.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   01 Feb 2014 12:14:30   tbair
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : CSVOCameraDlg
 //* .File Name       : $Workfile:   SVOCameraDlg.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.3  $
-//* .Check In Date   : $Date:   02 Dec 2013 11:03:18  $
+//* .Current Version : $Revision:   1.4  $
+//* .Check In Date   : $Date:   15 May 2014 10:25:52  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -354,7 +354,7 @@ void CSVOCameraDlg::SetCameraPropForAll(CString sCurrentCamera)
 
 BOOL CSVOCameraDlg::OnHelpInfo(HELPINFO* pHelpInfo) 
 {
-	::SendMessage( m_pParent->GetSafeHwnd(), WM_HELP, NULL, (DWORD)pHelpInfo );
+	::SendMessage( m_pParent->GetSafeHwnd(), WM_HELP, NULL, reinterpret_cast<DWORD_PTR>(pHelpInfo) );
 	return TRUE;
 }
 
@@ -380,6 +380,16 @@ void CSVOCameraDlg::ShowCameraDlgBtn( int nCmdShow )
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVOCameraDlg.cpp_v  $
+ * 
+ *    Rev 1.4   15 May 2014 10:25:52   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Changed OnHelpInfo signature to use DWORD_PTR.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   02 Dec 2013 11:03:18   tbair
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : SVOutputInfoListTreeCtrl
 //* .File Name       : $Workfile:   SVOutputInfoListTreeCtrl.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   02 Oct 2013 07:01:54  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   15 May 2014 11:40:38  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -496,7 +496,7 @@ void SVOutputInfoListTreeCtrlClass::RebuildTree
 							bResult = SetItemData ( hNewChild, iItemIndex );
 							m_ObjectList.push_back(object);
 							m_mapIndexes[iItemIndex] = hNewChild;
-							//bResult = SetItemData ( hNewChild, (DWORD) pObject );
+							//bResult = SetItemData ( hNewChild, reinterpret_cast<DWORD_PTR>(pObject) );
 
 							if (m_selectObjectList.size() > 0)
 							{
@@ -537,7 +537,7 @@ void SVOutputInfoListTreeCtrlClass::RebuildTree
 						}
 						else
 						{
-							bResult = SetItemData ( hNewChild, (DWORD) NULL );  
+							bResult = SetItemData ( hNewChild, static_cast<DWORD_PTR>(NULL) );  
 						}
 					}// end for( int nNewLevel = nLevel; nNewLevel <= nCountTokens; nNewLevel++ )
 				}// end block
@@ -1107,6 +1107,16 @@ void SVOutputInfoListTreeCtrlClass::SetBranchChecks( HTREEITEM hItem , bool p_bN
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVOutputInfoListTreeCtrl.cpp_v  $
+ * 
+ *    Rev 1.2   15 May 2014 11:40:38   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Changed SetItemData to cast values to DWORD_PTR.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   02 Oct 2013 07:01:54   tbair
  * Project:  SVObserver

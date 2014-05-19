@@ -5,8 +5,8 @@
 //* .Module Name     : SVObjectLibrary
 //* .File Name       : $Workfile:   SVObjectLibrary.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   01 Feb 2014 10:09:16  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   15 May 2014 09:42:28  $
 //******************************************************************************
 
 #ifndef SVOBJECTLIBRARY_H
@@ -141,12 +141,12 @@ const UINT SVM_PURE_MESSAGE	                        = 0x0000ffff;	// allow 16 bi
 
 ////////////////////////////////////////////////////////////////////////////////
 // Message Response ( Result: SVM_SVMR_RESULT )
-const UINT SVMR_NOT_PROCESSED                       = 0x00000000;	// Default for all messages, if not processed! 
+const UINT_PTR SVMR_NOT_PROCESSED                       = 0x00000000;	// Default for all messages, if not processed! 
 															// Also valid for SVM_POINTER_RESULT messages, 
 															// if they are not processed or not succesfully!!!
 															// NEVER CHANGE THIS VALUE!!!
-const UINT SVMR_SUCCESS                             = 0x80000000;
-const UINT SVMR_NO_SUCCESS                          = 0xffffffff;
+const UINT_PTR SVMR_SUCCESS                             = 0x80000000;
+const UINT_PTR SVMR_NO_SUCCESS                          = 0xffffffff;
 
 ////////////////////////////////////////////////////////////////////////////////
 // Message Types
@@ -434,8 +434,8 @@ typedef DWORD SVProductCountType;
 //* FUNCTION DECLARATION(S):
 //******************************************************************************
 
-LONG_PTR SVSendMessage( SVObjectClass* PObject, DWORD DwMessageID, LONG_PTR DwMessageValue, LONG_PTR DwMessageContext );
-LONG_PTR SVSendMessage( const GUID& RUniqueObjectID, DWORD DwMessageID, LONG_PTR DwMessageValue, LONG_PTR DwMessageContext );
+DWORD_PTR SVSendMessage( SVObjectClass* PObject, DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext );
+DWORD_PTR SVSendMessage( const GUID& RUniqueObjectID, DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext );
 
 //******************************************************************************
 //* CONSTANT VARIABLE(S):
@@ -453,6 +453,17 @@ LONG_PTR SVSendMessage( const GUID& RUniqueObjectID, DWORD DwMessageID, LONG_PTR
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObjectLibrary\SVObjectLibrary.h_v  $
+ * 
+ *    Rev 1.2   15 May 2014 09:42:28   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Revised SVSendMessage to use DWORD_PTR instead of DWORD or LONG_PTR.
+ * Revised processMessage to use DWORD_PTR instead of DWORD or LONG_PTR.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   01 Feb 2014 10:09:16   tbair
  * Project:  SVObserver

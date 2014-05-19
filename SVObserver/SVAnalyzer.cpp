@@ -5,8 +5,8 @@
 //* .Module Name     : SVAnalyzer.cpp
 //* .File Name       : $Workfile:   SVAnalyzer.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   01 Feb 2014 10:16:28  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   15 May 2014 10:09:10  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -89,13 +89,13 @@ SVResultClass* SVAnalyzerClass::GetResultObject()
 {
 	SVObjectTypeInfoStruct info;
 	info.ObjectType = SVResultObjectType;
-	SVResultClass* pResult = ( SVResultClass* )SVSendMessage( this, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>(&info) );
+	SVResultClass* pResult = reinterpret_cast<SVResultClass*>(SVSendMessage( this, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&info) ) );
 	return pResult;
 }
 
-LONG_PTR SVAnalyzerClass::processMessage( DWORD DwMessageID, LONG_PTR DwMessageValue, LONG_PTR DwMessageContext )
+DWORD_PTR SVAnalyzerClass::processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext )
 {
-	LONG_PTR DwResult = NULL;
+	DWORD_PTR DwResult = NULL;
 
 	SVAnalyzerLevelCreateStruct createStruct;
 
@@ -121,7 +121,7 @@ LONG_PTR SVAnalyzerClass::processMessage( DWORD DwMessageID, LONG_PTR DwMessageV
 			createStruct.ToolObjectInfo			= GetTool();
 			createStruct.InspectionObjectInfo	= GetInspection();
 
-			DwMessageValue = (DWORD)&createStruct;
+			DwMessageValue = reinterpret_cast<DWORD_PTR>(&createStruct);
 
 			break;
 		}
@@ -144,7 +144,7 @@ LONG_PTR SVAnalyzerClass::processMessage( DWORD DwMessageID, LONG_PTR DwMessageV
 			createStruct.ToolObjectInfo			= GetTool();
 			createStruct.InspectionObjectInfo	= GetInspection();
 
-			DwMessageValue = (DWORD)&createStruct;
+			DwMessageValue = reinterpret_cast<DWORD_PTR>(&createStruct);
 
 			break;
 		}
@@ -186,7 +186,7 @@ LONG_PTR SVAnalyzerClass::processMessage( DWORD DwMessageID, LONG_PTR DwMessageV
 				createStruct.ToolObjectInfo			= GetTool();
 				createStruct.InspectionObjectInfo	= GetInspection();
 				
-				LONG_PTR l_Return = SVSendMessage( pChildObject, SVM_CREATE_ALL_OBJECTS, reinterpret_cast<LONG_PTR>(&createStruct), NULL );
+				DWORD_PTR l_Return = SVSendMessage( pChildObject, SVM_CREATE_ALL_OBJECTS, reinterpret_cast<DWORD_PTR>(&createStruct), NULL );
 
 				if( ( DwMessageContext & SVMFResetObject ) == SVMFResetObject )
 				{
@@ -224,7 +224,7 @@ LONG_PTR SVAnalyzerClass::processMessage( DWORD DwMessageID, LONG_PTR DwMessageV
 				createStruct.ToolObjectInfo			= GetTool();
 				createStruct.InspectionObjectInfo	= GetInspection();
 				
-				LONG_PTR l_Return = SVSendMessage( pChildObject, SVM_CONNECT_ALL_OBJECTS, reinterpret_cast<LONG_PTR>(&createStruct), NULL );
+				DWORD_PTR l_Return = SVSendMessage( pChildObject, SVM_CONNECT_ALL_OBJECTS, reinterpret_cast<DWORD_PTR>(&createStruct), NULL );
 
 				return l_Return;
 			}
@@ -233,7 +233,7 @@ LONG_PTR SVAnalyzerClass::processMessage( DWORD DwMessageID, LONG_PTR DwMessageV
 
 		case SVMSGID_DISCONNECT_IMAGE_OBJECT:
 		{
-			SVAnalyzerClass * l_pAnalyzer = (SVAnalyzerClass *)DwMessageValue;
+			SVAnalyzerClass * l_pAnalyzer = reinterpret_cast<SVAnalyzerClass *>(DwMessageValue);
 			l_pAnalyzer->DisconnectImages();
 			return SVMR_SUCCESS;
 		}
@@ -338,6 +338,16 @@ BOOL SVImageAnalyzerClass::OnValidate()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVAnalyzer.cpp_v  $
+ * 
+ *    Rev 1.2   15 May 2014 10:09:10   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Revised processMessage to use DWORD_PTR
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   01 Feb 2014 10:16:28   tbair
  * Project:  SVObserver

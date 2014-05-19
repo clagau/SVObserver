@@ -5,8 +5,8 @@
 //* .Module Name     : SV1394CameraManagerDlg
 //* .File Name       : $Workfile:   SV1394CameraManagerDlg.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 09:18:08  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   15 May 2014 10:12:22  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -22,7 +22,6 @@ static char THIS_FILE[] = __FILE__;
 /////////////////////////////////////////////////////////////////////////////
 // SV1394CameraManagerDlg dialog
 
-
 SV1394CameraManagerDlg::SV1394CameraManagerDlg(CWnd* pParent /*=NULL*/)
 	: CDialog(SV1394CameraManagerDlg::IDD, pParent)
 {
@@ -30,7 +29,6 @@ SV1394CameraManagerDlg::SV1394CameraManagerDlg(CWnd* pParent /*=NULL*/)
 	m_sSelectedCamea = _T("");
 	//}}AFX_DATA_INIT
 }
-
 
 void SV1394CameraManagerDlg::DoDataExchange(CDataExchange* pDX)
 {
@@ -42,7 +40,6 @@ void SV1394CameraManagerDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_LBString(pDX, IDC_CAMERA_LIST, m_sSelectedCamea);
 	//}}AFX_DATA_MAP
 }
-
 
 BEGIN_MESSAGE_MAP(SV1394CameraManagerDlg, CDialog)
 	//{{AFX_MSG_MAP(SV1394CameraManagerDlg)
@@ -66,8 +63,8 @@ BOOL SV1394CameraManagerDlg::OnInitDialog()
 
 	Refresh();
 
-	m_CDownArrowBmp.LoadBitmap (IDB_DOWNARROW);
-	m_CUpArrowBmp.LoadBitmap (IDB_UPARROW);
+	m_CDownArrowBmp.LoadBitmap(IDB_DOWNARROW);
+	m_CUpArrowBmp.LoadBitmap(IDB_UPARROW);
 
 	m_CUpButton.SetBitmap(m_CUpArrowBmp);
 	m_CDownButton.SetBitmap(m_CDownArrowBmp);
@@ -77,13 +74,11 @@ BOOL SV1394CameraManagerDlg::OnInitDialog()
 	              // EXCEPTION: OCX Property Pages should return FALSE
 }
 
-
 void SV1394CameraManagerDlg::OnRefresh() 
 {
 	Refresh();
 
 	m_lbCameras.Invalidate();
-	
 }
 
 HRESULT SV1394CameraManagerDlg::Refresh()
@@ -103,28 +98,25 @@ HRESULT SV1394CameraManagerDlg::Refresh()
 		{
 			if( x < m_lbCameras.GetCount() )
 			{
-				m_lbCameras.SetItemData(x, (DWORD) &m_CamList.ElementAt(x));
+				m_lbCameras.SetItemData(x, reinterpret_cast<DWORD_PTR>(&m_CamList.ElementAt(x)));
 			}
 			else
 			{
 				CString sSerial = m_CamList[x].strSerialNum;
 
 				m_lbCameras.AddString(sSerial);
-				m_lbCameras.SetItemData(x, (DWORD)&m_CamList[x]);
+				m_lbCameras.SetItemData(x, reinterpret_cast<DWORD_PTR>(&m_CamList[x]));
 			}
 		}
 		else
 		{
-			m_lbCameras.SetItemData(x, NULL);
+			m_lbCameras.SetItemData(x, reinterpret_cast<DWORD_PTR>(nullptr));
 		}
 	}
 
 	::SetCursor( hCursor );
 	return S_OK;
-
-
 }
-
 
 void SV1394CameraManagerDlg::OnOK() 
 {
@@ -138,7 +130,6 @@ void SV1394CameraManagerDlg::OnMoveDown()
 	int iCurSel = m_lbCameras.GetCurSel();
 	if( iCurSel > -1 && iCurSel < m_lbCameras.GetCount()-1)
 	{
-
 		SV1394CameraStruct SVCamTmp;
 		SVCamTmp = m_CamList[iCurSel + 1];
 
@@ -151,8 +142,9 @@ void SV1394CameraManagerDlg::OnMoveDown()
 		m_lbCameras.SetCurSel(iCurSel+1);
 
 		for( int x = 0 ; x < m_CamList.GetSize() ; x ++)
-			m_lbCameras.SetItemData(x, (DWORD) &m_CamList.ElementAt(x));
-
+		{
+			m_lbCameras.SetItemData(x, reinterpret_cast<DWORD_PTR>(&m_CamList.ElementAt(x)));
+		}
 		m_lbCameras.Invalidate(); 
 
 		TheSV1394CameraManager.UpdateCameraOrder( m_CamList );
@@ -176,13 +168,13 @@ void SV1394CameraManagerDlg::OnMoveUp()
 		m_lbCameras.SetCurSel(iCurSel-1);
 
 		for( int x = 0 ; x < m_CamList.GetSize() ; x ++)
-			m_lbCameras.SetItemData(x, (DWORD) &m_CamList.ElementAt(x));
-
+		{
+			m_lbCameras.SetItemData(x, reinterpret_cast<DWORD_PTR>(&m_CamList.ElementAt(x)));
+		}
 		m_lbCameras.Invalidate();
 
 		TheSV1394CameraManager.UpdateCameraOrder( m_CamList );
 	}
-	
 }
 
 void SV1394CameraManagerDlg::OnCancel() 
@@ -196,7 +188,17 @@ void SV1394CameraManagerDlg::OnCancel()
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SV1394CameraManagerDlg.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SV1394CameraManagerDlg.cpp_v  $
+ * 
+ *    Rev 1.1   15 May 2014 10:12:22   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Revised SetItemData to use DWORD_PTR
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 09:18:08   bWalter
  * Project:  SVObserver

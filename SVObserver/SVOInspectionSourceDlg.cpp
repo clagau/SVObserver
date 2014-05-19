@@ -5,8 +5,8 @@
 //* .Module Name     : SVOInspectionSourceDlg
 //* .File Name       : $Workfile:   SVOInspectionSourceDlg.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.5  $
-//* .Check In Date   : $Date:   31 Jan 2014 17:16:36  $
+//* .Current Version : $Revision:   1.6  $
+//* .Check In Date   : $Date:   15 May 2014 11:19:02  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -484,7 +484,7 @@ CString CSVOInspectionSourceDlg::GetNextInspectionDisplayName(CString sLabelName
 
 BOOL CSVOInspectionSourceDlg::OnHelpInfo(HELPINFO* pHelpInfo) 
 {
-	::SendMessage( m_pParent->GetSafeHwnd(), WM_HELP, NULL, (DWORD)pHelpInfo );
+	::SendMessage( m_pParent->GetSafeHwnd(), WM_HELP, NULL, reinterpret_cast<DWORD_PTR>(pHelpInfo) );
 
 	return TRUE;
 }
@@ -494,6 +494,16 @@ BOOL CSVOInspectionSourceDlg::OnHelpInfo(HELPINFO* pHelpInfo)
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVOInspectionSourceDlg.cpp_v  $
+ * 
+ *    Rev 1.6   15 May 2014 11:19:02   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Modified OnHelpInfo to use DWORD_PTR.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.5   31 Jan 2014 17:16:36   bwalter
  * Project:  SVObserver

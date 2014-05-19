@@ -5,8 +5,8 @@
 //* .Module Name     : SVStatisticsTool
 //* .File Name       : $Workfile:   SVStatTool.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   01 Feb 2014 12:08:56  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   15 May 2014 12:40:12  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -317,10 +317,10 @@ DWORD SVStatisticsToolClass::AllocateResult (SVStatisticsFeatureEnum aFeatureInd
 		
 		// Get the output of the result
 		SVDoubleValueObjectClass* pValue = 
-			(SVDoubleValueObjectClass*)SVSendMessage(pResult, 
+			reinterpret_cast<SVDoubleValueObjectClass*>(SVSendMessage(pResult, 
 			SVM_GETFIRST_OBJECT, 
 			NULL, 
-			reinterpret_cast<LONG_PTR>(&info));
+			reinterpret_cast<DWORD_PTR>(&info)));
 		
 		if (!pValue)
 		{
@@ -339,7 +339,7 @@ DWORD SVStatisticsToolClass::AllocateResult (SVStatisticsFeatureEnum aFeatureInd
 		if( ! pResult->IsCreated() )
 		{
 			// And finally try to create the child object...
-			if( ::SVSendMessage( this, SVM_CREATE_CHILD_OBJECT, reinterpret_cast<LONG_PTR>(pResult), NULL ) != SVMR_SUCCESS )
+			if( ::SVSendMessage( this, SVM_CREATE_CHILD_OBJECT, reinterpret_cast<DWORD_PTR>(pResult), NULL ) != SVMR_SUCCESS )
 			{
 				AfxMessageBox("Creation of Statistics Result Failed");
 				
@@ -378,7 +378,7 @@ DWORD SVStatisticsToolClass::FreeResult (SVStatisticsFeatureEnum aFeatureIndex)
 		
 		::SVSendMessage (this, 
 			SVM_DESTROY_CHILD_OBJECT,
-			reinterpret_cast<LONG_PTR>(pResult),
+			reinterpret_cast<DWORD_PTR>(pResult),
 			SVMFSetDefaultInputs);
 		
 		pResult = NULL;
@@ -482,7 +482,7 @@ void SVStatisticsToolClass::SetVariableSelected( CString p_strName )
 		if( m_inputObjectInfo.IsConnected() && m_inputObjectInfo.GetInputObjectInfo().PObject )
 		{
 			::SVSendMessage(m_inputObjectInfo.GetInputObjectInfo().PObject,
-							SVM_DISCONNECT_OBJECT_INPUT, reinterpret_cast <LONG_PTR> (&m_inputObjectInfo), NULL );
+							SVM_DISCONNECT_OBJECT_INPUT, reinterpret_cast <DWORD_PTR> (&m_inputObjectInfo), NULL );
 		}
 	}
 
@@ -504,7 +504,7 @@ void SVStatisticsToolClass::SetVariableSelected( CString p_strName )
 			//m_inputObjectInfo.InputObjectInfo.UniqueObjectID = selectedVarGuid;
 			m_inputObjectInfo.SetInputObject( refObject );
 			
-			::SVSendMessage(refObject.Object(), SVM_CONNECT_OBJECT_INPUT, reinterpret_cast <LONG_PTR> (&m_inputObjectInfo), NULL );
+			::SVSendMessage(refObject.Object(), SVM_CONNECT_OBJECT_INPUT, reinterpret_cast <DWORD_PTR> (&m_inputObjectInfo), NULL );
 		}// end if( refObject.Object() )
 		msvVariableName.SetValue(1, p_strName);
 	}
@@ -777,9 +777,9 @@ BOOL SVStatisticsToolClass::onRun( SVRunStatusClass& RRunStatus )
 	return l_bOk;
 }
 
-LONG_PTR SVStatisticsToolClass::processMessage( DWORD DwMessageID, LONG_PTR DwMessageValue, LONG_PTR DwMessageContext )
+DWORD_PTR SVStatisticsToolClass::processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext )
 {
-	LONG_PTR DwResult = NULL;
+	DWORD_PTR DwResult = NULL;
 	// Try to process message by yourself...
 	DWORD dwPureMessageID = DwMessageID & SVM_PURE_MESSAGE;
 	switch( dwPureMessageID )
@@ -843,6 +843,17 @@ LONG_PTR SVStatisticsToolClass::processMessage( DWORD DwMessageID, LONG_PTR DwMe
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVStatTool.cpp_v  $
+ * 
+ *    Rev 1.3   15 May 2014 12:40:12   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Changed processMessage signature to use DWORD_PTR.
+ * 
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   01 Feb 2014 12:08:56   tbair
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : SVIPDoc
 //* .File Name       : $Workfile:   SVIPDoc.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.14  $
-//* .Check In Date   : $Date:   22 Apr 2014 13:13:22  $
+//* .Current Version : $Revision:   1.15  $
+//* .Check In Date   : $Date:   15 May 2014 13:04:38  $
 //******************************************************************************
 
 #pragma region Includes
@@ -199,7 +199,7 @@ void SVIPDoc::UpdateAllData()
 
 	if( m_NewProductData.PopHead( l_ProductData ) == S_OK )
 	{
-		SVIPImageDataElementMap::iterator l_Iter = l_ProductData.m_ImageData.begin();
+		SVIPImageDataElementMap::const_iterator l_Iter = l_ProductData.m_ImageData.begin();
 
 		while( l_Iter != l_ProductData.m_ImageData.end() )
 		{
@@ -3564,7 +3564,7 @@ DWORD WINAPI SVIPDoc::SVRegressionTestRunThread( LPVOID lpParam )
 
 	//let the IP know that the regression test is done.
 //	CWnd* pWnd = AfxGetMainWnd(); // SEJ -this fails in VC8 (could be cause we are in a different thread?)
-	CWnd* pWnd = pWnd = AfxGetApp()->m_pMainWnd;
+	CWnd* pWnd = AfxGetApp()->m_pMainWnd;
 	PostMessage (pWnd->m_hWnd, WM_COMMAND, WM_REGRESSION_TEST_COMPLETE, 0L);
 
 	//let the RegressionRunDlg know that it is to shut down...
@@ -4231,6 +4231,17 @@ BOOL SVIPDoc::RunOnce( SVToolClass* p_pTool )
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVIPDoc.cpp_v  $
+ * 
+ *    Rev 1.15   15 May 2014 13:04:38   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Revised UpdateAllData to use const_iterator.
+ * Revised SVRegressionTestRunThread to remove self assignment of pWnd.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.14   22 Apr 2014 13:13:22   sjones
  * Project:  SVObserver

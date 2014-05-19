@@ -5,8 +5,8 @@
 //* .Module Name     : SVSaveToolSetImageDialog
 //* .File Name       : $Workfile:   SVSaveToolSetImageDialog.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 15:02:08  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   15 May 2014 13:48:24  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -92,12 +92,12 @@ BOOL SVSaveToolSetImageDialogClass::OnInitDialog()
 
 	/*
 	// Populate available image combo...
-	SVImageClass* pImage = ( SVImageClass* ) ::SVSendMessage( PToolSet, SVM_GETFIRST_OBJECT, NULL, ( DWORD ) &imageObjectInfo );
+	SVImageClass* pImage = reinterpret_cast<SVImageClass*>(::SVSendMessage( PToolSet, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&imageObjectInfo)));
 	while( pImage )
 	{
 		index = availableImagesComboCtrl.AddString( pImage->GetCompleteObjectNameToObjectType( NULL, SVToolSetObjectType ) );
 		availableImagesComboCtrl.SetItemData( index, ( DWORD ) pImage );
-		pImage = ( SVImageClass* ) ::SVSendMessage( PToolSet, SVM_GETNEXT_OBJECT, ( DWORD ) pImage, ( DWORD ) &imageObjectInfo );
+		pImage = reinterpret_cast<SVImageClass*>(::SVSendMessage( PToolSet, SVM_GETNEXT_OBJECT, reinterpret_cast<DWORD_PTR>(pImage), reinterpret_cast<DWORD_PTR>(&imageObjectInfo)));
 	}
 	*/
 
@@ -220,7 +220,17 @@ void SVSaveToolSetImageDialogClass::OnSaveButton()
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVSaveToolSetImageDialog.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVSaveToolSetImageDialog.cpp_v  $
+ * 
+ *    Rev 1.1   15 May 2014 13:48:24   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Revised SVSendMessage to use DWORD_PTR
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 15:02:08   bWalter
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : SVOperator
 //* .File Name       : $Workfile:   SVOperator.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.4  $
-//* .Check In Date   : $Date:   05 Feb 2014 09:35:20  $
+//* .Current Version : $Revision:   1.5  $
+//* .Check In Date   : $Date:   15 May 2014 11:21:48  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -60,9 +60,9 @@ BOOL SVOperatorClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure 
 	return bOk;
 }
 
-LONG_PTR SVOperatorClass::processMessage(DWORD DwMessageID, LONG_PTR DwMessageValue, LONG_PTR DwMessageContext)
+DWORD_PTR SVOperatorClass::processMessage(DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext)
 {
-	LONG_PTR DwResult = NULL;
+	DWORD_PTR DwResult = NULL;
 	// Try to process message by yourself...
 	DWORD dwPureMessageID = DwMessageID & SVM_PURE_MESSAGE;
 	switch( dwPureMessageID )
@@ -106,6 +106,16 @@ void SVOperatorClass::init()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVOperator.cpp_v  $
+ * 
+ *    Rev 1.5   15 May 2014 11:21:48   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Modified processMessage to use DWORD_PTR.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.4   05 Feb 2014 09:35:20   tbair
  * Project:  SVObserver

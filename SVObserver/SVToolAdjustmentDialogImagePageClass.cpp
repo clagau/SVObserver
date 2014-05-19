@@ -5,8 +5,8 @@
 //* .Module Name     : SVToolAdjustmentDialogImagePageClass
 //* .File Name       : $Workfile:   SVToolAdjustmentDialogImagePageClass.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 15:36:10  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   15 May 2014 14:36:26  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -195,7 +195,7 @@ BOOL SVToolAdjustmentDialogImagePageClass::OnInitDialog()
 			/*
 			// Search for first...
 			SVImageClass* pImage = dynamic_cast <SVImageClass*> (reinterpret_cast <SVObjectClass*>
-				(::SVSendMessage( pToolSet, SVM_GETFIRST_OBJECT, NULL, ( DWORD ) &imageObjectInfo )));
+				(::SVSendMessage( pToolSet, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&imageObjectInfo) )));
 			while( pImage )
 			{
 				//
@@ -242,7 +242,7 @@ BOOL SVToolAdjustmentDialogImagePageClass::OnInitDialog()
 				
 				// Search for next image...
 				pImage = dynamic_cast <SVImageClass*> (reinterpret_cast <SVObjectClass*>
-					(::SVSendMessage( pToolSet, SVM_GETNEXT_OBJECT, ( DWORD ) pImage, ( DWORD ) &imageObjectInfo )));
+					(::SVSendMessage( pToolSet, SVM_GETNEXT_OBJECT, reinterpret_cast<DWORD_PTR>(pImage), reinterpret_cast<DWORD_PTR>(&imageObjectInfo) )));
 				
 				// Ensure only image sources which are produced by tools above the current tool....
 				if( pImage )
@@ -320,7 +320,17 @@ void SVToolAdjustmentDialogImagePageClass::OnSelchangeCombo1()
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVToolAdjustmentDialogImagePageClass.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVToolAdjustmentDialogImagePageClass.cpp_v  $
+ * 
+ *    Rev 1.1   15 May 2014 14:36:26   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Revised SVSendMessage to use DWORD_PTR
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 15:36:10   bWalter
  * Project:  SVObserver

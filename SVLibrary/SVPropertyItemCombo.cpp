@@ -5,8 +5,8 @@
 // * .Module Name     : PropertyItemCombo.cpp
 // * .File Name       : $Workfile:   SVPropertyItemCombo.cpp  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.2  $
-// * .Check In Date   : $Date:   23 Jan 2014 07:37:26  $
+// * .Current Version : $Revision:   1.3  $
+// * .Check In Date   : $Date:   15 May 2014 09:33:12  $
 // ******************************************************************************
 
 #include "stdafx.h"
@@ -220,7 +220,7 @@ void SVPropertyItemCombo::Serialize(CArchive& ar)
 	{	// storing code
 		ar << m_strText;
 		ar << m_dwStyle;
-		size = m_Strings.GetSize();
+		size = static_cast<__int32>(m_Strings.GetSize());
 		ar << size;
 		for (__int32 i=0; i<size; i++)
 		{
@@ -265,6 +265,16 @@ int SVPropertyItemCombo::GetDataIndex(void) const
 // ******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVLibrary\SVPropertyItemCombo.cpp_v  $
+ * 
+ *    Rev 1.3   15 May 2014 09:33:12   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Revised Serialize method to cast assignment to size to __int32
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   23 Jan 2014 07:37:26   tbair
  * Project:  SVObserver

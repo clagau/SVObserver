@@ -5,8 +5,8 @@
 //* .Module Name     : SVOCVAnalyzer
 //* .File Name       : $Workfile: 
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.3  $
-//* .Check In Date   : $Date:   01 Feb 2014 11:55:20  $
+//* .Current Version : $Revision:   1.4  $
+//* .Check In Date   : $Date:   15 May 2014 11:07:28  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -165,9 +165,9 @@ void SVOCVAnalyzerClass::DisplayAnalyzerResult()
 	dlg.DoModal();
 }
 
-LONG_PTR SVOCVAnalyzerClass::processMessage( DWORD DwMessageID, LONG_PTR DwMessageValue, LONG_PTR DwMessageContext )
+DWORD_PTR SVOCVAnalyzerClass::processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext )
 {
-	LONG_PTR DwResult = NULL;
+	DWORD_PTR DwResult = NULL;
 	// Try to process message by yourself...
 	DWORD dwPureMessageID = DwMessageID & SVM_PURE_MESSAGE;
 	switch( dwPureMessageID )
@@ -197,6 +197,16 @@ LONG_PTR SVOCVAnalyzerClass::processMessage( DWORD DwMessageID, LONG_PTR DwMessa
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVOCVAnalyzer.cpp_v  $
+ * 
+ *    Rev 1.4   15 May 2014 11:07:28   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Modified processMessage to use DWORD_PTR instead of LONG_PTR.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   01 Feb 2014 11:55:20   tbair
  * Project:  SVObserver

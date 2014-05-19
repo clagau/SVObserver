@@ -5,8 +5,8 @@
 //* .Module Name     : ConditionalController
 //* .File Name       : $Workfile:   ConditionalController.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   13 May 2014 04:45:08  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   15 May 2014 10:06:54  $
 //******************************************************************************
 //Description:  ConditionalController is the class to get/set and
 //              validate equation objects inside SVObserver.
@@ -114,11 +114,11 @@ namespace Seidenader
 			info.SubType = SVConditionalObjectType;
 			if ( nullptr != m_pTool )
 			{
-				pCondition = (SVEquationClass*) ::SVSendMessage( m_pTool, SVM_GETFIRST_OBJECT | SVM_NOTIFY_ONLY_FRIENDS, NULL, reinterpret_cast<LONG_PTR>( &info ) );
+				pCondition = reinterpret_cast<SVEquationClass*>(::SVSendMessage( m_pTool, SVM_GETFIRST_OBJECT | SVM_NOTIFY_ONLY_FRIENDS, NULL, reinterpret_cast<DWORD_PTR>( &info )) );
 			}
 			else
 			{
-				pCondition = (SVEquationClass*) ::SVSendMessage( m_pToolSet, SVM_GETFIRST_OBJECT | SVM_NOTIFY_ONLY_FRIENDS, NULL,reinterpret_cast<LONG_PTR>( &info ));
+				pCondition = reinterpret_cast<SVEquationClass*>(::SVSendMessage( m_pToolSet, SVM_GETFIRST_OBJECT | SVM_NOTIFY_ONLY_FRIENDS, NULL,reinterpret_cast<DWORD_PTR>( &info )) );
 			}
 			setEquation( pCondition );
 
@@ -144,6 +144,16 @@ namespace Seidenader
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\ConditionalController.cpp_v  $
+ * 
+ *    Rev 1.3   15 May 2014 10:06:54   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Revised to correct casting issues
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   13 May 2014 04:45:08   mziegler
  * Project:  SVObserver

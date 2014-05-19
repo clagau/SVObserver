@@ -5,8 +5,8 @@
 //* .Module Name     : SVBlobAnalyzerFeatureListBox
 //* .File Name       : $Workfile:   SVBlobAnalyzerFeatureListBox.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 09:42:18  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   15 May 2014 10:22:42  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -71,7 +71,7 @@ void SVBlobAnalyzeFeatureListBoxClass::init(SVBlobAnalyzerClass* apCurrentAnalyz
                     break;
                 }
 
-    			lReturned = SetItemData( lReturned, (DWORD) i );
+    			lReturned = SetItemData( lReturned, static_cast<DWORD_PTR>(i) );
                 if (lReturned == LB_ERR)
                 {
                     lError = -1148;
@@ -125,7 +125,17 @@ BOOL SVBlobAnalyzeFeatureListBoxClass::Create(
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVBlobAnalyzerFeatureListBox.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVBlobAnalyzerFeatureListBox.cpp_v  $
+ * 
+ *    Rev 1.1   15 May 2014 10:22:42   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Revised SetItemData to use DWORD_PTR
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 09:42:18   bWalter
  * Project:  SVObserver

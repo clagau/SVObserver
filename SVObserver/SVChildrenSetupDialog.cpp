@@ -5,8 +5,8 @@
 //* .Module Name     : SVChildrenSetupDialog
 //* .File Name       : $Workfile:   SVChildrenSetupDialog.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   01 Feb 2014 10:23:14  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   15 May 2014 11:10:26  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -53,7 +53,7 @@ void SVChildrenSetupDialogClass::redrawLists()
 			findInfo.flags = LVFI_STRING;
 			findInfo.psz   = rChildrenInfo.ClassName;
 			if( BAllowMultipleChildrenInstances || ChildrenListCtrl.FindItem( &findInfo ) < 0 )
-				AvailableChildrenListCtrl.SetItemData( AvailableChildrenListCtrl.InsertItem( 0, rChildrenInfo.ClassName ), ( DWORD ) i );
+				AvailableChildrenListCtrl.SetItemData( AvailableChildrenListCtrl.InsertItem( 0, rChildrenInfo.ClassName ), static_cast<DWORD_PTR>(i) );
 		}
 
 
@@ -167,7 +167,7 @@ void SVChildrenSetupDialogClass::OnAddButton()
 					::SVSendMessage( pObject, SVM_CONNECT_ALL_INPUTS, NULL, NULL );
 
 					// And finally try to create the child object...
-					if( ::SVSendMessage( PParentObject, SVM_CREATE_CHILD_OBJECT, reinterpret_cast<LONG_PTR>(pObject), SVMFSetDefaultInputs | SVMFResetInspection ) != SVMR_SUCCESS )
+					if( ::SVSendMessage( PParentObject, SVM_CREATE_CHILD_OBJECT, reinterpret_cast<DWORD_PTR>(pObject), SVMFSetDefaultInputs | SVMFResetInspection ) != SVMR_SUCCESS )
 					{
 						CString strMessage;
 						AfxFormatString1( strMessage, IDS_CRITICAL_CREATION_OF_FAILED, pObject->GetName() ); 
@@ -214,7 +214,7 @@ void SVChildrenSetupDialogClass::OnRemoveButton()
 				if( rc )
 				{
 					// Close, Disconnect and Delete Children...
-					::SVSendMessage( PParentObject, SVM_DESTROY_CHILD_OBJECT, reinterpret_cast<LONG_PTR>(pTaskObject), SVMFSetDefaultInputs | SVMFResetInspection );
+					::SVSendMessage( PParentObject, SVM_DESTROY_CHILD_OBJECT, reinterpret_cast<DWORD_PTR>(pTaskObject), SVMFSetDefaultInputs | SVMFResetInspection );
 				}
 			}
 		}
@@ -380,6 +380,16 @@ BOOL SVChildrenSetupDialogClass::checkOkToDelete( SVTaskObjectClass* pTaskObject
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVChildrenSetupDialog.cpp_v  $
+ * 
+ *    Rev 1.3   15 May 2014 11:10:26   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Revised SVSendMessage to use DWORD_PTR
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   01 Feb 2014 10:23:14   tbair
  * Project:  SVObserver

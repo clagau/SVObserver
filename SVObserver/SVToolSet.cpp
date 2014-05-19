@@ -5,8 +5,8 @@
 //* .Module Name     : SVToolSet.cpp
 //* .File Name       : $Workfile:   SVToolSet.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.3  $
-//* .Check In Date   : $Date:   01 Feb 2014 12:22:16  $
+//* .Current Version : $Revision:   1.4  $
+//* .Check In Date   : $Date:   15 May 2014 14:50:08  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -1390,9 +1390,9 @@ HRESULT SVToolSetClass::ClearResetCounts()
 	return l_hr;
 }
 
-LONG_PTR SVToolSetClass::processMessage( DWORD DwMessageID, LONG_PTR DwMessageValue, LONG_PTR DwMessageContext )
+DWORD_PTR SVToolSetClass::processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext )
 {
-	LONG_PTR DwResult = NULL;
+	DWORD_PTR DwResult = NULL;
 
 	SVAnalyzerLevelCreateStruct createStruct;
 
@@ -1418,7 +1418,7 @@ LONG_PTR SVToolSetClass::processMessage( DWORD DwMessageID, LONG_PTR DwMessageVa
 
 	case SVMSGID_CREATE_ALL_OBJECTS:
 		{
-			if( !IsCreated() && !CreateObject( ( SVObjectLevelCreateStruct* ) DwMessageValue ) )
+			if( !IsCreated() && !CreateObject( reinterpret_cast<SVObjectLevelCreateStruct*>(DwMessageValue) ) )
 			{
 				ASSERT( FALSE );
 
@@ -1434,14 +1434,14 @@ LONG_PTR SVToolSetClass::processMessage( DWORD DwMessageID, LONG_PTR DwMessageVa
 			createStruct.ToolObjectInfo	= GetTool();
 			createStruct.InspectionObjectInfo	= GetInspection();
 
-			DwMessageValue = (DWORD)&createStruct;
+			DwMessageValue = reinterpret_cast<DWORD_PTR>(&createStruct);
 
 			break;
 		}
 
 	case SVMSGID_CONNECT_ALL_OBJECTS:
 		{
-			if( ConnectObject( ( SVObjectLevelCreateStruct* ) DwMessageValue ) != S_OK )
+			if( ConnectObject( reinterpret_cast<SVObjectLevelCreateStruct*>(DwMessageValue) ) != S_OK )
 			{
 				ASSERT( FALSE );
 
@@ -1457,7 +1457,7 @@ LONG_PTR SVToolSetClass::processMessage( DWORD DwMessageID, LONG_PTR DwMessageVa
 			createStruct.ToolObjectInfo	= GetTool();
 			createStruct.InspectionObjectInfo	= GetInspection();
 
-			DwMessageValue = (DWORD)&createStruct;
+			DwMessageValue = reinterpret_cast<DWORD_PTR>(&createStruct);
 
 			break;
 		}
@@ -1470,7 +1470,7 @@ LONG_PTR SVToolSetClass::processMessage( DWORD DwMessageID, LONG_PTR DwMessageVa
 			// and returns the result of this message.
 			// ...use second message parameter ( DwMessageValue ) as SVObjectClass* of the child object
 			// ...returns SVMR_SUCCESS, SVMR_NO_SUCCESS or SVMR_NOT_PROCESSED
-			SVObjectClass* pChildObject = ( SVObjectClass* ) DwMessageValue;
+			SVObjectClass* pChildObject = reinterpret_cast<SVObjectClass*>(DwMessageValue);
 			if( IsCreated() && SV_IS_KIND_OF( pChildObject, SVObjectClass ) )
 			{
 				long l_LastIndex = 1;
@@ -1501,7 +1501,7 @@ LONG_PTR SVToolSetClass::processMessage( DWORD DwMessageID, LONG_PTR DwMessageVa
 				createStruct.OwnerObjectInfo        = this;
 				createStruct.InspectionObjectInfo	= GetInspection();
 
-				DWORD l_Return = SVSendMessage( pChildObject, SVM_CREATE_ALL_OBJECTS, reinterpret_cast<LONG_PTR>(&createStruct), NULL );
+				DWORD_PTR l_Return = SVSendMessage( pChildObject, SVM_CREATE_ALL_OBJECTS, reinterpret_cast<DWORD_PTR>(&createStruct), NULL );
 
 				if( ( DwMessageContext & SVMFResetObject ) == SVMFResetObject )
 				{
@@ -1533,7 +1533,7 @@ LONG_PTR SVToolSetClass::processMessage( DWORD DwMessageID, LONG_PTR DwMessageVa
 			// and returns the result of this message.
 			// ...use second message parameter ( DwMessageValue ) as SVObjectClass* of the child object
 			// ...returns SVMR_SUCCESS, SVMR_NO_SUCCESS or SVMR_NOT_PROCESSED
-			SVObjectClass* pChildObject = ( SVObjectClass* ) DwMessageValue;
+			SVObjectClass* pChildObject = reinterpret_cast<SVObjectClass*>(DwMessageValue);
 			if( SV_IS_KIND_OF( pChildObject, SVObjectClass ) )
 			{
 				SVInspectionLevelCreateStruct createStruct;
@@ -1541,7 +1541,7 @@ LONG_PTR SVToolSetClass::processMessage( DWORD DwMessageID, LONG_PTR DwMessageVa
 				createStruct.OwnerObjectInfo        = this;
 				createStruct.InspectionObjectInfo	= GetInspection();
 
-				DWORD l_Return = SVSendMessage( pChildObject, SVM_CONNECT_ALL_OBJECTS, reinterpret_cast<LONG_PTR>(&createStruct), NULL );
+				DWORD_PTR l_Return = SVSendMessage( pChildObject, SVM_CONNECT_ALL_OBJECTS, reinterpret_cast<DWORD_PTR>(&createStruct), NULL );
 
 				return l_Return;
 			}
@@ -1773,6 +1773,17 @@ HRESULT SVToolSetClass::onCollectOverlays(SVImageClass *p_Image, SVExtentMultiLi
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVToolSet.cpp_v  $
+ * 
+ *    Rev 1.4   15 May 2014 14:50:08   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Revised processMessage to use DWORD_PTR
+ * Revised SVSendMessage to use DWORD_PTR
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   01 Feb 2014 12:22:16   tbair
  * Project:  SVObserver

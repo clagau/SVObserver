@@ -5,8 +5,8 @@
 //* .Module Name     : NameSelectionTreeCtrl
 //* .File Name       : $Workfile:   NameSelectionTreeCtrl.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   23 Apr 2014 14:29:54  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   15 May 2014 10:11:00  $
 //******************************************************************************
 
 #pragma region Includes
@@ -283,7 +283,7 @@ void NameSelectionTreeCtrl::Populate(const NameSelectionList& list)
 					// Are we at the tree 'leaf' yet?
 					if (csNewChild == csNameLeaf)
 					{
-						int dist = std::distance(list.begin(), it);
+						size_t dist = std::distance(list.begin(), it);
 						m_mapIndexes[dist] = hNewChild;
 						SetItemData(hNewChild, dist | LeafNodeIndicator);
 						// check if it should be selected
@@ -525,6 +525,16 @@ void NameSelectionTreeCtrl::SetBranchChecks(HTREEITEM hItem , bool p_bNewBranchS
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\NameSelectionTreeCtrl.cpp_v  $
+ * 
+ *    Rev 1.3   15 May 2014 10:11:00   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Revised Populate to use size_t for assignment from std::distance
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   23 Apr 2014 14:29:54   ryoho
  * Project:  SVObserver

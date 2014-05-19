@@ -5,8 +5,8 @@
 //* .Module Name     : SVOCRAnalyzerResult
 //* .File Name       : $Workfile:   SVOCRAnalyzerResult.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.4  $
-//* .Check In Date   : $Date:   01 Feb 2014 11:39:20  $
+//* .Current Version : $Revision:   1.5  $
+//* .Check In Date   : $Date:   15 May 2014 10:43:20  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -768,9 +768,9 @@ BOOL SVOCRAnalyzeResultClass::OnValidate()
 //
 //
 //
-LONG_PTR SVOCRAnalyzeResultClass::processMessage( DWORD DwMessageID, LONG_PTR DwMessageValue, LONG_PTR DwMessageContext )
+DWORD_PTR SVOCRAnalyzeResultClass::processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext )
 {
-	LONG_PTR DwResult = NULL;
+	DWORD_PTR DwResult = NULL;
 
 	// Try to process message by yourself...
 	DWORD dwPureMessageID = DwMessageID & SVM_PURE_MESSAGE;
@@ -1368,6 +1368,16 @@ int SVOCRAnalyzeResultClass::CheckStringInTable(CString MatchString)
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVOCRAnalyzerResult.cpp_v  $
+ * 
+ *    Rev 1.5   15 May 2014 10:43:20   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Modified processMessage signature to use DWORD_PTR.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.4   01 Feb 2014 11:39:20   tbair
  * Project:  SVObserver

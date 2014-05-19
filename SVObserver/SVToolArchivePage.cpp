@@ -5,8 +5,8 @@
 //* .Module Name     : SVToolAdjustmentArchivePage
 //* .File Name       : $Workfile:   SVToolArchivePage.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   18 Nov 2013 12:44:22  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   15 May 2014 14:43:30  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -246,7 +246,7 @@ void SVToolAdjustmentArchivePage::BuildImageList()
 	                        ( SVSendMessage (  static_cast <SVObjectClass*> (pToolSet), 
 	                                           SVM_GETFIRST_OBJECT,
 	                                           NULL,
-	                                           reinterpret_cast <DWORD> (&info)
+	                                           reinterpret_cast <DWORD_PTR> (&info)
 	                                         )
 	                        )
 	                      );
@@ -262,8 +262,8 @@ void SVToolAdjustmentArchivePage::BuildImageList()
 		                     ( reinterpret_cast <SVObjectClass*> 
 		                        ( SVSendMessage (  static_cast <SVObjectClass*> (pToolSet), 
 		                                           SVM_GETNEXT_OBJECT,
-		                                           reinterpret_cast <DWORD> (pImage),
-		                                           reinterpret_cast <DWORD> (&info)
+		                                           reinterpret_cast <DWORD_PTR> (pImage),
+		                                           reinterpret_cast <DWORD_PTR> (&info)
 		                                         )
 		                         )
 		                     );
@@ -747,6 +747,16 @@ void SVToolAdjustmentArchivePage::OnBnClickedHeaderCheck()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVToolArchivePage.cpp_v  $
+ * 
+ *    Rev 1.3   15 May 2014 14:43:30   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Revised SVSendMessage to use DWORD_PTR
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   18 Nov 2013 12:44:22   tbair
  * Project:  SVObserver

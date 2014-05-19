@@ -5,8 +5,8 @@
 //* .Module Name     : SVLineAnalyzer
 //* .File Name       : $Workfile:   SVLineAnalyzer.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   01 Feb 2014 11:13:08  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   15 May 2014 13:14:08  $
 //******************************************************************************
 
 #ifndef SVLINEANALYZER_H
@@ -78,7 +78,7 @@ protected:
 
 	virtual BOOL  onRun( SVRunStatusClass& RRunStatus );
 
-	virtual LONG_PTR processMessage( DWORD DwMessageID, LONG_PTR DwMessageValue, LONG_PTR DwMessageContext );
+	virtual DWORD_PTR processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext );
 	virtual void removeEmbeddedExtents();
 
 	virtual HRESULT onCollectOverlays(SVImageClass *p_Image, SVExtentMultiLineStructCArray &p_MultiLineArray );
@@ -117,6 +117,16 @@ private:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVLineAnalyzer.h_v  $
+ * 
+ *    Rev 1.2   15 May 2014 13:14:08   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Revsied processMessage to use DWORD_PTR
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   01 Feb 2014 11:13:08   tbair
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : SVBlobAnalyzer
 //* .File Name       : $Workfile:   SVBlobAnalyzer.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.3  $
-//* .Check In Date   : $Date:   01 Feb 2014 10:23:12  $
+//* .Current Version : $Revision:   1.4  $
+//* .Check In Date   : $Date:   15 May 2014 10:19:42  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -396,10 +396,10 @@ DWORD SVBlobAnalyzerClass::AllocateResult (SVBlobFeatureEnum aFeatureIndex)
 		info.EmbeddedID = SVValueObjectGuid;
 
 		SVDoubleValueObjectClass* pValue = 
-		      (SVDoubleValueObjectClass*)SVSendMessage(pResult, 
+		      reinterpret_cast<SVDoubleValueObjectClass*>(SVSendMessage(pResult, 
 		                                               SVM_GETFIRST_OBJECT, 
 		                                               NULL, 
-		                                              reinterpret_cast<LONG_PTR>(&info));
+		                                              reinterpret_cast<DWORD_PTR>(&info)));
 
 		if (!pValue)
 		{
@@ -417,7 +417,7 @@ DWORD SVBlobAnalyzerClass::AllocateResult (SVBlobFeatureEnum aFeatureIndex)
 		if( ! pResult->IsCreated() )
 		{
 			// And finally try to create the child object...
-			if( ::SVSendMessage( this, SVM_CREATE_CHILD_OBJECT, reinterpret_cast<LONG_PTR>(pResult), NULL ) != SVMR_SUCCESS )
+			if( ::SVSendMessage( this, SVM_CREATE_CHILD_OBJECT, reinterpret_cast<DWORD_PTR>(pResult), NULL ) != SVMR_SUCCESS )
 			{
 				AfxMessageBox("Creation of Blob Analyzer Result Failed");
 					
@@ -487,10 +487,10 @@ DWORD SVBlobAnalyzerClass::AllocateBlobResult ()
 		info.EmbeddedID = SVValueObjectGuid;
 		
 		SVLongValueObjectClass* pValue = 
-			(SVLongValueObjectClass*)SVSendMessage(m_pResultBlob, 
+			reinterpret_cast<SVLongValueObjectClass*>(SVSendMessage(m_pResultBlob, 
 			SVM_GETFIRST_OBJECT, 
 			NULL, 
-			reinterpret_cast<LONG_PTR>(&info));
+			reinterpret_cast<DWORD_PTR>(&info)));
 		
 		if (!pValue)
 		{
@@ -508,7 +508,7 @@ DWORD SVBlobAnalyzerClass::AllocateBlobResult ()
 		if( ! m_pResultBlob->IsCreated() )
 		{
 			// And finally try to create the child object...
-			if( ::SVSendMessage( this, SVM_CREATE_CHILD_OBJECT, ( DWORD ) m_pResultBlob, NULL ) != SVMR_SUCCESS )
+			if( ::SVSendMessage( this, SVM_CREATE_CHILD_OBJECT, reinterpret_cast<DWORD_PTR>(m_pResultBlob), NULL ) != SVMR_SUCCESS )
 			{
 				AfxMessageBox("Creation of Blob Analyzer Result Failed");
 				
@@ -547,7 +547,7 @@ DWORD SVBlobAnalyzerClass::FreeResult (SVBlobFeatureEnum aFeatureIndex)
 		
 		SVSendMessage (this, 
 		               SVM_DESTROY_CHILD_OBJECT,
-		              reinterpret_cast<LONG_PTR>(pResult),
+		              reinterpret_cast<DWORD_PTR>(pResult),
 		               SVMFSetDefaultInputs);
 		
 		pResult = NULL;
@@ -818,7 +818,7 @@ BOOL SVBlobAnalyzerClass::CreateObject(SVObjectLevelCreateStruct* PCreateStructu
 	{
 		if( !msvValue[i].IsCreated() )
 		{
-			::SVSendMessage( this, SVM_CREATE_CHILD_OBJECT,reinterpret_cast<LONG_PTR>( msvValue + i ), NULL );
+			::SVSendMessage( this, SVM_CREATE_CHILD_OBJECT, reinterpret_cast<DWORD_PTR>( msvValue + i ), NULL );
 		}
 
 		if ( msvszFeaturesEnabled[i] != _T('1') )
@@ -922,9 +922,9 @@ BOOL SVBlobAnalyzerClass::OnValidate()
 	return TRUE;
 }
 
-LONG_PTR SVBlobAnalyzerClass::processMessage(DWORD DwMessageID, LONG_PTR DwMessageValue, LONG_PTR DwMessageContext)
+DWORD_PTR SVBlobAnalyzerClass::processMessage(DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext)
 {
-	LONG_PTR dwResult = 0L;
+	DWORD_PTR dwResult = 0;
 
 	switch (DwMessageID & SVM_PURE_MESSAGE)
 	{
@@ -1845,6 +1845,16 @@ void SVBlobAnalyzerClass::addDefaultInputObjects( BOOL BCallBaseClass, SVInputIn
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVBlobAnalyzer.cpp_v  $
+ * 
+ *    Rev 1.4   15 May 2014 10:19:42   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Revised processMessage to use DWORD_PTR
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   01 Feb 2014 10:23:12   tbair
  * Project:  SVObserver

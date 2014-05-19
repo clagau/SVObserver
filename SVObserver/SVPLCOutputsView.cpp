@@ -5,8 +5,8 @@
 //* .Module Name     : SVPLCOutputsView
 //* .File Name       : $Workfile:   SVPLCOutputsView.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.3  $
-//* .Check In Date   : $Date:   11 Dec 2013 14:03:50  $
+//* .Current Version : $Revision:   1.4  $
+//* .Check In Date   : $Date:   15 May 2014 12:32:54  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -255,7 +255,7 @@ void SVPLCOutputsView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 					GetListCtrl().SetItem( lInsertedEntry + iCurrentPPQ + k, 0, LVIF_IMAGE, NULL, 0, 0, 0, 0 );
 
 					// Store SVPLCOutputObject pointer in item data for editing
-					GetListCtrl().SetItemData( lInsertedEntry + iCurrentPPQ + k, (DWORD) l_pPLCOutput );
+					GetListCtrl().SetItemData( lInsertedEntry + iCurrentPPQ + k, reinterpret_cast<DWORD_PTR>(l_pPLCOutput) );
 
 					// Column: Description "Value Object Name"
 
@@ -899,6 +899,17 @@ void SVPLCOutputsView::OnAddTransferBlock()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVPLCOutputsView.cpp_v  $
+ * 
+ *    Rev 1.4   15 May 2014 12:32:54   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Changed SetItemData to cast values to DWORD_PTR.
+ * 
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   11 Dec 2013 14:03:50   tbair
  * Project:  SVObserver

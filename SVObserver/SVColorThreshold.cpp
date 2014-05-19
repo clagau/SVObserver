@@ -5,8 +5,8 @@
 //* .Module Name     : SVColorThreshold
 //* .File Name       : $Workfile:   SVColorThreshold.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   01 Feb 2014 10:23:14  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   15 May 2014 11:10:26  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -187,9 +187,9 @@ BOOL SVColorThresholdClass::CreateObject( SVObjectLevelCreateStruct* PCreateStru
 				  // Create 4 Output Images and 3 Histogram Images
 				  bOk = createImages();
 				  
-				  ::SVSendMessage( this, SVM_CREATE_CHILD_OBJECT,reinterpret_cast<LONG_PTR>(&band0HistogramImage), NULL );
-				  ::SVSendMessage( this, SVM_CREATE_CHILD_OBJECT,reinterpret_cast<LONG_PTR>(&band1HistogramImage), NULL );
-				  ::SVSendMessage( this, SVM_CREATE_CHILD_OBJECT,reinterpret_cast<LONG_PTR>(&band2HistogramImage), NULL );
+				  ::SVSendMessage( this, SVM_CREATE_CHILD_OBJECT,reinterpret_cast<DWORD_PTR>(&band0HistogramImage), NULL );
+				  ::SVSendMessage( this, SVM_CREATE_CHILD_OBJECT,reinterpret_cast<DWORD_PTR>(&band1HistogramImage), NULL );
+				  ::SVSendMessage( this, SVM_CREATE_CHILD_OBJECT,reinterpret_cast<DWORD_PTR>(&band2HistogramImage), NULL );
 			  }
 			  catch(...)
 			  {
@@ -825,6 +825,16 @@ SVDrawObjectListClass* SVColorThresholdClass::GetThresholdBarsFigure( int bandNu
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVColorThreshold.cpp_v  $
+ * 
+ *    Rev 1.2   15 May 2014 11:10:26   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Revised SVSendMessage to use DWORD_PTR
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   01 Feb 2014 10:23:14   tbair
  * Project:  SVObserver

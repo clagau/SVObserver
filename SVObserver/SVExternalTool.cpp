@@ -5,8 +5,8 @@
 //* .Module Name     : SVExternalTool
 //* .File Name       : $Workfile:   SVExternalTool.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   01 Feb 2014 10:36:42  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   15 May 2014 11:21:46  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -65,9 +65,9 @@ HRESULT SVExternalTool::UpdateImageWithExtent( unsigned long p_Index )
 	return S_OK;
 }
 
-LONG_PTR SVExternalTool::processMessage( DWORD DwMessageID, LONG_PTR DwMessageValue, LONG_PTR DwMessageContext )
+DWORD_PTR SVExternalTool::processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext )
 {
-	LONG_PTR DwResult = NULL;
+	DWORD_PTR DwResult = NULL;
 	
 	// Try to process message by yourself...
 	DWORD dwPureMessageID = DwMessageID & SVM_PURE_MESSAGE;
@@ -114,6 +114,16 @@ HRESULT SVExternalTool::GetInputImageNames( SVStringValueObjectClass*& p_pSource
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVExternalTool.cpp_v  $
+ * 
+ *    Rev 1.2   15 May 2014 11:21:46   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Revised processMessage to use DWORD_PTR
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   01 Feb 2014 10:36:42   tbair
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : SVResult.cpp
 //* .File Name       : $Workfile:   SVResult.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   01 Feb 2014 12:03:58  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   15 May 2014 12:40:06  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -106,9 +106,9 @@ BOOL SVResultClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
 	return bOk;
 }
 
-LONG_PTR SVResultClass::processMessage( DWORD DwMessageID, LONG_PTR DwMessageValue, LONG_PTR DwMessageContext )
+DWORD_PTR SVResultClass::processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext )
 {
-	LONG_PTR DwResult = NULL;
+	DWORD_PTR DwResult = NULL;
 
 	return( SVTaskObjectListClass::processMessage( DwMessageID, DwMessageValue, DwMessageContext ) | DwResult );
 }
@@ -138,7 +138,7 @@ SVRangeClass* SVResultClass::GetResultRange()
 {
 	SVObjectTypeInfoStruct info;
 	info.ObjectType = SVRangeObjectType;
-	SVRangeClass* pRange = ( SVRangeClass* )SVSendMessage( this, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>(&info) );
+	SVRangeClass* pRange = reinterpret_cast<SVRangeClass*>(SVSendMessage( this, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&info) ));
 	return pRange;
 }
 
@@ -766,6 +766,17 @@ void SVRangeDialogClass::OnOK()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVResult.cpp_v  $
+ * 
+ *    Rev 1.2   15 May 2014 12:40:06   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Changed processMessage signature to use DWORD_PTR.
+ * 
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   01 Feb 2014 12:03:58   tbair
  * Project:  SVObserver

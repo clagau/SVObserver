@@ -5,8 +5,8 @@
 //* .Module Name     : SVToolAdjustmentDialogAnalyzerPageClass
 //* .File Name       : $Workfile:   SVToolAdjustmentDialogAnalyzerPageClass.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   01 Feb 2014 12:18:28  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   15 May 2014 14:36:12  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -57,9 +57,9 @@ SVToolAdjustmentDialogAnalyzerPageClass::SVToolAdjustmentDialogAnalyzerPageClass
 			SVObjectTypeInfoStruct info;
 			info.ObjectType = SVAnalyzerObjectType;
 
-			SVSendMessage( pTool, SVM_GETAVAILABLE_OBJECTS, reinterpret_cast<LONG_PTR>(&availableAnalyzers), reinterpret_cast<LONG_PTR>(&info) );
+			SVSendMessage( pTool, SVM_GETAVAILABLE_OBJECTS, reinterpret_cast<DWORD_PTR>(&availableAnalyzers), reinterpret_cast<DWORD_PTR>(&info) );
 
-			pCurrentAnalyzer = (SVAnalyzerClass *)SVSendMessage( pTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>(&info) );
+			pCurrentAnalyzer = reinterpret_cast<SVAnalyzerClass *>(SVSendMessage( pTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&info) ));
 		}
 	}
 }
@@ -117,7 +117,7 @@ BOOL SVToolAdjustmentDialogAnalyzerPageClass::OnInitDialog()
 		}
 
 		// Get the Image for this tool
-		SVImageInfoClass* pImageInfo = ( SVImageInfoClass* ) ::SVSendMessage( pTool, SVM_GETFIRST_IMAGE_INFO, NULL, NULL );
+		SVImageInfoClass* pImageInfo = reinterpret_cast<SVImageInfoClass*>(::SVSendMessage( pTool, SVM_GETFIRST_IMAGE_INFO, NULL, NULL ));
 		if( pImageInfo )
 		{
 			SVImageClass* l_pImage = NULL;
@@ -244,7 +244,7 @@ void SVToolAdjustmentDialogAnalyzerPageClass::OnSelchangeCurrentAnalyzer()
 				{
 					// SEJ 
 					// And finally try to create the child object...
-					if( ::SVSendMessage( pTool, SVM_CREATE_CHILD_OBJECT, ( DWORD ) pCurrentAnalyzer, SVMFSetDefaultInputs | SVMFResetInspection ) != SVMR_SUCCESS )
+					if( ::SVSendMessage( pTool, SVM_CREATE_CHILD_OBJECT, reinterpret_cast<DWORD_PTR>(pCurrentAnalyzer), SVMFSetDefaultInputs | SVMFResetInspection ) != SVMR_SUCCESS )
 					{
 						AfxMessageBox("Creation of Analyzer Failed");
 						
@@ -305,9 +305,9 @@ void SVToolAdjustmentDialogAnalyzerPageClass::DestroyAnalyzer()
 			availableAnalyzerListBox.remove(pCurrentAnalyzer->GetObjectName());
 		}
 
-		::SVSendMessage( pTool, SVMSGID_DISCONNECT_IMAGE_OBJECT, reinterpret_cast<LONG_PTR>(pCurrentAnalyzer), NULL );
+		::SVSendMessage( pTool, SVMSGID_DISCONNECT_IMAGE_OBJECT, reinterpret_cast<DWORD_PTR>(pCurrentAnalyzer), NULL );
 		// Close, Disconnect and Delete the Object
-		::SVSendMessage( pTool, SVM_DESTROY_CHILD_OBJECT, reinterpret_cast<LONG_PTR>(pCurrentAnalyzer), SVMFSetDefaultInputs | SVMFResetInspection );
+		::SVSendMessage( pTool, SVM_DESTROY_CHILD_OBJECT, reinterpret_cast<DWORD_PTR>(pCurrentAnalyzer), SVMFSetDefaultInputs | SVMFResetInspection );
 
 		pCurrentAnalyzer = NULL;
 	}
@@ -350,7 +350,7 @@ void SVToolAdjustmentDialogAnalyzerPageClass::OnResultButton()
 		SVClassInfoStructListClass	availableResults;
 		SVObjectTypeInfoStruct		resultTypeInfo;
 		resultTypeInfo.ObjectType = SVResultObjectType;
-		::SVSendMessage( pCurrentAnalyzer, SVM_GETAVAILABLE_OBJECTS, reinterpret_cast<LONG_PTR>(&availableResults), reinterpret_cast<LONG_PTR>(&resultTypeInfo) );
+		::SVSendMessage( pCurrentAnalyzer, SVM_GETAVAILABLE_OBJECTS, reinterpret_cast<DWORD_PTR>(&availableResults), reinterpret_cast<DWORD_PTR>(&resultTypeInfo) );
 
 		// Get Dialog Title...
 		CString strTitle;
@@ -432,6 +432,16 @@ void SVToolAdjustmentDialogAnalyzerPageClass::OnPublishButton()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVToolAdjustmentDialogAnalyzerPageClass.cpp_v  $
+ * 
+ *    Rev 1.3   15 May 2014 14:36:12   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Revised SVSendMessage to use DWORD_PTR
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   01 Feb 2014 12:18:28   tbair
  * Project:  SVObserver

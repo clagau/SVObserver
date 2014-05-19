@@ -5,8 +5,8 @@
 //* .Module Name     : SVCommand.cpp
 //* .File Name       : $Workfile:   SVCommand.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.12  $
-//* .Check In Date   : $Date:   01 Apr 2014 15:41:10  $
+//* .Current Version : $Revision:   1.13  $
+//* .Check In Date   : $Date:   15 May 2014 11:10:28  $
 //******************************************************************************
 
 #pragma region Includes
@@ -5988,7 +5988,7 @@ HRESULT CSVCommand::RebuildStreamingDataList()
 				{
 					pTempObject = reinterpret_cast <SVObjectClass*> (::SVSendMessage( SVObjectManagerClass::Instance().GetObject( pStreamData->m_InspectionID ),
 						( SVM_GET_OBJECT_BY_NAME | SVM_PARENT_TO_CHILD | SVM_NOTIFY_FRIENDS ) & ~SVM_NOTIFY_ONLY_THIS, 
-						reinterpret_cast <LONG_PTR> (static_cast<LPCSTR>(l_NameInfo.GetObjectName().c_str())), NULL ) );
+						reinterpret_cast <DWORD_PTR> (static_cast<LPCSTR>(l_NameInfo.GetObjectName().c_str())), NULL ) );
 
 					pStreamData->pValueObject = dynamic_cast <SVValueObjectClass*> ( pTempObject );
 
@@ -7126,6 +7126,16 @@ STDMETHODIMP CSVCommand::SVIsAvailiable()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVCommand.cpp_v  $
+ * 
+ *    Rev 1.13   15 May 2014 11:10:28   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Revised SVSendMessage to use DWORD_PTR
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.12   01 Apr 2014 15:41:10   ryoho
  * Project:  SVObserver

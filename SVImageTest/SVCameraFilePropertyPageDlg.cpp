@@ -5,8 +5,8 @@
 //* .Module Name     : SVCameraFilePropertyPageDlg
 //* .File Name       : $Workfile:   SVCameraFilePropertyPageDlg.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   22 Apr 2013 11:08:06  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   15 May 2014 09:20:42  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -287,7 +287,7 @@ BOOL SVCameraFilePropertyPageDlg::OnInitDialog()
 										CString sText = iterOption->second.strDescription.ToString();
 										int iPos;
 										iPos = pCombo->AddString( sText );
-										pCombo->SetItemData( iPos, (DWORD) &(iterOption->second) );
+										pCombo->SetItemData( iPos, reinterpret_cast<DWORD_PTR>(&(iterOption->second)) );
 										if ( pCamDeviceParam->strValue == iterOption->second.m_strName )
 										{
 											pFormat = &(iterOption->second);
@@ -300,7 +300,7 @@ BOOL SVCameraFilePropertyPageDlg::OnInitDialog()
 									pCombo->ReadOnly( true );
 								}
 								
-								pCombo->SetItemValue( (DWORD) pFormat );
+								pCombo->SetItemValue( reinterpret_cast<DWORD_PTR>(pFormat) );
 							}
 						}
 						break;
@@ -768,6 +768,16 @@ bool SVCameraFilePropertyPageDlg::IsGigeSystem() const
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVImageTest\SVCameraFilePropertyPageDlg.cpp_v  $
+ * 
+ *    Rev 1.1   15 May 2014 09:20:42   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Revised OnInitDialog to use casting for DWORD_PTR instead of casting for DWORD
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   22 Apr 2013 11:08:06   bWalter
  * Project:  SVObserver

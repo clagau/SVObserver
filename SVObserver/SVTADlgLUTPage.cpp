@@ -5,8 +5,8 @@
 //* .Module Name     : SVTADlgLUTPage
 //* .File Name       : $Workfile:   SVTADlgLUTPage.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.3  $
-//* .Check In Date   : $Date:   01 Feb 2014 12:14:26  $
+//* .Current Version : $Revision:   1.4  $
+//* .Check In Date   : $Date:   15 May 2014 12:50:42  $
 //******************************************************************************
 
 #pragma region Includes
@@ -206,13 +206,13 @@ BOOL SVToolAdjustmentDialogLUTPageClass::OnInitDialog()
 		SVObjectTypeInfoStruct lutObjectInfo;
 		lutObjectInfo.ObjectType = SVUnaryImageOperatorObjectType;
 		lutObjectInfo.SubType	 = SVLUTOperatorObjectType;
-		m_pLUTOperator = ( SVLUTOperatorClass* ) ::SVSendMessage( m_pTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>(&lutObjectInfo) );
+		m_pLUTOperator = reinterpret_cast<SVLUTOperatorClass*>(::SVSendMessage( m_pTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&lutObjectInfo) ));
 		if( m_pLUTOperator )
 		{
 			// Get Use Lut Flag...
 			SVObjectTypeInfoStruct useLUTObjectInfo;
 			useLUTObjectInfo.EmbeddedID = SVUseLUTObjectGuid;
-			m_pUseLUT = ( SVBoolValueObjectClass* ) ::SVSendMessage( m_pLUTOperator, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>(&useLUTObjectInfo) );
+			m_pUseLUT = reinterpret_cast<SVBoolValueObjectClass*>(::SVSendMessage( m_pLUTOperator, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&useLUTObjectInfo) ));
 			if( m_pUseLUT )
 			{
 				m_pUseLUT->GetValue( m_bUseLUT );
@@ -221,7 +221,7 @@ BOOL SVToolAdjustmentDialogLUTPageClass::OnInitDialog()
 			// Get Continuous Recalc Lut Flag...
 			SVObjectTypeInfoStruct continuousRecalcLUTObjectInfo;
 			continuousRecalcLUTObjectInfo.EmbeddedID = SVContinuousRecalcLUTObjectGuid;
-			m_pContinuousRecalcLUT = ( SVBoolValueObjectClass* ) ::SVSendMessage( m_pLUTOperator, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>(&continuousRecalcLUTObjectInfo) );
+			m_pContinuousRecalcLUT = reinterpret_cast<SVBoolValueObjectClass*>(::SVSendMessage( m_pLUTOperator, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&continuousRecalcLUTObjectInfo) ));
 			if( m_pContinuousRecalcLUT )
 			{
 				m_pContinuousRecalcLUT->GetValue( m_bContinuousRecalcLUT );
@@ -231,12 +231,11 @@ BOOL SVToolAdjustmentDialogLUTPageClass::OnInitDialog()
 			SVObjectTypeInfoStruct lutEquationObjectInfo;
 			lutEquationObjectInfo.ObjectType = SVEquationObjectType;
 			lutEquationObjectInfo.SubType	 = SVLUTEquationObjectType;
-			m_pLUTEquation = ( SVLUTEquationClass* ) ::SVSendMessage( m_pLUTOperator, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>(&lutEquationObjectInfo) );
-
+			m_pLUTEquation = reinterpret_cast<SVLUTEquationClass*>(::SVSendMessage( m_pLUTOperator, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&lutEquationObjectInfo) ));
 			// Get Lut Mode...
 			SVObjectTypeInfoStruct lutModeObjectInfo;
 			lutModeObjectInfo.EmbeddedID = SVLUTModeObjectGuid;
-			m_pLUTMode = ( SVEnumerateValueObjectClass* ) ::SVSendMessage( m_pLUTOperator, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>(&lutModeObjectInfo) );
+			m_pLUTMode = reinterpret_cast<SVEnumerateValueObjectClass*>(::SVSendMessage( m_pLUTOperator, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&lutModeObjectInfo) ));
 			if( m_pLUTMode )
 			{
 				// Populate LUT Mode combo...
@@ -250,7 +249,7 @@ BOOL SVToolAdjustmentDialogLUTPageClass::OnInitDialog()
 			lutVectorObjectInfo.EmbeddedID = SVOutputLUTVectorObjectGuid;
 			m_pLUTVector = dynamic_cast <SVByteValueObjectClass*> 
 			                    (reinterpret_cast <SVObjectClass*>
-			                      (::SVSendMessage( m_pLUTOperator, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>(&lutVectorObjectInfo) ) ) );
+			                      (::SVSendMessage( m_pLUTOperator, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&lutVectorObjectInfo) ) ) );
 			ASSERT( m_pLUTVector );
 
 			// Get LUT Upper Clip...
@@ -258,7 +257,7 @@ BOOL SVToolAdjustmentDialogLUTPageClass::OnInitDialog()
 			lutUpperClipObjectInfo.EmbeddedID = SVLUTUpperClipObjectGuid;
 			m_pLUTUpperClip = dynamic_cast <SVLongValueObjectClass*>
 			                       (reinterpret_cast <SVObjectClass*>
-			                         (::SVSendMessage( m_pLUTOperator, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>(&lutUpperClipObjectInfo) ) ) );
+			                         (::SVSendMessage( m_pLUTOperator, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&lutUpperClipObjectInfo) ) ) );
 			ASSERT( m_pLUTUpperClip );
 
 			// Get LUT Lower Clip...
@@ -266,13 +265,13 @@ BOOL SVToolAdjustmentDialogLUTPageClass::OnInitDialog()
 			lutLowerClipObjectInfo.EmbeddedID = SVLUTLowerClipObjectGuid;
 			m_pLUTLowerClip = dynamic_cast <SVLongValueObjectClass*>
 			                       (reinterpret_cast <SVObjectClass*>
-			                         (::SVSendMessage( m_pLUTOperator, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>(&lutLowerClipObjectInfo) ) ) );
+			                         (::SVSendMessage( m_pLUTOperator, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&lutLowerClipObjectInfo) ) ) );
 			ASSERT( m_pLUTLowerClip );
 
 			// Get Formula Clip Flag...
 			SVObjectTypeInfoStruct formulaClipFlagObjectInfo;
 			formulaClipFlagObjectInfo.EmbeddedID = SVLUTEquationClipFlagObjectGuid;
-			m_pIsLUTFormulaClipped = ( SVBoolValueObjectClass* ) ::SVSendMessage( m_pLUTOperator, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>(&formulaClipFlagObjectInfo) );
+			m_pIsLUTFormulaClipped = reinterpret_cast<SVBoolValueObjectClass*>(::SVSendMessage( m_pLUTOperator, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&formulaClipFlagObjectInfo) ));
 			if( nullptr != m_pIsLUTFormulaClipped )
 			{
 				m_pIsLUTFormulaClipped->GetValue( m_isFormulaClip );
@@ -720,6 +719,16 @@ void SVToolAdjustmentDialogLUTPageClass::enableAllControls(BOOL isEnable)
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVTADlgLUTPage.cpp_v  $
+ * 
+ *    Rev 1.4   15 May 2014 12:50:42   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Changed SendMessage to use proper type cast of DWORD_PTR.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   01 Feb 2014 12:14:26   tbair
  * Project:  SVObserver

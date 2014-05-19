@@ -5,8 +5,8 @@
 //* .Module Name     : SVBarCodeResultClass
 //* .File Name       : $Workfile:   SVBarCodeResult.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.3  $
-//* .Check In Date   : $Date:   01 Feb 2014 10:23:10  $
+//* .Current Version : $Revision:   1.4  $
+//* .Check In Date   : $Date:   15 May 2014 10:19:40  $
 //******************************************************************************
 
 // SVBarCodeResult.cpp: implementation of the SVBarCodeResultClass class.
@@ -227,9 +227,9 @@ BOOL SVBarCodeResultClass::onRun(SVRunStatusClass &RRunStatus)
 	return FALSE;
 }
 
-LONG_PTR SVBarCodeResultClass::processMessage(DWORD DwMessageID, LONG_PTR DwMessageValue, LONG_PTR DwMessageContext)
+DWORD_PTR SVBarCodeResultClass::processMessage(DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext)
 {
-	LONG_PTR dwResult = 0L;
+	DWORD_PTR dwResult = 0;
 
 	switch (DwMessageID & SVM_PURE_MESSAGE)
 	{
@@ -519,6 +519,16 @@ int SVBarCodeResultClass::CheckStringInTable(CString MatchString)
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVBarCodeResult.cpp_v  $
+ * 
+ *    Rev 1.4   15 May 2014 10:19:40   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Revised processMessage to use DWORD_PTR
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   01 Feb 2014 10:23:10   tbair
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : SVBarCodeAttributesDialog
 //* .File Name       : $Workfile:   SVBarCodeAttributesDialog.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 09:40:36  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   15 May 2014 10:21:20  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -247,7 +247,7 @@ void SVBarCodeAttributesDialog::InitSelections(long lBarCodeType)
 	pErrCorrectionBox->SetCurSel(0);
 	for (iIndex = 0; iIndex < pErrCorrectionBox->GetCount(); iIndex++)
 	{
-		if (pErrCorrectionBox->GetItemData(iIndex) == (DWORD) m_dErrorCorrection)
+		if (pErrCorrectionBox->GetItemData(iIndex) == static_cast<DWORD_PTR>(m_dErrorCorrection))
 		{
 			pErrCorrectionBox->SetCurSel(iIndex);
 		}
@@ -256,7 +256,7 @@ void SVBarCodeAttributesDialog::InitSelections(long lBarCodeType)
 	pEncodingBox->SetCurSel(0);
 	for (iIndex = 0; iIndex < pEncodingBox->GetCount(); iIndex++)
 	{
-		if (pEncodingBox->GetItemData(iIndex) == (DWORD) m_dEncoding)
+		if (pEncodingBox->GetItemData(iIndex) == static_cast<DWORD_PTR>(m_dEncoding))
 		{
 			pEncodingBox->SetCurSel(iIndex);
 		}
@@ -303,7 +303,17 @@ DWORD SVBarCodeAttributesDialog::SetErrCorrection(DWORD dwErrCorrection)
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVBarCodeAttributesDialog.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVBarCodeAttributesDialog.cpp_v  $
+ * 
+ *    Rev 1.1   15 May 2014 10:21:20   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Revised GetItemData comparision to use DWORD_PTR
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 09:40:36   bWalter
  * Project:  SVObserver

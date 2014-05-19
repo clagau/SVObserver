@@ -5,8 +5,8 @@
 //* .Module Name     : SVExternalToolDlg
 //* .File Name       : $Workfile:   SVExternalToolDlg.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.3  $
-//* .Check In Date   : $Date:   01 Feb 2014 10:36:38  $
+//* .Current Version : $Revision:   1.4  $
+//* .Check In Date   : $Date:   15 May 2014 12:13:16  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -73,7 +73,7 @@ SVExternalToolDlg::SVExternalToolDlg( SVToolAdjustmentDialogSheetClass* pSheet )
 	SVObjectTypeInfoStruct info;
 	info.ObjectType = SVExternalToolTaskObjectType;
 
-	m_pTask = dynamic_cast<SVExternalToolTask*> ((SVObjectClass*)::SVSendMessage( m_pTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>(&info) ));
+	m_pTask = dynamic_cast<SVExternalToolTask*> ( reinterpret_cast<SVObjectClass*>(::SVSendMessage( m_pTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&info)) ));
 	ASSERT( m_pTask );
 
 	m_pCancelData = NULL;
@@ -560,6 +560,26 @@ HRESULT SVExternalToolDlg::CleanUpOldToolInfo()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVExternalToolDlg.cpp_v  $
+ * 
+ *    Rev 1.4   15 May 2014 12:13:16   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Revised SVSendMessage to use DWORD_PTR
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.0   15 May 2014 11:24:02   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Revised SVSendMessage to use DWORD_PTR
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   01 Feb 2014 10:36:38   tbair
  * Project:  SVObserver

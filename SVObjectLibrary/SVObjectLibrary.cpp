@@ -5,8 +5,8 @@
 //* .Module Name     : SVObjectLibrary
 //* .File Name       : $Workfile:   SVObjectLibrary.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   01 Feb 2014 10:09:14  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   15 May 2014 09:42:28  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -29,7 +29,7 @@ const SVObjectTypeInfoStruct	SVInvalidObjectTypeInfo;
 //* FUNCTION IMPLEMENTATION(S):
 //******************************************************************************
 
-LONG_PTR SVSendMessage( SVObjectClass* PObject, DWORD DwMessageID, LONG_PTR DwMessageValue, LONG_PTR DwMessageContext )
+DWORD_PTR SVSendMessage( SVObjectClass* PObject, DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext )
 {
 	if( PObject != NULL )
 	{
@@ -39,7 +39,7 @@ LONG_PTR SVSendMessage( SVObjectClass* PObject, DWORD DwMessageID, LONG_PTR DwMe
 }
 
 
-LONG_PTR SVSendMessage( const GUID& RUniqueObjectID, DWORD DwMessageID, LONG_PTR DwMessageValue, LONG_PTR DwMessageContext )
+DWORD_PTR SVSendMessage( const GUID& RUniqueObjectID, DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext )
 {
 	SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObject( RUniqueObjectID );
 
@@ -57,6 +57,17 @@ LONG_PTR SVSendMessage( const GUID& RUniqueObjectID, DWORD DwMessageID, LONG_PTR
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObjectLibrary\SVObjectLibrary.cpp_v  $
+ * 
+ *    Rev 1.2   15 May 2014 09:42:28   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Revised SVSendMessage to use DWORD_PTR instead of DWORD or LONG_PTR.
+ * Revised processMessage to use DWORD_PTR instead of DWORD or LONG_PTR.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   01 Feb 2014 10:09:14   tbair
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : SVCylindricalWarpDlg
 //* .File Name       : $Workfile:   SVCylindricalWarpDlg.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   01 Feb 2014 10:32:24  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   15 May 2014 11:12:42  $
 //******************************************************************************
 
 // SVCylindricalWarpDlg.cpp : implementation file
@@ -143,7 +143,7 @@ BOOL SVCylindricalWarpDlg::OnInitDialog()
 		SVObjectTypeInfoStruct objectInfo;
 		// Warp Type
 		objectInfo.EmbeddedID = SVWarpTypeObjectGuid;
-		m_pWarpType = ( SVEnumerateValueObjectClass* ) ::SVSendMessage( m_pTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>(&objectInfo) );
+		m_pWarpType = reinterpret_cast<SVEnumerateValueObjectClass*>(::SVSendMessage( m_pTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&objectInfo)));
 		if( m_pWarpType )
 		{
 			CString l_strEnumList;
@@ -159,7 +159,7 @@ BOOL SVCylindricalWarpDlg::OnInitDialog()
 
 		// Interpolation Mode
 		objectInfo.EmbeddedID = SVOutputInterpolationModeObjectGuid;
-		m_pInterpolationMode = ( SVEnumerateValueObjectClass* ) ::SVSendMessage( m_pTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>(&objectInfo) );
+		m_pInterpolationMode = reinterpret_cast<SVEnumerateValueObjectClass*>(::SVSendMessage( m_pTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&objectInfo) ));
 		if( m_pInterpolationMode )
 		{
 			CString l_strEnumList;
@@ -176,7 +176,7 @@ BOOL SVCylindricalWarpDlg::OnInitDialog()
 
 		// Warp Angle
 		objectInfo.EmbeddedID = SVWarpAngleObjectGuid;
-		m_pWarpAngle = ( SVDoubleValueObjectClass* ) ::SVSendMessage( m_pTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>(&objectInfo) );
+		m_pWarpAngle = reinterpret_cast<SVDoubleValueObjectClass*>(::SVSendMessage( m_pTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&objectInfo)) );
 		if( m_pWarpAngle )
 		{
 			m_pWarpAngle->GetValue( m_dWarpAngle );
@@ -249,6 +249,16 @@ void SVCylindricalWarpDlg::OnKillfocusWarpAngleEdit()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVCylindricalWarpDlg.cpp_v  $
+ * 
+ *    Rev 1.2   15 May 2014 11:12:42   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Revised SVSendMessage to use DWORD_PTR
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   01 Feb 2014 10:32:24   tbair
  * Project:  SVObserver

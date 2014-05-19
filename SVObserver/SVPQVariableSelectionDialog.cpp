@@ -5,8 +5,8 @@
 //* .Module Name     : <SVPQVariableSelectionDialog>
 //* .File Name       : $Workfile:   SVPQVariableSelectionDialog.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   03 Oct 2013 13:31:06  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   15 May 2014 12:32:52  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -83,7 +83,7 @@ BOOL SVPQVariableSelectionDialog::OnInitDialog()
 										 TVIS_STATEIMAGEMASK, 0L, hParent, TVI_LAST );
 
 		// Attach index into the List
-		m_treeCtrl.SetItemData( hChild, (DWORD) pIOEntry->m_pValueObject );  
+		m_treeCtrl.SetItemData( hChild, reinterpret_cast<DWORD_PTR>(pIOEntry->m_pValueObject) );  
 
 		// if selected previously
 		// Check the attributes in the base class (SVObject) of the SVPQDataObjectClass
@@ -124,6 +124,17 @@ void SVPQVariableSelectionDialog::OnCancel()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVPQVariableSelectionDialog.cpp_v  $
+ * 
+ *    Rev 1.2   15 May 2014 12:32:52   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Changed SetItemData to cast values to DWORD_PTR.
+ * 
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   03 Oct 2013 13:31:06   tbair
  * Project:  SVObserver

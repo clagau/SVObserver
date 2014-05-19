@@ -5,8 +5,8 @@
 //* .Module Name     : SVLineROI
 //* .File Name       : $Workfile:   SVLineROI.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   01 Feb 2014 11:13:06  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   15 May 2014 13:12:42  $
 //******************************************************************************
 
 #ifndef SVLINEROI_H
@@ -33,7 +33,7 @@ public:
 protected:
 	virtual BOOL onRun( SVRunStatusClass& RRunStatus );
 
-	virtual LONG_PTR processMessage( DWORD DwMessageID, LONG_PTR DwMessageValue, LONG_PTR DwMessageContext );
+	virtual DWORD_PTR processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext );
 
 	SVLineClass outputLineObject; // Embedded
 
@@ -46,6 +46,16 @@ protected:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVLineROI.h_v  $
+ * 
+ *    Rev 1.2   15 May 2014 13:12:42   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Revised processMessage to use DWORD_PTR
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   01 Feb 2014 11:13:06   tbair
  * Project:  SVObserver

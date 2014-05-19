@@ -5,8 +5,8 @@
 //* .Module Name     : SVPPQEntryDialog
 //* .File Name       : $Workfile:   SVPPQEntryDialog.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.3  $
-//* .Check In Date   : $Date:   28 Feb 2014 08:31:08  $
+//* .Current Version : $Revision:   1.4  $
+//* .Check In Date   : $Date:   15 May 2014 12:32:56  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -94,14 +94,14 @@ BOOL SVPPQEntryDialogCameraPageClass::OnInitDialog()
 		if( m_pSheet->m_lCurrentPosition == lPosition )			
 		{
 			index = selectedList.AddString( pCamera->GetCompleteObjectName() );
-			selectedList.SetItemData( index , (DWORD) pCamera );			
+			selectedList.SetItemData( index , reinterpret_cast<DWORD_PTR>(pCamera) );			
 		}// end if
 
 		// Fill available box...
 		if( -1 == lPosition )			
 		{
 			index = availableList.AddString( pCamera->GetCompleteObjectName() );
-			availableList.SetItemData( index , (DWORD) pCamera );			
+			availableList.SetItemData( index , reinterpret_cast<DWORD_PTR>(pCamera) );			
 		}// end if
 
 		GetDlgItem(IDC_ADD_BUTTON)->EnableWindow(m_pSheet->OkToAdd());
@@ -131,7 +131,7 @@ void SVPPQEntryDialogCameraPageClass::OnAddButton()
 		if( pCamera )
 		{
 			index = selectedList.AddString( pCamera->GetName() );
-			selectedList.SetItemData( index, (DWORD) pCamera );
+			selectedList.SetItemData( index, reinterpret_cast<DWORD_PTR>(pCamera) );
 		}// end if
 		
 	}// end if
@@ -153,7 +153,7 @@ void SVPPQEntryDialogCameraPageClass::OnRemoveButton()
 		if( pCamera )
 		{
 			index = availableList.AddString( pCamera->GetName() );
-			availableList.SetItemData( index, (DWORD) pCamera );
+			availableList.SetItemData( index, reinterpret_cast<DWORD_PTR>(pCamera) );
 		}// end if
 		
 	}// end if
@@ -293,6 +293,17 @@ BOOL SVPPQEntryDialogCameraPageClass::OnApply()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVPPQEntryDialog.cpp_v  $
+ * 
+ *    Rev 1.4   15 May 2014 12:32:56   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Changed SetItemData to cast values to DWORD_PTR.
+ * 
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   28 Feb 2014 08:31:08   tbair
  * Project:  SVObserver

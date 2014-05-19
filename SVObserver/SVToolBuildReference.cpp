@@ -5,8 +5,8 @@
 //* .Module Name     : SVToolBuildReference
 //* .File Name       : $Workfile:   SVToolBuildReference.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.3  $
-//* .Check In Date   : $Date:   01 Feb 2014 12:22:14  $
+//* .Current Version : $Revision:   1.4  $
+//* .Check In Date   : $Date:   15 May 2014 14:45:54  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -177,12 +177,13 @@ BOOL SVBuildReferenceToolClass::IsOkToEdit()
 	return TRUE;		
 }
 
-LONG_PTR SVBuildReferenceToolClass::processMessage( DWORD DwMessageID, LONG_PTR DwMessageValue, LONG_PTR DwMessageContext )
+DWORD_PTR SVBuildReferenceToolClass::processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext )
 {
-	LONG_PTR DwResult = NULL;
+	DWORD_PTR DwResult = NULL;
 
 	return( SVToolClass::processMessage( DwMessageID, DwMessageValue, DwMessageContext ) | DwResult );
 }
+
 BOOL SVBuildReferenceToolClass::onRun( SVRunStatusClass& RRunStatus )
 {
 	SetInvalid();
@@ -199,6 +200,16 @@ HRESULT SVBuildReferenceToolClass::ResetObject()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVToolBuildReference.cpp_v  $
+ * 
+ *    Rev 1.4   15 May 2014 14:45:54   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Revised processMessage to use DWORD_PTR
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   01 Feb 2014 12:22:14   tbair
  * Project:  SVObserver

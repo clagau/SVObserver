@@ -5,8 +5,8 @@
 //* .Module Name     : SVOConfigAssistantDlg
 //* .File Name       : $Workfile:   SVOConfigAssistantDlg.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.16  $
-//* .Check In Date   : $Date:   28 Apr 2014 17:35:36  $
+//* .Current Version : $Revision:   1.17  $
+//* .Check In Date   : $Date:   15 May 2014 10:28:34  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -3170,8 +3170,8 @@ BOOL CSVOConfigAssistantDlg::SendDataToConfiguration()
 				if (pTmpObj->HasInspectionNameChange())
 				{
 					::SVSendMessage( pcfgInsPro,SVM_OBJECT_RENAMED,
-						reinterpret_cast<LONG_PTR>( static_cast<SVObjectClass*>(pcfgInsPro) ), 
-						reinterpret_cast<LONG_PTR>( static_cast<LPCTSTR>(pTmpObj->GetOrginalInspectionName())) );
+						reinterpret_cast<DWORD_PTR>( static_cast<SVObjectClass*>(pcfgInsPro) ), 
+						reinterpret_cast<DWORD_PTR>( static_cast<LPCTSTR>(pTmpObj->GetOrginalInspectionName())) );
 					SVPPQObject *pPPQ;
 					SVOutputObjectList *pOutputObjList;
 					long lCount;
@@ -3182,8 +3182,8 @@ BOOL CSVOConfigAssistantDlg::SendDataToConfiguration()
 					if (pOutputObjList)
 					{
 						::SVSendMessage( pOutputObjList, SVM_OBJECT_RENAMED,
-							reinterpret_cast<LONG_PTR>(static_cast <SVObjectClass*> (pcfgInsPro)),
-							reinterpret_cast<LONG_PTR>(static_cast<LPCTSTR>( pTmpObj->GetOrginalInspectionName())) );
+							reinterpret_cast<DWORD_PTR>(static_cast <SVObjectClass*> (pcfgInsPro)),
+							reinterpret_cast<DWORD_PTR>(static_cast<LPCTSTR>( pTmpObj->GetOrginalInspectionName())) );
 					}
 
 					pConfig->GetPPQCount(lCount);
@@ -3193,8 +3193,8 @@ BOOL CSVOConfigAssistantDlg::SendDataToConfiguration()
 						if (pPPQ)
 						{
 							::SVSendMessage( pPPQ, SVM_OBJECT_RENAMED,
-								reinterpret_cast<LONG_PTR>(static_cast<SVObjectClass*>(pcfgInsPro)),
-								reinterpret_cast<LONG_PTR>(static_cast<LPCTSTR>( pTmpObj->GetOrginalInspectionName())) );
+								reinterpret_cast<DWORD_PTR>(static_cast<SVObjectClass*>(pcfgInsPro)),
+								reinterpret_cast<DWORD_PTR>(static_cast<LPCTSTR>( pTmpObj->GetOrginalInspectionName())) );
 						} //if (pPPQ)
 					} //for ppqcount
 				} // if name has changed
@@ -4919,6 +4919,16 @@ bool CSVOConfigAssistantDlg::IsFileAcquisition(int iDig) const
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVOConfigAssistantDlg.cpp_v  $
+ * 
+ *    Rev 1.17   15 May 2014 10:28:34   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Changed SendDataToConfiguration to use DWORD_PTR instead of LONG_PTR
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.16   28 Apr 2014 17:35:36   bwalter
  * Project:  SVObserver

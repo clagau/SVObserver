@@ -5,8 +5,8 @@
 //* .Module Name     : SVImageView
 //* .File Name       : $Workfile:   SVImageView.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.5  $
-//* .Check In Date   : $Date:   01 Feb 2014 10:48:54  $
+//* .Current Version : $Revision:   1.6  $
+//* .Check In Date   : $Date:   15 May 2014 12:45:22  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -513,7 +513,7 @@ BOOL SVImageViewClass::OnCommand( WPARAM p_wParam, LPARAM p_lParam )
 					SVObjectTypeInfoStruct l_svInfo;
 					l_svInfo.ObjectType = SVAnalyzerObjectType;
 
-					SVAnalyzerClass* l_psvAnalyzer = ( SVAnalyzerClass* )SVSendMessage( l_psvTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>(&l_svInfo) );
+					SVAnalyzerClass* l_psvAnalyzer = reinterpret_cast<SVAnalyzerClass*>(SVSendMessage( l_psvTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&l_svInfo)) );
 					if( l_psvAnalyzer )
 					{
 						CPoint l_point;
@@ -820,7 +820,7 @@ void SVImageViewClass::OnContextMenu( CWnd* p_pWnd, CPoint p_point )
 										SVObjectTypeInfoStruct l_svInfo;
 										l_svInfo.ObjectType = SVAnalyzerObjectType;
 
-										l_psvAnalyzer = ( SVAnalyzerClass* )SVSendMessage( l_psvTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>(&l_svInfo) );
+										l_psvAnalyzer = reinterpret_cast<SVAnalyzerClass*>(SVSendMessage( l_psvTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&l_svInfo)) );
 										if( l_psvAnalyzer )
 										{
 											l_resultFound = l_psvAnalyzer->IsPtOverResult( l_point );
@@ -1097,7 +1097,7 @@ void SVImageViewClass::OnRButtonDblClk( UINT p_nFlags, CPoint p_point )
 					SVObjectTypeInfoStruct l_svInfo;
 					l_svInfo.ObjectType = SVAnalyzerObjectType;
 
-					SVAnalyzerClass* l_psvAnalyzer = ( SVAnalyzerClass* )SVSendMessage( l_psvTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>(&l_svInfo) );
+					SVAnalyzerClass* l_psvAnalyzer = reinterpret_cast<SVAnalyzerClass*>(SVSendMessage( l_psvTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&l_svInfo)) );
 					if( l_psvAnalyzer )
 					{
 						// Set Display Flag so Errors will be displayed on dialog.
@@ -2605,6 +2605,16 @@ HRESULT SVImageViewClass::NotifyIPDocDisplayComplete()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVImageView.cpp_v  $
+ * 
+ *    Rev 1.6   15 May 2014 12:45:22   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Revised SVSendMessage to use DWORD_PTR
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.5   01 Feb 2014 10:48:54   tbair
  * Project:  SVObserver

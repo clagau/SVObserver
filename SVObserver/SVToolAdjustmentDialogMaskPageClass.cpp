@@ -5,8 +5,8 @@
 //* .Module Name     : SVToolAdjustmentDialogMaskPageClass
 //* .File Name       : $Workfile:   SVToolAdjustmentDialogMaskPageClass.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.3  $
-//* .Check In Date   : $Date:   01 Feb 2014 12:22:00  $
+//* .Current Version : $Revision:   1.4  $
+//* .Check In Date   : $Date:   15 May 2014 14:36:32  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -97,14 +97,14 @@ SVToolAdjustmentDialogMaskPageClass::SVToolAdjustmentDialogMaskPageClass( SVTool
 
 			// Get The UnaryImageOperatorList
 			m_pUnaryImageOperatorList = dynamic_cast <SVUnaryImageOperatorListClass*>
-				 ( reinterpret_cast<SVObjectClass*> ( SVSendMessage( m_pTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>(&info) ) ) );
+				 ( reinterpret_cast<SVObjectClass*> ( SVSendMessage( m_pTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&info) ) ) );
 
 			if( m_pUnaryImageOperatorList )
 			{
 				info.ObjectType = SVUnaryImageOperatorObjectType;
 				info.SubType = SVUserMaskOperatorObjectType;
 				m_pMask = dynamic_cast <SVUserMaskOperatorClass*>
-					( reinterpret_cast <SVObjectClass*> ( SVSendMessage( m_pUnaryImageOperatorList, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>(&info) ) ) );
+					( reinterpret_cast <SVObjectClass*> ( SVSendMessage( m_pUnaryImageOperatorList, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&info) ) ) );
 			}
 		}
 	}
@@ -405,7 +405,7 @@ void SVToolAdjustmentDialogMaskPageClass::OnEditStaticMaskButton()
 
 	// Get the Image for this tool
 	SVImageClass* pImage = NULL;
-	SVImageInfoClass* pImageInfo = ( SVImageInfoClass* ) ::SVSendMessage( m_pTool, SVM_GETFIRST_IMAGE_INFO, NULL, NULL );
+	SVImageInfoClass* pImageInfo = reinterpret_cast<SVImageInfoClass*>(::SVSendMessage( m_pTool, SVM_GETFIRST_IMAGE_INFO, NULL, NULL ));
 	if( pImageInfo )
 	{
 		pImageInfo->GetOwnerImage( pImage );
@@ -987,6 +987,16 @@ void SVToolAdjustmentDialogMaskPageClass::OnSelchangeDrawMaskCriteria()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVToolAdjustmentDialogMaskPageClass.cpp_v  $
+ * 
+ *    Rev 1.4   15 May 2014 14:36:32   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Revised SVSendMessage to use DWORD_PTR
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   01 Feb 2014 12:22:00   tbair
  * Project:  SVObserver

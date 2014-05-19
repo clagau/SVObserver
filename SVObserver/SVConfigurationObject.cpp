@@ -5,8 +5,8 @@
 //* .Module Name     : SVConfigurationObject
 //* .File Name       : $Workfile:   SVConfigurationObject.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.23  $
-//* .Check In Date   : $Date:   28 Apr 2014 14:22:10  $
+//* .Current Version : $Revision:   1.24  $
+//* .Check In Date   : $Date:   15 May 2014 11:10:28  $
 //******************************************************************************
 
 #pragma region Includes
@@ -2622,8 +2622,8 @@ HRESULT SVConfigurationObject::ObserverUpdate( const SVRenameObject& p_rData )
 		if( pOutputs )
 		{
 			::SVSendMessage( pOutputs, SVM_OBJECT_RENAMED,
-				reinterpret_cast<LONG_PTR>( l_pObject ),
-				reinterpret_cast<LONG_PTR>( static_cast<LPCTSTR>( p_rData.m_OldName.c_str() )) );
+				reinterpret_cast<DWORD_PTR>( l_pObject ),
+				reinterpret_cast<DWORD_PTR>( static_cast<LPCTSTR>( p_rData.m_OldName.c_str() )) );
 		}
 		else
 		{
@@ -2638,8 +2638,8 @@ HRESULT SVConfigurationObject::ObserverUpdate( const SVRenameObject& p_rData )
 			if( pPPQ )
 			{
 				::SVSendMessage( pPPQ, SVM_OBJECT_RENAMED,
-					reinterpret_cast<LONG_PTR>( l_pObject ),
-					reinterpret_cast<LONG_PTR>( static_cast<LPCTSTR>( p_rData.m_OldName.c_str() )));
+					reinterpret_cast<DWORD_PTR>( l_pObject ),
+					reinterpret_cast<DWORD_PTR>( static_cast<LPCTSTR>( p_rData.m_OldName.c_str() )));
 
 				pPPQ->RebuildOutputList();
 			}
@@ -5486,6 +5486,16 @@ HRESULT SVConfigurationObject::LoadMonitoredObjectList( SVTreeType& rTree, SVTre
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVConfigurationObject.cpp_v  $
+ * 
+ *    Rev 1.24   15 May 2014 11:10:28   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Revised SVSendMessage to use DWORD_PTR
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.23   28 Apr 2014 14:22:10   sjones
  * Project:  SVObserver

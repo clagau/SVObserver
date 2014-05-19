@@ -5,8 +5,8 @@
 //* .Module Name     : SVObserver
 //* .File Name       : $Workfile:   SVObserver.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.29  $
-//* .Check In Date   : $Date:   28 Apr 2014 14:29:42  $
+//* .Current Version : $Revision:   1.30  $
+//* .Check In Date   : $Date:   15 May 2014 13:34:36  $
 //******************************************************************************
 
 #pragma region Includes
@@ -3659,7 +3659,7 @@ int SVObserverApp::ExitInstance()
 	return CWinApp::ExitInstance();
 }
 
-void SVObserverApp::WinHelp( DWORD dwData, UINT nCmd ) 
+void SVObserverApp::WinHelp( DWORD_PTR dwData, UINT nCmd ) 
 {
 	CWinApp::WinHelp( dwData, nCmd );
 }
@@ -8909,6 +8909,16 @@ int SVObserverApp::FindMenuItem(CMenu* Menu, LPCTSTR MenuString)
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVObserver.cpp_v  $
+ * 
+ *    Rev 1.30   15 May 2014 13:34:36   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Revised WinHelp method override to use DWORD_PTR
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.29   28 Apr 2014 14:29:42   sjones
  * Project:  SVObserver

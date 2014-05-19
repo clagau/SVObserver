@@ -5,8 +5,8 @@
 //* .Module Name     : SVProfileEdgeMarkerAdjustmentPage
 //* .File Name       : $Workfile:   SVProfileEdgeMarkerAdjustmentPage.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   01 Feb 2014 12:00:06  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   15 May 2014 12:31:46  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -636,14 +636,14 @@ BOOL SVProfileEdgeMarkerAdjustmentPageClass::OnInitDialog()
 			SVObjectTypeInfoStruct lineObjectInfo;
 			lineObjectInfo.ObjectType = SVLineObjectType;
 
-			pLine = ( SVLineClass* )::SVSendMessage( PCurrentAnalyzer, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>(&lineObjectInfo) );
+			pLine = reinterpret_cast<SVLineClass*>(::SVSendMessage( PCurrentAnalyzer, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&lineObjectInfo) ));
 		}
 		
 		// Get the Thesholding Options from the SVImageToLineProjectClass
 		SVObjectTypeInfoStruct info;
 		info.ObjectType = SVImageToLineProjectObjectType;
 
-		pProject = ( SVImageToLineProjectClass * )SVSendMessage( PCurrentAnalyzer, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>(&info) );
+		pProject = reinterpret_cast<SVImageToLineProjectClass *>(SVSendMessage( PCurrentAnalyzer, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&info) ));
 	
 		if( !pProject )
 		{
@@ -677,7 +677,7 @@ BOOL SVProfileEdgeMarkerAdjustmentPageClass::OnInitDialog()
 		GetInspectionData();
 
 		// Get the Image for this tool
-		SVImageInfoClass* pImageInfo = ( SVImageInfoClass* ) ::SVSendMessage( pTool, SVM_GETFIRST_IMAGE_INFO, NULL, NULL );
+		SVImageInfoClass* pImageInfo = reinterpret_cast<SVImageInfoClass*>(::SVSendMessage( pTool, SVM_GETFIRST_IMAGE_INFO, NULL, NULL ));
 		if( pImageInfo )
 		{
 			// Set relative position of Tool Figures (Point Sets) to the Image
@@ -992,7 +992,7 @@ void SVProfileEdgeMarkerAdjustmentPageClass::updateGraphDisplay()
 		SVObjectTypeInfoStruct info;
 		info.ObjectType = SVImageToLineProjectObjectType;
 
-		pProject = ( SVImageToLineProjectClass * )SVSendMessage( PCurrentAnalyzer, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>(&info) );
+		pProject = reinterpret_cast<SVImageToLineProjectClass *>(SVSendMessage( PCurrentAnalyzer, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&info) ));
 	
 		if( !pProject )
 		{
@@ -1126,6 +1126,16 @@ void SVProfileEdgeMarkerAdjustmentPageClass::updateGraphDisplay()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVProfileEdgeMarkerAdjustmentPage.cpp_v  $
+ * 
+ *    Rev 1.3   15 May 2014 12:31:46   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Changed SendMessage to use proper type cast of DWORD_PTR.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   01 Feb 2014 12:00:06   tbair
  * Project:  SVObserver

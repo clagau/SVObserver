@@ -5,8 +5,8 @@
 //* .Module Name     : SVOutObjectInfoStruct
 //* .File Name       : $Workfile:   SVOutObjectInfoStruct.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   01 Feb 2014 10:09:12  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   15 May 2014 09:42:24  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -97,7 +97,7 @@ HRESULT SVOutObjectInfoStruct::DisconnectAllInputs()
 			// Send to the Object that is using this output
 			::SVSendMessage(inObjectInfo.UniqueObjectID,
 							SVM_DISCONNECT_OBJECT_INPUT, 
-							reinterpret_cast<LONG_PTR>(&inObjectInfo), NULL );
+							reinterpret_cast<DWORD_PTR>(&inObjectInfo), NULL );
 		}
 	}
 
@@ -180,6 +180,17 @@ BOOL SVOutObjectInfoStruct::Unlock() const
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObjectLibrary\SVOutObjectInfoStruct.cpp_v  $
+ * 
+ *    Rev 1.2   15 May 2014 09:42:24   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Revised SVSendMessage to use DWORD_PTR instead of DWORD or LONG_PTR.
+ * Revised processMessage to use DWORD_PTR instead of DWORD or LONG_PTR.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   01 Feb 2014 10:09:12   tbair
  * Project:  SVObserver

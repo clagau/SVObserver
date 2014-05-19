@@ -5,8 +5,8 @@
 // * .Module Name     : PropTreeItemCombo.cpp
 // * .File Name       : $Workfile:   PropTreeItemCombo.cpp  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.2  $
-// * .Check In Date   : $Date:   30 Oct 2013 10:21:56  $
+// * .Current Version : $Revision:   1.3  $
+// * .Check In Date   : $Date:   15 May 2014 09:13:02  $
 // ******************************************************************************
 
 // PropTreeItemCombo.cpp : implementation file
@@ -290,7 +290,7 @@ LONG SVRPropertyItemCombo::FindCBData(LPARAM lParam)
 	
 	for (idx = 0; idx < GetCount(); idx++)
 	{
-		if (GetItemData(idx) == (DWORD)lParam)
+		if (GetItemData(idx) == static_cast<DWORD_PTR>(lParam))
 			return idx;
 	}
 
@@ -482,6 +482,16 @@ void SVRPropertyItemCombo::SetButtonText( const CString& sText )
 // ******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\PropertyTree\PropTreeItemCombo.cpp_v  $
+ * 
+ *    Rev 1.3   15 May 2014 09:13:02   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Revised FindCBdata to use cast for DWORD_PTR instead of cast for DWORD
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   30 Oct 2013 10:21:56   tbair
  * Project:  SVObserver

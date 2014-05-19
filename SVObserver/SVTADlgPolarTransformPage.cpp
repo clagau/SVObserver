@@ -5,8 +5,8 @@
 //* .Module Name     : SVTADlgPolarTransformPage
 //* .File Name       : $Workfile:   SVTADlgPolarTransformPage.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   01 Feb 2014 12:14:30  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   15 May 2014 12:50:32  $
 //******************************************************************************
 
 //******************************************************************************
@@ -290,68 +290,68 @@ BOOL SVToolAdjustmentDialogPolarTransformPageClass::OnInitDialog()
 
 		// Get Evaluate Center X...
 		evaluateObjectInfo.SubType = SVEvaluateCenterXObjectType;		
-		pEvaluateCenterX = ( SVEvaluateClass* ) ::SVSendMessage( pTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>(&evaluateObjectInfo) );
+		pEvaluateCenterX = reinterpret_cast<SVEvaluateClass*>(::SVSendMessage( pTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&evaluateObjectInfo) ));
 		if( pEvaluateCenterX )
 		{
 			// Get Center X Result...
 			resultObjectInfo.EmbeddedID = SVOutputEvaluateCenterXResultObjectGuid;
-			pCenterXResult = ( SVDoubleValueObjectClass* ) ::SVSendMessage( pEvaluateCenterX, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>(&resultObjectInfo) );
+			pCenterXResult = reinterpret_cast<SVDoubleValueObjectClass*>(::SVSendMessage( pEvaluateCenterX, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&resultObjectInfo) ));
 		}
 
 		// Get Evaluate Center Y...
 		evaluateObjectInfo.SubType = SVEvaluateCenterYObjectType;		
-		pEvaluateCenterY = ( SVEvaluateClass* ) ::SVSendMessage( pTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>(&evaluateObjectInfo) );
+		pEvaluateCenterY = reinterpret_cast<SVEvaluateClass*>(::SVSendMessage( pTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&evaluateObjectInfo) ));
 		if( pEvaluateCenterY )
 		{
 			// Get Center Y Result...
 			resultObjectInfo.EmbeddedID = SVOutputEvaluateCenterYResultObjectGuid;
-			pCenterYResult = ( SVDoubleValueObjectClass* ) ::SVSendMessage( pEvaluateCenterY, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>(&resultObjectInfo) );
+			pCenterYResult = reinterpret_cast<SVDoubleValueObjectClass*>(::SVSendMessage( pEvaluateCenterY, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&resultObjectInfo) ));
 		}
 
 		// Get Evaluate Start Radius...
 		evaluateObjectInfo.SubType = SVEvaluateStartRadiusObjectType;		
-		pEvaluateStartRadius = ( SVEvaluateClass* ) ::SVSendMessage( pTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>(&evaluateObjectInfo) );
+		pEvaluateStartRadius = reinterpret_cast<SVEvaluateClass*>(::SVSendMessage( pTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&evaluateObjectInfo) ));
 		if( pEvaluateStartRadius )
 		{
 			// Get Start Radius Result...
 			resultObjectInfo.EmbeddedID = SVOutputEvaluateStartRadiusResultObjectGuid;
-			pStartRadiusResult = ( SVDoubleValueObjectClass* ) ::SVSendMessage( pEvaluateStartRadius, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>(&resultObjectInfo) );
+			pStartRadiusResult = reinterpret_cast<SVDoubleValueObjectClass*>(::SVSendMessage( pEvaluateStartRadius, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&resultObjectInfo) ));
 		}
 
 		// Get Evaluate End Radius...
 		evaluateObjectInfo.SubType = SVEvaluateEndRadiusObjectType;		
-		pEvaluateEndRadius = ( SVEvaluateClass* ) ::SVSendMessage( pTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>(&evaluateObjectInfo) );
+		pEvaluateEndRadius = reinterpret_cast<SVEvaluateClass*>(::SVSendMessage( pTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&evaluateObjectInfo) ));
 		if( pEvaluateEndRadius )
 		{
 			// Get End Radius Result...
 			resultObjectInfo.EmbeddedID = SVOutputEvaluateEndRadiusResultObjectGuid;
-			pEndRadiusResult = ( SVDoubleValueObjectClass* ) ::SVSendMessage( pEvaluateEndRadius, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>(&resultObjectInfo) );
+			pEndRadiusResult = reinterpret_cast<SVDoubleValueObjectClass*>(::SVSendMessage( pEvaluateEndRadius, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&resultObjectInfo) ));
 		}
 
 		// Get Evaluate Start Angle...
 		evaluateObjectInfo.SubType = SVEvaluateStartAngleObjectType;		
-		pEvaluateStartAngle = ( SVEvaluateClass* ) ::SVSendMessage( pTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>(&evaluateObjectInfo) );
+		pEvaluateStartAngle = reinterpret_cast<SVEvaluateClass*>(::SVSendMessage( pTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&evaluateObjectInfo) ));
 		if( pEvaluateStartAngle )
 		{
 			// Get Start Angle Result...
 			resultObjectInfo.EmbeddedID = SVOutputEvaluateStartAngleResultObjectGuid;
-			pStartAngleResult = ( SVDoubleValueObjectClass* ) ::SVSendMessage( pEvaluateStartAngle, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>(&resultObjectInfo) );
+			pStartAngleResult = reinterpret_cast<SVDoubleValueObjectClass*>(::SVSendMessage( pEvaluateStartAngle, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&resultObjectInfo) ));
 		}
 
 		// Get Evaluate End Angle...
 		evaluateObjectInfo.SubType = SVEvaluateEndAngleObjectType;		
-		pEvaluateEndAngle = ( SVEvaluateClass* ) ::SVSendMessage( pTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>(&evaluateObjectInfo) );
+		pEvaluateEndAngle = reinterpret_cast<SVEvaluateClass*>(::SVSendMessage( pTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&evaluateObjectInfo) ));
 		if( pEvaluateEndAngle )
 		{
 			// Get End Angle Result...
 			resultObjectInfo.EmbeddedID = SVOutputEvaluateEndAngleResultObjectGuid;
-			pEndAngleResult = ( SVDoubleValueObjectClass* ) ::SVSendMessage( pEvaluateEndAngle, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>(&resultObjectInfo) );
+			pEndAngleResult = reinterpret_cast<SVDoubleValueObjectClass*>(::SVSendMessage( pEvaluateEndAngle, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&resultObjectInfo) ));
 		}
 
 		// Get Use Formula...
 		SVObjectTypeInfoStruct objectInfo;
 		objectInfo.EmbeddedID = SVOutputUseFormulaObjectGuid;
-		pUseFormula = ( SVBoolValueObjectClass* ) ::SVSendMessage( pTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>(&objectInfo) );
+		pUseFormula = reinterpret_cast<SVBoolValueObjectClass*>(::SVSendMessage( pTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&objectInfo) ));
 		if( pUseFormula )
 		{
 			pUseFormula->GetValue( bUseFormula );
@@ -359,7 +359,7 @@ BOOL SVToolAdjustmentDialogPolarTransformPageClass::OnInitDialog()
 
 		// Get Use Angle Method ...
 		objectInfo.EmbeddedID = SVOutputAngularMethodObjectGuid;
-		m_pAngleMethod = ( SVEnumerateValueObjectClass* ) ::SVSendMessage( pTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>(&objectInfo) );
+		m_pAngleMethod = reinterpret_cast<SVEnumerateValueObjectClass*>(::SVSendMessage( pTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&objectInfo) ));
 		if( m_pAngleMethod )
 		{
 			CString l_strEnumList;
@@ -369,7 +369,7 @@ BOOL SVToolAdjustmentDialogPolarTransformPageClass::OnInitDialog()
 
 		// Get Interpolation Mode...
 		objectInfo.EmbeddedID = SVOutputInterpolationModeObjectGuid;
-		pInterpolationMode = ( SVEnumerateValueObjectClass* ) ::SVSendMessage( pTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>(&objectInfo) );
+		pInterpolationMode = reinterpret_cast<SVEnumerateValueObjectClass*>(::SVSendMessage( pTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&objectInfo) ));
 		if( pInterpolationMode )
 		{
 			// Populate Interpolation Mode combo...
@@ -553,6 +553,16 @@ void SVToolAdjustmentDialogPolarTransformPageClass::OnSelchangeAngularMethod()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVTADlgPolarTransformPage.cpp_v  $
+ * 
+ *    Rev 1.2   15 May 2014 12:50:32   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Changed SendMessage to use proper type cast of DWORD_PTR.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   01 Feb 2014 12:14:30   tbair
  * Project:  SVObserver

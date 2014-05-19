@@ -5,8 +5,8 @@
 //* .Module Name     : SVImagePolarTransform
 //* .File Name       : $Workfile:   SVImagePolarTransform.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   01 Feb 2014 10:42:32  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   15 May 2014 12:47:34  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -214,11 +214,11 @@ BOOL SVImagePolarTransformClass::SetDefaultFormulas()
 	// Find the evaluation center x object...
 	bOk = FALSE;
 	objectInfo.SubType = SVEvaluateCenterXObjectType;
-	SVEvaluateCenterXClass* pEvaluateCenterX = ( SVEvaluateCenterXClass* ) ::SVSendMessage( GetTool(), SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>(&objectInfo) );
+	SVEvaluateCenterXClass* pEvaluateCenterX = reinterpret_cast<SVEvaluateCenterXClass*>(::SVSendMessage( GetTool(), SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&objectInfo)) );
 	if( pEvaluateCenterX )
 	{
 		// Find equation object...
-		SVEquationClass* pEquation = ( SVEquationClass* ) ::SVSendMessage( pEvaluateCenterX, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>(&equationObjectInfo) );
+		SVEquationClass* pEquation = reinterpret_cast<SVEquationClass*>(::SVSendMessage( pEvaluateCenterX, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&equationObjectInfo)) );
 		if( pEquation )
 		{
 			// Get current name of embedded CenterX...
@@ -246,11 +246,11 @@ BOOL SVImagePolarTransformClass::SetDefaultFormulas()
 	// Find the evaluation center y object...
 	bOk = FALSE;
 	objectInfo.SubType = SVEvaluateCenterYObjectType;
-	SVEvaluateCenterYClass* pEvaluateCenterY = ( SVEvaluateCenterYClass* ) ::SVSendMessage( GetTool(), SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>(&objectInfo) );
+	SVEvaluateCenterYClass* pEvaluateCenterY = reinterpret_cast<SVEvaluateCenterYClass*>(::SVSendMessage( GetTool(), SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&objectInfo)) );
 	if( pEvaluateCenterY )
 	{
 		// Find equation object...
-		SVEquationClass* pEquation = ( SVEquationClass* ) ::SVSendMessage( pEvaluateCenterY, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>(&equationObjectInfo) );
+		SVEquationClass* pEquation = reinterpret_cast<SVEquationClass*>(::SVSendMessage( pEvaluateCenterY, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&equationObjectInfo)) );
 		if( pEquation )
 		{
 			// Get current name of embedded CenterY...
@@ -278,11 +278,11 @@ BOOL SVImagePolarTransformClass::SetDefaultFormulas()
 	// Find the evaluation start radius object...
 	bOk = FALSE;
 	objectInfo.SubType = SVEvaluateStartRadiusObjectType;
-	SVEvaluateStartRadiusClass* pEvaluateStartRadius = ( SVEvaluateStartRadiusClass* ) ::SVSendMessage( GetTool(), SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>(&objectInfo) );
+	SVEvaluateStartRadiusClass* pEvaluateStartRadius = reinterpret_cast<SVEvaluateStartRadiusClass*>(::SVSendMessage( GetTool(), SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&objectInfo)) );
 	if( pEvaluateStartRadius )
 	{
 		// Find equation object...
-		SVEquationClass* pEquation = ( SVEquationClass* ) ::SVSendMessage( pEvaluateStartRadius, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>(&equationObjectInfo) );
+		SVEquationClass* pEquation = reinterpret_cast<SVEquationClass*>(::SVSendMessage( pEvaluateStartRadius, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&equationObjectInfo)) );
 		if( pEquation )
 		{
 			// Get current name of embedded StartRadius...
@@ -310,11 +310,11 @@ BOOL SVImagePolarTransformClass::SetDefaultFormulas()
 	// Find the evaluation end radius object...
 	bOk = FALSE;
 	objectInfo.SubType = SVEvaluateEndRadiusObjectType;
-	SVEvaluateEndRadiusClass* pEvaluateEndRadius = ( SVEvaluateEndRadiusClass* ) ::SVSendMessage( GetTool(), SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>(&objectInfo) );
+	SVEvaluateEndRadiusClass* pEvaluateEndRadius = reinterpret_cast<SVEvaluateEndRadiusClass*>(::SVSendMessage( GetTool(), SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&objectInfo)) );
 	if( pEvaluateEndRadius )
 	{
 		// Find equation object...
-		SVEquationClass* pEquation = ( SVEquationClass* ) ::SVSendMessage( pEvaluateEndRadius, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>(&equationObjectInfo) );
+		SVEquationClass* pEquation = reinterpret_cast<SVEquationClass*>(::SVSendMessage( pEvaluateEndRadius, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&equationObjectInfo)) );
 		if( pEquation )
 		{
 			// Get current name of embedded EndRadius...
@@ -342,11 +342,11 @@ BOOL SVImagePolarTransformClass::SetDefaultFormulas()
 	// Find the evaluation start angle object...
 	bOk = FALSE;
 	objectInfo.SubType = SVEvaluateStartAngleObjectType;
-	SVEvaluateStartAngleClass* pEvaluateStartAngle = ( SVEvaluateStartAngleClass* ) ::SVSendMessage( GetTool(), SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>(&objectInfo) );
+	SVEvaluateStartAngleClass* pEvaluateStartAngle = reinterpret_cast<SVEvaluateStartAngleClass*>(::SVSendMessage( GetTool(), SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&objectInfo)) );
 	if( pEvaluateStartAngle )
 	{
 		// Find equation object...
-		SVEquationClass* pEquation = ( SVEquationClass* ) ::SVSendMessage( pEvaluateStartAngle, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>(&equationObjectInfo) );
+		SVEquationClass* pEquation = reinterpret_cast<SVEquationClass*>(::SVSendMessage( pEvaluateStartAngle, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&equationObjectInfo)) );
 		if( pEquation )
 		{
 			// Get current name of embedded StartAngle...
@@ -374,11 +374,11 @@ BOOL SVImagePolarTransformClass::SetDefaultFormulas()
 	// Find the evaluation end angle object...
 	bOk = FALSE;
 	objectInfo.SubType = SVEvaluateEndAngleObjectType;
-	SVEvaluateEndAngleClass* pEvaluateEndAngle = ( SVEvaluateEndAngleClass* ) ::SVSendMessage( GetTool(), SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>(&objectInfo) );
+	SVEvaluateEndAngleClass* pEvaluateEndAngle = reinterpret_cast<SVEvaluateEndAngleClass*>(::SVSendMessage( GetTool(), SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&objectInfo)) );
 	if( pEvaluateEndAngle )
 	{
 		// Find equation object...
-		SVEquationClass* pEquation = ( SVEquationClass* ) ::SVSendMessage( pEvaluateEndAngle, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>(&equationObjectInfo) );
+		SVEquationClass* pEquation = reinterpret_cast<SVEquationClass*>(::SVSendMessage( pEvaluateEndAngle, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&equationObjectInfo)) );
 		if( pEquation )
 		{
 			// Get current name of embedded EndAngle...
@@ -746,9 +746,9 @@ BOOL SVImagePolarTransformClass::onRun( SVRunStatusClass& RRunStatus )
 	return l_bOk;
 }
 
-LONG_PTR SVImagePolarTransformClass::processMessage( DWORD DwMessageID, LONG_PTR DwMessageValue, LONG_PTR DwMessageContext )
+DWORD_PTR SVImagePolarTransformClass::processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext )
 {
-	LONG_PTR DwResult = NULL;
+	DWORD_PTR DwResult = NULL;
 
 	DWORD dwPureMessageID = DwMessageID & SVM_PURE_MESSAGE;
 
@@ -877,6 +877,17 @@ HRESULT SVImagePolarTransformClass::CollectInputImageNames( SVRunStatusClass& RR
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVImagePolarTransform.cpp_v  $
+ * 
+ *    Rev 1.3   15 May 2014 12:47:34   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Revised processMessage to use DWORD_PTR
+ * Revised SVSendMessage to use DWORD_PTR
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   01 Feb 2014 10:42:32   tbair
  * Project:  SVObserver

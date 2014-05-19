@@ -5,8 +5,8 @@
 // * .Module Name     : SVOProPosQueDlg
 // * .File Name       : $Workfile:   SVOProPosQueDlg.cpp  $
 // * ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 13:11:54  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   15 May 2014 11:25:46  $
 // ******************************************************************************
 
 #include "stdafx.h"
@@ -527,7 +527,7 @@ void CSVOProPosQueDlg::OnDblclkLstPpqList()
 
 BOOL CSVOProPosQueDlg::OnHelpInfo(HELPINFO* pHelpInfo) 
 {
-	::SendMessage( m_pParent->GetSafeHwnd(), WM_HELP, NULL, (DWORD)pHelpInfo );
+	::SendMessage( m_pParent->GetSafeHwnd(), WM_HELP, NULL, reinterpret_cast<DWORD_PTR>(pHelpInfo) );
 
 	return TRUE;
 }
@@ -536,7 +536,17 @@ BOOL CSVOProPosQueDlg::OnHelpInfo(HELPINFO* pHelpInfo)
 // * LOG HISTORY:
 // ******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVOProPosQueDlg.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVOProPosQueDlg.cpp_v  $
+ * 
+ *    Rev 1.1   15 May 2014 11:25:46   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Changed OnHelpInfo sendMessage to use DWORD_PTR cast.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 13:11:54   bWalter
  * Project:  SVObserver

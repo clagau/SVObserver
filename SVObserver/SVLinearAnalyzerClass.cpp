@@ -5,8 +5,8 @@
 // * .Module Name     : SVLinearAnalyzerClass
 // * .File Name       : $Workfile:   SVLinearAnalyzerClass.cpp  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.2  $
-// * .Check In Date   : $Date:   01 Feb 2014 11:13:10  $
+// * .Current Version : $Revision:   1.3  $
+// * .Check In Date   : $Date:   15 May 2014 13:15:14  $
 // ******************************************************************************
 
 #include "stdafx.h"
@@ -314,10 +314,10 @@ SVLinearEdgeProcessingClass *SVLinearAnalyzerClass::GetEdgeA()
 	info.ObjectType = SVLinearEdgeProcessingObjectType;
 	info.SubType = SVLinearEdgeAProcessingObjectType;
 
-	l_psvEdge = (SVLinearEdgeProcessingClass *) SVSendMessage( this, 
+	l_psvEdge = reinterpret_cast<SVLinearEdgeProcessingClass *>(SVSendMessage( this, 
 																SVM_GETFIRST_OBJECT,
 																NULL,
-																reinterpret_cast<LONG_PTR>(&info));
+																reinterpret_cast<DWORD_PTR>(&info)));
 
 	return l_psvEdge;
 }
@@ -331,10 +331,10 @@ SVLinearEdgeProcessingClass *SVLinearAnalyzerClass::GetEdgeB()
 	info.ObjectType = SVLinearEdgeProcessingObjectType;
 	info.SubType = SVLinearEdgeBProcessingObjectType;
 
-	l_psvEdge = (SVLinearEdgeProcessingClass *) SVSendMessage( this, 
+	l_psvEdge = reinterpret_cast<SVLinearEdgeProcessingClass *>(SVSendMessage( this, 
 																	SVM_GETFIRST_OBJECT,
 																	NULL,
-																	reinterpret_cast<LONG_PTR>(&info));
+																	reinterpret_cast<DWORD_PTR>(&info)));
 
 	return l_psvEdge;
 }
@@ -519,9 +519,10 @@ HRESULT SVLinearAnalyzerClass::onCollectOverlays(SVImageClass *p_Image,SVExtentM
 	}
 	return l_hrRet;
 }
-LONG_PTR SVLinearAnalyzerClass::processMessage(DWORD DwMessageID, LONG_PTR DwMessageValue, LONG_PTR DwMessageContext)
+
+DWORD_PTR SVLinearAnalyzerClass::processMessage(DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext)
 {
-	LONG_PTR DwResult = 0L;
+	DWORD_PTR DwResult = 0;
 
 	switch (DwMessageID & SVM_PURE_MESSAGE)
 	{
@@ -549,6 +550,17 @@ LONG_PTR SVLinearAnalyzerClass::processMessage(DWORD DwMessageID, LONG_PTR DwMes
 // ******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVLinearAnalyzerClass.cpp_v  $
+ * 
+ *    Rev 1.3   15 May 2014 13:15:14   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Revised processMessage to use DWORD_PTR
+ * Revised SVSendMessage to use DWORD_PTR
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   01 Feb 2014 11:13:10   tbair
  * Project:  SVObserver

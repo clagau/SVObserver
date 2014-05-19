@@ -5,8 +5,8 @@
 //* .Module Name     : SVConfigXMLPrint
 //* .File Name       : $Workfile:   SVConfigXMLPrint.inl  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.9  $
-//* .Check In Date   : $Date:   04 Feb 2014 13:27:20  $
+//* .Current Version : $Revision:   1.10  $
+//* .Check In Date   : $Date:   15 May 2014 11:10:32  $
 //******************************************************************************
 
 #include "SVObjectLibrary/SVObjectLibrary.h"
@@ -999,7 +999,7 @@ inline void SVConfigXMLPrint::WriteObject( Writer writer, SVObjectClass* pObj ) 
 				SVObjectInfoStruct objectInfo;
 				objectInfo.ObjectTypeInfo.ObjectType = SVLineObjectType;
 				
-				SVLineClass* pLineClass = dynamic_cast <SVLineClass*> (reinterpret_cast<SVObjectClass*> (SVSendMessage( pObj, SVM_GETFIRST_OBJECT, reinterpret_cast<LONG_PTR>(&objectInfo), NULL) ) );
+				SVLineClass* pLineClass = dynamic_cast <SVLineClass*> (reinterpret_cast<SVObjectClass*> (SVSendMessage( pObj, SVM_GETFIRST_OBJECT, reinterpret_cast<DWORD_PTR>(&objectInfo), NULL) ) );
 				
 				POINT l_oHeadPoint;
 				POINT l_oTailPoint;
@@ -1408,6 +1408,16 @@ inline HRESULT SVDeviceParamConfigXMLHelper::Visit(SVCustomDeviceParam& param)
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVConfigXMLPrint.inl_v  $
+ * 
+ *    Rev 1.10   15 May 2014 11:10:32   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Revised SVSendMessage to use DWORD_PTR
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.9   04 Feb 2014 13:27:20   bwalter
  * Project:  SVObserver

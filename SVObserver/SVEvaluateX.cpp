@@ -5,8 +5,8 @@
 //* .Module Name     : SVEvaluateX
 //* .File Name       : $Workfile:   SVEvaluateX.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   01 Feb 2014 10:36:40  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   15 May 2014 11:21:42  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -126,9 +126,9 @@ BOOL SVEvaluateXClass::onRun( SVRunStatusClass& RRunStatus )
 }
 
 
-LONG_PTR SVEvaluateXClass::processMessage( DWORD DwMessageID, LONG_PTR DwMessageValue, LONG_PTR DwMessageContext )
+DWORD_PTR SVEvaluateXClass::processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext )
 {
-	LONG_PTR DwResult = NULL;
+	DWORD_PTR DwResult = NULL;
 
 	return( SVMathContainerClass::processMessage( DwMessageID, DwMessageValue, DwMessageContext ) | DwResult );
 }
@@ -138,6 +138,16 @@ LONG_PTR SVEvaluateXClass::processMessage( DWORD DwMessageID, LONG_PTR DwMessage
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVEvaluateX.cpp_v  $
+ * 
+ *    Rev 1.2   15 May 2014 11:21:42   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Revised processMessage to use DWORD_PTR
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   01 Feb 2014 10:36:40   tbair
  * Project:  SVObserver

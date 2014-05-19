@@ -5,8 +5,8 @@
 //* .Module Name     : SVOTriggerDeviceDlg
 //* .File Name       : $Workfile:   SVOTriggerDeviceDlg.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.4  $
-//* .Check In Date   : $Date:   30 Oct 2013 14:49:00  $
+//* .Current Version : $Revision:   1.5  $
+//* .Check In Date   : $Date:   15 May 2014 11:38:40  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -279,7 +279,7 @@ void CSVOTriggerDeviceDlg::OnSelchangeLstTriggers()
 
 BOOL CSVOTriggerDeviceDlg::OnHelpInfo(HELPINFO* pHelpInfo) 
 {
-	::SendMessage( m_pParent->GetSafeHwnd(), WM_HELP, NULL, (DWORD)pHelpInfo );
+	::SendMessage( m_pParent->GetSafeHwnd(), WM_HELP, NULL, reinterpret_cast<DWORD_PTR>(pHelpInfo) );
 
 	return TRUE;
 }
@@ -323,6 +323,16 @@ void CSVOTriggerDeviceDlg::EnableAdvancedPropertyButton(bool bEnable)
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVOTriggerDeviceDlg.cpp_v  $
+ * 
+ *    Rev 1.5   15 May 2014 11:38:40   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Changed OnHelpInfo sendMessage to use DWORD_PTR cast.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.4   30 Oct 2013 14:49:00   tbair
  * Project:  SVObserver

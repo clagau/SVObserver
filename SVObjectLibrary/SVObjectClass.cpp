@@ -5,8 +5,8 @@
 //* .Module Name     : SVObject
 //* .File Name       : $Workfile:   SVObjectClass.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.4  $
-//* .Check In Date   : $Date:   17 Mar 2014 14:14:10  $
+//* .Current Version : $Revision:   1.6  $
+//* .Check In Date   : $Date:   15 May 2014 15:30:26  $
 //******************************************************************************
 
 #pragma region Includes
@@ -135,7 +135,7 @@ void SVObjectClass::DestroyFriends()
 				if( pOwner )
 				{
 					// Close, Disconnect and Delete Friend...
-					::SVSendMessage( pOwner, SVM_DESTROY_FRIEND_OBJECT, reinterpret_cast<LONG_PTR>(pFriend), NULL );
+					::SVSendMessage( pOwner, SVM_DESTROY_FRIEND_OBJECT, reinterpret_cast<DWORD_PTR>(pFriend), NULL );
 				}
 				else
 				{
@@ -300,7 +300,7 @@ This method executes the close object method on all objects that use this object
 */
 BOOL SVObjectClass::CloseObject()
 {
-	LONG_PTR dwResult = SVMR_NOT_PROCESSED;
+	DWORD_PTR dwResult = SVMR_NOT_PROCESSED;
 
 	SVAutoLockAndReleaseTemplate< SVOutObjectInfoStruct > l_AutoLock;
 
@@ -315,7 +315,7 @@ BOOL SVObjectClass::CloseObject()
 			if( pObject && pObject->IsCreated() )
 			{
 				// Close only user of our output which are still not closed!
-				dwResult = ::SVSendMessage( pObject, SVM_CLOSE_OBJECT, reinterpret_cast<LONG_PTR> (static_cast<SVObjectClass*> (this)), NULL ) | dwResult;
+				dwResult = ::SVSendMessage( pObject, SVM_CLOSE_OBJECT, reinterpret_cast<DWORD_PTR> (static_cast<SVObjectClass*> (this)), NULL ) | dwResult;
 			}
 		}
 	}
@@ -1066,12 +1066,12 @@ BOOL SVObjectClass::ReinitObjectInfos()
 /*
 SVM_ message process function, should be overridden in derived classes. Refer to SVObject.h for information about possible messages. Use one of these global functions to send a message to an object:
 
-DWORD SVSendMessage( SVObjectClass* PObject, DWORD DwMessageID, DWORD DwMessageValue, DWORD DwMessageContext );
-DWORD SVSendMessage( const GUID& RUniqueObjectID, DWORD DwMessageID, DWORD DwMessageValue, DWORD DwMessageContext );
+DWORD_PTR SVSendMessage( SVObjectClass* PObject, DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext );
+DWORD_PTR SVSendMessage( const GUID& RUniqueObjectID, DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext );
 */
-LONG_PTR SVObjectClass::processMessage( DWORD DwMessageID, LONG_PTR DwMessageValue, LONG_PTR DwMessageContext )
+DWORD_PTR SVObjectClass::processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext )
 {
-	LONG_PTR DwResult = SVMR_NOT_PROCESSED;
+	DWORD_PTR DwResult = SVMR_NOT_PROCESSED;
 	// Try to process message by yourself...
 	// ( if necessary process here the incoming messages )
 	DWORD dwPureMessageID = DwMessageID & SVM_PURE_MESSAGE;
@@ -1079,7 +1079,7 @@ LONG_PTR SVObjectClass::processMessage( DWORD DwMessageID, LONG_PTR DwMessageVal
 	{
 		case SVMSGID_CREATE_ALL_OBJECTS:
 		{
-			if( !IsCreated() && !CreateObject( ( SVObjectLevelCreateStruct* ) DwMessageValue ) )
+			if( !IsCreated() && !CreateObject( reinterpret_cast<SVObjectLevelCreateStruct*>(DwMessageValue) ) )
 			{
 				ASSERT( FALSE );
 
@@ -1091,7 +1091,7 @@ LONG_PTR SVObjectClass::processMessage( DWORD DwMessageID, LONG_PTR DwMessageVal
 
 		case SVMSGID_CONNECT_ALL_OBJECTS:
 		{
-			if( ConnectObject( ( SVObjectLevelCreateStruct* ) DwMessageValue ) != S_OK )
+			if( ConnectObject( reinterpret_cast<SVObjectLevelCreateStruct*>(DwMessageValue) ) != S_OK )
 			{
 				ASSERT( FALSE );
 
@@ -1105,7 +1105,7 @@ LONG_PTR SVObjectClass::processMessage( DWORD DwMessageID, LONG_PTR DwMessageVal
 		{
 			// ...use third message parameter ( DwMessageContext ) to specify the objectTypeInfo!
 			//( SVObjectTypeInfoStruct->objectType => SVObjectTypeEnum )
-			SVObjectTypeInfoStruct* pObjectTypeInfo = ( SVObjectTypeInfoStruct* )DwMessageContext;
+			SVObjectTypeInfoStruct* pObjectTypeInfo = reinterpret_cast<SVObjectTypeInfoStruct*>(DwMessageContext);
 			if( pObjectTypeInfo )
 			{
 				// ...use second message parameter ( DwMessageValue ) to specify the object requesting
@@ -1132,7 +1132,7 @@ LONG_PTR SVObjectClass::processMessage( DWORD DwMessageID, LONG_PTR DwMessageVal
 					  )
 					{
 						// But object must be specified!
-						return reinterpret_cast<LONG_PTR> (static_cast<SVObjectClass*> (this));
+						return reinterpret_cast<DWORD_PTR> (static_cast<SVObjectClass*> (this));
 					}
 				}
 			}
@@ -1155,17 +1155,17 @@ LONG_PTR SVObjectClass::processMessage( DWORD DwMessageID, LONG_PTR DwMessageVal
 			if( GetEmbeddedID() == l_guidEmbeddedID )
 			{
 				SVObjectManagerClass::Instance().ChangeUniqueObjectID( this, taskObjectID );
-				return reinterpret_cast<LONG_PTR> (static_cast<SVObjectClass*> (this));
+				return reinterpret_cast<DWORD_PTR> (static_cast<SVObjectClass*> (this));
 
 			}
-			return ( DWORD )NULL; //SVMR_NOT_PROCESSED;
+			return static_cast<DWORD_PTR>(NULL); //SVMR_NOT_PROCESSED;
 		}
 
 		case SVMSGID_CONNECT_OBJECT_INPUT:
 		{
 			// ...use second message parameter ( DwMessageValue ) as pointer to InObjectInfo ( SVInObjectInfoStruct* )
 			// ...returns SVMR_SUCCESS, SVMR_NO_SUCCESS or SVMR_NOT_PROCESSED
-			SVInObjectInfoStruct* pInObjectInfo = ( SVInObjectInfoStruct* ) DwMessageValue;
+			SVInObjectInfoStruct* pInObjectInfo = reinterpret_cast<SVInObjectInfoStruct*>(DwMessageValue);
 			if( ConnectObjectInput( pInObjectInfo ) )
 			{
 				return SVMR_SUCCESS;
@@ -1178,7 +1178,7 @@ LONG_PTR SVObjectClass::processMessage( DWORD DwMessageID, LONG_PTR DwMessageVal
 		{
 			// ...use second message parameter ( DwMessageValue ) as pointer to InObjectInfo ( SVInObjectInfoStruct* )
 			// ...returns SVMR_SUCCESS, SVMR_NO_SUCCESS or SVMR_NOT_PROCESSED
-			SVInObjectInfoStruct* pInObjectInfo = ( SVInObjectInfoStruct* ) DwMessageValue;
+			SVInObjectInfoStruct* pInObjectInfo = reinterpret_cast<SVInObjectInfoStruct*>(DwMessageValue);
 			if( DisconnectObjectInput( pInObjectInfo ) )
 				return SVMR_SUCCESS;
 
@@ -1197,7 +1197,7 @@ LONG_PTR SVObjectClass::processMessage( DWORD DwMessageID, LONG_PTR DwMessageVal
 		case SVMSGID_SET_OBJECT_VALUE:
 		{
 			// try to set our trivial member
-			SVObjectAttributeClass* dataObject = ( SVObjectAttributeClass* )DwMessageContext;
+			SVObjectAttributeClass* dataObject = reinterpret_cast<SVObjectAttributeClass*>(DwMessageContext);
 			
 			if( SetObjectValue( dataObject ) == S_OK )
 				return SVMR_SUCCESS;
@@ -1211,7 +1211,7 @@ LONG_PTR SVObjectClass::processMessage( DWORD DwMessageID, LONG_PTR DwMessageVal
 
 			if( strName == GetCompleteObjectName() )
 			{
-				return reinterpret_cast<LONG_PTR> (static_cast<SVObjectClass*> (this));
+				return reinterpret_cast<DWORD_PTR> (static_cast<SVObjectClass*> (this));
 			}
 			else
 			{
@@ -1592,7 +1592,7 @@ BOOL SVObjectClass::GetChildObjectByName( LPCTSTR tszChildName, SVObjectClass** 
 		{
 			*ppObject = reinterpret_cast<SVObjectClass*>( ::SVSendMessage( this, 
 					( SVM_GET_OBJECT_BY_NAME | SVM_PARENT_TO_CHILD ) & ~SVM_NOTIFY_ONLY_THIS, 
-					reinterpret_cast<LONG_PTR>(tszChildName), NULL ) );
+					reinterpret_cast<DWORD_PTR>(tszChildName), NULL ) );
 			bReturn = ( *ppObject != NULL );
 		}
 	}
@@ -1716,6 +1716,27 @@ void SVObjectClass::SetDefaultObjectAttributesSet(UINT uAttributes)
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObjectLibrary\SVObjectClass.cpp_v  $
+ * 
+ *    Rev 1.6   15 May 2014 15:30:26   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Revised comment due to SVSendMessage using DWORD_PTR
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.5   15 May 2014 09:42:26   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Revised SVSendMessage to use DWORD_PTR instead of DWORD or LONG_PTR.
+ * Revised processMessage to use DWORD_PTR instead of DWORD or LONG_PTR.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.4   17 Mar 2014 14:14:10   bwalter
  * Project:  SVObserver

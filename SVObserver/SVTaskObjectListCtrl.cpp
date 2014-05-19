@@ -5,8 +5,8 @@
 //* .Module Name     : SVTaskObjectListCtrl
 //* .File Name       : $Workfile:   SVTaskObjectListCtrl.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   24 Apr 2013 11:34:48  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   15 May 2014 13:13:46  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -87,9 +87,9 @@ void SVTaskObjectListCtrlClass::Rebuild()
 
 		for( int i = 0; i < pOwnerTaskList->GetSize(); i++ )
 			if( pOwnerTaskList->GetAt( i ) )
-				SetItemData( InsertItem( i, pOwnerTaskList->GetAt( i )->GetName() ), ( DWORD ) pOwnerTaskList->GetAt( i ) );
+				SetItemData( InsertItem( i, pOwnerTaskList->GetAt( i )->GetName() ), reinterpret_cast<DWORD_PTR>(pOwnerTaskList->GetAt( i )) );
 			else
-				SetItemData( InsertItem( i, _T( "&&&&&&" ) ), ( DWORD ) NULL );
+				SetItemData( InsertItem( i, _T( "&&&&&&" ) ), static_cast<DWORD_PTR>(NULL) );
 
 		// 29 Oct 1999 - frb.
 		//SetItemData( InsertItem( i, _T( "-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------" ) ), NULL );
@@ -225,7 +225,18 @@ void SVTaskObjectListCtrlClass::OnBeginTrack( NMHDR* pNMHDR, LRESULT* pResult )
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVTaskObjectListCtrl.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVTaskObjectListCtrl.cpp_v  $
+ * 
+ *    Rev 1.1   15 May 2014 13:13:46   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Changed SetItemData to cast values to DWORD_PTR.
+ * 
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   24 Apr 2013 11:34:48   bWalter
  * Project:  SVObserver

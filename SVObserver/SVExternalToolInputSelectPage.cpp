@@ -5,8 +5,8 @@
 //* .Module Name     : SVExternalToolInputSelectPage
 //* .File Name       : $Workfile:   SVExternalToolInputSelectPage.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.4  $
-//* .Check In Date   : $Date:   01 Feb 2014 10:42:26  $
+//* .Current Version : $Revision:   1.5  $
+//* .Check In Date   : $Date:   15 May 2014 12:13:14  $
 //******************************************************************************
 
 // SVExternalToolInputSelectPage.cpp : implementation file
@@ -370,7 +370,7 @@ void SVExternalToolInputSelectPage::OnOK()
 				SVInObjectInfoStruct& rInfo = m_pTask->m_Data.m_aInputObjectInfo[iIndex];
 				if ( rInfo.GetInputObjectInfo().PObject )
 				{	// disconnect existing connection
-					BOOL bSuccess = ::SVSendMessage( rInfo.GetInputObjectInfo().PObject, SVM_DISCONNECT_OBJECT_INPUT, reinterpret_cast<LONG_PTR>(&rInfo), NULL );
+					BOOL bSuccess = (::SVSendMessage( rInfo.GetInputObjectInfo().PObject, SVM_DISCONNECT_OBJECT_INPUT, reinterpret_cast<DWORD_PTR>(&rInfo), NULL ) == SVMR_SUCCESS);
 					rInfo.SetInputObject( NULL );
 				}
 
@@ -378,7 +378,7 @@ void SVExternalToolInputSelectPage::OnOK()
 				{
 					rValue.SetValue(iBucket, strTmp);
 					rInfo.SetInputObject( pObject );
-					BOOL bSuccess = ::SVSendMessage( rInfo.GetInputObjectInfo().PObject, SVM_CONNECT_OBJECT_INPUT, reinterpret_cast<LONG_PTR>(&rInfo), NULL );
+					BOOL bSuccess = (::SVSendMessage( rInfo.GetInputObjectInfo().PObject, SVM_CONNECT_OBJECT_INPUT, reinterpret_cast<DWORD_PTR>(&rInfo), NULL ) == SVMR_SUCCESS);
 					ASSERT( bSuccess );
 				}
 				else
@@ -465,6 +465,26 @@ int SVExternalToolInputSelectPage::GetItemIndex(SVRPropertyItem* pItem)
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVExternalToolInputSelectPage.cpp_v  $
+ * 
+ *    Rev 1.5   15 May 2014 12:13:14   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Revised SVSendMessage to use DWORD_PTR
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.0   15 May 2014 11:23:48   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Revised SVSendMessage to use DWORD_PTR
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.4   01 Feb 2014 10:42:26   tbair
  * Project:  SVObserver

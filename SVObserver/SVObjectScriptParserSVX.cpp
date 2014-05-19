@@ -5,8 +5,8 @@
 //* .Module Name     : SVObjectScriptParser
 //* .File Name       : $Workfile:   SVObjectScriptParserSVX.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.3  $
-//* .Check In Date   : $Date:   01 Feb 2014 11:39:18  $
+//* .Current Version : $Revision:   1.4  $
+//* .Check In Date   : $Date:   15 May 2014 13:45:42  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -798,7 +798,7 @@ BOOL SVObjectScriptParserSVXClass::EvaluateOperandExpression( int OperandType, c
 				SVObjectClass* pObject = NULL;
 				if( rOwnerInfo.UniqueObjectID != SVInvalidGUID )
 				{
-					pObject = ( SVObjectClass* ) ::SVSendMessage( rOwnerInfo.UniqueObjectID, SVM_GET_OBJECT_BY_NAME, reinterpret_cast<LONG_PTR>( static_cast<LPCTSTR>( rExpressionStack.GetAt( riIndex ))), NULL );
+					pObject = reinterpret_cast<SVObjectClass*>(::SVSendMessage( rOwnerInfo.UniqueObjectID, SVM_GET_OBJECT_BY_NAME, reinterpret_cast<DWORD_PTR>( static_cast<LPCTSTR>( rExpressionStack.GetAt( riIndex ))), NULL ));
 				}
 				if( SV_IS_KIND_OF( pObject, SVObjectClass ) )
 				{
@@ -1996,7 +1996,7 @@ bool SVObjectScriptParserSVXClass::ReattachInputs( SVObjectClass* pObject, SVObj
 	//SVFunctionProfilerLocal profiler(profile);
 	SVInputInfoListClass inputInfoList;
 
-	::SVSendMessage(pObject, SVM_GET_INPUT_INTERFACE, reinterpret_cast<LONG_PTR>(&inputInfoList), NULL );
+	::SVSendMessage(pObject, SVM_GET_INPUT_INTERFACE, reinterpret_cast<DWORD_PTR>(&inputInfoList), NULL );
 
 	// Input List and requiredInputList must be the same size
 	// and In the same Order !!!
@@ -2812,8 +2812,8 @@ SVObjectClass* SVObjectScriptParserSVXClass::ProcessDefineObject( SVExpressionSt
 			// Try to overwrite object...
 			if( pObject = reinterpret_cast<SVObjectClass*>( ::SVSendMessage( ownerObjectInfo.PObject, 
 			                                                  SVM_OVERWRITE_OBJECT, 
-			                                                 reinterpret_cast<LONG_PTR>(objectOperand.Value()), 
-			                                                 reinterpret_cast<LONG_PTR>(embeddedOperand.Value()) )) )
+			                                                 reinterpret_cast<DWORD_PTR>(objectOperand.Value()), 
+			                                                 reinterpret_cast<DWORD_PTR>(embeddedOperand.Value()) )) )
 			{
 #ifdef SVOBJECTSCRIPTPARSER_DEBUG
 				TRACE( "OverWriteObject %.80s\n", pObject->GetName() );
@@ -2840,7 +2840,7 @@ SVObjectClass* SVObjectScriptParserSVXClass::ProcessDefineObject( SVExpressionSt
 		if( pObject && objectOwnerOperand.Value() )
 		{
 			// Try to replace or add object...
-			if( ::SVSendMessage( ownerObjectInfo.PObject, SVM_REPLACE_OBJECT, reinterpret_cast<LONG_PTR>(objectOperand.Value()), reinterpret_cast<LONG_PTR>(pObject) ) != SVMR_SUCCESS )
+			if( ::SVSendMessage( ownerObjectInfo.PObject, SVM_REPLACE_OBJECT, reinterpret_cast<DWORD_PTR>(objectOperand.Value()), reinterpret_cast<DWORD_PTR>(pObject) ) != SVMR_SUCCESS )
 			{
 				ASSERT( FALSE );
 				TRACE( "ReplaceObject %.80s\n", rLocalOwnerInfo.PObject->GetName() );
@@ -3011,7 +3011,7 @@ bool SVObjectScriptParserSVXClass::ProcessMemberAssignment( SVExpressionStack& r
 
 		// try to set the object's member value...
 		// Note:: Send this message to the Object's Owner
-		if( ::SVSendMessage( ownerObjectInfo.PObject, SVM_SET_OBJECT_VALUE, reinterpret_cast<LONG_PTR>(&objectInfo.UniqueObjectID), reinterpret_cast<LONG_PTR>(&dataObject) ) != SVMR_SUCCESS )
+		if( ::SVSendMessage( ownerObjectInfo.PObject, SVM_SET_OBJECT_VALUE, reinterpret_cast<DWORD_PTR>(&objectInfo.UniqueObjectID), reinterpret_cast<DWORD_PTR>(&dataObject) ) != SVMR_SUCCESS )
 		{
 			AfxMessageBox( "Parser Error:\n Set Object Member Value failed!" );
 			return rc;
@@ -3037,6 +3037,16 @@ HRESULT SVObjectScriptParserSVXClass::DoParse()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVObjectScriptParserSVX.cpp_v  $
+ * 
+ *    Rev 1.4   15 May 2014 13:45:42   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Revised SVSendMessage to use DWORD_PTR
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   01 Feb 2014 11:39:18   tbair
  * Project:  SVObserver

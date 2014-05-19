@@ -5,8 +5,8 @@
 //* .Module Name     : SVObserver
 //* .File Name       : $Workfile:   SVObserver.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.14  $
-//* .Check In Date   : $Date:   28 Apr 2014 13:38:06  $
+//* .Current Version : $Revision:   1.15  $
+//* .Check In Date   : $Date:   15 May 2014 13:34:36  $
 //******************************************************************************
 
 #ifndef SVOBSERVER_H
@@ -256,7 +256,7 @@ public:
 	virtual CDocument* OpenDocumentFile(LPCTSTR FileName);
 	virtual void Serialize(CArchive& ar);
 	virtual int ExitInstance();
-	virtual void WinHelp(DWORD dwData, UINT nCmd = HELP_CONTEXT);
+	virtual void WinHelp(DWORD_PTR dwData, UINT nCmd = HELP_CONTEXT);
 	//}}AFX_VIRTUAL
 #pragma endregion AFX_VIRTUAL Methods
 
@@ -625,6 +625,16 @@ extern SVObserverApp TheSVObserverApp;
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVObserver.h_v  $
+ * 
+ *    Rev 1.15   15 May 2014 13:34:36   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Revised WinHelp method override to use DWORD_PTR
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.14   28 Apr 2014 13:38:06   tbair
  * Project:  SVObserver

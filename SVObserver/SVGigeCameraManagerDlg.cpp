@@ -5,12 +5,11 @@
 //* .Module Name     : SVGigeCameraManagerDlg
 //* .File Name       : $Workfile:   SVGigeCameraManagerDlg.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   05 Jul 2013 09:11:04  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   15 May 2014 12:40:48  $
 //******************************************************************************
 
 #include "stdafx.h"
-//#include "svobserver.h"
 #include "SVGigeCameraManagerDlg.h"
 
 #ifdef _DEBUG
@@ -52,34 +51,31 @@ BOOL SVGigeCameraManagerDlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
-	m_ctlCameraList.InsertColumn(0, _T("#"), LVCFMT_LEFT,-1,-1);
-	m_ctlCameraList.InsertColumn(1, _T("IP Address"), LVCFMT_LEFT,-1,-1);
-	m_ctlCameraList.InsertColumn(2, _T("Serial #"), LVCFMT_LEFT,-1,-1);
-	m_ctlCameraList.InsertColumn(3, _T("Model"), LVCFMT_LEFT,-1,-1);
+	m_ctlCameraList.InsertColumn(0, _T("#"), LVCFMT_LEFT, -1, -1);
+	m_ctlCameraList.InsertColumn(1, _T("IP Address"), LVCFMT_LEFT, -1, -1);
+	m_ctlCameraList.InsertColumn(2, _T("Serial #"), LVCFMT_LEFT, -1, -1);
+	m_ctlCameraList.InsertColumn(3, _T("Model"), LVCFMT_LEFT, -1, -1);
 
 	m_ctlCameraList.SetExtendedStyle( m_ctlCameraList.GetExtendedStyle() | LVS_EX_FULLROWSELECT );
 
-
-	m_ctlCameraList.SetColumnWidth(0,25);
-	m_ctlCameraList.SetColumnWidth(1,100);
-	m_ctlCameraList.SetColumnWidth(2,105);
-	m_ctlCameraList.SetColumnWidth(3,105);
+	m_ctlCameraList.SetColumnWidth(0, 25);
+	m_ctlCameraList.SetColumnWidth(1, 100);
+	m_ctlCameraList.SetColumnWidth(2, 105);
+	m_ctlCameraList.SetColumnWidth(3, 105);
 
 	//orginal camera list from INI (not modified)
 	m_OriginalIniCameraList = TheSVGigeCameraManager.GetOriginalCameraIniOrder();
-
 
 	//camera list to modify
 	m_CamList = TheSVGigeCameraManager.GetCameraOrder();
 	
 	Refresh();
 	
-	m_CDownArrowBmp.LoadBitmap (IDB_DOWNARROW);
-	m_CUpArrowBmp.LoadBitmap (IDB_UPARROW);
+	m_CDownArrowBmp.LoadBitmap(IDB_DOWNARROW);
+	m_CUpArrowBmp.LoadBitmap(IDB_UPARROW);
 
 	m_CUpButton.SetBitmap(m_CUpArrowBmp);
 	m_CDownButton.SetBitmap(m_CDownArrowBmp);
-
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 	              // EXCEPTION: OCX Property Pages should return FALSE
@@ -121,19 +117,17 @@ HRESULT SVGigeCameraManagerDlg::Refresh()
 
 			if ( !sIPAddress.IsEmpty() )
 			{
-				m_ctlCameraList.SetItemText(x,1,sIPAddress);
-				m_ctlCameraList.SetItemText(x,2,sSerial);
-				m_ctlCameraList.SetItemText(x,3,sModelName);
+				m_ctlCameraList.SetItemText(x, 1, sIPAddress);
+				m_ctlCameraList.SetItemText(x, 2, sSerial);
+				m_ctlCameraList.SetItemText(x, 3, sModelName);
 			}
 			else
 			{
-				m_ctlCameraList.SetItemText(x,1,_T("<no device>"));
+				m_ctlCameraList.SetItemText(x, 1, _T("<no device>"));
 			}
-			m_ctlCameraList.SetItemData(x, (DWORD)&m_CamList[x]);
-
+			m_ctlCameraList.SetItemData(x, (reinterpret_cast<DWORD_PTR>(&m_CamList[x])));
 		}
-	} 
-
+	}
 	::SetCursor( hCursor );
 	return S_OK;
 }
@@ -173,8 +167,9 @@ void SVGigeCameraManagerDlg::OnMoveDown()
 			m_CamList[iCurSel].iPosition = iCurSel;
 
 			for( int x = 0 ; x < m_CamList.GetSize() ; x ++)
-				m_ctlCameraList.SetItemData(x, (DWORD) &m_CamList.ElementAt(x));
-
+			{
+				m_ctlCameraList.SetItemData(x, reinterpret_cast<DWORD_PTR>(&m_CamList.ElementAt(x)));
+			}
 			m_ctlCameraList.Invalidate(); 
 
 			UpdateListCtrl();
@@ -185,7 +180,6 @@ void SVGigeCameraManagerDlg::OnMoveDown()
 			int iSelction = m_ctlCameraList.SetItemState( iCurSel+1, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED );
 		}
 	}
-
 }
 
 void SVGigeCameraManagerDlg::OnMoveUp() 
@@ -214,8 +208,9 @@ void SVGigeCameraManagerDlg::OnMoveUp()
 			m_CamList[iCurSel].iPosition = iCurSel;
 
 			for( int x = 0 ; x < m_CamList.GetSize() ; x ++)
-				m_ctlCameraList.SetItemData(x, (DWORD) &m_CamList.ElementAt(x));
-
+			{
+				m_ctlCameraList.SetItemData(x, reinterpret_cast<DWORD_PTR>(&m_CamList.ElementAt(x)));
+			}
 			m_ctlCameraList.Invalidate(); 
 
 			UpdateListCtrl();
@@ -245,17 +240,16 @@ void SVGigeCameraManagerDlg::UpdateListCtrl()
 
 		if (!sIPAddress.IsEmpty())
 		{
-			m_ctlCameraList.SetItemText(x,1,sIPAddress);
-			m_ctlCameraList.SetItemText(x,2,sSerial);
-			m_ctlCameraList.SetItemText(x,3,sModel);
+			m_ctlCameraList.SetItemText(x, 1, sIPAddress);
+			m_ctlCameraList.SetItemText(x, 2, sSerial);
+			m_ctlCameraList.SetItemText(x, 3, sModel);
 		}
 		else
 		{
-			m_ctlCameraList.SetItemText(x,1,_T("<no device>"));
+			m_ctlCameraList.SetItemText(x, 1, _T("<no device>"));
 		}
-		m_ctlCameraList.SetItemData(x, (DWORD)&m_CamList[x]);
+		m_ctlCameraList.SetItemData(x, reinterpret_cast<DWORD_PTR>(&m_CamList[x]));
 	}
-
 }
 
 void SVGigeCameraManagerDlg::OnCancel() 
@@ -269,7 +263,17 @@ void SVGigeCameraManagerDlg::OnCancel()
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVGigeCameraManagerDlg.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVGigeCameraManagerDlg.cpp_v  $
+ * 
+ *    Rev 1.3   15 May 2014 12:40:48   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Revised SetItemData to use DWORD_PTR
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   05 Jul 2013 09:11:04   bwalter
  * Project:  SVObserver

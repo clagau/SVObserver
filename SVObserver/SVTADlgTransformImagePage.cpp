@@ -5,8 +5,8 @@
 //* .Module Name     : SVTADlgTransformImagePage
 //* .File Name       : $Workfile:   SVTADlgTransformImagePage.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   01 Feb 2014 12:14:34  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   15 May 2014 13:07:14  $
 //******************************************************************************
 
 //******************************************************************************
@@ -140,7 +140,7 @@ BOOL SVToolAdjustmentDialogTransformImagePageClass::OnInitDialog()
 		SVObjectTypeInfoStruct objectInfo;
 		objectInfo.ObjectType = SVBoolValueObjectType;
 		objectInfo.EmbeddedID = SVUseExtentsOnlyObjectGuid;
-		pUseExtentsOnly = ( SVBoolValueObjectClass* ) ::SVSendMessage( pTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>(&objectInfo) );
+		pUseExtentsOnly =  reinterpret_cast<SVBoolValueObjectClass*>(::SVSendMessage( pTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&objectInfo) ));
 		
 		if( pUseExtentsOnly )
 		{
@@ -224,6 +224,16 @@ void SVToolAdjustmentDialogTransformImagePageClass::OnUseExtentsOnly()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVTADlgTransformImagePage.cpp_v  $
+ * 
+ *    Rev 1.2   15 May 2014 13:07:14   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Changed SendMessage to use proper type cast of DWORD_PTR.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   01 Feb 2014 12:14:34   tbair
  * Project:  SVObserver

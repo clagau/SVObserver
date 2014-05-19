@@ -5,8 +5,8 @@
 //* .Module Name     : SVObjectAppClass
 //* .File Name       : $Workfile:   SVObjectAppClass.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   01 Feb 2014 11:39:18  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   15 May 2014 13:35:58  $
 //******************************************************************************
 
 #ifndef SVOBJECTAPPCLASS_H
@@ -35,7 +35,7 @@ public:
 	SVAnalyzerClass *GetAnalyzer() const;
 
 protected:
-	virtual LONG_PTR processMessage( DWORD DwMessageID, LONG_PTR DwMessageValue, LONG_PTR DwMessageContext );
+	virtual DWORD_PTR processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext );
 
 	void UpdateConnections( SVObjectLevelCreateStruct* PCreateStruct );
 
@@ -57,6 +57,16 @@ private:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVObjectAppClass.h_v  $
+ * 
+ *    Rev 1.3   15 May 2014 13:35:58   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Revised processMessage to use DWORD_PTR
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   01 Feb 2014 11:39:18   tbair
  * Project:  SVObserver

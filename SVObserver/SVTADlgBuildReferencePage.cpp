@@ -5,8 +5,8 @@
 //* .Module Name     : SVToolAdjustmentDialogBuildReferencePage
 //* .File Name       : $Workfile:   SVTADlgBuildReferencePage.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   01 Feb 2014 12:09:00  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   15 May 2014 12:50:36  $
 //******************************************************************************
 
 //******************************************************************************
@@ -280,85 +280,85 @@ BOOL SVToolAdjustmentDialogBuildReferencePageClass::OnInitDialog()
 		SVObjectTypeInfoStruct evaluateXObjectInfo;
 		evaluateXObjectInfo.ObjectType = SVMathContainerObjectType;
 		evaluateXObjectInfo.SubType	   = SVEvaluateXObjectType;
-		pEvaluateX = ( SVEvaluateXClass* ) ::SVSendMessage( pTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>(&evaluateXObjectInfo) );
+		pEvaluateX = reinterpret_cast<SVEvaluateXClass*>(::SVSendMessage( pTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&evaluateXObjectInfo) ));
 		if( pEvaluateX )
 		{
 			// Get EvaluateX Enabled Object...
 			SVObjectTypeInfoStruct enableObjectInfo;
 			enableObjectInfo.ObjectType = SVBoolValueObjectType;
 			enableObjectInfo.EmbeddedID = SVOutputEvaluateXEnabledObjectGuid;
-			pXEnabled = ( SVBoolValueObjectClass* ) ::SVSendMessage( pEvaluateX, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>(&enableObjectInfo) );
+			pXEnabled = reinterpret_cast<SVBoolValueObjectClass*>(::SVSendMessage( pEvaluateX, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&enableObjectInfo) ));
 
 			// Get EvaluateX Result Object...
 			SVObjectTypeInfoStruct resultObjectInfo;
 			resultObjectInfo.ObjectType = SVDoubleValueObjectType;
 			resultObjectInfo.EmbeddedID = SVOutputEvaluateXResultObjectGuid;
-			pXResult = ( SVDoubleValueObjectClass* ) ::SVSendMessage( pEvaluateX, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>(&resultObjectInfo) );
+			pXResult = reinterpret_cast<SVDoubleValueObjectClass*>(::SVSendMessage( pEvaluateX, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&resultObjectInfo) ));
 		}
 
 		// Get EvaluateY Object...
 		SVObjectTypeInfoStruct evaluateYObjectInfo;
 		evaluateYObjectInfo.ObjectType = SVMathContainerObjectType;
 		evaluateYObjectInfo.SubType	   = SVEvaluateYObjectType;
-		pEvaluateY = ( SVEvaluateYClass* ) ::SVSendMessage( pTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>(&evaluateYObjectInfo) );
+		pEvaluateY = reinterpret_cast<SVEvaluateYClass*>(::SVSendMessage( pTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&evaluateYObjectInfo) ));
 		if( pEvaluateY )
 		{
 			// Get EvaluateY Enabled Object...
 			SVObjectTypeInfoStruct enableObjectInfo;
 			enableObjectInfo.ObjectType = SVBoolValueObjectType;
 			enableObjectInfo.EmbeddedID = SVOutputEvaluateYEnabledObjectGuid;
-			pYEnabled = ( SVBoolValueObjectClass* ) ::SVSendMessage( pEvaluateY, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>(&enableObjectInfo) );
+			pYEnabled = reinterpret_cast<SVBoolValueObjectClass*>(::SVSendMessage( pEvaluateY, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&enableObjectInfo) ));
 
 			// Get EvaluateY Result Object...
 			SVObjectTypeInfoStruct resultObjectInfo;
 			resultObjectInfo.ObjectType = SVDoubleValueObjectType;
 			resultObjectInfo.EmbeddedID = SVOutputEvaluateYResultObjectGuid;
-			pYResult = ( SVDoubleValueObjectClass* ) ::SVSendMessage( pEvaluateY, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>(&resultObjectInfo) );
+			pYResult = reinterpret_cast<SVDoubleValueObjectClass*>(::SVSendMessage( pEvaluateY, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&resultObjectInfo) ));
 		}
 
 		// Get EvaluateBeta Object...
 		SVObjectTypeInfoStruct evaluateBetaObjectInfo;
 		evaluateBetaObjectInfo.ObjectType = SVMathContainerObjectType;
 		evaluateBetaObjectInfo.SubType	   = SVEvaluateBetaObjectType;
-		pEvaluateBeta = ( SVEvaluateBetaClass* ) ::SVSendMessage( pTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>(&evaluateBetaObjectInfo) );
+		pEvaluateBeta = reinterpret_cast<SVEvaluateBetaClass*>(::SVSendMessage( pTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&evaluateBetaObjectInfo) ));
 		if( pEvaluateBeta )
 		{
 			// Get EvaluateBeta Enabled Object...
 			SVObjectTypeInfoStruct enableObjectInfo;
 			enableObjectInfo.ObjectType = SVBoolValueObjectType;
 			enableObjectInfo.EmbeddedID = SVOutputEvaluateBetaEnabledObjectGuid;
-			pBetaEnabled = ( SVBoolValueObjectClass* ) ::SVSendMessage( pEvaluateBeta, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>(&enableObjectInfo) );
+			pBetaEnabled = reinterpret_cast<SVBoolValueObjectClass*>(::SVSendMessage( pEvaluateBeta, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&enableObjectInfo) ));
 
 			// Get EvaluateBeta Result Object...
 			SVObjectTypeInfoStruct resultObjectInfo;
 			resultObjectInfo.ObjectType = SVDoubleValueObjectType;
 			resultObjectInfo.EmbeddedID = SVOutputEvaluateBetaResultObjectGuid;
-			pBetaResult = ( SVDoubleValueObjectClass* ) ::SVSendMessage( pEvaluateBeta, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>(&resultObjectInfo) );
+			pBetaResult = reinterpret_cast<SVDoubleValueObjectClass*>(::SVSendMessage( pEvaluateBeta, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&resultObjectInfo) ));
 		}
 
 		// Get RotateReference Object...
 		SVObjectTypeInfoStruct rotateObjectInfo;
 		rotateObjectInfo.ObjectType = SVRotateReferenceObjectType;
-		pRotate = ( SVRotateReferenceClass* ) ::SVSendMessage( pTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>(&rotateObjectInfo) );
+		pRotate = reinterpret_cast<SVRotateReferenceClass*>(::SVSendMessage( pTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&rotateObjectInfo) ));
 		if( pRotate )
 		{
 			// Get learned X Object...
 			SVObjectTypeInfoStruct learnedXObjectInfo;
 			learnedXObjectInfo.ObjectType = SVDoubleValueObjectType;
 			learnedXObjectInfo.EmbeddedID = SVOutputLearnedXObjectGuid;
-			pLearnedX = ( SVDoubleValueObjectClass* ) ::SVSendMessage( pRotate, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>(&learnedXObjectInfo) );
+			pLearnedX = reinterpret_cast<SVDoubleValueObjectClass*>(::SVSendMessage( pRotate, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&learnedXObjectInfo) ));
 
 			// Get learned Y Object...
 			SVObjectTypeInfoStruct learnedYObjectInfo;
 			learnedYObjectInfo.ObjectType = SVDoubleValueObjectType;
 			learnedYObjectInfo.EmbeddedID = SVOutputLearnedYObjectGuid;
-			pLearnedY = ( SVDoubleValueObjectClass* ) ::SVSendMessage( pRotate, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>(&learnedYObjectInfo) );
+			pLearnedY = reinterpret_cast<SVDoubleValueObjectClass*>(::SVSendMessage( pRotate, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&learnedYObjectInfo) ));
 
 			// Get learned Beta Object...
 			SVObjectTypeInfoStruct learnedBetaObjectInfo;
 			learnedBetaObjectInfo.ObjectType = SVDoubleValueObjectType;
 			learnedBetaObjectInfo.EmbeddedID = SVOutputLearnedBetaObjectGuid;
-			pLearnedBeta = ( SVDoubleValueObjectClass* ) ::SVSendMessage( pRotate, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>(&learnedBetaObjectInfo) );
+			pLearnedBeta = reinterpret_cast<SVDoubleValueObjectClass*>(::SVSendMessage( pRotate, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&learnedBetaObjectInfo) ));
 		}
 
 
@@ -473,6 +473,16 @@ void SVToolAdjustmentDialogBuildReferencePageClass::OnYEnabledCheck()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVTADlgBuildReferencePage.cpp_v  $
+ * 
+ *    Rev 1.2   15 May 2014 12:50:36   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Changed SendMessage to use proper type cast of DWORD_PTR.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   01 Feb 2014 12:09:00   tbair
  * Project:  SVObserver

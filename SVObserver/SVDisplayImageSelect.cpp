@@ -5,8 +5,8 @@
 //* .Module Name     : SVDisplayImageSelect
 //* .File Name       : $Workfile:   SVDisplayImageSelect.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 10:14:14  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   15 May 2014 11:14:52  $
 //******************************************************************************
 #include "stdafx.h"
 #include "SVDisplayImageSelect.h"
@@ -82,7 +82,7 @@ BOOL SVDisplayImageSelect::OnInitDialog()
     if( m_pDoc )
 	{
 		index = mImageSelectList.AddString( _T("[None]") );
-		mImageSelectList.SetItemData( index, (DWORD) NULL );
+		mImageSelectList.SetItemData( index, static_cast<DWORD_PTR>(NULL) );
 
         // Get RGB Main Image only for Color Inpsection Document
 		// BRW - No longer necessary.  l_Visitor will add this item to the list.
@@ -93,7 +93,7 @@ BOOL SVDisplayImageSelect::OnInitDialog()
 			{
 				szImageName = pImage->GetCompleteObjectName();
 				index = mImageSelectList.AddString( szImageName );
-				mImageSelectList.SetItemData( index, (DWORD) pImage );
+				mImageSelectList.SetItemData( index, reinterpret_cast<DWORD_PTR>(pImage) );
 			}
 		}*/
 		
@@ -116,7 +116,7 @@ BOOL SVDisplayImageSelect::OnInitDialog()
 			{
 				szImageName = pImage->GetCompleteObjectName();
 				index = mImageSelectList.AddString( szImageName );
-				mImageSelectList.SetItemData( index, (DWORD) pImage );
+				mImageSelectList.SetItemData( index, reinterpret_cast<DWORD_PTR>(pImage) );
 			}
 		}// end while
 
@@ -137,7 +137,17 @@ BOOL SVDisplayImageSelect::OnInitDialog()
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVDisplayImageSelect.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVDisplayImageSelect.cpp_v  $
+ * 
+ *    Rev 1.1   15 May 2014 11:14:52   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Revised SetItemData to use DWORD_PTR
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 10:14:14   bWalter
  * Project:  SVObserver

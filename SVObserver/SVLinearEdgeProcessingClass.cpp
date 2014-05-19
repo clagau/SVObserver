@@ -5,8 +5,8 @@
 // * .Module Name     : SVLinearEdgeProcessingClass
 // * .File Name       : $Workfile:   SVLinearEdgeProcessingClass.cpp  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.3  $
-// * .Check In Date   : $Date:   01 Feb 2014 11:18:26  $
+// * .Current Version : $Revision:   1.4  $
+// * .Check In Date   : $Date:   15 May 2014 13:12:46  $
 // ******************************************************************************
 
 #include "stdafx.h"
@@ -1352,9 +1352,9 @@ HRESULT SVLinearEdgeProcessingClass::CalculateSubPixelEdge( double p_dStart, dou
 	return l_hrOk;
 }
 
-LONG_PTR SVLinearEdgeProcessingClass::processMessage(DWORD DwMessageID, LONG_PTR DwMessageValue, LONG_PTR DwMessageContext)
+DWORD_PTR SVLinearEdgeProcessingClass::processMessage(DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext)
 {
-	LONG_PTR DwResult = 0L;
+	DWORD_PTR DwResult = 0;
 
 	switch (DwMessageID & SVM_PURE_MESSAGE)
 	{
@@ -1383,6 +1383,16 @@ LONG_PTR SVLinearEdgeProcessingClass::processMessage(DWORD DwMessageID, LONG_PTR
 // ******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVLinearEdgeProcessingClass.cpp_v  $
+ * 
+ *    Rev 1.4   15 May 2014 13:12:46   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Revised processMessage to use DWORD_PTR
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   01 Feb 2014 11:18:26   tbair
  * Project:  SVObserver

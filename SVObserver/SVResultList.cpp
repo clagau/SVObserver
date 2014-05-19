@@ -5,8 +5,8 @@
 //* .Module Name     : SVResultList.cpp
 //* .File Name       : $Workfile:   SVResultList.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   08 May 2013 16:43:38  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   15 May 2014 13:48:26  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -72,11 +72,11 @@ void SVResultListClass::Refresh(SVTaskObjectClass* pRootObject)
 	}
 
 	/*
-	SVResultClass* pResult = dynamic_cast <SVResultClass*> ( reinterpret_cast <SVObjectClass*> (::SVSendMessage(pRootObject, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast <DWORD> (&info) ) ) );
+	SVResultClass* pResult = dynamic_cast <SVResultClass*> ( reinterpret_cast <SVObjectClass*> (::SVSendMessage(pRootObject, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast <DWORD_PTR> (&info) ) ) );
 	while( pResult )
 	{
 		m_results.Add( pResult );
-		pResult = dynamic_cast <SVResultClass*> ( reinterpret_cast <SVObjectClass*> (::SVSendMessage(pRootObject, SVM_GETNEXT_OBJECT, reinterpret_cast <DWORD> (pResult), reinterpret_cast <DWORD> (&info) ) ) );
+		pResult = dynamic_cast <SVResultClass*> ( reinterpret_cast <SVObjectClass*> (::SVSendMessage(pRootObject, SVM_GETNEXT_OBJECT, reinterpret_cast <DWORD> (pResult), reinterpret_cast <DWORD_PTR> (&info) ) ) );
 	}
 	*/
 
@@ -128,7 +128,17 @@ SVProductInspectedState SVResultListClass::GetInspectionState()
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVResultList.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVResultList.cpp_v  $
+ * 
+ *    Rev 1.2   15 May 2014 13:48:26   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Revised SVSendMessage to use DWORD_PTR
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   08 May 2013 16:43:38   bWalter
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : SVOCRDialog
 //* .File Name       : $Workfile:   SVOCRDialog.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   01 Feb 2014 11:39:22  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   15 May 2014 10:48:04  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -258,8 +258,8 @@ void SVOCRDialogClass::OnFontTraining()
 
 	SVObjectTypeInfoStruct info;
 	info.ObjectType = SVUnaryImageOperatorListObjectType;
-	SVObjectClass* pObject = ( SVObjectClass* ) ::SVSendMessage( 
-		pTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>(&info) );
+	SVObjectClass* pObject = reinterpret_cast<SVObjectClass*>(::SVSendMessage( 
+		pTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&info) ));
 	if( ! SV_IS_KIND_OF( pObject, SVUnaryImageOperatorListClass ) )
     {
        AfxMessageBox( _T( "ERROR: Font Training Setup: No OperatorList specified" ));
@@ -267,8 +267,8 @@ void SVOCRDialogClass::OnFontTraining()
     }
 
 	info.ObjectType = SVImageObjectType;
-	pObject = ( SVObjectClass* ) ::SVSendMessage( 
-		pObject, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>( &info ));
+	pObject = reinterpret_cast<SVObjectClass*>(::SVSendMessage( 
+		pObject, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>( &info )));
 	if( ! SV_IS_KIND_OF( pObject, SVImageClass ) )
     {
        AfxMessageBox( _T( "ERROR: Font Training Setup: No Image specified" ));
@@ -413,6 +413,16 @@ void SVOCRDialogClass::AddButtons()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVOCRDialog.cpp_v  $
+ * 
+ *    Rev 1.2   15 May 2014 10:48:04   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   SendMessage DWORD_PTR changes in OnFontTraining.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   01 Feb 2014 11:39:22   tbair
  * Project:  SVObserver

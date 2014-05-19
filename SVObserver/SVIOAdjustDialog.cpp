@@ -5,8 +5,8 @@
 //* .Module Name     : SVIOAdjustDialogClass
 //* .File Name       : $Workfile:   SVIOAdjustDialog.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.5  $
-//* .Check In Date   : $Date:   01 Oct 2013 14:31:02  $
+//* .Current Version : $Revision:   1.6  $
+//* .Check In Date   : $Date:   15 May 2014 12:56:58  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -134,7 +134,7 @@ BOOL SVIOAdjustDialogClass::OnInitDialog()
 
 	// Add an empty item...
 	if( !( m_pIOEntry.empty() ) )
-		IOCombo.SetItemData( IOCombo.AddString( _T( "" ) ), (DWORD) NULL );
+		IOCombo.SetItemData( IOCombo.AddString( _T( "" ) ), static_cast<DWORD_PTR>(NULL) );
 
 	if( m_bInputMode )
 	{
@@ -370,6 +370,16 @@ void SVIOAdjustDialogClass::OnSelChangeIOCombo()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVIOAdjustDialog.cpp_v  $
+ * 
+ *    Rev 1.6   15 May 2014 12:56:58   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Revised SetItemData to use DWORD_PTR
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.5   01 Oct 2013 14:31:02   tbair
  * Project:  SVObserver

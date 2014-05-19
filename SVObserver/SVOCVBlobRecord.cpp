@@ -5,8 +5,8 @@
 //* .Module Name     : SVOCVCharacterResultClass
 //* .File Name       : $Workfile:   SVOCVBlobRecord.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   01 Feb 2014 11:55:24  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   15 May 2014 11:07:32  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -122,9 +122,9 @@ BOOL SVOCVCharacterResultClass::onRun(SVRunStatusClass& RRunStatus)
 ////////////////////////////////////////////////////////////////////////////////
 // 
 ////////////////////////////////////////////////////////////////////////////////
-LONG_PTR SVOCVCharacterResultClass::processMessage( DWORD DwMessageID, LONG_PTR DwMessageValue, LONG_PTR DwMessageContext )
+DWORD_PTR SVOCVCharacterResultClass::processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext )
 {
-	LONG_PTR DwResult = NULL;
+	DWORD_PTR DwResult = NULL;
 
 	return( SVTaskObjectClass::processMessage( DwMessageID, DwMessageValue, DwMessageContext ) | DwResult );
 }
@@ -134,6 +134,16 @@ LONG_PTR SVOCVCharacterResultClass::processMessage( DWORD DwMessageID, LONG_PTR 
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVOCVBlobRecord.cpp_v  $
+ * 
+ *    Rev 1.2   15 May 2014 11:07:32   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Modified processMessage to use DWORD_PTR instead of LONG_PTR.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   01 Feb 2014 11:55:24   tbair
  * Project:  SVObserver

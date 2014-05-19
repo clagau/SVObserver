@@ -5,8 +5,8 @@
 //* .Module Name     : SVArchiveTool
 //* .File Name       : $Workfile:   SVArchiveTool.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.6  $
-//* .Check In Date   : $Date:   23 Apr 2014 12:34:14  $
+//* .Current Version : $Revision:   1.7  $
+//* .Check In Date   : $Date:   15 May 2014 10:09:08  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -228,9 +228,9 @@ void SVArchiveRecord::ConnectInputObject()
 		InObjectInfo.UniqueObjectID             = m_pArchiveTool->GetUniqueObjectID();
 		InObjectInfo.ObjectTypeInfo.ObjectType  = SVToolObjectType;
 		
-		LONG_PTR rc = ::SVSendMessage( m_svObjectReference.Guid(), 
+		DWORD_PTR rc = ::SVSendMessage( m_svObjectReference.Guid(), 
 		                            SVM_CONNECT_OBJECT_INPUT, 
-		                            reinterpret_cast <LONG_PTR> (&InObjectInfo), 
+		                            reinterpret_cast <DWORD_PTR> (&InObjectInfo), 
 		                            NULL );
 
 		ASSERT(rc == SVMR_SUCCESS );
@@ -247,9 +247,9 @@ void SVArchiveRecord::DisconnectInputObject()
 		InObjectInfo.UniqueObjectID            = m_pArchiveTool->GetUniqueObjectID();
 		InObjectInfo.ObjectTypeInfo.ObjectType = SVToolObjectType;
 		
-		LONG_PTR rc = ::SVSendMessage(	m_svObjectReference.Guid(), 
+		DWORD_PTR rc = ::SVSendMessage(	m_svObjectReference.Guid(), 
 		                            SVM_DISCONNECT_OBJECT_INPUT, 
-		                            reinterpret_cast <LONG_PTR> (&InObjectInfo), 
+		                            reinterpret_cast <DWORD_PTR> (&InObjectInfo), 
 		                            NULL );
 	}
 }
@@ -1652,12 +1652,12 @@ BOOL SVArchiveTool::OnValidate()	// called each onRun
 
 /////////////////////////////////////////////////////////////////////////////
 //
-LONG_PTR SVArchiveTool::processMessage( DWORD dwMessageID, 
-                                     LONG_PTR dwMessageValue, 
-                                     LONG_PTR dwMessageContext )
+DWORD_PTR SVArchiveTool::processMessage( DWORD dwMessageID, 
+                                     DWORD_PTR dwMessageValue, 
+                                     DWORD_PTR dwMessageContext )
 {
 	//BOOL bResult;
-	LONG_PTR dwResult = NULL;
+	DWORD_PTR dwResult = NULL;
 	// Try to process message by yourself...
 	DWORD dwPureMessageID = dwMessageID & SVM_PURE_MESSAGE;
 	switch (dwPureMessageID)
@@ -2352,6 +2352,16 @@ BOOL SVArchiveTool::renameToolSetSymbol(SVObjectClass* pObject, LPCTSTR orgName)
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVArchiveTool.cpp_v  $
+ * 
+ *    Rev 1.7   15 May 2014 10:09:08   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Revised processMessage to use DWORD_PTR
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.6   23 Apr 2014 12:34:14   tbair
  * Project:  SVObserver
