@@ -5,8 +5,8 @@
 //* .Module Name     : SVSecurity.cpp
 //* .File Name       : $Workfile:   SVSecurity.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   25 Apr 2013 17:01:20  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   20 May 2014 10:27:14  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -57,6 +57,9 @@ END_MESSAGE_MAP()
 
 CSVSecurityApp::CSVSecurityApp()
 {
+	free((void*)m_pszHelpFilePath);
+	m_pszHelpFilePath = _tcsdup(_T("C:\\SVObserver\\bin\\SVObserver.chm"));
+	EnableHtmlHelp();	
 }
 
 CSVSecurityApp::~CSVSecurityApp()
@@ -72,7 +75,17 @@ CSVSecurityApp theApp;
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVSecurity\SVSecurity.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVSecurity\SVSecurity.cpp_v  $
+ * 
+ *    Rev 1.1   20 May 2014 10:27:14   ryoho
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  904
+ * SCR Title:  Update SVObserver to use HtmlHelp instead of WinHelp
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Enabled the class to use HtmlHelp instead of WinHelp
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   25 Apr 2013 17:01:20   bWalter
  * Project:  SVObserver

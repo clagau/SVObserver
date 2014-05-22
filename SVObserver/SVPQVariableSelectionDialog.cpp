@@ -5,8 +5,8 @@
 //* .Module Name     : <SVPQVariableSelectionDialog>
 //* .File Name       : $Workfile:   SVPQVariableSelectionDialog.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   15 May 2014 12:32:52  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   21 May 2014 17:53:36  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -80,7 +80,7 @@ BOOL SVPQVariableSelectionDialog::OnInitDialog()
 		hChild = m_treeCtrl.InsertItem( TVIF_TEXT | TVIF_STATE | TVIF_PARAM,  
 										 (LPCTSTR) pIOEntry->m_pValueObject->GetName(),
  										 0, 0, INDEXTOSTATEIMAGEMASK( 1 ),	
-										 TVIS_STATEIMAGEMASK, 0L, hParent, TVI_LAST );
+										 TVIS_STATEIMAGEMASK, 0, hParent, TVI_LAST );
 
 		// Attach index into the List
 		m_treeCtrl.SetItemData( hChild, reinterpret_cast<DWORD_PTR>(pIOEntry->m_pValueObject) );  
@@ -124,6 +124,16 @@ void SVPQVariableSelectionDialog::OnCancel()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVPQVariableSelectionDialog.cpp_v  $
+ * 
+ *    Rev 1.3   21 May 2014 17:53:36   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Revised InsertItem to use proper type for the lParam
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   15 May 2014 12:32:52   tbair
  * Project:  SVObserver

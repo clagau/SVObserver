@@ -5,8 +5,8 @@
 //* .Module Name     : SVPQVariableTreeCtrl
 //* .File Name       : $Workfile:   SVPQVariableTreeCtrl.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   02 Oct 2013 07:12:22  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   21 May 2014 17:51:20  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -66,10 +66,8 @@ void SVPQVariableTreeCtrlClass::WalkTheTree( HTREEITEM hItem )
 
 void SVPQVariableTreeCtrlClass::ProcessItemAttributes( HTREEITEM hItem )
 {
-	DWORD dwItemData = static_cast<DWORD>(GetItemData(hItem));
-	SVObjectClass *pObject;
-
-	pObject = (SVObjectClass*) dwItemData;
+	DWORD_PTR dwItemData = GetItemData(hItem);
+	SVObjectClass* pObject = reinterpret_cast<SVObjectClass*>(dwItemData);
 	if( pObject )
 	{
 		BOOL bCheckState = GetCheckState(hItem);
@@ -90,11 +88,8 @@ void SVPQVariableTreeCtrlClass::ProcessItemAttributes( HTREEITEM hItem )
 				uAttributesSet &= ~uRequiredAttributes;
 				pObject->ObjectAttributesSetRef() = uAttributesSet;
 			}// end else
-
 		}// end if
-
 	}// end if
-
 }// end ProcessItemAttributes
 
 BEGIN_MESSAGE_MAP(SVPQVariableTreeCtrlClass, SVTreeCtrlClass)
@@ -107,6 +102,17 @@ END_MESSAGE_MAP()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVPQVariableTreeCtrl.cpp_v  $
+ * 
+ *    Rev 1.2   21 May 2014 17:51:20   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Revised to remove unnessary casting.
+ * Revised to correct casting warnings.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   02 Oct 2013 07:12:22   tbair
  * Project:  SVObserver

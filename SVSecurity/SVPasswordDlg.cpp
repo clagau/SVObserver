@@ -5,19 +5,22 @@
 //* .Module Name     : SVPasswordDlg.cpp
 //* .File Name       : $Workfile:   SVPasswordDlg.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   25 Apr 2013 17:00:52  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   20 May 2014 10:25:28  $
 //******************************************************************************
 
 #include "stdafx.h"
 #include "resource.h"
 #include "SVPasswordDlg.h"
+#include "SVSecurity.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
+
+extern CSVSecurityApp theApp;
 
 SVPasswordDlg::SVPasswordDlg(CWnd* pParent /*=NULL*/)
 	: CDialog(SVPasswordDlg::IDD, pParent)
@@ -27,6 +30,7 @@ SVPasswordDlg::SVPasswordDlg(CWnd* pParent /*=NULL*/)
 	m_strUser = _T("");
 	m_strStatus = _T("");
 	//}}AFX_DATA_INIT
+
 }
 
 SVPasswordDlg::~SVPasswordDlg()
@@ -65,7 +69,7 @@ BOOL SVPasswordDlg::OnInitDialog()
 
 void SVPasswordDlg::OnHelp() 
 {
-	::WinHelp( m_hWnd, _T("c:\\SVObserver\\bin\\SVObserver.hlp"),HELP_CONTEXT, IDD_PASSWORD_DLG + 0x60000 );	
+	theApp.HtmlHelpA(HH_HELP_CONTEXT,IDD_PASSWORD_DLG + 0x60000);
 }
 
 BOOL SVPasswordDlg::OnHelpInfo(HELPINFO* pHelpInfo) 
@@ -80,8 +84,8 @@ BOOL SVPasswordDlg::OnHelpInfo(HELPINFO* pHelpInfo)
 	else
 	{
 		pHelpInfo->iCtrlId += 0x70000;
-	}
-	::WinHelp( m_hWnd, _T("c:\\SVObserver\\bin\\SVObserver.hlp"),HELP_CONTEXT, pHelpInfo->iCtrlId );
+	}	
+	theApp.HtmlHelpA(pHelpInfo->iCtrlId,HH_HELP_CONTEXT);
 	return TRUE ; 
 }
 
@@ -89,7 +93,17 @@ BOOL SVPasswordDlg::OnHelpInfo(HELPINFO* pHelpInfo)
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVSecurity\SVPasswordDlg.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVSecurity\SVPasswordDlg.cpp_v  $
+ * 
+ *    Rev 1.1   20 May 2014 10:25:28   ryoho
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  904
+ * SCR Title:  Update SVObserver to use HtmlHelp instead of WinHelp
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   included SVSecurity.h so the dialogs would have access to theApp.  Changed OnHelp & OnHelpInfo to call HtmlHelp instead of WinHelp
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   25 Apr 2013 17:00:52   bWalter
  * Project:  SVObserver

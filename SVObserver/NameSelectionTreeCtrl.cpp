@@ -5,8 +5,8 @@
 //* .Module Name     : NameSelectionTreeCtrl
 //* .File Name       : $Workfile:   NameSelectionTreeCtrl.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.3  $
-//* .Check In Date   : $Date:   15 May 2014 10:11:00  $
+//* .Current Version : $Revision:   1.5  $
+//* .Check In Date   : $Date:   21 May 2014 17:51:22  $
 //******************************************************************************
 
 #pragma region Includes
@@ -232,7 +232,7 @@ void NameSelectionTreeCtrl::Populate(const NameSelectionList& list)
 										0,                               // int nSelectedImage, 
 										INDEXTOSTATEIMAGEMASK(1),		 // UINT nState, Not Checked = 1
 										TVIS_STATEIMAGEMASK,             // UINT nStateMask, 
-										0L,                              // LPARAM lParam,  See SetItemData() below
+										0,                               // LPARAM lParam,  See SetItemData() below
 										TVI_ROOT,                        // HTREEITEM hParent, 
 										TVI_LAST                         // HTREEITEM hInsertAfter 
 									);
@@ -257,7 +257,7 @@ void NameSelectionTreeCtrl::Populate(const NameSelectionList& list)
 										0,                               // int nSelectedImage, 
 										INDEXTOSTATEIMAGEMASK(nIndex),	 // UINT nState, 
 										TVIS_STATEIMAGEMASK,             // UINT nStateMask, 
-										0L,                              // LPARAM lParam,  See SetItemData() below
+										0,                               // LPARAM lParam,  See SetItemData() below
 										hNewChild,                       // HTREEITEM hParent, 
 										TVI_LAST                         // HTREEITEM hInsertAfter 
 									);
@@ -270,7 +270,7 @@ void NameSelectionTreeCtrl::Populate(const NameSelectionList& list)
 										0,                 // Selected image 
 										0,                 // UINT nState, 
 										0,                 // UINT nStateMask, 
-										0L,                // LPARAM lParam,  See SetItemData() below
+										0,                 // LPARAM lParam,  See SetItemData() below
 										hNewChild,         // HTREEITEM hParent, 
 										TVI_LAST           // HTREEITEM hInsertAfter 
 									);
@@ -283,7 +283,7 @@ void NameSelectionTreeCtrl::Populate(const NameSelectionList& list)
 					// Are we at the tree 'leaf' yet?
 					if (csNewChild == csNameLeaf)
 					{
-						size_t dist = std::distance(list.begin(), it);
+						int dist = static_cast<int>(std::distance(list.begin(), it));
 						m_mapIndexes[dist] = hNewChild;
 						SetItemData(hNewChild, dist | LeafNodeIndicator);
 						// check if it should be selected
@@ -448,7 +448,7 @@ void NameSelectionTreeCtrl::UpdateNodeStateColor(HTREEITEM hItem, long& p_rlFlag
 
 bool NameSelectionTreeCtrl::Click(HTREEITEM hItem)
 {
-	DWORD dwItemData = static_cast<DWORD>(GetItemData(hItem));
+	DWORD_PTR dwItemData = GetItemData(hItem);
 	if (dwItemData)
 	{
 		bool bCheckState = GetCheckState(hItem);
@@ -456,7 +456,7 @@ bool NameSelectionTreeCtrl::Click(HTREEITEM hItem)
 		bool bCanSelect = true;
 		if (m_fnCanSelectObject)
 		{
-			int iIndex = static_cast<int>(GetItemData(hItem)) & ~LeafNodeIndicator;
+			int iIndex = static_cast<int>(dwItemData) & ~LeafNodeIndicator;
 			bCanSelect = m_fnCanSelectObject(bCheckState, iIndex);
 		}
 		if (bCanSelect)
@@ -494,7 +494,8 @@ void NameSelectionTreeCtrl::SetBranchChecks(HTREEITEM hItem , bool p_bNewBranchS
 	HTREEITEM l_hItem = GetChildItem(hItem);
 	while (l_hItem != NULL) // && l_bStillChecking )
 	{
-		if (0 == GetItemData(l_hItem))
+		DWORD_PTR dwItemData = GetItemData(hItem);
+		if (!dwItemData)
 		{
 			SetBranchChecks(l_hItem, p_bNewBranchState);
 		}
@@ -507,7 +508,7 @@ void NameSelectionTreeCtrl::SetBranchChecks(HTREEITEM hItem , bool p_bNewBranchS
 				bool bCanSelect = true;
 				if (m_fnCanSelectObject)
 				{
-					int iIndex = static_cast<int>(GetItemData(l_hItem)) & ~LeafNodeIndicator;
+					int iIndex = static_cast<int>(dwItemData) & ~LeafNodeIndicator;
 					bCanSelect = m_fnCanSelectObject(l_bThisState, iIndex);
 				}
 				if (bCanSelect)
@@ -525,6 +526,28 @@ void NameSelectionTreeCtrl::SetBranchChecks(HTREEITEM hItem , bool p_bNewBranchS
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\NameSelectionTreeCtrl.cpp_v  $
+ * 
+ *    Rev 1.5   21 May 2014 17:51:22   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Revised to remove unnessary casting.
+ * Revised to correct casting warnings.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.4   21 May 2014 12:19:06   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Revised the Populate method to use unsigned user data assigned to the lParam of the TreeItem.
+ * Revised the Click method to correct a casting issue with GetItemData.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   15 May 2014 10:11:00   sjones
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : SVOutputInfoListTreeCtrl
 //* .File Name       : $Workfile:   SVOutputInfoListTreeCtrl.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   15 May 2014 11:40:38  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   21 May 2014 17:51:26  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -886,7 +886,7 @@ void SVOutputInfoListTreeCtrlClass::UpdateNodeStateColor( HTREEITEM hItem, long&
 //
 void SVOutputInfoListTreeCtrlClass::ProcessItemAttributes( HTREEITEM hItem, void* )
 {
-	DWORD dwItemData = static_cast<DWORD>(GetItemData(hItem));
+	DWORD_PTR dwItemData = GetItemData(hItem);
 	if( dwItemData )
 	{
 		bool bCheckState = GetCheckState( hItem );
@@ -896,7 +896,7 @@ void SVOutputInfoListTreeCtrlClass::ProcessItemAttributes( HTREEITEM hItem, void
 		//SVObjectClass* pObject = pInfoItem->PObject;
 		//SVObjectClass* pObject = (SVObjectClass*) dwItemData;
 		//ASSERT(pObject);
-		int iIndex = dwItemData;
+		int iIndex = static_cast<int>(dwItemData);
 		SVObjectReference object = m_ObjectList.at(iIndex);
 
 		if( bCheckState )
@@ -1025,7 +1025,7 @@ bool SVOutputInfoListTreeCtrlClass::SelectItemByIndex( int iIndex, bool bSelect 
 
 bool SVOutputInfoListTreeCtrlClass::Click( HTREEITEM hItem )
 {
-	DWORD dwItemData = static_cast<DWORD>(GetItemData(hItem));
+	DWORD_PTR dwItemData = GetItemData(hItem);
 	if ( dwItemData )
 	{
 		bool bCheckState = GetCheckState( hItem );
@@ -1033,7 +1033,7 @@ bool SVOutputInfoListTreeCtrlClass::Click( HTREEITEM hItem )
 		bool bCanSelect = true;
 		if ( m_fnCanSelectObject )
 		{
-			int iIndex = static_cast<int>(GetItemData(hItem));
+			int iIndex = static_cast<int>(dwItemData);
 			SVObjectReference refObject = m_ObjectList.at(iIndex);
 			bCanSelect = m_fnCanSelectObject(refObject, bCheckState, iIndex);
 		}
@@ -1107,6 +1107,17 @@ void SVOutputInfoListTreeCtrlClass::SetBranchChecks( HTREEITEM hItem , bool p_bN
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVOutputInfoListTreeCtrl.cpp_v  $
+ * 
+ *    Rev 1.3   21 May 2014 17:51:26   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Revised to remove unnessary casting.
+ * Revised to correct casting warnings.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   15 May 2014 11:40:38   tbair
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : CSVOEditorWnd
 //* .File Name       : $Workfile:   SVOEditorWnd.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   15 May 2014 11:17:48  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   21 May 2014 17:51:24  $
 //******************************************************************************
 
 //@doc
@@ -197,7 +197,7 @@ void CSVOEditorWnd::EndEditing(
 		GetWindowText( s ) ;
         if ( m_pLB->FindStringExact(-1,s) == LB_ERR )
         {
-            DWORD_PTR pointer = static_cast<DWORD_PTR>(m_pLB->GetItemData(m_edit_index));
+            DWORD_PTR pointer = m_pLB->GetItemData(m_edit_index);
 		    m_pLB->DeleteString( m_edit_index ) ;
 		    m_pLB->InsertString( m_edit_index, s ) ;
             m_pLB->SetItemData(m_edit_index, pointer);
@@ -262,6 +262,17 @@ void CSVOEditorWnd::OnLButtonDblClk(UINT nFlags, CPoint point)
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVOEditorWnd.cpp_v  $
+ * 
+ *    Rev 1.3   21 May 2014 17:51:24   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Revised to remove unnessary casting.
+ * Revised to correct casting warnings.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   15 May 2014 11:17:48   tbair
  * Project:  SVObserver

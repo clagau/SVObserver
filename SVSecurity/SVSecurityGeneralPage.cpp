@@ -5,8 +5,8 @@
 //* .Module Name     : SVSecurityGeneralPage.cpp
 //* .File Name       : $Workfile:   SVSecurityGeneralPage.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   25 Apr 2013 17:02:44  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   20 May 2014 10:25:28  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -18,12 +18,15 @@
 #include "SVAccessPointNode.h"
 #include "SVAccessClass.h"
 #include "SVSecuritySetupSheet.h"
+#include "SVSecurity.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
+
+extern CSVSecurityApp theApp;
 
 IMPLEMENT_DYNCREATE(SVSecurityGeneralPage, CPropertyPage)
 
@@ -228,20 +231,30 @@ BOOL SVSecurityGeneralPage::OnHelpInfo(HELPINFO* pHelpInfo)
 	{
 		pHelpInfo->iCtrlId += 0x70000;
 	}
-	::WinHelp( m_hWnd, _T("c:\\SVObserver\\bin\\SVObserver.hlp"),HELP_CONTEXT, pHelpInfo->iCtrlId );
+	theApp.HtmlHelpA(pHelpInfo->iCtrlId,HH_HELP_CONTEXT);
 	return TRUE ; 
 }
 
 void SVSecurityGeneralPage::OnHelp() 
 {
-	::WinHelp( m_hWnd, _T("c:\\SVObserver\\bin\\SVObserver.hlp"),HELP_CONTEXT, IDD_GENERAL_SECURITY_PAGE + 0x60000 );
+	theApp.HtmlHelpA(IDD_PASSWORD_DLG + 0x60000,HH_HELP_CONTEXT);
 }
 
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVSecurity\SVSecurityGeneralPage.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVSecurity\SVSecurityGeneralPage.cpp_v  $
+ * 
+ *    Rev 1.1   20 May 2014 10:25:28   ryoho
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  904
+ * SCR Title:  Update SVObserver to use HtmlHelp instead of WinHelp
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   included SVSecurity.h so the dialogs would have access to theApp.  Changed OnHelp & OnHelpInfo to call HtmlHelp instead of WinHelp
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   25 Apr 2013 17:02:44   bWalter
  * Project:  SVObserver

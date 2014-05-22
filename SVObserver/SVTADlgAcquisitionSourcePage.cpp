@@ -5,8 +5,8 @@
 //* .Module Name     : SVTADlgAcquisitionSourcePage
 //* .File Name       : $Workfile:   SVTADlgAcquisitionSourcePage.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   15 May 2014 12:50:34  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   21 May 2014 12:24:36  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -196,7 +196,7 @@ BOOL SVToolAdjustmentDialogAcquisitionSourcePageClass::OnInitDialog()
 				{
 					if( ( *l_Iter ) != NULL && ( *l_Iter )->mpsvDevice != NULL )
 					{
-						availableDigitizerTreeCtrl.AddItem( ( *l_Iter )->GetCompleteObjectName(), ( DWORD ) ( *l_Iter ) );
+						availableDigitizerTreeCtrl.AddItem( ( *l_Iter )->GetCompleteObjectName(), reinterpret_cast<DWORD_PTR>(*l_Iter) );
 					}
 
 					++l_Iter;
@@ -227,7 +227,7 @@ void SVToolAdjustmentDialogAcquisitionSourcePageClass::OnSelectButton()
 
 	// &&&
 	// Get current selected object in tree...
-	SVVirtualCamera* pCamera = ( SVVirtualCamera* ) availableDigitizerTreeCtrl.GetSelectedItemValue();
+	SVVirtualCamera* pCamera = reinterpret_cast<SVVirtualCamera*>(availableDigitizerTreeCtrl.GetSelectedItemValue());
 	if( pTool && pMainImage )
 	{
 		// Set new digitizer of main image...
@@ -414,6 +414,16 @@ void SVToolAdjustmentDialogAcquisitionSourcePageClass::OnSinglebandRadio()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVTADlgAcquisitionSourcePage.cpp_v  $
+ * 
+ *    Rev 1.3   21 May 2014 12:24:36   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Revised OnInitDialog to correct a casting issue.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   15 May 2014 12:50:34   tbair
  * Project:  SVObserver

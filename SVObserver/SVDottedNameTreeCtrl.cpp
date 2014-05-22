@@ -5,8 +5,8 @@
 //* .Module Name     : SVDottedNameTreeCtrl
 //* .File Name       : $Workfile:   SVDottedNameTreeCtrl.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   01 Oct 2013 14:12:22  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   21 May 2014 17:51:24  $
 //******************************************************************************
 
 //******************************************************************************
@@ -74,7 +74,7 @@ SVDottedNameTreeCtrlClass::~SVDottedNameTreeCtrlClass()
 //	 Date		Author		Comment                                       
 //  :26.01.2000 RO 			First Implementation
 ////////////////////////////////////////////////////////////////////////////////
-BOOL SVDottedNameTreeCtrlClass::AddItem( CString StrDottedItemName, DWORD DwItemValue, BOOL BExpand )
+BOOL SVDottedNameTreeCtrlClass::AddItem( CString StrDottedItemName, DWORD_PTR DwItemValue, BOOL BExpand )
 {
 	LPTSTR tStrSource = _tcsdup( StrDottedItemName );
 	if( tStrSource )
@@ -244,16 +244,14 @@ HTREEITEM SVDottedNameTreeCtrlClass::GetItem( CString StrDottedItemName )
 //	 Date		Author		Comment                                       
 //  :26.01.2000 RO 			First Implementation
 ////////////////////////////////////////////////////////////////////////////////
-DWORD SVDottedNameTreeCtrlClass::GetSelectedItemValue()
+DWORD_PTR SVDottedNameTreeCtrlClass::GetSelectedItemValue()
 {
 	HTREEITEM hItem = GetSelectedItem();
 	if( hItem != NULL )
-		return static_cast<DWORD>(GetItemData( hItem ));
+		return GetItemData( hItem );
 
 	return NULL;
 }
-
-
 
 BEGIN_MESSAGE_MAP(SVDottedNameTreeCtrlClass, CTreeCtrl)
 	//{{AFX_MSG_MAP(SVDottedNameTreeCtrlClass)
@@ -266,6 +264,27 @@ END_MESSAGE_MAP()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVDottedNameTreeCtrl.cpp_v  $
+ * 
+ *    Rev 1.3   21 May 2014 17:51:24   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Revised to remove unnessary casting.
+ * Revised to correct casting warnings.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.2   21 May 2014 12:21:48   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Revised AddItem and GetItemValue methods to use DWORD_PTR instead of DWORD to correct an issue in 64Bit.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   01 Oct 2013 14:12:22   tbair
  * Project:  SVObserver

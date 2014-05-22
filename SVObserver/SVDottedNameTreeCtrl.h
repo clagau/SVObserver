@@ -5,8 +5,8 @@
 //* .Module Name     : SVDottedNameTreeCtrl
 //* .File Name       : $Workfile:   SVDottedNameTreeCtrl.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 10:20:24  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   21 May 2014 12:21:46  $
 //******************************************************************************
 
 //******************************************************************************
@@ -44,9 +44,9 @@ public:
 
 // Attributes
 public:
-	BOOL		AddItem( CString StrDottedItemName, DWORD DwItemValue = NULL, BOOL BExpand = TRUE );
+	BOOL		AddItem( CString StrDottedItemName, DWORD_PTR DwItemValue = NULL, BOOL BExpand = TRUE );
 	HTREEITEM	GetItem( CString StrDottedItemName );
-	DWORD		GetSelectedItemValue();
+	DWORD_PTR	GetSelectedItemValue();
 
 // Operations
 public:
@@ -84,7 +84,17 @@ protected:
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVDottedNameTreeCtrl.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVDottedNameTreeCtrl.h_v  $
+ * 
+ *    Rev 1.1   21 May 2014 12:21:46   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Revised AddItem and GetItemValue methods to use DWORD_PTR instead of DWORD to correct an issue in 64Bit.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 10:20:24   bWalter
  * Project:  SVObserver

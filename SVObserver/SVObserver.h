@@ -5,8 +5,8 @@
 //* .Module Name     : SVObserver
 //* .File Name       : $Workfile:   SVObserver.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.15  $
-//* .Check In Date   : $Date:   15 May 2014 13:34:36  $
+//* .Current Version : $Revision:   1.16  $
+//* .Check In Date   : $Date:   20 May 2014 10:20:48  $
 //******************************************************************************
 
 #ifndef SVOBSERVER_H
@@ -256,7 +256,6 @@ public:
 	virtual CDocument* OpenDocumentFile(LPCTSTR FileName);
 	virtual void Serialize(CArchive& ar);
 	virtual int ExitInstance();
-	virtual void WinHelp(DWORD_PTR dwData, UINT nCmd = HELP_CONTEXT);
 	//}}AFX_VIRTUAL
 #pragma endregion AFX_VIRTUAL Methods
 
@@ -625,6 +624,16 @@ extern SVObserverApp TheSVObserverApp;
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVObserver.h_v  $
+ * 
+ *    Rev 1.16   20 May 2014 10:20:48   ryoho
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  904
+ * SCR Title:  Update SVObserver to use HtmlHelp instead of WinHelp
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Enabled HtmlHelp in the constructor.  Removed method WinHelp
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.15   15 May 2014 13:34:36   sjones
  * Project:  SVObserver

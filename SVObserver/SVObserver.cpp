@@ -5,8 +5,8 @@
 //* .Module Name     : SVObserver
 //* .File Name       : $Workfile:   SVObserver.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.30  $
-//* .Check In Date   : $Date:   15 May 2014 13:34:36  $
+//* .Current Version : $Revision:   1.31  $
+//* .Check In Date   : $Date:   20 May 2014 10:20:48  $
 //******************************************************************************
 
 #pragma region Includes
@@ -345,6 +345,10 @@ SVObserverApp::SVObserverApp()
 	  , m_XMLTree( m_MaterialsTree )
 	  , m_MaterialsTree()
 {
+	free((void*)m_pszHelpFilePath);
+	m_pszHelpFilePath = _tcsdup(_T("C:\\SVObserver\\bin\\SVObserver.chm"));
+	EnableHtmlHelp();
+
 	::OutputDebugString( _T( "Executing => SVObserverApp::SVObserverApp()\n" ) );
 
 	// Register Dcam Drivers w/Factory
@@ -3659,10 +3663,6 @@ int SVObserverApp::ExitInstance()
 	return CWinApp::ExitInstance();
 }
 
-void SVObserverApp::WinHelp( DWORD_PTR dwData, UINT nCmd ) 
-{
-	CWinApp::WinHelp( dwData, nCmd );
-}
 #pragma endregion AFX_Virtual methods
 
 #pragma region virtual
@@ -8909,6 +8909,16 @@ int SVObserverApp::FindMenuItem(CMenu* Menu, LPCTSTR MenuString)
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVObserver.cpp_v  $
+ * 
+ *    Rev 1.31   20 May 2014 10:20:48   ryoho
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  904
+ * SCR Title:  Update SVObserver to use HtmlHelp instead of WinHelp
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Enabled HtmlHelp in the constructor.  Removed method WinHelp
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.30   15 May 2014 13:34:36   sjones
  * Project:  SVObserver

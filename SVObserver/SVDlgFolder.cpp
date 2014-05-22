@@ -5,8 +5,8 @@
 //* .Module Name     : SVDlgFolder
 //* .File Name       : $Workfile:   SVDlgFolder.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   01 Oct 2013 12:48:28  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   21 May 2014 17:55:24  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -143,15 +143,7 @@ void CDlgFolder::OnInitDone()
 	//pFD->SetWindowText(_T("Choose Folder/Drive to Copy File To"));
 	pFD->SetWindowText((LPCTSTR)m_csTextCaptionBar);
 
-	m_wndProc = (WNDPROC)SetWindowLong(
-      pFD->m_hWnd,
-#ifdef _WIN64
-	  GWLP_WNDPROC,
-#else
-      GWL_WNDPROC,
-#endif
-      (long)WindowProcNew
-   );
+	m_wndProc = reinterpret_cast<WNDPROC>(SetWindowLongPtr(pFD->m_hWnd, GWLP_WNDPROC, reinterpret_cast<LONG_PTR>(WindowProcNew)));
 }
 
 //******************************************************************************
@@ -159,6 +151,16 @@ void CDlgFolder::OnInitDone()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVDlgFolder.cpp_v  $
+ * 
+ *    Rev 1.2   21 May 2014 17:55:24   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Revised to correct issue with truncated pointer for wndProc in 64bit
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   01 Oct 2013 12:48:28   tbair
  * Project:  SVObserver
