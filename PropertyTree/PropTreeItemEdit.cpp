@@ -5,8 +5,8 @@
 // * .Module Name     : D:\...\PropTreeItemEdit.cpp
 // * .File Name       : $Workfile:   PropTreeItemEdit.cpp  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.5  $
-// * .Check In Date   : $Date:   29 Jan 2014 11:09:14  $
+// * .Current Version : $Revision:   1.6  $
+// * .Check In Date   : $Date:   26 May 2014 08:45:26  $
 // ******************************************************************************
 
 // PropTreeItemEdit.cpp : implementation file
@@ -294,8 +294,9 @@ void SVRPropertyItemEdit::OnActivate()
 
 		CDC* pDC = m_btnDots.GetDC();
 		CSize size = pDC->GetTextExtent(m_strButtonText);
-		int iButtonWidth = size.cx + 4;
+		m_btnDots.ReleaseDC(pDC);
 
+		int iButtonWidth = size.cx + 4;
 		SetWindowPos(NULL, m_rc.left, m_rc.top, m_rc.Width()-iButtonWidth, m_rc.Height(), SWP_NOZORDER | SWP_SHOWWINDOW);
 		SetSel(0,-1);
 		DisplayButton();
@@ -326,6 +327,8 @@ void SVRPropertyItemEdit::DisplayButton()
 {
 	CDC* pDC = m_btnDots.GetDC();
 	CSize size = pDC->GetTextExtent(m_strButtonText);
+	m_btnDots.ReleaseDC(pDC);
+
 	int iButtonWidth = size.cx + 4;
 	m_bShowButton = (m_pProp->SendNotify(PTN_QUERY_SHOW_BUTTON, this)) != FALSE;
 	m_btnDots.SetWindowPos(NULL, m_rc.right-iButtonWidth, m_rc.top, iButtonWidth, m_rc.Height(), SWP_NOZORDER | (m_bShowButton ? SWP_SHOWWINDOW : SWP_HIDEWINDOW));
@@ -842,6 +845,16 @@ bool SVRPropertyItemEdit::SetItemValuePtr(CString& strVal)
 // ******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\PropertyTree\PropTreeItemEdit.cpp_v  $
+ * 
+ *    Rev 1.6   26 May 2014 08:45:26   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  897
+ * SCR Title:  Fix SVObserver GDI Resource Leaks
+ * Checked in by:  bWalter;  Ben Walter
+ * Change Description:  
+ *   Added ReleaseDC to clean up after GetDC.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.5   29 Jan 2014 11:09:14   tbair
  * Project:  SVObserver
