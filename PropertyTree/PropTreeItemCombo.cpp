@@ -5,8 +5,8 @@
 // * .Module Name     : PropTreeItemCombo.cpp
 // * .File Name       : $Workfile:   PropTreeItemCombo.cpp  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.3  $
-// * .Check In Date   : $Date:   15 May 2014 09:13:02  $
+// * .Current Version : $Revision:   1.4  $
+// * .Check In Date   : $Date:   26 May 2014 10:16:02  $
 // ******************************************************************************
 
 // PropTreeItemCombo.cpp : implementation file
@@ -174,7 +174,7 @@ void SVRPropertyItemCombo::OnActivate()
 	{
 		CDC* pDC = m_btnDots.GetDC();
 		CSize size = pDC->GetTextExtent(m_strButtonText);
-		iButtonWidth = size.cx + 4;
+		iButtonWidth = size.cx + g_buttonSpace;
 	}	
 	// activate the combo box
 	SetWindowPos(NULL, m_rc.left, m_rc.top, m_rc.Width()-iButtonWidth, m_rc.Height() + m_nDropHeight, SWP_NOZORDER | SWP_SHOWWINDOW);
@@ -237,7 +237,7 @@ void SVRPropertyItemCombo::DisplayButton()
 	{
 		CDC* pDC = m_btnDots.GetDC();
 		CSize size = pDC->GetTextExtent(m_strButtonText);
-		int iButtonWidth = size.cx + 4;
+		int iButtonWidth = size.cx + g_buttonSpace;
 		m_bShowButton = (m_pProp->SendNotify(PTN_QUERY_SHOW_BUTTON, this)) != FALSE;
 		m_btnDots.SetWindowPos(NULL, m_rc.right-iButtonWidth, m_rc.top, iButtonWidth, m_rc.Height(), SWP_NOZORDER | (m_bShowButton ? SWP_SHOWWINDOW : SWP_HIDEWINDOW));
 	}
@@ -482,6 +482,16 @@ void SVRPropertyItemCombo::SetButtonText( const CString& sText )
 // ******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\PropertyTree\PropTreeItemCombo.cpp_v  $
+ * 
+ *    Rev 1.4   26 May 2014 10:16:02   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  894
+ * SCR Title:  Enhancements to Adjust Tool Position Dialog
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   added constant g_buttonSpace and used it instead of magic numbers
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   15 May 2014 09:13:02   sjones
  * Project:  SVObserver

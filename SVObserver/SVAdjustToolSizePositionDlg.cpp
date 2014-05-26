@@ -5,196 +5,31 @@
 //* .Module Name     : SVAdjustToolSizePositionDlg
 //* .File Name       : $Workfile:   SVAdjustToolSizePositionDlg.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.5  $
-//* .Check In Date   : $Date:   03 Oct 2013 13:31:02  $
+//* .Current Version : $Revision:   1.6  $
+//* .Check In Date   : $Date:   26 May 2014 10:49:56  $
 //******************************************************************************
-
+#pragma region Includes
 #include "stdafx.h"
 #include <limits>
 #include "SVAdjustToolSizePositionDlg.h"
-
 #include "SVObjectLibrary/SVObjectSynchronousCommandTemplate.h"
-
 #include "svobserver.h"
 #include "SVTaskObject.h"
 #include "SVInspectionProcess.h"
 #include "SVGuiExtentUpdater.h"
 #include "SVImageListClass.h"
 #include "SVTool.h"
+#include "SVOMFCLibrary/SVOMFCLibraryGlobals.h"
+#pragma endregion Includes
 
+#pragma region Declarations
 #ifdef _DEBUG
 #define new DEBUG_NEW
-#undef THIS_FILE
-static char THIS_FILE[] = __FILE__;
 #endif
+#pragma endregion Declarations
 
-bool Equal( double d1, double d2 )	// this should move to a library
-{
-	return abs( d1 - d2 ) < std::numeric_limits<float>::epsilon();	// give a little breathing room (use float instead of double)
-}
-
-const int SVAdjustToolSizePositionPropertiesPage::m_iPropertyFilter = SVExtentPropertyPositionsInput | SVExtentPropertyDimensionsInput /* | SVExtentPropertyDimentionsOutput */;
-
-IMPLEMENT_DYNAMIC(SVAdjustToolSizePositionDlg, CPropertySheet)
-
-BEGIN_MESSAGE_MAP(SVAdjustToolSizePositionDlg, CPropertySheet)
+BEGIN_MESSAGE_MAP(SVAdjustToolSizePositionDlg, CDialog)
 	//{{AFX_MSG_MAP(SVAdjustToolSizePositionDlg)
-	ON_WM_DESTROY()
-	//}}AFX_MSG_MAP
-	ON_COMMAND(IDOK,OnOK)
-END_MESSAGE_MAP()
-
-
-SVAdjustToolSizePositionDlg::SVAdjustToolSizePositionDlg( LPCTSTR pszCaption, CWnd* pParentWnd, UINT iSelectPage, SVTaskObjectClass* pToolTask )
-	:CPropertySheet(pszCaption, pParentWnd, iSelectPage), ISVCancel()
-{
-	m_pToolTask = pToolTask;
-	ASSERT( m_pToolTask );
-	
-	if ( m_pToolTask )
-	{
-		if ( m_pToolTask->DoesObjectHaveExtents() == S_OK )
-			m_pToolTask->GetImageExtent(m_svExtents);
-
-	}
-	m_svOriginalExtents = m_svExtents;
-	CreatePages();
-}
-
-SVAdjustToolSizePositionDlg::~SVAdjustToolSizePositionDlg()
-{
-	DestroyPages();
-}
-
-HRESULT SVAdjustToolSizePositionDlg::CreatePages()
-{
-	ASSERT( m_pToolTask );
-
-	SVAdjustToolSizePositionMainPage* pMainDlg = new SVAdjustToolSizePositionMainPage(CString(_T("Adjust")), this);
-	AddPage(pMainDlg);
-
-	SVAdjustToolSizePositionPropertiesPage* pPropertiesDlg = new SVAdjustToolSizePositionPropertiesPage( CString(_T("Properties")), this );
-	AddPage(pPropertiesDlg);
-
-	return S_OK;
-}
-
-void SVAdjustToolSizePositionDlg::DestroyPages()
-{
-	CPropertyPage* pPage;
-	for( int i = GetPageCount() - 1; i >= 0; -- i )
-	{
-		pPage = GetPage( i );
-		RemovePage( i );
-		if( pPage )
-		{
-			delete pPage;
-		}
-	}
-}
-
-/////////////////////////////////////////////////////////////////////////////
-// SVAdjustToolSizePositionDlg message handlers
-
-BOOL SVAdjustToolSizePositionDlg::OnInitDialog() 
-{
-	m_bModeless = TRUE;	// trick base class into removing the standard buttons
-	BOOL bResult = CPropertySheet::OnInitDialog();
-	m_bModeless = FALSE;
-	
-	bool bCancelable = CanCancel();	// from ISVCancel base //SVPropertySheetCancelImpl base
-	CWnd* pWnd = GetDlgItem(IDCANCEL);
-	if ( pWnd )
-		pWnd->ShowWindow( bCancelable ? SW_SHOW : SW_HIDE );
-
-	//ModifyStyleEx(0, WS_EX_TOOLWINDOW, SWP_DRAWFRAME | SWP_FRAMECHANGED);
-
-	CTabCtrl* pTab = GetTabControl();
-	pTab->ModifyStyle(TCS_FOCUSONBUTTONDOWN, TCS_FOCUSNEVER);
-	pTab->SetWindowPos(NULL, 1,1, 0,0, SWP_NOSIZE | SWP_NOZORDER );
-
-	pTab->SetItemSize(CSize(1,15));
-	pTab->SetPadding(CSize(4,2));
-
-	SetActivePage(1);
-	SetActivePage(0);
-
-	int iX = AfxGetApp()->GetProfileInt(_T("State"), _T("ToolAdjustSizePos-X"), 0);
-	int iY = AfxGetApp()->GetProfileInt(_T("State"), _T("ToolAdjustSizePos-Y"), 0);
-
-	if ( iX != 0 && iY != 0 )
-	{
-		SetWindowPos(NULL, iX, iY, 0,0, SWP_NOSIZE | SWP_NOZORDER );
-	}
-
-	return bResult;
-}
-
-void SVAdjustToolSizePositionDlg::OnDestroy() 
-{
-	CRect rect;
-	GetWindowRect(&rect);
-	AfxGetApp()->WriteProfileInt( _T("State"), _T("ToolAdjustSizePos-X"), rect.left );
-	AfxGetApp()->WriteProfileInt( _T("State"), _T("ToolAdjustSizePos-Y"), rect.top );
-	
-	CPropertySheet::OnDestroy();
-	
-}
-
-void SVAdjustToolSizePositionDlg::OnOK() 
-{
-
-	int cnt = GetPageCount();
-
-	for( int i = 0;i < cnt; i++ )
-	{
-		CPropertyPage* pPage = GetPage(i);
-		if( pPage && pPage->GetSafeHwnd() ) 
-		{
-			//pPage->OnOK();
-		}
-	}
-	EndDialog(IDOK);
-}
-
-void SVAdjustToolSizePositionDlg::OnCancel()
-{
-	// restore original data
-	HRESULT hr = SVGuiExtentUpdater::SetImageExtent(m_pToolTask, m_svOriginalExtents);
-
-	EndDialog(IDCANCEL);
-}
-
-bool SVAdjustToolSizePositionDlg::CanCancel()
-{
-	ASSERT(m_pToolTask);
-	return false;//return m_pTool->CanCancel();
-}
-
-HRESULT SVAdjustToolSizePositionDlg::GetCancelData(SVCancelData*& rpData)
-{
-	ASSERT(m_pToolTask);
-	return S_FALSE; //return m_pTool->GetCancelData(rpData);
-}
-
-HRESULT SVAdjustToolSizePositionDlg::SetCancelData(SVCancelData* pData)
-{
-	ASSERT(m_pToolTask);
-	return S_FALSE; //return m_pTool->SetCancelData(pData);
-}
-
-
-
-
-
-
-
-
-/////////////////////////////////////////////////////////////////////////////
-// SVAdjustToolSizePositionMainPage dialog
-
-BEGIN_MESSAGE_MAP(SVAdjustToolSizePositionMainPage, CPropertyPage)
-	//{{AFX_MSG_MAP(SVAdjustToolSizePositionMainPage)
 	ON_WM_TIMER()
 	ON_BN_CLICKED(IDC_TOP_LEFT_RADIO, OnModeRadio)
 	ON_MESSAGE( WM_SV_NOTIFY_LBUTTONDOWN, OnNotifyLButtonDown )
@@ -202,88 +37,74 @@ BEGIN_MESSAGE_MAP(SVAdjustToolSizePositionMainPage, CPropertyPage)
 	ON_BN_CLICKED(IDC_MOVETOOL_RADIO, OnModeRadio)
 	ON_BN_CLICKED(IDC_ROTATION_RADIO, OnModeRadio)
 	ON_BN_CLICKED(IDC_BOTTOM_RIGHT_RADIO, OnModeRadio)
+	ON_BN_CLICKED(IDC_FULL_ROI_BTN, OnBnClickedFullROI)
+	ON_NOTIFY(PTN_ITEMCHANGED, IDC_RESULT_LIST, OnItemChanged)
+	ON_BN_CLICKED(IDOK, OnOK)
+	ON_BN_CLICKED(IDCANCEL, OnCancel)
 	//}}AFX_MSG_MAP
-	ON_BN_CLICKED(IDOK, OnIdOK)
-	ON_BN_CLICKED(IDCANCEL, OnIdCancel)
 END_MESSAGE_MAP()
 
+IMPLEMENT_DYNAMIC(SVAdjustToolSizePositionDlg, CDialog)
 
-SVAdjustToolSizePositionMainPage::SVAdjustToolSizePositionMainPage(const CString& sTitle, SVAdjustToolSizePositionDlg* pParent)
-	: CPropertyPage(SVAdjustToolSizePositionMainPage::IDD)
+#pragma region Constructor
+SVAdjustToolSizePositionDlg::SVAdjustToolSizePositionDlg(LPCTSTR pCaption, CWnd* pParentWnd, SVTaskObjectClass* pToolTask)
+	: CDialog(SVAdjustToolSizePositionDlg::IDD, pParentWnd)
 {
-	m_sTitle = sTitle;
-    m_psp.pszTitle = m_sTitle;
-    m_psp.dwFlags |= PSP_USETITLE;
-	m_pParentDialog = pParent;
-	m_pToolTask = m_pParentDialog->m_pToolTask;
-	m_pExtents   = &(m_pParentDialog->m_svExtents);
+	m_pToolTask = pToolTask;
+	ASSERT( m_pToolTask );
 
-	//{{AFX_DATA_INIT(SVAdjustToolSizePositionMainPage)
+	if ( m_pToolTask )
+	{
+		if ( S_OK == m_pToolTask->DoesObjectHaveExtents() )
+		{
+			m_pToolTask->GetImageExtent(m_svExtents);
+		}
+	}
+	m_svOriginalExtents = m_svExtents;
+	m_sTitle = pCaption;
+
+	//{{AFX_DATA_INIT(SVAdjustToolSizePositionDlg)
 	m_iMode = -1;
-	m_sWidthHeight = _T("");
-	m_sTopLeft = _T("");
 	//}}AFX_DATA_INIT
 }
 
-SVAdjustToolSizePositionMainPage::~SVAdjustToolSizePositionMainPage()
+SVAdjustToolSizePositionDlg::~SVAdjustToolSizePositionDlg()
 {
+	::DestroyIcon( m_icoArrowDown  );
+	::DestroyIcon( m_icoArrowUp );
+	::DestroyIcon( m_icoArrowLeft );
+	::DestroyIcon( m_icoArrowRight );
+	::DestroyIcon( m_icoArrowClockwise );
+	::DestroyIcon( m_icoArrowCounterclockwise );
 }
+#pragma endregion Constructor
 
-void SVAdjustToolSizePositionMainPage::DoDataExchange(CDataExchange* pDX)
+#pragma region Protected Methods
+void SVAdjustToolSizePositionDlg::DoDataExchange(CDataExchange* pDX)
 {
-	CPropertyPage::DoDataExchange(pDX);
-	//{{AFX_DATA_MAP(SVAdjustToolSizePositionMainPage)
+	CDialog::DoDataExchange(pDX);
+	//{{AFX_DATA_MAP(SVAdjustToolSizePositionDlg)
 	DDX_Control(pDX, IDC_UP_BUTTON, m_btnUp);
 	DDX_Control(pDX, IDC_RIGHT_BUTTON, m_btnRight);
 	DDX_Control(pDX, IDC_LEFT_BUTTON, m_btnLeft);
 	DDX_Control(pDX, IDC_DOWN_BUTTON, m_btnDown);
 	DDX_Radio(pDX, IDC_TOP_LEFT_RADIO, m_iMode);
-	DDX_Text(pDX, IDC_WIDTH_HEIGHT, m_sWidthHeight);
-	DDX_Text(pDX, IDC_STATIC_TOP_LEFT, m_sTopLeft);
 	//}}AFX_DATA_MAP
 }
 
-
-/////////////////////////////////////////////////////////////////////////////
-// SVAdjustToolSizePositionMainPage message handlers
-
-BOOL SVAdjustToolSizePositionMainPage::OnInitDialog() 
+BOOL SVAdjustToolSizePositionDlg::OnInitDialog()
 {
-	ASSERT( m_pToolTask != NULL );
-
+	ASSERT( nullptr != m_pToolTask );
 	m_iMode = MODE_MOVE;	// Default action: Move
+	CDialog::OnInitDialog();
 
-	//m_pToolTask->GetImageExtent(*m_pExtents);
-
-	CPropertyPage::OnInitDialog();
-
-	m_icoArrowDown = ::LoadImage(AfxGetApp()->m_hInstance,
-	                                     MAKEINTRESOURCE(IDI_ARROW_DOWN),
-	                                     IMAGE_ICON, 16,16, LR_DEFAULTCOLOR);
-	//SVWinHandle<HICON> h( m_icoArrowDown );
-	//h = m_icoArrowDown;
-	m_icoArrowUp = ::LoadImage(AfxGetApp()->m_hInstance,
-	                                   MAKEINTRESOURCE(IDI_ARROW_UP),
-	                                   IMAGE_ICON, 16,16, LR_DEFAULTCOLOR);
-
-	m_icoArrowLeft = ::LoadImage(AfxGetApp()->m_hInstance,
-	                                     MAKEINTRESOURCE(IDI_ARROW_LEFT),
-	                                     IMAGE_ICON, 16,16, LR_DEFAULTCOLOR);
-
-	m_icoArrowRight = ::LoadImage(AfxGetApp()->m_hInstance,
-	                                      MAKEINTRESOURCE(IDI_ARROW_RIGHT),
-	                                      IMAGE_ICON, 16,16, LR_DEFAULTCOLOR);
-
-	m_icoArrowClockwise = ::LoadImage(AfxGetApp()->m_hInstance,
-	                                          MAKEINTRESOURCE(IDI_ARROW_CLOCKWISE),
-	                                          IMAGE_ICON, 16,16, LR_DEFAULTCOLOR);
-
-	m_icoArrowCounterclockwise = ::LoadImage(AfxGetApp()->m_hInstance,
-	                                                 MAKEINTRESOURCE(IDI_ARROW_COUNTERCLOCKWISE),
-	                                                 IMAGE_ICON, 16,16, LR_DEFAULTCOLOR);
+	createIcons();
+	bool l_bShow = ( nullptr != dynamic_cast< AllowResizeToParent* >( m_pToolTask ) );
+	GetDlgItem(IDC_FULL_ROI_BTN)->ShowWindow( l_bShow ? SW_SHOW : SW_HIDE );
+	GetDlgItem(IDC_FULL_ROI_BTN)->EnableWindow( !IsFullSize() );
 
 	SVExtentPropertyMapType map;
-	m_pExtents->GetExtentPropertyList(SVExtentPropertyPositionsInput, map);
+	m_svExtents.GetExtentPropertyList(SVExtentPropertyPositionsInput, map);
 	if ( map.find( SVExtentPropertyRotationAngle ) == map.end() )	// if doesn't support rotation angle
 	{
 		GetDlgItem( IDC_ROTATION_RADIO )->ShowWindow( SW_HIDE );	// hide rotation option
@@ -291,68 +112,158 @@ BOOL SVAdjustToolSizePositionMainPage::OnInitDialog()
 
 	OnModeRadio();
 
-	UpdateExtentsDisplay();
+	// Init the control's size to cover the entire client area
+	CRect rc;
+
+	// Init the control's size to cover the entire client area
+	GetDlgItem(IDC_RESULT_LIST)->GetWindowRect(rc);
+	ScreenToClient(rc);
+	GetDlgItem(IDC_RESULT_LIST)->DestroyWindow();
+	// PTS_NOTIFY - SVRPropTree will send notification messages to the parent window
+	DWORD dwStyle = WS_CHILD|WS_VISIBLE|PTS_NOTIFY;
+	// Create SVRPropTree control
+	m_Tree.Create(dwStyle, rc, this, IDC_RESULT_LIST);
+	//first column should be 60% of the size and second 40%  
+	m_Tree.SetColumn( static_cast<long>(rc.Width() * 0.6) );
+	m_Tree.ShowInfoText( false );
+	BuildTreeFromExtents();
 
 	return TRUE;  // return TRUE unless you set the focus to a control
-	              // EXCEPTION: OCX Property Pages should return FALSE
 }
 
-LRESULT SVAdjustToolSizePositionMainPage::OnNotifyLButtonDown( WPARAM wParam, LPARAM lParam )
+LRESULT SVAdjustToolSizePositionDlg::OnNotifyLButtonDown( WPARAM wParam, LPARAM lParam )
 {
 	SVUpDownButton* pButton = reinterpret_cast <SVUpDownButton*> (lParam);
 	m_pButton = pButton;
 
-	ButtonAction( m_pButton, 0 );
+	ButtonAction( m_pButton );
 
-	SetTimer( TIMER_PAUSE, 600, NULL );
+	SetTimer( TIMER_PAUSE, 600, NULL ); //@TODO:  Document why 600.
 	return 0;
 }
 
-LRESULT SVAdjustToolSizePositionMainPage::OnNotifyLButtonUp( WPARAM wParam, LPARAM lParam )
+LRESULT SVAdjustToolSizePositionDlg::OnNotifyLButtonUp( WPARAM wParam, LPARAM lParam )
 {
 	SVUpDownButton* pButton = reinterpret_cast <SVUpDownButton*> (lParam);
-	KillTimer( TIMER_PAUSE  );
+	KillTimer( TIMER_PAUSE );
 	KillTimer( TIMER_REPEAT );
-	m_pButton = NULL;
+	m_pButton = nullptr;
 	return 0;
 }
 
-
-void SVAdjustToolSizePositionMainPage::OnTimer( UINT_CUSTOM nIDEvent )
+void SVAdjustToolSizePositionDlg::OnTimer( UINT_CUSTOM nIDEvent )
 {
 	switch ( nIDEvent )
 	{
 		case TIMER_PAUSE:
-
-			SetTimer( TIMER_REPEAT, 100, NULL );
+			SetTimer( TIMER_REPEAT, 100, nullptr ); //@TODO:  Document why 100.
 			break;
 
 		case TIMER_REPEAT:
-			ButtonAction( m_pButton, 0 );
+			ButtonAction( m_pButton);
 			break;
 
 		default:
-			CPropertyPage::OnTimer(nIDEvent);
+			CDialog::OnTimer(nIDEvent);
 	}
 	
 }
 
-HRESULT SVAdjustToolSizePositionMainPage::ButtonAction(SVUpDownButton* pButton, UINT nFlags)
+void SVAdjustToolSizePositionDlg::OnModeRadio() 
 {
-	static SVExtentLocationPropertyEnum aActions[2][4] =	// rows are buttons, colums are modes
+	UpdateData();
+	if ( MODE_ROTATE == m_iMode )
+	{
+		m_btnDown.SetIcon( nullptr );
+		m_btnUp.SetIcon( nullptr );
+		m_btnLeft.SetIcon( m_icoArrowClockwise );
+		m_btnRight.SetIcon( m_icoArrowCounterclockwise );
+	}
+	else
+	{
+		m_btnDown.SetIcon( m_icoArrowDown );
+		m_btnUp.SetIcon( m_icoArrowUp );
+		m_btnLeft.SetIcon( m_icoArrowLeft );
+		m_btnRight.SetIcon( m_icoArrowRight );
+	}
+
+	UpdateData(FALSE);
+}
+
+void SVAdjustToolSizePositionDlg::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResult)
+{
+	LPNMPROPTREE pNMPropTree = reinterpret_cast< LPNMPROPTREE >( pNotifyStruct );
+	*plResult = S_OK;
+	if ( pNMPropTree->pItem )
+	{
+		SVRPropertyItem* pItem = pNMPropTree->pItem;
+
+		// do validation
+		SVExtentPropertyEnum eProperty = static_cast< SVExtentPropertyEnum >( pItem->GetCtrlID() - ID_BASE );
+		CString sValue;
+		pItem->GetItemValue( sValue );
+		double dValue = atof( sValue );
+
+		m_pToolTask->GetImageExtent( m_svExtents );
+
+		double dOldValue;
+		m_svExtents.GetExtentProperty( eProperty, dOldValue );
+		if ( !ApproxEqual( dOldValue, dValue ) )
+		{
+			m_svExtents.SetExtentProperty( eProperty, dValue );
+
+			m_svExtents.UpdateData();
+
+			m_svExtents.GetExtentProperty( eProperty, dValue );
+			sValue = AsString(dValue);
+			pItem->SetItemValue( sValue );
+			pItem->OnRefresh();
+
+			HRESULT hr = SVGuiExtentUpdater::SetImageExtent(m_pToolTask, m_svExtents);
+			m_pToolTask->GetImageExtent( m_svExtents );
+			FillTreeFromExtents();
+		}
+	}
+}
+
+void SVAdjustToolSizePositionDlg::OnOK() 
+{
+	CDialog::OnOK();
+}
+
+void SVAdjustToolSizePositionDlg::OnCancel() 
+{
+	SVGuiExtentUpdater::SetImageExtent(m_pToolTask, m_svOriginalExtents);
+	CDialog::OnCancel();
+}
+
+void SVAdjustToolSizePositionDlg::OnBnClickedFullROI()
+{
+	HRESULT hr = SVGuiExtentUpdater::SetImageExtentToParent(m_pToolTask );
+
+	if( hr == S_OK )
+	{
+		m_pToolTask->GetImageExtent(m_svExtents);
+
+		FillTreeFromExtents();
+		m_Tree.Invalidate();
+	}
+}
+#pragma endregion Protected Methods
+
+#pragma region Private Methods
+HRESULT SVAdjustToolSizePositionDlg::ButtonAction(SVUpDownButton* pButton)
+{
+	UpdateData();
+
+	static SVExtentLocationPropertyEnum aActions[2][4] =	// rows are buttons (4), columns are modes (2)
 	{// TOP_LEFT, BOTTOM_RIGHT, MOVE, ROTATE
 		{ SVExtentLocationPropertyTop, SVExtentLocationPropertyBottom, SVExtentLocationPropertyCenter, SVExtentLocationPropertyUnknown },	// btnUp & btnDown
 		{ SVExtentLocationPropertyLeft, SVExtentLocationPropertyRight, SVExtentLocationPropertyCenter, SVExtentLocationPropertyRotate },	// btnLeft & btnRight
 	};
 	enum { BTN_UP_DOWN, BTN_LEFT_RIGHT };
-
-	HRESULT hr = S_OK;
-
-	UpdateData();
-
 	int dx = 0;
 	int dy = 0;
-
 	SVExtentLocationPropertyEnum eAction = SVExtentLocationPropertyUnknown;
 
 	if ( pButton == &m_btnUp )
@@ -376,38 +287,23 @@ HRESULT SVAdjustToolSizePositionMainPage::ButtonAction(SVUpDownButton* pButton, 
 		dx = 1;
 	}
 
-	// disable properties that use formulas
-	bool bDisable = false;
-	/*
-	SVExtentPropertyInfoStruct info;
-	SVTaskObjectClass* pTask = m_pImageView->GetSelectedObject();
-	ASSERT( pTask );
-	if ( pTask->GetPropertyInfo( eAction, info ) == S_OK )
+	HRESULT hr = S_OK;
+	if ( eAction == SVExtentLocationPropertyRotate )
 	{
-		bDisable = info.bFormula;
+		hr = AdjustToolAngle( dx );
 	}
-	*/
-
-	if ( !bDisable )
+	else
 	{
-		if ( eAction == SVExtentLocationPropertyRotate )
-		{
-			hr = AdjustToolAngle( dx );
-		}
-		else
-		{
-			hr = AdjustTool( eAction, dx, dy );
-		}
-
-		m_pToolTask->GetImageExtent(*m_pExtents);
-
-		UpdateExtentsDisplay();
+		hr = AdjustTool( eAction, dx, dy );
 	}
 
+	m_pToolTask->GetImageExtent(m_svExtents);
+	FillTreeFromExtents();
+	m_Tree.Invalidate();
 	return hr;
 }
 
-HRESULT SVAdjustToolSizePositionMainPage::AdjustTool( SVExtentLocationPropertyEnum eAction, int dx, int dy )
+HRESULT SVAdjustToolSizePositionDlg::AdjustTool( SVExtentLocationPropertyEnum eAction, int dx, int dy )
 {
 	HRESULT hr = S_OK;
 
@@ -423,20 +319,16 @@ HRESULT SVAdjustToolSizePositionMainPage::AdjustTool( SVExtentLocationPropertyEn
 	if ( hr == S_OK )
 	{
 		hr = SVGuiExtentUpdater::SetImageExtent(m_pToolTask, l_pExtents);
-	}	
+	}
 	return hr;
 }
 
-
-HRESULT SVAdjustToolSizePositionMainPage::AdjustToolAngle(double dDAngle)
+HRESULT SVAdjustToolSizePositionDlg::AdjustToolAngle(double dDAngle)
 {
 	HRESULT hr = S_OK;
-
 	SVImageExtentClass l_Extents;
-
-	hr = m_pToolTask->GetImageExtent(l_Extents);
-
 	double dCurrentAngle=0.0;
+	hr = m_pToolTask->GetImageExtent(l_Extents);
 	hr = l_Extents.GetExtentProperty( SVExtentPropertyRotationAngle, dCurrentAngle );
 	if ( l_Extents.GetTranslation() == SVExtentTranslationPolarUnwrap )
 	{
@@ -450,225 +342,26 @@ HRESULT SVAdjustToolSizePositionMainPage::AdjustToolAngle(double dDAngle)
 	if ( hr == S_OK )
 	{
 		hr = l_Extents.SetExtentProperty( SVExtentPropertyRotationAngle, dCurrentAngle );
-
 		if ( hr == S_OK )
 		{
 			hr = SVGuiExtentUpdater::SetImageExtent(m_pToolTask, l_Extents);
-			*m_pExtents = l_Extents;
+			m_svExtents = l_Extents;
 		}
 	}
 	return hr;
 }
 
-void SVAdjustToolSizePositionMainPage::OnModeRadio() 
+void SVAdjustToolSizePositionDlg::BuildTreeFromExtents()
 {
-	static CString aCaptions[4][2] = 
-	{
-		{_T("Top"), _T("Left")},
-		{_T("Bottom"), _T("Right")},
-		{_T("X Position"), _T("Y Position")},
-		{_T("End Angle"), _T("")}
-	};
-
-	UpdateData();
-	if ( m_iMode == MODE_ROTATE )
-	{
-		m_btnDown.SetIcon( NULL );
-		m_btnUp.SetIcon( NULL );
-		m_btnLeft.SetIcon( m_icoArrowClockwise );
-		m_btnRight.SetIcon( m_icoArrowCounterclockwise );
-	}
-	else
-	{
-		m_btnDown.SetIcon( m_icoArrowDown );
-		m_btnUp.SetIcon( m_icoArrowUp );
-		m_btnLeft.SetIcon( m_icoArrowLeft );
-		m_btnRight.SetIcon( m_icoArrowRight );
-	}
-
-	UpdateData(FALSE);
-}
-
-BOOL SVAdjustToolSizePositionMainPage::OnSetActive()
-{
-	BOOL l_bRet = CPropertyPage::OnSetActive();
-	UpdateExtentsDisplay();
-	return l_bRet;
-}
-
-void SVAdjustToolSizePositionMainPage::UpdateExtentsDisplay()
-{
-	long lWidth = 0;
-	long lHeight = 0;
-
-	long lTop = 0;
-	long lLeft = 0;
-
-	HRESULT hr1 = m_pExtents->GetExtentProperty( SVExtentPropertyOutputWidth, lWidth );
-	HRESULT hr2 = m_pExtents->GetExtentProperty( SVExtentPropertyOutputHeight, lHeight );
-	HRESULT hr3 = m_pExtents->GetExtentProperty( SVExtentPropertyPositionPointX, lLeft );
-	HRESULT hr4 = m_pExtents->GetExtentProperty( SVExtentPropertyPositionPointY, lTop );
-	m_sWidthHeight.Format(_T("%d x %d"), lWidth, lHeight);
-	m_sTopLeft.Format(_T("%d, %d"), lLeft, lTop);
-
-	UpdateData(FALSE);
-}
-
-BOOL SVAdjustToolSizePositionMainPage::DestroyWindow() 
-{
-	// TODO: Add your specialized code here and/or call the base class
-	::DestroyIcon( m_icoArrowDown  );
-	::DestroyIcon( m_icoArrowUp );
-	::DestroyIcon( m_icoArrowLeft );
-	::DestroyIcon( m_icoArrowRight );
-	::DestroyIcon( m_icoArrowClockwise );
-	::DestroyIcon( m_icoArrowCounterclockwise );
-
-	return CPropertyPage::DestroyWindow();
-}
-
-
-
-
-
-
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-
-
-
-
-
-namespace	// file local
-{
-	static int ID_BASE = 1000;
-}
-
-/////////////////////////////////////////////////////////////////////////////
-// SVAdjustToolSizePositionPropertiesPage property page
-
-IMPLEMENT_DYNCREATE(SVAdjustToolSizePositionPropertiesPage, CPropertyPage)
-
-BEGIN_MESSAGE_MAP(SVAdjustToolSizePositionPropertiesPage, CPropertyPage)
-	//{{AFX_MSG_MAP(SVAdjustToolSizePositionPropertiesPage)
-	//}}AFX_MSG_MAP
-	ON_BN_CLICKED(IDOK, OnIdOK)
-	ON_BN_CLICKED(IDCANCEL, OnIdCancel)
-    ON_NOTIFY(PTN_ITEMCHANGED, IDC_RESULT_LIST, OnItemChanged)
-	ON_BN_CLICKED(IDC_FULL_ROI_BTN, &SVAdjustToolSizePositionPropertiesPage::OnBnClickedFullROI)
-	ON_MESSAGE(MSG_TO_PARENT, &SVAdjustToolSizePositionPropertiesPage::OnUserMessage )
-END_MESSAGE_MAP()
-
-
-// Custom handler for loosing PropTree focus.
-// prevents button clicked message from getting lost.
-LRESULT SVAdjustToolSizePositionPropertiesPage::OnUserMessage(WPARAM wparam, LPARAM lparam)
-{
-	return SendMessage( WM_COMMAND, wparam, lparam );
-	//return 0; 
-}
-
-SVAdjustToolSizePositionPropertiesPage::SVAdjustToolSizePositionPropertiesPage(const CString& sTitle, SVAdjustToolSizePositionDlg* pParent) 
-	: CPropertyPage(SVAdjustToolSizePositionPropertiesPage::IDD)
-{
-	m_pParentDialog = pParent;
-	m_pExtents = &(m_pParentDialog->m_svExtents);
-	m_pToolTask = m_pParentDialog->m_pToolTask;
-
-	m_sTitle = sTitle;
-    m_psp.pszTitle = m_sTitle;
-    m_psp.dwFlags |= PSP_USETITLE;
-
-	//{{AFX_DATA_INIT(SVAdjustToolSizePositionPropertiesPage)
-		// NOTE: the ClassWizard will add member initialization here
-	//}}AFX_DATA_INIT
-}
-
-SVAdjustToolSizePositionPropertiesPage::~SVAdjustToolSizePositionPropertiesPage()
-{
-}
-
-void SVAdjustToolSizePositionPropertiesPage::DoDataExchange(CDataExchange* pDX)
-{
-	CPropertyPage::DoDataExchange(pDX);
-	//{{AFX_DATA_MAP(SVAdjustToolSizePositionPropertiesPage)
-	//}}AFX_DATA_MAP
-}
-
-
-BOOL SVAdjustToolSizePositionPropertiesPage::OnInitDialog() 
-{
-	CPropertyPage::OnInitDialog();
-	
-	DWORD dwStyle;
-	CRect rc;
-
-	// PTS_NOTIFY - SVRPropTree will send notification messages to the parent window
-	dwStyle = WS_CHILD|WS_VISIBLE|PTS_NOTIFY;
-
-	// Init the control's size to cover the entire client area
-    GetDlgItem(IDC_RESULT_LIST)->GetWindowRect(rc);
-    ScreenToClient(rc);
-	GetDlgItem(IDC_RESULT_LIST)->DestroyWindow();
-	//GetClientRect(&rc);
-	//rc.OffsetRect(0, 2);
-	//rc.DeflateRect(CSize(2,2));
-	// Create SVRPropTree control
-	m_Tree.Create(dwStyle, rc, this, IDC_RESULT_LIST);
-	m_Tree.SetColumn( rc.Width() / 2 );
-	m_Tree.ShowInfoText( false );
-
-	//SVRPropertyItem* pRoot = m_Tree.GetRootItem();
-	///*
-    SVRPropertyItem* pRoot = m_Tree.InsertItem(new SVRPropertyItem());
+	SVRPropertyItem* pRoot = m_Tree.InsertItem(new SVRPropertyItem());
 	ASSERT( pRoot );
 	pRoot->SetCanShrink(false);
-    pRoot->SetInfoText(_T(""));
+	pRoot->SetInfoText(_T(""));
 	pRoot->HideItem();
-	pRoot->SetHeight(2);
-	//*/
+	pRoot->SetHeight(2);  //@TODO:  Document why 2 is used here.
 
-	SVTaskObjectClass* pTask = m_pToolTask;
-	ASSERT( pTask );
+	FillTreeFromExtents(pRoot, true);
 
-	SVExtentPropertyListType list;
-	HRESULT hr = pTask->GetFilteredImageExtentPropertyList( list );
-
-	SVExtentPropertyMapType map;
-	m_pExtents->GetExtentPropertyList((SVExtentPropertyEnum) m_iPropertyFilter, map);
-	SVExtentPropertyMapType::const_iterator iter;
-	
-	for( iter = map.begin(); iter != map.end(); ++iter )
-	{
-		if ( std::find( list.begin(), list.end(), iter->first ) == list.end() )	// if item is not in filtered list, skip
-			continue;
-
-		SVRPropertyItemEdit* pEdit = dynamic_cast<SVRPropertyItemEdit*>(m_Tree.InsertItem(new SVRPropertyItemEdit(), pRoot));
-		ASSERT( pEdit );
-
-		CString sName = iter->second;  
-		double dValue = 0.0;
-		m_pExtents->GetExtentProperty( iter->first, dValue);  
-
-		//pEdit->SetCtrlID( iID++ );	// needs to be a postincrement here
-		pEdit->SetCtrlID( ID_BASE + (int) iter->first );
-
-		CString sLabel;
-		sLabel = sName;
-		pEdit->SetLabelText( sLabel );
-
-		pEdit->SetBold( false );
-		pEdit->SetHeight(16);
-
-		CString sValue;
-		sValue = AsString(dValue);
-		pEdit->SetItemValue( sValue );
-		pEdit->OnRefresh();
-	}//end for( iter = map.begin(); iter != map.end(); iter++ )
-
-	///*
 	SVRPropertyItem* pChild = pRoot->GetChild();
 	while ( pChild )
 	{
@@ -676,185 +369,87 @@ BOOL SVAdjustToolSizePositionPropertiesPage::OnInitDialog()
 		pChild = pChild->GetSibling();
 	}
 	pRoot->Expand( true );	// needed for redrawing
-	//*/
-
-	UpdateData(FALSE);
-
-	bool l_bShow = dynamic_cast<AllowResizeToParent *>(m_pToolTask) != NULL;
-	GetDlgItem(IDC_FULL_ROI_BTN)->ShowWindow( l_bShow ? SW_SHOW : SW_HIDE );
-	GetDlgItem(IDC_FULL_ROI_BTN)->EnableWindow( !IsFullSize() );
-
-	
-	return TRUE;  // return TRUE unless you set the focus to a control
-	              // EXCEPTION: OCX Property Pages should return FALSE
 }
 
-
-void SVAdjustToolSizePositionPropertiesPage::FillTreeFromExtents()
+void SVAdjustToolSizePositionDlg::FillTreeFromExtents()
 {
+	SVRPropertyItem* pRoot = m_Tree.GetRootItem();
+	FillTreeFromExtents(pRoot, false);
 
-    SVRPropertyItem* pRoot = m_Tree.GetRootItem();
+	GetDlgItem(IDC_FULL_ROI_BTN)->EnableWindow( !IsFullSize() );
+}
+
+void SVAdjustToolSizePositionDlg::FillTreeFromExtents( SVRPropertyItem* pRoot, bool shouldCreate )
+{
 	ASSERT( pRoot );
-
-	SVTaskObjectClass* pTask = m_pToolTask;
-	ASSERT( pTask );
-
+	ASSERT( m_pToolTask );
 	SVExtentPropertyListType list;
-	HRESULT hr = pTask->GetFilteredImageExtentPropertyList( list );
-
+	HRESULT hr = m_pToolTask->GetFilteredImageExtentPropertyList( list );
 	SVExtentPropertyMapType map;
-	m_pExtents->GetExtentPropertyList((SVExtentPropertyEnum) m_iPropertyFilter, map);
-	SVExtentPropertyMapType::const_iterator iter;
-	
-	for( iter = map.begin(); iter != map.end(); ++iter )
+	m_svExtents.GetExtentPropertyList((SVExtentPropertyEnum) m_iPropertyFilter, map);
+
+	for(SVExtentPropertyMapType::const_iterator iter = map.begin(); iter != map.end(); ++iter )
 	{
 		if ( std::find( list.begin(), list.end(), iter->first ) == list.end() )	// if item is not in filtered list, skip
-			continue;
-
-		SVRPropertyItemEdit* pEdit = dynamic_cast<SVRPropertyItemEdit*> (m_Tree.FindItem(ID_BASE + (int) iter->first));
-		ASSERT( pEdit );
-		if ( pEdit )
 		{
-			CString sName = iter->second;  
+			continue;
+		}
+
+		SVRPropertyItemEdit* pEdit = nullptr;
+		if (shouldCreate)
+		{
+			pEdit = dynamic_cast<SVRPropertyItemEdit*>(m_Tree.InsertItem(new SVRPropertyItemEdit(), pRoot));
+		}
+		else
+		{
+			pEdit = dynamic_cast<SVRPropertyItemEdit*> (m_Tree.FindItem(ID_BASE + (int) iter->first));
+		}
+		ASSERT( pEdit );
+
+		if (pEdit != nullptr)
+		{
+			CString sName = iter->second;
 			double dValue = 0.0;
-			m_pExtents->GetExtentProperty( iter->first, dValue);  
+			m_svExtents.GetExtentProperty( iter->first, dValue);
+
+			//pEdit->SetCtrlID( iID++ );	// needs to be a postincrement here
+			pEdit->SetCtrlID( ID_BASE + (int) iter->first );
+			pEdit->SetLabelText( sName );
+			pEdit->SetBold( false );
+			pEdit->SetHeight(16);
 
 			CString sValue;
-			sValue = AsString(dValue);
+			if ((iter->first&g_SVExtentPropertyNoDecimalPlaces) != 0)
+			{
+				sValue = AsString((int)dValue);
+			}
+			else if ((iter->first&g_SVExtentProperty2DecimalPlaces) != 0)
+			{
+				sValue.Format("%.2f", dValue);
+			}
+			else
+			{
+				sValue = AsString(dValue);
+			}
 			pEdit->SetItemValue( sValue );
 			pEdit->OnRefresh();
 		}
 	}//end for( iter = map.begin(); iter != map.end(); iter++ )
-
-	GetDlgItem(IDC_FULL_ROI_BTN)->EnableWindow( !IsFullSize() );
-
 }
 
-void SVAdjustToolSizePositionPropertiesPage::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResult)
-{
-	LPNMPROPTREE pNMPropTree = (LPNMPROPTREE) pNotifyStruct;
-	*plResult = S_OK;
-	if ( pNMPropTree->pItem )
-	{
-		SVRPropertyItem* pItem = pNMPropTree->pItem;
-
-		// do validation
-		SVExtentPropertyEnum eProperty = (SVExtentPropertyEnum) (pItem->GetCtrlID() - ID_BASE);
-		CString sValue;
-		pItem->GetItemValue( sValue );
-		double dValue = atof( sValue );
-
-		bool bValidated = true;
-
-		if ( !bValidated )
-		{
-			*plResult = S_FALSE;
-		}
-		else
-		{
-			m_pToolTask->GetImageExtent( *m_pExtents );
-
-			double dOldValue;
-			m_pExtents->GetExtentProperty( eProperty, dOldValue );
-			if ( !Equal( dOldValue, dValue ) )
-			{
-				m_pExtents->SetExtentProperty( eProperty, dValue );
-
-				m_pExtents->UpdateData();
-
-				m_pExtents->GetExtentProperty( eProperty, dValue );
-				sValue = AsString(dValue);
-				pItem->SetItemValue( sValue );
-				pItem->OnRefresh();
-
-				//
-				HRESULT hr = SVGuiExtentUpdater::SetImageExtent(m_pToolTask, *m_pExtents);
-				m_pToolTask->GetImageExtent( *m_pExtents );
-				FillTreeFromExtents();
-			}
-		}
-	}
-}
-
-BOOL SVAdjustToolSizePositionPropertiesPage::OnSetActive() 
-{
-	// Update all fields
-	SVRPropertyItem* pItem = m_Tree.GetRootItem();
-	ASSERT( pItem );
-	pItem = pItem->GetChild();
-	ASSERT( pItem );
-	pItem = pItem->GetChild();
-	//ASSERT( pItem );
-
-	while ( pItem )
-	{
-		SVExtentPropertyEnum eProperty = (SVExtentPropertyEnum) (pItem->GetCtrlID() - ID_BASE);
-		double dValue = 0.0;
-		m_pExtents->GetExtentProperty( eProperty, dValue);  
-
-
-		CString sValue;
-		sValue = AsString(dValue);
-		pItem->SetItemValue( sValue );
-		pItem->OnRefresh();
-
-		pItem = pItem->GetSibling();
-	}// end while ( pItem )
-	
-	return CPropertyPage::OnSetActive();
-}
-
-
-void SVAdjustToolSizePositionMainPage::OnIdOK() 
-{
-	m_pParentDialog->OnOK();
-	CPropertyPage::OnOK();
-}
-
-void SVAdjustToolSizePositionMainPage::OnIdCancel() 
-{
-	m_pParentDialog->OnCancel();
-	CPropertyPage::OnCancel();
-}
-
-void SVAdjustToolSizePositionPropertiesPage::OnIdCancel() 
-{
-	m_pParentDialog->OnCancel();
-	CPropertyPage::OnCancel();
-}
-
-void SVAdjustToolSizePositionPropertiesPage::OnIdOK() 
-{
-	m_pParentDialog->OnOK();
-	CPropertyPage::OnOK();
-}
-void SVAdjustToolSizePositionPropertiesPage::OnBnClickedFullROI()
-{
-	HRESULT hr = SVGuiExtentUpdater::SetImageExtentToParent(m_pToolTask );
-
-	if( hr == S_OK )
-	{
-		m_pToolTask->GetImageExtent(*m_pExtents);
-
-		FillTreeFromExtents();
-		m_Tree.Invalidate();
-	}
-}
-
-
-bool SVAdjustToolSizePositionPropertiesPage::IsFullSize()
+bool SVAdjustToolSizePositionDlg::IsFullSize()
 {
 	bool l_bFull = false;
 	long lWidth = 0;
 	long lHeight = 0;
 	long lTop = 0;
 	long lLeft = 0;
-	HRESULT hr1 = m_pExtents->GetExtentProperty( SVExtentPropertyOutputWidth, lWidth );
-	HRESULT hr2 = m_pExtents->GetExtentProperty( SVExtentPropertyOutputHeight, lHeight );
-	HRESULT hr3 = m_pExtents->GetExtentProperty( SVExtentPropertyPositionPointX, lLeft );
-	HRESULT hr4 = m_pExtents->GetExtentProperty( SVExtentPropertyPositionPointY, lTop );
+	HRESULT hr1 = m_svExtents.GetExtentProperty( SVExtentPropertyOutputWidth, lWidth );
+	HRESULT hr2 = m_svExtents.GetExtentProperty( SVExtentPropertyOutputHeight, lHeight );
+	HRESULT hr3 = m_svExtents.GetExtentProperty( SVExtentPropertyPositionPointX, lLeft );
+	HRESULT hr4 = m_svExtents.GetExtentProperty( SVExtentPropertyPositionPointY, lTop );
 
-	m_pToolTask->GetImageExtent(*m_pExtents);
+	m_pToolTask->GetImageExtent(m_svExtents);
 	SVImageExtentClass l_ParentExtent;
 	if( m_pToolTask->GetTool()->GetParentExtent( l_ParentExtent ) == S_OK )
 	{
@@ -877,11 +472,48 @@ bool SVAdjustToolSizePositionPropertiesPage::IsFullSize()
 	return l_bFull;
 }
 
+void SVAdjustToolSizePositionDlg::createIcons()
+{
+	m_icoArrowDown = ::LoadImage(AfxGetApp()->m_hInstance,
+		MAKEINTRESOURCE(IDI_ARROW_DOWN),
+		IMAGE_ICON, 16,16, LR_DEFAULTCOLOR);
+
+	m_icoArrowUp = ::LoadImage(AfxGetApp()->m_hInstance,
+		MAKEINTRESOURCE(IDI_ARROW_UP),
+		IMAGE_ICON, 16,16, LR_DEFAULTCOLOR);
+
+	m_icoArrowLeft = ::LoadImage(AfxGetApp()->m_hInstance,
+		MAKEINTRESOURCE(IDI_ARROW_LEFT),
+		IMAGE_ICON, 16,16, LR_DEFAULTCOLOR);
+
+	m_icoArrowRight = ::LoadImage(AfxGetApp()->m_hInstance,
+		MAKEINTRESOURCE(IDI_ARROW_RIGHT),
+		IMAGE_ICON, 16,16, LR_DEFAULTCOLOR);
+
+	m_icoArrowClockwise = ::LoadImage(AfxGetApp()->m_hInstance,
+		MAKEINTRESOURCE(IDI_ARROW_CLOCKWISE),
+		IMAGE_ICON, 16,16, LR_DEFAULTCOLOR);
+
+	m_icoArrowCounterclockwise = ::LoadImage(AfxGetApp()->m_hInstance,
+		MAKEINTRESOURCE(IDI_ARROW_COUNTERCLOCKWISE),
+		IMAGE_ICON, 16,16, LR_DEFAULTCOLOR);
+}
+#pragma endregion Private Methods
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVAdjustToolSizePositionDlg.cpp_v  $
+ * 
+ *    Rev 1.6   26 May 2014 10:49:56   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  894
+ * SCR Title:  Enhancements to Adjust Tool Position Dialog
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   combine the three classes and made the changes like described in SCR894
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.5   03 Oct 2013 13:31:02   tbair
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : SVExtentEnums
 //* .File Name       : $Workfile:   SVExtentEnums.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   22 Apr 2013 10:39:40  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   26 May 2014 10:23:38  $
 //******************************************************************************
 
 #ifndef _SVTOOLEXTENTENUMS_H
@@ -117,6 +117,15 @@ enum SVExtentPropertyEnum
 	SVExtentPropertyNone = 0,
 };
 
+//This parameter define how many decimal places the property have in the display
+const unsigned long g_SVExtentPropertyNoDecimalPlaces = SVExtentPropertyPositionPoint|SVExtentPropertyPositionPointEndOfLine|SVExtentPropertyTranslationOffset|
+														SVExtentPropertyOldPositionPoint|SVExtentPropertyOldAbsPositionPoint|SVExtentPropertyOldTranslationOffset|
+														SVExtentPropertyOutputPositionPoint|SVExtentPropertyOldRotationPoint|SVExtentPropertyWidth|SVExtentPropertyHeight|
+														SVExtentPropertyOutputWidth|SVExtentPropertyOutputHeight;
+const unsigned long g_SVExtentProperty2DecimalPlaces = SVExtentPropertyRotationAngle|SVExtentPropertyOldRotationAngle|SVExtentPropertyStartAngle|
+														SVExtentPropertyEndAngle|SVExtentPropertyInnerRadius|SVExtentPropertyOuterRadius;
+	
+
 enum SVExtentShapeEnum
 {
 	SVExtentShapeUnknown   = 0,
@@ -194,6 +203,16 @@ enum SVExtentTranslationEnum
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVImageLibrary\SVExtentEnums.h_v  $
+ * 
+ *    Rev 1.1   26 May 2014 10:23:38   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  894
+ * SCR Title:  Enhancements to Adjust Tool Position Dialog
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   add constants g_SVExtentPropertyNoDecimalPlaces and g_SVExtentProperty2DecimalPlaces
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   22 Apr 2013 10:39:40   bWalter
  * Project:  SVObserver

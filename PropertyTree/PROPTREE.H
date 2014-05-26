@@ -5,8 +5,8 @@
 // * .Module Name     : PropTree.h
 // * .File Name       : $Workfile:   PROPTREE.H  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.2  $
-// * .Check In Date   : $Date:   29 Jan 2014 08:42:02  $
+// * .Current Version : $Revision:   1.3  $
+// * .Check In Date   : $Date:   26 May 2014 10:16:02  $
 // ******************************************************************************
 
 // PropertyTreeCtrl.h : header file
@@ -61,6 +61,8 @@ enum
 	HTATTRIBUTE     = HTPROPFIRST + 3,
 	HTCHECKBOX      = HTPROPFIRST + 4,
 };
+
+const int g_buttonSpace = 4;
 
 // SVRPropTree WM_NOTIFY notification structure
 typedef struct _NMPROPTREE
@@ -300,6 +302,16 @@ protected:
 // ******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\PropertyTree\PROPTREE.H_v  $
+ * 
+ *    Rev 1.3   26 May 2014 10:16:02   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  894
+ * SCR Title:  Enhancements to Adjust Tool Position Dialog
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   added constant g_buttonSpace and used it instead of magic numbers
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   29 Jan 2014 08:42:02   bwalter
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : SVIPDoc
 //* .File Name       : $Workfile:   SVIPDoc.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.15  $
-//* .Check In Date   : $Date:   15 May 2014 13:04:38  $
+//* .Current Version : $Revision:   1.16  $
+//* .Check In Date   : $Date:   26 May 2014 10:51:14  $
 //******************************************************************************
 
 #pragma region Includes
@@ -3233,7 +3233,7 @@ void SVIPDoc::OnEditAdjustToolPosition()
 		if( SVImageViewClass* pImageView = GetImageView() )
 		{
 			SVSVIMStateClass::AddState( SV_STATE_EDITING );
-			SVAdjustToolSizePositionDlg dlg(_T("Adjust Tool Size / Position"), (CWnd*)this->GetMDIChild(), 0,l_pTool);
+			SVAdjustToolSizePositionDlg dlg(_T("Adjust Tool Size / Position"), (CWnd*)this->GetMDIChild(), l_pTool);
 			dlg.DoModal();
 			SVSVIMStateClass::RemoveState( SV_STATE_EDITING );
 		}
@@ -4231,6 +4231,16 @@ BOOL SVIPDoc::RunOnce( SVToolClass* p_pTool )
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVIPDoc.cpp_v  $
+ * 
+ *    Rev 1.16   26 May 2014 10:51:14   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  894
+ * SCR Title:  Enhancements to Adjust Tool Position Dialog
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   changed calls of SVAdjustToolSizePositionDlg-constructor 
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.15   15 May 2014 13:04:38   sjones
  * Project:  SVObserver

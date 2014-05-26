@@ -5,8 +5,8 @@
 // * .Module Name     : D:\...\PropTreeItemEdit.cpp
 // * .File Name       : $Workfile:   PropTreeItemEdit.cpp  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.6  $
-// * .Check In Date   : $Date:   26 May 2014 08:45:26  $
+// * .Current Version : $Revision:   1.7  $
+// * .Check In Date   : $Date:   26 May 2014 10:18:40  $
 // ******************************************************************************
 
 // PropTreeItemEdit.cpp : implementation file
@@ -292,15 +292,18 @@ void SVRPropertyItemEdit::OnActivate()
 	{
 		OnRefresh();
 
-		CDC* pDC = m_btnDots.GetDC();
-		CSize size = pDC->GetTextExtent(m_strButtonText);
-		m_btnDots.ReleaseDC(pDC);
+		DisplayButton();
+		int iButtonWidth = 0;
+		if (m_bShowButton)
+		{
+			CDC* pDC = m_btnDots.GetDC();
+			CSize size = pDC->GetTextExtent(m_strButtonText);
+			iButtonWidth = size.cx + g_buttonSpace;
+			m_btnDots.ReleaseDC(pDC);
+		}
 
-		int iButtonWidth = size.cx + 4;
 		SetWindowPos(NULL, m_rc.left, m_rc.top, m_rc.Width()-iButtonWidth, m_rc.Height(), SWP_NOZORDER | SWP_SHOWWINDOW);
 		SetSel(0,-1);
-		DisplayButton();
-
 		SetFocus();
 	}
 
@@ -329,7 +332,7 @@ void SVRPropertyItemEdit::DisplayButton()
 	CSize size = pDC->GetTextExtent(m_strButtonText);
 	m_btnDots.ReleaseDC(pDC);
 
-	int iButtonWidth = size.cx + 4;
+	int iButtonWidth = size.cx + g_buttonSpace;
 	m_bShowButton = (m_pProp->SendNotify(PTN_QUERY_SHOW_BUTTON, this)) != FALSE;
 	m_btnDots.SetWindowPos(NULL, m_rc.right-iButtonWidth, m_rc.top, iButtonWidth, m_rc.Height(), SWP_NOZORDER | (m_bShowButton ? SWP_SHOWWINDOW : SWP_HIDEWINDOW));
 }
@@ -845,6 +848,18 @@ bool SVRPropertyItemEdit::SetItemValuePtr(CString& strVal)
 // ******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\PropertyTree\PropTreeItemEdit.cpp_v  $
+ * 
+ *    Rev 1.7   26 May 2014 10:18:40   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  894
+ * SCR Title:  Enhancements to Adjust Tool Position Dialog
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   PropTreeItemCombo.cpp
+ * added constant g_buttonSpace and used it instead of magic numbers
+ * decreased space for text to have space for the button only if button displayed
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.6   26 May 2014 08:45:26   bwalter
  * Project:  SVObserver

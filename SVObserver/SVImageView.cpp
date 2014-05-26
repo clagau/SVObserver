@@ -5,8 +5,8 @@
 //* .Module Name     : SVImageView
 //* .File Name       : $Workfile:   SVImageView.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.6  $
-//* .Check In Date   : $Date:   15 May 2014 12:45:22  $
+//* .Current Version : $Revision:   1.7  $
+//* .Check In Date   : $Date:   26 May 2014 10:51:14  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -584,7 +584,7 @@ BOOL SVImageViewClass::OnCommand( WPARAM p_wParam, LPARAM p_lParam )
 					{
 						case SVImagePolarTransformObjectType: // 1792
 						{
-							SVAdjustToolSizePositionDlg dlg( _T( "Adjust Tool Size / Position" ), this, 0, m_psvObject );
+							SVAdjustToolSizePositionDlg dlg( _T( "Adjust Tool Size / Position" ), this, m_psvObject );
 							dlg.DoModal();
 							break;
 						}
@@ -607,12 +607,12 @@ BOOL SVImageViewClass::OnCommand( WPARAM p_wParam, LPARAM p_lParam )
 						{
 							if( SV_IS_KIND_OF( l_psvTool, SVLoadImageToolClass ) )
 							{
-								SVAdjustToolSizePositionDlg dlg( _T( "Adjust Tool Size / Position" ), this, 0, m_psvObject );
+								SVAdjustToolSizePositionDlg dlg( _T( "Adjust Tool Size / Position" ), this, m_psvObject );
 								dlg.DoModal();
 							}
 							else
 							{
-								SVAdjustToolSizePositionDlg dlg( _T( "Adjust Tool Size / Position" ), this, 0, m_psvObject );
+								SVAdjustToolSizePositionDlg dlg( _T( "Adjust Tool Size / Position" ), this, m_psvObject );
 								dlg.DoModal();
 							}
 
@@ -631,7 +631,7 @@ BOOL SVImageViewClass::OnCommand( WPARAM p_wParam, LPARAM p_lParam )
 				{
 					if( dynamic_cast< SVLineAnalyzerClass* >( m_psvObject ) != NULL )
 					{
-						SVAdjustToolSizePositionDlg dlg( _T( "Adjust Tool Size / Position" ), this,0, m_psvObject );
+						SVAdjustToolSizePositionDlg dlg( _T( "Adjust Tool Size / Position" ), this, m_psvObject );
 						dlg.DoModal();
 					}
 					else
@@ -647,13 +647,13 @@ BOOL SVImageViewClass::OnCommand( WPARAM p_wParam, LPARAM p_lParam )
 					{
 						case SVToolProfileObjectType:
 						{
-							SVAdjustToolSizePositionDlg dlg( _T( "Adjust Tool Size / Position" ), this, 0, m_psvObject );
+							SVAdjustToolSizePositionDlg dlg( _T( "Adjust Tool Size / Position" ), this, m_psvObject );
 							dlg.DoModal();
 							break;
 						}
 						default:
 						{
-							SVAdjustToolSizePositionDlg dlg( _T( "Adjust Tool Size / Position" ), this, 0, m_psvObject );
+							SVAdjustToolSizePositionDlg dlg( _T( "Adjust Tool Size / Position" ), this, m_psvObject );
 							dlg.DoModal();
 							break;
 						}
@@ -2605,6 +2605,16 @@ HRESULT SVImageViewClass::NotifyIPDocDisplayComplete()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVImageView.cpp_v  $
+ * 
+ *    Rev 1.7   26 May 2014 10:51:14   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  894
+ * SCR Title:  Enhancements to Adjust Tool Position Dialog
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   changed calls of SVAdjustToolSizePositionDlg-constructor 
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.6   15 May 2014 12:45:22   sjones
  * Project:  SVObserver

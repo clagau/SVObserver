@@ -5,8 +5,8 @@
 // * .Module Name     : SVDataManager
 // * .File Name       : $Workfile:   DataManager.cpp  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.3  $
-// * .Check In Date   : $Date:   30 Sep 2013 14:50:26  $
+// * .Current Version : $Revision:   1.4  $
+// * .Check In Date   : $Date:   23 May 2014 07:12:58  $
 // ******************************************************************************
 
 #include "stdafx.h"
@@ -582,9 +582,8 @@ HRESULT SVDataManager::ValidateIndexArrayHandle (long   alIndexArrayHandle) cons
 			lErr = SVDM_1500INVALIDINDEXARRAYHANDLE_ERROR;
 			break;
 		}
-		
-		if (((long) (svmManagedIndexArrayList [alIndexArrayHandle]) < lNbrOfElements) &&
-			((long) (svmManagedIndexArrayList [alIndexArrayHandle]) < -1))
+	
+		if ( svmManagedIndexArrayList [alIndexArrayHandle] == nullptr )
 		{
 			//------ This is a bit of an assumtion. If the handle is actually within 
 			//------ acceptable boundaries, but the contents of the contained pointer are
@@ -872,6 +871,16 @@ BOOL SVDataManager::Unlock() const
 // ******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVDataManagerLibrary\DataManager.cpp_v  $
+ * 
+ *    Rev 1.4   23 May 2014 07:12:58   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Modified ValidateIndexArrayHandle array check changed old code that did not work with the current vector container.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   30 Sep 2013 14:50:26   tbair
  * Project:  SVObserver

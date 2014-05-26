@@ -5,136 +5,103 @@
 //* .Module Name     : SVAdjustToolSizePositionDlg
 //* .File Name       : $Workfile:   SVAdjustToolSizePositionDlg.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.4  $
-//* .Check In Date   : $Date:   03 Oct 2013 13:31:04  $
+//* .Current Version : $Revision:   1.5  $
+//* .Check In Date   : $Date:   26 May 2014 10:49:56  $
 //******************************************************************************
 
 #ifndef SVADJUSTTOOLSIZEPOSITIONDLG_H
 #define SVADJUSTTOOLSIZEPOSITIONDLG_H
 
+#pragma region Includes
 #include "SVUtilityLibrary/SVWinHandle.h"
 #include "SVImageLibrary/SVImageExtentClass.h"
-#include "ISVCancel.h"
+#include "PropertyTree/PropTree.h"
+#include "SVUpDownButton.h"
+#pragma endregion Includes
 
-
-class SVObjectClass;
-class SVImageViewClass;
+#pragma region Declarations
 class SVTaskObjectClass;
+#pragma endregion Declarations
 
-
-
-class SVAdjustToolSizePositionDlg : public CPropertySheet, public ISVCancel
+class SVAdjustToolSizePositionDlg : public CDialog
 {
-	DECLARE_DYNAMIC(SVAdjustToolSizePositionDlg)
-
-// Construction
+	DECLARE_DYNCREATE(SVAdjustToolSizePositionDlg)
+#pragma region Constructor
 public:
-	SVAdjustToolSizePositionDlg( LPCTSTR pszCaption, CWnd* pParentWnd = NULL, UINT iSelectPage = 0, SVTaskObjectClass* pToolTask = NULL );
-	virtual ~SVAdjustToolSizePositionDlg();
-	HRESULT CreatePages();
+	SVAdjustToolSizePositionDlg(LPCTSTR pszCaption, CWnd* pParentWnd = nullptr, SVTaskObjectClass* pToolTask = nullptr);
+	~SVAdjustToolSizePositionDlg();
+#pragma endregion Constructor
 
-	// ISVCancel
-	virtual bool CanCancel();
-	virtual HRESULT GetCancelData(SVCancelData*& rpData);
-	virtual HRESULT SetCancelData(SVCancelData* pData);
-
-// Attributes
-public:
-	SVImageExtentClass m_svExtents;
-	SVImageExtentClass m_svOriginalExtents;
-	SVTaskObjectClass* m_pToolTask;
-
-// Operations
-public:
-	virtual void OnOK();
-	virtual void OnCancel();
-
+#pragma region Protected Methods
+protected:
 // Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(SVAdjustToolSizePositionDlg)
-	public:
-	virtual BOOL OnInitDialog();
-	//}}AFX_VIRTUAL
-
-
-	// Generated message map functions
-protected:
-	//{{AFX_MSG(SVAdjustToolSizePositionDlg)
-	afx_msg void OnDestroy();
-	//}}AFX_MSG
-	DECLARE_MESSAGE_MAP()
-	void DestroyPages();
-
-
-};	// end class SVAdjustToolSizePositionDlg
-
-#include "SVUpDownButton.h"
-
-class SVAdjustToolSizePositionMainPage : public CPropertyPage
-{
-// Construction
-public:
-	SVAdjustToolSizePositionMainPage(const CString& sTitle=_T(""), SVAdjustToolSizePositionDlg* pParent=NULL);
-	~SVAdjustToolSizePositionMainPage();
-
-// Overrides
-	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(SVAdjustToolSizePositionMainPage)
-	public:
-	virtual BOOL DestroyWindow();
-	protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+	virtual BOOL OnInitDialog();
 	//}}AFX_VIRTUAL
 
-// Implementation
-protected:
-// Dialog Data
-	//{{AFX_DATA(SVAdjustToolSizePositionMainPage)
-	enum { IDD = IDD_ADJUST_TOOL_SIZE_POSITION_DIALOG };
-	SVUpDownButton	m_btnUp;
-	SVUpDownButton	m_btnRight;
-	SVUpDownButton	m_btnLeft;
-	SVUpDownButton	m_btnDown;
-	int		m_iMode;
-	CString	m_sWidthHeight;
-	CString	m_sTopLeft;
-	//}}AFX_DATA
-
-	HRESULT ButtonAction(SVUpDownButton* pButton, UINT nFlags);
-	HRESULT AdjustTool( SVExtentLocationPropertyEnum eAction, int dx, int dy );
-	HRESULT AdjustToolAngle(double dDAngle);
-
-	void UpdateExtentsDisplay();
-
 	// Generated message map functions
-	//{{AFX_MSG(SVAdjustToolSizePositionMainPage)
-	virtual BOOL OnInitDialog();
+	//{{AFX_MSG(SVAdjustToolSizePositionDlg)
 #ifdef _WIN64
 #define UINT_CUSTOM UINT_PTR
 #else
 #define UINT_CUSTOM UINT
 #endif
-	afx_msg void OnTimer(UINT_CUSTOM nIDEvent);
-	afx_msg void OnModeRadio();
-	virtual BOOL OnSetActive();
-	//}}AFX_MSG
-	void OnIdCancel();
-	void OnIdOK();
 	afx_msg LRESULT OnNotifyLButtonDown( WPARAM wParam, LPARAM lParam );
 	afx_msg LRESULT OnNotifyLButtonUp( WPARAM wParam, LPARAM lParam );
+	afx_msg void OnTimer(UINT_CUSTOM nIDEvent);
+	afx_msg void OnModeRadio();
+	afx_msg void OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResult);
+	afx_msg void OnOK();
+	afx_msg void OnCancel();
+	afx_msg void OnBnClickedFullROI();
+	//}}AFX_MSG
+
 	DECLARE_MESSAGE_MAP()
+#pragma endregion Protected Methods
 
-	SVAdjustToolSizePositionDlg*  m_pParentDialog;
-	SVImageExtentClass*           m_pExtents;
-	SVTaskObjectClass*			  m_pToolTask;
+#pragma region Private Methods
+private:
+	HRESULT ButtonAction(SVUpDownButton* pButton);
+	HRESULT AdjustTool( SVExtentLocationPropertyEnum eAction, int dx, int dy );
+	HRESULT AdjustToolAngle(double dDAngle);
 
-	SVWinHandle<HICON> m_icoArrowUp;
-	SVWinHandle<HICON> m_icoArrowDown;
-	SVWinHandle<HICON> m_icoArrowLeft;
-	SVWinHandle<HICON> m_icoArrowRight;
-	SVWinHandle<HICON> m_icoArrowClockwise;
-	SVWinHandle<HICON> m_icoArrowCounterclockwise;
+	//************************************
+	// Method:    BuildTreeFromExtents
+	// Description: Build up the property tree from the extents.
+	// Returns:   void
+	//************************************
+	void BuildTreeFromExtents();
 
+	//************************************
+	// Method:    FillTreeFromExtents
+	// Description: Edit the entries of the property tree with the information from the extents.
+	// Returns:   void
+	//************************************
+	void FillTreeFromExtents();
+
+	//************************************
+	// Method:    FillTreeFromExtents
+	// Description: Edit or create the entries of the property tree with the information from the extents.
+	// Parameter: SVRPropertyItem* pRoot The root of the tree.
+	// Parameter: bool shouldCreate Define if the entries should be create new or only edit.
+	// Returns:   void
+	//************************************
+	void FillTreeFromExtents( SVRPropertyItem* pRoot, bool shouldCreate );
+
+	bool IsFullSize();
+
+	//************************************
+	// Method:    createIcons
+	// Description: Create the icons for the arrow buttons.
+	// Returns:   void
+	//************************************
+	void createIcons();
+#pragma endregion Private Methods
+
+#pragma region Member variables
+private:
 	enum
 	{
 		MODE_TOP_LEFT = 0,
@@ -148,71 +115,34 @@ protected:
 		TIMER_PAUSE  = 100,
 		TIMER_REPEAT = 101,
 	};
-	SVUpDownButton* m_pButton;
 
-	CString m_sTitle;
-
-};	// end class SVAdjustToolSizePositionMainPage
-
-#include "PropertyTree/PropTree.h"
-// #include "afxwin.h"
-
-class SVAdjustToolSizePositionPropertiesPage : public CPropertyPage
-{
-	DECLARE_DYNCREATE(SVAdjustToolSizePositionPropertiesPage)
-
-// Construction
-public:
-	SVAdjustToolSizePositionPropertiesPage(const CString& sTitle=_T(""), SVAdjustToolSizePositionDlg* pParent=NULL);
-	~SVAdjustToolSizePositionPropertiesPage();
-
-// Dialog Data
-	//{{AFX_DATA(SVAdjustToolSizePositionPropertiesPage)
-	enum { IDD = IDD_ADJUST_TOOL_SIZE_POSITION_PROPERTIES };
-		// NOTE - ClassWizard will add data members here.
-		//    DO NOT EDIT what you see in these blocks of generated code !
+	// Dialog Data
+	//{{AFX_DATA(SVAdjustToolSizePositionDlg)
+	enum { IDD = IDD_ADJUST_TOOL_SIZE_POSITION_DIALOG };
+	SVUpDownButton	m_btnUp;
+	SVUpDownButton	m_btnRight;
+	SVUpDownButton	m_btnLeft;
+	SVUpDownButton	m_btnDown;
+	int		m_iMode;
 	//}}AFX_DATA
 
-// Overrides
-	// ClassWizard generate virtual function overrides
-	//{{AFX_VIRTUAL(SVAdjustToolSizePositionPropertiesPage)
-	public:
-	virtual BOOL OnSetActive();
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-	//}}AFX_VIRTUAL
+	SVImageExtentClass m_svExtents;
+	SVImageExtentClass m_svOriginalExtents;
+	SVTaskObjectClass* m_pToolTask;
+	SVRPropTree m_Tree;
+	const static int m_iPropertyFilter = SVExtentPropertyPositionsInput | SVExtentPropertyDimensionsInput;
+	const static int ID_BASE = 1000;
 
-	afx_msg LRESULT OnUserMessage( WPARAM wparam, LPARAM lparam ); 
-	afx_msg void OnBnClickedFullROI();
-	bool IsFullSize();
-
-// Implementation
-protected:
-
-	SVRPropTree                     m_Tree;
-	SVAdjustToolSizePositionDlg*    m_pParentDialog;
-	CString                         m_sTitle;
-	SVImageExtentClass*             m_pExtents;
-	SVTaskObjectClass*				m_pToolTask;
-
-	const static int                       m_iPropertyFilter;
-
-	afx_msg void OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResult);
-
-	// Generated message map functions
-	//{{AFX_MSG(SVAdjustToolSizePositionPropertiesPage)
-	virtual BOOL OnInitDialog();
-	//}}AFX_MSG
-	void OnIdCancel();
-	void OnIdOK();
-	void FillTreeFromExtents();
-	DECLARE_MESSAGE_MAP()
-
-};	// end class SVAdjustToolSizePositionPropertiesPage
-
-//{{AFX_INSERT_LOCATION}}
-// Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
+	SVWinHandle<HICON> m_icoArrowUp;
+	SVWinHandle<HICON> m_icoArrowDown;
+	SVWinHandle<HICON> m_icoArrowLeft;
+	SVWinHandle<HICON> m_icoArrowRight;
+	SVWinHandle<HICON> m_icoArrowClockwise;
+	SVWinHandle<HICON> m_icoArrowCounterclockwise;
+	SVUpDownButton* m_pButton;
+	CString m_sTitle;
+#pragma endregion Member variables
+};	// end class SVAdjustToolSizePositionDlg
 #endif
 
 //******************************************************************************
@@ -220,6 +150,16 @@ protected:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVAdjustToolSizePositionDlg.h_v  $
+ * 
+ *    Rev 1.5   26 May 2014 10:49:56   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  894
+ * SCR Title:  Enhancements to Adjust Tool Position Dialog
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   combine the three classes and made the changes like described in SCR894
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.4   03 Oct 2013 13:31:04   tbair
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 // * .Module Name     : SVXmlStream.cpp
 // * .File Name       : $Workfile:   SVXmlStream.inl  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.0  $
-// * .Check In Date   : $Date:   18 Apr 2013 18:39:44  $
+// * .Current Version : $Revision:   1.1  $
+// * .Check In Date   : $Date:   23 May 2014 07:19:04  $
 // ******************************************************************************
 
 #ifndef SVXMLSTREAM_INL
@@ -182,7 +182,7 @@ void SVXmlStream< SVTreeType >::Parse_XML_Document()
 			mhr = S_OK;
 			SAFEARRAYBOUND	sabData;
 
-			if (V_ARRAY(&m_Variant) == NULL)
+			if (V_ARRAY(&m_Variant) == NULL || m_Variant.vt == VT_EMPTY)
 			{
 				sabData.cElements = 1;
 				sabData.lLbound   = 0;
@@ -1176,7 +1176,17 @@ void SVXmlStream< SVTreeType >::ReleaseTreeItemData( SVTreeType& Tree )
 // * LOG HISTORY:
 // ******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVConfigurationLibrary\SVXmlStream.inl_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVConfigurationLibrary\SVXmlStream.inl_v  $
+ * 
+ *    Rev 1.1   23 May 2014 07:19:04   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Modified Parse_XML_Document. Added additional test for vt_empty when parsing the <Value> into an array.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   18 Apr 2013 18:39:44   bWalter
  * Project:  SVObserver
