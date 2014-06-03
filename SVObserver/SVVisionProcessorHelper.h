@@ -5,8 +5,8 @@
 //* .Module Name     : SVVisionProcessorHelper
 //* .File Name       : $Workfile:   SVVisionProcessorHelper.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.8  $
-//* .Check In Date   : $Date:   23 Apr 2014 18:04:52  $
+//* .Current Version : $Revision:   1.9  $
+//* .Check In Date   : $Date:   02 Jun 2014 10:24:38  $
 //******************************************************************************
 
 #ifndef SVVISIONPROCESSORHELPER_H
@@ -41,6 +41,8 @@ enum SVDataDefinitionListType
 	SelectedValuesAndAllImages		= 9,
 	AllValuesAndAllImages			= 12,
 };
+
+const TCHAR			StandardItems[]				= _T( "StandardItems" );
 #pragma endregion Declarations
 
 class SVVisionProcessorHelper
@@ -99,6 +101,7 @@ protected:
 	HRESULT GetInspectionItems( const SVNameSet& p_rNames, SVNameStorageResultMap& p_rItems ) const;
 	HRESULT GetRemoteInputItems( const SVNameSet& p_rNames, SVNameStorageResultMap& p_rItems ) const;
 
+	HRESULT SetStandardItems( const SVNameStorageMap& p_rItems, SVNameStatusMap& p_rStatus );
 	HRESULT SetInspectionItems( const SVNameStorageMap& p_rItems, SVNameStatusMap& p_rStatus );
 	HRESULT SetRemoteInputItems( const SVNameStorageMap& p_rItems, SVNameStatusMap& p_rStatus );
 	HRESULT SetCameraItems( const SVNameStorageMap& p_rItems, SVNameStatusMap& p_rStatus );
@@ -131,6 +134,16 @@ private:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVVisionProcessorHelper.h_v  $
+ * 
+ *    Rev 1.9   02 Jun 2014 10:24:38   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  900
+ * SCR Title:  Separate View Image Update, View Result Update flags; remote access E55,E92
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Added SetStandardItems method and the constant StandardItems.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.8   23 Apr 2014 18:04:52   sjones
  * Project:  SVObserver

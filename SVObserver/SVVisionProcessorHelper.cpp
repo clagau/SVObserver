@@ -5,8 +5,8 @@
 //* .Module Name     : SVVisionProcessorHelper
 //* .File Name       : $Workfile:   SVVisionProcessorHelper.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.11  $
-//* .Check In Date   : $Date:   24 Apr 2014 11:29:08  $
+//* .Current Version : $Revision:   1.12  $
+//* .Check In Date   : $Date:   02 Jun 2014 10:24:38  $
 //******************************************************************************
 
 #pragma region Includes
@@ -51,12 +51,13 @@ SVVisionProcessorHelper::SVVisionProcessorHelper()
 : m_LastModifiedTime( 0 ), m_PrevModifiedTime( 0 )
 {
 	m_GetItemsFunctors = boost::assign::map_list_of< SVString, SVGetItemsFunctor >
-		( "Standard", boost::bind( &SVVisionProcessorHelper::GetStandardItems, this, _1, _2 ) )
+		( StandardItems, boost::bind( &SVVisionProcessorHelper::GetStandardItems, this, _1, _2 ) )
 		( FqnInspections, boost::bind( &SVVisionProcessorHelper::GetInspectionItems, this, _1, _2 ) )
 		( FqnRemoteInputs, boost::bind( &SVVisionProcessorHelper::GetRemoteInputItems, this, _1, _2 ) )
 		;
 
 	m_SetItemsFunctors = boost::assign::map_list_of< SVString, SVSetItemsFunctor >
+		( StandardItems, boost::bind( &SVVisionProcessorHelper::SetStandardItems, this, _1, _2 ) )
 		( FqnInspections, boost::bind( &SVVisionProcessorHelper::SetInspectionItems, this, _1, _2 ) )
 		( FqnRemoteInputs, boost::bind( &SVVisionProcessorHelper::SetRemoteInputItems, this, _1, _2 ) )
 		( FqnCameras, boost::bind( &SVVisionProcessorHelper::SetCameraItems, this, _1, _2 ) )
@@ -358,13 +359,14 @@ HRESULT SVVisionProcessorHelper::GetItems( const SVNameSet& p_rNames, SVNameStor
 			{
 				SVGetItemsFunctorMap::const_iterator l_FunctorIter = m_GetItemsFunctors.find( l_Info.m_NameArray[ 0 ] );
 
+				//If name is found in list then use it otherwise use the standard method
 				if( l_FunctorIter != m_GetItemsFunctors.end() )
 				{
 					l_NameSets[ l_FunctorIter->first ].insert( *l_Iter );
 				}
 				else
 				{
-					l_NameSets[ _T("Standard") ].insert( *l_Iter );
+					l_NameSets[ StandardItems ].insert( *l_Iter );
 				}
 			}
 			else
@@ -445,12 +447,7 @@ HRESULT SVVisionProcessorHelper::SetItems( const SVNameStorageMap& p_rItems, SVN
 				}
 				else
 				{
-					p_rStatus[ l_Iter->first.c_str() ] = SVMSG_ONE_OR_MORE_INSPECTIONS_DO_NOT_EXIST;
-
-					if( l_Status == S_OK )
-					{
-						l_Status = SVMSG_NOT_ALL_LIST_ITEMS_PROCESSED;
-					}
+					l_NameStorageItems[ StandardItems ].insert( *l_Iter );
 				}
 			}
 			else
@@ -589,6 +586,65 @@ HRESULT SVVisionProcessorHelper::GetRemoteInputItems( const SVNameSet& p_rNames,
 	}
 
 	return l_Status;
+}
+
+HRESULT SVVisionProcessorHelper::SetStandardItems( const SVNameStorageMap& rItems, SVNameStatusMap& rStatus )
+{
+	HRESULT Status = S_OK;
+
+	rStatus.clear();
+
+	if( !( rItems.empty() ) )
+	{
+		bool Online = SVSVIMStateClass::CheckState( SV_STATE_RUNNING );
+
+		for( SVNameStorageMap::const_iterator Iter = rItems.begin(); Iter != rItems.end(); ++Iter )
+		{
+			HRESULT LoopStatus = S_OK;
+			BasicValueObject* pValueObject = NULL;
+
+			SVObjectManagerClass::Instance().GetObjectByDottedName( Iter->first, pValueObject );
+
+			if( pValueObject != NULL )
+			{
+				bool Attribute = ( ( pValueObject->ObjectAttributesAllowed() & SV_REMOTELY_SETABLE ) == SV_REMOTELY_SETABLE );
+
+				if( Attribute )
+				{
+					Attribute = !Online || ( ( pValueObject->ObjectAttributesAllowed() & SV_SETABLE_ONLINE ) == SV_SETABLE_ONLINE );
+
+					if( Attribute )
+					{
+						LoopStatus = pValueObject->setValue(Iter->second.m_Variant);
+					}
+					else
+					{
+						LoopStatus = SVMSG_OBJECT_CANNOT_BE_SET_WHILE_ONLINE;
+					}
+				}
+				else
+				{
+					LoopStatus = SVMSG_OBJECT_CANNOT_BE_SET_REMOTELY;
+				}
+			}
+			else
+			{
+				LoopStatus = SVMSG_ONE_OR_MORE_REQUESTED_OBJECTS_DO_NOT_EXIST;
+			}
+
+			rStatus[ Iter->first ] = LoopStatus;
+			if( Status == S_OK && LoopStatus != S_OK )
+			{
+				Status = SVMSG_NOT_ALL_LIST_ITEMS_PROCESSED;
+			}
+		}
+	}
+	else
+	{
+		Status = E_INVALIDARG;
+	}
+
+	return Status;
 }
 
 HRESULT SVVisionProcessorHelper::SetInspectionItems( const SVNameStorageMap& p_rItems, SVNameStatusMap& p_rStatus )
@@ -934,6 +990,16 @@ void SVVisionProcessorHelper::ProcessLastModified( bool& p_WaitForEvents )
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVVisionProcessorHelper.cpp_v  $
+ * 
+ *    Rev 1.12   02 Jun 2014 10:24:38   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  900
+ * SCR Title:  Separate View Image Update, View Result Update flags; remote access E55,E92
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Added SetStandardItems method and the constant StandardItems.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.11   24 Apr 2014 11:29:08   sjones
  * Project:  SVObserver

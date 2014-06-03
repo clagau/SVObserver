@@ -5,8 +5,8 @@
 //* .Module Name     : SVConfigurationObject
 //* .File Name       : $Workfile:   SVConfigurationObject.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.24  $
-//* .Check In Date   : $Date:   15 May 2014 11:10:28  $
+//* .Current Version : $Revision:   1.25  $
+//* .Check In Date   : $Date:   02 Jun 2014 09:34:28  $
 //******************************************************************************
 
 #pragma region Includes
@@ -61,6 +61,7 @@
 #include "SVVirtualCamera.h"
 #include "SVObjectLibrary/GlobalConst.h"
 #include "RemoteMonitorNamedList.h"
+#include "EnvironmentObject.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -843,13 +844,35 @@ HRESULT SVConfigurationObject::LoadConfiguration(SVTreeType& rTree)
 				m_ulVersion = TheSVObserverApp.getLoadingVersion();
 			}
 
+			//This is the deprecated tag and has changed to CTAG_IMAGE_UPDATE and CTAG_RESULT_UPDATE
+			//Needs to be read for older configurations and becomes the standard default
+			BOOL Value = TRUE;
+			BasicValueObject* pValueObject = nullptr;
 			if (SVNavigateTreeClass::GetItem( rTree, CTAG_ONLINE_DISPLAY, htiChild, svValue) )
 			{
-				SVObjectManagerClass::Instance().SetOnlineDisplay( svValue );
+				Value = svValue;
 			}
-			else
+
+			if (SVNavigateTreeClass::GetItem( rTree, CTAG_IMAGE_DISPLAY_UPDATE, htiChild, svValue) )
 			{
-				SVObjectManagerClass::Instance().SetOnlineDisplay( true );
+				Value = svValue;
+			}
+			//Need to set the attributes to settable remotely and online for the Image Update object
+			pValueObject = EnvironmentObject::setEnvironmentValue( ::EnvironmentImageUpdate, Value );
+			if( nullptr != pValueObject)
+			{
+				pValueObject->ObjectAttributesAllowedRef() |= SV_REMOTELY_SETABLE | SV_SETABLE_ONLINE;
+			}
+
+			if (SVNavigateTreeClass::GetItem( rTree, CTAG_RESULT_DISPLAY_UPDATE, htiChild, svValue) )
+			{
+				Value = svValue;
+			}
+			//Need to set the attributes to settable remotely and online for the Result Update object
+			pValueObject = EnvironmentObject::setEnvironmentValue( ::EnvironmentResultUpdate, Value );
+			if( nullptr != pValueObject)
+			{
+				pValueObject->ObjectAttributesAllowedRef() |= SV_REMOTELY_SETABLE | SV_SETABLE_ONLINE;
 			}
 
 		}// end if ( SVNavigateTreeClass::GetItem( rTree, CTAG_ENVIRONMENT, NULL, &htiChild ) )
@@ -2760,24 +2783,31 @@ BOOL SVConfigurationObject::SaveEnvironment(SVTreeType& rTree)
 	if ( hEnvBranch != NULL )
 	{
 		SVTreeType::SVBranchHandle hBranch = NULL;
+		_variant_t svValue;
 
 		if( bOk )
 		{
-			_variant_t svValue = TheSVObserverApp.getCurrentVersion();
+			svValue = TheSVObserverApp.getCurrentVersion();
 			bOk = SVNavigateTreeClass::AddItem( rTree, hEnvBranch, CTAG_VERSION_NUMBER, svValue );
 		}
 
 		if ( bOk )
 		{
 			int iType = GetProductType();
-			_variant_t svValue = iType;
+			svValue = iType;
 			bOk = SVNavigateTreeClass::AddItem( rTree, hEnvBranch, CTAG_CONFIGURATION_TYPE, svValue );
 		}
 
 		if ( bOk )
 		{
-			_variant_t svValue = SVObjectManagerClass::Instance().GetOnlineDisplay();
-			bOk = SVNavigateTreeClass::AddItem( rTree, hEnvBranch, CTAG_ONLINE_DISPLAY, svValue );
+			EnvironmentObject::getEnvironmentValue( ::EnvironmentImageUpdate, svValue );
+			bOk = SVNavigateTreeClass::AddItem( rTree, hEnvBranch, CTAG_IMAGE_DISPLAY_UPDATE, svValue );
+		}
+
+		if ( bOk )
+		{
+			EnvironmentObject::getEnvironmentValue( ::EnvironmentResultUpdate, svValue );
+			bOk = SVNavigateTreeClass::AddItem( rTree, hEnvBranch, CTAG_RESULT_DISPLAY_UPDATE, svValue );
 		}
 	}// end if ( hEnvBranch != NULL )    // CTAG_ENVIRONMENT
 	return bOk;
@@ -5141,6 +5171,7 @@ HRESULT SVConfigurationObject::SetCameraItems( const SVNameStorageMap& rItems, S
 		for( SVNameStorageMap::const_iterator Iter = rItems.begin(); Iter != rItems.end(); ++Iter )
 		{
 			SVObjectNameInfo Info;
+			HRESULT LoopStatus = S_OK;
 
 			SVObjectNameInfo::ParseObjectName( Info, Iter->first );
 
@@ -5160,7 +5191,6 @@ HRESULT SVConfigurationObject::SetCameraItems( const SVNameStorageMap& rItems, S
 
 						if( Attribute )
 						{
-							HRESULT LoopStatus = S_OK;
 							LoopStatus = pValueObject->setValue(Iter->second.m_Variant);
 
 							SVVirtualCamera* pVirtualCamera = dynamic_cast< SVVirtualCamera* > (pValueObject->GetOwner());
@@ -5168,50 +5198,31 @@ HRESULT SVConfigurationObject::SetCameraItems( const SVNameStorageMap& rItems, S
 							{
 								CamerasChanged.insert(pVirtualCamera);
 							}
-							rStatus[ Iter->first ] = LoopStatus;
-							if( Status == S_OK && LoopStatus != S_OK )
-							{
-								Status = SVMSG_NOT_ALL_LIST_ITEMS_PROCESSED;
-							}
 						}
 						else
 						{
-							rStatus[ Iter->first ] = SVMSG_OBJECT_CANNOT_BE_SET_WHILE_ONLINE;
-
-							if( Status == S_OK )
-							{
-								Status = SVMSG_NOT_ALL_LIST_ITEMS_PROCESSED;
-							}
+							LoopStatus = SVMSG_OBJECT_CANNOT_BE_SET_WHILE_ONLINE;
 						}
 					}
 					else
 					{
-						rStatus[ Iter->first ] = SVMSG_OBJECT_CANNOT_BE_SET_REMOTELY;
-
-						if( Status == S_OK )
-						{
-							Status = SVMSG_NOT_ALL_LIST_ITEMS_PROCESSED;
-						}
+						LoopStatus = SVMSG_OBJECT_CANNOT_BE_SET_REMOTELY;
 					}
 				}
 				else
 				{
-					rStatus[ Iter->first ] = SVMSG_ONE_OR_MORE_REQUESTED_OBJECTS_DO_NOT_EXIST;
-
-					if( Status == S_OK )
-					{
-						Status = SVMSG_NOT_ALL_LIST_ITEMS_PROCESSED;
-					}
+					LoopStatus = SVMSG_ONE_OR_MORE_REQUESTED_OBJECTS_DO_NOT_EXIST;
 				}
 			}
 			else
 			{
-				rStatus[ Iter->first ] = SVMSG_ONE_OR_MORE_REQUESTED_OBJECTS_DO_NOT_EXIST;
+				LoopStatus = SVMSG_ONE_OR_MORE_REQUESTED_OBJECTS_DO_NOT_EXIST;
+			}
 
-				if( Status == S_OK )
-				{
-					Status = SVMSG_NOT_ALL_LIST_ITEMS_PROCESSED;
-				}
+			rStatus[ Iter->first ] = LoopStatus;
+			if( Status == S_OK && LoopStatus != S_OK )
+			{
+				Status = SVMSG_NOT_ALL_LIST_ITEMS_PROCESSED;
 			}
 		}
 	}
@@ -5486,6 +5497,19 @@ HRESULT SVConfigurationObject::LoadMonitoredObjectList( SVTreeType& rTree, SVTre
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVConfigurationObject.cpp_v  $
+ * 
+ *    Rev 1.25   02 Jun 2014 09:34:28   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  900
+ * SCR Title:  Separate View Image Update, View Result Update flags; remote access E55,E92
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Added loading and saving the Image and Result display update flags into the configuration.
+ * Set the default and conversion (CTAG_ONLINE_DISPLAY)  values for the flags when loading.
+ * Optimize the LoopStatus for the method SetCameraItems.
+ * 
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.24   15 May 2014 11:10:28   sjones
  * Project:  SVObserver

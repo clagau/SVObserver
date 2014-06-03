@@ -5,8 +5,8 @@
 //* .Module Name     : SVSecuritySetupPage.cpp
 //* .File Name       : $Workfile:   SVSecuritySetupPage.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.3  $
-//* .Check In Date   : $Date:   20 May 2014 10:25:28  $
+//* .Current Version : $Revision:   1.4  $
+//* .Check In Date   : $Date:   30 May 2014 10:47:10  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -371,13 +371,13 @@ BOOL SVSecuritySetupPage::OnHelpInfo(HELPINFO* pHelpInfo)
 	{
 		pHelpInfo->iCtrlId += 0x70000;
 	}
-	theApp.HtmlHelpA(pHelpInfo->iCtrlId,HH_HELP_CONTEXT);
+	theApp.HtmlHelp(pHelpInfo->iCtrlId,HH_HELP_CONTEXT);
 	return TRUE;
 }
 
 void SVSecuritySetupPage::OnHelp() 
 {
-	theApp.HtmlHelpA(IDD_SECURITY_PAGE + 0x60000,HH_HELP_CONTEXT);
+	theApp.HtmlHelp(IDD_SECURITY_PAGE + 0x60000,HH_HELP_CONTEXT);
 }
 
 //******************************************************************************
@@ -385,6 +385,16 @@ void SVSecuritySetupPage::OnHelp()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVSecurity\SVSecuritySetupPage.cpp_v  $
+ * 
+ *    Rev 1.4   30 May 2014 10:47:10   ryoho
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  904
+ * SCR Title:  Update SVObserver to use HtmlHelp instead of WinHelp
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   changed to use HtmlHelp instead of HtmlHelpA
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   20 May 2014 10:25:28   ryoho
  * Project:  SVObserver

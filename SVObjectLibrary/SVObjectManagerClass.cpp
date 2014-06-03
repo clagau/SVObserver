@@ -5,8 +5,8 @@
 //* .Module Name     : SVObjectManager
 //* .File Name       : $Workfile:   SVObjectManagerClass.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   17 Mar 2014 14:18:34  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   02 Jun 2014 06:40:24  $
 //******************************************************************************
 
 #pragma region Includes
@@ -44,7 +44,6 @@ SVObjectManagerClass& SVObjectManagerClass::Instance()
 SVObjectManagerClass::SVObjectManagerClass()
 : m_State( ReadWrite )
 , m_Lock()
-, m_OnlineDisplay( true )
 , m_ShortPPQIndicator( 0 )
 , m_ProductIndicator( 0 )
 , m_PendingImageIndicator( 0 )
@@ -1329,16 +1328,6 @@ HRESULT SVObjectManagerClass::UnregisterIODoc( const SVGUID& rIOGuid )
 	return l_Status;
 }
 
-int SVObjectManagerClass::GetOnlineDisplay() const
-{
-	return m_OnlineDisplay;
-}
-
-void SVObjectManagerClass::SetOnlineDisplay( int p_State )
-{
-	m_OnlineDisplay = p_State;
-}
-
 long SVObjectManagerClass::GetShortPPQIndicator() const
 {
 	return m_ShortPPQIndicator;
@@ -1863,6 +1852,16 @@ HRESULT SVObjectManagerClass::GetObservers( const SVString& rSubjectDataName, co
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObjectLibrary\SVObjectManagerClass.cpp_v  $
+ * 
+ *    Rev 1.3   02 Jun 2014 06:40:24   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  900
+ * SCR Title:  Separate View Image Update, View Result Update flags; remote access E55,E92
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Removed m_OnlineDisplay and its Get and Set methods
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   17 Mar 2014 14:18:34   bwalter
  * Project:  SVObserver

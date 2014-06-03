@@ -5,10 +5,11 @@
 //* .Module Name     : SVImageView
 //* .File Name       : $Workfile:   SVImageView.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.7  $
-//* .Check In Date   : $Date:   26 May 2014 10:51:14  $
+//* .Current Version : $Revision:   1.8  $
+//* .Check In Date   : $Date:   02 Jun 2014 09:42:42  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVImageView.h"
 
@@ -18,7 +19,6 @@
 #include "SVObjectLibrary/SVObjectWriter.h"
 #include "SVSVIMStateClass.h"
 #include "SVConfigurationLibrary/SVConfigurationTags.h"
-
 #include "SVAdjustToolSizePositionDlg.h"
 #include "SVAnalyzer.h"
 #include "SVDirectX.h"
@@ -33,12 +33,16 @@
 #include "SVObserver.h"
 #include "SVSetupDialogManager.h"
 #include "SVToolLoadImage.h"
+#include "EnvironmentObject.h"
+#pragma endregion Includes
+
+#pragma region Declarations
+using namespace Seidenader::SVObserver;
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
-#undef THIS_FILE
-static char THIS_FILE[] = __FILE__;
 #endif
+#pragma endregion Declarations
 
 static void UpdatePaletteForLut(bool bLut, LPDIRECTDRAWSURFACE7 pSurface)
 {
@@ -1013,20 +1017,27 @@ void SVImageViewClass::OnUpdate( CView* p_pSender, LPARAM p_lHint, CObject* p_pH
 {
 	//TRACE( _T( "SVImageView::OnUpdate %s\n" ), m_imageName );
 
-	CRect l_rect;
+	BOOL Update = TRUE;
+	EnvironmentObject::getEnvironmentValue( ::EnvironmentImageUpdate, Update );
+	Update = Update || !SVSVIMStateClass::CheckState( SV_STATE_RUNNING );
 
-	GetImageRect( l_rect );
-
-	if( m_LastRect != l_rect )
+	if( Update )
 	{
-		m_LastRect = l_rect;
+		CRect l_rect;
 
-		SetImageRect( m_LastRect );
+		GetImageRect( l_rect );
+
+		if( m_LastRect != l_rect )
+		{
+			m_LastRect = l_rect;
+
+			SetImageRect( m_LastRect );
+		}
+
+		UpdateBufferFromIPDoc();
+
+		CView::OnUpdate( p_pSender, p_lHint, p_pHint );
 	}
-
-	UpdateBufferFromIPDoc();
-
-	CView::OnUpdate( p_pSender, p_lHint, p_pHint );
 
 	if( GetUpdateRect( NULL ) == 0 )
 	{
@@ -2605,6 +2616,16 @@ HRESULT SVImageViewClass::NotifyIPDocDisplayComplete()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVImageView.cpp_v  $
+ * 
+ *    Rev 1.8   02 Jun 2014 09:42:42   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  900
+ * SCR Title:  Separate View Image Update, View Result Update flags; remote access E55,E92
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Checks the Image display update flag to determine if the view is to be updated
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.7   26 May 2014 10:51:14   mziegler
  * Project:  SVObserver

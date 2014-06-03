@@ -5,8 +5,8 @@
 //* .Module Name     : SVObjectManagerClass
 //* .File Name       : $Workfile:   SVObjectManagerClass.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   17 Mar 2014 14:18:34  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   02 Jun 2014 06:40:22  $
 //******************************************************************************
 
 #ifndef SVOBJECTMANAGERCLASS_H
@@ -168,9 +168,6 @@ public:
 	HRESULT RegisterIODoc( const SVGUID& rIOGuid, SVIODoc* p_pIODoc );
 	HRESULT UnregisterIODoc( const SVGUID& rIOGuid );
 
-	int GetOnlineDisplay() const;
-	void SetOnlineDisplay( int p_State );
-
 	long GetShortPPQIndicator() const;
 	void ClearShortPPQIndicator();
 	void IncrementShortPPQIndicator();
@@ -289,8 +286,6 @@ protected:
 	RootNameChildMap		m_RootNameChildren;
 	TranslateMap			m_TranslationMap;
 
-	int  m_OnlineDisplay;
-
 	long m_ShortPPQIndicator;
 	long m_ProductIndicator;
 	long m_PendingImageIndicator;
@@ -319,6 +314,16 @@ private:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObjectLibrary\SVObjectManagerClass.h_v  $
+ * 
+ *    Rev 1.3   02 Jun 2014 06:40:22   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  900
+ * SCR Title:  Separate View Image Update, View Result Update flags; remote access E55,E92
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Removed m_OnlineDisplay and its Get and Set methods
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   17 Mar 2014 14:18:34   bwalter
  * Project:  SVObserver

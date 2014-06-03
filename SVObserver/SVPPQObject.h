@@ -5,8 +5,8 @@
 //* .Module Name     : SVPPQObject
 //* .File Name       : $Workfile:   SVPPQObject.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.14  $
-//* .Check In Date   : $Date:   15 May 2014 11:56:14  $
+//* .Current Version : $Revision:   1.15  $
+//* .Check In Date   : $Date:   02 Jun 2014 10:18:42  $
 //******************************************************************************
 
 #ifndef SVPPQOBJECT_H
@@ -33,7 +33,7 @@
 #pragma endregion Includes
 
 #pragma region Declarations
-const char			PpqLength[]						= _T("Length");
+const TCHAR			PpqLength[]						= _T("Length");
 const long			StandardPpqLength				= 2;
 
 class SVInspectionProcess;
@@ -424,6 +424,16 @@ typedef SVVector< SVPPQObject* > SVPPQObjectArray;
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVPPQObject.h_v  $
+ * 
+ *    Rev 1.15   02 Jun 2014 10:18:42   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  900
+ * SCR Title:  Separate View Image Update, View Result Update flags; remote access E55,E92
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Changed char to TCHAR for constants.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.14   15 May 2014 11:56:14   tbair
  * Project:  SVObserver

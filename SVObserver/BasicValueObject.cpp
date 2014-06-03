@@ -5,14 +5,15 @@
 //* .Module Name     : BasicValueObject
 //* .File Name       : $Workfile:   BasicValueObject.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   02 Apr 2014 12:48:46  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   02 Jun 2014 08:31:24  $
 //******************************************************************************
 
 #pragma region Includes
 #include "stdafx.h"
 #include "BasicValueObject.h"
 
+#include "SVObjectLibrary\SVObjectLevelCreateStruct.h"
 #include "SVUtilityLibrary\SVSAFEARRAY.h"
 #include "SVOMFCLibrary\SVBoolValueDeviceParam.h"
 #include "SVOMFCLibrary\SVLongValueDeviceParam.h"
@@ -28,11 +29,12 @@ using namespace Seidenader::SVObserver;
 #pragma endregion Declarations
 
 #pragma region Constructor
-BasicValueObject::BasicValueObject( LPCSTR ObjectName )
-: SVObjectClass(ObjectName),
-	m_Created(FALSE)
+BasicValueObject::BasicValueObject( LPCSTR ObjectName,  SVObjectClass* pOwner, bool Node )
+: SVObjectClass(ObjectName)
+	, m_Created(false)
+	, m_Node(Node)
 {
-	Create();
+	Create( pOwner );
 }
 
 BasicValueObject::~BasicValueObject()
@@ -55,56 +57,22 @@ bool BasicValueObject::operator==(const BasicValueObject& rRhs) const
 
 HRESULT BasicValueObject::setValue(const _variant_t& rValue )
 {
-	HRESULT			Status;
-	_variant_t		Temp;
+	HRESULT	Status = S_OK;
+	_variant_t	TempValue( rValue );
 
 	//SVRC sends data as array
-	if( rValue.vt & VT_ARRAY )
+	if( TempValue.vt & VT_ARRAY )
 	{
-		SVSAFEARRAY SafeArray( rValue );
-
-		//BasicValueObject can only have one value
-		if ( 1 == SafeArray.size() )
-		{
-			Status = SafeArray.GetElement( 0, Temp );
-			//From SVRC only of type BSTR should be received
-			if(VT_BSTR == Temp.vt)
-			{
-				SVString StringValue;
-				StringValue = Temp.bstrVal;
-				Temp.Clear();
-				Temp.vt = m_Value.vt;
-				switch(m_Value.vt)
-				{
-				case VT_BSTR:
-					Temp.bstrVal = StringValue.ToBSTR();
-					break;
-				case VT_I4:
-					Temp.lVal = atol(StringValue.c_str());
-					break;
-				case VT_R8:
-					Temp.dblVal = atof(StringValue.c_str());
-					break;
-				default:
-					break;
-				}
-			}
-			Status = E_INVALIDARG;
-		}
-		else
-		{
-			Status = E_INVALIDARG;
-		}
-	}
-	else
-	{
-		Temp = rValue;
+		Status = ConvertArrayToVariant( TempValue );
 	}
 
-	Lock();
-	m_Value = Temp;
-	Unlock();
-	return S_OK;
+	if ( S_OK == Status )
+	{
+		Lock();
+		m_Value = TempValue;
+		Unlock();
+	}
+	return Status;
 }
 
 HRESULT BasicValueObject::setValue(const LPCTSTR Value )
@@ -158,16 +126,18 @@ HRESULT BasicValueObject::getValue( _variant_t& rValue ) const
 {
 	RefreshOwner();
 
+	rValue.Clear();
 	rValue = m_Value;
 	return S_OK;
 }
 
-HRESULT BasicValueObject::getValue( CString& rValue ) const
+HRESULT BasicValueObject::getValue( SVString& rValue ) const
 {
 	HRESULT	Result = S_OK;
 
 	RefreshOwner();
 
+	rValue.clear();
 	switch(m_Value.vt)
 	{
 	case VT_BSTR:
@@ -206,6 +176,7 @@ HRESULT BasicValueObject::getValue( BOOL& rValue ) const
 
 	RefreshOwner();
 
+	rValue =FALSE;
 	if(VT_BOOL == m_Value.vt)
 	{
 		rValue = m_Value.boolVal;
@@ -220,6 +191,7 @@ HRESULT BasicValueObject::getValue( long& rValue ) const
 
 	RefreshOwner();
 
+	rValue = 0;
 	if(VT_I4 == m_Value.vt)
 	{
 		rValue = m_Value.lVal;
@@ -234,6 +206,7 @@ HRESULT BasicValueObject::getValue( __int64& rValue ) const
 
 	RefreshOwner();
 
+	rValue = 0;
 	if(VT_I8 == m_Value.vt)
 	{
 		rValue = m_Value.llVal;
@@ -248,6 +221,7 @@ HRESULT BasicValueObject::getValue( double& rValue ) const
 
 	RefreshOwner();
 
+	rValue = 0.0;
 	if(VT_R4 == m_Value.vt)
 	{
 		rValue = m_Value.dblVal;
@@ -350,13 +324,24 @@ HRESULT BasicValueObject::updateDeviceParameter(SVDeviceParam* pDeviceParam)
 #pragma endregion Public Methods
 
 #pragma region Private Methods
-BOOL BasicValueObject::Create()
+BOOL BasicValueObject::Create( SVObjectClass* pOwner )
 {
 	m_Value.Clear();
-	SetObjectDepth(1);
-	ObjectAttributesAllowedRef() = SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES;
+	SetObjectDepth( 1 );
+	if( !m_Node )
+	{
+		ObjectAttributesAllowedRef() = SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES;
+	}
+	if( nullptr != pOwner )
+	{
+		SVObjectLevelCreateStruct CreateStruct;
+
+		CreateStruct.OwnerObjectInfo.SetObject(pOwner);
+		CreateObject( &CreateStruct );
+
+	}
 	::InitializeCriticalSection( &m_CriticalSection );
-	m_Created = TRUE;
+	m_Created = true;
 	return true;
 }
 
@@ -365,9 +350,9 @@ BOOL BasicValueObject::Destroy()
 	if( m_Created )
 	{
 		m_Value.Clear();
-		SetObjectDepth(-1);
+		SetObjectDepth( -1 );
 		::DeleteCriticalSection( &m_CriticalSection );
-		m_Created = FALSE;
+		m_Created = false;
 	}
 	return true;
 }
@@ -399,6 +384,68 @@ BOOL BasicValueObject::RefreshOwner() const
 
 	return Result;
 }
+
+HRESULT BasicValueObject::ConvertArrayToVariant( _variant_t& rValue ) const
+{
+	HRESULT Status = S_OK;
+	SVSAFEARRAY SafeArray( rValue );
+
+	//BasicValueObject can only have one value
+	if ( 1 == SafeArray.size() )
+	{
+		Status = SafeArray.GetElement( 0, rValue );
+		//From SVRC only of type BSTR should be received
+		if(VT_BSTR == rValue.vt)
+		{
+			SVString StringValue;
+			StringValue = rValue.bstrVal;
+			rValue.Clear();
+			rValue.vt = m_Value.vt;
+			switch(m_Value.vt)
+			{
+			case VT_BSTR:
+				rValue.bstrVal = StringValue.ToBSTR();
+				break;
+			case VT_BOOL:
+				if( 0 == StringValue.CompareNoCase( _T("True") ))
+				{
+					rValue.boolVal = TRUE;
+				}
+				else if( 0 == StringValue.CompareNoCase( _T("False") ) )
+				{
+					rValue.boolVal = FALSE;
+				}
+				else
+				{
+					Status = E_INVALIDARG;
+				}
+				break;
+			case VT_I4:
+				rValue.lVal = atol(StringValue.c_str());
+				break;
+			case VT_I8:
+				rValue.llVal = atol(StringValue.c_str());
+				break;
+			case VT_R8:
+				rValue.dblVal = atof(StringValue.c_str());
+				break;
+			default:
+				Status = E_INVALIDARG;
+				break;
+			}
+		}
+		else
+		{
+			Status = E_INVALIDARG;
+		}
+	}
+	else
+	{
+		Status = E_INVALIDARG;
+	}
+
+	return Status;
+}
 #pragma endregion Private Methods
 
 //******************************************************************************
@@ -406,6 +453,18 @@ BOOL BasicValueObject::RefreshOwner() const
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\BasicValueObject.cpp_v  $
+ * 
+ *    Rev 1.2   02 Jun 2014 08:31:24   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  900
+ * SCR Title:  Separate View Image Update, View Result Update flags; remote access E55,E92
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Added pOwner and Node to constructor
+ * Changed Create method to take pOwner parameter
+ * Added method CovertArrayToVariant
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   02 Apr 2014 12:48:46   bwalter
  * Project:  SVObserver

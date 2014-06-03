@@ -5,10 +5,11 @@
 //* .Module Name     : SVResultView
 //* .File Name       : $Workfile:   SVResultView.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.4  $
-//* .Check In Date   : $Date:   02 Oct 2013 12:05:42  $
+//* .Current Version : $Revision:   1.5  $
+//* .Check In Date   : $Date:   02 Jun 2014 10:20:12  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVResultView.h"
 #include "SVIPDoc.h"
@@ -20,14 +21,19 @@
 #include "SVXMLLibrary/SVNavigateTreeClass.h"
 #include "SVConfigurationLibrary/SVConfigurationTags.h"
 #include "SVIPChildFrm.h"
+#include "EnvironmentObject.h"
+#pragma endregion Includes
+
+#pragma region Declarations
+using namespace Seidenader::SVObserver;
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
-#undef THIS_FILE
-static char THIS_FILE[] = __FILE__;
 #endif
 
 enum { SV_NUMBER_RESULTVIEW_COLUMNS = 4 };
+#pragma endregion Declarations
+
 
 IMPLEMENT_DYNCREATE( SVResultViewClass, CListView )
 
@@ -101,6 +107,15 @@ void SVResultViewClass::OnDestroy()
 void SVResultViewClass::OnUpdate( CView* pSender, LPARAM lHint, CObject* pHint ) 
 {
 	SVIPDoc* l_pIPDoc = GetIPDoc();
+
+	BOOL Update = TRUE;
+	EnvironmentObject::getEnvironmentValue( ::EnvironmentResultUpdate, Update );
+	Update = Update || !SVSVIMStateClass::CheckState( SV_STATE_RUNNING );
+
+	if( !Update )
+	{
+		return;
+	}
 
 	if( l_pIPDoc != NULL )
 	{
@@ -862,6 +877,16 @@ BOOL SVResultViewClass::CheckParameters( SVTreeType& rTree, SVTreeType::SVBranch
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVResultView.cpp_v  $
+ * 
+ *    Rev 1.5   02 Jun 2014 10:20:12   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  900
+ * SCR Title:  Separate View Image Update, View Result Update flags; remote access E55,E92
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Checks the Result display update flag to determine if the view is to be updated.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.4   02 Oct 2013 12:05:42   tbair
  * Project:  SVObserver

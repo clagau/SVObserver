@@ -5,8 +5,8 @@
 //* .Module Name     : SVMainFrm
 //* .File Name       : $Workfile:   SVMainFrm.CPP  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.6  $
-//* .Check In Date   : $Date:   28 Feb 2014 09:16:56  $
+//* .Current Version : $Revision:   1.7  $
+//* .Check In Date   : $Date:   02 Jun 2014 09:54:04  $
 //******************************************************************************
 
 #pragma region Includes
@@ -38,15 +38,16 @@
 #include "SVObjectScriptParserSVX.h"	// new speedy
 #include "SVInspectionTreeParser.h"		// new Inspection XML (NOT object script)
 #include "RemoteCommand.h"
+#include "EnvironmentObject.h"
 
 #include "SVOLicenseManager/SVOLicenseManager.h"
 #pragma endregion Includes
 
 #pragma region Declarations
+using namespace Seidenader::SVObserver;
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
-#undef THIS_FILE
-static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
@@ -73,8 +74,10 @@ BEGIN_MESSAGE_MAP(SVMainFrame, CMDIFrameWnd)
 	ON_COMMAND(ID_VIEW_TOOLBAR, OnViewToolBar)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_PPQ_BAR, OnUpdateViewPPQBar)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_TOOLBAR, OnUpdateViewToolbar)
-	ON_COMMAND(ID_VIEW_ONLINE_DISPLAY, OnViewOnlineDisplay)
-	ON_UPDATE_COMMAND_UI(ID_VIEW_ONLINE_DISPLAY, OnUpdateViewOnlineDisplay)
+	ON_COMMAND(ID_VIEW_IMAGE_DISPLAY_UPDATE, OnViewImageDisplayUpdate)
+	ON_UPDATE_COMMAND_UI(ID_VIEW_IMAGE_DISPLAY_UPDATE, OnUpdateViewImageDisplayUpdate)
+	ON_COMMAND(ID_VIEW_RESULT_DISPLAY_UPDATE, OnViewResultDisplayUpdate)
+	ON_UPDATE_COMMAND_UI(ID_VIEW_RESULT_DISPLAY_UPDATE, OnUpdateViewResultDisplayUpdate)
 	ON_WM_SIZE()
 	ON_WM_SIZING()
 	//}}AFX_MSG_MAP
@@ -395,7 +398,7 @@ void SVMainFrame::SetStatusInfoText( LPCTSTR SIText )
 //	:
 ////////////////////////////////////////////////////////////////////////////////
 // .History
-//	 Date		Author		Comment                                       
+//	 Date		Author		Comment
 //  :27.05.1997 RO			First Implementation
 //	:
 ////////////////////////////////////////////////////////////////////////////////
@@ -454,7 +457,7 @@ void SVMainFrame::ShowAllBars( BOOL Show, BOOL RememberOldState /*= FALSE*/ )
 //	:
 ////////////////////////////////////////////////////////////////////////////////
 // .History
-//	 Date		Author		Comment                                       
+//	 Date		Author		Comment
 //  :27.05.1997 RO			First Implementation
 //	:
 ////////////////////////////////////////////////////////////////////////////////
@@ -569,7 +572,7 @@ void SVMainFrame::UpdateFrameTitleForDocument( LPCTSTR lpszDocName )
 //	:
 ////////////////////////////////////////////////////////////////////////////////
 // .History
-//	 Date		Author		Comment                                       
+//	 Date		Author		Comment
 //  :27.05.1997 RO			First Implementation
 //	:
 ////////////////////////////////////////////////////////////////////////////////
@@ -603,7 +606,7 @@ BOOL SVMainFrame::OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext* pContext)
 //	:
 ////////////////////////////////////////////////////////////////////////////////
 // .History
-//	 Date		Author		Comment                                       
+//	 Date		Author		Comment
 //  :27.05.1997 RO			First Implementation
 //	:
 ////////////////////////////////////////////////////////////////////////////////
@@ -688,7 +691,7 @@ int SVMainFrame::OnCreate( LPCREATESTRUCT lpCreateStruct )
 //	:
 ////////////////////////////////////////////////////////////////////////////////
 // .History
-//	 Date		Author		Comment                                       
+//	 Date		Author		Comment
 //  :27.05.1997 RO			First Implementation
 //	:
 ////////////////////////////////////////////////////////////////////////////////
@@ -720,7 +723,7 @@ void SVMainFrame::OnLButtonDown(UINT nFlags, CPoint point)
 //	:
 ////////////////////////////////////////////////////////////////////////////////
 // .History
-//	 Date		Author		Comment                                       
+//	 Date		Author		Comment
 //  :27.05.1997 RO			First Implementation
 //	:
 ////////////////////////////////////////////////////////////////////////////////
@@ -752,7 +755,7 @@ void SVMainFrame::OnRButtonDown(UINT nFlags, CPoint point)
 //	:
 ////////////////////////////////////////////////////////////////////////////////
 // .History
-//	 Date		Author		Comment                                       
+//	 Date		Author		Comment
 //  :27.05.1997 RO			First Implementation
 //	:
 ////////////////////////////////////////////////////////////////////////////////
@@ -786,7 +789,7 @@ void SVMainFrame::OnSetFocus(CWnd* pOldWnd)
 //	:
 ////////////////////////////////////////////////////////////////////////////////
 // .History
-//	 Date		Author		Comment                                       
+//	 Date		Author		Comment
 //  :27.05.1997 RO			First Implementation
 //	:
 ////////////////////////////////////////////////////////////////////////////////
@@ -820,11 +823,11 @@ void SVMainFrame::OnLButtonDblClk(UINT nFlags, CPoint point)
 //	:
 ////////////////////////////////////////////////////////////////////////////////
 // .History
-//	 Date		Author		Comment                                       
+//	 Date		Author		Comment
 //  :27.05.1997 RO			First Implementation
 //	:
 ////////////////////////////////////////////////////////////////////////////////
-void SVMainFrame::OnClose() 
+void SVMainFrame::OnClose()
 {
 	bool l_bAllowAccess = false;
 
@@ -902,7 +905,7 @@ void SVMainFrame::OnClose()
 //	:
 ////////////////////////////////////////////////////////////////////////////////
 // .History
-//	 Date		Author		Comment                                       
+//	 Date		Author		Comment
 //  :27.05.1997 RO			First Implementation
 //	:
 ////////////////////////////////////////////////////////////////////////////////
@@ -1080,7 +1083,7 @@ void SVMainFrame::OnUpdateStatusInfo( CCmdUI *pCmdUI )
 	m_wndStatusBar.Invalidate();
 }
 
-LRESULT SVMainFrame::InvalidateStatusBar( WPARAM wParam, LPARAM lParam)
+LRESULT SVMainFrame::InvalidateStatusBar( WPARAM wParam, LPARAM lParam )
 {
 	m_wndStatusBar.Invalidate();
 	return 0;
@@ -1109,11 +1112,11 @@ LRESULT SVMainFrame::InvalidateStatusBar( WPARAM wParam, LPARAM lParam)
 //	:
 ////////////////////////////////////////////////////////////////////////////////
 // .History
-//	 Date		Author		Comment                                       
+//	 Date		Author		Comment
 //  :27.05.1997 RO			First Implementation
 //	:
 ////////////////////////////////////////////////////////////////////////////////
-void SVMainFrame::OnMouseMove( UINT nFlags, CPoint point ) 
+void SVMainFrame::OnMouseMove( UINT nFlags, CPoint point )
 {
 	SetStatusInfoText( NULL );
 	
@@ -1143,11 +1146,11 @@ void SVMainFrame::OnMouseMove( UINT nFlags, CPoint point )
 //	:
 ////////////////////////////////////////////////////////////////////////////////
 // .History
-//	 Date		Author		Comment                                       
+//	 Date		Author		Comment
 //  :27.05.1997 RO			First Implementation
 //	:
 ////////////////////////////////////////////////////////////////////////////////
-void SVMainFrame::OnViewPPQBar() 
+void SVMainFrame::OnViewPPQBar()
 {
 	bool l_IsWindowVisible = ( PPQBar.IsWindowVisible() != FALSE );
 	bool l_ValidState = ( SVSVIMStateClass::CheckState( SV_STATE_READY | SV_STATE_RUNNING ) != FALSE );
@@ -1191,11 +1194,11 @@ void SVMainFrame::OnViewPPQBar()
 //	:
 ////////////////////////////////////////////////////////////////////////////////
 // .History
-//	 Date		Author		Comment                                       
+//	 Date		Author		Comment
 //  :27.05.1997 RO			First Implementation
 //	:
 ////////////////////////////////////////////////////////////////////////////////
-void SVMainFrame::OnViewToolBar() 
+void SVMainFrame::OnViewToolBar()
 {
 	if( !m_wndToolBar.IsWindowVisible() )
 	{
@@ -1235,11 +1238,11 @@ void SVMainFrame::OnViewToolBar()
 //	:
 ////////////////////////////////////////////////////////////////////////////////
 // .History
-//	 Date		Author		Comment                                       
+//	 Date		Author		Comment
 //  :27.05.1997 RO			First Implementation
 //	:
 ////////////////////////////////////////////////////////////////////////////////
-void SVMainFrame::OnUpdateViewPPQBar( CCmdUI* pCmdUI ) 
+void SVMainFrame::OnUpdateViewPPQBar( CCmdUI* pCmdUI )
 {
 	BOOL bEnable = !SVSVIMStateClass::CheckState( SV_STATE_TEST|SV_STATE_RUNNING );
 	bEnable &= TheSVObserverApp.OkToEdit() ? 1 : 0;
@@ -1280,11 +1283,11 @@ void SVMainFrame::OnUpdateViewPPQBar( CCmdUI* pCmdUI )
 //	:
 ////////////////////////////////////////////////////////////////////////////////
 // .History
-//	 Date		Author		Comment                                       
+//	 Date		Author		Comment
 //  :27.05.1997 RO			First Implementation
 //	:
 ////////////////////////////////////////////////////////////////////////////////
-void SVMainFrame::OnUpdateViewToolbar( CCmdUI* pCmdUI ) 
+void SVMainFrame::OnUpdateViewToolbar( CCmdUI* pCmdUI )
 {
 	pCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION ) );
 
@@ -1318,7 +1321,7 @@ HRESULT SVMainFrame::ParseToolsetScripts( SVTreeType& p_rTree )
 			CString* pToolsetScript = new CString;
 			SVGUID ownerGuid;
 
-			if( pToolsetScript != NULL)
+			if( pToolsetScript != NULL )
 			{
 				SVInspectionProcess* pInspect( NULL );
 				SVTreeType::SVBranchHandle htiSVIPDoc = NULL;
@@ -1497,10 +1500,10 @@ HRESULT SVMainFrame::ParseToolsetScripts( SVTreeType& p_rTree )
 //	:BOOL PPQBar::BuildButtons()
 ////////////////////////////////////////////////////////////////////////////////
 // .History
-//	 Date		Author		Comment                                       
+//	 Date		Author		Comment
 //  :08.01.1998 RO			First Implementation
 ////////////////////////////////////////////////////////////////////////////////
-BOOL SVMainFrame::BuildPPQButtons() 
+BOOL SVMainFrame::BuildPPQButtons()
 {
 	return PPQBar.BuildButtons();
 }
@@ -1517,7 +1520,7 @@ BOOL SVMainFrame::BuildPPQButtons()
 //	:BOOL PPQBar::DestroyButtons()
 ////////////////////////////////////////////////////////////////////////////////
 // .History
-//	 Date		Author		Comment                                       
+//	 Date		Author		Comment
 //  :05.05.1998 RO			First Implementation
 ////////////////////////////////////////////////////////////////////////////////
 BOOL SVMainFrame::DestroyPPQButtons()
@@ -1650,7 +1653,7 @@ LRESULT SVMainFrame::OnDisplayChange(WPARAM p_p1, LPARAM p_p2)
 		{
 			bResolutionChanged = true;
 		}
-		
+
 		// check for pixel depth change
 		int l_PixelDepth(0);
 		hr = SVDirectX::GetPrimarySurfacePixelDepth(l_PixelDepth);
@@ -1773,7 +1776,7 @@ LRESULT SVMainFrame::OnLoadConfiguration( WPARAM wParam, LPARAM lParam )
 //	:
 ////////////////////////////////////////////////////////////////////////////////
 // .History
-//	 Date		Author		Comment                                       
+//	 Date		Author		Comment
 //  :27.05.1997 RO			First Implementation
 //	:
 ////////////////////////////////////////////////////////////////////////////////
@@ -1806,7 +1809,7 @@ void SVMainFrame::AssertValid() const
 //	:
 ////////////////////////////////////////////////////////////////////////////////
 // .History
-//	 Date		Author		Comment                                       
+//	 Date		Author		Comment
 //  :27.05.1997 RO			First Implementation
 //	:
 ////////////////////////////////////////////////////////////////////////////////
@@ -1819,7 +1822,7 @@ void SVMainFrame::Dump(CDumpContext& dc) const
 
 void SVMainFrame::SetNotifyCommRC()
 {
-  mbNotifyCommRC = TRUE;
+	mbNotifyCommRC = TRUE;
 }
 
 LRESULT SVMainFrame::OnMsgSetToolSelected( 
@@ -1858,19 +1861,44 @@ LRESULT SVMainFrame::OnUserChanged( WPARAM wParam, LPARAM lParam )
 	return (LRESULT)TRUE;
 }
 
-void SVMainFrame::OnViewOnlineDisplay() 
+void SVMainFrame::OnViewImageDisplayUpdate()
 {
 	SVSVIMStateClass::AddState( SV_STATE_MODIFIED );
-	SVObjectManagerClass::Instance().SetOnlineDisplay( !( SVObjectManagerClass::Instance().GetOnlineDisplay() ) );
+
+	BOOL ImageUpdate = FALSE;
+	EnvironmentObject::getEnvironmentValue( ::EnvironmentImageUpdate, ImageUpdate );
+	EnvironmentObject::setEnvironmentValue( ::EnvironmentImageUpdate, !ImageUpdate );
 }
 
-void SVMainFrame::OnUpdateViewOnlineDisplay( CCmdUI* pCmdUI ) 
+void SVMainFrame::OnUpdateViewImageDisplayUpdate( CCmdUI* pCmdUI )
 {
 	BOOL bEnable = TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable( SECURITY_POINT_VIEW_MENU_ONLINE_DISPLAY );
-	bEnable &= !SVSVIMStateClass::CheckState(SV_STATE_REGRESSION);
+	bEnable &= !SVSVIMStateClass::CheckState( SV_STATE_REGRESSION );
 	pCmdUI->Enable( bEnable);
 
-	pCmdUI->SetCheck( SVObjectManagerClass::Instance().GetOnlineDisplay() );
+	BOOL ImageUpdate;
+	EnvironmentObject::getEnvironmentValue( ::EnvironmentImageUpdate, ImageUpdate );
+	pCmdUI->SetCheck( ImageUpdate );
+}
+
+void SVMainFrame::OnViewResultDisplayUpdate()
+{
+	SVSVIMStateClass::AddState( SV_STATE_MODIFIED );
+
+	BOOL ResultOnline = FALSE;
+	EnvironmentObject::getEnvironmentValue( ::EnvironmentResultUpdate, ResultOnline );
+	EnvironmentObject::setEnvironmentValue( ::EnvironmentResultUpdate, !ResultOnline );
+}
+
+void SVMainFrame::OnUpdateViewResultDisplayUpdate( CCmdUI* pCmdUI )
+{
+	BOOL bEnable = TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable( SECURITY_POINT_VIEW_MENU_ONLINE_DISPLAY );
+	bEnable &= !SVSVIMStateClass::CheckState( SV_STATE_REGRESSION );
+	pCmdUI->Enable( bEnable);
+
+	BOOL ResultOnline;
+	EnvironmentObject::getEnvironmentValue( ::EnvironmentResultUpdate, ResultOnline );
+	pCmdUI->SetCheck( ResultOnline );
 }
 
 BOOL SVMainFrame::VerifyBarStates(LPCTSTR lpszProfileName)
@@ -1886,7 +1914,7 @@ BOOL SVMainFrame::VerifyBarStates(LPCTSTR lpszProfileName)
 
 		int nDockedCount = static_cast<int>(pInfo->m_arrBarID.GetSize());
 		if (nDockedCount > 0)
-		{ 
+		{
 			// dockbar
 			for (int j = 0; j < nDockedCount; j++)
 			{
@@ -1917,11 +1945,11 @@ BOOL SVMainFrame::VerifyBarStates(LPCTSTR lpszProfileName)
 	return TRUE;
 }
 
-void SVMainFrame::OnSize(UINT nType, int cx, int cy) 
+void SVMainFrame::OnSize(UINT nType, int cx, int cy)
 {
 	CMDIFrameWnd::OnSize(nType, cx, cy);
 
-	if ( nType == SIZE_MINIMIZED ) 
+	if ( nType == SIZE_MINIMIZED )
 	{
 		// Do nothing else.  Just return.
 		return;
@@ -1946,7 +1974,7 @@ void SVMainFrame::OnSize(UINT nType, int cx, int cy)
 	}
 	
 	if ( nType == SIZE_RESTORED )
-	{ 
+	{
 		WINDOWPLACEMENT *lwp;
 		UINT nl;
 
@@ -1962,11 +1990,11 @@ void SVMainFrame::OnSize(UINT nType, int cx, int cy)
 	}
 }
 
-void SVMainFrame::OnSizing(UINT fwSide, LPRECT pRect) 
+void SVMainFrame::OnSizing(UINT fwSide, LPRECT pRect)
 {
 	m_bSizeChanged = TRUE;
 
-	CMDIFrameWnd::OnSizing(fwSide, pRect);	
+	CMDIFrameWnd::OnSizing(fwSide, pRect);
 }
 
 LRESULT SVMainFrame::OnHideIOViewTab( WPARAM p_wParam, LPARAM p_lParam )
@@ -1980,6 +2008,17 @@ LRESULT SVMainFrame::OnHideIOViewTab( WPARAM p_wParam, LPARAM p_lParam )
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVMainFrm.CPP_v  $
+ * 
+ *    Rev 1.7   02 Jun 2014 09:54:04   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  900
+ * SCR Title:  Separate View Image Update, View Result Update flags; remote access E55,E92
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Added ID_VIEW_IMAGE_DISPLAY_UPDATE and ID_VIEW_RESULT_DISPLAY_UPDATE command and update command handlers.
+ * Removed the ID_VIEW_ONLINE_DISPLAY command and update command handlers.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.6   28 Feb 2014 09:16:56   tbair
  * Project:  SVObserver

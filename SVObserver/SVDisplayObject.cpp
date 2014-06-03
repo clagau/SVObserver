@@ -5,10 +5,11 @@
 //* .Module Name     : SVDisplayObject
 //* .File Name       : $Workfile:   SVDisplayObject.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.4  $
-//* .Check In Date   : $Date:   25 Jul 2013 14:15:58  $
+//* .Current Version : $Revision:   1.5  $
+//* .Check In Date   : $Date:   02 Jun 2014 09:38:20  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVDisplayObject.h"
 
@@ -23,6 +24,16 @@
 #include "SVInspectionProcess.h"
 #include "SVIPDoc.h"
 #include "SVObserver.h"
+#include "EnvironmentObject.h"
+#pragma endregion Includes
+
+#pragma region Declarations
+using namespace Seidenader::SVObserver;
+
+#ifdef _DEBUG
+#define new DEBUG_NEW
+#endif
+#pragma endregion Declarations
 
 SVDisplayObject::SVDisplayObject( LPCSTR ObjectName )
 : SVObjectClass( ObjectName )
@@ -416,8 +427,13 @@ HRESULT SVDisplayObject::ProcessNotifyIPDoc( bool& p_rProcessed )
 HRESULT SVDisplayObject::FinishInspection( const SVInspectionCompleteInfoStruct& p_rProduct )
 {	
 	HRESULT l_Status = S_OK;
+	BOOL ImageUpdate = TRUE;
+	BOOL ResultUpdate = TRUE;
 
-	if( SVObjectManagerClass::Instance().GetOnlineDisplay() || !SVSVIMStateClass::CheckState( SV_STATE_RUNNING ))
+	EnvironmentObject::getEnvironmentValue( ::EnvironmentImageUpdate, ImageUpdate );
+	EnvironmentObject::getEnvironmentValue( ::EnvironmentResultUpdate, ResultUpdate );
+
+	if( ImageUpdate || ResultUpdate  || !SVSVIMStateClass::CheckState( SV_STATE_RUNNING ))
 	{
 		if( m_CriticalSectionCreated && m_hStartEvent != NULL && !( p_rProduct.empty() ) )
 		{
@@ -465,7 +481,17 @@ void SVDisplayObject::UpdateNextDisplayEvent()
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVDisplayObject.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVDisplayObject.cpp_v  $
+ * 
+ *    Rev 1.5   02 Jun 2014 09:38:20   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  900
+ * SCR Title:  Separate View Image Update, View Result Update flags; remote access E55,E92
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Changed the Online display flag into the Image and Result display update flags.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.4   25 Jul 2013 14:15:58   tbair
  * Project:  SVObserver

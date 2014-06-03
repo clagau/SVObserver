@@ -5,8 +5,8 @@
 //* .Module Name     : BasicValueObjects
 //* .File Name       : $Workfile:   BasicValueObjects.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   17 Mar 2014 15:10:22  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   02 Jun 2014 08:55:50  $
 //* ----------------------------------------------------------------------------
 //* This class is used as the container to store BasicValueObject objects
 //******************************************************************************
@@ -47,6 +47,15 @@ namespace Seidenader
 			BasicValueObject* getValueObject(LPCTSTR Name) const;
 
 			/**********
+			 The method gets the value of a name
+			 \param Name <in> the name of the object to get
+			 \param rValue <out> reference to the value of the object
+			 \return SOK on success
+			***********/
+			template <typename ELEMENT_TYPE>
+			HRESULT getValue( LPCSTR Name, ELEMENT_TYPE& rValue ) const;
+
+			/**********
 			 The method sets the value of a variable name if does not exist it is created
 			 \param Name <in> the variable name to set
 			 \param Value <in> the value to set the variable to
@@ -54,7 +63,7 @@ namespace Seidenader
 			 \return reference to the value object
 			***********/
 			template <typename ELEMENT_TYPE>
-			BasicValueObject& setValueObject(LPCTSTR Name, ELEMENT_TYPE Value, SVObjectClass* pOwner = nullptr);
+			BasicValueObject* setValueObject(LPCTSTR Name, const ELEMENT_TYPE Value, SVObjectClass* pOwner = nullptr);
 
 			/**********
 			 The method gets the value list
@@ -90,6 +99,18 @@ namespace Seidenader
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\BasicValueObjects.h_v  $
+ * 
+ *    Rev 1.1   02 Jun 2014 08:55:50   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  900
+ * SCR Title:  Separate View Image Update, View Result Update flags; remote access E55,E92
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Added method getValue.
+ * Changed return type, parameter type for setValueObject.
+ * setValueObject generates required nodes automatically.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   17 Mar 2014 15:10:22   bwalter
  * Project:  SVObserver

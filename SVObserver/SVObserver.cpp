@@ -5,8 +5,8 @@
 //* .Module Name     : SVObserver
 //* .File Name       : $Workfile:   SVObserver.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.31  $
-//* .Check In Date   : $Date:   20 May 2014 10:20:48  $
+//* .Current Version : $Revision:   1.32  $
+//* .Check In Date   : $Date:   02 Jun 2014 10:07:40  $
 //******************************************************************************
 
 #pragma region Includes
@@ -4066,50 +4066,29 @@ CString SVObserverApp::GetConfigurationName() const
 	return l_ConfigName;
 }
 
-CString SVObserverApp::getModelNumber() const
+SVString SVObserverApp::getModelNumber() const
 {
-	CString ModelNumber;
+	SVString ModelNumber;
 
-	EnvironmentObject *pEnvironment = nullptr;
-
-	SVObjectManagerClass::Instance().GetRootChildObject(pEnvironment, SVObjectManagerClass::Environment);
-
-	if(nullptr != pEnvironment)
-	{
-		ModelNumber = pEnvironment->getVariable(::EnvironmentModelNumber);
-	}
+	EnvironmentObject::getEnvironmentValue( ::EnvironmentModelNumber, ModelNumber );
 
 	return ModelNumber;
 }
 
-CString SVObserverApp::getSerialNumber() const
+SVString SVObserverApp::getSerialNumber() const
 {
-	CString SerialNumber;
+	SVString SerialNumber;
 
-	EnvironmentObject *pEnvironment = nullptr;
-
-	SVObjectManagerClass::Instance().GetRootChildObject(pEnvironment, SVObjectManagerClass::Environment);
-
-	if(nullptr != pEnvironment)
-	{
-		SerialNumber = pEnvironment->getVariable(::EnvironmentSerialNumber);
-	}
+	EnvironmentObject::getEnvironmentValue( ::EnvironmentSerialNumber, SerialNumber );
 
 	return SerialNumber;
 }
 
-CString SVObserverApp::getWinKey() const
+SVString SVObserverApp::getWinKey() const
 {
-	CString WinKey;
+	SVString WinKey;
 
-	EnvironmentObject *pEnvironment = nullptr;
-
-	SVObjectManagerClass::Instance().GetRootChildObject(pEnvironment, SVObjectManagerClass::Environment);
-
-	if(nullptr != pEnvironment)
-	{
-		WinKey = pEnvironment->getVariable(::EnvironmentWinKey);
-	}
+	EnvironmentObject::getEnvironmentValue( ::EnvironmentWinKey, WinKey );
 
 	return WinKey;
 }
@@ -7472,19 +7451,13 @@ HRESULT SVObserverApp::INILoad()
 
 	if (l_hrOk == S_OK)
 	{
-		EnvironmentObject *pEnvironment = nullptr;
-
-		SVObjectManagerClass::Instance().GetRootChildObject(pEnvironment, SVObjectManagerClass::Environment);
-
 		// copy settings from the SVOIniLoader class for now
 		g_bUseCorrectListRecursion = l_iniLoader.m_bUseCorrectListRecursion;
 
-		if(nullptr != pEnvironment)
-		{
-			pEnvironment->setVariable(::EnvironmentModelNumber, l_iniLoader.m_csModelNumber);
-			pEnvironment->setVariable(::EnvironmentSerialNumber ,l_iniLoader.m_csSerialNumber);
-			pEnvironment->setVariable(::EnvironmentWinKey, l_iniLoader.m_csWinKey);
-		}
+		EnvironmentObject::setEnvironmentValue( ::EnvironmentModelNumber, l_iniLoader.m_csModelNumber );
+		EnvironmentObject::setEnvironmentValue( ::EnvironmentSerialNumber , l_iniLoader.m_csSerialNumber );
+		EnvironmentObject::setEnvironmentValue( ::EnvironmentWinKey, l_iniLoader.m_csWinKey );
+
 		m_csProductName = l_iniLoader.m_csProductName;
 
 		m_csProcessorBoardName = l_iniLoader.m_csProcessorBoardName;
@@ -8909,6 +8882,16 @@ int SVObserverApp::FindMenuItem(CMenu* Menu, LPCTSTR MenuString)
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVObserver.cpp_v  $
+ * 
+ *    Rev 1.32   02 Jun 2014 10:07:40   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  900
+ * SCR Title:  Separate View Image Update, View Result Update flags; remote access E55,E92
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Replace the get and set variable methods to the static Environment methods getEnvironmentValue and setEnvironmentValue.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.31   20 May 2014 10:20:48   ryoho
  * Project:  SVObserver

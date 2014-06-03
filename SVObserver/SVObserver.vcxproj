@@ -4864,7 +4864,9 @@ echo %time%
     <ClInclude Include="VisualFx.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="BasicValueObject.inl" />
     <None Include="BasicValueObjects.inl" />
+    <None Include="EnvironmentObject.inl" />
     <None Include="res\arrow_rotate.ico" />
     <None Include="SVConfigurationTreeWriter.inl" />
     <None Include="SVConfigXMLPrint.inl" />

@@ -5,8 +5,8 @@
 //* .Module Name     : SVVirtualCamera
 //* .File Name       : $Workfile:   SVVirtualCamera.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.3  $
-//* .Check In Date   : $Date:   22 Apr 2014 13:26:54  $
+//* .Current Version : $Revision:   1.4  $
+//* .Check In Date   : $Date:   02 Jun 2014 10:23:16  $
 //******************************************************************************
 
 #ifndef SVVIRTUALCAMERA_H
@@ -24,14 +24,15 @@
 #include "SVUtilityLibrary/SVString.h"
 #include "SVAcquisitionClass.h"
 #include "BasicValueObjects.h"
+#include "SVOMFCLibrary/SVLongValueDeviceParam.h"
 #pragma endregion Includes
 
 #pragma region Declarations
 //Camera variables
-const TCHAR CameraSerialNumber[]	= _T( "SerialNumber" );
-const TCHAR CameraShutter[]			= _T( "Shutter" );
-const TCHAR CameraGain[]			= _T( "Gain" );
-const TCHAR CameraContrast[]		= _T( "Contrast" ); //Legacy name for Gain was Contrast.
+const TCHAR			CameraSerialNumber[]		= _T( "Serial Number" );
+const TCHAR			CameraShutter[]				= _T( "Shutter" );
+const TCHAR			CameraGain[]				= _T( "Gain" );
+const TCHAR			CameraContrast[]			= _T( "Contrast" );			//Legacy name for Gain was Contrast.
 
 typedef SVVector< SVVirtualCamera* > SVVirtualCameraArray;
 typedef SVSet< SVVirtualCamera* > SVVirtualCameraSet;
@@ -124,6 +125,7 @@ public:
 	HRESULT UnregisterTriggerRelay();
 
 	HRESULT UpdateCameraParameters();
+	HRESULT UpdateCameraLongParameter( LPCTSTR Name, const SVLongValueDeviceParam* pLongValueDeviceParam);
 	HRESULT UpdateDeviceParameters(SVDeviceParamCollection& rCameraParameters);
 #pragma endregion Public Methods
 
@@ -163,6 +165,16 @@ private:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVVirtualCamera.h_v  $
+ * 
+ *    Rev 1.4   02 Jun 2014 10:23:16   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  900
+ * SCR Title:  Separate View Image Update, View Result Update flags; remote access E55,E92
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Added UpdateCameraLongParameter method.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   22 Apr 2014 13:26:54   bwalter
  * Project:  SVObserver

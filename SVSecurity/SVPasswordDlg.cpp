@@ -5,8 +5,8 @@
 //* .Module Name     : SVPasswordDlg.cpp
 //* .File Name       : $Workfile:   SVPasswordDlg.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   20 May 2014 10:25:28  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   30 May 2014 10:47:12  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -69,7 +69,7 @@ BOOL SVPasswordDlg::OnInitDialog()
 
 void SVPasswordDlg::OnHelp() 
 {
-	theApp.HtmlHelpA(HH_HELP_CONTEXT,IDD_PASSWORD_DLG + 0x60000);
+	theApp.HtmlHelp(HH_HELP_CONTEXT,IDD_PASSWORD_DLG + 0x60000);
 }
 
 BOOL SVPasswordDlg::OnHelpInfo(HELPINFO* pHelpInfo) 
@@ -85,7 +85,7 @@ BOOL SVPasswordDlg::OnHelpInfo(HELPINFO* pHelpInfo)
 	{
 		pHelpInfo->iCtrlId += 0x70000;
 	}	
-	theApp.HtmlHelpA(pHelpInfo->iCtrlId,HH_HELP_CONTEXT);
+	theApp.HtmlHelp(pHelpInfo->iCtrlId,HH_HELP_CONTEXT);
 	return TRUE ; 
 }
 
@@ -94,6 +94,16 @@ BOOL SVPasswordDlg::OnHelpInfo(HELPINFO* pHelpInfo)
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVSecurity\SVPasswordDlg.cpp_v  $
+ * 
+ *    Rev 1.2   30 May 2014 10:47:12   ryoho
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  904
+ * SCR Title:  Update SVObserver to use HtmlHelp instead of WinHelp
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   changed to use HtmlHelp instead of HtmlHelpA
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   20 May 2014 10:25:28   ryoho
  * Project:  SVObserver

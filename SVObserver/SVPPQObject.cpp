@@ -5,8 +5,8 @@
 //* .Module Name     : SVPPQObject
 //* .File Name       : $Workfile:   SVPPQObject.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.19  $
-//* .Check In Date   : $Date:   15 May 2014 11:56:14  $
+//* .Current Version : $Revision:   1.20  $
+//* .Check In Date   : $Date:   02 Jun 2014 10:17:18  $
 //******************************************************************************
 
 #pragma region Includes
@@ -329,7 +329,7 @@ void SVPPQObject::init()
 	m_pInputList			= NULL;
 	m_pOutputList			= NULL;
 
-	m_PpqValues.setValueObject(PpqLength, StandardPpqLength, this);
+	m_PpqValues.setValueObject( PpqLength, StandardPpqLength, this );
 	SVObjectManagerClass::Instance().IncrementShortPPQIndicator();
 }
 
@@ -797,7 +797,7 @@ BOOL SVPPQObject::SetPPQLength( long lPPQLength )
 		}
 	}
 
-	m_PpqValues.setValueObject(PpqLength, lPPQLength);
+	m_PpqValues.setValueObject( PpqLength, lPPQLength );
 
 	if( GetPPQLength() != m_ppPPQPositions.size() )
 	{
@@ -4736,6 +4736,16 @@ void SVPPQObject::SVPPQTracking::IncrementTimeCount( const SVString& p_rName, si
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVPPQObject.cpp_v  $
+ * 
+ *    Rev 1.20   02 Jun 2014 10:17:18   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  900
+ * SCR Title:  Separate View Image Update, View Result Update flags; remote access E55,E92
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Added required spaces.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.19   15 May 2014 11:56:14   tbair
  * Project:  SVObserver

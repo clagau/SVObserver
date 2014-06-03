@@ -5,22 +5,13 @@
 // * .Module Name     : SVConfigurationTags
 // * .File Name       : $Workfile:   SVConfigurationTags.h  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.1  $
-// * .Check In Date   : $Date:   17 Apr 2014 16:45:46  $
+// * .Current Version : $Revision:   1.2  $
+// * .Check In Date   : $Date:   02 Jun 2014 06:18:46  $
 // ******************************************************************************
 // SVConfigurationTags.h
 
 #ifndef _INC_SVCONFIGURATIONTAGS_INCLUDED
 #define _INC_SVCONFIGURATIONTAGS_INCLUDED
-
-/*
-CString XmlizeTag(const CString& sTag)
-{
-    CString s = sTag;
-    StringMunge::KeepAlphaNum(s);
-    return s;
-}
-*/
 
 LPCTSTR const CTAG_DESCRIPTION                    = (_T("Description"));
 LPCTSTR const CTAG_HISTORY_LEVEL                  = (_T("HistoryLevel"));
@@ -249,7 +240,10 @@ LPCTSTR const CTAGF_INPUT_X                       = (_T("Input_%d"));
 LPCTSTR const CTAGF_OUTPUT_X                      = (_T("Output_%d"));
 LPCTSTR const CTAG_ITEM_NAME                      = (_T("ItemName"));
 LPCTSTR const CTAG_IO_TYPE                        = (_T("IO_Type"));
+//CTAG_ONLINE_DISPLAY kept for backward compatibility
 LPCTSTR const CTAG_ONLINE_DISPLAY                 = (_T("Online_Display"));
+LPCTSTR const CTAG_IMAGE_DISPLAY_UPDATE           = (_T("Image_Display_Update"));
+LPCTSTR const CTAG_RESULT_DISPLAY_UPDATE          = (_T("Result_Display_Update"));
 
 LPCTSTR const CTAG_LUT                            = _T("LUT");
 LPCTSTR const CTAG_LUT_TRANSFORM_OPERATION        = _T("LUTTransformOperation");
@@ -277,7 +271,6 @@ LPCTSTR const CTAG_FILEACQUISITION_FILE_IMAGE_WIDTH		= _T("ImageWidth");
 LPCTSTR const CTAG_FILEACQUISITION_FILE_IMAGE_HEIGHT	= _T("ImageHeight");
 
 LPCTSTR const CTAG_MAX_VALUE                      = _T("MaxValue");
-
 
 LPCTSTR const CTAG_IODOC                          = _T("IODoc");
 LPCTSTR const CTAG_PLC_PARAMETERS                 = _T("PlcParameters");
@@ -321,6 +314,17 @@ LPCTSTR const CTAG_FILENAME						  = _T("Filename");
 // ******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVConfigurationLibrary\SVConfigurationTags.h_v  $
+ * 
+ *    Rev 1.2   02 Jun 2014 06:18:46   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  900
+ * SCR Title:  Separate View Image Update, View Result Update flags; remote access E55,E92
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Removed dead method XmlizeTag
+ * Added CTAG_IMAGE_DISPLAY_UPDATE and CTAG_RESULT_DISPLAY_UPDATE tags
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   17 Apr 2014 16:45:46   ryoho
  * Project:  SVObserver

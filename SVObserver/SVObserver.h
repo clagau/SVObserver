@@ -5,8 +5,8 @@
 //* .Module Name     : SVObserver
 //* .File Name       : $Workfile:   SVObserver.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.16  $
-//* .Check In Date   : $Date:   20 May 2014 10:20:48  $
+//* .Current Version : $Revision:   1.17  $
+//* .Check In Date   : $Date:   02 Jun 2014 10:10:42  $
 //******************************************************************************
 
 #ifndef SVOBSERVER_H
@@ -90,11 +90,6 @@ LPCTSTR const SVTOOLPARAMETERLIST_MARKER = (_T( "** SVSetToolParameterList MARKE
 LPCTSTR const SVEXCLUDECHARS_CONFIG_NAME =     (_T("\\/:*\"<>|;&$@`[]{}()^~!#%"));
 LPCTSTR const SVEXCLUDECHARS_TOOL_NAME =       (_T("\\/:*\";,.+-$@'[]{}()<>|!%&~^\327\367"));
 LPCTSTR const SVEXCLUDECHARS_INSPECTION_NAME = (_T("\\/:*\";,.+-$@'[]{}()<>|"));
-
-//Environment variables
-const char			EnvironmentModelNumber[]	= _T("ModelNumber");
-const char			EnvironmentSerialNumber[]	= _T("SerialNumber");
-const char			EnvironmentWinKey[]			= _T("Windows.WinKey");
 
 typedef SVXMLMaterialsTree SVTreeType;
 #pragma endregion Declarations
@@ -273,9 +268,9 @@ public:
 
 	CString GetConfigurationName() const;
 
-	CString getModelNumber() const;
-	CString getSerialNumber() const;
-	CString getWinKey() const;
+	SVString getModelNumber() const;
+	SVString getSerialNumber() const;
+	SVString getWinKey() const;
 
 	HRESULT LoadPackedConfiguration( const CString& p_rPackedFileName );
 	HRESULT SavePackedConfiguration( const CString& p_rPackedFileName );
@@ -624,6 +619,16 @@ extern SVObserverApp TheSVObserverApp;
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVObserver.h_v  $
+ * 
+ *    Rev 1.17   02 Jun 2014 10:10:42   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  900
+ * SCR Title:  Separate View Image Update, View Result Update flags; remote access E55,E92
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Removed the Environment constants.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.16   20 May 2014 10:20:48   ryoho
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : MonitorListSheet
 //* .File Name       : $Workfile:   MonitorListSheet.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   16 May 2014 14:47:12  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   29 May 2014 11:23:40  $
 //******************************************************************************
 
 #pragma region Includes
@@ -229,7 +229,7 @@ HRESULT MonitorListSheet::CreatePages(bool bImageTab)
 		case FAIL_STATUS_LIST:
 		{
 			//SetDialogName = Fail Status List
-			const NameSelectionList& valueSelectionList = BuildSelectionList(m_MonitorList.GetPPQName(), m_MonitorList.GetFailStatusList(), AllowAll);
+			const NameSelectionList& valueSelectionList = BuildSelectionList(m_MonitorList.GetPPQName(), m_MonitorList.GetFailStatusList(), AllowOnly);
 			MonitorListValuesPage* pValuesDlg = new MonitorListValuesPage(valueSelectionList, this, ValuesTag);
 			AddPage(pValuesDlg);
 			break;
@@ -407,6 +407,16 @@ void MonitorListSheet::DestroyPages()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\MonitorListSheet.cpp_v  $
+ * 
+ *    Rev 1.2   29 May 2014 11:23:40   ryoho
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   change CreatePages method - only all certain elements for the Fail Status List.  
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   16 May 2014 14:47:12   sjones
  * Project:  SVObserver

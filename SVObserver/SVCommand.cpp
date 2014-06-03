@@ -5,8 +5,8 @@
 //* .Module Name     : SVCommand.cpp
 //* .File Name       : $Workfile:   SVCommand.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.13  $
-//* .Check In Date   : $Date:   15 May 2014 11:10:28  $
+//* .Current Version : $Revision:   1.14  $
+//* .Check In Date   : $Date:   02 Jun 2014 09:25:52  $
 //******************************************************************************
 
 #pragma region Includes
@@ -3802,7 +3802,10 @@ HRESULT CSVCommand::SVGetDataList(SAFEARRAY* psaNames, SAFEARRAY** ppsaValues, S
 				BasicValueObject* pValueObject = dynamic_cast< BasicValueObject* >( ObjectRef.Object() );
 				if( nullptr != pValueObject && !ObjectRef.IsEntireArray() )
 				{
-					HRESULT hrGet = pValueObject->getValue( Value );
+					SVString TempValue;
+
+					HRESULT hrGet = pValueObject->getValue( TempValue );
+					Value = TempValue.c_str();
 
 					if ( S_OK != hrGet )
 					{
@@ -7126,6 +7129,16 @@ STDMETHODIMP CSVCommand::SVIsAvailiable()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVCommand.cpp_v  $
+ * 
+ *    Rev 1.14   02 Jun 2014 09:25:52   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  900
+ * SCR Title:  Separate View Image Update, View Result Update flags; remote access E55,E92
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Changed SVGetDataList to use SVString when calling getValue.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.13   15 May 2014 11:10:28   sjones
  * Project:  SVObserver

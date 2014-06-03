@@ -5,8 +5,8 @@
 //* .Module Name     : SVMainFrame
 //* .File Name       : $Workfile:   SVMainFrm.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.3  $
-//* .Check In Date   : $Date:   21 Aug 2013 09:46:14  $
+//* .Current Version : $Revision:   1.4  $
+//* .Check In Date   : $Date:   02 Jun 2014 09:54:04  $
 //******************************************************************************
 
 #ifndef SVMAINFRM_H
@@ -50,8 +50,10 @@ public:
 	afx_msg void OnViewToolBar();
 	afx_msg void OnUpdateViewPPQBar(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateViewToolbar(CCmdUI* pCmdUI);
-	afx_msg void OnViewOnlineDisplay();
-	afx_msg void OnUpdateViewOnlineDisplay(CCmdUI* pCmdUI);
+	afx_msg void OnViewImageDisplayUpdate();
+	afx_msg void OnUpdateViewImageDisplayUpdate(CCmdUI* pCmdUI);
+	afx_msg void OnViewResultDisplayUpdate();
+	afx_msg void OnUpdateViewResultDisplayUpdate(CCmdUI* pCmdUI);
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 	afx_msg void OnSizing(UINT fwSide, LPRECT pRect);
 	afx_msg LRESULT OnDisplayChange(WPARAM p_p1, LPARAM p_p2);
@@ -168,6 +170,17 @@ private:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVMainFrm.h_v  $
+ * 
+ *    Rev 1.4   02 Jun 2014 09:54:04   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  900
+ * SCR Title:  Separate View Image Update, View Result Update flags; remote access E55,E92
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Added ID_VIEW_IMAGE_DISPLAY_UPDATE and ID_VIEW_RESULT_DISPLAY_UPDATE command and update command handlers.
+ * Removed the ID_VIEW_ONLINE_DISPLAY command and update command handlers.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   21 Aug 2013 09:46:14   tbair
  * Project:  SVObserver

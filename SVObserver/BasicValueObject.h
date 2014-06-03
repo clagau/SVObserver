@@ -5,8 +5,8 @@
 //* .Module Name     : BasicValueObject
 //* .File Name       : $Workfile:   BasicValueObject.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   17 Mar 2014 15:10:20  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   02 Jun 2014 08:41:20  $
 //* ----------------------------------------------------------------------------
 //* This class is used as a value object to store different types in the 
 //* object manager 
@@ -30,7 +30,7 @@ namespace Seidenader
 			 The class constructor
 			 \param ObjectName <in> the name of the object
 			***********/
-			BasicValueObject( LPCTSTR ObjectName );
+			BasicValueObject( LPCTSTR ObjectName, SVObjectClass* pOwner=nullptr, bool Node=false );
 
 			/**********
 			 The class destructor
@@ -101,7 +101,7 @@ namespace Seidenader
 			 \param Value <out> a value of type string to get
 			 \return SOK on success
 			***********/
-			HRESULT getValue( CString& rValue ) const;
+			HRESULT getValue( SVString& rValue ) const;
 
 			/**********
 			 The method gets the value object
@@ -137,6 +137,12 @@ namespace Seidenader
 			 \return SOK on success
 			***********/
 			HRESULT updateDeviceParameter(SVDeviceParam* pDeviceParam);
+
+			/**********
+			 The method checks if object is a node
+			 \return True if object is a node
+			 ***********/
+			inline bool isNode() const;
 		#pragma endregion Public Methods
 
 		private:
@@ -145,7 +151,7 @@ namespace Seidenader
 			 The method creates the value object
 			 \return True on success
 			***********/
-			virtual BOOL Create();
+			virtual BOOL Create( SVObjectClass* pOwner );
 
 			/**********
 			 The method destroys the value object
@@ -170,15 +176,26 @@ namespace Seidenader
 			 \return True on success
 			***********/
 			BOOL RefreshOwner() const;
+
+			/**********
+			 The method converts an array to variant data
+			 \return S_OK on success
+			***********/
+			HRESULT ConvertArrayToVariant( _variant_t& rValue ) const;
 	#pragma endregion Private Methods
 
 		private:
 		#pragma region Member Variables
 			_variant_t			m_Value;					//The value object container
-			CRITICAL_SECTION	m_CriticalSection;			//The crtical section object
-			BOOL				m_Created;					//Object is created
+			CRITICAL_SECTION	m_CriticalSection;			//The critical section object
+			bool				m_Created;					//Object is created
+			bool				m_Node;						//Object is only a node in the tree structure
 		#pragma endregion Member Variables
 		};
+
+		#pragma region Inline
+		#include "BasicValueObject.inl"
+		#pragma endregion Inline
 	}
 }
 
@@ -187,6 +204,23 @@ namespace Seidenader
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\BasicValueObject.h_v  $
+ * 
+ *    Rev 1.1   02 Jun 2014 08:41:20   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  900
+ * SCR Title:  Separate View Image Update, View Result Update flags; remote access E55,E92
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Added pOwner and Node to the constructor.
+ * Changed parameter for getValue from CString to SVString.
+ * Added isNode method.
+ * Changed Create method to take pOwner parameter
+ * Added method ConvertArrayToVariant
+ * Changed m_Create from BOOL to bool
+ * Added member bool m_Node
+ * Added include for .inl file
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   17 Mar 2014 15:10:20   bwalter
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : SVVirtualCamera
 //* .File Name       : $Workfile:   SVVirtualCamera.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.4  $
-//* .Check In Date   : $Date:   19 Mar 2014 23:24:48  $
+//* .Current Version : $Revision:   1.5  $
+//* .Check In Date   : $Date:   02 Jun 2014 10:22:00  $
 //******************************************************************************
 
 #pragma region Includes
@@ -14,7 +14,6 @@
 #include "SVVirtualCamera.h"
 #include "SVDigitizerProcessingClass.h"
 #include "SVOMFCLibrary/SVDeviceParams.h"
-#include "SVOMFCLibrary/SVLongValueDeviceParam.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -141,18 +140,20 @@ BOOL SVVirtualCamera::Destroy()
 
 HRESULT SVVirtualCamera::GetChildObject( SVObjectClass*& rpObject, const SVObjectNameInfo& rNameInfo, long Index ) const
 {
-	rpObject = NULL;
+	rpObject = nullptr;
 	HRESULT l_Status = SVObjectClass::GetChildObject( rpObject, rNameInfo, Index );
 
 	if( l_Status != S_OK )
 	{
 		if( 0 < rNameInfo.m_NameArray.size() && rNameInfo.m_NameArray[ Index ] == GetName() )
 		{
-			BasicValueObjects::ValueList::const_iterator ValueIter;
-			const BasicValueObjects::ValueList& Values = m_CameraValues.getValueList();
-			for( ValueIter = Values.begin(); rpObject == NULL && ValueIter != Values.end(); ++ValueIter )
+			BasicValueObject* pBasicValueObject=nullptr;
+
+			pBasicValueObject = m_CameraValues.getValueObject( rNameInfo.GetObjectArrayName( Index + 1 ).c_str() );
+
+			if( nullptr != pBasicValueObject )
 			{
-				l_Status = (*ValueIter)->GetChildObject(rpObject, rNameInfo, Index + 1);
+				rpObject = dynamic_cast<SVObjectClass*> (pBasicValueObject);
 			}
 		}
 	}
@@ -691,7 +692,6 @@ HRESULT SVVirtualCamera::UpdateCameraParameters()
 	if(S_OK == Status)
 	{
 		SVDeviceParam* pDeviceParam = nullptr;
-		SVLongValueDeviceParam* pLongValueDeviceParam = nullptr;
 
 		pDeviceParam = CameraParameters.GetParameter( DeviceParamSerialNumberString );
 
@@ -703,30 +703,30 @@ HRESULT SVVirtualCamera::UpdateCameraParameters()
 			m_CameraValues.setValueObject( ::CameraSerialNumber, SerialNumberValue, this );
 		}
 		pDeviceParam = CameraParameters.GetParameter( DeviceParamGain );
-		pLongValueDeviceParam = dynamic_cast< SVLongValueDeviceParam* >( pDeviceParam );
+		Status = UpdateCameraLongParameter( ::CameraGain, dynamic_cast< SVLongValueDeviceParam* >( pDeviceParam ) );
 
-		if( nullptr != pLongValueDeviceParam )
-		{
-			variant_t GainValue;
-			GainValue = pLongValueDeviceParam->GetScaledValue();
-			pDeviceParam = nullptr;
-			pLongValueDeviceParam = nullptr;
-			BasicValueObject& rValueObject = m_CameraValues.setValueObject( ::CameraGain, GainValue, this );
-			rValueObject.ObjectAttributesAllowedRef() |= SV_REMOTELY_SETABLE | SV_SETABLE_ONLINE;
-		}
 		pDeviceParam = CameraParameters.GetParameter( DeviceParamShutter );
-		pLongValueDeviceParam = dynamic_cast< SVLongValueDeviceParam* >( pDeviceParam );
+		Status = UpdateCameraLongParameter( ::CameraShutter, dynamic_cast< SVLongValueDeviceParam* >( pDeviceParam ) );
+	}
+	return Status;
+}
 
-		if( nullptr != pLongValueDeviceParam )
+HRESULT SVVirtualCamera::UpdateCameraLongParameter( LPCTSTR Name, const SVLongValueDeviceParam* pLongValueDeviceParam )
+{
+	HRESULT Status = S_FALSE;
+
+	if( nullptr != pLongValueDeviceParam )
+	{
+		variant_t Value;
+		Value = pLongValueDeviceParam->GetScaledValue();
+		BasicValueObject* pValueObject = m_CameraValues.setValueObject( Name, Value, this );
+		if( nullptr != pValueObject)
 		{
-			variant_t ShutterValue;
-			ShutterValue = pLongValueDeviceParam->GetScaledValue();
-			pDeviceParam = nullptr;
-			pLongValueDeviceParam = nullptr;
-			BasicValueObject& rValueObject = m_CameraValues.setValueObject( ::CameraShutter, ShutterValue, this );
-			rValueObject.ObjectAttributesAllowedRef() |= SV_REMOTELY_SETABLE | SV_SETABLE_ONLINE;
+			pValueObject->ObjectAttributesAllowedRef() |= SV_REMOTELY_SETABLE | SV_SETABLE_ONLINE;
+			Status = S_OK;
 		}
 	}
+
 	return Status;
 }
 
@@ -787,6 +787,17 @@ HRESULT SVVirtualCamera::UpdateDeviceParameters(SVDeviceParamCollection& rCamera
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVVirtualCamera.cpp_v  $
+ * 
+ *    Rev 1.5   02 Jun 2014 10:22:00   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  900
+ * SCR Title:  Separate View Image Update, View Result Update flags; remote access E55,E92
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Fixed GetChildObject method.
+ * Added UpdateCameraLongParameter method.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.4   19 Mar 2014 23:24:48   bwalter
  * Project:  SVObserver

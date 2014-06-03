@@ -5,8 +5,8 @@
 //* .Module Name     : EnvironmentObject
 //* .File Name       : $Workfile:   EnvironmentObject.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   17 Mar 2014 15:10:22  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   02 Jun 2014 09:02:58  $
 //******************************************************************************
 
 #pragma region Includes
@@ -48,44 +48,18 @@ EnvironmentObject::~EnvironmentObject()
 HRESULT EnvironmentObject::GetChildObject( SVObjectClass*& rpObject, const SVObjectNameInfo& rNameInfo, long Index ) const
 {
 	HRESULT Result = S_OK;
+	BasicValueObject* pBasicValueObject=nullptr;
 
-	rpObject = NULL;
-	BasicValueObjects::ValueList::const_iterator ValueIter;
-	SVString Name = rNameInfo.GetObjectArrayName( Index );
-	//Names are not allowed to have '.' due to Fully Qualified Name being only one object
-	Name.replace('.', ':');
-	SVObjectNameInfo DotlessNameInfo;
-	DotlessNameInfo.ParseObjectName(Name);
-	const BasicValueObjects::ValueList& rValues = m_EnvironmentValues.getValueList();
-	for( ValueIter = rValues.begin(); rpObject == NULL && ValueIter != rValues.end(); ++ValueIter )
+	rpObject = nullptr;
+	pBasicValueObject = m_EnvironmentValues.getValueObject( rNameInfo.GetObjectArrayName( Index ).c_str() );
+	
+	//Only if it is not a node return the object
+	if( ( nullptr != pBasicValueObject ) && !pBasicValueObject->isNode() )
 	{
-		(*ValueIter)->GetChildObject(rpObject, DotlessNameInfo, Index);
+		rpObject = dynamic_cast<SVObjectClass*> (pBasicValueObject);
 	}
 
 	return Result;
-}
-
-void EnvironmentObject::setVariable(LPCSTR Name, LPCTSTR Value)
-{
-	bool ValueSet = false;
-	CString DotlessName = Name;
-	//Replace any . in the name since there is only one object storing the value
-	DotlessName.Replace('.', ':');
-	m_EnvironmentValues.setValueObject(DotlessName, Value, this);
-}
-
-CString EnvironmentObject::getVariable(LPCSTR Name) const
-{
-	CString Value;
-	CString DotlessName = Name;
-	//Replace any . in the name since there is only one object storing the value
-	DotlessName.Replace('.', ':');
-	BasicValueObject* pValue = m_EnvironmentValues.getValueObject(DotlessName);
-	if(nullptr == pValue)
-	{
-		pValue->getValue(Value);
-	}
-	return Value;
 }
 #pragma endregion Public Methods
 
@@ -94,6 +68,17 @@ CString EnvironmentObject::getVariable(LPCSTR Name) const
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\EnvironmentObject.cpp_v  $
+ * 
+ *    Rev 1.1   02 Jun 2014 09:02:58   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  900
+ * SCR Title:  Separate View Image Update, View Result Update flags; remote access E55,E92
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Changed GetChildObject.
+ * Removed getVariable and setVariable methods.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   17 Mar 2014 15:10:22   bwalter
  * Project:  SVObserver

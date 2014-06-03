@@ -5,8 +5,8 @@
 //* .Module Name     : EnvironmentObject
 //* .File Name       : $Workfile:   EnvironmentObject.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   17 Mar 2014 15:10:22  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   02 Jun 2014 09:07:08  $
 //* ----------------------------------------------------------------------------
 //* This class is used as the root child object Environment to 
 //* store specific objects 
@@ -22,6 +22,15 @@ namespace Seidenader
 {
 	namespace SVObserver
 	{
+		#pragma region Declarations
+		//Environment variables
+		const TCHAR			EnvironmentModelNumber[]	= _T("Model Number");
+		const TCHAR			EnvironmentSerialNumber[]	= _T("Serial Number");
+		const TCHAR			EnvironmentWinKey[]			= _T("Windows.Win Key");
+		const TCHAR			EnvironmentImageUpdate[]	= _T("View.Image Display Update");
+		const TCHAR			EnvironmentResultUpdate[]	= _T("View.Result Display Update");
+		#pragma endregion Declarations
+
 		class EnvironmentObject : public SVObjectClass
 		{
 		#pragma region Declarations
@@ -61,24 +70,49 @@ namespace Seidenader
 			virtual HRESULT GetChildObject( SVObjectClass*& rpObject, const SVObjectNameInfo& rNameInfo, long Index = 0 ) const;
 
 			/**********
-			 The method sets the value of a variable name if it does not exist it is created
-			 \param Name <in> the variable name to set
-			 \param Value <in> the value to set the variable to
+			 The static method gets an environment value if available
+			 \param Name <in> the name of the object to get
+			 \param rValue <out> reference to the value of the object
 			***********/
-			void setVariable(LPCTSTR Name, LPCTSTR Value);
+			template <typename ELEMENT_TYPE>
+			static void getEnvironmentValue( LPCSTR Name, ELEMENT_TYPE& rValue );
 
 			/**********
-			 The method gets the value of a variable name
-			 \param Name <in> the variable name to set
-			 \return The value 
+			 The static method sets an environment value
+			 \param Name <in> the name of the object to set
+			 \param rValue <out> reference to the value of the object
+			 \return pointer to the value object
 			***********/
-			CString getVariable(LPCTSTR Name) const;
+			template <typename ELEMENT_TYPE>
+			static BasicValueObject* setEnvironmentValue( LPCSTR Name, const ELEMENT_TYPE& rValue );
+
+			/**********
+			 The method gets the value of a name
+			 \param Name <in> the name of the object to get
+			 \param rValue <out> reference to the value of the object
+			 \return SOK on success
+			***********/
+			template <typename ELEMENT_TYPE>
+			HRESULT getValue( LPCSTR Name, ELEMENT_TYPE& rValue ) const;
+
+			/**********
+			 The method sets the value of a variable name if does not exist it is created
+			 \param Name <in> the variable name to set
+			 \param Value <in> the value to set the variable to
+			 \return pointer to the value object
+			***********/
+			template <typename ELEMENT_TYPE>
+			BasicValueObject* setValue( LPCTSTR Name, const ELEMENT_TYPE Value );
 		#pragma endregion Public Methods
 
 		#pragma region Member Variables
 			BasicValueObjects	m_EnvironmentValues;		//Container for environment values
 		#pragma endregion Member Variables
 		};
+
+		#pragma region Inline
+		#include "EnvironmentObject.inl"
+		#pragma endregion Inline
 	}
 }
 
@@ -87,6 +121,20 @@ namespace Seidenader
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\EnvironmentObject.h_v  $
+ * 
+ *    Rev 1.1   02 Jun 2014 09:07:08   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  900
+ * SCR Title:  Separate View Image Update, View Result Update flags; remote access E55,E92
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Added the Environment names as TCHAR constants.
+ * Removed getVariable and setVariable methods.
+ * Added static methods getEnvironmentValue and setEnvironmentValue.
+ * Added getValue and SetValue methods
+ * Added include for .inl file.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   17 Mar 2014 15:10:22   bwalter
  * Project:  SVObserver
