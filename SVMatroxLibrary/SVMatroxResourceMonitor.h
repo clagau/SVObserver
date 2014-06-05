@@ -5,8 +5,8 @@
 // * .Module Name     : SVMatroxResourceMonitor
 // * .File Name       : $Workfile:   SVMatroxResourceMonitor.h  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.1  $
-// * .Check In Date   : $Date:   01 Oct 2013 11:16:50  $
+// * .Current Version : $Revision:   1.2  $
+// * .Check In Date   : $Date:   03 Jun 2014 14:14:10  $
 // ******************************************************************************
 #ifndef SVMATROXRESOURCEMONITOR_H
 #define SVMATROXRESOURCEMONITOR_H
@@ -37,7 +37,8 @@ protected:
 	SVMatroxResourceMonitor();
 	static SVMatroxResourceMonitor& Instance();
 	HRESULT ValidateCriticalSection() const;
-	
+	bool FindReference(SVMatroxIdentifier p_Identifier) const;
+
 private:
 	SVMatroxResourceMonitor( const SVMatroxResourceMonitor& p_rObject );
 	const SVMatroxResourceMonitor& operator=( const SVMatroxResourceMonitor& p_rObject );
@@ -49,6 +50,16 @@ private:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVMatroxLibrary\SVMatroxResourceMonitor.h_v  $
+ * 
+ *    Rev 1.2   03 Jun 2014 14:14:10   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  891
+ * SCR Title:  Remove tracking elements that hinder performance in release mode
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Removed monitoring from SVMatroxResource monitor class in release mode. This tool will only show issues when in debug mode due to asserts that are only active in debug.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   01 Oct 2013 11:16:50   tbair
  * Project:  SVObserver

@@ -5,13 +5,14 @@
 // * .Module Name     : SVMaskEditorCtl
 // * .File Name       : $Workfile:   SVMaskEditorCtl.cpp  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.1  $
-// * .Check In Date   : $Date:   01 Oct 2013 10:22:34  $
+// * .Current Version : $Revision:   1.2  $
+// * .Check In Date   : $Date:   03 Jun 2014 13:20:58  $
 // ******************************************************************************
 
 // SVMaskEditorCtl.cpp : Implementation of the SVMaskEditorCtrl ActiveX Control class.
 
 #include "stdafx.h"
+#include "SVSystemLibrary\SVImageConvertorGDI.h"
 #include "SVMaskEditor.h"
 
 #include "SVMaskEditorCtl.h"
@@ -44,9 +45,9 @@ END_MESSAGE_MAP()
 
 BEGIN_DISPATCH_MAP(SVMaskEditorCtrl, COleControl)
 	//{{AFX_DISPATCH_MAP(SVMaskEditorCtrl)
-	DISP_PROPERTY_EX(SVMaskEditorCtrl, "ImageDIBHandle", GetImageDIBHandle, SetImageDIBHandle, VT_HANDLE)
+	DISP_PROPERTY_EX(SVMaskEditorCtrl, "ImageDIBHandle", GetImageDIBHandle, SetImageDIBHandle, VT_UNKNOWN)
 	DISP_PROPERTY_EX(SVMaskEditorCtrl, "MaskOperator", GetMaskOperator, SetMaskOperator, VT_I4)
-	DISP_PROPERTY_EX(SVMaskEditorCtrl, "MaskData", GetMaskData, SetMaskData, VT_HANDLE)
+	DISP_PROPERTY_EX(SVMaskEditorCtrl, "MaskData", GetMaskData, SetMaskData, VT_UNKNOWN  )
 	DISP_FUNCTION(SVMaskEditorCtrl, "DoEditMaskModal", DoEditMaskModal, VT_I4, VTS_NONE)
 	DISP_FUNCTION_ID(SVMaskEditorCtrl, "Refresh", DISPID_REFRESH, Refresh, VT_EMPTY, VTS_NONE)
 	//}}AFX_DISPATCH_MAP
@@ -287,18 +288,23 @@ void SVMaskEditorCtrl::AboutBox()
 /////////////////////////////////////////////////////////////////////////////
 // SVMaskEditorCtrl message handlers
 
-OLE_HANDLE SVMaskEditorCtrl::GetImageDIBHandle() 
+IPictureDisp* SVMaskEditorCtrl::GetImageDIBHandle() 
 {
-	return ( OLE_HANDLE ) HBITMAP( bitmap );
+	CComPtr<IPictureDisp> pPic;
+	HRESULT hr = SVImageConvertorGDI::GetIPictureDispFromBitmap(bitmap, &pPic);
+	return pPic.Detach();
 }
 
-void SVMaskEditorCtrl::SetImageDIBHandle(OLE_HANDLE nNewValue) 
+void SVMaskEditorCtrl::SetImageDIBHandle(IPictureDisp* pPic) 
 {
 	bitmap.Detach(); // in case one is already attached
-
-	bitmap.Attach( ( HBITMAP ) nNewValue );
-
-	SetModifiedFlag();
+	HBITMAP bm;
+	HRESULT hr = SVImageConvertorGDI::GetBitmapFromIPictureDisp( pPic, bm );
+	if( S_OK == hr )
+	{
+		bitmap.Attach( bm );
+		SetModifiedFlag();
+	}
 }
 
 
@@ -356,17 +362,30 @@ void SVMaskEditorCtrl::SetMaskOperator(long nNewValue)
 	SetModifiedFlag();
 }
 
-OLE_HANDLE SVMaskEditorCtrl::GetMaskData() 
+IStream* SVMaskEditorCtrl::GetMaskData() 
 {
-	return ( OLE_HANDLE ) maskEditorDlg.GraphixObject.GetGraphixData();
+	CComPtr<IStream> stream;
+	HRESULT hr = CreateStreamOnHGlobal(maskEditorDlg.GraphixObject.GetGraphixData(), true, &stream );
+	ASSERT( hr == S_OK );
+	return stream.Detach();
+
 }
 
-void SVMaskEditorCtrl::SetMaskData(OLE_HANDLE nNewValue) 
+void SVMaskEditorCtrl::SetMaskData(IStream* nNewValue) 
 {
-	if( ! maskEditorDlg.GraphixObject.SetGraphixData( ( HGLOBAL ) nNewValue ) )
-		::GlobalFree( ( HGLOBAL ) nNewValue );
+	HGLOBAL	hg = 0 ;
+	HRESULT hr = GetHGlobalFromStream(nNewValue, &hg);
+	if( S_OK == hr )
+	{
+		if(maskEditorDlg.GraphixObject.SetGraphixData( hg ))
+		{
+			SetModifiedFlag();
+		}
+	}
 	else
-		SetModifiedFlag();
+	{
+		ASSERT(FALSE);
+	}
 }
 
 INT_PTR SVMaskEditorCtrl::DoEditMaskModal() 
@@ -392,6 +411,17 @@ INT_PTR SVMaskEditorCtrl::DoEditMaskModal()
 // ******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVMaskEditor\SVMaskEditorCtl.cpp_v  $
+ * 
+ *    Rev 1.2   03 Jun 2014 13:20:58   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Changed types to insure compatibility in 64bit Windows.
+ * OLE_HANDLE is a 32 bit type. Use IPICTUREDISP instead.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   01 Oct 2013 10:22:34   tbair
  * Project:  SVObserver

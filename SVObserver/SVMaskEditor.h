@@ -39,12 +39,14 @@ public:
 
 // Attributes
 public:
-	long GetImageDIBHandle();
-	void SetImageDIBHandle(long);
+	LPUNKNOWN GetImageDIBHandle();
+	void SetImageDIBHandle(LPUNKNOWN);
+
 	long GetMaskOperator();
 	void SetMaskOperator(long);
-	long GetMaskData();
-	void SetMaskData(long);
+
+	LPUNKNOWN GetMaskData();
+	void SetMaskData(LPUNKNOWN);
 
 // Operations
 public:

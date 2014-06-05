@@ -5,13 +5,17 @@
 // * .Module Name     : SVMatroxResourceMonitor
 // * .File Name       : $Workfile:   SVMatroxResourceMonitor.cpp  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.1  $
-// * .Check In Date   : $Date:   01 Oct 2013 11:15:30  $
+// * .Current Version : $Revision:   1.2  $
+// * .Check In Date   : $Date:   03 Jun 2014 14:14:12  $
 // ******************************************************************************
 
 #include "stdafx.h"
 #include "SVMatroxResourceMonitor.h"
 #include "SVMatroxErrorEnum.h"
+
+#ifdef _DEBUG
+#define MONITOR_MIL_RESOURCES
+#endif
 
 SVMatroxResourceMonitor::SVMatroxResourceMonitor()
 : m_CriticalSectionPtr()
@@ -30,7 +34,7 @@ SVMatroxResourceMonitor& SVMatroxResourceMonitor::Instance()
 HRESULT SVMatroxResourceMonitor::InsertIdentifier( SVMatroxIdentifierEnum p_IdentifierType, SVMatroxIdentifier p_Identifier )
 {
 	HRESULT l_Status = S_OK;
-
+#ifdef MONITOR_MIL_RESOURCES
 	SVMatroxResourceMonitor& monitor = SVMatroxResourceMonitor::Instance();
 
 	SVAutoLock l_AutoLock;
@@ -40,17 +44,6 @@ HRESULT SVMatroxResourceMonitor::InsertIdentifier( SVMatroxIdentifierEnum p_Iden
 	if( l_Status == SVMEE_STATUS_OK )
 	{
 		SVIdentifierSet::iterator l_AllIter = monitor.m_AllIdentifiers.find( p_Identifier );
-
-		if( l_AllIter == monitor.m_AllIdentifiers.end() )
-		{
-			monitor.m_AllIdentifiers.insert( p_Identifier );
-		}
-		else
-		{
-			l_Status = E_FAIL;
-		}
-
-		assert( l_Status == S_OK );
 
 		if( 0 <= p_IdentifierType && p_IdentifierType < static_cast< int >( monitor.m_Identifiers.size() ) )
 		{
@@ -65,6 +58,10 @@ HRESULT SVMatroxResourceMonitor::InsertIdentifier( SVMatroxIdentifierEnum p_Iden
 			{
 				l_Status = E_FAIL;
 			}
+			if( l_AllIter == monitor.m_AllIdentifiers.end() )
+			{
+				monitor.m_AllIdentifiers.insert( p_Identifier );
+			}
 		}
 		else
 		{
@@ -73,42 +70,42 @@ HRESULT SVMatroxResourceMonitor::InsertIdentifier( SVMatroxIdentifierEnum p_Iden
 	}
 
 	assert( l_Status == S_OK );
-
+#endif
 	return l_Status;
 }
 
-HRESULT SVMatroxResourceMonitor::EraseIdentifier( SVMatroxIdentifierEnum p_IdentifierType, SVMatroxIdentifier p_Identifier )
+bool SVMatroxResourceMonitor::FindReference(SVMatroxIdentifier Identifier) const
+{
+	bool bRetVal = false;
+	for (std::vector<SVIdentifierSet>::const_iterator it = m_Identifiers.begin();!bRetVal && it != m_Identifiers.end();++it)
+	{
+		const SVIdentifierSet& rSet = (*it);
+		SVIdentifierSet::const_iterator idIter = rSet.find(Identifier);
+		bRetVal = (idIter != rSet.end());
+	}
+	return bRetVal;
+}
+
+HRESULT SVMatroxResourceMonitor::EraseIdentifier(SVMatroxIdentifierEnum p_IdentifierType, SVMatroxIdentifier p_Identifier)
 {
 	HRESULT l_Status = S_OK;
-
+#ifdef MONITOR_MIL_RESOURCES
 	SVMatroxResourceMonitor& monitor = SVMatroxResourceMonitor::Instance();
 	SVAutoLock l_AutoLock;
 
-	l_Status = GetAutoLock( l_AutoLock );
+	l_Status = GetAutoLock(l_AutoLock);
 
-	if( l_Status == SVMEE_STATUS_OK )
+	if (l_Status == SVMEE_STATUS_OK)
 	{
-		SVIdentifierSet::iterator l_AllIter = monitor.m_AllIdentifiers.find( p_Identifier );
-
-		if( l_AllIter != monitor.m_AllIdentifiers.end() )
+		// remove the indentifier from the Set of Type Indentifiers
+		if (0 <= p_IdentifierType && p_IdentifierType < static_cast<int>( monitor.m_Identifiers.size()))
 		{
-			monitor.m_AllIdentifiers.erase( p_Identifier );
-		}
-		else
-		{
-			l_Status = E_FAIL;
-		}
+			SVIdentifierSet& p_rSet = monitor.m_Identifiers[p_IdentifierType];
+			SVIdentifierSet::iterator l_Iter = p_rSet.find(p_Identifier);
 
-		assert( l_Status == S_OK );
-
-		if( 0 <= p_IdentifierType && p_IdentifierType < static_cast< int >( monitor.m_Identifiers.size() ) )
-		{
-			SVIdentifierSet& p_rSet = monitor.m_Identifiers[ p_IdentifierType ];
-			SVIdentifierSet::iterator l_Iter = p_rSet.find( p_Identifier );
-
-			if( l_Iter != p_rSet.end() )
+			if (l_Iter != p_rSet.end())
 			{
-				p_rSet.erase( p_Identifier );
+				p_rSet.erase(p_Identifier);
 			}
 			else
 			{
@@ -119,17 +116,36 @@ HRESULT SVMatroxResourceMonitor::EraseIdentifier( SVMatroxIdentifierEnum p_Ident
 		{
 			l_Status = E_FAIL;
 		}
+
+		// If there are no other references to the identifier - remove it from the all identifiers list
+		if (!monitor.FindReference(p_Identifier))
+		{
+			SVIdentifierSet::iterator l_AllIter = monitor.m_AllIdentifiers.find( p_Identifier );
+
+			if (l_AllIter != monitor.m_AllIdentifiers.end())
+			{
+				monitor.m_AllIdentifiers.erase(p_Identifier);
+			}
+			else
+			{
+				l_Status = E_FAIL;
+			}
+
+			assert(l_Status == S_OK);
+		}
 	}
 
 	assert( l_Status == S_OK );
-
+#endif
 	return l_Status;
 }
 
 SVMatroxResourceMonitor::SVStatusCode SVMatroxResourceMonitor::GetAutoLock( SVAutoLock& p_rAutoLock )
 {
+	SVStatusCode l_Status = SVMEE_STATUS_OK;
+#ifdef MONITOR_MIL_RESOURCES
 	SVMatroxResourceMonitor& monitor = SVMatroxResourceMonitor::Instance();
-	SVStatusCode l_Status = monitor.ValidateCriticalSection();
+	l_Status = monitor.ValidateCriticalSection();
 
 	if( l_Status == SVMEE_STATUS_OK )
 	{
@@ -138,7 +154,7 @@ SVMatroxResourceMonitor::SVStatusCode SVMatroxResourceMonitor::GetAutoLock( SVAu
 			l_Status = SVMEE_INVALID_LOCK;
 		}
 	}
-
+#endif
 	return l_Status;
 }
 
@@ -164,6 +180,16 @@ SVMatroxResourceMonitor::SVStatusCode SVMatroxResourceMonitor::ValidateCriticalS
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVMatroxLibrary\SVMatroxResourceMonitor.cpp_v  $
+ * 
+ *    Rev 1.2   03 Jun 2014 14:14:12   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  891
+ * SCR Title:  Remove tracking elements that hinder performance in release mode
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Removed monitoring from SVMatroxResource monitor class in release mode. This tool will only show issues when in debug mode due to asserts that are only active in debug.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   01 Oct 2013 11:15:30   tbair
  * Project:  SVObserver

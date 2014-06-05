@@ -26,9 +26,9 @@ library SVMASKEDITORLib
 			// NOTE - ClassWizard will maintain property information here.
 			//    Use extreme caution when editing this section.
 			//{{AFX_ODL_PROP(SVMaskEditorCtrl)
-			[id(1), bindable, requestedit, displaybind] OLE_HANDLE ImageDIBHandle;
+			[id(1), bindable, requestedit, displaybind] ISTREAM ImageDIBHandle;
 			[id(2), bindable, requestedit, displaybind] long MaskOperator;
-			[id(3), bindable, requestedit, displaybind, defaultbind] OLE_HANDLE MaskData;
+			[id(3), bindable, requestedit, displaybind, defaultbind] ISTREAM MaskData;
 			//}}AFX_ODL_PROP
 
 		methods:

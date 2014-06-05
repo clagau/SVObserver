@@ -15,16 +15,17 @@ IMPLEMENT_DYNCREATE(CSVMaskEditor, CWnd)
 /////////////////////////////////////////////////////////////////////////////
 // CSVMaskEditor properties
 
-long CSVMaskEditor::GetImageDIBHandle()
+
+LPUNKNOWN CSVMaskEditor::GetImageDIBHandle()
 {
-	long result;
-	GetProperty(0x1, VT_I4, (void*)&result);
+	LPUNKNOWN result;
+	GetProperty(0x1, VT_UNKNOWN, (void*)&result);
 	return result;
 }
 
-void CSVMaskEditor::SetImageDIBHandle(long propVal)
+void CSVMaskEditor::SetImageDIBHandle(LPUNKNOWN propVal)
 {
-	SetProperty(0x1, VT_I4, propVal);
+	SetProperty(0x1, VT_UNKNOWN, propVal);
 }
 
 long CSVMaskEditor::GetMaskOperator()
@@ -39,20 +40,17 @@ void CSVMaskEditor::SetMaskOperator(long propVal)
 	SetProperty(0x2, VT_I4, propVal);
 }
 
-long CSVMaskEditor::GetMaskData()
+LPUNKNOWN CSVMaskEditor::GetMaskData()
 {
-	long result;
-	GetProperty(0x3, VT_I4, (void*)&result);
+	LPUNKNOWN result;
+	GetProperty(0x3, VT_UNKNOWN, (void*)&result);
 	return result;
 }
-
-void CSVMaskEditor::SetMaskData(long propVal)
+void CSVMaskEditor::SetMaskData(LPUNKNOWN propVal)
 {
-	SetProperty(0x3, VT_I4, propVal);
+	SetProperty(0x3, VT_UNKNOWN, propVal);
 }
 
-/////////////////////////////////////////////////////////////////////////////
-// CSVMaskEditor operations
 
 void CSVMaskEditor::Refresh()
 {

@@ -5,8 +5,8 @@
 //* .Module Name     : SVMaskEditorCtl
 //* .File Name       : $Workfile:   SVMaskEditorCtl.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   01 Oct 2013 10:22:34  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   03 Jun 2014 13:20:54  $
 //******************************************************************************
 
 #if !defined(AFX_SVMASKEDITORCTL_H__C87C9B82_E6DC_11D2_A77B_00106F000C7D__INCLUDED_)
@@ -61,12 +61,12 @@ protected:
 
 // Dispatch maps
 	//{{AFX_DISPATCH(SVMaskEditorCtrl)
-	afx_msg OLE_HANDLE GetImageDIBHandle();
-	afx_msg void SetImageDIBHandle(OLE_HANDLE nNewValue);
+	afx_msg IPictureDisp* GetImageDIBHandle();
+	afx_msg void SetImageDIBHandle(IPictureDisp* pPic);
 	afx_msg long GetMaskOperator();
 	afx_msg void SetMaskOperator(long nNewValue);
-	afx_msg OLE_HANDLE GetMaskData();
-	afx_msg void SetMaskData(OLE_HANDLE nNewValue);
+	afx_msg IStream* GetMaskData();
+	afx_msg void SetMaskData(IStream* nNewValue);
 	afx_msg INT_PTR DoEditMaskModal();
 	afx_msg void Refresh();
 	//}}AFX_DISPATCH
@@ -106,6 +106,17 @@ protected:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVMaskEditor\SVMaskEditorCtl.h_v  $
+ * 
+ *    Rev 1.2   03 Jun 2014 13:20:54   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Changed types to insure compatibility in 64bit Windows.
+ * OLE_HANDLE is a 32 bit type. Use IPICTUREDISP instead.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   01 Oct 2013 10:22:34   tbair
  * Project:  SVObserver

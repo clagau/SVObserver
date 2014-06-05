@@ -5,8 +5,8 @@
 // * .Module Name     : SVMatroxDisplayInterface
 // * .File Name       : $Workfile:   SVMatroxDisplayInterface.cpp  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.0  $
-// * .Check In Date   : $Date:   22 Apr 2013 15:12:48  $
+// * .Current Version : $Revision:   1.1  $
+// * .Check In Date   : $Date:   03 Jun 2014 13:43:08  $
 // ******************************************************************************
 
 #include "stdafx.h"
@@ -425,7 +425,7 @@ SVMatroxDisplayInterface::SVStatusCode SVMatroxDisplayInterface::Get( const SVMa
 		{
 			if( !p_rDispId.empty() )
 			{
-				long l_lValue;
+				MIL_INT l_lValue;
 				if(( p_eDispFlag & SVDispDouble) == SVDispDouble)
 				{	// if this parameter is expecting a double then we better use a double.
 					double l_dTmp = 0;
@@ -439,7 +439,7 @@ SVMatroxDisplayInterface::SVStatusCode SVMatroxDisplayInterface::Get( const SVMa
 				l_Code = SVMatroxApplicationInterface::GetLastStatus();
 				if( l_Code == SVMEE_STATUS_OK )
 				{
-					p_rlData = l_lValue;
+					p_rlData = static_cast<long>(l_lValue);
 				}
 			}
 			else
@@ -482,7 +482,7 @@ SVMatroxDisplayInterface::SVStatusCode SVMatroxDisplayInterface::Get( const SVMa
 		{
 			if( !p_rDispId.empty() )
 			{
-				long l_lValue;
+				MIL_INT l_lValue;
 				MdispInquire( p_rDispId.m_DisplayIdentifier, M_SELECTED, &l_lValue );
 				l_Code = SVMatroxApplicationInterface::GetLastStatus();
 				if( l_Code == SVMEE_STATUS_OK )
@@ -901,6 +901,16 @@ SVMatroxDisplayInterface::SVStatusCode SVMatroxDisplayInterface::Zoom( const SVM
 // ******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVMatroxLibrary\SVMatroxDisplayInterface.cpp_v  $
+ * 
+ *    Rev 1.1   03 Jun 2014 13:43:08   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Changed create function to use MIL_INT instead of long.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   22 Apr 2013 15:12:48   bWalter
  * Project:  SVObserver

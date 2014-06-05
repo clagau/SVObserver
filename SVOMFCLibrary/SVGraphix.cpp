@@ -5,8 +5,8 @@
 //* .Module Name     : SVGraphixDrawObjectClass
 //* .File Name       : $Workfile:   SVGraphix.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   27 Jan 2014 07:33:36  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   03 Jun 2014 13:48:50  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -334,7 +334,7 @@ HGLOBAL SVGraphixClass::GetGraphixData()
 	Serialize( archive );
 	archive.Close();
 
-	DWORD memFileSize = (DWORD)memFile.GetLength() + 10;
+	size_t memFileSize = static_cast<size_t>(memFile.GetLength());
 	HGLOBAL hMem = ::GlobalAlloc( GMEM_MOVEABLE, memFileSize );
 	BYTE* pMem = ( BYTE* ) ::GlobalLock( hMem );
 	if( hMem && pMem )
@@ -342,21 +342,24 @@ HGLOBAL SVGraphixClass::GetGraphixData()
 		BYTE* pMemFile = memFile.Detach();
 		memcpy( pMem, pMemFile, memFileSize );
 		::GlobalUnlock( pMem );
-		memFile.Attach( pMemFile, ( UINT ) memFileSize );
-
+		//Previous code attempted to free this memory by re-attaching to the CMemFile but it did not work. Use free.
+		free(pMemFile);
 		return hMem;
 	}
+	if(pMem) ::GlobalUnlock( pMem );
+	if(hMem) ::GlobalFree( hMem );
 	return NULL;
 }
 
 BOOL SVGraphixClass::SetGraphixData( HGLOBAL HGlobalMem ) 
 {
-	UINT memFileSize = ( UINT ) ::GlobalSize( HGlobalMem ); 
+	BOOL bRet = FALSE;
+	SIZE_T memFileSize = ::GlobalSize( HGlobalMem ); 
 	BYTE* pMemFile = ( BYTE* ) ::GlobalLock( HGlobalMem );
 	if( pMemFile && memFileSize )
 	{
 		CMemFile memFile;
-		memFile.Attach( pMemFile, memFileSize );
+		memFile.Attach( pMemFile, static_cast<UINT>(memFileSize) );
 		memFile.SeekToBegin();
 
 		CArchive archive( &memFile, CArchive::load );
@@ -366,11 +369,12 @@ BOOL SVGraphixClass::SetGraphixData( HGLOBAL HGlobalMem )
 		memFile.Detach();
 		
 		::GlobalUnlock( pMemFile );
-		::GlobalFree( HGlobalMem );
 
-		return TRUE;
+		bRet = TRUE;
 	}
-	return FALSE;
+	::GlobalFree( HGlobalMem );
+
+	return bRet;
 }
 
 //******************************************************************************
@@ -378,6 +382,16 @@ BOOL SVGraphixClass::SetGraphixData( HGLOBAL HGlobalMem )
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVOMFCLibrary\SVGraphix.cpp_v  $
+ * 
+ *    Rev 1.3   03 Jun 2014 13:48:50   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  890
+ * SCR Title:  Fix SVObserver Memory Leaks
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Fix leaks in Set and Get GraphixData.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   27 Jan 2014 07:33:36   tbair
  * Project:  SVObserver

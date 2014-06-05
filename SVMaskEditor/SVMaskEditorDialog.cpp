@@ -5,8 +5,8 @@
 //* .Module Name     : SVMaskEditorDialog
 //* .File Name       : $Workfile:   SVMaskEditorDialog.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   01 Oct 2013 10:22:32  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   03 Jun 2014 13:22:48  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -322,22 +322,22 @@ GraphixObject.SetGraphixRect( graRect );
             }
 
 			// Fill Arithmetic Combo...
-			ArithmeticComboCtl.SetItemData( ArithmeticComboCtl.AddString( _T( "AND" ) ), ( DWORD ) SVImageAnd );
-			ArithmeticComboCtl.SetItemData( ArithmeticComboCtl.AddString( _T( "OR" ) ),  ( DWORD ) SVImageOr );	
-			ArithmeticComboCtl.SetItemData( ArithmeticComboCtl.AddString( _T( "XOR" ) ), ( DWORD ) SVImageXOr );	
-			ArithmeticComboCtl.SetItemData( ArithmeticComboCtl.AddString( _T( "NOR" ) ), ( DWORD ) SVImageNor );	
-			ArithmeticComboCtl.SetItemData( ArithmeticComboCtl.AddString( _T( "XNOR" ) ), ( DWORD ) SVImageXNor );	
-			ArithmeticComboCtl.SetItemData( ArithmeticComboCtl.AddString( _T( "NAND" ) ), ( DWORD ) SVImageNand );	
-			ArithmeticComboCtl.SetItemData( ArithmeticComboCtl.AddString( _T( "ADD" ) ), ( DWORD ) SVImageAddSaturation );	
-			ArithmeticComboCtl.SetItemData( ArithmeticComboCtl.AddString( _T( "SUB" ) ), ( DWORD ) SVImageSubSaturation );	
-			ArithmeticComboCtl.SetItemData( ArithmeticComboCtl.AddString( _T( "MULT" ) ), ( DWORD ) SVImageMulSaturation );
-			ArithmeticComboCtl.SetItemData( ArithmeticComboCtl.AddString( _T( "DIV" ) ), ( DWORD ) SVImageDiv );
-			ArithmeticComboCtl.SetItemData( ArithmeticComboCtl.AddString( _T( "MIN" ) ), ( DWORD ) SVImageMin );	
-			ArithmeticComboCtl.SetItemData( ArithmeticComboCtl.AddString( _T( "MAX" ) ), ( DWORD ) SVImageMax );	
-			ArithmeticComboCtl.SetItemData( ArithmeticComboCtl.AddString( _T( "PASS" ) ), ( DWORD ) SVImagePass );	
+			ArithmeticComboCtl.SetItemData( ArithmeticComboCtl.AddString( _T( "AND" ) ),  SVImageAnd );
+			ArithmeticComboCtl.SetItemData( ArithmeticComboCtl.AddString( _T( "OR" ) ),   SVImageOr );	
+			ArithmeticComboCtl.SetItemData( ArithmeticComboCtl.AddString( _T( "XOR" ) ),  SVImageXOr );	
+			ArithmeticComboCtl.SetItemData( ArithmeticComboCtl.AddString( _T( "NOR" ) ),  SVImageNor );	
+			ArithmeticComboCtl.SetItemData( ArithmeticComboCtl.AddString( _T( "XNOR" ) ),  SVImageXNor );	
+			ArithmeticComboCtl.SetItemData( ArithmeticComboCtl.AddString( _T( "NAND" ) ),  SVImageNand );	
+			ArithmeticComboCtl.SetItemData( ArithmeticComboCtl.AddString( _T( "ADD" ) ),  SVImageAddSaturation );	
+			ArithmeticComboCtl.SetItemData( ArithmeticComboCtl.AddString( _T( "SUB" ) ),  SVImageSubSaturation );	
+			ArithmeticComboCtl.SetItemData( ArithmeticComboCtl.AddString( _T( "MULT" ) ),  SVImageMulSaturation );
+			ArithmeticComboCtl.SetItemData( ArithmeticComboCtl.AddString( _T( "DIV" ) ),  SVImageDiv );
+			ArithmeticComboCtl.SetItemData( ArithmeticComboCtl.AddString( _T( "MIN" ) ),  SVImageMin );	
+			ArithmeticComboCtl.SetItemData( ArithmeticComboCtl.AddString( _T( "MAX" ) ),  SVImageMax );	
+			ArithmeticComboCtl.SetItemData( ArithmeticComboCtl.AddString( _T( "PASS" ) ),  SVImagePass );	
 			// Set Default Operator...
 			for( int i = 0; i < ArithmeticComboCtl.GetCount(); ++ i )
-				if( m_lMilArithmeticOperation == ( long ) ArithmeticComboCtl.GetItemData( i ) )
+				if( m_lMilArithmeticOperation == static_cast<long>(ArithmeticComboCtl.GetItemData( i )) )
 				{
 					ArithmeticComboCtl.SetCurSel( i );
 					break;
@@ -1081,6 +1081,16 @@ StrZoom.Format( _T( "X: %d, Y: %d" ), point.x, point.y );
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVMaskEditor\SVMaskEditorDialog.cpp_v  $
+ * 
+ *    Rev 1.2   03 Jun 2014 13:22:48   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Removed c-style DWORD cast.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   01 Oct 2013 10:22:32   tbair
  * Project:  SVObserver

@@ -5,14 +5,14 @@
 //* .Module Name     : SVToolAdjustmentDialogMaskPageClass
 //* .File Name       : $Workfile:   SVToolAdjustmentDialogMaskPageClass.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.4  $
-//* .Check In Date   : $Date:   15 May 2014 14:36:32  $
+//* .Current Version : $Revision:   1.5  $
+//* .Check In Date   : $Date:   03 Jun 2014 13:40:30  $
 //******************************************************************************
 
 #include "stdafx.h"
 #include <colordlg.h>	// for custom color dlg resource #defines
 #include "SVToolAdjustmentDialogMaskPageClass.h"
-
+#include "SVSystemLibrary\SVImageConvertorGDI.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVRunControlLibrary/SVRunStatus.h"
 
@@ -378,7 +378,7 @@ void SVToolAdjustmentDialogMaskPageClass::RefreshComboBox(SVValueObjectClass& p_
 
 void SVToolAdjustmentDialogMaskPageClass::OnEditStaticMaskButton() 
 {
-	if( m_pMaskEditorCtl == NULL )
+	if( NULL == m_pMaskEditorCtl )
 	{
 		m_pMaskEditorCtl = new CSVMaskEditor;
 
@@ -415,61 +415,60 @@ void SVToolAdjustmentDialogMaskPageClass::OnEditStaticMaskButton()
 	{
 		UpdateData( TRUE );
 
-		/*
-		// Hide mask, we need image buffer without mask...
-		BOOL bState;
-		m_pMask->m_Data.bvoActivated.GetValue( bState );
-		m_pMask->m_Data.bvoActivated.SetValue( 1, FALSE );
-
-		// Run complete tool, since we work also with 
-		// in place process image operator lists and we need the image buffer
-		// without mask...RO_22Mar2000
-		if( m_pTool )
-		{
-			SVRunStatusClass runStatus;
-			runStatus.ClearAll();
-			runStatus.m_lResultDataIndex  = 1;
-			runStatus.m_lResultImageIndex = 1;
-			m_pTool->Run( runStatus );
-		}
-		//*/
-
 		//
 		// Create bitmap of output buffer...
 		//
 		ASSERT(m_pTool);
 		
 		HBITMAP hBM = SVMilBufferToBitmap2( pImage );
-		
-		m_pMaskEditorCtl->SetImageDIBHandle( ( long ) hBM );
-		
-		/*
-		// Recover mask state...
-		m_pMask->m_Data.bvoActivated.SetValue( 1, bState );
-		//*/
+		CComPtr<IPictureDisp> pDisp;
+		HRESULT hr = SVImageConvertorGDI::GetIPictureDispFromBitmap(hBM, &pDisp );
+		if( S_OK == hr )
+		{
+			m_pMaskEditorCtl->SetImageDIBHandle( pDisp );
+		}
 
 		// Set mask Graphix data...
-		m_pMaskEditorCtl->SetMaskData( ( long ) m_pMask->m_graphixObject.GetGraphixData() );
-
+		CComPtr<IStream> pStream;
+		hr = CreateStreamOnHGlobal( m_pMask->m_graphixObject.GetGraphixData(), true, &pStream);
+		if( S_OK == hr )
+		{
+			m_pMaskEditorCtl->SetMaskData( pStream );
+		}
+		else
+		{
+			ASSERT(FALSE);
+		}
 		// Set current mask operator...
 		long lMaskOperator;
 		m_pMask->m_Data.evoCurrentMaskOperator.GetValue( lMaskOperator );
-
 		m_pMaskEditorCtl->SetMaskOperator( lMaskOperator );
 
 		//
 		// Edit...Run the Mask Editor OCX dialog
 		//
-		if( m_pMaskEditorCtl->DoEditMaskModal() == IDOK )
+		if( IDOK == m_pMaskEditorCtl->DoEditMaskModal() )
 		{
 			// Get mask Graphix data...
-			m_pMask->m_graphixObject.SetGraphixData( ( HGLOBAL ) m_pMaskEditorCtl->GetMaskData() );
-			m_pMask->Refresh();
+			HGLOBAL hg;
+			CComPtr<IUnknown> pUnk;
+			pUnk.Attach(m_pMaskEditorCtl->GetMaskData());
+			CComPtr<IStream> pStream;
+			hr = pUnk->QueryInterface(IID_IStream, reinterpret_cast<void**>(&pStream) );
+			if(S_OK == hr)
+			{
+				if( pStream != nullptr)
+				{
+					hr = GetHGlobalFromStream(pStream, &hg);
+					m_pMask->m_graphixObject.SetGraphixData( hg );
+					m_pMask->Refresh();
+				}
+			}
 
 			// Update combo...
 			lMaskOperator = m_pMaskEditorCtl->GetMaskOperator();
 
-			m_pMask->m_Data.evoCurrentMaskOperator.GetValue( lMaskOperator );
+			//m_pMask->m_Data.evoCurrentMaskOperator.GetValue( lMaskOperator );
 			for( int i = 0; i < m_cbMaskOperator.GetCount(); ++ i )
 			{
 				if( lMaskOperator == ( long ) m_cbMaskOperator.GetItemData( i ) )
@@ -482,7 +481,7 @@ void SVToolAdjustmentDialogMaskPageClass::OnEditStaticMaskButton()
 			UpdateData( FALSE );
 		}
 
-		// Refresh Dialog...
+ 		// Refresh Dialog...
 		initMask();
 	}
 }
@@ -987,6 +986,16 @@ void SVToolAdjustmentDialogMaskPageClass::OnSelchangeDrawMaskCriteria()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVToolAdjustmentDialogMaskPageClass.cpp_v  $
+ * 
+ *    Rev 1.5   03 Jun 2014 13:40:30   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Modified Interface to use IPictureDisp and IStream for bitmaps and mask data.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.4   15 May 2014 14:36:32   sjones
  * Project:  SVObserver
