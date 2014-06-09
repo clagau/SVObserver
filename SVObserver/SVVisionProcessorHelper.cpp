@@ -5,8 +5,8 @@
 //* .Module Name     : SVVisionProcessorHelper
 //* .File Name       : $Workfile:   SVVisionProcessorHelper.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.12  $
-//* .Check In Date   : $Date:   02 Jun 2014 10:24:38  $
+//* .Current Version : $Revision:   1.13  $
+//* .Check In Date   : $Date:   09 Jun 2014 16:12:08  $
 //******************************************************************************
 
 #pragma region Includes
@@ -243,7 +243,7 @@ HRESULT SVVisionProcessorHelper::GetDataDefinitionList( const SVString& p_rInspe
 	long l_ValueFilter = -1;
 	long l_ImageFilter = -1;
 
-	if(0 != ( p_rListType & SelectedValues))
+	if(0 != ( p_rListType & SelectedValues ))
 	{
 		l_ValueFilter = SV_DD_VALUE;
 	}
@@ -263,8 +263,8 @@ HRESULT SVVisionProcessorHelper::GetDataDefinitionList( const SVString& p_rInspe
 		l_ImageFilter = SV_DD_IMAGE | SV_VIEWABLE;
 	}
 
-	SVInspectionProcess* pInspection = NULL;
-	SVConfigurationObject* l_pConfig = NULL;
+	SVInspectionProcess* pInspection = nullptr;
+	SVConfigurationObject* l_pConfig = nullptr;
 	SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
 
 	if ( (NULL != l_pConfig) && l_pConfig->GetInspectionObject(p_rInspectionName.c_str(), &pInspection) )
@@ -285,7 +285,7 @@ HRESULT SVVisionProcessorHelper::GetDataDefinitionList( const SVString& p_rInspe
 			for( int i = 0; i < nCount; i++ )
 			{
 				// Get OutObjectInfoStruct...
-				SVOutObjectInfoStruct* pInfoItem = NULL;
+				SVOutObjectInfoStruct* pInfoItem = nullptr;
 
 				pInfoItem = l_OutputList.GetAt( i );
 
@@ -313,17 +313,17 @@ HRESULT SVVisionProcessorHelper::GetDataDefinitionList( const SVString& p_rInspe
 			}
 		}
 
-		if( l_ImageFilter != -1)
+		if( l_ImageFilter != -1 )
 		{
 			//Add image definition list
 			SVImageListClass l_ImageList;
 			pToolSet->GetImageList( l_ImageList );
 
-			size_t nCount = l_ImageList.GetSize();
-			for( size_t i=0; i<nCount; i++)
+			int nCount = l_ImageList.GetSize();
+			for( int i = 0; i < nCount; i++ )
 			{
 				SVImageClass* l_pImage = l_ImageList.GetAt( i );
-			
+
 				if ( l_pImage )
 				{
 					SVDataDefinitionStruct l_DataDefinition;
@@ -990,6 +990,17 @@ void SVVisionProcessorHelper::ProcessLastModified( bool& p_WaitForEvents )
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVVisionProcessorHelper.cpp_v  $
+ * 
+ *    Rev 1.13   09 Jun 2014 16:12:08   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Changed type for nCount in method GetDataDefinitionList to avoid warning on x64 platform.
+ * Changed assignments in method GetDataDefinitionList to use nullptr.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.12   02 Jun 2014 10:24:38   gramseier
  * Project:  SVObserver
