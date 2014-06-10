@@ -5,8 +5,8 @@
 // * .Module Name     : SVOMFCLibraryGlobals
 // * .File Name       : $Workfile:   SVOMFCLibraryGlobals.h  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.0  $
-// * .Check In Date   : $Date:   25 Apr 2013 13:10:16  $
+// * .Current Version : $Revision:   1.1  $
+// * .Check In Date   : $Date:   10 Jun 2014 10:37:46  $
 // ******************************************************************************
 
 #ifndef _SVOMFCLIBRARYGLOBALS_H_
@@ -17,6 +17,7 @@
 #endif // _MSC_VER > 1000
 
 #include <float.h>
+#include <math.h>
 
 #define SVHANDLE_DEFINED
 typedef unsigned long SVHANDLE;
@@ -74,22 +75,22 @@ inline CString AsString(unsigned long n) {CString s;s.Format("%u", n); return s;
 inline CString AsString(double d) {CString s;s.Format("%f", d); return s;}
 
 inline bool ApproxEqual(float f1, float f2)
-	{
-	return ((f1 - f2) < FLT_EPSILON) || ((f2 - f1) < FLT_EPSILON);
-	}
+{
+	return (fabs(f1 - f2) < FLT_EPSILON);
+}
 
 inline bool ApproxEqual(double d1, double d2)
-	{
-	return ((d1 - d2) < DBL_EPSILON) || ((d2 - d1) < DBL_EPSILON);
-	}
+{
+	return (fabs(d1 - d2) < DBL_EPSILON);
+}
 
 inline long LongRand()
-	{
+{
 	// rand returns number {0,32767}. Let's create a 30-bit value from two random numbers
 	long l = rand() << 15;
 	l |= rand();
 	return l;
-	}
+}
 
 inline DWORD ROR(DWORD& rdwValue, BYTE byNumBitsToShift = 1)
 {
@@ -385,7 +386,17 @@ class SVIncompleteTypePtr
 // * LOG HISTORY:
 // ******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVOMFCLibrary\SVOMFCLibraryGlobals.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVOMFCLibrary\SVOMFCLibraryGlobals.h_v  $
+ * 
+ *    Rev 1.1   10 Jun 2014 10:37:46   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  894
+ * SCR Title:  Enhancements to Adjust Tool Position Dialog
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   Bugfix ApproxEqual
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   25 Apr 2013 13:10:16   bWalter
  * Project:  SVObserver
