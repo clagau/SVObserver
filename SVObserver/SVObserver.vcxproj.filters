@@ -3729,5 +3729,11 @@
     <None Include="BasicValueObjects.inl">
       <Filter>Header Files</Filter>
     </None>
-  </ItemGroup>
+    <None Include="BasicValueObject.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="EnvironmentObject.inl">
+      <Filter>Header Files</Filter>
+    </None>
+	</ItemGroup>
 </Project>
