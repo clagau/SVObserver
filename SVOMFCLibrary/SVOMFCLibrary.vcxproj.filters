@@ -56,9 +56,6 @@
     <ClCompile Include="SVParamListDeviceParam.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVSafeArrayHelpers.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVStringValueDeviceParam.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -131,9 +128,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVParamListDeviceParam.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVSafeArrayHelpers.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVStringValueDeviceParam.h">

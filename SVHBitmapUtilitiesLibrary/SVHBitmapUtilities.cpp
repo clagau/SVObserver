@@ -5,8 +5,8 @@
 //* .Module Name     : HBitmapUtilities
 //* .File Name       : $Workfile:   SVHBitmapUtilities.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   28 Feb 2014 09:02:16  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   12 Jun 2014 13:19:44  $
 //******************************************************************************
 
 
@@ -250,6 +250,7 @@ SVDIBITMAPINFO SVIHBitmapUtilities::SVCreateHBitmap( SVImageDefinitionStruct& rI
 	if(hbmResult == NULL)
 	{
 		delete [] pbmInfo;
+		pbmInfo = nullptr;
 		assert(0);
 	}
 	return SVDIBITMAPINFO( hbmResult, pBits, pbmInfo );
@@ -315,6 +316,16 @@ HRESULT SVIHBitmapUtilities::SVHBitmapToDC(const SVDIBITMAPINFO svSrcDIB, HDC hD
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVHBitmapUtilitiesLibrary\SVHBitmapUtilities.cpp_v  $
+ * 
+ *    Rev 1.3   12 Jun 2014 13:19:44   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  890
+ * SCR Title:  Fix SVObserver Memory Leaks
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Cleanup pointer after delete in SVCreateHBitmap.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   28 Feb 2014 09:02:16   tbair
  * Project:  SVObserver

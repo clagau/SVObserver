@@ -5,8 +5,8 @@
 //* .Module Name     : SVRemoteOutputsView
 //* .File Name       : $Workfile:   SVRemoteOutputsView.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   02 Oct 2013 08:17:46  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   12 Jun 2014 16:11:36  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -89,8 +89,8 @@ int SVRemoteOutputsView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	ImageList.Create( 16, 16, TRUE, 5, 5 );
 	ImageList.Add( AfxGetApp()->LoadIcon( IDI_IOITEM_ICON ) );
 	ImageList.Add( AfxGetApp()->LoadIcon( IDI_NOIOITEM_ICON ) );
-	ImageList.Add( AfxGetApp()->LoadIcon( IDI_PPQ_COLLAPSE ) );
-	ImageList.Add( AfxGetApp()->LoadIcon( IDI_PPQ_EXPAND ) );
+	ImageList.Add( AfxGetApp()->LoadIcon( IDI_COLLAPSE ) );
+	ImageList.Add( AfxGetApp()->LoadIcon( IDI_EXPAND ) );
 
 	StateImageList.Create( 16, 16, TRUE, 2, 2 );
 	StateImageList.Add( AfxGetApp()->LoadIcon( IDI_PPQ_ICON ) );
@@ -760,6 +760,17 @@ void SVRemoteOutputsView::OnLButtonDown(UINT nFlags, CPoint point)
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVRemoteOutputsView.cpp_v  $
+ * 
+ *    Rev 1.3   12 Jun 2014 16:11:36   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  906
+ * SCR Title:  SVObserver Tool Grouping
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   Revised IDI_PPQ_EXPAND to IDI_EXPAND
+ * Revised IDI_PPQ_COLLAPSE to IDI_COLLAPSE
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   02 Oct 2013 08:17:46   tbair
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : SVInspectionProcess
 //* .File Name       : $Workfile:   SVInspectionProcess.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.13  $
-//* .Check In Date   : $Date:   15 May 2014 12:50:56  $
+//* .Current Version : $Revision:   1.14  $
+//* .Check In Date   : $Date:   12 Jun 2014 16:19:40  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -42,7 +42,6 @@
 #include "SVExternalToolTask.h"
 #include "SVValueObject.h"
 #include "SVConfigurationObject.h"
-#include "SVToolSetTabView.h"
 #include "SVConditional.h"
 #include "SVSVIMStateClass.h"
 #include "SVAcquisitionClass.h"
@@ -4777,6 +4776,16 @@ void SVInspectionProcess::Persist(SVObjectWriter& rWriter)
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVInspectionProcess.cpp_v  $
+ * 
+ *    Rev 1.14   12 Jun 2014 16:19:40   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  906
+ * SCR Title:  SVObserver Tool Grouping
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   Removed include for SVToolSetTabView.h
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.13   15 May 2014 12:50:56   sjones
  * Project:  SVObserver

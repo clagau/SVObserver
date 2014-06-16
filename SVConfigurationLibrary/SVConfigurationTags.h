@@ -5,8 +5,8 @@
 // * .Module Name     : SVConfigurationTags
 // * .File Name       : $Workfile:   SVConfigurationTags.h  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.2  $
-// * .Check In Date   : $Date:   02 Jun 2014 06:18:46  $
+// * .Current Version : $Revision:   1.3  $
+// * .Check In Date   : $Date:   12 Jun 2014 16:05:48  $
 // ******************************************************************************
 // SVConfigurationTags.h
 
@@ -307,6 +307,14 @@ LPCTSTR const CTAG_TOOLSET_SET					  = _T("Tool Set");
 LPCTSTR const CTAG_DEPENDENT_FILES				  = _T("Dependent Files");
 LPCTSTR const CTAG_FILENAME						  = _T("Filename");
 
+LPCTSTR const CTAG_TOOLGROUPINGS				= _T("ToolGroupings");
+LPCTSTR const CTAG_GROUP						= _T("Group");
+LPCTSTR const CTAG_STARTGROUP					= _T("StartGroup");
+LPCTSTR const CTAG_TOOLS						= _T("Tools");
+LPCTSTR const CTAG_TOOL							= _T("Tool");
+LPCTSTR const CTAG_ENDGROUP						= _T("EndGroup");
+LPCTSTR const CTAG_COLLAPSED					= _T("Collapsed");
+
 #endif /* _INC_SVCONFIGURATIONTAGS_INCLUDED */
 
 // ******************************************************************************
@@ -314,6 +322,16 @@ LPCTSTR const CTAG_FILENAME						  = _T("Filename");
 // ******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVConfigurationLibrary\SVConfigurationTags.h_v  $
+ * 
+ *    Rev 1.3   12 Jun 2014 16:05:48   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  906
+ * SCR Title:  SVObserver Tool Grouping
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   Added tags for Tool Groupings
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   02 Jun 2014 06:18:46   gramseier
  * Project:  SVObserver

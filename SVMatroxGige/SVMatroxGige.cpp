@@ -5,8 +5,8 @@
 //* .Module Name     : SVMatroxGige
 //* .File Name       : $Workfile:   SVMatroxGige.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.4  $
-//* .Check In Date   : $Date:   02 Oct 2013 11:52:32  $
+//* .Current Version : $Revision:   1.5  $
+//* .Check In Date   : $Date:   12 Jun 2014 13:08:24  $
 //******************************************************************************
 
 #include "StdAfx.h"
@@ -16,7 +16,7 @@
 #include "SVMatroxLibrary/SVMatroxBufferInterface.h"
 #include "SVMatroxLibrary/SVMatroxSystemInterface.h"
 #include "SVMatroxDigitizerLibrary/SVMatroxDigitizerInterface.h"
-#include "SVOMFCLibrary/SVSafeArrayHelpers.h"
+#include "SVUtilityLibrary/SVUtilityGlobals.h"
 #include "SVImageLibrary/SVImageEnums.h"
 #include "SVTriggerLibrary/SVTriggerActivatorFunc.h"
 #include "SVTriggerLibrary/SVTriggerCallbackFunc.h"
@@ -1985,6 +1985,16 @@ HRESULT SVMatroxGige::SetAcquisitionTriggered(unsigned long p_ulHandle, bool bAc
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVMatroxGige\SVMatroxGige.cpp_v  $
+ * 
+ *    Rev 1.5   12 Jun 2014 13:08:24   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  871
+ * SCR Title:  Create Additional Visual Studio Solutions
+ * Checked in by:  bWalter;  Ben Walter
+ * Change Description:  
+ *   Removed duplicate global functions located in SVOMFCLibrary. Should use functions from SVUtilityLibrary.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.4   02 Oct 2013 11:52:32   tbair
  * Project:  SVObserver

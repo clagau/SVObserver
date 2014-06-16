@@ -5,8 +5,8 @@
 // * .Module Name     : SVCISapera
 // * .File Name       : $Workfile:   SVCISapera.cpp  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.2  $
-// * .Check In Date   : $Date:   07 May 2013 19:56:54  $
+// * .Current Version : $Revision:   1.3  $
+// * .Check In Date   : $Date:   13 Jun 2014 07:36:56  $
 // ******************************************************************************
 
 #include "StdAfx.h"
@@ -15,7 +15,7 @@
 #include "SVImageLibrary/SVImageEnums.h"
 #include "SVImageLibrary/SVAcquisitionBufferInterface.h"
 #include "SVOLibrary/SVQueueObject.h"
-#include "SVOMFCLibrary/SVSafeArrayHelpers.h"
+#include "SVUtilityLibrary/SVUtilityGlobals.h"
 #include "SVStatusLibrary/SVException.h"
 #include "SVStatusLibrary/SVStatusCodes.h"
 
@@ -2449,7 +2449,17 @@ HRESULT g_LoadCCFFile(CORSERVER p_hCorServer, unsigned long p_ulIndex, LPCTSTR p
 // * LOG HISTORY:
 // ******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVCI\SVCISapera.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVCI\SVCISapera.cpp_v  $
+ * 
+ *    Rev 1.3   13 Jun 2014 07:36:56   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  871
+ * SCR Title:  Create Additional Visual Studio Solutions
+ * Checked in by:  bWalter;  Ben Walter
+ * Change Description:  
+ *   Changed the include path to use SVUtilityLibrary instead of SVOMFCLibrary for SafeArrayHelpers.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   07 May 2013 19:56:54   bWalter
  * Project:  SVObserver

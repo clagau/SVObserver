@@ -5,8 +5,8 @@
 //* .Module Name     : SVIPDoc
 //* .File Name       : $Workfile:   SVIPDoc.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.16  $
-//* .Check In Date   : $Date:   26 May 2014 10:51:14  $
+//* .Current Version : $Revision:   1.17  $
+//* .Check In Date   : $Date:   12 Jun 2014 16:49:28  $
 //******************************************************************************
 
 #pragma region Includes
@@ -105,6 +105,9 @@ union SVViewUnion
 };
 #pragma endregion Declarations
 
+static const int MaxImageViews = 8;
+static const CString scColorToolMustBeFirstMessage = _T("A Color Tool must ALWAYS be\n the first tool on a color system.");
+
 //*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/
 //* Class Name : Class SVIPDoc
 //* Note(s)    : 
@@ -170,6 +173,10 @@ BEGIN_MESSAGE_MAP(SVIPDoc, CDocument)
 	ON_COMMAND(ID_ADD_REMOTEINPUTTOOL, OnAddRemoteInputTool)
 	ON_UPDATE_COMMAND_UI(ID_EDIT_ADJUSTLIGHTREFERENCE, OnAllowAdjustLightReference)
 	ON_UPDATE_COMMAND_UI(ID_EDIT_ADJUSTLUT, OnAllowAdjustLut)
+	ON_UPDATE_COMMAND_UI(ID_ADD_STARTTOOLGROUPING, OnUpdateAddStartToolGrouping)
+	ON_UPDATE_COMMAND_UI(ID_ADD_ENDTOOLGROUPING, OnUpdateAddEndToolGrouping)
+	ON_COMMAND(ID_ADD_STARTTOOLGROUPING, OnAddStartToolGrouping)
+	ON_COMMAND(ID_ADD_ENDTOOLGROUPING, OnAddEndToolGrouping)
 END_MESSAGE_MAP()
 
 #pragma region Constructor
@@ -392,7 +399,7 @@ BOOL SVIPDoc::InitAfterSystemIsDocked()
 		}
 		else
 		{
-			for (i = 0; i < 8; i++)
+			for (i = 0; i < MaxImageViews; i++)
 			{
 				pView = GetImageView( i );
 
@@ -438,55 +445,90 @@ BOOL SVIPDoc::InitAfterSystemIsDocked()
 //	 Date		Author		Comment                                       
 //  :dd.mm.yyyy				First Implementation
 ////////////////////////////////////////////////////////////////////////////////
-BOOL SVIPDoc::AddTool( SVToolClass* PTool )
+BOOL SVIPDoc::AddTool(SVToolClass* pTool)
 {
-	if( PTool != NULL )
+	if (nullptr != pTool)
 	{
-		SVToolClass* pNextTool = NULL;
-		int index = 0;
-		int count = 0;
-		
-		if( GetToolSetTabView() )
+		SVToolSetTabViewClass* pView = GetToolSetTabView();
+		if (pView)
 		{
-			index = GetToolSetTabView()->GetCurSel();
-			count = GetToolSetTabView()->GetItemCount() - 1; // insert at end
+			SVToolSetClass* pToolSet = GetToolSet();
 
-			if( index < 0 )
-				index = count; // insert at end
-
-			if( index < count )
-				pNextTool = GetToolSetTabView()->GetToolAt( index );
-		}
-
-		// A Color Tool must always be first on a RGB Color System.
-		if( index == 0 )
-		{
-			if( pNextTool && SV_IS_KIND_OF( pNextTool, SVColorToolClass ) &&
-							!SV_IS_KIND_OF( PTool, SVColorToolClass ) )
+			const ToolListSelectionInfo& info = pView->GetToolListSelectionInfo();
+			int toolListIndex = GetToolToInsertBefore(info.m_selection, info.m_listIndex);
+			
+			// A Color Tool must always be first on a RGB Color System.
+			// There can be multiple Color Tools on a RGB Color System, one of them must be first.
+			if (0 == toolListIndex)
 			{
-				AfxMessageBox( "A Color Tool must ALWAYS be\n the first tool on a color system.", MB_OK );
-				return FALSE;
-			}// end if
-		}// end if
+				if (pToolSet && pToolSet->GetSize())
+				{
+					SVToolClass* pNextTool = dynamic_cast<SVToolClass*>(pToolSet->GetAt(0));
+					if (pNextTool && SV_IS_KIND_OF(pNextTool, SVColorToolClass) &&
+									!SV_IS_KIND_OF(pTool, SVColorToolClass))
+					{
+						AfxMessageBox(scColorToolMustBeFirstMessage, MB_OK);
+						return false;
+					}
+				}
+			}
 
-		if( PTool != NULL )
-		{
-			SVAddTool l_AddTool( PTool, index );
+			SVAddTool l_AddTool(pTool, toolListIndex);
 
-			if( SVObjectManagerClass::Instance().UpdateObserver( GetInspectionID(), l_AddTool ) == S_OK )
+			if (S_OK == SVObjectManagerClass::Instance().UpdateObserver(GetInspectionID(), l_AddTool))
 			{
-				SetSelectedToolID( PTool->GetUniqueObjectID() );
+					
+				const SVGUID& rGuid = pTool->GetUniqueObjectID();
+				SetSelectedToolID(rGuid);
 
+				m_toolGroupings.AddTool(pTool->GetName(), static_cast<LPCTSTR>(info.m_selection));
+			
 				// Refresh all views...
-				UpdateAllViews( NULL );
+				UpdateAllViews(NULL);
 				
 				SetModifiedFlag();
 
-				return TRUE;
+				return true;
 			}
 		}
 	}
-	return FALSE;
+	return false;
+}
+
+bool SVIPDoc::AddToolGrouping(bool bStartGroup)
+{
+	bool bRetVal = false;
+	
+	SVToolSetTabViewClass* pView = GetToolSetTabView();
+	if (pView )
+	{
+		const ToolListSelectionInfo& rInfo = pView->GetToolListSelectionInfo();
+		if (bStartGroup)
+		{
+			m_toolGroupings.AddGroup(m_toolGroupings.GetDefaultName(), static_cast<LPCTSTR>(rInfo.m_selection));
+		}
+		else
+		{
+			// Get Group Name
+			CString group = m_toolGroupings.FindGroup(static_cast<LPCTSTR>(rInfo.m_selection)).c_str();
+			if (!group.IsEmpty())
+			{
+				// check if has end already ?
+				m_toolGroupings.AddEndGroup(static_cast<LPCTSTR>(group));
+			}
+		}
+
+		// change the selection to the group ?
+		//SetSelectedToolID( PTool->GetUniqueObjectID() );
+
+		// Refresh all views...
+		UpdateAllViews(NULL, SVIPDoc::RefreshView);
+				
+		SetModifiedFlag();
+
+		bRetVal = true;
+	}
+	return bRetVal;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -1200,7 +1242,7 @@ void SVIPDoc::OnAddPerspectiveTool()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// .Title       : OnAddWindowTool
+// .Title       : OnAddImageTool
 // -----------------------------------------------------------------------------
 // .Description : ...
 //              :
@@ -1397,6 +1439,36 @@ void SVIPDoc::OnAddColorTool()
 	if( pTool ) { delete( pTool ); }
 }
 
+void SVIPDoc::OnUpdateAddStartToolGrouping(CCmdUI* pCmdUI)
+{
+	pCmdUI->Enable(!SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST) && SVSVIMStateClass::CheckState(SV_STATE_EDIT));
+}
+
+void SVIPDoc::OnUpdateAddEndToolGrouping(CCmdUI* pCmdUI)
+{
+	bool bEnable = (!SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST) && SVSVIMStateClass::CheckState(SV_STATE_EDIT));
+	if (bEnable)
+	{
+		// check insertion position and ensure there is an unmatched start group before.
+		SVToolSetTabViewClass* pView = GetToolSetTabView();
+		if (pView)
+		{
+			bEnable = pView->IsEndToolGroupAllowed();
+		}
+	}
+	pCmdUI->Enable(bEnable);
+}
+
+void SVIPDoc::OnAddStartToolGrouping()
+{
+	AddToolGrouping(true);
+}
+
+void SVIPDoc::OnAddEndToolGrouping()
+{
+	AddToolGrouping(false);
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : OnEditDelete
 // -----------------------------------------------------------------------------
@@ -1409,77 +1481,116 @@ void SVIPDoc::OnAddColorTool()
 ////////////////////////////////////////////////////////////////////////////////
 void SVIPDoc::OnEditDelete()
 {
-	SVToolClass *pNextTool = NULL;
+	SVInspectionProcess* pInspection(GetInspectionProcess());
 
-	SVInspectionProcess* l_pInspection( GetInspectionProcess() );
-
-	if( l_pInspection == NULL ) { return; }
+	if (nullptr == pInspection) { return; }
 
 	// Don't allow while inspecting
-	if ( SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) )
+	if (SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST))
 	{
 		return;
 	}
-
-	if( GetToolSet() && GetToolSetTabView() && ! GetToolSetTabView()->IsLabelEditing() )
+	SVToolSetTabViewClass* pToolSetView = GetToolSetTabView();
+	SVToolSetClass* pToolSet = GetToolSet();
+	if (pToolSet && pToolSetView && !pToolSetView->IsLabelEditing())
 	{
-		// Delete tool...
-		int index;
-		if( ( index = GetToolSetTabView()->GetCurSel() ) != -1 )
+		// Delete Group or Tool...
+		const ToolListSelectionInfo& rInfo = pToolSetView->GetToolListSelectionInfo();
+		const SVGUID& rGuid = pToolSetView->GetSelectedTool();
+		if (!rGuid.empty())
 		{
-			// Don't let the first tool be delete if it is a Color Tool and 
+			// Don't let the first tool be deleted if it is a Color Tool and 
 			// the next tool isn't a Color Tool
 			// A Color Tool must always be first on a RGB Color System.
-			SVTaskObjectClass* pTaskObject = GetToolSet()->GetAt( index );
-			if( index + 1 < GetToolSet()->GetSize() )
+			SVTaskObjectClass* pFirstTaskObject = pToolSet->GetAt(0);
+			if (pFirstTaskObject && pFirstTaskObject->GetUniqueObjectID() == rGuid) // If deleting fist item
 			{
-				pNextTool = (SVToolClass*) GetToolSet()->GetAt( index + 1 );
-			}// end if
-
-			if( index == 0 )
-			{
-				if( pTaskObject &&  SV_IS_KIND_OF( pTaskObject, SVColorToolClass ) &&
-					pNextTool   && !SV_IS_KIND_OF( pNextTool,   SVColorToolClass ) )
+				if (pToolSet->GetSize() > 1)
 				{
-					AfxMessageBox( "A Color Tool must ALWAYS be\n the first tool on a color system.", MB_OK );
-					return;
-				}// end if
-			}// end if
-
-			HRESULT hr = DeleteTool( pTaskObject );
+					SVToolClass* pNextTool = dynamic_cast<SVToolClass*>(pToolSet->GetAt(1));
 			
-			if( hr == S_OK )
-			{
-				RunOnce();
-
-				index--;
-				if( index < 0 ) { index = 0; }
-
-				int iSize = GetToolSet()->GetSize();
-				if( iSize > 0 )
-				{
-					pTaskObject = GetToolSet()->GetAt( index );
+					if( pFirstTaskObject && SV_IS_KIND_OF(pFirstTaskObject, SVColorToolClass) &&
+						pNextTool && !SV_IS_KIND_OF(pNextTool, SVColorToolClass))
+					{
+						AfxMessageBox(scColorToolMustBeFirstMessage, MB_OK);
+						return;
+					}
 				}
-				else
-				{
-					pTaskObject = NULL;
-				}
-
-				SVToolSetTabViewClass* l_pTv = GetToolSetTabView();
-				l_pTv->toolSetListCtrl.SaveScrollPos();
-				l_pTv->toolSetListCtrl.Rebuild();
-				if( pTaskObject )
-				{
-					m_SelectedToolID = pTaskObject->GetUniqueObjectID();
-					l_pTv->toolSetListCtrl.SetCurrentSelection(m_SelectedToolID);
-				}
-
-				l_pTv->toolSetListCtrl.SetCurrentSelection( index );
-				l_pTv->toolSetListCtrl.RestoreScrollPos();
-				l_pTv->toolSetListCtrl.EnsureVisible( index, TRUE );
-
-				SetModifiedFlag();
 			}
+			SVTaskObjectClass* pTaskObject = dynamic_cast<SVTaskObjectClass *>(SVObjectManagerClass::Instance().GetObject(rGuid));
+			if (pTaskObject)
+			{
+				int index = GetSelectedToolIndex(rInfo.m_selection);
+
+				HRESULT hr = DeleteTool(pTaskObject);
+			
+				if (S_OK == hr)
+				{
+					m_toolGroupings.RemoveTool(static_cast<LPCTSTR>(rInfo.m_selection));
+
+					// Current behavior is to select the previous tool
+					// Select the previous tool or group (item) in the list ?
+					--index;
+					int iSize = pToolSet->GetSize();
+					if (iSize > 0 && index >= 0 && index < iSize)
+					{
+						pTaskObject = pToolSet->GetAt(index);
+					}
+					else
+					{
+						pTaskObject = nullptr;
+					}
+
+					pToolSetView->m_toolSetListCtrl.SaveScrollPos();
+// SEJ 999			pToolSetView->m_toolSetListCtrl.Rebuild();
+					if (pTaskObject)
+					{
+						m_SelectedToolID = pTaskObject->GetUniqueObjectID();
+					}
+					else
+					{
+						m_SelectedToolID = SVGUID();
+					}
+					pToolSetView->SetSelectedTool(m_SelectedToolID);
+					pToolSetView->m_toolSetListCtrl.RestoreScrollPos();
+					pToolSetView->m_toolSetListCtrl.EnsureVisible(index, true);
+
+					SetModifiedFlag();
+
+					RunOnce(); // this will cause rebuild to be called so why are we calling rebuild above?
+				}
+			}
+		}
+		else // Deleting Group
+		{
+			int index = rInfo.m_listIndex;
+			index--;
+			m_toolGroupings.RemoveGroup(static_cast<LPCTSTR>(rInfo.m_selection));
+				
+			pToolSetView->m_toolSetListCtrl.SaveScrollPos();
+			pToolSetView->m_toolSetListCtrl.Rebuild();
+			// Select previous..
+			if (index >= 0 && index < pToolSetView->m_toolSetListCtrl.GetItemCount())
+			{
+				DWORD_PTR itemData = pToolSetView->m_toolSetListCtrl.GetItemData(index);
+				if (itemData)
+				{
+					SVTaskObjectClass* pTaskObject = reinterpret_cast<SVTaskObjectClass*>(itemData);
+					if (pTaskObject)
+					{
+						m_SelectedToolID = pTaskObject->GetUniqueObjectID();
+					}
+					else
+					{
+						m_SelectedToolID = SVGUID();
+					}
+					pToolSetView->SetSelectedTool(m_SelectedToolID);
+					pToolSetView->m_toolSetListCtrl.SetItemState(index, LVIS_SELECTED, LVIS_SELECTED);
+				}
+				pToolSetView->m_toolSetListCtrl.EnsureVisible(index, true);
+			}
+			pToolSetView->m_toolSetListCtrl.RestoreScrollPos();
+			SetModifiedFlag();
 		}
 	}
 }
@@ -2025,16 +2136,6 @@ HRESULT SVIPDoc::IsToolSetListUpdated() const
 	return l_Status;
 }
 
-
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : GetPublishList
-// -----------------------------------------------------------------------------
-// .Description : ...
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :08.09.1999 SEJ			First Implementation
-////////////////////////////////////////////////////////////////////////////////
 BOOL SVIPDoc::checkOkToDelete( SVTaskObjectClass* pTaskObject )
 {
 	BOOL bRetVal = TRUE;
@@ -2321,7 +2422,7 @@ void SVIPDoc::RefreshDocument()
 {
 	SVCommandInspectionCollectImageData::SVImageIdSet l_ImageIds;
 
-	for( int i = 0; i < 8; ++i )
+	for( int i = 0; i < MaxImageViews; ++i )
 	{
 		SVImageViewClass* l_pImageView = GetImageView( i );
 
@@ -2356,7 +2457,7 @@ void SVIPDoc::RefreshDocument()
 
 void SVIPDoc::RecreateImageSurfaces()
 {
-	for( int i = 0; i < 8; ++ i )
+	for( int i = 0; i < MaxImageViews; ++ i )
 	{
 		SVImageViewClass* pImageView = GetImageView( i );
 
@@ -2488,6 +2589,7 @@ BOOL SVIPDoc::GetParameters(SVObjectWriter& rWriter)
 	// Save the View Placements
 	SaveViewPlacements(rWriter);
 
+	SaveToolGroupings(rWriter);
 	return bOk;
 }
 
@@ -2657,6 +2759,11 @@ void SVIPDoc::SaveViewPlacements(SVObjectWriter& rWriter)
 	rWriter.EndElement();
 
 	rWriter.EndElement();
+}
+
+void SVIPDoc::SaveToolGroupings(SVObjectWriter& rWriter)
+{
+	m_toolGroupings.GetParameters(rWriter);
 }
 
 BOOL SVIPDoc::SetParameters( SVTreeType& rTree, SVTreeType::SVBranchHandle htiParent )
@@ -2994,6 +3101,11 @@ BOOL SVIPDoc::SetParameters( SVTreeType& rTree, SVTreeType::SVBranchHandle htiPa
 				}
 			}
 		}
+		if (bOk)
+		{
+			HRESULT hr = m_toolGroupings.SetParameters(rTree, htiParent);
+			bOk = (S_OK == hr) ? true : false;
+		}
 	}
 	return bOk;
 }
@@ -3027,7 +3139,7 @@ HRESULT SVIPDoc::RemoveImage(const SVGUID& p_rImageId)
 {
 	HRESULT l_Status = S_FALSE;
 
-	for (int i = 0; i < 8; ++i)
+	for (int i = 0; i < MaxImageViews; ++i)
 	{
 		SVImageViewClass *l_pView = GetImageView( i );
 
@@ -3106,31 +3218,25 @@ BOOL SVIPDoc::SetSelectedToolForOperatorMove( BOOL bSetTool )
 {
 	BOOL l_Status = ( GetInspectionProcess() != NULL );
 
-	if( l_Status )
+	if (l_Status)
 	{
 		SVGUID l_TmpGUID = m_SelectedToolID;
 
 		l_Status = GetInspectionProcess()->SetSelectedToolForOperatorMove( bSetTool, l_TmpGUID );
 
-		if( l_Status )
+		if (l_Status)
 		{
 			m_SelectedToolID = l_TmpGUID;
 		}
 
 		SVToolSetTabViewClass* PView = GetToolSetTabView();
-		if( PView && l_Status )
+		if (PView && l_Status)
 		{
-			int nIndexTool( -1 );
-
-			//
 			// 'Select' the item in the list control associated with this tool
-			//
-			nIndexTool = PView->toolSetListCtrl.SetCurrentSelection( m_SelectedToolID );
+			PView->SetSelectedTool(m_SelectedToolID);
 		}
-
 		UpdateAllViews(NULL);      
 	}
-
 	return l_Status;
 }
 
@@ -3165,7 +3271,7 @@ HRESULT SVIPDoc::DeleteTool(SVTaskObjectClass* pTaskObject)
 
 			pTaskObject->GetOutputList( l_OutputList );
 
-			for (i = 0; i < 8; i++)
+			for (i = 0; i < MaxImageViews; i++)
 			{
 				pImageView = GetImageView( i );
 				if (pImageView->GetImage())
@@ -3653,6 +3759,16 @@ CString SVIPDoc::GetCompleteToolSetName() const
 	}
 
 	return l_Name;
+}
+
+const SVToolGrouping& SVIPDoc::GetToolGroupings() const
+{
+	return m_toolGroupings;
+}
+
+SVToolGrouping& SVIPDoc::GetToolGroupings()
+{
+	return m_toolGroupings;
 }
 
 void SVIPDoc::OnUpdateViewResetCountsAllIPs(CCmdUI* pCmdUI)
@@ -4226,11 +4342,84 @@ BOOL SVIPDoc::RunOnce( SVToolClass* p_pTool )
 	return l_Status;
 }
 
+int SVIPDoc::GetSelectedToolIndex(const CString& toolName) const
+{
+	int toolListIndex = 0;
+	const SVToolSetClass* pToolSet = GetToolSet();
+	if (pToolSet)
+	{
+		toolListIndex = pToolSet->GetSize();
+		bool bFound = false;
+		// FindTool by Name in SVTaskObjectList
+		for (int i = 0;i < pToolSet->GetSize() && !bFound;i++)
+		{
+			SVTaskObjectClass* pTool = pToolSet->GetAt(i);
+			if (pTool && pTool->GetName() == toolName)
+			{
+				toolListIndex = i;
+				bFound = true;
+			}
+		}
+	}
+	return toolListIndex;
+}
+
+int SVIPDoc::GetToolToInsertBefore(const CString& name, int listIndex) const
+{
+	int toolListIndex = 0;
+	
+	const SVToolSetClass* pToolSet = GetToolSet();
+	if (pToolSet)
+	{
+		toolListIndex = pToolSet->GetSize();
+		if (!name.IsEmpty())
+		{
+			bool bFound = false;
+			CString toolName = m_toolGroupings.GetToolToInsertBefore(static_cast<LPCTSTR>(name)).c_str();
+			if (!toolName.IsEmpty())
+			{
+				// FindTool by Name in SVTaskObjectList
+				for (int i = 0;i < pToolSet->GetSize() && !bFound;i++)
+				{
+					const SVTaskObjectClass* pTool = pToolSet->GetAt(i);
+					if (pTool && pTool->GetName() == toolName)
+					{
+						toolListIndex = i;
+						bFound = true;
+					}
+				}
+			}
+			if (!bFound && 0 == listIndex)
+			{
+				toolListIndex = 0;
+			}
+		}
+	}
+	return toolListIndex;
+}
+
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVIPDoc.cpp_v  $
+ * 
+ *    Rev 1.17   12 Jun 2014 16:49:28   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  906
+ * SCR Title:  SVObserver Tool Grouping
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   Added SVToolGrouping member.
+ * Revised AddTool to support Tool Groupings
+ * Revised OnEditDelete  to support Tool Groupings
+ * Added AddStartToolGrouping method
+ * Added AddEndToolGrouping method
+ * Added AddToolGrouping method
+ * Revised Rename logic to support Tool Groupings
+ * Added memu handlers for Add Start and End Tool Groupings
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.16   26 May 2014 10:51:14   mziegler
  * Project:  SVObserver

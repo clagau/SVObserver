@@ -5,8 +5,8 @@
 //* .Module Name     : SVMonitorListView
 //* .File Name       : $Workfile:   MonitorListView.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   23 Apr 2014 16:10:34  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   12 Jun 2014 16:11:36  $
 //******************************************************************************
 
 #pragma region Includes
@@ -488,8 +488,8 @@ int MonitorListView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	ImageList.Create(16, 16, true, 5, 5);
 	ImageList.Add(pApp->LoadIcon(IDI_IOITEM_ICON));		// 0
 	ImageList.Add(pApp->LoadIcon(IDI_NOIOITEM_ICON));	// 1
-	ImageList.Add(pApp->LoadIcon(IDI_PPQ_COLLAPSE));	// 2
-	ImageList.Add(pApp->LoadIcon(IDI_PPQ_EXPAND));		// 3
+	ImageList.Add(pApp->LoadIcon(IDI_COLLAPSE));		// 2
+	ImageList.Add(pApp->LoadIcon(IDI_EXPAND));			// 3
 
 	StateImageList.Create(16, 16, true, 2, 2);
 	StateImageList.Add(pApp->LoadIcon(IDI_PPQ_ICON));			// 0
@@ -1254,6 +1254,17 @@ void MonitorListView::OnLButtonDown(UINT nFlags, CPoint point)
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\MonitorListView.cpp_v  $
+ * 
+ *    Rev 1.3   12 Jun 2014 16:11:36   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  906
+ * SCR Title:  SVObserver Tool Grouping
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   Revised IDI_PPQ_EXPAND to IDI_EXPAND
+ * Revised IDI_PPQ_COLLAPSE to IDI_COLLAPSE
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   23 Apr 2014 16:10:34   ryoho
  * Project:  SVObserver

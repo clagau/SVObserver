@@ -1643,6 +1643,12 @@
     <ClCompile Include="SVMonitorList.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="SVToolGrouping.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SVToolSetTreeCtrl.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Midl Include="SVObserver.odl">
@@ -3402,6 +3408,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVMonitorList.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVToolGrouping.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVToolSetTreeCtrl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

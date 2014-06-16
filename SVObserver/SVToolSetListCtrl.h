@@ -5,51 +5,80 @@
 //* .Module Name     : SVToolSetListCtrl
 //* .File Name       : $Workfile:   SVToolSetListCtrl.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   13 May 2013 16:29:46  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   12 Jun 2014 16:46:24  $
 //******************************************************************************
+#pragma once
 
-#ifndef INCL_SVTOOLSETLISTCTRL_H
-#define INCL_SVTOOLSETLISTCTRL_H
-
-#include "SVTaskObjectListCtrl.h"
 #include "SVUtilityLibrary/SVGUID.h"
+#include "SVToolGrouping.h"
 
-/////////////////////////////////////////////////////////////////////////////
-// SVTaskObjectTreeCtrlClass window
+class SVToolClass;
+class SVTaskObjectListClass;
+class SVToolSetTabViewClass;
 
-class SVToolSetListCtrlClass : public SVTaskObjectListCtrlClass
+class ToolListSelectionInfo
 {
-	DECLARE_DYNCREATE(SVToolSetListCtrlClass)
+public:
+	const int m_listIndex;			// selected index in the ListCtrl
+	const CString m_selection;		// text for current selection
+
+	ToolListSelectionInfo(int listIndex, const CString& selection) 
+	: m_listIndex(listIndex), m_selection(selection) {}
+};
+
+class SVToolSetListCtrl : public CListCtrl
+{
+	DECLARE_DYNCREATE(SVToolSetListCtrl)
 
 public:
-	//{{AFX_MSG(SVToolSetListCtrlClass)
+	//{{AFX_MSG(SVToolSetListCtrl)
+	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
+	afx_msg void OnWindowPosChanged(WINDOWPOS* lpwndpos);
+	afx_msg void OnBeginTrack(NMHDR* pNMHDR, LRESULT* pResult);
 	//}}AFX_MSG
 
 	DECLARE_MESSAGE_MAP()
 
 	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(SVToolSetListCtrlClass)
+	//{{AFX_VIRTUAL(SVToolSetListCtrl)
 	//}}AFX_VIRTUAL
-
 public:
-	SVToolSetListCtrlClass();
+	SVToolSetListCtrl();
+	virtual ~SVToolSetListCtrl();
 
-	virtual ~SVToolSetListCtrlClass();
+	virtual BOOL PreTranslateMessage(MSG* pMsg);
 
 	virtual void Rebuild();
 	virtual void RebuildImages();
 
-	SVGUID GetCurrentSelectionID();
+	void SetTaskObjectList(SVTaskObjectListClass* pTaskObject);
+	
+	SVGUID GetSelectedTool() const;
+	void SetSelectedTool(const SVGUID& rGuid);
 
-	int GetCurrentSelection( int StartAt = -1 /* start searching at top */ );
-	int SetCurrentSelection( int nIndex = -1 /* to deselect */ );
-	int SetCurrentSelection( const SVGUID& p_rObjectID );
+	ToolListSelectionInfo GetToolListSelectionInfo() const;
+	void GetSelectedItemScreenPosition(POINT& rPoint) const;
+
 	void SaveScrollPos();
 	void RestoreScrollPos();
 
+	bool AllowedToEdit() const;
+	void AddEndDelimiter();
+	bool IsEndListDelimiter(const CString& text) const;
+	bool IsEmptyStringPlaceHolder(const CString& text) const;
+
 protected:
+	SVToolSetTabViewClass* GetView();
+	const SVToolSetTabViewClass* GetView() const;
 	void CreateImageLists();
+	int InsertStartGroup(int itemNo, const CString& startName, bool bCollapsed);
+	int InsertEndGroup(int itemNo, const CString& endName, bool bCollapsed);
+	int InsertTool(int itemNo, SVToolClass* pTool, bool bCollapsed);
+
+	void CollapseItem(int item);
+	void ExpandItem(int item);
+	bool IsStartGrouping(int index, bool& bState) const;
 
 	CImageList m_oStateImageList;
 
@@ -61,9 +90,10 @@ protected:
 	int m_iWarn;
 	int m_iUnknown;
 	int m_iTopIndex;
+	int m_expandState;
+	int m_collapseState;
 
-public:
-	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
+	SVTaskObjectListClass* m_pToolSet;
 };
 
 /////////////////////////////////////////////////////////////////////////////
@@ -71,13 +101,22 @@ public:
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
 
-#endif 
 
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVToolSetListCtrl.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVToolSetListCtrl.h_v  $
+ * 
+ *    Rev 1.2   12 Jun 2014 16:46:24   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  906
+ * SCR Title:  SVObserver Tool Grouping
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   Revised to support Tool Groupings
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   13 May 2013 16:29:46   bWalter
  * Project:  SVObserver

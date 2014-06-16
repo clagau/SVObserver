@@ -5,17 +5,17 @@
 //* .Module Name     : SVToolSetTabView
 //* .File Name       : $Workfile:   SVToolSetTabView.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   20 Sep 2013 14:51:08  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   12 Jun 2014 16:46:24  $
 //******************************************************************************
+#pragma once
 
-#ifndef SVTOOLSETTABVIEW_H
-#define SVTOOLSETTABVIEW_H
-
+#pragma region Includes
 #include "SVXMLLibrary/SVXMLMaterialsTree.h"
-#include "SVTaskObjectTreeCtrl.h"
+#include "SVToolSetTreeCtrl.h"
 #include "SVToolSetListCtrl.h"
 #include "SVOutputInfoListTreeCtrl.h"
+#pragma endregion Includes
 
 #define ID_EDIT_LABEL_ENDS 40000
 #define ID_RUN_ONCE		   40001
@@ -27,15 +27,15 @@ class SVObjectWriter;
 class SVToolSetTabViewClass : public CFormView
 {
 protected:
-	DECLARE_DYNCREATE( SVToolSetTabViewClass )
+	DECLARE_DYNCREATE(SVToolSetTabViewClass)
 
 public:
 	//{{AFX_DATA(SVToolSetTabViewClass)
 	enum { IDD = IDD_TOOLSETTAB_FORMVIEW };
-	SVOutputInfoListTreeCtrlClass	outputTreeCtrl;
-	SVTaskObjectTreeCtrlClass	toolSetTreeCtrl;
-	SVToolSetListCtrlClass	toolSetListCtrl;
-	CTabCtrl	toolSetTabCtrl;
+	SVOutputInfoListTreeCtrlClass m_outputTreeCtrl;
+	SVToolSetTreeCtrl m_toolSetTreeCtrl;
+	SVToolSetListCtrl m_toolSetListCtrl;
+	CTabCtrl m_toolSetTabCtrl;
 	//}}AFX_DATA
 
 	// Generated message map functions
@@ -68,7 +68,8 @@ public:
 	//{{AFX_VIRTUAL(SVToolSetTabViewClass)
 public:
 	virtual void OnInitialUpdate();
-	protected:
+
+protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 	virtual void OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint);
 	virtual void OnDraw(CDC* pDC);
@@ -76,35 +77,42 @@ public:
 
 public:
 	SVIPDoc* GetIPDoc() const;
-
 	BOOL GetParameters(SVObjectWriter& rWriter);
 
 	typedef SVXMLMaterialsTree SVTreeType;
 
-	BOOL SetParameters( SVTreeType& rTree, SVTreeType::SVBranchHandle htiParent );
+	BOOL SetParameters(SVTreeType& rTree, SVTreeType::SVBranchHandle htiParent);
+	BOOL CheckParameters(SVTreeType& rTree, SVTreeType::SVBranchHandle htiParent);
 
-	BOOL CheckParameters( SVTreeType& rTree, SVTreeType::SVBranchHandle htiParent );
+	void SetViewSize(CSize &Size);
+	bool IsLabelEditing() const;
 
-	void SetViewSize (CSize &Size);
-	BOOL IsLabelEditing();
-	int SetCurSel( int Pos );
-	int GetCurSel( int StartAt = -1 /* start searching at top */ );
-	POSITION GetFirstSelectedItemPosition();
-	int GetNextSelectedItem( POSITION &pos );
-	int GetItemCount() const;
+	void SetSelectedTool(const SVGUID& rGuid);
+	SVGUID GetSelectedTool() const;
 
-	SVToolClass* GetToolAt( int p_Index );
+	ToolListSelectionInfo GetToolListSelectionInfo() const;
+	void HandleExpandCollapse(const CString& name, bool bCollapse);
+	bool IsEndToolGroupAllowed() const;
+	CString GetSelectedGroup() const;
 
 protected:
 	SVToolSetTabViewClass();           // protected constructor used by dynamic creation
 	virtual ~SVToolSetTabViewClass();
-	void ValidateLabelText( CString& newText );
+	void ValidateLabelText(CString& newText);
 
-	BOOL			isLabeling;
-	int				labelingIndex;
-	CString         csLabelSaved;    // To restore label if necessary during editing.
-	CString         csLabelEdited;
+	void RenameItem(int item, const CString& oldName, const CString& newName);
 
+	void ToggleExpandCollapse(int item);
+	CString FindLoneStartGroup(int item) const;
+	bool IsToolsetListCtrlActive() const;
+
+	bool IsGroupNameUnique(const CString& name) const;
+	CString MakeGroupNameUnique(const CString& name, int index);
+
+	bool m_isLabeling;
+	int m_labelingIndex;
+	CString m_csLabelSaved;    // To restore label if necessary during editing.
+	CString m_csLabelEdited;
 };
 
 /////////////////////////////////////////////////////////////////////////////
@@ -112,13 +120,21 @@ protected:
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
 
-#endif // !defined(AFX_SVTOOLSETTABVIEW_H__75AEF555_B9E1_11D2_BB70_00C04FC38F76__INCLUDED_)
-
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVToolSetTabView.h_v  $
+ * 
+ *    Rev 1.2   12 Jun 2014 16:46:24   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  906
+ * SCR Title:  SVObserver Tool Grouping
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   Revised to support Tool Groupings
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   20 Sep 2013 14:51:08   bwalter
  * Project:  SVObserver

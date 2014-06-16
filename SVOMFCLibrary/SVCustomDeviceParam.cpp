@@ -5,8 +5,8 @@
 //* .Module Name     : SVCustomDeviceParam
 //* .File Name       : $Workfile:   SVCustomDeviceParam.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   28 Feb 2014 09:31:46  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   13 Jun 2014 10:00:06  $
 //******************************************************************************
 #include "Stdafx.h"
 #include "SVCustomDeviceParam.h"
@@ -64,43 +64,39 @@ HRESULT SVCustomDeviceParam::SetMetadata(const SVDeviceParam* pBaseParam)
 
 SVDeviceParam* SVCustomDeviceParam::Create(SVDeviceParamEnum typeEnum, const VARIANT& rv)
 {
-	SVCustomDeviceParam* pParam(NULL);
+	SVCustomDeviceParam* pParam(nullptr);
 
 	switch (rv.vt)
 	{
 		case VT_BSTR:
 		{
-			SVStringValueDeviceParam* pStringValueParam = new SVStringValueDeviceParam(typeEnum);
-			pStringValueParam->SetValue(rv);
-			pParam = new SVCustomDeviceParam(pStringValueParam);
-			delete pStringValueParam;
+			SVStringValueDeviceParam stringValueParam(typeEnum);
+			stringValueParam.SetValue(rv);
+			pParam = new SVCustomDeviceParam(&stringValueParam);
 		}
 		break;
 			
 		case VT_I4:
 		{
-			SVLongValueDeviceParam* pLongValueParam = new SVLongValueDeviceParam(typeEnum);
-			pLongValueParam->SetValue(rv);
-			pParam = new SVCustomDeviceParam(pLongValueParam);
-			delete pLongValueParam;
+			SVLongValueDeviceParam longValueParam(typeEnum);
+			longValueParam.SetValue(rv);
+			pParam = new SVCustomDeviceParam(&longValueParam);
 		}
 		break;
 			
 		case VT_BOOL:
 		{
-			SVBoolValueDeviceParam* pBoolValueParam = new SVBoolValueDeviceParam(typeEnum);
-			pBoolValueParam->SetValue(rv);
-			pParam = new SVCustomDeviceParam(pBoolValueParam);
-			delete pBoolValueParam;
+			SVBoolValueDeviceParam boolValueParam(typeEnum);
+			boolValueParam.SetValue(rv);
+			pParam = new SVCustomDeviceParam(&boolValueParam);
 		}
 		break;
 			
 		case VT_I8:
 		{
-			SVi64ValueDeviceParam* pI64ValueParam = new SVi64ValueDeviceParam(typeEnum);
-			pI64ValueParam->SetValue(rv);
-			pParam = new SVCustomDeviceParam(pI64ValueParam);
-			delete pI64ValueParam;
+			 SVi64ValueDeviceParam i64ValueParam(typeEnum);
+			i64ValueParam.SetValue(rv);
+			pParam = new SVCustomDeviceParam(&i64ValueParam);
 		}
 		break;
 	}
@@ -122,6 +118,16 @@ const SVDeviceParamWrapper& SVCustomDeviceParam::GetHeldParam() const
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVOMFCLibrary\SVCustomDeviceParam.cpp_v  $
+ * 
+ *    Rev 1.3   13 Jun 2014 10:00:06   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  890
+ * SCR Title:  Fix SVObserver Memory Leaks
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Revised Create method to use local stack variables rather then new and delete for the specialized device parameters.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   28 Feb 2014 09:31:46   tbair
  * Project:  SVObserver

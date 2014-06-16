@@ -146,8 +146,8 @@ IDI_ICON_WARNING        ICON                    "res\\W95MBX03.ICO"
 IDI_ICON_EXIST1         ICON                    "res\\icon_exist1.ico"
 IDI_PPQ_ICON            ICON                    "res\\ico00001.ico"
 IDI_PLC_OUTPUT_ICON     ICON                    "res\\ico00002.ico"
-IDI_PPQ_EXPAND          ICON                    "res\\ico00003.ico"
-IDI_PPQ_COLLAPSE        ICON                    "res\\icon2.ico"
+IDI_EXPAND              ICON                    "res\\ico00003.ico"
+IDI_COLLAPSE            ICON                    "res\\icon2.ico"
 IDI_ARROW_ROTATE        ICON                    "res\\arrow_rotate.ico"
 
 /////////////////////////////////////////////////////////////////////////////
@@ -4278,6 +4278,9 @@ BEGIN
     END
     POPUP "&Add",                           65535,MFT_STRING,MFS_ENABLED
     BEGIN
+        MENUITEM "Start Tool Grouping\tCtrl+Alt+G",   ID_ADD_STARTTOOLGROUPING,MFT_STRING,MFS_ENABLED
+        MENUITEM "End Tool Grouping\tCtrl+Alt+X",     ID_ADD_ENDTOOLGROUPING,MFT_STRING,MFS_ENABLED
+        MENUITEM MFT_SEPARATOR
         MENUITEM "Ac&quisition Tool",           ID_ADD_ACQUISITIONTOOL,MFT_STRING,MFS_ENABLED
         MENUITEM MFT_SEPARATOR
         MENUITEM "S&hift Tool\tCtrl+Alt+H",     ID_ADD_SHIFTTOOL,MFT_STRING,MFS_ENABLED

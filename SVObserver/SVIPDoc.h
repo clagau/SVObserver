@@ -5,13 +5,12 @@
 //* .Module Name     : SVIPDoc
 //* .File Name       : $Workfile:   SVIPDoc.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.3  $
-//* .Check In Date   : $Date:   02 Apr 2014 14:05:04  $
+//* .Current Version : $Revision:   1.4  $
+//* .Check In Date   : $Date:   12 Jun 2014 16:49:28  $
 //******************************************************************************
 
-#ifndef SVIPDOC_H
-#define SVIPDOC_H
-
+#pragma once
+#pragma region Includes
 #include "SVContainerLibrary/SVList.h"
 #include "SVContainerLibrary/SVRingBuffer.h"
 #include "SVRunControlLibrary/SVRunStatus.h"
@@ -28,6 +27,8 @@
 #include "SVIPProductStruct.h"
 #include "SVIPResultData.h"
 #include "SVValueObject.h"
+#include "SVToolGrouping.h"
+#pragma endregion Includes
 
 class SVConditionalClass;
 class SVInspectionThreadClass;
@@ -87,6 +88,7 @@ public:
 	void SaveViews(SVObjectWriter& rWriter);
 	void SaveViewPlacements(SVObjectWriter& rWriter);
 	void SaveConditionalHistory(SVObjectWriter& rWriter);
+	void SaveToolGroupings(SVObjectWriter& rWriter);
 
 	BOOL GetParameters(SVObjectWriter& rWriter);
 
@@ -126,6 +128,11 @@ public:
 	bool IsToolPreviousToSelected( const SVGUID& p_rToolID ) const;
 
 	CString GetCompleteToolSetName() const;
+
+	const SVToolGrouping& GetToolGroupings() const;
+	SVToolGrouping& GetToolGroupings();
+	int GetSelectedToolIndex(const CString& toolName) const;
+	int GetToolToInsertBefore(const CString& name, int listIndex) const;
 
 	CList< RegressionTestStruct*, RegressionTestStruct* > m_listRegCameras;
 	
@@ -170,6 +177,10 @@ public:
 	afx_msg void OnAddColorTool();
 	afx_msg void OnAddExternalTool();
 	afx_msg void OnAddLinearTool();
+	afx_msg void OnUpdateAddStartToolGrouping(CCmdUI* pCmdUI);
+	afx_msg void OnUpdateAddEndToolGrouping(CCmdUI* pCmdUI);
+	afx_msg void OnAddStartToolGrouping();
+	afx_msg void OnAddEndToolGrouping();
 	afx_msg void OnEditAdjustToolPosition();
 	afx_msg void OnUpdateEditAdjustToolPosition(CCmdUI* pCmdUI);
 	afx_msg void OnAddPerspectiveTool();
@@ -244,6 +255,8 @@ protected:
 
 	BOOL AddTool( SVToolClass* PTool );
 	HRESULT DeleteTool(SVTaskObjectClass* pTaskObject);
+
+	bool AddToolGrouping(bool bStartGroup=true);
 
 	CView* getView() const;
 	SVToolSetTabViewClass* GetToolSetTabView();
@@ -326,15 +339,31 @@ private:
 	CMDIChildWnd* m_pMDIChildWnd;
 
 	SVGUID m_SelectedToolID;
+	SVToolGrouping m_toolGroupings;
 };
-
-#endif
 
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVIPDoc.h_v  $
+ * 
+ *    Rev 1.4   12 Jun 2014 16:49:28   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  906
+ * SCR Title:  SVObserver Tool Grouping
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   Added SVToolGrouping member.
+ * Revised AddTool to support Tool Groupings
+ * Revised OnEditDelete  to support Tool Groupings
+ * Added AddStartToolGrouping method
+ * Added AddEndToolGrouping method
+ * Added AddToolGrouping method
+ * Revised Rename logic to support Tool Groupings
+ * Added memu handlers for Add Start and End Tool Groupings
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   02 Apr 2014 14:05:04   tbair
  * Project:  SVObserver

@@ -454,6 +454,8 @@ echo %time%
     <ClCompile Include="SVStorage.cpp" />
     <ClCompile Include="SVStorageResult.cpp" />
     <ClCompile Include="SVThresholdClass.cpp" />
+    <ClCompile Include="SVToolGrouping.cpp" />
+    <ClCompile Include="SVToolSetTreeCtrl.cpp" />
     <ClCompile Include="SVTriggerSelectionDlg.cpp" />
     <ClCompile Include="SVUnaryImageOperatorClass.cpp" />
     <ClCompile Include="SVUnaryOperatorClass.cpp" />
@@ -4366,6 +4368,8 @@ echo %time%
     <ClInclude Include="SVStorage.h" />
     <ClInclude Include="SVStorageResult.h" />
     <ClInclude Include="SVThresholdClass.h" />
+    <ClInclude Include="SVToolGrouping.h" />
+    <ClInclude Include="SVToolSetTreeCtrl.h" />
     <ClInclude Include="SVTriggerConstants.h" />
     <ClInclude Include="SVTriggerSelectionDlg.h" />
     <ClInclude Include="SVUnaryImageOperatorClass.h" />

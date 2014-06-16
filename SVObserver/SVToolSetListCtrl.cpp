@@ -5,13 +5,13 @@
 //* .Module Name     : SVToolSetListCtrl
 //* .File Name       : $Workfile:   SVToolSetListCtrl.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   15 May 2014 14:51:04  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   12 Jun 2014 16:46:24  $
 //******************************************************************************
 
 #include "stdafx.h"
 #include "SVToolSetListCtrl.h"
-
+#include "SVToolGrouping.h"
 #include "SVTool.h"
 #include "SVTaskObjectList.h"
 #include "SVToolSetTabView.h"
@@ -25,372 +25,580 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-/////////////////////////////////////////////////////////////////////////////
-// SVToolSetListCtrlClass
+static const CString EndListDelimiter = _T("-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
 
-IMPLEMENT_DYNCREATE(SVToolSetListCtrlClass, SVTaskObjectListCtrlClass)
+IMPLEMENT_DYNCREATE(SVToolSetListCtrl, CListCtrl)
 
-SVToolSetListCtrlClass::SVToolSetListCtrlClass()
-: SVTaskObjectListCtrlClass()
-{
-	m_iNone = -1;
-	m_iInvalid = -1;
-	m_iDisabled = -1;
-	m_iPass = -1;
-	m_iFail = -1;
-	m_iWarn = -1;
-	m_iUnknown = -1;
-	m_iTopIndex = 0;
-}
-
-SVToolSetListCtrlClass::~SVToolSetListCtrlClass()
+SVToolSetListCtrl::SVToolSetListCtrl()
+: CListCtrl()
+, m_iNone(-1)
+, m_iInvalid(-1)
+, m_iDisabled(-1)
+, m_iPass(-1)
+, m_iFail(-1)
+, m_iWarn(-1)
+, m_iUnknown(-1)
+, m_iTopIndex(0)
+, m_expandState(-1)
+, m_collapseState(-1)
+, m_pToolSet(nullptr)
 {
 }
 
-void SVToolSetListCtrlClass::Rebuild()
+SVToolSetListCtrl::~SVToolSetListCtrl()
 {
-	if( m_oStateImageList.GetSafeHandle() == NULL )
+}
+
+void SVToolSetListCtrl::SetTaskObjectList(SVTaskObjectListClass* pTaskObjectList)
+{
+	m_pToolSet = pTaskObjectList;
+	int cnt = 0;
+	// Get the Header Control
+	CHeaderCtrl* pHeaderCtrl = reinterpret_cast<CHeaderCtrl*>(GetDlgItem(0));
+	if (pHeaderCtrl)
 	{
-		CreateImageLists();
+		// turn off button style
+		pHeaderCtrl->ModifyStyle(HDS_BUTTONS, 0, 0);
+		cnt = pHeaderCtrl->GetItemCount();
 	}
 
-	DeleteAllItems();
-	
-	if( pOwnerTaskList != NULL )
+	if (cnt)
 	{
-		if( pOwnerTaskList->GetSize() <= 0 )
-		{
-			CString strEmpty;
-			strEmpty.LoadString( IDS_EMPTY_STRING );
-			InsertItem( LVIF_TEXT | LVIF_STATE,
-				0, strEmpty,
-				INDEXTOSTATEIMAGEMASK( m_iNone + 1 ),	// state
-				LVIS_STATEIMAGEMASK,		// stateMask
-				0, 0 );						// Set item data to NULL
-			return;
-		}
-		
-		int itemNo = 0;
-		int l_iIndex = -1;
-		
-		int l_iCount = pOwnerTaskList->GetSize();
-		
-		for( int i = 0; i < l_iCount; i++ )
-		{
-			SVToolClass *l_psvTool = NULL;
+		DeleteColumn(0);
+	}
+	InsertColumn(0, m_pToolSet->GetName(), LVCFMT_LEFT, -1, -1);
 
-			try
+	// Set the column Width
+	CRect rect;
+	GetClientRect(&rect);
+	SetColumnWidth(0, rect.Width());
+
+	Rebuild();
+}
+
+SVToolSetTabViewClass* SVToolSetListCtrl::GetView()
+{
+	return dynamic_cast<SVToolSetTabViewClass*>(GetParent());
+}
+
+const SVToolSetTabViewClass* SVToolSetListCtrl::GetView() const
+{
+	return dynamic_cast<SVToolSetTabViewClass*>(GetParent());
+}
+
+static SVToolClass* FindTool(const SVTaskObjectListClass* pToolSet, const CString& name)
+{
+	SVToolClass* pTool;
+	for (int i = 0;i < pToolSet->GetSize();i++)
+	{
+		pTool = dynamic_cast<SVToolClass *>(pToolSet->GetAt(i));
+		if (pTool && pTool->GetName() == name)
+		{
+			return pTool;
+		}
+	}
+	return nullptr;
+}
+
+void SVToolSetListCtrl::Rebuild()
+{
+	SVToolSetTabViewClass* pView = GetView();
+	if (pView)
+	{
+		SVIPDoc* pDoc = pView->GetIPDoc();
+		if (pDoc)
+		{
+			const SVToolGrouping& groupings = pDoc->GetToolGroupings();
+			if (nullptr == m_oStateImageList.GetSafeHandle())
 			{
-				l_psvTool = dynamic_cast<SVToolClass *>( pOwnerTaskList->GetAt( i ) );
+				CreateImageLists();
 			}
-			catch( ... )
+
+			DeleteAllItems();
+
+			int itemNo = 0;
+			bool bCollapsed = false;
+			for (SVToolGrouping::const_iterator it = groupings.begin(); it != groupings.end();++it)
 			{
-				l_psvTool = NULL;
-			}
-			
-			if( l_psvTool )
-			{
-				if( ! l_psvTool->IsValid() )
+				if (it->second.m_type == ToolGroupData::StartOfGroup)
 				{
-					l_iIndex = InsertItem( LVIF_TEXT | LVIF_STATE,
-						itemNo, l_psvTool->GetName(),
-						INDEXTOSTATEIMAGEMASK( m_iInvalid + 1 ),	// state
-						LVIS_STATEIMAGEMASK,		// stateMask
-						0, 0 );						// Set item data to NULL
+					bCollapsed = it->second.m_bCollapsed;
+					itemNo = InsertStartGroup(itemNo, it->first.c_str(), bCollapsed);
+				}
+				else if (it->second.m_type == ToolGroupData::EndOfGroup)
+				{
+					itemNo = InsertEndGroup(itemNo, it->first.c_str(), bCollapsed);
+					bCollapsed = false;
 				}
 				else
 				{
-					l_iIndex = InsertItem( LVIF_TEXT | LVIF_STATE,
-						itemNo, l_psvTool->GetName(),
-						INDEXTOSTATEIMAGEMASK( m_iNone + 1 ),	// state
-						LVIS_STATEIMAGEMASK,		// stateMask
-						0, 0 );						// Set item data to NULL
+					SVToolClass* pTool = FindTool(m_pToolSet, it->first.c_str());
+					if (pTool)
+					{
+						itemNo = InsertTool(itemNo, pTool, bCollapsed);
+					}
 				}
-				
-				SetItemData( l_iIndex, reinterpret_cast<DWORD_PTR>(l_psvTool) );
-				
-				itemNo++;
 			}
+			if (!GetItemCount())
+			{
+				CString strEmpty;
+				strEmpty.LoadString(IDS_EMPTY_STRING);
+				InsertItem(LVIF_TEXT | LVIF_STATE, 0, strEmpty, INDEXTOSTATEIMAGEMASK(m_iNone + 1), LVIS_STATEIMAGEMASK, 0, 0);
+			}
+			else
+			{
+				AddEndDelimiter();
+			}
+			RebuildImages();
 		}
-		
-		l_iIndex = InsertItem( LVIF_TEXT | LVIF_STATE,
-			itemNo, _T( "-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------" ),
-			INDEXTOSTATEIMAGEMASK( m_iNone + 1 ),	// state
-			LVIS_STATEIMAGEMASK,		// stateMask
-			0, 0 );						// Set item data to NULL
-		
-		SetItemData( l_iIndex, static_cast<DWORD_PTR>(NULL) );
 	}
-	
-	RebuildImages();
 }
 
-void SVToolSetListCtrlClass::RebuildImages()
+int SVToolSetListCtrl::InsertStartGroup(int itemNo, const CString& startName, bool bCollapsed)
 {
-	if( m_oStateImageList.GetSafeHandle() == NULL )
+	int index = itemNo;
+	int state = (bCollapsed) ? m_expandState : m_collapseState;
+	index = InsertItem(LVIF_TEXT | LVIF_STATE, itemNo, startName, INDEXTOSTATEIMAGEMASK(state + 1), LVIS_STATEIMAGEMASK, 0, 0);
+	SetItemData(index, 0);
+	index++;
+
+	return index;
+}
+
+int SVToolSetListCtrl::InsertEndGroup(int itemNo, const CString& endName, bool bCollapsed)
+{
+	int index = itemNo;
+	if (!endName.IsEmpty() && !bCollapsed)
+	{
+		index = InsertItem(LVIF_TEXT | LVIF_STATE, index, endName, INDEXTOSTATEIMAGEMASK(m_iNone + 1), LVIS_STATEIMAGEMASK, 0, 0);
+		SetItemData(index, 0);
+	}
+	index++;
+
+	return index;
+}
+
+int SVToolSetListCtrl::InsertTool(int itemNo, SVToolClass* pTool, bool bCollapsed)
+{
+	int index = itemNo;
+	if (pTool && !bCollapsed)
+	{
+		if (!pTool->IsValid())
+		{
+			index = InsertItem( LVIF_TEXT | LVIF_STATE, itemNo, pTool->GetName(), INDEXTOSTATEIMAGEMASK(m_iInvalid + 1), LVIS_STATEIMAGEMASK, 0, 0);
+		}
+		else
+		{
+			index = InsertItem( LVIF_TEXT | LVIF_STATE, itemNo, pTool->GetName(), INDEXTOSTATEIMAGEMASK(m_iNone + 1), LVIS_STATEIMAGEMASK, 0, 0);
+		}
+		SetItemData(index, reinterpret_cast<DWORD_PTR>(pTool));
+		index++;
+	}
+	return index;
+}
+
+void SVToolSetListCtrl::AddEndDelimiter()
+{
+	int itemNo = GetItemCount();
+	int index = InsertItem(LVIF_TEXT | LVIF_STATE, itemNo, EndListDelimiter, INDEXTOSTATEIMAGEMASK(m_iNone + 1), LVIS_STATEIMAGEMASK, 0, 0);
+	SetItemData(index, 0);
+}
+
+bool SVToolSetListCtrl::IsEndListDelimiter(const CString& text) const
+{
+	return (text == EndListDelimiter);
+}
+
+bool SVToolSetListCtrl::IsEmptyStringPlaceHolder(const CString& text) const
+{
+	CString emptyString;
+	emptyString.LoadString(NULL, IDS_EMPTY_STRING);
+	return (text == emptyString);
+}
+
+bool SVToolSetListCtrl::IsStartGrouping(int index, bool& bState) const
+{
+	bool bRetVal = false;
+	const SVToolSetTabViewClass* pView = GetView();
+	if (pView)
+	{
+		SVIPDoc* pDoc = pView->GetIPDoc();
+		if (pDoc)
+		{
+			CString name = GetItemText(index, 0);
+			const SVToolGrouping& groups = pDoc->GetToolGroupings();
+			bRetVal = groups.IsStartTag(name.GetString(), bState);
+		}
+	}
+	return bRetVal;
+}
+
+void SVToolSetListCtrl::RebuildImages()
+{
+	if (!m_oStateImageList.GetSafeHandle())
 	{
 		CreateImageLists();
 	}
 
 	int l_iCount = GetItemCount();
 
-	for( int i = 0; i < l_iCount; i++ )
+	for (int i = 0;i < l_iCount; i++)
 	{
-		SVToolClass *l_psvTool = NULL;
+		SVToolClass* pTool = nullptr;
 
-		try
+		DWORD_PTR userData = GetItemData(i);
+		if (userData)
 		{
-			l_psvTool = dynamic_cast<SVToolClass *>( reinterpret_cast<SVTaskObjectListClass*>( GetItemData( i ) ) );
-		}
-		catch( ... )
-		{
-			l_psvTool = NULL;
-		}
-
-		if( l_psvTool != NULL )
-		{
-			if( ! l_psvTool->IsValid() )
+			try
 			{
-				SetItemState( i, INDEXTOSTATEIMAGEMASK( m_iInvalid + 1 ),	LVIS_STATEIMAGEMASK );
+				pTool = dynamic_cast<SVToolClass *>(reinterpret_cast<SVTaskObjectListClass *>(userData));
 			}
-			else
+			catch ( ... )
 			{
-				SetItemState( i, INDEXTOSTATEIMAGEMASK( m_iNone + 1 ),	LVIS_STATEIMAGEMASK );
+				pTool = nullptr;
+			}
+		
+			if (nullptr != pTool)
+			{
+				if (!pTool->IsValid())
+				{
+					SetItemState(i, INDEXTOSTATEIMAGEMASK(m_iInvalid + 1), LVIS_STATEIMAGEMASK);
+				}
+				else
+				{
+					SetItemState(i, INDEXTOSTATEIMAGEMASK(m_iNone + 1), LVIS_STATEIMAGEMASK);
+				}
+			}
+			else // should never get here...
+			{
+				SetItemState(i, INDEXTOSTATEIMAGEMASK(m_iInvalid + 1), LVIS_STATEIMAGEMASK);
 			}
 		}
 		else
 		{
-			if( GetItemData( i ) != NULL )
+			// check for Group (Start or End)
+			// if start Group add +/- depending on collapsed state
+			bool bState;
+			if (IsStartGrouping(i, bState))
 			{
-				SetItemState( i, INDEXTOSTATEIMAGEMASK( m_iInvalid + 1 ),	LVIS_STATEIMAGEMASK );
-			}
-			else
-			{
-				SetItemState( i, INDEXTOSTATEIMAGEMASK( m_iNone + 1 ),	LVIS_STATEIMAGEMASK );
-			}
-		}
-	}
-}
-
-SVGUID SVToolSetListCtrlClass::GetCurrentSelectionID()
-{
-	SVGUID l_Result;
-
-	int cur = GetNextItem( -1, LVNI_SELECTED );
-	if (cur != -1)
-	{
-		if ( !IsValidSelection( cur ) )
-		{
-			cur = -1;
-		}
-	}
-
-	// Translate list index to index into ToolSet TaskObjectList - SEJ
-	if( cur != -1 )
-	{
-		LVITEM item;
-
-		memset( &item, '\0', sizeof( LVITEM ) );
-		item.mask = LVIF_PARAM;
-		item.iItem = cur;
-
-		if( GetItem( &item ) )
-		{
-			SVTaskObjectClass* pObject = ( SVTaskObjectClass * )( item.lParam );
-
-			if( pObject != NULL )
-			{
-				l_Result = pObject->GetUniqueObjectID();
-			}
-		}
-	}
-
-	return l_Result;
-}
-
-int SVToolSetListCtrlClass::GetCurrentSelection( int StartAt /* = -1 -> start searching at top */ )
-{
-	int cur = GetNextItem( StartAt, LVNI_SELECTED );
-	if (cur != -1)
-	{
-		if ( !IsValidSelection( cur ) )
-		{
-			cur = -1;
-		}
-	}
-	// Translate list index to index into ToolSet TaskObjectList - SEJ
-	if( cur != -1 )
-	{
-		LVITEM item;
-
-		memset( &item, '\0', sizeof( LVITEM ) );
-		item.mask = LVIF_PARAM;
-		item.iItem = cur;
-
-		if( GetItem( &item ) )
-		{
-			SVTaskObjectClass* pObject = ( SVTaskObjectClass * )( item.lParam );
-			SVTaskObjectListClass* pOwner = ( SVTaskObjectListClass * )pObject->GetOwner();
-			if( pOwner )
-			{
-				for( int i = 0;i < pOwner->GetSize();i++ )
+				if (bState) 
 				{
-					if( pObject == pOwner->GetAt( i ) )
-					{
-						cur = i;
-						break;
-					}
+					// show + (plus)
+					SetItemState(i, INDEXTOSTATEIMAGEMASK(m_expandState + 1), LVIS_STATEIMAGEMASK);
+				}
+				else
+				{
+					// show - (minus)
+					SetItemState(i, INDEXTOSTATEIMAGEMASK(m_collapseState + 1), LVIS_STATEIMAGEMASK);
 				}
 			}
 			else
-				cur = -1;
+			{
+				SetItemState(i, INDEXTOSTATEIMAGEMASK(m_iNone + 1),	LVIS_STATEIMAGEMASK);
+			}
 		}
 	}
-	return cur;
-}
-
-/////////////////////////////////////////////////////////////////////////////
-//
-//
-//
-//
-int SVToolSetListCtrlClass::SetCurrentSelection( int nIndex /*= -1 to deselect*/ )
-{
-    BOOL bResult;
-    bResult = SetItemState(
-        nIndex,          // int nItem, 
-        LVIS_SELECTED,   // UINT nState, 
-        LVIS_SELECTED    // UINT nMask 
-    );
-
-	Invalidate();           // cause WM_PAINT to refresh list control.
-
-    int nSelected = GetCurrentSelection();
-    return nSelected;
 }
 
 // OnKeyDown added to handle down arrow and up arrow, tool selection and scroll bars. 
-void SVToolSetListCtrlClass::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
+void SVToolSetListCtrl::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
 	bool l_bUpdate = false;
 	int l_iNext = 0;
-	int l_iSelected = GetNextItem( -1, LVNI_SELECTED ) ;
+	int l_iSelected = GetNextItem(-1, LVNI_SELECTED);
 
-	if( nChar == VK_DOWN)
+	if (VK_DOWN == nChar)
 	{
 		int iCount = GetItemCount();
 		l_iNext = l_iSelected + 1;
-		if( l_iNext < iCount )
+		if (l_iNext < iCount)
 		{
 			l_bUpdate = true;
 		}
 	}
-	if( nChar == VK_UP)
+	else if (VK_UP == nChar)
 	{
 		l_iNext = l_iSelected - 1;
-		if( l_iNext >= 0 )
+		if (l_iNext >= 0)
 		{
 			l_bUpdate = true;
 		}
 	}
-	if( l_bUpdate )
+	else
+	{
+		// Get Selected Item and determine if it's a Group Node
+		POSITION pos = GetFirstSelectedItemPosition();
+		if (pos)
+		{
+			int item = GetNextSelectedItem(pos);
+			if (item >= 0)
+			{
+				if (VK_ADD == nChar)
+				{
+					ExpandItem(item);
+				}
+				else if (VK_SUBTRACT == nChar)
+				{
+					// Collapse
+					CollapseItem(item);
+				}
+			}
+		}
+	}
+	if (l_bUpdate)
 	{
 		SVToolSetTabViewClass* l_pParent = static_cast<SVToolSetTabViewClass*>(GetParent());
-		if(l_pParent )
+		if (l_pParent)
 		{
-			SVIPDoc* pCurrentDocument = dynamic_cast< SVIPDoc* >( l_pParent->GetDocument() );
-			if( pCurrentDocument )
+			SVIPDoc* pCurrentDocument = dynamic_cast<SVIPDoc*>(l_pParent->GetDocument());
+			if (pCurrentDocument)
 			{
-				SetItemState(	l_iSelected, 0,	LVIS_SELECTED ); // un-select
-				SetCurrentSelection( l_iNext ); // Select.
-				EnsureVisible( l_iNext, FALSE);
-				SVGUID l_Guid = GetCurrentSelectionID();
-				if( !l_Guid.empty() )
-				{
-					pCurrentDocument->SetSelectedToolID( GetCurrentSelectionID() );
+				SetItemState(l_iSelected, 0, LVIS_SELECTED); // un-select
+				// SEJ - 999 move up or down in the list
+//				SetCurrentSelection(l_iNext); // Select.
+				SetItemState(l_iNext, LVIS_SELECTED, 0); // select
+				EnsureVisible(l_iNext, false);
 
-					if ( !SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) &&
-						TheSVObserverApp.OkToEdit() )
-					{
-						l_pParent->PostMessage(WM_COMMAND,ID_RUN_ONCE);
-					}
+				const SVGUID& rGuid = GetSelectedTool();
+				pCurrentDocument->SetSelectedToolID(rGuid);
+
+				if (!SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST) && TheSVObserverApp.OkToEdit())
+				{
+					l_pParent->PostMessage(WM_COMMAND, ID_RUN_ONCE);
 				}
 			}
 		}
 	}
 }
 // Used to save scroll position before rebuilding list.
-void SVToolSetListCtrlClass::SaveScrollPos()
+void SVToolSetListCtrl::SaveScrollPos()
 {
 	m_iTopIndex = GetTopIndex();
 }
 
 // Used in conjunction with SaveScrollPos to restore 
 // scroll bars after a rebuild.
-void SVToolSetListCtrlClass::RestoreScrollPos()
+void SVToolSetListCtrl::RestoreScrollPos()
 {
-	if( m_iTopIndex > 0 )
+	if (m_iTopIndex > 0)
 	{
-		EnsureVisible(GetItemCount()-1, FALSE);
-		EnsureVisible(m_iTopIndex, FALSE );
+		EnsureVisible(GetItemCount() -1, false);
+		EnsureVisible(m_iTopIndex, false);
 	}
 }
 
-int SVToolSetListCtrlClass::SetCurrentSelection( const SVGUID& p_rObjectID )
+SVGUID SVToolSetListCtrl::GetSelectedTool() const
 {
-	for( int i = 0; i < GetItemCount(); ++i )
+	SVGUID guid;
+	int index = GetNextItem(-1, LVNI_SELECTED);
+	if (index != -1)
 	{
-		if( IsValidSelection( i ) )
+		LVITEM item;
+		memset(&item, '\0', sizeof(LVITEM));
+		item.mask = LVIF_PARAM;
+		item.iItem = index;
+
+		if (GetItem(&item))
 		{
-			LVITEM item;
-
-			memset( &item, '\0', sizeof( LVITEM ) );
-			item.mask = LVIF_PARAM;
-			item.iItem = i;
-
-			if( GetItem( &item ) )
+			if (item.lParam)
 			{
-				SVTaskObjectClass* pObject = reinterpret_cast< SVTaskObjectClass* >( item.lParam );
-
-				if( pObject != NULL && p_rObjectID == pObject->GetUniqueObjectID() )
+				SVObjectClass* pObject = reinterpret_cast<SVObjectClass *>(item.lParam);
+				if (pObject)
 				{
-					SetItemState( i, LVIS_SELECTED, LVIS_SELECTED );
-				}
-				else
-				{
-					SetItemState( i, 0, LVIS_SELECTED );
+					guid = pObject->GetUniqueObjectID();
 				}
 			}
 		}
 	}
-
-    Invalidate(); // cause WM_PAINT to refresh list control.
-
-    int l_Index = GetCurrentSelection();
-    return l_Index;
+	return guid;
 }
 
+bool SVToolSetListCtrl::AllowedToEdit() const
+{
+	bool bRetVal = false;
+	int index = GetNextItem(-1, LVNI_SELECTED);
+	if (index != -1)
+	{
+		CString text = GetItemText(index, 0);
+		if (!IsEndListDelimiter(text) && !IsEmptyStringPlaceHolder(text))
+		{
+			bRetVal = true;
+		}
+	}
+	return bRetVal;
+}
 
-BEGIN_MESSAGE_MAP(SVToolSetListCtrlClass, SVTaskObjectListCtrlClass)
-	//{{AFX_MSG_MAP(SVToolSetListCtrlClass)
+void SVToolSetListCtrl::SetSelectedTool(const SVGUID& rGuid)
+{
+	for (int i = 0; i < GetItemCount(); ++i)
+	{
+		LVITEM item;
+		memset(&item, '\0', sizeof(LVITEM));
+		item.mask = LVIF_PARAM;
+		item.iItem = i;
+
+		if (GetItem(&item))
+		{
+			if (item.lParam)
+			{
+				SVTaskObjectClass* pObject = reinterpret_cast<SVTaskObjectClass*>(item.lParam);
+
+				if (!rGuid.empty() && nullptr != pObject && rGuid == pObject->GetUniqueObjectID())
+				{
+					SetItemState(i, LVIS_SELECTED, LVIS_SELECTED);
+				}
+				else
+				{
+					SetItemState(i, 0, LVIS_SELECTED);
+				}
+			}
+		}
+	}
+    Invalidate(); // cause WM_PAINT to refresh list control.
+}
+
+ToolListSelectionInfo SVToolSetListCtrl::GetToolListSelectionInfo() const
+{
+	int toolListIndex = m_pToolSet->GetSize();
+	CString itemText; 
+	int listIndex = GetNextItem(-1, LVNI_SELECTED);
+	if (-1 != listIndex)
+	{
+		itemText = GetItemText(listIndex, 0);
+	}
+	if (IsEndListDelimiter(itemText) || IsEmptyStringPlaceHolder(itemText))
+	{
+		itemText.Empty();
+	}
+	return ToolListSelectionInfo(listIndex, itemText);
+}
+
+void SVToolSetListCtrl::GetSelectedItemScreenPosition(POINT& rPoint) const
+{
+	int index = GetNextItem(-1, LVNI_SELECTED);
+	GetItemPosition(index, &rPoint);
+}
+
+BEGIN_MESSAGE_MAP(SVToolSetListCtrl, CListCtrl)
+	//{{AFX_MSG_MAP(SVToolSetListCtrl)
+	ON_WM_WINDOWPOSCHANGED()
+	ON_NOTIFY(HDN_BEGINTRACKA, 0, OnBeginTrack)
+	ON_NOTIFY(HDN_BEGINTRACKW, 0, OnBeginTrack)
 	//}}AFX_MSG_MAP
 	ON_WM_KEYDOWN()
 END_MESSAGE_MAP()
 
-
-void SVToolSetListCtrlClass::CreateImageLists()
+void SVToolSetListCtrl::OnWindowPosChanged(WINDOWPOS* lpwndpos)
 {
-	m_oStateImageList.Create( 16, 16, TRUE, 2, 2 );
+	CListCtrl::OnWindowPosChanged(lpwndpos);
 
-	m_iNone = m_oStateImageList.Add( AfxGetApp()->LoadIcon( IDI_STATUS_NONE ) );
-	m_iInvalid = m_oStateImageList.Add( AfxGetApp()->LoadIcon( IDI_STATUS_BLACK ) );
-	m_iDisabled = m_oStateImageList.Add( AfxGetApp()->LoadIcon( IDI_STATUS_GRAY ) );
-	m_iPass = m_oStateImageList.Add( AfxGetApp()->LoadIcon( IDI_STATUS_GREEN ) );
-	m_iFail = m_oStateImageList.Add( AfxGetApp()->LoadIcon( IDI_STATUS_RED ) );
-	m_iWarn = m_oStateImageList.Add( AfxGetApp()->LoadIcon( IDI_STATUS_YELLOW ) );
-	m_iUnknown = m_oStateImageList.Add( AfxGetApp()->LoadIcon( IDI_STATUS_BLUE ) );
+	if (!(lpwndpos->flags & SWP_NOSIZE))
+	{
+		CRect rect;
+		GetClientRect(&rect);
+		SetColumnWidth(0, rect.Width());
+	}
+}
 
-	SetImageList( &m_oStateImageList, LVSIL_STATE );
+void SVToolSetListCtrl::OnBeginTrack(NMHDR* pNMHDR, LRESULT* pResult)
+{
+     switch (pNMHDR->code)
+     {
+		 // This is due to a bug in NT where the code is not translated
+		 // to ANSI/UNICODE properly (in NT - UNICODE is always sent)
+		case HDN_BEGINTRACKW:
+		case HDN_BEGINTRACKA:
+		case HDN_DIVIDERDBLCLICKA:
+		case HDN_DIVIDERDBLCLICKW:
+		{
+			*pResult = true;		// disable tracking
+		}
+		break;
+
+		default:
+		{
+			*pResult = 0;
+		}
+		break;
+     } 
+}
+
+BOOL SVToolSetListCtrl::PreTranslateMessage(MSG* pMsg)
+{
+	if (WM_KEYDOWN == pMsg->message)
+	{
+		// When an item is being edited make sure the edit control receives certain important key strokes
+		// MFC has been designed in such a way that the parent window gets a chance at the messages using the PreTranslateMessage() virtual function. 
+		// If the parent window is a CDialog or a CFormView, the ESC and the return key are handled by the parent and does not reach the control. 
+		// To allow our control to process some important messages we need to override the PreTranslateMessage() function. 
+		// In the code below, we allow the control key combinations to go through to the control. 
+		// This allows copy, cut and paste using the control key combinations.
+		if (GetEditControl() && 
+			(VK_DELETE == pMsg->wParam ||
+			VK_RETURN == pMsg->wParam ||
+			VK_ESCAPE == pMsg->wParam ||
+			GetKeyState(VK_CONTROL)))
+		{
+			::TranslateMessage(pMsg);
+			::DispatchMessage(pMsg);
+			return true; // DO NOT process further
+		}
+	}	 
+	return CListCtrl::PreTranslateMessage(pMsg);
+}
+
+void SVToolSetListCtrl::CreateImageLists()
+{
+	m_oStateImageList.Create(16, 16, TRUE, 2, 2);
+
+	CWinApp* pApp = AfxGetApp();
+	if (pApp)
+	{
+		m_iNone = m_oStateImageList.Add(pApp->LoadIcon(IDI_STATUS_NONE));
+		m_iInvalid = m_oStateImageList.Add(pApp->LoadIcon(IDI_STATUS_BLACK));
+		m_iDisabled = m_oStateImageList.Add(pApp->LoadIcon(IDI_STATUS_GRAY));
+		m_iPass = m_oStateImageList.Add(pApp->LoadIcon(IDI_STATUS_GREEN));
+		m_iFail = m_oStateImageList.Add(pApp->LoadIcon(IDI_STATUS_RED));
+		m_iWarn = m_oStateImageList.Add(pApp->LoadIcon(IDI_STATUS_YELLOW));
+		m_iUnknown = m_oStateImageList.Add(pApp->LoadIcon(IDI_STATUS_BLUE));
+		m_collapseState = m_oStateImageList.Add(pApp->LoadIcon(IDI_COLLAPSE));
+		m_expandState = m_oStateImageList.Add(pApp->LoadIcon(IDI_EXPAND));
+	}
+	SetImageList(&m_oStateImageList, LVSIL_STATE);
+}
+
+void SVToolSetListCtrl::CollapseItem(int item)
+{
+	LVITEM lvItem;
+	lvItem.mask = LVIF_PARAM;
+	lvItem.iItem = item;
+	lvItem.iSubItem = 0;
+
+	GetItem(&lvItem);
+	CString name = GetItemText(item, 0);
+	// Send to View...
+	SVToolSetTabViewClass* pView = dynamic_cast<SVToolSetTabViewClass*>(GetParent());
+	if (pView)
+	{
+		pView->HandleExpandCollapse(name, true);
+	}
+}
+
+void SVToolSetListCtrl::ExpandItem(int item)
+{
+	LVITEM lvItem;
+	lvItem.mask = LVIF_PARAM;
+	lvItem.iItem = item;
+	lvItem.iSubItem = 0;
+
+	GetItem(&lvItem);
+	CString name = GetItemText(item, 0);
+	// Send to View...
+	SVToolSetTabViewClass* pView = dynamic_cast<SVToolSetTabViewClass*>(GetParent());
+	if (pView)
+	{
+		pView->HandleExpandCollapse(name, false);
+	}
 }
 
 //******************************************************************************
@@ -398,6 +606,16 @@ void SVToolSetListCtrlClass::CreateImageLists()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVToolSetListCtrl.cpp_v  $
+ * 
+ *    Rev 1.3   12 Jun 2014 16:46:24   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  906
+ * SCR Title:  SVObserver Tool Grouping
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   Revised to support Tool Groupings
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   15 May 2014 14:51:04   sjones
  * Project:  SVObserver

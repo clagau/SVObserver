@@ -5,8 +5,8 @@
 //* .Module Name     : SVExtentMultiLineStruct
 //* .File Name       : $Workfile:   SVExtentMultiLineStruct.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   09 Jan 2014 07:40:52  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   12 Jun 2014 13:46:04  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -203,7 +203,7 @@ void SVExtentMultiLineStruct::AssignExtentFigure( SVExtentFigureStruct &p_rsvVal
 		{
 			SVExtentPointStruct l_svPoint;
 
-			double l_dAngle( 0 );
+			double l_dAngle( 0.0 );
 
 			double l_dStartAngle = SVGetRotationAngle( p_rsvValue.m_svTopCenter, p_rsvValue.m_svBottomRight );
 			double l_dEndAngle = SVGetRotationAngle( p_rsvValue.m_svTopCenter, p_rsvValue.m_svBottomLeft );
@@ -213,10 +213,10 @@ void SVExtentMultiLineStruct::AssignExtentFigure( SVExtentFigureStruct &p_rsvVal
 
 			if ( l_dStartAngle < l_dEndAngle )
 			{
-				l_dEndAngle -= 360;
+				l_dEndAngle -= 360.0;
 			}
 
-			double l_dStep = ( l_dEndAngle - l_dStartAngle ) / ( l_dInnerRadius >= 1 ? l_dInnerRadius : 1 );
+			double l_dStep = ( l_dEndAngle - l_dStartAngle ) / ( l_dInnerRadius >= 1.0 ? l_dInnerRadius : 1.0 );
 			double l_dLoopStep = ::fabs( l_dStep );
 
 			if( l_dLoopStep < 5.0 )
@@ -264,7 +264,7 @@ void SVExtentMultiLineStruct::AssignExtentFigure( SVExtentFigureStruct &p_rsvVal
 
 			m_svLineArray.SetAtGrow( 2, l_svLine );
 
-			l_dStep = ( l_dEndAngle - l_dStartAngle ) /( l_dOuterRadius >= 1 ? l_dOuterRadius : 1 );
+			l_dStep = ( l_dEndAngle - l_dStartAngle ) /( l_dOuterRadius >= 1.0 ? l_dOuterRadius : 1.0 );
 			l_dLoopStep = ::fabs( l_dStep );
 
 			if( l_dLoopStep < 5.0 )
@@ -320,7 +320,7 @@ void SVExtentMultiLineStruct::AssignExtentFigure( SVExtentFigureStruct &p_rsvVal
 
 			if ( l_dStartAngle < l_dEndAngle )
 			{
-				l_dEndAngle -= 360;
+				l_dEndAngle -= 360.0;
 			}
 
 			l_dStartAngle += 360.0;
@@ -360,14 +360,14 @@ void SVExtentMultiLineStruct::AssignExtentFigure( SVExtentFigureStruct &p_rsvVal
 
 			for( l_dAngle = l_dMinAngle; l_dAngle < l_dMaxAngle; l_dAngle += l_dLoopStep )
 			{
-				l_svPoint = SVRotatePoint( p_rsvValue.m_svTopCenter, l_dInnerRadius + (l_dAngle > l_dMinAngle + 360 ? 4 : 0) , l_dLoopAngle );
+				l_svPoint = SVRotatePoint( p_rsvValue.m_svTopCenter, l_dInnerRadius + (l_dAngle > l_dMinAngle + 360.0 ? 4.0 : 0.0) , l_dLoopAngle );
 
 				l_svLine.m_svPointArray.SetAtGrow( l_lIndex++, l_svPoint );
 
 				l_dLoopAngle += l_dStep;
 			}
 
-			l_svPoint = SVRotatePoint( p_rsvValue.m_svTopCenter, l_dInnerRadius + (l_dAngle > l_dMinAngle + 360 ? 4 : 0) , l_dMinAngle );
+			l_svPoint = SVRotatePoint( p_rsvValue.m_svTopCenter, l_dInnerRadius + (l_dAngle > l_dMinAngle + 360.0 ? 4.0 : 0.0) , l_dMinAngle );
 
 			l_svLine.m_svPointArray.SetAtGrow( l_lIndex++, l_svPoint );
 
@@ -400,14 +400,14 @@ void SVExtentMultiLineStruct::AssignExtentFigure( SVExtentFigureStruct &p_rsvVal
 
 			for( l_dAngle = l_dMinAngle; l_dAngle < l_dMaxAngle; l_dAngle += l_dLoopStep )
 			{
-				l_svPoint = SVRotatePoint( p_rsvValue.m_svTopCenter, l_dOuterRadius + (l_dAngle > l_dMinAngle + 360 ? 4 : 0), l_dLoopAngle );
+				l_svPoint = SVRotatePoint( p_rsvValue.m_svTopCenter, l_dOuterRadius + (l_dAngle > l_dMinAngle + 360.0 ? 4.0 : 0.0), l_dLoopAngle );
 
 				l_svLine.m_svPointArray.SetAtGrow( l_lIndex++, l_svPoint );
 
 				l_dLoopAngle -= l_dStep;
 			}
 
-			l_svPoint = SVRotatePoint( p_rsvValue.m_svTopCenter, l_dOuterRadius + (l_dAngle > l_dMinAngle + 360 ? 4 : 0), l_dMaxAngle );
+			l_svPoint = SVRotatePoint( p_rsvValue.m_svTopCenter, l_dOuterRadius + (l_dAngle > l_dMinAngle + 360.0 ? 4.0 : 0.0), l_dMaxAngle );
 
 			l_svLine.m_svPointArray.SetAtGrow( l_lIndex++, l_svPoint );
 
@@ -429,7 +429,7 @@ void SVExtentMultiLineStruct::AssignExtentFigure( SVExtentFigureStruct &p_rsvVal
 
 			if ( l_dStartAngle < l_dEndAngle )
 			{
-				l_dEndAngle -= 360;
+				l_dEndAngle -= 360.0;
 			}
 
 			l_dStartAngle += 360.0;
@@ -467,7 +467,7 @@ void SVExtentMultiLineStruct::AssignExtentFigure( SVExtentFigureStruct &p_rsvVal
 
 			long l_lIndex = 0;
 
-			for( l_dAngle = 0; l_dAngle < 360; l_dAngle += l_dLoopStep )
+			for( l_dAngle = 0; l_dAngle < 360.0; l_dAngle += l_dLoopStep )
 			{
 				l_svPoint = SVRotatePoint( p_rsvValue.m_svTopCenter, l_dInnerRadius  , l_dLoopAngle );
 				l_svLine.m_svPointArray.SetAtGrow( l_lIndex++, l_svPoint );
@@ -475,9 +475,9 @@ void SVExtentMultiLineStruct::AssignExtentFigure( SVExtentFigureStruct &p_rsvVal
 				l_dLoopAngle += l_dStep;
 			}
 
-			for( l_dAngle = 0; l_dAngle < 360; l_dAngle += l_dLoopStep )
+			for( l_dAngle = 0; l_dAngle < 360.0; l_dAngle += l_dLoopStep )
 			{
-				l_svPoint = SVRotatePoint( p_rsvValue.m_svTopCenter, l_dInnerRadius +  4 , l_dLoopAngle );
+				l_svPoint = SVRotatePoint( p_rsvValue.m_svTopCenter, l_dInnerRadius +  4.0 , l_dLoopAngle );
 				l_svLine.m_svPointArray.SetAtGrow( l_lIndex++, l_svPoint );
 
 				l_dLoopAngle += l_dStep;
@@ -522,7 +522,7 @@ void SVExtentMultiLineStruct::AssignExtentFigure( SVExtentFigureStruct &p_rsvVal
 			{
 				l_dLoopAngle -= l_dStep;
 
-				l_svPoint = SVRotatePoint( p_rsvValue.m_svTopCenter, l_dOuterRadius + 4 , l_dLoopAngle );
+				l_svPoint = SVRotatePoint( p_rsvValue.m_svTopCenter, l_dOuterRadius + 4.0 , l_dLoopAngle );
 				l_svLine.m_svPointArray.SetAtGrow( l_lIndex++, l_svPoint );
 			}
 
@@ -580,6 +580,16 @@ HRESULT SVExtentMultiLineStruct::Initialize()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVImageLibrary\SVExtentMultiLineStruct.cpp_v  $
+ * 
+ *    Rev 1.2   12 Jun 2014 13:46:04   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  884
+ * SCR Title:  Update Source Code Files to Follow New Programming Standards and Guidelines
+ * Checked in by:  bWalter;  Ben Walter
+ * Change Description:  
+ *   Changed integer constants to floating point where they should have been floating point constants.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   09 Jan 2014 07:40:52   tbair
  * Project:  SVObserver

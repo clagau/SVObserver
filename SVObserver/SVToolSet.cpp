@@ -5,8 +5,8 @@
 //* .Module Name     : SVToolSet.cpp
 //* .File Name       : $Workfile:   SVToolSet.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.4  $
-//* .Check In Date   : $Date:   15 May 2014 14:50:08  $
+//* .Current Version : $Revision:   1.5  $
+//* .Check In Date   : $Date:   12 Jun 2014 16:20:48  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -23,8 +23,6 @@
 #include "SVSVIMStateClass.h"
 #include "SVTool.h"
 #include "SVToolAdjustmentDialogSheetClass.h"
-#include "SVToolSetTabView.h"
-#include "SVInspectionProcess.h"
 
 SV_IMPLEMENT_CLASS( SVToolSetClass, SVToolSetClassGuid );
 
@@ -1773,6 +1771,17 @@ HRESULT SVToolSetClass::onCollectOverlays(SVImageClass *p_Image, SVExtentMultiLi
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVToolSet.cpp_v  $
+ * 
+ *    Rev 1.5   12 Jun 2014 16:20:48   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  906
+ * SCR Title:  SVObserver Tool Grouping
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   Removed include for SVToolSetTabView.h
+ * Removed duplicate include for SVInspectionProcess.h
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.4   15 May 2014 14:50:08   sjones
  * Project:  SVObserver

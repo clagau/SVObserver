@@ -5,8 +5,8 @@
 //* .Module Name     : SVPLCOutputsView
 //* .File Name       : $Workfile:   SVPLCOutputsView.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.4  $
-//* .Check In Date   : $Date:   15 May 2014 12:32:54  $
+//* .Current Version : $Revision:   1.5  $
+//* .Check In Date   : $Date:   12 Jun 2014 16:11:36  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -91,8 +91,8 @@ int SVPLCOutputsView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	ImageList.Create( 16, 16, TRUE, 5, 5 );                  // 20 Apr 1999 - frb.
 	ImageList.Add( AfxGetApp()->LoadIcon( IDI_IOITEM_ICON ) );
 	ImageList.Add( AfxGetApp()->LoadIcon( IDI_NOIOITEM_ICON ) );
-	ImageList.Add( AfxGetApp()->LoadIcon( IDI_PPQ_COLLAPSE ) );
-	ImageList.Add( AfxGetApp()->LoadIcon( IDI_PPQ_EXPAND ) );
+	ImageList.Add( AfxGetApp()->LoadIcon( IDI_COLLAPSE ) );
+	ImageList.Add( AfxGetApp()->LoadIcon( IDI_EXPAND ) );
 
 	StateImageList.Create( 16, 16, TRUE, 2, 2 );             // 20 Apr 1999 - frb.
 	StateImageList.Add( AfxGetApp()->LoadIcon( IDI_PPQ_ICON ) );
@@ -899,6 +899,17 @@ void SVPLCOutputsView::OnAddTransferBlock()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVPLCOutputsView.cpp_v  $
+ * 
+ *    Rev 1.5   12 Jun 2014 16:11:36   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  906
+ * SCR Title:  SVObserver Tool Grouping
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   Revised IDI_PPQ_EXPAND to IDI_EXPAND
+ * Revised IDI_PPQ_COLLAPSE to IDI_COLLAPSE
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.4   15 May 2014 12:32:54   tbair
  * Project:  SVObserver
