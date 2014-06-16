@@ -5,8 +5,8 @@
 // * .Module Name     : SVRegressionRunDlg
 // * .File Name       : $Workfile:   SVRegressionRunDlg.cpp  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.2  $
-// * .Check In Date   : $Date:   28 Feb 2014 09:22:56  $
+// * .Current Version : $Revision:   1.3  $
+// * .Check In Date   : $Date:   16 Jun 2014 04:06:46  $
 // ******************************************************************************
 // SVRegressionRunDlg.cpp : implementation file
 //
@@ -311,9 +311,20 @@ BOOL CSVRegressionRunDlg::PreTranslateMessage(MSG* pMsg)
 {
 	if ( pMsg->message && m_ctlToolTip )
 		m_ctlToolTip->RelayEvent(pMsg);
-
 	
-	return CDialog::PreTranslateMessage(pMsg);
+	BOOL retValue = FALSE;
+	//send hotkey to main window if control is pressed
+	if (WM_KEYDOWN == pMsg->message && HIBYTE( ::GetKeyState(VK_CONTROL)) )
+	{
+		retValue = AfxGetMainWnd()->PreTranslateMessage(pMsg);
+	}
+
+	//if message was not translated, call base class
+	if (!retValue)
+	{	
+		retValue = CDialog::PreTranslateMessage(pMsg);
+	}
+	return retValue;
 }
 
 void CSVRegressionRunDlg::OnDeltaposSpinDelayTime(NMHDR* pNMHDR, LRESULT* pResult) 
@@ -600,6 +611,16 @@ void CSVRegressionRunDlg::OnBtnExit()
 // ******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVRegressionRunDlg.cpp_v  $
+ * 
+ *    Rev 1.3   16 Jun 2014 04:06:46   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  907
+ * SCR Title:  Add hotkey Ctrl+0 for "Reset Counts All IPs" in the View Menu
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   Change the method PreTranslateMessage to send hot keys with pressed Ctrl-key first to main-Wnd.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   28 Feb 2014 09:22:56   tbair
  * Project:  SVObserver
