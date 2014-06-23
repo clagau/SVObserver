@@ -5,8 +5,8 @@
 //* .Module Name     : RemoteMonitorListController
 //* .File Name       : $Workfile:   RemoteMonitorListController.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.7  $
-//* .Check In Date   : $Date:   28 Apr 2014 15:32:36  $
+//* .Current Version : $Revision:   1.9  $
+//* .Check In Date   : $Date:   20 Jun 2014 10:30:36  $
 //******************************************************************************
 
 #pragma region Includes
@@ -217,8 +217,10 @@ void RemoteMonitorListController::BuildPPQMonitorList(PPQMonitorList& ppqMonitor
 	for (RemoteMonitorList::const_iterator it = m_list.begin();it != m_list.end();++it)
 	{
 		// Only Activated Lists are sent to the Inspections and Monitor Lists can only be activated when Offline
-		if (it->second.IsActive())
+		bool bActive = it->second.IsActive();
+		if (bActive)
 		{
+			// SEJ - 222 need to write the monitorlist to shared memory...
 			const MonitoredObjectList& values = it->second.GetProductValuesList();
 			const MonitoredObjectList& images = it->second.GetProductImagesList();
 			const MonitoredObjectList& failStatus = it->second.GetFailStatusList();
@@ -244,7 +246,10 @@ void RemoteMonitorListController::BuildPPQMonitorList(PPQMonitorList& ppqMonitor
 			// If there is something to monitor, add it to the PPQ Monitor List
 			if (!remoteValueList.empty() || !remoteImageList.empty() || !remoteRejectCondList.empty())
 			{
-				ppqMonitorList[ppqName] = SVMonitorList(remoteValueList, remoteImageList, remoteValueList, remoteImageList, remoteRejectCondList);
+				RejectDepthAndMonitorList list;
+				list.rejectDepth = it->second.GetRejectDepthQueue();
+				list.monitorList = SVMonitorList(remoteValueList, remoteImageList, remoteValueList, remoteImageList, remoteRejectCondList);
+				ppqMonitorList[ppqName] = std::make_pair(bActive, list);
 			}
 		}
 	}
@@ -253,6 +258,16 @@ void RemoteMonitorListController::BuildPPQMonitorList(PPQMonitorList& ppqMonitor
 HRESULT RemoteMonitorListController::ActivateRemoteMonitorList(const SVString& listName, bool bActivate)
 {
 	HRESULT hr = S_OK;
+
+	if (bActivate)
+	{
+		//unactivate list prior to activating
+		for (RemoteMonitorList::iterator it = m_list.begin();it != m_list.end();++it)
+		{
+			it->second.Activate(false);
+		}
+	}
+
 	RemoteMonitorList::iterator it = m_list.find(listName);
 	if (it != m_list.end())
 	{
@@ -282,6 +297,26 @@ HRESULT RemoteMonitorListController::ActivateRemoteMonitorList(const SVString& l
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\RemoteMonitorListController.cpp_v  $
+ * 
+ *    Rev 1.9   20 Jun 2014 10:30:36   ryoho
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Changed ActivateRemoteMonitorList to de-activate the active list when activating a monitor list
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.8   19 Jun 2014 17:35:46   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Revised BuildPPQMonitorList to return the reject depth
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.7   28 Apr 2014 15:32:36   sjones
  * Project:  SVObserver

@@ -5,76 +5,30 @@
 //* .Module Name     : SVClientSocket
 //* .File Name       : $Workfile:   SVClientSocket.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   25 Apr 2013 17:14:08  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   19 Jun 2014 15:48:02  $
 //******************************************************************************
+
 #include "stdafx.h"
 #include "SVClientSocket.h"
 
 // Create must be called prior to calling connect
-SVSocketError::ErrorEnum SVClientSocket::Connect(const char* hostAddr, unsigned short portNo)
-{
-	SVSocketError::ErrorEnum error = SVSocketError::Success;
-	if (IsValidSocket())
-	{
-		// Check HostAddr for Alpha and get canonical address
-		std::string ipAddr = hostAddr;
-		if (isalpha(hostAddr[0]))
-		{
-			hostent* pHost = gethostbyname(hostAddr);
-			if (pHost != NULL)
-			{
-				ipAddr = inet_ntoa(*(struct in_addr *)*pHost->h_addr_list);
-				// if loopback get real ip address
-				if (ipAddr == "127.0.0.1") 
-				{
-					pHost = gethostbyname("");
-					if (pHost != NULL)
-					{
-						ipAddr = inet_ntoa(*(struct in_addr *)*pHost->h_addr_list);
-					}
-					else // Host name not resolved
-					{
-						error = SVSocketError::HostNotFound;
-					}
-				}
-			}
-			else // Host name not resolved
-			{
-				error = SVSocketError::HostNotFound;
-			}
-		}
-		if (error == SVSocketError::Success)
-		{
-			sockaddr_in addr;
-			addr.sin_family = AF_INET;
-			addr.sin_addr.s_addr = inet_addr(ipAddr.c_str());
-			addr.sin_port = htons(portNo);
-			
-			if (connect(m_socket, (SOCKADDR *)&addr, sizeof(addr)) == SOCKET_ERROR)
-			{
-				// could return OperationInProgress for non blocking socket (Windows returns WouldBlock)
-				error = SVSocketError::GetLastSocketError();
-			}
-		}
-	}
-	else
-	{
-		error = SVSocketError::NotASocket;
-	}
-	return error;
-}
-
-void SVClientSocket::Disconnect()
-{
-	Destroy();
-}
 
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVSocketLibrary\SVClientSocket.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVSocketLibrary\SVClientSocket.cpp_v  $
+ * 
+ *    Rev 1.1   19 Jun 2014 15:48:02   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Merged changes from SVRemoteControl project.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   25 Apr 2013 17:14:08   bWalter
  * Project:  SVObserver

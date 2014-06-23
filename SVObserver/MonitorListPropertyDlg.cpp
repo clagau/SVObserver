@@ -5,8 +5,8 @@
 //* .Module Name     : MonitorListPropertyDlg
 //* .File Name       : $Workfile:   MonitorListPropertyDlg.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   17 Apr 2014 16:23:34  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   19 Jun 2014 15:15:20  $
 //******************************************************************************
 
 #pragma region Includes
@@ -83,7 +83,15 @@ void MonitorListPropertyDlg::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResu
 		{
 			CString sName;
 			m_Tree.FindItem(PROP_MONITOR_LIST_NAME)->GetItemValue(sName);
-			m_DisplayName = sName;
+			RemoteMonitorList::const_iterator it = m_MonitorList.find(sName);
+			if (it != m_MonitorList.end())
+			{ //found the name in the list.  Set name back to what it was
+				m_Tree.FindItem(PROP_MONITOR_LIST_NAME)->SetItemValue(m_DisplayName);
+			}
+			else
+			{
+				m_DisplayName = sName;
+			}
 		}
 		
 		if ( pItem->GetCtrlID() == PROP_MONITOR_LIST_DEPTH )
@@ -169,6 +177,16 @@ int MonitorListPropertyDlg::GetMonitorListRejectQueueDepth() const
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\MonitorListPropertyDlg.cpp_v  $
+ * 
+ *    Rev 1.1   19 Jun 2014 15:15:20   ryoho
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Fixed issue so that there will never be a duplicated name
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   17 Apr 2014 16:23:34   ryoho
  * Project:  SVObserver

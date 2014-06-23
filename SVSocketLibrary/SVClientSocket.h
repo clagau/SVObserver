@@ -5,27 +5,129 @@
 //* .Module Name     : SVClientSocket
 //* .File Name       : $Workfile:   SVClientSocket.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   25 Apr 2013 17:14:24  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   19 Jun 2014 15:48:04  $
 //******************************************************************************
 
 #pragma once
 
+#pragma region Includes
 #include "SVSocket.h"
+#pragma warning (push)
+#pragma warning (disable: 4996)
 
-class SVClientSocket : public SVSocket
+#include <boost\xpressive\xpressive.hpp>
+#pragma endregion Includes
+
+#pragma region Declarations
+typedef boost::xpressive::sregex regrex;
+typedef boost::xpressive::smatch match;
+#pragma endregion Declarations
+
+namespace Seidenader
 {
-public:
-	SVSocketError::ErrorEnum Connect(const char* ipAddr, unsigned short portNo);
-	void Disconnect();
+	namespace Socket
+	{
+		template<typename API>
+		class SVClientSocket : public SVSocket<API>
+		{
+		public:
+			SVSocketError::ErrorEnum Connect(const char* ipAddr, unsigned short portNo);
+			void Disconnect();
+			bool IsConnected() const { return m_isConnected; }
+		};
 
-};
+		template<typename API>
+		inline SVSocketError::ErrorEnum SVClientSocket<API>::Connect(const char* hostAddr, unsigned short portNo)
+		{
+			SVSocketError::ErrorEnum error = SVSocketError::Success;
+			Create();
+
+			bool validSocket = IsValidSocket();
+			if ( validSocket )
+			{
+				// Check HostAddr for Alpha and get canonical address
+				regrex e = boost::xpressive::sregex::compile("\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}");
+				match sMatchIP;
+
+				std::string ipAddr = hostAddr;
+				if ( !boost::xpressive::regex_match(ipAddr, sMatchIP, e) )
+				{
+					hostent* pHost = gethostbyname(hostAddr);
+					if ( pHost != nullptr )
+					{
+						ipAddr = inet_ntoa(*(struct in_addr *)*pHost->h_addr_list);
+						// if loopback get real ip address
+						if ( "127.0.0.1" == ipAddr )
+						{
+							pHost = gethostbyname("");
+							if ( pHost != nullptr )
+							{
+								ipAddr = inet_ntoa(*(struct in_addr *)*pHost->h_addr_list);
+							}
+							else // Host name not resolved
+							{
+								error = SVSocketError::HostNotFound;
+							}
+						}
+					}
+					else // Host name not resolved
+					{
+						error = SVSocketError::HostNotFound;
+					}
+				}
+				if ( SVSocketError::Success == error )
+				{
+					m_peer.sin_family = AF_INET;
+					m_peer.sin_addr.s_addr = inet_addr(ipAddr.c_str());
+					m_peer.sin_port = htons(portNo);
+
+					if ( API::connect( m_socket, reinterpret_cast< SOCKADDR* >( &m_peer ), sizeof(sockaddr_in) ) == SOCKET_ERROR )
+					{
+						// could return OperationInProgress for non blocking socket (Windows returns WouldBlock)
+						error = SVSocketError::GetLastSocketError();
+					}
+					else
+					{
+						m_isConnected = true;
+					}
+				}
+			}
+			else
+			{
+				error = SVSocketError::NotASocket;
+			}
+			return error;
+		}
+
+		template<typename API>
+		inline void SVClientSocket<API>::Disconnect()
+		{
+			Destroy();
+			m_isConnected = false;
+		}
+	}
+}
+
+#pragma warning (pop)
+
+typedef Seidenader::Socket::SVClientSocket<TcpApi> SVClientSocket;
 
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVSocketLibrary\SVClientSocket.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVSocketLibrary\SVClientSocket.h_v  $
+ * 
+ *    Rev 1.1   19 Jun 2014 15:48:04   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Merged changes from SVRemoteControl project.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   25 Apr 2013 17:14:24   bWalter
  * Project:  SVObserver

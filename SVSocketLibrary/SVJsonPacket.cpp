@@ -5,9 +5,10 @@
 //* .Module Name     : SVJsonPacket
 //* .File Name       : $Workfile:   SVJsonPacket.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   25 Apr 2013 17:14:38  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   19 Jun 2014 15:48:04  $
 //******************************************************************************
+
 #include "stdafx.h"
 #include "SVJsonPacket.h"
 
@@ -50,30 +51,12 @@ void SVJsonPacket::Add(const std::string& data)
 			break;
 		}
 	}
-
-	//m_packet += data;
 }
 
 bool SVJsonPacket::IsComplete() const
 {
 	bool bComplete = (m_count == 0 && m_packet.length() > 0) ? true : false;
 	return bComplete;
-/*
-	int count = 0;
-	// match opening/closing braces
-	for (std::string::const_iterator it = m_packet.begin();it != m_packet.end();++it)
-	{
-		if ((*it) == '{')
-		{
-			count++;
-		}
-		else if ((*it) == '}')
-		{
-			count--;
-		}
-	}
-	return (count == 0);
-*/
 }
 
 bool SVJsonPacket::IsValid() const
@@ -92,7 +75,7 @@ const std::string& SVJsonPacket::GetJsonData() const
 void SVJsonPacket::Clear()
 {
 	m_packet.clear();
-	
+
 	// copy from overflow buffer
 	if (m_pending.length() > 0)
 	{
@@ -138,7 +121,17 @@ void SVJsonPacket::Reset()
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVSocketLibrary\SVJsonPacket.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVSocketLibrary\SVJsonPacket.cpp_v  $
+ * 
+ *    Rev 1.1   19 Jun 2014 15:48:04   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Merged changes from SVRemoteControl project.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   25 Apr 2013 17:14:38   bWalter
  * Project:  SVObserver

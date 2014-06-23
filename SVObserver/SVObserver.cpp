@@ -5,8 +5,8 @@
 //* .Module Name     : SVObserver
 //* .File Name       : $Workfile:   SVObserver.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.32  $
-//* .Check In Date   : $Date:   02 Jun 2014 10:07:40  $
+//* .Current Version : $Revision:   1.33  $
+//* .Check In Date   : $Date:   19 Jun 2014 17:38:28  $
 //******************************************************************************
 
 #pragma region Includes
@@ -7281,7 +7281,11 @@ HRESULT SVObserverApp::Start()
 		for( l = 0; l_hrOk == S_OK && l < lSize; l++ )
 		{
 			l_pConfig->GetPPQ( l, &pPPQ );
+
+			pPPQ->SetMonitorList(ppqMonitorList[pPPQ->GetName()]);
+
 			l_hrOk = pPPQ->CanGoOnline();
+
 			SVTriggerObject * l_trigger = NULL;
 			pPPQ->GetTrigger(l_trigger);
 			if (l_trigger->IsSoftwareTrigger())
@@ -7308,10 +7312,6 @@ HRESULT SVObserverApp::Start()
 			{
 				l_pConfig->GetPPQ( l, &pPPQ );
 				l_hrOk = pPPQ->GoOnline();
-				if (S_OK == l_hrOk)
-				{
-					pPPQ->SetMonitorList(ppqMonitorList[pPPQ->GetName()]);
-				}
 			}// end for
 
 			if( l_hrOk != S_OK )
@@ -8882,6 +8882,16 @@ int SVObserverApp::FindMenuItem(CMenu* Menu, LPCTSTR MenuString)
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVObserver.cpp_v  $
+ * 
+ *    Rev 1.33   19 Jun 2014 17:38:28   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Revised to send the active monitor list to the PPQ(s) .
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.32   02 Jun 2014 10:07:40   gramseier
  * Project:  SVObserver

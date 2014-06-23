@@ -5,8 +5,8 @@
 //* .Module Name     : SVToolSetTabView
 //* .File Name       : $Workfile:   SVToolSetTabView.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.6  $
-//* .Check In Date   : $Date:   12 Jun 2014 16:46:24  $
+//* .Current Version : $Revision:   1.7  $
+//* .Check In Date   : $Date:   18 Jun 2014 18:32:22  $
 //******************************************************************************
 #pragma region Includes
 #include "stdafx.h"
@@ -1045,49 +1045,31 @@ void SVToolSetTabViewClass::ToggleExpandCollapse(int item)
 	}
 }
 
-CString SVToolSetTabViewClass::FindLoneStartGroup(int item) const
-{
-	CString name;
-	SVIPDoc* pDoc = GetIPDoc();
-	if (pDoc)
-	{
-		const SVToolGrouping& rGroupings = pDoc->GetToolGroupings();
-		int count = m_toolSetListCtrl.GetItemCount();
-		int startIndex = (item == -1) ? count - 1: item - 1;
-		for (int i = startIndex; i >= 0; --i)
-		{
-			DWORD_PTR data = m_toolSetListCtrl.GetItemData(i);
-			if (!data) // signifies start or end group
-			{
-				CString groupName = m_toolSetListCtrl.GetItemText(i, 0);
-				if (rGroupings.IsStartTag(groupName.GetString()))
-				{
-					if (!rGroupings.HasEndTag(groupName.GetString()))
-					{
-						name = groupName;
-						break;
-					}
-				}
-			}
-		}
-	}
-	return name;
-}
-
 bool SVToolSetTabViewClass::IsEndToolGroupAllowed() const
 {
 	bool bRetVal = false;
-	int item = -1;
-	// If there is a unmatched Start Group before the insertion point, End Group is allowed
-	POSITION pos = m_toolSetListCtrl.GetFirstSelectedItemPosition();
-	if (pos)
+	SVIPDoc* pDoc = GetIPDoc();
+	if (pDoc)
 	{
-		item = m_toolSetListCtrl.GetNextSelectedItem(pos);
-	}
-	const SVString& name = FindLoneStartGroup(item);
-	if (!name.empty())
-	{
-		bRetVal = true;
+		CString itemName; 
+		int item = -1;
+		// If there is a unmatched Start Group before the insertion point, End Group is allowed
+		POSITION pos = m_toolSetListCtrl.GetFirstSelectedItemPosition();
+		if (pos)
+		{
+			item = m_toolSetListCtrl.GetNextSelectedItem(pos);
+			itemName = m_toolSetListCtrl.GetItemText(item, 0);
+			if (m_toolSetListCtrl.IsEndListDelimiter(itemName))
+			{
+				itemName.Empty(); 
+			}
+		}
+		const SVToolGrouping& rGroupings = pDoc->GetToolGroupings();
+		const SVString& name = rGroupings.FindCandidateStartGroup(static_cast<LPCTSTR>(itemName));
+		if (!name.empty())
+		{
+			bRetVal = true;
+		}
 	}
 	return bRetVal;
 }
@@ -1175,6 +1157,17 @@ bool SVToolSetTabViewClass::IsToolsetListCtrlActive() const
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVToolSetTabView.cpp_v  $
+ * 
+ *    Rev 1.7   18 Jun 2014 18:32:22   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  906
+ * SCR Title:  SVObserver Tool Grouping
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   Removed FindLoneStartGroup method.
+ * Revised IsEndGroupAllowed method to correct an issue with not finding the proper start/end group pairing.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.6   12 Jun 2014 16:46:24   sjones
  * Project:  SVObserver

@@ -2,8 +2,8 @@
 //* .Module Name     : SVToolGrouping
 //* .File Name       : $Workfile:   SVToolGrouping.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   12 Jun 2014 16:15:48  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   19 Jun 2014 10:42:30  $
 //******************************************************************************
 #pragma region Includes
 #include "stdafx.h"
@@ -100,7 +100,7 @@ void SVToolGrouping::AddGroup(const String& rName, const String& rInsertBefore)
 	m_list.insert(it, std::make_pair(rName, ToolGroupData(ToolGroupData::StartOfGroup, rName))); 
 }
 
-bool SVToolGrouping::AddEndGroup(const String& rGroupName)
+bool SVToolGrouping::AddEndGroup(const String& rGroupName, const String& rInsertBefore)
 {
 	bool bRetVal = false;
 	
@@ -111,16 +111,35 @@ bool SVToolGrouping::AddEndGroup(const String& rGroupName)
 		{
 			endName += scDupSuffix;
 		}
-		// Find End of this group
-		ToolGroupList::iterator it = std::find_if(m_list.begin(), m_list.end(),
-			[&rGroupName](const ToolGroup& rGroup)->bool { return rGroupName == rGroup.first; } );
-		if (it != m_list.end())
+		ToolGroupList::iterator it = m_list.end();
+		if (!rInsertBefore.empty())
 		{
-			// Update Start group with End group name
-			it->second.m_endName = endName;
-			// Find the End of the group (next Start, or End of the list)
-			it = std::find_if(it, m_list.end(),[&rGroupName](const ToolGroup& rGroup)->bool { return ToolGroupData::StartOfGroup == rGroup.second.m_type && rGroupName != rGroup.first; } );
+			it = std::find_if(m_list.begin(), m_list.end(),
+			[&rInsertBefore](const ToolGroup& rGroup)->bool { return rInsertBefore == rGroup.first; });
 			m_list.insert(it, std::make_pair(endName, ToolGroupData(ToolGroupData::EndOfGroup, rGroupName, endName, false)));
+
+			// Find Start Group
+			it = std::find_if(m_list.begin(), m_list.end(),
+			[&rGroupName](const ToolGroup& rGroup)->bool { return ToolGroupData::StartOfGroup == rGroup.second.m_type && rGroupName == rGroup.first; } );
+			if (it != m_list.end())
+			{
+				// Update Start group with End group name
+				it->second.m_endName = endName;
+			}
+		}
+		else
+		{
+			// Find End of this group
+			it = std::find_if(m_list.begin(), m_list.end(),
+			[&rGroupName](const ToolGroup& rGroup)->bool { return rGroupName == rGroup.first; } );
+			if (it != m_list.end())
+			{
+				// Update Start group with End group name
+				it->second.m_endName = endName;
+				// Find the End of the group (next Start, or End of the list)
+				it = std::find_if(it, m_list.end(),[&rGroupName](const ToolGroup& rGroup)->bool { return ToolGroupData::StartOfGroup == rGroup.second.m_type && rGroupName != rGroup.first; } );
+				m_list.insert(it, std::make_pair(endName, ToolGroupData(ToolGroupData::EndOfGroup, rGroupName, endName, false)));
+			}
 		}
 	}
 	return bRetVal;
@@ -143,18 +162,19 @@ bool SVToolGrouping::RemoveGroup(const String& rName)
 	if (IsEndTag(rName))
 	{
 		ToolGroupList::iterator it = std::find_if(m_list.begin(), m_list.end(),
-		[&rName](const ToolGroup& rGroup)->bool { return (rName == rGroup.second.m_endName && ToolGroupData::StartOfGroup == rGroup.second.m_type); });
+		[&rName](const ToolGroup& rGroup)->bool { return (rName == rGroup.first && ToolGroupData::EndOfGroup == rGroup.second.m_type); });
 		if (it != m_list.end())
 		{
-			// Remove End and update Start
-			it->second.m_endName.clear();
-
+			// Remove End 
+			m_list.erase(it);
+			bRetVal = true;
+		
 			it = std::find_if(m_list.begin(), m_list.end(),
-			[&rName](const ToolGroup& rGroup)->bool { return (rName == rGroup.first && ToolGroupData::EndOfGroup == rGroup.second.m_type); });
+			[&rName](const ToolGroup& rGroup)->bool { return (rName == rGroup.second.m_endName && ToolGroupData::StartOfGroup == rGroup.second.m_type); });
 			if (it != m_list.end())
 			{
-				m_list.erase(it);
-				bRetVal = true;
+				// Update Start
+				it->second.m_endName.clear();
 			}
 		}
 	}
@@ -214,6 +234,25 @@ bool SVToolGrouping::RenameItem(const String& rOldName, const String& rNewName)
 		bRetVal = true;
 	}
 	return bRetVal;
+}
+
+String SVToolGrouping::FindCandidateStartGroup(const String& rName) const
+{
+	String group;
+	ToolGroupList::const_reverse_iterator it = m_list.rbegin();
+	if (!rName.empty())
+	{
+		it = std::find_if(it, m_list.rend(), [&rName](const ToolGroup& rToolGroup)->bool { return rName == rToolGroup.first; } );
+	}
+	if (it != m_list.rend())
+	{
+		it = std::find_if(it, m_list.rend(), [&rName](const ToolGroup& rToolGroup)->bool { return ToolGroupData::StartOfGroup == rToolGroup.second.m_type && rName != rToolGroup.first; } );
+		if (it != m_list.rend() && it->second.m_endName.empty())
+		{
+			group = it->first;
+		}
+	}
+	return group;
 }
 
 String SVToolGrouping::FindGroup(const String& rName) const
@@ -506,15 +545,16 @@ bool SVToolGrouping::GetParameters(SVObjectWriter& rWriter)
 			}
 			else if (ToolGroupData::EndOfGroup == it->second.m_type)
 			{
-				_bstr_t name(it->second.m_endName.c_str());
-				_variant_t value(name);
-				rWriter.WriteAttribute(CTAG_ENDGROUP, value);
-
 				if (bToolListActive)
 				{
 					rWriter.EndElement();
 					bToolListActive = false;
 				}
+
+				_bstr_t name(it->second.m_endName.c_str());
+				_variant_t value(name);
+				rWriter.WriteAttribute(CTAG_ENDGROUP, value);
+
 				if (bGroupActive)
 				{
 					rWriter.EndElement();
@@ -581,6 +621,38 @@ size_t SVToolGrouping::size() const
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVToolGrouping.cpp_v  $
+ * 
+ *    Rev 1.3   19 Jun 2014 10:42:30   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  906
+ * SCR Title:  SVObserver Tool Grouping
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   modified order of saving end element for tool group and EndGroup name in GetParameters.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.2   18 Jun 2014 18:33:58   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  906
+ * SCR Title:  SVObserver Tool Grouping
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   Added FindCanfdidateStartGroup method to assist when adding an end group.
+ * Revised AddEndGroup to update the start group with the end group name
+ * Revised RemoveGroup to correct and issue with removing end groups.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.1   18 Jun 2014 14:20:00   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  906
+ * SCR Title:  SVObserver Tool Grouping
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   Revised AddEndGroup to allow adding end group before selection
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   12 Jun 2014 16:15:48   sjones
  * Project:  SVObserver

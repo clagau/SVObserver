@@ -5,8 +5,8 @@
 //* .Module Name     : SVToolSetTabView
 //* .File Name       : $Workfile:   SVToolSetTabView.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   12 Jun 2014 16:46:24  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   18 Jun 2014 18:32:22  $
 //******************************************************************************
 #pragma once
 
@@ -103,7 +103,6 @@ protected:
 	void RenameItem(int item, const CString& oldName, const CString& newName);
 
 	void ToggleExpandCollapse(int item);
-	CString FindLoneStartGroup(int item) const;
 	bool IsToolsetListCtrlActive() const;
 
 	bool IsGroupNameUnique(const CString& name) const;
@@ -125,6 +124,17 @@ protected:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVToolSetTabView.h_v  $
+ * 
+ *    Rev 1.3   18 Jun 2014 18:32:22   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  906
+ * SCR Title:  SVObserver Tool Grouping
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   Removed FindLoneStartGroup method.
+ * Revised IsEndGroupAllowed method to correct an issue with not finding the proper start/end group pairing.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   12 Jun 2014 16:46:24   sjones
  * Project:  SVObserver

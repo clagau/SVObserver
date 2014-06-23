@@ -5,62 +5,142 @@
 //* .Module Name     : SVSocket
 //* .File Name       : $Workfile:   SVSocket.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   06 Aug 2013 11:11:40  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   19 Jun 2014 16:25:38  $
 //******************************************************************************
+
 #pragma once
 
 #include <winsock2.h>
 #include <string>
+#include "TcpApi.h"
+#include "UdpApi.h"
 #include "SVSocketError.h"
+#include "SocketTraits.h"
+#include <boost/shared_array.hpp>
 
-class SVSocket
+typedef boost::shared_array<BYTE> bytes;
+
+extern volatile long g_sn;
+
+namespace Seidenader
 {
-protected:
-	SOCKET m_socket;
-	sockaddr_in m_addr;
+	namespace Socket
+	{
+		typedef SVSocketError::ErrorEnum Err;
 
-public:
-	SVSocket();
-	virtual ~SVSocket();
-	
-	virtual SVSocketError::ErrorEnum Create();
-	virtual void Destroy();
+		template<typename API>
+		class SVSocket
+		{
+		public:
+			typedef typename Traits<API>::Socket_t Socket_t;
+			typedef typename Traits<API>::FdSet_t FdSet_t;
+			static const Socket_t InvalidSock = Traits<API>::InvalidSock; // m_ is not used here because this is a constant.
+			size_t m_buff_sz;
+		protected:
+			Socket_t m_socket;
+			sockaddr_in m_addr; // this socket address
+			sockaddr_in m_peer; // peer address (if connected)
+			bool m_isConnected;
+			bool m_hasOwner;
+			int m_sockNum;
+			char * dupWithHeader(const unsigned char * src, std::vector<char> & vec, size_t len) const;
+		public:
+			SVSocket(Socket_t sok = InvalidSock)
+				: m_socket(sok), m_hasOwner(false), m_isConnected(false), m_buff_sz(48 * 1024)
+			{
+				m_sockNum = InterlockedIncrement(&g_sn);
+				int namelen = sizeof(sockaddr_in);
+				if (m_socket != InvalidSock && 
+					API::getsockname(m_socket, reinterpret_cast< sockaddr* >( &m_addr ), &namelen) != SVSocketError::Success)
+				{
+					m_socket = InvalidSock;
+				}
+				memset(&m_peer, 0, sizeof(sockaddr_in));
+			}
 
-	ULONG GetAddr() const;
+			virtual ~SVSocket()
+			{
+				if ( m_hasOwner )
+				{
+					Destroy();
+				}
+			}
 
-	SVSocketError::ErrorEnum SetNonBlocking();
-	SVSocketError::ErrorEnum SetBlocking();
-	SVSocketError::ErrorEnum SetKeepAliveOption(bool bEnable);
-	SVSocketError::ErrorEnum SetLingerOption(bool bEnable, unsigned short nTime);
-	SVSocketError::ErrorEnum SetOptionReuseAddr();
-	SVSocketError::ErrorEnum DisableDelay();
-	SVSocketError::ErrorEnum EnableDelay();
-	
-	SVSocketError::ErrorEnum Write(const std::string& data);
-	SVSocketError::ErrorEnum Write(const unsigned char* buffer, size_t len);
-	SVSocketError::ErrorEnum Read(unsigned char* buffer, size_t len, size_t& amtRead);
+			virtual Err Create();
+			virtual void Destroy();
 
-	operator SOCKET() const;
-	void Attach(SOCKET socket, const sockaddr_in& addr);
-	SOCKET Release();
-	bool IsValidSocket() const;
-	
-protected:
-	SVSocketError::ErrorEnum Bind(const char* hostAddr, unsigned short portNo);
+			ULONG GetAddr() const;
+			void Log(const std::string & msg, bool full = false) const;
 
-private:
-	// not copyable
-	SVSocket(const SVSocket& socket); 
-	SVSocket& operator=(const SVSocket& socket) const; 
+			Err SetNonBlocking();
+			Err SetBlocking();
+			Err SetKeepAliveOption(bool bEnable);
+			Err SetLingerOption(bool bEnable, unsigned short nTime);
+			Err GetReadTimeout();
+			Err SetReadTimeout();
+			Err SetOptionReuseAddr();
+			Err DisableDelay();
+			Err EnableDelay();
+			Err GetMaxDgramSize(size_t & sz);
+			Err SetBufferSize(int sz);
+			Err SetReadTimeout(u_int tout);
 
-};
+			Err Write(const std::string& data, bool hasHeader = false); // Use for non-JSON data.
+			Err Write(const unsigned char* buffer, size_t len, bool hasHeader = false); // Use for non-JSON data.
+			Err Read(unsigned char* buffer, size_t len, size_t& amtRead, bool hasHeader = false);
+			Err Select(int & nfds, FdSet_t * readfds, FdSet_t * writefds, FdSet_t * exceptfds, const timeval *timeout);
+			Err ReadFrom(unsigned char * buffer, size_t len, size_t & amtRead, sockaddr_in & from, size_t & fromLen, bool hasHeader = false);
+			Err PeekFrom(unsigned char * buffer, size_t len, size_t & amtRead, sockaddr_in & from, size_t & fromLen, bool hasHeader = false);
+			Err WriteTo(const unsigned char * buffer, size_t len, const sockaddr_in & to, size_t toLen, bool hasHeader = false);
+			Err ReadAll(bytes & dest, u_long & sz, bool hasHeader = false);
+
+			operator Socket_t() const;
+			void Attach(Socket_t socket, const sockaddr_in& addr);
+			Socket_t Release();
+			bool IsValidSocket() const
+			{
+				return (m_socket != InvalidSock);
+			}
+
+			std::string state() const;
+
+			bool IsValidPayload(size_t) { return true; } // Currently, we say every payload is valid.  May be specialized later.
+			Err Bind(const char* hostAddr, unsigned short portNo);
+			SVSocketError::ErrorEnum Send( const std::string& data ); // Use Send for JSON (no header).
+		};
+	}
+}
+
+#include "SVSocket.inl"
+
+typedef Seidenader::Socket::SVSocket<TcpApi> SVSocket;
 
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVSocketLibrary\SVSocket.h_v  $
+ * 
+ *    Rev 1.3   19 Jun 2014 16:25:38   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Fixed comment for Write method.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.2   19 Jun 2014 15:48:06   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Merged changes from SVRemoteControl project.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   06 Aug 2013 11:11:40   jHanebach
  * Project:  SVObserver

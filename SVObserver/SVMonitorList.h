@@ -5,8 +5,8 @@
 //* .Module Name     : SVMonitorList
 //* .File Name       : $Workfile:   SVMonitorList.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   28 Apr 2014 14:19:32  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   19 Jun 2014 17:36:58  $
 //******************************************************************************
 #pragma once
 #include <set>
@@ -34,12 +34,28 @@ public:
 	void Clear();
 };
 
-typedef std::map<SVString, SVMonitorList> PPQMonitorList;
+struct RejectDepthAndMonitorList
+{
+	int rejectDepth;
+	SVMonitorList monitorList;
+};
+typedef std::pair<bool, RejectDepthAndMonitorList> ActiveMonitorList;
+typedef std::map<SVString, ActiveMonitorList> PPQMonitorList;
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVMonitorList.h_v  $
+ * 
+ *    Rev 1.3   19 Jun 2014 17:36:58   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Revised the container to hold the reject depth
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   28 Apr 2014 14:19:32   sjones
  * Project:  SVObserver

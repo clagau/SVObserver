@@ -5,8 +5,8 @@
 //* .Module Name     : SVIPDoc
 //* .File Name       : $Workfile:   SVIPDoc.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.17  $
-//* .Check In Date   : $Date:   12 Jun 2014 16:49:28  $
+//* .Current Version : $Revision:   1.18  $
+//* .Check In Date   : $Date:   18 Jun 2014 14:19:28  $
 //******************************************************************************
 
 #pragma region Includes
@@ -514,7 +514,7 @@ bool SVIPDoc::AddToolGrouping(bool bStartGroup)
 			if (!group.IsEmpty())
 			{
 				// check if has end already ?
-				m_toolGroupings.AddEndGroup(static_cast<LPCTSTR>(group));
+				m_toolGroupings.AddEndGroup(static_cast<LPCTSTR>(group), static_cast<LPCTSTR>(rInfo.m_selection));
 			}
 		}
 
@@ -4403,6 +4403,16 @@ int SVIPDoc::GetToolToInsertBefore(const CString& name, int listIndex) const
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVIPDoc.cpp_v  $
+ * 
+ *    Rev 1.18   18 Jun 2014 14:19:28   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  906
+ * SCR Title:  SVObserver Tool Grouping
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   Revised AddToolGroup to allow adding end group before selection
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.17   12 Jun 2014 16:49:28   sjones
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : SVConfigurationObject
 //* .File Name       : $Workfile:   SVConfigurationObject.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.25  $
-//* .Check In Date   : $Date:   02 Jun 2014 09:34:28  $
+//* .Current Version : $Revision:   1.26  $
+//* .Check In Date   : $Date:   18 Jun 2014 11:28:14  $
 //******************************************************************************
 
 #pragma region Includes
@@ -440,7 +440,9 @@ BOOL SVConfigurationObject::RemovePPQ( SVPPQObject *pPPQ )
 	int iSize;
 
 	// BRW - PLC has been deprecated.
-	//TheSVObserverApp.m_PLCManager.DestroyPLC( pPPQ->GetPLCName());
+#ifndef _WIN64
+	TheSVObserverApp.m_PLCManager.DestroyPLC( pPPQ->GetPLCName());
+#endif
 
 	iSize = m_arPPQArray.GetSize();
 	for( i = 0; i < iSize; i++ )
@@ -2200,7 +2202,8 @@ HRESULT SVConfigurationObject::LoadConfiguration(SVTreeType& rTree)
 					}// end if SVNavigateTreeClass::GetItem( rTree, CTAG_INPUT, htiSubChild, &htiDeviceChild )
 
 					// BRW - PLC has been deprecated.
-					/*BOOL l_bTmp = SVNavigateTreeClass::GetItem( rTree, CTAG_PLC_ID, htiSubChild, svValue );
+#ifndef _WIN64
+					BOOL l_bTmp = SVNavigateTreeClass::GetItem( rTree, CTAG_PLC_ID, htiSubChild, svValue );
 					if( l_bTmp )
 					{
 						CString csName = svValue;
@@ -2209,8 +2212,8 @@ HRESULT SVConfigurationObject::LoadConfiguration(SVTreeType& rTree)
 						{
 							pPPQ->SetPLCName( csName );
 						}
-					}*/
-
+					}
+#endif
 					if ( bOk )
 					{
 						bOk = pPPQ->Create();
@@ -3549,7 +3552,8 @@ BOOL SVConfigurationObject::SavePPQ(SVTreeType& rTree)
 				SVConfigurationTreeWriter< SVTreeType > writer(rTree, htiSubChild);
 				pPPQ->PersistInputs(writer);
 				// BRW - PLC has been deprecated.
-				/*if( bOk )
+#ifndef _WIN64
+				if( bOk )
 				{
 					_variant_t svVariant;
 					CString csPLCId;
@@ -3557,7 +3561,8 @@ BOOL SVConfigurationObject::SavePPQ(SVTreeType& rTree)
 					svVariant.SetString( csPLCId );
 					SVNavigateTreeClass::AddItem( rTree, htiSubChild, CTAG_PLC_ID, svVariant );
 					svVariant.Clear();
-				}*/
+				}//*/
+#endif
 			}// end if bOk = this->GetPPQ( lPPQ, &pPPQ );
 		}// end for( lPPQ = 0; lPPQ < lPPQCount; lPPQ++ )
 	}// end if ( hBranch != NULL )  // CTAG_PPQ
@@ -5497,6 +5502,16 @@ HRESULT SVConfigurationObject::LoadMonitoredObjectList( SVTreeType& rTree, SVTre
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVConfigurationObject.cpp_v  $
+ * 
+ *    Rev 1.26   18 Jun 2014 11:28:14   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  852
+ * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Conditionally added the PLC code for 32bit platform.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.25   02 Jun 2014 09:34:28   gramseier
  * Project:  SVObserver

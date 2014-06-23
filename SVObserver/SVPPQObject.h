@@ -5,12 +5,11 @@
 //* .Module Name     : SVPPQObject
 //* .File Name       : $Workfile:   SVPPQObject.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.15  $
-//* .Check In Date   : $Date:   02 Jun 2014 10:18:42  $
+//* .Current Version : $Revision:   1.16  $
+//* .Check In Date   : $Date:   19 Jun 2014 17:50:58  $
 //******************************************************************************
 
-#ifndef SVPPQOBJECT_H
-#define SVPPQOBJECT_H
+#pragma once
 
 #pragma region Includes
 #include <boost/config.hpp>
@@ -170,7 +169,9 @@ public:
 	SVCameraTriggerData& GetCameraInputData();
 	long GetExtraBufferSize() const;
 
-	HRESULT SetMonitorList(const SVMonitorList& rList);
+	HRESULT SetMonitorList(const ActiveMonitorList& rActiveList);
+	bool HasActiveMonitorList() const;
+
 protected:
 	typedef SVVector< SVInspectionProcess* > SVPPQInspectionProcessVector;
 
@@ -210,6 +211,18 @@ protected:
 		bool m_ToggleState;
 
 	};
+
+	typedef std::map<SVString, SVGUID> SVFilterElementMap;
+	typedef std::map<SVGUID, SVFilterElementMap> SVInspectionFilterElementMap;
+	struct SVSharedMemoryFilters
+	{
+		SVSharedMemoryFilters();
+
+		void clear();
+		SVInspectionFilterElementMap m_RejectConditionValues;
+	};
+	SVSharedMemoryFilters m_SharedMemoryItems;
+	bool m_bActiveMonitorList;
 
 	typedef std::pair< long, SVInspectionInfoStruct > SVInspectionInfoPair;
 	typedef std::pair< long, SVProductInfoRequestStruct > SVProductRequestPair;
@@ -400,6 +413,7 @@ private:
 	SVPPQTracking m_PPQTracking;
 #endif // EnableTracking
 
+	void SetRejectConditionList(const SVMonitorItemList& rRejectCondList);
 	Seidenader::SVObserver::BasicValueObjects	m_PpqValues;
 
 	SVPPQOutputModeEnum m_oOutputMode;
@@ -417,13 +431,24 @@ private:
 
 typedef SVVector< SVPPQObject* > SVPPQObjectArray;
 
-#endif /* _INC_SVPPQOBJECT_INCLUDED */
-
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVPPQObject.h_v  $
+ * 
+ *    Rev 1.16   19 Jun 2014 17:50:58   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Revised SetMonitorList method to also accept reject depth.
+ * Added HasActiveMonitorList method.
+ * Added SetRejectConditionList method.
+ * Added SVFilterElementMap struct for reject condition list (Monitor List).
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.15   02 Jun 2014 10:18:42   gramseier
  * Project:  SVObserver

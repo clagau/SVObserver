@@ -73,7 +73,7 @@
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -106,7 +106,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <WholeProgramOptimization>false</WholeProgramOptimization>
-      <PreprocessorDefinitions>NDEBUG;WIN32;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
@@ -154,6 +154,7 @@
     <ClCompile Include="SVSocketLibrary.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="SocketTraits.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="SVClientSocket.h" />
     <ClInclude Include="SVJsonPacket.h" />
@@ -162,8 +163,11 @@
     <ClInclude Include="SVSocketError.h" />
     <ClInclude Include="SVSocketLibrary.h" />
     <ClInclude Include="SVSocketThread.h" />
+    <ClInclude Include="TcpApi.h" />
+    <ClInclude Include="UdpApi.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="SVSocket.inl" />
     <None Include="SVSocketThread.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

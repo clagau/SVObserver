@@ -5,8 +5,8 @@
 //* .Module Name     : SVPPQObject
 //* .File Name       : $Workfile:   SVPPQObject.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.20  $
-//* .Check In Date   : $Date:   02 Jun 2014 10:17:18  $
+//* .Current Version : $Revision:   1.22  $
+//* .Check In Date   : $Date:   19 Jun 2014 18:00:36  $
 //******************************************************************************
 
 #pragma region Includes
@@ -24,6 +24,7 @@
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVConfigurationLibrary/SVConfigurationTags.h"
 #include "SVTimerLibrary/SVClock.h"
+#include "SVUtilityLibrary/SVDottedName.h"
 #include "SVGlobal.h"
 #include "SVObserver.h"
 #include "SVOutputObjectList.h"
@@ -247,7 +248,8 @@ SVPPQObject::SVPPQObject( LPCSTR ObjectName )
 : SVObjectClass( ObjectName )
 , m_oTriggerQueue( 10 )
 , m_NAKCount( 0 )
-, m_conditionalOutputName( PPQ_CONDITIONAL_OUTPUT_ALWAYS ) 
+, m_conditionalOutputName( PPQ_CONDITIONAL_OUTPUT_ALWAYS )
+, m_bActiveMonitorList(false)
 {
 	init();
 }
@@ -257,6 +259,7 @@ SVPPQObject::SVPPQObject( SVObjectClass* POwner, int StringResourceID )
 , m_oTriggerQueue( 10 )
 , m_NAKCount( 0 )
 , m_conditionalOutputName ( PPQ_CONDITIONAL_OUTPUT_ALWAYS ) 
+, m_bActiveMonitorList(false)
 {
 	init();
 }
@@ -1299,6 +1302,12 @@ HRESULT SVPPQObject::CanGoOnline()
 	{
 		l_hrOk = SV_CAN_GO_ONLINE_FAILURE_CONDITIONAL_OUTPUT;
 	}
+	if (S_OK != l_hrOk && HasActiveMonitorList())
+	{
+		// clear the list
+		SetMonitorList(ActiveMonitorList(false, RejectDepthAndMonitorList()));
+	}
+
 	return l_hrOk;
 }// end CanGoOnline
 
@@ -1688,6 +1697,10 @@ BOOL SVPPQObject::GoOffline()
 
 			l_pProduct->SetProductComplete();
 		}
+	}
+	if (HasActiveMonitorList())
+	{
+		SetMonitorList(ActiveMonitorList(false, RejectDepthAndMonitorList()));
 	}
 
 	return TRUE;
@@ -4526,39 +4539,83 @@ static bool CompareInspectionName(const SVString& name, const SVString& dottedNa
 	return false;
 }
 
-HRESULT SVPPQObject::SetMonitorList(const SVMonitorList& rList)
+static HRESULT GetValueObject(const SVString& rName, SVValueObjectReference& rRefObject)
+{
+	HRESULT hr = S_FALSE;
+	SVObjectClass* pObject(nullptr);
+	hr = SVObjectManagerClass::Instance().GetObjectByDottedName(rName, pObject);
+	if (pObject != nullptr)
+	{
+		rRefObject = SVValueObjectReference(pObject);
+		hr = S_OK;
+	}
+	return hr;
+}
+
+HRESULT SVPPQObject::SetMonitorList(const ActiveMonitorList& rActiveList)
 {
 	HRESULT hr = S_OK;
-	// separate the list by Inspection and send to each Inspection
-	const SVMonitorItemList& valList = rList.GetDataList();
-	const SVMonitorItemList& imgList = rList.GetImageList();
-	const SVMonitorItemList& rejectValList = rList.GetRejectDataList();
-	const SVMonitorItemList& rejectImgList = rList.GetRejectImageList();
-	const SVMonitorItemList& rejectCondList = rList.GetConditionalDataList();
-
-	typedef std::pair<SVMonitorItemList::const_iterator, SVMonitorItemList::const_iterator> Bounds;
-  
-	for (SVPPQInspectionProcessVector::iterator it = m_arInspections.begin(); it != m_arInspections.end(); ++it)
+	m_bActiveMonitorList = rActiveList.first;
+	if (m_bActiveMonitorList)
 	{
-		SVInspectionProcess* pInspection = (*it);
-		if (pInspection)
-		{
-			const SVString& inspectionName = pInspection->GetName();
-			Bounds valBounds = std::equal_range(valList.begin(), valList.end(), inspectionName, CompareInspectionName);
-			Bounds imgBounds = std::equal_range(imgList.begin(), imgList.end(), inspectionName, CompareInspectionName);
-			Bounds rejectValBounds = std::equal_range(rejectValList.begin(), rejectValList.end(), inspectionName, CompareInspectionName);
-			Bounds rejectImgBounds = std::equal_range(rejectImgList.begin(), rejectImgList.end(), inspectionName, CompareInspectionName);
-			Bounds rejectCondBounds = std::equal_range(rejectCondList.begin(), rejectCondList.end(), inspectionName, CompareInspectionName);
+		const SVMonitorList& rList = rActiveList.second.monitorList;
+	
+		// separate the list by Inspection and send to each Inspection
+		const SVMonitorItemList& valList = rList.GetDataList();
+		const SVMonitorItemList& imgList = rList.GetImageList();
+		//const SVMonitorItemList& rejectValList = rList.GetRejectDataList();
+		//const SVMonitorItemList& rejectImgList = rList.GetRejectImageList();
+		const SVMonitorItemList& rejectCondList = rList.GetConditionalDataList();
 
-			SVMonitorList inspectionMonitorList(SVMonitorItemList(valBounds.first, valBounds.second),
-												SVMonitorItemList(imgBounds.first, imgBounds.second),
-												SVMonitorItemList(rejectValBounds.first, rejectValBounds.second),
-												SVMonitorItemList(rejectImgBounds.first, rejectImgBounds.second),
-												SVMonitorItemList(rejectCondBounds.first, rejectCondBounds.second));
-			hr = pInspection->UpdateSharedMemoryFilters(inspectionMonitorList);
+		typedef std::pair<SVMonitorItemList::const_iterator, SVMonitorItemList::const_iterator> Bounds;
+  
+		for (SVPPQInspectionProcessVector::iterator it = m_arInspections.begin(); it != m_arInspections.end(); ++it)
+		{
+			SVInspectionProcess* pInspection = (*it);
+			if (pInspection)
+			{
+				const SVString& inspectionName = pInspection->GetName();
+				Bounds valBounds = std::equal_range(valList.begin(), valList.end(), inspectionName, CompareInspectionName);
+				Bounds imgBounds = std::equal_range(imgList.begin(), imgList.end(), inspectionName, CompareInspectionName);
+	/*
+				Bounds rejectValBounds = std::equal_range(rejectValList.begin(), rejectValList.end(), inspectionName, CompareInspectionName);
+				Bounds rejectImgBounds = std::equal_range(rejectImgList.begin(), rejectImgList.end(), inspectionName, CompareInspectionName);
+				Bounds rejectCondBounds = std::equal_range(rejectCondList.begin(), rejectCondList.end(), inspectionName, CompareInspectionName);
+	*/
+				SVMonitorList inspectionMonitorList(SVMonitorItemList(valBounds.first, valBounds.second),
+													SVMonitorItemList(imgBounds.first, imgBounds.second),
+													SVMonitorItemList(), SVMonitorItemList(), SVMonitorItemList());
+	/*
+													SVMonitorItemList(rejectValBounds.first, rejectValBounds.second),
+													SVMonitorItemList(rejectImgBounds.first, rejectImgBounds.second),
+													SVMonitorItemList(rejectCondBounds.first, rejectCondBounds.second));
+	*/
+				hr = pInspection->UpdateSharedMemoryFilters(inspectionMonitorList);
+			}
+		}
+		SetRejectConditionList(rejectCondList);
+	}
+	else
+	{
+		// Clear the Reject Condition List
+		SetRejectConditionList(SVMonitorItemList());
+
+		// Clear the MonitorList(s)
+		for (SVPPQInspectionProcessVector::iterator it = m_arInspections.begin(); it != m_arInspections.end(); ++it)
+		{
+			SVInspectionProcess* pInspection = (*it);
+			if (pInspection)
+			{
+				pInspection->UpdateSharedMemoryFilters(SVMonitorList());
+			}
 		}
 	}
 	return hr;
+}
+
+bool SVPPQObject::HasActiveMonitorList() const
+{
+	return m_bActiveMonitorList;
 }
 
 const SVString& SVPPQObject::GetConditionalOutputName() const
@@ -4731,11 +4788,90 @@ void SVPPQObject::SVPPQTracking::IncrementTimeCount( const SVString& p_rName, si
 }
 #endif //EnableTracking
 
+static SVGUID GetInspectionGuid(const SVString& rName)
+{
+	SVGUID guid;
+	SVDottedName dottedName(rName.c_str());
+	
+	if (dottedName.size())
+	{
+		guid = SVObjectManagerClass::Instance().GetObjectIdFromCompleteName(dottedName[0]);
+	}
+	return guid;
+}
+
+void SVPPQObject::SetRejectConditionList(const SVMonitorItemList& rRejectCondList)
+{
+	bool bNotFound = false;
+	m_SharedMemoryItems.m_RejectConditionValues.clear();
+	// keep a copy of the reject condition
+	for (SVMonitorItemList::const_iterator it = rRejectCondList.begin();it != rRejectCondList.end();++it)
+	{
+		const SVString& name = (*it);
+		SVGUID inspectionGuid = GetInspectionGuid(name);
+		if (!inspectionGuid.empty())
+		{
+			SVValueObjectReference l_RefObject;
+			if (S_OK == GetValueObject(name, l_RefObject))
+			{
+				m_SharedMemoryItems.m_RejectConditionValues[inspectionGuid][name] = l_RefObject.Guid();
+			}
+			else
+			{
+				bNotFound = true;
+			}
+		}
+	}
+	if (bNotFound)
+	{
+		// Event Log...
+		SVException l_Exception;
+		CString message;
+		message.Format(_T("Not All Reject Condition List items found\n"));
+
+		SETEXCEPTION1(l_Exception, SVMSG_SVO_45_SHARED_MEMORY_SETUP_LISTS, message);
+		l_Exception.LogException(message);
+	}
+}
+
+SVPPQObject::SVSharedMemoryFilters::SVSharedMemoryFilters()
+: m_RejectConditionValues()
+{
+}
+
+void SVPPQObject::SVSharedMemoryFilters::clear()
+{
+	m_RejectConditionValues.clear();
+}
+
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVPPQObject.cpp_v  $
+ * 
+ *    Rev 1.22   19 Jun 2014 18:00:36   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Added SVSharedMemoryFilters methods.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.21   19 Jun 2014 17:50:58   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Revised SetMonitorList method to also accept reject depth.
+ * Added HasActiveMonitorList method.
+ * Added SetRejectConditionList method.
+ * Added SVFilterElementMap struct for reject condition list (Monitor List).
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.20   02 Jun 2014 10:17:18   gramseier
  * Project:  SVObserver

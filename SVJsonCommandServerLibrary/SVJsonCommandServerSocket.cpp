@@ -5,8 +5,8 @@
 //* .Module Name     : SVJsonCommandServerSocket
 //* .File Name       : $Workfile:   SVJsonCommandServerSocket.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.3  $
-//* .Check In Date   : $Date:   01 Oct 2013 09:26:18  $
+//* .Current Version : $Revision:   1.4  $
+//* .Check In Date   : $Date:   19 Jun 2014 15:56:32  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -220,7 +220,7 @@ void SVJsonCommandServerSocket::ThreadProcessHandler(bool& bWaitEvents)
 
 					if( !( l_Data.empty() ) )
 					{
-						SVSocketError::ErrorEnum error = m_client.Write( l_Data );
+						SVSocketError::ErrorEnum error = m_client.Send( l_Data ); // Use Send instead of Write for JSON.
 
 						l_Sleep = ( error != SVSocketError::Success );
 						if( l_Sleep )
@@ -231,10 +231,10 @@ void SVJsonCommandServerSocket::ThreadProcessHandler(bool& bWaitEvents)
 				}
 
 				// do reads / close handling for client (only one client)
-				if (FD_ISSET(m_client, &read_set))    
-				{        
-					//data is available on the socket, read it        
-					//a return value of 0 on the socket indicates the socket was closed        
+				if (FD_ISSET(m_client, &read_set))
+				{
+					//data is available on the socket, read it
+					//a return value of 0 on the socket indicates the socket was closed
 					//for that case close the socket and remove socket from fd_set
 					unsigned char buf[ 16 * 1024 ];
 					size_t l_Size = sizeof(buf) - 1;
@@ -247,7 +247,7 @@ void SVJsonCommandServerSocket::ThreadProcessHandler(bool& bWaitEvents)
 						sockaddr_in addr;
 						int len = sizeof(addr);
 						getpeername(m_client, (SOCKADDR *)&addr, &len);
-  
+
 						printf("Client Closed: %s\n", inet_ntoa(addr.sin_addr));
 						*/
 						// client socket closed...
@@ -303,6 +303,16 @@ void SVJsonCommandServerSocket::CloseClient()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVJsonCommandServerLibrary\SVJsonCommandServerSocket.cpp_v  $
+ * 
+ *    Rev 1.4   19 Jun 2014 15:56:32   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Changed method ThreadProcessHandler to use SVSocket.Send instead of SVSocket.Write.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   01 Oct 2013 09:26:18   tbair
  * Project:  SVObserver

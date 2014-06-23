@@ -2,8 +2,8 @@
 //* .Module Name     : SVToolGrouping
 //* .File Name       : $Workfile:   SVToolGrouping.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   12 Jun 2014 16:15:48  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   18 Jun 2014 18:33:58  $
 //******************************************************************************
 #pragma once
 
@@ -48,13 +48,14 @@ public:
 	String GetToolToInsertBefore(const String& rName) const;
 
 	void AddGroup(const String& rName, const String& rInsertBefore = String());
-	bool AddEndGroup(const String& rGroup);
+	bool AddEndGroup(const String& rGroup, const String& rInsertBefore);
 	void AddTool(const String& rName, const String& rInsertBefore = String());
 
 	bool RemoveGroup(const String& rName);
 	bool RemoveTool(const String& rName);
 
 	bool RenameItem(const String& rOldName, const String& rNewName);
+	String FindCandidateStartGroup(const String& rName) const;
 	String FindGroup(const String& rName) const;
 
 	typedef SVXMLMaterialsTree SVTreeType;
@@ -85,6 +86,28 @@ private:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVToolGrouping.h_v  $
+ * 
+ *    Rev 1.2   18 Jun 2014 18:33:58   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  906
+ * SCR Title:  SVObserver Tool Grouping
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   Added FindCanfdidateStartGroup method to assist when adding an end group.
+ * Revised AddEndGroup to update the start group with the end group name
+ * Revised RemoveGroup to correct and issue with removing end groups.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.1   18 Jun 2014 14:20:02   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  906
+ * SCR Title:  SVObserver Tool Grouping
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   Revised AddEndGroup to allow adding end group before selection
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   12 Jun 2014 16:15:48   sjones
  * Project:  SVObserver

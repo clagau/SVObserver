@@ -5,49 +5,30 @@
 //* .Module Name     : SVServerSocket
 //* .File Name       : $Workfile:   SVServerSocket.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   25 Apr 2013 17:15:06  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   19 Jun 2014 15:48:04  $
 //******************************************************************************
+
 #include "stdafx.h"
 #include "SVServerSocket.h"
 
 // Create must be called prior to calling Listen
-SVSocketError::ErrorEnum SVServerSocket::Listen(unsigned short portNo)
-{
-	SVSocketError::ErrorEnum error = SVSocketError::Success;
-	if (IsValidSocket())
-	{
-		hostent* localHost = gethostbyname("");
-		if (localHost != NULL)
-		{
-			//char* localIP = inet_ntoa(*(struct in_addr *)*localHost->h_addr_list);
-			// bind to INADDR_ANY
-			error = Bind(" ", portNo); //localIP, portNo);
-			if (error == SVSocketError::Success)
-			{
-				if (listen(m_socket, 1) == SOCKET_ERROR)
-				{
-					error = SVSocketError::GetLastSocketError();
-				}
-			}
-		}
-		else
-		{
-			error = SVSocketError::AddressNotAvailable;
-		}
-	}
-	else
-	{
-		error = SVSocketError::NotASocket;
-	}
-	return error;
-}
 
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVSocketLibrary\SVServerSocket.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVSocketLibrary\SVServerSocket.cpp_v  $
+ * 
+ *    Rev 1.1   19 Jun 2014 15:48:04   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Merged changes from SVRemoteControl project.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   25 Apr 2013 17:15:06   bWalter
  * Project:  SVObserver

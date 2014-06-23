@@ -5,88 +5,106 @@
 //* .Module Name     : SVSocketError
 //* .File Name       : $Workfile:   SVSocketError.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   25 Apr 2013 17:16:44  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   19 Jun 2014 15:48:06  $
 //******************************************************************************
 
 #pragma once
 
-class SVSocketError
+namespace Seidenader
 {
-public:
-	enum ErrorEnum
+	namespace Socket
 	{
-		Success,
-		Interrupted,
-		PermissionDenied,
-		InvalidPointerAddress,
-		InvalidArgument,
-		TooManyOpenSockets,
-		WouldBlock,
-		OperationInProgress,
-		OperationAlreadyInProgress,
-		NotASocket,
-		DestinationAddressRequired,
-		MessageTooLong,
-		ProtocolWrong,
-		BadProtocolOption,
-		ProtocolNotSupported,
-		SocketTypeNotSupported,
-		OperationNotSupported,
-		ProtocolFamilyNotSupported,
-		AddressFamilyNotSupported,
-		AddressInUse,
-		AddressNotAvailable,
-		NetworkDown,
-		NetworkUnreachable,
-		NetworkReset,
-		ConnectionAborted,
-		ConnectionReset,
-		NoBufferSpaceAvailable,
-		AlreadyConnected,
-		NotConnected,
-		Shutdown,
-		ConnectionTimeout,
-		ConnectionRefused,
-		HostDown,
-		HostUnreachable,
-		ToManyProcesses,
-		SystemNotReady,
-		VersionNotSupported,
-		NotInitialised,
-		ShutdownInProgress,
-		ClassTypeNotFound,
-		HostNotFound,
-		TryAgain,
-		NoRecovery,
-		NoData,
-		InvalidHandle,
-		InvalidParameter,
-		IOIncomplete,
-		IOPending,
-		NotEnoughMemory,
-		OperationAborted,
-		InvalidProcTable,
-		InvalidProvider,
-		ProviderFailedInit,
-		CallFailure,
-		AlreadyCreated,
-	 	Unknown
-	};
-	static SVSocketError::ErrorEnum GetLastSocketError();
-	static SVSocketError::ErrorEnum TranslateError(int errorCode);
-	static const char * GetErrorText(ErrorEnum err);
+		class SVSocketError
+		{
+		public:
+			enum ErrorEnum
+			{
+				Success,
+				Interrupted,
+				PermissionDenied,
+				InvalidPointerAddress,
+				InvalidArgument,
+				TooManyOpenSockets,
+				WouldBlock,
+				OperationInProgress,
+				OperationAlreadyInProgress,
+				NotASocket,
+				DestinationAddressRequired,
+				MessageTooLong,
+				ProtocolWrong,
+				BadProtocolOption,
+				ProtocolNotSupported,
+				SocketTypeNotSupported,
+				OperationNotSupported,
+				ProtocolFamilyNotSupported,
+				AddressFamilyNotSupported,
+				AddressInUse,
+				AddressNotAvailable,
+				NetworkDown,
+				NetworkUnreachable,
+				NetworkReset,
+				ConnectionAborted,
+				ConnectionReset,
+				NoBufferSpaceAvailable,
+				AlreadyConnected,
+				NotConnected,
+				Shutdown,
+				ConnectionTimeout,
+				ConnectionRefused,
+				HostDown,
+				HostUnreachable,
+				ToManyProcesses,
+				SystemNotReady,
+				VersionNotSupported,
+				NotInitialised,
+				ShutdownInProgress,
+				ClassTypeNotFound,
+				HostNotFound,
+				TryAgain,
+				NoRecovery,
+				NoData,
+				InvalidHandle,
+				InvalidParameter,
+				IOIncomplete,
+				IOPending,
+				NotEnoughMemory,
+				OperationAborted,
+				InvalidProcTable,
+				InvalidProvider,
+				ProviderFailedInit,
+				CallFailure,
+				AlreadyCreated,
+				Unknown
+			};
+			static SVSocketError::ErrorEnum GetLastSocketError();
+			static SVSocketError::ErrorEnum TranslateError(int errorCode);
+			static const char * GetErrorText(ErrorEnum err);
 
-private:
-	SVSocketError();
-	~SVSocketError();
-};
+		private:
+			SVSocketError();
+			~SVSocketError();
+		};
+	}
+}
+
+typedef Seidenader::Socket::SVSocketError SVSocketError;
 
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVSocketLibrary\SVSocketError.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVSocketLibrary\SVSocketError.h_v  $
+ * 
+ *    Rev 1.1   19 Jun 2014 15:48:06   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Merged changes from SVRemoteControl project.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   25 Apr 2013 17:16:44   bWalter
  * Project:  SVObserver

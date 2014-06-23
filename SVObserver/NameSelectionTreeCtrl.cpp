@@ -5,8 +5,8 @@
 //* .Module Name     : NameSelectionTreeCtrl
 //* .File Name       : $Workfile:   NameSelectionTreeCtrl.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.5  $
-//* .Check In Date   : $Date:   21 May 2014 17:51:22  $
+//* .Current Version : $Revision:   1.6  $
+//* .Check In Date   : $Date:   18 Jun 2014 11:07:28  $
 //******************************************************************************
 
 #pragma region Includes
@@ -491,17 +491,17 @@ void NameSelectionTreeCtrl::SetBranchChecks(HTREEITEM hItem , bool p_bNewBranchS
 {
 	SetCheckState(hItem, p_bNewBranchState, false);
 	// **** Set Check on Everything below this node...
-	HTREEITEM l_hItem = GetChildItem(hItem);
-	while (l_hItem != NULL) // && l_bStillChecking )
+	HTREEITEM hChildItem = GetChildItem(hItem);
+	while (hChildItem != NULL) // && l_bStillChecking )
 	{
-		DWORD_PTR dwItemData = GetItemData(hItem);
+		DWORD_PTR dwItemData = GetItemData(hChildItem);
 		if (!dwItemData)
 		{
-			SetBranchChecks(l_hItem, p_bNewBranchState);
+			SetBranchChecks(hChildItem, p_bNewBranchState);
 		}
 		else
 		{
-			bool l_bThisState = GetCheckState(l_hItem);
+			bool l_bThisState = GetCheckState(hChildItem);
 
 			if (p_bNewBranchState != l_bThisState)
 			{
@@ -513,11 +513,11 @@ void NameSelectionTreeCtrl::SetBranchChecks(HTREEITEM hItem , bool p_bNewBranchS
 				}
 				if (bCanSelect)
 				{
-					SetCheckState(l_hItem, p_bNewBranchState);
+					SetCheckState(hChildItem, p_bNewBranchState);
 				}
 			}
 		}
-		l_hItem = GetNextItem(l_hItem, TVGN_NEXT);
+		hChildItem = GetNextItem(hChildItem, TVGN_NEXT);
 	}
 }
 
@@ -526,6 +526,16 @@ void NameSelectionTreeCtrl::SetBranchChecks(HTREEITEM hItem , bool p_bNewBranchS
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\NameSelectionTreeCtrl.cpp_v  $
+ * 
+ *    Rev 1.6   18 Jun 2014 11:07:28   ryoho
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   fixed issue with branch selection
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.5   21 May 2014 17:51:22   sjones
  * Project:  SVObserver
