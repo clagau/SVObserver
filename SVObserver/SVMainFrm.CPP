@@ -5,8 +5,8 @@
 //* .Module Name     : SVMainFrm
 //* .File Name       : $Workfile:   SVMainFrm.CPP  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.7  $
-//* .Check In Date   : $Date:   02 Jun 2014 09:54:04  $
+//* .Current Version : $Revision:   1.8  $
+//* .Check In Date   : $Date:   24 Jun 2014 07:08:58  $
 //******************************************************************************
 
 #pragma region Includes
@@ -107,6 +107,7 @@ BEGIN_MESSAGE_MAP(SVMainFrame, CMDIFrameWnd)
 	ON_MESSAGE(SV_SET_MODE, OnSetMode)
 	ON_MESSAGE(SV_LOAD_CONFIGURATION, OnLoadConfiguration)
 	ON_MESSAGE(SV_REFRESH_STATUS_BAR, InvalidateStatusBar )
+	ON_MESSAGE(SV_SHUTDOWN, Shutdown )
 END_MESSAGE_MAP()
 
 #pragma region Constructor
@@ -1089,6 +1090,15 @@ LRESULT SVMainFrame::InvalidateStatusBar( WPARAM wParam, LPARAM lParam )
 	return 0;
 }
 
+LRESULT SVMainFrame::Shutdown( WPARAM wParam, LPARAM lParam )
+{
+	long shutdownOption = static_cast<long>(wParam);
+	char cmd[50];
+	sprintf_s(cmd, "SVShutdown.exe %d 15", shutdownOption);
+	system(cmd);
+	return 0;
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : // e.g. Run member function of class ...
 // -----------------------------------------------------------------------------
@@ -2008,6 +2018,16 @@ LRESULT SVMainFrame::OnHideIOViewTab( WPARAM p_wParam, LPARAM p_lParam )
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVMainFrm.CPP_v  $
+ * 
+ *    Rev 1.8   24 Jun 2014 07:08:58   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  905
+ * SCR Title:  Implement Shutdown Command thru Remote Control
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add Shutdown message handler function that will start the shutdown executable.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.7   02 Jun 2014 09:54:04   gramseier
  * Project:  SVObserver

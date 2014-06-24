@@ -5,8 +5,8 @@
 //* .Module Name     : SVStaticValueObjectClassImpl
 //* .File Name       : $Workfile:   SVStaticValueObjectClassImpl.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   11 Nov 2013 09:32:36  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   23 Jun 2014 07:30:52  $
 //******************************************************************************
 
 #ifndef SVStaticValueObjectClassImpl_H
@@ -126,7 +126,7 @@ protected:
 		{
 			int iResultSize = GetResultSize(iBucket);
 			ASSERT( iResultSize <= ArraySize() );
-			raValues.resize( iResultSize );
+			raValues.resize( iResultSize > 0 ? iResultSize : 1 );
 			if ( ArraySize() == 1 )
 				raValues[0] = static_cast< ELEMENT_TYPE >(ScalarBucket(iBucket));
 			else
@@ -255,6 +255,16 @@ namespace std
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVStaticValueObjectClassImpl.h_v  $
+ * 
+ *    Rev 1.1   23 Jun 2014 07:30:52   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  872
+ * SCR Title:  Add Archive Tool Headers to Archive File
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   modified GetArrayValuesImpl to force a size of 1 or greater to prevent a crash.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   11 Nov 2013 09:32:36   tbair
  * Project:  SVObserver

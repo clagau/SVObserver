@@ -5,8 +5,8 @@
 //* .Module Name     : SVUserMessage
 //* .File Name       : $Workfile:   SVUserMessage.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   15 Aug 2013 06:15:44  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   24 Jun 2014 07:28:24  $
 //******************************************************************************
 
 #ifndef SVUSERMESSAGE_H
@@ -64,6 +64,7 @@
 #define SV_SET_MODE WM_USER + 33
 #define SV_LOAD_CONFIGURATION WM_USER + 34
 #define SV_REFRESH_STATUS_BAR WM_USER + 35
+#define SV_SHUTDOWN WM_USER + 36
 
 /**************************************************************************/
 /* INCLUDE CONTROL:
@@ -75,6 +76,16 @@
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVUserMessage.h_v  $
+ * 
+ *    Rev 1.3   24 Jun 2014 07:28:24   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  905
+ * SCR Title:  Implement Shutdown Command thru Remote Control
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Added constants to support remote shutdown command.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   15 Aug 2013 06:15:44   tbair
  * Project:  SVObserver

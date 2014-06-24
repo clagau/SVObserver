@@ -5,8 +5,8 @@
 //* .Module Name     : SVMainFrame
 //* .File Name       : $Workfile:   SVMainFrm.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.4  $
-//* .Check In Date   : $Date:   02 Jun 2014 09:54:04  $
+//* .Current Version : $Revision:   1.5  $
+//* .Check In Date   : $Date:   24 Jun 2014 07:08:58  $
 //******************************************************************************
 
 #ifndef SVMAINFRM_H
@@ -99,6 +99,7 @@ public:
 	void ShowAllBars( BOOL Show, BOOL RememberOldState = FALSE );
 
 	LRESULT InvalidateStatusBar( WPARAM wParam, LPARAM lParam );
+	LRESULT Shutdown( WPARAM wParam, LPARAM lParam );
 
 	virtual void OnUpdateFrameTitle( BOOL bAddToTitle );
 	void UpdateFrameTitleForDocument( LPCTSTR lpszDocName );
@@ -170,6 +171,16 @@ private:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVMainFrm.h_v  $
+ * 
+ *    Rev 1.5   24 Jun 2014 07:08:58   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  905
+ * SCR Title:  Implement Shutdown Command thru Remote Control
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add Shutdown message handler function that will start the shutdown executable.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.4   02 Jun 2014 09:54:04   gramseier
  * Project:  SVObserver

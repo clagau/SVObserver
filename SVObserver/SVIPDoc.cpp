@@ -5,8 +5,8 @@
 //* .Module Name     : SVIPDoc
 //* .File Name       : $Workfile:   SVIPDoc.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.18  $
-//* .Check In Date   : $Date:   18 Jun 2014 14:19:28  $
+//* .Current Version : $Revision:   1.19  $
+//* .Check In Date   : $Date:   24 Jun 2014 09:34:14  $
 //******************************************************************************
 
 #pragma region Includes
@@ -1542,7 +1542,7 @@ void SVIPDoc::OnEditDelete()
 					}
 
 					pToolSetView->m_toolSetListCtrl.SaveScrollPos();
-// SEJ 999			pToolSetView->m_toolSetListCtrl.Rebuild();
+					pToolSetView->m_toolSetListCtrl.Rebuild(); // do not remove as the item mist be removed from the list before setting the new selection
 					if (pTaskObject)
 					{
 						m_SelectedToolID = pTaskObject->GetUniqueObjectID();
@@ -4403,6 +4403,16 @@ int SVIPDoc::GetToolToInsertBefore(const CString& name, int listIndex) const
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVIPDoc.cpp_v  $
+ * 
+ *    Rev 1.19   24 Jun 2014 09:34:14   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  906
+ * SCR Title:  SVObserver Tool Grouping
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   Revised OnEditDelete method to call SVToolSetListCtrl::Rebuild to ensure deleted item has been removed before selecting another tool..
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.18   18 Jun 2014 14:19:28   sjones
  * Project:  SVObserver

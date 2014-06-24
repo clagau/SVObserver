@@ -5,13 +5,14 @@
 //* .Module Name     : SVSocketRemoteCommandManager
 //* .File Name       : $Workfile:   SVSocketRemoteCommandManager.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.8  $
-//* .Check In Date   : $Date:   25 Apr 2014 13:08:22  $
+//* .Current Version : $Revision:   1.10  $
+//* .Check In Date   : $Date:   24 Jun 2014 08:21:50  $
 //******************************************************************************
 
 #include "stdafx.h"
 #include <boost/config.hpp>
 #include <boost/assign.hpp>
+#include <fstream>
 #include "SVSocketRemoteCommandManager.h"
 #include "SVTimerLibrary\SVClock.h"
 #include "JsonLib/include/json.h"
@@ -21,6 +22,7 @@
 #include "SVGlobal.h"
 #include "SVRemoteControlConstants.h"
 #include "SVVisionProcessorHelper.h"
+#include "SVUserMessage.h"
 
 #define SV_DATA_TO_CONTENTS
 //#define SV_OUTPUT_JSON
@@ -46,6 +48,7 @@ SVRemoteCommandFunctions::SVCommandFunctionMap SVRemoteCommandFunctions::m_Async
 (SVRC::cmdName::qryProd,  &SVRemoteCommandFunctions::QueryProductList)
 (SVRC::cmdName::qryRjct, &SVRemoteCommandFunctions::QueryRejectCondList)
 (SVRC::cmdName::qryFail, &SVRemoteCommandFunctions::QueryFailStatusList)
+(SVRC::cmdName::shutdownSVIM, &SVRemoteCommandFunctions::Shutdown)
 ;
 
 bool SVRemoteCommandFunctions::IsAsyncCommand( const std::string& p_rJsonCommand )
@@ -1375,6 +1378,86 @@ HRESULT SVRemoteCommandFunctions::SetDeviceMode( const std::string& p_rJsonComma
 	return l_Status;
 }
 
+//HRESULT SVRemoteCommandFunctions::RegisterProductList( const std::string& command, std::string& jsonResults )
+//{
+//	HRESULT hr = S_OK;
+//	Json::Reader reader;
+//	Json::Value jsonCmd;
+//	Json::Value result(Json::objectValue);
+//	try
+//	{
+//		if( reader.parse( command, jsonCmd, false ) )
+//		{
+//			SVNameStatusMap errors;
+//			WriteJsonCommandToFile(jsonCmd, "C:\\temp\\RegisterProductList-cmd");
+//			hr = SVVisionProcessorHelper::Instance().RegisterProductList(ExtractRPLParams(jsonCmd), errors);
+//			result[ SVRC::result::faults] = (Errors2Json(errors));
+//		}
+//		else
+//		{
+//			hr = E_INVALIDARG;
+//		}
+//	}
+//	catch (ATL::CAtlException & ex)
+//	{
+//		hr = ex;
+//	}
+//
+//	WriteResultToJsonAndFile(command, jsonResults, result, "C:\\temp\\RegisterProductList-rsp", hr);
+//	return hr;
+//}
+
+HRESULT SVRemoteCommandFunctions::Shutdown( const std::string& command, std::string& jsonResults )
+{
+	HRESULT hr = S_OK;
+	Json::Value result(Json::objectValue);
+	try
+	{
+		long shutdownOption = -1;
+		Json::Reader reader;
+		Json::Value cmdValues;
+		Json::Value jsonArguments;
+		if( reader.parse( command, cmdValues, false ) )
+		if( cmdValues.isObject() )
+		{
+			jsonArguments = cmdValues[ SVRC::cmd::arg ];
+		}
+
+		if( jsonArguments.isObject() )
+		{
+			Json::Value jsonOptions;
+
+			jsonOptions = jsonArguments[ SVRC::arg::options ];
+
+			if( jsonOptions.isInt() )
+			{
+				shutdownOption = jsonOptions.asInt();
+			}
+		}
+		//check if shutdown.exe is exist. If not, the shutdown won't done.
+		std::ifstream dllfile("SVShutdown.exe", std::ios::binary);
+		CWnd* pWnd = pWnd = AfxGetApp()->m_pMainWnd;
+		if ( 0 > shutdownOption && !dllfile && nullptr != pWnd)
+		{
+			hr = S_FALSE;
+		} 
+		else		
+		{
+			PostMessage(pWnd->m_hWnd, SV_SHUTDOWN, shutdownOption, 0 );
+		}		
+	}
+	catch (ATL::CAtlException & ex)
+	{
+		hr = ex;
+	}
+
+	result[ SVRC::result::state ] = hr;
+	std::string fileName = "C:\\temp\\Shutdown-rsp";
+	WriteResultToJsonAndFile(command, jsonResults, result, fileName, hr);
+
+	return hr;
+}
+
 HRESULT SVRemoteCommandFunctions::SetItems( const std::string& p_rJsonCommand, std::string& p_rJsonResults )
 {
 	HRESULT l_Status = S_OK;
@@ -1835,6 +1918,26 @@ AFX_INLINE HRESULT SVRemoteCommandFunctions::WriteResultToJsonAndFile( const std
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVSocketRemoteCommandManager.cpp_v  $
+ * 
+ *    Rev 1.10   24 Jun 2014 08:21:50   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  905
+ * SCR Title:  Implement Shutdown Command thru Remote Control
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Include fstream
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.9   24 Jun 2014 07:21:22   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  905
+ * SCR Title:  Implement Shutdown Command thru Remote Control
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Added remote command function Shutdown.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.8   25 Apr 2014 13:08:22   sjones
  * Project:  SVObserver

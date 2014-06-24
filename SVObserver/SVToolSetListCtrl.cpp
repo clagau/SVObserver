@@ -5,8 +5,8 @@
 //* .Module Name     : SVToolSetListCtrl
 //* .File Name       : $Workfile:   SVToolSetListCtrl.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.3  $
-//* .Check In Date   : $Date:   12 Jun 2014 16:46:24  $
+//* .Current Version : $Revision:   1.4  $
+//* .Check In Date   : $Date:   24 Jun 2014 09:32:04  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -443,7 +443,7 @@ void SVToolSetListCtrl::SetSelectedTool(const SVGUID& rGuid)
 			{
 				SVTaskObjectClass* pObject = reinterpret_cast<SVTaskObjectClass*>(item.lParam);
 
-				if (!rGuid.empty() && nullptr != pObject && rGuid == pObject->GetUniqueObjectID())
+				if (!rGuid.empty() && SV_IS_KIND_OF(pObject, SVTaskObjectClass) && rGuid == pObject->GetUniqueObjectID())
 				{
 					SetItemState(i, LVIS_SELECTED, LVIS_SELECTED);
 				}
@@ -606,6 +606,16 @@ void SVToolSetListCtrl::ExpandItem(int item)
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVToolSetListCtrl.cpp_v  $
+ * 
+ *    Rev 1.4   24 Jun 2014 09:32:04   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  906
+ * SCR Title:  SVObserver Tool Grouping
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   Revsied SetSelectedTool method to check for valid SVTaskObject pointer.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   12 Jun 2014 16:46:24   sjones
  * Project:  SVObserver

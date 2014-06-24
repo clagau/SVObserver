@@ -5,8 +5,8 @@
 //* .Module Name     : SVSocketRemoteCommandManager
 //* .File Name       : $Workfile:   SVSocketRemoteCommandManager.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.3  $
-//* .Check In Date   : $Date:   23 Apr 2014 18:07:06  $
+//* .Current Version : $Revision:   1.4  $
+//* .Check In Date   : $Date:   24 Jun 2014 07:21:22  $
 //******************************************************************************
 
 #ifndef SVSOCKETREMOTECOMMANDMANAGER_H
@@ -72,6 +72,7 @@ protected:
 	static HRESULT SetDeviceMode( const std::string& p_rJsonCommand, std::string& p_rJsonResults );
 	static HRESULT SetItems( const std::string& p_rJsonCommand, std::string& p_rJsonResults );
 
+	static HRESULT Shutdown( const std::string& command, std::string& jsonResults );
 	static HRESULT ActivateMonitorList( const std::string& rJsonCommand, std::string& rJsonResults );
 	static HRESULT QueryProductList( const std::string& rJsonCommand, std::string& rJsonResults );
 	static HRESULT QueryRejectCondList( const std::string& rJsonCommand, std::string& rJsonResults );
@@ -105,6 +106,16 @@ typedef SVJsonCommandManager< SVRemoteCommandFunctions > SVSocketRemoteCommandMa
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVSocketRemoteCommandManager.h_v  $
+ * 
+ *    Rev 1.4   24 Jun 2014 07:21:22   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  905
+ * SCR Title:  Implement Shutdown Command thru Remote Control
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Added remote command function Shutdown.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   23 Apr 2014 18:07:06   sjones
  * Project:  SVObserver
