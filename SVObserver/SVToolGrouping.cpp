@@ -2,8 +2,8 @@
 //* .Module Name     : SVToolGrouping
 //* .File Name       : $Workfile:   SVToolGrouping.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.3  $
-//* .Check In Date   : $Date:   19 Jun 2014 10:42:30  $
+//* .Current Version : $Revision:   1.4  $
+//* .Check In Date   : $Date:   25 Jun 2014 13:17:56  $
 //******************************************************************************
 #pragma region Includes
 #include "stdafx.h"
@@ -97,7 +97,27 @@ void SVToolGrouping::AddGroup(const String& rName, const String& rInsertBefore)
 		it = std::find_if(m_list.begin(), m_list.end(),
 		[&rInsertBefore](const ToolGroup& rGroup)->bool { return rInsertBefore == rGroup.first; });
 	}
-	m_list.insert(it, std::make_pair(rName, ToolGroupData(ToolGroupData::StartOfGroup, rName))); 
+	ToolGroupList::iterator curIt = m_list.insert(it, std::make_pair(rName, ToolGroupData(ToolGroupData::StartOfGroup, rName)));
+
+	// check if end group needs to be reassigned to this newly added group (split group)
+	it = std::find_if(curIt, m_list.end(),
+		[&rName](const ToolGroup& rGroup)->bool { return rName != rGroup.first && (ToolGroupData::EndOfGroup == rGroup.second.m_type || ToolGroupData::StartOfGroup == rGroup.second.m_type); });
+	if (it != m_list.end())
+	{
+		if (ToolGroupData::EndOfGroup == it->second.m_type)
+		{
+			String endName = it->first;
+			// find current start group for end group and unassign
+			it = std::find_if(m_list.begin(), m_list.end(),
+				[&endName](const ToolGroup& rGroup)->bool { return endName == rGroup.second.m_endName && ToolGroupData::StartOfGroup == rGroup.second.m_type; });
+			if (it != m_list.end())
+			{
+				it->second.m_endName.clear();
+			}
+			// reassign the end to the newly inserted group
+			curIt->second.m_endName = endName;
+		}
+	}
 }
 
 bool SVToolGrouping::AddEndGroup(const String& rGroupName, const String& rInsertBefore)
@@ -621,6 +641,16 @@ size_t SVToolGrouping::size() const
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVToolGrouping.cpp_v  $
+ * 
+ *    Rev 1.4   25 Jun 2014 13:17:56   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  906
+ * SCR Title:  SVObserver Tool Grouping
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   Revised AddGroup method to check and/or reassign end group if necessary.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   19 Jun 2014 10:42:30   tbair
  * Project:  SVObserver

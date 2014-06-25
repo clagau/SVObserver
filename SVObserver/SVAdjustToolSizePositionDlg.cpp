@@ -5,8 +5,8 @@
 //* .Module Name     : SVAdjustToolSizePositionDlg
 //* .File Name       : $Workfile:   SVAdjustToolSizePositionDlg.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.6  $
-//* .Check In Date   : $Date:   26 May 2014 10:49:56  $
+//* .Current Version : $Revision:   1.7  $
+//* .Check In Date   : $Date:   25 Jun 2014 10:34:12  $
 //******************************************************************************
 #pragma region Includes
 #include "stdafx.h"
@@ -20,6 +20,7 @@
 #include "SVImageListClass.h"
 #include "SVTool.h"
 #include "SVOMFCLibrary/SVOMFCLibraryGlobals.h"
+#include "SVSVIMStateClass.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -228,6 +229,11 @@ void SVAdjustToolSizePositionDlg::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* p
 
 void SVAdjustToolSizePositionDlg::OnOK() 
 {
+	//check if extents have change.  if they change set SV_STATE_MODIFIED
+	if (m_svOriginalExtents != m_svExtents)
+	{
+		SVSVIMStateClass::AddState(SV_STATE_MODIFIED);
+	}
 	CDialog::OnOK();
 }
 
@@ -504,6 +510,16 @@ void SVAdjustToolSizePositionDlg::createIcons()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVAdjustToolSizePositionDlg.cpp_v  $
+ * 
+ *    Rev 1.7   25 Jun 2014 10:34:12   ryoho
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  894
+ * SCR Title:  Enhancements to Adjust Tool Position Dialog
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   Made changes to OnOK to check to see if any of the extents have changed.  If they do, set the SVSVIMState to Modified.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.6   26 May 2014 10:49:56   mziegler
  * Project:  SVObserver

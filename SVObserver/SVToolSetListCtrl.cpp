@@ -5,8 +5,8 @@
 //* .Module Name     : SVToolSetListCtrl
 //* .File Name       : $Workfile:   SVToolSetListCtrl.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.4  $
-//* .Check In Date   : $Date:   24 Jun 2014 09:32:04  $
+//* .Current Version : $Revision:   1.5  $
+//* .Check In Date   : $Date:   25 Jun 2014 13:21:32  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -33,11 +33,6 @@ SVToolSetListCtrl::SVToolSetListCtrl()
 : CListCtrl()
 , m_iNone(-1)
 , m_iInvalid(-1)
-, m_iDisabled(-1)
-, m_iPass(-1)
-, m_iFail(-1)
-, m_iWarn(-1)
-, m_iUnknown(-1)
 , m_iTopIndex(0)
 , m_expandState(-1)
 , m_collapseState(-1)
@@ -109,7 +104,7 @@ void SVToolSetListCtrl::Rebuild()
 		if (pDoc)
 		{
 			const SVToolGrouping& groupings = pDoc->GetToolGroupings();
-			if (nullptr == m_oStateImageList.GetSafeHandle())
+			if (nullptr == m_ImageList.GetSafeHandle())
 			{
 				CreateImageLists();
 			}
@@ -118,32 +113,33 @@ void SVToolSetListCtrl::Rebuild()
 
 			int itemNo = 0;
 			bool bCollapsed = false;
+			int indent = 0;
 			for (SVToolGrouping::const_iterator it = groupings.begin(); it != groupings.end();++it)
 			{
 				if (it->second.m_type == ToolGroupData::StartOfGroup)
 				{
 					bCollapsed = it->second.m_bCollapsed;
 					itemNo = InsertStartGroup(itemNo, it->first.c_str(), bCollapsed);
+					indent = 1;
 				}
 				else if (it->second.m_type == ToolGroupData::EndOfGroup)
 				{
 					itemNo = InsertEndGroup(itemNo, it->first.c_str(), bCollapsed);
 					bCollapsed = false;
+					indent = 0;
 				}
 				else
 				{
 					SVToolClass* pTool = FindTool(m_pToolSet, it->first.c_str());
 					if (pTool)
 					{
-						itemNo = InsertTool(itemNo, pTool, bCollapsed);
+						itemNo = InsertTool(itemNo, pTool, bCollapsed, indent);
 					}
 				}
 			}
 			if (!GetItemCount())
 			{
-				CString strEmpty;
-				strEmpty.LoadString(IDS_EMPTY_STRING);
-				InsertItem(LVIF_TEXT | LVIF_STATE, 0, strEmpty, INDEXTOSTATEIMAGEMASK(m_iNone + 1), LVIS_STATEIMAGEMASK, 0, 0);
+				InsertEmptyString(itemNo);
 			}
 			else
 			{
@@ -157,9 +153,18 @@ void SVToolSetListCtrl::Rebuild()
 int SVToolSetListCtrl::InsertStartGroup(int itemNo, const CString& startName, bool bCollapsed)
 {
 	int index = itemNo;
-	int state = (bCollapsed) ? m_expandState : m_collapseState;
-	index = InsertItem(LVIF_TEXT | LVIF_STATE, itemNo, startName, INDEXTOSTATEIMAGEMASK(state + 1), LVIS_STATEIMAGEMASK, 0, 0);
-	SetItemData(index, 0);
+	int img = (bCollapsed) ? m_expandState : m_collapseState;
+	LVITEM item;
+	memset(&item, 0, sizeof(item));
+	item.mask = LVIF_IMAGE | LVIF_INDENT | LVIF_PARAM;
+	item.iItem = index;
+	item.iSubItem = 0;
+	item.iImage = img;
+	item.iIndent = 0;
+	item.lParam = 0;
+	index = InsertItem(&item);
+	SetItemText(index, 0, startName);
+
 	index++;
 
 	return index;
@@ -170,28 +175,43 @@ int SVToolSetListCtrl::InsertEndGroup(int itemNo, const CString& endName, bool b
 	int index = itemNo;
 	if (!endName.IsEmpty() && !bCollapsed)
 	{
-		index = InsertItem(LVIF_TEXT | LVIF_STATE, index, endName, INDEXTOSTATEIMAGEMASK(m_iNone + 1), LVIS_STATEIMAGEMASK, 0, 0);
-		SetItemData(index, 0);
+		LVITEM item;
+		memset(&item, 0, sizeof(item));
+		item.mask = LVIF_IMAGE | LVIF_INDENT | LVIF_PARAM;
+		item.iItem = index;
+		item.iSubItem = 0;
+		item.iIndent = 1;
+		item.lParam = 0;
+		item.iImage = m_iNone;
+		index = InsertItem(&item);
+		SetItemText(index, 0, endName);
 	}
 	index++;
 
 	return index;
 }
 
-int SVToolSetListCtrl::InsertTool(int itemNo, SVToolClass* pTool, bool bCollapsed)
+int SVToolSetListCtrl::InsertTool(int itemNo, SVToolClass* pTool, bool bCollapsed, int indent)
 {
 	int index = itemNo;
 	if (pTool && !bCollapsed)
 	{
+		int img = m_iNone;
 		if (!pTool->IsValid())
 		{
-			index = InsertItem( LVIF_TEXT | LVIF_STATE, itemNo, pTool->GetName(), INDEXTOSTATEIMAGEMASK(m_iInvalid + 1), LVIS_STATEIMAGEMASK, 0, 0);
+			img = m_iInvalid;
 		}
-		else
-		{
-			index = InsertItem( LVIF_TEXT | LVIF_STATE, itemNo, pTool->GetName(), INDEXTOSTATEIMAGEMASK(m_iNone + 1), LVIS_STATEIMAGEMASK, 0, 0);
-		}
-		SetItemData(index, reinterpret_cast<DWORD_PTR>(pTool));
+
+		LVITEM item;
+		memset(&item, 0, sizeof(item));
+		item.iItem = index;
+		item.iSubItem = 0;
+		item.mask = LVIF_IMAGE | LVIF_INDENT | LVIF_PARAM;
+		item.iIndent = indent;
+		item.lParam = reinterpret_cast<DWORD_PTR>(pTool);
+		item.iImage = img;
+		index = InsertItem(&item);
+		SetItemText(index, 0, pTool->GetName());
 		index++;
 	}
 	return index;
@@ -200,8 +220,33 @@ int SVToolSetListCtrl::InsertTool(int itemNo, SVToolClass* pTool, bool bCollapse
 void SVToolSetListCtrl::AddEndDelimiter()
 {
 	int itemNo = GetItemCount();
-	int index = InsertItem(LVIF_TEXT | LVIF_STATE, itemNo, EndListDelimiter, INDEXTOSTATEIMAGEMASK(m_iNone + 1), LVIS_STATEIMAGEMASK, 0, 0);
-	SetItemData(index, 0);
+	LVITEM item;
+	memset(&item, 0, sizeof(item));
+	item.mask = LVIF_IMAGE | LVIF_INDENT | LVIF_PARAM;
+	item.iItem = itemNo;
+	item.iSubItem = 0;
+	item.iIndent = 0;
+	item.lParam = 0;
+	item.iImage = m_iNone;
+
+	int index = InsertItem(&item);
+	SetItemText(index, 0, EndListDelimiter);
+}
+
+void SVToolSetListCtrl::InsertEmptyString(int itemNo)
+{
+	CString strEmpty;
+	strEmpty.LoadString(IDS_EMPTY_STRING);
+	LVITEM item;
+	memset(&item, 0, sizeof(item));
+	item.mask = LVIF_IMAGE | LVIF_INDENT | LVIF_PARAM;
+	item.iItem = itemNo;
+	item.iSubItem = 0;
+	item.iImage = m_iNone;
+	item.iIndent = 0;
+	item.lParam = 0;
+	int index = InsertItem(&item);
+	SetItemText(index, 0, strEmpty);
 }
 
 bool SVToolSetListCtrl::IsEndListDelimiter(const CString& text) const
@@ -235,18 +280,23 @@ bool SVToolSetListCtrl::IsStartGrouping(int index, bool& bState) const
 
 void SVToolSetListCtrl::RebuildImages()
 {
-	if (!m_oStateImageList.GetSafeHandle())
+	if (!m_ImageList.GetSafeHandle())
 	{
 		CreateImageLists();
 	}
 
 	int l_iCount = GetItemCount();
 
+	LVITEM item;
+	memset(&item, 0, sizeof(item));
+	item.mask = LVIF_IMAGE;
 	for (int i = 0;i < l_iCount; i++)
 	{
 		SVToolClass* pTool = nullptr;
-
+		int img = m_iNone;
+		item.iItem = i;	
 		DWORD_PTR userData = GetItemData(i);
+
 		if (userData)
 		{
 			try
@@ -257,21 +307,13 @@ void SVToolSetListCtrl::RebuildImages()
 			{
 				pTool = nullptr;
 			}
-		
+	
 			if (nullptr != pTool)
 			{
 				if (!pTool->IsValid())
 				{
-					SetItemState(i, INDEXTOSTATEIMAGEMASK(m_iInvalid + 1), LVIS_STATEIMAGEMASK);
+					img  = m_iInvalid;
 				}
-				else
-				{
-					SetItemState(i, INDEXTOSTATEIMAGEMASK(m_iNone + 1), LVIS_STATEIMAGEMASK);
-				}
-			}
-			else // should never get here...
-			{
-				SetItemState(i, INDEXTOSTATEIMAGEMASK(m_iInvalid + 1), LVIS_STATEIMAGEMASK);
 			}
 		}
 		else
@@ -284,19 +326,17 @@ void SVToolSetListCtrl::RebuildImages()
 				if (bState) 
 				{
 					// show + (plus)
-					SetItemState(i, INDEXTOSTATEIMAGEMASK(m_expandState + 1), LVIS_STATEIMAGEMASK);
+					img = m_expandState;
 				}
 				else
 				{
 					// show - (minus)
-					SetItemState(i, INDEXTOSTATEIMAGEMASK(m_collapseState + 1), LVIS_STATEIMAGEMASK);
+					img = m_collapseState;
 				}
 			}
-			else
-			{
-				SetItemState(i, INDEXTOSTATEIMAGEMASK(m_iNone + 1),	LVIS_STATEIMAGEMASK);
-			}
 		}
+		item.iImage = img;
+		SetItem(&item); 
 	}
 }
 
@@ -549,22 +589,18 @@ BOOL SVToolSetListCtrl::PreTranslateMessage(MSG* pMsg)
 
 void SVToolSetListCtrl::CreateImageLists()
 {
-	m_oStateImageList.Create(16, 16, TRUE, 2, 2);
+	m_ImageList.Create(16, 16, TRUE, 2, 2);
 
 	CWinApp* pApp = AfxGetApp();
 	if (pApp)
 	{
-		m_iNone = m_oStateImageList.Add(pApp->LoadIcon(IDI_STATUS_NONE));
-		m_iInvalid = m_oStateImageList.Add(pApp->LoadIcon(IDI_STATUS_BLACK));
-		m_iDisabled = m_oStateImageList.Add(pApp->LoadIcon(IDI_STATUS_GRAY));
-		m_iPass = m_oStateImageList.Add(pApp->LoadIcon(IDI_STATUS_GREEN));
-		m_iFail = m_oStateImageList.Add(pApp->LoadIcon(IDI_STATUS_RED));
-		m_iWarn = m_oStateImageList.Add(pApp->LoadIcon(IDI_STATUS_YELLOW));
-		m_iUnknown = m_oStateImageList.Add(pApp->LoadIcon(IDI_STATUS_BLUE));
-		m_collapseState = m_oStateImageList.Add(pApp->LoadIcon(IDI_COLLAPSE));
-		m_expandState = m_oStateImageList.Add(pApp->LoadIcon(IDI_EXPAND));
+		m_iNone = m_ImageList.Add(pApp->LoadIcon(IDI_STATUS_NONE));
+		m_iInvalid = m_ImageList.Add(pApp->LoadIcon(IDI_STATUS_BLACK));
+		m_collapseState = m_ImageList.Add(pApp->LoadIcon(IDI_COLLAPSE));
+		m_expandState = m_ImageList.Add(pApp->LoadIcon(IDI_EXPAND));
 	}
-	SetImageList(&m_oStateImageList, LVSIL_STATE);
+	SetImageList(&m_ImageList, LVSIL_NORMAL);
+	SetImageList(&m_ImageList, LVSIL_SMALL);
 }
 
 void SVToolSetListCtrl::CollapseItem(int item)
@@ -606,6 +642,19 @@ void SVToolSetListCtrl::ExpandItem(int item)
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVToolSetListCtrl.cpp_v  $
+ * 
+ *    Rev 1.5   25 Jun 2014 13:21:32   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  906
+ * SCR Title:  SVObserver Tool Grouping
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   Added InsertEmptyString method.
+ * Revised InsertTool method for indenting.
+ * Removed unused imageList icons.
+ * Revised to indent Tools in a group and the End Group.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.4   24 Jun 2014 09:32:04   sjones
  * Project:  SVObserver

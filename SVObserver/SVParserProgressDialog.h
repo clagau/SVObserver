@@ -5,8 +5,8 @@
 //* .Module Name     : SVParserProgressDialog
 //* .File Name       : $Workfile:   SVParserProgressDialog.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 13:18:06  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   25 Jun 2014 11:57:24  $
 //******************************************************************************
 
 #ifndef SVPARSERPROGRESSDIALOG_H_INCLUDED_
@@ -16,16 +16,20 @@
 #include "SVContainerLibrary/SVVector.h"
 #include "SVProgressDialog.h"
 #include "SVObjectLibrary/SVLockableClass.h"
+#include "SVUtilityLibrary\SVSharedPtr.h"
 
 class SVObjectScriptParserClass;
+
+typedef SVSharedPtr<CProgressCtrl> ProgressCtrlSharedPtr;
+typedef SVSharedPtr<CStatic> StaticSharedPtr;
 
 struct SVParserProgressControlStruct
 {
 	BOOL bValidate;
 	GUID OwnerGuid;
 	SVObjectScriptParserClass* pParser;
-	CProgressCtrl* pProgressCtrl;
-	CStatic* pStaticTextCtrl;
+	ProgressCtrlSharedPtr pProgressCtrl;
+	StaticSharedPtr pStaticTextCtrl;
 	CString Text;
 	int TotalSize;
 
@@ -98,7 +102,17 @@ private:
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVParserProgressDialog.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVParserProgressDialog.h_v  $
+ * 
+ *    Rev 1.1   25 Jun 2014 11:57:24   ryoho
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  910
+ * SCR Title:  Fix memory leaks for Software Trigger Dialog and Parser Progress Dialog
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   changed the CProgressCtrl and the CStatic to be a shared pointer so they get cleaned up correctly.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 13:18:06   bWalter
  * Project:  SVObserver

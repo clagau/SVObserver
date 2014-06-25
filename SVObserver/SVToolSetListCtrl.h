@@ -5,8 +5,8 @@
 //* .Module Name     : SVToolSetListCtrl
 //* .File Name       : $Workfile:   SVToolSetListCtrl.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   12 Jun 2014 16:46:24  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   25 Jun 2014 13:20:22  $
 //******************************************************************************
 #pragma once
 
@@ -64,7 +64,6 @@ public:
 	void RestoreScrollPos();
 
 	bool AllowedToEdit() const;
-	void AddEndDelimiter();
 	bool IsEndListDelimiter(const CString& text) const;
 	bool IsEmptyStringPlaceHolder(const CString& text) const;
 
@@ -74,24 +73,21 @@ protected:
 	void CreateImageLists();
 	int InsertStartGroup(int itemNo, const CString& startName, bool bCollapsed);
 	int InsertEndGroup(int itemNo, const CString& endName, bool bCollapsed);
-	int InsertTool(int itemNo, SVToolClass* pTool, bool bCollapsed);
+	int InsertTool(int itemNo, SVToolClass* pTool, bool bCollapsed, int indent);
+	void AddEndDelimiter();
+	void InsertEmptyString(int itemNo);
 
 	void CollapseItem(int item);
 	void ExpandItem(int item);
 	bool IsStartGrouping(int index, bool& bState) const;
 
-	CImageList m_oStateImageList;
+	CImageList m_ImageList;
 
 	int m_iNone;
 	int m_iInvalid;
-	int m_iDisabled;
-	int m_iPass;
-	int m_iFail;
-	int m_iWarn;
-	int m_iUnknown;
-	int m_iTopIndex;
 	int m_expandState;
 	int m_collapseState;
+	int m_iTopIndex;
 
 	SVTaskObjectListClass* m_pToolSet;
 };
@@ -107,6 +103,19 @@ protected:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVToolSetListCtrl.h_v  $
+ * 
+ *    Rev 1.3   25 Jun 2014 13:20:22   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  906
+ * SCR Title:  SVObserver Tool Grouping
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   Revised scope of AddEndDelimiter to be private.
+ * Added InsertEmptyString method.
+ * Revised InsertTool method for indenting.
+ * Removed unused imageList icons.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   12 Jun 2014 16:46:24   sjones
  * Project:  SVObserver

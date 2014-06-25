@@ -5,8 +5,8 @@
 //* .Module Name     : SVParserProgressDialog
 //* .File Name       : $Workfile:   SVParserProgressDialog.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   02 Oct 2013 07:01:54  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   25 Jun 2014 11:57:24  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -128,8 +128,8 @@ BOOL SVParserProgressDialog::AddParser( unsigned long parserHandle, SVObjectScri
 		rc = true;
 		SVParserProgressControlStruct parserControl;
 
-		CProgressCtrl* pProgressCtrl = NULL;
-		CStatic* pStaticTextCtrl = NULL;
+		ProgressCtrlSharedPtr pProgressCtrl = nullptr;
+		StaticSharedPtr pStaticTextCtrl = nullptr;
 
 		// Get Progress Control name...
 		CString text;
@@ -153,8 +153,9 @@ BOOL SVParserProgressDialog::AddParser( unsigned long parserHandle, SVObjectScri
 		// check if parser progress control array is empty
 		if( m_parserControlList.size() == 0 )
 		{
-			pProgressCtrl = &m_progressCtrl;
-			pStaticTextCtrl = &m_staticTextCtrl;
+			//Set the shared pointer to null deleter because it is an object on the heap
+			pProgressCtrl = ProgressCtrlSharedPtr(&m_progressCtrl, SVNullDeleter());
+			pStaticTextCtrl = StaticSharedPtr(&m_staticTextCtrl, SVNullDeleter());
 		}
 		
 		// Popluate parser progress control
@@ -184,7 +185,7 @@ CProgressCtrl* SVParserProgressDialog::GetProgressControl( unsigned long parserH
 	{
 		SVParserProgressControlStruct& parserControl = GetParserControl(parserHandle);
 		
-		return parserControl.pProgressCtrl;
+		return parserControl.pProgressCtrl.get();
 	}
 	catch(std::exception& e)
 	{
@@ -198,7 +199,7 @@ CStatic* SVParserProgressDialog::GetTextControl( unsigned long parserHandle )
 	try
 	{
 		SVParserProgressControlStruct& parserControl = GetParserControl(parserHandle);
-		return parserControl.pStaticTextCtrl;
+		return parserControl.pStaticTextCtrl.get();
 	}
 	catch(std::exception& e)
 	{
@@ -288,7 +289,7 @@ LRESULT SVParserProgressDialog::OnEndProgressDialog( WPARAM wParam, LPARAM lPara
 	try
 	{
 		SVParserProgressControlStruct& parserControl = GetParserControl(parserHandle);
-		CProgressCtrl* pProgressCtrl = parserControl.pProgressCtrl;
+		ProgressCtrlSharedPtr pProgressCtrl = parserControl.pProgressCtrl;
 		
 		// Update Progress Control
 		pProgressCtrl->SetPos( 100 );
@@ -363,8 +364,8 @@ void SVParserProgressDialog::SetProgressLocations()
 
 		// Get Progress Control name...
 		CString text( l_rParserControl.Text );
-		CProgressCtrl* pProgressCtrl = NULL;
-		CStatic* pStaticTextCtrl = NULL;
+		ProgressCtrlSharedPtr pProgressCtrl = nullptr;
+		StaticSharedPtr pStaticTextCtrl = nullptr;
 
 		int columnNo = static_cast<int>(i / MAX_VISIBLE_PROGRESS_ROWS);
 		int rowNo = static_cast<int>(i % MAX_VISIBLE_PROGRESS_ROWS);
@@ -566,6 +567,16 @@ void SVParserProgressDialog::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScr
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVParserProgressDialog.cpp_v  $
+ * 
+ *    Rev 1.2   25 Jun 2014 11:57:24   ryoho
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  910
+ * SCR Title:  Fix memory leaks for Software Trigger Dialog and Parser Progress Dialog
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   changed the CProgressCtrl and the CStatic to be a shared pointer so they get cleaned up correctly.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   02 Oct 2013 07:01:54   tbair
  * Project:  SVObserver

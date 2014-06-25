@@ -5,8 +5,8 @@
 //* .Module Name     : SVObserver
 //* .File Name       : $Workfile:   SVObserver.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.33  $
-//* .Check In Date   : $Date:   19 Jun 2014 17:38:28  $
+//* .Current Version : $Revision:   1.34  $
+//* .Check In Date   : $Date:   25 Jun 2014 11:55:30  $
 //******************************************************************************
 
 #pragma region Includes
@@ -7395,7 +7395,8 @@ HRESULT SVObserverApp::Start()
 			svE.LogException(l_strTrigCnts);
 
 			SVSVIMStateClass::RemoveState( SV_STATE_UNAVAILABLE | SV_STATE_STARTING );
-			if (SVSoftwareTriggerDlg::Instance().HasTriggers())
+			
+			if (l_trgrDlg.HasTriggers())
 			{
 				EnableTriggerSettings();
 			}
@@ -8612,6 +8613,9 @@ void SVObserverApp::OnStopAll()
 		SVSVIMStateClass::RemoveState( SV_STATE_RUNNING );
 
 		SetPriorityClass( GetCurrentProcess(), NORMAL_PRIORITY_CLASS );
+
+		SVSoftwareTriggerDlg & l_trgrDlg = SVSoftwareTriggerDlg::Instance();
+		l_trgrDlg.ClearTriggers();
 	}
 }// end OnStopAll
 
@@ -8882,6 +8886,18 @@ int SVObserverApp::FindMenuItem(CMenu* Menu, LPCTSTR MenuString)
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVObserver.cpp_v  $
+ * 
+ *    Rev 1.34   25 Jun 2014 11:55:30   ryoho
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  910
+ * SCR Title:  Fix memory leaks for Software Trigger Dialog and Parser Progress Dialog
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   changed ::Start to use the local copy of the SVSoftwareTriggerDlg intead of doing another Instance later on in the method.  
+ * 
+ * In OnStopAll, added ClearTriggers.  
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.33   19 Jun 2014 17:38:28   sjones
  * Project:  SVObserver

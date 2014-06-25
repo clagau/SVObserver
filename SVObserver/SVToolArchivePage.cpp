@@ -5,8 +5,8 @@
 //* .Module Name     : SVToolAdjustmentArchivePage
 //* .File Name       : $Workfile:   SVToolArchivePage.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.3  $
-//* .Check In Date   : $Date:   15 May 2014 14:43:30  $
+//* .Current Version : $Revision:   1.4  $
+//* .Check In Date   : $Date:   25 Jun 2014 13:01:34  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -633,50 +633,28 @@ bool SVToolAdjustmentArchivePage::GetSelectedHeaderNamePairs( StringPairVect& He
 			++it;
 		}
 
-		// ... Add newly selected Items.
-		StringPairVect::iterator NextHdrPair = HeaderPairs.begin();
+		// ... Create Lis from selected...
+		StringPairVect SelectedHeaderPairs;
 		for( SVObjectReferenceVector::iterator l_it = l_aRefObj.begin(); l_it != l_aRefObj.end() ; ++l_it)
 		{
 			SVGUID svGUIDValue;
 			svGUIDValue = l_it->Guid(); //GetCompleteObjectName();
 
-			bool bFound = false;
-			StringPairVect::iterator it;
-			for( it = NextHdrPair ; it != HeaderPairs.end(); ++it)
-			{
-				if( it->first == svGUIDValue.ToString().c_str() )
-				{
-					// Found Stop looking...
-					bFound = true;
-					NextHdrPair = it+1;
-					break;
-				}
-			}
-			if( !bFound )	// Add a new one.
-			{
-				
-				StrStrPair NewPair( svGUIDValue.ToString().c_str(), 
-					SVObjectManagerClass::Instance().GetObject(svGUIDValue)->GetCompleteObjectName() );
-				if( NextHdrPair == HeaderPairs.end())
-				{
-					HeaderPairs.push_back(NewPair);
-					NextHdrPair = HeaderPairs.end();
-				}
-				else
-				{
-					NextHdrPair = HeaderPairs.insert(NextHdrPair, NewPair );
-					++NextHdrPair;
-				}
-			}
+			StrStrPair NewPair( svGUIDValue.ToString().c_str(), 
+				SVObjectManagerClass::Instance().GetObject(svGUIDValue)->GetCompleteObjectName() );
+			SelectedHeaderPairs.push_back(NewPair);
 		}
-		// Remove extras...
-		for( StringPairVect::iterator it = HeaderPairs.begin() ; it != HeaderPairs.end(); )
+
+
+		// copy labels to the selected List...
+		for( StringPairVect::iterator it = SelectedHeaderPairs.begin() ; it != SelectedHeaderPairs.end(); ++it)
 		{
+
 			bool bFound = false;
-			for( SVObjectReferenceVector::iterator it2 = l_aRefObj.begin(); it2 != l_aRefObj.end() ; ++it2)
+			StringPairVect::iterator it2 = HeaderPairs.begin();
+			for( ; it2 != HeaderPairs.end() ; ++it2)
 			{
-				SVGUID svGuidValue = it2->Guid();
-				if( it->first == svGuidValue.ToString().c_str() )
+				if( it->first == it2->first ) // GUIDs match
 				{
 					// Found Stop looking...
 					bFound = true;
@@ -685,13 +663,12 @@ bool SVToolAdjustmentArchivePage::GetSelectedHeaderNamePairs( StringPairVect& He
 			}
 			if( bFound )
 			{
-				++it;
-			}
-			else
-			{
-				it = HeaderPairs.erase( it );
+				// copy label to new list.
+				*it = *it2;
 			}
 		}
+
+		HeaderPairs = SelectedHeaderPairs;
 		return true;
 	}
 	return false;
@@ -747,6 +724,16 @@ void SVToolAdjustmentArchivePage::OnBnClickedHeaderCheck()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVToolArchivePage.cpp_v  $
+ * 
+ *    Rev 1.4   25 Jun 2014 13:01:34   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  872
+ * SCR Title:  Add Archive Tool Headers to Archive File
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Fixed bug in GetSelectedHeaderNamePairs.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   15 May 2014 14:43:30   sjones
  * Project:  SVObserver
