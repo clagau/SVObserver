@@ -5,8 +5,8 @@
 // * .Module Name     : SVMatroxPatternInterface
 // * .File Name       : $Workfile:   SVMatroxPatternInterface.cpp  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.1  $
-// * .Check In Date   : $Date:   01 Oct 2013 11:15:30  $
+// * .Current Version : $Revision:   1.2  $
+// * .Check In Date   : $Date:   26 Jun 2014 11:28:44  $
 // ******************************************************************************
 
 #include "stdafx.h"
@@ -59,7 +59,6 @@ long SVMatroxPatternInterface::ConvertModelType2MatroxType( long p_lType)
 		l_lMatroxType |= M_CIRCULAR_OVERSCAN;
 	}
 
-	//
 	if (l_lMatroxType == 0)
 	{
 		l_lMatroxType = M_UNINITIALIZED;
@@ -73,7 +72,7 @@ long SVMatroxPatternInterface::ConvertModelType2MatroxType( long p_lType)
 @SVOperationDescription This function converts a SVPatternTypeEnum to matrox constants.
 
 */
-long SVMatroxPatternInterface::Convert2MatroxType( SVPatternTypeEnum p_eType) 
+long SVMatroxPatternInterface::Convert2MatroxType( SVPatternTypeEnum p_eType )
 {
 	long l_lMatroxType = M_UNINITIALIZED;
 	switch( p_eType & SVPatBaseType)
@@ -130,7 +129,7 @@ long SVMatroxPatternInterface::Convert2MatroxType( SVPatternTypeEnum p_eType)
 @SVOperationDescription This function converts a SVPatternTypeEnum to matrox constants.
 
 */
-long SVMatroxPatternInterface::Convert2MatroxType( SVPatternSearchParameterTypeEnum p_eType) 
+long SVMatroxPatternInterface::Convert2MatroxType( SVPatternSearchParameterTypeEnum p_eType )
 {
 	long l_lMatroxType = M_UNINITIALIZED;
 	switch( p_eType)
@@ -190,7 +189,7 @@ long SVMatroxPatternInterface::Convert2MatroxType( SVPatternSearchParameterTypeE
 @SVOperationDescription This function converts a SVPatternResultEnum to matrox constants.
 
 */
-long SVMatroxPatternInterface::Convert2MatroxType( SVPatternResultEnum p_eType) 
+long SVMatroxPatternInterface::Convert2MatroxType( SVPatternResultEnum p_eType )
 {
 	long l_lMatroxType = M_UNINITIALIZED;
 	switch( p_eType & SVPatBaseType)
@@ -258,7 +257,7 @@ long SVMatroxPatternInterface::Convert2MatroxType( SVPatternResultEnum p_eType)
 /**
 @SVOperationName Create - Pattern Model
 
-@SVOperationDescription This function creates a model, using data from the specified area of the model's source image. 
+@SVOperationDescription This function creates a model, using data from the specified area of the model's source image.
 
 */
 SVMatroxPatternInterface::SVStatusCode SVMatroxPatternInterface::Create( SVMatroxPatternModel& p_rModel, SVMatroxBuffer& p_rSrcImageId,long p_lOffX, long p_lOffY, long p_lSizeX, long p_lSizeY, long p_lType )
@@ -362,7 +361,6 @@ SVMatroxPatternInterface::SVStatusCode SVMatroxPatternInterface::Create( SVMatro
 	}
 #endif
 	return l_Code;
-
 }
 
 /**
@@ -406,7 +404,6 @@ SVMatroxPatternInterface::SVStatusCode SVMatroxPatternInterface::Destroy( SVMatr
 	}
 #endif
 	return l_Code;
-
 }
 
 /**
@@ -563,7 +560,7 @@ SVMatroxPatternInterface::SVStatusCode SVMatroxPatternInterface::Execute( const 
 @SVOperationDescription This function returns information about the specified model or result buffer and stores it in the supplied double.
 
 */
-SVMatroxPatternInterface::SVStatusCode SVMatroxPatternInterface::Get( const SVMatroxPatternModel& p_rModelId, SVPatternTypeEnum p_eType, double& p_rdValue ) 
+SVMatroxPatternInterface::SVStatusCode SVMatroxPatternInterface::Get( const SVMatroxPatternModel& p_rModelId, SVPatternTypeEnum p_eType, double& p_rdValue )
 {
 	SVStatusCode l_Code( SVMEE_STATUS_OK );
 #ifdef USE_TRY_BLOCKS
@@ -604,7 +601,6 @@ SVMatroxPatternInterface::SVStatusCode SVMatroxPatternInterface::Get( const SVMa
 	}
 #endif
 	return l_Code;
-
 }
 
 /**
@@ -613,7 +609,7 @@ SVMatroxPatternInterface::SVStatusCode SVMatroxPatternInterface::Get( const SVMa
 @SVOperationDescription This function returns information about the specified model or result buffer and stores it in the supplied long.
 
 */
-SVMatroxPatternInterface::SVStatusCode SVMatroxPatternInterface::Get( const SVMatroxPatternModel& p_rModelId, const SVPatternTypeEnum p_eType, long& p_rlValue ) 
+SVMatroxPatternInterface::SVStatusCode SVMatroxPatternInterface::Get( const SVMatroxPatternModel& p_rModelId, const SVPatternTypeEnum p_eType, long& p_rlValue )
 {
 	double l_dValue;
 	SVStatusCode l_Code = Get(p_rModelId, p_eType, l_dValue);
@@ -630,7 +626,7 @@ SVMatroxPatternInterface::SVStatusCode SVMatroxPatternInterface::Get( const SVMa
 @SVOperationDescription This function can be used to set the model's internal search parameters.
 
 */
-SVMatroxPatternInterface::SVStatusCode SVMatroxPatternInterface::Set( const SVMatroxPatternModel& p_rModelId, const SVPatternTypeEnum p_eType, const double& p_rdValue ) 
+SVMatroxPatternInterface::SVStatusCode SVMatroxPatternInterface::Set( const SVMatroxPatternModel& p_rModelId, const SVPatternTypeEnum p_eType, const double& p_rdValue )
 {
 	SVStatusCode l_Code( SVMEE_STATUS_OK );
 #ifdef USE_TRY_BLOCKS
@@ -674,7 +670,7 @@ SVMatroxPatternInterface::SVStatusCode SVMatroxPatternInterface::Set( const SVMa
 @SVOperationDescription This function can be used to set the model's internal search parameters.
 
 */
-SVMatroxPatternInterface::SVStatusCode SVMatroxPatternInterface::Set( const SVMatroxPatternModel& p_rModelId, const SVPatternTypeEnum p_eType, const long& p_rlValue ) 
+SVMatroxPatternInterface::SVStatusCode SVMatroxPatternInterface::Set( const SVMatroxPatternModel& p_rModelId, const SVPatternTypeEnum p_eType, const long& p_rlValue )
 {
 	return Set( p_rModelId, p_eType, static_cast<double>(p_rlValue));
 }
@@ -685,7 +681,7 @@ SVMatroxPatternInterface::SVStatusCode SVMatroxPatternInterface::Set( const SVMa
 @SVOperationDescription This function can be used to set the model's internal advanced search parameters.
 
 */
-SVMatroxPatternInterface::SVStatusCode SVMatroxPatternInterface::Set( const SVMatroxPatternModel& p_rModelId, const SVPatternSearchParameterTypeEnum p_eType, const double& p_rdValue ) 
+SVMatroxPatternInterface::SVStatusCode SVMatroxPatternInterface::Set( const SVMatroxPatternModel& p_rModelId, const SVPatternSearchParameterTypeEnum p_eType, const double& p_rdValue )
 {
 	SVStatusCode l_Code( SVMEE_STATUS_OK );
 #ifdef USE_TRY_BLOCKS
@@ -729,7 +725,7 @@ SVMatroxPatternInterface::SVStatusCode SVMatroxPatternInterface::Set( const SVMa
 @SVOperationDescription This function can be used to set the model's internal advanced search parameters.
 
 */
-SVMatroxPatternInterface::SVStatusCode SVMatroxPatternInterface::Set( const SVMatroxPatternModel& p_rModelId, const SVPatternSearchParameterTypeEnum p_eType, const long& p_rlValue ) 
+SVMatroxPatternInterface::SVStatusCode SVMatroxPatternInterface::Set( const SVMatroxPatternModel& p_rModelId, const SVPatternSearchParameterTypeEnum p_eType, const long& p_rlValue )
 {
 	return Set( p_rModelId, p_eType, static_cast<double>(p_rlValue));
 }
@@ -740,7 +736,7 @@ SVMatroxPatternInterface::SVStatusCode SVMatroxPatternInterface::Set( const SVMa
 @SVOperationDescription This function retrieves the result(s) of the specified type from a specified pattern matching result buffer.
 
 */
-SVMatroxPatternInterface::SVStatusCode SVMatroxPatternInterface::GetResult( const SVMatroxPatResult& p_rResultId, const SVPatternResultEnum p_eType, double* p_pdValue ) 
+SVMatroxPatternInterface::SVStatusCode SVMatroxPatternInterface::GetResult( const SVMatroxPatResult& p_rResultId, const SVPatternResultEnum p_eType, double* p_pdValue )
 {
 	SVStatusCode l_Code( SVMEE_STATUS_OK );
 #ifdef USE_TRY_BLOCKS
@@ -856,7 +852,7 @@ SVMatroxPatternInterface::SVStatusCode SVMatroxPatternInterface::SetNumber( cons
 @SVOperationDescription This function retrieves the number of matches found after searching for a model.
 
 */
-SVMatroxPatternInterface::SVStatusCode SVMatroxPatternInterface::GetNumber( const SVMatroxPatResult& p_rResultId, long& p_rlValue ) 
+SVMatroxPatternInterface::SVStatusCode SVMatroxPatternInterface::GetNumber( const SVMatroxPatResult& p_rResultId, long& p_rlValue )
 {
 	SVStatusCode l_Code( SVMEE_STATUS_OK );
 #ifdef USE_TRY_BLOCKS
@@ -890,8 +886,6 @@ SVMatroxPatternInterface::SVStatusCode SVMatroxPatternInterface::GetNumber( cons
 #endif
 	return l_Code;
 }
-
-
 
 /**
 @SVOperationName SetPosition
@@ -1153,18 +1147,20 @@ SVMatroxPatternInterface::SVStatusCode SVMatroxPatternInterface::SetAngle( const
 	return l_Code;
 }
 
-RECT SVMatroxPatternInterface::CalculateOverscanOuterRect(const POINT& pos, const SIZE& size)
+/*static*/ RECT SVMatroxPatternInterface::CalculateOverscanOuterRect( const POINT& pos, const SIZE& size )
 {
 	POINT centerPos = { pos.x + (size.cx / 2), pos.y + (size.cy / 2) };
-	float dx = static_cast<float>((pos.y + size.cx) - centerPos.x);
-	float dy = static_cast<float>((pos.y + size.cy) - centerPos.y);
-	long radius = static_cast<long>( sqrt( (dx * dx) + (dy * dy) ) );
+	//dx and dy is half the size of the rectangle
+	float dx = static_cast<float>(0.5*size.cx);
+	float dy = static_cast<float>(0.5*size.cy);
+	//The 0.5 is needed for the rounding from float to long
+	long radius = static_cast<long>( sqrt( (dx * dx) + (dy * dy) ) + 0.5 );
 
 	RECT rect = { centerPos.x - radius, centerPos.y - radius, centerPos.x + radius, centerPos.y + radius };
 	return rect;
 }
 
-RECT SVMatroxPatternInterface::CalculateOverscanInnerRect(const POINT& pos, const SIZE& size)
+/*static*/ RECT SVMatroxPatternInterface::CalculateOverscanInnerRect( const POINT& pos, const SIZE& size )
 {
 	RECT boundingRect = { pos.x, pos.y, pos.x + size.cx, pos.y + size.cy };
 	long width = boundingRect.right - boundingRect.left;
@@ -1172,7 +1168,7 @@ RECT SVMatroxPatternInterface::CalculateOverscanInnerRect(const POINT& pos, cons
 	POINT centerPos = { boundingRect.left + (width / 2), boundingRect.top + (height / 2) };
 	long radius = std::min( width / 2, height / 2 );
 	long val = static_cast<long>(static_cast<float>(radius) * (sqrt(2.0f) / 2.0f));
-	
+
 	RECT rect = { centerPos.x - val, centerPos.y - val, centerPos.x + val, centerPos.y + val };
 	return rect;
 }
@@ -1182,6 +1178,17 @@ RECT SVMatroxPatternInterface::CalculateOverscanInnerRect(const POINT& pos, cons
 // ******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVMatroxLibrary\SVMatroxPatternInterface.cpp_v  $
+ * 
+ *    Rev 1.2   26 Jun 2014 11:28:44   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  885
+ * SCR Title:  Replace image display in TA-dialogs with activeX SVPictureDisplay
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   fixed method CalculateOverscanOuterRect
+ * cleanup code (remove comment code, formatting code)
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   01 Oct 2013 11:15:30   tbair
  * Project:  SVObserver

@@ -196,6 +196,7 @@
     </Bscmake>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="DisplayHelper.cpp" />
     <ClCompile Include="Regexp.cpp">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -311,6 +312,7 @@
     <ClCompile Include="SVStringValueDeviceParam.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="DisplayHelper.h" />
     <ClInclude Include="Regexp.h" />
     <ClInclude Include="StdAfx.h" />
     <ClInclude Include="StringMunge.h" />

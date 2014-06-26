@@ -5,8 +5,8 @@
 // * .Module Name     : SVMatroxPatternInterface
 // * .File Name       : $Workfile:   SVMatroxPatternInterface.h  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.0  $
-// * .Check In Date   : $Date:   22 Apr 2013 15:24:16  $
+// * .Current Version : $Revision:   1.1  $
+// * .Check In Date   : $Date:   26 Jun 2014 11:29:22  $
 // ******************************************************************************
 
 #ifndef SV_MATROX_PATTERN_INTERFACE_H
@@ -115,14 +115,14 @@ public:
 	static SVStatusCode SetAngle( const SVMatroxPatternModel& p_rModelId, bool p_bEnable );
 
 	// helpers for Circular Overscan
-	static RECT CalculateOverscanOuterRect(const POINT& pos, const SIZE& size);
-	static RECT CalculateOverscanInnerRect(const POINT& pos, const SIZE& size);
+	static RECT CalculateOverscanOuterRect( const POINT& pos, const SIZE& size );
+	static RECT CalculateOverscanInnerRect( const POINT& pos, const SIZE& size );
 
 private:
-	static long ConvertModelType2MatroxType( long p_lType);
-	static long Convert2MatroxType( SVPatternTypeEnum p_eType);
-	static long Convert2MatroxType( SVPatternSearchParameterTypeEnum p_eType);
-	static long Convert2MatroxType( SVPatternResultEnum p_eType);
+	static long ConvertModelType2MatroxType( long p_lType );
+	static long Convert2MatroxType( SVPatternTypeEnum p_eType );
+	static long Convert2MatroxType( SVPatternSearchParameterTypeEnum p_eType );
+	static long Convert2MatroxType( SVPatternResultEnum p_eType );
 };
 
 #endif // SV_MATROX_PATTERN_INTERFACE_H
@@ -132,6 +132,16 @@ private:
 // ******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVMatroxLibrary\SVMatroxPatternInterface.h_v  $
+ * 
+ *    Rev 1.1   26 Jun 2014 11:29:22   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  885
+ * SCR Title:  Replace image display in TA-dialogs with activeX SVPictureDisplay
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   cleanup code (remove comment code, formatting code)
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   22 Apr 2013 15:24:16   bWalter
  * Project:  SVObserver

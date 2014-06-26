@@ -5,8 +5,8 @@
 //* .Module Name     : SVToolSetTabView
 //* .File Name       : $Workfile:   SVToolSetTabView.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.7  $
-//* .Check In Date   : $Date:   18 Jun 2014 18:32:22  $
+//* .Current Version : $Revision:   1.8  $
+//* .Check In Date   : $Date:   26 Jun 2014 09:51:34  $
 //******************************************************************************
 #pragma region Includes
 #include "stdafx.h"
@@ -273,12 +273,11 @@ void SVToolSetTabViewClass::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHin
 				if (rToolGroupings.empty())
 				{
 					SVToolSetClass* pToolSet = pCurrentDocument->GetToolSet();
-					SVString prevToolName;
+					SVString insertAtEnd;
 					for (int i = 0;i < pToolSet->GetSize();i++)
 					{
 						SVString name = pToolSet->GetAt(i)->GetName();
-						rToolGroupings.AddTool(name.c_str(), prevToolName.c_str());
-						prevToolName = name;
+						rToolGroupings.AddTool(name.c_str(), insertAtEnd.c_str());
 					}
 				}
 				m_toolSetListCtrl.SetTaskObjectList(pCurrentDocument->GetToolSet());
@@ -1157,6 +1156,16 @@ bool SVToolSetTabViewClass::IsToolsetListCtrlActive() const
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVToolSetTabView.cpp_v  $
+ * 
+ *    Rev 1.8   26 Jun 2014 09:51:34   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  906
+ * SCR Title:  SVObserver Tool Grouping
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   Revsied OnUpdate to correct an issue where the toolset is displayed in reverse order whenthere are no tool groupings.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.7   18 Jun 2014 18:32:22   sjones
  * Project:  SVObserver
