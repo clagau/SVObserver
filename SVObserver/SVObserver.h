@@ -5,8 +5,8 @@
 //* .Module Name     : SVObserver
 //* .File Name       : $Workfile:   SVObserver.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.17  $
-//* .Check In Date   : $Date:   02 Jun 2014 10:10:42  $
+//* .Current Version : $Revision:   1.18  $
+//* .Check In Date   : $Date:   26 Jun 2014 17:54:24  $
 //******************************************************************************
 
 #ifndef SVOBSERVER_H
@@ -197,7 +197,7 @@ public:
 	afx_msg void OnAppExit();
 	afx_msg void OnFileSaveAsSVC();
 	afx_msg void OnUpdatePublishedResultsPicker(CCmdUI* pCmdUI);
-	afx_msg void OnUpdatePublishedImagesPicker(CCmdUI* PCmdUI) ;
+	afx_msg void OnUpdatePublishedImagesPicker(CCmdUI* PCmdUI);
 	afx_msg void OnUpdateResultsPicker(CCmdUI* pCmdUI);
 	afx_msg void OnExtrasUtilitiesEdit();
 	afx_msg void OnUpdateAddPolarUnwrapTool(CCmdUI* PCmdUI);
@@ -619,6 +619,16 @@ extern SVObserverApp TheSVObserverApp;
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVObserver.h_v  $
+ * 
+ *    Rev 1.18   26 Jun 2014 17:54:24   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  885
+ * SCR Title:  Replace image display in TA-dialogs with activeX SVPictureDisplay
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   cleanup
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.17   02 Jun 2014 10:10:42   gramseier
  * Project:  SVObserver

@@ -5,11 +5,12 @@
 //* .Module Name     : SVToolAdjustmentDialogImagePageClass
 //* .File Name       : $Workfile:   SVToolAdjustmentDialogImagePageClass.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   15 May 2014 14:36:26  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   26 Jun 2014 18:29:26  $
 //******************************************************************************
 
 #include "stdafx.h"
+#include <afxctl.h>
 #include "SVToolAdjustmentDialogImagePageClass.h"
 
 #include "SVObjectLibrary/SVObjectManagerClass.h"
@@ -21,6 +22,7 @@
 #include "SVIPDoc.h"
 #include "SVTool.h"
 #include "SVToolAdjustmentDialogSheetClass.h"
+#include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "SVToolSet.h"
 
 #ifdef _DEBUG
@@ -71,8 +73,8 @@ void SVToolAdjustmentDialogImagePageClass::refresh()
 	if( pParentDialog && ( pTool = pParentDialog->GetTool() ) )
 	{
 		SetInspectionData();
-		
-		dialogImage.refresh();
+
+		dialogImage.Refresh();
 	}
 }
 
@@ -88,7 +90,7 @@ void SVToolAdjustmentDialogImagePageClass::DoDataExchange(CDataExchange* pDX)
 BOOL SVToolAdjustmentDialogImagePageClass::OnInitDialog() 
 {
 	CPropertyPage::OnInitDialog();
-	
+
 	SVToolSetClass* pToolSet;
 	SVToolClass* pTool = pParentDialog->GetTool();
 	SVIPDoc* l_pIPDoc = pParentDialog->GetIPDoc();
@@ -96,13 +98,13 @@ BOOL SVToolAdjustmentDialogImagePageClass::OnInitDialog()
 	if( pTool != NULL && l_pIPDoc != NULL )
 	{
 		SetTaskObject( pTool );
-		
+
 		pToolSet = dynamic_cast <SVToolSetClass*> (pTool->GetAncestor( SVToolSetObjectType ));
 		if( pToolSet &&	pToolSet->getCurrentImage() )
 		{
 			// First clean up image list
 			imageList.RemoveAll();
-			
+
 			SVInObjectInfoStruct* l_psvImageInfo = NULL;
 			SVInObjectInfoStruct* l_psvLastImageInfo = NULL;
 
@@ -152,28 +154,19 @@ BOOL SVToolAdjustmentDialogImagePageClass::OnInitDialog()
 					}
 
 					SVImageInfoClass ImageInfo = pImage->GetImageInfo();
-					
+
 					if( (pImage->ObjectAttributesAllowed() & SV_HIDDEN) == 0 )
 					{
 						long l_lBandNumber = 1;
-						
+
 						ImageInfo.GetImageProperty( SVImagePropertyBandNumber, l_lBandNumber );
-					
-						#define __REMOVE_GAGE_TOOL_IMAGE
-						#ifdef  __REMOVE_GAGE_TOOL_IMAGE   //27 Oct 1999 - frb.
-							SVToolClass * pImageOwnerTool = dynamic_cast<SVToolClass *>( ImageInfo.GetOwner() );
-							if(pImageOwnerTool)
-							{
-								if(!SV_IS_KIND_OF(pImageOwnerTool, SVGageToolClass))
-								{
-									// Insert Image into combo box...
-									if ( l_lBandNumber == 1)
-									{
-										imageList.Add( pImage );
-									}
-								}
-							}
-							else
+
+#define __REMOVE_GAGE_TOOL_IMAGE
+#ifdef  __REMOVE_GAGE_TOOL_IMAGE   //27 Oct 1999 - frb.
+						SVToolClass * pImageOwnerTool = dynamic_cast<SVToolClass *>( ImageInfo.GetOwner() );
+						if(pImageOwnerTool)
+						{
+							if(!SV_IS_KIND_OF(pImageOwnerTool, SVGageToolClass))
 							{
 								// Insert Image into combo box...
 								if ( l_lBandNumber == 1)
@@ -181,13 +174,22 @@ BOOL SVToolAdjustmentDialogImagePageClass::OnInitDialog()
 									imageList.Add( pImage );
 								}
 							}
-						#else
+						}
+						else
+						{
 							// Insert Image into combo box...
 							if ( l_lBandNumber == 1)
 							{
 								imageList.Add( pImage );
 							}
-						#endif
+						}
+#else
+						// Insert Image into combo box...
+						if ( l_lBandNumber == 1)
+						{
+							imageList.Add( pImage );
+						}
+#endif
 					}
 				}
 			}
@@ -198,74 +200,75 @@ BOOL SVToolAdjustmentDialogImagePageClass::OnInitDialog()
 				(::SVSendMessage( pToolSet, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&imageObjectInfo) )));
 			while( pImage )
 			{
-				//
-				// Check for unwanted images here.
-				//
-				SVImageInfoClass ImageInfo = pImage->GetImageInfo();
-				
-				if( (pImage->ObjectAttributesAllowed() & SV_HIDDEN) == 0 )
-				{
-					long l_lBandNumber = 1;
-					
-					ImageInfo.GetImageProperty( SVImagePropertyBandNumber, l_lBandNumber );
-					
-#define __REMOVE_GAGE_TOOL_IMAGE
-#ifdef  __REMOVE_GAGE_TOOL_IMAGE   //27 Oct 1999 - frb.
-					SVToolClass * pImageOwnerTool = dynamic_cast<SVToolClass *>( ImageInfo.GetOwner() );
-					if(pImageOwnerTool)
-					{
-						if(!SV_IS_KIND_OF(pImageOwnerTool, SVGageToolClass))
-						{
-							// Insert Image into combo box...
-							if ( l_lBandNumber == 1)
-							{
-								imageList.Add( pImage );
-							}
-						}
-					}
-					else
-					{
-						// Insert Image into combo box...
-						if ( l_lBandNumber == 1)
-						{
-							imageList.Add( pImage );
-						}
-					}
-#else
-					// Insert Image into combo box...
-					if ( l_lBandNumber == 1)
-					{
-						imageList.Add( pImage );
-					}
-#endif
-				}// end if ( pImage->GetImageInfo( ImageInfo ) && (pImage->ObjectAttributesAllowed() & SV_HIDDEN) == 0)
-				
-				// Search for next image...
-				pImage = dynamic_cast <SVImageClass*> (reinterpret_cast <SVObjectClass*>
-					(::SVSendMessage( pToolSet, SVM_GETNEXT_OBJECT, reinterpret_cast<DWORD_PTR>(pImage), reinterpret_cast<DWORD_PTR>(&imageObjectInfo) )));
-				
-				// Ensure only image sources which are produced by tools above the current tool....
-				if( pImage )
-				{
-					SVToolClass* pImageOwnerTool = dynamic_cast <SVToolClass*> (pImage->GetAncestor( SVToolObjectType ));
+			//
+			// Check for unwanted images here.
+			//
+			SVImageInfoClass ImageInfo = pImage->GetImageInfo();
 
-					if( pImageOwnerTool != NULL )
-					{
-						if( !( l_pIPDoc->IsToolPreviousToSelected( pImageOwnerTool->GetUniqueObjectID() ) ) )
-						{
-							break;
-						}
-					}
-				}// end if( pImage )
+			if( (pImage->ObjectAttributesAllowed() & SV_HIDDEN) == 0 )
+			{
+			long l_lBandNumber = 1;
+
+			ImageInfo.GetImageProperty( SVImagePropertyBandNumber, l_lBandNumber );
+
+			#define __REMOVE_GAGE_TOOL_IMAGE
+			#ifdef  __REMOVE_GAGE_TOOL_IMAGE   //27 Oct 1999 - frb.
+			SVToolClass * pImageOwnerTool = dynamic_cast<SVToolClass *>( ImageInfo.GetOwner() );
+			if(pImageOwnerTool)
+			{
+			if(!SV_IS_KIND_OF(pImageOwnerTool, SVGageToolClass))
+			{
+			// Insert Image into combo box...
+			if ( l_lBandNumber == 1)
+			{
+			imageList.Add( pImage );
+			}
+			}
+			}
+			else
+			{
+			// Insert Image into combo box...
+			if ( l_lBandNumber == 1)
+			{
+			imageList.Add( pImage );
+			}
+			}
+			#else
+			// Insert Image into combo box...
+			if ( l_lBandNumber == 1)
+			{
+			imageList.Add( pImage );
+			}
+			#endif
+			}// end if ( pImage->GetImageInfo( ImageInfo ) && (pImage->ObjectAttributesAllowed() & SV_HIDDEN) == 0)
+
+			// Search for next image...
+			pImage = dynamic_cast <SVImageClass*> (reinterpret_cast <SVObjectClass*>
+					(::SVSendMessage( pToolSet, SVM_GETNEXT_OBJECT, reinterpret_cast<DWORD_PTR>(pImage), reinterpret_cast<DWORD_PTR>(&imageObjectInfo) )));
+
+			// Ensure only image sources which are produced by tools above the current tool....
+			if( pImage )
+			{
+			SVToolClass* pImageOwnerTool = dynamic_cast <SVToolClass*> (pImage->GetAncestor( SVToolObjectType ));
+
+			if( pImageOwnerTool != NULL )
+			{
+			if( !( l_pIPDoc->IsToolPreviousToSelected( pImageOwnerTool->GetUniqueObjectID() ) ) )
+			{
+			break;
+			}
+			}
+			}// end if( pImage )
 			}// end while( pImage )
 			*/
-			
+
 			// Init source image list box...
 			oldIndex = availableSourceImageListBox.init( &imageList, pCurrentSourceImage );
-			
-			dialogImage.UpdateImageInfo( pCurrentSourceImage );
-			dialogImage.refresh();
-			
+
+			dialogImage.AddTab(_T("Image"));
+			dialogImage.setImage( pCurrentSourceImage );
+			dialogImage.Refresh();
+
 			UpdateData( FALSE ); // set data to dialog
 		}// end if( pToolSet &&	pToolSet->getCurrentImage() )
 	}// end if( pParentDialog && ( pTool = pParentDialog->PTool ) )
@@ -280,7 +283,7 @@ BOOL SVToolAdjustmentDialogImagePageClass::OnInitDialog()
 
 
 	return TRUE;  // return TRUE unless you set the focus to a control
-	              // EXCEPTION: OCX-Eigenschaftenseiten sollten FALSE zurückgeben
+	// EXCEPTION: OCX-Eigenschaftenseiten sollten FALSE zurückgeben
 }
 
 void SVToolAdjustmentDialogImagePageClass::OnSelchangeCombo1() 
@@ -301,8 +304,8 @@ void SVToolAdjustmentDialogImagePageClass::OnSelchangeCombo1()
 
 		pCurrentSourceImage = dynamic_cast<SVImageClass*>( pImageInputInfo->GetInputObjectInfo().PObject );
 
-		dialogImage.UpdateImageInfo( pCurrentSourceImage );
-	
+		dialogImage.setImage( pCurrentSourceImage );
+
 		refresh();
 
 		if( l_bIsValid && ! pParentDialog->GetTool()->IsValid() )
@@ -321,6 +324,16 @@ void SVToolAdjustmentDialogImagePageClass::OnSelchangeCombo1()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVToolAdjustmentDialogImagePageClass.cpp_v  $
+ * 
+ *    Rev 1.2   26 Jun 2014 18:29:26   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  885
+ * SCR Title:  Replace image display in TA-dialogs with activeX SVPictureDisplay
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   use SVPictureDisplay-control
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   15 May 2014 14:36:26   sjones
  * Project:  SVObserver

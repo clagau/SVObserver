@@ -5,8 +5,8 @@
 //* .Module Name     : SVToolAdjustmentDialogFileImageSourcePage
 //* .File Name       : $Workfile:   SVTADlgFileImageSourcePage.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   24 Apr 2013 11:14:38  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   26 Jun 2014 18:21:18  $
 //******************************************************************************
 
 //******************************************************************************
@@ -24,16 +24,18 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
+#pragma region Includes
 #include "SVFileNameClass.h"
-#include "SVDlgImage.h"
-
+#include "PictureDisplay.h"
 #include "SVTaskObjectInterfaceClass.h"
+#pragma endregion Includes
 
+#pragma region Declarations
 class SVToolAdjustmentDialogSheetClass;
 class SVToolClass;
 class SVBoolValueObjectClass;
 class SVFileNameValueObjectClass;
-
+#pragma endregion Declarations
 //******************************************************************************
 //* CLASS(ES) & TYPE(S):
 //* STRUCTURE(S) & TYPE(S):
@@ -42,67 +44,52 @@ class SVFileNameValueObjectClass;
 
 class SVToolAdjustmentDialogFileImageSourcePageClass : public CPropertyPage, public SVTaskObjectInterfaceClass
 {
-//******************************************************************************
-// Constructor(s):
-//******************************************************************************
+#pragma region Constructor
 public:
 	SVToolAdjustmentDialogFileImageSourcePageClass( SVToolAdjustmentDialogSheetClass* PParent );
-
-//******************************************************************************
-// Destructor(s):
-//******************************************************************************
-public:
 	virtual ~SVToolAdjustmentDialogFileImageSourcePageClass();
+#pragma endregion Constructor
 
+#pragma region Public Methods
+public:
 	virtual HRESULT SetInspectionData();
+#pragma endregion Public Methods
 
-//******************************************************************************
-// Message Handler(s):
-//******************************************************************************
+#pragma region Protected Methods
 protected:
 	//{{AFX_MSG(SVToolAdjustmentDialogFileImageSourcePageClass)
-	virtual BOOL OnInitDialog();
 	afx_msg void OnBrowseButton();
 	afx_msg void OnReloadCheck();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 
-
-//******************************************************************************
-// Virtual(s):
-//******************************************************************************
-
 	//{{AFX_VIRTUAL(SVToolAdjustmentDialogFileImageSourcePageClass)
 	protected:
+	virtual BOOL OnInitDialog();
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV-Unterstützung
 	//}}AFX_VIRTUAL
 
-
-//******************************************************************************
-// Operation(s) Of Representation:
-//******************************************************************************
 protected:
 	void refresh();
+	void setImages();
+#pragma endregion Protected Methods
 
-//******************************************************************************
-// Data Element(s):
-//******************************************************************************
-public:
-protected:
-	SVToolAdjustmentDialogSheetClass*	pSheet;
-	SVToolClass*						pTool;
-	SVImageClass*						pImage;
-	SVBoolValueObjectClass*				pReloadObject;
-	SVFileNameValueObjectClass*			pPathNameObject;
-	SVFileNameClass						svfncImageSourceFile;
+#pragma region Member variables
+private:
+	SVToolAdjustmentDialogSheetClass*	m_pSheet;
+	SVToolClass*						m_pTool;
+	SVImageClass*						m_pImage;
+	SVBoolValueObjectClass*				m_pReloadObject;
+	SVFileNameValueObjectClass*			m_pPathNameObject;
+	SVFileNameClass						m_svfncImageSourceFile;
 
 	//{{AFX_DATA(SVToolAdjustmentDialogFileImageSourcePageClass)
 	enum { IDD = IDD_TA_FILE_IMAGE_DIALOG };
-	SVDlgImageClass	imageCtrl;
-	CString	StrPathName;
-	BOOL	BContinuousReload;
+	PictureDisplay	m_imageCtrl;
+	CString	m_StrPathName;
+	BOOL	m_BContinuousReload;
 	//}}AFX_DATA
-
+#pragma endregion Member variables
 };
 
 //{{AFX_INSERT_LOCATION}}
@@ -117,7 +104,18 @@ protected:
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVTADlgFileImageSourcePage.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVTADlgFileImageSourcePage.h_v  $
+ * 
+ *    Rev 1.1   26 Jun 2014 18:21:18   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  885
+ * SCR Title:  Replace image display in TA-dialogs with activeX SVPictureDisplay
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   use SVPictureDisplay-control
+ * cleanup
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   24 Apr 2013 11:14:38   bWalter
  * Project:  SVObserver

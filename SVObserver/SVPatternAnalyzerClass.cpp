@@ -5,8 +5,8 @@
 //* .Module Name     : SVPatternAnalyzerClass
 //* .File Name       : $Workfile:   SVPatternAnalyzerClass.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.3  $
-//* .Check In Date   : $Date:   15 May 2014 11:21:46  $
+//* .Current Version : $Revision:   1.4  $
+//* .Check In Date   : $Date:   26 Jun 2014 18:12:20  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -16,7 +16,6 @@
 #include "SVMessage/SVMessage.h"
 #include "SVRunControlLibrary/SVRunControlLibrary.h"
 #include "SVStatusLibrary/SVException.h"
-#include "SVDrawObject.h"
 #include "SVGlobal.h"
 #include "SVImageClass.h"
 #include "SVImageProcessingClass.h"
@@ -379,7 +378,6 @@ BOOL SVPatternAnalyzerClass::UpdateModelFromBuffer()
 				l_Code = SVMatroxPatternInterface::Destroy( m_patModelHandle );
 			}
 		
-
 			// Check if Circular Overscan is enabled
 			bool bCircularScan;
 			msv_bpatCircularOverscan.GetValue(bCircularScan);
@@ -1266,8 +1264,6 @@ BOOL SVPatternAnalyzerClass::IsPtOverResult( CPoint point )
 			bool bError = false;
 			for (int i = 0; !bError && i < (int)lOccurances; i++)
 			{
-				SVDrawObjectClass l_svDrawObject;
-
 				double dResultXPos = 0.0;
 				double dResultYPos = 0.0;
 				double dResultAngle = 0.0;
@@ -1403,6 +1399,16 @@ BOOL SVPatternAnalyzerClass::GetModelImageFileName( CString &csFileName )
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVPatternAnalyzerClass.cpp_v  $
+ * 
+ *    Rev 1.4   26 Jun 2014 18:12:20   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  885
+ * SCR Title:  Replace image display in TA-dialogs with activeX SVPictureDisplay
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   remove unused SVDrawObjectClass
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   15 May 2014 11:21:46   tbair
  * Project:  SVObserver

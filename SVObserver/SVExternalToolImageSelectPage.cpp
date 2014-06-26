@@ -5,16 +5,15 @@
 //* .Module Name     : SVExternalToolImageSelectPage
 //* .File Name       : $Workfile:   SVExternalToolImageSelectPage.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.3  $
-//* .Check In Date   : $Date:   15 May 2014 12:13:16  $
+//* .Current Version : $Revision:   1.4  $
+//* .Check In Date   : $Date:   26 Jun 2014 17:30:38  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVExternalToolImageSelectPage.h"
-
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVObjectLibrary/SVObjectSynchronousCommandTemplate.h"
-
 #include "SVExternalTool.h"
 #include "SVExternalToolDetailsSheet.h"
 #include "SVExternalToolTask.h"
@@ -27,7 +26,9 @@
 #include "SVToolSet.h"
 #include "SVTool.h"
 #include "SVCommandInspectionRunOnce.h"
+#pragma endregion Includes
 
+#pragma region Declarations
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #undef THIS_FILE
@@ -36,211 +37,159 @@ static char THIS_FILE[] = __FILE__;
 
 BEGIN_MESSAGE_MAP(SVExternalToolImageSelectPage, CPropertyPage)
 	//{{AFX_MSG_MAP(SVExternalToolImageSelectPage)
-	ON_CBN_SELCHANGE(IDC_SELECT_IMAGE, OnSelchangeImage)
-	ON_LBN_SELCHANGE(IDC_IMAGE_LIST, OnSelchangeImageList)
+	ON_NOTIFY(PTN_ITEMCHANGED, IDC_IMAGE_LIST, OnItemChanged)
+	ON_NOTIFY(PTN_PROPCLICK, IDC_IMAGE_LIST, OnPropClick)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
+#pragma endregion Declarations
 
-SVExternalToolImageSelectPage::SVExternalToolImageSelectPage(SVExternalToolDetailsSheet* pParent, int id ) 
+#pragma region Constructor
+SVExternalToolImageSelectPage::SVExternalToolImageSelectPage( SVExternalToolDetailsSheet* pParent, int id )
 : CPropertyPage(id)
+, m_pParentDialog( pParent )
 {
 	ASSERT( m_pParentDialog );
-
-	m_pParentDialog		  = pParent;
-	m_pCurrentSourceImage = NULL;
 
 	m_pTool = m_pParentDialog->m_pTool;
 	m_pTask = m_pParentDialog->m_pTask;
 
-	for ( int i = 0 ; i < SVExternalToolTaskData::NUM_INPUT_IMAGES ; i++ )
+	for ( int i = 0; i < SVExternalToolTaskData::NUM_INPUT_IMAGES; i++ )
 	{
-		m_pInputImageInfo[i] = NULL;
+		m_pInputImageInfo[i] = nullptr;
 	}
-
-	//{{AFX_DATA_INIT(SVExternalToolImageSelectPage)
-		// NOTE: the ClassWizard will add member initialization here
-	//}}AFX_DATA_INIT
-
 }
 
 SVExternalToolImageSelectPage::~SVExternalToolImageSelectPage()
 {
 }
+#pragma endregion Constructor
 
+#pragma region Protected Methods
 void SVExternalToolImageSelectPage::DoDataExchange(CDataExchange* pDX)
 {
 	CPropertyPage::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(SVExternalToolImageSelectPage)
-	DDX_Control(pDX, IDC_IMAGE_LIST, m_lbImageList);
 	DDX_Control(pDX, IDC_IMAGE_DISPLAY, m_ImageDisplay);
-	DDX_Control(pDX, IDC_SELECT_IMAGE, m_cbAvailableImages);
 	//}}AFX_DATA_MAP
 }
 
-BOOL SVExternalToolImageSelectPage::OnInitDialog() 
+BOOL SVExternalToolImageSelectPage::OnInitDialog()
 {
 	CPropertyPage::OnInitDialog();
-	
 	SVIPDoc* l_pIPDoc = m_pParentDialog->GetIPDoc();
 
-	if( l_pIPDoc != NULL )
+	if( nullptr != l_pIPDoc )
 	{
-		SVToolSetClass* pToolSet = NULL;
+		SVToolSetClass* pToolSet = dynamic_cast <SVToolSetClass*> ( m_pTool->GetAncestor( SVToolSetObjectType ) );
 
-		for( int i = 0 ; i < m_pTask->m_Data.m_lNumInputImages; i++)
+		if( nullptr != pToolSet && pToolSet->getCurrentImage() && m_pTask->m_Data.m_lNumInputImages > 0 )
 		{
-			CString strTmp;
-			strTmp.Format("Image_%02d",i+1);
-			m_lbImageList.AddString(strTmp);
-		}
-
-
-
-		pToolSet = dynamic_cast <SVToolSetClass*> ( m_pTool->GetAncestor( SVToolSetObjectType ) );
-
-		if( pToolSet &&	pToolSet->getCurrentImage() && m_pTask->m_Data.m_lNumInputImages > 0 )
-		{
-			int i;
-
 			GetDlgItem(IDC_NO_IMAGES_TXT)->ShowWindow( SW_HIDE );
-			GetDlgItem(IDC_IMAGE_NAME_TXT)->ShowWindow( SW_SHOW );
-			GetDlgItem(IDC_SOURCE_IMAGE_INPUT_TXT)->ShowWindow( SW_SHOW );
+			GetDlgItem(IDC_IMAGE_LIST)->ShowWindow( SW_SHOW );
 
 			// copy pointers to input image info
-			for ( i = 0; i < m_pTask->m_Data.m_lNumInputImages; i++ )
+			for ( int i = 0; i < m_pTask->m_Data.m_lNumInputImages; i++ )
 			{
 				m_pInputImageInfo[i] = &m_pTask->m_Data.m_aInputImageInfo[ i ];
-			}// end for ( int i = 0; i < m_pTask->m_Data.m_iNumInputImages; i++ )
-
-			// init currently selected image
-			int iInitialSelect = 0;
-		
-			if( m_pInputImageInfo[iInitialSelect]->GetInputObjectInfo().PObject != NULL && m_pInputImageInfo[iInitialSelect]->IsConnected() )
-			{
-
-				m_pCurrentSourceImage = dynamic_cast <SVImageClass*> ( m_pInputImageInfo[iInitialSelect]->GetInputObjectInfo().PObject );
 			}
 
-			int iIndex = 0;
-
-			SVObjectTypeInfoStruct imageObjectInfo;
-			imageObjectInfo.ObjectType = SVImageObjectType;
-
-			SVGetObjectDequeByTypeVisitor l_Visitor( imageObjectInfo );
-
-			SVObjectManagerClass::Instance().VisitElements( l_Visitor, pToolSet->GetUniqueObjectID() );
-
-			SVGetObjectDequeByTypeVisitor::SVObjectPtrDeque::const_iterator l_Iter;
-
-			for( l_Iter = l_Visitor.GetObjects().begin(); l_Iter != l_Visitor.GetObjects().end(); ++l_Iter )
-			{
-				SVImageClass* pImage = dynamic_cast< SVImageClass* >( const_cast< SVObjectClass* >( *l_Iter ) );
-
-				// Ensure only image sources which are produced by tools above the current tool....
-				if( pImage )
-				{
-					SVToolClass* pImageOwnerTool = dynamic_cast <SVToolClass*> ( pImage->GetAncestor( SVToolObjectType ) );
-
-					if( pImageOwnerTool != NULL )
-					{
-						if( !( l_pIPDoc->IsToolPreviousToSelected( pImageOwnerTool->GetUniqueObjectID() )) || (pImageOwnerTool == m_pTool) )
-						{
-							break;
-						}
-					}
-
-					SVImageInfoClass l_ImageInfo = pImage->GetImageInfo();
-
-					bool bUseImage = true;
-
-					pImageOwnerTool = dynamic_cast<SVToolClass *>(l_ImageInfo.GetOwner());
-
-					if( pImageOwnerTool )
-					{
-						bUseImage = bUseImage && !SV_IS_KIND_OF(pImageOwnerTool, SVGageToolClass);
-					}
-
-					long l_lBandNumber = 1;
-
-					l_ImageInfo.GetImageProperty( SVImagePropertyBandNumber, l_lBandNumber );
-
-					bUseImage = bUseImage && (l_lBandNumber == 1);
-
-					bUseImage = bUseImage && !(pImage->ObjectAttributesAllowed() & SV_HIDDEN);
-
-					if ( bUseImage )
-					{
-						m_AvailableImages.Add( pImage );
-						++iIndex;
-					}
-				}
-			}
-			// Init source image list box...
-			// the item data is the index (same as position)
-			m_iOldIndex = m_cbAvailableImages.init( &m_AvailableImages, m_pCurrentSourceImage );
-
-			// set the indexes
-			// if any input images use this image, set the index
-			for ( int iImageIndex = 0; iImageIndex < m_pTask->m_Data.m_lNumInputImages; iImageIndex++ )
-			{
-				for (int iComboIndex=0; iComboIndex < m_cbAvailableImages.GetCount(); iComboIndex++)
-				{
-					int iAvailableIndex = static_cast< int >( m_cbAvailableImages.GetItemData( iComboIndex ) );
-					SVImageClass* pImage = m_AvailableImages.GetAt(iAvailableIndex);
-					if ( pImage == m_pInputImageInfo[iImageIndex]->GetInputObjectInfo().PObject )
-					{
-						m_lbImageList.SetItemData(iImageIndex, iComboIndex);
-					}
-				}
-
-			}
-
-			m_ImageDisplay.UpdateImageInfo( m_pCurrentSourceImage );
-			m_ImageDisplay.refresh();
-
+			SVGUID toolsetGUID = pToolSet->GetUniqueObjectID();
+			createAvailableImageList(toolsetGUID, l_pIPDoc);
+			buildPropertyTree();
+			setImages();
 			UpdateData( FALSE ); // set data to dialog
-
 		}// end if( pToolSet &&	pToolSet->getCurrentImage() )
 		else
 		{
 			m_ImageDisplay.ShowWindow( SW_HIDE );
-			m_lbImageList.ShowWindow( SW_HIDE );
-			m_cbAvailableImages.ShowWindow( SW_HIDE );
 			GetDlgItem(IDC_NO_IMAGES_TXT)->ShowWindow( SW_SHOW );
-			GetDlgItem(IDC_IMAGE_NAME_TXT)->ShowWindow( SW_HIDE );
-			GetDlgItem(IDC_SOURCE_IMAGE_INPUT_TXT)->ShowWindow( SW_HIDE );
+			GetDlgItem(IDC_IMAGE_LIST)->ShowWindow( SW_HIDE );
 		}
-
-		// ******** Update List Box **********
-
-		m_lbImageList.SetCurSel(0);
 	}
-	
+
 	return TRUE;  // return TRUE unless you set the focus to a control
 	              // EXCEPTION: OCX Property Pages should return FALSE
 }
 
+void SVExternalToolImageSelectPage::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResult)
+{
+	UpdateData( TRUE ); // get data from dialog
+	LPNMPROPTREE pNMPropTree = reinterpret_cast< LPNMPROPTREE >( pNotifyStruct );
+	*plResult = S_FALSE;
+
+	if ( nullptr != pNMPropTree->pItem )
+	{
+		SVRPropertyItemCombo* pItem = dynamic_cast<SVRPropertyItemCombo*>(pNMPropTree->pItem);
+		if ( nullptr != pItem && pItem->GetCtrlID() >= 0 && static_cast<int>(pItem->GetCtrlID()) < m_pTask->m_Data.m_lNumInputImages )
+		{
+			long comboData = -1;
+			pItem->GetItemValue(comboData);
+			if (comboData >= 0 && comboData< static_cast<int>(m_AvailableImages.size()) && nullptr != m_AvailableImages[comboData])
+			{
+				SVImageClass* image = m_AvailableImages[comboData];
+				SVInObjectInfoStruct& rInfo = *(m_pInputImageInfo[pItem->GetCtrlID()]);
+				//set new image to the Input image info
+				rInfo.SetInputObject(image);
+
+				BOOL bSuccess = ( ::SVSendMessage( rInfo.GetInputObjectInfo().PObject, SVM_CONNECT_OBJECT_INPUT, reinterpret_cast< DWORD_PTR >( &rInfo ), NULL ) == SVMR_SUCCESS );
+				ASSERT( bSuccess );
+				*plResult = bSuccess ? S_OK : S_FALSE;
+
+				// Tell Tool image source has changed
+				bSuccess = ( ::SVSendMessage( m_pParentDialog->m_pTool, SVM_IMAGE_SOURCE_CHANGED, NULL, NULL ) == SVMR_SUCCESS );
+				ASSERT( bSuccess );
+				*plResult = bSuccess ? S_OK : S_FALSE;
+
+				// Reset all objects again...
+				bSuccess = ( ::SVSendMessage( m_pParentDialog->m_pTool, SVM_RESET_ALL_OBJECTS, NULL, NULL ) == SVMR_SUCCESS );
+				ASSERT( bSuccess );
+				*plResult = bSuccess ? S_OK : S_FALSE;
+			}
+
+			setImages();
+			Refresh();
+		}
+	}
+}
+
+void SVExternalToolImageSelectPage::OnPropClick( NMHDR* pNotifyStruct, LRESULT* plResult )
+{
+	LPNMPROPTREE pNMPropTree = reinterpret_cast< LPNMPROPTREE >( pNotifyStruct );
+	*plResult = S_FALSE;
+
+	if ( nullptr != pNMPropTree->pItem )
+	{
+		SVRPropertyItemCombo* pItem = dynamic_cast<SVRPropertyItemCombo*>(pNMPropTree->pItem);
+		if ( nullptr != pItem && pItem->GetCtrlID() >= 0 && static_cast<int>(pItem->GetCtrlID()) < m_pTask->m_Data.m_lNumInputImages )
+		{
+			//set displayed tab to the current selected entry in the propTree
+			m_ImageDisplay.SelectTab(pItem->GetCtrlID());
+			*plResult = S_OK;
+		}
+	}
+}
+#pragma endregion Protected Methods
+
+#pragma region Private Methods
 void SVExternalToolImageSelectPage::Refresh()
 {
-	SVToolClass* pTool;
-	if( m_pParentDialog && ( pTool = m_pParentDialog->m_pTool ) )
+	SVToolClass* pTool = m_pParentDialog->m_pTool;
+	if( nullptr != m_pParentDialog && nullptr != pTool )
 	{
 		SVInspectionProcess* l_pInspection = pTool->GetInspection();
 
-		if( l_pInspection != NULL )
+		if( l_pInspection != nullptr )
 		{
 			SVCommandInspectionRunOncePtr l_CommandPtr = new SVCommandInspectionRunOnce( l_pInspection->GetUniqueObjectID(), pTool->GetUniqueObjectID() );
 			SVObjectSynchronousCommandTemplate< SVCommandInspectionRunOncePtr > l_Command( l_pInspection->GetUniqueObjectID(), l_CommandPtr );
 
-			l_Command.Execute( 120000 );
-
-			m_ImageDisplay.refresh();
-			
+			l_Command.Execute( 120000 ); // Allow the command 2 minutes to execute.
+			m_ImageDisplay.Refresh();
 			SVIPDoc* l_pIPDoc = SVObjectManagerClass::Instance().GetIPDoc( l_pInspection->GetUniqueObjectID() );
 
-			if( l_pIPDoc != NULL )
+			if( l_pIPDoc != nullptr )
 			{
-				l_pIPDoc->UpdateAllViews( NULL );
+				l_pIPDoc->UpdateAllViews( nullptr );
 			}
 
 			UpdateData( FALSE ); // set data to dialog
@@ -248,55 +197,129 @@ void SVExternalToolImageSelectPage::Refresh()
 	}
 }
 
-void SVExternalToolImageSelectPage::OnSelchangeImage() 
+void SVExternalToolImageSelectPage::buildPropertyTree()
 {
-	UpdateData( TRUE ); // get data from dialog
+	// PTS_NOTIFY - SVRPropTree will send notification messages to the parent window
+	DWORD dwStyle = WS_CHILD|WS_VISIBLE|PTS_NOTIFY;
+	CRect rc;
+	// Init the control's size to cover the entire client area
+	GetDlgItem(IDC_IMAGE_LIST)->GetWindowRect(rc);
+	ScreenToClient(rc);
+	// Create SVRPropTree control
+	m_Tree.Create(dwStyle, rc, this, IDC_IMAGE_LIST);
+	m_Tree.SetColumn(static_cast<long>(rc.Width() * 0.15));
+	m_Tree.ShowInfoText( false );
 
-	int iCurrentImage = m_lbImageList.GetCurSel();
-	int iCurSel = m_cbAvailableImages.GetCurSel();
-	int index = ( int ) m_cbAvailableImages.GetItemData( iCurSel );
+	SVRPropertyItem* pRoot = m_Tree.InsertItem(new SVRPropertyItem());
+	ASSERT( pRoot );
+	pRoot->SetCanShrink(false);
+	pRoot->SetLabelText(_T("Input Source Images"));
+	pRoot->SetInfoText(_T(""));
 
-	m_lbImageList.SetItemData(iCurrentImage, iCurSel);
-
-	if( m_pInputImageInfo[iCurrentImage] && m_pInputImageInfo[iCurrentImage]->PObject && index != LB_ERR && index >= 0 && index < m_AvailableImages.GetSize() )
+	// set the indexes
+	// if any input images use this image, set the index
+	for ( int iImageIndex = 0; iImageIndex < m_pTask->m_Data.m_lNumInputImages; iImageIndex++ )
 	{
-		// disconnect old selected image, connect new one
+		CString strTmp;
+		strTmp.Format( "Image %02d", iImageIndex + 1 );
+		SVRPropertyItemCombo* pCombo = static_cast< SVRPropertyItemCombo* >( m_Tree.InsertItem( new SVRPropertyItemCombo(), pRoot ) );
 
-		SVToolSetClass* pToolSet = dynamic_cast <SVToolSetClass*> (m_pInputImageInfo[iCurrentImage]->PObject->GetAncestor( SVToolSetObjectType ));
+		if ( nullptr != pCombo )
+		{
+			pCombo->SetCtrlID( iImageIndex );
+			pCombo->SetLabelText( strTmp );
+			pCombo->CreateComboBox();
+			int curSel = 0;
+			for (unsigned int iComboIndex=0; iComboIndex < m_AvailableImages.size(); iComboIndex++)
+			{
+				int iInsIndex = pCombo->AddString( m_AvailableImages[iComboIndex]->getDisplayedName() );
+				pCombo->SetItemData( iInsIndex, iComboIndex );
+				if ( m_AvailableImages[iComboIndex] == m_pInputImageInfo[iImageIndex]->GetInputObjectInfo().PObject)
+				{
+					curSel = iComboIndex;
+				}
+			}
+			pCombo->SetItemValue(curSel);
+		}
 
-		// Get new input...
-		m_pCurrentSourceImage = m_AvailableImages.GetAt( index );
+		m_ImageDisplay.AddTab(strTmp);
+	}
+	pRoot->Expand();
+}
 
-		SVInObjectInfoStruct& rInfo = *(m_pInputImageInfo[iCurrentImage]);
-		rInfo.SetInputObject( m_pCurrentSourceImage );
-		BOOL bSuccess = (::SVSendMessage( rInfo.GetInputObjectInfo().PObject, SVM_CONNECT_OBJECT_INPUT, reinterpret_cast<DWORD_PTR>(&rInfo), NULL ) == SVMR_SUCCESS);
-		ASSERT( bSuccess );
+void SVExternalToolImageSelectPage::setImages()
+{
+	for ( int iImageIndex = 0; iImageIndex < m_pTask->m_Data.m_lNumInputImages; iImageIndex++ )
+	{
+		SVImageClass* image = dynamic_cast <SVImageClass*> ( m_pInputImageInfo[iImageIndex]->GetInputObjectInfo().PObject );
+		m_ImageDisplay.setImage( image, iImageIndex );
+	}
+	m_ImageDisplay.Refresh();
+}
 
-		// Tell Tool image source has changed
-		::SVSendMessage( m_pParentDialog->m_pTool, SVM_IMAGE_SOURCE_CHANGED, NULL, NULL );
+void SVExternalToolImageSelectPage::createAvailableImageList( const SVGUID toolSetGUID, const SVIPDoc* l_pIPDoc )
+{
+	SVObjectTypeInfoStruct imageObjectInfo;
+	imageObjectInfo.ObjectType = SVImageObjectType;
+	SVGetObjectDequeByTypeVisitor l_Visitor( imageObjectInfo );
+	SVObjectManagerClass::Instance().VisitElements( l_Visitor, toolSetGUID );
+	SVGetObjectDequeByTypeVisitor::SVObjectPtrDeque::const_iterator l_Iter;
 
-		// Reset all objects again...
-		::SVSendMessage( m_pParentDialog->m_pTool, SVM_RESET_ALL_OBJECTS, NULL, NULL );
+	for( l_Iter = l_Visitor.GetObjects().begin(); l_Iter != l_Visitor.GetObjects().end(); ++l_Iter )
+	{
+		SVImageClass* pImage = dynamic_cast< SVImageClass* >( const_cast< SVObjectClass* >( *l_Iter ) );
 
-		m_ImageDisplay.UpdateImageInfo( m_pCurrentSourceImage );
-	
-		Refresh();
+		// Ensure only image sources which are produced by tools above the current tool....
+		if( pImage )
+		{
+			SVToolClass* pImageOwnerTool = dynamic_cast <SVToolClass*> ( pImage->GetAncestor( SVToolObjectType ) );
+
+			if( pImageOwnerTool != NULL )
+			{
+				if( !( l_pIPDoc->IsToolPreviousToSelected( pImageOwnerTool->GetUniqueObjectID() )) || (pImageOwnerTool == m_pTool) )
+				{
+					break;
+				}
+			}
+
+			SVImageInfoClass l_ImageInfo = pImage->GetImageInfo();
+			bool bUseImage = true;
+			pImageOwnerTool = dynamic_cast<SVToolClass *>(l_ImageInfo.GetOwner());
+
+			if( pImageOwnerTool )
+			{
+				bUseImage = bUseImage && !SV_IS_KIND_OF(pImageOwnerTool, SVGageToolClass);
+			}
+
+			long l_lBandNumber = 1;
+			l_ImageInfo.GetImageProperty( SVImagePropertyBandNumber, l_lBandNumber );
+			bUseImage = bUseImage && (l_lBandNumber == 1);
+			bUseImage = bUseImage && !(pImage->ObjectAttributesAllowed() & SV_HIDDEN);
+			if ( bUseImage )
+			{
+				m_AvailableImages.Add( pImage );
+			}
+		}
 	}
 }
-
-void SVExternalToolImageSelectPage::OnSelchangeImageList() 
-{
-	// update image list selection
-	int iIndex = static_cast< int >( m_lbImageList.GetItemData( m_lbImageList.GetCurSel() ) );
-	m_cbAvailableImages.SetCurSel(iIndex);
-	OnSelchangeImage();
-}
+#pragma endregion Private Methods
 
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVExternalToolImageSelectPage.cpp_v  $
+ * 
+ *    Rev 1.4   26 Jun 2014 17:30:38   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  885
+ * SCR Title:  Replace image display in TA-dialogs with activeX SVPictureDisplay
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   rearrange the dialog
+ * use SVPictureDisplay-control
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   15 May 2014 12:13:16   sjones
  * Project:  SVObserver

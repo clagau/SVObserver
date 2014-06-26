@@ -5,8 +5,8 @@
 //* .Module Name     : SVToolAdjustmentDialogFilterPageClass
 //* .File Name       : $Workfile:   SVToolAdjustmentDialogFilterPageClass.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   15 May 2014 14:36:18  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   26 Jun 2014 18:29:24  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -94,6 +94,28 @@ HRESULT SVToolAdjustmentDialogFilterPageClass::SetInspectionData()
 
 	return l_hrOk;
 }
+BOOL SVToolAdjustmentDialogFilterPageClass::setImages()
+{
+
+	SVImageInfoClass* pImageInfo = reinterpret_cast<SVImageInfoClass*>(::SVSendMessage( pTool, SVM_GETFIRST_IMAGE_INFO, NULL, NULL ));
+	if( pImageInfo )
+	{
+		SVImageClass* l_pImage = NULL;
+
+		pImageInfo->GetOwnerImage( l_pImage );
+
+		// Set dialog image...
+
+		dialogImage.setImage(l_pImage);
+		dialogImage.Refresh();
+		return TRUE;
+	}
+	else
+		return FALSE;
+
+
+
+}
 
 void SVToolAdjustmentDialogFilterPageClass::refresh()
 {
@@ -103,7 +125,8 @@ void SVToolAdjustmentDialogFilterPageClass::refresh()
 	SetInspectionData();
 
 	// Refresh dialog image...
-	dialogImage.refresh();
+	setImages();
+
 }
 
 void SVToolAdjustmentDialogFilterPageClass::OnSelchangeList1() 
@@ -138,6 +161,13 @@ void SVToolAdjustmentDialogFilterPageClass::DoDataExchange(CDataExchange* pDX)
 	//}}AFX_DATA_MAP
 }
 
+BOOL SVToolAdjustmentDialogFilterPageClass::OnSetActive() 
+{
+
+	setImages();
+	return CPropertyPage::OnSetActive();
+}
+
 BOOL SVToolAdjustmentDialogFilterPageClass::OnInitDialog() 
 {
 	CPropertyPage::OnInitDialog();
@@ -146,31 +176,25 @@ BOOL SVToolAdjustmentDialogFilterPageClass::OnInitDialog()
 
 	m_btnProperties.EnableWindow( FALSE );
 
+	dialogImage.AddTab(_T("Tool Result"));  
+
 	if( pTool && pUnaryImageOperatorList)
 	{
-		// Get the Image for this tool
-		SVImageInfoClass* pImageInfo = reinterpret_cast<SVImageInfoClass*>(::SVSendMessage( pTool, SVM_GETFIRST_IMAGE_INFO, NULL, NULL ));
-		if( pImageInfo )
+
+		BOOL res = setImages();
+		if(res)
 		{
-			SVImageClass* l_pImage = NULL;
-
-			pImageInfo->GetOwnerImage( l_pImage );
-
-			// Set dialog image...
-			dialogImage.UpdateImageInfo( l_pImage );
-
-			// Populate available filter list box...
 			availableFilterListBox.init( &availableFilters );
 
 			UpdateData( FALSE );
-	
-			// Refresh Dialog...
-			refresh();
+			// Populate filter list box and run filter...
+			filterListBox.init( pUnaryImageOperatorList );
 
+			SetInspectionData();
 			return TRUE;
 		}
 	}
-	
+
 	// Not valid call...
 	if( GetParent() )
 		GetParent()->SendMessage( WM_CLOSE );
@@ -178,7 +202,7 @@ BOOL SVToolAdjustmentDialogFilterPageClass::OnInitDialog()
 		SendMessage( WM_CLOSE );
 
 	return TRUE;  // return TRUE unless you set the focus to a control
-	              // EXCEPTION: OCX-Eigenschaftenseiten sollten FALSE zurückgeben
+	// EXCEPTION: OCX-Eigenschaftenseiten sollten FALSE zurückgeben
 }
 
 
@@ -201,12 +225,12 @@ void SVToolAdjustmentDialogFilterPageClass::OnButtonInsertNewFilter()
 		if(  sourceIndex != -1 )
 		{
 			int destinyIndex	= filterListBox.GetCurSel();
-			
+
 			if( destinyIndex == LB_ERR ) // First Entryitem
 				destinyIndex = 0;
-			
+
 			// Construct and Create the Filter Class Object
-			
+
 			// Rebuild the List of selected Filters
 			if (pUnaryImageOperatorList )
 			{
@@ -220,7 +244,7 @@ void SVToolAdjustmentDialogFilterPageClass::OnButtonInsertNewFilter()
 				{
 					// Need to add before the Threshold Object
 					pUnaryImageOperatorList->InsertAt( destinyIndex, pFilter );
-					
+
 					// And last - Create (initialize) it
 
 					if( ! pFilter->IsCreated() )
@@ -230,7 +254,7 @@ void SVToolAdjustmentDialogFilterPageClass::OnButtonInsertNewFilter()
 						if( ::SVSendMessage( pUnaryImageOperatorList, SVM_CREATE_CHILD_OBJECT, reinterpret_cast<DWORD_PTR>(pFilter), SVMFResetObject ) != SVMR_SUCCESS )
 						{
 							AfxMessageBox("Creation of Filter Failed");
-							
+
 							// What should we really do here ??? SEJ
 
 							// Remove it from the Tool TaskObjectList ( Destruct it )
@@ -394,7 +418,7 @@ void SVToolAdjustmentDialogFilterPageClass::OnButtonProperties()
 			else if( l_pThinningFilter != NULL )
 			{
 				SVThinningFilterDlg l_svDlg;
-				
+
 				l_svDlg.SetTaskObject( l_pThinningFilter );
 
 				l_svDlg.DoModal();
@@ -428,6 +452,16 @@ void SVToolAdjustmentDialogFilterPageClass::OnButtonProperties()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVToolAdjustmentDialogFilterPageClass.cpp_v  $
+ * 
+ *    Rev 1.3   26 Jun 2014 18:29:24   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  885
+ * SCR Title:  Replace image display in TA-dialogs with activeX SVPictureDisplay
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   use SVPictureDisplay-control
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   15 May 2014 14:36:18   sjones
  * Project:  SVObserver

@@ -5,121 +5,151 @@
 //* .Module Name     : SVPatModelPageClass
 //* .File Name       : $Workfile:   SVPatSelectModelPageClass.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 13:20:10  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   26 Jun 2014 18:09:44  $
 //******************************************************************************
 
 #ifndef SVPATMODELPAGECLASS_H
 #define SVPATMODELPAGECLASS_H
 
+#pragma region Includes
 #include "SVLibrary/SVBitmap.h"
 #include "SVImageLibrary/SVImageInfoClass.h"
 #include "SVImageLibrary/SVImageBufferHandleInterface.h"
-#include "SVDlgImage.h"
-#include "SVDlgImageGraph.h"
+#include "PropertyTree/PropTree.h"
+#include "PictureDisplay.h"
+#pragma endregion Includes
 
+#pragma region Declarations
 class SVToolClass;
 class SVPatternAnalyzerClass;
 class SVPatAnalyzeSetupDlgSheet;
+//{{AFX_INSERT_LOCATION}}
+// Microsoft Visual C++ will insert additional declarations immediately before the previous line.
+#pragma endregion Declarations
 
 class SVPatModelPageClass : public CPropertyPage
 {
 	DECLARE_DYNCREATE(SVPatModelPageClass)
 
 // Construction
+#pragma region Constructor
 public:
 	SVPatModelPageClass();
 	virtual ~SVPatModelPageClass();
+#pragma endregion Constructor
 
+#pragma region Public Members
+public:
+	//@HACK: These Member Variables are used outside this class.  It should be changed to make them private.
 // Dialog Data
 	//{{AFX_DATA(SVPatModelPageClass)
 	enum { IDD = IDD_PAT_SETUP_MODEL };
-	SVDlgImageGraphClass m_svToolImage;
-	SVDlgImageGraphClass m_svModelImage;
-	CSliderCtrl	m_YSlider;
-	CSliderCtrl	m_XSlider;
-	CEdit	m_ModelPositionXEditCtrl;
-	CEdit	m_ModelPositionYEditCtrl;
-	CEdit	m_ModelWidthEditCtrl;
-	CEdit	m_ModelHeightEditCtrl;
 	CButton m_CircularOverscanCheckbox;
+	PictureDisplay m_dialogImage;
+	CString	m_strModelName;
+	BOOL m_bCircularOverscan;
+	SVRPropTree          m_Tree;
+	//}}AFX_DATA
 
 	int		m_nXPos;
 	int		m_nYPos;
 	long	m_lModelWidth;
 	long	m_lModelHeight;
-	CString	m_strModelName;
-	BOOL m_bCircularOverscan;
-	//}}AFX_DATA
-
 	int m_nMaxX;
 	int m_nMaxY;
 	
 	SVPatternAnalyzerClass* m_pPatAnalyzer;
+#pragma endregion Public Members
 
+#pragma region Protected Methods
+protected:
 // Overrides
+#pragma region AFX Virtual Methods
 	// ClassWizard generate virtual function overrides
 	//{{AFX_VIRTUAL(SVPatModelPageClass)
-	public:
 	virtual void OnCancel();
 	virtual void OnOK();
 	virtual BOOL OnSetActive();
 	virtual BOOL OnKillActive();
-	protected:
+	virtual BOOL OnInitDialog();
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 	//}}AFX_VIRTUAL
+#pragma endregion AFX Virtual Methods
+
+#pragma region AFX MSG
+	// Generated message map functions
+	//{{AFX_MSG(SVPatModelPageClass)
+	afx_msg void OnFileButton();
+	afx_msg void OnCreateModel();
+	afx_msg void OnKillFileName();
+	afx_msg void OnCircularOverscanClicked();
+	afx_msg void OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResult);
+	//}}AFX_MSG
+	DECLARE_MESSAGE_MAP()
+	DECLARE_EVENTSINK_MAP()
+#pragma endregion AFX MSG
 
 // Implementation
 protected:
-	SVPatAnalyzeSetupDlgSheet* m_pSheet;
+	//************************************
+	// Method:    ObjectChangedExDialogimage
+	// Description: Event-methods, called if overlay-object is changed. Set the new values to the mask properties.
+	//************************************
+	void ObjectChangedExDialogImage(long Tab, long Handle, VARIANT* ParameterList, VARIANT* ParameterValue);
+#pragma endregion Protected Methods
 
-	long m_sourceImageWidth;
-	long m_sourceImageHeight;
-
-	CString	m_strOldModelName;
-
-	BOOL ProcessOnKillfocus(UINT nId);
-	void DrawModelPosition();
-	void SetControlTextLength();
-	void AdjustSliderX(); 
-	void AdjustSliderY(); 
-	void InitModelImage();
-	void InitializeData(); 
-	BOOL GetModelFile(BOOL bMode);
-	UINT RestoreModelFromFile();
-	
+#pragma region Private Methods
+private:
 	// Validation routines
 	bool ValidateModelParameters(UINT& nMsgID);
 	bool ValidateModelWidth(UINT& nMsgID);
 	bool ValidateModelHeight(UINT& nMsgID);
 	bool ValidateModelFilename(UINT& nMsgID);
 
-	//
-	void ClampModelPositionX();
-	void ClampModelPositionY();
+	void InitializeData(); 
+	BOOL ProcessOnKillFocus(UINT nId);
+	UINT RestoreModelFromFile();
+	BOOL GetModelFile(BOOL bMode);
 
-	void DrawCircularOverscanFigure(SVDlgImageGraphClass& rImage, const CRect& outerRect, const CRect& innerRect, COLORREF color);
-	
-	// Generated message map functions
-	//{{AFX_MSG(SVPatModelPageClass)
-	virtual BOOL OnInitDialog();
-	afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
-	afx_msg void OnPaint();
-	afx_msg void OnFileButton();
-	afx_msg void OnKillXPosition();
-	afx_msg void OnKillYPosition();
-	afx_msg void OnKillModelHeight();
-	afx_msg void OnKillModelWidth();
-	afx_msg void OnCreateModel();
-	afx_msg void OnKillFileName();
-	afx_msg void OnCircularOverscanClicked();
-	//}}AFX_MSG
-	DECLARE_MESSAGE_MAP()
+	HRESULT BuildPropertyList();
+	HRESULT RefreshProperties();
+	void setImages();
+	void setOverlay();
+	void setCircularToolOverlay();
+	void setCircularModelOverlay();
+	//************************************
+	// Method:    setCircularOverscanCheckboxState
+	// Description: Enable or Disable the checkbox if the height and width large enough or not.
+	//				Uncheck the checkbox, if it is not big enough
+	// Returns:   void
+	//************************************
+	void setCircularOverscanCheckboxState();
+#pragma endregion Private Methods
 
+#pragma region Member Variables
+private:
+	enum 
+	{ 
+		ModelWidth_Property,
+		ModelHeight_Property,
+		ModelOriginX_Property,
+		ModelOriginY_Property
+	} Model_Property_Enums;
+
+	SVPatAnalyzeSetupDlgSheet* m_pSheet;
+
+	long m_sourceImageWidth;
+	long m_sourceImageHeight;
+
+	CString m_strOldModelName;
+	long m_handleToModelOverlayObject;
+	long m_handleToCircleOverlayObject;
+	long m_handleToSquareOverlayObject;
+	long m_handleToCircleOverlayObject2;
+	long m_handleToSquareOverlayObject2;
+#pragma endregion Member Variables
 };
-
-//{{AFX_INSERT_LOCATION}}
-// Microsoft Visual C++ will insert additional declarations immediately before the previous line.
 
 #endif
 
@@ -127,7 +157,17 @@ protected:
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVPatSelectModelPageClass.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVPatSelectModelPageClass.h_v  $
+ * 
+ *    Rev 1.1   26 Jun 2014 18:09:44   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  885
+ * SCR Title:  Replace image display in TA-dialogs with activeX SVPictureDisplay
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   use SVPictureDisplay-control
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 13:20:10   bWalter
  * Project:  SVObserver

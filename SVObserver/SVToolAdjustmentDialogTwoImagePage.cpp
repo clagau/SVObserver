@@ -5,8 +5,8 @@
 //* .Module Name     : SVToolAdjustmentDialogTwoImagePage
 //* .File Name       : $Workfile:   SVToolAdjustmentDialogTwoImagePage.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   15 May 2014 14:37:58  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   26 Jun 2014 18:29:28  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -36,6 +36,7 @@ BEGIN_MESSAGE_MAP(SVToolAdjustmentDialogTwoImagePageClass, CPropertyPage)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
+#pragma region Constructor
 SVToolAdjustmentDialogTwoImagePageClass::SVToolAdjustmentDialogTwoImagePageClass( SVToolAdjustmentDialogSheetClass* Parent ) 
 	: CPropertyPage(SVToolAdjustmentDialogTwoImagePageClass::IDD)
 {
@@ -58,6 +59,7 @@ SVToolAdjustmentDialogTwoImagePageClass::SVToolAdjustmentDialogTwoImagePageClass
 SVToolAdjustmentDialogTwoImagePageClass::~SVToolAdjustmentDialogTwoImagePageClass()
 {
 }
+#pragma endregion Constructor
 
 HRESULT SVToolAdjustmentDialogTwoImagePageClass::SetInspectionData()
 {
@@ -67,7 +69,7 @@ HRESULT SVToolAdjustmentDialogTwoImagePageClass::SetInspectionData()
 	{
 		UpdateData( TRUE ); // get data from dialog
 
-		long lOperator = ( long ) operatorCtrl.GetItemData( operatorCtrl.GetCurSel() );
+		long lOperator = ( long ) m_operatorCtrl.GetItemData( m_operatorCtrl.GetCurSel() );
 
 		l_hrOk = AddInputRequest( pArithmeticOperator, lOperator );
 
@@ -83,13 +85,17 @@ HRESULT SVToolAdjustmentDialogTwoImagePageClass::SetInspectionData()
 
 		if( lOperator == SV_IMGOP_DOUBLE_HEIGHT || lOperator == SV_IMGOP_FLIP_VERTICAL || lOperator == SV_IMGOP_FLIP_HORIZONTAL )
 		{
-			secondAvailableSourceImageListBoxCtl.EnableWindow( FALSE );
-			secondImageCtrl.ShowWindow( SW_HIDE );
+			m_secondAvailableSourceImageListBoxCtl.EnableWindow( FALSE );
+			//hide second image tab, because in this mode is only on image aloud.
+			m_firstImageCtrl.ShowTab(1, 0);
+			m_secondImageCtrl.ShowTab(1, 0);
 		}// end if
 		else
 		{
-			secondAvailableSourceImageListBoxCtl.EnableWindow( TRUE );
-			secondImageCtrl.ShowWindow( SW_SHOW );
+			m_secondAvailableSourceImageListBoxCtl.EnableWindow( TRUE );
+			//show second image tab
+			m_firstImageCtrl.ShowTab(1, 1);
+			m_secondImageCtrl.ShowTab(1, 1);
 		}// end else
 
 		UpdateData( FALSE );
@@ -101,20 +107,19 @@ HRESULT SVToolAdjustmentDialogTwoImagePageClass::SetInspectionData()
 void SVToolAdjustmentDialogTwoImagePageClass::refresh()
 {
 	SetInspectionData();
-
-	firstImageCtrl.refresh();
-	secondImageCtrl.refresh();
+	setImages();
 }
 
+#pragma region Protected Methods
 void SVToolAdjustmentDialogTwoImagePageClass::DoDataExchange(CDataExchange* pDX)
 {
 	CPropertyPage::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(SVToolAdjustmentDialogTwoImagePageClass)
-	DDX_Control(pDX, IDC_OPERATOR_COMBO, operatorCtrl);
-	DDX_Control(pDX, IDC_SECOND_IMAGE, secondImageCtrl);
-	DDX_Control(pDX, IDC_FIRST_IMAGE, firstImageCtrl);
-	DDX_Control(pDX, IDC_COMBO1, firstAvailableSourceImageListBoxCtl);
-	DDX_Control(pDX, IDC_COMBO2, secondAvailableSourceImageListBoxCtl);
+	DDX_Control(pDX, IDC_OPERATOR_COMBO, m_operatorCtrl);
+	DDX_Control(pDX, IDC_SECOND_IMAGE, m_secondImageCtrl);
+	DDX_Control(pDX, IDC_FIRST_IMAGE, m_firstImageCtrl);
+	DDX_Control(pDX, IDC_COMBO1, m_firstAvailableSourceImageListBoxCtl);
+	DDX_Control(pDX, IDC_COMBO2, m_secondAvailableSourceImageListBoxCtl);
 	//}}AFX_DATA_MAP
 }
 
@@ -235,18 +240,20 @@ BOOL SVToolAdjustmentDialogTwoImagePageClass::OnInitDialog()
 				}
 			}
 
-
-			firstImageCtrl.UpdateImageInfo( pFirstSourceImage );
-			firstImageCtrl.refresh();
-
-			secondImageCtrl.UpdateImageInfo( pSecondSourceImage );
-			secondImageCtrl.refresh();
+			m_firstImageCtrl.AddTab(_T("First Image")); 
+			m_firstImageCtrl.AddTab(_T("Second Image")); 
+			m_firstImageCtrl.AddTab(_T("Result Image")); 
+			m_secondImageCtrl.AddTab(_T("First Image")); 
+			m_secondImageCtrl.AddTab(_T("Second Image")); 
+			m_secondImageCtrl.AddTab(_T("Result Image")); 
+			m_secondImageCtrl.SelectTab(1);
+			setImages();
 
 			// Init first source image list...
-			firstOldIndex  = firstAvailableSourceImageListBoxCtl.init( &imageList, pFirstSourceImage );
+			firstOldIndex  = m_firstAvailableSourceImageListBoxCtl.init( &imageList, pFirstSourceImage );
 
 			// Init second source image list...
-			secondOldIndex = secondAvailableSourceImageListBoxCtl.init( &imageList, pSecondSourceImage );
+			secondOldIndex = m_secondAvailableSourceImageListBoxCtl.init( &imageList, pSecondSourceImage );
 
 
 			// Get Current Arithmetic Operator...
@@ -255,34 +262,34 @@ BOOL SVToolAdjustmentDialogTwoImagePageClass::OnInitDialog()
 			operatorObjectInfo.EmbeddedID = SVArithmeticOperatorObjectGuid;
 			pArithmeticOperator = reinterpret_cast<SVLongValueObjectClass*>(::SVSendMessage( pTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&operatorObjectInfo) ));
 			// Fill Arithmetic Combo...
-			operatorCtrl.SetItemData( operatorCtrl.AddString( _T( "AND" ) ), static_cast<DWORD_PTR>(SVImageAnd) );
-			operatorCtrl.SetItemData( operatorCtrl.AddString( _T( "OR" ) ),  static_cast<DWORD_PTR>(SVImageOr) );	
-			operatorCtrl.SetItemData( operatorCtrl.AddString( _T( "XOR" ) ), static_cast<DWORD_PTR>(SVImageXOr) );	
-			operatorCtrl.SetItemData( operatorCtrl.AddString( _T( "NOR" ) ), static_cast<DWORD_PTR>(SVImageNor) );	
-			operatorCtrl.SetItemData( operatorCtrl.AddString( _T( "XNOR" ) ), static_cast<DWORD_PTR>(SVImageXNor) );	
-			operatorCtrl.SetItemData( operatorCtrl.AddString( _T( "NAND" ) ), static_cast<DWORD_PTR>(SVImageNand) );	
-			operatorCtrl.SetItemData( operatorCtrl.AddString( _T( "ADD" ) ), static_cast<DWORD_PTR>(SVImageAddSaturation) );	
-			operatorCtrl.SetItemData( operatorCtrl.AddString( _T( "SUB" ) ), static_cast<DWORD_PTR>(SVImageSubSaturation) );	
-			operatorCtrl.SetItemData( operatorCtrl.AddString( _T( "MULT" ) ), static_cast<DWORD_PTR>(SVImageMulSaturation) );
-			operatorCtrl.SetItemData( operatorCtrl.AddString( _T( "DIV" ) ), static_cast<DWORD_PTR>(SVImageDiv) );
-			operatorCtrl.SetItemData( operatorCtrl.AddString( _T( "MIN" ) ), static_cast<DWORD_PTR>(SVImageMin) );	
-			operatorCtrl.SetItemData( operatorCtrl.AddString( _T( "MAX" ) ), static_cast<DWORD_PTR>(SVImageMax) );	
-			operatorCtrl.SetItemData( operatorCtrl.AddString( _T( "PASS" ) ), static_cast<DWORD_PTR>(SVImagePass) );	
+			m_operatorCtrl.SetItemData( m_operatorCtrl.AddString( _T( "AND" ) ), static_cast<DWORD_PTR>(SVImageAnd) );
+			m_operatorCtrl.SetItemData( m_operatorCtrl.AddString( _T( "OR" ) ),  static_cast<DWORD_PTR>(SVImageOr) );	
+			m_operatorCtrl.SetItemData( m_operatorCtrl.AddString( _T( "XOR" ) ), static_cast<DWORD_PTR>(SVImageXOr) );	
+			m_operatorCtrl.SetItemData( m_operatorCtrl.AddString( _T( "NOR" ) ), static_cast<DWORD_PTR>(SVImageNor) );	
+			m_operatorCtrl.SetItemData( m_operatorCtrl.AddString( _T( "XNOR" ) ), static_cast<DWORD_PTR>(SVImageXNor) );	
+			m_operatorCtrl.SetItemData( m_operatorCtrl.AddString( _T( "NAND" ) ), static_cast<DWORD_PTR>(SVImageNand) );	
+			m_operatorCtrl.SetItemData( m_operatorCtrl.AddString( _T( "ADD" ) ), static_cast<DWORD_PTR>(SVImageAddSaturation) );	
+			m_operatorCtrl.SetItemData( m_operatorCtrl.AddString( _T( "SUB" ) ), static_cast<DWORD_PTR>(SVImageSubSaturation) );	
+			m_operatorCtrl.SetItemData( m_operatorCtrl.AddString( _T( "MULT" ) ), static_cast<DWORD_PTR>(SVImageMulSaturation) );
+			m_operatorCtrl.SetItemData( m_operatorCtrl.AddString( _T( "DIV" ) ), static_cast<DWORD_PTR>(SVImageDiv) );
+			m_operatorCtrl.SetItemData( m_operatorCtrl.AddString( _T( "MIN" ) ), static_cast<DWORD_PTR>(SVImageMin) );	
+			m_operatorCtrl.SetItemData( m_operatorCtrl.AddString( _T( "MAX" ) ), static_cast<DWORD_PTR>(SVImageMax) );	
+			m_operatorCtrl.SetItemData( m_operatorCtrl.AddString( _T( "PASS" ) ), static_cast<DWORD_PTR>(SVImagePass) );	
 			
 			// Special Image Operator... ( not defined by MIL ! )
-			operatorCtrl.SetItemData( operatorCtrl.AddString( _T( "AVERAGE" ) ), static_cast<DWORD_PTR>(SV_IMGOP_AVERAGE) );	
-			operatorCtrl.SetItemData( operatorCtrl.AddString( _T( "DOUBLE HEIGHT" ) ), static_cast<DWORD_PTR>(SV_IMGOP_DOUBLE_HEIGHT) );	
-			operatorCtrl.SetItemData( operatorCtrl.AddString( _T( "FLIP VERTICAL" ) ), static_cast<DWORD_PTR>(SV_IMGOP_FLIP_VERTICAL) );	
-			operatorCtrl.SetItemData( operatorCtrl.AddString( _T( "FLIP HORIZONTAL" ) ), static_cast<DWORD_PTR>(SV_IMGOP_FLIP_HORIZONTAL) );
+			m_operatorCtrl.SetItemData( m_operatorCtrl.AddString( _T( "AVERAGE" ) ), static_cast<DWORD_PTR>(SV_IMGOP_AVERAGE) );	
+			m_operatorCtrl.SetItemData( m_operatorCtrl.AddString( _T( "DOUBLE HEIGHT" ) ), static_cast<DWORD_PTR>(SV_IMGOP_DOUBLE_HEIGHT) );	
+			m_operatorCtrl.SetItemData( m_operatorCtrl.AddString( _T( "FLIP VERTICAL" ) ), static_cast<DWORD_PTR>(SV_IMGOP_FLIP_VERTICAL) );	
+			m_operatorCtrl.SetItemData( m_operatorCtrl.AddString( _T( "FLIP HORIZONTAL" ) ), static_cast<DWORD_PTR>(SV_IMGOP_FLIP_HORIZONTAL) );
 
 			// Set Default Operator...
 			long lOperator = 0;
 			pArithmeticOperator->GetValue( lOperator );
-			for( int i = 0; i < operatorCtrl.GetCount(); ++ i )
+			for( int i = 0; i < m_operatorCtrl.GetCount(); ++ i )
 			{
-				if( lOperator == ( long ) operatorCtrl.GetItemData( i ) )
+				if( lOperator == ( long ) m_operatorCtrl.GetItemData( i ) )
 				{
-					operatorCtrl.SetCurSel( i );
+					m_operatorCtrl.SetCurSel( i );
 					OnSelchangeOperatorCombo();
 					break;
 				}
@@ -310,7 +317,7 @@ void SVToolAdjustmentDialogTwoImagePageClass::OnSelchangeCombo1()
 {
 	UpdateData( TRUE ); // get data from dialog
 
-	int index = ( int ) firstAvailableSourceImageListBoxCtl.GetItemData( firstAvailableSourceImageListBoxCtl.GetCurSel() );
+	int index = ( int ) m_firstAvailableSourceImageListBoxCtl.GetItemData( m_firstAvailableSourceImageListBoxCtl.GetCurSel() );
 
 	if( index != LB_ERR && index >= 0 && index < imageList.GetSize() )
 	{
@@ -320,9 +327,6 @@ void SVToolAdjustmentDialogTwoImagePageClass::OnSelchangeCombo1()
 		pParentDialog->GetTool()->ConnectToImage( pFirstImageInputInfo, pFirstSourceImage );
 
 		pFirstSourceImage = dynamic_cast<SVImageClass*>( pFirstImageInputInfo->GetInputObjectInfo().PObject );
-
-		firstImageCtrl.UpdateImageInfo( pFirstSourceImage );
-
 		refresh();
 	}
 }
@@ -331,7 +335,7 @@ void SVToolAdjustmentDialogTwoImagePageClass::OnSelChangeCombo2()
 {
 	UpdateData( TRUE ); // get data from dialog
 
-	int index = ( int ) secondAvailableSourceImageListBoxCtl.GetItemData( secondAvailableSourceImageListBoxCtl.GetCurSel() );
+	int index = ( int ) m_secondAvailableSourceImageListBoxCtl.GetItemData( m_secondAvailableSourceImageListBoxCtl.GetCurSel() );
 
 	if( index != LB_ERR && index >= 0 && index < imageList.GetSize() )
 	{
@@ -341,9 +345,6 @@ void SVToolAdjustmentDialogTwoImagePageClass::OnSelChangeCombo2()
 		pParentDialog->GetTool()->ConnectToImage( pSecondImageInputInfo, pSecondSourceImage );
 
 		pSecondSourceImage = dynamic_cast<SVImageClass*>( pSecondImageInputInfo->GetInputObjectInfo().PObject );
-
-		secondImageCtrl.UpdateImageInfo( pSecondSourceImage );
-
 		refresh();
 	}
 }
@@ -352,12 +353,55 @@ void SVToolAdjustmentDialogTwoImagePageClass::OnSelchangeOperatorCombo()
 {
 	refresh();
 }
+#pragma endregion Protected Methods
+
+#pragma region Private Methods
+void SVToolAdjustmentDialogTwoImagePageClass::setImages()
+{
+	m_firstImageCtrl.setImage( pFirstSourceImage, 0 );
+	m_firstImageCtrl.setImage( pSecondSourceImage, 1 );
+	m_secondImageCtrl.setImage( pFirstSourceImage, 0 );
+	m_secondImageCtrl.setImage( pSecondSourceImage, 1 );
+	
+	//set result image
+	SVImageInfoClass* pImageInfo = reinterpret_cast < SVImageInfoClass*> (::SVSendMessage( pTool, SVM_GETFIRST_IMAGE_INFO, NULL, NULL ) );
+	if( nullptr != pImageInfo )
+	{
+		SVImageClass* pImage = nullptr;
+		pImageInfo->GetOwnerImage( pImage );
+		m_firstImageCtrl.setImage( pImage, 2 );
+		m_secondImageCtrl.setImage( pImage, 2 );
+		//display result image tab
+		m_firstImageCtrl.ShowTab(2, 1);
+		m_secondImageCtrl.ShowTab(2, 1);
+	}
+	else
+	{
+		//hide result image tab
+		m_firstImageCtrl.ShowTab(2, 0);
+		m_secondImageCtrl.ShowTab(2, 0);
+	}
+
+	m_firstImageCtrl.Refresh();
+	m_secondImageCtrl.Refresh();
+}
+#pragma endregion Private Methods
 
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVToolAdjustmentDialogTwoImagePage.cpp_v  $
+ * 
+ *    Rev 1.3   26 Jun 2014 18:29:28   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  885
+ * SCR Title:  Replace image display in TA-dialogs with activeX SVPictureDisplay
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   use SVPictureDisplay-control
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   15 May 2014 14:37:58   sjones
  * Project:  SVObserver

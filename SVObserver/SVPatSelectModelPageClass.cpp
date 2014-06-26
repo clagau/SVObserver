@@ -5,10 +5,11 @@
 //* .Module Name     : SVPatSelectModelPageClass
 //* .File Name       : $Workfile:   SVPatSelectModelPageClass.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 13:19:58  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   26 Jun 2014 18:09:46  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVPatSelectModelPageClass.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
@@ -20,87 +21,371 @@
 #include "SVImageProcessingClass.h"
 #include "SVImageClass.h"
 #include "SVOMFCLibrary\SVGraphix.h"
+#include "SVOMFCLibrary\DisplayHelper.h"
+#pragma endregion Includes
 
+#pragma region Declarations
 #ifdef _DEBUG
 #define new DEBUG_NEW
-#undef THIS_FILE
-static char THIS_FILE[] = __FILE__;
 #endif
+
+using namespace Seidenader::SVOMFCLibrary;
 
 static const int SVMinModelWidth = 4;
 static const int SVMinModelHeight = 4;
-
-/////////////////////////////////////////////////////////////////////////////
-// helper to generate point set for circle
-void Get8Points(SVDrawObjectClass& circle, const POINT& centerPos, const POINT& pos)
-{
-	circle.AddPoint(CPoint(centerPos.x + pos.x, centerPos.y + pos.y));
-	circle.AddPoint(CPoint(centerPos.x + pos.x, centerPos.y - pos.y));
-	circle.AddPoint(CPoint(centerPos.x - pos.x, centerPos.y + pos.y));
-	circle.AddPoint(CPoint(centerPos.x - pos.x, centerPos.y - pos.y));
-	circle.AddPoint(CPoint(centerPos.x + pos.y, centerPos.y + pos.x));
-	circle.AddPoint(CPoint(centerPos.x + pos.y, centerPos.y - pos.x));
-	circle.AddPoint(CPoint(centerPos.x - pos.y, centerPos.y + pos.x));
-	circle.AddPoint(CPoint(centerPos.x - pos.y, centerPos.y - pos.x));
-}
-
-/////////////////////////////////////////////////////////////////////////////
-// helper to generate point set for circle
-void GenerateCirclePoints(SVDrawObjectClass& circle, long radius, const POINT& centerPos)
-{
-	CPoint pos(0, radius);
-
-	long d = 3 - (2 * radius);		// init decision variable
-
-	while (pos.x < pos.y)
-	{
-		Get8Points(circle, centerPos, pos);
-
-		if (d < 0)
-		{
-			d += (4 * pos.x) + 6; // update decision variable
-		}
-		else
-		{
-			d += 4 * (pos.x - pos.y) + 10; // update decision variable
-			pos.y--;	// Decrement Y
-		}
-		pos.x++;		// Increment X
-	}
-
-	if (pos.x == pos.y)
-	{
-		Get8Points(circle, centerPos, pos);
-	}
-}
-
-/////////////////////////////////////////////////////////////////////////////
-// SVPatModelPageClass property page
+static const int SVMinModelWidthWithCircular = 25;
+static const int SVMinModelHeightWithCircular = 25;
 
 IMPLEMENT_DYNCREATE(SVPatModelPageClass, CPropertyPage)
+#pragma endregion Declarations
 
-SVPatModelPageClass::SVPatModelPageClass() 
+#pragma region Constructor
+SVPatModelPageClass::SVPatModelPageClass()
 : CPropertyPage(SVPatModelPageClass::IDD)
 {
 	//{{AFX_DATA_INIT(SVPatModelPageClass)
-	m_nXPos = 0;
-	m_nYPos = 0;
-	m_lModelWidth = SVMinModelWidth;
-	m_lModelHeight = SVMinModelHeight;
-	m_strModelName = _T("");
+	m_strModelName = _T(""); // @TODO:  Move assignments to the constructor initialization list.
 	//}}AFX_DATA_INIT
-
 	m_nMaxX = 100;
 	m_nMaxY = 100;
 
 	m_sourceImageWidth = 100;
 	m_sourceImageHeight = 100;
+	m_handleToModelOverlayObject = -1;
+	m_handleToCircleOverlayObject = -1;
+	m_handleToSquareOverlayObject = -1;
+	m_handleToCircleOverlayObject2 = -1;
+	m_handleToSquareOverlayObject2 = -1;
+
+	m_nXPos = 0;
+	m_nYPos = 0;
+	m_lModelWidth = m_sourceImageWidth/2;
+	m_lModelHeight = m_sourceImageHeight/2;
 }
 
 SVPatModelPageClass::~SVPatModelPageClass()
 {
 }
+#pragma endregion Constructor
 
+#pragma region Protected Methods
+#pragma region AFX Virtual Methods
+void SVPatModelPageClass::OnCancel()
+{
+}
+
+void SVPatModelPageClass::OnOK()
+{
+	UINT nMsgID = 0;
+	if (ValidateModelParameters(nMsgID))
+	{
+		// Should we check if model needs created here?
+		CPropertyPage::OnOK();
+	}
+	else
+	{
+		AfxMessageBox(nMsgID);
+	}
+}
+
+BOOL SVPatModelPageClass::OnSetActive()
+{
+	BOOL l_bOk = CPropertyPage::OnSetActive();
+
+	if ( l_bOk )
+	{
+		InitializeData();
+	}
+
+	return l_bOk;
+}
+
+BOOL SVPatModelPageClass::OnKillActive()
+{
+	UpdateData(true);
+
+	// Do Settings Validation
+	UINT nMsgID = 0;
+	if (!ValidateModelParameters(nMsgID))
+	{
+		AfxMessageBox(nMsgID);
+		return FALSE;
+	}
+
+// No need for further data Validation. Just return TRUE
+//	return CPropertyPage::OnKillActive();
+
+	return TRUE;
+}
+
+BOOL SVPatModelPageClass::OnInitDialog()
+{
+	BOOL bOK = TRUE;
+
+	CPropertyPage::OnInitDialog();
+
+	m_pSheet = static_cast< SVPatAnalyzeSetupDlgSheet* >( GetParent() );
+
+	///////////////////////////////////////////////////////////////////////
+	// Create Property box
+	CRect rect;
+	// PTS_NOTIFY - SVRPropTree will send notification messages to the parent window
+	DWORD dwStyle = WS_CHILD|WS_VISIBLE|PTS_NOTIFY;
+
+	GetDlgItem(IDC_PROPERTIES)->GetWindowRect(rect);
+	ScreenToClient(rect);
+	GetDlgItem(IDC_PROPERTIES)->DestroyWindow();
+	// Create SVRPropTree control
+	m_Tree.EnableListBoxStyle();
+	m_Tree.Create(dwStyle, rect, this, IDC_PROPERTIES);
+	m_Tree.SetColumn( static_cast<long>(rect.Width() * 65. / 100.) ); // @TODO:  Explain the numbers.
+	m_Tree.ShowInfoText( false );
+
+	m_dialogImage.AddTab(_T("Tool Image")); 
+	m_dialogImage.AddTab(_T("Model Image")); 
+
+	InitializeData();
+	BuildPropertyList();
+	setImages();
+
+	return TRUE;  // return TRUE unless you set the focus to a control
+	              // EXCEPTION: OCX Property Pages should return FALSE
+}
+
+void SVPatModelPageClass::DoDataExchange(CDataExchange* pDX)
+{
+	CPropertyPage::DoDataExchange(pDX);
+	//{{AFX_DATA_MAP(SVPatModelPageClass)
+	DDX_Control(pDX, IDC_PAT_CIRCULAR_OVERSCAN, m_CircularOverscanCheckbox);
+	DDX_Check(pDX, IDC_PAT_CIRCULAR_OVERSCAN, m_bCircularOverscan);
+	DDX_Text(pDX, IDC_PAT1_FILE_NAME, m_strModelName);
+	DDX_Control(pDX, IDC_DIALOGIMAGE, m_dialogImage);
+	//}}AFX_DATA_MAP
+}
+#pragma endregion AFX Virtual Methods
+
+#pragma region AFX MSG
+void SVPatModelPageClass::OnFileButton()
+{
+	if ( GetModelFile( TRUE ) ) // @TODO:  Explain the "TRUE".
+	{
+		ProcessOnKillFocus( IDC_PAT1_FILE_NAME );
+	}
+}
+
+void SVPatModelPageClass::OnCreateModel()
+{
+	UpdateData();
+
+	if ( m_pPatAnalyzer != nullptr && GetModelFile( FALSE ) ) // @TODO:  Explain the "FALSE".
+	{
+		m_pPatAnalyzer->SetModelExtents(static_cast<long>(m_nXPos), static_cast<long>(m_nYPos), m_lModelWidth, m_lModelHeight);
+		m_pPatAnalyzer->SetCircularOverscan((m_bCircularOverscan) ? true : false);
+
+		// SEJ - need to check if region is large enough to accommodate Overscan
+
+		if( m_pPatAnalyzer->UpdateModelFromInputImage() )
+		{
+			SVMatroxBufferInterface::SVStatusCode l_Code;
+
+			// Set the Search parameters
+			BOOL bOk = m_pPatAnalyzer->SetSearchParameters() && !( m_pPatAnalyzer->m_patBufferHandlePtr.empty() );
+			if (bOk)
+			{
+				SVFileNameClass svFileName( m_strModelName );
+
+				CString strExt = svFileName.GetExtension();
+
+				// Now save the Model Image buffer to a file
+				SVMatroxFileTypeEnum FileFormatID = SVFileMIL; // Set as default.
+				if ( strExt.CompareNoCase(_T(".bmp")) == 0)
+				{
+					FileFormatID = SVFileBitmap;
+				}
+				else if(strExt.CompareNoCase(_T(".tif")) == 0)
+				{
+					FileFormatID = SVFileTiff;
+				}
+
+				SVMatroxString l_strFileName = m_strModelName;
+
+				SVImageBufferHandleImage l_MilHandle;
+				m_pPatAnalyzer->m_patBufferHandlePtr->GetData( l_MilHandle );
+
+				l_Code = SVMatroxBufferInterface::Export( l_MilHandle.GetBuffer(),
+															l_strFileName,
+															FileFormatID );
+
+				if (l_Code == SVMEE_STATUS_OK)
+				{
+					
+					UINT nMsgID = RestoreModelFromFile();
+					if (nMsgID)
+					{
+						AfxMessageBox(nMsgID);
+					}
+				}
+				else
+				{
+					AfxMessageBox(IDS_PAT_ALLOC_MODEL_FAILED);
+				}
+			}
+			else
+			{
+				AfxMessageBox(IDS_PAT_ALLOC_MODEL_FAILED);
+			}
+		}
+		else
+		{
+			AfxMessageBox(IDS_PAT_ALLOC_MODEL_FAILED);
+		}
+	}
+}
+
+// Kill focus of File name edit control
+void SVPatModelPageClass::OnKillFileName()
+{
+	if(GetFocus() && (GetFocus()->GetDlgCtrlID() == IDC_PAT1_FILE_BUTTON))
+	{
+		return;
+	}
+
+	// copy current file to old
+	m_strOldModelName = m_strModelName;
+	UpdateData(true);
+
+	ProcessOnKillFocus(IDC_PAT1_FILE_NAME);
+}
+
+void SVPatModelPageClass::OnCircularOverscanClicked()
+{
+	// Get Previous State
+	BOOL bOverscanState = m_bCircularOverscan;
+	UpdateData(true);
+
+	// Check State Change
+	if (bOverscanState != m_bCircularOverscan)
+	{
+		m_pPatAnalyzer->SetCircularOverscan((m_bCircularOverscan) ? true : false);
+		// Set Search Parameters (not current ones, but mostly what we started with before invocation of this setup dialog
+		m_pPatAnalyzer->SetSearchParameters();
+	}
+	setOverlay();
+}
+
+void SVPatModelPageClass::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResult)
+{
+	LPNMPROPTREE pNMPropTree = reinterpret_cast< LPNMPROPTREE >(pNotifyStruct);
+	*plResult = S_OK;
+
+	if ( pNMPropTree->pItem )
+	{
+		SVRPropertyItem* pItem = pNMPropTree->pItem;
+
+		CString sValue;
+		long lNewValue;
+		pItem->GetItemValue( sValue );
+		lNewValue = atol( sValue );
+
+		switch (pItem->GetCtrlID())
+		{
+		case ModelWidth_Property:
+			if (lNewValue >= SVMinModelWidth && lNewValue <= m_sourceImageWidth-m_nXPos)
+			{
+				m_lModelWidth = lNewValue;
+				setCircularOverscanCheckboxState();
+			}
+			else
+			{
+				sValue = AsString( m_lModelWidth );
+				pItem->SetItemValue( sValue );
+			}
+			break;
+		case ModelHeight_Property:
+			if (lNewValue >= SVMinModelHeight && lNewValue <= m_sourceImageHeight-m_nYPos)
+			{
+				m_lModelHeight = lNewValue;
+				setCircularOverscanCheckboxState();
+			}
+			else
+			{
+				sValue = AsString( m_lModelHeight );
+				pItem->SetItemValue( sValue );
+			}
+			break;
+		case ModelOriginX_Property:
+			if (lNewValue >= 0 && lNewValue <= m_sourceImageWidth-m_lModelWidth)
+			{
+				m_nXPos = lNewValue;
+			}
+			else
+			{
+				sValue = AsString( m_nXPos );
+				pItem->SetItemValue( sValue );
+			}
+			break;
+		case ModelOriginY_Property:
+			if (lNewValue >= 0 && lNewValue <= m_sourceImageHeight-m_lModelHeight)
+			{
+				m_nYPos = lNewValue;
+			}
+			else
+			{
+				sValue = AsString( m_nYPos );
+				pItem->SetItemValue( sValue );
+			}	
+			break;
+		default:
+			break;
+		}
+		pItem->OnRefresh();
+		setOverlay();
+	}// end if ( pNMPropTree->pItem )
+}
+
+BEGIN_MESSAGE_MAP(SVPatModelPageClass, CPropertyPage)
+	//{{AFX_MSG_MAP(SVPatModelPageClass)
+	ON_WM_HSCROLL()
+	ON_WM_PAINT()
+	ON_BN_CLICKED(IDC_PAT1_FILE_BUTTON, OnFileButton)
+	ON_BN_CLICKED(IDC_PAT1_CREATE_MODEL, OnCreateModel)
+	ON_BN_CLICKED(IDC_PAT_CIRCULAR_OVERSCAN, OnCircularOverscanClicked)
+	ON_EN_KILLFOCUS(IDC_PAT1_FILE_NAME, OnKillFileName)
+	ON_NOTIFY(PTN_ITEMCHANGED, IDC_PROPERTIES, OnItemChanged)
+	//}}AFX_MSG_MAP
+END_MESSAGE_MAP()
+
+BEGIN_EVENTSINK_MAP(SVPatModelPageClass, CDialog)
+	ON_EVENT(SVPatModelPageClass, IDC_DIALOGIMAGE, 8, SVPatModelPageClass::ObjectChangedExDialogImage, VTS_I4 VTS_I4 VTS_PVARIANT VTS_PVARIANT)
+END_EVENTSINK_MAP()
+#pragma endregion AFX MSG
+
+void SVPatModelPageClass::ObjectChangedExDialogImage(long Tab, long Handle, VARIANT* ParameterList, VARIANT* ParameterValue)
+{
+	////////////////////////////////////////////////////////
+	// SET SHAPE PROPERTIES
+	VariantParamMap ParaMap;
+	int count = DisplayHelper::FillParameterMap(ParaMap, ParameterList, ParameterValue);
+
+	if( ParaMap.end() != ParaMap.find(CDSVPictureDisplay::P_X1) && VT_I4 == ParaMap[CDSVPictureDisplay::P_X1].vt &&
+		ParaMap.end() != ParaMap.find(CDSVPictureDisplay::P_X2) && VT_I4 == ParaMap[CDSVPictureDisplay::P_X2].vt &&
+		ParaMap.end() != ParaMap.find(CDSVPictureDisplay::P_Y1) && VT_I4 == ParaMap[CDSVPictureDisplay::P_Y1].vt &&
+		ParaMap.end() != ParaMap.find(CDSVPictureDisplay::P_Y2) && VT_I4 == ParaMap[CDSVPictureDisplay::P_Y2].vt)
+	{
+		m_lModelWidth = ParaMap[CDSVPictureDisplay::P_X2].lVal - ParaMap[CDSVPictureDisplay::P_X1].lVal;
+		m_lModelHeight = ParaMap[CDSVPictureDisplay::P_Y2].lVal - ParaMap[CDSVPictureDisplay::P_Y1].lVal;
+		m_nXPos = ParaMap[CDSVPictureDisplay::P_X1].lVal;
+		m_nYPos = ParaMap[CDSVPictureDisplay::P_Y1].lVal;
+
+		setCircularOverscanCheckboxState();
+	}
+
+	RefreshProperties();
+	setOverlay();
+}
+#pragma endregion Protected Methods
+
+#pragma region Private Methods
 bool SVPatModelPageClass::ValidateModelParameters(UINT& nMsgID)
 {
 	UpdateData(true);
@@ -170,7 +455,7 @@ bool SVPatModelPageClass::ValidateModelHeight(UINT& nMsgID)
 	return bRetVal;
 }
 
-bool SVPatModelPageClass::ValidateModelFilename(UINT& nMsgID)
+bool SVPatModelPageClass::ValidateModelFilename(UINT& nMsgID) // @TODO:  Add actual validation to this method.
 {
 	nMsgID = 0;
 	UpdateData(true);
@@ -181,101 +466,12 @@ bool SVPatModelPageClass::ValidateModelFilename(UINT& nMsgID)
 	{
 		// verify that the file exists
 	}
-	return bRetVal;
+	return bRetVal; // Currently, this is always returning true!
 }
-
-void SVPatModelPageClass::ClampModelPositionX()
-{
-	UpdateData(true);
-
-	if (m_nXPos > m_nMaxX)
-	{
-		m_nXPos = m_nMaxX;
-	}
-
-	m_XSlider.SetPos(m_nXPos);
-
-	UpdateData(false);
-}
-
-void SVPatModelPageClass::ClampModelPositionY()
-{
-	UpdateData(true);
-	
-	if (m_nYPos > m_nMaxY)
-	{
-		m_nYPos = m_nMaxY;
-	}
-
-	m_YSlider.SetPos(m_nYPos);
-
-	UpdateData(false);
-}
-
-void SVPatModelPageClass::DoDataExchange(CDataExchange* pDX)
-{
-	CPropertyPage::DoDataExchange(pDX);
-	//{{AFX_DATA_MAP(SVPatModelPageClass)
-	DDX_Control(pDX, IDC_PAT1_PICTURE, m_svToolImage);
-	DDX_Control(pDX, IDC_PAT1_MODEL, m_svModelImage);
-	DDX_Control(pDX, IDC_PAT_ORIGIN_Y, m_YSlider);
-	DDX_Control(pDX, IDC_PAT_ORIGIN_X, m_XSlider);
-	DDX_Control(pDX, IDC_PAT_MDL_WIDTH, m_ModelWidthEditCtrl);
-	DDX_Control(pDX, IDC_PAT_MDL_HEIGHT, m_ModelHeightEditCtrl);
-	DDX_Control(pDX, IDC_PAT_X_POSITION, m_ModelPositionXEditCtrl);
-	DDX_Control(pDX, IDC_PAT_Y_POSITION, m_ModelPositionYEditCtrl);
-	DDX_Control(pDX, IDC_PAT_CIRCULAR_OVERSCAN, m_CircularOverscanCheckbox);
-	DDX_Check(pDX, IDC_PAT_CIRCULAR_OVERSCAN, m_bCircularOverscan);
-	DDX_Text(pDX, IDC_PAT_X_POSITION, m_nXPos);
-	DDX_Text(pDX, IDC_PAT_Y_POSITION, m_nYPos);
-	DDX_Text(pDX, IDC_PAT_MDL_WIDTH, m_lModelWidth);
-	DDX_Text(pDX, IDC_PAT_MDL_HEIGHT, m_lModelHeight);
-	DDX_Text(pDX, IDC_PAT1_FILE_NAME, m_strModelName);
-	//}}AFX_DATA_MAP
-}
-
-BEGIN_MESSAGE_MAP(SVPatModelPageClass, CPropertyPage)
-	//{{AFX_MSG_MAP(SVPatModelPageClass)
-	ON_WM_HSCROLL()
-	ON_WM_PAINT()
-	ON_BN_CLICKED(IDC_PAT1_FILE_BUTTON, OnFileButton)
-	ON_BN_CLICKED(IDC_PAT1_CREATE_MODEL, OnCreateModel)
-	ON_BN_CLICKED(IDC_PAT_CIRCULAR_OVERSCAN, OnCircularOverscanClicked)
-	ON_EN_KILLFOCUS(IDC_PAT_X_POSITION, OnKillXPosition)
-	ON_EN_KILLFOCUS(IDC_PAT_Y_POSITION, OnKillYPosition)
-	ON_EN_KILLFOCUS(IDC_PAT_MDL_HEIGHT, OnKillModelHeight)
-	ON_EN_KILLFOCUS(IDC_PAT_MDL_WIDTH, OnKillModelWidth)
-	ON_EN_KILLFOCUS(IDC_PAT1_FILE_NAME, OnKillFileName)
-	//}}AFX_MSG_MAP
-END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
 // SVPatModelPageClass message handlers
-
-BOOL SVPatModelPageClass::OnInitDialog() 
-{
-	BOOL bOK = TRUE;
-
-	CPropertyPage::OnInitDialog();
-	
-	m_pSheet = (SVPatAnalyzeSetupDlgSheet *)GetParent();
-
-	if ( m_pPatAnalyzer != NULL )
-	{
-		m_svToolImage.init( m_pPatAnalyzer->getInputImage() );
-		m_svToolImage.refresh();
-	}
-
-	InitializeData(); 
-	InitModelImage();
-	
-	SetControlTextLength(); // Set limits for edit control Text
-	
-	return TRUE;  // return TRUE unless you set the focus to a control
-	              // EXCEPTION: OCX Property Pages should return FALSE
-}
-
-void SVPatModelPageClass::InitializeData() 
+void SVPatModelPageClass::InitializeData()
 {
 	CString	strValue;
 
@@ -289,320 +485,78 @@ void SVPatModelPageClass::InitializeData()
 	m_sourceImageWidth = l_oRect.right - l_oRect.left;
 	m_sourceImageHeight = l_oRect.bottom - l_oRect.top;
 	
-	// Update the text on the Dialog with the limits
-	CString text;
-	text.Format(_T("Model Width (%d - %d Pixels)"), SVMinModelWidth, m_sourceImageWidth);
-	CWnd* pWnd = GetDlgItem(IDC_PAT_MDL_WIDTH_TXT);
-	pWnd->SetWindowText(text);
-
-	text.Format(_T("Model Height (%d - %d Pixels)"), SVMinModelHeight, m_sourceImageHeight);
-	pWnd = GetDlgItem(IDC_PAT_MDL_HEIGHT_TXT);
-	pWnd->SetWindowText(text);
-
 	long xPos;
 	long yPos;
 	m_pPatAnalyzer->GetModelExtents(xPos, yPos, m_lModelWidth, m_lModelHeight);
-		
+
 	if(l_oRect.bottom < m_lModelHeight)
+	{
 		m_lModelHeight = l_oRect.bottom - 1;
+	}
 
 	if(l_oRect.right < m_lModelWidth)
+	{
 		m_lModelWidth = l_oRect.right - 1;
+	}
 
 	// Initialize the Slider for X origin
 	m_nXPos = static_cast<int>(xPos);
-	m_nMaxX = (int)(l_oRect.right - m_lModelWidth);
-	
+	m_nMaxX = static_cast< int >( l_oRect.right - m_lModelWidth );
+
 	if(m_nXPos > m_nMaxX)
+	{
 		m_nXPos = m_nMaxX;
+	}
 
-// Initialize the Slider for Y origin
+	// Initialize the Slider for Y origin
 	m_nYPos = static_cast<int>(yPos);
-	m_nMaxY = (int)(l_oRect.bottom - m_lModelHeight);
-	
+	m_nMaxY = static_cast< int >( l_oRect.bottom - m_lModelHeight );
+
 	if(m_nYPos > m_nMaxY)
+	{
 		m_nYPos = m_nMaxY;
-
-	m_XSlider.SetRange(0, m_nMaxX, TRUE);
-	m_XSlider.SetPos(m_nXPos);
-	m_XSlider.SetPageSize(10);
-	strValue.Format("%d", m_nMaxX);
-	SetDlgItemText(IDC_PAT_MAX_X, strValue);
-
-	m_YSlider.SetRange(0, m_nMaxY, TRUE);
-	m_YSlider.SetPos(m_nYPos);
-	m_YSlider.SetPageSize(10);
-	strValue.Format("%d", m_nMaxY);
-	SetDlgItemText(IDC_PAT_MAX_Y, strValue);
+	}
 
 	m_pPatAnalyzer->GetModelImageFileName( m_strModelName );
-
+	setCircularOverscanCheckboxState();
 	UpdateData(false);
 }
 
-void SVPatModelPageClass::SetControlTextLength() 
+BOOL SVPatModelPageClass::ProcessOnKillFocus(UINT nId) //@TODO:  Change c-style casts in this method to _cast.
 {
-	m_ModelWidthEditCtrl.SetLimitText(4);
-	m_ModelHeightEditCtrl.SetLimitText(4);
-	m_ModelPositionXEditCtrl.SetLimitText(4);
-	m_ModelPositionYEditCtrl.SetLimitText(4);
-}
-
-void SVPatModelPageClass::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar) 
-{
-	CSliderCtrl *pSlider = (CSliderCtrl *) pScrollBar;
-	int iNewPos = pSlider->GetPos();
-
-	switch (nSBCode)
-	{
-		case SB_LEFT :
-		  iNewPos = pSlider->GetRangeMin();
-		  break;
-
-		case SB_ENDSCROLL :
-		  break;
-
-		case SB_LINELEFT :
-		  iNewPos--;
-		  break;
-
-		case SB_LINERIGHT :
-		  iNewPos++;
-		  break;
-
-		case SB_PAGELEFT :
-		  iNewPos -= 10;
-		  break;
-
-		case SB_PAGERIGHT :
-		  iNewPos += 10;
-		  break;
-
-		case SB_RIGHT :
-		  iNewPos = pSlider->GetRangeMax();
-		  break;
-
-		case SB_THUMBPOSITION :
-		  iNewPos = nPos;
-		  break;
-
-		case SB_THUMBTRACK :
-		  iNewPos = nPos;
-		  break;
-	}
-	if (iNewPos < pSlider->GetRangeMin())
-		iNewPos = pSlider->GetRangeMin();
-
-	if (iNewPos > pSlider->GetRangeMax())
-		iNewPos = pSlider->GetRangeMax();
-	
-	switch (pSlider->GetDlgCtrlID())
-	{
-		case IDC_PAT_ORIGIN_X:
-		{
-			if(m_nXPos != iNewPos)
-			{
-				m_nXPos = iNewPos;
-				UpdateData(false);
-				DrawModelPosition();
-			}
-			break;
-		}
-
-		case IDC_PAT_ORIGIN_Y:
-		{
-			if(m_nYPos != iNewPos)
-			{
-				m_nYPos = iNewPos;
-				UpdateData(false);
-				DrawModelPosition();
-			}
-			break;
-		}
-	}
-
-	CPropertyPage::OnHScroll(nSBCode, nPos, pScrollBar);
-}
-
-void SVPatModelPageClass::OnFileButton() 
-{
-	if ( GetModelFile( true ) )
-	{
-		ProcessOnKillfocus( IDC_PAT1_FILE_NAME );
-	}
-}
-
-void SVPatModelPageClass::OnKillXPosition() 
-{
-	if(ProcessOnKillfocus(IDC_PAT_X_POSITION))
-	{
-		DrawModelPosition();
-	}
-}
-
-void SVPatModelPageClass::OnKillYPosition() 
-{
-	if(ProcessOnKillfocus(IDC_PAT_Y_POSITION))
-	{
-		DrawModelPosition();
-	}
-}
-
-void SVPatModelPageClass::OnKillModelHeight() 
-{
-	if(ProcessOnKillfocus(IDC_PAT_MDL_HEIGHT))
-	{
-		DrawModelPosition();
-	}
-}
-
-void SVPatModelPageClass::OnKillModelWidth() 
-{
-	if(ProcessOnKillfocus(IDC_PAT_MDL_WIDTH))
-	{
-		DrawModelPosition();
-	}
-}
-
-void SVPatModelPageClass::OnCancel() 
-{
-}
-
-void SVPatModelPageClass::OnOK() 
-{
-	UINT nMsgID = 0;
-	if (ValidateModelParameters(nMsgID))
-	{
-		// Should we check if model needs created here?
-		CPropertyPage::OnOK();
-	}
-	else
-	{
-		AfxMessageBox(nMsgID);
-	}
-}
-
-void SVPatModelPageClass::DrawCircularOverscanFigure(SVDlgImageGraphClass& rImage, const CRect& outerRect, const CRect& innerRect, COLORREF color)
-{
-	if (m_bCircularOverscan)
-	{
-		SVDrawObjectClass l_svROIFigure;
-
-		SVDrawObjectClass circle;
-		circle.SetDrawPen( TRUE, PS_SOLID, 1, color );
-		circle.SetDrawSinglePoints(true);
-
-		int radius = min(outerRect.Width(), outerRect.Height()) / 2;
-		
-		if (radius)
-		{
-			CPoint centerPos(outerRect.left + (outerRect.Width() / 2), 
-							outerRect.top + (outerRect.Height() / 2));
-		
-			GenerateCirclePoints(circle, radius, centerPos);
-
-			//
-			rImage.AddPoints( circle, SVGraphScale );
-		}
-
-		l_svROIFigure.SetDrawSinglePoints(false);
-		l_svROIFigure.SetDrawPen( TRUE, PS_SOLID, 1, color );
-
-		// Draw Bounding Rect
-		l_svROIFigure.SetPointAtGrow( 4, CPoint( innerRect.left, innerRect.top ) );		
-		l_svROIFigure.SetPointAtGrow( 0, CPoint( innerRect.left, innerRect.top ) );
-		l_svROIFigure.SetPointAtGrow( 1, CPoint( innerRect.right, innerRect.top ) );
-		l_svROIFigure.SetPointAtGrow( 2, CPoint( innerRect.right, innerRect.bottom ) );
-		l_svROIFigure.SetPointAtGrow( 3, CPoint( innerRect.left, innerRect.bottom ) );
-
-		rImage.AddPoints( l_svROIFigure, SVGraphScale );
-	}
-}
-
-void SVPatModelPageClass::DrawModelPosition()
-{
-	m_svToolImage.ClearPoints();
-
-	CRect outerRect(m_nXPos, m_nYPos, m_nXPos + m_lModelWidth, m_nYPos + m_lModelHeight);
-	CRect innerRect = SVMatroxPatternInterface::CalculateOverscanInnerRect(CPoint(outerRect.left, outerRect.top), CSize(m_lModelWidth, m_lModelHeight));
-
-	SVDrawObjectClass l_svROIFigure;
-
-	COLORREF color = SV_DEFAULT_GOOD_COLOR;
-	l_svROIFigure.SetDrawSinglePoints(false);
-	l_svROIFigure.SetDrawPen( TRUE, PS_SOLID, 1, color );
-
-	l_svROIFigure.SetPointAtGrow( 4, CPoint( outerRect.left, outerRect.top ) );		
-	l_svROIFigure.SetPointAtGrow( 0, CPoint( outerRect.left, outerRect.top ) );
-	l_svROIFigure.SetPointAtGrow( 1, CPoint( outerRect.right, outerRect.top ) );
-	l_svROIFigure.SetPointAtGrow( 2, CPoint( outerRect.right, outerRect.bottom ) );
-	l_svROIFigure.SetPointAtGrow( 3, CPoint( outerRect.left, outerRect.bottom ) );
-
-	m_svToolImage.AddPoints( l_svROIFigure, SVGraphScale );
-
-	if (m_bCircularOverscan)
-	{
-		DrawCircularOverscanFigure(m_svToolImage, outerRect, innerRect, color);
-	}
-
-	m_svToolImage.refresh();
-}
-
-BOOL SVPatModelPageClass::ProcessOnKillfocus(UINT nId) 
-{
+	// @TODO:  Move these method calls outside the "if" line.
 	if (GetActiveWindow() != (CWnd *)m_pSheet ||
 		m_pSheet->GetActiveIndex() != 0)
+	{
 		return TRUE;
-	
+	}
+
 	UINT nMsgID = 0;
-	
+
 	switch (nId)
 	{
-		case IDC_PAT_MDL_WIDTH:
-		{
-			if (ValidateModelWidth(nMsgID))
-			{
-				AdjustSliderX();
-			}
-			break;
-		}
-
-		case IDC_PAT_MDL_HEIGHT:
-		{
-			if (ValidateModelHeight(nMsgID))
-			{
-				AdjustSliderY();
-			}
-			break;
-		}
-
-		case IDC_PAT_X_POSITION:
-		{
-			ClampModelPositionX();
-			break;
-		}
-
-		case IDC_PAT_Y_POSITION:
-		{
-			ClampModelPositionY();
-			break;
-		}
-
 		case IDC_PAT1_FILE_NAME:
 		{
 			// if no model name - don't create
 			if (m_strModelName.IsEmpty())
+			{
 				break;
+			}
 
 			// check that name has changed
 			if (m_strModelName != m_strOldModelName)
 			{
-				// Extract Model from the file			
+				// Extract Model from the file
 				nMsgID = RestoreModelFromFile();
 			}
+			break;
+		}
+		default:
+		{
+			break; // Do nothing.
 		}
 	}
-	
+
 	if (nMsgID)
 	{
 		AfxMessageBox(nMsgID);
@@ -613,188 +567,12 @@ BOOL SVPatModelPageClass::ProcessOnKillfocus(UINT nId)
 	return TRUE;
 }
 
-void SVPatModelPageClass::AdjustSliderY() 
-{
-	SVImageExtentClass l_svExtents;
-	RECT l_oRect;
-
-	m_pPatAnalyzer->GetTool()->GetImageExtent( l_svExtents );
-	l_svExtents.GetOutputRectangle( l_oRect );
-
-	if ( m_pPatAnalyzer != NULL )
-	{
-		CString	strMax;
-		GetDlgItemText(IDC_PAT_MDL_HEIGHT, strMax);
-		m_nMaxY = (int)(l_oRect.bottom - m_lModelHeight);
-		
-		if (m_nMaxY < 1)
-		{
-			m_nMaxY = 1;
-			strMax.Format("%d", (int)(l_oRect.bottom) - 1);
-			SetDlgItemText(IDC_PAT_MDL_HEIGHT, strMax);
-		}
-		
-		m_lModelHeight = atol(strMax.Left(10));
-
-		if (m_nYPos > m_nMaxY)
-		{
-			m_nYPos = m_nMaxY;
-			strMax.Format("%d", m_nMaxY);
-			SetDlgItemText(IDC_PAT_Y_POSITION, strMax);
-		}
-		m_YSlider.SetRange(0, m_nMaxY, TRUE);
-		m_YSlider.SetPos(m_nYPos);
-		strMax.Format("%d", m_nMaxY);
-		SetDlgItemText(IDC_PAT_MAX_Y, strMax);
-	}
-}
-
-void SVPatModelPageClass::AdjustSliderX() 
-{
-	SVImageExtentClass l_svExtents;
-	RECT l_oRect;
-
-	m_pPatAnalyzer->GetTool()->GetImageExtent( l_svExtents );
-	l_svExtents.GetOutputRectangle( l_oRect );
-
-// Re-size the X-axis slide Bar.
-	if ( m_pPatAnalyzer != NULL )
-	{
-		CString		strMax;
-		GetDlgItemText(IDC_PAT_MDL_WIDTH, strMax);
-		m_nMaxX = (int)(l_oRect.right - m_lModelWidth);
-		
-		if (m_nMaxX < 1)
-		{
-			m_nMaxX = 1;
-			strMax.Format("%d", (int)(l_oRect.right) - 1);
-			SetDlgItemText(IDC_PAT_MDL_WIDTH, strMax);
-		}
-
-		m_lModelWidth = atol(strMax.Left(10));
-		
-		if (m_nXPos > m_nMaxX)
-		{
-			m_nXPos = m_nMaxX;
-			strMax.Format("%d", m_nMaxX);
-			SetDlgItemText(IDC_PAT_X_POSITION, strMax);
-		}
-		m_XSlider.SetRange(0, m_nMaxX, TRUE);
-		m_XSlider.SetPos(m_nXPos);
-		strMax.Format("%d", m_nMaxX);
-		SetDlgItemText(IDC_PAT_MAX_X, strMax);
-	}
-}
-
-void SVPatModelPageClass::InitModelImage() 
-{
-	if ( m_pPatAnalyzer != NULL )
-	{
-		m_svModelImage.init( &( m_pPatAnalyzer->m_patBuffer ), m_pPatAnalyzer->m_patBufferHandlePtr );
-
-		m_svModelImage.ClearPoints();
-
-		if (m_bCircularOverscan)
-		{
-			CRect outerRect(0, 0, m_lModelWidth, m_lModelHeight);
-			CRect innerRect = SVMatroxPatternInterface::CalculateOverscanInnerRect(CPoint(outerRect.left, outerRect.top), CSize(m_lModelWidth, m_lModelHeight));
-
-			COLORREF color = SV_DEFAULT_GOOD_COLOR;
-
-			// draw rectangle on center of image
-			DrawCircularOverscanFigure(m_svModelImage, outerRect, innerRect, color);
-		}
-
-		m_svModelImage.refresh();
-	}
-}
-
-void SVPatModelPageClass::OnPaint() 
-{
-	CPaintDC dc(this); // device context for painting
-
-	DrawModelPosition();
-}
-
-void SVPatModelPageClass::OnCreateModel() 
-{
-	UpdateData();
-
-	if ( m_pPatAnalyzer != NULL && GetModelFile( FALSE ) )
-	{
-		m_pPatAnalyzer->SetModelExtents(static_cast<long>(m_nXPos), static_cast<long>(m_nYPos), m_lModelWidth, m_lModelHeight);
-		m_pPatAnalyzer->SetCircularOverscan((m_bCircularOverscan) ? true : false);
-
-		// SEJ - need to check if region is large enough to accomodate Overscan
-
-		if( m_pPatAnalyzer->UpdateModelFromInputImage() )
-		{
-			SVMatroxBufferInterface::SVStatusCode l_Code;
-
-			// Set the Search parameters
-			BOOL bOk = m_pPatAnalyzer->SetSearchParameters() && !( m_pPatAnalyzer->m_patBufferHandlePtr.empty() );
-			if (bOk)
-			{
-				SVFileNameClass svFileName( m_strModelName );
-
-				CString strExt = svFileName.GetExtension();
-		
-				// Now save the Model Image buffer to a file
-				SVMatroxFileTypeEnum FileFormatID = SVFileMIL; // Set as default.
-				if ( strExt.CompareNoCase(_T(".bmp")) == 0)
-				{
-					FileFormatID = SVFileBitmap;
-				}
-				else if(strExt.CompareNoCase(_T(".tif")) == 0)
-				{
-					FileFormatID = SVFileTiff;
-				}
-
-				SVMatroxString l_strFileName = m_strModelName;
-				
-				SVImageBufferHandleImage l_MilHandle;
-				m_pPatAnalyzer->m_patBufferHandlePtr->GetData( l_MilHandle );
-
-				l_Code = SVMatroxBufferInterface::Export( l_MilHandle.GetBuffer(),
-															l_strFileName,
-															FileFormatID );
-
-				if (l_Code == SVMEE_STATUS_OK)
-				{
-					
-					UINT nMsgID = RestoreModelFromFile();
-					if (nMsgID)
-					{
-						AfxMessageBox(nMsgID);
-					}
-				}
-				else
-				{
-					AfxMessageBox(IDS_PAT_ALLOC_MODEL_FAILED);
-				}
-			}
-			else
-			{
-				AfxMessageBox(IDS_PAT_ALLOC_MODEL_FAILED);
-			}
-		}
-		else
-		{
-			AfxMessageBox(IDS_PAT_ALLOC_MODEL_FAILED);
-		}
-
-		Invalidate();
-//		UpdateWindow();
-	}
-}
-
 // If an error occurs, return the Error message Id, otherwise return 0;
-UINT SVPatModelPageClass::RestoreModelFromFile() 
+UINT SVPatModelPageClass::RestoreModelFromFile()
 {
 	UINT nMsgId = 0;
-
 	UpdateData( true );
-	
+
 	// set analyzer values
 	// Set circular overscan State
 	m_pPatAnalyzer->SetCircularOverscan((m_bCircularOverscan) ? true : false);
@@ -803,25 +581,25 @@ UINT SVPatModelPageClass::RestoreModelFromFile()
 	{
 		// save the offsets
 		POINT pos = { m_nXPos, m_nYPos };
-						
+
 		InitializeData();
-		InitModelImage();
 
 		// restore the offsets
 		m_nXPos = pos.x;
 		m_nYPos = pos.y;
+		RefreshProperties();
 		UpdateData(false);
 	}
 	else
+	{
 		return nMsgId;
+	}
 
-	Invalidate();
-//	UpdateWindow();
-
-	return ((UINT)0);
+	setImages();
+	return 0;
 }
 
-BOOL SVPatModelPageClass::GetModelFile(BOOL	bMode)
+BOOL SVPatModelPageClass::GetModelFile(BOOL bMode)
 {
 	BOOL bOk = FALSE;
 
@@ -866,82 +644,286 @@ BOOL SVPatModelPageClass::GetModelFile(BOOL	bMode)
 	return bOk;
 }
 
-BOOL SVPatModelPageClass::OnSetActive() 
+HRESULT SVPatModelPageClass::BuildPropertyList()
 {
-	BOOL l_bOk = CPropertyPage::OnSetActive();
+	m_Tree.DeleteAllItems();
 
-	if ( l_bOk )
+	SVRPropertyItem* pRoot = m_Tree.InsertItem(new SVRPropertyItem());
+	ASSERT( pRoot );
+	pRoot->SetCanShrink(false);
+	pRoot->SetInfoText(_T(""));
+	pRoot->HideItem();
+	pRoot->SetHeight(2);
+
+	CString text;
+	SVRPropertyItemEdit* pItem = dynamic_cast <SVRPropertyItemEdit*> ( m_Tree.InsertItem(new SVRPropertyItemEdit(), pRoot) );
+	long lValue = m_nXPos;
+	CString sValue = AsString(lValue);
+	pItem->SetItemValue( sValue );
+	pItem->SetCtrlID( ModelOriginX_Property );
+	pItem->SetBold( false );
+	pItem->SetHeight(16);
+	pItem->SetLabelText( "X-Position" );
+	pItem->OnRefresh();
+
+	pItem = dynamic_cast <SVRPropertyItemEdit*> ( m_Tree.InsertItem(new SVRPropertyItemEdit(), pRoot) );
+	lValue = m_nYPos;
+	sValue = AsString(lValue);
+	pItem->SetItemValue( sValue );
+	pItem->SetCtrlID( ModelOriginY_Property );
+	pItem->SetBold( false );
+	pItem->SetHeight(16);
+	pItem->SetLabelText( "Y-Position" );
+	pItem->OnRefresh();
+
+	pItem = dynamic_cast <SVRPropertyItemEdit*> ( m_Tree.InsertItem(new SVRPropertyItemEdit(), pRoot) );
+	lValue = m_lModelWidth;
+	sValue = AsString(lValue);
+	pItem->SetItemValue( sValue );
+	pItem->SetCtrlID( ModelWidth_Property );
+	pItem->SetBold( false );
+	pItem->SetHeight(16);
+	text.Format(_T("Width (%d - %d)"),  SVMinModelWidth, m_sourceImageWidth);
+	pItem->SetLabelText( text );
+	pItem->OnRefresh();
+
+	pItem = dynamic_cast <SVRPropertyItemEdit*> ( m_Tree.InsertItem(new SVRPropertyItemEdit(), pRoot) );
+	lValue = m_lModelHeight;
+	sValue = AsString(lValue);
+	pItem->SetItemValue( sValue );
+	pItem->SetCtrlID( ModelHeight_Property );
+	pItem->SetBold( false );
+	pItem->SetHeight(16);
+	text.Format(_T("Height (%d - %d)"), SVMinModelHeight, m_sourceImageHeight);
+	pItem->SetLabelText( text );
+	pItem->OnRefresh();
+
+	SVRPropertyItem* pChild = pRoot->GetChild();
+	while ( pChild )
 	{
-		InitializeData();
-		InitModelImage();
+		pChild->Expand( TRUE );
+		pChild = pChild->GetSibling();
 	}
+	pRoot->Expand( true );	// needed for redrawing
 
-	return l_bOk;
+	RefreshProperties();	// redraw with appropriate bAvailableWithAutoResize status
+
+	return S_OK;
 }
 
-BOOL SVPatModelPageClass::OnKillActive() 
+HRESULT SVPatModelPageClass::RefreshProperties()
 {
-	UpdateData(true);
+	SVRPropertyItem* pRoot = m_Tree.GetRootItem()->GetChild();
+	ASSERT( pRoot );
+	SVRPropertyItem* pChild = pRoot->GetChild();
 
-	// Do Settings Validation
-	UINT nMsgID = 0;
-	if (!ValidateModelParameters(nMsgID))
+	CString sValue("");
+	while ( nullptr != pChild )
 	{
-		AfxMessageBox(nMsgID);
-		return FALSE;
+		switch (pChild->GetCtrlID())
+		{
+		case ModelWidth_Property:
+			sValue = AsString( m_lModelWidth );
+			pChild->SetItemValue( sValue );
+			break;
+		case ModelHeight_Property:
+			sValue = AsString( m_lModelHeight );
+			pChild->SetItemValue( sValue );
+			break;
+		case ModelOriginX_Property:
+			sValue = AsString( m_nXPos );
+			pChild->SetItemValue( sValue );
+			break;
+		case ModelOriginY_Property:
+			sValue = AsString( m_nYPos );
+			pChild->SetItemValue( sValue );
+			break;
+		}
+		pChild = pChild->GetSibling();
 	}
 
-// No need for further data Validation. Just return TRUE
-//	return CPropertyPage::OnKillActive();
+	m_Tree.RedrawWindow();
+	return S_OK;
+}
+
+void SVPatModelPageClass::setImages()
+{
+	if ( m_pPatAnalyzer != NULL )
+	{
+		m_dialogImage.setImage( m_pPatAnalyzer->getInputImage(), 0 );
+		m_dialogImage.setImage( m_pPatAnalyzer->m_patBufferHandlePtr, 1 );
+	}
 	
-	return TRUE; 
+	setOverlay();
+	m_dialogImage.Refresh();
 }
 
-// Kill focus of File name edit control
-void SVPatModelPageClass::OnKillFileName() 
+void SVPatModelPageClass::setOverlay()
 {
-	if(GetFocus() && (GetFocus()->GetDlgCtrlID() == IDC_PAT1_FILE_BUTTON))
-		return;
+	LongParamMap Parmap;
+	Parmap[ CDSVPictureDisplay::P_Type] = CDSVPictureDisplay::RectangleROI;
+	Parmap[CDSVPictureDisplay::P_X1] = m_nXPos;
+	Parmap[CDSVPictureDisplay::P_Y1] = m_nYPos;
+	Parmap[CDSVPictureDisplay::P_X2] = m_nXPos + m_lModelWidth;
+	Parmap[CDSVPictureDisplay::P_Y2] = m_nYPos + m_lModelHeight;
+	Parmap[CDSVPictureDisplay::P_Color] = SVColor::Green;
+	Parmap[CDSVPictureDisplay::P_SelectedColor] = SVColor::Green;
+	Parmap[CDSVPictureDisplay::P_AllowEdit] = 7;
 
-	// copy current file to old
-	m_strOldModelName = m_strModelName;
-	UpdateData(true);
-
-	ProcessOnKillfocus(IDC_PAT1_FILE_NAME);
-}
-
-void SVPatModelPageClass::OnCircularOverscanClicked()
-{
-	// Get Previous State
-	BOOL bOverscanState = m_bCircularOverscan;
-	UpdateData(true);
-
-	// Check State Change
-	if (bOverscanState != m_bCircularOverscan)
+	if ( -1 < m_handleToModelOverlayObject )
 	{
-		m_pPatAnalyzer->SetModelExtents(static_cast<long>(m_nXPos), static_cast<long>(m_nYPos), m_lModelWidth, m_lModelHeight);
+		m_dialogImage.EditOverlay(0, m_handleToModelOverlayObject, Parmap);
+	}
+	else
+	{
+		m_dialogImage.AddOverlay(0, Parmap, &m_handleToModelOverlayObject);
+	}
+	m_dialogImage.SetEditAllow(0, m_handleToModelOverlayObject, 7);
 
-		m_pPatAnalyzer->SetCircularOverscan((m_bCircularOverscan) ? true : false);
-		
-		// Recreate pattern
-		m_pPatAnalyzer->UpdateModelFromInputImage();
-		
-		// Set Search Parameters (not current ones, but mostly what we started with before invocation of this setup dialog
-		m_pPatAnalyzer->SetSearchParameters();
-
-		// Refresh the Model View
-		InitModelImage();
-
-		// cause a repaint
-		Invalidate();
+	if (m_bCircularOverscan)
+	{
+		setCircularToolOverlay();
+		setCircularModelOverlay();
+	}
+	else
+	{
+		if (m_handleToCircleOverlayObject != -1)
+		{
+			m_dialogImage.RemoveOverlay(0, m_handleToCircleOverlayObject);
+			m_handleToCircleOverlayObject = -1;
+		}
+		if (m_handleToCircleOverlayObject2 != -1)
+		{
+			m_dialogImage.RemoveOverlay(1, m_handleToCircleOverlayObject2);
+			m_handleToCircleOverlayObject2 = -1;
+		}
+		if (m_handleToSquareOverlayObject != -1)
+		{
+			m_dialogImage.RemoveOverlay(0, m_handleToSquareOverlayObject);
+			m_handleToSquareOverlayObject = -1;
+		}
+		if (m_handleToSquareOverlayObject2 != -1)
+		{
+			m_dialogImage.RemoveOverlay(1, m_handleToSquareOverlayObject2);
+			m_handleToSquareOverlayObject2 = -1;
+		}
 	}
 }
+
+void SVPatModelPageClass::setCircularToolOverlay()
+{
+	LongParamMap Parmap;
+	Parmap[CDSVPictureDisplay::P_Color] = SVColor::Green;
+	Parmap[CDSVPictureDisplay::P_SelectedColor] = SVColor::Green;
+	Parmap[CDSVPictureDisplay::P_AllowEdit] = 0;
+	CRect innerRect = SVMatroxPatternInterface::CalculateOverscanInnerRect(CPoint(m_nXPos, m_nYPos), CSize(m_lModelWidth, m_lModelHeight));
+	CRect outerRect = SVMatroxPatternInterface::CalculateOverscanOuterRect(CPoint(innerRect.left, innerRect.top), innerRect.Size() );
+	//Circle overlay
+	Parmap[CDSVPictureDisplay::P_Type] = CDSVPictureDisplay::EllipseROI;
+	Parmap[CDSVPictureDisplay::P_X1] = outerRect.left;
+	Parmap[CDSVPictureDisplay::P_Y1] = outerRect.top;
+	Parmap[CDSVPictureDisplay::P_X2] = outerRect.right;
+	Parmap[CDSVPictureDisplay::P_Y2] = outerRect.bottom;
+	if ( -1 < m_handleToCircleOverlayObject )
+	{
+		m_dialogImage.EditOverlay(0, m_handleToCircleOverlayObject, Parmap);
+	}
+	else
+	{
+		m_dialogImage.AddOverlay(0, Parmap, &m_handleToCircleOverlayObject);
+	}
+
+	//Square overlay
+	Parmap[CDSVPictureDisplay::P_Type] = CDSVPictureDisplay::RectangleROI;
+	Parmap[CDSVPictureDisplay::P_X1] = innerRect.left;
+	Parmap[CDSVPictureDisplay::P_Y1] = innerRect.top;
+	Parmap[CDSVPictureDisplay::P_X2] = innerRect.right;
+	Parmap[CDSVPictureDisplay::P_Y2] = innerRect.bottom;
+	if ( -1 < m_handleToSquareOverlayObject )
+	{
+		m_dialogImage.EditOverlay(0, m_handleToSquareOverlayObject, Parmap);
+	}
+	else
+	{
+		m_dialogImage.AddOverlay(0, Parmap, &m_handleToSquareOverlayObject);
+	}
+}
+
+void SVPatModelPageClass::setCircularModelOverlay()
+{
+	//Overlay for the model
+	if (!m_pPatAnalyzer->m_patBufferHandlePtr->empty())
+	{
+		long modelWidth = abs(m_pPatAnalyzer->m_patBufferHandlePtr->GetBitmapInfo().GetWidth());
+		long modelHeight = abs(m_pPatAnalyzer->m_patBufferHandlePtr->GetBitmapInfo().GetHeight());
+		CRect innerRect = SVMatroxPatternInterface::CalculateOverscanInnerRect(CPoint(0, 0), CSize(modelWidth, modelHeight));
+		CRect outerRect = SVMatroxPatternInterface::CalculateOverscanOuterRect(CPoint(innerRect.left, innerRect.top), innerRect.Size() );
+		LongParamMap Parmap;
+		Parmap[CDSVPictureDisplay::P_Color] = SVColor::Green;
+		Parmap[CDSVPictureDisplay::P_SelectedColor] = SVColor::Green;
+		Parmap[CDSVPictureDisplay::P_AllowEdit] = 0;
+		//Circle overlay
+		Parmap[CDSVPictureDisplay::P_Type] = CDSVPictureDisplay::EllipseROI;
+		Parmap[CDSVPictureDisplay::P_X1] = outerRect.left;
+		Parmap[CDSVPictureDisplay::P_Y1] = outerRect.top;
+		Parmap[CDSVPictureDisplay::P_X2] = outerRect.right;
+		Parmap[CDSVPictureDisplay::P_Y2] = outerRect.bottom;
+
+		if ( -1 < m_handleToCircleOverlayObject2 )
+		{
+			m_dialogImage.EditOverlay(1, m_handleToCircleOverlayObject2, Parmap);
+		}
+		else
+		{
+			m_dialogImage.AddOverlay(1, Parmap, &m_handleToCircleOverlayObject2);
+		}
+
+		//Square overlay
+		Parmap[CDSVPictureDisplay::P_Type] = CDSVPictureDisplay::RectangleROI;
+		Parmap[CDSVPictureDisplay::P_X1] = innerRect.left;
+		Parmap[CDSVPictureDisplay::P_Y1] = innerRect.top;
+		Parmap[CDSVPictureDisplay::P_X2] = innerRect.right;
+		Parmap[CDSVPictureDisplay::P_Y2] = innerRect.bottom;
+		if ( -1 < m_handleToSquareOverlayObject2 )
+		{
+			m_dialogImage.EditOverlay(1, m_handleToSquareOverlayObject2, Parmap);
+		}
+		else
+		{
+			m_dialogImage.AddOverlay(1, Parmap, &m_handleToSquareOverlayObject2);
+		}
+	}  //if (!m_pPatAnalyzer->m_patBufferHandlePtr->empty())
+}
+
+void SVPatModelPageClass::setCircularOverscanCheckboxState()
+{
+	bool shouldEnable = (SVMinModelWidthWithCircular <= m_lModelWidth && SVMinModelHeightWithCircular <= m_lModelHeight);
+
+	m_CircularOverscanCheckbox.EnableWindow(shouldEnable);
+	if (!shouldEnable)
+	{
+		m_CircularOverscanCheckbox.SetCheck(0);
+		OnCircularOverscanClicked();
+	}
+	UpdateData(FALSE);
+}
+#pragma endregion Private Methods
 
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVPatSelectModelPageClass.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVPatSelectModelPageClass.cpp_v  $
+ * 
+ *    Rev 1.1   26 Jun 2014 18:09:46   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  885
+ * SCR Title:  Replace image display in TA-dialogs with activeX SVPictureDisplay
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   use SVPictureDisplay-control
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 13:19:58   bWalter
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : SVToolAdjustmentDialogAnalyzerPageClass
 //* .File Name       : $Workfile:   SVToolAdjustmentDialogAnalyzerPageClass.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.3  $
-//* .Check In Date   : $Date:   15 May 2014 14:36:12  $
+//* .Current Version : $Revision:   1.4  $
+//* .Check In Date   : $Date:   26 Jun 2014 18:29:24  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -47,7 +47,7 @@ SVToolAdjustmentDialogAnalyzerPageClass::SVToolAdjustmentDialogAnalyzerPageClass
 	pParentDialog = Parent;
 	pTool = NULL;
 	pCurrentAnalyzer = NULL;
-	
+
 	if( pParentDialog )
 	{
 		pTool = pParentDialog->GetTool();
@@ -77,7 +77,14 @@ void SVToolAdjustmentDialogAnalyzerPageClass::DoDataExchange(CDataExchange* pDX)
 	//}}AFX_DATA_MAP
 }
 
-BOOL SVToolAdjustmentDialogAnalyzerPageClass::OnInitDialog() 
+
+BOOL SVToolAdjustmentDialogAnalyzerPageClass::OnSetActive()
+{
+	setImages();
+	return CPropertyPage::OnSetActive();
+}
+
+BOOL SVToolAdjustmentDialogAnalyzerPageClass::OnInitDialog()
 {
 	CPropertyPage::OnInitDialog();
 
@@ -89,45 +96,39 @@ BOOL SVToolAdjustmentDialogAnalyzerPageClass::OnInitDialog()
 		// Set Result/Publish button...
 		switch( rToolType.SubType )
 		{
-			case SVToolProfileObjectType:
-			case SVLinearToolObjectType:
+		case SVToolProfileObjectType:  // fall through...
+		case SVLinearToolObjectType:
+			if( pWnd = GetDlgItem( IDC_PUBLISH_BUTTON ) )
+			{
+				pWnd->EnableWindow( FALSE );
+				pWnd->ShowWindow( SW_HIDE );
+			}
+			break;
+
+		case SVWindowToolObjectType:  // fall through...
+		default:
+			if( pWnd = GetDlgItem( IDC_RESULT_BUTTON ) )
+			{
+				pWnd->EnableWindow( FALSE );
+				pWnd->ShowWindow( SW_HIDE );
+			}
+
+			if( !pCurrentAnalyzer )
+			{
 				if( pWnd = GetDlgItem( IDC_PUBLISH_BUTTON ) )
 				{
 					pWnd->EnableWindow( FALSE );
-					pWnd->ShowWindow( SW_HIDE );
 				}
-				break;
-
-			case SVWindowToolObjectType:
-			default:
-				if( pWnd = GetDlgItem( IDC_RESULT_BUTTON ) )
-				{
-					pWnd->EnableWindow( FALSE );
-					pWnd->ShowWindow( SW_HIDE );
-				}
-
-				if( !pCurrentAnalyzer )
-				{
-					if( pWnd = GetDlgItem( IDC_PUBLISH_BUTTON ) )
-					{
-						pWnd->EnableWindow( FALSE );
-					}
-				}
-				break;
+			}
+			break;
 		}
+
+		dialogImage.AddTab(_T("Tool Result"));
 
 		// Get the Image for this tool
-		SVImageInfoClass* pImageInfo = reinterpret_cast<SVImageInfoClass*>(::SVSendMessage( pTool, SVM_GETFIRST_IMAGE_INFO, NULL, NULL ));
-		if( pImageInfo )
-		{
-			SVImageClass* l_pImage = NULL;
+			setImages();
 
-			pImageInfo->GetOwnerImage( l_pImage );
 
-			dialogImage.UpdateImageInfo( l_pImage );
-			dialogImage.refresh();
-		}
-	
 		// get index of Current Analyzer
 		int currentAnalyzerIndex = -1;
 		if (pCurrentAnalyzer)
@@ -152,21 +153,20 @@ BOOL SVToolAdjustmentDialogAnalyzerPageClass::OnInitDialog()
 			GetParent()->SendMessage( WM_CLOSE );
 		else
 			SendMessage( WM_CLOSE );
-	
-	return TRUE;  // return TRUE unless you set the focus to a control
-	              // EXCEPTION: OCX-Eigenschaftenseiten sollten FALSE zurückgeben
-}
 
+	return TRUE;  // return TRUE unless you set the focus to a control
+	// EXCEPTION: OCX-Eigenschaftenseiten sollten FALSE zurückgeben
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : OnButtonDetails
 ////////////////////////////////////////////////////////////////////////////////
 // .History
-//	 Date		Author		Comment                                       
+//	 Date		Author		Comment
 //  :27.05.1997 RO			First Implementation
 //	:28.08.1999 RO			Replaced DoDetailDialog() with SetupDialog().
 ////////////////////////////////////////////////////////////////////////////////
-void SVToolAdjustmentDialogAnalyzerPageClass::OnButtonDetails() 
+void SVToolAdjustmentDialogAnalyzerPageClass::OnButtonDetails()
 {
 	if( pCurrentAnalyzer )
 	{
@@ -200,7 +200,7 @@ void SVToolAdjustmentDialogAnalyzerPageClass::OnButtonDetails()
 		AfxMessageBox( IDS_USER_INFORMATION_NO_ANALYZER_DETAILS, MB_ICONINFORMATION );
 }
 
-void SVToolAdjustmentDialogAnalyzerPageClass::OnSelchangeCurrentAnalyzer() 
+void SVToolAdjustmentDialogAnalyzerPageClass::OnSelchangeCurrentAnalyzer()
 {
 	CWaitCursor l_cwcMouse;
 
@@ -235,19 +235,19 @@ void SVToolAdjustmentDialogAnalyzerPageClass::OnSelchangeCurrentAnalyzer()
 				// Ensure this Object's inputs get connected
 				//::SVSendMessage( pCurrentAnalyzer, SVM_CONNECT_ALL_INPUTS, NULL, NULL );
 
-				// Fix to ensure Friends get connections as well 
+				// Fix to ensure Friends get connections as well
 				::SVSendMessage( pTool, SVM_CONNECT_ALL_INPUTS, NULL, NULL );
 
 				// And last - Create (initialize) it
-				
+
 				if( ! pCurrentAnalyzer->IsCreated() )
 				{
-					// SEJ 
+					// SEJ
 					// And finally try to create the child object...
 					if( ::SVSendMessage( pTool, SVM_CREATE_CHILD_OBJECT, reinterpret_cast<DWORD_PTR>(pCurrentAnalyzer), SVMFSetDefaultInputs | SVMFResetInspection ) != SVMR_SUCCESS )
 					{
 						AfxMessageBox("Creation of Analyzer Failed");
-						
+
 						// What should we really do here ??? SEJ
 
 						// Remove it from the Tool TaskObjectList ( Destruct it )
@@ -314,8 +314,27 @@ void SVToolAdjustmentDialogAnalyzerPageClass::DestroyAnalyzer()
 
 }
 
+BOOL SVToolAdjustmentDialogAnalyzerPageClass::setImages()
+{
+
+	// Get the Image for this tool
+	SVImageInfoClass* pImageInfo = reinterpret_cast<SVImageInfoClass*>( ::SVSendMessage( pTool, SVM_GETFIRST_IMAGE_INFO, NULL, NULL ));
+	if( pImageInfo )
+	{
+		SVImageClass* l_pImage = NULL;
+
+		pImageInfo->GetOwnerImage( l_pImage );
+
+		dialogImage.setImage(l_pImage);
+		dialogImage.Refresh();
+		return TRUE;
+	}
+	else
+		return FALSE;
+}
+
 ////////////////////////////////////////////////////////////////////////////////
-// updateButtons - Enable/Disable Buttons 
+// updateButtons - Enable/Disable Buttons
 ////////////////////////////////////////////////////////////////////////////////
 void SVToolAdjustmentDialogAnalyzerPageClass::updateButtons()
 {
@@ -325,10 +344,10 @@ void SVToolAdjustmentDialogAnalyzerPageClass::updateButtons()
 		state = TRUE;
 
 	CWnd* pWnd;
-	
+
 	if( ( pWnd = GetDlgItem( IDC_DETAILS_BUTTON ) ) )
 		pWnd->EnableWindow( state );
-	
+
 	if( ( pWnd = GetDlgItem( IDC_RESULT_BUTTON ) ) )
 	{
 		if( pWnd->IsWindowVisible() )
@@ -342,7 +361,7 @@ void SVToolAdjustmentDialogAnalyzerPageClass::updateButtons()
 	}
 }
 
-void SVToolAdjustmentDialogAnalyzerPageClass::OnResultButton() 
+void SVToolAdjustmentDialogAnalyzerPageClass::OnResultButton()
 {
 	if( pCurrentAnalyzer )
 	{
@@ -378,31 +397,30 @@ void SVToolAdjustmentDialogAnalyzerPageClass::OnResultButton()
 
 		// Call dialog...
 		dlg.DoModal();
-		
+
 		// if dialog was cancelled - get current analyzer pointer...
-			//pCurrentAnalyzer = ( SVAnalyzerClass* ) dlg.PParentObject;
+		//pCurrentAnalyzer = ( SVAnalyzerClass* ) dlg.PParentObject;
 
 		// Restore the pointer (in case of Cancel)
 		pCurrentAnalyzer = ( SVAnalyzerClass* )SVObjectManagerClass::Instance().GetObject( analyzerGuid );
 	}
 }
 
-
-void SVToolAdjustmentDialogAnalyzerPageClass::OnPublishButton() 
+void SVToolAdjustmentDialogAnalyzerPageClass::OnPublishButton()
 {
 	SVDlgResultPicker   dlg;
-	
+
 	CString  publishedResultString;
-	
+
 	msvError.ClearLastErrorCd ();
 	while (1)
 	{
 		dlg.PTaskObjectList = pCurrentAnalyzer;
 		dlg.uAttributesDesired = SV_PUBLISHABLE;
-		
+
 		publishedResultString.LoadString ( IDS_PUBLISHABLE_RESULTS );
 		dlg.SetCaptionTitle (publishedResultString);
-		
+
 		INT_PTR rc = dlg.DoModal ();
 		if( rc == IDOK )
 		{
@@ -433,6 +451,16 @@ void SVToolAdjustmentDialogAnalyzerPageClass::OnPublishButton()
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVToolAdjustmentDialogAnalyzerPageClass.cpp_v  $
  * 
+ *    Rev 1.4   26 Jun 2014 18:29:24   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  885
+ * SCR Title:  Replace image display in TA-dialogs with activeX SVPictureDisplay
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   use SVPictureDisplay-control
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ *
  *    Rev 1.3   15 May 2014 14:36:12   sjones
  * Project:  SVObserver
  * Change Request (SCR) nbr:  852

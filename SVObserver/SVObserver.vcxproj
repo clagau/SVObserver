@@ -318,6 +318,7 @@ echo %time%
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="CDSVPictureDisplay.cpp" />
     <ClCompile Include="ConditionalController.cpp" />
     <ClCompile Include="BasicValueObject.cpp" />
     <ClCompile Include="BasicValueObjects.cpp" />
@@ -363,6 +364,7 @@ echo %time%
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
+    <ClCompile Include="PictureDisplay.cpp" />
     <ClCompile Include="MonitorListBasePage.cpp" />
     <ClCompile Include="MonitorListImagesPage.cpp" />
     <ClCompile Include="MonitorListSheet.cpp" />
@@ -2179,16 +2181,6 @@ echo %time%
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <ClCompile Include="SVMaskShapeEditorDlg.cpp">
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-    </ClCompile>
-    <ClCompile Include="SVMaskShapeFigureEditors.cpp">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -4290,6 +4282,7 @@ echo %time%
     <ClInclude Include="AutoBuild.h" />
     <ClInclude Include="BasicValueObject.h" />
     <ClInclude Include="BasicValueObjects.h" />
+    <ClInclude Include="CDSVPictureDisplay.h" />
     <ClInclude Include="ConditionalController.h" />
     <ClInclude Include="CSVOCRFontTraining.h" />
     <ClInclude Include="CSVOCRGrayFontTrain.h" />
@@ -4300,6 +4293,7 @@ echo %time%
     <ClInclude Include="ISVCancel.h" />
     <ClInclude Include="ISVPropertyPageDialog.h" />
     <ClInclude Include="ModelessMessageBox.h" />
+    <ClInclude Include="PictureDisplay.h" />
     <ClInclude Include="MonitorListBasePage.h" />
     <ClInclude Include="MonitorListImagesPage.h" />
     <ClInclude Include="MonitorListSheet.h" />
@@ -4603,7 +4597,6 @@ echo %time%
     <ClInclude Include="svmaskeditor.h" />
     <ClInclude Include="SVMaskShape.h" />
     <ClInclude Include="SVMaskShapeEditorDlg.h" />
-    <ClInclude Include="SVMaskShapeFigureEditors.h" />
     <ClInclude Include="SVMathContainer.h" />
     <ClInclude Include="SVMathEquation.h" />
     <ClInclude Include="SVMathTool.h" />
@@ -4987,7 +4980,7 @@ echo %time%
   </ImportGroup>
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties RESOURCE_FILE="SVObserver.rc" />
+      <UserProperties RESOURCE_FILE="SVObserver.rc" _x007B_8174991A-A5F5-4CB3-85E3-3B31FAEF2314_x007D_="CDSVPictureDisplay" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>

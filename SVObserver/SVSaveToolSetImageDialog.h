@@ -5,8 +5,8 @@
 //* .Module Name     : SVSaveToolSetImageDialog
 //* .File Name       : $Workfile:   SVSaveToolSetImageDialog.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 15:02:22  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   26 Jun 2014 18:14:58  $
 //******************************************************************************
 
 //******************************************************************************
@@ -24,7 +24,7 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
-#include "SVDlgImage.h"
+#include "PictureDisplay.h"
 
 class SVToolSetClass;
 
@@ -42,7 +42,7 @@ class SVSaveToolSetImageDialogClass : public CDialog
 // Constructor(s):
 //******************************************************************************
 public:
-	SVSaveToolSetImageDialogClass(CWnd* pParent = NULL);   // standard constructor
+	SVSaveToolSetImageDialogClass(SVToolSetClass* pToolSet, CWnd* pParent = NULL);   // standard constructor
 
 //******************************************************************************
 // Operator(s):
@@ -62,16 +62,17 @@ protected:
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 
+	void setImages();
 
 //******************************************************************************
 // Data Element(s):
 //******************************************************************************
-public:
-	SVToolSetClass*		PToolSet;
+private:
+	SVToolSetClass*		m_pToolSet;
 	//{{AFX_DATA(SVSaveToolSetImageDialogClass)
 	enum { IDD = IDD_SELECT_TOOLSET_IMAGE_TO_SAVE_DIALOG };
-	SVDlgImageClass	currentSelectedImageCtrl;
-	CComboBox	availableImagesComboCtrl;
+	PictureDisplay	m_currentSelectedImageCtrl;
+	CComboBox	m_availableImagesComboCtrl;
 	//}}AFX_DATA
 
 };
@@ -89,7 +90,17 @@ public:
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVSaveToolSetImageDialog.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVSaveToolSetImageDialog.h_v  $
+ * 
+ *    Rev 1.1   26 Jun 2014 18:14:58   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  885
+ * SCR Title:  Replace image display in TA-dialogs with activeX SVPictureDisplay
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   use SVPictureDisplay-control
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 15:02:22   bWalter
  * Project:  SVObserver

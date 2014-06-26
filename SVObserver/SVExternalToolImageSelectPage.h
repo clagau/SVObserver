@@ -5,85 +5,115 @@
 //* .Module Name     : SVExternalToolImageSelectPage
 //* .File Name       : $Workfile:   SVExternalToolImageSelectPage.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 10:32:20  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   26 Jun 2014 17:30:38  $
 //******************************************************************************
 
-#if !defined(AFX_SVEXTERNALTOOLIMAGESELECT_H__7B89817A_8EF9_4C35_9F99_31F2551FBE02__INCLUDED_)
-#define AFX_SVEXTERNALTOOLIMAGESELECT_H__7B89817A_8EF9_4C35_9F99_31F2551FBE02__INCLUDED_
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
 
-#include "SVDlgImage.h"
+#pragma region Includes
 #include "SVExternalToolTask.h"
 #include "SVImageListClass.h"
 #include "SVView.h"
+#include "PictureDisplay.h"
+#include "PropertyTree\PropTree.h"
+#pragma endregion Includes
 
+#pragma region Declarations
 class SVExternalToolDetailsSheet;
 class SVExternalTool;
 class SVExternalToolTask;
-
-/////////////////////////////////////////////////////////////////////////////
-// SVExternalToolImageSelectPage dialog
+#pragma endregion Declarations
 
 class SVExternalToolImageSelectPage : public CPropertyPage
 {
-//	DECLARE_DYNCREATE(SVExternalToolImageSelectPage)
-
-// Construction
+#pragma region Constructor
 public:
-	SVExternalToolImageSelectPage(SVExternalToolDetailsSheet* pParent = NULL, int id = IDD );
+	SVExternalToolImageSelectPage( SVExternalToolDetailsSheet* pParent = NULL, int id = IDD );
 	~SVExternalToolImageSelectPage();
+#pragma endregion Constructor
 
-	void Refresh();
-// Dialog Data
-	//{{AFX_DATA(SVExternalToolImageSelectPage)
-	enum { IDD = IDD_EXTERNAL_TOOL_IMAGES };
-	CListBox	m_lbImageList;
-	SVDlgImageClass	m_ImageDisplay;
-	SVAvailableSourceImageListComboBoxClass	m_cbAvailableImages;
-	//}}AFX_DATA
-
-
+#pragma region Protected Methods
 // Overrides
 	// ClassWizard generate virtual function overrides
 	//{{AFX_VIRTUAL(SVExternalToolImageSelectPage)
-	protected:
+protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+	virtual BOOL OnInitDialog();
 	//}}AFX_VIRTUAL
 
-// Implementation
-protected:
 	// Generated message map functions
 	//{{AFX_MSG(SVExternalToolImageSelectPage)
-	virtual BOOL OnInitDialog();
-	afx_msg void OnSelchangeImage();
-	afx_msg void OnSelchangeImageList();
+	void OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResult);
+	void OnPropClick(NMHDR* pNotifyStruct, LRESULT* plResult);
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
-protected:
-	SVExternalToolDetailsSheet*			m_pParentDialog;
-	SVImageClass*						m_pCurrentSourceImage;
-	SVInObjectInfoStruct*				m_pInputImageInfo[SVExternalToolTaskData::NUM_INPUT_IMAGES];
-	int									m_iOldIndex;
-	SVImageListClass				    m_AvailableImages;
-	SVInputInfoListClass				m_ToolInputList;
-	SVExternalTool*                     m_pTool;
-	SVExternalToolTask*                 m_pTask;
+#pragma endregion Protected Methods
+
+#pragma region Private Methods
+private:
+	void Refresh();
+
+	//************************************
+	// Method:    buildPropertyTree
+	// Description: build up the property tree for the input image selection
+	// Returns:   void
+	//************************************
+	void buildPropertyTree();
+
+	//************************************
+	// Method:    setImages
+	// Description: Sets the images to the image control.
+	// Returns:   void
+	//************************************
+	void setImages();
+
+	//************************************
+	// Method:    createAvailableImageList
+	// Description: create a list of the available images and store them to the parameter m_AvailableImages.
+	// Parameter: const SVGUID toolSetGUID The GUID of the toolset.
+	// Parameter: const SVIPDoc * l_pIPDoc Pointer to the used IP document.
+	// Returns:   void
+	//************************************
+	void createAvailableImageList( const SVGUID toolSetGUID, const SVIPDoc* l_pIPDoc );
+#pragma endregion Private Methods
+
+#pragma region Member variables
+private:
+	// Dialog Data
+	//{{AFX_DATA(SVExternalToolImageSelectPage)
+	enum { IDD = IDD_EXTERNAL_TOOL_IMAGES };
+	PictureDisplay m_ImageDisplay;
+	//}}AFX_DATA
+
+	SVExternalToolDetailsSheet*	m_pParentDialog;
+	SVInObjectInfoStruct*		m_pInputImageInfo[SVExternalToolTaskData::NUM_INPUT_IMAGES];
+	SVImageListClass			m_AvailableImages;
+	SVExternalTool*				m_pTool;
+	SVExternalToolTask*			m_pTask;
+	SVRPropTree					m_Tree;
+#pragma endregion Member variables
 };
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
 
-#endif // !defined(AFX_SVEXTERNALTOOLIMAGESELECT_H__7B89817A_8EF9_4C35_9F99_31F2551FBE02__INCLUDED_)
-
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVExternalToolImageSelectPage.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVExternalToolImageSelectPage.h_v  $
+ * 
+ *    Rev 1.1   26 Jun 2014 17:30:38   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  885
+ * SCR Title:  Replace image display in TA-dialogs with activeX SVPictureDisplay
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   rearrange the dialog
+ * use SVPictureDisplay-control
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 10:32:20   bWalter
  * Project:  SVObserver

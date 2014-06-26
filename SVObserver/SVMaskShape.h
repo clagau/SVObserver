@@ -5,52 +5,20 @@
 //* .Module Name     : SVMaskShape
 //* .File Name       : $Workfile:   SVMaskShape.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   23 Jul 2013 17:56:52  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   26 Jun 2014 17:49:54  $
 //******************************************************************************
 
-#ifndef SVMASKSHAPE_H_
-#define SVMASKSHAPE_H_
 #pragma once
 
+#pragma region Includes
 #include <map>
 #include <set>
 #include "SVHBitmapUtilitiesLibrary\SVHBitmapUtilities.h"
 #include "SVImageLibrary\SVImageInfoClass.h"
 #include "SVUtilityLibrary/SVUtilityGlobals.h"
 #include "SVMatroxLibrary/SVMatroxLibrary.h"
-
-//!! THESE NEED TO BE MOVED
-//const int blahblah = 5;	// this works in VC6, but we want these color names to be scoped
-//struct SVColor	// define standard color names	// VC6 won't compile const values defined inside a class/struct
-namespace SVColor	// define standard color names
-{  
-	//enum type	// use const instead of enum so we can see the values in the editor intellisense
-	//{
-		const COLORREF Black        = RGB(   0,   0,   0); //0x00000000;	//        0
-		const COLORREF White        = RGB( 255, 255, 255); //0x00FFFFFF;	// 16777215
-		const COLORREF DarkBlue     = RGB(   0,   0, 192); //0x00C00000;	// 12582912
-		const COLORREF Blue         = RGB(   0,   0, 255); //0x00FF0000;	// 16711680
-		const COLORREF MeduimBlue   = RGB(   0, 128, 255); //0x00FF8000;	// 16760832
-		const COLORREF LightBlue    = RGB(   0, 192, 255); //0x00FFC000;	// 16744448
-		const COLORREF Aqua         = RGB(   0, 255, 255); //0x00FFFF00;	// 16776960
-		const COLORREF DarkGreen    = RGB(   0, 128,   0); //0x00008000;	//    32668
-		const COLORREF Green        = RGB(   0, 192,   0); //0x0000C000;	//    49152
-		const COLORREF LightGreen   = RGB(   0, 255,   0); //0x0000FF00;	//    65280
-		const COLORREF Cyan         = RGB(   0, 192, 192); //0x00C0C000;	// 12632064
-		const COLORREF LightCyan    = RGB(   0, 255, 255); //0x00FFFF00;	// 16776960
-		const COLORREF Red          = RGB( 192,   0,   0); //0x000000C0;	//      192
-		const COLORREF LightRed     = RGB( 255,   0,   0); //0x000000FF;	//      255
-		const COLORREF Magenta      = RGB( 192,   0, 192); //0x00C000C0;	// 12583104
-		const COLORREF LightMagenta = RGB( 255,   0, 255); //0x00FF00FF;	// 16711935
-		const COLORREF Brown        = RGB( 143,  71,  71); //0x0047478F;	//  4671375
-		const COLORREF Yellow       = RGB( 255, 255,   0); //0x0000FFFF;	//    65535
-		const COLORREF DarkGray     = RGB( 128, 128, 128); //0x00808080;	//  8421504
-		const COLORREF LightGray    = RGB( 192, 192, 192); //0x00C0C0C0;	// 12632256
-		const COLORREF Orange       = RGB( 255, 112,   0); //0x000070FF;	//    28927
-	//};
-}//;
-
+#pragma endregion Includes
 
 struct SVMaskFillPropertiesStruct
 {
@@ -81,7 +49,6 @@ struct SVMaskShapeProperty
 	SVMaskShapeProperty(const SVMaskShapeProperty& rhs)
 	{
 		value = rhs.value;
-//		ASSERT( rhs.order != 0 );
 		order = rhs.order;
 		bAvailableWithAutoResize = rhs.bAvailableWithAutoResize;
 		strName = rhs.strName;
@@ -115,7 +82,6 @@ struct SVMaskShapeProperty
 class SVMaskShape
 {
 public:
-	
 	typedef std::map<GUID, SVMaskShapeProperty> MapType;
 	typedef MapType::const_iterator MapTypeConstIterator;
 	struct SortedMapCompare {bool operator ()(const MapTypeConstIterator& a, const MapTypeConstIterator& b)
@@ -139,10 +105,10 @@ public:
 	HRESULT SetFillProperties( SVMaskFillPropertiesStruct svFillStruct );
 	HRESULT GetFillProperties( SVMaskFillPropertiesStruct& rsvFillStruct ) const;
 
-	CRect GetMaskImageRect();
-	CRect GetRect();
-	CSize GetSize();
-	CPoint GetCenter();
+	CRect GetMaskImageRect(); //@TODO:  Change method to const?
+	CRect GetRect(); //@TODO:  Change method to const?
+	CSize GetSize(); //@TODO:  Change method to const?
+	CPoint GetCenter(); //@TODO:  Change method to const?
 
 protected:
 	SVMaskShape();	// don't create instances of base class
@@ -151,8 +117,8 @@ protected:
 	virtual HRESULT RenderOutline( CDC& dc, CRect rectViewport, CRect rectDisplay, COLORREF rgb ) {return S_FALSE; }
 	virtual HRESULT ValidateProperties(MapType& rmapProperties);
 
-	HRESULT TranslateToDisplay(CRect rectViewport, CRect rectDisplay, CRect& rectShape);
-	HRESULT TranslateToDisplay(CRect rectViewport, CRect rectDisplay, std::vector<POINT>& rvecPoints);
+	HRESULT TranslateToDisplay(CRect rectViewport, CRect rectDisplay, CRect& rectShape); //@TODO:  Change method to const?
+	HRESULT TranslateToDisplay(CRect rectViewport, CRect rectDisplay, std::vector<POINT>& rvecPoints); //@TODO:  Change method to const?
 
 	SVDIBITMAPINFO m_dib;
 	CDC m_RenderDC;
@@ -166,12 +132,11 @@ protected:
 	bool m_bAutoResize;
 
 private:
-	void ComputeColors(COLORREF& rgbShape, COLORREF& rgbBackground);
+	void ComputeColors(COLORREF& rgbShape, COLORREF& rgbBackground); //@TODO:  Change method to const?
 
-	static HRESULT TranslateCoordinates(const SVExtentFigureStruct& rectSource, const SVExtentFigureStruct& rectDest, SVExtentFigureStruct& rRect);
-	static HRESULT TranslateCoordinates(const SVExtentFigureStruct& rectSource, const SVExtentFigureStruct& rectDest, SVExtentPointStruct& rPoint);
+	static HRESULT TranslateCoordinates(const SVExtentFigureStruct& rectSource, const SVExtentFigureStruct& rectDest, SVExtentFigureStruct& rRect); //@TODO:  Change method to const?
+	static HRESULT TranslateCoordinates(const SVExtentFigureStruct& rectSource, const SVExtentFigureStruct& rectDest, SVExtentPointStruct& rPoint); //@TODO:  Change method to const?
 	static HRESULT TranslateCoordinates(const SVExtentFigureStruct& rectSource, const SVExtentFigureStruct& rectDest, std::vector<SVExtentPointStruct>& rvecPoints);
-
 };
 
 class SVMaskShapeRectangle : public SVMaskShape
@@ -221,16 +186,25 @@ public:
 protected:
 	virtual HRESULT Render( CDC& dc, COLORREF rgbShape, COLORREF rgbBackground );
 	virtual HRESULT RenderOutline( CDC& dc, CRect rectViewport, CRect rectDisplay, COLORREF rgb );
-	virtual HRESULT ValidateProperties(MapType& rmapProperties);
+	virtual HRESULT ValidateProperties(MapType& rmapProperties); //@TODO:  Change method to const?
 };
-
-#endif //#ifndef SVMASKSHAPE_H_
 
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVMaskShape.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVMaskShape.h_v  $
+ * 
+ *    Rev 1.2   26 Jun 2014 17:49:54   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  885
+ * SCR Title:  Replace image display in TA-dialogs with activeX SVPictureDisplay
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   move SVColor to PictureDisplay.h
+ * cleanup
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   23 Jul 2013 17:56:52   sjones
  * Project:  SVObserver

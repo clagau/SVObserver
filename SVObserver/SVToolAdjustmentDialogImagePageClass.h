@@ -5,17 +5,17 @@
 //* .Module Name     : SVToolAdjustmentDialogImagePageClass
 //* .File Name       : $Workfile:   SVToolAdjustmentDialogImagePageClass.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 15:36:24  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   26 Jun 2014 18:29:26  $
 //******************************************************************************
 
 #ifndef SVTOOLADJUSTMENTDIALOGIMAGEPAGECLASS_H
 #define SVTOOLADJUSTMENTDIALOGIMAGEPAGECLASS_H
 
-#include "SVDlgImage.h"
 #include "SVImageListClass.h"
 #include "SVObjectLibrary/SVInputInfoListClass.h"
 #include "SVTaskObjectInterfaceClass.h"
+#include "PictureDisplay.h"
 #include "SVView.h"
 
 class SVToolAdjustmentDialogSheetClass;
@@ -49,7 +49,7 @@ protected:
 	//{{AFX_DATA(SVToolAdjustmentDialogImagePageClass)
 	enum { IDD = IDD_TA_IMAGE_DIALOG };
 	SVAvailableSourceImageListComboBoxClass	availableSourceImageListBox;
-	SVDlgImageClass	dialogImage;
+	PictureDisplay	dialogImage;
 	//}}AFX_DATA
 	
 protected:
@@ -72,7 +72,17 @@ protected:
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVToolAdjustmentDialogImagePageClass.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVToolAdjustmentDialogImagePageClass.h_v  $
+ * 
+ *    Rev 1.1   26 Jun 2014 18:29:26   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  885
+ * SCR Title:  Replace image display in TA-dialogs with activeX SVPictureDisplay
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   use SVPictureDisplay-control
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 15:36:24   bWalter
  * Project:  SVObserver

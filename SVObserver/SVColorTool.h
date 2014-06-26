@@ -5,14 +5,13 @@
 //* .Module Name     : SVColorTool
 //* .File Name       : $Workfile:   SVColorTool.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   15 May 2014 11:07:28  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   26 Jun 2014 17:26:46  $
 //******************************************************************************
 
 #ifndef SVCOLORTOOL_H
 #define SVCOLORTOOL_H
 
-#include "SVDrawObject.h"
 #include "SVImageClass.h"
 #include "SVTool.h"
 
@@ -46,15 +45,12 @@ protected:
 
 	virtual DWORD_PTR processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext );
 
-	// ROI Draw Object...
-	SVDrawObjectClass	 roiFigure;
-
 	// Embeddeds
 	SVRGBImageClass band0Image;
 	SVRGBImageClass band1Image;
 	SVRGBImageClass band2Image;
 
-	SVBoolValueObjectClass		convertToHSI;
+	SVBoolValueObjectClass convertToHSI;
 	// String value object for Source Image Names
 	SVStringValueObjectClass m_svSourceImageNames;
 
@@ -64,8 +60,7 @@ public:
 private:
 	virtual void init();
 
-	virtual HRESULT CollectInputImageNames( );
-
+	virtual HRESULT CollectInputImageNames();
 };
 
 //******************************************************************************
@@ -78,6 +73,17 @@ private:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVColorTool.h_v  $
+ * 
+ *    Rev 1.3   26 Jun 2014 17:26:46   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  885
+ * SCR Title:  Replace image display in TA-dialogs with activeX SVPictureDisplay
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   remove unused includes and parameter
+ * cleanup
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   15 May 2014 11:07:28   sjones
  * Project:  SVObserver
@@ -259,4 +265,3 @@ $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVColorToo
  * 
  * /////////////////////////////////////////////////////////////////////////////////////
 */
-//** EOF **

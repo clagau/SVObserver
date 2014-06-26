@@ -5,8 +5,8 @@
 //* .Module Name     : SVView
 //* .File Name       : $Workfile:   SVView.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   02 Oct 2013 08:39:02  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   26 Jun 2014 18:32:16  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -217,42 +217,7 @@ int SVAvailableSourceImageListComboBoxClass::init( SVImageListClass* pImageList,
 			SVImageClass* pImage = pImageList->GetAt( i );
 			if( pImage )
 			{
-				const SVObjectTypeInfoStruct& rObjectTypeInfo = pImage->GetObjectInfo().ObjectTypeInfo;
-				CString strName;
-				switch( rObjectTypeInfo.SubType )
-				{
-					case SVRGBMainImageObjectType:	// RGBMain image - Not selectable
-						break;
-						
-					case SVMainImageObjectType:	// Main image
-						if( pImage->GetOwner() )
-						{
-							strName = pImage->GetOwner()->GetName();
-							strName += _T( ".Image1" );
-						}
-						break;
-						
-					default:
-					{
-						SVImageInfoClass imageInfo = pImage->GetImageInfo();
-
-						if( imageInfo.GetOwner() )
-						{
-							/*
-							strName = imageInfo.POwnerTool->GetName();
-							
-							// Handle Multiple Image outputs...
-							
-							CString imageName = pImage->GetName();
-							strName += _T( " " );
-							strName += imageName;
-							//*/
-							strName = pImage->GetCompleteObjectNameToObjectType( NULL, SVToolObjectType );
-						}
-
-						break;
-					}// end default:
-				}// end switch( rObjectTypeInfo.SubType )
+				CString strName = pImage->getDisplayedName();
 
 				if( !strName.IsEmpty() )
 				{
@@ -303,6 +268,16 @@ int SVAvailableSourceImageListComboBoxClass::init( SVImageListClass* pImageList,
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVView.cpp_v  $
+ * 
+ *    Rev 1.2   26 Jun 2014 18:32:16   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  885
+ * SCR Title:  Replace image display in TA-dialogs with activeX SVPictureDisplay
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   move functionallity of method init to pImage->getDisplayedName
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   02 Oct 2013 08:39:02   tbair
  * Project:  SVObserver

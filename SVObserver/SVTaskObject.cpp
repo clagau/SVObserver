@@ -5,8 +5,8 @@
 //* .Module Name     : SVTaskObject
 //* .File Name       : $Workfile:   SVTaskObject.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.5  $
-//* .Check In Date   : $Date:   15 May 2014 13:10:50  $
+//* .Current Version : $Revision:   1.6  $
+//* .Check In Date   : $Date:   26 Jun 2014 18:25:22  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -1159,7 +1159,7 @@ void SVTaskObjectClass::SetDisabled()
 				rFriend.PObject->SetDisabled();
 			}
 		}
-		
+
 		friendList.Unlock();
 	}
 }
@@ -1168,21 +1168,19 @@ void SVTaskObjectClass::SetDisabled()
 // Operation(s) Of Reading Access:
 //******************************************************************************
 
-DWORD SVTaskObjectClass::GetObjectColor()
+DWORD SVTaskObjectClass::GetObjectColor() const
 {
 	DWORD dwColor;
 	statusColor.GetValue(dwColor);
 	return dwColor;
 }
 
-DWORD SVTaskObjectClass::GetObjectState()
+DWORD SVTaskObjectClass::GetObjectState() const
 {
 	DWORD dwState;
 	statusTag.GetValue(dwState);
 	return dwState;
 }
-
-
 
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : GetInputOutputObjects
@@ -2672,6 +2670,16 @@ HRESULT SVTaskObjectClass::ResetObjectInputs()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVTaskObject.cpp_v  $
+ * 
+ *    Rev 1.6   26 Jun 2014 18:25:22   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  885
+ * SCR Title:  Replace image display in TA-dialogs with activeX SVPictureDisplay
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   made method GetObjectColor and GetObjectState const
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.5   15 May 2014 13:10:50   tbair
  * Project:  SVObserver

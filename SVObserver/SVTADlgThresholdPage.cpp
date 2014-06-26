@@ -5,18 +5,11 @@
 //* .Module Name     : SVToolAdjustmentDialogThresholdPage
 //* .File Name       : $Workfile:   SVTADlgThresholdPage.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.5  $
-//* .Check In Date   : $Date:   15 May 2014 13:07:12  $
+//* .Current Version : $Revision:   1.6  $
+//* .Check In Date   : $Date:   26 Jun 2014 18:21:18  $
 //******************************************************************************
 
-//******************************************************************************
-//* INCLUDE(S):
-//******************************************************************************
-
-////////////////////////////////////////////////////////////////////////////////
-// General Include File(s)
-////////////////////////////////////////////////////////////////////////////////
-
+#pragma region Includes
 #include "stdafx.h"
 #include "SVTADlgThresholdPage.h"
 
@@ -34,22 +27,18 @@
 #include "SVToolAdjustmentDialogSheetClass.h"
 #include "SVUpperThresholdEquation.h"
 #include "SVHistogram.h"
+#pragma endregion Includes
 
 //******************************************************************************
 //* DEFINITIONS OF MODULE-LOCAL VARIABLES:
 //******************************************************************************
 #ifdef _DEBUG
 #define new DEBUG_NEW
-#undef THIS_FILE
-static char THIS_FILE[] = __FILE__;
 #endif
-
 
 //******************************************************************************
 //* CLASS METHOD IMPLEMENTATION(S):
 //******************************************************************************
-
-
 
 //*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/
 //* Class Name : Class SVToolAdjustmentDialogThresholdPageClass 
@@ -123,7 +112,7 @@ SVToolAdjustmentDialogThresholdPageClass::SVToolAdjustmentDialogThresholdPageCla
 			info.ObjectType = SVUnaryImageOperatorListObjectType;
 
 			pUnaryImageOperatorList = reinterpret_cast<SVUnaryImageOperatorListClass*>(SVSendMessage( pTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&info) ));
-		
+
 			info.ObjectType = SVUnaryImageOperatorObjectType;
 			info.SubType = SVThresholdObjectType;
 
@@ -260,9 +249,9 @@ void SVToolAdjustmentDialogThresholdPageClass::DoDataExchange(CDataExchange* pDX
 	if( isEdit == FALSE )
 	{
 		//{{AFX_DATA_MAP(SVToolAdjustmentDialogThresholdPageClass)
-	DDX_Control(pDX, IDC_LOWER_EDIT, editLowerThres);
-	DDX_Control(pDX, IDC_UPPER_EDIT, editUpperThres);
-	DDX_Control(pDX, IDC_AUTOTHRESHOLD_EDIT, editAutoThreshold);
+		DDX_Control(pDX, IDC_LOWER_EDIT, editLowerThres);
+		DDX_Control(pDX, IDC_UPPER_EDIT, editUpperThres);
+		DDX_Control(pDX, IDC_AUTOTHRESHOLD_EDIT, editAutoThreshold);
 		DDX_Control(pDX, IDC_WHITE_BACKGROUND_RADIO, autoThresholdWhiteRadio);
 		DDX_Control(pDX, IDC_BLACK_BACKGROUND_RADIO, autoThresholdBlackRadio);
 		DDX_Control(pDX, IDC_AUTOTHRESHOLD_SLIDER, autoThresholdCtrl);
@@ -275,12 +264,12 @@ void SVToolAdjustmentDialogThresholdPageClass::DoDataExchange(CDataExchange* pDX
 		DDX_Text(pDX, IDC_WHITE_PIXEL_TEXT, strWhitePixel);
 		DDX_Check(pDX, IDC_AUTOTHRESHOLD_CHECK, bUseAutoThreshold);
 		DDX_Text(pDX, IDC_AUTOTHRESHOLD_EDIT, csEditAutoThreshold);
-	DDX_Text(pDX, IDC_UPPER_EDIT, csUpperThres);
-	DDX_Text(pDX, IDC_LOWER_EDIT, csLowerThres);
-	DDX_Check(pDX, IDC_USE_EXTERN_ATM_CHECK, bUseExternATM);
-	DDX_Check(pDX, IDC_USE_EXTERN_LT_CHECK, bUseExternLT);
-	DDX_Check(pDX, IDC_USE_EXTERN_UT_CHECK, bUseExternUT);
-	//}}AFX_DATA_MAP
+		DDX_Text(pDX, IDC_UPPER_EDIT, csUpperThres);
+		DDX_Text(pDX, IDC_LOWER_EDIT, csLowerThres);
+		DDX_Check(pDX, IDC_USE_EXTERN_ATM_CHECK, bUseExternATM);
+		DDX_Check(pDX, IDC_USE_EXTERN_LT_CHECK, bUseExternLT);
+		DDX_Check(pDX, IDC_USE_EXTERN_UT_CHECK, bUseExternUT);
+		//}}AFX_DATA_MAP
 	}
 	else
 	{
@@ -307,7 +296,7 @@ void SVToolAdjustmentDialogThresholdPageClass::initThreshold()
 			SVMatroxImageResult histResultID;
 			SVMatroxLongArray l_alHistValues;
 			SVDataBufferInfoClass svData;
-			
+
 			l_alHistValues.resize(256);
 			svData.Length = 256;
 			svData.Type = SVDataBufferInfoClass::SVHistResult;
@@ -316,40 +305,39 @@ void SVToolAdjustmentDialogThresholdPageClass::initThreshold()
 			{
 				histResultID = svData.HBuffer.milResult;
 			}
-			
+
 			SVSmartHandlePointer ImageHandle;
-			
+
 			if ( pCurrentThreshold->getReferenceImage()->GetImageHandle( ImageHandle ) && !( ImageHandle.empty() ) )
 			{
 				SVImageBufferHandleImage l_MilHandle;
 				ImageHandle->GetData( l_MilHandle );
-				
+
 				SVMatroxImageInterface::SVStatusCode l_Code;
 				l_Code = SVMatroxImageInterface::Histogram( histResultID, l_MilHandle.GetBuffer() );
 				l_Code = SVMatroxImageInterface::GetResult( histResultID, l_alHistValues );
 				l_Code = SVMatroxImageInterface::Destroy( histResultID );
-				
+
 				strWhitePixel.Format( "White Pixel: %d", l_alHistValues[ 255 ] );
 			}
 		}
 
-		dialogImage.refresh();
-
+		setImages();
 		UpdateData( FALSE ); // set data to dialog
 	}
 }
 
 
 
-BOOL SVToolAdjustmentDialogThresholdPageClass::OnSetActive() 
+BOOL SVToolAdjustmentDialogThresholdPageClass::OnSetActive()
 {
 	SetInspectionData();
-
+	setImages();
 	return CPropertyPage::OnSetActive();
 }
 
 
-BOOL SVToolAdjustmentDialogThresholdPageClass::OnInitDialog() 
+BOOL SVToolAdjustmentDialogThresholdPageClass::OnInitDialog()
 {
 	CPropertyPage::OnInitDialog();
 
@@ -359,8 +347,8 @@ BOOL SVToolAdjustmentDialogThresholdPageClass::OnInitDialog()
 	{
 		if( pCurrentThreshold && pCurrentThreshold->getReferenceImage() )
 		{
-			dialogImage.UpdateImageInfo( pCurrentThreshold->getReferenceImage() );
-			dialogImage.refresh();
+			dialogImage.AddTab(_T("Tool Result")); 
+			setImages();
 
 			// Setup sliders...
 			upperThreshold.SetRange( 0, 255, TRUE );
@@ -379,10 +367,10 @@ BOOL SVToolAdjustmentDialogThresholdPageClass::OnInitDialog()
 
 			upperThreshold.SetPos( ( int ) upperThres );
 			lowerThreshold.SetPos( ( int ) lowerThres );
-			
+
 			csLowerThres.Format( _T("%ld"), lowerThres );
 			csUpperThres.Format( _T("%ld"), upperThres );
-			
+
 			// Get other flags...
 			pCurrentThreshold->m_threshActivate.GetValue( thresholdActive );
 			pCurrentThreshold->m_upperThreshActivate.GetValue( upperThresholdActive );
@@ -434,7 +422,7 @@ BOOL SVToolAdjustmentDialogThresholdPageClass::OnInitDialog()
 				pWnd->EnableWindow( FALSE );
 			if( pWnd = GetDlgItem( IDC_USE_EXTERN_UT_CHECK ) )
 				pWnd->EnableWindow( FALSE );
-			
+
 			// Hide Formula Button
 			if( pWnd = GetDlgItem( IDC_LT_FORMULA_BUTTON ) )
 				pWnd->ShowWindow( SW_HIDE );
@@ -454,7 +442,6 @@ BOOL SVToolAdjustmentDialogThresholdPageClass::OnInitDialog()
 				pWnd->ShowWindow( SW_HIDE );
 			if( pWnd = GetDlgItem( IDC_ATM_FORMULA_BUTTON ) )
 				pWnd->ShowWindow( SW_HIDE );
-
 		}
 	}
 	else
@@ -467,9 +454,7 @@ BOOL SVToolAdjustmentDialogThresholdPageClass::OnInitDialog()
 	return TRUE;
 }
 
-
-
-void SVToolAdjustmentDialogThresholdPageClass::OnChangeUpperEdit() 
+void SVToolAdjustmentDialogThresholdPageClass::OnChangeUpperEdit()
 {
 	UpdateData( TRUE ); // get data of dialog
 	//
@@ -496,8 +481,7 @@ void SVToolAdjustmentDialogThresholdPageClass::OnChangeUpperEdit()
 	initThreshold();
 }
 
-
-void SVToolAdjustmentDialogThresholdPageClass::OnChangeLowerEdit() 
+void SVToolAdjustmentDialogThresholdPageClass::OnChangeLowerEdit()
 {
 	UpdateData( TRUE ); // get data of dialog
 	//
@@ -524,8 +508,7 @@ void SVToolAdjustmentDialogThresholdPageClass::OnChangeLowerEdit()
 	initThreshold();
 }
 
-
-void SVToolAdjustmentDialogThresholdPageClass::OnChangeAutothresholdEdit() 
+void SVToolAdjustmentDialogThresholdPageClass::OnChangeAutothresholdEdit()
 {
 	UpdateData( TRUE ); // get data of dialog
 
@@ -544,7 +527,7 @@ void SVToolAdjustmentDialogThresholdPageClass::OnChangeAutothresholdEdit()
 		dAutoThreshold = 2.0;
 		csEditAutoThreshold.Format( _T("%.4f") ,dAutoThreshold);
 	}
-    //
+	//
 	// Update controls.
 	//
 	autoThresholdCtrl.SetPos( ( int ) ( dAutoThreshold * 10000.0 ) );
@@ -560,46 +543,44 @@ void SVToolAdjustmentDialogThresholdPageClass::OnChangeAutothresholdEdit()
 	initThreshold();
 }
 
-
-
-void SVToolAdjustmentDialogThresholdPageClass::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar) 
+void SVToolAdjustmentDialogThresholdPageClass::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 {
-	UpdateData( TRUE ); // get data of dialog	
-	
+	UpdateData( TRUE ); // get data of dialog
+
 	if( &upperThreshold == ( CSliderCtrl* ) pScrollBar )
 	{
-		upperThres = ( long ) upperThreshold.GetPos();		
+		upperThres = ( long ) upperThreshold.GetPos();
 		m_histogram.PostMessage(ID_BOUND_CHANGE, 2, upperThres|(histState << 8));
 		csUpperThres.Format( _T("%ld") , upperThres );
 	}
 
 	if( &lowerThreshold == ( CSliderCtrl* ) pScrollBar )
 	{
-		lowerThres = ( long ) lowerThreshold.GetPos();	
+		lowerThres = ( long ) lowerThreshold.GetPos();
 		m_histogram.PostMessage(ID_BOUND_CHANGE, 1, lowerThres|(histState << 8));
-		csLowerThres.Format( _T("%ld") , lowerThres );	
+		csLowerThres.Format( _T("%ld") , lowerThres );
 	}
 
 	if( &autoThresholdCtrl == ( CSliderCtrl* ) pScrollBar )
 	{
-		dAutoThreshold = ( ( double ) autoThresholdCtrl.GetPos() ) / 10000;		
+		dAutoThreshold = ( ( double ) autoThresholdCtrl.GetPos() ) / 10000;
 		csEditAutoThreshold.Format( _T("%.4f") , dAutoThreshold );
 	}
 
 	UpdateData( FALSE ); // set data to dialog
 	initThreshold();
-	
+
 	CPropertyPage::OnHScroll(nSBCode, nPos, pScrollBar);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : OnUpperActivateCheck
 ////////////////////////////////////////////////////////////////////////////////
-void SVToolAdjustmentDialogThresholdPageClass::OnUpperActivateCheck() 
+void SVToolAdjustmentDialogThresholdPageClass::OnUpperActivateCheck()
 {
 	// Activate or Deactivate upperThresholding
 	UpdateData( TRUE ); // get data of dialog
-	
+
 	CWnd* pWnd;
 	if( upperThresholdActive == TRUE )
 	{
@@ -658,7 +639,6 @@ void SVToolAdjustmentDialogThresholdPageClass::OnUpperActivateCheck()
 			pWnd->ShowWindow( SW_SHOW );
 			pWnd->EnableWindow();
 		}
-
 	}
 	else
 	{
@@ -717,11 +697,11 @@ void SVToolAdjustmentDialogThresholdPageClass::OnUpperActivateCheck()
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : OnLowerActivateCheck
 ////////////////////////////////////////////////////////////////////////////////
-void SVToolAdjustmentDialogThresholdPageClass::OnLowerActivateCheck() 
+void SVToolAdjustmentDialogThresholdPageClass::OnLowerActivateCheck()
 {
 	// Activate or Deactivate lowerThresholding
 	UpdateData( TRUE ); // get data of dialog
-	
+
 	CWnd* pWnd;
 	if( lowerThresholdActive == TRUE )
 	{
@@ -839,7 +819,7 @@ void SVToolAdjustmentDialogThresholdPageClass::OnLowerActivateCheck()
 // .Title       : OnCheck1
 //	Activate or Deactivate Thresholding
 ////////////////////////////////////////////////////////////////////////////////
-void SVToolAdjustmentDialogThresholdPageClass::OnCheck1() 
+void SVToolAdjustmentDialogThresholdPageClass::OnCheck1()
 {
 	UpdateData( TRUE ); // get data of dialog
 
@@ -904,7 +884,6 @@ void SVToolAdjustmentDialogThresholdPageClass::OnCheck1()
 			// Save state
 			lo = ( int ) lowerThres;
 			up = ( int ) upperThres;
-
 		}
 		else
 		{
@@ -921,7 +900,6 @@ void SVToolAdjustmentDialogThresholdPageClass::OnCheck1()
 				pWnd->ShowWindow( SW_HIDE );
 			if( pWnd = GetDlgItem( IDC_ATM_FORMULA_BUTTON ) )
 				pWnd->ShowWindow( SW_HIDE );
-
 
 			// Show manual threshold controls...
 			if( pWnd = GetDlgItem( IDC_UPPER_CHECK ) )
@@ -941,16 +919,14 @@ void SVToolAdjustmentDialogThresholdPageClass::OnCheck1()
 			if( pWnd = GetDlgItem( IDC_USE_EXTERN_UT_CHECK ) )
 				pWnd->ShowWindow( SW_SHOW );
 
+			lo = static_cast< int >( lowerThres );
+			up = static_cast< int >( upperThres );
 
-			lo = ( int ) lowerThres;
-			up = ( int ) upperThres;
-
-			OnLowerActivateCheck();	// check lowerThresholdActive state
+			OnLowerActivateCheck(); // check lowerThresholdActive state
 			OnUpperActivateCheck(); // check upperThresholdActive state
 
 			lowerThreshold.SetPos(lo);
 			upperThreshold.SetPos(up);
-
 		}
 	}
 	else
@@ -982,7 +958,6 @@ void SVToolAdjustmentDialogThresholdPageClass::OnCheck1()
 		if( pWnd = GetDlgItem( IDC_UT_FORMULA_BUTTON ) )
 			pWnd->ShowWindow( SW_HIDE );
 
-
 		// Hide auto threshold controls...
 		if( pWnd = GetDlgItem( IDC_AUTOTHRESHOLD_EDIT ) )
 			pWnd->ShowWindow( SW_HIDE );
@@ -996,32 +971,31 @@ void SVToolAdjustmentDialogThresholdPageClass::OnCheck1()
 			pWnd->ShowWindow( SW_HIDE );
 		if( pWnd = GetDlgItem( IDC_ATM_FORMULA_BUTTON ) )
 			pWnd->ShowWindow( SW_HIDE );
-
 	}
 
 	initThreshold();
 }
 
-void SVToolAdjustmentDialogThresholdPageClass::OnAutoThresholdCheck() 
+void SVToolAdjustmentDialogThresholdPageClass::OnAutoThresholdCheck()
 {
 	OnCheck1();
 }
 
-void SVToolAdjustmentDialogThresholdPageClass::OnWhiteBackgroundRadio() 
+void SVToolAdjustmentDialogThresholdPageClass::OnWhiteBackgroundRadio()
 {
 	UpdateData( TRUE ); // get data of dialog
 	CheckRadioButton( IDC_WHITE_BACKGROUND_RADIO, IDC_BLACK_BACKGROUND_RADIO, IDC_WHITE_BACKGROUND_RADIO );
 	initThreshold();
 }
 
-void SVToolAdjustmentDialogThresholdPageClass::OnBlackBackgroundRadio() 
+void SVToolAdjustmentDialogThresholdPageClass::OnBlackBackgroundRadio()
 {
 	UpdateData( TRUE ); // get data of dialog
 	CheckRadioButton( IDC_WHITE_BACKGROUND_RADIO, IDC_BLACK_BACKGROUND_RADIO, IDC_BLACK_BACKGROUND_RADIO );
 	initThreshold();
 }
 
-void SVToolAdjustmentDialogThresholdPageClass::OnUTFormulaButton() 
+void SVToolAdjustmentDialogThresholdPageClass::OnUTFormulaButton()
 {
 	UpdateData( TRUE ); // get data of dialog
 
@@ -1038,7 +1012,7 @@ void SVToolAdjustmentDialogThresholdPageClass::OnUTFormulaButton()
 
 		dlg.DoModal();
 
-		long l_lResult = (long)pEquation->GetYACCResult();
+		long l_lResult = static_cast< long >( pEquation->GetYACCResult() );
 		csUpperThres.Format( _T("%ld") , l_lResult );
 
 		UpdateData(FALSE);
@@ -1055,7 +1029,7 @@ void SVToolAdjustmentDialogThresholdPageClass::UpdateLowerThresholdFromFormula()
 	SVLowerThresholdEquationClass* pEquation = reinterpret_cast<SVLowerThresholdEquationClass*>(SVSendMessage( pCurrentThreshold, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&info) ));
 	if( pEquation )
 	{
-		long l_lResult = (long)pEquation->GetYACCResult();
+		long l_lResult = static_cast< long >( pEquation->GetYACCResult() );
 		csLowerThres.Format( _T("%ld") , l_lResult );
 	}
 }
@@ -1068,12 +1042,12 @@ void SVToolAdjustmentDialogThresholdPageClass::UpdateUpperThresholdFromFoumula()
 	SVUpperThresholdEquationClass* pEquation = reinterpret_cast<SVUpperThresholdEquationClass*>(SVSendMessage( pCurrentThreshold, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&info) ));
 	if( pEquation )
 	{
-		long l_lResult = (long)pEquation->GetYACCResult();
+		long l_lResult = static_cast< long >( pEquation->GetYACCResult() );
 		csUpperThres.Format( _T("%ld") , l_lResult );
 	}
 }
 
-void SVToolAdjustmentDialogThresholdPageClass::OnATMFormulaButton() 
+void SVToolAdjustmentDialogThresholdPageClass::OnATMFormulaButton()
 {
 	UpdateData( TRUE ); // get data of dialog
 
@@ -1094,7 +1068,7 @@ void SVToolAdjustmentDialogThresholdPageClass::OnATMFormulaButton()
 	}
 }
 
-void SVToolAdjustmentDialogThresholdPageClass::OnLTFormulaButton() 
+void SVToolAdjustmentDialogThresholdPageClass::OnLTFormulaButton()
 {
 	UpdateData( TRUE ); // get data of dialog
 
@@ -1119,21 +1093,21 @@ void SVToolAdjustmentDialogThresholdPageClass::OnLTFormulaButton()
 	}
 }
 
-void SVToolAdjustmentDialogThresholdPageClass::OnUseExternATMCheck() 
+void SVToolAdjustmentDialogThresholdPageClass::OnUseExternATMCheck()
 {
 	UpdateData( TRUE ); // get data of dialog
 	OnCheck1();	
 }
 
-void SVToolAdjustmentDialogThresholdPageClass::OnUseExternLTCheck() 
+void SVToolAdjustmentDialogThresholdPageClass::OnUseExternLTCheck()
 {
 	UpdateData( TRUE ); // get data of dialog
 	OnCheck1();	
 }
 
-void SVToolAdjustmentDialogThresholdPageClass::OnUseExternUTCheck() 
+void SVToolAdjustmentDialogThresholdPageClass::OnUseExternUTCheck()
 {
-	UpdateData( TRUE ); // get data of dialog	
+	UpdateData( TRUE ); // get data of dialog
 	OnCheck1();
 }
 
@@ -1152,13 +1126,14 @@ LRESULT SVToolAdjustmentDialogThresholdPageClass::OnBoundChange(WPARAM wParam, L
 		csUpperThres.Format( _T("%ld") , upperThres );
 		upperThreshold.SetPos(upperThres);
 		break;
+	default:
+		break;
 	}
 	UpdateData(FALSE);
 	initThreshold();
-	//OnCheck1();
+
 	return TRUE;
 }
-
 
 BOOL SVToolAdjustmentDialogThresholdPageClass::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
 {
@@ -1175,8 +1150,11 @@ BOOL SVToolAdjustmentDialogThresholdPageClass::OnMouseWheel(UINT nFlags, short z
 	return TRUE;
 }
 
-
-
+void SVToolAdjustmentDialogThresholdPageClass::setImages()
+{
+	dialogImage.setImage( pCurrentThreshold->getReferenceImage() );
+	dialogImage.Refresh();
+}
 
 //******************************************************************************
 //* FUNCTION IMPLEMENTATION(S):
@@ -1292,12 +1270,12 @@ BOOL GetThreshold( HWND hWnd, DWORD& Value )
 	DWORD con;
 
 	::GetWindowText( hWnd, szWindowText, 19 );
-	
+
 	// only numbers be allowed!
 	for( TCHAR* index = szWindowText; *index != 0;  index++ )
 		if( ( *index < '0' ) || ( *index > '9') )
 			return FALSE;
-	
+
 	if( ( con = _ttol( szWindowText ) ) > 255 )
 		return FALSE;
 
@@ -1373,21 +1351,22 @@ void SetThreshold( HWND hWnd, DWORD Value )
 	::SetWindowText( hWnd, str.GetBufferSetLength(20) );
 }
 
-
-
-
-
-
-
-
-
-
-
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVTADlgThresholdPage.cpp_v  $
+ * 
+ *    Rev 1.6   26 Jun 2014 18:21:18   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  885
+ * SCR Title:  Replace image display in TA-dialogs with activeX SVPictureDisplay
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   use SVPictureDisplay-control
+ * cleanup
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.5   15 May 2014 13:07:12   tbair
  * Project:  SVObserver
@@ -1707,4 +1686,3 @@ $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVTADlgThr
  * 
  * /////////////////////////////////////////////////////////////////////////////////////
 */
-//** EOF **

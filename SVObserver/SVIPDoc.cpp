@@ -5,8 +5,8 @@
 //* .Module Name     : SVIPDoc
 //* .File Name       : $Workfile:   SVIPDoc.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.19  $
-//* .Check In Date   : $Date:   24 Jun 2014 09:34:14  $
+//* .Current Version : $Revision:   1.20  $
+//* .Check In Date   : $Date:   26 Jun 2014 17:45:10  $
 //******************************************************************************
 
 #pragma region Includes
@@ -1690,8 +1690,7 @@ void SVIPDoc::OnEditToolSetCondition()
 ////////////////////////////////////////////////////////////////////////////////
 void SVIPDoc::OnFileSaveImage()
 {
-	SVSaveToolSetImageDialogClass dlg;
-	dlg.PToolSet = GetToolSet();
+	SVSaveToolSetImageDialogClass dlg( GetToolSet() );
 	dlg.DoModal();
 }
 
@@ -3339,7 +3338,7 @@ void SVIPDoc::OnEditAdjustToolPosition()
 		if( SVImageViewClass* pImageView = GetImageView() )
 		{
 			SVSVIMStateClass::AddState( SV_STATE_EDITING );
-			SVAdjustToolSizePositionDlg dlg(_T("Adjust Tool Size / Position"), (CWnd*)this->GetMDIChild(), l_pTool);
+			SVAdjustToolSizePositionDlg dlg( _T( "Adjust Tool Size / Position" ), dynamic_cast< CWnd* >( this->GetMDIChild() ), l_pTool );
 			dlg.DoModal();
 			SVSVIMStateClass::RemoveState( SV_STATE_EDITING );
 		}
@@ -3370,7 +3369,6 @@ void SVIPDoc::OnViewResetAllCounts()
 	{
 		TheSVObserverApp.ResetAllCounts();
 	}
-
 }
 
 void SVIPDoc::OnViewResetCountsCurrentIP()
@@ -3401,14 +3399,14 @@ DWORD WINAPI SVIPDoc::SVRegressionTestRunThread( LPVOID lpParam )
 {
 	SVIPDoc* l_IPDoc = reinterpret_cast< SVIPDoc* >( lpParam );
 
-	if( l_IPDoc->GetInspectionProcess() == NULL ) { return E_FAIL; }
+	if( nullptr == l_IPDoc->GetInspectionProcess() ) { return E_FAIL; }
 
 	bool l_bFirst = true;
 	l_IPDoc->m_bRegressionTestRunning = true;
-	
+
 	l_IPDoc->m_regtestRunMode = RegModePause;
 	l_IPDoc->m_bRegressionTestStopping = false;
-	
+
 	bool l_bUsingSingleFile = false;
 	BOOL bDisplayFile = FALSE;
 	BOOL bModeReset = FALSE;
@@ -3435,7 +3433,7 @@ DWORD WINAPI SVIPDoc::SVRegressionTestRunThread( LPVOID lpParam )
 		for ( INT_PTR i = 0; i < iListCnt; i++ )
 		{
 			POSITION posCamera = l_IPDoc->m_listRegCameras.FindIndex(i);
-			
+
 			if ( posCamera == NULL ) { continue; }
 			l_bDone = false;
 
@@ -3501,7 +3499,7 @@ DWORD WINAPI SVIPDoc::SVRegressionTestRunThread( LPVOID lpParam )
 							}
 						}
 						else
-						{  //not using single files.  
+						{  //not using single files.
 							if ( l_bListDone && ( (iListCnt-1) == i) )
 							{
 								l_IPDoc->m_regtestRunMode = RegModePause;
@@ -4403,6 +4401,16 @@ int SVIPDoc::GetToolToInsertBefore(const CString& name, int listIndex) const
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVIPDoc.cpp_v  $
+ * 
+ *    Rev 1.20   26 Jun 2014 17:45:10   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  885
+ * SCR Title:  Replace image display in TA-dialogs with activeX SVPictureDisplay
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   change call of the constuctor of SVSaveToolSetImageDialogClass
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.19   24 Jun 2014 09:34:14   sjones
  * Project:  SVObserver

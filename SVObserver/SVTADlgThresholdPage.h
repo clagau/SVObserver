@@ -5,8 +5,8 @@
 //* .Module Name     : SVToolAdjustmentDialogThresholdPage
 //* .File Name       : $Workfile:   SVTADlgThresholdPage.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   25 Jul 2013 14:01:08  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   26 Jun 2014 18:21:16  $
 //******************************************************************************
 
 //******************************************************************************
@@ -26,10 +26,10 @@
 
 #include "SVEditNumbers.h"
 #include "SVView.h"
-#include "SVDlgImage.h"
 
 #include "SVTaskObjectInterfaceClass.h"
 #include "svhistogram.h"
+#include "PictureDisplay.h"
 
 class SVToolAdjustmentDialogSheetClass;
 class SVToolClass;
@@ -52,9 +52,9 @@ void SetThreshold( HWND hWnd, DWORD Value );
 class SVToolAdjustmentDialogThresholdPageClass : public CPropertyPage, public SVTaskObjectInterfaceClass
 {
 
-//******************************************************************************
-// Class Wizard Generated Message Map Entries:
-//******************************************************************************
+	//******************************************************************************
+	// Class Wizard Generated Message Map Entries:
+	//******************************************************************************
 	// Generated message map functions
 	//{{AFX_MSG(SVToolAdjustmentDialogThresholdPageClass)
 	virtual BOOL OnInitDialog();
@@ -82,47 +82,55 @@ class SVToolAdjustmentDialogThresholdPageClass : public CPropertyPage, public SV
 
 	void UpdateLowerThresholdFromFormula();
 	void UpdateUpperThresholdFromFoumula();
-//******************************************************************************
-// Friend Declaration(s):
-//******************************************************************************
+	//******************************************************************************
+	// Friend Declaration(s):
+	//******************************************************************************
 
-//******************************************************************************
-// Constructor(s):
-//******************************************************************************
+	//******************************************************************************
+	// Constructor(s):
+	//******************************************************************************
 public:
-// Standard constructor
+	// Standard constructor
 	SVToolAdjustmentDialogThresholdPageClass( SVToolAdjustmentDialogSheetClass* Parent );
 
-//******************************************************************************
-// Destructor(s):
-//******************************************************************************
+	//******************************************************************************
+	// Destructor(s):
+	//******************************************************************************
 public:
-// Standard destructor
+	// Standard destructor
 	~SVToolAdjustmentDialogThresholdPageClass();
 
 	virtual HRESULT SetInspectionData();
 
+	//************************************
+	// Method:    setImages
+	// Description: Set image to the activeX-control. 
+	// Access:    public 
+	// Returns:   void
+	//************************************
 
-//******************************************************************************
-// Operator(s):
-//******************************************************************************
+	void setImages();
+
+	//******************************************************************************
+	// Operator(s):
+	//******************************************************************************
 public:
 	void initThreshold();
 
 
-//******************************************************************************
-// Class Wizard Generated Virtual Function(s):
-//******************************************************************************
+	//******************************************************************************
+	// Class Wizard Generated Virtual Function(s):
+	//******************************************************************************
 	//{{AFX_VIRTUAL(SVToolAdjustmentDialogThresholdPageClass)
-	public:
+public:
 	virtual BOOL OnSetActive();
-	protected:
+protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV
 	//}}AFX_VIRTUAL
 
-//******************************************************************************
-// Class Wizard Generated Dialog Data:
-//******************************************************************************
+	//******************************************************************************
+	// Class Wizard Generated Dialog Data:
+	//******************************************************************************
 protected:
 	//{{AFX_DATA(SVToolAdjustmentDialogThresholdPageClass)
 	enum { IDD = IDD_TA_THRESHOLD_DIALOG };
@@ -132,7 +140,7 @@ protected:
 	CButton	autoThresholdWhiteRadio;
 	CButton	autoThresholdBlackRadio;
 	SVSliderCtrl	autoThresholdCtrl;
-	SVDlgImageClass	dialogImage;
+	PictureDisplay	dialogImage;
 	SVSliderCtrl	lowerThreshold;
 	SVSliderCtrl	upperThreshold;
 	BOOL	upperThresholdActive;
@@ -148,18 +156,18 @@ protected:
 	BOOL	bUseExternUT;
 	//}}AFX_DATA
 
-//******************************************************************************
-// Debug Operation(s):
-//******************************************************************************
+	//******************************************************************************
+	// Debug Operation(s):
+	//******************************************************************************
 public:
 
-//******************************************************************************
-// Data Element(s):
-//******************************************************************************
+	//******************************************************************************
+	// Data Element(s):
+	//******************************************************************************
 public:
 	SVToolAdjustmentDialogSheetClass* pParentDialog;
 	BOOL isEdit;
-	
+
 protected:
 	SVToolClass* pTool;
 	SVUnaryImageOperatorListClass* pUnaryImageOperatorList;
@@ -195,7 +203,18 @@ public:
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVTADlgThresholdPage.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVTADlgThresholdPage.h_v  $
+ * 
+ *    Rev 1.2   26 Jun 2014 18:21:16   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  885
+ * SCR Title:  Replace image display in TA-dialogs with activeX SVPictureDisplay
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   use SVPictureDisplay-control
+ * cleanup
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   25 Jul 2013 14:01:08   tbair
  * Project:  SVObserver

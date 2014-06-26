@@ -5,8 +5,8 @@
 //* .Module Name     : SVTADlgColorToolPage
 //* .File Name       : $Workfile:   SVTADlgColorToolPage.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 15:18:52  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   26 Jun 2014 18:21:16  $
 //******************************************************************************
 
 
@@ -32,8 +32,8 @@ SVTADlgColorToolPageClass::SVTADlgColorToolPageClass( SVToolClass* PTool ) : CPr
 	m_convertToHSI = FALSE;
 	//}}AFX_DATA_INIT
 
-	pTool = (SVColorToolClass *)PTool;
-	pConvertToHSI = pTool->GetConvertToHSIVariable();
+	m_pTool = (SVColorToolClass *)PTool;
+	m_pConvertToHSI = m_pTool->GetConvertToHSIVariable();
 }
 
 SVTADlgColorToolPageClass::~SVTADlgColorToolPageClass()
@@ -44,11 +44,11 @@ HRESULT SVTADlgColorToolPageClass::SetInspectionData()
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if( pTool )
+	if( m_pTool )
 	{
 		UpdateData( TRUE ); // get data from dialog
 
-		l_hrOk = AddInputRequest( pConvertToHSI, m_convertToHSI );
+		l_hrOk = AddInputRequest( m_pConvertToHSI, m_convertToHSI );
 
 		if( l_hrOk == S_OK )
 		{
@@ -57,7 +57,7 @@ HRESULT SVTADlgColorToolPageClass::SetInspectionData()
 
 		if( l_hrOk == S_OK )
 		{
-			l_hrOk = RunOnce( pTool );
+			l_hrOk = RunOnce( m_pTool );
 		}
 
 		UpdateData( FALSE );
@@ -70,7 +70,7 @@ void SVTADlgColorToolPageClass::DoDataExchange(CDataExchange* pDX)
 {
 	CPropertyPage::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(SVTADlgColorToolPageClass)
-		DDX_Control(pDX, IDC_DIALOGIMAGE, dialogImage);
+	DDX_Control(pDX, IDC_DIALOGIMAGE, m_dialogImage);
 	DDX_Check(pDX, IDC_CONVERT_TO_HSI, m_convertToHSI);
 	//}}AFX_DATA_MAP
 }
@@ -90,21 +90,14 @@ BOOL SVTADlgColorToolPageClass::OnInitDialog()
 {
 	CPropertyPage::OnInitDialog();
 	
-	SetTaskObject( pTool );
+	SetTaskObject( m_pTool );
 
-	if( pTool && pConvertToHSI )
+	if( m_pTool && m_pConvertToHSI )
 	{
 		// Get the convert to HSI state
-		pConvertToHSI->GetValue( m_convertToHSI );
-
-		// Get the Image to Display
-		SVImageClass* pImage = pTool->GetRGBImage();
-
-		if( pImage )
-		{
-			dialogImage.UpdateImageInfo( pImage );
-			dialogImage.refresh();
-		}
+		m_pConvertToHSI->GetValue( m_convertToHSI );
+		m_dialogImage.AddTab(_T("Tool Input")); 
+		setImages();
 		UpdateData( FALSE ); // set data to dialog
 	}
 	else
@@ -126,14 +119,40 @@ void SVTADlgColorToolPageClass::OnConvertToHsi()
 
 void SVTADlgColorToolPageClass::OnTrainColor() 
 {
-	SVSetupDialogManager::Instance().SetupDialog( pTool->GetClassID(), pTool->GetUniqueObjectID(), this );
+	SVSetupDialogManager::Instance().SetupDialog( m_pTool->GetClassID(), m_pTool->GetUniqueObjectID(), this );
 }
-	
+
+void SVTADlgColorToolPageClass::setImages()
+{
+	if (nullptr != m_pTool)
+	{
+		// Get the Image to Display
+		SVImageClass* pImage = m_pTool->GetRGBImage();
+		if( nullptr != pImage )
+		{
+			m_dialogImage.setImage( pImage, 0 );
+			m_dialogImage.Refresh();
+		}
+	}
+}
+
+
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVTADlgColorToolPage.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVTADlgColorToolPage.cpp_v  $
+ * 
+ *    Rev 1.1   26 Jun 2014 18:21:16   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  885
+ * SCR Title:  Replace image display in TA-dialogs with activeX SVPictureDisplay
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   use SVPictureDisplay-control
+ * cleanup
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 15:18:52   bWalter
  * Project:  SVObserver

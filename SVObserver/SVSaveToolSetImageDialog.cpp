@@ -5,8 +5,8 @@
 //* .Module Name     : SVSaveToolSetImageDialog
 //* .File Name       : $Workfile:   SVSaveToolSetImageDialog.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   15 May 2014 13:48:24  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   26 Jun 2014 18:14:58  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -25,14 +25,14 @@ static char THIS_FILE[]=__FILE__;
 #define new DEBUG_NEW
 #endif
 
-SVSaveToolSetImageDialogClass::SVSaveToolSetImageDialogClass(CWnd* pParent /*=NULL*/)
+SVSaveToolSetImageDialogClass::SVSaveToolSetImageDialogClass(SVToolSetClass* pToolSet, CWnd* pParent /*=NULL*/)
 	: CDialog(SVSaveToolSetImageDialogClass::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(SVSaveToolSetImageDialogClass)
 		// NOTE: the ClassWizard will add member initialization here
 	//}}AFX_DATA_INIT
 
-	PToolSet = NULL;
+	m_pToolSet = pToolSet;
 }
 
 
@@ -40,8 +40,8 @@ void SVSaveToolSetImageDialogClass::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(SVSaveToolSetImageDialogClass)
-	DDX_Control(pDX, IDC_DIALOGIMAGE, currentSelectedImageCtrl);
-	DDX_Control(pDX, IDC_AVAILABLE_IMAGES_COMBO, availableImagesComboCtrl);
+	DDX_Control(pDX, IDC_DIALOGIMAGE, m_currentSelectedImageCtrl);
+	DDX_Control(pDX, IDC_AVAILABLE_IMAGES_COMBO, m_availableImagesComboCtrl);
 	//}}AFX_DATA_MAP
 }
 
@@ -60,8 +60,8 @@ BOOL SVSaveToolSetImageDialogClass::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
-	ASSERT( PToolSet );
-	if( ! PToolSet )
+	ASSERT( m_pToolSet );
+	if( ! m_pToolSet )
 	{
 		OnCancel();
 		return FALSE;
@@ -75,7 +75,7 @@ BOOL SVSaveToolSetImageDialogClass::OnInitDialog()
 
 	SVGetObjectDequeByTypeVisitor l_Visitor( imageObjectInfo );
 
-	SVObjectManagerClass::Instance().VisitElements( l_Visitor, PToolSet->GetUniqueObjectID() );
+	SVObjectManagerClass::Instance().VisitElements( l_Visitor, m_pToolSet->GetUniqueObjectID() );
 
 	SVGetObjectDequeByTypeVisitor::SVObjectPtrDeque::const_iterator l_Iter;
 
@@ -85,30 +85,14 @@ BOOL SVSaveToolSetImageDialogClass::OnInitDialog()
 
 		if( pImage != NULL )
 		{
-			index = availableImagesComboCtrl.AddString( pImage->GetCompleteObjectNameToObjectType( NULL, SVToolSetObjectType ) );
-			availableImagesComboCtrl.SetItemData( index, ( DWORD ) pImage );
+			index = m_availableImagesComboCtrl.AddString( pImage->GetCompleteObjectNameToObjectType( NULL, SVToolSetObjectType ) );
+			m_availableImagesComboCtrl.SetItemData( index, ( DWORD ) pImage );
 		}
 	}
 
-	/*
-	// Populate available image combo...
-	SVImageClass* pImage = reinterpret_cast<SVImageClass*>(::SVSendMessage( PToolSet, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&imageObjectInfo)));
-	while( pImage )
-	{
-		index = availableImagesComboCtrl.AddString( pImage->GetCompleteObjectNameToObjectType( NULL, SVToolSetObjectType ) );
-		availableImagesComboCtrl.SetItemData( index, ( DWORD ) pImage );
-		pImage = reinterpret_cast<SVImageClass*>(::SVSendMessage( PToolSet, SVM_GETNEXT_OBJECT, reinterpret_cast<DWORD_PTR>(pImage), reinterpret_cast<DWORD_PTR>(&imageObjectInfo)));
-	}
-	*/
-
-	index = availableImagesComboCtrl.SetCurSel( 0 );
-
-	// Display current selected image...
-	if( index >= 0 )
-	{
-		currentSelectedImageCtrl.UpdateImageInfo( ( SVImageClass* ) availableImagesComboCtrl.GetItemData( index ) );
-		currentSelectedImageCtrl.refresh();
-	}
+	index = m_availableImagesComboCtrl.SetCurSel( 0 );
+	m_currentSelectedImageCtrl.AddTab(_T("Image")); 
+	setImages();
 
 	UpdateData( FALSE );
 	return TRUE;  // return TRUE unless you set the focus to a control
@@ -119,13 +103,7 @@ void SVSaveToolSetImageDialogClass::OnSelchangeAvailableImagesCombo()
 {
 	UpdateData( TRUE );	
 
-	// Display current selected image...
-	int index = availableImagesComboCtrl.GetCurSel();
-	if( index >= 0 )
-	{
-		currentSelectedImageCtrl.UpdateImageInfo( ( SVImageClass* ) availableImagesComboCtrl.GetItemData( index ) );
-		currentSelectedImageCtrl.refresh();
-	}
+	setImages();
 
 	UpdateData( FALSE );
 }
@@ -134,10 +112,10 @@ void SVSaveToolSetImageDialogClass::OnSaveButton()
 {
 	UpdateData( TRUE );
 
-	int index = availableImagesComboCtrl.GetCurSel();
+	int index = m_availableImagesComboCtrl.GetCurSel();
 	SVImageClass* pImage;
 	if( index >= 0 && 
-		( pImage = ( SVImageClass* ) availableImagesComboCtrl.GetItemData( index ) ) 
+		( pImage = ( SVImageClass* ) m_availableImagesComboCtrl.GetItemData( index ) ) 
 		)
 	{
 		// Get output buffer handle...
@@ -216,11 +194,33 @@ void SVSaveToolSetImageDialogClass::OnSaveButton()
 	}	
 }
 
+void SVSaveToolSetImageDialogClass::setImages()
+{
+	int index = m_availableImagesComboCtrl.GetCurSel( );
+
+	// Display current selected image...
+	if( index >= 0 )
+	{
+		m_currentSelectedImageCtrl.setImage( ( SVImageClass* ) m_availableImagesComboCtrl.GetItemData(index ), 0 );
+		m_currentSelectedImageCtrl.Refresh();
+	}
+}
+
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVSaveToolSetImageDialog.cpp_v  $
+ * 
+ *    Rev 1.2   26 Jun 2014 18:14:58   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  885
+ * SCR Title:  Replace image display in TA-dialogs with activeX SVPictureDisplay
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   use SVPictureDisplay-control
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   15 May 2014 13:48:24   sjones
  * Project:  SVObserver

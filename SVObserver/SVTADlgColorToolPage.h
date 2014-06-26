@@ -5,8 +5,8 @@
 //* .Module Name     : SVTADlgColorToolPage
 //* .File Name       : $Workfile:   SVTADlgColorToolPage.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   24 Apr 2013 11:14:10  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   26 Jun 2014 18:21:16  $
 //******************************************************************************
 
 #if !defined(SVTADLGCOLORTOOLPAGE_H)
@@ -18,9 +18,8 @@
 // SVTADlgColorToolPage.h : header file
 //
 
-#include "SVDlgImage.h"
-
 #include "SVTaskObjectInterfaceClass.h"
+#include "PictureDisplay.h"
 
 class SVColorToolClass;
 class SVToolClass;
@@ -39,14 +38,6 @@ public:
 
 	virtual HRESULT SetInspectionData();
 
-// Dialog Data
-	//{{AFX_DATA(SVTADlgColorToolPageClass)
-	enum { IDD = IDD_TA_COLOR_TOOL_DIALOG };
-	SVDlgImageClass	dialogImage;
-	BOOL	m_convertToHSI;
-	//}}AFX_DATA
-
-
 // Overrides
 	// ClassWizard generate virtual function overrides
 	//{{AFX_VIRTUAL(SVTADlgColorToolPageClass)
@@ -58,15 +49,24 @@ public:
 protected:
 	// Generated message map functions
 	//{{AFX_MSG(SVTADlgColorToolPageClass)
-		virtual BOOL OnInitDialog();
+	virtual BOOL OnInitDialog();
 	afx_msg void OnConvertToHsi();
 	afx_msg void OnTrainColor();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 
+	void setImages();
+
 protected:
-	SVColorToolClass* pTool;
-	SVBoolValueObjectClass* pConvertToHSI;
+	// Dialog Data
+	//{{AFX_DATA(SVTADlgColorToolPageClass)
+	enum { IDD = IDD_TA_COLOR_TOOL_DIALOG };
+	PictureDisplay	m_dialogImage;
+	BOOL	m_convertToHSI;
+	//}}AFX_DATA
+
+	SVColorToolClass* m_pTool;
+	SVBoolValueObjectClass* m_pConvertToHSI;
 };
 
 //{{AFX_INSERT_LOCATION}}
@@ -78,7 +78,18 @@ protected:
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVTADlgColorToolPage.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVTADlgColorToolPage.h_v  $
+ * 
+ *    Rev 1.1   26 Jun 2014 18:21:16   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  885
+ * SCR Title:  Replace image display in TA-dialogs with activeX SVPictureDisplay
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   use SVPictureDisplay-control
+ * cleanup
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   24 Apr 2013 11:14:10   bWalter
  * Project:  SVObserver

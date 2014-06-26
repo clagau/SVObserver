@@ -5,8 +5,8 @@
 //* .Module Name     : SVToolAdjustmentDialogFileImageSourcePage
 //* .File Name       : $Workfile:   SVTADlgFileImageSourcePage.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   15 May 2014 12:50:40  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   26 Jun 2014 18:21:18  $
 //******************************************************************************
 
 //******************************************************************************
@@ -77,15 +77,15 @@ static char THIS_FILE[] = __FILE__;
 SVToolAdjustmentDialogFileImageSourcePageClass::SVToolAdjustmentDialogFileImageSourcePageClass( SVToolAdjustmentDialogSheetClass* PParent ) : CPropertyPage( SVToolAdjustmentDialogFileImageSourcePageClass::IDD )
 {
 	//{{AFX_DATA_INIT(SVToolAdjustmentDialogFileImageSourcePageClass)
-	StrPathName = _T("");
-	BContinuousReload = FALSE;
+	m_StrPathName = _T("");
+	m_BContinuousReload = FALSE;
 	//}}AFX_DATA_INIT
 
-	pImage			= NULL;
-	pReloadObject	= NULL;
-	pPathNameObject = NULL;
-	pSheet = PParent;
-	pTool  = NULL;
+	m_pImage			= NULL;
+	m_pReloadObject	= NULL;
+	m_pPathNameObject = NULL;
+	m_pSheet = PParent;
+	m_pTool  = NULL;
 }
 
 SVToolAdjustmentDialogFileImageSourcePageClass::~SVToolAdjustmentDialogFileImageSourcePageClass()
@@ -96,15 +96,15 @@ HRESULT SVToolAdjustmentDialogFileImageSourcePageClass::SetInspectionData()
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if( pTool != NULL )
+	if( m_pTool != NULL )
 	{
 		UpdateData( TRUE ); // get data from dialog
 
-		l_hrOk = AddInputRequest( pPathNameObject, svfncImageSourceFile.GetFullFileName() );
+		l_hrOk = AddInputRequest( m_pPathNameObject, m_svfncImageSourceFile.GetFullFileName() );
 
 		if( l_hrOk == S_OK )
 		{
-			l_hrOk = AddInputRequest( pReloadObject, BContinuousReload );
+			l_hrOk = AddInputRequest( m_pReloadObject, m_BContinuousReload );
 		}
 
 		if( l_hrOk == S_OK )
@@ -114,11 +114,11 @@ HRESULT SVToolAdjustmentDialogFileImageSourcePageClass::SetInspectionData()
 
 		if( l_hrOk == S_OK )
 		{
-			l_hrOk = RunOnce( pTool );
+			l_hrOk = RunOnce( m_pTool );
 		}
 
-		pReloadObject->GetValue( BContinuousReload );
-		pPathNameObject->GetValue( StrPathName );
+		m_pReloadObject->GetValue( m_BContinuousReload );
+		m_pPathNameObject->GetValue( m_StrPathName );
 
 		UpdateData( FALSE );
 	}
@@ -129,17 +129,16 @@ HRESULT SVToolAdjustmentDialogFileImageSourcePageClass::SetInspectionData()
 void SVToolAdjustmentDialogFileImageSourcePageClass::refresh()
 {
 	SetInspectionData();
-
-	imageCtrl.refresh();
+	setImages();
 }
 
 void SVToolAdjustmentDialogFileImageSourcePageClass::DoDataExchange(CDataExchange* pDX)
 {
 	CPropertyPage::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(SVToolAdjustmentDialogFileImageSourcePageClass)
-	DDX_Control(pDX, IDC_IMAGE, imageCtrl);
-	DDX_Text(pDX, IDC_IMAGE_SOURCE_EDIT, StrPathName);
-	DDX_Check(pDX, IDC_RELOAD_CHECK, BContinuousReload);
+	DDX_Control(pDX, IDC_IMAGE, m_imageCtrl);
+	DDX_Text(pDX, IDC_IMAGE_SOURCE_EDIT, m_StrPathName);
+	DDX_Check(pDX, IDC_RELOAD_CHECK, m_BContinuousReload);
 	//}}AFX_DATA_MAP
 }
 
@@ -162,33 +161,35 @@ BOOL SVToolAdjustmentDialogFileImageSourcePageClass::OnInitDialog()
 {
 	CPropertyPage::OnInitDialog();
 
-	if( pSheet && ( pTool = pSheet->GetTool() ) )
+	if( m_pSheet && ( m_pTool = m_pSheet->GetTool() ) )
 	{
-		SetTaskObject( pTool );
+		SetTaskObject( m_pTool );
 
 		// Find Image...
 		SVObjectTypeInfoStruct imageObjectInfo;
 		imageObjectInfo.ObjectType = SVImageObjectType;
-		pImage = reinterpret_cast<SVImageClass*>(::SVSendMessage( pTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&imageObjectInfo) ));
+		m_pImage = reinterpret_cast<SVImageClass*>(::SVSendMessage( m_pTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&imageObjectInfo) ));
 
 		// Find Reload...
 		SVObjectTypeInfoStruct reloadObjectInfo;
 		reloadObjectInfo.ObjectType = SVBoolValueObjectType;
 		reloadObjectInfo.EmbeddedID = SVContinuousReloadObjectGuid;
-		pReloadObject = reinterpret_cast<SVBoolValueObjectClass*>(::SVSendMessage( pTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&reloadObjectInfo) ));
+		m_pReloadObject = reinterpret_cast<SVBoolValueObjectClass*>(::SVSendMessage( m_pTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&reloadObjectInfo) ));
 
 		// Find PathName...
 		SVObjectTypeInfoStruct pathNameObjectInfo;
 		pathNameObjectInfo.ObjectType = SVStringValueObjectType;
 		pathNameObjectInfo.EmbeddedID = SVPathNameObjectGuid;
-		pPathNameObject = reinterpret_cast<SVFileNameValueObjectClass*>(::SVSendMessage( pTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&pathNameObjectInfo) ));
+		m_pPathNameObject = reinterpret_cast<SVFileNameValueObjectClass*>(::SVSendMessage( m_pTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&pathNameObjectInfo) ));
 
-		if( pImage && pReloadObject && pPathNameObject )
+		m_imageCtrl.AddTab(_T("Tool Input")); 
+
+		if( m_pImage && m_pReloadObject && m_pPathNameObject )
 		{
-			imageCtrl.UpdateImageInfo( pImage );
+			setImages();
 
-			pReloadObject->GetValue( BContinuousReload );
-			pPathNameObject->GetValue( StrPathName );
+			m_pReloadObject->GetValue( m_BContinuousReload );
+			m_pPathNameObject->GetValue( m_StrPathName );
 
 			UpdateData( FALSE ); // set data to dialog
 
@@ -214,7 +215,7 @@ void SVToolAdjustmentDialogFileImageSourcePageClass::OnBrowseButton()
 
 	UpdateData( TRUE );
 
-	if( pTool && pReloadObject && pPathNameObject )
+	if( m_pTool && m_pReloadObject && m_pPathNameObject )
 	{
 		//
 		// Try to read the current image file path name from registry...
@@ -223,14 +224,14 @@ void SVToolAdjustmentDialogFileImageSourcePageClass::OnBrowseButton()
 																										_T( "ImagesFilePath" ), 
 																										_T("C:\\Images"));
 		
-		svfncImageSourceFile.SetPathName(csPath);
-		svfncImageSourceFile.SetFileType(SV_IMAGE_SOURCE_FILE_TYPE);
-		if (svfncImageSourceFile.SelectFile())
+		m_svfncImageSourceFile.SetPathName(csPath);
+		m_svfncImageSourceFile.SetFileType(SV_IMAGE_SOURCE_FILE_TYPE);
+		if (m_svfncImageSourceFile.SelectFile())
 		{
 			//
 			// Save the directory selected from..
 			//
-			csPath = svfncImageSourceFile.GetPathName();
+			csPath = m_svfncImageSourceFile.GetPathName();
 			
 			//
 			// Write this path name back to registry...to initialize registry.
@@ -249,11 +250,28 @@ void SVToolAdjustmentDialogFileImageSourcePageClass::OnReloadCheck()
 	refresh();
 }
 
+void SVToolAdjustmentDialogFileImageSourcePageClass::setImages()
+{
+	m_imageCtrl.setImage( m_pImage, 0 );
+	m_imageCtrl.Refresh();
+}
+
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVTADlgFileImageSourcePage.cpp_v  $
+ * 
+ *    Rev 1.3   26 Jun 2014 18:21:18   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  885
+ * SCR Title:  Replace image display in TA-dialogs with activeX SVPictureDisplay
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   use SVPictureDisplay-control
+ * cleanup
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   15 May 2014 12:50:40   tbair
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : SVImage
 //* .File Name       : $Workfile:   SVImageClass.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.7  $
-//* .Check In Date   : $Date:   15 May 2014 12:44:04  $
+//* .Current Version : $Revision:   1.8  $
+//* .Check In Date   : $Date:   26 Jun 2014 17:41:18  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -1836,6 +1836,36 @@ SVImageClass* SVImageClass::GetRootImage()
 	return pRootImage;
 }
 
+CString SVImageClass::getDisplayedName() const
+{
+	const SVObjectTypeInfoStruct& rObjectTypeInfo = GetObjectInfo().ObjectTypeInfo;
+	CString strName;
+	switch( rObjectTypeInfo.SubType )
+	{
+	case SVRGBMainImageObjectType:	// RGBMain image - Not selectable
+		break;
+
+	case SVMainImageObjectType:	// Main image
+		if( GetOwner() )
+		{
+			strName = GetOwner()->GetName();
+			strName += _T( ".Image1" );
+		}
+		break;
+
+	default:
+		{
+			SVImageInfoClass imageInfo = GetImageInfo();
+			if( imageInfo.GetOwner() )
+			{
+				strName = GetCompleteObjectNameToObjectType( NULL, SVToolObjectType );
+			}
+			break;
+		}// end default:
+	}// end switch( rObjectTypeInfo.SubType )
+	return strName;
+}
+
 DWORD_PTR SVImageClass::processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext )
 {
 	DWORD_PTR DwResult = NULL;
@@ -2758,6 +2788,16 @@ HRESULT SVImageClass::UnregisterAsSubObject()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVImageClass.cpp_v  $
+ * 
+ *    Rev 1.8   26 Jun 2014 17:41:18   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  885
+ * SCR Title:  Replace image display in TA-dialogs with activeX SVPictureDisplay
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   add method getDisplayedName
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.7   15 May 2014 12:44:04   sjones
  * Project:  SVObserver

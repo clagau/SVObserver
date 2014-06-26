@@ -5,14 +5,17 @@
 //* .Module Name     : SVMaskShape
 //* .File Name       : $Workfile:   SVMaskShape.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   01 Oct 2013 15:24:36  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   26 Jun 2014 17:49:56  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include <algorithm>
 #include "SVMaskShape.h"
 #include "SVLibrary/Intersect.h"
+#include "PictureDisplay.h"
+#pragma endregion Includes
 
 #pragma warning ( disable : 4503 )
 
@@ -33,7 +36,7 @@ SVMaskShape::SVMaskShape()
 	m_bAutoResize       = false;
 }
 
-SVMaskShape::~SVMaskShape()	// this is a base clas
+SVMaskShape::~SVMaskShape()	// this is a base class
 {
 	m_dib.FreeBitmapInfo();
 }
@@ -57,14 +60,13 @@ HRESULT SVMaskShape::DrawOutline( CDC& dc, CRect rectViewport, CRect rectDisplay
 	return hr;
 }
 
-HRESULT SVMaskShape::Draw( SVMatroxBuffer mil ) 
+HRESULT SVMaskShape::Draw( SVMatroxBuffer mil )
 {
 	HRESULT hr = S_OK;
 	if ( !mil.empty() )
 	{
 		
 		SVMatroxBufferInterface::SVStatusCode l_Code;
-//		SVMatroxBufferInterface::ClearBuffer( mil, 255 );
 		l_Code = SVMatroxBufferInterface::CopyBuffer(  mil, m_dib.hbm );
 		hr = (l_Code != SVMEE_STATUS_OK) ? l_Code | SVMEE_MATROX_ERROR : S_OK;
 	}
@@ -111,10 +113,6 @@ HRESULT SVMaskShape::Refresh()
 
 		// fill background of dc
 		CRect rect;
-		//CSize size = m_RenderDC.GetWindowExt();	// this does not work!
-		//rect.bottom = size.cy;
-		//rect.right = size.cx;
-		//m_svImageInfo.GetExtents().GetRectangle(rect);	// ?? this doesn't work? this is input?
 		m_svImageInfo.GetOutputRectangle(rect);
 		m_RenderDC.FillSolidRect(rect, rgbBackground);
 
@@ -236,7 +234,6 @@ HRESULT SVMaskShape::GetFillProperties( SVMaskFillPropertiesStruct& rsvFillStruc
 	return S_OK;
 }
 
-
 void SVMaskShape::ComputeColors(COLORREF& rgbShape, COLORREF& rgbBackground)
 {
 	if ( m_svFillStruct.bMaskInsideShape )
@@ -329,7 +326,6 @@ CPoint SVMaskShape::GetCenter()
 	}
 }
 
-
 SVMaskShape::SortedMapViewType SVMaskShape::GetTempSortedPropertyMapView(const MapType& map)
 {
 	SortedMapViewType set;
@@ -367,7 +363,7 @@ HRESULT SVMaskShape::TranslateToDisplay(const CRect rectViewport, const CRect re
 	}
 
 	std::copy( vecPoints.begin(), vecPoints.end(), p_rvecPoints.begin() );	// from ExtentPoint back to POINT
-	
+
 	return hr;
 }// SVMaskShape::TranslateToDisplay
 
@@ -378,7 +374,7 @@ HRESULT SVMaskShape::TranslateToDisplay(const CRect rectViewport, const CRect re
 	SVExtentFigureStruct figure(rectShape);
 
 	CRect rectImage = GetMaskImageRect();
-	
+
 	SVExtentFigureStruct figureSource(rectImage);  // mask image is the input
 	SVExtentFigureStruct figureDest(rectViewport); // viewport is the output
 
@@ -416,7 +412,7 @@ HRESULT SVMaskShape::TranslateCoordinates(const SVExtentFigureStruct& rectSource
 	double dScaleY = rectDest.Size().m_dCY / rectSource.Size().m_dCY;
 
 	rPoint -= rectDest.m_svTopLeft;
-	
+
 	rPoint.m_dPositionX *= dScaleX;
 	rPoint.m_dPositionY *= dScaleY;
 	return S_OK;
@@ -787,6 +783,17 @@ HRESULT SVMaskShapeDoughnut::ValidateProperties(MapType& p_rmapProperties)
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVMaskShape.cpp_v  $
+ * 
+ *    Rev 1.3   26 Jun 2014 17:49:56   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  885
+ * SCR Title:  Replace image display in TA-dialogs with activeX SVPictureDisplay
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   move SVColor to PictureDisplay.h
+ * cleanup
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   01 Oct 2013 15:24:36   tbair
  * Project:  SVObserver

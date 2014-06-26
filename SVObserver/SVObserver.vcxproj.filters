@@ -665,9 +665,6 @@
     <ClCompile Include="SVMaskShapeEditorDlg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVMaskShapeFigureEditors.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVMathContainer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -1616,6 +1613,15 @@
     <ClCompile Include="EnvironmentObject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="CDSVPictureDisplay.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PictureDisplay.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RemoteCommand.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="RootObject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -2346,9 +2352,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVMaskShapeEditorDlg.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVMaskShapeFigureEditors.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVMathContainer.h">
@@ -3378,6 +3381,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="RootObject.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CDSVPictureDisplay.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PictureDisplay.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="RemoteMonitorNamedList.h">

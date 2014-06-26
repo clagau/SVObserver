@@ -5,8 +5,8 @@
 //* .Module Name     : SVTADlgColorThresholdOutput
 //* .File Name       : $Workfile:   SVTADlgColorThresholdOutput.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 15:20:22  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   26 Jun 2014 18:17:58  $
 //******************************************************************************
 
 #if !defined(SVTADLGCOLORTHRESHOLDOUTPUT_H)
@@ -19,8 +19,6 @@
 //
 
 #include "SVTADlgColorThresholdBasePage.h"
-#include "SVDlgImage.h"
-#include "SVDlgImageEditor.h"
 
 class SVColorThresholdClass;
 
@@ -68,7 +66,17 @@ protected:
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVTADlgColorThresholdOutput.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVTADlgColorThresholdOutput.h_v  $
+ * 
+ *    Rev 1.1   26 Jun 2014 18:17:58   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  885
+ * SCR Title:  Replace image display in TA-dialogs with activeX SVPictureDisplay
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   remove unused SVDlgImageGraph.h and SVDlgImageEditor.h
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 15:20:22   bWalter
  * Project:  SVObserver

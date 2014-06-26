@@ -5,24 +5,25 @@
 //* .Module Name     : SVToolAdjustmentDialogTwoImagePage
 //* .File Name       : $Workfile:   SVToolAdjustmentDialogTwoImagePage.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 15:41:10  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   26 Jun 2014 18:29:24  $
 //******************************************************************************
-
 #ifndef SVTOOLADJUSTMENTDIALOGTWOIMAGEPAGE_H
 #define SVTOOLADJUSTMENTDIALOGTWOIMAGEPAGE_H
-
-
+#pragma region Includes
 #include "SVImageListClass.h"
-#include "SVDlgImage.h"
 #include "SVView.h"
 
 #include "SVTaskObjectInterfaceClass.h"
+#include "PictureDisplay.h"
+#pragma endregion Includes
 
+#pragma region Declarations
 class SVToolAdjustmentDialogSheetClass;
 struct SVInObjectInfoStruct;
 class SVLongValueObjectClass;
 class SVToolSetClass;
+#pragma endregion Declarations
 
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : Dialog Class SVToolAdjustmentDialogTwoImagePageClass 
@@ -42,6 +43,23 @@ class SVToolSetClass;
 ////////////////////////////////////////////////////////////////////////////////
 class SVToolAdjustmentDialogTwoImagePageClass : public CPropertyPage, public SVTaskObjectInterfaceClass
 {
+	DECLARE_MESSAGE_MAP()
+
+#pragma region Constructor
+public:
+	SVToolAdjustmentDialogTwoImagePageClass( SVToolAdjustmentDialogSheetClass* Parent );
+	~SVToolAdjustmentDialogTwoImagePageClass();
+#pragma endregion Constructor
+
+#pragma region Protected Methods
+//******************************************************************************
+// Class Wizard Generated Virtual Function(s):
+//******************************************************************************
+	//{{AFX_VIRTUAL(SVToolAdjustmentDialogTwoImagePageClass)
+	protected:
+	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV
+	//}}AFX_VIRTUAL
+
 //******************************************************************************
 // Class Wizard Generated Message Map Entries:
 //******************************************************************************
@@ -53,54 +71,27 @@ protected:
 	afx_msg void OnSelChangeCombo2();
 	afx_msg void OnSelchangeOperatorCombo();
 	//}}AFX_MSG
+#pragma endregion Protected Methods
 
-	DECLARE_MESSAGE_MAP()
-
-//******************************************************************************
-// Constructor(s):
-//******************************************************************************
-public:
-// Standard constructor
-	SVToolAdjustmentDialogTwoImagePageClass( SVToolAdjustmentDialogSheetClass* Parent );
-
-//******************************************************************************
-// Destructor(s):
-//******************************************************************************
-public:
-// Standard destructor
-	~SVToolAdjustmentDialogTwoImagePageClass();
-
+#pragma region Private Methods
+private:
 	virtual HRESULT SetInspectionData();
-
-//******************************************************************************
-// Class Wizard Generated Virtual Function(s):
-//******************************************************************************
-	//{{AFX_VIRTUAL(SVToolAdjustmentDialogTwoImagePageClass)
-	public:
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV
-	//}}AFX_VIRTUAL
-
-//******************************************************************************
-// Operator(s):
-//******************************************************************************
-protected:
 	void refresh();
+	void setImages();
+#pragma endregion Private Methods
 
-//******************************************************************************
-// Data Element(s):
-//******************************************************************************
+#pragma region Member variables
 protected:
 	//{{AFX_DATA(SVToolAdjustmentDialogTwoImagePageClass)
 	enum { IDD = IDD_TA_TWO_IMAGE_DIALOG };
-	CComboBox	operatorCtrl;
-	SVDlgImageClass	secondImageCtrl;
-	SVDlgImageClass	firstImageCtrl;
-	SVAvailableSourceImageListComboBoxClass	firstAvailableSourceImageListBoxCtl;
-	SVAvailableSourceImageListComboBoxClass	secondAvailableSourceImageListBoxCtl;
+	CComboBox	m_operatorCtrl;
+	PictureDisplay	m_secondImageCtrl;
+	PictureDisplay	m_firstImageCtrl;
+	SVAvailableSourceImageListComboBoxClass	m_firstAvailableSourceImageListBoxCtl;
+	SVAvailableSourceImageListComboBoxClass	m_secondAvailableSourceImageListBoxCtl;
 	//}}AFX_DATA
 
-protected:
+private:
 	SVToolAdjustmentDialogSheetClass*	pParentDialog;
 
 	SVInObjectInfoStruct*				pFirstImageInputInfo;
@@ -116,6 +107,7 @@ protected:
 
 	SVToolSetClass*						pToolSet;
 	SVToolClass*						pTool;
+#pragma endregion Member variables
 };
 
 #endif
@@ -124,7 +116,17 @@ protected:
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVToolAdjustmentDialogTwoImagePage.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVToolAdjustmentDialogTwoImagePage.h_v  $
+ * 
+ *    Rev 1.1   26 Jun 2014 18:29:24   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  885
+ * SCR Title:  Replace image display in TA-dialogs with activeX SVPictureDisplay
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   use SVPictureDisplay-control
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 15:41:10   bWalter
  * Project:  SVObserver

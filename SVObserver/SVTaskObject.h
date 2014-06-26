@@ -5,8 +5,8 @@
 //* .Module Name     : SVTaskObject
 //* .File Name       : $Workfile:   SVTaskObject.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.3  $
-//* .Check In Date   : $Date:   15 May 2014 13:10:50  $
+//* .Current Version : $Revision:   1.4  $
+//* .Check In Date   : $Date:   26 Jun 2014 18:25:22  $
 //******************************************************************************
 
 #ifndef SVTASKOBJECT_H
@@ -119,9 +119,9 @@ protected:
 
 public:
 	// Get the local object color...
-	virtual DWORD GetObjectColor();
+	virtual DWORD GetObjectColor() const override;
 	// Get the local object state...
-	virtual DWORD GetObjectState();
+	virtual DWORD GetObjectState() const override;
 	virtual void GetInputObjects( SVInputInfoListClass& RInputObjectList );
 	virtual void GetAllInputObjects();
 #ifdef USE_OBJECT_SCRIPT
@@ -153,7 +153,7 @@ public:
 	virtual HRESULT CollectOverlays( SVImageClass *p_Image, SVExtentMultiLineStructCArray &p_MultiLineArray );
 
 	virtual void AddEmbeddedObject( SVObjectClass* PObject );
-    virtual void RemoveEmbeddedObject( SVObjectClass * pObjectToRemove);
+	virtual void RemoveEmbeddedObject( SVObjectClass* pObjectToRemove);
 	virtual SVValueObjectClass* GetEmbeddedValueObject( GUID classguid );
 
 	virtual HRESULT ResetObjectInputs();
@@ -247,6 +247,16 @@ private:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVTaskObject.h_v  $
+ * 
+ *    Rev 1.4   26 Jun 2014 18:25:22   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  885
+ * SCR Title:  Replace image display in TA-dialogs with activeX SVPictureDisplay
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   made method GetObjectColor and GetObjectState const
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   15 May 2014 13:10:50   tbair
  * Project:  SVObserver

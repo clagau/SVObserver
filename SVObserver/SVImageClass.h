@@ -5,8 +5,8 @@
 //* .Module Name     : SVImageClass
 //* .File Name       : $Workfile:   SVImageClass.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.4  $
-//* .Check In Date   : $Date:   15 May 2014 12:44:04  $
+//* .Current Version : $Revision:   1.5  $
+//* .Check In Date   : $Date:   26 Jun 2014 17:41:18  $
 //******************************************************************************
 
 #ifndef SVIMAGECLASS_H
@@ -50,7 +50,7 @@ public:
 	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStruct );
 	virtual BOOL CloseObject();
 
-	virtual SVImageTypeEnum GetImageType();
+	virtual SVImageTypeEnum GetImageType(); //@TODO:  Change method to const?
 	virtual SVImageClass* GetParentImage() const;
 	virtual const GUID& GetParentImageID() const;
 	virtual const SVImageInfoClass& GetImageInfo() const;
@@ -84,8 +84,8 @@ public:
 	virtual HRESULT ValidateAgainstOutputExtents( const SVImageExtentClass& p_rsvExtent );
 	virtual HRESULT ValidateAgainstChildrenExtents( SVImageExtentClass& p_rsvExtent );
 
-	virtual HRESULT GetParentImageHandle( SVSmartHandlePointer& p_rsvBufferHandle );
-	virtual HRESULT GetParentImageHandle( SVImageIndexStruct p_svBufferIndex, SVSmartHandlePointer& p_rsvBufferHandle );
+	virtual HRESULT GetParentImageHandle( SVSmartHandlePointer& p_rsvBufferHandle ); //@TODO:  Change method to const?
+	virtual HRESULT GetParentImageHandle( SVImageIndexStruct p_svBufferIndex, SVSmartHandlePointer& p_rsvBufferHandle ); //@TODO:  Change method to const?
 
 	// Need to deal with source and result image buckets
 	virtual BOOL GetImageHandleIndex( SVImageIndexStruct& rsvIndex ) const;
@@ -93,7 +93,7 @@ public:
 
 	virtual BOOL CopyImageTo( SVImageIndexStruct svIndex );
 
-	virtual BOOL GetImageHandle( SVSmartHandlePointer& p_rHandlePtr );
+	virtual BOOL GetImageHandle( SVSmartHandlePointer& p_rHandlePtr ); //@TODO:  Change method to const?
 	virtual BOOL GetImageHandle( SVImageIndexStruct svIndex, SVSmartHandlePointer& rHandle );
 
 	virtual BOOL SafeImageCopyToHandle     ( SVSmartHandlePointer& p_rHandle );
@@ -114,20 +114,21 @@ public:
 	virtual HRESULT SetObjectValue( SVObjectAttributeClass* PDataObject );
 
 #ifdef USE_OBJECT_SCRIPT
-	virtual void GetObjectScript( CString& RStrScript, CString& RStrAliasTable, int Indent = 0 );
+	virtual void GetObjectScript( CString& RStrScript, CString& RStrAliasTable, int Indent = 0 ); //@TODO:  Change method to const?
 #endif
 	virtual void Persist( SVObjectWriter& rWriter );
 	virtual void PersistImageAttributes( SVObjectWriter& rWriter );
 
-	virtual BOOL OnValidate();
-	
+	virtual BOOL OnValidate(); //@TODO:  Change method to const?
+
 	virtual SVImageIndexStruct GetSourceImageIndex( SVProductInfoStruct* pProduct );
 
-	long getPixelDepth();
+	long getPixelDepth(); //@TODO:  Change method to const?
 
-	SVImageClass* GetRootImage();
+	SVImageClass* GetRootImage(); //@TODO:  Change method to const?
+	CString getDisplayedName() const; //@TODO:  Consider changing method to use SVString instead of CString.
 
-	HRESULT TranslateFromOutputSpaceToImage(SVImageClass* p_pImage, SVExtentPointStruct p_InPt, SVExtentPointStruct& p_OutPt);
+	HRESULT TranslateFromOutputSpaceToImage(SVImageClass* p_pImage, SVExtentPointStruct p_InPt, SVExtentPointStruct& p_OutPt); //@TODO:  Change method to const?
 
 	void GetChildExtents( SVChildExtentDeque& p_rChildExtents ) const;
 
@@ -160,8 +161,8 @@ protected:
 
 	virtual HRESULT GetChildImageInfo( const GUID& p_rChildID, SVImageInfoClass& p_rImageInfo ) const;
 
-	virtual HRESULT GetChildImageHandle( const GUID& p_rChildID, SVSmartHandlePointer& p_rsvBufferHandle );
-	virtual HRESULT GetChildImageHandle( const GUID& p_rChildID, SVImageIndexStruct p_svBufferIndex, SVSmartHandlePointer& p_rsvBufferHandle );
+	virtual HRESULT GetChildImageHandle( const GUID& p_rChildID, SVSmartHandlePointer& p_rsvBufferHandle ); //@TODO:  Change method to const?
+	virtual HRESULT GetChildImageHandle( const GUID& p_rChildID, SVImageIndexStruct p_svBufferIndex, SVSmartHandlePointer& p_rsvBufferHandle ); //@TODO:  Change method to const?
 
 	virtual HRESULT GetImageIndex( SVDataManagerHandle& p_rHandle, const SVImageIndexStruct& rIndex ) const;
 
@@ -214,6 +215,16 @@ class SVRGBImageClass : public SVImageClass
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVImageClass.h_v  $
+ * 
+ *    Rev 1.5   26 Jun 2014 17:41:18   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  885
+ * SCR Title:  Replace image display in TA-dialogs with activeX SVPictureDisplay
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   add method getDisplayedName
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.4   15 May 2014 12:44:04   sjones
  * Project:  SVObserver

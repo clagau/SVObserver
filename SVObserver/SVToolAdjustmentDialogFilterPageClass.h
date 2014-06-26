@@ -5,8 +5,8 @@
 //* .Module Name     : SVToolAdjustmentDialogFilterPageClass
 //* .File Name       : $Workfile:   SVToolAdjustmentDialogFilterPageClass.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   13 Aug 2013 10:39:20  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   26 Jun 2014 18:29:26  $
 //******************************************************************************
 
 //******************************************************************************
@@ -21,10 +21,11 @@
 #endif // _MSC_VER > 1000
 
 #include "SVClassInfoStruct.h"
-#include "SVDlgImage.h"
+#include "PictureDisplay.h"
 #include "SVFilterListBoxClass.h"
 #include "SVAvailableFilterListComboBoxClass.h"
 #include "SVTaskObjectInterfaceClass.h"
+
 
 class SVToolAdjustmentDialogSheetClass;
 
@@ -48,9 +49,9 @@ class SVToolAdjustmentDialogSheetClass;
 ////////////////////////////////////////////////////////////////////////////////
 class SVToolAdjustmentDialogFilterPageClass : public CPropertyPage, public SVTaskObjectInterfaceClass
 {
-//******************************************************************************
-// Class Wizard Generated Message Map Entries:
-//******************************************************************************
+	//******************************************************************************
+	// Class Wizard Generated Message Map Entries:
+	//******************************************************************************
 	// Generated message map functions
 protected:
 	//{{AFX_MSG(SVToolAdjustmentDialogFilterPageClass)
@@ -64,52 +65,67 @@ protected:
 
 	DECLARE_MESSAGE_MAP()
 
-//******************************************************************************
-// Constructor(s):
-//******************************************************************************
+	//******************************************************************************
+	// Constructor(s):
+	//******************************************************************************
 public:
-// Standard constructor
+	// Standard constructor
 	SVToolAdjustmentDialogFilterPageClass( SVToolAdjustmentDialogSheetClass* Parent );
 
-//******************************************************************************
-// Destructor(s):
-//******************************************************************************
+	//******************************************************************************
+	// Destructor(s):
+	//******************************************************************************
 public:
-// Standard destructor
+	// Standard destructor
 	~SVToolAdjustmentDialogFilterPageClass();
 
 	virtual HRESULT SetInspectionData();
+	//************************************
+	// Method:    setImages
+	// Description: Set image to the activeX-control. 
+	// Access:    public 
+	// Returns:   BOOL -FALSE when image not exist
+	//************************************
+	BOOL setImages();
 
-//******************************************************************************
-// Operation(s) Of Writing Access And Data Exchange:
-//******************************************************************************
+	//******************************************************************************
+	// Operation(s) Of Writing Access And Data Exchange:
+	//******************************************************************************
 protected:
 	void refresh();
 
-//******************************************************************************
-// Class Wizard Generated Virtual Function(s):
-//******************************************************************************
+	//******************************************************************************
+	// Class Wizard Generated Virtual Function(s):
+	//******************************************************************************
 	//{{AFX_VIRTUAL(SVToolAdjustmentDialogFilterPageClass)
-	protected:
+protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV-Unterstützung
 	//}}AFX_VIRTUAL
 
-//******************************************************************************
-// Class Wizard Generated Dialog Data:
-//******************************************************************************
+	//************************************
+	// Method:    OnSetActive
+	// Description: is called when propertypage get active. set the image 
+	// Access:    public 
+	// Returns:   BOOL 
+	//************************************
+	virtual BOOL OnSetActive( );
+
+	//******************************************************************************
+	// Class Wizard Generated Dialog Data:
+	//******************************************************************************
 protected:
 	//{{AFX_DATA(SVToolAdjustmentDialogFilterPageClass)
 	enum { IDD = IDD_TA_FILTER_DIALOG };
 	CButton	m_btnProperties;
 	CButton	insertFilter;
 	SVFilterListBoxClass	filterListBox;
-	SVDlgImageClass	dialogImage;
+	PictureDisplay	dialogImage;
 	SVAvailableFilterListComboBoxClass	availableFilterListBox;
 	//}}AFX_DATA
 
-//******************************************************************************
-// Data Element(s):
-//******************************************************************************
+	//******************************************************************************
+	// Data Element(s):
+	//******************************************************************************
 public:
 	SVToolAdjustmentDialogSheetClass* pParentDialog;
 
@@ -129,6 +145,16 @@ protected:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVToolAdjustmentDialogFilterPageClass.h_v  $
+ * 
+ *    Rev 1.2   26 Jun 2014 18:29:26   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  885
+ * SCR Title:  Replace image display in TA-dialogs with activeX SVPictureDisplay
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   use SVPictureDisplay-control
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   13 Aug 2013 10:39:20   bWalter
  * Project:  SVObserver

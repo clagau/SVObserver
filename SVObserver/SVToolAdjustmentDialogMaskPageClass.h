@@ -5,18 +5,18 @@
 //* .Module Name     : SVToolAdjustmentDialogMaskPageClass
 //* .File Name       : $Workfile:   SVToolAdjustmentDialogMaskPageClass.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 15:37:16  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   26 Jun 2014 18:29:28  $
 //******************************************************************************
 
 #ifndef SVTOOLADJUSTMENTDIALOGMASKPAGECLASS_H
 #define SVTOOLADJUSTMENTDIALOGMASKPAGECLASS_H
 
-#include "SVDlgImage.h"
 #include "SVEnumerateCombo.h"
 #include "SVImageListClass.h"
 #include "SVObjectLibrary/SVInputInfoListClass.h"
 #include "SVTaskObjectInterfaceClass.h"
+#include "PictureDisplay.h"
 #include "SVView.h"
 
 class CSVMaskEditor;
@@ -41,15 +41,6 @@ protected:
 		MASK_TYPE_SHAPE = 2,
 	};
 
-	enum ViewImageEnum
-	{
-		VIEW_SOURCE = 0,
-		VIEW_MASK   = 1,
-		VIEW_RESULT = 2,
-	};
-
-	ViewImageEnum m_ePage;
-
 	void initMask();
 
 	// Generated message map functions
@@ -67,7 +58,6 @@ protected:
 	afx_msg void OnButtonFillColorMore();
 	afx_msg void OnRadioShapeMask();
 	afx_msg void OnSelchangeComboFillOptions();
-	afx_msg void OnSelchangeImageTab(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnChangeEditFillColor();
 	afx_msg void OnSelchangeDrawMaskCriteria();
 	//}}AFX_MSG
@@ -76,11 +66,11 @@ protected:
 	//{{AFX_VIRTUAL(SVToolAdjustmentDialogMaskPageClass)
 	protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV
+	virtual BOOL OnSetActive( );
 	//}}AFX_VIRTUAL
 
 	//{{AFX_DATA(SVToolAdjustmentDialogMaskPageClass)
 	enum { IDD = IDD_TA_MASK };
-	CTabCtrl	m_tabImage;
 	CButton	m_btnImportMask;
 	CButton	m_btnExportMask;
 	CButton	m_btnEditStaticMask;
@@ -90,7 +80,7 @@ protected:
 	CButton	m_btnFillColorMore;
 	SVAvailableSourceImageListComboBoxClass	m_cbAvailableSourceImageList;
 	CComboBox           m_cbMaskOperator;
-	SVDlgImageClass     m_dialogImage;
+	PictureDisplay      m_dialogImage;
 	BOOL                m_bActivateMask;
 	int                 m_iMaskType;
 	CString	m_sFillColor;
@@ -106,7 +96,7 @@ protected:
 	SVImageListClass                   m_imageList;
 	SVInObjectInfoStruct*              m_pImageInputInfo;
 	SVImageClass*                      m_pCurrentSourceImage;
-	SVEnumerateComboClass               m_DrawCriteriaCombo;
+	SVEnumerateComboClass              m_DrawCriteriaCombo;
 
 	SVFileNameClass                    m_svfnFileName;    // SES 15-Jan-2001
 
@@ -115,7 +105,7 @@ protected:
 private:
 	void SetupImageMaskCombo();
 	void ShowControls(int iMaskType);
-	void DisplayImagePage();
+	void setImages();
 
 	void RefreshComboBox(SVValueObjectClass& p_rValueObject, CComboBox* p_pComboBox);
 	
@@ -138,7 +128,17 @@ private:
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVToolAdjustmentDialogMaskPageClass.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVToolAdjustmentDialogMaskPageClass.h_v  $
+ * 
+ *    Rev 1.1   26 Jun 2014 18:29:28   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  885
+ * SCR Title:  Replace image display in TA-dialogs with activeX SVPictureDisplay
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   use SVPictureDisplay-control
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 15:37:16   bWalter
  * Project:  SVObserver

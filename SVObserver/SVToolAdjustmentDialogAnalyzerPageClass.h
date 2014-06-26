@@ -5,8 +5,8 @@
 //* .Module Name     : SVToolAdjustmentDialogAnalyzerPageClass
 //* .File Name       : $Workfile:   SVToolAdjustmentDialogAnalyzerPageClass.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   13 Aug 2013 10:04:26  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   26 Jun 2014 18:29:24  $
 //******************************************************************************
 
 //******************************************************************************
@@ -31,7 +31,7 @@
 
 #include "SVClassInfoStruct.h"
 #include "SVView.h"
-#include "SVDlgImage.h"
+#include "PictureDisplay.h"
 #include "SVImageListClass.h"
 #include "SVEnumerateCombo.h"
 
@@ -52,9 +52,9 @@ struct SVToolPropertyEntryStruct;
 class SVToolAdjustmentDialogAnalyzerPageClass : public CPropertyPage
 {
 
-//******************************************************************************
-// Class Wizard Generated Message Map Entries:
-//******************************************************************************
+	//******************************************************************************
+	// Class Wizard Generated Message Map Entries:
+	//******************************************************************************
 	// Generated message map functions
 protected:
 	//{{AFX_MSG(SVToolAdjustmentDialogAnalyzerPageClass)
@@ -67,62 +67,77 @@ protected:
 
 	DECLARE_MESSAGE_MAP()
 
-//******************************************************************************
-// Friend Declaration(s):
-//******************************************************************************
+	//******************************************************************************
+	// Friend Declaration(s):
+	//******************************************************************************
 	friend class SVTAReferenceAdjustmentDialogClass;
 
 
-//******************************************************************************
-// Constructor(s):
-//******************************************************************************
+	//******************************************************************************
+	// Constructor(s):
+	//******************************************************************************
 public:
-// Standard constructor
+	// Standard constructor
 	SVToolAdjustmentDialogAnalyzerPageClass( SVToolAdjustmentDialogSheetClass* Parent );
 
-//******************************************************************************
-// Destructor(s):
-//******************************************************************************
+	//******************************************************************************
+	// Destructor(s):
+	//******************************************************************************
 public:
-// Standard destructor
+	// Standard destructor
 	~SVToolAdjustmentDialogAnalyzerPageClass();
 
 protected:
 	void updateButtons();
 	void DestroyAnalyzer();
+	//************************************
+	// Method:    setImages
+	// Description: Set image to the activeX-control. 
+	// Access:    public 
+	// Returns:   BOOL -FALSE when image not exist
+	//************************************
+	BOOL setImages();
 
-//******************************************************************************
-// Class Wizard Generated Virtual Function(s):
-//******************************************************************************
+	//******************************************************************************
+	// Class Wizard Generated Virtual Function(s):
+	//******************************************************************************
 	//{{AFX_VIRTUAL(SVToolAdjustmentDialogAnalyzerPageClass)
-	protected:
+protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV
 	//}}AFX_VIRTUAL
+	//************************************
+	// Method:    OnSetActive
+	// Description: is called when propertypage get active. set the image 
+	// Access:    public 
+	// Returns:   BOOL 
+	//************************************
+	virtual BOOL OnSetActive();
 
-//******************************************************************************
-// Class Wizard Generated Dialog Data:
-//******************************************************************************
+	//******************************************************************************
+	// Class Wizard Generated Dialog Data:
+	//******************************************************************************
 protected:
 	//{{AFX_DATA(SVToolAdjustmentDialogAnalyzerPageClass)
 	enum { IDD = IDD_TA_ANALYZER_DIALOG };
 	SVAvailableAnalyzerListComboBoxClass	availableAnalyzerListBox;
-	SVDlgImageClass	dialogImage;
+	PictureDisplay	dialogImage;
 	//}}AFX_DATA
 
-//******************************************************************************
-// Data Element(s):
-//******************************************************************************
+	//******************************************************************************
+	// Data Element(s):
+	//******************************************************************************
 public:
-    SVErrorClass    msvError;
+	SVErrorClass    msvError;
 
 protected:
 	SVToolAdjustmentDialogSheetClass*	pParentDialog;
 	SVToolClass*                    pTool;
 	SVAnalyzerClass*				pCurrentAnalyzer;
-	
+
 	SVClassInfoStructListClass availableAnalyzers;
 
 	int								oldIndex;
+
 };
 
 //{{AFX_INSERT_LOCATION}}
@@ -135,6 +150,16 @@ protected:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVToolAdjustmentDialogAnalyzerPageClass.h_v  $
+ * 
+ *    Rev 1.2   26 Jun 2014 18:29:24   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  885
+ * SCR Title:  Replace image display in TA-dialogs with activeX SVPictureDisplay
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   use SVPictureDisplay-control
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   13 Aug 2013 10:04:26   bWalter
  * Project:  SVObserver
