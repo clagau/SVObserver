@@ -1,0 +1,427 @@
+//******************************************************************************
+//* COPYRIGHT (c) 2010 by Seidenader Vision, Harrisburg
+//* All Rights Reserved
+//******************************************************************************
+//* .Module Name     : GraphObject
+//* .File Name       : $Workfile:   GraphObject.cpp  $
+//* ----------------------------------------------------------------------------
+//* .Current Version : $Revision:   1.0  $
+//* .Check In Date   :     $Date:   26 Jun 2014 16:26:40  $
+//******************************************************************************
+
+#pragma region Includes
+#include "StdAfx.h"
+#include "GraphObject.h"
+#include "SVPictureDisplayIdl.h"
+#pragma endregion Includes
+
+#pragma region Declarations
+#ifdef _DEBUG
+#define new DEBUG_NEW
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
+#endif
+#pragma endregion Declarations
+
+#pragma region Constructor
+GraphObject::GraphObject()
+: m_borderRect(0, 0, 0, 0)
+, m_subType(Fit2ViewArea)
+, m_min_x(0)
+, m_max_x(0)
+, m_min_y(0)
+, m_max_y(0)
+, m_isVerticalFlip(false)
+, m_isHorizontalFlip(false)
+{
+}
+
+GraphObject::~GraphObject()
+{
+}
+#pragma region Constructor
+
+#pragma region Public Methods
+void GraphObject::Draw( POINT p_Offset, double p_fZoomWidth, double p_fZoomHeight, CDC& rDC, bool p_bSelected )
+{
+	CPen pen;
+	if( p_bSelected )
+	{
+		pen.CreatePen( PS_DOT, m_PenWidth, m_SelectedColor );
+	}
+	else
+	{
+		pen.CreatePen( PS_SOLID, m_PenWidth, m_color );
+	}
+	int oldBKMode = rDC.SetBkMode( TRANSPARENT );
+	CPen* pOldPen = rDC.SelectObject( &pen );
+	//create points
+	POINT* points = new POINT[m_points.size()];
+	double localZoomWidth = 1.0;
+	double localZoomHeight = 1.0;
+	long localOffsetX = 0;
+	long localOffsetY = 0;
+	switch (m_subType)
+	{
+	case DisplayOnImage:
+		if(m_isHorizontalFlip)
+		{
+			localOffsetX -= m_imageSize.cx;
+			localZoomWidth *= -1.0;
+		}
+
+		if(m_isVerticalFlip)
+		{
+			localOffsetY -= m_imageSize.cy;
+			localZoomHeight *= -1.0;
+		}
+
+		for (size_t i = 0; i < m_points.size(); i++)
+		{
+			points[i].x = static_cast<long>( (((m_points[i].x + localOffsetX) * localZoomWidth) - p_Offset.x ) * p_fZoomWidth );
+			points[i].y = static_cast<long>( (((m_points[i].y + localOffsetY) * localZoomHeight) - p_Offset.y) * p_fZoomHeight );
+		}
+		break;
+	case Fit2ViewArea:
+		calcFullViewPointsForDrawing(m_borderRect, points, m_points.size());
+		break;
+	case Scale2ViewAreaPerParameter:
+		CRect valueRect(m_min_x, m_min_y, m_max_x, m_max_y);
+		calcFullViewPointsForDrawing(valueRect, points, m_points.size());
+		break;
+	}
+
+	size_t numPoints = m_points.size();
+	ASSERT( INT_MAX > numPoints );
+	rDC.Polyline( points, static_cast< int >( numPoints ) );
+	delete[] points;
+	rDC.SelectObject( pOldPen );
+	rDC.SetBkMode( oldBKMode );
+	DrawObject::DrawChildren( p_Offset, p_fZoomWidth, p_fZoomHeight, rDC, p_bSelected );
+}
+
+bool GraphObject::IsValidObjectAtPoint( HTTYPE& SelType, const CPoint& imagePoint, const CPoint& viewPoint ) const
+{
+	bool bRet = false;
+
+	long l_lAllow = GetEditAllowed();
+
+	if( l_lAllow > 0 )
+	{
+		CRect l_rec = GetRectangle();
+
+		// Always valid if not DisplayOnImage or check if we are inside
+		if( DisplayOnImage != m_subType || l_rec.PtInRect( imagePoint ) )
+		{
+			if( (l_lAllow & AllowMove) == AllowMove )	// Allowed to move...
+			{
+				SelType = HTOBJECT;
+				bRet = true;
+			}
+			else if( (l_lAllow & AllowDelete) == AllowDelete)	// Allowed to delete but not move...
+			{
+				SelType = HTSELECTED;
+				bRet = true;
+			}
+		}
+	}
+
+	if( bRet == false )
+	{
+		bRet = IsValidChildObjectAtPoint( SelType, imagePoint, viewPoint );
+	}
+
+	return bRet;
+}
+
+bool GraphObject::Move(HTTYPE SelType, POINT imageMovePoint, const POINT &viewMovePoint)
+{
+	switch (SelType)
+	{
+	case HTOBJECT:
+		//only movement possible if no scale. If scale the graph is over the whole image.
+		if (DisplayOnImage == m_subType)
+		{
+			//change move if flipped
+			POINT movePoint = imageMovePoint;
+			if (m_isHorizontalFlip)
+			{
+				movePoint.x = -movePoint.x;
+			}
+			if (m_isVerticalFlip)
+			{
+				movePoint.y = -movePoint.y;
+			}
+			for (unsigned int i=0; i<m_points.size(); i++)
+			{
+				m_points[i].Offset(movePoint);
+			}
+			m_borderRect.OffsetRect(movePoint);
+			MoveChild( HTOBJECT, imageMovePoint, viewMovePoint );
+		}
+		return true;
+	default:
+		break;
+	}
+
+	return false;
+}
+
+void GraphObject::SetParameter(const VariantParamMap& ParameterMap)
+{
+	DrawObject::SetParameter(ParameterMap);
+
+	calcRect();
+}
+
+void GraphObject::SetParameter(long parameterId, _variant_t parameterValue)
+{
+	switch (parameterId)
+	{
+	case P_Type:
+		ASSERT( GraphROI == parameterValue.lVal );
+		break;
+	case P_SubType:
+		m_subType = static_cast<ROISubType_Graph>(parameterValue.lVal);
+		break;
+	case P_ARRAY_XY:
+		setPoints(parameterValue);
+		break;
+	case P_X_Min:
+		m_min_x = parameterValue.lVal;
+		break;
+	case P_X_Max:
+		m_max_x = parameterValue.lVal;
+		break;
+	case P_Y_Min:
+		m_min_y = parameterValue.lVal;
+		break;
+	case P_Y_Max:
+		m_max_y = parameterValue.lVal;
+		break;
+	case P_Is_Flip_Vertical:
+		m_isVerticalFlip = (VARIANT_TRUE == parameterValue.boolVal);
+		break;
+	case P_Is_Flip_Horizontal:
+		m_isHorizontalFlip = (VARIANT_TRUE == parameterValue.boolVal);
+		break;
+	default:
+		DrawObject::SetParameter(parameterId, parameterValue);
+		break;
+	}
+}
+
+void GraphObject::GetParameter(VariantParamMap& ParameterMap) const
+{
+	DrawObject::GetParameter(ParameterMap);
+
+	ParameterMap[P_Type] = static_cast<long>(LineROI);
+	ParameterMap[P_SubType] = static_cast<long>(m_subType);
+	ParameterMap[P_ARRAY_XY] = getPointsAsVariant();
+	ParameterMap[P_X_Min] = m_min_x;
+	ParameterMap[P_X_Max] = m_max_x;
+	ParameterMap[P_Y_Min] = m_min_y;
+	ParameterMap[P_Y_Max] = m_max_y;
+	ParameterMap[P_Is_Flip_Vertical] = m_isVerticalFlip;
+	ParameterMap[P_Is_Flip_Horizontal] = m_isHorizontalFlip;
+}
+
+RECT GraphObject::GetRectangle() const
+{
+	CRect retRec = m_borderRect;
+	if (DisplayOnImage == m_subType)
+	{
+		//flip rectangle in image if necessary.
+		if (m_isHorizontalFlip)
+		{
+			retRec.left = m_imageSize.cx - m_borderRect.right;
+			retRec.right = m_imageSize.cx - m_borderRect.left;
+		}
+		if (m_isVerticalFlip)
+		{
+			retRec.top = m_imageSize.cy - m_borderRect.bottom;
+			retRec.bottom = m_imageSize.cy - m_borderRect.top;
+		}
+	}
+	else
+	{
+		retRec = CRect(0, 0, m_viewSize.cx, m_viewSize.cy);
+	}
+	return retRec;
+}
+
+void GraphObject::setPoints( const _variant_t& variantPoints )
+{
+	m_points.clear();
+	//the variant must be an array of long or double
+	if (VT_ARRAY == (variantPoints.vt & VT_ARRAY) && (VT_I4 == (variantPoints.vt & VT_I4) || VT_R8 == (variantPoints.vt & VT_R8)))
+	{
+		long length = variantPoints.parray->rgsabound[0].cElements;
+		//length must be modulo 2, because it is the xy pair
+		ASSERT(0 == length % 2);
+		if (1 < length)
+		{
+			void* data = nullptr;
+			SafeArrayAccessData(variantPoints.parray, &data);
+			if ( VT_I4 == ( variantPoints.vt & VT_I4 ) )
+			{
+				long* dataLong = reinterpret_cast< long* >( data );
+				for (int i = 0; i < length / 2; i++)
+				{
+					m_points.push_back(CPoint(dataLong[i * 2], dataLong[i * 2 + 1]));
+				}
+			}
+			else
+			{
+				double* dataDouble = reinterpret_cast< double* >( data );
+				for (int i = 0; i < length / 2; i++)
+				{
+					m_points.push_back(CPoint(static_cast<long>(dataDouble[i * 2]), static_cast<long>(dataDouble[i * 2 + 1])));
+				}
+			}
+			SafeArrayUnaccessData(variantPoints.parray);
+		}
+		else
+		{
+			ASSERT(false);
+		}
+	}
+	else
+	{
+		ASSERT(false);
+	}
+}
+
+_variant_t GraphObject::getPointsAsVariant() const
+{
+	if (0 < m_points.size())
+	{
+		long* pointList = new long[m_points.size()*2];
+		for (unsigned int i=0; i<m_points.size(); i++)
+		{
+			pointList[i*2] = m_points[i].x;
+			pointList[i*2+1] = m_points[i].y;
+		}
+		COleSafeArray arraySafe;
+		size_t doubleNumPoints = m_points.size() * 2;
+		ASSERT( ULONG_MAX > doubleNumPoints );
+		arraySafe.CreateOneDim( VT_I4, static_cast< DWORD >( doubleNumPoints ), pointList );
+		delete[] pointList;
+		return arraySafe;
+	}
+	return 0;
+}
+
+void GraphObject::calcRect()
+{
+	if (m_points.size() > 0)
+	{
+		//calculate rect
+		m_borderRect = CRect(m_points[0], m_points[0]);
+		for (unsigned int i=1; i < m_points.size(); i++)
+		{
+			if (m_borderRect.left > m_points[i].x)
+			{
+				m_borderRect.left = m_points[i].x;
+			}
+			if (m_borderRect.right < m_points[i].x)
+			{
+				m_borderRect.right = m_points[i].x;
+			}
+			if (m_borderRect.top > m_points[i].y)
+			{
+				m_borderRect.top = m_points[i].y;
+			}
+			if (m_borderRect.bottom < m_points[i].y)
+			{
+				m_borderRect.bottom = m_points[i].y;
+			}
+		}
+	}
+	else
+	{
+		m_borderRect = CRect(0, 0, 0, 0);
+	}
+}
+
+void GraphObject::calcFullViewPointsForDrawing( const CRect valueRect, POINT* const & points, size_t sizePoints )
+{
+	ASSERT(m_points.size() == sizePoints);
+	long localOffsetX = 0;
+	long localOffsetY = 0;
+	double localZoomWidth = m_viewSize.cx / static_cast<double>(valueRect.Width());
+	double localZoomHeight = m_viewSize.cy / static_cast<double>(valueRect.Height());
+	if(m_isHorizontalFlip)
+	{
+		localOffsetX -= valueRect.right;
+		localZoomWidth *= -1.0;
+	}
+	else
+	{
+		localOffsetX -= valueRect.left;
+	}
+
+	if(m_isVerticalFlip)
+	{
+		localOffsetY -= valueRect.bottom;
+		localZoomHeight *= -1.0;
+	}
+	else
+	{
+		localOffsetY -= valueRect.top;
+	}
+
+	for ( size_t i = 0; i < m_points.size(); i++ )
+	{
+		points[i].x = static_cast<long>( (m_points[i].x + localOffsetX) * localZoomWidth);
+		points[i].y = static_cast<long>( (m_points[i].y + localOffsetY) * localZoomHeight);
+	}
+}
+#pragma endregion Public Methods
+
+//******************************************************************************
+//* LOG HISTORY:
+//******************************************************************************
+/*
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVPictureDisplay\GraphObject.cpp_v  $
+ * 
+ *    Rev 1.0   26 Jun 2014 16:26:40   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  885
+ * SCR Title:  Replace image display in TA-dialogs with activeX SVPictureDisplay
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   Initial Checkin
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.2   16 Jun 2010 11:58:50   jspila
+ * Project:  SVEZConfig
+ * Change Request (SCR) nbr:  8
+ * SCR Title:  Font Training
+ * Checked in by:  bWalter;  Ben Walter
+ * Change Description:  
+ *   Updated Picture Control to be able to used a different color for selected objects.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.1   03 May 2010 07:06:48   tbair
+ * Project:  SVEZConfig
+ * Change Request (SCR) nbr:  3
+ * SCR Title:  Develop Picture Display Control
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Changed move functions to return true if they can be resized or moved. There is now a limit on minimum size.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.0   15 Mar 2010 13:24:04   jspila
+ * Project:  SVEZConfig
+ * Change Request (SCR) nbr:  1
+ * SCR Title:  Initial Check-in of Prototype
+ * Checked in by:  Joe;  Joe Spila
+ * Change Description:  
+ *   Initial Check-in.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+*/

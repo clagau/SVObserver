@@ -1,0 +1,263 @@
+// SVPictureDisplay.idl : type library source for ActiveX Control project.
+
+// This file will be processed by the MIDL compiler tool to
+// produce the type library (SVPictureDisplay.tlb) that will become a resource in
+// SVPictureDisplay.ocx.
+
+#include <olectl.h>
+#include <idispids.h>
+
+[ uuid(FEF66C91-65ED-4FDA-BA70-797702358358), version(1.0),
+  helpfile("SVPictureDisplay.hlp"),
+  helpstring("SVPictureDisplay ActiveX Control module"),
+  control ]
+library SVPictureDisplayLib
+{
+	importlib(STDOLE_TLB);
+
+	//  Primary dispatch interface for SVPictureDisplayCtrl
+	typedef enum _AppearanceTypes  
+	{  
+	  	[helpstring("Top Buttons")] TopButtons = 0,  
+	  	[helpstring("Right Buttons")] RightButtons = 1,  
+	  	[helpstring("Left Buttons")] LeftButtons = 2,  
+	  	[helpstring("Bottom Buttons")] BottomButtons = 3, 
+		[helpstring("Hide Buttons")] HideButtons = 4
+	} AppearanceTypes;
+
+	 typedef enum  _JustifyTypes
+	{  
+	  	[helpstring("Top or Left")] TopLeft = 0,  
+	  	[helpstring("Bottom or Right")] BottomRight = 1,  
+	} JustifyTypes;
+  
+	// SVROI Types
+	typedef enum _ROIType
+	{
+	  	[helpstring("Rectangle")]	RectangleROI	= 0,
+	  	[helpstring("Line")]		LineROI			= 1,
+	  	[helpstring("Text")]		TextROI			= 2,
+	  	[helpstring("Arrow")]		ArrowROI		= 3,
+		[helpstring("Ellipse")]		EllipseROI		= 4,
+		[helpstring("Doughnut")]	DoughnutROI		= 5, 
+		[helpstring("Trapezoid")]	TrapezoidROI	= 6,
+		[helpstring("Graph")]		GraphROI		= 7,
+		[helpstring("Marker")]		MarkerROI		= 8,
+		[helpstring("Invalid")]		InvalidROIType	= 9
+
+	} ROIType;
+
+	
+	typedef enum _AllowType
+	{
+
+	[helpstring("AllowNone")] AllowNone=0,
+	[helpstring("AllowMove")] AllowMove=1,
+	[helpstring("AllowResize")] AllowResize=2,
+	[helpstring("AllowResizeAndMove")] AllowResizeAndMove=3,
+	[helpstring("AllowDelete")] AllowDelete=4,
+	[helpstring("AllowAll")]AllowAll=7
+	
+	}
+	AllowType;
+	
+	// Trapezoidtypes 
+	typedef enum _ROISubType_Trapezoid
+	{
+		[helpstring("VerticalAxisTop")]	VerticalAxisTop	= 0,
+	  	[helpstring("VerticalAxisBottom")]		VerticalAxisBottom		= 1,
+	  	[helpstring("HorizontalAxisLeft")]		HorizontalAxisLeft		= 2,
+	  	[helpstring("HorizontalAxisRight")]		HorizontalAxisRight		= 3,
+		[helpstring("HorizontalAxisRight")]		InvalidROISubtype		= 4,
+		
+	} ROISubType_Trapezoid;
+
+	// subtype graph
+	typedef enum _ROISubType_Graph
+	{
+		[helpstring("Display on Image")]					DisplayOnImage		= 0,
+	  	[helpstring("Fit to View Area")]					Fit2ViewArea		= 1,
+	  	[helpstring("Scale to View Area per Parameter")]	Scale2ViewAreaPerParameter	= 2,
+	} ROISubType_Graph;
+
+	// subtype marker
+	typedef enum _ROISubType_Marker
+	{
+		[helpstring("Vertical Marker")]			VerticalMarker		= 0,
+	  	[helpstring("Horizontal Marker")]		HorizontalMarker	= 1,
+	} ROISubType_Marker;
+
+	typedef enum _SVOrientation
+	{
+		[helpstring("None")]	None	= 0,
+	  	[helpstring("LeftToRight")]		LeftToRight		= 1,
+	  	[helpstring("RightToLeft")]		RightToLeft		= 2,
+	  	[helpstring("TopToBottom")]		TopToBottom		= 3,
+		[helpstring("BottomToTop")]		BottomToTop		= 4,
+	} SVOrientation;
+
+	typedef enum _ParameterType
+	{
+		[helpstring("ROI Type")]				P_Type =2,
+		[helpstring("ROI X1 Position")]			P_X1=3,
+		[helpstring("ROI Y1 Position")]			P_Y1=4,
+		[helpstring("ROI X2 Position")]			P_X2=5,
+		[helpstring("ROI Y2 Position")]			P_Y2=6,
+		[helpstring("ROI Text")]				P_Text = 7,	
+		[helpstring("ROI Orientation")]			P_Orientation = 8,	
+		[helpstring("ROI point(XY) array")]		P_ARRAY_XY=9,
+		[helpstring("ROI Allow Edit Flags")]	P_AllowEdit = 10,
+		[helpstring("ROI X-Min")]				P_X_Min=11,
+		[helpstring("ROI X-Max")]				P_X_Max=12,
+		[helpstring("ROI Y-Min")]				P_Y_Min=13,
+		[helpstring("ROI Y-Max")]				P_Y_Max=14,
+		[helpstring("ROI Is Flip Vertical")]	P_Is_Flip_Vertical=15,
+		[helpstring("ROI Is Flip Horizontal")]	P_Is_Flip_Horizontal=16,
+		[helpstring("ROI Min")]					P_Min=17,
+		[helpstring("ROI Max")]					P_Max=18,
+		[helpstring("ROI Value")]				P_VALUE=19,
+		[helpstring("ROI Offset")]				P_Offset = 20,
+		[helpstring("ROI SideThickness")]		P_SideThickness=21,
+		[helpstring("ROI TopThickness")]		P_TopThickness=22,
+		[helpstring("ROI SubType")]				P_SubType=23,
+		[helpstring("ROI color")]				P_Color = 24,	
+		[helpstring("ROI SelectedColor")]		P_SelectedColor = 25,	
+	} ParameterType;
+
+	// SVROI Object Interface
+	[
+		uuid(B5419935-769D-4527-9D9B-2776A146FD4C), 
+		helpstring("SVROI Interface")
+	]
+	dispinterface ISVROI
+	{
+	properties:
+		[id(1), readonly, helpstring("ROI Group")]				long Parent;
+
+	methods:
+		[id(24), helpstring("Set Overlay")] HRESULT SetOverlay(VARIANT* pParameterList, VARIANT* pParameterValue, LONG bAllowEdit);
+	}
+
+	[
+		uuid(2105ADD0-7C8B-4ec7-A875-54905D47725B), 
+		helpstring("SVROI Interface")
+	]
+	coclass SVROI
+	{
+		[default] dispinterface ISVROI;
+	};
+	
+	///////////////////// SVROI Object List ////////////////////////////////////////////
+	[
+		uuid(058A6CA5-044C-46b1-BB65-CBEA5A39B8BC), 
+		helpstring("SVROIList Interface")
+	]
+	dispinterface ISVROIList
+	{
+	properties:
+		[id(1), readonly, helpstring("Returns number of SVROI objects in the collection.")]
+		long Count;
+
+		[id(DISPID_NEWENUM), readonly, restricted]	// -4 is DISPID_NEWENUM. Must be propget.
+		IUnknown* _NewEnum;				// precede with underscore so users can't see it.
+
+	methods:
+		[id(0), helpstring("Returns specified SVROI object from the collection.")]
+		IDispatch* Item([in] long lIndex);
+
+		[id(2), helpstring("Adds an SVROI object to the collection.")]
+		long Add([in] ISVROI* pROIObject);
+
+		[id(3), helpstring("Removes specified SVROI object from the collection.)")]
+		void Remove([in] long lIndex);
+
+		[id(4), helpstring("Removes all SVROI objects from the collection.)")]
+		void RemoveAll(void);
+	}
+
+	[
+		uuid(B861BF63-CD67-4de7-A621-CB46088B00C3), 
+		helpstring("ROI Collection (one-based)")
+	]
+	coclass SVROIList
+	{
+		[default] dispinterface ISVROIList;
+	};
+
+	[ uuid(C16C57B1-F3A1-437B-BBF7-1829D7C0A5DC),
+	  helpstring("Dispatch interface for SVPictureDisplay Control")]
+	dispinterface _DSVPictureDisplay
+	{
+	properties:
+			[id(1), helpstring("Button Appearance")] AppearanceTypes ButtonAppearance;
+			[id(2), helpstring("Button Spacing in Pixels")] LONG ButtonSpacing;
+			[id(3), helpstring("Button Justify")] JustifyTypes ButtonJustify;
+			[id(4), helpstring("Scroll Bar Width pixels")] LONG ScrollBarWidth;
+			[id(33), helpstring("Remove the overlay-objects, if a new image is set")] VARIANT_BOOL IsClearOverlayByNewImage;
+			[id(35), helpstring("Zoom images in all tabs simultaneously")] VARIANT_BOOL SimultaneousZoom;
+			[id(40), helpstring("Allow Overlay Over Boundary")] VARIANT_BOOL BoundaryCheck;
+			[id(41), helpstring("ZoomSlider for Zooming")] VARIANT_BOOL ZoomSlider;
+			[id(42), helpstring("Hide Scroll Bars")] VARIANT_BOOL HideScrollBar;
+			[id(43), helpstring("Hide the tab control")] VARIANT_BOOL HideTabControl;
+
+	methods:
+			[id(DISPID_REFRESH), helpstring("method Refresh")] void Refresh(void);
+
+			[id(5), helpstring("Add Tab")] SCODE AddTab(BSTR text, [out] LONG* pHandle);
+			[id(6), helpstring("Remove Tab")] SCODE RemoveTab(LONG lTab);
+			[id(7), helpstring("Select Tab")] SCODE SelectTab(LONG lTab);
+			[id(8), helpstring("Show Tab")] SCODE ShowTab(LONG lTab, LONG bShow);
+			[id(9), helpstring("Rename Tab")] SCODE RenameTab(LONG lTab, BSTR Name);
+
+			[id(10), helpstring("Set Zoom")] SCODE SetZoom(LONG p_lTab, FLOAT p_fZoom);
+			[id(11), helpstring("Get Zoom")] SCODE GetZoom(LONG p_lTab, [out] FLOAT* pFloat);
+
+			[id(12), helpstring("Set Picture")] SCODE SetPicture(LONG p_lTab, IPictureDisp* p_Picture, OLE_COLOR color);
+			[id(13), helpstring("SetPictureWithROI")] SCODE SetPictureWithROI([in] LONG p_lTab, [in] IPictureDisp* p_Picture, [in] OLE_COLOR color, [in] ISVROIList* p_RoiList);
+
+			[id(39), helpstring("Add Overlay defined by Parameter")] SCODE AddOverlay(LONG lTab,  [in] VARIANT* ParameterList,  [in] VARIANT* ParameterValues,  [out] LONG* pHandle);
+			[id(37), helpstring("Add Overlay to groiup defined by Paramete ToGroup")] SCODE AddOverlayToGroup(LONG lGroup, LONG lTab, [in] VARIANT* pParameterlist,   [in] VARIANT* pParametervalue, LONG* pHandle);
+			[id(38), helpstring("Edit Overlay Overlay")] SCODE EditOverlay(LONG lTab, LONG lHandle, VARIANT* pParameterList, VARIANT* pParameterValue);
+		
+
+			[id(27), helpstring("Remove Overlay")] SCODE RemoveOverlay(LONG lTab, LONG Handle);
+			[id(28), helpstring("Remove All Overlays")] SCODE RemoveAllOverlays(LONG lTab);
+
+			[id(29), helpstring("Set Edit Allow")] SCODE SetEditAllow(LONG lTab, LONG lHandle, LONG l_AllowEdit);
+			[id(30), helpstring("Select Object")] SCODE SelectObject(LONG p_lTab, LONG p_lHandle);
+			[id(31), helpstring("Enable Save Button")] SCODE EnableSaveButton(LONG p_lTab, LONG p_lEnable);
+			[id(32), helpstring("method GetViewRect")] SCODE GetViewRect(LONG lTab, [out] LONG* X1, [out] LONG* Y1, [out] LONG* X2, [out] LONG* Y2);
+			[id(34), helpstring("Get tab handle of selected tab")] SCODE GetSelectedTab(LONG* pTab);
+	};
+
+	//  Event dispatch interface for SVPictureDisplayCtrl
+
+	[ uuid(292B012C-B2C2-4C43-8EE0-7FA7C3DABE73),
+	  helpstring("Event interface for SVPictureDisplay Control") ]
+	dispinterface _DSVPictureDisplayEvents
+	{
+		properties:
+			//  Event interface has no properties
+
+		methods:
+			//[id(1)] void ObjectChanged(LONG lTab, LONG lHandle, LONG lX1, LONG lY1, LONG lX2, LONG lY2);
+			[id(2)] void ObjectDeleted(LONG lTab, LONG lHandle);
+			[id(3)] void SavePictureEvent(IPictureDisp* pPictureDisp, LONG Tab);
+			//[id(4)] void ObjectMoved(LONG lTab, LONG lHandle, LONG lX1, LONG lY1, LONG lX2, LONG lY2);
+			[id(5)] void ObjectSelected(LONG lTab, LONG lHandle, LONG lX1, LONG lY1, LONG lX2, LONG lY2);
+			[id(6)] void MouseMovedIm(LONG tab, LONG X, LONG Y);
+			[id(7)] void ObjectMovedEx(LONG tab, LONG handle, VARIANT* ParameterList, VARIANT* ParameterValue);
+			[id(8)] void ObjectChangedEx(LONG tab, LONG handle, VARIANT* Parameterlist, VARIANT* ParameterValue);
+			[id(9)] void TabChange(LONG tabHandle);
+	};
+
+	//  Class information for SVPictureDisplayCtrl
+
+	[ uuid(8174991A-A5F5-4CB3-85E3-3B31FAEF2314),
+	  helpstring("SVPictureDisplay Control"), control ]
+	coclass SVPictureDisplay
+	{
+		[default] dispinterface _DSVPictureDisplay;
+		[default, source] dispinterface _DSVPictureDisplayEvents;
+	};
+};
