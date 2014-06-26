@@ -5,8 +5,8 @@
 //* .Module Name     : SVToolAdjustmentArchivePage
 //* .File Name       : $Workfile:   SVToolArchivePage.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.4  $
-//* .Check In Date   : $Date:   25 Jun 2014 13:01:34  $
+//* .Current Version : $Revision:   1.5  $
+//* .Check In Date   : $Date:   26 Jun 2014 07:07:56  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -614,8 +614,9 @@ bool SVToolAdjustmentArchivePage::GetSelectedHeaderNamePairs( StringPairVect& He
 		// but only add if Guids match the selected object Guids
 		// output a vector of Object Name / Label pairs filtered by the selected objects..
 		SVObjectReferenceVector l_aRefObj;
-		m_treeResultsList.GetSelectedObjects(l_aRefObj);
-		
+		std::vector<int> vecInt;
+		m_treeResultsList.GetSelectedObjectsInTreeOrder(l_aRefObj, vecInt);
+
 		// Get Lists....
 		typedef std::vector<CString> StringVect;
 		StringVect l_HeaderLabelNames;
@@ -624,18 +625,15 @@ bool SVToolAdjustmentArchivePage::GetSelectedHeaderNamePairs( StringPairVect& He
 		m_pTool->m_HeaderObjectGUIDs.GetValues( l_HeaderObjectGUIDs );
 
 		// Collect Object and Label into pairs.
-		StringVect::iterator it1 = l_HeaderLabelNames.begin();
-		for( StringVect::iterator it = l_HeaderObjectGUIDs.begin() ; it != l_HeaderObjectGUIDs.end() ; )
+		for( StringVect::const_iterator it = l_HeaderObjectGUIDs.begin(),it1 = l_HeaderLabelNames.begin() ; it != l_HeaderObjectGUIDs.end() ;++it1, ++it)
 		{
 			StrStrPair l_Pair(*it, *it1 );
 			HeaderPairs.push_back(l_Pair);
-			++it1;
-			++it;
 		}
 
-		// ... Create Lis from selected...
+		// ... Create List from selected...
 		StringPairVect SelectedHeaderPairs;
-		for( SVObjectReferenceVector::iterator l_it = l_aRefObj.begin(); l_it != l_aRefObj.end() ; ++l_it)
+		for( SVObjectReferenceVector::const_iterator l_it = l_aRefObj.begin(); l_it != l_aRefObj.end() ; ++l_it)
 		{
 			SVGUID svGUIDValue;
 			svGUIDValue = l_it->Guid(); //GetCompleteObjectName();
@@ -651,7 +649,7 @@ bool SVToolAdjustmentArchivePage::GetSelectedHeaderNamePairs( StringPairVect& He
 		{
 
 			bool bFound = false;
-			StringPairVect::iterator it2 = HeaderPairs.begin();
+			StringPairVect::const_iterator it2 = HeaderPairs.begin();
 			for( ; it2 != HeaderPairs.end() ; ++it2)
 			{
 				if( it->first == it2->first ) // GUIDs match
@@ -664,7 +662,7 @@ bool SVToolAdjustmentArchivePage::GetSelectedHeaderNamePairs( StringPairVect& He
 			if( bFound )
 			{
 				// copy label to new list.
-				*it = *it2;
+				it->second = it2->second;
 			}
 		}
 
@@ -724,6 +722,16 @@ void SVToolAdjustmentArchivePage::OnBnClickedHeaderCheck()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVToolArchivePage.cpp_v  $
+ * 
+ *    Rev 1.5   26 Jun 2014 07:07:56   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  872
+ * SCR Title:  Add Archive Tool Headers to Archive File
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Modified GetSelectedHeaderNamePairs to use the Tree Order function from the object selector.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.4   25 Jun 2014 13:01:34   tbair
  * Project:  SVObserver
