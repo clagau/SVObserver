@@ -5,8 +5,8 @@
 //* .Module Name     : SVObjectClass
 //* .File Name       : $Workfile:   SVObjectClass.inl  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   17 Mar 2014 14:15:02  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   27 Jun 2014 08:05:04  $
 //******************************************************************************
 
 #ifndef SVOBJECTCLASS_INL
@@ -63,7 +63,7 @@ inline SVObjectClass* SVObjectClass::GetOwner() const
 /*
 This method return the owner object info.
 */
-inline const SVObjectInfoStruct& SVObjectClass::GetOwnerInfo()
+inline const SVObjectInfoStruct& SVObjectClass::GetOwnerInfo() const
 {
 	return ownerObjectInfo;
 }
@@ -71,7 +71,7 @@ inline const SVObjectInfoStruct& SVObjectClass::GetOwnerInfo()
 /*
 This method returns the object info of this object instance.
 */
-inline const SVObjectInfoStruct& SVObjectClass::GetObjectInfo()
+inline const SVObjectInfoStruct& SVObjectClass::GetObjectInfo() const
 {
 	return outObjectInfo;
 }
@@ -90,14 +90,6 @@ This method returns the object's image depth.
 inline long SVObjectClass::GetImageDepth() const
 {
 	return mlImageDepth;
-}
-
-/*
-This method return the object's data depth.
-*/
-inline int SVObjectClass::GetObjectDepth()
-{
-	return objectDepth;
 }
 
 /*
@@ -132,7 +124,18 @@ HRESULT SVObjectClass::Accept( SVObjectVisitor& p_rVisitor )
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObjectLibrary\SVObjectClass.inl_v  $
+$Log:   N:\PVCSARCH65\PROJECTFILES\ARCHIVES\SVOBSERVER_SRC\SVObjectLibrary\SVObjectClass.inl_v  $
+ * 
+ *    Rev 1.2   27 Jun 2014 08:05:04   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  885
+ * SCR Title:  Replace image display in TA-dialogs with activeX SVPictureDisplay
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   remove GetObjectDepth and GetObjectIcon
+ * made methods const: GetObjectColor, GetObjectState, GetCompleteObjectName2, GetCompleteObjectNameLength, GetOwnerInfo, GetObjectInfo and GetFriendList
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   17 Mar 2014 14:15:02   bwalter
  * Project:  SVObserver

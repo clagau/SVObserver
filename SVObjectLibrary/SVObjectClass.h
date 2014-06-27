@@ -5,8 +5,8 @@
 //* .Module Name     : SVObjectClass
 //* .File Name       : $Workfile:   SVObjectClass.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.3  $
-//* .Check In Date   : $Date:   15 May 2014 09:42:26  $
+//* .Current Version : $Revision:   1.4  $
+//* .Check In Date   : $Date:   27 Jun 2014 08:05:06  $
 //******************************************************************************
 
 #ifndef SVOBJECTCLASS_H
@@ -67,7 +67,6 @@ public:
 
 	virtual void ResetPrivateInputInterface();
 
-	int GetObjectDepth();
 	virtual BOOL SetObjectDepth( int NewObjectDepth );
 	virtual BOOL SetObjectDepthWithIndex( int NewObjectDepth, int NewLastSetIndex );
 
@@ -89,9 +88,8 @@ public:
 	virtual HRESULT SetObjectValue( SVObjectAttributeClass* PDataObject );
 	virtual void SetInvalid();
 	virtual void SetDisabled();
-	virtual DWORD	GetObjectColor();
-	virtual DWORD	GetObjectState();
-	virtual HICON	GetObjectIcon();
+	virtual DWORD GetObjectColor() const;
+	virtual DWORD GetObjectState() const;
 
 #ifdef USE_OBJECT_SCRIPT
 	virtual void GetObjectSubScript( CString& RStrScript, CString& RStrAliasTable, int Indent = 0 );
@@ -106,14 +104,14 @@ public:
 	virtual void PersistAttributes( SVObjectWriter& rWriter );
 
 	virtual bool IsArray() const;
-	virtual int  GetArraySize() const;
+	virtual int GetArraySize() const;
 
 	virtual BOOL ReinitObjectInfos();
-	
+
 	virtual BOOL GetChildObjectByName( LPCTSTR tszName, SVObjectClass** ppObject );
 
 	virtual HRESULT GetChildObject( SVObjectClass*& p_rpObject, const SVObjectNameInfo& p_rNameInfo, long p_Index = 0 ) const;
-	
+
 	virtual HRESULT ResetObjectInputs();
 
 	virtual HRESULT RefreshObject();
@@ -143,9 +141,9 @@ public:
 	CString GetCompleteObjectName() const;
 	void GetCompleteObjectName( CString& rString ) const;
 
-	CString GetCompleteObjectNameToObjectType( LPCSTR LPSZCompleteName = NULL, SVObjectTypeEnum  objectTypeToInclude = SVToolSetObjectType ) const;
-	LPTSTR GetCompleteObjectName2( LPCTSTR LPSZCompleteName = NULL );
-	int GetCompleteObjectNameLength( int Length );
+	CString GetCompleteObjectNameToObjectType( LPCSTR LPSZCompleteName = NULL, SVObjectTypeEnum objectTypeToInclude = SVToolSetObjectType ) const;
+	LPTSTR GetCompleteObjectName2( LPCTSTR LPSZCompleteName = NULL ) const;
+	int GetCompleteObjectNameLength( int Length ) const;
 	int GetResourceID() const;
 	SVObjectClass* GetOwner() const;
 	long GetObjectSubType() const;
@@ -155,16 +153,16 @@ public:
 	const SVGUID& GetEmbeddedID() const;
 	const SVGUID& GetOwnerID() const;
 	const SVObjectTypeEnum& GetObjectType() const;
-	const SVObjectInfoStruct&	GetOwnerInfo();
-	const SVObjectInfoStruct&	GetObjectInfo();
-	const SVObjectInfoArrayClass& GetFriendList ();
+	const SVObjectInfoStruct& GetOwnerInfo() const;
+	const SVObjectInfoStruct& GetObjectInfo() const;
+	const SVObjectInfoArrayClass& GetFriendList() const;
 
 protected:
 	virtual SVObjectPtrDeque GetPreProcessObjects() const;
 	virtual SVObjectPtrDeque GetPostProcessObjects() const;
 
 	virtual SVObjectClass *UpdateObject( const GUID &friendGuid, SVObjectClass *p_psvObject, SVObjectClass *p_psvNewOwner );
-	
+
 	virtual DWORD_PTR processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext );
 
 	void buildCompleteObjectName( LPTSTR LPSZCompleteName, int MaxLength );
@@ -172,7 +170,6 @@ protected:
 	virtual HRESULT RemoveObjectConnection( const GUID& p_rObjectID );
 
 public:
-
 	//This attribute holds the object level error information.
 	SVErrorClass msvError;
 
@@ -183,7 +180,7 @@ public:
 	void SetObjectAttributesSet(UINT uAttributes, int iIndex=0, UINT WhichBits = SET_ALL_BITS);
 	void SetDefaultObjectAttributesSet(UINT uAttributes);
 
-protected:	// private:
+protected:
 	//This attribute holds the enumerated bits of allowed object attributes.
 	UINT m_uObjectAttributesAllowed;
 	//This attribute holds the enumerated bits of set object attributes.
@@ -218,6 +215,7 @@ protected:	// private:
 
 	//user given name
 	CString strName;
+
 private:
 	void init();
 
@@ -225,7 +223,6 @@ private:
 	int resourceID;
 	//NOT user changeable name
 	CString strObjectName;
-
 };
 
 /*
@@ -254,7 +251,18 @@ typedef SVVector< SVObjectClass* > SVObjectClassPtrArray;
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObjectLibrary\SVObjectClass.h_v  $
+$Log:   N:\PVCSARCH65\PROJECTFILES\ARCHIVES\SVOBSERVER_SRC\SVObjectLibrary\SVObjectClass.h_v  $
+ * 
+ *    Rev 1.4   27 Jun 2014 08:05:06   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  885
+ * SCR Title:  Replace image display in TA-dialogs with activeX SVPictureDisplay
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   remove GetObjectDepth and GetObjectIcon
+ * made methods const: GetObjectColor, GetObjectState, GetCompleteObjectName2, GetCompleteObjectNameLength, GetOwnerInfo, GetObjectInfo and GetFriendList
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   15 May 2014 09:42:26   sjones
  * Project:  SVObserver

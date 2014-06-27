@@ -5,8 +5,8 @@
 //* .Module Name     : SVObject
 //* .File Name       : $Workfile:   SVObjectClass.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.6  $
-//* .Check In Date   : $Date:   15 May 2014 15:30:26  $
+//* .Current Version : $Revision:   1.7  $
+//* .Check In Date   : $Date:   27 Jun 2014 08:05:06  $
 //******************************************************************************
 
 #pragma region Includes
@@ -895,22 +895,16 @@ SVObjectClass* SVObjectClass::GetAncestor( SVObjectTypeEnum AncestorObjectType )
 }
 
 // Get the local object color...
-DWORD SVObjectClass::GetObjectColor()
+DWORD SVObjectClass::GetObjectColor() const
 {
 	// Not defined here!
 	return SV_DEFAULT_INACTIVE_COLOR;
 }
 
 // Get the local object state...
-DWORD SVObjectClass::GetObjectState()
+DWORD SVObjectClass::GetObjectState() const
 {
 	return 0x0000; // ERROR_INSPECTED_STATE;
-}
-
-// Get the local object icon...
-HICON SVObjectClass::GetObjectIcon()
-{
-	return NULL;
 }
 
 /*
@@ -990,7 +984,7 @@ CString SVObjectClass::GetCompleteObjectNameToObjectType( LPCSTR LPSZCompleteNam
 /*
 Get the complete object name, beginning from highest owner level.
 */
-LPTSTR SVObjectClass::GetCompleteObjectName2( LPCTSTR LPSZCompleteName )
+LPTSTR SVObjectClass::GetCompleteObjectName2( LPCTSTR LPSZCompleteName ) const
 {
 	int Length = 0;
 	if( LPSZCompleteName )
@@ -1025,7 +1019,7 @@ LPTSTR SVObjectClass::GetCompleteObjectName2( LPCTSTR LPSZCompleteName )
 /*
 This method returns a reference to the friends list attribute of this object.
 */
-const SVObjectInfoArrayClass& SVObjectClass::GetFriendList ()
+const SVObjectInfoArrayClass& SVObjectClass::GetFriendList() const
 {
 	return friendList;
 }
@@ -1226,12 +1220,14 @@ DWORD_PTR SVObjectClass::processMessage( DWORD DwMessageID, DWORD_PTR DwMessageV
 /*
 This method gets the length of the complete object name length.
 */
-int SVObjectClass::GetCompleteObjectNameLength( int Length )
+int SVObjectClass::GetCompleteObjectNameLength( int Length ) const
 {
 	Length += GetNameLength() + 1;
 
 	if( ownerObjectInfo.PObject != NULL && ownerObjectInfo.PObject != this )
+	{
 		Length = ownerObjectInfo.PObject->GetCompleteObjectNameLength( Length );
+	}
 
 	return Length;
 }
@@ -1715,7 +1711,18 @@ void SVObjectClass::SetDefaultObjectAttributesSet(UINT uAttributes)
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObjectLibrary\SVObjectClass.cpp_v  $
+$Log:   N:\PVCSARCH65\PROJECTFILES\ARCHIVES\SVOBSERVER_SRC\SVObjectLibrary\SVObjectClass.cpp_v  $
+ * 
+ *    Rev 1.7   27 Jun 2014 08:05:06   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  885
+ * SCR Title:  Replace image display in TA-dialogs with activeX SVPictureDisplay
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   remove GetObjectDepth and GetObjectIcon
+ * made methods const: GetObjectColor, GetObjectState, GetCompleteObjectName2, GetCompleteObjectNameLength, GetOwnerInfo, GetObjectInfo and GetFriendList
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.6   15 May 2014 15:30:26   sjones
  * Project:  SVObserver
