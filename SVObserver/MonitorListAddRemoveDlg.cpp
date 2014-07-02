@@ -5,8 +5,8 @@
 //* .Module Name     : MonitorListAddRemoveDlg
 //* .File Name       : $Workfile:   MonitorListAddRemoveDlg.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   17 Apr 2014 16:22:52  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   01 Jul 2014 15:21:50  $
 //******************************************************************************
 
 #pragma region Includes
@@ -15,7 +15,7 @@
 #include "MonitorListPropertyDlg.h"
 #pragma endregion Includes
 
-#define ALLOW_ONLY_ONE_MONITOR_LIST
+//#define ALLOW_ONLY_ONE_MONITOR_LIST
 
 IMPLEMENT_DYNAMIC(MonitorListAddRemoveDlg, CDialog)
 
@@ -329,6 +329,16 @@ void MonitorListAddRemoveDlg::OnBnClickedBtnProperties()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\MonitorListAddRemoveDlg.cpp_v  $
+ * 
+ *    Rev 1.1   01 Jul 2014 15:21:50   ryoho
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   commented out the #define ALLOW_ONLY_ONE_MONITOR_LIST so that multiple list can be created
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   17 Apr 2014 16:22:52   ryoho
  * Project:  SVObserver

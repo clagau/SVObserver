@@ -5,8 +5,8 @@
 //* .Module Name     : SVJsonCommandServerSocket
 //* .File Name       : $Workfile:   SVJsonCommandServerSocket.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.4  $
-//* .Check In Date   : $Date:   19 Jun 2014 15:56:32  $
+//* .Current Version : $Revision:   1.5  $
+//* .Check In Date   : $Date:   01 Jul 2014 15:17:54  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -36,17 +36,21 @@ bool SVJsonCommandServerSocket::Start(unsigned short portNo)
 {
 	bool bRetVal = false;
 	SVSocketError::ErrorEnum error = m_server.Create();
-	if (error == SVSocketError::Success)
+	if (SVSocketError::Success == error)
 	{
-		error = m_server.Listen(portNo);
-		if (error == SVSocketError::Success)
+		error = m_server.SetNonBlocking();
+		if (SVSocketError::Success == error)
 		{
-			bRetVal = true;
-			if (!m_thread.IsActive())
+			error = m_server.Listen(portNo);
+			if (SVSocketError::Success == error)
 			{
-				// Start thread for accepts and reads
-				m_thread.Create(boost::bind(&SVJsonCommandServerSocket::ThreadProcessHandler, this, _1), "SVJsonCommandServerSocketThread");
-				QueueUserAPC(SVJsonCommandServerSocket::OnAPCEvent, m_thread.GetThreadHandle(), NULL);
+				bRetVal = true;
+				if (!m_thread.IsActive())
+				{
+					// Start thread for accepts and reads
+					m_thread.Create(boost::bind(&SVJsonCommandServerSocket::ThreadProcessHandler, this, _1), "SVJsonCommandServerSocketThread");
+					QueueUserAPC(SVJsonCommandServerSocket::OnAPCEvent, m_thread.GetThreadHandle(), NULL);
+				}
 			}
 		}
 	}
@@ -303,6 +307,16 @@ void SVJsonCommandServerSocket::CloseClient()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVJsonCommandServerLibrary\SVJsonCommandServerSocket.cpp_v  $
+ * 
+ *    Rev 1.5   01 Jul 2014 15:17:54   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Revised Start method to set the socket to nonblocking
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.4   19 Jun 2014 15:56:32   bwalter
  * Project:  SVObserver

@@ -2,8 +2,8 @@
 //* .Module Name     : SVToolGrouping
 //* .File Name       : $Workfile:   SVToolGrouping.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.4  $
-//* .Check In Date   : $Date:   25 Jun 2014 13:17:56  $
+//* .Current Version : $Revision:   1.5  $
+//* .Check In Date   : $Date:   01 Jul 2014 14:18:22  $
 //******************************************************************************
 #pragma region Includes
 #include "stdafx.h"
@@ -39,6 +39,16 @@ bool SVToolGrouping::IsNameUnique(const String& rName) const
 		[&rName](const ToolGroup& rGroup)->bool { return rName == rGroup.first; });
 
 	return bRetVal;
+}
+
+String SVToolGrouping::MakeNameUnique(const String& rName) const
+{
+	String newName = rName;
+	while (!IsNameUnique(newName))
+	{
+		newName += scDupSuffix;
+	}
+	return newName;
 }
 
 String SVToolGrouping::GetToolToInsertBefore(const String& rName) const
@@ -641,6 +651,16 @@ size_t SVToolGrouping::size() const
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVToolGrouping.cpp_v  $
+ * 
+ *    Rev 1.5   01 Jul 2014 14:18:22   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  906
+ * SCR Title:  SVObserver Tool Grouping
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   Added MakeNameUnique method
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.4   25 Jun 2014 13:17:56   sjones
  * Project:  SVObserver

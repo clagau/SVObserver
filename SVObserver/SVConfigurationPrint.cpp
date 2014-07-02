@@ -5,8 +5,8 @@
 //* .Module Name     : SVConfigurationPrint
 //* .File Name       : $Workfile:   SVConfigurationPrint.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.9  $
-//* .Check In Date   : $Date:   15 May 2014 11:10:30  $
+//* .Current Version : $Revision:   1.10  $
+//* .Check In Date   : $Date:   01 Jul 2014 15:12:10  $
 //******************************************************************************
 
 #pragma region Includes
@@ -52,6 +52,8 @@
 #include "SVShapeMaskHelperClass.h"
 #include "SVIOController.h"
 #include "SVUserMaskOperatorClass.h"
+#include "SVBlobAnalyzer.h"
+#include "SVResultDouble.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -945,6 +947,27 @@ void SVConfigurationPrint::PrintDetails( CDC* pDC, SVObjectClass* pObj, CPoint& 
 					sValue.Format(_T("%s"), maskObj->getMaskInputImage()->GetCompleteObjectName());
 					ptCurPos.x   = (nIndentLevel + 1) * m_shortTabPixels;
 					PrintValueObject(pDC, ptCurPos, sLabel, sValue);
+				}
+			}
+
+			if (SV_IS_KIND_OF(pObj,SVDoubleResultClass))
+			{
+				SVDoubleResultClass* pBlobResult = dynamic_cast<SVDoubleResultClass*>(pObj);
+				if (pBlobResult)
+				{
+					if (SV_IS_KIND_OF(pBlobResult->GetOwner(),SVBlobAnalyzerClass))
+					{  
+						sLabel = pApp->GetStringResource(IDS_BLOB_FEATURE_DEFAULT_VALUE) + _T(":");
+						SVDoubleValueObjectClass* pDoubleValueObj = pBlobResult->getInputDouble();
+						if ( pDoubleValueObj )
+						{
+							double dVal;
+							HRESULT hr = pDoubleValueObj->GetDefaultValue(dVal);
+							sValue.Format(_T("%lf"),dVal);
+							ptCurPos.x   = (nIndentLevel + 1) * m_shortTabPixels;
+							PrintValueObject(pDC, ptCurPos, sLabel, sValue);
+						}
+					}
 				}
 			}
 
@@ -2562,6 +2585,16 @@ HRESULT SVDeviceParamConfigPrintHelper::Visit(SVCustomDeviceParam& param)
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVConfigurationPrint.cpp_v  $
+ * 
+ *    Rev 1.10   01 Jul 2014 15:12:10   ryoho
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  913
+ * SCR Title:  Add Blob Feature Default Value to the Configuration Print (SVO-214)
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   changed PrintDetails - to check for BlobAnalyzerResults and to print the default values for the features
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.9   15 May 2014 11:10:30   sjones
  * Project:  SVObserver

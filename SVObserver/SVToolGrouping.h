@@ -2,8 +2,8 @@
 //* .Module Name     : SVToolGrouping
 //* .File Name       : $Workfile:   SVToolGrouping.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   18 Jun 2014 18:33:58  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   01 Jul 2014 14:18:22  $
 //******************************************************************************
 #pragma once
 
@@ -45,6 +45,7 @@ class SVToolGrouping
 public:
 	String GetDefaultName() const;
 	bool IsNameUnique(const String& rName) const;
+	String MakeNameUnique(const String& rName) const;
 	String GetToolToInsertBefore(const String& rName) const;
 
 	void AddGroup(const String& rName, const String& rInsertBefore = String());
@@ -86,6 +87,16 @@ private:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVToolGrouping.h_v  $
+ * 
+ *    Rev 1.3   01 Jul 2014 14:18:22   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  906
+ * SCR Title:  SVObserver Tool Grouping
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   Added MakeNameUnique method
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   18 Jun 2014 18:33:58   sjones
  * Project:  SVObserver

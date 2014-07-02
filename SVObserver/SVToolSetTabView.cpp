@@ -5,8 +5,8 @@
 //* .Module Name     : SVToolSetTabView
 //* .File Name       : $Workfile:   SVToolSetTabView.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.8  $
-//* .Check In Date   : $Date:   26 Jun 2014 09:51:34  $
+//* .Current Version : $Revision:   1.9  $
+//* .Check In Date   : $Date:   01 Jul 2014 14:19:40  $
 //******************************************************************************
 #pragma region Includes
 #include "stdafx.h"
@@ -1087,49 +1087,13 @@ bool SVToolSetTabViewClass::IsGroupNameUnique(const CString& name) const
 
 CString SVToolSetTabViewClass::MakeGroupNameUnique(const CString& name, int index)
 {
-	bool bDone = false;
-	int nCountSafety = 10;
 	CString newText = name;
-    CString newTextUpper = newText;
-	newTextUpper.MakeUpper();
-
-    while (!bDone)
-    {
-        bool bDup = false;
-        
-		for (int i = 0;i < m_toolSetListCtrl.GetItemCount() && !bDup;i++)
-		{
-			// The Group receiving a new name is exempt from the duplicate test.
-			DWORD_PTR data = m_toolSetListCtrl.GetItemData(i);
-			if (!data && i != index)
-			{
-				CString groupName = m_toolSetListCtrl.GetItemText(i, 0);
-				
-				groupName.MakeUpper();
-	        
-				if (groupName == newTextUpper)
-				{
-					bDup = true;
-				}
-			}
-        }
-        if (bDup)
-        {
-            newText += scDUP;
-
-            // Allow only 10 iterations
-            nCountSafety--;
-            if (nCountSafety < 1)
-            {
-				// make up some temporary name ?
-                bDone = true;
-            }
-        }
-        else
-        {
-            bDone = true;
-        }
-    }
+	SVIPDoc* pDoc = GetIPDoc();
+	if (pDoc)
+	{
+		const SVToolGrouping& rGroupings = pDoc->GetToolGroupings();
+		newText = rGroupings.MakeNameUnique(static_cast<LPCTSTR>(name)).c_str();
+	}
 	return newText;
 }
 
@@ -1156,6 +1120,16 @@ bool SVToolSetTabViewClass::IsToolsetListCtrlActive() const
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVToolSetTabView.cpp_v  $
+ * 
+ *    Rev 1.9   01 Jul 2014 14:19:40   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  906
+ * SCR Title:  SVObserver Tool Grouping
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   Revised makeGroupnameUnique to call SVToolGrouping MakeNameUnique
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.8   26 Jun 2014 09:51:34   sjones
  * Project:  SVObserver

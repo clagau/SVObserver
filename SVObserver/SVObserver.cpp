@@ -5,8 +5,8 @@
 //* .Module Name     : SVObserver
 //* .File Name       : $Workfile:   SVObserver.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.34  $
-//* .Check In Date   : $Date:   25 Jun 2014 11:55:30  $
+//* .Current Version : $Revision:   1.35  $
+//* .Check In Date   : $Date:   01 Jul 2014 15:33:04  $
 //******************************************************************************
 
 #pragma region Includes
@@ -487,7 +487,11 @@ void SVObserverApp::OnFileNewConfig()
 {
 	if( m_svSecurityMgr.SVValidate( SECURITY_POINT_FILE_MENU_NEW ) == S_OK )
 	{
-		ShowConfigurationAssistant( 0, TRUE );
+		if ( ! (ShowConfigurationAssistant( 0, TRUE )) )
+		{
+			//canceled did not want to close existing configuration
+			return;
+		}
 	}
 
 	if( OkToEdit() || !m_svSecurityMgr.SVIsSecured( SECURITY_POINT_MODE_MENU_EDIT_TOOLSET ) )
@@ -8886,6 +8890,16 @@ int SVObserverApp::FindMenuItem(CMenu* Menu, LPCTSTR MenuString)
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVObserver.cpp_v  $
+ * 
+ *    Rev 1.35   01 Jul 2014 15:33:04   ryoho
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   changed OnFileNewConfig - when asking if you want to close the exiting configuration, if "No" return from the function so that the monitor list do not get removed.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.34   25 Jun 2014 11:55:30   ryoho
  * Project:  SVObserver

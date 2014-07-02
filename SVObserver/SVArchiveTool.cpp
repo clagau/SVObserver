@@ -5,8 +5,8 @@
 //* .Module Name     : SVArchiveTool
 //* .File Name       : $Workfile:   SVArchiveTool.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.7  $
-//* .Check In Date   : $Date:   15 May 2014 10:09:08  $
+//* .Current Version : $Revision:   1.8  $
+//* .Check In Date   : $Date:   01 Jul 2014 07:41:54  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -1322,7 +1322,6 @@ void SVArchiveTool::initializeArchiveTool()
 	m_stringArchiveResultGuids_OBSOLETE.ObjectAttributesAllowedRef() = SV_NO_ATTRIBUTES;
 	m_svoArchiveImageNames.ObjectAttributesAllowedRef() =  SV_REMOTELY_SETABLE;
 	m_svoArchiveResultNames.ObjectAttributesAllowedRef() = SV_REMOTELY_SETABLE;
-	m_HeaderLabelNames.ObjectAttributesAllowedRef() = SV_REMOTELY_SETABLE;
 	m_HeaderObjectGUIDs.ObjectAttributesAllowedRef() = SV_NO_ATTRIBUTES;
 	m_bInitializedForRun = FALSE;
 	m_eArchiveMethod = SVArchiveInvalidMethod;
@@ -2352,6 +2351,16 @@ BOOL SVArchiveTool::renameToolSetSymbol(SVObjectClass* pObject, LPCTSTR orgName)
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVArchiveTool.cpp_v  $
+ * 
+ *    Rev 1.8   01 Jul 2014 07:41:54   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  872
+ * SCR Title:  Add Archive Tool Headers to Archive File
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Fixed Attribute where Header Lables were not showing up in results picker and SIAC.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.7   15 May 2014 10:09:08   sjones
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : MonitorListPropertyDlg
 //* .File Name       : $Workfile:   MonitorListPropertyDlg.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   19 Jun 2014 15:15:20  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   01 Jul 2014 15:24:08  $
 //******************************************************************************
 
 #pragma region Includes
@@ -16,7 +16,7 @@
 #include "RemoteMonitorNamedList.h"
 #pragma endregion Includes
 
-enum {IDC_MONITOR_PROPERTY_TRUE = 100};
+enum {IDC_MONITOR_PROPERTY_TREE = 100};
 
 IMPLEMENT_DYNAMIC(MonitorListPropertyDlg, CDialog)
 
@@ -37,7 +37,7 @@ void MonitorListPropertyDlg::DoDataExchange(CDataExchange* pDX)
 }
 
 BEGIN_MESSAGE_MAP(MonitorListPropertyDlg, CDialog)
-	ON_NOTIFY(PTN_ITEMCHANGED, IDC_MONITOR_PROPERTY_TRUE, OnItemChanged)
+	ON_NOTIFY(PTN_ITEMCHANGED, IDC_MONITOR_PROPERTY_TREE, OnItemChanged)
 	ON_COMMAND(IDOK,OnOK)
 END_MESSAGE_MAP()
 
@@ -54,7 +54,7 @@ BOOL MonitorListPropertyDlg::OnInitDialog()
 	ScreenToClient(rc);
 	
 	// Create SVRPropTree control IDC_MONITOR_PROPERTY_TRUE
-	m_Tree.Create(dwStyle, rc, this, IDC_MONITOR_PROPERTY_TRUE);
+	m_Tree.Create(dwStyle, rc, this, IDC_MONITOR_PROPERTY_TREE);
 	long lVal = m_Tree.GetColumn();
 	m_Tree.SetColumn(200);
 
@@ -153,7 +153,7 @@ void MonitorListPropertyDlg::SetupMonitorListProperties()
 		{
 			pPropItem->SetLabelText(_T("Reject Queue Depth"));
 			pPropItem->SetCtrlID(PROP_MONITOR_LIST_DEPTH);
-			pPropItem->SetInfoText(_T("The maximum number of rejected products whose data will be stored in the Run Reject Server. Defaul value = 10, range 0-50"));
+			pPropItem->SetInfoText(_T("The maximum number of rejected products whose data will be stored in the Run Reject Server. Default value: 10, Range: 0-50"));
 			pPropItem->SetItemValue(m_MonitorListRejectQueueDepth);
 		}
 
@@ -177,6 +177,16 @@ int MonitorListPropertyDlg::GetMonitorListRejectQueueDepth() const
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\MonitorListPropertyDlg.cpp_v  $
+ * 
+ *    Rev 1.2   01 Jul 2014 15:24:08   ryoho
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   chnaged IDC_MONITOR_PROPERTY_TRUE to IDC_MONITOR_PROPERTY_TREE.   Changed the text for the description for the Reject Condition Queue Depth
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   19 Jun 2014 15:15:20   ryoho
  * Project:  SVObserver

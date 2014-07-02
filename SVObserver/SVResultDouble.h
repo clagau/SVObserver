@@ -5,8 +5,8 @@
 //* .Module Name     : SVResultDouble
 //* .File Name       : $Workfile:   SVResultDouble.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 14:56:02  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   01 Jul 2014 15:15:22  $
 //******************************************************************************
 
 //******************************************************************************
@@ -41,11 +41,9 @@ public:
 	virtual BOOL CloseObject();
 
 	virtual BOOL OnValidate();
-
+	SVDoubleValueObjectClass* getInputDouble();
 protected:
 	virtual BOOL onRun( SVRunStatusClass& RRunStatus );
-
-	SVDoubleValueObjectClass* getInputDouble();
 
 // Data Element(s):
 public:
@@ -64,7 +62,17 @@ protected:
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVResultDouble.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVResultDouble.h_v  $
+ * 
+ *    Rev 1.1   01 Jul 2014 15:15:22   ryoho
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  913
+ * SCR Title:  Add Blob Feature Default Value to the Configuration Print (SVO-214)
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   chnaged getInputDouble to be a Public Method so it could be used in the Configuration Print
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 14:56:02   bWalter
  * Project:  SVObserver
