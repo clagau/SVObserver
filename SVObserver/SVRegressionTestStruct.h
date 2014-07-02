@@ -5,8 +5,8 @@
 // * .Module Name     : SVRegressionTestStruct
 // * .File Name       : $Workfile:   SVRegressionTestStruct.h  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.0  $
-// * .Check In Date   : $Date:   23 Apr 2013 14:42:34  $
+// * .Current Version : $Revision:   1.1  $
+// * .Check In Date   : $Date:   02 Jul 2014 14:06:40  $
 // ******************************************************************************
 
 #ifndef _SV_REGRESSION_TEST_STRUCT
@@ -66,10 +66,12 @@ enum RegressionPlayModeEnum
 
 enum RegressionFileSelectCode
 {
-	SelectGood = 0,
-	SelectionBadList = 1,
-	SelectionInvalid = 2,
-	SelectionNoFiles = 3
+	SelectGood				= 0,
+	SelectionBadList		= 1,
+	SelectionInvalid		= 2,
+	SelectionInvalidMask	= 3,
+	SelectionNoFiles		= 4,
+	SelectionFileNotExist	= 5
 };
 
 #endif
@@ -78,7 +80,17 @@ enum RegressionFileSelectCode
 // * LOG HISTORY:
 // ******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVRegressionTestStruct.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVRegressionTestStruct.h_v  $
+ * 
+ *    Rev 1.1   02 Jul 2014 14:06:40   ryoho
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  765
+ * SCR Title:  Fix crash due to issue with selecting files for Regression Test
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   added SelectionInvalidMask and SelectionFileNotExist to the RegressionFileSelectCode enum 
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 14:42:34   bWalter
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 // * .Module Name     : SVRegressionFileSelectSheet
 // * .File Name       : $Workfile:   SVRegressionFileSelectSheet.cpp  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.1  $
-// * .Check In Date   : $Date:   02 Oct 2013 07:12:18  $
+// * .Current Version : $Revision:   1.2  $
+// * .Check In Date   : $Date:   02 Jul 2014 14:03:28  $
 // ******************************************************************************
 
 #include "stdafx.h"
@@ -144,12 +144,26 @@ void CSVRegressionFileSelectSheet::OnOK()
 		}
 		case SelectionInvalid:
 		{
-			if ( AfxMessageBox("Selection Error:  Using sinlge file on one of the cameras, but did not select a file.  Select again?",MB_YESNO ) == IDYES )
+			if ( AfxMessageBox("Selection Error: Use Single File selected for one of the cameras but a file was not selected. Select again?",MB_YESNO ) == IDYES )
 			{
 				return;
 			}
 			else
 			{
+				ClearRegressionList();
+				EndDialog(IDCANCEL);
+				return;
+			}
+		}
+		case SelectionInvalidMask:
+		{
+			if ( AfxMessageBox("Selection Error: Use List of Files selected, but the file name does not match\n the acceptable format (<filename>_<sequencenumber>.bmp). Select again?",MB_YESNO ) == IDYES )
+			{
+				return;
+			}
+			else
+			{
+				ClearRegressionList();
 				EndDialog(IDCANCEL);
 				return;
 			}
@@ -162,12 +176,26 @@ void CSVRegressionFileSelectSheet::OnOK()
 			}
 			else
 			{
+				ClearRegressionList();
 				EndDialog(IDCANCEL);
 				return;
 			}
 
 		}
+		case SelectionFileNotExist:
+		{
+			if ( AfxMessageBox("Selection Error:  File does not exist.  Select again?",MB_YESNO ) == IDYES )
+			{
+				return;
+			}
+			else
+			{
+				ClearRegressionList();
+				EndDialog(IDCANCEL);
+				return;
+			}
 
+		}
 	}//end switch...
 
 
@@ -223,29 +251,56 @@ RegressionFileSelectCode CSVRegressionFileSelectSheet::ValidateList()
 				}
 				else 
 				{
-					l_lTotalNumFiles++;
+					//check to make sure name is a file that exists
+					CFile TempFile;
+					if ( TempFile.Open(pStruct->csFirstFile,CFile::modeRead) )
+					{
+						l_lTotalNumFiles++;
+						TempFile.Close();
+					}
+					else
+					{
+						return SelectionFileNotExist;
+					}
 				}
 				
 			}
 
 			if ( pStruct->iFileMethod == RegFileList )
 			{
-				CString sFullName;
-				long lNmbFiles = GetNumberOfFilesMatchingMask(pStruct->csFileMask);
-				l_lTotalNumFiles += lNmbFiles;
-				//check number of files...
-				if ( lListCountSize == 0 )
+				if (!pStruct->csFileMask.IsEmpty())
 				{
-					lListCountSize = lNmbFiles;
-				}
-				else // check to make sure that size matches the others
-				{
-					if ( lNmbFiles != lListCountSize )
+					CString sFullName;
+					long lNmbFiles = GetNumberOfFilesMatchingMask(pStruct->csFileMask);
+					l_lTotalNumFiles += lNmbFiles;
+
+					if ( 0  < lNmbFiles )
+					{
+						//check number of files...
+						if ( lListCountSize == 0 )
+						{
+							lListCountSize = lNmbFiles;
+						}
+						else // check to make sure that size matches the others
+						{
+							if ( lNmbFiles != lListCountSize )
+							{
+								bRet = FALSE;
+								l_ReturnCode = SelectionBadList;
+
+							}
+						}
+					}
+					else
 					{
 						bRet = FALSE;
-						l_ReturnCode = SelectionBadList;
-
+						l_ReturnCode = SelectionInvalidMask;
 					}
+				}
+				else
+				{
+					bRet = FALSE;
+					l_ReturnCode = SelectionNoFiles;
 				}
 			}
 		}
@@ -436,6 +491,16 @@ BOOL CSVRegressionFileSelectSheet::OnInitDialog()
 // ******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVRegressionFileSelectSheet.cpp_v  $
+ * 
+ *    Rev 1.2   02 Jul 2014 14:03:28   ryoho
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  765
+ * SCR Title:  Fix crash due to issue with selecting files for Regression Test
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Changed OnOk to display more descriptive error messages and to clear the regression data if they do not want to re-select files.  Changed ValidateList to look for other invalid conditions.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   02 Oct 2013 07:12:18   tbair
  * Project:  SVObserver
