@@ -5,12 +5,11 @@
 //* .Module Name     : SVGigeCameraROIDlg
 //* .File Name       : $Workfile:   SVGigeCameraROIDlg.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   29 Apr 2014 19:01:16  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   02 Jul 2014 13:06:46  $
 //******************************************************************************
 
-#ifndef SVGIGECAMERAROIDLG_H
-#define SVGIGECAMERAROIDLG_H
+#pragma once
 
 #pragma region Includes
 #include "resource.h"
@@ -22,7 +21,7 @@
 #include "SVOMFCLibrary/SVLongValueDeviceParam.h"
 #include "SVImageLibrary/SVImagingDeviceParams.h"
 #include "SVAcquisitionClass.h"
-#include "SVDlgImageGraphROI.h"
+#include "PictureDisplay.h"
 #pragma endregion Includes
 
 class ISVCameraDeviceImageFormatUpdater
@@ -43,13 +42,14 @@ public:
 
 class SVGigeCameraROIDlg : public CDialog
 {
-public:
 #pragma region Construction
+public:
 	SVGigeCameraROIDlg(ISVCameraDeviceImageFormatUpdater& rUpdater, CWnd* pParent = NULL);
 	virtual ~SVGigeCameraROIDlg();
 #pragma endregion Construction
 
 #pragma region Public Methods
+public:
 	void SetFormat( SVCameraFormat* pFormat );
 	void SetFormatImage( const SVImageInfoClass& rInfo );
 	void SetAcquisitionDevice( SVAcquisitionClassPtr pDevice );
@@ -79,12 +79,19 @@ protected:
 	afx_msg void OnDeltaPosSpinBinningVert(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnDeltaPosSpinBinningHoriz(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnTakePicture();
-	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 	afx_msg void OnChangeROI();
 	afx_msg void OnChangeBinningVert();
 	afx_msg void OnChangeBinningHoriz();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
+	DECLARE_EVENTSINK_MAP()
+
+	//************************************
+	// Method:    ObjectChangedDialogimage
+	// Description: Event-methods, called if overlay-object is changed. Set the new values to the mask properties.
+	// Access:    public
+	//************************************
+	void ObjectChangedExDialogImage(long Tab, long Handle, VARIANT* ParameterList, VARIANT* ParameterValue);
 #pragma endregion Protected Methods
 
 #pragma region Private Methods
@@ -97,7 +104,6 @@ private:
 	void UpdateImageDisplay();
 	void UpdateDeviceBinningParams();
 	void Normalize(CRect &p_roRect);
-	SVSmartHandlePointer GetImageHandle() const;
 	void UpdateSpinTopRange();
 	void UpdateSpinLeftRange();
 	void UpdateSpinWidthRange();
@@ -105,6 +111,7 @@ private:
 	long GetScaledMaxWidth() const;
 	long GetScaledMaxHeight() const;
 	double GetScaledValue(long value, double scaleFactor) const;
+	void setImages();
 #pragma endregion Private Methods
 
 #pragma region Member Variables
@@ -120,7 +127,7 @@ private:
 
 	//{{AFX_DATA(SVGigeCameraROIDlg)
 	enum { IDD = IDD_GIGE_CAMERA_ROI_DLG };
-	SVDlgImageGraphROI m_Image;
+	PictureDisplay m_Image;
 	CSpinButtonCtrl m_SpinHeight;
 	CSpinButtonCtrl m_SpinLeft;
 	CSpinButtonCtrl m_SpinWidth;
@@ -152,19 +159,30 @@ private:
 	long m_verticalBinningOriginalValue;
 	long m_horizontalBinningOriginalValue;
 	ISVCameraDeviceImageFormatUpdater& m_rImageFormatUpdater;
+	long m_handleToOverlay;
+	static const long m_invalidHandle = -1;
 #pragma endregion Member Variables
 };
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
 
-#endif
-
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVGigeCameraROIDlg.h_v  $
+ * 
+ *    Rev 1.3   02 Jul 2014 13:06:46   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  902
+ * SCR Title:  Change Complex Dialog Image Displays to Use SVPictureDisplay ActiveX
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   use SVPictureDisplay-control
+ * cleanup (e.g. use static_cast instead of c-style cast)
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   29 Apr 2014 19:01:16   bwalter
  * Project:  SVObserver

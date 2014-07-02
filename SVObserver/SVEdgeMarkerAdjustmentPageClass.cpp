@@ -5,8 +5,8 @@
 //* .Module Name     : SVEdgeMarkerAdjustmentPageClass
 //* .File Name       : $Workfile:   SVEdgeMarkerAdjustmentPageClass.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   15 May 2014 12:13:14  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   02 Jul 2014 13:08:04  $
 //******************************************************************************
 
 
@@ -28,28 +28,24 @@ IMPLEMENT_DYNCREATE( SVEdgeMarkerAdjustmentPageClass, CPropertyPage )
 
 SVEdgeMarkerAdjustmentPageClass::SVEdgeMarkerAdjustmentPageClass( UINT nIDCaption /* = 0 */ , int id /* = IDD */) 
 : CPropertyPage( id, nIDCaption )
+, PCurrentAnalyzer( nullptr )
+, pAnalyzerOwner( nullptr )
+, pLine( nullptr )
+, m_pvoEdgeDirection( nullptr )
+, m_pvoEdgePolarisation( nullptr )
+, m_pvoEdgeSelect( nullptr )
+, m_pvoEdgeSelectThisValue( nullptr )
+, m_pvoEdgeIsFixedEdgeMarker( nullptr )
+, m_pvoEdgePosition( nullptr )
+, m_pvoEdgePositionOffsetValue( nullptr )
+, m_pvoEdgeLowerThresholdValue( nullptr )
+, m_pvoEdgeUpperThresholdValue( nullptr )
+, StrLower( _T("") )
+, StrUpper( _T("") )
+, StrPositionOffset( _T("") )
+, StrEdgeSelectThis( _T("") )
 {
-	PCurrentAnalyzer = NULL;
-
-	pAnalyzerOwner  = NULL;
-	pLine = NULL;
-
-	//set all value object pointers to null
-	m_pvoEdgeDirection = NULL;
-	m_pvoEdgePolarisation = NULL;
-	m_pvoEdgeSelect = NULL;
-	m_pvoEdgeSelectThisValue = NULL;
-	m_pvoEdgeIsFixedEdgeMarker = NULL;
-	m_pvoEdgePosition = NULL;
-	m_pvoEdgePositionOffsetValue = NULL;
-	m_pvoEdgeLowerThresholdValue = NULL;
-	m_pvoEdgeUpperThresholdValue = NULL;
-
 	//{{AFX_DATA_INIT(SVEdgeMarkerAdjustmentPageClass)
-	StrLower = _T("");
-	StrUpper = _T("");
-	StrPositionOffset = _T("");
-	StrEdgeSelectThis = _T("");
 	//}}AFX_DATA_INIT
 }
 
@@ -82,7 +78,7 @@ HRESULT SVEdgeMarkerAdjustmentPageClass::GetInspectionData()
 
 	if( l_hrOk == S_OK )
 	{
-		l_hrOk = GetSliderData( l_dLower, l_dUpper );
+		l_hrOk = UpdateSliderData( l_dLower, l_dUpper );
 	}
 
 	BOOL bIsFixedEdgeMarker;
@@ -504,12 +500,12 @@ void SVEdgeMarkerAdjustmentPageClass::SetNormalizer( const SVValueBaseNormalizer
 	LowerNormalizer = l_rsvNormalizer;
 }
 
-HRESULT SVEdgeMarkerAdjustmentPageClass::GetSliderData( double p_dLower, double p_dUpper )
+HRESULT SVEdgeMarkerAdjustmentPageClass::UpdateSliderData( double p_dLower, double p_dUpper )
 {
 	HRESULT l_hrOk = S_OK;
 
-	StrUpper.Format( "%u", (int)p_dUpper );
-	StrLower.Format( "%u", (int)p_dLower );
+	StrUpper.Format( "%u", static_cast< int >( p_dUpper ) );
+	StrLower.Format( "%u", static_cast< int >( p_dLower ) );
 
 	setScrollPos( &UpperSliderCtrl, static_cast<int>(p_dUpper) );
 	setScrollPos( &LowerSliderCtrl, static_cast<long>(p_dLower) );
@@ -788,6 +784,17 @@ BOOL SVEdgeMarkerAdjustmentPageClass::OnSetActive()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVEdgeMarkerAdjustmentPageClass.cpp_v  $
+ * 
+ *    Rev 1.3   02 Jul 2014 13:08:04   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  902
+ * SCR Title:  Change Complex Dialog Image Displays to Use SVPictureDisplay ActiveX
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   rename method GetSliderData to UpdateSliderData
+ * cleanup (e.g. use static_cast instead of c-style cast)
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   15 May 2014 12:13:14   sjones
  * Project:  SVObserver

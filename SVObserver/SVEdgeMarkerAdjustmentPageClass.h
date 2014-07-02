@@ -5,8 +5,8 @@
 //* .Module Name     : SVEdgeMarkerAdjustmentPageClass
 //* .File Name       : $Workfile:   SVEdgeMarkerAdjustmentPageClass.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 10:24:08  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   02 Jul 2014 13:08:04  $
 //******************************************************************************
 
 #ifndef _SVEDGEMARKERADJUSTMENTPAGECLASS_H
@@ -88,7 +88,15 @@ public:
 	//}}AFX_DATA
 
 protected:
-	virtual HRESULT GetSliderData( double p_dLower, double p_dUpper );
+	//************************************
+	// Method:    UpdateSliderData
+	// Description: Sets the scroll position for the slider controls and updates the public members StrLower and StrUpper.
+	// Parameter: p_dLower - New position for the lower slider control
+	// Parameter: p_dUpper - New position for the upper slider control
+	// Returns:   S_OK every time
+	//************************************
+	// @WARNING:  This is a bad design.  Public member variables should not be used.  Instead use accessor functions.
+	virtual HRESULT UpdateSliderData( double p_dLower, double p_dUpper );
 
 	void setScrollRange( CSliderCtrl* pSliderCtrl, int min, int max );
 	void setScrollPos( CSliderCtrl* pSliderCtrl, int pos );
@@ -144,7 +152,18 @@ protected:
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVEdgeMarkerAdjustmentPageClass.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVEdgeMarkerAdjustmentPageClass.h_v  $
+ * 
+ *    Rev 1.1   02 Jul 2014 13:08:04   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  902
+ * SCR Title:  Change Complex Dialog Image Displays to Use SVPictureDisplay ActiveX
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   rename method GetSliderData to UpdateSliderData
+ * cleanup (e.g. use static_cast instead of c-style cast)
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 10:24:08   bWalter
  * Project:  SVObserver

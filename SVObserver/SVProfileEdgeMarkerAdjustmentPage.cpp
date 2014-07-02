@@ -5,10 +5,11 @@
 //* .Module Name     : SVProfileEdgeMarkerAdjustmentPage
 //* .File Name       : $Workfile:   SVProfileEdgeMarkerAdjustmentPage.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.3  $
-//* .Check In Date   : $Date:   15 May 2014 12:31:46  $
+//* .Current Version : $Revision:   1.4  $
+//* .Check In Date   : $Date:   02 Jul 2014 13:06:46  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVProfileEdgeMarkerAdjustmentPage.h"
 #include "SVLinearAnalyzerClass.h"
@@ -18,7 +19,10 @@
 #include "SVInspectionProcess.h"
 #include "SVSVIMStateClass.h"
 #include "SVTool.h"
+#include "SVOMFCLibrary\DisplayHelper.h"
+#pragma endregion Includes
 
+#pragma region Declarations
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #undef THIS_FILE
@@ -30,39 +34,415 @@ static char THIS_FILE[] = __FILE__;
 #define USE_MAX_MINUS_OFFSET		2
 #define USE_MIN_PLUS_OFFSET			3
 
-/////////////////////////////////////////////////////////////////////////////
-// Eigenschaftenseite SVProfileEdgeMarkerAdjustmentPageClass 
-
 IMPLEMENT_DYNCREATE( SVProfileEdgeMarkerAdjustmentPageClass, SVEdgeMarkerAdjustmentPageClass )
+#pragma endregion Declarations
 
+#pragma region Constructor
 SVProfileEdgeMarkerAdjustmentPageClass::SVProfileEdgeMarkerAdjustmentPageClass( UINT nIDCaption /* = 0 */ ) 
 : SVEdgeMarkerAdjustmentPageClass( nIDCaption, SVProfileEdgeMarkerAdjustmentPageClass::IDD )
+, m_lowerThresholdMaxOffset( 0 )
+, m_lowerThresholdMinOffset( 0 )
+, m_lowerThresholdMaxPercentDiff( 0 )
+, m_upperThresholdMaxOffset( 0 )
+, m_upperThresholdMinOffset( 0 )
+, m_upperThresholdMaxPercentDiff( 0 )
+, m_lowerThresholdOption( 0 )
+, m_upperThresholdOption( 0 )
 {
 	//{{AFX_DATA_INIT(SVProfileEdgeMarkerAdjustmentPageClass)
-	m_lowerThresholdMaxOffset = 0;
-	m_lowerThresholdMinOffset = 0;
-	m_lowerThresholdMaxPercentDiff = 0;
-	m_upperThresholdMaxOffset = 0;
-	m_upperThresholdMinOffset = 0;
-	m_upperThresholdMaxPercentDiff = 0;
-	m_lowerThresholdOption = 0;
-	m_upperThresholdOption = 0;
 	//}}AFX_DATA_INIT
-
-	m_pEdge = NULL;
-	pProject = NULL;
 }
 
 SVProfileEdgeMarkerAdjustmentPageClass::~SVProfileEdgeMarkerAdjustmentPageClass()
 {
 }
+#pragma endregion Constructor
 
+#pragma region MFC Methods
+void SVProfileEdgeMarkerAdjustmentPageClass::OnCancel()
+{
+	SVEdgeMarkerAdjustmentPageClass::OnCancel();
+}
+
+
+BOOL SVProfileEdgeMarkerAdjustmentPageClass::OnSetActive()
+{
+	BOOL bRetVal = SVEdgeMarkerAdjustmentPageClass::OnSetActive();
+
+	// Update point sets (needed for 2 edges)
+	m_dialogImage.Refresh();
+
+	return bRetVal;
+}
+
+void SVProfileEdgeMarkerAdjustmentPageClass::DoDataExchange( CDataExchange* pDX )
+{
+	SVEdgeMarkerAdjustmentPageClass::DoDataExchange( pDX );
+	//{{AFX_DATA_MAP(SVProfileEdgeMarkerAdjustmentPageClass)
+	DDX_Control(pDX, IDC_LOWER_MIN_OFFSET, m_LowerMinOffsetEditCtrl);
+	DDX_Control(pDX, IDC_LOWER_MAX_OFFSET, m_LowerMaxOffsetEditCtrl);
+	DDX_Control(pDX, IDC_LOWER_PERCENT_DIFF, m_LowerMaxDiffEditCtrl);
+	DDX_Control(pDX, IDC_UPPER_MIN_OFFSET, m_UpperMinOffsetEditCtrl);
+	DDX_Control(pDX, IDC_UPPER_MAX_OFFSET, m_UpperMaxOffsetEditCtrl);
+	DDX_Control(pDX, IDC_UPPER_PERCENT_DIFF, m_UpperMaxDiffEditCtrl);
+	DDX_Radio(pDX, IDC_LOWER_USER_SELECTABLE, m_lowerThresholdOption);
+	DDX_Radio(pDX, IDC_UPPER_USER_SELECTABLE, m_upperThresholdOption);
+	DDX_Text(pDX, IDC_LOWER_MAX_OFFSET, m_lowerThresholdMaxOffset);
+	DDX_Text(pDX, IDC_LOWER_MIN_OFFSET, m_lowerThresholdMinOffset);
+	DDX_Text(pDX, IDC_LOWER_PERCENT_DIFF, m_lowerThresholdMaxPercentDiff);
+	DDV_MinMaxInt( pDX, m_lowerThresholdMaxPercentDiff, 0, 100);
+	DDX_Text(pDX, IDC_UPPER_MAX_OFFSET, m_upperThresholdMaxOffset);
+	DDX_Text(pDX, IDC_UPPER_MIN_OFFSET, m_upperThresholdMinOffset);
+	DDX_Text(pDX, IDC_UPPER_PERCENT_DIFF, m_upperThresholdMaxPercentDiff);
+	DDX_Control(pDX, IDC_DIALOGIMAGE, m_dialogImage);
+	DDV_MinMaxInt( pDX, m_upperThresholdMaxPercentDiff, 0, 100);
+	//}}AFX_DATA_MAP
+}
+
+BOOL SVProfileEdgeMarkerAdjustmentPageClass::OnInitDialog()
+{
+	CPropertyPage::OnInitDialog();
+
+	SetTaskObject( PCurrentAnalyzer );
+
+	if( ! PCurrentAnalyzer )
+		GetParent()->SendMessage( WM_CLOSE );
+
+	if( SV_IS_KIND_OF( PCurrentAnalyzer->GetOwner(), SVTaskObjectClass ) )
+	{
+		pAnalyzerOwner = ( SVTaskObjectClass* ) PCurrentAnalyzer->GetOwner();
+	}
+
+	SVLinearAnalyzerClass *l_psvLinear = dynamic_cast<SVLinearAnalyzerClass *>(PCurrentAnalyzer);
+
+	if( nullptr == l_psvLinear )
+	{
+		if( PCurrentAnalyzer )
+		{
+			SVObjectTypeInfoStruct lineObjectInfo;
+			lineObjectInfo.ObjectType = SVLineObjectType;
+
+			pLine = ( SVLineClass* )::SVSendMessage( PCurrentAnalyzer, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<LONG_PTR>(&lineObjectInfo) );
+		}
+		
+		// Get the Thesholding Options from the SVImageToLineProjectClass
+		SVObjectTypeInfoStruct info;
+		info.ObjectType = SVImageToLineProjectObjectType;
+
+		SVImageToLineProjectClass *pProject = reinterpret_cast<SVImageToLineProjectClass *>(SVSendMessage( PCurrentAnalyzer, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&info) ));
+	
+		if( nullptr != pProject )
+		{
+			GetParent()->SendMessage( WM_CLOSE );
+		}
+	}
+	
+	SVToolClass* pTool = dynamic_cast<SVToolClass*>( PCurrentAnalyzer->GetOwner() );
+
+	RunOnce( pTool );
+	GetInspectionData();
+
+	// Get the Image for this tool
+	SVImageInfoClass* pImageInfo = ( SVImageInfoClass* ) ::SVSendMessage( pTool, SVM_GETFIRST_IMAGE_INFO, NULL, NULL );
+	if( nullptr != pImageInfo )
+	{
+		SVImageClass* pImage = nullptr;
+		pImageInfo->GetOwnerImage( pImage );
+		m_dialogImage.AddTab("Image");
+		m_dialogImage.setImage( pImage, 0 );
+		m_dialogImage.Refresh();
+	}
+
+	return TRUE;  // return TRUE unless you set the focus to a control
+}
+
+void SVProfileEdgeMarkerAdjustmentPageClass::OnHScroll( UINT nSBCode, UINT nPos, CScrollBar* pScrollBar )
+{
+	SVEdgeMarkerAdjustmentPageClass::OnHScroll( nSBCode, nPos, pScrollBar );
+
+	UpdateData( TRUE ); // get data of dialog	
+
+	if( &UpperSliderCtrl == ( CSliderCtrl* ) pScrollBar )
+	{
+		switch( m_upperThresholdOption )
+		{
+			case USE_SLIDER:
+			double dUpper;
+			dUpper = Normalizer.CalcRealValue( ( double ) UpperSliderCtrl.GetPos() );
+			StrUpper.Format( "%u", (int)dUpper );
+			break;
+
+			case USE_MAX_MINUS_PERCENT_DIFF:
+			m_upperThresholdMaxPercentDiff = (unsigned char) Normalizer.CalcRealValue( ( double ) UpperSliderCtrl.GetPos() );
+			StrUpper.Format( "%u", m_upperThresholdMaxPercentDiff );
+			break;
+
+			case USE_MAX_MINUS_OFFSET:
+			m_upperThresholdMaxOffset =	(unsigned char) Normalizer.CalcRealValue( ( double ) UpperSliderCtrl.GetPos() );
+			StrUpper.Format( "%u", m_upperThresholdMaxOffset );
+			break;
+
+			case USE_MIN_PLUS_OFFSET:
+			m_upperThresholdMinOffset = (unsigned char) Normalizer.CalcRealValue( ( double ) UpperSliderCtrl.GetPos() );
+			StrUpper.Format( "%u", m_upperThresholdMinOffset );
+			break;
+		}
+	}
+
+	if( &LowerSliderCtrl == ( CSliderCtrl* ) pScrollBar )
+	{
+		switch( m_lowerThresholdOption )
+		{
+			case USE_SLIDER:
+			double dLower;
+			dLower = LowerNormalizer.CalcRealValue( ( double ) LowerSliderCtrl.GetPos() );
+			StrLower.Format( "%u", (int)dLower );
+			break;
+
+			case USE_MAX_MINUS_PERCENT_DIFF:
+			m_lowerThresholdMaxPercentDiff = (unsigned char) LowerNormalizer.CalcRealValue( ( double ) LowerSliderCtrl.GetPos() );
+			StrLower.Format( "%u", m_lowerThresholdMaxPercentDiff );
+			break;
+
+			case USE_MAX_MINUS_OFFSET:
+			m_lowerThresholdMaxOffset = (unsigned char) LowerNormalizer.CalcRealValue( ( double ) LowerSliderCtrl.GetPos() );
+			StrLower.Format( "%u", m_lowerThresholdMaxOffset );
+			break;
+
+			case USE_MIN_PLUS_OFFSET:
+			m_lowerThresholdMinOffset = (unsigned char) LowerNormalizer.CalcRealValue( ( double ) LowerSliderCtrl.GetPos() );
+			StrLower.Format( "%u", m_lowerThresholdMinOffset );
+			break;
+		}
+	}
+
+	UpdateData( FALSE ); // set data to dialog
+
+	SetInspectionData();
+}
+
+void SVProfileEdgeMarkerAdjustmentPageClass::OnUpperUserSelectable()
+{
+	UpdateData(TRUE);
+
+	double dUpper;
+
+	dUpper = Normalizer.CalcRealValue( ( double ) UpperSliderCtrl.GetPos() );
+
+	StrUpper.Format( "%u", (int)dUpper );
+
+	UpdateData(FALSE);
+
+	SetInspectionData();
+}
+
+void SVProfileEdgeMarkerAdjustmentPageClass::OnLowerUserSelectable()
+{
+	UpdateData(TRUE);
+
+	double dLower;
+
+	dLower = LowerNormalizer.CalcRealValue( ( double ) LowerSliderCtrl.GetPos() );
+
+	StrLower.Format( "%u", (int)dLower );
+
+	UpdateData(FALSE);
+
+	SetInspectionData();
+}
+
+void SVProfileEdgeMarkerAdjustmentPageClass::OnUpperUseMaxMinusDiff()
+{
+	UpdateData(TRUE);
+
+	StrUpper.Format( "%u", m_upperThresholdMaxPercentDiff );
+
+	UpdateData( FALSE ); // set data to dialog
+
+	SetInspectionData();
+}
+
+void SVProfileEdgeMarkerAdjustmentPageClass::OnUpperUseMaxMinusOffset()
+{
+	UpdateData(TRUE);
+
+	StrUpper.Format( "%u", m_upperThresholdMaxOffset );
+
+	UpdateData( FALSE ); // set data to dialog
+
+	SetInspectionData();
+}
+
+void SVProfileEdgeMarkerAdjustmentPageClass::OnUpperUseMinPlusOffset()
+{
+	UpdateData(TRUE);
+
+	StrUpper.Format( "%u", m_upperThresholdMinOffset );
+
+	UpdateData( FALSE ); // set data to dialog
+
+	SetInspectionData();
+}
+
+void SVProfileEdgeMarkerAdjustmentPageClass::OnLowerUseMaxMinusDiff()
+{
+	UpdateData(TRUE);
+
+	StrLower.Format( "%u", m_lowerThresholdMaxPercentDiff );
+
+	UpdateData( FALSE ); // set data to dialog
+
+	SetInspectionData();
+}
+
+void SVProfileEdgeMarkerAdjustmentPageClass::OnLowerUseMaxMinusOffset()
+{
+	UpdateData(TRUE);
+
+	StrLower.Format( "%u", m_lowerThresholdMaxOffset );
+
+	UpdateData( FALSE ); // set data to dialog
+
+	SetInspectionData();
+}
+
+void SVProfileEdgeMarkerAdjustmentPageClass::OnLowerUseMinPlusOffset()
+{
+	UpdateData(TRUE);
+
+	StrLower.Format( "%u", m_lowerThresholdMinOffset );
+
+	UpdateData( FALSE ); // set data to dialog
+
+	SetInspectionData();
+}
+
+void SVProfileEdgeMarkerAdjustmentPageClass::OnChangeUpperPercentDiff()
+{
+	if( m_upperThresholdOption != USE_SLIDER )
+	{
+		int l_prevValue = m_upperThresholdMaxPercentDiff;
+		if( UpdateData(TRUE) )
+		{
+			StrUpper.Format( "%u", m_upperThresholdMaxPercentDiff );
+
+			UpdateData( FALSE ); // set data to dialog
+
+			SetInspectionData();
+		}
+		else
+		{
+			m_upperThresholdMaxPercentDiff = l_prevValue;
+			UpdateData(FALSE);
+		}
+	}
+}
+
+void SVProfileEdgeMarkerAdjustmentPageClass::OnChangeUpperMaxOffset()
+{
+	if( m_upperThresholdOption != USE_SLIDER )
+	{
+		UpdateData(TRUE);
+
+		StrUpper.Format( "%u", m_upperThresholdMaxOffset );
+
+		UpdateData( FALSE ); // set data to dialog
+
+		SetInspectionData();
+	}
+}
+
+void SVProfileEdgeMarkerAdjustmentPageClass::OnChangeUpperMinOffset()
+{
+	if( m_upperThresholdOption != USE_SLIDER )
+	{
+		UpdateData(TRUE);
+
+		StrUpper.Format( "%u", m_upperThresholdMinOffset );
+
+		UpdateData( FALSE ); // set data to dialog
+
+		SetInspectionData();
+	}
+}
+
+void SVProfileEdgeMarkerAdjustmentPageClass::OnChangeLowerPercentDiff()
+{
+	if( m_lowerThresholdOption != USE_SLIDER )
+	{
+		int l_PrevValue = m_lowerThresholdMaxPercentDiff;
+		if( UpdateData(TRUE) )
+		{
+			StrLower.Format( "%u", m_lowerThresholdMaxPercentDiff );
+
+			UpdateData( FALSE ); // set data to dialog
+
+			SetInspectionData();
+		}
+		else
+		{
+			m_lowerThresholdMaxPercentDiff = l_PrevValue;
+			UpdateData(FALSE);
+		}
+	}
+}
+
+void SVProfileEdgeMarkerAdjustmentPageClass::OnChangeLowerMaxOffset()
+{
+	if( m_lowerThresholdOption != USE_SLIDER )
+	{
+		UpdateData(TRUE);
+
+		StrLower.Format( "%u", m_lowerThresholdMaxOffset );
+
+		UpdateData( FALSE ); // set data to dialog
+
+		SetInspectionData();
+	}
+}
+
+void SVProfileEdgeMarkerAdjustmentPageClass::OnChangeLowerMinOffset()
+{
+	if( m_lowerThresholdOption != USE_SLIDER )
+	{
+		UpdateData(TRUE);
+
+		StrLower.Format( "%u", m_lowerThresholdMinOffset );
+
+		UpdateData( FALSE ); // set data to dialog
+
+		SetInspectionData();
+	}
+}
+
+BEGIN_MESSAGE_MAP( SVProfileEdgeMarkerAdjustmentPageClass, SVEdgeMarkerAdjustmentPageClass )
+	//{{AFX_MSG_MAP(SVProfileEdgeMarkerAdjustmentPageClass)
+	ON_WM_HSCROLL()
+	ON_BN_CLICKED(IDC_UPPER_USER_SELECTABLE, OnUpperUserSelectable)
+	ON_BN_CLICKED(IDC_LOWER_USER_SELECTABLE, OnLowerUserSelectable)
+	ON_BN_CLICKED(IDC_UPPER_USE_MAX_MINUS_DIFF, OnUpperUseMaxMinusDiff)
+	ON_BN_CLICKED(IDC_UPPER_USE_MAX_MINUS_OFFSET, OnUpperUseMaxMinusOffset)
+	ON_BN_CLICKED(IDC_UPPER_USE_MIN_PLUS_OFFSET, OnUpperUseMinPlusOffset)
+	ON_BN_CLICKED(IDC_LOWER_USE_MAX_MINUS_DIFF, OnLowerUseMaxMinusDiff)
+	ON_BN_CLICKED(IDC_LOWER_USE_MAX_MINUS_OFFSET, OnLowerUseMaxMinusOffset)
+	ON_BN_CLICKED(IDC_LOWER_USE_MIN_PLUS_OFFSET, OnLowerUseMinPlusOffset)
+	ON_EN_CHANGE(IDC_UPPER_PERCENT_DIFF, OnChangeUpperPercentDiff)
+	ON_EN_CHANGE(IDC_UPPER_MAX_OFFSET, OnChangeUpperMaxOffset)
+	ON_EN_CHANGE(IDC_UPPER_MIN_OFFSET, OnChangeUpperMinOffset)
+	ON_EN_CHANGE(IDC_LOWER_PERCENT_DIFF, OnChangeLowerPercentDiff)
+	ON_EN_CHANGE(IDC_LOWER_MAX_OFFSET, OnChangeLowerMaxOffset)
+	ON_EN_CHANGE(IDC_LOWER_MIN_OFFSET, OnChangeLowerMinOffset)
+	//}}AFX_MSG_MAP
+END_MESSAGE_MAP()
+#pragma endregion MFC Methods
+
+#pragma region Public Methods
 HRESULT SVProfileEdgeMarkerAdjustmentPageClass::GetInspectionData()
 {
 	HRESULT l_hrOk = S_OK;
 
 	BOOL state;
-	
+
 	m_pvoUseLowerThresholdSelectable->GetValue( state );
 	if( state )
 	{
@@ -168,7 +548,7 @@ HRESULT SVProfileEdgeMarkerAdjustmentPageClass::SetInspectionData()
 			{
 				l_hrOk = AddInputRequest( m_pvoUseLowerThresholdSelectable, TRUE );
 			}
-	
+
 			if( l_hrOk == S_OK )
 			{
 				l_hrOk = AddInputRequest( m_pvoUseLowerThresholdMaxMinusPercentDiff, (double)FALSE );
@@ -398,28 +778,28 @@ HRESULT SVProfileEdgeMarkerAdjustmentPageClass::SetInspectionData()
 
 	SVLinearAnalyzerClass *l_psvLinear = dynamic_cast<SVLinearAnalyzerClass *>(PCurrentAnalyzer);
 	
-	if( l_psvLinear != NULL )
+	if( nullptr != l_psvLinear )
 	{
 		if( m_bEdgeA )
 		{
-			if( l_hrOk == S_OK && l_psvLinear->m_svShowAllEdgeAOverlays.GetOwner() != NULL )
+			if( l_hrOk == S_OK && l_psvLinear->m_svShowAllEdgeAOverlays.GetOwner() != nullptr )
 			{
 				l_hrOk = AddInputRequest( &( l_psvLinear->m_svShowAllEdgeAOverlays ), TRUE );
 			}
 
-			if( l_hrOk == S_OK && l_psvLinear->m_svShowAllEdgeBOverlays.GetOwner() != NULL )
+			if( l_hrOk == S_OK && l_psvLinear->m_svShowAllEdgeBOverlays.GetOwner() != nullptr )
 			{
 				l_hrOk = AddInputRequest( &( l_psvLinear->m_svShowAllEdgeBOverlays ), (double)FALSE );
 			}
 		}
 		else
 		{
-			if( l_hrOk == S_OK && l_psvLinear->m_svShowAllEdgeAOverlays.GetOwner() != NULL )
+			if( l_hrOk == S_OK && l_psvLinear->m_svShowAllEdgeAOverlays.GetOwner() != nullptr )
 			{
 				l_hrOk = AddInputRequest( &( l_psvLinear->m_svShowAllEdgeAOverlays ), (double)FALSE );
 			}
 
-			if( l_hrOk == S_OK && l_psvLinear->m_svShowAllEdgeBOverlays.GetOwner() != NULL )
+			if( l_hrOk == S_OK && l_psvLinear->m_svShowAllEdgeBOverlays.GetOwner() != nullptr )
 			{
 				l_hrOk = AddInputRequest( &( l_psvLinear->m_svShowAllEdgeBOverlays ), TRUE );
 			}
@@ -433,7 +813,66 @@ HRESULT SVProfileEdgeMarkerAdjustmentPageClass::SetInspectionData()
 
 	return l_hrOk;
 }
+#pragma endregion Public Methods
 
+#pragma region Protected Methods
+HRESULT SVProfileEdgeMarkerAdjustmentPageClass::UpdateSliderData( double p_dLower, double p_dUpper )
+{
+	double l_dUpper = 0.0;
+	double l_dLower = 0.0;
+
+	switch( m_upperThresholdOption )
+	{
+		case USE_SLIDER:
+			l_dUpper = p_dUpper;
+			break;
+
+		case USE_MAX_MINUS_PERCENT_DIFF:
+			l_dUpper = m_upperThresholdMaxPercentDiff;
+			break;
+
+		case USE_MAX_MINUS_OFFSET:
+			l_dUpper = m_upperThresholdMaxOffset;
+			break;
+
+		case USE_MIN_PLUS_OFFSET:
+			l_dUpper = m_upperThresholdMinOffset;
+			break;
+
+		default:
+			// Do nothing.
+			break;
+	}
+
+	switch( m_lowerThresholdOption )
+	{
+		case USE_SLIDER:
+			l_dLower = p_dLower;
+			break;
+
+		case USE_MAX_MINUS_PERCENT_DIFF:
+			l_dLower = m_lowerThresholdMaxPercentDiff;
+			break;
+
+		case USE_MAX_MINUS_OFFSET:
+			l_dLower = m_lowerThresholdMaxOffset;
+			break;
+
+		case USE_MIN_PLUS_OFFSET:
+			l_dLower = m_lowerThresholdMinOffset;
+			break;
+
+		default:
+			// Do nothing.
+			break;
+	}
+
+	return SVEdgeMarkerAdjustmentPageClass::UpdateSliderData( l_dLower, l_dUpper );
+}
+
+#pragma region Protected Methods
+
+#pragma region Private Methods
 void SVProfileEdgeMarkerAdjustmentPageClass::updateControls()
 {
 	switch( m_lowerThresholdOption )
@@ -442,7 +881,7 @@ void SVProfileEdgeMarkerAdjustmentPageClass::updateControls()
 		m_LowerMaxDiffEditCtrl.EnableWindow(FALSE);
 		m_LowerMaxOffsetEditCtrl.EnableWindow(FALSE);
 		m_LowerMinOffsetEditCtrl.EnableWindow(FALSE);
-		
+
 		// Set Slider Range to 0 - 255
 		setScrollRange( &LowerSliderCtrl, 0, 255 );
 		break;
@@ -451,7 +890,7 @@ void SVProfileEdgeMarkerAdjustmentPageClass::updateControls()
 		m_LowerMaxDiffEditCtrl.EnableWindow(TRUE);
 		m_LowerMaxOffsetEditCtrl.EnableWindow(FALSE);
 		m_LowerMinOffsetEditCtrl.EnableWindow(FALSE);
-		
+
 		// Set Slider Range to 0 - 100
 		setScrollRange( &LowerSliderCtrl, 0, 100 );
 		break;
@@ -460,7 +899,7 @@ void SVProfileEdgeMarkerAdjustmentPageClass::updateControls()
 		m_LowerMaxDiffEditCtrl.EnableWindow(FALSE);
 		m_LowerMaxOffsetEditCtrl.EnableWindow(TRUE);
 		m_LowerMinOffsetEditCtrl.EnableWindow(FALSE);
-		
+
 		// Set Slider Range to 0 - 255
 		setScrollRange( &LowerSliderCtrl, 0, 255 );
 		break;
@@ -515,617 +954,173 @@ void SVProfileEdgeMarkerAdjustmentPageClass::updateControls()
 	}
 }
 
-HRESULT SVProfileEdgeMarkerAdjustmentPageClass::GetSliderData( double p_dLower, double p_dUpper )
-{
-	HRESULT l_hrOk = S_OK;
-
-	double l_dUpper = 0.0;
-	double l_dLower = 0.0;
-
-	switch( m_upperThresholdOption )
-	{
-		case USE_SLIDER:
-			l_dUpper = p_dUpper;
-			break;
-
-		case USE_MAX_MINUS_PERCENT_DIFF:
-			l_dUpper = m_upperThresholdMaxPercentDiff;
-			break;
-
-		case USE_MAX_MINUS_OFFSET:
-			l_dUpper = m_upperThresholdMaxOffset;
-			break;
-
-		case USE_MIN_PLUS_OFFSET:
-			l_dUpper = m_upperThresholdMinOffset;
-			break;
-	}
-
-	switch( m_lowerThresholdOption )
-	{
-		case USE_SLIDER:
-			l_dLower = p_dLower;
-			break;
-
-		case USE_MAX_MINUS_PERCENT_DIFF:
-			l_dLower = m_lowerThresholdMaxPercentDiff;
-			break;
-
-		case USE_MAX_MINUS_OFFSET:
-			l_dLower = m_lowerThresholdMaxOffset;
-			break;
-
-		case USE_MIN_PLUS_OFFSET:
-			l_dLower = m_lowerThresholdMinOffset;
-			break;
-	}
-
-	return SVEdgeMarkerAdjustmentPageClass::GetSliderData( l_dLower, l_dUpper );
-}
-
-void SVProfileEdgeMarkerAdjustmentPageClass::DoDataExchange( CDataExchange* pDX )
-{
-	SVEdgeMarkerAdjustmentPageClass::DoDataExchange( pDX );
-	//{{AFX_DATA_MAP(SVProfileEdgeMarkerAdjustmentPageClass)
-	DDX_Control(pDX, IDC_LOWER_MIN_OFFSET, m_LowerMinOffsetEditCtrl);
-	DDX_Control(pDX, IDC_LOWER_MAX_OFFSET, m_LowerMaxOffsetEditCtrl);
-	DDX_Control(pDX, IDC_LOWER_PERCENT_DIFF, m_LowerMaxDiffEditCtrl);
-	DDX_Control(pDX, IDC_UPPER_MIN_OFFSET, m_UpperMinOffsetEditCtrl);
-	DDX_Control(pDX, IDC_UPPER_MAX_OFFSET, m_UpperMaxOffsetEditCtrl);
-	DDX_Control(pDX, IDC_UPPER_PERCENT_DIFF, m_UpperMaxDiffEditCtrl);
-	DDX_Radio(pDX, IDC_LOWER_USER_SELECTABLE, m_lowerThresholdOption);
-	DDX_Radio(pDX, IDC_UPPER_USER_SELECTABLE, m_upperThresholdOption);
-	DDX_Text(pDX, IDC_LOWER_MAX_OFFSET, m_lowerThresholdMaxOffset);
-	DDX_Text(pDX, IDC_LOWER_MIN_OFFSET, m_lowerThresholdMinOffset);
-	DDX_Text(pDX, IDC_LOWER_PERCENT_DIFF, m_lowerThresholdMaxPercentDiff);
-	DDV_MinMaxInt( pDX, m_lowerThresholdMaxPercentDiff, 0, 100);
-	DDX_Text(pDX, IDC_UPPER_MAX_OFFSET, m_upperThresholdMaxOffset);
-	DDX_Text(pDX, IDC_UPPER_MIN_OFFSET, m_upperThresholdMinOffset);
-	DDX_Text(pDX, IDC_UPPER_PERCENT_DIFF, m_upperThresholdMaxPercentDiff);
-	DDX_Control(pDX, IDC_DIALOGIMAGE, dialogImage);
-	DDV_MinMaxInt( pDX, m_upperThresholdMaxPercentDiff, 0, 100);
-	//}}AFX_DATA_MAP
-}
-
-
-BEGIN_MESSAGE_MAP( SVProfileEdgeMarkerAdjustmentPageClass, SVEdgeMarkerAdjustmentPageClass )
-	//{{AFX_MSG_MAP(SVProfileEdgeMarkerAdjustmentPageClass)
-	ON_WM_HSCROLL()
-	ON_BN_CLICKED(IDC_UPPER_USER_SELECTABLE, OnUpperUserSelectable)
-	ON_BN_CLICKED(IDC_LOWER_USER_SELECTABLE, OnLowerUserSelectable)
-	ON_BN_CLICKED(IDC_UPPER_USE_MAX_MINUS_DIFF, OnUpperUseMaxMinusDiff)
-	ON_BN_CLICKED(IDC_UPPER_USE_MAX_MINUS_OFFSET, OnUpperUseMaxMinusOffset)
-	ON_BN_CLICKED(IDC_UPPER_USE_MIN_PLUS_OFFSET, OnUpperUseMinPlusOffset)
-	ON_BN_CLICKED(IDC_LOWER_USE_MAX_MINUS_DIFF, OnLowerUseMaxMinusDiff)
-	ON_BN_CLICKED(IDC_LOWER_USE_MAX_MINUS_OFFSET, OnLowerUseMaxMinusOffset)
-	ON_BN_CLICKED(IDC_LOWER_USE_MIN_PLUS_OFFSET, OnLowerUseMinPlusOffset)
-	ON_EN_CHANGE(IDC_UPPER_PERCENT_DIFF, OnChangeUpperPercentDiff)
-	ON_EN_CHANGE(IDC_UPPER_MAX_OFFSET, OnChangeUpperMaxOffset)
-	ON_EN_CHANGE(IDC_UPPER_MIN_OFFSET, OnChangeUpperMinOffset)
-	ON_EN_CHANGE(IDC_LOWER_PERCENT_DIFF, OnChangeLowerPercentDiff)
-	ON_EN_CHANGE(IDC_LOWER_MAX_OFFSET, OnChangeLowerMaxOffset)
-	ON_EN_CHANGE(IDC_LOWER_MIN_OFFSET, OnChangeLowerMinOffset)
-	//}}AFX_MSG_MAP
-END_MESSAGE_MAP()
-
-/////////////////////////////////////////////////////////////////////////////
-// SVProfileEdgeMarkerAdjustmentPageClass 
-
-BOOL SVProfileEdgeMarkerAdjustmentPageClass::OnInitDialog() 
-{
-	BOOL l_bOk = FALSE;
-
-	CPropertyPage::OnInitDialog();
-
-	SetTaskObject( PCurrentAnalyzer );
-
-	if( ! PCurrentAnalyzer )
-		GetParent()->SendMessage( WM_CLOSE );
-
-	if( SV_IS_KIND_OF( PCurrentAnalyzer->GetOwner(), SVTaskObjectClass ) )
-	{
-		pAnalyzerOwner = ( SVTaskObjectClass* ) PCurrentAnalyzer->GetOwner();
-	}
-
-	SVLinearAnalyzerClass *l_psvLinear = dynamic_cast<SVLinearAnalyzerClass *>(PCurrentAnalyzer);
-
-	if( l_psvLinear == NULL )
-	{
-		if( PCurrentAnalyzer )
-		{
-			SVObjectTypeInfoStruct lineObjectInfo;
-			lineObjectInfo.ObjectType = SVLineObjectType;
-
-			pLine = reinterpret_cast<SVLineClass*>(::SVSendMessage( PCurrentAnalyzer, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&lineObjectInfo) ));
-		}
-		
-		// Get the Thesholding Options from the SVImageToLineProjectClass
-		SVObjectTypeInfoStruct info;
-		info.ObjectType = SVImageToLineProjectObjectType;
-
-		pProject = reinterpret_cast<SVImageToLineProjectClass *>(SVSendMessage( PCurrentAnalyzer, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&info) ));
-	
-		if( !pProject )
-		{
-			GetParent()->SendMessage( WM_CLOSE );
-		}
-
-		l_bOk = TRUE;
-	}
-	else
-	{
-		if( m_bEdgeA )
-		{
-			m_pEdge = l_psvLinear->GetEdgeA();
-		}
-		else
-		{
-			m_pEdge = l_psvLinear->GetEdgeB();
-		}
-
-		l_bOk = TRUE;
-	}
-
-
-	if( l_bOk )
-	{
-		SVToolClass* pTool = dynamic_cast<SVToolClass*>( PCurrentAnalyzer->GetOwner() );
-
-		RunOnce( pTool );
-
-
-		GetInspectionData();
-
-		// Get the Image for this tool
-		SVImageInfoClass* pImageInfo = reinterpret_cast<SVImageInfoClass*>(::SVSendMessage( pTool, SVM_GETFIRST_IMAGE_INFO, NULL, NULL ));
-		if( pImageInfo )
-		{
-			// Set relative position of Tool Figures (Point Sets) to the Image
-//			pImageInfo->GetProperty( SVExtentPropertyPositionPoint, dialogImage.m_ptPosition );
-// No longer using relative position... now from (0,0) T.B.
-			dialogImage.m_ptPosition = CPoint( 0, 0);
-
-			SVImageClass* l_pImage = NULL;
-
-			pImageInfo->GetOwnerImage( l_pImage );
-
-			// Set the Image
-			dialogImage.init( l_pImage );
-
-			// Redraw
-			dialogImage.refresh();
-		}
-	}
-	
-	return TRUE;  // return TRUE unless you set the focus to a control
-}
-
-void SVProfileEdgeMarkerAdjustmentPageClass::OnCancel() 
-{
-	SVEdgeMarkerAdjustmentPageClass::OnCancel();
-}
-
-
-void SVProfileEdgeMarkerAdjustmentPageClass::OnHScroll( UINT nSBCode, UINT nPos, CScrollBar* pScrollBar ) 
-{
-	SVEdgeMarkerAdjustmentPageClass::OnHScroll( nSBCode, nPos, pScrollBar );
-
-	UpdateData( TRUE ); // get data of dialog	
-
-	if( &UpperSliderCtrl == ( CSliderCtrl* ) pScrollBar )
-	{
-		switch( m_upperThresholdOption )
-		{
-			case USE_SLIDER:
-			double dUpper;
-			dUpper = Normalizer.CalcRealValue( ( double ) UpperSliderCtrl.GetPos() );
-			StrUpper.Format( "%u", (int)dUpper );
-			break;
-
-			case USE_MAX_MINUS_PERCENT_DIFF:
-			m_upperThresholdMaxPercentDiff = (unsigned char) Normalizer.CalcRealValue( ( double ) UpperSliderCtrl.GetPos() );
-			StrUpper.Format( "%u", m_upperThresholdMaxPercentDiff );
-			break;
-
-			case USE_MAX_MINUS_OFFSET:
-			m_upperThresholdMaxOffset =	(unsigned char) Normalizer.CalcRealValue( ( double ) UpperSliderCtrl.GetPos() );
-			StrUpper.Format( "%u", m_upperThresholdMaxOffset );
-			break;
-
-			case USE_MIN_PLUS_OFFSET:
-			m_upperThresholdMinOffset = (unsigned char) Normalizer.CalcRealValue( ( double ) UpperSliderCtrl.GetPos() );
-			StrUpper.Format( "%u", m_upperThresholdMinOffset );
-			break;
-		}
-	}
-
-	if( &LowerSliderCtrl == ( CSliderCtrl* ) pScrollBar )
-	{
-		switch( m_lowerThresholdOption )
-		{
-			case USE_SLIDER:
-			double dLower;
-			dLower = LowerNormalizer.CalcRealValue( ( double ) LowerSliderCtrl.GetPos() );
-			StrLower.Format( "%u", (int)dLower );
-			break;
-
-			case USE_MAX_MINUS_PERCENT_DIFF:
-			m_lowerThresholdMaxPercentDiff = (unsigned char) LowerNormalizer.CalcRealValue( ( double ) LowerSliderCtrl.GetPos() );
-			StrLower.Format( "%u", m_lowerThresholdMaxPercentDiff );
-			break;
-
-			case USE_MAX_MINUS_OFFSET:
-			m_lowerThresholdMaxOffset = (unsigned char) LowerNormalizer.CalcRealValue( ( double ) LowerSliderCtrl.GetPos() );
-			StrLower.Format( "%u", m_lowerThresholdMaxOffset );
-			break;
-
-			case USE_MIN_PLUS_OFFSET:
-			m_lowerThresholdMinOffset = (unsigned char) LowerNormalizer.CalcRealValue( ( double ) LowerSliderCtrl.GetPos() );
-			StrLower.Format( "%u", m_lowerThresholdMinOffset );
-			break;
-		}
-	}
-
-	UpdateData( FALSE ); // set data to dialog
-
-	SetInspectionData();
-}
-
-
-BOOL SVProfileEdgeMarkerAdjustmentPageClass::OnSetActive() 
-{
-	BOOL bRetVal = SVEdgeMarkerAdjustmentPageClass::OnSetActive();
-
-	// Update point sets (needed for 2 edges)
-	dialogImage.RefreshPoints();
-
-	return bRetVal;
-}
-
-void SVProfileEdgeMarkerAdjustmentPageClass::OnUpperUserSelectable() 
-{
-	UpdateData(TRUE);
-
-	double dUpper;
-
-	dUpper = Normalizer.CalcRealValue( ( double ) UpperSliderCtrl.GetPos() );
-
-	StrUpper.Format( "%u", (int)dUpper );
-
-	UpdateData(FALSE);
-
-	SetInspectionData();
-}
-
-void SVProfileEdgeMarkerAdjustmentPageClass::OnLowerUserSelectable() 
-{
-	UpdateData(TRUE);
-
-	double dLower;
-
-	dLower = LowerNormalizer.CalcRealValue( ( double ) LowerSliderCtrl.GetPos() );
-
-	StrLower.Format( "%u", (int)dLower );
-
-	UpdateData(FALSE);
-
-	SetInspectionData();
-}
-
-void SVProfileEdgeMarkerAdjustmentPageClass::OnUpperUseMaxMinusDiff() 
-{
-	UpdateData(TRUE);
-	
-	StrUpper.Format( "%u", m_upperThresholdMaxPercentDiff );
-
-	UpdateData( FALSE ); // set data to dialog
-	
-	SetInspectionData();
-}
-
-void SVProfileEdgeMarkerAdjustmentPageClass::OnUpperUseMaxMinusOffset() 
-{
-	UpdateData(TRUE);
-
-	StrUpper.Format( "%u", m_upperThresholdMaxOffset );
-
-	UpdateData( FALSE ); // set data to dialog
-
-	SetInspectionData();
-}
-
-void SVProfileEdgeMarkerAdjustmentPageClass::OnUpperUseMinPlusOffset() 
-{
-	UpdateData(TRUE);
-	
-	StrUpper.Format( "%u", m_upperThresholdMinOffset );
-
-	UpdateData( FALSE ); // set data to dialog
-
-	SetInspectionData();
-}
-
-void SVProfileEdgeMarkerAdjustmentPageClass::OnLowerUseMaxMinusDiff() 
-{
-	UpdateData(TRUE);
-	
-	StrLower.Format( "%u", m_lowerThresholdMaxPercentDiff );
-
-	UpdateData( FALSE ); // set data to dialog
-
-	SetInspectionData();
-}
-
-void SVProfileEdgeMarkerAdjustmentPageClass::OnLowerUseMaxMinusOffset() 
-{
-	UpdateData(TRUE);
-	
-	StrLower.Format( "%u", m_lowerThresholdMaxOffset );
-
-	UpdateData( FALSE ); // set data to dialog
-
-	SetInspectionData();
-}
-
-void SVProfileEdgeMarkerAdjustmentPageClass::OnLowerUseMinPlusOffset() 
-{
-	UpdateData(TRUE);
-	
-	StrLower.Format( "%u", m_lowerThresholdMinOffset );
-
-	UpdateData( FALSE ); // set data to dialog
-
-	SetInspectionData();
-}
-
-void SVProfileEdgeMarkerAdjustmentPageClass::OnChangeUpperPercentDiff() 
-{
-	if( m_upperThresholdOption != USE_SLIDER )
-	{
-		int l_prevValue = m_upperThresholdMaxPercentDiff;
-		if( UpdateData(TRUE) )
-		{
-			StrUpper.Format( "%u", m_upperThresholdMaxPercentDiff );
-
-			UpdateData( FALSE ); // set data to dialog
-
-			SetInspectionData();
-		}
-		else
-		{
-			m_upperThresholdMaxPercentDiff = l_prevValue;
-			UpdateData(FALSE);
-		}
-	}
-}
-
-void SVProfileEdgeMarkerAdjustmentPageClass::OnChangeUpperMaxOffset() 
-{
-	if( m_upperThresholdOption != USE_SLIDER )
-	{
-		UpdateData(TRUE);
-
-		StrUpper.Format( "%u", m_upperThresholdMaxOffset );
-
-		UpdateData( FALSE ); // set data to dialog
-
-		SetInspectionData();
-	}
-}
-
-void SVProfileEdgeMarkerAdjustmentPageClass::OnChangeUpperMinOffset() 
-{
-	if( m_upperThresholdOption != USE_SLIDER )
-	{
-		UpdateData(TRUE);
-
-		StrUpper.Format( "%u", m_upperThresholdMinOffset );
-
-		UpdateData( FALSE ); // set data to dialog
-
-		SetInspectionData();
-	}
-}
-
-void SVProfileEdgeMarkerAdjustmentPageClass::OnChangeLowerPercentDiff() 
-{
-	if( m_lowerThresholdOption != USE_SLIDER )
-	{
-		int l_PrevValue = m_lowerThresholdMaxPercentDiff;
-		if( UpdateData(TRUE) )
-		{
-			StrLower.Format( "%u", m_lowerThresholdMaxPercentDiff );
-
-			UpdateData( FALSE ); // set data to dialog
-
-			SetInspectionData();
-		}
-		else
-		{
-			m_lowerThresholdMaxPercentDiff = l_PrevValue;
-			UpdateData(FALSE);
-		}
-	}
-}
-
-void SVProfileEdgeMarkerAdjustmentPageClass::OnChangeLowerMaxOffset() 
-{
-	if( m_lowerThresholdOption != USE_SLIDER )
-	{
-		UpdateData(TRUE);
-
-		StrLower.Format( "%u", m_lowerThresholdMaxOffset );
-
-		UpdateData( FALSE ); // set data to dialog
-
-		SetInspectionData();
-	}
-}
-
-void SVProfileEdgeMarkerAdjustmentPageClass::OnChangeLowerMinOffset() 
-{
-	if( m_lowerThresholdOption != USE_SLIDER )
-	{
-		UpdateData(TRUE);
-
-		StrLower.Format( "%u", m_lowerThresholdMinOffset );
-
-		UpdateData( FALSE ); // set data to dialog
-
-		SetInspectionData();
-	}
-}
-
 void SVProfileEdgeMarkerAdjustmentPageClass::updateGraphDisplay()
 {
 	BOOL l_bOk = TRUE;
-
 	SVLinearAnalyzerClass *l_psvLinear = dynamic_cast<SVLinearAnalyzerClass *>(PCurrentAnalyzer);
-	SVImageClass *l_psvImage = NULL;
 
 	// Remove old points
-	dialogImage.ClearPoints();
+	m_dialogImage.RemoveAllOverlays(0);
 
-	if( l_psvLinear == NULL )
+	if( nullptr == l_psvLinear )
 	{
-		// Get the Thesholding Options from the SVImageToLineProjectClass
+		// Get the Thresholding Options from the SVImageToLineProjectClass
 		SVObjectTypeInfoStruct info;
 		info.ObjectType = SVImageToLineProjectObjectType;
 
-		pProject = reinterpret_cast<SVImageToLineProjectClass *>(SVSendMessage( PCurrentAnalyzer, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&info) ));
+		SVImageToLineProjectClass *pProject = reinterpret_cast<SVImageToLineProjectClass *>(SVSendMessage( PCurrentAnalyzer, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&info) ));
 	
-		if( !pProject )
+		if( nullptr != pProject )
 		{
 			return;
 		}
 
-		l_psvImage = pProject->getInputImage();
-
 		// Get the Analyzer figures
-		if( l_psvImage != NULL )
+		if( nullptr != pProject->getInputImage() )
 		{
 			SVLineAnalyzerClass *l_psvAnalyzer = dynamic_cast<SVLineAnalyzerClass *>(PCurrentAnalyzer);
-
-			if( l_psvAnalyzer != NULL )
+			if( l_psvAnalyzer != nullptr )
 			{
 				SVExtentMultiLineStruct l_svMultiLine;
-
 				if( l_psvAnalyzer->GetHistogramOverlay( l_svMultiLine ) == S_OK )
 				{
-					SVDrawObjectListClass l_svDrawObjectList;
-
-					l_svDrawObjectList.AddExtentMultiLineData( l_svMultiLine );
-
-					dialogImage.AddPoints( &l_svDrawObjectList, SVGraphScale );
-
+					setGraphOverlayToPicture( l_svMultiLine );
 					l_svMultiLine.Initialize();
 				}
 
 				if( l_psvAnalyzer->GetThresholdBarsOverlay( l_svMultiLine ) == S_OK )
 				{
-					SVDrawObjectListClass l_svDrawObjectList;
-
-					l_svDrawObjectList.AddExtentMultiLineData( l_svMultiLine );
-
-					dialogImage.AddPoints( &l_svDrawObjectList, SVGraphScale );
-
+					setLineOverlayToPicture( l_svMultiLine );
 					l_svMultiLine.Initialize();
 				}
 
 				if( l_psvAnalyzer->GetEdgesOverlay( l_svMultiLine ) == S_OK )
 				{
-					SVDrawObjectListClass l_svDrawObjectList;
-
-					l_svDrawObjectList.AddExtentMultiLineData( l_svMultiLine );
-
-					dialogImage.AddPoints( &l_svDrawObjectList, SVGraphScale );
-
+					setLineOverlayToPicture( l_svMultiLine );
 					l_svMultiLine.Initialize();
 				}
 
 				if( l_psvAnalyzer->GetSelectedEdgeOverlays( l_svMultiLine ) == S_OK )
 				{
-					SVDrawObjectListClass l_svDrawObjectList;
-
-					l_svDrawObjectList.AddExtentMultiLineData( l_svMultiLine );
-
-					dialogImage.AddPoints( &l_svDrawObjectList, SVGraphScale );
+					setLineOverlayToPicture( l_svMultiLine );
+					l_svMultiLine.Initialize();
 				}
 			}
 		}
 	}
 	else
 	{
+		SVLinearEdgeProcessingClass* pEdge = nullptr;
 		if( m_bEdgeA )
 		{
-			m_pEdge = l_psvLinear->GetEdgeA();
+			pEdge = l_psvLinear->GetEdgeA();
 		}
 		else
 		{
-			m_pEdge = l_psvLinear->GetEdgeB();
+			pEdge = l_psvLinear->GetEdgeB();
 		}
 
-		if( m_pEdge == NULL )
+		if( nullptr == pEdge )
 		{
 			return;
 		}
 
 		SVInspectionProcess* l_pInspect = l_psvLinear->GetInspection();
-
 		SVExtentMultiLineStruct l_svMultiLine;
 
-		if( l_psvLinear->GetHistogramOverlay( m_pEdge, l_svMultiLine ) == S_OK )
+		if( l_psvLinear->GetHistogramOverlay( pEdge, l_svMultiLine ) == S_OK )
 		{
-			SVDrawObjectListClass l_svDrawObjectList;
-
-			l_svDrawObjectList.AddExtentMultiLineData( l_svMultiLine );
-
-			dialogImage.AddPoints( &l_svDrawObjectList, SVGraphScale );
-
+			setGraphOverlayToPicture( l_svMultiLine );
 			l_svMultiLine.Initialize();
 		}
 
-		if( l_psvLinear->GetThresholdBarsOverlay( m_pEdge, l_svMultiLine ) == S_OK )
+		if( l_psvLinear->GetThresholdBarsOverlay( pEdge, l_svMultiLine ) == S_OK )
 		{
-			SVDrawObjectListClass l_svDrawObjectList;
-
-			l_svDrawObjectList.AddExtentMultiLineData( l_svMultiLine );
-
-			dialogImage.AddPoints( &l_svDrawObjectList, SVGraphScale );
-
+			setLineOverlayToPicture( l_svMultiLine );
 			l_svMultiLine.Initialize();
 		}
 
-		if( l_psvLinear->GetEdgesOverlay( m_pEdge, l_svMultiLine ) == S_OK )
+		if( l_psvLinear->GetEdgesOverlay( pEdge, l_svMultiLine ) == S_OK )
 		{
-			SVDrawObjectListClass l_svDrawObjectList;
-
-			l_svDrawObjectList.AddExtentMultiLineData( l_svMultiLine );
-
-			dialogImage.AddPoints( &l_svDrawObjectList, SVGraphScale );
-
+			setLineOverlayToPicture( l_svMultiLine );
 			l_svMultiLine.Initialize();
 		}
 
 		if( l_psvLinear->GetSelectedEdgeOverlays( l_svMultiLine ) == S_OK )
 		{
-			SVDrawObjectListClass l_svDrawObjectList;
-
-			l_svDrawObjectList.AddExtentMultiLineData( l_svMultiLine );
-
-			dialogImage.AddPoints( &l_svDrawObjectList, SVGraphScale );
+			setLineOverlayToPicture( l_svMultiLine );
+			l_svMultiLine.Initialize();
 		}
 	}
 
 	// Update the Graph on the Dialog
-	dialogImage.refresh();
+	m_dialogImage.Refresh();
 }
+
+void SVProfileEdgeMarkerAdjustmentPageClass::setGraphOverlayToPicture( const SVExtentMultiLineStruct &svMultiLine )
+{
+	long handle = -1;
+	ASSERT(1 == svMultiLine.m_svLineArray.size());
+	long sizePointsArray = svMultiLine.m_svLineArray[0].m_svPointArray.size();
+	long* points = new long[sizePointsArray*2];
+	for (int i=0; i<sizePointsArray; i++)
+	{
+		points[i*2] = static_cast<long>(svMultiLine.m_svLineArray[0].m_svPointArray[i].m_dPositionX);
+		points[i*2+1] = static_cast<long>(svMultiLine.m_svLineArray[0].m_svPointArray[i].m_dPositionY);
+	}
+
+	COleSafeArray arraySafe;
+	arraySafe.CreateOneDim(VT_I4, sizePointsArray*2, points);
+	std::map<long,_variant_t> ParMap;
+	ParMap[CDSVPictureDisplay::P_Type ] = static_cast<long>(CDSVPictureDisplay::GraphROI);
+	ParMap[CDSVPictureDisplay::P_Color] = static_cast<long>(svMultiLine.m_svLineArray[0].m_dwColor);
+	ParMap[CDSVPictureDisplay::P_SelectedColor] = static_cast<long>(svMultiLine.m_svLineArray[0].m_dwColor);
+	ParMap[CDSVPictureDisplay::P_AllowEdit] = static_cast<long>(0);
+	ParMap[CDSVPictureDisplay::P_ARRAY_XY] = arraySafe;
+
+	m_dialogImage.AddOverlay(0, ParMap, &handle );
+	delete[] points;
+}
+
+void SVProfileEdgeMarkerAdjustmentPageClass::setLineOverlayToPicture( const SVExtentMultiLineStruct &svMultiLine, long allowType /*= CDSVPictureDisplay::AllowNone */ )
+{
+	long handle = -1;
+	unsigned int count = svMultiLine.m_svLineArray.size();
+	for (unsigned int i = 0; i < count; i++)
+	{
+		ASSERT(2 == svMultiLine.m_svLineArray[i].m_svPointArray.size());
+
+		std::map<long,_variant_t> ParMap;
+		ParMap[CDSVPictureDisplay::P_Type ] = static_cast<long>(CDSVPictureDisplay::LineROI);
+		ParMap[CDSVPictureDisplay::P_Color] = static_cast<long>(svMultiLine.m_svLineArray[i].m_dwColor);
+		ParMap[CDSVPictureDisplay::P_SelectedColor] = static_cast<long>(svMultiLine.m_svLineArray[i].m_dwColor);
+		ParMap[CDSVPictureDisplay::P_AllowEdit] = static_cast<long>(allowType);
+		ParMap[CDSVPictureDisplay::P_X1] = static_cast<long>(svMultiLine.m_svLineArray[i].m_svPointArray[0].m_dPositionX);
+		ParMap[CDSVPictureDisplay::P_Y1] = static_cast<long>(svMultiLine.m_svLineArray[i].m_svPointArray[0].m_dPositionY);
+		ParMap[CDSVPictureDisplay::P_X2] = static_cast<long>(svMultiLine.m_svLineArray[i].m_svPointArray[1].m_dPositionX);
+		ParMap[CDSVPictureDisplay::P_Y2] = static_cast<long>(svMultiLine.m_svLineArray[i].m_svPointArray[1].m_dPositionY);
+
+		m_dialogImage.AddOverlay(0, ParMap, &handle );
+	}
+}
+#pragma endregion Private Methods
 
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVProfileEdgeMarkerAdjustmentPage.cpp_v  $
+ * 
+ *    Rev 1.4   02 Jul 2014 13:06:46   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  902
+ * SCR Title:  Change Complex Dialog Image Displays to Use SVPictureDisplay ActiveX
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   use SVPictureDisplay-control
+ * cleanup (e.g. use static_cast instead of c-style cast)
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   15 May 2014 12:31:46   tbair
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : SVSetupDialogManager
 //* .File Name       : $Workfile:   SVSetupDialogManager.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   02 Oct 2013 08:17:48  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   02 Jul 2014 13:10:48  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -60,7 +60,7 @@
 #include "SVPixelAnalyzer.h"
 #include "SVPixelAnalyzerSetup.h"
 #include "SVProfileEdgeMarkerAdjustmentPage.h"
-#include "SVProfileThresholdAdjustmentPage.h"
+#include "SVThresholdAdjustmentPageClass.h"
 #include "SVResult.h"
 #include "SVTADlgColorThresholdSheet.h"
 #include "SVTool.h"
@@ -2198,14 +2198,7 @@ HRESULT SVSetupDialogManager::SVPixelCountingLineAnalyzerClassSetupDialog( const
 		SVMeasureAnalyzerAdjustmentSheetClass measureDialog( strTitle );
 		//SVThresholdAdjustmentPageClass* pPage = new SVThresholdAdjustmentPageClass;
 
-		SVThresholdAdjustmentPageClass* pPage;
-
-		// check if owned by Profile Tool
-		const SVObjectInfoStruct& rObjectInfo = l_pAnalyzer->GetOwner()->GetObjectInfo();
-		if( rObjectInfo.ObjectTypeInfo.SubType == SVToolProfileObjectType )
-			pPage = new SVProfileThresholdAdjustmentPageClass;
-		else
-			pPage = new SVThresholdAdjustmentPageClass;
+		SVThresholdAdjustmentPageClass* pPage = new SVThresholdAdjustmentPageClass;
 
 		if( pLine && pIPDoc && pPage )
 		{
@@ -2304,6 +2297,16 @@ HRESULT SVSetupDialogManager::SVResultClassSetupDialog( const SVGUID& p_rObjectI
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVSetupDialogManager.cpp_v  $
+ * 
+ *    Rev 1.2   02 Jul 2014 13:10:48   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  902
+ * SCR Title:  Change Complex Dialog Image Displays to Use SVPictureDisplay ActiveX
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   use in method SVPixelCountingLineAnalyzerClassSetupDialog only class SVThresholdAdjustmentPageClass and remove unused class SVProfileThresholdAdjustmentPageClass
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   02 Oct 2013 08:17:48   tbair
  * Project:  SVObserver

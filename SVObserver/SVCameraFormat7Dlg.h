@@ -5,17 +5,16 @@
 // * .Module Name     : SVCameraFormat7Dlg
 // * .File Name       : $Workfile:   SVCameraFormat7Dlg.h  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.2  $
-// * .Check In Date   : $Date:   29 Apr 2014 19:01:14  $
+// * .Current Version : $Revision:   1.3  $
+// * .Check In Date   : $Date:   02 Jul 2014 13:06:46  $
 // ******************************************************************************
 
-#ifndef SVCAMERAFORMAT7DLG_H
-#define SVCAMERAFORMAT7DLG_H
+#pragma once
 
 #pragma region Includes
 #include "SVImageLibrary/SVImageInfoClass.h"
 #include "SVImageLibrary/SVImageBufferHandleInterface.h"
-#include "SVDlgImageGraphROI.h"
+#include "PictureDisplay.h"
 #include "SVOMFCLibrary/SVDeviceParams.h"
 #include "SVImageLibrary/SVImagingDeviceParams.h"
 #include "SVAcquisitionClass.h"
@@ -30,6 +29,7 @@ public:
 #pragma endregion Construction
 
 #pragma region Public Methods
+public:
 	void SetFormat( SVCameraFormat* pFormat );
 	void SetFormat7Image( const SVImageInfoClass& rInfo );
 	void SetAcquisitionDevice( SVAcquisitionClassPtr pDevice );
@@ -54,10 +54,21 @@ protected:
 	afx_msg void OnDeltaPosSpinLeft(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnDeltaPosSpinTop(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnTakePicture();
-	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 	afx_msg void OnChangeROI();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
+	DECLARE_EVENTSINK_MAP()
+
+	//************************************
+	// Method:    ObjectChangedExDialogImage
+	// Description: Event-methods, called if overlay-object is changed. Set the new values to the ROI properties.
+	// Parameter: long Tab: handle to the tab
+	// Parameter: long Handle: handle to the overlay
+	// Parameter: VARIANT * ParameterList: List of the parameter names
+	// Parameter: VARIANT * ParameterValue: List of the parameter values
+	// Returns:   void
+	//************************************
+	void ObjectChangedExDialogImage(long Tab, long Handle, VARIANT* ParameterList, VARIANT* ParameterValue);
 #pragma endregion Protected Methods
 
 #pragma region Private Methods
@@ -65,13 +76,13 @@ private:
 	void SetGraphicROI();
 	void OnDeltaPosSpin( NMHDR* pNMHDR );
 	void Normalize(CRect &p_roRect);
-	SVSmartHandlePointer GetImageHandle() const;
+	void setImages();
 #pragma endregion Private Methods
 
 #pragma region Member Variables
 	//{{AFX_DATA(SVCameraFormat7Dlg)
 	enum { IDD = IDD_CAMERA_FORMAT7_DLG };
-	SVDlgImageGraphROI m_Image;
+	PictureDisplay m_Image;
 	CSpinButtonCtrl m_SpinHeight;
 	CSpinButtonCtrl m_SpinLeft;
 	CSpinButtonCtrl m_SpinWidth;
@@ -86,19 +97,30 @@ private:
 	SVCameraFormat* m_pFormat;
 	SVImageInfoClass m_ImageInfo;
 	SVSmartHandlePointer m_pImageHandle;
+	long m_handleToOverlay;
+	static const long m_invalidHandle = -1;
 #pragma endregion Member Variables
 };
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
 
-#endif
-
 // ******************************************************************************
 // * LOG HISTORY:
 // ******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVCameraFormat7Dlg.h_v  $
+ * 
+ *    Rev 1.3   02 Jul 2014 13:06:46   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  902
+ * SCR Title:  Change Complex Dialog Image Displays to Use SVPictureDisplay ActiveX
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   use SVPictureDisplay-control
+ * cleanup (e.g. use static_cast instead of c-style cast)
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   29 Apr 2014 19:01:14   bwalter
  * Project:  SVObserver

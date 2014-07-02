@@ -287,12 +287,6 @@
     <ClCompile Include="SVDlgImageEditor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVDlgImageGraph.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVDlgImageGraphROI.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVDlgImagePicker.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -945,9 +939,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVProfileEdgeMarkerAdjustmentPage.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVProfileThresholdAdjustmentPage.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVProgressDialog.cpp">
@@ -1943,12 +1934,6 @@
     <ClInclude Include="SVDlgImageEditor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVDlgImageGraph.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVDlgImageGraphROI.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVDlgImagePicker.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -2643,9 +2628,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVProfileEdgeMarkerAdjustmentPage.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVProfileThresholdAdjustmentPage.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVProgressDialog.h">

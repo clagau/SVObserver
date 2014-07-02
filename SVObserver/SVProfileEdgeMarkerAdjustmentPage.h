@@ -5,79 +5,43 @@
 //* .Module Name     : SVProfileEdgeMarkerAdjustmentPage
 //* .File Name       : $Workfile:   SVProfileEdgeMarkerAdjustmentPage.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   07 May 2013 08:21:08  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   02 Jul 2014 13:06:44  $
 //******************************************************************************
 
-#ifndef SVPROFILEEDGEMARKERADJUSTMENTPAGE_H
-#define SVPROFILEEDGEMARKERADJUSTMENTPAGE_H
+#pragma once
 
+#pragma region Includes
 #include "SVEdgeMarkerAdjustmentPageClass.h"
 #include "SVLineAnalyzer.h"
-#include "SVDlgImageGraph.h"
+#include "PictureDisplay.h"
+#pragma endregion Includes
 
+#pragma region Declarations
 class SVImageToLineProjectClass;
 class SVLinearEdgeProcessingClass;
+#pragma endregion Declarations
 
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : SVProfileEdgeMarkerAdjustmentPageClass
-// -----------------------------------------------------------------------------
-// .Description : e.g. This base class capsules an Image and provides its ...
-//              :
-//              :
-// -----------------------------------------------------------------------------
-// .Export
-//	 Public Method				Description
-//  :
-//  :
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :06.06.1998 RO			First Implementation
-////////////////////////////////////////////////////////////////////////////////
 class SVProfileEdgeMarkerAdjustmentPageClass : public SVEdgeMarkerAdjustmentPageClass
 {
 	DECLARE_DYNCREATE(SVProfileEdgeMarkerAdjustmentPageClass)
-
+#pragma region Constructor
 public:
 	SVProfileEdgeMarkerAdjustmentPageClass( UINT nIDCaption = 0 );
 	~SVProfileEdgeMarkerAdjustmentPageClass();
+#pragma endregion Constructor
 
-	virtual HRESULT GetInspectionData();
-	virtual HRESULT SetInspectionData();
-
-	//{{AFX_DATA(SVProfileEdgeMarkerAdjustmentPageClass)
-	enum { IDD = IDD_PROFILE_GR_EDGE_MARKER_ADJUST_DIALOG };
-	CEdit	m_LowerMinOffsetEditCtrl;
-	CEdit	m_LowerMaxOffsetEditCtrl;
-	CEdit	m_LowerMaxDiffEditCtrl;
-	CEdit	m_UpperMinOffsetEditCtrl;
-	CEdit	m_UpperMaxOffsetEditCtrl;
-	CEdit	m_UpperMaxDiffEditCtrl;
-	BYTE	m_lowerThresholdMaxOffset;
-	BYTE	m_lowerThresholdMinOffset;
-	int		m_lowerThresholdMaxPercentDiff;
-	BYTE	m_upperThresholdMaxOffset;
-	BYTE	m_upperThresholdMinOffset;
-	int 	m_upperThresholdMaxPercentDiff;
-	int		m_lowerThresholdOption;
-	int		m_upperThresholdOption;
-	SVDlgImageGraphClass	dialogImage;
-	//}}AFX_DATA
-
+#pragma region MFC Methods
 	//{{AFX_VIRTUAL(SVProfileEdgeMarkerAdjustmentPageClass)
-	public:
-	virtual void OnCancel();
-	virtual BOOL OnSetActive();
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV
+public:
+	virtual void OnCancel() override;
+	virtual BOOL OnSetActive() override;
+protected:
+	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV
+	virtual BOOL OnInitDialog() override;
 	//}}AFX_VIRTUAL
 
-protected:
-	virtual HRESULT GetSliderData( double p_dLower, double p_dUpper );
-
 	//{{AFX_MSG(SVProfileEdgeMarkerAdjustmentPageClass)
-	virtual BOOL OnInitDialog();
 	afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
 	afx_msg void OnUpperUserSelectable();
 	afx_msg void OnLowerUserSelectable();
@@ -95,25 +59,84 @@ protected:
 	afx_msg void OnChangeLowerMinOffset();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
+#pragma endregion MFC Methods
 
+#pragma region Public Methods
+public:
+	virtual HRESULT GetInspectionData() override;
+	virtual HRESULT SetInspectionData() override;
+#pragma endregion Public Methods
+
+#pragma region Protected Methods
+protected:
+	virtual HRESULT UpdateSliderData( double p_dLower, double p_dUpper ) override;
+#pragma region Protected Methods
+
+#pragma region Private Methods
+private:
 	void updateControls();
 	void updateGraphDisplay();
-	void setInitialValues();
 
-	SVImageToLineProjectClass *pProject;
-	SVLinearEdgeProcessingClass	*m_pEdge;
+	//************************************
+	// Method:    setGraphOverlayToPicture
+	// Description: Set a vector of points as graph overlay to the display control. 
+	// Parameter: const SVExtentMultiLineStruct & svMultiLine The points and the information of the color.
+	// Returns:   void
+	//************************************
+	void setGraphOverlayToPicture( const SVExtentMultiLineStruct &svMultiLine );
+
+	//************************************
+	// Method:    setLineOverlayToPicture
+	// Description: Set point pairs as line overlays to the display control.
+	// Parameter: const SVExtentMultiLineStruct svMultiLine The points and the information of the color.
+	// Parameter: long allowType Set the allowType to the control. Default is none change allowed.
+	// Returns:   void
+	//************************************
+	void setLineOverlayToPicture( const SVExtentMultiLineStruct &svMultiLine, long allowType = CDSVPictureDisplay::AllowNone );
+#pragma endregion Private Methods
+
+#pragma region Member variables
+private:
+	//{{AFX_DATA(SVProfileEdgeMarkerAdjustmentPageClass)
+	enum { IDD = IDD_PROFILE_GR_EDGE_MARKER_ADJUST_DIALOG };
+	CEdit	m_LowerMinOffsetEditCtrl;
+	CEdit	m_LowerMaxOffsetEditCtrl;
+	CEdit	m_LowerMaxDiffEditCtrl;
+	CEdit	m_UpperMinOffsetEditCtrl;
+	CEdit	m_UpperMaxOffsetEditCtrl;
+	CEdit	m_UpperMaxDiffEditCtrl;
+	BYTE	m_lowerThresholdMaxOffset;
+	BYTE	m_lowerThresholdMinOffset;
+	int		m_lowerThresholdMaxPercentDiff;
+	BYTE	m_upperThresholdMaxOffset;
+	BYTE	m_upperThresholdMinOffset;
+	int 	m_upperThresholdMaxPercentDiff;
+	int		m_lowerThresholdOption;
+	int		m_upperThresholdOption;
+	PictureDisplay m_dialogImage;
+	//}}AFX_DATA
+#pragma endregion Member variables
 };
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Developer Studio 
 
-#endif
-
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVProfileEdgeMarkerAdjustmentPage.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVProfileEdgeMarkerAdjustmentPage.h_v  $
+ * 
+ *    Rev 1.2   02 Jul 2014 13:06:44   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  902
+ * SCR Title:  Change Complex Dialog Image Displays to Use SVPictureDisplay ActiveX
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   use SVPictureDisplay-control
+ * cleanup (e.g. use static_cast instead of c-style cast)
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   07 May 2013 08:21:08   bWalter
  * Project:  SVObserver

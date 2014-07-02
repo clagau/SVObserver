@@ -5,8 +5,8 @@
 //* .Module Name     : SVGigeCameraROIDlg
 //* .File Name       : $Workfile:   SVGigeCameraROIDlg.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   29 Apr 2014 19:01:16  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   02 Jul 2014 13:06:46  $
 //******************************************************************************
 
 #pragma region Includes
@@ -16,6 +16,7 @@
 #include "SVImageProcessingClass.h"
 #include "SVImageLibrary/SVImageBufferHandleInterface.h"
 #include "SVOMFCLibrary/SVStringValueDeviceParam.h"
+#include "SVOMFCLibrary/DisplayHelper.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -32,7 +33,6 @@ BEGIN_MESSAGE_MAP(SVGigeCameraROIDlg, CDialog)
 	ON_NOTIFY(UDN_DELTAPOS, IDC_SPIN_VERT, OnDeltaPosSpinBinningVert)
 	ON_NOTIFY(UDN_DELTAPOS, IDC_SPIN_HORIZ, OnDeltaPosSpinBinningHoriz)
 	ON_BN_CLICKED(IDC_TAKE_PICTURE, OnTakePicture)
-	ON_WM_MOUSEMOVE()
 	ON_EN_CHANGE(IDC_EDIT_TOP, OnChangeROI)
 	ON_EN_CHANGE(IDC_EDIT_LEFT, OnChangeROI)
 	ON_EN_CHANGE(IDC_EDIT_HEIGHT, OnChangeROI)
@@ -41,24 +41,29 @@ BEGIN_MESSAGE_MAP(SVGigeCameraROIDlg, CDialog)
 	ON_EN_CHANGE(IDC_EDIT_VERT, OnChangeBinningHoriz)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
+
+BEGIN_EVENTSINK_MAP(SVGigeCameraROIDlg, CDialog)
+	ON_EVENT(SVGigeCameraROIDlg, IDC_DIALOGIMAGE, 8, SVGigeCameraROIDlg::ObjectChangedExDialogImage, VTS_I4 VTS_I4 VTS_PVARIANT VTS_PVARIANT)
+END_EVENTSINK_MAP()
 #pragma endregion Declarations
 
 #pragma region Constructor
 SVGigeCameraROIDlg::SVGigeCameraROIDlg(ISVCameraDeviceImageFormatUpdater& rUpdater, CWnd* pParent /*=NULL*/)
 : CDialog(SVGigeCameraROIDlg::IDD, pParent)
 , m_rImageFormatUpdater(rUpdater)
-, m_pDevice(NULL) 
-, m_pFormat(NULL)
-, m_verticalBinningParam(NULL)
-, m_horizontalBinningParam(NULL)
+, m_pDevice(nullptr) 
+, m_pFormat(nullptr)
+, m_verticalBinningParam(nullptr)
+, m_horizontalBinningParam(nullptr)
 , m_verticalBinningOriginalValue(1)
 , m_horizontalBinningOriginalValue(1)
+, m_iHeight( 0 )
+, m_iLeft( 0 )
+, m_iTop( 0 )
+, m_iWidth( 0 )
+, m_handleToOverlay( m_invalidHandle )
 {
 	//{{AFX_DATA_INIT(SVGigeCameraROIDlg)
-	m_iHeight = 0;
-	m_iLeft = 0;
-	m_iTop = 0;
-	m_iWidth = 0;
 	//}}AFX_DATA_INIT
 }
 
@@ -190,16 +195,10 @@ BOOL SVGigeCameraROIDlg::OnInitDialog()
 		m_pDevice->SingleGrab( m_pImageHandle );
 	}
 
-	// Set relative position of Tool Figures (Point Sets) to the Image
-	m_ImageInfo.GetExtentProperty( SVExtentPropertyPositionPoint, m_Image.m_ptPosition );
-
 	// Set the Image
-	m_Image.init( &m_ImageInfo, GetImageHandle() );
-	m_Image.SetOwner( this );
-
+	m_Image.AddTab("Camera image");
+	setImages();
 	SetGraphicROI();
-
-	m_Image.refresh();
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 	              // EXCEPTION: OCX Property Pages should return FALSE
@@ -331,7 +330,7 @@ void SVGigeCameraROIDlg::OnDeltaPosSpinBinningVert(NMHDR* pNMHDR, LRESULT* pResu
 {
 	*pResult = S_OK;
 
-	NMUPDOWN* pnm = (NMUPDOWN*) pNMHDR;
+	NMUPDOWN* pnm = reinterpret_cast< NMUPDOWN* >( pNMHDR );
 
 	long prevValue = m_verticalBinningParam->lValue;
 	long newValue = m_verticalBinning.value + pnm->iDelta;
@@ -371,7 +370,7 @@ void SVGigeCameraROIDlg::OnDeltaPosSpinBinningHoriz(NMHDR* pNMHDR, LRESULT* pRes
 {
 	*pResult = S_OK;
 
-	NMUPDOWN* pnm = (NMUPDOWN*) pNMHDR;
+	NMUPDOWN* pnm = reinterpret_cast< NMUPDOWN* >( pNMHDR );
 
 	long prevValue = m_horizontalBinningParam->lValue;
 	long newValue = m_horizontalBinning.value + pnm->iDelta;
@@ -414,30 +413,7 @@ void SVGigeCameraROIDlg::OnTakePicture()
 	{
 		m_pDevice->SingleGrab( m_pImageHandle );
 	}
-	m_Image.refresh();
-}
-
-void SVGigeCameraROIDlg::OnMouseMove(UINT nFlags, CPoint point)
-{
-	if (GetCapture() == &m_Image)
-	{
-		CRect l_oRect;
-
-		m_Image.GetROI( l_oRect );
-
-		Normalize( l_oRect );
-
-		m_iTop    = l_oRect.top;
-		m_iLeft   = l_oRect.left;
-		m_iWidth  = l_oRect.Width();
-		m_iHeight = l_oRect.Height();
-
-		UpdateData(FALSE);
-	}
-	else
-	{
-		CDialog::OnMouseMove(nFlags, point);
-	}
+	setImages();
 }
 
 void SVGigeCameraROIDlg::OnChangeROI()
@@ -480,6 +456,19 @@ void SVGigeCameraROIDlg::OnChangeBinningVert()
 void SVGigeCameraROIDlg::OnChangeBinningHoriz()
 {
 }
+
+void SVGigeCameraROIDlg::ObjectChangedExDialogImage(long Tab, long Handle, VARIANT* ParameterList, VARIANT* ParameterValue)
+{
+	std::map<long,_variant_t> ParaMap;
+	int count = Seidenader::SVOMFCLibrary::DisplayHelper::FillParameterMap(ParaMap,ParameterList,ParameterValue);
+
+	m_iWidth = ParaMap[CDSVPictureDisplay::P_X2].lVal - ParaMap[CDSVPictureDisplay::P_X1].lVal;
+	m_iHeight = ParaMap[CDSVPictureDisplay::P_Y2].lVal - ParaMap[CDSVPictureDisplay::P_Y1].lVal;
+	m_iLeft = ParaMap[CDSVPictureDisplay::P_X1].lVal;
+	m_iTop = ParaMap[CDSVPictureDisplay::P_Y1].lVal;
+	UpdateData(FALSE);
+	SetGraphicROI();
+}
 #pragma endregion Protected Methods
 
 #pragma region Private Methods
@@ -512,18 +501,23 @@ void SVGigeCameraROIDlg::RestoreBinning()
 
 void SVGigeCameraROIDlg::SetGraphicROI()
 {
-	CRect l_oRect;
+	std::map<long,long> ParMap;
+	ParMap[ CDSVPictureDisplay::P_Type ] = CDSVPictureDisplay::RectangleROI;
+	ParMap[ CDSVPictureDisplay::P_X1 ] = m_iLeft;
+	ParMap[ CDSVPictureDisplay::P_Y1 ] = m_iTop;
+	ParMap[ CDSVPictureDisplay::P_X2 ] = m_iLeft + m_iWidth;
+	ParMap[ CDSVPictureDisplay::P_Y2 ] = m_iTop + m_iHeight;
+	ParMap[ CDSVPictureDisplay::P_Color ] = SVColor::Green;
+	ParMap[ CDSVPictureDisplay::P_SelectedColor ] = SVColor::Green;
+	ParMap[ CDSVPictureDisplay::P_AllowEdit ] = CDSVPictureDisplay::AllowAll;
 
-	l_oRect.top = m_iTop;
-	l_oRect.left = m_iLeft;
-	l_oRect.bottom = m_iTop + m_iHeight;
-	l_oRect.right = m_iLeft + m_iWidth;
-
-	if ( nullptr != m_Image.GetSafeHwnd() )
+	if (m_invalidHandle == m_handleToOverlay )
 	{
-		m_Image.ClearPoints();
-		m_Image.SetROI( l_oRect );
-		m_Image.refresh();
+		m_Image.AddOverlay(0, ParMap, &m_handleToOverlay);
+	}
+	else
+	{
+		m_Image.EditOverlay(0, m_handleToOverlay, ParMap);
 	}
 }
 
@@ -572,13 +566,11 @@ void SVGigeCameraROIDlg::UpdateImageDisplay()
 
 	SVImageProcessingClass::Instance().CreateImageBuffer( m_ImageInfo, m_pImageHandle );
 
-	// Set the Image Info
-	m_Image.init( &m_ImageInfo, GetImageHandle() );
-
 	OnTakePicture();
 
 	// Redraw the ROI
 	OnChangeROI();
+	setImages();
 }
 
 void SVGigeCameraROIDlg::UpdateDeviceBinningParams()
@@ -646,11 +638,6 @@ void SVGigeCameraROIDlg::Normalize( CRect &l_roRect )
 	ASSERT( l_roRect.Height() >= 0 );
 }
 
-SVSmartHandlePointer SVGigeCameraROIDlg::GetImageHandle() const
-{
-	return m_pImageHandle;
-}
-
 void SVGigeCameraROIDlg::UpdateSpinTopRange()
 {
 	m_SpinTop.SetRange(0, static_cast<short>(GetScaledMaxHeight() - m_pFormat->lVPosStep) );
@@ -681,16 +668,33 @@ long SVGigeCameraROIDlg::GetScaledMaxHeight() const
 	return m_pFormat->lHeightMax / m_verticalBinning.value;
 }
 
-double  SVGigeCameraROIDlg::GetScaledValue(long value, double scaleFactor) const
+double SVGigeCameraROIDlg::GetScaledValue(long value, double scaleFactor) const
 {
 	return static_cast<double>(value) * scaleFactor;
 }
 
+void SVGigeCameraROIDlg::setImages()
+{
+	m_Image.setImage( m_pImageHandle );
+	m_Image.Refresh();
+}
+#pragma endregion Private Methods
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVGigeCameraROIDlg.cpp_v  $
+ * 
+ *    Rev 1.3   02 Jul 2014 13:06:46   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  902
+ * SCR Title:  Change Complex Dialog Image Displays to Use SVPictureDisplay ActiveX
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   use SVPictureDisplay-control
+ * cleanup (e.g. use static_cast instead of c-style cast)
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   29 Apr 2014 19:01:16   bwalter
  * Project:  SVObserver
