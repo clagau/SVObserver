@@ -5,8 +5,8 @@
 //* .Module Name     : SVStatusCodes
 //* .File Name       : $Workfile:   SVStatusCodes.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   25 Apr 2013 17:44:12  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   07 Jul 2014 17:12:38  $
 //******************************************************************************
 
 #ifndef SVSTATUSCODES_H
@@ -313,7 +313,7 @@ enum SVStatusCodesEnum
 	SV_INFORMATION_SVACCESS_000C = SECURITY_POINT_FILE_MENU_EXIT,
 	SV_INFORMATION_SVACCESS_000D = SECURITY_POINT_VIEW_MENU,
 	SV_INFORMATION_SVACCESS_000E = SECURITY_POINT_VIEW_MENU_PPQ_BAR,
-	SV_INFORMATION_SVACCESS_000F = SECURITY_POINT_VIEW_MENU_ONLINE_DISPLAY,
+	SV_INFORMATION_SVACCESS_000F = SECURITY_POINT_VIEW_MENU_IMAGE_DISPLAY_UPDATE,
 	SV_INFORMATION_SVACCESS_0010 = SECURITY_POINT_MODE_MENU,
 	SV_INFORMATION_SVACCESS_0011 = SECURITY_POINT_MODE_MENU_RUN,
 	SV_INFORMATION_SVACCESS_0012 = SECURITY_POINT_MODE_MENU_STOP,
@@ -331,6 +331,7 @@ enum SVStatusCodesEnum
 	SV_INFORMATION_SVACCESS_001E = SECURITY_POINT_VIEW_MENU_RESET_COUNTS_CURRENT,
 	SV_INFORMATION_SVACCESS_001F = SECURITY_POINT_VIEW_MENU_RESET_COUNTS_ALL,
 	SV_INFORMATION_SVACCESS_0020 = SECURITY_POINT_MODE_MENU_EXIT_RUN_MODE,
+	SV_INFORMATION_SVACCESS_0021 = SECURITY_POINT_VIEW_MENU_RESULT_DISPLAY_UPDATE,
 
 	SV_SUCCESS_SVMACHINEMESSAGE_0000 = SVMSG_SVMM_BASE_MASK,
 
@@ -425,7 +426,18 @@ enum SVStatusCodesEnum
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVStatusLibrary\SVStatusCodes.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVStatusLibrary\SVStatusCodes.h_v  $
+ * 
+ *    Rev 1.1   07 Jul 2014 17:12:38   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  900
+ * SCR Title:  Separate View Image Update, View Result Update flags; remote access E55,E92
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Split the Security access from Image Online Display to Image Display Update and Result Display Update
+ * Enum changed SVStatusCodesEnum
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   25 Apr 2013 17:44:12   bWalter
  * Project:  SVObserver

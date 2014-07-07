@@ -5,8 +5,8 @@
 //* .Module Name     : SVInspectionProcess
 //* .File Name       : $Workfile:   SVInspectionProcess.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.7  $
-//* .Check In Date   : $Date:   15 May 2014 12:50:02  $
+//* .Current Version : $Revision:   1.8  $
+//* .Check In Date   : $Date:   03 Jul 2014 16:49:48  $
 //******************************************************************************
 
 #ifndef INC_SVINSPECTIONPROCESS_INCLUDED
@@ -238,9 +238,6 @@ protected:
 		
 		SVFilterElementMap m_LastInspectedValues;
 		SVFilterElementMap m_LastInspectedImages;
-		SVFilterElementMap m_ConditionalValues;
-		SVFilterElementMap m_RejectValues;
-		SVFilterElementMap m_RejectImages;
 	};
 
 #ifdef EnableTracking
@@ -349,7 +346,7 @@ protected:
 	HRESULT ProcessInspection( bool& p_rProcessed, SVProductInfoStruct& p_rProduct );
 	HRESULT ProcessMonitorLists( bool& p_rProcessed );
 	HRESULT ProcessLastInspectedImages( bool& p_rProcessed );
-	HRESULT ProcessNotifyWithLastInspected( bool& p_rProcessed );
+	HRESULT ProcessNotifyWithLastInspected( bool& p_rProcessed, SVProductInfoStruct& p_rProduct );
 	HRESULT ProcessConditionalHistory( bool& p_rProcessed );
 	HRESULT ProcessCommandQueue( bool& p_rProcessed );
 
@@ -561,6 +558,17 @@ inline HRESULT SVInspectionProcess::SetObjectArrayValues(SVValueObjectReference 
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVInspectionProcess.h_v  $
+ * 
+ *    Rev 1.8   03 Jul 2014 16:49:48   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Revised ProcessNotifyWithLastInspection.
+ * Revised SVSharedMemoryFilters.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.7   15 May 2014 12:50:02   sjones
  * Project:  SVObserver

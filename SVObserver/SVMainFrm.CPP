@@ -5,8 +5,8 @@
 //* .Module Name     : SVMainFrm
 //* .File Name       : $Workfile:   SVMainFrm.CPP  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.8  $
-//* .Check In Date   : $Date:   24 Jun 2014 07:08:58  $
+//* .Current Version : $Revision:   1.9  $
+//* .Check In Date   : $Date:   07 Jul 2014 16:52:08  $
 //******************************************************************************
 
 #pragma region Includes
@@ -1882,7 +1882,7 @@ void SVMainFrame::OnViewImageDisplayUpdate()
 
 void SVMainFrame::OnUpdateViewImageDisplayUpdate( CCmdUI* pCmdUI )
 {
-	BOOL bEnable = TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable( SECURITY_POINT_VIEW_MENU_ONLINE_DISPLAY );
+	BOOL bEnable = TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable( SECURITY_POINT_VIEW_MENU_IMAGE_DISPLAY_UPDATE );
 	bEnable &= !SVSVIMStateClass::CheckState( SV_STATE_REGRESSION );
 	pCmdUI->Enable( bEnable);
 
@@ -1902,7 +1902,7 @@ void SVMainFrame::OnViewResultDisplayUpdate()
 
 void SVMainFrame::OnUpdateViewResultDisplayUpdate( CCmdUI* pCmdUI )
 {
-	BOOL bEnable = TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable( SECURITY_POINT_VIEW_MENU_ONLINE_DISPLAY );
+	BOOL bEnable = TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable( SECURITY_POINT_VIEW_MENU_RESULT_DISPLAY_UPDATE );
 	bEnable &= !SVSVIMStateClass::CheckState( SV_STATE_REGRESSION );
 	pCmdUI->Enable( bEnable);
 
@@ -2018,6 +2018,17 @@ LRESULT SVMainFrame::OnHideIOViewTab( WPARAM p_wParam, LPARAM p_lParam )
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVMainFrm.CPP_v  $
+ * 
+ *    Rev 1.9   07 Jul 2014 16:52:08   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  900
+ * SCR Title:  Separate View Image Update, View Result Update flags; remote access E55,E92
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Split the Security access from Image Online Display to Image Display Update and Result Display Update
+ * Methods changed OnUpdateViewImageDisplayUpdate, OnUpdateViewResultDisplayUpdate
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.8   24 Jun 2014 07:08:58   tbair
  * Project:  SVObserver

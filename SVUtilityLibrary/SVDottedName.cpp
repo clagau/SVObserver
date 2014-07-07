@@ -5,18 +5,15 @@
 //* .Module Name     : SVDottedName
 //* .File Name       : $Workfile:   SVDottedName.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   17 Jun 2014 10:26:12  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   03 Jul 2014 16:27:28  $
 //******************************************************************************
 
 #pragma region Includes
 #include "stdafx.h"
-#pragma warning (push)
-#pragma warning (disable : 4996)
 #include <boost/config.hpp>
 #include <boost/algorithm/string.hpp>
 #include "SVDottedName.h"
-#pragma warning (pop)
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -76,6 +73,16 @@ SVDottedName::const_reverse_iterator SVDottedName::rend() const
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVUtilityLibrary\SVDottedName.cpp_v  $
+ * 
+ *    Rev 1.1   03 Jul 2014 16:27:28   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Revised to suppress warning 4996
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   17 Jun 2014 10:26:12   bwalter
  * Project:  SVObserver

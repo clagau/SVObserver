@@ -5,8 +5,8 @@
 //* .Module Name     : SVPPQObject
 //* .File Name       : $Workfile:   SVPPQObject.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.16  $
-//* .Check In Date   : $Date:   19 Jun 2014 17:50:58  $
+//* .Current Version : $Revision:   1.17  $
+//* .Check In Date   : $Date:   03 Jul 2014 16:34:20  $
 //******************************************************************************
 
 #pragma once
@@ -212,8 +212,8 @@ protected:
 
 	};
 
-	typedef std::map<SVString, SVGUID> SVFilterElementMap;
-	typedef std::map<SVGUID, SVFilterElementMap> SVInspectionFilterElementMap;
+	typedef std::map<SVString, SVGUID> SVFilterElementMap; // Dotted name to Guid mapping
+	typedef std::map<SVGUID, SVFilterElementMap> SVInspectionFilterElementMap; // Inspection Guid to FilterElementMap mapping
 	struct SVSharedMemoryFilters
 	{
 		SVSharedMemoryFilters();
@@ -414,6 +414,7 @@ private:
 #endif // EnableTracking
 
 	void SetRejectConditionList(const SVMonitorItemList& rRejectCondList);
+
 	Seidenader::SVObserver::BasicValueObjects	m_PpqValues;
 
 	SVPPQOutputModeEnum m_oOutputMode;
@@ -436,6 +437,16 @@ typedef SVVector< SVPPQObject* > SVPPQObjectArray;
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVPPQObject.h_v  $
+ * 
+ *    Rev 1.17   03 Jul 2014 16:34:20   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Added comments for filter element map defines
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.16   19 Jun 2014 17:50:58   sjones
  * Project:  SVObserver

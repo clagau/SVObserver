@@ -5,8 +5,8 @@
 //* .Module Name     : stdafx
 //* .File Name       : $Workfile:   Stdafx.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   23 Jul 2013 18:21:52  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   03 Jul 2014 16:30:48  $
 //******************************************************************************
 
 #ifndef STDAFX_H
@@ -43,6 +43,7 @@
 #define _AFX_SECURE_NO_DEPRECATE
 #define _ATL_SECURE_NO_DEPRECATE
 #define _CRT_NON_CONFORMING_SWPRINTFS
+#define _SCL_SECURE_NO_WARNINGS
 
 #ifndef _DEBUG
 #define _CRTDBG_MAP_ALLOC
@@ -101,7 +102,17 @@
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\Stdafx.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\Stdafx.h_v  $
+ * 
+ *    Rev 1.2   03 Jul 2014 16:30:48   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Added define for _SCL_SECURE_NO_WARNINGS to supress warning 4996
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   23 Jul 2013 18:21:52   sjones
  * Project:  SVObserver

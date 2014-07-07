@@ -5,8 +5,8 @@
 //* .Module Name     : BasicValueObject
 //* .File Name       : $Workfile:   BasicValueObject.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   02 Jun 2014 08:31:24  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   07 Jul 2014 16:45:18  $
 //******************************************************************************
 
 #pragma region Includes
@@ -143,6 +143,11 @@ HRESULT BasicValueObject::getValue( SVString& rValue ) const
 	case VT_BSTR:
 		{
 			rValue = m_Value.bstrVal;
+		}
+		break;
+	case VT_BOOL:
+		{
+			rValue =  m_Value.boolVal ? _T( "True") : _T( "False" );
 		}
 		break;
 	case VT_I4:
@@ -453,6 +458,17 @@ HRESULT BasicValueObject::ConvertArrayToVariant( _variant_t& rValue ) const
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\BasicValueObject.cpp_v  $
+ * 
+ *    Rev 1.3   07 Jul 2014 16:45:18   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  900
+ * SCR Title:  Separate View Image Update, View Result Update flags; remote access E55,E92
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Fixed that getValue also returns values of type boolean
+ * Method changed getValue
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   02 Jun 2014 08:31:24   gramseier
  * Project:  SVObserver

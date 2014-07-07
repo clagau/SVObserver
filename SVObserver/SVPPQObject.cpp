@@ -5,19 +5,17 @@
 //* .Module Name     : SVPPQObject
 //* .File Name       : $Workfile:   SVPPQObject.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.22  $
-//* .Check In Date   : $Date:   19 Jun 2014 18:00:36  $
+//* .Current Version : $Revision:   1.23  $
+//* .Check In Date   : $Date:   03 Jul 2014 16:39:30  $
 //******************************************************************************
 
 #pragma region Includes
-#pragma warning (disable: 4996)
 #include "stdafx.h"
 #include <Mmsystem.h>
 #include <fstream>
 #include <algorithm>
 #include <limits>
 #include <boost/bind.hpp>
-#include <boost/algorithm/string.hpp>
 #include "SVPPQObject.h"
 #include "SVDataManagerLibrary/DataManager.h"
 #include "SVIOLibrary/SVIOConfigurationInterfaceClass.h"
@@ -49,6 +47,7 @@ using namespace Seidenader::SVObserver;
 #endif
 
 const long g_lPPQExtraBufferSize = 50;
+
 #pragma endregion Declarations
 
 HRESULT CALLBACK SVFinishTriggerCallback( void *pOwner, void *pCaller, void *pTriggerInfo )
@@ -1305,7 +1304,7 @@ HRESULT SVPPQObject::CanGoOnline()
 	if (S_OK != l_hrOk && HasActiveMonitorList())
 	{
 		// clear the list
-		SetMonitorList(ActiveMonitorList(false, RejectDepthAndMonitorList()));
+		l_hrOk = SetMonitorList(ActiveMonitorList(false, RejectDepthAndMonitorList()));
 	}
 
 	return l_hrOk;
@@ -3224,7 +3223,6 @@ bool SVPPQObject::SetProductComplete( SVProductInfoStruct& p_rProduct )
 
 		p_rProduct.oPPQInfo.m_ResultImagePublishedDMIndexHandle.clear();
 	}
-
 	p_rProduct.SetProductComplete();
 
 	p_rProduct.m_ProductState += _T( "|COMPLETE" );
@@ -4527,12 +4525,10 @@ long SVPPQObject::GetExtraBufferSize() const
 
 static bool CompareInspectionName(const SVString& name, const SVString& dottedName)
 {
-	typedef std::deque<std::string> split_container_type;
-	split_container_type splitContainer;
-	boost::algorithm::split(splitContainer, std::string(dottedName.c_str()), boost::algorithm::is_any_of("."), boost::algorithm::token_compress_on);
-	if (splitContainer.size() > 0)
+	SVDottedName parsedName(dottedName.c_str());
+	if (parsedName.size())
 	{
-		const SVString inspectionName = splitContainer[0];
+		SVString inspectionName = parsedName[0];
 		int cmp = inspectionName.Compare(name);
 		return (cmp > 0) ? true : false;
 	}
@@ -4563,8 +4559,6 @@ HRESULT SVPPQObject::SetMonitorList(const ActiveMonitorList& rActiveList)
 		// separate the list by Inspection and send to each Inspection
 		const SVMonitorItemList& valList = rList.GetDataList();
 		const SVMonitorItemList& imgList = rList.GetImageList();
-		//const SVMonitorItemList& rejectValList = rList.GetRejectDataList();
-		//const SVMonitorItemList& rejectImgList = rList.GetRejectImageList();
 		const SVMonitorItemList& rejectCondList = rList.GetConditionalDataList();
 
 		typedef std::pair<SVMonitorItemList::const_iterator, SVMonitorItemList::const_iterator> Bounds;
@@ -4577,19 +4571,11 @@ HRESULT SVPPQObject::SetMonitorList(const ActiveMonitorList& rActiveList)
 				const SVString& inspectionName = pInspection->GetName();
 				Bounds valBounds = std::equal_range(valList.begin(), valList.end(), inspectionName, CompareInspectionName);
 				Bounds imgBounds = std::equal_range(imgList.begin(), imgList.end(), inspectionName, CompareInspectionName);
-	/*
-				Bounds rejectValBounds = std::equal_range(rejectValList.begin(), rejectValList.end(), inspectionName, CompareInspectionName);
-				Bounds rejectImgBounds = std::equal_range(rejectImgList.begin(), rejectImgList.end(), inspectionName, CompareInspectionName);
-				Bounds rejectCondBounds = std::equal_range(rejectCondList.begin(), rejectCondList.end(), inspectionName, CompareInspectionName);
-	*/
+
 				SVMonitorList inspectionMonitorList(SVMonitorItemList(valBounds.first, valBounds.second),
 													SVMonitorItemList(imgBounds.first, imgBounds.second),
 													SVMonitorItemList(), SVMonitorItemList(), SVMonitorItemList());
-	/*
-													SVMonitorItemList(rejectValBounds.first, rejectValBounds.second),
-													SVMonitorItemList(rejectImgBounds.first, rejectImgBounds.second),
-													SVMonitorItemList(rejectCondBounds.first, rejectCondBounds.second));
-	*/
+
 				hr = pInspection->UpdateSharedMemoryFilters(inspectionMonitorList);
 			}
 		}
@@ -4849,6 +4835,18 @@ void SVPPQObject::SVSharedMemoryFilters::clear()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVPPQObject.cpp_v  $
+ * 
+ *    Rev 1.23   03 Jul 2014 16:39:30   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Revised CanGoOnline to capture return code from SetMonitorList.
+ * Removed dead code from SetMonitorList.
+ * Revised CompareInspectionName to use SVDottedName.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.22   19 Jun 2014 18:00:36   sjones
  * Project:  SVObserver

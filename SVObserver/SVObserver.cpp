@@ -5,8 +5,8 @@
 //* .Module Name     : SVObserver
 //* .File Name       : $Workfile:   SVObserver.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.35  $
-//* .Check In Date   : $Date:   01 Jul 2014 15:33:04  $
+//* .Current Version : $Revision:   1.36  $
+//* .Check In Date   : $Date:   07 Jul 2014 16:53:16  $
 //******************************************************************************
 
 #pragma region Includes
@@ -7970,7 +7970,8 @@ HRESULT SVObserverApp::InitializeSecurity()
 
 		AddSecurityNode(hMessageDll, SECURITY_POINT_VIEW_MENU );     // Second Child From Root
 		AddSecurityNode(hMessageDll, SECURITY_POINT_VIEW_MENU_PPQ_BAR       , _T("") );
-		AddSecurityNode(hMessageDll, SECURITY_POINT_VIEW_MENU_ONLINE_DISPLAY, _T("") );
+		AddSecurityNode(hMessageDll, SECURITY_POINT_VIEW_MENU_IMAGE_DISPLAY_UPDATE, _T("") );
+		AddSecurityNode(hMessageDll, SECURITY_POINT_VIEW_MENU_RESULT_DISPLAY_UPDATE, _T("") );
 		AddSecurityNode(hMessageDll, SECURITY_POINT_VIEW_MENU_RESET_COUNTS_CURRENT, _T("") );
 		AddSecurityNode(hMessageDll, SECURITY_POINT_VIEW_MENU_RESET_COUNTS_ALL, _T("") );
 
@@ -8890,6 +8891,17 @@ int SVObserverApp::FindMenuItem(CMenu* Menu, LPCTSTR MenuString)
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVObserver.cpp_v  $
+ * 
+ *    Rev 1.36   07 Jul 2014 16:53:16   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  900
+ * SCR Title:  Separate View Image Update, View Result Update flags; remote access E55,E92
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Split the Security access from Image Online Display to Image Display Update and Result Display Update
+ * Method changed InitializeSecurity
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.35   01 Jul 2014 15:33:04   ryoho
  * Project:  SVObserver

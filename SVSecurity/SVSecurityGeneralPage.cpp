@@ -5,8 +5,8 @@
 //* .Module Name     : SVSecurityGeneralPage.cpp
 //* .File Name       : $Workfile:   SVSecurityGeneralPage.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   30 May 2014 10:47:12  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   07 Jul 2014 17:06:00  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -135,7 +135,8 @@ void SVSecurityGeneralPage::OnNoSecurityBtn()
 	m_pAccess->SetNTGroup( SECURITY_POINT_FILE_MENU_EXIT,                   _T("Everybody") );
 	m_pAccess->SetNTGroup( SECURITY_POINT_UNRESTRICTED_FILE_ACCESS,         _T("Everybody") );
 	m_pAccess->SetNTGroup( SECURITY_POINT_VIEW_MENU_PPQ_BAR,                _T("Everybody") );
-	m_pAccess->SetNTGroup( SECURITY_POINT_VIEW_MENU_ONLINE_DISPLAY,         _T("Everybody") );
+	m_pAccess->SetNTGroup( SECURITY_POINT_VIEW_MENU_IMAGE_DISPLAY_UPDATE,   _T("Everybody") );
+	m_pAccess->SetNTGroup( SECURITY_POINT_VIEW_MENU_RESULT_DISPLAY_UPDATE,  _T("Everybody") );
 	m_pAccess->SetNTGroup( SECURITY_POINT_VIEW_MENU_RESET_COUNTS_CURRENT,   _T("Everybody") );
 	m_pAccess->SetNTGroup( SECURITY_POINT_VIEW_MENU_RESET_COUNTS_ALL,       _T("Everybody") );
 	m_pAccess->SetNTGroup( SECURITY_POINT_MODE_MENU_RUN,                    _T("Everybody") );
@@ -162,7 +163,8 @@ void SVSecurityGeneralPage::OnNoSecurityBtn()
 	m_pAccess->SetForcedPrompt( SECURITY_POINT_FILE_MENU_EXIT,                  FALSE);
 	m_pAccess->SetForcedPrompt( SECURITY_POINT_UNRESTRICTED_FILE_ACCESS,        FALSE);
 	m_pAccess->SetForcedPrompt( SECURITY_POINT_VIEW_MENU_PPQ_BAR,               FALSE);
-	m_pAccess->SetForcedPrompt( SECURITY_POINT_VIEW_MENU_ONLINE_DISPLAY,        FALSE);
+	m_pAccess->SetForcedPrompt( SECURITY_POINT_VIEW_MENU_IMAGE_DISPLAY_UPDATE,  FALSE);
+	m_pAccess->SetForcedPrompt( SECURITY_POINT_VIEW_MENU_RESULT_DISPLAY_UPDATE, FALSE);
 	m_pAccess->SetForcedPrompt( SECURITY_POINT_VIEW_MENU_RESET_COUNTS_CURRENT,  FALSE);
 	m_pAccess->SetForcedPrompt( SECURITY_POINT_VIEW_MENU_RESET_COUNTS_ALL,      FALSE);
 	m_pAccess->SetForcedPrompt( SECURITY_POINT_MODE_MENU_RUN,                   FALSE);
@@ -196,7 +198,8 @@ void SVSecurityGeneralPage::OnTraditionalSecurityBtn()
 	m_pAccess->SetNTGroup( SECURITY_POINT_UNRESTRICTED_FILE_ACCESS        , _T("Supervisor Group,Vision Worker Group,Operator Group") );
 
 	m_pAccess->SetNTGroup( SECURITY_POINT_VIEW_MENU_PPQ_BAR       , _T("Supervisor Group,Vision Worker Group,Operator Group,Move Operator Group") );
-	m_pAccess->SetNTGroup( SECURITY_POINT_VIEW_MENU_ONLINE_DISPLAY, _T("Supervisor Group,Vision Worker Group") );
+	m_pAccess->SetNTGroup( SECURITY_POINT_VIEW_MENU_IMAGE_DISPLAY_UPDATE, _T("Supervisor Group,Vision Worker Group") );
+	m_pAccess->SetNTGroup( SECURITY_POINT_VIEW_MENU_RESULT_DISPLAY_UPDATE, _T("Supervisor Group,Vision Worker Group") );
 	m_pAccess->SetNTGroup( SECURITY_POINT_VIEW_MENU_RESET_COUNTS_CURRENT, _T("Supervisor Group,Vision Worker Group,Operator Group") );
 	m_pAccess->SetNTGroup( SECURITY_POINT_VIEW_MENU_RESET_COUNTS_ALL, _T("Supervisor Group,Vision Worker Group,Operator Group") );
 
@@ -245,6 +248,17 @@ void SVSecurityGeneralPage::OnHelp()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVSecurity\SVSecurityGeneralPage.cpp_v  $
+ * 
+ *    Rev 1.3   07 Jul 2014 17:06:00   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  900
+ * SCR Title:  Separate View Image Update, View Result Update flags; remote access E55,E92
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Split the Security access from Image Online Display to Image Display Update and Result Display Update
+ * Methods changed OnTraditionalSecurityBtn, OnNoSecurityBtn
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   30 May 2014 10:47:12   ryoho
  * Project:  SVObserver
