@@ -5,8 +5,8 @@
 //* .Module Name     : RemoteMonitorListController
 //* .File Name       : $Workfile:   RemoteMonitorListController.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.9  $
-//* .Check In Date   : $Date:   20 Jun 2014 10:30:36  $
+//* .Current Version : $Revision:   1.10  $
+//* .Check In Date   : $Date:   08 Jul 2014 09:07:00  $
 //******************************************************************************
 
 #pragma region Includes
@@ -23,14 +23,10 @@
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVUtilityLibrary/SVGUID.h"
 #include "SVMainImageClass.h"
+#include "RemoteMonitorListHelper.h"
 #pragma endregion Includes
 
 extern SVObserverApp TheSVObserverApp;
-
-static SVString GetObjectNameFromGuid(const SVGUID& guid)
-{
-	return SVObjectManagerClass::Instance().GetCompleteObjectName(guid);
-}
 
 PPQNameListNames RemoteMonitorListController::GetPPQMonitorLists(SVConfigurationObject* pConfig) const
 {
@@ -147,7 +143,7 @@ bool RemoteMonitorListController::ValidateMonitoredObject(MonitoredObjectList& r
 	
 	for (MonitoredObjectList::iterator it = rList.begin();it != rList.end();)
 	{
-		const SVGUID& guid = (*it);
+		const SVGUID& guid = (*it).guid;
 		SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObject(guid);
 		if (!IsValidMonitoredObject(pObject))
 		{
@@ -220,7 +216,6 @@ void RemoteMonitorListController::BuildPPQMonitorList(PPQMonitorList& ppqMonitor
 		bool bActive = it->second.IsActive();
 		if (bActive)
 		{
-			// SEJ - 222 need to write the monitorlist to shared memory...
 			const MonitoredObjectList& values = it->second.GetProductValuesList();
 			const MonitoredObjectList& images = it->second.GetProductImagesList();
 			const MonitoredObjectList& failStatus = it->second.GetFailStatusList();
@@ -231,12 +226,12 @@ void RemoteMonitorListController::BuildPPQMonitorList(PPQMonitorList& ppqMonitor
 			SVMonitorItemList remoteRejectCondList;
 
 			typedef std::insert_iterator<SVMonitorItemList> Insertor;
-			std::transform(values.begin(), values.end(), Insertor(remoteValueList, remoteValueList.begin()), GetObjectNameFromGuid);
-			std::transform(images.begin(), images.end(), Insertor(remoteImageList, remoteImageList.begin()), GetObjectNameFromGuid);
-			std::transform(failStatus.begin(), failStatus.end(), Insertor(remoteValueList, remoteValueList.begin()), GetObjectNameFromGuid);
+			std::transform(values.begin(), values.end(), Insertor(remoteValueList, remoteValueList.begin()), RemoteMonitorListHelper::GetNameFromMonitoredObject);
+			std::transform(images.begin(), images.end(), Insertor(remoteImageList, remoteImageList.begin()), RemoteMonitorListHelper::GetNameFromMonitoredObject);
+			std::transform(failStatus.begin(), failStatus.end(), Insertor(remoteValueList, remoteValueList.begin()), RemoteMonitorListHelper::GetNameFromMonitoredObject);
 			for (MonitoredObjectList::const_iterator rejectCondIt = rejectCond.begin();rejectCondIt != rejectCond.end();++rejectCondIt)
 			{
-				const SVString& name = GetObjectNameFromGuid(*rejectCondIt);
+				const SVString& name = RemoteMonitorListHelper::GetNameFromMonitoredObject(*rejectCondIt);
 				if (!name.empty())
 				{
 					remoteValueList.insert(name);
@@ -297,6 +292,17 @@ HRESULT RemoteMonitorListController::ActivateRemoteMonitorList(const SVString& l
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\RemoteMonitorListController.cpp_v  $
+ * 
+ *    Rev 1.10   08 Jul 2014 09:07:00   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Removed GetObjectNameFromGuid function.
+ * Revised BuildPPQMonitorList to use RemoteMonitorListHelper.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.9   20 Jun 2014 10:30:36   ryoho
  * Project:  SVObserver

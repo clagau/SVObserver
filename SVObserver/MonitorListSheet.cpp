@@ -5,8 +5,8 @@
 //* .Module Name     : MonitorListSheet
 //* .File Name       : $Workfile:   MonitorListSheet.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   29 May 2014 11:23:40  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   08 Jul 2014 09:19:50  $
 //******************************************************************************
 
 #pragma region Includes
@@ -22,6 +22,7 @@
 #include "MonitorListImagesPage.h"
 #include "SVConfigurationObject.h"
 #include "SVToolSet.h"
+#include "RemoteMonitorListHelper.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #pragma endregion Includes
 
@@ -63,16 +64,6 @@ static bool AllowOnly(const SVObjectTypeInfoStruct& info)
 	return bRetVal;
 }
 
-static SVString GetObjectName(const SVGUID& rGuid)
-{
-	return SVObjectManagerClass::Instance().GetCompleteObjectName(rGuid);
-}
-
-static SVGUID GetGuidFromObjectName(const SVString& name)
-{
-	return SVObjectManagerClass::Instance().GetObjectIdFromCompleteName(name);
-}
-
 class MatchName
 {
 private:
@@ -99,7 +90,7 @@ static void SelectItem(NameSelectionList& rList, const SVString& name)
 	}
 }
 
-static NameSelectionList BuildSelectionList(const SVString& PPQName, const MonitoredObjectList& rList, AllowedFunc Allowed, bool bImages=false)
+static NameSelectionList BuildSelectionList(const SVString& PPQName, const MonitoredObjectList& rList, AllowedFunc Allowed, bool bAllowWholeArray, bool bImages=false)
 {
 	NameSelectionList nameList;
 
@@ -133,8 +124,33 @@ static NameSelectionList BuildSelectionList(const SVString& PPQName, const Monit
 								SVObjectReference objectRef = pInfo->GetObjectReference();
 								if (Allowed(pInfo->ObjectTypeInfo))
 								{
-									SVString name = objectRef.GetCompleteObjectName();
-									nameList.push_back(std::make_pair(name, false));
+									SVValueObjectClass* pValueObject = dynamic_cast<SVValueObjectClass*>(objectRef.Object());
+									if (pValueObject)
+									{
+										if (pValueObject->IsArray())
+										{
+											// if want whole array
+											if (bAllowWholeArray)
+											{
+												// stuff entire array specifier at the top of the list
+												objectRef.SetEntireArray();
+												SVString name = objectRef.GetCompleteOneBasedObjectName();
+												nameList.push_back(std::make_pair(name, false));
+											}
+											// add array elements
+											for (int i = 0;i < pValueObject->GetArraySize();i++)
+											{
+												objectRef.SetArrayIndex(i);
+												SVString name = objectRef.GetCompleteOneBasedObjectName();
+												nameList.push_back(std::make_pair(name, false));
+											}
+										}
+										else
+										{
+											SVString name = objectRef.GetCompleteObjectName();
+											nameList.push_back(std::make_pair(name, false));
+										}
+									}
 								}
 							}
 						}
@@ -152,8 +168,7 @@ static NameSelectionList BuildSelectionList(const SVString& PPQName, const Monit
 							const SVImageClass* pMainImage = pToolSet->getCurrentImage();
 							if (pMainImage)
 							{
-								SVString mainImageName = pMainImage ->GetCompleteObjectName();
-								//SVString mainImageName = pInspection->GetToolsetImage();
+								SVString mainImageName = pMainImage->GetCompleteObjectName();
 								nameList.push_back(std::make_pair(mainImageName, false));
 							}
 							for (SVImageListClass::const_iterator it = imageList.begin();it != imageList.end();++it)
@@ -174,8 +189,8 @@ static NameSelectionList BuildSelectionList(const SVString& PPQName, const Monit
 	// mark the selected items
 	for (MonitoredObjectList::const_iterator it = rList.begin();it != rList.end();++it)
 	{
-		// Get Name from Guid
-		const SVString& name = GetObjectName(*it);
+		// Get Name from MonitoredObject
+		const SVString& name = RemoteMonitorListHelper::GetNameFromMonitoredObject(*it);
 		SelectItem(nameList, name);
 	}
 	return nameList;
@@ -208,6 +223,7 @@ const RemoteMonitorNamedList& MonitorListSheet::GetMonitorList() const
 {
 	return m_MonitorList;
 }
+
 HRESULT MonitorListSheet::CreatePages(bool bImageTab)
 {
 	switch (m_eListType)
@@ -215,11 +231,11 @@ HRESULT MonitorListSheet::CreatePages(bool bImageTab)
 		case PRODUCT_OBJECT_LIST:
 		{
 			//SetDialogName = Product Object List
-			const NameSelectionList& valueSelectionList = BuildSelectionList(m_MonitorList.GetPPQName(), m_MonitorList.GetProductValuesList(), AllowAll);
-			MonitorListValuesPage* pValuesDlg = new MonitorListValuesPage(valueSelectionList, this, ValuesTag);
+			const NameSelectionList& valueSelectionList = BuildSelectionList(m_MonitorList.GetPPQName(), m_MonitorList.GetProductValuesList(), AllowAll, true);
+			MonitorListValuesPage* pValuesDlg = new MonitorListValuesPage(valueSelectionList, true, this, ValuesTag);
 			AddPage(pValuesDlg);
 
-			const NameSelectionList& imageSelectionList = BuildSelectionList(m_MonitorList.GetPPQName(), m_MonitorList.GetProductImagesList(), AllowAll, true);
+			const NameSelectionList& imageSelectionList = BuildSelectionList(m_MonitorList.GetPPQName(), m_MonitorList.GetProductImagesList(), AllowAll, false, true);
 			MonitorListImagesPage* pImagesDlg = new MonitorListImagesPage(imageSelectionList, this, ImagesTag);
 			AddPage(pImagesDlg);
 
@@ -229,16 +245,16 @@ HRESULT MonitorListSheet::CreatePages(bool bImageTab)
 		case FAIL_STATUS_LIST:
 		{
 			//SetDialogName = Fail Status List
-			const NameSelectionList& valueSelectionList = BuildSelectionList(m_MonitorList.GetPPQName(), m_MonitorList.GetFailStatusList(), AllowOnly);
-			MonitorListValuesPage* pValuesDlg = new MonitorListValuesPage(valueSelectionList, this, ValuesTag);
+			const NameSelectionList& valueSelectionList = BuildSelectionList(m_MonitorList.GetPPQName(), m_MonitorList.GetFailStatusList(), AllowOnly, false);
+			MonitorListValuesPage* pValuesDlg = new MonitorListValuesPage(valueSelectionList, false, this, ValuesTag);
 			AddPage(pValuesDlg);
 			break;
 		}
 		case REJECT_CONDITION_LIST:
 		{
 			//SetDialogName = Reject Condition List
-			const NameSelectionList& valueSelectionList = BuildSelectionList(m_MonitorList.GetPPQName(), m_MonitorList.GetRejectConditionList(), AllowOnly);
-			MonitorListValuesPage* pValuesDlg = new MonitorListValuesPage(valueSelectionList, this, ValuesTag);
+			const NameSelectionList& valueSelectionList = BuildSelectionList(m_MonitorList.GetPPQName(), m_MonitorList.GetRejectConditionList(), AllowOnly, false);
+			MonitorListValuesPage* pValuesDlg = new MonitorListValuesPage(valueSelectionList, false, this, ValuesTag);
 			AddPage(pValuesDlg);
 			break;
 		}
@@ -253,10 +269,10 @@ MonitoredObjectList MonitorListSheet::GetMonitoredObjectList(const NameSelection
 	{
 		if (it->second)
 		{
-			const SVGUID& guid = GetGuidFromObjectName(it->first);
-			if (!guid.empty())
+			const MonitoredObject& monitoredObj = RemoteMonitorListHelper::GetMonitoredObjectFromName(it->first);
+			if (!monitoredObj.guid.empty())
 			{
-				monitoredObjectList.push_back(guid);
+				monitoredObjectList.push_back(monitoredObj);
 			}
 		}
 	}
@@ -407,6 +423,20 @@ void MonitorListSheet::DestroyPages()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\MonitorListSheet.cpp_v  $
+ * 
+ *    Rev 1.3   08 Jul 2014 09:19:50   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Removed GetObjectName function.
+ * Removed GetGuidFromObjectName function.
+ * Revised GetGuidFromObjectName to use RemoteMonitorListHelper.
+ * Revised CreatePages to allow wholeArraySelection.
+ * Revised GetMonitoredObjectList to use RemoteMonitorListHelper.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   29 May 2014 11:23:40   ryoho
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : SVVisionProcessorHelper
 //* .File Name       : $Workfile:   SVVisionProcessorHelper.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.13  $
-//* .Check In Date   : $Date:   09 Jun 2014 16:12:08  $
+//* .Current Version : $Revision:   1.14  $
+//* .Check In Date   : $Date:   08 Jul 2014 08:58:40  $
 //******************************************************************************
 
 #pragma region Includes
@@ -27,6 +27,7 @@
 #include "SVSocketRemoteCommandManager.h"
 #include "SVSVIMStateClass.h"
 #include "BasicValueObject.h"
+#include "RemoteMonitorListHelper.h"
 #include "SVObjectLibrary/GlobalConst.h"
 #pragma endregion Includes
 
@@ -813,10 +814,9 @@ static void BuildNameSetForMonitoredObjectList( const MonitoredObjectList& rList
 {
 	for (MonitoredObjectList::const_iterator it = rList.begin();it != rList.end();++it)
 	{
-		const SVString& name = SVObjectManagerClass::Instance().GetCompleteObjectName(*it);
+		const SVString& name = RemoteMonitorListHelper::GetNameFromMonitoredObject(*it);
 		if (!name.empty())
 		{
-			// prepend "Inspections" ?
 			rNames.insert(name);
 		}
 	}
@@ -990,6 +990,16 @@ void SVVisionProcessorHelper::ProcessLastModified( bool& p_WaitForEvents )
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVVisionProcessorHelper.cpp_v  $
+ * 
+ *    Rev 1.14   08 Jul 2014 08:58:40   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Revised BuildNameSetForMonitoredObjectList to use RemoteMonitorListHelper
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.13   09 Jun 2014 16:12:08   bwalter
  * Project:  SVObserver

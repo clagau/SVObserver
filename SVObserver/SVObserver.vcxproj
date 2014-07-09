@@ -371,6 +371,7 @@ echo %time%
     <ClCompile Include="MonitorListValuesPage.cpp" />
     <ClCompile Include="RemoteCommand.cpp" />
     <ClCompile Include="RemoteMonitorListController.cpp" />
+    <ClCompile Include="RemoteMonitorListHelper.cpp" />
     <ClCompile Include="RemoteMonitorNamedList.cpp" />
     <ClCompile Include="RootObject.cpp" />
     <ClCompile Include="MonitorListAddRemoveDlg.cpp" />
@@ -4274,6 +4275,7 @@ echo %time%
     <ClInclude Include="MonitorListAddRemoveDlg.h" />
     <ClInclude Include="MonitorListPropertyDlg.h" />
     <ClInclude Include="RemoteMonitorListController.h" />
+    <ClInclude Include="RemoteMonitorListHelper.h" />
     <ClInclude Include="RemoteMonitorNamedList.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="RootObject.h" />

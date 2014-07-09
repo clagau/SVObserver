@@ -5,8 +5,8 @@
 //* .Module Name     : MonitorListValuesPage
 //* .File Name       : $Workfile:   MonitorListValuesPage.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   17 Apr 2014 16:24:06  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   08 Jul 2014 09:15:30  $
 //******************************************************************************
 #pragma region Includes
 #include "stdafx.h"
@@ -27,8 +27,9 @@ BEGIN_MESSAGE_MAP(MonitorListValuesPage, MonitorListBasePage)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
-MonitorListValuesPage::MonitorListValuesPage(const NameSelectionList& rList, MonitorListSheet* pParent, const CString& szCaption, int id)
+MonitorListValuesPage::MonitorListValuesPage(const NameSelectionList& rList, bool bWholeArray, MonitorListSheet* pParent, const CString& szCaption, int id)
 : MonitorListBasePage(rList, pParent, szCaption, id)
+, m_bAllowWholeArray(bWholeArray)
 {
 	//{{AFX_DATA_INIT(MonitorListValuesPage)
 	//}}AFX_DATA_INIT
@@ -57,7 +58,10 @@ void MonitorListValuesPage::DoDataExchange(CDataExchange* pDX)
 BOOL MonitorListValuesPage::OnInitDialog() 
 {
 	MonitorListBasePage::OnInitDialog();
-	
+	if (m_bAllowWholeArray)
+	{
+		m_Tree.SetAllowWholeArray();
+	}
 	return TRUE;  // return TRUE unless you set the focus to a control
 	              // EXCEPTION: OCX Property Pages should return FALSE
 }
@@ -78,7 +82,18 @@ void MonitorListValuesPage::InitPage()
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\MonitorListValuesPage.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\MonitorListValuesPage.cpp_v  $
+ * 
+ *    Rev 1.1   08 Jul 2014 09:15:30   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Revsied MonitorListValuesPage constructor.
+ * Revised OnInitDialog to support wholeArray selection.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   17 Apr 2014 16:24:06   ryoho
  * Project:  SVObserver

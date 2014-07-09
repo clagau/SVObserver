@@ -1646,6 +1646,9 @@
     <ClCompile Include="SVToolSetTreeCtrl.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="RemoteMonitorListHelper.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Midl Include="SVObserver.odl">
@@ -3407,6 +3410,9 @@
     <ClInclude Include="SVToolSetTreeCtrl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="RemoteMonitorListHelper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="SVDLLToolLoadLibraryClass.inl">
@@ -3738,5 +3744,5 @@
     <None Include="EnvironmentObject.inl">
       <Filter>Header Files</Filter>
     </None>
-	</ItemGroup>
+  </ItemGroup>
 </Project>

@@ -5,8 +5,8 @@
 //* .Module Name     : SVMonitorListView
 //* .File Name       : $Workfile:   MonitorListView.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.3  $
-//* .Check In Date   : $Date:   12 Jun 2014 16:11:36  $
+//* .Current Version : $Revision:   1.4  $
+//* .Check In Date   : $Date:   08 Jul 2014 09:12:30  $
 //******************************************************************************
 
 #pragma region Includes
@@ -21,6 +21,7 @@
 #include "SVSVIMStateClass.h"
 #include "MonitorListSheet.h"
 #include "MonitorListPropertyDlg.h"
+#include "RemoteMonitorListHelper.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #pragma endregion Includes
 
@@ -40,16 +41,6 @@ static const CString scFAILSTATUSLIST = _T("FailStatusList");
 static const CString scVALUES = _T("Values");
 static const CString scIMAGES = _T("Images");
 
-#pragma region Static functions
-static SVString GetObjectName(const SVGUID& rGuid)
-{
-	return SVObjectManagerClass::Instance().GetCompleteObjectName(rGuid);
-}
-
-static SVGUID GetGuidFromObjectName(const SVString& name)
-{
-	return SVObjectManagerClass::Instance().GetObjectIdFromCompleteName(name);
-}
 
 static SVString GetItemName(CListCtrl& rCtrl, int item)
 {
@@ -120,7 +111,7 @@ static int AddMonitoredItems(CListCtrl& rCtrl, const MonitoredObjectList& items,
 
 	for (MonitoredObjectList::const_iterator it = items.begin(); it != items.end();++it)
 	{
-		const SVString& name = GetObjectName(*it);
+		const SVString& name = RemoteMonitorListHelper::GetNameFromMonitoredObject(*it);
 		if (!name.empty())
 		{
 			lvItem.iItem = insertPos + pos++;
@@ -751,8 +742,9 @@ bool MonitorListView::RemoveMonitoredItem(int item)
 					{
 						// Remove ProductItemList Values Item
 						MonitoredObjectList valuesList = it->second.GetProductValuesList();
-						const SVGUID& guid = GetGuidFromObjectName(GetItemName(rCtrl, item));
-						MonitoredObjectList::iterator valueIt = std::find(valuesList.begin(), valuesList.end(), guid);
+						const MonitoredObject& rMatch = RemoteMonitorListHelper::GetMonitoredObjectFromName(GetItemName(rCtrl, item));
+						MonitoredObjectList::iterator valueIt = std::find_if(valuesList.begin(), valuesList.end(), 
+							[&rMatch](const MonitoredObject& rObj)->bool { return (memcmp(&rMatch, reinterpret_cast<const void *>(&rObj), sizeof(rObj)) == 0); });
 						if (valueIt != valuesList.end())
 						{
 							valuesList.erase(valueIt);
@@ -770,8 +762,8 @@ bool MonitorListView::RemoveMonitoredItem(int item)
 					{
 						// Remove ProductItemList Images Item
 						MonitoredObjectList imagesList = it->second.GetProductImagesList();
-						const SVGUID& guid = GetGuidFromObjectName(GetItemName(rCtrl, item));
-						MonitoredObjectList::iterator imageIt = std::find(imagesList.begin(), imagesList.end(), guid);
+						const MonitoredObject& rMatch = RemoteMonitorListHelper::GetMonitoredObjectFromName(GetItemName(rCtrl, item));
+						MonitoredObjectList::iterator imageIt = std::find(imagesList.begin(), imagesList.end(), rMatch);
 						if (imageIt != imagesList.end())
 						{
 							imagesList.erase(imageIt);
@@ -805,8 +797,8 @@ bool MonitorListView::RemoveMonitoredItem(int item)
 					if (it != list.end())
 					{
 						MonitoredObjectList valuesList = it->second.GetRejectConditionList();
-						const SVGUID& guid = GetGuidFromObjectName(GetItemName(rCtrl, item));
-						MonitoredObjectList::iterator valueIt = std::find(valuesList.begin(), valuesList.end(), guid);
+						const MonitoredObject& rMatch = RemoteMonitorListHelper::GetMonitoredObjectFromName(GetItemName(rCtrl, item));
+						MonitoredObjectList::iterator valueIt = std::find(valuesList.begin(), valuesList.end(), rMatch);
 						if (valueIt != valuesList.end())
 						{
 							valuesList.erase(valueIt);
@@ -840,8 +832,8 @@ bool MonitorListView::RemoveMonitoredItem(int item)
 					if (it != list.end())
 					{
 						MonitoredObjectList valuesList = it->second.GetFailStatusList();
-						const SVGUID& guid = GetGuidFromObjectName(GetItemName(rCtrl, item));
-						MonitoredObjectList::iterator valueIt = std::find(valuesList.begin(), valuesList.end(), guid);
+						const MonitoredObject& rMatch = RemoteMonitorListHelper::GetMonitoredObjectFromName(GetItemName(rCtrl, item));
+						MonitoredObjectList::iterator valueIt = std::find(valuesList.begin(), valuesList.end(), rMatch);
 						if (valueIt != valuesList.end())
 						{
 							valuesList.erase(valueIt);
@@ -1254,6 +1246,20 @@ void MonitorListView::OnLButtonDown(UINT nFlags, CPoint point)
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\MonitorListView.cpp_v  $
+ * 
+ *    Rev 1.4   08 Jul 2014 09:12:30   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Removed GetObjectName function.
+ * Removed GetGuidFromObjectName function.
+ * Revised AddMonitoredItems to use RemoteMonitorListHelper.
+ * Revised RemoveMonitoredItem to use RemoteMonitorListHelper.
+ * 
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   12 Jun 2014 16:11:36   sjones
  * Project:  SVObserver

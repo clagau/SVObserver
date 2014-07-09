@@ -5,8 +5,8 @@
 //* .Module Name     : SVConfigurationObject
 //* .File Name       : $Workfile:   SVConfigurationObject.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.26  $
-//* .Check In Date   : $Date:   18 Jun 2014 11:28:14  $
+//* .Current Version : $Revision:   1.27  $
+//* .Check In Date   : $Date:   08 Jul 2014 09:01:42  $
 //******************************************************************************
 
 #pragma region Includes
@@ -61,6 +61,7 @@
 #include "SVVirtualCamera.h"
 #include "SVObjectLibrary/GlobalConst.h"
 #include "RemoteMonitorNamedList.h"
+#include "RemoteMonitorListHelper.h"
 #include "EnvironmentObject.h"
 #pragma endregion Includes
 
@@ -3614,8 +3615,8 @@ bool SVConfigurationObject::SaveMonitoredObjectList( SVTreeType& rTree, SVTreeTy
 		MonitoredObjectList::const_iterator iter = rList.begin();
 		while ( bOk && rList.end() != iter )
 		{
-			const SVGUID& guid = *iter;
-			const SVString& objectName = SVObjectManagerClass::Instance().GetCompleteObjectName( guid );
+			const MonitoredObject& rObj = *iter;
+			const SVString& objectName = RemoteMonitorListHelper::GetNameFromMonitoredObject(rObj);//SVObjectManagerClass::Instance().GetCompleteObjectName( guid );
 			if ( !objectName.empty() )
 			{
 				bOk = SVNavigateTreeClass::AddItem( rTree, hBranchChild, objectName.c_str(), svValue );
@@ -5475,13 +5476,11 @@ HRESULT SVConfigurationObject::LoadMonitoredObjectList( SVTreeType& rTree, SVTre
 			_bstr_t name;
 			rTree.GetLeafName( htiLeaf, name.GetBSTR() );
 
-			GUID guid;
-			// translate entry from DottedName string to GUID
-			retValue = SVObjectManagerClass::Instance().GetObjectByDottedName( name, guid );
-			if ( S_OK == retValue )
+			const MonitoredObject& rObj = RemoteMonitorListHelper::GetMonitoredObjectFromName(name);
+			if (!rObj.guid.empty())
 			{
-				// add guid for this leaf to the list
-				rList.push_back( SVGUID( guid ) );
+				// add object for this leaf to the list
+				rList.push_back(rObj);
 				rTree.GetNextLeaf( htiChild, htiLeaf );
 			}
 			else
@@ -5502,6 +5501,17 @@ HRESULT SVConfigurationObject::LoadMonitoredObjectList( SVTreeType& rTree, SVTre
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVConfigurationObject.cpp_v  $
+ * 
+ *    Rev 1.27   08 Jul 2014 09:01:42   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Revised SaveMonitoredObjectList to use RemoteMonitorListHelper.
+ * Revised LoadMonitoredObjectList to use RemoteMonitorListHelper.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.26   18 Jun 2014 11:28:14   tbair
  * Project:  SVObserver

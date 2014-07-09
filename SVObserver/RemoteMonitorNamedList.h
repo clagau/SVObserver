@@ -5,8 +5,8 @@
 //* .Module Name     : RemoteMonitorNamedList
 //* .File Name       : $Workfile:   RemoteMonitorNamedList.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   23 Apr 2014 10:34:58  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   08 Jul 2014 09:04:16  $
 //******************************************************************************
 #pragma once
 
@@ -16,7 +16,18 @@
 #include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
-typedef std::deque<SVGUID> MonitoredObjectList;
+struct MonitoredObject
+{
+	SVGUID guid;
+	bool isArray;
+	bool wholeArray;
+	long arrayIndex;
+
+	MonitoredObject() : isArray(false), wholeArray(false), arrayIndex(-1) {}
+	bool operator==(const MonitoredObject& rhs) { return (guid == rhs.guid && isArray == rhs.isArray, wholeArray == rhs.wholeArray, arrayIndex == rhs.arrayIndex); }
+};
+
+typedef std::deque<MonitoredObject> MonitoredObjectList;
 
 enum RejectQueueDepthConstraints
 {
@@ -76,6 +87,17 @@ public:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\RemoteMonitorNamedList.h_v  $
+ * 
+ *    Rev 1.2   08 Jul 2014 09:04:16   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Added MonitoredObject struct.
+ * Revised MonitoredObjectList to contain MonitoredObject instead of SVGUID
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   23 Apr 2014 10:34:58   sjones
  * Project:  SVObserver

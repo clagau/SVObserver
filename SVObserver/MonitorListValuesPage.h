@@ -5,8 +5,8 @@
 //* .Module Name     : MonitorListValuesPage
 //* .File Name       : $Workfile:   MonitorListValuesPage.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   17 Apr 2014 16:24:04  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   08 Jul 2014 09:13:58  $
 //******************************************************************************
 
 #pragma once
@@ -24,7 +24,7 @@ class MonitorListValuesPage : public MonitorListBasePage
 
 #pragma region Public
 public:
-	MonitorListValuesPage(const NameSelectionList& rList, MonitorListSheet* pParentSheet, const CString& szCaption, int id = IDD);
+	MonitorListValuesPage(const NameSelectionList& rList, bool bWholeArray, MonitorListSheet* pParentSheet, const CString& szCaption, int id = IDD);
 	virtual ~MonitorListValuesPage();
 
 	// ISVPropertyPageDialog
@@ -56,6 +56,7 @@ protected:
 	virtual void OnSelchangeListSelected();
 
 	virtual void InitPage();
+	bool m_bAllowWholeArray;
 #pragma endregion Protected
 };
 
@@ -66,7 +67,17 @@ protected:
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\MonitorListValuesPage.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\MonitorListValuesPage.h_v  $
+ * 
+ *    Rev 1.1   08 Jul 2014 09:13:58   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Revsied MonitorListValuesPage constructor.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   17 Apr 2014 16:24:04   ryoho
  * Project:  SVObserver
