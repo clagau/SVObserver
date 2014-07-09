@@ -5,8 +5,8 @@
 //* .Module Name     : SVVisionProcessorHelper
 //* .File Name       : $Workfile:   SVVisionProcessorHelper.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.14  $
-//* .Check In Date   : $Date:   08 Jul 2014 08:58:40  $
+//* .Current Version : $Revision:   1.15  $
+//* .Check In Date   : $Date:   09 Jul 2014 17:04:06  $
 //******************************************************************************
 
 #pragma region Includes
@@ -928,6 +928,38 @@ HRESULT SVVisionProcessorHelper::ActivateMonitorList( const SVString& rListName,
 	return hr;
 }
 
+HRESULT SVVisionProcessorHelper::QueryMonitorListNames( SVNameSet& rNames ) const
+{
+	HRESULT hr = S_OK;
+	DWORD notAllowedStates = SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION | 
+		SV_STATE_START_PENDING | SV_STATE_STARTING | SV_STATE_STOP_PENDING | SV_STATE_STOPING |
+		SV_STATE_CREATING | SV_STATE_LOADING | SV_STATE_SAVING | SV_STATE_CLOSING;
+	if ( !SVSVIMStateClass::CheckState( notAllowedStates ) && SVSVIMStateClass::CheckState( SV_STATE_READY ) )
+	{
+		SVConfigurationObject* pConfig = nullptr;
+
+		HRESULT hr = SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
+		if ( nullptr != pConfig )
+		{
+			const RemoteMonitorList& rList = pConfig->GetRemoteMonitorList();
+			for (RemoteMonitorList::const_iterator it = rList.begin();it != rList.end();++it)
+			{
+				// insert monitor list to result name set
+				rNames.insert(it->first);
+			}
+		}
+		else
+		{
+			hr = E_POINTER;
+		}
+	}
+	else
+	{
+		hr = SVMSG_SVF_ACCESS_DENIED;
+	}
+	return hr;
+}
+
 void SVVisionProcessorHelper::Startup()
 {
 	m_AsyncProcedure.Create( &SVVisionProcessorHelper::APCThreadProcess, boost::bind(&SVVisionProcessorHelper::ThreadProcess, this, _1), "SVVisionProcessorHelper" );
@@ -990,6 +1022,16 @@ void SVVisionProcessorHelper::ProcessLastModified( bool& p_WaitForEvents )
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVVisionProcessorHelper.cpp_v  $
+ * 
+ *    Rev 1.15   09 Jul 2014 17:04:06   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  915
+ * SCR Title:  Add command QueryMonitorListNames for RemoteControl
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   add method QueryMonitorListNames
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.14   08 Jul 2014 08:58:40   sjones
  * Project:  SVObserver

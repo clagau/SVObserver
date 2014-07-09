@@ -5,8 +5,8 @@
 //* .Module Name     : SVVisionProcessorHelper
 //* .File Name       : $Workfile:   SVVisionProcessorHelper.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.9  $
-//* .Check In Date   : $Date:   02 Jun 2014 10:24:38  $
+//* .Current Version : $Revision:   1.10  $
+//* .Check In Date   : $Date:   09 Jul 2014 17:04:06  $
 //******************************************************************************
 
 #ifndef SVVISIONPROCESSORHELPER_H
@@ -81,6 +81,7 @@ public:
 	HRESULT QueryRejectCondList( const SVString& rListName, SVNameSet& rNames ) const;
 	HRESULT QueryFailStatusList( const SVString& rListName, SVNameSet& rNames ) const;
 	HRESULT ActivateMonitorList( const SVString& rListName, bool bActivate );
+	HRESULT QueryMonitorListNames( SVNameSet& rNames ) const;
 
 protected:
 	typedef boost::function< HRESULT ( const SVNameSet&, SVNameStorageResultMap& ) > SVGetItemsFunctor;
@@ -134,6 +135,16 @@ private:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVVisionProcessorHelper.h_v  $
+ * 
+ *    Rev 1.10   09 Jul 2014 17:04:06   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  915
+ * SCR Title:  Add command QueryMonitorListNames for RemoteControl
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   add method QueryMonitorListNames
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.9   02 Jun 2014 10:24:38   gramseier
  * Project:  SVObserver

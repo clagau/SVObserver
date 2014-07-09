@@ -5,8 +5,8 @@
 //* .Module Name     : SVSocketRemoteCommandManager
 //* .File Name       : $Workfile:   SVSocketRemoteCommandManager.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.4  $
-//* .Check In Date   : $Date:   24 Jun 2014 07:21:22  $
+//* .Current Version : $Revision:   1.5  $
+//* .Check In Date   : $Date:   09 Jul 2014 17:04:06  $
 //******************************************************************************
 
 #ifndef SVSOCKETREMOTECOMMANDMANAGER_H
@@ -77,6 +77,7 @@ protected:
 	static HRESULT QueryProductList( const std::string& rJsonCommand, std::string& rJsonResults );
 	static HRESULT QueryRejectCondList( const std::string& rJsonCommand, std::string& rJsonResults );
 	static HRESULT QueryFailStatusList( const std::string& rJsonCommand, std::string& rJsonResults );
+	static HRESULT QueryMonitorListNames( const std::string& rJsonCommand, std::string& rJsonResults );
 
 	AFX_INLINE static HRESULT WriteJsonCommandToFile(const Json::Value& p_rJsonValues, const std::string& p_rFileName);
 	AFX_INLINE static HRESULT WriteJsonCommandToFile(const std::string& p_rJsonCommand, const std::string& p_rFileName);
@@ -106,6 +107,16 @@ typedef SVJsonCommandManager< SVRemoteCommandFunctions > SVSocketRemoteCommandMa
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVSocketRemoteCommandManager.h_v  $
+ * 
+ *    Rev 1.5   09 Jul 2014 17:04:06   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  915
+ * SCR Title:  Add command QueryMonitorListNames for RemoteControl
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   add method QueryMonitorListNames
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.4   24 Jun 2014 07:21:22   tbair
  * Project:  SVObserver

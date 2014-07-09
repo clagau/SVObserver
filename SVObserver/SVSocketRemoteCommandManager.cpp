@@ -5,8 +5,8 @@
 //* .Module Name     : SVSocketRemoteCommandManager
 //* .File Name       : $Workfile:   SVSocketRemoteCommandManager.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.10  $
-//* .Check In Date   : $Date:   24 Jun 2014 08:21:50  $
+//* .Current Version : $Revision:   1.11  $
+//* .Check In Date   : $Date:   09 Jul 2014 17:01:52  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -48,6 +48,7 @@ SVRemoteCommandFunctions::SVCommandFunctionMap SVRemoteCommandFunctions::m_Async
 (SVRC::cmdName::qryProd,  &SVRemoteCommandFunctions::QueryProductList)
 (SVRC::cmdName::qryRjct, &SVRemoteCommandFunctions::QueryRejectCondList)
 (SVRC::cmdName::qryFail, &SVRemoteCommandFunctions::QueryFailStatusList)
+(SVRC::cmdName::qryMonListNames, &SVRemoteCommandFunctions::QueryMonitorListNames)
 (SVRC::cmdName::shutdownSVIM, &SVRemoteCommandFunctions::Shutdown)
 ;
 
@@ -1826,6 +1827,31 @@ HRESULT SVRemoteCommandFunctions::QueryFailStatusList( const std::string& rJsonC
 	return hr;
 }
 
+HRESULT SVRemoteCommandFunctions::QueryMonitorListNames( const std::string& rJsonCommand, std::string& rJsonResults )
+{
+	Json::Value EntryArray(Json::arrayValue);
+	SVNameSet names;
+
+	HRESULT hr = SVVisionProcessorHelper::Instance().QueryMonitorListNames(names);
+	if( S_OK == hr )
+	{
+		for( SVNameSet::const_iterator it = names.begin();it != names.end();++it)
+		{
+			Json::Value Element(Json::objectValue);
+			Element = (*it).c_str();
+			EntryArray.append(Element);
+		}
+	}
+
+	// need to set the results even on an error...
+	Json::Value Results(Json::objectValue);
+	Results[ SVRC::result::names ] = EntryArray;
+	std::string FileName = "C:\\temp\\QueryMonitorListNames-rsp";
+	WriteResultToJsonAndFile(rJsonCommand, rJsonResults, Results, FileName, hr);
+
+	return hr;
+}
+
 /*####################################################################################################################################
 *	WriteJsonCommandToFile				This is used to write the Json values into a file if necessary
 *	Return: 							The status result of the method  
@@ -1918,6 +1944,16 @@ AFX_INLINE HRESULT SVRemoteCommandFunctions::WriteResultToJsonAndFile( const std
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVSocketRemoteCommandManager.cpp_v  $
+ * 
+ *    Rev 1.11   09 Jul 2014 17:01:52   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  915
+ * SCR Title:  Add command QueryMonitorListNames for RemoteControl
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   add method QueryMonitorListNames to class and to function map.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.10   24 Jun 2014 08:21:50   tbair
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : SVRemoteControlConstants
 //* .File Name       : $Workfile:   SVRemoteControlConstants.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.6  $
-//* .Check In Date   : $Date:   24 Jun 2014 07:28:22  $
+//* .Current Version : $Revision:   1.7  $
+//* .Check In Date   : $Date:   09 Jul 2014 17:02:48  $
 //******************************************************************************
 
 #ifndef SVREMOTECONTROLCONSTANTS_H
@@ -41,15 +41,17 @@ namespace SVRC
 		const std::string putFile = "PutDeviceFile";
 		const std::string setItems = "SetItems";
 		const std::string setMode = "SetDeviceMode";
-		const std::string regProd = "RegisterProductList";
+		const std::string regMon = "RegisterMonitorList";
 		const std::string qryProd = "QueryProductList";
 		const std::string qryRjct = "QueryRejectCondList";
 		const std::string qryFail = "QueryFailStatusList";
 		const std::string getProd = "GetProduct";
 		const std::string getDefList = "GetDataDefinitionList";
 		const std::string getRjct = "GetReject";
+		const std::string getFail = "GetFailStatus";
 		const std::string actvMonList = "ActivateMonitorList";
 		const std::string shutdownSVIM = "Shutdown";
+		const std::string qryMonListNames = "QueryMonitorListNames";
 	}
 
 	namespace arg
@@ -123,6 +125,7 @@ namespace SVRC
 		const std::string image = "Image";
 		const std::string imageFileName = "ImageFileName";
 		const std::string status = "Status";
+		const std::string fetch = "Fetch";
 	}
 
 	namespace error
@@ -141,6 +144,7 @@ namespace SVRC
 		const std::string add_info = "AdditionalInfo";
 	}
 }
+
 #endif
 
 //******************************************************************************
@@ -148,6 +152,18 @@ namespace SVRC
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVRemoteControlConstants.h_v  $
+ * 
+ *    Rev 1.7   09 Jul 2014 17:02:48   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  915
+ * SCR Title:  Add command QueryMonitorListNames for RemoteControl
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   rename RegisterProductList into RegisterMonitorList
+ * add GetFailStatus and QueryMonitorListNames
+ * add fetch
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.6   24 Jun 2014 07:28:22   tbair
  * Project:  SVObserver
