@@ -5,8 +5,8 @@
 // * .Module Name     : SVLinearAnalyzerClass
 // * .File Name       : $Workfile:   SVLinearAnalyzerClass.cpp  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.3  $
-// * .Check In Date   : $Date:   15 May 2014 13:15:14  $
+// * .Current Version : $Revision:   1.4  $
+// * .Check In Date   : $Date:   10 Jul 2014 17:44:52  $
 // ******************************************************************************
 
 #include "stdafx.h"
@@ -129,75 +129,6 @@ BOOL SVLinearAnalyzerClass::OnValidate()
 
 	SetInvalid();
 	return FALSE;
-}
-
-HRESULT SVLinearAnalyzerClass::GetThresholdBarsOverlay( SVLinearEdgeProcessingClass *p_psvEdge, SVExtentMultiLineStruct &p_rsvMiltiLine )
-{
-	SVImageExtentClass l_svAnalyzerExtents;
-
-	HRESULT l_hrOk = GetImageExtent( l_svAnalyzerExtents );
-
-	if( l_hrOk == S_OK && p_psvEdge != NULL )
-	{
-		SVExtentMultiLineStruct l_svMultiLine;
-
-		if( p_psvEdge->GetThresholdBarsOverlay( l_svMultiLine ) == S_OK )
-		{
-			l_svAnalyzerExtents.TranslateFromOutputSpace( l_svMultiLine, l_svMultiLine );
-
-			p_rsvMiltiLine.m_svLineArray.Append( l_svMultiLine.m_svLineArray );
-
-			l_hrOk = S_OK;
-		}
-	}
-
-	return l_hrOk;
-}
-
-HRESULT SVLinearAnalyzerClass::GetHistogramOverlay( SVLinearEdgeProcessingClass *p_psvEdge, SVExtentMultiLineStruct &p_rsvMiltiLine )
-{
-	SVImageExtentClass l_svAnalyzerExtents;
-
-	HRESULT l_hrOk = GetImageExtent( l_svAnalyzerExtents );
-
-	if( l_hrOk == S_OK && p_psvEdge != NULL )
-	{
-		SVExtentLineStruct l_svLine;
-
-		if( p_psvEdge->GetHistogramOverlay( l_svLine ) == S_OK )
-		{
-			l_svAnalyzerExtents.TranslateFromOutputSpace( l_svLine, l_svLine );
-
-			p_rsvMiltiLine.m_svLineArray.Add( l_svLine );
-
-			l_hrOk = S_OK;
-		}
-	}
-
-	return l_hrOk;
-}
-
-HRESULT SVLinearAnalyzerClass::GetEdgesOverlay( SVLinearEdgeProcessingClass *p_psvEdge, SVExtentMultiLineStruct &p_rsvMiltiLine )
-{
-	SVImageExtentClass l_svAnalyzerExtents;
-
-	HRESULT l_hrOk = GetImageExtent( l_svAnalyzerExtents );
-
-	if( l_hrOk == S_OK && p_psvEdge != NULL )
-	{
-		SVExtentMultiLineStruct l_svMultiLine;
-
-		if( p_psvEdge->GetEdgesOverlay( l_svMultiLine ) == S_OK )
-		{
-			l_svAnalyzerExtents.TranslateFromOutputSpace( l_svMultiLine, l_svMultiLine );
-
-			p_rsvMiltiLine.m_svLineArray.Append( l_svMultiLine.m_svLineArray );
-
-			l_hrOk = S_OK;
-		}
-	}
-
-	return l_hrOk;
 }
 
 HRESULT SVLinearAnalyzerClass::GetSelectedEdgeOverlays( SVExtentMultiLineStruct &p_rsvMiltiLine )
@@ -550,6 +481,16 @@ DWORD_PTR SVLinearAnalyzerClass::processMessage(DWORD DwMessageID, DWORD_PTR DwM
 // ******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVLinearAnalyzerClass.cpp_v  $
+ * 
+ *    Rev 1.4   10 Jul 2014 17:44:52   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  902
+ * SCR Title:  Change Complex Dialog Image Displays to Use SVPictureDisplay ActiveX
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   remove methods GetThresholdBarsOverlay, GetHistogramOverlay and GetEdgesOverlay
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   15 May 2014 13:15:14   sjones
  * Project:  SVObserver

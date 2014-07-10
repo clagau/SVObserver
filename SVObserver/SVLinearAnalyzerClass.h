@@ -5,8 +5,8 @@
 // * .Module Name     : SVLinearAnalyzerClass
 // * .File Name       : $Workfile:   SVLinearAnalyzerClass.h  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.2  $
-// * .Check In Date   : $Date:   15 May 2014 13:14:06  $
+// * .Current Version : $Revision:   1.3  $
+// * .Check In Date   : $Date:   10 Jul 2014 17:44:52  $
 // ******************************************************************************
 
 #ifndef _SVLINEARANALYZERCLASS_H
@@ -38,9 +38,6 @@ public:
 
 	virtual BOOL OnValidate();
 
-	virtual HRESULT GetThresholdBarsOverlay( SVLinearEdgeProcessingClass *p_psvEdge, SVExtentMultiLineStruct &p_rsvMiltiLine );
-	virtual HRESULT GetHistogramOverlay( SVLinearEdgeProcessingClass *p_psvEdge, SVExtentMultiLineStruct &p_rsvMiltiLine );
-	virtual HRESULT GetEdgesOverlay( SVLinearEdgeProcessingClass *p_psvEdge, SVExtentMultiLineStruct &p_rsvMiltiLine );
 	virtual HRESULT GetSelectedEdgeOverlays( SVExtentMultiLineStruct &p_MultiLine );
 
 	virtual HRESULT GetImageExtent( SVImageExtentClass &p_rsvImageExtent );
@@ -91,6 +88,16 @@ protected:
 // ******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVLinearAnalyzerClass.h_v  $
+ * 
+ *    Rev 1.3   10 Jul 2014 17:44:52   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  902
+ * SCR Title:  Change Complex Dialog Image Displays to Use SVPictureDisplay ActiveX
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   remove methods GetThresholdBarsOverlay, GetHistogramOverlay and GetEdgesOverlay
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   15 May 2014 13:14:06   sjones
  * Project:  SVObserver

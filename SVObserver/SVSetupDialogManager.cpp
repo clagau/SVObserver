@@ -5,8 +5,8 @@
 //* .Module Name     : SVSetupDialogManager
 //* .File Name       : $Workfile:   SVSetupDialogManager.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   02 Jul 2014 13:10:48  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   10 Jul 2014 17:43:24  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -569,16 +569,7 @@ HRESULT SVSetupDialogManager::SVEdgeCountingLineAnalyzerClassSetupDialog( const 
 		}
 
 		SVMeasureAnalyzerAdjustmentSheetClass measureDialog( strTitle );
-		//SVEdgeMarkerAdjustmentPageClass* pPage = new SVEdgeMarkerAdjustmentPageClass( IDS_OBJECTNAME_EDGE );
-		
-		SVEdgeMarkerAdjustmentPageClass* pPage;
-
-		// check if owned by Profile Tool
-		const SVObjectInfoStruct& rObjectInfo = l_pAnalyzer->GetOwner()->GetObjectInfo();
-		if( rObjectInfo.ObjectTypeInfo.SubType == SVToolProfileObjectType )
-			pPage = new SVProfileEdgeMarkerAdjustmentPageClass( IDS_OBJECTNAME_EDGE );
-		else
-			pPage = new SVEdgeMarkerAdjustmentPageClass( IDS_OBJECTNAME_EDGE );
+		SVEdgeMarkerAdjustmentPageClass* pPage = new SVEdgeMarkerAdjustmentPageClass( IDS_OBJECTNAME_EDGE );
 
 		if( pIPDoc && pLine && pPage )
 		{
@@ -679,16 +670,7 @@ HRESULT SVSetupDialogManager::SVEdgePositionLineAnalyzerClassSetupDialog( const 
 		}
 
 		SVMeasureAnalyzerAdjustmentSheetClass measureDialog( strTitle );
-		//SVEdgeMarkerAdjustmentPageClass* pPage = new SVEdgeMarkerAdjustmentPageClass( IDS_OBJECTNAME_EDGE );
-
-		SVEdgeMarkerAdjustmentPageClass* pPage;
-
-		// check if owned by Profile Tool
-		SVObjectInfoStruct objectInfo = l_pAnalyzer->GetOwner()->GetObjectInfo();
-		if( objectInfo.ObjectTypeInfo.SubType == SVToolProfileObjectType )
-			pPage = new SVProfileEdgeMarkerAdjustmentPageClass( IDS_OBJECTNAME_EDGE );
-		else
-			pPage = new SVEdgeMarkerAdjustmentPageClass( IDS_OBJECTNAME_EDGE );
+		SVEdgeMarkerAdjustmentPageClass* pPage = new SVEdgeMarkerAdjustmentPageClass( IDS_OBJECTNAME_EDGE );
 
 		if( pIPDoc && pLine && pPage )
 		{
@@ -1046,23 +1028,8 @@ HRESULT SVSetupDialogManager::SVLinearMeasurementLineAnalyzerClassSetupDialog( c
 		}
 
 		SVMeasureAnalyzerAdjustmentSheetClass measureDialog( strTitle );
-		//SVEdgeMarkerAdjustmentPageClass* pPageA = new SVEdgeMarkerAdjustmentPageClass( IDS_EDGE_A );
-		//SVEdgeMarkerAdjustmentPageClass* pPageB = new SVEdgeMarkerAdjustmentPageClass( IDS_EDGE_B );
-
-		SVEdgeMarkerAdjustmentPageClass* pPageA, *pPageB;
-
-		// check if owned by Profile Tool
-		SVObjectInfoStruct objectInfo = l_pAnalyzer->GetOwner()->GetObjectInfo();
-		if( objectInfo.ObjectTypeInfo.SubType == SVToolProfileObjectType )
-		{
-			pPageA = new SVProfileEdgeMarkerAdjustmentPageClass( IDS_EDGE_A );
-			pPageB = new SVProfileEdgeMarkerAdjustmentPageClass( IDS_EDGE_B );
-		}
-		else
-		{
-			pPageA = new SVEdgeMarkerAdjustmentPageClass( IDS_EDGE_A );
-			pPageB = new SVEdgeMarkerAdjustmentPageClass( IDS_EDGE_B );
-		}
+		SVEdgeMarkerAdjustmentPageClass* pPageA = new SVEdgeMarkerAdjustmentPageClass( IDS_EDGE_A );
+		SVEdgeMarkerAdjustmentPageClass* pPageB = new SVEdgeMarkerAdjustmentPageClass( IDS_EDGE_B );
 
 		if( pIPDoc && pLine && pPageA && pPageB )
 		{
@@ -1265,23 +1232,8 @@ HRESULT SVSetupDialogManager::SVMaximumBackgroundObjectLineAnalyzerClassSetupDia
 		}
 
 		SVMeasureAnalyzerAdjustmentSheetClass measureDialog( strTitle );
-		//SVEdgeMarkerAdjustmentPageClass* pPageA = new SVEdgeMarkerAdjustmentPageClass( IDS_EDGE_A );
-		//SVEdgeMarkerAdjustmentPageClass* pPageB = new SVEdgeMarkerAdjustmentPageClass( IDS_EDGE_B );
-
-		SVEdgeMarkerAdjustmentPageClass* pPageA, *pPageB;
-
-		// check if owned by Profile Tool
-		SVObjectInfoStruct objectInfo = l_pAnalyzer->GetOwner()->GetObjectInfo();
-		if( objectInfo.ObjectTypeInfo.SubType == SVToolProfileObjectType )
-		{
-			pPageA = new SVProfileEdgeMarkerAdjustmentPageClass( IDS_EDGE_A );
-			pPageB = new SVProfileEdgeMarkerAdjustmentPageClass( IDS_EDGE_B );
-		}
-		else
-		{
-			pPageA = new SVEdgeMarkerAdjustmentPageClass( IDS_EDGE_A );
-			pPageB = new SVEdgeMarkerAdjustmentPageClass( IDS_EDGE_B );
-		}
+		SVEdgeMarkerAdjustmentPageClass* pPageA = new SVEdgeMarkerAdjustmentPageClass( IDS_EDGE_A );
+		SVEdgeMarkerAdjustmentPageClass* pPageB = new SVEdgeMarkerAdjustmentPageClass( IDS_EDGE_B );
 
 		if( pIPDoc && pLine && pPageA && pPageB )
 		{
@@ -1422,23 +1374,8 @@ HRESULT SVSetupDialogManager::SVMaximumForegroundObjectLineAnalyzerClassSetupDia
 		}
 
 		SVMeasureAnalyzerAdjustmentSheetClass measureDialog( strTitle );
-		//SVEdgeMarkerAdjustmentPageClass* pPageA = new SVEdgeMarkerAdjustmentPageClass( IDS_EDGE_A );
-		//SVEdgeMarkerAdjustmentPageClass* pPageB = new SVEdgeMarkerAdjustmentPageClass( IDS_EDGE_B );
-
-		SVEdgeMarkerAdjustmentPageClass* pPageA, *pPageB;
-
-		// check if owned by Profile Tool
-		SVObjectInfoStruct objectInfo = l_pAnalyzer->GetOwner()->GetObjectInfo();
-		if( objectInfo.ObjectTypeInfo.SubType == SVToolProfileObjectType )
-		{
-			pPageA = new SVProfileEdgeMarkerAdjustmentPageClass( IDS_EDGE_A );
-			pPageB = new SVProfileEdgeMarkerAdjustmentPageClass( IDS_EDGE_B );
-		}
-		else
-		{
-			pPageA = new SVEdgeMarkerAdjustmentPageClass( IDS_EDGE_A );
-			pPageB = new SVEdgeMarkerAdjustmentPageClass( IDS_EDGE_B );
-		}
+		SVEdgeMarkerAdjustmentPageClass* pPageA = new SVEdgeMarkerAdjustmentPageClass( IDS_EDGE_A );
+		SVEdgeMarkerAdjustmentPageClass* pPageB = new SVEdgeMarkerAdjustmentPageClass( IDS_EDGE_B );
 
 		if( pIPDoc && pLine && pPageA && pPageB )
 		{
@@ -1579,23 +1516,8 @@ HRESULT SVSetupDialogManager::SVMaximumObjectLineAnalyzerClassSetupDialog( const
 		}
 
 		SVMeasureAnalyzerAdjustmentSheetClass measureDialog( strTitle );
-		//SVEdgeMarkerAdjustmentPageClass* pPageA = new SVEdgeMarkerAdjustmentPageClass( IDS_EDGE_A );
-		//SVEdgeMarkerAdjustmentPageClass* pPageB = new SVEdgeMarkerAdjustmentPageClass( IDS_EDGE_B );
-
-		SVEdgeMarkerAdjustmentPageClass* pPageA, *pPageB;
-
-		// check if owned by Profile Tool
-		SVObjectInfoStruct objectInfo = l_pAnalyzer->GetOwner()->GetObjectInfo();
-		if( objectInfo.ObjectTypeInfo.SubType == SVToolProfileObjectType )
-		{
-			pPageA = new SVProfileEdgeMarkerAdjustmentPageClass( IDS_EDGE_A );
-			pPageB = new SVProfileEdgeMarkerAdjustmentPageClass( IDS_EDGE_B );
-		}
-		else
-		{
-			pPageA = new SVEdgeMarkerAdjustmentPageClass( IDS_EDGE_A );
-			pPageB = new SVEdgeMarkerAdjustmentPageClass( IDS_EDGE_B );
-		}
+		SVEdgeMarkerAdjustmentPageClass* pPageA = new SVEdgeMarkerAdjustmentPageClass( IDS_EDGE_A );
+		SVEdgeMarkerAdjustmentPageClass* pPageB = new SVEdgeMarkerAdjustmentPageClass( IDS_EDGE_B );
 
 		BOOL BRetVal = FALSE;
 		if( pIPDoc && pLine && pPageA && pPageB )
@@ -2297,6 +2219,16 @@ HRESULT SVSetupDialogManager::SVResultClassSetupDialog( const SVGUID& p_rObjectI
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVSetupDialogManager.cpp_v  $
+ * 
+ *    Rev 1.3   10 Jul 2014 17:43:24   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  902
+ * SCR Title:  Change Complex Dialog Image Displays to Use SVPictureDisplay ActiveX
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   remove if-command with SVToolProfileObjectType in several methods
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   02 Jul 2014 13:10:48   mziegler
  * Project:  SVObserver

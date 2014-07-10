@@ -5,8 +5,8 @@
 // * .Module Name     : SVLinearEdgeProcessingClass
 // * .File Name       : $Workfile:   SVLinearEdgeProcessingClass.h  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.2  $
-// * .Check In Date   : $Date:   15 May 2014 13:12:48  $
+// * .Current Version : $Revision:   1.3  $
+// * .Check In Date   : $Date:   10 Jul 2014 17:46:18  $
 // ******************************************************************************
 
 #ifndef SVLINEAREDGEPROCESSINGCLASS_H
@@ -47,6 +47,20 @@ public:
 	HRESULT GetHistogramOverlay( SVExtentLineStruct &p_rsvLine );
 	HRESULT GetEdgesOverlay( SVExtentMultiLineStruct &p_rsvMiltiLine );
 	HRESULT GetSelectedEdgeOverlay( SVExtentLineStruct &p_rsvLine );
+	
+	//************************************
+	// Method:    getLowerThresholdValue
+	// Description: Get the value of the lower threshold. If there is are error, it return -1. 
+	// Returns:   long
+	//************************************
+	long getLowerThresholdValue() const;
+
+	//************************************
+	// Method:    geUpperThresholdValue
+	// Description: Get the value of the upper threshold. If there is are error, it return -1. 
+	// Returns:   long
+	//************************************
+	long getUpperThresholdValue() const;
 
 	SVEnumerateValueObjectClass m_svDirection;
 	SVEnumerateValueObjectClass m_svPolarisation;
@@ -110,6 +124,16 @@ protected:
 // ******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVLinearEdgeProcessingClass.h_v  $
+ * 
+ *    Rev 1.3   10 Jul 2014 17:46:18   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  902
+ * SCR Title:  Change Complex Dialog Image Displays to Use SVPictureDisplay ActiveX
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   add methods getLowerThresholdValue and getUpperThresholdValue
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   15 May 2014 13:12:48   sjones
  * Project:  SVObserver

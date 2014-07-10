@@ -4,9 +4,11 @@
 //******************************************************************************
 //* .Module Name     : SVProfileEdgeMarkerAdjustmentPage
 //* .File Name       : $Workfile:   SVProfileEdgeMarkerAdjustmentPage.h  $
+//* .Description	 : Display the average graph and the edges to the GUI and let the user to change the parameter
+//*					   ATTENTION: This class is used now for the linear tool, the name should be changed, but it is done yet because it is a mess with PVCS.
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   02 Jul 2014 13:06:44  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   10 Jul 2014 17:41:16  $
 //******************************************************************************
 
 #pragma once
@@ -79,24 +81,29 @@ private:
 
 	//************************************
 	// Method:    setGraphOverlayToPicture
-	// Description: Set a vector of points as graph overlay to the display control. 
-	// Parameter: const SVExtentMultiLineStruct & svMultiLine The points and the information of the color.
+	// Description: Set the histogram and the edge lines as overlay to the display control. 
+	// Parameter: SVLinearEdgeProcessingClass* pEdge The linear edge class from where to get the graph points.
 	// Returns:   void
 	//************************************
-	void setGraphOverlayToPicture( const SVExtentMultiLineStruct &svMultiLine );
+	void setGraphOverlayToPicture( SVLinearEdgeProcessingClass* pEdge );
 
 	//************************************
-	// Method:    setLineOverlayToPicture
-	// Description: Set point pairs as line overlays to the display control.
-	// Parameter: const SVExtentMultiLineStruct svMultiLine The points and the information of the color.
+	// Method:    setMarkerOverlayToPicture
+	// Description: Set a marker overlay to the display control.
+	// Parameter: unsigned long value The position of the marker.
 	// Parameter: long allowType Set the allowType to the control. Default is none change allowed.
 	// Returns:   void
 	//************************************
-	void setLineOverlayToPicture( const SVExtentMultiLineStruct &svMultiLine, long allowType = CDSVPictureDisplay::AllowNone );
+	void setMarkerOverlayToPicture( unsigned long value, long allowType = CDSVPictureDisplay::AllowNone );
 #pragma endregion Private Methods
 
 #pragma region Member variables
 private:
+	//const values for the graph display of the edge lines
+	static const long m_egdeLinesGraphMaxY = 20;
+	static const long m_egdeLinesStartPos = 8;
+	static const long m_egdeLinesStopPos = 12;
+
 	//{{AFX_DATA(SVProfileEdgeMarkerAdjustmentPageClass)
 	enum { IDD = IDD_PROFILE_GR_EDGE_MARKER_ADJUST_DIALOG };
 	CEdit	m_LowerMinOffsetEditCtrl;
@@ -126,6 +133,18 @@ private:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVProfileEdgeMarkerAdjustmentPage.h_v  $
+ * 
+ *    Rev 1.3   10 Jul 2014 17:41:16   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  902
+ * SCR Title:  Change Complex Dialog Image Displays to Use SVPictureDisplay ActiveX
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   new implementation for setGraphOverlayToPicture and use setMarkerOverlayToPicture instead of setLineOverlayToPicture, 
+ * to send real value instead of calculated values under certain conditions invalid graph points.
+ * remove if-part for lineAnalyzer, because no longer used (old profile tool)
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   02 Jul 2014 13:06:44   mziegler
  * Project:  SVObserver

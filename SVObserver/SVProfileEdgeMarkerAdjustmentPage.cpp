@@ -5,12 +5,13 @@
 //* .Module Name     : SVProfileEdgeMarkerAdjustmentPage
 //* .File Name       : $Workfile:   SVProfileEdgeMarkerAdjustmentPage.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.4  $
-//* .Check In Date   : $Date:   02 Jul 2014 13:06:46  $
+//* .Current Version : $Revision:   1.5  $
+//* .Check In Date   : $Date:   10 Jul 2014 17:41:14  $
 //******************************************************************************
 
 #pragma region Includes
 #include "stdafx.h"
+#include "SVRunControlLibrary/SVRunControlLibrary.h"
 #include "SVProfileEdgeMarkerAdjustmentPage.h"
 #include "SVLinearAnalyzerClass.h"
 #include "SVLinearEdgeProcessingClass.h"
@@ -962,53 +963,7 @@ void SVProfileEdgeMarkerAdjustmentPageClass::updateGraphDisplay()
 	// Remove old points
 	m_dialogImage.RemoveAllOverlays(0);
 
-	if( nullptr == l_psvLinear )
-	{
-		// Get the Thresholding Options from the SVImageToLineProjectClass
-		SVObjectTypeInfoStruct info;
-		info.ObjectType = SVImageToLineProjectObjectType;
-
-		SVImageToLineProjectClass *pProject = reinterpret_cast<SVImageToLineProjectClass *>(SVSendMessage( PCurrentAnalyzer, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&info) ));
-	
-		if( nullptr != pProject )
-		{
-			return;
-		}
-
-		// Get the Analyzer figures
-		if( nullptr != pProject->getInputImage() )
-		{
-			SVLineAnalyzerClass *l_psvAnalyzer = dynamic_cast<SVLineAnalyzerClass *>(PCurrentAnalyzer);
-			if( l_psvAnalyzer != nullptr )
-			{
-				SVExtentMultiLineStruct l_svMultiLine;
-				if( l_psvAnalyzer->GetHistogramOverlay( l_svMultiLine ) == S_OK )
-				{
-					setGraphOverlayToPicture( l_svMultiLine );
-					l_svMultiLine.Initialize();
-				}
-
-				if( l_psvAnalyzer->GetThresholdBarsOverlay( l_svMultiLine ) == S_OK )
-				{
-					setLineOverlayToPicture( l_svMultiLine );
-					l_svMultiLine.Initialize();
-				}
-
-				if( l_psvAnalyzer->GetEdgesOverlay( l_svMultiLine ) == S_OK )
-				{
-					setLineOverlayToPicture( l_svMultiLine );
-					l_svMultiLine.Initialize();
-				}
-
-				if( l_psvAnalyzer->GetSelectedEdgeOverlays( l_svMultiLine ) == S_OK )
-				{
-					setLineOverlayToPicture( l_svMultiLine );
-					l_svMultiLine.Initialize();
-				}
-			}
-		}
-	}
-	else
+	if( nullptr != l_psvLinear )
 	{
 		SVLinearEdgeProcessingClass* pEdge = nullptr;
 		if( m_bEdgeA )
@@ -1025,31 +980,20 @@ void SVProfileEdgeMarkerAdjustmentPageClass::updateGraphDisplay()
 			return;
 		}
 
-		SVInspectionProcess* l_pInspect = l_psvLinear->GetInspection();
-		SVExtentMultiLineStruct l_svMultiLine;
 
-		if( l_psvLinear->GetHistogramOverlay( pEdge, l_svMultiLine ) == S_OK )
+		//set HistogramOverlay and edges
+		setGraphOverlayToPicture(pEdge);
+
+		//set Threshold Bars
+		long thresholdValue = pEdge->getLowerThresholdValue();
+		if ( 0 <= thresholdValue )
 		{
-			setGraphOverlayToPicture( l_svMultiLine );
-			l_svMultiLine.Initialize();
+			setMarkerOverlayToPicture(thresholdValue);
 		}
-
-		if( l_psvLinear->GetThresholdBarsOverlay( pEdge, l_svMultiLine ) == S_OK )
+		thresholdValue = pEdge->getUpperThresholdValue();
+		if ( 0 <= thresholdValue )
 		{
-			setLineOverlayToPicture( l_svMultiLine );
-			l_svMultiLine.Initialize();
-		}
-
-		if( l_psvLinear->GetEdgesOverlay( pEdge, l_svMultiLine ) == S_OK )
-		{
-			setLineOverlayToPicture( l_svMultiLine );
-			l_svMultiLine.Initialize();
-		}
-
-		if( l_psvLinear->GetSelectedEdgeOverlays( l_svMultiLine ) == S_OK )
-		{
-			setLineOverlayToPicture( l_svMultiLine );
-			l_svMultiLine.Initialize();
+			setMarkerOverlayToPicture(thresholdValue);
 		}
 	}
 
@@ -1057,51 +1001,83 @@ void SVProfileEdgeMarkerAdjustmentPageClass::updateGraphDisplay()
 	m_dialogImage.Refresh();
 }
 
-void SVProfileEdgeMarkerAdjustmentPageClass::setGraphOverlayToPicture( const SVExtentMultiLineStruct &svMultiLine )
+void SVProfileEdgeMarkerAdjustmentPageClass::setGraphOverlayToPicture( SVLinearEdgeProcessingClass* pEdge )
 {
+	std::vector<double> histogramData;
+	pEdge->GetInputLinearData()->GetValues( histogramData );
 	long handle = -1;
-	ASSERT(1 == svMultiLine.m_svLineArray.size());
-	long sizePointsArray = svMultiLine.m_svLineArray[0].m_svPointArray.size();
-	long* points = new long[sizePointsArray*2];
-	for (int i=0; i<sizePointsArray; i++)
+	size_t sizePointsArray = histogramData.size();
+	double* points = new double[sizePointsArray * 2];
+	for (size_t i = 0; i < sizePointsArray; i++)
 	{
-		points[i*2] = static_cast<long>(svMultiLine.m_svLineArray[0].m_svPointArray[i].m_dPositionX);
-		points[i*2+1] = static_cast<long>(svMultiLine.m_svLineArray[0].m_svPointArray[i].m_dPositionY);
+		points[i*2] = static_cast<double>(i);
+		points[i*2+1] = static_cast<double>(histogramData[i]);
 	}
 
 	COleSafeArray arraySafe;
-	arraySafe.CreateOneDim(VT_I4, sizePointsArray*2, points);
+	arraySafe.CreateOneDim(VT_R8, static_cast< DWORD >( sizePointsArray * 2 ), points);
 	std::map<long,_variant_t> ParMap;
 	ParMap[CDSVPictureDisplay::P_Type ] = static_cast<long>(CDSVPictureDisplay::GraphROI);
-	ParMap[CDSVPictureDisplay::P_Color] = static_cast<long>(svMultiLine.m_svLineArray[0].m_dwColor);
-	ParMap[CDSVPictureDisplay::P_SelectedColor] = static_cast<long>(svMultiLine.m_svLineArray[0].m_dwColor);
+	ParMap[CDSVPictureDisplay::P_SubType ] = static_cast<long>(CDSVPictureDisplay::Scale2ViewAreaPerParameter);
+	ParMap[CDSVPictureDisplay::P_Color] = static_cast<long>(SV_DEFAULT_SUB_FUNCTION_COLOR_1);
+	ParMap[CDSVPictureDisplay::P_SelectedColor] = static_cast<long>(SV_DEFAULT_SUB_FUNCTION_COLOR_1);
 	ParMap[CDSVPictureDisplay::P_AllowEdit] = static_cast<long>(0);
 	ParMap[CDSVPictureDisplay::P_ARRAY_XY] = arraySafe;
+	ParMap[CDSVPictureDisplay::P_Is_Flip_Vertical] = true;
+	ParMap[CDSVPictureDisplay::P_X_Min] = 0;
+	ParMap[CDSVPictureDisplay::P_X_Max] = sizePointsArray;
+	ParMap[CDSVPictureDisplay::P_Y_Min] = 0;
+	ParMap[CDSVPictureDisplay::P_Y_Max] = pEdge->m_dwColorNumber-1;
 
+	m_dialogImage.AddOverlay( 0, ParMap, &handle );
+
+	//set linear Edge lines
+	std::vector<double> linearEdge;
+	pEdge->m_svLinearEdges.GetValues( linearEdge );
+	ParMap[CDSVPictureDisplay::P_Color] = static_cast<long>(SV_DEFAULT_SUB_FUNCTION_COLOR_2);
+	ParMap[CDSVPictureDisplay::P_SelectedColor] = static_cast<long>(SV_DEFAULT_SUB_FUNCTION_COLOR_2);
+	ParMap[CDSVPictureDisplay::P_Is_Flip_Vertical] = false;
+	ParMap[CDSVPictureDisplay::P_Y_Max] = m_egdeLinesGraphMaxY;
+	points[1] = m_egdeLinesStartPos; // y of first point
+	points[3] = m_egdeLinesStopPos; // y of second point
+	for (size_t i = 0; i < linearEdge.size(); i++)
+	{
+		points[0] = linearEdge[i]; // x of first point
+		points[2] = linearEdge[i]; // x of second point
+		arraySafe.CreateOneDim(VT_R8, 4, points); // two points are four values
+		ParMap[CDSVPictureDisplay::P_ARRAY_XY] = arraySafe;
+		m_dialogImage.AddOverlay(0, ParMap, &handle );
+	}
+
+	//set selected Edge line
+	double distance;
+	pEdge->GetOutputEdgeDistance( distance );
+	points[0] = distance; // x of first point
+	points[2] = distance; // x of second point
+	arraySafe.CreateOneDim(VT_R8, 4, points); // two points are four values
+	ParMap[CDSVPictureDisplay::P_Color] = static_cast<long>(pEdge->GetObjectColor());
+	ParMap[CDSVPictureDisplay::P_SelectedColor] = static_cast<long>(pEdge->GetObjectColor());
+	ParMap[CDSVPictureDisplay::P_ARRAY_XY] = arraySafe;
 	m_dialogImage.AddOverlay(0, ParMap, &handle );
+
 	delete[] points;
 }
 
-void SVProfileEdgeMarkerAdjustmentPageClass::setLineOverlayToPicture( const SVExtentMultiLineStruct &svMultiLine, long allowType /*= CDSVPictureDisplay::AllowNone */ )
+void SVProfileEdgeMarkerAdjustmentPageClass::setMarkerOverlayToPicture( unsigned long value, long allowType /*= CDSVPictureDisplay::AllowNone */ )
 {
 	long handle = -1;
-	unsigned int count = svMultiLine.m_svLineArray.size();
-	for (unsigned int i = 0; i < count; i++)
-	{
-		ASSERT(2 == svMultiLine.m_svLineArray[i].m_svPointArray.size());
 
-		std::map<long,_variant_t> ParMap;
-		ParMap[CDSVPictureDisplay::P_Type ] = static_cast<long>(CDSVPictureDisplay::LineROI);
-		ParMap[CDSVPictureDisplay::P_Color] = static_cast<long>(svMultiLine.m_svLineArray[i].m_dwColor);
-		ParMap[CDSVPictureDisplay::P_SelectedColor] = static_cast<long>(svMultiLine.m_svLineArray[i].m_dwColor);
-		ParMap[CDSVPictureDisplay::P_AllowEdit] = static_cast<long>(allowType);
-		ParMap[CDSVPictureDisplay::P_X1] = static_cast<long>(svMultiLine.m_svLineArray[i].m_svPointArray[0].m_dPositionX);
-		ParMap[CDSVPictureDisplay::P_Y1] = static_cast<long>(svMultiLine.m_svLineArray[i].m_svPointArray[0].m_dPositionY);
-		ParMap[CDSVPictureDisplay::P_X2] = static_cast<long>(svMultiLine.m_svLineArray[i].m_svPointArray[1].m_dPositionX);
-		ParMap[CDSVPictureDisplay::P_Y2] = static_cast<long>(svMultiLine.m_svLineArray[i].m_svPointArray[1].m_dPositionY);
+	std::map<long,_variant_t> ParMap;
+	ParMap[CDSVPictureDisplay::P_Type ] = static_cast<long>(CDSVPictureDisplay::MarkerROI);
+	ParMap[CDSVPictureDisplay::P_SubType ] = static_cast<long>(CDSVPictureDisplay::HorizontalMarker);
+	ParMap[CDSVPictureDisplay::P_Color] = static_cast<long>(SV_DEFAULT_SUB_FUNCTION_COLOR_1);
+	ParMap[CDSVPictureDisplay::P_SelectedColor] = static_cast<long>(SV_DEFAULT_SUB_FUNCTION_COLOR_1);
+	ParMap[CDSVPictureDisplay::P_AllowEdit] = static_cast<long>(allowType);
+	ParMap[CDSVPictureDisplay::P_Min] = static_cast<long>(0);
+	ParMap[CDSVPictureDisplay::P_Max] = static_cast<long>(255);
+	ParMap[CDSVPictureDisplay::P_VALUE] = static_cast<long>(255 - value);
 
-		m_dialogImage.AddOverlay(0, ParMap, &handle );
-	}
+	m_dialogImage.AddOverlay(0, ParMap, &handle );
 }
 #pragma endregion Private Methods
 
@@ -1110,6 +1086,18 @@ void SVProfileEdgeMarkerAdjustmentPageClass::setLineOverlayToPicture( const SVEx
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVProfileEdgeMarkerAdjustmentPage.cpp_v  $
+ * 
+ *    Rev 1.5   10 Jul 2014 17:41:14   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  902
+ * SCR Title:  Change Complex Dialog Image Displays to Use SVPictureDisplay ActiveX
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   new implementation for setGraphOverlayToPicture and use setMarkerOverlayToPicture instead of setLineOverlayToPicture, 
+ * to send real value instead of calculated values under certain conditions invalid graph points.
+ * remove if-part for lineAnalyzer, because no longer used (old profile tool)
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.4   02 Jul 2014 13:06:46   mziegler
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 // * .Module Name     : SVLinearEdgeProcessingClass
 // * .File Name       : $Workfile:   SVLinearEdgeProcessingClass.cpp  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.4  $
-// * .Check In Date   : $Date:   15 May 2014 13:12:46  $
+// * .Current Version : $Revision:   1.5  $
+// * .Check In Date   : $Date:   10 Jul 2014 17:46:18  $
 // ******************************************************************************
 
 #include "stdafx.h"
@@ -806,6 +806,32 @@ HRESULT SVLinearEdgeProcessingClass::GetSelectedEdgeOverlay( SVExtentLineStruct 
 	return l_hrOk;
 }
 
+long SVLinearEdgeProcessingClass::getLowerThresholdValue() const
+{
+	DWORD thresholdValue = 0;
+	if (S_OK == m_svLowerThresholdValue.GetValue( thresholdValue ))
+	{
+		return static_cast<long>(thresholdValue);
+	}
+	else
+	{
+		return -1;
+	}
+}
+
+long SVLinearEdgeProcessingClass::getUpperThresholdValue() const
+{
+	DWORD thresholdValue = 0;
+	if (S_OK == m_svUpperThresholdValue.GetValue( thresholdValue ))
+	{
+		return static_cast<long>(thresholdValue);
+	}
+	else
+	{
+		return -1;
+	}
+}
+
 HRESULT SVLinearEdgeProcessingClass::UpdateUpperThresholdValues( long p_lIndex )
 {
 	HRESULT l_hrOk = S_OK;
@@ -1383,6 +1409,16 @@ DWORD_PTR SVLinearEdgeProcessingClass::processMessage(DWORD DwMessageID, DWORD_P
 // ******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVLinearEdgeProcessingClass.cpp_v  $
+ * 
+ *    Rev 1.5   10 Jul 2014 17:46:18   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  902
+ * SCR Title:  Change Complex Dialog Image Displays to Use SVPictureDisplay ActiveX
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   add methods getLowerThresholdValue and getUpperThresholdValue
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.4   15 May 2014 13:12:46   sjones
  * Project:  SVObserver
