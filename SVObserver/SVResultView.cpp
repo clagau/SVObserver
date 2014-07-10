@@ -5,12 +5,13 @@
 //* .Module Name     : SVResultView
 //* .File Name       : $Workfile:   SVResultView.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.5  $
-//* .Check In Date   : $Date:   02 Jun 2014 10:20:12  $
+//* .Current Version : $Revision:   1.6  $
+//* .Check In Date   : $Date:   10 Jul 2014 08:28:34  $
 //******************************************************************************
 
 #pragma region Includes
 #include "stdafx.h"
+#include "SVObserver.h"
 #include "SVResultView.h"
 #include "SVIPDoc.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
@@ -766,16 +767,20 @@ void SVResultViewClass::OnRButtonUp(UINT nFlags, CPoint point)
 
 void SVResultViewClass::OnRButtonDown(UINT nFlags, CPoint point) 
 {
-	CMenu l_menu;
-	CMenu* l_pPopup;
+	CMenu ResultsMenu;
 
-	if( l_menu.LoadMenu( IDR_RESULTS_CONTEXT_MENU ) )
+	if( SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_READY ) &&
+		TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable( SECURITY_POINT_MODE_MENU_EDIT_TOOLSET ) )
 	{
-		if( l_pPopup = l_menu.GetSubMenu( 0 ) )
+		if( ResultsMenu.LoadMenu( IDR_RESULTS_CONTEXT_MENU ) )
 		{
-			CPoint l_Point = point;
-			ClientToScreen(&l_Point);
-			l_pPopup->TrackPopupMenu( TPM_LEFTALIGN | TPM_RIGHTBUTTON, l_Point.x, l_Point.y, this );
+			CMenu* pPopup = ResultsMenu.GetSubMenu( 0 );
+			if( nullptr != pPopup )
+			{
+				CPoint Point = point;
+				ClientToScreen( &Point );
+				pPopup->TrackPopupMenu( TPM_LEFTALIGN | TPM_RIGHTBUTTON, Point.x, Point.y, this );
+			}
 		}
 	}
 }
@@ -877,6 +882,17 @@ BOOL SVResultViewClass::CheckParameters( SVTreeType& rTree, SVTreeType::SVBranch
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVResultView.cpp_v  $
+ * 
+ *    Rev 1.6   10 Jul 2014 08:28:34   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  859
+ * SCR Title:  Add Results Picker Access via Right-Click (Context Menu) in the Results Area
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Check security settings when calling the context menu for the result picker in the view
+ * Method changed OnRButtonDown
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.5   02 Jun 2014 10:20:12   gramseier
  * Project:  SVObserver
