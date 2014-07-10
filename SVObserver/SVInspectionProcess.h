@@ -5,8 +5,8 @@
 //* .Module Name     : SVInspectionProcess
 //* .File Name       : $Workfile:   SVInspectionProcess.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.8  $
-//* .Check In Date   : $Date:   03 Jul 2014 16:49:48  $
+//* .Current Version : $Revision:   1.9  $
+//* .Check In Date   : $Date:   10 Jul 2014 17:10:58  $
 //******************************************************************************
 
 #ifndef INC_SVINSPECTIONPROCESS_INCLUDED
@@ -346,7 +346,7 @@ protected:
 	HRESULT ProcessInspection( bool& p_rProcessed, SVProductInfoStruct& p_rProduct );
 	HRESULT ProcessMonitorLists( bool& p_rProcessed );
 	HRESULT ProcessLastInspectedImages( bool& p_rProcessed );
-	HRESULT ProcessNotifyWithLastInspected( bool& p_rProcessed, SVProductInfoStruct& p_rProduct );
+	HRESULT ProcessNotifyWithLastInspected( bool& p_rProcessed );
 	HRESULT ProcessConditionalHistory( bool& p_rProcessed );
 	HRESULT ProcessCommandQueue( bool& p_rProcessed );
 
@@ -558,6 +558,16 @@ inline HRESULT SVInspectionProcess::SetObjectArrayValues(SVValueObjectReference 
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVInspectionProcess.h_v  $
+ * 
+ *    Rev 1.9   10 Jul 2014 17:10:58   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Revised ProcessNotifyWithLastInspected to not be passed a SVProductnNfoStruct referenec, but rather call GetLastPorduct to obtain it to fix an issue with the image display.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.8   03 Jul 2014 16:49:48   sjones
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : SVInspectionProcess
 //* .File Name       : $Workfile:   SVInspectionProcess.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.15  $
-//* .Check In Date   : $Date:   03 Jul 2014 16:49:48  $
+//* .Current Version : $Revision:   1.16  $
+//* .Check In Date   : $Date:   10 Jul 2014 17:10:58  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -343,7 +343,7 @@ HRESULT SVInspectionProcess::ProcessLastInspectedImages( bool& p_rProcessed )
 	return l_Status;
 }
 
-HRESULT SVInspectionProcess::ProcessNotifyWithLastInspected(bool& p_rProcessed, SVProductInfoStruct& rProduct)
+HRESULT SVInspectionProcess::ProcessNotifyWithLastInspected(bool& p_rProcessed)
 {
 	HRESULT l_Status = S_OK;
 
@@ -354,13 +354,13 @@ HRESULT SVInspectionProcess::ProcessNotifyWithLastInspected(bool& p_rProcessed, 
 #endif
 		::InterlockedExchange(&m_NotifyWithLastInspected, 0);
 
-//		SVProductInfoStruct l_Product = LastProductGet(SV_LAST_INSPECTED);
+		SVProductInfoStruct l_Product = LastProductGet(SV_LAST_INSPECTED);
 		if (GetPPQ()->HasActiveMonitorList())
 		{
 
 		}
 		// Why are we doing this twice, our caller does it as well...
-		SVInspectionCompleteInfoStruct l_Data(GetUniqueObjectID(), rProduct);
+		SVInspectionCompleteInfoStruct l_Data(GetUniqueObjectID(), l_Product);
 		SVObjectManagerClass::Instance().UpdateObservers("SVInspectionProcess", GetUniqueObjectID(), l_Data);
 
 		p_rProcessed = true;
@@ -690,7 +690,7 @@ void SVInspectionProcess::ThreadProcess( bool& p_WaitForEvents )
 
 	ProcessLastInspectedImages( l_Processed );
 
-	ProcessNotifyWithLastInspected( l_Processed, l_Product );
+	ProcessNotifyWithLastInspected( l_Processed );
 
 	ProcessConditionalHistory( l_Processed );
 
@@ -4644,6 +4644,16 @@ void SVInspectionProcess::Persist(SVObjectWriter& rWriter)
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVInspectionProcess.cpp_v  $
+ * 
+ *    Rev 1.16   10 Jul 2014 17:10:58   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Revised ProcessNotifyWithLastInspected to not be passed a SVProductnNfoStruct referenec, but rather call GetLastPorduct to obtain it to fix an issue with the image display.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.15   03 Jul 2014 16:49:48   sjones
  * Project:  SVObserver
