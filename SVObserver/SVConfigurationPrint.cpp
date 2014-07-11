@@ -5,8 +5,8 @@
 //* .Module Name     : SVConfigurationPrint
 //* .File Name       : $Workfile:   SVConfigurationPrint.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.10  $
-//* .Check In Date   : $Date:   01 Jul 2014 15:12:10  $
+//* .Current Version : $Revision:   1.11  $
+//* .Check In Date   : $Date:   11 Jul 2014 09:50:06  $
 //******************************************************************************
 
 #pragma region Includes
@@ -169,9 +169,39 @@ private:
 	int m_nIndentLevel;
 };
 
-
-
-
+static CString GetToolGroup(const CString& toolName, SVInspectionProcess* pInspection, bool bStart)
+{
+	CString name;
+	// get the document that owns this inspection
+	SVIPDoc* pDoc = SVObjectManagerClass::Instance().GetIPDoc(pInspection->GetUniqueObjectID());
+	if (pDoc)
+	{
+		const SVToolGrouping& rGrouping = pDoc->GetToolGroupings();
+		SVToolGrouping::const_iterator it = rGrouping.find(static_cast<LPCTSTR>(toolName));
+		if (bStart)
+		{
+			if (it != rGrouping.end() && it != rGrouping.begin())
+			{
+				it--;
+				if (ToolGroupData::StartOfGroup == it->second.m_type)
+				{
+					name = it->first.c_str();
+				}
+			}
+		}
+		else
+		{
+			if (it != rGrouping.end() && ++it != rGrouping.end())
+			{
+				if (ToolGroupData::EndOfGroup == it->second.m_type)
+				{
+					name = it->first.c_str();
+				}
+			}
+		}
+	}
+	return name;
+}
 
 /////////////////////////////////////////////////////////////////////////////
 // SVConfigurationPrint
@@ -656,9 +686,39 @@ BOOL SVConfigurationPrint::DoPreparePrinting(CPrintInfo* pPrintInfo)
 ////////////////////////////////////////////////////////////////////////////////
 void SVConfigurationPrint::PrintObject( CDC* pDC, SVObjectClass* pObj, CPoint& ptCurPos, int nIndentLevel )
 {
-	PrintDetails(pDC, pObj, ptCurPos, nIndentLevel);
-	PrintFriends(pDC, pObj, ptCurPos, nIndentLevel + 1);
-	PrintChildren(pDC, pObj, ptCurPos, nIndentLevel + 1);
+	if (SVToolClass* pTool = dynamic_cast<SVToolClass*>(pObj))
+	{
+		//Get Start Group
+		CString groupName = GetToolGroup(pTool->GetName(), pTool->GetInspection(), true);
+		if (!groupName.IsEmpty())
+		{
+			CString sLabel;
+			sLabel.Format("Tool Grouping: %s", groupName);
+			ptCurPos.x  = nIndentLevel * m_shortTabPixels;
+			CPoint ptTemp = ptCurPos;
+			ptCurPos.y += PrintString(pDC, ptTemp, sLabel);
+		}
+		PrintDetails(pDC, pObj, ptCurPos, nIndentLevel);
+		PrintFriends(pDC, pObj, ptCurPos, nIndentLevel + 1);
+		PrintChildren(pDC, pObj, ptCurPos, nIndentLevel + 1);
+
+		// Get End Group
+		groupName = GetToolGroup(pTool->GetName(), pTool->GetInspection(), false);
+		if (!groupName.IsEmpty())
+		{
+			CString sLabel;
+			sLabel.Format("End Tool Grouping: %s", groupName);
+			ptCurPos.x  = nIndentLevel * m_shortTabPixels;
+			CPoint ptTemp = ptCurPos;
+			ptCurPos.y += PrintString(pDC, ptTemp, sLabel);
+		}
+	}
+	else
+	{
+		PrintDetails(pDC, pObj, ptCurPos, nIndentLevel);
+		PrintFriends(pDC, pObj, ptCurPos, nIndentLevel + 1);
+		PrintChildren(pDC, pObj, ptCurPos, nIndentLevel + 1);
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -2585,6 +2645,17 @@ HRESULT SVDeviceParamConfigPrintHelper::Visit(SVCustomDeviceParam& param)
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVConfigurationPrint.cpp_v  $
+ * 
+ *    Rev 1.11   11 Jul 2014 09:50:06   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  906
+ * SCR Title:  SVObserver Tool Grouping
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   Added GetToolGroup static function.
+ * Revised PrintObject to print tool groupings.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.10   01 Jul 2014 15:12:10   ryoho
  * Project:  SVObserver
