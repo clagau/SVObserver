@@ -5,11 +5,13 @@
 //* .Module Name     : SVConfigXMLPrint
 //* .File Name       : $Workfile:   SVConfigXMLPrint.inl  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.11  $
-//* .Check In Date   : $Date:   11 Jul 2014 10:02:20  $
+//* .Current Version : $Revision:   1.12  $
+//* .Check In Date   : $Date:   14 Jul 2014 08:28:14  $
 //******************************************************************************
 
 #include "SVObjectLibrary/SVObjectLibrary.h"
+#include "SVBlobAnalyzer.h"
+#include "SVResultDouble.h"
 
 std::pair<GUID **, size_t> NonPrintGuids();
 
@@ -1047,6 +1049,30 @@ inline void SVConfigXMLPrint::WriteObject( Writer writer, SVObjectClass* pObj ) 
 				}
 			}
 
+			if (SV_IS_KIND_OF(pObj,SVDoubleResultClass))
+			{
+				SVDoubleResultClass* pBlobResult = dynamic_cast<SVDoubleResultClass*>(pObj);
+				if (pBlobResult)
+				{
+					if (SV_IS_KIND_OF(pBlobResult->GetOwner(),SVBlobAnalyzerClass))
+					{  
+						sLabel = pApp->GetStringResource(IDS_BLOB_FEATURE_DEFAULT_VALUE) + _T(":");
+						SVDoubleValueObjectClass* pDoubleValueObj = pBlobResult->getInputDouble();
+						if ( pDoubleValueObj )
+						{
+							double dVal;
+							HRESULT hr = pDoubleValueObj->GetDefaultValue(dVal);
+							sValue.Format(_T("%lf"),dVal);
+							//ptCurPos.x   = (nIndentLevel + 1) * m_shortTabPixels;
+							//PrintValueObject(pDC, ptCurPos, utf16(sLabel), utf16(sValue));
+		
+							WriteValueObject(writer, L"Property", utf16(sLabel), utf16(sValue));
+
+						}
+					}
+				}
+			}
+
 			if (SV_IS_KIND_OF(pObj, SVLineAnalyzerClass))
 			{
 				SVObjectInfoStruct objectInfo;
@@ -1482,6 +1508,16 @@ inline HRESULT SVDeviceParamConfigXMLHelper::Visit(SVCustomDeviceParam& param)
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVConfigXMLPrint.inl_v  $
+ * 
+ *    Rev 1.12   14 Jul 2014 08:28:14   ryoho
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  913
+ * SCR Title:  Add Blob Feature Default Value to the Configuration Print (SVO-214)
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   changed PrintDetails - to check for BlobAnalyzerResults and to print the default values for the features
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.11   11 Jul 2014 10:02:20   sjones
  * Project:  SVObserver
