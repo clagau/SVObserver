@@ -5,8 +5,8 @@
 //* .Module Name     : SVConfigXMLPrint
 //* .File Name       : $Workfile:   SVConfigXMLPrint.inl  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.12  $
-//* .Check In Date   : $Date:   14 Jul 2014 08:28:14  $
+//* .Current Version : $Revision:   1.13  $
+//* .Check In Date   : $Date:   14 Jul 2014 14:53:12  $
 //******************************************************************************
 
 #include "SVObjectLibrary/SVObjectLibrary.h"
@@ -22,45 +22,33 @@ typedef sv_xml::SVDeviceParamConfigXMLHelper SVDeviceParamConfigXMLHelper;
 const wchar_t * invalid = L"** I N V A L I D ! **";
 
 const int cp_dflt = 1252;
-static bool g_bToolGroupActive = false;
 
-static CString GetToolGroup(const CString& toolName, SVInspectionProcess* pInspection, bool bStart)
+static SVToolGrouping GetToolGroupings(const SVGUID& rInspectionGuid)
 {
-	CString name;
 	// get the document that owns this inspection
-	SVIPDoc* pDoc = SVObjectManagerClass::Instance().GetIPDoc(pInspection->GetUniqueObjectID());
+	SVIPDoc* pDoc = SVObjectManagerClass::Instance().GetIPDoc(rInspectionGuid);
 	if (pDoc)
 	{
-		const SVToolGrouping& rGrouping = pDoc->GetToolGroupings();
-		SVToolGrouping::const_iterator it = rGrouping.find(static_cast<LPCTSTR>(toolName));
-		if (bStart)
+		return pDoc->GetToolGroupings();
+	}
+	return SVToolGrouping();
+}
+
+static SVObjectClass* GetTool(const SVString& rName, const SVTaskObjectListClass& rToolSet)
+{
+	SVObjectClass* pObject(nullptr);
+	for (int i = 0; !pObject && i < rToolSet.GetSize(); i++)
+	{
+		if (rToolSet.GetAt(i)->GetName() == rName) 
 		{
-			if (it != rGrouping.end() && it != rGrouping.begin())
-			{
-				it--;
-				if (ToolGroupData::StartOfGroup == it->second.m_type)
-				{
-					name = it->first.c_str();
-				}
-			}
-		}
-		else
-		{
-			if (it != rGrouping.end() && ++it != rGrouping.end())
-			{
-				if (ToolGroupData::EndOfGroup == it->second.m_type)
-				{
-					name = it->first.c_str();
-				}
-			}
+			pObject = rToolSet.GetAt(i);
 		}
 	}
-	return name;
+	return pObject;
 }
 
 inline const std::string SVConfigXMLPrint::Print() const
 {
-	g_bToolGroupActive = false;
 	SVObjectManagerClass::Instance().GetConfigurationObject( m_cfo );
 	CComPtr<IXmlWriter> writer;
 	HRESULT hr = ::CreateXmlWriter(__uuidof(IXmlWriter), reinterpret_cast<void**>(&writer), 0);
@@ -982,23 +970,6 @@ inline void SVConfigXMLPrint::WriteObject( Writer writer, SVObjectClass* pObj ) 
 				if ( !( pObj->ObjectAttributesAllowed() & SV_PRINTABLE) )	// EB 20050818 - hack this instead of doing it right
 					break;
 
-			// Check for Start Group
-			if (SVToolClass* pTool = dynamic_cast<SVToolClass*>(pObj))
-			{
-				// Print Tool Grouping - check if tool is directly after a Grouping (Start Group check)
-				CString groupName = GetToolGroup(pTool->GetName(), pTool->GetInspection(), true);
-				if (!groupName.IsEmpty())
-				{
-					std::wstring name = to_utf16(static_cast<LPCTSTR>(groupName), cp_dflt);
-					if (g_bToolGroupActive)
-					{	
-						writer->WriteEndElement();
-					}
-					g_bToolGroupActive = true;
-					writer->WriteStartElement(nullptr, L"ToolGrouping", nullptr);
-					writer->WriteAttributeString(nullptr, L"Name", nullptr, name.c_str());
-				}
-			}
 			writer->WriteStartElement(NULL, to_utf16(pObj->GetClassName(), cp_dflt).c_str(), NULL);
 			std::wstring objName = to_utf16(pObj->GetName(), cp_dflt);
 			writer->WriteAttributeString(NULL, L"Name", NULL, objName.c_str());
@@ -1115,46 +1086,86 @@ inline void SVConfigXMLPrint::WriteObject( Writer writer, SVObjectClass* pObj ) 
 			writer->WriteComment(objName.c_str());
 			writer->WriteEndElement();
 		} while (false);// end do
-		// Check for End Group
-		if (SVToolClass* pTool = dynamic_cast<SVToolClass*>(pObj))
-		{
-			// Print Tool Grouping - check if tool is directly before a Grouping (End Group check)
-			CString groupName = GetToolGroup(pTool->GetName(), pTool->GetInspection(), false);
-			if (!groupName.IsEmpty())
-			{
-				std::wstring name = to_utf16(static_cast<LPCTSTR>(groupName), cp_dflt);
-				writer->WriteStartElement(nullptr, L"EndToolGrouping", nullptr);
-				writer->WriteAttributeString(nullptr, L"Name", nullptr, name.c_str());
-				writer->WriteEndElement();
-				writer->WriteEndElement(); // end for start group
-				g_bToolGroupActive = false;
-			}
-		}
 	}// End if( SV_IS_KIND_OF( pObj, SVValueObjectClass ) ) else
 
 	//writer->WriteEndElement();
 }  // end function void SVConfigXMLPrint:::PrintDetails( ... )
+
+void SVConfigXMLPrint::WriteAllChildren(Writer writer, SVTaskObjectListClass* pTaskObj) const
+{
+	for (int nCnt = 0; nCnt < pTaskObj->GetSize(); nCnt++)
+	{
+		SVObjectClass* pChild = pTaskObj->GetAt(nCnt);
+		if (pChild)
+		{
+			WriteObject(writer, pChild);
+		}
+	}
+}
 
 void SVConfigXMLPrint::WriteChildren( Writer writer, SVObjectClass* pObj ) const
 {
 	if ( SVTaskObjectListClass* pTaskObj = dynamic_cast <SVTaskObjectListClass*> (pObj) )
     {
 		writer->WriteStartElement(NULL, L"Children", NULL);
-		for (int nCnt = 0; nCnt < pTaskObj->GetSize(); nCnt++)
-		{
-			SVObjectClass* pChild = pTaskObj->GetAt(nCnt);
-			
-			if (pChild)
-			{
-				WriteObject(writer, pChild);
-			}  // end if( pChild )
-		}  // end for( int nCnt = 0; nCnt < pChildInfoList->GetSize(); nCnt++ )
 		if (SVToolSetClass* pToolSet = dynamic_cast <SVToolSetClass *>(pObj))
 		{
-			if (g_bToolGroupActive)
+			SVToolGrouping& rToolGroupings = GetToolGroupings(pToolSet->GetInspection()->GetUniqueObjectID());
+			if (rToolGroupings.size())
 			{
-				writer->WriteEndElement();
+				bool bToolGroupActive = false;
+				for (SVToolGrouping::const_iterator it = rToolGroupings.begin();it != rToolGroupings.end();++it)
+				{
+					switch (it->second.m_type)
+					{
+						case ToolGroupData::StartOfGroup:
+						{
+							if (bToolGroupActive)
+							{
+								writer->WriteEndElement();
+							}
+							bToolGroupActive = true;
+							writer->WriteStartElement(nullptr, L"ToolGrouping", nullptr);
+							std::wstring name = to_utf16(it->first.c_str(), cp_dflt);
+							writer->WriteAttributeString(nullptr, L"Name", nullptr, name.c_str());
+						}
+						break;
+
+						case ToolGroupData::EndOfGroup:
+						{
+							writer->WriteStartElement(nullptr, L"EndToolGrouping", nullptr);
+							std::wstring name = to_utf16(it->first.c_str(), cp_dflt);
+							writer->WriteAttributeString(nullptr, L"Name", nullptr, name.c_str());
+							writer->WriteEndElement();
+							writer->WriteEndElement(); // end of start group
+							bToolGroupActive = false;
+						}
+						break;
+
+						case ToolGroupData::Tool:
+						{
+							SVObjectClass* pTool = GetTool(it->first.c_str(), *pTaskObj);
+							if (pTool)
+							{
+								WriteObject(writer, pTool);
+							}
+						}
+						break;
+					}
+				}
+				if (bToolGroupActive)
+				{
+					writer->WriteEndElement();
+				}
 			}
+			else
+			{
+				WriteAllChildren(writer, pTaskObj);
+			}
+		}
+		else
+		{
+			WriteAllChildren(writer, pTaskObj);
 		}
 		writer->WriteEndElement();
 	}  // end if( SV_IS_KIND_OF( pObj, SVTaskObjectListClass ) )
@@ -1508,6 +1519,21 @@ inline HRESULT SVDeviceParamConfigXMLHelper::Visit(SVCustomDeviceParam& param)
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVConfigXMLPrint.inl_v  $
+ * 
+ *    Rev 1.13   14 Jul 2014 14:53:12   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  906
+ * SCR Title:  SVObserver Tool Grouping
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   Added WriteAllChildren method.
+ * Removed GetToolGroup function.
+ * Aded GetToolGroupings function.
+ * Added getTool function.
+ * Revised WriteObject method.
+ * Revised WriteChildren method.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.12   14 Jul 2014 08:28:14   ryoho
  * Project:  SVObserver

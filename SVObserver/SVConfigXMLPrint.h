@@ -5,8 +5,8 @@
 //* .Module Name     : SVConfigXMLPrint
 //* .File Name       : $Workfile:   SVConfigXMLPrint.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.3  $
-//* .Check In Date   : $Date:   03 Dec 2013 13:54:14  $
+//* .Current Version : $Revision:   1.4  $
+//* .Check In Date   : $Date:   14 Jul 2014 14:50:54  $
 //******************************************************************************
 
 #ifndef SVCONFIGXMLPRINT_H
@@ -92,6 +92,7 @@ namespace sv_xml
 		void WritePPQBar(Writer writer) const;
 		void WriteObject( Writer writer, SVObjectClass* pObj ) const;
 		void WriteValueObject( Writer writer, SVValueObjectClass* pObj ) const;
+		void WriteAllChildren( Writer writer, SVTaskObjectListClass* pObj ) const;
 		void WriteChildren( Writer writer, SVObjectClass* pObj ) const;
 		void WriteFriends( Writer writer, SVObjectClass* pObj ) const;
 		void WriteInputOutputList( Writer writer, SVObjectClass* pObj ) const;
@@ -171,6 +172,16 @@ namespace sv_xml
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVConfigXMLPrint.h_v  $
+ * 
+ *    Rev 1.4   14 Jul 2014 14:50:54   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  906
+ * SCR Title:  SVObserver Tool Grouping
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   Added WriteAllChildren method.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   03 Dec 2013 13:54:14   bwalter
  * Project:  SVObserver

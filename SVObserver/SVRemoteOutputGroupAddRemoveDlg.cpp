@@ -5,8 +5,8 @@
 //* .Module Name     : SVRemoteOutputGroupAddRemoveDlg
 //* .File Name       : $Workfile:   SVRemoteOutputGroupAddRemoveDlg.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   02 Oct 2013 07:58:48  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   14 Jul 2014 15:38:00  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -333,24 +333,31 @@ LRESULT  SVRemoteOutputGroupAddRemoveDlg::OnUsedListEditFinished(WPARAM wPar, LP
 		CString newName;
 		m_UsedList.GetText(sel, newName);
 
-		bool l_bFoundInRenameList=false;
-		for( CStringPairVect::iterator it = m_aRenamedGroups.begin(); it != m_aRenamedGroups.end(); ++it)
+		//trim white space from left and right of the new name
+		newName.Trim();
+
+		//don't all blank strings
+		if ( !newName.IsEmpty() )
 		{
-			if( it->second == oldName )
+			bool l_bFoundInRenameList=false;
+			for( CStringPairVect::iterator it = m_aRenamedGroups.begin(); it != m_aRenamedGroups.end(); ++it)
 			{
-				l_bFoundInRenameList = true;
-				it->second = newName;
-				break;
+				if( it->second == oldName )
+				{
+					l_bFoundInRenameList = true;
+					it->second = newName;
+					break;
+				}
 			}
-		}
-		if( !l_bFoundInRenameList )
-		{
-			if( oldName != newName )
+			if( !l_bFoundInRenameList )
 			{
-				m_aRenamedGroups.push_back( std::pair<CString, CString>(oldName, newName ));
+				if( oldName != newName )
+				{
+					m_aRenamedGroups.push_back( std::pair<CString, CString>(oldName, newName ));
+				}
 			}
+			m_SetupGroup[sel].m_strName = newName;
 		}
-		m_SetupGroup[sel].m_strName = newName;
 		m_UsedList.ResetContent();
 		UpdateUsedList();
 	}
@@ -368,6 +375,16 @@ HRESULT SVRemoteOutputGroupAddRemoveDlg::GetRenamed( CStringPairVect& OutputList
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVRemoteOutputGroupAddRemoveDlg.cpp_v  $
+ * 
+ *    Rev 1.2   14 Jul 2014 15:38:00   ryoho
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   changed the editing of the name to Trim whitespace and not allow blank names
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   02 Oct 2013 07:58:48   tbair
  * Project:  SVObserver

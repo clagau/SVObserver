@@ -5,8 +5,8 @@
 //* .Module Name     : SVConfigurationPrint
 //* .File Name       : $Workfile:   SVConfigurationPrint.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.11  $
-//* .Check In Date   : $Date:   11 Jul 2014 09:50:06  $
+//* .Current Version : $Revision:   1.12  $
+//* .Check In Date   : $Date:   14 Jul 2014 14:54:16  $
 //******************************************************************************
 
 #pragma region Includes
@@ -169,38 +169,28 @@ private:
 	int m_nIndentLevel;
 };
 
-static CString GetToolGroup(const CString& toolName, SVInspectionProcess* pInspection, bool bStart)
+static SVToolGrouping GetToolGroupings(const SVGUID& rInspectionGuid)
 {
-	CString name;
 	// get the document that owns this inspection
-	SVIPDoc* pDoc = SVObjectManagerClass::Instance().GetIPDoc(pInspection->GetUniqueObjectID());
+	SVIPDoc* pDoc = SVObjectManagerClass::Instance().GetIPDoc(rInspectionGuid);
 	if (pDoc)
 	{
-		const SVToolGrouping& rGrouping = pDoc->GetToolGroupings();
-		SVToolGrouping::const_iterator it = rGrouping.find(static_cast<LPCTSTR>(toolName));
-		if (bStart)
+		return pDoc->GetToolGroupings();
+	}
+	return SVToolGrouping();
+}
+
+static SVObjectClass* GetTool(const SVString& rName, const SVTaskObjectListClass& rToolSet)
+{
+	SVObjectClass* pObject(nullptr);
+	for (int i = 0; !pObject && i < rToolSet.GetSize(); i++)
+	{
+		if (rToolSet.GetAt(i)->GetName() == rName) 
 		{
-			if (it != rGrouping.end() && it != rGrouping.begin())
-			{
-				it--;
-				if (ToolGroupData::StartOfGroup == it->second.m_type)
-				{
-					name = it->first.c_str();
-				}
-			}
-		}
-		else
-		{
-			if (it != rGrouping.end() && ++it != rGrouping.end())
-			{
-				if (ToolGroupData::EndOfGroup == it->second.m_type)
-				{
-					name = it->first.c_str();
-				}
-			}
+			pObject = rToolSet.GetAt(i);
 		}
 	}
-	return name;
+	return pObject;
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -360,7 +350,6 @@ void SVConfigurationPrint::DoPrintConfig()
 		// Set up doc info an start the config printing process...
 		CString strTitle = pApp->getConfigFileName();
 		
-		
 		if (strTitle.GetLength() > 31)
 			strTitle.ReleaseBuffer(31);
 		
@@ -371,14 +360,10 @@ void SVConfigurationPrint::DoPrintConfig()
 		
 		// Init docInfo members...
 		docInfo.cbSize = sizeof(DOCINFO);
-		
 		docInfo.lpszDocName = strTitle;
-		
-		
+
 		CString strPortName;
-		
 		int nFormatID;
-		
 		
 		if (strOutput.IsEmpty())
 		{
@@ -409,23 +394,16 @@ void SVConfigurationPrint::DoPrintConfig()
 		// disable main window while printing & init printing status dialog
 		AfxGetMainWnd()->EnableWindow(FALSE);
 		
-		
 		CPrintingDialog   dlgPrintStatus(AfxGetMainWnd());
 		
 		CString           strTemp;
 		
 		dlgPrintStatus.SetDlgItemText(AFX_IDC_PRINT_DOCNAME, strTitle);
-		
 		dlgPrintStatus.SetDlgItemText(AFX_IDC_PRINT_PRINTERNAME, m_printInfo.m_pPD->GetDeviceName());
-		
 		AfxFormatString1(strTemp, nFormatID, strPortName);
-		
 		dlgPrintStatus.SetDlgItemText(AFX_IDC_PRINT_PORTNAME, strTemp);
-		
 		dlgPrintStatus.ShowWindow(SW_SHOW);
-		
 		dlgPrintStatus.UpdateWindow();
-		
 		
 		// Start config printing process...
 		
@@ -450,7 +428,6 @@ void SVConfigurationPrint::DoPrintConfig()
 		// Guarantee values are in the valid range
 		UINT     nEndPage    = m_printInfo.GetToPage();
 		UINT     nStartPage  = m_printInfo.GetFromPage();
-		
 		
 		if (nEndPage < m_printInfo.GetMinPage())
 		{
@@ -500,12 +477,10 @@ void SVConfigurationPrint::DoPrintConfig()
 			
 			dlgPrintStatus.SetDlgItemText(AFX_IDC_PRINT_PAGENUM, szBuf);
 			
-			
 			// set up drawing rect to entire page (in logical coordinates)
 			m_printInfo.m_rectDraw.SetRect(0, 0, m_printDC.GetDeviceCaps(HORZRES), m_printDC.GetDeviceCaps(VERTRES));
 			
 			m_printDC.DPtoLP(&m_printInfo.m_rectDraw);
-			
 			
 			// attempt to start the current page
 			if (m_printDC.StartPage() < 0)
@@ -543,7 +518,6 @@ void SVConfigurationPrint::DoPrintConfig()
 		OnEndPrinting();    // clean up after printing
 		
 		dlgPrintStatus.DestroyWindow();
-		
 		
 		m_printDC.Detach();   // will be cleaned up by CPrintInfo destructor
 	}  // if( OnPreparePrinting( &printInfo ) )
@@ -686,39 +660,9 @@ BOOL SVConfigurationPrint::DoPreparePrinting(CPrintInfo* pPrintInfo)
 ////////////////////////////////////////////////////////////////////////////////
 void SVConfigurationPrint::PrintObject( CDC* pDC, SVObjectClass* pObj, CPoint& ptCurPos, int nIndentLevel )
 {
-	if (SVToolClass* pTool = dynamic_cast<SVToolClass*>(pObj))
-	{
-		//Get Start Group
-		CString groupName = GetToolGroup(pTool->GetName(), pTool->GetInspection(), true);
-		if (!groupName.IsEmpty())
-		{
-			CString sLabel;
-			sLabel.Format("Tool Grouping: %s", groupName);
-			ptCurPos.x  = nIndentLevel * m_shortTabPixels;
-			CPoint ptTemp = ptCurPos;
-			ptCurPos.y += PrintString(pDC, ptTemp, sLabel);
-		}
-		PrintDetails(pDC, pObj, ptCurPos, nIndentLevel);
-		PrintFriends(pDC, pObj, ptCurPos, nIndentLevel + 1);
-		PrintChildren(pDC, pObj, ptCurPos, nIndentLevel + 1);
-
-		// Get End Group
-		groupName = GetToolGroup(pTool->GetName(), pTool->GetInspection(), false);
-		if (!groupName.IsEmpty())
-		{
-			CString sLabel;
-			sLabel.Format("End Tool Grouping: %s", groupName);
-			ptCurPos.x  = nIndentLevel * m_shortTabPixels;
-			CPoint ptTemp = ptCurPos;
-			ptCurPos.y += PrintString(pDC, ptTemp, sLabel);
-		}
-	}
-	else
-	{
-		PrintDetails(pDC, pObj, ptCurPos, nIndentLevel);
-		PrintFriends(pDC, pObj, ptCurPos, nIndentLevel + 1);
-		PrintChildren(pDC, pObj, ptCurPos, nIndentLevel + 1);
-	}
+	PrintDetails(pDC, pObj, ptCurPos, nIndentLevel);
+	PrintFriends(pDC, pObj, ptCurPos, nIndentLevel + 1);
+	PrintChildren(pDC, pObj, ptCurPos, nIndentLevel + 1);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -1076,6 +1020,18 @@ void SVConfigurationPrint::PrintDetails( CDC* pDC, SVObjectClass* pObj, CPoint& 
 	}  // end if( SV_IS_KIND_OF( pObj, SVTaskObjectClass )
 }  // end function void SVConfigurationPrint:::PrintDetails( ... )
 
+void SVConfigurationPrint::PrintAllChildren(CDC* pDC, SVTaskObjectListClass* pTaskObj,  CPoint& ptCurPos, int nIndentLevel)
+{
+	for (int nCnt = 0; nCnt < pTaskObj->GetSize(); nCnt++)
+	{
+		SVObjectClass* pChild = pTaskObj->GetAt(nCnt);
+		if (pChild)
+		{
+			PrintObject(pDC, pChild, ptCurPos, nIndentLevel);
+		}
+	}
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : SVConfigurationPrint:::PrintChildren
 // -----------------------------------------------------------------------------
@@ -1113,15 +1069,57 @@ void SVConfigurationPrint::PrintChildren( CDC* pDC, SVObjectClass* pObj, CPoint&
 {
 	if ( SVTaskObjectListClass* pTaskObj = dynamic_cast <SVTaskObjectListClass*> (pObj) )
     {
-		for (int nCnt = 0; nCnt < pTaskObj->GetSize(); nCnt++)
+		if (SVToolSetClass* pToolSet = dynamic_cast<SVToolSetClass*>(pObj))
 		{
-			SVObjectClass* pChild = pTaskObj->GetAt(nCnt);
-			
-			if (pChild)
+			SVToolGrouping& rToolGroupings = GetToolGroupings(pToolSet->GetInspection()->GetUniqueObjectID());
+			if (rToolGroupings.size())
 			{
-				PrintObject(pDC, pChild, ptCurPos, nIndentLevel);
-			}  // end if( pChild )
-		}  // end for( int nCnt = 0; nCnt < pChildInfoList->GetSize(); nCnt++ )
+				bool bToolGroupActive = false;
+				for (SVToolGrouping::const_iterator it = rToolGroupings.begin();it != rToolGroupings.end();++it)
+				{
+					switch (it->second.m_type)
+					{
+						case ToolGroupData::StartOfGroup:
+						{
+							CString sLabel;
+							sLabel.Format("Tool Grouping: %s", it->first.c_str());
+							ptCurPos.x  = nIndentLevel * m_shortTabPixels;
+							CPoint ptTemp = ptCurPos;
+							ptCurPos.y += PrintString(pDC, ptTemp, sLabel);
+						}
+						break;
+
+						case ToolGroupData::EndOfGroup:
+						{
+							CString sLabel;
+							sLabel.Format("End Tool Grouping: %s", it->first.c_str());
+							ptCurPos.x  = nIndentLevel * m_shortTabPixels;
+							CPoint ptTemp = ptCurPos;
+							ptCurPos.y += PrintString(pDC, ptTemp, sLabel);
+						}
+						break;
+
+						case ToolGroupData::Tool:
+						{
+							SVObjectClass* pTool = GetTool(it->first.c_str(), *pTaskObj);
+							if (pTool)
+							{
+								PrintObject(pDC, pTool, ptCurPos, nIndentLevel);
+							}
+						}
+						break;
+					}
+				}
+			}
+			else
+			{
+				PrintAllChildren(pDC, pTaskObj,  ptCurPos, nIndentLevel);
+			}
+		}
+		else
+		{
+			PrintAllChildren(pDC, pTaskObj,  ptCurPos, nIndentLevel);
+		}
 	}  // end if( SV_IS_KIND_OF( pObj, SVTaskObjectListClass ) )
 }  // end function void SVConfigurationPrint:::PrintChildren( ... )
 
@@ -1346,7 +1344,7 @@ int SVConfigurationPrint::PrintString(CDC* pDC, CPoint& ptCurPos, LPCTSTR _lpszO
         if (lpszOutput.IsEmpty())
             lpszOutput = _T(" ");
 		
-		CRect    crectPrintRect(m_printInfo.m_rectDraw);
+		CRect crectPrintRect(m_printInfo.m_rectDraw);
 		
         crectPrintRect.top  = ptCurPos.y;
 		crectPrintRect.left = ptCurPos.x + 50;
@@ -1601,14 +1599,14 @@ void SVConfigurationPrint::OnPrepareDC()
 	ASSERT_VALID(pDC);
 	
     UNUSED(pDC); // unused in release builds
-	
+
 	// Default to one page printing if doc length not known
 	m_printInfo.m_bContinuePrinting = (m_printInfo.GetMaxPage() != 0xffff) || (m_printInfo.m_nCurPage == 1);
 }
 
 void SVConfigurationPrint::OnBeginPrinting()
 {
-	CDC*	pDC = &m_printDC;
+	CDC* pDC = &m_printDC;
 	
 	if (pDC)
 	{
@@ -1640,95 +1638,95 @@ void SVConfigurationPrint::OnBeginPrinting()
 		// Create title font
 		BOOL bResult = m_fontTitle.CreateFont(
 			- (int)fHeightTitleLinePixels,				// logical height of font 
-			0,														// logical average character width 
-			0,									               // angle of escapement 
-			0,									               // base-line orientation angle 
-			FW_DONTCARE,					               // font weight 
-			FALSE,								            // italic attribute flag 
-			TRUE,									            // underline attribute flag 
-			FALSE,								            // strikeout attribute flag 
-			DEFAULT_CHARSET,						         // character set identifier 
-			OUT_DEFAULT_PRECIS,					         // output precision 
-			CLIP_DEFAULT_PRECIS,					         // clipping precision 
-			PROOF_QUALITY,						            // output quality 
+			0,											// logical average character width 
+			0,									        // angle of escapement 
+			0,									        // base-line orientation angle 
+			FW_DONTCARE,					            // font weight 
+			FALSE,								        // italic attribute flag 
+			TRUE,									    // underline attribute flag 
+			FALSE,								        // strikeout attribute flag 
+			DEFAULT_CHARSET,						    // character set identifier 
+			OUT_DEFAULT_PRECIS,					        // output precision 
+			CLIP_DEFAULT_PRECIS,					    // clipping precision 
+			PROOF_QUALITY,						        // output quality 
 			DEFAULT_PITCH | TMPF_TRUETYPE | FF_ROMAN,	// pitch and family 
-			NULL									            // pointer to typeface name string 
+			NULL									    // pointer to typeface name string 
 			);
 		ASSERT(bResult);
 		
 		// Create sub title font
 		bResult = m_fontSection.CreateFont(
-			- (int)fHeightSectionLinePixels,				// logical height of font 
-			0,														// logical average character width 
-			0,											         // angle of escapement 
-			0,											         // base-line orientation angle 
-			FW_DONTCARE,							         // font weight 
-			FALSE,										      // italic attribute flag 
-			TRUE,													// underline attribute flag 
-			FALSE,										      // strikeout attribute flag 
-			DEFAULT_CHARSET,							      // character set identifier 
-			OUT_DEFAULT_PRECIS,						      // output precision 
-			CLIP_DEFAULT_PRECIS,						      // clipping precision 
-			PROOF_QUALITY,								      // output quality 
+			- (int)fHeightSectionLinePixels,			// logical height of font 
+			0,											// logical average character width 
+			0,											// angle of escapement 
+			0,											// base-line orientation angle 
+			FW_DONTCARE,							    // font weight 
+			FALSE,										// italic attribute flag 
+			TRUE,										// underline attribute flag 
+			FALSE,										// strikeout attribute flag 
+			DEFAULT_CHARSET,							// character set identifier 
+			OUT_DEFAULT_PRECIS,						    // output precision 
+			CLIP_DEFAULT_PRECIS,						// clipping precision 
+			PROOF_QUALITY,								// output quality 
 			DEFAULT_PITCH | TMPF_TRUETYPE | FF_ROMAN,	// pitch and family 
-			NULL										         // pointer to typeface name string 
+			NULL										// pointer to typeface name string 
 			);
 		ASSERT(bResult);
 		
 		// Create sub title font
 		bResult = m_fontSubSection.CreateFont(
-			- (int)fHeightSectionLinePixels,				// logical height of font 
-			0,														// logical average character width 
-			0,											         // angle of escapement 
-			0,											         // base-line orientation angle 
-			FW_DONTCARE,							         // font weight 
-			FALSE,										      // italic attribute flag 
-			FALSE,										      // underline attribute flag 
-			FALSE,										      // strikeout attribute flag 
-			DEFAULT_CHARSET,							      // character set identifier 
-			OUT_DEFAULT_PRECIS,						      // output precision 
-			CLIP_DEFAULT_PRECIS,						      // clipping precision 
-			PROOF_QUALITY,								      // output quality 
+			- (int)fHeightSectionLinePixels,			// logical height of font 
+			0,											// logical average character width 
+			0,											// angle of escapement 
+			0,											// base-line orientation angle 
+			FW_DONTCARE,							    // font weight 
+			FALSE,										// italic attribute flag 
+			FALSE,										// underline attribute flag 
+			FALSE,										// strikeout attribute flag 
+			DEFAULT_CHARSET,							// character set identifier 
+			OUT_DEFAULT_PRECIS,						    // output precision 
+			CLIP_DEFAULT_PRECIS,						// clipping precision 
+			PROOF_QUALITY,								// output quality 
 			DEFAULT_PITCH | TMPF_TRUETYPE | FF_ROMAN,	// pitch and family 
-			NULL										         // pointer to typeface name string 
+			NULL										// pointer to typeface name string 
 			);
 		ASSERT(bResult);
 		
 		// Create text font
 		bResult = m_fontText.CreateFont(
-			- (int)fHeightTextLinePixels,					// logical height of font 
-			0,														// logical average character width 
-			0,										            // angle of escapement 
-			0,										            // base-line orientation angle 
-			FW_DONTCARE,						            // font weight 
-			FALSE,									         // italic attribute flag 
-			FALSE,									         // underline attribute flag 
-			FALSE,									         // strikeout attribute flag 
-			DEFAULT_CHARSET,						         // character set identifier 
-			OUT_DEFAULT_PRECIS,					         // output precision 
-			CLIP_DEFAULT_PRECIS,					         // clipping precision 
-			PROOF_QUALITY,							         // output quality 
+			- (int)fHeightTextLinePixels,				// logical height of font 
+			0,											// logical average character width 
+			0,										    // angle of escapement 
+			0,										    // base-line orientation angle 
+			FW_DONTCARE,						        // font weight 
+			FALSE,									    // italic attribute flag 
+			FALSE,									    // underline attribute flag 
+			FALSE,									    // strikeout attribute flag 
+			DEFAULT_CHARSET,						    // character set identifier 
+			OUT_DEFAULT_PRECIS,					        // output precision 
+			CLIP_DEFAULT_PRECIS,					    // clipping precision 
+			PROOF_QUALITY,							    // output quality 
 			DEFAULT_PITCH | TMPF_TRUETYPE | FF_ROMAN,	// pitch and family 
-			NULL									            // pointer to typeface name string 
+			NULL									    // pointer to typeface name string 
 			);
 		ASSERT(bResult);
 		
 		// Create sub title font
 		bResult = m_fontPageNbr.CreateFont(
-			-m_heightPageNumberPixels,						// logical height of font 
-			0,														// logical average character width 
-			0,											         // angle of escapement 
-			0,											         // base-line orientation angle 
-			FW_DONTCARE,							         // font weight 
-			FALSE,										      // italic attribute flag 
-			FALSE,										      // underline attribute flag 
-			FALSE,										      // strikeout attribute flag 
-			DEFAULT_CHARSET,							      // character set identifier 
-			OUT_DEFAULT_PRECIS,						      // output precision 
-			CLIP_DEFAULT_PRECIS,						      // clipping precision 
-			PROOF_QUALITY,								      // output quality 
+			-m_heightPageNumberPixels,					// logical height of font 
+			0,											// logical average character width 
+			0,											// angle of escapement 
+			0,											// base-line orientation angle 
+			FW_DONTCARE,							    // font weight 
+			FALSE,										// italic attribute flag 
+			FALSE,										// underline attribute flag 
+			FALSE,										// strikeout attribute flag 
+			DEFAULT_CHARSET,							// character set identifier 
+			OUT_DEFAULT_PRECIS,						    // output precision 
+			CLIP_DEFAULT_PRECIS,						// clipping precision 
+			PROOF_QUALITY,								// output quality 
 			DEFAULT_PITCH | TMPF_TRUETYPE | FF_ROMAN,	// pitch and family 
-			NULL										         // pointer to typeface name string 
+			NULL										// pointer to typeface name string 
 			);
 		ASSERT(bResult);
 		
@@ -2645,6 +2643,21 @@ HRESULT SVDeviceParamConfigPrintHelper::Visit(SVCustomDeviceParam& param)
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVConfigurationPrint.cpp_v  $
+ * 
+ *    Rev 1.12   14 Jul 2014 14:54:16   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  906
+ * SCR Title:  SVObserver Tool Grouping
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   Added PrintAllChildren method.
+ * Removed GetToolGroup function.
+ * Aded GetToolGroupings function.
+ * Added GetTool function.
+ * Revised PrintObject method.
+ * Revised PrintChildren method.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.11   11 Jul 2014 09:50:06   sjones
  * Project:  SVObserver

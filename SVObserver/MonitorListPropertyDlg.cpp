@@ -5,8 +5,8 @@
 //* .Module Name     : MonitorListPropertyDlg
 //* .File Name       : $Workfile:   MonitorListPropertyDlg.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   01 Jul 2014 15:24:08  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   14 Jul 2014 15:38:02  $
 //******************************************************************************
 
 #pragma region Includes
@@ -83,14 +83,16 @@ void MonitorListPropertyDlg::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResu
 		{
 			CString sName;
 			m_Tree.FindItem(PROP_MONITOR_LIST_NAME)->GetItemValue(sName);
+			sName.Trim();
 			RemoteMonitorList::const_iterator it = m_MonitorList.find(sName);
-			if (it != m_MonitorList.end())
+			if (!sName.IsEmpty() && it != m_MonitorList.end())
 			{ //found the name in the list.  Set name back to what it was
 				m_Tree.FindItem(PROP_MONITOR_LIST_NAME)->SetItemValue(m_DisplayName);
 			}
 			else
 			{
 				m_DisplayName = sName;
+				m_Tree.FindItem(PROP_MONITOR_LIST_NAME)->SetItemValue(m_DisplayName);
 			}
 		}
 		
@@ -177,6 +179,16 @@ int MonitorListPropertyDlg::GetMonitorListRejectQueueDepth() const
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\MonitorListPropertyDlg.cpp_v  $
+ * 
+ *    Rev 1.3   14 Jul 2014 15:38:02   ryoho
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   changed the editing of the name to Trim whitespace and not allow blank names
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   01 Jul 2014 15:24:08   ryoho
  * Project:  SVObserver

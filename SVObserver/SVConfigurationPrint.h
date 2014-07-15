@@ -5,8 +5,8 @@
 //* .Module Name     : SVConfigurationPrint
 //* .File Name       : $Workfile:   SVConfigurationPrint.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   04 Feb 2014 13:26:08  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   14 Jul 2014 14:54:42  $
 //******************************************************************************
 
 #ifndef SVCONFIGURATIONPRINT_H
@@ -31,6 +31,7 @@ enum
 };
 
 class SVObjectClass;
+class SVTaskObjectListClass;
 class SVDiscreteInputsView;
 class SVDiscreteOutputsView;
 class SVDeviceParamConfigPrintHelper;
@@ -69,6 +70,7 @@ protected:
 	void OnEndPrinting();
 
 	void PrintFriends(CDC* pDC, SVObjectClass* pObj, CPoint& ptCurPos, int nIndentLevel);
+	void PrintAllChildren(CDC* pDC, SVTaskObjectListClass* pTaskObj,  CPoint& ptCurPos, int nIndentLevel);
 	void PrintChildren(CDC* pDC, SVObjectClass* pObj, CPoint& ptCurPos, int nIndentLevel);
 	void PrintDetails(CDC* pDC, SVObjectClass* pObj, CPoint& ptCurPos, int nIndentLevel);
 	void PrintObject(CDC* pDC, SVObjectClass* pObj, CPoint& ptCurPos, int nIndentLevel);
@@ -142,6 +144,16 @@ protected:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVConfigurationPrint.h_v  $
+ * 
+ *    Rev 1.2   14 Jul 2014 14:54:42   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  906
+ * SCR Title:  SVObserver Tool Grouping
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   Added PrintAllChildren method.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   04 Feb 2014 13:26:08   bwalter
  * Project:  SVObserver

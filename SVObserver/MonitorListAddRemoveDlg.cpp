@@ -5,8 +5,8 @@
 //* .Module Name     : MonitorListAddRemoveDlg
 //* .File Name       : $Workfile:   MonitorListAddRemoveDlg.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   01 Jul 2014 15:21:50  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   14 Jul 2014 15:38:00  $
 //******************************************************************************
 
 #pragma region Includes
@@ -271,9 +271,10 @@ LRESULT MonitorListAddRemoveDlg::OnUsedListEditFinished(WPARAM wPar, LPARAM lPar
 	{
 		CString newName;
 		m_UsedList.GetText(index, newName);
+		newName.Trim();
 
 		// if not the same name and is a Valid Name (does not contain parentheses and is unique)
-		if (newName.Compare(listName.c_str()) != 0 && IsValidListName(newName))
+		if (!newName.IsEmpty() && newName.Compare(listName.c_str()) != 0 && IsValidListName(newName))
 		{
 			// Replace List (remove old, add new)
 			ReplaceList(listName.c_str(), newName);
@@ -329,6 +330,16 @@ void MonitorListAddRemoveDlg::OnBnClickedBtnProperties()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\MonitorListAddRemoveDlg.cpp_v  $
+ * 
+ *    Rev 1.2   14 Jul 2014 15:38:00   ryoho
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   changed the editing of the name to Trim whitespace and not allow blank names
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   01 Jul 2014 15:21:50   ryoho
  * Project:  SVObserver

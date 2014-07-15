@@ -5,8 +5,8 @@
 //* .Module Name     : RemoteMonitorListController
 //* .File Name       : $Workfile:   RemoteMonitorListController.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.10  $
-//* .Check In Date   : $Date:   08 Jul 2014 09:07:00  $
+//* .Current Version : $Revision:   1.11  $
+//* .Check In Date   : $Date:   14 Jul 2014 13:47:44  $
 //******************************************************************************
 
 #pragma region Includes
@@ -24,6 +24,7 @@
 #include "SVUtilityLibrary/SVGUID.h"
 #include "SVMainImageClass.h"
 #include "RemoteMonitorListHelper.h"
+#include "SVToolSet.h"
 #pragma endregion Includes
 
 extern SVObserverApp TheSVObserverApp;
@@ -128,7 +129,7 @@ static bool IsValidMonitoredObject(SVObjectClass* pObject)
 		//check to see if MainImageClass or SVRGBMainImageClass
 		if (!bRetVal)
 		{
-			if  ( SV_IS_KIND_OF(pObject, SVMainImageClass) || SV_IS_KIND_OF(pObject, SVRGBMainImageClass) )
+			if  ( SV_IS_KIND_OF(pObject->GetOwner(),SVToolSetClass) && (SV_IS_KIND_OF(pObject, SVMainImageClass) || SV_IS_KIND_OF(pObject, SVRGBMainImageClass)) )
 			{
 				bRetVal = true;
 			}
@@ -292,6 +293,16 @@ HRESULT RemoteMonitorListController::ActivateRemoteMonitorList(const SVString& l
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\RemoteMonitorListController.cpp_v  $
+ * 
+ *    Rev 1.11   14 Jul 2014 13:47:44   ryoho
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Changed IsValidMonitoredObject to check if pObject owner is the ToolSet to allow for Acquisition Tool Images to be allowed
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.10   08 Jul 2014 09:07:00   sjones
  * Project:  SVObserver

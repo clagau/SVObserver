@@ -5,8 +5,8 @@
 //* .Module Name     : SVToolAcquisition
 //* .File Name       : $Workfile:   SVToolAcquisition.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   15 May 2014 13:10:56  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   14 Jul 2014 12:44:44  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -74,6 +74,7 @@ BOOL SVAcquisitionToolClass::CreateObject( SVObjectLevelCreateStruct* PCreateStr
 	if( SVToolClass::CreateObject( PCreateStructure ) )
 	{
 		bOk = ( SetImageExtent( 1, mainImageObject.GetImageExtents() ) == S_OK );
+		mainImageObject.ObjectAttributesAllowedRef() |= SV_PUBLISH_RESULT_IMAGE;
 	}
 
 	m_svSourceImageNames.ObjectAttributesAllowedRef() &=~SV_REMOTELY_SETABLE & ~SV_SETABLE_ONLINE;
@@ -163,6 +164,16 @@ HRESULT SVAcquisitionToolClass::GetInputImageNames( SVStringValueObjectClass*& p
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVToolAcquisition.cpp_v  $
+ * 
+ *    Rev 1.3   14 Jul 2014 12:44:44   ryoho
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   changed CreateObject to add the SV_PUBLISH_RESULT_IMAGE attribute
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   15 May 2014 13:10:56   tbair
  * Project:  SVObserver
