@@ -5,8 +5,8 @@
 //* .Module Name     : SVConfigurationPrint
 //* .File Name       : $Workfile:   SVConfigurationPrint.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   14 Jul 2014 14:54:42  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   16 Jul 2014 07:53:50  $
 //******************************************************************************
 
 #ifndef SVCONFIGURATIONPRINT_H
@@ -87,9 +87,11 @@ protected:
 	void PrintOCRParameters(CDC* pDC, CString strParameters, CPoint &ptCurPos, int nIndentLevel);
 	void PrintOCRGrayScaleParameters(CDC* pDC, CString strParameters, CPoint &ptCurPos, int nIndentLevel);
 	void PrintIOEntryObject(CDC* pDC, CPoint& ptCurPos, int nIndentLevel, LPCTSTR lpszName, SVIOEntryHostStructPtr IOEntry);
+	void PrintMonitorListItem(CDC* pDC, CPoint& ptCurPos, int nIndentLevel, LPCTSTR lpszName, LPCTSTR lpszValue);
 	void PrintIOSection(CDC* pDC, CPoint& ptCurPos, int nIndentLevel);
 	void PrintModuleIO(CDC* pDC, CPoint& ptCurPos, int nIndentLevel);
 	void PrintResultIO(CDC* pDC, CPoint& ptCurPos, int nIndentLevel);
+	void PrintMonitorListSection(CDC* pDC, CPoint& ptCurPos, int nIndentLevel);
 	void PrintPPQBarSection(CDC* pDC, CPoint& ptCurPos, int nIndentLevel);
 	void PrintInspectionToolSet(CDC* pDC, CPoint& ptCurPos, int nIndentLevel);
 #pragma endregion Protected Methods
@@ -144,6 +146,26 @@ protected:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVConfigurationPrint.h_v  $
+ * 
+ *    Rev 1.3   16 Jul 2014 07:53:50   ryoho
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   added methods PrintMonitorListSection and PrintMonitorListItem
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.0   16 Jul 2014 07:52:22   ryoho
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   added methods PrintMonitorListSection and PrintMonitorListItem
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   14 Jul 2014 14:54:42   sjones
  * Project:  SVObserver

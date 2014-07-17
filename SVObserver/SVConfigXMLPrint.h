@@ -5,8 +5,8 @@
 //* .Module Name     : SVConfigXMLPrint
 //* .File Name       : $Workfile:   SVConfigXMLPrint.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.4  $
-//* .Check In Date   : $Date:   14 Jul 2014 14:50:54  $
+//* .Current Version : $Revision:   1.5  $
+//* .Check In Date   : $Date:   16 Jul 2014 07:54:54  $
 //******************************************************************************
 
 #ifndef SVCONFIGXMLPRINT_H
@@ -89,6 +89,7 @@ namespace sv_xml
 		void WriteModuleIO(Writer writer) const;
 		void WriteResultIO(Writer writer) const;
 		void WriteIOSection(Writer writer) const;
+		void WriteMonitorListSection(Writer writer) const;
 		void WritePPQBar(Writer writer) const;
 		void WriteObject( Writer writer, SVObjectClass* pObj ) const;
 		void WriteValueObject( Writer writer, SVValueObjectClass* pObj ) const;
@@ -172,6 +173,16 @@ namespace sv_xml
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVConfigXMLPrint.h_v  $
+ * 
+ *    Rev 1.5   16 Jul 2014 07:54:54   ryoho
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   added method WriteMonitorListSection
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.4   14 Jul 2014 14:50:54   sjones
  * Project:  SVObserver

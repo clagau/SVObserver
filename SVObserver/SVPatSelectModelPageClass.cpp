@@ -5,8 +5,8 @@
 //* .Module Name     : SVPatSelectModelPageClass
 //* .File Name       : $Workfile:   SVPatSelectModelPageClass.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   26 Jun 2014 18:09:46  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   17 Jul 2014 06:36:12  $
 //******************************************************************************
 
 #pragma region Includes
@@ -85,6 +85,13 @@ void SVPatModelPageClass::OnOK()
 	else
 	{
 		AfxMessageBox(nMsgID);
+	}
+	if (!m_pPatAnalyzer->IsValidSize())
+	{
+		if (AfxMessageBox("Model is larger than the ROI of the Window Tool. Do you want to change Model (Yes) or leave dialog (No)?",MB_YESNO ) == IDNO)
+		{
+			CPropertyPage::OnOK();
+		}
 	}
 }
 
@@ -914,6 +921,16 @@ void SVPatModelPageClass::setCircularOverscanCheckboxState()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVPatSelectModelPageClass.cpp_v  $
+ * 
+ *    Rev 1.2   17 Jul 2014 06:36:12   ryoho
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  912
+ * SCR Title:  Fix issue with Pattern Analyzer if pattern is larger than the ROI of tool
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   chnaged OnOK to validate size of Model to ROI, if larger display a message.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   26 Jun 2014 18:09:46   mziegler
  * Project:  SVObserver

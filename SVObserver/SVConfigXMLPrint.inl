@@ -5,13 +5,15 @@
 //* .Module Name     : SVConfigXMLPrint
 //* .File Name       : $Workfile:   SVConfigXMLPrint.inl  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.13  $
-//* .Check In Date   : $Date:   14 Jul 2014 14:53:12  $
+//* .Current Version : $Revision:   1.14  $
+//* .Check In Date   : $Date:   16 Jul 2014 07:54:54  $
 //******************************************************************************
 
 #include "SVObjectLibrary/SVObjectLibrary.h"
 #include "SVBlobAnalyzer.h"
 #include "SVResultDouble.h"
+#include "RemoteMonitorList.h"
+#include "RemoteMonitorListHelper.h"
 
 std::pair<GUID **, size_t> NonPrintGuids();
 
@@ -461,6 +463,7 @@ inline void SVConfigXMLPrint::WriteIOSection(Writer writer) const
 	writer->WriteStartElement(NULL, L"InputOutput", NULL);
 	WriteModuleIO(writer);
 	WriteResultIO(writer);
+	WriteMonitorListSection(writer);
 	writer->WriteEndElement();
 }
 
@@ -640,6 +643,136 @@ inline void SVConfigXMLPrint::WriteModuleIO(Writer writer) const
 		}
 	}
 }
+
+inline void SVConfigXMLPrint::WriteMonitorListSection(Writer writer) const
+{
+	CString sLabel, sValue;
+	wchar_t				buff[64];
+	int ItemCount = 0;
+
+	SVConfigurationObject* pConfig = NULL;
+	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
+
+	if (pConfig)
+	{
+		writer->WriteStartElement(NULL, L"RemoteMonitorList", NULL);
+		
+		const RemoteMonitorList& remoteMonitorLists = pConfig->GetRemoteMonitorList();
+
+		RemoteMonitorList::const_iterator iterMonitorList = remoteMonitorLists.begin();
+		while (remoteMonitorLists.end() != iterMonitorList)
+		{
+			const SVString& ListName = iterMonitorList->first;
+			const RemoteMonitorNamedList& monitorList = iterMonitorList->second;
+			
+			//write Monitor List Name
+			writer->WriteStartElement(NULL,L"MonitorListName",NULL);
+			writer->WriteAttributeString(NULL, L"Name", NULL, to_utf16(ListName.c_str(), cp_dflt).c_str());
+			writer->WriteEndElement();//Monitor List Name
+
+			//write out PPQ
+			writer->WriteStartElement(NULL,L"PPQName",NULL);
+			writer->WriteAttributeString(NULL, L"Name", NULL, to_utf16(monitorList.GetPPQName().c_str(), cp_dflt).c_str());
+			writer->WriteEndElement();//PPQ
+
+			//write Queue Depth
+			int Depth = monitorList.GetRejectDepthQueue();
+			writer->WriteStartElement(NULL,L"RejectQueueDepth",NULL);
+			writer->WriteAttributeString(NULL, L"Value", NULL, _itow(Depth, buff, 10));
+			writer->WriteEndElement();//queue depth
+
+			//write Product Value List
+			ItemCount = 0;
+			const MonitoredObjectList& ValueList = monitorList.GetProductValuesList();
+			MonitoredObjectList::const_iterator vlIt = ValueList.begin();
+			writer->WriteStartElement(NULL,L"ProductValueList",NULL);
+			while( vlIt != ValueList.end() )
+			{
+				ItemCount++;
+				const MonitoredObject& rObj = *vlIt;
+				const SVString& objectName = RemoteMonitorListHelper::GetNameFromMonitoredObject(rObj);
+				if ( !objectName.empty() )
+				{
+					writer->WriteStartElement(NULL,L"ProductValueItem",NULL);
+					writer->WriteAttributeString(NULL, L"Item", NULL, _itow(ItemCount, buff, 10));
+					writer->WriteAttributeString(NULL, L"Name", NULL, to_utf16(objectName.c_str(), cp_dflt).c_str());
+					writer->WriteEndElement();
+				}
+				vlIt++;
+			}
+			writer->WriteEndElement();
+
+			// Write Product Image List
+			ItemCount = 0;
+			const MonitoredObjectList& ImageList = monitorList.GetProductImagesList();
+			MonitoredObjectList::const_iterator ilIt = ImageList.begin();
+			writer->WriteStartElement(NULL,L"ProductImageList",NULL);
+			while( ilIt != ImageList.end() )
+			{
+				ItemCount++;
+				const MonitoredObject& rObj = *ilIt;
+				const SVString& objectName = RemoteMonitorListHelper::GetNameFromMonitoredObject(rObj);
+				if ( !objectName.empty() )
+				{
+					writer->WriteStartElement(NULL,L"ProductImageItem",NULL);
+					writer->WriteAttributeString(NULL, L"Image", NULL, _itow(ItemCount, buff, 10));
+					writer->WriteAttributeString(NULL, L"Name", NULL, to_utf16(objectName.c_str(), cp_dflt).c_str());
+					writer->WriteEndElement();
+				}
+				ilIt++;
+			}
+			writer->WriteEndElement();
+
+			// Write Reject Condition List
+			ItemCount = 0;
+			const MonitoredObjectList& RejectList = monitorList.GetRejectConditionList();
+			MonitoredObjectList::const_iterator rlIt = RejectList.begin();
+			writer->WriteStartElement(NULL,L"RejectConditionList",NULL);
+			while( rlIt != RejectList.end() )
+			{
+				ItemCount++;
+				const MonitoredObject& rObj = *rlIt;
+				const SVString& objectName = RemoteMonitorListHelper::GetNameFromMonitoredObject(rObj);
+				if ( !objectName.empty() )
+				{
+					writer->WriteStartElement(NULL,L"RejectConditionItem",NULL);
+					writer->WriteAttributeString(NULL, L"Item", NULL, _itow(ItemCount, buff, 10));
+					writer->WriteAttributeString(NULL, L"Name", NULL, to_utf16(objectName.c_str(), cp_dflt).c_str());
+					writer->WriteEndElement();
+				}
+				rlIt++;
+			}
+			writer->WriteEndElement();
+
+			// Write Fail Status List
+			ItemCount = 0;
+			const MonitoredObjectList& FailList = monitorList.GetFailStatusList();
+			MonitoredObjectList::const_iterator flIt = FailList.begin();
+			writer->WriteStartElement(NULL,L"FailStatusList",NULL);
+			while( flIt != FailList.end() )
+			{
+				ItemCount++;
+				const MonitoredObject& rObj = *flIt;
+				const SVString& objectName = RemoteMonitorListHelper::GetNameFromMonitoredObject(rObj);
+				if ( !objectName.empty() )
+				{
+					writer->WriteStartElement(NULL,L"FailStatusItem",NULL);
+					writer->WriteAttributeString(NULL, L"Item", NULL, _itow(ItemCount, buff, 10));
+					writer->WriteAttributeString(NULL, L"Name", NULL, to_utf16(objectName.c_str(), cp_dflt).c_str());
+					writer->WriteEndElement();
+				}
+				flIt++;
+			}
+			writer->WriteEndElement();
+
+			iterMonitorList++;
+		}
+
+
+		writer->WriteEndElement();//RemoteMonitroList
+	}
+}
+
 
 inline void SVConfigXMLPrint::WritePPQBar(Writer writer) const
 {
@@ -1519,6 +1652,16 @@ inline HRESULT SVDeviceParamConfigXMLHelper::Visit(SVCustomDeviceParam& param)
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVConfigXMLPrint.inl_v  $
+ * 
+ *    Rev 1.14   16 Jul 2014 07:54:54   ryoho
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   added method WriteMonitorListSection
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.13   14 Jul 2014 14:53:12   sjones
  * Project:  SVObserver

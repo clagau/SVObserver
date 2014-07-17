@@ -5,8 +5,8 @@
 //* .Module Name     : SVPatternAnalyzerClass
 //* .File Name       : $Workfile:   SVPatternAnalyzerClass.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.4  $
-//* .Check In Date   : $Date:   26 Jun 2014 18:12:20  $
+//* .Current Version : $Revision:   1.5  $
+//* .Check In Date   : $Date:   17 Jul 2014 06:38:48  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -854,8 +854,7 @@ BOOL SVPatternAnalyzerClass::onRun (SVRunStatusClass &RRunStatus)
 			
 			if (!SVImageAnalyzerClass::onRun(RRunStatus))
 			{
-				msvError.msvlErrorCd = -ERR_SRI14; // Error code 25014
-				SV_TRAP_ERROR_BRK (msvError, ERR_SRI14);
+				break;
 			}
 			
 			pSVImage = (SVImageClass *)getInputImage();
@@ -1076,30 +1075,6 @@ HRESULT SVPatternAnalyzerClass::ResetObject()
 					l_Code = SVMatroxPatternInterface::SetCenter( m_patModelHandle, 0, 0 );
 
 					if (l_Code != SVMEE_STATUS_OK)
-					{
-						l_hrOk = S_FALSE;
-					}
-				}
-			}
-			else
-			{
-				l_hrOk = S_FALSE;
-			}
-		}
-
-		if( l_hrOk == S_OK )
-		{
-			SVImageExtentClass l_svExtents;
-
-			if ( GetTool() != NULL && GetTool()->GetImageExtent( l_svExtents ) == S_OK )
-			{
-				RECT l_oRec;
-
-				l_hrOk = l_svExtents.GetOutputRectangle( l_oRec );
-
-				if ( l_hrOk == S_OK )
-				{
-					if( l_oRec.bottom < m_lpatModelHeight || l_oRec.right < m_lpatModelWidth )
 					{
 						l_hrOk = S_FALSE;
 					}
@@ -1394,11 +1369,46 @@ BOOL SVPatternAnalyzerClass::GetModelImageFileName( CString &csFileName )
 	return ( msv_szModelImageFile.GetValue( csFileName ) == S_OK );
 }
 
+bool SVPatternAnalyzerClass::IsValidSize()
+{
+	bool bRet = true;
+	SVImageExtentClass svExtents;
+
+	if ( GetTool() != NULL && GetTool()->GetImageExtent( svExtents ) == S_OK )
+	{
+		RECT oRec;
+		HRESULT hrOk = svExtents.GetOutputRectangle( oRec );
+
+		if ( S_OK == hrOk )
+		{
+			if( oRec.bottom < m_lpatModelHeight || oRec.right < m_lpatModelWidth )
+			{
+				bRet = false;
+			}
+		}
+	}
+	else
+	{
+		bRet = false;
+	}
+	return bRet;
+}
+
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVPatternAnalyzerClass.cpp_v  $
+ * 
+ *    Rev 1.5   17 Jul 2014 06:38:48   ryoho
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  912
+ * SCR Title:  Fix issue with Pattern Analyzer if pattern is larger than the ROI of tool
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   added method IsValidSize.  Change OnValidate to validate the size of the model instead of doing that check in the RestObject. 
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.4   26 Jun 2014 18:12:20   mziegler
  * Project:  SVObserver

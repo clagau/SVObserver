@@ -5,8 +5,8 @@
 //* .Module Name     : SVConfigurationPrint
 //* .File Name       : $Workfile:   SVConfigurationPrint.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.12  $
-//* .Check In Date   : $Date:   14 Jul 2014 14:54:16  $
+//* .Current Version : $Revision:   1.13  $
+//* .Check In Date   : $Date:   16 Jul 2014 07:53:50  $
 //******************************************************************************
 
 #pragma region Includes
@@ -54,6 +54,8 @@
 #include "SVUserMaskOperatorClass.h"
 #include "SVBlobAnalyzer.h"
 #include "SVResultDouble.h"
+#include "RemoteMonitorList.h"
+#include "RemoteMonitorListHelper.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -1484,6 +1486,17 @@ void SVConfigurationPrint::PrintIOEntryObject(CDC* pDC, CPoint& ptCurPos, int nI
 	}
 }
 
+void SVConfigurationPrint::PrintMonitorListItem(CDC* pDC, CPoint& ptCurPos, int nIndentLevel, LPCTSTR lpszName, LPCTSTR lpszValue)
+{
+	SVDigitalInputObject	*pDigInput = NULL;
+	SVDigitalOutputObject	*pDigOutput = NULL;
+	SVString				sValue;
+	
+	ptCurPos.x = nIndentLevel * m_shortTabPixels;
+	
+	PrintValueObject(pDC, ptCurPos, lpszName, lpszValue);
+}
+
 void SVConfigurationPrint::OnVirtualPrint(BOOL bRealPrintInput /* = FALSE */) 
 {
 	SVObserverApp*         pApp    = dynamic_cast <SVObserverApp*> (AfxGetApp());
@@ -2322,6 +2335,7 @@ void SVConfigurationPrint::PrintIOSection(CDC* pDC, CPoint& ptCurPos, int nInden
 	
 	PrintModuleIO(pDC, ptCurPos, nIndentLevel);
 	PrintResultIO(pDC, ptCurPos, nIndentLevel);
+	PrintMonitorListSection(pDC, ptCurPos, nIndentLevel);
 }
 
 void SVConfigurationPrint::PrintModuleIO(CDC* pDC, CPoint& ptCurPos, int nIndentLevel)
@@ -2496,6 +2510,104 @@ void SVConfigurationPrint::PrintResultIO(CDC* pDC, CPoint& ptCurPos, int nIndent
 	}
 }  // end function void SVObserverApp::PrintResultIO( CDC* pDC, ... )
 
+void SVConfigurationPrint::PrintMonitorListSection(CDC* pDC, CPoint& ptCurPos, int nIndentLevel)
+{
+	CString				label, value;
+	SVConfigurationObject* pConfig = NULL;
+	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
+	if (pConfig)
+	{
+		ptCurPos.x = nIndentLevel * m_shortTabPixels;
+
+		PrintValueObject(pDC, ptCurPos, _T("Remote Monitor List"), "");
+
+		const RemoteMonitorList& remoteMonitorLists = pConfig->GetRemoteMonitorList();
+
+		RemoteMonitorList::const_iterator iterMonitorList = remoteMonitorLists.begin();
+		while ( remoteMonitorLists.end() != iterMonitorList )
+		{
+			const SVString& ListName = iterMonitorList->first;
+			const RemoteMonitorNamedList& monitorList = iterMonitorList->second;
+
+			// Write out list name
+			PrintMonitorListItem(pDC, ptCurPos, nIndentLevel+1, _T("Monitor List Name"), ListName.c_str());
+
+			// Write out PPQ 
+			value = monitorList.GetPPQName().c_str();
+			PrintMonitorListItem(pDC, ptCurPos, nIndentLevel+1, _T("PPQ"), monitorList.GetPPQName().c_str());
+
+			// Write out reject queue depth
+			int Depth = monitorList.GetRejectDepthQueue();
+			value.Format("%d",Depth);
+			PrintMonitorListItem(pDC, ptCurPos, nIndentLevel+1, _T("Reject Queue Depth"), value);
+
+			// Print Product Value List
+			const MonitoredObjectList& ValueList = monitorList.GetProductValuesList();
+			MonitoredObjectList::const_iterator vlIt = ValueList.begin();
+			PrintMonitorListItem(pDC, ptCurPos, nIndentLevel+1, _T("Product Value List"), "");
+			while( vlIt != ValueList.end() )
+			{
+				const MonitoredObject& rObj = *vlIt;
+				const SVString& objectName = RemoteMonitorListHelper::GetNameFromMonitoredObject(rObj);
+				if ( !objectName.empty() )
+				{
+					value = objectName.c_str();
+					PrintMonitorListItem(pDC, ptCurPos, nIndentLevel+2, value, "");
+				}
+				vlIt++;
+			}			
+
+			// Print Product Image List
+			const MonitoredObjectList& ImageList = monitorList.GetProductImagesList();
+			MonitoredObjectList::const_iterator ilIt = ImageList.begin();
+			PrintMonitorListItem(pDC, ptCurPos, nIndentLevel+1, _T("Product Image List"), "");
+			while( ilIt != ImageList.end() )
+			{
+				const MonitoredObject& rObj = *ilIt;
+				const SVString& objectName = RemoteMonitorListHelper::GetNameFromMonitoredObject(rObj);
+				if ( !objectName.empty() )
+				{
+					value = objectName.c_str();
+					PrintMonitorListItem(pDC, ptCurPos, nIndentLevel+2, value, "");
+				}
+				ilIt++;
+			}
+
+			// Print Reject Condition List
+			const MonitoredObjectList& RejectList = monitorList.GetRejectConditionList();
+			MonitoredObjectList::const_iterator rlIt = RejectList.begin();
+			PrintMonitorListItem(pDC, ptCurPos, nIndentLevel+1, _T("Reject Condition List"), "");
+			while( rlIt != RejectList.end() )
+			{
+				const MonitoredObject& rObj = *rlIt;
+				const SVString& objectName = RemoteMonitorListHelper::GetNameFromMonitoredObject(rObj);
+				if ( !objectName.empty() )
+				{
+					value = objectName.c_str();
+					PrintMonitorListItem(pDC, ptCurPos, nIndentLevel+2, value, "");
+				}
+				rlIt++;
+			}
+
+			// Print Fail Status List
+			const MonitoredObjectList& FailList = monitorList.GetFailStatusList();
+			MonitoredObjectList::const_iterator flIt = FailList.begin();
+			PrintMonitorListItem(pDC, ptCurPos, nIndentLevel+1, _T("Fail Status List"), "");
+			while( flIt != FailList.end() )
+			{
+				const MonitoredObject& rObj = *flIt;
+				const SVString& objectName = RemoteMonitorListHelper::GetNameFromMonitoredObject(rObj);
+				if ( !objectName.empty() )
+				{
+					value = objectName.c_str();
+					PrintMonitorListItem(pDC, ptCurPos, nIndentLevel+2, value, "");
+				}
+				flIt++;
+			}
+			iterMonitorList++;
+		}
+	}
+}
 
 SVDeviceParamConfigPrintHelper::SVDeviceParamConfigPrintHelper(
 	SVConfigurationPrint* pPrint, SVDeviceParamCollection& rCamFileParams, CDC* pDC, CPoint& ptCurPos, int nIndentLevel)
@@ -2643,6 +2755,26 @@ HRESULT SVDeviceParamConfigPrintHelper::Visit(SVCustomDeviceParam& param)
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVConfigurationPrint.cpp_v  $
+ * 
+ *    Rev 1.13   16 Jul 2014 07:53:50   ryoho
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   added methods PrintMonitorListSection and PrintMonitorListItem
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.0   16 Jul 2014 07:52:24   ryoho
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   added methods PrintMonitorListSection and PrintMonitorListItem
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.12   14 Jul 2014 14:54:16   sjones
  * Project:  SVObserver

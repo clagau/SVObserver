@@ -5,8 +5,8 @@
 //* .Module Name     : SVPatternAnalyzerClass
 //* .File Name       : $Workfile:   svpatternanalyzerclass.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   15 May 2014 11:21:48  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   17 Jul 2014 06:38:48  $
 //******************************************************************************
 
 #ifndef SVPATTERNANALYZERCLASS_H
@@ -100,6 +100,7 @@ public:
 	BOOL GetModelImageFileName(CString &csFileName);
 
 	virtual HRESULT ResetObject();
+	bool IsValidSize();
 
 protected:
 	void CreateResult();
@@ -132,6 +133,16 @@ private:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\svpatternanalyzerclass.h_v  $
+ * 
+ *    Rev 1.3   17 Jul 2014 06:38:48   ryoho
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  912
+ * SCR Title:  Fix issue with Pattern Analyzer if pattern is larger than the ROI of tool
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   added method IsValidSize.  Change OnValidate to validate the size of the model instead of doing that check in the RestObject. 
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   15 May 2014 11:21:48   tbair
  * Project:  SVObserver
