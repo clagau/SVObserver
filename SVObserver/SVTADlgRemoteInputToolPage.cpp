@@ -5,10 +5,11 @@
 //* .Module Name     : SVTADlgRemoteInputToolPage
 //* .File Name       : $Workfile:   SVTADlgRemoteInputToolPage.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   24 Apr 2013 11:17:12  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   17 Jul 2014 20:30:00  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "resource.h"
 #include "SVTADlgRemoteInputToolPage.h"
@@ -18,7 +19,16 @@
 #include "SVTool.h"
 #include "SVToolAdjustmentDialogSheetClass.h"
 #include "SVToolset.h"
-#include "SVToolsetOutputSelectionDialog.h"
+#include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
+#pragma endregion Includes
+
+#pragma region Declarations
+using namespace Seidenader::ObjectSelectorLibrary;
+
+#ifdef _DEBUG
+#define new DEBUG_NEW
+#endif
+#pragma endregion Declarations
 
 SVTADlgRemoteInputToolPage::SVTADlgRemoteInputToolPage( SVToolAdjustmentDialogSheetClass* Parent, int id ) 
 : CPropertyPage( id )
@@ -90,33 +100,56 @@ void SVTADlgRemoteInputToolPage::OnBnClickedClearInputButton()
 
 void SVTADlgRemoteInputToolPage::OnBnClickedSelectInputButton()
 {
-	if( m_pTool != NULL )
+	if( nullptr == m_pTool ) { return; }
+
+	SVToolSetClass* pToolSet = dynamic_cast<SVToolSetClass*> ( m_pTool->GetAncestor( SVToolSetObjectType ) );
+
+	if( nullptr == pToolSet ) { return; }
+
+	SVString InspectionName( pToolSet->GetInspection()->GetName() );
+
+	ObjectTreeGenerator::SelectorTypeEnum SelectorType;
+	SelectorType = static_cast<ObjectTreeGenerator::SelectorTypeEnum> (ObjectTreeGenerator::SelectorTypeEnum::TypeSetAttributes | ObjectTreeGenerator::SelectorTypeEnum::TypeSingleObject);
+	ObjectTreeGenerator::Instance().setSelectorType( SelectorType );
+	ObjectTreeGenerator::Instance().setAttributeFilters( SV_ARCHIVABLE );
+	ObjectTreeGenerator::Instance().setLocationFilter( ObjectTreeGenerator::FilterInput, InspectionName, SVString( _T("") ) );
+
+	SVOutputInfoListClass OutputList;
+	pToolSet->GetOutputList( OutputList );
+	ObjectTreeGenerator::Instance().insertOutputList( OutputList );
+
+	if( nullptr ==  m_pTool->GetInputObject() )
 	{
-		SVToolSetClass* pToolSet = dynamic_cast<SVToolSetClass*> ( m_pTool->GetAncestor( SVToolSetObjectType ) );
+		SVStringSet Items;
 
-		SVToolsetOutputSelectionDialog dlg;
-		dlg.PTaskObjectList = pToolSet;
-		dlg.uAttributesDesired = SV_ARCHIVABLE;
+		SVObjectReference ObjectRef( m_pTool->GetInputObject() );
 
-		SVObjectReference input( m_pTool->GetInputObject() );
-		SVObjectReferenceVector selectedInputs;
-		selectedInputs.push_back(input);
+		Items.insert( SVString( ObjectRef.GetCompleteOneBasedObjectName() ) );
+		ObjectTreeGenerator::Instance().setCheckItems( Items );
+	}
 
-		dlg.m_treeOutputList.SetSelection(selectedInputs);
+	CString ToolsetOutput;
+	ToolsetOutput.LoadString ( IDS_SELECT_TOOLSET_OUTPUT );
+	SVString Title;
+	Title.Format(_T("%s - %s"), ToolsetOutput , m_pTool->GetName() );
+	SVString TabTitle = ToolsetOutput; 
 
-		if( dlg.DoModal() == IDOK )
+	INT_PTR Result = ObjectTreeGenerator::Instance().showDialog( Title, TabTitle, this );
+
+	if( IDOK == Result )
+	{
+		SVString SelectedOutputName = ObjectTreeGenerator::Instance().getSingleObjectResult().getLocation();
+		if( !SelectedOutputName.empty() )
 		{
-			if( !( dlg.m_sSelectedOutputName.IsEmpty() ) )
-			{
-				m_InputName = pToolSet->GetInspection()->GetName() + CString( _T( "." ) ) + dlg.m_sSelectedOutputName;
-			}
-			else
-			{
-				m_InputName.Empty();
-			}
-
-			m_pTool->SetInputObject( dlg.m_refSelectedObject.Guid() );
+			m_InputName = pToolSet->GetInspection()->GetName() +  CString( _T( "." ) ) + SelectedOutputName.c_str();
 		}
+		else
+		{
+			m_InputName.Empty();
+		}
+
+		SVGUID ObjectGuid(ObjectTreeGenerator::Instance().getSingleObjectResult().getItemKey());
+		m_pTool->SetInputObject( ObjectGuid );
 	}
 
 	RefreshSelectedInputName();
@@ -131,7 +164,18 @@ void SVTADlgRemoteInputToolPage::RefreshSelectedInputName()
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVTADlgRemoteInputToolPage.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVTADlgRemoteInputToolPage.cpp_v  $
+ * 
+ *    Rev 1.1   17 Jul 2014 20:30:00   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  909
+ * SCR Title:  Object Selector replacing Result Picker and Output Selector SVO-72, 40, 130
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Replace ResultPicker Dialog with Object Selector Dialog
+ * Changed methods: OnBnClickedSelectInputButton
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   24 Apr 2013 11:17:12   bWalter
  * Project:  SVObserver

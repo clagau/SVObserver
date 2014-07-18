@@ -5,8 +5,8 @@
 //* .Module Name     : SVRemoteOutputEditDialog
 //* .File Name       : $Workfile:   SVRemoteOutputEditDialog.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.6  $
-//* .Check In Date   : $Date:   02 Oct 2013 07:58:46  $
+//* .Current Version : $Revision:   1.7  $
+//* .Check In Date   : $Date:   17 Jul 2014 20:21:28  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -16,7 +16,6 @@
 #include "SVObserver.h"
 #include "SVConfigurationObject.h"
 #include "SVRemoteOutputDataController.h"
-#include "SVToolsetOutputSelectionDialog.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVInspectionProcess.h"
 #include "SVToolSet.h"
@@ -224,6 +223,16 @@ BOOL SVRemoteOutputEditDialog::PreTranslateMessage(MSG* pMsg)
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVRemoteOutputEditDialog.cpp_v  $
+ * 
+ *    Rev 1.7   17 Jul 2014 20:21:28   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  909
+ * SCR Title:  Object Selector replacing Result Picker and Output Selector SVO-72, 40, 130
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Removed namespaces and code review changes
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.6   02 Oct 2013 07:58:46   tbair
  * Project:  SVObserver

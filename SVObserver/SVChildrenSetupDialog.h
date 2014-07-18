@@ -5,12 +5,11 @@
 //* .Module Name     : SVChildrenSetupDialog
 //* .File Name       : $Workfile:   SVChildrenSetupDialog.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 09:53:18  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   17 Jul 2014 18:19:34  $
 //******************************************************************************
 
-#ifndef SVCHILDRENSETUPDIALOG_H
-#define SVCHILDRENSETUPDIALOG_H
+#pragma once
 
 #include "SVTaskObjectListCtrl.h"
 
@@ -52,7 +51,6 @@ protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV-Unterstützung
 	//}}AFX_VIRTUAL
 
-
 //******************************************************************************
 // Operation(s) Of Representation:
 //******************************************************************************
@@ -64,32 +62,40 @@ protected:
 // Data Element(s):
 //******************************************************************************
 public:
-	SVClassInfoStructListClass* PAvailableChildrenList;
-	SVTaskObjectListClass*		PParentObject;
+	SVClassInfoStructListClass*	m_pAvailableChildrenList;
+	SVTaskObjectListClass*		m_pParentObject;
 	CString StrTitle;
-	BOOL						BAllowMultipleChildrenInstances;
-	SVIPDoc*					PDocument;
+	BOOL						m_AllowMultipleChildrenInstances;
+	SVIPDoc*					m_pDocument;
 
 protected:
-	SVObjectClass* pParentOwner;
+	SVObjectClass* m_pParentOwner;
 
 	//{{AFX_DATA(SVChildrenSetupDialogClass)
 	enum { IDD = IDD_CHILDREN_DIALOG };
-	SVTaskObjectListCtrlClass	ChildrenListCtrl;
-	CListCtrl	AvailableChildrenListCtrl;
+	SVTaskObjectListCtrlClass m_ChildrenListCtrl;
+	CListCtrl m_AvailableChildrenListCtrl;
 	//}}AFX_DATA
 };
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
 
-#endif	// SVCHILDRENSETUPDIALOG_H
-
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVChildrenSetupDialog.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVChildrenSetupDialog.h_v  $
+ * 
+ *    Rev 1.1   17 Jul 2014 18:19:34   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  909
+ * SCR Title:  Object Selector replacing Result Picker and Output Selector SVO-72, 40, 130
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Code review changes
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 09:53:18   bWalter
  * Project:  SVObserver
@@ -196,5 +202,3 @@ $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVChildren
  * 
  * /////////////////////////////////////////////////////////////////////////////////////
 */
-
-

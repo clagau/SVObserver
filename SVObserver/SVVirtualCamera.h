@@ -5,12 +5,11 @@
 //* .Module Name     : SVVirtualCamera
 //* .File Name       : $Workfile:   SVVirtualCamera.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.4  $
-//* .Check In Date   : $Date:   02 Jun 2014 10:23:16  $
+//* .Current Version : $Revision:   1.5  $
+//* .Check In Date   : $Date:   17 Jul 2014 20:51:54  $
 //******************************************************************************
 
-#ifndef SVVIRTUALCAMERA_H
-#define SVVIRTUALCAMERA_H
+#pragma once
 
 #pragma region Includes
 #include "SVInfoStructs.h"
@@ -29,10 +28,10 @@
 
 #pragma region Declarations
 //Camera variables
-const TCHAR			CameraSerialNumber[]		= _T( "Serial Number" );
-const TCHAR			CameraShutter[]				= _T( "Shutter" );
-const TCHAR			CameraGain[]				= _T( "Gain" );
-const TCHAR			CameraContrast[]			= _T( "Contrast" );			//Legacy name for Gain was Contrast.
+const TCHAR CameraSerialNumber[]	= _T( "Serial Number" );
+const TCHAR CameraShutter[]			= _T( "Shutter" );
+const TCHAR CameraGain[]			= _T( "Gain" );
+const TCHAR CameraContrast[]		= _T( "Contrast" ); //Legacy name for Gain was Contrast.
 
 typedef SVVector< SVVirtualCamera* > SVVirtualCameraArray;
 typedef SVSet< SVVirtualCamera* > SVVirtualCameraSet;
@@ -102,7 +101,7 @@ public:
 
 	LPCTSTR GetImageFilename() const;
 	void SetImageFilename(const SVString& filename);
-	
+
 	LPCTSTR GetImageDirectoryName() const;
 	void SetImageDirectoryName(const SVString& directoryName);
 
@@ -120,7 +119,7 @@ public:
 
 	long GetFileImageHeight() const;
 	void SetFileImageHeight(long height);
-	
+
 	HRESULT RegisterTriggerRelay(SVIOTriggerLoadLibraryClass* triggerDLL, unsigned long ulIndex);
 	HRESULT UnregisterTriggerRelay();
 
@@ -147,7 +146,7 @@ protected:
 	CStdioFile m_LogFile;
 
 private:
-	Seidenader::SVObserver::BasicValueObjects m_CameraValues;
+	BasicValueObjects m_CameraValues;
 	bool m_bFileAcquisition;
 	SVString m_imageFilename;
 	SVString m_imageDirectoryName;
@@ -158,13 +157,21 @@ private:
 #pragma endregion Member Variables
 };
 
-#endif
-
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVVirtualCamera.h_v  $
+ * 
+ *    Rev 1.5   17 Jul 2014 20:51:54   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  909
+ * SCR Title:  Object Selector replacing Result Picker and Output Selector SVO-72, 40, 130
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Removed namespaces and code review changes
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.4   02 Jun 2014 10:23:16   gramseier
  * Project:  SVObserver

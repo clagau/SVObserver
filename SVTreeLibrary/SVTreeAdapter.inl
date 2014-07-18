@@ -5,11 +5,11 @@
 //* .Module Name     : SVTreeAdapter
 //* .File Name       : $Workfile:   SVTreeAdapter.inl  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   25 Apr 2013 18:50:10  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   17 Jul 2014 16:54:28  $
 //******************************************************************************
 
-#include "SVTreeLibrary/SVCompareKeys.h"
+#include "SVCompareKeys.h"
 
 ///////////////////////////////////////////////////////////////////////
 // 
@@ -467,9 +467,6 @@ void SVTreeAdapter<ElementKey, ElementType, InvalidKey>::swap(
 	m_rTree.swap(rhs);
 }
 
-///////////////////////////////////////////////////////////////////////
-// Get the Begin Iterator
-///////////////////////////////////////////////////////////////////////
 template<typename ElementKey, typename ElementType, typename InvalidKey>
 typename SVTreeAdapter<ElementKey, ElementType, InvalidKey>::sv_tree_iterator
 SVTreeAdapter<ElementKey, ElementType, InvalidKey>::begin() 
@@ -477,9 +474,6 @@ SVTreeAdapter<ElementKey, ElementType, InvalidKey>::begin()
 	return sv_tree_iterator( m_rTree.begin() ); 
 }
 
-///////////////////////////////////////////////////////////////////////
-// Get the Begin Iterator
-///////////////////////////////////////////////////////////////////////
 template<typename ElementKey, typename ElementType, typename InvalidKey>
 typename SVTreeAdapter<ElementKey, ElementType, InvalidKey>::sv_tree_const_iterator
 SVTreeAdapter<ElementKey, ElementType, InvalidKey>::begin() const
@@ -487,9 +481,48 @@ SVTreeAdapter<ElementKey, ElementType, InvalidKey>::begin() const
 	return sv_tree_const_iterator( m_rTree.begin() ); 
 }
 
-///////////////////////////////////////////////////////////////////////
-// Get the End Iterator
-///////////////////////////////////////////////////////////////////////
+template<typename ElementKey, typename ElementType, typename InvalidKey>
+typename SVTreeAdapter<ElementKey, ElementType, InvalidKey>::SVTree_pre_order_iterator
+	SVTreeAdapter<ElementKey, ElementType, InvalidKey>::pre_order_begin() 
+{ 
+	return SVTree_pre_order_iterator( m_rTree.pre_order_begin() ); 
+}
+
+template<typename ElementKey, typename ElementType, typename InvalidKey>
+typename SVTreeAdapter<ElementKey, ElementType, InvalidKey>::SVTree_const_pre_order_iterator
+	SVTreeAdapter<ElementKey, ElementType, InvalidKey>::pre_order_begin() const
+{ 
+	return SVTree_const_pre_order_iterator( m_rTree.pre_order_begin() ); 
+}
+
+template<typename ElementKey, typename ElementType, typename InvalidKey>
+typename SVTreeAdapter<ElementKey, ElementType, InvalidKey>::SVTree_post_order_iterator
+	SVTreeAdapter<ElementKey, ElementType, InvalidKey>::post_order_begin() 
+{ 
+	return SVTree_post_order_iterator( m_rTree.post_order_begin() ); 
+}
+
+template<typename ElementKey, typename ElementType, typename InvalidKey>
+typename SVTreeAdapter<ElementKey, ElementType, InvalidKey>::SVTree_const_post_order_iterator
+	SVTreeAdapter<ElementKey, ElementType, InvalidKey>::post_order_begin() const
+{ 
+	return SVTree_const_post_order_iterator( m_rTree.post_order_begin() ); 
+}
+
+template<typename ElementKey, typename ElementType, typename InvalidKey>
+typename SVTreeAdapter<ElementKey, ElementType, InvalidKey>::SVTree_level_order_iterator
+	SVTreeAdapter<ElementKey, ElementType, InvalidKey>::level_order_begin() 
+{ 
+	return SVTree_level_order_iterator( m_rTree.level_order_begin() ); 
+}
+
+template<typename ElementKey, typename ElementType, typename InvalidKey>
+typename SVTreeAdapter<ElementKey, ElementType, InvalidKey>::SVTree_const_level_order_iterator
+	SVTreeAdapter<ElementKey, ElementType, InvalidKey>::level_order_begin() const
+{ 
+	return SVTree_const_level_order_iterator( m_rTree.level_order_begin() ); 
+}
+
 template<typename ElementKey, typename ElementType, typename InvalidKey>
 typename SVTreeAdapter<ElementKey, ElementType, InvalidKey>::sv_tree_iterator
 SVTreeAdapter<ElementKey, ElementType, InvalidKey>::end() 
@@ -497,14 +530,53 @@ SVTreeAdapter<ElementKey, ElementType, InvalidKey>::end()
 	return sv_tree_iterator( m_rTree.end() ); 
 }
 
-///////////////////////////////////////////////////////////////////////
-// Get the End Iterator
-///////////////////////////////////////////////////////////////////////
 template<typename ElementKey, typename ElementType, typename InvalidKey>
 typename SVTreeAdapter<ElementKey, ElementType, InvalidKey>::sv_tree_const_iterator
 SVTreeAdapter<ElementKey, ElementType, InvalidKey>::end() const
 { 
 	return sv_tree_const_iterator( m_rTree.end() ); 
+}
+
+template<typename ElementKey, typename ElementType, typename InvalidKey>
+typename SVTreeAdapter<ElementKey, ElementType, InvalidKey>::SVTree_pre_order_iterator
+	SVTreeAdapter<ElementKey, ElementType, InvalidKey>::pre_order_end() 
+{ 
+	return SVTree_pre_order_iterator( m_rTree.pre_order_end() ); 
+}
+
+template<typename ElementKey, typename ElementType, typename InvalidKey>
+typename SVTreeAdapter<ElementKey, ElementType, InvalidKey>::SVTree_const_pre_order_iterator
+	SVTreeAdapter<ElementKey, ElementType, InvalidKey>::pre_order_end() const
+{ 
+	return SVTree_const_pre_order_iterator( m_rTree.pre_order_end() ); 
+}
+
+template<typename ElementKey, typename ElementType, typename InvalidKey>
+typename SVTreeAdapter<ElementKey, ElementType, InvalidKey>::SVTree_post_order_iterator
+	SVTreeAdapter<ElementKey, ElementType, InvalidKey>::post_order_end() 
+{ 
+	return SVTree_post_order_iterator( m_rTree.post_order_end() ); 
+}
+
+template<typename ElementKey, typename ElementType, typename InvalidKey>
+typename SVTreeAdapter<ElementKey, ElementType, InvalidKey>::SVTree_const_post_order_iterator
+	SVTreeAdapter<ElementKey, ElementType, InvalidKey>::post_order_end() const
+{ 
+	return SVTree_const_post_order_iterator( m_rTree.post_order_end() ); 
+}
+
+template<typename ElementKey, typename ElementType, typename InvalidKey>
+typename SVTreeAdapter<ElementKey, ElementType, InvalidKey>::SVTree_level_order_iterator
+	SVTreeAdapter<ElementKey, ElementType, InvalidKey>::level_order_end() 
+{ 
+	return SVTree_level_order_iterator( m_rTree.level_order_end() ); 
+}
+
+template<typename ElementKey, typename ElementType, typename InvalidKey>
+typename SVTreeAdapter<ElementKey, ElementType, InvalidKey>::SVTree_const_level_order_iterator
+	SVTreeAdapter<ElementKey, ElementType, InvalidKey>::level_order_end() const
+{ 
+	return SVTree_const_level_order_iterator( m_rTree.level_order_end() ); 
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -597,19 +669,19 @@ SVTreeAdapter<ElementKey, ElementType, InvalidKey>::find( const ElementKey& key,
 }
 
 template<typename ElementKey, typename ElementType, typename InvalidKey>
-typename SVTreeAdapter<ElementKey, ElementType, InvalidKey>::operator SVTreeContainer * ()
+SVTreeAdapter<ElementKey, ElementType, InvalidKey>::operator SVTreeContainer * ()
 {
 	return &m_rTree;
 }
 
 template<typename ElementKey, typename ElementType, typename InvalidKey>
-typename SVTreeAdapter<ElementKey, ElementType, InvalidKey>::operator SVTreeContainer & ()
+SVTreeAdapter<ElementKey, ElementType, InvalidKey>::operator SVTreeContainer & ()
 {
 	return m_rTree;
 }
 
 template<typename ElementKey, typename ElementType, typename InvalidKey>
-typename SVTreeAdapter<ElementKey, ElementType, InvalidKey>::operator SVTreeContainer const & () const
+SVTreeAdapter<ElementKey, ElementType, InvalidKey>::operator SVTreeContainer const & () const
 {
 	return m_rTree;
 }
@@ -653,7 +725,17 @@ SVTreeAdapter<ElementKey, ElementType, InvalidKey>::parent() const
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVTreeLibrary\SVTreeAdapter.inl_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVTreeLibrary\SVTreeAdapter.inl_v  $
+ * 
+ *    Rev 1.1   17 Jul 2014 16:54:28   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  909
+ * SCR Title:  Object Selector replacing Result Picker and Output Selector SVO-72, 40, 130
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Added post and level iterators and const iterators
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   25 Apr 2013 18:50:10   bWalter
  * Project:  SVObserver

@@ -5,10 +5,11 @@
 //* .Module Name     : SVFormulaEditorPageClass
 //* .File Name       : $Workfile:   SVFormulaEditorPage.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.5  $
-//* .Check In Date   : $Date:   28 Jan 2014 11:18:36  $
+//* .Current Version : $Revision:   1.6  $
+//* .Check In Date   : $Date:   17 Jul 2014 19:05:38  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVIPDoc.h"
 #include "SVInspectionProcess.h"
@@ -17,9 +18,14 @@
 #include "SVFormulaEditorPage.h"
 #include "SVMathContainer.h"
 #include "SVEquation.h"
-#include "SVToolsetOutputSelectionDialog.h"
+#include "SVObjectLibrary/GlobalConst.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
-using namespace Seidenader::SVObserver;
+#include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
+#pragma endregion Includes
+
+#pragma region Declarations
+using namespace Seidenader::SVObjectLibrary;
+using namespace Seidenader::ObjectSelectorLibrary;
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -38,15 +44,12 @@ enum
 	OBM_DNARROW         = 32752,
 };
 
-/////////////////////////////////////////////////////////////////////////////
-// SVFormulaEditorPageClass dialog
+#pragma endregion Declarations
 
 BEGIN_MESSAGE_MAP(SVFormulaEditorPageClass, CPropertyPage)
 	//{{AFX_MSG_MAP(SVFormulaEditorPageClass)
-	ON_BN_CLICKED(IDC_ADD_PPQ_VARIABLE_BUTTON, OnAddPPQVariableButton)
 	ON_BN_CLICKED(IDC_ADD_LOCAL_VARIABLE_BUTTON, OnAddLocalVariableButton)
 	ON_BN_CLICKED(IDC_ADD_CONSTANT_BUTTON, OnAddConstantButton)
-	ON_CBN_DROPDOWN(IDC_PPQ_VARIABLE_COMBO, OnDropdownPpqVariableCombo)
 	ON_BN_CLICKED(IDC_LOCAL_VARIABLE_SELECT, OnLocalVariableSelect)
 	ON_BN_CLICKED(IDC_DISABLE_EQUATION, OnDisable)
 	ON_BN_CLICKED(IDC_DISABLE_TOOL, OnDisable)
@@ -65,7 +68,6 @@ SVFormulaEditorPageClass::SVFormulaEditorPageClass( IFormulaController& rControl
 	, m_equationDisabled( FALSE )
 	, m_toolDisabled( FALSE )
 	, m_numChars( 0 )
-	, m_ppqComboExtent( 0 )
 {
 }
 
@@ -75,13 +77,11 @@ void SVFormulaEditorPageClass::DoDataExchange(CDataExchange* pDX)
 	//{{AFX_DATA_MAP(SVFormulaEditorPageClass)
 	DDX_Control(pDX, IDC_LOCAL_VARIABLE_SELECT, m_ToolsetOutputSelectButton);
 	DDX_Control(pDX, IDC_CONSTANT_EDIT, m_ConstantEditCtrl);
-	DDX_Control(pDX, IDC_ADD_PPQ_VARIABLE_BUTTON, m_AddPPQVariableCtrl);
 	DDX_Control(pDX, IDC_ADD_LOCAL_VARIABLE_BUTTON, m_AddLocalVariableCtrl);
 	DDX_Control(pDX, IDC_ADD_CONSTANT_BUTTON, m_AddConstantCtrl);
 	DDX_Control(pDX, IDC_DECIMAL, m_decimalRadioButton);
 	DDX_Control(pDX, IDC_HEXADECIMAL, m_hexadecimalRadioButton);
 	DDX_Control(pDX, IDC_BINARY, m_binaryRadioButton);
-	DDX_Control(pDX, IDC_PPQ_VARIABLE_COMBO, m_PPQVariableComboCtrl);
 	DDX_Control(pDX, IDC_MATHCOND_RICHEDIT, m_MathRichEditCtrl);
 	DDX_Control(pDX, IDC_DISABLE_EQUATION, m_DisableEquationCtrl);
 	DDX_Control(pDX, IDC_DISABLE_TOOL, m_DisableToolCtrl);
@@ -113,31 +113,6 @@ BOOL SVFormulaEditorPageClass::OnInitDialog()
 	GetDlgItem(IDC_DISABLE_TOOL)->SetWindowText((LPCTSTR)s);
 
 	setEquationText();
-
-	// Set CombmoBox Horizontal Extent
-	m_ppqComboExtent = 0;
-
-	// Clear ListBox Extents
-	m_PPQVariableComboCtrl.SetHorizontalExtent( m_ppqComboExtent );
-	std::vector<SVString> ppqVariableNames = m_rFormulaController.getPPQVariableNames();
-
-	// populate PPQ Variables ComboBox
-	for( size_t i = 0; i < ppqVariableNames.size(); i++ )
-	{	
-		// get the width of the string
-		int strWidth = GetComboBoxStringExtent( m_PPQVariableComboCtrl, ppqVariableNames[i].ToString() );
-		if( strWidth > m_ppqComboExtent )
-			m_ppqComboExtent = strWidth;
-
-		m_PPQVariableComboCtrl.AddString( ppqVariableNames[i].ToString() );
-	}// end for
-
-	// Disable if no PPQ Inputs
-	if ( m_PPQVariableComboCtrl.GetCount() <= 0 )
-	{
-		m_PPQVariableComboCtrl.EnableWindow( false );
-		m_AddPPQVariableCtrl.EnableWindow( false );
-	}
 
 	if (!m_isConditionalPage)
 	{
@@ -361,55 +336,48 @@ void SVFormulaEditorPageClass::setEquationText()
 /////////////////////////////////////////////////////////////////////////////
 // SVFormulaEditorPageClass message handlers
 
-void SVFormulaEditorPageClass::OnDropdownPpqVariableCombo() 
-{
-	// This does not work cause the combobox list does not have a horizontal scrollbar
-	//PPQVariableComboCtrl.SetHorizontalExtent( ppqComboExtent );
-
-	// Instead - set the width of the drop down list to 
-	// the size of tyhe widest string (in pixels)
-	int width = m_PPQVariableComboCtrl.GetDroppedWidth();
-	if( width < m_ppqComboExtent )
-		m_PPQVariableComboCtrl.SetDroppedWidth( m_ppqComboExtent );
-}
-
-void SVFormulaEditorPageClass::OnAddPPQVariableButton() 
-{
-	CString text;
-
-	// Get Pointer to SVOutObjectInfo
-	int curSel = m_PPQVariableComboCtrl.GetCurSel();
-	if( curSel == CB_ERR )
-	{
-		AfxMessageBox("The item you are trying to add is not a valid selection\nPlease select an item from the list");
-		return;
-	}
-
-	// Get Current Selection in combobox
-	m_PPQVariableComboCtrl.GetWindowText( text );
-	if( !text.IsEmpty() )
-	{
-		// Variables are delimited by qouble qoutes
-		CString variable = _T( "\"" ) + text + _T( "\"" );
-		insertIntoRichEdit( ( LPCTSTR )variable );
-	}
-}
-
 void SVFormulaEditorPageClass::OnLocalVariableSelect() 
 {
-	UpdateData();
+	UpdateData( TRUE );
 
-	SVToolsetOutputSelectionDialog dlg;
-
-	dlg.PTaskObjectList = m_rFormulaController.getToolSet();
-	dlg.uAttributesDesired = SV_SELECTABLE_FOR_EQUATION;
-	dlg.m_treeOutputList.SetAllowWholeArray();
-
-	if( dlg.DoModal() == IDOK )
+	SVString InspectionName;
+	if( nullptr != m_rFormulaController.getInspectionProcess() )
 	{
-		// Get Toolset Output Name
-		// Update ToolsetOutputVariable
-		m_strToolsetOutputVariable = dlg.m_sSelectedOutputName;
+		InspectionName = m_rFormulaController.getInspectionProcess()->GetName();
+	}
+	ObjectTreeGenerator::Instance().setSelectorType( ObjectTreeGenerator::SelectorTypeEnum::TypeSingleObject );
+	ObjectTreeGenerator::Instance().setAttributeFilters( SV_SELECTABLE_FOR_EQUATION );
+	ObjectTreeGenerator::Instance().setLocationFilter( ObjectTreeGenerator::FilterInput, InspectionName, SVString( _T("") ) );
+	ObjectTreeGenerator::Instance().setLocationFilter( ObjectTreeGenerator::FilterOutput, FqnPPQVariables, SVString( _T("") ) );
+	ObjectTreeGenerator::Instance().setAllowWholeArrays( true );
+
+	SVStringArray PpqVariables = m_rFormulaController.getPPQVariableNames();
+
+	//Need to replace the inspection name with the PPQ Variables name
+	SVStringArray::iterator Iter( PpqVariables.begin() );
+	while( Iter != PpqVariables.end() )
+	{
+		Iter->replace( InspectionName.c_str(), FqnPPQVariables );
+		Iter++;
+	}
+	ObjectTreeGenerator::Instance().insertTreeObjects( PpqVariables );
+
+	SVOutputInfoListClass OutputList;
+	m_rFormulaController.getToolSet()->GetOutputList( OutputList );
+	ObjectTreeGenerator::Instance().insertOutputList( OutputList );
+
+	
+	CString ToolsetOutput;
+	ToolsetOutput.LoadString ( IDS_SELECT_TOOLSET_OUTPUT );
+	SVString Title;
+	Title.Format(_T("%s - %s"), ToolsetOutput , InspectionName.c_str() );
+	SVString TabTitle = ToolsetOutput; 
+
+	INT_PTR Result = ObjectTreeGenerator::Instance().showDialog( Title, TabTitle, this );
+
+	if( IDOK == Result )
+	{
+		m_strToolsetOutputVariable = ObjectTreeGenerator::Instance().getSingleObjectResult().getLocation().c_str();
 		UpdateData( FALSE );
 	}
 }
@@ -768,25 +736,12 @@ void SVFormulaEditorPageClass::enableControls()
 
 	if (state == TRUE)
 	{
-		// Disable if no PPQ Inputs
-		if (m_PPQVariableComboCtrl.GetCount() <= 0)
-		{
-			m_PPQVariableComboCtrl.EnableWindow( false );
-			m_AddPPQVariableCtrl.EnableWindow( false );
-		}
-		else
-		{
-			m_PPQVariableComboCtrl.EnableWindow( true );
-			m_AddPPQVariableCtrl.EnableWindow( true );
-		}
 		m_validateBar.EnableWindow( true );
 		m_validateBar.EnableButton(ID_FORMULA_TEST, true);
 		enableUndoButton();
 	}
 	else
 	{
-		m_PPQVariableComboCtrl.EnableWindow( state );
-		m_AddPPQVariableCtrl.EnableWindow( state );
 		m_validateBar.EnableWindow( state );
 	}
 	
@@ -816,6 +771,19 @@ void SVFormulaEditorPageClass::enableControls()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVFormulaEditorPage.cpp_v  $
+ * 
+ *    Rev 1.6   17 Jul 2014 19:05:38   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  909
+ * SCR Title:  Object Selector replacing Result Picker and Output Selector SVO-72, 40, 130
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Replace ResultPicker Dialog with Object Selector Dialog
+ * Removed m_AddPPQVariableCtrl, m_PPQVariableComboCtrl, m_ppqComboExtent, OnAddPPQVariableButton, OnDropdownPPQVariable
+ * Code review changes
+ * Changed methods: OnLocalVariableSelect
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.5   28 Jan 2014 11:18:36   bwalter
  * Project:  SVObserver

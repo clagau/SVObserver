@@ -5,8 +5,8 @@
 //* .Module Name     : SVVisionProcessorHelper
 //* .File Name       : $Workfile:   SVVisionProcessorHelper.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.15  $
-//* .Check In Date   : $Date:   09 Jul 2014 17:04:06  $
+//* .Current Version : $Revision:   1.16  $
+//* .Check In Date   : $Date:   17 Jul 2014 20:51:54  $
 //******************************************************************************
 
 #pragma region Includes
@@ -32,11 +32,12 @@
 #pragma endregion Includes
 
 #pragma region Declarations
-using namespace Seidenader::SVObserver;
 using namespace Seidenader::SVObjectLibrary;
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
@@ -49,7 +50,8 @@ SVVisionProcessorHelper& SVVisionProcessorHelper::Instance()
 
 #pragma region Constructor
 SVVisionProcessorHelper::SVVisionProcessorHelper()
-: m_LastModifiedTime( 0 ), m_PrevModifiedTime( 0 )
+: m_LastModifiedTime( 0 )
+, m_PrevModifiedTime( 0 )
 {
 	m_GetItemsFunctors = boost::assign::map_list_of< SVString, SVGetItemsFunctor >
 		( StandardItems, boost::bind( &SVVisionProcessorHelper::GetStandardItems, this, _1, _2 ) )
@@ -1022,6 +1024,16 @@ void SVVisionProcessorHelper::ProcessLastModified( bool& p_WaitForEvents )
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVVisionProcessorHelper.cpp_v  $
+ * 
+ *    Rev 1.16   17 Jul 2014 20:51:54   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  909
+ * SCR Title:  Object Selector replacing Result Picker and Output Selector SVO-72, 40, 130
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Removed namespaces and code review changes
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.15   09 Jul 2014 17:04:06   mziegler
  * Project:  SVObserver

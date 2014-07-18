@@ -5,8 +5,8 @@
 //* .Module Name     : RootObject
 //* .File Name       : $Workfile:   RootObject.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   17 Mar 2014 15:10:24  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   17 Jul 2014 17:56:30  $
 //******************************************************************************
 
 #pragma region Includes
@@ -18,10 +18,10 @@
 #pragma endregion Includes
 
 #pragma region Declarations
-using namespace Seidenader::SVObserver;
-
 #ifdef _DEBUG
 #define new DEBUG_NEW
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
 #endif
 
 SV_IMPLEMENT_CLASS( RootObject, RootObjectGuid );
@@ -96,6 +96,16 @@ BOOL RootObject::destroyConfigurationObject()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\RootObject.cpp_v  $
+ * 
+ *    Rev 1.1   17 Jul 2014 17:56:30   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  909
+ * SCR Title:  Object Selector replacing Result Picker and Output Selector SVO-72, 40, 130
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Removed namespaces and code review changes
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   17 Mar 2014 15:10:24   bwalter
  * Project:  SVObserver

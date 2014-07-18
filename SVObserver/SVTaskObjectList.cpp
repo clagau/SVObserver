@@ -5,8 +5,8 @@
 //* .Module Name     : SVTaskObjectList
 //* .File Name       : $Workfile:   SVTaskObjectList.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.6  $
-//* .Check In Date   : $Date:   15 May 2014 13:10:52  $
+//* .Current Version : $Revision:   1.7  $
+//* .Check In Date   : $Date:   17 Jul 2014 20:39:34  $
 //******************************************************************************
 
 // @WARNING:  This filename (SVTaskObjectList) does not match the class name (SVTaskObjectListClass).
@@ -50,7 +50,7 @@ SVTaskObjectListClass::~SVTaskObjectListClass()
 }
 #pragma endregion
 
-HRESULT SVTaskObjectListClass::GetOutputList( SVOutputInfoListClass& p_rOutputInfoList )
+HRESULT SVTaskObjectListClass::GetOutputList( SVOutputInfoListClass& p_rOutputInfoList ) const
 {
 	HRESULT l_Status( SVTaskObjectClass::GetOutputList( p_rOutputInfoList ) );
 
@@ -1483,6 +1483,16 @@ HRESULT SVTaskObjectListClass::onCollectOverlays(SVImageClass *p_Image, SVExtent
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVTaskObjectList.cpp_v  $
+ * 
+ *    Rev 1.7   17 Jul 2014 20:39:34   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  909
+ * SCR Title:  Object Selector replacing Result Picker and Output Selector SVO-72, 40, 130
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Made GetOutputlist const
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.6   15 May 2014 13:10:52   tbair
  * Project:  SVObserver

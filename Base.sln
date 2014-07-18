@@ -72,6 +72,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SVConfigurationLibrary", "S
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PropTree", "PropertyTree\PropTree.vcxproj", "{10F35B35-05F0-472D-B72E-304CAAAD305A}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SVOResource", "SVOResource\SVOResource.vcxproj", "{C3BC831E-730C-421E-8475-408B0A536082}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -468,6 +470,22 @@ Global
 		{10F35B35-05F0-472D-B72E-304CAAAD305A}.Unicode Release|Win32.Build.0 = Release|Win32
 		{10F35B35-05F0-472D-B72E-304CAAAD305A}.Unicode Release|x64.ActiveCfg = Release|x64
 		{10F35B35-05F0-472D-B72E-304CAAAD305A}.Unicode Release|x64.Build.0 = Release|x64
+		{C3BC831E-730C-421E-8475-408B0A536082}.Debug|Win32.ActiveCfg = Debug|Win32
+		{C3BC831E-730C-421E-8475-408B0A536082}.Debug|Win32.Build.0 = Debug|Win32
+		{C3BC831E-730C-421E-8475-408B0A536082}.Debug|x64.ActiveCfg = Debug|x64
+		{C3BC831E-730C-421E-8475-408B0A536082}.Debug|x64.Build.0 = Debug|x64
+		{C3BC831E-730C-421E-8475-408B0A536082}.Release|Win32.ActiveCfg = Release|Win32
+		{C3BC831E-730C-421E-8475-408B0A536082}.Release|Win32.Build.0 = Release|Win32
+		{C3BC831E-730C-421E-8475-408B0A536082}.Release|x64.ActiveCfg = Release|x64
+		{C3BC831E-730C-421E-8475-408B0A536082}.Release|x64.Build.0 = Release|x64
+		{C3BC831E-730C-421E-8475-408B0A536082}.Unicode Debug|Win32.ActiveCfg = Debug|Win32
+		{C3BC831E-730C-421E-8475-408B0A536082}.Unicode Debug|Win32.Build.0 = Debug|Win32
+		{C3BC831E-730C-421E-8475-408B0A536082}.Unicode Debug|x64.ActiveCfg = Debug|x64
+		{C3BC831E-730C-421E-8475-408B0A536082}.Unicode Debug|x64.Build.0 = Debug|x64
+		{C3BC831E-730C-421E-8475-408B0A536082}.Unicode Release|Win32.ActiveCfg = Release|Win32
+		{C3BC831E-730C-421E-8475-408B0A536082}.Unicode Release|Win32.Build.0 = Release|Win32
+		{C3BC831E-730C-421E-8475-408B0A536082}.Unicode Release|x64.ActiveCfg = Release|x64
+		{C3BC831E-730C-421E-8475-408B0A536082}.Unicode Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

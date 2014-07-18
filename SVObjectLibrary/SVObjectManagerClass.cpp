@@ -5,8 +5,8 @@
 //* .Module Name     : SVObjectManager
 //* .File Name       : $Workfile:   SVObjectManagerClass.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.3  $
-//* .Check In Date   : $Date:   02 Jun 2014 06:40:24  $
+//* .Current Version : $Revision:   1.4  $
+//* .Check In Date   : $Date:   17 Jul 2014 15:18:06  $
 //******************************************************************************
 
 #pragma region Includes
@@ -17,7 +17,6 @@
 #include "SVSystemLibrary/SVAutoLockAndReleaseTemplate.h"
 
 #include "SVClassRegisterListClass.h"
-#include "SVObjectClass.h"
 #include "SVObjectLibrary.h"
 #include "SVObjectSubmitCommandFacade.h"
 #include "SVObserverConnectData.h"
@@ -175,7 +174,7 @@ void SVObjectManagerClass::Translation(SVString& Name)
 	SVObjectNameInfo NameInfo;
 	SVObjectNameInfo::ParseObjectName( NameInfo, Name );
 	SVObjectNameInfo::SVNameDeque::iterator NameIter;
-	for(NameIter = NameInfo.m_NameArray.begin(); NameIter != NameInfo.m_NameArray.end(); NameIter++)
+	for(NameIter = NameInfo.m_NameArray.begin(); NameIter != NameInfo.m_NameArray.end(); ++NameIter)
 	{
 		TranslateMap::const_iterator TranslationIter;
 		TranslationIter =  m_TranslationMap.find( *NameIter );
@@ -401,15 +400,23 @@ HRESULT SVObjectManagerClass::GetObjectByDottedName( const SVString& rFullName, 
 					}
 				}
 			}
-			//Remove top name as this was only needed to get the child Root object
-			NameInfo.RemoveTopName();
-			SVObjectClass* l_pObject = NULL;
-
-			Result = pChildRootObject->GetChildObject( l_pObject, NameInfo);
-
-			if( l_pObject != NULL )
+			SVObjectClass* pObject = NULL;
+			//Only child root object
+			if( 1 == NameInfo.m_NameArray.size() )
 			{
-				rReference = SVObjectReference( l_pObject, NameInfo );
+				pObject = pChildRootObject;
+			}
+			else
+			{
+				//Remove top name as this was only needed to get the child Root object
+				NameInfo.RemoveTopName();
+
+				Result = pChildRootObject->GetChildObject( pObject, NameInfo );
+			}
+
+			if( pObject != NULL )
+			{
+				rReference = SVObjectReference( pObject, NameInfo );
 			}
 			else
 			{
@@ -549,7 +556,7 @@ BOOL SVObjectManagerClass::ChangeUniqueObjectID( SVObjectClass* PObject, const S
 	return FALSE;
 }
 
-SVObjectClass* SVObjectManagerClass::GetObject( const SVGUID& RGuid )
+SVObjectClass* SVObjectManagerClass::GetObject( const SVGUID& RGuid ) const
 {
 	SVObjectClass* pObject = NULL;
 	SVAutoLockAndReleaseTemplate< SVCriticalSection > l_AutoLock;
@@ -744,7 +751,7 @@ HRESULT SVObjectManagerClass::GetObserverSubject( const SVString& rSubjectDataNa
 	return l_Status;
 }
 
-HRESULT SVObjectManagerClass::GetObserverIds( const SVString& rSubjectDataName, const SVGUID& rSubjectID, SVObserverIdSet& rObserverIds )
+HRESULT SVObjectManagerClass::GetObserverIds( const SVString& rSubjectDataName, const SVGUID& rSubjectID, GuidSet& rObserverIds )
 {
 	rObserverIds.clear();
 
@@ -1437,6 +1444,70 @@ long SVObjectManagerClass::GetFileSequenceNumber() const
 	return m_FileSequenceNumber;
 }
 
+HRESULT SVObjectManagerClass::getTreeList(const SVString& rPath, SVObjectReferenceVector& rObjectList, UINT AttributesAllowedFilter) const
+{
+	HRESULT Result = S_OK;
+	GuidSet GuidObjectList;
+
+	SVObjectClass* pStartObject = nullptr;
+	GetObjectByDottedName(rPath, pStartObject);
+
+	SVString InternalPath = pStartObject->GetCompleteObjectName();
+	if( nullptr != pStartObject )
+	{
+		if( (pStartObject->ObjectAttributesAllowed() & AttributesAllowedFilter) == AttributesAllowedFilter )
+		{
+			GuidObjectList.insert(pStartObject->GetUniqueObjectID());
+		}
+
+		SVUniqueObjectEntryStructPtr pUniqueObjectEntry;
+
+		SVAutoLockAndReleaseTemplate< SVCriticalSection > l_AutoLock;
+
+		BOOL l_Status = true;
+
+		if( m_State == ReadWrite )
+		{
+			l_Status = l_AutoLock.Assign( &m_Lock );
+		}
+
+		if( l_Status )
+		{
+			SVUniqueObjectEntryMap::const_iterator Iter( m_UniqueObjectEntries.begin() );
+
+			while( Iter != m_UniqueObjectEntries.end() )
+			{
+				pUniqueObjectEntry = Iter->second ;
+
+				if( !pUniqueObjectEntry.empty() &&  NULL != pUniqueObjectEntry->PObject )
+				{
+					if( (pUniqueObjectEntry->PObject->ObjectAttributesAllowed() & AttributesAllowedFilter) == AttributesAllowedFilter )
+					{
+						//Check if owner is in list
+						SVString ObjectPath = pUniqueObjectEntry->PObject->GetCompleteObjectName();
+						SVString::size_type Pos = ObjectPath.find( InternalPath.c_str() );
+						if( SVString::npos != Pos )
+						{
+							GuidObjectList.insert(pUniqueObjectEntry->PObject->GetUniqueObjectID());
+						}
+					}
+				}
+				++Iter;
+			}
+		}
+	}
+
+	GuidSet::iterator Iter(GuidObjectList.begin());
+	while( Iter != GuidObjectList.end() )
+	{
+		SVObjectReference ObjectRef( GetObject(*Iter) );
+		rObjectList.push_back( ObjectRef );
+		++Iter;
+	}
+
+	return Result;
+}
+
 SVObjectManagerClass::SVCookieEntryStructPtr SVObjectManagerClass::GetCookieEntry( long p_Cookie ) const
 {
 	SVCookieEntryStructPtr l_CookieEntryPtr;
@@ -1852,6 +1923,18 @@ HRESULT SVObjectManagerClass::GetObservers( const SVString& rSubjectDataName, co
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObjectLibrary\SVObjectManagerClass.cpp_v  $
+ * 
+ *    Rev 1.4   17 Jul 2014 15:18:06   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  909
+ * SCR Title:  Object Selector replacing Result Picker and Output Selector SVO-72, 40, 130
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Added getTreeList method
+ * Coding guidline changes
+ * Methods changed: getTreeList, GetObject, Translation, GetObserverIds, GetObjectByDottedName
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   02 Jun 2014 06:40:24   gramseier
  * Project:  SVObserver

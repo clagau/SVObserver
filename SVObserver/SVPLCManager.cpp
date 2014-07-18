@@ -5,8 +5,8 @@
 //* .Module Name     : SVPLCManager
 //* .File Name       : $Workfile:   SVPLCManager.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   04 Feb 2014 15:43:36  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   17 Jul 2014 20:04:58  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -90,7 +90,7 @@ HRESULT SVPLCManager::DestroyPLC( CString p_strPLCName )
 HRESULT SVPLCManager::GetStateFunction( DWORD* p_pdwState )
 {
 	HRESULT l_hr = -3140;
-	if( Seidenader::SVObserver::GlobalRCGetState( p_pdwState ))
+	if( GlobalRCGetState( p_pdwState ))
 	{
 		l_hr = S_OK;
 	}
@@ -271,6 +271,16 @@ HRESULT SVPLCManager::GetDefaultPLCAddress( CString& p_rstrAddress )
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVPLCManager.cpp_v  $
+ * 
+ *    Rev 1.3   17 Jul 2014 20:04:58   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  909
+ * SCR Title:  Object Selector replacing Result Picker and Output Selector SVO-72, 40, 130
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Removed namespaces and code review changes
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   04 Feb 2014 15:43:36   bwalter
  * Project:  SVObserver

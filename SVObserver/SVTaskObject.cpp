@@ -5,8 +5,8 @@
 //* .Module Name     : SVTaskObject
 //* .File Name       : $Workfile:   SVTaskObject.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.6  $
-//* .Check In Date   : $Date:   26 Jun 2014 18:25:22  $
+//* .Current Version : $Revision:   1.7  $
+//* .Check In Date   : $Date:   17 Jul 2014 20:39:34  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -114,7 +114,7 @@ BOOL SVTaskObjectClass::ReInit()
 	return FALSE;
 }
 
-HRESULT SVTaskObjectClass::GetOutputList( SVOutputInfoListClass& p_rOutputInfoList )
+HRESULT SVTaskObjectClass::GetOutputList( SVOutputInfoListClass& p_rOutputInfoList ) const
 {
 	HRESULT l_Status( S_OK );
 
@@ -122,7 +122,7 @@ HRESULT SVTaskObjectClass::GetOutputList( SVOutputInfoListClass& p_rOutputInfoLi
 	{
 		for (int i = 0; i < friendList.GetSize(); ++ i)
 		{
-			SVObjectInfoStruct& rFriend = friendList[ i ];
+			const SVObjectInfoStruct& rFriend = friendList[ i ];
 
 			// Check if Friend is alive...
 			SVTaskObjectClass* l_pObject( NULL );
@@ -2670,6 +2670,16 @@ HRESULT SVTaskObjectClass::ResetObjectInputs()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVTaskObject.cpp_v  $
+ * 
+ *    Rev 1.7   17 Jul 2014 20:39:34   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  909
+ * SCR Title:  Object Selector replacing Result Picker and Output Selector SVO-72, 40, 130
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Made GetOutputlist const
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.6   26 Jun 2014 18:25:22   mziegler
  * Project:  SVObserver

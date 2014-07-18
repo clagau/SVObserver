@@ -5,12 +5,11 @@
 //* .Module Name     : SVTreeAdapter
 //* .File Name       : $Workfile:   SVTreeAdapter.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   25 Apr 2013 18:49:56  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   17 Jul 2014 16:54:28  $
 //******************************************************************************
 
-#ifndef SVTREEADAPTER_H
-#define SVTREEADAPTER_H
+#pragma once
 
 // Add $(ProgramFiles)\TCL_5.3.0 to include directories as part of VS Options for sequential_tree.h
 #include <sequential_tree.h>
@@ -19,8 +18,8 @@
 #include <algorithm>
 #include <functional>
 
-#include "SVTreeLibrary/SVTreeIterator.h"
-#include "SVTreeLibrary/SVTreeLibraryEnums.h"
+#include "SVTreeIterator.h"
+#include "SVTreeLibraryEnums.h"
 
 /**
 @SVObjectName Tree Adapter
@@ -41,6 +40,10 @@ public:
 	typedef typename SVTreeContainer::const_iterator SVTree_const_iterator;
 	typedef typename SVTreeContainer::pre_order_iterator SVTree_pre_order_iterator;
 	typedef typename SVTreeContainer::const_pre_order_iterator SVTree_const_pre_order_iterator;
+	typedef typename SVTreeContainer::post_order_iterator SVTree_post_order_iterator;
+	typedef typename SVTreeContainer::const_post_order_iterator SVTree_const_post_order_iterator;
+	typedef typename SVTreeContainer::level_order_iterator SVTree_level_order_iterator;
+	typedef typename SVTreeContainer::const_level_order_iterator SVTree_const_level_order_iterator;
 	typedef SVTreeIterator<ElementKey, ElementType, InvalidKey> sv_tree_iterator;
 	typedef SVTreeConstIterator<ElementKey, ElementType, InvalidKey> sv_tree_const_iterator;
 	typedef SVTreeContainer::container_type ChildContainer;
@@ -79,10 +82,22 @@ public:
 	void swap(SVTreeContainer &);
 
 	sv_tree_iterator begin();
-	sv_tree_iterator end();
-
 	sv_tree_const_iterator begin() const;
+	SVTree_pre_order_iterator pre_order_begin();
+	SVTree_const_pre_order_iterator pre_order_begin() const;
+	SVTree_post_order_iterator post_order_begin();
+	SVTree_const_post_order_iterator post_order_begin() const;
+	SVTree_level_order_iterator level_order_begin();
+	SVTree_const_level_order_iterator level_order_begin() const;
+
+	sv_tree_iterator end();
 	sv_tree_const_iterator end() const;
+	SVTree_pre_order_iterator pre_order_end();
+	SVTree_const_pre_order_iterator pre_order_end() const;
+	SVTree_post_order_iterator post_order_end();
+	SVTree_const_post_order_iterator post_order_end() const;
+	SVTree_level_order_iterator level_order_end();
+	SVTree_const_level_order_iterator level_order_end() const;
 
 	sv_tree_iterator erase(sv_tree_iterator& it);
 
@@ -117,15 +132,23 @@ protected:
 
 };
 
-#include "SVTreeLibrary/SVTreeAdapter.inl"
-
-#endif // #ifndef SVTREEADAPTER_H
+#include "SVTreeAdapter.inl"
 
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVTreeLibrary\SVTreeAdapter.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVTreeLibrary\SVTreeAdapter.h_v  $
+ * 
+ *    Rev 1.1   17 Jul 2014 16:54:28   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  909
+ * SCR Title:  Object Selector replacing Result Picker and Output Selector SVO-72, 40, 130
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Added post and level iterators and const iterators
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   25 Apr 2013 18:49:56   bWalter
  * Project:  SVObserver

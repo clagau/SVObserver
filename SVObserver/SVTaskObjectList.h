@@ -5,8 +5,8 @@
 //* .Module Name     : SVTaskObjectList
 //* .File Name       : $Workfile:   SVTaskObjectList.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.4  $
-//* .Check In Date   : $Date:   15 May 2014 13:10:52  $
+//* .Current Version : $Revision:   1.5  $
+//* .Check In Date   : $Date:   17 Jul 2014 20:39:32  $
 //******************************************************************************
 
 #ifndef SVTASKOBJECTLIST_H
@@ -29,7 +29,7 @@ public:
 	SVTaskObjectListClass( BOOL BCreateDefaultTaskList = FALSE, SVObjectClass* POwner = NULL, int StringResourceID = IDS_CLASSNAME_SVTASKOBJECTLIST );
 	virtual ~SVTaskObjectListClass();
 
-	virtual HRESULT GetOutputList( SVOutputInfoListClass& p_rOutputInfoList );
+	virtual HRESULT GetOutputList( SVOutputInfoListClass& p_rOutputInfoList ) const;
 
 	void AppendInputObjects();
 	void RemoveOutputObject( SVOutObjectInfoStruct* pOutObject );
@@ -138,6 +138,16 @@ protected:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVTaskObjectList.h_v  $
+ * 
+ *    Rev 1.5   17 Jul 2014 20:39:32   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  909
+ * SCR Title:  Object Selector replacing Result Picker and Output Selector SVO-72, 40, 130
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Made GetOutputlist const
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.4   15 May 2014 13:10:52   tbair
  * Project:  SVObserver

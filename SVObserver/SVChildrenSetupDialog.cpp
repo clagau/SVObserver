@@ -5,82 +5,79 @@
 //* .Module Name     : SVChildrenSetupDialog
 //* .File Name       : $Workfile:   SVChildrenSetupDialog.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.3  $
-//* .Check In Date   : $Date:   15 May 2014 11:10:26  $
+//* .Current Version : $Revision:   1.4  $
+//* .Check In Date   : $Date:   17 Jul 2014 18:22:00  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVChildrenSetupDialog.h"
 #include "SVClassInfoStruct.h"
 #include "SVTaskObjectList.h"
-#include "SVDlgResultPicker.h"
 #include "SVInspectionProcess.h"
 #include "SVIPDoc.h"
 #include "SVShowDependentsDialog.h"
 #include "SVSetupDialogManager.h"
+#include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
+#pragma endregion Includes
+
+#pragma region Declarations
+using namespace Seidenader::ObjectSelectorLibrary;
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
+#pragma endregion Declarations
 
 SVChildrenSetupDialogClass::SVChildrenSetupDialogClass(CWnd* pParent /*=NULL*/)
 : CDialog(SVChildrenSetupDialogClass::IDD, pParent)
+, m_pAvailableChildrenList( nullptr )
+, m_pParentObject( nullptr )
+, m_pParentOwner( nullptr )
+, m_AllowMultipleChildrenInstances( FALSE )
 {
 	//{{AFX_DATA_INIT(SVChildrenSetupDialogClass)
 	//}}AFX_DATA_INIT
-
-	PAvailableChildrenList = NULL;
-	PParentObject		   = NULL;
-	pParentOwner		   = NULL;
-	BAllowMultipleChildrenInstances = FALSE;
 }
 
 void SVChildrenSetupDialogClass::redrawLists()
 {
-	if( PAvailableChildrenList && PParentObject )
+	if( m_pAvailableChildrenList && m_pParentObject )
 	{
-		ChildrenListCtrl.Rebuild();
+		m_ChildrenListCtrl.Rebuild();
 
-		AvailableChildrenListCtrl.DeleteAllItems();
-		for( int i = 0; i < PAvailableChildrenList->GetSize(); ++ i )
+		m_AvailableChildrenListCtrl.DeleteAllItems();
+		for( int i = 0; i < m_pAvailableChildrenList->GetSize(); ++i )
 		{
-			SVClassInfoStruct& rChildrenInfo = PAvailableChildrenList->ElementAt( i );
+			SVClassInfoStruct& rChildrenInfo = m_pAvailableChildrenList->ElementAt( i );
 
 			// Make simple name comparison...
 			LVFINDINFO findInfo;
 			findInfo.flags = LVFI_STRING;
 			findInfo.psz   = rChildrenInfo.ClassName;
-			if( BAllowMultipleChildrenInstances || ChildrenListCtrl.FindItem( &findInfo ) < 0 )
-				AvailableChildrenListCtrl.SetItemData( AvailableChildrenListCtrl.InsertItem( 0, rChildrenInfo.ClassName ), static_cast<DWORD_PTR>(i) );
+			if( m_AllowMultipleChildrenInstances || m_ChildrenListCtrl.FindItem( &findInfo ) < 0 )
+			{
+				m_AvailableChildrenListCtrl.SetItemData( m_AvailableChildrenListCtrl.InsertItem( 0, rChildrenInfo.ClassName ), static_cast<DWORD_PTR>(i) );
+			}
 		}
 
-
-		CWnd* pWnd = NULL;
-		if( pWnd = GetDlgItem( IDC_PUBLISH_BUTTON ) )
-			pWnd->EnableWindow( FALSE );
-
-		if( pWnd = GetDlgItem( IDC_SETUP_BUTTON ) )
-			pWnd->EnableWindow( FALSE );
-
-		if( pWnd = GetDlgItem( IDC_ADD_BUTTON ) )
-			pWnd->EnableWindow( FALSE );
-
-		if( pWnd = GetDlgItem( IDC_REMOVE_BUTTON ) )
-			pWnd->EnableWindow( FALSE );
+		GetAndEnableWindow( this, IDC_PUBLISH_BUTTON, FALSE );
+		GetAndEnableWindow( this, IDC_SETUP_BUTTON, FALSE );
+		GetAndEnableWindow( this, IDC_ADD_BUTTON, FALSE );
+		GetAndEnableWindow( this, IDC_REMOVE_BUTTON, FALSE );
 
 		UpdateData( FALSE ); // set data to dialog
 	}
 }
 
-
 void SVChildrenSetupDialogClass::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(SVChildrenSetupDialogClass)
-	DDX_Control(pDX, IDC_CHILDREN_LIST, ChildrenListCtrl);
-	DDX_Control(pDX, IDC_AVAILABLE_CHILDREN_LIST, AvailableChildrenListCtrl);
+	DDX_Control(pDX, IDC_CHILDREN_LIST, m_ChildrenListCtrl);
+	DDX_Control(pDX, IDC_AVAILABLE_CHILDREN_LIST, m_AvailableChildrenListCtrl);
 	//}}AFX_DATA_MAP
 }
 
@@ -103,91 +100,94 @@ END_MESSAGE_MAP()
 // Message Handler
 //******************************************************************************
 
-BOOL SVChildrenSetupDialogClass::OnInitDialog() 
+BOOL SVChildrenSetupDialogClass::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 	
-	if( PAvailableChildrenList && PParentObject && ( pParentOwner = PParentObject->GetOwner() ) )
+	if( m_pAvailableChildrenList && m_pParentObject && ( m_pParentOwner = m_pParentObject->GetOwner() ) )
 	{
 		// Setup available list...
-		AvailableChildrenListCtrl.ModifyStyle( 0, LVS_REPORT );
+		m_AvailableChildrenListCtrl.ModifyStyle( 0, LVS_REPORT );
 		// Set column witdh...
 		CRect rect;
-		AvailableChildrenListCtrl.GetClientRect( &rect );
-		AvailableChildrenListCtrl.InsertColumn( 0, _T( "" ), LVCFMT_LEFT, rect.Width(), -1 );
-
+		m_AvailableChildrenListCtrl.GetClientRect( &rect );
+		m_AvailableChildrenListCtrl.InsertColumn( 0, _T( "" ), LVCFMT_LEFT, rect.Width(), -1 );
 
 		// Setup children list...
-		ChildrenListCtrl.ModifyStyle( 0, LVS_REPORT );
+		m_ChildrenListCtrl.ModifyStyle( 0, LVS_REPORT );
 		// Set column witdh...
-		ChildrenListCtrl.GetClientRect( &rect );
-		ChildrenListCtrl.InsertColumn( 0, _T( "" ), LVCFMT_LEFT, rect.Width(), -1 );
+		m_ChildrenListCtrl.GetClientRect( &rect );
+		m_ChildrenListCtrl.InsertColumn( 0, _T( "" ), LVCFMT_LEFT, rect.Width(), -1 );
 		// Populate...
-		ChildrenListCtrl.SetTaskObjectList( PParentObject );
+		m_ChildrenListCtrl.SetTaskObjectList( m_pParentObject );
 
-		if( ! StrTitle.IsEmpty() )
-			SetWindowText( StrTitle );
+		if( !StrTitle.IsEmpty() ) { SetWindowText( StrTitle ); }
 
-		// Refresh...		
+		// Refresh...
 		redrawLists();
 	}
 	else
+	{
 		// Not valid call...
 		SendMessage( WM_CLOSE );
-	
+	}
+
 	return TRUE;  // return TRUE unless you set the focus to a control
 	              // EXCEPTION: OCX-Eigenschaftenseiten sollten FALSE zurückgeben
 }
 
-void SVChildrenSetupDialogClass::OnAddButton() 
+void SVChildrenSetupDialogClass::OnAddButton()
 {
 	CWaitCursor l_cwcMouse;
 
-	if( PAvailableChildrenList && PParentObject )
+	if( m_pAvailableChildrenList && m_pParentObject )
 	{
 		int item = -1;
 		int listIndex;
 		// Get all selected items...
-		while( ( item = AvailableChildrenListCtrl.GetNextItem( item, LVNI_ALL | LVNI_SELECTED ) ) >= 0 )
+		while( ( item = m_AvailableChildrenListCtrl.GetNextItem( item, LVNI_ALL | LVNI_SELECTED ) ) >= 0 )
 		{
-			listIndex = ( int ) AvailableChildrenListCtrl.GetItemData( item );
-			if( listIndex >= 0 && listIndex < PAvailableChildrenList->GetSize() )
+			listIndex = static_cast< int >( m_AvailableChildrenListCtrl.GetItemData( item ) );
+			if( listIndex >= 0 && listIndex < m_pAvailableChildrenList->GetSize() )
 			{
 				// It´s a valid index ...
 
-				SVClassInfoStruct& rChildrenInfo = PAvailableChildrenList->ElementAt( listIndex );
+				SVClassInfoStruct& rChildrenInfo = m_pAvailableChildrenList->ElementAt( listIndex );
 				// Construct Children...
-				SVTaskObjectClass* pObject = ( SVTaskObjectClass* ) rChildrenInfo.Construct();
+				SVTaskObjectClass* pObject = static_cast< SVTaskObjectClass* >( rChildrenInfo.Construct() );
 				if( SV_IS_KIND_OF( pObject, SVTaskObjectClass ) )
 				{
 					// Add children to parent...
-					PParentObject->Add( pObject );
+					m_pParentObject->Add( pObject );
 
 					// Ensure this Object's inputs get connected
 					::SVSendMessage( pObject, SVM_CONNECT_ALL_INPUTS, NULL, NULL );
 
 					// And finally try to create the child object...
-					if( ::SVSendMessage( PParentObject, SVM_CREATE_CHILD_OBJECT, reinterpret_cast<DWORD_PTR>(pObject), SVMFSetDefaultInputs | SVMFResetInspection ) != SVMR_SUCCESS )
+					if( ::SVSendMessage( m_pParentObject, SVM_CREATE_CHILD_OBJECT, reinterpret_cast<DWORD_PTR>(pObject), SVMFSetDefaultInputs | SVMFResetInspection ) != SVMR_SUCCESS )
 					{
 						CString strMessage;
-						AfxFormatString1( strMessage, IDS_CRITICAL_CREATION_OF_FAILED, pObject->GetName() ); 
+						AfxFormatString1( strMessage, IDS_CRITICAL_CREATION_OF_FAILED, pObject->GetName() );
 						AfxMessageBox( strMessage );
-						
+
 						// Remove it from the Tool TaskObjectList ( Destruct it )
 						GUID objectID = pObject->GetUniqueObjectID();
 						if( objectID != SVInvalidGUID )
-							PParentObject->Delete( objectID );
+						{
+							m_pParentObject->Delete( objectID );
+						}
 						else
+						{
 							delete pObject;
+						}
 
-						pObject = NULL;
+						pObject = nullptr;
 						continue;
 					}
 				}
 				else
 				{
-					if( pObject )
-						delete pObject;
+					if( pObject != nullptr ) { delete pObject; }
 				}
 			}
 		}
@@ -197,16 +197,16 @@ void SVChildrenSetupDialogClass::OnAddButton()
 	}
 }
 
-void SVChildrenSetupDialogClass::OnRemoveButton() 
+void SVChildrenSetupDialogClass::OnRemoveButton()
 {
-	if( PAvailableChildrenList && PParentObject )
+	if( m_pAvailableChildrenList && m_pParentObject )
 	{
 		int item = -1;
 		SVTaskObjectClass* pTaskObject;
 		// Get all selected items...
-		while( ( item = ChildrenListCtrl.GetNextItem( item, LVNI_ALL | LVNI_SELECTED ) ) >= 0 )
+		while( ( item = m_ChildrenListCtrl.GetNextItem( item, LVNI_ALL | LVNI_SELECTED ) ) >= 0 )
 		{
-			pTaskObject = ( SVTaskObjectClass* ) ChildrenListCtrl.GetItemData( item );
+			pTaskObject = reinterpret_cast< SVTaskObjectClass* >( m_ChildrenListCtrl.GetItemData( item ) );
 			if( SV_IS_KIND_OF( pTaskObject, SVTaskObjectClass ) )
 			{
 				int rc = checkOkToDelete( pTaskObject );
@@ -214,7 +214,7 @@ void SVChildrenSetupDialogClass::OnRemoveButton()
 				if( rc )
 				{
 					// Close, Disconnect and Delete Children...
-					::SVSendMessage( PParentObject, SVM_DESTROY_CHILD_OBJECT, reinterpret_cast<DWORD_PTR>(pTaskObject), SVMFSetDefaultInputs | SVMFResetInspection );
+					::SVSendMessage( m_pParentObject, SVM_DESTROY_CHILD_OBJECT, reinterpret_cast<DWORD_PTR>(pTaskObject), SVMFSetDefaultInputs | SVMFResetInspection );
 				}
 			}
 		}
@@ -224,32 +224,31 @@ void SVChildrenSetupDialogClass::OnRemoveButton()
 	}
 }
 
-void SVChildrenSetupDialogClass::OnCancel() 
+void SVChildrenSetupDialogClass::OnCancel()
 {
 	CDialog::OnCancel();
 }
 
-void SVChildrenSetupDialogClass::OnOK() 
+void SVChildrenSetupDialogClass::OnOK()
 {
-    ASSERT(PDocument);
-    if(PDocument)
-    {
-        PDocument->SetModifiedFlag();   // Mark document as changed.
-    }
+	ASSERT(m_pDocument);
+	if(m_pDocument)
+	{
+		m_pDocument->SetModifiedFlag();   // Mark document as changed.
+	}
 
 	CDialog::OnOK();
 }
 
-void SVChildrenSetupDialogClass::OnSetupButton() 
+void SVChildrenSetupDialogClass::OnSetupButton()
 {
-	if( PAvailableChildrenList && PParentObject )
+	if( m_pAvailableChildrenList && m_pParentObject )
 	{
 		int item = -1;
-		SVObjectClass* pObject;
 		// Get all selected items...
-		while( ( item = ChildrenListCtrl.GetNextItem( item, LVNI_ALL | LVNI_SELECTED ) ) >= 0 )
+		while( ( item = m_ChildrenListCtrl.GetNextItem( item, LVNI_ALL | LVNI_SELECTED ) ) >= 0 )
 		{
-			pObject = ( SVObjectClass* ) ChildrenListCtrl.GetItemData( item );
+			SVObjectClass* pObject = reinterpret_cast< SVObjectClass* >( m_ChildrenListCtrl.GetItemData( item ) );
 			if( SV_IS_KIND_OF( pObject, SVObjectClass ) )
 			{
 				SVSetupDialogManager::Instance().SetupDialog( pObject->GetClassID(), pObject->GetUniqueObjectID(), this );
@@ -261,45 +260,50 @@ void SVChildrenSetupDialogClass::OnSetupButton()
 	}
 }
 
-void SVChildrenSetupDialogClass::OnPublishButton() 
+void SVChildrenSetupDialogClass::OnPublishButton()
 {
-	SVDlgResultPicker   dlg;
+	if( nullptr == m_pParentObject || nullptr == m_pParentOwner ) { return; }
 
-    CString  publishedResultString;
+	ObjectTreeGenerator::Instance().setSelectorType( ObjectTreeGenerator::SelectorTypeEnum::TypeSetAttributes );
+	ObjectTreeGenerator::Instance().setAttributeFilters( SV_PUBLISHABLE );
+	ObjectTreeGenerator::Instance().setLocationFilter( ObjectTreeGenerator::FilterInput, m_pParentOwner->GetCompleteObjectName(), SVString( _T("") ) );
 
-    dlg.PTaskObjectList = PParentObject;
-    dlg.uAttributesDesired = SV_PUBLISHABLE;
+	SVOutputInfoListClass OutputList;
+	m_pParentObject->GetOutputList( OutputList );
+	ObjectTreeGenerator::Instance().insertOutputList( OutputList );
 
-    publishedResultString.LoadString ( IDS_PUBLISHABLE_RESULTS );
-    dlg.SetCaptionTitle (publishedResultString);
+	CString PublishableResults;
+	PublishableResults.LoadString( IDS_PUBLISHABLE_RESULTS );
+	SVString Title;
+	SVString ToolName( m_pParentOwner->GetName() );
+	Title.Format(_T("%s - %s"), PublishableResults , ToolName.c_str() );
+	SVString TabTitle = PublishableResults;
+	INT_PTR Result = ObjectTreeGenerator::Instance().showDialog( Title, TabTitle, this );
 
-    INT_PTR rc = dlg.DoModal ();
-	if( rc == IDOK )
+	if( IDOK == Result )
 	{
 		// refresh the publish list
-		if( PDocument )
+		if( m_pDocument )
 		{
-			PDocument->RefreshPublishedList();
+			m_pDocument->RefreshPublishedList();
 		}
 	}
 }
 
-void SVChildrenSetupDialogClass::OnItemChangedChildrenList(NMHDR* pNMHDR, LRESULT* pResult) 
+void SVChildrenSetupDialogClass::OnItemChangedChildrenList(NMHDR* pNMHDR, LRESULT* pResult)
 {
-	NM_LISTVIEW* pNMListView = (NM_LISTVIEW*)pNMHDR;
-
-	CWnd* pWnd = NULL;
+	NM_LISTVIEW* pNMListView = reinterpret_cast< NM_LISTVIEW* >( pNMHDR );
 
 	//
 	// Check for a selection count and if selection is not the
 	// 'Empty' string.
 	//
-	int nSelectedCount = ChildrenListCtrl.GetSelectedCount();
-	int nItemCount = ChildrenListCtrl.GetItemCount();
+	UINT nSelectedCount = m_ChildrenListCtrl.GetSelectedCount();
+	int nItemCount = m_ChildrenListCtrl.GetItemCount();
 	BOOL bValidSelection = FALSE;
 	if(nItemCount > 0)
 	{
-	   bValidSelection = ChildrenListCtrl.IsValidSelection(0);
+		bValidSelection = m_ChildrenListCtrl.IsValidSelection(0);
 	}
 
 	if( (nSelectedCount == 0) ||
@@ -307,53 +311,34 @@ void SVChildrenSetupDialogClass::OnItemChangedChildrenList(NMHDR* pNMHDR, LRESUL
 		!bValidSelection ) )
 	{
 		//
-		// Disable the appropriate buttons.
+		// Disable the inappropriate buttons.
 		//
-		if( pWnd = GetDlgItem( IDC_PUBLISH_BUTTON ) )
-			pWnd->EnableWindow( FALSE );
-
-		if( pWnd = GetDlgItem( IDC_SETUP_BUTTON ) )
-			pWnd->EnableWindow( FALSE );
-
-		if( pWnd = GetDlgItem( IDC_REMOVE_BUTTON ) )
-			pWnd->EnableWindow( FALSE );
+		GetAndEnableWindow( this, IDC_PUBLISH_BUTTON, FALSE );
+		GetAndEnableWindow( this, IDC_SETUP_BUTTON, FALSE );
+		GetAndEnableWindow( this, IDC_REMOVE_BUTTON, FALSE );
 	}
 	else
 	{
 		//
 		// Enable the appropriate buttons.
 		//
-		if( pWnd = GetDlgItem( IDC_PUBLISH_BUTTON ) )
-			pWnd->EnableWindow( TRUE );
-
-		if( pWnd = GetDlgItem( IDC_SETUP_BUTTON ) )
-			pWnd->EnableWindow( TRUE );
-
-		if( pWnd = GetDlgItem( IDC_REMOVE_BUTTON ) )
-			pWnd->EnableWindow( TRUE );
+		GetAndEnableWindow( this, IDC_PUBLISH_BUTTON );
+		GetAndEnableWindow( this, IDC_SETUP_BUTTON );
+		GetAndEnableWindow( this, IDC_REMOVE_BUTTON );
 	}
-	
+
 	UpdateData( FALSE ); // set data to dialog
 
 	*pResult = 0;
 }
 
-void SVChildrenSetupDialogClass::OnItemChangedAvailableChildrenList(NMHDR* pNMHDR, LRESULT* pResult) 
+void SVChildrenSetupDialogClass::OnItemChangedAvailableChildrenList(NMHDR* pNMHDR, LRESULT* pResult)
 {
-	NM_LISTVIEW* pNMListView = (NM_LISTVIEW*)pNMHDR;
+	NM_LISTVIEW* pNMListView = reinterpret_cast< NM_LISTVIEW* >( pNMHDR );
 
-	CWnd* pWnd = NULL;
-	if( AvailableChildrenListCtrl.GetSelectedCount() )
-	{
-		if( pWnd = GetDlgItem( IDC_ADD_BUTTON ) )
-			pWnd->EnableWindow( TRUE );
-	}
-	else
-	{
-		if( pWnd = GetDlgItem( IDC_ADD_BUTTON ) )
-			pWnd->EnableWindow( FALSE );
-	}
-	
+	BOOL enable = m_AvailableChildrenListCtrl.GetSelectedCount();
+	GetAndEnableWindow( this, IDC_ADD_BUTTON, enable );
+
 	UpdateData( FALSE ); // set data to dialog
 
 	*pResult = 0;
@@ -362,15 +347,14 @@ void SVChildrenSetupDialogClass::OnItemChangedAvailableChildrenList(NMHDR* pNMHD
 BOOL SVChildrenSetupDialogClass::checkOkToDelete( SVTaskObjectClass* pTaskObject )
 {
 	BOOL bRetVal = TRUE;
-	
+
 	// show dependents dialog
 	SVShowDependentsDialog dlg;
 	dlg.PTaskObject = pTaskObject;
-		
+
 	INT_PTR rc = dlg.DoModal();
 
-	if( rc == IDCANCEL )
-		bRetVal = FALSE;
+	if( IDCANCEL == rc ) { bRetVal = FALSE; }
 
 	return bRetVal;
 }
@@ -380,6 +364,18 @@ BOOL SVChildrenSetupDialogClass::checkOkToDelete( SVTaskObjectClass* pTaskObject
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVChildrenSetupDialog.cpp_v  $
+ * 
+ *    Rev 1.4   17 Jul 2014 18:22:00   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  909
+ * SCR Title:  Object Selector replacing Result Picker and Output Selector SVO-72, 40, 130
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Replace ResultPicker Dialog with Object Selector Dialog
+ * Code review changes
+ * Methods changed: OnPublishButton
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   15 May 2014 11:10:26   sjones
  * Project:  SVObserver

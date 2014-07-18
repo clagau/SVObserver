@@ -5,12 +5,11 @@
 //* .Module Name     : SVFormulaEditorPageClass
 //* .File Name       : $Workfile:   SVFormulaEditorPage.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   14 Jan 2014 12:19:12  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   17 Jul 2014 19:02:38  $
 //******************************************************************************
 
-#ifndef SVFORMULAEDITORPAGE_H
-#define SVFORMULAEDITORPAGE_H
+#pragma once
 
 #include "SVObjectLibrary/SVInputInfoListClass.h"
 #include "SVToolBar.h"
@@ -28,7 +27,7 @@ class SVFormulaEditorPageClass : public CPropertyPage
 {
 // Construction
 public:
-	SVFormulaEditorPageClass( Seidenader::SVObserver::IFormulaController& rController, bool isDisableCheckboxesVisible = false, UINT captionID = IDS_FORMULA_STRING, UINT disableExtentionID = IDS_TOOL_STRING );   // standard constructor
+	SVFormulaEditorPageClass( IFormulaController& rController, bool isDisableCheckboxesVisible = false, UINT captionID = IDS_FORMULA_STRING, UINT disableExtentionID = IDS_TOOL_STRING );   // standard constructor
 
 	bool validateAndSetEquation();
 
@@ -36,10 +35,8 @@ public:
 	//{{AFX_DATA(SVFormulaEditorPageClass)
 	enum { IDD = IDD_FORMULA_DIALOG };
 	CEdit	m_ConstantEditCtrl;
-	CButton	m_AddPPQVariableCtrl;
 	CButton	m_AddLocalVariableCtrl;
 	CButton	m_AddConstantCtrl;
-	CComboBox	m_PPQVariableComboCtrl;
 	CEdit	m_MathRichEditCtrl;
 	CString	m_StrConstantValue;
 	int		m_constantType;
@@ -83,11 +80,9 @@ protected:
 	// Generated message map functions
 	//{{AFX_MSG(SVFormulaEditorPageClass)
 	virtual void OnOK();
-	afx_msg void OnAddPPQVariableButton();
 	afx_msg void OnAddLocalVariableButton();
 	afx_msg void OnAddConstantButton();
 	virtual BOOL OnInitDialog();
-	afx_msg void OnDropdownPpqVariableCombo();
 	afx_msg void OnLocalVariableSelect();
 	afx_msg void OnDisable();
 	afx_msg void OnEquationFieldChanged();
@@ -107,9 +102,8 @@ protected:
 	SVToolBarClass m_statisticsOperatorBar;
 
 private:
-	Seidenader::SVObserver::IFormulaController& m_rFormulaController;
+	IFormulaController& m_rFormulaController;
 	int m_numChars;
-	int m_ppqComboExtent;
 	bool m_isConditionalPage;
 	UINT m_disableExtentionID;
 	CBitmap m_downArrowBitmap;
@@ -118,13 +112,22 @@ private:
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
 
-#endif
-
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVFormulaEditorPage.h_v  $
+ * 
+ *    Rev 1.3   17 Jul 2014 19:02:38   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  909
+ * SCR Title:  Object Selector replacing Result Picker and Output Selector SVO-72, 40, 130
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Removed m_AddPPQVariableCtrl, m_PPQVariableComboCtrl, m_ppqComboExtent, OnAddPPQVariableButton, OnDropdownPPQVariable
+ * Code review changes
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   14 Jan 2014 12:19:12   bwalter
  * Project:  SVObserver

@@ -5,12 +5,11 @@
 //* .Module Name     : SVToolAdjustmentDialogSheetClass
 //* .File Name       : $Workfile:   SVToolAdjustmentDialogSheetClass.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   14 Jan 2014 12:31:16  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   17 Jul 2014 20:51:52  $
 //******************************************************************************
 
-#ifndef SVTOOLADJUSTMENTDIALOGSHEETCLASS_H
-#define SVTOOLADJUSTMENTDIALOGSHEETCLASS_H
+#pragma once
 
 #include "IFormulaController.h"
 #include "FormulaController.h"
@@ -71,20 +70,28 @@ private:
 
 	SVIPDoc* m_pIPDoc;
 	SVToolClass& m_rTool;
-	Seidenader::SVObserver::FormulaController m_formulaController;
-	Seidenader::SVObserver::ConditionalController m_conditionalController;
+	FormulaController m_formulaController;
+	ConditionalController m_conditionalController;
 };
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif //_SVTOOLADJUSTMENTDIALOGSHEETCLASS_H
 
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVToolAdjustmentDialogSheetClass.h_v  $
+ * 
+ *    Rev 1.2   17 Jul 2014 20:51:52   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  909
+ * SCR Title:  Object Selector replacing Result Picker and Output Selector SVO-72, 40, 130
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Removed namespaces and code review changes
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   14 Jan 2014 12:31:16   bwalter
  * Project:  SVObserver

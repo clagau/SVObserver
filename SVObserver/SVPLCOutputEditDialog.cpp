@@ -5,8 +5,8 @@
 //* .Module Name     : SVPLCOutputEditDialog
 //* .File Name       : $Workfile:   SVPLCOutputEditDialog.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.4  $
-//* .Check In Date   : $Date:   30 Oct 2013 11:00:30  $
+//* .Current Version : $Revision:   1.5  $
+//* .Check In Date   : $Date:   17 Jul 2014 20:04:58  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -14,7 +14,6 @@
 #include "SVObserver.h"
 #include "SVConfigurationObject.h"
 #include "SVPLCOutputEditDialog.h"
-#include "SVToolsetOutputSelectionDialog.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVInspectionProcess.h"
 #include "SVToolSet.h"
@@ -289,6 +288,16 @@ BOOL SVPLCOutputEditDialog::PreTranslateMessage(MSG* pMsg)
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVPLCOutputEditDialog.cpp_v  $
+ * 
+ *    Rev 1.5   17 Jul 2014 20:04:58   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  909
+ * SCR Title:  Object Selector replacing Result Picker and Output Selector SVO-72, 40, 130
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Removed namespaces and code review changes
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.4   30 Oct 2013 11:00:30   tbair
  * Project:  SVObserver

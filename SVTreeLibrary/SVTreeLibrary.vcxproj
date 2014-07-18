@@ -142,6 +142,8 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="ObjectTreeItems.cpp" />
+    <ClCompile Include="ObjectSelectorItem.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -150,6 +152,9 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="IObjectSelectorItem.h" />
+    <ClInclude Include="ObjectTreeItems.h" />
+    <ClInclude Include="ObjectSelectorItem.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="SVCompareKeys.h" />
     <ClInclude Include="SVTree.h" />

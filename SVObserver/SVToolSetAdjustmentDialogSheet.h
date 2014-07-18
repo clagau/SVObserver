@@ -5,52 +5,18 @@
 //* .Module Name     : SVToolSetAdjustmentDialogSheet
 //* .File Name       : $Workfile:   SVToolSetAdjustmentDialogSheet.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   14 Jan 2014 12:33:20  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   17 Jul 2014 20:51:52  $
 //******************************************************************************
 
-//******************************************************************************
-//* INCLUDE CONTROL:
-//******************************************************************************
+#pragma once
 
-#ifndef SVTOOLSETADJUSTMENTDIALOGSHEET_H
-#define SVTOOLSETADJUSTMENTDIALOGSHEET_H
-
-
-//******************************************************************************
-//* INCLUDE(S):
-//******************************************************************************
-
-//{{AFX_INCLUDES()
-//}}AFX_INCLUDES
-
+#pragma region Includes
 #include "SVConditional.h"
 #include "ConditionalController.h"
 #include "SVFormulaEditorPage.h"
+#pragma endregion Includes
 
-
-//******************************************************************************
-//* FUNCTION DECLARATION(S):
-//******************************************************************************
-
-
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : Class SVToolSetAdjustmentDialogSheetClass
-// -----------------------------------------------------------------------------
-// .Description :  
-//              :
-//              :
-// -----------------------------------------------------------------------------
-// .Export
-//	 Public Method				Description
-//  :
-//  :
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :dd.mm.yyyy				First Implementation
-//	:
-////////////////////////////////////////////////////////////////////////////////
 class SVToolSetAdjustmentDialogSheetClass : public CPropertySheet
 {
 
@@ -124,7 +90,7 @@ protected:
 //******************************************************************************
 private:
 	SVFormulaEditorPageClass m_formulaPage;
-	Seidenader::SVObserver::ConditionalController m_conditionalController;
+	ConditionalController m_conditionalController;
 	SVToolSetClass* m_pToolSet;
 };
 
@@ -134,15 +100,20 @@ private:
 ////////////////////////////////////////////////////////////////////////////////
 
 //******************************************************************************
-//* INCLUDE CONTROL:
-//******************************************************************************
-#endif	//	SVTOOLSETADJUSTMENTDIALOGSHEET_H
-
-//******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVToolSetAdjustmentDialogSheet.h_v  $
+ * 
+ *    Rev 1.2   17 Jul 2014 20:51:52   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  909
+ * SCR Title:  Object Selector replacing Result Picker and Output Selector SVO-72, 40, 130
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Removed namespaces and code review changes
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   14 Jan 2014 12:33:20   bwalter
  * Project:  SVObserver

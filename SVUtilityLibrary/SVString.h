@@ -5,17 +5,19 @@
 //* .Module Name     : SVString
 //* .File Name       : $Workfile:   SVString.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   30 Oct 2013 15:46:08  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   17 Jul 2014 17:17:18  $
 //******************************************************************************
 
-#ifndef SVSTRING_H
-#define SVSTRING_H
-
+#pragma once
+#pragma region Includes
 #include <string>
 #include <tchar.h>
 #include <comdef.h>
 #include <vector>
+#include <map>
+#include <set>
+#pragma endregion Includes
 
 /**
 @SVObjectName String
@@ -190,14 +192,24 @@ bool operator==( LPCTSTR psz1, const SVString& str2 );
 bool operator!=( LPCTSTR psz1, const SVString& str2 );
 
 typedef std::vector< SVString > SVStringArray;
-
-#endif // SVSTRING_H
+typedef std::set< SVString > SVStringSet;
+typedef std::map< SVString, SVString > TranslateMap;
 
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVUtilityLibrary\SVString.h_v  $
+ * 
+ *    Rev 1.2   17 Jul 2014 17:17:18   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  909
+ * SCR Title:  Object Selector replacing Result Picker and Output Selector SVO-72, 40, 130
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Added Typedef definitions
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   30 Oct 2013 15:46:08   bwalter
  * Project:  SVObserver

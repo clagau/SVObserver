@@ -5,17 +5,13 @@
 //* .Module Name     : SVToolAdjustmentDialogSheetClass
 //* .File Name       : $Workfile:   SVToolAdjustmentDialogSheetClass.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.6  $
-//* .Check In Date   : $Date:   15 May 2014 14:36:10  $
+//* .Current Version : $Revision:   1.7  $
+//* .Check In Date   : $Date:   17 Jul 2014 20:51:50  $
 //******************************************************************************
 
-////////////////////////////////////////////////////////////////////////////////
-// General Include File(s)
-////////////////////////////////////////////////////////////////////////////////
-
+#pragma region Includes
 #include "stdafx.h"
 #include "SVToolAdjustmentDialogSheetClass.h"
-
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "ISVPropertyPageDialog.h"
 #include "SVCylindricalWarpDlg.h"
@@ -53,13 +49,15 @@
 #include "SVTADlgTranslationShiftPage.h"
 #include "FormulaController.h"
 #include "ConditionalController.h"
-using namespace Seidenader::SVObserver;
+#pragma endregion Includes
 
+#pragma region Declarations
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
+#pragma endregion Declarations
 
 IMPLEMENT_DYNAMIC(SVToolAdjustmentDialogSheetClass, CPropertySheet)
 
@@ -418,7 +416,6 @@ SVIPDoc* SVToolAdjustmentDialogSheetClass::GetIPDoc() const
 
 SVToolClass* SVToolAdjustmentDialogSheetClass::GetTool() const
 {
-	// BRW - Is it safe to return address of m_rTool here?  Why not just return m_rTool?
 	return &m_rTool;
 }
 
@@ -427,6 +424,16 @@ SVToolClass* SVToolAdjustmentDialogSheetClass::GetTool() const
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVToolAdjustmentDialogSheetClass.cpp_v  $
+ * 
+ *    Rev 1.7   17 Jul 2014 20:51:50   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  909
+ * SCR Title:  Object Selector replacing Result Picker and Output Selector SVO-72, 40, 130
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Removed namespaces and code review changes
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.6   15 May 2014 14:36:10   sjones
  * Project:  SVObserver

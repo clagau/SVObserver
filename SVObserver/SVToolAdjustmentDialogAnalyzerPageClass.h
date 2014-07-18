@@ -5,8 +5,8 @@
 //* .Module Name     : SVToolAdjustmentDialogAnalyzerPageClass
 //* .File Name       : $Workfile:   SVToolAdjustmentDialogAnalyzerPageClass.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   26 Jun 2014 18:29:24  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   17 Jul 2014 20:58:12  $
 //******************************************************************************
 
 //******************************************************************************
@@ -78,7 +78,7 @@ protected:
 	//******************************************************************************
 public:
 	// Standard constructor
-	SVToolAdjustmentDialogAnalyzerPageClass( SVToolAdjustmentDialogSheetClass* Parent );
+	SVToolAdjustmentDialogAnalyzerPageClass( SVToolAdjustmentDialogSheetClass* pParent );
 
 	//******************************************************************************
 	// Destructor(s):
@@ -130,9 +130,9 @@ public:
 	SVErrorClass    msvError;
 
 protected:
-	SVToolAdjustmentDialogSheetClass*	pParentDialog;
-	SVToolClass*                    pTool;
-	SVAnalyzerClass*				pCurrentAnalyzer;
+	SVToolAdjustmentDialogSheetClass*	m_pParentDialog;
+	SVToolClass*                    m_pTool;
+	SVAnalyzerClass*				m_pCurrentAnalyzer;
 
 	SVClassInfoStructListClass availableAnalyzers;
 
@@ -150,6 +150,16 @@ protected:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVToolAdjustmentDialogAnalyzerPageClass.h_v  $
+ * 
+ *    Rev 1.3   17 Jul 2014 20:58:12   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  909
+ * SCR Title:  Object Selector replacing Result Picker and Output Selector SVO-72, 40, 130
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Code review changes
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   26 Jun 2014 18:29:24   mziegler
  * Project:  SVObserver

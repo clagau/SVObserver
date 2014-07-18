@@ -5,8 +5,8 @@
 //* .Module Name     : SVExternalToolResultPage
 //* .File Name       : $Workfile:   SVExternalToolResultPage.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 10:32:48  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   17 Jul 2014 18:51:30  $
 //******************************************************************************
 // SVExternalToolResultPage.cpp : implementation file
 //
@@ -223,11 +223,8 @@ void SVExternalToolResultPage::OnItemButtonClick(NMHDR* pNotifyStruct, LRESULT* 
 // display VO picker dialog and return selection
 int SVExternalToolResultPage::SelectObject(int iIndex)
 {
-	//CString sObjectName = _T("");
 
 	SVVariantResultClass* pResult = dynamic_cast< SVVariantResultClass*>(m_pTask->GetResultRangeObject(iIndex)) ;
-
-	//SVToolsetOutputSelectionDialog dlg;
 
 	if( pResult )
 	{
@@ -317,7 +314,17 @@ int SVExternalToolResultPage::GetItemIndex(SVRPropertyItem* pItem)
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVExternalToolResultPage.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVExternalToolResultPage.cpp_v  $
+ * 
+ *    Rev 1.1   17 Jul 2014 18:51:30   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  909
+ * SCR Title:  Object Selector replacing Result Picker and Output Selector SVO-72, 40, 130
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Code review changes
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 10:32:48   bWalter
  * Project:  SVObserver

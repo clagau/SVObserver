@@ -5,8 +5,8 @@
 //* .Module Name     : SVIPDoc
 //* .File Name       : $Workfile:   SVIPDoc.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.20  $
-//* .Check In Date   : $Date:   26 Jun 2014 17:45:10  $
+//* .Current Version : $Revision:   1.21  $
+//* .Check In Date   : $Date:   17 Jul 2014 19:21:28  $
 //******************************************************************************
 
 #pragma region Includes
@@ -20,10 +20,9 @@
 #include "SVUtilityLibrary/SVGUID.h"
 
 #include "SVAngularProfileTool.h"
-#include "SVArchiveTool.h"                // 27 May 1999 - frb.
+#include "SVArchiveTool.h"
 #include "SVColorTool.h"
 #include "SVConditional.h"
-#include "SVDlgResultPicker.h"
 #include "SVDlgImagePicker.h"
 #include "SVFileNameManagerClass.h"
 #include "SVGageTool.h"
@@ -32,7 +31,7 @@
 #include "SVImageViewScroll.h"
 #include "SVImageView.h"
 #include "SVImageProcessingClass.h"
-#include "SVIPChildFrm.h"                // 16 Jun 1999 - frb.
+#include "SVIPChildFrm.h"
 #include "SVLightReferenceDialog.h"
 #include "SVLutDlg.h"
 #include "SVMainFrm.h"
@@ -40,9 +39,9 @@
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVObjectScriptParser.h"
 #include "SVObserver.h"
-#include "SVPolarTransformationTool.h"  // RO_27Feb2000
+#include "SVPolarTransformationTool.h"
 #include "SVPQVariableSelectionDialog.h"
-#include "SVTransformationTool.h"		// 08 Feb 2000 - SEJ
+#include "SVTransformationTool.h"
 #include "SVToolAdjustmentDialogSheetClass.h"
 #include "SVToolAcquisition.h"
 #include "SVToolBuildReference.h"
@@ -56,7 +55,7 @@
 #include "SVToolImage.h"
 #include "SVSaveToolSetImageDialog.h"
 #include "SVShowDependentsDialog.h"
-#include "SVStatTool.h"					  // 05 Octobter 1999 - SEJ.
+#include "SVStatTool.h"
 #include "SVUtilities.h"
 #include "SVWindowTool.h"
 #include "SVCylindricalWarpTool.h"
@@ -88,11 +87,16 @@
 #include "SVCommandInspectionRunOnce.h"
 #include "SVGuiExtentUpdater.h"
 #include "SVShiftTool.h"
+#include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
 #pragma endregion Includes
 
 #pragma region Declarations
+using namespace Seidenader::ObjectSelectorLibrary;
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
 #endif
 
 union SVViewUnion
@@ -1735,22 +1739,26 @@ void SVIPDoc::Dump(CDumpContext& dc) const
 void SVIPDoc::OnResultsPicker()
 {
 	SVInspectionProcess* l_pInspection( GetInspectionProcess() );
+	if( NULL == l_pInspection ) { return; }
+	
+	SVString InspectionName( l_pInspection->GetName() );
 
-	if( l_pInspection == NULL ) { return; }
+	ObjectTreeGenerator::Instance().setSelectorType( ObjectTreeGenerator::SelectorTypeEnum::TypeSetAttributes );
+	ObjectTreeGenerator::Instance().setAttributeFilters( SV_VIEWABLE );
+	ObjectTreeGenerator::Instance().setLocationFilter( ObjectTreeGenerator::FilterInput, InspectionName, SVString( _T("") ) );
 
-	SVDlgResultPicker dlg;
-	dlg.PTaskObjectList = GetToolSet();
-	dlg.uAttributesDesired = SV_VIEWABLE;
+	SVOutputInfoListClass OutputList;
+	GetToolSet()->GetOutputList( OutputList );
+	ObjectTreeGenerator::Instance().insertOutputList( OutputList );
 
-	CString ResultString;
-	ResultString.LoadString ( IDS_RESULT_PICKER );
-	CString inspectionName = l_pInspection->GetName();
-	CString title;
-	title.Format(_T("%s - %s"), ResultString, inspectionName);
-	dlg.SetCaptionTitle(title);
+	CString ResultPicker;
+	ResultPicker.LoadString ( IDS_RESULT_PICKER );
+	SVString Title;
+	Title.Format(_T("%s - %s"), ResultPicker , InspectionName.c_str() );
+	SVString TabTitle = ResultPicker;
+	INT_PTR Result = ObjectTreeGenerator::Instance().showDialog( Title, TabTitle );
 
-	INT_PTR dlgResult = dlg.DoModal();
-	if( dlgResult == IDOK )	
+	if( IDOK == Result )
 	{
 		// Set the Document as modified
 		SetModifiedFlag();
@@ -1764,36 +1772,39 @@ void SVIPDoc::OnResultsPicker()
 void SVIPDoc::OnPublishedResultsPicker()
 {
 	SVInspectionProcess* l_pInspection( GetInspectionProcess() );
+	if( NULL == l_pInspection ) { return; }
 
-	if( l_pInspection == NULL ) { return; }
+	SVString InspectionName( l_pInspection->GetName() );
 
-	SVDlgResultPicker dlg;
-	CString publishedResultString;
+	ObjectTreeGenerator::Instance().setSelectorType( ObjectTreeGenerator::SelectorTypeEnum::TypeSetAttributes );
+	ObjectTreeGenerator::Instance().setAttributeFilters( SV_PUBLISHABLE );
+	ObjectTreeGenerator::Instance().setLocationFilter( ObjectTreeGenerator::FilterInput, InspectionName, SVString( _T("") ) );
 
-	dlg.PTaskObjectList = GetToolSet();
-	dlg.uAttributesDesired = SV_PUBLISHABLE;
+	SVOutputInfoListClass OutputList;
+	GetToolSet()->GetOutputList( OutputList );
+	ObjectTreeGenerator::Instance().insertOutputList( OutputList );
 
-	publishedResultString.LoadString ( IDS_PUBLISHABLE_RESULTS );
-	CString inspectionName = l_pInspection->GetName();
-	CString title;
-	title.Format(_T("%s - %s"), publishedResultString, inspectionName);
-	dlg.SetCaptionTitle(title);
+	CString PublishableResults;
+	PublishableResults.LoadString ( IDS_PUBLISHABLE_RESULTS );
+	SVString Title;
+	Title.Format(_T("%s - %s"), PublishableResults , InspectionName.c_str() );
+	SVString TabTitle = PublishableResults; 
+	INT_PTR Result = ObjectTreeGenerator::Instance().showDialog( Title, TabTitle );
 
-	INT_PTR dlgResult = dlg.DoModal();
-	if( dlgResult == IDOK )
+	if( IDOK == Result )
 	{
 		l_pInspection->GetPublishList().Refresh( GetToolSet() );
 
+		// Set the Document as modified
 		SetModifiedFlag();
 
-		// *** // ***
 		long lSize;
 		long l;
 		SVPPQObject *pPPQ;
 
 		SVConfigurationObject* pConfig = nullptr;
 		SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
-		if (pConfig)
+		if ( nullptr != pConfig )
 		{
 			pConfig->ValidateRemoteMonitorList();
 
@@ -1810,8 +1821,7 @@ void SVIPDoc::OnPublishedResultsPicker()
 			}
 		}// end for
 		TheSVObserverApp.GetIODoc()->UpdateAllViews( NULL );
-		// *** // ***
-	}// end if
+	}
 }
 
 void SVIPDoc::OnPublishedResultImagesPicker()
@@ -4401,6 +4411,18 @@ int SVIPDoc::GetToolToInsertBefore(const CString& name, int listIndex) const
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVIPDoc.cpp_v  $
+ * 
+ *    Rev 1.21   17 Jul 2014 19:21:28   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  909
+ * SCR Title:  Object Selector replacing Result Picker and Output Selector SVO-72, 40, 130
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Replace ResultPicker Dialog with Object Selector Dialog
+ * Removed namespaces and code review changes
+ * Changed methods: OnResultsPicker, OnPublishedResultsPicker
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.20   26 Jun 2014 17:45:10   mziegler
  * Project:  SVObserver

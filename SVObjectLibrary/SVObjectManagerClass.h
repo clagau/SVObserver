@@ -5,8 +5,8 @@
 //* .Module Name     : SVObjectManagerClass
 //* .File Name       : $Workfile:   SVObjectManagerClass.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.3  $
-//* .Check In Date   : $Date:   02 Jun 2014 06:40:22  $
+//* .Current Version : $Revision:   1.4  $
+//* .Check In Date   : $Date:   17 Jul 2014 15:14:02  $
 //******************************************************************************
 
 #ifndef SVOBJECTMANAGERCLASS_H
@@ -22,6 +22,7 @@
 #include "SVUtilityLibrary/SVSharedPtr.h"
 #include "SVObjectReference.h"
 #include "SVObserverNotificationFunctor.h"
+#include "SVObjectClass.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -54,9 +55,8 @@ public:
 	};
 	typedef std::map< RootChildObjectEnum, SVGUID > RootEnumChildMap;
 	typedef std::map< SVString, SVGUID > RootNameChildMap;
-	typedef std::map< SVString, SVString > TranslateMap;
 
-	typedef std::set< SVGUID > SVObserverIdSet;
+	typedef std::set< SVGUID > GuidSet;
 	typedef std::deque< SVString > SVSubjectDataNameDeque;
 
 	static SVObjectManagerClass& Instance();
@@ -103,8 +103,7 @@ public:
 	BOOL CloseUniqueObjectID( SVObjectClass* PObject );
 	BOOL ChangeUniqueObjectID( SVObjectClass* PObject, const SVGUID& RNewGuid );
 
-	SVObjectClass* GetObject( const SVGUID& RGuid );
-	//SVObjectClass* GetObject( LPCTSTR tszName );
+	SVObjectClass* GetObject( const SVGUID& RGuid ) const;
 	SVObjectClass* GetObjectCompleteName( LPCTSTR tszName );
 	SVObjectReference GetObjectReference( const CString& strName );
 
@@ -129,7 +128,7 @@ public:
 	HRESULT GetObserverSubject( const SVString& rSubjectDataName, const SVGUID& rObserverID, GUID& rSubjectID ) const;
 	HRESULT GetObserverSubject( const SVString& rSubjectDataName, long p_Cookie, GUID& rSubjectID ) const;
 
-	HRESULT GetObserverIds( const SVString& rSubjectDataName, const SVGUID& rSubjectID, SVObserverIdSet& rObserverIds );
+	HRESULT GetObserverIds( const SVString& rSubjectDataName, const SVGUID& rSubjectID, GuidSet& rObserverIds );
 
 	HRESULT AttachObserver( const SVString& rSubjectDataName, const SVGUID& rSubjectID, const SVGUID& rObserverID );
 	HRESULT AttachObserver( const SVString& rSubjectDataName, const SVGUID& rSubjectID, const SVGUID& rObserverID, const SVMaterials& rAttributes );
@@ -194,6 +193,8 @@ public:
 	long GetNextFrameRate( long p_LastFrameRate );
 
 	long GetFileSequenceNumber() const;
+
+	HRESULT getTreeList(const SVString& rPath, SVObjectReferenceVector& rObjectList, UINT AttributesAllowedFilter) const;
 
 	bool m_bIsColorSVIM;
 
@@ -314,6 +315,18 @@ private:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObjectLibrary\SVObjectManagerClass.h_v  $
+ * 
+ *    Rev 1.4   17 Jul 2014 15:14:02   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  909
+ * SCR Title:  Object Selector replacing Result Picker and Output Selector SVO-72, 40, 130
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Added getTreeList method
+ * Coding guidline changes
+ * 
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   02 Jun 2014 06:40:22   gramseier
  * Project:  SVObserver

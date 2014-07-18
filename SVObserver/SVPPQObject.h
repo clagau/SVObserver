@@ -5,8 +5,8 @@
 //* .Module Name     : SVPPQObject
 //* .File Name       : $Workfile:   SVPPQObject.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.17  $
-//* .Check In Date   : $Date:   03 Jul 2014 16:34:20  $
+//* .Current Version : $Revision:   1.18  $
+//* .Check In Date   : $Date:   17 Jul 2014 20:13:42  $
 //******************************************************************************
 
 #pragma once
@@ -32,8 +32,8 @@
 #pragma endregion Includes
 
 #pragma region Declarations
-const TCHAR			PpqLength[]						= _T("Length");
-const long			StandardPpqLength				= 2;
+const TCHAR	PpqLength[]			= _T("Length");
+const long	StandardPpqLength	= 2;
 
 class SVInspectionProcess;
 #pragma endregion Declarations
@@ -415,7 +415,7 @@ private:
 
 	void SetRejectConditionList(const SVMonitorItemList& rRejectCondList);
 
-	Seidenader::SVObserver::BasicValueObjects	m_PpqValues;
+	BasicValueObjects	m_PpqValues;
 
 	SVPPQOutputModeEnum m_oOutputMode;
 	long				m_lOutputDelay;
@@ -437,6 +437,16 @@ typedef SVVector< SVPPQObject* > SVPPQObjectArray;
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVPPQObject.h_v  $
+ * 
+ *    Rev 1.18   17 Jul 2014 20:13:42   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  909
+ * SCR Title:  Object Selector replacing Result Picker and Output Selector SVO-72, 40, 130
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Removed namespaces and code review changes
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.17   03 Jul 2014 16:34:20   sjones
  * Project:  SVObserver

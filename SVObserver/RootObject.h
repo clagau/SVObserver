@@ -5,8 +5,8 @@
 //* .Module Name     : RootObject
 //* .File Name       : $Workfile:   RootObject.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   17 Mar 2014 15:10:24  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   17 Jul 2014 17:56:30  $
 //* ----------------------------------------------------------------------------
 //* This class is used to define the root node for the class object manager
 //******************************************************************************
@@ -19,84 +19,88 @@
 #include "SVConfigurationObject.h"
 #pragma endregion Includes
 
-namespace Seidenader
+class RootObject : public SVObjectClass
 {
-	namespace SVObserver
-	{
-		class RootObject : public SVObjectClass
-		{
-		#pragma region Declarations
-			SV_DECLARE_CLASS( RootObject );
-		#pragma endregion Declarations
+#pragma region Declarations
+	SV_DECLARE_CLASS( RootObject );
+#pragma endregion Declarations
 
-		public:
-		#pragma region Constructor
-			/**********
-			 The class constructor
-			 \param ObjectName <in> the name of the object
-			***********/
-			RootObject( LPCSTR ObjectName );
+public:
+#pragma region Constructor
+	/**********
+		The class constructor
+		\param ObjectName <in> the name of the object
+	***********/
+	RootObject( LPCSTR ObjectName );
 
-			/**********
-			 The class constructor
-			 \param pOwner <in> a pointer to the parent object
-			 \param StringResourceID <in> the resource string ID for the name
-			***********/
-			RootObject( SVObjectClass *pOwner = NULL, int StringResourceID = IDS_CLASSNAME_ROOTOBJECT );
+	/**********
+		The class constructor
+		\param pOwner <in> a pointer to the parent object
+		\param StringResourceID <in> the resource string ID for the name
+	***********/
+	RootObject( SVObjectClass *pOwner = NULL, int StringResourceID = IDS_CLASSNAME_ROOTOBJECT );
 
-				/**********
-			 The destructor
-			***********/
-			virtual ~RootObject();
-		#pragma endregion Constructor
+		/**********
+		The destructor
+	***********/
+	virtual ~RootObject();
+#pragma endregion Constructor
 
-		public:
-		#pragma region Public Methods
-			/**********
-			 The method creates the configuration object
-			 \return SOK on success
-			***********/
-			BOOL createConfigurationObject();
+public:
+#pragma region Public Methods
+	/**********
+		The method creates the configuration object
+		\return SOK on success
+	***********/
+	BOOL createConfigurationObject();
 
-			/**********
-			 The method finds the object corresponding to the name
-			 \param rpObject <out> a reference pointer to the object being searched
-			 \param rNameInfo <in> a reference to the name of the object to search for
-			 \param Index <in> the index of the name to search for
-			 \return SOK on success
-			***********/
-			virtual HRESULT GetChildObject( SVObjectClass*& p_rpObject, const SVObjectNameInfo& p_rNameInfo, long p_Index = 0 ) const;
-		#pragma endregion Public Methods
+	/**********
+		The method finds the object corresponding to the name
+		\param rpObject <out> a reference pointer to the object being searched
+		\param rNameInfo <in> a reference to the name of the object to search for
+		\param Index <in> the index of the name to search for
+		\return SOK on success
+	***********/
+	virtual HRESULT GetChildObject( SVObjectClass*& p_rpObject, const SVObjectNameInfo& p_rNameInfo, long p_Index = 0 ) const;
+#pragma endregion Public Methods
 
-		private:
-		#pragma region Private Methods
-			/**********
-			 The method creates the environment object
-			 \return SOK on success
-			***********/
-			BOOL createEnvironmentObject();
+private:
+#pragma region Private Methods
+	/**********
+		The method creates the environment object
+		\return SOK on success
+	***********/
+	BOOL createEnvironmentObject();
 
-			/**********
-			 The method destroys the configuration object
-			 \return SOK on success
-			***********/
-			BOOL destroyConfigurationObject();
-		#pragma endregion Private Methods
+	/**********
+		The method destroys the configuration object
+		\return SOK on success
+	***********/
+	BOOL destroyConfigurationObject();
+#pragma endregion Private Methods
 
-		private:
-		#pragma region Member Variables
-			EnvironmentObject		m_EnvironmentObject;				//The main node environment object
-			SVConfigurationObject	*m_pConfigurationObject;			//The main node configuration pointer object
-		#pragma endregion Member Variables
-		};
-	}
-}
+private:
+#pragma region Member Variables
+	EnvironmentObject		m_EnvironmentObject;				//The main node environment object
+	SVConfigurationObject	*m_pConfigurationObject;			//The main node configuration pointer object
+#pragma endregion Member Variables
+};
 
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\RootObject.h_v  $
+ * 
+ *    Rev 1.1   17 Jul 2014 17:56:30   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  909
+ * SCR Title:  Object Selector replacing Result Picker and Output Selector SVO-72, 40, 130
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Removed namespaces and code review changes
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   17 Mar 2014 15:10:24   bwalter
  * Project:  SVObserver

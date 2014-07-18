@@ -5,8 +5,8 @@
 //* .Module Name     : SVToolAdjustmentDialogMultipleAnalyzerPage
 //* .File Name       : $Workfile:   SVTADlgMultipleAnalyzerPage.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   15 May 2014 12:50:42  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   17 Jul 2014 20:21:28  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -520,17 +520,17 @@ void SVToolAdjustmentDialogMultipleAnalyzerPageClass::OnResultButton()
 
 		// Prepare result adjustment dialog...
 		SVChildrenSetupDialogClass dlg;
-		dlg.PDocument = l_pIPDoc;
-		dlg.BAllowMultipleChildrenInstances = FALSE;
-		dlg.PParentObject					= pCurrentAnalyzer;
-		dlg.PAvailableChildrenList			= &availableResults;
+		dlg.m_pDocument = l_pIPDoc;
+		dlg.m_AllowMultipleChildrenInstances = FALSE;
+		dlg.m_pParentObject					= pCurrentAnalyzer;
+		dlg.m_pAvailableChildrenList		= &availableResults;
 		dlg.StrTitle						= strTitle;
 
 		// Call dialog...
 		dlg.DoModal();
 
 		// Use, if dialog was cancled parsed analyzer pointer...
-		pCurrentAnalyzer = ( SVAnalyzerClass* ) dlg.PParentObject;
+		pCurrentAnalyzer = ( SVAnalyzerClass* ) dlg.m_pParentObject;
 
 		// And now refresh...
 		redrawList();
@@ -583,6 +583,16 @@ void SVToolAdjustmentDialogMultipleAnalyzerPageClass::OnKeyDownMultipleAnalyzerL
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVTADlgMultipleAnalyzerPage.cpp_v  $
+ * 
+ *    Rev 1.3   17 Jul 2014 20:21:28   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  909
+ * SCR Title:  Object Selector replacing Result Picker and Output Selector SVO-72, 40, 130
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Removed namespaces and code review changes
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   15 May 2014 12:50:42   tbair
  * Project:  SVObserver

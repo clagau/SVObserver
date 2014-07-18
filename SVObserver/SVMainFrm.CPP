@@ -5,8 +5,8 @@
 //* .Module Name     : SVMainFrm
 //* .File Name       : $Workfile:   SVMainFrm.CPP  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.9  $
-//* .Check In Date   : $Date:   07 Jul 2014 16:52:08  $
+//* .Current Version : $Revision:   1.10  $
+//* .Check In Date   : $Date:   17 Jul 2014 19:22:30  $
 //******************************************************************************
 
 #pragma region Includes
@@ -44,10 +44,10 @@
 #pragma endregion Includes
 
 #pragma region Declarations
-using namespace Seidenader::SVObserver;
-
 #ifdef _DEBUG
 #define new DEBUG_NEW
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
@@ -948,7 +948,7 @@ void SVMainFrame::OnUpdateStatusInfo( CCmdUI *pCmdUI )
 		{
 			CString l_strMode = _T("Mode: ");
 			unsigned long l_lMode = 0;
-			Seidenader::SVObserver::GlobalRCGetMode( &l_lMode );
+			GlobalRCGetMode( &l_lMode );
 			switch( l_lMode )
 			{
 				case SVIM_MODE_UNKNOWN:
@@ -2018,6 +2018,16 @@ LRESULT SVMainFrame::OnHideIOViewTab( WPARAM p_wParam, LPARAM p_lParam )
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVMainFrm.CPP_v  $
+ * 
+ *    Rev 1.10   17 Jul 2014 19:22:30   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  909
+ * SCR Title:  Object Selector replacing Result Picker and Output Selector SVO-72, 40, 130
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Removed namespaces and code review changes
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.9   07 Jul 2014 16:52:08   gramseier
  * Project:  SVObserver

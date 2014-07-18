@@ -5,8 +5,8 @@
 //* .Module Name     : SVTaskObject
 //* .File Name       : $Workfile:   SVTaskObject.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.4  $
-//* .Check In Date   : $Date:   26 Jun 2014 18:25:22  $
+//* .Current Version : $Revision:   1.5  $
+//* .Check In Date   : $Date:   17 Jul 2014 20:39:34  $
 //******************************************************************************
 
 #ifndef SVTASKOBJECT_H
@@ -82,7 +82,7 @@ public:
 	virtual BOOL CloseObject();
 	virtual void Disconnect();
 	virtual BOOL DisconnectInput(SVInObjectInfoStruct* pInObjectInfo);
-	virtual HRESULT GetOutputList( SVOutputInfoListClass& p_rOutputInfoList );
+	virtual HRESULT GetOutputList( SVOutputInfoListClass& p_rOutputInfoList ) const;
 	virtual HRESULT DisconnectInputsOutputs(SVObjectVector& rListOfObjects);
 	virtual HRESULT HideInputsOutputs(SVObjectVector& rListOfObjects);
 
@@ -247,6 +247,16 @@ private:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVTaskObject.h_v  $
+ * 
+ *    Rev 1.5   17 Jul 2014 20:39:34   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  909
+ * SCR Title:  Object Selector replacing Result Picker and Output Selector SVO-72, 40, 130
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Made GetOutputlist const
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.4   26 Jun 2014 18:25:22   mziegler
  * Project:  SVObserver

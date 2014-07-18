@@ -5,8 +5,8 @@
 //* .Module Name     : Global constants
 //* .File Name       : $Workfile:   GlobalConst.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   02 Jun 2014 06:37:02  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   17 Jul 2014 15:07:54  $
 //* ----------------------------------------------------------------------------
 //* This is the global constant file for the SVObjectLibrary project.
 //******************************************************************************
@@ -22,6 +22,7 @@ namespace Seidenader
 		const TCHAR			FqnConfiguration[]				= _T( "Configuration Object" );
 		const TCHAR			FqnInspections[]				= _T( "Inspections" );
 		const TCHAR			FqnPPQs[]						= _T( "PPQs" );
+		const TCHAR			FqnPPQVariables[]				= _T( "PPQ Variables" );
 		const TCHAR			FqnRemoteInputs[]				= _T( "RemoteInputs" );
 		const TCHAR			FqnCameras[]					= _T( "Cameras" );
 		#pragma endregion Declarations
@@ -33,6 +34,16 @@ namespace Seidenader
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObjectLibrary\GlobalConst.h_v  $
+ * 
+ *    Rev 1.2   17 Jul 2014 15:07:54   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  909
+ * SCR Title:  Object Selector replacing Result Picker and Output Selector SVO-72, 40, 130
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Added fqnPPQVariables name
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   02 Jun 2014 06:37:02   gramseier
  * Project:  SVObserver

@@ -5,27 +5,30 @@
 //* .Module Name     : SVToolAdjustmentDialogStatisticsPageClass
 //* .File Name       : $Workfile:   SVTADlgStatisticsPage.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   15 May 2014 13:13:44  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   17 Jul 2014 20:32:52  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVTADlgStatisticsPage.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
-#include "SVToolsetOutputSelectionDialog.h"
-#include "SVDlgResultPicker.h"
 #include "SVToolSet.h"
 #include "SVStatTool.h"
 #include "SVResult.h"
 #include "SVIPDoc.h"
 #include "SVInspectionProcess.h"
 #include "SVSetupDialogManager.h"
+#include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
+#pragma endregion Includes
+
+#pragma region Declarations
+using namespace Seidenader::ObjectSelectorLibrary;
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
-#undef THIS_FILE
-static char THIS_FILE[] = __FILE__;
 #endif
+#pragma endregion Declarations
 
 ///////////////////////////////////////////////////////////
 // Error Codes used by this program
@@ -287,53 +290,85 @@ void SVToolAdjustmentDialogStatisticsPageClass::OnSetRange()
 //
 void SVToolAdjustmentDialogStatisticsPageClass::OnPublishButton() 
 {
-	SVDlgResultPicker   dlg;
+	if( NULL == m_pTool ) { return; }
 
-    CString  publishedResultString;
+	SVInspectionProcess* pInspection = m_pTool->GetInspection();
+	if( NULL == pInspection ) { return; }
 
-    dlg.PTaskObjectList = m_pTool;
-    dlg.uAttributesDesired = SV_PUBLISHABLE;
+	ObjectTreeGenerator::Instance().setSelectorType( ObjectTreeGenerator::SelectorTypeEnum::TypeSetAttributes );
+	ObjectTreeGenerator::Instance().setAttributeFilters( SV_PUBLISHABLE );
+	ObjectTreeGenerator::Instance().setLocationFilter( ObjectTreeGenerator::FilterInput, pInspection->GetToolSet()->GetCompleteObjectName(), SVString( _T("") ) );
 
-    publishedResultString.LoadString ( IDS_PUBLISHABLE_RESULTS );
-    dlg.SetCaptionTitle (publishedResultString);
+	SVOutputInfoListClass OutputList;
+	m_pTool->GetOutputList( OutputList );
+	ObjectTreeGenerator::Instance().insertOutputList( OutputList );
 
-	if( dlg.DoModal() == IDOK )
+	CString PublishableResults;
+	PublishableResults.LoadString ( IDS_PUBLISHABLE_RESULTS );
+	SVString Title;
+	SVString ToolName( m_pTool->GetName() );
+	Title.Format(_T("%s - %s"), PublishableResults , ToolName.c_str() );
+	SVString TabTitle = PublishableResults; 
+	INT_PTR Result = ObjectTreeGenerator::Instance().showDialog( Title, TabTitle, this );
+
+	if( IDOK == Result )
 	{
-		// refresh the publish list
-		SVInspectionProcess* pInspection = m_pTool->GetInspection();
-		ASSERT( pInspection );
-		if( pInspection )
+
+		SVPublishListClass& PublishList = pInspection->GetPublishList();
+		PublishList.Refresh( static_cast <SVTaskObjectClass*> (pInspection->GetToolSet()) );
+
+		SVIPDoc* l_pIPDoc = SVObjectManagerClass::Instance().GetIPDoc( pInspection->GetUniqueObjectID() );
+
+		if( NULL != l_pIPDoc )
 		{
-			SVPublishListClass& publishList = pInspection->GetPublishList();
-			publishList.Refresh( static_cast <SVTaskObjectClass*> (pInspection->GetToolSet()) );
-
-			SVIPDoc* l_pIPDoc = SVObjectManagerClass::Instance().GetIPDoc( pInspection->GetUniqueObjectID() );
-
-			if( l_pIPDoc != NULL )
-			{
-				l_pIPDoc->SetModifiedFlag();
-			}
+			l_pIPDoc->SetModifiedFlag();
 		}
 	}
-	
 }
 
 void SVToolAdjustmentDialogStatisticsPageClass::OnBtnObjectPicker() 
 {
+	
+	if( NULL == m_pTool || NULL == m_pToolSet ) { return; }
+
+	SVInspectionProcess* pInspection = m_pTool->GetInspection();
+	if( NULL == pInspection ) { return; }
+
 	m_pTool->UpdateTaskObjectOutputListAttributes();
 
-	SVToolsetOutputSelectionDialog dlg;
-	
-	dlg.PTaskObjectList = m_pToolSet;
-	dlg.uAttributesDesired = SV_SELECTABLE_FOR_STATISTICS;
-	dlg.m_bUpdateObjectAttributes = true;
+	SVString InspectionName( pInspection->GetName() );
 
-	if( dlg.DoModal() == IDOK )
+	ObjectTreeGenerator::SelectorTypeEnum SelectorType;
+	SelectorType = static_cast<ObjectTreeGenerator::SelectorTypeEnum> (ObjectTreeGenerator::SelectorTypeEnum::TypeSetAttributes | ObjectTreeGenerator::SelectorTypeEnum::TypeSingleObject);
+	ObjectTreeGenerator::Instance().setSelectorType( SelectorType );
+	ObjectTreeGenerator::Instance().setAttributeFilters( SV_SELECTABLE_FOR_STATISTICS );
+	ObjectTreeGenerator::Instance().setLocationFilter( ObjectTreeGenerator::FilterInput, InspectionName, SVString( _T("") ) );
+
+	SVOutputInfoListClass OutputList;
+	m_pToolSet->GetOutputList( OutputList );
+	ObjectTreeGenerator::Instance().insertOutputList( OutputList );
+
+	CString ToolsetOutput;
+	ToolsetOutput.LoadString ( IDS_SELECT_TOOLSET_OUTPUT );
+	SVString Title;
+	Title.Format(_T("%s - %s"), ToolsetOutput , m_pTool->GetName() );
+	SVString TabTitle = ToolsetOutput; 
+
+	INT_PTR Result = ObjectTreeGenerator::Instance().showDialog( Title, TabTitle, this );
+
+	if( IDOK == Result )
 	{
-		m_strVariableToMonitor = dlg.m_sSelectedOutputName;
-		SVObjectReference refObject = dlg.m_refSelectedObject;
-		m_pTool->SetVariableSelected( refObject.GetCompleteObjectName() );
-		m_strFullNameOfVariable = refObject.GetCompleteObjectName();
+		m_strVariableToMonitor = ObjectTreeGenerator::Instance().getSingleObjectResult().getLocation().c_str();
+
+		SVGUID ResultObjectGuid( ObjectTreeGenerator::Instance().getSingleObjectResult().getItemKey() );
+		SVObjectClass *pResultObject = nullptr;
+		SVObjectManagerClass::Instance().GetObjectByIdentifier( ResultObjectGuid,  pResultObject);
+		if( nullptr != pResultObject )
+		{
+			m_pTool->SetVariableSelected( pResultObject->GetCompleteObjectName() );
+			m_strFullNameOfVariable = pResultObject->GetCompleteObjectName();
+		}
+
 		UpdateData( FALSE );
 	}
 }
@@ -342,6 +377,17 @@ void SVToolAdjustmentDialogStatisticsPageClass::OnBtnObjectPicker()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVTADlgStatisticsPage.cpp_v  $
+ * 
+ *    Rev 1.3   17 Jul 2014 20:32:52   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  909
+ * SCR Title:  Object Selector replacing Result Picker and Output Selector SVO-72, 40, 130
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Replace ResultPicker Dialog with Object Selector Dialog
+ * Changed methods: OnPublishButton
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   15 May 2014 13:13:44   tbair
  * Project:  SVObserver

@@ -5,12 +5,11 @@
 // * .Module Name     : SVOMFCLibraryGlobals
 // * .File Name       : $Workfile:   SVOMFCLibraryGlobals.h  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.1  $
-// * .Check In Date   : $Date:   10 Jun 2014 10:37:46  $
+// * .Current Version : $Revision:   1.2  $
+// * .Check In Date   : $Date:   17 Jul 2014 17:31:08  $
 // ******************************************************************************
 
-#ifndef _SVOMFCLIBRARYGLOBALS_H_
-#define _SVOMFCLIBRARYGLOBALS_H_
+#pragma once
 
 #if _MSC_VER > 1000
 #pragma once
@@ -380,13 +379,51 @@ class SVIncompleteTypePtr
 	T* m_t;
 };
 
-#endif	//#ifndef _SVOMFCLIBRARYGLOBALS_H_
+//******************************************************************************
+// Method:		GetAndEnableWindow
+// Description:	Gets a control from a dialog and enables or disables it.
+// Parameter:	dialog - This should be a pointer the dialog containing the 
+//		control to be enabled or disabled.
+// Parameter:	ctrlId - This should be the identifier for the control.
+// Parameter:	enable - Indicates if the control should be enabled {TRUE, default}
+//		or disabled {FALSE}.
+// Returns:		HRESULT -
+//		S_OK - The control was not previously disabled.
+//		S_FALSE - The control was not previously disabled.
+//		E_FAIL - ctrlId was not found in dialog.
+//******************************************************************************
+inline HRESULT GetAndEnableWindow( CWnd* dialog, const int ctrlId, const BOOL enable = TRUE )
+{
+	HRESULT hr = E_FAIL;
+
+	if ( nullptr != dialog )
+	{
+		CWnd* item = dialog->GetDlgItem( ctrlId );
+		if ( nullptr != item )
+		{
+			BOOL wasDisabled = item->EnableWindow( enable );
+			hr = wasDisabled == FALSE ? S_FALSE : S_OK;
+		}
+	}
+
+	return hr;
+}
 
 // ******************************************************************************
 // * LOG HISTORY:
 // ******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVOMFCLibrary\SVOMFCLibraryGlobals.h_v  $
+ * 
+ *    Rev 1.2   17 Jul 2014 17:31:08   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  884
+ * SCR Title:  Update Source Code Files to Follow New Programming Standards and Guidelines
+ * Checked in by:  bWalter;  Ben Walter
+ * Change Description:  
+ *   Added method GetAndEnableWindow
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   10 Jun 2014 10:37:46   mziegler
  * Project:  SVObserver

@@ -290,9 +290,6 @@
     <ClCompile Include="SVDlgImagePicker.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVDlgResultPicker.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVDLLToolDefinitionStructs.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -1274,9 +1271,6 @@
     <ClCompile Include="SVToolSetListCtrl.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVToolsetOutputSelectionDialog.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVToolSetTabView.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -1938,9 +1932,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVDlgImagePicker.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVDlgResultPicker.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVDLLToolDefinitionStructs.h">
@@ -2982,9 +2973,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVToolSetListCtrl.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVToolsetOutputSelectionDialog.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVToolSetTabView.h">

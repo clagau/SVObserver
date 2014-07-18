@@ -5,8 +5,8 @@
 //* .Module Name     : SVObserver
 //* .File Name       : $Workfile:   SVObserver.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.36  $
-//* .Check In Date   : $Date:   07 Jul 2014 16:53:16  $
+//* .Current Version : $Revision:   1.37  $
+//* .Check In Date   : $Date:   17 Jul 2014 19:38:34  $
 //******************************************************************************
 
 #pragma region Includes
@@ -107,7 +107,6 @@
 #include "SVImportedInspectionInfo.h"
 #include "SVIPDocInfoImporter.h"
 #include "SVVisionProcessorHelper.h"
-#include "SVDlgResultPicker.h"
 #include "RemoteCommand.h"
 #include "SVIOBoardCapabilities.h"
 #include "SVInspectionProcess.h"
@@ -115,10 +114,11 @@
 #include "RootObject.h"
 #include "EnvironmentObject.h"
 #include "SVMonitorList.h"
+#include "SVSystemLibrary\LoadDll.h"
 #pragma endregion Includes
 
 #pragma region Declarations
-using namespace Seidenader::SVObserver;
+using namespace Seidenader::SVSystemLibrary;
 
 #define ID_TRIGGER_SETTINGS 21017
 
@@ -155,6 +155,8 @@ SVObserverApp TheSVObserverApp;
 //******************************************************************************
 #ifdef _DEBUG
 #define new DEBUG_NEW
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
 #endif
 
 class CMdiChildWorkaround : public CMDIChildWnd
@@ -3006,54 +3008,13 @@ void SVObserverApp::OnEditPublishedResults( UINT nID )
 		l_pConfig->GetInspections( l_Inspections );
 		if( uiInspection < l_Inspections.size())
 		{
-			SVInspectionProcess* pInsp = l_Inspections[uiInspection];
-			SVDlgResultPicker dlg;
-			CString publishedResultString;
+			SVIPDoc* pDoc =  SVObjectManagerClass::Instance().GetIPDoc( l_Inspections[uiInspection]->GetUniqueObjectID() );
 
-			dlg.PTaskObjectList = pInsp->GetToolSet();
-			dlg.uAttributesDesired = SV_PUBLISHABLE;
-
-			publishedResultString.LoadString ( IDS_PUBLISHABLE_RESULTS );
-			CString inspectionName = pInsp->GetName();
-			CString title;
-			title.Format(_T("%s - %s"), publishedResultString, inspectionName);
-			dlg.SetCaptionTitle(title);
-
-			INT_PTR dlgResult = dlg.DoModal();
-			if( dlgResult == IDOK )
+			if( NULL != pDoc )
 			{
-				pInsp->GetPublishList().Refresh( pInsp->GetToolSet() );
+				pDoc->OnPublishedResultsPicker();
+			}
 
-				long lSize;
-				long l;
-				SVPPQObject *pPPQ;
-
-				SVConfigurationObject* pConfig = NULL;
-				SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
-
-				SVSVIMStateClass::AddState( SV_STATE_MODIFIED );
-				if (pConfig)
-				{
-					pConfig->ValidateRemoteMonitorList();
-				
-					// Force the PPQs to rebuild
-					pConfig->GetPPQCount( lSize );
-
-					for( l = 0; l < lSize; l++ )
-					{
-						pConfig->GetPPQ( l, &pPPQ );
-						if( pPPQ )
-						{
-							pPPQ->RebuildOutputList();
-						}// end if
-					}
-				}// end for
-				SVIODoc* pIODoc = GetIODoc();
-				if (pIODoc)
-				{
-					pIODoc->UpdateAllViews( NULL );
-				}
-			}// end if
 		}
 	}	
 }
@@ -3462,6 +3423,9 @@ BOOL SVObserverApp::InitInstance()
 		InitSVIMServer();
 	}
 
+	HINSTANCE ResourceInstance( NULL );
+	//Load resource dll explicitly
+	LoadDll::Instance().getDll( SVOResourceDll, ResourceInstance );
 	//
 	// Init user list...
 
@@ -4572,13 +4536,13 @@ BOOL SVObserverApp::InitSVIMServer()
 		if( m_pSVIMServerWrapper && m_pSVIMServerWrapper->mSVIMServer.IsStarted() )
 		{
 			m_pSVIMServerWrapper->mSVIMServer.SetSVObserverWnd( m_pMainWnd->m_hWnd );
-			m_pSVIMServerWrapper->mSVIMServer.SetGoOffline( Seidenader::SVObserver::GlobalRCGoOffline );
-			m_pSVIMServerWrapper->mSVIMServer.SetGoOnline( Seidenader::SVObserver::GlobalRCGoOnline );
-			m_pSVIMServerWrapper->mSVIMServer.SetGetConfigurationName( Seidenader::SVObserver::GlobalRCGetConfigurationName );
-			m_pSVIMServerWrapper->mSVIMServer.SetGetState( Seidenader::SVObserver::GlobalRCGetState );
-			m_pSVIMServerWrapper->mSVIMServer.SetOpenConfiguration( Seidenader::SVObserver::GlobalRCOpenConfiguration );
-			m_pSVIMServerWrapper->mSVIMServer.SetSaveConfiguration( Seidenader::SVObserver::GlobalRCSaveConfiguration );
-			m_pSVIMServerWrapper->mSVIMServer.SetCloseConfiguration( Seidenader::SVObserver::GlobalRCCloseAndCleanConfiguration );
+			m_pSVIMServerWrapper->mSVIMServer.SetGoOffline( GlobalRCGoOffline );
+			m_pSVIMServerWrapper->mSVIMServer.SetGoOnline( GlobalRCGoOnline );
+			m_pSVIMServerWrapper->mSVIMServer.SetGetConfigurationName( GlobalRCGetConfigurationName );
+			m_pSVIMServerWrapper->mSVIMServer.SetGetState( GlobalRCGetState );
+			m_pSVIMServerWrapper->mSVIMServer.SetOpenConfiguration( GlobalRCOpenConfiguration );
+			m_pSVIMServerWrapper->mSVIMServer.SetSaveConfiguration( GlobalRCSaveConfiguration );
+			m_pSVIMServerWrapper->mSVIMServer.SetCloseConfiguration( GlobalRCCloseAndCleanConfiguration );
 			return TRUE;
 		}
 	}
@@ -8891,6 +8855,19 @@ int SVObserverApp::FindMenuItem(CMenu* Menu, LPCTSTR MenuString)
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVObserver.cpp_v  $
+ * 
+ *    Rev 1.37   17 Jul 2014 19:38:34   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  909
+ * SCR Title:  Object Selector replacing Result Picker and Output Selector SVO-72, 40, 130
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Removed namespaces and code review changes
+ * Loads resource dll
+ * Replace ResultPicker Dialog with Object Selector Dialog
+ * Changed methods: OnEditPublishedResults, InitInstance
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.36   07 Jul 2014 16:53:16   gramseier
  * Project:  SVObserver

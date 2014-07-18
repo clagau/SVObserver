@@ -5,13 +5,13 @@
 //* .Module Name     : SVExternalToolInputSelectPage
 //* .File Name       : $Workfile:   SVExternalToolInputSelectPage.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.5  $
-//* .Check In Date   : $Date:   15 May 2014 12:13:14  $
+//* .Current Version : $Revision:   1.6  $
+//* .Check In Date   : $Date:   17 Jul 2014 18:47:12  $
 //******************************************************************************
 
 // SVExternalToolInputSelectPage.cpp : implementation file
 //
-
+#pragma region Includes
 #include "stdafx.h"
 #include "svobserver.h"
 #include "SVGlobal.h"
@@ -21,15 +21,18 @@
 #include "SVIPDoc.h"
 #include "SVExternalTool.h"
 #include "SVExternalToolTask.h"
-#include "SVToolsetOutputSelectionDialog.h"
 #include "SVInspectionProcess.h"
 #include "../SVObjectLibrary/SVObjectManagerClass.h"
+#include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
+#pragma endregion Includes
+
+#pragma region Declarations
+using namespace Seidenader::ObjectSelectorLibrary;
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
-#undef THIS_FILE
-static char THIS_FILE[] = __FILE__;
 #endif
+#pragma endregion Declarations
 
 /////////////////////////////////////////////////////////////////////////////
 // SVExternalToolInputSelectPage property page
@@ -267,40 +270,58 @@ void SVExternalToolInputSelectPage::OnItemButtonClick(NMHDR* pNotifyStruct, LRES
 
 
 // display VO picker dialog and return selection
-int SVExternalToolInputSelectPage::SelectObject(CString& rsObjectName, SVRPropertyItem* pItem )
+int SVExternalToolInputSelectPage::SelectObject(CString& rObjectName, SVRPropertyItem* pItem )
 {
-	CString sObjectName;
+	CString ObjectName;
 
-	SVToolsetOutputSelectionDialog dlg;
-	
+	if( nullptr == m_pTool ) { return 0; }
+
 	SVToolSetClass* pToolSet = dynamic_cast<SVToolSetClass*> ( m_pTool->GetAncestor( SVToolSetObjectType ) );
-	ASSERT( pToolSet );
-	dlg.PTaskObjectList = pToolSet;
-//	dlg.uAttributesDesired = SV_SELECTABLE_FOR_EQUATION;
-	dlg.uAttributesDesired = SV_ARCHIVABLE;
 
-	SVObjectReferenceVector selectedInputs;
-	
-	SVObjectReference input(FindObject(pItem));
-	selectedInputs.push_back(input);
+	if( nullptr == pToolSet ) { return 0; }
 
-	dlg.m_treeOutputList.SetSelection(selectedInputs);
+	SVString InspectionName( pToolSet->GetInspection()->GetName() );
 
-	UINT_PTR nResult = dlg.DoModal();
-	if( nResult == IDOK )
+	ObjectTreeGenerator::Instance().setSelectorType( ObjectTreeGenerator::SelectorTypeEnum::TypeSingleObject );
+	ObjectTreeGenerator::Instance().setAttributeFilters( SV_ARCHIVABLE );
+	ObjectTreeGenerator::Instance().setLocationFilter( ObjectTreeGenerator::FilterInput, InspectionName, SVString( _T("") ) );
+
+	SVOutputInfoListClass OutputList;
+	pToolSet->GetOutputList( OutputList );
+	ObjectTreeGenerator::Instance().insertOutputList( OutputList );
+
+	SVStringSet Items;
+
+	CString Value;
+	pItem->GetItemValue( Value );
+
+	SVString ItemName( Value );
+	if( !ItemName.empty() )
 	{
-		CString strTmp = dlg.m_sSelectedOutputName;
-		if(!strTmp.IsEmpty())
+		Items.insert( ItemName );
+		ObjectTreeGenerator::Instance().setCheckItems( Items );
+	}
+
+	CString ToolsetOutput;
+	ToolsetOutput.LoadString ( IDS_SELECT_TOOLSET_OUTPUT );
+	SVString Title;
+	Title.Format(_T("%s - %s"), ToolsetOutput , m_pTool->GetName() );
+	SVString TabTitle = ToolsetOutput; 
+
+	INT_PTR Result = ObjectTreeGenerator::Instance().showDialog( Title, TabTitle, this );
+
+	if( IDOK == Result )
+	{
+		SVString SelectedOutputName = ObjectTreeGenerator::Instance().getSingleObjectResult().getLocation();
+		if( !SelectedOutputName.empty() )
 		{
-			// @PPH removed to get rid of the inspection name followed by a dot
-			// sObjectName = pToolSet->GetInspection()->GetName() + CString(_T(".")) + strTmp;
-			sObjectName = strTmp;
+			ObjectName = SelectedOutputName.c_str();
 		}
 	}
 
-	rsObjectName = sObjectName;
+	rObjectName = ObjectName;
 
-	return static_cast<int>(nResult);
+	return static_cast<int> ( Result );
 }
 
 void SVExternalToolInputSelectPage::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResult)
@@ -465,6 +486,17 @@ int SVExternalToolInputSelectPage::GetItemIndex(SVRPropertyItem* pItem)
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVExternalToolInputSelectPage.cpp_v  $
+ * 
+ *    Rev 1.6   17 Jul 2014 18:47:12   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  909
+ * SCR Title:  Object Selector replacing Result Picker and Output Selector SVO-72, 40, 130
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Replace ResultPicker Dialog with Object Selector Dialog
+ * Changed methods: SelectObject
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.5   15 May 2014 12:13:14   sjones
  * Project:  SVObserver

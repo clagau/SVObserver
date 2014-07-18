@@ -5,51 +5,23 @@
 //* .Module Name     : SVFormulaEditorSheet
 //* .File Name       : $Workfile:   SVFormulaEditorSheet.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   14 Jan 2014 12:21:10  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   17 Jul 2014 19:11:04  $
 //******************************************************************************
 
-//******************************************************************************
-//* INCLUDE(S):
-//******************************************************************************
-
-////////////////////////////////////////////////////////////////////////////////
-// General Include File(s)
-////////////////////////////////////////////////////////////////////////////////
-
+#pragma region Includes
 #include "stdafx.h"
-
-////////////////////////////////////////////////////////////////////////////////
-// Other Necessary Include File(s) - Module Link(s)
-////////////////////////////////////////////////////////////////////////////////
-
-////////////////////////////////////////////////////////////////////////////////
-// Prototyping
-////////////////////////////////////////////////////////////////////////////////
-
 #include "SVFormulaEditorSheet.h"
 #include "FormulaController.h"
-using namespace Seidenader::SVObserver;
+#pragma endregion Includes
 
-//******************************************************************************
-//* DEFINITIONS OF MODULE-LOCAL VARIABLES:
-//******************************************************************************
-
+#pragma region Declarations
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
-
-//******************************************************************************
-//* CLASS METHOD IMPLEMENTATION(S):
-//******************************************************************************
-
-//*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/
-//* Class Name : SVFormulaEditorSheetClass
-//* Note(s)    : Property Sheet
-//*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/
-
+#pragma endregion Declarations
 
 SVFormulaEditorSheetClass::SVFormulaEditorSheetClass(UINT nIDCaption, CWnd* pParentWnd, UINT iSelectPage)
 	:CPropertySheet(nIDCaption, pParentWnd, iSelectPage)
@@ -86,7 +58,7 @@ void SVFormulaEditorSheetClass::SetTaskObject( SVTaskObjectClass* pObject )
 ////////////////////////////////////////////////////////////////////////////////
 //
 ////////////////////////////////////////////////////////////////////////////////
-BOOL SVFormulaEditorSheetClass::OnInitDialog() 
+BOOL SVFormulaEditorSheetClass::OnInitDialog()
 {
 	BOOL bResult = CPropertySheet::OnInitDialog();
 
@@ -103,7 +75,6 @@ BOOL SVFormulaEditorSheetClass::OnInitDialog()
 
 	return bResult;
 }
-
 
 BEGIN_MESSAGE_MAP(SVFormulaEditorSheetClass, CPropertySheet)
 	//{{AFX_MSG_MAP(SVFormulaEditorSheetClass)
@@ -142,16 +113,18 @@ void SVFormulaEditorSheetClass::OnOK()
 	EndDialog( IDOK );
 }
 
-void SVFormulaEditorSheetClass::OnSysCommand(UINT nID, LPARAM lParam) 
+void SVFormulaEditorSheetClass::OnSysCommand(UINT nID, LPARAM lParam)
 {
 	switch (nID & 0xFFF0)
 	{
 		// Ignore the close command
 		case SC_CLOSE:
-			return;
+			// Do nothing.
+			break;
+		default:
+			CPropertySheet::OnSysCommand(nID, lParam);
+			break;
 	}
-
-	CPropertySheet::OnSysCommand(nID, lParam);
 }
 
 //******************************************************************************
@@ -159,6 +132,16 @@ void SVFormulaEditorSheetClass::OnSysCommand(UINT nID, LPARAM lParam)
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVFormulaEditorSheet.cpp_v  $
+ * 
+ *    Rev 1.2   17 Jul 2014 19:11:04   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  909
+ * SCR Title:  Object Selector replacing Result Picker and Output Selector SVO-72, 40, 130
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Removed namespaces and code review changes
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   14 Jan 2014 12:21:10   bwalter
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : SVCommand.cpp
 //* .File Name       : $Workfile:   SVCommand.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.14  $
-//* .Check In Date   : $Date:   02 Jun 2014 09:25:52  $
+//* .Current Version : $Revision:   1.15  $
+//* .Check In Date   : $Date:   17 Jul 2014 18:35:54  $
 //******************************************************************************
 
 #pragma region Includes
@@ -68,10 +68,10 @@
 #pragma endregion Includes
 
 #pragma region Declarations
-using namespace Seidenader::SVObserver;
-
 #ifdef _DEBUG
 #define new DEBUG_NEW
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
 #endif
 
 volatile BOOL CSVCommand::m_bRunStreamData = FALSE;
@@ -92,7 +92,7 @@ SVVector< SVInspectionProcess* > CSVCommand::m_arInspections;
 
 #pragma region Constructor
 CSVCommand::CSVCommand()
-: m_pStream( NULL )
+: m_pStream( nullptr )
 {
 	if (!m_bCriticalSectionInitialized)
 	{
@@ -107,40 +107,38 @@ STDMETHODIMP CSVCommand::GetSVIMState(BSTR *pszXMLData, BSTR *pXMLError)
 	SVException svException;
 	SVXmlException svXmlException;
 	SVXmlCmd SvXmlCmd;
-	ULONG ulState = 0;//88; //set to 0 non test mode
+	ULONG ulState = 0; //set to 0 non test mode
 	HRESULT hrResult = S_OK;
 	BSTR XMLData;
 	BSTR XMLError;
-	
+
 	//xml state data
 	do
 	{
 		if(!SvXmlCmd.InitXml())goto xmlerror;
-		
+
 		if(!SvXmlCmd.SetCommand(_T("GetSVIMState")))goto xmlerror;
-		
-		//BOOL GetSVIMState (DWORD *pdwSVIMState)
+
 		//more error checking required here!
-		Seidenader::SVObserver::GlobalRCGetState(&ulState);
-		
-		
+		GlobalRCGetState(&ulState);
+
 		//ENTER CURRENT STATE OF SVOBSERVER HERE as per the following function
 		// i.e. Definition: BOOL GetSvimState(ULONG* state, SVException* svException)
 		//					return FALSE if error
 		// if(!GetSvimState(&ulState, &svException)break;
-		
+
 		if(!SvXmlCmd.SetSVIMstate(ulState))goto xmlerror;
-		
+
 		//save the xml doc into an XML BSTR
 		if(!SvXmlCmd.GetXmlDoc(&XMLData))goto xmlerror;
-		
+
 		*pszXMLData = SysAllocString(XMLData);
-		
+
 		if(XMLData)
 		{
 			SysFreeString(XMLData);
 		}
-		
+
 		SETEXCEPTION0 (svException, SVMSG_CMDCOMSRV_NO_ERROR);
 		break;
 xmlerror:
@@ -153,8 +151,8 @@ xmlerror:
 		{
 			svException = SvXmlCmd.GetParserError();
 		}
-		
-		hrResult =  S_FALSE;
+
+		hrResult = S_FALSE;
 		break;
 	} while (0);
 
@@ -164,14 +162,14 @@ xmlerror:
 		svXmlException = XmlException;
 	}
 	svXmlException.GetXmlDoc(&XMLError);
-	
+
 	*pXMLError = SysAllocString(XMLError);
-	
+
 	if(XMLError)
 	{
 		SysFreeString(XMLError);
 	}
-	
+
 	return hrResult;
 }
 
@@ -183,26 +181,26 @@ STDMETHODIMP CSVCommand::SetSVIMState(BSTR szXMLData, BSTR* pXMLError)
 	ULONG ulState;
 	HRESULT hrResult = S_OK;
 	BSTR XMLError;
-	
+
 	//xml state data
 	do
 	{
 		if(!SvXmlCmd.InitXml())goto xmlerror;
-		
+
 		if(!SvXmlCmd.LoadDoc(&szXMLData))goto xmlerror;
-		
+
 		SvXmlCmd.GetSVIMstate(&ulState);
-		
+
 		//more error checking required here!
 		if(ulState)
 		{
-			Seidenader::SVObserver::GlobalRCGoOnline();
+			GlobalRCGoOnline();
 		}
 		else
 		{
-			Seidenader::SVObserver::GlobalRCGoOffline();
+			GlobalRCGoOffline();
 		}
-		
+
 		SETEXCEPTION0 (svException, SVMSG_CMDCOMSRV_NO_ERROR);
 		break;
 xmlerror:
@@ -215,25 +213,25 @@ xmlerror:
 		{
 			svException = SvXmlCmd.GetParserError();
 		}
-		
-		hrResult =  S_FALSE;
+
+		hrResult = S_FALSE;
 		break;
 	} while (0);
-	
+
 	if((svXmlException = svException) != TRUE)
 	{ //create an exception object for an XML parse error
 		SVException XmlException = svXmlException.GetParserError();
 		svXmlException = XmlException;
 	}
 	svXmlException.GetXmlDoc(&XMLError);
-	
+
 	*pXMLError = SysAllocString(XMLError);
-	
+
 	if(XMLError)
 	{
 		SysFreeString(XMLError);
 	}
-	
+
 	return hrResult;
 }
 
@@ -253,19 +251,19 @@ STDMETHODIMP CSVCommand::GetSVIMConfig(BSTR* pszXMLData, BSTR* pXMLError)
 	HRESULT hrResult = S_OK;
 	BSTR XMLData;
 	BSTR XMLError;
-	
+
 	do
 	{
 		if(!SvXmlCmd.InitXml())goto xmlerror;
-		
+
 		if(!SvXmlCmd.SetCommand(_T("GetSVIMConfig")))goto xmlerror;
-		
-		if( !Seidenader::SVObserver::GlobalRCGetConfigurationName( szConfigName ) ) { goto error; }
-		
+
+		if( !GlobalRCGetConfigurationName( szConfigName ) ) { goto error; }
+
 		szPackedFile = szConfigName;
 		szPackedFile += _T(".svf");
-		
-		if ( Seidenader::SVObserver::GlobalRCSaveConfiguration() )
+
+		if ( GlobalRCSaveConfiguration() )
 		{
 			try
 			{
@@ -304,22 +302,22 @@ STDMETHODIMP CSVCommand::GetSVIMConfig(BSTR* pszXMLData, BSTR* pXMLError)
 		{
 			goto error;
 		}
-		
+
 		if(!SvXmlCmd.SetBinData(pBuf,dwFileLength))goto xmlerror;
-		
+
 		//save the xml doc into an XML BSTR
 		//		if(!SvXmlCmd.GetXmlDoc(pszXMLData))goto xmlerror;
-		
+
 		//save the xml doc into an XML BSTR
 		if(!SvXmlCmd.GetXmlDoc(&XMLData))goto xmlerror;
-		
+
 		*pszXMLData = SysAllocString(XMLData);
-		
+
 		if(XMLData)
 		{
 			SysFreeString(XMLData);
 		}
-		
+
 		SETEXCEPTION0 (svException, SVMSG_CMDCOMSRV_NO_ERROR);
 		break;
 error:
@@ -336,25 +334,25 @@ xmlerror:
 		{
 			svException = SvXmlCmd.GetParserError();
 		}
-		
-		hrResult =  S_FALSE;
+
+		hrResult = S_FALSE;
 		break;
 	} while (0);
-	
+
 	if((svXmlException = svException) != TRUE)
 	{ //create an exception object for an XML parse error
 		SVException XmlException = svXmlException.GetParserError();
 		svXmlException = XmlException;
 	}
 	svXmlException.GetXmlDoc(&XMLError);
-	
+
 	*pXMLError = SysAllocString(XMLError);
-	
+
 	if(XMLError)
 	{
 		SysFreeString(XMLError);
 	}
-	
+
 	if(pBuf)free(pBuf);
 	return hrResult;
 }
@@ -413,7 +411,7 @@ STDMETHODIMP CSVCommand::PutSVIMConfig(BSTR szXMLData, BSTR* pXMLError)
 		}
 
 		//global function to close config and clean up c:\run dir
-		if ( !Seidenader::SVObserver::GlobalRCCloseAndCleanConfiguration() )
+		if ( !GlobalRCCloseAndCleanConfiguration() )
 		{ 
 			hrException = SVMSG_ERROR_CLOSING_CLEANING_CONFIG;
 			goto error; 
@@ -440,20 +438,23 @@ STDMETHODIMP CSVCommand::PutSVIMConfig(BSTR szXMLData, BSTR* pXMLError)
 		}
 
 		//load the config
-		if( !Seidenader::SVObserver::GlobalRCOpenConfiguration( ( char* )( ( LPCTSTR )szConfigFile ) ) )
+		LPTSTR pConfigFile = szConfigFile.GetBuffer();
+		BOOL loadedConfig = GlobalRCOpenConfiguration( pConfigFile );
+		if( !loadedConfig )
 		{ 
 			hrException = SVMSG_ERROR_LOADING_CONFIGURATION;
-			goto error; 
+			goto error;
 		}
+		szConfigFile.ReleaseBuffer();
 
 		SETEXCEPTION0 (svException, SVMSG_CMDCOMSRV_NO_ERROR);
 		svException.LogException(_T("Informational - Ending PutSVIMConfig"));
 		break;
 error:
-		//set the excption for the correct reason for breaking
+		//set the exception for the correct reason for breaking
 		SETEXCEPTION0 (svException, hrException); // rpy 13Mar14
 		svException.LogException();
-		hrResult =  S_FALSE;
+		hrResult = S_FALSE;
 		break;
 xmlerror:
 		//create an exception object for an XML error
@@ -466,7 +467,7 @@ xmlerror:
 			svException = SvXmlCmd.GetParserError();
 		}
 
-		hrResult =  S_FALSE;
+		hrResult = S_FALSE;
 		break;
 	} while (0);
 
@@ -545,7 +546,7 @@ STDMETHODIMP CSVCommand::GetSVIMFile(BSTR * pszXMLData, BSTR* pXMLError)
 		break;
 error:
 		SETEXCEPTION0 (svException, SVMSG_CMDCOMSRV_ERROR);
-		hrResult =  S_FALSE;
+		hrResult = S_FALSE;
 		break;
 xmlerror:
 		//create an exception object for an XML error
@@ -558,7 +559,7 @@ xmlerror:
 			svException = SvXmlCmd.GetParserError();
 		}
 		
-		hrResult =  S_FALSE;
+		hrResult = S_FALSE;
 		break;
 	} while (0);
 	
@@ -635,7 +636,7 @@ STDMETHODIMP CSVCommand::PutSVIMFile(BSTR szXMLData, BSTR* pXMLError)
 		break;
 error:
 		SETEXCEPTION0 (svException, SVMSG_CMDCOMSRV_ERROR);
-		hrResult =  S_FALSE;
+		hrResult = S_FALSE;
 		break;
 xmlerror:
 		//create an exception object for an XML error
@@ -648,7 +649,7 @@ xmlerror:
 			svException = SvXmlCmd.GetParserError();
 		}
 		
-		hrResult =  S_FALSE;
+		hrResult = S_FALSE;
 		break;
 	} while (0);
 	
@@ -681,15 +682,15 @@ STDMETHODIMP CSVCommand::LoadSVIMConfig(BSTR szXMLData, BSTR* pXMLError)
 	WIN32_FIND_DATA FindData;
 	HRESULT hrResult = S_OK;
 	BSTR XMLError;
-	
+
 	do
 	{
 		if(!SvXmlCmd.InitXml())goto xmlerror;
-		
+
 		if(!SvXmlCmd.LoadDoc(&szXMLData))goto xmlerror;
-		
+
 		if(!SvXmlCmd.GetSVIMfilename(&szConfigFileName))goto xmlerror;
-		
+
 		//check for existence of config file
 		_tsplitpath (szConfigFileName, szDrive, szDir, szFName, szExt);
 		if(!_tcscmp(szDrive, _T("")))
@@ -700,7 +701,7 @@ STDMETHODIMP CSVCommand::LoadSVIMConfig(BSTR szXMLData, BSTR* pXMLError)
 				//check for existence of file first
 				if(FindFirstFile(path_buffer,&FindData) == INVALID_HANDLE_VALUE)goto error;
 				szConfigFileName = path_buffer;
-				if( !Seidenader::SVObserver::GlobalRCCloseConfiguration() ) { goto error; }
+				if( !GlobalRCCloseConfiguration() ) { goto error; }
 			}
 			else goto error;
 		}
@@ -709,13 +710,13 @@ STDMETHODIMP CSVCommand::LoadSVIMConfig(BSTR szXMLData, BSTR* pXMLError)
 			//check for existence of file first
 			if(FindFirstFile(szConfigFileName,&FindData) == INVALID_HANDLE_VALUE)goto error;
 			//global function to close config and clean up c:\run dir
-			if( !Seidenader::SVObserver::GlobalRCCloseAndCleanConfiguration() ) { goto error; }
+			if( !GlobalRCCloseAndCleanConfiguration() ) { goto error; }
 		}
 		else goto error;
-		
+
 		//load the config
-		if( !Seidenader::SVObserver::GlobalRCOpenConfiguration( szConfigFileName ) ) { goto error; }
-		
+		if( !GlobalRCOpenConfiguration( szConfigFileName ) ) { goto error; }
+
 		SETEXCEPTION0 (svException, SVMSG_CMDCOMSRV_NO_ERROR);
 		break;
 error:
@@ -732,25 +733,25 @@ xmlerror:
 		{
 			svException = SvXmlCmd.GetParserError();
 		}
-		
-		hrResult =  S_FALSE;
+
+		hrResult = S_FALSE;
 		break;
 	} while (0);
-	
+
 	if((svXmlException = svException) != TRUE)
 	{ //create an exception object for an XML parse error
 		SVException XmlException = svXmlException.GetParserError();
 		svXmlException = XmlException;
 	}
 	svXmlException.GetXmlDoc(&XMLError);
-	
+
 	*pXMLError = SysAllocString(XMLError);
-	
+
 	if(XMLError)
 	{
 		SysFreeString(XMLError);
 	}
-	
+
 	return hrResult;
 }
 
@@ -818,7 +819,7 @@ STDMETHODIMP CSVCommand::GetSVIMInspectionResults(BSTR* pszXMLData, BSTR* pXMLEr
 		break;
 error:
 		SETEXCEPTION0 (svException, SVMSG_CMDCOMSRV_ERROR);
-		hrResult =  S_FALSE;
+		hrResult = S_FALSE;
 		break;
 xmlerror:
 		//create an exception object for an XML error
@@ -831,7 +832,7 @@ xmlerror:
 			svException = SvXmlCmd.GetParserError();
 		}
 		
-		hrResult =  S_FALSE;
+		hrResult = S_FALSE;
 		break;
 	} while (0);
 	
@@ -861,30 +862,30 @@ STDMETHODIMP CSVCommand::GetSVIMConfigName(BSTR * pszXMLData, BSTR* pXMLError)
 	HRESULT hrResult = S_OK;
 	BSTR XMLData;
 	BSTR XMLError;
-	
+
 	do
 	{
 		if(!SvXmlCmd.InitXml())goto xmlerror;
-		
+
 		if(!SvXmlCmd.SetCommand(_T("GetSVIMConfigName")))goto xmlerror;
-		
-		if( !Seidenader::SVObserver::GlobalRCGetConfigurationName( szConfigName ) )
+
+		if( !GlobalRCGetConfigurationName( szConfigName ) )
 		{
 			goto error;
 		}
-		
+
 		if(!SvXmlCmd.SetSVIMfilename(szConfigName))goto xmlerror;
-		
+
 		//save the xml doc into an XML BSTR
 		if(!SvXmlCmd.GetXmlDoc(&XMLData))goto xmlerror;
-		
+
 		*pszXMLData = SysAllocString(XMLData);
-		
+
 		if(XMLData)
 		{
 			SysFreeString(XMLData);
 		}
-		
+
 		SETEXCEPTION0 (svException, SVMSG_CMDCOMSRV_NO_ERROR);
 		break;
 error:
@@ -901,25 +902,25 @@ xmlerror:
 		{
 			svException = SvXmlCmd.GetParserError();
 		}
-		
-		hrResult =  S_FALSE;
+
+		hrResult = S_FALSE;
 		break;
 	} while (0);
-	
+
 	if((svXmlException = svException) != TRUE)
 	{ //create an exception object for an XML parse error
 		SVException XmlException = svXmlException.GetParserError();
 		svXmlException = XmlException;
 	}
 	svXmlException.GetXmlDoc(&XMLError);
-	
+
 	*pXMLError = SysAllocString(XMLError);
-	
+
 	if(XMLError)
 	{
 		SysFreeString(XMLError);
 	}
-	
+
 	return hrResult;
 }
 
@@ -936,29 +937,28 @@ STDMETHODIMP CSVCommand::SVGetSVIMState(unsigned long *ulState)
 	SVException svException;
 	HRESULT hrResult;
 	BOOL bSuccess;
-	
+
 	do
 	{
 		hrResult = S_OK;
 		bSuccess = FALSE;
-		
+
 		try
 		{
-			bSuccess = Seidenader::SVObserver::GlobalRCGetState( ulState );
+			bSuccess = GlobalRCGetState( ulState );
 		}
 		catch (...)
 		{
 			bSuccess = FALSE;
 		}
-		
+
 		if( !bSuccess )
 		{
 			SETEXCEPTION0(svException, SVMSG_CMDCOMSRV_ERROR);
 			hrResult = S_FALSE;
 		}
-		
 	} while (0);
-	
+
 	return hrResult;
 }// end SVGetSVIMState
 
@@ -966,27 +966,26 @@ STDMETHODIMP CSVCommand::SVSetSVIMMode(unsigned long lSVIMNewMode)
 {
 	SVException svException;
 	HRESULT hrResult;
-	
+
 	do
 	{
 		hrResult = S_OK;
-		
+
 		try
 		{
-			hrResult = Seidenader::SVObserver::GlobalRCSetMode( lSVIMNewMode );
+			hrResult = GlobalRCSetMode( lSVIMNewMode );
 		}
 		catch (...)
 		{
 			hrResult = S_FALSE;
 		}
-		
+
 		if( !(hrResult == S_OK) )
 		{
 			SETEXCEPTION0(svException, SVMSG_CMDCOMSRV_ERROR);
 		}
-		
 	} while (0);
-	
+
 	return hrResult;
 }// end SVSetSVIMMode
 
@@ -994,27 +993,23 @@ STDMETHODIMP CSVCommand::SVGetSVIMMode(unsigned long* p_plSVIMMode)
 {
 	SVException svException;
 	HRESULT hrResult;
-	
-	do
+
+	hrResult = S_OK;
+
+	try
 	{
-		hrResult = S_OK;
-		
-		try
-		{
-			hrResult = Seidenader::SVObserver::GlobalRCGetMode( p_plSVIMMode );
-		}
-		catch (...)
-		{
-			hrResult = S_FALSE;
-		}
-		
-		if( !(hrResult == S_OK) )
-		{
-			SETEXCEPTION0(svException, SVMSG_CMDCOMSRV_ERROR);
-		}
-		
-	} while (0);
-	
+		hrResult = GlobalRCGetMode( p_plSVIMMode );
+	}
+	catch (...)
+	{
+		hrResult = S_FALSE;
+	}
+
+	if( !(hrResult == S_OK) )
+	{
+		SETEXCEPTION0(svException, SVMSG_CMDCOMSRV_ERROR);
+	}
+
 	return hrResult;
 }// end SVGetSVIMMode
 
@@ -1024,12 +1019,11 @@ STDMETHODIMP CSVCommand::SVSetSVIMState(unsigned long ulSVIMState)
 	HRESULT hrResult;
 	BOOL bSuccess;
 
-	if( SVSVIMStateClass::CheckState( SV_STATE_EDITING ))
+	if( SVSVIMStateClass::CheckState( SV_STATE_EDITING ) )
 	{
 		hrResult = SVMSG_52_MODE_GUI_IN_USE_ERROR;
 	}
 	else
-	do
 	{
 		hrResult = S_OK;
 		bSuccess = FALSE;
@@ -1038,25 +1032,25 @@ STDMETHODIMP CSVCommand::SVSetSVIMState(unsigned long ulSVIMState)
 		{
 			if( ulSVIMState )
 			{
-				bSuccess = Seidenader::SVObserver::GlobalRCGoOnline();
+				bSuccess = GlobalRCGoOnline();
 			}
 			else
 			{
-				bSuccess = Seidenader::SVObserver::GlobalRCGoOffline();
+				bSuccess = GlobalRCGoOffline();
 			}
 		}
 		catch (...)
 		{
 			bSuccess = FALSE;
 		}
-		
+
 		if( !bSuccess )
 		{
 			SETEXCEPTION0(svException, SVMSG_CMDCOMSRV_ERROR);
 			hrResult = S_FALSE;
 		}
-	} while (0);
-	
+	}
+
 	return hrResult;
 }// end SVSetSVIMState
 
@@ -1076,34 +1070,34 @@ STDMETHODIMP CSVCommand::SVGetSVIMConfig( long lOffset, long *lBlockSize, BSTR *
 	long lBytesToGo = 0;
 	CFileException *ex;
 	BOOL bHrSet = FALSE;
-	
+
 	do
 	{
 		hrResult = S_OK;
 		bSuccess = FALSE;
 		memset( szConfigName, 0, _MAX_PATH );
-		
+
 		try
 		{
-			
-			bSuccess = Seidenader::SVObserver::GlobalRCGetConfigurationName( szConfigName );
-			
+			bSuccess = GlobalRCGetConfigurationName( szConfigName );
+
 			if( bSuccess )
-			{	
+			{
 				strPackedFile = szConfigName;
 				strPackedFile += _T(".svf");
 			}
-			
+
 			// check offset: if zero then it is first time in
 			if (lOffset < 1)
-			{		
+			{
 				// on first time
 				// pack files to temp area before sending packets
-				
+
 				if( bSuccess )
 				{
-					bSuccess = Seidenader::SVObserver::GlobalRCSaveConfiguration();
+					bSuccess = GlobalRCSaveConfiguration();
 				}
+
 				if( bSuccess )
 				{
 					bSuccess = PackedFile.PackFiles( CString(szConfigName), strPackedFile );
@@ -1124,13 +1118,13 @@ STDMETHODIMP CSVCommand::SVGetSVIMConfig( long lOffset, long *lBlockSize, BSTR *
 						*lBlockSize = lBytesToGo;
 						*bLastFlag = TRUE;
 					}
-					
+
 					*bstrFileData = SysAllocStringByteLen(NULL,*lBlockSize);
 					if ( (*bstrFileData) == NULL)
 					{
 						AfxThrowMemoryException( );
 					}
-					
+
 					binFile.Seek( lOffset, CFile::begin );
 					binFile.Read( *bstrFileData, *lBlockSize );
 					// Close the file
@@ -1143,7 +1137,7 @@ STDMETHODIMP CSVCommand::SVGetSVIMConfig( long lOffset, long *lBlockSize, BSTR *
 					bSuccess = FALSE;
 					throw (ex);
 				}
-			}//end if 
+			}//end if
 		}
 		catch (CMemoryException *memEx)
 		{
@@ -1175,16 +1169,15 @@ STDMETHODIMP CSVCommand::SVGetSVIMConfig( long lOffset, long *lBlockSize, BSTR *
 		{
 			bSuccess = FALSE;
 		}
-		
+
 		if( (!bSuccess) && (!bHrSet) )
 		{
 			SETEXCEPTION0 (svException, SVMSG_CMDCOMSRV_ERROR);
 			hrResult = S_FALSE;
 		}
 		break;
-		
 	} while (0);
-	
+
 	return hrResult;
 }// end SVGetSVIMConfig
 
@@ -1195,7 +1188,7 @@ STDMETHODIMP CSVCommand::SVPutSVIMConfig(long lOffset, long lBlockSize, BSTR *bs
 	CString configFileName;
 	SVPackedFile svPackedFile;
 	HRESULT hrResult;
-	BOOL bSuccess;  
+	BOOL bSuccess;
 	CFile binFile;
 	CString strFilename;
 	CString strPath; 
@@ -1203,12 +1196,12 @@ STDMETHODIMP CSVCommand::SVPutSVIMConfig(long lOffset, long lBlockSize, BSTR *bs
 	BOOL bRet = FALSE;
 	CFileException *ex;
 	BOOL bHrSet = FALSE;
-	
+
 	do
 	{
 		hrResult = S_OK;
 		bSuccess = FALSE;
-		
+
 		try
 		{
 			if(CreateDirPath(CString(_T("c:\\temp")))) 
@@ -1237,7 +1230,7 @@ STDMETHODIMP CSVCommand::SVPutSVIMConfig(long lOffset, long lBlockSize, BSTR *bs
 						throw (ex);
 					}
 				}
-				
+
 				if (bRet)
 				{
 					binFile.Seek( lOffset, CFile::begin );
@@ -1247,15 +1240,15 @@ STDMETHODIMP CSVCommand::SVPutSVIMConfig(long lOffset, long lBlockSize, BSTR *bs
 					bSuccess = TRUE;
 				}
 			}
-			
+
 			if (bLastFlag)
 			{
 				// make sure file exists
 				bSuccess = (0 == _access( szPackedFile, 0 ) );
-				
+
 				// global function to close config and clean up c:\run dir
-				bSuccess = Seidenader::SVObserver::GlobalRCCloseAndCleanConfiguration();
-				
+				bSuccess = GlobalRCCloseAndCleanConfiguration();
+
 				if( bSuccess )
 				{
 					//unpack the files in the c:\run directory
@@ -1267,24 +1260,26 @@ STDMETHODIMP CSVCommand::SVPutSVIMConfig(long lOffset, long lBlockSize, BSTR *bs
 						SETEXCEPTION0 (svException, SVMSG_CMDCOMSRV_PACKEDFILE_ERROR);
 					}
 				}
-				
+
 				if( bSuccess )
 				{
 					// check for a good path on the config in the packed file
 					configFileName = svPackedFile.getConfigFilePath();
 					bSuccess = !( configFileName.IsEmpty() );
 				}
-				
+
 				if( bSuccess )
 				{
 					// make sure file exists
 					bSuccess = ( 0 == _access( configFileName, 0 ) );
 				}
-				
+
 				if( bSuccess )
 				{
 					//load the config
-					bSuccess = Seidenader::SVObserver::GlobalRCOpenConfiguration( ( char* )( LPCTSTR )configFileName );
+					LPTSTR pConfigFileName = configFileName.GetBuffer();
+					bSuccess = GlobalRCOpenConfiguration( pConfigFileName );
+					configFileName.ReleaseBuffer();
 				}
 			}
 		}
@@ -1304,7 +1299,7 @@ STDMETHODIMP CSVCommand::SVPutSVIMConfig(long lOffset, long lBlockSize, BSTR *bs
 		{
 			bSuccess = FALSE;
 		}
-		
+
 		if( (!bSuccess) && (!bHrSet) )
 		{
 			SETEXCEPTION0 (svException, SVMSG_CMDCOMSRV_ERROR);
@@ -1312,7 +1307,7 @@ STDMETHODIMP CSVCommand::SVPutSVIMConfig(long lOffset, long lBlockSize, BSTR *bs
 		}
 		break;
 	} while (0);
-	
+
 	return hrResult;
 }// end SVPutSVIMConfig
 
@@ -1519,19 +1514,19 @@ STDMETHODIMP CSVCommand::SVLoadSVIMConfig(BSTR bstrConfigFilename)
 	BOOL bSuccess;
 	CFileException ex;
 	BOOL bHrSet = TRUE;
-	
+
 	do
 	{
 		hrResult = S_OK;
 		bSuccess = FALSE;
-		
+
 		try
 		{
 			strConfigFile = bstrConfigFilename;
-			
+
 			//split filename into peices
 			_tsplitpath( strConfigFile, szDrive, szDir, szFile, szExt );
-			
+
 			if( !_tcscmp( szDrive, _T("") ) )
 			{ //just the file name, search the run directory for the filename
 				if( 0 == _tcscmp( szExt, _T( ".svx" ) ) || 0 == _tcscmp( szExt, _T( "" ) ) )
@@ -1539,63 +1534,67 @@ STDMETHODIMP CSVCommand::SVLoadSVIMConfig(BSTR bstrConfigFilename)
 					_tmakepath( szPath, "C", "\\Run\\", szFile, "svx" );
 					//check for existence of file first
 					bSuccess = ( 0 == _access( szPath, 0 ) );
-					
+
 					if( bSuccess )
 					{
 						strConfigFile = szPath;
 						//global function to close config and clean up c:\run dir
-						bSuccess = Seidenader::SVObserver::GlobalRCCloseAndCleanConfiguration();
+						bSuccess = GlobalRCCloseAndCleanConfiguration();
 					}
 				}
 				else
+				{
 					bSuccess = FALSE;
+				}
 			}
 			else if( 0 == _tcscmp( szExt, _T( ".svx" ) ) ) //fully qualified path with svx extension
 			{
 				//check for existence of file first
 				bSuccess = ( 0 == _access( strConfigFile, 0 ) );
-				
+
 				if( bSuccess )
 				{
 					//global function to close config and clean up c:\run dir
-					bSuccess = Seidenader::SVObserver::GlobalRCCloseAndCleanConfiguration();
+					bSuccess = GlobalRCCloseAndCleanConfiguration();
 				}
 				else
-				{ 
+				{
 					throw ( (CFileException*)(&ex) );
 				}
-				
 			}
 			else
+			{
 				bSuccess = FALSE;
-			
+			}
+
 			if( bSuccess )
 			{
 				//load the config
-				bSuccess = Seidenader::SVObserver::GlobalRCOpenConfiguration( ( char* )( LPCTSTR )strConfigFile );
+				LPTSTR pConfigFile = strConfigFile.GetBuffer();
+				bSuccess = GlobalRCOpenConfiguration( pConfigFile );
+				strConfigFile.ReleaseBuffer();
 			}
 		}
 		catch (CFileException* &theEx)
 		{
 			hrResult = SVMSG_CMDCOMCTRL_FILE_ERROR;
 			bHrSet = TRUE;
-			SETEXCEPTION0(svException,SVMSG_CMDCOMCTRL_FILE_ERROR);          
+			SETEXCEPTION0(svException,SVMSG_CMDCOMCTRL_FILE_ERROR);
 			theEx->Delete();
 		}
 		catch (...)
 		{
 			bSuccess = FALSE;
 		}
-		
+
 		if( (!bSuccess) && (!bHrSet) )
 		{
 			SETEXCEPTION0 (svException, SVMSG_CMDCOMSRV_ERROR);
 			hrResult = S_FALSE;
 		}
 		break;
-		
 	} while (0);
-	
+
 	return hrResult;
 }
 
@@ -1610,29 +1609,29 @@ STDMETHODIMP CSVCommand::SVGetSVIMInspectionResults(BSTR bstrInspection, BSTR *b
 	unsigned long ulState;
 	HRESULT hrResult;
 	BOOL bSuccess;
-	
+
 	do
 	{
 		hrResult = S_OK;
 		bSuccess = FALSE;
-		
+
 		try
 		{
 			szIPD = bstrInspection;
-			
+
 			if(!SvXmlCmd.InitXml())goto xmlerror;
-			
+
 			if(!SvXmlCmd.SetSVIMfilename(szIPD))goto xmlerror;
-			
+
 			if(!SvXmlCmd.SetCommand(_T("GetSVIMInspectionResults")))goto xmlerror;
-			
+
 			//ADD THE REQUIRED RESULTS DATA FROM ALL IPDS AND ALL PUBLISHED RESULTS
 			//possibly in a loop using the following function
 			//NOTE:  The order in which in the results data per IPD is added to the XML
 			//Doc will determine the index number that must be used to retreive the data.
 			//i.e first data item added to XML doc will be index zero
-			
-			bSuccess = Seidenader::SVObserver::GlobalRCGetState( &ulState );
+
+			bSuccess = GlobalRCGetState( &ulState );
 			if( bSuccess && (0 == (ulState & SV_STATE_LOADING) ) )
 			{
 				SVIPDoc* pIPDoc = TheSVObserverApp.GetIPDoc( szIPD );
@@ -1648,22 +1647,22 @@ STDMETHODIMP CSVCommand::SVGetSVIMInspectionResults(BSTR bstrInspection, BSTR *b
 				else goto error;
 			}
 			else goto error;
-			
+
 			//save the xml doc into an XML BSTR
 			if(!SvXmlCmd.GetXmlDoc(&XMLData))goto xmlerror;
-			
+
 			*bstrXMLResults = SysAllocString(XMLData);
-			
+
 			if(XMLData)
 			{
 				SysFreeString(XMLData);
 			}
-			
+
 			SETEXCEPTION0 (svException, SVMSG_CMDCOMSRV_NO_ERROR);
 			break;
 error:
 			SETEXCEPTION0 (svException, SVMSG_CMDCOMSRV_ERROR);
-			hrResult =  S_FALSE;
+			hrResult = S_FALSE;
 			break;
 xmlerror:
 			// we had an XML error, return the right HRESULT
@@ -1676,7 +1675,7 @@ xmlerror:
 			bSuccess = FALSE;
 		}
 	} while (0);
-	
+
 	return hrResult;
 }
 
@@ -1686,17 +1685,17 @@ STDMETHODIMP CSVCommand::SVGetSVIMConfigName(BSTR *bstrConfigFilename)
 	CString strConfigName;
 	HRESULT hrResult;
 	BOOL bSuccess;
-	
+
 	do
 	{
 		hrResult = S_OK;
 		bSuccess = FALSE;
-		
+
 		try
 		{
-			bSuccess = Seidenader::SVObserver::GlobalRCGetConfigurationName( strConfigName.GetBuffer( _MAX_PATH ) );
+			bSuccess = GlobalRCGetConfigurationName( strConfigName.GetBuffer( _MAX_PATH ) );
 			strConfigName.ReleaseBuffer();
-			
+
 			if( bSuccess )
 			{
 				*bstrConfigFilename = strConfigName.AllocSysString();
@@ -1706,15 +1705,14 @@ STDMETHODIMP CSVCommand::SVGetSVIMConfigName(BSTR *bstrConfigFilename)
 		{
 			bSuccess = FALSE;
 		}
-		
+
 		if( !bSuccess )
 		{
 			SETEXCEPTION0 (svException, SVMSG_CMDCOMSRV_ERROR);
 			hrResult = S_FALSE;
 		}
-		
 	} while (0);
-	
+
 	return hrResult;
 }
 
@@ -4419,7 +4417,7 @@ HRESULT CSVCommand::SVSetToolParameterList(SAFEARRAY* psaNames, SAFEARRAY* psaVa
 				Values.Add(_variant_t( bstrValue ));
 				Parameter.m_StorageType = SVVisionProcessor::SVStorageValue;
 				Parameter.m_Variant = Values;
-				ParameterObjects[Name] =  Parameter;
+				ParameterObjects[Name] = Parameter;
 			}
 			else
 			{
@@ -7129,6 +7127,16 @@ STDMETHODIMP CSVCommand::SVIsAvailiable()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVCommand.cpp_v  $
+ * 
+ *    Rev 1.15   17 Jul 2014 18:35:54   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  909
+ * SCR Title:  Object Selector replacing Result Picker and Output Selector SVO-72, 40, 130
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Removed namespaces and code review changes
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.14   02 Jun 2014 09:25:52   gramseier
  * Project:  SVObserver

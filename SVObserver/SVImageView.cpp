@@ -5,14 +5,13 @@
 //* .Module Name     : SVImageView
 //* .File Name       : $Workfile:   SVImageView.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.8  $
-//* .Check In Date   : $Date:   02 Jun 2014 09:42:42  $
+//* .Current Version : $Revision:   1.9  $
+//* .Check In Date   : $Date:   17 Jul 2014 19:11:02  $
 //******************************************************************************
 
 #pragma region Includes
 #include "stdafx.h"
 #include "SVImageView.h"
-
 #include "SVImageLibrary/SVDrawContext.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
@@ -37,10 +36,10 @@
 #pragma endregion Includes
 
 #pragma region Declarations
-using namespace Seidenader::SVObserver;
-
 #ifdef _DEBUG
 #define new DEBUG_NEW
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
@@ -2616,6 +2615,16 @@ HRESULT SVImageViewClass::NotifyIPDocDisplayComplete()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVImageView.cpp_v  $
+ * 
+ *    Rev 1.9   17 Jul 2014 19:11:02   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  909
+ * SCR Title:  Object Selector replacing Result Picker and Output Selector SVO-72, 40, 130
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Removed namespaces and code review changes
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.8   02 Jun 2014 09:42:42   gramseier
  * Project:  SVObserver
