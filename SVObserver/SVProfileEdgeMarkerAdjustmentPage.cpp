@@ -5,8 +5,8 @@
 //* .Module Name     : SVProfileEdgeMarkerAdjustmentPage
 //* .File Name       : $Workfile:   SVProfileEdgeMarkerAdjustmentPage.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.5  $
-//* .Check In Date   : $Date:   10 Jul 2014 17:41:14  $
+//* .Current Version : $Revision:   1.6  $
+//* .Check In Date   : $Date:   18 Jul 2014 03:59:50  $
 //******************************************************************************
 
 #pragma region Includes
@@ -1018,7 +1018,8 @@ void SVProfileEdgeMarkerAdjustmentPageClass::setGraphOverlayToPicture( SVLinearE
 	arraySafe.CreateOneDim(VT_R8, static_cast< DWORD >( sizePointsArray * 2 ), points);
 	std::map<long,_variant_t> ParMap;
 	ParMap[CDSVPictureDisplay::P_Type ] = static_cast<long>(CDSVPictureDisplay::GraphROI);
-	ParMap[CDSVPictureDisplay::P_SubType ] = static_cast<long>(CDSVPictureDisplay::Scale2ViewAreaPerParameter);
+	ParMap[CDSVPictureDisplay::P_SubType_X ] = static_cast<long>(CDSVPictureDisplay::ImageArea_ScalePerParameter);
+	ParMap[CDSVPictureDisplay::P_SubType_Y ] = static_cast<long>(CDSVPictureDisplay::ViewArea_ScalePerParameter);
 	ParMap[CDSVPictureDisplay::P_Color] = static_cast<long>(SV_DEFAULT_SUB_FUNCTION_COLOR_1);
 	ParMap[CDSVPictureDisplay::P_SelectedColor] = static_cast<long>(SV_DEFAULT_SUB_FUNCTION_COLOR_1);
 	ParMap[CDSVPictureDisplay::P_AllowEdit] = static_cast<long>(0);
@@ -1086,6 +1087,16 @@ void SVProfileEdgeMarkerAdjustmentPageClass::setMarkerOverlayToPicture( unsigned
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVProfileEdgeMarkerAdjustmentPage.cpp_v  $
+ * 
+ *    Rev 1.6   18 Jul 2014 03:59:50   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  902
+ * SCR Title:  Change Complex Dialog Image Displays to Use SVPictureDisplay ActiveX
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   use P_SubType_X and P_SubType_Y instead of P_SubType for graph overlay
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.5   10 Jul 2014 17:41:14   mziegler
  * Project:  SVObserver

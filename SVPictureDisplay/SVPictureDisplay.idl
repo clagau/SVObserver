@@ -75,9 +75,10 @@ library SVPictureDisplayLib
 	// subtype graph
 	typedef enum _ROISubType_Graph
 	{
-		[helpstring("Display on Image")]					DisplayOnImage		= 0,
-	  	[helpstring("Fit to View Area")]					Fit2ViewArea		= 1,
-	  	[helpstring("Scale to View Area per Parameter")]	Scale2ViewAreaPerParameter	= 2,
+		[helpstring("Display on Image, no scale")]					ImageArea_NoScale	= 0,
+	  	[helpstring("View Area, fit values to area")]				ViewArea_Fit		= 1,
+	  	[helpstring("View Area, Scale to per Parameter")]			ViewArea_ScalePerParameter	= 2,
+		[helpstring("Display on Image, Scale to per Parameter")]	ImageArea_ScalePerParameter	= 3,
 	} ROISubType_Graph;
 
 	// subtype marker
@@ -122,6 +123,8 @@ library SVPictureDisplayLib
 		[helpstring("ROI SubType")]				P_SubType=23,
 		[helpstring("ROI color")]				P_Color = 24,	
 		[helpstring("ROI SelectedColor")]		P_SelectedColor = 25,	
+		[helpstring("ROI SubType_X")]			P_SubType_X=26,
+		[helpstring("ROI SubType_Y")]			P_SubType_Y=27,
 	} ParameterType;
 
 	// SVROI Object Interface

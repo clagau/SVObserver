@@ -74,6 +74,11 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PropTree", "PropertyTree\Pr
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SVOResource", "SVOResource\SVOResource.vcxproj", "{C3BC831E-730C-421E-8475-408B0A536082}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SVPictureDisplay", "SVPictureDisplay\SVPictureDisplay.vcxproj", "{2D5B80B2-305B-4DBA-B76D-335A51AF0D5C}"
+	ProjectSection(ProjectDependencies) = postProject
+		{88204352-9BA7-43F1-ABAB-C75A485171E3} = {88204352-9BA7-43F1-ABAB-C75A485171E3}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -486,6 +491,22 @@ Global
 		{C3BC831E-730C-421E-8475-408B0A536082}.Unicode Release|Win32.Build.0 = Release|Win32
 		{C3BC831E-730C-421E-8475-408B0A536082}.Unicode Release|x64.ActiveCfg = Release|x64
 		{C3BC831E-730C-421E-8475-408B0A536082}.Unicode Release|x64.Build.0 = Release|x64
+		{2D5B80B2-305B-4DBA-B76D-335A51AF0D5C}.Debug|Win32.ActiveCfg = Debug|Win32
+		{2D5B80B2-305B-4DBA-B76D-335A51AF0D5C}.Debug|Win32.Build.0 = Debug|Win32
+		{2D5B80B2-305B-4DBA-B76D-335A51AF0D5C}.Debug|x64.ActiveCfg = Debug|x64
+		{2D5B80B2-305B-4DBA-B76D-335A51AF0D5C}.Debug|x64.Build.0 = Debug|x64
+		{2D5B80B2-305B-4DBA-B76D-335A51AF0D5C}.Release|Win32.ActiveCfg = Release|Win32
+		{2D5B80B2-305B-4DBA-B76D-335A51AF0D5C}.Release|Win32.Build.0 = Release|Win32
+		{2D5B80B2-305B-4DBA-B76D-335A51AF0D5C}.Release|x64.ActiveCfg = Release|x64
+		{2D5B80B2-305B-4DBA-B76D-335A51AF0D5C}.Release|x64.Build.0 = Release|x64
+		{2D5B80B2-305B-4DBA-B76D-335A51AF0D5C}.Unicode Debug|Win32.ActiveCfg = Debug|Win32
+		{2D5B80B2-305B-4DBA-B76D-335A51AF0D5C}.Unicode Debug|Win32.Build.0 = Debug|Win32
+		{2D5B80B2-305B-4DBA-B76D-335A51AF0D5C}.Unicode Debug|x64.ActiveCfg = Debug|x64
+		{2D5B80B2-305B-4DBA-B76D-335A51AF0D5C}.Unicode Debug|x64.Build.0 = Debug|x64
+		{2D5B80B2-305B-4DBA-B76D-335A51AF0D5C}.Unicode Release|Win32.ActiveCfg = Release|Win32
+		{2D5B80B2-305B-4DBA-B76D-335A51AF0D5C}.Unicode Release|Win32.Build.0 = Release|Win32
+		{2D5B80B2-305B-4DBA-B76D-335A51AF0D5C}.Unicode Release|x64.ActiveCfg = Release|x64
+		{2D5B80B2-305B-4DBA-B76D-335A51AF0D5C}.Unicode Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

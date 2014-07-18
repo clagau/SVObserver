@@ -6,8 +6,8 @@
 //* .File Name       : $Workfile:   CDSVPictureDisplay.h  $
 //* .Description     : Declaration of ActiveX Control wrapper class(es) created by Microsoft Visual C++
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   26 Jun 2014 16:46:30  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   18 Jul 2014 03:58:52  $
 //******************************************************************************
 
 #pragma once
@@ -87,9 +87,10 @@ enum
 }ROISubType_Trapezoid;
 enum 
 {	
-	DisplayOnImage		= 0,
-	Fit2ViewArea		= 1,
-	Scale2ViewAreaPerParameter	= 2,
+	ImageArea_NoScale			= 0,
+	ViewArea_Fit				= 1,
+	ViewArea_ScalePerParameter	= 2,
+	ImageArea_ScalePerParameter	= 3,
 } 	ROISubType_Graph;
 enum
 {
@@ -129,7 +130,9 @@ enum
     P_TopThickness = 22,
     P_SubType = 23,
     P_Color = 24,
-    P_SelectedColor = 25
+    P_SelectedColor = 25,
+	P_SubType_X	= 26,
+	P_SubType_Y	= 27
 }_ParameterType;
 
 public:
@@ -385,6 +388,17 @@ void SetHideTabControl(BOOL propVal)
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\CDSVPictureDisplay.h_v  $
+ * 
+ *    Rev 1.1   18 Jul 2014 03:58:52   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  902
+ * SCR Title:  Change Complex Dialog Image Displays to Use SVPictureDisplay ActiveX
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   rename enum-values of ROISubType_Graph and add ImageArea_ScalePerParameter
+ * add P_SubType_X and P_SubType_Y to enum _ParameterType
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   26 Jun 2014 16:46:30   mziegler
  * Project:  SVObserver

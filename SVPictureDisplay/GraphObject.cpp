@@ -5,8 +5,8 @@
 //* .Module Name     : GraphObject
 //* .File Name       : $Workfile:   GraphObject.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   :     $Date:   26 Jun 2014 16:26:40  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   :     $Date:   18 Jul 2014 03:53:40  $
 //******************************************************************************
 
 #pragma region Includes
@@ -26,7 +26,8 @@ static char THIS_FILE[] = __FILE__;
 #pragma region Constructor
 GraphObject::GraphObject()
 : m_borderRect(0, 0, 0, 0)
-, m_subType(Fit2ViewArea)
+, m_subType_X(ViewArea_Fit)
+, m_subType_Y(ViewArea_Fit)
 , m_min_x(0)
 , m_max_x(0)
 , m_min_y(0)
@@ -57,37 +58,41 @@ void GraphObject::Draw( POINT p_Offset, double p_fZoomWidth, double p_fZoomHeigh
 	CPen* pOldPen = rDC.SelectObject( &pen );
 	//create points
 	POINT* points = new POINT[m_points.size()];
-	double localZoomWidth = 1.0;
-	double localZoomHeight = 1.0;
-	long localOffsetX = 0;
-	long localOffsetY = 0;
-	switch (m_subType)
+
+	switch (m_subType_X)
 	{
-	case DisplayOnImage:
-		if(m_isHorizontalFlip)
-		{
-			localOffsetX -= m_imageSize.cx;
-			localZoomWidth *= -1.0;
-		}
-
-		if(m_isVerticalFlip)
-		{
-			localOffsetY -= m_imageSize.cy;
-			localZoomHeight *= -1.0;
-		}
-
-		for (size_t i = 0; i < m_points.size(); i++)
-		{
-			points[i].x = static_cast<long>( (((m_points[i].x + localOffsetX) * localZoomWidth) - p_Offset.x ) * p_fZoomWidth );
-			points[i].y = static_cast<long>( (((m_points[i].y + localOffsetY) * localZoomHeight) - p_Offset.y) * p_fZoomHeight );
-		}
+	case ImageArea_NoScale:
+		calcPointsForDrawing(X_DIRECTION, 0, m_imageSize.cx, m_imageSize.cx, p_Offset.x, p_fZoomWidth, m_isHorizontalFlip, points, m_points.size());
 		break;
-	case Fit2ViewArea:
-		calcFullViewPointsForDrawing(m_borderRect, points, m_points.size());
+	case ViewArea_Fit:
+		calcPointsForDrawing(X_DIRECTION, m_borderRect.left, m_borderRect.right, m_viewSize.cx, 0, 1, m_isHorizontalFlip, points, m_points.size());
 		break;
-	case Scale2ViewAreaPerParameter:
-		CRect valueRect(m_min_x, m_min_y, m_max_x, m_max_y);
-		calcFullViewPointsForDrawing(valueRect, points, m_points.size());
+	case ViewArea_ScalePerParameter:
+		calcPointsForDrawing(X_DIRECTION, m_min_x, m_max_x, m_viewSize.cx, 0, 1, m_isHorizontalFlip, points, m_points.size());
+		break;
+	case ImageArea_ScalePerParameter:
+		calcPointsForDrawing(X_DIRECTION, m_min_x, m_max_x, m_imageSize.cx, p_Offset.x, p_fZoomWidth, m_isHorizontalFlip, points, m_points.size());
+		break;
+	default: //should never happens
+		ASSERT(0);
+		break;
+	}
+	switch (m_subType_Y)
+	{
+	case ImageArea_NoScale:
+		calcPointsForDrawing(Y_DIRECTION, 0, m_imageSize.cy, m_imageSize.cy, p_Offset.y, p_fZoomHeight, m_isVerticalFlip, points, m_points.size());
+		break;
+	case ViewArea_Fit:
+		calcPointsForDrawing(Y_DIRECTION, m_borderRect.top, m_borderRect.bottom, m_viewSize.cy, 0, 1, m_isVerticalFlip, points, m_points.size());
+		break;
+	case ViewArea_ScalePerParameter:
+		calcPointsForDrawing(Y_DIRECTION, m_min_y, m_max_y, m_viewSize.cy, 0, 1, m_isVerticalFlip, points, m_points.size());
+		break;
+	case ImageArea_ScalePerParameter:
+		calcPointsForDrawing(Y_DIRECTION, m_min_y, m_max_y, m_imageSize.cy, p_Offset.y, p_fZoomHeight, m_isVerticalFlip, points, m_points.size());
+		break;
+	default: //should never happens
+		ASSERT(0);
 		break;
 	}
 
@@ -110,8 +115,9 @@ bool GraphObject::IsValidObjectAtPoint( HTTYPE& SelType, const CPoint& imagePoin
 	{
 		CRect l_rec = GetRectangle();
 
-		// Always valid if not DisplayOnImage or check if we are inside
-		if( DisplayOnImage != m_subType || l_rec.PtInRect( imagePoint ) )
+		// Always valid if not ImageArea_NoScale or check if we are inside
+		if( (ImageArea_NoScale != m_subType_X || (l_rec.left <= imagePoint.x && l_rec.right >= imagePoint.x )) && 
+			(ImageArea_NoScale != m_subType_Y || (l_rec.top <= imagePoint.y && l_rec.bottom >= imagePoint.y )))
 		{
 			if( (l_lAllow & AllowMove) == AllowMove )	// Allowed to move...
 			{
@@ -140,7 +146,7 @@ bool GraphObject::Move(HTTYPE SelType, POINT imageMovePoint, const POINT &viewMo
 	{
 	case HTOBJECT:
 		//only movement possible if no scale. If scale the graph is over the whole image.
-		if (DisplayOnImage == m_subType)
+		if (ImageArea_NoScale == m_subType_X || ImageArea_NoScale != m_subType_Y)
 		{
 			//change move if flipped
 			POINT movePoint = imageMovePoint;
@@ -152,6 +158,17 @@ bool GraphObject::Move(HTTYPE SelType, POINT imageMovePoint, const POINT &viewMo
 			{
 				movePoint.y = -movePoint.y;
 			}
+
+			//only movement possible if no scale. If scale the graph is over the whole image.
+			if (ImageArea_NoScale != m_subType_X)
+			{ //remove movement if scaled
+				movePoint.x = 0;
+			}
+			if (ImageArea_NoScale != m_subType_Y)
+			{ //remove movement if scaled
+				movePoint.y = 0;
+			}
+
 			for (unsigned int i=0; i<m_points.size(); i++)
 			{
 				m_points[i].Offset(movePoint);
@@ -181,8 +198,17 @@ void GraphObject::SetParameter(long parameterId, _variant_t parameterValue)
 	case P_Type:
 		ASSERT( GraphROI == parameterValue.lVal );
 		break;
-	case P_SubType:
-		m_subType = static_cast<ROISubType_Graph>(parameterValue.lVal);
+	//this parameter set scale option to both direction. 
+	// ATTENTIONS: Should only be used if both should be the same, else it should used P_SubType_X and P_SubType_Y.
+	case P_SubType: 
+		m_subType_X = static_cast<ROISubType_Graph>(parameterValue.lVal);
+		m_subType_Y = m_subType_X;
+		break;
+	case P_SubType_X:
+		m_subType_X = static_cast<ROISubType_Graph>(parameterValue.lVal);
+		break;
+	case P_SubType_Y:
+		m_subType_Y = static_cast<ROISubType_Graph>(parameterValue.lVal);
 		break;
 	case P_ARRAY_XY:
 		setPoints(parameterValue);
@@ -216,7 +242,8 @@ void GraphObject::GetParameter(VariantParamMap& ParameterMap) const
 	DrawObject::GetParameter(ParameterMap);
 
 	ParameterMap[P_Type] = static_cast<long>(LineROI);
-	ParameterMap[P_SubType] = static_cast<long>(m_subType);
+	ParameterMap[P_SubType_X] = static_cast<long>(m_subType_X);
+	ParameterMap[P_SubType_Y] = static_cast<long>(m_subType_Y);
 	ParameterMap[P_ARRAY_XY] = getPointsAsVariant();
 	ParameterMap[P_X_Min] = m_min_x;
 	ParameterMap[P_X_Max] = m_max_x;
@@ -229,7 +256,7 @@ void GraphObject::GetParameter(VariantParamMap& ParameterMap) const
 RECT GraphObject::GetRectangle() const
 {
 	CRect retRec = m_borderRect;
-	if (DisplayOnImage == m_subType)
+	if (ImageArea_NoScale == m_subType_X)
 	{
 		//flip rectangle in image if necessary.
 		if (m_isHorizontalFlip)
@@ -237,6 +264,14 @@ RECT GraphObject::GetRectangle() const
 			retRec.left = m_imageSize.cx - m_borderRect.right;
 			retRec.right = m_imageSize.cx - m_borderRect.left;
 		}
+	}
+	else
+	{
+		retRec.left = 0;
+		retRec.right = m_viewSize.cx;
+	}
+	if (ImageArea_NoScale == m_subType_Y)
+	{
 		if (m_isVerticalFlip)
 		{
 			retRec.top = m_imageSize.cy - m_borderRect.bottom;
@@ -245,7 +280,8 @@ RECT GraphObject::GetRectangle() const
 	}
 	else
 	{
-		retRec = CRect(0, 0, m_viewSize.cx, m_viewSize.cy);
+		retRec.top = 0;
+		retRec.bottom = m_viewSize.cy;
 	}
 	return retRec;
 }
@@ -344,37 +380,34 @@ void GraphObject::calcRect()
 	}
 }
 
-void GraphObject::calcFullViewPointsForDrawing( const CRect valueRect, POINT* const & points, size_t sizePoints )
+void GraphObject::calcPointsForDrawing( DirectionEnum direction, long minValue, long maxValue, long displaySize, long globalOffset, double globalZoom, bool isFlip, POINT* const & points, size_t sizePoints )
 {
 	ASSERT(m_points.size() == sizePoints);
-	long localOffsetX = 0;
-	long localOffsetY = 0;
-	double localZoomWidth = m_viewSize.cx / static_cast<double>(valueRect.Width());
-	double localZoomHeight = m_viewSize.cy / static_cast<double>(valueRect.Height());
-	if(m_isHorizontalFlip)
+	long localOffset = 0;
+	double localZoom = displaySize / static_cast<double>(maxValue - minValue);
+	if(isFlip)
 	{
-		localOffsetX -= valueRect.right;
-		localZoomWidth *= -1.0;
+		localOffset -= maxValue;
+		localZoom *= -1.0;
 	}
 	else
 	{
-		localOffsetX -= valueRect.left;
+		localOffset -= minValue;
 	}
 
-	if(m_isVerticalFlip)
+	if (X_DIRECTION == direction)
 	{
-		localOffsetY -= valueRect.bottom;
-		localZoomHeight *= -1.0;
+		for ( size_t i = 0; i < m_points.size(); i++ )
+		{
+			points[i].x = static_cast<long>( (((m_points[i].x + localOffset) * localZoom)- globalOffset) * globalZoom );
+		}
 	}
 	else
 	{
-		localOffsetY -= valueRect.top;
-	}
-
-	for ( size_t i = 0; i < m_points.size(); i++ )
-	{
-		points[i].x = static_cast<long>( (m_points[i].x + localOffsetX) * localZoomWidth);
-		points[i].y = static_cast<long>( (m_points[i].y + localOffsetY) * localZoomHeight);
+		for ( size_t i = 0; i < m_points.size(); i++ )
+		{
+			points[i].y = static_cast<long>( (((m_points[i].y + localOffset) * localZoom) - globalOffset) * globalZoom );
+		}
 	}
 }
 #pragma endregion Public Methods
@@ -384,6 +417,17 @@ void GraphObject::calcFullViewPointsForDrawing( const CRect valueRect, POINT* co
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVPictureDisplay\GraphObject.cpp_v  $
+ * 
+ *    Rev 1.1   18 Jul 2014 03:53:40   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  902
+ * SCR Title:  Change Complex Dialog Image Displays to Use SVPictureDisplay ActiveX
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   use P_SubType_X and P_SubType_Y instead of P_SubType in whole class for scale and display graph independent in x and y direction
+ * add new subType ImageArea_ScalePerParameter
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   26 Jun 2014 16:26:40   mziegler
  * Project:  SVObserver

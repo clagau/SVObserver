@@ -5,8 +5,8 @@
 //* .Module Name     : GraphObject
 //* .File Name       : $Workfile:   GraphObject.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   :     $Date:   26 Jun 2014 16:26:40  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   :     $Date:   18 Jul 2014 03:53:40  $
 //******************************************************************************
 
 #pragma once
@@ -53,14 +53,37 @@ protected:
 	_variant_t getPointsAsVariant() const;
 
 	void calcRect();
-	void calcFullViewPointsForDrawing( const CRect valueRect, POINT* const & points, size_t sizePoints );
+
+	//Enum only for the protected method calcPointsForDrawing.
+	enum DirectionEnum
+	{
+		X_DIRECTION,
+		Y_DIRECTION
+	};
+
+	//************************************
+	// Method:    calcPointsForDrawing
+	// Description:  calculate the drawing points out of the member points.
+	// Parameter: DirectionEnum direction	Define which points (x or y) should calculate with this call.
+	// Parameter: long minValue				Minimum value
+	// Parameter: long maxValue				Maximum value
+	// Parameter: long displaySize			The size where the minValue and maxValue are displayed (e.g. imageSize or viewSize)
+	// Parameter: long globalOffset			The global offset only for display on image, for display on view set value to 0.
+	// Parameter: double globalZoom			The global zoom factor only for display on image, for display on view set value to 1.
+	// Parameter: bool isFlip				Should overlay flipped in this direction.
+	// Parameter: POINT * const & points	The output value, the array must be allocted with the size of sizePoints.
+	// Parameter: size_t sizePoints			Length of the points-array, must be the size of the array m_points.
+	// Returns:   void
+	//************************************
+	void calcPointsForDrawing( DirectionEnum direction, long minValue, long maxValue, long displaySize, long globalOffset, double globalZoom, bool isFlip, POINT* const & points, size_t sizePoints );
 #pragma endregion
 
 #pragma region Member Variables
 protected:
 	CRect m_borderRect;
 	std::vector<CPoint> m_points;
-	ROISubType_Graph m_subType;
+	ROISubType_Graph m_subType_X;   //display type for x-direction
+	ROISubType_Graph m_subType_Y;	//display type for y-direction
 	long m_min_x;
 	long m_max_x;
 	long m_min_y;
@@ -75,6 +98,17 @@ protected:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVPictureDisplay\GraphObject.h_v  $
+ * 
+ *    Rev 1.1   18 Jul 2014 03:53:40   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  902
+ * SCR Title:  Change Complex Dialog Image Displays to Use SVPictureDisplay ActiveX
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   use P_SubType_X and P_SubType_Y instead of P_SubType in whole class for scale and display graph independent in x and y direction
+ * add new subType ImageArea_ScalePerParameter
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   26 Jun 2014 16:26:40   mziegler
  * Project:  SVObserver
