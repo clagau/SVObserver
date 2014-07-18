@@ -5,8 +5,8 @@
 //* .Module Name     : ObjectSelectorPpg
 //* .File Name       : $Workfile:   ObjectSelectorPpg.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   17 Jul 2014 11:16:24  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   18 Jul 2014 14:42:14  $
 //******************************************************************************
 
 #pragma region Includes
@@ -28,7 +28,9 @@ static char THIS_FILE[] = __FILE__;
 #pragma endregion Declarations
 
 BEGIN_MESSAGE_MAP(ObjectSelectorPpg, CPropertyPage)
+	ON_COMMAND(ID_HELP, OnHelp)
 	ON_WM_SIZE()
+	ON_WM_HELPINFO()
 END_MESSAGE_MAP()
 
 #pragma region Constructor
@@ -98,6 +100,29 @@ void ObjectSelectorPpg::OnSize(UINT nType, int cx, int cy)
 	m_Resizer.Resize(this);
 }
 
+void ObjectSelectorPpg::OnHelp() 
+{
+	AfxGetApp()->HtmlHelp(0x213B0);
+}
+
+BOOL ObjectSelectorPpg::OnHelpInfo(HELPINFO* pHelpInfo) 
+{
+	//@TODO[ramseier] This needs to be changed to call the correct Help IDs that have to be generated
+	if( ( pHelpInfo->iCtrlId & 0xffff ) == 0xffff || 
+		pHelpInfo->iCtrlId < 500)
+	{
+		pHelpInfo->iCtrlId = 0x213B0;
+//		pHelpInfo->iCtrlId = IDD_PASSWORD_DLG + 0x60000;
+	}
+	else
+	{
+		pHelpInfo->iCtrlId = 0x213B0;
+//		pHelpInfo->iCtrlId += 0x70000;
+	}	
+	AfxGetApp()->HtmlHelp( pHelpInfo->iCtrlId,HH_HELP_CONTEXT );
+	return TRUE ; 
+}
+
 void ObjectSelectorPpg::setResizeControls()
 {
 	m_Resizer.Add(this, IDC_LABEL_TREE_NODES, RESIZE_LOCKLEFT | RESIZE_LOCKTOP);
@@ -117,6 +142,16 @@ void ObjectSelectorPpg::setResizeControls()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\ObjectSelectorLibrary\ObjectSelectorPpg.cpp_v  $
+ * 
+ *    Rev 1.1   18 Jul 2014 14:42:14   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  909
+ * SCR Title:  Object Selector replacing Result Picker and Output Selector SVO-72, 40, 130
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Added the help methods to the dialog
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   17 Jul 2014 11:16:24   gramseier
  * Project:  SVObserver

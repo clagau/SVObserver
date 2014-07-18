@@ -5,8 +5,8 @@
 //* .Module Name     : ObjectSelectorPpg
 //* .File Name       : $Workfile:   ObjectSelectorPpg.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   17 Jul 2014 11:16:24  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   18 Jul 2014 14:42:14  $
 //* ----------------------------------------------------------------------------
 //* This class is the object selector property page 
 //******************************************************************************
@@ -81,25 +81,11 @@ namespace Seidenader
 		#pragma region Protected Methods
 			DECLARE_MESSAGE_MAP()
 
-			/**********
-			 The method exchanges the data between class and page
-			 \param pDX <in> pointer to the data exchange object
-			***********/
 			virtual void DoDataExchange(CDataExchange* pDX);
-			
-			/**********
-			 The method initializes the dialog
-			 \return True if default control receives focus
-			***********/
 			virtual BOOL OnInitDialog();
-
-			/**********
-			 The method is called when the size of the dialog is changed
-			 \param nType <in> resizing type request
-			 \param cx <in> the new x size
-			 \param cy <in> the new y size
-			***********/
 			afx_msg void OnSize(UINT nType, int cx, int cy);
+			afx_msg void OnHelp();
+			afx_msg BOOL OnHelpInfo(HELPINFO* pHelpInfo);
 
 			/**********
 			 The method sets the controls which are resized when the page is resized
@@ -130,6 +116,16 @@ namespace Seidenader
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\ObjectSelectorLibrary\ObjectSelectorPpg.h_v  $
+ * 
+ *    Rev 1.1   18 Jul 2014 14:42:14   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  909
+ * SCR Title:  Object Selector replacing Result Picker and Output Selector SVO-72, 40, 130
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Added the help methods to the dialog
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   17 Jul 2014 11:16:24   gramseier
  * Project:  SVObserver
