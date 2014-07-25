@@ -5,8 +5,8 @@
 //* .Module Name     : SVToolAdjustmentArchivePage
 //* .File Name       : $Workfile:   SVToolArchivePage.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.5  $
-//* .Check In Date   : $Date:   26 Jun 2014 07:07:56  $
+//* .Current Version : $Revision:   1.6  $
+//* .Check In Date   : $Date:   23 Jul 2014 11:42:08  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -103,6 +103,8 @@ BOOL SVToolAdjustmentArchivePage::OnInitDialog()
 	CWaitCursor wait;                 // 23 Nov 1999 - frb.
 
 	CPropertyPage::OnInitDialog();
+	//will need to fix the call to ResetObject at a later date - RPY
+	m_pTool->ResetObject();
 
 	CDWordArray dwaIndex;
 	int iIndex=0;
@@ -139,8 +141,11 @@ BOOL SVToolAdjustmentArchivePage::OnInitDialog()
 	s.Format(_T("%ld"),dwTemp);
 	m_editMaxImages.SetWindowText((LPCTSTR)s);
 
+	//store the MaxImageNumber
+	m_sMaxImageNumber = s;
+
 	long lMemUsed = TheSVMemoryManager().ReservedBytes( ARCHIVE_TOOL_MEMORY_POOL_GO_OFFLINE_NAME );
-	m_lToolImageMemoryUsage = 0;
+ 	m_lToolImageMemoryUsage = 0;
 	m_lTotalArchiveImageMemoryAvailable = TheSVMemoryManager().SizeOfPoolBytes( ARCHIVE_TOOL_MEMORY_POOL_GO_OFFLINE_NAME );
 	m_lInitialArchiveImageMemoryUsage = lMemUsed;
 
@@ -193,7 +198,11 @@ BOOL SVToolAdjustmentArchivePage::OnInitDialog()
 
 	UpdateData(FALSE);   // To Controls.
 
-	CalculateFreeMem();
+	// calculate free mem if in SVArchiveGoOffline mode
+	if (SVArchiveGoOffline == m_eSelectedArchiveMethod)
+	{
+		CalculateFreeMem();
+	}
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 	              // EXCEPTION: OCX-Eigenschaftenseiten sollten FALSE zurückgeben
@@ -240,40 +249,7 @@ void SVToolAdjustmentArchivePage::BuildImageList()
 			m_imageListAll.Add(pImage);
 		}
 	}
-	/*
-	pImage = static_cast <SVImageClass*>
-	                     ( reinterpret_cast <SVObjectClass*>
-	                        ( SVSendMessage (  static_cast <SVObjectClass*> (pToolSet), 
-	                                           SVM_GETFIRST_OBJECT,
-	                                           NULL,
-	                                           reinterpret_cast <DWORD_PTR> (&info)
-	                                         )
-	                        )
-	                      );
-
-	if(pImage)
-	{
-		m_imageListAll.Add(pImage);
-	}
-
-	while (pImage && !lDone)
-	{
-		pImage = static_cast <SVImageClass*>
-		                     ( reinterpret_cast <SVObjectClass*> 
-		                        ( SVSendMessage (  static_cast <SVObjectClass*> (pToolSet), 
-		                                           SVM_GETNEXT_OBJECT,
-		                                           reinterpret_cast <DWORD_PTR> (pImage),
-		                                           reinterpret_cast <DWORD_PTR> (&info)
-		                                         )
-		                         )
-		                     );
-		if(pImage)
-		{
-			m_imageListAll.Add(pImage);
-		}
-	}
-	*/
-
+	
 	//
 	// Set the archivable attributes in images based on.
 	//
@@ -327,8 +303,26 @@ void SVToolAdjustmentArchivePage::BuildImageList()
 //
 bool SVToolAdjustmentArchivePage::QueryAllowExit() 
 {
-	UpdateData(TRUE);        
+	UpdateData(TRUE); 
 
+	//check to see if mode is SVArchiveGoOffline.  
+	if (SVArchiveGoOffline == m_eSelectedArchiveMethod)
+	{
+		//check to see if any items are selected in the image tree
+		SVObjectListClass ObjectList;
+		m_treeImagesList.GetCheckedObjects(&ObjectList);
+		int iSize = ObjectList.GetSize();
+		if (iSize > 0 )
+		{
+			//if memory usage < 0 do not all them to exit
+			long FreeMemory = CalculateFreeMem();
+			if (FreeMemory < 0)
+			{
+				AfxMessageBox("Not enough Available Archive Tool Image Memory. Please deselect some\nimages, decrease \"Max Images\" or change \"When to archive\" mode.");
+				return false;
+			}
+		}
+	}
 	//
 	// Update the file path to the archive file for associated archive tool.
 	//
@@ -516,45 +510,70 @@ bool SVToolAdjustmentArchivePage::CanSelectObjectCallback( SVObjectReference ref
 	UpdateData();
 	bool bOk = true;
 
-	long l_lFreeMem = CalculateFreeMem();
+	SVImageClass* pImage = dynamic_cast <SVImageClass*> ( refObject.Object() );
+	ASSERT(pImage);
 
-	//if ( m_eSelectedArchiveMethod == SVArchiveGoOffline )	// do the calculations regardless
-	{
-		SVImageClass* pImage = dynamic_cast <SVImageClass*> ( refObject.Object() );
-		ASSERT( pImage );
+	//Get amount of memory needed for the selected image.
+	long MemoryForSelectedImage = SVArchiveTool::CalculateImageMemory( pImage );
+	MemoryForSelectedImage *= m_lImagesToArchive;
 
-		long lMemory = SVArchiveTool::CalculateImageMemory( pImage );
-		lMemory *= m_lImagesToArchive;
 
-		if ( bCurrentState == false )// want to select
+	if (bCurrentState == false)// want to select
+	{	
+		bool bAddItem = true;
+
+		//only check for memory if in mode SVArchiveGoOffline
+		if (SVArchiveGoOffline == m_eSelectedArchiveMethod)
 		{
-			long lDelta = lMemory - m_lInitialToolImageMemoryUsage + m_lToolImageMemoryUsage;
-			bool bCanReserve = ( l_lFreeMem - lDelta >= 0 );
-			if ( bCanReserve && (lDelta > 0) )
-				bCanReserve = TheSVMemoryManager().CanReservePoolMemory( ARCHIVE_TOOL_MEMORY_POOL_GO_OFFLINE_NAME, lDelta );
-			if ( bCanReserve )
+			long CurrentToolFreeMem = CalculateFreeMem();
+
+			//lDelta is the total amount of memory that will need to be allocated.  Only gets commited once the tool's reset object gets called.
+			long lDelta = MemoryForSelectedImage - m_lInitialToolImageMemoryUsage + m_lToolImageMemoryUsage;
+			
+			long Difference = CurrentToolFreeMem - MemoryForSelectedImage;
+
+			bool bCanReserve = false;
+			if (Difference >= 0)
 			{
-				m_mapSelectedImageMemUsage[ pImage ] = lMemory / m_lImagesToArchive;
-				long lFreeMem = CalculateFreeMem();
+				bCanReserve = true;
+			}
+			
+			if (bCanReserve && (lDelta > 0))
+			{
+				bCanReserve = TheSVMemoryManager().CanReservePoolMemory( ARCHIVE_TOOL_MEMORY_POOL_GO_OFFLINE_NAME, lDelta );
+			}
+
+			if (bCanReserve)
+			{
+				bAddItem = true;
+				m_mapSelectedImageMemUsage[ pImage ] = MemoryForSelectedImage / m_lImagesToArchive;
+				CalculateFreeMem();
 			}
 			else
 			{
-				if ( m_eSelectedArchiveMethod == SVArchiveGoOffline )
-				{
-					bOk = false;
-					ASSERT( bOk );
-					CString strMessage;
-					strMessage.Format(_T("Not enough Archive Tool image memory to select %s"), pImage->GetCompleteObjectName());
-					AfxMessageBox( strMessage );
-				}
+				bAddItem = false;
+				bOk = false;
+				ASSERT( bOk );
+				CString strMessage;
+				strMessage.Format(_T("Not enough Archive Tool image memory to select %s"), pImage->GetCompleteObjectName());
+				AfxMessageBox( strMessage );
 			}
 		}
-		else	// want to deselect
+		if (bAddItem)
 		{
-			m_mapSelectedImageMemUsage.erase( pImage );
-			long lFreeMem = CalculateFreeMem();
+			m_mapSelectedImageMemUsage[ pImage ] = MemoryForSelectedImage / m_lImagesToArchive;
+		}
+	}
+	else	// want to deselect
+	{
+		m_mapSelectedImageMemUsage.erase( pImage );
 
-			if ( lFreeMem < 0 )
+		//Calculate Free Mem if in SVArchiveGoOffline mode
+		if (SVArchiveGoOffline == m_eSelectedArchiveMethod)
+		{
+			long FreeMem = CalculateFreeMem();
+
+			if (FreeMem < 0)
 			{
 				AfxMessageBox(_T("Not enough Archive Tool image memory for the images selected. Please deselect some images."));
 			}
@@ -568,12 +587,36 @@ void SVToolAdjustmentArchivePage::OnSelchangeModeCombo()
 {
 	UpdateData();
 	int iSel = m_cbMode.GetCurSel();
-	if ( iSel != CB_ERR )
+	if (iSel != CB_ERR)
 	{
 		m_eSelectedArchiveMethod = static_cast <SVArchiveMethodEnum> (m_cbMode.GetItemData( iSel ));
 		m_wndAvailableArchiveImageMemory.ShowWindow( m_eSelectedArchiveMethod == SVArchiveGoOffline );
 		m_wndTxtAvailableArchiveImageMemory.ShowWindow( m_eSelectedArchiveMethod == SVArchiveGoOffline );
-		CalculateFreeMem();
+
+		//if changing to SVArchiveGoOffline mode - build m_mapSelectedImageUsage with selected items in the tree
+		if (SVArchiveGoOffline == m_eSelectedArchiveMethod)
+		{
+			SVObjectListClass l_ObjectList;
+			m_treeImagesList.GetCheckedObjects(&l_ObjectList);
+
+			m_mapSelectedImageMemUsage.clear();
+
+			for (int i=0; i < l_ObjectList.GetSize(); i++)
+			{
+				SVObjectReference refObject = l_ObjectList.GetAt(i);
+				SVImageClass* pImage = dynamic_cast <SVImageClass*> (refObject.Object());
+				if (pImage)
+				{
+					m_mapSelectedImageMemUsage[ pImage ] = SVArchiveTool::CalculateImageMemory(pImage);
+				}
+			}
+			//check to make sure they did not go over the available memory
+			long FreeMem = CalculateFreeMem();
+			if (FreeMem < 0)
+			{
+				AfxMessageBox("There is not enough Available Archive Tool Image Memory for your selection in Change Mode. Available Archive Image Memory\nis the result of the selected images and the Max Images number.");
+			}
+		}
 	}
 }
 
@@ -582,27 +625,56 @@ void SVToolAdjustmentArchivePage::OnChangeEditMaxImages()
 	CString strNumImages;
 	m_editMaxImages.GetWindowText(strNumImages);
 	m_lImagesToArchive = atol(strNumImages);
-	CalculateFreeMem();
+	
+	//check to make sure we don't go over the amount of free memory
+	if (SVArchiveGoOffline == m_eSelectedArchiveMethod)
+	{
+		long llFreeMem = CalculateFreeMem();
+		if (llFreeMem >= 0)
+		{
+			m_sMaxImageNumber = strNumImages;
+			m_lImagesToArchive = atol(strNumImages);
+		}
+		else
+		{
+			CString sMsg;
+			sMsg.Format("There is not enough Available Archive Tool Image Memory for %s images in Change Mode. Available\nArchive Image Memory is the result of the selected images and the Max Images number.\nThe selection will be reset.",strNumImages);
+			AfxMessageBox(sMsg);
+			m_lImagesToArchive = atol(m_sMaxImageNumber);
+			m_editMaxImages.SetWindowText((LPCSTR)m_sMaxImageNumber);
+		}
+	}
 }
 
 long SVToolAdjustmentArchivePage::CalculateToolMemoryUsage()
 {
-	long l_lToolImageMemoryUsage = 0;
-	MapSelectedImageType::iterator iter;
-	for ( iter = m_mapSelectedImageMemUsage.begin(); iter != m_mapSelectedImageMemUsage.end(); ++iter )
-		l_lToolImageMemoryUsage += iter->second;
-	l_lToolImageMemoryUsage *= m_lImagesToArchive;
-	long lToolImageMemoryUsage = l_lToolImageMemoryUsage;
-	return lToolImageMemoryUsage;
+	long ToolImageMemoryUsage = 0;
+
+	MapSelectedImageType::const_iterator iter;
+	for (iter = m_mapSelectedImageMemUsage.begin(); iter != m_mapSelectedImageMemUsage.end(); ++iter)
+	{
+		ToolImageMemoryUsage += iter->second;
+	}
+	ToolImageMemoryUsage *= m_lImagesToArchive;
+
+	return ToolImageMemoryUsage;
 }
 
 long SVToolAdjustmentArchivePage::CalculateFreeMem()
 {
 	m_lToolImageMemoryUsage = CalculateToolMemoryUsage();
-	long lFreeMem = m_lTotalArchiveImageMemoryAvailable - (m_lToolImageMemoryUsage + m_lInitialArchiveImageMemoryUsageExcludingThisTool);
-	m_strAvailableArchiveImageMemory.Format( _T("%8.1f MB"), (double) lFreeMem / (double) (1024 * 1024) );
-	UpdateData(FALSE);
-	return lFreeMem;
+	long FreeMem = -1;
+
+	if (m_lToolImageMemoryUsage >=0)
+	{
+		FreeMem = m_lTotalArchiveImageMemoryAvailable - (m_lToolImageMemoryUsage + m_lInitialArchiveImageMemoryUsageExcludingThisTool);
+		
+		m_strAvailableArchiveImageMemory.Format( _T("%8.1f MB"), (double) FreeMem / (double) (1024 * 1024) );
+
+		UpdateData(FALSE);
+	}
+
+	return FreeMem;
 }
 bool SVToolAdjustmentArchivePage::GetSelectedHeaderNamePairs( StringPairVect& HeaderPairs)
 {
@@ -722,6 +794,22 @@ void SVToolAdjustmentArchivePage::OnBnClickedHeaderCheck()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVToolArchivePage.cpp_v  $
+ * 
+ *    Rev 1.6   23 Jul 2014 11:42:08   ryoho
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  916
+ * SCR Title:  Fix issue with available memory calculation with Archive Tool (SV0-350)
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   OnInitDialog to call the Archive Tool Reset Object.
+ * BuildImageList - removed old code.
+ * QueryAllowExit - show message and don't allow to exit if the memory is negative.
+ * CanSelectObjectCallback - changed logic to calculate memory correctly.
+ * OnSelchangeCombo - When switching to Change Mode, calculate memory and show message if memory goes negative based on selections.
+ * OnChangeEditMaxImages - show message if memory goes negative.
+ * 
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.5   26 Jun 2014 07:07:56   tbair
  * Project:  SVObserver

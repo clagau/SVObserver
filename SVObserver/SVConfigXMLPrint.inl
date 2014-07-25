@@ -5,8 +5,8 @@
 //* .Module Name     : SVConfigXMLPrint
 //* .File Name       : $Workfile:   SVConfigXMLPrint.inl  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.14  $
-//* .Check In Date   : $Date:   16 Jul 2014 07:54:54  $
+//* .Current Version : $Revision:   1.15  $
+//* .Check In Date   : $Date:   23 Jul 2014 10:34:38  $
 //******************************************************************************
 
 #include "SVObjectLibrary/SVObjectLibrary.h"
@@ -1149,7 +1149,11 @@ inline void SVConfigXMLPrint::WriteObject( Writer writer, SVObjectClass* pObj ) 
 				SVUserMaskOperatorClass* maskObj = dynamic_cast <SVUserMaskOperatorClass*>( pObj );
 				if ( NULL != maskObj )
 				{
-					WriteValueObject(writer, L"Property",  utf16(pApp->GetStringResource(IDS_IMAGE_SOURCE_STRING)), to_utf16(maskObj->getMaskInputImage()->GetCompleteObjectName().GetBuffer(), cp_dflt).c_str());
+					SVImageClass* pImage = maskObj->getMaskInputImage();
+					if (nullptr != pImage)
+					{
+						WriteValueObject(writer, L"Property",  utf16(pApp->GetStringResource(IDS_IMAGE_SOURCE_STRING)), to_utf16(pImage->GetCompleteObjectName().GetBuffer(), cp_dflt).c_str());
+					}
 				}
 			}
 
@@ -1652,6 +1656,16 @@ inline HRESULT SVDeviceParamConfigXMLHelper::Visit(SVCustomDeviceParam& param)
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVConfigXMLPrint.inl_v  $
+ * 
+ *    Rev 1.15   23 Jul 2014 10:34:38   ryoho
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  876
+ * SCR Title:  Add user mask image to print configuration
+ * Checked in by:  bWalter;  Ben Walter
+ * Change Description:  
+ *   Changed WriteObject for the SVUserMaskOperatorClass to check to make sure that the SVImageClass is not NULL
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.14   16 Jul 2014 07:54:54   ryoho
  * Project:  SVObserver

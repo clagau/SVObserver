@@ -5,8 +5,8 @@
 //* .Module Name     : SVMemoryManager
 //* .File Name       : $Workfile:   SVMemoryManager.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 12:36:04  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   23 Jul 2014 11:36:32  $
 //******************************************************************************
 
 #ifndef SVMEMORYMANAGER_H
@@ -64,19 +64,19 @@ private:
 
 			if ( m_lUsed + lSizeInBytes < m_lPoolSize )
 			{
-				SVMemoryPoolEntryMap::iterator iter = m_mapEntries.find(owner);
-				if ( iter == m_mapEntries.end() )
-				{
-					SVSingleLock lock( m_critsec );
-					iter = m_mapEntries.insert( SVMemoryPoolEntryPair(owner, SVMemoryPoolEntry()) ).first;
-				}
-				::InterlockedExchangeAdd( const_cast <LPLONG> (&m_lUsed), lSizeInBytes );
-				iter->second.lSize += lSizeInBytes;
 				hr = S_OK;
 			}
-			else
+			
+			//Add the amount of Memory even if you are over the limit.  The Archive Tool Dialog will handle negative memory properly
+			SVMemoryPoolEntryMap::iterator iter = m_mapEntries.find(owner);
+			if ( iter == m_mapEntries.end() )
 			{
+				SVSingleLock lock( m_critsec );
+				iter = m_mapEntries.insert( SVMemoryPoolEntryPair(owner, SVMemoryPoolEntry()) ).first;
 			}
+			::InterlockedExchangeAdd( const_cast <LPLONG> (&m_lUsed), lSizeInBytes );
+			iter->second.lSize += lSizeInBytes;
+
 			return hr;
 		}
 
@@ -200,7 +200,17 @@ inline SVMemoryManager<void*>& TheSVMemoryManager() {return SVMemoryManagerSingl
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVMemoryManager.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVMemoryManager.h_v  $
+ * 
+ *    Rev 1.1   23 Jul 2014 11:36:32   ryoho
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  916
+ * SCR Title:  Fix issue with available memory calculation with Archive Tool (SV0-350)
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   changed ReserverPoolMemory to add the memory allocation even if it goes over.  the error will still be out of memory
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 12:36:04   bWalter
  * Project:  SVObserver

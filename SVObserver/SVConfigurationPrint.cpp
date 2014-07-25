@@ -5,8 +5,8 @@
 //* .Module Name     : SVConfigurationPrint
 //* .File Name       : $Workfile:   SVConfigurationPrint.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.13  $
-//* .Check In Date   : $Date:   16 Jul 2014 07:53:50  $
+//* .Current Version : $Revision:   1.14  $
+//* .Check In Date   : $Date:   23 Jul 2014 10:34:08  $
 //******************************************************************************
 
 #pragma region Includes
@@ -949,10 +949,14 @@ void SVConfigurationPrint::PrintDetails( CDC* pDC, SVObjectClass* pObj, CPoint& 
 				SVUserMaskOperatorClass* maskObj = dynamic_cast <SVUserMaskOperatorClass*>( pObj );
 				if ( NULL != maskObj )
 				{
-					sLabel = pApp->GetStringResource(IDS_IMAGE_SOURCE_STRING) + _T(":");
-					sValue.Format(_T("%s"), maskObj->getMaskInputImage()->GetCompleteObjectName());
-					ptCurPos.x   = (nIndentLevel + 1) * m_shortTabPixels;
-					PrintValueObject(pDC, ptCurPos, sLabel, sValue);
+					SVImageClass* pImage = maskObj->getMaskInputImage();
+					if (nullptr != pImage)
+					{
+						sLabel = pApp->GetStringResource(IDS_IMAGE_SOURCE_STRING) + _T(":");
+						sValue.Format(_T("%s"), pImage->GetCompleteObjectName());
+						ptCurPos.x   = (nIndentLevel + 1) * m_shortTabPixels;
+						PrintValueObject(pDC, ptCurPos, sLabel, sValue);
+					}
 				}
 			}
 
@@ -2755,6 +2759,16 @@ HRESULT SVDeviceParamConfigPrintHelper::Visit(SVCustomDeviceParam& param)
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVConfigurationPrint.cpp_v  $
+ * 
+ *    Rev 1.14   23 Jul 2014 10:34:08   ryoho
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  876
+ * SCR Title:  Add user mask image to print configuration
+ * Checked in by:  bWalter;  Ben Walter
+ * Change Description:  
+ *   changd PrintDetails for the SVUserMaskOperatorClass to check to make sure that the SVImageClass is not NULL
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.13   16 Jul 2014 07:53:50   ryoho
  * Project:  SVObserver

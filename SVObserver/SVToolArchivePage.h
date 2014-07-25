@@ -5,8 +5,8 @@
 //* .Module Name     : SVToolAdjustmentArchivePage
 //* .File Name       : $Workfile:   SVToolArchivePage.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   11 Nov 2013 07:37:58  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   23 Jul 2014 11:37:26  $
 //******************************************************************************
 
 #ifndef __SVTOOLARCHIVEPAGE_INCLUDED__
@@ -100,6 +100,7 @@ protected:
 	bool CanSelectObjectCallback( SVObjectReference refObject, bool bCurrentState, int );
 private:
 	BOOL m_bUseComumnHeaders;
+	CString m_sMaxImageNumber;
 
 };
 
@@ -110,6 +111,16 @@ private:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVToolArchivePage.h_v  $
+ * 
+ *    Rev 1.2   23 Jul 2014 11:37:26   ryoho
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  916
+ * SCR Title:  Fix issue with available memory calculation with Archive Tool (SV0-350)
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   added CString m_sMaxImageNumber
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   11 Nov 2013 07:37:58   tbair
  * Project:  SVObserver
