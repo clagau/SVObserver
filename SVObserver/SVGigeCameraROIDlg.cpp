@@ -5,8 +5,8 @@
 //* .Module Name     : SVGigeCameraROIDlg
 //* .File Name       : $Workfile:   SVGigeCameraROIDlg.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.3  $
-//* .Check In Date   : $Date:   02 Jul 2014 13:06:46  $
+//* .Current Version : $Revision:   1.4  $
+//* .Check In Date   : $Date:   28 Jul 2014 10:11:42  $
 //******************************************************************************
 
 #pragma region Includes
@@ -467,7 +467,7 @@ void SVGigeCameraROIDlg::ObjectChangedExDialogImage(long Tab, long Handle, VARIA
 	m_iLeft = ParaMap[CDSVPictureDisplay::P_X1].lVal;
 	m_iTop = ParaMap[CDSVPictureDisplay::P_Y1].lVal;
 	UpdateData(FALSE);
-	SetGraphicROI();
+	OnChangeROI();
 }
 #pragma endregion Protected Methods
 
@@ -684,6 +684,17 @@ void SVGigeCameraROIDlg::setImages()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVGigeCameraROIDlg.cpp_v  $
+ * 
+ *    Rev 1.4   28 Jul 2014 10:11:42   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  902
+ * SCR Title:  Change Complex Dialog Image Displays to Use SVPictureDisplay ActiveX
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   bugfix: only set ROI position on the available grid by mouse moving of the ROI.
+ * 
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   02 Jul 2014 13:06:46   mziegler
  * Project:  SVObserver
