@@ -5,8 +5,8 @@
 //* .Module Name     : SVDlgFolder
 //* .File Name       : $Workfile:   SVDlgFolder.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   21 May 2014 17:55:24  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   25 Jul 2014 15:09:18  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -22,10 +22,8 @@ IMPLEMENT_DYNAMIC(CDlgFolder, CSVFileDialog)
 WNDPROC CDlgFolder::m_wndProc = NULL;
 
 CDlgFolder::CDlgFolder() : 
-   //CFileDialog(TRUE, NULL, _T("*..*"))  // Show folders only.
-   CSVFileDialog(TRUE,NULL,_T("*.*"))       // Show all files
+   CSVFileDialog(TRUE,NULL,_T("*..*"))       // Show Folders Only
 {
-	//m_pPath = pPath;
 }
 
 
@@ -99,6 +97,7 @@ void CDlgFolder::OnInitDone()
 	HideControl(stc3);
 	HideControl(cmb1);
 	HideControl(stc2);
+	HideControl(cmb13);
 
 	CWnd* pFD = GetParent();
 
@@ -151,6 +150,16 @@ void CDlgFolder::OnInitDone()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVDlgFolder.cpp_v  $
+ * 
+ *    Rev 1.3   25 Jul 2014 15:09:18   ryoho
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  922
+ * SCR Title:  Fix issues with the Folder Select Dialog
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   changed the constructor to only show Folders
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   21 May 2014 17:55:24   sjones
  * Project:  SVObserver

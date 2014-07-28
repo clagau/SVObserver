@@ -5,8 +5,8 @@
 //* .Module Name     : SVToolAdjustmentArchivePage
 //* .File Name       : $Workfile:   SVToolArchivePage.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.6  $
-//* .Check In Date   : $Date:   23 Jul 2014 11:42:08  $
+//* .Current Version : $Revision:   1.7  $
+//* .Check In Date   : $Date:   25 Jul 2014 15:14:06  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -467,7 +467,12 @@ void SVToolAdjustmentArchivePage::OnBrowse()
 {
 	SVFileNameClass	svfncArchiveFileName;
 
+	//get current path
+	CString sArchiveFullNameAndPath;
+	m_editArchiveFileName.GetWindowText( sArchiveFullNameAndPath );
+
 	svfncArchiveFileName.SetFileType(SV_DEFAULT_FILE_TYPE);
+	svfncArchiveFileName.SetDefaultFullFileName(sArchiveFullNameAndPath);
 	if (svfncArchiveFileName.SelectFile())
 	{
 		m_editArchiveFileName.SetWindowText(svfncArchiveFileName.GetFullFileName());
@@ -794,6 +799,16 @@ void SVToolAdjustmentArchivePage::OnBnClickedHeaderCheck()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVToolArchivePage.cpp_v  $
+ * 
+ *    Rev 1.7   25 Jul 2014 15:14:06   ryoho
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  923
+ * SCR Title:  Fix the default file selection for the Archive Tool
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   when browsing for the archive file, start with the path that is in the edit field.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.6   23 Jul 2014 11:42:08   ryoho
  * Project:  SVObserver
