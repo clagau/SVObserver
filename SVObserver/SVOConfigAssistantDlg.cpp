@@ -5,8 +5,8 @@
 //* .Module Name     : SVOConfigAssistantDlg
 //* .File Name       : $Workfile:   SVOConfigAssistantDlg.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.17  $
-//* .Check In Date   : $Date:   15 May 2014 10:28:34  $
+//* .Current Version : $Revision:   1.18  $
+//* .Check In Date   : $Date:   04 Aug 2014 07:31:04  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -4405,6 +4405,52 @@ BOOL CSVOConfigAssistantDlg::SystemChangeResetCamera( SVIMProductEnum p_lNewSyst
 			l_bRet = TRUE;
 			break;
 		}
+		case SVIM_PRODUCT_X2_GD1A:
+		case SVIM_PRODUCT_X2_GD2A:
+		case SVIM_PRODUCT_X2_GD4A:
+		case SVIM_PRODUCT_X2_GD8A:
+		case SVIM_PRODUCT_D1:
+		case SVIM_PRODUCT_D2:
+		case SVIM_PRODUCT_D3:
+		case SVIM_PRODUCT_X1:
+		case SVIM_PRODUCT_X2:
+		case SVIM_PRODUCT_X3:
+		case SVIM_PRODUCT_X1_COLOR:
+		case SVIM_PRODUCT_X2_COLOR:
+		case SVIM_PRODUCT_X3_COLOR:
+		case SVIM_PRODUCT_X2_GD1A_COLOR:
+		case SVIM_PRODUCT_X2_GD2A_COLOR:
+		case SVIM_PRODUCT_X2_GD4A_COLOR:
+		case SVIM_PRODUCT_X2_GD8A_COLOR:
+		case SVIM_PRODUCT_D1_COLOR:
+		case SVIM_PRODUCT_D2_COLOR:
+		case SVIM_PRODUCT_D3_COLOR:
+		{
+			int iNum = GetCameraListCount();
+			int iCh = 0;
+			int iDig = 0;
+			CSVOCameraObj *pObj = NULL;
+			for ( int i = 0; i < iNum; i++ )
+			{
+				pObj = GetCameraObject(i);
+				if ( pObj )
+				{
+					iDig = pObj->GetDigNumber();
+					pObj->SetDigNumber(iDig);
+					pObj->SetBandNumber(0);
+					pObj->SetCameraFile("");
+					if (!pObj->IsFileAcquisition())
+					{
+						if ( AddMessageToList(CAMERA_DLG, BuildDisplayMessage(MESSAGE_TYPE_ERROR, pObj->GetCameraDisplayName(), CAMERA_INVALID_FILES)) )
+						{
+							m_iCameraErrors++;
+						}
+					}
+				}
+			}
+			l_bRet = TRUE;
+			break;
+		}
 		default:
 		{
 			//go thru each camera and remove dig #'s and assign Ch#'s
@@ -4919,6 +4965,16 @@ bool CSVOConfigAssistantDlg::IsFileAcquisition(int iDig) const
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVOConfigAssistantDlg.cpp_v  $
+ * 
+ *    Rev 1.18   04 Aug 2014 07:31:04   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  893
+ * SCR Title:  Fix Camera Index Issue for Digital Cameras (e115)
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Added a cases for digital cameras to SystemChangeResetCamera. In the past, the default case set the digitizer number to zero.  The new case preserves the digitizer number.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.17   15 May 2014 10:28:34   tbair
  * Project:  SVObserver

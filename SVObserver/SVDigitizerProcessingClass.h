@@ -5,8 +5,8 @@
 //* .Module Name     : SVDigitizerProcessingClass
 //* .File Name       : $Workfile:   SVDigitizerProcessingClass.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 10:11:46  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   04 Aug 2014 07:24:08  $
 //******************************************************************************
 
 #ifndef SVDIGITIZERPROCESSINGCLASS_H
@@ -54,6 +54,8 @@ public:
 	HRESULT StoreLastCameraImage();
 	HRESULT RestoreLastCameraImage();
 
+	SVString GetReOrderedCamera( LPCTSTR Name ) const;
+
 protected:
 	SVDigitizerProcessingClass();
 
@@ -91,7 +93,17 @@ private:
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVDigitizerProcessingClass.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVDigitizerProcessingClass.h_v  $
+ * 
+ *    Rev 1.1   04 Aug 2014 07:24:08   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  893
+ * SCR Title:  Fix Camera Index Issue for Digital Cameras (e115)
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Added GetRe-ordered Cameras function to insure the correct camera order when they are re-ordered with the camera manager.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 10:11:46   bWalter
  * Project:  SVObserver

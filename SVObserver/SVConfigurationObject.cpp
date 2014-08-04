@@ -5,8 +5,8 @@
 //* .Module Name     : SVConfigurationObject
 //* .File Name       : $Workfile:   SVConfigurationObject.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.28  $
-//* .Check In Date   : $Date:   17 Jul 2014 18:35:56  $
+//* .Current Version : $Revision:   1.29  $
+//* .Check In Date   : $Date:   04 Aug 2014 07:24:08  $
 //******************************************************************************
 
 #pragma region Includes
@@ -1415,8 +1415,8 @@ HRESULT SVConfigurationObject::LoadConfiguration(SVTreeType& rTree)
 										lut.Transform();
 									}
 								}
-
-								bOk = SVImageProcessingClass::Instance().GetAcquisitionDevice( csFullName, psvDevice ) == S_OK;
+								SVString strNewAcquisitionDeviceName = SVDigitizerProcessingClass::Instance().GetReOrderedCamera(csFullName);
+								bOk = SVImageProcessingClass::Instance().GetAcquisitionDevice( strNewAcquisitionDeviceName.c_str(), psvDevice ) == S_OK;
 								if ( bOk )
 								{
 									if ( !( psvDevice.empty() ) )
@@ -1614,7 +1614,8 @@ HRESULT SVConfigurationObject::LoadConfiguration(SVTreeType& rTree)
 
 					if ( bOk )
 					{
-						bOk = pCamera->Create( csDeviceName );
+						SVString strRemappedDeviceName = SVDigitizerProcessingClass::Instance().GetReOrderedCamera(csDeviceName);
+						bOk = pCamera->Create( strRemappedDeviceName.c_str() );
 					}
 
 					if ( bOk )
@@ -2426,7 +2427,8 @@ HRESULT SVConfigurationObject::LoadFileAcquisitionConfiguration(SVTreeType& rTre
 					//psvDevice->DestroyBuffers();
 					psvDevice->CreateBuffers( svImageInfo, TheSVObserverApp.GetSourceImageDepth() );
 				}
-				if( !( AddAcquisitionDevice( csFullName, svFileArray, svLight, lut, &svDeviceParams ) ) )
+				SVString strRemappedName = SVDigitizerProcessingClass::Instance().GetReOrderedCamera(csFullName);
+				if( !( AddAcquisitionDevice( strRemappedName.c_str(), svFileArray, svLight, lut, &svDeviceParams ) ) )
 				{
 					hr = E_FAIL;
 				}
@@ -5502,6 +5504,16 @@ HRESULT SVConfigurationObject::LoadMonitoredObjectList( SVTreeType& rTree, SVTre
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVConfigurationObject.cpp_v  $
+ * 
+ *    Rev 1.29   04 Aug 2014 07:24:08   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  893
+ * SCR Title:  Fix Camera Index Issue for Digital Cameras (e115)
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Added GetRe-ordered Cameras function to insure the correct camera order when they are re-ordered with the camera manager.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.28   17 Jul 2014 18:35:56   gramseier
  * Project:  SVObserver

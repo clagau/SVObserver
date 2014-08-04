@@ -5,8 +5,8 @@
 //* .Module Name     : SVDigitizerProcessingClass
 //* .File Name       : $Workfile:   SVDigitizerProcessingClass.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.4  $
-//* .Check In Date   : $Date:   17 Mar 2014 15:21:16  $
+//* .Current Version : $Revision:   1.5  $
+//* .Check In Date   : $Date:   04 Aug 2014 07:24:08  $
 //******************************************************************************
 
 #pragma region Includes
@@ -650,6 +650,37 @@ HRESULT SVDigitizerProcessingClass::UpdateIntekDevices()
 	return Status;
 }
 
+SVString SVDigitizerProcessingClass::GetReOrderedCamera( LPCTSTR Name ) const
+{
+	SVString strRet=Name;
+	// if the system is Matrox 
+	SVString::size_type pos = strRet.find("Matrox_GIGE.Dig_");
+	if( pos != SVString::npos )
+	{
+		SVGigeCameraStructSet GigECamSet = TheSVGigeCameraManager.GetCameraOrder();
+		size_t index = strRet[16]-'0';
+		if( index < GigECamSet.size() )
+		{
+			strRet[16] = '0' + GigECamSet[index].iPosition;
+		}
+	}
+	else
+	{
+		// if the system is Intek
+		pos = strRet.find("Matrox_1394.Dig_");
+		if( pos != SVString::npos )
+		{
+			SVGigeCameraStructSet GigECamSet = TheSVGigeCameraManager.GetCameraOrder();
+			size_t index = strRet[16]-'0';
+			if( index < GigECamSet.size() )
+			{
+				strRet[16] = '0' + GigECamSet[index].iPosition;
+			}
+		}
+	}
+	return strRet;
+}
+
 HRESULT SVDigitizerProcessingClass::UpdateMatroxDevices()
 {
 	HRESULT Status = S_OK;
@@ -758,6 +789,16 @@ HRESULT SVDigitizerProcessingClass::UpdateMatroxDevices()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVDigitizerProcessingClass.cpp_v  $
+ * 
+ *    Rev 1.5   04 Aug 2014 07:24:08   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  893
+ * SCR Title:  Fix Camera Index Issue for Digital Cameras (e115)
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Added GetRe-ordered Cameras function to insure the correct camera order when they are re-ordered with the camera manager.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.4   17 Mar 2014 15:21:16   bwalter
  * Project:  SVObserver
