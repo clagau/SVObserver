@@ -5,8 +5,8 @@
 //* .Module Name     : SVToolAdjustmentArchivePage
 //* .File Name       : $Workfile:   SVToolArchivePage.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.7  $
-//* .Check In Date   : $Date:   25 Jul 2014 15:14:06  $
+//* .Current Version : $Revision:   1.8  $
+//* .Check In Date   : $Date:   07 Aug 2014 09:27:04  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -646,7 +646,10 @@ void SVToolAdjustmentArchivePage::OnChangeEditMaxImages()
 			sMsg.Format("There is not enough Available Archive Tool Image Memory for %s images in Change Mode. Available\nArchive Image Memory is the result of the selected images and the Max Images number.\nThe selection will be reset.",strNumImages);
 			AfxMessageBox(sMsg);
 			m_lImagesToArchive = atol(m_sMaxImageNumber);
-			m_editMaxImages.SetWindowText((LPCSTR)m_sMaxImageNumber);
+			if(m_sMaxImageNumber != strNumImages)
+			{
+				m_editMaxImages.SetWindowText((LPCSTR)m_sMaxImageNumber);
+			}
 		}
 	}
 }
@@ -799,6 +802,16 @@ void SVToolAdjustmentArchivePage::OnBnClickedHeaderCheck()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVToolArchivePage.cpp_v  $
+ * 
+ *    Rev 1.8   07 Aug 2014 09:27:04   ryoho
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  916
+ * SCR Title:  Fix issue with available memory calculation with Archive Tool (SV0-350)
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Changed OnChangeEditMaxImages so it would not write back the number if it was the same.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.7   25 Jul 2014 15:14:06   ryoho
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : SVPatternAnalyzerClass
 //* .File Name       : $Workfile:   SVPatternAnalyzerClass.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.5  $
-//* .Check In Date   : $Date:   17 Jul 2014 06:38:48  $
+//* .Current Version : $Revision:   1.6  $
+//* .Check In Date   : $Date:   07 Aug 2014 09:28:48  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -827,7 +827,7 @@ BOOL SVPatternAnalyzerClass::OnValidate()
 {
 	if (SVImageAnalyzerClass::OnValidate())
 	{
-		if ( !m_patModelHandle.empty() && !m_patResultHandle.empty() )
+		if ( IsValidSize() && !m_patModelHandle.empty() && !m_patResultHandle.empty() )
 		{
 			isObjectValid.SetValue(1, TRUE);
 			return TRUE;
@@ -1399,6 +1399,16 @@ bool SVPatternAnalyzerClass::IsValidSize()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVPatternAnalyzerClass.cpp_v  $
+ * 
+ *    Rev 1.6   07 Aug 2014 09:28:48   ryoho
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  912
+ * SCR Title:  Fix issue with Pattern Analyzer if pattern is larger than the ROI of tool
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   changed OnValidate to call IsValidSize to set the analyzer/tool invalid if the pattern is larger then the ROI of the tool.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.5   17 Jul 2014 06:38:48   ryoho
  * Project:  SVObserver
