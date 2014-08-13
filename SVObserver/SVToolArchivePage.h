@@ -5,8 +5,8 @@
 //* .Module Name     : SVToolAdjustmentArchivePage
 //* .File Name       : $Workfile:   SVToolArchivePage.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   23 Jul 2014 11:37:26  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   12 Aug 2014 06:47:56  $
 //******************************************************************************
 
 #ifndef __SVTOOLARCHIVEPAGE_INCLUDED__
@@ -54,6 +54,7 @@ protected:
 	CEdit	m_editArchiveFileName;
 	BOOL	m_checkAppendArchive;
 	BOOL	m_checkStopAtMaxImages;
+	BOOL	m_bUseColumnHeaders;
 	int		m_iModeIndex;
 	CString	m_strAvailableArchiveImageMemory;
 	//}}AFX_DATA
@@ -98,8 +99,9 @@ protected:
 	bool StoreHeaderValuesToTool( StringPairVect& HeaderPairs );
 
 	bool CanSelectObjectCallback( SVObjectReference refObject, bool bCurrentState, int );
+	void OnClickResultsTreeCtrl( int Par1 );
+	void UpdateHeaderBtn();
 private:
-	BOOL m_bUseComumnHeaders;
 	CString m_sMaxImageNumber;
 
 };
@@ -111,6 +113,16 @@ private:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVToolArchivePage.h_v  $
+ * 
+ *    Rev 1.3   12 Aug 2014 06:47:56   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  872
+ * SCR Title:  Add Archive Tool Headers to Archive File
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Added click callback to update header button.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   23 Jul 2014 11:37:26   ryoho
  * Project:  SVObserver

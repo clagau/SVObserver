@@ -5,8 +5,8 @@
 //* .Module Name     : SVObjectManager
 //* .File Name       : $Workfile:   SVObjectManagerClass.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.4  $
-//* .Check In Date   : $Date:   17 Jul 2014 15:18:06  $
+//* .Current Version : $Revision:   1.5  $
+//* .Check In Date   : $Date:   12 Aug 2014 12:42:48  $
 //******************************************************************************
 
 #pragma region Includes
@@ -1452,9 +1452,9 @@ HRESULT SVObjectManagerClass::getTreeList(const SVString& rPath, SVObjectReferen
 	SVObjectClass* pStartObject = nullptr;
 	GetObjectByDottedName(rPath, pStartObject);
 
-	SVString InternalPath = pStartObject->GetCompleteObjectName();
 	if( nullptr != pStartObject )
 	{
+		SVString InternalPath = pStartObject->GetCompleteObjectName();
 		if( (pStartObject->ObjectAttributesAllowed() & AttributesAllowedFilter) == AttributesAllowedFilter )
 		{
 			GuidObjectList.insert(pStartObject->GetUniqueObjectID());
@@ -1488,7 +1488,10 @@ HRESULT SVObjectManagerClass::getTreeList(const SVString& rPath, SVObjectReferen
 						SVString::size_type Pos = ObjectPath.find( InternalPath.c_str() );
 						if( SVString::npos != Pos )
 						{
-							GuidObjectList.insert(pUniqueObjectEntry->PObject->GetUniqueObjectID());
+							if( ObjectPath.size() == Pos + InternalPath.size() || ObjectPath[Pos+InternalPath.size()] == '.')
+							{
+								GuidObjectList.insert(pUniqueObjectEntry->PObject->GetUniqueObjectID());
+							}
 						}
 					}
 				}
@@ -1923,6 +1926,18 @@ HRESULT SVObjectManagerClass::GetObservers( const SVString& rSubjectDataName, co
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObjectLibrary\SVObjectManagerClass.cpp_v  $
+ * 
+ *    Rev 1.5   12 Aug 2014 12:42:48   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  909
+ * SCR Title:  Object Selector replacing Result Picker and Output Selector SVO-72, 40, 130
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Fixed: Accessed pointer before nullptr check and object name filter
+ * Changed methods:getTreeList
+ * 
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.4   17 Jul 2014 15:18:06   gramseier
  * Project:  SVObserver

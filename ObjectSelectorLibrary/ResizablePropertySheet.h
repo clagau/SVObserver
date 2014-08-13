@@ -9,8 +9,8 @@
 //* .File Name       : $Workfile:   ResizablePropertySheet.h  $
 //* .Description	 : The class resizes the registered controls in a dialog 
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   17 Jul 2014 11:16:28  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   12 Aug 2014 12:35:06  $
 //******************************************************************************
 
 #pragma once
@@ -41,6 +41,7 @@ namespace Seidenader
 		public:
 		#pragma region Public Methods
 			virtual BOOL OnInitDialog();
+			INT_PTR DoModal();
 			// Returns the size/position of the page
 			void GetPageRect(RECT *pRect);
 		#pragma endregion Public Methods
@@ -49,6 +50,7 @@ namespace Seidenader
 		#pragma region Protected Methods
 
 			virtual LRESULT WindowProc(UINT message, WPARAM wParam, LPARAM lParam);
+			static int CALLBACK ResizePropSheetCallback(HWND hWnd, UINT message, LPARAM lParam);
 			//{{AFX_MSG(CResizablePropertySheet)
 			afx_msg void OnSize(UINT nType, int cx, int cy);
 			afx_msg void OnGetMinMaxInfo(MINMAXINFO FAR* lpMMI);
@@ -73,6 +75,17 @@ namespace Seidenader
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\ObjectSelectorLibrary\ResizablePropertySheet.h_v  $
+ * 
+ *    Rev 1.1   12 Aug 2014 12:35:06   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  909
+ * SCR Title:  Object Selector replacing Result Picker and Output Selector SVO-72, 40, 130
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Fixed button display problem in the resize property sheet Win7 64bit
+ * Added the methods DoModal and ResizePropSheetCallback
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   17 Jul 2014 11:16:28   gramseier
  * Project:  SVObserver

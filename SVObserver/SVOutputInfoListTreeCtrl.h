@@ -5,8 +5,8 @@
 //* .Module Name     : SVOutputInfoListTreeCtrl
 //* .File Name       : $Workfile:   SVOutputInfoListTreeCtrl.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 13:15:28  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   12 Aug 2014 06:47:04  $
 //******************************************************************************
 
 #ifndef SVOUTPUTINFOLISTTREECTRL_H
@@ -29,6 +29,7 @@ class SVTaskObjectListClass;
 // of the item. The third parameter is the index of the item in the tree
 // the return value indicates if the object can be selected/deselected.
 typedef Loki::Functor<bool, TYPELIST_3(SVObjectReference, bool, int) > SVObjectTreeCanSelectObjectCallbackFn;
+typedef Loki::Functor<void, TYPELIST_1( int ) > SVClickCallbackFn;
 
 
 struct SVSelectObjectFilterInfoStruct
@@ -68,6 +69,7 @@ public:
 	HRESULT SelectObjectFilter( SVSelectObjectFilterInfoStruct svFilter );
 
 	void SetCanSelectObjectCallback( SVObjectTreeCanSelectObjectCallbackFn fn );
+	void SetClickCallback( SVClickCallbackFn fn);
 
 	HRESULT GetAddedObjects( std::set<SVObjectReference>& p_rAddedSet );
 	HRESULT GetRemovedObjects( std::set<SVObjectReference>& p_rRemovedSet );
@@ -126,6 +128,7 @@ protected:
 	bool m_bAllowBranchCheck;
 
 	SVObjectTreeCanSelectObjectCallbackFn m_fnCanSelectObject;
+	SVClickCallbackFn m_fnClick;
 
 	SVObjectReferenceVector m_selectObjectList; // used to provide what should be selected
 // Overrides
@@ -155,7 +158,17 @@ protected:
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVOutputInfoListTreeCtrl.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVOutputInfoListTreeCtrl.h_v  $
+ * 
+ *    Rev 1.1   12 Aug 2014 06:47:04   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  872
+ * SCR Title:  Add Archive Tool Headers to Archive File
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Added click callback.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 13:15:28   bWalter
  * Project:  SVObserver

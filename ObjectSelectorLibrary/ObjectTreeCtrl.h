@@ -5,8 +5,8 @@
 //* .Module Name     : ObjectTreeCtrl
 //* .File Name       : $Workfile:   ObjectTreeCtrl.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   17 Jul 2014 11:16:26  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   12 Aug 2014 12:32:36  $
 //* ----------------------------------------------------------------------------
 //* This class is used to display the object tree control
 //******************************************************************************
@@ -114,7 +114,7 @@ namespace Seidenader
 			\param Flags <in> the flags for the hit test
 			\return the tree item or NULL
 			***********/
-			const HTREEITEM checkItemHit( const CPoint& rPoint, UINT Flags ) const;
+			const HTREEITEM checkItemHit( const CPoint& rPoint, const UINT Flags ) const;
 
 			/**********
 			The method sets the item to checked
@@ -180,6 +180,18 @@ namespace Seidenader
 			\return a reference to the list of updated items
 			***********/
 			inline SVStringSet& getUpdateItems();
+
+			/**********
+			The method gets the left button check flag
+			\return the check flag value
+			***********/
+			inline UINT& getLeftButtonCheckFlag();
+
+			/**********
+			The method sets the left button check flag
+			\param rCheckFlag <in> 
+			***********/
+			inline void setLeftButtonCheckFlag( const UINT& rCheckFlag );
 		#pragma endregion Protected Methods
 
 		private:
@@ -187,6 +199,7 @@ namespace Seidenader
 			ObjectSelectorPpg& m_rParent;					//The parent reference
 			CPoint m_ContextPoint;							//Point where context menu called
 			bool m_SingleSelect;							//True when tree has only single item selection
+			UINT m_LeftButtonCheckFlag;						//The left button click check flag
 			static SVString m_CurrentSelection;				//The current selection
 			static SVStringSet m_UpdateItems;				//The list of items to update
 		#pragma endregion Member Variables
@@ -203,6 +216,17 @@ namespace Seidenader
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\ObjectSelectorLibrary\ObjectTreeCtrl.h_v  $
+ * 
+ *    Rev 1.1   12 Aug 2014 12:32:36   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  909
+ * SCR Title:  Object Selector replacing Result Picker and Output Selector SVO-72, 40, 130
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Optional what part of the tree item is clicked for it to toggle
+ * Added the methods getLeftButtonCheckFlag and setLeftButtonCheckFlag
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   17 Jul 2014 11:16:26   gramseier
  * Project:  SVObserver

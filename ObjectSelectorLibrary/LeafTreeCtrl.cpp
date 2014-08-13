@@ -5,8 +5,8 @@
 //* .Module Name     : LeafTreeCtrl
 //* .File Name       : $Workfile:   LeafTreeCtrl.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   17 Jul 2014 11:12:18  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   12 Aug 2014 12:24:12  $
 //******************************************************************************
 
 #pragma region Includes
@@ -37,6 +37,7 @@ END_MESSAGE_MAP()
 LeafTreeCtrl::LeafTreeCtrl(  ObjectSelectorPpg& rParent, bool SingleSelect )
 	: ObjectTreeCtrl( rParent, SingleSelect )
 {
+	setLeftButtonCheckFlag( TVHT_ONITEM );
 }
 
 LeafTreeCtrl::~LeafTreeCtrl()
@@ -208,6 +209,17 @@ void LeafTreeCtrl::OnUncheckAll()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\ObjectSelectorLibrary\LeafTreeCtrl.cpp_v  $
+ * 
+ *    Rev 1.1   12 Aug 2014 12:24:12   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  909
+ * SCR Title:  Object Selector replacing Result Picker and Output Selector SVO-72, 40, 130
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Toggle leaf value when the label is clicked
+ * Changed methods: Constructor
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   17 Jul 2014 11:12:18   gramseier
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : SVOutputInfoListTreeCtrl
 //* .File Name       : $Workfile:   SVOutputInfoListTreeCtrl.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.3  $
-//* .Check In Date   : $Date:   21 May 2014 17:51:26  $
+//* .Current Version : $Revision:   1.4  $
+//* .Check In Date   : $Date:   12 Aug 2014 06:47:04  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -953,6 +953,11 @@ void SVOutputInfoListTreeCtrlClass::SetCanSelectObjectCallback( SVObjectTreeCanS
 	m_fnCanSelectObject = fn;
 }
 
+void SVOutputInfoListTreeCtrlClass::SetClickCallback( SVClickCallbackFn fn)
+{
+	m_fnClick = fn;
+}
+
 void SVOutputInfoListTreeCtrlClass::SetAllowWholeArray()
 {
 	m_bAllowWholeArray = true;
@@ -1025,6 +1030,7 @@ bool SVOutputInfoListTreeCtrlClass::SelectItemByIndex( int iIndex, bool bSelect 
 
 bool SVOutputInfoListTreeCtrlClass::Click( HTREEITEM hItem )
 {
+	bool bRet = false;
 	DWORD_PTR dwItemData = GetItemData(hItem);
 	if ( dwItemData )
 	{
@@ -1048,7 +1054,7 @@ bool SVOutputInfoListTreeCtrlClass::Click( HTREEITEM hItem )
 				long l_lCheckState = 0;
 				UpdateNodeStateColor( GetRootItem(), l_lCheckState ); 
 			}
-			return true;
+			bRet = true;
 		}
 	}
 	else
@@ -1060,10 +1066,16 @@ bool SVOutputInfoListTreeCtrlClass::Click( HTREEITEM hItem )
 			SetBranchChecks( hItem, l_bNewBranchState );
 			long l_lCheckState = 0;
 			UpdateNodeStateColor( GetRootItem(), l_lCheckState ); 
-			return true;
+			bRet = true;
 		}
 	}
-	return false;
+
+	if ( m_fnClick )
+	{
+		m_fnClick(0);
+	}
+
+	return bRet;
 }
 
 void SVOutputInfoListTreeCtrlClass::SetBranchChecks( HTREEITEM hItem , bool p_bNewBranchState )
@@ -1107,6 +1119,16 @@ void SVOutputInfoListTreeCtrlClass::SetBranchChecks( HTREEITEM hItem , bool p_bN
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVOutputInfoListTreeCtrl.cpp_v  $
+ * 
+ *    Rev 1.4   12 Aug 2014 06:47:04   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  872
+ * SCR Title:  Add Archive Tool Headers to Archive File
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Added click callback.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   21 May 2014 17:51:26   sjones
  * Project:  SVObserver

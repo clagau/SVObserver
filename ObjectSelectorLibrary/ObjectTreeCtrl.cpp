@@ -5,8 +5,8 @@
 //* .Module Name     : ObjectTreeCtrl
 //* .File Name       : $Workfile:   ObjectTreeCtrl.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   17 Jul 2014 11:16:24  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   12 Aug 2014 12:30:46  $
 //******************************************************************************
 
 #pragma region Includes
@@ -44,9 +44,10 @@ END_MESSAGE_MAP()
 
 #pragma region Constructor
 ObjectTreeCtrl::ObjectTreeCtrl(  ObjectSelectorPpg& rParent, bool SingleSelect  ) :
-	m_rParent( rParent )
-	, m_SingleSelect( SingleSelect)
-	, m_ContextPoint(0, 0)
+m_rParent( rParent )
+, m_SingleSelect( SingleSelect)
+, m_ContextPoint(0, 0)
+, m_LeftButtonCheckFlag( TVHT_ONITEMSTATEICON )
 {
 }
 
@@ -70,11 +71,16 @@ void ObjectTreeCtrl::OnLButtonDown( UINT Flags, CPoint Point )
 	//When left button clicked then reset context menu point
 	m_ContextPoint = CPoint(0, 0);
 
-	HTREEITEM Item = checkItemHit( Point, TVHT_ONITEMSTATEICON );
+	HTREEITEM Item = checkItemHit( Point, m_LeftButtonCheckFlag );
 
-	if( setCheckItem( Item ) ) {return;}
-
-	CTreeCtrl::OnLButtonDown( Flags, Point );
+	if( setCheckItem( Item ) )
+	{
+		SetFocus();
+	}
+	else
+	{
+		CTreeCtrl::OnLButtonDown( Flags, Point );
+	}
 }
 
 void ObjectTreeCtrl::OnRButtonDown( UINT Flags, CPoint Point ) 
@@ -97,14 +103,19 @@ void ObjectTreeCtrl::OnRButtonDown( UINT Flags, CPoint Point )
 
 void ObjectTreeCtrl::OnKeyDown( UINT Char, UINT RepCnt, UINT Flags ) 
 {
+	bool KeyHandled( false);
+
 	if( VK_SPACE == Char )
 	{
 		HTREEITEM Item = GetSelectedItem();
 
-		if( setCheckItem( Item ) ) {return;}
+		KeyHandled = setCheckItem( Item );
 	}
 
-	CTreeCtrl::OnKeyDown( Char, RepCnt, Flags);
+	if( !KeyHandled  )
+	{
+		CTreeCtrl::OnKeyDown( Char, RepCnt, Flags);
+	}
 }
 
 void ObjectTreeCtrl::OnDestroy() 
@@ -176,27 +187,31 @@ const HTREEITEM ObjectTreeCtrl::checkItemHit( const CPoint& rPoint, const UINT F
 
 bool ObjectTreeCtrl::setCheckItem( const HTREEITEM& rItem )
 {
+	bool Result( false );
+
 	if( NULL != rItem )
 	{
 		//Check if item is checkable
-		if( !isCheckable() ) 
+		if( isCheckable() )
 		{
-			return true;
+			clearLastCheckedItem( rItem );
+			TreeItemSet Items;
+
+			Items.insert( rItem );
+			if( setCheckState( Items ) )
+			{
+				//If item is checked then this item should also be selected
+				SelectItem( rItem );
+				Result = true;
+			}
 		}
-
-		clearLastCheckedItem( rItem );
-		TreeItemSet Items;
-
-		Items.insert( rItem );
-		if( setCheckState( Items ) )
+		else
 		{
-			//If item is checked then this item should also be selected
-			SelectItem( rItem );
-			return true;
+			Result =  true;
 		}
 	}
 
-	return false;
+	return Result;
 }
 
 bool ObjectTreeCtrl::setCheckState( const TreeItemSet& rParentItems, IObjectSelectorItem::CheckedStateEnum CheckedState )
@@ -335,6 +350,18 @@ void ObjectTreeCtrl::clearLastCheckedItem( const HTREEITEM& rItem )
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\ObjectSelectorLibrary\ObjectTreeCtrl.cpp_v  $
+ * 
+ *    Rev 1.1   12 Aug 2014 12:30:46   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  909
+ * SCR Title:  Object Selector replacing Result Picker and Output Selector SVO-72, 40, 130
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Optional what part of the tree item is clicked for it to toggle
+ * Coding guidline changes
+ * Changed methods: OnLButtonDown
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   17 Jul 2014 11:16:24   gramseier
  * Project:  SVObserver

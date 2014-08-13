@@ -5,8 +5,8 @@
 //* .Module Name     : SVToolAdjustmentArchivePage
 //* .File Name       : $Workfile:   SVToolArchivePage.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.8  $
-//* .Check In Date   : $Date:   07 Aug 2014 09:27:04  $
+//* .Current Version : $Revision:   1.10  $
+//* .Check In Date   : $Date:   12 Aug 2014 14:28:20  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -43,7 +43,7 @@ END_MESSAGE_MAP()
 SVToolAdjustmentArchivePage::SVToolAdjustmentArchivePage( 
 	SVToolAdjustmentDialogSheetClass* Parent ) 
 	: CPropertyPage(SVToolAdjustmentArchivePage::IDD)
-	, m_bUseComumnHeaders(FALSE)
+	, m_bUseColumnHeaders(FALSE)
 {
 	//{{AFX_DATA_INIT(SVToolAdjustmentArchivePage)
 	m_checkAppendArchive = 0;
@@ -89,7 +89,7 @@ void SVToolAdjustmentArchivePage::DoDataExchange(CDataExchange* pDX)
 	DDX_Check(pDX, IDC_CHECK_STOP_AT_MAX, m_checkStopAtMaxImages);
 	DDX_CBIndex(pDX, IDC_MODE_COMBO, m_iModeIndex);
 	DDX_Text(pDX, IDC_AVAILABLE_ARCHIVE_IMAGE_MEMORY, m_strAvailableArchiveImageMemory);
-	DDX_Check(pDX, IDC_HEADER_CHECK, m_bUseComumnHeaders);
+	DDX_Check(pDX, IDC_HEADER_CHECK, m_bUseColumnHeaders);
 	//}}AFX_DATA_MAP
 }
 
@@ -159,7 +159,7 @@ BOOL SVToolAdjustmentArchivePage::OnInitDialog()
 	m_treeImagesList.InitOutputListTreeCtrl();
 
 	m_treeImagesList.SetCanSelectObjectCallback( SVObjectTreeCanSelectObjectCallbackFn(this, &SVToolAdjustmentArchivePage::CanSelectObjectCallback) );
-
+	m_treeResultsList.SetClickCallback( SVClickCallbackFn(this, &SVToolAdjustmentArchivePage::OnClickResultsTreeCtrl) );
 	//
 	// Build the output list and set the object 'attributes' to use.
 	//
@@ -188,9 +188,19 @@ BOOL SVToolAdjustmentArchivePage::OnInitDialog()
 	m_pTool->m_dwArchiveStopAtMaxImages.GetValue( dwTemp );
 	m_checkStopAtMaxImages = (int)dwTemp;
 
-	bool bTemp = false;
-	m_pTool->m_bvoUseHeaders.GetValue( bTemp );
-	m_bUseComumnHeaders = bTemp ? 1 : 0;
+	bool bUseColumnHeaders = false;
+	m_pTool->m_bvoUseHeaders.GetValue( bUseColumnHeaders );
+	if(bUseColumnHeaders && m_pTool->m_arrayImagesInfoObjectsToArchive.GetSize() > 0)
+	{
+		m_bUseColumnHeaders = 1;
+		GetDlgItem(IDC_HEADER_BTN)->EnableWindow();
+	}
+	else
+	{
+		m_bUseColumnHeaders = 0;
+		GetDlgItem(IDC_HEADER_BTN)->EnableWindow(FALSE);
+	}
+
 	//
 	// Build the image list to select archivable images from.
 	//
@@ -318,7 +328,7 @@ bool SVToolAdjustmentArchivePage::QueryAllowExit()
 			long FreeMemory = CalculateFreeMem();
 			if (FreeMemory < 0)
 			{
-				AfxMessageBox("Not enough Available Archive Tool Image Memory. Please deselect some\nimages, decrease \"Max Images\" or change \"When to archive\" mode.");
+				AfxMessageBox("Not enough Available Archive Image Memory. Please deselect some\nimages, decrease \"Max Images\" or change \"When to archive\" mode.");
 				return false;
 			}
 		}
@@ -560,7 +570,7 @@ bool SVToolAdjustmentArchivePage::CanSelectObjectCallback( SVObjectReference ref
 				bOk = false;
 				ASSERT( bOk );
 				CString strMessage;
-				strMessage.Format(_T("Not enough Archive Tool image memory to select %s"), pImage->GetCompleteObjectName());
+				strMessage.Format(_T("Not enough Archive Image Memory to select %s"), pImage->GetCompleteObjectName());
 				AfxMessageBox( strMessage );
 			}
 		}
@@ -580,12 +590,26 @@ bool SVToolAdjustmentArchivePage::CanSelectObjectCallback( SVObjectReference ref
 
 			if (FreeMem < 0)
 			{
-				AfxMessageBox(_T("Not enough Archive Tool image memory for the images selected. Please deselect some images."));
+				AfxMessageBox(_T("Not enough Archive Image Memory for the images selected. Please deselect some images."));
 			}
 		}
 	}
 
 	return bOk;
+}
+
+void SVToolAdjustmentArchivePage::OnClickResultsTreeCtrl( int par1 )
+{
+	UpdateHeaderBtn();
+}
+
+void SVToolAdjustmentArchivePage::UpdateHeaderBtn()
+{
+	UpdateData();
+	SVObjectReferenceVector refObjs;
+	m_treeResultsList.GetSelectedObjects( refObjs );
+	BOOL bEnable = refObjs.size() != 0 && m_bUseColumnHeaders;
+	GetDlgItem(IDC_HEADER_BTN)->EnableWindow(bEnable);
 }
 
 void SVToolAdjustmentArchivePage::OnSelchangeModeCombo() 
@@ -619,7 +643,7 @@ void SVToolAdjustmentArchivePage::OnSelchangeModeCombo()
 			long FreeMem = CalculateFreeMem();
 			if (FreeMem < 0)
 			{
-				AfxMessageBox("There is not enough Available Archive Tool Image Memory for your selection in Change Mode. Available Archive Image Memory\nis the result of the selected images and the Max Images number.");
+				AfxMessageBox("There is not enough Available Archive Image Memory for your selection in Change Mode. Available Archive Image Memory\nis the result of the selected images and the Max Images number.");
 			}
 		}
 	}
@@ -643,7 +667,7 @@ void SVToolAdjustmentArchivePage::OnChangeEditMaxImages()
 		else
 		{
 			CString sMsg;
-			sMsg.Format("There is not enough Available Archive Tool Image Memory for %s images in Change Mode. Available\nArchive Image Memory is the result of the selected images and the Max Images number.\nThe selection will be reset.",strNumImages);
+			sMsg.Format("There is not enough Available Archive Image Memory for %s images in Change Mode. Available\nArchive Image Memory is the result of the selected images and the Max Images number.\nThe selection will be reset.",strNumImages);
 			AfxMessageBox(sMsg);
 			m_lImagesToArchive = atol(m_sMaxImageNumber);
 			if(m_sMaxImageNumber != strNumImages)
@@ -793,8 +817,7 @@ void SVToolAdjustmentArchivePage::OnBnClickedHeaderBtn()
 // Update tool from checkbox.
 void SVToolAdjustmentArchivePage::OnBnClickedHeaderCheck()
 {
-	UpdateData();
-	m_pTool->m_bvoUseHeaders.SetDefaultValue(m_bUseComumnHeaders, true);
+	UpdateHeaderBtn();
 }
 
 //******************************************************************************
@@ -802,6 +825,26 @@ void SVToolAdjustmentArchivePage::OnBnClickedHeaderCheck()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVToolArchivePage.cpp_v  $
+ * 
+ *    Rev 1.10   12 Aug 2014 14:28:20   ryoho
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  916
+ * SCR Title:  Fix issue with available memory calculation with Archive Tool (SV0-350)
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Update text for error messages
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.9   12 Aug 2014 06:47:56   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  872
+ * SCR Title:  Add Archive Tool Headers to Archive File
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Added click callback to update header button.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.8   07 Aug 2014 09:27:04   ryoho
  * Project:  SVObserver

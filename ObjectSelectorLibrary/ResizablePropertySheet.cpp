@@ -9,8 +9,8 @@
 //* .File Name       : $Workfile:   ResizablePropertySheet.cpp  $
 //* .Description	 : The class resizes the registered controls in a dialog 
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   17 Jul 2014 11:16:26  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   12 Aug 2014 12:35:04  $
 //******************************************************************************
 
 #pragma region Includes
@@ -122,8 +122,6 @@ BOOL CResizablePropertySheet::OnInitDialog()
 		m_Resize.Add(this, 0x3027, RESIZE_LOCKBOTTOM|RESIZE_LOCKRIGHT|RESIZE_LOCKLEFT);
 	}
 
-	// Set the resizable border
-	ModifyStyle(0, WS_THICKFRAME);
 	return TRUE; 
 }
 
@@ -143,9 +141,6 @@ void CResizablePropertySheet::GetPageRect(RECT *pRect)
 #pragma region Protected Methods
 void CResizablePropertySheet::OnSize(UINT nType, int cx, int cy) 
 {
-	// Must repeatedly do this to keep the frame from restoring itself
-	ModifyStyle(0, WS_THICKFRAME);
-
 	CPropertySheet::OnSize(nType, cx, cy);
 
 	// Make sure to erase the previous gripper position
@@ -153,9 +148,6 @@ void CResizablePropertySheet::OnSize(UINT nType, int cx, int cy)
 
 	if (GetTabControl())
 	{
-		CRect rcClient;
-		GetClientRect(rcClient);
-
 		CRect rcPage;
 		GetPageRect(rcPage);
 
@@ -226,14 +218,39 @@ void CResizablePropertySheet::OnPaint()
 	GetClientRect(&rect);
 
 	// Get the standard size of the gripper
-	rect.left = rect.right-GetSystemMetrics(SM_CXHSCROLL);
-	rect.top  = rect.bottom-GetSystemMetrics(SM_CYVSCROLL);
+	rect.left = rect.right - ::GetSystemMetrics(SM_CXHSCROLL);
+	rect.top  = rect.bottom - ::GetSystemMetrics(SM_CYVSCROLL);
 
 	// Draw it
 	dc.DrawFrameControl(&rect, DFC_SCROLL, DFCS_SCROLLSIZEGRIP);
 
 	// Save the painted rect so we can invalidate the rect on next OnSize()
 	m_rcGripper = rect;
+}
+
+INT_PTR CResizablePropertySheet::DoModal()
+{
+	// Hook into property sheet creation code
+	m_psh.dwFlags |= PSH_USECALLBACK;
+	m_psh.pfnCallback = ResizePropSheetCallback;
+
+	return CPropertySheet::DoModal();
+}
+
+int CALLBACK CResizablePropertySheet::ResizePropSheetCallback(HWND hWnd, UINT message, LPARAM lParam)
+{
+	extern int CALLBACK AfxPropSheetCallback(HWND, UINT message, LPARAM lParam);
+	// XMN: Call MFC's callback
+	int nRes = AfxPropSheetCallback(hWnd, message, lParam);
+
+	switch (message)
+	{
+	case PSCB_PRECREATE:
+		((LPDLGTEMPLATE) lParam)->style |= (DS_3DLOOK | DS_SETFONT | WS_THICKFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION);
+		break;
+	}
+
+	return nRes;
 }
 #pragma endregion Protected Methods
 
@@ -242,6 +259,17 @@ void CResizablePropertySheet::OnPaint()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\ObjectSelectorLibrary\ResizablePropertySheet.cpp_v  $
+ * 
+ *    Rev 1.1   12 Aug 2014 12:35:04   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  909
+ * SCR Title:  Object Selector replacing Result Picker and Output Selector SVO-72, 40, 130
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Fixed button display problem in the resize property sheet Win7 64bit
+ * Added the methods DoModal and ResizePropSheetCallback
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   17 Jul 2014 11:16:26   gramseier
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : ObjectSelectorPpg
 //* .File Name       : $Workfile:   ObjectSelectorPpg.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   18 Jul 2014 14:42:14  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   12 Aug 2014 12:27:08  $
 //******************************************************************************
 
 #pragma region Includes
@@ -79,11 +79,11 @@ BOOL ObjectSelectorPpg::OnInitDialog()
 		m_StateImageList.Add( AfxGetApp()->LoadIcon( i ) );
 	}
 
-	m_NodeTree.ModifyStyle (0, TVS_CHECKBOXES);
+	m_NodeTree.ModifyStyle (0, TVS_CHECKBOXES | TVS_SHOWSELALWAYS );
 	m_NodeTree.SetImageList( &m_ImageList, TVSIL_NORMAL );
 	m_NodeTree.SetImageList( &m_StateImageList, TVSIL_STATE );
 
-	m_LeafTree.ModifyStyle (0, TVS_CHECKBOXES);
+	m_LeafTree.ModifyStyle (0, TVS_CHECKBOXES );
 	m_LeafTree.SetImageList( &m_ImageList, TVSIL_NORMAL );
 	m_LeafTree.SetImageList( &m_StateImageList, TVSIL_STATE );
 
@@ -142,6 +142,17 @@ void ObjectSelectorPpg::setResizeControls()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\ObjectSelectorLibrary\ObjectSelectorPpg.cpp_v  $
+ * 
+ *    Rev 1.2   12 Aug 2014 12:27:08   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  909
+ * SCR Title:  Object Selector replacing Result Picker and Output Selector SVO-72, 40, 130
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Selection in tree node remains also when it does not have the focus
+ * Changed methods: OnInitDialog
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   18 Jul 2014 14:42:14   gramseier
  * Project:  SVObserver

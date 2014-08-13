@@ -5,8 +5,8 @@
 //* .Module Name     : EnvironmentObject
 //* .File Name       : $Workfile:   EnvironmentObject.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   17 Jul 2014 17:39:40  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   12 Aug 2014 12:51:52  $
 //******************************************************************************
 
 #pragma region Includes
@@ -46,19 +46,9 @@ EnvironmentObject::~EnvironmentObject()
 #pragma region Public Methods
 HRESULT EnvironmentObject::GetChildObject( SVObjectClass*& rpObject, const SVObjectNameInfo& rNameInfo, long Index ) const
 {
-	HRESULT Result = S_OK;
-	BasicValueObject* pBasicValueObject=nullptr;
+	rpObject =  dynamic_cast<SVObjectClass*> ( m_EnvironmentValues.getValueObject( rNameInfo.GetObjectArrayName( Index ).c_str() ) );
 
-	rpObject = nullptr;
-	pBasicValueObject = m_EnvironmentValues.getValueObject( rNameInfo.GetObjectArrayName( Index ).c_str() );
-
-	//Only if it is not a node return the object
-	if( ( nullptr != pBasicValueObject ) && !pBasicValueObject->isNode() )
-	{
-		rpObject = dynamic_cast<SVObjectClass*> (pBasicValueObject);
-	}
-
-	return Result;
+	return S_OK;
 }
 #pragma endregion Public Methods
 
@@ -67,6 +57,17 @@ HRESULT EnvironmentObject::GetChildObject( SVObjectClass*& rpObject, const SVObj
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\EnvironmentObject.cpp_v  $
+ * 
+ *    Rev 1.3   12 Aug 2014 12:51:52   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  909
+ * SCR Title:  Object Selector replacing Result Picker and Output Selector SVO-72, 40, 130
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Fixed: GetChildObject not returning object when it is a node
+ * Changed methods:GetChildObject
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   17 Jul 2014 17:39:40   gramseier
  * Project:  SVObserver
