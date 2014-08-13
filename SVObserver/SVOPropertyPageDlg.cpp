@@ -5,8 +5,8 @@
 //* .Module Name     : SVOPropertyPageDlg
 //* .File Name       : $Workfile:   SVOPropertyPageDlg.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.4  $
-//* .Check In Date   : $Date:   15 May 2014 11:23:26  $
+//* .Current Version : $Revision:   1.5  $
+//* .Check In Date   : $Date:   13 Aug 2014 12:05:28  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -1327,6 +1327,25 @@ void CSVOPropertyPageDlg::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResult)
 									{
 										pParam->strValue = pFormat->m_strName;
 									}
+									//make sure binning parameters are set to 1 (no binning)
+									if (!pFormat->bVariableROI)
+									{
+										//UpdateCameraGigeBinningParameters
+										if (params.ParameterExists(DeviceParamVerticalBinning))
+										{
+											SVLongValueDeviceParam* pParam(NULL);
+											params.GetParameter(DeviceParamVerticalBinning).GetDerivedValue(pParam);
+											pParam->lValue = 1;
+											params.SetParameter(DeviceParamVerticalBinning,pParam);
+										}
+										if (params.ParameterExists(DeviceParamHorizontalBinning))
+										{
+											SVLongValueDeviceParam* pParam(NULL);
+											params.GetParameter(DeviceParamHorizontalBinning).GetDerivedValue(pParam);
+											pParam->lValue = 1;
+											params.SetParameter(DeviceParamHorizontalBinning,pParam);
+										}										
+									}								
 								}
 							}
 							break;
@@ -2264,6 +2283,16 @@ bool CSVOPropertyPageDlg::IsGigeSystem() const
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVOPropertyPageDlg.cpp_v  $
+ * 
+ *    Rev 1.5   13 Aug 2014 12:05:28   ryoho
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  926
+ * SCR Title:  Fix issue with binning staying on (SVO-323)
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   changed OnChangeItem.  If switching out of custom ROI mode, turn binning off.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.4   15 May 2014 11:23:26   tbair
  * Project:  SVObserver
