@@ -5,8 +5,8 @@
 //* .Module Name     : SVConfigurationPrint
 //* .File Name       : $Workfile:   SVConfigurationPrint.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.15  $
-//* .Check In Date   : $Date:   12 Aug 2014 08:53:42  $
+//* .Current Version : $Revision:   1.16  $
+//* .Check In Date   : $Date:   14 Aug 2014 07:14:18  $
 //******************************************************************************
 
 #pragma region Includes
@@ -1033,11 +1033,7 @@ void SVConfigurationPrint::PrintAllChildren(CDC* pDC, SVTaskObjectListClass* pTa
 		SVObjectClass* pChild = pTaskObj->GetAt(nCnt);
 		if (pChild)
 		{
-			CString sOwner = pChild->GetOwner()->GetName();
-			if (!((sOwner == "Result Box X ToolSet Image") || (sOwner == "Result Box Y ToolSet Image")) )
-			{
-				PrintObject(pDC, pChild, ptCurPos, nIndentLevel);
-			}
+			PrintObject(pDC, pChild, ptCurPos, nIndentLevel);
 		}
 	}
 }
@@ -2763,6 +2759,16 @@ HRESULT SVDeviceParamConfigPrintHelper::Visit(SVCustomDeviceParam& param)
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVConfigurationPrint.cpp_v  $
+ * 
+ *    Rev 1.16   14 Aug 2014 07:14:18   ryoho
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  913
+ * SCR Title:  Add Blob Feature Default Value to the Configuration Print (SVO-214)
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   backed out previous change.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.15   12 Aug 2014 08:53:42   ryoho
  * Project:  SVObserver

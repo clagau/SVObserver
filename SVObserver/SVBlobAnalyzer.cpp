@@ -5,8 +5,8 @@
 //* .Module Name     : SVBlobAnalyzer
 //* .File Name       : $Workfile:   SVBlobAnalyzer.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.5  $
-//* .Check In Date   : $Date:   12 Aug 2014 08:52:26  $
+//* .Current Version : $Revision:   1.6  $
+//* .Check In Date   : $Date:   14 Aug 2014 07:14:18  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -361,9 +361,8 @@ DWORD SVBlobAnalyzerClass::AllocateResult (SVBlobFeatureEnum aFeatureIndex)
 	msvError.ClearLastErrorCd ();
 
 	//not a MIL Feature...  Just return
-	//if ( (aFeatureIndex == SV_CENTER_X_SOURCE)  || (aFeatureIndex == SV_CENTER_Y_SOURCE) )
-	//	return 0;
-	//removed the above code so that the feature result gets created so that its default value will show up in the print report
+	if ( (aFeatureIndex == SV_CENTER_X_SOURCE)  || (aFeatureIndex == SV_CENTER_Y_SOURCE) )
+		return 0;
 
 	do
 	{
@@ -1848,6 +1847,16 @@ void SVBlobAnalyzerClass::addDefaultInputObjects( BOOL BCallBaseClass, SVInputIn
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVBlobAnalyzer.cpp_v  $
+ * 
+ *    Rev 1.6   14 Aug 2014 07:14:18   ryoho
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  913
+ * SCR Title:  Add Blob Feature Default Value to the Configuration Print (SVO-214)
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   backed out previous change.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.5   12 Aug 2014 08:52:26   ryoho
  * Project:  SVObserver
