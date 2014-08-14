@@ -242,7 +242,6 @@
     <ClCompile Include="SVROIList.cpp" />
     <ClCompile Include="SymmetricTrapezoid.cpp" />
     <ClCompile Include="TextObject.cpp" />
-    <ClCompile Include="ZoomHelper.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="SVPictureDisplay.def" />
@@ -279,7 +278,6 @@
     <ClInclude Include="SVROIList.h" />
     <ClInclude Include="SymmetricTrapezoid.h" />
     <ClInclude Include="TextObject.h" />
-    <ClInclude Include="ZoomHelper.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="SVPictureDisplay.rc" />

@@ -5,8 +5,8 @@
 //* .Module Name     : SVPictureTabs
 //* .File Name       : $Workfile:   SVPictureTabs.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   :     $Date:   26 Jun 2014 16:28:56  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   :     $Date:   14 Aug 2014 17:39:10  $
 //******************************************************************************
 
 #pragma region Includes
@@ -625,12 +625,15 @@ HRESULT SVPictureTabs::SetPicture( long p_lTabHandle, IPictureDisp* l_pPicture, 
 
 	if( IsValidTabHandle( p_lTabHandle ) )
 	{
-		int l_iCurrentTab = m_TabCtrl.GetCurSel();
-		long l_lCurrentTabHandle = GetHandleFromTabIndex( l_iCurrentTab );
+		int iCurrentTab = m_TabCtrl.GetCurSel();
+		long CurrentTabHandle = GetHandleFromTabIndex( iCurrentTab );
 
-		l_hr = m_PicDialogs[p_lTabHandle].GetPictureDialog()->SetPicture( l_pPicture, color );
+		//zoom should only be changed if tab is selected
+		bool IsCurrentTab = ( CurrentTabHandle == p_lTabHandle );
 
-		if( l_lCurrentTabHandle == p_lTabHandle )
+		l_hr = m_PicDialogs[p_lTabHandle].GetPictureDialog()->SetPicture( l_pPicture, color, IsCurrentTab );
+
+		if( IsCurrentTab )
 		{
 			m_PicDialogs[p_lTabHandle].GetPictureDialog()->Invalidate( false );
 		}
@@ -648,12 +651,15 @@ HRESULT SVPictureTabs::SetPictureWithROI( long p_lTabHandle, IPictureDisp* l_pPi
 
 	if( IsValidTabHandle( p_lTabHandle ) )
 	{
-		int l_iCurrentTab = m_TabCtrl.GetCurSel();
-		long l_lCurrentTabHandle = GetHandleFromTabIndex( l_iCurrentTab );
+		int iCurrentTab = m_TabCtrl.GetCurSel();
+		long CurrentTabHandle = GetHandleFromTabIndex( iCurrentTab );
 
-		l_hr = m_PicDialogs[p_lTabHandle].GetPictureDialog()->SetPictureWithROI( l_pPicture, color, p_RoiList );
+		//zoom should only be changed if tab is selected
+		bool IsCurrentTab = ( CurrentTabHandle == p_lTabHandle );
 
-		if( l_lCurrentTabHandle == p_lTabHandle )
+		l_hr = m_PicDialogs[p_lTabHandle].GetPictureDialog()->SetPictureWithROI( l_pPicture, color, p_RoiList, IsCurrentTab );
+
+		if( IsCurrentTab )
 		{
 			m_PicDialogs[p_lTabHandle].GetPictureDialog()->Invalidate( false );
 		}
@@ -665,7 +671,7 @@ HRESULT SVPictureTabs::SetPictureWithROI( long p_lTabHandle, IPictureDisp* l_pPi
 	return l_hr;
 }
 
-HRESULT SVPictureTabs::AddTab(LPCTSTR p_Name, long *phandle )
+HRESULT SVPictureTabs::AddTab( LPCTSTR p_Name, long *phandle )
 {
 	HRESULT l_hr = S_OK;
 
@@ -688,9 +694,14 @@ HRESULT SVPictureTabs::AddTab(LPCTSTR p_Name, long *phandle )
 		}
 	}
 
-	m_TabCtrl.InsertItem(newIndex, p_Name); // BRW - Why don't we check return value here?
+	long Index = m_TabCtrl.InsertItem(newIndex, p_Name); 
+	if(Index != newIndex)
+	{
+		return E_FAIL;
+	}
+	
 	long tabHandle = m_TabHandle++;
-	// Create the Picture Dialog to be asssociated with the newly added Tab
+	// Create the Picture Dialog to be associated with the newly added Tab
 	SVPictureDialogRef picDlg(new SVPictureDialog(tabHandle));
 	picDlg.get()->Create( SVPictureDialog::IDD, &m_TabCtrl );
 
@@ -710,7 +721,15 @@ HRESULT SVPictureTabs::AddTab(LPCTSTR p_Name, long *phandle )
 	PicTab.SetPictureDialogRef( picDlg );
 	PicTab.SetTabName( p_Name );
 	PicTab.SetTabIndex(newIndex);
-	m_PicDialogs.insert(std::make_pair(tabHandle, PicTab)); // BRW - Why don't we check return value here?
+	
+	std::pair  < TabPictureDialogListIt, bool > pr;
+
+	pr = m_PicDialogs.insert(std::make_pair(tabHandle, PicTab)); 
+	if(pr.second == false)
+	{
+		return E_FAIL;
+	}
+
 
 	UpdateAppearance();
 	UpdateButtonJustify();
@@ -920,6 +939,17 @@ BOOL SVPictureTabs::IsScrollbarHidden() const
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVPictureDisplay\SVPictureTabs.cpp_v  $
+ * 
+ *    Rev 1.1   14 Aug 2014 17:39:10   mEichengruen
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  902
+ * SCR Title:  Change Complex Dialog Image Displays to Use SVPictureDisplay ActiveX
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   zoom should only be changed if tab is selected
+ * Check return values.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   26 Jun 2014 16:28:56   mziegler
  * Project:  SVObserver

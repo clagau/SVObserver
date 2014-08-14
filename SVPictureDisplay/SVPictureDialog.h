@@ -5,8 +5,8 @@
 //* .Module Name     : SVPictureDialog
 //* .File Name       : $Workfile:   SVPictureDialog.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   :     $Date:   26 Jun 2014 16:28:04  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   :     $Date:   14 Aug 2014 17:35:52  $
 //******************************************************************************
 #pragma once
 
@@ -31,8 +31,27 @@ public:
 	enum { IDD = IDD_PICT_DIALOG };
 	
 	HRESULT SetScrollBars();
-	HRESULT SetPicture( IPictureDisp* l_pPicture, COLORREF BackgroundColor );
-	HRESULT SetPictureWithROI( IPictureDisp* p_Picture, unsigned long BackgroundColor, ISVROIList* p_RoiList );
+
+	//************************************
+	// Method:    SetPicture
+	// Description:  Gives the PictureDisplay a picture to display.
+	// Parameter: IPictureDisp* - pointer to the image to display
+	// Parameter: COLORREF - color to be displayed in the area that is not filled by the image
+	// Parameter: bool - flag that indicates the zoom factor should be recalculated based on the dimensions of p_Picture
+	// Returns:   HRESULT
+	//************************************
+	HRESULT SetPicture( IPictureDisp* l_pPicture, COLORREF BackgroundColor, bool adjustZoom );
+
+	//************************************
+	// Method:    SetPictureWithROI
+	// Description:  Gives the PictureDisplay a picture to display with overlay information (ROI).
+	// Parameter: IPictureDisp* - pointer to the image to display
+	// Parameter: COLORREF - color to be displayed in the area that is not filled by the image
+	// Parameter: ISVROIList* - overlay information
+	// Parameter: bool - flag that indicates the zoom factor should be recalculated based on the dimensions of p_Picture
+	// Returns:   HRESULT
+	//************************************
+	HRESULT SetPictureWithROI( IPictureDisp* p_Picture, COLORREF BackgroundColor, ISVROIList* p_RoiList, bool adjustZoom );
 
 	void SetAppearance( long l_lType );
 	long GetAppearance() const;
@@ -197,7 +216,18 @@ private:
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVPictureDisplay\SVPictureDialog.h_v  $
+$Log:   N:\PVCSARCH65\PROJECTFILES\ARCHIVES\SVOBSERVER_SRC\SVPICTUREDISPLAY\SVPictureDialog.h_v  $
+ * 
+ *    Rev 1.1   14 Aug 2014 17:35:52   mEichengruen
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  902
+ * SCR Title:  Change Complex Dialog Image Displays to Use SVPictureDisplay ActiveX
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   new Parameter adjustZoom in SetPicture
+ * 
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   26 Jun 2014 16:28:04   mziegler
  * Project:  SVObserver

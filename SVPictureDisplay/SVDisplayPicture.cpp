@@ -5,8 +5,8 @@
 //* .Module Name     : SVDisplayPicture
 //* .File Name       : $Workfile:   SVDisplayPicture.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   :     $Date:   26 Jun 2014 16:28:02  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   :     $Date:   14 Aug 2014 17:35:52  $
 //******************************************************************************
 
 #pragma region Includes
@@ -270,7 +270,7 @@ BOOL SVDisplayPicture::OnEraseBkgnd(CDC* pDC)
 }
 
 //  Set Picture should make a copy of the picture here.
-HRESULT SVDisplayPicture::SetPicture( IPictureDisp* p_Picture, unsigned long BackgroundColor )
+HRESULT SVDisplayPicture::SetPicture( IPictureDisp* p_Picture, unsigned long BackgroundColor, bool AdjustZoom )
 {
 	HRESULT l_hr = S_OK;
 	IPicture* l_pPicture( nullptr );
@@ -328,11 +328,12 @@ HRESULT SVDisplayPicture::SetPicture( IPictureDisp* p_Picture, unsigned long Bac
 					CalculateZoomToFit();
 				}
 				m_BackgroundColor = BackgroundColor;
-				if( l_bFirstTime || m_Zoom.IsFit() )
+
+				if( AdjustZoom && (l_bFirstTime || m_Zoom.IsFit()) )
 				{
 					SetZoom(ZoomToFit);
 				}
-				else if ( m_Zoom.IsOne() )
+				else if ( AdjustZoom && m_Zoom.IsOne() )
 				{
 					// Set Default Zoom here.
 					SetZoom(ZoomOneToOne);
@@ -351,8 +352,6 @@ HRESULT SVDisplayPicture::SetPicture( IPictureDisp* p_Picture, unsigned long Bac
 		l_hr = E_InvalidPictureHandle;
 	}
 
-	AdjustSizeToImage();
-
 	return l_hr;
 }
 
@@ -363,7 +362,7 @@ void SVDisplayPicture::ClearPicture()
 	m_Zoom.Clear();
 }
 
-HRESULT SVDisplayPicture::SetPictureWithROI( IPictureDisp* p_Picture, unsigned long BackgroundColor, ISVROIList* p_RoiList )
+HRESULT SVDisplayPicture::SetPictureWithROI( IPictureDisp* p_Picture, unsigned long BackgroundColor, ISVROIList* p_RoiList, bool AdjustZoom )
 {
 	HRESULT l_hr = S_OK;
 	IPicture* l_pPicture( nullptr );
@@ -440,11 +439,11 @@ HRESULT SVDisplayPicture::SetPictureWithROI( IPictureDisp* p_Picture, unsigned l
 					}
 					pDispatch->Release();
 				}
-				if( l_bFirstTime || m_Zoom.IsFit() )
+				if( AdjustZoom && (l_bFirstTime || m_Zoom.IsFit()) )
 				{
 					SetZoom(ZoomToFit);
 				}
-				else if( m_Zoom.IsOne() )
+				else if( AdjustZoom && m_Zoom.IsOne() )
 				{
 					SetZoom(ZoomOneToOne);
 				}
@@ -1460,7 +1459,18 @@ void SVDisplayPicture::setImageSize( int x, int y )
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVPictureDisplay\SVDisplayPicture.cpp_v  $
+$Log:   N:\PVCSARCH65\PROJECTFILES\ARCHIVES\SVOBSERVER_SRC\SVPICTUREDISPLAY\SVDisplayPicture.cpp_v  $
+ * 
+ *    Rev 1.1   14 Aug 2014 17:35:52   mEichengruen
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  902
+ * SCR Title:  Change Complex Dialog Image Displays to Use SVPictureDisplay ActiveX
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   new Parameter adjustZoom in SetPicture
+ * 
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   26 Jun 2014 16:28:02   mziegler
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : SVPictureDialog
 //* .File Name       : $Workfile:   SVPictureDialog.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   :     $Date:   26 Jun 2014 16:28:02  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   :     $Date:   14 Aug 2014 17:35:52  $
 //******************************************************************************
 
 #pragma region Includes
@@ -881,16 +881,9 @@ void SVPictureDialog::SetZoomSlider(BOOL bRange)
 				m_SliderCtrlZoom.SetRangeMax(max);
 			}
 
-			//Calculate the change in zoomfactor when clicking on zoomslider dependent  on the Zoomfactor
-			if( GetZoomFactor() > 2 * GetZoomHelper().GetZoomStepLarge())
-			{
-				m_SliderCtrlZoom.SetPageSize( SliderProp );
-			}
-			else
-			{
-				int pagesize = static_cast<int>(SliderProp * GetZoomHelper().GetZoomStepSmall());
-				m_SliderCtrlZoom.SetPageSize(pagesize);
-			}
+			//Calculate the change in zoomfactor when clicking on zoomslider dependent on the Zoomfactor
+			int pagesize = static_cast<int>(SliderProp * GetZoomHelper().GetZoomStep());
+			m_SliderCtrlZoom.SetPageSize(pagesize);
 		}
 
 		int nZoom( static_cast< int >( GetZoomFactor() * float( SliderProp ) ) );
@@ -993,19 +986,22 @@ void SVPictureDialog::OnBnClickedZoomOne()
 	}
 }
 
-HRESULT SVPictureDialog::SetPicture( IPictureDisp* p_Picture, unsigned long BackgroundColor )
+HRESULT SVPictureDialog::SetPicture( IPictureDisp* p_Picture, COLORREF BackgroundColor, bool adjustZoom )
 {
-	HRESULT hr = m_PictDisplay.SetPicture( p_Picture, BackgroundColor );
+	HRESULT hr = m_PictDisplay.SetPicture( p_Picture, BackgroundColor, adjustZoom );
+	AdjustSizeToImage();
 	SetScrollBars();
 	SetZoomSlider(TRUE);
 	CloneScrollPosition(SB_BOTH);
 	return hr;
 }
 
-HRESULT SVPictureDialog::SetPictureWithROI( IPictureDisp* p_Picture, unsigned long BackgroundColor, ISVROIList* p_RoiList )
+HRESULT SVPictureDialog::SetPictureWithROI( IPictureDisp* p_Picture, COLORREF BackgroundColor, ISVROIList* p_RoiList, bool adjustZoom )
 {
-	HRESULT hr = m_PictDisplay.SetPictureWithROI( p_Picture, BackgroundColor, p_RoiList );
+	HRESULT hr = m_PictDisplay.SetPictureWithROI( p_Picture, BackgroundColor, p_RoiList, adjustZoom );
+	AdjustSizeToImage();
 	SetScrollBars();
+	SetZoomSlider(TRUE);
 	CloneScrollPosition(SB_BOTH);
 	return hr;
 }
@@ -1226,7 +1222,18 @@ void SVPictureDialog::SetZoomFit()
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVPictureDisplay\SVPictureDialog.cpp_v  $
+$Log:   N:\PVCSARCH65\PROJECTFILES\ARCHIVES\SVOBSERVER_SRC\SVPICTUREDISPLAY\SVPictureDialog.cpp_v  $
+ * 
+ *    Rev 1.1   14 Aug 2014 17:35:52   mEichengruen
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  902
+ * SCR Title:  Change Complex Dialog Image Displays to Use SVPictureDisplay ActiveX
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   new Parameter adjustZoom in SetPicture
+ * 
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   26 Jun 2014 16:28:02   mziegler
  * Project:  SVObserver

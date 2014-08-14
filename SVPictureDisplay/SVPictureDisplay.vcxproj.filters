@@ -69,9 +69,6 @@
     <ClCompile Include="Doughnut.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ZoomHelper.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="GraphObject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -166,9 +163,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Doughnut.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ZoomHelper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="GraphObject.h">

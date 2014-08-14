@@ -5,8 +5,8 @@
 //* .Module Name     : SVDisplayPicture
 //* .File Name       : $Workfile:   SVDisplayPicture.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   :     $Date:   26 Jun 2014 16:28:02  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   :     $Date:   14 Aug 2014 17:35:52  $
 //******************************************************************************
 
 #pragma once
@@ -14,7 +14,7 @@
 #pragma region Includes
 #include "SVPictureDisplayIdl.h"
 #include "DrawObject.h"
-#include "ZoomHelper.h"
+#include "SVOMFCLibrary\ZoomHelper.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -44,9 +44,6 @@ enum DisplayPictureErrors
 	E_DuplicateTabName = -79014,
 	E_InvalidOverlay = -79016
 };
-
-//const float DefaultZoomMin = 0.1F;  // BRW - This was never used.
-//const float DefaultZoomMax = 10.0F;  // BRW - This was never used.
 
 class SVPictureTabs;
 class SVPictureDisplayCtrl;
@@ -116,9 +113,27 @@ protected:
 public:
 	void Refresh();
 
-	// Functions....
-	HRESULT SetPicture( IPictureDisp* p_Picture, unsigned long BackgroundColor );
-	HRESULT SetPictureWithROI( IPictureDisp* p_Picture, unsigned long BackgroundColor, ISVROIList* p_RoiList );
+	//************************************
+	// Method:    SetPicture
+	// Description:  Gives the PictureDisplay a picture to display.
+	// Parameter: IPictureDisp* - pointer to the image to display
+	// Parameter: COLORREF - color to be displayed in the area that is not filled by the image
+	// Parameter: bool - flag that indicates the zoom factor should be recalculated based on the dimensions of p_Picture
+	// Returns:   HRESULT
+	//************************************
+	HRESULT SetPicture( IPictureDisp* p_Picture, COLORREF BackgroundColor, bool AdjustZoom );
+
+	//************************************
+	// Method:    SetPictureWithROI
+	// Description:  Gives the PictureDisplay a picture to display with overlay information (ROI).
+	// Parameter: IPictureDisp* - pointer to the image to display
+	// Parameter: COLORREF - color to be displayed in the area that is not filled by the image
+	// Parameter: ISVROIList* - overlay information
+	// Parameter: bool - flag that indicates the zoom factor should be recalculated based on the dimensions of p_Picture
+	// Returns:   HRESULT
+	//************************************
+	HRESULT SetPictureWithROI( IPictureDisp* p_Picture, COLORREF BackgroundColor, ISVROIList* p_RoiList, bool AdjustZoom );
+
 	void SetZoomFactor(double scaleFactor);
 
 	double GetZoomFactor() const;
@@ -143,7 +158,7 @@ public:
 
 	//************************************
 	// Method:    GetViewMaxRect
-	// Description: the returned rectangle is the maximal ClientvieRectaangle
+	// Description:  Gets the rectangle that is the maximum client view area
 	// Parameter: CRect & MaxRect
 	// Returns:   void
 	//************************************
@@ -267,7 +282,18 @@ private:
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVPictureDisplay\SVDisplayPicture.h_v  $
+$Log:   N:\PVCSARCH65\PROJECTFILES\ARCHIVES\SVOBSERVER_SRC\SVPICTUREDISPLAY\SVDisplayPicture.h_v  $
+ * 
+ *    Rev 1.1   14 Aug 2014 17:35:52   mEichengruen
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  902
+ * SCR Title:  Change Complex Dialog Image Displays to Use SVPictureDisplay ActiveX
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   new Parameter adjustZoom in SetPicture
+ * 
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   26 Jun 2014 16:28:02   mziegler
  * Project:  SVObserver
