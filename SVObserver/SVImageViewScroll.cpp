@@ -5,10 +5,11 @@
 //* .Module Name     : SVImageViewScroll
 //* .File Name       : $Workfile:   SVImageViewScroll.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 10:56:30  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   14 Aug 2014 15:58:32  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include <comdef.h>
 #include "SVImageViewScroll.h"
@@ -19,6 +20,8 @@
 #include "SVSVIMStateClass.h"
 #include "SVXMLLibrary/SVNavigateTreeClass.h"
 #include "SVIPChildFrm.h"
+#include "SVMainFrm.h"
+#pragma endregion Includes
 
 IMPLEMENT_DYNCREATE( SVImageViewScroll, CScrollView )
 
@@ -28,14 +31,25 @@ BEGIN_MESSAGE_MAP(SVImageViewScroll, CScrollView)
 	ON_WM_CONTEXTMENU()
 	ON_WM_ERASEBKGND()
 	//}}AFX_MSG_MAP
+	ON_COMMAND(ID_ZOOM_MINUS, &SVImageViewScroll::OnZoomMinus)
+	ON_UPDATE_COMMAND_UI(ID_ZOOM_MINUS, &SVImageViewScroll::OnUpdateZoomMinus)
+	ON_COMMAND(ID_ZOOM_PLUS, &SVImageViewScroll::OnZoomPlus)
+	ON_UPDATE_COMMAND_UI(ID_ZOOM_PLUS, &SVImageViewScroll::OnUpdateZoomPlus)
+	ON_COMMAND(ID_ZOOM_FIT, &SVImageViewScroll::OnZoomFit)
+	ON_UPDATE_COMMAND_UI(ID_ZOOM_FIT, &SVImageViewScroll::OnUpdateZoomFit)
+	ON_COMMAND(ID_ZOOM_ONE, &SVImageViewScroll::OnZoomOne)
+	ON_UPDATE_COMMAND_UI(ID_ZOOM_ONE, &SVImageViewScroll::OnUpdateZoomOne)
+	ON_COMMAND(ID_ZOOM_SLIDER_MOVED, &SVImageViewScroll::OnZoomSliderMoved)
+	ON_WM_KILLFOCUS()
+	ON_WM_SETFOCUS()
 END_MESSAGE_MAP()
 
 SVImageViewScroll::SVImageViewScroll()
 : CScrollView()
 {
-  CRuntimeClass *pImageRunTime = RUNTIME_CLASS (SVImageViewClass);
-  psvImageView = (SVImageViewClass *) pImageRunTime->CreateObject ();
-  ASSERT (psvImageView->IsKindOf (RUNTIME_CLASS (SVImageViewClass)));
+	CRuntimeClass* pImageRunTime = RUNTIME_CLASS(SVImageViewClass);
+	m_pView = static_cast< SVImageViewClass* >( pImageRunTime->CreateObject() );
+	ASSERT(m_pView->IsKindOf(RUNTIME_CLASS(SVImageViewClass)));
 
 	m_oOldScrollPoint = CPoint( 0, 0 );
 	m_oOldMaxScrollPoint = CPoint( 0, 0 );
@@ -65,11 +79,11 @@ BOOL SVImageViewScroll::OnEraseBkgnd( CDC* p_pDC )
 	CRect l_oRect( CPoint( 0, 0 ), l_oSizeTotal );
 
 	ValidateRect( l_oRect ); // Removed painted area
-	
+
 	l_bOk = CScrollView::OnEraseBkgnd( p_pDC ); // Clears non-painted area
 
 	InvalidateRect( l_oRect, false );  // invalidates painted area
-	
+
 	return l_bOk;
 }
 
@@ -93,18 +107,18 @@ void SVImageViewScroll::OnInitialUpdate()
 
 BOOL SVImageViewScroll::Create(LPCTSTR LPSZClassName, LPCTSTR LPSZWindowName, DWORD DWStyle, const RECT& Rect, CWnd* PParentWnd, UINT NID, CCreateContext* PContext)
 {
- 	LPCTSTR lpszClassName = AfxRegisterWndClass( CS_DBLCLKS | CS_OWNDC | CS_HREDRAW | CS_VREDRAW, 0, m_hWindowBackgroundColor , 0 );
+	LPCTSTR lpszClassName = AfxRegisterWndClass( CS_DBLCLKS | CS_OWNDC | CS_HREDRAW | CS_VREDRAW, 0, m_hWindowBackgroundColor, 0 );
 	if (CWnd::Create( lpszClassName, _T( "Untitled Image Scroll" ), DWStyle, Rect, PParentWnd, NID, PContext ))
-  {
-    return psvImageView->Create (LPSZClassName, LPSZWindowName, DWStyle, Rect, (CWnd *) this, NID, PContext);
-  }
+	{
+		return m_pView->Create(LPSZClassName, LPSZWindowName, DWStyle, Rect, static_cast< CWnd* >( this ), NID, PContext);
+	}
 
-  return FALSE;
+	return FALSE;
 }
 
 void SVImageViewScroll::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 {
-	if( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) )
+	if( !SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) )
 	{
 		int l_iMapMode;
 		SIZE l_oSizeTotal;
@@ -122,20 +136,20 @@ void SVImageViewScroll::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 	}
 }
 
-void SVImageViewScroll::OnMouseMove(UINT nFlags, CPoint point) 
+void SVImageViewScroll::OnMouseMove(UINT nFlags, CPoint point)
 {
-	SetCursor (AfxGetApp()->LoadStandardCursor (IDC_ARROW));
+	SetCursor(AfxGetApp()->LoadStandardCursor(IDC_ARROW));
 
 	CScrollView::OnMouseMove(nFlags, point);
 }
 
-BOOL SVImageViewScroll::OnCommand(WPARAM wParam, LPARAM lParam) 
+BOOL SVImageViewScroll::OnCommand(WPARAM wParam, LPARAM lParam)
 {
 	BOOL l_bOk = TRUE;
 
-	if ( psvImageView != NULL )
+	if (nullptr != m_pView)
 	{
-		l_bOk = psvImageView->OnCommand (wParam, lParam);
+		l_bOk = m_pView->OnCommand (wParam, lParam);
 	}
 
 	l_bOk = CScrollView::OnCommand(wParam, lParam) && l_bOk;
@@ -143,31 +157,31 @@ BOOL SVImageViewScroll::OnCommand(WPARAM wParam, LPARAM lParam)
 	return l_bOk;
 }
 
-void SVImageViewScroll::OnContextMenu(CWnd* pWnd, CPoint point) 
+void SVImageViewScroll::OnContextMenu(CWnd* pWnd, CPoint point)
 {
-	if ( psvImageView != NULL )
+	if (nullptr != m_pView)
 	{
-		psvImageView->OnContextMenu( pWnd, point );
+		m_pView->OnContextMenu( pWnd, point );
 	}
-}	
+}
 
 void SVImageViewScroll::SetViewSize( CSize &p_rcSize )
 {
 	CWnd *l_pcWnd = this;
-	SVIPSplitterFrame *l_pSplitterFrame = NULL;
+	SVIPSplitterFrame *l_pSplitterFrame = nullptr;
 
 	do
 	{
 		l_pcWnd = l_pcWnd->GetParent();
 
-		if ( l_pcWnd != NULL )
+		if (nullptr != l_pcWnd)
 		{
 			l_pSplitterFrame = dynamic_cast<SVIPSplitterFrame *>( l_pcWnd );
 		}
 	}
-	while ( l_pSplitterFrame == NULL && l_pcWnd != NULL );
+	while (nullptr == l_pSplitterFrame && nullptr != l_pcWnd);
 
-	if ( l_pSplitterFrame != NULL )
+	if (nullptr != l_pSplitterFrame)
 	{
 		l_pSplitterFrame->SetViewSize( this, p_rcSize );
 	}
@@ -198,11 +212,11 @@ void SVImageViewScroll::SetImageSize( SIZE p_oSize )
 
 	ScrollToPosition( CPoint( 0, 0 ) );
 
-	if ( psvImageView != NULL )
+	if (nullptr != m_pView)
 	{
 		CRect l_oRect( CPoint( 0, 0 ), p_oSize );
 
-		psvImageView->MoveWindow( l_oRect );
+		m_pView->MoveWindow( l_oRect );
 	}
 
 	GetClientRect( l_oClientRect );
@@ -226,20 +240,20 @@ void SVImageViewScroll::SetImageSize( SIZE p_oSize )
 	{
 		if( l_oSizeTotal.cx < l_oWindowRect.Size().cx )
 		{
-			l_dX = (double)m_oOldScrollPoint.x;
+			l_dX = static_cast< double >( m_oOldScrollPoint.x );
 		}
 
 		if( m_oOldMaxScrollPoint.x != p_oSize.cx - l_oWindowRect.Size().cx )
 		{
 			if( 0 < m_oOldMaxScrollPoint.x )
 			{
-				l_dX = l_dX * (double)(p_oSize.cx - l_oWindowRect.Size().cx) / (double)m_oOldMaxScrollPoint.x;
+				l_dX = l_dX * static_cast< double >(p_oSize.cx - l_oWindowRect.Size().cx) / static_cast< double >( m_oOldMaxScrollPoint.x );
 			}
 
 			m_oOldMaxScrollPoint.x = p_oSize.cx - l_oWindowRect.Size().cx;
 		}
 
-		m_oOldScrollPoint.x = (long)l_dX;
+		m_oOldScrollPoint.x = static_cast< long >( l_dX );
 	}
 
 	if( l_oWindowRect.Size().cx == l_oClientRect.Size().cx )
@@ -257,24 +271,24 @@ void SVImageViewScroll::SetImageSize( SIZE p_oSize )
 	{
 		if( l_oSizeTotal.cy < l_oWindowRect.Size().cy )
 		{
-			l_dY = (double)m_oOldScrollPoint.y;
+			l_dY = static_cast< double >( m_oOldScrollPoint.y );
 		}
 
 		if( m_oOldMaxScrollPoint.y != p_oSize.cy - l_oWindowRect.Size().cy )
 		{
 			if( 0 < m_oOldMaxScrollPoint.y )
 			{
-				l_dY = l_dY * (double)(p_oSize.cy - l_oWindowRect.Size().cy) / (double)m_oOldMaxScrollPoint.y;
+				l_dY = l_dY * static_cast< double >(p_oSize.cy - l_oWindowRect.Size().cy) / static_cast< double >( m_oOldMaxScrollPoint.y );
 			}
 
 			m_oOldMaxScrollPoint.y = p_oSize.cy - l_oWindowRect.Size().cy;
 		}
 
-		m_oOldScrollPoint.y = (long)l_dY;
+		m_oOldScrollPoint.y = static_cast< long >( l_dY );
 	}
 
-	l_oPoint.x = (long)l_dX;
-	l_oPoint.y = (long)l_dY;
+	l_oPoint.x = static_cast< long >( l_dX );
+	l_oPoint.y = static_cast< long >( l_dY );
 
 	ScrollToPosition( l_oPoint );
 }
@@ -285,16 +299,16 @@ BOOL SVImageViewScroll::GetParameters(SVObjectWriter& rWriter)
 
 	CRect l_WindowRect;
 	CSize l_ScrollSize = GetTotalSize();
-	CPoint l_ScrollPoint = 	GetScrollPosition();
+	CPoint l_ScrollPoint = GetScrollPosition();
 
 	GetWindowRect( l_WindowRect );
 
 	_variant_t svVariant;
 
 	rWriter.StartElement(CTAG_IMAGE_VIEW);
-	bOk = psvImageView->GetParameters(rWriter) && bOk;
+	bOk = m_pView->GetParameters(rWriter) && bOk;
 	rWriter.EndElement();
-	
+
 	rWriter.StartElement(CTAG_SCROLL_SIZE);
 	svVariant = l_ScrollSize.cx;
 	rWriter.WriteAttribute(CTAG_CX, svVariant);
@@ -303,7 +317,7 @@ BOOL SVImageViewScroll::GetParameters(SVObjectWriter& rWriter)
 	svVariant = l_ScrollSize.cy;
 	rWriter.WriteAttribute(CTAG_CY, svVariant);
 	svVariant.Clear();
-	
+
 	rWriter.EndElement();
 
 	rWriter.StartElement(CTAG_SCROLL_POINT);
@@ -334,7 +348,7 @@ BOOL SVImageViewScroll::SetParameters( SVTreeType& rTree, SVTreeType::SVBranchHa
 
 	_variant_t svVariant;
 
-	SVTreeType::SVBranchHandle htiData = NULL;
+	SVTreeType::SVBranchHandle htiData = nullptr;
 
 	CSize l_ViewSize;
 	CSize l_ScrollSize;
@@ -343,7 +357,7 @@ BOOL SVImageViewScroll::SetParameters( SVTreeType& rTree, SVTreeType::SVBranchHa
 	bOk = SVNavigateTreeClass::GetItemBranch( rTree, CTAG_IMAGE_VIEW, htiParent, htiData );
 	if ( bOk )
 	{
-		bOk = psvImageView->SetParameters( rTree, htiData );
+		bOk = m_pView->SetParameters( rTree, htiData );
 	}
 
 	if ( bOk )
@@ -423,7 +437,7 @@ BOOL SVImageViewScroll::SetParameters( SVTreeType& rTree, SVTreeType::SVBranchHa
 
 		if ( bOk )
 		{
-		  ScrollToPosition( l_ScrollPoint );
+			ScrollToPosition( l_ScrollPoint );
 		}
 	}
 
@@ -436,7 +450,7 @@ BOOL SVImageViewScroll::CheckParameters( SVTreeType& rTree, SVTreeType::SVBranch
 
 	_variant_t svVariant;
 
-	SVTreeType::SVBranchHandle htiData = NULL;
+	SVTreeType::SVBranchHandle htiData = nullptr;
 
 	CSize l_ViewSize;
 	CSize l_ScrollSize;
@@ -451,7 +465,7 @@ BOOL SVImageViewScroll::CheckParameters( SVTreeType& rTree, SVTreeType::SVBranch
 	bOk = SVNavigateTreeClass::GetItemBranch( rTree, CTAG_IMAGE_VIEW, htiParent, htiData );
 	if ( bOk )
 	{
-		bOk = psvImageView->SetParameters( rTree, htiData );
+		bOk = m_pView->SetParameters( rTree, htiData );
 	}
 
 	if ( bOk )
@@ -475,7 +489,7 @@ BOOL SVImageViewScroll::CheckParameters( SVTreeType& rTree, SVTreeType::SVBranch
 	if ( bOk )
 	{
 		if( l_ViewSize.cx != l_CheckWindowRect.Width() ||
-		    l_ViewSize.cy != l_CheckWindowRect.Height() )
+			l_ViewSize.cy != l_CheckWindowRect.Height() )
 		{
 			SetViewSize( l_ViewSize );
 
@@ -546,11 +560,152 @@ BOOL SVImageViewScroll::CheckParameters( SVTreeType& rTree, SVTreeType::SVBranch
 	return bOk;
 }
 
+void SVImageViewScroll::OnZoomMinus()
+{
+	if(nullptr != m_pView)
+	{
+		m_pView->OnZoomMinus();
+	}
+}
+
+void SVImageViewScroll::OnUpdateZoomMinus(CCmdUI *pCmdUI)
+{
+	bool enable = IsZoomAllowed();
+	pCmdUI->Enable(enable);
+}
+
+void SVImageViewScroll::OnZoomPlus()
+{
+	if(nullptr != m_pView)
+	{
+		m_pView->OnZoomPlus();
+	}
+}
+
+bool SVImageViewScroll::IsZoomAllowed() const
+{
+	bool allowed = !ImageIsEmpty() && !SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST );
+	return allowed;
+}
+
+void SVImageViewScroll::OnUpdateZoomPlus(CCmdUI *pCmdUI)
+{
+	bool enable = IsZoomAllowed();
+	pCmdUI->Enable(enable);
+}
+
+void SVImageViewScroll::OnZoomFit()
+{
+	if(nullptr != m_pView)
+	{
+		m_pView->OnZoomFit();
+	}
+}
+
+void SVImageViewScroll::OnUpdateZoomFit(CCmdUI *pCmdUI)
+{
+	bool enable = IsZoomAllowed();
+	pCmdUI->Enable(enable);
+}
+
+void SVImageViewScroll::OnZoomOne()
+{
+	if(m_pView)
+	{
+		m_pView->OnZoomOne();
+	}
+}
+
+bool SVImageViewScroll::ImageIsEmpty() const
+{
+	bool retval = true;
+
+	if(nullptr != m_pView)
+	{
+		retval = m_pView->ImageIsEmpty();
+	}
+
+	return retval;
+}
+
+void SVImageViewScroll::OnUpdateZoomOne(CCmdUI *pCmdUI)
+{
+	bool enable = IsZoomAllowed();
+	pCmdUI->Enable(enable);
+}
+
+void SVImageViewScroll::OnZoomSliderMoved()
+{
+	SVMainFrame* pFrame = dynamic_cast<SVMainFrame*>( AfxGetMainWnd() );
+	double val = 1.0;
+
+	if(nullptr != pFrame)
+	{
+		val = pFrame->GetZoomToolbarValue();
+	}
+
+	if(nullptr != m_pView)
+	{
+		m_pView->SetZoom(EZoomValue, val);
+	}
+}
+
+void SVImageViewScroll::OnKillFocus(CWnd* pNewWnd)
+{
+	CScrollView::OnKillFocus(pNewWnd);
+	SVIPSplitterFrame* pSplitterFrame = nullptr;
+	CMDIFrameWnd* pMDIFrame = dynamic_cast< CMDIFrameWnd*>(AfxGetApp()->m_pMainWnd);
+
+	if(nullptr != pMDIFrame)
+	{
+		pSplitterFrame = dynamic_cast< SVIPSplitterFrame* >(pMDIFrame->GetActiveFrame());
+	}
+
+	if(nullptr != pSplitterFrame)
+	{
+		pSplitterFrame->RefreshAllSplitters();
+	}
+}
+
+void SVImageViewScroll::OnSetFocus(CWnd* pOldWnd)
+{
+	CScrollView::OnSetFocus(pOldWnd);
+	SVMainFrame* pFrame = dynamic_cast<SVMainFrame*>( AfxGetMainWnd() );
+
+	if(nullptr != pFrame)
+	{
+		SVIPSplitterFrame* pSplitterFrame = dynamic_cast< SVIPSplitterFrame* >(pFrame->GetActiveFrame());
+
+		if(pSplitterFrame != nullptr)
+		{
+			pSplitterFrame->RefreshAllSplitters();
+		}
+
+		bool bZoom = IsZoomAllowed();
+		pFrame->EnableZoomToolbar(bZoom);
+
+		if( true == bZoom && nullptr != m_pView )
+		{
+			pFrame->SetZoomToolbar(m_pView->GetZoomHelper());
+		}
+	}
+}
+
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVImageViewScroll.cpp_v  $
+$Log:   N:\PVCSARCH65\PROJECTFILES\ARCHIVES\SVOBSERVER_SRC\SVOBSERVER\SVImageViewScroll.cpp_v  $
+ * 
+ *    Rev 1.1   14 Aug 2014 15:58:32   mEichengruen
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  921
+ * SCR Title:  Add more complete zoom functionality. (runpage)
+ * Checked in by:  mEichengruen;  Marcus Eichengruen
+ * Change Description:  
+ *   new commandentries for zoom commands
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 10:56:30   bWalter
  * Project:  SVObserver

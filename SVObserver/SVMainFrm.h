@@ -5,18 +5,23 @@
 //* .Module Name     : SVMainFrame
 //* .File Name       : $Workfile:   SVMainFrm.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.5  $
-//* .Check In Date   : $Date:   24 Jun 2014 07:08:58  $
+//* .Current Version : $Revision:   1.6  $
+//* .Check In Date   : $Date:   14 Aug 2014 16:09:36  $
 //******************************************************************************
 
-#ifndef SVMAINFRM_H
-#define SVMAINFRM_H
+#pragma once
 
+#pragma region Includes
 #include "SVXMLLibrary/SVXMLMaterialsTree.h"
 #include "SVPPQBar.h"
 #include "SVStatusBar.h"
+#include "ZoomToolBar.h"
+#include "ZoomHelperEx.h"
+#pragma endregion Includes
 
+#pragma region Declarations
 class CSVRegressionRunDlg;
+#pragma endregion Declarations
 
 /**
 @SVObjectName Main Frame
@@ -72,18 +77,22 @@ public:
 	afx_msg LRESULT OnEndObjectCreation( WPARAM wParam, LPARAM lParam );
 
 	afx_msg LRESULT OnMsgSetToolSelected( WPARAM wParam, LPARAM lParam );
-	
+
 	afx_msg LRESULT OnUserChanged( WPARAM wParam, LPARAM lParam );
 
 	afx_msg LRESULT OnHideIOViewTab( WPARAM p_wParam, LPARAM p_lParam );
 
+	// Toolbar Methods
+	afx_msg void OnToolbarZoom();
+	afx_msg void OnUpdateToolbarZoom(CCmdUI *pCmdUI);
+
 	DECLARE_MESSAGE_MAP()
 
 public:
-// Standard constructor
+#pragma region Constructor
 	SVMainFrame();
-// Standard destructor
 	virtual ~SVMainFrame();
+#pragma endregion Constructor
 
 	typedef SVXMLMaterialsTree SVTreeType;
 
@@ -96,7 +105,16 @@ public:
 
 	void SetStatusInfoText( LPCTSTR SIText );
 
-	void ShowAllBars( BOOL Show, BOOL RememberOldState = FALSE );
+
+	//************************************
+	// Method:    ShowToolBars
+	// Description:  Show or Hide the tool bars.  
+	// Parameter: BOOL Show (True is show False is hide)
+	// Parameter: BOOL RememberOldState if true remember or restore the old state 
+	// Parameter: DWORD dwBars Flag_Standard | Flag_Zoom
+	// Returns:   void
+	//************************************
+	void ShowToolBars(BOOL Show, BOOL RememberOldState , DWORD dwBars );
 
 	LRESULT InvalidateStatusBar( WPARAM wParam, LPARAM lParam );
 	LRESULT Shutdown( WPARAM wParam, LPARAM lParam );
@@ -109,12 +127,12 @@ public:
 
 
 	CSVRegressionRunDlg *m_pregTestDlg;
-	
+
 	//{{AFX_VIRTUAL(SVMainFrame)
-	public:
+public:
 	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
 	virtual BOOL Create(LPCTSTR lpszClassName, LPCTSTR lpszWindowName, DWORD dwStyle, const RECT& rect, CWnd* pParentWnd, UINT nID, CCreateContext* pContext = NULL);
-	protected:
+protected:
 	virtual BOOL OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext* pContext);
 	//}}AFX_VIRTUAL
 
@@ -139,38 +157,82 @@ public:
 public:
 	void SetNotifyCommRC ();
 
+	//************************************
+	// Method:    GetZoomToolbarValue
+	// Description:  Get the value from the zoom toolbar
+	// Returns:   double
+	//************************************
+	double GetZoomToolbarValue() const;
+
+	//************************************
+	// Method:    SetZoomToolbar
+	// Description:  Set the zoom toolbar with the the values from Zoomhelper
+	// Parameter: ZoomHelperEx & helper
+	// Returns:   void
+	//************************************
+	void SetZoomToolbar(const ZoomHelperEx &helper );
+
+	//************************************
+	// Method:    EnableZoomToolbar
+	// Description:  Enable the zoom tool bar
+	// Parameter: bool enable
+	// Returns:   void
+	//************************************
+	void EnableZoomToolbar(bool enable );	
+
+	//************************************
+	// Method:    IsZoomingPossible
+	// Description: True if the zoom toolbar is enabled
+	// Returns:   bool
+	//************************************
+	bool IsZoomingPossible();
+
 protected:
 	// Bars...
 	SVStatusBar				m_wndStatusBar;
 	CToolBar				m_wndToolBar;
-	SVPPQBarClass			PPQBar;
-	CToolBar				IPDocToolBar;
+	ZoomToolBar				m_wndToolBarZoom;
 
-	BOOL toolBarWasShown;
-	BOOL statusBarWasShown;
-	BOOL PPQBarWasShown;
-	BOOL IPDocToolBarWasShown;
+	SVPPQBarClass			m_PPQBar;
 
-    CBrush m_BackgroundBrush;
+	BOOL m_toolbarZoomWasShown;
+	BOOL m_toolbarWasShown;
+	BOOL m_PPQBarWasShown;
 
-	HICON	m_oemLargeIcon;
-	HICON	m_oemSmallIcon;
+	CBrush m_BackgroundBrush;
+
+	HICON m_oemLargeIcon;
+	HICON m_oemSmallIcon;
 
 private:
-	BOOL mbNotifyCommRC;
+	BOOL m_notifyCommRC;
 
 	BOOL m_bSizeChanged;
 	UINT m_PosSize;
 	HANDLE m_hDisplayChangedEvent; // Set if the display settings have been changed since the Window was created.
-};
 
-#endif	//	SVMAINFRM_H
+public:
+	const static DWORD Flag_Standard = 0x1;
+	const static DWORD Flag_Zoom = 0x2;
+};
 
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVMainFrm.h_v  $
+$Log:   N:\PVCSARCH65\PROJECTFILES\ARCHIVES\SVOBSERVER_SRC\SVOBSERVER\SVMainFrm.h_v  $
+ * 
+ *    Rev 1.6   14 Aug 2014 16:09:36   mEichengruen
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  921
+ * SCR Title:  Add more complete zoom functionality. (runpage)
+ * Checked in by:  mEichengruen;  Marcus Eichengruen
+ * Change Description:  
+ *   error handling in checkbarstate
+ * New zoom toolbar 
+ * new entry in ViewMenu 
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.5   24 Jun 2014 07:08:58   tbair
  * Project:  SVObserver

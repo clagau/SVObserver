@@ -5,8 +5,8 @@
 //* .Module Name     : SVIPSplitterFrame
 //* .File Name       : $Workfile:   SVIPChildFrm.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 11:16:26  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   14 Aug 2014 16:03:22  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -17,6 +17,7 @@
 #include "SVResultView.h"
 #include "SVToolSetTabView.h"
 #include "SVUserMessage.h"
+#include "SVMainfrm.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -24,14 +25,9 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-// Macros
-#define CALCROWS(Images) (int) floor ((sqrt (Images + 1)))
-#define CALCCOLS(Images) (int) ceil ( ((double)(Images + 1)) / (double) (CALCROWS(Images)))
-
-
 /////////////////////////////////////////////////////////////////////////////
 // SVIPSplitterFrame
-// Create a splitter window which splits an tool set view, 
+// Create a splitter window which splits a toolset view, 
 // image view and result view
 //                   |
 //                   |
@@ -51,6 +47,7 @@ BEGIN_MESSAGE_MAP(SVIPSplitterFrame, CMDIChildWnd)
 	//{{AFX_MSG_MAP(SVIPSplitterFrame)
 	ON_MESSAGE(SV_MDICHILDFRAME_UPDATE_ALL_DATA, OnUpdateAllData)
 	//}}AFX_MSG_MAP
+	ON_WM_MDIACTIVATE()
 END_MESSAGE_MAP()
 
 LRESULT SVIPSplitterFrame::OnUpdateAllData(WPARAM wParam, LPARAM lParam)
@@ -182,7 +179,6 @@ void SVIPSplitterFrame::SetViewSize( CWnd *l_pView, CSize &p_rViewSize )
 	}
 }
 
-
 BOOL SVIPSplitterFrame::OnCreateClient( LPCREATESTRUCT lpcs, CCreateContext* PContext )
 {
 	if( PContext != NULL )
@@ -198,7 +194,7 @@ BOOL SVIPSplitterFrame::OnCreateClient( LPCREATESTRUCT lpcs, CCreateContext* PCo
 	// Use these values for the creation of view windows.
 	//
 	long l;
-		
+
 	//
 	// Create a splitter with 2 rows, 1 column
 	//
@@ -207,7 +203,7 @@ BOOL SVIPSplitterFrame::OnCreateClient( LPCREATESTRUCT lpcs, CCreateContext* PCo
 	{
 		return FALSE;
 	}
-	
+
 	//
 	// Add the first splitter pane - which is a nested splitter with 2 columns
 	// for the Tool Set Tab View	
@@ -229,7 +225,7 @@ BOOL SVIPSplitterFrame::OnCreateClient( LPCREATESTRUCT lpcs, CCreateContext* PCo
 	{
 		return FALSE;
 	}
-	
+
 	//
 	// Add the next splitter pane - which is a nested splitter with 3 rows
 	// for the three rows or image views
@@ -241,7 +237,7 @@ BOOL SVIPSplitterFrame::OnCreateClient( LPCREATESTRUCT lpcs, CCreateContext* PCo
 	{
 		return FALSE;
 	}
-	
+
 	//
 	// Add the next splitter pane - which is a nested splitter with 2 columns
 	// for the two main image views
@@ -261,9 +257,8 @@ BOOL SVIPSplitterFrame::OnCreateClient( LPCREATESTRUCT lpcs, CCreateContext* PCo
 		{
 			return FALSE;
 		}// end if
-
 	}// end for
-	
+
 	//
 	// Add the next splitter pane - which is a nested splitter with 3 columns
 	// for three tool image views
@@ -283,9 +278,8 @@ BOOL SVIPSplitterFrame::OnCreateClient( LPCREATESTRUCT lpcs, CCreateContext* PCo
 		{
 			return FALSE;
 		}// end if
-
 	}// end for
-	
+
 	//
 	// Add the next splitter pane - which is a nested splitter with 3 columns
 	// for three tool image views
@@ -305,7 +299,6 @@ BOOL SVIPSplitterFrame::OnCreateClient( LPCREATESTRUCT lpcs, CCreateContext* PCo
 		{
 			return FALSE;
 		}// end if
-
 	}// end for
 
 	// Add the result view to the bottom row but after the toolset tab view
@@ -318,22 +311,20 @@ BOOL SVIPSplitterFrame::OnCreateClient( LPCREATESTRUCT lpcs, CCreateContext* PCo
 	{
 		return FALSE;
 	}
-	
+
 	// Set min and ideal sizes...
 	// NOTE: 
 	// The height of tool set view and image view panes, and the width of the 
 	// image view pane will be set in BOOL SVImageViewClass::BuildImageWindow()
-	
+
 	// Set width of tool set view pane...
 	m_oWndSplitter2.SetColumnInfo( 0, SV_DEFAULT_TOOL_SET_VIEW_WIDTH, 10 );
-	
+
 	// Set height of result view pane...
 	m_oWndSplitter1.SetRowInfo( 1, SV_DEFAULT_RESULT_VIEW_HEIGHT, 10 );
 
-    //
-	// activate the tool set view
-	//
-	SetActiveView( (CView*) m_oWndSplitter2.GetPane( 0, 0 ) );
+	//activate ImageScrollView #1
+	SetActiveView( static_cast< CView* >( m_oWndSplitter4.GetPane( 0, 0 ) ) );
 
 	return TRUE;
 }// end OnCreateClient
@@ -402,14 +393,49 @@ void SVIPSplitterFrame::SetDefaultPaneSizes(RECT &BoundingRect)
 	m_oWndSplitter4.RecalcLayout();
 	m_oWndSplitter5.RecalcLayout();
 	m_oWndSplitter6.RecalcLayout();
-
 }// end SetDefaultPaneSizes
+
+void SVIPSplitterFrame::RefreshAllSplitters()
+{
+	m_oWndSplitter1.RefreshSplitBars();
+	m_oWndSplitter2.RefreshSplitBars();
+	m_oWndSplitter3.RefreshSplitBars();
+	m_oWndSplitter4.RefreshSplitBars();
+	m_oWndSplitter5.RefreshSplitBars();
+	m_oWndSplitter6.RefreshSplitBars();
+}
+
+void SVIPSplitterFrame::OnMDIActivate(BOOL bActivate, CWnd* pActivateWnd, CWnd* pDeactivateWnd)
+{
+	CMDIChildWnd::OnMDIActivate(bActivate, pActivateWnd, pDeactivateWnd);
+
+	if(FALSE == bActivate)
+	{
+		RefreshAllSplitters();
+		SVMainFrame* pFrame = dynamic_cast<SVMainFrame*>( AfxGetMainWnd() );
+		if(nullptr != pFrame)
+		{
+			pFrame->EnableZoomToolbar(false);
+		}
+	}
+}
 
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVIPChildFrm.cpp_v  $
+$Log:   N:\PVCSARCH65\PROJECTFILES\ARCHIVES\SVOBSERVER_SRC\SVOBSERVER\SVIPChildFrm.cpp_v  $
+ * 
+ *    Rev 1.1   14 Aug 2014 16:03:22   mEichengruen
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  921
+ * SCR Title:  Add more complete zoom functionality. (runpage)
+ * Checked in by:  mEichengruen;  Marcus Eichengruen
+ * Change Description:  
+ *   blue frame around active panel: new functions 
+ * RefreshallSplitter, OnMDIActivate
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 11:16:26   bWalter
  * Project:  SVObserver
@@ -420,150 +446,149 @@ $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVIPChildF
  *   Initial check in to SVObserver_src.  (Merged with svo_src label SVO 6.10 Beta 008.)
  * 
  * /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 1.0.1.15   02 Jul 2012 16:58:44   jspila
-   Project:  SVObserver
-   Change Request (SCR) nbr:  769
-   SCR Title:  Fix Problems and Crashes with Inspection Document Display Updates
-   Checked in by:  Joe;  Joe Spila
-   Change Description:  
-     Updated source code to promote new display functionality.
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 1.0.1.14   07 Oct 2011 14:22:10   jspila
-   Project:  SVObserver
-   Change Request (SCR) nbr:  730
-   SCR Title:  Adjust SVObserver to fix issues with Inspection resource handshaking
-   Checked in by:  tBair;  Tom Bair
-   Change Description:  
-     Updated MDI Child Window and IP Document to fix threading problems by moving the data through a lockless queue and notifying the IP Document via the MDI Child Window with a windows message.
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 1.0.1.13   27 Jan 2011 11:20:56   jspila
-   Project:  SVObserver
-   Change Request (SCR) nbr:  712
-   SCR Title:  Fix issues with black images when using command interface (SIAC)
-   Checked in by:  Joe;  Joe Spila
-   Change Description:  
-     Updated source code to fix issues with Matrox Buffer Management.
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 1.0.1.12   01 Jun 2010 10:43:58   jspila
-   Project:  SVObserver
-   Change Request (SCR) nbr:  693
-   SCR Title:  Fix Performance Issue with Inspection Process
-   Checked in by:  Joe;  Joe Spila
-   Change Description:  
-     Updated code to remove redundent methodologies and fix missing or incorrect calling functionality.
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 1.0.1.11   17 Feb 2005 14:35:36   Joe
-   Project:  SVObserver
-   Change Request (SCR) nbr:  456
-   SCR Title:  Update Image and Tool Objects to use the new Extent Classes
-   Checked in by:  Joe;  Joe Spila
-   Change Description:  
-     Update class with new methodologies based on new base object, extents and reset structure.
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 1.0.1.10   22 Apr 2003 10:31:26   rschock
-   Project:  SVObserver
-   Change Request (SCR) nbr:  346
-   SCR Title:  Update SVObserver to Version 4.21 Release
-   Checked in by:  Joe;  Joe Spila
-   Change Description:  
-     Redid the #include defines and standardized the Tracker log headers and removed warning from release mode builds.
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 1.0.1.9   14 Mar 2003 16:49:54   rschock
-   Project:  SVObserver
-   Change Request (SCR) nbr:  301
-   SCR Title:  Implement Result Image Circle Buffer
-   Checked in by:  rYoho;  Rob Yoho
-   Change Description:  
-     Modified restoring of image panes to revert to saved position.
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 1.0.1.8   19 Nov 2002 14:39:30   ryoho
-   Project:  SVObserver
-   Change Request (SCR) nbr:  226
-   SCR Title:  Monochrome SVIM configuration compatibility between ViperQUAD and ViperDUAL
-   Checked in by:  rYoho;  Rob Yoho
-   Change Description:  
-     Removed COM support
-               PreCreateWindow
-               Initial size = 100x100
-               Handle additional splitters
-   
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 1.0.1.7   04 Oct 2001 15:43:28   Joe
-   Project:  SVObserver
-   Change Request (SCR) nbr:  229
-   SCR Title:  Upgrade SVObserver to Version 3.34 Release
-   Checked in by:  Joe;  Joe Spila
-   Change Description:  
-     Modified source code to remove compiler warning message.
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 1.0.1.6   14 Mar 2000 14:32:40   sjones
-   Project:  SVObserver
-   Change Request (SCR) nbr:  96
-   SCR Title:  Scroll/Zoom images displayed in the inspection document.
-   Checked in by:  Mike;  Mike McCarl
-   Change Description:  
-     Revised SetSavedPaneSizes to coorectly restore height of the views.
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 1.0.1.5   23 Feb 2000 14:53:34   mike
-   Project:  SVObserver
-   Change Request (SCR) nbr:  96
-   SCR Title:  Scroll/Zoom images displayed in the inspection document.
-   Checked in by:  Mike;  Mike McCarl
-   Change Description:  
-     Changed SetDefaultPaneSizes to increase the size of the initial results view window
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 1.0.1.4   16 Feb 2000 16:49:30   mike
-   Project:  SVObserver
-   Change Request (SCR) nbr:  96
-   SCR Title:  Scroll/Zoom images displayed in the inspection document.
-   Checked in by:  Mike;  Mike McCarl
-   Change Description:  
-     Added multi-image display to the IPD
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 1.0.1.3   08 Feb 2000 11:03:06   mike
-   Project:  SVObserver
-   Change Request (SCR) nbr:  96
-   SCR Title:  Scroll/Zoom images displayed in the inspection document.
-   Checked in by:  Mike;  Mike McCarl
-   Change Description:  
-     Changes to initialization (SVImageViewScroll is now the
-   child view).
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 1.0.1.2   Feb 01 2000 10:18:48   Nick
-   Project:  SVObserver
-   Change Request (SCR) nbr:  92
-   SCR Title:  Remove Obsolete SVChildFrame class
-   Checked in by:  Nick;  F Roland "Nick" Bjorklund
-   Change Description:  
-     Removed obsolete class.
-   
-   /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.0.1.15   02 Jul 2012 16:58:44   jspila
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  769
+ * SCR Title:  Fix Problems and Crashes with Inspection Document Display Updates
+ * Checked in by:  Joe;  Joe Spila
+ * Change Description:  
+ *   Updated source code to promote new display functionality.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.0.1.14   07 Oct 2011 14:22:10   jspila
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  730
+ * SCR Title:  Adjust SVObserver to fix issues with Inspection resource handshaking
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Updated MDI Child Window and IP Document to fix threading problems by moving the data through a lockless queue and notifying the IP Document via the MDI Child Window with a windows message.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.0.1.13   27 Jan 2011 11:20:56   jspila
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  712
+ * SCR Title:  Fix issues with black images when using command interface (SIAC)
+ * Checked in by:  Joe;  Joe Spila
+ * Change Description:  
+ *   Updated source code to fix issues with Matrox Buffer Management.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.0.1.12   01 Jun 2010 10:43:58   jspila
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  693
+ * SCR Title:  Fix Performance Issue with Inspection Process
+ * Checked in by:  Joe;  Joe Spila
+ * Change Description:  
+ *   Updated code to remove redundent methodologies and fix missing or incorrect calling functionality.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.0.1.11   17 Feb 2005 14:35:36   Joe
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  456
+ * SCR Title:  Update Image and Tool Objects to use the new Extent Classes
+ * Checked in by:  Joe;  Joe Spila
+ * Change Description:  
+ *   Update class with new methodologies based on new base object, extents and reset structure.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.0.1.10   22 Apr 2003 10:31:26   rschock
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  346
+ * SCR Title:  Update SVObserver to Version 4.21 Release
+ * Checked in by:  Joe;  Joe Spila
+ * Change Description:  
+ *   Redid the #include defines and standardized the Tracker log headers and removed warning from release mode builds.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.0.1.9   14 Mar 2003 16:49:54   rschock
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  301
+ * SCR Title:  Implement Result Image Circle Buffer
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Modified restoring of image panes to revert to saved position.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.0.1.8   19 Nov 2002 14:39:30   ryoho
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  226
+ * SCR Title:  Monochrome SVIM configuration compatibility between ViperQUAD and ViperDUAL
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Removed COM support
+ *             PreCreateWindow
+ *             Initial size = 100x100
+ *             Handle additional splitters
+ * 
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.0.1.7   04 Oct 2001 15:43:28   Joe
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  229
+ * SCR Title:  Upgrade SVObserver to Version 3.34 Release
+ * Checked in by:  Joe;  Joe Spila
+ * Change Description:  
+ *   Modified source code to remove compiler warning message.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.0.1.6   14 Mar 2000 14:32:40   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  96
+ * SCR Title:  Scroll/Zoom images displayed in the inspection document.
+ * Checked in by:  Mike;  Mike McCarl
+ * Change Description:  
+ *   Revised SetSavedPaneSizes to coorectly restore height of the views.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.0.1.5   23 Feb 2000 14:53:34   mike
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  96
+ * SCR Title:  Scroll/Zoom images displayed in the inspection document.
+ * Checked in by:  Mike;  Mike McCarl
+ * Change Description:  
+ *   Changed SetDefaultPaneSizes to increase the size of the initial results view window
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.0.1.4   16 Feb 2000 16:49:30   mike
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  96
+ * SCR Title:  Scroll/Zoom images displayed in the inspection document.
+ * Checked in by:  Mike;  Mike McCarl
+ * Change Description:  
+ *   Added multi-image display to the IPD
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.0.1.3   08 Feb 2000 11:03:06   mike
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  96
+ * SCR Title:  Scroll/Zoom images displayed in the inspection document.
+ * Checked in by:  Mike;  Mike McCarl
+ * Change Description:  
+ *   Changes to initialization (SVImageViewScroll is now the
+ * child view).
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.0.1.2   Feb 01 2000 10:18:48   Nick
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  92
+ * SCR Title:  Remove Obsolete SVChildFrame class
+ * Checked in by:  Nick;  F Roland "Nick" Bjorklund
+ * Change Description:  
+ *   Removed obsolete class.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
 */
-//** EOF **

@@ -5,23 +5,29 @@
 //* .Module Name     : SVIPSplitterFrame
 //* .File Name       : $Workfile:   SVIPChildFrm.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 11:16:36  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   14 Aug 2014 16:03:20  $
 //******************************************************************************
 
-#ifndef SVIPCHILDFRM_H
-#define SVIPCHILDFRM_H
+#pragma once
 
+#pragma region Includes
+#include "FramedSplitterWnd.h"
+#pragma endregion Includes
+
+#pragma region Declarations
 class SVIPDoc;
+#pragma endregion Declarations
 
 class SVIPSplitterFrame : public CMDIChildWnd
 {
-  DECLARE_DYNCREATE( SVIPSplitterFrame )
+	DECLARE_DYNCREATE( SVIPSplitterFrame )
 protected:
 	// App Wizard Generated
 	//{{AFX_MSG(SVIPSplitterFrame)
 	afx_msg LRESULT OnUpdateAllData(WPARAM wParam, LPARAM lParam);
 	afx_msg LRESULT OnUpdateNextView(WPARAM wParam, LPARAM lParam);
+	afx_msg void OnMDIActivate(BOOL bActivate, CWnd* pActivateWnd, CWnd* pDeactivateWnd);
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 
@@ -42,27 +48,23 @@ public:
 
 	void SetViewSize( CWnd *l_pView, CSize &p_rViewSize );
 
+	void RefreshAllSplitters();
 
 //******************************************************************************
 // Data Element(s):
 //******************************************************************************
 protected:
 	// See comments below for a picture of how these splitters look
-	CSplitterWnd	m_oWndSplitter1;
-	CSplitterWnd	m_oWndSplitter2;        
-	CSplitterWnd	m_oWndSplitter3;        
-	CSplitterWnd	m_oWndSplitter4;        
-	CSplitterWnd	m_oWndSplitter5;        
-	CSplitterWnd	m_oWndSplitter6;
+	FramedSplitterWnd m_oWndSplitter1;
+	FramedSplitterWnd m_oWndSplitter2;
+	FramedSplitterWnd m_oWndSplitter3;
+	FramedSplitterWnd m_oWndSplitter4;
+	FramedSplitterWnd m_oWndSplitter5;
+	FramedSplitterWnd m_oWndSplitter6;
 
 private:
 	SVIPDoc* m_pIPDoc;
-
 };
-
-#endif	//	SVIPCHILDFRM_H
-
-//** EOF **
 
 //  Below is the picture of how the splitters connect
 //  The numbers indicate which splitter goes where
@@ -101,7 +103,18 @@ private:
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVIPChildFrm.h_v  $
+$Log:   N:\PVCSARCH65\PROJECTFILES\ARCHIVES\SVOBSERVER_SRC\SVOBSERVER\SVIPChildFrm.h_v  $
+ * 
+ *    Rev 1.1   14 Aug 2014 16:03:20   mEichengruen
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  921
+ * SCR Title:  Add more complete zoom functionality. (runpage)
+ * Checked in by:  mEichengruen;  Marcus Eichengruen
+ * Change Description:  
+ *   blue frame around active panel: new functions 
+ * RefreshallSplitter, OnMDIActivate
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 11:16:36   bWalter
  * Project:  SVObserver

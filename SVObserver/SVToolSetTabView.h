@@ -5,9 +5,10 @@
 //* .Module Name     : SVToolSetTabView
 //* .File Name       : $Workfile:   SVToolSetTabView.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.3  $
-//* .Check In Date   : $Date:   18 Jun 2014 18:32:22  $
+//* .Current Version : $Revision:   1.4  $
+//* .Check In Date   : $Date:   14 Aug 2014 16:18:36  $
 //******************************************************************************
+
 #pragma once
 
 #pragma region Includes
@@ -20,9 +21,11 @@
 #define ID_EDIT_LABEL_ENDS 40000
 #define ID_RUN_ONCE		   40001
 
+#pragma region Declarations
 class SVIPDoc;
 class SVToolClass;
 class SVObjectWriter;
+#pragma endregion Declarations
 
 class SVToolSetTabViewClass : public CFormView
 {
@@ -48,7 +51,7 @@ public:
 	afx_msg void OnBeginlabeleditToolsetList(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnEndlabeleditToolsetList(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnClickToolsetList(NMHDR* pNMHDR, LRESULT* pResult);
-    afx_msg void OnRightClickToolsetList(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnRightClickToolsetList(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnEditLabelEnds();
 	afx_msg void OnSelectToolForOperatorMove();
 	afx_msg void OnSelectToolComment();
@@ -57,6 +60,7 @@ public:
 	afx_msg void OnEditToolName();
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
 	afx_msg void OnRunOnce();
+	afx_msg void OnSetFocus(CWnd* pOldWnd);
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 
@@ -114,16 +118,21 @@ protected:
 	CString m_csLabelEdited;
 };
 
-/////////////////////////////////////////////////////////////////////////////
-
-//{{AFX_INSERT_LOCATION}}
-// Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVToolSetTabView.h_v  $
+$Log:   N:\PVCSARCH65\PROJECTFILES\ARCHIVES\SVOBSERVER_SRC\SVOBSERVER\SVToolSetTabView.h_v  $
+ * 
+ *    Rev 1.4   14 Aug 2014 16:18:36   mEichengruen
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  921
+ * SCR Title:  Add more complete zoom functionality. (runpage)
+ * Checked in by:  mEichengruen;  Marcus Eichengruen
+ * Change Description:  
+ *   blue frame around active panel new function OnSetFocus
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   18 Jun 2014 18:32:22   sjones
  * Project:  SVObserver

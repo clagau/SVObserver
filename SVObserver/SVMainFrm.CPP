@@ -5,8 +5,8 @@
 //* .Module Name     : SVMainFrm
 //* .File Name       : $Workfile:   SVMainFrm.CPP  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.10  $
-//* .Check In Date   : $Date:   17 Jul 2014 19:22:30  $
+//* .Current Version : $Revision:   1.11  $
+//* .Check In Date   : $Date:   14 Aug 2014 16:09:36  $
 //******************************************************************************
 
 #pragma region Includes
@@ -39,7 +39,8 @@
 #include "SVInspectionTreeParser.h"		// new Inspection XML (NOT object script)
 #include "RemoteCommand.h"
 #include "EnvironmentObject.h"
-
+#include "SVImageViewScroll.h"
+#include "SVImageView.h"
 #include "SVOLicenseManager/SVOLicenseManager.h"
 #pragma endregion Includes
 
@@ -108,6 +109,8 @@ BEGIN_MESSAGE_MAP(SVMainFrame, CMDIFrameWnd)
 	ON_MESSAGE(SV_LOAD_CONFIGURATION, OnLoadConfiguration)
 	ON_MESSAGE(SV_REFRESH_STATUS_BAR, InvalidateStatusBar )
 	ON_MESSAGE(SV_SHUTDOWN, Shutdown )
+	ON_COMMAND(ID_TOOLBAR_ZOOM, &SVMainFrame::OnToolbarZoom)
+	ON_UPDATE_COMMAND_UI(ID_TOOLBAR_ZOOM, &SVMainFrame::OnUpdateToolbarZoom)
 END_MESSAGE_MAP()
 
 #pragma region Constructor
@@ -138,11 +141,11 @@ END_MESSAGE_MAP()
 ////////////////////////////////////////////////////////////////////////////////
 SVMainFrame::SVMainFrame()
 {
-	toolBarWasShown			= FALSE;
-	statusBarWasShown		= FALSE;
-	PPQBarWasShown			= FALSE;
+	m_toolbarWasShown			= FALSE;
+	m_PPQBarWasShown			= FALSE;
+	m_toolbarZoomWasShown		= FALSE;
 
-	mbNotifyCommRC = FALSE;
+	m_notifyCommRC = FALSE;
 	m_oemLargeIcon = NULL;
 	m_oemSmallIcon = NULL;
 
@@ -376,58 +379,58 @@ void SVMainFrame::SetStatusInfoText( LPCTSTR SIText )
 	}
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : ShowAllBars
-// -----------------------------------------------------------------------------
-// .Description : ...
-//              :
-// -----------------------------------------------------------------------------
-// .Input(s)
-//	 Type				Name				Description
-//	: 
-//  :
-// .Output(s)
-//	:
-//  :
-// .Return Value
-//	: 
-// -----------------------------------------------------------------------------
-// .Import Function Reference(s)
-//	:
-// -----------------------------------------------------------------------------
-// .Import Variable Reference(s)
-//	:
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment
-//  :27.05.1997 RO			First Implementation
-//	:
-////////////////////////////////////////////////////////////////////////////////
-void SVMainFrame::ShowAllBars( BOOL Show, BOOL RememberOldState /*= FALSE*/ )
+void SVMainFrame::ShowToolBars(BOOL Show, BOOL RememberOldState /*= FALSE*/, DWORD Flags /*= Flag_Standard | Flag_Zoom */)
 {
-	ShowControlBar( &m_wndStatusBar, TRUE, FALSE ); //statusBarWasShown, FALSE );
-
-	if( Show )
+	if( TRUE == Show )
 	{
 		if( RememberOldState )
 		{
-			ShowControlBar( &m_wndToolBar, toolBarWasShown, FALSE );
-			ShowControlBar( &PPQBar, PPQBarWasShown, FALSE );
+			if(Flags & Flag_Standard)
+			{
+				ShowControlBar( &m_wndToolBar, m_toolbarWasShown, FALSE );
+				ShowControlBar( &m_PPQBar, m_PPQBarWasShown, FALSE );
+			}
+
+			if(Flags & Flag_Zoom)
+			{
+				ShowControlBar( &m_wndToolBarZoom, m_toolbarZoomWasShown, FALSE );
+				m_wndToolBarZoom.Enable(IsZoomingPossible());
+			}
 		}
 		else
 		{
 			// Show all bars
-			ShowControlBar( &m_wndToolBar, TRUE, FALSE );
-			ShowControlBar( &PPQBar, TRUE, FALSE );
+			if(Flags & Flag_Standard)
+			{
+				ShowControlBar( &m_wndToolBar, TRUE, FALSE );
+				ShowControlBar( &m_PPQBar, TRUE, FALSE );
+			}
+			if(Flags & Flag_Zoom)
+			{
+				ShowControlBar( &m_wndToolBarZoom, TRUE, FALSE );
+				m_wndToolBarZoom.Enable(IsZoomingPossible());
+			}
 		}
 	}
 	else
 	{
-		toolBarWasShown			= m_wndToolBar.IsWindowVisible();
-		PPQBarWasShown			= PPQBar.IsWindowVisible();
+		if(Flags & Flag_Standard)
+		{
+			m_toolbarWasShown			= m_wndToolBar.IsWindowVisible();
+			m_PPQBarWasShown			= m_PPQBar.IsWindowVisible();
+			ShowControlBar( &m_wndToolBar, FALSE, FALSE );
 
-		ShowControlBar( &m_wndToolBar, FALSE, FALSE );
-		ShowControlBar( &PPQBar, FALSE, FALSE );
+			ShowControlBar( &m_PPQBar, FALSE, FALSE );
+		}
+
+		if(Flags & Flag_Zoom)
+		{
+			if(!SVSVIMStateClass::CheckState( SV_STATE_TEST  | SV_STATE_RUNNING))
+			{
+				m_toolbarZoomWasShown = m_wndToolBarZoom.IsWindowVisible();
+			}
+			ShowControlBar( &m_wndToolBarZoom, FALSE, FALSE );
+		}
 
 		SetStatusInfoText( _T(""));
 	}
@@ -624,6 +627,11 @@ int SVMainFrame::OnCreate( LPCREATESTRUCT lpCreateStruct )
 		return -1;      // Fehler beim Erzeugen
 	}
 
+	if( !m_wndToolBarZoom.Create( this, WS_CHILD | WS_VISIBLE | CBRS_TOP | CBRS_TOOLTIPS, ID_ZOOMTOOLBAR ) )
+	{
+		return -1;      // Fehler beim Erzeugen
+	}
+
 	if( !m_wndStatusBar.Create( this ) ||
 		!m_wndStatusBar.SetIndicators( indicators,
 		  sizeof( indicators ) / sizeof( UINT ) ) )
@@ -633,7 +641,7 @@ int SVMainFrame::OnCreate( LPCREATESTRUCT lpCreateStruct )
 
 	m_wndStatusBar.SetPaneInfo( 1, ID_INDICATOR_INFO, SBPS_NOBORDERS, 0 );
 
-	if ( !PPQBar.Create( this ) )
+	if ( !m_PPQBar.Create( this ) )
 	{
 		return -1;      // Fehler beim Erzeugen
 	}
@@ -644,20 +652,33 @@ int SVMainFrame::OnCreate( LPCREATESTRUCT lpCreateStruct )
 	m_wndToolBar.SetBarStyle( m_wndToolBar.GetBarStyle() | CBRS_TOOLTIPS | CBRS_GRIPPER | CBRS_FLYBY | CBRS_SIZE_DYNAMIC );
 	m_wndToolBar.EnableDocking( CBRS_ALIGN_ANY );
 
-	// PPQ Bar
-	PPQBar.SetBarStyle( PPQBar.GetBarStyle() | CBRS_SIZE_DYNAMIC | CBRS_TOOLTIPS | CBRS_GRIPPER | CBRS_FLYBY );
-	PPQBar.EnableDocking( CBRS_ALIGN_BOTTOM | CBRS_ALIGN_TOP );
+	m_wndToolBarZoom.EnableDocking(CBRS_ALIGN_TOP | CBRS_ALIGN_BOTTOM);
+	m_wndToolBarZoom.SetWindowText(_T("Zoom Factor"));
 
+	// PPQ Bar
+	m_PPQBar.SetBarStyle( m_PPQBar.GetBarStyle() | CBRS_SIZE_DYNAMIC | CBRS_TOOLTIPS | CBRS_GRIPPER | CBRS_FLYBY );
+	m_PPQBar.EnableDocking( CBRS_ALIGN_BOTTOM | CBRS_ALIGN_TOP );
+
+	DockControlBar( &m_wndToolBarZoom );
 	DockControlBar( &m_wndToolBar );
-	DockControlBar( &PPQBar, AFX_IDW_DOCKBAR_BOTTOM );
+	DockControlBar( &m_PPQBar, AFX_IDW_DOCKBAR_BOTTOM );
 
 	// Remember old bar states...
-	if ( VerifyBarStates(_T("Bar States")) )
+	try
 	{
-		LoadBarState(_T("Bar States"));
+		if ( VerifyBarStates(_T("Bar States")) )
+		{
+			LoadBarState(_T("Bar States"));
+		}
+	}
+	catch (CException* e)
+	{
+		e->Delete();
+		ASSERT(FALSE);
 	}
 
-	ShowAllBars(TRUE, TRUE);
+	ShowControlBar( &m_wndStatusBar, TRUE, FALSE );
+	ShowToolBars(TRUE, TRUE, Flag_Standard | Flag_Zoom);
 
 	LoadOEMIcon();
 
@@ -861,11 +882,19 @@ void SVMainFrame::OnClose()
 		}
 
 		// Store current bar state...
-		SaveBarState( _T( "Bar States" ) );
+		try
+		{
+			SaveBarState( _T( "Bar States" ) );
+		}
+		catch (CException* e)
+		{
+			e->Delete();
+			ASSERT(FALSE);
+		}
 
 		// Log out...
 		TheSVObserverApp.Logout();
-	
+
 		// Last checking...
 		switch( TheSVObserverApp.CanCloseMainFrame() )
 		{
@@ -1162,20 +1191,20 @@ void SVMainFrame::OnMouseMove( UINT nFlags, CPoint point )
 ////////////////////////////////////////////////////////////////////////////////
 void SVMainFrame::OnViewPPQBar()
 {
-	bool l_IsWindowVisible = ( PPQBar.IsWindowVisible() != FALSE );
+	bool l_IsWindowVisible = ( m_PPQBar.IsWindowVisible() != FALSE );
 	bool l_ValidState = ( SVSVIMStateClass::CheckState( SV_STATE_READY | SV_STATE_RUNNING ) != FALSE );
 
 	if ( ! l_IsWindowVisible && l_ValidState && TheSVObserverApp.OkToEdit() )
 	{
-		ShowControlBar( &PPQBar, TRUE, FALSE );
-		PPQBarWasShown = TRUE;
-		PPQBar.BuildButtons();
+		ShowControlBar( &m_PPQBar, TRUE, FALSE );
+		m_PPQBarWasShown = TRUE;
+		m_PPQBar.BuildButtons();
 	}
 	else
 	{
 		// Hide bar...
-		ShowControlBar( &PPQBar, FALSE, FALSE );
-		PPQBarWasShown = FALSE;
+		ShowControlBar( &m_PPQBar, FALSE, FALSE );
+		m_PPQBarWasShown = FALSE;
 	}
 
 	RecalcLayout();
@@ -1213,17 +1242,38 @@ void SVMainFrame::OnViewToolBar()
 	if( !m_wndToolBar.IsWindowVisible() )
 	{
 		ShowControlBar( &m_wndToolBar, TRUE, FALSE );
-		toolBarWasShown = TRUE;
+		m_toolbarWasShown = TRUE;
 	}
 	else
 	{
 		// Hide bar...
 		ShowControlBar( &m_wndToolBar, FALSE, FALSE );
-		toolBarWasShown = FALSE;
+		m_toolbarWasShown = FALSE;
 	}
 
 	RecalcLayout();
 }
+
+void SVMainFrame::OnToolbarZoom()
+{
+	if( !m_wndToolBarZoom.IsWindowVisible() )
+	{
+		ShowControlBar( &m_wndToolBarZoom, TRUE, FALSE );
+		m_toolbarZoomWasShown = TRUE;
+	}
+	else
+	{
+		// Hide bar...
+		ShowControlBar( &m_wndToolBarZoom, FALSE, FALSE );
+		m_toolbarZoomWasShown = FALSE;
+	}
+
+	RecalcLayout();
+}
+
+
+
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : OnUpdateViewPPQBar
@@ -1257,10 +1307,10 @@ void SVMainFrame::OnUpdateViewPPQBar( CCmdUI* pCmdUI )
 	BOOL bEnable = !SVSVIMStateClass::CheckState( SV_STATE_TEST|SV_STATE_RUNNING );
 	bEnable &= TheSVObserverApp.OkToEdit() ? 1 : 0;
 	bEnable &= !SVSVIMStateClass::CheckState( SV_STATE_REGRESSION );
-	bEnable |= PPQBar.IsWindowVisible();
+	bEnable |= m_PPQBar.IsWindowVisible();
 	pCmdUI->Enable(bEnable);
 
-	if( PPQBar.IsWindowVisible() )
+	if( m_PPQBar.IsWindowVisible() )
 	{
 		pCmdUI->SetCheck( 1 );
 	}
@@ -1268,6 +1318,15 @@ void SVMainFrame::OnUpdateViewPPQBar( CCmdUI* pCmdUI )
 	{
 		pCmdUI->SetCheck( 0 );
 	}
+	//@TODO mec disable submenu ???
+
+	bool enableToolbars =  ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION );
+	CMenu* pMenu = GetMenu();
+	EnableParentMenu(pMenu,ID_TOOLBAR_ZOOM, enableToolbars,3 );
+	
+
+	
+	
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -1302,6 +1361,20 @@ void SVMainFrame::OnUpdateViewToolbar( CCmdUI* pCmdUI )
 	pCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION ) );
 
 	if ( m_wndToolBar.IsWindowVisible() )
+	{
+		pCmdUI->SetCheck( 1 );
+	}
+	else
+	{
+		pCmdUI->SetCheck( 0 );
+	}
+}
+
+void SVMainFrame::OnUpdateToolbarZoom(CCmdUI *pCmdUI)
+{
+	pCmdUI->Enable( !SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION ) );
+
+	if ( m_wndToolBarZoom.IsWindowVisible() )
 	{
 		pCmdUI->SetCheck( 1 );
 	}
@@ -1515,7 +1588,7 @@ HRESULT SVMainFrame::ParseToolsetScripts( SVTreeType& p_rTree )
 ////////////////////////////////////////////////////////////////////////////////
 BOOL SVMainFrame::BuildPPQButtons()
 {
-	return PPQBar.BuildButtons();
+	return m_PPQBar.BuildButtons();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -1535,7 +1608,7 @@ BOOL SVMainFrame::BuildPPQButtons()
 ////////////////////////////////////////////////////////////////////////////////
 BOOL SVMainFrame::DestroyPPQButtons()
 {
-	return PPQBar.DestroyButtons();
+	return m_PPQBar.DestroyButtons();
 }
 
 ///////////////////////////////////////////////////////
@@ -1612,9 +1685,9 @@ void SVMainFrame::OnConfigurationFinishedInitializing()
 	//
 	// See if this configuration was downloaded from a remote computer.
 	//
-	if ( mbNotifyCommRC )
+	if ( m_notifyCommRC )
 	{
-		mbNotifyCommRC = FALSE;
+		m_notifyCommRC = FALSE;
 	}
 
 	TheSVObserverApp.RemoveUnusedFiles();
@@ -1832,7 +1905,7 @@ void SVMainFrame::Dump(CDumpContext& dc) const
 
 void SVMainFrame::SetNotifyCommRC()
 {
-	mbNotifyCommRC = TRUE;
+	m_notifyCommRC = TRUE;
 }
 
 LRESULT SVMainFrame::OnMsgSetToolSelected( 
@@ -1857,9 +1930,9 @@ LRESULT SVMainFrame::OnUserChanged( WPARAM wParam, LPARAM lParam )
 	if( !accessAllowed )
 	{
 		// Hide PPQ Bar
-		if( PPQBar.IsWindowVisible() )
+		if( m_PPQBar.IsWindowVisible() )
 		{
-			ShowControlBar( &PPQBar, FALSE, FALSE );
+			ShowControlBar( &m_PPQBar, FALSE, FALSE );
 			recalcNeeded = TRUE;
 		}
 	}
@@ -1886,9 +1959,42 @@ void SVMainFrame::OnUpdateViewImageDisplayUpdate( CCmdUI* pCmdUI )
 	bEnable &= !SVSVIMStateClass::CheckState( SV_STATE_REGRESSION );
 	pCmdUI->Enable( bEnable);
 
+	
+	
 	BOOL ImageUpdate;
 	EnvironmentObject::getEnvironmentValue( ::EnvironmentImageUpdate, ImageUpdate );
 	pCmdUI->SetCheck( ImageUpdate );
+	
+	
+	bool bEnableZoom = false;
+	CMDIChildWnd *pChild = (CMDIChildWnd*) GetActiveFrame();
+	CView*  pView =  pChild->GetActiveView();
+	SVImageViewClass *pIView = NULL;
+	SVImageViewScroll *pSView = NULL;
+	pIView = dynamic_cast<SVImageViewClass*> (pView);
+	if(pIView)
+	{
+		bEnableZoom = pIView->IsZoomAllowed();
+	}
+	else
+	{
+		pSView = dynamic_cast<SVImageViewScroll*>( pView);
+
+	}
+	if(pSView)
+	{
+		bEnableZoom = pSView->IsZoomAllowed();
+	}
+
+	
+	CMenu* pMenu = GetMenu();
+	if(pMenu)
+	{
+		EnableParentMenu(pMenu,ID_ZOOM_MINUS, bEnableZoom,3 );
+	}
+	
+
+
 }
 
 void SVMainFrame::OnViewResultDisplayUpdate()
@@ -1948,6 +2054,13 @@ BOOL SVMainFrame::VerifyBarStates(LPCTSTR lpszProfileName)
 			if (GetControlBar(pInfo->m_nBarID) == NULL)
 			{
 				return FALSE; // invalid bar ID
+			}
+		}
+		else
+		{
+			if(nullptr == dynamic_cast<CDockBar*>(pInfo->m_pBar))
+			{
+				return FALSE;
 			}
 		}
 	}
@@ -2013,11 +2126,66 @@ LRESULT SVMainFrame::OnHideIOViewTab( WPARAM p_wParam, LPARAM p_lParam )
 	return 0;
 }
 
+double SVMainFrame::GetZoomToolbarValue() const
+{
+	return m_wndToolBarZoom.GetValue();
+}
+
+void SVMainFrame::SetZoomToolbar(const ZoomHelperEx& helper)
+{
+	m_wndToolBarZoom.SetRange(helper.GetZoomMin(), helper.GetZoomMax(), helper.GetZoomStep());
+	m_wndToolBarZoom.SetValue(helper.GetZoom());
+}
+
+void SVMainFrame::EnableZoomToolbar(bool enable)
+{
+	m_wndToolBarZoom.Enable(enable);
+}
+
+bool SVMainFrame::IsZoomingPossible()
+{
+	CMDIChildWnd* pChild = dynamic_cast<CMDIChildWnd*>(GetActiveFrame());
+
+	CView* pView = nullptr;
+	if(nullptr != pChild)
+	{
+		pView = pChild->GetActiveView();
+	}
+
+	SVImageViewScroll* pImageViewScroll = dynamic_cast<SVImageViewScroll*>(pView);
+
+	if(nullptr != pImageViewScroll)
+	{
+		return !pImageViewScroll->ImageIsEmpty();
+	}
+
+	SVImageViewClass* pImageView = dynamic_cast<SVImageViewClass*>(pView);
+
+	if(nullptr != pImageView)
+	{
+		return !pImageView->ImageIsEmpty();
+	}
+
+	return false;
+}
+
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVMainFrm.CPP_v  $
+$Log:   N:\PVCSARCH65\PROJECTFILES\ARCHIVES\SVOBSERVER_SRC\SVOBSERVER\SVMainFrm.CPP_v  $
+ * 
+ *    Rev 1.11   14 Aug 2014 16:09:36   mEichengruen
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  921
+ * SCR Title:  Add more complete zoom functionality. (runpage)
+ * Checked in by:  mEichengruen;  Marcus Eichengruen
+ * Change Description:  
+ *   error handling in checkbarstate
+ * New zoom toolbar 
+ * new entry in ViewMenu 
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.10   17 Jul 2014 19:22:30   gramseier
  * Project:  SVObserver
@@ -2125,16 +2293,16 @@ $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVMainFrm.
  * 
  * /////////////////////////////////////////////////////////////////////////////////////
  * 
-      Rev 3.82   16 Apr 2013 15:35:42   jspila
-   Project:  SVObserver
-   Change Request (SCR) nbr:  822
-   SCR Title:  Remove DDE Input and Output functionality from SVObserver
-   Checked in by:  Joe;  Joe Spila
-   Change Description:  
-     Removed DDE functionality from the source code.
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
+ *    Rev 3.82   16 Apr 2013 15:35:42   jspila
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  822
+ * SCR Title:  Remove DDE Input and Output functionality from SVObserver
+ * Checked in by:  Joe;  Joe Spila
+ * Change Description:  
+ *   Removed DDE functionality from the source code.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
  *    Rev 1.0   23 Apr 2013 12:25:54   bWalter
  * Project:  SVObserver
  * Change Request (SCR) nbr:  814
@@ -2144,882 +2312,882 @@ $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVMainFrm.
  *   Initial check in to SVObserver_src.  (Merged with svo_src label SVO 6.10 Beta 008.)
  * 
  * /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 3.81   25 Mar 2013 13:36:26   ryoho
-   Project:  SVObserver
-   Change Request (SCR) nbr:  810
-   SCR Title:  Remove support for Legacy Tools
-   Checked in by:  rYoho;  Rob Yoho
-   Change Description:  
-     removed OnViewInspectionToolBar, OnUpdateViewInspectionToolBar
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 3.80   25 Mar 2013 12:42:20   ryoho
-   Project:  SVObserver
-   Change Request (SCR) nbr:  796
-   SCR Title:  Add a License Manager that will handle the Matrox Licenses
-   Checked in by:  rYoho;  Rob Yoho
-   Change Description:  
-     removed the Identification Error from the status bar
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 3.79   20 Mar 2013 07:08:54   tbair
-   Project:  SVObserver
-   Change Request (SCR) nbr:  819
-   SCR Title:  Modify SVObserver to force the status bar to update
-   Checked in by:  tBair;  Tom Bair
-   Change Description:  
-     Added call to the status bar Invalidate after the status bar is updated.
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 3.78   27 Feb 2013 11:23:10   ryoho
-   Project:  SVObserver
-   Change Request (SCR) nbr:  796
-   SCR Title:  Add a License Manager that will handle the Matrox Licenses
-   Checked in by:  rYoho;  Rob Yoho
-   Change Description:  
-     Added case for OnUpdateStatusInfo for license errors
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 3.77   11 Feb 2013 14:19:08   jspila
-   Project:  SVObserver
-   Change Request (SCR) nbr:  812
-   SCR Title:  Add New Remote Command Functionality
-   Checked in by:  Joe;  Joe Spila
-   Change Description:  
-     Updated source code to use the new framework for the remote socket interface.
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 3.76   10 Jan 2013 15:06:24   jspila
-   Project:  SVObserver
-   Change Request (SCR) nbr:  792
-   SCR Title:  Change SVObserver Background Color to Körber Grey
-   Checked in by:  bWalter;  Ben Walter
-   Change Description:  
-     Added missing log entries.
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 3.75   11 Oct 2012 10:54:16   jspila
-   Project:  SVObserver
-   Change Request (SCR) nbr:  602
-   SCR Title:  Revise the Toolset Parsing and Object Creation Methodology
-   Checked in by:  Joe;  Joe Spila
-   Change Description:  
-     Updated include information based on the navigate tree class moving to the XML library.
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 3.74   01 Oct 2012 16:18:00   bwalter
-   Project:  SVObserver
-   Change Request (SCR) nbr:  792
-   SCR Title:  Change SVObserver Background Color to Körber Grey
-   Checked in by:  bWalter;  Ben Walter
-   Change Description:  
-     Changed MDI Client Window background to grey.
-     Changed m_BlueBrush to m_BackgroundBrush.
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 3.73   28 Sep 2012 14:33:26   jspila
-   Project:  SVObserver
-   Change Request (SCR) nbr:  602
-   SCR Title:  Revise the Toolset Parsing and Object Creation Methodology
-   Checked in by:  Joe;  Joe Spila
-   Change Description:  
-     Upated code to use new templated classes.
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 3.72   25 Sep 2012 15:21:48   jspila
-   Project:  SVObserver
-   Change Request (SCR) nbr:  602
-   SCR Title:  Revise the Toolset Parsing and Object Creation Methodology
-   Checked in by:  Joe;  Joe Spila
-   Change Description:  
-     Updated to use new tree type.
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 3.71   18 Sep 2012 18:35:56   jspila
-   Project:  SVObserver
-   Change Request (SCR) nbr:  781
-   SCR Title:  Update SVObserver Version Number for Esok Release
-   Checked in by:  Joe;  Joe Spila
-   Change Description:  
-     Updated the creation and management for the version information.
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 3.70   18 Sep 2012 18:22:42   jspila
-   Project:  SVObserver
-   Change Request (SCR) nbr:  602
-   SCR Title:  Revise the Toolset Parsing and Object Creation Methodology
-   Checked in by:  Joe;  Joe Spila
-   Change Description:  
-     Updated code to use the templated XML objects that moved from the SVLibrary to the new XML Library and to the Configuration Library.
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 3.69   06 Sep 2012 10:09:58   jspila
-   Project:  SVObserver
-   Change Request (SCR) nbr:  602
-   SCR Title:  Revise the Toolset Parsing and Object Creation Methodology
-   Checked in by:  Joe;  Joe Spila
-   Change Description:  
-     Updated Parse Toolset Scripts method to adjust the data collection functionality based on moving the inspection process attributes.
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 3.68   04 Sep 2012 15:43:34   jspila
-   Project:  SVObserver
-   Change Request (SCR) nbr:  602
-   SCR Title:  Revise the Toolset Parsing and Object Creation Methodology
-   Checked in by:  Joe;  Joe Spila
-   Change Description:  
-     Updated Navigate Tree class to not force the programmer to create an instance of the class to use it.  Converted all functionality to static.
-   
-   Update source code to include new parser dialog changes.
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 3.67.1.0   08 Nov 2012 15:25:36   ryoho
-   Project:  SVObserver
-   Change Request (SCR) nbr:  792
-   SCR Title:  Change SVObserver Background Color to Körber Grey
-   Checked in by:  bWalter;  Ben Walter
-   Change Description:  
-     changed backgroud color to grey
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 3.67   14 Aug 2012 15:56:12   jspila
-   Project:  SVObserver
-   Change Request (SCR) nbr:  779
-   SCR Title:  Fix Problems with DDE Inputs and DDE Outputs
-   Checked in by:  Joe;  Joe Spila
-   Change Description:  
-     Updated output list functionality to only allow unique elements to the output list and notify user when duplicates are detected.
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 3.66   03 Aug 2012 11:48:04   jspila
-   Project:  SVObserver
-   Change Request (SCR) nbr:  769
-   SCR Title:  Fix Problems and Crashes with Inspection Document Display Updates
-   Checked in by:  Joe;  Joe Spila
-   Change Description:  
-     Removed dead code.
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 3.65   09 Jul 2012 14:08:20   jspila
-   Project:  SVObserver
-   Change Request (SCR) nbr:  769
-   SCR Title:  Fix Problems and Crashes with Inspection Document Display Updates
-   Checked in by:  Joe;  Joe Spila
-   Change Description:  
-     Updated source code to change the include for SVIM State.
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 3.64   02 Jul 2012 17:19:28   jspila
-   Project:  SVObserver
-   Change Request (SCR) nbr:  769
-   SCR Title:  Fix Problems and Crashes with Inspection Document Display Updates
-   Checked in by:  Joe;  Joe Spila
-   Change Description:  
-     Updated source code to promote new display functionality.
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 3.63   28 Jun 2012 18:00:42   jspila
-   Project:  SVObserver
-   Change Request (SCR) nbr:  768
-   SCR Title:  Add the display time-out and throttling options for 5.50
-   Checked in by:  tBair;  Tom Bair
-   Change Description:  
-     Reverted back to before changes were made for this change.
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 3.62   19 Jun 2012 13:00:06   jspila
-   Project:  SVObserver
-   Change Request (SCR) nbr:  744
-   SCR Title:  Add Shared Memory and Socket Functionality for Run Page Web Server
-   Checked in by:  Joe;  Joe Spila
-   Change Description:  
-     Optimized the application state functionality.  The application state class was altered to simplify its usage and elements were added to object manager to separate tracking states.
-   Centralized the location of the configuration object identifier and removed synchronization problems.
-   
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 3.61   23 May 2012 10:13:30   tbair
-   Project:  SVObserver
-   Change Request (SCR) nbr:  768
-   SCR Title:  Add the display time-out and throttling options for 5.50
-   Checked in by:  tBair;  Tom Bair
-   Change Description:  
-     Fixed code in OnMsgSetToolSelected from merge error.
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 3.60   16 May 2012 18:53:12   jHanebach
-   Project:  SVObserver
-   Change Request (SCR) nbr:  763
-   SCR Title:  Add the display time-out and throttling options.
-   Checked in by:  tBair;  Tom Bair
-   Change Description:  
-     Merge 5.43 changes
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 3.59   13 Mar 2012 13:45:36   jspila
-   Project:  SVObserver
-   Change Request (SCR) nbr:  745
-   SCR Title:  Fix contention issue during load process and display
-   Checked in by:  tBair;  Tom Bair
-   Change Description:  
-     Updated OnMsgSetToolSelected to call through SVObserver App instead of throught configuration object.
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 3.58.1.1   15 May 2012 10:38:36   tbair
-   Project:  SVObserver
-   Change Request (SCR) nbr:  763
-   SCR Title:  Add the display time-out and throttling options.
-   Checked in by:  tBair;  Tom Bair
-   Change Description:  
-     Removed Modified Flag from timeout setting because it writes to the svim.ini file.
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 3.58.1.0   14 May 2012 14:21:48   tbair
-   Project:  SVObserver
-   Change Request (SCR) nbr:  763
-   SCR Title:  Add the display time-out and throttling options.
-   Checked in by:  tBair;  Tom Bair
-   Change Description:  
-     Implement Freeze Dialog
-   Implement display update rate options
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 3.58   28 Sep 2011 13:09:10   jspila
-   Project:  SVObserver
-   Change Request (SCR) nbr:  730
-   SCR Title:  Adjust SVObserver to fix issues with Inspection resource handshaking
-   Checked in by:  tBair;  Tom Bair
-   Change Description:  
-     Updated source code to fix issues with camera image interface and methodology.
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 3.57   16 Sep 2011 16:05:54   jspila
-   Project:  SVObserver
-   Change Request (SCR) nbr:  730
-   SCR Title:  Adjust SVObserver to fix issues with Inspection resource handshaking
-   Checked in by:  tBair;  Tom Bair
-   Change Description:  
-     Updated object to use the new resource management functionality.
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 3.56   05 Jul 2011 12:35:28   jspila
-   Project:  SVObserver
-   Change Request (SCR) nbr:  723
-   SCR Title:  Remove Free Memory Check from Status Area
-   Checked in by:  Joe;  Joe Spila
-   Change Description:  
-     Updated source code to remove the memory check process and status bar display.
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 3.55   29 Apr 2011 08:06:56   jspila
-   Project:  SVObserver
-   Change Request (SCR) nbr:  707
-   SCR Title:  Change Inspection Display Functionality to Force Display of Last Inspected
-   Checked in by:  Joe;  Joe Spila
-   Change Description:  
-     Updated code to allow for inspection to for the display to give up when an inspection get queued.  The display is now regulated to a maximum of 10 frames per second.
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 3.54   30 Mar 2011 16:11:16   jspila
-   Project:  SVObserver
-   Change Request (SCR) nbr:  707
-   SCR Title:  Change Inspection Display Functionality to Force Display of Last Inspected
-   Checked in by:  Joe;  Joe Spila
-   Change Description:  
-     Updated source code to clairify construction functionality and add clean-up functionality to remove memory leaks.
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 3.53   27 Jan 2011 11:33:38   jspila
-   Project:  SVObserver
-   Change Request (SCR) nbr:  712
-   SCR Title:  Fix issues with black images when using command interface (SIAC)
-   Checked in by:  Joe;  Joe Spila
-   Change Description:  
-     Updated source code to fix issues with Matrox Buffer Management.
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 3.52   08 Dec 2010 13:05:08   jspila
-   Project:  SVObserver
-   Change Request (SCR) nbr:  707
-   SCR Title:  Change Inspection Display Functionality to Force Display of Last Inspected
-   Checked in by:  Joe;  Joe Spila
-   Change Description:  
-     Updated source code to include changes in notification functionality using the Observer Design Pattern.
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 3.51   09 Nov 2010 16:21:44   jspila
-   Project:  SVObserver
-   Change Request (SCR) nbr:  704
-   SCR Title:  Upgrade SVObserver Version for 5.33 Release
-   Checked in by:  Joe;  Joe Spila
-   Change Description:  
-     Updated source code to remove duplicate container objects.
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 3.50   15 Oct 2010 15:25:02   jspila
-   Project:  SVObserver
-   Change Request (SCR) nbr:  701
-   SCR Title:  Add New Font Functionality to the Existing Command Interface
-   Checked in by:  Joe;  Joe Spila
-   Change Description:  
-     Updated source code assoicated with casting issues and HBITMAP changes.
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 3.49   27 Jul 2010 10:53:14   jspila
-   Project:  SVObserver
-   Change Request (SCR) nbr:  697
-   SCR Title:  Add Free Memory Information to Status Bar
-   Checked in by:  Joe;  Joe Spila
-   Change Description:  
-     Changed to use default Device Context instead of status bar Device Context.
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 3.48   23 Jul 2010 09:35:10   jspila
-   Project:  SVObserver
-   Change Request (SCR) nbr:  697
-   SCR Title:  Add Free Memory Information to Status Bar
-   Checked in by:  Joe;  Joe Spila
-   Change Description:  
-     Updated status bar functionality to better size the data so that it does not scroll off the screen.  Updated version number to 5.32 Beta 026.
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 3.47   19 Jul 2010 13:19:40   jspila
-   Project:  SVObserver
-   Change Request (SCR) nbr:  694
-   SCR Title:  Upgrade SVObserver version for Chromis release
-   Checked in by:  Joe;  Joe Spila
-   Change Description:  
-     Fixed issue with returning NULL for user name.
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 3.46   13 Jul 2010 12:25:56   jspila
-   Project:  SVObserver
-   Change Request (SCR) nbr:  697
-   SCR Title:  Add Free Memory Information to Status Bar
-   Checked in by:  Joe;  Joe Spila
-   Change Description:  
-     Updated source code to include changes to status bar to add free memory status.
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 3.45   29 Jun 2010 14:02:28   jspila
-   Project:  SVObserver
-   Change Request (SCR) nbr:  693
-   SCR Title:  Fix Performance Issue with Inspection Process
-   Checked in by:  Joe;  Joe Spila
-   Change Description:  
-     Updated source to change object validity test and casting changes.
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 3.44   16 Dec 2009 12:00:40   jspila
-   Project:  SVObserver
-   Change Request (SCR) nbr:  677
-   SCR Title:  Fix problem in camera notify thread
-   Checked in by:  Joe;  Joe Spila
-   Change Description:  
-     Fix issues with includes and comments.
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 3.43   21 Sep 2009 13:33:40   sjones
-   Project:  SVObserver
-   Change Request (SCR) nbr:  662
-   SCR Title:  Add Display Change Support to SVImageView
-   Checked in by:  sJones;  Steve Jones
-   Change Description:  
-     Added OnDisplayChange handler.
-   Added OnActivateApp handler.
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 3.42   14 Nov 2008 14:22:20   tbair
-   Project:  SVObserver
-   Change Request (SCR) nbr:  615
-   SCR Title:  Integrate PLC Classes into SVObserver Outputs
-   Checked in by:  tBair;  Tom Bair
-   Change Description:  
-     Added IOView Tabs
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 3.41   07 Mar 2008 10:38:30   tbair
-   Project:  SVObserver
-   Change Request (SCR) nbr:  609
-   SCR Title:  Fix GDI and Handle Leaks that limit the number of configuration loads.
-   Checked in by:  tBair;  Tom Bair
-   Change Description:  
-     Used DestroyIcon instead of DeleteObject for icons.
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 3.40   20 Jun 2007 16:24:26   Joe
-   Project:  SVObserver
-   Change Request (SCR) nbr:  598
-   SCR Title:  Upgrade SVObserver to compile using vc++ in VS2005
-   Checked in by:  jSpila;  Joseph Spila
-   Change Description:  
-     These changes include modification based on fixing compiler-based and project-based differences between VC6 and VC8.  These changes mainly include casting issues, but some include type conversion and assignment of new compiler controlling defines.
-   
-   These changes also include changes to the SVObserver COM Server and Connection Point functionality.
-   
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 3.39   30 Aug 2005 13:29:42   tbair
-   Project:  SVObserver
-   Change Request (SCR) nbr:  455
-   SCR Title:  New Security for SVObserver
-   Checked in by:  tBair;  Tom Bair
-   Change Description:  
-     Modified onUpdatestatusText so text and color update at the same time.
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 3.38   26 Aug 2005 14:36:06   tbair
-   Project:  SVObserver
-   Change Request (SCR) nbr:  493
-   SCR Title:  Fix Bug in SVOutputObjectList
-   Checked in by:  tBair;  Tom Bair
-   Change Description:  
-     Moved ValidateOutputList function to OnConfigurationFinishedInitializing(
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 3.37   22 Aug 2005 11:16:04   tbair
-   Project:  SVObserver
-   Change Request (SCR) nbr:  455
-   SCR Title:  New Security for SVObserver
-   Checked in by:  tBair;  Tom Bair
-   Change Description:  
-     Changed name of function SVIsAllowed to SVIsDisplayable.
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 3.36   17 Aug 2005 11:48:18   tbair
-   Project:  SVObserver
-   Change Request (SCR) nbr:  455
-   SCR Title:  New Security for SVObserver
-   Checked in by:  tBair;  Tom Bair
-   Change Description:  
-     Fixed bug with status bar text
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 3.35   05 Aug 2005 09:07:44   tbair
-   Project:  SVObserver
-   Change Request (SCR) nbr:  455
-   SCR Title:  New Security for SVObserver
-   Checked in by:  tBair;  Tom Bair
-   Change Description:  
-     Implement Mode on StatusBar and Add color indicators.
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 3.34   02 Aug 2005 13:51:46   tbair
-   Project:  SVObserver
-   Change Request (SCR) nbr:  455
-   SCR Title:  New Security for SVObserver
-   Checked in by:  tBair;  Tom Bair
-   Change Description:  
-     Removed Status Option from View Menu
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 3.33   01 Aug 2005 08:37:42   tbair
-   Project:  SVObserver
-   Change Request (SCR) nbr:  455
-   SCR Title:  New Security for SVObserver
-   Checked in by:  tBair;  Tom Bair
-   Change Description:  
-     Added Status Indicator for Current User
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 3.32   21 Jul 2005 14:41:40   ryoho
-   Project:  SVObserver
-   Change Request (SCR) nbr:  462
-   SCR Title:  Redo the fuctionality of the Regression Test
-   Checked in by:  rYoho;  Rob Yoho
-   Change Description:  
-     fixed problem with regression test.  moved the run dialog to SVMainFrame, instead of having it owned by IPDoc. 
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 3.31   15 Jul 2005 11:32:02   ryoho
-   Project:  SVObserver
-   Change Request (SCR) nbr:  462
-   SCR Title:  Redo the fuctionality of the Regression Test
-   Checked in by:  rYoho;  Rob Yoho
-   Change Description:  
-     added code for switching modes for use with the regression test
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 3.30   21 Jun 2005 13:07:38   tbair
-   Project:  SVObserver
-   Change Request (SCR) nbr:  455
-   SCR Title:  New Security for SVObserver
-   Checked in by:  tBair;  Tom Bair
-   Change Description:  
-     Initial changes to add SVSecurity
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 3.29   17 Feb 2005 14:48:40   Joe
-   Project:  SVObserver
-   Change Request (SCR) nbr:  456
-   SCR Title:  Update Image and Tool Objects to use the new Extent Classes
-   Checked in by:  Joe;  Joe Spila
-   Change Description:  
-     Update class with new methodologies based on new base object, extents and reset structure.
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 3.28   16 Feb 2005 14:47:26   ryoho
-   Project:  SVObserver
-   Change Request (SCR) nbr:  440
-   SCR Title:  Create Internal Tool Object to Managing Tool Extents and Result Extents
-   Checked in by:  rYoho;  Rob Yoho
-   Change Description:  
-     updated header files
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 3.27   12 Jul 2004 12:58:54   ebeyeler
-   Project:  SVObserver
-   Change Request (SCR) nbr:  428
-   SCR Title:  Improve Load Configuration time
-   Checked in by:  eBeyeler;  Eric Beyeler
-   Change Description:  
-     implemented changes for the new parser
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 3.25   22 Mar 2004 13:25:28   rschock
-   Project:  SVObserver
-   Change Request (SCR) nbr:  409
-   SCR Title:  Fix loading of a configuration from the Run directory.
-   Checked in by:  rSchock;  Rosco Schock
-   Change Description:  
-     Fixed loading from the run directory to not delete unused files until all the objects have been parsed.
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 3.24   08 Jul 2003 09:15:42   rschock
-   Project:  SVObserver
-   Change Request (SCR) nbr:  374
-   SCR Title:  Add check before changing tool parameters when processing input list
-   Checked in by:  Joe;  Joe Spila
-   Change Description:  
-     Added call to BuildValueObjectMap to the loading process.
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 3.23   25 Jun 2003 09:12:56   ryoho
-   Project:  SVObserver
-   Change Request (SCR) nbr:  371
-   SCR Title:  Remove DOS Focus COM support
-   Checked in by:  rYoho;  Rob Yoho
-   Change Description:  
-     removed the CommPort support for DOS Focus
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 3.22   22 Apr 2003 11:06:58   rschock
-   Project:  SVObserver
-   Change Request (SCR) nbr:  346
-   SCR Title:  Update SVObserver to Version 4.21 Release
-   Checked in by:  Joe;  Joe Spila
-   Change Description:  
-     Redid the #include defines and standardized the Tracker log headers and removed warning from release mode builds.
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 3.21   27 Feb 2003 15:02:28   ryoho
-   Project:  SVObserver
-   Change Request (SCR) nbr:  323
-   SCR Title:  Bar State problem when switching versions
-   Checked in by:  rYoho;  Rob Yoho
-   Change Description:  
-     added method - VerifyBarStates.
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 3.20   19 Nov 2002 15:31:16   ryoho
-   Project:  SVObserver
-   Change Request (SCR) nbr:  226
-   SCR Title:  Monochrome SVIM configuration compatibility between ViperQUAD and ViperDUAL
-   Checked in by:  rYoho;  Rob Yoho
-   Change Description:  
-     Removed Application Bar
-               Added Tool Bar
-               Added Status Bar
-               Added View Online Display
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 3.19   12 Nov 2001 10:10:36   Joe
-   Project:  SVObserver
-   Change Request (SCR) nbr:  238
-   SCR Title:  Security Issue: Some users without the privlegy can execute "Move Tools".
-   Checked in by:  Joe;  Joe Spila
-   Change Description:  
-     Removed short-cut logic in OnMsgSetToolSelected.
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 3.18   09 Aug 2001 07:54:00   ed
-   Project:  SVObserver
-   Change Request (SCR) nbr:  210
-   SCR Title:  Fix of shared data, multiple IPD's, same digitizer
-   Checked in by:  Ed;  Ed Chobanoff
-   Change Description:  
-     Removed validation and initialization code from
-   "OnEndObjectScriptParse" and placed this code in new function
-   "OnEndObjectCreation".  
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 3.17   07 Aug 2001 15:15:04   rschock
-   Project:  SVObserver
-   Change Request (SCR) nbr:  208
-   SCR Title:  Improve configuration load time
-   Checked in by:  rSchock;  Rosco Schock
-   Change Description:  
-     Removed unneeded call to SVM_RESET_ALL_OBJECTS
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 3.16   12 Jun 2001 16:07:26   ed
-   Project:  SVObserver
-   Change Request (SCR) nbr:  200
-   SCR Title:  Update code to implement SVIM COM Server
-   Checked in by:  Ed;  Ed Chobanoff
-   Change Description:  
-     Modified SVObserver state code in functions, OnUpdateFrameTitle, OnUpdateViewApplicationBar, OnViewPPQBar, OnUpdateViewPPQBar, OnUpdateViewStatusBar, OnUpdateViewToolbar, OnUpdateViewInspectionToolBar, OnEndObjectScriptParse.  Modified the OnClose function concerning SVObserver state and COM server lock count.
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 3.15   19 Apr 2001 14:42:24   Steve
-   Project:  SVObserver
-   Change Request (SCR) nbr:  196
-   SCR Title:  Restructure Scripted Load/Save Procedures Functional Requirement
-   Checked in by:  Steve;  Stephen E. Steffan
-   Change Description:  
-     Header file changes due to include file restructuring.
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 3.14   08 Mar 2001 12:48:00   Joe
-   Project:  SVObserver
-   Change Request (SCR) nbr:  193
-   SCR Title:  Fix intermittent problems with the remote go on-line command from SVFocusNT
-   Checked in by:  Joe;  Joe Spila
-   Change Description:  
-     Update OnEndObjectScriptParse method to include setting SVObserverApp::WasSECLoading flag tp FALSE.
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 3.13   25 Jan 2001 16:19:52   Joe
-   Project:  SVObserver
-   Change Request (SCR) nbr:  191
-   SCR Title:  Restructure File Management
-   Checked in by:  Joe;  Joe Spila
-   Change Description:  
-     These changes fixed the SVObserverApp file handling and associated systems.  These systems include the .SEC, .IOD, and .IPD files as well as the camera files.
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 3.12.1.1   10 May 2001 17:54:28   rschock
-   Project:  SVObserver
-   Change Request (SCR) nbr:  197
-   SCR Title:  Fix lock-ups in application when loading configuration from SVFocusNT
-   Checked in by:  rSchock;  Rosco Schock
-   Change Description:  
-     Changed SVObserver state code in
-   OnUpdateFrameTitle
-   UpdateFrameTitleForDocument
-   OnClose
-   OnUpdateViewApplicationBar
-   OnViewPPQBar
-   OnUpdateViewPPQBar
-   OnUpdateViewStatusBar
-   OnUpdateViewToolbar
-   OnUpdateViewInspectionToolBar
-   OnEndObjectScriptParse
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 3.12.1.0   15 Feb 2001 09:44:40   Joe
-   Project:  SVObserver
-   Change Request (SCR) nbr:  193
-   SCR Title:  Fix intermittent problems with the remote go on-line command from SVFocusNT
-   Checked in by:  Joe;  Joe Spila
-   Change Description:  
-     Update OnEndObjectScriptParse method to include setting SVObserverApp::WasSECLoading flag tp FALSE.
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 3.12   28 Aug 2000 16:03:20   Joe
-   Project:  SVObserver
-   Change Request (SCR) nbr:  177
-   SCR Title:  Fix Automatic Load Last SEC Problem
-   Checked in by:  Joe;  Joe Spila
-   Change Description:  
-     Update FastOCR to prevent memory access violations.
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 3.11   15 Jun 2000 08:49:06   sjones
-   Project:  SVObserver
-   Change Request (SCR) nbr:  163
-   SCR Title:  OEM Splash Screen, Help About Logo and Application Icon
-   Checked in by:  sJones;  Steve Jones
-   Change Description:  
-     Added LoadOEMIcon method.
-   Added m_oemLargeIcon and m_oemSmallIcon.
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 3.10   05 May 2000 13:54:50   sjones
-   Project:  SVObserver
-   Change Request (SCR) nbr:  134
-   SCR Title:  Restricted Operator Security level
-   Checked in by:  sJones;  Steve Jones
-   Change Description:  
-     Added OnUserChanged handler.
-   Revised OnUpdateViewApplicationBar to check privileges.
-   Revised OnUpdateViewPPQBar to check privileges.
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 3.9   03 May 2000 10:15:46   mike
-   Project:  SVObserver
-   Change Request (SCR) nbr:  119
-   SCR Title:  SVFocusNT Support
-   Checked in by:  Mike;  Mike McCarl
-   Change Description:  
-     Modified to accept remote commands from SVFocusNT
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 3.8   Feb 01 2000 10:01:10   Nick
-   Project:  SVObserver
-   Change Request (SCR) nbr:  90
-   SCR Title:  Save  Operator Tool Move Priviledge in Configuration
-   Checked in by:  Nick;  F Roland "Nick" Bjorklund
-   Change Description:  
-     Added message to process a tool selected for operator move.
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 3.7   Jan 19 2000 15:08:16   Nick
-   Project:  SVObserver
-   Change Request (SCR) nbr:  89
-   SCR Title:  Outputs not set when going 'OnLine'
-   Checked in by:  Nick;  F Roland "Nick" Bjorklund
-   Change Description:  
-     Added call to IO view UpdateAllViews() which calls IO view OnUpdate which 'connects' logical IO with physical IO as required after a configuration is loaded and goes 'online'.
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 3.6   Jan 14 2000 15:18:50   Nick
-   Project:  SVObserver
-   Change Request (SCR) nbr:  85
-   SCR Title:  Version 3.04 Beta 1 versioning changes.
-   Checked in by:  Nick;  F Roland "Nick" Bjorklund
-   Change Description:  
-     Update SVIODoc  related views with call to UpdateAllViews() after  configuration input 'parsing' is completed.
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 3.5   Jan 03 2000 14:27:10   Nick
-   Project:  SVObserver
-   Change Request (SCR) nbr:  77
-   SCR Title:  Automatic configuration load and go online fails.
-   Checked in by:  Nick;  F Roland "Nick" Bjorklund
-   Change Description:  
-     Changes so an automatically loaded configuration will 'go online'.
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 3.4   01 Dec 1999 17:21:48   mike
-   Project:  SVObserver
-   Change Request (SCR) nbr:  68
-   SCR Title:  Defer "Go Online" processing till after configuration load is complete
-   Checked in by:  Mike;  Mike McCarl
-   Change Description:  
-     Modified OnRCLoadSEC to notify SVMainFrm that RCCommandComplete must be called when a configuration load is complete. This required adding SetNotifyComplete function to the SVMainFrmClass
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 3.3   Nov 30 1999 16:08:32   Nick
-   Project:  SVObserver
-   Change Request (SCR) nbr:  65
-   SCR Title:  Remove obsolute class SVToolSetViewClass
-   Checked in by:  Nick;  F Roland "Nick" Bjorklund
-   Change Description:  
-     Removed refernces to SVToolSetViewClass.
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 3.2   30 Nov 1999 15:37:10   mike
-   Project:  SVObserver
-   Change Request (SCR) nbr:  68
-   SCR Title:  Defer "Go Online" processing till after configuration load is complete
-   Checked in by:  Mike;  Mike McCarl
-   Change Description:  
-     Added "IsLoadingToolSet" method which indicates if a configuration is currently being loaded or not.
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 3.1   Nov 30 1999 13:38:50   Nick
-   Project:  SVObserver
-   Change Request (SCR) nbr:  65
-   SCR Title:  Remove obsolute class SVToolSetViewClass
-   Checked in by:  Nick;  F Roland "Nick" Bjorklund
-   Change Description:  
-     Removed references to SVToolSetView and added header.
-   
-   /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 3.81   25 Mar 2013 13:36:26   ryoho
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  810
+ * SCR Title:  Remove support for Legacy Tools
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   removed OnViewInspectionToolBar, OnUpdateViewInspectionToolBar
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 3.80   25 Mar 2013 12:42:20   ryoho
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  796
+ * SCR Title:  Add a License Manager that will handle the Matrox Licenses
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   removed the Identification Error from the status bar
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 3.79   20 Mar 2013 07:08:54   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  819
+ * SCR Title:  Modify SVObserver to force the status bar to update
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Added call to the status bar Invalidate after the status bar is updated.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 3.78   27 Feb 2013 11:23:10   ryoho
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  796
+ * SCR Title:  Add a License Manager that will handle the Matrox Licenses
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Added case for OnUpdateStatusInfo for license errors
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 3.77   11 Feb 2013 14:19:08   jspila
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  812
+ * SCR Title:  Add New Remote Command Functionality
+ * Checked in by:  Joe;  Joe Spila
+ * Change Description:  
+ *   Updated source code to use the new framework for the remote socket interface.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 3.76   10 Jan 2013 15:06:24   jspila
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  792
+ * SCR Title:  Change SVObserver Background Color to Körber Grey
+ * Checked in by:  bWalter;  Ben Walter
+ * Change Description:  
+ *   Added missing log entries.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 3.75   11 Oct 2012 10:54:16   jspila
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  602
+ * SCR Title:  Revise the Toolset Parsing and Object Creation Methodology
+ * Checked in by:  Joe;  Joe Spila
+ * Change Description:  
+ *   Updated include information based on the navigate tree class moving to the XML library.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 3.74   01 Oct 2012 16:18:00   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  792
+ * SCR Title:  Change SVObserver Background Color to Körber Grey
+ * Checked in by:  bWalter;  Ben Walter
+ * Change Description:  
+ *   Changed MDI Client Window background to grey.
+ *   Changed m_BlueBrush to m_BackgroundBrush.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 3.73   28 Sep 2012 14:33:26   jspila
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  602
+ * SCR Title:  Revise the Toolset Parsing and Object Creation Methodology
+ * Checked in by:  Joe;  Joe Spila
+ * Change Description:  
+ *   Upated code to use new templated classes.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 3.72   25 Sep 2012 15:21:48   jspila
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  602
+ * SCR Title:  Revise the Toolset Parsing and Object Creation Methodology
+ * Checked in by:  Joe;  Joe Spila
+ * Change Description:  
+ *   Updated to use new tree type.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 3.71   18 Sep 2012 18:35:56   jspila
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  781
+ * SCR Title:  Update SVObserver Version Number for Esok Release
+ * Checked in by:  Joe;  Joe Spila
+ * Change Description:  
+ *   Updated the creation and management for the version information.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 3.70   18 Sep 2012 18:22:42   jspila
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  602
+ * SCR Title:  Revise the Toolset Parsing and Object Creation Methodology
+ * Checked in by:  Joe;  Joe Spila
+ * Change Description:  
+ *   Updated code to use the templated XML objects that moved from the SVLibrary to the new XML Library and to the Configuration Library.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 3.69   06 Sep 2012 10:09:58   jspila
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  602
+ * SCR Title:  Revise the Toolset Parsing and Object Creation Methodology
+ * Checked in by:  Joe;  Joe Spila
+ * Change Description:  
+ *   Updated Parse Toolset Scripts method to adjust the data collection functionality based on moving the inspection process attributes.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 3.68   04 Sep 2012 15:43:34   jspila
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  602
+ * SCR Title:  Revise the Toolset Parsing and Object Creation Methodology
+ * Checked in by:  Joe;  Joe Spila
+ * Change Description:  
+ *   Updated Navigate Tree class to not force the programmer to create an instance of the class to use it.  Converted all functionality to static.
+ * 
+ * Update source code to include new parser dialog changes.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 3.67.1.0   08 Nov 2012 15:25:36   ryoho
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  792
+ * SCR Title:  Change SVObserver Background Color to Körber Grey
+ * Checked in by:  bWalter;  Ben Walter
+ * Change Description:  
+ *   changed backgroud color to grey
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 3.67   14 Aug 2012 15:56:12   jspila
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  779
+ * SCR Title:  Fix Problems with DDE Inputs and DDE Outputs
+ * Checked in by:  Joe;  Joe Spila
+ * Change Description:  
+ *   Updated output list functionality to only allow unique elements to the output list and notify user when duplicates are detected.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 3.66   03 Aug 2012 11:48:04   jspila
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  769
+ * SCR Title:  Fix Problems and Crashes with Inspection Document Display Updates
+ * Checked in by:  Joe;  Joe Spila
+ * Change Description:  
+ *   Removed dead code.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 3.65   09 Jul 2012 14:08:20   jspila
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  769
+ * SCR Title:  Fix Problems and Crashes with Inspection Document Display Updates
+ * Checked in by:  Joe;  Joe Spila
+ * Change Description:  
+ *   Updated source code to change the include for SVIM State.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 3.64   02 Jul 2012 17:19:28   jspila
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  769
+ * SCR Title:  Fix Problems and Crashes with Inspection Document Display Updates
+ * Checked in by:  Joe;  Joe Spila
+ * Change Description:  
+ *   Updated source code to promote new display functionality.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 3.63   28 Jun 2012 18:00:42   jspila
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  768
+ * SCR Title:  Add the display time-out and throttling options for 5.50
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Reverted back to before changes were made for this change.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 3.62   19 Jun 2012 13:00:06   jspila
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  744
+ * SCR Title:  Add Shared Memory and Socket Functionality for Run Page Web Server
+ * Checked in by:  Joe;  Joe Spila
+ * Change Description:  
+ *   Optimized the application state functionality.  The application state class was altered to simplify its usage and elements were added to object manager to separate tracking states.
+ * Centralized the location of the configuration object identifier and removed synchronization problems.
+ * 
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 3.61   23 May 2012 10:13:30   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  768
+ * SCR Title:  Add the display time-out and throttling options for 5.50
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Fixed code in OnMsgSetToolSelected from merge error.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 3.60   16 May 2012 18:53:12   jHanebach
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  763
+ * SCR Title:  Add the display time-out and throttling options.
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Merge 5.43 changes
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 3.59   13 Mar 2012 13:45:36   jspila
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  745
+ * SCR Title:  Fix contention issue during load process and display
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Updated OnMsgSetToolSelected to call through SVObserver App instead of throught configuration object.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 3.58.1.1   15 May 2012 10:38:36   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  763
+ * SCR Title:  Add the display time-out and throttling options.
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Removed Modified Flag from timeout setting because it writes to the svim.ini file.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 3.58.1.0   14 May 2012 14:21:48   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  763
+ * SCR Title:  Add the display time-out and throttling options.
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Implement Freeze Dialog
+ * Implement display update rate options
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 3.58   28 Sep 2011 13:09:10   jspila
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  730
+ * SCR Title:  Adjust SVObserver to fix issues with Inspection resource handshaking
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Updated source code to fix issues with camera image interface and methodology.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 3.57   16 Sep 2011 16:05:54   jspila
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  730
+ * SCR Title:  Adjust SVObserver to fix issues with Inspection resource handshaking
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Updated object to use the new resource management functionality.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 3.56   05 Jul 2011 12:35:28   jspila
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  723
+ * SCR Title:  Remove Free Memory Check from Status Area
+ * Checked in by:  Joe;  Joe Spila
+ * Change Description:  
+ *   Updated source code to remove the memory check process and status bar display.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 3.55   29 Apr 2011 08:06:56   jspila
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  707
+ * SCR Title:  Change Inspection Display Functionality to Force Display of Last Inspected
+ * Checked in by:  Joe;  Joe Spila
+ * Change Description:  
+ *   Updated code to allow for inspection to for the display to give up when an inspection get queued.  The display is now regulated to a maximum of 10 frames per second.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 3.54   30 Mar 2011 16:11:16   jspila
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  707
+ * SCR Title:  Change Inspection Display Functionality to Force Display of Last Inspected
+ * Checked in by:  Joe;  Joe Spila
+ * Change Description:  
+ *   Updated source code to clairify construction functionality and add clean-up functionality to remove memory leaks.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 3.53   27 Jan 2011 11:33:38   jspila
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  712
+ * SCR Title:  Fix issues with black images when using command interface (SIAC)
+ * Checked in by:  Joe;  Joe Spila
+ * Change Description:  
+ *   Updated source code to fix issues with Matrox Buffer Management.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 3.52   08 Dec 2010 13:05:08   jspila
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  707
+ * SCR Title:  Change Inspection Display Functionality to Force Display of Last Inspected
+ * Checked in by:  Joe;  Joe Spila
+ * Change Description:  
+ *   Updated source code to include changes in notification functionality using the Observer Design Pattern.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 3.51   09 Nov 2010 16:21:44   jspila
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  704
+ * SCR Title:  Upgrade SVObserver Version for 5.33 Release
+ * Checked in by:  Joe;  Joe Spila
+ * Change Description:  
+ *   Updated source code to remove duplicate container objects.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 3.50   15 Oct 2010 15:25:02   jspila
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  701
+ * SCR Title:  Add New Font Functionality to the Existing Command Interface
+ * Checked in by:  Joe;  Joe Spila
+ * Change Description:  
+ *   Updated source code assoicated with casting issues and HBITMAP changes.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 3.49   27 Jul 2010 10:53:14   jspila
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  697
+ * SCR Title:  Add Free Memory Information to Status Bar
+ * Checked in by:  Joe;  Joe Spila
+ * Change Description:  
+ *   Changed to use default Device Context instead of status bar Device Context.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 3.48   23 Jul 2010 09:35:10   jspila
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  697
+ * SCR Title:  Add Free Memory Information to Status Bar
+ * Checked in by:  Joe;  Joe Spila
+ * Change Description:  
+ *   Updated status bar functionality to better size the data so that it does not scroll off the screen.  Updated version number to 5.32 Beta 026.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 3.47   19 Jul 2010 13:19:40   jspila
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  694
+ * SCR Title:  Upgrade SVObserver version for Chromis release
+ * Checked in by:  Joe;  Joe Spila
+ * Change Description:  
+ *   Fixed issue with returning NULL for user name.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 3.46   13 Jul 2010 12:25:56   jspila
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  697
+ * SCR Title:  Add Free Memory Information to Status Bar
+ * Checked in by:  Joe;  Joe Spila
+ * Change Description:  
+ *   Updated source code to include changes to status bar to add free memory status.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 3.45   29 Jun 2010 14:02:28   jspila
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  693
+ * SCR Title:  Fix Performance Issue with Inspection Process
+ * Checked in by:  Joe;  Joe Spila
+ * Change Description:  
+ *   Updated source to change object validity test and casting changes.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 3.44   16 Dec 2009 12:00:40   jspila
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  677
+ * SCR Title:  Fix problem in camera notify thread
+ * Checked in by:  Joe;  Joe Spila
+ * Change Description:  
+ *   Fix issues with includes and comments.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 3.43   21 Sep 2009 13:33:40   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  662
+ * SCR Title:  Add Display Change Support to SVImageView
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   Added OnDisplayChange handler.
+ * Added OnActivateApp handler.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 3.42   14 Nov 2008 14:22:20   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  615
+ * SCR Title:  Integrate PLC Classes into SVObserver Outputs
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Added IOView Tabs
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 3.41   07 Mar 2008 10:38:30   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  609
+ * SCR Title:  Fix GDI and Handle Leaks that limit the number of configuration loads.
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Used DestroyIcon instead of DeleteObject for icons.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 3.40   20 Jun 2007 16:24:26   Joe
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  598
+ * SCR Title:  Upgrade SVObserver to compile using vc++ in VS2005
+ * Checked in by:  jSpila;  Joseph Spila
+ * Change Description:  
+ *   These changes include modification based on fixing compiler-based and project-based differences between VC6 and VC8.  These changes mainly include casting issues, but some include type conversion and assignment of new compiler controlling defines.
+ * 
+ * These changes also include changes to the SVObserver COM Server and Connection Point functionality.
+ * 
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 3.39   30 Aug 2005 13:29:42   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  455
+ * SCR Title:  New Security for SVObserver
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Modified onUpdatestatusText so text and color update at the same time.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 3.38   26 Aug 2005 14:36:06   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  493
+ * SCR Title:  Fix Bug in SVOutputObjectList
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Moved ValidateOutputList function to OnConfigurationFinishedInitializing(
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 3.37   22 Aug 2005 11:16:04   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  455
+ * SCR Title:  New Security for SVObserver
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Changed name of function SVIsAllowed to SVIsDisplayable.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 3.36   17 Aug 2005 11:48:18   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  455
+ * SCR Title:  New Security for SVObserver
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Fixed bug with status bar text
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 3.35   05 Aug 2005 09:07:44   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  455
+ * SCR Title:  New Security for SVObserver
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Implement Mode on StatusBar and Add color indicators.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 3.34   02 Aug 2005 13:51:46   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  455
+ * SCR Title:  New Security for SVObserver
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Removed Status Option from View Menu
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 3.33   01 Aug 2005 08:37:42   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  455
+ * SCR Title:  New Security for SVObserver
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Added Status Indicator for Current User
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 3.32   21 Jul 2005 14:41:40   ryoho
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  462
+ * SCR Title:  Redo the fuctionality of the Regression Test
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   fixed problem with regression test.  moved the run dialog to SVMainFrame, instead of having it owned by IPDoc. 
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 3.31   15 Jul 2005 11:32:02   ryoho
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  462
+ * SCR Title:  Redo the fuctionality of the Regression Test
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   added code for switching modes for use with the regression test
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 3.30   21 Jun 2005 13:07:38   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  455
+ * SCR Title:  New Security for SVObserver
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Initial changes to add SVSecurity
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 3.29   17 Feb 2005 14:48:40   Joe
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  456
+ * SCR Title:  Update Image and Tool Objects to use the new Extent Classes
+ * Checked in by:  Joe;  Joe Spila
+ * Change Description:  
+ *   Update class with new methodologies based on new base object, extents and reset structure.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 3.28   16 Feb 2005 14:47:26   ryoho
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  440
+ * SCR Title:  Create Internal Tool Object to Managing Tool Extents and Result Extents
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   updated header files
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 3.27   12 Jul 2004 12:58:54   ebeyeler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  428
+ * SCR Title:  Improve Load Configuration time
+ * Checked in by:  eBeyeler;  Eric Beyeler
+ * Change Description:  
+ *   implemented changes for the new parser
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 3.25   22 Mar 2004 13:25:28   rschock
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  409
+ * SCR Title:  Fix loading of a configuration from the Run directory.
+ * Checked in by:  rSchock;  Rosco Schock
+ * Change Description:  
+ *   Fixed loading from the run directory to not delete unused files until all the objects have been parsed.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 3.24   08 Jul 2003 09:15:42   rschock
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  374
+ * SCR Title:  Add check before changing tool parameters when processing input list
+ * Checked in by:  Joe;  Joe Spila
+ * Change Description:  
+ *   Added call to BuildValueObjectMap to the loading process.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 3.23   25 Jun 2003 09:12:56   ryoho
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  371
+ * SCR Title:  Remove DOS Focus COM support
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   removed the CommPort support for DOS Focus
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 3.22   22 Apr 2003 11:06:58   rschock
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  346
+ * SCR Title:  Update SVObserver to Version 4.21 Release
+ * Checked in by:  Joe;  Joe Spila
+ * Change Description:  
+ *   Redid the #include defines and standardized the Tracker log headers and removed warning from release mode builds.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 3.21   27 Feb 2003 15:02:28   ryoho
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  323
+ * SCR Title:  Bar State problem when switching versions
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   added method - VerifyBarStates.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 3.20   19 Nov 2002 15:31:16   ryoho
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  226
+ * SCR Title:  Monochrome SVIM configuration compatibility between ViperQUAD and ViperDUAL
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Removed Application Bar
+ *             Added Tool Bar
+ *             Added Status Bar
+ *             Added View Online Display
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 3.19   12 Nov 2001 10:10:36   Joe
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  238
+ * SCR Title:  Security Issue: Some users without the privlegy can execute "Move Tools".
+ * Checked in by:  Joe;  Joe Spila
+ * Change Description:  
+ *   Removed short-cut logic in OnMsgSetToolSelected.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 3.18   09 Aug 2001 07:54:00   ed
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  210
+ * SCR Title:  Fix of shared data, multiple IPD's, same digitizer
+ * Checked in by:  Ed;  Ed Chobanoff
+ * Change Description:  
+ *   Removed validation and initialization code from
+ * "OnEndObjectScriptParse" and placed this code in new function
+ * "OnEndObjectCreation".  
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 3.17   07 Aug 2001 15:15:04   rschock
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  208
+ * SCR Title:  Improve configuration load time
+ * Checked in by:  rSchock;  Rosco Schock
+ * Change Description:  
+ *   Removed unneeded call to SVM_RESET_ALL_OBJECTS
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 3.16   12 Jun 2001 16:07:26   ed
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  200
+ * SCR Title:  Update code to implement SVIM COM Server
+ * Checked in by:  Ed;  Ed Chobanoff
+ * Change Description:  
+ *   Modified SVObserver state code in functions, OnUpdateFrameTitle, OnUpdateViewApplicationBar, OnViewPPQBar, OnUpdateViewPPQBar, OnUpdateViewStatusBar, OnUpdateViewToolbar, OnUpdateViewInspectionToolBar, OnEndObjectScriptParse.  Modified the OnClose function concerning SVObserver state and COM server lock count.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 3.15   19 Apr 2001 14:42:24   Steve
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  196
+ * SCR Title:  Restructure Scripted Load/Save Procedures Functional Requirement
+ * Checked in by:  Steve;  Stephen E. Steffan
+ * Change Description:  
+ *   Header file changes due to include file restructuring.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 3.14   08 Mar 2001 12:48:00   Joe
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  193
+ * SCR Title:  Fix intermittent problems with the remote go on-line command from SVFocusNT
+ * Checked in by:  Joe;  Joe Spila
+ * Change Description:  
+ *   Update OnEndObjectScriptParse method to include setting SVObserverApp::WasSECLoading flag tp FALSE.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 3.13   25 Jan 2001 16:19:52   Joe
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  191
+ * SCR Title:  Restructure File Management
+ * Checked in by:  Joe;  Joe Spila
+ * Change Description:  
+ *   These changes fixed the SVObserverApp file handling and associated systems.  These systems include the .SEC, .IOD, and .IPD files as well as the camera files.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 3.12.1.1   10 May 2001 17:54:28   rschock
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  197
+ * SCR Title:  Fix lock-ups in application when loading configuration from SVFocusNT
+ * Checked in by:  rSchock;  Rosco Schock
+ * Change Description:  
+ *   Changed SVObserver state code in
+ * OnUpdateFrameTitle
+ * UpdateFrameTitleForDocument
+ * OnClose
+ * OnUpdateViewApplicationBar
+ * OnViewPPQBar
+ * OnUpdateViewPPQBar
+ * OnUpdateViewStatusBar
+ * OnUpdateViewToolbar
+ * OnUpdateViewInspectionToolBar
+ * OnEndObjectScriptParse
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 3.12.1.0   15 Feb 2001 09:44:40   Joe
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  193
+ * SCR Title:  Fix intermittent problems with the remote go on-line command from SVFocusNT
+ * Checked in by:  Joe;  Joe Spila
+ * Change Description:  
+ *   Update OnEndObjectScriptParse method to include setting SVObserverApp::WasSECLoading flag tp FALSE.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 3.12   28 Aug 2000 16:03:20   Joe
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  177
+ * SCR Title:  Fix Automatic Load Last SEC Problem
+ * Checked in by:  Joe;  Joe Spila
+ * Change Description:  
+ *   Update FastOCR to prevent memory access violations.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 3.11   15 Jun 2000 08:49:06   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  163
+ * SCR Title:  OEM Splash Screen, Help About Logo and Application Icon
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   Added LoadOEMIcon method.
+ * Added m_oemLargeIcon and m_oemSmallIcon.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 3.10   05 May 2000 13:54:50   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  134
+ * SCR Title:  Restricted Operator Security level
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   Added OnUserChanged handler.
+ * Revised OnUpdateViewApplicationBar to check privileges.
+ * Revised OnUpdateViewPPQBar to check privileges.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 3.9   03 May 2000 10:15:46   mike
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  119
+ * SCR Title:  SVFocusNT Support
+ * Checked in by:  Mike;  Mike McCarl
+ * Change Description:  
+ *   Modified to accept remote commands from SVFocusNT
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 3.8   Feb 01 2000 10:01:10   Nick
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  90
+ * SCR Title:  Save  Operator Tool Move Priviledge in Configuration
+ * Checked in by:  Nick;  F Roland "Nick" Bjorklund
+ * Change Description:  
+ *   Added message to process a tool selected for operator move.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 3.7   Jan 19 2000 15:08:16   Nick
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  89
+ * SCR Title:  Outputs not set when going 'OnLine'
+ * Checked in by:  Nick;  F Roland "Nick" Bjorklund
+ * Change Description:  
+ *   Added call to IO view UpdateAllViews() which calls IO view OnUpdate which 'connects' logical IO with physical IO as required after a configuration is loaded and goes 'online'.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 3.6   Jan 14 2000 15:18:50   Nick
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  85
+ * SCR Title:  Version 3.04 Beta 1 versioning changes.
+ * Checked in by:  Nick;  F Roland "Nick" Bjorklund
+ * Change Description:  
+ *   Update SVIODoc  related views with call to UpdateAllViews() after  configuration input 'parsing' is completed.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 3.5   Jan 03 2000 14:27:10   Nick
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  77
+ * SCR Title:  Automatic configuration load and go online fails.
+ * Checked in by:  Nick;  F Roland "Nick" Bjorklund
+ * Change Description:  
+ *   Changes so an automatically loaded configuration will 'go online'.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 3.4   01 Dec 1999 17:21:48   mike
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  68
+ * SCR Title:  Defer "Go Online" processing till after configuration load is complete
+ * Checked in by:  Mike;  Mike McCarl
+ * Change Description:  
+ *   Modified OnRCLoadSEC to notify SVMainFrm that RCCommandComplete must be called when a configuration load is complete. This required adding SetNotifyComplete function to the SVMainFrmClass
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 3.3   Nov 30 1999 16:08:32   Nick
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  65
+ * SCR Title:  Remove obsolute class SVToolSetViewClass
+ * Checked in by:  Nick;  F Roland "Nick" Bjorklund
+ * Change Description:  
+ *   Removed refernces to SVToolSetViewClass.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 3.2   30 Nov 1999 15:37:10   mike
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  68
+ * SCR Title:  Defer "Go Online" processing till after configuration load is complete
+ * Checked in by:  Mike;  Mike McCarl
+ * Change Description:  
+ *   Added "IsLoadingToolSet" method which indicates if a configuration is currently being loaded or not.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 3.1   Nov 30 1999 13:38:50   Nick
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  65
+ * SCR Title:  Remove obsolute class SVToolSetViewClass
+ * Checked in by:  Nick;  F Roland "Nick" Bjorklund
+ * Change Description:  
+ *   Removed references to SVToolSetView and added header.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
 */

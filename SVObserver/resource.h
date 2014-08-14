@@ -57,6 +57,8 @@
 #define IDB_DOWNARROW                   2004
 #define IDB_UPARROW                     2005
 #define IDP_OLE_INIT_FAILED             2500
+#define ID_EDIT_ZOOM                    3000
+#define ID_SLIDER_ZOOM                  3001
 #define IDD_ABOUTBOX                    5000
 #define IDD_TOOLSETTAB_FORMVIEW         5001
 #define IDD_GR_EDGE_MARKER_ADJUST_DIALOG 5002
@@ -1168,6 +1170,7 @@
 #define IDR_MONITOR_LIST_ADD_REMOVE     11105
 #define IDR_MONITOR_SUB_LIST            11106
 #define IDR_MONITOR_LIST_ITEM           11107
+#define IDR_TOOLBAR_ZOOM                11108
 #define IDS_OBJECTNAME_INPUT_01         14001
 #define IDS_OBJECTNAME_INPUT_02         14002
 #define IDS_OBJECTNAME_INPUT_03         14003
@@ -2684,6 +2687,15 @@
 #define ID_MONITORLIST_ADD_REMOVE_LIST  20332
 #define ID_MONITORLIST_ADD_EDIT_ITEMS   20333
 #define ID_MONITORLIST_REMOVE_ITEM      20334
+#define ID_ZOOM_PLUS                    20335
+#define ID_ZOOM_MINUS                   20336
+#define ID_ZOOM_ONE                     20337
+#define ID_ZOOM_FIT                     20338
+#define ID_Dummy                        20339
+#define ID_ZOOM_SLIDER_MOVED            20340
+#define ID_TOOLBAR_STANDARD             20341
+#define ID_TOOLBAR_ZOOM                 20342
+#define ID_ZOOMTOOLBAR                  20343
 #define ID_VIEW_TOOLSETDRAW             32999
 #define ID_VIEW_TOOLSETDRAW_POP_BASE    33000
 #define ID_VIEW_TOOLSETDRAW_POP_MAX     33049
@@ -2716,9 +2728,9 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_3D_CONTROLS                     1
-#define _APS_NEXT_RESOURCE_VALUE        11108
-#define _APS_NEXT_COMMAND_VALUE         20335
+#define _APS_NEXT_RESOURCE_VALUE        11109
+#define _APS_NEXT_COMMAND_VALUE         20344
 #define _APS_NEXT_CONTROL_VALUE         16031
-#define _APS_NEXT_SYMED_VALUE           3000
+#define _APS_NEXT_SYMED_VALUE           3002
 #endif
 #endif

@@ -378,6 +378,7 @@ echo %time%
     <ClCompile Include="MonitorListPropertyDlg.cpp" />
     <ClCompile Include="NameSelectionTreeCtrl.cpp" />
     <ClCompile Include="SoftwareTriggerDlg.cpp" />
+    <ClCompile Include="FramedSplitterWnd.cpp" />
     <ClCompile Include="StdAfx.cpp">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -4194,6 +4195,8 @@ echo %time%
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <ClCompile Include="VisualFx.cpp" />
+    <ClCompile Include="ZoomHelperEx.cpp" />
+    <ClCompile Include="ZoomToolBar.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Midl Include="SVObserver.odl">
@@ -4261,6 +4264,7 @@ echo %time%
     <ClInclude Include="RootObject.h" />
     <ClInclude Include="NameSelectionTreeCtrl.h" />
     <ClInclude Include="SoftwareTriggerDlg.h" />
+    <ClInclude Include="FramedSplitterWnd.h" />
     <ClInclude Include="StdAfx.h" />
     <ClInclude Include="SV1394CameraManager.h" />
     <ClInclude Include="SV1394CameraManagerDlg.h" />
@@ -4806,12 +4810,15 @@ echo %time%
     <ClInclude Include="SVWindowTool.h" />
     <ClInclude Include="UseTypeExceptMatch.h" />
     <ClInclude Include="VisualFx.h" />
+    <ClInclude Include="ZoomHelperEx.h" />
+    <ClInclude Include="ZoomToolBar.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="BasicValueObject.inl" />
     <None Include="BasicValueObjects.inl" />
     <None Include="EnvironmentObject.inl" />
     <None Include="res\arrow_rotate.ico" />
+    <None Include="res\toolbarZoom.bmp" />
     <None Include="SVConfigurationTreeWriter.inl" />
     <None Include="SVConfigXMLPrint.inl" />
     <None Include="SVDLLToolLoadLibraryClass.inl" />

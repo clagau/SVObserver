@@ -5,8 +5,8 @@
 //* .Module Name     : SVGlobal Function Module
 //* .File Name       : $Workfile:   SVGlobal.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   01 Oct 2013 14:19:30  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   14 Aug 2014 15:49:14  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -1593,6 +1593,70 @@ void SVRCSetSVCPathName( LPCTSTR TStrPathName )
 	AfxGetApp()->WriteProfileString( _T( "Settings" ), _T( "CurrentSVCPathName" ), SVRCCurrentSVCPathName );
 }
 
+
+
+#define INDEX_FOUND  -2
+
+//************************************
+// Method:    _FindMenuIndex
+// Description:  Function is only used in EnableParentMenu
+// Parameter: CMenu *  & pParent pointer to parent menu (output)
+// Parameter: int &ParentMenuIndex index of the parenmenuentry
+// Parameter: CMenu * pMenu 
+// Parameter: UINT ID CommandId 
+// Parameter: int  start index of submenu where search for the command entry is started.
+// Returns:   int index of Entry, 
+//************************************
+int   _FindMenuIndex( CMenu*  &pParent,  int&  ParentMenuIndex, CMenu*  pMenu, UINT ID , int start =0)
+{
+	for(int i =start ; i < pMenu->GetMenuItemCount(); i++)
+	{
+		if( pMenu->GetMenuItemID(i) == ID)
+		{
+			return i;
+		}
+		else
+		{
+			CMenu* pSubMenu = pMenu->GetSubMenu(i);
+
+			if(pSubMenu)
+			{
+				int index = _FindMenuIndex(pParent,ParentMenuIndex, pSubMenu, ID);
+
+				if(index == INDEX_FOUND)
+				{
+					return INDEX_FOUND;
+				}
+
+				if(index > -1)
+				{
+					ParentMenuIndex = i;
+					pParent =  pMenu;
+					return INDEX_FOUND;
+				}
+			}
+		}
+
+	}
+	return -1;
+}
+
+bool EnableParentMenu(CMenu* pMenu, UINT ID, bool Enable, int start )
+{
+	UINT flag = Enable?  MF_BYPOSITION | MF_ENABLED : MF_BYPOSITION |  MF_GRAYED;
+	CMenu* pParentMenu =nullptr;
+	int ParentMenuIndex =-1;
+	if( _FindMenuIndex( pParentMenu, ParentMenuIndex, pMenu, ID , start ) == INDEX_FOUND)
+	{
+		if(pParentMenu )
+		{
+			return (-1 != pParentMenu->EnableMenuItem(ParentMenuIndex, flag ));
+		}
+	}
+	return false;
+}
+
+
 //** EOF **
 
 //******************************************************************************
@@ -1600,6 +1664,16 @@ void SVRCSetSVCPathName( LPCTSTR TStrPathName )
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVGlobal.cpp_v  $
+ * 
+ *    Rev 1.3   14 Aug 2014 15:49:14   mEichengruen
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  921
+ * SCR Title:  Add more complete zoom functionality. (runpage)
+ * Checked in by:  mEichengruen;  Marcus Eichengruen
+ * Change Description:  
+ *   enable parent menu entry
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   01 Oct 2013 14:19:30   tbair
  * Project:  SVObserver

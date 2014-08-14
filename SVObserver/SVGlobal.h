@@ -5,12 +5,11 @@
 //* .Module Name     : SVGlobal
 //* .File Name       : $Workfile:   SVGlobal.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.5  $
-//* .Check In Date   : $Date:   04 Feb 2014 15:18:50  $
+//* .Current Version : $Revision:   1.6  $
+//* .Check In Date   : $Date:   14 Aug 2014 15:49:14  $
 //******************************************************************************
 
-#ifndef SVGLOBAL_H
-#define SVGLOBAL_H
+#pragma once
 
 #include <map>
 #include "SVMatroxLibrary/SVMatroxLibrary.h"
@@ -821,6 +820,18 @@ void 	SVRCSetSVCPathName( LPCTSTR TStrPathName );
 void	SVSetupLoadSECCommand( HWND HWindow, UINT Msg, WPARAM WParam, LPARAM LParam );
 
 
+
+//************************************
+// Method:    EnableParentMenu
+// Description:  Find the ParentMenu entry  of an Entry and enable or disable it 
+// Parameter: CMenu * pMenu 
+// Parameter: UINT ID Command Id of the entry 
+// Parameter: bool Enable true is enable false is disable 
+// Parameter: int  start index of submenu where search for the command entry is started.
+// Returns:   bool true if sucessfull 
+//************************************
+bool EnableParentMenu(CMenu* pMenu, UINT ID, bool Enable, int start =0);
+
 extern TCHAR	SVRCCurrentSVCPathName[];
 
 enum svModeEnum
@@ -836,16 +847,22 @@ enum svModeEnum
 	SVIM_MODE_REMOVE = 0x8000,
 };
 
-/**************************************************************************/
-/* INCLUDE CONTROL:
-/**************************************************************************/
-#endif	// SVGLOBAL_H
 
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVGlobal.h_v  $
+ * 
+ *    Rev 1.6   14 Aug 2014 15:49:14   mEichengruen
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  921
+ * SCR Title:  Add more complete zoom functionality. (runpage)
+ * Checked in by:  mEichengruen;  Marcus Eichengruen
+ * Change Description:  
+ *   enable parent menu entry
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.5   04 Feb 2014 15:18:50   bwalter
  * Project:  SVObserver

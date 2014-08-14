@@ -84,6 +84,7 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 // Bitmap
 //
 
+IDR_TOOLBAR_ZOOM        BITMAP                  "res\\toolbarZoom.bmp"
 IDR_MAINFRAME           BITMAP                  "res\\Toolbar.bmp"
 IDR_SVOBSERVER_IPDOCTYPE BITMAP                  "res\\svobserv.bmp"
 IDR_MATH_CONDITIONAL_TOOLBAR BITMAP                  "res\\ToolbarConditional.bmp"
@@ -3974,6 +3975,16 @@ END
 // Toolbar
 //
 
+IDR_TOOLBAR_ZOOM TOOLBAR 16, 15
+BEGIN
+    BUTTON      ID_Dummy
+    BUTTON      ID_ZOOM_MINUS
+    BUTTON      ID_Dummy
+    BUTTON      ID_ZOOM_PLUS
+    BUTTON      ID_ZOOM_FIT
+    BUTTON      ID_ZOOM_ONE
+END
+
 IDR_MAINFRAME TOOLBAR 16, 15
 BEGIN
     BUTTON      ID_FILE_NEW
@@ -4086,50 +4097,54 @@ END
 // Menu
 //
 
-IDR_MAINFRAME MENU
+IDR_MAINFRAME MENUEX
 BEGIN
-    POPUP "&File"
+    POPUP "&File",                          65535,MFT_STRING,MFS_ENABLED
     BEGIN
-        MENUITEM "&New\tCtrl+N",                ID_FILE_NEW
-        MENUITEM SEPARATOR
-        MENUITEM "S&elect Configuration",       ID_FILE_OPEN_SVC
-        MENUITEM SEPARATOR
-        MENUITEM "Recent File",                 ID_FILE_MRU_FILE1, GRAYED
-        MENUITEM SEPARATOR
-        MENUITEM "E&xit",                       ID_APP_EXIT
+        MENUITEM "&New\tCtrl+N",                ID_FILE_NEW,MFT_STRING,MFS_ENABLED
+        MENUITEM MFT_SEPARATOR
+        MENUITEM "S&elect Configuration",       ID_FILE_OPEN_SVC,MFT_STRING,MFS_ENABLED
+        MENUITEM MFT_SEPARATOR
+        MENUITEM "Recent File",                 ID_FILE_MRU_FILE1,MFT_STRING,MFS_GRAYED
+        MENUITEM MFT_SEPARATOR
+        MENUITEM "E&xit",                       ID_APP_EXIT,MFT_STRING,MFS_ENABLED
     END
-    POPUP "&View"
+    POPUP "&View",                          65535,MFT_STRING,MFS_ENABLED
     BEGIN
-        MENUITEM "&Toolbar",                    ID_VIEW_TOOLBAR
-    END
-    POPUP "Mode"
-    BEGIN
-        MENUITEM "R&un\tCtrl+&G",               ID_GO_ONLINE
-        MENUITEM "&Stop\tCtrl+F",               ID_GO_OFFLINE
-        MENUITEM "&Regression Test\tCtrl+R",    ID_RUN_REGRESSIONTEST
-        MENUITEM "&Test\tCtrl+T",               ID_MODE_TEST
-        MENUITEM "&Edit\tCtrl+D",               ID_MODE_EDIT
-        MENUITEM "Edit &Move Tool\tCtrl+M",     ID_MODE_EDIT_MOVE
-    END
-    POPUP "E&xtras"
-    BEGIN
-        MENUITEM "Additional Environment Settings", ID_EXTRAS_ENVIRONMENTSETTINGS
-        MENUITEM SEPARATOR
-        MENUITEM "User &Login",                 ID_EXTRAS_LOGIN
-        MENUITEM "User Log&out",                ID_EXTRAS_LOGOUT
-        MENUITEM "&Security Setup",             ID_EXTRAS_SECURITY_SETUP
-        MENUITEM SEPARATOR
-        POPUP "&Utilities"
+        POPUP "&Toolbars",                       65535,MFT_STRING,MFS_ENABLED
         BEGIN
-            MENUITEM "&Customize Utilities",        ID_EXTRAS_UTILITIES_EDIT
-            MENUITEM SEPARATOR
+            MENUITEM "&Standard",                   ID_VIEW_TOOLBAR,MFT_STRING,MFS_ENABLED
+            MENUITEM "&Zoom",                       ID_TOOLBAR_ZOOM,MFT_STRING,MFS_ENABLED
         END
     END
-    POPUP "&Help", HELP
+    POPUP "Mode",                           65535,MFT_STRING,MFS_ENABLED
     BEGIN
-        MENUITEM "&Help Topics",                ID_HELP_FINDER
-        MENUITEM SEPARATOR
-        MENUITEM "&About SVObserver...",        ID_APP_ABOUT
+        MENUITEM "R&un\tCtrl+&G",               ID_GO_ONLINE,MFT_STRING,MFS_ENABLED
+        MENUITEM "&Stop\tCtrl+F",               ID_GO_OFFLINE,MFT_STRING,MFS_ENABLED
+        MENUITEM "&Regression Test\tCtrl+R",    ID_RUN_REGRESSIONTEST,MFT_STRING,MFS_ENABLED
+        MENUITEM "&Test\tCtrl+T",               ID_MODE_TEST,MFT_STRING,MFS_ENABLED
+        MENUITEM "&Edit\tCtrl+D",               ID_MODE_EDIT,MFT_STRING,MFS_ENABLED
+        MENUITEM "Edit &Move Tool\tCtrl+M",     ID_MODE_EDIT_MOVE,MFT_STRING,MFS_ENABLED
+    END
+    POPUP "E&xtras",                        65535,MFT_STRING,MFS_ENABLED
+    BEGIN
+        MENUITEM "Additional Environment Settings", ID_EXTRAS_ENVIRONMENTSETTINGS,MFT_STRING,MFS_ENABLED
+        MENUITEM MFT_SEPARATOR
+        MENUITEM "User &Login",                 ID_EXTRAS_LOGIN,MFT_STRING,MFS_ENABLED
+        MENUITEM "User Log&out",                ID_EXTRAS_LOGOUT,MFT_STRING,MFS_ENABLED
+        MENUITEM "&Security Setup",             ID_EXTRAS_SECURITY_SETUP,MFT_STRING,MFS_ENABLED
+        MENUITEM MFT_SEPARATOR
+        POPUP "&Utilities",                     65535,MFT_STRING,MFS_ENABLED
+        BEGIN
+            MENUITEM "&Customize Utilities",        ID_EXTRAS_UTILITIES_EDIT,MFT_STRING,MFS_ENABLED
+            MENUITEM MFT_SEPARATOR
+        END
+    END
+    POPUP "&Help",                          65535,MFT_STRING | MFT_RIGHTJUSTIFY,MFS_ENABLED
+    BEGIN
+        MENUITEM "&Help Topics",                ID_HELP_FINDER,MFT_STRING,MFS_ENABLED
+        MENUITEM MFT_SEPARATOR
+        MENUITEM "&About SVObserver...",        ID_APP_ABOUT,MFT_STRING,MFS_ENABLED
     END
 END
 
@@ -4162,7 +4177,11 @@ BEGIN
     END
     POPUP "&View",                          65535,MFT_STRING,MFS_ENABLED
     BEGIN
-        MENUITEM "&Toolbar",                    ID_VIEW_TOOLBAR,MFT_STRING,MFS_ENABLED
+        POPUP "&Toolbars",                       65535,MFT_STRING,MFS_ENABLED
+        BEGIN
+            MENUITEM "&Standard",                   ID_VIEW_TOOLBAR,MFT_STRING,MFS_ENABLED
+            MENUITEM "&Zoom",                       ID_TOOLBAR_ZOOM,MFT_STRING,MFS_ENABLED
+        END
         MENUITEM "&PPQ Bar",                    ID_VIEW_PPQ_BAR,MFT_STRING,MFS_ENABLED
     END
     POPUP "&Window",                        65535,MFT_STRING,MFS_ENABLED
@@ -4248,8 +4267,8 @@ BEGIN
     END
     POPUP "&Add",                           65535,MFT_STRING,MFS_ENABLED
     BEGIN
-        MENUITEM "Start Tool Grouping\tCtrl+Alt+G",   ID_ADD_STARTTOOLGROUPING,MFT_STRING,MFS_ENABLED
-        MENUITEM "End Tool Grouping\tCtrl+Alt+X",     ID_ADD_ENDTOOLGROUPING,MFT_STRING,MFS_ENABLED
+        MENUITEM "Start Tool Grouping\tCtrl+Alt+G", ID_ADD_STARTTOOLGROUPING,MFT_STRING,MFS_ENABLED
+        MENUITEM "End Tool Grouping\tCtrl+Alt+X", ID_ADD_ENDTOOLGROUPING,MFT_STRING,MFS_ENABLED
         MENUITEM MFT_SEPARATOR
         MENUITEM "Ac&quisition Tool",           ID_ADD_ACQUISITIONTOOL,MFT_STRING,MFS_ENABLED
         MENUITEM MFT_SEPARATOR
@@ -4275,7 +4294,11 @@ BEGIN
     END
     POPUP "&View",                          65535,MFT_STRING,MFS_ENABLED
     BEGIN
-        MENUITEM "&Tool Bar",                   ID_VIEW_TOOLBAR,MFT_STRING,MFS_ENABLED
+        POPUP "&Toolbars",                      65535,MFT_STRING,MFS_ENABLED
+        BEGIN
+            MENUITEM "&Standard",                   ID_VIEW_TOOLBAR,MFT_STRING,MFS_ENABLED
+            MENUITEM "&Zoom",                        ID_TOOLBAR_ZOOM,MFT_STRING,MFS_ENABLED
+        END
         MENUITEM "&PPQ Bar",                    ID_VIEW_PPQ_BAR,MFT_STRING,MFS_ENABLED
         MENUITEM MFT_SEPARATOR
         MENUITEM "&Image Display Update",       ID_VIEW_IMAGE_DISPLAY_UPDATE,MFT_STRING,MFS_ENABLED
@@ -4284,6 +4307,13 @@ BEGIN
         MENUITEM MFT_SEPARATOR
         MENUITEM "Reset Counts Current IP",     ID_VIEW_RESETCOUNTSCURRENTIP,MFT_STRING,MFS_ENABLED
         MENUITEM "Reset Counts All IPs\tCtrl+0", ID_VIEW_RESETCOUNTSALLIPS,MFT_STRING,MFS_ENABLED
+        POPUP "Zoom",                           65535,MFT_STRING,MFS_ENABLED
+        BEGIN
+            MENUITEM "Zoom +\tCtrl+plus",           ID_ZOOM_PLUS,MFT_STRING,MFS_ENABLED
+            MENUITEM "Zoom -\tCtrl+minus",          ID_ZOOM_MINUS,MFT_STRING,MFS_ENABLED
+            MENUITEM "Zoom 1:1",                    ID_ZOOM_ONE,MFT_STRING,MFS_ENABLED
+            MENUITEM "Zoom []",                     ID_ZOOM_FIT,MFT_STRING,MFS_ENABLED
+        END
     END
     POPUP "&Window",                        65535,MFT_STRING,MFS_ENABLED
     BEGIN
@@ -4329,14 +4359,16 @@ BEGIN
     BEGIN
         POPUP "Zoom"
         BEGIN
-            MENUITEM "Smaller",                     ID_ZOOM_OUT
-            MENUITEM "Larger",                      ID_ZOOM_IN
+            MENUITEM "Smaller -",                   ID_ZOOM_OUT
+            MENUITEM "Larger +",                    ID_ZOOM_IN
             MENUITEM SEPARATOR
             MENUITEM "Tiny",                        ID_ZOOM_SMALLEST
             MENUITEM "Small",                       ID_ZOOM_SMALL
-            MENUITEM "Normal",                      ID_ZOOM_NORMAL
+            MENUITEM "Normal 1:1",                  ID_ZOOM_NORMAL
             MENUITEM "Large",                       ID_ZOOM_LARGE
             MENUITEM "Extra Large",                 ID_ZOOM_LARGEST
+            MENUITEM SEPARATOR
+            MENUITEM "Zoom []",                     ID_ZOOM_FIT
         END
         MENUITEM "Configure Analyzer",          ID_CONFIG_ANALYZER
         MENUITEM "Show Analyzer Result",        ID_ANALYZER_RESULT
@@ -4523,6 +4555,10 @@ BEGIN
     VK_INSERT,      ID_EDIT_COPY,           VIRTKEY, CONTROL, NOINVERT
     "W",            ID_ADD_WINDOWTOOL,      VIRTKEY, CONTROL, ALT, NOINVERT
     VK_F2,          ID_EDIT_NAME,           VIRTKEY, NOINVERT
+    VK_OEM_MINUS,   ID_ZOOM_MINUS,          VIRTKEY, CONTROL, NOINVERT
+    VK_SUBTRACT,    ID_ZOOM_MINUS,          VIRTKEY, CONTROL, NOINVERT
+    VK_OEM_PLUS,    ID_ZOOM_PLUS,           VIRTKEY, CONTROL, NOINVERT
+    VK_ADD,         ID_ZOOM_PLUS,           VIRTKEY, CONTROL, NOINVERT
 END
 
 /////////////////////////////////////////////////////////////////////////////
@@ -5648,6 +5684,10 @@ BEGIN
                             "\nInspec\nInspec\nSVObserver Inspec. Process Doc Files (*.ipd)\n.ipd\nSVObserverInspectionProcess.Document\nSVObserver Inspection Process Document"
     IDR_SVOBSERVER_IODOCTYPE 
                             "\nSVIO\nIOList\nSVIO Files (*.iod)\n.iod\nSVObserverInputOutput.Document\nSVObserver Input Output Document"
+END
+
+STRINGTABLE
+BEGIN
     IDS_IMAGE_SOURCE_STRING "Image Source"
     IDS_CONDITIONAL_STRING  "Conditional"
     IDS_OBJECTNAME_LUT_EQUATION_CLIP "LUT Equation Clip"
@@ -6317,6 +6357,10 @@ BEGIN
     IDS_OBJECTNAME_TRANSLATION_Y_RESULT "Translation Y Result"
     IDS_OBJECTNAME_TOP_RESULT "Top Result"
     IDS_OBJECTNAME_LEFT_RESULT "Left Result"
+END
+
+STRINGTABLE
+BEGIN
     IDS_CLASSNAME_ROOTOBJECT "Root"
     IDS_CLASSNAME_ENVIRONMENTOBJECT "Environment"
 END
@@ -6751,7 +6795,15 @@ BEGIN
     IDS_CLASSNAME_HISTOGRAMANALYZER_VALLEYRESULT "Histogram Valley Result"
 END
 
-#endif    // English (United States) resources
+STRINGTABLE
+BEGIN
+    ID_ZOOM_PLUS            "zoom plus"
+    ID_ZOOM_MINUS           "zoom minus"
+    ID_ZOOM_ONE             "zoom one"
+    ID_ZOOM_FIT             "zoom fit"
+END
+
+#endif    // Englisch (USA) resources
 /////////////////////////////////////////////////////////////////////////////
 
 

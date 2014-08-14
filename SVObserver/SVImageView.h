@@ -5,12 +5,11 @@
 //* .Module Name     : SVImageView
 //* .File Name       : $Workfile:   SVImageView.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   24 Sep 2013 16:18:34  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   14 Aug 2014 15:55:16  $
 //******************************************************************************
 
-#ifndef SVIMAGEVIEW_H
-#define SVIMAGEVIEW_H
+#pragma once
 
 #include "SVMatroxLibrary/SVMatroxLibrary.h"
 #include "SVRunControlLibrary/SVImageIndexStruct.h"
@@ -19,6 +18,8 @@
 #include "SVXMLLibrary/SVXMLMaterialsTree.h"
 #include "SVUtilityLibrary/SVWinHandle.h"
 #include "SVInfoStructs.h"
+#include "SVOMFCLibrary\ZoomHelper.h"
+#include "ZoomHelperEx.h"
 
 struct IDirectDrawSurface7;
 
@@ -28,6 +29,14 @@ class SVIPDoc;
 class SVTaskObjectClass;
 struct SVCameraInfoStruct;
 class SVObjectWriter;
+
+// enums are parameter for function SetZoom
+enum EZoom {
+	EZoomMinus,
+	EZoomPlus,
+	EZoomFit,
+	EZoomOne,
+	EZoomValue };
 
 class SVImageViewClass : public CView
 {
@@ -84,6 +93,17 @@ public:
 	afx_msg void OnDestroy();
 	afx_msg void OnContextMenu( CWnd* p_pWnd, CPoint p_point );
 	afx_msg BOOL OnEraseBkgnd( CDC* p_pDC );
+	afx_msg void OnZoomPlus();
+	afx_msg void OnUpdateZoomPlus(CCmdUI *pCmdUI);
+	afx_msg void OnZoomMinus();
+	afx_msg void OnUpdateZoomMinus(CCmdUI *pCmdUI);
+	afx_msg void OnZoomOne();
+	afx_msg void OnUpdateZoomOne(CCmdUI *pCmdUI);
+	afx_msg void OnZoomFit();
+	afx_msg void OnZoomSliderMoved();
+	afx_msg void OnUpdateZoomFit(CCmdUI *pCmdUI);
+	afx_msg void OnSetFocus(CWnd* pOldWnd);
+	afx_msg void OnKillFocus(CWnd* pNewWnd);
 	//}}AFX_MSG
 
 	DECLARE_MESSAGE_MAP()
@@ -98,9 +118,48 @@ public:
 	virtual void OnUpdate( CView* p_pSender, LPARAM p_lHint, CObject* p_pHint );
 	//}}AFX_VIRTUAL
 
+public:
+	//************************************
+	// Method:    ImageIsEmpty
+	// Description: true if no image is in this View
+	// Returns:   bool
+	//************************************
+	bool ImageIsEmpty() const;
+
+	//************************************
+	// Method:    SetZoom
+	// Description:  Set the zoom value according to the zoom parameter, which should be one of the new zoom values.
+	// Parameter: EZoom zoom (EZoomMinus, EZoomPlus, EZoomFit, EZoomOne, EZoomValue)
+	// Parameter: double value (only relevant for EZoomValue)
+	// Returns:   double
+	//************************************
+	double SetZoom(EZoom zoom, double value = 1.0);
+
+	//************************************
+	// Method:    SetZoomIndex
+	// Description:  Set Zoom value according to the ezoom parameter, which should be one of the zoom steps which are the old Zoomvalue.
+	// Parameter: EZoomMode ezoom ( SMALLEST,SMALL,NORMAL, LARGE, LARGEST, ZOOM_IN, ZOOM_OUT, ZOOM_VALUE) 
+	// Parameter: unsigned int scaleIndex (only relevant for EZoomValue)
+	// Returns:   bool
+	//************************************
+	bool SetZoomIndex( EZoomMode ezoom, unsigned int scaleIndex = 1 );
+
+	//************************************
+	// Method:    GetZoomHelper
+	// Description:  returns a const reference to zoom helper
+	// Returns:   const ZoomHelperEx&
+	//************************************
+	const ZoomHelperEx& GetZoomHelper() const;
+
+	//************************************
+	// Method:    IsZoomAllowed
+	// Description:  Return  true if zooming is enabled
+	// Returns:   bool
+	//************************************
+	bool IsZoomAllowed() const;
+
 protected:
 	void Initialize();
-
 	bool GetScrollPosition( CPoint& p_point );
 	bool SetScrollPosition( CPoint& p_point );
 
@@ -130,9 +189,7 @@ protected:
 
 	HRESULT UpdateImageSurfaces( const SVBitmapInfo& p_rBitmapInfo );
 	HRESULT CopyBitsToSurface( const CRect& p_rSourceRect, const SVBitmapInfo& p_rBitmapInfo, const unsigned char* p_pBitmapBits );
-/* Obsolete - Replaced due to performance reasons
-	HRESULT UpdateScaledSurfaceWithExtremeLUT();
-*/
+
 	HRESULT BlitToScaledSurface( CRect& p_rSourceRect, CRect& p_rDestRect );
 	HRESULT BlitToPrimarySurface( CRect& p_rDestRect );
 	HRESULT RecreateLostSurface();
@@ -144,13 +201,18 @@ protected:
 	HRESULT DisplaySurface();
 	HRESULT NotifyIPDocDisplayComplete();
 
+	//************************************
+	// Method:    CalculateZoomFit
+	// Description:  Calculate the m_ZoomFit parameter for the current view port and image sizes
+	// Returns:   bool
+	//************************************
+	bool CalculateZoomFit();
+
+#pragma region Member variables
 	SVByteVector m_ImageDIB;
 	SVExtentMultiLineStructCArray m_OverlayData;
 
-	unsigned long m_scaleIndex;
-	unsigned long m_scaleCount;
-	double m_scaleFactor[ 31 ];
-	HGDIOBJ m_hFont[ 31 ];
+	ZoomHelperEx m_ZoomHelper;
 
 	SVGUID m_ImageId;
 	CString m_imageName;
@@ -186,25 +248,27 @@ protected:
 	CRect m_LastRect;
 
 	SVThreadWait m_ThreadWait;
-
+#pragma endregion Member variables
 };
-
-/////////////////////////////////////////////////////////////////////////////
-//{{AFX_INSERT_LOCATION}}
-// Microsoft Developer Studio fügt zusätzliche Deklarationen unmittelbar vor der vorhergehenden Zeile ein.
-
-//******************************************************************************
-//* INCLUDE CONTROL:
-//******************************************************************************
-#endif	//	SVIMAGEVIEW_H
-
-//** EOF **
 
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVImageView.h_v  $
+ * 
+ *    Rev 1.2   14 Aug 2014 15:55:16   mEichengruen
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  921
+ * SCR Title:  Add more complete zoom functionality. (runpage)
+ * Checked in by:  mEichengruen;  Marcus Eichengruen
+ * Change Description:  
+ *   new commandentries for zoom commands
+ * Createfont moved to Zoomhelper
+ * scale Factor moved to Zoomhelper
+ * new functions Calculate zoomfit, SetZoom, SetZoomIndex
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   24 Sep 2013 16:18:34   bwalter
  * Project:  SVObserver

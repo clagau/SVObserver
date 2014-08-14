@@ -1640,7 +1640,16 @@
     <ClCompile Include="SVToolSetTreeCtrl.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ZoomToolBar.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ZoomHelperEx.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="RemoteMonitorListHelper.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FramedSplitterWnd.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -3398,7 +3407,16 @@
     <ClInclude Include="SVToolSetTreeCtrl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ZoomToolBar.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ZoomHelperEx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="RemoteMonitorListHelper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FramedSplitterWnd.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -3731,6 +3749,9 @@
     </None>
     <None Include="EnvironmentObject.inl">
       <Filter>Header Files</Filter>
+    </None>
+    <None Include="res\toolbarZoom.bmp">
+      <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>
 </Project>

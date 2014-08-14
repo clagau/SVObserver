@@ -2,8 +2,8 @@
 //* .Module Name     : SVToolGrouping
 //* .File Name       : $Workfile:   SVToolGrouping.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.5  $
-//* .Check In Date   : $Date:   01 Jul 2014 14:18:22  $
+//* .Current Version : $Revision:   1.6  $
+//* .Check In Date   : $Date:   14 Aug 2014 16:09:24  $
 //******************************************************************************
 #pragma region Includes
 #include "stdafx.h"
@@ -60,33 +60,14 @@ String SVToolGrouping::GetToolToInsertBefore(const String& rName) const
 		[&rName](const ToolGroup& rGroup)->bool { return rName == rGroup.first; });
 		if (it != m_list.end())
 		{
-			if (ToolGroupData::Tool != it->second.m_type)
+			if (ToolGroupData::StartOfGroup == it->second.m_type || ToolGroupData::EndOfGroup == it->second.m_type)
 			{
-				if (ToolGroupData::EndOfGroup != it->second.m_type)
+				// Start of Group or End of Group selected - get first tool after selection
+				while (++it != m_list.end() && toolName.empty())
 				{
-					ToolGroupList::const_reverse_iterator rIt(it);
-					while (rIt != m_list.rend() && toolName.empty())
+					if (it->second.m_type == ToolGroupData::Tool)
 					{
-						if (++rIt != m_list.rend())
-						{
-							if (rIt->second.m_type == ToolGroupData::Tool)
-							{
-								toolName = rIt->first;
-							}
-						}
-					}
-				}
-				else // End of Group selected - get first tool after
-				{
-					while (it != m_list.end() && toolName.empty())
-					{
-						if (++it != m_list.end())
-						{
-							if (it->second.m_type == ToolGroupData::Tool)
-							{
-								toolName = it->first;
-							}
-						}
+						toolName = it->first;
 					}
 				}
 			}
@@ -651,6 +632,16 @@ size_t SVToolGrouping::size() const
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVToolGrouping.cpp_v  $
+ * 
+ *    Rev 1.6   14 Aug 2014 16:09:24   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  906
+ * SCR Title:  SVObserver Tool Grouping
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   Revised GetToolToInsertBefore method to correct an issue when inserting a tool before the Start of Group.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.5   01 Jul 2014 14:18:22   sjones
  * Project:  SVObserver

@@ -5,17 +5,20 @@
 //* .Module Name     : SVImageViewScroll
 //* .File Name       : $Workfile:   SVImageViewScroll.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 10:56:38  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   14 Aug 2014 15:58:32  $
 //******************************************************************************
 
-#ifndef INC_SVIMAGEVIEWSCROLL_3891AE0101B5_INCLUDED
-#define INC_SVIMAGEVIEWSCROLL_3891AE0101B5_INCLUDED
+#pragma once
 
+#pragma region Includes
 #include "SVXMLLibrary/SVXMLMaterialsTree.h"
+#pragma endregion Includes
 
+#pragma region Declarations
 class SVImageViewClass;
 class SVObjectWriter;
+#pragma endregion Declarations
 
 class SVImageViewScroll : public CScrollView
 {
@@ -24,8 +27,8 @@ class SVImageViewScroll : public CScrollView
 	//{{AFX_VIRTUAL(SVImageViewScroll)
 	public:
 	virtual void OnInitialUpdate();
-	virtual BOOL Create(LPCTSTR LPSZClassName, LPCTSTR LPSZWindowName, DWORD DWStyle, const RECT& Rect, CWnd* PParentWnd, UINT NID, CCreateContext* PContext = NULL);
-	virtual void OnDraw (CDC* pDC);
+	virtual BOOL Create(LPCTSTR LPSZClassName, LPCTSTR LPSZWindowName, DWORD DWStyle, const RECT& Rect, CWnd* PParentWnd, UINT NID, CCreateContext* PContext = nullptr);
+	virtual void OnDraw(CDC* pDC);
 	protected:
 	virtual void OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint);
 	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
@@ -46,32 +49,64 @@ public:
 	void SetViewSize( CSize &p_rcSize );
 	void SetImageSize( SIZE p_oSize );
 
+	//************************************
+	// Method:    ImageIsEmpty
+	// Description:  Return true if image is empty
+	// Returns:   bool
+	//************************************
+	bool ImageIsEmpty() const;
+
+	//************************************
+	// Method:    IsZoomAllowed
+	//  Description:  Return true if zooming is enabled
+	// Returns:   bool
+	//************************************
+	bool IsZoomAllowed() const;
+
 protected:
 	//{{AFX_MSG(SVImageViewScroll)
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
 	afx_msg BOOL OnEraseBkgnd( CDC* p_pDC );
+	afx_msg void OnZoomMinus();
+	afx_msg void OnUpdateZoomMinus(CCmdUI *pCmdUI);
+	afx_msg void OnZoomPlus();
+	afx_msg void OnUpdateZoomPlus(CCmdUI *pCmdUI);
+	afx_msg void OnZoomFit();
+	afx_msg void OnUpdateZoomFit(CCmdUI *pCmdUI);
+	afx_msg void OnZoomOne();
+	afx_msg void OnUpdateZoomOne(CCmdUI *pCmdUI);
+	afx_msg void OnZoomSliderMoved();
+	afx_msg void OnKillFocus(CWnd* pNewWnd);
+	afx_msg void OnSetFocus(CWnd* pOldWnd);
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 
 private:
-	SVImageViewClass *psvImageView;
+	SVImageViewClass* m_pView;
 
 	CPoint m_oOldMaxScrollPoint;
 	CPoint m_oOldScrollPoint;
 	HBRUSH m_hWindowBackgroundColor;
 
 	SIZE m_SizeTotal;
-
 };
-
-#endif /* _INC_SVIMAGEVIEWSCROLL_3891AE0101B5_INCLUDED */
 
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVImageViewScroll.h_v  $
+$Log:   N:\PVCSARCH65\PROJECTFILES\ARCHIVES\SVOBSERVER_SRC\SVOBSERVER\SVImageViewScroll.h_v  $
+ * 
+ *    Rev 1.1   14 Aug 2014 15:58:32   mEichengruen
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  921
+ * SCR Title:  Add more complete zoom functionality. (runpage)
+ * Checked in by:  mEichengruen;  Marcus Eichengruen
+ * Change Description:  
+ *   new commandentries for zoom commands
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 10:56:38   bWalter
  * Project:  SVObserver

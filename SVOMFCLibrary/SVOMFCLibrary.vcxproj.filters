@@ -71,6 +71,9 @@
     <ClCompile Include="DisplayHelper.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ZoomHelper.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Regexp.h">
@@ -152,6 +155,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="DisplayHelper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ZoomHelper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
