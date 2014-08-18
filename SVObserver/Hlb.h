@@ -5,74 +5,55 @@
 //* .Module Name     : HLB
 //* .File Name       : $Workfile:   Hlb.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 09:13:32  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   15 Aug 2014 15:21:14  $
 //******************************************************************************
 
+#pragma once
 
-#ifndef HLB_H
-#define HLB_H
-
-
-typedef CArray< int, int > CIntArray;
-
-/////////////////////////////////////////////////////////////////////////////
-// CHorzListBox window
-
-class CHorzListBox : public CListBox
+class SVHorizListBox : public CListBox
 {
-// Construction
 public:
-	CHorzListBox();
-
-// Attributes
-protected:
-	BOOL m_bLocked;
-	CIntArray m_arrExtents;
-	int m_nLongestExtent;
-	int m_nTabStops;
-	int* m_lpTabStops;
-
-// Operations
-public:
-	void LockHExtentUpdate();
-	void UnlockHExtentUpdate();
-	void UpdateHExtent();
+	SVHorizListBox();
+	virtual ~SVHorizListBox();
 
 protected:
-	void InsertNewExtent(int nItem, LPCTSTR lpszStr);
-	void InsertNewExtent(int nItem, LPCTSTR lpszStr, CDC* pDC);
-	void InitTabStops();
+	int CalcHorizExtent(CDC* pDC, LPCTSTR text) const;
+	void ResetHorizExtent();
+	void CalcNewHorizExtent(LPCTSTR text);
 
 // Overrides
 	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(CHorzListBox)
+	//{{AFX_VIRTUAL(SVHorizListBox)
 	//}}AFX_VIRTUAL
-
-// Implementation
-public:
-	virtual ~CHorzListBox();
 
 	// Generated message map functions
 protected:
-	//{{AFX_MSG(CHorzListBox)
+	//{{AFX_MSG(SVHorizListBox)
 	//}}AFX_MSG
 	afx_msg LRESULT OnAddString(WPARAM wParam, LPARAM lParam);
 	afx_msg LRESULT OnInsertString(WPARAM wParam, LPARAM lParam);
 	afx_msg LRESULT OnDeleteString(WPARAM wParam, LPARAM lParam);
 	afx_msg LRESULT OnSetTabStops(WPARAM wParam, LPARAM lParam);
+	afx_msg LRESULT OnResetContent(WPARAM wParam, LPARAM lParam);
 	DECLARE_MESSAGE_MAP()
 };
-
-/////////////////////////////////////////////////////////////////////////////
-
-#endif
 
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\Hlb.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\Hlb.h_v  $
+ * 
+ *    Rev 1.1   15 Aug 2014 15:21:14   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Revised to calculate the exent for the list box horizontal scroll bar.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 09:13:32   bWalter
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : SocketTraits
 //* .File Name       : $Workfile:   SocketTraits.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   19 Jun 2014 15:09:28  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   15 Aug 2014 14:12:32  $
 //******************************************************************************
 
 #pragma once
@@ -29,6 +29,8 @@ namespace Seidenader
 			static const std::string ApiName() { return "tcp"; }
 			static void CreateOptions(Socket_t s) {}
 			static const char tick = 't';
+			static const size_t buffer_size = 64*1024;
+			static const bool needsHeader = false;
 		};
 
 		template<>
@@ -42,6 +44,8 @@ namespace Seidenader
 			static const std::string ApiName() { return "udp"; }
 			static void CreateOptions(Socket_t s) {}
 			static const char tick = 'u';
+			static const size_t buffer_size = 1450;
+			static const bool needsHeader = true;
 		};
 	}
 }
@@ -52,13 +56,13 @@ namespace Seidenader
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVSocketLibrary\SocketTraits.h_v  $
  * 
- *    Rev 1.0   19 Jun 2014 15:09:28   bwalter
+ *    Rev 1.1   15 Aug 2014 14:12:32   jHanebach
  * Project:  SVObserver
  * Change Request (SCR) nbr:  886
  * SCR Title:  Add RunReject Server Support to SVObserver
  * Checked in by:  rYoho;  Rob Yoho
  * Change Description:  
- *   Initial check in.  Merged changes from SVRemoteControl project.
+ *   Syncing with svrc code base
  * 
  * /////////////////////////////////////////////////////////////////////////////////////
  * 

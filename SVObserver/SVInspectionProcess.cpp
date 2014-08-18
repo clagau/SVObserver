@@ -5,8 +5,8 @@
 //* .Module Name     : SVInspectionProcess
 //* .File Name       : $Workfile:   SVInspectionProcess.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.16  $
-//* .Check In Date   : $Date:   10 Jul 2014 17:10:58  $
+//* .Current Version : $Revision:   1.17  $
+//* .Check In Date   : $Date:   14 Aug 2014 18:14:00  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -26,6 +26,7 @@
 #include "SVSystemLibrary/SVAutoLockAndReleaseTemplate.h"
 #include "SVTimerLibrary/SVClock.h"
 #include "SVConfigurationLibrary/SVConfigurationTags.h"
+#include "SVSharedMemoryLibrary/SVSharedConfiguration.h"
 
 #include "SVObserver.h"
 #include "SVGetObjectDequeByTypeVisitor.h"
@@ -47,6 +48,13 @@
 #include "SVAcquisitionClass.h"
 #include "SVCommandStreamManager.h"
 #include "SVOLicenseManager/SVOLicenseManager.h"
+#include "SVSharedMemorySingleton.h"
+
+#define SEJ_ErrorBase 15000
+#define Err_15021 (SEJ_ErrorBase+21)
+#define Err_15022 (SEJ_ErrorBase+22)
+#define Err_15023 (SEJ_ErrorBase+23)
+#define Err_15024 (SEJ_ErrorBase+24)
 
 SV_IMPLEMENT_CLASS( SVInspectionProcess, SVInspectionProcessGuid );
 
@@ -277,7 +285,7 @@ HRESULT SVInspectionProcess::ProcessMonitorLists(bool& p_rProcessed)
 			CString l_Message;
 			l_Message.Format(_T("Not All Data List items found\n"));
 
-			SETEXCEPTION1(l_Exception, SVMSG_SVO_45_SHARED_MEMORY_SETUP_LISTS, l_Message);
+			SETEXCEPTION5(l_Exception, SVMSG_SVO_45_SHARED_MEMORY_SETUP_LISTS, Err_15021, l_Message);
 			l_Exception.LogException(l_Message);
 		}
 		bNotFound = false;
@@ -306,7 +314,7 @@ HRESULT SVInspectionProcess::ProcessMonitorLists(bool& p_rProcessed)
 			CString l_Message;
 			l_Message.Format(_T("Not All Image List items found\n"));
 
-			SETEXCEPTION1(l_Exception, SVMSG_SVO_45_SHARED_MEMORY_SETUP_LISTS, l_Message);
+			SETEXCEPTION5(l_Exception, SVMSG_SVO_45_SHARED_MEMORY_SETUP_LISTS, Err_15022, l_Message);
 			l_Exception.LogException( l_Message );
 		}
 		::InterlockedIncrement( &m_NotifyWithLastInspected );
@@ -343,7 +351,7 @@ HRESULT SVInspectionProcess::ProcessLastInspectedImages( bool& p_rProcessed )
 	return l_Status;
 }
 
-HRESULT SVInspectionProcess::ProcessNotifyWithLastInspected(bool& p_rProcessed)
+HRESULT SVInspectionProcess::ProcessNotifyWithLastInspected(bool& p_rProcessed, long sharedSlotIndex)
 {
 	HRESULT l_Status = S_OK;
 
@@ -357,7 +365,44 @@ HRESULT SVInspectionProcess::ProcessNotifyWithLastInspected(bool& p_rProcessed)
 		SVProductInfoStruct l_Product = LastProductGet(SV_LAST_INSPECTED);
 		if (GetPPQ()->HasActiveMonitorList())
 		{
+			try
+			{
+				if (l_Product.ProcessCount() > 0)
+				{			
+#ifdef COLLECT_SHAREDMEMORY_STATS
+					SeidenaderVision::SVProfiler totalProfiler;
+					SeidenaderVision::SVProfiler rejectProfiler;
+					SeidenaderVision::SVProfiler commitProfiler;
+					totalProfiler.Start();
+#endif
+					SeidenaderVision::SVSharedInspectionWriter& rWriter = SVSharedMemorySingleton::Instance().GetInspectionWriter(GetPPQIdentifier(), GetUniqueObjectID());
+					SVSharedData& rLastInspected = rWriter.GetLastInspectedSlot(sharedSlotIndex);
+					FillSharedData(sharedSlotIndex, rLastInspected, m_SharedMemoryFilters.m_LastInspectedValues, m_SharedMemoryFilters.m_LastInspectedImages, l_Product, rWriter);
+				
+#ifdef COLLECT_SHAREDMEMORY_STATS
+					// mark as write complete and ready for read
+					commitProfiler.Start();
+#endif
+				}
+			}
+			catch (const std::exception& e)
+			{
+				SVException l_Exception;
+				CString l_Message;
+				l_Message.Format(_T("ProcessNotifyWithLastInspected - %s"), e.what());
 
+				SETEXCEPTION5(l_Exception, SVMSG_SVO_44_SHARED_MEMORY, Err_15023, l_Message);
+				l_Exception.LogException(l_Message);
+			}
+			catch (...)
+			{
+				SVException l_Exception;
+				CString l_Message;
+				l_Message.Format(_T("ProcessNotifyWithLastInspected - Unknown"));
+
+				SETEXCEPTION5(l_Exception, SVMSG_SVO_44_SHARED_MEMORY, Err_15024, l_Message);
+				l_Exception.LogException(l_Message);
+			}
 		}
 		// Why are we doing this twice, our caller does it as well...
 		SVInspectionCompleteInfoStruct l_Data(GetUniqueObjectID(), l_Product);
@@ -690,7 +735,7 @@ void SVInspectionProcess::ThreadProcess( bool& p_WaitForEvents )
 
 	ProcessLastInspectedImages( l_Processed );
 
-	ProcessNotifyWithLastInspected( l_Processed );
+	ProcessNotifyWithLastInspected( l_Processed, l_Product.m_svInspectionInfos[GetUniqueObjectID()].m_lastInspectedSlot );
 
 	ProcessConditionalHistory( l_Processed );
 
@@ -4517,6 +4562,156 @@ HRESULT SVInspectionProcess::GetInspectionImage( const CString& p_strName, SVIma
 	return E_FAIL;
 }
 
+// This method fills the Toolset structure in Shared Memory (for either LastInspected or Rejects )
+void SVInspectionProcess::FillSharedData(long sharedSlotIndex, SVSharedData& rData, const SVFilterElementMap& rValues, const SVFilterElementMap& rImages, SVProductInfoStruct& rProductInfo, SeidenaderVision::SVSharedInspectionWriter& rWriter)
+{
+	SVProductInfoStruct& l_rProductInfo = rProductInfo;
+	
+	SVDataManagerHandle dmHandle = l_rProductInfo.oPPQInfo.m_ResultDataDMIndexHandle;
+	long dataIndex = dmHandle.GetIndex();
+
+	SVSharedValueMap& rSharedValues = rData.m_Values;
+	SVSharedImageMap& rSharedImages = rData.m_Images;
+
+	rSharedValues.clear();
+	rSharedImages.clear();
+
+	for (SVFilterElementMap::const_iterator ValueIter = rValues.begin(); ValueIter != rValues.end(); ++ValueIter)
+	{
+		HRESULT hr = S_OK;
+		CString value;
+		bool bItemNotFound = true;
+		SVValueObjectClass* pValueObject = nullptr;
+		SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObject(ValueIter->second.ToGUID());
+
+		if (pObject)
+		{
+			pValueObject = dynamic_cast<SVValueObjectClass *>(pObject);
+			if (pValueObject) 
+			{
+				SVObjectNameInfo nameInfo;
+				SVObjectNameInfo::ParseObjectName(nameInfo, ValueIter->first.c_str());
+				SVValueObjectReference ref(pObject, nameInfo);
+				
+				// for now just a single item (no full array)
+				if (!ref.IsEntireArray())
+				{
+					HRESULT hrGet = ref.GetValue(dataIndex, value);
+					if (hrGet == SVMSG_SVO_33_OBJECT_INDEX_INVALID  || hrGet == SVMSG_SVO_34_OBJECT_INDEX_OUT_OF_RANGE)
+					{
+						hr = hrGet;
+						value = ref.DefaultValue(); // did not get value. set value to default
+						if (value.IsEmpty())
+						{
+							value.Format("%i", -1);
+						}
+					}
+					else if (S_OK != hrGet)	// some generic error; currently should not get here
+					{
+						hr = SVMSG_ONE_OR_MORE_REQUESTED_OBJECTS_DO_NOT_EXIST;
+						value.Format("%i", -1); // did not get value. set value to -1
+					}
+					else if (S_OK == hrGet)
+					{
+						bItemNotFound = false;
+					}
+				}
+				else // Get Entire Array
+				{
+					// get all results and put them into a parsable string
+					int iNumResults = 0;
+					ref.Object()->GetResultSize(dataIndex, iNumResults);
+					CString sArrayValues;
+					for (int iArrayIndex = 0;iArrayIndex < iNumResults && S_OK == hr;iArrayIndex++)
+					{
+						CString sValue;
+						hr = ref.Object()->GetValue(dataIndex, iArrayIndex, sValue);
+						if (S_OK == hr)
+						{
+							if (iArrayIndex > 0)
+							{
+								sArrayValues += _T(",");
+							}
+							sArrayValues += _T("`");
+							sArrayValues += sValue;
+							sArrayValues += _T("`");
+						}
+					}
+					if (S_OK == hr)
+					{
+						bItemNotFound = false;
+						value = sArrayValues;
+					}
+				}
+			}
+		}
+		if (bItemNotFound)
+		{
+			hr = SVMSG_ONE_OR_MORE_REQUESTED_OBJECTS_DO_NOT_EXIST;
+		}
+		rSharedValues.insert(SVSharedValuePair(char_string(ValueIter->first.c_str(), rData.m_Allocator), 
+					SVSharedValue(SVSharedValue::StringType, static_cast<const char*>(value), hr, rData.m_Allocator)));
+	}
+
+	for (SVFilterElementMap::const_iterator imageIter = rImages.begin(); imageIter != rImages.end(); ++imageIter)
+	{
+		HRESULT hr = S_OK;
+		bool bImgNotFound = true;
+		SVImageClass* pImage = nullptr;
+		SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObject(imageIter->second.ToGUID());
+
+		if (pObject != nullptr)
+		{
+			pImage = dynamic_cast<SVImageClass *>(pObject);
+
+			if (pImage != nullptr)
+			{
+				SVSmartHandlePointer imageHandlePtr;
+			
+				// Special check for Color Tool's RGBMainImage which is HSI
+				if (SV_IS_KIND_OF(pImage, SVRGBMainImageClass))
+				{
+					// this will make a copy...
+					SVImageProcessingClass::Instance().CreateImageBuffer(pImage->GetImageInfo(), imageHandlePtr);
+					pImage->SafeImageConvertToHandle(imageHandlePtr, SVImageHLSToRGB);
+				}
+				else
+				{
+					pImage->GetImageHandle(imageHandlePtr);
+				}
+
+				if (!imageHandlePtr.empty())
+				{
+					bImgNotFound = false;
+					// Add Drive and Directory to base filename
+					SVString name = imageIter->first.c_str();
+					SVString filename = SeidenaderVision::SVSharedConfiguration::GetImageDirectoryName() + "\\" + SVSharedImage::filename(name.c_str(), sharedSlotIndex, img::bmp);
+					// Write Image to disk
+					HRESULT hr = SVImageProcessingClass::Instance().SaveImageBuffer(filename.c_str(), imageHandlePtr);
+					std::pair<SVSharedImageMap::iterator, bool> IterPair = rSharedImages.insert(SVSharedImagePair(char_string(name.c_str(), rData.m_Allocator), SVSharedImage(filename.c_str(), hr, rData.m_Allocator)));
+					// if the Insert failed - update the status
+					if (!IterPair.second && IterPair.first != rSharedImages.end())
+					{
+						IterPair.first->second.m_Status = E_FAIL;
+					}
+				}
+			}
+		}
+		if (bImgNotFound)
+		{
+			hr = SVMSG_ONE_OR_MORE_REQUESTED_OBJECTS_DO_NOT_EXIST;
+			SVString name = imageIter->first.c_str();
+			SVString filename;
+			std::pair<SVSharedImageMap::iterator, bool> IterPair = rSharedImages.insert(SVSharedImagePair(char_string(name.c_str(), rData.m_Allocator), SVSharedImage(filename.c_str(), hr, rData.m_Allocator)));
+			// if the Insert failed - update the status
+			if (!IterPair.second && IterPair.first != rSharedImages.end())
+			{
+				IterPair.first->second.m_Status = E_FAIL;
+			}
+		}
+	}
+	rData.m_TriggerCount = l_rProductInfo.ProcessCount();
+}
 
 SVInspectionProcess::SVSharedMemoryFilters::SVSharedMemoryFilters()
 : m_LastInspectedValues()
@@ -4644,6 +4839,19 @@ void SVInspectionProcess::Persist(SVObjectWriter& rWriter)
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVInspectionProcess.cpp_v  $
+ * 
+ *    Rev 1.17   14 Aug 2014 18:14:00   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Added FillSharedData method.
+ * Revised ThreadProcess to call ProcessNotifyWithLastInspected with the shared memory slot index
+ * Revised ProcessNotifyWithLastInspected method to pass the shared memory slot index.
+ * Revised ProcessMOnitorList to use SETEXCEPTION5
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.16   10 Jul 2014 17:10:58   sjones
  * Project:  SVObserver

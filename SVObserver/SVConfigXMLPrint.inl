@@ -5,8 +5,8 @@
 //* .Module Name     : SVConfigXMLPrint
 //* .File Name       : $Workfile:   SVConfigXMLPrint.inl  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.17  $
-//* .Check In Date   : $Date:   14 Aug 2014 07:14:16  $
+//* .Current Version : $Revision:   1.15  $
+//* .Check In Date   : $Date:   23 Jul 2014 10:34:38  $
 //******************************************************************************
 
 #include "SVObjectLibrary/SVObjectLibrary.h"
@@ -1656,26 +1656,6 @@ inline HRESULT SVDeviceParamConfigXMLHelper::Visit(SVCustomDeviceParam& param)
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVConfigXMLPrint.inl_v  $
- * 
- *    Rev 1.17   14 Aug 2014 07:14:16   ryoho
- * Project:  SVObserver
- * Change Request (SCR) nbr:  913
- * SCR Title:  Add Blob Feature Default Value to the Configuration Print (SVO-214)
- * Checked in by:  rYoho;  Rob Yoho
- * Change Description:  
- *   backed out previous change.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.16   12 Aug 2014 08:54:18   ryoho
- * Project:  SVObserver
- * Change Request (SCR) nbr:  913
- * SCR Title:  Add Blob Feature Default Value to the Configuration Print (SVO-214)
- * Checked in by:  rYoho;  Rob Yoho
- * Change Description:  
- *   Changed WriteAllChildren - don't write range for Result Box X Toolset Image or Result Box Y Toolset Image
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.15   23 Jul 2014 10:34:38   ryoho
  * Project:  SVObserver

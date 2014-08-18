@@ -5,14 +5,20 @@
 //* .Module Name     : SVObjectNameInfo
 //* .File Name       : $Workfile:   SVObjectNameInfo.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   17 Mar 2014 14:19:08  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   15 Aug 2014 15:47:14  $
 //******************************************************************************
 
 #pragma region Includes
 #include "stdafx.h"
+#include <boost/algorithm/string.hpp>
 #include "SVObjectNameInfo.h"
 #pragma endregion Includes
+
+static void StripSpaces(std::string& rStr)
+{
+	boost::algorithm::trim(rStr);
+}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // indexes are one-based and specified with []
@@ -50,7 +56,10 @@ HRESULT SVObjectNameInfo::ParseObjectName( SVObjectNameInfo& p_rNameInfo, const 
 				if( l_NextIndex != SVString::npos )
 				{
 					p_rNameInfo.m_IndexPresent = true;
-					p_rNameInfo.m_Index = p_rObjectName.Mid( l_Index + 1, l_NextIndex - ( l_Index + 1 ) );
+					// ignore whitespace
+					std::string indexStr = p_rObjectName.Mid( l_Index + 1, l_NextIndex - ( l_Index + 1 ) ).c_str();
+					StripSpaces(indexStr);
+					p_rNameInfo.m_Index = indexStr.c_str();
 
 					if( p_rObjectName[ l_NextIndex ] == _T( ']' ) )
 					{
@@ -248,6 +257,17 @@ void SVObjectNameInfo::RemoveBottomName()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObjectLibrary\SVObjectNameInfo.cpp_v  $
+ * 
+ *    Rev 1.3   15 Aug 2014 15:47:14   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Revised ParseObjectName to strip spaces from the array specifier.
+ * Added StripSpaces function.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   17 Mar 2014 14:19:08   bwalter
  * Project:  SVObserver

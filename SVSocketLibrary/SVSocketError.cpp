@@ -5,8 +5,8 @@
 //* .Module Name     : SVSocketError
 //* .File Name       : $Workfile:   SVSocketError.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   25 Apr 2013 17:16:30  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   15 Aug 2014 14:12:34  $
 //******************************************************************************
 #include "stdafx.h"
 #include <winsock2.h>
@@ -72,6 +72,65 @@ const char * ErrorText[] =
  	"Unknown error."
 };
 
+HRESULT Hresults[] = 
+{
+	S_OK,
+	RPC_E_CALL_CANCELED,			//Interrupted,
+	RPC_E_ACCESS_DENIED,			//PermissionDenied,
+	RPC_E_INVALID_DATA, 			//InvalidPointerAddress,
+	RPC_E_INVALID_PARAMETER,		//InvalidArgument,
+	RPC_E_OUT_OF_RESOURCES,			//TooManyOpenSockets,
+	RPC_E_CANTTRANSMIT_CALL,		//WouldBlock,
+	RPC_S_CALLPENDING,				//OperationInProgress,
+	RPC_S_CALLPENDING,				//OperationAlreadyInProgress,
+	RPC_E_INVALID_OBJECT,			//NotASocket,
+	INET_E_INVALID_URL,				//DestinationAddressRequired,
+	INET_E_CANNOT_LOAD_DATA,		//MessageTooLong,
+	E_INVALID_PROTOCOL_FORMAT,		//ProtocolWrong,
+	E_INVALID_PROTOCOL_OPERATION,	//BadProtocolOption,
+	E_PROTOCOL_VERSION_NOT_SUPPORTED,	//ProtocolNotSupported,
+	E_SUBPROTOCOL_NOT_SUPPORTED,	//SocketTypeNotSupported,
+	RPC_E_INVALIDMETHOD,			//OperationNotSupported,
+	INET_E_UNKNOWN_PROTOCOL,		//ProtocolFamilyNotSupported,
+	INET_E_INVALID_URL,				//AddressFamilyNotSupported,
+	INET_E_INVALID_URL,				//AddressInUse,
+	INET_E_INVALID_URL,				//AddressNotAvailable,
+	INET_E_CANNOT_CONNECT,			//NetworkDown,
+	INET_E_CANNOT_CONNECT,			//NetworkUnreachable,
+	INET_E_CANNOT_CONNECT,			//NetworkReset,
+	RPC_E_CONNECTION_TERMINATED,	//ConnectionAborted,
+	RPC_E_CONNECTION_TERMINATED,	//ConnectionReset,
+	INET_E_CANNOT_LOAD_DATA,		//NoBufferSpaceAvailable,
+	INET_E_INVALID_REQUEST,			//AlreadyConnected,
+	RPC_E_DISCONNECTED,				//NotConnected,
+	UI_E_SHUTDOWN_CALLED,			//Shutdown,
+	INET_E_CONNECTION_TIMEOUT,		//ConnectionTimeout,
+	RPC_E_CALL_REJECTED,			//ConnectionRefused,
+	INET_E_CANNOT_CONNECT,			//HostDown,
+	INET_E_CANNOT_CONNECT,			//HostUnreachable,
+	RPC_E_OUT_OF_RESOURCES,			//ToManyProcesses,
+	INET_E_CANNOT_CONNECT,			//SystemNotReady,
+	E_PROTOCOL_VERSION_NOT_SUPPORTED,	//VersionNotSupported,
+	INET_E_RESOURCE_NOT_FOUND,		//NotInitialised,
+	UI_E_SHUTDOWN_CALLED,			//ShutdownInProgress,
+	RPC_E_CANTTRANSMIT_CALL,		//ClassTypeNotFound,
+	INET_E_CANNOT_CONNECT,			//HostNotFound,
+	RPC_E_RETRY,					//TryAgain,
+	RPC_E_SERVER_DIED,				//NoRecovery,
+	RPC_E_CANTTRANSMIT_CALL,		//NoData,
+	RPC_E_INVALID_OBJREF,			//InvalidHandle,
+	RPC_E_INVALID_PARAMETER,		//InvalidParameter,
+	RPC_E_TOO_LATE,					//IOIncomplete,
+	RPC_E_SERVERCALL_RETRYLATER,	//IOPending,
+	RPC_E_OUT_OF_RESOURCES,			//NotEnoughMemory,
+	RPC_E_CALL_CANCELED,			//OperationAborted,
+	RPC_E_INVALID_OBJREF,			//InvalidProcTable,
+	RPC_E_INVALID_OBJREF,			//InvalidProvider,
+	RPC_E_CANTTRANSMIT_CALL,		//ProviderFailedInit,
+	RPC_E_CANTTRANSMIT_CALL,		//CallFailure,
+	RPC_E_CANTTRANSMIT_CALL,			//AlreadyCreated,
+	E_UNEXPECTED, 					//	Unknown
+};
 
 SVSocketError::ErrorEnum SVSocketError::GetLastSocketError()
 {
@@ -86,6 +145,11 @@ const char * SVSocketError::GetErrorText(SVSocketError::ErrorEnum err)
 	static const char * defError = "Error number out of range.";
 	size_t i = err;
 	return ( 0 <= i && i < sizeof(ErrorText)/sizeof(ErrorText[0]))? ::ErrorText[i]:defError;
+}
+
+HRESULT SVSocketError::HrFromSocketError(SVSocketError::ErrorEnum err)
+{
+	return Hresults[err];
 }
 
 SVSocketError::ErrorEnum SVSocketError::TranslateError(int errorCode)
@@ -383,7 +447,25 @@ SVSocketError::ErrorEnum SVSocketError::TranslateError(int errorCode)
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVSocketLibrary\SVSocketError.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVSocketLibrary\SVSocketError.cpp_v  $
+ * 
+ *    Rev 1.1   15 Aug 2014 14:12:34   jHanebach
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Syncing with svrc code base
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.1   24 Mar 2014 10:58:16   jHanebach
+ * Project: SVRemoteControl
+ * Change Request (SCR) nbr: 10
+ * SCR Title: Add reject/run page server connection and commands
+ * Checked in by: jHanebach; Jack Hanebach
+ * Change Description: Changes for run/reject server.
+ * \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
  * 
  *    Rev 1.0   25 Apr 2013 17:16:30   bWalter
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : MonitorListBasePage
 //* .File Name       : $Workfile:   MonitorListBasePage.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   17 Apr 2014 16:22:50  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   15 Aug 2014 15:22:46  $
 //******************************************************************************
 
 #pragma once
@@ -14,6 +14,7 @@
 #pragma region Includes
 #include <utility>
 #include <deque>
+#include "Hlb.h"
 #include "ISVPropertyPageDialog.h"
 #include "NameSelectionTreeCtrl.h"
 #include "SVUtilityLibrary/SVString.h"
@@ -44,7 +45,7 @@ public:
 	NameSelectionTreeCtrl m_Tree;
 	CButton     m_btnRemoveAll;
 	CButton     m_btnRemove;
-	CListBox    m_lbSelected;
+	SVHorizListBox   m_lbSelected;
 	//}}AFX_DATA
 
 #pragma endregion Public
@@ -90,6 +91,16 @@ protected:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\MonitorListBasePage.h_v  $
+ * 
+ *    Rev 1.1   15 Aug 2014 15:22:46   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Revised to use SVHorizListBox.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   17 Apr 2014 16:22:50   ryoho
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : SVIOEntryStruct
 //* .File Name       : $Workfile:   SVInfoStructs.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   13 May 2013 12:16:20  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   14 Aug 2014 18:02:08  $
 //******************************************************************************
 
 #ifndef INC_SVINFOSTRUCTS_INCLUDED
@@ -235,6 +235,7 @@ struct SVInspectionInfoStruct
 
 	double m_ToolSetEndTime;
 	double m_ToolSetAvgTime;
+	long m_lastInspectedSlot; // Shared Memory
 };
 
 typedef std::map< SVGUID, SVInspectionInfoStruct > SVGUIDSVInspectionInfoStructMap;
@@ -289,10 +290,10 @@ struct SVProductInfoStruct
 
 	SVStdMapSVVirtualCameraPtrSVCameraInfoStruct m_svCameraInfos;
 	SVGUIDSVInspectionInfoStructMap	m_svInspectionInfos;
+	long m_lastInspectedSlot; // Shared Memory
 
 protected:
 	long m_ProductActive;
-
 };
 
 struct SVInspectionCompleteInfoStruct
@@ -495,7 +496,17 @@ private:
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVInfoStructs.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVInfoStructs.h_v  $
+ * 
+ *    Rev 1.3   14 Aug 2014 18:02:08   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Added m_lastInspectedSlot to SVInspectionInfoStruct
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   13 May 2013 12:16:20   bWalter
  * Project:  SVObserver

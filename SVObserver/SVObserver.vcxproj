@@ -119,7 +119,7 @@
       <Command>copy ..\XmlLite\xmllite.lib "$(OutDir)"</Command>
     </PreLinkEvent>
     <Link>
-      <AdditionalDependencies>SVConfigurationLibrary.lib;SVSocketLibrary.lib;SVGigeCameraFileLibrary.lib;SV1394CameraFileLibrary.lib;SVIMServer.lib;SVSecurity.lib;SVHBitmapUtilitiesLibrary.lib;SVEquationLibrary.lib;SVFileSystemLibrary.lib;SVImageCompression.lib;SVLibrary.lib;SVCmnLib.lib;SVOLicenseManager.lib;PropTree.lib;SVIOLibrary.lib;SVRunControlLibrary.lib;SVStatusLibrary.lib;SVXMLLibrary.lib;SVCommandLibrary.lib;JsonLib.lib;SVJsonCommandServerLibrary.lib;SVMatroxLibrary.lib;SVImageLibrary.lib;SVOMFCLibrary.lib;SVMaterialsLibrary.lib;SVOLibrary.lib;SVUtilityLibrary.lib;SVObjectLibrary.lib;SVTreeLibrary.lib;ObjectSelectorLibrary.lib;Winmm.lib;Rpcrt4.lib;ddraw.lib;dxguid.lib;xmllite.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SVConfigurationLibrary.lib;SVSocketLibrary.lib;SVGigeCameraFileLibrary.lib;SV1394CameraFileLibrary.lib;SVIMServer.lib;SVSecurity.lib;SVHBitmapUtilitiesLibrary.lib;SVEquationLibrary.lib;SVFileSystemLibrary.lib;SVSharedMemoryLibrary.lib;SVImageCompression.lib;SVLibrary.lib;SVCmnLib.lib;SVOLicenseManager.lib;PropTree.lib;SVIOLibrary.lib;SVRunControlLibrary.lib;SVStatusLibrary.lib;SVXMLLibrary.lib;SVCommandLibrary.lib;JsonLib.lib;SVJsonCommandServerLibrary.lib;SVMatroxLibrary.lib;SVImageLibrary.lib;SVOMFCLibrary.lib;SVMaterialsLibrary.lib;SVOLibrary.lib;SVUtilityLibrary.lib;SVObjectLibrary.lib;SVTreeLibrary.lib;ObjectSelectorLibrary.lib;Winmm.lib;Rpcrt4.lib;ddraw.lib;dxguid.lib;xmllite.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>$(OutDir);$(ProgramFiles)\Microsoft DirectX 9.0 SDK (April 2005)\Lib\x86;$(ProgramFiles)\Matrox Imaging\mil\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -175,7 +175,7 @@ echo %time%
       <Command>copy ..\XmlLite\$(Platform)\xmllite.lib "$(OutDir)"</Command>
     </PreLinkEvent>
     <Link>
-      <AdditionalDependencies>SVConfigurationLibrary.lib;SVSocketLibrary.lib;SVGigeCameraFileLibrary.lib;SV1394CameraFileLibrary.lib;SVIMServer.lib;SVSecurity.lib;SVHBitmapUtilitiesLibrary.lib;SVEquationLibrary.lib;SVFileSystemLibrary.lib;SVLibrary.lib;SVCmnLib.lib;SVOLicenseManager.lib;PropTree.lib;SVIOLibrary.lib;SVRunControlLibrary.lib;SVStatusLibrary.lib;SVXMLLibrary.lib;SVCommandLibrary.lib;JsonLib.lib;SVJsonCommandServerLibrary.lib;SVMatroxLibrary.lib;SVImageLibrary.lib;SVOMFCLibrary.lib;SVMaterialsLibrary.lib;SVOLibrary.lib;SVUtilityLibrary.lib;SVObjectLibrary.lib;SVTreeLibrary.lib;ObjectSelectorLibrary.lib;Winmm.lib;Rpcrt4.lib;ddraw.lib;dxguid.lib;xmllite.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SVConfigurationLibrary.lib;SVSocketLibrary.lib;SVGigeCameraFileLibrary.lib;SV1394CameraFileLibrary.lib;SVIMServer.lib;SVSecurity.lib;SVHBitmapUtilitiesLibrary.lib;SVEquationLibrary.lib;SVFileSystemLibrary.lib;SVSharedMemoryLibrary.lib;SVLibrary.lib;SVCmnLib.lib;SVOLicenseManager.lib;PropTree.lib;SVIOLibrary.lib;SVRunControlLibrary.lib;SVStatusLibrary.lib;SVXMLLibrary.lib;SVCommandLibrary.lib;JsonLib.lib;SVJsonCommandServerLibrary.lib;SVMatroxLibrary.lib;SVImageLibrary.lib;SVOMFCLibrary.lib;SVMaterialsLibrary.lib;SVOLibrary.lib;SVUtilityLibrary.lib;SVObjectLibrary.lib;SVTreeLibrary.lib;ObjectSelectorLibrary.lib;Winmm.lib;Rpcrt4.lib;ddraw.lib;dxguid.lib;xmllite.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>$(OutDir);$(ProgramFiles)\Microsoft DirectX 9.0 SDK (April 2005)\Lib\x64;$(ProgramFiles)\Microsoft SDKs\Windows\v7.0A\Lib\x64;C:\Program Files\Matrox Imaging\mil\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -232,7 +232,7 @@ echo %time%
       <Command>copy ..\XmlLite\xmllite.lib "$(OutDir)"</Command>
     </PreLinkEvent>
     <Link>
-      <AdditionalDependencies>SVConfigurationLibrary.lib;SVSocketLibrary.lib;SVGigeCameraFileLibrary.lib;SV1394CameraFileLibrary.lib;SVIMServer.lib;SVSecurity.lib;SVHBitmapUtilitiesLibrary.lib;SVEquationLibrary.lib;SVFileSystemLibrary.lib;SVImageCompression.lib;SVLibrary.lib;SVCmnLib.lib;SVOLicenseManager.lib;PropTree.lib;SVIOLibrary.lib;SVRunControlLibrary.lib;SVStatusLibrary.lib;SVXMLLibrary.lib;SVCommandLibrary.lib;JsonLib.lib;SVJsonCommandServerLibrary.lib;SVMatroxLibrary.lib;SVImageLibrary.lib;SVOMFCLibrary.lib;SVMaterialsLibrary.lib;SVOLibrary.lib;SVUtilityLibrary.lib;SVObjectLibrary.lib;SVTreeLibrary.lib;ObjectSelectorLibrary.lib;Winmm.lib;Rpcrt4.lib;ddraw.lib;dxguid.lib;xmllite.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SVConfigurationLibrary.lib;SVSocketLibrary.lib;SVGigeCameraFileLibrary.lib;SV1394CameraFileLibrary.lib;SVIMServer.lib;SVSecurity.lib;SVHBitmapUtilitiesLibrary.lib;SVEquationLibrary.lib;SVFileSystemLibrary.lib;SVSharedMemoryLibrary.lib;SVImageCompression.lib;SVLibrary.lib;SVCmnLib.lib;SVOLicenseManager.lib;PropTree.lib;SVIOLibrary.lib;SVRunControlLibrary.lib;SVStatusLibrary.lib;SVXMLLibrary.lib;SVCommandLibrary.lib;JsonLib.lib;SVJsonCommandServerLibrary.lib;SVMatroxLibrary.lib;SVImageLibrary.lib;SVOMFCLibrary.lib;SVMaterialsLibrary.lib;SVOLibrary.lib;SVUtilityLibrary.lib;SVObjectLibrary.lib;SVTreeLibrary.lib;ObjectSelectorLibrary.lib;Winmm.lib;Rpcrt4.lib;ddraw.lib;dxguid.lib;xmllite.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>$(OutDir);$(ProgramFiles)\Microsoft DirectX 9.0 SDK (April 2005)\Lib\x86;$(ProgramFiles)\Matrox Imaging\mil\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -295,7 +295,7 @@ echo %time%
       <Command>copy ..\XmlLite\$(Platform)\xmllite.lib "$(OutDir)"</Command>
     </PreLinkEvent>
     <Link>
-      <AdditionalDependencies>SVConfigurationLibrary.lib;SVSocketLibrary.lib;SVGigeCameraFileLibrary.lib;SV1394CameraFileLibrary.lib;SVIMServer.lib;SVSecurity.lib;SVHBitmapUtilitiesLibrary.lib;SVEquationLibrary.lib;SVFileSystemLibrary.lib;SVLibrary.lib;SVCmnLib.lib;SVOLicenseManager.lib;PropTree.lib;SVIOLibrary.lib;SVRunControlLibrary.lib;SVStatusLibrary.lib;SVXMLLibrary.lib;SVCommandLibrary.lib;JsonLib.lib;SVJsonCommandServerLibrary.lib;SVMatroxLibrary.lib;SVImageLibrary.lib;SVOMFCLibrary.lib;SVMaterialsLibrary.lib;SVOLibrary.lib;SVUtilityLibrary.lib;SVObjectLibrary.lib;SVTreeLibrary.lib;ObjectSelectorLibrary.lib;Winmm.lib;Rpcrt4.lib;ddraw.lib;dxguid.lib;xmllite.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SVConfigurationLibrary.lib;SVSocketLibrary.lib;SVGigeCameraFileLibrary.lib;SV1394CameraFileLibrary.lib;SVIMServer.lib;SVSecurity.lib;SVHBitmapUtilitiesLibrary.lib;SVEquationLibrary.lib;SVFileSystemLibrary.lib;SVSharedMemoryLibrary.lib;SVLibrary.lib;SVCmnLib.lib;SVOLicenseManager.lib;PropTree.lib;SVIOLibrary.lib;SVRunControlLibrary.lib;SVStatusLibrary.lib;SVXMLLibrary.lib;SVCommandLibrary.lib;JsonLib.lib;SVJsonCommandServerLibrary.lib;SVMatroxLibrary.lib;SVImageLibrary.lib;SVOMFCLibrary.lib;SVMaterialsLibrary.lib;SVOLibrary.lib;SVUtilityLibrary.lib;SVObjectLibrary.lib;SVTreeLibrary.lib;ObjectSelectorLibrary.lib;Winmm.lib;Rpcrt4.lib;ddraw.lib;dxguid.lib;xmllite.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>$(OutDir);$(ProgramFiles)\Microsoft DirectX 9.0 SDK (April 2005)\Lib\x64;$(ProgramFiles)\Microsoft SDKs\Windows\v7.0A\Lib\x64;C:\Program Files\Matrox Imaging\mil\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -450,6 +450,7 @@ echo %time%
     <ClCompile Include="SVObjectScriptParserBase.cpp" />
     <ClCompile Include="SVOpeningFilterClass.cpp" />
     <ClCompile Include="SVShapeMaskHelperClass.cpp" />
+    <ClCompile Include="SVSharedMemorySingleton.cpp" />
     <ClCompile Include="SVSharpen2FilterClass.cpp" />
     <ClCompile Include="SVSharpenFilterClass.cpp" />
     <ClCompile Include="SVSmoothFilterClass.cpp" />
@@ -4309,6 +4310,7 @@ echo %time%
     <ClInclude Include="SVPPQConstants.h" />
     <ClInclude Include="SVRemoteControlConstants.h" />
     <ClInclude Include="SVShapeMaskHelperClass.h" />
+    <ClInclude Include="SVSharedMemorySingleton.h" />
     <ClInclude Include="SVSharpen2FilterClass.h" />
     <ClInclude Include="SVSharpenFilterClass.h" />
     <ClInclude Include="SVSmoothFilterClass.h" />

@@ -5,8 +5,8 @@
 //* .Module Name     : SVIOEntryStruct
 //* .File Name       : $Workfile:   SVInfoStructs.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   13 May 2013 12:16:18  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   14 Aug 2014 18:08:14  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -366,7 +366,8 @@ SVInspectionInfoStruct::SVInspectionInfoStruct()
 	m_EndToolset( 0 ),
 	m_CallbackReceived( 0 ),
 	m_ToolSetEndTime( 0.0 ),
-	m_ToolSetAvgTime( 0.0 )
+	m_ToolSetAvgTime( 0.0 ),
+	m_lastInspectedSlot(-1)
 {
 }
 
@@ -382,7 +383,8 @@ SVInspectionInfoStruct::SVInspectionInfoStruct( const SVInspectionInfoStruct &p_
 	m_EndToolset( 0 ),
 	m_CallbackReceived( 0 ),
 	m_ToolSetEndTime( 0.0 ),
-	m_ToolSetAvgTime( 0.0 )
+	m_ToolSetAvgTime( 0.0 ),
+	m_lastInspectedSlot(-1)
 {
 	Assign( p_rsvData, p_rsvData.m_ResultImageDMIndexHandle.GetLockType() );
 }
@@ -422,6 +424,7 @@ HRESULT SVInspectionInfoStruct::Assign( const SVInspectionInfoStruct &p_rsvData,
 
 		m_ToolSetEndTime = p_rsvData.m_ToolSetEndTime;
 		m_ToolSetAvgTime = p_rsvData.m_ToolSetAvgTime;
+		m_lastInspectedSlot = p_rsvData.m_lastInspectedSlot;
 
 		l_Temp = m_ResultImageDMIndexHandle.Assign( p_rsvData.m_ResultImageDMIndexHandle, p_LockType );
 
@@ -454,6 +457,7 @@ void SVInspectionInfoStruct::Reset()
 	m_ToolSetEndTime = 0.0;
 	m_ToolSetAvgTime = 0.0;
 
+	m_lastInspectedSlot = -1;
 	ClearIndexes();
 }// end Reset
 
@@ -475,6 +479,8 @@ void SVInspectionInfoStruct::Init()
 
 	m_ToolSetEndTime = 0.0;
 	m_ToolSetAvgTime = 0.0;
+
+	m_lastInspectedSlot = -1;
 
 	ClearIndexes();
 }// end Init
@@ -652,6 +658,7 @@ const SVDataManagerHandle& SVCameraInfoStruct::GetSourceImageDMIndexHandle() con
 
 SVProductInfoStruct::SVProductInfoStruct()
 : m_ProductActive( 0 )
+, m_lastInspectedSlot(-1)
 {
 	Reset();
 }
@@ -672,6 +679,7 @@ SVProductInfoStruct::SVProductInfoStruct( const SVProductInfoStruct &p_rsvData )
 , m_svCameraInfos( p_rsvData.m_svCameraInfos )
 , m_svInspectionInfos( p_rsvData.m_svInspectionInfos )
 , m_ProductActive( 0 )
+, m_lastInspectedSlot(p_rsvData.m_lastInspectedSlot)
 {
 	if( p_rsvData.IsProductActive() )
 	{
@@ -706,6 +714,7 @@ const SVProductInfoStruct &SVProductInfoStruct::operator=( const SVProductInfoSt
 
 		m_svCameraInfos = p_rsvData.m_svCameraInfos;
 		m_svInspectionInfos = p_rsvData.m_svInspectionInfos;
+		m_lastInspectedSlot = p_rsvData.m_lastInspectedSlot;
 
 		if( p_rsvData.IsProductActive() )
 		{
@@ -738,6 +747,8 @@ HRESULT SVProductInfoStruct::Assign( const SVProductInfoStruct &p_rsvData, SVDat
 		oOutputsInfo = p_rsvData.oOutputsInfo;
 
 		l_Status = oPPQInfo.Assign( p_rsvData.oPPQInfo, p_LockType );
+
+		m_lastInspectedSlot = p_rsvData.m_lastInspectedSlot;
 
 		SVStdMapSVVirtualCameraPtrSVCameraInfoStruct::iterator l_Iter;
 		SVStdMapSVVirtualCameraPtrSVCameraInfoStruct::const_iterator l_RightIter;
@@ -814,6 +825,7 @@ void SVProductInfoStruct::InitProductInfo()
 	bDataComplete		= FALSE;
 	bStreamed           = FALSE;
 	hrPPQStatus         = S_OK;
+	m_lastInspectedSlot = -1;
 
 	oInputsInfo.Init();
 	oOutputsInfo.Init();
@@ -851,6 +863,7 @@ void SVProductInfoStruct::Reset()
 	bDataComplete		= FALSE;
 	bStreamed           = FALSE;
 	hrPPQStatus         = S_OK;
+	m_lastInspectedSlot = -1;
 
 	oInputsInfo.Reset();
 	oOutputsInfo.Reset();
@@ -1452,7 +1465,20 @@ HRESULT SVProductInfoRequestStruct::GetWaitHandle( HANDLE& p_rHandle ) const
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVInfoStructs.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVInfoStructs.cpp_v  $
+ * 
+ *    Rev 1.3   14 Aug 2014 18:08:14   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Added m_lastInspectedSlot to SVInspectionInfoStruct.
+ * Revised SVInspectionInfoStruct.constructor, copy constructor,  Assign, Reset and Init methods for m_lastInspectedSlot.
+ * Added m_lastInspectedSlot to SVProductInfoStruct.
+ * Revised SVProductInfoStruct constructor, copy constructor, assignment operator, Assign, InitProdictInfo, Reset methods for m_lastInspectedSlot.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   13 May 2013 12:16:18   bWalter
  * Project:  SVObserver

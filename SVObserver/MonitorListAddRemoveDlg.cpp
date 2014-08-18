@@ -5,12 +5,13 @@
 //* .Module Name     : MonitorListAddRemoveDlg
 //* .File Name       : $Workfile:   MonitorListAddRemoveDlg.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   14 Jul 2014 15:38:00  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   15 Aug 2014 10:59:52  $
 //******************************************************************************
 
 #pragma region Includes
 #include "stdafx.h"
+#include <set>
 #include "MonitorListAddRemoveDlg.h"
 #include "MonitorListPropertyDlg.h"
 #pragma endregion Includes
@@ -161,25 +162,41 @@ CString MonitorListAddRemoveDlg::NextAvailableListName() const
 	CString newName;
 	int num = 1;
 	CString strSet = _T("1234567890");
-	bool bDone = false;
+	
+	typedef std::set<int> IDSet;
+	IDSet ids;
 	// look for the next available number
-	for (int i = 0;i < m_UsedList.GetCount() && !bDone;i++)
+	for (int i = 0;i < m_UsedList.GetCount();i++)
 	{
 		CString name;
 		m_UsedList.GetText(i, name);
+		// parse out PPQ ID (PPQ_N)
+		name = GetListNameFromDisplayName(name);
 		int iFirst = name.FindOneOf(strSet);
-		CString strTmp = name.Mid(iFirst).SpanIncluding(strSet);
-		int iTmp = atol(strTmp);
-		if (iTmp == num)
-		{	
-			num++;
-		}
-		else
+		if (-1 != iFirst)
 		{
-			bDone = true;
+			CString strTmp = name.Mid(iFirst).SpanIncluding(strSet);
+			int iTmp = atol(strTmp);
+			ids.insert(iTmp);
 		}
 	}
-	newName.Format( _T("MonitorList%d"), num );
+
+	// Get next highest number
+	IDSet::const_reverse_iterator it = ids.rbegin();
+	if (it != ids.rend())
+	{
+        num = (*it) + 1;
+    }
+
+	// find next non used number in the sequence
+	/*IDSet::const_iterator it = ids.lower_bound(num);
+    while (it != ids.end() && *it == num)
+    {
+        ++it;
+        ++num;
+    } */
+    
+    newName.Format( _T("MonitorList%d"), num );
 	return newName;
 }
 
@@ -330,6 +347,16 @@ void MonitorListAddRemoveDlg::OnBnClickedBtnProperties()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\MonitorListAddRemoveDlg.cpp_v  $
+ * 
+ *    Rev 1.3   15 Aug 2014 10:59:52   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Revised GetNextAvailableListName method to correct an issue with duplicate names.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   14 Jul 2014 15:38:00   ryoho
  * Project:  SVObserver

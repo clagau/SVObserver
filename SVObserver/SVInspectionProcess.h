@@ -5,8 +5,8 @@
 //* .Module Name     : SVInspectionProcess
 //* .File Name       : $Workfile:   SVInspectionProcess.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.9  $
-//* .Check In Date   : $Date:   10 Jul 2014 17:10:58  $
+//* .Current Version : $Revision:   1.10  $
+//* .Check In Date   : $Date:   14 Aug 2014 18:10:42  $
 //******************************************************************************
 
 #ifndef INC_SVINSPECTIONPROCESS_INCLUDED
@@ -27,6 +27,8 @@
 #include "SVOLibrary/SVQueueObject.h"
 #include "SVRunControlLibrary/SVImageIndexStruct.h"
 #include "SVRunControlLibrary/SVRunStatus.h"
+#include "SVSharedMemoryLibrary/SVSharedData.h"
+#include "SVSharedMemoryLibrary/SVSharedInspectionWriter.h"
 #include "SVSystemLibrary/SVCriticalSection.h"
 #include "SVUtilityLibrary/SVGUID.h"
 
@@ -346,7 +348,7 @@ protected:
 	HRESULT ProcessInspection( bool& p_rProcessed, SVProductInfoStruct& p_rProduct );
 	HRESULT ProcessMonitorLists( bool& p_rProcessed );
 	HRESULT ProcessLastInspectedImages( bool& p_rProcessed );
-	HRESULT ProcessNotifyWithLastInspected( bool& p_rProcessed );
+	HRESULT ProcessNotifyWithLastInspected( bool& p_rProcessed, long sharedSlotIndex );
 	HRESULT ProcessConditionalHistory( bool& p_rProcessed );
 	HRESULT ProcessCommandQueue( bool& p_rProcessed );
 
@@ -410,6 +412,8 @@ private:
 	HRESULT CollectConditionalHistoryData();
 
 	HRESULT FindPPQInputObjectByName( SVObjectClass*& p_rpObject, LPCTSTR p_FullName ) const;
+
+	void FillSharedData(long sharedSlotIndex, SVSharedData& rData, const SVFilterElementMap& rValues, const SVFilterElementMap& rImages, SVProductInfoStruct& rProductInfo, SeidenaderVision::SVSharedInspectionWriter& rWriter);
 
 	DWORD m_dwCHTimeout;
 	SVConditionalHistory  m_ConditionalHistory;
@@ -558,6 +562,17 @@ inline HRESULT SVInspectionProcess::SetObjectArrayValues(SVValueObjectReference 
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVInspectionProcess.h_v  $
+ * 
+ *    Rev 1.10   14 Aug 2014 18:10:42   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Added FillSharedData method.
+ * Revised ProcessNotifyWithLastInspected method.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.9   10 Jul 2014 17:10:58   sjones
  * Project:  SVObserver

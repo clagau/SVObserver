@@ -5,8 +5,8 @@
 //* .Module Name     : SVPPQObject
 //* .File Name       : $Workfile:   SVPPQObject.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.18  $
-//* .Check In Date   : $Date:   17 Jul 2014 20:13:42  $
+//* .Current Version : $Revision:   1.19  $
+//* .Check In Date   : $Date:   14 Aug 2014 18:16:28  $
 //******************************************************************************
 
 #pragma once
@@ -21,6 +21,7 @@
 #include "SVObjectLibrary/SVObjectWriter.h"
 #include "SVOLibrary/SVQueueObject.h"
 #include "SVSystemLibrary/SVAsyncProcedure.h"
+#include "SVSharedMemorySingleton.h"
 #include "SVInfoStructs.h"
 #include "SVPPQEnums.h"
 #include "SVPPQShiftRegister.h"
@@ -414,6 +415,9 @@ private:
 #endif // EnableTracking
 
 	void SetRejectConditionList(const SVMonitorItemList& rRejectCondList);
+	void ReleaseSharedMemory(const SVProductInfoStruct& rProduct);
+	void CommitSharedMemory(const SVProductInfoStruct& rProduct);
+	HRESULT CheckRejectCondition(const SVProductInfoStruct& rProduct, SeidenaderVision::SVSharedPPQWriter& rWriter) const;
 
 	BasicValueObjects	m_PpqValues;
 
@@ -437,6 +441,18 @@ typedef SVVector< SVPPQObject* > SVPPQObjectArray;
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVPPQObject.h_v  $
+ * 
+ *    Rev 1.19   14 Aug 2014 18:16:28   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Added ReleaseSharedMemory method.
+ * Added CommitSharedMemory method.
+ * Added CheckRejectCondition method.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.18   17 Jul 2014 20:13:42   gramseier
  * Project:  SVObserver

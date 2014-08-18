@@ -5,8 +5,8 @@
 //* .Module Name     : SVSocketError
 //* .File Name       : $Workfile:   SVSocketError.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   19 Jun 2014 15:48:06  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   15 Aug 2014 14:12:34  $
 //******************************************************************************
 
 #pragma once
@@ -75,11 +75,12 @@ namespace Seidenader
 				ProviderFailedInit,
 				CallFailure,
 				AlreadyCreated,
-				Unknown
+	 			Unknown
 			};
 			static SVSocketError::ErrorEnum GetLastSocketError();
 			static SVSocketError::ErrorEnum TranslateError(int errorCode);
 			static const char * GetErrorText(ErrorEnum err);
+			static HRESULT HrFromSocketError(ErrorEnum err);
 
 		private:
 			SVSocketError();
@@ -90,21 +91,49 @@ namespace Seidenader
 
 typedef Seidenader::Socket::SVSocketError SVSocketError;
 
+#if _MSC_VER < 1700
+#define INET_E_INVALID_URL					_HRESULT_TYPEDEF_(0x800C0002L)
+#define INET_E_NO_SESSION					_HRESULT_TYPEDEF_(0x800C0003L)
+#define INET_E_CANNOT_CONNECT				_HRESULT_TYPEDEF_(0x800C0004L)
+#define INET_E_RESOURCE_NOT_FOUND			_HRESULT_TYPEDEF_(0x800C0005L)
+#define INET_E_OBJECT_NOT_FOUND				 _HRESULT_TYPEDEF_(0x800C0006L)
+#define INET_E_DATA_NOT_AVAILABLE			_HRESULT_TYPEDEF_(0x800C0007L)
+#define INET_E_DOWNLOAD_FAILURE				_HRESULT_TYPEDEF_(0x800C0008L)
+#define INET_E_CONNECTION_TIMEOUT			_HRESULT_TYPEDEF_(0x800C000BL)
+#define INET_E_INVALID_REQUEST				 _HRESULT_TYPEDEF_(0x800C000CL)
+#define INET_E_UNKNOWN_PROTOCOL				_HRESULT_TYPEDEF_(0x800C000DL)
+#define INET_E_CANNOT_LOAD_DATA				 _HRESULT_TYPEDEF_(0x800C000FL)
+#define E_INVALID_PROTOCOL_OPERATION		_HRESULT_TYPEDEF_(0x83760001L)
+#define E_INVALID_PROTOCOL_FORMAT			_HRESULT_TYPEDEF_(0x83760002L)
+#define E_PROTOCOL_EXTENSIONS_NOT_SUPPORTED _HRESULT_TYPEDEF_(0x83760003L)
+#define E_SUBPROTOCOL_NOT_SUPPORTED			_HRESULT_TYPEDEF_(0x83760004L)
+#define E_PROTOCOL_VERSION_NOT_SUPPORTED	_HRESULT_TYPEDEF_(0x83760005L)
+
+#endif
+
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVSocketLibrary\SVSocketError.h_v  $
  * 
- *    Rev 1.1   19 Jun 2014 15:48:06   bwalter
+ *    Rev 1.2   15 Aug 2014 14:12:34   jHanebach
  * Project:  SVObserver
  * Change Request (SCR) nbr:  886
  * SCR Title:  Add RunReject Server Support to SVObserver
  * Checked in by:  rYoho;  Rob Yoho
  * Change Description:  
- *   Merged changes from SVRemoteControl project.
+ *   Syncing with svrc code base
  * 
  * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.1   24 Mar 2014 10:58:16   jHanebach
+ * Project: SVRemoteControl
+ * Change Request (SCR) nbr: 10
+ * SCR Title: Add reject/run page server connection and commands
+ * Checked in by: jHanebach; Jack Hanebach
+ * Change Description: Changes for run/reject server.
+ * \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
  * 
  *    Rev 1.0   25 Apr 2013 17:16:44   bWalter
  * Project:  SVObserver

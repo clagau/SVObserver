@@ -5,8 +5,8 @@
 //* .Module Name     : RemoteMonitorListController
 //* .File Name       : $Workfile:   RemoteMonitorListController.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.11  $
-//* .Check In Date   : $Date:   14 Jul 2014 13:47:44  $
+//* .Current Version : $Revision:   1.12  $
+//* .Check In Date   : $Date:   14 Aug 2014 17:55:00  $
 //******************************************************************************
 
 #pragma region Includes
@@ -19,6 +19,7 @@
 #include "SVConfigurationObject.h"
 #include "SVIODoc.h"
 #include "SVIOTabbedView.h"
+#include "SVSharedMemorySingleton.h"
 #include "SVObserver.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVUtilityLibrary/SVGUID.h"
@@ -26,6 +27,9 @@
 #include "RemoteMonitorListHelper.h"
 #include "SVToolSet.h"
 #pragma endregion Includes
+
+#define SEJ_ErrorBase 15000
+#define Err_15020 (SEJ_ErrorBase+20)
 
 extern SVObserverApp TheSVObserverApp;
 
@@ -208,6 +212,40 @@ void RemoteMonitorListController::ValidateInputs()
 	}
 }
 
+static void WriteMonitorListToSharedMemory(const std::string& name, const std::string& ppqName, int rejectDepth, const MonitoredObjectList& values, const MonitoredObjectList& images, const MonitoredObjectList& failStatus, const MonitoredObjectList& rejectCond)
+{
+	const SVSharedMemorySettings& rSettings = SVSharedMemorySingleton::Instance().GetSettings();
+	SeidenaderVision::SVMonitorListWriter& rWriter = SVSharedMemorySingleton::Instance().GetMonitorListWriter();
+	rWriter.Create(rSettings);
+	if (rWriter.IsCreated())
+	{
+		typedef std::vector<std::string> NameList;
+		typedef std::insert_iterator<NameList> Insertor;
+		NameList productItems;
+		NameList failStatusItems;
+		NameList rejectCondItems;
+
+		std::transform(values.begin(), values.end(), Insertor(productItems, productItems.begin()), [](const MonitoredObject& rObj)->std::string { return RemoteMonitorListHelper::GetNameFromMonitoredObject(rObj).c_str(); });
+		std::transform(images.begin(), images.end(), Insertor(productItems, productItems.end()), [](const MonitoredObject& rObj)->std::string { return RemoteMonitorListHelper::GetNameFromMonitoredObject(rObj).c_str(); });
+		std::transform(rejectCond.begin(), rejectCond.end(), Insertor(rejectCondItems, rejectCondItems.end()), [](const MonitoredObject& rObj)->std::string { return RemoteMonitorListHelper::GetNameFromMonitoredObject(rObj).c_str(); });
+		std::transform(failStatus.begin(), failStatus.end(), Insertor(failStatusItems, failStatusItems.end()), [](const MonitoredObject& rObj)->std::string { return RemoteMonitorListHelper::GetNameFromMonitoredObject(rObj).c_str(); });
+
+		rWriter.AddList(name, ppqName, rejectDepth);
+		rWriter.FillList(name, SeidenaderVision::productItems, productItems);
+		rWriter.FillList(name, SeidenaderVision::rejectCondition, rejectCondItems);
+		rWriter.FillList(name, SeidenaderVision::failStatus, failStatusItems);
+	}
+	else
+	{
+		// log exception
+		SVException l_Exception;
+		CString l_Message;
+		l_Message.Format(_T("WriteMonitorListToSharedMemory - No Shared memory"));
+		SETEXCEPTION5(l_Exception, SVMSG_SVO_44_SHARED_MEMORY, Err_15020, l_Message);
+		l_Exception.LogException(l_Message);
+	}
+}
+
 void RemoteMonitorListController::BuildPPQMonitorList(PPQMonitorList& ppqMonitorList) const
 {
 	// combine the lists by PPQName
@@ -222,6 +260,10 @@ void RemoteMonitorListController::BuildPPQMonitorList(PPQMonitorList& ppqMonitor
 			const MonitoredObjectList& failStatus = it->second.GetFailStatusList();
 			const MonitoredObjectList& rejectCond = it->second.GetRejectConditionList();
 			const SVString& ppqName = it->second.GetPPQName();
+
+			// write the monitorlist to shared memory...
+			WriteMonitorListToSharedMemory(it->first.c_str(), ppqName.c_str(), it->second.GetRejectDepthQueue(), values, images, failStatus, rejectCond);
+
 			SVMonitorItemList remoteValueList;
 			SVMonitorItemList remoteImageList;
 			SVMonitorItemList remoteRejectCondList;
@@ -293,6 +335,17 @@ HRESULT RemoteMonitorListController::ActivateRemoteMonitorList(const SVString& l
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\RemoteMonitorListController.cpp_v  $
+ * 
+ *    Rev 1.12   14 Aug 2014 17:55:00   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Added WriteMonitorListToSharedMemory function.
+ * Revised BuildPPQMonitorList to call WriteMonitorListToSharedMemory
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.11   14 Jul 2014 13:47:44   ryoho
  * Project:  SVObserver

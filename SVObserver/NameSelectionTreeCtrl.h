@@ -5,8 +5,8 @@
 //* .Module Name     : NameSelectionTreeCtrl
 //* .File Name       : $Workfile:   NameSelectionTreeCtrl.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   17 Apr 2014 16:26:12  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   15 Aug 2014 15:28:46  $
 //******************************************************************************
 
 #pragma once
@@ -39,6 +39,7 @@ public:
 	void InitTreeCtrl();
 	void Populate(const NameSelectionList& rList);
 	bool SelectItemByIndex(int index);
+	void DeselectAll();
 
 protected:
 	void SetBranchChecks(HTREEITEM hItem , bool p_bNewBranchState);
@@ -84,6 +85,27 @@ protected:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\NameSelectionTreeCtrl.h_v  $
+ * 
+ *    Rev 1.2   15 Aug 2014 15:28:46   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Removed DeselectItems
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.1   15 Aug 2014 13:27:14   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Added DeselectAll method.
+ * Added DeselectItems method.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   17 Apr 2014 16:26:12   ryoho
  * Project:  SVObserver

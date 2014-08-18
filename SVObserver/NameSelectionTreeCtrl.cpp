@@ -5,8 +5,8 @@
 //* .Module Name     : NameSelectionTreeCtrl
 //* .File Name       : $Workfile:   NameSelectionTreeCtrl.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.6  $
-//* .Check In Date   : $Date:   18 Jun 2014 11:07:28  $
+//* .Current Version : $Revision:   1.8  $
+//* .Check In Date   : $Date:   15 Aug 2014 15:30:02  $
 //******************************************************************************
 
 #pragma region Includes
@@ -334,6 +334,12 @@ bool NameSelectionTreeCtrl::SelectItemByIndex(int index)
 	return bRetVal;
 }
 
+void NameSelectionTreeCtrl::DeselectAll()
+{
+	HTREEITEM hItem = GetRootItem();
+	SetBranchChecks(hItem, false);
+}
+
 bool NameSelectionTreeCtrl::SetCheckState(HTREEITEM hItem, bool bCheck, bool bSelect)
 {
 	TVITEM tvItem;
@@ -526,6 +532,28 @@ void NameSelectionTreeCtrl::SetBranchChecks(HTREEITEM hItem , bool p_bNewBranchS
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\NameSelectionTreeCtrl.cpp_v  $
+ * 
+ *    Rev 1.8   15 Aug 2014 15:30:02   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Removed DeselectItems.
+ * Revised DeselectAll to call SetBranchChecks
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.7   15 Aug 2014 13:27:14   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Added DeselectAll method.
+ * Added DeselectItems method.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.6   18 Jun 2014 11:07:28   ryoho
  * Project:  SVObserver

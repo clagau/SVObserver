@@ -5,8 +5,8 @@
 //* .Module Name     : SVObserver
 //* .File Name       : $Workfile:   SVObserver.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.38  $
-//* .Check In Date   : $Date:   14 Aug 2014 16:10:56  $
+//* .Current Version : $Revision:   1.39  $
+//* .Check In Date   : $Date:   14 Aug 2014 18:29:10  $
 //******************************************************************************
 
 #pragma region Includes
@@ -114,6 +114,7 @@
 #include "RootObject.h"
 #include "EnvironmentObject.h"
 #include "SVMonitorList.h"
+#include "SVSharedMemorySingleton.h"
 #include "SVSystemLibrary\LoadDll.h"
 #pragma endregion Includes
 
@@ -3009,7 +3010,6 @@ void SVObserverApp::OnEditPublishedResults( UINT nID )
 		if( uiInspection < l_Inspections.size())
 		{
 			SVIPDoc* pDoc =  SVObjectManagerClass::Instance().GetIPDoc( l_Inspections[uiInspection]->GetUniqueObjectID() );
-
 			if( NULL != pDoc )
 			{
 				pDoc->OnPublishedResultsPicker();
@@ -3566,7 +3566,7 @@ int SVObserverApp::ExitInstance()
 	SVSocketRemoteCommandManager::Instance().Shutdown();
 
 	SVSocketLibrary::Destroy();
-
+	SVSharedMemorySingleton::Instance().Destroy();
 	ValidateMRUList();
 
 	// Destroy still open message windows
@@ -8856,7 +8856,17 @@ int SVObserverApp::FindMenuItem(CMenu* Menu, LPCTSTR MenuString)
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSARCH65\PROJECTFILES\ARCHIVES\SVOBSERVER_SRC\SVOBSERVER\SVObserver.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVObserver.cpp_v  $
+ * 
+ *    Rev 1.39   14 Aug 2014 18:29:10   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Revised ExitInstance to cal lSVSharedMemorySingleton::Destroy.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.38   14 Aug 2014 16:10:56   mEichengruen
  * Project:  SVObserver

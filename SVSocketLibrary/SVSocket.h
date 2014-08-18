@@ -5,8 +5,8 @@
 //* .Module Name     : SVSocket
 //* .File Name       : $Workfile:   SVSocket.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.3  $
-//* .Check In Date   : $Date:   19 Jun 2014 16:25:38  $
+//* .Current Version : $Revision:   1.4  $
+//* .Check In Date   : $Date:   15 Aug 2014 14:12:34  $
 //******************************************************************************
 
 #pragma once
@@ -47,7 +47,7 @@ namespace Seidenader
 			char * dupWithHeader(const unsigned char * src, std::vector<char> & vec, size_t len) const;
 		public:
 			SVSocket(Socket_t sok = InvalidSock)
-				: m_socket(sok), m_hasOwner(false), m_isConnected(false), m_buff_sz(48 * 1024)
+				: m_socket(sok), m_hasOwner(false), m_isConnected(false), m_buff_sz(Traits<API>::buffer_size)
 			{
 				m_sockNum = InterlockedIncrement(&g_sn);
 				int namelen = sizeof(sockaddr_in);
@@ -122,25 +122,39 @@ typedef Seidenader::Socket::SVSocket<TcpApi> SVSocket;
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVSocketLibrary\SVSocket.h_v  $
  * 
- *    Rev 1.3   19 Jun 2014 16:25:38   bwalter
+ *    Rev 1.4   15 Aug 2014 14:12:34   jHanebach
  * Project:  SVObserver
  * Change Request (SCR) nbr:  886
  * SCR Title:  Add RunReject Server Support to SVObserver
  * Checked in by:  rYoho;  Rob Yoho
  * Change Description:  
- *   Fixed comment for Write method.
+ *   Syncing with svrc code base
  * 
  * /////////////////////////////////////////////////////////////////////////////////////
  * 
- *    Rev 1.2   19 Jun 2014 15:48:06   bwalter
- * Project:  SVObserver
- * Change Request (SCR) nbr:  886
- * SCR Title:  Add RunReject Server Support to SVObserver
- * Checked in by:  rYoho;  Rob Yoho
- * Change Description:  
- *   Merged changes from SVRemoteControl project.
+ *    Rev 1.3   10 Jul 2014 15:45:00   jHanebach
+ * Project: SVRemoteControl
+ * Change Request (SCR) nbr: 10
+ * SCR Title: Add reject/run page server connection and commands
+ * Checked in by: jHanebach; Jack Hanebach
+ * Change Description: Synchronizing with svn
+ * \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
  * 
- * /////////////////////////////////////////////////////////////////////////////////////
+ *    Rev 1.2   05 Jun 2014 11:40:12   jHanebach
+ * Project: SVRemoteControl
+ * Change Request (SCR) nbr: 10
+ * SCR Title: Add reject/run page server connection and commands
+ * Checked in by: jHanebach; Jack Hanebach
+ * Change Description: Code clean-up, minor bug fixes.
+ * \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+ * 
+ *    Rev 1.1   24 Mar 2014 10:58:16   jHanebach
+ * Project: SVRemoteControl
+ * Change Request (SCR) nbr: 10
+ * SCR Title: Add reject/run page server connection and commands
+ * Checked in by: jHanebach; Jack Hanebach
+ * Change Description: Changes for run/reject server.
+ * \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
  * 
  *    Rev 1.1   06 Aug 2013 11:11:40   jHanebach
  * Project:  SVObserver

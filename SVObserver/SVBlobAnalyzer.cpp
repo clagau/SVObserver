@@ -5,8 +5,8 @@
 //* .Module Name     : SVBlobAnalyzer
 //* .File Name       : $Workfile:   SVBlobAnalyzer.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.6  $
-//* .Check In Date   : $Date:   14 Aug 2014 07:14:18  $
+//* .Current Version : $Revision:   1.4  $
+//* .Check In Date   : $Date:   15 May 2014 10:19:42  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -400,8 +400,6 @@ DWORD SVBlobAnalyzerClass::AllocateResult (SVBlobFeatureEnum aFeatureIndex)
 		                                               SVM_GETFIRST_OBJECT, 
 		                                               NULL, 
 		                                              reinterpret_cast<DWORD_PTR>(&info)));
-		
-
 
 		if (!pValue)
 		{
@@ -1847,26 +1845,6 @@ void SVBlobAnalyzerClass::addDefaultInputObjects( BOOL BCallBaseClass, SVInputIn
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVBlobAnalyzer.cpp_v  $
- * 
- *    Rev 1.6   14 Aug 2014 07:14:18   ryoho
- * Project:  SVObserver
- * Change Request (SCR) nbr:  913
- * SCR Title:  Add Blob Feature Default Value to the Configuration Print (SVO-214)
- * Checked in by:  rYoho;  Rob Yoho
- * Change Description:  
- *   backed out previous change.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.5   12 Aug 2014 08:52:26   ryoho
- * Project:  SVObserver
- * Change Request (SCR) nbr:  913
- * SCR Title:  Add Blob Feature Default Value to the Configuration Print (SVO-214)
- * Checked in by:  rYoho;  Rob Yoho
- * Change Description:  
- *   Changed AllocateResult not to return if feature is SV_CENTER_X_SOURCE or SV_CENTER_Y_SOURCE
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.4   15 May 2014 10:19:42   sjones
  * Project:  SVObserver

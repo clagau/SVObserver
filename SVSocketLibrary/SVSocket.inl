@@ -5,8 +5,8 @@
 //* .Module Name     : SVSocket
 //* .File Name       : $Workfile:   SVSocket.inl  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   19 Jun 2014 15:09:28  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   15 Aug 2014 14:12:34  $
 //******************************************************************************
 
 #define NOMINMAX
@@ -251,8 +251,8 @@ namespace Seidenader
 		{
 			Err error = SVSocketError::Success;
 
-			if ( API::setsockopt( m_socket, SOL_SOCKET, SO_SNDBUF, static_cast< char* >( sz ), int(sizeof(sz) ) ) == SOCKET_ERROR
-				|| API::setsockopt( m_socket, SOL_SOCKET, SO_RCVBUF, static_cast< char* >( sz ), int(sizeof(sz) ) ) == SOCKET_ERROR )
+			if ( API::setsockopt( m_socket, SOL_SOCKET, SO_SNDBUF, reinterpret_cast< char* >( &sz ), int(sizeof(int) ) ) == SOCKET_ERROR
+				|| API::setsockopt( m_socket, SOL_SOCKET, SO_RCVBUF, reinterpret_cast< char* >( &sz ), int(sizeof(int) ) ) == SOCKET_ERROR )
 			{
 				error = SVSocketError::GetLastSocketError();
 			}
@@ -404,13 +404,18 @@ namespace Seidenader
 						left -= head.len;
 						head.len = std::min(chunk_sz, left);
 						++head.seq;
-						Sleep(1);
+						//Sleep(1);
 					}
 					while((l_Error != SOCKET_ERROR) && (left != 0) );
 				}
 				else
 				{
-					l_Error = API::sendto( m_socket, buff, static_cast< int >( len ), 0, reinterpret_cast< sockaddr* >( &m_peer ), sizeof(sockaddr_in) );
+					u_long sz = htonl(static_cast<u_long>(len));
+					l_Error = API::sendto( m_socket, reinterpret_cast<char *>(&sz), static_cast< int >( sizeof(u_long) ), 0, reinterpret_cast< sockaddr* >( &m_peer ), sizeof(sockaddr_in) );
+					if (SOCKET_ERROR != l_Error)
+					{
+						l_Error = API::sendto( m_socket, buff, static_cast< int >( len ), 0, reinterpret_cast< sockaddr* >( &m_peer ), sizeof(sockaddr_in) );
+					}
 				}
 				if ( l_Error == SOCKET_ERROR)
 				{
@@ -490,7 +495,7 @@ namespace Seidenader
 		template<typename API>
 		inline Err SVSocket<API>::ReadAll(bytes & dest, u_long & sz, bool hasHeader)
 		{
-			const u_int rdTmout = 100;
+			const u_int rdTmout = 200;
 			sz = 0;
 			if (hasHeader)
 			{
@@ -563,6 +568,10 @@ namespace Seidenader
 		inline Err SVSocket<TcpApi>::ReadAll(bytes & dest, u_long & sz, bool)
 		{
 			u_long len;
+			const u_int rdTmout = 500;
+			Err result = SetReadTimeout(rdTmout);
+			boost::function<Err ()> tout = boost::bind(&SVSocket<TcpApi>::SetReadTimeout, this, 0);
+			scope_cleanup<boost::function<Err ()> > sc(tout); // make sure we reset the timeout when exiting
 			int amt = TcpApi::recv(m_socket, reinterpret_cast< char* >( &len ), sizeof(u_long), 0);
 			if (amt < 0)
 			{
@@ -573,6 +582,7 @@ namespace Seidenader
 			BYTE * buff = dest.get();
 			do
 			{
+				result = SetReadTimeout(rdTmout*5);
 				amt = TcpApi::recv(m_socket, reinterpret_cast< char* >( buff ), len, 0);
 				if (amt < 0)
 				{
@@ -669,13 +679,13 @@ namespace Seidenader
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVSocketLibrary\SVSocket.inl_v  $
  * 
- *    Rev 1.0   19 Jun 2014 15:09:28   bwalter
+ *    Rev 1.1   15 Aug 2014 14:12:34   jHanebach
  * Project:  SVObserver
  * Change Request (SCR) nbr:  886
  * SCR Title:  Add RunReject Server Support to SVObserver
  * Checked in by:  rYoho;  Rob Yoho
  * Change Description:  
- *   Initial check in.  Merged changes from SVRemoteControl project.
+ *   Syncing with svrc code base
  * 
  * /////////////////////////////////////////////////////////////////////////////////////
 */

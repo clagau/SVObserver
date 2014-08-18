@@ -5,8 +5,8 @@
 //* .Module Name     : MonitorListBasePage
 //* .File Name       : $Workfile:   MonitorListBasePage.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   23 Apr 2014 10:41:58  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   15 Aug 2014 15:26:04  $
 //******************************************************************************
 #pragma region Includes
 #include "stdafx.h"
@@ -133,12 +133,7 @@ void MonitorListBasePage::OnBtnRemove()
 
 void MonitorListBasePage::OnBtnRemoveAll() 
 {
-	int iItems = m_lbSelected.GetCount();
-	for (int i = iItems-1;i >= 0; --i)
-	{
-		int index = static_cast<int>(m_lbSelected.GetItemData(i));
-		m_Tree.SelectItemByIndex(index);
-	}
+	m_Tree.DeselectAll();
 }
 
 bool MonitorListBasePage::CanSelectObjectCallback(bool bCurrentState, int index)
@@ -168,7 +163,7 @@ bool MonitorListBasePage::CanSelectObjectCallback(bool bCurrentState, int index)
 	}
 	else // want to deselect
 	{
-		int iIndex = m_lbSelected.FindString(0, name.c_str());
+		int iIndex = m_lbSelected.FindStringExact(0, name.c_str());
 		if (iIndex != LB_ERR)
 		{
 			m_lbSelected.DeleteString(iIndex);
@@ -182,6 +177,27 @@ bool MonitorListBasePage::CanSelectObjectCallback(bool bCurrentState, int index)
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\MonitorListBasePage.cpp_v  $
+ * 
+ *    Rev 1.3   15 Aug 2014 15:26:04   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Revised OnBtnRemoveAll to not call ResetContent
+ * Revised CanSelectObjectCallback to call FindStringExact
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.2   15 Aug 2014 13:28:42   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Revised OnBtnRemoveAll method.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   23 Apr 2014 10:41:58   ryoho
  * Project:  SVObserver

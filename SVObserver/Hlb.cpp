@@ -5,11 +5,12 @@
 //* .Module Name     : HLB
 //* .File Name       : $Workfile:   Hlb.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   01 Oct 2013 11:54:38  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   15 Aug 2014 15:21:14  $
 //******************************************************************************
 
 #include "stdafx.h"
+#include <algorithm>
 #include "HLB.h"
 
 #ifdef _DEBUG
@@ -18,365 +19,126 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-/////////////////////////////////////////////////////////////////////////////
-// CHorzListBox
+static const int margin_padding = 6;
 
-//***********************************************************************
-// Function:
-//
-//     CHorzListBox::CHorzListBox()
-//
-// Purpose:
-//
-//     Constructs a CHorzListBox object
-//
-// History:
-//
-//   Date   Comment                                           Initials
-// ======== ================================================= ========
-//  1/31/96 Created                                             JMR
-//***********************************************************************
-CHorzListBox::CHorzListBox()
+SVHorizListBox::SVHorizListBox()
 {
-	m_bLocked = FALSE;      // start out in auto mode
-	m_nLongestExtent = 0;   // tracks longest extent, initially 0
-	m_nTabStops = 0;        // no tab stops
-	m_lpTabStops = NULL;    // array of tab stops
 }
 
-//***********************************************************************
-// Function:
-//
-//     CHorzListBox::~CHorzListBox()
-//
-// Purpose:
-//
-//     Destructs a CHorzListBox object
-//
-// History:
-//
-//   Date   Comment                                           Initials
-// ======== ================================================= ========
-//  1/31/96 Created                                             JMR
-//***********************************************************************
-CHorzListBox::~CHorzListBox()
+SVHorizListBox::~SVHorizListBox()
 {
-	if (m_lpTabStops != NULL)
-		delete m_lpTabStops;
 }
 
-//***********************************************************************
-// Function:
-//
-//     CHorzListBox::LockHExtentUpdate()
-//
-// Purpose:
-//
-//     Stops auto updating of horizontal extent
-//
-// History:
-//
-//   Date   Comment                                           Initials
-// ======== ================================================= ========
-//  1/31/96 Created                                             JMR
-//***********************************************************************
-void CHorzListBox::LockHExtentUpdate()
-{
-	m_bLocked = TRUE;
-}
-
-//***********************************************************************
-// Function:
-//
-//     CHorzListBox::UnlockHExtentUpdate()
-//
-// Purpose:
-//
-//     Turns auto updating back on
-//
-// History:
-//
-//   Date   Comment                                           Initials
-// ======== ================================================= ========
-//  1/31/96 Created                                             JMR
-//***********************************************************************
-void CHorzListBox::UnlockHExtentUpdate()
-{
-	m_bLocked = FALSE;
-}
-
-//***********************************************************************
-// Function:
-//
-//     CHorzListBox::UpdateHExtent()
-//
-// Purpose:
-//
-//     Updates horizontal extent when auto updating has been turned off
-//     for some period.
-//
-// History:
-//
-//   Date   Comment                                           Initials
-// ======== ================================================= ========
-//  1/31/96 Created                                             JMR
-//***********************************************************************
-void CHorzListBox::UpdateHExtent()
-{
-	m_arrExtents.RemoveAll();
-	m_nLongestExtent = 0;
-	int nCount = GetCount();
-
-	CDC* pDC = GetDC();
-	HFONT hFont = (HFONT)SendMessage(WM_GETFONT);
-	CFont *pFont = CFont::FromHandle(hFont);
-	ASSERT(pFont);
-	CFont* pPrevFont = pDC->SelectObject(pFont);
-	CString str;
-
-	for(int i=0; i<nCount; i++)
-	{
-		GetText(i, str);
-		InsertNewExtent(i, str, pDC);
-	}
-
-	SetHorizontalExtent(m_nLongestExtent);
-	pDC->SelectObject(pPrevFont);
-	ReleaseDC(pDC);
-}
-
-//***********************************************************************
-// Function:
-//
-//     CHorzListBox::InsertNewExtent() PROTECTED
-//
-// Purpose:
-//
-//     Used to update the extent array when a new item is added
-//
-// History:
-//
-//   Date   Comment                                           Initials
-// ======== ================================================= ========
-//  1/31/96 Created                                             JMR
-//***********************************************************************
-void CHorzListBox::InsertNewExtent(int nItem, LPCTSTR lpszStr, CDC* pDC)
-{
-	if (NULL == m_lpTabStops)
-		InitTabStops();
-
-    CSize newExtent;
-    if (GetStyle() & LBS_USETABSTOPS)
-	    newExtent = pDC->GetTabbedTextExtent(lpszStr, static_cast<int>(strlen(lpszStr)),
-		    m_nTabStops, m_lpTabStops);
-    else
-        newExtent = pDC->GetTextExtent(lpszStr, static_cast<int>(strlen(lpszStr)));
-
-	newExtent.cx += 6;
-	m_arrExtents.InsertAt(nItem, newExtent.cx);
-
-	if (newExtent.cx > m_nLongestExtent)
-	{
-		m_nLongestExtent = newExtent.cx;
-	}
-}
-
-void CHorzListBox::InsertNewExtent(int nItem, LPCTSTR lpszStr)
-{
-	if (m_bLocked)
-		return;
-
-	CDC* pDC = GetDC();
-	HFONT hFont = (HFONT)SendMessage(WM_GETFONT);
-	CFont *pFont = CFont::FromHandle(hFont);
-	ASSERT(pFont);
-	CFont* pPrevFont = pDC->SelectObject(pFont);
-	InsertNewExtent(nItem, lpszStr, pDC);
-	SetHorizontalExtent(m_nLongestExtent);
-	pDC->SelectObject(pPrevFont);
-	ReleaseDC(pDC);
-}
-
-//***********************************************************************
-// Function:
-//
-//     CHorzListBox::InitTabStops() PROTECTED
-//
-// Purpose:
-//
-//     Initializes tab stops
-//
-// History:
-//
-//   Date   Comment                                           Initials
-// ======== ================================================= ========
-//  1/31/96 Created                                             JMR
-//***********************************************************************
-void CHorzListBox::InitTabStops()
-{
-	int nDefault = 2;
-	SetTabStops(1, &nDefault);
-}
-
-BEGIN_MESSAGE_MAP(CHorzListBox, CListBox)
-	//{{AFX_MSG_MAP(CHorzListBox)
+BEGIN_MESSAGE_MAP(SVHorizListBox, CListBox)
+	//{{AFX_MSG_MAP(SVHorizListBox)
 	//}}AFX_MSG_MAP
-	ON_MESSAGE( LB_ADDSTRING, OnAddString )
-	ON_MESSAGE( LB_INSERTSTRING, OnInsertString )
-	ON_MESSAGE( LB_DELETESTRING, OnDeleteString )
-	ON_MESSAGE( LB_SETTABSTOPS, OnSetTabStops )
+	ON_MESSAGE(LB_ADDSTRING, OnAddString)
+	ON_MESSAGE(LB_INSERTSTRING, OnInsertString)
+	ON_MESSAGE(LB_DELETESTRING, OnDeleteString)
+	ON_MESSAGE(LB_SETTABSTOPS, OnSetTabStops)
+	ON_MESSAGE(LB_RESETCONTENT, OnResetContent)
 END_MESSAGE_MAP()
 
-/////////////////////////////////////////////////////////////////////////////
-// CHorzListBox message handlers
-
-//***********************************************************************
-// Function:
-//
-//     CHorzListBox::OnAddString()
-//
-// Purpose:
-//
-//     Intercepts the LB_ADDSTRING message to update the horizontal extent
-//
-// History:
-//
-//   Date   Comment                                           Initials
-// ======== ================================================= ========
-//  1/31/96 Created                                             JMR
-//***********************************************************************
-LRESULT CHorzListBox::OnAddString(WPARAM, LPARAM lParam)
+int SVHorizListBox::CalcHorizExtent(CDC* pDC, LPCTSTR text) const
 {
-	LRESULT lResult = Default();
-	if (LB_ERR == lResult || LB_ERRSPACE == lResult) // check for error first!
-		return lResult;
-
-	InsertNewExtent(static_cast<int>(lResult), (LPCTSTR)lParam);
-	return lResult;
-}
-
-//***********************************************************************
-// Function:
-//
-//     CHorzListBox::OnInsertString()
-//
-// Purpose:
-//
-//     Intercepts the LB_INSERTSTRING message to update the horizontal extent
-//
-// History:
-//
-//   Date   Comment                                           Initials
-// ======== ================================================= ========
-//  1/31/96 Created                                             JMR
-//***********************************************************************
-LRESULT CHorzListBox::OnInsertString(WPARAM, LPARAM lParam)
-{
-	LRESULT lResult = Default();
-	if (LB_ERR == lResult || LB_ERRSPACE == lResult) // check for error first!
-		return lResult;
-
-	InsertNewExtent(static_cast<int>(lResult), (LPCTSTR)lParam);
-	return lResult;
-}
-
-//***********************************************************************
-// Function:
-//
-//     CHorzListBox::OnDeleteString()
-//
-// Purpose:
-//
-//     Intercepts the LB_DELETESTRING message to update the horizontal extent
-//
-// History:
-//
-//   Date   Comment                                           Initials
-// ======== ================================================= ========
-//  1/31/96 Created                                             JMR
-//***********************************************************************
-LRESULT CHorzListBox::OnDeleteString(WPARAM wParam, LPARAM)
-{
-	LRESULT lResult = Default();
-	if (LB_ERR == lResult) // check for error first!
-		return lResult;
-
-	if (m_bLocked) // don't do anything if locked
-		return lResult;
-
-	int nExtent = m_arrExtents[wParam];
-	m_arrExtents.RemoveAt(wParam);
-	if (nExtent >= m_nLongestExtent)
+	CSize size;
+	if (0 == (GetStyle() & LBS_USETABSTOPS))
 	{
-		m_nLongestExtent = 0;
-		for(int i = 0; i<lResult; i++)
-		{
-			if (m_arrExtents[i] > m_nLongestExtent)
-				m_nLongestExtent = m_arrExtents[i];
-		}
+		size = pDC->GetTextExtent(text, static_cast<int>(_tcslen(text)));
 	}
-	SetHorizontalExtent(m_nLongestExtent);
-
-	return lResult;
+	else
+	{
+		// Expand tabs as well
+		size = pDC->GetTabbedTextExtent(text, static_cast<int>(_tcslen(text)), 0, nullptr);
+	}
+	size.cx += margin_padding;
+	return size.cx;
 }
 
-//***********************************************************************
-// Function:
-//
-//     CHorzListBox::OnSetTabStops()
-//
-// Purpose:
-//
-//     Intercepts the LB_SETTABSTOPS message to update tab stop array
-//
-// History:
-//
-//   Date   Comment                                           Initials
-// ======== ================================================= ========
-//  1/31/96 Created                                             JMR
-//***********************************************************************
-LRESULT CHorzListBox::OnSetTabStops(WPARAM wParam, LPARAM lParam)
+void SVHorizListBox::ResetHorizExtent()
 {
-	LRESULT lResult = Default();
-	if (!lResult)
-		return lResult;
-
-	m_nTabStops = static_cast<int>(wParam);
-
-	if (NULL != m_lpTabStops)
+	if (!GetCount())
 	{
-		delete [] m_lpTabStops;
-		m_lpTabStops = NULL;
+		SetHorizontalExtent(0);
 	}
+	else
+	{
+		CWaitCursor waitCursor;
+		CDC *pDC = GetDC();
+		ASSERT(pDC);
+
+		CFont* pOldFont = pDC->SelectObject(GetFont());
 	
-	if (m_nTabStops > 0)
-	{
-		m_lpTabStops = new int[m_nTabStops];
-		memcpy(m_lpTabStops, (void*)lParam, m_nTabStops * sizeof(int));
-
-		CDC* pDC = GetDC();
-		HFONT hFont = (HFONT)SendMessage(WM_GETFONT);
-		CFont *pFont = CFont::FromHandle(hFont);
-		ASSERT(pFont);
-		CFont* pPrevFont = pDC->SelectObject(pFont);
-		CSize size;
-
-		GetTextExtentPoint32(pDC->GetSafeHdc(),
-			_T("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"),
-			52, &size);
-
-		pDC->SelectObject(pPrevFont);
+		int extent = 0;
+		for (int i = 0; i < GetCount(); i++)
+		{
+			CString text;
+			GetText(i, text);
+			extent = std::max(extent, CalcHorizExtent(pDC, text));
+		}
+		pDC->SelectObject(pOldFont);
 		ReleaseDC(pDC);
-
-		int aveCharWidth = (size.cx/26 +1)/2;
-
-		for(int i=0; i<m_nTabStops; i++)
-			m_lpTabStops[i] = (m_lpTabStops[i] * aveCharWidth + 2)/4;
+		SetHorizontalExtent(extent);
 	}
+}
 
-	if (!m_bLocked)
-		UpdateHExtent(); // tabs changed, recalc everything!
+void SVHorizListBox::CalcNewHorizExtent(LPCTSTR text)
+{
+	CDC *pDC = GetDC();
+	CFont* pOldFont = pDC->SelectObject(GetFont());
+	int extent = CalcHorizExtent(pDC, text);
+	pDC->SelectObject(pOldFont);
+	ReleaseDC(pDC);
+	if (extent > GetHorizontalExtent())
+	{
+		SetHorizontalExtent(extent);
+	}
+}
 
+LRESULT SVHorizListBox::OnAddString(WPARAM wParam, LPARAM lParam)
+{
+	LRESULT lResult = Default();
+	if (LB_ERR != lResult && LB_ERRSPACE != lResult)
+	{
+		CalcNewHorizExtent(reinterpret_cast<LPCTSTR>(lParam));
+	}
+	return lResult;
+}
+
+LRESULT SVHorizListBox::OnInsertString(WPARAM wParam, LPARAM lParam)
+{
+	LRESULT lResult = Default();
+	if (LB_ERR != lResult && LB_ERRSPACE != lResult)
+	{
+		CalcNewHorizExtent(reinterpret_cast<LPCTSTR>(lParam));
+	}
+	return lResult;
+}
+
+LRESULT SVHorizListBox::OnDeleteString(WPARAM wParam, LPARAM lParam)
+{
+	LRESULT lResult = Default();
+	if (LB_ERR != lResult && LB_ERRSPACE != lResult)
+	{
+		ResetHorizExtent();
+	}
+	return lResult;
+}
+
+LRESULT SVHorizListBox::OnSetTabStops(WPARAM wParam, LPARAM lParam)
+{
+	LRESULT lResult = Default();
+	if (LB_ERR != lResult && LB_ERRSPACE != lResult)
+	{
+		ResetHorizExtent();
+	}
+	return lResult;
+}
+
+LRESULT SVHorizListBox::OnResetContent(WPARAM wParam, LPARAM lParam)
+{
+	LRESULT lResult = Default();
+	SetHorizontalExtent(0);
 	return lResult;
 }
 
@@ -385,6 +147,16 @@ LRESULT CHorzListBox::OnSetTabStops(WPARAM wParam, LPARAM lParam)
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\Hlb.cpp_v  $
+ * 
+ *    Rev 1.2   15 Aug 2014 15:21:14   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Revised to calculate the exent for the list box horizontal scroll bar.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   01 Oct 2013 11:54:38   tbair
  * Project:  SVObserver
