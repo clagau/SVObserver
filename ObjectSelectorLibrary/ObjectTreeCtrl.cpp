@@ -5,8 +5,8 @@
 //* .Module Name     : ObjectTreeCtrl
 //* .File Name       : $Workfile:   ObjectTreeCtrl.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   12 Aug 2014 12:30:46  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   18 Aug 2014 07:46:20  $
 //******************************************************************************
 
 #pragma region Includes
@@ -125,7 +125,7 @@ void ObjectTreeCtrl::OnDestroy()
 	DeleteAllItems();
 }
 
-void ObjectTreeCtrl::getRootItems( TreeItemSet& rRootItems )
+void ObjectTreeCtrl::getRootItems( TreeItemSet& rRootItems ) const
 {
 	HTREEITEM Item = GetRootItem();
 
@@ -350,6 +350,16 @@ void ObjectTreeCtrl::clearLastCheckedItem( const HTREEITEM& rItem )
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\ObjectSelectorLibrary\ObjectTreeCtrl.cpp_v  $
+ * 
+ *    Rev 1.2   18 Aug 2014 07:46:20   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  909
+ * SCR Title:  Object Selector replacing Result Picker and Output Selector SVO-72, 40, 130
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Coding guidline changes using const object for get and is methods
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   12 Aug 2014 12:30:46   gramseier
  * Project:  SVObserver

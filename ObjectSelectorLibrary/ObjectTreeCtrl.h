@@ -5,8 +5,8 @@
 //* .Module Name     : ObjectTreeCtrl
 //* .File Name       : $Workfile:   ObjectTreeCtrl.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   12 Aug 2014 12:32:36  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   18 Aug 2014 07:46:20  $
 //* ----------------------------------------------------------------------------
 //* This class is used to display the object tree control
 //******************************************************************************
@@ -87,13 +87,13 @@ namespace Seidenader
 			/**********
 			The method determines if item is checkable
 			***********/
-			virtual bool isCheckable() = 0;
+			virtual bool isCheckable() const = 0;
 
 			/**********
 			The method gets the list of root items
 			\param rRootItems <in> the reference to the list of root items
 			***********/
-			void getRootItems( TreeItemSet& rRootItems );
+			void getRootItems( TreeItemSet& rRootItems ) const;
 
 			/**********
 			The method expands or collapses all items starting with the parent item
@@ -155,19 +155,19 @@ namespace Seidenader
 			The method gets the parent property page
 			\return the property page reference
 			***********/
-			inline ObjectSelectorPpg& getParentPropPage();
+			inline ObjectSelectorPpg& getParentPropPage() const;
 
 			/**********
 			The method gets the point where the context menu was clicked
 			\return the point of the context menu
 			***********/
-			inline const CPoint& getContextPoint();
+			inline const CPoint& getContextPoint() const;
 
 			/**********
 			The method returns true if set to single select mode
 			\return true if single select
 			***********/
-			inline bool isSingleSelect();
+			inline bool isSingleSelect() const;
 
 			/**********
 			The method sets the current selection
@@ -179,13 +179,13 @@ namespace Seidenader
 			The method gets a reference to the update items
 			\return a reference to the list of updated items
 			***********/
-			inline SVStringSet& getUpdateItems();
+			inline SVStringSet& getUpdateItems() const;
 
 			/**********
 			The method gets the left button check flag
 			\return the check flag value
 			***********/
-			inline UINT& getLeftButtonCheckFlag();
+			inline const UINT& getLeftButtonCheckFlag() const;
 
 			/**********
 			The method sets the left button check flag
@@ -216,6 +216,16 @@ namespace Seidenader
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\ObjectSelectorLibrary\ObjectTreeCtrl.h_v  $
+ * 
+ *    Rev 1.2   18 Aug 2014 07:46:20   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  909
+ * SCR Title:  Object Selector replacing Result Picker and Output Selector SVO-72, 40, 130
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Coding guidline changes using const object for get and is methods
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   12 Aug 2014 12:32:36   gramseier
  * Project:  SVObserver

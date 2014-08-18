@@ -5,8 +5,8 @@
 //* .Module Name     : NodeTreeCtrl
 //* .File Name       : $Workfile:   NodeTreeCtrl.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   17 Jul 2014 11:12:20  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   18 Aug 2014 07:46:18  $
 //******************************************************************************
 
 #pragma region Includes
@@ -305,7 +305,7 @@ void NodeTreeCtrl::showContextMenu( bool ItemHit )
 	}
 }
 
-bool NodeTreeCtrl::isCheckable()
+bool NodeTreeCtrl::isCheckable() const
 {
 	bool Result = !isSingleSelect();
 	return Result;
@@ -347,6 +347,16 @@ bool NodeTreeCtrl::ExpandToCheckedItems()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\ObjectSelectorLibrary\NodeTreeCtrl.cpp_v  $
+ * 
+ *    Rev 1.1   18 Aug 2014 07:46:18   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  909
+ * SCR Title:  Object Selector replacing Result Picker and Output Selector SVO-72, 40, 130
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Coding guidline changes using const object for get and is methods
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   17 Jul 2014 11:12:20   gramseier
  * Project:  SVObserver

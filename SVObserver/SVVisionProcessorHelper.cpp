@@ -5,8 +5,8 @@
 //* .Module Name     : SVVisionProcessorHelper
 //* .File Name       : $Workfile:   SVVisionProcessorHelper.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.16  $
-//* .Check In Date   : $Date:   17 Jul 2014 20:51:54  $
+//* .Current Version : $Revision:   1.17  $
+//* .Check In Date   : $Date:   18 Aug 2014 07:37:54  $
 //******************************************************************************
 
 #pragma region Includes
@@ -507,48 +507,43 @@ HRESULT SVVisionProcessorHelper::SetItems( const SVNameStorageMap& p_rItems, SVN
 
 HRESULT SVVisionProcessorHelper::GetStandardItems( const SVNameSet& p_rNames, SVNameStorageResultMap& p_rItems ) const
 {
-	HRESULT l_Status = S_OK;
+	HRESULT Status = S_OK;
 
 	p_rItems.clear();
 
-	for( SVNameSet::const_iterator l_Iter = p_rNames.begin(); SUCCEEDED( l_Status ) && l_Iter != p_rNames.end(); ++l_Iter )
+	for( SVNameSet::const_iterator l_Iter = p_rNames.begin(); SUCCEEDED( Status ) && l_Iter != p_rNames.end(); ++l_Iter )
 	{
+		HRESULT LoopStatus = SVMSG_ONE_OR_MORE_REQUESTED_OBJECTS_DO_NOT_EXIST;
 		SVObjectReference ref;
+		SVStorage ValueStorage;
 
 		SVObjectManagerClass::Instance().GetObjectByDottedName( *l_Iter, ref );
 
 		if( ref.Object() != NULL )
 		{
 			BasicValueObject* pValueObject = dynamic_cast< BasicValueObject* >( ref.Object() );
-			SVStorage ValueStorage;
 
 			if( NULL != pValueObject )
 			{
-				l_Status = pValueObject->getValue( ValueStorage.m_Variant );
+				_variant_t Value;
 
-				if( l_Status == S_OK )
+				if( S_OK == pValueObject->getValue( Value ) )
 				{
+					ValueStorage.m_Variant = Value;
 					ValueStorage.m_StorageType = SVVisionProcessor::SVStorageValue;
+					LoopStatus = S_OK;
 				}
-				else
-				{
-					l_Status = SVMSG_ONE_OR_MORE_REQUESTED_OBJECTS_DO_NOT_EXIST;
-				}
-				p_rItems[ l_Iter->c_str() ] = SVStorageResult(ValueStorage, l_Status, 0);
 			}
 		}
-		else
+		p_rItems[ l_Iter->c_str() ] = SVStorageResult(ValueStorage, LoopStatus, 0);
+		
+		if( S_OK == Status  && S_OK != LoopStatus )
 		{
-			p_rItems[ l_Iter->c_str() ] = SVStorageResult( SVStorage(), SVMSG_ONE_OR_MORE_REQUESTED_OBJECTS_DO_NOT_EXIST, 0 );
-
-			if( l_Status == S_OK )
-			{
-				l_Status = SVMSG_NOT_ALL_LIST_ITEMS_PROCESSED;
-			}
+			Status = SVMSG_NOT_ALL_LIST_ITEMS_PROCESSED;
 		}
 	}
 
-	return l_Status;
+	return Status;
 }
 
 HRESULT SVVisionProcessorHelper::GetInspectionItems( const SVNameSet& p_rNames, SVNameStorageResultMap& p_rItems ) const
@@ -1024,6 +1019,17 @@ void SVVisionProcessorHelper::ProcessLastModified( bool& p_WaitForEvents )
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVVisionProcessorHelper.cpp_v  $
+ * 
+ *    Rev 1.17   18 Aug 2014 07:37:54   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  900
+ * SCR Title:  Separate View Image Update, View Result Update flags; remote access E55,E92
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Fixed: Missed return value for a certain path in the method GetStandardItems
+ * Methods changed: GetStandardItems
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.16   17 Jul 2014 20:51:54   gramseier
  * Project:  SVObserver

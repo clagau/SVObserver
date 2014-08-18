@@ -9,8 +9,8 @@
 //* .File Name       : $Workfile:   ResizablePropertySheet.cpp  $
 //* .Description	 : The class resizes the registered controls in a dialog 
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   12 Aug 2014 12:35:04  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   18 Aug 2014 07:49:04  $
 //******************************************************************************
 
 #pragma region Includes
@@ -246,7 +246,7 @@ int CALLBACK CResizablePropertySheet::ResizePropSheetCallback(HWND hWnd, UINT me
 	switch (message)
 	{
 	case PSCB_PRECREATE:
-		((LPDLGTEMPLATE) lParam)->style |= (DS_3DLOOK | DS_SETFONT | WS_THICKFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION);
+		( reinterpret_cast<LPDLGTEMPLATE> (lParam) )->style |= (DS_3DLOOK | DS_SETFONT | WS_THICKFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION);
 		break;
 	}
 
@@ -259,6 +259,17 @@ int CALLBACK CResizablePropertySheet::ResizePropSheetCallback(HWND hWnd, UINT me
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\ObjectSelectorLibrary\ResizablePropertySheet.cpp_v  $
+ * 
+ *    Rev 1.2   18 Aug 2014 07:49:04   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  909
+ * SCR Title:  Object Selector replacing Result Picker and Output Selector SVO-72, 40, 130
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Coding guidline changes for a reinterpret_cast
+ * Methods changed: ResizePropSheetCallback
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   12 Aug 2014 12:35:04   gramseier
  * Project:  SVObserver

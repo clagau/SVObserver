@@ -5,8 +5,8 @@
 //* .Module Name     : LeafTreeCtrl
 //* .File Name       : $Workfile:   LeafTreeCtrl.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   17 Jul 2014 11:12:20  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   18 Aug 2014 07:46:18  $
 //* ----------------------------------------------------------------------------
 //* This class is used to display the node tree control
 //******************************************************************************
@@ -77,7 +77,7 @@ namespace Seidenader
 			/**********
 			The method determines if item is checkable
 			***********/
-			virtual bool isCheckable() override;
+			virtual bool isCheckable() const override;
 		#pragma endregion Protected Methods
 
 		private:
@@ -93,6 +93,16 @@ namespace Seidenader
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\ObjectSelectorLibrary\LeafTreeCtrl.h_v  $
+ * 
+ *    Rev 1.1   18 Aug 2014 07:46:18   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  909
+ * SCR Title:  Object Selector replacing Result Picker and Output Selector SVO-72, 40, 130
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Coding guidline changes using const object for get and is methods
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   17 Jul 2014 11:12:20   gramseier
  * Project:  SVObserver

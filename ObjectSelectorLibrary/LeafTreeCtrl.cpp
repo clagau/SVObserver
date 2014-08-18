@@ -5,8 +5,8 @@
 //* .Module Name     : LeafTreeCtrl
 //* .File Name       : $Workfile:   LeafTreeCtrl.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   12 Aug 2014 12:24:12  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   18 Aug 2014 07:46:16  $
 //******************************************************************************
 
 #pragma region Includes
@@ -175,7 +175,7 @@ void LeafTreeCtrl::showContextMenu( bool ItemHit )
 	}
 }
 
-bool LeafTreeCtrl::isCheckable()
+bool LeafTreeCtrl::isCheckable() const
 {
 	//Can always check item
 	bool Result(true);
@@ -209,6 +209,16 @@ void LeafTreeCtrl::OnUncheckAll()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\ObjectSelectorLibrary\LeafTreeCtrl.cpp_v  $
+ * 
+ *    Rev 1.2   18 Aug 2014 07:46:16   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  909
+ * SCR Title:  Object Selector replacing Result Picker and Output Selector SVO-72, 40, 130
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Coding guidline changes using const object for get and is methods
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   12 Aug 2014 12:24:12   gramseier
  * Project:  SVObserver
