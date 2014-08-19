@@ -1,4 +1,4 @@
-There are two ways to view and build projects related to SVObserver.
+There are two ways to view and build projects related to SVObserver.  RunRejectServer.sln contains the RunRejectServer runs alongside SVObserver when monitor lists are used.
 
 1) The Single Solution Approach
   The traditional way to build SVObserver.exe is to use SVObserver.sln.  This solution contains the projects required to SVObserver.exe with one click.

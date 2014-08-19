@@ -5,8 +5,8 @@
 //* .Module Name     : MonitorListAddRemoveDlg
 //* .File Name       : $Workfile:   MonitorListAddRemoveDlg.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.3  $
-//* .Check In Date   : $Date:   15 Aug 2014 10:59:52  $
+//* .Current Version : $Revision:   1.4  $
+//* .Check In Date   : $Date:   18 Aug 2014 16:09:08  $
 //******************************************************************************
 
 #pragma region Includes
@@ -46,27 +46,6 @@ void MonitorListAddRemoveDlg::ReplaceList(const CString& oldName, const CString&
 		m_MonitorList.erase(it);
 		m_MonitorList.insert(std::make_pair(newName, namedList));
 	}
-}
-
-bool MonitorListAddRemoveDlg::IsValidListName(const CString& name)
-{
-	bool bRetVal = true;
-	// don't allow parentheses
-	int sPos = name.ReverseFind(_T('('));
-	if (sPos != -1)
-	{
-		bRetVal = false;
-	}
-	if (bRetVal)
-	{
-		// check for uniqueness
-		RemoteMonitorList:: iterator it = m_MonitorList.find(name); // check if it's unique
-		if (it != m_MonitorList.end())
-		{
-			bRetVal = false;
-		}
-	}
-	return bRetVal;
 }
 
 CString MonitorListAddRemoveDlg::BuildListDisplayName(const CString& PPQName, const CString& name) const
@@ -118,11 +97,20 @@ BEGIN_MESSAGE_MAP(MonitorListAddRemoveDlg, CDialog)
 	ON_BN_CLICKED(IDC_ADD_BTN, &MonitorListAddRemoveDlg::OnBnClickedAddBtn)
 	ON_BN_CLICKED(IDC_REMOVE_BTN, &MonitorListAddRemoveDlg::OnBnClickedRemoveBtn)
 	ON_BN_CLICKED(IDOK, &MonitorListAddRemoveDlg::OnBnClickedOk)
-	ON_MESSAGE(WM_APP_LB_ITEM_EDITED, OnUsedListEditFinished)
 	ON_BN_CLICKED(IDC_BTN_PROPERTIES, &MonitorListAddRemoveDlg::OnBnClickedBtnProperties)
+	ON_LBN_DBLCLK(IDC_USED_LIST, OnDblClickUsedList)
 END_MESSAGE_MAP()
 
 // MonitorListAddRemoveDlg message handlers
+
+void MonitorListAddRemoveDlg::OnDblClickUsedList()
+{
+	int lAddSel = m_AvailableList.GetCurSel();
+	if (lAddSel > -1)
+	{
+		OnBnClickedBtnProperties(); //Show the properties dialog
+	}
+}
 
 void MonitorListAddRemoveDlg::OnBnClickedAddBtn()
 {
@@ -275,46 +263,6 @@ void MonitorListAddRemoveDlg::UpdateUsedList(const CString& PPQName, const NameD
 	}
 }
 
-LRESULT MonitorListAddRemoveDlg::OnUsedListEditFinished(WPARAM wPar, LPARAM lPar)
-{
-	bool bRevert = true;
-	int index = static_cast<int>(wPar);
-	CString oldName = reinterpret_cast<LPCTSTR>(lPar);
-	int rejectDepth = static_cast<int>(m_UsedList.GetItemData(index));
-
-	const CString& PPQName = GetPPQName(oldName);
-	const SVString& listName = GetListNameFromDisplayName(oldName);
-	if (!PPQName.IsEmpty() && !listName.empty())
-	{
-		CString newName;
-		m_UsedList.GetText(index, newName);
-		newName.Trim();
-
-		// if not the same name and is a Valid Name (does not contain parentheses and is unique)
-		if (!newName.IsEmpty() && newName.Compare(listName.c_str()) != 0 && IsValidListName(newName))
-		{
-			// Replace List (remove old, add new)
-			ReplaceList(listName.c_str(), newName);
-			
-			const CString& displayName = BuildListDisplayName(PPQName, newName);
-			m_UsedList.DeleteString(index);
-			int insertIndex = m_UsedList.InsertString(index, displayName);
-			m_UsedList.SetItemData(insertIndex, rejectDepth);
-			m_UsedList.SetCurSel(insertIndex);
-			bRevert = false;
-		}
-	}
-	if (bRevert)
-	{
-		// revert back
-		m_UsedList.DeleteString(index);
-		int insertIndex = m_UsedList.InsertString(index, oldName);
-		m_UsedList.SetItemData(insertIndex, rejectDepth);
-		m_UsedList.SetCurSel(insertIndex);
-	}
-	return 0;
-}
-
 void MonitorListAddRemoveDlg::OnBnClickedBtnProperties()
 {
 	int iPos = m_UsedList.GetCurSel();
@@ -326,7 +274,7 @@ void MonitorListAddRemoveDlg::OnBnClickedBtnProperties()
 		CString sName = GetListNameFromDisplayName(sTmpName);
 		CString sPPQ = GetPPQName(sTmpName);
 	
-		MonitorListPropertyDlg propDlg(m_MonitorList,sName);
+		MonitorListPropertyDlg propDlg(m_MonitorList, sName);
 		if (IDOK == propDlg.DoModal() )
 		{
 			CString sNewName = propDlg.GetMonitorListName();
@@ -347,6 +295,19 @@ void MonitorListAddRemoveDlg::OnBnClickedBtnProperties()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\MonitorListAddRemoveDlg.cpp_v  $
+ * 
+ *    Rev 1.4   18 Aug 2014 16:09:08   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Removed OnUsedListEditFinished method.
+ * Removed IsValidName method.
+ * Changed m_UsedList from SVEditableListBox to CListBox.
+ * Renamed OnLbnDblclkUsedList to OnDblClickUsedList.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   15 Aug 2014 10:59:52   sjones
  * Project:  SVObserver

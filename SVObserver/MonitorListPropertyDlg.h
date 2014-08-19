@@ -5,8 +5,8 @@
 //* .Module Name     : MonitorListPropertyDlg
 //* .File Name       : $Workfile:   MonitorListPropertyDlg.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   17 Apr 2014 16:23:34  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   18 Aug 2014 16:10:58  $
 //******************************************************************************
 
 #pragma once
@@ -48,7 +48,6 @@ public:
 #pragma region Protected
 protected:
 
-
 // ClassWizard generate virtual function overrides
 	//{{AFX_VIRTUAL(MonitorListPropertyDlg)
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
@@ -65,12 +64,13 @@ protected:
 
 #pragma region Private
 	RemoteMonitorList& m_MonitorList;
-	CString m_MonitorListName;
-	CString m_PreviousName;
-	CString m_DisplayName;
+	CString m_MonitorListName;	// original Monitor List name
+	CString m_DisplayName;		// current valid Monitor List name (starts out as original Monitor List name)
 	int m_MonitorListRejectQueueDepth;
 	CString m_sPPQ;
 	void SetupMonitorListProperties();
+	bool IsValidListName(const CString& name) const;
+	void ValidateLabelText(CString& newText) const;
 
 #pragma endregion Private
 };
@@ -80,6 +80,18 @@ protected:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\MonitorListPropertyDlg.h_v  $
+ * 
+ *    Rev 1.1   18 Aug 2014 16:10:58   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Added IsValidName method.
+ * Added ValidateLabelText method.
+ * Removed m_PreviousName member variable.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   17 Apr 2014 16:23:34   ryoho
  * Project:  SVObserver

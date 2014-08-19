@@ -5,8 +5,8 @@
 //* .Module Name     : SVPPQObject
 //* .File Name       : $Workfile:   SVPPQObject.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.25  $
-//* .Check In Date   : $Date:   14 Aug 2014 18:25:40  $
+//* .Current Version : $Revision:   1.26  $
+//* .Check In Date   : $Date:   18 Aug 2014 18:29:56  $
 //******************************************************************************
 
 #pragma region Includes
@@ -1300,7 +1300,7 @@ HRESULT SVPPQObject::CanGoOnline()
 	if ( l_hrOk == S_OK )
 	{
 		size_t iSize = m_arInspections.GetSize();
-		for( size_t i = 0; l_hrOk == S_OK && i < iSize; i++ )
+		for( size_t i = 0; S_OK == l_hrOk && i < iSize; i++ )
 		{
 			sharedInspectionWriterCreationInfo.push_back(SeidenaderVision::InspectionID(m_arInspections[i]->GetName(), m_arInspections[i]->GetUniqueObjectID()));
 			if ( ! m_arInspections[i]->CanGoOnline() )
@@ -1348,7 +1348,7 @@ HRESULT SVPPQObject::CanGoOnline()
 	if (S_OK != l_hrOk && HasActiveMonitorList())
 	{
 		// clear the list
-		l_hrOk = SetMonitorList(ActiveMonitorList(false, RejectDepthAndMonitorList()));
+		SetMonitorList(ActiveMonitorList(false, RejectDepthAndMonitorList()));
 	}
 
 	return l_hrOk;
@@ -5104,6 +5104,16 @@ void SVPPQObject::SVSharedMemoryFilters::clear()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVPPQObject.cpp_v  $
+ * 
+ *    Rev 1.26   18 Aug 2014 18:29:56   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Revised CanGoOnline to correct an issue where the HRESULT was not preserved and overridden.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.25   14 Aug 2014 18:25:40   sjones
  * Project:  SVObserver

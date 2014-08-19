@@ -5,6 +5,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SVObserver", "SVObserver\SV
 	ProjectSection(ProjectDependencies) = postProject
 		{E0344B2A-C109-4008-ADBD-DDC03F806647} = {E0344B2A-C109-4008-ADBD-DDC03F806647}
 		{DC61928F-C2CF-4461-980B-918E20F491DF} = {DC61928F-C2CF-4461-980B-918E20F491DF}
+		{B479E2E3-2B4F-4E2C-A6AD-A0A03579FE59} = {B479E2E3-2B4F-4E2C-A6AD-A0A03579FE59}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SVMaskEditor", "SVMaskEditor\SVMaskEditor.vcxproj", "{436A0F9B-8847-46EA-A565-CDF5306DDDE7}"
@@ -18,6 +19,8 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SVOLicenseManager", "SVOLicenseManager\SVOLicenseManager.vcxproj", "{1AE3A433-715A-4CE8-B97F-3A1C623F4ABC}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ObjectSelectorLibrary", "ObjectSelectorLibrary\ObjectSelectorLibrary.vcxproj", "{E0344B2A-C109-4008-ADBD-DDC03F806647}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SVSharedMemoryLibrary", "SVSharedMemoryLibrary\SVSharedMemoryLibrary.vcxproj", "{B479E2E3-2B4F-4E2C-A6AD-A0A03579FE59}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -139,6 +142,22 @@ Global
 		{E0344B2A-C109-4008-ADBD-DDC03F806647}.Unicode Release|Win32.Build.0 = Release|Win32
 		{E0344B2A-C109-4008-ADBD-DDC03F806647}.Unicode Release|x64.ActiveCfg = Release|x64
 		{E0344B2A-C109-4008-ADBD-DDC03F806647}.Unicode Release|x64.Build.0 = Release|x64
+		{B479E2E3-2B4F-4E2C-A6AD-A0A03579FE59}.Debug|Win32.ActiveCfg = Debug|Win32
+		{B479E2E3-2B4F-4E2C-A6AD-A0A03579FE59}.Debug|Win32.Build.0 = Debug|Win32
+		{B479E2E3-2B4F-4E2C-A6AD-A0A03579FE59}.Debug|x64.ActiveCfg = Debug|x64
+		{B479E2E3-2B4F-4E2C-A6AD-A0A03579FE59}.Debug|x64.Build.0 = Debug|x64
+		{B479E2E3-2B4F-4E2C-A6AD-A0A03579FE59}.Release|Win32.ActiveCfg = Release|Win32
+		{B479E2E3-2B4F-4E2C-A6AD-A0A03579FE59}.Release|Win32.Build.0 = Release|Win32
+		{B479E2E3-2B4F-4E2C-A6AD-A0A03579FE59}.Release|x64.ActiveCfg = Release|x64
+		{B479E2E3-2B4F-4E2C-A6AD-A0A03579FE59}.Release|x64.Build.0 = Release|x64
+		{B479E2E3-2B4F-4E2C-A6AD-A0A03579FE59}.Unicode Debug|Win32.ActiveCfg = Debug|Win32
+		{B479E2E3-2B4F-4E2C-A6AD-A0A03579FE59}.Unicode Debug|Win32.Build.0 = Debug|Win32
+		{B479E2E3-2B4F-4E2C-A6AD-A0A03579FE59}.Unicode Debug|x64.ActiveCfg = Debug|x64
+		{B479E2E3-2B4F-4E2C-A6AD-A0A03579FE59}.Unicode Debug|x64.Build.0 = Debug|x64
+		{B479E2E3-2B4F-4E2C-A6AD-A0A03579FE59}.Unicode Release|Win32.ActiveCfg = Release|Win32
+		{B479E2E3-2B4F-4E2C-A6AD-A0A03579FE59}.Unicode Release|Win32.Build.0 = Release|Win32
+		{B479E2E3-2B4F-4E2C-A6AD-A0A03579FE59}.Unicode Release|x64.ActiveCfg = Release|x64
+		{B479E2E3-2B4F-4E2C-A6AD-A0A03579FE59}.Unicode Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

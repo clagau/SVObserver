@@ -23,6 +23,11 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SVMessage", "SVMessage\SVMessage.vcxproj", "{A511C66F-36A3-4590-9CB4-A0CB6CA1D702}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "RunRejectServer", "RunRejectServer\runrejctsvr.vcxproj", "{9B0560C0-FEE5-4806-9594-CFED40E28A18}"
+	ProjectSection(ProjectDependencies) = postProject
+		{3275BAC6-AC2C-4D44-BCE3-6A7131D0F59D} = {3275BAC6-AC2C-4D44-BCE3-6A7131D0F59D}
+		{C16749CD-4A36-46CF-BD75-9BCABB510A70} = {C16749CD-4A36-46CF-BD75-9BCABB510A70}
+		{B479E2E3-2B4F-4E2C-A6AD-A0A03579FE59} = {B479E2E3-2B4F-4E2C-A6AD-A0A03579FE59}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
