@@ -5,8 +5,8 @@
 //* .Module Name     : SVInspectionProcess
 //* .File Name       : $Workfile:   SVInspectionProcess.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.17  $
-//* .Check In Date   : $Date:   14 Aug 2014 18:14:00  $
+//* .Current Version : $Revision:   1.18  $
+//* .Check In Date   : $Date:   20 Aug 2014 12:55:38  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -363,7 +363,7 @@ HRESULT SVInspectionProcess::ProcessNotifyWithLastInspected(bool& p_rProcessed, 
 		::InterlockedExchange(&m_NotifyWithLastInspected, 0);
 
 		SVProductInfoStruct l_Product = LastProductGet(SV_LAST_INSPECTED);
-		if (GetPPQ()->HasActiveMonitorList())
+		if (GetPPQ()->HasActiveMonitorList() && SVSVIMStateClass::CheckState(SV_STATE_RUNNING))
 		{
 			try
 			{
@@ -4839,6 +4839,16 @@ void SVInspectionProcess::Persist(SVObjectWriter& rWriter)
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVInspectionProcess.cpp_v  $
+ * 
+ *    Rev 1.18   20 Aug 2014 12:55:38   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Revised ProcessNotifyWithLastInspected to check if the state is set to Running before trying to access the shared memory inspection writer.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.17   14 Aug 2014 18:14:00   sjones
  * Project:  SVObserver

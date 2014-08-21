@@ -5,8 +5,8 @@
 //* .Module Name     : SVAccessClass.cpp
 //* .File Name       : $Workfile:   SVAccessClass.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   02 Oct 2013 10:00:48  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   20 Aug 2014 11:30:26  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -1005,17 +1005,22 @@ HRESULT SVAccessClass::CreateProcess( const char* const strAppName, const char* 
 // CreateProcess - wide char version.
 HRESULT SVAccessClass::CreateProcess( const wchar_t* const p_wstrAppName, const wchar_t* const p_wstrPath, const wchar_t* const p_wstrCommand )
 {
-	USES_CONVERSION;
-
 	HRESULT l_hr = S_OK;
 
 	// Set Startup structure for process
 	STARTUPINFOW Startup;
 	PROCESS_INFORMATION processInfo;
 	wchar_t wstrArgs[256];
-	wchar_t wstrAppPathName[256];
-	wchar_t wstrDirPath[256];
+	wchar_t wstrAppPathName[_MAX_PATH];
+	wchar_t wstrDirPath[_MAX_DIR];
 
+	memset(wstrArgs, 0, sizeof(wstrArgs));
+	memset(wstrAppPathName, 0, sizeof(wstrAppPathName));
+	memset(wstrDirPath, 0, sizeof(wstrDirPath));
+	memset(&Startup, 0, sizeof(Startup));
+	memset(&processInfo, 0, sizeof(processInfo));
+
+	Startup.cb = sizeof(Startup);
 	Startup.dwFlags = STARTF_USESHOWWINDOW;
 	Startup.wShowWindow = SW_SHOWDEFAULT;
 	Startup.lpDesktop = NULL;  // will create an invisible desktop for this user
@@ -1024,13 +1029,6 @@ HRESULT SVAccessClass::CreateProcess( const wchar_t* const p_wstrAppName, const 
 	Startup.lpTitle = NULL;
 //	GetStartupInfoW(&Startup);
 
-	// Convert local members to Wide charactors
-	wchar_t *l_pwcCurrentUser = A2W( m_svStorage.GetCurrentUser().operator LPCTSTR());
-	wchar_t *l_pwcLogonServer = A2W( m_strLogonServer.operator LPCTSTR() );
-	wchar_t *l_pwcPassword = A2W( m_svStorage.GetCurrentPassword().operator LPCTSTR());
-
-
-	
 	wcscpy( wstrAppPathName, p_wstrAppName );        // Start with the supplied app name
 	wcscpy( wstrDirPath, p_wstrPath );               // Start with supplied path
 
@@ -1040,7 +1038,7 @@ HRESULT SVAccessClass::CreateProcess( const wchar_t* const p_wstrAppName, const 
 	{
 		// Check if path plus the File is valid
 		wcscpy( wstrAppPathName, p_wstrPath );
-		size_t l_iLen = wcslen( p_wstrPath );
+		int l_iLen = static_cast<int>(wcslen( p_wstrPath ));
 		if( l_iLen > 0 )                          // Check if the last charactor is a backslash
 		{                                         // if not then append a backslash.
 			if( wstrAppPathName[l_iLen - 1] != L'\\' )
@@ -1060,8 +1058,8 @@ HRESULT SVAccessClass::CreateProcess( const wchar_t* const p_wstrAppName, const 
 			else
 			{                                     // We found the correct path
 				wcscpy( wstrDirPath, wstrAppPathName );
-				size_t iLen = wcslen( wstrDirPath ); 
-				for( size_t i = iLen ; i > -1 ; i-- )// get rid of the name
+				int iLen = static_cast<int>(wcslen( wstrDirPath ));
+				for( int i = iLen ; i > -1; i-- )// get rid of the name
 				{                                 // so we only have the directory
 					if( wstrDirPath[i] == '\\' )  // path portion.
 					{
@@ -1080,8 +1078,8 @@ HRESULT SVAccessClass::CreateProcess( const wchar_t* const p_wstrAppName, const 
 	{                                             // We found the correct path
 		_close( l_handle );
 		wcscpy( wstrDirPath, wstrAppPathName );
-		size_t iLen = wcslen( wstrDirPath );
-		for( size_t i = iLen ; i > -1 ; i-- )        // get rid of the name
+		int iLen = static_cast<int>(wcslen( wstrDirPath ));
+		for( int i = iLen ; i > -1; i-- )        // get rid of the name
 		{                                         // so we only have the directory
 			if( wstrDirPath[i] == '\\' )          // path portion.
 			{
@@ -1108,19 +1106,29 @@ HRESULT SVAccessClass::CreateProcess( const wchar_t* const p_wstrAppName, const 
 										  SW_SHOWNORMAL))
 			{
 			  CString msg;
+#ifdef _UNICODE
 			  msg.Format (_T("Unable to start %s\n(%s).\n\nCheck Utility Properties."),
 						  p_wstrAppName,
 						  p_wstrCommand);
+#else
+			  msg.Format (_T("Unable to start %s\n(%s).\n\nCheck Utility Properties."),
+						  CW2A(p_wstrAppName),
+						  CW2A(p_wstrCommand));
 			  ::MessageBox (HWND_DESKTOP, msg, _T("Failure"), MB_OK);
+#endif
 			}
 		}
 		else
 		{
-
-			wcscpy( wstrArgs, p_wstrAppName);
+			wcscpy(wstrArgs, p_wstrAppName);
 			wcscat(wstrArgs, L" ");
 			wcscat(wstrArgs, p_wstrCommand);
-	
+
+			// Convert local members to Wide charactors
+			CA2W l_pwcCurrentUser(m_svStorage.GetCurrentUser().operator LPCTSTR());
+			CA2W l_pwcLogonServer( m_strLogonServer.operator LPCTSTR() );
+			CA2W l_pwcPassword( m_svStorage.GetCurrentPassword().operator LPCTSTR());
+
 			long lError;
 
 			lError = CreateProcessWithLogonW( l_pwcCurrentUser,   // User
@@ -1149,11 +1157,9 @@ HRESULT SVAccessClass::CreateProcess( const wchar_t* const p_wstrAppName, const 
 				CloseHandle( processInfo.hThread );
 				l_hr = S_OK;
 			}
-
 		}
 	}
 	return l_hr;
-
 }
 
 // SVIsSecured 
@@ -1194,6 +1200,17 @@ bool SVAccessClass::IsLoggedOn()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVSecurity\SVAccessClass.cpp_v  $
+ * 
+ *    Rev 1.2   20 Aug 2014 11:30:26   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  929
+ * SCR Title:  SVObserver Customize Utilities issue
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   Revised CreateProcess method to initialize variables and to ensure the correct size for the path and directory arrays.
+ * Revised CreateProcess method to correct the issue of using unsigned varibales in a for loop checking for signed variables.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   02 Oct 2013 10:00:48   tbair
  * Project:  SVObserver

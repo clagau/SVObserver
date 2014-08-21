@@ -5,8 +5,8 @@
 // * .Module Name     : SVOIntelRAIDStatusClass
 // * .File Name       : $Workfile:   SVOIntelRAIDStatusClass.cpp  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.1  $
-// * .Check In Date   : $Date:   23 Jul 2013 18:00:26  $
+// * .Current Version : $Revision:   1.2  $
+// * .Check In Date   : $Date:   20 Aug 2014 12:20:42  $
 // ******************************************************************************
 
 #include "stdafx.h"
@@ -88,6 +88,7 @@ HRESULT SVOIntelRAIDStatusClass::CheckStatus()
 	std::auto_ptr<SVEventLogClass> l_psvLog (new SVEventLogClass);
 
 	unsigned long l_ulItem = 0;
+	long lType = 0;
 
 	m_csRaidStatus.Empty();
 	m_csErrorStatus.Empty();
@@ -116,6 +117,24 @@ HRESULT SVOIntelRAIDStatusClass::CheckStatus()
 				{
 					if( CString( l_svRecord.GetSourceName() ).CompareNoCase( "IAANTMon" ) == 0 )
 					{
+						lType = 1;
+						LPCTSTR l_szString = l_svRecord.GetFirstString();
+
+						while( l_szString != NULL )
+						{
+							if( 0 < strlen( l_szString ) )
+							{
+								l_csStatus = l_szString;
+							}
+
+							l_szString = l_svRecord.GetNextString();
+						}
+
+						m_csRaidStatus = l_csStatus;
+					}
+					if( CString(l_svRecord.GetSourceName() ).CompareNoCase("IAStorDataMgrSvc") == 0 )
+					{
+						lType = 2;
 						LPCTSTR l_szString = l_svRecord.GetFirstString();
 
 						while( l_szString != NULL )
@@ -161,15 +180,32 @@ HRESULT SVOIntelRAIDStatusClass::CheckStatus()
 	}
 	else
 	{
-		if( m_csRaidStatus.CompareNoCase( "Normal" ) == 0 )
-		{
-			m_csRaidStatus.Empty();
+		if( lType == 1 )
+		{	// If we find Normal then assume good.
+			if( m_csRaidStatus.CompareNoCase( "Normal" ) == 0 )
+			{
+				m_csRaidStatus.Empty();
 
-			SVSVIMStateClass::RemoveState( SV_STATE_RAID_FAILURE );
+				SVSVIMStateClass::RemoveState( SV_STATE_RAID_FAILURE );
+			}
+			else
+			{
+				SVSVIMStateClass::AddState( SV_STATE_RAID_FAILURE );
+			}
 		}
-		else
-		{
-			SVSVIMStateClass::AddState( SV_STATE_RAID_FAILURE );
+		if( lType == 2 )
+		{	// If we do not find Degraded or rebuilding... then assume good.
+			if( (m_csRaidStatus.Find( "Degraded" ) == -1) &&
+				(m_csRaidStatus.Find( "Rebuilding in progress") == -1))
+			{
+				m_csRaidStatus.Empty();
+
+				SVSVIMStateClass::RemoveState( SV_STATE_RAID_FAILURE );
+			}
+			else
+			{
+				SVSVIMStateClass::AddState( SV_STATE_RAID_FAILURE );
+			}
 		}
 	}
 
@@ -195,7 +231,17 @@ const HANDLE SVOIntelRAIDStatusClass::GetCheckEvent()
 // * LOG HISTORY:
 // ******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVOIntelRAIDStatusClass.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVOIntelRAIDStatusClass.cpp_v  $
+ * 
+ *    Rev 1.2   20 Aug 2014 12:20:42   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  931
+ * SCR Title:  Add RAID system reporting support for the X2B Image
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Modified CheckStatus to look for the new event source name of "IAStorDataMgrSvc" and it's status string.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   23 Jul 2013 18:00:26   sjones
  * Project:  SVObserver

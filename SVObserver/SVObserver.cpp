@@ -5,8 +5,8 @@
 //* .Module Name     : SVObserver
 //* .File Name       : $Workfile:   SVObserver.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.39  $
-//* .Check In Date   : $Date:   14 Aug 2014 18:29:10  $
+//* .Current Version : $Revision:   1.40  $
+//* .Check In Date   : $Date:   20 Aug 2014 18:21:06  $
 //******************************************************************************
 
 #pragma region Includes
@@ -3566,7 +3566,7 @@ int SVObserverApp::ExitInstance()
 	SVSocketRemoteCommandManager::Instance().Shutdown();
 
 	SVSocketLibrary::Destroy();
-	SVSharedMemorySingleton::Instance().Destroy();
+	SVSharedMemorySingleton::Destroy();
 	ValidateMRUList();
 
 	// Destroy still open message windows
@@ -8857,6 +8857,16 @@ int SVObserverApp::FindMenuItem(CMenu* Menu, LPCTSTR MenuString)
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVObserver.cpp_v  $
+ * 
+ *    Rev 1.40   20 Aug 2014 18:21:06   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Revised SVSharedMemorySingleton::Destroy to be static
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.39   14 Aug 2014 18:29:10   sjones
  * Project:  SVObserver

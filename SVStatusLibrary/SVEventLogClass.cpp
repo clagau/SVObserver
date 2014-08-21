@@ -5,8 +5,8 @@
 //* .Module Name     : SVEventLogClass
 //* .File Name       : $Workfile:   SVEventLogClass.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   25 Apr 2013 17:42:16  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   20 Aug 2014 12:25:38  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -265,7 +265,7 @@ HRESULT SVEventLogClass::ReadPrevious( SVEventRecordStruct& p_rsvRecord )
 					}
 				}
 			}
-			while ( (l_svOk != ERROR_INSUFFICIENT_BUFFER)&& (l_svOk != S_OK) && (m_pucBuffer != NULL) && (l_iTries <= 2) );
+			while ( (l_svOk == ERROR_INSUFFICIENT_BUFFER) && (m_pucBuffer != NULL) && (l_iTries <= 2) );
 		}
 	}
 
@@ -329,7 +329,17 @@ HRESULT SVEventLogClass::LocalDestroy()
 // * LOG HISTORY:
 // ******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVStatusLibrary\SVEventLogClass.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVStatusLibrary\SVEventLogClass.cpp_v  $
+ * 
+ *    Rev 1.1   20 Aug 2014 12:25:38   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  931
+ * SCR Title:  Add RAID system reporting support for the X2B Image
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Modified the ReadPrevious while loop so it will retry when the buffer is resized.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   25 Apr 2013 17:42:16   bWalter
  * Project:  SVObserver

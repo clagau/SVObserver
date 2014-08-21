@@ -5,8 +5,8 @@
 //* .Module Name     : SVSharedMemorySingleton
 //* .File Name       : $Workfile:   SVSharedMemorySingleton.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   14 Aug 2014 17:56:44  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   20 Aug 2014 17:43:18  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -168,9 +168,13 @@ void SVSharedMemorySingleton::SetProductDepth(long productDepth, long extra)
 
 void SVSharedMemorySingleton::Destroy()
 {
-	m_PPQSharedMemory.clear();
-	m_monitorListWriter.Release();
-	m_shareControlHandler.Release();
+	if (SeidenaderVision::SVSharedConfiguration::SharedDriveExists() && SeidenaderVision::SVSharedConfiguration::ControlFileExits())
+	{
+		SVSharedMemorySingleton& instance = SVSharedMemorySingleton::Instance();
+		instance.m_PPQSharedMemory.clear();
+		instance.m_monitorListWriter.Release();
+		instance.m_shareControlHandler.Release();
+	}
 }
 
 //******************************************************************************
@@ -178,6 +182,16 @@ void SVSharedMemorySingleton::Destroy()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVSharedMemorySingleton.cpp_v  $
+ * 
+ *    Rev 1.1   20 Aug 2014 17:43:18   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Revised Destroy method to be static and to check for the existence of the Shared Memory Drive and Control Shared Memory file.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   14 Aug 2014 17:56:44   sjones
  * Project:  SVObserver

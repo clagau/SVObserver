@@ -5,8 +5,8 @@
 //* .Module Name     : SVSharedConfiguration
 //* .File Name       : $Workfile:   SVSharedConfiguration.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   14 Aug 2014 17:07:38  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   20 Aug 2014 17:32:04  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -16,6 +16,11 @@
 #include "SVShared.h"
 
 using namespace SeidenaderVision;
+
+const std::string SVSharedConfiguration::GetControlShareName()
+{
+	return "ControlSegment";
+}
 
 const std::string SVSharedConfiguration::GetShareName()
 {
@@ -74,7 +79,7 @@ void SVSharedConfiguration::Log(const std::string & msg)
 	static std::ofstream os;
 	if (!os.is_open())
 	{
-		os.open(fname(), std::ios_base::app);
+		os.open(LogFilename(), std::ios_base::app);
 	}
 	char buf[10] = {0};
 	_itoa(::GetCurrentThreadId(), buf, 16);
@@ -176,11 +181,32 @@ void SVSharedConfiguration::EnsureShareDirectoryExists()
 	}
 }
 
+bool SVSharedConfiguration::ControlFileExits()
+{
+	std::string fname;
+	boost::interprocess::ipcdetail::get_tmp_base_dir(fname);
+	fname += "\\" + GetControlShareName();
+	return PathFileExistsA(fname.c_str()) ? true : false;
+}
+
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVSharedMemoryLibrary\SVSharedConfiguration.cpp_v  $
+ * 
+ *    Rev 1.1   20 Aug 2014 17:32:04   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Added GetControlShareName method.
+ * Added ControlFileExists method.
+ * Revised SharedDriveExists method to be public.
+ * Renamed fname method to LogFilename.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   14 Aug 2014 17:07:38   sjones
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : SVShareControlHandler
 //* .File Name       : $Workfile:   SVShareControlHandler.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   14 Aug 2014 17:07:32  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   20 Aug 2014 17:35:26  $
 //******************************************************************************
 #include "StdAfx.h"
 #include "SVShareControlHandler.h"
@@ -19,7 +19,7 @@ SVShareControlHandler::SVShareControlHandler()
 , m_ctrl(nullptr)
 {
 	SVSharedConfiguration::Log("ControlHandler::Constructor");
-	const std::string segmentName = "ControlSegment";
+	const std::string segmentName = SVSharedConfiguration::GetControlShareName();
 	try
 	{
 		SVSharedConfiguration::EnsureShareDirectoryExists();
@@ -70,6 +70,16 @@ bool SVShareControlHandler::IsCreated() const
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVSharedMemoryLibrary\SVShareControlHandler.cpp_v  $
+ * 
+ *    Rev 1.1   20 Aug 2014 17:35:26   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Revised constructor to call SVSharedConfiguration::GetControlShareName method.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   14 Aug 2014 17:07:32   sjones
  * Project:  SVObserver

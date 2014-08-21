@@ -5,8 +5,8 @@
 //* .Module Name     : SVSharedMemorySingleton
 //* .File Name       : $Workfile:   SVSharedMemorySingleton.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   14 Aug 2014 17:56:42  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   20 Aug 2014 17:43:20  $
 //******************************************************************************
 
 #pragma once
@@ -42,7 +42,7 @@ public:
 	void SetRejectDepth(long rejectDepth);
 	void SetProductDepth(long productDepth, long extra);
 
-	void Destroy();
+	static void Destroy();
 protected:
 	typedef std::map<SVGUID, SeidenaderVision::SVSharedPPQWriter> SVPPQSharedMemoryMap;
 
@@ -68,6 +68,16 @@ private:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVSharedMemorySingleton.h_v  $
+ * 
+ *    Rev 1.1   20 Aug 2014 17:43:20   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Revised Destroy method to be static and to check for the existence of the Shared Memory Drive and Control Shared Memory file.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   14 Aug 2014 17:56:42   sjones
  * Project:  SVObserver
