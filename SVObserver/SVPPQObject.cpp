@@ -5,8 +5,8 @@
 //* .Module Name     : SVPPQObject
 //* .File Name       : $Workfile:   SVPPQObject.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.28  $
-//* .Check In Date   : $Date:   21 Aug 2014 13:41:50  $
+//* .Current Version : $Revision:   1.29  $
+//* .Check In Date   : $Date:   22 Aug 2014 08:42:54  $
 //******************************************************************************
 
 #pragma region Includes
@@ -1780,8 +1780,8 @@ BOOL SVPPQObject::GoOffline()
 	if (HasActiveMonitorList())
 	{
 		SetMonitorList(ActiveMonitorList(false, RejectDepthAndMonitorList()));
+		SVSharedMemorySingleton::Instance().ErasePPQSharedMemory(GetUniqueObjectID());
 	}
-	SVSharedMemorySingleton::Instance().ErasePPQSharedMemory(GetUniqueObjectID());
 
 	return TRUE;
 }// end GoOffline
@@ -5110,6 +5110,16 @@ void SVPPQObject::SVSharedMemoryFilters::clear()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVPPQObject.cpp_v  $
+ * 
+ *    Rev 1.29   22 Aug 2014 08:42:54   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Revised GoOffline to only call ErasePPQSharedMemory if there is an active MOnitor List.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.28   21 Aug 2014 13:41:50   sjones
  * Project:  SVObserver

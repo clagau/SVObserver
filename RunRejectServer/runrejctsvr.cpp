@@ -1,5 +1,13 @@
-// runrejctsvr.cpp : Defines the entry point for the console application.
-//
+//******************************************************************************
+//* COPYRIGHT (c) 2014 by Seidenader Vision, Harrisburg
+//* All Rights Reserved
+//******************************************************************************
+//* .Module Name     : runrejctsvr
+//* .File Name       : $Workfile:   runrejctsvr.cpp  $
+//* ----------------------------------------------------------------------------
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   22 Aug 2014 11:01:30  $
+//******************************************************************************
 
 #include "stdafx.h"
 #include <process.h>
@@ -17,6 +25,8 @@
 #include "SVMonitorListReader.h"
 #include "SVShareControlHandler.h"
 #include "SVSharedConfiguration.h"
+
+#pragma comment (lib, "version.lib")
 
 const u_short imgPort = 28963;
 
@@ -617,6 +627,48 @@ void servcmd(LPVOID ctrlPtr)
 	_endthread();
 }
 
+std::string GetVersionString()
+{
+	std::string verStr;
+
+	char moduleFilename[512];
+	::GetModuleFileNameA(NULL, moduleFilename, sizeof(moduleFilename));
+
+	DWORD dwHandle;
+	DWORD size = ::GetFileVersionInfoSizeA(moduleFilename, &dwHandle);
+	unsigned char* lpData = new unsigned char[size];
+
+	BOOL rc = ::GetFileVersionInfoA(moduleFilename, NULL, size, lpData);
+	if (rc)
+	{
+		VS_FIXEDFILEINFO* pFileInfo = NULL;
+		//::ZeroMemory(&version, sizeof(VS_FIXEDFILEINFO));
+		UINT Len = 0;
+		if (::VerQueryValueA(lpData, "\\", (LPVOID *)&pFileInfo, (PUINT)&Len)) 
+		{
+			std::stringstream buf;
+
+			buf << HIWORD(pFileInfo->dwFileVersionMS);
+			buf << ".";
+			buf << std::setfill('0') << std::setw(2) << LOWORD(pFileInfo->dwFileVersionMS);
+
+			if( HIWORD(pFileInfo->dwFileVersionLS) < 255 )
+			{
+				buf << "b" << HIWORD(pFileInfo->dwFileVersionLS);
+			}
+			verStr = buf.str();
+		}
+	}
+	delete [] lpData;
+
+	#ifdef _DEBUG
+		verStr += "d";        // For debug builds.
+	#endif
+
+	return verStr;
+
+}
+
 int _tmain(int argc, _TCHAR* argv[])
 {
 	HRESULT hr = SeidenaderVision::SVSharedConfiguration::SharedResourcesOk();
@@ -642,6 +694,10 @@ int _tmain(int argc, _TCHAR* argv[])
 	}
 	try
 	{
+		const std::string& versionStr = GetVersionString();
+		std::string title = "Run/Reject Server ";
+		title += versionStr;
+		SetConsoleTitleA(title.c_str());
 		SVSocketLibrary::Init();
 		ShareControl ctrl;
 		HANDLE threads[3];
@@ -658,3 +714,29 @@ int _tmain(int argc, _TCHAR* argv[])
 	return 0;
 }
 
+//******************************************************************************
+//* LOG HISTORY:
+//******************************************************************************
+/*
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\RunRejectServer\runrejctsvr.cpp_v  $
+ * 
+ *    Rev 1.3   22 Aug 2014 11:01:30   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Revised to correct merge issue (missing ending brace)
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.2   22 Aug 2014 09:55:04   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Added PVCS header/footer
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+*/
