@@ -6797,10 +6797,10 @@ END
 
 STRINGTABLE
 BEGIN
-    ID_ZOOM_PLUS            "zoom plus"
-    ID_ZOOM_MINUS           "zoom minus"
-    ID_ZOOM_ONE             "zoom one"
-    ID_ZOOM_FIT             "zoom fit"
+    ID_ZOOM_PLUS            "zoom plus\nZoom +"
+    ID_ZOOM_MINUS           "Zoom minus\nZoom -"
+    ID_ZOOM_ONE             "zoom one\nZoom 1:1"
+	ID_ZOOM_FIT             "zoom fit\nZoom []"
 END
 
 #endif    // Englisch (USA) resources
