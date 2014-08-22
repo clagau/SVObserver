@@ -5,8 +5,8 @@
 //* .Module Name     : SVPatSelectModelPageClass
 //* .File Name       : $Workfile:   SVPatSelectModelPageClass.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   17 Jul 2014 06:36:12  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   21 Aug 2014 10:40:44  $
 //******************************************************************************
 
 #pragma region Includes
@@ -86,12 +86,32 @@ void SVPatModelPageClass::OnOK()
 	{
 		AfxMessageBox(nMsgID);
 	}
+	m_bAllowExit = true;
 	if (!m_pPatAnalyzer->IsValidSize())
 	{
-		if (AfxMessageBox("Model is larger than the ROI of the Window Tool. Do you want to change Model (Yes) or leave dialog (No)?",MB_YESNO ) == IDNO)
+		if (AfxMessageBox("Model is larger than the ROI of the Window Tool. Do you want to change Model (Yes) or leave dialog (No)?",MB_YESNO ) == IDYES)
+		{
+			m_bAllowExit = false;
+			return;
+		}
+		else
 		{
 			CPropertyPage::OnOK();
 		}
+	}
+}
+
+BOOL SVPatModelPageClass::OnApply()
+{
+	OnOK();
+
+	if (m_bAllowExit)
+	{
+		return TRUE;
+	}
+	else
+	{
+		return FALSE;
 	}
 }
 
@@ -921,6 +941,16 @@ void SVPatModelPageClass::setCircularOverscanCheckboxState()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVPatSelectModelPageClass.cpp_v  $
+ * 
+ *    Rev 1.3   21 Aug 2014 10:40:44   ryoho
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  912
+ * SCR Title:  Fix issue with Pattern Analyzer if pattern is larger than the ROI of tool
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   added OnApply and a check to see if the user wants to exit if model is larger then ROI
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   17 Jul 2014 06:36:12   ryoho
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : SVPatModelPageClass
 //* .File Name       : $Workfile:   SVPatSelectModelPageClass.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   26 Jun 2014 18:09:44  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   21 Aug 2014 10:40:42  $
 //******************************************************************************
 
 #ifndef SVPATMODELPAGECLASS_H
@@ -70,6 +70,7 @@ protected:
 	//{{AFX_VIRTUAL(SVPatModelPageClass)
 	virtual void OnCancel();
 	virtual void OnOK();
+	virtual BOOL OnApply();
 	virtual BOOL OnSetActive();
 	virtual BOOL OnKillActive();
 	virtual BOOL OnInitDialog();
@@ -118,6 +119,7 @@ private:
 	void setOverlay();
 	void setCircularToolOverlay();
 	void setCircularModelOverlay();
+	bool m_bAllowExit;
 	//************************************
 	// Method:    setCircularOverscanCheckboxState
 	// Description: Enable or Disable the checkbox if the height and width large enough or not.
@@ -158,6 +160,16 @@ private:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVPatSelectModelPageClass.h_v  $
+ * 
+ *    Rev 1.2   21 Aug 2014 10:40:42   ryoho
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  912
+ * SCR Title:  Fix issue with Pattern Analyzer if pattern is larger than the ROI of tool
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   added OnApply and a check to see if the user wants to exit if model is larger then ROI
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   26 Jun 2014 18:09:44   mziegler
  * Project:  SVObserver

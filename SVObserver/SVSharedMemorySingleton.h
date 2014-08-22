@@ -5,8 +5,8 @@
 //* .Module Name     : SVSharedMemorySingleton
 //* .File Name       : $Workfile:   SVSharedMemorySingleton.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   20 Aug 2014 17:43:20  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   21 Aug 2014 12:06:54  $
 //******************************************************************************
 
 #pragma once
@@ -42,6 +42,7 @@ public:
 	void SetRejectDepth(long rejectDepth);
 	void SetProductDepth(long productDepth, long extra);
 
+	static bool HasShares();
 	static void Destroy();
 protected:
 	typedef std::map<SVGUID, SeidenaderVision::SVSharedPPQWriter> SVPPQSharedMemoryMap;
@@ -68,6 +69,16 @@ private:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVSharedMemorySingleton.h_v  $
+ * 
+ *    Rev 1.2   21 Aug 2014 12:06:54   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Added HasShares method.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   20 Aug 2014 17:43:20   sjones
  * Project:  SVObserver

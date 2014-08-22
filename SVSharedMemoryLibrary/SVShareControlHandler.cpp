@@ -5,8 +5,8 @@
 //* .Module Name     : SVShareControlHandler
 //* .File Name       : $Workfile:   SVShareControlHandler.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   20 Aug 2014 17:35:26  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   21 Aug 2014 12:10:32  $
 //******************************************************************************
 #include "StdAfx.h"
 #include "SVShareControlHandler.h"
@@ -56,6 +56,15 @@ void SVShareControlHandler::Release()
 			m_ctrl = nullptr;
 		}
 		shm.reset();
+		try
+		{
+			const std::string segmentName = SVSharedConfiguration::GetControlShareName();
+			boost::interprocess::shared_memory_object::remove(segmentName.c_str());
+		}
+		catch (boost::interprocess::interprocess_exception& e)
+		{
+			SVSharedConfiguration::Log(e.what());
+		}
 	}
 }
 
@@ -70,6 +79,16 @@ bool SVShareControlHandler::IsCreated() const
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVSharedMemoryLibrary\SVShareControlHandler.cpp_v  $
+ * 
+ *    Rev 1.2   21 Aug 2014 12:10:32   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Revised Release method to remove the shared memory file.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   20 Aug 2014 17:35:26   sjones
  * Project:  SVObserver

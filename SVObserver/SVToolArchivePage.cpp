@@ -5,8 +5,8 @@
 //* .Module Name     : SVToolAdjustmentArchivePage
 //* .File Name       : $Workfile:   SVToolArchivePage.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.10  $
-//* .Check In Date   : $Date:   12 Aug 2014 14:28:20  $
+//* .Current Version : $Revision:   1.11  $
+//* .Check In Date   : $Date:   21 Aug 2014 11:08:06  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -643,7 +643,7 @@ void SVToolAdjustmentArchivePage::OnSelchangeModeCombo()
 			long FreeMem = CalculateFreeMem();
 			if (FreeMem < 0)
 			{
-				AfxMessageBox("There is not enough Available Archive Image Memory for your selection in Change Mode. Available Archive Image Memory\nis the result of the selected images and the Max Images number.");
+				AfxMessageBox("There is not enough Available Archive Image Memory for your selection in Change Mode.\nAvailable Archive Image Memory is the result of the selected images and the Max Images number.");
 			}
 		}
 	}
@@ -654,27 +654,39 @@ void SVToolAdjustmentArchivePage::OnChangeEditMaxImages()
 	CString strNumImages;
 	m_editMaxImages.GetWindowText(strNumImages);
 	m_lImagesToArchive = atol(strNumImages);
-	
-	//check to make sure we don't go over the amount of free memory
-	if (SVArchiveGoOffline == m_eSelectedArchiveMethod)
-	{
-		long llFreeMem = CalculateFreeMem();
-		if (llFreeMem >= 0)
+
+	//check to make sure they don't type in a value below 1
+	if ( m_lImagesToArchive > 0 )
+	{  
+		//check to make sure we don't go over the amount of free memory
+		if (SVArchiveGoOffline == m_eSelectedArchiveMethod)
 		{
-			m_sMaxImageNumber = strNumImages;
-			m_lImagesToArchive = atol(strNumImages);
+			long llFreeMem = CalculateFreeMem();
+			if (llFreeMem >= 0)
+			{
+				m_sMaxImageNumber = strNumImages;
+				m_lImagesToArchive = atol(strNumImages);
+			}
+			else
+			{
+				CString sMsg;
+				sMsg.Format("There is not enough Available Archive Image Memory for %s images in Change Mode. Available\nArchive Image Memory is the result of the selected images and the Max Images number.\nThe selection will be reset.",strNumImages);
+				AfxMessageBox(sMsg);
+				m_lImagesToArchive = atol(m_sMaxImageNumber);
+				if(m_sMaxImageNumber != strNumImages)
+				{
+					m_editMaxImages.SetWindowText((LPCSTR)m_sMaxImageNumber);
+				}
+			}
 		}
 		else
 		{
-			CString sMsg;
-			sMsg.Format("There is not enough Available Archive Image Memory for %s images in Change Mode. Available\nArchive Image Memory is the result of the selected images and the Max Images number.\nThe selection will be reset.",strNumImages);
-			AfxMessageBox(sMsg);
-			m_lImagesToArchive = atol(m_sMaxImageNumber);
-			if(m_sMaxImageNumber != strNumImages)
-			{
-				m_editMaxImages.SetWindowText((LPCSTR)m_sMaxImageNumber);
-			}
+			m_sMaxImageNumber = strNumImages;
 		}
+	}
+	else
+	{
+		m_editMaxImages.SetWindowText(m_sMaxImageNumber);
 	}
 }
 
@@ -825,6 +837,16 @@ void SVToolAdjustmentArchivePage::OnBnClickedHeaderCheck()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVToolArchivePage.cpp_v  $
+ * 
+ *    Rev 1.11   21 Aug 2014 11:08:06   ryoho
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  916
+ * SCR Title:  Fix issue with available memory calculation with Archive Tool (SV0-350)
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   fixed issue with one an error message and also with being able to put in 0 for max number of images.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.10   12 Aug 2014 14:28:20   ryoho
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : SVPPQObject
 //* .File Name       : $Workfile:   SVPPQObject.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.26  $
-//* .Check In Date   : $Date:   18 Aug 2014 18:29:56  $
+//* .Current Version : $Revision:   1.28  $
+//* .Check In Date   : $Date:   21 Aug 2014 13:41:50  $
 //******************************************************************************
 
 #pragma region Includes
@@ -743,7 +743,10 @@ BOOL SVPPQObject::Destroy()
 	m_pResultDataCircleBuffer.clear();
 	m_pResultImagePublishedCircleBuffer.clear();
 
-	SVSharedMemorySingleton::Instance().ErasePPQSharedMemory(GetUniqueObjectID());
+	if (SVSharedMemorySingleton::HasShares())
+	{
+		SVSharedMemorySingleton::Instance().ErasePPQSharedMemory(GetUniqueObjectID());
+	}
 
 	m_bCreated = FALSE;
 	return TRUE;
@@ -1728,7 +1731,10 @@ BOOL SVPPQObject::GoOffline()
 		l_svIter->first->GoOffline();
 	}// end for
 
-	QuieseSharedMemory();
+	if (HasActiveMonitorList())
+	{
+		QuieseSharedMemory();
+	}
 	
 	lSize = m_arInspections.GetSize();
 	for( i = 0; i < lSize; i++ )
@@ -5104,6 +5110,26 @@ void SVPPQObject::SVSharedMemoryFilters::clear()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVPPQObject.cpp_v  $
+ * 
+ *    Rev 1.28   21 Aug 2014 13:41:50   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Revised GoOffline to only call QuieseSharedMemory if there is an active Monitor List.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.27   21 Aug 2014 12:08:14   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Revised destructor to call SVSharedMemorySingleton::HasShares before trying to erase the PPQ share
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.26   18 Aug 2014 18:29:56   sjones
  * Project:  SVObserver
