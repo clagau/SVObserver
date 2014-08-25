@@ -5,8 +5,8 @@
 //* .Module Name     : LeafTreeCtrl
 //* .File Name       : $Workfile:   LeafTreeCtrl.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   18 Aug 2014 07:46:16  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   25 Aug 2014 07:37:44  $
 //******************************************************************************
 
 #pragma region Includes
@@ -136,7 +136,7 @@ void LeafTreeCtrl::updateTree()
 		{
 			if( IterChild->second.isLeaf() && (NULL != IterChild->second.getTreeItem()) )
 			{
-				IObjectSelectorItem::CheckedStateEnum CheckedState( IObjectSelectorItem::CheckedStateNone );
+				IObjectSelectorItem::CheckedStateEnum CheckedState( IObjectSelectorItem::EmptyEnabled );
 				CheckedState = static_cast<IObjectSelectorItem::CheckedStateEnum> (GetItemState(IterChild->second.getTreeItem(), TVIS_STATEIMAGEMASK)>>12);
 				//Check if state has changed
 				if( IterChild->second.getCheckedState() != CheckedState )
@@ -191,7 +191,7 @@ void LeafTreeCtrl::OnCheckAll()
 
 	getRootItems( Items );
 
-	setCheckState( Items, IObjectSelectorItem::Checked );
+	setCheckState( Items, IObjectSelectorItem::CheckedEnabled );
 }
 
 void LeafTreeCtrl::OnUncheckAll()
@@ -200,7 +200,7 @@ void LeafTreeCtrl::OnUncheckAll()
 
 	getRootItems( Items );
 
-	setCheckState( Items, IObjectSelectorItem::Unchecked );
+	setCheckState( Items, IObjectSelectorItem::UncheckedEnabled );
 }
 #pragma endregion Protected Methods
 
@@ -209,6 +209,18 @@ void LeafTreeCtrl::OnUncheckAll()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\ObjectSelectorLibrary\LeafTreeCtrl.cpp_v  $
+ * 
+ *    Rev 1.3   25 Aug 2014 07:37:44   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  909
+ * SCR Title:  Object Selector replacing Result Picker and Output Selector SVO-72, 40, 130
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Added disabled checked states
+ * Object Selector displays nodes disabled when in single select mode
+ * Changed methods: UpdateTree, OnCheckAll, OnUnCheckAll
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   18 Aug 2014 07:46:16   gramseier
  * Project:  SVObserver

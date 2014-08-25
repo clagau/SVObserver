@@ -5,8 +5,8 @@
 //* .Module Name     : ObjectTreeCtrl
 //* .File Name       : $Workfile:   ObjectTreeCtrl.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   18 Aug 2014 07:46:20  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   25 Aug 2014 07:42:44  $
 //******************************************************************************
 
 #pragma region Includes
@@ -43,11 +43,12 @@ BEGIN_MESSAGE_MAP(ObjectTreeCtrl, CTreeCtrl)
 END_MESSAGE_MAP()
 
 #pragma region Constructor
-ObjectTreeCtrl::ObjectTreeCtrl(  ObjectSelectorPpg& rParent, bool SingleSelect  ) :
-m_rParent( rParent )
-, m_SingleSelect( SingleSelect)
-, m_ContextPoint(0, 0)
-, m_LeftButtonCheckFlag( TVHT_ONITEMSTATEICON )
+ObjectTreeCtrl::ObjectTreeCtrl(  ObjectSelectorPpg& rParent, bool SingleSelect  )
+	: CTreeCtrl()
+	, m_rParent( rParent )
+	, m_SingleSelect( SingleSelect)
+	, m_ContextPoint(0, 0)
+	, m_LeftButtonCheckFlag( TVHT_ONITEMSTATEICON )
 {
 }
 
@@ -235,16 +236,23 @@ bool ObjectTreeCtrl::setCheckState( const TreeItemSet& rParentItems, IObjectSele
 		if( m_rParent.getTreeContainer().end() != Iter )
 		{
 			//If no defined state then we want to toggle the state
-			if( IObjectSelectorItem::CheckedStateNone == CheckedState )
+			if( IObjectSelectorItem::EmptyEnabled == CheckedState )
 			{
 				switch( Iter->second.getCheckedState() )
 				{
-				case IObjectSelectorItem::Unchecked:
-					CheckedState =  IObjectSelectorItem::Checked;
+				case IObjectSelectorItem::UncheckedEnabled:
+					CheckedState =  IObjectSelectorItem::CheckedEnabled;
 					break;
-				case IObjectSelectorItem::Checked:
-				case IObjectSelectorItem::TriState:
-					CheckedState =  IObjectSelectorItem::Unchecked;
+				case IObjectSelectorItem::CheckedEnabled:
+				case IObjectSelectorItem::TriStateEnabled:
+					CheckedState =  IObjectSelectorItem::UncheckedEnabled;
+					break;
+				case IObjectSelectorItem::UncheckedDisabled:
+					CheckedState =  IObjectSelectorItem::CheckedDisabled;
+					break;
+				case IObjectSelectorItem::CheckedDisabled:
+				case IObjectSelectorItem::TriStateDisabled:
+					CheckedState =  IObjectSelectorItem::UncheckedDisabled;
 					break;
 				default:
 					break;
@@ -274,7 +282,8 @@ void ObjectTreeCtrl::setChildrenState( ObjectTreeItems::iterator& rIter, IObject
 	ObjectTreeItems::iterator ChildIter = rIter.GetChildTree()->begin();
 	while( rIter.GetChildTree()->end() != ChildIter )
 	{
-		if( (IObjectSelectorItem::TriState != rCheckedState) || ChildIter->second.isNode() )
+		bool TriState = IObjectSelectorItem::TriStateEnabled == rCheckedState || IObjectSelectorItem::TriStateDisabled == rCheckedState;
+		if( !TriState  || ChildIter->second.isNode() )
 		{
 			ChildIter->second.setCheckedState( rCheckedState );
 			m_UpdateItems.insert( ChildIter->first );
@@ -292,10 +301,10 @@ void ObjectTreeCtrl::setParentState( ObjectTreeItems::iterator& rIter )
 
 		if( getParentPropPage().getTreeContainer().end() != ParentIter )
 		{
-			IObjectSelectorItem::CheckedStateEnum CheckedState = IObjectSelectorItem::Unchecked;
+			IObjectSelectorItem::CheckedStateEnum CheckedState = IObjectSelectorItem::UncheckedEnabled;
 
 			CheckedState = getParentPropPage().getTreeContainer().getNodeCheckedState( ParentIter );
-			if( IObjectSelectorItem::CheckedStateNone != CheckedState && ParentIter->second.getCheckedState() != CheckedState )
+			if( IObjectSelectorItem::EmptyEnabled != CheckedState && ParentIter->second.getCheckedState() != CheckedState )
 			{
 				ParentIter->second.setCheckedState( CheckedState ); 
 				m_UpdateItems.insert( ParentIter->first );
@@ -319,7 +328,7 @@ void ObjectTreeCtrl::clearLastCheckedItem( const HTREEITEM& rItem )
 				Iter = getParentPropPage().getTreeContainer().findItem( m_CurrentSelection );
 				if( getParentPropPage().getTreeContainer().end() != Iter )
 				{
-					Iter->second.setCheckedState( IObjectSelectorItem::Unchecked );
+					Iter->second.setCheckedState( IObjectSelectorItem::UncheckedEnabled );
 
 					m_UpdateItems.insert( Iter->first );
 					setParentState( Iter );
@@ -330,7 +339,7 @@ void ObjectTreeCtrl::clearLastCheckedItem( const HTREEITEM& rItem )
 				if( getParentPropPage().getTreeContainer().end() != Iter )
 				{
 					//If it is unchecked then it will be checked after this method
-					if( IObjectSelectorItem::Unchecked == Iter->second.getCheckedState() )
+					if( IObjectSelectorItem::UncheckedEnabled == Iter->second.getCheckedState() )
 					{
 						m_CurrentSelection = *pLocation;
 					}
@@ -350,6 +359,18 @@ void ObjectTreeCtrl::clearLastCheckedItem( const HTREEITEM& rItem )
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\ObjectSelectorLibrary\ObjectTreeCtrl.cpp_v  $
+ * 
+ *    Rev 1.3   25 Aug 2014 07:42:44   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  909
+ * SCR Title:  Object Selector replacing Result Picker and Output Selector SVO-72, 40, 130
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Added disabled checked states
+ * Object Selector displays nodes disabled when in single select mode
+ * Changed methods: setCheckState, setChildrenState, setParentState, clearLastCheckedItem
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   18 Aug 2014 07:46:20   gramseier
  * Project:  SVObserver

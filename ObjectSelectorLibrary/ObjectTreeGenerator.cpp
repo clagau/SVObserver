@@ -5,8 +5,8 @@
 //* .Module Name     : ObjectTreeGenerator
 //* .File Name       : $Workfile:   ObjectTreeGenerator.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   17 Jul 2014 11:16:26  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   25 Aug 2014 07:46:48  $
 //******************************************************************************
 
 #pragma region Includes
@@ -159,6 +159,8 @@ void ObjectTreeGenerator::insertTreeObject( const SVObjectReference& rObjectRef 
 
 	SelectorItem.setName( rObjectRef->GetName() );
 	SelectorItem.setItemKey( rObjectRef->GetUniqueObjectID().ToVARIANT() );
+	SelectorItem.setAttibute( Attribute );
+	SelectorItem.setCheckedState( IObjectSelectorItem::UncheckedEnabled );
 	//Only set the checked states if of type attributes
 	if( TypeSetAttributes == (m_SelectorType & TypeSetAttributes) )
 	{
@@ -166,10 +168,9 @@ void ObjectTreeGenerator::insertTreeObject( const SVObjectReference& rObjectRef 
 		bool Checked = (AttributesSet & m_AttributesSetFilter) == m_AttributesSetFilter;
 		if( Checked )
 		{
-			SelectorItem.setCheckedState( IObjectSelectorItem::Checked ); 
+			SelectorItem.setCheckedState( IObjectSelectorItem::CheckedEnabled );
 		}
 	}
-	SelectorItem.setAttibute( Attribute );
 	checkLocationFilters( m_LocationInputFilters, Location );
 	m_TreeContainer.insertLeaf( Location, SelectorItem );
 }
@@ -181,6 +182,7 @@ void ObjectTreeGenerator::insertTreeObject( const SVString& rLocation )
 
 	SelectorItem.setName( rLocation );
 	SelectorItem.setAttibute( Attribute );
+	SelectorItem.setCheckedState( IObjectSelectorItem::UncheckedEnabled );
 	//Make copy of location because reference is const
 	SVString Location( rLocation );
 	checkLocationFilters( m_LocationInputFilters, Location );
@@ -210,6 +212,9 @@ INT_PTR ObjectTreeGenerator::showDialog( const SVString& rTitle, const SVString&
 	{
 		CWaitCursor* pWait = new CWaitCursor;
 
+		bool isSingleObject = TypeSingleObject == (TypeSingleObject & m_SelectorType);
+
+		m_TreeContainer.setTreeType( isSingleObject );
 		m_TreeContainer.setNodeCheckedStates();
 		m_TreeContainer.synchronizeCheckedStates();
 
@@ -223,7 +228,6 @@ INT_PTR ObjectTreeGenerator::showDialog( const SVString& rTitle, const SVString&
 		}
 		CResizablePropertySheet Sheet( rTitle.c_str(), pParent );
 
-		bool isSingleObject = TypeSingleObject == (TypeSingleObject & m_SelectorType);
 		ObjectSelectorPpg ObjectSelectorPage( m_TreeContainer, rTabTitle,  isSingleObject );
 
 		//Don't display the apply button
@@ -279,7 +283,7 @@ bool ObjectTreeGenerator::setCheckItems( const SVStringSet& rItems )
 		Iter = m_TreeContainer.findItem( Location );
 		if( m_TreeContainer.end() != Iter )
 		{
-			Iter->second.setCheckedState( IObjectSelectorItem::Checked );
+			Iter->second.setCheckedState( IObjectSelectorItem::CheckedEnabled );
 			Result = true;
 		}
 		++IterName;
@@ -459,7 +463,7 @@ bool ObjectTreeGenerator::checkModifiedItems()
 			Result = true;
 		}
 
-		if( IObjectSelectorItem::Checked == Iter->second.getCheckedState() && TypeSingleObject == (TypeSingleObject & m_SelectorType) )
+		if( IObjectSelectorItem::CheckedEnabled == Iter->second.getCheckedState() && TypeSingleObject == (TypeSingleObject & m_SelectorType) )
 		{
 			SingleObjectResult = Iter->second;
 			//If it is an array we need to modify the location back to its original form
@@ -528,10 +532,10 @@ void ObjectTreeGenerator::setItemAttributes()
 
 				switch( Iter->second.getCheckedState() )
 				{
-				case IObjectSelectorItem::Checked:
+				case IObjectSelectorItem::CheckedEnabled:
 					AttributesSet |= m_AttributesSetFilter;
 					break;
-				case IObjectSelectorItem::Unchecked:
+				case IObjectSelectorItem::UncheckedEnabled:
 					AttributesSet &= ~m_AttributesSetFilter;
 					break;
 				default:
@@ -572,6 +576,18 @@ void ObjectTreeGenerator::checkLocationFilters( const TranslateMap& rFilters, SV
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\ObjectSelectorLibrary\ObjectTreeGenerator.cpp_v  $
+ * 
+ *    Rev 1.1   25 Aug 2014 07:46:48   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  909
+ * SCR Title:  Object Selector replacing Result Picker and Output Selector SVO-72, 40, 130
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Added disabled checked states
+ * Object Selector displays nodes disabled when in single select mode
+ * Changed methods: insertTreeObject, showDialog, setCheckItems, checkModifiedItems, setItemAttributes
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   17 Jul 2014 11:16:26   gramseier
  * Project:  SVObserver

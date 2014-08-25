@@ -5,8 +5,8 @@
 //* .Module Name     : IObjectSelectorItem
 //* .File Name       : $Workfile:   IObjectSelectorItem.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   17 Jul 2014 17:04:46  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   25 Aug 2014 08:08:04  $
 //* ----------------------------------------------------------------------------
 //* This interface is used to define a single selector item for the tree
 //******************************************************************************
@@ -42,10 +42,14 @@ namespace Seidenader
 			***********/
 			enum CheckedStateEnum
 			{
-				CheckedStateNone,
-				Unchecked,
-				Checked,
-				TriState
+				EmptyEnabled,
+				UncheckedEnabled,
+				CheckedEnabled,
+				TriStateEnabled,
+				EmptyDisabled,
+				UncheckedDisabled,
+				CheckedDisabled,
+				TriStateDisabled
 			};
 
 			/**********
@@ -227,7 +231,18 @@ namespace Seidenader
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVTreeLibrary\IObjectSelectorItem.h_v  $
+$Log:   N:\PVCSARCH65\PROJECTFILES\ARCHIVES\SVOBSERVER_SRC\SVTreeLibrary\IObjectSelectorItem.h_v  $
+ * 
+ *    Rev 1.1   25 Aug 2014 08:08:04   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  909
+ * SCR Title:  Object Selector replacing Result Picker and Output Selector SVO-72, 40, 130
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Added disabled checked states
+ * Object Selector displays nodes disabled when in single select mode
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   17 Jul 2014 17:04:46   gramseier
  * Project:  SVObserver

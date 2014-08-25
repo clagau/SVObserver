@@ -5,8 +5,8 @@
 //* .Module Name     : ObjectTreeItems
 //* .File Name       : $Workfile:   ObjectTreeItems.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   17 Jul 2014 17:04:46  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   25 Aug 2014 08:37:08  $
 //* ----------------------------------------------------------------------------
 //* This class is used to define the object selector tree
 //******************************************************************************
@@ -58,6 +58,12 @@ namespace Seidenader
 		public:
 		#pragma region Public Methods
 			/**********
+			 The method sets if the tree type is single select
+			 \param SingleSelect <in> true if the tree is in single select mode
+			***********/
+			void setTreeType( bool SingleSelect );
+
+			/**********
 			 The method inserts a leaf into the tree including required nodes
 			 \param rLocation <in> the dotted path of the item in the tree
 			 \param rSelectorItem <in> a reference to the selector item to insert
@@ -75,7 +81,7 @@ namespace Seidenader
 			 \param rIter <in> a reference to the item to get the state for
 			 \return the checked state for the item
 			***********/
-			IObjectSelectorItem::CheckedStateEnum getNodeCheckedState( const iterator& rIter );
+			IObjectSelectorItem::CheckedStateEnum getNodeCheckedState( const iterator& rIter ) const;
 
 			/**********
 			 The method synchronizes the checked states
@@ -110,6 +116,11 @@ namespace Seidenader
 			***********/
 			iterator findLevelItem( const iterator& rStartIter, const iterator& rEnd, const SVString& rLocation );
 		#pragma endregion Private Methods
+
+		private:
+		#pragma region Member Variables
+			bool m_SingleSelect;
+		#pragma endregion Member Variables
 		};
 	} //namespace SVObserver
 } //namespace Seidenader
@@ -118,7 +129,19 @@ namespace Seidenader
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVTreeLibrary\ObjectTreeItems.h_v  $
+$Log:   N:\PVCSARCH65\PROJECTFILES\ARCHIVES\SVOBSERVER_SRC\SVTreeLibrary\ObjectTreeItems.h_v  $
+ * 
+ *    Rev 1.1   25 Aug 2014 08:37:08   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  909
+ * SCR Title:  Object Selector replacing Result Picker and Output Selector SVO-72, 40, 130
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Added disabled checked states
+ * Object Selector displays nodes disabled when in single select mode
+ * Added method: setTreeType
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   17 Jul 2014 17:04:46   gramseier
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : ObjectTreeItems
 //* .File Name       : $Workfile:   ObjectTreeItems.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   17 Jul 2014 17:04:48  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   25 Aug 2014 08:34:42  $
 //******************************************************************************
 
 #pragma region Includes
@@ -24,12 +24,14 @@ using namespace Seidenader::SVTreeLibrary;
 
 #pragma region Constructor
 ObjectTreeItems::ObjectTreeItems()
-: SVTreeBase()
+	: SVTreeBase()
+	, m_SingleSelect( false )
 {
 }
 
 ObjectTreeItems::ObjectTreeItems( const SVTreeContainer& l_rTree )
-: SVTreeBase( l_rTree )
+	: SVTreeBase( l_rTree )
+	, m_SingleSelect( false )
 {
 }
 
@@ -39,6 +41,11 @@ ObjectTreeItems::~ObjectTreeItems()
 #pragma endregion Constructor
 
 #pragma region Public Methods
+void ObjectTreeItems::setTreeType( bool SingleSelect )
+{
+	m_SingleSelect = SingleSelect;
+}
+
 ObjectTreeItems::iterator ObjectTreeItems::insertLeaf( const SVString& rLocation, ObjectSelectorItem& rSelectorItem )
 {
 	ObjectTreeItems::iterator Iter = findItem( rLocation, true );
@@ -63,7 +70,7 @@ void ObjectTreeItems::setNodeCheckedStates()
 		if( Iter->second.isNode() )
 		{
 			IObjectSelectorItem::CheckedStateEnum CheckedState = getNodeCheckedState( Iter.base() );
-			if( IObjectSelectorItem::CheckedStateNone != CheckedState && Iter->second.getCheckedState() != CheckedState )
+			if( IObjectSelectorItem::EmptyEnabled != CheckedState && Iter->second.getCheckedState() != CheckedState )
 			{
 				Iter->second.setCheckedState( CheckedState );
 			}
@@ -72,9 +79,9 @@ void ObjectTreeItems::setNodeCheckedStates()
 	}
 }
 
-IObjectSelectorItem::CheckedStateEnum ObjectTreeItems::getNodeCheckedState( const iterator& rIter )
+IObjectSelectorItem::CheckedStateEnum ObjectTreeItems::getNodeCheckedState( const iterator& rIter ) const
 {
-	IObjectSelectorItem::CheckedStateEnum CheckedState = IObjectSelectorItem::CheckedStateNone;
+	IObjectSelectorItem::CheckedStateEnum CheckedState = IObjectSelectorItem::EmptyEnabled;
 
 	if( rIter->second.isNode() )
 	{
@@ -82,20 +89,30 @@ IObjectSelectorItem::CheckedStateEnum ObjectTreeItems::getNodeCheckedState( cons
 		bool AllChecked = true;
 		bool SomeChecked = false;
 
-		CheckedState = IObjectSelectorItem::Unchecked;
+		if( m_SingleSelect )
+		{
+			CheckedState = IObjectSelectorItem::UncheckedDisabled;
+		}
+		else
+		{
+			CheckedState = IObjectSelectorItem::UncheckedEnabled;
+		}
 
 		const_iterator IterChild( rIter.GetChildTree()->begin() );
 		while( rIter.GetChildTree()->end() != IterChild && LoopChildren )
 		{
 			switch( IterChild->second.getCheckedState() )
 			{
-			case IObjectSelectorItem::Unchecked:
+			case IObjectSelectorItem::UncheckedEnabled:
+			case IObjectSelectorItem::UncheckedDisabled:
 				AllChecked = false;
 				break;
-			case IObjectSelectorItem::Checked:
+			case IObjectSelectorItem::CheckedEnabled:
+			case IObjectSelectorItem::CheckedDisabled:
 				SomeChecked = true;
 				break;
-			case IObjectSelectorItem::TriState:
+			case IObjectSelectorItem::TriStateEnabled:
+			case IObjectSelectorItem::TriStateDisabled:
 				AllChecked = false;
 				SomeChecked = true;
 				break;
@@ -114,11 +131,25 @@ IObjectSelectorItem::CheckedStateEnum ObjectTreeItems::getNodeCheckedState( cons
 
 		if( AllChecked )
 		{
-			CheckedState = IObjectSelectorItem::Checked;
+			if( m_SingleSelect )
+			{
+				CheckedState = IObjectSelectorItem::CheckedDisabled;
+			}
+			else
+			{
+				CheckedState = IObjectSelectorItem::CheckedEnabled;
+			}
 		}
 		else if( SomeChecked )
 		{
-			CheckedState = IObjectSelectorItem::TriState;
+			if( m_SingleSelect )
+			{
+				CheckedState = IObjectSelectorItem::TriStateDisabled;
+			}
+			else
+			{
+				CheckedState = IObjectSelectorItem::TriStateEnabled;
+			}
 		}
 	}
 
@@ -203,9 +234,21 @@ ObjectTreeItems::iterator ObjectTreeItems::createNode( ObjectTreeItems::iterator
 		Name = rLocation.Mid( Pos + 1 );
 	}
 
+	IObjectSelectorItem::CheckedStateEnum CheckedState;
+
+	if( m_SingleSelect )
+	{
+		CheckedState = IObjectSelectorItem::UncheckedDisabled;
+	}
+	else
+	{
+		CheckedState = IObjectSelectorItem::UncheckedEnabled;
+	}
 	SelectorItem.setName( Name );
 	SelectorItem.setLocation( rLocation );
-	SelectorItem.setAttibute( ObjectSelectorItem::Node );
+	SelectorItem.setAttibute( IObjectSelectorItem::Node );
+	SelectorItem.setCheckedState( CheckedState );
+	SelectorItem.setOrgCheckedState( CheckedState );
 	try
 	{
 		if( end() == rParentIter )
@@ -247,7 +290,20 @@ ObjectTreeItems::iterator ObjectTreeItems::findLevelItem(const iterator& rIter, 
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVTreeLibrary\ObjectTreeItems.cpp_v  $
+$Log:   N:\PVCSARCH65\PROJECTFILES\ARCHIVES\SVOBSERVER_SRC\SVTreeLibrary\ObjectTreeItems.cpp_v  $
+ * 
+ *    Rev 1.1   25 Aug 2014 08:34:42   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  909
+ * SCR Title:  Object Selector replacing Result Picker and Output Selector SVO-72, 40, 130
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Added disabled checked states
+ * Object Selector displays nodes disabled when in single select mode
+ * Added Method: setTreeType
+ * Changed methods: setNodeCheckedStates, getNodeCheckedState, createNode
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   17 Jul 2014 17:04:48   gramseier
  * Project:  SVObserver

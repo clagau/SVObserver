@@ -5,8 +5,8 @@
 //* .Module Name     : ObjectItemData
 //* .File Name       : $Workfile:   ObjectSelectorItem.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   17 Jul 2014 17:04:46  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   25 Aug 2014 08:33:18  $
 //******************************************************************************
 
 #pragma region Includes
@@ -54,8 +54,8 @@ void ObjectSelectorItem::Clear()
 	m_IconNumber = 0;
 	m_ArrayIndex = -1;
 	m_Modified = false;
-	m_CheckedState = Unchecked;
-	m_OrgCheckedState = Unchecked;
+	m_CheckedState = EmptyEnabled;
+	m_OrgCheckedState = EmptyEnabled;
 }
 
 const ObjectSelectorItem& ObjectSelectorItem::operator=( const ObjectSelectorItem& rObject )
@@ -234,7 +234,19 @@ bool ObjectSelectorItem::isModified() const
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVTreeLibrary\ObjectSelectorItem.cpp_v  $
+$Log:   N:\PVCSARCH65\PROJECTFILES\ARCHIVES\SVOBSERVER_SRC\SVTreeLibrary\ObjectSelectorItem.cpp_v  $
+ * 
+ *    Rev 1.1   25 Aug 2014 08:33:18   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  909
+ * SCR Title:  Object Selector replacing Result Picker and Output Selector SVO-72, 40, 130
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Added disabled checked states
+ * Object Selector displays nodes disabled when in single select mode
+ * Changed methods: Clear
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   17 Jul 2014 17:04:46   gramseier
  * Project:  SVObserver

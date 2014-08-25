@@ -5,8 +5,8 @@
 //* .Module Name     : NodeTreeCtrl
 //* .File Name       : $Workfile:   NodeTreeCtrl.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   18 Aug 2014 07:46:18  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   25 Aug 2014 07:40:16  $
 //******************************************************************************
 
 #pragma region Includes
@@ -88,7 +88,7 @@ void NodeTreeCtrl::loadTree()
 			Iter->second.setTreeItem( Item );
 		}
 		//On initial load check if leaf value selected when in single object selection mode
-		if( isSingleSelect() && Iter->second.isLeaf() && IObjectSelectorItem::Checked == Iter->second.getCheckedState() )
+		if( isSingleSelect() && Iter->second.isLeaf() && IObjectSelectorItem::CheckedEnabled == Iter->second.getCheckedState() )
 		{
 			setCurrentSelection( Iter->second.getLocation() );
 			CurrentItems.insert( ParentItem );
@@ -119,7 +119,7 @@ void NodeTreeCtrl::updateTree()
 		{
 			if( Iter->second.isNode() && (NULL != Iter->second.getTreeItem()) )
 			{
-				IObjectSelectorItem::CheckedStateEnum CheckedState( IObjectSelectorItem::CheckedStateNone );
+				IObjectSelectorItem::CheckedStateEnum CheckedState( IObjectSelectorItem::EmptyEnabled );
 				CheckedState = static_cast<IObjectSelectorItem::CheckedStateEnum> (GetItemState(Iter->second.getTreeItem(), TVIS_STATEIMAGEMASK)>>12);
 				//Check if state has changed
 				if( Iter->second.getCheckedState() != CheckedState )
@@ -217,7 +217,7 @@ void NodeTreeCtrl::OnCheckAll()
 		getRootItems( Items );
 	}
 
-	setCheckState( Items, IObjectSelectorItem::Checked );
+	setCheckState( Items, IObjectSelectorItem::CheckedEnabled );
 }
 
 void NodeTreeCtrl::OnUncheckAll()
@@ -236,7 +236,7 @@ void NodeTreeCtrl::OnUncheckAll()
 		getRootItems( Items );
 	}
 
-	setCheckState( Items, IObjectSelectorItem::Unchecked );
+	setCheckState( Items, IObjectSelectorItem::UncheckedEnabled );
 }
 
 void NodeTreeCtrl::changeSelectedItem( const HTREEITEM& rItem )
@@ -326,7 +326,9 @@ bool NodeTreeCtrl::ExpandToCheckedItems()
 		if( Iter->second.isNode() )
 		{
 			IObjectSelectorItem::CheckedStateEnum CheckedState = Iter->second.getCheckedState();
-			if( IObjectSelectorItem::Checked == CheckedState || IObjectSelectorItem::TriState == CheckedState)
+			bool Checked =  IObjectSelectorItem::CheckedEnabled == CheckedState || IObjectSelectorItem::CheckedDisabled == CheckedState;
+			bool Tristate = IObjectSelectorItem::TriStateEnabled == CheckedState || IObjectSelectorItem::TriStateDisabled == CheckedState;
+			if( Checked || Tristate )
 			{
 				Expand( Iter->second.getTreeItem(), TVE_EXPAND );
 				Result = true;
@@ -347,6 +349,18 @@ bool NodeTreeCtrl::ExpandToCheckedItems()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\ObjectSelectorLibrary\NodeTreeCtrl.cpp_v  $
+ * 
+ *    Rev 1.2   25 Aug 2014 07:40:16   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  909
+ * SCR Title:  Object Selector replacing Result Picker and Output Selector SVO-72, 40, 130
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Added disabled checked states
+ * Object Selector displays nodes disabled when in single select mode
+ * Changed methods: loadTree, updateTree, OnCheckAll, OnUnCheckAll, ExpandToCheckedItems
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   18 Aug 2014 07:46:18   gramseier
  * Project:  SVObserver

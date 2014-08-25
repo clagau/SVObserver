@@ -5,8 +5,8 @@
 //* .Module Name     : ObjectTreeCtrl
 //* .File Name       : $Workfile:   ObjectTreeCtrl.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   18 Aug 2014 07:46:20  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   25 Aug 2014 07:44:16  $
 //* ----------------------------------------------------------------------------
 //* This class is used to display the object tree control
 //******************************************************************************
@@ -129,7 +129,7 @@ namespace Seidenader
 			\param CheckedState <in> the state to change it to
 			\return True if state has changed
 			***********/
-			bool setCheckState( const TreeItemSet& rParentItems, SVTreeLibrary::IObjectSelectorItem::CheckedStateEnum CheckedState = SVTreeLibrary::IObjectSelectorItem::CheckedStateNone );
+			bool setCheckState( const TreeItemSet& rParentItems, SVTreeLibrary::IObjectSelectorItem::CheckedStateEnum CheckedState = SVTreeLibrary::IObjectSelectorItem::EmptyEnabled );
 
 			/**********
 			The method sets the state of the children items
@@ -216,6 +216,17 @@ namespace Seidenader
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\ObjectSelectorLibrary\ObjectTreeCtrl.h_v  $
+ * 
+ *    Rev 1.3   25 Aug 2014 07:44:16   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  909
+ * SCR Title:  Object Selector replacing Result Picker and Output Selector SVO-72, 40, 130
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Added disabled checked states
+ * Object Selector displays nodes disabled when in single select mode
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   18 Aug 2014 07:46:20   gramseier
  * Project:  SVObserver
