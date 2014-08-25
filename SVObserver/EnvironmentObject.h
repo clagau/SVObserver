@@ -5,8 +5,8 @@
 //* .Module Name     : EnvironmentObject
 //* .File Name       : $Workfile:   EnvironmentObject.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   17 Jul 2014 17:39:40  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   25 Aug 2014 02:40:18  $
 //* ----------------------------------------------------------------------------
 //* This class is used as the root child object Environment to 
 //* store specific objects 
@@ -26,6 +26,13 @@ const TCHAR EnvironmentSerialNumber[]	= _T("Serial Number");
 const TCHAR EnvironmentWinKey[]			= _T("Windows.Win Key");
 const TCHAR EnvironmentImageUpdate[]	= _T("View.Image Display Update");
 const TCHAR EnvironmentResultUpdate[]	= _T("View.Result Display Update");
+const TCHAR EnvironmentModeIsRun[]		= _T("Mode.Is Run");
+const TCHAR EnvironmentModeIsStop[]		= _T("Mode.Is Stop");
+const TCHAR EnvironmentModeIsRegressionTest[]		= _T("Mode.Is Regression Test");
+const TCHAR EnvironmentModeIsTest[]		= _T("Mode.Is Test");
+const TCHAR EnvironmentModeIsEdit[]		= _T("Mode.Is Edit");
+const TCHAR EnvironmentModeIsEditMoveTool[]		= _T("Mode.Is Edit Move Tool");
+const TCHAR EnvironmentModeValue[]		= _T("Mode.Value");
 #pragma endregion Declarations
 
 class EnvironmentObject : public SVObjectClass
@@ -116,6 +123,16 @@ public:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\EnvironmentObject.h_v  $
+ * 
+ *    Rev 1.3   25 Aug 2014 02:40:18   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  934
+ * SCR Title:  Add Remote Access to Environment.Mode Parameters
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   Add Environment-Mode const string parameter
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   17 Jul 2014 17:39:40   gramseier
  * Project:  SVObserver

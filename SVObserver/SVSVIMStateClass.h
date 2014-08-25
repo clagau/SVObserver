@@ -5,8 +5,8 @@
 //* .Module Name     : SVSVIMStateClass
 //* .File Name       : $Workfile:   SVSVIMStateClass.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 15:16:02  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   25 Aug 2014 02:41:14  $
 //******************************************************************************
 
 #if defined ( _MSC_VER ) && ( _MSC_VER >= 1000 )
@@ -74,6 +74,23 @@ public:
 	static bool CheckState( DWORD dwState );
 
 private:
+	//************************************
+	// Method:    setEnvironmentParameters
+	// Description:  Set all Environment.Mode parameter.
+	// Returns:   void
+	//************************************
+	static void setEnvironmentParameters();
+
+	//************************************
+	// Method:    setEnvironmentParameter
+	// Description:  Set a Environment parameter
+	// Parameter: DWORD dwState State to check
+	// Parameter: const TCHAR * name Name of the Environment parameter
+	// Returns:   void
+	//************************************
+	static void setEnvironmentParameter( DWORD dwState, const TCHAR * name );
+
+
 	//This constructor does nothing. 
 	SVSVIMStateClass();
 
@@ -90,7 +107,18 @@ private:
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVSVIMStateClass.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVSVIMStateClass.h_v  $
+ * 
+ *    Rev 1.1   25 Aug 2014 02:41:14   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  934
+ * SCR Title:  Add Remote Access to Environment.Mode Parameters
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   add methods setEnvironmentParameter(s)
+ * set environment-mode parameters
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 15:16:02   bWalter
  * Project:  SVObserver

@@ -5,14 +5,15 @@
 //* .Module Name     : SVSVIMStateClass
 //* .File Name       : $Workfile:   SVSVIMStateClass.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   18 Jun 2013 19:23:20  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   25 Aug 2014 02:41:14  $
 //******************************************************************************
 
 #include "stdafx.h"
 #include <intrin.h>
 #include "SVSVIMStateClass.h"
 #include "SVVisionProcessorHelper.h"
+#include "EnvironmentObject.h"
 
 #pragma intrinsic(_InterlockedAnd)
 #pragma intrinsic(_InterlockedOr)
@@ -41,6 +42,7 @@ bool SVSVIMStateClass::AddState( DWORD dwState )
 		SVVisionProcessorHelper::Instance().SetLastModifiedTime();
 	}
 
+	setEnvironmentParameters();
 	return true;
 }
 
@@ -52,6 +54,7 @@ bool SVSVIMStateClass::RemoveState( DWORD dwState )
 	//::InterlockedExchange( &m_SVIMState, dwTempState );
 
 	::_InterlockedAnd( &m_SVIMState, ~dwState );
+	setEnvironmentParameters();
 
 	return true;
 }
@@ -63,11 +66,56 @@ bool SVSVIMStateClass::CheckState( DWORD dwState )
 	return l_Status;
 }
 
+void SVSVIMStateClass::setEnvironmentParameters()
+{
+	EnvironmentObject::setEnvironmentValue( ::EnvironmentModeValue, m_SVIMState );
+
+	setEnvironmentParameter(SV_STATE_EDIT, ::EnvironmentModeIsEdit);
+	setEnvironmentParameter(SV_STATE_RUNNING, ::EnvironmentModeIsRun);
+	setEnvironmentParameter(SV_STATE_EDIT_MOVE, ::EnvironmentModeIsEditMoveTool);
+	setEnvironmentParameter(SV_STATE_REGRESSION, ::EnvironmentModeIsRegressionTest);
+	setEnvironmentParameter(SV_STATE_TEST, ::EnvironmentModeIsTest);
+
+	if( SVSVIMStateClass::CheckState( SV_STATE_READY ) &&
+		!SVSVIMStateClass::CheckState( SV_STATE_EDIT ) &&
+		!SVSVIMStateClass::CheckState( SV_STATE_EDIT_MOVE ) )
+	{
+		EnvironmentObject::setEnvironmentValue( ::EnvironmentModeIsStop, TRUE );
+	}
+	else
+	{
+		EnvironmentObject::setEnvironmentValue( ::EnvironmentModeIsStop, FALSE );
+	}
+}
+
+void SVSVIMStateClass::setEnvironmentParameter( DWORD dwState, const TCHAR * name )
+{
+	if( CheckState( dwState ) )
+	{
+		EnvironmentObject::setEnvironmentValue( name, TRUE );
+	}
+	else
+	{
+		EnvironmentObject::setEnvironmentValue( name, FALSE );
+	}
+}
+
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVSVIMStateClass.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVSVIMStateClass.cpp_v  $
+ * 
+ *    Rev 1.2   25 Aug 2014 02:41:14   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  934
+ * SCR Title:  Add Remote Access to Environment.Mode Parameters
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   add methods setEnvironmentParameter(s)
+ * set environment-mode parameters
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   18 Jun 2013 19:23:20   bwalter
  * Project:  SVObserver

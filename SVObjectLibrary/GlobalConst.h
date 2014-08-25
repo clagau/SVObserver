@@ -5,8 +5,8 @@
 //* .Module Name     : Global constants
 //* .File Name       : $Workfile:   GlobalConst.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   17 Jul 2014 15:07:54  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   25 Aug 2014 02:33:18  $
 //* ----------------------------------------------------------------------------
 //* This is the global constant file for the SVObjectLibrary project.
 //******************************************************************************
@@ -18,13 +18,13 @@ namespace Seidenader
 	namespace SVObjectLibrary
 	{
 		#pragma region Declarations
-		//Root children nodes
 		const TCHAR			FqnConfiguration[]				= _T( "Configuration Object" );
 		const TCHAR			FqnInspections[]				= _T( "Inspections" );
 		const TCHAR			FqnPPQs[]						= _T( "PPQs" );
 		const TCHAR			FqnPPQVariables[]				= _T( "PPQ Variables" );
 		const TCHAR			FqnRemoteInputs[]				= _T( "RemoteInputs" );
 		const TCHAR			FqnCameras[]					= _T( "Cameras" );
+		const TCHAR			FqnEnvironmentMode[]			= _T( "Environment.Mode" );
 		#pragma endregion Declarations
 	}
 }
@@ -34,6 +34,16 @@ namespace Seidenader
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObjectLibrary\GlobalConst.h_v  $
+ * 
+ *    Rev 1.3   25 Aug 2014 02:33:18   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  934
+ * SCR Title:  Add Remote Access to Environment.Mode Parameters
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   add string const parameter FqnEnvironmentMode
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   17 Jul 2014 15:07:54   gramseier
  * Project:  SVObserver
