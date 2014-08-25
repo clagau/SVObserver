@@ -5,8 +5,8 @@
 //* .Module Name     : SVVisionProcessorHelper
 //* .File Name       : $Workfile:   SVVisionProcessorHelper.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.17  $
-//* .Check In Date   : $Date:   18 Aug 2014 07:37:54  $
+//* .Current Version : $Revision:   1.19  $
+//* .Check In Date   : $Date:   22 Aug 2014 14:42:44  $
 //******************************************************************************
 
 #pragma region Includes
@@ -884,7 +884,7 @@ HRESULT SVVisionProcessorHelper::QueryFailStatusList( const SVString& rListName,
 		if ( it != rList.end() )
 		{
 			const RemoteMonitorNamedList& rNamedList = it->second;
-			BuildNameSetForMonitoredObjectList( rNamedList.GetRejectConditionList(), rNames );
+			BuildNameSetForMonitoredObjectList( rNamedList.GetFailStatusList(), rNames );
 		}
 		else
 		{
@@ -927,32 +927,21 @@ HRESULT SVVisionProcessorHelper::ActivateMonitorList( const SVString& rListName,
 
 HRESULT SVVisionProcessorHelper::QueryMonitorListNames( SVNameSet& rNames ) const
 {
-	HRESULT hr = S_OK;
-	DWORD notAllowedStates = SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION | 
-		SV_STATE_START_PENDING | SV_STATE_STARTING | SV_STATE_STOP_PENDING | SV_STATE_STOPING |
-		SV_STATE_CREATING | SV_STATE_LOADING | SV_STATE_SAVING | SV_STATE_CLOSING;
-	if ( !SVSVIMStateClass::CheckState( notAllowedStates ) && SVSVIMStateClass::CheckState( SV_STATE_READY ) )
-	{
-		SVConfigurationObject* pConfig = nullptr;
+	SVConfigurationObject* pConfig = nullptr;
 
-		HRESULT hr = SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
-		if ( nullptr != pConfig )
+	HRESULT hr = SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
+	if ( nullptr != pConfig )
+	{
+		const RemoteMonitorList& rList = pConfig->GetRemoteMonitorList();
+		for (RemoteMonitorList::const_iterator it = rList.begin();it != rList.end();++it)
 		{
-			const RemoteMonitorList& rList = pConfig->GetRemoteMonitorList();
-			for (RemoteMonitorList::const_iterator it = rList.begin();it != rList.end();++it)
-			{
-				// insert monitor list to result name set
-				rNames.insert(it->first);
-			}
-		}
-		else
-		{
-			hr = E_POINTER;
+			// insert monitor list to result name set
+			rNames.insert(it->first);
 		}
 	}
 	else
 	{
-		hr = SVMSG_SVF_ACCESS_DENIED;
+		hr = E_POINTER;
 	}
 	return hr;
 }
@@ -1019,6 +1008,26 @@ void SVVisionProcessorHelper::ProcessLastModified( bool& p_WaitForEvents )
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVVisionProcessorHelper.cpp_v  $
+ * 
+ *    Rev 1.19   22 Aug 2014 14:42:44   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Revised QueryMonitorListNames to remove state restrictions.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.18   22 Aug 2014 14:18:04   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Revised QueryFailStatusList to get the fail statis list instead of the reject condition list.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.17   18 Aug 2014 07:37:54   gramseier
  * Project:  SVObserver
