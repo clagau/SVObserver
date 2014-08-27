@@ -5,8 +5,8 @@
 //* .Module Name     : FormulaController
 //* .File Name       : $Workfile:   FormulaController.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.4  $
-//* .Check In Date   : $Date:   17 Jul 2014 17:39:40  $
+//* .Current Version : $Revision:   1.5  $
+//* .Check In Date   : $Date:   27 Aug 2014 01:22:48  $
 //******************************************************************************
 //Description:  FormulaController is the class to get/set and
 //              validate equation objects inside SVObserver.
@@ -66,6 +66,7 @@ SVStringArray FormulaController::getPPQVariableNames() const
 	std::vector<SVString> retVals;
 	if ( nullptr != m_pInspection )
 	{
+		SVIOEntryHostStructPtrList PPQVariables;
 		for( size_t i = 0; i < m_pInspection->m_PPQInputs.size(); i++ )
 		{	
 			SVIOEntryHostStructPtr ioEntryPtr = m_pInspection->m_PPQInputs[i].m_IOEntryPtr;
@@ -73,10 +74,20 @@ SVStringArray FormulaController::getPPQVariableNames() const
 			//check if input is enable for this inspection
 			if( ioEntryPtr->m_Enabled )
 			{
-				SVString name = ioEntryPtr->m_pValueObject->GetCompleteObjectName();
-				retVals.push_back( name );
+				PPQVariables.push_back( ioEntryPtr );
 			}
 		}// end for
+
+		std::sort( PPQVariables.begin(), PPQVariables.end(), &SVIOEntryHostStruct::PtrGreater );
+
+		SVIOEntryHostStructPtrList::iterator Iter( PPQVariables.begin() );
+		while( Iter != PPQVariables.end() )
+		{
+			SVString Name = Iter->get()->m_pValueObject->GetCompleteObjectName();
+			retVals.push_back( Name );
+
+			++Iter;
+		}
 	}
 	return retVals;
 }
@@ -193,6 +204,17 @@ void FormulaController::setEquation( SVEquationClass* pEquation )
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\FormulaController.cpp_v  $
+ * 
+ *    Rev 1.5   27 Aug 2014 01:22:48   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  909
+ * SCR Title:  Object Selector replacing Result Picker and Output Selector SVO-72, 40, 130
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Fixed input variable sort problem
+ * Changed methods: getPPQVariableNames
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.4   17 Jul 2014 17:39:40   gramseier
  * Project:  SVObserver

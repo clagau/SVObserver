@@ -5,8 +5,8 @@
 //* .Module Name     : MonitorListPropertyDlg
 //* .File Name       : $Workfile:   MonitorListPropertyDlg.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   18 Aug 2014 16:10:58  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   26 Aug 2014 17:19:22  $
 //******************************************************************************
 
 #pragma once
@@ -69,7 +69,7 @@ protected:
 	int m_MonitorListRejectQueueDepth;
 	CString m_sPPQ;
 	void SetupMonitorListProperties();
-	bool IsValidListName(const CString& name) const;
+	bool IsValidListName(const CString& name, const CString& originalName) const;
 	void ValidateLabelText(CString& newText) const;
 
 #pragma endregion Private
@@ -80,6 +80,16 @@ protected:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\MonitorListPropertyDlg.h_v  $
+ * 
+ *    Rev 1.2   26 Aug 2014 17:19:22   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Revised IsValidName to ignore case when looking for unique names.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   18 Aug 2014 16:10:58   sjones
  * Project:  SVObserver

@@ -5,13 +5,14 @@
 //* .Module Name     : SVIPDoc
 //* .File Name       : $Workfile:   SVIPDoc.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.21  $
-//* .Check In Date   : $Date:   17 Jul 2014 19:21:28  $
+//* .Current Version : $Revision:   1.22  $
+//* .Check In Date   : $Date:   27 Aug 2014 01:26:46  $
 //******************************************************************************
 
 #pragma region Includes
 #include "stdafx.h"
 #include <comdef.h>
+#include <algorithm>
 #include "SVIPDoc.h"
 
 #include "SVObjectLibrary/SVObjectSynchronousCommandTemplate.h"
@@ -1908,13 +1909,15 @@ void SVIPDoc::OnSelectPPQVariable()
 	title.Format(_T("%s - %s"),  ViewPPQDataCaption, inspectionName);
 	dlg.SetCaptionTitle(title);
 
-	dlg.m_lPPQInputsSize = l_pInspection->m_PPQInputs.size();
-	dlg.m_ppPPQInputs.resize( dlg.m_lPPQInputsSize );
-
 	for( size_t z = 0; z < l_pInspection->m_PPQInputs.size(); ++z )
 	{
-		dlg.m_ppPPQInputs[ z ] = l_pInspection->m_PPQInputs[ z ].m_IOEntryPtr;
+		if( l_pInspection->m_PPQInputs[z].m_IOEntryPtr->m_Enabled )
+		{
+			dlg.m_ppPPQInputs.push_back( l_pInspection->m_PPQInputs[ z ].m_IOEntryPtr );
+		}
 	}
+	
+	std::sort( dlg.m_ppPPQInputs.begin(), dlg.m_ppPPQInputs.end(), &SVIOEntryHostStruct::PtrGreater );
 	
 	INT_PTR dlgResult = dlg.DoModal();
 	if( dlgResult == IDOK )
@@ -4411,6 +4414,17 @@ int SVIPDoc::GetToolToInsertBefore(const CString& name, int listIndex) const
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVIPDoc.cpp_v  $
+ * 
+ *    Rev 1.22   27 Aug 2014 01:26:46   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  909
+ * SCR Title:  Object Selector replacing Result Picker and Output Selector SVO-72, 40, 130
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Fixed input variable sort problem
+ * Changed methods: OnSelectPPQVariable
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.21   17 Jul 2014 19:21:28   gramseier
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : SVIOEntryHostStruct
 //* .File Name       : $Workfile:   SVIOEntryHostStruct.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   07 Aug 2013 13:20:36  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   27 Aug 2014 01:24:38  $
 //******************************************************************************
 
 #ifndef SVIOENTRYHOSTSTRUCT_H
@@ -47,6 +47,8 @@ struct SVIOEntryHostStruct
 	SVValueObjectClass* m_pValueObject;
 	SVObjectClass* m_pValueParent;
 
+	static bool PtrGreater( SVSharedPtr< SVIOEntryHostStruct > elem1, SVSharedPtr< SVIOEntryHostStruct > elem2 );
+
 private:
 	SVIOEntryHostStruct( const SVIOEntryHostStruct& p_rsvObject );
 
@@ -63,6 +65,17 @@ typedef std::deque< SVIOEntryHostStructPtr > SVIOEntryHostStructPtrList;
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVIOEntryHostStruct.h_v  $
+ * 
+ *    Rev 1.3   27 Aug 2014 01:24:38   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  909
+ * SCR Title:  Object Selector replacing Result Picker and Output Selector SVO-72, 40, 130
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Fixed input variable sort problem
+ * Added the sort method PtrGreater
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   07 Aug 2013 13:20:36   sjones
  * Project:  SVObserver

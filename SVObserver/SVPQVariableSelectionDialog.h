@@ -5,8 +5,8 @@
 //* .Module Name     : <SVPQVariableSelectionDialog>
 //* .File Name       : $Workfile:   SVPQVariableSelectionDialog.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   02 Oct 2013 07:41:06  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   27 Aug 2014 01:32:26  $
 //******************************************************************************
 
 #ifndef SVPQVARIABLESELECTIONDIALOG_H
@@ -21,7 +21,6 @@ public:
 	CString csAvailableText;
 
 	SVIOEntryHostStructPtrList m_ppPPQInputs;
-	size_t m_lPPQInputsSize;
 
 public:
 	SVPQVariableSelectionDialog(CWnd* pParent = NULL);   // standard constructor
@@ -64,6 +63,17 @@ protected:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVPQVariableSelectionDialog.h_v  $
+ * 
+ *    Rev 1.3   27 Aug 2014 01:32:26   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  909
+ * SCR Title:  Object Selector replacing Result Picker and Output Selector SVO-72, 40, 130
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Fixed input variable sort problem
+ * Changed methods: OnInitDialog
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   02 Oct 2013 07:41:06   tbair
  * Project:  SVObserver

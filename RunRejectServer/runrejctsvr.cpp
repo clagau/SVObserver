@@ -5,8 +5,8 @@
 //* .Module Name     : runrejctsvr
 //* .File Name       : $Workfile:   runrejctsvr.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.3  $
-//* .Check In Date   : $Date:   22 Aug 2014 11:01:30  $
+//* .Current Version : $Revision:   1.4  $
+//* .Check In Date   : $Date:   26 Aug 2014 17:16:24  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -666,18 +666,45 @@ std::string GetVersionString()
 	#endif
 
 	return verStr;
-
 }
 
+bool CheckCommandLineArgs(int argc, _TCHAR* argv[], LPCTSTR option)
+{
+	bool bFound = false;
+	if (argc > 1)
+	{
+		for (int i = 1;i < argc && !bFound;i++)
+		{
+			if (_tcsicmp(argv[i], option) == 0)
+			{
+				bFound = true;
+			}
+		}
+	}
+	return bFound;
+}
+
+// Command Line arguments: /nocheck
+// /nocheck means to ignore the 2 GiG size requirement
 int _tmain(int argc, _TCHAR* argv[])
 {
+	// check command line args - if /nocheck is specified - ignore the < 2 Gig error
+	bool bCheckSizeOverride = CheckCommandLineArgs(argc, argv, _T("/nocheck"));
+	
 	HRESULT hr = SeidenaderVision::SVSharedConfiguration::SharedResourcesOk();
 	if (hr != S_OK)
 	{
 		std::string msg;
 		if (hr == STG_E_INSUFFICIENTMEMORY)
 		{
-			msg = "Shared Resources - not enough space available.\n";
+			if (!bCheckSizeOverride)
+			{
+				msg = "Shared Resources - not enough space available.\n";
+			}
+			else
+			{
+				hr = S_OK;
+			}
 		}
 		else if (hr == STG_E_PATHNOTFOUND)
 		{
@@ -687,10 +714,13 @@ int _tmain(int argc, _TCHAR* argv[])
 		{
 			msg = "Shared Resources - missing or inadequate.\n";
 		}
-		::OutputDebugStringA(msg.c_str());
-		std::cout << msg;
-		// Messagebox ?
-		return -1;
+		if (S_OK != hr)
+		{
+			::OutputDebugStringA(msg.c_str());
+			std::cout << msg;
+			// Messagebox ?
+			return -1;
+		}
 	}
 	try
 	{
@@ -719,6 +749,16 @@ int _tmain(int argc, _TCHAR* argv[])
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\RunRejectServer\runrejctsvr.cpp_v  $
+ * 
+ *    Rev 1.4   26 Aug 2014 17:16:24   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Added command line option to override the 2 Gig minimum size requirement.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   22 Aug 2014 11:01:30   sjones
  * Project:  SVObserver

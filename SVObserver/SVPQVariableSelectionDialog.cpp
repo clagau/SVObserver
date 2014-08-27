@@ -5,8 +5,8 @@
 //* .Module Name     : <SVPQVariableSelectionDialog>
 //* .File Name       : $Workfile:   SVPQVariableSelectionDialog.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.3  $
-//* .Check In Date   : $Date:   21 May 2014 17:53:36  $
+//* .Current Version : $Revision:   1.4  $
+//* .Check In Date   : $Date:   27 Aug 2014 01:32:28  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -29,7 +29,6 @@ SVPQVariableSelectionDialog::SVPQVariableSelectionDialog(CWnd* pParent /*=NULL*/
 
 	csAvailableText.LoadString( IDS_AVAILABLE_DATA ); 
 
-	m_lPPQInputsSize = 0;
 }
 
 void SVPQVariableSelectionDialog::DoDataExchange(CDataExchange* pDX)
@@ -71,11 +70,9 @@ BOOL SVPQVariableSelectionDialog::OnInitDialog()
 	HTREEITEM hChild = NULL;
 
 	// Loop through the inputs
-	for( l = 0; l < m_lPPQInputsSize; l++ )
+	for( l = 0; l < m_ppPPQInputs.size(); l++ )
 	{
 		pIOEntry = m_ppPPQInputs[l];
-		if( !pIOEntry->m_Enabled )
-			continue;
 
 		hChild = m_treeCtrl.InsertItem( TVIF_TEXT | TVIF_STATE | TVIF_PARAM,  
 										 (LPCTSTR) pIOEntry->m_pValueObject->GetName(),
@@ -96,7 +93,6 @@ BOOL SVPQVariableSelectionDialog::OnInitDialog()
 
 	}// end for
 
-	m_treeCtrl.SortChildren( hParent);
 	return TRUE;  // return TRUE unless you set the focus to a control
 	              // EXCEPTION: OCX Property Pages should return FALSE
 }
@@ -124,6 +120,17 @@ void SVPQVariableSelectionDialog::OnCancel()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVPQVariableSelectionDialog.cpp_v  $
+ * 
+ *    Rev 1.4   27 Aug 2014 01:32:28   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  909
+ * SCR Title:  Object Selector replacing Result Picker and Output Selector SVO-72, 40, 130
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Fixed input variable sort problem
+ * Changed methods: OnInitDialog
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   21 May 2014 17:53:36   sjones
  * Project:  SVObserver

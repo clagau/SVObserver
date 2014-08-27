@@ -5,8 +5,8 @@
 //* .Module Name     : SVPPQObject
 //* .File Name       : $Workfile:   SVPPQObject.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.29  $
-//* .Check In Date   : $Date:   22 Aug 2014 08:42:54  $
+//* .Current Version : $Revision:   1.30  $
+//* .Check In Date   : $Date:   27 Aug 2014 01:30:40  $
 //******************************************************************************
 
 #pragma region Includes
@@ -1881,40 +1881,6 @@ HRESULT SVPPQObject::GetInputIOValues( SVVariantBoolVector& p_rInputValues ) con
 	return l_Status;
 }
 
-bool SVIOEntryHostStructPtrGreater( SVIOEntryHostStructPtr elem1, SVIOEntryHostStructPtr elem2 )
-{
-	bool l_bGreater = false;
-	if( !( elem1.empty() ) && !( elem2.empty() ) )
-	{
-		if( ( elem1->m_pValueObject != NULL ) && ( elem2->m_pValueObject != NULL ) )
-		{
-			CString l_strTmp1 = elem1->m_pValueObject->GetCompleteObjectName();
-			CString l_strTmp2 = elem2->m_pValueObject->GetCompleteObjectName();
-			if( l_strTmp2.GetLength() == l_strTmp1.GetLength() )
-			{
-				l_bGreater =  l_strTmp2 > l_strTmp1 ;
-			}
-			else
-			{
-				int len1 = l_strTmp1.GetLength();
-				int len2 = l_strTmp2.GetLength();
-				int min = len1 < len2 ? len1 : len2;
-				int l_compare = 0;
-				if( 0 ==( l_compare =  l_strTmp1.Left(min).Compare( l_strTmp2.Left(min) ) ))
-				{
-					l_bGreater = len2 > len1;
-				}
-				else
-				{
-					l_bGreater = l_compare > 0;
-				}
-			}
-		}
-	}
-
-	return l_bGreater;
-}
-
 BOOL SVPPQObject::RebuildInputList(bool bHasCameraTrigger)
 {
 	SVIOEntryHostStructPtrList ppNewInputs;
@@ -1966,7 +1932,7 @@ BOOL SVPPQObject::RebuildInputList(bool bHasCameraTrigger)
 
 		m_UsedInputs = ppNewInputs;
 
-		std::sort( m_UsedInputs.begin(), m_UsedInputs.end(), &SVIOEntryHostStructPtrGreater );
+		std::sort( m_UsedInputs.begin(), m_UsedInputs.end(), &SVIOEntryHostStruct::PtrGreater );
 
 		// Fill out all the product info structs with the current inputs
 		for( j = 0; j < ( m_ppPPQPositions.size() + g_lPPQExtraBufferSize ); j++ )
@@ -5110,6 +5076,18 @@ void SVPPQObject::SVSharedMemoryFilters::clear()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVPPQObject.cpp_v  $
+ * 
+ *    Rev 1.30   27 Aug 2014 01:30:40   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  909
+ * SCR Title:  Object Selector replacing Result Picker and Output Selector SVO-72, 40, 130
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Fixed input variable sort problem
+ * Moved sort method to SVIOEntryHostStruct
+ * Changed methods: RebuildInputList
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.29   22 Aug 2014 08:42:54   sjones
  * Project:  SVObserver

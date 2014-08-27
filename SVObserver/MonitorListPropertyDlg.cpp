@@ -5,8 +5,8 @@
 //* .Module Name     : MonitorListPropertyDlg
 //* .File Name       : $Workfile:   MonitorListPropertyDlg.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.4  $
-//* .Check In Date   : $Date:   18 Aug 2014 16:11:46  $
+//* .Current Version : $Revision:   1.5  $
+//* .Check In Date   : $Date:   26 Aug 2014 17:19:22  $
 //******************************************************************************
 
 #pragma region Includes
@@ -115,11 +115,15 @@ void MonitorListPropertyDlg::ValidateLabelText(CString& newText) const
 	}
 }
 
-bool MonitorListPropertyDlg::IsValidListName(const CString& name) const
+bool MonitorListPropertyDlg::IsValidListName(const CString& name, const CString& originalName) const
 {
 	bool bRetVal = true;
-	// check for uniqueness
-	RemoteMonitorList:: const_iterator it = m_MonitorList.find(name);
+	// check for uniqueness (case insensitive)
+	RemoteMonitorList::const_iterator it = std::find_if(m_MonitorList.begin(), m_MonitorList.end(), [&](const RemoteMonitorList::value_type& entry)->bool 
+	{ 
+		return (0 == name.CompareNoCase(entry.first.c_str()) && 0 != originalName.CompareNoCase(entry.first.c_str())); 
+	} 
+	);
 	if (it != m_MonitorList.end())
 	{
 		bRetVal = false;
@@ -142,7 +146,7 @@ void MonitorListPropertyDlg::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResu
 			sName.Trim();
 			
 			ValidateLabelText(sName);
-			if (IsValidListName(sName))
+			if (IsValidListName(sName, m_DisplayName))
 			{ 
 				m_DisplayName = sName;
 			}
@@ -231,6 +235,16 @@ int MonitorListPropertyDlg::GetMonitorListRejectQueueDepth() const
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\MonitorListPropertyDlg.cpp_v  $
+ * 
+ *    Rev 1.5   26 Aug 2014 17:19:22   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Revised IsValidName to ignore case when looking for unique names.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.4   18 Aug 2014 16:11:46   sjones
  * Project:  SVObserver

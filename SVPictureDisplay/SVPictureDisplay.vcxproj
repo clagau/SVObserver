@@ -253,7 +253,10 @@
     <None Include="res\ZoomOut.ico" />
   </ItemGroup>
   <ItemGroup>
-    <Midl Include="SVPictureDisplay.idl" />
+    <Midl Include="SVPictureDisplay.idl">
+      <TargetEnvironment Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">X64</TargetEnvironment>
+      <TargetEnvironment Condition="'$(Configuration)|$(Platform)'=='Release|x64'">X64</TargetEnvironment>
+    </Midl>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ArrowObject.h" />
