@@ -5,8 +5,8 @@
 //* .Module Name     : SVMainFrm
 //* .File Name       : $Workfile:   SVMainFrm.CPP  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.11  $
-//* .Check In Date   : $Date:   14 Aug 2014 16:09:36  $
+//* .Current Version : $Revision:   1.12  $
+//* .Check In Date   : $Date:   27 Aug 2014 11:06:12  $
 //******************************************************************************
 
 #pragma region Includes
@@ -1946,11 +1946,14 @@ LRESULT SVMainFrame::OnUserChanged( WPARAM wParam, LPARAM lParam )
 
 void SVMainFrame::OnViewImageDisplayUpdate()
 {
-	SVSVIMStateClass::AddState( SV_STATE_MODIFIED );
+	if( TheSVObserverApp.m_svSecurityMgr.SVValidate( SECURITY_POINT_VIEW_MENU_IMAGE_DISPLAY_UPDATE ) == S_OK )
+	{
+		SVSVIMStateClass::AddState( SV_STATE_MODIFIED );
 
-	BOOL ImageUpdate = FALSE;
-	EnvironmentObject::getEnvironmentValue( ::EnvironmentImageUpdate, ImageUpdate );
-	EnvironmentObject::setEnvironmentValue( ::EnvironmentImageUpdate, !ImageUpdate );
+		BOOL ImageUpdate = FALSE;
+		EnvironmentObject::getEnvironmentValue( ::EnvironmentImageUpdate, ImageUpdate );
+		EnvironmentObject::setEnvironmentValue( ::EnvironmentImageUpdate, !ImageUpdate );
+	}
 }
 
 void SVMainFrame::OnUpdateViewImageDisplayUpdate( CCmdUI* pCmdUI )
@@ -1958,13 +1961,10 @@ void SVMainFrame::OnUpdateViewImageDisplayUpdate( CCmdUI* pCmdUI )
 	BOOL bEnable = TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable( SECURITY_POINT_VIEW_MENU_IMAGE_DISPLAY_UPDATE );
 	bEnable &= !SVSVIMStateClass::CheckState( SV_STATE_REGRESSION );
 	pCmdUI->Enable( bEnable);
-
-	
 	
 	BOOL ImageUpdate;
 	EnvironmentObject::getEnvironmentValue( ::EnvironmentImageUpdate, ImageUpdate );
 	pCmdUI->SetCheck( ImageUpdate );
-	
 	
 	bool bEnableZoom = false;
 	CMDIChildWnd *pChild = (CMDIChildWnd*) GetActiveFrame();
@@ -1986,24 +1986,23 @@ void SVMainFrame::OnUpdateViewImageDisplayUpdate( CCmdUI* pCmdUI )
 		bEnableZoom = pSView->IsZoomAllowed();
 	}
 
-	
 	CMenu* pMenu = GetMenu();
 	if(pMenu)
 	{
 		EnableParentMenu(pMenu,ID_ZOOM_MINUS, bEnableZoom,3 );
 	}
-	
-
-
 }
 
 void SVMainFrame::OnViewResultDisplayUpdate()
 {
-	SVSVIMStateClass::AddState( SV_STATE_MODIFIED );
+	if( TheSVObserverApp.m_svSecurityMgr.SVValidate( SECURITY_POINT_VIEW_MENU_RESULT_DISPLAY_UPDATE ) == S_OK )
+	{
+		SVSVIMStateClass::AddState( SV_STATE_MODIFIED );
 
-	BOOL ResultOnline = FALSE;
-	EnvironmentObject::getEnvironmentValue( ::EnvironmentResultUpdate, ResultOnline );
-	EnvironmentObject::setEnvironmentValue( ::EnvironmentResultUpdate, !ResultOnline );
+		BOOL ResultOnline = FALSE;
+		EnvironmentObject::getEnvironmentValue( ::EnvironmentResultUpdate, ResultOnline );
+		EnvironmentObject::setEnvironmentValue( ::EnvironmentResultUpdate, !ResultOnline );
+	}
 }
 
 void SVMainFrame::OnUpdateViewResultDisplayUpdate( CCmdUI* pCmdUI )
@@ -2173,7 +2172,18 @@ bool SVMainFrame::IsZoomingPossible()
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSARCH65\PROJECTFILES\ARCHIVES\SVOBSERVER_SRC\SVOBSERVER\SVMainFrm.CPP_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVMainFrm.CPP_v  $
+ * 
+ *    Rev 1.12   27 Aug 2014 11:06:12   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  900
+ * SCR Title:  Separate View Image Update, View Result Update flags; remote access E55,E92
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Fixed: Security login dialog not being displayed in force mode
+ * Method changed: OnViewImageDisplayUpdate, OnViewResultDisplayUpdate
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.11   14 Aug 2014 16:09:36   mEichengruen
  * Project:  SVObserver
