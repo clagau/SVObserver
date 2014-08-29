@@ -5,8 +5,8 @@
 //* .Module Name     : runrejctsvr
 //* .File Name       : $Workfile:   runrejctsvr.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.4  $
-//* .Check In Date   : $Date:   26 Aug 2014 17:16:24  $
+//* .Current Version : $Revision:   1.5  $
+//* .Check In Date   : $Date:   29 Aug 2014 17:35:56  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -27,7 +27,6 @@
 #include "SVSharedConfiguration.h"
 
 #pragma comment (lib, "version.lib")
-
 const u_short imgPort = 28963;
 
 template<typename API>
@@ -46,29 +45,10 @@ struct port<UdpApi>
 };
 
 typedef Json::Value JsonCmd;
+typedef SeidenaderVision::ProductPtr ProductPtr;
 
 using Seidenader::Socket::header;
 using Seidenader::Socket::Traits;
-
-const std::string mock_rsp_begin = 
-"{\
-\"ID\" : 0,\
-\"Name\" : \"GetProduct\",\
-\"HResult\" : 0,\
-\"Results\" :\
-{\
-\"items\" :\
-{\
-\"Images\" :\
-[\
-";
-const std::string mock_rsp_end =
-"],\
-\"Values\" : [],\
-\"Errors\" : []\
-}\
-}\
-}";
 
 void servimg(LPVOID)
 {
@@ -149,6 +129,7 @@ struct MonitorListCopy
 	std::string m_name;
 	std::string m_ppq;
 	int m_rejectDepth;
+	SVProductFilterEnum m_ProductFilter;
 };
 
 typedef std::map<std::string, MonitorListCopy> MonitorMapCopy;
@@ -299,7 +280,6 @@ Json::Value & GenerateImages(Json::Value & arr, InspectionDataPtr data)
 	return arr;
 }
 
-typedef SeidenaderVision::ProductPtr ProductPtr;
 
 template<typename API>
 Json::Value WriteProductItems(ProductPtr product)
@@ -346,7 +326,9 @@ Json::Value WriteFailStatus(const FailStatusMap & fsMap)
 					vo[SVRC::vo::name] = value.name;
 					vo[SVRC::vo::status] = value.status;
 					vo[SVRC::vo::count] = value.trigger;
-					vo[SVRC::vo::array] = value.value;
+					Json::Value valueArray(Json::arrayValue);
+					valueArray.append(value.value);
+					vo[SVRC::vo::array] = valueArray;
 					entries.append(vo);
 				}
 			);
@@ -360,10 +342,72 @@ Json::Value WriteFailStatus(const FailStatusMap & fsMap)
 	return rslt;
 }
 
+Json::Value GetLastInspectedProduct(PPQReader& rReader, long trig)
+{
+	static std::pair<ProductPtr, long> lastProduct(ProductPtr(nullptr), -1);
+	Json::Value rslt(Json::objectValue);
+	if (trig >= 0)
+	{
+		if (lastProduct.second < 0 || trig != lastProduct.first->product.m_TriggerCount)
+		{
+
+			throw(std::exception("Product Not Found"));
+		}
+		else
+		{
+			rslt = WriteProductItems<UdpApi>(lastProduct.first);
+		}
+	}
+	else
+	{
+		long idx = -1;
+		const ProductPtr product = rReader.RequestNextProduct(idx);
+		rslt = WriteProductItems<UdpApi>(product);
+
+		if (lastProduct.second >= 0)
+		{
+			rReader.ReleaseProduct(lastProduct .first, lastProduct .second);
+		}
+		lastProduct = std::make_pair(product, idx);
+	}
+	return rslt;
+}
+
+template<typename API>
+Json::Value GetRejectedProduct(PPQReader& rReader, long trig)
+{
+	static std::pair<ProductPtr, long> lastReject(ProductPtr(nullptr), -1); // Last reject held from GetReject call 
+	Json::Value rslt(Json::objectValue);
+	if (trig >= 0)
+	{
+		if (lastReject.second < 0 || trig != lastReject.first->product.m_TriggerCount)
+		{
+			throw(std::exception("Reject Not Found"));
+		}
+		else
+		{
+			rslt = WriteProductItems<UdpApi>(lastReject.first);
+		}
+	}
+	else
+	{
+		long idx = -1;
+		const ProductPtr product = rReader.RequestReject(trig, idx);
+		rslt = WriteProductItems<API>(product);
+	
+		// Decide which product to keep and which to release...
+		if (lastReject.second >= 0)
+		{
+			rReader.ReleaseReject(lastReject.first, lastReject.second);
+		}
+		lastReject = std::make_pair(product, idx);
+	}
+	return rslt;
+}
+
 template<>
 Json::Value DispatchCommand<TcpApi>(const JsonCmd & cmd, const MonitorMapCopy & mlMap)
 {
-	static std::pair<ProductPtr, long> lastReject(ProductPtr(nullptr), -1);
 	Json::Value rslt(Json::objectValue);
 	if (cmd.isObject() && cmd.isMember(SVRC::cmd::name))
 	{
@@ -414,11 +458,7 @@ Json::Value DispatchCommand<TcpApi>(const JsonCmd & cmd, const MonitorMapCopy & 
 				PPQReader reader;
 				reader.Open(ppqName);
 				long trig = args[SVRC::arg::trgrCount].asInt();
-				long idx;
-				const ProductPtr product = reader.RequestReject(trig, idx);
-				rslt = WriteProductItems<TcpApi>(product);
-				reader.ReleaseReject(lastReject.first, lastReject.second);
-				lastReject = std::make_pair(product, idx);
+				rslt = GetRejectedProduct<TcpApi>(reader, trig);
 				return rslt;
 			}
 			else
@@ -433,7 +473,6 @@ Json::Value DispatchCommand<TcpApi>(const JsonCmd & cmd, const MonitorMapCopy & 
 template<>
 Json::Value DispatchCommand<UdpApi>(const JsonCmd & cmd, const MonitorMapCopy & mlMap)
 {
-	static std::pair<ProductPtr, long> lastProduct(ProductPtr(nullptr), -1);
 	Json::Value rslt(Json::objectValue);
 	if (cmd.isObject() && cmd.isMember(SVRC::cmd::name))
 	{
@@ -451,27 +490,28 @@ Json::Value DispatchCommand<UdpApi>(const JsonCmd & cmd, const MonitorMapCopy & 
 				ppqName = mit->second.m_ppq;
 				PPQReader reader;
 				reader.Open(ppqName);
-				long idx;
-				ProductPtr product;
-				if (args.isMember(SVRC::arg::trgrCount) && (idx = args[SVRC::arg::trgrCount].asInt()) >= 0) // request locked product by trigger count
+
+				long trig = -1;
+				if (args.isMember(SVRC::arg::trgrCount))
 				{
-					if (lastProduct.second < 0 || lastProduct.first->product.m_TriggerCount != idx)
-					{
-						throw std::exception("No product for this trigger count.");
-					}
-					product = lastProduct.first;
-					idx = lastProduct.second;
+					trig = args[SVRC::arg::trgrCount].asInt();
 				}
-				else // request next product
+				if (LastInspectedFilter == mit->second.m_ProductFilter)
 				{
-					product = reader.RequestNextProduct(idx);
-				
-					rslt = WriteProductItems<UdpApi>(product);
-					if (lastProduct.second >= 0)
+					rslt = GetLastInspectedProduct(reader, trig);
+				}
+				else
+				{
+					// Check if there are rejects, if so get the rejected propduct, else get the last inspected product.
+					try
 					{
-						reader.ReleaseProduct(lastProduct.first, lastProduct.second);
+						rslt = GetRejectedProduct<UdpApi>(reader, trig);
 					}
-					lastProduct = std::make_pair(product, idx);
+					catch (std::exception& e)
+					{
+						::OutputDebugStringA(e.what());
+						rslt = GetLastInspectedProduct(reader, trig);
+					}
 				}
 			}
 			else
@@ -539,6 +579,7 @@ MonitorListCopy MakeCopy(const MonitorListReader & reader, const std::string & n
 	cpy.m_name = list.GetName().c_str();
 	cpy.m_ppq = list.GetPPQName().c_str();
 	cpy.m_rejectDepth = list.GetRejectDepth();
+	cpy.m_ProductFilter = list.GetProductFilter();
 	cpy.prodItems = MakeCopy(list.GetProductItems());
 	cpy.failStats = MakeCopy(list.GetFailStatus());
 	cpy.rejctCond = MakeCopy(list.GetRejectCond());
@@ -552,7 +593,7 @@ void servcmd(LPVOID ctrlPtr)
 	{
 		typedef typename Seidenader::Socket::SVServerSocket<API> ServerSocket;
 		typedef typename Seidenader::Socket::SVSocket<API> Socket;
-		bool lastReady = false;
+		long lastReady = -1;
 		ShareControl & ctrl = *reinterpret_cast<ShareControl *>(ctrlPtr);
 		MonitorListReader mlReader;
 		MonitorMapCopy monitorMap;
@@ -574,31 +615,31 @@ void servcmd(LPVOID ctrlPtr)
 					{
 						if (ctrl.IsReady())
 						{
-							if (!lastReady)
+							long count = ctrl.GetCount();
+							if (count != lastReady) // ready counter has changed - monitor list might have changed
 							{
+								mlReader.Open();
+								monitorMap.clear();
+								std::vector<std::string> mlNames = mlReader.GetListNames();
+								std::for_each(mlNames.begin(), mlNames.end(),
+									[&mlReader, &monitorMap](const std::string & name)
+									{
+										monitorMap.insert(std::make_pair(name, MakeCopy(mlReader, name)));
+									}
+								);
+								mlReader.Close();
+								lastReady = count;
 								ctrl.SetAck();
-								lastReady = true;
-									mlReader.Open();
-									monitorMap.clear();
-									std::vector<std::string> mlNames = mlReader.GetListNames();
-									std::for_each(mlNames.begin(), mlNames.end(),
-										[&mlReader, &monitorMap](const std::string & name)
-										{
-											monitorMap.insert(std::make_pair(name, MakeCopy(mlReader, name)));
-										}
-									);
-									mlReader.Close();
-									lastReady = true;
 							}
 							std::string resp = GenerateResponse<API>(cmd, monitorMap);
 							client.Write(resp, Traits<API>::needsHeader);
 						}
 						else
 						{
-							if (lastReady)
+							if (lastReady) // last time we checked control was ready, svo has gone offline since
 							{
+								lastReady = 0;
 								ctrl.SetAck();
-								lastReady = false;
 							}
 							client.Write(BusyMessage(cmd), Traits<API>::needsHeader);
 							Sleep(100);
@@ -684,12 +725,14 @@ bool CheckCommandLineArgs(int argc, _TCHAR* argv[], LPCTSTR option)
 	return bFound;
 }
 
-// Command Line arguments: /nocheck
+// Command Line arguments: /nocheck /show
 // /nocheck means to ignore the 2 GiG size requirement
+// / show means show console window (it is hidden by default)
 int _tmain(int argc, _TCHAR* argv[])
 {
 	// check command line args - if /nocheck is specified - ignore the < 2 Gig error
 	bool bCheckSizeOverride = CheckCommandLineArgs(argc, argv, _T("/nocheck"));
+	bool bShowConsole = CheckCommandLineArgs(argc, argv, _T("/show"));
 	
 	HRESULT hr = SeidenaderVision::SVSharedConfiguration::SharedResourcesOk();
 	if (hr != S_OK)
@@ -728,6 +771,11 @@ int _tmain(int argc, _TCHAR* argv[])
 		std::string title = "Run/Reject Server ";
 		title += versionStr;
 		SetConsoleTitleA(title.c_str());
+		if (!bShowConsole)
+		{
+			HWND hWnd = GetConsoleWindow();
+			ShowWindow(hWnd, SW_HIDE);
+		}
 		SVSocketLibrary::Init();
 		ShareControl ctrl;
 		HANDLE threads[3];
@@ -749,6 +797,16 @@ int _tmain(int argc, _TCHAR* argv[])
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\RunRejectServer\runrejctsvr.cpp_v  $
+ * 
+ *    Rev 1.5   29 Aug 2014 17:35:56   jHanebach
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Added support for product filter, bug fixes, refactoring.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.4   26 Aug 2014 17:16:24   sjones
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : SVRemoteControlConstants
 //* .File Name       : $Workfile:   SVRemoteControlConstants.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   15 Aug 2014 14:51:30  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   29 Aug 2014 17:35:56  $
 //******************************************************************************
 
 #ifndef SVREMOTECONTROLCONSTANTS_H
@@ -41,7 +41,7 @@ namespace SVRC
 		const std::string putFile = "PutDeviceFile";
 		const std::string setItems = "SetItems";
 		const std::string setMode = "SetDeviceMode";
-		const std::string regProd = "RegisterMonitorList";
+		const std::string regMon = "RegisterMonitorList";
 		const std::string qryProd = "QueryProductList";
 		const std::string qryRjct = "QueryRejectCondList";
 		const std::string qryFail = "QueryFailStatusList";
@@ -50,7 +50,10 @@ namespace SVRC
 		const std::string getRjct = "GetReject";
 		const std::string getFail = "GetFailStatus";
 		const std::string actvMonList = "ActivateMonitorList";
-		const std::string deactvList = "DeactivateMonitorList";
+		const std::string shutdownSVIM = "Shutdown";
+		const std::string qryMonListNames = "QueryMonitorListNames";
+		const std::string getProductFilter = "GetProductFilter";
+		const std::string setProductFilter = "SetProductFilter";
 	}
 
 	namespace arg
@@ -80,6 +83,8 @@ namespace SVRC
 		const std::string listType = "listType";
 		const std::string active = "active";
 		const std::string id = "id";
+		const std::string options = "options";
+		const std::string filter = "filter";
 	}
 
 	namespace result
@@ -104,6 +109,7 @@ namespace SVRC
 		const std::string destinationPath = "destinationPath";
 		const std::string destinationFileName = "destinationFileName";
 		const std::string entries = "Entries";
+		const std::string filter = "filter";
 	}
 
 	//Value Object
@@ -150,6 +156,16 @@ namespace SVRC
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\RunRejectServer\SVRemoteControlConstants.h_v  $
+ * 
+ *    Rev 1.1   29 Aug 2014 17:35:56   jHanebach
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Added support for product filter, bug fixes, refactoring.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   15 Aug 2014 14:51:30   jHanebach
  * Project:  SVObserver
