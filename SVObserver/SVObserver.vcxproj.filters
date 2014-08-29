@@ -3759,5 +3759,8 @@
     <None Include="res\toolbarZoom.bmp">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="res\korber.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

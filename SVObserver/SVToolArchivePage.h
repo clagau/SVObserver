@@ -5,8 +5,8 @@
 //* .Module Name     : SVToolAdjustmentArchivePage
 //* .File Name       : $Workfile:   SVToolArchivePage.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.3  $
-//* .Check In Date   : $Date:   12 Aug 2014 06:47:56  $
+//* .Current Version : $Revision:   1.4  $
+//* .Check In Date   : $Date:   28 Aug 2014 07:25:48  $
 //******************************************************************************
 
 #ifndef __SVTOOLARCHIVEPAGE_INCLUDED__
@@ -103,6 +103,7 @@ protected:
 	void UpdateHeaderBtn();
 private:
 	CString m_sMaxImageNumber;
+	bool m_bInit;
 
 };
 
@@ -113,6 +114,16 @@ private:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVToolArchivePage.h_v  $
+ * 
+ *    Rev 1.4   28 Aug 2014 07:25:48   ryoho
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  916
+ * SCR Title:  Fix issue with available memory calculation with Archive Tool (SV0-350)
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   added member variable m_bInit.  When the dialog is being initialized do not display error messages in method  OnChangeEditMaxImages
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   12 Aug 2014 06:47:56   tbair
  * Project:  SVObserver

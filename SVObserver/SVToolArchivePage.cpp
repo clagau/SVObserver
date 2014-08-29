@@ -5,8 +5,8 @@
 //* .Module Name     : SVToolAdjustmentArchivePage
 //* .File Name       : $Workfile:   SVToolArchivePage.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.11  $
-//* .Check In Date   : $Date:   21 Aug 2014 11:08:06  $
+//* .Current Version : $Revision:   1.12  $
+//* .Check In Date   : $Date:   28 Aug 2014 07:25:48  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -101,6 +101,7 @@ void SVToolAdjustmentArchivePage::DoDataExchange(CDataExchange* pDX)
 BOOL SVToolAdjustmentArchivePage::OnInitDialog() 
 {
 	CWaitCursor wait;                 // 23 Nov 1999 - frb.
+	m_bInit = true;
 
 	CPropertyPage::OnInitDialog();
 	//will need to fix the call to ResetObject at a later date - RPY
@@ -214,6 +215,7 @@ BOOL SVToolAdjustmentArchivePage::OnInitDialog()
 		CalculateFreeMem();
 	}
 
+	m_bInit = false;
 	return TRUE;  // return TRUE unless you set the focus to a control
 	              // EXCEPTION: OCX-Eigenschaftenseiten sollten FALSE zurückgeben
 }
@@ -655,38 +657,41 @@ void SVToolAdjustmentArchivePage::OnChangeEditMaxImages()
 	m_editMaxImages.GetWindowText(strNumImages);
 	m_lImagesToArchive = atol(strNumImages);
 
-	//check to make sure they don't type in a value below 1
-	if ( m_lImagesToArchive > 0 )
-	{  
-		//check to make sure we don't go over the amount of free memory
-		if (SVArchiveGoOffline == m_eSelectedArchiveMethod)
-		{
-			long llFreeMem = CalculateFreeMem();
-			if (llFreeMem >= 0)
+	if (!m_bInit)
+	{
+		//check to make sure they don't type in a value below 1
+		if ( m_lImagesToArchive > 0 )
+		{  
+			//check to make sure we don't go over the amount of free memory
+			if (SVArchiveGoOffline == m_eSelectedArchiveMethod)
 			{
-				m_sMaxImageNumber = strNumImages;
-				m_lImagesToArchive = atol(strNumImages);
+				long llFreeMem = CalculateFreeMem();
+				if (llFreeMem >= 0)
+				{
+					m_sMaxImageNumber = strNumImages;
+					m_lImagesToArchive = atol(strNumImages);
+				}
+				else
+				{
+					CString sMsg;
+					sMsg.Format("There is not enough Available Archive Image Memory for %s images in Change Mode. Available\nArchive Image Memory is the result of the selected images and the Max Images number.\nThe selection will be reset.",strNumImages);
+					AfxMessageBox(sMsg);
+					m_lImagesToArchive = atol(m_sMaxImageNumber);
+					if(m_sMaxImageNumber != strNumImages)
+					{
+						m_editMaxImages.SetWindowText((LPCSTR)m_sMaxImageNumber);
+					}
+				}
 			}
 			else
 			{
-				CString sMsg;
-				sMsg.Format("There is not enough Available Archive Image Memory for %s images in Change Mode. Available\nArchive Image Memory is the result of the selected images and the Max Images number.\nThe selection will be reset.",strNumImages);
-				AfxMessageBox(sMsg);
-				m_lImagesToArchive = atol(m_sMaxImageNumber);
-				if(m_sMaxImageNumber != strNumImages)
-				{
-					m_editMaxImages.SetWindowText((LPCSTR)m_sMaxImageNumber);
-				}
+				m_sMaxImageNumber = strNumImages;
 			}
 		}
 		else
 		{
-			m_sMaxImageNumber = strNumImages;
+			m_editMaxImages.SetWindowText(m_sMaxImageNumber);
 		}
-	}
-	else
-	{
-		m_editMaxImages.SetWindowText(m_sMaxImageNumber);
 	}
 }
 
@@ -837,6 +842,16 @@ void SVToolAdjustmentArchivePage::OnBnClickedHeaderCheck()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVToolArchivePage.cpp_v  $
+ * 
+ *    Rev 1.12   28 Aug 2014 07:25:48   ryoho
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  916
+ * SCR Title:  Fix issue with available memory calculation with Archive Tool (SV0-350)
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   added member variable m_bInit.  When the dialog is being initialized do not display error messages in method  OnChangeEditMaxImages
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.11   21 Aug 2014 11:08:06   ryoho
  * Project:  SVObserver

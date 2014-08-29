@@ -5,8 +5,8 @@
 //* .Module Name     : SVShareControlHandler
 //* .File Name       : $Workfile:   SVShareControlHandler.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   21 Aug 2014 12:10:32  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   28 Aug 2014 18:39:46  $
 //******************************************************************************
 #include "StdAfx.h"
 #include "SVShareControlHandler.h"
@@ -16,6 +16,7 @@ using namespace SeidenaderVision;
 SVShareControlHandler::SVShareControlHandler()
 : m_shareName("ShareControl")
 , m_count(0)
+, m_filterChangeCount(0)
 , m_ctrl(nullptr)
 {
 	SVSharedConfiguration::Log("ControlHandler::Constructor");
@@ -79,6 +80,16 @@ bool SVShareControlHandler::IsCreated() const
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVSharedMemoryLibrary\SVShareControlHandler.cpp_v  $
+ * 
+ *    Rev 1.3   28 Aug 2014 18:39:46   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Added variable and accessor methods for filterChanged. 
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   21 Aug 2014 12:10:32   sjones
  * Project:  SVObserver

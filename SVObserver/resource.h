@@ -1171,6 +1171,7 @@
 #define IDR_MONITOR_SUB_LIST            11106
 #define IDR_MONITOR_LIST_ITEM           11107
 #define IDR_TOOLBAR_ZOOM                11108
+#define IDB_KORBER                      11109
 #define IDS_OBJECTNAME_INPUT_01         14001
 #define IDS_OBJECTNAME_INPUT_02         14002
 #define IDS_OBJECTNAME_INPUT_03         14003
@@ -2728,7 +2729,7 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_3D_CONTROLS                     1
-#define _APS_NEXT_RESOURCE_VALUE        11109
+#define _APS_NEXT_RESOURCE_VALUE        11110
 #define _APS_NEXT_COMMAND_VALUE         20344
 #define _APS_NEXT_CONTROL_VALUE         16031
 #define _APS_NEXT_SYMED_VALUE           3002

@@ -104,6 +104,7 @@ IDB_KNOB_MASK           BITMAP                  "RES\\SVKnob_mask.bmp"
 IDB_SVDOT_FACE          BITMAP                  "RES\\SVKnobDot.bmp"
 IDB_SVDOT_MASK          BITMAP                  "RES\\SVKnobDot_mask.bmp"
 IDB_SVR                 BITMAP                  "res\\SVR.bmp"
+IDB_KORBER              BITMAP                  "res\\Korber.bmp"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -344,7 +345,7 @@ BEGIN
     LTEXT           "Lilienthalstrasse 8",IDC_ADDRESS2,16,102,208,8
     LTEXT           "D - 85570 Markt Schwaben, Germany",IDC_COUNTRY2,16,112,208,8
     LTEXT           "Telefon:  +49  (0)8121 802 - 0  -  Telefax:  +49  (0)8121 802 - 100",IDC_PHONE2,16,122,208,8
-    CONTROL         2000,IDC_LOGO,"Static",SS_BITMAP | SS_SUNKEN,16,18,49,25
+    CONTROL         11112,IDC_LOGO,"Static",SS_BITMAP | SS_SUNKEN,16,18,49,25
     LTEXT           "e-mail:  svr@seidenader.de  -  Internet:  http://www.seidenader.com",IDC_EMAIL2,16,132,208,8
     LTEXT           "Körber Solutions",IDC_COMPANY,16,49,208,8
     LTEXT           "Seidenader Maschinenbau GmbH, Markt Schwaben",IDC_COUNTRY,16,58,208,8

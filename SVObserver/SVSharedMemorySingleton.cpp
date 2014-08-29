@@ -5,8 +5,8 @@
 //* .Module Name     : SVSharedMemorySingleton
 //* .File Name       : $Workfile:   SVSharedMemorySingleton.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   21 Aug 2014 12:06:56  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   28 Aug 2014 18:48:28  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -166,6 +166,30 @@ void SVSharedMemorySingleton::SetProductDepth(long productDepth, long extra)
 	m_settings.SetNumProductSlots(productDepth + extra);
 }
 
+HRESULT SVSharedMemorySingleton::SetProductFilter(const SVString& listName, SVProductFilterEnum filter)
+{
+	HRESULT hr = S_OK;
+	if (SeidenaderVision::SVSharedConfiguration::SharedDriveExists() && SeidenaderVision::SVSharedConfiguration::ControlFileExits())
+	{
+		SVSharedMemorySingleton& instance = SVSharedMemorySingleton::Instance();
+		try
+		{
+			instance.m_monitorListWriter.SetProductFilter(listName.c_str(), filter);
+			instance.m_shareControlHandler.SetProductFilterChanged();
+		}
+		catch (std::exception& e)
+		{
+			UNREFERENCED_PARAMETER(e);
+			hr = E_UNEXPECTED;
+		}
+	}
+	else
+	{
+		hr = E_HANDLE;
+	}
+	return hr;
+}
+
 void SVSharedMemorySingleton::Destroy()
 {
 	if (SeidenaderVision::SVSharedConfiguration::SharedDriveExists() && SeidenaderVision::SVSharedConfiguration::ControlFileExits())
@@ -187,6 +211,16 @@ bool SVSharedMemorySingleton::HasShares()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVSharedMemorySingleton.cpp_v  $
+ * 
+ *    Rev 1.3   28 Aug 2014 18:48:28   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Added SetProductFilter method
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   21 Aug 2014 12:06:56   sjones
  * Project:  SVObserver

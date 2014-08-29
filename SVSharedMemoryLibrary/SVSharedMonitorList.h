@@ -5,12 +5,13 @@
 //* .Module Name     : SVSharedMonitorList
 //* .File Name       : $Workfile:   SVSharedMonitorList.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   14 Aug 2014 17:09:18  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   28 Aug 2014 18:36:36  $
 //******************************************************************************
 #pragma once
 
 #include "SVShared.h"
+#include "SVProductFilterEnum.h"
 
 namespace SeidenaderVision
 {
@@ -30,6 +31,7 @@ namespace SeidenaderVision
 		char_string m_ppq; // ppq name
 		int m_rejectDepth;
 
+		SVProductFilterEnum m_filter;
 		bool m_active; // set when activated
 
 	public:
@@ -46,6 +48,7 @@ namespace SeidenaderVision
 		const char_string & GetName() const { return m_name; }
 		const char_string & GetPPQName() const { return m_ppq; }
 		int GetRejectDepth() const { return m_rejectDepth; }
+		SVProductFilterEnum GetProductFilter() const { return m_filter; }
 
 		void SetProductItems(const std::vector<std::string> & items);
 		void SetRejectCond(const std::vector<std::string> & items);
@@ -63,6 +66,7 @@ namespace SeidenaderVision
 			m_ppq = char_string(ppq.c_str(), m_allocator);
 		}
 		void SetRejectDepth(int depth) { m_rejectDepth = depth; }
+		void SetProductFilter(SVProductFilterEnum filter) { m_filter = filter; }
 	};
 
 	typedef boost::interprocess::allocator<SVSharedMonitorList, segment_manager_t> MonitorListAllocator;
@@ -73,6 +77,16 @@ namespace SeidenaderVision
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVSharedMemoryLibrary\SVSharedMonitorList.h_v  $
+ * 
+ *    Rev 1.1   28 Aug 2014 18:36:36   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Added SVProductFilterEnum m_filter member variable 
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   14 Aug 2014 17:09:18   sjones
  * Project:  SVObserver

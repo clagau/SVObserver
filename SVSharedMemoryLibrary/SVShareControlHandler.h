@@ -5,8 +5,8 @@
 //* .Module Name     : SVShareControlHandler
 //* .File Name       : $Workfile:   SVShareControlHandler.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   14 Aug 2014 17:07:34  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   28 Aug 2014 18:39:44  $
 //******************************************************************************
 #pragma once
 #include "SVSharedControl.h"
@@ -21,6 +21,7 @@ namespace SeidenaderVision
 		const std::string m_shareName;
 		managed_shared_memory_shared_ptr shm;
 		long m_count;
+		long m_filterChangeCount;
 
 	public:
 		SVShareControlHandler();
@@ -42,6 +43,9 @@ namespace SeidenaderVision
 		timestamp GetSVOHeartbeat() const { return m_ctrl->svo_heartbeat; }
 		timestamp GetRRSHeartbeat() const { return m_ctrl->rrs_heartbeat; }
 
+		void SetProductFilterChanged() { SVSharedConfiguration::Log("ControlHandler::SetProductFilterChanged"); m_ctrl->productFilterChanged = ++m_filterChangeCount; }
+		bool ProductFilterChanged(long previousValue) const { SVSharedConfiguration::Log("ControlHandler::ProductFilterChanged"); return m_ctrl->productFilterChanged != previousValue; }
+
 		void Release();
 	};
 }
@@ -51,6 +55,16 @@ namespace SeidenaderVision
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVSharedMemoryLibrary\SVShareControlHandler.h_v  $
+ * 
+ *    Rev 1.1   28 Aug 2014 18:39:44   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Added variable and accessor methods for filterChanged. 
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   14 Aug 2014 17:07:34   sjones
  * Project:  SVObserver

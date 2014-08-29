@@ -5,8 +5,8 @@
 //* .Module Name     : SVRemoteControlConstants
 //* .File Name       : $Workfile:   SVRemoteControlConstants.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.7  $
-//* .Check In Date   : $Date:   09 Jul 2014 17:02:48  $
+//* .Current Version : $Revision:   1.8  $
+//* .Check In Date   : $Date:   28 Aug 2014 18:46:24  $
 //******************************************************************************
 
 #ifndef SVREMOTECONTROLCONSTANTS_H
@@ -52,6 +52,8 @@ namespace SVRC
 		const std::string actvMonList = "ActivateMonitorList";
 		const std::string shutdownSVIM = "Shutdown";
 		const std::string qryMonListNames = "QueryMonitorListNames";
+		const std::string getProductFilter = "GetProductFilter";
+		const std::string setProductFilter = "SetProductFilter";
 	}
 
 	namespace arg
@@ -82,6 +84,7 @@ namespace SVRC
 		const std::string active = "active";
 		const std::string id = "id";
 		const std::string options = "options";
+		const std::string filter = "filter";
 	}
 
 	namespace result
@@ -106,6 +109,7 @@ namespace SVRC
 		const std::string destinationPath = "destinationPath";
 		const std::string destinationFileName = "destinationFileName";
 		const std::string entries = "Entries";
+		const std::string filter = "filter";
 	}
 
 	//Value Object
@@ -152,6 +156,19 @@ namespace SVRC
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVRemoteControlConstants.h_v  $
+ * 
+ *    Rev 1.8   28 Aug 2014 18:46:24   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Added getProductFilter to cmd namespace
+ * Added setProductFilter to cmd namespace
+ * Added filter to arg namespace
+ * Added filter to result namespace
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.7   09 Jul 2014 17:02:48   mziegler
  * Project:  SVObserver

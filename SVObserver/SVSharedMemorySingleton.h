@@ -5,8 +5,8 @@
 //* .Module Name     : SVSharedMemorySingleton
 //* .File Name       : $Workfile:   SVSharedMemorySingleton.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   21 Aug 2014 12:06:54  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   28 Aug 2014 18:48:26  $
 //******************************************************************************
 
 #pragma once
@@ -41,6 +41,7 @@ public:
 	long GetRejectDepth() const;
 	void SetRejectDepth(long rejectDepth);
 	void SetProductDepth(long productDepth, long extra);
+	static HRESULT SetProductFilter(const SVString& listName, SVProductFilterEnum filter);
 
 	static bool HasShares();
 	static void Destroy();
@@ -69,6 +70,16 @@ private:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVSharedMemorySingleton.h_v  $
+ * 
+ *    Rev 1.3   28 Aug 2014 18:48:26   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Added SetProductFilter method
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   21 Aug 2014 12:06:54   sjones
  * Project:  SVObserver

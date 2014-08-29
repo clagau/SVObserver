@@ -4822,6 +4822,7 @@ echo %time%
     <None Include="BasicValueObjects.inl" />
     <None Include="EnvironmentObject.inl" />
     <None Include="res\arrow_rotate.ico" />
+    <None Include="res\korber.bmp" />
     <None Include="res\toolbarZoom.bmp" />
     <None Include="SVConfigurationTreeWriter.inl" />
     <None Include="SVConfigXMLPrint.inl" />

@@ -5,8 +5,8 @@
 //* .Module Name     : SVSharedPPQWriter
 //* .File Name       : $Workfile:   SVSharedPPQWriter.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   14 Aug 2014 17:09:54  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   28 Aug 2014 18:32:24  $
 //******************************************************************************
 #include "StdAfx.h"
 #include <cmath>
@@ -115,7 +115,7 @@ namespace SeidenaderVision
 			long numRejectSlots = p_rSettings.NumRejectSlots();
 			if (numRejectSlots)
 			{
-				numRejectSlots += static_cast<long>(std::ceil(static_cast<float>(numRejectSlots) * 0.5f)); // allow 50% extra
+				numRejectSlots += static_cast<long>(std::ceil(static_cast<float>(numRejectSlots) * 0.5f)) + 4; // allow 50% extra + 4 additional slots
 			}
 			// Construct adjusted settings
 			SVSharedMemorySettings settings(p_rSettings.MonitorStoreSize(), p_rSettings.ProductStoreSize(), p_rSettings.DataStoreSize(), p_rSettings.NumProductSlots(), numRejectSlots);
@@ -248,6 +248,16 @@ namespace SeidenaderVision
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVSharedMemoryLibrary\SVSharedPPQWriter.cpp_v  $
+ * 
+ *    Rev 1.1   28 Aug 2014 18:32:24   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Revised Create method to add an additional 4 slots to the allocation.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   14 Aug 2014 17:09:54   sjones
  * Project:  SVObserver

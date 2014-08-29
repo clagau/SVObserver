@@ -5,8 +5,8 @@
 //* .Module Name     : SVMonitorListWriter
 //* .File Name       : $Workfile:   SVMonitorListWriter.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   14 Aug 2014 17:07:30  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   28 Aug 2014 18:41:56  $
 //******************************************************************************
 #include "StdAfx.h"
 #include "SVMonitorListWriter.h"
@@ -141,11 +141,41 @@ void SVMonitorListWriter::FillList(const std::string & listName, listType type, 
 	}
 }
 
+void SVMonitorListWriter::SetProductFilter(const std::string & listName, SVProductFilterEnum filter)
+{
+	SVSharedConfiguration::Log("SVMonitorListWriter::SetProductFilter");
+	if (!m_lists)
+	{
+		::OutputDebugString("MonitorListStore not created yet.");
+		throw std::exception("MonitorListStore not created yet.");
+	}
+	try
+	{
+		SVSharedMonitorList & mlist = (*m_lists)[listName];
+		mlist.SetProductFilter(filter);
+	}
+	catch (boost::interprocess::interprocess_exception& e)
+	{
+		::OutputDebugString(e.what());
+		throw std::exception("MonitorList SetProductFilter failed.");
+	}
+}
+
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVSharedMemoryLibrary\SVMonitorListWriter.cpp_v  $
+ * 
+ *    Rev 1.1   28 Aug 2014 18:41:56   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Added SetProductFilter method.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   14 Aug 2014 17:07:30   sjones
  * Project:  SVObserver

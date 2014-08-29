@@ -5,12 +5,13 @@
 //* .Module Name     : SVMonitorListWriter
 //* .File Name       : $Workfile:   SVMonitorListWriter.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   14 Aug 2014 17:07:32  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   28 Aug 2014 18:41:54  $
 //******************************************************************************
 #pragma once
 #include "SVMonitorListStore.h"
 #include "SVSharedMemorySettings.h"
+#include "SVProductFilterEnum.h"
 
 namespace SeidenaderVision
 {
@@ -29,8 +30,8 @@ namespace SeidenaderVision
 		bool IsCreated() const;
 		HRESULT Create(const SVSharedMemorySettings & settings);
 		void AddList(const std::string & listName, const std::string & ppqName, int rejectDepth);
-
 		void FillList(const std::string & listName, listType type, const std::vector<std::string> & list);
+		void SetProductFilter(const std::string & listName, SVProductFilterEnum filter);
 
 		void Release();
 
@@ -46,6 +47,16 @@ namespace SeidenaderVision
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVSharedMemoryLibrary\SVMonitorListWriter.h_v  $
+ * 
+ *    Rev 1.1   28 Aug 2014 18:41:54   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Added SetProductFilter method.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   14 Aug 2014 17:07:32   sjones
  * Project:  SVObserver

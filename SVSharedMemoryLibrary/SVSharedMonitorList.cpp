@@ -5,8 +5,8 @@
 //* .Module Name     : SVSharedMonitorList
 //* .File Name       : $Workfile:   SVSharedMonitorList.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   14 Aug 2014 17:09:24  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   28 Aug 2014 18:36:36  $
 //******************************************************************************
 #include "StdAfx.h"
 #include "SVSharedMonitorList.h"
@@ -23,6 +23,7 @@ SVSharedMonitorList::SVSharedMonitorList(const void_allocator & allocator)
 , m_ppq("", allocator)
 , m_rejectDepth(0)
 , m_active(false)
+, m_filter(LastInspectedFilter)
 {
 	SVSharedConfiguration::Log("SVSharedMonitorList::Constructor");
 }
@@ -36,6 +37,7 @@ SeidenaderVision::SVSharedMonitorList::SVSharedMonitorList(const SVSharedMonitor
 , m_ppq(rho.m_ppq.c_str(), rho.m_allocator)
 , m_rejectDepth(rho.m_rejectDepth)
 , m_active(rho.m_active)
+, m_filter(rho.m_filter)
 {
 	SVSharedConfiguration::Log("SVSharedMonitorList::copy Constructor");
 }
@@ -52,6 +54,7 @@ SeidenaderVision::SVSharedMonitorList & SeidenaderVision::SVSharedMonitorList::o
 		m_ppq = rho.m_ppq;
 		m_rejectDepth = rho.m_rejectDepth;
 		m_active = rho.m_active;
+		m_filter = rho.m_filter;
 	}
 	return *this;
 }
@@ -117,6 +120,16 @@ void SVSharedMonitorList::SetFailStatus(const std::vector<std::string> & items)
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVSharedMemoryLibrary\SVSharedMonitorList.cpp_v  $
+ * 
+ *    Rev 1.1   28 Aug 2014 18:36:36   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Added SVProductFilterEnum m_filter member variable 
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   14 Aug 2014 17:09:24   sjones
  * Project:  SVObserver

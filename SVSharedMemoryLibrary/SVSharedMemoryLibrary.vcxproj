@@ -174,6 +174,7 @@
     <ClInclude Include="SVMonitorListReader.h" />
     <ClInclude Include="SVMonitorListStore.h" />
     <ClInclude Include="SVMonitorListWriter.h" />
+    <ClInclude Include="SVProductFilterEnum.h" />
     <ClInclude Include="SVShareControlHandler.h" />
     <ClInclude Include="SVShared.h" />
     <ClInclude Include="SVSharedConfiguration.h" />
