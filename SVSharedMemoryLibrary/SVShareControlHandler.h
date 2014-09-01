@@ -5,8 +5,8 @@
 //* .Module Name     : SVShareControlHandler
 //* .File Name       : $Workfile:   SVShareControlHandler.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   28 Aug 2014 18:39:44  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   29 Aug 2014 17:33:00  $
 //******************************************************************************
 #pragma once
 #include "SVSharedControl.h"
@@ -36,7 +36,7 @@ namespace SeidenaderVision
 
 		void SetAck(){ SVSharedConfiguration::Log("ControlHandler::SetAck"); m_ctrl->ack = 1; }
 		bool GotAck() const { SVSharedConfiguration::Log("ControlHandler::GotAck"); return m_ctrl->ack ? true : false; }
-
+		long GetCount() const { return m_count; }
 		void TickSVOHeartbeat() { m_ctrl->svo_heartbeat = GetTickCount(); }
 		void TickRRSHeartbeat() { m_ctrl->rrs_heartbeat = GetTickCount(); }
 
@@ -55,6 +55,16 @@ namespace SeidenaderVision
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVSharedMemoryLibrary\SVShareControlHandler.h_v  $
+ * 
+ *    Rev 1.2   29 Aug 2014 17:33:00   jHanebach
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Added GetCount method
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   28 Aug 2014 18:39:44   sjones
  * Project:  SVObserver

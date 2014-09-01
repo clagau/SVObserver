@@ -5,8 +5,8 @@
 //* .Module Name     : RemoteMonitorNamedList
 //* .File Name       : $Workfile:   RemoteMonitorNamedList.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   08 Jul 2014 09:04:16  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   29 Aug 2014 17:49:04  $
 //******************************************************************************
 #pragma once
 
@@ -14,6 +14,7 @@
 #include <deque>
 #include "SVUtilityLibrary/SVGUID.h"
 #include "SVUtilityLibrary/SVString.h"
+#include "SVSharedMemoryLibrary/SVProductFilterEnum.h"
 #pragma endregion Includes
 
 struct MonitoredObject
@@ -48,6 +49,7 @@ private:
 	MonitoredObjectList m_rejectConditionList;
 	MonitoredObjectList m_failStatusList;
 	bool m_bActive; // do not persist the active state
+	SVProductFilterEnum m_filter;
 #pragma endregion PrivateData
 
 #pragma region PublicMethods
@@ -79,6 +81,10 @@ public:
 
 	void Activate(bool bActivate);
 	bool IsActive() const;
+
+	void SetProductFilter(SVProductFilterEnum filter);
+	SVProductFilterEnum GetProductFilter() const;
+
 #pragma endregion PublicMethods
 };
 
@@ -87,6 +93,16 @@ public:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\RemoteMonitorNamedList.h_v  $
+ * 
+ *    Rev 1.3   29 Aug 2014 17:49:04   jHanebach
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Added support for get/set product filter.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   08 Jul 2014 09:04:16   sjones
  * Project:  SVObserver

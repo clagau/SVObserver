@@ -5,8 +5,8 @@
 //* .Module Name     : RemoteMonitorListController
 //* .File Name       : $Workfile:   RemoteMonitorListController.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.12  $
-//* .Check In Date   : $Date:   14 Aug 2014 17:55:00  $
+//* .Current Version : $Revision:   1.13  $
+//* .Check In Date   : $Date:   29 Aug 2014 17:49:02  $
 //******************************************************************************
 
 #pragma region Includes
@@ -26,6 +26,7 @@
 #include "SVMainImageClass.h"
 #include "RemoteMonitorListHelper.h"
 #include "SVToolSet.h"
+#include "SVSVIMStateClass.h"
 #pragma endregion Includes
 
 #define SEJ_ErrorBase 15000
@@ -303,6 +304,7 @@ HRESULT RemoteMonitorListController::ActivateRemoteMonitorList(const SVString& l
 		for (RemoteMonitorList::iterator it = m_list.begin();it != m_list.end();++it)
 		{
 			it->second.Activate(false);
+			it->second.SetProductFilter(LastInspectedFilter);
 		}
 	}
 
@@ -310,6 +312,7 @@ HRESULT RemoteMonitorListController::ActivateRemoteMonitorList(const SVString& l
 	if (it != m_list.end())
 	{
 		it->second.Activate(bActivate);
+		it->second.SetProductFilter(LastInspectedFilter);
 	}
 	else
 	{
@@ -330,11 +333,65 @@ HRESULT RemoteMonitorListController::ActivateRemoteMonitorList(const SVString& l
 	}
 }
 
+HRESULT RemoteMonitorListController::SetRemoteMonitorListProductFilter(const SVString& listName, SVProductFilterEnum filter)
+{
+	HRESULT hr = S_OK;
+	RemoteMonitorList::iterator it = m_list.find(listName);
+	if (it != m_list.end())
+	{
+		// must be active - else it's an error
+		if (it->second.IsActive())
+		{
+			it->second.SetProductFilter(filter);
+			// if we are online, update the filter for the monitorList in shared memory
+			// otherwise we will pick up the change when we go online
+			if (SVSVIMStateClass::CheckState(SV_STATE_RUNNING))
+			{
+				SVSharedMemorySingleton::SetProductFilter(listName, filter);
+			}
+		}
+		else
+		{
+			hr = E_ACCESSDENIED;
+		}
+	}
+	else
+	{
+		 hr = E_INVALIDARG;
+	}
+	return hr;
+}
+
+HRESULT RemoteMonitorListController::GetRemoteMonitorListProductFilter(const SVString& listName, SVProductFilterEnum& rFilter) const
+{
+	HRESULT hr = S_OK;
+	RemoteMonitorList::const_iterator it = m_list.find(listName);
+	if (it != m_list.end())
+	{
+		rFilter = it->second.GetProductFilter();
+	}
+	else
+	{
+		 hr = E_INVALIDARG;
+	}
+	return hr;
+}
+
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\RemoteMonitorListController.cpp_v  $
+ * 
+ *    Rev 1.13   29 Aug 2014 17:49:02   jHanebach
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Added support for get/set product filter.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.12   14 Aug 2014 17:55:00   sjones
  * Project:  SVObserver

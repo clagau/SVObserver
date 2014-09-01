@@ -50,7 +50,7 @@
 #define IDI_NOIOITEM_ICON               1504
 #define IDI_ICON_EXIST                  1505
 #define IDI_ICON_NOTEXIST               1506
-#define IDB_SVR                         2000
+#define IDB_KORBER                      2000
 #define IDB_START                       2001
 #define IDB_LEFTARROW                   2002
 #define IDB_RIGHTARROW                  2003
@@ -1171,7 +1171,6 @@
 #define IDR_MONITOR_SUB_LIST            11106
 #define IDR_MONITOR_LIST_ITEM           11107
 #define IDR_TOOLBAR_ZOOM                11108
-#define IDB_KORBER                      11109
 #define IDS_OBJECTNAME_INPUT_01         14001
 #define IDS_OBJECTNAME_INPUT_02         14002
 #define IDS_OBJECTNAME_INPUT_03         14003
@@ -2729,7 +2728,7 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_3D_CONTROLS                     1
-#define _APS_NEXT_RESOURCE_VALUE        11110
+#define _APS_NEXT_RESOURCE_VALUE        11109
 #define _APS_NEXT_COMMAND_VALUE         20344
 #define _APS_NEXT_CONTROL_VALUE         16031
 #define _APS_NEXT_SYMED_VALUE           3002

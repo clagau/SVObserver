@@ -5,8 +5,8 @@
 //* .Module Name     : SVConfigurationObject
 //* .File Name       : $Workfile:   SVConfigurationObject.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.12  $
-//* .Check In Date   : $Date:   28 Apr 2014 14:22:10  $
+//* .Current Version : $Revision:   1.14  $
+//* .Check In Date   : $Date:   29 Aug 2014 17:49:04  $
 //******************************************************************************
 
 #ifndef INC_SVCONFIGURATIONOBJECT_INCLUDED
@@ -19,6 +19,7 @@
 #include "SVMaterialsLibrary/SVMaterialsTree.h"
 #include "SVObjectLibrary/SVObserverTemplate.h"
 #include "SVXMLLibrary/SVXMLMaterialsTree.h"
+#include "SVSharedMemoryLibrary/SVProductFilterEnum.h"
 
 #include "SVFileNameArrayClass.h"
 #include "SVInfoStructs.h"
@@ -70,7 +71,6 @@ public:
 
 	HRESULT LoadConfiguration(SVTreeType& rTree);
 
-	HRESULT GetMode( unsigned long& p_rMode ) const;
 	HRESULT SetMode( unsigned long p_Mode );
 
 	HRESULT GetInspectionItems( const SVNameSet& p_rNames, SVNameStorageResultMap& p_rItems ) const;
@@ -205,6 +205,8 @@ public:
 	void ValidateRemoteMonitorList();
 	HRESULT ActivateRemoteMonitorList(const SVString& listName, bool bActivate);
 	void GetActiveRemoteMonitorList(RemoteMonitorList& rActiveList) const;
+	HRESULT GetRemoteMonitorListProductFilter(const SVString& listName, SVProductFilterEnum& rFilter) const;
+	HRESULT SetRemoteMonitorListProductFilter(const SVString& listName, SVProductFilterEnum filter);
 	void BuildPPQMonitorList(PPQMonitorList& ppqMonitorList) const;
 
 	//************************************
@@ -302,6 +304,26 @@ private:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVConfigurationObject.h_v  $
+ * 
+ *    Rev 1.14   29 Aug 2014 17:49:04   jHanebach
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Added support for get/set product filter.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.13   29 Aug 2014 15:43:16   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  934
+ * SCR Title:  Add Remote Access to Environment.Mode Parameters
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   Removed GetMode.  Use SVSVIMStateClass::GetMode instead.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.12   28 Apr 2014 14:22:10   sjones
  * Project:  SVObserver

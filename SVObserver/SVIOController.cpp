@@ -5,8 +5,8 @@
 //* .Module Name     : SVIOController
 //* .File Name       : $Workfile:   SVIOController.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.11  $
-//* .Check In Date   : $Date:   15 May 2014 12:50:04  $
+//* .Current Version : $Revision:   1.12  $
+//* .Check In Date   : $Date:   29 Aug 2014 17:49:04  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -692,11 +692,31 @@ void SVIOController::BuildPPQMonitorList(PPQMonitorList& ppqMonitorList) const
 	m_RemoteMonitorListController.BuildPPQMonitorList(ppqMonitorList);
 }
 
+HRESULT SVIOController::SetRemoteMonitorListProductFilter(const SVString& listName, SVProductFilterEnum filter)
+{
+	return m_RemoteMonitorListController.SetRemoteMonitorListProductFilter(listName, filter);
+}
+
+HRESULT SVIOController::GetRemoteMonitorListProductFilter(const SVString& listName, SVProductFilterEnum& rFilter) const
+{
+	return m_RemoteMonitorListController.GetRemoteMonitorListProductFilter(listName, rFilter);
+}
+
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVIOController.cpp_v  $
+ * 
+ *    Rev 1.12   29 Aug 2014 17:49:04   jHanebach
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Added support for get/set product filter.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.11   15 May 2014 12:50:04   sjones
  * Project:  SVObserver

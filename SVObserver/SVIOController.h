@@ -5,8 +5,8 @@
 //* .Module Name     : SVIOController
 //* .File Name       : $Workfile:   SVIOController.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.9  $
-//* .Check In Date   : $Date:   15 May 2014 12:50:00  $
+//* .Current Version : $Revision:   1.10  $
+//* .Check In Date   : $Date:   29 Aug 2014 17:49:06  $
 //******************************************************************************
 
 #ifndef SVIOCONTROLLER_H
@@ -14,6 +14,7 @@
 
 #include "SVObjectLibrary/SVObjectClass.h"
 #include "SVObjectLibrary/SVObserverTemplate.h"
+#include "SVSharedMemoryLibrary/SVProductFilterEnum.h"
 #ifndef _WIN64
 #include "SVP_SRC/SVPLCInterfaceClass.h"
 #include "SVPLCDataController.h"
@@ -101,6 +102,8 @@ public:
 	void ValidateRemoteMonitorList();
 	HRESULT ActivateRemoteMonitorList(const SVString& listName, bool bActivate);
 	void GetActiveRemoteMonitorList(RemoteMonitorList& rActiveList) const;
+	HRESULT SetRemoteMonitorListProductFilter(const SVString& listName, SVProductFilterEnum rFilter);
+	HRESULT GetRemoteMonitorListProductFilter(const SVString& listName, SVProductFilterEnum& rFilter) const;
 	void BuildPPQMonitorList(PPQMonitorList& ppqMonitorList) const;
 
 protected:
@@ -125,6 +128,16 @@ private:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVIOController.h_v  $
+ * 
+ *    Rev 1.10   29 Aug 2014 17:49:06   jHanebach
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Added support for get/set product filter.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.9   15 May 2014 12:50:00   sjones
  * Project:  SVObserver

@@ -5,15 +5,13 @@
 //* .Module Name     : SVSVIMStateClass
 //* .File Name       : $Workfile:   SVSVIMStateClass.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   25 Aug 2014 02:41:14  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   29 Aug 2014 15:44:02  $
 //******************************************************************************
 
-#if defined ( _MSC_VER ) && ( _MSC_VER >= 1000 )
 #pragma once
-#endif
-#ifndef _INC_SVSVIMSTATECLASS_3A93E1A3036B_INCLUDED
-#define _INC_SVSVIMSTATECLASS_3A93E1A3036B_INCLUDED
+
+#include "SVGlobal.h"
 
 #define SV_STATE_UNKNOWN		0x00000000
 
@@ -57,21 +55,28 @@
 class SVSVIMStateClass
 {
 public:
-	//This operation adds a substate to the existing state 
+	//This operation adds a sub-state to the existing state 
 	//value.  The value passed in as a parameter is ORed to 
 	//the existing value.
 	static bool AddState( DWORD dwState );
 
-	//This operation removes a particular substate from the 
-	//existing state value.  This process takes the substate 
+	//This operation removes a particular sub-state from the 
+	//existing state value.  This process takes the sub-state 
 	//value and inverts it and ANDs it to the existing state 
 	//value.
 	static bool RemoveState( DWORD dwState );
 
 	//This operation checks the parameter state value against 
-	//the interal value and outputs in the result parameter 
+	//the internal value and outputs in the result parameter 
 	//whether there is at least one bit (state) matching.
 	static bool CheckState( DWORD dwState );
+
+	//************************************
+	// Method:    GetMode
+	// Description:  Get the value of the mode
+	// Returns:   svModeEnum Enum of the mode
+	//************************************
+	static svModeEnum GetMode();
 
 private:
 	//************************************
@@ -81,33 +86,31 @@ private:
 	//************************************
 	static void setEnvironmentParameters();
 
-	//************************************
-	// Method:    setEnvironmentParameter
-	// Description:  Set a Environment parameter
-	// Parameter: DWORD dwState State to check
-	// Parameter: const TCHAR * name Name of the Environment parameter
-	// Returns:   void
-	//************************************
-	static void setEnvironmentParameter( DWORD dwState, const TCHAR * name );
-
-
-	//This constructor does nothing. 
+	//This constructor does nothing.
 	SVSVIMStateClass();
 
-	//This destructor does nothing. 
+	//This destructor does nothing.
 	virtual ~SVSVIMStateClass();
 
 	//This attribute contain the SVIM state value.
 	static long m_SVIMState;
 };
 
-#endif /* _INC_SVSVIMSTATECLASS_3A93E1A3036B_INCLUDED */
-
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVSVIMStateClass.h_v  $
+ * 
+ *    Rev 1.2   29 Aug 2014 15:44:02   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  934
+ * SCR Title:  Add Remote Access to Environment.Mode Parameters
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   Added static method GetMode.  Removed method setEnvironmentParameter.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   25 Aug 2014 02:41:14   mziegler
  * Project:  SVObserver

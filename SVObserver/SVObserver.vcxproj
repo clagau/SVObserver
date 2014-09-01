@@ -4889,7 +4889,6 @@ echo %time%
     <None Include="RES\SVKnobDot_mask.bmp" />
     <None Include="RES\svobserv.bmp" />
     <None Include="res\SVObserver.rc2" />
-    <None Include="Res\SVR.bmp" />
     <None Include="res\Toolbar.bmp" />
     <None Include="RES\ToolbarBasic.bmp" />
     <None Include="RES\ToolbarConditional.bmp" />

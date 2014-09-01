@@ -5,8 +5,8 @@
 //* .Module Name     : SVSocketRemoteCommandManager
 //* .File Name       : $Workfile:   SVSocketRemoteCommandManager.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.11  $
-//* .Check In Date   : $Date:   09 Jul 2014 17:01:52  $
+//* .Current Version : $Revision:   1.12  $
+//* .Check In Date   : $Date:   29 Aug 2014 17:49:06  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -18,6 +18,7 @@
 #include "JsonLib/include/json.h"
 #include "SVJsonCommandServerLibrary/SVJsonUtilities.h"
 #include "SVSystemLibrary/SVEncodeDecodeUtilities.h"
+#include "SVSharedMemoryLibrary/SVProductFilterEnum.h"
 
 #include "SVGlobal.h"
 #include "SVRemoteControlConstants.h"
@@ -33,6 +34,8 @@ SVRemoteCommandFunctions::SVCommandFunctionMap SVRemoteCommandFunctions::m_Funct
 (SVRC::cmdName::getVersion, &SVRemoteCommandFunctions::GetVersions)
 (SVRC::cmdName::getOLCount, &SVRemoteCommandFunctions::GetDeviceOfflineCount)
 (SVRC::cmdName::actvMonList, &SVRemoteCommandFunctions::ActivateMonitorList)
+(SVRC::cmdName::getProductFilter, &SVRemoteCommandFunctions::GetProductFilter)
+(SVRC::cmdName::setProductFilter, &SVRemoteCommandFunctions::SetProductFilter)
 ;
 
 SVRemoteCommandFunctions::SVCommandFunctionMap SVRemoteCommandFunctions::m_AsyncFunctions = boost::assign::map_list_of< std::string, SVRemoteCommandFunctions::SVCommandFunction >
@@ -1852,6 +1855,148 @@ HRESULT SVRemoteCommandFunctions::QueryMonitorListNames( const std::string& rJso
 	return hr;
 }
 
+HRESULT SVRemoteCommandFunctions::GetProductFilter( const std::string& rJsonCommand, std::string& rJsonResults )
+{
+	HRESULT hr = S_OK;
+
+	std::string ListName;
+	SVProductFilterEnum filter(LastInspectedFilter);
+	Json::Reader Reader;
+	Json::Value JsonCmdValues;
+
+	if( Reader.parse( rJsonCommand, JsonCmdValues, false ) )
+	{
+		std::string FileName = "C:\\temp\\GetProductFilter-cmd";
+		WriteJsonCommandToFile(JsonCmdValues, FileName);
+
+		Json::Value JsonArguments;
+
+		if( JsonCmdValues.isObject() )
+		{
+			JsonArguments = JsonCmdValues[ SVRC::cmd::arg ];
+		}
+
+		if( JsonArguments.isObject() )
+		{
+			Json::Value JsonListName = JsonArguments[ SVRC::arg::listName ];
+
+			if( JsonListName.isString() )
+			{
+				ListName = JsonListName.asString();
+			}
+			else
+			{
+				hr = E_INVALIDARG;
+			}
+		}
+		else
+		{
+			hr = E_INVALIDARG;
+		}
+	}
+	else
+	{
+		hr = E_INVALIDARG;
+	}
+
+	if( S_OK == hr )
+	{
+		if( !( ListName.empty() ) )
+		{
+			hr = SVVisionProcessorHelper::Instance().GetProductFilter( ListName, filter );
+		}
+		else
+		{
+			hr = E_INVALIDARG;
+		}
+	}
+
+	Json::Value Results(Json::objectValue);
+	if (S_OK == hr)
+	{
+		Results[SVRC::result::filter] = static_cast<Json::Value::UInt>(filter);
+	}
+
+	std::string FileName = "C:\\temp\\GetProductFilter-rsp";
+	WriteResultToJsonAndFile(rJsonCommand, rJsonResults, Results, FileName, hr);
+	
+	return hr;
+}
+
+HRESULT SVRemoteCommandFunctions::SetProductFilter( const std::string& rJsonCommand, std::string& rJsonResults )
+{
+	HRESULT hr = S_OK;
+
+	std::string ListName;
+	unsigned long filter = LastInspectedFilter;
+	Json::Reader Reader;
+	Json::Value JsonCmdValues;
+
+	if( Reader.parse( rJsonCommand, JsonCmdValues, false ) )
+	{
+		std::string FileName = "C:\\temp\\SetProductFilter-cmd";
+		WriteJsonCommandToFile(JsonCmdValues, FileName);
+
+		Json::Value JsonArguments;
+
+		if( JsonCmdValues.isObject() )
+		{
+			JsonArguments = JsonCmdValues[ SVRC::cmd::arg ];
+		}
+
+		if( JsonArguments.isObject() )
+		{
+			Json::Value JsonListName = JsonArguments[ SVRC::arg::listName ];
+
+			if( JsonListName.isString() )
+			{
+				ListName = JsonListName.asString();
+			}
+			else
+			{
+				hr = E_INVALIDARG;
+			}
+			Json::Value JsonFilter = JsonArguments[ SVRC::arg::filter ];
+			if (JsonFilter.isInt())
+			{
+				filter = JsonFilter.asInt();
+			}
+			else
+			{
+				hr = E_INVALIDARG;
+			}
+		}
+		else
+		{
+			hr = E_INVALIDARG;
+		}
+	}
+	else
+	{
+		hr = E_INVALIDARG;
+	}
+
+	if( S_OK == hr )
+	{
+		if (!(ListName.empty()) && (LastInspectedFilter == filter || LastRejectFilter == filter))
+		{
+			hr = SVVisionProcessorHelper::Instance().SetProductFilter(ListName, static_cast<SVProductFilterEnum>(filter));
+		}
+		else
+		{
+			hr = E_INVALIDARG;
+		}
+	}
+
+	Json::Value Results(Json::objectValue);
+
+	std::string FileName = "C:\\temp\\SetProductFilter-rsp";
+	WriteResultToJsonAndFile(rJsonCommand, rJsonResults, Results, FileName, hr);
+	
+	return hr;
+
+}
+
 /*####################################################################################################################################
 *	WriteJsonCommandToFile				This is used to write the Json values into a file if necessary
 *	Return: 							The status result of the method  
@@ -1944,6 +2089,16 @@ AFX_INLINE HRESULT SVRemoteCommandFunctions::WriteResultToJsonAndFile( const std
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVSocketRemoteCommandManager.cpp_v  $
+ * 
+ *    Rev 1.12   29 Aug 2014 17:49:06   jHanebach
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Added support for get/set product filter.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.11   09 Jul 2014 17:01:52   mziegler
  * Project:  SVObserver

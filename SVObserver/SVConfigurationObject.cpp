@@ -5,8 +5,8 @@
 //* .Module Name     : SVConfigurationObject
 //* .File Name       : $Workfile:   SVConfigurationObject.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.29  $
-//* .Check In Date   : $Date:   04 Aug 2014 07:24:08  $
+//* .Current Version : $Revision:   1.31  $
+//* .Check In Date   : $Date:   29 Aug 2014 17:49:04  $
 //******************************************************************************
 
 #pragma region Includes
@@ -4566,53 +4566,6 @@ bool SVConfigurationObject::RenameOutputListInspectionNames(CString& OldInspecti
 	return m_pOutputObjectList->RenameInspection( OldInspectionName, NewInspectionName);
 }
 
-HRESULT SVConfigurationObject::GetMode( unsigned long& p_rMode ) const
-{
-	HRESULT l_Status = S_OK;
-
-	p_rMode = SVIM_MODE_UNKNOWN;
-
-	if( SVSVIMStateClass::CheckState( SV_STATE_EDIT ))
-	{
-		p_rMode = SVIM_MODE_EDIT;
-	}
-	else if( SVSVIMStateClass::CheckState( SV_STATE_RUNNING ))
-	{
-		p_rMode = SVIM_MODE_ONLINE;
-	}
-	else if( SVSVIMStateClass::CheckState( SV_STATE_EDIT_MOVE ))
-	{
-		p_rMode = SVIM_MODE_EDIT_MOVE;
-	}
-	else if( SVSVIMStateClass::CheckState( SV_STATE_REGRESSION ))
-	{
-		p_rMode = SVIM_MODE_REGRESSION;
-	}
-	else if( SVSVIMStateClass::CheckState( SV_STATE_TEST ))
-	{
-		p_rMode = SVIM_MODE_TEST;
-	}
-	else if( SVSVIMStateClass::CheckState( SV_STATE_START_PENDING ) ||
-		SVSVIMStateClass::CheckState( SV_STATE_STARTING ) ||
-		SVSVIMStateClass::CheckState( SV_STATE_STOP_PENDING ) ||
-		SVSVIMStateClass::CheckState( SV_STATE_STOPING ))
-	{
-		p_rMode = SVIM_MODE_CHANGING;
-	}
-	else if( SVSVIMStateClass::CheckState( SV_STATE_READY) && 
-		!SVSVIMStateClass::CheckState( SV_STATE_EDIT ) &&
-		!SVSVIMStateClass::CheckState( SV_STATE_EDIT_MOVE ))
-	{
-		p_rMode = SVIM_MODE_OFFLINE;
-	}
-	else
-	{
-		l_Status = S_FALSE;
-	}
-
-	return l_Status;
-}
-
 HRESULT SVConfigurationObject::SetMode( unsigned long p_Mode )
 {
 	HRESULT l_Status = static_cast< HRESULT >( SendMessage( AfxGetApp()->m_pMainWnd->m_hWnd, SV_SET_MODE, 0, ( LPARAM )p_Mode ) );
@@ -5380,6 +5333,26 @@ void SVConfigurationObject::GetActiveRemoteMonitorList(RemoteMonitorList& rActiv
 	}
 }
 
+HRESULT SVConfigurationObject::GetRemoteMonitorListProductFilter(const SVString& listName, SVProductFilterEnum& rFilter) const
+{
+	HRESULT hr = E_POINTER;
+	if (nullptr != m_pIOController)
+	{
+		hr = m_pIOController->GetRemoteMonitorListProductFilter(listName, rFilter);
+	}
+	return hr;
+
+}
+HRESULT SVConfigurationObject::SetRemoteMonitorListProductFilter(const SVString& listName, SVProductFilterEnum filter)
+{
+	HRESULT hr = E_POINTER;
+	if (nullptr != m_pIOController)
+	{
+		hr = m_pIOController->SetRemoteMonitorListProductFilter(listName, filter);
+	}
+	return hr;
+}
+
 void SVConfigurationObject::BuildPPQMonitorList(PPQMonitorList& ppqMonitorList)  const
 {
 	ppqMonitorList.clear();
@@ -5504,6 +5477,26 @@ HRESULT SVConfigurationObject::LoadMonitoredObjectList( SVTreeType& rTree, SVTre
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVConfigurationObject.cpp_v  $
+ * 
+ *    Rev 1.31   29 Aug 2014 17:49:04   jHanebach
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Added support for get/set product filter.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.30   29 Aug 2014 15:43:14   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  934
+ * SCR Title:  Add Remote Access to Environment.Mode Parameters
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   Removed GetMode.  Use SVSVIMStateClass::GetMode instead.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.29   04 Aug 2014 07:24:08   tbair
  * Project:  SVObserver

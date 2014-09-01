@@ -5,8 +5,8 @@
 //* .Module Name     : SVSVIMStateClass
 //* .File Name       : $Workfile:   SVSVIMStateClass.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   25 Aug 2014 02:41:14  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   29 Aug 2014 15:44:02  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -66,38 +66,63 @@ bool SVSVIMStateClass::CheckState( DWORD dwState )
 	return l_Status;
 }
 
-void SVSVIMStateClass::setEnvironmentParameters()
+svModeEnum SVSVIMStateClass::GetMode()
 {
-	EnvironmentObject::setEnvironmentValue( ::EnvironmentModeValue, m_SVIMState );
+	svModeEnum retVal = SVIM_MODE_UNKNOWN;
 
-	setEnvironmentParameter(SV_STATE_EDIT, ::EnvironmentModeIsEdit);
-	setEnvironmentParameter(SV_STATE_RUNNING, ::EnvironmentModeIsRun);
-	setEnvironmentParameter(SV_STATE_EDIT_MOVE, ::EnvironmentModeIsEditMoveTool);
-	setEnvironmentParameter(SV_STATE_REGRESSION, ::EnvironmentModeIsRegressionTest);
-	setEnvironmentParameter(SV_STATE_TEST, ::EnvironmentModeIsTest);
-
-	if( SVSVIMStateClass::CheckState( SV_STATE_READY ) &&
+	if( SVSVIMStateClass::CheckState( SV_STATE_EDIT ) )
+	{
+		retVal = SVIM_MODE_EDIT;
+	}
+	else if( SVSVIMStateClass::CheckState( SV_STATE_RUNNING ) )
+	{
+		retVal = SVIM_MODE_ONLINE;
+	}
+	else if( SVSVIMStateClass::CheckState( SV_STATE_EDIT_MOVE ) )
+	{
+		retVal = SVIM_MODE_EDIT_MOVE;
+	}
+	else if( SVSVIMStateClass::CheckState( SV_STATE_REGRESSION ) )
+	{
+		retVal = SVIM_MODE_REGRESSION;
+	}
+	else if( SVSVIMStateClass::CheckState( SV_STATE_TEST ) )
+	{
+		retVal = SVIM_MODE_TEST;
+	}
+	// Pending conditions...
+	else if( SVSVIMStateClass::CheckState( SV_STATE_START_PENDING ) ||
+		SVSVIMStateClass::CheckState( SV_STATE_STARTING ) ||
+		SVSVIMStateClass::CheckState( SV_STATE_STOP_PENDING ) ||
+		SVSVIMStateClass::CheckState( SV_STATE_STOPING ) )
+	{
+		retVal = SVIM_MODE_CHANGING;
+	}
+	else if( SVSVIMStateClass::CheckState( SV_STATE_READY ) &&
 		!SVSVIMStateClass::CheckState( SV_STATE_EDIT ) &&
 		!SVSVIMStateClass::CheckState( SV_STATE_EDIT_MOVE ) )
 	{
-		EnvironmentObject::setEnvironmentValue( ::EnvironmentModeIsStop, TRUE );
+		retVal = SVIM_MODE_OFFLINE;
 	}
 	else
 	{
-		EnvironmentObject::setEnvironmentValue( ::EnvironmentModeIsStop, FALSE );
+		retVal = SVIM_MODE_UNKNOWN;
 	}
+
+	return retVal;
 }
 
-void SVSVIMStateClass::setEnvironmentParameter( DWORD dwState, const TCHAR * name )
+void SVSVIMStateClass::setEnvironmentParameters()
 {
-	if( CheckState( dwState ) )
-	{
-		EnvironmentObject::setEnvironmentValue( name, TRUE );
-	}
-	else
-	{
-		EnvironmentObject::setEnvironmentValue( name, FALSE );
-	}
+	long modeValue = static_cast<long>(GetMode());
+
+	EnvironmentObject::setEnvironmentValue( ::EnvironmentModeValue, modeValue );
+	EnvironmentObject::setEnvironmentValue( ::EnvironmentModeIsRun, static_cast< long >( SVIM_MODE_ONLINE == modeValue ) );
+	EnvironmentObject::setEnvironmentValue( ::EnvironmentModeIsStop, static_cast< long >( SVIM_MODE_OFFLINE == modeValue ) );
+	EnvironmentObject::setEnvironmentValue( ::EnvironmentModeIsRegressionTest, static_cast< long >( SVIM_MODE_REGRESSION == modeValue ) );
+	EnvironmentObject::setEnvironmentValue( ::EnvironmentModeIsTest, static_cast< long >( SVIM_MODE_TEST == modeValue ) );
+	EnvironmentObject::setEnvironmentValue( ::EnvironmentModeIsEdit, static_cast< long >( SVIM_MODE_EDIT == modeValue ) );
+	EnvironmentObject::setEnvironmentValue( ::EnvironmentModeIsEditMoveTool, static_cast< long >( SVIM_MODE_EDIT_MOVE == modeValue ) );
 }
 
 //******************************************************************************
@@ -105,6 +130,16 @@ void SVSVIMStateClass::setEnvironmentParameter( DWORD dwState, const TCHAR * nam
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVSVIMStateClass.cpp_v  $
+ * 
+ *    Rev 1.3   29 Aug 2014 15:44:02   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  934
+ * SCR Title:  Add Remote Access to Environment.Mode Parameters
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   Added static method GetMode.  Removed method setEnvironmentParameter.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   25 Aug 2014 02:41:14   mziegler
  * Project:  SVObserver

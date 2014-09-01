@@ -5,8 +5,8 @@
 //* .Module Name     : SVVisionProcessorHelper
 //* .File Name       : $Workfile:   SVVisionProcessorHelper.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.19  $
-//* .Check In Date   : $Date:   22 Aug 2014 14:42:44  $
+//* .Current Version : $Revision:   1.21  $
+//* .Check In Date   : $Date:   29 Aug 2014 17:49:06  $
 //******************************************************************************
 
 #pragma region Includes
@@ -187,7 +187,7 @@ HRESULT SVVisionProcessorHelper::GetConfigurationMode( unsigned long& p_rMode ) 
 
 	if( l_pConfig != NULL )
 	{
-		l_Status = l_pConfig->GetMode( p_rMode );
+		p_rMode = SVSVIMStateClass::GetMode();
 	}
 	else if( l_Status == S_OK )
 	{
@@ -946,6 +946,38 @@ HRESULT SVVisionProcessorHelper::QueryMonitorListNames( SVNameSet& rNames ) cons
 	return hr;
 }
 
+HRESULT SVVisionProcessorHelper::SetProductFilter(const SVString& rListName, SVProductFilterEnum filter) 
+{
+	SVConfigurationObject* pConfig = nullptr;
+
+	HRESULT hr = SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
+	if ( nullptr != pConfig )
+	{
+		hr = pConfig->SetRemoteMonitorListProductFilter( rListName, filter );
+	}
+	else
+	{
+		hr = E_POINTER;
+	}
+	return  hr;
+}
+
+HRESULT SVVisionProcessorHelper::GetProductFilter(const SVString& rListName, SVProductFilterEnum& rFilter) const
+{
+	SVConfigurationObject* pConfig = nullptr;
+
+	HRESULT hr = SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
+	if ( nullptr != pConfig )
+	{
+		hr = pConfig->GetRemoteMonitorListProductFilter( rListName, rFilter );
+	}
+	else
+	{
+		hr = E_POINTER;
+	}
+	return  hr;
+}
+
 void SVVisionProcessorHelper::Startup()
 {
 	m_AsyncProcedure.Create( &SVVisionProcessorHelper::APCThreadProcess, boost::bind(&SVVisionProcessorHelper::ThreadProcess, this, _1), "SVVisionProcessorHelper" );
@@ -1008,6 +1040,26 @@ void SVVisionProcessorHelper::ProcessLastModified( bool& p_WaitForEvents )
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVVisionProcessorHelper.cpp_v  $
+ * 
+ *    Rev 1.21   29 Aug 2014 17:49:06   jHanebach
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Added support for get/set product filter.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.20   29 Aug 2014 15:45:04   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  934
+ * SCR Title:  Add Remote Access to Environment.Mode Parameters
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   Changed GetConfigurationMode to call SVSVIMStateClass::GetMode.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.19   22 Aug 2014 14:42:44   sjones
  * Project:  SVObserver

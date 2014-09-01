@@ -5,8 +5,8 @@
 //* .Module Name     : RemoteMonitorNamedList
 //* .File Name       : $Workfile:   RemoteMonitorNamedList.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   23 Apr 2014 10:35:00  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   29 Aug 2014 17:49:02  $
 //******************************************************************************
 #pragma region Includes
 #include "Stdafx.h"
@@ -119,11 +119,31 @@ bool RemoteMonitorNamedList::IsActive() const
 	return m_bActive;
 }
 
+void RemoteMonitorNamedList::SetProductFilter(SVProductFilterEnum filter)
+{
+	m_filter = filter;
+}
+
+SVProductFilterEnum RemoteMonitorNamedList::GetProductFilter() const
+{
+	return m_filter;
+}
+
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\RemoteMonitorNamedList.cpp_v  $
+ * 
+ *    Rev 1.2   29 Aug 2014 17:49:02   jHanebach
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Added support for get/set product filter.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   23 Apr 2014 10:35:00   sjones
  * Project:  SVObserver

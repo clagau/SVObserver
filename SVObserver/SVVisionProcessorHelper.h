@@ -5,8 +5,8 @@
 //* .Module Name     : SVVisionProcessorHelper
 //* .File Name       : $Workfile:   SVVisionProcessorHelper.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.10  $
-//* .Check In Date   : $Date:   09 Jul 2014 17:04:06  $
+//* .Current Version : $Revision:   1.11  $
+//* .Check In Date   : $Date:   29 Aug 2014 17:49:02  $
 //******************************************************************************
 
 #ifndef SVVISIONPROCESSORHELPER_H
@@ -21,6 +21,7 @@
 #include "SVSystemLibrary/SVAsyncProcedure.h"
 #include "SVUtilityLibrary/SVString.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
+#include "SVSharedMemoryLibrary/SVProductFilterEnum.h"
 #include "SVStorage.h"
 #include "SVStorageResult.h"
 #include "SVVisionProcessorConstants.h"
@@ -82,6 +83,8 @@ public:
 	HRESULT QueryFailStatusList( const SVString& rListName, SVNameSet& rNames ) const;
 	HRESULT ActivateMonitorList( const SVString& rListName, bool bActivate );
 	HRESULT QueryMonitorListNames( SVNameSet& rNames ) const;
+	HRESULT SetProductFilter( const SVString& rListName, SVProductFilterEnum filter );
+	HRESULT GetProductFilter( const SVString& rListName, SVProductFilterEnum& filter ) const;
 
 protected:
 	typedef boost::function< HRESULT ( const SVNameSet&, SVNameStorageResultMap& ) > SVGetItemsFunctor;
@@ -135,6 +138,16 @@ private:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVVisionProcessorHelper.h_v  $
+ * 
+ *    Rev 1.11   29 Aug 2014 17:49:02   jHanebach
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Added support for get/set product filter.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.10   09 Jul 2014 17:04:06   mziegler
  * Project:  SVObserver

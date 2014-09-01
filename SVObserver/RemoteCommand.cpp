@@ -5,8 +5,8 @@
 //* .Module Name     : RemoteCommand
 //* .File Name       : $Workfile:   RemoteCommand.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   17 Jul 2014 17:56:28  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   29 Aug 2014 15:42:32  $
 //******************************************************************************
 
 #pragma region includes
@@ -107,48 +107,9 @@ HRESULT GlobalRCSetMode( unsigned long p_lNewMode )
 
 HRESULT GlobalRCGetMode( unsigned long* p_plMode )
 {
-	HRESULT hr = S_OK;
+	*p_plMode = SVSVIMStateClass::GetMode();
 
-	if( SVSVIMStateClass::CheckState( SV_STATE_EDIT ) )
-	{
-		*p_plMode = SVIM_MODE_EDIT;
-	}
-	else if( SVSVIMStateClass::CheckState( SV_STATE_RUNNING ) )
-	{
-		*p_plMode = SVIM_MODE_ONLINE;
-	}
-	else if( SVSVIMStateClass::CheckState( SV_STATE_EDIT_MOVE ) )
-	{
-		*p_plMode = SVIM_MODE_EDIT_MOVE;
-	}
-	else if( SVSVIMStateClass::CheckState( SV_STATE_REGRESSION ) )
-	{
-		*p_plMode = SVIM_MODE_REGRESSION;
-	}
-	else if( SVSVIMStateClass::CheckState( SV_STATE_TEST ) )
-	{
-		*p_plMode = SVIM_MODE_TEST;
-	}
-	// Pending conditions...
-	else if( SVSVIMStateClass::CheckState( SV_STATE_START_PENDING ) ||
-		SVSVIMStateClass::CheckState( SV_STATE_STARTING ) ||
-		SVSVIMStateClass::CheckState( SV_STATE_STOP_PENDING ) ||
-		SVSVIMStateClass::CheckState( SV_STATE_STOPING ) )
-	{
-		*p_plMode = SVIM_MODE_CHANGING;
-	}
-	else if( SVSVIMStateClass::CheckState( SV_STATE_READY ) &&
-		!SVSVIMStateClass::CheckState( SV_STATE_EDIT ) &&
-		!SVSVIMStateClass::CheckState( SV_STATE_EDIT_MOVE ) )
-	{
-		*p_plMode = SVIM_MODE_OFFLINE;
-	}
-	else
-	{
-		*p_plMode = 0;
-	}
-
-	return hr;
+	return S_OK;
 }
 
 // Global functions for SVFocusNT Remote Commands
@@ -223,6 +184,16 @@ BOOL GlobalRCCloseConfiguration()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\RemoteCommand.cpp_v  $
+ * 
+ *    Rev 1.2   29 Aug 2014 15:42:32   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  934
+ * SCR Title:  Add Remote Access to Environment.Mode Parameters
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   Changed GlobalRCGetMode to call SVSVIMStateClass::GetMode.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   17 Jul 2014 17:56:28   gramseier
  * Project:  SVObserver

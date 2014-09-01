@@ -5,8 +5,8 @@
 //* .Module Name     : SVSocketRemoteCommandManager
 //* .File Name       : $Workfile:   SVSocketRemoteCommandManager.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.5  $
-//* .Check In Date   : $Date:   09 Jul 2014 17:04:06  $
+//* .Current Version : $Revision:   1.6  $
+//* .Check In Date   : $Date:   29 Aug 2014 17:49:06  $
 //******************************************************************************
 
 #ifndef SVSOCKETREMOTECOMMANDMANAGER_H
@@ -78,6 +78,8 @@ protected:
 	static HRESULT QueryRejectCondList( const std::string& rJsonCommand, std::string& rJsonResults );
 	static HRESULT QueryFailStatusList( const std::string& rJsonCommand, std::string& rJsonResults );
 	static HRESULT QueryMonitorListNames( const std::string& rJsonCommand, std::string& rJsonResults );
+	static HRESULT GetProductFilter( const std::string& rJsonCommand, std::string& rJsonResults );
+	static HRESULT SetProductFilter( const std::string& rJsonCommand, std::string& rJsonResults );
 
 	AFX_INLINE static HRESULT WriteJsonCommandToFile(const Json::Value& p_rJsonValues, const std::string& p_rFileName);
 	AFX_INLINE static HRESULT WriteJsonCommandToFile(const std::string& p_rJsonCommand, const std::string& p_rFileName);
@@ -107,6 +109,16 @@ typedef SVJsonCommandManager< SVRemoteCommandFunctions > SVSocketRemoteCommandMa
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVSocketRemoteCommandManager.h_v  $
+ * 
+ *    Rev 1.6   29 Aug 2014 17:49:06   jHanebach
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Added support for get/set product filter.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.5   09 Jul 2014 17:04:06   mziegler
  * Project:  SVObserver
