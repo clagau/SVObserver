@@ -5,8 +5,8 @@
 //* .Module Name     : SVMainFrm
 //* .File Name       : $Workfile:   SVMainFrm.CPP  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.12  $
-//* .Check In Date   : $Date:   27 Aug 2014 11:06:12  $
+//* .Current Version : $Revision:   1.13  $
+//* .Check In Date   : $Date:   02 Sep 2014 12:16:48  $
 //******************************************************************************
 
 #pragma region Includes
@@ -42,6 +42,7 @@
 #include "SVImageViewScroll.h"
 #include "SVImageView.h"
 #include "SVOLicenseManager/SVOLicenseManager.h"
+#include "SVIPChildFrm.h" 
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -1961,11 +1962,10 @@ void SVMainFrame::OnUpdateViewImageDisplayUpdate( CCmdUI* pCmdUI )
 	BOOL bEnable = TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable( SECURITY_POINT_VIEW_MENU_IMAGE_DISPLAY_UPDATE );
 	bEnable &= !SVSVIMStateClass::CheckState( SV_STATE_REGRESSION );
 	pCmdUI->Enable( bEnable);
-	
 	BOOL ImageUpdate;
 	EnvironmentObject::getEnvironmentValue( ::EnvironmentImageUpdate, ImageUpdate );
 	pCmdUI->SetCheck( ImageUpdate );
-	
+
 	bool bEnableZoom = false;
 	CMDIChildWnd *pChild = (CMDIChildWnd*) GetActiveFrame();
 	CView*  pView =  pChild->GetActiveView();
@@ -1979,7 +1979,6 @@ void SVMainFrame::OnUpdateViewImageDisplayUpdate( CCmdUI* pCmdUI )
 	else
 	{
 		pSView = dynamic_cast<SVImageViewScroll*>( pView);
-
 	}
 	if(pSView)
 	{
@@ -2168,11 +2167,30 @@ bool SVMainFrame::IsZoomingPossible()
 	return false;
 }
 
+void SVMainFrame::RefreshAllSplitters()
+{
+	SVIPSplitterFrame* pSplitterFrame = dynamic_cast< SVIPSplitterFrame*>(GetActiveFrame());
+	if(nullptr != pSplitterFrame)
+	{
+		pSplitterFrame->RefreshAllSplitters();
+	}
+}
+
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVMainFrm.CPP_v  $
+ * 
+ *    Rev 1.13   02 Sep 2014 12:16:48   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  921
+ * SCR Title:  Add more complete zoom functionality. (runpage)
+ * Checked in by:  mEichengruen;  Marcus Eichengruen
+ * Change Description:  
+ *   Added method RefreshAllSplitters.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.12   27 Aug 2014 11:06:12   gramseier
  * Project:  SVObserver

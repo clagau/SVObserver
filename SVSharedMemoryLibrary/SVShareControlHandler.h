@@ -5,8 +5,8 @@
 //* .Module Name     : SVShareControlHandler
 //* .File Name       : $Workfile:   SVShareControlHandler.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   29 Aug 2014 17:33:00  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   02 Sep 2014 15:27:58  $
 //******************************************************************************
 #pragma once
 #include "SVSharedControl.h"
@@ -45,6 +45,7 @@ namespace SeidenaderVision
 
 		void SetProductFilterChanged() { SVSharedConfiguration::Log("ControlHandler::SetProductFilterChanged"); m_ctrl->productFilterChanged = ++m_filterChangeCount; }
 		bool ProductFilterChanged(long previousValue) const { SVSharedConfiguration::Log("ControlHandler::ProductFilterChanged"); return m_ctrl->productFilterChanged != previousValue; }
+		long GetFilterChangeCount() const { return m_filterChangeCount; }
 
 		void Release();
 	};
@@ -55,6 +56,17 @@ namespace SeidenaderVision
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVSharedMemoryLibrary\SVShareControlHandler.h_v  $
+ * 
+ *    Rev 1.3   02 Sep 2014 15:27:58   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  885
+ * SCR Title:  Replace image display in TA-dialogs with activeX SVPictureDisplay
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   Added GetFilterChangeCount method.
+ * 
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   29 Aug 2014 17:33:00   jHanebach
  * Project:  SVObserver

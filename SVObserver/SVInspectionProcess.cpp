@@ -5,8 +5,8 @@
 //* .Module Name     : SVInspectionProcess
 //* .File Name       : $Workfile:   SVInspectionProcess.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.18  $
-//* .Check In Date   : $Date:   20 Aug 2014 12:55:38  $
+//* .Current Version : $Revision:   1.19  $
+//* .Check In Date   : $Date:   02 Sep 2014 13:23:00  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -367,7 +367,7 @@ HRESULT SVInspectionProcess::ProcessNotifyWithLastInspected(bool& p_rProcessed, 
 		{
 			try
 			{
-				if (l_Product.ProcessCount() > 0)
+				if (l_Product.ProcessCount() > 0 && sharedSlotIndex >= 0)
 				{			
 #ifdef COLLECT_SHAREDMEMORY_STATS
 					SeidenaderVision::SVProfiler totalProfiler;
@@ -380,7 +380,6 @@ HRESULT SVInspectionProcess::ProcessNotifyWithLastInspected(bool& p_rProcessed, 
 					FillSharedData(sharedSlotIndex, rLastInspected, m_SharedMemoryFilters.m_LastInspectedValues, m_SharedMemoryFilters.m_LastInspectedImages, l_Product, rWriter);
 				
 #ifdef COLLECT_SHAREDMEMORY_STATS
-					// mark as write complete and ready for read
 					commitProfiler.Start();
 #endif
 				}
@@ -404,7 +403,6 @@ HRESULT SVInspectionProcess::ProcessNotifyWithLastInspected(bool& p_rProcessed, 
 				l_Exception.LogException(l_Message);
 			}
 		}
-		// Why are we doing this twice, our caller does it as well...
 		SVInspectionCompleteInfoStruct l_Data(GetUniqueObjectID(), l_Product);
 		SVObjectManagerClass::Instance().UpdateObservers("SVInspectionProcess", GetUniqueObjectID(), l_Data);
 
@@ -4839,6 +4837,18 @@ void SVInspectionProcess::Persist(SVObjectWriter& rWriter)
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVInspectionProcess.cpp_v  $
+ * 
+ *    Rev 1.19   02 Sep 2014 13:23:00   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Revised ProcessNotifyWithLastInspected method to check for an invalid shared memory slot index.
+ * 
+ * 
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.18   20 Aug 2014 12:55:38   sjones
  * Project:  SVObserver

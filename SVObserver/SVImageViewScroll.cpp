@@ -5,8 +5,8 @@
 //* .Module Name     : SVImageViewScroll
 //* .File Name       : $Workfile:   SVImageViewScroll.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   14 Aug 2014 15:58:32  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   02 Sep 2014 12:13:52  $
 //******************************************************************************
 
 #pragma region Includes
@@ -438,6 +438,7 @@ BOOL SVImageViewScroll::SetParameters( SVTreeType& rTree, SVTreeType::SVBranchHa
 		if ( bOk )
 		{
 			ScrollToPosition( l_ScrollPoint );
+			UpdateZoomToolbar();
 		}
 	}
 
@@ -667,6 +668,25 @@ void SVImageViewScroll::OnKillFocus(CWnd* pNewWnd)
 	}
 }
 
+void SVImageViewScroll::UpdateZoomToolbar()
+{
+	//only when we have the focus 
+	SVImageViewScroll* pFocus = dynamic_cast<SVImageViewScroll*>(GetFocus());
+
+	SVMainFrame* pFrame = dynamic_cast<SVMainFrame*>( AfxGetMainWnd() );
+
+	if(nullptr != pFrame && pFocus == this )
+	{
+		bool bZoom = IsZoomAllowed();
+		pFrame->EnableZoomToolbar(bZoom);
+
+		if( true == bZoom && nullptr != m_pView )
+		{
+			pFrame->SetZoomToolbar(m_pView->GetZoomHelper());
+		}
+	}
+}
+
 void SVImageViewScroll::OnSetFocus(CWnd* pOldWnd)
 {
 	CScrollView::OnSetFocus(pOldWnd);
@@ -695,7 +715,18 @@ void SVImageViewScroll::OnSetFocus(CWnd* pOldWnd)
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSARCH65\PROJECTFILES\ARCHIVES\SVOBSERVER_SRC\SVOBSERVER\SVImageViewScroll.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVImageViewScroll.cpp_v  $
+ * 
+ *    Rev 1.2   02 Sep 2014 12:13:52   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  921
+ * SCR Title:  Add more complete zoom functionality. (runpage)
+ * Checked in by:  mEichengruen;  Marcus Eichengruen
+ * Change Description:  
+ *   Added method UpdateZoomToolbar.
+ * Changed SetParameters method to call UpdateZoomToolbar to fix issue where toolbar zoom didn't match zoom setting for selected ImageView.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   14 Aug 2014 15:58:32   mEichengruen
  * Project:  SVObserver

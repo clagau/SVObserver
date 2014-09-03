@@ -5,8 +5,8 @@
 //* .Module Name     : SVImageView
 //* .File Name       : $Workfile:   SVImageView.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   14 Aug 2014 15:55:16  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   02 Sep 2014 12:12:54  $
 //******************************************************************************
 
 #pragma once
@@ -131,18 +131,20 @@ public:
 	// Description:  Set the zoom value according to the zoom parameter, which should be one of the new zoom values.
 	// Parameter: EZoom zoom (EZoomMinus, EZoomPlus, EZoomFit, EZoomOne, EZoomValue)
 	// Parameter: double value (only relevant for EZoomValue)
+	// Parameter: bool when true, set the zoom slider in Mainframe
 	// Returns:   double
 	//************************************
-	double SetZoom(EZoom zoom, double value = 1.0);
+	double SetZoom(EZoom zoom, double value = 1.0, bool bSetSlider = true);
 
 	//************************************
 	// Method:    SetZoomIndex
 	// Description:  Set Zoom value according to the ezoom parameter, which should be one of the zoom steps which are the old Zoomvalue.
 	// Parameter: EZoomMode ezoom ( SMALLEST,SMALL,NORMAL, LARGE, LARGEST, ZOOM_IN, ZOOM_OUT, ZOOM_VALUE) 
 	// Parameter: unsigned int scaleIndex (only relevant for EZoomValue)
+	// Parameter: bool when true, set the zoom slider in Mainframe
 	// Returns:   bool
 	//************************************
-	bool SetZoomIndex( EZoomMode ezoom, unsigned int scaleIndex = 1 );
+	bool SetZoomIndex( EZoomMode eZoom, unsigned int scaleIndex = 1 ,bool bSetSlider = true );
 
 	//************************************
 	// Method:    GetZoomHelper
@@ -157,6 +159,13 @@ public:
 	// Returns:   bool
 	//************************************
 	bool IsZoomAllowed() const;
+
+	//************************************
+	// Method:    UpdateZoomToolbar
+	// Description:  Updates the zoom toolbar but only when the view has the focus
+	// Returns:   void
+	//************************************
+	void UpdateZoomToolbar();
 
 protected:
 	void Initialize();
@@ -256,6 +265,17 @@ protected:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVImageView.h_v  $
+ * 
+ *    Rev 1.3   02 Sep 2014 12:12:54   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  921
+ * SCR Title:  Add more complete zoom functionality. (runpage)
+ * Checked in by:  mEichengruen;  Marcus Eichengruen
+ * Change Description:  
+ *   Added parameter bSetZoomSlider to SetZoom and SetZoomIndex methods.
+ * Added method UpdateZoomToolbar.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   14 Aug 2014 15:55:16   mEichengruen
  * Project:  SVObserver

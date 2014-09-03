@@ -5,8 +5,8 @@
 //* .Module Name     : SVSVIMStateClass
 //* .File Name       : $Workfile:   SVSVIMStateClass.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.3  $
-//* .Check In Date   : $Date:   29 Aug 2014 15:44:02  $
+//* .Current Version : $Revision:   1.4  $
+//* .Check In Date   : $Date:   02 Sep 2014 10:16:54  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -117,12 +117,12 @@ void SVSVIMStateClass::setEnvironmentParameters()
 	long modeValue = static_cast<long>(GetMode());
 
 	EnvironmentObject::setEnvironmentValue( ::EnvironmentModeValue, modeValue );
-	EnvironmentObject::setEnvironmentValue( ::EnvironmentModeIsRun, static_cast< long >( SVIM_MODE_ONLINE == modeValue ) );
-	EnvironmentObject::setEnvironmentValue( ::EnvironmentModeIsStop, static_cast< long >( SVIM_MODE_OFFLINE == modeValue ) );
-	EnvironmentObject::setEnvironmentValue( ::EnvironmentModeIsRegressionTest, static_cast< long >( SVIM_MODE_REGRESSION == modeValue ) );
-	EnvironmentObject::setEnvironmentValue( ::EnvironmentModeIsTest, static_cast< long >( SVIM_MODE_TEST == modeValue ) );
-	EnvironmentObject::setEnvironmentValue( ::EnvironmentModeIsEdit, static_cast< long >( SVIM_MODE_EDIT == modeValue ) );
-	EnvironmentObject::setEnvironmentValue( ::EnvironmentModeIsEditMoveTool, static_cast< long >( SVIM_MODE_EDIT_MOVE == modeValue ) );
+	EnvironmentObject::setEnvironmentValue( ::EnvironmentModeIsRun, static_cast< BOOL >( SVIM_MODE_ONLINE == modeValue ) );
+	EnvironmentObject::setEnvironmentValue( ::EnvironmentModeIsStop, static_cast< BOOL >( SVIM_MODE_OFFLINE == modeValue ) );
+	EnvironmentObject::setEnvironmentValue( ::EnvironmentModeIsRegressionTest, static_cast< BOOL >( SVIM_MODE_REGRESSION == modeValue ) );
+	EnvironmentObject::setEnvironmentValue( ::EnvironmentModeIsTest, static_cast< BOOL >( SVIM_MODE_TEST == modeValue ) );
+	EnvironmentObject::setEnvironmentValue( ::EnvironmentModeIsEdit, static_cast< BOOL >( SVIM_MODE_EDIT == modeValue ) );
+	EnvironmentObject::setEnvironmentValue( ::EnvironmentModeIsEditMoveTool, static_cast< BOOL >( SVIM_MODE_EDIT_MOVE == modeValue ) );
 }
 
 //******************************************************************************
@@ -130,6 +130,16 @@ void SVSVIMStateClass::setEnvironmentParameters()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVSVIMStateClass.cpp_v  $
+ * 
+ *    Rev 1.4   02 Sep 2014 10:16:54   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  934
+ * SCR Title:  Add Remote Access to Environment.Mode Parameters
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   Fixed type for Environment.Mode variables.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   29 Aug 2014 15:44:02   bwalter
  * Project:  SVObserver

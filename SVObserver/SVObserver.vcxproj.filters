@@ -518,9 +518,6 @@
     <ClCompile Include="SVIOBoardCapabilities.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVIOChildFrm.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVIOController.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -2198,9 +2195,6 @@
     <ClInclude Include="SVIOBoardCapabilities.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVIOChildFrm.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVIOController.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -3605,9 +3599,6 @@
       <Filter>Resource Files</Filter>
     </None>
     <None Include="res\SVObserver.rc2">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="Res\SVR.bmp">
       <Filter>Resource Files</Filter>
     </None>
     <None Include="res\Toolbar.bmp">

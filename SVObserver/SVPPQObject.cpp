@@ -5,8 +5,8 @@
 //* .Module Name     : SVPPQObject
 //* .File Name       : $Workfile:   SVPPQObject.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.30  $
-//* .Check In Date   : $Date:   27 Aug 2014 01:30:40  $
+//* .Current Version : $Revision:   1.31  $
+//* .Check In Date   : $Date:   02 Sep 2014 14:53:34  $
 //******************************************************************************
 
 #pragma region Includes
@@ -4925,7 +4925,7 @@ void SVPPQObject::ReleaseSharedMemory(const SVProductInfoStruct& rProduct)
 			// Release Shared Product
 			SeidenaderVision::SVSharedPPQWriter& rWriter = SVSharedMemorySingleton::Instance().GetPPQWriter(GetUniqueObjectID());
 			SeidenaderVision::SVSharedProduct& rSharedProduct = rWriter.GetProductSlot(rProduct.m_lastInspectedSlot);
-			rSharedProduct.m_TriggerCount = 0;
+			rSharedProduct.m_TriggerCount = -1;
 			rSharedProduct.m_Inspections.clear();
 			
 			rWriter.ReleaseProduct(rSharedProduct);
@@ -5076,6 +5076,16 @@ void SVPPQObject::SVSharedMemoryFilters::clear()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVPPQObject.cpp_v  $
+ * 
+ *    Rev 1.31   02 Sep 2014 14:53:34   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Revised ReleaseSharedMemory method to set the Product's TriggerCount in the share.This is used to designate an invalid product for the consumers of the product share.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.30   27 Aug 2014 01:30:40   gramseier
  * Project:  SVObserver

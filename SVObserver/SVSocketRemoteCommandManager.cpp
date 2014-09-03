@@ -5,8 +5,8 @@
 //* .Module Name     : SVSocketRemoteCommandManager
 //* .File Name       : $Workfile:   SVSocketRemoteCommandManager.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.12  $
-//* .Check In Date   : $Date:   29 Aug 2014 17:49:06  $
+//* .Current Version : $Revision:   1.13  $
+//* .Check In Date   : $Date:   02 Sep 2014 13:25:28  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -1914,7 +1914,7 @@ HRESULT SVRemoteCommandFunctions::GetProductFilter( const std::string& rJsonComm
 	Json::Value Results(Json::objectValue);
 	if (S_OK == hr)
 	{
-		Results[SVRC::result::filter] = static_cast<Json::Value::UInt>(filter);
+		Results[SVRC::result::filter] = static_cast<Json::Value::Int>(filter);
 	}
 
 	std::string FileName = "C:\\temp\\GetProductFilter-rsp";
@@ -2089,6 +2089,17 @@ AFX_INLINE HRESULT SVRemoteCommandFunctions::WriteResultToJsonAndFile( const std
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVSocketRemoteCommandManager.cpp_v  $
+ * 
+ *    Rev 1.13   02 Sep 2014 13:25:28   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Revised GetProductFilter method to set the filter json value as an Json:Int type.
+ * 
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.12   29 Aug 2014 17:49:06   jHanebach
  * Project:  SVObserver

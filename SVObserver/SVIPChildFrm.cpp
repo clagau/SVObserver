@@ -5,8 +5,8 @@
 //* .Module Name     : SVIPSplitterFrame
 //* .File Name       : $Workfile:   SVIPChildFrm.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   14 Aug 2014 16:03:22  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   02 Sep 2014 12:15:38  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -324,7 +324,11 @@ BOOL SVIPSplitterFrame::OnCreateClient( LPCREATESTRUCT lpcs, CCreateContext* PCo
 	m_oWndSplitter1.SetRowInfo( 1, SV_DEFAULT_RESULT_VIEW_HEIGHT, 10 );
 
 	//activate ImageScrollView #1
-	SetActiveView( static_cast< CView* >( m_oWndSplitter4.GetPane( 0, 0 ) ) );
+	CView *pView = dynamic_cast< CView* >( m_oWndSplitter4.GetPane( 0, 0 ) );
+	if(pView)
+	{
+		SetActiveView( pView );
+	}
 
 	return TRUE;
 }// end OnCreateClient
@@ -424,7 +428,17 @@ void SVIPSplitterFrame::OnMDIActivate(BOOL bActivate, CWnd* pActivateWnd, CWnd* 
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSARCH65\PROJECTFILES\ARCHIVES\SVOBSERVER_SRC\SVOBSERVER\SVIPChildFrm.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVIPChildFrm.cpp_v  $
+ * 
+ *    Rev 1.2   02 Sep 2014 12:15:38   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  921
+ * SCR Title:  Add more complete zoom functionality. (runpage)
+ * Checked in by:  mEichengruen;  Marcus Eichengruen
+ * Change Description:  
+ *   Changed method OnCreateClient to check before calling SetActiveView.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   14 Aug 2014 16:03:22   mEichengruen
  * Project:  SVObserver

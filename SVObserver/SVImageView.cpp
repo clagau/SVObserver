@@ -5,8 +5,8 @@
 //* .Module Name     : SVImageView
 //* .File Name       : $Workfile:   SVImageView.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.10  $
-//* .Check In Date   : $Date:   14 Aug 2014 15:55:14  $
+//* .Current Version : $Revision:   1.11  $
+//* .Check In Date   : $Date:   02 Sep 2014 12:12:00  $
 //******************************************************************************
 
 #pragma region Includes
@@ -732,74 +732,69 @@ void SVImageViewClass::OnContextMenu( CWnd* p_pWnd, CPoint p_point )
 		{
 			if( l_pPopup = l_menu.GetSubMenu( 0 ) )
 			{
-				if( SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) )
+				if(!IsZoomAllowed())
 				{
 					l_pPopup->DeleteMenu( 0, MF_BYPOSITION );  // delete Zoom
+				}
+
+				if( !m_mouseIsOverTool )
+				{
 					l_pPopup->DeleteMenu( ID_CONFIG_ANALYZER, MF_BYCOMMAND );
 					l_pPopup->DeleteMenu( ID_ADJUST_POSITION, MF_BYCOMMAND );
-					l_pPopup->DeleteMenu( ID_SELECT_DISPLAY_IMAGE, MF_BYCOMMAND );
 					l_pPopup->DeleteMenu( ID_ANALYZER_RESULT, MF_BYCOMMAND );
 				}
 				else
 				{
-					if( !m_mouseIsOverTool )
-					{
-						l_pPopup->DeleteMenu( ID_CONFIG_ANALYZER, MF_BYCOMMAND );
-						l_pPopup->DeleteMenu( ID_ADJUST_POSITION, MF_BYCOMMAND );
-						l_pPopup->DeleteMenu( ID_ANALYZER_RESULT, MF_BYCOMMAND );
-					}
-					else
-					{
-						BOOL l_resultFound = FALSE;
-						SVAnalyzerClass* l_psvAnalyzer = NULL;
-						SVIPDoc *l_psvIPDoc = GetIPDoc();
+					BOOL l_resultFound = FALSE;
+					SVAnalyzerClass* l_psvAnalyzer = NULL;
+					SVIPDoc *l_psvIPDoc = GetIPDoc();
 
-						if( l_psvIPDoc != NULL )
+					if( nullptr != l_psvIPDoc )
+					{
+						SVToolClass* l_psvTool = dynamic_cast< SVToolClass* >( SVObjectManagerClass::Instance().GetObject( l_psvIPDoc->GetSelectedToolID() ) );
+						if( l_psvTool )
 						{
-							SVToolClass* l_psvTool = dynamic_cast< SVToolClass* >( SVObjectManagerClass::Instance().GetObject( l_psvIPDoc->GetSelectedToolID() ) );
-							if( l_psvTool )
+							CPoint l_point;
+							l_point.x = m_mousePoint.x;
+							l_point.y = m_mousePoint.y;
+
+							TransformFromViewSpace( l_point );
+
+							if( GetObjectAtPoint( l_point ) )
 							{
-								CPoint l_point;
-								l_point.x = m_mousePoint.x;
-								l_point.y = m_mousePoint.y;
+								l_psvAnalyzer = dynamic_cast<SVAnalyzerClass *>( m_psvObject );
 
-								TransformFromViewSpace( l_point );
-
-								if( GetObjectAtPoint( l_point ) )
+								if( nullptr == l_psvAnalyzer )
 								{
-									l_psvAnalyzer = dynamic_cast<SVAnalyzerClass *>( m_psvObject );
+									SVObjectTypeInfoStruct l_svInfo;
+									l_svInfo.ObjectType = SVAnalyzerObjectType;
 
-									if( l_psvAnalyzer == NULL )
+									l_psvAnalyzer = reinterpret_cast<SVAnalyzerClass*>(SVSendMessage( l_psvTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&l_svInfo)) );
+									if( l_psvAnalyzer )
 									{
-										SVObjectTypeInfoStruct l_svInfo;
-										l_svInfo.ObjectType = SVAnalyzerObjectType;
-
-										l_psvAnalyzer = reinterpret_cast<SVAnalyzerClass*>(SVSendMessage( l_psvTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&l_svInfo)) );
-										if( l_psvAnalyzer )
-										{
-											l_resultFound = l_psvAnalyzer->IsPtOverResult( l_point );
-										}
+										l_resultFound = l_psvAnalyzer->IsPtOverResult( l_point );
 									}
 								}
 							}
 						}
+					}
 
-						if( !l_resultFound )
-						{
-							l_pPopup->DeleteMenu( ID_ANALYZER_RESULT, MF_BYCOMMAND );
-						}
+					if( !l_resultFound )
+					{
+						l_pPopup->DeleteMenu( ID_ANALYZER_RESULT, MF_BYCOMMAND );
+					}
 
-						if( !l_psvAnalyzer )
-						{
-							l_pPopup->DeleteMenu( ID_CONFIG_ANALYZER, MF_BYCOMMAND );
-						}
+					if( !l_psvAnalyzer )
+					{
+						l_pPopup->DeleteMenu( ID_CONFIG_ANALYZER, MF_BYCOMMAND );
+					}
 
-						if( !( TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable( SECURITY_POINT_MODE_MENU_EDIT_TOOLSET ) ) )
-						{
-							l_pPopup->DeleteMenu( ID_CONFIG_ANALYZER, MF_BYCOMMAND );
-						}
+					if( !( TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable( SECURITY_POINT_MODE_MENU_EDIT_TOOLSET ) ) )
+					{
+						l_pPopup->DeleteMenu( ID_CONFIG_ANALYZER, MF_BYCOMMAND );
 					}
 				}
+
 				l_pPopup->TrackPopupMenu( TPM_LEFTALIGN | TPM_RIGHTBUTTON, p_point.x, p_point.y, this );
 			}
 		}
@@ -1445,7 +1440,7 @@ bool SVImageViewClass::CalculateZoomFit()
 	return ret;
 }
 
-double SVImageViewClass::SetZoom( EZoom zoom, double value )
+double SVImageViewClass::SetZoom( EZoom zoom, double value, bool bSetZoomSlider )
 {
 	double res = 1.0;
 	switch (zoom)
@@ -1482,51 +1477,43 @@ double SVImageViewClass::SetZoom( EZoom zoom, double value )
 	GetImageRect( l_rect );
 	SetImageRect( l_rect );
 	SVMainFrame* pFrame = dynamic_cast<SVMainFrame*>( AfxGetMainWnd() );
-	if(pFrame)
+	if(pFrame && bSetZoomSlider)
 	{
 		pFrame->SetZoomToolbar(m_ZoomHelper);
 	}
 	return m_ZoomHelper.GetZoom();
 }
 
-bool SVImageViewClass::SetZoomIndex( EZoomMode ezoom, unsigned  scalindex  )
+bool SVImageViewClass::SetZoomIndex( EZoomMode eZoom, unsigned  scaleIndex, bool bSetZoomSlider )
 {
-	if(ezoom == EZOOM_VALUE)
+	if(eZoom == EZOOM_VALUE)
 	{
-		if(scalindex  >= m_ZoomHelper.GetScaleCount() )
+		if( scaleIndex >= m_ZoomHelper.GetScaleCount() )
 		{
 			return false;
 		}
 	}
-	
 
-	
-	bool bZoomChanged = m_ZoomHelper.ChangeScaleIndex(ezoom, scalindex);
-
+	bool bZoomChanged = m_ZoomHelper.ChangeScaleIndex(eZoom, scaleIndex);
 
 	if(bZoomChanged)
 	{
 		CRect l_rect;
 		GetImageRect( l_rect );
 		SetImageRect( l_rect );
-		SVMainFrame* pFrame =  dynamic_cast<SVMainFrame*>( AfxGetMainWnd() );
-		if(pFrame)
+		SVMainFrame* pFrame = dynamic_cast<SVMainFrame*>( AfxGetMainWnd() );
+		if(pFrame && bSetZoomSlider)
 		{
 			pFrame->SetZoomToolbar(m_ZoomHelper);
-
-			
-
 		}
 	}
 
 	return true;
 }
 
-const ZoomHelperEx& SVImageViewClass::GetZoomHelper()  const
+const ZoomHelperEx& SVImageViewClass::GetZoomHelper() const
 {
-
 	return m_ZoomHelper;
-
 }
 
 bool SVImageViewClass::SetImageRect( CRect& p_rect )
@@ -1947,19 +1934,9 @@ BOOL SVImageViewClass::GetParameters(SVObjectWriter& rWriter)
 	rWriter.WriteAttribute(CTAG_VIEW_INITIALIZED, l_svVariant);
 	l_svVariant.Clear();
 
-	long l_index = m_ZoomHelper.GetScaleIndex() - m_ZoomHelper.GetScaleCount() / 2;
-
-	if( 0 < l_index )
-	{
-		l_index++;
-	}
-	else if( l_index < 0 )
-	{
-		l_index--;
-	}
-
-	l_svVariant = l_index;
-	rWriter.WriteAttribute(CTAG_IMAGE_ZOOM_FACTOR, l_svVariant);
+	double zoom = m_ZoomHelper.GetZoom();
+	l_svVariant = zoom;
+	rWriter.WriteAttribute(CTAG_IMAGE_ZOOM_FACTOR_EX, l_svVariant);
 	l_svVariant.Clear();
 
 	if( l_pImage != NULL )
@@ -1975,6 +1952,7 @@ BOOL SVImageViewClass::GetParameters(SVObjectWriter& rWriter)
 BOOL SVImageViewClass::SetParameters( SVTreeType& p_tree, SVTreeType::SVBranchHandle p_parent )
 {
 	BOOL l_bOk = FALSE;
+	BOOL bZoomExOK = FALSE;
 
 	_variant_t l_svVariant;
 
@@ -1987,6 +1965,19 @@ BOOL SVImageViewClass::SetParameters( SVTreeType& p_tree, SVTreeType::SVBranchHa
 	}
 
 	if( l_bOk )
+	{
+		bZoomExOK = SVNavigateTreeClass::GetItem( p_tree, CTAG_IMAGE_ZOOM_FACTOR_EX, p_parent, l_svVariant );
+		if(bZoomExOK)
+		{
+			double dZoom = l_svVariant;
+			if( !SetZoom(EZoomValue, dZoom, false) )
+			{
+				SetZoom( EZoomValue, 1.0, false );
+			}
+		}
+	}
+
+	if( l_bOk && !bZoomExOK )
 	{
 		l_bOk = SVNavigateTreeClass::GetItem( p_tree, CTAG_IMAGE_ZOOM_FACTOR, p_parent, l_svVariant );
 		if( l_bOk )
@@ -2004,9 +1995,9 @@ BOOL SVImageViewClass::SetParameters( SVTreeType& p_tree, SVTreeType::SVBranchHa
 				l_index--;
 			}
 
-			if( !SetZoomIndex(EZOOM_VALUE, m_ZoomHelper.GetScaleCount() / 2 + l_index ) )
+			if( !SetZoomIndex(EZOOM_VALUE, m_ZoomHelper.GetScaleCount() / 2 + l_index, false) )
 			{
-				SetZoomIndex(EZOOM_VALUE, m_ZoomHelper.GetScaleCount() / 2 );
+				SetZoomIndex(EZOOM_VALUE, m_ZoomHelper.GetScaleCount() / 2, false );
 			}
 		}
 	}
@@ -2032,6 +2023,7 @@ BOOL SVImageViewClass::SetParameters( SVTreeType& p_tree, SVTreeType::SVBranchHa
 		}
 	}
 
+	UpdateZoomToolbar();
 	return l_bOk;
 }
 
@@ -2042,6 +2034,7 @@ BOOL SVImageViewClass::CheckParameters( SVTreeType& p_tree, SVTreeType::SVBranch
 	_variant_t l_svVariant;
 
 	bool l_bUseImageView = false;
+	bool bZoomExOK = false;
 
 	l_bOk = SVNavigateTreeClass::GetItem( p_tree, CTAG_VIEW_INITIALIZED, p_parent, l_svVariant );
 	if( l_bOk )
@@ -2050,6 +2043,23 @@ BOOL SVImageViewClass::CheckParameters( SVTreeType& p_tree, SVTreeType::SVBranch
 	}
 
 	if( l_bOk )
+	{
+		bZoomExOK = SVNavigateTreeClass::GetItem( p_tree, CTAG_IMAGE_ZOOM_FACTOR_EX, p_parent, l_svVariant );
+		if(bZoomExOK)
+		{
+			double dZoom = l_svVariant;
+
+			if( m_ZoomHelper.GetZoom() != dZoom )
+			{
+				if( !SetZoom(EZoomValue, dZoom, false) )
+				{
+					SetZoom( EZoomValue, 1.0, false );
+				}
+			}
+		}
+	}
+
+	if( l_bOk && !bZoomExOK )
 	{
 		l_bOk = SVNavigateTreeClass::GetItem( p_tree, CTAG_IMAGE_ZOOM_FACTOR, p_parent, l_svVariant );
 		if( l_bOk )
@@ -2067,11 +2077,11 @@ BOOL SVImageViewClass::CheckParameters( SVTreeType& p_tree, SVTreeType::SVBranch
 				l_index--;
 			}
 
-			if( m_ZoomHelper.GetScaleIndex() != m_ZoomHelper.GetScaleCount() / 2 + l_index )
+			if( m_ZoomHelper.GetScaleIndex() != m_ZoomHelper.GetScaleCount() / 2 + l_index, false )
 			{
-				if( !SetZoomIndex(EZOOM_VALUE, m_ZoomHelper.GetScaleCount()  / 2 + l_index ) )
+				if( !SetZoomIndex( EZOOM_VALUE, m_ZoomHelper.GetScaleCount() / 2 + l_index, false ) )
 				{
-				SetZoomIndex(EZOOM_VALUE, m_ZoomHelper.GetScaleCount()  / 2 );
+				SetZoomIndex( EZOOM_VALUE, m_ZoomHelper.GetScaleCount() / 2, false );
 				}
 			}
 		}
@@ -2294,18 +2304,35 @@ bool SVImageViewClass::IsZoomAllowed() const
 	return allowed;
 }
 
+void SVImageViewClass::UpdateZoomToolbar()
+{
+	//only when we have the focus 
+	SVImageViewClass* pFocus = dynamic_cast<SVImageViewClass*>(GetFocus());
+
+	SVMainFrame* pFrame = dynamic_cast<SVMainFrame*>( AfxGetMainWnd() );
+
+	if( nullptr != pFrame && pFocus == this )
+	{
+		bool bZoom = IsZoomAllowed();
+		pFrame->EnableZoomToolbar(bZoom);
+
+		if( true == bZoom )
+		{
+			pFrame->SetZoomToolbar(GetZoomHelper());
+		}
+	}
+}
+
 void SVImageViewClass::OnUpdateZoomPlus(CCmdUI *pCmdUI)
 {
 	bool enable  = IsZoomAllowed();
 	pCmdUI->Enable(enable);
 }
 
-
 void SVImageViewClass::OnZoomMinus()
 {
 	SetZoom( EZoomMinus);
 }
-
 
 void SVImageViewClass::OnUpdateZoomMinus(CCmdUI *pCmdUI)
 {
@@ -2313,12 +2340,10 @@ void SVImageViewClass::OnUpdateZoomMinus(CCmdUI *pCmdUI)
 	pCmdUI->Enable(enable);
 }
 
-
 void SVImageViewClass::OnZoomOne()
 {
 	SetZoom( EZoomOne);
 }
-
 
 void SVImageViewClass::OnUpdateZoomOne(CCmdUI *pCmdUI)
 {
@@ -2804,6 +2829,19 @@ void SVImageViewClass::OnKillFocus(CWnd* pNewWnd)
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVImageView.cpp_v  $
+ * 
+ *    Rev 1.11   02 Sep 2014 12:12:00   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  921
+ * SCR Title:  Add more complete zoom functionality. (runpage)
+ * Checked in by:  mEichengruen;  Marcus Eichengruen
+ * Change Description:  
+ *   Updated OnContextMenu to avoid adding Zoom options to context menu when ImageView is empty.
+ * Added parameter bSetZoomSlider to SetZoom and SetZoomIndex methods.
+ * Upated methods GetParameters, SetParameters, and CheckParameters to use the new tag CTAG_IMAGE_ZOOM_FACTOR_EX.
+ * Added method UpdateZoomToolbar.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.10   14 Aug 2014 15:55:14   mEichengruen
  * Project:  SVObserver

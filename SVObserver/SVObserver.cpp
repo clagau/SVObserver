@@ -5,8 +5,8 @@
 //* .Module Name     : SVObserver
 //* .File Name       : $Workfile:   SVObserver.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.40  $
-//* .Check In Date   : $Date:   20 Aug 2014 18:21:06  $
+//* .Current Version : $Revision:   1.41  $
+//* .Check In Date   : $Date:   02 Sep 2014 12:17:50  $
 //******************************************************************************
 
 #pragma region Includes
@@ -6646,7 +6646,7 @@ HRESULT SVObserverApp::SetModeEditMove( bool l_bState )
 //  :27.05.1997 RO			First Implementation
 //	:
 ////////////////////////////////////////////////////////////////////////////////
-void SVObserverApp::SetTestMode(bool p_bNoSecurity ) 
+void SVObserverApp::SetTestMode(bool p_bNoSecurity )
 {
 	bool l_bAllowAccess = false;
 
@@ -6749,6 +6749,7 @@ void SVObserverApp::SetTestMode(bool p_bNoSecurity )
 				SetAllIPDocumentsOnline();
 
 				GetMainFrame()->ShowToolBars( FALSE, TRUE, SVMainFrame::Flag_Zoom );
+				GetMainFrame()->RefreshAllSplitters();
 
 				SVSVIMStateClass::AddState( SV_STATE_TEST );
 				SVSVIMStateClass::RemoveState( SV_STATE_EDIT );
@@ -7185,7 +7186,7 @@ HRESULT SVObserverApp::CheckDrive(const CString& p_strDrive) const
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
-HRESULT SVObserverApp::Start() 
+HRESULT SVObserverApp::Start()
 {
 	HRESULT l_hrOk = S_OK;
 
@@ -7306,6 +7307,7 @@ HRESULT SVObserverApp::Start()
 			SVSVIMStateClass::RemoveState( SV_STATE_READY | SV_STATE_START_PENDING );
 
 			GetMainFrame()->ShowToolBars( FALSE, TRUE, SVMainFrame::Flag_Standard | SVMainFrame::Flag_Zoom );
+			GetMainFrame()->RefreshAllSplitters();
 
 			SetPriorityClass( GetCurrentProcess(), REALTIME_PRIORITY_CLASS );
 
@@ -8580,6 +8582,7 @@ void SVObserverApp::OnStopAll()
 		}
 
 		GetMainFrame()->ShowToolBars( TRUE, TRUE,SVMainFrame::Flag_Standard | SVMainFrame::Flag_Zoom );
+		GetMainFrame()->RefreshAllSplitters();
 
 		SVSVIMStateClass::RemoveState( SV_STATE_RUNNING );
 
@@ -8857,6 +8860,16 @@ int SVObserverApp::FindMenuItem(CMenu* Menu, LPCTSTR MenuString)
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVObserver.cpp_v  $
+ * 
+ *    Rev 1.41   02 Sep 2014 12:17:50   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  921
+ * SCR Title:  Add more complete zoom functionality. (runpage)
+ * Checked in by:  mEichengruen;  Marcus Eichengruen
+ * Change Description:  
+ *   Changed methods SetTestMode, Start, and OnStopAll to call RefreshAllSplitters.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.40   20 Aug 2014 18:21:06   sjones
  * Project:  SVObserver

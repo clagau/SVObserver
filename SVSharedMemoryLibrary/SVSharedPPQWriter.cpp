@@ -5,8 +5,8 @@
 //* .Module Name     : SVSharedPPQWriter
 //* .File Name       : $Workfile:   SVSharedPPQWriter.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   28 Aug 2014 18:32:24  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   02 Sep 2014 13:18:18  $
 //******************************************************************************
 #include "StdAfx.h"
 #include <cmath>
@@ -74,8 +74,14 @@ namespace SeidenaderVision
 			flags = data[idx].m_Flags;
 			if (count++ > size)
 			{
-				//throw std::exception("reader error\n");
-				DebugBreak();
+				if (bReject)
+				{
+					throw std::exception("No Available Reject Slots for Writing\n");
+				}
+				else
+				{
+					throw std::exception("No Available Slots for Writing\n");
+				}
 			}
 		} 
 		while ((flags & ds::reading) || ::InterlockedCompareExchange(&data[idx].m_Flags, flags | ds::writing, flags) != flags);
@@ -248,6 +254,16 @@ namespace SeidenaderVision
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVSharedMemoryLibrary\SVSharedPPQWriter.cpp_v  $
+ * 
+ *    Rev 1.2   02 Sep 2014 13:18:18   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Revised next_writable method to throw an std::exception rather than call DebugBreak.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   28 Aug 2014 18:32:24   sjones
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : SVImageViewScroll
 //* .File Name       : $Workfile:   SVImageViewScroll.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   14 Aug 2014 15:58:32  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   02 Sep 2014 12:14:36  $
 //******************************************************************************
 
 #pragma once
@@ -63,6 +63,13 @@ public:
 	//************************************
 	bool IsZoomAllowed() const;
 
+	//************************************
+	// Method:    UpdateZoomToolbar
+	// Description:  Updates the zoom toolbar but only when the view has the focus
+	// Returns:   void
+	//************************************
+	void UpdateZoomToolbar();
+
 protected:
 	//{{AFX_MSG(SVImageViewScroll)
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
@@ -96,7 +103,17 @@ private:
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSARCH65\PROJECTFILES\ARCHIVES\SVOBSERVER_SRC\SVOBSERVER\SVImageViewScroll.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVImageViewScroll.h_v  $
+ * 
+ *    Rev 1.2   02 Sep 2014 12:14:36   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  921
+ * SCR Title:  Add more complete zoom functionality. (runpage)
+ * Checked in by:  mEichengruen;  Marcus Eichengruen
+ * Change Description:  
+ *   Added method UpdateZoomToolbar.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   14 Aug 2014 15:58:32   mEichengruen
  * Project:  SVObserver

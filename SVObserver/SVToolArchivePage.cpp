@@ -5,8 +5,8 @@
 //* .Module Name     : SVToolAdjustmentArchivePage
 //* .File Name       : $Workfile:   SVToolArchivePage.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.12  $
-//* .Check In Date   : $Date:   28 Aug 2014 07:25:48  $
+//* .Current Version : $Revision:   1.13  $
+//* .Check In Date   : $Date:   02 Sep 2014 11:23:42  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -515,8 +515,14 @@ void SVToolAdjustmentArchivePage::OnBrowse2()
 	if (svfncImageFolder.SelectPath())
     {
 		csInitialPath = svfncImageFolder.GetPathName();
-		if (csInitialPath.GetAt(csInitialPath.GetLength() - 1) != (TCHAR)'\\')
-			csInitialPath += (TCHAR)'\\';
+		int len = csInitialPath.GetLength();
+		if (len)
+		{
+			if (csInitialPath.GetAt(len - 1) != _T('\\'))
+			{
+				csInitialPath += _T('\\');
+			}
+		}
     }
 
 	m_editImageFilesRoot.SetWindowText (csInitialPath);
@@ -842,6 +848,16 @@ void SVToolAdjustmentArchivePage::OnBnClickedHeaderCheck()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVToolArchivePage.cpp_v  $
+ * 
+ *    Rev 1.13   02 Sep 2014 11:23:42   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  914
+ * SCR Title:  Fix negative memory issues with the Archive Tool when in change mode
+ * Checked in by:  JimAdmin;  James A. Brown
+ * Change Description:  
+ *   Revised Browse2 method to check the string length before indexing
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.12   28 Aug 2014 07:25:48   ryoho
  * Project:  SVObserver

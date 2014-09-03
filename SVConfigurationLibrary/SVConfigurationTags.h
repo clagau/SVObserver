@@ -5,8 +5,8 @@
 // * .Module Name     : SVConfigurationTags
 // * .File Name       : $Workfile:   SVConfigurationTags.h  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.3  $
-// * .Check In Date   : $Date:   12 Jun 2014 16:05:48  $
+// * .Current Version : $Revision:   1.4  $
+// * .Check In Date   : $Date:   02 Sep 2014 12:01:40  $
 // ******************************************************************************
 // SVConfigurationTags.h
 
@@ -198,6 +198,7 @@ LPCTSTR const CTAG_SCROLL_POINT                   = (_T("ScrollPoint"));
 LPCTSTR const CTAG_CELL_HEIGHT                    = (_T("CellHeight"));
 LPCTSTR const CTAG_CELL_WIDTH                     = (_T("CellWidth"));
 LPCTSTR const CTAG_IMAGE_ZOOM_FACTOR              = (_T("ImageZoomFactor"));
+LPCTSTR const CTAG_IMAGE_ZOOM_FACTOR_EX           = (_T("ImageZoomFactorEx"));
 LPCTSTR const CTAG_VIEW_INITIALIZED               = (_T("ViewInitialized"));
 LPCTSTR const CTAG_IMAGE_NAME                     = (_T("ImageName"));
 LPCTSTR const CTAG_FREEZE_SCRIPT                  = (_T("FreezeScript"));
@@ -322,6 +323,16 @@ LPCTSTR const CTAG_COLLAPSED					= _T("Collapsed");
 // ******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVConfigurationLibrary\SVConfigurationTags.h_v  $
+ * 
+ *    Rev 1.4   02 Sep 2014 12:01:40   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  921
+ * SCR Title:  Add more complete zoom functionality. (runpage)
+ * Checked in by:  mEichengruen;  Marcus Eichengruen
+ * Change Description:  
+ *   Added CTAG_IMAGE_ZOOM_FACTOR_EX.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   12 Jun 2014 16:05:48   sjones
  * Project:  SVObserver

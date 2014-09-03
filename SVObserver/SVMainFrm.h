@@ -5,8 +5,8 @@
 //* .Module Name     : SVMainFrame
 //* .File Name       : $Workfile:   SVMainFrm.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.6  $
-//* .Check In Date   : $Date:   14 Aug 2014 16:09:36  $
+//* .Current Version : $Revision:   1.7  $
+//* .Check In Date   : $Date:   02 Sep 2014 12:16:48  $
 //******************************************************************************
 
 #pragma once
@@ -116,6 +116,13 @@ public:
 	//************************************
 	void ShowToolBars(BOOL Show, BOOL RememberOldState , DWORD dwBars );
 
+	//************************************
+	// Method:    RefreshAllSplitters
+	// Description:  Redraws the splitter frames
+	// Returns:   void
+	//************************************
+	void RefreshAllSplitters();
+
 	LRESULT InvalidateStatusBar( WPARAM wParam, LPARAM lParam );
 	LRESULT Shutdown( WPARAM wParam, LPARAM lParam );
 
@@ -220,7 +227,17 @@ public:
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSARCH65\PROJECTFILES\ARCHIVES\SVOBSERVER_SRC\SVOBSERVER\SVMainFrm.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVMainFrm.h_v  $
+ * 
+ *    Rev 1.7   02 Sep 2014 12:16:48   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  921
+ * SCR Title:  Add more complete zoom functionality. (runpage)
+ * Checked in by:  mEichengruen;  Marcus Eichengruen
+ * Change Description:  
+ *   Added method RefreshAllSplitters.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.6   14 Aug 2014 16:09:36   mEichengruen
  * Project:  SVObserver
