@@ -5,8 +5,8 @@
 // * .Module Name     : SVOCMArchive
 // * .File Name       : $Workfile:   SVOCMArchive.cpp  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.0  $
-// * .Check In Date   : $Date:   18 Apr 2013 18:39:38  $
+// * .Current Version : $Revision:   1.1  $
+// * .Check In Date   : $Date:   03 Sep 2014 15:50:28  $
 // ******************************************************************************
 
 #include "stdafx.h"
@@ -29,27 +29,11 @@ static char THIS_FILE[]=__FILE__;
 
 SVOCMArchive::SVOCMArchive()
 {
-
 }
 
 SVOCMArchive::~SVOCMArchive()
 {
-
 }
-
-HRESULT SVOCMArchive::SerializeGUID(CArchive &rArchive, GUID &rGuid)
-{
-	HRESULT hrOk = S_OK;
-
-	rArchive >> rGuid.Data1 >> rGuid.Data2 >> rGuid.Data3;
-	for ( int i = 0; i < 8; i++)
-	{
-		rArchive >> rGuid.Data4[i];
-	}
-
-	return hrOk;
-}
-
 
 HRESULT SVOCMArchive::GetSVOSavedVersionNumberFromConfigurationFile (
 	BSTR				abstrFileName, 
@@ -59,21 +43,15 @@ HRESULT SVOCMArchive::GetSVOSavedVersionNumberFromConfigurationFile (
 
 	CFileException	fileException;
 
-	long				lFileOpen;
-	long				lNbrOfCharactersRead;
-	unsigned long	ulConfigurationVersion;
+	long				lFileOpen = FALSE;
+	long				lNbrOfCharactersRead = 0;
+	unsigned long	ulConfigurationVersion = 0;
 
 	SVBStr			bstrConfigurationFileName;
 
 	char				csBuffer [4000];
 
-
-	HRESULT	hr;
-
-	hr = 0;
-	lFileOpen = FALSE;
-	lNbrOfCharactersRead = 0;
-	ulConfigurationVersion = 0;
+	HRESULT hr = 0;
 
 	while (1)
 	{
@@ -105,7 +83,7 @@ HRESULT SVOCMArchive::GetSVOSavedVersionNumberFromConfigurationFile (
 		}
 
 		lFileOpen = TRUE;
-		//-	Configuration file successfully openned.
+		//-	Configuration file successfully opened.
 
 		//-   Set the file pointer to the beginning of the file.
 		try
@@ -123,8 +101,6 @@ HRESULT SVOCMArchive::GetSVOSavedVersionNumberFromConfigurationFile (
 		lNbrOfCharactersRead = fConfigurationFile.Read (csBuffer, 
 			sizeof(csBuffer) - 1);
 
-
-
 		//-   Append NULL to acquired buffer.
 		csBuffer [lNbrOfCharactersRead] = 0;
 
@@ -132,10 +108,9 @@ HRESULT SVOCMArchive::GetSVOSavedVersionNumberFromConfigurationFile (
 		fConfigurationFile.Close ();
 		lFileOpen = FALSE;
 
-
 		//********** NEEDS DONE ************************
 
-		//-	Always list latest and greatest formats first.		
+		//-	Always list latest and greatest formats first.
 		hr = FindVersion440_ (csBuffer, 
 			&ulConfigurationVersion);
 		if (hr & 0xc0000000)
@@ -187,7 +162,6 @@ HRESULT SVOCMArchive::GetSVOSavedVersionNumberFromConfigurationFile (
 	return hr;
 }
 
-
 //- If a version number is not found, this function will set 
 //- aplConfigurationVersion to zero.
 HRESULT SVOCMArchive::FindVersion401_430 (char* apczSourceString, 
@@ -196,25 +170,15 @@ HRESULT SVOCMArchive::FindVersion401_430 (char* apczSourceString,
 	char*		pntr1;
 	char*		pntr2;
 	char		czWhiteSpace [40];
-	//	char		czValueString [500];
 
-	long		lFound;
-	//   long		lIndex;
+	long		lFound = FALSE;
+	long		lVersionNumber = 0;
 
-	long		lVersionNumber;
-
-	HRESULT	hr;
-
-	hr = 0;
-	lFound = FALSE;
-	lVersionNumber = 0;
+	HRESULT	hr = 0;
 	*aplConfigurationVersion = 0;
 
 	while (1)
 	{
-		//		lLength = sizeof (czValueString);
-		//      czValueString [0] = 0;
-
 		//--- Yes, I am treating a comma as white space.
 		strcpy (czWhiteSpace, "\a\b\f\n\r\t\v ,");
 		pntr1 = apczSourceString;
@@ -253,7 +217,6 @@ HRESULT SVOCMArchive::FindVersion401_430 (char* apczSourceString,
 		//-	Move passed "<".
 		pntr1 = pntr1 + 1;
 
-
 		//--- Move passed any white space.
 		pntr1 = pntr1 + strspn (pntr1, czWhiteSpace);
 		if (*pntr1 == NULL)
@@ -262,7 +225,6 @@ HRESULT SVOCMArchive::FindVersion401_430 (char* apczSourceString,
 			hr = -1660;
 			break;
 		}
-
 
 		if (strncmp (pntr1, "VALUE", 5) != 0)
 		{
@@ -329,18 +291,14 @@ HRESULT SVOCMArchive::FindVersion401_430 (char* apczSourceString,
 	return hr;
 }
 
-
 //- If a version number is not found, this function will set 
 //- aplConfigurationVersion to zero.
 HRESULT SVOCMArchive::FindVersion440_ (char*				apczSourceString, 
 																			 unsigned long* p_ulpConfigurationVersion)
 {
-	HRESULT					hr;
+	HRESULT					hr = S_OK;
 
-	unsigned long			l_ulVersionNumber;
-
-	hr = S_OK;
-	l_ulVersionNumber = 0;
+	unsigned long			l_ulVersionNumber = 0;
 
 	while (1)
 	{
@@ -356,40 +314,32 @@ HRESULT SVOCMArchive::FindVersion440_ (char*				apczSourceString,
 			break;
 		}
 
-		//-	Assumtions that can be made at this point....
+		//-	Assumptions that can be made at this point....
 		//-     Only XML files will get to this point.
 		//-	  "<?xml" exists.
 
 		hr = FindVersion440__RevisionHistory (apczSourceString,
 			&l_ulVersionNumber);
-		if (hr & 0xc0000000)
-		{
-
-		}
 
 		break;
 	}
 
-
-	if (l_ulVersionNumber == 0)
+	if (l_ulVersionNumber != 0)
 	{
-	}
-	else
-		//-Any version number that shows less than 4.30 and greater than 14.00 
+		//-Any version number that shows less than 4.00 and greater than 14.00 
 		//-will be considered invalid.  The 14.00 is an arbitrary large version 
-		//-number which is used to test for obscenely bizar data.
-		if ((l_ulVersionNumber <  0x00040000) ||	// 0x00041e00 =  4.30
-			(l_ulVersionNumber >= 0x00140000))		// 0x00140000 = 14.00 
+		//-number which is used to test for obscenely bizarre data.
+		if ((l_ulVersionNumber <  0x00040000) ||	// 0x00040000 =  4.00
+			(l_ulVersionNumber >= 0x00140000))		// 0x00140000 = 14.00
 		{
 			hr = -1732;
 		}
+	}
 
-		*p_ulpConfigurationVersion = l_ulVersionNumber;
+	*p_ulpConfigurationVersion = l_ulVersionNumber;
 
-
-		return hr;
+	return hr;
 }
-
 
 HRESULT SVOCMArchive::FindVersion440__Standard (char* apczSourceString, 
 																								unsigned long* aplConfigurationVersion)
@@ -397,27 +347,16 @@ HRESULT SVOCMArchive::FindVersion440__Standard (char* apczSourceString,
 	char*		pntr1;
 	char*		pntr2;
 	char		czWhiteSpace [40];
-	//	char		czValueString [500];
 
-	long		lFound;
-	long		lInQuotes;
-	//   long		lIndex;
+	long		lFound = FALSE;
+	long		lInQuotes = FALSE;
+	long		lVersionNumber = 0;
 
-	long		lVersionNumber;
-
-	HRESULT	hr;
-
-
-	hr = 0;
-	lFound = FALSE;
-	lInQuotes = FALSE;
-	lVersionNumber = 0;
+	HRESULT	hr = 0;
 	*aplConfigurationVersion = 0;
 
 	while (1)
 	{
-
-
 		//--- Yes, I am treating a comma as white space.
 		strcpy (czWhiteSpace, "\a\b\f\n\r\t\v ,");
 		pntr1 = apczSourceString;
@@ -433,7 +372,6 @@ HRESULT SVOCMArchive::FindVersion440__Standard (char* apczSourceString,
 			//-		Ignore.
 			pntr1 = pntr1 + 3;
 		}
-
 
 		if (strncmp (pntr1, "<?xml", 5) != 0)
 		{
@@ -494,8 +432,7 @@ HRESULT SVOCMArchive::FindVersion440__Standard (char* apczSourceString,
 			pntr2--;
 		}
 
-
-		//-	Because XML doesn't guarentee the order of the attribute entries, we 
+		//-	Because XML doesn't guarantee the order of the attribute entries, we 
 		//-	will find the entire entry between the "<" and the ">" and then search
 		//-   for the Value attribute. ----------------------------------------------
 		if (pntr2 == apczSourceString)
@@ -533,43 +470,6 @@ HRESULT SVOCMArchive::FindVersion440__Standard (char* apczSourceString,
 			break;
 		}
 
-
-		/*- VERSION AS ATTRIBUTE ----------------------------------------------------
-		//-	Search this element entry for the Value attribute.
-		if ((pntr2 = strstr (pntr2, 
-		"Value=")) == NULL)
-		{
-		//-		value not found.
-		hr = -1726;
-		break;
-		}
-
-		if (pntr2 > pntr1)
-		{
-		hr = -1729;
-		break;
-		}
-
-		//-   Move passed "Value=\"".
-		pntr2 = pntr2 + 7;
-
-		if (*pntr2 == NULL)
-		{
-		//-		This just shouldn't be.
-		hr = -1730;
-		break;
-		}
-
-		//--- Move passed any white space.
-		pntr2 = pntr2 + strspn (pntr2, czWhiteSpace);
-
-		if (*pntr2 == NULL)
-		{
-		hr = -1731;
-		break;
-		}
-		*/
-
 		//- VERSION AS TEXT ---------------------------------------------------------
 		//-   Move past '>'.
 		pntr2 = pntr1 + 1;
@@ -588,7 +488,6 @@ HRESULT SVOCMArchive::FindVersion440__Standard (char* apczSourceString,
 	return hr;
 }
 
-
 HRESULT SVOCMArchive::FindVersion440__RevisionHistory (char*				p_czpSourceString, 
 																											 unsigned long*	p_ulpConfigurationVersion)
 {
@@ -596,23 +495,17 @@ HRESULT SVOCMArchive::FindVersion440__RevisionHistory (char*				p_czpSourceStrin
 	char*				pntr2;
 	char				czWhiteSpace [40];
 
-	long				lFound;
+	long				lFound = FALSE;
 
-	unsigned long	l_ulVersionNumber;
+	unsigned long	l_ulVersionNumber = 0;
 	unsigned long	l_ulVersionNumber1;
 	unsigned long	l_ulVersionNumber2;
 
-	HRESULT	hr;
-
-	hr = 0;
-	lFound = FALSE;
-	l_ulVersionNumber = 0;
+	HRESULT	hr = 0;
 	*p_ulpConfigurationVersion = 0;
 
 	while (1)
 	{
-
-
 		//--- Yes, I am treating a comma as white space.
 		strcpy (czWhiteSpace, "\a\b\f\n\r\t\v ,");
 		pntr1 = p_czpSourceString;
@@ -654,7 +547,6 @@ HRESULT SVOCMArchive::FindVersion440__RevisionHistory (char*				p_czpSourceStrin
 			break;
 		}
 
-
 		//-	It's now time to read the version number!!!
 		//-	A base of 0 means that the function will automatically determine the 
 		//-	base (of the input string).
@@ -686,12 +578,22 @@ HRESULT SVOCMArchive::FindVersion440__RevisionHistory (char*				p_czpSourceStrin
 	return hr;
 }
 
-
 // ******************************************************************************
 // * LOG HISTORY:
 // ******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVConfigurationLibrary\SVOCMArchive.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVConfigurationLibrary\SVOCMArchive.cpp_v  $
+ * 
+ *    Rev 1.1   03 Sep 2014 15:50:28   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  880
+ * SCR Title:  Remove .SEC
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   Removed methods SerializeGUID, which was previously used for .sec files.
+ * Minor code clean up.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   18 Apr 2013 18:39:38   bWalter
  * Project:  SVObserver

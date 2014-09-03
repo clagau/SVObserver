@@ -5,419 +5,23 @@
 // * .Module Name     : SVOCMArchive
 // * .File Name       : $Workfile:   SVOCMArchive.h  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.1  $
-// * .Check In Date   : $Date:   03 Feb 2014 16:11:32  $
+// * .Current Version : $Revision:   1.2  $
+// * .Check In Date   : $Date:   03 Sep 2014 15:51:26  $
 // ******************************************************************************
 
-#ifndef SVOCMARCHIVE_H
-#define SVOCMARCHIVE_H
+#pragma once
 
 #include <comdef.h>
 #include "SVStatusLibrary/SVException.h"
 #include "SVMessage/SVMessage.h"
 
-class SVOCMArchive  
+class SVOCMArchive
 {
 private:
 	SVOCMArchive();
 	virtual ~SVOCMArchive();
 
 public:
-	template< typename SVTreeType >
-	static HRESULT ArchiveSVObserverApp(   unsigned long ulSVOVersion, 
-		unsigned long& ulSECVersion, 
-		CArchive& rArchive, 
-		SVTreeType& p_rTree,
-		CString& rIODocName,
-		typename SVTreeType::SVBranchHandle p_rParent);
-
-	template< typename SVTreeType >
-	static HRESULT ArchiveSVSystemClass(   unsigned long ulSVOVersion, 
-		unsigned long ulSECVersion, 
-		bool bIsColorMode,
-		CArchive& rArchive, 
-		SVTreeType& p_rTree,
-		typename typename SVTreeType::SVBranchHandle p_pParent,
-		int& riIPDocSize );
-
-	template< typename SVTreeType >
-	static HRESULT ArchiveSVDigitizerArrayClass(   unsigned long ulSVOVersion, 
-		unsigned long ulSECVersion, 
-		bool bIsColorMode,
-		CString& rcsBoardName,
-		CArchive& rArchive, 
-		SVTreeType& p_rTree,
-		typename SVTreeType::SVBranchHandle p_pParent);
-
-	template< typename SVTreeType >
-	static HRESULT ArchiveSVDigitizerObjectClass(  unsigned long ulSVOVersion, 
-		unsigned long ulSECVersion,
-		bool bIsColorMode,
-		CString& rcsBoardName, 
-		long lIndex, 
-		CArchive& rArchive, 
-		SVTreeType& p_rTree,
-		typename SVTreeType::SVBranchHandle p_pParent);
-
-	template< typename SVTreeType >
-	static HRESULT ArchiveSVDigitizerInfoStruct(   unsigned long ulSVOVersion, 
-		unsigned long ulSECVersion,
-		bool bIsColorMode,
-		CString &rcsBoardName, 
-		long lIndex, 
-		typename SVTreeType::SVBranchHandle p_pPPQCameraBranch,
-		CArchive& rArchive, 
-		SVTreeType& p_rTree,
-		typename SVTreeType::SVBranchHandle p_pParent,
-		long& rlCount);
-
-	template< typename SVTreeType >
-	static HRESULT ArchiveSVAcquisitionSourceListClass(unsigned long ulSVOVersion, 
-		unsigned long ulSECVersion,
-		bool bIsColorMode,
-		CString &rcsBoardName, 
-		long lIndex, 
-		long lSelected, 
-		CArchive &rArchive, 
-		SVTreeType& p_rTree,
-		typename SVTreeType::SVBranchHandle p_pParent);
-
-	template< typename SVTreeType >
-	static HRESULT ArchiveSVAcquisitionSourceClass(unsigned long ulSVOVersion, 
-		unsigned long ulSECVersion,
-		bool bIsColorMode,
-		CString &rcsBoardName, 
-		long lIndex, 
-		bool bIsSelected, 
-		CArchive &rArchive, 
-		SVTreeType& p_rTree,
-		typename SVTreeType::SVBranchHandle p_pParent);
-
-	template< typename SVTreeType >
-	static HRESULT ArchiveSVImageInfoClass(unsigned long ulSVOVersion, 
-		unsigned long ulSECVersion, 
-		bool bIsColorMode,
-		CString &rcsBoardName, 
-		long lIndex, 
-		CArchive &rArchive, 
-		SVTreeType& p_rTree,
-		typename SVTreeType::SVBranchHandle p_pParent);
-
-	template< typename SVTreeType >
-	static HRESULT ArchiveSVExtentClass(   unsigned long ulSVOVersion, 
-		unsigned long ulSECVersion, 
-		CArchive &rArchive, 
-		SVTreeType& p_rTree,
-		typename SVTreeType::SVBranchHandle p_pParent);
-
-	template< typename SVTreeType >
-	static HRESULT ArchiveSVLightReferenceArrayClass(  unsigned long ulSVOVersion, 
-		unsigned long ulSECVersion,
-		bool bIsColorMode,
-		CArchive &rArchive, 
-		SVTreeType& p_rTree,
-		typename SVTreeType::SVBranchHandle p_pParent);
-
-	template< typename SVTreeType >
-	static HRESULT ArchiveSVLightReferenceClass(   unsigned long ulSVOVersion, 
-		unsigned long ulSECVersion, 
-		bool bIsColorMode,
-		CArchive &rArchive, 
-		SVTreeType& p_rTree,
-		typename SVTreeType::SVBranchHandle p_pParent);
-
-	template< typename SVTreeType >
-	static HRESULT ArchiveSVPPQIndexHandleOwnerStruct( unsigned long ulSVOVersion, 
-		unsigned long ulSECVersion, 
-		typename SVTreeType::SVBranchHandle p_pPPQCameraBranch,
-		CArchive &rArchive, 
-		SVTreeType& p_rTree,
-		typename SVTreeType::SVBranchHandle p_pParent);
-
-	template< typename SVTreeType >
-	static HRESULT ArchiveSVDDEEntryStruct(    unsigned long ulSVOVersion, 
-		unsigned long ulSECVersion,
-		CArchive &rArchive, 
-		SVTreeType& p_rTree,
-		typename SVTreeType::SVBranchHandle p_pParent,
-		long& rlCount,
-		LPCTSTR tszNameFormat);
-
-	template< typename SVTreeType >
-	static HRESULT ArchiveSVDDEInputEntryListClass(unsigned long ulSVOVersion, 
-		unsigned long ulSECVersion,
-		long lIndex, 
-		CArchive &rArchive, 
-		SVTreeType& p_rTree,
-		typename SVTreeType::SVBranchHandle p_pParent,
-		long& rlCount);
-
-	template< typename SVTreeType >
-	static HRESULT ArchiveSVPQDataLinkInfoStruct(  unsigned long ulSVOVersion, 
-		unsigned long ulSECVersion,
-		CArchive &rArchive, 
-		SVTreeType& p_rTree,
-		typename SVTreeType::SVBranchHandle p_pParent,
-		typename SVTreeType::SVBranchHandle& p_rpBranch,
-		long* plCount,
-		LPCTSTR tszNameFormat);
-
-	template< typename SVTreeType >
-	static HRESULT ArchiveSVPQDataLinkInfoStruct(  unsigned long ulSVOVersion, 
-		unsigned long ulSECVersion,
-		CArchive &rArchive, 
-		SVTreeType& p_rTree,
-		typename SVTreeType::SVBranchHandle p_pParent);
-
-	template< typename SVTreeType >
-	static HRESULT ArchiveAddSVPQDataLinkInfoStruct( unsigned long ulSVOVersion, 
-		unsigned long ulSECVersion,
-		CArchive &rArchive, 
-		SVTreeType& p_rTree,
-		typename SVTreeType::SVBranchHandle p_pParent,
-		typename SVTreeType::SVBranchHandle p_pBranch);
-
-	template< typename SVTreeType >
-	static HRESULT ArchiveSVByteArrayClass(unsigned long ulSVOVersion, 
-		unsigned long ulSECVersion, 
-		CArchive &rArchive, 
-		SVTreeType& p_rTree,
-		typename SVTreeType::SVBranchHandle p_pParent);
-
-	template< typename SVTreeType >
-	static HRESULT ArchiveSVPQDigitialInputInfoListClass(  unsigned long ulSVOVersion, 
-		unsigned long ulSECVersion, 
-		long lIndex,
-		CArchive &rArchive, 
-		SVTreeType& p_rTree,
-		typename SVTreeType::SVBranchHandle p_pParent,
-		long& rlCount);
-
-	template< typename SVTreeType >
-	static HRESULT ArchiveSVPQDigitialInputInfoStruct( unsigned long ulSVOVersion, 
-		unsigned long ulSECVersion,
-		long lIndex, 
-		CArchive &rArchive, 
-		SVTreeType& p_rTree,
-		typename SVTreeType::SVBranchHandle p_pParent,
-		long& rlCount);
-
-	template< typename SVTreeType >
-	static HRESULT ArchiveSVAcquisitionTriggerEventServerClass(unsigned long ulSVOVersion, 
-		unsigned long ulSECVersion, 
-		CArchive &rArchive, 
-		SVTreeType& p_rTree,
-		typename SVTreeType::SVBranchHandle p_pParent);
-
-	template< typename SVTreeType >
-	static HRESULT ArchiveSVEventServerClass(  unsigned long ulSVOVersion, 
-		unsigned long ulSECVersion, 
-		CArchive &rArchive, 
-		SVTreeType& p_rTree,
-		typename SVTreeType::SVBranchHandle p_pParent);
-
-	template< typename SVTreeType >
-	static HRESULT ArchiveSVDigitalOutputObjectClass(  unsigned long ulSVOVersion, 
-		unsigned long ulSECVersion, 
-		CArchive &rArchive, 
-		SVTreeType& p_rTree,
-		typename SVTreeType::SVBranchHandle p_pParent);
-
-	template< typename SVTreeType >
-	static HRESULT ArchiveSVPQObjectClass( unsigned long ulSVOVersion, 
-		unsigned long ulSECVersion, 
-		long lIndex,
-		CArchive &rArchive, 
-		SVTreeType& p_rTree,
-		typename SVTreeType::SVBranchHandle p_pParent,
-		long& rlCount);
-
-	template< typename SVTreeType >
-	static HRESULT ArchiveSVPQCheckerObjectClass(  unsigned long ulSVOVersion, 
-		unsigned long ulSECVersion, 
-		CArchive &rArchive, 
-		SVTreeType& p_rTree,
-		typename SVTreeType::SVBranchHandle p_pParent);
-
-	template< typename SVTreeType >
-	static HRESULT ArchiveSVPPQInfoStruct( unsigned long ulSVOVersion, 
-		unsigned long ulSECVersion, 
-		long lIndex,
-		CArchive &rArchive, 
-		SVTreeType& p_rTree,
-		typename SVTreeType::SVBranchHandle p_pParent);
-
-	template< typename SVTreeType >
-	static HRESULT ArchiveSVDDEControlClass(   unsigned long ulSVOVersion, 
-		unsigned long ulSECVersion, 
-		long lIndex,
-		CArchive &rArchive, 
-		SVTreeType& p_rTree,
-		typename SVTreeType::SVBranchHandle p_pParent);
-
-	template< typename SVTreeType >
-	static HRESULT ArchiveSVDDEOutputEntryListClass(   unsigned long ulSVOVersion, 
-		unsigned long ulSECVersion, 
-		long lIndex,
-		CArchive &rArchive, 
-		SVTreeType& p_rTree,
-		typename SVTreeType::SVBranchHandle p_pParent);
-
-	template< typename SVTreeType >
-	static HRESULT ArchiveSVIPDocInfoClass(unsigned long ulSVOVersion, 
-		unsigned long ulSECVersion, 
-		CString &rcsBoardName,
-		CString &rcsInspection, 
-		CArchive &rArchive, 
-		SVTreeType& p_rTree,
-		typename SVTreeType::SVBranchHandle p_pParent);
-
-	template< typename SVTreeType >
-	static HRESULT ArchiveSVIPDocRequirementInfoClass( unsigned long ulSVOVersion, 
-		unsigned long ulSECVersion, 
-		typename SVTreeType::SVBranchHandle p_pInspection,
-		CString &rcsBoardName,
-		CString &rcsInspection, 
-		CArchive &rArchive, 
-		SVTreeType& p_rTree,
-		typename SVTreeType::SVBranchHandle p_pParent);
-
-	template< typename SVTreeType >
-	static HRESULT ArchiveSVCameraInfoStruct(  unsigned long ulSVOVersion, 
-		unsigned long ulSECVersion, 
-		typename SVTreeType::SVBranchHandle p_pInspection,
-		CString &rcsBoardName,
-		CString &rcsInspection, 
-		CArchive &rArchive, 
-		SVTreeType& p_rTree,
-		typename SVTreeType::SVBranchHandle p_pParent);
-
-	template< typename SVTreeType >
-	static HRESULT ArchiveIOD( unsigned long ulSVOVersion, 
-		unsigned long &ulIODVersion, 
-		CArchive &rArchive, 
-		SVTreeType& p_rTree);
-
-	template< typename SVTreeType >
-	static HRESULT ArchiveSVIODoc( unsigned long ulSVOVersion, 
-		unsigned long &ulIODVersion, 
-		CArchive &rArchive, 
-		SVTreeType& p_rTree,
-		typename SVTreeType::SVBranchHandle p_pParent);
-
-	template< typename SVTreeType >
-	static HRESULT ArchiveSVTriggerEventServerClass(   unsigned long ulSVOVersion, 
-		unsigned long ulIODVersion, 
-		CArchive &rArchive, 
-		SVTreeType& p_rTree,
-		typename SVTreeType::SVBranchHandle p_pParent);
-
-	template< typename SVTreeType >
-	static HRESULT ArchiveSVTimerTriggerEventServerClass(  unsigned long ulSVOVersion, 
-		unsigned long ulIODVersion, 
-		CArchive &rArchive, 
-		SVTreeType& p_rTree,
-		typename SVTreeType::SVBranchHandle p_pParent);
-
-	template< typename SVTreeType >
-	static HRESULT ArchiveSVIOEntryClass(  unsigned long ulSVOVersion, 
-		unsigned long ulIODVersion, 
-		CArchive &rArchive, 
-		SVTreeType& p_rTree,
-		typename SVTreeType::SVBranchHandle p_pParent);
-
-	template< typename SVTreeType >
-	static HRESULT ArchiveSVDigitalInputObjectClass(   unsigned long ulSVOVersion, 
-		unsigned long ulIODVersion, 
-		CArchive &rArchive, 
-		SVTreeType& p_rTree,
-		typename SVTreeType::SVBranchHandle p_pParent);
-
-	template< typename SVTreeType >
-	static HRESULT ArchiveIPD( unsigned long ulSVOVersion, 
-		unsigned long &ulIPDVersion, 
-		CArchive &rArchive, 
-		SVTreeType& p_rTree,
-		typename SVTreeType::SVBranchHandle p_pParent);
-
-	template< typename SVTreeType >
-	static HRESULT ArchiveSVIPDoc( unsigned long ulSVOVersion, 
-		unsigned long &ulIPDVersion, 
-		CString &rcsInspection, 
-		CArchive &rArchive, 
-		SVTreeType& p_rTree,
-		typename SVTreeType::SVBranchHandle p_pParent);
-
-	template< typename SVTreeType >
-	static HRESULT ArchiveSVIPDocViewData( unsigned long ulSVOVersion, 
-		unsigned long &ulIPDVersion, 
-		CArchive &rArchive, 
-		SVTreeType& p_rTree,
-		typename SVTreeType::SVBranchHandle p_pParent);
-
-	template< typename SVTreeType >
-	static HRESULT ArchiveSVImageViewScroll(   unsigned long ulSVOVersion, 
-		unsigned long &ulIPDVersion, 
-		CArchive &rArchive, 
-		SVTreeType& p_rTree,
-		typename SVTreeType::SVBranchHandle p_pParent);
-
-	template< typename SVTreeType >
-	static HRESULT ArchiveSVImageViewClass(unsigned long ulSVOVersion, 
-		unsigned long &ulIPDVersion, 
-		CArchive &rArchive, 
-		SVTreeType& p_rTree,
-		typename SVTreeType::SVBranchHandle p_pParent);
-
-	template< typename SVTreeType >
-	static HRESULT ArchiveSVImageViewClassEmbedded(unsigned long ulSVOVersion, 
-		unsigned long &ulIPDVersion, 
-		CArchive &rArchive, 
-		SVTreeType& p_rTree,
-		typename SVTreeType::SVBranchHandle p_pParent);
-
-	template< typename SVTreeType >
-	static HRESULT ArchiveSVToolSetTabViewClass(   unsigned long ulSVOVersion, 
-		unsigned long &ulIPDVersion, 
-		CArchive &rArchive, 
-		SVTreeType& p_rTree,
-		typename SVTreeType::SVBranchHandle p_pParent);
-
-	template< typename SVTreeType >
-	static HRESULT ArchiveSVResultViewClass(   unsigned long ulSVOVersion, 
-		unsigned long &ulIPDVersion, 
-		CArchive &rArchive, 
-		SVTreeType& p_rTree,
-		typename SVTreeType::SVBranchHandle p_pParent);
-
-	template< typename SVTreeType >
-	static HRESULT ArchiveWindowPlacementData( unsigned long ulSVOVersion, 
-		unsigned long &ulIPDVersion, 
-		CArchive &rArchive, 
-		SVTreeType& p_rTree,
-		typename SVTreeType::SVBranchHandle p_pParent);
-
-	template< typename SVTreeType >
-	static HRESULT ArchivePointData(   unsigned long ulSVOVersion, 
-		unsigned long &ulIPDVersion, 
-		CArchive &rArchive, 
-		SVTreeType& p_rTree,
-		typename SVTreeType::SVBranchHandle p_pParent);
-
-	template< typename SVTreeType >
-	static HRESULT ArchiveRectData(unsigned long ulSVOVersion, 
-		unsigned long &ulIPDVersion, 
-		CArchive &rArchive, 
-		SVTreeType& p_rTree,
-		typename SVTreeType::SVBranchHandle p_pParent);
-
-	template< typename SVTreeType >
-	static HRESULT ArchiveSizeData(unsigned long ulSVOVersion, 
-		unsigned long &ulIPDVersion, 
-		CArchive &rArchive, 
-		SVTreeType& p_rTree,
-		typename SVTreeType::SVBranchHandle p_pParent);
-
 	template< typename SVTreeType >
 	static HRESULT CreateTreeFromConfigurationFile (unsigned long ulSVOVersion, 
 		unsigned long ulSECVersion, 
@@ -441,7 +45,7 @@ public:
 	//
 	//	ulSECVersion - input - 
 	//   It is intended that this parameter contain the SVObserver version file 
-	//   format that is desired in the saved file.  This functionallity is not 
+	//   format that is desired in the saved file.  This functionality is not 
 	//   currently implemented, so this parameter is not used.  Potential future 
 	//   implementation.
 	//##ModelId=3F2FA26101AD
@@ -453,23 +57,19 @@ public:
 		LPCTSTR			pstrFilename,
 		SVTreeType& p_rTree);
 
-
 	// GetSVOSavedVersionNumberFromConfigurationFile () -------------------------
 	// This function currently only works on SVX files.
 	static HRESULT GetSVOSavedVersionNumberFromConfigurationFile (
 		BSTR				abstrFileName, 
 		unsigned long*	apulSVOConfigVersion);
 
-
-
 protected:
-
-
 	//	FindVersion401_430 () ----------------------------------------------------
 	// If a version number is not found, this function will set 
 	// aplConfigurationVersion to zero.
 	static HRESULT FindVersion401_430 (char* apczSourceString, 
 		unsigned long* aplConfigurationVersion);
+
 	//	FindVersion440_ () -------------------------------------------------------
 	// If a version number is not found, this function will set 
 	// aplConfigurationVersion to zero.
@@ -490,83 +90,6 @@ protected:
 	// configuration document were encrypted.
 	static HRESULT FindVersion440__RevisionHistory (char*				p_czpSourceString, 
 		unsigned long*	p_ulpConfigurationVersion);
-
-
-	template< typename SVTreeType >
-	static HRESULT GetEnvironmentBranch( SVTreeType& p_rTree, 
-		typename SVTreeType::SVBranchHandle& p_rpBranch );
-
-	template< typename SVTreeType >
-	static HRESULT GetAcquisitionDeviceBranch( LPCTSTR lpszBoardName,
-		long lDigNumber,
-		SVTreeType& p_rTree, 
-		typename SVTreeType::SVBranchHandle& p_rpBranch );
-
-	template< typename SVTreeType >
-	static HRESULT GetCameraBranch( long lNumber,
-		SVTreeType& p_rTree, 
-		typename SVTreeType::SVBranchHandle& p_rpBranch );
-
-	template< typename SVTreeType >
-	static HRESULT GetTriggerBranch( long lNumber,
-		SVTreeType& p_rTree, 
-		typename SVTreeType::SVBranchHandle& p_rpBranch );
-
-	template< typename SVTreeType >
-	static HRESULT GetInspectionBranch( long lNumber,
-		SVTreeType& p_rTree, 
-		typename SVTreeType::SVBranchHandle& p_rpBranch );
-
-	template< typename SVTreeType >
-	static HRESULT GetPPQBranch( long lNumber,
-		SVTreeType& p_rTree, 
-		typename SVTreeType::SVBranchHandle& p_rpBranch );
-
-	template< typename SVTreeType >
-	static HRESULT GetIOBranch( SVTreeType& p_rTree, 
-		typename SVTreeType::SVBranchHandle& p_rpBranch );
-
-	template< typename SVTreeType >
-	static HRESULT GetBranch( SVTreeType& p_rTree, 
-		LPCTSTR lpszName, 
-		typename SVTreeType::SVBranchHandle p_pParent, 
-		typename SVTreeType::SVBranchHandle& p_rpItem );
-
-	template< typename SVTreeType >
-	static HRESULT GetItem( SVTreeType& p_rTree, 
-		LPCTSTR lpszName, 
-		typename SVTreeType::SVBranchHandle p_pParent, 
-		typename SVTreeType::SVLeafHandle& p_rLeaf );
-
-	template< typename SVTreeType >
-	static HRESULT AddItem( LPCTSTR lpszName, 
-		typename SVTreeType::SVBranchHandle& p_rParent,
-		SVTreeType& rTree, 
-		_variant_t &rVariant );
-
-	template< typename SVTreeType >
-	static HRESULT AddItem( LPCTSTR lpszName, 
-		typename SVTreeType::SVBranchHandle& p_rParent,
-		int iType,
-		SVTreeType& rTree, 
-		CArchive &rArchive,
-		void *pvValue = NULL );
-
-	template< typename SVTreeType >
-	static HRESULT AddArray( LPCTSTR lpszName, 
-		typename SVTreeType::SVBranchHandle& p_rParent,
-		int iType,
-		unsigned long ulSize,
-		SVTreeType& rTree, 
-		CArchive &rArchive );
-
-	template< typename SVTreeType >
-	static HRESULT AddBranch( SVTreeType& p_rTree, 
-		LPCTSTR lpszName, 
-		typename SVTreeType::SVBranchHandle p_pParent, 
-		typename SVTreeType::SVBranchHandle& p_rpBranch );
-
-	static HRESULT SerializeGUID( CArchive &rArchive, GUID &rGuid);
 
 	// EB 2002 08 08 : add exception handling
 #define CONFIG_MGR_USE_ERROR_HANDLING
@@ -593,7 +116,6 @@ protected:
 	{
 		if (hr != S_OK)
 		{
-
 			if (bySeverity == 2)    // if (bySeverity >= minloglevel && bySeverity < 3)
 			{
 				// we don't want to throw, just create an exception object and use it's reporting facilities
@@ -607,7 +129,6 @@ protected:
 				// (stop processing and jump to the catch block)
 				throw SVException(lErr, tszSourceCompileDate, tszSourceCompileTime, _T(""), tszSourceFile, iSourceLine, tszSourceModificationTimestamp, SVMSG_SVO_16_LOAD_CONFIG_ERROR, hr);
 			}
-
 		}
 	}
 #endif
@@ -615,13 +136,82 @@ protected:
 
 #include "SVOCMArchive.inl"
 
-#endif
-
 // ******************************************************************************
 // * LOG HISTORY:
 // ******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVConfigurationLibrary\SVOCMArchive.h_v  $
+ * 
+ *    Rev 1.2   03 Sep 2014 15:51:26   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  880
+ * SCR Title:  Remove .SEC
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   Removed methods related to CArchive:
+ * ArchiveSVObserverApp,
+ * ArchiveSVSystemClass,
+ * ArchiveSVDigitizerArrayClass,
+ * ArchiveSVDigitizerObjectClass,
+ * ArchiveSVDigitizerInfoStruct,
+ * ArchiveSVAcquisitionSourceListClass,
+ * ArchiveSVAcquisitionSourceClass,
+ * ArchiveSVImageInfoClass,
+ * ArchiveSVExtentClass,
+ * ArchiveSVLightReferenceArrayClass,
+ * ArchiveSVLightReferenceClass,
+ * ArchiveSVPPQIndexHandleOwnerStruct,
+ * ArchiveSVDDEEntryStruct,
+ * ArchiveSVDDEInputEntryListClass,
+ * ArchiveSVPQDataLinkInfoStruct (both versions),
+ * ArchiveAddSVPQDataLinkInfoStruct,
+ * ArchiveSVByteArrayClass,
+ * ArchiveSVPQDigitialInputInfoListClass [sic],
+ * ArchiveSVPQDigitialInputInfoStruct [sic],
+ * ArchiveSVAcquisitionTriggerEventServerClass,
+ * ArchiveSVEventServerClass,
+ * ArchiveSVDigitalOutputObjectClass,
+ * ArchiveSVPQObjectClass,
+ * ArchiveSVPQCheckerObjectClass,
+ * ArchiveSVPPQInfoStruct,
+ * ArchiveSVDDEControlClass,
+ * ArchiveSVDDEOutputEntryListClass,
+ * ArchiveSVIPDocInfoClass,
+ * ArchiveSVIPDocRequirementInfoClass,
+ * ArchiveSVCameraInfoStruct,
+ * ArchiveIOD,
+ * ArchiveSVIODoc,
+ * ArchiveSVTriggerEventServerClass,
+ * ArchiveSVTimerTriggerEventServerClass,
+ * ArchiveSVIOEntryClass,
+ * ArchiveSVDigitalInputObjectClass,
+ * ArchiveIPD,
+ * ArchiveSVIPDoc,
+ * ArchiveSVIPDocViewData,
+ * ArchiveSVImageViewScroll,
+ * ArchiveSVImageViewClass,
+ * ArchiveSVImageViewClassEmbedded,
+ * ArchiveSVToolSetTabViewClass,
+ * ArchiveSVResultViewClass,
+ * ArchiveWindowPlacementData,
+ * ArchivePointData,
+ * ArchiveRectData,
+ * ArchiveSizeData,
+ * GetEnvironmentBranch,
+ * GetAcquisitionDeviceBranch,
+ * GetCameraBranch,
+ * GetTriggerBranch,
+ * GetInsepctionBranch,
+ * GetPPQBranch,
+ * GetIOBranch,
+ * GetBranch,
+ * GetItem,
+ * AddItem (both versions),
+ * AddArray,
+ * AddBranch,
+ * and SerializeGUID.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   03 Feb 2014 16:11:32   bwalter
  * Project:  SVObserver

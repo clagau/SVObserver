@@ -5,25 +5,11 @@
 // * .Module Name     : SVOCMGlobals
 // * .File Name       : $Workfile:   SVOCMGlobals.h  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.1  $
-// * .Check In Date   : $Date:   03 Feb 2014 16:14:34  $
+// * .Current Version : $Revision:   1.2  $
+// * .Check In Date   : $Date:   03 Sep 2014 15:54:44  $
 // ******************************************************************************
 
-#ifndef SVOCMGLOBALS_H
-#define SVOCMGLOBALS_H
-
-template< typename SVTreeType >
-HRESULT SVOCMArchiveIOD( unsigned long ulSVOVersion, 
-                         unsigned long &ulSECVersion, 
-                         CArchive &rArchive, 
-                         SVTreeType& p_rTree );
-
-template< typename SVTreeType >
-HRESULT SVOCMArchiveIPD( unsigned long ulSVOVersion, 
-                         unsigned long &ulSECVersion, 
-                         CArchive &rArchive, 
-                         SVTreeType& p_rTree,
-												 typename SVTreeType::SVBranchHandle p_pParent );
+#pragma once
 
 template< typename SVTreeType >
 HRESULT SVOCMLoadConfiguration( unsigned long ulSVOVersion, 
@@ -39,13 +25,23 @@ HRESULT SVOCMSaveConfiguration( unsigned long ulSVOVersion,
 
 #include "SVOCMGlobals.inl"
 
-#endif
-
 // ******************************************************************************
 // * LOG HISTORY:
 // ******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVConfigurationLibrary\SVOCMGlobals.h_v  $
+ * 
+ *    Rev 1.2   03 Sep 2014 15:54:44   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  880
+ * SCR Title:  Remove .SEC
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   Removed methods related to CArchive:
+ * SVOCMArchiveIOD
+ * and SVOCMArchiveIPD.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   03 Feb 2014 16:14:34   bwalter
  * Project:  SVObserver

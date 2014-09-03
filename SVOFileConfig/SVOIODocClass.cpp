@@ -5,22 +5,24 @@
 // * .Module Name     : SVOIODocClass
 // * .File Name       : $Workfile:   SVOIODocClass.cpp  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.0  $
-// * .Check In Date   : $Date:   25 Apr 2013 11:33:08  $
+// * .Current Version : $Revision:   1.1  $
+// * .Check In Date   : $Date:   03 Sep 2014 16:04:04  $
 // ******************************************************************************
 
 #include "stdafx.h"
 #include "SVOFileConfig.h"
 #include "SVOIODocClass.h"
-
 #include "SVOFileConfigDlg.h"
-#include "SVConfigurationLibrary/SVOCMGlobals.h"
+#include "SVStatusLibrary/SVException.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
+
+#define SEJ_ErrorBase 15000
+#define Err_15036 (SEJ_ErrorBase+36)
 
 IMPLEMENT_DYNCREATE(SVOIODocClass, COleServerDoc)
 
@@ -66,11 +68,11 @@ void SVOIODocClass::Dump(CDumpContext& dc) const
 
 void SVOIODocClass::Serialize(CArchive& ar)
 {
-	unsigned long ulIODVersion;
-
-	unsigned __int64 lPos = ar.GetFile()->Seek( 0, CFile::current );
-
-	SVOCMArchiveIOD( theApp.ulVersion, ulIODVersion, ar, theApp.pdlg->m_XMLCTree );
+	SVException l_Exception;
+	CString l_Message;
+	l_Message.Format(_T("This was previously used for .sec files."));
+	SETEXCEPTION5(l_Exception, E_NOTIMPL, Err_15036, l_Message);
+	l_Exception.LogException(l_Message);
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -103,7 +105,18 @@ COleServerItem* SVOIODocClass::OnGetEmbeddedItem()
 // * LOG HISTORY:
 // ******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVOFileConfig\SVOIODocClass.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVOFileConfig\SVOIODocClass.cpp_v  $
+ * 
+ *    Rev 1.1   03 Sep 2014 16:04:04   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  880
+ * SCR Title:  Remove .SEC
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   Changed Serialize to avoid calling old .sec file code.
+ * Added Err_15036.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   25 Apr 2013 11:33:08   bWalter
  * Project:  SVObserver

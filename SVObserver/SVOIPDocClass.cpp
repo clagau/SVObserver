@@ -5,15 +5,15 @@
 //* .Module Name     : SVOIPDocClass
 //* .File Name       : $Workfile:   SVOIPDocClass.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   31 Jan 2014 17:16:38  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   03 Sep 2014 16:01:04  $
 //******************************************************************************
 
 #include "stdafx.h"
 #include "SVObserver.h"
 #include "SVOIPDocClass.h"
-#include "SVConfigurationLibrary/SVOCMGlobals.h"
 #include "SVFileNameManagerClass.h"
+#include "SVStatusLibrary/SVException.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -22,6 +22,9 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 IMPLEMENT_DYNCREATE(SVOIPDocClass, COleServerDoc)
+
+#define SEJ_ErrorBase 15000
+#define Err_15035 (SEJ_ErrorBase+35)
 
 SVOIPDocClass::SVOIPDocClass()
 : COleServerDoc()
@@ -74,11 +77,11 @@ void SVOIPDocClass::Dump(CDumpContext& dc) const
 
 void SVOIPDocClass::Serialize(CArchive& ar)
 {
-	unsigned long ulIODVersion;
-
-	unsigned __int64 lPos = ar.GetFile()->Seek( 0, CFile::current );
-
-	SVOCMArchiveIPD( TheSVObserverApp.getCurrentVersion(), ulIODVersion, ar, TheSVObserverApp.m_XMLTree, TheSVObserverApp.m_Inspection );
+	SVException l_Exception;
+	CString l_Message;
+	l_Message.Format(_T("This was previously used for .sec files."));
+	SETEXCEPTION5(l_Exception, E_NOTIMPL, Err_15035, l_Message);
+	l_Exception.LogException(l_Message);
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -146,6 +149,17 @@ void SVOIPDocClass::CloseDocument()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVOIPDocClass.cpp_v  $
+ * 
+ *    Rev 1.2   03 Sep 2014 16:01:04   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  880
+ * SCR Title:  Remove .SEC
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   Changed Serialize to avoid calling old .sec file code.
+ * Added Err_15035.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   31 Jan 2014 17:16:38   bwalter
  * Project:  SVObserver

@@ -5,49 +5,14 @@
 // * .Module Name     : SVOCMGlobals
 // * .File Name       : $Workfile:   SVOCMGlobals.inl  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.1  $
-// * .Check In Date   : $Date:   03 Feb 2014 16:14:36  $
+// * .Current Version : $Revision:   1.2  $
+// * .Check In Date   : $Date:   03 Sep 2014 15:54:44  $
 // ******************************************************************************
 
-#ifndef SVOCMGLOBALS_INL
-#define SVOCMGLOBALS_INL
+#pragma once
 
-#include "SVOCMGlobals.h"
 #include "SVStatusLibrary/SVStatusCodes.h"
 #include "SVOCMArchive.h"
-
-template< typename SVTreeType >
-HRESULT SVOCMArchiveIOD( unsigned long ulSVOVersion, 
-												unsigned long &ulSECVersion, 
-												CArchive &rArchive, 
-												SVTreeType& p_rTree )
-{
-	HRESULT hrOk = S_FALSE;
-
-	if( rArchive.IsLoading() )
-	{
-		hrOk = SVOCMArchive::ArchiveIOD( ulSVOVersion, ulSECVersion, rArchive, p_rTree );
-	}
-
-	return hrOk;
-}
-
-template< typename SVTreeType >
-HRESULT SVOCMArchiveIPD( unsigned long ulSVOVersion, 
-												unsigned long &ulSECVersion, 
-												CArchive &rArchive, 
-												SVTreeType& p_rTree,
-												typename SVTreeType::SVBranchHandle p_pParent)
-{
-	HRESULT hrOk = S_FALSE;
-
-	if( rArchive.IsLoading() )
-	{
-		hrOk = SVOCMArchive::ArchiveIPD( ulSVOVersion, ulSECVersion, rArchive, p_rTree, p_pParent );
-	}
-
-	return hrOk;
-}
 
 template< typename SVTreeType >
 HRESULT SVOCMLoadConfiguration(unsigned long ulSVOVersion, 
@@ -85,17 +50,26 @@ HRESULT SVOCMSaveConfiguration (unsigned long ulSVOVersion,
 		csFileName, 
 		p_rTree);
 
-
 	return hr;
 }
-
-#endif
 
 // ******************************************************************************
 // * LOG HISTORY:
 // ******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVConfigurationLibrary\SVOCMGlobals.inl_v  $
+ * 
+ *    Rev 1.2   03 Sep 2014 15:54:44   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  880
+ * SCR Title:  Remove .SEC
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   Removed methods related to CArchive:
+ * SVOCMArchiveIOD
+ * and SVOCMArchiveIPD.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   03 Feb 2014 16:14:36   bwalter
  * Project:  SVObserver
