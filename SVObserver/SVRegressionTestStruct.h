@@ -5,8 +5,8 @@
 // * .Module Name     : SVRegressionTestStruct
 // * .File Name       : $Workfile:   SVRegressionTestStruct.h  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.1  $
-// * .Check In Date   : $Date:   02 Jul 2014 14:06:40  $
+// * .Current Version : $Revision:   1.2  $
+// * .Check In Date   : $Date:   04 Sep 2014 12:45:20  $
 // ******************************************************************************
 
 #ifndef _SV_REGRESSION_TEST_STRUCT
@@ -71,7 +71,8 @@ enum RegressionFileSelectCode
 	SelectionInvalid		= 2,
 	SelectionInvalidMask	= 3,
 	SelectionNoFiles		= 4,
-	SelectionFileNotExist	= 5
+	SelectionFileNotExist	= 5,
+	SelectionEmptyList		= 6
 };
 
 #endif
@@ -81,6 +82,16 @@ enum RegressionFileSelectCode
 // ******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVRegressionTestStruct.h_v  $
+ * 
+ *    Rev 1.2   04 Sep 2014 12:45:20   ryoho
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  765
+ * SCR Title:  Fix crash due to issue with selecting files for Regression Test
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   added slection empty list enum
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   02 Jul 2014 14:06:40   ryoho
  * Project:  SVObserver

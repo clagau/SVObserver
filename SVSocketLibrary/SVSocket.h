@@ -5,8 +5,8 @@
 //* .Module Name     : SVSocket
 //* .File Name       : $Workfile:   SVSocket.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.4  $
-//* .Check In Date   : $Date:   15 Aug 2014 14:12:34  $
+//* .Current Version : $Revision:   1.5  $
+//* .Check In Date   : $Date:   04 Sep 2014 13:21:34  $
 //******************************************************************************
 
 #pragma once
@@ -71,7 +71,7 @@ namespace Seidenader
 			virtual void Destroy();
 
 			ULONG GetAddr() const;
-			void Log(const std::string & msg, bool full = false) const;
+			std::string Log(const std::string & msg, bool full = false) const;
 
 			Err SetNonBlocking();
 			Err SetBlocking();
@@ -121,6 +121,16 @@ typedef Seidenader::Socket::SVSocket<TcpApi> SVSocket;
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVSocketLibrary\SVSocket.h_v  $
+ * 
+ *    Rev 1.5   04 Sep 2014 13:21:34   jHanebach
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Changed Log method to return string.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.4   15 Aug 2014 14:12:34   jHanebach
  * Project:  SVObserver

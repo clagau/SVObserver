@@ -5,8 +5,8 @@
 //* .Module Name     : SVSharedConfiguration
 //* .File Name       : $Workfile:   SVSharedConfiguration.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   20 Aug 2014 17:32:04  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   04 Sep 2014 14:05:34  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -14,6 +14,8 @@
 #include <winioctl.h>
 #include "SVSharedConfiguration.h"
 #include "SVShared.h"
+
+#define ENABLE_LOG
 
 using namespace SeidenaderVision;
 
@@ -194,6 +196,16 @@ bool SVSharedConfiguration::ControlFileExits()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVSharedMemoryLibrary\SVSharedConfiguration.cpp_v  $
+ * 
+ *    Rev 1.2   04 Sep 2014 14:05:34   jHanebach
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Enabled logging.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   20 Aug 2014 17:32:04   sjones
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : SVSharedPPQReader
 //* .File Name       : $Workfile:   SVSharedPPQReader.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   14 Aug 2014 17:09:50  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   04 Sep 2014 14:04:36  $
 //******************************************************************************
 #include "StdAfx.h"
 #include "SVSharedPPQReader.h"
@@ -119,22 +119,30 @@ namespace SeidenaderVision
 
 	long SVSharedPPQReader::next_readable() const
 	{
-		long idx = 0;
-		int count = 0;
 		long flags = ds::none;
-		SVSharedProductVector * data(nullptr);
+		long start = sh->current_idx;
+		if (start < 0)
+		{
+			::OutputDebugString("ppq next_readable - No Data\n");
+			throw std::exception("ppq next_readable No Data");
+		}
+		long idx = start + 1;
+		long count = 0;
+		long size = sh->data.size();
+
+		SVSharedProductVector * data = &sh->data;
+
 		do
 		{
-			idx = sh->current_idx;
-			if (idx < 0)
-			{
-				::OutputDebugString("ppq next_readable - No Data\n");
-				throw std::exception("ppq next_readable No Data");
-			}
-			data = &sh->data;
+			idx = (--idx + size) % size;
 			flags = (*data)[idx].m_Flags;
-			count++;
-		} while((flags & ds::writing) == ds::writing || _InterlockedCompareExchange(&(*data)[idx].m_Flags, flags + 1, flags) != flags);
+			if (count++ > size)
+			{
+				throw std::exception("ppq next_readable out of slots");
+			}
+		} 
+		while((flags & ds::writing) == ds::writing || _InterlockedCompareExchange(&(*data)[idx].m_Flags, flags + 1, flags) != flags);
+		
 		return idx;
 	}
 
@@ -142,7 +150,9 @@ namespace SeidenaderVision
 	{
 		int count = 0;
 		long flags = ds::none;
-		long idx = rsh->current_idx;
+		long start = rsh->current_idx;
+		long idx = start + 1;
+		long size = rsh->data.size();
 		if (idx < 0) // -1 means No rejects are available (none exist)
 		{
 			::OutputDebugString("ppq next_reject_readable - No Data\n");
@@ -151,8 +161,13 @@ namespace SeidenaderVision
 		SVSharedProductVector* data = &rsh->data;
 		do
 		{
+			idx = (--idx + size) % size;
 			flags = (*data)[idx].m_Flags;
-			count++;
+			if (count++ > size)
+			{
+				throw std::exception("next_reject_readable out of slots");
+			}
+
 		} 
 		while((flags & ds::writing) == ds::writing || _InterlockedCompareExchange(&(*data)[idx].m_Flags, flags + 1, flags) != flags);
 		
@@ -282,6 +297,16 @@ namespace SeidenaderVision
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVSharedMemoryLibrary\SVSharedPPQReader.cpp_v  $
+ * 
+ *    Rev 1.1   04 Sep 2014 14:04:36   jHanebach
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Changed slot picking logic.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   14 Aug 2014 17:09:50   sjones
  * Project:  SVObserver

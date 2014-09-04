@@ -2532,9 +2532,9 @@ FONT 8, "MS Sans Serif"
 BEGIN
     CONTROL         "Use list of files",IDC_RADIO_REG_LIST,"Button",BS_AUTORADIOBUTTON | WS_GROUP,7,12,61,10
     CONTROL         "Use single file",IDC_RADIO_REG_SINGLE,"Button",BS_AUTORADIOBUTTON,7,25,59,10
-    CONTROL         "no files",IDC_RADIO_REG_NONE,"Button",BS_AUTORADIOBUTTON,7,38,38,10
-    EDITTEXT        IDC_EDIT_REG_SELECTED_FILES,7,66,156,14,ES_AUTOHSCROLL
-    LTEXT           "Selected Files",IDC_STATIC,7,54,124,8
+    CONTROL         "No files",IDC_RADIO_REG_NONE,"Button",BS_AUTORADIOBUTTON,7,38,39,10
+    EDITTEXT        IDC_EDIT_REG_SELECTED_FILES,7,66,156,14,ES_AUTOHSCROLL | ES_READONLY
+    LTEXT           "Selected File",IDC_STATIC,7,54,124,8
     PUSHBUTTON      "...",IDC_BTN_REG_TEST_BROWSE_FILES,164,66,11,14
 END
 
@@ -2569,7 +2569,7 @@ BEGIN
     LTEXT           "Default value:",IDC_STATIC,8,16,45,8
 END
 
-IDD_DLG_EXIT_REGRESSION DIALOG 0, 0, 201, 50
+IDD_DLG_EXIT_REGRESSION DIALOG 0, 0, 160, 50
 STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Exit Regression"
 FONT 8, "MS Sans Serif"
@@ -2967,6 +2967,7 @@ BEGIN
     PUSHBUTTON      "Remove",IDC_BTN_REMOVE,246,216,50,14
     PUSHBUTTON      "Remove All",IDC_BTN_REMOVE_ALL,303,216,50,14
 END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -3779,7 +3780,7 @@ BEGIN
     IDD_DLG_EXIT_REGRESSION, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 194
+        RIGHTMARGIN, 153
         TOPMARGIN, 7
         BOTTOMMARGIN, 42
     END
@@ -4111,7 +4112,7 @@ BEGIN
     END
     POPUP "&View",                          65535,MFT_STRING,MFS_ENABLED
     BEGIN
-        POPUP "&Toolbars",                       65535,MFT_STRING,MFS_ENABLED
+        POPUP "&Toolbars",                      65535,MFT_STRING,MFS_ENABLED
         BEGIN
             MENUITEM "&Standard",                   ID_VIEW_TOOLBAR,MFT_STRING,MFS_ENABLED
             MENUITEM "&Zoom",                       ID_TOOLBAR_ZOOM,MFT_STRING,MFS_ENABLED
@@ -4177,7 +4178,7 @@ BEGIN
     END
     POPUP "&View",                          65535,MFT_STRING,MFS_ENABLED
     BEGIN
-        POPUP "&Toolbars",                       65535,MFT_STRING,MFS_ENABLED
+        POPUP "&Toolbars",                      65535,MFT_STRING,MFS_ENABLED
         BEGIN
             MENUITEM "&Standard",                   ID_VIEW_TOOLBAR,MFT_STRING,MFS_ENABLED
             MENUITEM "&Zoom",                       ID_TOOLBAR_ZOOM,MFT_STRING,MFS_ENABLED
@@ -4297,7 +4298,7 @@ BEGIN
         POPUP "&Toolbars",                      65535,MFT_STRING,MFS_ENABLED
         BEGIN
             MENUITEM "&Standard",                   ID_VIEW_TOOLBAR,MFT_STRING,MFS_ENABLED
-            MENUITEM "&Zoom",                        ID_TOOLBAR_ZOOM,MFT_STRING,MFS_ENABLED
+            MENUITEM "&Zoom",                       ID_TOOLBAR_ZOOM,MFT_STRING,MFS_ENABLED
         END
         MENUITEM "&PPQ Bar",                    ID_VIEW_PPQ_BAR,MFT_STRING,MFS_ENABLED
         MENUITEM MFT_SEPARATOR
@@ -4508,6 +4509,7 @@ BEGIN
     END
 END
 
+
 /////////////////////////////////////////////////////////////////////////////
 //
 // Accelerator
@@ -4560,6 +4562,7 @@ BEGIN
     VK_OEM_PLUS,    ID_ZOOM_PLUS,           VIRTKEY, CONTROL, NOINVERT
     VK_ADD,         ID_ZOOM_PLUS,           VIRTKEY, CONTROL, NOINVERT
 END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -5244,7 +5247,7 @@ BEGIN
     IDS_OBJECTNAME_SHIFTTOOL_ENABLE_SOURCE_IMAGE_EXTENTS 
                             "Enable Source Image Extents"
     ID_INDICATOR_GIGE_LICENSE_ERROR "License Error"
-	IDS_BLOB_FEATURE_DEFAULT_VALUE "Default Value"
+    IDS_BLOB_FEATURE_DEFAULT_VALUE "Default Value"
 END
 
 STRINGTABLE
@@ -6800,7 +6803,7 @@ BEGIN
     ID_ZOOM_PLUS            "zoom plus\nZoom +"
     ID_ZOOM_MINUS           "Zoom minus\nZoom -"
     ID_ZOOM_ONE             "zoom one\nZoom 1:1"
-	ID_ZOOM_FIT             "zoom fit\nZoom []"
+    ID_ZOOM_FIT             "zoom fit\nZoom []"
 END
 
 #endif    // Englisch (USA) resources

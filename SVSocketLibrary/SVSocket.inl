@@ -5,8 +5,8 @@
 //* .Module Name     : SVSocket
 //* .File Name       : $Workfile:   SVSocket.inl  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   15 Aug 2014 14:12:34  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   04 Sep 2014 13:21:34  $
 //******************************************************************************
 
 #define NOMINMAX
@@ -107,7 +107,7 @@ namespace Seidenader
 		}
 
 		template<typename API>
-		inline void SVSocket<API>::Log(const std::string & msg, bool full) const
+		inline std::string SVSocket<API>::Log(const std::string & msg, bool full) const
 		{
 		//#ifdef LOG_ENABLED
 			static int tick = 0;
@@ -132,6 +132,7 @@ namespace Seidenader
 			#pragma warning (pop)
 
 			::OutputDebugStringA(buff);
+			return buff;
 		//#endif
 		}
 
@@ -678,6 +679,16 @@ namespace Seidenader
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVSocketLibrary\SVSocket.inl_v  $
+ * 
+ *    Rev 1.2   04 Sep 2014 13:21:34   jHanebach
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Changed Log method to return string.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   15 Aug 2014 14:12:34   jHanebach
  * Project:  SVObserver

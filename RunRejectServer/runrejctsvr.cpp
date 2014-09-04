@@ -5,8 +5,8 @@
 //* .Module Name     : runrejctsvr
 //* .File Name       : $Workfile:   runrejctsvr.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.5  $
-//* .Check In Date   : $Date:   29 Aug 2014 17:35:56  $
+//* .Current Version : $Revision:   1.6  $
+//* .Check In Date   : $Date:   04 Sep 2014 14:12:50  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -49,6 +49,7 @@ typedef SeidenaderVision::ProductPtr ProductPtr;
 
 using Seidenader::Socket::header;
 using Seidenader::Socket::Traits;
+using SeidenaderVision::SVSharedConfiguration;
 
 void servimg(LPVOID)
 {
@@ -98,16 +99,26 @@ void servimg(LPVOID)
 					catch(std::exception & ex)
 					{
 						std::cout << ex.what() << std::endl;
+						SVSharedConfiguration::Log(ex.what());
 						break;
 					}
 				}
+				else
+				{
+					SVSharedConfiguration::Log(client.Log(SVSocketError::GetErrorText(SVSocketError::GetLastSocketError()), true));
+				}
 			}
+			//else
+			//{
+			//	SVSharedConfiguration::Log(client.Log(SVSocketError::GetErrorText(SVSocketError::GetLastSocketError()), true));
+			//}
 			//client.Destroy();
 		}
 	}
 	catch(std::exception & ex)
 	{
 		std::cout << ex.what() << std::endl;
+		SVSharedConfiguration::Log(ex.what());
 	}	
 	_endthread();
 }
@@ -280,7 +291,6 @@ Json::Value & GenerateImages(Json::Value & arr, InspectionDataPtr data)
 	return arr;
 }
 
-
 template<typename API>
 Json::Value WriteProductItems(ProductPtr product)
 {
@@ -345,6 +355,7 @@ Json::Value WriteFailStatus(const FailStatusMap & fsMap)
 Json::Value GetLastInspectedProduct(PPQReader& rReader, long trig)
 {
 	static std::pair<ProductPtr, long> lastProduct(ProductPtr(nullptr), -1);
+	static Json::Value lastResult(Json::objectValue);
 	Json::Value rslt(Json::objectValue);
 	if (trig >= 0)
 	{
@@ -355,7 +366,7 @@ Json::Value GetLastInspectedProduct(PPQReader& rReader, long trig)
 		}
 		else
 		{
-			rslt = WriteProductItems<UdpApi>(lastProduct.first);
+			rslt = lastResult;
 		}
 	}
 	else
@@ -369,14 +380,38 @@ Json::Value GetLastInspectedProduct(PPQReader& rReader, long trig)
 			rReader.ReleaseProduct(lastProduct .first, lastProduct .second);
 		}
 		lastProduct = std::make_pair(product, idx);
+		lastResult = rslt;
 	}
 	return rslt;
 }
 
 template<typename API>
-Json::Value GetRejectedProduct(PPQReader& rReader, long trig)
+Json::Value GetRejectedProduct(PPQReader& rReader, long trig);
+
+template<>
+Json::Value GetRejectedProduct<TcpApi>(PPQReader& rReader, long trig)
 {
 	static std::pair<ProductPtr, long> lastReject(ProductPtr(nullptr), -1); // Last reject held from GetReject call 
+	Json::Value rslt(Json::objectValue);
+	
+	long idx = -1;
+	ProductPtr product = rReader.RequestReject(trig, idx);
+	rslt = WriteProductItems<TcpApi>(product);
+	
+	// Decide which product to keep and which to release...
+	if (lastReject.second >= 0)
+	{
+		rReader.ReleaseReject(lastReject.first, lastReject.second);
+	}
+	lastReject = std::make_pair(product, idx);
+	return rslt;
+}
+
+template<>
+Json::Value GetRejectedProduct<UdpApi>(PPQReader& rReader, long trig)
+{
+	static std::pair<ProductPtr, long> lastReject(ProductPtr(nullptr), -1); // Last reject held from GetProduct call w/Product Filter = LastReject
+	static Json::Value lastResult(Json::objectValue);
 	Json::Value rslt(Json::objectValue);
 	if (trig >= 0)
 	{
@@ -386,14 +421,14 @@ Json::Value GetRejectedProduct(PPQReader& rReader, long trig)
 		}
 		else
 		{
-			rslt = WriteProductItems<UdpApi>(lastReject.first);
+			rslt = lastResult;
 		}
 	}
 	else
 	{
 		long idx = -1;
 		const ProductPtr product = rReader.RequestReject(trig, idx);
-		rslt = WriteProductItems<API>(product);
+		rslt = WriteProductItems<UdpApi>(product);
 	
 		// Decide which product to keep and which to release...
 		if (lastReject.second >= 0)
@@ -401,6 +436,7 @@ Json::Value GetRejectedProduct(PPQReader& rReader, long trig)
 			rReader.ReleaseReject(lastReject.first, lastReject.second);
 		}
 		lastReject = std::make_pair(product, idx);
+		lastResult = rslt;
 	}
 	return rslt;
 }
@@ -545,6 +581,7 @@ std::string GenerateResponse(const JsonCmd & cmd, const MonitorMapCopy & mlMap)
 	{
 		rsp[SVRC::cmd::err] = ex.what();
 		rsp[SVRC::cmd::hr] = Json::Value(E_FAIL);
+		SVSharedConfiguration::Log(Traits<API>::ApiName() + ": " + ex.what());
 	}
 	Json::FastWriter writer;
 	return writer.write(rsp);
@@ -594,6 +631,7 @@ void servcmd(LPVOID ctrlPtr)
 		typedef typename Seidenader::Socket::SVServerSocket<API> ServerSocket;
 		typedef typename Seidenader::Socket::SVSocket<API> Socket;
 		long lastReady = -1;
+		long lastFilterChange = -1;
 		ShareControl & ctrl = *reinterpret_cast<ShareControl *>(ctrlPtr);
 		MonitorListReader mlReader;
 		MonitorMapCopy monitorMap;
@@ -631,6 +669,24 @@ void servcmd(LPVOID ctrlPtr)
 								lastReady = count;
 								ctrl.SetAck();
 							}
+							else // check product filter change - only applicable for UDP
+							{
+								long filterChangeCount = ctrl.GetFilterChangeCount();
+								if (filterChangeCount != lastFilterChange) // filter counter has changed - product filter might have changed
+								{
+									// Update Filter info...
+									mlReader.Open();
+									std::vector<std::string> mlNames = mlReader.GetListNames();
+									std::for_each(mlNames.begin(), mlNames.end(),
+										[&mlReader, &monitorMap](const std::string & name)
+										{
+											monitorMap[name].m_ProductFilter = mlReader[name].GetProductFilter();
+										}
+									);
+									mlReader.Close();
+									lastFilterChange = filterChangeCount;
+								}
+							}
 							std::string resp = GenerateResponse<API>(cmd, monitorMap);
 							client.Write(resp, Traits<API>::needsHeader);
 						}
@@ -652,17 +708,20 @@ void servcmd(LPVOID ctrlPtr)
 				}
 				catch(std::exception & ex)
 				{
+					SVSharedConfiguration::Log(Traits<API>::ApiName() + ": " + ex.what());
 					std::cout << ex.what() << std::endl;
 				}
 			}
 			else
 			{
 				std::cout << "invalid socket\n";
+				SVSharedConfiguration::Log(client.Log(SVSocketError::GetErrorText(SVSocketError::GetLastSocketError()), true));
 			}
 		}
 	}
 	catch(std::exception & ex)
 	{
+		SVSharedConfiguration::Log(Traits<API>::ApiName() + ": " + ex.what());
 		std::cout << ex.what() << std::endl;
 	}	
 	_endthread();
@@ -797,6 +856,18 @@ int _tmain(int argc, _TCHAR* argv[])
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\RunRejectServer\runrejctsvr.cpp_v  $
+ * 
+ *    Rev 1.6   04 Sep 2014 14:12:50   jHanebach
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  886
+ * SCR Title:  Add RunReject Server Support to SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Enabled logging.
+ * Added logic to save JSON for last product.
+ * Changes for Product Filter.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.5   29 Aug 2014 17:35:56   jHanebach
  * Project:  SVObserver

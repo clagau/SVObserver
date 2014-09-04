@@ -5,8 +5,8 @@
 // * .Module Name     : SVRegressionFileSelectSheet
 // * .File Name       : $Workfile:   SVRegressionFileSelectSheet.cpp  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.2  $
-// * .Check In Date   : $Date:   02 Jul 2014 14:03:28  $
+// * .Current Version : $Revision:   1.3  $
+// * .Check In Date   : $Date:   04 Sep 2014 12:44:38  $
 // ******************************************************************************
 
 #include "stdafx.h"
@@ -139,13 +139,28 @@ void CSVRegressionFileSelectSheet::OnOK()
 		}
 		case SelectionBadList:
 		{
-			AfxMessageBox("Selection Error:  List must be of same size.  Please Select Again");
+			AfxMessageBox("Selection Error:  Lists must be the same size.  Please select again.");
+			ClearRegressionList();
 			return;
 		}
 		case SelectionInvalid:
 		{
-			if ( AfxMessageBox("Selection Error: Use Single File selected for one of the cameras but a file was not selected. Select again?",MB_YESNO ) == IDYES )
+			if ( AfxMessageBox("Selection Error: \"Use single file\" is selected for one of the cameras but a file was not selected. Select again?",MB_YESNO ) == IDYES )
 			{
+				return;
+			}
+			else
+			{
+				ClearRegressionList();
+				EndDialog(IDCANCEL);
+				return;
+			}
+		}
+		case SelectionEmptyList:
+		{
+			if ( AfxMessageBox("Selection Error: \"Use list of files\" selected, but the file name does not match\n the acceptable format (<file name>_<sequence number>.bmp). Select again?",MB_YESNO ) == IDYES )
+			{
+				ClearRegressionList();
 				return;
 			}
 			else
@@ -157,7 +172,7 @@ void CSVRegressionFileSelectSheet::OnOK()
 		}
 		case SelectionInvalidMask:
 		{
-			if ( AfxMessageBox("Selection Error: Use List of Files selected, but the file name does not match\n the acceptable format (<filename>_<sequencenumber>.bmp). Select again?",MB_YESNO ) == IDYES )
+			if ( AfxMessageBox("Selection Error: \"Use list of files\" selected, but the file name does not match\n the acceptable format (<file name>_<sequence number>.bmp). Select again?",MB_YESNO ) == IDYES )
 			{
 				return;
 			}
@@ -170,7 +185,7 @@ void CSVRegressionFileSelectSheet::OnOK()
 		}
 		case SelectionNoFiles:
 		{
-			if ( AfxMessageBox("Selection Error:  No Files Selected.  Select again?",MB_YESNO ) == IDYES )
+			if ( AfxMessageBox("Selection Error:  \"No files\" selected.  Select again?",MB_YESNO ) == IDYES )
 			{
 				return;
 			}
@@ -300,7 +315,7 @@ RegressionFileSelectCode CSVRegressionFileSelectSheet::ValidateList()
 				else
 				{
 					bRet = FALSE;
-					l_ReturnCode = SelectionNoFiles;
+					l_ReturnCode = SelectionEmptyList;
 				}
 			}
 		}
@@ -491,6 +506,16 @@ BOOL CSVRegressionFileSelectSheet::OnInitDialog()
 // ******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVRegressionFileSelectSheet.cpp_v  $
+ * 
+ *    Rev 1.3   04 Sep 2014 12:44:38   ryoho
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  765
+ * SCR Title:  Fix crash due to issue with selecting files for Regression Test
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   made changes to the error messages 
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   02 Jul 2014 14:03:28   ryoho
  * Project:  SVObserver

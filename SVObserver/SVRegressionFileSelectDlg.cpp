@@ -5,8 +5,8 @@
 // * .Module Name     : SVRegressionFileSelectDlg
 // * .File Name       : $Workfile:   SVRegressionFileSelectDlg.cpp  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.0  $
-// * .Check In Date   : $Date:   23 Apr 2013 14:41:20  $
+// * .Current Version : $Revision:   1.1  $
+// * .Check In Date   : $Date:   04 Sep 2014 12:43:58  $
 // ******************************************************************************
 
 #include "stdafx.h"
@@ -77,7 +77,7 @@ void CSVRegressionFileSelectDlg::OnBtnRegTestBrowseFiles()
 
 	m_sRegistryPath = AfxGetApp()->GetProfileString(_T("RegressionTest"), _T("LastPath"),_T("C:\\Temp"));
 
-	static char BASED_CODE szFilter[] = "BMP Files (*.bmp)|*.bmp|Image Files (*.bmp)|*.bmp|All Files (*.*)|*.*||";
+	static char BASED_CODE szFilter[] = "BMP Files (*.bmp)|*.bmp|Image Files (*.bmp)|*.bmp||";
 
 	CString	csFileExtensionFilterList = "BMP's (*.bmp)|*.bmp||";
 	// TODO: Add your control notification handler code here
@@ -98,10 +98,19 @@ void CSVRegressionFileSelectDlg::OnBtnRegTestBrowseFiles()
 	if ( dlg.DoModal() == IDOK)
 	{
 		m_sRegTestFiles = dlg.GetPathName(); 
-		int iPos = m_sRegTestFiles.ReverseFind('\\');
+		if ( !m_sRegTestFiles.IsEmpty() )
+		{
+			if (0 != m_sRegTestFiles.Right(4).CompareNoCase(".bmp"))
+			{
+				AfxMessageBox(_T("Selection Error:  A .bmp file must be selected."));
+				m_sRegTestFiles = "";
+			}
 
-		CString sTmpDirName = m_sRegTestFiles.Left(iPos);
-		AfxGetApp()->WriteProfileString(_T("RegressionTest"),_T("LastPath"),sTmpDirName);
+			int iPos = m_sRegTestFiles.ReverseFind('\\');
+
+			CString sTmpDirName = m_sRegTestFiles.Left(iPos);
+			AfxGetApp()->WriteProfileString(_T("RegressionTest"),_T("LastPath"),sTmpDirName);
+		}
 	}
 
 
@@ -171,7 +180,17 @@ void CSVRegressionFileSelectDlg::SetRegressionData(RegressionTestStruct *p_pData
 // * LOG HISTORY:
 // ******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVRegressionFileSelectDlg.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVRegressionFileSelectDlg.cpp_v  $
+ * 
+ *    Rev 1.1   04 Sep 2014 12:43:58   ryoho
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  765
+ * SCR Title:  Fix crash due to issue with selecting files for Regression Test
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   made changes to file select dialog to only show .bmp in the list and will show a message if they try to pick a non bmp file.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 14:41:20   bWalter
  * Project:  SVObserver
