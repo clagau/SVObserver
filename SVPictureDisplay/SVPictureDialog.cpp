@@ -5,8 +5,8 @@
 //* .Module Name     : SVPictureDialog
 //* .File Name       : $Workfile:   SVPictureDialog.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   :     $Date:   14 Aug 2014 17:35:52  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   :     $Date:   05 Sep 2014 09:25:18  $
 //******************************************************************************
 
 #pragma region Includes
@@ -95,6 +95,7 @@ BEGIN_MESSAGE_MAP(SVPictureDialog, CDialog)
 	ON_BN_CLICKED(IDC_ZOOM_ONE, &SVPictureDialog::OnBnClickedZoomOne)
 	ON_BN_CLICKED(IDC_SAVE_BUTTON, &SVPictureDialog::OnBnClickedSaveButton)
 	ON_WM_SIZE()
+	ON_WM_HELPINFO()
 END_MESSAGE_MAP()
 
 // SVPictureDialog message handlers
@@ -1218,11 +1219,26 @@ void SVPictureDialog::SetZoomFit()
 	CloneScrollPosition(SB_BOTH);
 }
 
+BOOL SVPictureDialog::OnHelpInfo(HELPINFO* pHelpInfo)
+{
+	return TRUE;
+}
+
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSARCH65\PROJECTFILES\ARCHIVES\SVOBSERVER_SRC\SVPICTUREDISPLAY\SVPictureDialog.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVPictureDisplay\SVPictureDialog.cpp_v  $
+ * 
+ *    Rev 1.2   05 Sep 2014 09:25:18   ryoho
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  902
+ * SCR Title:  Change Complex Dialog Image Displays to Use SVPictureDisplay ActiveX
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   added message handler OnHelpInfo. 
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   14 Aug 2014 17:35:52   mEichengruen
  * Project:  SVObserver

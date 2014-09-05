@@ -5,8 +5,8 @@
 //* .Module Name     : SVPictureDialog
 //* .File Name       : $Workfile:   SVPictureDialog.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   :     $Date:   14 Aug 2014 17:35:52  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   :     $Date:   05 Sep 2014 09:25:18  $
 //******************************************************************************
 #pragma once
 
@@ -173,6 +173,7 @@ protected:
 	afx_msg void OnBnClickedZoomOne();
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 	afx_msg void OnBnClickedSaveButton();
+	afx_msg BOOL OnHelpInfo(HELPINFO* pHelpInfo);
 
 	//************************************
 	// Method:    ZoomToSliderPos
@@ -216,7 +217,17 @@ private:
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSARCH65\PROJECTFILES\ARCHIVES\SVOBSERVER_SRC\SVPICTUREDISPLAY\SVPictureDialog.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVPictureDisplay\SVPictureDialog.h_v  $
+ * 
+ *    Rev 1.2   05 Sep 2014 09:25:18   ryoho
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  902
+ * SCR Title:  Change Complex Dialog Image Displays to Use SVPictureDisplay ActiveX
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   added message handler OnHelpInfo. 
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   14 Aug 2014 17:35:52   mEichengruen
  * Project:  SVObserver
