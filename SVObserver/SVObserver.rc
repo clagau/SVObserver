@@ -4114,7 +4114,7 @@ BEGIN
     BEGIN
         POPUP "&Toolbars",                      65535,MFT_STRING,MFS_ENABLED
         BEGIN
-            MENUITEM "&Standard",                   ID_VIEW_TOOLBAR,MFT_STRING,MFS_ENABLED
+            MENUITEM "&Standard",                   ID_TOOLBAR_STANDARD,MFT_STRING,MFS_ENABLED
             MENUITEM "&Zoom",                       ID_TOOLBAR_ZOOM,MFT_STRING,MFS_ENABLED
         END
     END
@@ -4180,7 +4180,7 @@ BEGIN
     BEGIN
         POPUP "&Toolbars",                      65535,MFT_STRING,MFS_ENABLED
         BEGIN
-            MENUITEM "&Standard",                   ID_VIEW_TOOLBAR,MFT_STRING,MFS_ENABLED
+            MENUITEM "&Standard",                   ID_TOOLBAR_STANDARD,MFT_STRING,MFS_ENABLED
             MENUITEM "&Zoom",                       ID_TOOLBAR_ZOOM,MFT_STRING,MFS_ENABLED
         END
         MENUITEM "&PPQ Bar",                    ID_VIEW_PPQ_BAR,MFT_STRING,MFS_ENABLED
@@ -4297,7 +4297,7 @@ BEGIN
     BEGIN
         POPUP "&Toolbars",                      65535,MFT_STRING,MFS_ENABLED
         BEGIN
-            MENUITEM "&Standard",                   ID_VIEW_TOOLBAR,MFT_STRING,MFS_ENABLED
+            MENUITEM "&Standard",                   ID_TOOLBAR_STANDARD,MFT_STRING,MFS_ENABLED
             MENUITEM "&Zoom",                       ID_TOOLBAR_ZOOM,MFT_STRING,MFS_ENABLED
         END
         MENUITEM "&PPQ Bar",                    ID_VIEW_PPQ_BAR,MFT_STRING,MFS_ENABLED
@@ -5852,7 +5852,7 @@ END
 
 STRINGTABLE
 BEGIN
-    ID_VIEW_TOOLBAR         "Show or hide the tool bar\nToggle Tool Bar"
+    ID_TOOLBAR_STANDARD         "Show or hide the tool bar\nToggle Tool Bar"
     ID_VIEW_STATUS_BAR      "Show or hide the status bar\nToggle Status Bar"
 END
 

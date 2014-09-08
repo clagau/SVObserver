@@ -5,8 +5,8 @@
 //* .Module Name     : ObjectTreeGenerator
 //* .File Name       : $Workfile:   ObjectTreeGenerator.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   25 Aug 2014 07:46:48  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   08 Sep 2014 09:47:22  $
 //******************************************************************************
 
 #pragma region Includes
@@ -16,6 +16,7 @@
 #include "SVObjectLibrary\SVObjectManagerClass.h"
 #include "SVTreeLibrary\ObjectSelectorItem.h"
 #include "SVSystemLibrary\LoadDll.h"
+#include "SVOResource\resource.h"
 #include "ResizablePropertySheet.h"
 #include "ObjectSelectorPpg.h"
 #pragma endregion Includes
@@ -234,6 +235,23 @@ INT_PTR ObjectTreeGenerator::showDialog( const SVString& rTitle, const SVString&
 		Sheet.m_psh.dwFlags |= PSH_NOAPPLYNOW;
 
 		Sheet.AddPage( &ObjectSelectorPage );
+		int HelpID( IDD_OBJECT_SELECTOR_PPG );
+		if( isSingleObject)
+		{
+			HelpID = IDD_OUTPUT_SELECTOR;
+		}
+		else
+		{
+			if( SV_VIEWABLE == m_AttributesSetFilter )
+			{
+				HelpID = IDD_RESULTS_PICKER;
+			}
+			else if( SV_PUBLISHABLE == m_AttributesSetFilter )
+			{
+				HelpID = IDD_PUBLISHED_RESULTS;
+			}
+		}
+		ObjectSelectorPage.setHelpID( HelpID );
 
 		delete pWait;
 		pWait = nullptr;
@@ -576,6 +594,18 @@ void ObjectTreeGenerator::checkLocationFilters( const TranslateMap& rFilters, SV
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\ObjectSelectorLibrary\ObjectTreeGenerator.cpp_v  $
+ * 
+ *    Rev 1.2   08 Sep 2014 09:47:22   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  909
+ * SCR Title:  Object Selector replacing Result Picker and Output Selector SVO-72, 40, 130
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Object Selector property page has a variable context ID
+ * Changed methods: showDialog
+ * 
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   25 Aug 2014 07:46:48   gramseier
  * Project:  SVObserver

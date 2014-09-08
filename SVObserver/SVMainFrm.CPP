@@ -5,8 +5,8 @@
 //* .Module Name     : SVMainFrm
 //* .File Name       : $Workfile:   SVMainFrm.CPP  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.13  $
-//* .Check In Date   : $Date:   02 Sep 2014 12:16:48  $
+//* .Current Version : $Revision:   1.14  $
+//* .Check In Date   : $Date:   05 Sep 2014 13:17:36  $
 //******************************************************************************
 
 #pragma region Includes
@@ -73,9 +73,9 @@ BEGIN_MESSAGE_MAP(SVMainFrame, CMDIFrameWnd)
 	ON_WM_CLOSE()
 	ON_WM_MOUSEMOVE()
 	ON_COMMAND(ID_VIEW_PPQ_BAR, OnViewPPQBar)
-	ON_COMMAND(ID_VIEW_TOOLBAR, OnViewToolBar)
+	ON_COMMAND(ID_TOOLBAR_STANDARD, OnViewToolBar)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_PPQ_BAR, OnUpdateViewPPQBar)
-	ON_UPDATE_COMMAND_UI(ID_VIEW_TOOLBAR, OnUpdateViewToolbar)
+	ON_UPDATE_COMMAND_UI(ID_TOOLBAR_STANDARD, OnUpdateViewToolbar)
 	ON_COMMAND(ID_VIEW_IMAGE_DISPLAY_UPDATE, OnViewImageDisplayUpdate)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_IMAGE_DISPLAY_UPDATE, OnUpdateViewImageDisplayUpdate)
 	ON_COMMAND(ID_VIEW_RESULT_DISPLAY_UPDATE, OnViewResultDisplayUpdate)
@@ -2181,6 +2181,16 @@ void SVMainFrame::RefreshAllSplitters()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVMainFrm.CPP_v  $
+ * 
+ *    Rev 1.14   05 Sep 2014 13:17:36   ryoho
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  921
+ * SCR Title:  Add more complete zoom functionality. (runpage)
+ * Checked in by:  mEichengruen;  Marcus Eichengruen
+ * Change Description:  
+ *   changed ID_VIEW_TOOLBAR to ID_TOOLBAR_STANDARD so that Help would work correctly.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.13   02 Sep 2014 12:16:48   bwalter
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : ObjectSelectorPpg
 //* .File Name       : $Workfile:   ObjectSelectorPpg.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   12 Aug 2014 12:27:08  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   08 Sep 2014 09:45:52  $
 //******************************************************************************
 
 #pragma region Includes
@@ -39,6 +39,7 @@ ObjectSelectorPpg::ObjectSelectorPpg( ObjectTreeItems& rTreeContainer, const SVS
 	, m_rTreeContainer( rTreeContainer )
 	, m_NodeTree( *this, SingleSelect )
 	, m_LeafTree( *this, SingleSelect )
+	, m_HelpID(0)
 {
 	m_psp.pszTitle = rTitle.c_str();
 	m_psp.dwFlags |= PSP_USETITLE;
@@ -102,25 +103,14 @@ void ObjectSelectorPpg::OnSize(UINT nType, int cx, int cy)
 
 void ObjectSelectorPpg::OnHelp() 
 {
-	AfxGetApp()->HtmlHelp(0x213B0);
+	AfxGetApp()->HtmlHelp( m_HelpID + 0x80000 );
 }
 
 BOOL ObjectSelectorPpg::OnHelpInfo(HELPINFO* pHelpInfo) 
 {
-	//@TODO[ramseier] This needs to be changed to call the correct Help IDs that have to be generated
-	if( ( pHelpInfo->iCtrlId & 0xffff ) == 0xffff || 
-		pHelpInfo->iCtrlId < 500)
-	{
-		pHelpInfo->iCtrlId = 0x213B0;
-//		pHelpInfo->iCtrlId = IDD_PASSWORD_DLG + 0x60000;
-	}
-	else
-	{
-		pHelpInfo->iCtrlId = 0x213B0;
-//		pHelpInfo->iCtrlId += 0x70000;
-	}	
-	AfxGetApp()->HtmlHelp( pHelpInfo->iCtrlId,HH_HELP_CONTEXT );
-	return TRUE ; 
+	pHelpInfo->iCtrlId = m_HelpID + 0x80000;
+	AfxGetApp()->HtmlHelp( pHelpInfo->iCtrlId, HH_HELP_CONTEXT );
+	return TRUE ;
 }
 
 void ObjectSelectorPpg::setResizeControls()
@@ -142,6 +132,17 @@ void ObjectSelectorPpg::setResizeControls()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\ObjectSelectorLibrary\ObjectSelectorPpg.cpp_v  $
+ * 
+ *    Rev 1.3   08 Sep 2014 09:45:52   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  909
+ * SCR Title:  Object Selector replacing Result Picker and Output Selector SVO-72, 40, 130
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Object Selector property page has a variable context ID
+ * Changed methods: OnHelp, OnHelpInfo
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   12 Aug 2014 12:27:08   gramseier
  * Project:  SVObserver

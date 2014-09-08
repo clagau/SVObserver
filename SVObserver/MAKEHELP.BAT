@@ -23,6 +23,9 @@ echo. >>%1
 echo // SVSecurity Controls (IDC_*) >>%1
 makehm /h IDC_,HIDC_,0x70000 ..\SVSecurity\resource.h >>%1
 echo. >>%1
+echo // SVOResource Dialogs (IDD_*) >>%1
+makehm /h IDD_,HIDD_,0x80000 ..\SVOResource\resource.h >>%1
+echo. >>%1
 echo // System Control ID's >>%1
 echo #define HID_FILE_NEW                            0x0001E100 >>%1
 echo #define HID_FILE_PRINT_SETUP                    0x0001E106 >>%1

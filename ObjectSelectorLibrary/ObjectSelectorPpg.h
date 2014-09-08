@@ -5,8 +5,8 @@
 //* .Module Name     : ObjectSelectorPpg
 //* .File Name       : $Workfile:   ObjectSelectorPpg.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   18 Jul 2014 14:42:14  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   08 Sep 2014 09:44:14  $
 //* ----------------------------------------------------------------------------
 //* This class is the object selector property page 
 //******************************************************************************
@@ -70,6 +70,12 @@ namespace Seidenader
 			inline void setNodeLocation( const SVString& rNodeLocation );
 
 			/**********
+			 The method sets the current node location
+			 \param rNodeLocation <in> a reference to the node location
+			***********/
+			inline void setHelpID( int HelpID );
+
+			/**********
 			 The method is called to update the dialog data
 			 \param pFromeTree <in> a pointer from which tree the update command originates
 			***********/
@@ -102,6 +108,7 @@ namespace Seidenader
 			CImageList m_StateImageList;					//The state image list
 			CImageList m_ImageList;							//The image list
 			CString m_NodeLocation;							//The currently selected node location
+			int m_HelpID;									//The help id used to identify the property page
 		#pragma endregion Member Variables
 		};
 
@@ -116,6 +123,17 @@ namespace Seidenader
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\ObjectSelectorLibrary\ObjectSelectorPpg.h_v  $
+ * 
+ *    Rev 1.2   08 Sep 2014 09:44:14   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  909
+ * SCR Title:  Object Selector replacing Result Picker and Output Selector SVO-72, 40, 130
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Object Selector property page has a variable context ID
+ * Added methods: setHelpID
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   18 Jul 2014 14:42:14   gramseier
  * Project:  SVObserver
