@@ -5,8 +5,8 @@
 //* .Module Name     : SVToolAdjustmentArchivePage
 //* .File Name       : $Workfile:   SVToolArchivePage.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.13  $
-//* .Check In Date   : $Date:   02 Sep 2014 11:23:42  $
+//* .Current Version : $Revision:   1.15  $
+//* .Check In Date   : $Date:   10 Sep 2014 09:36:40  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -191,7 +191,7 @@ BOOL SVToolAdjustmentArchivePage::OnInitDialog()
 
 	bool bUseColumnHeaders = false;
 	m_pTool->m_bvoUseHeaders.GetValue( bUseColumnHeaders );
-	if(bUseColumnHeaders && m_pTool->m_arrayImagesInfoObjectsToArchive.GetSize() > 0)
+	if(bUseColumnHeaders && m_pTool->m_arrayResultsInfoObjectsToArchive.GetSize() > 0)
 	{
 		m_bUseColumnHeaders = 1;
 		GetDlgItem(IDC_HEADER_BTN)->EnableWindow();
@@ -841,6 +841,7 @@ void SVToolAdjustmentArchivePage::OnBnClickedHeaderBtn()
 void SVToolAdjustmentArchivePage::OnBnClickedHeaderCheck()
 {
 	UpdateHeaderBtn();
+	m_pTool->m_bvoUseHeaders.SetValue( 1, m_bUseColumnHeaders );
 }
 
 //******************************************************************************
@@ -848,6 +849,26 @@ void SVToolAdjustmentArchivePage::OnBnClickedHeaderCheck()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVToolArchivePage.cpp_v  $
+ * 
+ *    Rev 1.15   10 Sep 2014 09:36:40   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  872
+ * SCR Title:  Add Archive Tool Headers to Archive File
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Added SetValue to OnBnClickedHeaderCheck to store value in the tool.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.14   10 Sep 2014 06:34:36   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  872
+ * SCR Title:  Add Archive Tool Headers to Archive File
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Fixed archive tool header check box check in OnInitDialog.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.13   02 Sep 2014 11:23:42   sjones
  * Project:  SVObserver
