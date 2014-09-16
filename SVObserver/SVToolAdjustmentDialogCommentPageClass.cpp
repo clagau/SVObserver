@@ -5,8 +5,8 @@
 //* .Module Name     : SVToolAdjustmentDialogCommentPageClass
 //* .File Name       : $Workfile:   SVToolAdjustmentDialogCommentPageClass.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   11 Nov 2013 07:29:34  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   16 Sep 2014 09:36:06  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -41,6 +41,7 @@ void SVToolAdjustmentDialogCommentPageClass::DoDataExchange(CDataExchange* pDX)
 
 BEGIN_MESSAGE_MAP(SVToolAdjustmentDialogCommentPageClass, CDialog)
 	ON_EN_KILLFOCUS(IDC_EDIT_COMMENT, &SVToolAdjustmentDialogCommentPageClass::OnEnKillfocusEditComment)
+	ON_EN_SETFOCUS(IDC_EDIT_COMMENT, &SVToolAdjustmentDialogCommentPageClass::OnSetFocusToEditComment)
 END_MESSAGE_MAP()
 
 
@@ -73,7 +74,7 @@ HRESULT SVToolAdjustmentDialogCommentPageClass::SetInspectionData()
 
 
 	l_hrOk = AddInputRequest( pTool->GetToolComment(), m_strComment );
-
+	
 	if( l_hrOk == S_OK )
 	{
 		l_hrOk = AddInputRequestMarker();
@@ -96,11 +97,29 @@ void SVToolAdjustmentDialogCommentPageClass::OnEnKillfocusEditComment()
 	SetInspectionData();
 }
 
+void SVToolAdjustmentDialogCommentPageClass::OnSetFocusToEditComment()
+{
+	CEdit *editControl = static_cast<CEdit*>(GetDlgItem(IDC_EDIT_COMMENT));
+	editControl->SetSel(0,0);
+	UpdateData(FALSE);
+}
+
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVToolAdjustmentDialogCommentPageClass.cpp_v  $
+ * 
+ *    Rev 1.2   16 Sep 2014 09:36:06   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  927
+ * SCR Title:  Improve comment function
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   update the comment value in rc-file to have the same size and font.
+ * Add method OnSetFocusToEditComment to remove the highlight of the text if the comment will open.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   11 Nov 2013 07:29:34   tbair
  * Project:  SVObserver

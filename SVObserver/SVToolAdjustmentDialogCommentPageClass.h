@@ -5,8 +5,8 @@
 //* .Module Name     : SVToolAdjustmentDialogCommentPageClass
 //* .File Name       : $Workfile:   SVToolAdjustmentDialogCommentPageClass.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 15:33:58  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   16 Sep 2014 09:36:04  $
 //******************************************************************************
 
 #pragma once
@@ -53,13 +53,25 @@ protected:
 public:
 	CString m_strComment;
 	afx_msg void OnEnKillfocusEditComment();
+	afx_msg void OnSetFocusToEditComment();
 };
 
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVToolAdjustmentDialogCommentPageClass.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVToolAdjustmentDialogCommentPageClass.h_v  $
+ * 
+ *    Rev 1.1   16 Sep 2014 09:36:04   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  927
+ * SCR Title:  Improve comment function
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   update the comment value in rc-file to have the same size and font.
+ * Add method OnSetFocusToEditComment to remove the highlight of the text if the comment will open.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 15:33:58   bWalter
  * Project:  SVObserver
