@@ -5,8 +5,8 @@
 //* .Module Name     : SVAdjustToolSizePositionDlg
 //* .File Name       : $Workfile:   SVAdjustToolSizePositionDlg.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.7  $
-//* .Check In Date   : $Date:   25 Jun 2014 10:34:12  $
+//* .Current Version : $Revision:   1.8  $
+//* .Check In Date   : $Date:   17 Sep 2014 08:07:18  $
 //******************************************************************************
 #pragma region Includes
 #include "stdafx.h"
@@ -104,9 +104,10 @@ BOOL SVAdjustToolSizePositionDlg::OnInitDialog()
 	GetDlgItem(IDC_FULL_ROI_BTN)->ShowWindow( l_bShow ? SW_SHOW : SW_HIDE );
 	GetDlgItem(IDC_FULL_ROI_BTN)->EnableWindow( !IsFullSize() );
 
-	SVExtentPropertyMapType map;
-	m_svExtents.GetExtentPropertyList(SVExtentPropertyPositionsInput, map);
-	if ( map.find( SVExtentPropertyRotationAngle ) == map.end() )	// if doesn't support rotation angle
+	SVExtentPropertyListType list;
+	m_pToolTask->GetFilteredImageExtentPropertyList( list );
+
+	if ( std::find( list.begin(), list.end(), SVExtentPropertyRotationAngle ) == list.end() )	// if item is not in filtered list, skip
 	{
 		GetDlgItem( IDC_ROTATION_RADIO )->ShowWindow( SW_HIDE );	// hide rotation option
 	}
@@ -510,6 +511,16 @@ void SVAdjustToolSizePositionDlg::createIcons()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVAdjustToolSizePositionDlg.cpp_v  $
+ * 
+ *    Rev 1.8   17 Sep 2014 08:07:18   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  935
+ * SCR Title:  Linear Tool Adjust Position Dialog - Disable Rotation Buttons When No Rotation
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   use in OnInitDialog filtered list instead of map to search if rotation is used or not
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.7   25 Jun 2014 10:34:12   ryoho
  * Project:  SVObserver
