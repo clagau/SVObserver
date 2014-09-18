@@ -5,8 +5,8 @@
 //* .Module Name     : SVDriveInitDlg
 //* .File Name       : $Workfile:   SVDriveInitDlg.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   06 May 2013 14:06:16  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   17 Sep 2014 15:03:26  $
 //******************************************************************************
 
 #ifndef SVDRIVEINITDLG_H
@@ -89,7 +89,7 @@ private:
 
 	HRESULT BackupBootIni();
 
-	HRESULT UpdateTVicLpt( LPCTSTR p_szIOBoard );
+	HRESULT UpdateIOInterfaceDLL( LPCTSTR p_szIOBoard );
 
 	HRESULT UpdateMatrox( LPCTSTR p_szDigitizer );
 	HRESULT UpdateMatroxRegistryMaxMem( size_t& p_rMaxSize, size_t p_MILSize );
@@ -109,7 +109,18 @@ private:
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVDriveInit\SVDriveInitDlg.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVDriveInit\SVDriveInitDlg.h_v  $
+ * 
+ *    Rev 1.2   17 Sep 2014 15:03:26   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  943
+ * SCR Title:  Parallel Port I/O for 64 Bit and Windows 7
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   Added support for SVLptIO.
+ * Renamed UpdateTVicLPT to UpdateIOInterfaceDLL
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   06 May 2013 14:06:16   bWalter
  * Project:  SVObserver

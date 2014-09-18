@@ -5,8 +5,8 @@
 // * .Module Name     : SVIOTESTDlg
 // * .File Name       : $Workfile:   SVIOTESTDlg.cpp  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.2  $
-// * .Check In Date   : $Date:   01 Oct 2013 09:21:32  $
+// * .Current Version : $Revision:   1.3  $
+// * .Check In Date   : $Date:   17 Sep 2014 15:18:02  $
 // ******************************************************************************
 
 #include "stdafx.h"
@@ -26,6 +26,9 @@ static char THIS_FILE[] = __FILE__;
 
 UINT_PTR m_nTimer;
 extern CSVIOTESTApp theApp;
+
+static LPCTSTR SVTVICLPTDLL = _T("SVTVicLpt.dll");
+static LPCTSTR SVLPTIODLL = _T("SVLptIO.dll");
 
 /////////////////////////////////////////////////////////////////////////////
 // CAboutDlg dialog used for App About
@@ -294,7 +297,8 @@ BOOL CSVIOTESTDlg::OnInitDialog()
 	// Default board is an IO board model 10
 	m_BoardModel = 0;
 
-	if( m_csDigital.CompareNoCase("SVTVicLpt.dll") == 0)
+	if( 0 == m_csDigital.CompareNoCase(SVTVICLPTDLL) ||
+		0 == m_csDigital.CompareNoCase(SVLPTIODLL))
 	{
 		VARIANT l_vValue;
 		::VariantInit( &l_vValue );
@@ -355,8 +359,9 @@ BOOL CSVIOTESTDlg::OnInitDialog()
 		// Display Information about the Board.
 		l_strValue = l_vVersion.bstrVal;
 		::VariantClear( &l_vVersion );
-		l_strNewName.Format("%s (%s - %s)",
+		l_strNewName.Format("%s - %s (%s - %s)",
 			l_strWindowName,
+			m_csDigital,
 			l_strName, 
 			l_strValue );
 			
@@ -509,9 +514,9 @@ void CSVIOTESTDlg::OnTimer( UINT_PTR nIDEvent )
 		}
 	}
 
-
 	// Read Fans
-	if( m_csDigital.CompareNoCase("SVTVicLpt.dll") == 0)
+	if( 0 == m_csDigital.CompareNoCase(SVTVICLPTDLL) || 
+		0 == m_csDigital.CompareNoCase(SVLPTIODLL))
 	{
 		VARIANT l_vValue;
 		::VariantInit( &l_vValue);
@@ -1328,6 +1333,16 @@ void CSVIOTESTDlg::OnSelchangeBoardModelCombo()
 // ******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVIOTest\SVIOTESTDlg.cpp_v  $
+ * 
+ *    Rev 1.3   17 Sep 2014 15:18:02   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  943
+ * SCR Title:  Parallel Port I/O for 64 Bit and Windows 7
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   Added support for SVLptIO
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   01 Oct 2013 09:21:32   tbair
  * Project:  SVObserver

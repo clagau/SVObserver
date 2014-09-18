@@ -5,8 +5,8 @@
 //* .Module Name     : SVDriveInitDlg
 //* .File Name       : $Workfile:   SVDriveInitDlg.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.3  $
-//* .Check In Date   : $Date:   16 May 2014 08:53:52  $
+//* .Current Version : $Revision:   1.4  $
+//* .Check In Date   : $Date:   17 Sep 2014 15:03:26  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -615,7 +615,7 @@ bool SVDriveInitDlg::UpdateRegistryInfo()
 			GetPrivateProfileString( l_csIOBoardName, _T("DigitalIODLL"), _T(""), l_pszDLL, 1024, hardwareFileName);
 			l_csIOBoardDLL.ReleaseBuffer();
 
-			l_bOk &= ( UpdateTVicLpt( l_csIOBoardDLL ) == S_OK );
+			l_bOk &= ( UpdateIOInterfaceDLL( l_csIOBoardDLL ) == S_OK );
 		}
 	}
 	
@@ -869,7 +869,7 @@ HRESULT SVDriveInitDlg::BackupBootIni()
 	return l_Status;
 }
 
-HRESULT SVDriveInitDlg::UpdateTVicLpt( LPCTSTR p_szIOBoard )
+HRESULT SVDriveInitDlg::UpdateIOInterfaceDLL( LPCTSTR p_szIOBoard )
 {
 	HRESULT l_Status = S_OK;
 
@@ -912,7 +912,7 @@ HRESULT SVDriveInitDlg::UpdateTVicLpt( LPCTSTR p_szIOBoard )
 		++l_Iter;
 	}
 
-	if( l_IOBoardDLL.Compare( _T( "SVTVicLpt.dll" ) ) == 0 )
+	if( l_IOBoardDLL.Compare( _T( "SVTVicLpt.dll" ) ) == 0  || l_IOBoardDLL.Compare( _T( "SVLptIO.dll" ) ) == 0 )
 	{
 		if( l_Iter == l_FileData.end() )
 		{
@@ -1345,6 +1345,17 @@ HRESULT SVDriveInitDlg::AddCommandBeforeSVObserver( LPCTSTR p_strNewCommand, boo
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVDriveInit\SVDriveInitDlg.cpp_v  $
+ * 
+ *    Rev 1.4   17 Sep 2014 15:03:26   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  943
+ * SCR Title:  Parallel Port I/O for 64 Bit and Windows 7
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   Added support for SVLptIO.
+ * Renamed UpdateTVicLPT to UpdateIOInterfaceDLL
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   16 May 2014 08:53:52   sjones
  * Project:  SVObserver
