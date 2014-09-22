@@ -5,8 +5,8 @@
 //* .Module Name     : SVBarCodeStringMatchDialog
 //* .File Name       : $Workfile:   svbarcodestringmatchdialog.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 09:43:04  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   18 Sep 2014 13:38:22  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -196,7 +196,7 @@ void SVBarCodeStringMatchDialog::OnBarCodeSelectFile()
    // begin SES 18-Jan-2001
    SVFileNameClass   svfnFileName;
 
-   svfnFileName.SetFileType ( SV_BAR_CODE_MATCH_STRING_FILE_TYPE );
+   svfnFileName.SetFileType ( SV_BAR_CODE_STORE_VALUE_FILE_TYPE );
    
    if ( svfnFileName.SelectFile () == IDOK )
    {
@@ -247,7 +247,17 @@ void SVBarCodeStringMatchDialog::OnBcMultiSelectfile()
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\svbarcodestringmatchdialog.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\svbarcodestringmatchdialog.cpp_v  $
+ * 
+ *    Rev 1.1   18 Sep 2014 13:38:22   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  944
+ * SCR Title:  Fix Security for File and Folder Selection Dialog for 64 Bit
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   Revised to use SV_BAR_CODE_STORE_VALUE_FILE_TYPE
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 09:43:04   bWalter
  * Project:  SVObserver

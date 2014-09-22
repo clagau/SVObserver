@@ -5,8 +5,8 @@
 // * .Module Name     : PropertyItemFile.h
 // * .File Name       : $Workfile:   PropTreeItemFile.h  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.0  $
-// * .Check In Date   : $Date:   18 Apr 2013 16:43:18  $
+// * .Current Version : $Revision:   1.1  $
+// * .Check In Date   : $Date:   18 Sep 2014 13:33:28  $
 // ******************************************************************************
 
 // PropertyItemFile.h : header file
@@ -27,44 +27,9 @@
 //	If you use this code, drop me an email.  I'd like to know if you find the code
 //	useful.
 
-#ifndef PROPERTYITEMFILE_H
-#define PROPERTYITEMFILE_H
-
-#include <shlobj.h>
-#include <shlwapi.h>
+#pragma once
 
 #include "PropTreeItem.h"
-
-#pragma comment(lib, "shlwapi")
-
-/////////////////////////////////////////////////////////////////////////////
-// @doc INTERNAL
-// @class SVRFileDialog
-// @base public | CFileDialog
-// The sole purpose for this class is to change the
-// text of the "OPEN" button to "OK".
-
-class SVRFileDialog : public CFileDialog
-{
-	DECLARE_DYNAMIC(SVRFileDialog)
-		
-public:
-	SVRFileDialog(BOOL bOpenFileDialog, // TRUE for FileOpen, FALSE for FileSaveAs
-						LPCTSTR lpszDefExt = NULL,
-						LPCTSTR lpszFileName = NULL,
-						DWORD dwFlags = OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT,
-						LPCTSTR lpszFilter = NULL,
-						CWnd* pParentWnd = NULL);
-
-
-protected:
-	//{{AFX_MSG(SVRFileDialog)
-	virtual BOOL OnInitDialog();
-	//}}AFX_MSG
-	virtual void OnInitDone();
-	DECLARE_MESSAGE_MAP()
-};
-
 
 /////////////////////////////////////////////////////////////////////////////
 // SVRPropertyItemFile control
@@ -77,12 +42,11 @@ protected:
 // SVR_BUTTONLEFT	- places the button on the left side of the control, only used when control is being initialized
 // SVR_VALIDATE   - The Folder or Filename entered must already exist.
 
-#define SVR_FILE				0x00000001
+#define SVR_FILE			0x00000001
 #define SVR_FOLDER			0x00000002
 #define SVR_TRAILINGSLASH	0x00000004
 #define SVR_BUTTONLEFT		0x00000008
-#define SVR_VALIDATE			0x00000010
-
+#define SVR_VALIDATE		0x00000010
 
 /////////////////////////////////////////////////////////////////////////////
 // SVRPropertyItemFile window
@@ -91,10 +55,7 @@ class SVRPropertyItemFile : public CEdit, public SVRPropertyItem
 {
 // Construction
 public:
-	SVRPropertyItemFile();
-	SVRPropertyItemFile(DWORD dwFlags, LPCTSTR sFilter = NULL);
-    SVRPropertyItemFile(DWORD dwFlags, LPCTSTR sFilter = NULL, LPCTSTR sInitialDir = NULL,
-                        BOOL bSetDir = FALSE);
+    SVRPropertyItemFile(bool bFullAccess, DWORD dwFlags, LPCTSTR sFilter = nullptr, LPCTSTR sInitialDir = nullptr, BOOL bSetDir = false);
 	virtual ~SVRPropertyItemFile();
 
 // Attributes
@@ -132,12 +93,7 @@ public:
 
 // Implementation
 public:
-	// @cmember Returns a pointer to the internal BROWSEINFO structure.
-	BROWSEINFO* GetBrowseInfo() const;
 	CString GetPathName(void);
-	// @cmember Returns a pointer to the internal OPENFILENAME structure.
-	OPENFILENAME* GetOpenFileName() const;
-	// @cmember Get the starting position for GetNextPathName().
 
 	// Generated message map functions
 protected:
@@ -157,7 +113,7 @@ protected:
 	// @cmember Starts and handles the returns from the SHBrowseForFolder() shell function.
 	bool SVRBrowseForFolder();
 	
-	// @cmember Starts and handles the returns from the <c CFileDialog>.
+	// @cmember Starts and handles the returns from the <c FileDialog>.
 	bool SVROpenFile();
 	
 	// @cmember Checks if the given point is in the browse button.
@@ -182,32 +138,29 @@ protected:
 
 private:
 	// @cmember Filter for CFileDialog control.
-	CString				m_sFilter;
+	CString	m_sFilter;
 	// @cmember Browse button on left side of control?
-	bool					m_bButtonLeft;
+	bool m_bButtonLeft;
 	// @cmember TRUE while control is being created, FALSE otherwise.
-	bool					m_bCreatingControl;
+	bool m_bCreatingControl;
 	// @cmember Browse for files or folders?
-	bool					m_bFindFolder;
+	bool m_bFindFolder;
 	// @cmember Button has captured the mouse?
-	bool					m_bMouseCaptured;
+	bool m_bMouseCaptured;
 	// @cmember Window text has changed since last time FillBuffers() was called.
-	bool					m_bTextChanged;
+	bool m_bTextChanged;
 	// @cmember Add a trailing slash to folders?
-	bool					m_bTrailingSlash;
+	bool m_bTrailingSlash;
 	// @cmember Current button state (up, down, or disabled).
-	int					m_nButtonState;
-	// @cmember Only active when m_bFindFolder is TRUE.
-	BROWSEINFO*			m_pBROWSEINFO;
-	// @cmember Only active when m_bFindFolder is FALSE.
-	SVRFileDialog*	m_pCFileDialog;
+	int m_nButtonState;
 	// @cmember Window coordinates of the button.
-	CRect					m_rcButtonRect;
+	CRect m_rcButtonRect;
 
     BOOL m_bInitialDirSet;
     CString m_sInitialDir;
+	bool m_bFullAccess;
 protected:
-	CString			m_sAttribute;
+	CString m_sAttribute;
 };
 
 /////////////////////////////////////////////////////////////////////////////
@@ -215,13 +168,22 @@ protected:
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
 
-#endif // !defined(AFX_PROPERTYITEMFILE_H__642536B1_1162_4F99_B09D_9B1BD2CF88B6__INCLUDED_)
-
 // ******************************************************************************
 // * LOG HISTORY:
 // ******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\PropertyTree\PropTreeItemFile.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\PropertyTree\PropTreeItemFile.h_v  $
+ * 
+ *    Rev 1.1   18 Sep 2014 13:33:28   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  944
+ * SCR Title:  Fix Security for File and Folder Selection Dialog for 64 Bit
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   Removed SVRFileDilaog.
+ * Revised to use SVDialogFolder and SVFileDialog
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   18 Apr 2013 16:43:18   bWalter
  * Project:  SVObserver

@@ -5,11 +5,13 @@
 //* .Module Name     : SVOInspectionSourceDlg
 //* .File Name       : $Workfile:   SVOInspectionSourceDlg.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.6  $
-//* .Check In Date   : $Date:   15 May 2014 11:19:02  $
+//* .Current Version : $Revision:   1.7  $
+//* .Check In Date   : $Date:   18 Sep 2014 13:40:04  $
 //******************************************************************************
 
 #include "stdafx.h"
+#include <boost/config.hpp>
+#include <boost/bind.hpp>
 #include "resource.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVOInspectionSourceDlg.h"
@@ -20,10 +22,8 @@
 #include "SVOPPQObj.h"
 #include "SVInspectionExporter.h"
 #include "SVInspectionImporter.h"
-#include "SVFileDialog.h"
 #include "SVObserver.h"
-#include <boost/config.hpp>
-#include <boost/bind.hpp>
+#include "SVLibrary/SVFileDialog.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -249,7 +249,9 @@ void CSVOInspectionSourceDlg::OnBtnImportIpd()
 	LPCTSTR fileFilters = (bColor) ? szColorInspectionExportFileFilters : szInspectionExportFileFilters;
 	// prompt for file 
 	DWORD dwFlags = OFN_DONTADDTORECENT | OFN_ENABLESIZING | OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_NOCHANGEDIR;
-	CSVFileDialog dlg(true, fileExt, NULL, dwFlags, fileFilters, this);
+	bool bFullAccess = TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_UNRESTRICTED_FILE_ACCESS);
+	SVFileDialog dlg(true, bFullAccess, fileExt, NULL, dwFlags, fileFilters, this);
+	dlg.m_ofn.lpstrTitle = _T("Select File");
 
 	if (dlg.DoModal() == IDOK)
 	{
@@ -339,7 +341,8 @@ void CSVOInspectionSourceDlg::OnBtnExportIpd()
 
 				// prompt for path and file name
 				DWORD dwFlags = OFN_DONTADDTORECENT | OFN_ENABLESIZING | OFN_PATHMUSTEXIST | OFN_NOCHANGEDIR | OFN_HIDEREADONLY;
-				CSVFileDialog dlg(false, fileExt, ipName.c_str(), dwFlags, fileFilters, this);
+				bool bFullAccess = TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_UNRESTRICTED_FILE_ACCESS);
+				SVFileDialog dlg(false, bFullAccess, fileExt, ipName.c_str(), dwFlags, fileFilters, this);
 				if (dlg.DoModal() == IDOK)
 				{
 					CString pathName = dlg.GetPathName();
@@ -494,6 +497,16 @@ BOOL CSVOInspectionSourceDlg::OnHelpInfo(HELPINFO* pHelpInfo)
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVOInspectionSourceDlg.cpp_v  $
+ * 
+ *    Rev 1.7   18 Sep 2014 13:40:04   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  944
+ * SCR Title:  Fix Security for File and Folder Selection Dialog for 64 Bit
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   Revised to use SVLibrary/SVFileDialog
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.6   15 May 2014 11:19:02   tbair
  * Project:  SVObserver

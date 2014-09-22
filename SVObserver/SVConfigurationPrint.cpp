@@ -5,12 +5,13 @@
 //* .Module Name     : SVConfigurationPrint
 //* .File Name       : $Workfile:   SVConfigurationPrint.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.14  $
-//* .Check In Date   : $Date:   23 Jul 2014 10:34:08  $
+//* .Current Version : $Revision:   1.15  $
+//* .Check In Date   : $Date:   18 Sep 2014 12:51:58  $
 //******************************************************************************
 
 #pragma region Includes
 #include "stdafx.h"
+#include <boost/algorithm/string/replace.hpp>
 #include "SVConfigurationPrint.h"
 #include "SVConfigurationObject.h"
 
@@ -63,6 +64,8 @@
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
+
+static const int LEFT_MARGIN = 50;
 
 static GUID* pguidNonPrintArray[] = 
 {
@@ -460,9 +463,7 @@ void SVConfigurationPrint::DoPrintConfig()
 		// begin page printing loop
 		BOOL  bError = FALSE;
 		
-        for (m_printInfo.m_nCurPage = nStartPage;
-			 m_printInfo.m_nCurPage != nEndPage;
-			 m_printInfo.m_nCurPage += nStep)
+        for (m_printInfo.m_nCurPage = nStartPage;m_printInfo.m_nCurPage != nEndPage;m_printInfo.m_nCurPage += nStep)
 		{
 			OnPrepareDC();
 			
@@ -471,24 +472,19 @@ void SVConfigurationPrint::DoPrintConfig()
 			{
 				break;
 			}
-			
 			// write current page
 			TCHAR szBuf[80];
-			
 			wsprintf(szBuf, strTemp, m_printInfo.m_nCurPage);
-			
 			dlgPrintStatus.SetDlgItemText(AFX_IDC_PRINT_PAGENUM, szBuf);
 			
 			// set up drawing rect to entire page (in logical coordinates)
 			m_printInfo.m_rectDraw.SetRect(0, 0, m_printDC.GetDeviceCaps(HORZRES), m_printDC.GetDeviceCaps(VERTRES));
-			
 			m_printDC.DPtoLP(&m_printInfo.m_rectDraw);
 			
 			// attempt to start the current page
 			if (m_printDC.StartPage() < 0)
 			{
 				bError = TRUE;
-				
 				break;
 			}  // end if( printDC.StartPage() < 0 )
 			
@@ -496,15 +492,12 @@ void SVConfigurationPrint::DoPrintConfig()
 			
 			ASSERT(m_printInfo.m_bContinuePrinting);
 			
-            //
 			// page successfully started, so now render the page
-            //
 			PrintPage();
 			
 			if (m_printDC.EndPage() < 0 || ! _AfxAbortProc(m_printDC.m_hDC, 0))
 			{
 				bError = TRUE;
-				
 				break;
 			}  // end if( printDC.EndPage() < 0 || ! _AfxAbortProc( printDC.m_hDC, 0 ) )
 		}  // end for(  printInfo.m_nCurPage = nStartPage; ...
@@ -1227,10 +1220,7 @@ void SVConfigurationPrint::PrintInputOutputList( CDC* pDC, SVObjectClass* pObj, 
 	}  // end for( int nCnt = 0; nCnt < pOutputInfoList->GetSize(); nCnt++ )
 }  // end function void SVConfigurationPrint:::PrintInputOutputList( ... )
 
-void SVConfigurationPrint::PrintOCRParameters(CDC* pDC,
-    CString strParameters,
-    CPoint &ptCurPos,
-    int nIndentLevel)
+void SVConfigurationPrint::PrintOCRParameters(CDC* pDC, CString strParameters, CPoint &ptCurPos, int nIndentLevel)
 {
 	SVObserverApp* pApp = dynamic_cast <SVObserverApp*> (AfxGetApp());
 	int      nFirstHeight   = 0;
@@ -1273,10 +1263,7 @@ void SVConfigurationPrint::PrintOCRParameters(CDC* pDC,
 	}
 }
 
-void SVConfigurationPrint::PrintOCRGrayScaleParameters(CDC* pDC,
-    CString strParameters,
-    CPoint &ptCurPos,
-    int nIndentLevel)
+void SVConfigurationPrint::PrintOCRGrayScaleParameters(CDC* pDC, CString strParameters, CPoint &ptCurPos, int nIndentLevel)
 {
 	SVObserverApp* pApp = dynamic_cast <SVObserverApp*> (AfxGetApp());
 	int      nFirstHeight   = 0;
@@ -1330,13 +1317,66 @@ void SVConfigurationPrint::PrintOCRGrayScaleParameters(CDC* pDC,
 	}
 }
 
-/////////////////////////////////////////////////////////////////////////////
-//  
-// The parameter 'bool  bWidthCheck' added for checking whether the width of the text
-// overlaps with its result on the right hand side. default value is true.
-// Added Sri. 2/16/00
-//
-//
+static CString ExpandTabs(LPCTSTR text)
+{
+	//Tabstop every 8 characters - replace tab with eight (8) spaces
+	std::basic_string<TCHAR> tmp = text;
+	boost::replace_all(tmp, _T("\t"), _T("        "));
+	return tmp.c_str();
+}
+
+typedef std::deque<CString> WordWrapLines;
+
+static WordWrapLines DoWordWrap(LPCTSTR text, int numChars)
+{
+	WordWrapLines lines;
+	CString tmp(text);
+	CString line;
+	int cnt = 0;
+	int len = tmp.GetLength();
+	for (int i = 0 ;i < len;i++)
+	{
+		cnt++;
+		if (tmp[i] == _T('\n'))
+		{
+			lines.push_back(_T(" "));
+			cnt = 0;
+			line.Empty();
+		}
+		else if (cnt > numChars)
+		{
+			lines.push_back(line);
+			cnt = 1;
+			line = tmp[i];
+		}
+		else
+		{
+			line += tmp[i];
+		}
+	}
+	if (!line.IsEmpty())
+	{
+		lines.push_back(line);
+	}
+	return lines;
+}
+
+static void OutputTextString(CDC* pDC, LPCTSTR text, const CRect& rRect)
+{
+	// Get Height and Width of a single character ('W')
+	CRect charRect(0, 0, 100, 100);
+	CString testStr(_T("W"));
+	CSize size = pDC->GetTextExtent(testStr);
+	WordWrapLines lines = DoWordWrap(text, rRect.Width() / size.cx);
+	
+	CRect textRect(rRect);
+	for (WordWrapLines::const_iterator it = lines.begin();it != lines.end();++it)
+	{
+		pDC->TextOut(textRect.left, textRect.top, (*it));
+		textRect.top += size.cy;
+	}
+}
+
 int SVConfigurationPrint::PrintString(CDC* pDC, CPoint& ptCurPos, LPCTSTR _lpszOutput)
 {
 	if (m_isPrintToStringBuffer)
@@ -1349,14 +1389,16 @@ int SVConfigurationPrint::PrintString(CDC* pDC, CPoint& ptCurPos, LPCTSTR _lpszO
         CString lpszOutput = _lpszOutput;
         if (lpszOutput.IsEmpty())
             lpszOutput = _T(" ");
-		
+
+		lpszOutput = ExpandTabs(static_cast<LPCTSTR>(lpszOutput));
+
 		CRect crectPrintRect(m_printInfo.m_rectDraw);
 		
         crectPrintRect.top  = ptCurPos.y;
-		crectPrintRect.left = ptCurPos.x + 50;
+		crectPrintRect.left = ptCurPos.x + LEFT_MARGIN;
 		
         // Get dimensions
-		int   nHeight = pDC->DrawText(lpszOutput, &crectPrintRect, DT_LEFT | DT_EXPANDTABS | DT_WORDBREAK | DT_CALCRECT | DT_NOCLIP);
+		int nHeight = pDC->DrawText(lpszOutput, &crectPrintRect, DT_LEFT | DT_TOP | DT_WORDBREAK | DT_NOFULLWIDTHCHARBREAK | DT_NOCLIP | DT_CALCRECT);
 		ptCurPos.x = crectPrintRect.right;
 		
 		if (m_isRealPrint)
@@ -1378,14 +1420,13 @@ int SVConfigurationPrint::PrintString(CDC* pDC, CPoint& ptCurPos, LPCTSTR _lpszO
 				nEndPosition = (int) m_virtualPrintPageInfoList.GetAt(nPageIndex);
 			}
 			
-            CRect    crectRealRect = crectPrintRect;
+            CRect crectRealRect = crectPrintRect;
             crectRealRect.top += m_printInfo.m_rectDraw.top - nStartPosition;
 			crectRealRect.bottom = crectRealRect.top + nHeight;
 			
 			if (crectPrintRect.top >= nStartPosition && crectPrintRect.bottom <= nEndPosition)
 			{
-				pDC->DrawText(lpszOutput, &crectRealRect, DT_LEFT | DT_EXPANDTABS | DT_WORDBREAK | DT_NOCLIP);
-				
+				OutputTextString(pDC, static_cast<LPCTSTR>(lpszOutput), crectRealRect);
                 return nHeight;
 			}
 			else
@@ -1411,9 +1452,7 @@ int SVConfigurationPrint::PrintString(CDC* pDC, CPoint& ptCurPos, LPCTSTR _lpszO
 				m_virtualPrintPageInfoList.Add((DWORD) ptCurPos.y);
 			}
 		}
-		
-		nHeight = pDC->DrawText(lpszOutput, &crectPrintRect, DT_LEFT | DT_EXPANDTABS | DT_WORDBREAK | DT_NOCLIP);
-		
+		OutputTextString(pDC, static_cast<LPCTSTR>(lpszOutput), crectPrintRect);
         return nHeight; 
 	}
 	return 0;
@@ -1627,9 +1666,16 @@ void SVConfigurationPrint::OnBeginPrinting()
 	
 	if (pDC)
 	{
+		pDC->SetMapMode(MM_TEXT);
+		pDC->SetTextAlign(TA_LEFT | TA_TOP | TA_NOUPDATECP);
+
 		// set up drawing rect to entire page in device coordinates)
 		m_printInfo.m_rectDraw.SetRect(0, 0, pDC->GetDeviceCaps(HORZRES), pDC->GetDeviceCaps(VERTRES));
 		
+		pDC->DPtoLP(&m_printInfo.m_rectDraw);
+		pDC->SetViewportOrg(0, 0);
+		pDC->SetViewportExt(m_printInfo.m_rectDraw.Width(), m_printInfo.m_rectDraw.Height());
+
         //
         // Size the fonts based on the printer driver report of space on the
         // printer 'device context'.
@@ -1780,7 +1826,7 @@ void SVConfigurationPrint::PrintPage()
 	// Exchange font and store old one
 	pcfontOldFont = pDC->SelectObject(&m_fontPageNbr);
 	
-	UINT uOldTextAlign = pDC->SetTextAlign(TA_CENTER);
+	UINT uOldTextAlign = pDC->SetTextAlign(TA_CENTER | TA_NOUPDATECP);
 	
 	pDC->TextOut(m_pageCenter, pDC->GetDeviceCaps(VERTRES) - m_heightPageNumberPixels, strPage);
 	
@@ -1788,7 +1834,7 @@ void SVConfigurationPrint::PrintPage()
 	
 	// Restore old font style
 	pDC->SelectObject(pcfontOldFont);
-}  // end function void SVObserverApp::OnPrint( CDC* pPrintCDC, CPrintInfo* pPrintInfo )
+}  // end function void SVConfigurationPrint::PrintPage() 
 
 void SVConfigurationPrint::OnEndPrinting()
 {
@@ -2252,7 +2298,7 @@ void SVConfigurationPrint::PrintPPQBarSection(CDC* pDC, CPoint& ptCurPos, int nI
                     {
                         if ( l_pObject->IsValid() )
                         {
-					ptCurPos.y += PrintString(pDC, ptTemp, l_pObject->GetName());
+							ptCurPos.y += PrintString(pDC, ptTemp, l_pObject->GetName());
                         }//end if
                     }
                     else
@@ -2759,6 +2805,17 @@ HRESULT SVDeviceParamConfigPrintHelper::Visit(SVCustomDeviceParam& param)
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVConfigurationPrint.cpp_v  $
+ * 
+ *    Rev 1.15   18 Sep 2014 12:51:58   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  945
+ * SCR Title:  Configuration Print Report doesn't print correctly under 64 Bit
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   Revised to call TextOut instead of DrawText.
+ * Added word wrap logic.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.14   23 Jul 2014 10:34:08   ryoho
  * Project:  SVObserver

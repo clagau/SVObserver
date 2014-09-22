@@ -5,15 +5,16 @@
 //* .Module Name     : SVFileNameClass
 //* .File Name       : $Workfile:   SVFileNameClass.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   14 Mar 2014 11:06:28  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   18 Sep 2014 13:37:06  $
 //******************************************************************************
 
 #include "stdafx.h"
-#include "SVFileNameClass.h"
-#include "SVDlgFolder.h"
-
 #include <io.h>
+#include "SVFileNameClass.h"
+#include "SVObserver.h"
+#include "SVMessage/SVMessage.h"
+#include "SVLibrary/SVDlgFolder.h"
 
 //##ModelId=3A4B50DE029F
 SVFileNameClass::SVFileNameClass()
@@ -176,53 +177,53 @@ BOOL SVFileNameClass::SetFileType(DWORD dwFileType)
 	{
 		case SV_DEFAULT_FILE_TYPE:
 		{
-			SetFileSelectDialogTitle( "Select File" );
-			SetFileSaveDialogTitle( "Save File" );
-			SetDefaultFileExtension( (LPCTSTR) NULL );
-			SetDefaultFileName( (LPCTSTR) NULL );
-			SetDefaultPathName( "C:\\RUN" );
+			SetFileSelectDialogTitle( _T("Select File") );
+			SetFileSaveDialogTitle( _T("Save File") );
+			SetDefaultFileExtension( static_cast<LPCTSTR>(nullptr));
+			SetDefaultFileName( (LPCTSTR) nullptr );
+			SetDefaultPathName( _T("C:\\RUN") );
 			SetFileSelectFlags( OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | OFN_ENABLESIZING | OFN_EXPLORER );
 			SetFileSaveFlags( OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | OFN_ENABLESIZING | OFN_EXPLORER );
-			SetFileExtensionFilterList( "All Files (*.*)|*.*||" );
+			SetFileExtensionFilterList( _T("All Files (*.*)|*.*||") );
 
 			bOk = TRUE;
 			break;
 		}
 		case SV_CAMERA_FILE_TYPE:
 		{
-			SetFileSelectDialogTitle( "Select Camera File" );
-			SetFileSaveDialogTitle( "Save Camera File" );
-			SetDefaultFileExtension( ".cca" );
-			SetDefaultFileName( (LPCTSTR) NULL );
-			SetDefaultPathName( "C:\\CAM" );
+			SetFileSelectDialogTitle( _T("Select Camera File") );
+			SetFileSaveDialogTitle( _T("Save Camera File") );
+			SetDefaultFileExtension( _T(".cca") );
+			SetDefaultFileName( static_cast<LPCTSTR>(nullptr) );
+			SetDefaultPathName( _T("C:\\CAM") );
 			SetFileSelectFlags( OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | OFN_ENABLESIZING | OFN_EXPLORER );
 			SetFileSaveFlags( OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | OFN_ENABLESIZING | OFN_EXPLORER );
-			SetFileExtensionFilterList( "Digitizer Files (*.cca)|*.cca||" );
+			SetFileExtensionFilterList( _T("Digitizer Files (*.cca)|*.cca||") );
 
 			bOk = TRUE;
 			break;
 		}
 		case SV_IMAGE_SOURCE_FILE_TYPE:
 		{
-			SetFileSelectDialogTitle( "Select Image File" );
-			SetFileSaveDialogTitle( "Save Image File" );
+			SetFileSelectDialogTitle( _T("Select Image File") );
+			SetFileSaveDialogTitle( _T("Save Image File") );
 			SetDefaultFileExtension( ".bmp" );
-			SetDefaultFileName( (LPCTSTR) NULL );
-			SetDefaultPathName( "C:\\IMAGES" );
+			SetDefaultFileName( static_cast<LPCTSTR>(nullptr) );
+			SetDefaultPathName( _T("C:\\IMAGES") );
 			SetFileSelectFlags( OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | OFN_ENABLESIZING | OFN_EXPLORER );
 			SetFileSaveFlags( OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | OFN_ENABLESIZING | OFN_EXPLORER );
-			SetFileExtensionFilterList( "Bitmap File Format (*.bmp)|*.bmp|MIL Image Format File (*.mim)|*.mim|TIFF Image Format (*.tif)|*.tif||" );
+			SetFileExtensionFilterList( _T("Bitmap File Format (*.bmp)|*.bmp|MIL Image Format File (*.mim)|*.mim|TIFF Image Format (*.tif)|*.tif||") );
 
 			bOk = TRUE;
 			break;
 		}
 		case SV_PATTERN_MODEL_FILE_TYPE:
 		{
-			SetFileSelectDialogTitle( "Select Model File" );
-			SetFileSaveDialogTitle( "Save Model File" );
-			SetDefaultFileExtension( ".bmp" );
-			SetDefaultFileName( (LPCTSTR) NULL );
-			SetDefaultPathName( "C:\\RUN" );
+			SetFileSelectDialogTitle( _T("Select Model File") );
+			SetFileSaveDialogTitle( _T("Save Model File") );
+			SetDefaultFileExtension( _T(".bmp") );
+			SetDefaultFileName( static_cast<LPCTSTR>(nullptr) );
+			SetDefaultPathName( _T("C:\\RUN") );
 			SetFileSelectFlags( OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | OFN_ENABLESIZING | OFN_EXPLORER );
 			SetFileSaveFlags( OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | OFN_ENABLESIZING | OFN_EXPLORER );
 			SetFileExtensionFilterList( "Bitmap File Format (*.bmp)|*.bmp|MIL Image Format File (*.mim)|*.mim|TIFF Image Format (*.tif)|*.tif||" );
@@ -232,67 +233,81 @@ BOOL SVFileNameClass::SetFileType(DWORD dwFileType)
 		}
 		case SV_MASK_FILE_TYPE:
 		{
-			SetFileSelectDialogTitle( "Select SVObserver Mask File" );
-			SetFileSaveDialogTitle( "Save SVObserver Mask File" );
-			SetDefaultFileExtension( ".svm" );
-			SetDefaultFileName( (LPCTSTR) NULL );
-			SetDefaultPathName( "C:\\RUN" );
+			SetFileSelectDialogTitle( _T("Select SVObserver Mask File") );
+			SetFileSaveDialogTitle( _T("Save SVObserver Mask File") );
+			SetDefaultFileExtension( _T(".svm") );
+			SetDefaultFileName( static_cast<LPCTSTR>(nullptr) );
+			SetDefaultPathName( _T("C:\\RUN") );
 			SetFileSelectFlags( OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | OFN_ENABLESIZING | OFN_EXPLORER );
 			SetFileSaveFlags( OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | OFN_ENABLESIZING | OFN_EXPLORER );
-			SetFileExtensionFilterList( "SVObserver Mask Files (*.svm)|*.svm||" );
+			SetFileExtensionFilterList( _T("SVObserver Mask Files (*.svm)|*.svm||") );
 
 			bOk = TRUE;
 			break;
 		}
  		case SV_BAR_CODE_MATCH_STRING_FILE_TYPE:
 		{
-			SetFileSelectDialogTitle( "Select Bar Code Match String File" );
-			SetFileSaveDialogTitle( "Save Bar Code Match String File" );
-			SetDefaultFileExtension( ".txt" );
-			SetDefaultFileName( (LPCTSTR) NULL );
-			SetDefaultPathName( "C:\\RUN" );
+			SetFileSelectDialogTitle( _T("Select Bar Code Match String File") );
+			SetFileSaveDialogTitle( _T("Save Bar Code Match String File") );
+			SetDefaultFileExtension( _T(".txt") );
+			SetDefaultFileName( static_cast<LPCTSTR>(nullptr) );
+			SetDefaultPathName( _T("C:\\RUN") );
 			SetFileSelectFlags( OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | OFN_ENABLESIZING | OFN_EXPLORER );
 			SetFileSaveFlags( OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | OFN_ENABLESIZING | OFN_EXPLORER );
-			SetFileExtensionFilterList( "Text Files (*.txt)|*.txt|All Files (*.*)|*.*||" );
+			SetFileExtensionFilterList( _T("Text Files (*.txt)|*.txt|All Files (*.*)|*.*||") );
+
+			bOk = TRUE;
+			break;
+		}
+		case SV_BAR_CODE_STORE_VALUE_FILE_TYPE:
+		{
+			SetFileSelectDialogTitle( _T("Select File") );
+			SetFileSaveDialogTitle( _T("Save Bar Code Value File") );
+			SetDefaultFileExtension( _T(".txt") );
+			SetDefaultFileName( static_cast<LPCTSTR>(nullptr) );
+			SetDefaultPathName( _T("C:\\RUN") );
+			SetFileSelectFlags( OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | OFN_ENABLESIZING | OFN_EXPLORER );
+			SetFileSaveFlags( OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | OFN_ENABLESIZING | OFN_EXPLORER );
+			SetFileExtensionFilterList( _T("Text Files (*.txt)|*.txt|All Files (*.*)|*.*||") );
 
 			bOk = TRUE;
 			break;
 		}
 		case SV_OCR_MATCH_STRING_FILE_TYPE:
 		{
-			SetFileSelectDialogTitle( "Select OCR Match String File" );
-			SetFileSaveDialogTitle( "Save OCR Match String File" );
-			SetDefaultFileExtension( ".txt" );
-			SetDefaultFileName( (LPCTSTR) NULL );
-			SetDefaultPathName( "C:\\RUN" );
+			SetFileSelectDialogTitle( _T("Select OCR Match String File") );
+			SetFileSaveDialogTitle( _T("Save OCR Match String File") );
+			SetDefaultFileExtension( _T(".txt") );
+			SetDefaultFileName( static_cast<LPCTSTR>(nullptr) );
+			SetDefaultPathName( _T("C:\\RUN") );
 			SetFileSelectFlags( OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | OFN_ENABLESIZING | OFN_EXPLORER );
 			SetFileSaveFlags( OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | OFN_ENABLESIZING | OFN_EXPLORER );
-			SetFileExtensionFilterList( "Text Files (*.txt)|*.txt|All Files (*.*)|*.*||" );
+			SetFileExtensionFilterList( _T("Text Files (*.txt)|*.txt|All Files (*.*)|*.*||") );
 
 			bOk = TRUE;
 			break;
 		}
 		case SV_OCR_FONT_FILE_TYPE:
 		{
-			SetFileSelectDialogTitle( "Select WiT Font Training File" );
-			SetFileSaveDialogTitle( "Save WiT Font Training File" );
-			SetDefaultFileExtension( ".wit" );
-			SetDefaultFileName( (LPCTSTR) NULL );
-			SetDefaultPathName( "C:\\RUN" );
+			SetFileSelectDialogTitle( _T("Select WiT Font Training File") );
+			SetFileSaveDialogTitle( _T("Save WiT Font Training File") );
+			SetDefaultFileExtension( _T(".wit") );
+			SetDefaultFileName( static_cast<LPCTSTR>(nullptr) );
+			SetDefaultPathName( _T("C:\\RUN") );
 			SetFileSelectFlags( OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | OFN_ENABLESIZING | OFN_EXPLORER );
 			SetFileSaveFlags( OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | OFN_ENABLESIZING | OFN_EXPLORER );
-			SetFileExtensionFilterList( "WiT Font Files (*.wit)|*.wit||" );
+			SetFileExtensionFilterList( _T("WiT Font Files (*.wit)|*.wit||") );
 
 			bOk = TRUE;
 			break;
 		}
 		case SV_SVX_CONFIGURATION_FILE_TYPE:
 		{
-			SetFileSelectDialogTitle( "Select Configuration File" );
+			SetFileSelectDialogTitle( _T("Select Configuration File") );
 		  SetFileSaveDialogTitle( _T( "Save Configuration File" ) );
-			SetDefaultFileExtension( ".svx" );
-			SetDefaultFileName( (LPCTSTR) NULL );
-			SetDefaultPathName( "C:\\RUN" );
+			SetDefaultFileExtension( _T(".svx") );
+			SetDefaultFileName( static_cast<LPCTSTR>(nullptr) );
+			SetDefaultPathName( _T("C:\\RUN") );
 			SetFileSelectFlags( OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | OFN_ENABLESIZING | OFN_EXPLORER );
 			SetFileSaveFlags( OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | OFN_ENABLESIZING | OFN_EXPLORER );
 			SetFileExtensionFilterList( _T( "SVResearch Configuration Files (*.svx)|*.svx||" ) );
@@ -491,25 +506,21 @@ BOOL SVFileNameClass::SelectPath()
 {
 	BOOL bOk = FALSE;
 	CString		strPath;
-	CDlgFolder	dlg;
-
-	if ( CString( GetPathName() ).IsEmpty() )
+	bool bFullAccess = TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_UNRESTRICTED_FILE_ACCESS);
+	CString initialDir = GetPathName();
+	if (initialDir.IsEmpty())
 	{
-		dlg.m_ofn.lpstrInitialDir = GetDefaultPathName();
+		initialDir = GetDefaultPathName();
 	}
-	else
-	{
-		dlg.m_ofn.lpstrInitialDir = GetPathName();
-	}
+	SVDlgFolder	dlg(bFullAccess, initialDir);
 
-	dlg.InitDlgFolder( &strPath, _T( "Ok" ), _T( "Select Folder" ) );
+	dlg.InitDlgFolder(_T("Ok"), _T("Select Folder"));
 	if ( dlg.DoModal() == IDOK )
 	{
+		strPath = dlg.GetPathName();
 		bOk = SetPathName( strPath );
-
 		SetDefaultPathName( strPath );
 	}
-
 	return bOk;
 }
 
@@ -537,12 +548,14 @@ BOOL SVFileNameClass::SelectFile()
     if (!csFileName.IsEmpty())
 	    csFileName += GetDefaultFileExtension();
 
-	CSVFileDialog dlg( TRUE, 
-	                 GetDefaultFileExtension(),
-									 csFileName, 
-									 GetFileSelectFlags(),
-									 GetFileExtensionFilterList(),
-									 NULL );
+	bool bFullAccess = TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_UNRESTRICTED_FILE_ACCESS);
+	SVFileDialog dlg( true,
+					bFullAccess,  
+	                GetDefaultFileExtension(),
+					csFileName, 
+					GetFileSelectFlags(),
+					GetFileExtensionFilterList(),
+					nullptr );
 
 	dlg.m_ofn.lpstrTitle = GetFileSelectDialogTitle();
 
@@ -589,12 +602,14 @@ BOOL SVFileNameClass::SaveFile()
 	CString csFileName = GetDefaultFileName();
 	csFileName += GetDefaultFileExtension();
 
-	CSVFileDialog dlg( FALSE, 
+	bool bFullAccess = TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_UNRESTRICTED_FILE_ACCESS);
+	SVFileDialog dlg( false, 
+					 bFullAccess,
 	                 GetDefaultFileExtension(),
-									 csFileName, 
-									 GetFileSaveFlags(),
-									 GetFileExtensionFilterList(),
-									 NULL );
+					 csFileName, 
+					 GetFileSaveFlags(),
+					 GetFileExtensionFilterList(),
+					 nullptr );
 
 	dlg.m_ofn.lpstrTitle = GetFileSaveDialogTitle();
 
@@ -683,6 +698,17 @@ void SVFileNameClass::Init()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVFileNameClass.cpp_v  $
+ * 
+ *    Rev 1.3   18 Sep 2014 13:37:06   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  944
+ * SCR Title:  Fix Security for File and Folder Selection Dialog for 64 Bit
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   Added SV_BAR_CODE_STORE_VALUE_FILE_TYPE
+ * Revised to use SVLibrary/SVFileDialog
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   14 Mar 2014 11:06:28   tbair
  * Project:  SVObserver

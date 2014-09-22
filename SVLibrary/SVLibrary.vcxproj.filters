@@ -29,12 +29,6 @@
     <ClCompile Include="SVDialog.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVFEButton.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVFileEditCtrl.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVInPlaceEdit.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -47,24 +41,6 @@
     <ClCompile Include="SVPackedFile.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVPropertyItem.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVPropertyItemCombo.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVPropertyItemEdit.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVPropertyItemFile.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVPropertyItemFont.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVPropertyListBox.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVSimpleIndexQueue.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -72,6 +48,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVWinUtility.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SVDlgFolder.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SVFileDialog.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -94,12 +76,6 @@
     <ClInclude Include="SVDialog.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVFEButton.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVFileEditCtrl.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVInPlaceEdit.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -115,24 +91,6 @@
     <ClInclude Include="SVPackedFile.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVPropertyItem.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVPropertyItemCombo.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVPropertyItemEdit.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVPropertyItemFile.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVPropertyItemFont.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVPropertyListBox.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVReferenceCountingTemplate.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -146,6 +104,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVWinUtility.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVDlgFolder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVFileDialog.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

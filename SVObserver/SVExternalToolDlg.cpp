@@ -5,8 +5,8 @@
 //* .Module Name     : SVExternalToolDlg
 //* .File Name       : $Workfile:   SVExternalToolDlg.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.4  $
-//* .Check In Date   : $Date:   15 May 2014 12:13:16  $
+//* .Current Version : $Revision:   1.5  $
+//* .Check In Date   : $Date:   18 Sep 2014 13:39:12  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -20,7 +20,7 @@
 #include "SVShowDependentsDialog.h"
 #include "SVInspectionProcess.h"
 #include "SVIPDoc.h"
-
+#include "SVLibrary/SVFileDialog.h"
 #include "SVLoki/Functor.h"
 
 #ifdef _DEBUG
@@ -238,21 +238,22 @@ void SVExternalToolDlg::OnDelete()
 
 void SVExternalToolDlg::OnAdd() 
 {
-	CFileDialog cfd(TRUE, "dll", _T(""),
+	bool bFullAccess = TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_UNRESTRICTED_FILE_ACCESS);
+	SVFileDialog cfd(true, bFullAccess, _T("dll"), _T(""),
 		OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT,
-		"Dynamic Link Library(*.dll)|*.dll|All Files (*.*)|*.*||");
-
+		_T("Dynamic Link Library(*.dll)|*.dll|All Files (*.*)|*.*||"));
 
 	TCHAR tszPath[MAX_PATH]={0};
 	_tcscpy(tszPath, m_strLastDllPath);
 	cfd.m_ofn.lpstrInitialDir = tszPath;
+	cfd.m_ofn.lpstrTitle = _T("Select File");
 	
 	if( cfd.DoModal() == IDOK)
 	{
 		// Extract File Name
 		CString strFileName = cfd.GetPathName();
 		m_strLastDllPath = strFileName;
-		int iFind = m_strLastDllPath.ReverseFind('\\');
+		int iFind = m_strLastDllPath.ReverseFind(_T('\\'));
 		if (iFind >= 0)
 		{
 			m_strLastDllPath = m_strLastDllPath.Left(iFind);
@@ -273,19 +274,21 @@ void SVExternalToolDlg::OnAdd()
 void SVExternalToolDlg::OnBrowse() 
 {
 	UpdateData();
-	CFileDialog cfd(TRUE, "dll", _T(""),
+	bool bFullAccess = TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_UNRESTRICTED_FILE_ACCESS);
+	SVFileDialog cfd(true, bFullAccess, _T("dll"), _T(""),
 		OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT,
-		"Dynamic Link Library(*.dll)|*.dll|All Files (*.*)|*.*||");
+		_T("Dynamic Link Library(*.dll)|*.dll|All Files (*.*)|*.*||"));
 
 	TCHAR tszPath[MAX_PATH]={0};
 	_tcscpy(tszPath, m_strLastDllPath);
 	cfd.m_ofn.lpstrInitialDir = tszPath;
+	cfd.m_ofn.lpstrTitle = _T("Select File");
 	
 	if( cfd.DoModal() == IDOK)
 	{
 		CString strFileName = cfd.GetPathName();
 		m_strLastDllPath = strFileName;
-		int iFind = m_strLastDllPath.ReverseFind('\\');
+		int iFind = m_strLastDllPath.ReverseFind(_T('\\'));
 		if (iFind >= 0)
 		{
 			m_strLastDllPath = m_strLastDllPath.Left(iFind);
@@ -560,6 +563,16 @@ HRESULT SVExternalToolDlg::CleanUpOldToolInfo()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVExternalToolDlg.cpp_v  $
+ * 
+ *    Rev 1.5   18 Sep 2014 13:39:12   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  944
+ * SCR Title:  Fix Security for File and Folder Selection Dialog for 64 Bit
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   Revised to use SVLibrary/SVFileDialog
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.4   15 May 2014 12:13:16   sjones
  * Project:  SVObserver

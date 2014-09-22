@@ -6,59 +6,57 @@
 //* .File Name       : $Workfile:   SVDlgFolder.h  $
 //* ----------------------------------------------------------------------------
 //* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 10:15:12  $
+//* .Check In Date   : $Date:   18 Sep 2014 13:15:12  $
 //******************************************************************************
-
-#ifndef __DLGFOLDER_H__
-#define __DLGFOLDER_H__
+#pragma once
 
 #include "SVFileDialog.h"
 
-/////////////////////////////////////////////////////////////////////////////
-//
-// CDlgFolder dialog
-//
-//
-class CDlgFolder : public CSVFileDialog
+class SVDlgFolder : public SVFileDialog
 {
-	DECLARE_DYNAMIC(CDlgFolder)
+	DECLARE_DYNAMIC(SVDlgFolder)
 
 public:
-	CDlgFolder();
-   void InitDlgFolder(
-      CString* pcsPathDestination,   // The destination
-      LPCTSTR csTextOKButton,
-      LPCTSTR csTextCaptionBar
-   );
+	SVDlgFolder(bool bFullAccess, LPCTSTR initialDir=nullptr);
+	virtual ~SVDlgFolder();
+	void InitDlgFolder(LPCTSTR csTextOKButton, LPCTSTR csTextCaptionBar);
 
-   
-public:
-	static WNDPROC m_wndProc;
-	virtual void OnInitDone( );
+	virtual void OnInitDone();
+	CString GetPathName() const;
+	void SetSelectedPath(LPCTSTR path);
 
-// Attributes
-	CString* m_pPath;
    CString m_csTextOKButton;
    CString m_csTextCaptionBar;
+   static WNDPROC m_wndProc;
 
 protected:
-   void RebuildTheTree();
+	virtual void OnFolderChange();
 
-	//{{AFX_MSG(CDlgFolder)
+	//{{AFX_MSG(SVDlgFolder)
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
+
+	CString m_path;
 };
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Developer Studio will insert additional declarations immediately before the previous line.
 
-#endif //__DLGFOLDER_H__
-
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVDlgFolder.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVLibrary\SVDlgFolder.h_v  $
+ * 
+ *    Rev 1.0   18 Sep 2014 13:15:12   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  944
+ * SCR Title:  Fix Security for File and Folder Selection Dialog for 64 Bit
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   Initial checkin, moved from SVObserver
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 10:15:12   bWalter
  * Project:  SVObserver

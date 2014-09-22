@@ -5,8 +5,8 @@
 //* .Module Name     : SVOPropertyPageDlg
 //* .File Name       : $Workfile:   SVOPropertyPageDlg.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.5  $
-//* .Check In Date   : $Date:   13 Aug 2014 12:05:28  $
+//* .Current Version : $Revision:   1.6  $
+//* .Check In Date   : $Date:   18 Sep 2014 13:42:30  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -183,7 +183,8 @@ void CSVOPropertyPageDlg::SetupCamera()
 		LPCTSTR fileFilter = SVHardwareManifest::IsDigitalSVIM( m_eProduct ) ? 
 			(SVHardwareManifest::IsMatroxGige(m_eProduct) ? SVGigeCameraFileFilter : SV1394CameraFileFilter) : CorecoCameraFileFilter;
 		
-		SVRPropertyItemFile* pFile = (SVRPropertyItemFile*)m_Tree.InsertItem(new SVRPropertyItemFile(SVR_FILE,
+		bool bFullAccess = TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_UNRESTRICTED_FILE_ACCESS);
+		SVRPropertyItemFile* pFile = (SVRPropertyItemFile*)m_Tree.InsertItem(new SVRPropertyItemFile(bFullAccess, SVR_FILE,
 				fileFilter, FileName.GetDefaultPathName(), TRUE), pRoot);
 		if (pFile)
 		{
@@ -242,8 +243,9 @@ void CSVOPropertyPageDlg::SetupFileCamera(SVRPropertyItem* pRoot)
 	LPCTSTR fileFilter = _T("Image Files (*.bmp)|*.bmp||");
 	SVFileNameClass FileName;
 	FileName.SetFileType(SV_IMAGE_SOURCE_FILE_TYPE);
-		
-	SVRPropertyItemFile* pFile = (SVRPropertyItemFile*)m_Tree.InsertItem(new SVRPropertyItemFile(SVR_FILE,
+	
+	bool bFullAccess = TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_UNRESTRICTED_FILE_ACCESS);
+	SVRPropertyItemFile* pFile = (SVRPropertyItemFile*)m_Tree.InsertItem(new SVRPropertyItemFile(bFullAccess, SVR_FILE,
 									fileFilter, FileName.GetDefaultPathName(), true), pRoot);
 	if (pFile)
 	{
@@ -253,7 +255,7 @@ void CSVOPropertyPageDlg::SetupFileCamera(SVRPropertyItem* pRoot)
 		pFile->SetItemValue(m_pCameraObj->GetImageFilename());
 	}
 
-	pFile = (SVRPropertyItemFile*)m_Tree.InsertItem(new SVRPropertyItemFile(SVR_FOLDER | SVR_TRAILINGSLASH,
+	pFile = (SVRPropertyItemFile*)m_Tree.InsertItem(new SVRPropertyItemFile(bFullAccess, SVR_FOLDER | SVR_TRAILINGSLASH,
 									NULL, FileName.GetDefaultPathName(), true), pRoot);
 	if (pFile)
 	{
@@ -2283,6 +2285,16 @@ bool CSVOPropertyPageDlg::IsGigeSystem() const
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVOPropertyPageDlg.cpp_v  $
+ * 
+ *    Rev 1.6   18 Sep 2014 13:42:30   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  944
+ * SCR Title:  Fix Security for File and Folder Selection Dialog for 64 Bit
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   Revised due to changes in SVRPropertyItemFile which now uses SVLibrary/SVFileDialog for security purposes.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.5   13 Aug 2014 12:05:28   ryoho
  * Project:  SVObserver

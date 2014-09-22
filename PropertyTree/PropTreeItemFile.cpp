@@ -5,8 +5,8 @@
 // * .Module Name     : PropertyItemFile.cpp
 // * .File Name       : $Workfile:   PropTreeItemFile.cpp  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.1  $
-// * .Check In Date   : $Date:   30 Sep 2013 14:07:26  $
+// * .Current Version : $Revision:   1.2  $
+// * .Check In Date   : $Date:   18 Sep 2014 13:33:28  $
 // ******************************************************************************
 
 // PropertyItemFile.cpp : implementation file
@@ -30,6 +30,8 @@
 #include "stdafx.h"
 #include "proptree.h"
 #include "PropTreeItemFile.h"
+#include "SVLibrary/SVDlgFolder.h"
+#include "SVLibrary/SVFileDialog.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -47,64 +49,6 @@ enum
 	BTN_DISABLED  = 2,
 };
 
-/////////////////////////////////////////////////////////////////////////////
-// @doc EXTERNAL
-// @func This is the default callback procedure for the SHBrowseForFolder function.
-// It sets the current selection to the directory specified in the edit control
-
-int CALLBACK SVRFolderProc(HWND hWnd, UINT nMsg, LPARAM, LPARAM lpData)
-{
-	if (nMsg == BFFM_INITIALIZED)
-		::SendMessage(hWnd, BFFM_SETSELECTION, TRUE, lpData);
-	return 0;
-}
-
-
-IMPLEMENT_DYNAMIC(SVRFileDialog, CFileDialog)
-
-
-/////////////////////////////////////////////////////////////////////////////
-// SVRFileDialog
-
-SVRFileDialog::SVRFileDialog(BOOL bOpenFileDialog,
-										 LPCTSTR lpszDefExt,
-										 LPCTSTR lpszFileName,
-										 DWORD dwFlags,
-										 LPCTSTR lpszFilter,
-										 CWnd* pParentWnd) :
-	CFileDialog(bOpenFileDialog, lpszDefExt, lpszFileName, dwFlags, lpszFilter, pParentWnd)
-{
-}
-
-
-BEGIN_MESSAGE_MAP(SVRFileDialog, CFileDialog)
-	//{{AFX_MSG_MAP(SVRFileDialog)
-	//}}AFX_MSG_MAP
-END_MESSAGE_MAP()
-
-
-BOOL SVRFileDialog::OnInitDialog() 
-{
-	CFileDialog::OnInitDialog();
-	
-	// Set the text of the IDOK button on an
-	// old style dialog to 'OK'
-	if (!(m_ofn.Flags & OFN_EXPLORER))
-	{
-		GetDlgItem(IDOK)->SetWindowText(_T("OK"));
-	}
-	return TRUE;
-}
-
-
-void SVRFileDialog::OnInitDone()
-{
-	// Set the text of the IDOK button on an
-	// Explorer style dialog to 'OK'
-	CommDlg_OpenSave_SetControlText(GetParent()->m_hWnd, IDOK, _T("OK"));
-}
-
-
 void SVRPropertyItemFile::Initialize()
 {
 	// Initialize all variables
@@ -115,56 +59,21 @@ void SVRPropertyItemFile::Initialize()
 	m_bTextChanged     = true;
 	m_bTrailingSlash   = false;
 	m_nButtonState     = BTN_UP;
-	m_pBROWSEINFO      = NULL;
-	m_pCFileDialog     = NULL;
 	m_rcButtonRect.SetRectEmpty();
 }
 
-
 void SVRPropertyItemFile::ResetControl()
 {
-	// clean up all pointer variables
-	if (m_pBROWSEINFO)
-	{
-		delete m_pBROWSEINFO;
-		m_pBROWSEINFO = NULL;
-	}
-
-	if (m_pCFileDialog)
-	{
-		delete m_pCFileDialog;
-		m_pCFileDialog = NULL;
-	}
-
 	m_bCreatingControl = true;
 }
-
 
 /////////////////////////////////////////////////////////////////////////////
 // SVRPropertyItemFile
 
-SVRPropertyItemFile::SVRPropertyItemFile() :
-	m_sAttribute(_T("")),
-	m_sFilter(_T("Text Files (*.txt)|*.txt|All Files (*.*)|*.*||"))
-{
-	Initialize();
-    m_bInitialDirSet = FALSE;
-}
-
-
-SVRPropertyItemFile::SVRPropertyItemFile(DWORD dwFlags, LPCTSTR lpszVal /*=NULL*/) :
-	m_sAttribute(_T("")),
-	m_sFilter(_T("Text Files (*.txt)|*.txt|All Files (*.*)|*.*||"))
-{
-	Initialize();
-    SetItemType(dwFlags, lpszVal);
-    m_bInitialDirSet = FALSE;
-}
-
-
-SVRPropertyItemFile::SVRPropertyItemFile(DWORD dwFlags, LPCTSTR lpszVal, LPCTSTR sInitialDir,BOOL bSetDir) :
-	m_sAttribute(_T("")),
-	m_sFilter(_T("Text Files (*.txt)|*.txt|All Files (*.*)|*.*||"))
+SVRPropertyItemFile::SVRPropertyItemFile(bool bFullAccess, DWORD dwFlags, LPCTSTR lpszVal, LPCTSTR sInitialDir, BOOL bSetDir) 
+: m_sAttribute(_T(""))
+, m_sFilter(_T("Text Files (*.txt)|*.txt|All Files (*.*)|*.*||"))
+, m_bFullAccess(bFullAccess)
 {
     m_sInitialDir = sInitialDir;
     m_bInitialDirSet = bSetDir;
@@ -176,7 +85,6 @@ SVRPropertyItemFile::~SVRPropertyItemFile()
 {
 	ResetControl();
 }
-
 
 BEGIN_MESSAGE_MAP(SVRPropertyItemFile, CEdit)
 	//{{AFX_MSG_MAP(SVRPropertyItemFile)
@@ -196,7 +104,6 @@ BEGIN_MESSAGE_MAP(SVRPropertyItemFile, CEdit)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
-
 /////////////////////////////////////////////////////////////////////////////
 // SVRPropertyItemFile message handlers
 
@@ -204,7 +111,6 @@ void SVRPropertyItemFile::DrawAttribute(CDC* pDC, const RECT& rc)
 {
 	ASSERT(m_pProp!=NULL);
 	CFont*	l_pOldFont;
-
 
 	l_pOldFont = pDC->SelectObject(IsReadOnly() ? m_pProp->GetNormalFont() : m_pProp->GetBoldFont());
 	pDC->SetTextColor(RGB(0,0,0));
@@ -217,13 +123,13 @@ void SVRPropertyItemFile::DrawAttribute(CDC* pDC, const RECT& rc)
 	pDC->SelectObject(l_pOldFont);
 }
 
-
 void SVRPropertyItemFile::OnMove()
 {
 	if (IsWindow(m_hWnd))
+	{
 		SetWindowPos(NULL, m_rc.left, m_rc.top, m_rc.Width(), m_rc.Height(), SWP_NOZORDER|SWP_NOACTIVATE);
+	}
 }
-
 
 void SVRPropertyItemFile::OnRefresh()
 {
@@ -233,7 +139,6 @@ void SVRPropertyItemFile::OnRefresh()
 	}
 }
 
-
 void SVRPropertyItemFile::OnCommit()
 {
 	// hide edit control
@@ -241,7 +146,6 @@ void SVRPropertyItemFile::OnCommit()
 
 	GetWindowText(m_sAttribute);
 }
-
 
 void SVRPropertyItemFile::OnActivate()
 {
@@ -257,7 +161,6 @@ void SVRPropertyItemFile::OnActivate()
 		}
 		SendMessage(WM_SETFONT, (WPARAM)m_pProp->GetNormalFont()->m_hObject);
 	}
-    
 
 	OnRefresh();
 	SetSel(0, -1);
@@ -267,22 +170,23 @@ void SVRPropertyItemFile::OnActivate()
 	SendMessage(EM_LIMITTEXT, _MAX_PATH, 0);
 }
 
-
 void SVRPropertyItemFile::ButtonClicked()
 {
 	bool bResult = false;
 	if (m_bFindFolder)
+	{
 		bResult = SVRBrowseForFolder();
+	}
 	else
+	{
 		bResult = SVROpenFile();
-
+	}
 	if (bResult)
 	{
 		m_bCommitOnce = false;
 		CommitChanges();
 	}
 }
-
 
 void SVRPropertyItemFile::DrawButton(int nButtonState)
 {
@@ -351,7 +255,6 @@ void SVRPropertyItemFile::DrawButton(int nButtonState)
 	m_nButtonState = nButtonState;
 }
 
-
 void SVRPropertyItemFile::DrawDots(CDC *pDC, COLORREF CR, int nOffset /* = 0 */)
 {
 	// draw the dots on the button
@@ -390,58 +293,31 @@ void SVRPropertyItemFile::DrawDots(CDC *pDC, COLORREF CR, int nOffset /* = 0 */)
 	}
 }
 
-
 bool SVRPropertyItemFile::SVRBrowseForFolder()
 {
 	bool bReturnValue = false;
-	bool bProcedure   = true;		// assume user of this class has set a callback procedure
-	bool bDisplay     = true;		// assume user of this class has set a DisplayName
+	
+	CString szPath = m_sAttribute;
+	// remove the trailing slash if present (SHBrowseForFolder() does not like it)
+	int len = szPath.GetLength() - 1;
+	if (len != 2 && szPath[len] == _T('\\'))
+		szPath.Delete(len);
 
-	TCHAR lpstrDisplay[_MAX_PATH];
-	if (!m_pBROWSEINFO->pszDisplayName)			// user has not set a display name
-	{											// flag it, and use our own buffer
-		bDisplay = false;
-		m_pBROWSEINFO->pszDisplayName = lpstrDisplay;
-	}
+	SVDlgFolder dlg(m_bFullAccess, szPath);
+	dlg.InitDlgFolder(_T("OK"), _T("Select Folder"));
 
-	CString szPath;
-	LPARAM oldLP = m_pBROWSEINFO->lParam;
-	if (!m_pBROWSEINFO->lpfn)
+	INT_PTR rc = dlg.DoModal();
+	if (IDOK == rc)
 	{
-		bProcedure = false;
-		szPath = m_sAttribute;
-		// remove the trailing slash if present (SHBrowseForFolder() does not like it)
-		int len = szPath.GetLength() - 1;
-		if (len != 2 && szPath[len] == '\\')
-			szPath.Delete(len);
-		m_pBROWSEINFO->lParam = (LPARAM)(LPCTSTR)szPath;	// set lParam to point to szPath
-		m_pBROWSEINFO->lpfn = SVRFolderProc;	// set the callback procedure
-	}
-
-	ITEMIDLIST __unaligned *idl = SHBrowseForFolder(m_pBROWSEINFO);
-	if (idl)
-	{
-		if (SHGetPathFromIDList(idl, lpstrDisplay))	// get path string from ITEMIDLIST
+		CString path = dlg.GetPathName();
+		if (m_bTrailingSlash)				// add a trailing slash if it is not already there
 		{
-			if (m_bTrailingSlash)				// add a trailing slash if it is not already there
-			{
-				size_t len = _tcslen(lpstrDisplay);
-				if (lpstrDisplay[len - 1] != '\\')
-					_tcscat(lpstrDisplay, _T("\\"));
-			}
-			SetWindowText(lpstrDisplay);		// update edit control
-			bReturnValue = true;
+			int len = path.GetLength();
+			if (path[len - 1] != _T('\\'))
+				path += _T("\\");
 		}
-		LPMALLOC lpm;
-		if (SHGetMalloc(&lpm) == NOERROR)
-			lpm->Free(idl);						// free memory returned by SHBrowseForFolder
-	}
-	if (!bDisplay)								// reset m_pBROWSEINFO to clear the DisplayName
-		m_pBROWSEINFO->pszDisplayName = NULL;
-	if (!bProcedure)							// reset m_pBROWSEINFO to clear the default callback proc.
-	{
-		m_pBROWSEINFO->lpfn = NULL;
-		m_pBROWSEINFO->lParam = oldLP;
+		SetWindowText(path);		// update edit control
+		bReturnValue = true;
 	}
 	
 	m_pProp->SetFocusedItem(this);
@@ -449,55 +325,43 @@ bool SVRPropertyItemFile::SVRBrowseForFolder()
 
 	return bReturnValue;
 }
-
 
 bool SVRPropertyItemFile::SVROpenFile()
 {
 	bool bReturnValue = false;
 	bool bDirectory   = true;			// assume user of this class has set the initial directory
 
+	SVFileDialog dlg(true, m_bFullAccess, nullptr, nullptr, OFN_HIDEREADONLY | OFN_FILEMUSTEXIST | OFN_NOCHANGEDIR, m_sFilter, this);
+
+	dlg.m_ofn.lpstrTitle = _T("Select File");
 	TCHAR lpstrDirectory[_MAX_PATH] = _T("");
-	if (m_pCFileDialog->m_ofn.lpstrInitialDir == NULL)
+	if (dlg.m_ofn.lpstrInitialDir == nullptr)
 	{
 		bDirectory = false;				// directory in edit control
 		_tcscpy(lpstrDirectory, GetPathName());
-		m_pCFileDialog->m_ofn.lpstrInitialDir = lpstrDirectory;
+		dlg.m_ofn.lpstrInitialDir = lpstrDirectory;
 	}
     if (m_bInitialDirSet)
     {
-        m_pCFileDialog->m_ofn.lpstrInitialDir = m_sInitialDir;
+        dlg.m_ofn.lpstrInitialDir = m_sInitialDir;
     }
 
-	if (m_pCFileDialog->DoModal() == IDOK)		// Start the CFileDialog
-	{											// user clicked OK, enter files selected into edit control
+	if (IDOK == dlg.DoModal())			// Start the FileDialog
+	{									// user clicked OK, enter files selected into edit control
 		CString szFileSeperator;
 		szFileSeperator = _T(";");
 		ASSERT(szFileSeperator.GetLength() == 1);	// must be one character only
 		szFileSeperator += _T(" ");
-		CString szPath = m_pCFileDialog->GetPathName();
+		CString szPath = dlg.GetPathName();
 		SetWindowText(szPath);
 		bReturnValue = true;
 	}
-	if (!bDirectory)							// reset OPENFILENAME
-		m_pCFileDialog->m_ofn.lpstrInitialDir = NULL;
 	
 	m_pProp->SetFocusedItem(this);
 	SetFocus();									// ensure focus returns to this control
 	
 	return bReturnValue;
 }
-
-
-/////////////////////////////////////////////////////////////////////////////
-// @doc EXTERNAL
-// @mfunc Returns a pointer to the BROWSEINFO structure so the user of this
-// control can set their own parameters for SHBrowseForFolder.
-
-BROWSEINFO* SVRPropertyItemFile::GetBrowseInfo() const
-{
-	return m_pBROWSEINFO;
-}
-
 
 CString SVRPropertyItemFile::GetPathName(void)
 {
@@ -519,26 +383,15 @@ CString SVRPropertyItemFile::GetPathName(void)
 	return (CString)lpstrReturnString;
 }
 
-
-OPENFILENAME* SVRPropertyItemFile::GetOpenFileName() const
-{
-	if (m_pCFileDialog)
-		return (&m_pCFileDialog->m_ofn);
-	return NULL;
-}
-
-
 BOOL SVRPropertyItemFile::OnChange() 
 {
 	m_bTextChanged = true;
 	return FALSE;		// Allow the parent window to also handle this message
 }
 
-
 void SVRPropertyItemFile::OnDestroy() 
 {
 }
-
 
 void SVRPropertyItemFile::OnEnable(BOOL bEnable) 
 {
@@ -546,7 +399,6 @@ void SVRPropertyItemFile::OnEnable(BOOL bEnable)
 	CEdit::OnEnable(bEnable);
 	DrawButton(bEnable ? BTN_UP : BTN_DISABLED);
 }
-
 
 void SVRPropertyItemFile::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) 
 {
@@ -568,7 +420,6 @@ void SVRPropertyItemFile::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 	CEdit::OnKeyDown(nChar, nRepCnt, nFlags);
 }
 
-
 void SVRPropertyItemFile::OnLButtonUp(UINT nFlags, CPoint point) 
 {
 	CEdit::OnLButtonUp(nFlags, point);
@@ -588,7 +439,6 @@ void SVRPropertyItemFile::OnLButtonUp(UINT nFlags, CPoint point)
 	}
 }
 
-
 void SVRPropertyItemFile::OnMouseMove(UINT nFlags, CPoint point) 
 {
 	CEdit::OnMouseMove(nFlags, point);
@@ -605,7 +455,6 @@ void SVRPropertyItemFile::OnMouseMove(UINT nFlags, CPoint point)
 			DrawButton(BTN_UP);
 	}
 }
-
 
 void SVRPropertyItemFile::OnNcCalcSize(BOOL bCalcValidRects, NCCALCSIZE_PARAMS FAR* lpncsp) 
 {
@@ -633,7 +482,6 @@ void SVRPropertyItemFile::OnNcCalcSize(BOOL bCalcValidRects, NCCALCSIZE_PARAMS F
 	m_rcButtonRect.NormalizeRect();
 }
 
-
 LRESULT SVRPropertyItemFile::OnNcHitTest(CPoint point) 
 {
 	LRESULT where = CEdit::OnNcHitTest(point);
@@ -641,7 +489,6 @@ LRESULT SVRPropertyItemFile::OnNcHitTest(CPoint point)
 		where = HTBORDER;
 	return where;
 }
-
 
 void SVRPropertyItemFile::OnNcLButtonDown(UINT nHitTest, CPoint point) 
 {
@@ -658,13 +505,11 @@ void SVRPropertyItemFile::OnNcLButtonDown(UINT nHitTest, CPoint point)
 	}
 }
 
-
 void SVRPropertyItemFile::OnNcPaint() 
 {
 	CEdit::OnNcPaint();				// draws the border around the control
 	DrawButton(m_nButtonState);	// draw the button in its current state
 }
-
 
 void SVRPropertyItemFile::OnSize(UINT nType, int cx, int cy) 
 {
@@ -672,7 +517,6 @@ void SVRPropertyItemFile::OnSize(UINT nType, int cx, int cy)
 	// Force a recalculation of the button's size and position
 	SetWindowPos(NULL, 0, 0, 0, 0, SWP_FRAMECHANGED | SWP_NOMOVE | SWP_NOZORDER | SWP_NOSIZE | SWP_NOACTIVATE);
 }
-
 
 BOOL SVRPropertyItemFile::ScreenPointInButtonRect(CPoint point)
 {
@@ -683,11 +527,9 @@ BOOL SVRPropertyItemFile::ScreenPointInButtonRect(CPoint point)
 	return m_rcButtonRect.PtInRect(point);
 }
 
-
 void SVRPropertyItemFile::OnKillFocus(CWnd* pNewWnd) 
 {
 	CEdit::OnKillFocus(pNewWnd);
-
 	
 	//if (pNewWnd != NULL && pNewWnd != this) //CWnd::GetParent() == pNewWnd)
 	{
@@ -699,12 +541,10 @@ void SVRPropertyItemFile::OnKillFocus(CWnd* pNewWnd)
 	}
 }
 
-
 UINT SVRPropertyItemFile::OnGetDlgCode() 
 {
 	return CEdit::OnGetDlgCode() | DLGC_WANTALLKEYS;
 }
-
 
 bool SVRPropertyItemFile::SetItemType(DWORD dwFlags, LPCTSTR sFilter /*=NULL*/)
 {
@@ -721,42 +561,19 @@ bool SVRPropertyItemFile::SetItemType(DWORD dwFlags, LPCTSTR sFilter /*=NULL*/)
 	if (m_bFindFolder)
 	{
 		ASSERT(!(dwFlags & SVR_FILE));			// can not specify SVR_FILE with SVR_FOLDER
-		m_pBROWSEINFO = new BROWSEINFO;
-		if (!m_pBROWSEINFO)						// failed to create BROWSEINFO structure
-			return false;
-		// set up the browseinfo structure used by SHBrowseForFolder()
-		::ZeroMemory(m_pBROWSEINFO, sizeof(BROWSEINFO));
-		m_pBROWSEINFO->hwndOwner = GetSafeHwnd();
-		m_pBROWSEINFO->ulFlags = BIF_RETURNONLYFSDIRS;
 	}
 	else
 	{
 		ASSERT(dwFlags & SVR_FILE);			// must specify either SVR_FILE or SVR_FOLDER
-		// create the CFileDialog
-		m_pCFileDialog = new SVRFileDialog(TRUE,
-														NULL,
-														NULL,
-														OFN_HIDEREADONLY | OFN_FILEMUSTEXIST | OFN_NOCHANGEDIR,
-														m_sFilter,
-														this);
-		if (!m_pCFileDialog)						// failed to create the CFileDialog
-			return false;
-
-		// set up the CFileDialog
-		m_pCFileDialog->m_ofn.hwndOwner = GetSafeHwnd();
-		m_pCFileDialog->m_ofn.lpstrTitle = _T("Browse for File");
 	}
-
 	return true;
 }
-
 
 bool SVRPropertyItemFile::GetItemValue(CString& strVal)
 {
 	strVal = m_sAttribute;
 	return true;
 }
-
 
 bool SVRPropertyItemFile::GetItemValue(VARIANT& vtVal)
 {
@@ -765,7 +582,6 @@ bool SVRPropertyItemFile::GetItemValue(VARIANT& vtVal)
     V_BSTR(&vtVal) = m_sAttribute.AllocSysString();
 	return true;
 }
-
 
 bool SVRPropertyItemFile::SetItemValue(LPCTSTR lpszVal)
 {
@@ -778,6 +594,17 @@ bool SVRPropertyItemFile::SetItemValue(LPCTSTR lpszVal)
 // ******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\PropertyTree\PropTreeItemFile.cpp_v  $
+ * 
+ *    Rev 1.2   18 Sep 2014 13:33:28   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  944
+ * SCR Title:  Fix Security for File and Folder Selection Dialog for 64 Bit
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   Removed SVRFileDilaog.
+ * Revised to use SVDialogFolder and SVFileDialog
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   30 Sep 2013 14:07:26   tbair
  * Project:  SVObserver

@@ -5,25 +5,30 @@
 // * .Module Name     : SVLibrary
 // * .File Name       : $Workfile:   svlibrary.h  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.0  $
-// * .Check In Date   : $Date:   22 Apr 2013 13:37:16  $
+// * .Current Version : $Revision:   1.1  $
+// * .Check In Date   : $Date:   18 Sep 2014 13:20:54  $
 // ******************************************************************************
 
 #include "SVDialog.h"
 #include "SVListCtrl.h"
 #include "SecuredObject.h"
 #include "SVVersionInfo.h"
-#include "SVPropertyListBox.h"
-#include "SVPropertyItemCombo.h"
-#include "SVPropertyItemEdit.h"
-#include "SVPropertyItemFile.h"
-#include "SVPropertyItemFont.h"
 
 // ******************************************************************************
 // * LOG HISTORY:
 // ******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVLibrary\svlibrary.h_v  $
+ * 
+ *    Rev 1.1   18 Sep 2014 13:20:54   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  944
+ * SCR Title:  Fix Security for File and Folder Selection Dialog for 64 Bit
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   Removed unused includes
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   22 Apr 2013 13:37:16   bWalter
  * Project:  SVObserver

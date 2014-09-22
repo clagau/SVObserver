@@ -275,9 +275,6 @@
     <ClCompile Include="SVDlgBitmap.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVDlgFolder.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVDlgGraph.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -384,9 +381,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVFileAcquisitionInitiator.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVFileDialog.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVFileNameArrayClass.cpp">
@@ -1928,9 +1922,6 @@
     <ClInclude Include="SVDlgBitmap.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVDlgFolder.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVDlgGraph.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -2040,9 +2031,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVFileAcquisitionInitiator.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVFileDialog.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVFileNameArrayClass.h">

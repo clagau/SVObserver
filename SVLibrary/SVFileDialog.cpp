@@ -2,17 +2,16 @@
 //* COPYRIGHT (c) 2003 by SVResearch, Harrisburg
 //* All Rights Reserved
 //******************************************************************************
-//* .Module Name     : CSVFileDialog
+//* .Module Name     : SVFileDialog
 //* .File Name       : $Workfile:   SVFileDialog.cpp  $
 //* ----------------------------------------------------------------------------
 //* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 10:36:02  $
+//* .Check In Date   : $Date:   18 Sep 2014 13:15:12  $
 //******************************************************************************
 
 #include "stdafx.h"
-#include "SVObserver.h"
+#include <Dlgs.h>
 #include "SVFileDialog.h"
-#include "SVMessage/SVMessage.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -20,11 +19,12 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-#define CMD_SHORTCUT	30736	// Create Shortcut
-#define CMD_DELETE		30737	// Delete
-#define CMD_RENAME		30738	// Rename
-#define CMD_PROPERTIES	30739	// Properties
-#define CMD_CUT			30744	// Cut
+#define CMD_SHORTCUT	30993//30736	// Create Shortcut
+#define CMD_DELETE		30994//30737	// Delete
+#define CMD_RENAME		30995//30738	// Rename
+#define CMD_PROPERTIES	30996//30739	// Properties
+#define CMD_CUT			31001//30744	// Cut
+#define CMD_COPY		31002			// Copy
 
 /////////////////////////////////////////////////////////////////////////////
 // CNewWnd
@@ -46,82 +46,121 @@ END_MESSAGE_MAP()
 
 LRESULT CNewWnd::WindowProc(UINT message, WPARAM wParam, LPARAM lParam) 
 {
-	if( message == WM_INITMENUPOPUP )
+	if (WM_INITMENUPOPUP == message)
 	{
-		HMENU hmenu = (HMENU)(wParam);
-		if( ::IsMenu( hmenu ) )
+		HMENU hmenu = reinterpret_cast<HMENU>(wParam);
+		if (::IsMenu(hmenu))
 		{
+/* for debug purposes, in case the IDs change again
+			TCHAR szItemText[256] = {_T('\0')};
 			int iItems = ::GetMenuItemCount(hmenu);
+			for (int i = 0;i < iItems;i++)
+			{
+				UINT menuID = ::GetMenuItemID(hmenu, i);
+				MENUITEMINFO itemInfo;
+				ZeroMemory(&itemInfo, sizeof(itemInfo));
+				ZeroMemory(&szItemText, sizeof(szItemText));
+				itemInfo.cbSize = sizeof(itemInfo);
+				itemInfo.fMask = MIIM_STRING; 
+				itemInfo.dwTypeData = szItemText; 
+				itemInfo.cch = (sizeof(szItemText) / sizeof(TCHAR));
+				::GetMenuItemInfo(hmenu, menuID, false, &itemInfo);
 
-			if( CMD_RENAME == ::GetMenuItemID( hmenu, (iItems - 2) - 1 ) )
-				::RemoveMenu( hmenu, CMD_RENAME, MF_BYCOMMAND );
-				//::EnableMenuItem( hmenu, CMD_RENAME, MF_BYCOMMAND | MF_GRAYED );
-			if( CMD_DELETE == ::GetMenuItemID( hmenu, (iItems - 3) - 1 ) )
-				::RemoveMenu( hmenu, CMD_DELETE, MF_BYCOMMAND );
-				//::EnableMenuItem( hmenu, CMD_DELETE, MF_BYCOMMAND | MF_GRAYED );
-			if( CMD_CUT == ::GetMenuItemID( hmenu, (iItems - 7) - 1 ) )
-				::RemoveMenu( hmenu, CMD_CUT, MF_BYCOMMAND );
-				//::EnableMenuItem( hmenu, CMD_CUT, MF_BYCOMMAND | MF_GRAYED );
-		}// end if
-
-		return CWnd::WindowProc(message, wParam, lParam);
-	}// end if
-	else if( message == WM_DRAWITEM )    // Short circuit popups since not MFC
+				TRACE("Menu POS: %d ID: %d String: %s\n", i, menuID, szItemText);
+			}
+*/
+			::RemoveMenu(hmenu, CMD_RENAME, MF_BYCOMMAND);
+			::RemoveMenu(hmenu, CMD_DELETE, MF_BYCOMMAND);
+			::RemoveMenu(hmenu, CMD_CUT, MF_BYCOMMAND);
+		}
+	}
+	else if (WM_DRAWITEM == message || WM_MEASUREITEM == message)    // Short circuit popups since not MFC
+	{
 		return CWnd::DefWindowProc(message, wParam, lParam);
-	else if( message == WM_MEASUREITEM ) // Short circuit popups since not MFC
-		return CWnd::DefWindowProc(message, wParam, lParam);
-	else if( message == WM_COMMAND && wParam == 94225 ) // DEL
-		return 0;
-	else if( message == WM_COMMAND && wParam == 94232 ) // CTRL-X
-		return 0;
-	else if( message == WM_COMMAND && wParam == 94226 ) // F2
-		return 0;
-	else
-		return CWnd::WindowProc(message, wParam, lParam);
-}// end WindowProc
-
-/////////////////////////////////////////////////////////////////////////////
-// CSVFileDialog
-
-IMPLEMENT_DYNAMIC(CSVFileDialog, CFileDialog)
-
-CSVFileDialog::CSVFileDialog(BOOL bOpenFileDialog, LPCTSTR lpszDefExt, LPCTSTR lpszFileName,
-		DWORD dwFlags, LPCTSTR lpszFilter, CWnd* pParentWnd) :
-		CFileDialog(bOpenFileDialog, lpszDefExt, lpszFileName, dwFlags, lpszFilter, pParentWnd)
-{
-	m_bFullAccess = false;
-	m_bFullAccess = (TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable( SECURITY_POINT_UNRESTRICTED_FILE_ACCESS )) ;  
+	}
+	else if (message == WM_COMMAND)
+	{
+		if (28689 == LOWORD(wParam) ||  // DEL
+			28696 == LOWORD(wParam) ||  // CTRL-X
+			28690 == LOWORD(wParam))	// F2
+			return 0;
+	}
+	return CWnd::WindowProc(message, wParam, lParam);
 }
 
+IMPLEMENT_DYNAMIC(SVFileDialog, CFileDialog)
 
-BEGIN_MESSAGE_MAP(CSVFileDialog, CFileDialog)
-	//{{AFX_MSG_MAP(CSVFileDialog)
+SVFileDialog::SVFileDialog(BOOL bOpenFileDialog, bool bFullAccess, LPCTSTR lpszDefExt, LPCTSTR lpszFileName, DWORD dwFlags, LPCTSTR lpszFilter, CWnd* pParentWnd) 
+: CFileDialog(bOpenFileDialog, lpszDefExt, lpszFileName, dwFlags, lpszFilter, pParentWnd, 0, false)
+, m_bFullAccess(bFullAccess)
+{
+}
+
+SVFileDialog::~SVFileDialog()
+{
+}
+
+BEGIN_MESSAGE_MAP(SVFileDialog, CFileDialog)
+	//{{AFX_MSG_MAP(SVFileDialog)
 		// NOTE - the ClassWizard will add and remove mapping macros here.
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
-void CSVFileDialog::OnFileNameChange( )
+void SVFileDialog::OnFolderChange()
 {
-	if( !m_bFullAccess && !::IsWindow( m_oWnd1.GetSafeHwnd() ) )
+	CFileDialog::OnFolderChange();
+	
+	if (!m_bFullAccess && !::IsWindow(m_oWnd1.GetSafeHwnd()))
 	{
-		CWnd *psWnd = GetParent()->GetDlgItem(lst1);
-		psWnd = psWnd->GetNextWindow();
-		m_oWnd1.SubclassWindow( psWnd->GetSafeHwnd() );
+		CWnd* psWnd = GetParent()->GetDlgItem(lst2);
+		if (psWnd)
+		{
+			m_oWnd1.SubclassWindow(psWnd->GetSafeHwnd());
 
-		DWORD dwStyle;
-		CWnd *psCtrl = m_oWnd1.GetWindow( GW_CHILD );
-		dwStyle = ::GetWindowLong( psCtrl->GetSafeHwnd(), GWL_STYLE );
-		dwStyle &= ~LVS_EDITLABELS;
-		::SetWindowLong( psCtrl->GetSafeHwnd(), GWL_STYLE, dwStyle );
-	}// end if
-
-}// end OnFileNameChange
+			CWnd *psCtrl = m_oWnd1.GetWindow(GW_CHILD);
+			if (psCtrl)
+			{
+				DWORD dwStyle = ::GetWindowLong(psCtrl->GetSafeHwnd(), GWL_STYLE);
+				dwStyle &= ~LVS_EDITLABELS;
+				::SetWindowLong(psCtrl->GetSafeHwnd(), GWL_STYLE, dwStyle);
+			}
+		}
+	}
+	else
+	{
+		// Sometimes the List View Control doesn't get destroyed between invocations, so we reset the style to allow renaming.
+		CWnd* psWnd = GetParent()->GetDlgItem(lst2);
+		if (psWnd)
+		{
+			CWnd *psCtrl = psWnd->GetWindow(GW_CHILD);
+			if (psCtrl)
+			{
+				DWORD dwStyle = ::GetWindowLong(psCtrl->GetSafeHwnd(), GWL_STYLE);
+				if (LVS_EDITLABELS != (dwStyle & LVS_EDITLABELS))
+				{
+					dwStyle |= LVS_EDITLABELS;
+					::SetWindowLong(psCtrl->GetSafeHwnd(), GWL_STYLE, dwStyle);
+				}
+			}
+		}
+	}
+}
 
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVFileDialog.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVLibrary\SVFileDialog.cpp_v  $
+ * 
+ *    Rev 1.0   18 Sep 2014 13:15:12   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  944
+ * SCR Title:  Fix Security for File and Folder Selection Dialog for 64 Bit
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   Initial checkin, moved from SVObserver
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 10:36:02   bWalter
  * Project:  SVObserver

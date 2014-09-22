@@ -5,8 +5,8 @@
 //* .Module Name     : SVFileNameClass
 //* .File Name       : $Workfile:   SVFileNameClass.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   04 Feb 2014 15:16:00  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   18 Sep 2014 13:37:06  $
 //******************************************************************************
 
 #if defined (_MSC_VER) && (_MSC_VER >= 1000)
@@ -25,7 +25,7 @@ enum SVFileTypesEnum
 	SV_BAR_CODE_MATCH_STRING_FILE_TYPE = 5,
 	SV_OCR_MATCH_STRING_FILE_TYPE      = 6,
 	SV_OCR_FONT_FILE_TYPE              = 7,
-
+	SV_BAR_CODE_STORE_VALUE_FILE_TYPE  = 8,
 	SV_SVX_CONFIGURATION_FILE_TYPE     = 9,
 	SV_OCV_MATCH_STRING_FILE_TYPE      = 10,
 	SV_OCV_FONT_FILE_TYPE              = 11,
@@ -330,6 +330,17 @@ private:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVFileNameClass.h_v  $
+ * 
+ *    Rev 1.2   18 Sep 2014 13:37:06   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  944
+ * SCR Title:  Fix Security for File and Folder Selection Dialog for 64 Bit
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   Added SV_BAR_CODE_STORE_VALUE_FILE_TYPE
+ * Revised to use SVLibrary/SVFileDialog
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   04 Feb 2014 15:16:00   bwalter
  * Project:  SVObserver

@@ -5,94 +5,88 @@
 //* .Module Name     : SVDlgFolder
 //* .File Name       : $Workfile:   SVDlgFolder.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.3  $
-//* .Check In Date   : $Date:   25 Jul 2014 15:09:18  $
+//* .Current Version : $Revision:   1.0  $
+//* .Check In Date   : $Date:   18 Sep 2014 13:15:12  $
 //******************************************************************************
 
 #include "stdafx.h"
+#include <Dlgs.h>
+#include <afxdlgs.h>
 #include "SVDlgFolder.h"
 
-/////////////////////////////////////////////////////////////////////////////
-//
-// CDlgFolder
-//
-//
-IMPLEMENT_DYNAMIC(CDlgFolder, CSVFileDialog)
+IMPLEMENT_DYNAMIC(SVDlgFolder, SVFileDialog)
 
-WNDPROC CDlgFolder::m_wndProc = NULL;
+WNDPROC SVDlgFolder::m_wndProc = nullptr;
 
-CDlgFolder::CDlgFolder() : 
-   CSVFileDialog(TRUE,NULL,_T("*..*"))       // Show Folders Only
+SVDlgFolder::SVDlgFolder(bool bFullAccess, LPCTSTR initialDir) 
+: SVFileDialog(true, bFullAccess, nullptr, _T("*..*"))      // Show folders only.
+{
+/* vista style only
+	m_bPickFoldersMode = true; // Show folders only.
+*/
+	m_ofn.lpstrInitialDir = initialDir;
+}
+
+SVDlgFolder::~SVDlgFolder()
 {
 }
 
-
-BEGIN_MESSAGE_MAP(CDlgFolder, CSVFileDialog)
-	//{{AFX_MSG_MAP(CDlgFolder)
+BEGIN_MESSAGE_MAP(SVDlgFolder, SVFileDialog)
+	//{{AFX_MSG_MAP(SVDlgFolder)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
-void CDlgFolder::InitDlgFolder( CString* pcsPathDestination,   // The destination
-                                LPCTSTR csTextOKButton,
-                                LPCTSTR csTextCaptionBar )
+void SVDlgFolder::InitDlgFolder(LPCTSTR csTextOKButton, LPCTSTR csTextCaptionBar)
 {
-   m_pPath = pcsPathDestination;
    m_csTextOKButton = csTextOKButton;
    m_csTextCaptionBar = csTextCaptionBar;
 }
 
-/////////////////////////////////////////////////////////////////////////////
-//
-// 
-// Call this function when user navigate into CFileDialog.
-// 
-//
-LRESULT CALLBACK WindowProcNew(
-   HWND hwnd,
-   UINT message, 
-   WPARAM wParam, 
-   LPARAM lParam
-)
+void SVDlgFolder::OnFolderChange()
 {
-	
-	if (message ==  WM_COMMAND)
-   {
-		if (HIWORD(wParam) == BN_CLICKED)
-      {
-			if (LOWORD(wParam) == IDOK)
+	SVFileDialog::OnFolderChange();
+}
+
+LRESULT CALLBACK WindowProcNew(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
+{
+	if (WM_COMMAND == message)
+	{
+		if (BN_CLICKED == HIWORD(wParam))
+		{
+			if (IDOK == LOWORD(wParam))
 			{
-            //
-            // Figure out the dialog object from the hwnd.
-            //
-				if (CSVFileDialog* pDlg = (CSVFileDialog*)CWnd::FromHandle(hwnd))
+				// Figure out the dialog object from the hwnd.
+				if (SVFileDialog* pDlg = reinterpret_cast<SVFileDialog *>(CWnd::FromHandle(hwnd)))
 				{
-               //
-               // Get the directory that is has been selected.
-               // This will eliminate the any files that might have been
-               // selected too.
-               //
+					// Get the directory that has been selected.
+					// This will eliminate any files that might have been selected.
 					TCHAR path[MAX_PATH];
 					GetCurrentDirectory(MAX_PATH, path);
-					*((CDlgFolder*)pDlg->GetDlgItem(0))->m_pPath = CString(path);
+					(dynamic_cast<SVDlgFolder*>(pDlg->GetDlgItem(0)))->SetSelectedPath(path);
 					pDlg->EndDialog(IDOK);
-					return NULL;
+					return false;
 				}
 			}
-      }
-   }
-	return CallWindowProc(
-      CDlgFolder::m_wndProc, hwnd, message, wParam, lParam);
+		}
+	}
+	return CallWindowProc(SVDlgFolder::m_wndProc, hwnd, message, wParam, lParam);
+}
+
+CString SVDlgFolder::GetPathName() const
+{
+	return m_path;
+}
+
+void SVDlgFolder::SetSelectedPath(LPCTSTR path)
+{
+	m_path = path;
 }
 
 /////////////////////////////////////////////////////////////////////////////
-// 
-// For update the wiew of CFileDialog
-// 
-void CDlgFolder::OnInitDone()
+// For updating the View of CFileDialog
+void SVDlgFolder::OnInitDone()
 {
-   //
    // Hide unused controls.
-   //
 	HideControl(edt1);
 	HideControl(stc3);
 	HideControl(cmb1);
@@ -100,56 +94,54 @@ void CDlgFolder::OnInitDone()
 	HideControl(cmb13);
 
 	CWnd* pFD = GetParent();
+	if (pFD)
+	{
+		// Reposition the CANCEL and OK buttons.
+		CRect rectCancel; 
+		pFD->GetDlgItem(IDCANCEL)->GetWindowRect(rectCancel);
+		pFD->ScreenToClient(rectCancel);
 
-   //
-   // Reposition the CANCEL and OK buttons.
-   //
-	CRect rectCancel; 
-   pFD->GetDlgItem(IDCANCEL)->GetWindowRect(rectCancel);
-	pFD->ScreenToClient(rectCancel);
+		CRect rectOK; 
+		pFD->GetDlgItem(IDOK)->GetWindowRect(rectOK);
+		pFD->ScreenToClient(rectOK);
+		pFD->GetDlgItem(IDOK)->SetWindowPos(0, rectCancel.left - rectOK.Width() - 4, rectCancel.top, 0, 0, SWP_NOZORDER | SWP_NOSIZE);
 
-	CRect rectOK; 
-   pFD->GetDlgItem(IDOK)->GetWindowRect(rectOK);
-	pFD->ScreenToClient(rectOK);
-	pFD->GetDlgItem(IDOK)->SetWindowPos(
-      0,
-      rectCancel.left - rectOK.Width() - 4,
-      rectCancel.top, 
-      0,0, 
-      SWP_NOZORDER | SWP_NOSIZE
-   );
+		CRect rectList2; 
+		pFD->GetDlgItem(lst1)->GetWindowRect(rectList2);
+		pFD->ScreenToClient(rectList2);
+		pFD->GetDlgItem(lst1)->SetWindowPos(0, 0, 0, rectList2.Width(), abs(rectList2.top - (rectCancel.top - 4)), SWP_NOMOVE | SWP_NOZORDER);
 
-	CRect rectList2; 
-   pFD->GetDlgItem(lst1)->GetWindowRect(rectList2);
-	pFD->ScreenToClient(rectList2);
-	pFD->GetDlgItem(lst1)->SetWindowPos(
-      0,0,0,
-      rectList2.Width(), 
-      abs(rectList2.top - (rectCancel.top - 4)), 
-      SWP_NOMOVE | SWP_NOZORDER
-   );
+		if (!m_csTextOKButton.IsEmpty())
+		{
+			// Change the text on the OK button..
+			SetControlText(IDOK, static_cast<LPCTSTR>(m_csTextOKButton));
+		}
 
-   //
-   // Change the text on the OK button..
-   // LPCSTR "COPY"  not Unicode
-   //
-	//SetControlText(IDOK, _T("COPY"));
-   SetControlText(IDOK,(LPCTSTR)m_csTextOKButton);
+		if (!m_csTextCaptionBar.IsEmpty())
+		{
+			// Set the title in the caption bar..
+			pFD->SetWindowText(static_cast<LPCTSTR>(m_csTextCaptionBar));
+		}
 
-   //
-   // Set the title in the caption bar..
-   //
-	//pFD->SetWindowText(_T("Choose Folder/Drive to Copy File To"));
-	pFD->SetWindowText((LPCTSTR)m_csTextCaptionBar);
-
-	m_wndProc = reinterpret_cast<WNDPROC>(SetWindowLongPtr(pFD->m_hWnd, GWLP_WNDPROC, reinterpret_cast<LONG_PTR>(WindowProcNew)));
+		m_wndProc = reinterpret_cast<WNDPROC>(SetWindowLongPtr(pFD->m_hWnd, GWLP_WNDPROC, reinterpret_cast<LONG_PTR>(WindowProcNew)));
+	}
 }
 
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVDlgFolder.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVLibrary\SVDlgFolder.cpp_v  $
+ * 
+ *    Rev 1.0   18 Sep 2014 13:15:12   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  944
+ * SCR Title:  Fix Security for File and Folder Selection Dialog for 64 Bit
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   Initial checkin, moved from SVObserver
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   25 Jul 2014 15:09:18   ryoho
  * Project:  SVObserver

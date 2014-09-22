@@ -2,46 +2,26 @@
 //* COPYRIGHT (c) 2003 by SVResearch, Harrisburg
 //* All Rights Reserved
 //******************************************************************************
-//* .Module Name     : CSVFileDialog
+//* .Module Name     : SVFileDialog
 //* .File Name       : $Workfile:   SVFileDialog.h  $
 //* ----------------------------------------------------------------------------
 //* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 10:36:12  $
+//* .Check In Date   : $Date:   18 Sep 2014 13:15:12  $
 //******************************************************************************
 
-#if !defined(AFX_SVFILEDIALOG_H__1B1F8858_43EF_11D5_9A46_00106F051331__INCLUDED_)
-#define AFX_SVFILEDIALOG_H__1B1F8858_43EF_11D5_9A46_00106F051331__INCLUDED_
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
-// SVFileDialog.h : header file
-//
 
-/////////////////////////////////////////////////////////////////////////////
-// CNewWnd dialog
 class CNewWnd : public CWnd
 {
-// Construction
 public:
 	CNewWnd();
+	virtual ~CNewWnd();
 
-// Attributes
-public:
-
-// Operations
-public:
-
-// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CNewWnd)
 	protected:
 	virtual LRESULT WindowProc(UINT message, WPARAM wParam, LPARAM lParam);
 	//}}AFX_VIRTUAL
-
-// Implementation
-public:
-	virtual ~CNewWnd();
 
 	// Generated message map functions
 protected:
@@ -50,26 +30,25 @@ protected:
 	DECLARE_MESSAGE_MAP()
 };
 
-/////////////////////////////////////////////////////////////////////////////
-// CSVFileDialog dialog
-
-class CSVFileDialog : public CFileDialog
+class SVFileDialog : public CFileDialog
 {
-	DECLARE_DYNAMIC(CSVFileDialog)
+	DECLARE_DYNAMIC(SVFileDialog)
 
 public:
-	CSVFileDialog(BOOL bOpenFileDialog, // TRUE for FileOpen, FALSE for FileSaveAs
-		LPCTSTR lpszDefExt = NULL,
-		LPCTSTR lpszFileName = NULL,
+	SVFileDialog(BOOL bOpenFileDialog, // TRUE for FileOpen, FALSE for FileSaveAs
+		bool bFullAccess,
+		LPCTSTR lpszDefExt = nullptr,
+		LPCTSTR lpszFileName = nullptr,
 		DWORD dwFlags = OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT,
-		LPCTSTR lpszFilter = NULL,
-		CWnd* pParentWnd = NULL);
+		LPCTSTR lpszFilter = nullptr,
+		CWnd* pParentWnd = nullptr);
+	virtual ~SVFileDialog();
 
 protected:
-	//{{AFX_MSG(CSVFileDialog)
+	//{{AFX_MSG(SVFileDialog)
 		// NOTE - the ClassWizard will add and remove member functions here.
 	//}}AFX_MSG
-	virtual void OnFileNameChange( );
+	virtual void OnFolderChange();
 
 	CNewWnd m_oWnd1; // View containing Explorer window to intercept WM_COMMAND
 	bool m_bFullAccess;
@@ -80,13 +59,21 @@ protected:
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
 
-#endif // !defined(AFX_SVFILEDIALOG_H__1B1F8858_43EF_11D5_9A46_00106F051331__INCLUDED_)
-
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVFileDialog.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVLibrary\SVFileDialog.h_v  $
+ * 
+ *    Rev 1.0   18 Sep 2014 13:15:12   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  944
+ * SCR Title:  Fix Security for File and Folder Selection Dialog for 64 Bit
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   Initial checkin, moved from SVObserver
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 10:36:12   bWalter
  * Project:  SVObserver
