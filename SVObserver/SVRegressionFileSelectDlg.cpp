@@ -5,13 +5,14 @@
 // * .Module Name     : SVRegressionFileSelectDlg
 // * .File Name       : $Workfile:   SVRegressionFileSelectDlg.cpp  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.1  $
-// * .Check In Date   : $Date:   04 Sep 2014 12:43:58  $
+// * .Current Version : $Revision:   1.2  $
+// * .Check In Date   : $Date:   24 Sep 2014 12:08:26  $
 // ******************************************************************************
 
 #include "stdafx.h"
 #include "svobserver.h"
 #include "SVRegressionFileSelectDlg.h"
+#include "SVLibrary/SVFileDialog.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -23,7 +24,6 @@ static char THIS_FILE[] = __FILE__;
 // CSVRegressionFileSelectDlg property page
 
 IMPLEMENT_DYNCREATE(CSVRegressionFileSelectDlg, CPropertyPage)
-
 
 CSVRegressionFileSelectDlg::CSVRegressionFileSelectDlg(LPCTSTR lptstrDialogName) : CPropertyPage(CSVRegressionFileSelectDlg::IDD)
 {
@@ -64,7 +64,6 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CSVRegressionFileSelectDlg message handlers
 
-
 void CSVRegressionFileSelectDlg::SetDlgTitle( LPCTSTR lpszTitle )
 {
 	m_sDialogName = lpszTitle;
@@ -75,15 +74,13 @@ void CSVRegressionFileSelectDlg::OnBtnRegTestBrowseFiles()
 	//get last regression path from registry...
 	CString sFilePath;
 
-	m_sRegistryPath = AfxGetApp()->GetProfileString(_T("RegressionTest"), _T("LastPath"),_T("C:\\Temp"));
+	m_sRegistryPath = AfxGetApp()->GetProfileString(_T("RegressionTest"), _T("LastPath"), _T("C:\\Temp"));
 
-	static char BASED_CODE szFilter[] = "BMP Files (*.bmp)|*.bmp|Image Files (*.bmp)|*.bmp||";
-
-	CString	csFileExtensionFilterList = "BMP's (*.bmp)|*.bmp||";
-	// TODO: Add your control notification handler code here
-	//CFileDialog dlg(TRUE,"*.bmp",szFilter);
-	CFileDialog dlg(TRUE,NULL,NULL,0,szFilter,NULL);
-
+	CString	csFileExtensionFilterList = _T("BMP's (*.bmp)|*.bmp||");
+	static TCHAR szFilter[] = _T("BMP Files (*.bmp)|*.bmp|Image Files (*.bmp)|*.bmp|All Files (*.*)|*.*||");
+	bool bFullAccess = TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_UNRESTRICTED_FILE_ACCESS);
+	SVFileDialog dlg(true, bFullAccess, nullptr, nullptr, 0, szFilter, nullptr);
+	dlg.m_ofn.lpstrTitle = _T("Select File");
 
 	if ( m_sRegTestFiles.IsEmpty() )
 	{
@@ -100,20 +97,17 @@ void CSVRegressionFileSelectDlg::OnBtnRegTestBrowseFiles()
 		m_sRegTestFiles = dlg.GetPathName(); 
 		if ( !m_sRegTestFiles.IsEmpty() )
 		{
-			if (0 != m_sRegTestFiles.Right(4).CompareNoCase(".bmp"))
+			if (0 != m_sRegTestFiles.Right(4).CompareNoCase(_T(".bmp")))
 			{
 				AfxMessageBox(_T("Selection Error:  A .bmp file must be selected."));
-				m_sRegTestFiles = "";
+				m_sRegTestFiles = _T("");
 			}
-
-			int iPos = m_sRegTestFiles.ReverseFind('\\');
+			int iPos = m_sRegTestFiles.ReverseFind(_T('\\'));
 
 			CString sTmpDirName = m_sRegTestFiles.Left(iPos);
-			AfxGetApp()->WriteProfileString(_T("RegressionTest"),_T("LastPath"),sTmpDirName);
+			AfxGetApp()->WriteProfileString(_T("RegressionTest"), _T("LastPath"), sTmpDirName);
 		}
 	}
-
-
 	UpdateData(FALSE);
 }
 
@@ -121,16 +115,13 @@ BOOL CSVRegressionFileSelectDlg::OnInitDialog()
 {
 	CPropertyPage::OnInitDialog();
 
-
 	m_pParent = dynamic_cast<CSVRegressionFileSelectSheet*>(GetParent());
 	m_pParent->m_psh.dwFlags |= PSH_NOAPPLYNOW;
-	
 
 	UpdateData(FALSE);
 	return TRUE;  // return TRUE unless you set the focus to a control
 	              // EXCEPTION: OCX Property Pages should return FALSE
 }
-
 
 RegressionFileEnum CSVRegressionFileSelectDlg::GetFileSelectType()
 {
@@ -181,6 +172,16 @@ void CSVRegressionFileSelectDlg::SetRegressionData(RegressionTestStruct *p_pData
 // ******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVRegressionFileSelectDlg.cpp_v  $
+ * 
+ *    Rev 1.2   24 Sep 2014 12:08:26   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  944
+ * SCR Title:  Fix Security for File and Folder Selection Dialog for 64 Bit
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   Revised to use SVLibrary/SVFileDialog
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   04 Sep 2014 12:43:58   ryoho
  * Project:  SVObserver

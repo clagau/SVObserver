@@ -5,8 +5,8 @@
 //* .Module Name     : AutoBuild
 //* .File Name       : $Workfile:   AutoBuild.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.54  $
-//* .Check In Date   : $Date:   19 Sep 2014 10:15:04  $
+//* .Current Version : $Revision:   1.55  $
+//* .Check In Date   : $Date:   25 Sep 2014 14:10:10  $
 //******************************************************************************
 
 #pragma once
@@ -23,7 +23,7 @@
 //    c is the beta version number - if c equals 0 or is greater than 254 then the application is marked as Released
 //    d is unused
 
-#define FILEVER        6,30,2,0
+#define FILEVER        7,0,1,0
 #define PRODUCTVER     FILEVER
 #define STRFILEVER     SV_STRINGIZE( FILEVER )
 #define STRPRODUCTVER  SV_STRINGIZE( PRODUCTVER )
@@ -33,6 +33,16 @@
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\AutoBuild.h_v  $
+ * 
+ *    Rev 1.55   25 Sep 2014 14:10:10   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  940
+ * SCR Title:  Update SVObserver Version Number for the 7.00 Release
+ * Checked in by:  bWalter;  Ben Walter
+ * Change Description:  
+ *   Change Version to 7.00 Beta 001
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.54   19 Sep 2014 10:15:04   tbair
  * Project:  SVObserver
