@@ -5,8 +5,8 @@
 //* .Module Name     : SVCommandInspectionCollectImageData
 //* .File Name       : $Workfile:   SVCommandInspectionCollectImageData.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   08 May 2013 16:01:44  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   30 Sep 2014 15:35:34  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -16,6 +16,8 @@
 #include "SVInspectionProcess.h"
 #include "SVResultList.h"
 #include "SVToolSet.h"
+#include "SVObjectLibrary/GlobalConst.h"
+#include "SVPPQObject.h"
 
 SVCommandInspectionCollectImageData::SVCommandInspectionCollectImageData()
 : m_InspectionId()
@@ -163,118 +165,32 @@ const SVIPProductStruct& SVCommandInspectionCollectImageData::GetProduct() const
 
 HRESULT SVCommandInspectionCollectImageData::UpdateResults( SVInspectionProcess* p_pInspection, SVIPResultData& p_rResultData )
 {
-	HRESULT l_Status = S_OK;
+	HRESULT hRet = S_OK;
 
 	if( p_pInspection != NULL )
 	{
-		SVToolSetClass* pToolSet = p_pInspection->GetToolSet();
-		if( pToolSet )
+		hRet = setPPQInputResultData(p_pInspection, p_rResultData);
+		if ( S_OK == hRet )
 		{
-			// Get the OutputList
-			SVResultListClass* pResultList = pToolSet->GetResultList();
-			if( pResultList )
-			{
-				for( size_t i = 0; i < pResultList->m_vecObjects.size(); ++i )
-				{
-					SVObjectReference ref = pResultList->m_vecObjects.at(i);
-					if( ref.Object() != NULL )
-					{
-						SVIPResultItemDefinition l_Def;
-
-						if( ref.IsIndexPresent() )
-						{
-							if( ref.IsEntireArray() )
-							{
-								l_Def = SVIPResultItemDefinition( ref.Guid(), SVString() );
-							}
-							else
-							{
-								l_Def = SVIPResultItemDefinition( ref.Guid(), _variant_t( ref.ArrayIndex(true) ) );
-							}
-						}
-						else
-						{
-							l_Def = SVIPResultItemDefinition( ref.Guid() );
-						}
-
-						unsigned long l_Color = ref.Object()->GetObjectColor();
-						if( ref.Object()->GetOwner() )
-						{
-							l_Color = ref.Object()->GetOwner()->GetObjectColor();
-						}
-
-						CString l_Value;
-
-						SVValueObjectReference voref(ref);  // try to assign to value object
-						if( voref.Object() )                // if successful
-						{
-							if( voref->GetObjectType() == SVStringValueObjectType)
-							{
-								CString l_strQuotes;
-								CString l_strValue;
-								voref.GetValue( l_strValue );
-								// Wrap string in Quotes...
-								l_strQuotes.Format(_T("\042%s\042"),l_strValue);
-								l_Value = l_strQuotes;
-							}
-							else
-							{
-								HRESULT hr = voref.GetValue( l_Value );
-								if ( hr == SVMSG_SVO_34_OBJECT_INDEX_OUT_OF_RANGE )
-								{
-									l_Value = _T("< ") + l_Value + _T(" >");
-								}
-								else if ( hr != S_OK )
-								{
-									l_Value = _T( "<Not Valid>" );
-								}
-							}
-						}
-
-						p_rResultData.m_ResultData[ l_Def ] = SVIPResultItemData( static_cast< LPCTSTR >( l_Value ), l_Color );
-					}
-				}
-			}
-		}
-		else
-		{
-			l_Status = E_FAIL;
+			hRet = setToolSetResultData(p_pInspection, p_rResultData);
 		}
 
-		if( l_Status == S_OK )
+		if ( S_OK == hRet )
 		{
-			unsigned long l_Color = 0x00ffffff;
+			hRet = setPPQ_XParameterResultData(p_pInspection, p_rResultData);
+		}
 
-			// Insert all PPQ input items that are picked for viewing
-			for( size_t l = 0; p_pInspection && l < p_pInspection->m_PPQInputs.size(); ++l )
-			{
-				SVIOEntryStruct pIOEntry;
-				SVValueObjectClass* pObject;			
-				pIOEntry = p_pInspection->m_PPQInputs[l];
-
-				pObject = dynamic_cast <SVValueObjectClass*> (pIOEntry.m_IOEntryPtr->m_pValueObject);
-				if ( pObject )
-				{
-					if( !( pObject->ObjectAttributesSet() & SV_VIEWABLE ) )
-						continue;
-
-					SVIPResultItemDefinition l_Def( pObject->GetUniqueObjectID() );
-
-					CString l_Value;
-
-					pObject->GetValue( l_Value );
-
-					p_rResultData.m_ResultData[ l_Def ] = SVIPResultItemData( static_cast< LPCTSTR >( l_Value ), l_Color, pIOEntry.m_IOEntryPtr->m_ObjectType );
-				}
-			}
+		if ( S_OK == hRet )
+		{
+			hRet = setEnvironmentResultData(p_rResultData);
 		}
 	}
 	else
 	{
-		l_Status = E_FAIL;
+		hRet = E_FAIL;
 	}
 
-	return l_Status;
+	return hRet;
 }
 
 HRESULT SVCommandInspectionCollectImageData::UpdateBuffer(const SVGUID& p_rImageId, SVStdMapSVVirtualCameraPtrSVCameraInfoStruct& p_rsvCameraInfos,
@@ -367,11 +283,173 @@ HRESULT SVCommandInspectionCollectImageData::UpdateBuffer(const SVGUID& p_rImage
 	return l_Status;
 }
 
+HRESULT SVCommandInspectionCollectImageData::setToolSetResultData( SVInspectionProcess* p_pInspection, SVIPResultData &p_rResultData )
+{
+	HRESULT l_Status = S_OK;
+
+	SVToolSetClass* pToolSet = p_pInspection->GetToolSet();
+	if( pToolSet )
+	{
+		// Get the OutputList
+		SVResultListClass* pResultList = pToolSet->GetResultList();
+		if( pResultList )
+		{
+			for( size_t i = 0; i < pResultList->m_vecObjects.size(); ++i )
+			{
+				SVObjectReference ref = pResultList->m_vecObjects.at(i);
+				if( ref.Object() != NULL )
+				{
+					SVIPResultItemDefinition l_Def;
+
+					if( ref.IsIndexPresent() )
+					{
+						if( ref.IsEntireArray() )
+						{
+							l_Def = SVIPResultItemDefinition( ref.Guid(), SVString() );
+						}
+						else
+						{
+							l_Def = SVIPResultItemDefinition( ref.Guid(), _variant_t( ref.ArrayIndex(true) ) );
+						}
+					}
+					else
+					{
+						l_Def = SVIPResultItemDefinition( ref.Guid() );
+					}
+
+					unsigned long l_Color = ref.Object()->GetObjectColor();
+					if( ref.Object()->GetOwner() )
+					{
+						l_Color = ref.Object()->GetOwner()->GetObjectColor();
+					}
+
+					CString l_Value;
+
+					SVValueObjectReference voref(ref);  // try to assign to value object
+					if( voref.Object() )                // if successful
+					{
+						if( voref->GetObjectType() == SVStringValueObjectType)
+						{
+							CString l_strQuotes;
+							CString l_strValue;
+							voref.GetValue( l_strValue );
+							// Wrap string in Quotes...
+							l_strQuotes.Format(_T("\042%s\042"),l_strValue);
+							l_Value = l_strQuotes;
+						}
+						else
+						{
+							HRESULT hr = voref.GetValue( l_Value );
+							if ( hr == SVMSG_SVO_34_OBJECT_INDEX_OUT_OF_RANGE )
+							{
+								l_Value = _T("< ") + l_Value + _T(" >");
+							}
+							else if ( hr != S_OK )
+							{
+								l_Value = _T( "<Not Valid>" );
+							}
+						}
+					}
+
+					p_rResultData.m_ResultData[ l_Def ] = SVIPResultItemData( static_cast< LPCTSTR >( l_Value ), l_Color );
+				}
+			}
+		}
+	}
+	else
+	{
+		l_Status = E_FAIL;
+	}	
+	return l_Status;
+}
+
+HRESULT SVCommandInspectionCollectImageData::setPPQInputResultData( SVInspectionProcess* p_pInspection, SVIPResultData &p_rResultData )
+{
+	HRESULT hRet = S_OK;
+
+	// Insert all PPQ input items that are picked for viewing
+	for( size_t l = 0; p_pInspection && l < p_pInspection->m_PPQInputs.size(); ++l )
+	{
+		SVIOEntryStruct pIOEntry = p_pInspection->m_PPQInputs[l];
+		hRet |= addViewableObject2ResultData(pIOEntry.m_IOEntryPtr->m_pValueObject, p_rResultData);
+	}
+	return hRet;
+}
+
+HRESULT SVCommandInspectionCollectImageData::setPPQ_XParameterResultData( SVInspectionProcess* p_pInspection, SVIPResultData &p_rResultData )
+{
+	HRESULT hRet = S_OK;
+	SVObjectReferenceVector ObjectList;
+	SVPPQObject *ppq = p_pInspection->GetPPQ();
+	SVString PPQName = ppq->GetName();
+	SVObjectManagerClass::Instance().getTreeList( PPQName, ObjectList, SV_VIEWABLE );
+	for(SVObjectReferenceVector::const_iterator iter = ObjectList.begin(); iter != ObjectList.end(); ++iter) 
+	{
+		hRet |= addViewableObject2ResultData(iter->Object(), p_rResultData);
+	}
+	return hRet;
+}
+
+HRESULT SVCommandInspectionCollectImageData::setEnvironmentResultData( SVIPResultData &p_rResultData )
+{
+	HRESULT hRet = S_OK;
+	SVObjectReferenceVector ObjectList;
+	SVObjectManagerClass::Instance().getTreeList( Seidenader::SVObjectLibrary::FqnEnvironmentMode, ObjectList, SV_VIEWABLE );
+	for(SVObjectReferenceVector::const_iterator iter = ObjectList.begin(); iter != ObjectList.end(); ++iter) 
+	{
+		hRet |= addViewableObject2ResultData(iter->Object(), p_rResultData);
+	}	
+	return hRet;
+}
+
+HRESULT SVCommandInspectionCollectImageData::addViewableObject2ResultData( SVObjectClass * object, SVIPResultData &p_rResultData, unsigned long colorValue )
+{
+	HRESULT hRet = S_OK;
+	if( nullptr != object && object->ObjectAttributesSet() & SV_VIEWABLE )
+	{
+		SVIPResultItemDefinition def( object->GetUniqueObjectID() );
+		SVString value = "";
+
+		if( SV_IS_KIND_OF( object, SVValueObjectClass ) )
+		{
+			CString tmpValue;
+			hRet = static_cast<SVValueObjectClass*> (object)->GetValue( tmpValue );
+			value = tmpValue;
+		}
+		else if( SV_IS_KIND_OF( object, BasicValueObject ) )
+		{
+			hRet = static_cast <BasicValueObject*> (object)->getValue( value );
+		}
+		else
+		{
+			hRet = E_FAIL;
+		}
+
+		p_rResultData.m_ResultData[ def ] = SVIPResultItemData( value, colorValue );
+	}
+	return hRet;
+}
+
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVCommandInspectionCollectImageData.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVCommandInspectionCollectImageData.cpp_v  $
+ * 
+ *    Rev 1.2   30 Sep 2014 15:35:34   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  925
+ * SCR Title:  Add PPQ Items and SVObserver Modes to Equation Editor Object Selector
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   Changed UpdateResults method to allow PPQ items in equations.  Broke into multiple new methods:
+ * setToolSetResultData,
+ * setPPQInputResultData,
+ * setPPQ_XParameterResultData,
+ * setEnvironmentResultData,
+ * and addViewableObject2ResultData.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   08 May 2013 16:01:44   bWalter
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : SVPPQObject
 //* .File Name       : $Workfile:   SVPPQObject.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.31  $
-//* .Check In Date   : $Date:   02 Sep 2014 14:53:34  $
+//* .Current Version : $Revision:   1.32  $
+//* .Check In Date   : $Date:   30 Sep 2014 15:48:12  $
 //******************************************************************************
 
 #pragma region Includes
@@ -302,7 +302,7 @@ SVPPQObject::~SVPPQObject()
 	m_bOnline                    = false;
 	m_bMaintainSourceImages      = false;
 	m_lInspectionTimeoutMillisec = 0;
-	SetPPQLength(2);
+	SetPPQLength(StandardPpqLength);
 	m_lOutputDelay               = 100;
 	m_lResetDelay                = 0;
 
@@ -344,6 +344,15 @@ void SVPPQObject::init()
 	m_pMasterProductInfos	= NULL;
 	m_pInputList			= NULL;
 	m_pOutputList			= NULL;
+
+	m_voTriggerToggle.ObjectAttributesAllowedRef()	= SV_EMBEDABLE | SV_PRINTABLE;
+	m_voOutputToggle.ObjectAttributesAllowedRef()	= SV_EMBEDABLE | SV_PRINTABLE;
+	m_voACK.ObjectAttributesAllowedRef()			= SV_EMBEDABLE | SV_PRINTABLE;
+	m_voNAK.ObjectAttributesAllowedRef()			= SV_EMBEDABLE | SV_PRINTABLE;
+	m_voMasterFault.ObjectAttributesAllowedRef()	= SV_EMBEDABLE | SV_PRINTABLE;
+	m_voMasterWarning.ObjectAttributesAllowedRef()	= SV_EMBEDABLE | SV_PRINTABLE;
+	m_voNotInspected.ObjectAttributesAllowedRef()	= SV_EMBEDABLE | SV_PRINTABLE;
+	m_voDataValid.ObjectAttributesAllowedRef()		= SV_EMBEDABLE | SV_PRINTABLE;
 
 	m_PpqValues.setValueObject( PpqLength, StandardPpqLength, this );
 	SVObjectManagerClass::Instance().IncrementShortPPQIndicator();
@@ -5076,6 +5085,19 @@ void SVPPQObject::SVSharedMemoryFilters::clear()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVPPQObject.cpp_v  $
+ * 
+ *    Rev 1.32   30 Sep 2014 15:48:12   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  925
+ * SCR Title:  Add PPQ Items and SVObserver Modes to Equation Editor Object Selector
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   Changed destructor to use constant StandardPpqLength instead of using the 
+ * 
+ * literal 2.
+ * Changed init to set the addributes for PPQ items.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.31   02 Sep 2014 14:53:34   sjones
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : SVExternalToolTask
 //* .File Name       : $Workfile:   SVExternalToolTask.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.3  $
-//* .Check In Date   : $Date:   15 May 2014 11:21:48  $
+//* .Current Version : $Revision:   1.4  $
+//* .Check In Date   : $Date:   30 Sep 2014 15:42:52  $
 //******************************************************************************
 
 #ifndef SVEXTERNALTOOLTASK_H
@@ -138,7 +138,15 @@ protected:
 
 	SVImageClass* GetInputImage(int iIndex);
 	SVImageClass* GetResultImage(int iIndex);
-	SVValueObjectClass* GetInputValueObject(int iIndex);
+
+	//************************************
+	// Method:    GetInputValue
+	// Description:  Get a variant value of a requested input.
+	// Parameter: int iIndex Index of the requested input.
+	// Returns:   _variant_t
+	//************************************
+	_variant_t GetInputValue(int iIndex);
+
 	SVVariantValueObjectClass* GetResultValueObject(int iIndex);
 	SVResultClass* GetResultRangeObject(int iIndex);
 	std::vector<SVResultClass*> GetResultRangeObjects();
@@ -193,6 +201,18 @@ public:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVExternalToolTask.h_v  $
+ * 
+ *    Rev 1.4   30 Sep 2014 15:42:52   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  925
+ * SCR Title:  Add PPQ Items and SVObserver Modes to Equation Editor Object Selector
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   Changed the method GetInputValueObject to GetInputValue; also, 
+ * 
+ * changed to returned _variant_t instead of SVValueObjectClass*.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   15 May 2014 11:21:48   sjones
  * Project:  SVObserver

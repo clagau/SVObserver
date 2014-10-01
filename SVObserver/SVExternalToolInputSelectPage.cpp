@@ -5,8 +5,8 @@
 //* .Module Name     : SVExternalToolInputSelectPage
 //* .File Name       : $Workfile:   SVExternalToolInputSelectPage.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.6  $
-//* .Check In Date   : $Date:   17 Jul 2014 18:47:12  $
+//* .Current Version : $Revision:   1.7  $
+//* .Check In Date   : $Date:   30 Sep 2014 15:40:18  $
 //******************************************************************************
 
 // SVExternalToolInputSelectPage.cpp : implementation file
@@ -24,6 +24,8 @@
 #include "SVInspectionProcess.h"
 #include "../SVObjectLibrary/SVObjectManagerClass.h"
 #include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
+#include "SVPPQObject.h"
+#include "SVObjectLibrary/GlobalConst.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -284,7 +286,17 @@ int SVExternalToolInputSelectPage::SelectObject(CString& rObjectName, SVRPropert
 
 	ObjectTreeGenerator::Instance().setSelectorType( ObjectTreeGenerator::SelectorTypeEnum::TypeSingleObject );
 	ObjectTreeGenerator::Instance().setAttributeFilters( SV_ARCHIVABLE );
+	CString tmp;
+	tmp.LoadString(IDS_CLASSNAME_ROOTOBJECT);
+	ObjectTreeGenerator::Instance().setLocationFilter( ObjectTreeGenerator::FilterInput, tmp, SVString( _T("") ) );
 	ObjectTreeGenerator::Instance().setLocationFilter( ObjectTreeGenerator::FilterInput, InspectionName, SVString( _T("") ) );
+	ObjectTreeGenerator::Instance().insertTreeObjects( Seidenader::SVObjectLibrary::FqnEnvironmentMode );
+	if (nullptr != m_pTool)
+	{
+		SVPPQObject *ppq = m_pTool->GetInspection()->GetPPQ();
+		SVString PPQName = ppq->GetName();
+		ObjectTreeGenerator::Instance().insertTreeObjects( PPQName );
+	}
 
 	SVOutputInfoListClass OutputList;
 	pToolSet->GetOutputList( OutputList );
@@ -486,6 +498,16 @@ int SVExternalToolInputSelectPage::GetItemIndex(SVRPropertyItem* pItem)
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVExternalToolInputSelectPage.cpp_v  $
+ * 
+ *    Rev 1.7   30 Sep 2014 15:40:18   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  925
+ * SCR Title:  Add PPQ Items and SVObserver Modes to Equation Editor Object Selector
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   Changed SelectObject to allow selection of PPQ items.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.6   17 Jul 2014 18:47:12   gramseier
  * Project:  SVObserver

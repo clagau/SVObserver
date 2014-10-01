@@ -5,8 +5,8 @@
 //* .Module Name     : SVExternalToolTask
 //* .File Name       : $Workfile:   SVExternalToolTask.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.9  $
-//* .Check In Date   : $Date:   15 May 2014 11:21:48  $
+//* .Current Version : $Revision:   1.10  $
+//* .Check In Date   : $Date:   30 Sep 2014 15:41:32  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -865,16 +865,15 @@ BOOL SVExternalToolTask::onRun( SVRunStatusClass& RRunStatus )
 	{
 		try
 		{
-			// See Section 3.5.3.  
+			// See Section 3.5.3.
 			// SetInputValues()
 			// SetMILInputImages()
 			// SetMILResultImages()
 			// RunTool()
 			// GetResultValues()
 
-			
 			SVMatroxBufferInterface::SVStatusCode l_Code;
-			
+
 			GUID guid = GetUniqueObjectID();
 			int i;
 			HRESULT hr = S_OK;
@@ -919,10 +918,6 @@ BOOL SVExternalToolTask::onRun( SVRunStatusClass& RRunStatus )
 			if ( bNeedReset )
 				ResetObject();
 
-
-
-
-
 			/////////////////////////////////////////////////////
 			//   Inputs
 			/////////////////////////////////////////////////////
@@ -930,17 +925,13 @@ BOOL SVExternalToolTask::onRun( SVRunStatusClass& RRunStatus )
 			// collect input values
 			for ( i=0; i < m_Data.m_lNumInputValues; i++)
 			{
-				SVValueObjectClass* pValueObject = GetInputValueObject(i);
-				//ASSERT( pValueObject );
-				//m_aInspectionInputValues[i].Clear();
-				pValueObject->GetValue( m_aInspectionInputValues[i] );
+				m_aInspectionInputValues[i] = GetInputValue(i);
 				HRESULT hrChangeType = ::VariantChangeType(&m_aInspectionInputValues[i], &m_aInspectionInputValues[i], 0, static_cast<VARTYPE>(m_Data.m_aInputValueDefinitions[i].lVT) );
 				if ( hrChangeType != S_OK )
 				{
 					m_aInspectionInputValues[i].Clear();
 					m_aInspectionInputValues[i].ChangeType( static_cast<VARTYPE>(m_Data.m_aInputValueDefinitions[i].lVT));
 				}
-
 			}
 			// send input values to DLL
 			hr = m_dll.SetInputValues( guid, m_Data.m_lNumInputValues, m_Data.m_lNumInputValues ? &(m_aInspectionInputValues[0]) : NULL );
@@ -1106,7 +1097,6 @@ BOOL SVExternalToolTask::onRun( SVRunStatusClass& RRunStatus )
 			{ // HBitmap Images
 			}
 
-			
 			///////////////////////////////////////
 			//    Run
 			///////////////////////////////////////
@@ -1117,9 +1107,6 @@ BOOL SVExternalToolTask::onRun( SVRunStatusClass& RRunStatus )
 			}
 			if ( hr != S_OK )
 				throw hr;
-
-			
-
 
 			///////////////////////////////////////
 			//    Outputs
@@ -1133,17 +1120,12 @@ BOOL SVExternalToolTask::onRun( SVRunStatusClass& RRunStatus )
 
 			for ( i=0; i < m_Data.m_lNumResultValues; i++ )
 			{
-				
-				//ASSERT( m_Data.m_aResultValueDefinitions[i].lVT == m_aInspectionResultValues[i].vt);
-
 				GetResultValueObject(i)->SetValue( RRunStatus.m_lResultDataIndex, m_aInspectionResultValues[i] );
-				
+
 				// Clear OleVariant that was created in Dll.
 				m_aInspectionResultValues[i].Clear();
 				//m_aInspectionResultValues[i].vt = m_Data.m_aResultValueDefinitions[i].lVT;
 			}
-
- 
 
 			// Result Images
 
@@ -1232,7 +1214,6 @@ BOOL SVExternalToolTask::onRun( SVRunStatusClass& RRunStatus )
 				l_bOk = FALSE;
 			}
 
-
 		}	// end try
 		catch (HRESULT hr)
 		{
@@ -1259,7 +1240,6 @@ BOOL SVExternalToolTask::onRun( SVRunStatusClass& RRunStatus )
 
 	return l_bOk;
 }
-
 
 HRESULT SVExternalToolTask::SetPathName(const CString& strPath)
 {
@@ -1408,10 +1388,16 @@ HRESULT SVExternalToolTask::InspectionInputsToVariantArray()
 	{
 		SVInObjectInfoStruct& rInfo = m_Data.m_aInputObjectInfo[i];
 		_variant_t vtTemp;
-		if( dynamic_cast<SVValueObjectClass*>(rInfo.GetInputObjectInfo().PObject) != NULL )
+		SVObjectClass *pObject = rInfo.GetInputObjectInfo().PObject;
+		if( SV_IS_KIND_OF( pObject, SVValueObjectClass ) )
 		{
-			SVValueObjectClass* pValueObject = static_cast < SVValueObjectClass* >(rInfo.GetInputObjectInfo().PObject);
+			SVValueObjectClass* pValueObject = static_cast < SVValueObjectClass* >(pObject);
 			pValueObject->GetValue( vtTemp );
+		}
+		else if( SV_IS_KIND_OF( pObject, BasicValueObject ) )
+		{
+			BasicValueObject* pValueObject = static_cast < BasicValueObject* >(pObject);
+			pValueObject->getValue( vtTemp );
 		}
 		else
 		{
@@ -1454,26 +1440,28 @@ SVImageClass* SVExternalToolTask::GetInputImage(int iIndex)
 	}
 }
 
-SVValueObjectClass* SVExternalToolTask::GetInputValueObject(int iIndex)
+_variant_t SVExternalToolTask::GetInputValue(int iIndex)
 {
-	//ASSERT( iIndex >= 0 );
-	//ASSERT( iIndex < m_Data.m_lNumInputValues );
+	_variant_t value;
+	value.Clear();
 	if ( iIndex >= 0 && iIndex < m_Data.m_lNumInputValues )
 	{
 		SVInObjectInfoStruct& rInfo = m_Data.m_aInputObjectInfo[iIndex];
-		if ( dynamic_cast<SVValueObjectClass*>(rInfo.GetInputObjectInfo().PObject ))
+		SVObjectClass *pObject = rInfo.GetInputObjectInfo().PObject;
+		if( SV_IS_KIND_OF( pObject, SVValueObjectClass ) )
 		{
-			return static_cast <SVValueObjectClass*> (rInfo.GetInputObjectInfo().PObject);
+			(static_cast <SVValueObjectClass*> (pObject) )->GetValue( value );
+		}
+		else if( SV_IS_KIND_OF( pObject, BasicValueObject ) )
+		{
+			static_cast <BasicValueObject*> (pObject)->getValue( value );
 		}
 		else
 		{
-			return &(m_Data.m_aInputObjects[iIndex]);
+			(m_Data.m_aInputObjects[iIndex]).GetValue( value );
 		}
 	}
-	else
-	{
-		return NULL;
-	}
+	return value;
 }
 
 SVImageClass* SVExternalToolTask::GetResultImage(int iIndex)
@@ -2091,15 +2079,21 @@ HRESULT SVExternalToolTask::ConnectInputs()
 		CString strObjectName ; 
 		CString strCompleteObjectName = GetInspection()->GetCompleteObjectName();
 		m_Data.m_aInputObjects[i].GetValue(strObjectName);
-		// if the inspection name is found in the object name
-		// then use the object name.
-		if( strObjectName.Find(strCompleteObjectName) == 0)
-		{	// Object name already has inspection name.
-			strCompleteObjectName = strObjectName;
+
+		CString toolSetText;
+		toolSetText.LoadString(IDS_CLASSNAME_SVTOOLSET);
+
+		// if object name starts with tool set, inspection name must be added
+		// else it must not be added, because it can be another object (e.g. "PPQ_1.Length" or "Environment.Mode.IsRun")
+		if( strObjectName.Find(toolSetText) == 0)
+		{	
+			// Inspection name plus object name.
+			strCompleteObjectName += "." + strObjectName;
 		}
 		else
-		{	// Inspection name plus object name.
-			strCompleteObjectName += "." + strObjectName;
+		{
+			// Object name is already complete.
+			strCompleteObjectName = strObjectName;
 		}
 
 		//MZA: change function to find object from inspection child object to anz dotted name
@@ -2175,6 +2169,21 @@ HRESULT SVExternalToolTask::CollectInputImageNames( SVRunStatusClass& RRunStatus
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVExternalToolTask.cpp_v  $
+ * 
+ *    Rev 1.10   30 Sep 2014 15:41:32   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  925
+ * SCR Title:  Add PPQ Items and SVObserver Modes to Equation Editor Object Selector
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   Changed onRun method to call GetInputValue.
+ * Added support for BasicValueObject to the method InpsectionInputsToVariantArray.
+ * Changed the method GetInputValueObject to GetInputValue; also, changed to returned _variant_t instead of 
+ * 
+ * SVValueObjectClass*.
+ * Updated the method ConnectInputs to handle PPQ items.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.9   15 May 2014 11:21:48   sjones
  * Project:  SVObserver

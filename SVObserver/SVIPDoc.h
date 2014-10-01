@@ -5,8 +5,8 @@
 //* .Module Name     : SVIPDoc
 //* .File Name       : $Workfile:   SVIPDoc.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.4  $
-//* .Check In Date   : $Date:   12 Jun 2014 16:49:28  $
+//* .Current Version : $Revision:   1.5  $
+//* .Check In Date   : $Date:   30 Sep 2014 15:46:42  $
 //******************************************************************************
 
 #pragma once
@@ -324,6 +324,48 @@ private:
 	void InitializeDirectX();
 
 	void ClearRegressionTestStructures();
+
+	//************************************
+	// Method:    addToolsetObject2ResultDefinitions
+	// Description:  Add all viewable toolset objects to the result definition list
+	// Parameter: SVResultDefinitionDeque& p_rDefinitions
+	// Returns:   HRESULT S_OK if no error, else E_FAIL.
+	//************************************
+	HRESULT addToolsetObject2ResultDefinitions( SVResultDefinitionDeque& p_rDefinitions ) const;
+
+	//************************************
+	// Method:    addPPQInputs2ResultDefinitions
+	// Description:  Add all viewable PPQ input objects to the result definition list
+	// Parameter: SVResultDefinitionDeque& p_rDefinitions
+	// Returns:   HRESULT S_OK if no error, else E_FAIL.
+	//************************************
+	HRESULT addPPQInputs2ResultDefinitions( SVResultDefinitionDeque& p_rDefinitions ) const;
+
+	//************************************
+	// Method:    addPPQ_XParameter2ResultDefinitions
+	// Description:  Add all viewable PPQ parameter to the result definition list
+	// Parameter: SVResultDefinitionDeque& p_rDefinitions
+	// Returns:   HRESULT S_OK if no error, else E_FAIL.
+	//************************************
+	HRESULT addPPQ_XParameter2ResultDefinitions( SVResultDefinitionDeque& p_rDefinitions ) const;
+
+	//************************************
+	// Method:    addEnvironmentObject2ResultDefinitions
+	// Description:  Add all viewable environment object to the result definition list
+	// Parameter: SVResultDefinitionDeque& p_rDefinitions
+	// Returns:   void
+	//************************************
+	void addEnvironmentObject2ResultDefinitions( SVResultDefinitionDeque& p_rDefinitions ) const;
+
+	//************************************
+	// Method:    addViewableObject2ResultDefinitions
+	// Description:  Add one object to the result definition list, if it viewable.
+	// Parameter: SVObjectClass* pObject
+	// Parameter: SVResultDefinitionDeque& p_rDefinitions
+	// Returns:   void
+	//************************************
+	void addViewableObject2ResultDefinitions( SVObjectClass* pObject, SVResultDefinitionDeque& p_rDefinitions ) const;
+
 	RegressionRunModeEnum m_regtestRunMode;
 	RegressionPlayModeEnum m_regtestRunPlayMode;
 	HANDLE m_hRegressionHandle;
@@ -347,6 +389,21 @@ private:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVIPDoc.h_v  $
+ * 
+ *    Rev 1.5   30 Sep 2014 15:46:42   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  925
+ * SCR Title:  Add PPQ Items and SVObserver Modes to Equation Editor Object Selector
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   Added new methods:
+ * addToolsetObject2ResultDefinitions,
+ * addPPQInputs2ResultDefinitions,
+ * addPPQ_XParameter2ResultDefinitions,
+ * addEnvironmentObject2ResultDefinitions,
+ * and addViewableObject2ResultDefinitions.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.4   12 Jun 2014 16:49:28   sjones
  * Project:  SVObserver

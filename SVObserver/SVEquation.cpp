@@ -5,8 +5,8 @@
 //* .Module Name     : SVEquation.cpp
 //* .File Name       : $Workfile:   SVEquation.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.5  $
-//* .Check In Date   : $Date:   15 May 2014 11:21:36  $
+//* .Current Version : $Revision:   1.7  $
+//* .Check In Date   : $Date:   30 Sep 2014 15:37:34  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -22,6 +22,7 @@
 #include "SVPPQObject.h"
 #include "SVToolSet.h"
 #include "SVObjectLibrary\SVToolsetScriptTags.h"
+#include "SVObjectLibrary\GlobalConst.h"
 
 SVEquationSymbolTableClass::SVEquationSymbolTableClass()
 {
@@ -40,15 +41,15 @@ SVEquationSymbolTableClass::~SVEquationSymbolTableClass()
 void SVEquationSymbolTableClass::ClearAll()
 {
 	// Disconnect the dynmaic Inputs
-	for( int i = toolsetSymbolTable.GetSize() - 1; i >= 0; i-- )
+	for( int i = m_toolsetSymbolTable.GetSize() - 1; i >= 0; i-- )
 	{
-		SVInObjectInfoStruct* pInObjectInfo = toolsetSymbolTable.GetAt( i );
+		SVInObjectInfoStruct* pInObjectInfo = m_toolsetSymbolTable.GetAt( i );
 		::SVSendMessage(pInObjectInfo->GetInputObjectInfo().UniqueObjectID,
 										SVM_DISCONNECT_OBJECT_INPUT, 
 										reinterpret_cast<DWORD_PTR>(pInObjectInfo), NULL );
 	}
 	// Empty the ToolSet Symbol table 
-	toolsetSymbolTable.RemoveAll();
+	m_toolsetSymbolTable.RemoveAll();
 
 	// Empty the Combined Symbol table
 	for( int n = GetSize() - 1;n >= 0; n-- )
@@ -64,12 +65,12 @@ void SVEquationSymbolTableClass::ClearAll()
 /////////////////////////////////////////////////////////////////
 // Set pointers to Available Lists
 /////////////////////////////////////////////////////////////////
-void SVEquationSymbolTableClass::SetAvailableLists(SVInputInfoListClass* PAvailPPQSymbols, SVOutputInfoListClass* PAvailToolSetSymbols )
+void SVEquationSymbolTableClass::SetAvailableLists(SVInputInfoListClass* PAvailInputSymbols, SVOutputInfoListClass* PAvailToolSetSymbols )
 {
-	pAvailPPQSymbols = PAvailPPQSymbols;
-	pAvailToolSetSymbols = PAvailToolSetSymbols;
+	m_pAvailInputSymbols = PAvailInputSymbols;
+	m_pAvailToolSetSymbols = PAvailToolSetSymbols;
 
-	ASSERT( pAvailToolSetSymbols == NULL || 0 < pAvailToolSetSymbols->GetSize() );
+	ASSERT( m_pAvailToolSetSymbols == NULL || 0 < m_pAvailToolSetSymbols->GetSize() );
 }
 
 /////////////////////////////////////////////////////////////////
@@ -83,7 +84,7 @@ int SVEquationSymbolTableClass::FindSymbol( LPCTSTR name )
 	for( int i = 0; i < l_iCount; i++ )
 	{
 		SVEquationSymbolStruct* pSymbolStruct = GetAt( i );
-		if( pSymbolStruct->Type == SV_PPQ_SYMBOL_TYPE )
+		if( pSymbolStruct->Type == SV_INPUT_SYMBOL_TYPE )
 		{
 			if( !_tcscmp(name, pSymbolStruct->Name ) )
 			{
@@ -104,7 +105,7 @@ int SVEquationSymbolTableClass::FindSymbol( LPCTSTR name )
 }
 
 /////////////////////////////////////////////////////////////////
-// Add a PPQ or ToolSet Symbol based on name
+// Add a input (e.g. PPQ) or ToolSet Symbol based on name
 /////////////////////////////////////////////////////////////////
 int SVEquationSymbolTableClass::AddSymbol( LPCTSTR name, SVObjectClass* pRequestor )
 {
@@ -112,12 +113,12 @@ int SVEquationSymbolTableClass::AddSymbol( LPCTSTR name, SVObjectClass* pRequest
 	CString nameStr = name;
 	nameStr.Remove( _T( '\"' ) );
 
-	// Find the name in the PPQ Available list
-	int index = findPPQSymbol( nameStr );
+	// Find the name in the Input Available list (e.g. PPQ parameter or modes)
+	int index = findInputSymbol( nameStr );
 
-	if( index != -1 ) // found in PPQ Available List
+	if( index != -1 ) // found in Input Available List
 	{
-		index = addPPQSymbol( nameStr, index );
+		index = addInputSymbol( nameStr, index );
 	}
 	else
 	{
@@ -133,20 +134,20 @@ int SVEquationSymbolTableClass::AddSymbol( LPCTSTR name, SVObjectClass* pRequest
 }
 
 /////////////////////////////////////////////////////////////////
-// Add a PPQ Symbol
+// Add a Input Symbol
 /////////////////////////////////////////////////////////////////
-int SVEquationSymbolTableClass::addPPQSymbol( LPCTSTR name, int index )
+int SVEquationSymbolTableClass::addInputSymbol( LPCTSTR name, int index )
 {
 	SVEquationSymbolStruct* pSymbolStruct;
 	int symbolIndex = -1;
 
-	if( pAvailPPQSymbols )
+	if( m_pAvailInputSymbols )
 	{
-		SVInObjectInfoStruct* pObjInfo = pAvailPPQSymbols->GetAt( index );
+		SVInObjectInfoStruct* pObjInfo = m_pAvailInputSymbols->GetAt( index );
 		if( pObjInfo )
 		{
 			pSymbolStruct = new SVEquationSymbolStruct();
-			pSymbolStruct->Type = SV_PPQ_SYMBOL_TYPE;
+			pSymbolStruct->Type = SV_INPUT_SYMBOL_TYPE;
 			pSymbolStruct->Name = name;
 			pSymbolStruct->IsValid = TRUE;
 			pSymbolStruct->InObjectInfo.SetInputObject( pObjInfo->GetInputObjectInfo().PObject );
@@ -171,9 +172,9 @@ int SVEquationSymbolTableClass::addToolSetSymbol( LPCTSTR name, int index, SVObj
 	SVEquationSymbolStruct* pSymbolStruct;
 	int symbolIndex = -1;
 
-	if( pAvailToolSetSymbols )
+	if( m_pAvailToolSetSymbols )
 	{
-		SVOutObjectInfoStruct* pOutObjectInfo = pAvailToolSetSymbols->GetAt( index );
+		SVOutObjectInfoStruct* pOutObjectInfo = m_pAvailToolSetSymbols->GetAt( index );
 		if( pOutObjectInfo )
 		{
 			// Add to combined symbol table if not already there
@@ -206,7 +207,7 @@ int SVEquationSymbolTableClass::addToolSetSymbol( LPCTSTR name, int index, SVObj
 				}
 				symbolIndex = Add( pSymbolStruct );
 				// add it to the top
-				toolsetSymbolTable.Add( &pSymbolStruct->InObjectInfo );
+				m_toolsetSymbolTable.Add( &pSymbolStruct->InObjectInfo );
 			}
 		}
 	}
@@ -214,23 +215,32 @@ int SVEquationSymbolTableClass::addToolSetSymbol( LPCTSTR name, int index, SVObj
 }
 
 /////////////////////////////////////////////////////////////////
-// Find a PPQ Symbol
+// Find a Input Symbol
 /////////////////////////////////////////////////////////////////
-int SVEquationSymbolTableClass::findPPQSymbol( LPCTSTR name )
+int SVEquationSymbolTableClass::findInputSymbol( LPCTSTR name )
 {
 	int index = -1;
 	SVInObjectInfoStruct *pObjInfo;
 
-	if( pAvailPPQSymbols )
+	if( m_pAvailInputSymbols )
 	{
 		// Find DataLinkInfo in Available List by name
-		for( int i = pAvailPPQSymbols->GetSize() - 1; i >= 0; i-- )
+		for( int i = m_pAvailInputSymbols->GetSize() - 1; i >= 0; i-- )
 		{
-			pObjInfo = pAvailPPQSymbols->GetAt( i );
+			pObjInfo = m_pAvailInputSymbols->GetAt( i );
 
-			SVString l_Temp = pObjInfo->GetOneBasedInputObjectShortName();
+			//search for short name (used by PPQVariable)
+			SVString temp = pObjInfo->GetOneBasedInputObjectShortName();
+			if( temp == name )
+			{
+				index = i;
+				break;
+			}
 
-			if( l_Temp == name )
+			//search for name in the complete object name
+			temp = pObjInfo->GetInputObjectInfo().GetObjectReference().GetCompleteObjectName();
+			size_t position = temp.find( name );
+			if( SVString::npos != position && position + strlen(name) >= temp.size() )
 			{
 				index = i;
 				break;
@@ -247,14 +257,14 @@ int SVEquationSymbolTableClass::findToolSetSymbol( LPCTSTR name )
 {
 	int index = -1;
 
-	if( pAvailToolSetSymbols )
+	if( m_pAvailToolSetSymbols )
 	{
 		// Find the name in the ToolSet Available Output List
-		int l_iCount = pAvailToolSetSymbols->GetSize();
+		int l_iCount = m_pAvailToolSetSymbols->GetSize();
 
 		for( int i = l_iCount - 1; i >= 0; i-- )
 		{
-			SVOutObjectInfoStruct* pOutObjectInfo = pAvailToolSetSymbols->GetAt( i );
+			SVOutObjectInfoStruct* pOutObjectInfo = m_pAvailToolSetSymbols->GetAt( i );
 			if( pOutObjectInfo->PObject ) 
 			{
 				SVObjectClass* pObject = pOutObjectInfo->PObject;
@@ -278,23 +288,30 @@ int SVEquationSymbolTableClass::findToolSetSymbol( LPCTSTR name )
 /////////////////////////////////////////////////////////////////
 SVInputInfoListClass& SVEquationSymbolTableClass::GetToolSetSymbolTable()
 {
-	return toolsetSymbolTable;
+	return m_toolsetSymbolTable;
 }
 
 /////////////////////////////////////////////////////////////////
-// Get the data from either a PPQ Symbol or a ToolSet Symbol
+// Get the data from either a Input Symbol or a ToolSet Symbol
 /////////////////////////////////////////////////////////////////
 HRESULT SVEquationSymbolTableClass::GetData( int iSymbolIndex, double& value, long lBufferIndex )
 {
 	if( iSymbolIndex >= 0 && iSymbolIndex < GetSize() )
 	{
-		SVEquationSymbolStruct* pSymbolStruct = GetAt ( iSymbolIndex );
+		SVEquationSymbolStruct* pSymbolStruct = GetAt( iSymbolIndex );
 
-		if( pSymbolStruct->Type == SV_PPQ_SYMBOL_TYPE )
+		if( pSymbolStruct->Type == SV_INPUT_SYMBOL_TYPE )
 		{
 			// Get the Data
-			if( SV_IS_KIND_OF( pSymbolStruct->InObjectInfo.GetInputObjectInfo().PObject, SVValueObjectClass ) )
-				return ( static_cast <SVValueObjectClass*> (pSymbolStruct->InObjectInfo.GetInputObjectInfo().PObject) )->GetValue( value );
+			SVObjectClass *object = pSymbolStruct->InObjectInfo.GetInputObjectInfo().PObject;
+			if( SV_IS_KIND_OF( object, SVValueObjectClass ) )
+			{
+				return ( static_cast <SVValueObjectClass*>(object) )->GetValue( value );
+			}
+			else if( SV_IS_KIND_OF( object, BasicValueObject ) )
+			{
+				return static_cast <BasicValueObject*>(object)->getValue( value );
+			}
 			else
 				return S_FALSE;
 		}
@@ -303,7 +320,7 @@ HRESULT SVEquationSymbolTableClass::GetData( int iSymbolIndex, double& value, lo
 			// Get the Data
 			if( pSymbolStruct->InObjectInfo.IsConnected() && pSymbolStruct->InObjectInfo.GetInputObjectInfo().PObject )
 			{
-				SVValueObjectClass* pValueObject = static_cast <SVValueObjectClass*> (pSymbolStruct->InObjectInfo.GetInputObjectInfo().PObject);
+				SVValueObjectClass* pValueObject = static_cast <SVValueObjectClass*>(pSymbolStruct->InObjectInfo.GetInputObjectInfo().PObject);
 				return pValueObject->GetValue( value );
 			}
 		}
@@ -315,14 +332,14 @@ HRESULT SVEquationSymbolTableClass::GetData( int iSymbolIndex, int iIndex, doubl
 {
 	if( iSymbolIndex >= 0 && iSymbolIndex < GetSize() )
 	{
-		SVEquationSymbolStruct* pSymbolStruct = GetAt ( iSymbolIndex );
+		SVEquationSymbolStruct* pSymbolStruct = GetAt( iSymbolIndex );
 
-		if( pSymbolStruct->Type == SV_PPQ_SYMBOL_TYPE )
+		if( pSymbolStruct->Type == SV_INPUT_SYMBOL_TYPE )
 		{
 			// Get the Data
 			if( SV_IS_KIND_OF( pSymbolStruct->InObjectInfo.GetInputObjectInfo().PObject, SVValueObjectClass ) )
 			{
-				SVValueObjectClass* pValueObject = static_cast<SVValueObjectClass*> (pSymbolStruct->InObjectInfo.GetInputObjectInfo().PObject);
+				SVValueObjectClass* pValueObject = static_cast<SVValueObjectClass*>(pSymbolStruct->InObjectInfo.GetInputObjectInfo().PObject);
 				return pValueObject->GetValue( pValueObject->GetLastSetIndex(), iIndex, value );
 			}
 			else
@@ -333,7 +350,7 @@ HRESULT SVEquationSymbolTableClass::GetData( int iSymbolIndex, int iIndex, doubl
 			// Get the Data
 			if( pSymbolStruct->InObjectInfo.IsConnected() && pSymbolStruct->InObjectInfo.GetInputObjectInfo().PObject )
 			{
-				SVValueObjectClass* pValueObject = static_cast<SVValueObjectClass*> (pSymbolStruct->InObjectInfo.GetInputObjectInfo().PObject);
+				SVValueObjectClass* pValueObject = static_cast<SVValueObjectClass*>(pSymbolStruct->InObjectInfo.GetInputObjectInfo().PObject);
 				return pValueObject->GetValue( pValueObject->GetLastSetIndex(), iIndex, value );
 			}
 		}
@@ -345,14 +362,14 @@ HRESULT SVEquationSymbolTableClass::GetData(int iSymbolIndex, std::vector<double
 {
 	if( iSymbolIndex >= 0 && iSymbolIndex < GetSize() )
 	{
-		SVEquationSymbolStruct* pSymbolStruct = GetAt ( iSymbolIndex );
+		SVEquationSymbolStruct* pSymbolStruct = GetAt( iSymbolIndex );
 
-		if( pSymbolStruct->Type == SV_PPQ_SYMBOL_TYPE )
+		if( pSymbolStruct->Type == SV_INPUT_SYMBOL_TYPE )
 		{
 			// Get the Data
 			if( SV_IS_KIND_OF( pSymbolStruct->InObjectInfo.GetInputObjectInfo().PObject, SVValueObjectClass ) )
 			{
-				SVValueObjectClass* pValueObject = static_cast<SVValueObjectClass*> (pSymbolStruct->InObjectInfo.GetInputObjectInfo().PObject);
+				SVValueObjectClass* pValueObject = static_cast<SVValueObjectClass*>(pSymbolStruct->InObjectInfo.GetInputObjectInfo().PObject);
 				return pValueObject->GetValues( pValueObject->GetLastSetIndex(), values );
 			}
 			else
@@ -363,7 +380,7 @@ HRESULT SVEquationSymbolTableClass::GetData(int iSymbolIndex, std::vector<double
 			// Get the Data
 			if( pSymbolStruct->InObjectInfo.IsConnected() && pSymbolStruct->InObjectInfo.GetInputObjectInfo().PObject )
 			{
-				SVValueObjectClass* pValueObject = static_cast<SVValueObjectClass*> (pSymbolStruct->InObjectInfo.GetInputObjectInfo().PObject);
+				SVValueObjectClass* pValueObject = static_cast<SVValueObjectClass*>(pSymbolStruct->InObjectInfo.GetInputObjectInfo().PObject);
 				return pValueObject->GetValues( pValueObject->GetLastSetIndex(), values );
 			}
 		}
@@ -454,6 +471,20 @@ BOOL SVEquationClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure 
 
 	// Set / Reset Printable Flag
 	enabled.ObjectAttributesAllowedRef() |= SV_PRINTABLE;
+
+	SVObjectClass *owner = enabled.GetOwner();
+	if (nullptr != owner)
+	{
+		SVString ownerName(owner->GetName());
+		CString conditionalString;
+		conditionalString.LoadString( IDS_CLASSNAME_SVCONDITIONAL );
+
+		if (0 == ownerName.Compare(conditionalString))
+		{
+			// Set / Reset Remotely Setable Flag, if owner is conditional class.
+			enabled.ObjectAttributesAllowedRef() |= SV_REMOTELY_SETABLE;
+		}
+	}
 
 	isCreated = bOk;
 
@@ -761,164 +792,34 @@ BOOL SVEquationClass::IsEnabled()
 SVEquationTestResult SVEquationClass::Test()
 {
 	SVEquationTestResult ret;
-	SVInspectionProcess *pInspection = NULL;
 	m_lCurrentRunIndex = -1;
 
 	if( HasCondition() && IsEnabled() )
 	{
-		CString equationText;
-		CString strTemp;
-		CString strEquation;
-		CString strName;
-		CString strTempName;
-		BOOL bDone;
-		BOOL bFound;
-		int iWhere1;
-		int iWhere2;
-		int iWhere3;
-		int iWhere4;
-		int iWhere5;
-		int iWhere6;
-
-		GetEquationText( equationText );
-		equationText += "\n";
-
-		// Note Buffer must be terminated with a new line
-		LPTSTR pEquation = equationText.GetBuffer( equationText.GetLength() + 1 );
-
 		// *** // ***
-		SVInputInfoListClass arPPQAvailList;
-		SVInObjectInfoStruct* pInInfoStruct;
-		SVIOEntryStruct pIOEntry;
-		SVInspectionProcess* pInspect;
-		SVObjectClass* pObject;
-		SVPPQObject* pPPQ;
-		long lSize;
-		long l;
-		size_t i;
-
-		pInspection = GetInspection();
-		for( i = 0; pInspection && i < pInspection->m_PPQInputs.size(); i++ )
-		{
-			pIOEntry = pInspection->m_PPQInputs[i];
-
-			if( !pIOEntry.m_IOEntryPtr->m_Enabled )
-				continue;
-
-			pInInfoStruct = new SVInObjectInfoStruct;
-
-			pInInfoStruct->SetInputObject( pIOEntry.m_IOEntryPtr->m_pValueObject );
-
-			arPPQAvailList.Add( pInInfoStruct );
-		}// end for
-
-		// Check for old variables that were shared across the PPQ/Digitizer
-		GetEquationText( strEquation );
-		strTemp = strEquation;
-		strTemp.MakeUpper();
-
-		iWhere1 = -1;
-		iWhere3 = -1;
-		iWhere5 = -1;
-		bDone = FALSE;
-		while( !bDone )
-		{
-			bFound = FALSE;
-			
-			iWhere1 = strTemp.Find( "VIPER QUAD", iWhere1 + 1 );
-			if( !bFound && iWhere1 != -1 )
-			{
-				iWhere2 = strTemp.Find( ". ", iWhere1 );
-				if( iWhere2 != -1 )
-				{
-					strName     = strEquation.Mid( iWhere1, iWhere2 - iWhere1 + 2 );
-					strTempName = strEquation.Mid( iWhere1 + 17, iWhere2 - iWhere1 - 17 );
-
-					bFound = TRUE;
-				}// end if
-
-			}// end if
-
-			iWhere3 = strTemp.Find( "VIPER DUAL", iWhere3 + 1 );
-			if( !bFound && iWhere3 != -1 )
-			{
-				iWhere4 = strTemp.Find( ". ", iWhere3 );
-				if( iWhere4 != -1 )
-				{
-					strName     = strEquation.Mid( iWhere3, iWhere4 - iWhere3 + 2 );
-					strTempName = strEquation.Mid( iWhere3 + 17, iWhere4 - iWhere3 - 17 );
-
-					bFound = TRUE;
-				}// end if
-
-			}// end if
-
-			iWhere5 = strTemp.Find( "VIPER RGB", iWhere5 + 1 );
-			if( !bFound && iWhere5 != -1 )
-			{
-				iWhere6 = strTemp.Find( ". ", iWhere5 );
-				if( iWhere6 != -1 )
-				{
-					strName     = strEquation.Mid( iWhere5, iWhere6 - iWhere5 + 2 );
-					strTempName = strEquation.Mid( iWhere5 + 16, iWhere6 - iWhere5 - 16 );
-
-					bFound = TRUE;
-				}// end if
-
-			}// end if
-
-			if( bFound )
-			{
-				// &&&&
-				// Right now an inspection can have only one PPQ
-				pPPQ = pInspection->GetPPQ();
-				pPPQ->GetInspectionCount( lSize );
-				for( l = 0, pObject = NULL; l < lSize; l++ )
-				{
-					pPPQ->GetInspection( l, pInspect );
-					pObject = reinterpret_cast<SVObjectClass *>(::SVSendMessage( pInspect->GetToolSet(), 
-								( SVM_GET_OBJECT_BY_NAME | SVM_PARENT_TO_CHILD | SVM_NOTIFY_FRIENDS ) & ~SVM_NOTIFY_ONLY_THIS, 
-								reinterpret_cast<DWORD_PTR>( static_cast<LPCSTR>( strTempName )), NULL ) );
-
-					if( pObject != NULL )
-						break;
-				}// end for
-
-				pInInfoStruct = new SVInObjectInfoStruct;
-				if( pObject == NULL )
-				{
-					pInInfoStruct->SetInputObject( static_cast< LPCTSTR >( strName ) );
-				}
-				else
-				{
-					pInInfoStruct->SetInputObject( pObject );
-				}
-
-				arPPQAvailList.Add( pInInfoStruct );
-				continue;
-			}// end if
-
-			bDone = TRUE;
-		}// end while
-		// *** // ***
+		SVInputInfoListClass arInputAvailList;
+		addPPQVariableToList(arInputAvailList);
+		addOldPPQDigitizerVariableToList( arInputAvailList );
+		addPPQ_XParameterToList(arInputAvailList);
+		addEnvironmentModeParameterToList(arInputAvailList);
 
 		// Get Available ToolSet Variables
 		// Get Known ToolSet Outputs ( selectable for equation )
 		SVTaskObjectClass* pToolSet = GetInspection()->GetToolSet();
-
 		SVOutputInfoListClass l_OutputList;
-
 		pToolSet->GetOutputList( l_OutputList );
-
 		SVOutputInfoListClass toolSetPickList;
 		l_OutputList.GetAllowedAttributesList( SV_SELECTABLE_FOR_EQUATION, &toolSetPickList );
 	
 		// Clear the symbol Tables
 		symbols.ClearAll();
-		
-		
-			symbols.SetAvailableLists( &arPPQAvailList, &toolSetPickList );
+		symbols.SetAvailableLists( &arInputAvailList, &toolSetPickList );
 
+		CString equationText;
+		GetEquationText( equationText );
+		equationText += "\n";
+		// Note Buffer must be terminated with a new line
+		LPTSTR pEquation = equationText.GetBuffer( equationText.GetLength() + 1 );
 		// Build Lexical Stack
 		SVEquationTestResult result = lexicalScan( pEquation );
 		if( result.bPassed )
@@ -991,14 +892,13 @@ SVEquationTestResult SVEquationClass::Test()
 		// Clear the pointers to the Available Lists
 		symbols.SetAvailableLists( NULL, NULL );
 
-		// Free the memory for the PPQ variables list
-		lSize = arPPQAvailList.GetSize();
-		for( l = 0; l < lSize; l++ )
+		// Free the memory for the input variables list
+		long lSize = arInputAvailList.GetSize();
+		for( long l = 0; l < lSize; l++ )
 		{
-			pInInfoStruct = arPPQAvailList[l];
-			delete pInInfoStruct;
+			delete arInputAvailList[l];
 		}// end for
-		arPPQAvailList.RemoveAll();
+		arInputAvailList.RemoveAll();
 		
 		isObjectValid.SetValue( 1, ret.bPassed );
 	}
@@ -1430,12 +1330,201 @@ HRESULT SVEquationClass::ResetObject()
 	return l_hrOk;
 }
 
-//** EOF **
+void SVEquationClass::addOldPPQDigitizerVariableToList( SVInputInfoListClass &arInputAvailList )
+{
+	SVPPQObject* pPPQ = GetInspection()->GetPPQ();
+
+	// Check for old variables that were shared across the PPQ/Digitizer
+	CString strEquation;
+	GetEquationText( strEquation );
+	CString strTemp = strEquation;
+	CString strTempName = "";
+	CString strName;
+	strTemp.MakeUpper();
+
+	int iWhere1 = -1;
+	int iWhere2 = -1;
+	int iWhere3 = -1;
+	int iWhere4 = -1;
+	int iWhere5 = -1;
+	int iWhere6 = -1;
+	bool bDone = false;
+	while( !bDone )
+	{
+		bool bFound = false;
+
+		iWhere1 = strTemp.Find( "VIPER QUAD", iWhere1 + 1 );
+		if( !bFound && iWhere1 != -1 )
+		{
+			iWhere2 = strTemp.Find( ". ", iWhere1 );
+			if( iWhere2 != -1 )
+			{
+				strName     = strEquation.Mid( iWhere1, iWhere2 - iWhere1 + 2 );
+				strTempName = strEquation.Mid( iWhere1 + 17, iWhere2 - iWhere1 - 17 );
+
+				bFound = TRUE;
+			}// end if
+
+		}// end if
+
+		iWhere3 = strTemp.Find( "VIPER DUAL", iWhere3 + 1 );
+		if( !bFound && iWhere3 != -1 )
+		{
+			iWhere4 = strTemp.Find( ". ", iWhere3 );
+			if( iWhere4 != -1 )
+			{
+				strName     = strEquation.Mid( iWhere3, iWhere4 - iWhere3 + 2 );
+				strTempName = strEquation.Mid( iWhere3 + 17, iWhere4 - iWhere3 - 17 );
+
+				bFound = TRUE;
+			}// end if
+
+		}// end if
+
+		iWhere5 = strTemp.Find( "VIPER RGB", iWhere5 + 1 );
+		if( !bFound && iWhere5 != -1 )
+		{
+			iWhere6 = strTemp.Find( ". ", iWhere5 );
+			if( iWhere6 != -1 )
+			{
+				strName     = strEquation.Mid( iWhere5, iWhere6 - iWhere5 + 2 );
+				strTempName = strEquation.Mid( iWhere5 + 16, iWhere6 - iWhere5 - 16 );
+
+				bFound = TRUE;
+			}// end if
+		}// end if
+
+		if( bFound )
+		{
+			long lSize;
+			// Right now an inspection can have only one PPQ
+			pPPQ->GetInspectionCount( lSize );
+			SVObjectClass* pObject = nullptr;
+			SVInspectionProcess* pInspect = nullptr;
+			for( long l = 0; l < lSize; l++ )
+			{
+				pPPQ->GetInspection( l, pInspect );
+				pObject = reinterpret_cast<SVObjectClass *>(::SVSendMessage( pInspect->GetToolSet(), 
+					( SVM_GET_OBJECT_BY_NAME | SVM_PARENT_TO_CHILD | SVM_NOTIFY_FRIENDS ) & ~SVM_NOTIFY_ONLY_THIS, 
+					reinterpret_cast<DWORD_PTR>( static_cast<LPCSTR>( strTempName )), NULL ) );
+
+				if( pObject != NULL )
+					break;
+			}// end for
+
+			SVInObjectInfoStruct* pInInfoStruct = new SVInObjectInfoStruct;
+			if( nullptr == pObject )
+			{
+				pInInfoStruct->SetInputObject( static_cast< LPCTSTR >( strName ) );
+			}
+			else
+			{
+				pInInfoStruct->SetInputObject( pObject );
+			}
+
+			arInputAvailList.Add( pInInfoStruct );
+			continue;
+		}// end if
+
+		bDone = true;
+	}// end while
+}
+
+void SVEquationClass::addPPQVariableToList( SVInputInfoListClass &arInputAvailList )
+{
+	SVIOEntryStruct pIOEntry;
+	SVInspectionProcess *pInspection = GetInspection();
+	for( size_t i = 0; pInspection && i < pInspection->m_PPQInputs.size(); i++ )
+	{
+		pIOEntry = pInspection->m_PPQInputs[i];
+
+		if( !pIOEntry.m_IOEntryPtr->m_Enabled )
+			continue;
+
+		SVInObjectInfoStruct *pInInfoStruct = new SVInObjectInfoStruct;
+
+		pInInfoStruct->SetInputObject( pIOEntry.m_IOEntryPtr->m_pValueObject );
+
+		arInputAvailList.Add( pInInfoStruct );
+	}// end for
+}
+
+void SVEquationClass::addPPQ_XParameterToList( SVInputInfoListClass &arInputAvailList )
+{
+	//add PPQ_X parameter to the equation selection list
+	SVPPQObject *ppq = GetInspection()->GetPPQ();
+	SVString PPQName = ppq->GetName();
+	SVObjectReferenceVector ObjectList;
+	SVObjectManagerClass::Instance().getTreeList( PPQName, ObjectList, SV_SELECTABLE_FOR_EQUATION );
+	for(SVObjectReferenceVector::const_iterator iter = ObjectList.begin(); iter != ObjectList.end(); ++iter) 
+	{
+		SVInObjectInfoStruct *pInInfoStruct = new SVInObjectInfoStruct;
+		pInInfoStruct->SetInputObject( iter->Object() );
+		arInputAvailList.Add( pInInfoStruct );
+	}
+}
+
+void SVEquationClass::addEnvironmentModeParameterToList( SVInputInfoListClass &arInputAvailList )
+{
+	SVObjectReferenceVector ObjectList;
+	SVObjectManagerClass::Instance().getTreeList( Seidenader::SVObjectLibrary::FqnEnvironmentMode, ObjectList, SV_SELECTABLE_FOR_EQUATION );
+	for(SVObjectReferenceVector::const_iterator iter = ObjectList.begin(); iter != ObjectList.end(); ++iter) 
+	{
+		SVInObjectInfoStruct *pInInfoStruct = new SVInObjectInfoStruct;
+		pInInfoStruct->SetInputObject( iter->Object() );
+		arInputAvailList.Add( pInInfoStruct );
+	}
+}
+
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVEquation.cpp_v  $
+ * 
+ *    Rev 1.7   30 Sep 2014 15:37:34   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  925
+ * SCR Title:  Add PPQ Items and SVObserver Modes to Equation Editor Object Selector
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   Changed parameter name for SetAvailableLists method from PAvailPPQSymbols to PAvailInputSymbols.
+ * Changed SV_PPQ_SYMBOL_TYPE to SV_INPUT_SYMBOL_TYPE in these methods:
+ * FindSymbol,
+ * addInputSymbol,
+ * and GetData (multiple versions).
+ * Changed member variable name from toolsetSymbolTable to m_toolsetSymbolTable in these methods:
+ * ClearAll,
+ * addToolSetSymbol,
+ * and GetToolSetSymbolTable.
+ * Changed member variable name from pAvailToolSetSymbols to m_pAvailableToolSetSymbols in these methods:
+ * SetAvailableLists,
+ * addToolSetSymbol,
+ * and findToolSetSymbol.
+ * Changed member variable name from pAvailPPQSymbols to m_pAvailInputSymbols in these methods:
+ * SetAvailableLists,
+ * addInputSymbol,
+ * and findInputSymbol.
+ * Changed method name from addPPQSymbol to addInputSymbol.
+ * Changed method name from findPPQSymbol to findInputSymbol.
+ * Added new methods:
+ * addOldPPQDigitizerVariableToList,
+ * addPPQVariableToList,
+ * addPPQ_XParameterToList,
+ * and addEnvironmentModeParameterToList.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.6   26 Sep 2014 12:48:44   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  946
+ * SCR Title:  Make Conditional Page's Disable Equation Setting Writable from SVRC and SIAC
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   Changed CreateObject method to set/reset Remotely Setable Flag, if owner is conditional class.
+ * 
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.5   15 May 2014 11:21:36   sjones
  * Project:  SVObserver

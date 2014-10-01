@@ -5,8 +5,8 @@
 //* .Module Name     : SVEquation.h
 //* .File Name       : $Workfile:   SVEquation.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.3  $
-//* .Check In Date   : $Date:   15 May 2014 11:21:36  $
+//* .Current Version : $Revision:   1.4  $
+//* .Check In Date   : $Date:   30 Sep 2014 15:38:48  $
 //******************************************************************************
 
 #ifndef SVEQUATIONCLASS_H
@@ -36,7 +36,7 @@ class SVIPDoc;
 /**
 @SVObjectName Equation Symbol Type Enumeration
 
-@SVObjectOverview This enumeration defines the Unknown, PPQ and Toolset symbol type values.
+@SVObjectOverview This enumeration defines the Unknown, Input and Toolset symbol type values.
 
 @SVObjectOperations This enumeration has no operations.
 
@@ -44,7 +44,7 @@ class SVIPDoc;
 enum SVEquationSymbolTypeEnum
 {
 	SV_UNKNOWN_SYMBOL_TYPE,
-	SV_PPQ_SYMBOL_TYPE,
+	SV_INPUT_SYMBOL_TYPE,
 	SV_TOOLSET_SYMBOL_TYPE
 };
 
@@ -85,8 +85,8 @@ public:
 	SVEquationSymbolTableClass();
 	~SVEquationSymbolTableClass();
 
-	int FindSymbol( LPCTSTR name );					// Find PPQ or ToolSet Symbol
-	int AddSymbol( LPCTSTR name, SVObjectClass* pRequestor );	// Add PPQ or ToolSet Symbol
+	int FindSymbol( LPCTSTR name );					// Find Input or ToolSet Symbol
+	int AddSymbol( LPCTSTR name, SVObjectClass* pRequestor );	// Add Input or ToolSet Symbol
 
 	SVInputInfoListClass& GetToolSetSymbolTable();	// Get the ToolSet Symbol table
 
@@ -95,19 +95,19 @@ public:
 	HRESULT GetData(int iSymbolIndex, std::vector<double>& values, long lBufferIndex );		// Get the Data Value
 
 	void ClearAll();
-	void SetAvailableLists( SVInputInfoListClass* PAvailPPQSymbols, SVOutputInfoListClass* PAvailToolSetSymbols );
+	void SetAvailableLists( SVInputInfoListClass* PAvailInputSymbols, SVOutputInfoListClass* PAvailToolSetSymbols );
 	
 protected:
-	int findPPQSymbol( LPCTSTR name );					// Find PPQ Symbol
+	int findInputSymbol( LPCTSTR name );					// Find Input Symbol
 	int findToolSetSymbol( LPCTSTR name );				// Find ToolSet Symbol
 
-	int addPPQSymbol( LPCTSTR name, int index );		// Add PPQ Symbol
+	int addInputSymbol( LPCTSTR name, int index );		// Add Input Symbol
 	int addToolSetSymbol( LPCTSTR name, int index, SVObjectClass* pRequestor );	// Add ToolSet Symbol
 
 protected:
-	SVInputInfoListClass toolsetSymbolTable;		// The symbol table for the ToolSet Variables in the equation
-	SVOutputInfoListClass* pAvailToolSetSymbols;	// List of Available ToolSet symbols
-	SVInputInfoListClass* pAvailPPQSymbols;			// List of Available PPQ symbols
+	SVInputInfoListClass m_toolsetSymbolTable;		// The symbol table for the ToolSet Variables in the equation
+	SVOutputInfoListClass* m_pAvailToolSetSymbols;	// List of Available ToolSet symbols
+	SVInputInfoListClass* m_pAvailInputSymbols;			// List of Available Input symbols
 };
 
 /**
@@ -265,6 +265,32 @@ protected:
 private:
 	SVEquationTestResult lexicalScan( LPSTR buffer );		// perform lexical scan
 
+	//************************************
+	// Method:    addOldPPQDigitizerVariableToList
+	// Description:  Add the old PPQ-digitizer-variable to the list. Will maybe obsolete later on.
+	// Parameter: SVInputInfoListClass & arInputAvailList
+	// Returns:   void
+	//************************************
+	void addOldPPQDigitizerVariableToList(SVInputInfoListClass &arInputAvailList);
+
+	//************************************
+	// Method:    addPPQVariableToList
+	// Description:  Add the PPQ-variable to the list.
+	// Parameter: SVInputInfoListClass & arInputAvailList
+	// Returns:   void
+	//************************************
+	void addPPQVariableToList( SVInputInfoListClass &arInputAvailList );
+
+	//************************************
+	// Method:    addPPQ_XParameterToList
+	// Description:  Add the PPQ_X-parameter to the list (e.g. PPQ_1.Length).
+	// Parameter: SVInputInfoListClass & arInputAvailList
+	// Returns:   void
+	//************************************
+	void addPPQ_XParameterToList( SVInputInfoListClass &arInputAvailList );
+
+	void addEnvironmentModeParameterToList( SVInputInfoListClass &arInputAvailList );
+
 protected:
 	SVEquationLexClass lex;					// scanner class
 	SVEquationYaccClass yacc;				// parser class
@@ -275,7 +301,7 @@ protected:
 	
 	SVEquationStruct equationStruct;		// the Equation Structure
 	
-	SVEquationSymbolTableClass symbols;		// all symbols ( PPQ and local )
+	SVEquationSymbolTableClass symbols;		// all symbols ( input and local )
 	long m_lCurrentRunIndex;				// pointer to the run status for the current run
 											// it is needed to get the result data index for PPQ inputs
 };
@@ -287,6 +313,26 @@ protected:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVEquation.h_v  $
+ * 
+ *    Rev 1.4   30 Sep 2014 15:38:48   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  925
+ * SCR Title:  Add PPQ Items and SVObserver Modes to Equation Editor Object Selector
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   Changed parameter name for SetAvailableLists method from PAvailPPQSymbols to PAvailInputSymbols.
+ * Changed method name from findPPQSymbol to findInputSymbol.
+ * Changed method name from addPPQSymbol to addInputSymbol.
+ * Changed member variable name from toolsetSymbolTable to m_toolsetSymbolTable.
+ * Changed member variable name from pAvailableToolSetSymbols to m_pAvailableToolSetSymbols.
+ * Changed member variable name from pAvailPPQSymbols to m_pAvailInputSymbols.
+ * Added new methods:
+ * addOldPPQDigitizerVariableToList,
+ * addPPQVariableToList,
+ * addPPQ_XParameterToList,
+ * and addEnvironmentModeParameterToList.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   15 May 2014 11:21:36   sjones
  * Project:  SVObserver

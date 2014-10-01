@@ -5,8 +5,8 @@
 //* .Module Name     : SVFormulaEditorPageClass
 //* .File Name       : $Workfile:   SVFormulaEditorPage.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.6  $
-//* .Check In Date   : $Date:   17 Jul 2014 19:05:38  $
+//* .Current Version : $Revision:   1.7  $
+//* .Check In Date   : $Date:   30 Sep 2014 15:44:22  $
 //******************************************************************************
 
 #pragma region Includes
@@ -21,6 +21,7 @@
 #include "SVObjectLibrary/GlobalConst.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
+#include "SVPPQObject.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -336,20 +337,30 @@ void SVFormulaEditorPageClass::setEquationText()
 /////////////////////////////////////////////////////////////////////////////
 // SVFormulaEditorPageClass message handlers
 
-void SVFormulaEditorPageClass::OnLocalVariableSelect() 
+void SVFormulaEditorPageClass::OnLocalVariableSelect()
 {
 	UpdateData( TRUE );
 
 	SVString InspectionName;
-	if( nullptr != m_rFormulaController.getInspectionProcess() )
+	SVString PPQName;
+	SVInspectionProcess* inspection = m_rFormulaController.getInspectionProcess();
+	if( nullptr != inspection )
 	{
-		InspectionName = m_rFormulaController.getInspectionProcess()->GetName();
+		InspectionName = inspection->GetName();
+		SVPPQObject *ppq = inspection->GetPPQ();
+		PPQName = ppq->GetName();
 	}
+	CString tmp;
+	tmp.LoadString(IDS_CLASSNAME_ROOTOBJECT);
 	ObjectTreeGenerator::Instance().setSelectorType( ObjectTreeGenerator::SelectorTypeEnum::TypeSingleObject );
 	ObjectTreeGenerator::Instance().setAttributeFilters( SV_SELECTABLE_FOR_EQUATION );
 	ObjectTreeGenerator::Instance().setLocationFilter( ObjectTreeGenerator::FilterInput, InspectionName, SVString( _T("") ) );
+	ObjectTreeGenerator::Instance().setLocationFilter( ObjectTreeGenerator::FilterInput, tmp, SVString( _T("") ) );
 	ObjectTreeGenerator::Instance().setLocationFilter( ObjectTreeGenerator::FilterOutput, FqnPPQVariables, SVString( _T("") ) );
 	ObjectTreeGenerator::Instance().setAllowWholeArrays( true );
+
+	ObjectTreeGenerator::Instance().insertTreeObjects( FqnEnvironmentMode );
+	ObjectTreeGenerator::Instance().insertTreeObjects( PPQName );
 
 	SVStringArray PpqVariables = m_rFormulaController.getPPQVariableNames();
 
@@ -366,7 +377,6 @@ void SVFormulaEditorPageClass::OnLocalVariableSelect()
 	m_rFormulaController.getToolSet()->GetOutputList( OutputList );
 	ObjectTreeGenerator::Instance().insertOutputList( OutputList );
 
-	
 	CString ToolsetOutput;
 	ToolsetOutput.LoadString ( IDS_SELECT_TOOLSET_OUTPUT );
 	SVString Title;
@@ -771,6 +781,16 @@ void SVFormulaEditorPageClass::enableControls()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVFormulaEditorPage.cpp_v  $
+ * 
+ *    Rev 1.7   30 Sep 2014 15:44:22   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  925
+ * SCR Title:  Add PPQ Items and SVObserver Modes to Equation Editor Object Selector
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   Changed the method OnLocalVariableSelect to handle PPQ items.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.6   17 Jul 2014 19:05:38   gramseier
  * Project:  SVObserver

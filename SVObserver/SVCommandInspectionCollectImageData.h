@@ -5,8 +5,8 @@
 //* .Module Name     : SVCommandInspectionCollectImageData
 //* .File Name       : $Workfile:   SVCommandInspectionCollectImageData.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 09:56:12  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   30 Sep 2014 16:07:52  $
 //******************************************************************************
 
 #ifndef SVCOMMANDINSPECTIONCOLLECTIMAGEDATA_H
@@ -49,11 +49,55 @@ protected:
 		SVImageIndexStruct p_svResultImageIndex, long p_ResultDataIndex, 
 		SVByteVector& p_rImageDIB, SVExtentMultiLineStructCArray& p_rMultiLineArray );
 
+	//************************************
+	// Method:    setToolSetResultData
+	// Description:  Set the viewable toolset objects to the resultData-list
+	// Parameter: SVInspectionProcess* p_pInspection Pointer to the inspection
+	// Parameter: SVIPResultData& p_rResultData Reference to the resultData-list
+	// Returns:   HRESULT Error return value S_OK if no error, else E_FAIL.
+	//************************************
+	HRESULT setToolSetResultData( SVInspectionProcess* p_pInspection, SVIPResultData& p_rResultData );
+
+	//************************************
+	// Method:    setPPQInputResultData
+	// Description:  Set the viewable PPQ input objects to the resultData-list
+	// Parameter: SVInspectionProcess* p_pInspection Pointer to the inspection
+	// Parameter: SVIPResultData& p_rResultData Reference to the resultData-list
+	// Returns:   HRESULT Error return value S_OK if no error, else E_FAIL.
+	//************************************
+	HRESULT setPPQInputResultData( SVInspectionProcess* p_pInspection, SVIPResultData& p_rResultData );
+
+	//************************************
+	// Method:    setPPQ_XParameterResultData
+	// Description:  Set the viewable PPQ parameter objects to the resultData-list
+	// Parameter: SVInspectionProcess* p_pInspection Pointer to the inspection
+	// Parameter: SVIPResultData& p_rResultData Reference to the resultData-list
+	// Returns:   HRESULT Error return value S_OK if no error, else E_FAIL.
+	//************************************
+	HRESULT setPPQ_XParameterResultData( SVInspectionProcess* p_pInspection, SVIPResultData& p_rResultData );
+
+	//************************************
+	// Method:    setEnvironmentResultData
+	// Description:  Set the viewable environment parameter objects to the resultData-list
+	// Parameter: SVIPResultData& p_rResultData Reference to the resultData-list
+	// Returns:   HRESULT Error return value S_OK if no error, else E_FAIL.
+	//************************************
+	HRESULT setEnvironmentResultData( SVIPResultData& p_rResultData );
+
+	//************************************
+	// Method:    addViewableObjfct2ResultData
+	// Description:  Add one object to the resultData-list if it viewable
+	// Parameter: SVObjectClass* object 
+	// Parameter: SVIPResultData& p_rResultData Reference to the resultData-list
+	// Parameter: unsigned long colorValue Displayed color, Default value is 0x00ffffff.
+	// Returns:   HRESULT Error return value S_OK if no error or object is not viewable, else E_FAIL.
+	//************************************
+	HRESULT addViewableObject2ResultData( SVObjectClass* object, SVIPResultData& p_rResultData, unsigned long colorValue = 0x00ffffff );
+
 private:
 	SVGUID m_InspectionId;
 	SVImageIdSet m_ImageIds;
 	SVIPProductStruct m_Product;
-
 };
 
 typedef SVSharedPtr< SVCommandInspectionCollectImageData > SVCommandInspectionCollectImageDataPtr;
@@ -64,7 +108,22 @@ typedef SVSharedPtr< SVCommandInspectionCollectImageData > SVCommandInspectionCo
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVCommandInspectionCollectImageData.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVCommandInspectionCollectImageData.h_v  $
+ * 
+ *    Rev 1.1   30 Sep 2014 16:07:52   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  925
+ * SCR Title:  Add PPQ Items and SVObserver Modes to Equation Editor Object Selector
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   Added new methods:
+ * setToolSetResultData,
+ * setPPQInputResultData,
+ * setPPQ_XParameterResultData,
+ * setEnvironmentResultData,
+ * and addViewableObject2ResultData.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 09:56:12   bWalter
  * Project:  SVObserver

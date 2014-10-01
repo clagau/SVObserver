@@ -5,8 +5,8 @@
 //* .Module Name     : SVIPDoc
 //* .File Name       : $Workfile:   SVIPDoc.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.22  $
-//* .Check In Date   : $Date:   27 Aug 2014 01:26:46  $
+//* .Current Version : $Revision:   1.23  $
+//* .Check In Date   : $Date:   30 Sep 2014 15:45:32  $
 //******************************************************************************
 
 #pragma region Includes
@@ -89,6 +89,7 @@
 #include "SVGuiExtentUpdater.h"
 #include "SVShiftTool.h"
 #include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
+#include "SVObjectLibrary/GlobalConst.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -1740,13 +1741,21 @@ void SVIPDoc::Dump(CDumpContext& dc) const
 void SVIPDoc::OnResultsPicker()
 {
 	SVInspectionProcess* l_pInspection( GetInspectionProcess() );
-	if( NULL == l_pInspection ) { return; }
+	if( nullptr == l_pInspection ) { return; }
 	
 	SVString InspectionName( l_pInspection->GetName() );
 
 	ObjectTreeGenerator::Instance().setSelectorType( ObjectTreeGenerator::SelectorTypeEnum::TypeSetAttributes );
 	ObjectTreeGenerator::Instance().setAttributeFilters( SV_VIEWABLE );
+	CString tmp;
+	tmp.LoadString(IDS_CLASSNAME_ROOTOBJECT);
+	ObjectTreeGenerator::Instance().setLocationFilter( ObjectTreeGenerator::FilterInput, tmp, SVString( _T("") ) );
 	ObjectTreeGenerator::Instance().setLocationFilter( ObjectTreeGenerator::FilterInput, InspectionName, SVString( _T("") ) );
+	ObjectTreeGenerator::Instance().insertTreeObjects( Seidenader::SVObjectLibrary::FqnEnvironmentMode );
+
+	SVPPQObject* ppq = GetInspectionProcess()->GetPPQ();
+	SVString PPQName = ppq->GetName();
+	ObjectTreeGenerator::Instance().insertTreeObjects( PPQName );
 
 	SVOutputInfoListClass OutputList;
 	GetToolSet()->GetOutputList( OutputList );
@@ -2040,75 +2049,16 @@ HRESULT SVIPDoc::GetResultDefinitions( SVResultDefinitionDeque& p_rDefinitions )
 
 	p_rDefinitions.clear();
 
-	SVToolSetClass* pToolSet = GetToolSet();
-	if( pToolSet )
+	addEnvironmentObject2ResultDefinitions(p_rDefinitions);
+	l_Status |= addPPQ_XParameter2ResultDefinitions(p_rDefinitions);
+
+	if ( S_OK == l_Status )
 	{
-		// Get the OutputList
-		SVResultListClass* pResultList = pToolSet->GetResultList();
-		if( pResultList )
+		l_Status |= addToolsetObject2ResultDefinitions(p_rDefinitions);
+
+		if ( S_OK == l_Status )
 		{
-			for( size_t i = 0; i < pResultList->m_vecObjects.size(); ++i )
-			{
-				SVObjectReference ref = pResultList->m_vecObjects.at(i);
-				if( ref.Object() != NULL )
-				{
-					SVIPResultItemDefinition l_Def;
-
-					if( ref.IsIndexPresent() )
-					{
-						if( ref.IsEntireArray() )
-						{
-							l_Def = SVIPResultItemDefinition( ref.Guid(), SVString() );
-						}
-						else
-						{
-							l_Def = SVIPResultItemDefinition( ref.Guid(), ref.GetIndex() );
-						}
-					}
-					else
-					{
-						l_Def = SVIPResultItemDefinition( ref.Guid() );
-					}
-
-					p_rDefinitions.push_back( l_Def );
-				}
-			}
-		}
-	}
-	else
-	{
-		l_Status = E_FAIL;
-	}
-
-	if( l_Status == S_OK )
-	{
-		SVInspectionProcess* l_pInspect = GetInspectionProcess();
-
-		if( l_pInspect != NULL )
-		{
-			unsigned long l_Color = 0x00ffffff;
-
-			// Insert all PPQ input items that are picked for viewing
-			for( size_t l = 0; l_pInspect && l < l_pInspect->m_PPQInputs.size(); ++l )
-			{
-				SVIOEntryStruct pIOEntry;
-				SVValueObjectClass* pObject;
-				pIOEntry = l_pInspect->m_PPQInputs[l];
-
-				pObject = dynamic_cast <SVValueObjectClass*> (pIOEntry.m_IOEntryPtr->m_pValueObject);
-				if ( pObject )
-				{
-					if( !( pObject->ObjectAttributesSet() & SV_VIEWABLE ) ) { continue; }
-
-					SVIPResultItemDefinition l_Def( pObject->GetUniqueObjectID() );
-
-					p_rDefinitions.push_back( l_Def );
-				}
-			}
-		}
-		else
-		{
-			l_Status = E_FAIL;
+			l_Status |= addPPQInputs2ResultDefinitions(p_rDefinitions);
 		}
 	}
 
@@ -4409,11 +4359,134 @@ int SVIPDoc::GetToolToInsertBefore(const CString& name, int listIndex) const
 	return toolListIndex;
 }
 
+HRESULT SVIPDoc::addToolsetObject2ResultDefinitions( SVResultDefinitionDeque &p_rDefinitions ) const
+{
+	HRESULT hRet = S_OK;
+	SVToolSetClass* pToolSet = GetToolSet();
+	if( pToolSet )
+	{
+		// Get the OutputList
+		SVResultListClass* pResultList = pToolSet->GetResultList();
+		if( pResultList )
+		{
+			for( size_t i = 0; i < pResultList->m_vecObjects.size(); ++i )
+			{
+				SVObjectReference ref = pResultList->m_vecObjects.at(i);
+				if( nullptr != ref.Object() )
+				{
+					SVIPResultItemDefinition l_Def;
+
+					if( ref.IsIndexPresent() )
+					{
+						if( ref.IsEntireArray() )
+						{
+							l_Def = SVIPResultItemDefinition( ref.Guid(), SVString() );
+						}
+						else
+						{
+							l_Def = SVIPResultItemDefinition( ref.Guid(), ref.GetIndex() );
+						}
+					}
+					else
+					{
+						l_Def = SVIPResultItemDefinition( ref.Guid() );
+					}
+
+					p_rDefinitions.push_back( l_Def );
+				}
+			}
+		}
+	}
+	else
+	{
+		hRet = E_FAIL;
+	}	
+	return hRet;
+}
+
+HRESULT SVIPDoc::addPPQInputs2ResultDefinitions( SVResultDefinitionDeque &p_rDefinitions ) const
+{
+	HRESULT hRet = S_OK;
+	SVInspectionProcess* l_pInspect = GetInspectionProcess();
+
+	if( nullptr != l_pInspect )
+	{
+		// Insert all PPQ input items that are picked for viewing
+		for( size_t l = 0; l_pInspect && l < l_pInspect->m_PPQInputs.size(); ++l )
+		{
+			SVIOEntryStruct pIOEntry = l_pInspect->m_PPQInputs[l];
+			addViewableObject2ResultDefinitions(pIOEntry.m_IOEntryPtr->m_pValueObject, p_rDefinitions);
+		}
+	}
+	else
+	{
+		hRet = E_FAIL;
+	}	
+	return hRet;
+}
+
+HRESULT SVIPDoc::addPPQ_XParameter2ResultDefinitions( SVResultDefinitionDeque &p_rDefinitions ) const
+{
+	SVInspectionProcess *pInspect = GetInspectionProcess();
+	if( nullptr != pInspect )
+	{
+		SVPPQObject *ppq = pInspect->GetPPQ();
+		if ( nullptr != ppq )
+		{
+			//add PPQ_X parameter to the equation selection list
+			SVString PPQName = ppq->GetName();
+			SVObjectReferenceVector ObjectList;
+			SVObjectManagerClass::Instance().getTreeList( PPQName, ObjectList, SV_VIEWABLE );
+			for(SVObjectReferenceVector::const_iterator iter = ObjectList.begin(); iter != ObjectList.end(); ++iter) 
+			{
+				addViewableObject2ResultDefinitions(iter->Object(), p_rDefinitions);
+			}
+			return S_OK;
+		}
+	}
+
+	return E_FAIL;
+}
+
+void SVIPDoc::addEnvironmentObject2ResultDefinitions( SVResultDefinitionDeque &p_rDefinitions ) const
+{
+	SVObjectReferenceVector ObjectList;
+	SVObjectManagerClass::Instance().getTreeList( Seidenader::SVObjectLibrary::FqnEnvironmentMode, ObjectList, SV_VIEWABLE );
+	for(SVObjectReferenceVector::const_iterator iter = ObjectList.begin(); iter != ObjectList.end(); ++iter) 
+	{
+		addViewableObject2ResultDefinitions(iter->Object(), p_rDefinitions);
+	}
+}
+
+void SVIPDoc::addViewableObject2ResultDefinitions( SVObjectClass* pObject, SVResultDefinitionDeque &p_rDefinitions ) const
+{
+	if ( pObject && pObject->ObjectAttributesSet() & SV_VIEWABLE )
+	{
+		SVIPResultItemDefinition l_Def( pObject->GetUniqueObjectID() );
+		p_rDefinitions.push_back( l_Def );
+	}
+}
+
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVIPDoc.cpp_v  $
+ * 
+ *    Rev 1.23   30 Sep 2014 15:45:32   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  925
+ * SCR Title:  Add PPQ Items and SVObserver Modes to Equation Editor Object Selector
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   Changed the method OnResultsPicker to show PPQ items.
+ * Changed GetResultDefinitions method to handle PPQ items.  Broke into multiple new methods:
+ * addEnvironmentObject2ResultDefinitions,
+ * addPPQ_XParameter2ResultDefinitions,
+ * addToolsetObject2ResultDefinitions,
+ * and addPPQInputs2ResultDefinitions.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.22   27 Aug 2014 01:26:46   gramseier
  * Project:  SVObserver

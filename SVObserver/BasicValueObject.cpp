@@ -5,8 +5,8 @@
 //* .Module Name     : BasicValueObject
 //* .File Name       : $Workfile:   BasicValueObject.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.4  $
-//* .Check In Date   : $Date:   17 Jul 2014 17:39:38  $
+//* .Current Version : $Revision:   1.5  $
+//* .Check In Date   : $Date:   30 Sep 2014 15:33:38  $
 //******************************************************************************
 
 #pragma region Includes
@@ -177,60 +177,114 @@ HRESULT BasicValueObject::getValue( SVString& rValue ) const
 
 HRESULT BasicValueObject::getValue( BOOL& rValue ) const
 {
-	HRESULT	Result = S_FALSE;
+	HRESULT Result = S_OK;
 
 	RefreshOwner();
 
-	rValue =FALSE;
-	if(VT_BOOL == m_Value.vt)
+	switch(m_Value.vt)
 	{
-		rValue = m_Value.boolVal;
-		Result = S_OK;
+	case VT_I4:
+		rValue = static_cast<BOOL>(m_Value.lVal);
+		break;
+	case VT_I8:
+		rValue = static_cast<BOOL>(m_Value.llVal);
+		break;
+	case VT_BOOL:
+		rValue = static_cast<BOOL>(m_Value.boolVal);
+		break;
+	case VT_R4: // fall through...
+	case VT_BSTR: // fall through...
+	default:
+		Result = S_FALSE;
+		break;
 	}
+
 	return Result;
 }
 
 HRESULT BasicValueObject::getValue( long& rValue ) const
 {
-	HRESULT	Result = S_FALSE;
+	HRESULT Result = S_OK;
 
 	RefreshOwner();
 
 	rValue = 0;
-	if(VT_I4 == m_Value.vt)
+	switch(m_Value.vt)
 	{
-		rValue = m_Value.lVal;
-		Result = S_OK;
+	case VT_I4:
+		rValue = static_cast<long>(m_Value.lVal);
+		break;
+	case VT_I8:
+		rValue = static_cast<long>(m_Value.llVal);
+		break;
+	case VT_BOOL:
+		rValue = static_cast<long>(m_Value.boolVal);
+		break;
+	case VT_R4: 
+		rValue = static_cast<long>(m_Value.dblVal);
+		break;
+	case VT_BSTR: // fall through...
+	default:
+		Result = S_FALSE;
+		break;
 	}
 	return Result;
 }
 
 HRESULT BasicValueObject::getValue( __int64& rValue ) const
 {
-	HRESULT	Result = S_FALSE;
+	HRESULT Result = S_OK;
 
 	RefreshOwner();
 
 	rValue = 0;
-	if(VT_I8 == m_Value.vt)
+	switch(m_Value.vt)
 	{
-		rValue = m_Value.llVal;
-		Result = S_OK;
+	case VT_I4:
+		rValue = static_cast<__int64>(m_Value.lVal);
+		break;
+	case VT_I8:
+		rValue = static_cast<__int64>(m_Value.llVal);
+		break;
+	case VT_BOOL:
+		rValue = static_cast<__int64>(m_Value.boolVal);
+		break;
+	case VT_R4: 
+		rValue = static_cast<__int64>(m_Value.dblVal);
+		break;
+	case VT_BSTR: // fall through...
+	default:
+		Result = S_FALSE;
+		break;
 	}
 	return Result;
 }
 
 HRESULT BasicValueObject::getValue( double& rValue ) const
 {
-	HRESULT	Result = S_FALSE;
+	HRESULT Result = S_OK;
 
 	RefreshOwner();
 
 	rValue = 0.0;
-	if(VT_R4 == m_Value.vt)
+	switch(m_Value.vt)
 	{
-		rValue = m_Value.dblVal;
-		Result = S_OK;
+	case VT_I4:
+		rValue = static_cast<double>(m_Value.lVal);
+		break;
+	case VT_I8:
+		rValue = static_cast<double>(m_Value.llVal);
+		break;
+	case VT_BOOL:
+		rValue = static_cast<double>(m_Value.boolVal);
+		break;
+	case VT_R4: 
+		rValue = static_cast<double>(m_Value.dblVal);
+		break;
+	case VT_BSTR: // fall through...
+	default:
+		Result = S_FALSE;
+		break;
 	}
 	return Result;
 }
@@ -458,6 +512,16 @@ HRESULT BasicValueObject::ConvertArrayToVariant( _variant_t& rValue ) const
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\BasicValueObject.cpp_v  $
+ * 
+ *    Rev 1.5   30 Sep 2014 15:33:38   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  925
+ * SCR Title:  Add PPQ Items and SVObserver Modes to Equation Editor Object Selector
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   Changed getValue methods to be able to handle multiple types of values.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.4   17 Jul 2014 17:39:38   gramseier
  * Project:  SVObserver
