@@ -5,8 +5,8 @@
 //* .Module Name     : SVJsonCommandServerSocket
 //* .File Name       : $Workfile:   SVJsonCommandServerSocket.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.5  $
-//* .Check In Date   : $Date:   01 Jul 2014 15:17:54  $
+//* .Current Version : $Revision:   1.6  $
+//* .Check In Date   : $Date:   02 Oct 2014 10:38:02  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -92,6 +92,10 @@ bool SVJsonCommandServerSocket::Write(const std::string& data)
 		if( bRetVal )
 		{
 			m_WriteQueue.push_back( data );
+		}
+		else
+		{
+			// SEJ  - need to log something
 		}
 	}
 
@@ -208,28 +212,35 @@ void SVJsonCommandServerSocket::ThreadProcessHandler(bool& bWaitEvents)
 
 				if (FD_ISSET(m_client, &write_set))
 				{
-					std::string l_Data;
-
 					if( !( m_WriteQueue.empty() ) )
 					{
 						SVAutoLockAndReleaseTemplate< SVCriticalSection > l_Auto;
 
 						if( l_Auto.Assign( &m_WriteQueueLock ) )
 						{
-							l_Data = m_WriteQueue.front();
+							std::string l_Data = m_WriteQueue.front();
 
 							m_WriteQueue.pop_front();
+
+							if( !( l_Data.empty() ) )
+							{
+								SVSocketError::ErrorEnum error = m_client.Send( l_Data ); // Use Send instead of Write for JSON.
+
+								l_Sleep = ( error != SVSocketError::Success );
+								if( l_Sleep )
+								{
+									// SEJ - need to log something
+									CloseClient();
+								}
+							}
+							else
+							{
+								// SEJ - need to log something
+							}
 						}
-					}
-
-					if( !( l_Data.empty() ) )
-					{
-						SVSocketError::ErrorEnum error = m_client.Send( l_Data ); // Use Send instead of Write for JSON.
-
-						l_Sleep = ( error != SVSocketError::Success );
-						if( l_Sleep )
+						else
 						{
-							CloseClient();
+							// SEJ - need to log something
 						}
 					}
 				}
@@ -307,6 +318,18 @@ void SVJsonCommandServerSocket::CloseClient()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVJsonCommandServerLibrary\SVJsonCommandServerSocket.cpp_v  $
+ * 
+ *    Rev 1.6   02 Oct 2014 10:38:02   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  949
+ * SCR Title:  Repeatedly Calling PutConfig Causes SVObserver to Stop Responding
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   Revised Write to add placeholder for logging.
+ * Revised ThreadProcessHandler to add placeholders for logging and reduce scope of std::string data.
+ * 
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.5   01 Jul 2014 15:17:54   sjones
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : SVSocketRemoteCommandManager
 //* .File Name       : $Workfile:   SVSocketRemoteCommandManager.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.13  $
-//* .Check In Date   : $Date:   02 Sep 2014 13:25:28  $
+//* .Current Version : $Revision:   1.14  $
+//* .Check In Date   : $Date:   02 Oct 2014 10:22:40  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -1147,9 +1147,7 @@ HRESULT SVRemoteCommandFunctions::PutConfig( const std::string& p_rJsonCommand, 
 		if( l_JsonArguments.isObject() )
 		{
 			std::string l_DestinationPath;
-			Json::Value l_JsonContents;
-
-			l_JsonContents = l_JsonArguments[ SVRC::arg::contents ];
+			Json::Value l_JsonContents = l_JsonArguments[ SVRC::arg::contents ];
 
 			if( l_JsonContents.isString() )
 			{
@@ -2084,11 +2082,43 @@ AFX_INLINE HRESULT SVRemoteCommandFunctions::WriteResultToJsonAndFile( const std
 	return l_Status;
 }
 
+void SVRemoteCommandFunctions::BuildErrorResponse(const std::string& rJsonCommand, std::string& rResponse, HRESULT hr)
+{
+	HRESULT l_Status = S_OK;
+
+	Json::FastWriter l_Writer;
+	Json::Value l_Object(Json::objectValue);
+	std::string l_Name;
+	long l_Id = 0;
+
+	GetCommandName( rJsonCommand, l_Name );
+	GetCommandId( rJsonCommand, l_Id );
+
+	l_Object[ SVRC::cmd::name ] = l_Name;
+	l_Object[ SVRC::cmd::id ] = l_Id;
+	l_Object[ SVRC::cmd::hr ] = hr;
+	l_Object[ SVRC::cmd::reslts ] = Json::Value(Json::objectValue);
+	// use Format Message ?
+	//l_Object[ SVRC::cmd::err ] = 
+
+	rResponse = l_Writer.write( l_Object ).c_str();
+}
+
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVSocketRemoteCommandManager.cpp_v  $
+ * 
+ *    Rev 1.14   02 Oct 2014 10:22:40   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  949
+ * SCR Title:  Repeatedly Calling PutConfig Causes SVObserver to Stop Responding
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   Added BuildErrorResponse method.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.13   02 Sep 2014 13:25:28   sjones
  * Project:  SVObserver

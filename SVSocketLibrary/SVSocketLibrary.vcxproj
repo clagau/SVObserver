@@ -148,6 +148,7 @@
     </ClCompile>
     <ClCompile Include="SVClientSocket.cpp" />
     <ClCompile Include="SVJsonPacket.cpp" />
+    <ClCompile Include="SVJsonStreamPacket.cpp" />
     <ClCompile Include="SVServerSocket.cpp" />
     <ClCompile Include="SVSocket.cpp" />
     <ClCompile Include="SVSocketError.cpp" />
@@ -158,6 +159,7 @@
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="SVClientSocket.h" />
     <ClInclude Include="SVJsonPacket.h" />
+    <ClInclude Include="SVJsonStreamPacket.h" />
     <ClInclude Include="SVServerSocket.h" />
     <ClInclude Include="SVSocket.h" />
     <ClInclude Include="SVSocketError.h" />

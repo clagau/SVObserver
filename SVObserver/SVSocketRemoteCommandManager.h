@@ -5,8 +5,8 @@
 //* .Module Name     : SVSocketRemoteCommandManager
 //* .File Name       : $Workfile:   SVSocketRemoteCommandManager.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.6  $
-//* .Check In Date   : $Date:   29 Aug 2014 17:49:06  $
+//* .Current Version : $Revision:   1.7  $
+//* .Check In Date   : $Date:   02 Oct 2014 10:22:40  $
 //******************************************************************************
 
 #ifndef SVSOCKETREMOTECOMMANDMANAGER_H
@@ -36,6 +36,7 @@ public:
 
 	static HRESULT ProcessCommand( const std::string& p_rJsonCommand, std::string& p_rJsonResults );
 	static HRESULT ProcessAsyncCommand( const std::string& p_rJsonCommand, std::string& p_rJsonResults );
+	static void BuildErrorResponse(const std::string& rCommand, std::string& rResponse, HRESULT hr);
 
 protected:
 	static void GetCommandName( const std::string& p_rJsonCommand, std::string& p_rName );
@@ -81,11 +82,11 @@ protected:
 	static HRESULT GetProductFilter( const std::string& rJsonCommand, std::string& rJsonResults );
 	static HRESULT SetProductFilter( const std::string& rJsonCommand, std::string& rJsonResults );
 
-	AFX_INLINE static HRESULT WriteJsonCommandToFile(const Json::Value& p_rJsonValues, const std::string& p_rFileName);
-	AFX_INLINE static HRESULT WriteJsonCommandToFile(const std::string& p_rJsonCommand, const std::string& p_rFileName);
+	inline static HRESULT WriteJsonCommandToFile(const Json::Value& p_rJsonValues, const std::string& p_rFileName);
+	inline static HRESULT WriteJsonCommandToFile(const std::string& p_rJsonCommand, const std::string& p_rFileName);
 
-	AFX_INLINE static HRESULT WriteResultToJsonAndFile( const std::string& p_rJsonCommand, std::string& p_rJsonResults, 
-														const Json::Value& p_rJsonResultValue, const std::string& p_rFileName , HRESULT p_Status);
+	inline static HRESULT WriteResultToJsonAndFile( const std::string& p_rJsonCommand, std::string& p_rJsonResults, 
+													const Json::Value& p_rJsonResultValue, const std::string& p_rFileName, HRESULT p_Status);
 
 	static SVCommandFunctionMap m_Functions;
 	static SVCommandFunctionMap m_AsyncFunctions;
@@ -109,6 +110,16 @@ typedef SVJsonCommandManager< SVRemoteCommandFunctions > SVSocketRemoteCommandMa
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVSocketRemoteCommandManager.h_v  $
+ * 
+ *    Rev 1.7   02 Oct 2014 10:22:40   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  949
+ * SCR Title:  Repeatedly Calling PutConfig Causes SVObserver to Stop Responding
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   Added BuildErrorResponse method.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.6   29 Aug 2014 17:49:06   jHanebach
  * Project:  SVObserver

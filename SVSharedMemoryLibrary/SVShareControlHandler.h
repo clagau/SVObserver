@@ -5,8 +5,8 @@
 //* .Module Name     : SVShareControlHandler
 //* .File Name       : $Workfile:   SVShareControlHandler.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.3  $
-//* .Check In Date   : $Date:   02 Sep 2014 15:27:58  $
+//* .Current Version : $Revision:   1.4  $
+//* .Check In Date   : $Date:   02 Oct 2014 09:04:10  $
 //******************************************************************************
 #pragma once
 #include "SVSharedControl.h"
@@ -27,27 +27,27 @@ namespace SeidenaderVision
 		SVShareControlHandler();
 		~SVShareControlHandler();
 
-		bool IsCreated() const;
-		// SVObserver is setting/clearing ready flag and clearing ack flag at the same time
-		void SetReady() { SVSharedConfiguration::Log("ControlHandler::SetReady"); m_ctrl->ready = ++m_count; m_ctrl->ack = 0; }
-		void ClearReady(){ SVSharedConfiguration::Log("ControlHandler::ClearReady"); m_ctrl->ready = 0; m_ctrl->ack = 0; }
-		bool IsReady() const { SVSharedConfiguration::Log("ControlHandler::IsReady"); return (IsCreated() && m_ctrl->ready) ? true : false; }
-		bool ReadyChanged(long previousValue) const { SVSharedConfiguration::Log("ControlHandler::ReadyChanged"); return m_ctrl->ready != previousValue; }
-
-		void SetAck(){ SVSharedConfiguration::Log("ControlHandler::SetAck"); m_ctrl->ack = 1; }
-		bool GotAck() const { SVSharedConfiguration::Log("ControlHandler::GotAck"); return m_ctrl->ack ? true : false; }
-		long GetCount() const { return m_count; }
-		void TickSVOHeartbeat() { m_ctrl->svo_heartbeat = GetTickCount(); }
-		void TickRRSHeartbeat() { m_ctrl->rrs_heartbeat = GetTickCount(); }
-
-		timestamp GetSVOHeartbeat() const { return m_ctrl->svo_heartbeat; }
-		timestamp GetRRSHeartbeat() const { return m_ctrl->rrs_heartbeat; }
-
-		void SetProductFilterChanged() { SVSharedConfiguration::Log("ControlHandler::SetProductFilterChanged"); m_ctrl->productFilterChanged = ++m_filterChangeCount; }
-		bool ProductFilterChanged(long previousValue) const { SVSharedConfiguration::Log("ControlHandler::ProductFilterChanged"); return m_ctrl->productFilterChanged != previousValue; }
-		long GetFilterChangeCount() const { return m_filterChangeCount; }
-
 		void Release();
+		bool IsCreated() const;
+
+		// SVObserver is setting/clearing ready flag and clearing ack flag at the same time
+		void SetReady();										// for writer use
+		void ClearReady();										// for writer use
+		bool IsReady() const;									// for reader use
+		bool ReadyChanged(long previousValue) const;			// for reader use
+
+		void SetAck();											// for reader use
+		bool GotAck() const;									// for writer use
+		long GetReadyCount() const;								// used by reader only
+		void TickSVOHeartbeat();								// not used (future ?)
+		void TickRRSHeartbeat();								// not used (future ?)
+
+		timestamp GetSVOHeartbeat() const;						// not used (future ?)
+		timestamp GetRRSHeartbeat() const;						// not used (future ?)
+
+		void SetProductFilterChanged();							// for writer use
+		bool ProductFilterChanged(long previousValue) const;	// for reader use
+		long GetProductFilterChangeCount() const;				// for reader use
 	};
 }
 
@@ -56,6 +56,18 @@ namespace SeidenaderVision
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVSharedMemoryLibrary\SVShareControlHandler.h_v  $
+ * 
+ *    Rev 1.4   02 Oct 2014 09:04:10   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  954
+ * SCR Title:  Fix Issues with Run/Reject Server and Shared Memory Synchronization
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   Moved code into SVShareControlHandler.cpp file.
+ * Renamed GetCount to GetReadyCount.
+ * Renamed GetFilterChangeCount to GetProductFilterChangeCount.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   02 Sep 2014 15:27:58   sjones
  * Project:  SVObserver

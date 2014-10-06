@@ -5,8 +5,8 @@
 //* .Module Name     : SVShareControlHandler
 //* .File Name       : $Workfile:   SVShareControlHandler.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.3  $
-//* .Check In Date   : $Date:   28 Aug 2014 18:39:46  $
+//* .Current Version : $Revision:   1.4  $
+//* .Check In Date   : $Date:   02 Oct 2014 09:05:54  $
 //******************************************************************************
 #include "StdAfx.h"
 #include "SVShareControlHandler.h"
@@ -75,11 +75,115 @@ bool SVShareControlHandler::IsCreated() const
 	return (shm.get() != nullptr && m_ctrl);
 }
 
+void SVShareControlHandler::SetReady()
+{ 
+	SVSharedConfiguration::Log("ControlHandler::SetReady"); 
+	m_ctrl->ready = ++m_count; 
+	m_ctrl->ack = 0; 
+} 
+
+void SVShareControlHandler::ClearReady()
+{
+	SVSharedConfiguration::Log("ControlHandler::ClearReady");
+	m_ctrl->ready = 0;
+	m_ctrl->ack = 0;
+}
+
+bool SVShareControlHandler::IsReady() const 
+{
+	SVSharedConfiguration::Log("ControlHandler::IsReady");
+	return (IsCreated() && m_ctrl->ready) ? true : false;
+}
+
+bool SVShareControlHandler::ReadyChanged(long previousValue) const
+{
+	SVSharedConfiguration::Log("ControlHandler::ReadyChanged");
+	return m_ctrl->ready != previousValue;
+}
+
+void SVShareControlHandler::SetAck()
+{
+	SVSharedConfiguration::Log("ControlHandler::SetAck");
+	m_ctrl->ack = 1;
+}
+
+bool SVShareControlHandler::GotAck() const
+{
+	SVSharedConfiguration::Log("ControlHandler::GotAck");
+	return m_ctrl->ack ? true : false;
+}
+
+long SVShareControlHandler::GetReadyCount() const
+{
+	long count = 0;
+	if (m_ctrl)
+	{
+		count = m_ctrl->ready;
+	}
+	return count;
+}
+
+void SVShareControlHandler::TickSVOHeartbeat()
+{
+	m_ctrl->svo_heartbeat = GetTickCount();
+}
+
+void SVShareControlHandler::TickRRSHeartbeat()
+{
+	m_ctrl->rrs_heartbeat = GetTickCount();
+}
+
+timestamp SVShareControlHandler::GetSVOHeartbeat() const
+{
+	return m_ctrl->svo_heartbeat;
+}
+
+timestamp SVShareControlHandler::GetRRSHeartbeat() const
+{
+	return m_ctrl->rrs_heartbeat;
+}
+
+void SVShareControlHandler::SetProductFilterChanged()
+{
+	SVSharedConfiguration::Log("ControlHandler::SetProductFilterChanged");
+	m_ctrl->productFilterChanged = ++m_filterChangeCount;
+}
+
+bool SVShareControlHandler::ProductFilterChanged(long previousValue) const
+{
+	SVSharedConfiguration::Log("ControlHandler::ProductFilterChanged");
+	return m_ctrl->productFilterChanged != previousValue;
+}
+
+long SVShareControlHandler::GetProductFilterChangeCount() const 
+{
+	long count = 0;
+	if (m_ctrl)
+	{
+		count = m_ctrl->productFilterChanged;
+	}
+	return count;
+}
+
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVSharedMemoryLibrary\SVShareControlHandler.cpp_v  $
+ * 
+ *    Rev 1.4   02 Oct 2014 09:05:54   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  954
+ * SCR Title:  Fix Issues with Run/Reject Server and Shared Memory Synchronization
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   Moved code from SVShareControlHandler.h
+ * Renamed GetCount to GetReadyCount.
+ * Revised GetReadyCount.
+ * Renamed GetFilterChangeCount to GetProductFilterChangeCount.
+ * Revised GetProductFilterChangeCount.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   28 Aug 2014 18:39:46   sjones
  * Project:  SVObserver

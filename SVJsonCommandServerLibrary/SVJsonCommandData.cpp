@@ -5,8 +5,8 @@
 //* .Module Name     : SVJsonCommandData
 //* .File Name       : $Workfile:   SVJsonCommandData.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   22 Apr 2013 13:14:22  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   02 Oct 2014 10:28:00  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -78,7 +78,7 @@ HRESULT SVJsonCommandData::WaitForRequest( DWORD p_TimeoutInMilliseconds ) const
 	{
 		if( ::WaitForSingleObject( m_WaitHandle, p_TimeoutInMilliseconds ) != WAIT_OBJECT_0 )
 		{
-			l_Status = E_FAIL;
+			l_Status = RPC_E_TIMEOUT; // timeout occurred
 		}
 	}
 	else
@@ -139,6 +139,16 @@ HRESULT SVJsonCommandData::GetWaitHandle( HANDLE& p_rHandle ) const
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVJsonCommandServerLibrary\SVJsonCommandData.cpp_v  $
+ * 
+ *    Rev 1.1   02 Oct 2014 10:28:00   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  949
+ * SCR Title:  Repeatedly Calling PutConfig Causes SVObserver to Stop Responding
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   Revised WaitForresquest to return RPC_E_TIMEOUT when a timeout occurs
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   22 Apr 2013 13:14:22   bWalter
  * Project:  SVObserver

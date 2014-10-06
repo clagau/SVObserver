@@ -5,8 +5,8 @@
 //* .Module Name     : runrejctsvr
 //* .File Name       : $Workfile:   runrejctsvr.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.6  $
-//* .Check In Date   : $Date:   04 Sep 2014 14:12:50  $
+//* .Current Version : $Revision:   1.7  $
+//* .Check In Date   : $Date:   02 Oct 2014 09:10:22  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -45,7 +45,23 @@ struct port<UdpApi>
 };
 
 typedef Json::Value JsonCmd;
+
+typedef SeidenaderVision::SVShareControlHandler ShareControl;
+typedef SeidenaderVision::SVMonitorListReader MonitorListReader;
+typedef SeidenaderVision::SVSharedPPQReader PPQReader;
+
+typedef Seidenader::Socket::SVServerSocket<UdpApi> UdpServerSocket;
+typedef Seidenader::Socket::SVSocket<UdpApi> UdpSocket;
+
+typedef Seidenader::Socket::SVServerSocket<TcpApi> TcpServerSocket;
+typedef Seidenader::Socket::SVSocket<TcpApi> TcpSocket;
+
 typedef SeidenaderVision::ProductPtr ProductPtr;
+
+typedef std::pair<ProductPtr, long> ProductPtrPair;
+static std::pair<ProductPtr, long> g_lastProduct(ProductPtr(nullptr), -1); // For last held product from GetProduct cmd
+static std::pair<ProductPtr, long> g_lastRejectProduct(ProductPtr(nullptr), -1); // For last held Reject from GetProduct cmd when product filter is lastReject
+static std::pair<ProductPtr, long> g_lastReject(ProductPtr(nullptr), -1); // For last held Reject from GetReject cmd
 
 using Seidenader::Socket::header;
 using Seidenader::Socket::Traits;
@@ -55,8 +71,8 @@ void servimg(LPVOID)
 {
 	try
 	{
-		typedef Seidenader::Socket::SVServerSocket<UdpApi> ServerSocket;
-		typedef Seidenader::Socket::SVSocket<UdpApi> Socket;
+		typedef UdpServerSocket ServerSocket;
+		typedef UdpSocket Socket;
 		typedef Seidenader::Socket::header header;
 		ServerSocket sok;
 		sok.Create();
@@ -92,9 +108,7 @@ void servimg(LPVOID)
 						is.seekg(0, std::ios::beg);
 						std::vector<u_char> vec(sz);
 						is.read(reinterpret_cast<char *>(&vec[0]), sz);
-						//std::cout << "writing " << sz << " bytes...";
 						client.Write(&vec[0], sz, true);
-						//std::cout << filename << " written\n";
 					}
 					catch(std::exception & ex)
 					{
@@ -108,11 +122,6 @@ void servimg(LPVOID)
 					SVSharedConfiguration::Log(client.Log(SVSocketError::GetErrorText(SVSocketError::GetLastSocketError()), true));
 				}
 			}
-			//else
-			//{
-			//	SVSharedConfiguration::Log(client.Log(SVSocketError::GetErrorText(SVSocketError::GetLastSocketError()), true));
-			//}
-			//client.Destroy();
 		}
 	}
 	catch(std::exception & ex)
@@ -122,13 +131,6 @@ void servimg(LPVOID)
 	}	
 	_endthread();
 }
-
-typedef Seidenader::Socket::SVSocket<TcpApi> TcpSocket;
-typedef Seidenader::Socket::SVSocket<UdpApi> UdpSocket;
-
-typedef SeidenaderVision::SVShareControlHandler ShareControl;
-typedef SeidenaderVision::SVMonitorListReader MonitorListReader;
-typedef SeidenaderVision::SVSharedPPQReader PPQReader;
 
 struct MonitorListCopy 
 {
@@ -155,11 +157,12 @@ JsonCmd ReadCommand(TcpSocket & sok)
 	SVSocketError::ErrorEnum error = SVSocketError::Success;
 	if (SVSocketError::Success == (error = sok.ReadAll(arr, buflen, false)))
 	{
-		std::string cmd = reinterpret_cast<char *>(arr.get());
-		//::OutputDebugStringA(cmd.c_str());
-		//::OutputDebugStringA("\n");
-		Json::Reader reader;
-		reader.parse(cmd, val, false); // don't care for the actual command for now
+		if (arr.get())
+		{
+			std::string cmd = reinterpret_cast<char *>(arr.get());
+			Json::Reader reader;
+			reader.parse(cmd, val, false); // don't care for the actual command for now
+		}
 	}
 	else
 	{
@@ -186,7 +189,6 @@ JsonCmd ReadCommand(UdpSocket & sok)
 
 std::string EncodeImg(const std::string & name)
 {
-	//const std::string quot = "\"";
 	HANDLE hFile = ::CreateFileA(name.c_str(), GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
 	if (hFile == INVALID_HANDLE_VALUE)
 	{
@@ -229,14 +231,14 @@ Json::Value NewResponse(const JsonCmd & cmd)
 typedef SeidenaderVision::SVSharedInspectionReader SHMReader;
 
 // the three following functions expect the Json array and add to it value/error/image objects respectively.
-Json::Value & GenerateValues(Json::Value & arr, InspectionDataPtr data)
+Json::Value & GenerateValues(Json::Value & arr, InspectionDataPtr data, const MonitorListCopy::Strings& productItemNames)
 {
 	int count = data->m_TriggerCount;
-	//std::for_each(data->m_Values.begin(), data->m_Values.end(),
 	for (SVSharedValueMap::const_iterator it = data->m_Values.begin(); it != data->m_Values.end(); ++it)
-		//[&arr, count](const SVSharedValuePair & pair)
+	{
+		const SVSharedValueMap::value_type & pair = *it;
+		if (std::find(productItemNames.begin(), productItemNames.end(), pair.first.c_str()) != productItemNames.end())
 		{
-			const SVSharedValueMap::value_type & pair = *it;
 			Json::Value val(Json::objectValue);
 			val[SVRC::vo::name] = pair.first.c_str();
 			val[SVRC::vo::status] = pair.second.m_Status;
@@ -246,7 +248,7 @@ Json::Value & GenerateValues(Json::Value & arr, InspectionDataPtr data)
 			val[SVRC::vo::array] = value;
 			arr.append(val);
 		}
-	//);
+	}
 	return arr;
 }
 
@@ -272,14 +274,14 @@ void AppendImageContents<TcpApi>(Json::Value & val, const std::string & filePath
 }
 
 template<typename API>
-Json::Value & GenerateImages(Json::Value & arr, InspectionDataPtr data)
+Json::Value & GenerateImages(Json::Value & arr, InspectionDataPtr data, const MonitorListCopy::Strings& productItemNames)
 {
 	int count = data->m_TriggerCount;
-	//std::for_each(data->m_Images.begin(), data->m_Images.end(),
-		//[&arr, count](SVSharedImagePair & pair)
 	for (SVSharedImageMap::iterator it = data->m_Images.begin(); it != data->m_Images.end(); ++it)
+	{
+		SVSharedImageMap::value_type & pair = *it;
+		if (std::find(productItemNames.begin(), productItemNames.end(), pair.first.c_str()) != productItemNames.end())
 		{
-			SVSharedImageMap::value_type & pair = *it;
 			Json::Value val(Json::objectValue);
 			val[SVRC::io::name] = pair.first.c_str();
 			val[SVRC::io::status] = pair.second.m_Status;
@@ -287,22 +289,22 @@ Json::Value & GenerateImages(Json::Value & arr, InspectionDataPtr data)
 			AppendImageContents<API>(val, pair.second.m_Filename.c_str());
 			arr.append(val);
 		}
-	//);
+	}
 	return arr;
 }
 
 template<typename API>
-Json::Value WriteProductItems(ProductPtr product)
+Json::Value WriteProductItems(ProductPtr product, const MonitorListCopy::Strings& productItemNames)
 {
 	Json::Value rslt(Json::objectValue);
 	Json::Value values(Json::arrayValue);
 	Json::Value images(Json::arrayValue);
 	Json::Value errors(Json::arrayValue);
 	std::for_each(product->inspections.begin(), product->inspections.end(),
-		[&values, &images, &errors](std::pair<const std::string, InspectionDataPtr> & pair) 
+		[&values, &images, &errors, &productItemNames](std::pair<const std::string, InspectionDataPtr> & pair) 
 		{ 
-			GenerateValues(values, pair.second); 
-			GenerateImages<API>(images, pair.second); 
+			GenerateValues(values, pair.second, productItemNames); 
+			GenerateImages<API>(images, pair.second, productItemNames); 
 			GenerateErrors(errors, pair.second);
 		}
 	);
@@ -352,16 +354,14 @@ Json::Value WriteFailStatus(const FailStatusMap & fsMap)
 	return rslt;
 }
 
-Json::Value GetLastInspectedProduct(PPQReader& rReader, long trig)
+Json::Value GetLastInspectedProduct(PPQReader& rReader, long trig, const MonitorListCopy::Strings& productItemNames)
 {
-	static std::pair<ProductPtr, long> lastProduct(ProductPtr(nullptr), -1);
 	static Json::Value lastResult(Json::objectValue);
 	Json::Value rslt(Json::objectValue);
 	if (trig >= 0)
 	{
-		if (lastProduct.second < 0 || trig != lastProduct.first->product.m_TriggerCount)
+		if (g_lastProduct.second < 0 || trig != g_lastProduct.first->product.m_TriggerCount)
 		{
-
 			throw(std::exception("Product Not Found"));
 		}
 		else
@@ -373,49 +373,63 @@ Json::Value GetLastInspectedProduct(PPQReader& rReader, long trig)
 	{
 		long idx = -1;
 		const ProductPtr product = rReader.RequestNextProduct(idx);
-		rslt = WriteProductItems<UdpApi>(product);
+		rslt = WriteProductItems<UdpApi>(product, productItemNames);
 
-		if (lastProduct.second >= 0)
+		if (g_lastProduct.second >= 0)
 		{
-			rReader.ReleaseProduct(lastProduct .first, lastProduct .second);
+			rReader.ReleaseProduct(g_lastProduct .first, g_lastProduct .second);
 		}
-		lastProduct = std::make_pair(product, idx);
+		g_lastProduct = std::make_pair(product, idx);
 		lastResult = rslt;
 	}
 	return rslt;
 }
 
 template<typename API>
-Json::Value GetRejectedProduct(PPQReader& rReader, long trig);
+void ClearHeld();
 
 template<>
-Json::Value GetRejectedProduct<TcpApi>(PPQReader& rReader, long trig)
+void ClearHeld<TcpApi>()
 {
-	static std::pair<ProductPtr, long> lastReject(ProductPtr(nullptr), -1); // Last reject held from GetReject call 
+	g_lastReject = std::make_pair(ProductPtr(nullptr), -1);
+}
+
+template<>
+void ClearHeld<UdpApi>()
+{
+	g_lastProduct = std::make_pair(ProductPtr(nullptr), -1);
+	g_lastRejectProduct = std::make_pair(ProductPtr(nullptr), -1);
+}
+
+template<typename API>
+Json::Value GetRejectedProduct(PPQReader& rReader, long trig, const MonitorListCopy::Strings& productItemNames);
+
+template<>
+Json::Value GetRejectedProduct<TcpApi>(PPQReader& rReader, long trig, const MonitorListCopy::Strings& productItemNames)
+{
 	Json::Value rslt(Json::objectValue);
 	
 	long idx = -1;
 	ProductPtr product = rReader.RequestReject(trig, idx);
-	rslt = WriteProductItems<TcpApi>(product);
+	rslt = WriteProductItems<TcpApi>(product, productItemNames);
 	
 	// Decide which product to keep and which to release...
-	if (lastReject.second >= 0)
+	if (g_lastReject.second >= 0)
 	{
-		rReader.ReleaseReject(lastReject.first, lastReject.second);
+		rReader.ReleaseReject(g_lastReject.first, g_lastReject.second);
 	}
-	lastReject = std::make_pair(product, idx);
+	g_lastReject = std::make_pair(product, idx);
 	return rslt;
 }
 
 template<>
-Json::Value GetRejectedProduct<UdpApi>(PPQReader& rReader, long trig)
+Json::Value GetRejectedProduct<UdpApi>(PPQReader& rReader, long trig, const MonitorListCopy::Strings& productItemNames)
 {
-	static std::pair<ProductPtr, long> lastReject(ProductPtr(nullptr), -1); // Last reject held from GetProduct call w/Product Filter = LastReject
 	static Json::Value lastResult(Json::objectValue);
 	Json::Value rslt(Json::objectValue);
 	if (trig >= 0)
 	{
-		if (lastReject.second < 0 || trig != lastReject.first->product.m_TriggerCount)
+		if (g_lastRejectProduct.second < 0 || trig != g_lastRejectProduct.first->product.m_TriggerCount)
 		{
 			throw(std::exception("Reject Not Found"));
 		}
@@ -428,14 +442,14 @@ Json::Value GetRejectedProduct<UdpApi>(PPQReader& rReader, long trig)
 	{
 		long idx = -1;
 		const ProductPtr product = rReader.RequestReject(trig, idx);
-		rslt = WriteProductItems<UdpApi>(product);
+		rslt = WriteProductItems<UdpApi>(product, productItemNames);
 	
 		// Decide which product to keep and which to release...
-		if (lastReject.second >= 0)
+		if (g_lastRejectProduct.second >= 0)
 		{
-			rReader.ReleaseReject(lastReject.first, lastReject.second);
+			rReader.ReleaseReject(g_lastRejectProduct.first, g_lastRejectProduct.second);
 		}
-		lastReject = std::make_pair(product, idx);
+		g_lastRejectProduct = std::make_pair(product, idx);
 		lastResult = rslt;
 	}
 	return rslt;
@@ -494,7 +508,7 @@ Json::Value DispatchCommand<TcpApi>(const JsonCmd & cmd, const MonitorMapCopy & 
 				PPQReader reader;
 				reader.Open(ppqName);
 				long trig = args[SVRC::arg::trgrCount].asInt();
-				rslt = GetRejectedProduct<TcpApi>(reader, trig);
+				rslt = GetRejectedProduct<TcpApi>(reader, trig, mit->second.prodItems);
 				return rslt;
 			}
 			else
@@ -534,19 +548,19 @@ Json::Value DispatchCommand<UdpApi>(const JsonCmd & cmd, const MonitorMapCopy & 
 				}
 				if (LastInspectedFilter == mit->second.m_ProductFilter)
 				{
-					rslt = GetLastInspectedProduct(reader, trig);
+					rslt = GetLastInspectedProduct(reader, trig, mit->second.prodItems);
 				}
 				else
 				{
 					// Check if there are rejects, if so get the rejected propduct, else get the last inspected product.
 					try
 					{
-						rslt = GetRejectedProduct<UdpApi>(reader, trig);
+						rslt = GetRejectedProduct<UdpApi>(reader, trig, mit->second.prodItems);
 					}
 					catch (std::exception& e)
 					{
 						::OutputDebugStringA(e.what());
-						rslt = GetLastInspectedProduct(reader, trig);
+						rslt = GetLastInspectedProduct(reader, trig, mit->second.prodItems);
 					}
 				}
 			}
@@ -623,6 +637,45 @@ MonitorListCopy MakeCopy(const MonitorListReader & reader, const std::string & n
 	return cpy;
 }
 
+static bool CheckReadyChanged(long& lastReady, long count, MonitorListReader& mlReader, MonitorMapCopy& monitorMap)
+{
+	bool readyChanged = false;
+	if (count && count != lastReady) // ready counter has changed - monitor list might have changed
+	{
+		mlReader.Open();
+		monitorMap.clear();
+		std::vector<std::string> mlNames = mlReader.GetListNames();
+		std::for_each(mlNames.begin(), mlNames.end(),
+		[&mlReader, &monitorMap](const std::string & name)
+		{
+			monitorMap.insert(std::make_pair(name, MakeCopy(mlReader, name)));
+		}
+		);
+		mlReader.Close();
+		lastReady = count;
+		readyChanged = true;
+	}
+	return readyChanged;
+}
+
+static void CheckProductFilterChanged(long& lastFilterChange, long count, MonitorListReader& mlReader, MonitorMapCopy& monitorMap)
+{
+	if (count && count != lastFilterChange) // filter counter has changed - product filter might have changed
+	{
+		// Update Filter info...
+		mlReader.Open();
+		std::vector<std::string> mlNames = mlReader.GetListNames();
+		std::for_each(mlNames.begin(), mlNames.end(),
+		[&mlReader, &monitorMap](const std::string & name)
+		{
+			monitorMap[name].m_ProductFilter = mlReader[name].GetProductFilter();
+		}
+		);
+		mlReader.Close();
+		lastFilterChange = count;
+	}
+}
+
 template<typename API>
 void servcmd(LPVOID ctrlPtr)
 {
@@ -648,46 +701,22 @@ void servcmd(LPVOID ctrlPtr)
 			{
 				try
 				{
-					JsonCmd cmd = ReadCommand(client);
+					const JsonCmd& cmd = ReadCommand(client);
 					if (!cmd.isNull())
 					{
 						if (ctrl.IsReady())
 						{
-							long count = ctrl.GetCount();
-							if (count != lastReady) // ready counter has changed - monitor list might have changed
+							bool readyChanged = CheckReadyChanged(lastReady, ctrl.GetReadyCount(), mlReader, monitorMap);
+							if (!readyChanged)
 							{
-								mlReader.Open();
-								monitorMap.clear();
-								std::vector<std::string> mlNames = mlReader.GetListNames();
-								std::for_each(mlNames.begin(), mlNames.end(),
-									[&mlReader, &monitorMap](const std::string & name)
-									{
-										monitorMap.insert(std::make_pair(name, MakeCopy(mlReader, name)));
-									}
-								);
-								mlReader.Close();
-								lastReady = count;
+								CheckProductFilterChanged(lastFilterChange, ctrl.GetProductFilterChangeCount(), mlReader, monitorMap);
+							}
+							else
+							{
 								ctrl.SetAck();
+								ClearHeld<API>();
 							}
-							else // check product filter change - only applicable for UDP
-							{
-								long filterChangeCount = ctrl.GetFilterChangeCount();
-								if (filterChangeCount != lastFilterChange) // filter counter has changed - product filter might have changed
-								{
-									// Update Filter info...
-									mlReader.Open();
-									std::vector<std::string> mlNames = mlReader.GetListNames();
-									std::for_each(mlNames.begin(), mlNames.end(),
-										[&mlReader, &monitorMap](const std::string & name)
-										{
-											monitorMap[name].m_ProductFilter = mlReader[name].GetProductFilter();
-										}
-									);
-									mlReader.Close();
-									lastFilterChange = filterChangeCount;
-								}
-							}
-							std::string resp = GenerateResponse<API>(cmd, monitorMap);
+							const std::string& resp = GenerateResponse<API>(cmd, monitorMap);
 							client.Write(resp, Traits<API>::needsHeader);
 						}
 						else
@@ -698,7 +727,6 @@ void servcmd(LPVOID ctrlPtr)
 								ctrl.SetAck();
 							}
 							client.Write(BusyMessage(cmd), Traits<API>::needsHeader);
-							Sleep(100);
 						}
 					}
 					else
@@ -786,7 +814,7 @@ bool CheckCommandLineArgs(int argc, _TCHAR* argv[], LPCTSTR option)
 
 // Command Line arguments: /nocheck /show
 // /nocheck means to ignore the 2 GiG size requirement
-// / show means show console window (it is hidden by default)
+// /show means show console window (it is hidden by default)
 int _tmain(int argc, _TCHAR* argv[])
 {
 	// check command line args - if /nocheck is specified - ignore the < 2 Gig error
@@ -856,6 +884,21 @@ int _tmain(int argc, _TCHAR* argv[])
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\RunRejectServer\runrejctsvr.cpp_v  $
+ * 
+ *    Rev 1.7   02 Oct 2014 09:10:22   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  954
+ * SCR Title:  Fix Issues with Run/Reject Server and Shared Memory Synchronization
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   Aded CheckReadyChanged function.
+ * Added CheckProductFilterChanged function.
+ * Added ClearHeld function.
+ * Revised servcmd function.
+ * Revised GetLastInspectedProduct
+ * Revised GetRejectedProduct
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.6   04 Sep 2014 14:12:50   jHanebach
  * Project:  SVObserver

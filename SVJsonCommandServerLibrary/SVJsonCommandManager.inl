@@ -5,8 +5,8 @@
 //* .Module Name     : SVJsonCommandManager
 //* .File Name       : $Workfile:   SVJsonCommandManager.inl  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   01 Oct 2013 09:26:18  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   02 Oct 2014 10:30:54  $
 //******************************************************************************
 
 #ifndef SVJSONCOMMANDMANAGER_INL
@@ -51,7 +51,6 @@ HRESULT SVJsonCommandManager< SVCommandProcessor >::ProcessJsonCommand( const st
 	{
 		l_Status = SVCommandProcessor::ProcessCommand( p_rJsonCommand, p_rJsonResults );
 	}
-
 	return l_Status;
 }
 
@@ -107,7 +106,7 @@ HRESULT SVJsonCommandManager< SVCommandProcessor >::ProcessAsyncJsonCommand( con
 
 				if( l_Status == S_OK )
 				{
-					l_Status = m_JsonCommandDataPtr->WaitForRequest( 60000 );
+					l_Status = m_JsonCommandDataPtr->WaitForRequest( 60000 * 5 );
 
 					if( l_Status == S_OK )
 					{
@@ -132,7 +131,10 @@ HRESULT SVJsonCommandManager< SVCommandProcessor >::ProcessAsyncJsonCommand( con
 	{
 		l_Status = SVMSG_54_SVIM_BUSY;
 	}
-
+	if (S_OK != l_Status)
+	{
+		SVCommandProcessor::BuildErrorResponse(p_rJsonCommand, p_rJsonResults, l_Status);
+	}
 	return l_Status;
 }
 
@@ -158,6 +160,17 @@ void SVJsonCommandManager< SVCommandProcessor >::ThreadProcess( bool& p_WaitForE
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVJsonCommandServerLibrary\SVJsonCommandManager.inl_v  $
+ * 
+ *    Rev 1.3   02 Oct 2014 10:30:54   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  949
+ * SCR Title:  Repeatedly Calling PutConfig Causes SVObserver to Stop Responding
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   Revised ProcessAsyncJsonCommand to wait for a maximum of 5 minutes.
+ * Revised ProcessAsyncJsonCommand to call BuildErrorResponse if the wait fails for any reason (timeout/unable to lock)
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   01 Oct 2013 09:26:18   tbair
  * Project:  SVObserver

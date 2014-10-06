@@ -33,6 +33,9 @@
     <ClCompile Include="SVSocketError.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="SVJsonStreamPacket.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="SVSocketLibrary.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -69,6 +72,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="UdpApi.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVJsonStreamPacket.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

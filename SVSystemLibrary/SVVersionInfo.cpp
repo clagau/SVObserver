@@ -5,8 +5,8 @@
 //* .Module Name     : SVVersionInfo
 //* .File Name       : $Workfile:   SVVersionInfo.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   25 Apr 2013 18:03:46  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   01 Oct 2014 06:08:38  $
 //******************************************************************************
 #include "stdafx.h"
 #include <iomanip>
@@ -37,11 +37,11 @@ std::string SVVersionInfo::GetVersion()
 		if (::VerQueryValue(lpData, "\\", (LPVOID *)&pFileInfo, (PUINT)&Len)) 
 		{
 			std::stringstream buf;
-			buf << HIWORD(pFileInfo->dwFileVersionMS) << "."  << LOWORD(pFileInfo->dwFileVersionMS);
+			buf << HIWORD(pFileInfo->dwFileVersionMS) << "." << std::setfill( '0' ) << std::setw( 2 ) << LOWORD(pFileInfo->dwFileVersionMS);
 
 			if( HIWORD(pFileInfo->dwFileVersionLS) < 255 )
 			{
-				buf << " Beta " << HIWORD(pFileInfo->dwFileVersionLS);
+				buf << " Beta " << std::setfill( '0' ) << std::setw( 3 ) << HIWORD(pFileInfo->dwFileVersionLS);
 			}
 
 			verStr = buf.str();
@@ -198,7 +198,17 @@ std::string SVVersionInfo::GetShortTitleVersion()
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVSystemLibrary\SVVersionInfo.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVSystemLibrary\SVVersionInfo.cpp_v  $
+ * 
+ *    Rev 1.1   01 Oct 2014 06:08:38   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  940
+ * SCR Title:  Update SVObserver Version Number for the 7.00 Release
+ * Checked in by:  bWalter;  Ben Walter
+ * Change Description:  
+ *   Added leading zeros for second digit of the version number and beta.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   25 Apr 2013 18:03:46   bWalter
  * Project:  SVObserver

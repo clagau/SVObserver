@@ -5,8 +5,8 @@
 //* .Module Name     : SVJsonCommandServer
 //* .File Name       : $Workfile:   SVJsonCommandServer.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   18 Jun 2013 17:15:48  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   02 Oct 2014 10:39:38  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -56,11 +56,17 @@ HRESULT SVJsonCommandServer::WriteJson(const std::string& data)
 {
 	HRESULT l_Status = S_OK;
 
-	if( !( m_ServerSocket.Write( data ) ) )
+	if (data.empty())
 	{
-		l_Status = E_FAIL;
+		l_Status = E_INVALIDARG;
 	}
-
+	else
+	{
+		if( !( m_ServerSocket.Write( data ) ) )
+		{
+			l_Status = E_FAIL;
+		}
+	}
 	return l_Status;
 }
 
@@ -88,7 +94,17 @@ void SVJsonCommandServer::OnClientJsonReceived(const std::string& data)
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVJsonCommandServerLibrary\SVJsonCommandServer.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVJsonCommandServerLibrary\SVJsonCommandServer.cpp_v  $
+ * 
+ *    Rev 1.2   02 Oct 2014 10:39:38   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  949
+ * SCR Title:  Repeatedly Calling PutConfig Causes SVObserver to Stop Responding
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   Revised WriteJson to return E_INVALIDARG if there is no data to be written
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   18 Jun 2013 17:15:48   bwalter
  * Project:  SVObserver
