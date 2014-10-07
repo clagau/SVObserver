@@ -167,6 +167,8 @@
 #define IDD_CHOOSEGRAYCOLOR             5114
 #define IDD_GIGE_CAMERA_MANAGER_DLG     5115
 #define IDD_GIGE_CAMERA_ROI_DLG         5116
+//The following dummy ID is required to identify the Conditional page for the help context.
+#define IDD_CONDITIONAL_PAGE            5117
 #define IDS_OF_STRING                   10000
 #define IDS_PAGE_STRING                 10001
 #define IDS_RESULT_STRING               10002

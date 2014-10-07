@@ -5,8 +5,8 @@
 //* .Module Name     : SVFormulaEditorPageClass
 //* .File Name       : $Workfile:   SVFormulaEditorPage.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.3  $
-//* .Check In Date   : $Date:   17 Jul 2014 19:02:38  $
+//* .Current Version : $Revision:   1.4  $
+//* .Check In Date   : $Date:   07 Oct 2014 03:14:42  $
 //******************************************************************************
 
 #pragma once
@@ -80,6 +80,8 @@ protected:
 	// Generated message map functions
 	//{{AFX_MSG(SVFormulaEditorPageClass)
 	virtual void OnOK();
+	afx_msg void OnHelp();
+	afx_msg BOOL OnHelpInfo(HELPINFO* pHelpInfo);
 	afx_msg void OnAddLocalVariableButton();
 	afx_msg void OnAddConstantButton();
 	virtual BOOL OnInitDialog();
@@ -117,6 +119,16 @@ private:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVFormulaEditorPage.h_v  $
+ * 
+ *    Rev 1.4   07 Oct 2014 03:14:42   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  936
+ * SCR Title:  Show Different Help for Formula and Conditional Pages
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   add help methods OnHelp and OnHelpInfo for context help
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   17 Jul 2014 19:02:38   gramseier
  * Project:  SVObserver

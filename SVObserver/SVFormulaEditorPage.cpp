@@ -5,8 +5,8 @@
 //* .Module Name     : SVFormulaEditorPageClass
 //* .File Name       : $Workfile:   SVFormulaEditorPage.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.7  $
-//* .Check In Date   : $Date:   30 Sep 2014 15:44:22  $
+//* .Current Version : $Revision:   1.8  $
+//* .Check In Date   : $Date:   07 Oct 2014 03:14:44  $
 //******************************************************************************
 
 #pragma region Includes
@@ -55,6 +55,7 @@ BEGIN_MESSAGE_MAP(SVFormulaEditorPageClass, CPropertyPage)
 	ON_BN_CLICKED(IDC_DISABLE_EQUATION, OnDisable)
 	ON_BN_CLICKED(IDC_DISABLE_TOOL, OnDisable)
 	ON_EN_CHANGE(IDC_MATHCOND_RICHEDIT, OnEquationFieldChanged)
+	ON_WM_HELPINFO()
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
@@ -148,6 +149,33 @@ void SVFormulaEditorPageClass::OnOK()
 	{
 		HandleValidateError( result );
 	}
+}
+
+void SVFormulaEditorPageClass::OnHelp()
+{
+	if (m_isConditionalPage)
+	{
+		AfxGetApp()->HtmlHelp( IDD_CONDITIONAL_PAGE + 0x20000 );
+	}
+	else
+	{
+		AfxGetApp()->HtmlHelp( IDD_FORMULA_DIALOG + 0x20000 );
+	}
+}
+
+BOOL SVFormulaEditorPageClass::OnHelpInfo(HELPINFO* pHelpInfo)
+{
+	if (m_isConditionalPage)
+	{
+		pHelpInfo->iCtrlId = IDD_CONDITIONAL_PAGE + 0x20000;
+	}
+	else
+	{
+		pHelpInfo->iCtrlId = IDD_FORMULA_DIALOG + 0x20000;
+	}
+
+	AfxGetApp()->HtmlHelp( pHelpInfo->iCtrlId, HH_HELP_CONTEXT );
+	return TRUE ;
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -781,6 +809,16 @@ void SVFormulaEditorPageClass::enableControls()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVFormulaEditorPage.cpp_v  $
+ * 
+ *    Rev 1.8   07 Oct 2014 03:14:44   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  936
+ * SCR Title:  Show Different Help for Formula and Conditional Pages
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   add help methods OnHelp and OnHelpInfo for context help
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.7   30 Sep 2014 15:44:22   bwalter
  * Project:  SVObserver
