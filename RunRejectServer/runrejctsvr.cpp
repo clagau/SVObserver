@@ -5,8 +5,8 @@
 //* .Module Name     : runrejctsvr
 //* .File Name       : $Workfile:   runrejctsvr.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.7  $
-//* .Check In Date   : $Date:   02 Oct 2014 09:10:22  $
+//* .Current Version : $Revision:   1.8  $
+//* .Check In Date   : $Date:   06 Oct 2014 17:01:42  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -144,6 +144,46 @@ struct MonitorListCopy
 	int m_rejectDepth;
 	SVProductFilterEnum m_ProductFilter;
 };
+
+std::string GetVersionString()
+{
+	std::string verStr;
+
+	char moduleFilename[512];
+	::GetModuleFileNameA(NULL, moduleFilename, sizeof(moduleFilename));
+
+	DWORD dwHandle;
+	DWORD size = ::GetFileVersionInfoSizeA(moduleFilename, &dwHandle);
+	unsigned char* lpData = new unsigned char[size];
+
+	BOOL rc = ::GetFileVersionInfoA(moduleFilename, NULL, size, lpData);
+	if (rc)
+	{
+		VS_FIXEDFILEINFO* pFileInfo = NULL;
+		UINT Len = 0;
+		if (::VerQueryValueA(lpData, "\\", (LPVOID *)&pFileInfo, (PUINT)&Len)) 
+		{
+			std::stringstream buf;
+
+			buf << HIWORD(pFileInfo->dwFileVersionMS);
+			buf << ".";
+			buf << std::setfill('0') << std::setw(2) << LOWORD(pFileInfo->dwFileVersionMS);
+
+			if( HIWORD(pFileInfo->dwFileVersionLS) < 255 )
+			{
+				buf << "b" << HIWORD(pFileInfo->dwFileVersionLS);
+			}
+			verStr = buf.str();
+		}
+	}
+	delete [] lpData;
+
+	#ifdef _DEBUG
+		verStr += "d";        // For debug builds.
+	#endif
+
+	return verStr;
+}
 
 typedef std::map<std::string, MonitorListCopy> MonitorMapCopy;
 
@@ -516,6 +556,13 @@ Json::Value DispatchCommand<TcpApi>(const JsonCmd & cmd, const MonitorMapCopy & 
 				throw std::exception("Invalid arguments");
 			}
 		}
+		else if (cmd[SVRC::cmd::name] == SVRC::cmdName::getVersion)
+		{
+			const std::string& rVerStr = GetVersionString();
+			Json::Value rslt(Json::objectValue);
+			rslt[SVRC::result::SVO_ver] = rVerStr.c_str();
+			return rslt;
+		}
 	}
 	throw std::exception("Invalid command name.");
 }
@@ -585,11 +632,19 @@ template<typename API>
 std::string GenerateResponse(const JsonCmd & cmd, const MonitorMapCopy & mlMap)
 {
 	Json::Value rsp = NewResponse(cmd);
-	Json::Value rslt(Json::objectValue);
 	try
 	{
-		rslt[SVRC::result::items] = DispatchCommand<API>(cmd, mlMap);
-		rsp[SVRC::cmd::reslts] = rslt;
+		const Json::Value& value = DispatchCommand<API>(cmd, mlMap);
+		if (cmd[SVRC::cmd::name] != SVRC::cmdName::getVersion)
+		{
+			Json::Value rslt(Json::objectValue);
+			rslt[SVRC::result::items] = value;
+			rsp[SVRC::cmd::reslts] = rslt;
+		}
+		else
+		{
+			rsp[SVRC::cmd::reslts] = value;
+		}
 	}
 	catch(std::exception & ex)
 	{
@@ -755,46 +810,6 @@ void servcmd(LPVOID ctrlPtr)
 	_endthread();
 }
 
-std::string GetVersionString()
-{
-	std::string verStr;
-
-	char moduleFilename[512];
-	::GetModuleFileNameA(NULL, moduleFilename, sizeof(moduleFilename));
-
-	DWORD dwHandle;
-	DWORD size = ::GetFileVersionInfoSizeA(moduleFilename, &dwHandle);
-	unsigned char* lpData = new unsigned char[size];
-
-	BOOL rc = ::GetFileVersionInfoA(moduleFilename, NULL, size, lpData);
-	if (rc)
-	{
-		VS_FIXEDFILEINFO* pFileInfo = NULL;
-		//::ZeroMemory(&version, sizeof(VS_FIXEDFILEINFO));
-		UINT Len = 0;
-		if (::VerQueryValueA(lpData, "\\", (LPVOID *)&pFileInfo, (PUINT)&Len)) 
-		{
-			std::stringstream buf;
-
-			buf << HIWORD(pFileInfo->dwFileVersionMS);
-			buf << ".";
-			buf << std::setfill('0') << std::setw(2) << LOWORD(pFileInfo->dwFileVersionMS);
-
-			if( HIWORD(pFileInfo->dwFileVersionLS) < 255 )
-			{
-				buf << "b" << HIWORD(pFileInfo->dwFileVersionLS);
-			}
-			verStr = buf.str();
-		}
-	}
-	delete [] lpData;
-
-	#ifdef _DEBUG
-		verStr += "d";        // For debug builds.
-	#endif
-
-	return verStr;
-}
 
 bool CheckCommandLineArgs(int argc, _TCHAR* argv[], LPCTSTR option)
 {
@@ -884,6 +899,16 @@ int _tmain(int argc, _TCHAR* argv[])
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\RunRejectServer\runrejctsvr.cpp_v  $
+ * 
+ *    Rev 1.8   06 Oct 2014 17:01:42   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  952
+ * SCR Title:  Run/Reject Server Should Respond to the GetVersion Command
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   Revised to handle GetVersion Command
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.7   02 Oct 2014 09:10:22   sjones
  * Project:  SVObserver
