@@ -5,8 +5,8 @@
 //* .Module Name     : SVBlobAnalyzer
 //* .File Name       : $Workfile:   SVBlobAnalyzer.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   15 May 2014 10:19:38  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   08 Oct 2014 02:54:26  $
 //******************************************************************************
 
 #ifndef SVBLOBANALYZERCLASS__INCLUDED
@@ -260,6 +260,11 @@ protected:
 
 private:
 	void CreateArray();
+
+	static const int m_defaultResultNumberOfBlobsLowFail = 0;
+	static const int m_defaultResultNumberOfBlobsLowWarn = 0;
+	static const int m_defaultResultNumberOfBlobsHighFail = 9999;
+	static const int m_defaultResultNumberOfBlobsHighWarn = 9999;
 };
 
 #endif
@@ -269,6 +274,16 @@ private:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVBlobAnalyzer.h_v  $
+ * 
+ *    Rev 1.3   08 Oct 2014 02:54:26   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  924
+ * SCR Title:  Default Parameters in Blob Analyzer Result Number of Blobs
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   add const for m_defaultResultNumberOfBlobs...(low and High, Fail and Warn) and change the value from 1->0 and from 2->9999
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   15 May 2014 10:19:38   sjones
  * Project:  SVObserver

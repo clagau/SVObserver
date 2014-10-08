@@ -5,8 +5,8 @@
 //* .Module Name     : SVBlobAnalyzer
 //* .File Name       : $Workfile:   SVBlobAnalyzer.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.4  $
-//* .Check In Date   : $Date:   15 May 2014 10:19:42  $
+//* .Current Version : $Revision:   1.5  $
+//* .Check In Date   : $Date:   08 Oct 2014 02:54:26  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -775,10 +775,10 @@ BOOL SVBlobAnalyzerClass::CreateObject(SVObjectLevelCreateStruct* PCreateStructu
 		}
 
 		if (msvError.GetLastErrorCd () & SV_ERROR_CONDITION)
-			break; // If any error had occured in the for loop, break out of while loop also
+			break; // If any error had occurred in the for loop, break out of while loop also
 		
 		// RDS 2002-03-26
-		// Set currently existing features into the persistance string
+		// Set currently existing features into the persistence string
 		// Mainly this should be SV_BOXX_MAX thru SV_BOXY_MIN
 		msvPersistantFeaturesEnabled.SetValue ( 1, msvszFeaturesEnabled );
 
@@ -789,7 +789,7 @@ BOOL SVBlobAnalyzerClass::CreateObject(SVObjectLevelCreateStruct* PCreateStructu
 		if(!m_pResultBlob && !(m_pResultBlob = (SVLongResultClass*)GetBlobResultObject()))
 		{
 			if (AllocateBlobResult() & SV_ERROR_CONDITION) 
-				break; // Some error has occured
+				break; // Some error has occurred
 			
 			SVRangeClass *pRange = m_pResultBlob->GetResultRange();
 			if(!pRange)
@@ -797,10 +797,10 @@ BOOL SVBlobAnalyzerClass::CreateObject(SVObjectLevelCreateStruct* PCreateStructu
 				msvError.msvlErrorCd = 25029;
 				SV_TRAP_ERROR_BRK (msvError, 25029);
 			}
-			pRange->FailLow.SetValue(1, 1.0); 
-			pRange->WarnLow.SetValue(1, 1.0);
-			pRange->FailHigh.SetValue(1, 2.0); 
-			pRange->WarnHigh.SetValue(1, 2.0);
+			pRange->FailLow.SetValue(1, m_defaultResultNumberOfBlobsLowFail); 
+			pRange->WarnLow.SetValue(1, m_defaultResultNumberOfBlobsLowWarn);
+			pRange->FailHigh.SetValue(1, m_defaultResultNumberOfBlobsHighFail); 
+			pRange->WarnHigh.SetValue(1, m_defaultResultNumberOfBlobsHighWarn);
 		}
 		// End. Sri
 		msvValue[0].GetDefaultValue (deflt);
@@ -1845,6 +1845,16 @@ void SVBlobAnalyzerClass::addDefaultInputObjects( BOOL BCallBaseClass, SVInputIn
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVBlobAnalyzer.cpp_v  $
+ * 
+ *    Rev 1.5   08 Oct 2014 02:54:26   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  924
+ * SCR Title:  Default Parameters in Blob Analyzer Result Number of Blobs
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   add const for m_defaultResultNumberOfBlobs...(low and High, Fail and Warn) and change the value from 1->0 and from 2->9999
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.4   15 May 2014 10:19:42   sjones
  * Project:  SVObserver

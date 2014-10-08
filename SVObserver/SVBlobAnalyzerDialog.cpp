@@ -5,8 +5,8 @@
 //* .Module Name     : SVBlobAnalyzerDialog
 //* .File Name       : $Workfile:   SVBlobAnalyzerDialog.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   01 Oct 2013 12:16:24  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   08 Oct 2014 02:53:40  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -85,7 +85,7 @@ void SVBlobAnalyzeFeatureDialogClass::DoDataExchange(CDataExchange* pDX)
 	DDX_Check(pDX, IDC_ASCENDING, msvAscending);
 	DDX_Check(pDX, IDC_EXCLUDE_BLOB, m_bExclude);
 	DDX_Text(pDX, IDC_EDIT_MAX_NBR_BLOBS, m_lMaxNumberBlobs);
-	DDV_MinMaxLong(pDX, m_lMaxNumberBlobs, 100, 10000);
+	DDV_MinMaxLong(pDX, m_lMaxNumberBlobs, 100, 9999);
 	DDX_Text(pDX, IDC_EDIT_MAX_BLOB_DATA_ARRAY_SIZE, m_lMaxBlobDataArraySize);
 	DDV_MinMaxLong(pDX, m_lMaxBlobDataArraySize, 1, m_lMaxNumberBlobs);
 	//}}AFX_DATA_MAP
@@ -606,6 +606,16 @@ void SVBlobAnalyzeFeatureDialogClass::OnButtonSetFeatureProperties()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVBlobAnalyzerDialog.cpp_v  $
+ * 
+ *    Rev 1.2   08 Oct 2014 02:53:40   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  924
+ * SCR Title:  Default Parameters in Blob Analyzer Result Number of Blobs
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   change max-"Max number of Blobs" from 10000 to 9999
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   01 Oct 2013 12:16:24   tbair
  * Project:  SVObserver
