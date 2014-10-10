@@ -5,8 +5,8 @@
 //* .Module Name     : SVEquation.cpp
 //* .File Name       : $Workfile:   SVEquation.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.7  $
-//* .Check In Date   : $Date:   30 Sep 2014 15:37:34  $
+//* .Current Version : $Revision:   1.8  $
+//* .Check In Date   : $Date:   10 Oct 2014 04:25:14  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -482,7 +482,7 @@ BOOL SVEquationClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure 
 		if (0 == ownerName.Compare(conditionalString))
 		{
 			// Set / Reset Remotely Setable Flag, if owner is conditional class.
-			enabled.ObjectAttributesAllowedRef() |= SV_REMOTELY_SETABLE;
+			enabled.ObjectAttributesAllowedRef() |= SV_REMOTELY_SETABLE | SV_SETABLE_ONLINE;
 		}
 	}
 
@@ -1481,6 +1481,16 @@ void SVEquationClass::addEnvironmentModeParameterToList( SVInputInfoListClass &a
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVEquation.cpp_v  $
+ * 
+ *    Rev 1.8   10 Oct 2014 04:25:14   mEichengruen
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  946
+ * SCR Title:  Make Conditional Page's Disable Equation Setting Writable from SVRC and SIAC
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   add flag to setable tool.Conditional.Enabled online
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.7   30 Sep 2014 15:37:34   bwalter
  * Project:  SVObserver
