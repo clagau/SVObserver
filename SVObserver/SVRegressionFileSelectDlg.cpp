@@ -5,8 +5,8 @@
 // * .Module Name     : SVRegressionFileSelectDlg
 // * .File Name       : $Workfile:   SVRegressionFileSelectDlg.cpp  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.2  $
-// * .Check In Date   : $Date:   24 Sep 2014 12:08:26  $
+// * .Current Version : $Revision:   1.3  $
+// * .Check In Date   : $Date:   08 Oct 2014 13:46:16  $
 // ******************************************************************************
 
 #include "stdafx.h"
@@ -77,7 +77,7 @@ void CSVRegressionFileSelectDlg::OnBtnRegTestBrowseFiles()
 	m_sRegistryPath = AfxGetApp()->GetProfileString(_T("RegressionTest"), _T("LastPath"), _T("C:\\Temp"));
 
 	CString	csFileExtensionFilterList = _T("BMP's (*.bmp)|*.bmp||");
-	static TCHAR szFilter[] = _T("BMP Files (*.bmp)|*.bmp|Image Files (*.bmp)|*.bmp|All Files (*.*)|*.*||");
+	static TCHAR szFilter[] = _T("BMP Files (*.bmp)|*.bmp|Image Files (*.bmp)|*.bmp||");
 	bool bFullAccess = TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_UNRESTRICTED_FILE_ACCESS);
 	SVFileDialog dlg(true, bFullAccess, nullptr, nullptr, 0, szFilter, nullptr);
 	dlg.m_ofn.lpstrTitle = _T("Select File");
@@ -102,10 +102,14 @@ void CSVRegressionFileSelectDlg::OnBtnRegTestBrowseFiles()
 				AfxMessageBox(_T("Selection Error:  A .bmp file must be selected."));
 				m_sRegTestFiles = _T("");
 			}
-			int iPos = m_sRegTestFiles.ReverseFind(_T('\\'));
 
-			CString sTmpDirName = m_sRegTestFiles.Left(iPos);
-			AfxGetApp()->WriteProfileString(_T("RegressionTest"), _T("LastPath"), sTmpDirName);
+			int iPos = m_sRegTestFiles.ReverseFind(_T('\\'));
+			if(iPos != -1)
+			{
+				//only write out registry entry if the path is not empty.
+				CString sTmpDirName = m_sRegTestFiles.Left(iPos);
+				AfxGetApp()->WriteProfileString(_T("RegressionTest"), _T("LastPath"), sTmpDirName);
+			}
 		}
 	}
 	UpdateData(FALSE);
@@ -172,6 +176,16 @@ void CSVRegressionFileSelectDlg::SetRegressionData(RegressionTestStruct *p_pData
 // ******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVRegressionFileSelectDlg.cpp_v  $
+ * 
+ *    Rev 1.3   08 Oct 2014 13:46:16   ryoho
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  944
+ * SCR Title:  Fix Security for File and Folder Selection Dialog for 64 Bit
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   removed the "All File *.*" from the filter.  Did a check to make sure the Pos is not -1 before writing out the directory name to the registry.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   24 Sep 2014 12:08:26   sjones
  * Project:  SVObserver

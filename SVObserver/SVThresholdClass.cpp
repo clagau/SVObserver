@@ -5,8 +5,8 @@
 //* .Module Name     : 
 //* .File Name       : $Workfile:   SVThresholdClass.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   09 Aug 2013 12:03:58  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   08 Oct 2014 07:26:54  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -59,7 +59,7 @@ void SVThresholdClass::init()
 	// Set Embedded defaults
 	m_upperThresh.SetDefaultValue( SV_DEFAULT_TOOL_UPPER_TRESH, TRUE );
 	m_lowerThresh.SetDefaultValue( SV_DEFAULT_TOOL_LOWER_TRESH, TRUE );
-	m_threshActivate.SetDefaultValue( SV_DEFAULT_TOOL_TRESH_ACTIVATE, TRUE );
+	m_threshActivate.SetDefaultValue( SV_DEFAULT_TOOL_TRESH_ACTIVATE, FALSE );
 	m_upperThreshActivate.SetDefaultValue( SV_DEFAULT_TOOL_UPPER_TRESH_ACTIVATE, TRUE );
 	m_lowerThreshActivate.SetDefaultValue( SV_DEFAULT_TOOL_LOWER_TRESH_ACTIVATE, TRUE );
 
@@ -591,6 +591,16 @@ HRESULT SVThresholdClass::Rebuild()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVThresholdClass.cpp_v  $
+ * 
+ *    Rev 1.1   08 Oct 2014 07:26:54   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  956
+ * SCR Title:  Threshold Off by default on tools using threshold. (SVO-167)
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Changed the default value for m_threshActivate to FALSE.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   09 Aug 2013 12:03:58   bwalter
  * Project:  SVObserver
