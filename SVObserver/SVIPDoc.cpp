@@ -5,8 +5,8 @@
 //* .Module Name     : SVIPDoc
 //* .File Name       : $Workfile:   SVIPDoc.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.23  $
-//* .Check In Date   : $Date:   30 Sep 2014 15:45:32  $
+//* .Current Version : $Revision:   1.24  $
+//* .Check In Date   : $Date:   13 Oct 2014 11:07:56  $
 //******************************************************************************
 
 #pragma region Includes
@@ -1747,15 +1747,16 @@ void SVIPDoc::OnResultsPicker()
 
 	ObjectTreeGenerator::Instance().setSelectorType( ObjectTreeGenerator::SelectorTypeEnum::TypeSetAttributes );
 	ObjectTreeGenerator::Instance().setAttributeFilters( SV_VIEWABLE );
-	CString tmp;
-	tmp.LoadString(IDS_CLASSNAME_ROOTOBJECT);
-	ObjectTreeGenerator::Instance().setLocationFilter( ObjectTreeGenerator::FilterInput, tmp, SVString( _T("") ) );
 	ObjectTreeGenerator::Instance().setLocationFilter( ObjectTreeGenerator::FilterInput, InspectionName, SVString( _T("") ) );
-	ObjectTreeGenerator::Instance().insertTreeObjects( Seidenader::SVObjectLibrary::FqnEnvironmentMode );
 
-	SVPPQObject* ppq = GetInspectionProcess()->GetPPQ();
-	SVString PPQName = ppq->GetName();
-	ObjectTreeGenerator::Instance().insertTreeObjects( PPQName );
+	//The next code is commented out because this task is moved form 7.00 to 7.10 (see SVO-95 and SVO-475).
+	//CString tmp;
+	//tmp.LoadString(IDS_CLASSNAME_ROOTOBJECT);
+	//ObjectTreeGenerator::Instance().setLocationFilter( ObjectTreeGenerator::FilterInput, tmp, SVString( _T("") ) );
+	//ObjectTreeGenerator::Instance().insertTreeObjects( Seidenader::SVObjectLibrary::FqnEnvironmentMode );
+	//SVPPQObject* ppq = GetInspectionProcess()->GetPPQ();
+	//SVString PPQName = ppq->GetName();
+	//ObjectTreeGenerator::Instance().insertTreeObjects( PPQName );
 
 	SVOutputInfoListClass OutputList;
 	GetToolSet()->GetOutputList( OutputList );
@@ -4472,6 +4473,16 @@ void SVIPDoc::addViewableObject2ResultDefinitions( SVObjectClass* pObject, SVRes
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVIPDoc.cpp_v  $
+ * 
+ *    Rev 1.24   13 Oct 2014 11:07:56   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  925
+ * SCR Title:  Add PPQ Items and SVObserver Modes to Equation Editor Object Selector
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   Changed method OnResultsPicker to omit Environment and PPQ nodes.  Keep the commented out code because these will be added in the 7.10 release instead.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.23   30 Sep 2014 15:45:32   bwalter
  * Project:  SVObserver
