@@ -5,8 +5,8 @@
 //* .Module Name     : SVSocket
 //* .File Name       : $Workfile:   SVSocket.inl  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   04 Sep 2014 13:21:34  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   14 Oct 2014 17:42:50  $
 //******************************************************************************
 
 #define NOMINMAX
@@ -34,7 +34,7 @@ namespace Seidenader
 				static_cast< short >( addr.sin_addr.S_un.S_un_b.s_b2 ) << '.' <<
 				static_cast< short >( addr.sin_addr.S_un.S_un_b.s_b3 ) << '.' <<
 				static_cast< short >( addr.sin_addr.S_un.S_un_b.s_b4 ) << ':' <<
-				static_cast< short >( addr.sin_port );
+				addr.sin_port;
 			return os.str();
 		}
 
@@ -89,7 +89,21 @@ namespace Seidenader
 		{
 			if (m_socket != InvalidSock)
 			{
-				int rc = API::close(m_socket);
+				int rc = 0;
+				if (IsConnected())
+				{
+					rc = API::shutdown(m_socket, SD_BOTH);
+					if (rc == SOCKET_ERROR)
+					{
+						Err error = SVSocketError::GetLastSocketError();
+					}
+					rc = SetLingerOption(false, 0);
+					if (rc == SOCKET_ERROR)
+					{
+						Err error = SVSocketError::GetLastSocketError();
+					}
+				}
+				rc = API::close(m_socket);
 				if (rc == SOCKET_ERROR)
 				{
 					Err error = SVSocketError::GetLastSocketError();
@@ -252,8 +266,8 @@ namespace Seidenader
 		{
 			Err error = SVSocketError::Success;
 
-			if ( API::setsockopt( m_socket, SOL_SOCKET, SO_SNDBUF, reinterpret_cast< char* >( &sz ), int(sizeof(int) ) ) == SOCKET_ERROR
-				|| API::setsockopt( m_socket, SOL_SOCKET, SO_RCVBUF, reinterpret_cast< char* >( &sz ), int(sizeof(int) ) ) == SOCKET_ERROR )
+			if ( API::setsockopt( m_socket, SOL_SOCKET, SO_SNDBUF, reinterpret_cast< void* >( &sz ), sizeof(sz) ) == SOCKET_ERROR
+				|| API::setsockopt( m_socket, SOL_SOCKET, SO_RCVBUF, reinterpret_cast< void* >( &sz ), sizeof(sz) ) == SOCKET_ERROR )
 			{
 				error = SVSocketError::GetLastSocketError();
 			}
@@ -461,7 +475,7 @@ namespace Seidenader
 
 			Err error = SVSocketError::Success;
 			amtRead = 0;
-			int frLen = fromLen;
+			int frLen = static_cast<int>(fromLen);
 			// get available data
 			int amt = API::recvfrom(m_socket, reinterpret_cast< char* >( buffer ), static_cast< int >( len ), 0, reinterpret_cast< sockaddr* >( &from ), &frLen);
 			if (amt < 0)
@@ -523,7 +537,7 @@ namespace Seidenader
 						for (; idx < cnt;)
 						{
 							result = ReadFrom(&tmp[0], m_buff_sz, len, m_peer, dummy);
-							u_int chnk_sz = m_buff_sz - sizeof(header);
+							u_int chnk_sz = static_cast<u_int>(m_buff_sz - sizeof(header));
 							if (Err::Success == result && len >= sizeof(header))
 							{
 								head = n2h(*reinterpret_cast<header *>(&tmp[0]));
@@ -568,7 +582,7 @@ namespace Seidenader
 		template<>
 		inline Err SVSocket<TcpApi>::ReadAll(bytes & dest, u_long & sz, bool)
 		{
-			u_long len;
+			u_long len = 0;
 			const u_int rdTmout = 500;
 			Err result = SetReadTimeout(rdTmout);
 			boost::function<Err ()> tout = boost::bind(&SVSocket<TcpApi>::SetReadTimeout, this, 0);
@@ -578,21 +592,29 @@ namespace Seidenader
 			{
 				return SVSocketError::GetLastSocketError();
 			}
-			len = sz = ntohl(len);
-			dest.reset(new BYTE[len]);
-			BYTE * buff = dest.get();
-			do
+			if (amt > 0)
 			{
-				result = SetReadTimeout(rdTmout*5);
-				amt = TcpApi::recv(m_socket, reinterpret_cast< char* >( buff ), len, 0);
-				if (amt < 0)
+				len = sz = ntohl(len);
+				if (len > 0)
 				{
-					return SVSocketError::GetLastSocketError();
+					dest.reset(new BYTE[len]);
+					BYTE * buff = dest.get();
+					do
+					{
+						result = SetReadTimeout(rdTmout*5);
+						amt = TcpApi::recv(m_socket, reinterpret_cast< char* >( buff ), len, 0);
+						if (amt < 0)
+						{
+							return SVSocketError::GetLastSocketError();
+						}
+						if (amt > 0)
+						{
+							buff += amt;
+							len -= amt;
+						}
+					} while (len > 0);
 				}
-				buff += amt;
-				len -= amt;
 			}
-			while (len > 0);
 			return SVSocketError::Success;
 		}
 
@@ -679,6 +701,18 @@ namespace Seidenader
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVSocketLibrary\SVSocket.inl_v  $
+ * 
+ *    Rev 1.3   14 Oct 2014 17:42:50   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  953
+ * SCR Title:  Refactor Design for Socket Used by SVRC
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   Revised Destory to gracefully shutdown/close the socket
+ * Revised to correct casting issues.
+ * Revised ReadAll to correct an issue with zero bytes read.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   04 Sep 2014 13:21:34   jHanebach
  * Project:  SVObserver

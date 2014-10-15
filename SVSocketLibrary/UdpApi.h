@@ -5,8 +5,8 @@
 //* .Module Name     : UdpApi
 //* .File Name       : $Workfile:   UdpApi.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   19 Jun 2014 15:09:30  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   14 Oct 2014 17:34:20  $
 //******************************************************************************
 
 #pragma once
@@ -25,6 +25,7 @@ namespace Seidenader
 		public:
 		   static int connect(Socket_t u, const sockaddr* name, int namelen) { return 0; }
 		   static int listen(Socket_t u, int backlog) { return 0; }
+		   static int shutdown(Socket_t u, int flags) { return 0; }
 		};
 
 		enum ctrl 
@@ -86,6 +87,16 @@ typedef Seidenader::Socket::UdpApi UdpApi;
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVSocketLibrary\UdpApi.h_v  $
+ * 
+ *    Rev 1.1   14 Oct 2014 17:34:20   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  953
+ * SCR Title:  Refactor Design for Socket Used by SVRC
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   Added shutdown method
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   19 Jun 2014 15:09:30   bwalter
  * Project:  SVObserver

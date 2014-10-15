@@ -5,8 +5,8 @@
 //* .Module Name     : SVServerSocket
 //* .File Name       : $Workfile:   SVServerSocket.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   19 Jun 2014 15:48:04  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   14 Oct 2014 17:37:58  $
 //******************************************************************************
 
 #pragma once
@@ -23,12 +23,24 @@ namespace Seidenader
 		public:
 			SVSocketError::ErrorEnum Listen(unsigned short portNo);
 			Socket_t Accept(sockaddr* addr, int* addrlen);
+			bool ClientConnecting() const;
 		};
 
 		template<>
 		inline typename Traits<TcpApi>::Socket_t SVServerSocket<TcpApi>::Accept(sockaddr* addr, int* addrlen)
 		{
 			return TcpApi::accept(m_socket, addr, addrlen);
+		}
+
+		template<typename API>
+		inline bool SVServerSocket<API>::ClientConnecting() const
+		{
+			timeval timeout = {0, 0};
+			fd_set readset;
+			FD_ZERO(&readset);
+			FD_SET(m_socket, &readset);
+			int max_fd = 1;
+			return (select(max_fd + 1, &readset, nullptr, nullptr, &timeout) == 1) ? true : false;
 		}
 
 		template<>
@@ -87,6 +99,16 @@ typedef Seidenader::Socket::SVServerSocket<TcpApi> SVServerSocket;
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVSocketLibrary\SVServerSocket.h_v  $
+ * 
+ *    Rev 1.2   14 Oct 2014 17:37:58   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  953
+ * SCR Title:  Refactor Design for Socket Used by SVRC
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   Added ClientConnectiing method
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   19 Jun 2014 15:48:04   bwalter
  * Project:  SVObserver

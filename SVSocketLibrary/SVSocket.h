@@ -5,19 +5,20 @@
 //* .Module Name     : SVSocket
 //* .File Name       : $Workfile:   SVSocket.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.5  $
-//* .Check In Date   : $Date:   04 Sep 2014 13:21:34  $
+//* .Current Version : $Revision:   1.6  $
+//* .Check In Date   : $Date:   14 Oct 2014 17:39:50  $
 //******************************************************************************
 
 #pragma once
 
 #include <winsock2.h>
+#include <boost/shared_array.hpp>
 #include <string>
+#include <vector>
 #include "TcpApi.h"
 #include "UdpApi.h"
 #include "SVSocketError.h"
 #include "SocketTraits.h"
-#include <boost/shared_array.hpp>
 
 typedef boost::shared_array<BYTE> bytes;
 
@@ -48,6 +49,18 @@ namespace Seidenader
 		public:
 			SVSocket(Socket_t sok = InvalidSock)
 				: m_socket(sok), m_hasOwner(false), m_isConnected(false), m_buff_sz(Traits<API>::buffer_size)
+			{
+				m_sockNum = InterlockedIncrement(&g_sn);
+				int namelen = sizeof(sockaddr_in);
+				if (m_socket != InvalidSock && 
+					API::getsockname(m_socket, reinterpret_cast< sockaddr* >( &m_addr ), &namelen) != SVSocketError::Success)
+				{
+					m_socket = InvalidSock;
+				}
+				memset(&m_peer, 0, sizeof(sockaddr_in));
+			}
+			SVSocket(bool isConnected, bool bHasOwner, Socket_t sok)
+				: m_socket(sok), m_hasOwner(bHasOwner), m_isConnected(isConnected), m_buff_sz(Traits<API>::buffer_size)
 			{
 				m_sockNum = InterlockedIncrement(&g_sn);
 				int namelen = sizeof(sockaddr_in);
@@ -102,12 +115,32 @@ namespace Seidenader
 			{
 				return (m_socket != InvalidSock);
 			}
+			bool IsConnected() const { return m_isConnected; }
 
 			std::string state() const;
 
 			bool IsValidPayload(size_t) { return true; } // Currently, we say every payload is valid.  May be specialized later.
 			Err Bind(const char* hostAddr, unsigned short portNo);
 			SVSocketError::ErrorEnum Send( const std::string& data ); // Use Send for JSON (no header).
+
+			bool DataAvailable() const
+			{
+				bool bDataAvail = false;
+				timeval timeout = {0, 0};
+				fd_set readset;
+				FD_ZERO(&readset);
+				FD_SET(m_socket, &readset);
+				int max_fd = 1;
+				int rc = select(max_fd + 1, &readset, nullptr, nullptr, &timeout);
+				if (rc > 0)
+				{
+					if (FD_ISSET(m_socket, &readset))
+					{
+						bDataAvail = true;
+					}
+				}
+				return bDataAvail;
+			}
 		};
 	}
 }
@@ -121,6 +154,18 @@ typedef Seidenader::Socket::SVSocket<TcpApi> SVSocket;
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVSocketLibrary\SVSocket.h_v  $
+ * 
+ *    Rev 1.6   14 Oct 2014 17:39:50   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  953
+ * SCR Title:  Refactor Design for Socket Used by SVRC
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   Added Constructor override to track connected state
+ * Added IsConnected method
+ * Added DataAvailable method
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.5   04 Sep 2014 13:21:34   jHanebach
  * Project:  SVObserver

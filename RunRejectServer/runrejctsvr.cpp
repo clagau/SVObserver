@@ -5,11 +5,12 @@
 //* .Module Name     : runrejctsvr
 //* .File Name       : $Workfile:   runrejctsvr.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.8  $
-//* .Check In Date   : $Date:   06 Oct 2014 17:01:42  $
+//* .Current Version : $Revision:   1.9  $
+//* .Check In Date   : $Date:   14 Oct 2014 18:31:32  $
 //******************************************************************************
 
 #include "stdafx.h"
+#include <conio.h>
 #include <process.h>
 #include <string>
 #include <fstream>
@@ -27,6 +28,12 @@
 #include "SVSharedConfiguration.h"
 
 #pragma comment (lib, "version.lib")
+
+bool g_bQuit = false;
+
+DWORD threadIds[3] = {0};
+HANDLE threads[3] = {0};
+
 const u_short imgPort = 28963;
 
 template<typename API>
@@ -67,7 +74,7 @@ using Seidenader::Socket::header;
 using Seidenader::Socket::Traits;
 using SeidenaderVision::SVSharedConfiguration;
 
-void servimg(LPVOID)
+DWORD WINAPI servimg(LPVOID)
 {
 	try
 	{
@@ -81,40 +88,43 @@ void servimg(LPVOID)
 		const size_t buflen = 1024*48;
 		boost::scoped_array<u_char> arr(new u_char[buflen]);
 		long cnt = 0;
-		while(true)
+		while (!g_bQuit)
 		{
-			sockaddr addr;
-			u_char *buf = arr.get();
-			int len = sizeof(sockaddr);
-			Socket client = sok.Accept(&addr, &len);
-			if (client.IsValidSocket())
+			if (sok.ClientConnecting())
 			{
-				// read file name
-				bytes buf;
-				u_long sz;
-				if (client.ReadAll(buf, sz, true) == SVSocketError::Success)
+				sockaddr addr;
+				u_char *buf = arr.get();
+				int len = sizeof(sockaddr);
+				Socket client = sok.Accept(&addr, &len); // this never blocks for udp...
+				if (client.IsValidSocket())
 				{
-					std::string filename = std::string(reinterpret_cast<char *>(buf.get()), sz);
-					try
+					// read file name
+					bytes buf;
+					u_long sz;
+					if (client.ReadAll(buf, sz, true) == SVSocketError::Success)
 					{
-						std::ifstream is;
-						is.open(filename, std::ios::in | std::ios::binary);
-						if (!is.is_open())
+						std::string filename = std::string(reinterpret_cast<char *>(buf.get()), sz);
+						try
 						{
-							throw std::runtime_error("Cannot open " + filename);
+							std::ifstream is;
+							is.open(filename, std::ios::in | std::ios::binary);
+							if (!is.is_open())
+							{
+								throw std::runtime_error("Cannot open " + filename);
+							}
+							is.seekg(0, std::ios::end);
+							std::streamsize sz = is.tellg();
+							is.seekg(0, std::ios::beg);
+							std::vector<u_char> vec(sz);
+							is.read(reinterpret_cast<char *>(&vec[0]), sz);
+							client.Write(&vec[0], sz, true);
 						}
-						is.seekg(0, std::ios::end);
-						std::streamsize sz = is.tellg();
-						is.seekg(0, std::ios::beg);
-						std::vector<u_char> vec(sz);
-						is.read(reinterpret_cast<char *>(&vec[0]), sz);
-						client.Write(&vec[0], sz, true);
-					}
-					catch(std::exception & ex)
-					{
-						std::cout << ex.what() << std::endl;
-						SVSharedConfiguration::Log(ex.what());
-						break;
+						catch(std::exception & ex)
+						{
+							std::cout << ex.what() << std::endl;
+							SVSharedConfiguration::Log(ex.what());
+							break;
+						}
 					}
 				}
 				else
@@ -124,12 +134,12 @@ void servimg(LPVOID)
 			}
 		}
 	}
-	catch(std::exception & ex)
+	catch (std::exception & ex)
 	{
 		std::cout << ex.what() << std::endl;
 		SVSharedConfiguration::Log(ex.what());
 	}	
-	_endthread();
+	return 0;
 }
 
 struct MonitorListCopy 
@@ -731,85 +741,242 @@ static void CheckProductFilterChanged(long& lastFilterChange, long count, Monito
 	}
 }
 
-template<typename API>
-void servcmd(LPVOID ctrlPtr)
+template<typename API, typename ServerSocket>
+void Handler(ServerSocket& sok, ShareControl& ctrl, MonitorListReader& mlReader, MonitorMapCopy& monitorMap);
+
+template <>
+void Handler<UdpApi, UdpServerSocket>(UdpServerSocket& sok, ShareControl& ctrl, MonitorListReader& mlReader, MonitorMapCopy& monitorMap)
+{
+	typedef UdpApi API;
+	typedef UdpSocket Socket;
+	long lastReady = -1;
+	long lastFilterChange = -1;
+	sockaddr addr;
+	int len = sizeof(sockaddr);
+	Socket client = sok.Accept(&addr, &len); // for UDP this never blocks
+	if (client.IsValidSocket())
+	{
+		try
+		{
+			const JsonCmd& cmd = ReadCommand(client);
+			if (!cmd.isNull())
+			{
+				if (ctrl.IsReady())
+				{
+					bool readyChanged = CheckReadyChanged(lastReady, ctrl.GetReadyCount(), mlReader, monitorMap);
+					if (!readyChanged)
+					{
+						CheckProductFilterChanged(lastFilterChange, ctrl.GetProductFilterChangeCount(), mlReader, monitorMap);
+					}
+					else
+					{
+						ctrl.SetAck();
+						ClearHeld<API>();
+					}
+					const std::string& resp = GenerateResponse<API>(cmd, monitorMap);
+					client.Write(resp, Traits<API>::needsHeader);
+				}
+				else
+				{
+					if (lastReady) // last time we checked control was ready, svo has gone offline since
+					{
+						lastReady = 0;
+						ctrl.SetAck();
+					}
+					client.Write(BusyMessage(cmd), Traits<API>::needsHeader);
+				}
+			}
+			else
+			{
+				std::cout << "null cmd \n";
+			}
+		}
+		catch(std::exception & ex)
+		{
+			SVSharedConfiguration::Log(Traits<API>::ApiName() + ": " + ex.what());
+			std::cout << ex.what() << std::endl;
+		}
+	}
+	else
+	{
+		std::cout << "invalid socket\n";
+		SVSharedConfiguration::Log(client.Log(SVSocketError::GetErrorText(SVSocketError::GetLastSocketError()), true));
+	}
+}
+
+template<>
+void Handler<TcpApi, TcpServerSocket>(TcpServerSocket& sok, ShareControl& ctrl, MonitorListReader& mlReader, MonitorMapCopy& monitorMap)
+{
+	typedef TcpApi API;
+	typedef TcpSocket Socket; 
+	long lastReady = -1;
+	long lastFilterChange = -1;
+	sockaddr addr;
+	int len = sizeof(sockaddr);
+	SOCKET s = sok.Accept(&addr, &len); // this blocks until a client tries to connect
+	Socket client((Socket::InvalidSock != s), true, s); // create a socket
+
+	while (!g_bQuit && client.IsValidSocket() && client.IsConnected())
+	{
+		if (client.DataAvailable())
+		{
+			try
+			{
+				const JsonCmd& cmd = ReadCommand(client);
+				if (!cmd.isNull())
+				{
+					if (ctrl.IsReady())
+					{
+						bool readyChanged = CheckReadyChanged(lastReady, ctrl.GetReadyCount(), mlReader, monitorMap);
+						if (!readyChanged)
+						{
+							CheckProductFilterChanged(lastFilterChange, ctrl.GetProductFilterChangeCount(), mlReader, monitorMap);
+						}
+						else
+						{
+							ctrl.SetAck();
+							ClearHeld<API>();
+						}
+						const std::string& resp = GenerateResponse<API>(cmd, monitorMap);
+						client.Write(resp, Traits<API>::needsHeader);
+						break;
+					}
+					else
+					{
+						if (lastReady) // last time we checked control was ready, svo has gone offline since
+						{
+							lastReady = 0;
+							ctrl.SetAck();
+						}
+						client.Write(BusyMessage(cmd), Traits<API>::needsHeader);
+					}
+				}
+			}
+			catch(std::exception & ex)
+			{
+				SVSharedConfiguration::Log(Traits<API>::ApiName() + ": " + ex.what());
+				std::cout << ex.what() << std::endl;
+			}
+		}
+		::Sleep(20);
+	}
+}
+
+template <typename API>
+DWORD WINAPI servcmd(LPVOID ctrlPtr)
 {
 	try
 	{
-		typedef typename Seidenader::Socket::SVServerSocket<API> ServerSocket;
-		typedef typename Seidenader::Socket::SVSocket<API> Socket;
-		long lastReady = -1;
-		long lastFilterChange = -1;
-		ShareControl & ctrl = *reinterpret_cast<ShareControl *>(ctrlPtr);
+		typedef Seidenader::Socket::SVServerSocket<API> ServerSocket;
+		ShareControl& ctrl = *reinterpret_cast<ShareControl *>(ctrlPtr);
 		MonitorListReader mlReader;
 		MonitorMapCopy monitorMap;
 		ServerSocket sok;
 		sok.Create();
 		sok.SetBlocking();
 		sok.Listen(port<API>::number);
-		while(true)
+		while (!g_bQuit)
 		{
-			sockaddr addr;
-			int len = sizeof(sockaddr);
-			Socket client = sok.Accept(&addr, &len);
-			if (client.IsValidSocket())
+			if (sok.ClientConnecting())
 			{
-				try
-				{
-					const JsonCmd& cmd = ReadCommand(client);
-					if (!cmd.isNull())
-					{
-						if (ctrl.IsReady())
-						{
-							bool readyChanged = CheckReadyChanged(lastReady, ctrl.GetReadyCount(), mlReader, monitorMap);
-							if (!readyChanged)
-							{
-								CheckProductFilterChanged(lastFilterChange, ctrl.GetProductFilterChangeCount(), mlReader, monitorMap);
-							}
-							else
-							{
-								ctrl.SetAck();
-								ClearHeld<API>();
-							}
-							const std::string& resp = GenerateResponse<API>(cmd, monitorMap);
-							client.Write(resp, Traits<API>::needsHeader);
-						}
-						else
-						{
-							if (lastReady) // last time we checked control was ready, svo has gone offline since
-							{
-								lastReady = 0;
-								ctrl.SetAck();
-							}
-							client.Write(BusyMessage(cmd), Traits<API>::needsHeader);
-						}
-					}
-					else
-					{
-						std::cout << "null cmd \n";
-					}
-				}
-				catch(std::exception & ex)
-				{
-					SVSharedConfiguration::Log(Traits<API>::ApiName() + ": " + ex.what());
-					std::cout << ex.what() << std::endl;
-				}
-			}
-			else
-			{
-				std::cout << "invalid socket\n";
-				SVSharedConfiguration::Log(client.Log(SVSocketError::GetErrorText(SVSocketError::GetLastSocketError()), true));
+				Handler<API>(sok, ctrl, mlReader, monitorMap);
 			}
 		}
 	}
 	catch(std::exception & ex)
 	{
-		SVSharedConfiguration::Log(Traits<API>::ApiName() + ": " + ex.what());
 		std::cout << ex.what() << std::endl;
 	}	
-	_endthread();
+	return 0;
 }
 
+void RunConsole()
+{
+	bool paused = false;
+	HANDLE hStdin = GetStdHandle(STD_INPUT_HANDLE); 
+    HANDLE hStdout = GetStdHandle(STD_OUTPUT_HANDLE); 
+	CONSOLE_SCREEN_BUFFER_INFO csbiInfo;
+	GetConsoleScreenBufferInfo(hStdout, &csbiInfo);
+	WORD wOldColorAttrs = csbiInfo.wAttributes;
+
+	// Set the text attributes to draw green text on black background. 
+    SetConsoleTextAttribute(hStdout, FOREGROUND_GREEN | FOREGROUND_INTENSITY);
+
+	// Turn off the line input and echo input modes 
+	DWORD fdwOldMode;
+    GetConsoleMode(hStdin, &fdwOldMode);
+    
+    DWORD fdwMode = fdwOldMode &  ~(ENABLE_LINE_INPUT | ENABLE_ECHO_INPUT); 
+    SetConsoleMode(hStdin, fdwMode);
+    	
+    LPTSTR lpszPrompt = _T("Type q to quit: ");
+	DWORD cWritten;
+	COORD coordScreen = { 0, 0 };
+	while (!g_bQuit) 
+    { 
+		coordScreen.X = 0;
+		coordScreen.Y = 23;
+		SetConsoleCursorPosition( hStdout, coordScreen);
+		
+		if (paused)
+		{
+			WriteConsole(hStdout, _T("*** PAUSED ***"), 14, &cWritten, nullptr);
+		}
+		else
+		{
+			WriteConsole(hStdout, _T("              "), 14, &cWritten, nullptr);
+		}
+		coordScreen.Y = 24;
+		SetConsoleCursorPosition( hStdout, coordScreen);
+		WriteConsole(hStdout, lpszPrompt, static_cast<DWORD>(_tcslen(lpszPrompt)), &cWritten, nullptr);
+
+		DWORD NumberOfEventsRead = 0;
+		INPUT_RECORD buff[128];
+		BOOL rc = PeekConsoleInput(hStdin, buff, sizeof(buff), &NumberOfEventsRead);
+		if (rc && NumberOfEventsRead)
+		{
+			rc = ReadConsoleInput(hStdin, buff, sizeof(buff), &NumberOfEventsRead);
+			if (rc && NumberOfEventsRead)
+			{           
+				for (DWORD i = 0; i < NumberOfEventsRead; i++) 
+				{
+					switch(buff[i].EventType) 
+					{ 
+						case KEY_EVENT: // keyboard input 
+						{
+							if (buff[i].Event.KeyEvent.uChar.AsciiChar == 'q' || buff[i].Event.KeyEvent.uChar.AsciiChar == 'Q' )
+							{
+								g_bQuit = true;
+							}
+							break; 
+						}
+	 
+						case MOUSE_EVENT: // mouse input 
+						//MouseEventProc(irInBuf[i].Event.MouseEvent); 
+						break; 
+	 
+						case WINDOW_BUFFER_SIZE_EVENT: // scrn buf. resizing 
+						//ResizeEventProc(irInBuf[i].Event.WindowBufferSizeEvent); 
+						break; 
+	 
+						case FOCUS_EVENT:  // disregard focus events 
+						case MENU_EVENT:   // disregard menu events 
+						break; 
+	 
+						default: 
+						break; 
+					} 
+				}
+			}
+		}
+		Sleep(250);
+	}
+	// Restore the original console mode. 
+    SetConsoleMode(hStdin, fdwOldMode);
+
+    // Restore the original text colors. 
+    SetConsoleTextAttribute(hStdout, wOldColorAttrs);
+}
 
 bool CheckCommandLineArgs(int argc, _TCHAR* argv[], LPCTSTR option)
 {
@@ -880,11 +1047,17 @@ int _tmain(int argc, _TCHAR* argv[])
 		}
 		SVSocketLibrary::Init();
 		ShareControl ctrl;
+		DWORD threadIds[3];
 		HANDLE threads[3];
-		threads[0] = (HANDLE)_beginthread(servimg, 0, nullptr);
-		threads[1] = (HANDLE)_beginthread(servcmd<TcpApi>, 0, (void *)&ctrl);
-		threads[2] = (HANDLE)_beginthread(servcmd<UdpApi>, 0, (void *)&ctrl);
-		::MsgWaitForMultipleObjects(3, threads, FALSE, INFINITE, QS_KEY);
+		
+		threads[0] = CreateThread(nullptr, 0, servimg, nullptr, 0, &threadIds[0]);
+		threads[1] = CreateThread(nullptr, 0, servcmd<TcpApi>, (void *)&ctrl, 0, &threadIds[1]);
+		threads[2] = CreateThread(nullptr, 0, servcmd<UdpApi>, (void *)&ctrl, 0, &threadIds[2]);
+	
+		RunConsole();
+
+		// stop the threads...
+		::WaitForMultipleObjects(3, threads, true, INFINITE);
 	}
 	catch (std::exception & ex)
 	{
@@ -899,6 +1072,22 @@ int _tmain(int argc, _TCHAR* argv[])
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\RunRejectServer\runrejctsvr.cpp_v  $
+ * 
+ *    Rev 1.9   14 Oct 2014 18:31:32   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  963
+ * SCR Title:  Missing End Group when saving and loading tool group
+ * Checked in by:  una;  <<Unassigned>>
+ * Change Description:  
+ *   Revised servimg to call ClientConnecting
+ * Revised servcmd to call a templated handler, one for UDP and one for TCP
+ * Add Handler templated method for UDP.
+ * Add Handler templated method for TCP.
+ * Added console
+ * Revised to use CreateThread.
+ * 
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.8   06 Oct 2014 17:01:42   sjones
  * Project:  SVObserver

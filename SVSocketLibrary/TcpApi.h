@@ -5,16 +5,14 @@
 //* .Module Name     : TcpApi
 //* .File Name       : $Workfile:   TcpApi.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   19 Jun 2014 15:09:28  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   14 Oct 2014 17:34:40  $
 //******************************************************************************
 
 #pragma once
 
 #include <winsock2.h>
-#include <vector>
-#include <set>
-#include <iostream>
+
 namespace Seidenader
 {
 	namespace Socket
@@ -25,11 +23,9 @@ namespace Seidenader
 		   typedef SOCKET Socket_t;
 		   typedef SOCKET SysSock_t;
 		   typedef int Opt_t;
-		   //static int startup();
-		   //static int cleanup();
+
 		   static Socket_t socket(int af, int type, int protocol) { return ::socket(af, type, protocol); }
 		   static int bind(Socket_t u, const sockaddr* name, int namelen) { return ::bind(u, name, namelen); }
-		   //static int bind(Socket_t u, Socket_t udpsock);
 		   static int listen(Socket_t u, int backlog) { return ::listen(u, backlog); }
 		   static Socket_t accept(Socket_t u, sockaddr* addr, int* addrlen) { return ::accept(u, addr, addrlen); }
 		   static int connect(Socket_t u, const sockaddr* name, int namelen) { return ::connect(u, name, namelen); }
@@ -46,23 +42,9 @@ namespace Seidenader
 			{ return ::recvfrom(u, buf, len, flags, from, fromlen); }
 		   static int sendto(Socket_t u, const char * buf, int len, int flags, const sockaddr * to, int tolen)
 			{ return ::sendto(u, buf, len, flags, to, tolen); }
-		   //static int sendmsg(Socket_t u, const char* buf, int len, int ttl = -1, bool inorder = false)
-		   //static int recvmsg(Socket_t u, char* buf, int len);
-		   //static int64_t sendfile(Socket_t u, std::fstream& ifs, int64_t& offset, int64_t size, int block = 364000);
-		   //static int64_t recvfile(Socket_t u, std::fstream& ofs, int64_t& offset, int64_t size, int block = 7280000);
 		   static int select(int nfds, fd_set* readfds, fd_set* writefds, fd_set* exceptfds, const timeval* timeout)
 			{ return ::select(nfds, readfds, writefds, exceptfds, timeout); }
-		   //static int selectEx(const std::vector<Socket_t>& fds, std::vector<Socket_t>* readfds, std::vector<Socket_t>* writefds, std::vector<Socket_t>* exceptfds, long long msTimeOut);
-		   //static int epoll_create() { return ::epoll_create(); }
-		   //static int epoll_add_usock(const int eid, const Socket_t u, const int* events = NULL);
-		   //static int epoll_add_ssock(const int eid, const Socket_t s, const int* events = NULL);
-		   //static int epoll_remove_usock(const int eid, const Socket_t u);
-		   //static int epoll_remove_ssock(const int eid, const Socket_t s);
-		   //static int epoll_wait(const int eid, std::set<Socket_t>* readfds, std::set<Socket_t>* writefds, long long msTimeOut, std::set<Socket_t>* lrfds = NULL, std::set<Socket_t>* wrfds = NULL);
-		   //static int epoll_release(const int eid) { return ::epoll_release(eid); }
-		   //static CUDTException& getlasterror();
-		   //static int perfmon(Socket_t u, CPerfMon* perf, bool clear = true);
-		   //static UDTSTATUS getsockstate(Socket_t u);
+   		   static int shutdown(Socket_t u, int flags) { return ::shutdown(u, flags); }
 		};
 	}
 }
@@ -74,6 +56,17 @@ typedef Seidenader::Socket::TcpApi TcpApi;
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVSocketLibrary\TcpApi.h_v  $
+ * 
+ *    Rev 1.1   14 Oct 2014 17:34:40   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  953
+ * SCR Title:  Refactor Design for Socket Used by SVRC
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   Added shutdown method
+ * Removed dead code
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   19 Jun 2014 15:09:28   bwalter
  * Project:  SVObserver
