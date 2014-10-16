@@ -5,8 +5,8 @@
 //* .Module Name     : SVInspectionExporter
 //* .File Name       : $Workfile:   SVInspectionExporter.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   04 Feb 2014 15:22:46  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   15 Oct 2014 17:30:24  $
 //******************************************************************************
 
 #pragma region Includes
@@ -232,6 +232,9 @@ static void PersistDocument(const SVGUID& inspectionGuid, SVObjectWriter& rWrite
 		// Save Conditional History
 		pDoc->SaveConditionalHistory(rWriter);
 
+		// Save Tool Groupings
+		pDoc->SaveToolGroupings(rWriter);
+
 		rWriter.EndElement();
 	}
 }
@@ -300,6 +303,16 @@ HRESULT SVInspectionExporter::Export(const SVString& filename, const SVString& i
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVInspectionExporter.cpp_v  $
+ * 
+ *    Rev 1.2   15 Oct 2014 17:30:24   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  962
+ * SCR Title:  Tool Groupings Not Imported When Importing an Inspection
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   Revised PersistDocument method to export the ToolGroupings
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   04 Feb 2014 15:22:46   bwalter
  * Project:  SVObserver

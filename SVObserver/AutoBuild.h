@@ -5,8 +5,8 @@
 //* .Module Name     : AutoBuild
 //* .File Name       : $Workfile:   AutoBuild.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.56  $
-//* .Check In Date   : $Date:   14 Oct 2014 07:01:52  $
+//* .Current Version : $Revision:   1.58  $
+//* .Check In Date   : $Date:   15 Oct 2014 18:23:08  $
 //******************************************************************************
 
 #pragma once
@@ -23,7 +23,7 @@
 //    c is the beta version number - if c equals 0 or is greater than 254 then the application is marked as Released
 //    d is unused
 
-#define FILEVER        7,0,2,0
+#define FILEVER        7,0,4,0
 #define PRODUCTVER     FILEVER
 #define STRFILEVER     SV_STRINGIZE( FILEVER )
 #define STRPRODUCTVER  SV_STRINGIZE( PRODUCTVER )
@@ -33,6 +33,26 @@
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\AutoBuild.h_v  $
+ * 
+ *    Rev 1.58   15 Oct 2014 18:23:08   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  953
+ * SCR Title:  Refactor Design for Socket Used by SVRC
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   Updated to version 7.00 beta 004
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.57   15 Oct 2014 08:30:16   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  953
+ * SCR Title:  Refactor Design for Socket Used by SVRC
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   Updated to  version 7.0 Beta 3
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.56   14 Oct 2014 07:01:52   tbair
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : SVSharedPPQReader
 //* .File Name       : $Workfile:   SVSharedPPQReader.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   04 Sep 2014 14:04:36  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   15 Oct 2014 17:52:00  $
 //******************************************************************************
 #include "StdAfx.h"
 #include "SVSharedPPQReader.h"
@@ -128,7 +128,7 @@ namespace SeidenaderVision
 		}
 		long idx = start + 1;
 		long count = 0;
-		long size = sh->data.size();
+		long size = static_cast<long>(sh->data.size());
 
 		SVSharedProductVector * data = &sh->data;
 
@@ -152,7 +152,7 @@ namespace SeidenaderVision
 		long flags = ds::none;
 		long start = rsh->current_idx;
 		long idx = start + 1;
-		long size = rsh->data.size();
+		long size = static_cast<long>(rsh->data.size());
 		if (idx < 0) // -1 means No rejects are available (none exist)
 		{
 			::OutputDebugString("ppq next_reject_readable - No Data\n");
@@ -274,20 +274,31 @@ namespace SeidenaderVision
 		}
 		return ret;
 	}
-
+	
+	// This method is only called from GetFailStatus
 	Value SVProductBundle::find(const std::string & name) const
 	{
 		Value val;
-		std::for_each(inspections.begin(), inspections.end(),
-			[&name, &val](const std::pair<std::string, InspectionDataPtr> & pair)
-			{
-				Value v = pair.second->FindValue(name);
-				if (!v.empty())
-				{
-					val = v;
-				}
-			}
+		// find the Inspection Share for this item
+		std::string inspectionName = name.substr(0, name.find_first_of('.'));
+		InspectionDataPtrMap::const_iterator it = std::find_if(inspections.begin(), inspections.end(),
+			[&inspectionName](const InspectionDataPtrMap::value_type& entry)
+		{
+			return inspectionName == entry.first.substr(0, entry.first.find_first_of('.'));
+		}
 		);
+		if (it != inspections.end())
+		{
+			Value v = it->second->FindValue(name);
+			if (!v.empty())
+			{
+				val = v;
+			}
+		}
+		else
+		{
+			throw std::exception((name + " not found.").c_str());
+		}
 		return val;
 	}
 }
@@ -297,6 +308,16 @@ namespace SeidenaderVision
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVSharedMemoryLibrary\SVSharedPPQReader.cpp_v  $
+ * 
+ *    Rev 1.2   15 Oct 2014 17:52:00   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  953
+ * SCR Title:  Refactor Design for Socket Used by SVRC
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   Revised SVProductBundle find method to find the inspection share for the item first before trying to find the item value in the inspection share(s)
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   04 Sep 2014 14:04:36   jHanebach
  * Project:  SVObserver

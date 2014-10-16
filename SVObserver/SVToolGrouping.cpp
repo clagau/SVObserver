@@ -2,8 +2,8 @@
 //* .Module Name     : SVToolGrouping
 //* .File Name       : $Workfile:   SVToolGrouping.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.6  $
-//* .Check In Date   : $Date:   14 Aug 2014 16:09:24  $
+//* .Current Version : $Revision:   1.7  $
+//* .Check In Date   : $Date:   15 Oct 2014 17:27:52  $
 //******************************************************************************
 #pragma region Includes
 #include "stdafx.h"
@@ -460,7 +460,7 @@ HRESULT SVToolGrouping::SetParameters(SVTreeType& rTree, SVTreeType::SVBranchHan
 								// End Group is optional
 								if (!endGroupName.empty())
 								{
-									groupings.m_list.insert(groupings.m_list.end(), std::make_pair(endGroupName, ToolGroupData(ToolGroupData::EndOfGroup, endGroupName)));
+									groupings.m_list.insert(groupings.m_list.end(), std::make_pair(endGroupName, ToolGroupData(ToolGroupData::EndOfGroup, groupName, endGroupName, false)));
 								}
 							}
 						}
@@ -632,6 +632,16 @@ size_t SVToolGrouping::size() const
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVToolGrouping.cpp_v  $
+ * 
+ *    Rev 1.7   15 Oct 2014 17:27:52   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  963
+ * SCR Title:  Missing End Group When Saving and Loading Tool Group
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   Revised SetParameters to construct the ToolGroupData for the end group correctly
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.6   14 Aug 2014 16:09:24   sjones
  * Project:  SVObserver

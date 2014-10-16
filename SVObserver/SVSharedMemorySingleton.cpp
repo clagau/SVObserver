@@ -5,8 +5,8 @@
 //* .Module Name     : SVSharedMemorySingleton
 //* .File Name       : $Workfile:   SVSharedMemorySingleton.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.3  $
-//* .Check In Date   : $Date:   28 Aug 2014 18:48:28  $
+//* .Current Version : $Revision:   1.4  $
+//* .Check In Date   : $Date:   15 Oct 2014 19:03:54  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -49,8 +49,8 @@ void SVSharedMemorySingleton::CheckDirectories()
 	// Ensure Directories exist
 	try
 	{
-		// Check if drive exists and enough space
-		if (S_OK == SeidenaderVision::SVSharedConfiguration::SharedResourcesOk())
+		//if (S_OK == SeidenaderVision::SVSharedConfiguration::SharedResourcesOk()) // Check if drive exists and enough space
+		if (SeidenaderVision::SVSharedConfiguration::SharedDriveExists()) // just check that the drive exists
 		{
 			const std::string& sharedMemoryDirectory = SeidenaderVision::SVSharedConfiguration::GetSharedMemoryDirectoryName();
 			DWORD res = GetFileAttributes(sharedMemoryDirectory.c_str());
@@ -211,6 +211,16 @@ bool SVSharedMemorySingleton::HasShares()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVSharedMemorySingleton.cpp_v  $
+ * 
+ *    Rev 1.4   15 Oct 2014 19:03:54   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  953
+ * SCR Title:  Refactor Design for Socket Used by SVRC
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   Revised CheckDirectories to only check for the existance of the drive and not check the size
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   28 Aug 2014 18:48:28   sjones
  * Project:  SVObserver

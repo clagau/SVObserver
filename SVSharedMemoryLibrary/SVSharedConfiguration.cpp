@@ -5,8 +5,8 @@
 //* .Module Name     : SVSharedConfiguration
 //* .File Name       : $Workfile:   SVSharedConfiguration.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   04 Sep 2014 14:05:34  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   15 Oct 2014 19:02:52  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -148,6 +148,26 @@ bool SVSharedConfiguration::SharedDriveSizeOk()
 			}
 		}
 	}
+	else
+	{
+		DWORD error = GetLastError();
+		if (error == ERROR_ACCESS_DENIED) // could be mapped drive
+		{
+			ULARGE_INTEGER FreeBytesAvailable;
+			ULARGE_INTEGER TotalNumberOfBytes;
+			ULARGE_INTEGER TotalNumberOfFreeBytes;
+
+			BOOL success = GetDiskFreeSpaceExA(volName.c_str(), &FreeBytesAvailable, &TotalNumberOfBytes, &TotalNumberOfFreeBytes);
+			if (success)
+			{
+				double size = static_cast<double>(FreeBytesAvailable.QuadPart) / static_cast<double>(1024 * 1024 * 1024);
+				if (size >= 2.0)
+				{
+					bRetVal = true;
+				}
+			}
+		}
+	}
 	return bRetVal;
 }
 
@@ -196,6 +216,16 @@ bool SVSharedConfiguration::ControlFileExits()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVSharedMemoryLibrary\SVSharedConfiguration.cpp_v  $
+ * 
+ *    Rev 1.3   15 Oct 2014 19:02:52   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  953
+ * SCR Title:  Refactor Design for Socket Used by SVRC
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   Revised SharedDriveSizeOK to handle substituted drive
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   04 Sep 2014 14:05:34   jHanebach
  * Project:  SVObserver
