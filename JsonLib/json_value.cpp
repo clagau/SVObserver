@@ -2,8 +2,8 @@
 //* .Module Name     : Value
 //* .File Name       : $Workfile:   json_value.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   18 Apr 2013 16:13:56  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   16 Oct 2014 10:55:24  $
 //******************************************************************************
 
 #include <iostream>
@@ -92,8 +92,11 @@ public:
       if ( length == unknown )
          length = (unsigned int)strlen(value);
       char *newString = static_cast<char *>( malloc( length + 1 ) );
-      memcpy( newString, value, length );
-      newString[length] = 0;
+	  if (newString)
+	  {
+		memcpy( newString, value, length );
+		newString[length] = 0;
+	  }
       return newString;
    }
 
@@ -1730,7 +1733,18 @@ Path::make( Value &root ) const
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\JsonLib\json_value.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\JsonLib\json_value.cpp_v  $
+ * 
+ *    Rev 1.1   16 Oct 2014 10:55:24   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  953
+ * SCR Title:  Refactor Design for Socket Used by SVRC
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   Revised duplicateStringValue to check for null before calling memcpy
+ * 
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   18 Apr 2013 16:13:56   bWalter
  * Project:  SVObserver
