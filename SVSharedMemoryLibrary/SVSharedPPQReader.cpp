@@ -5,8 +5,8 @@
 //* .Module Name     : SVSharedPPQReader
 //* .File Name       : $Workfile:   SVSharedPPQReader.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   15 Oct 2014 17:52:00  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   17 Oct 2014 13:02:36  $
 //******************************************************************************
 #include "StdAfx.h"
 #include "SVSharedPPQReader.h"
@@ -142,7 +142,7 @@ namespace SeidenaderVision
 			}
 		} 
 		while((flags & ds::writing) == ds::writing || _InterlockedCompareExchange(&(*data)[idx].m_Flags, flags + 1, flags) != flags);
-		
+
 		return idx;
 	}
 
@@ -308,6 +308,16 @@ namespace SeidenaderVision
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVSharedMemoryLibrary\SVSharedPPQReader.cpp_v  $
+ * 
+ *    Rev 1.3   17 Oct 2014 13:02:36   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  954
+ * SCR Title:  Fix Issues with Run/Reject Server and Shared Memory Synchronization
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   Removed whitespace
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   15 Oct 2014 17:52:00   sjones
  * Project:  SVObserver

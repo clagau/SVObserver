@@ -5,8 +5,8 @@
 //* .Module Name     : SVMonitorListView
 //* .File Name       : $Workfile:   MonitorListView.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.4  $
-//* .Check In Date   : $Date:   08 Jul 2014 09:12:30  $
+//* .Current Version : $Revision:   1.5  $
+//* .Check In Date   : $Date:   17 Oct 2014 13:34:14  $
 //******************************************************************************
 
 #pragma region Includes
@@ -743,8 +743,7 @@ bool MonitorListView::RemoveMonitoredItem(int item)
 						// Remove ProductItemList Values Item
 						MonitoredObjectList valuesList = it->second.GetProductValuesList();
 						const MonitoredObject& rMatch = RemoteMonitorListHelper::GetMonitoredObjectFromName(GetItemName(rCtrl, item));
-						MonitoredObjectList::iterator valueIt = std::find_if(valuesList.begin(), valuesList.end(), 
-							[&rMatch](const MonitoredObject& rObj)->bool { return (memcmp(&rMatch, reinterpret_cast<const void *>(&rObj), sizeof(rObj)) == 0); });
+						MonitoredObjectList::iterator valueIt = std::find(valuesList.begin(), valuesList.end(), rMatch);
 						if (valueIt != valuesList.end())
 						{
 							valuesList.erase(valueIt);
@@ -1176,7 +1175,8 @@ void MonitorListView::OnDeleteItem()
 		POSITION Pos = rCtrl.GetFirstSelectedItemPosition();
 		if (Pos != NULL)
 		{
-			int item = GetListCtrl().GetNextSelectedItem(Pos);
+			int item = rCtrl.GetNextSelectedItem(Pos);
+			int Nextitem = rCtrl.GetNextItem(item, LVNI_ABOVE);
 			if (RemoveMonitoredItem(item))
 			{
 				SVSVIMStateClass::AddState(SV_STATE_MODIFIED);
@@ -1186,14 +1186,13 @@ void MonitorListView::OnDeleteItem()
 					pIODoc->SetModifiedFlag();
 				}
 
-				item = rCtrl.GetNextItem(item, LVNI_ABOVE);
 				if (rCtrl.GetItemCount())
 				{
 					if (item < 0)
 					{
 						item = 0;
 					}
-					rCtrl.SetItemState(item, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED);
+					rCtrl.SetItemState(Nextitem, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED);
 				}
 			}
 		}
@@ -1246,6 +1245,16 @@ void MonitorListView::OnLButtonDown(UINT nFlags, CPoint point)
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\MonitorListView.cpp_v  $
+ * 
+ *    Rev 1.5   17 Oct 2014 13:34:14   ryoho
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  964
+ * SCR Title:  Fix the Remove/Delete Functionality on the Monitor List View
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   for the ProductValueItemNode changed the find_if to use the std::find.   Changed OnDeleteItem to also select the previous item.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.4   08 Jul 2014 09:12:30   sjones
  * Project:  SVObserver

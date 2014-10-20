@@ -5,8 +5,8 @@
 //* .Module Name     : RemoteMonitorNamedList
 //* .File Name       : $Workfile:   RemoteMonitorNamedList.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.3  $
-//* .Check In Date   : $Date:   29 Aug 2014 17:49:04  $
+//* .Current Version : $Revision:   1.4  $
+//* .Check In Date   : $Date:   17 Oct 2014 13:35:26  $
 //******************************************************************************
 #pragma once
 
@@ -25,7 +25,7 @@ struct MonitoredObject
 	long arrayIndex;
 
 	MonitoredObject() : isArray(false), wholeArray(false), arrayIndex(-1) {}
-	bool operator==(const MonitoredObject& rhs) { return (guid == rhs.guid && isArray == rhs.isArray, wholeArray == rhs.wholeArray, arrayIndex == rhs.arrayIndex); }
+	bool operator==(const MonitoredObject& rhs) { return (guid == rhs.guid && isArray == rhs.isArray && wholeArray == rhs.wholeArray && arrayIndex == rhs.arrayIndex); }
 };
 
 typedef std::deque<MonitoredObject> MonitoredObjectList;
@@ -93,6 +93,16 @@ public:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\RemoteMonitorNamedList.h_v  $
+ * 
+ *    Rev 1.4   17 Oct 2014 13:35:26   ryoho
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  964
+ * SCR Title:  Fix the Remove/Delete Functionality on the Monitor List View
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   in the operator== changed the comma's to && so it would work correctly.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   29 Aug 2014 17:49:04   jHanebach
  * Project:  SVObserver

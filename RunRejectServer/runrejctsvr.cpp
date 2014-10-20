@@ -5,8 +5,8 @@
 //* .Module Name     : runrejctsvr
 //* .File Name       : $Workfile:   runrejctsvr.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.9  $
-//* .Check In Date   : $Date:   14 Oct 2014 18:31:32  $
+//* .Current Version : $Revision:   1.10  $
+//* .Check In Date   : $Date:   17 Oct 2014 13:02:02  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -66,9 +66,9 @@ typedef Seidenader::Socket::SVSocket<TcpApi> TcpSocket;
 typedef SeidenaderVision::ProductPtr ProductPtr;
 
 typedef std::pair<ProductPtr, long> ProductPtrPair;
-static std::pair<ProductPtr, long> g_lastProduct(ProductPtr(nullptr), -1); // For last held product from GetProduct cmd
-static std::pair<ProductPtr, long> g_lastRejectProduct(ProductPtr(nullptr), -1); // For last held Reject from GetProduct cmd when product filter is lastReject
-static std::pair<ProductPtr, long> g_lastReject(ProductPtr(nullptr), -1); // For last held Reject from GetReject cmd
+static ProductPtrPair g_lastProduct(ProductPtr(nullptr), -1); // For last held product from GetProduct cmd
+static ProductPtrPair g_lastRejectProduct(ProductPtr(nullptr), -1); // For last held Reject from GetProduct cmd when product filter is lastReject
+static ProductPtrPair g_lastReject(ProductPtr(nullptr), -1); // For last held Reject from GetReject cmd
 
 using Seidenader::Socket::header;
 using Seidenader::Socket::Traits;
@@ -427,7 +427,7 @@ Json::Value GetLastInspectedProduct(PPQReader& rReader, long trig, const Monitor
 
 		if (g_lastProduct.second >= 0)
 		{
-			rReader.ReleaseProduct(g_lastProduct .first, g_lastProduct .second);
+			rReader.ReleaseProduct(g_lastProduct.first, g_lastProduct.second);
 		}
 		g_lastProduct = std::make_pair(product, idx);
 		lastResult = rslt;
@@ -749,8 +749,8 @@ void Handler<UdpApi, UdpServerSocket>(UdpServerSocket& sok, ShareControl& ctrl, 
 {
 	typedef UdpApi API;
 	typedef UdpSocket Socket;
-	long lastReady = -1;
-	long lastFilterChange = -1;
+	static long lastReady = -1;
+	static long lastFilterChange = -1;
 	sockaddr addr;
 	int len = sizeof(sockaddr);
 	Socket client = sok.Accept(&addr, &len); // for UDP this never blocks
@@ -809,8 +809,8 @@ void Handler<TcpApi, TcpServerSocket>(TcpServerSocket& sok, ShareControl& ctrl, 
 {
 	typedef TcpApi API;
 	typedef TcpSocket Socket; 
-	long lastReady = -1;
-	long lastFilterChange = -1;
+	static long lastReady = -1;
+	static long lastFilterChange = -1;
 	sockaddr addr;
 	int len = sizeof(sockaddr);
 	SOCKET s = sok.Accept(&addr, &len); // this blocks until a client tries to connect
@@ -1072,6 +1072,16 @@ int _tmain(int argc, _TCHAR* argv[])
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\RunRejectServer\runrejctsvr.cpp_v  $
+ * 
+ *    Rev 1.10   17 Oct 2014 13:02:02   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  954
+ * SCR Title:  Fix Issues with Run/Reject Server and Shared Memory Synchronization
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   Revised the lastReady and lastFilterChange variables in the Handler templated functions to be static to correct an issue where the shared mempry slot weren't being released.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.9   14 Oct 2014 18:31:32   sjones
  * Project:  SVObserver

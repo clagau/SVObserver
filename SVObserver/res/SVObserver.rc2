@@ -7,7 +7,7 @@
 #endif //APSTUDIO_INVOKED
 
 #include "resource.h"
-#include "autoBuild.h"
+#include "..\AutoBuild\autoBuild.h"
 
 /////////////////////////////////////////////////////////////////////////////
 //
