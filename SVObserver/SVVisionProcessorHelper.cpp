@@ -5,8 +5,8 @@
 //* .Module Name     : SVVisionProcessorHelper
 //* .File Name       : $Workfile:   SVVisionProcessorHelper.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.21  $
-//* .Check In Date   : $Date:   29 Aug 2014 17:49:06  $
+//* .Current Version : $Revision:   1.22  $
+//* .Check In Date   : $Date:   20 Oct 2014 11:21:10  $
 //******************************************************************************
 
 #pragma region Includes
@@ -165,6 +165,12 @@ HRESULT SVVisionProcessorHelper::GetOfflineCount( unsigned long& p_rCount ) cons
 
 HRESULT SVVisionProcessorHelper::LoadConfiguration( const SVString& p_rPackFileName )
 {
+	// Check if we are in an allowed state first
+	// Not allowed to perform if in Regression or Test
+	if (SVSVIMStateClass::CheckState(SV_STATE_TEST | SV_STATE_REGRESSION))
+	{
+		return SVMSG_63_SVIM_IN_WRONG_MODE;
+	}
 	HRESULT l_Status = TheSVObserverApp.LoadPackedConfiguration( p_rPackFileName.c_str() );
 
 	return l_Status;
@@ -203,6 +209,16 @@ HRESULT SVVisionProcessorHelper::SetConfigurationMode( unsigned long p_Mode )
 {
 	HRESULT l_Status = S_OK;
 
+	// Check if we are in an allowed state first
+	// Not allowed to transition to or from Regression or Test
+	if (p_Mode & (SV_STATE_TEST | SV_STATE_REGRESSION))
+	{
+		return SVMSG_64_SVIM_MODE_NOT_REMOTELY_SETABLE;
+	}
+	if (SVSVIMStateClass::CheckState(SV_STATE_TEST | SV_STATE_REGRESSION))
+	{
+		return SVMSG_63_SVIM_IN_WRONG_MODE;
+	}
 	SVConfigurationObject* l_pConfig = NULL;
 
 	l_Status = SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
@@ -1040,6 +1056,17 @@ void SVVisionProcessorHelper::ProcessLastModified( bool& p_WaitForEvents )
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVVisionProcessorHelper.cpp_v  $
+ * 
+ *    Rev 1.22   20 Oct 2014 11:21:10   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  951
+ * SCR Title:  Correct Responses to Remote Commands
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   Revised LoadConfiguration to return an error if SVObserver is in Regression or Test mode.
+ * Revised SetConfigurationMode to return an error if transitioning from or to Regression or Test mode.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.21   29 Aug 2014 17:49:06   jHanebach
  * Project:  SVObserver

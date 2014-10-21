@@ -1658,6 +1658,9 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\AutoBuild\AutoBuild.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="CSVOCRFontTraining.h">
       <Filter>Header Files</Filter>
     </ClInclude>

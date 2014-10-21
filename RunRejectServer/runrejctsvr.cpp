@@ -5,8 +5,8 @@
 //* .Module Name     : runrejctsvr
 //* .File Name       : $Workfile:   runrejctsvr.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.10  $
-//* .Check In Date   : $Date:   17 Oct 2014 13:02:02  $
+//* .Current Version : $Revision:   1.11  $
+//* .Check In Date   : $Date:   20 Oct 2014 11:28:26  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -216,6 +216,10 @@ JsonCmd ReadCommand(TcpSocket & sok)
 	}
 	else
 	{
+		if (SVSocketError::ConnectionReset == error)
+		{
+			sok.Destroy();
+		}
 		::OutputDebugStringA(SVSocketError::GetErrorText(error));
 		::OutputDebugStringA("\n");
 	}
@@ -1072,6 +1076,16 @@ int _tmain(int argc, _TCHAR* argv[])
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\RunRejectServer\runrejctsvr.cpp_v  $
+ * 
+ *    Rev 1.11   20 Oct 2014 11:28:26   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  953
+ * SCR Title:  Refactor Design for Socket Used by SVRC
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   Revised ReadCommand to destroy the clinet socket on a Connection Rest error.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.10   17 Oct 2014 13:02:02   sjones
  * Project:  SVObserver

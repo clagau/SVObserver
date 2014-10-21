@@ -5,8 +5,8 @@
 //* .Module Name     : SVCommand.cpp
 //* .File Name       : $Workfile:   SVCommand.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.15  $
-//* .Check In Date   : $Date:   17 Jul 2014 18:35:54  $
+//* .Current Version : $Revision:   1.16  $
+//* .Check In Date   : $Date:   20 Oct 2014 11:17:34  $
 //******************************************************************************
 
 #pragma region Includes
@@ -373,6 +373,12 @@ STDMETHODIMP CSVCommand::PutSVIMConfig(BSTR szXMLData, BSTR* pXMLError)
 	BSTR XMLError;
 	HRESULT hrException = S_OK;
 
+	// Check if we are in an allowed state first
+	// Not allowed to perform if State is Regression or Test
+	if (SVSVIMStateClass::CheckState(SV_STATE_TEST | SV_STATE_REGRESSION))
+	{
+		return SVMSG_63_SVIM_IN_WRONG_MODE;
+	}
 	do
 	{
 		SETEXCEPTION0 (svException, SVMSG_CMDCOMSRV_NO_ERROR);
@@ -683,6 +689,13 @@ STDMETHODIMP CSVCommand::LoadSVIMConfig(BSTR szXMLData, BSTR* pXMLError)
 	HRESULT hrResult = S_OK;
 	BSTR XMLError;
 
+	// Check if we are in an allowed state first
+	// Not allowed to perform if State is Regression or Test
+	if (SVSVIMStateClass::CheckState(SV_STATE_TEST | SV_STATE_REGRESSION))
+	{
+		_bstr_t data(szXMLData, false);
+		return SVMSG_63_SVIM_IN_WRONG_MODE;
+	}
 	do
 	{
 		if(!SvXmlCmd.InitXml())goto xmlerror;
@@ -967,6 +980,16 @@ STDMETHODIMP CSVCommand::SVSetSVIMMode(unsigned long lSVIMNewMode)
 	SVException svException;
 	HRESULT hrResult;
 
+	// Check if we are in an allowed state first
+	// Not allowed to transition to or from Regression or Test
+	if (lSVIMNewMode & (SV_STATE_TEST | SV_STATE_REGRESSION))
+	{
+		return SVMSG_64_SVIM_MODE_NOT_REMOTELY_SETABLE;
+	}
+	if (SVSVIMStateClass::CheckState(SV_STATE_TEST | SV_STATE_REGRESSION))
+	{
+		return SVMSG_63_SVIM_IN_WRONG_MODE;
+	}
 	do
 	{
 		hrResult = S_OK;
@@ -1197,6 +1220,12 @@ STDMETHODIMP CSVCommand::SVPutSVIMConfig(long lOffset, long lBlockSize, BSTR *bs
 	CFileException *ex;
 	BOOL bHrSet = FALSE;
 
+	// Check if we are in an allowed state first
+	// Not allowed to perform if Mode is Regression or Test
+	if (SVSVIMStateClass::CheckState(SV_STATE_TEST | SV_STATE_REGRESSION))
+	{
+		return SVMSG_63_SVIM_IN_WRONG_MODE;
+	}
 	do
 	{
 		hrResult = S_OK;
@@ -1515,6 +1544,11 @@ STDMETHODIMP CSVCommand::SVLoadSVIMConfig(BSTR bstrConfigFilename)
 	CFileException ex;
 	BOOL bHrSet = TRUE;
 
+	// Check the mode first - Not allowed to perform if Mode is Regression or Test
+	if (SVSVIMStateClass::CheckState(SV_STATE_TEST | SV_STATE_REGRESSION))
+	{
+		return SVMSG_63_SVIM_IN_WRONG_MODE;
+	}
 	do
 	{
 		hrResult = S_OK;
@@ -7127,6 +7161,20 @@ STDMETHODIMP CSVCommand::SVIsAvailiable()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVCommand.cpp_v  $
+ * 
+ *    Rev 1.16   20 Oct 2014 11:17:34   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  951
+ * SCR Title:  Correct Responses to Remote Commands
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   Revised PutSVIMConfig to return an error if SVObserver is in Regression or Test mode.
+ * Revised LoadSVIMConfig to return an error if SVObserver is in Regression or Test mode.
+ * Revised SVSetSVIMMode to return an error if tyry to transition from or to Regresion or Test mode
+ * Revised SVPutSVIMConfig to return an error if SVObserver is in Regression or Test mode.
+ * Revised SVLoadSVIMConfig to return an error if SVObserver is in Regression or Test mode.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.15   17 Jul 2014 18:35:54   gramseier
  * Project:  SVObserver

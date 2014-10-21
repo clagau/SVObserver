@@ -4206,6 +4206,7 @@ echo %time%
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\AutoBuild\AutoBuild.h" />
     <ClInclude Include="BasicValueObject.h" />
     <ClInclude Include="BasicValueObjects.h" />
     <ClInclude Include="CDSVPictureDisplay.h" />
