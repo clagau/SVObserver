@@ -5,8 +5,8 @@
 //* .Module Name     : SVCommand.cpp
 //* .File Name       : $Workfile:   SVCommand.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.16  $
-//* .Check In Date   : $Date:   20 Oct 2014 11:17:34  $
+//* .Current Version : $Revision:   1.17  $
+//* .Check In Date   : $Date:   22 Oct 2014 17:00:46  $
 //******************************************************************************
 
 #pragma region Includes
@@ -194,6 +194,12 @@ STDMETHODIMP CSVCommand::SetSVIMState(BSTR szXMLData, BSTR* pXMLError)
 		//more error checking required here!
 		if(ulState)
 		{
+			// Check if we are in an allowed state first
+			// Not allowed to perform if State is Regression or Test
+			if (SVSVIMStateClass::CheckState(SV_STATE_TEST | SV_STATE_REGRESSION))
+			{
+				return SVMSG_63_SVIM_IN_WRONG_MODE;
+			}
 			GlobalRCGoOnline();
 		}
 		else
@@ -1055,6 +1061,12 @@ STDMETHODIMP CSVCommand::SVSetSVIMState(unsigned long ulSVIMState)
 		{
 			if( ulSVIMState )
 			{
+				// Check if we are in an allowed state first
+				// Not allowed to perform if State is Regression or Test
+				if (SVSVIMStateClass::CheckState(SV_STATE_TEST | SV_STATE_REGRESSION))
+				{
+					return SVMSG_63_SVIM_IN_WRONG_MODE;
+				}
 				bSuccess = GlobalRCGoOnline();
 			}
 			else
@@ -7161,6 +7173,17 @@ STDMETHODIMP CSVCommand::SVIsAvailiable()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVCommand.cpp_v  $
+ * 
+ *    Rev 1.17   22 Oct 2014 17:00:46   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  951
+ * SCR Title:  Correct Responses to Remote Commands
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   Revised SetSVIMState to restrict going online if in Regression or Test mode.
+ * Revised SVSetSVIMState to restrict going online if in Regression or Test mode.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.16   20 Oct 2014 11:17:34   sjones
  * Project:  SVObserver

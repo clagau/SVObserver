@@ -5,8 +5,8 @@
 //* .Module Name     : SVVisionProcessorHelper
 //* .File Name       : $Workfile:   SVVisionProcessorHelper.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.22  $
-//* .Check In Date   : $Date:   20 Oct 2014 11:21:10  $
+//* .Current Version : $Revision:   1.23  $
+//* .Check In Date   : $Date:   22 Oct 2014 11:31:52  $
 //******************************************************************************
 
 #pragma region Includes
@@ -535,24 +535,41 @@ HRESULT SVVisionProcessorHelper::GetStandardItems( const SVNameSet& p_rNames, SV
 
 		SVObjectManagerClass::Instance().GetObjectByDottedName( *l_Iter, ref );
 
-		if( ref.Object() != NULL )
+		if( nullptr != ref.Object() )
 		{
-			BasicValueObject* pValueObject = dynamic_cast< BasicValueObject* >( ref.Object() );
+			BasicValueObject* pBasicValueObject = dynamic_cast< BasicValueObject* >( ref.Object() );
 
-			if( NULL != pValueObject )
+			if( nullptr != pBasicValueObject )
 			{
 				_variant_t Value;
+				HRESULT getResult = pBasicValueObject->getValue( Value );
+				bool notNode = !pBasicValueObject->isNode();
 
-				if( S_OK == pValueObject->getValue( Value ) )
+				if( notNode && S_OK == getResult )
 				{
 					ValueStorage.m_Variant = Value;
 					ValueStorage.m_StorageType = SVVisionProcessor::SVStorageValue;
 					LoopStatus = S_OK;
 				}
 			}
+			else
+			{
+				SVValueObjectClass* pValueObject = dynamic_cast< SVValueObjectClass* >( ref.Object() );
+
+				if ( nullptr != pValueObject )
+				{
+					_variant_t Value;
+					if( S_OK == pValueObject->GetValue( Value ) )
+					{
+						ValueStorage.m_Variant = Value;
+						ValueStorage.m_StorageType = SVVisionProcessor::SVStorageValue;
+						LoopStatus = S_OK;
+					}
+				}
+			}
 		}
 		p_rItems[ l_Iter->c_str() ] = SVStorageResult(ValueStorage, LoopStatus, 0);
-		
+
 		if( S_OK == Status  && S_OK != LoopStatus )
 		{
 			Status = SVMSG_NOT_ALL_LIST_ITEMS_PROCESSED;
@@ -1056,6 +1073,16 @@ void SVVisionProcessorHelper::ProcessLastModified( bool& p_WaitForEvents )
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVVisionProcessorHelper.cpp_v  $
+ * 
+ *    Rev 1.23   22 Oct 2014 11:31:52   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  967
+ * SCR Title:  Make GetItems SVRC Command Return an Error When a Partial Name is Requested
+ * Checked in by:  bWalter;  Ben Walter
+ * Change Description:  
+ *   Changed the method GetStandardItems to add special handling for BasicValueObject.  If a requested item is a BasicValueObject, a value should only be returned if it is not a node.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.22   20 Oct 2014 11:21:10   sjones
  * Project:  SVObserver

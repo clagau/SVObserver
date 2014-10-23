@@ -5,12 +5,14 @@
 //* .Module Name     : runrejctsvr
 //* .File Name       : $Workfile:   runrejctsvr.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.11  $
-//* .Check In Date   : $Date:   20 Oct 2014 11:28:26  $
+//* .Current Version : $Revision:   1.13  $
+//* .Check In Date   : $Date:   22 Oct 2014 14:21:30  $
 //******************************************************************************
 
 #include "stdafx.h"
 #include <conio.h>
+#include <Psapi.h>
+#include <tlhelp32.h>
 #include <process.h>
 #include <string>
 #include <fstream>
@@ -998,14 +1000,42 @@ bool CheckCommandLineArgs(int argc, _TCHAR* argv[], LPCTSTR option)
 	return bFound;
 }
 
+bool IsProcessRunning(const wchar_t *processName,DWORD dwProcess)
+{
+    bool exists = false;
+    PROCESSENTRY32 entry;
+    entry.dwSize = sizeof(PROCESSENTRY32);
+
+    HANDLE snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, NULL);
+
+    if (Process32First(snapshot, &entry))
+        while (Process32Next(snapshot, &entry))
+            if (!wcsicmp(entry.szExeFile, processName))
+			{
+				if (entry.th32ProcessID != dwProcess)
+	                exists = true;
+			}
+
+    CloseHandle(snapshot);
+    return exists;
+}
+
+
 // Command Line arguments: /nocheck /show
 // /nocheck means to ignore the 2 GiG size requirement
 // /show means show console window (it is hidden by default)
 int _tmain(int argc, _TCHAR* argv[])
 {
+	 DWORD pid = GetCurrentProcessId();
+
+	if ( IsProcessRunning(_T("RunRejectServer.exe"),pid) )
+	{
+		return -1;
+	}
 	// check command line args - if /nocheck is specified - ignore the < 2 Gig error
 	bool bCheckSizeOverride = CheckCommandLineArgs(argc, argv, _T("/nocheck"));
 	bool bShowConsole = CheckCommandLineArgs(argc, argv, _T("/show"));
+
 	
 	HRESULT hr = SeidenaderVision::SVSharedConfiguration::SharedResourcesOk();
 	if (hr != S_OK)
@@ -1076,6 +1106,26 @@ int _tmain(int argc, _TCHAR* argv[])
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\RunRejectServer\runrejctsvr.cpp_v  $
+ * 
+ *    Rev 1.13   22 Oct 2014 14:21:30   ryoho
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  966
+ * SCR Title:  Limit the RunRejectServer to only one instance
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   made the check to see if the process is running to be the first operation.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.12   22 Oct 2014 12:11:12   ryoho
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  966
+ * SCR Title:  Limit the RunRejectServer to only one instance
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   added method IsProcessingRunning to only allow 1 instance of the RunRejectServer
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.11   20 Oct 2014 11:28:26   sjones
  * Project:  SVObserver
