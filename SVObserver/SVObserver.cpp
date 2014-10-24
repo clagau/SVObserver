@@ -5,8 +5,8 @@
 //* .Module Name     : SVObserver
 //* .File Name       : $Workfile:   SVObserver.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.41  $
-//* .Check In Date   : $Date:   02 Sep 2014 12:17:50  $
+//* .Current Version : $Revision:   1.42  $
+//* .Check In Date   : $Date:   23 Oct 2014 09:51:46  $
 //******************************************************************************
 
 #pragma region Includes
@@ -7491,11 +7491,20 @@ HRESULT SVObserverApp::INILoad()
 
 		if( -1 < l_iniLoader.m_csHardwareOptions.Find( "FastOCR" ) )
 		{
+#ifdef _WIN64
+			TheSVOLicenseManager().SetFastOCRLicense(false);
+			if ( m_pFastOcr != NULL )
+			{
+				delete m_pFastOcr;
+				m_pFastOcr = NULL;
+			}
+#else
 			TheSVOLicenseManager().SetFastOCRLicense(true);
 			if ( m_pFastOcr == NULL )
 			{
 				m_pFastOcr = new SVLVFastOCR();
 			}
+#endif
 		}
 		else
 		{
@@ -8860,6 +8869,16 @@ int SVObserverApp::FindMenuItem(CMenu* Menu, LPCTSTR MenuString)
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVObserver.cpp_v  $
+ * 
+ *    Rev 1.42   23 Oct 2014 09:51:46   ryoho
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  957
+ * SCR Title:  Remove FastOCR functionality for 64-bit version of SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Changed INILoad to add a #ifdef _WIN64 to turn off support for FastOCR.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.41   02 Sep 2014 12:17:50   bwalter
  * Project:  SVObserver

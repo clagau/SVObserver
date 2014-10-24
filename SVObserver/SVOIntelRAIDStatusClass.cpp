@@ -5,8 +5,8 @@
 // * .Module Name     : SVOIntelRAIDStatusClass
 // * .File Name       : $Workfile:   SVOIntelRAIDStatusClass.cpp  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.2  $
-// * .Check In Date   : $Date:   20 Aug 2014 12:20:42  $
+// * .Current Version : $Revision:   1.3  $
+// * .Check In Date   : $Date:   23 Oct 2014 08:44:32  $
 // ******************************************************************************
 
 #include "stdafx.h"
@@ -93,7 +93,7 @@ HRESULT SVOIntelRAIDStatusClass::CheckStatus()
 	m_csRaidStatus.Empty();
 	m_csErrorStatus.Empty();
 
-	HRESULT l_svOk = l_psvLog->Open( "Application" );
+	HRESULT l_svOk = l_psvLog->Open( _T("Application") );
 
 	if( l_svOk == S_OK )
 	{
@@ -114,25 +114,36 @@ HRESULT SVOIntelRAIDStatusClass::CheckStatus()
 				l_ulItem = 1;
 
 				while( l_svOk == S_OK && l_ulItem <= l_ulCount  && m_csRaidStatus.IsEmpty() )
-				{
-					if( CString( l_svRecord.GetSourceName() ).CompareNoCase( "IAANTMon" ) == 0 )
+				{	// Look for event source "IAANTMon"
+					if( CString( l_svRecord.GetSourceName() ).CompareNoCase( _T("IAANTMon") ) == 0 )
 					{
 						lType = 1;
 						LPCTSTR l_szString = l_svRecord.GetFirstString();
-
-						while( l_szString != NULL )
-						{
-							if( 0 < strlen( l_szString ) )
+						CString l_strTmp = l_szString;
+						int pos = 0;
+						std::vector<CString> l_Strings;
+						// Parse lines in text string.
+						CString strTmp = l_strTmp.Tokenize(_T("\n"), pos );
+						while( !strTmp.IsEmpty() )
+						{	// parse all lines that contain the word status.
+							if( strTmp.Find(_T("Status")) > -1 )
 							{
-								l_csStatus = l_szString;
+								l_Strings.push_back(strTmp );
 							}
-
-							l_szString = l_svRecord.GetNextString();
+							strTmp = l_strTmp.Tokenize( _T("\n"), pos );
 						}
 
-						m_csRaidStatus = l_csStatus;
+						if( l_Strings.size() > 0 )
+						{	// first status string.
+							m_csRaidStatus = l_Strings[0];
+							if( l_Strings.size() > 1) // if more than 1 status string.
+							{   // overwrite with second status string.
+								m_csRaidStatus = l_Strings[1];
+							}
+						}
 					}
-					if( CString(l_svRecord.GetSourceName() ).CompareNoCase("IAStorDataMgrSvc") == 0 )
+					// Look for event source "IAStorDataMgrSvc"
+					if( CString(l_svRecord.GetSourceName() ).CompareNoCase(_T("IAStorDataMgrSvc")) == 0 )
 					{
 						lType = 2;
 						LPCTSTR l_szString = l_svRecord.GetFirstString();
@@ -160,13 +171,13 @@ HRESULT SVOIntelRAIDStatusClass::CheckStatus()
 
 	if( l_svOk != S_OK )
 	{
-		m_csErrorStatus.Format( "Error Reading Event Log (Item = %lu - ErrorCode = %lu)", l_ulItem, l_svOk );
+		m_csErrorStatus.Format( _T("Error Reading Event Log (Item = %lu - ErrorCode = %lu)"), l_ulItem, l_svOk );
 
-		FILE* l_pFile = ::fopen( "C:\\SVObserver\\LastEventReadError.txt", "w" );
+		FILE* l_pFile = ::fopen( _T("C:\\SVObserver\\LastEventReadError.txt"), _T("w") );
 
 		if( l_pFile != NULL )
 		{
-			::fprintf( l_pFile,"%s\n", m_csErrorStatus );
+			::fprintf( l_pFile,_T("%s\n"), m_csErrorStatus );
 
 			::fclose( l_pFile );
 
@@ -182,7 +193,7 @@ HRESULT SVOIntelRAIDStatusClass::CheckStatus()
 	{
 		if( lType == 1 )
 		{	// If we find Normal then assume good.
-			if( m_csRaidStatus.CompareNoCase( "Normal" ) == 0 )
+			if( m_csRaidStatus.Find( _T("Normal") ) != -1 )
 			{
 				m_csRaidStatus.Empty();
 
@@ -195,8 +206,8 @@ HRESULT SVOIntelRAIDStatusClass::CheckStatus()
 		}
 		if( lType == 2 )
 		{	// If we do not find Degraded or rebuilding... then assume good.
-			if( (m_csRaidStatus.Find( "Degraded" ) == -1) &&
-				(m_csRaidStatus.Find( "Rebuilding in progress") == -1))
+			if( (m_csRaidStatus.Find( _T("Degraded") ) == -1) &&
+				(m_csRaidStatus.Find( _T("Rebuilding in progress")) == -1))
 			{
 				m_csRaidStatus.Empty();
 
@@ -232,6 +243,16 @@ const HANDLE SVOIntelRAIDStatusClass::GetCheckEvent()
 // ******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVOIntelRAIDStatusClass.cpp_v  $
+ * 
+ *    Rev 1.3   23 Oct 2014 08:44:32   tBair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  968
+ * SCR Title:  Fix RAID Status Reporting for Windows 7
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Modified CheckStatus to parse event log strings for newer version of Intel Raid entries.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   20 Aug 2014 12:20:42   tbair
  * Project:  SVObserver

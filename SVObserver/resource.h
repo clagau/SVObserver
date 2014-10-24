@@ -169,6 +169,7 @@
 #define IDD_GIGE_CAMERA_ROI_DLG         5116
 //The following dummy ID is required to identify the Conditional page for the help context.
 #define IDD_CONDITIONAL_PAGE            5117
+#define IDD_CUSTOM2_FILTER              5118
 #define IDS_OF_STRING                   10000
 #define IDS_PAGE_STRING                 10001
 #define IDS_RESULT_STRING               10002
@@ -1116,8 +1117,8 @@
 #define IDD_PLC_PROP_DLG                11041
 #define IDR_PLC_CONTEXT_MENU_ITEM       11042
 #define IDD_PLC_PROP_LIST_DLG           11043
-#define IDI_EXPAND						11044
-#define IDI_COLLAPSE					11045
+#define IDI_EXPAND                      11044
+#define IDI_COLLAPSE                    11045
 #define IDR_PLC_CONTEXT_MENU_ITEM_NO_DELETE 11046
 #define IDS_CLASSNAME_HISTOGRAMANALYZER_VALLEYRESULT 11046
 #define IDD_ADD_REMOVE_PLC_DLG          11047
@@ -1173,6 +1174,8 @@
 #define IDR_MONITOR_SUB_LIST            11106
 #define IDR_MONITOR_LIST_ITEM           11107
 #define IDR_TOOLBAR_ZOOM                11108
+#define IDS_CLASSNAME_CUSTOM2FILTER     11110
+#define IDS_OBJECTNAME_CUSTOMFILTER_KERNELCELL 11111
 #define IDS_OBJECTNAME_INPUT_01         14001
 #define IDS_OBJECTNAME_INPUT_02         14002
 #define IDS_OBJECTNAME_INPUT_03         14003
@@ -2491,6 +2494,16 @@
 #define IDC_BTN_REMOVE                  16028
 #define IDC_BTN_REMOVE_ALL              16029
 #define IDC_BTN_PROPERTIES              16030
+#define IDC_GRID                        16031
+#define IDC_SUM_SELECTOR                16032
+#define IDC_KERNEL_SUM                  16033
+#define IDC_APPLY_SUM                   16034
+#define IDC_NORM_FACTOR                 16035
+#define IDC_NORM_RESULT                 16036
+#define IDC_EDIT_CELL                   16037
+#define IDC_GRID_STATUS                 16038
+#define IDC_IMPORT_FILTER               16039
+#define IDC_EXPORT_FILTER               16040
 #define ID_TEST                         20000
 #define ID_BROWSE_BUTTON                20001
 #define ID_PLUSBUTTON                   20002
@@ -2600,7 +2613,6 @@
 #define ID_ADD_TRANSFORMATIONTOOL       20115
 #define ID_ADD_POLARUNWRAPTOOL          20116
 #define ID_ADJUST_POSITION              20117
-
 #define ID_SELECT_PPQVARIABLE           20119
 #define ID_ANALYZER_RESULT              20120
 #define ID_ADD_COLORTOOL                20121
@@ -2626,8 +2638,8 @@
 #define ID_FORMULA_COMMABUTTON          20147
 #define ID_FORMULA_ARRAY_BUTTON         20160
 #define ID_FORMULA_ARRAY_INDEX_BUTTON   20161
-#define ID_ADD_STARTTOOLGROUPING		20168
-#define ID_ADD_ENDTOOLGROUPING			20169
+#define ID_ADD_STARTTOOLGROUPING        20168
+#define ID_ADD_ENDTOOLGROUPING          20169
 #define ID_ADD_CYLINDRICALWARPTOOL      20170
 #define ID_ADD_PERSPECTIVEWARPTOOL      20171
 #define ID_VIEW_RESETCOUNTSCURRENTIP    20172
@@ -2698,6 +2710,7 @@
 #define ID_TOOLBAR_STANDARD             20341
 #define ID_TOOLBAR_ZOOM                 20342
 #define ID_ZOOMTOOLBAR                  20343
+#define ID_OK                           20344
 #define ID_VIEW_TOOLSETDRAW             32999
 #define ID_VIEW_TOOLSETDRAW_POP_BASE    33000
 #define ID_VIEW_TOOLSETDRAW_POP_MAX     33049
@@ -2730,9 +2743,9 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_3D_CONTROLS                     1
-#define _APS_NEXT_RESOURCE_VALUE        11109
-#define _APS_NEXT_COMMAND_VALUE         20344
-#define _APS_NEXT_CONTROL_VALUE         16031
+#define _APS_NEXT_RESOURCE_VALUE        11112
+#define _APS_NEXT_COMMAND_VALUE         20345
+#define _APS_NEXT_CONTROL_VALUE         16041
 #define _APS_NEXT_SYMED_VALUE           3002
 #endif
 #endif

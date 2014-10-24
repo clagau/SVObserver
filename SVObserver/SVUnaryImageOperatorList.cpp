@@ -5,8 +5,8 @@
 //* .Module Name     : SVUnaryImageOperatorList
 //* .File Name       : $Workfile:   SVUnaryImageOperatorList.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.4  $
-//* .Check In Date   : $Date:   15 May 2014 15:06:26  $
+//* .Current Version : $Revision:   1.5  $
+//* .Check In Date   : $Date:   24 Oct 2014 11:50:48  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -89,6 +89,13 @@ void SVUnaryImageOperatorListClass::init()
 	filterClassInfo.ClassName.LoadString( IDS_CLASSNAME_SVCUSTOMFILTER );
 	availableChildren.Add( filterClassInfo );
 	
+	// Add the Custom2 Filter
+	filterClassInfo.ObjectTypeInfo.ObjectType = SVFilterObjectType;
+	filterClassInfo.ObjectTypeInfo.SubType = SVCustom2FilterObjectType;
+	filterClassInfo.ClassId = Custom2FilterClassGuid;
+	filterClassInfo.ClassName.LoadString( IDS_CLASSNAME_CUSTOM2FILTER );
+	availableChildren.Add( filterClassInfo );
+
 	// Add the Ranking Filter
 	filterClassInfo.ObjectTypeInfo.ObjectType = SVFilterObjectType;
 	filterClassInfo.ObjectTypeInfo.SubType = SVRankingFilterObjectType;
@@ -903,6 +910,18 @@ BOOL SVInPlaceImageOperatorListClass::Run( SVRunStatusClass& RRunStatus )
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVUnaryImageOperatorList.cpp_v  $
+ * 
+ *    Rev 1.5   24 Oct 2014 11:50:48   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  942
+ * SCR Title:  Create new Custom2 Filter SVO-324 SVO-67 SVO-74
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   added Custom2 Filter to the filter types
+ * 
+ * Method Changed: init
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.4   15 May 2014 15:06:26   sjones
  * Project:  SVObserver

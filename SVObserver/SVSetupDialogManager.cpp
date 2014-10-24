@@ -5,8 +5,8 @@
 //* .Module Name     : SVSetupDialogManager
 //* .File Name       : $Workfile:   SVSetupDialogManager.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.3  $
-//* .Check In Date   : $Date:   10 Jul 2014 17:43:24  $
+//* .Current Version : $Revision:   1.5  $
+//* .Check In Date   : $Date:   23 Oct 2014 14:45:46  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -1638,6 +1638,10 @@ HRESULT SVSetupDialogManager::SVMaximumObjectLineAnalyzerClassSetupDialog( const
 
 HRESULT SVSetupDialogManager::SVOCRAnalyzerClassSetupDialog( const SVGUID& p_rObjectId, CWnd* PParentWnd )
 {
+#ifdef _WIN64
+	AfxMessageBox("OCR OCV Analyzer is not supported on this platform.");
+	return E_FAIL;
+#else
 	HRESULT l_Status = S_OK;
 
 	SVOCRAnalyzerClass* l_pAnalyzer = dynamic_cast< SVOCRAnalyzerClass* >( SVObjectManagerClass::Instance().GetObject( p_rObjectId ) );
@@ -1716,10 +1720,15 @@ HRESULT SVSetupDialogManager::SVOCRAnalyzerClassSetupDialog( const SVGUID& p_rOb
 	}
 
 	return l_Status;
+#endif
 }
 
 HRESULT SVSetupDialogManager::SVOCRGrayAnalyzerClassSetupDialog( const SVGUID& p_rObjectId, CWnd* PParentWnd )
 {
+#ifdef _WIN64
+	AfxMessageBox("OCR OCV Gray Scale Analyzer is not supported on this platform.");
+	return E_FAIL;
+#else
 	HRESULT l_Status = S_OK;
 
 	SVOCRGrayAnalyzerClass* l_pAnalyzer = dynamic_cast< SVOCRGrayAnalyzerClass* >( SVObjectManagerClass::Instance().GetObject( p_rObjectId ) );
@@ -1799,6 +1808,7 @@ HRESULT SVSetupDialogManager::SVOCRGrayAnalyzerClassSetupDialog( const SVGUID& p
 	}
 
 	return l_Status;
+#endif
 }
 
 HRESULT SVSetupDialogManager::SVOCVAnalyzerClassSetupDialog( const SVGUID& p_rObjectId, CWnd* PParentWnd )
@@ -2219,6 +2229,26 @@ HRESULT SVSetupDialogManager::SVResultClassSetupDialog( const SVGUID& p_rObjectI
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVSetupDialogManager.cpp_v  $
+ * 
+ *    Rev 1.5   23 Oct 2014 14:45:46   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  957
+ * SCR Title:  Remove FastOCR functionality for 64-bit version of SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Corrected spelling for message text.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.4   23 Oct 2014 09:55:32   ryoho
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  957
+ * SCR Title:  Remove FastOCR functionality for 64-bit version of SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   when bringing up the OCR OCV Analyzer or OCR OCV Gray Scale Analyzer on 64 bit systems a message will show up saying the analyzer is not supported.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   10 Jul 2014 17:43:24   mziegler
  * Project:  SVObserver

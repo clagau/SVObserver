@@ -5,8 +5,8 @@
 //* .Module Name     : SVOConfigAssistantDlg
 //* .File Name       : $Workfile:   SVOConfigAssistantDlg.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.18  $
-//* .Check In Date   : $Date:   04 Aug 2014 07:31:04  $
+//* .Current Version : $Revision:   1.19  $
+//* .Check In Date   : $Date:   23 Oct 2014 17:37:54  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -337,7 +337,15 @@ BOOL CSVOConfigAssistantDlg::OnInitDialog()
 
 	//select correct product on right hand side
 	l_sProductString = GetNameFromProductID( m_lConfigurationType );
-	m_ctlAvailableSys.SelectString(-1,l_sProductString.operator LPCTSTR());
+	int iExactStringPosition = m_ctlAvailableSys.FindStringExact(-1,l_sProductString.operator LPCSTR());
+	if (CB_ERR != iExactStringPosition)
+	{
+		m_ctlAvailableSys.SetCurSel(iExactStringPosition);
+	}
+	else
+	{
+		m_ctlAvailableSys.SetCurSel(0);
+	}
 
 	OnChangeEditConfigurationName();
 	SetupMessages();
@@ -1563,11 +1571,11 @@ void CSVOConfigAssistantDlg::SetConfigurationSystem(long lSysValue)
 		{
 			if( TheSVObserverApp.IsColorSVIM() )
 			{
-				m_lConfigurationType = SVIM_PRODUCT_D1_COLOR;
+				m_lConfigurationType = SVIM_PRODUCT_X2_GD8A_COLOR;
 			}
 			else
 			{
-				m_lConfigurationType = SVIM_PRODUCT_FULL;
+				m_lConfigurationType = SVIM_PRODUCT_X2_GD8A;
 			}
 			break;
 		}
@@ -4965,6 +4973,16 @@ bool CSVOConfigAssistantDlg::IsFileAcquisition(int iDig) const
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVOConfigAssistantDlg.cpp_v  $
+ * 
+ *    Rev 1.19   23 Oct 2014 17:37:54   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  958
+ * SCR Title:  Remove Legacy SVIM Types from Available Systems List
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   changed OnInitDialog to select the exact name in the combo. changed SetConfigurationSystem to use the GD8A as default if the hardware is Unknown.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.18   04 Aug 2014 07:31:04   tbair
  * Project:  SVObserver

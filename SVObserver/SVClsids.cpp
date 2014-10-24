@@ -5,8 +5,8 @@
 //* .Module Name     : SVClsids
 //* .File Name       : $Workfile:   SVClsids.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.3  $
-//* .Check In Date   : $Date:   17 Mar 2014 15:15:14  $
+//* .Current Version : $Revision:   1.4  $
+//* .Check In Date   : $Date:   24 Oct 2014 11:31:34  $
 //******************************************************************************
 
 #pragma region Includes
@@ -406,6 +406,12 @@
 
 // GUID for the SVCustomFilterClass
 /*const*/ GUID SVCustomFilterClassGuid				= { 0xd2675f29, 0xc2db, 0x11d1, { 0x96, 0x11, 0x0, 0x0, 0x13, 0x44, 0xd, 0xd } };
+
+// GUID for the Custom2Filter
+/*const*/ GUID Custom2FilterClassGuid				= { 0xd2675f29, 0xc2db, 0x11d1, { 0x96, 0x11, 0x0, 0x0, 0x14, 0x44, 0xd, 0xd } };
+
+// GUID for the Custom2FilterKernel
+/*const*/ GUID Custom2FilterKernelGuid				= { 0x12e2f10e, 0x3644, 0x46c7, { 0x9c, 0x81, 0x3a, 0x25, 0xd8, 0xa7, 0x98, 0x8b } };
 
 // GUIDs for the Embedded Objects of the SVCustomFilterClass
 /*const*/ GUID SVCustomFilterCell01Guid				= { 0x665b5b03, 0x19e8, 0x4d71, { 0x87, 0x52, 0x84, 0x30, 0x78, 0x6, 0xd0, 0xcd } };
@@ -1604,6 +1610,16 @@
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVClsids.cpp_v  $
+ * 
+ *    Rev 1.4   24 Oct 2014 11:31:34   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  942
+ * SCR Title:  Create new Custom2 Filter SVO-324 SVO-67 SVO-74
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Added Custom2 Filter CLSIDs
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   17 Mar 2014 15:15:14   bwalter
  * Project:  SVObserver

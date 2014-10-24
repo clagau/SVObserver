@@ -1646,6 +1646,12 @@
     <ClCompile Include="SVSharedMemorySingleton.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Custom2Filter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Custom2FilterDlg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Midl Include="SVObserver.odl">
@@ -3407,6 +3413,12 @@
     <ClInclude Include="SVSharedMemorySingleton.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Custom2Filter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Custom2FilterDlg.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="SVDLLToolLoadLibraryClass.inl">
@@ -3740,6 +3752,9 @@
     </None>
     <None Include="res\korber.bmp">
       <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Custom2Filter.inl">
+      <Filter>Header Files</Filter>
     </None>
   </ItemGroup>
 </Project>

@@ -5,8 +5,8 @@
 //* .Module Name     : SVToolAdjustmentDialogFilterPageClass
 //* .File Name       : $Workfile:   SVToolAdjustmentDialogFilterPageClass.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.3  $
-//* .Check In Date   : $Date:   26 Jun 2014 18:29:24  $
+//* .Current Version : $Revision:   1.4  $
+//* .Check In Date   : $Date:   24 Oct 2014 11:45:54  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -15,6 +15,8 @@
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVCustomFilterDlg.h"
 #include "SVCustomFilters.h"
+#include "Custom2FilterDlg.h"
+#include "Custom2Filter.h"
 #include "SVIPDoc.h"
 #include "SVInspectionProcess.h"
 #include "SVRankingFilterDlg.h"
@@ -139,6 +141,7 @@ void SVToolAdjustmentDialogFilterPageClass::OnSelchangeList1()
 			SVUnaryImageOperatorClass* pOperator = ( SVUnaryImageOperatorClass* )filterListBox.GetItemData( index );
 
 			m_btnProperties.EnableWindow( SV_IS_KIND_OF( pOperator, SVCustomFilterClass ) 
+				|| SV_IS_KIND_OF( pOperator, Custom2Filter )
 				|| SV_IS_KIND_OF( pOperator, SVRankingFilterClass )
 				|| SV_IS_KIND_OF( pOperator, SVThinningFilterClass )
 				|| SV_IS_KIND_OF( pOperator, SVThickeningFilterClass )
@@ -394,6 +397,7 @@ void SVToolAdjustmentDialogFilterPageClass::OnButtonProperties()
 			SVUnaryImageOperatorClass* l_pOperator = ( SVUnaryImageOperatorClass* )filterListBox.GetItemData( index );
 
 			SVCustomFilterClass *l_pCustomFilter = dynamic_cast<SVCustomFilterClass *>( l_pOperator );
+			Custom2Filter *l_pCustom2Filter = dynamic_cast<Custom2Filter *>( l_pOperator );
 			SVRankingFilterClass *l_pRankingFilter = dynamic_cast<SVRankingFilterClass *>( l_pOperator );
 			SVThinningFilterClass *l_pThinningFilter = dynamic_cast<SVThinningFilterClass *>( l_pOperator );
 			SVThickeningFilterClass *l_pThickeningFilter = dynamic_cast<SVThickeningFilterClass *>( l_pOperator );
@@ -404,6 +408,14 @@ void SVToolAdjustmentDialogFilterPageClass::OnButtonProperties()
 				SVCustomFilterDlg l_svDlg;
 
 				l_svDlg.SetTaskObject( l_pCustomFilter );
+
+				l_svDlg.DoModal();
+			}// end if
+			if( l_pCustom2Filter != NULL )
+			{
+				Custom2FilterDlg l_svDlg;
+
+				l_svDlg.SetTaskObject( l_pCustom2Filter );
 
 				l_svDlg.DoModal();
 			}// end if
@@ -452,6 +464,17 @@ void SVToolAdjustmentDialogFilterPageClass::OnButtonProperties()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVToolAdjustmentDialogFilterPageClass.cpp_v  $
+ * 
+ *    Rev 1.4   24 Oct 2014 11:45:54   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  942
+ * SCR Title:  Create new Custom2 Filter SVO-324 SVO-67 SVO-74
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Added Custom2 Filter Dialog
+ * Method Changed: OnButtonProperties
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   26 Jun 2014 18:29:24   mziegler
  * Project:  SVObserver

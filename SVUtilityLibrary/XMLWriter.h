@@ -1,3 +1,17 @@
+//******************************************************************************
+//* Copyright (c) 2010
+//* All Rights Reserved
+//* Author           : Ferruccio Barletta (ferruccio.barletta@gmail.com)
+//* License          : 
+//* From             : 
+//******************************************************************************
+//* .Module Name     : XMLWriter
+//* .File Name       : $Workfile:   XMLWriter.h  $
+//* ----------------------------------------------------------------------------
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   24 Oct 2014 12:00:08  $
+//******************************************************************************
+
 /* 
 Copyright (C) 2010, Ferruccio Barletta (ferruccio.barletta@gmail.com)
 
@@ -84,7 +98,7 @@ namespace xml
 		element(const char* name, writer& wr) : name(name), wr(wr)
 		{
 			assert(name != 0);
-			check_parent();
+			check_parent( true );
 			wr.header().putc('<').puts(name);
 			tagopen = true;
 			wr.elements.push(this);
@@ -97,9 +111,9 @@ namespace xml
 			{
 				wr.elements.pop();
 				if (tagopen)
-					wr.puts("/>");
+					wr.puts("/>\r\n");
 				else
-					wr.puts("</").puts(name).putc('>');
+					wr.puts("</").puts(name).puts(">\r\n");
 			}
 		}
 
@@ -132,7 +146,7 @@ namespace xml
 		element& contents(const char* str)
 		{
 			assert(str != 0);
-			check_parent();
+			check_parent( false );
 			qputs(str);
 			return *this;
 		}
@@ -153,7 +167,7 @@ namespace xml
 		// write CDATA section
 		element& cdata(const char* str) {
 			assert(str != 0);
-			check_parent();
+			check_parent( false );
 			wr.puts("<![CDATA[");
 			wr.puts(str);
 			wr.puts("]]>");
@@ -185,11 +199,15 @@ namespace xml
 		}
 
 		// check to see if we have a parent tag which needs to be closed
-		void check_parent()
+		void check_parent(bool NewLine)
 		{
 			if (!wr.elements.empty() && wr.elements.top()->tagopen)
 			{
-				wr.putc('>');
+				if(NewLine)
+					wr.puts(">\r\n");
+				else
+					wr.putc('>');
+
 				wr.elements.top()->tagopen = false;
 			}
 		}
@@ -197,3 +215,20 @@ namespace xml
 }
 
 #endif
+
+//******************************************************************************
+//* LOG HISTORY:
+//******************************************************************************
+/*
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVUtilityLibrary\XMLWriter.h_v  $
+ * 
+ *    Rev 1.1   24 Oct 2014 12:00:08   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  942
+ * SCR Title:  Create new Custom2 Filter SVO-324 SVO-67 SVO-74
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Added end of line for the XML
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ */

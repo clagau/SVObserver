@@ -5,8 +5,8 @@
 //* .Module Name     : SVOCRGrayAnalyzerResult
 //* .File Name       : $Workfile:   SVOCRGrayAnalyzerResult.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.4  $
-//* .Check In Date   : $Date:   15 May 2014 11:02:52  $
+//* .Current Version : $Revision:   1.6  $
+//* .Check In Date   : $Date:   23 Oct 2014 14:44:34  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -17,6 +17,7 @@
 #include "SVGlobal.h"
 #include "SVImageClass.h"
 #include "SVTool.h"
+#include "SVOLicenseManager/SVOLicenseManager.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -33,6 +34,8 @@ SVOCRGrayAnalyzeResultClass::SVOCRGrayAnalyzeResultClass( SVObjectClass* POwner,
 												    :SVResultClass(FALSE, POwner, StringResourceID )   // TBD - 16 Jul 1999 - frb. FALSE???
 {
 	ocrParameters.psvOCRResult = this;
+
+	m_bHasLicenseError = !TheSVOLicenseManager().HasFastOCRLicense();
 
 	clearAll();
 }
@@ -312,32 +315,39 @@ BOOL SVOCRGrayAnalyzeResultClass::CreateObject(	SVObjectLevelCreateStruct* PCrea
 		bOk = getInputImage() != NULL;
 	}
 
-	if ( bOk )
+	if ( !m_bHasLicenseError )
 	{
-    bOk = isWitCompleteLoaded();
-
-		if ( ! bOk )
+		if ( bOk )
 		{
-		   AfxMessageBox("ERROR: Failed to Load OCR Gray Library");   // 24 Jun 1999 - frb.
+			bOk = isWitCompleteLoaded();
+
+			if ( ! bOk )
+			{
+				AfxMessageBox("ERROR: Failed to Load OCR Gray Library");   // 24 Jun 1999 - frb.
+			}
+		}
+
+		if ( bOk )
+		{
+			//
+			// The OCR parameters should be available now from the script..
+			//
+			CString csTemp;
+
+			StrOcrParameters.GetValue( csTemp );
+			ocrParameters.ConvertStringToParams( (LPCTSTR)csTemp );
+
+			// Load Match String, if necessary...
+			LoadMatchString();
+
+			// Generate Font Model, if necessary...
+			GenerateFontModel();
 		}
 	}
-
-	if ( bOk )
+	else
 	{
-		//
-		// The OCR parameters should be available now from the script..
-		//
-		CString csTemp;
-
-		StrOcrParameters.GetValue( csTemp );
-		ocrParameters.ConvertStringToParams( (LPCTSTR)csTemp );
-
-		// Load Match String, if necessary...
-		LoadMatchString();
-
-		// Generate Font Model, if necessary...
-    GenerateFontModel();
-  }
+		AfxMessageBox("Error: OCR OCV Gray Scale Analyzer is not supported on this platform. The tool will become invalid.");
+	}
 
 	// Set / Reset Printable Flag
 	matchString.ObjectAttributesAllowedRef() |= SV_PRINTABLE;
@@ -477,13 +487,18 @@ CRect SVOCRGrayAnalyzeResultClass::Draw( HDC DC, CRect R )
 ////////////////////////////////////////////////////////////////////////////////
 BOOL SVOCRGrayAnalyzeResultClass::GenerateFontModel()
 {
-	BOOL bOk = isWitCompleteLoaded();
+	BOOL bOk = FALSE;
 
-	if ( bOk )
+	if ( !m_bHasLicenseError )
 	{
-		if (pOCRFontModelGray)
+		bOk = isWitCompleteLoaded();
+
+		if ( bOk )
 		{
-			bOk = svlvFastOcr.DestroyLVObjectData( (void **)(&pOCRFontModelGray), "CorFontModelGray", NULL );
+			if (pOCRFontModelGray)
+			{
+				bOk = svlvFastOcr.DestroyLVObjectData( (void **)(&pOCRFontModelGray), "CorFontModelGray", NULL );
+			}
 		}
 	}
 
@@ -773,6 +788,13 @@ HRESULT SVOCRGrayAnalyzeResultClass::ResetObject()
 BOOL SVOCRGrayAnalyzeResultClass::onRun( SVRunStatusClass& RRunStatus )
 {
 	BOOL bOk = FALSE;
+	
+	if (m_bHasLicenseError)
+	{
+		SetInvalid();
+		RRunStatus.SetInvalid();
+		return bOk;
+	}
     
 	bOk = SVResultClass::onRun( RRunStatus );
 
@@ -835,7 +857,6 @@ BOOL SVOCRGrayAnalyzeResultClass::onRun( SVRunStatusClass& RRunStatus )
 					{
 						long imageTypeMil = -1;
 						l_Code = SVMatroxBufferInterface::Get( milBuffer, SVType, imageTypeMil );
-						//long imageTypeMil = MbufInquire( milBuffer, M_TYPE, M_NULL );
 
 						if ( imageTypeMil != 8 )
 						{
@@ -1292,6 +1313,28 @@ int SVOCRGrayAnalyzeResultClass::CheckStringInTable(CString MatchString)
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVOCRGrayAnalyzerResult.cpp_v  $
+ * 
+ *    Rev 1.6   23 Oct 2014 14:44:34   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  957
+ * SCR Title:  Remove FastOCR functionality for 64-bit version of SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Correct spelling for message text.
+ * Cleaned up ifs in SVOCRGrayAnalyzeResultClass constructor and CreateObject.
+ * Added missing license error checks in onRun and GenerateFontModel methods.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.5   23 Oct 2014 09:53:42   ryoho
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  957
+ * SCR Title:  Remove FastOCR functionality for 64-bit version of SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   added error message if FastOCR is used as an analyzer.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.4   15 May 2014 11:02:52   tbair
  * Project:  SVObserver

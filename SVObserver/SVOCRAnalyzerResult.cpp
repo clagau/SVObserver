@@ -5,8 +5,8 @@
 //* .Module Name     : SVOCRAnalyzerResult
 //* .File Name       : $Workfile:   SVOCRAnalyzerResult.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.5  $
-//* .Check In Date   : $Date:   15 May 2014 10:43:20  $
+//* .Current Version : $Revision:   1.7  $
+//* .Check In Date   : $Date:   23 Oct 2014 14:43:32  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -33,15 +33,8 @@ SVOCRAnalyzeResultClass::SVOCRAnalyzeResultClass( SVObjectClass* POwner,
 {
 	ocrParameters.psvOCRResult = this;
 
-	if ( TheSVOLicenseManager().HasFastOCRLicense() )
-	{
-		m_bHasLicenseError = false;
-	}
-	else
-	{
-		m_bHasLicenseError = true;
-	}	
-	
+	m_bHasLicenseError = !TheSVOLicenseManager().HasFastOCRLicense();
+
 	clearAll();
 }
 
@@ -347,19 +340,20 @@ BOOL SVOCRAnalyzeResultClass::CreateObject(	SVObjectLevelCreateStruct* PCreateSt
 		if ( bOk )
 		{
 			bOk = isWitCompleteLoaded();
-			
+
 			if ( ! bOk )
 			{
-			   AfxMessageBox("ERROR: Failed to Load OCR Library");   // 24 Jun 1999 - frb.
+				AfxMessageBox("ERROR: Failed to Load OCR Library");   // 24 Jun 1999 - frb.
 			}
 		}
 
 		if ( bOk )
 		{
-		//
-		// The OCR parameters should be available now from the script..
-		//
-		CString csTemp;
+			//
+			// The OCR parameters should be available now from the script..
+			//
+			CString csTemp;
+
 			StrOcrParameters.GetValue( csTemp );
 			ocrParameters.ConvertStringToParams( (LPCTSTR)csTemp );
 
@@ -369,10 +363,10 @@ BOOL SVOCRAnalyzeResultClass::CreateObject(	SVObjectLevelCreateStruct* PCreateSt
 			// Generate Font Model, if necessary...
 			GenerateFontModel();
 		}
-	}//if (HasOCRLicense())
-	if ( m_bHasLicenseError )
+	}
+	else
 	{
-	   AfxMessageBox("ERROR: Failed to Load OCR Library (Fast OCR not supported with current model number)");
+		AfxMessageBox("Error: OCR OCV Analyzer is not supported on this platform. The tool will become invalid.");
 	}
 
 	// Set / Reset Printable Flag
@@ -519,17 +513,20 @@ CRect SVOCRAnalyzeResultClass::Draw( HDC DC, CRect R )
 BOOL SVOCRAnalyzeResultClass::GenerateFontModel()
 {
 	BOOL bOk = FALSE;
+
 	if ( !m_bHasLicenseError )
 	{
 		bOk = isWitCompleteLoaded();
+
 		if ( bOk )
 		{
-			if( pOCRFontModel ) 
+			if( pOCRFontModel )
 			{
 				bOk = svlvFastOcr.DestroyLVObjectData( (void **)(&pOCRFontModel), "CorFontModel", NULL );
 			}
 		}
 	}
+
 	if ( bOk )
 	{
 		CString csTemp;
@@ -1368,6 +1365,27 @@ int SVOCRAnalyzeResultClass::CheckStringInTable(CString MatchString)
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVOCRAnalyzerResult.cpp_v  $
+ * 
+ *    Rev 1.7   23 Oct 2014 14:43:32   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  957
+ * SCR Title:  Remove FastOCR functionality for 64-bit version of SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Correct spelling for message text.
+ * Cleaned up ifs in SVOCRAnalyzeClass constructor and CreateObject.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.6   23 Oct 2014 09:53:40   ryoho
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  957
+ * SCR Title:  Remove FastOCR functionality for 64-bit version of SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   added error message if FastOCR is used as an analyzer.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.5   15 May 2014 10:43:20   tbair
  * Project:  SVObserver

@@ -34,6 +34,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SVObserver", "SVObserver\SV
 		{245ED6E8-B382-4D40-B26E-7D4E0CDFC5A9} = {245ED6E8-B382-4D40-B26E-7D4E0CDFC5A9}
 		{5796BBF7-F64D-4B14-816E-B9012A52A225} = {5796BBF7-F64D-4B14-816E-B9012A52A225}
 		{22A733F9-76B1-4D79-8D08-BFB5FC104C33} = {22A733F9-76B1-4D79-8D08-BFB5FC104C33}
+		{2BFBF5FA-1947-4A24-9F5A-697FB3EF6671} = {2BFBF5FA-1947-4A24-9F5A-697FB3EF6671}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PropTree", "PropertyTree\PropTree.vcxproj", "{10F35B35-05F0-472D-B72E-304CAAAD305A}"
@@ -449,6 +450,8 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SVSharedMemoryLibrary", "SVSharedMemoryLibrary\SVSharedMemoryLibrary.vcxproj", "{B479E2E3-2B4F-4E2C-A6AD-A0A03579FE59}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "RunRejectServer", "RunRejectServer\runrejctsvr.vcxproj", "{9B0560C0-FEE5-4806-9594-CFED40E28A18}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GridCtrlLibrary", "GridCtrlLibrary\GridCtrlLibrary.vcxproj", "{2BFBF5FA-1947-4A24-9F5A-697FB3EF6671}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -1564,6 +1567,22 @@ Global
 		{9B0560C0-FEE5-4806-9594-CFED40E28A18}.Unicode Release|Win32.Build.0 = Release|Win32
 		{9B0560C0-FEE5-4806-9594-CFED40E28A18}.Unicode Release|x64.ActiveCfg = Release|x64
 		{9B0560C0-FEE5-4806-9594-CFED40E28A18}.Unicode Release|x64.Build.0 = Release|x64
+		{2BFBF5FA-1947-4A24-9F5A-697FB3EF6671}.Debug|Win32.ActiveCfg = Debug|Win32
+		{2BFBF5FA-1947-4A24-9F5A-697FB3EF6671}.Debug|Win32.Build.0 = Debug|Win32
+		{2BFBF5FA-1947-4A24-9F5A-697FB3EF6671}.Debug|x64.ActiveCfg = Debug|x64
+		{2BFBF5FA-1947-4A24-9F5A-697FB3EF6671}.Debug|x64.Build.0 = Debug|x64
+		{2BFBF5FA-1947-4A24-9F5A-697FB3EF6671}.Release|Win32.ActiveCfg = Release|Win32
+		{2BFBF5FA-1947-4A24-9F5A-697FB3EF6671}.Release|Win32.Build.0 = Release|Win32
+		{2BFBF5FA-1947-4A24-9F5A-697FB3EF6671}.Release|x64.ActiveCfg = Release|x64
+		{2BFBF5FA-1947-4A24-9F5A-697FB3EF6671}.Release|x64.Build.0 = Release|x64
+		{2BFBF5FA-1947-4A24-9F5A-697FB3EF6671}.Unicode Debug|Win32.ActiveCfg = Debug|Win32
+		{2BFBF5FA-1947-4A24-9F5A-697FB3EF6671}.Unicode Debug|Win32.Build.0 = Debug|Win32
+		{2BFBF5FA-1947-4A24-9F5A-697FB3EF6671}.Unicode Debug|x64.ActiveCfg = Debug|x64
+		{2BFBF5FA-1947-4A24-9F5A-697FB3EF6671}.Unicode Debug|x64.Build.0 = Debug|x64
+		{2BFBF5FA-1947-4A24-9F5A-697FB3EF6671}.Unicode Release|Win32.ActiveCfg = Release|Win32
+		{2BFBF5FA-1947-4A24-9F5A-697FB3EF6671}.Unicode Release|Win32.Build.0 = Release|Win32
+		{2BFBF5FA-1947-4A24-9F5A-697FB3EF6671}.Unicode Release|x64.ActiveCfg = Release|x64
+		{2BFBF5FA-1947-4A24-9F5A-697FB3EF6671}.Unicode Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

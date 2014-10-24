@@ -5,8 +5,8 @@
 //* .Module Name     : SVObjectTypeInfoStruct
 //* .File Name       : $Workfile:   SVObjectTypeInfoStruct.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   22 Apr 2013 17:01:28  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   24 Oct 2014 10:54:08  $
 //******************************************************************************
 
 //******************************************************************************
@@ -248,6 +248,7 @@ enum SVObjectSubTypeEnum
 	SVThinningFilterObjectType                  = 0x00002017,
 	SVThickeningFilterObjectType                = 0x00002018,
 	SVShapeMaskHelperObjectType					= 0x00002019,
+	SVCustom2FilterObjectType					= 0x0000201a,
 // Operator SubTypes
 	SVColorThresholdObjectType					= 0x00003000,
 
@@ -298,7 +299,18 @@ struct SVObjectTypeInfoStruct
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObjectLibrary\SVObjectTypeInfoStruct.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObjectLibrary\SVObjectTypeInfoStruct.h_v  $
+ * 
+ *    Rev 1.1   24 Oct 2014 10:54:08   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  942
+ * SCR Title:  Create new Custom2 Filter SVO-324 SVO-67 SVO-74
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Added Unary Image Operator Subtype for Custom2 Filter
+ * Changed SVObjectSubTypeEnum
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   22 Apr 2013 17:01:28   bWalter
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : SVHardwareManifest
 //* .File Name       : $Workfile:   SVHardwareManifest.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   09 Apr 2014 10:45:44  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   23 Oct 2014 13:27:12  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -27,7 +27,7 @@ typedef std::map<SVIMProductEnum, SVIMProductEnumSet> SVIMProductCompatibilityLi
 
 const SVHardwareManifest::SVIMTypeMap SVHardwareManifest::m_SVIMTypeMap = boost::assign::map_list_of< SVIMProductEnum, SVIMTypeInfoStruct >
 	// SVIMProductEnum,                               COLOR, SUPPORTED, DIGITIZERS, TRIGGERS
-	( SVIM_PRODUCT_FULL,          SVIMTypeInfoStruct( false, true,      4,			4 ) )
+	( SVIM_PRODUCT_FULL,          SVIMTypeInfoStruct( false, false,      4,			4 ) )
 	( SVIM_PRODUCT_05,            SVIMTypeInfoStruct( false, false,     2,			2 ) )
 	( SVIM_PRODUCT_RGB_MONO,      SVIMTypeInfoStruct( false, false,     3,			1 ) )
 	( SVIM_PRODUCT_RGB_COLOR,     SVIMTypeInfoStruct( true,  false,     1,			1 ) )
@@ -35,13 +35,13 @@ const SVHardwareManifest::SVIMTypeMap SVHardwareManifest::m_SVIMTypeMap = boost:
 	( SVIM_PRODUCT_D2,            SVIMTypeInfoStruct( false, false,     6,			2 ) )
 	( SVIM_PRODUCT_D3,            SVIMTypeInfoStruct( false, false,     9,			3 ) )
 	( SVIM_PRODUCT_X1,            SVIMTypeInfoStruct( false, false,     3,			1 ) )
-	( SVIM_PRODUCT_X2,            SVIMTypeInfoStruct( false, true,      6,			3 ) )
+	( SVIM_PRODUCT_X2,            SVIMTypeInfoStruct( false, false,      6,			3 ) )
 	( SVIM_PRODUCT_X3,            SVIMTypeInfoStruct( false, false,     3,			3 ) )
 	( SVIM_PRODUCT_D1_COLOR,      SVIMTypeInfoStruct( true,  false,     3,			1 ) )
 	( SVIM_PRODUCT_D2_COLOR,      SVIMTypeInfoStruct( true,  false,     6,			2 ) )
 	( SVIM_PRODUCT_D3_COLOR,      SVIMTypeInfoStruct( true,  false,     9,			3 ) )
 	( SVIM_PRODUCT_X1_COLOR,      SVIMTypeInfoStruct( true,  false,     3,			1 ) )
-	( SVIM_PRODUCT_X2_COLOR,      SVIMTypeInfoStruct( true,  true,      6,			3 ) )
+	( SVIM_PRODUCT_X2_COLOR,      SVIMTypeInfoStruct( true,  false,      6,			3 ) )
 	( SVIM_PRODUCT_X3_COLOR,      SVIMTypeInfoStruct( true,  false,     3,			3 ) )
 	( SVIM_PRODUCT_D1_HUB,        SVIMTypeInfoStruct( false, false,     3,			3 ) )
 	( SVIM_PRODUCT_D2_HUB,        SVIMTypeInfoStruct( false, false,     3,			3 ) )
@@ -49,8 +49,8 @@ const SVHardwareManifest::SVIMTypeMap SVHardwareManifest::m_SVIMTypeMap = boost:
 	( SVIM_PRODUCT_X1_HUB,        SVIMTypeInfoStruct( false, false,     3,			3 ) )
 	( SVIM_PRODUCT_X2_GD1A,       SVIMTypeInfoStruct( false, true,      1,			1 ) )
 	( SVIM_PRODUCT_X2_GD1A_COLOR, SVIMTypeInfoStruct( true,  true,      1,			1 ) )
-	( SVIM_PRODUCT_X2_GD2A,       SVIMTypeInfoStruct( false, true,      2,			2 ) )
-	( SVIM_PRODUCT_X2_GD2A_COLOR, SVIMTypeInfoStruct( true,  true,      2,			2 ) )
+	( SVIM_PRODUCT_X2_GD2A,       SVIMTypeInfoStruct( false, false,      2,			2 ) )
+	( SVIM_PRODUCT_X2_GD2A_COLOR, SVIMTypeInfoStruct( true,  false,      2,			2 ) )
 	( SVIM_PRODUCT_X2_GD4A,       SVIMTypeInfoStruct( false, false,     4,			3 ) )
 	( SVIM_PRODUCT_X2_GD4A_COLOR, SVIMTypeInfoStruct( true,  false,     4,			3 ) )
 	( SVIM_PRODUCT_X2_GD8A,       SVIMTypeInfoStruct( false, true,      8,			3 ) )
@@ -394,6 +394,16 @@ bool SVHardwareManifest::IsNonIOSVIM(SVIMProductEnum p_ProductType)
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVHardwareManifest.cpp_v  $
+ * 
+ *    Rev 1.2   23 Oct 2014 13:27:12   ryoho
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  958
+ * SCR Title:  Remove Legacy SVIM Types from Available Systems List
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   set the analog/digital models to be not supported
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   09 Apr 2014 10:45:44   tbair
  * Project:  SVObserver

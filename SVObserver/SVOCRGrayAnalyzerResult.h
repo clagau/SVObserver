@@ -5,8 +5,8 @@
 //* .Module Name     : SVOCRGrayAnalyzerResult
 //* .File Name       : $Workfile:   SVOCRGrayAnalyzerResult.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   15 May 2014 11:02:50  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   23 Oct 2014 09:53:40  $
 //******************************************************************************
 #ifndef SV_OCR_GRAY_ANALYZER_RESULT_H
 #define SV_OCR_GRAY_ANALYZER_RESULT_H
@@ -185,6 +185,9 @@ protected:
 
 	//  Wit wrapper for noMatchLabel.
 	char *witNoMatchLabel;
+
+private:
+	bool m_bHasLicenseError;
     
 };
 
@@ -195,6 +198,16 @@ protected:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVOCRGrayAnalyzerResult.h_v  $
+ * 
+ *    Rev 1.3   23 Oct 2014 09:53:40   ryoho
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  957
+ * SCR Title:  Remove FastOCR functionality for 64-bit version of SVObserver
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   added error message if FastOCR is used as an analyzer.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   15 May 2014 11:02:50   tbair
  * Project:  SVObserver
