@@ -5,8 +5,8 @@
 //* .Module Name     : runrejctsvr
 //* .File Name       : $Workfile:   runrejctsvr.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.13  $
-//* .Check In Date   : $Date:   22 Oct 2014 14:21:30  $
+//* .Current Version : $Revision:   1.16  $
+//* .Check In Date   : $Date:   28 Oct 2014 10:45:20  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -821,6 +821,10 @@ void Handler<TcpApi, TcpServerSocket>(TcpServerSocket& sok, ShareControl& ctrl, 
 	int len = sizeof(sockaddr);
 	SOCKET s = sok.Accept(&addr, &len); // this blocks until a client tries to connect
 	Socket client((Socket::InvalidSock != s), true, s); // create a socket
+	if (client.IsValidSocket())
+	{
+		client.DisableDelay(); // turn off nagle
+	}
 
 	while (!g_bQuit && client.IsValidSocket() && client.IsConnected())
 	{
@@ -854,7 +858,16 @@ void Handler<TcpApi, TcpServerSocket>(TcpServerSocket& sok, ShareControl& ctrl, 
 							lastReady = 0;
 							ctrl.SetAck();
 						}
-						client.Write(BusyMessage(cmd), Traits<API>::needsHeader);
+						// check for version command
+						if (cmd[SVRC::cmd::name] == SVRC::cmdName::getVersion)
+						{
+							const std::string& resp = GenerateResponse<API>(cmd, monitorMap);
+							client.Write(resp, Traits<API>::needsHeader);
+						}
+						else
+						{
+							client.Write(BusyMessage(cmd), Traits<API>::needsHeader);
+						}
 					}
 				}
 			}
@@ -864,7 +877,6 @@ void Handler<TcpApi, TcpServerSocket>(TcpServerSocket& sok, ShareControl& ctrl, 
 				std::cout << ex.what() << std::endl;
 			}
 		}
-		::Sleep(20);
 	}
 }
 
@@ -1000,26 +1012,33 @@ bool CheckCommandLineArgs(int argc, _TCHAR* argv[], LPCTSTR option)
 	return bFound;
 }
 
-bool IsProcessRunning(const wchar_t *processName,DWORD dwProcess)
+bool IsProcessRunning(const TCHAR* processName,DWORD dwProcess)
 {
     bool exists = false;
     PROCESSENTRY32 entry;
+	memset(&entry, 0, sizeof(entry));
     entry.dwSize = sizeof(PROCESSENTRY32);
 
-    HANDLE snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, NULL);
-
-    if (Process32First(snapshot, &entry))
-        while (Process32Next(snapshot, &entry))
-            if (!wcsicmp(entry.szExeFile, processName))
+    HANDLE snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+	if (INVALID_HANDLE_VALUE != snapshot)
+	{
+		if (Process32First(snapshot, &entry))
+		{
+			while (Process32Next(snapshot, &entry))
 			{
-				if (entry.th32ProcessID != dwProcess)
-	                exists = true;
+				if (!_tcsicmp(entry.szExeFile, processName))
+				{
+					if (entry.th32ProcessID != dwProcess)
+					{
+						exists = true;
+					}
+				}
 			}
-
-    CloseHandle(snapshot);
+		}
+		CloseHandle(snapshot);
+	}
     return exists;
 }
-
 
 // Command Line arguments: /nocheck /show
 // /nocheck means to ignore the 2 GiG size requirement
@@ -1035,7 +1054,6 @@ int _tmain(int argc, _TCHAR* argv[])
 	// check command line args - if /nocheck is specified - ignore the < 2 Gig error
 	bool bCheckSizeOverride = CheckCommandLineArgs(argc, argv, _T("/nocheck"));
 	bool bShowConsole = CheckCommandLineArgs(argc, argv, _T("/show"));
-
 	
 	HRESULT hr = SeidenaderVision::SVSharedConfiguration::SharedResourcesOk();
 	if (hr != S_OK)
@@ -1106,6 +1124,37 @@ int _tmain(int argc, _TCHAR* argv[])
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\RunRejectServer\runrejctsvr.cpp_v  $
+ * 
+ *    Rev 1.16   28 Oct 2014 10:45:20   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  952
+ * SCR Title:  Run/Reject Server Should Respond to the GetVersion Command
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   Revised TCP handler to check for version command even if the Control Share indicates not ready (No Monitor share).
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.15   27 Oct 2014 18:18:40   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  953
+ * SCR Title:  Refactor Design for Socket Used by SVRC
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   Revised Handler for TCP to disable the nagle delay
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.14   27 Oct 2014 09:48:40   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  953
+ * SCR Title:  Refactor Design for Socket Used by SVRC
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   Revised Tcp specialized Handler to set keepalive values.
+ * Revised IsProcessRunning to check for valid handle.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.13   22 Oct 2014 14:21:30   ryoho
  * Project:  SVObserver

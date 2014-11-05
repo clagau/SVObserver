@@ -5,8 +5,8 @@
 //* .Module Name     : SVSocket
 //* .File Name       : $Workfile:   SVSocket.inl  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.3  $
-//* .Check In Date   : $Date:   14 Oct 2014 17:42:50  $
+//* .Current Version : $Revision:   1.6  $
+//* .Check In Date   : $Date:   28 Oct 2014 10:46:28  $
 //******************************************************************************
 
 #define NOMINMAX
@@ -92,12 +92,12 @@ namespace Seidenader
 				int rc = 0;
 				if (IsConnected())
 				{
-					rc = API::shutdown(m_socket, SD_BOTH);
+					rc = SetLingerOption(false, 0);
 					if (rc == SOCKET_ERROR)
 					{
 						Err error = SVSocketError::GetLastSocketError();
 					}
-					rc = SetLingerOption(false, 0);
+					rc = API::shutdown(m_socket, SD_BOTH);
 					if (rc == SOCKET_ERROR)
 					{
 						Err error = SVSocketError::GetLastSocketError();
@@ -261,6 +261,17 @@ namespace Seidenader
 			return error;
 		}
 
+		template<typename API>
+		inline Err SVSocket<API>::SetKeepAliveValues(int interval, int timeVal)
+		{
+			Err error = SVSocketError::Success;
+			if ( API::setKeepAliveValues( m_socket, interval, timeVal ) == SOCKET_ERROR )
+			{
+				error = SVSocketError::GetLastSocketError();
+			}
+			return error;
+		}
+		
 		template<typename API>
 		inline Err SVSocket<API>::SetBufferSize(int sz)
 		{
@@ -588,6 +599,10 @@ namespace Seidenader
 			boost::function<Err ()> tout = boost::bind(&SVSocket<TcpApi>::SetReadTimeout, this, 0);
 			scope_cleanup<boost::function<Err ()> > sc(tout); // make sure we reset the timeout when exiting
 			int amt = TcpApi::recv(m_socket, reinterpret_cast< char* >( &len ), sizeof(u_long), 0);
+			if (0 == amt)
+			{
+				return SVSocketError::ConnectionReset;
+			}
 			if (amt < 0)
 			{
 				return SVSocketError::GetLastSocketError();
@@ -701,6 +716,36 @@ namespace Seidenader
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVSocketLibrary\SVSocket.inl_v  $
+ * 
+ *    Rev 1.6   28 Oct 2014 10:46:28   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  952
+ * SCR Title:  Run/Reject Server Should Respond to the GetVersion Command
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   Revised TCP ReadlAll to return CONNECTION_RESET if amount read is zero.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.5   27 Oct 2014 18:16:02   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  953
+ * SCR Title:  Refactor Design for Socket Used by SVRC
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   Revised Destroy method to call SetLinger before calling shutdown.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.4   27 Oct 2014 09:43:54   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  953
+ * SCR Title:  Refactor Design for Socket Used by SVRC
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   Added SetKeepAliveValues method.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   14 Oct 2014 17:42:50   sjones
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : SVSocket
 //* .File Name       : $Workfile:   SVSocket.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.6  $
-//* .Check In Date   : $Date:   14 Oct 2014 17:39:50  $
+//* .Current Version : $Revision:   1.7  $
+//* .Check In Date   : $Date:   27 Oct 2014 09:43:22  $
 //******************************************************************************
 
 #pragma once
@@ -89,6 +89,7 @@ namespace Seidenader
 			Err SetNonBlocking();
 			Err SetBlocking();
 			Err SetKeepAliveOption(bool bEnable);
+			Err SetKeepAliveValues(int interval, int timeVal);
 			Err SetLingerOption(bool bEnable, unsigned short nTime);
 			Err GetReadTimeout();
 			Err SetReadTimeout();
@@ -126,7 +127,7 @@ namespace Seidenader
 			bool DataAvailable() const
 			{
 				bool bDataAvail = false;
-				timeval timeout = {0, 0};
+				timeval timeout = {0, 20};
 				fd_set readset;
 				FD_ZERO(&readset);
 				FD_SET(m_socket, &readset);
@@ -154,6 +155,17 @@ typedef Seidenader::Socket::SVSocket<TcpApi> SVSocket;
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVSocketLibrary\SVSocket.h_v  $
+ * 
+ *    Rev 1.7   27 Oct 2014 09:43:22   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  953
+ * SCR Title:  Refactor Design for Socket Used by SVRC
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   Added SetkeepAliveValues method.
+ * Revised DataAvailable method to set select timeout of 20 ms.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.6   14 Oct 2014 17:39:50   sjones
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : SVServerSocket
 //* .File Name       : $Workfile:   SVServerSocket.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   14 Oct 2014 17:37:58  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   27 Oct 2014 09:45:14  $
 //******************************************************************************
 
 #pragma once
@@ -35,7 +35,7 @@ namespace Seidenader
 		template<typename API>
 		inline bool SVServerSocket<API>::ClientConnecting() const
 		{
-			timeval timeout = {0, 0};
+			timeval timeout = {0, 200};
 			fd_set readset;
 			FD_ZERO(&readset);
 			FD_SET(m_socket, &readset);
@@ -99,6 +99,16 @@ typedef Seidenader::Socket::SVServerSocket<TcpApi> SVServerSocket;
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVSocketLibrary\SVServerSocket.h_v  $
+ * 
+ *    Rev 1.3   27 Oct 2014 09:45:14   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  953
+ * SCR Title:  Refactor Design for Socket Used by SVRC
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   Revised ClientConnecting method to set select timeout of 200 ms.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   14 Oct 2014 17:37:58   sjones
  * Project:  SVObserver

@@ -5,13 +5,14 @@
 //* .Module Name     : TcpApi
 //* .File Name       : $Workfile:   TcpApi.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   14 Oct 2014 17:34:40  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   27 Oct 2014 09:39:04  $
 //******************************************************************************
 
 #pragma once
 
 #include <winsock2.h>
+#include <Mstcpip.h>
 
 namespace Seidenader
 {
@@ -45,6 +46,16 @@ namespace Seidenader
 		   static int select(int nfds, fd_set* readfds, fd_set* writefds, fd_set* exceptfds, const timeval* timeout)
 			{ return ::select(nfds, readfds, writefds, exceptfds, timeout); }
    		   static int shutdown(Socket_t u, int flags) { return ::shutdown(u, flags); }
+		   static int setKeepAliveValues(Socket_t u, int interval, int timeVal)
+		   {
+				struct tcp_keepalive alive;
+				DWORD dwBytesRet = 0;
+				alive.onoff = true;					 // keepalive enabled
+				alive.keepaliveinterval = interval;  // set Interval between keepalive probes
+				alive.keepalivetime = timeVal;       // set Keep alive time
+
+				return WSAIoctl(u, SIO_KEEPALIVE_VALS, &alive, sizeof(alive), nullptr, 0, &dwBytesRet, nullptr, nullptr);
+		   }
 		};
 	}
 }
@@ -56,6 +67,16 @@ typedef Seidenader::Socket::TcpApi TcpApi;
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVSocketLibrary\TcpApi.h_v  $
+ * 
+ *    Rev 1.2   27 Oct 2014 09:39:04   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  953
+ * SCR Title:  Refactor Design for Socket Used by SVRC
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   Added setKeepAliveValues method
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   14 Oct 2014 17:34:40   sjones
  * Project:  SVObserver

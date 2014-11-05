@@ -5,8 +5,8 @@
 //* .Module Name     : AutoBuild
 //* .File Name       : $Workfile:   AutoBuild.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   22 Oct 2014 11:20:04  $
+//* .Current Version : $Revision:   1.7  $
+//* .Check In Date   : $Date:   04 Nov 2014 08:56:24  $
 //******************************************************************************
 
 #pragma once
@@ -23,7 +23,7 @@
 //    c is the beta version number - if c equals 0 or is greater than 254 then the application is marked as Released
 //    d is unused
 
-#define FILEVER        7,0,7,0
+#define FILEVER        7,0,255,0
 #define PRODUCTVER     FILEVER
 #define STRFILEVER     SV_STRINGIZE( FILEVER )
 #define STRPRODUCTVER  SV_STRINGIZE( PRODUCTVER )
@@ -33,6 +33,56 @@
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\AutoBuild\AutoBuild.h_v  $
+ * 
+ *    Rev 1.7   04 Nov 2014 08:56:24   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  940
+ * SCR Title:  Update SVObserver Version Number for the 7.00 Release
+ * Checked in by:  bWalter;  Ben Walter
+ * Change Description:  
+ *   Changed version to 7.00 Released (beta 255)
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.6   30 Oct 2014 08:24:36   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  940
+ * SCR Title:  Update SVObserver Version Number for the 7.00 Release
+ * Checked in by:  bWalter;  Ben Walter
+ * Change Description:  
+ *   Updated to version 7.00 beta 011
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.5   28 Oct 2014 10:48:28   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  952
+ * SCR Title:  Run/Reject Server Should Respond to the GetVersion Command
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   Updated version to Beta 10
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.4   27 Oct 2014 16:59:56   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  953
+ * SCR Title:  Refactor Design for Socket Used by SVRC
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   Updated version number to beta 9
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.3   24 Oct 2014 17:21:20   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  940
+ * SCR Title:  Update SVObserver Version Number for the 7.00 Release
+ * Checked in by:  bWalter;  Ben Walter
+ * Change Description:  
+ *   Updated to version 7.00 beta 008
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   22 Oct 2014 11:20:04   bwalter
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : Custom2 Filter dialog
 //* .File Name       : $Workfile:   Custom2FilterDlg.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   24 Oct 2014 11:15:00  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   05 Nov 2014 05:05:08  $
 //******************************************************************************
 
 #pragma region Includes
@@ -76,16 +76,16 @@ END_MESSAGE_MAP()
 #pragma region Constructor
 Custom2FilterDlg::Custom2FilterDlg( CWnd* pParent )
 	: CDialog( Custom2FilterDlg::IDD, pParent )
-	, m_KernelWidth(0)
-	, m_KernelHeight(0)
-	, m_KernelSum(0)
-	, m_NormalizationFactor(0)
-	, m_NormilizationResult(_T(""))
-	, m_GridEditMode(false)
+	, m_KernelWidth( 0 )
+	, m_KernelHeight( 0 )
+	, m_KernelSum( 0 )
+	, m_NormalizationFactor( 1 )
+	, m_NormilizationResult( _T("") )
+	, m_GridEditMode( false )
 	, m_AbsoluteValue( FALSE )
 	, m_ClippingEnabled( FALSE )
-	, m_EditCell(_T(""))
-	, m_GridStatus(_T(""))
+	, m_EditCell( _T("") )
+	, m_GridStatus( _T("") )
 {
 }
 
@@ -130,8 +130,7 @@ HRESULT Custom2FilterDlg::SetInspectionData()
 
 		if( Result == S_OK )
 		{
-			pCustom2Filter->getKernelArray().SetArraySize( static_cast<int> (m_KernelArray.size()) );
-			Result = pCustom2Filter->getKernelArray().SetArrayValues( 0, m_KernelArray.begin(), m_KernelArray.end() );
+			Result = AddInputRequest( &pCustom2Filter->getKernelArray(), m_KernelArray.begin(), m_KernelArray.end() );
 		}
 
 		if( Result == S_OK )
@@ -159,7 +158,6 @@ void Custom2FilterDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_SUM_SELECTOR, m_SumSelectorCtrl);
 	DDX_Text(pDX, IDC_KERNEL_SUM, m_KernelSum);
 	DDX_Text(pDX, IDC_NORM_FACTOR, m_NormalizationFactor);
-	DDV_MinMaxLong(pDX, m_NormalizationFactor, 1, LONG_MAX);
 	DDX_Text(pDX, IDC_NORM_RESULT, m_NormilizationResult);
 	DDX_Check(pDX, IDC_ABSOLUTE_VALUE, m_AbsoluteValue);
 	DDX_Check(pDX, IDC_CLIPPING_ON, m_ClippingEnabled);
@@ -247,7 +245,10 @@ BOOL Custom2FilterDlg::PreTranslateMessage(MSG* pMsg)
 					UpdateData( FALSE );
 					Result = TRUE;
 				}
-
+				if( m_EditCell.GetLength() >= MaxCellCharacters )
+				{
+					m_GridEditMode = false;
+				}
 			}
 			else
 			{
@@ -315,15 +316,27 @@ void Custom2FilterDlg::OnCbnSelchangeSumSelector()
 void Custom2FilterDlg::OnBnClickedApplySum()
 {
 	UpdateData( TRUE );
-	//Only apply the absolute value for the Normalization Factor
-	m_NormalizationFactor = ::abs( m_KernelSum );
-	calculateNormalizationResult();
-	UpdateData( FALSE );
+	if( 0 == m_KernelSum )
+	{
+		AfxMessageBox( DataInvalidNormalizationFactor );
+	}
+	else
+	{
+		//Only apply the absolute value for the Normalization Factor
+		m_NormalizationFactor = ::abs( m_KernelSum );
+		calculateNormalizationResult();
+		UpdateData( FALSE );
+	}
 }
 
 void Custom2FilterDlg::OnEnChangeNormilizationFactor()
 {
 	UpdateData( TRUE );
+	if( 0 == m_NormalizationFactor )
+	{
+		AfxMessageBox( DataInvalidNormalizationFactor );
+		m_NormalizationFactor = 1;
+	}
 	calculateNormalizationResult();
 	UpdateData( FALSE );
 }
@@ -389,6 +402,7 @@ void Custom2FilterDlg::OnEnSetfocusEditCell()
 void Custom2FilterDlg::OnGridSelChanged( NMHDR* pNotifyStruct, LRESULT* pResult )
 {
 	updateEditCellandStatus();
+	m_GridEditMode = false;
 	UpdateData( FALSE );
 }
 
@@ -575,7 +589,6 @@ void Custom2FilterDlg::initializeFilter()
 		pFilter->getClippingEnabled().GetValue( m_ClippingEnabled );
 
 		m_KernelArray.clear();
-
 		pFilter->getKernelArray().GetValues( m_KernelArray );
 	}
 }
@@ -886,13 +899,11 @@ void Custom2FilterDlg::updateEditCellandStatus()
 		m_GridStatus.Format( StatusGridMultiCell, CellCount, MarkedSum );
 	}
 
-	m_GridEditMode = false;
 	m_EditCell = MarkedCellsValue;
 }
 
 void Custom2FilterDlg::checkCellsValid()
 {
-	int Count = 0;
 	if( !m_GridEditMode )
 	{
 		for( int i = 1; i <= m_KernelHeight; i++ )
@@ -1050,6 +1061,18 @@ bool Custom2FilterDlg::doesControlHaveFocus( UINT ControlID ) const
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\Custom2FilterDlg.cpp_v  $
+ * 
+ *    Rev 1.1   05 Nov 2014 05:05:08   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  942
+ * SCR Title:  Create new Custom2 Filter SVO-324 SVO-67 SVO-74
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Bugfix: Cell input problem
+ * Kernel update problem in Tool Adjust dialog
+ * 
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   24 Oct 2014 11:15:00   gramseier
  * Project:  SVObserver
