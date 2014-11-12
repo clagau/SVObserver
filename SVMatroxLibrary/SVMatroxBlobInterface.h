@@ -5,8 +5,8 @@
 // * .Module Name     : SVMatroxBlobInterface
 // * .File Name       : $Workfile:   SVMatroxBlobInterface.h  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.0  $
-// * .Check In Date   : $Date:   22 Apr 2013 14:59:30  $
+// * .Current Version : $Revision:   1.1  $
+// * .Check In Date   : $Date:   12 Nov 2014 08:24:36  $
 // ******************************************************************************
 
 #ifndef SV_MATROX_BLOB_INTERFACE_H
@@ -97,8 +97,8 @@ public:
 	static SVStatusCode Set( const SVMatroxBlobResult& p_rResultId, SVBlobControlEnum p_lControlType, const double p_lControlValue);
 
 	//
-	static SVStatusCode GetForeground( const SVMatroxBlobResult& p_rResultId, bool& p_bLightBackground);
-	static SVStatusCode SetForeground( const SVMatroxBlobResult& p_rResultId, bool p_bLightBackground);
+	static SVStatusCode GetForeground( const SVMatroxBlobResult& p_rResultId, bool& rIsDarkForeground);
+	static SVStatusCode SetForeground( const SVMatroxBlobResult& p_rResultId, bool isDarkForeground);
 	static SVStatusCode GetIdentifier( const SVMatroxBlobResult& p_rResultId, bool& p_bBinary);
 	static SVStatusCode SetIdentifier( const SVMatroxBlobResult& p_rResultId, bool p_bBinary);
 
@@ -160,6 +160,16 @@ private:
 // ******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVMatroxLibrary\SVMatroxBlobInterface.h_v  $
+ * 
+ *    Rev 1.1   12 Nov 2014 08:24:36   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  938
+ * SCR Title:  Add Black Blob Mode to Blob Analyzer (SVO-336)
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   rename parameter name for methode Set/GetForeground from light background to isBlackForeground
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   22 Apr 2013 14:59:30   bWalter
  * Project:  SVObserver

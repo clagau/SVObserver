@@ -5,8 +5,8 @@
 // * .Module Name     : SVMatroxBlobInterface
 // * .File Name       : $Workfile:   SVMatroxBlobInterface.cpp  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.1  $
-// * .Check In Date   : $Date:   01 Oct 2013 11:08:10  $
+// * .Current Version : $Revision:   1.2  $
+// * .Check In Date   : $Date:   12 Nov 2014 08:24:36  $
 // ******************************************************************************
 
 #include "stdafx.h"
@@ -932,7 +932,7 @@ SVMatroxBlobInterface::SVStatusCode SVMatroxBlobInterface::Set( const SVMatroxBl
 @SVOperationDescription This function gets the Foreground control value
 
 */
-SVMatroxBlobInterface::SVStatusCode SVMatroxBlobInterface::GetForeground( const SVMatroxBlobResult& p_rResultId, bool& p_bLightBackground)
+SVMatroxBlobInterface::SVStatusCode SVMatroxBlobInterface::GetForeground( const SVMatroxBlobResult& p_rResultId, bool& rIsDarkForeground)
 {
 	SVStatusCode l_Code( SVMEE_STATUS_OK );
 #ifdef USE_TRY_BLOCKS
@@ -943,7 +943,7 @@ SVMatroxBlobInterface::SVStatusCode SVMatroxBlobInterface::GetForeground( const 
 		{
 			long value;
 			MblobInquire( p_rResultId.m_BlobResultId, M_FOREGROUND_VALUE, &value);
-			p_bLightBackground = (value) ? true : false;
+			rIsDarkForeground = (value) ? true : false;
 			l_Code = SVMatroxApplicationInterface::GetLastStatus();
 		}
 		else
@@ -967,7 +967,7 @@ SVMatroxBlobInterface::SVStatusCode SVMatroxBlobInterface::GetForeground( const 
 @SVOperationDescription This function sets the Foreground control value
 
 */
-SVMatroxBlobInterface::SVStatusCode SVMatroxBlobInterface::SetForeground( const SVMatroxBlobResult& p_rResultId, bool p_bLightBackground)
+SVMatroxBlobInterface::SVStatusCode SVMatroxBlobInterface::SetForeground( const SVMatroxBlobResult& p_rResultId, bool isDarkForeground)
 {
 	SVStatusCode l_Code( SVMEE_STATUS_OK );
 #ifdef USE_TRY_BLOCKS
@@ -976,7 +976,7 @@ SVMatroxBlobInterface::SVStatusCode SVMatroxBlobInterface::SetForeground( const 
 	{
 		if( !p_rResultId.empty() )
 		{
-			MblobControl( p_rResultId.m_BlobResultId, M_FOREGROUND_VALUE, (p_bLightBackground) ? M_ZERO: M_NONZERO );
+			MblobControl( p_rResultId.m_BlobResultId, M_FOREGROUND_VALUE, (isDarkForeground) ? M_ZERO: M_NONZERO );
 			l_Code = SVMatroxApplicationInterface::GetLastStatus();
 		}
 		else
@@ -1710,6 +1710,16 @@ HRESULT SVMatroxBlobInterface::CreateBlobOffsetResultList(const SVBlobList& resu
 // ******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVMatroxLibrary\SVMatroxBlobInterface.cpp_v  $
+ * 
+ *    Rev 1.2   12 Nov 2014 08:24:36   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  938
+ * SCR Title:  Add Black Blob Mode to Blob Analyzer (SVO-336)
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   rename parameter name for methode Set/GetForeground from light background to isBlackForeground
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   01 Oct 2013 11:08:10   tbair
  * Project:  SVObserver
