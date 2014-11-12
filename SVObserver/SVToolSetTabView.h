@@ -5,8 +5,8 @@
 //* .Module Name     : SVToolSetTabView
 //* .File Name       : $Workfile:   SVToolSetTabView.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.4  $
-//* .Check In Date   : $Date:   14 Aug 2014 16:18:36  $
+//* .Current Version : $Revision:   1.5  $
+//* .Check In Date   : $Date:   10 Nov 2014 16:46:00  $
 //******************************************************************************
 
 #pragma once
@@ -109,8 +109,7 @@ protected:
 	void ToggleExpandCollapse(int item);
 	bool IsToolsetListCtrlActive() const;
 
-	bool IsGroupNameUnique(const CString& name) const;
-	CString MakeGroupNameUnique(const CString& name, int index);
+	bool CheckName(const CString& name) const;
 
 	bool m_isLabeling;
 	int m_labelingIndex;
@@ -122,7 +121,20 @@ protected:
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSARCH65\PROJECTFILES\ARCHIVES\SVOBSERVER_SRC\SVOBSERVER\SVToolSetTabView.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVToolSetTabView.h_v  $
+ * 
+ *    Rev 1.5   10 Nov 2014 16:46:00   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  969
+ * SCR Title:  SVObserver Should Check the Name of Group Tools When Naming Other Tools
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   Removed IsGroupNameUnique method.
+ * Added CheckName method.
+ * Added ShowDuplicateNameMessage function.
+ * Revised OnEndlabeleditToolsetList to check for unique name and prompt with Retry/Canel message box if not..
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.4   14 Aug 2014 16:18:36   mEichengruen
  * Project:  SVObserver

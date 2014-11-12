@@ -5,8 +5,8 @@
 //* .Module Name     : SVToolSetTabView
 //* .File Name       : $Workfile:   SVToolSetTabView.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.10  $
-//* .Check In Date   : $Date:   14 Aug 2014 16:18:38  $
+//* .Current Version : $Revision:   1.11  $
+//* .Check In Date   : $Date:   10 Nov 2014 16:46:00  $
 //******************************************************************************
 
 #pragma region Includes
@@ -42,8 +42,6 @@
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
-
-static const CString scDUP = _T("DUP");
 
 enum ToolsetViewUpdateHints
 {
@@ -789,6 +787,14 @@ void SVToolSetTabViewClass::OnRunOnce()
 	}
 }
 
+static bool ShowDuplicateNameMessage(const CString& rName)
+{
+	CString msg("A duplicate name was found for the item being renamed\n");
+	msg += rName;
+	int rc = AfxMessageBox(msg, MB_RETRYCANCEL);
+	return (IDRETRY == rc);
+}
+
 void SVToolSetTabViewClass::OnEndlabeleditToolsetList(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	LV_DISPINFO* pDispInfo = reinterpret_cast<LV_DISPINFO*>(pNMHDR);
@@ -807,26 +813,35 @@ void SVToolSetTabViewClass::OnEndlabeleditToolsetList(NMHDR* pNMHDR, LRESULT* pR
 
 			// Validate the text and remove unwanted characters.
 			ValidateLabelText(newText);
-
-			if (!rGuid.empty())
+			bool bDoReEdit = false;
+			if (m_csLabelSaved != newText) // In case it was renamed to the same name as before renaming
 			{
-				SVToolSetClass* pToolSet = pCurrentDocument->GetToolSet();
-				SVToolClass* pTool = dynamic_cast<SVToolClass*>(SVObjectManagerClass::Instance().GetObject(rGuid));
-				if (nullptr != pToolSet && nullptr != pTool)
+				if (!rGuid.empty()) // renaming a Tool
 				{
-					// Check for duplicate name and adjust by incrementing a trailing sequence number if any.
-					pToolSet->CheckForExistingName(newText, pTool);
-					pTool->SetName(newText);
-				}
-			}
-			else
-			{
-				if (m_csLabelSaved != newText) // In case some Idiot renames it to the same name
-				{
-					bool bUnique = IsGroupNameUnique(newText);
-					if (!bUnique)
+					SVToolSetClass* pToolSet = pCurrentDocument->GetToolSet();
+					SVToolClass* pTool = dynamic_cast<SVToolClass*>(SVObjectManagerClass::Instance().GetObject(rGuid));
+					if (nullptr != pToolSet && nullptr != pTool)
 					{
-						newText = MakeGroupNameUnique(newText, m_labelingIndex);
+						// Check for duplicate name and show message if Duplicate
+						bool bNameOk = CheckName(newText);
+						if (bNameOk)
+						{
+							pTool->SetName(newText);
+						}
+						else
+						{
+							
+							bDoReEdit = ShowDuplicateNameMessage(newText);
+							newText = m_csLabelSaved; // reset it back to original
+						}
+					}
+				}
+				else // renaming a Group label
+				{
+					if (!CheckName(newText))
+					{
+						bDoReEdit = ShowDuplicateNameMessage(newText);
+						newText = m_csLabelSaved; // reset it back to original
 					}
 				}
 			}
@@ -848,6 +863,10 @@ void SVToolSetTabViewClass::OnEndlabeleditToolsetList(NMHDR* pNMHDR, LRESULT* pR
 				pIODoc->UpdateAllViews(nullptr);
 			}
 			*pResult = true;
+			if (bDoReEdit)
+			{
+				PostMessage(WM_COMMAND, ID_EDIT_NAME);
+			}
 		}
 	}
 	else
@@ -1092,28 +1111,16 @@ bool SVToolSetTabViewClass::IsEndToolGroupAllowed() const
 	return bRetVal;
 }
 
-bool SVToolSetTabViewClass::IsGroupNameUnique(const CString& name) const
+bool SVToolSetTabViewClass::CheckName(const CString& name) const
 {
-	bool bRetVal = false;
+	bool bNameOk = true;
 	SVIPDoc* pDoc = GetIPDoc();
 	if (nullptr != pDoc)
 	{
 		const SVToolGrouping& rGroupings = pDoc->GetToolGroupings();
-		bRetVal = rGroupings.IsNameUnique(name.GetString());
+		bNameOk = rGroupings.IsNameUnique(static_cast<LPCTSTR>(name));
 	}
-	return bRetVal;
-}
-
-CString SVToolSetTabViewClass::MakeGroupNameUnique(const CString& name, int index)
-{
-	CString newText = name;
-	SVIPDoc* pDoc = GetIPDoc();
-	if (nullptr != pDoc)
-	{
-		const SVToolGrouping& rGroupings = pDoc->GetToolGroupings();
-		newText = rGroupings.MakeNameUnique(static_cast<LPCTSTR>(name)).c_str();
-	}
-	return newText;
+	return bNameOk;
 }
 
 bool SVToolSetTabViewClass::IsToolsetListCtrlActive() const
@@ -1138,7 +1145,20 @@ bool SVToolSetTabViewClass::IsToolsetListCtrlActive() const
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSARCH65\PROJECTFILES\ARCHIVES\SVOBSERVER_SRC\SVOBSERVER\SVToolSetTabView.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVToolSetTabView.cpp_v  $
+ * 
+ *    Rev 1.11   10 Nov 2014 16:46:00   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  969
+ * SCR Title:  SVObserver Should Check the Name of Group Tools When Naming Other Tools
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   Removed IsGroupNameUnique method.
+ * Added CheckName method.
+ * Added ShowDuplicateNameMessage function.
+ * Revised OnEndlabeleditToolsetList to check for unique name and prompt with Retry/Canel message box if not..
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.10   14 Aug 2014 16:18:38   mEichengruen
  * Project:  SVObserver

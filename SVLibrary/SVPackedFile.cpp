@@ -5,8 +5,8 @@
 // * .Module Name     : modulename
 // * .File Name       : $Workfile:   SVPackedFile.cpp  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.2  $
-// * .Check In Date   : $Date:   03 Feb 2014 16:36:04  $
+// * .Current Version : $Revision:   1.3  $
+// * .Check In Date   : $Date:   10 Nov 2014 16:51:36  $
 // ******************************************************************************
 
 #include "stdafx.h"
@@ -77,9 +77,10 @@ BOOL SVPackedFile::PackFiles( const CString& szFile, const CString& szPackedFile
 					PackedFile.Write (&PathLen, sizeof (PathLen));
 					PackedFile.Write (T2W((TCHAR *)(LPCTSTR)szPath), PathLen);
 				}
-				catch (CFileException e)
+				catch (CFileException* pe)
 				{
-					e.GetErrorMessage (szMessage, sizeof (szMessage));
+					pe->GetErrorMessage (szMessage, sizeof (szMessage));
+					pe->Delete();
 					svException.SetException (SVMSG_LIB_PACKFILE_IO_ERROR, _T(__DATE__), _T(__TIME__), CString (szMessage), _T(__FILE__), __LINE__, _T(__TIMESTAMP__));
 					PackedFile.Close();
 					FindClose (hFindFile);
@@ -95,9 +96,10 @@ BOOL SVPackedFile::PackFiles( const CString& szFile, const CString& szPackedFile
 							PackedFile.Write(Buffer, CountRead);
 						}
 					}
-					catch (CFileException e)
+					catch (CFileException* pe)
 					{
-						e.GetErrorMessage (szMessage, sizeof (szMessage));
+						pe->GetErrorMessage (szMessage, sizeof (szMessage));
+						pe->Delete();
 						svException.SetException (SVMSG_LIB_PACKFILE_IO_ERROR, _T(__DATE__), _T(__TIME__), CString (szMessage), _T(__FILE__), __LINE__, _T(__TIMESTAMP__));
 						PackedFile.Close();
 						SourceFile.Close();
@@ -208,9 +210,10 @@ BOOL SVPackedFile::UnPackFiles( const CString& szPackedFile, const CString& szUn
 				}
 			}
 		}
-		catch (CFileException e)
+		catch (CFileException* pe)
 		{
-			e.GetErrorMessage (szMessage, sizeof (szMessage));
+			pe->GetErrorMessage (szMessage, sizeof (szMessage));
+			pe->Delete();
 			svException.SetException (SVMSG_LIB_PACKFILE_IO_ERROR, _T(__DATE__), _T(__TIME__), CString (szMessage), _T(__FILE__), __LINE__, _T(__TIMESTAMP__));
 			if (SourceFile.m_hFile != CFile::hFileNull)
 			{
@@ -243,6 +246,17 @@ const CString& SVPackedFile::getConfigFilePath() const
 // ******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVLibrary\SVPackedFile.cpp_v  $
+ * 
+ *    Rev 1.3   10 Nov 2014 16:51:36   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  970
+ * SCR Title:  GetConfig and PutConfig cause a crash when there is not enough disk space
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   Revised PackFiles to catch CFileException by pointer instead of value.
+ * Revised UnpackFiles to catch CFileException by pointer instead of value.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   03 Feb 2014 16:36:04   bwalter
  * Project:  SVObserver

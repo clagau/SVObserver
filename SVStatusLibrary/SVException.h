@@ -5,8 +5,8 @@
 //* .Module Name     : SVException
 //* .File Name       : $Workfile:   SVException.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   25 Apr 2013 17:43:28  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   10 Nov 2014 16:55:58  $
 //******************************************************************************
 
 #ifndef _INC_SVEXCEPTION_38BBBEC2003E_INCLUDED
@@ -38,6 +38,7 @@ public:
 
 	virtual ~SVException();
 
+	SVString what() const;
 	void DeleteBinData();
 
 	ULONG GetSourceFile(BSTR * bstrValue);
@@ -61,20 +62,19 @@ public:
     void SetException(long ErrorCode, TCHAR* szCompileDate, TCHAR* szCompileTime, LPCTSTR szErrorText, TCHAR* szSourceFile, long SourceLine, TCHAR* szSourceDateTime, DWORD dwProgramCode, DWORD dwOsErrorCode);
 	void SetException(long ErrorCode, TCHAR* szCompileDate, TCHAR* szCompileTime, LPVOID pErrorData, UINT cbErrorData, TCHAR* szSourceFile, long SourceLine, TCHAR* szSourceDateTime, DWORD dwProgramCode, DWORD dwOsErrorCode);
 	void SetException(long ErrorCode, TCHAR* szCompileDate, TCHAR* szCompileTime, LPCTSTR sErrorText, TCHAR* szSourceFile, long SourceLine, TCHAR* szSourceDateTime, DWORD dwProgramCode = 0);
-	UINT GetSeverity();
+	UINT GetSeverity() const;
 
-	UINT GetFacility();
+	UINT GetFacility() const;
 
-	WORD GetCategory();
+	WORD GetCategory() const;
 
-	DWORD GetOSErrorCode ();
-	void Format (SVString& szMsg , LPCTSTR pszMessage = NULL, LANGID Language = 0);
-	DWORD GetErrorCode ();
+	DWORD GetOSErrorCode() const;
+	void Format (SVString& szMsg , LPCTSTR pszMessage = nullptr, LANGID Language = 0) const;
+	DWORD GetErrorCode() const;
 
 	const SVException& operator=(const SVException& rhs);
 
 	void ResetException();
-
 
 private:
 	void InitException();
@@ -111,6 +111,7 @@ private:
 
 	//Flag indicating if the exception was written to the event log
 	BOOL mbLogged;
+	SVString m_ErrorText; 
 };
 
 #endif
@@ -119,7 +120,18 @@ private:
 // * LOG HISTORY:
 // ******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVStatusLibrary\SVException.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVStatusLibrary\SVException.h_v  $
+ * 
+ *    Rev 1.1   10 Nov 2014 16:55:58   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  970
+ * SCR Title:  GetConfig and PutConfig cause a crash when there is not enough disk space
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   Revised to hold the text message if it was set.
+ * Added the what method to retrieve the error text (if it was set) or get the text from FormatMessage.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   25 Apr 2013 17:43:28   bWalter
  * Project:  SVObserver

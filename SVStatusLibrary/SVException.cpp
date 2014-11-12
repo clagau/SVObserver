@@ -5,8 +5,8 @@
 //* .Module Name     : SVException
 //* .File Name       : $Workfile:   SVException.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   02 Oct 2013 10:08:12  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   10 Nov 2014 16:55:58  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -68,8 +68,8 @@ void SVException::SetException(long ErrorCode, TCHAR* szCompileDate, TCHAR* szCo
 {
 	SVString errorText(pszErrorText);
 	UINT cbErrorData = static_cast< UINT >( errorText.size() * sizeof( TCHAR ) );
-
 	SetException(ErrorCode, szCompileDate, szCompileTime,  (LPVOID) pszErrorText, cbErrorData, szSourceFile, SourceLine, szSourceDateTime, dwProgramCode);
+	m_ErrorText = errorText;
 }
 
 /*
@@ -147,9 +147,10 @@ Sets values in an SVException object.
 */
 void SVException::SetException(long ErrorCode, TCHAR* szCompileDate, TCHAR* szCompileTime, LPCTSTR tszErrorText, TCHAR* szSourceFile, long SourceLine, TCHAR* szSourceDateTime , DWORD dwProgramCode, DWORD dwOsErrorCode)
 {
-	SVString sErrorText(tszErrorText);
-	UINT cbErrorData = static_cast< UINT >( sErrorText.size() * sizeof( TCHAR ) );
-	SetException(ErrorCode, szCompileDate, szCompileTime, (LPVOID)sErrorText.ToString(), cbErrorData, szSourceFile, SourceLine, szSourceDateTime ,dwProgramCode, dwOsErrorCode);
+	SVString errorText(tszErrorText);
+	UINT cbErrorData = static_cast< UINT >( errorText.size() * sizeof( TCHAR ) );
+	SetException(ErrorCode, szCompileDate, szCompileTime, (LPVOID)m_ErrorText.ToString(), cbErrorData, szSourceFile, SourceLine, szSourceDateTime ,dwProgramCode, dwOsErrorCode);
+	m_ErrorText = errorText;
 }
 
 /*
@@ -207,8 +208,6 @@ void SVException::SetException(long ErrorCode, DWORD dwProgramCode, DWORD dwOsEr
 	mdwProgramCode = dwProgramCode;
 
 }
-
-
 
 /*
 Sets values in an SVException object.
@@ -282,14 +281,14 @@ const SVException& SVException::operator=(const SVException& rhs)
     mbLogged = rhs.mbLogged;
     mdwProgramCode = rhs.mdwProgramCode;
 
+	m_ErrorText = rhs.m_ErrorText;
     return rhs;
 }
-
 
 /*
 Returns the 32-bit SVMSG error code.
 */
-DWORD SVException::GetErrorCode()
+DWORD SVException::GetErrorCode() const
 {
 	return mErrorCode;
 }
@@ -297,7 +296,7 @@ DWORD SVException::GetErrorCode()
 /*
 Returns the 32-bit operating system error code.
 */
-DWORD SVException::GetOSErrorCode()
+DWORD SVException::GetOSErrorCode() const
 {
 	return mOSErrorCode;
 }
@@ -305,7 +304,7 @@ DWORD SVException::GetOSErrorCode()
 /*
 Formats an SVException object into a readable sting.
 */
-void SVException::Format(SVString &szMsg , LPCTSTR pszMessage , LANGID Language)
+void SVException::Format(SVString &szMsg , LPCTSTR pszMessage , LANGID Language) const
 {
 	SVString szMessageDll;
 	LPVOID pszTemp;
@@ -423,7 +422,7 @@ Returns the severity level of an exception. Possible return values are:
   SEV_WARNING
   SEV_FATAL
 */
-UINT SVException::GetSeverity()
+UINT SVException::GetSeverity() const
 {
 	return (GetErrorCode () & 0xc0000000) >> 30;
 }
@@ -431,7 +430,7 @@ UINT SVException::GetSeverity()
 /*
 Returns the 12 bit facility code. (see SVMessage.h for a complete list).
 */
-UINT SVException::GetFacility()
+UINT SVException::GetFacility() const
 {
 	return (GetErrorCode () & 0x0fff0000) >> 16;
 }
@@ -439,7 +438,7 @@ UINT SVException::GetFacility()
 /*
 Returns a category value (based upon the facility) that can be used with ReportEvent.
 */
-WORD SVException::GetCategory()
+WORD SVException::GetCategory() const
 {
 	return (GetFacility() & 0x00ff);
 }
@@ -556,6 +555,7 @@ void SVException::InitException()
 	memset (mszCompileTime, 0, 256 * sizeof (TCHAR));
 	memset (mszSourceDateTime, 0, 256 * sizeof (TCHAR));
 	memset (mszSourceFile, 0, 256 * sizeof (TCHAR));
+	m_ErrorText.clear();
 }
 
 /*
@@ -571,11 +571,36 @@ void SVException::DeleteBinData()
 	mcbErrorData = 0;
 }
 
+SVString SVException::what() const
+{
+	SVString msg;
+	if (!m_ErrorText.empty())
+	{
+		msg = m_ErrorText;
+	}
+	if (msg.empty())
+	{
+		Format(msg, nullptr, 0);
+	}
+	return msg;
+}
+
 // ******************************************************************************
 // * LOG HISTORY:
 // ******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVStatusLibrary\SVException.cpp_v  $
+ * 
+ *    Rev 1.2   10 Nov 2014 16:55:58   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  970
+ * SCR Title:  GetConfig and PutConfig cause a crash when there is not enough disk space
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   Revised to hold the text message if it was set.
+ * Added the what method to retrieve the error text (if it was set) or get the text from FormatMessage.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   02 Oct 2013 10:08:12   tbair
  * Project:  SVObserver

@@ -2,8 +2,8 @@
 //* .Module Name     : SVToolGrouping
 //* .File Name       : $Workfile:   SVToolGrouping.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.7  $
-//* .Check In Date   : $Date:   15 Oct 2014 17:27:52  $
+//* .Current Version : $Revision:   1.8  $
+//* .Check In Date   : $Date:   10 Nov 2014 16:41:26  $
 //******************************************************************************
 #pragma region Includes
 #include "stdafx.h"
@@ -18,7 +18,6 @@
 
 static const String scDefaultToolGroupName = _T("Group");
 static const String scEndPrefix = _T("End ");
-static const String scDupSuffix = _T("DUP");
 
 String SVToolGrouping::GetDefaultName() const
 {
@@ -35,18 +34,80 @@ String SVToolGrouping::GetDefaultName() const
 
 bool SVToolGrouping::IsNameUnique(const String& rName) const
 {
+	String nameLower;
+	std::transform(rName.begin(), rName.end(), std::back_inserter(nameLower), ::tolower);
+
 	bool bRetVal = std::none_of(m_list.begin(), m_list.end(), 
-		[&rName](const ToolGroup& rGroup)->bool { return rName == rGroup.first; });
+		[&nameLower](const ToolGroup& rGroup)->bool 
+	{ 
+		// case insensitive compare
+		String itemNameLower;
+		std::transform(rGroup.first.begin(), rGroup.first.end(), std::back_inserter(itemNameLower), ::tolower);
+		return (itemNameLower == nameLower); 
+	});
 
 	return bRetVal;
 }
 
-String SVToolGrouping::MakeNameUnique(const String& rName) const
+String SVToolGrouping::MakeNumericUniqueName(const String& rName) const
 {
 	String newName = rName;
-	while (!IsNameUnique(newName))
+	String nameLower;
+	std::transform(rName.begin(), rName.end(), std::back_inserter(nameLower), ::tolower);
+
+	int num = 0;
+	// find all names that start with this name (case insensitive)
+	std::for_each(m_list.begin(), m_list.end(), [&nameLower, &num](const ToolGroup& rGroup)->void
+	{ 
+		String itemNameLower;
+		std::transform(rGroup.first.begin(), rGroup.first.end(),std::back_inserter(itemNameLower), ::tolower);
+	    size_t pos = itemNameLower.find(nameLower);
+		if (0 == pos)
+		{
+			// check if the base name is augmented with numeric values
+			if (itemNameLower == nameLower)
+			{
+				// check for trailing digits
+				size_t last_char_pos = nameLower.find_last_not_of(_T("0123456789"));
+				if (last_char_pos != String::npos)
+				{
+					// get base name (strip trailing numbers)
+					// String val = nameLower.substr(0, last_char_pos + 1);
+					String val = nameLower.substr(last_char_pos + 1);
+					int lastNum = atoi(val.c_str());
+					num = std::max(num, lastNum + 1);
+				}
+				else
+				{
+					num = std::max(num, 1);
+				}
+			}
+			else
+			{
+				/*
+				String val = itemNameLower.substr(nameLower.length());
+				// check for all numerics
+				if (std::all_of(val.begin(), val.end(), ::isdigit))
+				*/
+				// check for trailing digits
+				size_t last_char_pos = nameLower.find_last_not_of(_T("0123456789"));
+				if (last_char_pos != String::npos)
+				{
+					String val = nameLower.substr(last_char_pos + 1);
+					// convert and set max
+					int lastNum = atoi(val.c_str());
+					num = std::max(num, lastNum + 1);
+				}
+			}
+		}
+	});
+	
+	// build new name
+	if (num)
 	{
-		newName += scDupSuffix;
+		std::stringstream ss;
+		ss << rName << num;
+		newName = ss.str().c_str();
 	}
 	return newName;
 }
@@ -118,9 +179,9 @@ bool SVToolGrouping::AddEndGroup(const String& rGroupName, const String& rInsert
 	if (!rGroupName.empty())
 	{
 		String endName = scEndPrefix + rGroupName;
-		while (!IsNameUnique(endName))
+		if (!IsNameUnique(endName))
 		{
-			endName += scDupSuffix;
+			endName = MakeNumericUniqueName(endName);
 		}
 		ToolGroupList::iterator it = m_list.end();
 		if (!rInsertBefore.empty())
@@ -632,6 +693,19 @@ size_t SVToolGrouping::size() const
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVToolGrouping.cpp_v  $
+ * 
+ *    Rev 1.8   10 Nov 2014 16:41:26   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  969
+ * SCR Title:  SVObserver Should Check the Name of Group Tools When Naming Other Tools
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   Removed MakeNameUnique method.
+ * Added MakeNumericUniqueName method.
+ * Revised IsNameUnique to be case insensitive.
+ * Revised AddEndGroup to call MakeNumericUniqueName if name is not unique.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.7   15 Oct 2014 17:27:52   sjones
  * Project:  SVObserver

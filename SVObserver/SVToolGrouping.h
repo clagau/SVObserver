@@ -2,8 +2,8 @@
 //* .Module Name     : SVToolGrouping
 //* .File Name       : $Workfile:   SVToolGrouping.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.3  $
-//* .Check In Date   : $Date:   01 Jul 2014 14:18:22  $
+//* .Current Version : $Revision:   1.4  $
+//* .Check In Date   : $Date:   10 Nov 2014 16:41:24  $
 //******************************************************************************
 #pragma once
 
@@ -45,7 +45,8 @@ class SVToolGrouping
 public:
 	String GetDefaultName() const;
 	bool IsNameUnique(const String& rName) const;
-	String MakeNameUnique(const String& rName) const;
+
+	String MakeNumericUniqueName(const String& rName) const;
 	String GetToolToInsertBefore(const String& rName) const;
 
 	void AddGroup(const String& rName, const String& rInsertBefore = String());
@@ -87,6 +88,19 @@ private:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVToolGrouping.h_v  $
+ * 
+ *    Rev 1.4   10 Nov 2014 16:41:24   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  969
+ * SCR Title:  SVObserver Should Check the Name of Group Tools When Naming Other Tools
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   Removed MakeNameUnique method.
+ * Added MakeNumericUniqueName method.
+ * Revised IsNameUnique to be case insensitive.
+ * Revised AddEndGroup to call MakeNumericUniqueName if name is not unique.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   01 Jul 2014 14:18:22   sjones
  * Project:  SVObserver

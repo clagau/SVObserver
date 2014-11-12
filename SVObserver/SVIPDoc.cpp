@@ -5,8 +5,8 @@
 //* .Module Name     : SVIPDoc
 //* .File Name       : $Workfile:   SVIPDoc.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.24  $
-//* .Check In Date   : $Date:   13 Oct 2014 11:07:56  $
+//* .Current Version : $Revision:   1.25  $
+//* .Check In Date   : $Date:   10 Nov 2014 16:48:02  $
 //******************************************************************************
 
 #pragma region Includes
@@ -437,6 +437,18 @@ BOOL SVIPDoc::InitAfterSystemIsDocked()
 	return l_bOk;
 }
 
+// @WARNING: CheckName method doesn't just check the name, it also changes the name if a duplicate is found.
+static void CheckName(SVToolClass* pTool, const SVToolGrouping& rGroupings)
+{
+	String name = pTool->GetName();
+	
+	if (!rGroupings.IsNameUnique(name))
+	{
+		const String& newName = rGroupings.MakeNumericUniqueName(name).c_str();
+		pTool->SetName(newName.c_str());
+	}
+}
+
 //******************************************************************************
 // Operation(s) Of Writing Access:
 //******************************************************************************
@@ -478,6 +490,8 @@ BOOL SVIPDoc::AddTool(SVToolClass* pTool)
 					}
 				}
 			}
+
+			CheckName(pTool, m_toolGroupings);
 
 			SVAddTool l_AddTool(pTool, toolListIndex);
 
@@ -4473,6 +4487,17 @@ void SVIPDoc::addViewableObject2ResultDefinitions( SVObjectClass* pObject, SVRes
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVIPDoc.cpp_v  $
+ * 
+ *    Rev 1.25   10 Nov 2014 16:48:02   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  969
+ * SCR Title:  SVObserver Should Check the Name of Group Tools When Naming Other Tools
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   Added CheckName function.
+ * Revised AddTool method to call CheckName function.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.24   13 Oct 2014 11:07:56   bwalter
  * Project:  SVObserver

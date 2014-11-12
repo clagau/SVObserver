@@ -5,8 +5,8 @@
 //* .Module Name     : SVSocketRemoteCommandManager
 //* .File Name       : $Workfile:   SVSocketRemoteCommandManager.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.7  $
-//* .Check In Date   : $Date:   02 Oct 2014 10:22:40  $
+//* .Current Version : $Revision:   1.8  $
+//* .Check In Date   : $Date:   10 Nov 2014 17:10:46  $
 //******************************************************************************
 
 #ifndef SVSOCKETREMOTECOMMANDMANAGER_H
@@ -36,7 +36,7 @@ public:
 
 	static HRESULT ProcessCommand( const std::string& p_rJsonCommand, std::string& p_rJsonResults );
 	static HRESULT ProcessAsyncCommand( const std::string& p_rJsonCommand, std::string& p_rJsonResults );
-	static void BuildErrorResponse(const std::string& rCommand, std::string& rResponse, HRESULT hr);
+	static void BuildErrorResponse(const std::string& rCommand, std::string& rResponse, HRESULT hr, const std::string& errorText=std::string());
 
 protected:
 	static void GetCommandName( const std::string& p_rJsonCommand, std::string& p_rName );
@@ -110,6 +110,18 @@ typedef SVJsonCommandManager< SVRemoteCommandFunctions > SVSocketRemoteCommandMa
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVSocketRemoteCommandManager.h_v  $
+ * 
+ *    Rev 1.8   10 Nov 2014 17:10:46   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  970
+ * SCR Title:  GetConfig and PutConfig cause a crash when there is not enough disk space
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   Revised BuildErrorResponse to iclude the error text in the Json if it's supplied.
+ * Revised GetConfig to catch any SVException thrown and call BuildErrorResponse on any error.
+ * Revised PutConfig to catch any SVException thrown and call BuildErrorResponse on any error.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.7   02 Oct 2014 10:22:40   sjones
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : SVVisionProcessorHelper
 //* .File Name       : $Workfile:   SVVisionProcessorHelper.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.23  $
-//* .Check In Date   : $Date:   22 Oct 2014 11:31:52  $
+//* .Current Version : $Revision:   1.24  $
+//* .Check In Date   : $Date:   10 Nov 2014 17:12:54  $
 //******************************************************************************
 
 #pragma region Includes
@@ -178,8 +178,14 @@ HRESULT SVVisionProcessorHelper::LoadConfiguration( const SVString& p_rPackFileN
 
 HRESULT SVVisionProcessorHelper::SaveConfiguration( const SVString& p_rPackFileName ) const
 {
-	HRESULT l_Status = TheSVObserverApp.SavePackedConfiguration( p_rPackFileName.c_str() );
+	SVConfigurationObject* pConfig = nullptr;
+	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
 
+	if (nullptr == pConfig|| !pConfig->IsConfigurationLoaded())
+	{
+		return SVMSG_CONFIGURATION_NOT_LOADED;
+	}
+	HRESULT l_Status = TheSVObserverApp.SavePackedConfiguration(p_rPackFileName.c_str());
 	return l_Status;
 }
 
@@ -1073,6 +1079,16 @@ void SVVisionProcessorHelper::ProcessLastModified( bool& p_WaitForEvents )
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVVisionProcessorHelper.cpp_v  $
+ * 
+ *    Rev 1.24   10 Nov 2014 17:12:54   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  970
+ * SCR Title:  GetConfig and PutConfig cause a crash when there is not enough disk space
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   Revised SaveConfiguration to return an error if no configuration is loaded.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.23   22 Oct 2014 11:31:52   bwalter
  * Project:  SVObserver

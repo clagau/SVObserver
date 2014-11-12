@@ -5,8 +5,8 @@
 //* .Module Name     : SVSocketRemoteCommandManager
 //* .File Name       : $Workfile:   SVSocketRemoteCommandManager.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.14  $
-//* .Check In Date   : $Date:   02 Oct 2014 10:22:40  $
+//* .Current Version : $Revision:   1.15  $
+//* .Check In Date   : $Date:   10 Nov 2014 17:10:46  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -698,34 +698,43 @@ HRESULT SVRemoteCommandFunctions::GetConfig( const std::string& p_rJsonCommand, 
 	{
 		l_RemoteFilePath = "Configuration.svp";
 	}
-
+	std::string errText;
 	std::string l_TempFileName;
 
 	l_Status = GetTempFileNameFromFilePath( l_TempFileName, l_RemoteFilePath );
 
 	if( !( l_TempFileName.empty() ) )
 	{
-		l_Status = SVVisionProcessorHelper::Instance().SaveConfiguration( l_TempFileName );
+		try
+		{
+			l_Status = SVVisionProcessorHelper::Instance().SaveConfiguration( l_TempFileName );
+		}
+		catch (SVException& e)
+		{
+			l_Status = e.GetErrorCode();
+			errText = e.what().c_str();
+		}
 	}
-	else if( l_Status == S_OK )
+	else if (S_OK == l_Status)
 	{
 		l_Status = E_UNEXPECTED;
 	}
 
-	if( l_Status == S_OK )
+	if (S_OK == l_Status)
 	{
 		#ifdef SV_DATA_TO_CONTENTS
 			l_Status = SVEncodeDecodeUtilities::Base64EncodeToStringFromFile( l_Contents, l_TempFileName );
 
-			::remove( l_TempFileName.c_str() );
 		#else
 			l_Status = GetFileNameFromFilePath( l_DestinationFileName, l_TempFileName );
 		#endif
 	}
+	// cleanup
+	::remove( l_TempFileName.c_str() );
 
 	Json::Value l_Results(Json::objectValue);
 
-	if( l_Status == S_OK )
+	if (S_OK == l_Status)
 	{
 		l_Results[ SVRC::result::filePath ] = l_RemoteFilePath;
 
@@ -734,11 +743,20 @@ HRESULT SVRemoteCommandFunctions::GetConfig( const std::string& p_rJsonCommand, 
 		#else
 			l_Results[ SVRC::result::destinationFileName ] = l_DestinationFileName;
 		#endif
+		std::string l_FileName = "C:\\temp\\GetConfig-rsp";
+		WriteResultToJsonAndFile(p_rJsonCommand, p_rJsonResults, l_Results, l_FileName, l_Status);
 	}
-
-	std::string l_FileName = "C:\\temp\\GetConfig-rsp";
-	WriteResultToJsonAndFile(p_rJsonCommand, p_rJsonResults, l_Results, l_FileName, l_Status);
-
+	else
+	{
+		// Log Exception (in case no one else did...)
+		SVException e;
+		SETEXCEPTION4(e, l_Status, -20202);
+		if (errText.empty())
+		{
+			errText = e.what().c_str();
+		}
+		BuildErrorResponse(p_rJsonCommand, p_rJsonResults, l_Status, errText);
+	}
 	return l_Status;
 }
 
@@ -1170,18 +1188,18 @@ HRESULT SVRemoteCommandFunctions::PutConfig( const std::string& p_rJsonCommand, 
 
 				l_Status = GetTempFileNameFromFilePath( l_TempFileName, l_RemoteFilePath );
 
-				if( l_Status == S_OK )
+				if (S_OK == l_Status)
 				{
 					l_Status = SVEncodeDecodeUtilities::Base64DecodeToFileFromString( l_TempFileName, l_JsonContents.asString() );
-				}
-
-				if( l_Status == S_OK )
-				{
-					l_SourceFileName = l_TempFileName;
-				}
-				else
-				{
-					l_SourceFileName.clear();
+				
+					if (S_OK == l_Status)
+					{
+						l_SourceFileName = l_TempFileName;
+					}
+					else
+					{
+						::remove(l_TempFileName.c_str());
+					}
 				}
 			}
 			else
@@ -1197,28 +1215,54 @@ HRESULT SVRemoteCommandFunctions::PutConfig( const std::string& p_rJsonCommand, 
 				}
 				else
 				{
+					l_SourceFileName.clear();
 					l_Status = E_INVALIDARG;
 				}
 			}
 		}
 	}
 
+	std::string errText;
 	if( !( l_SourceFileName.empty() ) )
 	{
-		l_Status = SVVisionProcessorHelper::Instance().LoadConfiguration( l_SourceFileName );
-
-		::remove( l_SourceFileName.c_str() );
+		try
+		{
+			l_Status = SVVisionProcessorHelper::Instance().LoadConfiguration( l_SourceFileName );
+		}
+		catch (SVException& e)
+		{
+			l_Status = e.GetErrorCode();
+			errText = e.what().c_str();
+		}
+		::remove(l_SourceFileName.c_str());
 	}
-	else if( l_Status == S_OK )
+	else if (S_OK == l_Status)
 	{
 		l_Status = E_INVALIDARG;
 	}
 
 	Json::Value l_Results(Json::objectValue);
 
-	std::string l_FileName = "C:\\temp\\PutConfig-rsp";
-	WriteResultToJsonAndFile(p_rJsonCommand, p_rJsonResults, l_Results, l_FileName, l_Status);
-
+	if (S_OK == l_Status)
+	{
+		std::string l_FileName = "C:\\temp\\PutConfig-rsp";
+		WriteResultToJsonAndFile(p_rJsonCommand, p_rJsonResults, l_Results, l_FileName, l_Status);
+	}
+	else
+	{
+		// Log Exception (in case no one else did...)
+		SVException e;
+		SETEXCEPTION4(e, l_Status, -10101);
+		if (errText.empty())
+		{
+			errText = e.what().c_str();
+		}
+		if (!FAILED(l_Status))
+		{
+			l_Status = HRESULT_FROM_WIN32(l_Status);
+		}
+		BuildErrorResponse(p_rJsonCommand, p_rJsonResults, l_Status, errText);
+	}
 	return l_Status;
 }
 
@@ -2082,7 +2126,7 @@ AFX_INLINE HRESULT SVRemoteCommandFunctions::WriteResultToJsonAndFile( const std
 	return l_Status;
 }
 
-void SVRemoteCommandFunctions::BuildErrorResponse(const std::string& rJsonCommand, std::string& rResponse, HRESULT hr)
+void SVRemoteCommandFunctions::BuildErrorResponse(const std::string& rJsonCommand, std::string& rResponse, HRESULT hr, const std::string& errorText)
 {
 	HRESULT l_Status = S_OK;
 
@@ -2098,9 +2142,10 @@ void SVRemoteCommandFunctions::BuildErrorResponse(const std::string& rJsonComman
 	l_Object[ SVRC::cmd::id ] = l_Id;
 	l_Object[ SVRC::cmd::hr ] = hr;
 	l_Object[ SVRC::cmd::reslts ] = Json::Value(Json::objectValue);
-	// use Format Message ?
-	//l_Object[ SVRC::cmd::err ] = 
-
+	if (!errorText.empty())
+	{
+		l_Object[ SVRC::cmd::err ] = errorText.c_str();
+	}
 	rResponse = l_Writer.write( l_Object ).c_str();
 }
 
@@ -2109,6 +2154,18 @@ void SVRemoteCommandFunctions::BuildErrorResponse(const std::string& rJsonComman
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVSocketRemoteCommandManager.cpp_v  $
+ * 
+ *    Rev 1.15   10 Nov 2014 17:10:46   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  970
+ * SCR Title:  GetConfig and PutConfig cause a crash when there is not enough disk space
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   Revised BuildErrorResponse to iclude the error text in the Json if it's supplied.
+ * Revised GetConfig to catch any SVException thrown and call BuildErrorResponse on any error.
+ * Revised PutConfig to catch any SVException thrown and call BuildErrorResponse on any error.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.14   02 Oct 2014 10:22:40   sjones
  * Project:  SVObserver
