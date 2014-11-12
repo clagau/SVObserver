@@ -5,8 +5,8 @@
 //* .Module Name     : SVBlobAnalyzer
 //* .File Name       : $Workfile:   SVBlobAnalyzer.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.3  $
-//* .Check In Date   : $Date:   08 Oct 2014 02:54:26  $
+//* .Current Version : $Revision:   1.4  $
+//* .Check In Date   : $Date:   12 Nov 2014 07:02:32  $
 //******************************************************************************
 
 #ifndef SVBLOBANALYZERCLASS__INCLUDED
@@ -230,9 +230,11 @@ public:
 	SVMatroxBlobFeatureList              msvFeatureListID;
 	SVMatroxBlobResult                   msvResultBufferID;
 
+	SVBoolValueObjectClass       m_isBlackBlobValue;
+
 	//new value objects for Fill Blob option
 	SVBoolValueObjectClass       m_bvoFillBlobs;
-	SVEnumerateValueObjectClass  m_evoBlobColor;
+	SVEnumerateValueObjectClass  m_evoBlobFillColor;
 	SVEnumerateValueObjectClass  m_evoBlobType;
 
 protected:
@@ -274,6 +276,18 @@ private:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVBlobAnalyzer.h_v  $
+ * 
+ *    Rev 1.4   12 Nov 2014 07:02:32   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  938
+ * SCR Title:  Add Black Blob Mode to Blob Analyzer (SVO-336)
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   add m_isBlackBlobValue
+ * set foreground to blob interface
+ * rename m_evoBlobFillColor instead m_evoBlobColor
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   08 Oct 2014 02:54:26   mziegler
  * Project:  SVObserver

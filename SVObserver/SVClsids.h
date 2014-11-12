@@ -5,8 +5,8 @@
 //* .Module Name     : SVClsids
 //* .File Name       : $Workfile:   SVClsids.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.4  $
-//* .Check In Date   : $Date:   24 Oct 2014 11:31:34  $
+//* .Current Version : $Revision:   1.5  $
+//* .Check In Date   : $Date:   12 Nov 2014 07:04:28  $
 //******************************************************************************
 
 #ifndef SVCLSIDS_H
@@ -239,6 +239,8 @@ extern /*const*/ GUID SVExcludeFailedObjectGuid;
 //GUID for new blob feature.  CenterOfBoundingBox
 extern /*const*/ GUID SVBlobCenterOfBoundingBoxXGuid;
 extern /*const*/ GUID SVBlobCenterOfBoundingBoxYGuid;
+
+extern /*const*/ GUID SVBlobIsBlackGuid;
 
 //new GUIDs for BlobAnalyzer for Use FIll, Fill Color, and Fill Type
 extern /*const*/ GUID SVBlobUseFillGuid;
@@ -1258,6 +1260,16 @@ extern /*const*/ GUID SVStringHeaderGuid;
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVClsids.h_v  $
+ * 
+ *    Rev 1.5   12 Nov 2014 07:04:28   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  938
+ * SCR Title:  Add Black Blob Mode to Blob Analyzer (SVO-336)
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   add SVBlobIsBlackGuid
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.4   24 Oct 2014 11:31:34   gramseier
  * Project:  SVObserver

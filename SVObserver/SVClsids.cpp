@@ -5,8 +5,8 @@
 //* .Module Name     : SVClsids
 //* .File Name       : $Workfile:   SVClsids.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.4  $
-//* .Check In Date   : $Date:   24 Oct 2014 11:31:34  $
+//* .Current Version : $Revision:   1.5  $
+//* .Check In Date   : $Date:   12 Nov 2014 07:04:28  $
 //******************************************************************************
 
 #pragma region Includes
@@ -299,7 +299,7 @@
 /*const*/ GUID SVBlobCenterOfBoundingBoxXGuid		= { 0xde0c35ab, 0x65c6, 0x4836, { 0x95, 0x29, 0xd6, 0x99, 0x73, 0x28, 0x7, 0x5d } };
 /*const*/ GUID SVBlobCenterOfBoundingBoxYGuid		= { 0xdd3c531e, 0xeb45, 0x475c, { 0xa8, 0xbb, 0xab, 0xaf, 0x34, 0x54, 0xa, 0x44 } };
 
-
+/*const*/ GUID SVBlobIsBlackGuid				= { 0xf350a652, 0x1b8a, 0x4c95, { 0x8f, 0x7d, 0x9d, 0x8d, 0x54, 0x37, 0xc1, 0x39 } };
 
 //GUIDs for BlobAnalyzer for Use Fill, Fill Color, and Type
 /*const*/ GUID SVBlobUseFillGuid					= { 0x4a6be419, 0xeda6, 0x4805, { 0x95, 0x32, 0x37, 0x56, 0x98, 0xaf, 0x2, 0xed } };
@@ -1610,6 +1610,16 @@
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVClsids.cpp_v  $
+ * 
+ *    Rev 1.5   12 Nov 2014 07:04:28   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  938
+ * SCR Title:  Add Black Blob Mode to Blob Analyzer (SVO-336)
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   add SVBlobIsBlackGuid
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.4   24 Oct 2014 11:31:34   gramseier
  * Project:  SVObserver

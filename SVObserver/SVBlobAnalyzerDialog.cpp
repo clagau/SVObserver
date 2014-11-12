@@ -5,8 +5,8 @@
 //* .Module Name     : SVBlobAnalyzerDialog
 //* .File Name       : $Workfile:   SVBlobAnalyzerDialog.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.4  $
-//* .Check In Date   : $Date:   24 Oct 2014 15:56:12  $
+//* .Current Version : $Revision:   1.5  $
+//* .Check In Date   : $Date:   12 Nov 2014 07:03:38  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -38,6 +38,7 @@ BEGIN_MESSAGE_MAP(SVBlobAnalyzeFeatureDialogClass, CDialog)
 	ON_BN_CLICKED(IDC_EXCLUDE_BLOB, OnExcludeBlob)
 	ON_BN_CLICKED(IDC_BTN_FILL_BLOBS, OnBtnFillBlobs)
 	ON_BN_CLICKED(IDC_FILL_BLOBS, OnFillBlobs)
+	ON_CBN_SELCHANGE(IDC_BLOB_COLOR, OnBlobColor)
 	ON_EN_CHANGE(IDC_EDIT_MAX_NBR_BLOBS, OnChangeEditMaxNbrBlobs)
 	ON_EN_KILLFOCUS(IDC_EDIT_MAX_NBR_BLOBS, OnKillFocusMaxNbrBlobs)
 	ON_BN_CLICKED(IDC_BUTTON_SET_FEATURE_PROPERTIES, OnButtonSetFeatureProperties)
@@ -54,6 +55,9 @@ SVBlobAnalyzeFeatureDialogClass::SVBlobAnalyzeFeatureDialogClass(
 	SVIPDoc* p_pIPDoc, 
 	CWnd* pParent )
 	: CDialog( SVBlobAnalyzeFeatureDialogClass::IDD, pParent )
+	, m_isBlackBlobs(false)
+	, m_pIPDoc( p_pIPDoc )
+	, m_pCurrentAnalyzer( pAnalyzer )
 {
 	//{{AFX_DATA_INIT(SVBlobAnalyzeFeatureDialogClass)
 	msvSortFeatureEdt = _T("");
@@ -62,9 +66,6 @@ SVBlobAnalyzeFeatureDialogClass::SVBlobAnalyzeFeatureDialogClass(
 	m_lMaxNumberBlobs = 100;
 	m_lMaxBlobDataArraySize = 100;
 	//}}AFX_DATA_INIT
-
-	m_pIPDoc = p_pIPDoc;
-	m_pCurrentAnalyzer = pAnalyzer;
 }
 
 SVBlobAnalyzeFeatureDialogClass::~SVBlobAnalyzeFeatureDialogClass()
@@ -81,6 +82,7 @@ void SVBlobAnalyzeFeatureDialogClass::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_BTN_FILL_BLOBS, m_btnFillBlobs);
 	DDX_Control(pDX, IDC_LIST2, m_lbSelectedFeatures);
 	DDX_Control(pDX, IDC_LIST1, m_lbAvailableFeatures);
+	DDX_Control(pDX, IDC_BLOB_COLOR, m_cbBlobColor);
 	DDX_Text(pDX, IDC_SORT_FEATURE_EDT, msvSortFeatureEdt);
 	DDX_Check(pDX, IDC_ASCENDING, msvAscending);
 	DDX_Check(pDX, IDC_EXCLUDE_BLOB, m_bExclude);
@@ -119,6 +121,7 @@ BOOL SVBlobAnalyzeFeatureDialogClass::OnInitDialog()
 	//      _tcscpy (msvszOriginalFeaturesEnabled, msvszOriginalFeaturesEnabled); 
 			m_pCurrentAnalyzer->msvSortAscending.GetValue(msvAscending);
 			m_pCurrentAnalyzer->msvbExcludeFailed.GetValue(m_bExclude);
+			m_pCurrentAnalyzer->m_isBlackBlobValue.GetValue(m_isBlackBlobs);
 			m_pCurrentAnalyzer->m_lvoBlobSampleSize.GetValue(m_lMaxNumberBlobs);
 			m_pCurrentAnalyzer->m_lvoMaxBlobDataArraySize.GetValue(m_lMaxBlobDataArraySize);
 
@@ -166,6 +169,15 @@ BOOL SVBlobAnalyzeFeatureDialogClass::OnInitDialog()
 			m_chkFillBlob.SetCheck(FALSE);
 		}
 
+		if (m_isBlackBlobs)
+		{
+			m_cbBlobColor.SetCurSel(0);
+		}
+		else
+		{
+			m_cbBlobColor.SetCurSel(1);
+		}
+
 		UpdateData (FALSE);
 
 		break;
@@ -205,6 +217,11 @@ HRESULT SVBlobAnalyzeFeatureDialogClass::SetInspectionData()
 		if( l_hrOk == S_OK )
 		{
 			l_hrOk = AddInputRequest( &( m_pCurrentAnalyzer->msvbExcludeFailed ), m_bExclude );
+		}
+
+		if( l_hrOk == S_OK )
+		{
+			l_hrOk = AddInputRequest( &( m_pCurrentAnalyzer->m_isBlackBlobValue ), m_isBlackBlobs );
 		}
 
 		if( l_hrOk == S_OK )
@@ -535,7 +552,7 @@ void SVBlobAnalyzeFeatureDialogClass::OnBtnFillBlobs()
 {
 	SVFillBlobDlg dlg;
 	
-	dlg.m_pvoBlobColor = &m_pCurrentAnalyzer->m_evoBlobColor;
+	dlg.m_pvoBlobFillColor = &m_pCurrentAnalyzer->m_evoBlobFillColor;
 	dlg.m_pvoBlobType = &m_pCurrentAnalyzer->m_evoBlobType;
 
 	dlg.DoModal();
@@ -552,6 +569,13 @@ void SVBlobAnalyzeFeatureDialogClass::OnFillBlobs()
 		m_btnFillBlobs.EnableWindow(FALSE);
 	}
 	
+	SetInspectionData();
+}
+
+void SVBlobAnalyzeFeatureDialogClass::OnBlobColor()
+{
+	UpdateData(TRUE);
+	m_isBlackBlobs = (m_cbBlobColor.GetCurSel() == 0);
 	SetInspectionData();
 }
 
@@ -606,6 +630,18 @@ void SVBlobAnalyzeFeatureDialogClass::OnButtonSetFeatureProperties()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVBlobAnalyzerDialog.cpp_v  $
+ * 
+ *    Rev 1.5   12 Nov 2014 07:03:38   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  938
+ * SCR Title:  Add Black Blob Mode to Blob Analyzer (SVO-336)
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   add blob color combobox and method OnBlobColor
+ * add m_isBlackBlobs
+ * move parameter init from Constructor body to header
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.4   24 Oct 2014 15:56:12   bwalter
  * Project:  SVObserver

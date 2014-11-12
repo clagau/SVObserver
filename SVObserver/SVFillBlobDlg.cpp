@@ -5,8 +5,8 @@
 // * .Module Name     : SVFillBlobDlg.cpp
 // * .File Name       : $Workfile:   SVFillBlobDlg.cpp  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.0  $
-// * .Check In Date   : $Date:   23 Apr 2013 10:38:42  $
+// * .Current Version : $Revision:   1.1  $
+// * .Check In Date   : $Date:   12 Nov 2014 07:05:36  $
 // ******************************************************************************
 
 #include "stdafx.h"
@@ -44,7 +44,7 @@ HRESULT SVFillBlobDlg::SetInspectionData()
 	{
 		long lValue = ( long ) m_ctlBlobColor.GetItemData( iCurSel );
 
-		if( AddInputRequest( m_pvoBlobColor, lValue ) == S_OK )
+		if( AddInputRequest( m_pvoBlobFillColor, lValue ) == S_OK )
 		{
 			l_bRequestAdded = true;
 		}
@@ -134,9 +134,9 @@ void SVFillBlobDlg::FillCombos()
 
 
 	CString l_sCurrentColor;
-	m_pvoBlobColor->GetEnumTypes(l_sBlobColorStr);
+	m_pvoBlobFillColor->GetEnumTypes(l_sBlobColorStr);
 	m_ctlBlobColor.SetEnumTypes(l_sBlobColorStr);
-	m_pvoBlobColor->GetValue(l_sCurrentColor);
+	m_pvoBlobFillColor->GetValue(l_sCurrentColor);
 	m_ctlBlobColor.SelectString(-1,l_sCurrentColor);
 
 	UpdateData( FALSE );
@@ -158,7 +158,17 @@ void SVFillBlobDlg::OnSelchangeComboBlobType()
 // * LOG HISTORY:
 // ******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVFillBlobDlg.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVFillBlobDlg.cpp_v  $
+ * 
+ *    Rev 1.1   12 Nov 2014 07:05:36   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  938
+ * SCR Title:  Add Black Blob Mode to Blob Analyzer (SVO-336)
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   rename m_pvoBlobFillColor instead m_pvoBlobColor to clarify this parameter
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 10:38:42   bWalter
  * Project:  SVObserver

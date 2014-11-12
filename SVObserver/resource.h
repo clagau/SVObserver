@@ -1494,6 +1494,7 @@
 #define IDS_OBJECTNAME_CAMERA_TRIGGER_TIMESTAMP 14565
 #define IDS_OBJECTNAME_CAMERA_TRIGGER_LINEINSTATE 14566
 #define IDS_CLASSNAME_SVCAMERADATAINPUTOBJECT 14567
+#define IDS_BLACK_BLOBS                 14568
 #define IDC_NEW_USER_BUTTON             15000
 #define IDC_LEARN_BUTTON                15001
 #define IDC_DELETE_USER_BUTTON          15002
@@ -2504,6 +2505,7 @@
 #define IDC_GRID_STATUS                 16038
 #define IDC_IMPORT_FILTER               16039
 #define IDC_EXPORT_FILTER               16040
+#define IDC_BLOB_COLOR                  16041
 #define ID_TEST                         20000
 #define ID_BROWSE_BUTTON                20001
 #define ID_PLUSBUTTON                   20002
@@ -2745,7 +2747,7 @@
 #define _APS_3D_CONTROLS                     1
 #define _APS_NEXT_RESOURCE_VALUE        11112
 #define _APS_NEXT_COMMAND_VALUE         20345
-#define _APS_NEXT_CONTROL_VALUE         16041
+#define _APS_NEXT_CONTROL_VALUE         16042
 #define _APS_NEXT_SYMED_VALUE           3002
 #endif
 #endif

@@ -5,8 +5,8 @@
 //* .Module Name     : SVBlobAnalyzer
 //* .File Name       : $Workfile:   SVBlobAnalyzer.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.5  $
-//* .Check In Date   : $Date:   08 Oct 2014 02:54:26  $
+//* .Current Version : $Revision:   1.6  $
+//* .Check In Date   : $Date:   12 Nov 2014 07:02:32  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -202,9 +202,9 @@ SVBlobAnalyzerClass::SVBlobAnalyzerClass( SVObjectClass* POwner, int StringResou
 void SVBlobAnalyzerClass::init()
 {
 	SVBlobFeatureEnum i;
-	
-	msvError.ClearLastErrorCd ();
-	
+
+	msvError.ClearLastErrorCd();
+
 	msvlDefaultAttributes = 0;
 	m_lNumberOfBlobsFound = 0;
 	m_lNumberOfBlobsToProcess = 0;
@@ -219,61 +219,67 @@ void SVBlobAnalyzerClass::init()
 		SVBlobEnabledFeaturesObjectGuid,
 		IDS_OBJECTNAME_ENABLEDFEATURES,
 		false, SVResetItemNone );
-	
+
 	RegisterEmbeddedObject(
 		&m_lvoBlobSampleSize, 
 		SVNbrOfBlobsObjectGuid,
 		IDS_OBJECTNAME_NBROFBLOBS,
 		false, SVResetItemOwner );
-	
+
 	RegisterEmbeddedObject(
 		&m_lvoMaxBlobDataArraySize, 
 		SVMaxBlobDataArraySizeObjectGuid,
 		IDS_OBJECTNAME_MAX_BLOB_DATA_ARRAY_SIZE,
 		false, SVResetItemOwner );
-	
+
 	RegisterEmbeddedObject(
 		&msvSortFeature, 
 		SVSortFeatureObjectGuid,
 		IDS_OBJECTNAME_SORTFEATURE,
 		false, SVResetItemNone );
-	
+
 	RegisterEmbeddedObject(
 		&m_lvoNumberOfBlobsFound, 
 		SVNbrOfBlobsFoundObjectGuid,
 		IDS_OBJECTNAME_NBROFBLOBSFOUND,
 		false, SVResetItemNone );
-	
+
 	RegisterEmbeddedObject(
 		&msvSortAscending, 
 		SVSortAscendingObjectGuid,
 		IDS_OBJECTNAME_SORTASCENDING,
 		false, SVResetItemNone );
-	
+
 	RegisterEmbeddedObject(
 		&msvbExcludeFailed, 
 		SVExcludeFailedObjectGuid,
 		IDS_OBJECTNAME_EXCLUDEFAILED,
 		false, SVResetItemNone );
-	
+
 	RegisterEmbeddedObject(
 		&m_bvoFillBlobs,
 		SVBlobUseFillGuid,
 		IDS_BLOB_USE_FILL,
 		false, SVResetItemOwner );
-	
+
 	RegisterEmbeddedObject(
-		&m_evoBlobColor,
+		&m_isBlackBlobValue,
+		SVBlobIsBlackGuid,
+		IDS_BLACK_BLOBS,
+		false, SVResetItemOwner );
+
+	RegisterEmbeddedObject(
+		&m_evoBlobFillColor,
 		SVBlobFillColorGuid,
 		IDS_BLOB_FILL_COLOR,
 		false, SVResetItemNone );
-	
+
 	RegisterEmbeddedObject(
 		&m_evoBlobType,
 		SVBlobFillTypeGuid,
 		IDS_BLOB_FILL_TYPE,
 		false, SVResetItemNone );
-	
+
 	for (i = SV_AREA; i < SV_TOPOF_LIST; i = (SVBlobFeatureEnum) (i + 1))
 	{
 		RegisterEmbeddedObject(
@@ -281,23 +287,23 @@ void SVBlobAnalyzerClass::init()
 			*BlobFeatureConstants[i].pEmbeddedID,
 			BlobFeatureConstants[i].NewStringResourceID,
 			false, SVResetItemNone );
-		
+
 		msvValue[i].SetDefaultValue(0, TRUE);
-		
+
 		msvszFeaturesEnabled [i] = _T('1');             // Not enabled.
 		m_guidResults[i] = SVInvalidGUID;
 	}
-	
+
 	msvszFeaturesEnabled [SV_TOPOF_LIST] = _T('\0');    // Null termination.
-	
+
 	msvSortAscending.SetDefaultValue(FALSE,TRUE);
 	msvbExcludeFailed.SetDefaultValue(FALSE,TRUE);
-	
+
 	msvlDefaultAttributes = msvValue[0].ObjectAttributesAllowed();
-	
+
 	// Set default inputs and outputs
 	addDefaultInputObjects();
-	
+
 	/*--- FEATURE LIST ---------------------------------------------------------*/
 	/*--- The list of enabled features is kept in a string because, of the      */
 	/*--- "value objects", the string appeared to contain the least overhead. --*/
@@ -307,21 +313,22 @@ void SVBlobAnalyzerClass::init()
 		msvValue[i].ObjectAttributesAllowedRef() = 
 			msvValue[i].ObjectAttributesAllowed() & (~SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES);
 	}
-	
+
 	msvPersistantFeaturesEnabled.SetDefaultValue (msvszFeaturesEnabled, TRUE);
 	/*--- End of FEATURE LIST. -------------------------------------------------*/
-	
+
 	m_lvoBlobSampleSize.SetDefaultValue (SV_MAX_NUMBER_OF_BLOBS, TRUE);
 	m_lvoMaxBlobDataArraySize.SetDefaultValue(1, TRUE);
-	
+
 	msvSortFeature.SetDefaultValue (-1, TRUE);
-	
+
 	CreateArray();
-	
+
+	m_isBlackBlobValue.SetDefaultValue(FALSE,FALSE);
 	//set default values for the BlobFill value objects
 	m_bvoFillBlobs.SetDefaultValue(FALSE,TRUE);
-	m_evoBlobColor.SetEnumTypes(g_strBlobFillColorEnums);
-	m_evoBlobColor.SetDefaultValue(SV_BLOB_FILL_BLACK,TRUE);
+	m_evoBlobFillColor.SetEnumTypes(g_strBlobFillColorEnums);
+	m_evoBlobFillColor.SetDefaultValue(SV_BLOB_FILL_BLACK,TRUE);
 	m_evoBlobType.SetEnumTypes(g_strBlobFillTypeEnums);
 	m_evoBlobType.SetDefaultValue(SV_BLOB_FILL_EXCLUDED,TRUE);
 }
@@ -775,10 +782,10 @@ BOOL SVBlobAnalyzerClass::CreateObject(SVObjectLevelCreateStruct* PCreateStructu
 		}
 
 		if (msvError.GetLastErrorCd () & SV_ERROR_CONDITION)
-			break; // If any error had occurred in the for loop, break out of while loop also
+			break; // If any error had occurred in the for loop, break out of while loop also.
 		
 		// RDS 2002-03-26
-		// Set currently existing features into the persistence string
+		// Set currently existing features into the persistence string.
 		// Mainly this should be SV_BOXX_MAX thru SV_BOXY_MIN
 		msvPersistantFeaturesEnabled.SetValue ( 1, msvszFeaturesEnabled );
 
@@ -789,7 +796,7 @@ BOOL SVBlobAnalyzerClass::CreateObject(SVObjectLevelCreateStruct* PCreateStructu
 		if(!m_pResultBlob && !(m_pResultBlob = (SVLongResultClass*)GetBlobResultObject()))
 		{
 			if (AllocateBlobResult() & SV_ERROR_CONDITION) 
-				break; // Some error has occurred
+				break; // Some error has occurred.
 			
 			SVRangeClass *pRange = m_pResultBlob->GetResultRange();
 			if(!pRange)
@@ -952,44 +959,44 @@ DWORD_PTR SVBlobAnalyzerClass::processMessage(DWORD DwMessageID, DWORD_PTR DwMes
 //
 BOOL SVBlobAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 {
-	long    lSortFeature;
-	
+	long lSortFeature;
+
 	bool l_bCenterXSet = false;
 	bool l_bCenterYSet = false;
-	
+
 	SVImageClass* pImage;
-	
-	msvError.ClearLastErrorCd ();
+
+	msvError.ClearLastErrorCd();
 
 	SVMatroxBlobInterface::SVStatusCode l_Code;
 
 	do
 	{
 		SVSmartHandlePointer ImageHandle;
-		
+
 		if(!SVImageAnalyzerClass::onRun(RRunStatus))
 		{
 			break;
 		}
-		
+
 		//
 		// Mil library determines the blobs and count of blobs.
-		//		
+		//
 		pImage = getInputImage();
-		
+
 		if (!pImage)
 		{
 			msvError.msvlErrorCd = -1135;
 			SV_TRAP_ERROR_BRK_TSTFIRST (msvError, 1135);
 		}
-		
+
 		if ( ! pImage->GetImageHandle( ImageHandle ) || ImageHandle.empty() )
 		{
 			ASSERT( FALSE );
 			msvError.msvlErrorCd = -1135;
 			SV_TRAP_ERROR_BRK_TSTFIRST (msvError, 1135);
 		}
-		
+
 		SVImageBufferHandleImage l_MilBuffer;
 		ImageHandle->GetData( l_MilBuffer );
 
@@ -1005,7 +1012,7 @@ BOOL SVBlobAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 		//
 		l_Code = SVMatroxBlobInterface::Execute( msvResultBufferID, l_MilBuffer.GetBuffer(), msvFeatureListID );
 
-	    if( l_Code != SVMEE_STATUS_OK ) 
+		if( l_Code != SVMEE_STATUS_OK )
 		{
 			msvError.msvlErrorCd = l_Code | SVMEE_MATROX_ERROR;
 			SV_TRAP_ERROR_BRK_TSTFIRST (msvError, 1131);
@@ -1046,16 +1053,15 @@ BOOL SVBlobAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 					double dLow, dHigh;
 					pRange->FailHigh.GetValue(dHigh);
 					pRange->FailLow.GetValue(dLow);
-					
-					
+
 					// check to see if the feature is SV_CENTER_X_SOURCE or SV_CENTER_Y_SOURCE
 					// if so do not call the MIL functions.
-					
+
 					if ( (eFeature == SV_CENTER_X_SOURCE) || (eFeature == SV_CENTER_Y_SOURCE) )
 					{
 						continue;
 					}
-					
+
 					l_Code = SVMatroxBlobInterface::BlobSelect(msvResultBufferID, 
 						SVEBlobExclude, 
 						BlobFeatureConstants[eFeature].MILFeatureDef, 
@@ -1071,7 +1077,7 @@ BOOL SVBlobAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 				}
 			}
 			if (msvError.GetLastErrorCd () & SV_ERROR_CONDITION)
-				break; // If any error had occured in the for loop, break out of while loop also
+				break; // If any error had occurred in the for loop, break out of while loop also.
 		}// end if(bExclude)
 		// End. Sri
 
@@ -1080,7 +1086,7 @@ BOOL SVBlobAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 		//
 		l_Code = SVMatroxBlobInterface::GetNumber( msvResultBufferID, m_lNumberOfBlobsFound );
 
-    if( l_Code != SVMEE_STATUS_OK )
+		if( l_Code != SVMEE_STATUS_OK )
 		{
 			msvError.msvlErrorCd = l_Code | SVMEE_MATROX_ERROR;
 			SV_TRAP_ERROR_BRK_TSTFIRST (msvError, 1132);
@@ -1139,7 +1145,7 @@ BOOL SVBlobAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 				SV_TRAP_ERROR_BRK_TSTFIRST (msvError, 1133);
 			}
 
-			if( l_Code != SVMEE_STATUS_OK  )
+			if( l_Code != SVMEE_STATUS_OK )
 			{
 				msvError.msvlErrorCd = l_Code | SVMEE_MATROX_ERROR;
 				SV_TRAP_ERROR_BRK_TSTFIRST (msvError, 1133);
@@ -1162,7 +1168,7 @@ BOOL SVBlobAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 		if( m_lNumberOfBlobsToProcess > 0 )
 		{
 			register SVBlobFeatureEnum eFeature;
-			
+
 			//
 			// Get the array of features values for each feature selected.
 			//
@@ -1177,7 +1183,7 @@ BOOL SVBlobAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 						// feature, since they are not MIL features.
 						continue;
 					}
-					
+
 					//
 					// Get a pointer to the row of values assigned to this blob
 					// feature.
@@ -1215,7 +1221,6 @@ BOOL SVBlobAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 						l_Code = SVMatroxBlobInterface::GetResult( msvResultBufferID, 
 							BlobFeatureConstants [eFeature]. MILFeatureDef,
 							pData );
-
 					}
 				}// end if (msvszFeaturesEnabled [eFeature] == _T('1'))
 
@@ -1257,7 +1262,7 @@ BOOL SVBlobAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 					double l_dCenterX = 0.0;
 					double l_dCenterY = 0.0;
 					SVExtentPointStruct ptSt;
-					
+
 					l_dMaxX = pBoxXMaxData[n];
 					l_dMinX = pBoxXMinData[n];
 					l_dMaxY = pBoxYMaxData[n];
@@ -1293,7 +1298,6 @@ BOOL SVBlobAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 				}//for number of blobs
 			}//if the feature SV_CENTER_X(Y)_SOURCE is set
 
-			
 			msvSortFeature.GetValue( lSortFeature );
 			msvlSortMap.SetSize( m_lNumberOfBlobsFound );
 			// Check for Sort Feature
@@ -1301,7 +1305,9 @@ BOOL SVBlobAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 			// otherwise if at least one feature has been selected
 			// lSortFeature will be a valid feature index
 			if( lSortFeature >= SV_AREA && lSortFeature < SV_TOPOF_LIST )
+			{
 				SortBlobs( lSortFeature, msvlSortMap.GetData(), static_cast< long >( msvlSortMap.GetSize() ) );
+			}
 
 			for (eFeature = SV_AREA; eFeature < SV_TOPOF_LIST; eFeature = (SVBlobFeatureEnum) (eFeature + 1))
 			{
@@ -1331,18 +1337,18 @@ BOOL SVBlobAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 			// End. sri
 			SetInvalid();
 		}
-		
+
 		// Now fill the blobs
 		BOOL l_bFillBlob;
 		m_bvoFillBlobs.GetValue(l_bFillBlob);
-		
+
 		l_Code = SVMatroxBlobInterface::GetNumber( msvResultBufferID, m_lNumberOfBlobsFound );
 		if ( l_bFillBlob )
-		{	
+		{
 			long l_lColor;
 			long l_lType;
-			m_evoBlobColor.GetValue(RRunStatus.m_lResultDataIndex,l_lColor);
-			m_evoBlobType.GetValue(RRunStatus.m_lResultDataIndex,l_lType);
+			m_evoBlobFillColor.GetValue(RRunStatus.m_lResultDataIndex, l_lColor);
+			m_evoBlobType.GetValue(RRunStatus.m_lResultDataIndex, l_lType);
 			SVBlobControlEnum l_eCriterion = SVEBlobAll;
 			switch( l_lType )
 			{
@@ -1361,17 +1367,21 @@ BOOL SVBlobAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 					l_eCriterion = SVEBlobIncludeBlobs;
 					break;
 				}
+				default:
+				{
+					// Do nothing.
+					break;
+				}
 			}// end switch( l_lType )
-			
+
 			l_Code = SVMatroxBlobInterface::BlobFill( msvResultBufferID, l_MilBuffer.GetBuffer(), l_eCriterion, l_lColor);
 		}// end if
-		
 	} while ( false );
 
 	if (msvError.GetLastErrorCd () & SV_ERROR_CONDITION)
 	{
-		SetInvalid ();
-		RRunStatus.SetInvalid ();
+		SetInvalid();
+		RRunStatus.SetInvalid();
 		return FALSE;
 	}
 
@@ -1719,19 +1729,22 @@ void SVBlobAnalyzerClass::CreateArray()
 HRESULT SVBlobAnalyzerClass::ResetObject()
 {
 	HRESULT l_hr = SVImageAnalyzerClass::ResetObject();
-	
+
 	BOOL l_bIsFillBlob;
 	m_bvoFillBlobs.GetValue( l_bIsFillBlob );
 
 	if ( l_bIsFillBlob )
 	{
-
 		SVMatroxBlobInterface::Set( msvResultBufferID, SVEBlobSaveRuns, static_cast<long>(SVValueEnable) );
 	}
 	else
 	{
 		SVMatroxBlobInterface::Set( msvResultBufferID, SVEBlobSaveRuns, static_cast<long>(SVValueDisable) );
 	}
+
+	BOOL isBlackBlobs;
+	m_isBlackBlobValue.GetValue( isBlackBlobs );
+	SVMatroxBlobInterface::SetForeground( msvResultBufferID, TRUE == isBlackBlobs );
 
 	CreateArray();
 
@@ -1845,6 +1858,18 @@ void SVBlobAnalyzerClass::addDefaultInputObjects( BOOL BCallBaseClass, SVInputIn
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVBlobAnalyzer.cpp_v  $
+ * 
+ *    Rev 1.6   12 Nov 2014 07:02:32   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  938
+ * SCR Title:  Add Black Blob Mode to Blob Analyzer (SVO-336)
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   add m_isBlackBlobValue
+ * set foreground to blob interface
+ * rename m_evoBlobFillColor instead m_evoBlobColor
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.5   08 Oct 2014 02:54:26   mziegler
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : SVBlobAnalyzerDialog
 //* .File Name       : $Workfile:   SVBlobAnalyzerDialog.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 09:43:40  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   12 Nov 2014 07:03:38  $
 //******************************************************************************
 
 #ifndef __SVBLOBANALYZERDIALOG__INCLUDED
@@ -44,6 +44,7 @@ protected:
 	afx_msg void OnExcludeBlob();
 	afx_msg void OnBtnFillBlobs();
 	afx_msg void OnFillBlobs();
+	afx_msg void OnBlobColor();
 	afx_msg void OnChangeEditMaxNbrBlobs();
 	afx_msg void OnKillFocusMaxNbrBlobs();
 	afx_msg void OnButtonSetFeatureProperties();
@@ -74,6 +75,7 @@ public:
 	CEdit	m_ctlMaxNbrBlobs;
 	CButton	m_chkFillBlob;
 	CButton	m_btnFillBlobs;
+	CComboBox m_cbBlobColor;
 	SVBlobAnalyzeFeatureListBoxClass	m_lbSelectedFeatures;
 	SVBlobAnalyzeFeatureListBoxClass	m_lbAvailableFeatures;
 	CString	msvSortFeatureEdt;
@@ -96,6 +98,7 @@ public:
 
 	CString script;
 	CString alias;
+	bool    m_isBlackBlobs;
 
 protected:
 	SVIPDoc* m_pIPDoc;
@@ -109,7 +112,19 @@ protected:
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVBlobAnalyzerDialog.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVBlobAnalyzerDialog.h_v  $
+ * 
+ *    Rev 1.1   12 Nov 2014 07:03:38   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  938
+ * SCR Title:  Add Black Blob Mode to Blob Analyzer (SVO-336)
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   add blob color combobox and method OnBlobColor
+ * add m_isBlackBlobs
+ * move parameter init from Constructor body to header
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 09:43:40   bWalter
  * Project:  SVObserver
