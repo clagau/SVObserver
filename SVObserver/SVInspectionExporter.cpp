@@ -5,8 +5,8 @@
 //* .Module Name     : SVInspectionExporter
 //* .File Name       : $Workfile:   SVInspectionExporter.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.3  $
-//* .Check In Date   : $Date:   24 Oct 2014 11:35:58  $
+//* .Current Version : $Revision:   1.4  $
+//* .Check In Date   : $Date:   13 Nov 2014 09:14:10  $
 //******************************************************************************
 
 #pragma region Includes
@@ -256,7 +256,7 @@ HRESULT SVInspectionExporter::Export(const SVString& filename, const SVString& i
 			dstZipFile += scDependentsZipExt;
 
 			std::ofstream os;
-			os.open( dstXmlFile.c_str(), std::ofstream::binary );
+			os.open( dstXmlFile.c_str() );
 			if (os.is_open())
 			{
 				SVObjectXMLWriter writer(os);
@@ -303,6 +303,16 @@ HRESULT SVInspectionExporter::Export(const SVString& filename, const SVString& i
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVInspectionExporter.cpp_v  $
+ * 
+ *    Rev 1.4   13 Nov 2014 09:14:10   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  942
+ * SCR Title:  Create new Custom2 Filter SVO-324 SVO-67 SVO-74
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Changed file stream to text format for the XML output
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   24 Oct 2014 11:35:58   gramseier
  * Project:  SVObserver

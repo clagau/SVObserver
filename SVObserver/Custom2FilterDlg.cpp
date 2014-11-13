@@ -5,8 +5,8 @@
 //* .Module Name     : Custom2 Filter dialog
 //* .File Name       : $Workfile:   Custom2FilterDlg.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   05 Nov 2014 05:05:08  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   13 Nov 2014 09:14:10  $
 //******************************************************************************
 
 #pragma region Includes
@@ -504,7 +504,7 @@ void Custom2FilterDlg::OnBnClickedExportFilter()
 		{
 
 			std::ofstream FileStream;
-			FileStream.open( FileDlg.GetPathName(), std::ofstream::binary );
+			FileStream.open( FileDlg.GetPathName() );
 			if( FileStream.is_open() )
 			{
 				SVObjectXMLWriter XmlWriter( FileStream );
@@ -1061,6 +1061,16 @@ bool Custom2FilterDlg::doesControlHaveFocus( UINT ControlID ) const
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\Custom2FilterDlg.cpp_v  $
+ * 
+ *    Rev 1.2   13 Nov 2014 09:14:10   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  942
+ * SCR Title:  Create new Custom2 Filter SVO-324 SVO-67 SVO-74
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Changed file stream to text format for the XML output
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   05 Nov 2014 05:05:08   gramseier
  * Project:  SVObserver

@@ -8,8 +8,8 @@
 //* .Module Name     : XMLWriter
 //* .File Name       : $Workfile:   XMLWriter.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   24 Oct 2014 12:00:08  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   13 Nov 2014 08:58:44  $
 //******************************************************************************
 
 /* 
@@ -111,9 +111,9 @@ namespace xml
 			{
 				wr.elements.pop();
 				if (tagopen)
-					wr.puts("/>\r\n");
+					wr.puts("/>\n");
 				else
-					wr.puts("</").puts(name).puts(">\r\n");
+					wr.puts("</").puts(name).puts(">\n");
 			}
 		}
 
@@ -204,7 +204,7 @@ namespace xml
 			if (!wr.elements.empty() && wr.elements.top()->tagopen)
 			{
 				if(NewLine)
-					wr.puts(">\r\n");
+					wr.puts(">\n");
 				else
 					wr.putc('>');
 
@@ -221,6 +221,16 @@ namespace xml
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVUtilityLibrary\XMLWriter.h_v  $
+ * 
+ *    Rev 1.2   13 Nov 2014 08:58:44   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  942
+ * SCR Title:  Create new Custom2 Filter SVO-324 SVO-67 SVO-74
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Changed EOL from \r\n to \n as the Text file format adds the \r automatically
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   24 Oct 2014 12:00:08   gramseier
  * Project:  SVObserver
