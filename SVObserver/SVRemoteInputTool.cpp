@@ -5,8 +5,8 @@
 //* .Module Name     : SVRemoteInputTool
 //* .File Name       : $Workfile:   SVRemoteInputTool.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.3  $
-//* .Check In Date   : $Date:   15 May 2014 12:40:04  $
+//* .Current Version : $Revision:   1.4  $
+//* .Check In Date   : $Date:   13 Nov 2014 10:10:56  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -145,7 +145,7 @@ HRESULT SVRemoteInputTool::ProcessNotifyData( SVObjectCommandDataJsonPtr& p_rDat
 			{
 				SVCommandTemplatePtr l_CommandPtr = new SVCommandQueueElement( GetUniqueObjectID(), p_rDataPtr );
 
-				l_Status = SVObjectManagerClass::Instance().SubmitCommand( l_pInspection->GetUniqueObjectID(), l_CommandPtr );
+				l_Status = SVObjectManagerClass::Instance().SubmitCommand( *l_pInspection, l_CommandPtr );
 
 				if( l_Status != S_OK )
 				{
@@ -566,6 +566,16 @@ bool SVRemoteInputTool::SVDataElement::operator<( const SVDataElement& p_rObject
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVRemoteInputTool.cpp_v  $
+ * 
+ *    Rev 1.4   13 Nov 2014 10:10:56   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  932
+ * SCR Title:  Clean up GetInspectionItems and SVCommandInspectionGetItemsPtr (SVO-150)
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   In method ProcessNotifyData fit SubmitCommand to new signature.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   15 May 2014 12:40:04   tbair
  * Project:  SVObserver

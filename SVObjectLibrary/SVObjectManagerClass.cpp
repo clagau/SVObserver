@@ -5,8 +5,8 @@
 //* .Module Name     : SVObjectManager
 //* .File Name       : $Workfile:   SVObjectManagerClass.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.5  $
-//* .Check In Date   : $Date:   12 Aug 2014 12:42:48  $
+//* .Current Version : $Revision:   1.6  $
+//* .Check In Date   : $Date:   13 Nov 2014 10:01:18  $
 //******************************************************************************
 
 #pragma region Includes
@@ -658,29 +658,28 @@ SVString SVObjectManagerClass::GetCompleteObjectName( const SVGUID& RGuid )
 
 HRESULT SVObjectManagerClass::SubmitCommand( const SVGUID& rObjectID, const SVCommandTemplatePtr& rCommandPtr )
 {
-	HRESULT l_Status = S_OK;
-
+	HRESULT hRet = E_FAIL;
 	SVObjectClass* l_pObject = GetObject( rObjectID );
 
-	if( l_pObject != NULL )
+	if( nullptr != l_pObject )
 	{
-		SVObjectSubmitCommandFacade* l_pCommandTarget = dynamic_cast< SVObjectSubmitCommandFacade* >( l_pObject );
-
-		if( l_pCommandTarget != NULL )
-		{
-			l_Status = l_pCommandTarget->SubmitCommand( rCommandPtr );
-		}
-		else
-		{
-			l_Status = E_FAIL;
-		}
-	}
-	else
-	{
-		l_Status = E_FAIL;
+		hRet = SubmitCommand( *l_pObject, rCommandPtr );
 	}
 
-	return l_Status;
+	return hRet;
+}
+
+HRESULT SVObjectManagerClass::SubmitCommand( SVObjectClass& rObject, const SVCommandTemplatePtr& rCommandPtr )
+{
+	HRESULT hRet = E_FAIL;
+	SVObjectSubmitCommandFacade* l_pCommandTarget = dynamic_cast< SVObjectSubmitCommandFacade* >( &rObject );
+
+	if( nullptr != l_pCommandTarget )
+	{
+		hRet = l_pCommandTarget->SubmitCommand( rCommandPtr );
+	}
+
+	return hRet;
 }
 
 HRESULT SVObjectManagerClass::InsertObserver( SVObserverNotificationFunctorPtr p_FunctorPtr, long& rCookie )
@@ -1926,6 +1925,16 @@ HRESULT SVObjectManagerClass::GetObservers( const SVString& rSubjectDataName, co
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObjectLibrary\SVObjectManagerClass.cpp_v  $
+ * 
+ *    Rev 1.6   13 Nov 2014 10:01:18   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  932
+ * SCR Title:  Clean up GetInspectionItems and SVCommandInspectionGetItemsPtr (SVO-150)
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   add second method SubmitCommand which use SVObjectClass instead of SVGUID
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.5   12 Aug 2014 12:42:48   gramseier
  * Project:  SVObserver

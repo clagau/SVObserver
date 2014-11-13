@@ -5,8 +5,8 @@
 //* .Module Name     : SVConfigurationObject
 //* .File Name       : $Workfile:   SVConfigurationObject.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.31  $
-//* .Check In Date   : $Date:   29 Aug 2014 17:49:04  $
+//* .Current Version : $Revision:   1.32  $
+//* .Check In Date   : $Date:   13 Nov 2014 10:10:12  $
 //******************************************************************************
 
 #pragma region Includes
@@ -4575,9 +4575,8 @@ HRESULT SVConfigurationObject::SetMode( unsigned long p_Mode )
 
 HRESULT SVConfigurationObject::GetInspectionItems( const SVNameSet& p_rNames, SVNameStorageResultMap& p_rItems ) const
 {
-	typedef std::set< SVString > SVFullNameSet;
 	typedef std::map< SVString, SVInspectionProcess* > SVInspectionMap;
-	typedef std::map< SVString, SVFullNameSet > SVInspectionNameItemNameMap;
+	typedef std::map< SVString, SVCommandInspectionGetItems::SVNameObjectSet > SVInspectionNameItemNameMap;
 	typedef SVObjectAsynchronousCommandTemplate< SVCommandInspectionGetItemsPtr > SVAsyncCommand;
 	typedef std::deque< SVAsyncCommand > SVAsyncCommandDeque;
 
@@ -4601,22 +4600,23 @@ HRESULT SVConfigurationObject::GetInspectionItems( const SVNameSet& p_rNames, SV
 				SVObjectReference ref;
 				SVObjectManagerClass::Instance().GetObjectByDottedName( l_Info.GetObjectArrayName( 0 ), ref );
 
-				if( ref.Object() != NULL )
+				if( nullptr != ref.Object() )
 				{
-					SVInspectionProcess* l_pInsection = NULL;
+					SVInspectionProcess* l_pInsection = nullptr;
 
 					GetInspectionObject( l_Info.GetObjectArrayName( 1 ).c_str(), &l_pInsection );
 
-					if( l_pInsection != NULL )
+					if( nullptr != l_pInsection )
 					{
 						l_Inspections[ l_pInsection->GetName() ] = l_pInsection;
-						l_InspectionItems[ l_pInsection->GetName() ].insert( *l_Iter );
+						SVCommandInspectionGetItems::SVFullNameObjectPair newPair(*l_Iter, ref);
+						l_InspectionItems[ l_pInsection->GetName() ].insert(newPair);
 					}
 					else
 					{
 						p_rItems[ l_Iter->c_str() ] = SVStorageResult( SVStorage(), SVMSG_ONE_OR_MORE_REQUESTED_OBJECTS_DO_NOT_EXIST, 0 );
 
-						if( l_Status == S_OK )
+						if( S_OK == l_Status )
 						{
 							l_Status = SVMSG_NOT_ALL_LIST_ITEMS_PROCESSED;
 						}
@@ -4626,7 +4626,7 @@ HRESULT SVConfigurationObject::GetInspectionItems( const SVNameSet& p_rNames, SV
 				{
 					p_rItems[ l_Iter->c_str() ] = SVStorageResult( SVStorage(), SVMSG_ONE_OR_MORE_INSPECTIONS_DO_NOT_EXIST, 0 );
 
-					if( l_Status == S_OK )
+					if( S_OK == l_Status )
 					{
 						l_Status = SVMSG_NOT_ALL_LIST_ITEMS_PROCESSED;
 					}
@@ -4636,7 +4636,7 @@ HRESULT SVConfigurationObject::GetInspectionItems( const SVNameSet& p_rNames, SV
 			{
 				p_rItems[ l_Iter->c_str() ] = SVStorageResult( SVStorage(), SVMSG_ONE_OR_MORE_REQUESTED_OBJECTS_DO_NOT_EXIST, 0 );
 
-				if( l_Status == S_OK )
+				if( S_OK == l_Status )
 				{
 					l_Status = SVMSG_NOT_ALL_LIST_ITEMS_PROCESSED;
 				}
@@ -4649,10 +4649,10 @@ HRESULT SVConfigurationObject::GetInspectionItems( const SVNameSet& p_rNames, SV
 		{
 			SVInspectionMap::iterator l_ProcessIter = l_Inspections.find( l_InspectionIter->first );
 
-			if( l_ProcessIter != l_Inspections.end() && l_ProcessIter->second != NULL )
+			if( l_ProcessIter != l_Inspections.end() && nullptr != l_ProcessIter->second )
 			{
-				SVCommandInspectionGetItemsPtr l_DataPtr = new SVCommandInspectionGetItems( l_ProcessIter->second->GetUniqueObjectID(), l_InspectionIter->second );
-				SVObjectAsynchronousCommandTemplate< SVCommandInspectionGetItemsPtr > l_Command( l_ProcessIter->second->GetUniqueObjectID(), l_DataPtr );
+				SVCommandInspectionGetItemsPtr l_DataPtr = new SVCommandInspectionGetItems( *l_ProcessIter->second, l_InspectionIter->second );
+				SVObjectAsynchronousCommandTemplate< SVCommandInspectionGetItemsPtr > l_Command( *l_ProcessIter->second, l_DataPtr );
 
 				HRESULT l_CommandStatus = l_Command.SubmitCommand();
 
@@ -4660,7 +4660,7 @@ HRESULT SVConfigurationObject::GetInspectionItems( const SVNameSet& p_rNames, SV
 				{
 					l_AsyncCommands.push_back( l_Command );
 
-					if( l_Status == S_OK )
+					if( S_OK == l_Status )
 					{
 						l_Status = l_CommandStatus;
 					}
@@ -4698,11 +4698,11 @@ HRESULT SVConfigurationObject::GetInspectionItems( const SVNameSet& p_rNames, SV
 
 					if( SUCCEEDED( l_CommandStatus ) )
 					{
-						if( l_CommandStatus == S_OK )
+						if( S_OK == l_CommandStatus )
 						{
 							p_rItems.insert( l_AsyncIter->GetCommandPtr()->GetResultItems().begin(), l_AsyncIter->GetCommandPtr()->GetResultItems().end() );
 
-							if( l_Status == S_OK )
+							if( S_OK == l_Status )
 							{
 								l_Status = l_CommandStatus;
 							}
@@ -5477,6 +5477,16 @@ HRESULT SVConfigurationObject::LoadMonitoredObjectList( SVTreeType& rTree, SVTre
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVConfigurationObject.cpp_v  $
+ * 
+ *    Rev 1.32   13 Nov 2014 10:10:12   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  932
+ * SCR Title:  Clean up GetInspectionItems and SVCommandInspectionGetItemsPtr (SVO-150)
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   use inspection-object instead of ID and SVObjectClass instead of SVGUID in method GetInspectionItems
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.31   29 Aug 2014 17:49:04   jHanebach
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : SVCommandInspectionGetItems
 //* .File Name       : $Workfile:   SVCommandInspectionGetItems.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.3  $
-//* .Check In Date   : $Date:   17 Mar 2014 15:19:06  $
+//* .Current Version : $Revision:   1.4  $
+//* .Check In Date   : $Date:   13 Nov 2014 10:09:08  $
 //******************************************************************************
 
 #pragma region Includes
@@ -30,17 +30,12 @@
 
 #pragma region Constructor
 SVCommandInspectionGetItems::SVCommandInspectionGetItems()
-: m_InspectionId(), m_ItemNames(), m_ResultItems()
+: m_Inspection(nullptr), m_ItemNames(), m_ResultItems()
 {
 }
 
-SVCommandInspectionGetItems::SVCommandInspectionGetItems(const SVCommandInspectionGetItems& p_rObject)
-: m_InspectionId( p_rObject.m_InspectionId ), m_ItemNames( p_rObject.m_ItemNames ), m_ResultItems( p_rObject.m_ResultItems )
-{
-}
-
-SVCommandInspectionGetItems::SVCommandInspectionGetItems(const SVGUID& p_rInspectionId, const SVItemNameSet& p_rItemNames)
-: m_InspectionId( p_rInspectionId ), m_ItemNames( p_rItemNames ), m_ResultItems()
+SVCommandInspectionGetItems::SVCommandInspectionGetItems(const SVInspectionProcess& p_rInspection, const SVNameObjectSet& p_rItemNames)
+: m_Inspection( &p_rInspection ), m_ItemNames( p_rItemNames ), m_ResultItems()
 {
 }
 
@@ -53,47 +48,31 @@ HRESULT SVCommandInspectionGetItems::Execute()
 {
 	HRESULT l_Status = S_OK;
 
-	SVObjectClass* l_pObject = SVObjectManagerClass::Instance().GetObject( GetInspectionId() );
-	SVInspectionProcess* l_pInspection = dynamic_cast< SVInspectionProcess* >( l_pObject );
-
-	if( l_pInspection != NULL )
+	if( nullptr != m_Inspection )
 	{
-		SVProductInfoStruct l_Product = l_pInspection->LastProductGet( SV_OTHER );
+		SVProductInfoStruct l_Product = m_Inspection->LastProductGet( SV_OTHER );
 		unsigned long l_TriggerCount = l_Product.ProcessCount();
 
-		for( SVItemNameSet::const_iterator l_Iter = m_ItemNames.begin(); SUCCEEDED( l_Status ) && l_Iter != m_ItemNames.end(); ++l_Iter )
+		for( SVNameObjectSet::const_iterator l_Iter = m_ItemNames.begin(); SUCCEEDED( l_Status ) && l_Iter != m_ItemNames.end(); ++l_Iter )
 		{
-			SVObjectNameInfo l_Info;
+			SVObjectReference ref = l_Iter->second;
 
-			SVObjectNameInfo::ParseObjectName( l_Info, *l_Iter );
-
-			if( l_Info.m_NameArray[ 0 ] == "Inspections" )
+			if( nullptr != ref.Object() )
 			{
-				SVObjectReference ref;
-	
-				SVObjectManagerClass::Instance().GetObjectByDottedName( l_Info.GetObjectArrayName( 0 ), ref );
+				HRESULT l_TempStatus = S_OK;
 
-				if( ref.Object() != NULL )
+				if( nullptr != dynamic_cast< SVValueObjectClass* >( ref.Object() ) )
 				{
-					HRESULT l_TempStatus = S_OK;
-
-					if( dynamic_cast< SVValueObjectClass* >( ref.Object() ) != NULL )
-					{
-						l_TempStatus = UpdateResultsWithValueData( *l_Iter, ref, l_TriggerCount );
-					}
-					else
-					{
-						l_TempStatus = UpdateResultsWithImageData( *l_Iter, ref, l_TriggerCount );
-					}
-
-					if( l_Status == S_OK )
-					{
-						l_Status = l_TempStatus;
-					}
+					l_TempStatus = UpdateResultsWithValueData( l_Iter->first, ref, l_TriggerCount );
 				}
-				else if( l_Status == S_OK )
+				else
 				{
-					l_Status = SVMSG_NOT_ALL_LIST_ITEMS_PROCESSED;
+					l_TempStatus = UpdateResultsWithImageData( l_Iter->first, ref, l_TriggerCount );
+				}
+
+				if( l_Status == S_OK )
+				{
+					l_Status = l_TempStatus;
 				}
 			}
 			else if( l_Status == S_OK )
@@ -114,7 +93,7 @@ bool SVCommandInspectionGetItems::empty() const
 {
 	bool l_Status = true;
 
-	l_Status = l_Status && ( m_InspectionId.empty() );
+	l_Status = l_Status && ( nullptr == m_Inspection );
 	l_Status = l_Status && ( m_ItemNames.empty() );
 	l_Status = l_Status && ( m_ResultItems.empty() );
 
@@ -123,26 +102,21 @@ bool SVCommandInspectionGetItems::empty() const
 
 void SVCommandInspectionGetItems::clear()
 {
-	m_InspectionId.clear();
+	m_Inspection = nullptr;
 	m_ItemNames.clear();
 	m_ResultItems.clear();
 }
 
-const SVGUID& SVCommandInspectionGetItems::GetInspectionId() const
-{
-	return m_InspectionId;
-}
-
-const SVCommandInspectionGetItems::SVItemNameSet& SVCommandInspectionGetItems::GetItemNames() const
+const SVCommandInspectionGetItems::SVNameObjectSet& SVCommandInspectionGetItems::GetItemNames() const
 {
 	return m_ItemNames;
 }
 
-HRESULT SVCommandInspectionGetItems::SetCommandData(const SVGUID& p_rInspectionId, const SVItemNameSet& p_rItemNames)
+HRESULT SVCommandInspectionGetItems::SetCommandData(const SVInspectionProcess& p_rInspection, const SVNameObjectSet& p_rItemNames)
 {
 	HRESULT l_Status = S_OK;
 
-	m_InspectionId = p_rInspectionId;
+	m_Inspection = &p_rInspection;
 	m_ItemNames = p_rItemNames;
 
 	m_ResultItems.clear();
@@ -280,6 +254,16 @@ HRESULT SVCommandInspectionGetItems::UpdateResultsWithValueData( const SVString&
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVCommandInspectionGetItems.cpp_v  $
+ * 
+ *    Rev 1.4   13 Nov 2014 10:09:08   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  932
+ * SCR Title:  Clean up GetInspectionItems and SVCommandInspectionGetItemsPtr (SVO-150)
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   use inspection-object instead of ID
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   17 Mar 2014 15:19:06   bwalter
  * Project:  SVObserver

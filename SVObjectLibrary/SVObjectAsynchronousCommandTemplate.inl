@@ -5,8 +5,8 @@
 //* .Module Name     : SVObjectAsynchronousCommandTemplate
 //* .File Name       : $Workfile:   SVObjectAsynchronousCommandTemplate.inl  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   22 Apr 2013 16:38:20  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   13 Nov 2014 10:00:04  $
 //******************************************************************************
 
 #ifndef SVOBJECTASYNCHRONOUSCOMMANDTEMPLATE_INL
@@ -19,19 +19,19 @@
 
 template< typename SVCommandPtr >
 SVObjectAsynchronousCommandTemplate< SVCommandPtr >::SVObjectAsynchronousCommandTemplate()
-: m_ObjectID(), m_CommandPtr(), m_WrapperPtr()
+: m_Object(nullptr), m_CommandPtr(), m_WrapperPtr()
 {
 }
 
 template< typename SVCommandPtr >
 SVObjectAsynchronousCommandTemplate< SVCommandPtr >::SVObjectAsynchronousCommandTemplate( const SVObjectAsynchronousCommandTemplate& p_rObject )
-: m_ObjectID( p_rObject.m_ObjectID ), m_CommandPtr( p_rObject.m_CommandPtr ), m_WrapperPtr( p_rObject.m_WrapperPtr )
+: m_Object( p_rObject.m_Object ), m_CommandPtr( p_rObject.m_CommandPtr ), m_WrapperPtr( p_rObject.m_WrapperPtr )
 {
 }
 
 template< typename SVCommandPtr >
-SVObjectAsynchronousCommandTemplate< SVCommandPtr >::SVObjectAsynchronousCommandTemplate( const SVGUID& p_rObjectID, const SVCommandPtr& p_rCommandPtr )
-: m_ObjectID( p_rObjectID ), m_CommandPtr( p_rCommandPtr ), m_WrapperPtr()
+SVObjectAsynchronousCommandTemplate< SVCommandPtr >::SVObjectAsynchronousCommandTemplate( SVObjectClass& p_rObject, const SVCommandPtr& p_rCommandPtr )
+: m_Object( &p_rObject ), m_CommandPtr( p_rCommandPtr ), m_WrapperPtr()
 {
 }
 
@@ -45,7 +45,7 @@ HRESULT SVObjectAsynchronousCommandTemplate< SVCommandPtr >::SubmitCommand()
 {
 	HRESULT l_Status = S_OK;
 
-	if( !( m_ObjectID.empty() ) && !( m_CommandPtr.empty() ) )
+	if( nullptr != m_Object && !( m_CommandPtr.empty() ) )
 	{
 		m_WrapperPtr = new SVObjectCommandWrapperTemplate< SVCommandPtr >( m_CommandPtr );
 
@@ -55,7 +55,7 @@ HRESULT SVObjectAsynchronousCommandTemplate< SVCommandPtr >::SubmitCommand()
 
 			if( !( l_CommandPtr.empty() ) )
 			{
-				l_Status = SVObjectManagerClass::Instance().SubmitCommand( m_ObjectID, l_CommandPtr );
+				l_Status = SVObjectManagerClass::Instance().SubmitCommand( *m_Object, l_CommandPtr );
 			}
 			else
 			{
@@ -126,7 +126,17 @@ const SVCommandPtr& SVObjectAsynchronousCommandTemplate< SVCommandPtr >::GetComm
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObjectLibrary\SVObjectAsynchronousCommandTemplate.inl_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObjectLibrary\SVObjectAsynchronousCommandTemplate.inl_v  $
+ * 
+ *    Rev 1.1   13 Nov 2014 10:00:04   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  932
+ * SCR Title:  Clean up GetInspectionItems and SVCommandInspectionGetItemsPtr (SVO-150)
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   set SVObjectClass instead of SVGUID
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   22 Apr 2013 16:38:20   bWalter
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : SVObjectManagerClass
 //* .File Name       : $Workfile:   SVObjectManagerClass.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.4  $
-//* .Check In Date   : $Date:   17 Jul 2014 15:14:02  $
+//* .Current Version : $Revision:   1.5  $
+//* .Check In Date   : $Date:   13 Nov 2014 10:01:18  $
 //******************************************************************************
 
 #ifndef SVOBJECTMANAGERCLASS_H
@@ -112,6 +112,7 @@ public:
 	SVString GetCompleteObjectName( const SVGUID& RGuid );
 
 	HRESULT SubmitCommand( const SVGUID& rObjectID, const SVCommandTemplatePtr& rCommandPtr );
+	HRESULT SubmitCommand( SVObjectClass& rObject, const SVCommandTemplatePtr& rCommandPtr );
 
 	template< typename SVNotifyData >
 	HRESULT Notify( const SVGUID& rObjectID, SVNotifyData& rData );
@@ -315,6 +316,16 @@ private:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObjectLibrary\SVObjectManagerClass.h_v  $
+ * 
+ *    Rev 1.5   13 Nov 2014 10:01:18   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  932
+ * SCR Title:  Clean up GetInspectionItems and SVCommandInspectionGetItemsPtr (SVO-150)
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   add second method SubmitCommand which use SVObjectClass instead of SVGUID
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.4   17 Jul 2014 15:14:02   gramseier
  * Project:  SVObserver

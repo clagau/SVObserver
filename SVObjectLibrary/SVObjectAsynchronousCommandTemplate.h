@@ -5,8 +5,8 @@
 //* .Module Name     : SVObjectAsynchronousCommandTemplate
 //* .File Name       : $Workfile:   SVObjectAsynchronousCommandTemplate.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   22 Apr 2013 16:38:14  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   13 Nov 2014 10:00:04  $
 //******************************************************************************
 
 #ifndef SVOBJECTASYNCHRONOUSCOMMANDTEMPLATE_H
@@ -20,7 +20,7 @@ class SVObjectAsynchronousCommandTemplate
 public:
 	SVObjectAsynchronousCommandTemplate();
 	SVObjectAsynchronousCommandTemplate( const SVObjectAsynchronousCommandTemplate& p_rObject );
-	SVObjectAsynchronousCommandTemplate( const SVGUID& p_rObjectID, const SVCommandPtr& p_rCommandPtr );
+	SVObjectAsynchronousCommandTemplate( SVObjectClass& p_rObject, const SVCommandPtr& p_rCommandPtr );
 
 	virtual ~SVObjectAsynchronousCommandTemplate();
 
@@ -33,7 +33,7 @@ public:
 private:
 	typedef typename SVObjectCommandWrapperTemplate< SVCommandPtr >::SVObjectCommandWrapperPtr SVObjectCommandWrapperPtr;
 
-	SVGUID m_ObjectID;
+	SVObjectClass *m_Object;
 	SVCommandPtr m_CommandPtr;
 	SVObjectCommandWrapperPtr m_WrapperPtr;
 
@@ -47,7 +47,17 @@ private:
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObjectLibrary\SVObjectAsynchronousCommandTemplate.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObjectLibrary\SVObjectAsynchronousCommandTemplate.h_v  $
+ * 
+ *    Rev 1.1   13 Nov 2014 10:00:04   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  932
+ * SCR Title:  Clean up GetInspectionItems and SVCommandInspectionGetItemsPtr (SVO-150)
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   set SVObjectClass instead of SVGUID
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   22 Apr 2013 16:38:14   bWalter
  * Project:  SVObserver
