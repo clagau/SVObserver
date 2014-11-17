@@ -5,8 +5,8 @@
 //* .Module Name     : Custom2 Filter dialog
 //* .File Name       : $Workfile:   Custom2FilterDlg.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   13 Nov 2014 09:14:10  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   17 Nov 2014 09:15:48  $
 //******************************************************************************
 
 #pragma region Includes
@@ -158,6 +158,7 @@ void Custom2FilterDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_SUM_SELECTOR, m_SumSelectorCtrl);
 	DDX_Text(pDX, IDC_KERNEL_SUM, m_KernelSum);
 	DDX_Text(pDX, IDC_NORM_FACTOR, m_NormalizationFactor);
+	DDV_MinMaxLong(pDX, m_NormalizationFactor, 1, 99999999);
 	DDX_Text(pDX, IDC_NORM_RESULT, m_NormilizationResult);
 	DDX_Check(pDX, IDC_ABSOLUTE_VALUE, m_AbsoluteValue);
 	DDX_Check(pDX, IDC_CLIPPING_ON, m_ClippingEnabled);
@@ -214,76 +215,14 @@ BOOL Custom2FilterDlg::PreTranslateMessage(MSG* pMsg)
 
 	if( doesControlHaveFocus( IDC_GRID ) )
 	{
-		bool isNumeric = '0' <= pMsg->wParam && '9' >= pMsg->wParam;
-		//Minus sign only when it is the first character
-		if( !m_GridEditMode && '-' == pMsg->wParam )
-		{
-			isNumeric = true;
-		}
 
 		if(	WM_CHAR == pMsg->message )
 		{
-			if( isNumeric )
-			{
-				if( !m_GridEditMode )
-				{
-					m_EditCell.Empty();
-					m_GridEditMode = true;
-				}
-
-				int MaxCellCharacters( MaxCellCharSize );
-				//Check if cell value not to large
-				if( !m_EditCell.IsEmpty() && '-' == m_EditCell[0] )
-				{
-					MaxCellCharacters++;
-				}
-
-				if( m_EditCell.GetLength() < MaxCellCharacters )
-				{
-					m_EditCell += static_cast<TCHAR> (pMsg->wParam);
-					updateGridSelection( m_EditCell );
-					UpdateData( FALSE );
-					Result = TRUE;
-				}
-				if( m_EditCell.GetLength() >= MaxCellCharacters )
-				{
-					m_GridEditMode = false;
-				}
-			}
-			else
-			{
-				m_GridEditMode = false;
-				checkCellsValid();
-			}
+			Result = inputGridCtrlCharacter( pMsg->wParam );
 		}
 		else if( WM_KEYDOWN == pMsg->message )
 		{
-			bool hasPositionChanged = VK_PRIOR <= pMsg->wParam && VK_DOWN >= pMsg->wParam || VK_RETURN == pMsg->wParam;
-			if( hasPositionChanged )
-			{
-				m_GridEditMode = false;
-				checkCellsValid();
-			}
-
-			if( VK_TAB == pMsg->wParam )
-			{
-				bool ShiftKeyPressed( false );
-				m_GridEditMode = false;
-				checkCellsValid();
-
-				ShiftKeyPressed = 0 != HIBYTE( GetKeyState( VK_SHIFT ) );
-				SvGcl::CCellID Cell = m_Grid.GetFocusCell();
-				if( m_KernelHeight == Cell.row && m_KernelWidth == Cell.col && !ShiftKeyPressed)
-				{
-					GetDlgItem( IDC_IMPORT_FILTER )->SetFocus();
-					Result = TRUE;
-				}
-				else if( 1 == Cell.row && 1 == Cell.col && ShiftKeyPressed)
-				{
-					GetDlgItem( IDC_CLIPPING_ON )->SetFocus();
-					Result = TRUE;
-				}
-			}
+			Result = inputGridCtrlKey( pMsg->wParam );
 		}
 	}
 
@@ -332,11 +271,6 @@ void Custom2FilterDlg::OnBnClickedApplySum()
 void Custom2FilterDlg::OnEnChangeNormilizationFactor()
 {
 	UpdateData( TRUE );
-	if( 0 == m_NormalizationFactor )
-	{
-		AfxMessageBox( DataInvalidNormalizationFactor );
-		m_NormalizationFactor = 1;
-	}
 	calculateNormalizationResult();
 	UpdateData( FALSE );
 }
@@ -379,19 +313,13 @@ void Custom2FilterDlg::OnEnSetfocusEditCell()
 		{
 			CellFocus.row = 1;
 			CellFocus.col = 1;
-			CellSelection.SetMinRow( 1 );
-			CellSelection.SetMaxRow( 1 );
-			CellSelection.SetMinCol( 1 );
-			CellSelection.SetMaxCol( 1 );
+			CellSelection.Set( 1, 1, 1, 1 );
 		}
 		else
 		{
 			CellFocus.row = m_KernelHeight;
 			CellFocus.col = m_KernelWidth;
-			CellSelection.SetMinRow( m_KernelHeight );
-			CellSelection.SetMaxRow( m_KernelHeight );
-			CellSelection.SetMinCol( m_KernelWidth );
-			CellSelection.SetMaxCol( m_KernelWidth );
+			CellSelection.Set( m_KernelHeight, m_KernelWidth, m_KernelHeight, m_KernelWidth );
 		}
 		m_Grid.SetFocus();
 		m_Grid.SetFocusCell( CellFocus );
@@ -474,6 +402,11 @@ void Custom2FilterDlg::OnBnClickedImportFilter()
 				}
 			}
 			::CoUninitialize();
+			//Set the focus and visibility to the first cell
+			m_Grid.SetFocusCell( 1, 1 );
+			m_Grid.SetSelectedRange( 1, 1, 1, 1 );
+			m_Grid.EnsureVisible( 1, 1 );
+			m_Grid.Refresh();
 			if( S_OK != Result )
 			{
 				Message.Format( ImportFailed, FileDlg.GetPathName() );
@@ -571,9 +504,11 @@ void Custom2FilterDlg::OnBnClickedOk()
 {
 	UpdateData( TRUE );
 
-	SetInspectionData();
-
-	CDialog::OnOK();
+	if( 0 < m_NormalizationFactor )
+	{
+		SetInspectionData();
+		CDialog::OnOK();
+	}
 }
 
 void Custom2FilterDlg::initializeFilter()
@@ -596,6 +531,107 @@ void Custom2FilterDlg::initializeFilter()
 Custom2Filter* Custom2FilterDlg::getCustom2Filter()
 {
 	return dynamic_cast<Custom2Filter*>( GetTaskObject() );
+}
+
+BOOL Custom2FilterDlg::inputGridCtrlCharacter( WPARAM Character )
+{
+	BOOL Result( FALSE );
+
+	bool isNumeric = '0' <= Character && '9' >= Character;
+	//Minus sign resets edit mode so that it will be the first character
+	if( '-' == Character )
+	{
+		isNumeric = true;
+		m_GridEditMode = false;
+	}
+	if( isNumeric )
+	{
+		if( !m_GridEditMode )
+		{
+			m_EditCell.Empty();
+			m_GridEditMode = true;
+		}
+
+		int MaxCellCharacters( MaxCellCharSize );
+		//Check if cell value not to large
+		if( !m_EditCell.IsEmpty() && '-' == m_EditCell[0] )
+		{
+			MaxCellCharacters++;
+		}
+
+		if( m_EditCell.GetLength() < MaxCellCharacters )
+		{
+			m_EditCell += static_cast<TCHAR> ( Character );
+			updateGridSelection( m_EditCell );
+			UpdateData( FALSE );
+			Result = TRUE;
+		}
+		if( m_EditCell.GetLength() >= MaxCellCharacters )
+		{
+			m_GridEditMode = false;
+		}
+	}
+	else
+	{
+		m_GridEditMode = false;
+		checkCellsValid();
+	}
+
+	return Result;
+}
+
+BOOL Custom2FilterDlg::inputGridCtrlKey( WPARAM Key )
+{
+	BOOL Result( FALSE );
+
+	bool hasPositionChanged = VK_PRIOR <= Key && VK_DOWN >= Key || VK_RETURN == Key;
+	if( hasPositionChanged )
+	{
+		m_GridEditMode = false;
+		checkCellsValid();
+	}
+
+	if( VK_TAB == Key )
+	{
+		bool ShiftKeyPressed( false );
+		m_GridEditMode = false;
+		checkCellsValid();
+
+		ShiftKeyPressed = 0 != HIBYTE( GetKeyState( VK_SHIFT ) );
+		SvGcl::CCellID Cell = m_Grid.GetFocusCell();
+		if( m_KernelHeight == Cell.row && m_KernelWidth == Cell.col && !ShiftKeyPressed)
+		{
+			GetDlgItem( IDC_IMPORT_FILTER )->SetFocus();
+			Result = TRUE;
+		}
+		else if( 1 == Cell.row && 1 == Cell.col && ShiftKeyPressed)
+		{
+			GetDlgItem( IDC_CLIPPING_ON )->SetFocus();
+			Result = TRUE;
+		}
+		else if( -1 == Cell.row && -1 == Cell.col )
+		{
+			SvGcl::CCellRange Selection = m_Grid.GetSelectedCellRange();
+			for( int i = Selection.GetMinRow(); i <= Selection.GetMaxRow(); i++ )
+			{
+				for( int j = Selection.GetMinCol(); j <= Selection.GetMaxCol(); j++ )
+				{
+					if( m_Grid.IsCellSelected( i, j ) )
+					{
+						m_Grid.SetFocusCell( i, j );
+						m_Grid.SetSelectedRange( i, j, i, j );
+						Result = TRUE;
+						//Have found fist selected cell so exit loops
+						i = Selection.GetMaxRow();
+						j = Selection.GetMaxCol();
+					}
+				}
+			}
+
+		}
+	}
+
+	return Result;
 }
 
 void Custom2FilterDlg::recalculateKernel( int Width, int Height )
@@ -806,6 +842,15 @@ void Custom2FilterDlg::addKernelSum()
 				break;
 			}
 		}
+	}
+	//If Sum is 0 then disable apply button
+	if(0 == m_KernelSum)
+	{
+		GetDlgItem( IDC_APPLY_SUM )->EnableWindow( FALSE );
+	}
+	else
+	{
+		GetDlgItem( IDC_APPLY_SUM )->EnableWindow( TRUE );
 	}
 	//When sum has changed recalculate the normalization result
 	calculateNormalizationResult();
@@ -1061,6 +1106,17 @@ bool Custom2FilterDlg::doesControlHaveFocus( UINT ControlID ) const
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\Custom2FilterDlg.cpp_v  $
+ * 
+ *    Rev 1.3   17 Nov 2014 09:15:48   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  942
+ * SCR Title:  Create new Custom2 Filter SVO-324 SVO-67 SVO-74
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Fixed: Refresh, limit and tab problems for the custom2 filter
+ * Added Method inputGridCtrlCharacter and inputGridCtrlKey
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   13 Nov 2014 09:14:10   gramseier
  * Project:  SVObserver

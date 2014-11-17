@@ -5,10 +5,10 @@
 //* .Module Name     : Custom2 Filter dialog
 //* .File Name       : $Workfile:   Custom2FilterDlg.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   24 Oct 2014 11:15:00  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   17 Nov 2014 09:11:14  $
 //* ----------------------------------------------------------------------------
-//* This class is the 
+//* This class is the dialog for the custom2 filter
 //******************************************************************************
 
 #pragma once
@@ -99,6 +99,20 @@ protected:
 	// Return: A pointer to the custom filter object 
 	//************************************
 	Custom2Filter* getCustom2Filter();
+
+	//************************************
+	// Description: This handles character input to the grid control
+	// Parameter: Character <in> The character to be input to the control
+	// Return: True when character has been handled 
+	//************************************
+	BOOL inputGridCtrlCharacter( WPARAM Character );
+
+	//************************************
+	// Description: This handles key input to the grid control
+	// Parameter: Key <in> The key to be input to the control
+	// Return: True when key has been handled 
+	//************************************
+	BOOL inputGridCtrlKey( WPARAM Character );
 
 	//************************************
 	// Description: The method recalculates the kernel with a new width and height
@@ -212,6 +226,16 @@ private:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\Custom2FilterDlg.h_v  $
+ * 
+ *    Rev 1.1   17 Nov 2014 09:11:14   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  942
+ * SCR Title:  Create new Custom2 Filter SVO-324 SVO-67 SVO-74
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Added Method inputGridCtrlCharacter and inputGridCtrlKey
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   24 Oct 2014 11:15:00   gramseier
  * Project:  SVObserver
