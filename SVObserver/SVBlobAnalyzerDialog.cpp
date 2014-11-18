@@ -5,8 +5,8 @@
 //* .Module Name     : SVBlobAnalyzerDialog
 //* .File Name       : $Workfile:   SVBlobAnalyzerDialog.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.6  $
-//* .Check In Date   : $Date:   18 Nov 2014 05:09:06  $
+//* .Current Version : $Revision:   1.7  $
+//* .Check In Date   : $Date:   18 Nov 2014 11:13:46  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -55,7 +55,7 @@ SVBlobAnalyzeFeatureDialogClass::SVBlobAnalyzeFeatureDialogClass(
 	SVIPDoc* p_pIPDoc, 
 	CWnd* pParent )
 	: CDialog( SVBlobAnalyzeFeatureDialogClass::IDD, pParent )
-	, m_colorBlobEnum(SV_BLOB_BLACK)
+	, m_colorBlobEnum(SV_BLOB_WHITE)
 	, m_pIPDoc( p_pIPDoc )
 	, m_pCurrentAnalyzer( pAnalyzer )
 {
@@ -630,6 +630,16 @@ void SVBlobAnalyzeFeatureDialogClass::OnButtonSetFeatureProperties()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVBlobAnalyzerDialog.cpp_v  $
+ * 
+ *    Rev 1.7   18 Nov 2014 11:13:46   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  938
+ * SCR Title:  Add Black Blob Mode to Blob Analyzer (SVO-336)
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   change default value of color blob to SV_BLOB_WHITE
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.6   18 Nov 2014 05:09:06   mziegler
  * Project:  SVObserver
