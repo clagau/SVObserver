@@ -5,8 +5,8 @@
 //* .Module Name     : SVBlobAnalyzer
 //* .File Name       : $Workfile:   SVBlobAnalyzer.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.6  $
-//* .Check In Date   : $Date:   12 Nov 2014 07:02:32  $
+//* .Current Version : $Revision:   1.7  $
+//* .Check In Date   : $Date:   18 Nov 2014 05:07:48  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -263,7 +263,7 @@ void SVBlobAnalyzerClass::init()
 		false, SVResetItemOwner );
 
 	RegisterEmbeddedObject(
-		&m_isBlackBlobValue,
+		&m_colorBlobEnumValue,
 		SVBlobIsBlackGuid,
 		IDS_BLACK_BLOBS,
 		false, SVResetItemOwner );
@@ -324,7 +324,8 @@ void SVBlobAnalyzerClass::init()
 
 	CreateArray();
 
-	m_isBlackBlobValue.SetDefaultValue(FALSE,FALSE);
+	m_colorBlobEnumValue.SetEnumTypes(g_strBlobColorEnums);
+	m_colorBlobEnumValue.SetDefaultValue(SV_BLOB_WHITE,FALSE);	
 	//set default values for the BlobFill value objects
 	m_bvoFillBlobs.SetDefaultValue(FALSE,TRUE);
 	m_evoBlobFillColor.SetEnumTypes(g_strBlobFillColorEnums);
@@ -1742,9 +1743,9 @@ HRESULT SVBlobAnalyzerClass::ResetObject()
 		SVMatroxBlobInterface::Set( msvResultBufferID, SVEBlobSaveRuns, static_cast<long>(SVValueDisable) );
 	}
 
-	BOOL isBlackBlobs;
-	m_isBlackBlobValue.GetValue( isBlackBlobs );
-	SVMatroxBlobInterface::SetForeground( msvResultBufferID, TRUE == isBlackBlobs );
+	long colorBlobEnum;
+	m_colorBlobEnumValue.GetValue( colorBlobEnum );
+	SVMatroxBlobInterface::SetForeground( msvResultBufferID, SV_BLOB_BLACK == colorBlobEnum );
 
 	CreateArray();
 
@@ -1858,6 +1859,17 @@ void SVBlobAnalyzerClass::addDefaultInputObjects( BOOL BCallBaseClass, SVInputIn
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVBlobAnalyzer.cpp_v  $
+ * 
+ *    Rev 1.7   18 Nov 2014 05:07:48   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  938
+ * SCR Title:  Add Black Blob Mode to Blob Analyzer (SVO-336)
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   Add enum SV_BLOB_COLOR_ENUM and g_strBlobColorEnums.
+ * Rename m_isBlackBlobValue into m_colorBlobEnumValue and change the type from bool-value to enum-value.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.6   12 Nov 2014 07:02:32   mziegler
  * Project:  SVObserver

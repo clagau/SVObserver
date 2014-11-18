@@ -5,8 +5,8 @@
 //* .Module Name     : SVBlobAnalyzer
 //* .File Name       : $Workfile:   SVBlobAnalyzer.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.4  $
-//* .Check In Date   : $Date:   12 Nov 2014 07:02:32  $
+//* .Current Version : $Revision:   1.5  $
+//* .Check In Date   : $Date:   18 Nov 2014 05:07:48  $
 //******************************************************************************
 
 #ifndef SVBLOBANALYZERCLASS__INCLUDED
@@ -106,6 +106,16 @@ struct SVBlobFeatureConstants
 	GUID*   pEmbeddedID;
 	int     NewStringResourceID;
 };
+
+enum SV_BLOB_COLOR_ENUM
+{
+	SV_BLOB_BLACK    = 0,
+	SV_BLOB_WHITE    = 1	
+};// end SV_BLOB_COLOR_ENUM
+
+// Add String for SVEnumerateValueObjectClass
+const LPCSTR g_strBlobColorEnums = 
+	_T( "Black=0,White=1" );
 
 enum SV_BLOB_FILL_COLOR_ENUM
 {
@@ -230,7 +240,7 @@ public:
 	SVMatroxBlobFeatureList              msvFeatureListID;
 	SVMatroxBlobResult                   msvResultBufferID;
 
-	SVBoolValueObjectClass       m_isBlackBlobValue;
+	SVEnumerateValueObjectClass  m_colorBlobEnumValue;
 
 	//new value objects for Fill Blob option
 	SVBoolValueObjectClass       m_bvoFillBlobs;
@@ -276,6 +286,17 @@ private:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVBlobAnalyzer.h_v  $
+ * 
+ *    Rev 1.5   18 Nov 2014 05:07:48   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  938
+ * SCR Title:  Add Black Blob Mode to Blob Analyzer (SVO-336)
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   Add enum SV_BLOB_COLOR_ENUM and g_strBlobColorEnums.
+ * Rename m_isBlackBlobValue into m_colorBlobEnumValue and change the type from bool-value to enum-value.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.4   12 Nov 2014 07:02:32   mziegler
  * Project:  SVObserver

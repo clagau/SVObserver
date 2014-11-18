@@ -5,8 +5,8 @@
 //* .Module Name     : SVBlobAnalyzerDialog
 //* .File Name       : $Workfile:   SVBlobAnalyzerDialog.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   12 Nov 2014 07:03:38  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   18 Nov 2014 05:09:04  $
 //******************************************************************************
 
 #ifndef __SVBLOBANALYZERDIALOG__INCLUDED
@@ -98,7 +98,7 @@ public:
 
 	CString script;
 	CString alias;
-	bool    m_isBlackBlobs;
+	long    m_colorBlobEnum;
 
 protected:
 	SVIPDoc* m_pIPDoc;
@@ -113,6 +113,17 @@ protected:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVBlobAnalyzerDialog.h_v  $
+ * 
+ *    Rev 1.2   18 Nov 2014 05:09:04   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  938
+ * SCR Title:  Add Black Blob Mode to Blob Analyzer (SVO-336)
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   Rename m_isBlackBlobs into m_colorBlobEnum and change the type from bool to long.
+ * Use m_colorBlobEnumValue from analyzer class.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   12 Nov 2014 07:03:38   mziegler
  * Project:  SVObserver

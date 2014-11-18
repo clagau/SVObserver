@@ -5,8 +5,8 @@
 //* .Module Name     : SVBlobAnalyzerDialog
 //* .File Name       : $Workfile:   SVBlobAnalyzerDialog.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.5  $
-//* .Check In Date   : $Date:   12 Nov 2014 07:03:38  $
+//* .Current Version : $Revision:   1.6  $
+//* .Check In Date   : $Date:   18 Nov 2014 05:09:06  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -55,7 +55,7 @@ SVBlobAnalyzeFeatureDialogClass::SVBlobAnalyzeFeatureDialogClass(
 	SVIPDoc* p_pIPDoc, 
 	CWnd* pParent )
 	: CDialog( SVBlobAnalyzeFeatureDialogClass::IDD, pParent )
-	, m_isBlackBlobs(false)
+	, m_colorBlobEnum(SV_BLOB_BLACK)
 	, m_pIPDoc( p_pIPDoc )
 	, m_pCurrentAnalyzer( pAnalyzer )
 {
@@ -121,7 +121,7 @@ BOOL SVBlobAnalyzeFeatureDialogClass::OnInitDialog()
 	//      _tcscpy (msvszOriginalFeaturesEnabled, msvszOriginalFeaturesEnabled); 
 			m_pCurrentAnalyzer->msvSortAscending.GetValue(msvAscending);
 			m_pCurrentAnalyzer->msvbExcludeFailed.GetValue(m_bExclude);
-			m_pCurrentAnalyzer->m_isBlackBlobValue.GetValue(m_isBlackBlobs);
+			m_pCurrentAnalyzer->m_colorBlobEnumValue.GetValue(m_colorBlobEnum);
 			m_pCurrentAnalyzer->m_lvoBlobSampleSize.GetValue(m_lMaxNumberBlobs);
 			m_pCurrentAnalyzer->m_lvoMaxBlobDataArraySize.GetValue(m_lMaxBlobDataArraySize);
 
@@ -169,7 +169,7 @@ BOOL SVBlobAnalyzeFeatureDialogClass::OnInitDialog()
 			m_chkFillBlob.SetCheck(FALSE);
 		}
 
-		if (m_isBlackBlobs)
+		if (SV_BLOB_BLACK == m_colorBlobEnum)
 		{
 			m_cbBlobColor.SetCurSel(0);
 		}
@@ -221,7 +221,7 @@ HRESULT SVBlobAnalyzeFeatureDialogClass::SetInspectionData()
 
 		if( l_hrOk == S_OK )
 		{
-			l_hrOk = AddInputRequest( &( m_pCurrentAnalyzer->m_isBlackBlobValue ), m_isBlackBlobs );
+			l_hrOk = AddInputRequest( &( m_pCurrentAnalyzer->m_colorBlobEnumValue ), m_colorBlobEnum );
 		}
 
 		if( l_hrOk == S_OK )
@@ -575,7 +575,7 @@ void SVBlobAnalyzeFeatureDialogClass::OnFillBlobs()
 void SVBlobAnalyzeFeatureDialogClass::OnBlobColor()
 {
 	UpdateData(TRUE);
-	m_isBlackBlobs = (m_cbBlobColor.GetCurSel() == 0);
+	m_colorBlobEnum = m_cbBlobColor.GetCurSel();
 	SetInspectionData();
 }
 
@@ -630,6 +630,17 @@ void SVBlobAnalyzeFeatureDialogClass::OnButtonSetFeatureProperties()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVBlobAnalyzerDialog.cpp_v  $
+ * 
+ *    Rev 1.6   18 Nov 2014 05:09:06   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  938
+ * SCR Title:  Add Black Blob Mode to Blob Analyzer (SVO-336)
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   Rename m_isBlackBlobs into m_colorBlobEnum and change the type from bool to long.
+ * Use m_colorBlobEnumValue from analyzer class.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.5   12 Nov 2014 07:03:38   mziegler
  * Project:  SVObserver

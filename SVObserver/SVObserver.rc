@@ -5245,7 +5245,7 @@ END
 STRINGTABLE
 BEGIN
     IDS_BLOB_FILL_TYPE      "Blob Fill Type"
-    IDS_BLACK_BLOBS         "Blobs in Black"
+    IDS_BLACK_BLOBS         "Blob Color"
     IDS_BLOB_MAX_NUMBER     "Maximum number of blobs"
     IDS_CLASSNAME_SVVARIANTVALUEOBJECT "Variant Value"
     IDS_OBJECTNAME_IMAGE2   "Image2"
