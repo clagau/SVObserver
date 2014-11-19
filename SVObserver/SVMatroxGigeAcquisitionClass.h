@@ -5,8 +5,8 @@
 //* .Module Name     : SVMatroxGigeAcquisitionClass
 //* .File Name       : $Workfile:   SVMatroxGigeAcquisitionClass.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   07 Mar 2014 18:20:08  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   19 Nov 2014 03:35:08  $
 //******************************************************************************
 
 #ifndef SVMATROXGIGEACQUISITIONCLASS_H
@@ -79,7 +79,7 @@ protected:
 
 	virtual HRESULT StartDigitizer();
 
-	virtual HRESULT GetCameraImageInfo(SVImageInfoClass *pImageInfo);
+	HRESULT GetCameraImageInfo(SVImageInfoClass &pImageInfo);
 	HRESULT DestroyLocal();
 
 	long mlLastIndex;
@@ -121,6 +121,19 @@ private:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVMatroxGigeAcquisitionClass.h_v  $
+ * 
+ *    Rev 1.3   19 Nov 2014 03:35:08   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  937
+ * SCR Title:  Do Not Send Parameters to Camera if Physical Camera Does Not Match Camera File
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   change signature of GetCameraImageInfo (use reference instead of pointer)
+ * In GetCameraImageInfo: call SVDigitizerProcessingClass::Instance().GetDigitizerSubsystem(mcsDigName) only once and check before use this pointer.
+ * 			Remove HRESULT hr, because it always S_OK and remove dead code of the Error-MessageBox
+ * Check if camera match to file before send commands in SetStandardCameraParameter, GetCameraImageInfo, SetDeviceParameters and SetGigeFeatureOverrides
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   07 Mar 2014 18:20:08   bwalter
  * Project:  SVObserver

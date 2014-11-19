@@ -5,8 +5,8 @@
 //* .Module Name     : SVIntekAcquisitionClass
 //* .File Name       : $Workfile:   SVIntekAcquisitionClass.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.3  $
-//* .Check In Date   : $Date:   17 Mar 2014 15:25:40  $
+//* .Current Version : $Revision:   1.4  $
+//* .Check In Date   : $Date:   19 Nov 2014 03:34:04  $
 //******************************************************************************
 
 #pragma region Includes
@@ -784,9 +784,9 @@ HRESULT SVIntekAcquisitionClass::GetCameraImageInfo( SVImageInfoClass* pImageInf
 	int iFormat = SVImageFormatUnknown;
 
 	if ( IsValidBoard() &&
-	     IsDigitizerSubsystemValid() )
+		IsDigitizerSubsystemValid() &&
+		CameraMatchesCameraFile() )
 	{
-
 		SVDigitizerProcessingClass::Instance().GetDigitizerSubsystem(mcsDigName)->GetBufferHeight( m_hDigitizer, &bufHeight );
 		SVDigitizerProcessingClass::Instance().GetDigitizerSubsystem(mcsDigName)->GetBufferWidth( m_hDigitizer, &bufWidth );
 		SVDigitizerProcessingClass::Instance().GetDigitizerSubsystem(mcsDigName)->GetBufferFormat( m_hDigitizer, &iFormat );
@@ -868,44 +868,7 @@ HRESULT SVIntekAcquisitionClass::SetDeviceParameters( const SVDeviceParamCollect
 
 HRESULT SVIntekAcquisitionClass::IsValidCameraFileParameters( SVDeviceParamCollection& rDeviceParams )
 {
-	HRESULT l_hrOk = S_OK;
-
-	if( m_hDigitizer != NULL && rDeviceParams.ParameterExists( DeviceParamVendorId ) )
-	{
-		CString l_csVenderId;
-
-		_variant_t l_oValue;
-
-		SVDigitizerLoadLibraryClass* l_psvLibrary = SVDigitizerProcessingClass::Instance().GetDigitizerSubsystem(mcsDigName);
-
-		if( l_psvLibrary != NULL && l_psvLibrary->ParameterGetValue( m_hDigitizer, 100, 0, &l_oValue ) == S_OK )
-		{
-			l_csVenderId = l_oValue.bstrVal;
-
-			if( l_csVenderId == StringValue( rDeviceParams.Parameter( DeviceParamVendorId ) ) )
-			{
-				if( rDeviceParams.ParameterExists( DeviceParamModelName ) &&
-					l_psvLibrary->ParameterGetValue( m_hDigitizer, 102, 0, &l_oValue ) == S_OK )
-				{
-					CString sHardwareModel( l_oValue.bstrVal, ::SysStringLen( l_oValue.bstrVal ) );
-
-					CString sModel = StringValue(rDeviceParams.Parameter( DeviceParamModelName )).ToString();
-
-					if (   sHardwareModel != _T("") && sModel != _T("")
-						&& sHardwareModel.CompareNoCase(sModel) != 0 )
-					{
-						l_hrOk = S_FALSE;
-					}
-				}
-			}
-			else
-			{
-				l_hrOk = S_FALSE;
-			}
-		}
-	}
-
-	return l_hrOk;
+	return m_cameraDriverProxy.IsValidCameraFileParameters( rDeviceParams, m_hDigitizer, SVDigitizerProcessingClass::Instance().GetDigitizerSubsystem(mcsDigName));
 }
 
 void SVIntekAcquisitionClass::ClearDeviceIdentifier()
@@ -1004,6 +967,17 @@ HRESULT SVIntekAcquisitionClass::StartDigitizer()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVIntekAcquisitionClass.cpp_v  $
+ * 
+ *    Rev 1.4   19 Nov 2014 03:34:04   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  937
+ * SCR Title:  Do Not Send Parameters to Camera if Physical Camera Does Not Match Camera File
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   Check if camera match to file before set the image size in GetCameraImageInfo
+ * remove duplicate code in IsValidCameraFileParameter and call insted same function in SVIntekDCamDriverProxy
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   17 Mar 2014 15:25:40   bwalter
  * Project:  SVObserver

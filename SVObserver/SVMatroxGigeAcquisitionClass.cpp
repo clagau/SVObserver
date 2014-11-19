@@ -5,8 +5,8 @@
 //* .Module Name     : SVMatroxGigeAcquisitionClass
 //* .File Name       : $Workfile:   SVMatroxGigeAcquisitionClass.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.5  $
-//* .Check In Date   : $Date:   17 Mar 2014 15:26:12  $
+//* .Current Version : $Revision:   1.6  $
+//* .Check In Date   : $Date:   19 Nov 2014 03:35:08  $
 //******************************************************************************
 
 #pragma region Includes
@@ -170,7 +170,7 @@ HRESULT SVMatroxGigeAcquisitionClass::LoadFiles(SVFileNameArrayClass& rFiles)
 			}
 			SetDeviceParameters( DeviceParams );
 
-			GetCameraImageInfo( &msvImageInfo );
+			GetCameraImageInfo( msvImageInfo );
 		}
 	}
 
@@ -314,7 +314,7 @@ HRESULT SVMatroxGigeAcquisitionClass::InitializeDevice( const SVDeviceParamColle
 		}
 
 		// Update image info with format setting from device parameters
-		GetCameraImageInfo( &msvImageInfo );
+		GetCameraImageInfo( msvImageInfo );
 	}
 
 	if ( m_DeviceParams.ParameterExists( DeviceParamAcquisitionTriggerEdge ) )
@@ -477,26 +477,28 @@ HRESULT SVMatroxGigeAcquisitionClass::UpdateLightReferenceAttributes( int iBand,
 HRESULT SVMatroxGigeAcquisitionClass::SetStandardCameraParameter( const SVDeviceParamWrapper& rw )
 {
 	HRESULT hr = S_OK;
-	
-	if ( IsDigitizerSubsystemValid() )
+
+	if ( IsDigitizerSubsystemValid() && CameraMatchesCameraFile())
 	{
 		if ( m_hDigitizer != NULL )
 		{
 			SVDigitizerLoadLibraryClass* pDigitizer = SVDigitizerProcessingClass::Instance().GetDigitizerSubsystem(mcsDigName);
 
 			hr = m_cameraProxy.SetStandardCameraParameter(rw, m_DeviceParams, m_hDigitizer, pDigitizer);
-			
+
 			if ( hr == S_OK )
 			{
 				hr = InitializeDevice( m_DeviceParams );
 			}
 		}
 	}
+
 	if( hr == S_OK )
 	{
 		// refresh image info
-		GetCameraImageInfo( &msvImageInfo );
+		GetCameraImageInfo( msvImageInfo );
 	}
+
 	return hr;
 }
 
@@ -624,20 +626,19 @@ HRESULT SVMatroxGigeAcquisitionClass::SetLutImpl( const SVLut& lut )
 	return hr;
 }
 
-HRESULT SVMatroxGigeAcquisitionClass::GetCameraImageInfo( SVImageInfoClass *pImageInfo )
+HRESULT SVMatroxGigeAcquisitionClass::GetCameraImageInfo( SVImageInfoClass &pImageInfo )
 {
-	HRESULT hr = S_FALSE;
-
 	unsigned long bufWidth = 640;
 	unsigned long bufHeight = 480;
-	unsigned long uiBandNumber = 1;
 	int iFormat = SVImageFormatUnknown;
 
-	if ( IsValidBoard() && IsDigitizerSubsystemValid() )
+	//check if valid board, subsystem and if connected camera matches chosen camera file
+	SVDigitizerLoadLibraryClass *digSub = SVDigitizerProcessingClass::Instance().GetDigitizerSubsystem(mcsDigName);
+	if ( IsValidBoard() && nullptr != digSub && CameraMatchesCameraFile() )
 	{
-		SVDigitizerProcessingClass::Instance().GetDigitizerSubsystem(mcsDigName)->GetBufferHeight( m_hDigitizer, &bufHeight );
-		SVDigitizerProcessingClass::Instance().GetDigitizerSubsystem(mcsDigName)->GetBufferWidth( m_hDigitizer, &bufWidth );
-		SVDigitizerProcessingClass::Instance().GetDigitizerSubsystem(mcsDigName)->GetBufferFormat( m_hDigitizer, &iFormat );
+		digSub->GetBufferHeight( m_hDigitizer, &bufHeight );
+		digSub->GetBufferWidth( m_hDigitizer, &bufWidth );
+		digSub->GetBufferFormat( m_hDigitizer, &iFormat );
 	}
 	else
 	{
@@ -653,38 +654,22 @@ HRESULT SVMatroxGigeAcquisitionClass::GetCameraImageInfo( SVImageInfoClass *pIma
 	}
 
 	// Band number depends on video type...
-	switch( iFormat )
+	unsigned long uiBandNumber = 1;
+	if ( iFormat == SVImageFormatRGB888 || iFormat == SVImageFormatRGB8888 )
 	{
-		case SVImageFormatMono8:  // Mono
-		{
-			uiBandNumber = 1;
-			break;
-		}
-		case SVImageFormatRGB888:	// RGB
-		case SVImageFormatRGB8888:  // RGB
-		{
-			uiBandNumber = 3;
-			break;
-		}
+		uiBandNumber = 3; // Only RGB uses more than 1 band.
 	}
 
-	pImageInfo->SetImageProperty( SVImagePropertyFormat, iFormat );
-	pImageInfo->SetImageProperty( SVImagePropertyPixelDepth, SV8BitUnsigned );
-	pImageInfo->SetImageProperty( SVImagePropertyBandNumber, uiBandNumber );
-	pImageInfo->SetImageProperty( SVImagePropertyBandLink, 0 );
+	pImageInfo.SetImageProperty( SVImagePropertyFormat, iFormat );
+	pImageInfo.SetImageProperty( SVImagePropertyPixelDepth, SV8BitUnsigned );
+	pImageInfo.SetImageProperty( SVImagePropertyBandNumber, uiBandNumber );
+	pImageInfo.SetImageProperty( SVImagePropertyBandLink, 0 );
 
-	pImageInfo->SetExtentProperty( SVExtentPropertyOutputPositionPoint, 0 );
-	pImageInfo->SetExtentProperty( SVExtentPropertyWidth, bufWidth );
-	pImageInfo->SetExtentProperty( SVExtentPropertyHeight, bufHeight );
+	pImageInfo.SetExtentProperty( SVExtentPropertyOutputPositionPoint, 0 );
+	pImageInfo.SetExtentProperty( SVExtentPropertyWidth, bufWidth );
+	pImageInfo.SetExtentProperty( SVExtentPropertyHeight, bufHeight );
 
-	hr = S_OK;
-
-	if ( hr != S_OK )
-	{
-		AfxMessageBox( "Failed to get acquisition source information!", MB_ICONEXCLAMATION );
-	}
-
-	return hr;
+	return S_OK;
 }
 
 HRESULT SVMatroxGigeAcquisitionClass::SetDeviceParameters( const SVDeviceParamCollection& rDeviceParams )
@@ -692,7 +677,7 @@ HRESULT SVMatroxGigeAcquisitionClass::SetDeviceParameters( const SVDeviceParamCo
 	HRESULT hr = S_OK;
 
 	// SEJ - send notification to start tracking main camera parameters
-	if ( IsDigitizerSubsystemValid() )
+	if ( IsDigitizerSubsystemValid() && CameraMatchesCameraFile())
 	{
 		_variant_t dummy;
 		hr = SVDigitizerProcessingClass::Instance().GetDigitizerSubsystem(mcsDigName)->ParameterSetValue(m_hDigitizer, SVGigeBeginTrackParameters, 0, &dummy);
@@ -788,7 +773,7 @@ HRESULT SVMatroxGigeAcquisitionClass::SetGigeFeatureOverrides(const SVString& fe
 {
 	HRESULT hr = S_FALSE;
 	
-	if (IsDigitizerSubsystemValid())
+	if (IsDigitizerSubsystemValid() && CameraMatchesCameraFile())
 	{
 		if (m_hDigitizer != NULL)
 		{
@@ -829,6 +814,19 @@ HRESULT SVMatroxGigeAcquisitionClass::StartDigitizer()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVMatroxGigeAcquisitionClass.cpp_v  $
+ * 
+ *    Rev 1.6   19 Nov 2014 03:35:08   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  937
+ * SCR Title:  Do Not Send Parameters to Camera if Physical Camera Does Not Match Camera File
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   change signature of GetCameraImageInfo (use reference instead of pointer)
+ * In GetCameraImageInfo: call SVDigitizerProcessingClass::Instance().GetDigitizerSubsystem(mcsDigName) only once and check before use this pointer.
+ * 			Remove HRESULT hr, because it always S_OK and remove dead code of the Error-MessageBox
+ * Check if camera match to file before send commands in SetStandardCameraParameter, GetCameraImageInfo, SetDeviceParameters and SetGigeFeatureOverrides
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.5   17 Mar 2014 15:26:12   bwalter
  * Project:  SVObserver

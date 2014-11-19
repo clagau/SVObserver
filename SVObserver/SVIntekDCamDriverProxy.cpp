@@ -5,8 +5,8 @@
 // * .Module Name     : SVIntekDCamDriverProxy.cpp
 // * .File Name       : $Workfile:   SVIntekDCamDriverProxy.cpp  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.0  $
-// * .Check In Date   : $Date:   23 Apr 2013 11:05:42  $
+// * .Current Version : $Revision:   1.1  $
+// * .Check In Date   : $Date:   19 Nov 2014 03:33:04  $
 // ******************************************************************************
 
 #include "stdafx.h"
@@ -20,7 +20,7 @@
 #include "SVOMFCLibrary/SVLongValueDeviceParam.h"
 
 SVIntekDCamDriverProxy::SVIntekDCamDriverProxy()
-: SVDCamDriverProxy(), m_pAcquisition( NULL )
+: SVDCamDriverProxy(), m_pAcquisition( nullptr )
 {
 }
 
@@ -285,7 +285,6 @@ HRESULT SVIntekDCamDriverProxy::WriteCameraRegisterBlock( unsigned long ulAddres
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	//
 	if ( pDigitizer != NULL )
 	{
 		_variant_t l_oValue;
@@ -325,7 +324,6 @@ HRESULT SVIntekDCamDriverProxy::WriteCameraRegisterBlock( unsigned long ulAddres
 			}
 		}
 	}
-	//
 
 	return l_hrOk;
 }
@@ -334,7 +332,6 @@ HRESULT SVIntekDCamDriverProxy::ReadCameraRegisterBlock( unsigned long ulAddress
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	//
 	if ( pDigitizer != NULL )
 	{
 		_variant_t l_oValue;
@@ -373,7 +370,6 @@ HRESULT SVIntekDCamDriverProxy::ReadCameraRegisterBlock( unsigned long ulAddress
 			}
 		}
 	}
-	//
 
 	return l_hrOk;
 }
@@ -508,9 +504,7 @@ HRESULT SVIntekDCamDriverProxy::SetStandardCameraParameter( const SVDeviceParamW
 
 						const SVCameraFormat& rcf = pParam->options.find(pParam->strValue)->second;
 
-						_variant_t l_oValue;
-
-						l_oValue = rcf.m_lDCamFormat;
+						_variant_t l_oValue = rcf.m_lDCamFormat;
 						l_hrOk = pDigitizer->ParameterSetValue( hDigitizer, SVIntekParameterDCamFormat, 0, &l_oValue );
 						l_oValue.Clear();
 
@@ -665,6 +659,22 @@ bool SVIntekDCamDriverProxy::CameraMatchesCameraFile(const SVDeviceParamCollecti
 			l_csVenderId = l_oValue.bstrVal;
 
 			l_bOk = l_csVenderId == StringValue( rCameraFileDeviceParams.Parameter( DeviceParamVendorId ) );
+
+			if (l_bOk)
+			{
+				if( rCameraFileDeviceParams.ParameterExists( DeviceParamModelName ) &&
+					pDigitizer->ParameterGetValue( hDigitizer, SVIntekParameterDCamModelName, 0, &l_oValue ) == S_OK )
+				{
+					CString sHardwareModel( l_oValue.bstrVal, ::SysStringLen( l_oValue.bstrVal ) );
+
+					CString sModel = StringValue(rCameraFileDeviceParams.Parameter( DeviceParamModelName )).ToString();
+
+					if ( sHardwareModel.CompareNoCase(sModel) != 0 )
+					{
+						l_bOk = false;
+					}
+				}
+			}
 		}
 	}
 
@@ -685,7 +695,17 @@ bool SVIntekDCamDriverProxy::IsOnline() const
 // * LOG HISTORY:
 // ******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVIntekDCamDriverProxy.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVIntekDCamDriverProxy.cpp_v  $
+ * 
+ *    Rev 1.1   19 Nov 2014 03:33:04   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  937
+ * SCR Title:  Do Not Send Parameters to Camera if Physical Camera Does Not Match Camera File
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   In CameraMatchesCameraFile: check also model name, not only Vendor id.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 11:05:42   bWalter
  * Project:  SVObserver
