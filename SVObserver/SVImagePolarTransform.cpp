@@ -5,8 +5,8 @@
 //* .Module Name     : SVImagePolarTransform
 //* .File Name       : $Workfile:   SVImagePolarTransform.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.3  $
-//* .Check In Date   : $Date:   15 May 2014 12:47:34  $
+//* .Current Version : $Revision:   1.4  $
+//* .Check In Date   : $Date:   20 Nov 2014 07:02:58  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -620,7 +620,8 @@ BOOL SVImagePolarTransformClass::onRun( SVRunStatusClass& RRunStatus )
 
 		l_bOk = l_bOk && outputImageObject.SetImageHandleIndex( RRunStatus.Images );
 
-		l_bOk = l_bOk && outputImageObject.UpdateImage( l_svExtents ) == S_OK;
+		//added "true" to the call of UpdateImage - if the tool only changes position the output image does not need to be re-created
+		l_bOk = l_bOk && outputImageObject.UpdateImage( l_svExtents,true ) == S_OK;
 
 		l_svExtents = outputImageObject.GetImageExtents( );
 
@@ -877,6 +878,16 @@ HRESULT SVImagePolarTransformClass::CollectInputImageNames( SVRunStatusClass& RR
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVImagePolarTransform.cpp_v  $
+ * 
+ *    Rev 1.4   20 Nov 2014 07:02:58   ryoho
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  971
+ * SCR Title:  Reduce tool time for Polar Unwrap when using formula for position (SVO-317)
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   Modified onRun - added 'true' to the call of UpdateImage.  This should not re-create the output buffer if only the position of the tool has changed.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   15 May 2014 12:47:34   sjones
  * Project:  SVObserver
