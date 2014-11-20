@@ -5,59 +5,39 @@
 // * .Module Name     : SVRegressionRunDlg
 // * .File Name       : $Workfile:   SVRegressionRunDlg.h  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.1  $
-// * .Check In Date   : $Date:   28 Feb 2014 09:22:56  $
+// * .Current Version : $Revision:   1.2  $
+// * .Check In Date   : $Date:   20 Nov 2014 08:14:38  $
 // ******************************************************************************
 
 #ifndef SVREGRESSIONRUNDLG_H
 #define SVREGRESSIONRUNDLG_H
 
+#pragma region Includes
+#include "SVView.h" // for SVSliderCtrl
 #include "SVRegressionTestStruct.h"
 #include "SVLibrary/SVListCtrl.h"
+#pragma endregion Includes
 
 class CSVRegressionRunDlg : public CDialog
 {
-// Construction
+#pragma region Constructor
 public:
-	CSVRegressionRunDlg(CWnd* pParent = NULL);   // standard constructor
+	CSVRegressionRunDlg(CWnd* pParent = nullptr);   // standard constructor
 	virtual ~CSVRegressionRunDlg();
-	void SetIPDocParent(SVIPDoc* pIPDocParent);
+#pragma endregion Constructor
 
-	int GetTimeoutPeriod();
-
-// Dialog Data
-	//{{AFX_DATA(CSVRegressionRunDlg)
-	enum { IDD = IDD_DIALOG_REGRESSIONTEST_RUN };
-	CButton	m_btnExit;
-	CButton	m_btnSettings;
-	CSpinButtonCtrl	m_spnDelayTime;
-	CListBox	m_lstCameraImages;
-	CButton	m_btnStopExit;
-	CButton	m_btnPlayPause;
-	CButton	m_btnMode;
-	CButton	m_btnFrameUp;
-	CButton	m_btnFrameBack;
-	CButton	m_btnBeginning;
-	int		m_iNumberSeconds;
-	//}}AFX_DATA
-
-
-// Overrides
+#pragma region MFC Methods
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CSVRegressionRunDlg)
-	public:
-	virtual BOOL PreTranslateMessage(MSG* pMsg);
-	protected:
+protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+	virtual BOOL OnInitDialog();
+	virtual void OnOK();
+	virtual void OnCancel();
+	virtual BOOL PreTranslateMessage(MSG* pMsg);
 	//}}AFX_VIRTUAL
 
 // Implementation
-protected:
-
-	afx_msg LRESULT SetNextFiles(WPARAM, LPARAM);
-	afx_msg LRESULT SetPlayPauseBtn(WPARAM, LPARAM);
-	afx_msg LRESULT SetPreviousFrameBtn(WPARAM, LPARAM);
-	afx_msg LRESULT CloseRegressionTest(WPARAM, LPARAM);
 	// Generated message map functions
 	//{{AFX_MSG(CSVRegressionRunDlg)
 	afx_msg void OnBtnBeginning();
@@ -66,22 +46,59 @@ protected:
 	afx_msg void OnBtnMode();
 	afx_msg void OnBtnPlay();
 	afx_msg void OnBtnStop();
-	virtual BOOL OnInitDialog();
-	virtual void OnOK();
 	afx_msg void OnDeltaposSpinDelayTime(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
 	afx_msg void OnShowWindow(BOOL bShow, UINT nStatus);
 	afx_msg void OnClose();
 	afx_msg void OnBtnSettings();
 	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
 	afx_msg void OnBtnExit();
+	afx_msg LRESULT SetNextFiles(WPARAM, LPARAM);
+	afx_msg LRESULT SetPlayPauseBtn(WPARAM, LPARAM);
+	afx_msg LRESULT SetPreviousFrameBtn(WPARAM, LPARAM);
+	afx_msg LRESULT CloseRegressionTest(WPARAM, LPARAM);
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
+#pragma endregion MFC Methods
 
-	virtual void OnCancel();
+#pragma region Public Methods
+public:
+	void SetIPDocParent(SVIPDoc* pIPDocParent);
+#pragma endregion Public Methods
 
+#pragma region Private Methods
+private: 
+	BOOL EnableButtons(BOOL p_bValue);
+	void DestroyIcons();
 
+	//************************************
+	// Method:    setDelayTime
+	// Description:  set the delay time depending of the position to edit control and system.
+	// Parameter: int position
+	// Returns:   void
+	//************************************
+	void setDelayTime( int position );
+#pragma endregion Private Methods
 
-private: // data members
+#pragma region Member variables
+private:
+	// Dialog Data
+	//{{AFX_DATA(CSVRegressionRunDlg)
+	enum { IDD = IDD_DIALOG_REGRESSIONTEST_RUN };
+	CButton	m_btnExit;
+	CButton	m_btnSettings;
+	SVSliderCtrl m_sliderDelayTime;
+	CListBox	m_lstCameraImages;
+	CButton	m_btnStopExit;
+	CButton	m_btnPlayPause;
+	CButton	m_btnMode;
+	CButton	m_btnFrameUp;
+	CButton	m_btnFrameBack;
+	CButton	m_btnBeginning;
+	CString	m_timeDelayText;
+	//}}AFX_DATA
+
+	 // data members
 	HICON m_iconPlay;
 	HICON m_iconPause;
 	HICON m_iconModeContinue;
@@ -97,9 +114,9 @@ private: // data members
 	CToolTipCtrl* m_ctlToolTip;
 
 	SVIPDoc* m_pIPDocParent;
-	BOOL EnableButtons(BOOL p_bValue);
-	void DestroyIcons();
 	BOOL m_bFirst;
+	int	m_timeDelayInMS;
+#pragma endregion Member variables
 };
 
 //{{AFX_INSERT_LOCATION}}
@@ -111,7 +128,17 @@ private: // data members
 // * LOG HISTORY:
 // ******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVRegressionRunDlg.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\svobserver\SVRegressionRunDlg.h_v  $
+ * 
+ *    Rev 1.2   20 Nov 2014 08:14:38   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  930
+ * SCR Title:  Improve Regression Test Dialog (SVO-136)
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   changes all over the RegressionRunDlg for new design (SVO-136)
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   28 Feb 2014 09:22:56   tbair
  * Project:  SVObserver

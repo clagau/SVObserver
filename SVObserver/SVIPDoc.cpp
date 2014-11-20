@@ -5,8 +5,8 @@
 //* .Module Name     : SVIPDoc
 //* .File Name       : $Workfile:   SVIPDoc.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.25  $
-//* .Check In Date   : $Date:   10 Nov 2014 16:48:02  $
+//* .Current Version : $Revision:   1.26  $
+//* .Check In Date   : $Date:   20 Nov 2014 08:11:04  $
 //******************************************************************************
 
 #pragma region Includes
@@ -3625,7 +3625,7 @@ DWORD WINAPI SVIPDoc::SVRegressionTestRunThread( LPVOID lpParam )
 		{
 			if ( l_IPDoc->m_regtestRunMode == RegModePlay )
 			{
-				int iMS = l_IPDoc->m_iRegessionTimeoutMS*1000;
+				int iMS = l_IPDoc->m_iRegessionTimeoutMS;
 				if( iMS < MinRegressionTime )
 				{
 					iMS = MinRegressionTime;
@@ -4486,7 +4486,17 @@ void SVIPDoc::addViewableObject2ResultDefinitions( SVObjectClass* pObject, SVRes
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVIPDoc.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\svobserver\SVIPDoc.cpp_v  $
+ * 
+ *    Rev 1.26   20 Nov 2014 08:11:04   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  930
+ * SCR Title:  Improve Regression Test Dialog (SVO-136)
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   in SVRegressionTestRunThread: Because the regression timeout is now really in ms, remove the multiply by 1000.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.25   10 Nov 2014 16:48:02   sjones
  * Project:  SVObserver
