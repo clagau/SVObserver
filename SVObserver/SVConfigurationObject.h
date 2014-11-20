@@ -5,8 +5,8 @@
 //* .Module Name     : SVConfigurationObject
 //* .File Name       : $Workfile:   SVConfigurationObject.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.14  $
-//* .Check In Date   : $Date:   29 Aug 2014 17:49:04  $
+//* .Current Version : $Revision:   1.15  $
+//* .Check In Date   : $Date:   20 Nov 2014 05:01:58  $
 //******************************************************************************
 
 #ifndef INC_SVCONFIGURATIONOBJECT_INCLUDED
@@ -202,6 +202,14 @@ public:
 	void ClearRemoteMonitorList();
 	RemoteMonitorList GetRemoteMonitorList() const;
 	void SetRemoteMonitorList(const RemoteMonitorList& rList);
+
+	//************************************
+	// Method:    ReplaceOrAddMonitorList
+	// Description:  Replace a monitor list if it already exists or add a new monitor list to the configuration.
+	// Parameter: const RemoteMonitorNamedList & rList
+	// Returns:   void
+	//************************************
+	void ReplaceOrAddMonitorList(const RemoteMonitorNamedList& rList);
 	void ValidateRemoteMonitorList();
 	HRESULT ActivateRemoteMonitorList(const SVString& listName, bool bActivate);
 	void GetActiveRemoteMonitorList(RemoteMonitorList& rActiveList) const;
@@ -303,7 +311,17 @@ private:
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVConfigurationObject.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\svobserver\SVConfigurationObject.h_v  $
+ * 
+ *    Rev 1.15   20 Nov 2014 05:01:58   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  918
+ * SCR Title:  Implement Method RegisterMonitorList for RemoteControl (SVO-369)
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   add method ReplaceOrAddMonitorList
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.14   29 Aug 2014 17:49:04   jHanebach
  * Project:  SVObserver

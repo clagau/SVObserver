@@ -5,8 +5,8 @@
 //* .Module Name     : SVObject
 //* .File Name       : $Workfile:   SVObjectClass.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.7  $
-//* .Check In Date   : $Date:   27 Jun 2014 08:05:06  $
+//* .Current Version : $Revision:   1.8  $
+//* .Check In Date   : $Date:   20 Nov 2014 04:39:28  $
 //******************************************************************************
 
 #pragma region Includes
@@ -880,18 +880,19 @@ SVPublicAttributeEntryStruct* SVObjectClass::GetPublicAttribute()
 /*
 This method returns Ancestor Object of specified Object Type of this Object, if any.  Otherwise it returns NULL.
 */
-SVObjectClass* SVObjectClass::GetAncestor( SVObjectTypeEnum AncestorObjectType )
+SVObjectClass* SVObjectClass::GetAncestor( SVObjectTypeEnum AncestorObjectType ) const
 {
-	SVObjectClass* pOwner = static_cast<SVObjectClass *>(this);
-	while( pOwner = pOwner->GetOwner() )
+	SVObjectClass* pOwner = this->GetOwner();
+	
+	while( nullptr != pOwner )
 	{
-		if ( pOwner == NULL )
-			break;
-
 		if( pOwner->GetObjectType() == AncestorObjectType )
 			return pOwner;
+
+		pOwner = pOwner->GetOwner();
 	}
-	return NULL;
+
+	return nullptr;
 }
 
 // Get the local object color...
@@ -1711,7 +1712,17 @@ void SVObjectClass::SetDefaultObjectAttributesSet(UINT uAttributes)
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSARCH65\PROJECTFILES\ARCHIVES\SVOBSERVER_SRC\SVObjectLibrary\SVObjectClass.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObjectLibrary\SVObjectClass.cpp_v  $
+ * 
+ *    Rev 1.8   20 Nov 2014 04:39:28   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  918
+ * SCR Title:  Implement Method RegisterMonitorList for RemoteControl (SVO-369)
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   change method GetAncestor to const and rearrange the code without changing the behavoiur.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.7   27 Jun 2014 08:05:06   mziegler
  * Project:  SVObserver

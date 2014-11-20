@@ -5,8 +5,8 @@
 //* .Module Name     : SVVisionProcessorHelper
 //* .File Name       : $Workfile:   SVVisionProcessorHelper.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.11  $
-//* .Check In Date   : $Date:   29 Aug 2014 17:49:02  $
+//* .Current Version : $Revision:   1.12  $
+//* .Check In Date   : $Date:   20 Nov 2014 05:06:18  $
 //******************************************************************************
 
 #ifndef SVVISIONPROCESSORHELPER_H
@@ -26,6 +26,7 @@
 #include "SVStorageResult.h"
 #include "SVVisionProcessorConstants.h"
 #include "SVDataDefinitionStruct.h"
+#include "RemoteMonitorNamedList.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -74,7 +75,7 @@ public:
 	HRESULT GetDataDefinitionList( const SVString& p_rInspectionName, const SVDataDefinitionListType& p_rListType, SVDataDefinitionStructArray& p_rDataDefinitionArray) const;
 
 	HRESULT GetItems( const SVNameSet& p_rNames, SVNameStorageResultMap& p_rItems ) const;
-	HRESULT SetItems( const SVNameStorageMap& p_rItems, SVNameStatusMap& p_rStatus );
+	HRESULT SetItems( const SVNameStorageMap& p_rItems, SVNameStatusMap& rStatusOfItems );
 
 	HRESULT SetLastModifiedTime();
 
@@ -85,6 +86,7 @@ public:
 	HRESULT QueryMonitorListNames( SVNameSet& rNames ) const;
 	HRESULT SetProductFilter( const SVString& rListName, SVProductFilterEnum filter );
 	HRESULT GetProductFilter( const SVString& rListName, SVProductFilterEnum& filter ) const;
+	HRESULT RegisterMonitorList( const SVString& rListName, const SVString& rPPQName, int rejectDepth, const SVNameSet& rProdList, const SVNameSet& rRejectCondList, const SVNameSet& rFailStatusList, SVNameStatusMap& rStatusOfItemsWithError );
 
 protected:
 	typedef boost::function< HRESULT ( const SVNameSet&, SVNameStorageResultMap& ) > SVGetItemsFunctor;
@@ -128,6 +130,19 @@ private:
 #pragma region Private Methods
 	SVVisionProcessorHelper( const SVVisionProcessorHelper& p_rObject );
 	const SVVisionProcessorHelper& operator=( const SVVisionProcessorHelper& p_rObject );
+
+	//************************************
+	// Method:    SetValuesOrImagesMonitoredObjectLists
+	// Description:  Check if objects exist for the all names from the list, if the object valid and part of the ppq and if no error add them to the monitored-Lists, else add error to status list.
+	// Parameter: const SVNameSet & rObjectNameList Name list of the objects, which should be added.
+	// Parameter: const SVPPQObject & pPPQ The PPQ object
+	// Parameter: MonitoredObjectList & rMonitoredValueObjectList [out] Referents of the monitored list for value object.
+	// Parameter: MonitoredObjectList * pMonitoredImageObjectList [out] Pointer to the monitored list for image object, if no images permited, is pointer should nullptr. Then every image object get an error.
+	// Parameter: SVNameStatusMap & rStatus [out] Status of the objects with errors.
+	// Parameter: HRESULT & hr [in/out] Change the result value only if an error happens. If no error happens input is equal output.
+	// Returns:   void
+	//************************************
+	void SetValuesOrImagesMonitoredObjectLists( const SVNameSet& rObjectNameList, const SVPPQObject& pPPQ, MonitoredObjectList &rMonitoredValueObjectList, MonitoredObjectList *pMonitoredImageObjectList, SVNameStatusMap &rStatus, HRESULT &hr );
 #pragma endregion Private Methods
 };
 
@@ -137,7 +152,18 @@ private:
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVVisionProcessorHelper.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\svobserver\SVVisionProcessorHelper.h_v  $
+ * 
+ *    Rev 1.12   20 Nov 2014 05:06:18   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  918
+ * SCR Title:  Implement Method RegisterMonitorList for RemoteControl (SVO-369)
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   rename parameter name from p_rStatus to rStatusOfItems in method SetItems
+ * add methods RegisterMonitorList and SetValuesOrImagesMonitoredObjectLists
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.11   29 Aug 2014 17:49:02   jHanebach
  * Project:  SVObserver

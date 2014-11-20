@@ -5,8 +5,8 @@
 //* .Module Name     : SVPPQObject
 //* .File Name       : $Workfile:   SVPPQObject.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.32  $
-//* .Check In Date   : $Date:   30 Sep 2014 15:48:12  $
+//* .Current Version : $Revision:   1.33  $
+//* .Check In Date   : $Date:   20 Nov 2014 05:03:12  $
 //******************************************************************************
 
 #pragma region Includes
@@ -3756,6 +3756,25 @@ HRESULT SVPPQObject::GetInspections( std::vector< SVInspectionProcess* >& rvecIn
 	return S_OK;
 }
 
+bool SVPPQObject::IsObjectInPPQ( const SVObjectClass& object ) const
+{
+	bool retValue = false;
+	const SVObjectClass *inspectObject = object.GetAncestor(SVInspectionObjectType);
+
+	if (nullptr != inspectObject)
+	{
+		for (SVPPQInspectionProcessVector::const_iterator it = m_arInspections.begin(); it != m_arInspections.end(); ++it)
+		{
+			if (inspectObject == (*it))
+			{
+				return true;
+			}
+		}
+	}
+
+	return retValue;
+}
+
 bool SVPPQObject::IsProductExpired( const SVProductInfoStruct* pProduct ) const
 {
 	if ( m_oOutputMode == SVPPQExtendedTimeDelayMode && m_lInspectionTimeoutMillisec > 0 )
@@ -5084,7 +5103,17 @@ void SVPPQObject::SVSharedMemoryFilters::clear()
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVPPQObject.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\svobserver\SVPPQObject.cpp_v  $
+ * 
+ *    Rev 1.33   20 Nov 2014 05:03:12   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  918
+ * SCR Title:  Implement Method RegisterMonitorList for RemoteControl (SVO-369)
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   add method IsObjectInPPQ
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.32   30 Sep 2014 15:48:12   bwalter
  * Project:  SVObserver

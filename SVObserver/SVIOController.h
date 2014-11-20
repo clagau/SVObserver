@@ -5,8 +5,8 @@
 //* .Module Name     : SVIOController
 //* .File Name       : $Workfile:   SVIOController.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.10  $
-//* .Check In Date   : $Date:   29 Aug 2014 17:49:06  $
+//* .Current Version : $Revision:   1.11  $
+//* .Check In Date   : $Date:   20 Nov 2014 05:01:58  $
 //******************************************************************************
 
 #ifndef SVIOCONTROLLER_H
@@ -99,6 +99,14 @@ public:
 	void ClearRemoteMonitorList();
 	const RemoteMonitorList& GetRemoteMonitorList() const;
 	void SetRemoteMonitorList(const RemoteMonitorList& rList);
+
+	//************************************
+	// Method:    ReplaceOrAddMonitorList
+	// Description:  Replace a monitor list if it already exists or add a new monitor list to the configuration.
+	// Parameter: const RemoteMonitorNamedList & rList
+	// Returns:   void
+	//************************************
+	void ReplaceOrAddMonitorList( const RemoteMonitorNamedList& rList );
 	void ValidateRemoteMonitorList();
 	HRESULT ActivateRemoteMonitorList(const SVString& listName, bool bActivate);
 	void GetActiveRemoteMonitorList(RemoteMonitorList& rActiveList) const;
@@ -118,7 +126,6 @@ protected:
 private:
 	void LocalIntialize();
 	void LocalDestroy();
-
 };
 
 #endif
@@ -127,7 +134,17 @@ private:
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVIOController.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\svobserver\SVIOController.h_v  $
+ * 
+ *    Rev 1.11   20 Nov 2014 05:01:58   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  918
+ * SCR Title:  Implement Method RegisterMonitorList for RemoteControl (SVO-369)
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   add method ReplaceOrAddMonitorList
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.10   29 Aug 2014 17:49:06   jHanebach
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : RemoteMonitorListController
 //* .File Name       : $Workfile:   RemoteMonitorListController.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.13  $
-//* .Check In Date   : $Date:   29 Aug 2014 17:49:02  $
+//* .Current Version : $Revision:   1.14  $
+//* .Check In Date   : $Date:   20 Nov 2014 04:59:56  $
 //******************************************************************************
 
 #pragma region Includes
@@ -102,6 +102,19 @@ void RemoteMonitorListController::SetRemoteMonitorList(const RemoteMonitorList& 
 	HideShowViewTab();
 }
 
+void RemoteMonitorListController::ReplaceOrAddMonitorList( const RemoteMonitorNamedList& rList )
+{
+	RemoteMonitorList::iterator it = m_list.find(rList.GetName());
+	if (it != m_list.end())
+	{
+		it->second = rList;
+	}
+	else
+	{
+		m_list[rList.GetName()] = rList;
+	}
+}
+
 void RemoteMonitorListController::HideShowViewTab()
 {
 	if (IsEmpty())
@@ -124,7 +137,7 @@ void RemoteMonitorListController::ResetObject()
 }
 
 // must exist and must be published
-static bool IsValidMonitoredObject(SVObjectClass* pObject)
+bool RemoteMonitorListController::IsValidMonitoredObject(const SVObjectClass* pObject)
 {
 	bool bRetVal = false;
 	if (nullptr != pObject)
@@ -134,7 +147,7 @@ static bool IsValidMonitoredObject(SVObjectClass* pObject)
 		//check to see if MainImageClass or SVRGBMainImageClass
 		if (!bRetVal)
 		{
-			if  ( SV_IS_KIND_OF(pObject->GetOwner(),SVToolSetClass) && (SV_IS_KIND_OF(pObject, SVMainImageClass) || SV_IS_KIND_OF(pObject, SVRGBMainImageClass)) )
+			if ( SV_IS_KIND_OF(pObject->GetOwner(), const SVToolSetClass) && (SV_IS_KIND_OF(pObject, const SVMainImageClass) || SV_IS_KIND_OF(pObject, const SVRGBMainImageClass)) )
 			{
 				bRetVal = true;
 			}
@@ -381,7 +394,18 @@ HRESULT RemoteMonitorListController::GetRemoteMonitorListProductFilter(const SVS
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\RemoteMonitorListController.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\svobserver\RemoteMonitorListController.cpp_v  $
+ * 
+ *    Rev 1.14   20 Nov 2014 04:59:56   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  918
+ * SCR Title:  Implement Method RegisterMonitorList for RemoteControl (SVO-369)
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   add method ReplaceOrAddMonitorList.
+ * move static function IsValidMonitoredObject to a static method of this class.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.13   29 Aug 2014 17:49:02   jHanebach
  * Project:  SVObserver

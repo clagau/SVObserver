@@ -5,8 +5,8 @@
 //* .Module Name     : SVVisionProcessorHelper
 //* .File Name       : $Workfile:   SVVisionProcessorHelper.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.24  $
-//* .Check In Date   : $Date:   10 Nov 2014 17:12:54  $
+//* .Current Version : $Revision:   1.25  $
+//* .Check In Date   : $Date:   20 Nov 2014 05:06:18  $
 //******************************************************************************
 
 #pragma region Includes
@@ -29,6 +29,7 @@
 #include "BasicValueObject.h"
 #include "RemoteMonitorListHelper.h"
 #include "SVObjectLibrary/GlobalConst.h"
+#include "SVObjectLibrary/SVObjectLibrary.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -446,7 +447,7 @@ HRESULT SVVisionProcessorHelper::GetItems( const SVNameSet& p_rNames, SVNameStor
 	return l_Status;
 }
 
-HRESULT SVVisionProcessorHelper::SetItems( const SVNameStorageMap& p_rItems, SVNameStatusMap& p_rStatus )
+HRESULT SVVisionProcessorHelper::SetItems( const SVNameStorageMap& p_rItems, SVNameStatusMap& rStatusOfItems )
 {
 	typedef std::map< SVString, SVNameStorageMap > SVStringNameStorageMap;
 
@@ -477,7 +478,7 @@ HRESULT SVVisionProcessorHelper::SetItems( const SVNameStorageMap& p_rItems, SVN
 			}
 			else
 			{
-				p_rStatus[ l_Iter->first.c_str() ] = SVMSG_ONE_OR_MORE_INSPECTIONS_DO_NOT_EXIST;
+				rStatusOfItems[ l_Iter->first.c_str() ] = SVMSG_ONE_OR_MORE_INSPECTIONS_DO_NOT_EXIST;
 
 				if( l_Status == S_OK )
 				{
@@ -487,7 +488,7 @@ HRESULT SVVisionProcessorHelper::SetItems( const SVNameStorageMap& p_rItems, SVN
 		}
 		else
 		{
-			p_rStatus[ l_Iter->first.c_str() ] = SVMSG_ONE_OR_MORE_INSPECTIONS_DO_NOT_EXIST;
+			rStatusOfItems[ l_Iter->first.c_str() ] = SVMSG_ONE_OR_MORE_INSPECTIONS_DO_NOT_EXIST;
 
 			if( l_Status == S_OK )
 			{
@@ -506,7 +507,7 @@ HRESULT SVVisionProcessorHelper::SetItems( const SVNameStorageMap& p_rItems, SVN
 
 			HRESULT l_LoopStatus = l_FunctorIter->second( l_NameIterator->second, l_StatusItems );
 
-			p_rStatus.insert( l_StatusItems.begin(), l_StatusItems.end() );
+			rStatusOfItems.insert( l_StatusItems.begin(), l_StatusItems.end() );
 
 			if( l_Status == S_OK )
 			{
@@ -515,7 +516,7 @@ HRESULT SVVisionProcessorHelper::SetItems( const SVNameStorageMap& p_rItems, SVN
 		}
 		else
 		{
-			p_rStatus[ l_NameIterator->first.c_str() ] = SVMSG_ONE_OR_MORE_INSPECTIONS_DO_NOT_EXIST;
+			rStatusOfItems[ l_NameIterator->first.c_str() ] = SVMSG_ONE_OR_MORE_INSPECTIONS_DO_NOT_EXIST;
 
 			if( l_Status == S_OK )
 			{
@@ -1017,6 +1018,52 @@ HRESULT SVVisionProcessorHelper::GetProductFilter(const SVString& rListName, SVP
 	return  hr;
 }
 
+HRESULT SVVisionProcessorHelper::RegisterMonitorList( const SVString& rListName, const SVString& rPPQName, int rejectDepth, const SVNameSet& rProdList, const SVNameSet& rRejectCondList, const SVNameSet& rFailStatusList, SVNameStatusMap& rStatusOfItemsWithError )
+{
+	HRESULT hr = S_OK;
+	DWORD notAllowedStates = SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION | 
+		SV_STATE_START_PENDING | SV_STATE_STARTING | SV_STATE_STOP_PENDING | SV_STATE_STOPING |
+		SV_STATE_CREATING | SV_STATE_LOADING | SV_STATE_SAVING | SV_STATE_CLOSING;
+	if ( !SVSVIMStateClass::CheckState( notAllowedStates ) && SVSVIMStateClass::CheckState( SV_STATE_READY ) )
+	{
+		SVConfigurationObject* pConfig = nullptr;
+		hr = SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
+		if ( nullptr != pConfig )
+		{
+			SVPPQObject* pPPQ = nullptr;
+			if (pConfig->GetPPQByName(rPPQName.c_str(), &pPPQ) && nullptr != pPPQ)
+			{
+				MonitoredObjectList prodCondValuesList;
+				MonitoredObjectList prodCondImageList;
+				MonitoredObjectList rejectCondObjectList;
+				MonitoredObjectList failStatusObjectList;
+				SetValuesOrImagesMonitoredObjectLists( rProdList, *pPPQ, prodCondValuesList, &prodCondImageList, rStatusOfItemsWithError, hr);
+				SetValuesOrImagesMonitoredObjectLists( rRejectCondList, *pPPQ, rejectCondObjectList, nullptr, rStatusOfItemsWithError, hr);
+				SetValuesOrImagesMonitoredObjectLists( rFailStatusList, *pPPQ, failStatusObjectList, nullptr, rStatusOfItemsWithError, hr);
+
+				if (S_OK == hr)
+				{
+					RemoteMonitorNamedList newMonitorlist(rPPQName, rListName, prodCondValuesList, prodCondImageList, rejectCondObjectList, failStatusObjectList, rejectDepth );
+					pConfig->ReplaceOrAddMonitorList(newMonitorlist);
+				}
+			}
+			else
+			{
+				hr = SVMSG_NO_PPQ_FOUND;
+			}
+		}
+		else if( hr == S_OK )
+		{
+			hr = E_UNEXPECTED;
+		}
+	}
+	else
+	{
+		hr = SVMSG_SVF_ACCESS_DENIED;
+	}
+	return hr;
+}
+
 void SVVisionProcessorHelper::Startup()
 {
 	m_AsyncProcedure.Create( &SVVisionProcessorHelper::APCThreadProcess, boost::bind(&SVVisionProcessorHelper::ThreadProcess, this, _1), "SVVisionProcessorHelper" );
@@ -1074,11 +1121,68 @@ void SVVisionProcessorHelper::ProcessLastModified( bool& p_WaitForEvents )
 	}
 }
 
+void SVVisionProcessorHelper::SetValuesOrImagesMonitoredObjectLists( const SVNameSet& rObjectNameList, const SVPPQObject& pPPQ, MonitoredObjectList &rMonitoredValueObjectList, MonitoredObjectList *pMonitoredImageObjectList, SVNameStatusMap &rStatus, HRESULT &hr )
+{
+	for( SVNameSet::const_iterator iter = rObjectNameList.begin(); iter != rObjectNameList.end(); ++iter )
+	{
+		const MonitoredObject& rObj = RemoteMonitorListHelper::GetMonitoredObjectFromName(*iter);
+		SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObject( rObj.guid );
+		if (nullptr != pObject)
+		{
+			if ( RemoteMonitorListController::IsValidMonitoredObject(pObject) )
+			{
+				if (pPPQ.IsObjectInPPQ(*pObject))
+				{
+					if (SV_IS_KIND_OF(pObject, SVValueObjectClass))
+					{
+						rMonitoredValueObjectList.push_back(rObj);
+					}
+					else if (nullptr != pMonitoredImageObjectList && SV_IS_KIND_OF(pObject, SVImageClass))
+					{
+						pMonitoredImageObjectList->push_back(rObj);
+					}
+					else
+					{
+						hr = SVMSG_ONE_OR_MORE_OBJECTS_INVALID;
+						rStatus[*iter] = SVMSG_OBJECT_WRONG_TYPE;
+					}
+				}
+				else
+				{
+					hr = SVMSG_ONE_OR_MORE_OBJECTS_INVALID;
+					rStatus[*iter] = SVMSG_OBJECT_IN_WRONG_PPQ;
+				}
+			}
+			else
+			{
+				hr = SVMSG_ONE_OR_MORE_OBJECTS_INVALID;
+				rStatus[*iter] = SVMSG_OBJECT_WRONG_TYPE;
+			}
+		}
+		else
+		{
+			hr = SVMSG_ONE_OR_MORE_OBJECTS_INVALID;
+			rStatus[*iter] = SVMSG_OBJECT_NOT_FOUND;
+		}
+	}
+}
+
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVVisionProcessorHelper.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\svobserver\SVVisionProcessorHelper.cpp_v  $
+ * 
+ *    Rev 1.25   20 Nov 2014 05:06:18   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  918
+ * SCR Title:  Implement Method RegisterMonitorList for RemoteControl (SVO-369)
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   rename parameter name from p_rStatus to rStatusOfItems in method SetItems
+ * add methods RegisterMonitorList and SetValuesOrImagesMonitoredObjectLists
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.24   10 Nov 2014 17:12:54   sjones
  * Project:  SVObserver

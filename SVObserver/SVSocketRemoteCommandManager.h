@@ -5,8 +5,8 @@
 //* .Module Name     : SVSocketRemoteCommandManager
 //* .File Name       : $Workfile:   SVSocketRemoteCommandManager.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.8  $
-//* .Check In Date   : $Date:   10 Nov 2014 17:10:46  $
+//* .Current Version : $Revision:   1.9  $
+//* .Check In Date   : $Date:   20 Nov 2014 05:05:16  $
 //******************************************************************************
 
 #ifndef SVSOCKETREMOTECOMMANDMANAGER_H
@@ -54,8 +54,25 @@ protected:
 
 	static HRESULT AddJsonValuesToStorageItems( const Json::Value& p_rJsonValues, SVNameStorageMap& p_rItems );
 	static HRESULT AddJsonImagesToStorageItems( const Json::Value& p_rJsonImages, SVNameStorageMap& p_rItems );
-	static HRESULT AddResultStatusToJsonValue( const SVNameStorageMap& p_rItems, const SVNameStatusMap& p_rResultStatus, Json::Value& p_rJsonErrors );
 
+	//************************************
+	// Method:    CreateJsonValueWithResultErrors
+	// Description:  Create a json value for returning an error list. Check if a status is missing for an item (not processed) or a status is failed.
+	// Parameter: const SVNameStorageMap& p_rItems   List of items which should be processed. 
+	// Parameter: const SVNameStatusMap & rItemResultStatus  Status for each item.
+	// Parameter: Json::Value & jsonResult [in/out] This object must be of the type object. The return value is an array of errors in this object.
+	// Returns:   HRESULT Is S_OK if no error was found.
+	//************************************
+	static HRESULT CreateJsonValueWithResultErrors( const SVNameStorageMap& p_rItems, const SVNameStatusMap& rItemResultStatus, Json::Value& jsonResult );
+
+	//************************************
+	// Method:    CreateJsonValueWithResultErrors
+	// Description:  Create a json value for returning an error list from a statusMap.
+	// Parameter: const SVNameStatusMap & rItemResultStatus  List of status of the result to the items.
+	// Parameter: Json::Value & jsonResult [in/out] This object must be of the type object. The return value is an array of errors in this object.
+	// Returns:   HRESULT Is S_OK if no error was found.
+	//************************************
+	static HRESULT CreateJsonValueWithResultErrors( const SVNameStatusMap& rItemResultStatus, Json::Value& jsonResult );
 	static HRESULT CommandNotFound( const std::string& p_rJsonCommand, std::string& p_rJsonResults );
 
 	static HRESULT GetDeviceMode( const std::string& p_rJsonCommand, std::string& p_rJsonResults );
@@ -75,6 +92,16 @@ protected:
 
 	static HRESULT Shutdown( const std::string& command, std::string& jsonResults );
 	static HRESULT ActivateMonitorList( const std::string& rJsonCommand, std::string& rJsonResults );
+
+	//************************************
+	// Method:    RegisterMonitorList
+	// Description:  Add a monitor list to or replaces a monitor list in the current configuration.
+	// Parameter: const std::string& rJsonCommand
+	// Parameter: std::string rJsonResults
+	// Returns:   HRESULT Is S_OK if no error was found.
+	//************************************
+	static HRESULT RegisterMonitorList( const std::string& rJsonCommand, std::string& rJsonResults );
+
 	static HRESULT QueryProductList( const std::string& rJsonCommand, std::string& rJsonResults );
 	static HRESULT QueryRejectCondList( const std::string& rJsonCommand, std::string& rJsonResults );
 	static HRESULT QueryFailStatusList( const std::string& rJsonCommand, std::string& rJsonResults );
@@ -109,7 +136,18 @@ typedef SVJsonCommandManager< SVRemoteCommandFunctions > SVSocketRemoteCommandMa
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVSocketRemoteCommandManager.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\svobserver\SVSocketRemoteCommandManager.h_v  $
+ * 
+ *    Rev 1.9   20 Nov 2014 05:05:16   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  918
+ * SCR Title:  Implement Method RegisterMonitorList for RemoteControl (SVO-369)
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   add regMon and method RegisterMonitorList
+ * remove AddResultStatusToJsonValue and replace it with two methods CreateJsonValueWithResultErrors
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.8   10 Nov 2014 17:10:46   sjones
  * Project:  SVObserver

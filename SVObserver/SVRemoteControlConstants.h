@@ -5,8 +5,8 @@
 //* .Module Name     : SVRemoteControlConstants
 //* .File Name       : $Workfile:   SVRemoteControlConstants.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.8  $
-//* .Check In Date   : $Date:   28 Aug 2014 18:46:24  $
+//* .Current Version : $Revision:   1.9  $
+//* .Check In Date   : $Date:   20 Nov 2014 05:04:28  $
 //******************************************************************************
 
 #ifndef SVREMOTECONTROLCONSTANTS_H
@@ -85,6 +85,7 @@ namespace SVRC
 		const std::string id = "id";
 		const std::string options = "options";
 		const std::string filter = "filter";
+		const std::string rejectDepth = "rejectDepth";
 	}
 
 	namespace result
@@ -155,7 +156,17 @@ namespace SVRC
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVRemoteControlConstants.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\svobserver\SVRemoteControlConstants.h_v  $
+ * 
+ *    Rev 1.9   20 Nov 2014 05:04:28   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  918
+ * SCR Title:  Implement Method RegisterMonitorList for RemoteControl (SVO-369)
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   add string rejectDepth to arg
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.8   28 Aug 2014 18:46:24   sjones
  * Project:  SVObserver

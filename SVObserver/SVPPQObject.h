@@ -5,8 +5,8 @@
 //* .Module Name     : SVPPQObject
 //* .File Name       : $Workfile:   SVPPQObject.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.19  $
-//* .Check In Date   : $Date:   14 Aug 2014 18:16:28  $
+//* .Current Version : $Revision:   1.20  $
+//* .Check In Date   : $Date:   20 Nov 2014 05:03:12  $
 //******************************************************************************
 
 #pragma once
@@ -102,6 +102,14 @@ public:
 	BOOL GetInspection( long lIndex, SVInspectionProcess *&ppInspection );
 
 	HRESULT GetInspections( std::vector< SVInspectionProcess* >& rvecInspections ) const;
+
+	//************************************
+	// Method:    IsObjectInPPQ
+	// Description:  Check if the object is part of this PPQ.
+	// Parameter: const SVObjectClass & object The object which should be checked.
+	// Returns:   bool True if object is part of the PPQ.
+	//************************************
+	bool IsObjectInPPQ( const SVObjectClass& object ) const;
 
 	// PPQ position management functions
 	BOOL SetCameraPPQPosition( long lPosition, SVVirtualCamera *pCamera );
@@ -440,7 +448,17 @@ typedef SVVector< SVPPQObject* > SVPPQObjectArray;
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVPPQObject.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\svobserver\SVPPQObject.h_v  $
+ * 
+ *    Rev 1.20   20 Nov 2014 05:03:12   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  918
+ * SCR Title:  Implement Method RegisterMonitorList for RemoteControl (SVO-369)
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   add method IsObjectInPPQ
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.19   14 Aug 2014 18:16:28   sjones
  * Project:  SVObserver

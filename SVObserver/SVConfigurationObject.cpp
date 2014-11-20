@@ -5,8 +5,8 @@
 //* .Module Name     : SVConfigurationObject
 //* .File Name       : $Workfile:   SVConfigurationObject.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.32  $
-//* .Check In Date   : $Date:   13 Nov 2014 10:10:12  $
+//* .Current Version : $Revision:   1.33  $
+//* .Check In Date   : $Date:   20 Nov 2014 05:01:58  $
 //******************************************************************************
 
 #pragma region Includes
@@ -5306,6 +5306,14 @@ void SVConfigurationObject::SetRemoteMonitorList(const RemoteMonitorList& rList)
 	}
 }
 
+void SVConfigurationObject::ReplaceOrAddMonitorList(const RemoteMonitorNamedList& rList)
+{
+	if (nullptr != m_pIOController)
+	{
+		m_pIOController->ReplaceOrAddMonitorList(rList);
+	}
+}
+
 void SVConfigurationObject::ValidateRemoteMonitorList()
 {
 	if (nullptr != m_pIOController)
@@ -5476,7 +5484,17 @@ HRESULT SVConfigurationObject::LoadMonitoredObjectList( SVTreeType& rTree, SVTre
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVConfigurationObject.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\svobserver\SVConfigurationObject.cpp_v  $
+ * 
+ *    Rev 1.33   20 Nov 2014 05:01:58   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  918
+ * SCR Title:  Implement Method RegisterMonitorList for RemoteControl (SVO-369)
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   add method ReplaceOrAddMonitorList
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.32   13 Nov 2014 10:10:12   mziegler
  * Project:  SVObserver

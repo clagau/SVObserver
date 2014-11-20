@@ -5,8 +5,8 @@
 //* .Module Name     : SVIOController
 //* .File Name       : $Workfile:   SVIOController.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.12  $
-//* .Check In Date   : $Date:   29 Aug 2014 17:49:04  $
+//* .Current Version : $Revision:   1.13  $
+//* .Check In Date   : $Date:   20 Nov 2014 05:02:00  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -672,6 +672,11 @@ void SVIOController::SetRemoteMonitorList(const RemoteMonitorList& rList)
 	m_RemoteMonitorListController.SetRemoteMonitorList(rList);
 }
 
+void SVIOController::ReplaceOrAddMonitorList( const RemoteMonitorNamedList& rList )
+{
+	m_RemoteMonitorListController.ReplaceOrAddMonitorList(rList);
+}
+
 void SVIOController::ValidateRemoteMonitorList()
 {
 	m_RemoteMonitorListController.ValidateInputs();
@@ -706,7 +711,17 @@ HRESULT SVIOController::GetRemoteMonitorListProductFilter(const SVString& listNa
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVIOController.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\svobserver\SVIOController.cpp_v  $
+ * 
+ *    Rev 1.13   20 Nov 2014 05:02:00   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  918
+ * SCR Title:  Implement Method RegisterMonitorList for RemoteControl (SVO-369)
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   add method ReplaceOrAddMonitorList
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.12   29 Aug 2014 17:49:04   jHanebach
  * Project:  SVObserver

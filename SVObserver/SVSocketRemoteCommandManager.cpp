@@ -5,8 +5,8 @@
 //* .Module Name     : SVSocketRemoteCommandManager
 //* .File Name       : $Workfile:   SVSocketRemoteCommandManager.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.15  $
-//* .Check In Date   : $Date:   10 Nov 2014 17:10:46  $
+//* .Current Version : $Revision:   1.16  $
+//* .Check In Date   : $Date:   20 Nov 2014 05:05:16  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -24,6 +24,7 @@
 #include "SVRemoteControlConstants.h"
 #include "SVVisionProcessorHelper.h"
 #include "SVUserMessage.h"
+#include "RemoteMonitorNamedList.h"
 
 #define SV_DATA_TO_CONTENTS
 //#define SV_OUTPUT_JSON
@@ -48,6 +49,7 @@ SVRemoteCommandFunctions::SVCommandFunctionMap SVRemoteCommandFunctions::m_Async
 (SVRC::cmdName::putFile, &SVRemoteCommandFunctions::PutDeviceFile)
 (SVRC::cmdName::setMode, &SVRemoteCommandFunctions::SetDeviceMode)
 (SVRC::cmdName::setItems, &SVRemoteCommandFunctions::SetItems)
+(SVRC::cmdName::regMon, &SVRemoteCommandFunctions::RegisterMonitorList)
 (SVRC::cmdName::qryProd,  &SVRemoteCommandFunctions::QueryProductList)
 (SVRC::cmdName::qryRjct, &SVRemoteCommandFunctions::QueryRejectCondList)
 (SVRC::cmdName::qryFail, &SVRemoteCommandFunctions::QueryFailStatusList)
@@ -515,17 +517,18 @@ HRESULT SVRemoteCommandFunctions::AddJsonImagesToStorageItems( const Json::Value
 	return l_Status;
 }
 
-HRESULT SVRemoteCommandFunctions::AddResultStatusToJsonValue( const SVNameStorageMap& p_rItems, const SVNameStatusMap& p_rResultStatus, Json::Value& p_rJsonErrors )
+HRESULT SVRemoteCommandFunctions::CreateJsonValueWithResultErrors( const SVNameStorageMap& p_rItems, const SVNameStatusMap& rItemResultStatus, Json::Value& jsonResults )
 {
 	HRESULT l_Status = S_OK;
 
-	if( p_rJsonErrors.isArray() )
+	if( jsonResults.isObject() )
 	{
+		Json::Value errorArray(Json::arrayValue);
 		for( SVNameStorageMap::const_iterator l_ItemsIter = p_rItems.begin(); l_ItemsIter != p_rItems.end(); ++l_ItemsIter )
 		{
-			SVNameStatusMap::const_iterator l_StatusIter = p_rResultStatus.find( l_ItemsIter->first );
+			SVNameStatusMap::const_iterator l_StatusIter = rItemResultStatus.find( l_ItemsIter->first );
 
-			if( ( l_StatusIter == p_rResultStatus.end() ) || ( l_StatusIter->second != S_OK ) )
+			if( ( l_StatusIter == rItemResultStatus.end() ) || ( l_StatusIter->second != S_OK ) )
 			{
 				l_Status = SVMSG_NOT_ALL_LIST_ITEMS_PROCESSED;
 
@@ -533,7 +536,7 @@ HRESULT SVRemoteCommandFunctions::AddResultStatusToJsonValue( const SVNameStorag
 
 				l_Error[ SVRC::error::name ] = l_ItemsIter->first.ToDataType();
 
-				if( l_StatusIter == p_rResultStatus.end() )
+				if( l_StatusIter == rItemResultStatus.end() )
 				{
 					l_Error[ SVRC::error::status ] = static_cast< HRESULT >( SVMSG_OBJECT_NOT_PROCESSED );
 				}
@@ -542,9 +545,13 @@ HRESULT SVRemoteCommandFunctions::AddResultStatusToJsonValue( const SVNameStorag
 					l_Error[ SVRC::error::status ] = l_StatusIter->second;
 				}
 
-				p_rJsonErrors.append( l_Error );
+				errorArray.append( l_Error );
 			}
 		}
+
+		Json::Value jsonFaults(Json::objectValue);
+		jsonFaults[ SVRC::result::errors ] = errorArray;
+		jsonResults[ SVRC::result::faults ] = jsonFaults;
 	}
 	else
 	{
@@ -552,6 +559,36 @@ HRESULT SVRemoteCommandFunctions::AddResultStatusToJsonValue( const SVNameStorag
 	}
 
 	return l_Status;
+}
+
+HRESULT SVRemoteCommandFunctions::CreateJsonValueWithResultErrors( const SVNameStatusMap& rItemResultStatus, Json::Value& jsonResults )
+{
+	HRESULT hr = S_OK;
+
+	if ( jsonResults.isObject() )
+	{
+		Json::Value errorArray(Json::arrayValue);
+		for( SVNameStatusMap::const_iterator iter = rItemResultStatus.begin(); iter != rItemResultStatus.end(); ++iter )
+		{
+			if( S_OK != iter->second )
+			{
+				hr = SVMSG_NOT_ALL_LIST_ITEMS_PROCESSED;
+				Json::Value errorValue( Json::objectValue );
+				errorValue[ SVRC::error::name ] = iter->first.c_str();
+				errorValue[ SVRC::error::status ] = iter->second;
+				errorArray.append( errorValue );
+			}
+		}
+
+		Json::Value jsonFaults(Json::objectValue);
+		jsonFaults[ SVRC::result::errors ] = errorArray;
+		jsonResults[ SVRC::result::faults ] = jsonFaults;
+	}
+	else
+	{
+		hr = E_UNEXPECTED;
+	}
+	return hr;
 }
 
 HRESULT SVRemoteCommandFunctions::CommandNotFound( const std::string& p_rJsonCommand, std::string& p_rJsonResults )
@@ -1575,23 +1612,18 @@ HRESULT SVRemoteCommandFunctions::SetItems( const std::string& p_rJsonCommand, s
 		}
 	}
 
-	Json::Value l_Results(Json::objectValue);
-	Json::Value l_ErrorArray(Json::arrayValue);
-	Json::Value l_JsonFaults(Json::objectValue);
+	Json::Value jsonResults(Json::objectValue);
 
-	HRESULT l_TempStatus = AddResultStatusToJsonValue( l_Items, l_ResultStatus, l_ErrorArray );
+	HRESULT l_TempStatus = CreateJsonValueWithResultErrors( l_Items, l_ResultStatus, jsonResults );
 
 	if( l_Status == S_OK )
 	{
 		l_Status = l_TempStatus;
 	}
 
-	l_JsonFaults[ SVRC::result::errors ] = l_ErrorArray;
-	l_Results[ SVRC::result::faults ] = l_JsonFaults;
-
 	std::string l_FileName = "C:\\temp\\SetItems-rsp";
-	WriteResultToJsonAndFile(p_rJsonCommand, p_rJsonResults, l_Results, l_FileName, l_Status);
-	
+	WriteResultToJsonAndFile(p_rJsonCommand, p_rJsonResults, jsonResults, l_FileName, l_Status);
+
 	return l_Status;
 }
 
@@ -1665,6 +1697,112 @@ HRESULT SVRemoteCommandFunctions::ActivateMonitorList( const std::string& rJsonC
 	std::string FileName = "C:\\temp\\ActivateMonitorList-rsp";
 	WriteResultToJsonAndFile(rJsonCommand, rJsonResults, Results, FileName, hr);
 	
+	return hr;
+}
+
+HRESULT SVRemoteCommandFunctions::RegisterMonitorList( const std::string& rJsonCommand, std::string& rJsonResults )
+{
+	HRESULT hr = S_OK;
+	std::string listName;
+	std::string ppqName;
+	SVNameSet prodList;
+	SVNameSet rejectCondList;
+	SVNameSet failStatusList;
+	int rejectDepth = 0;
+	Json::Reader reader;
+	Json::Value jsonCmdValues;
+	SVNameStatusMap itemErrorMap;
+
+	if( reader.parse( rJsonCommand, jsonCmdValues, false ) )
+	{
+		std::string fileName = "C:\\temp\\RegisterMonitorList-cmd";
+		WriteJsonCommandToFile(jsonCmdValues, fileName);
+
+		Json::Value jsonArguments;
+		if( jsonCmdValues.isObject() )
+		{
+			jsonArguments = jsonCmdValues[ SVRC::cmd::arg ];
+		}
+
+		if( jsonArguments.isObject() )
+		{
+			Json::Value jsonArg = jsonArguments[ SVRC::arg::listName ];
+			if( jsonArg.isString() )
+			{
+				listName = jsonArg.asString();
+			}
+			else
+			{
+				hr = E_INVALIDARG;
+			}
+
+			jsonArg = jsonArguments[ SVRC::arg::ppqName ];
+			if( jsonArg.isString() )
+			{
+				ppqName = jsonArg.asString();
+			}
+			else
+			{
+				hr = E_INVALIDARG;
+			}
+
+			jsonArg = jsonArguments[ SVRC::arg::rejectDepth ];
+			if( jsonArg.isInt() )
+			{
+				rejectDepth = jsonArg.asInt();
+				if (MinRejectQueueDepth > rejectDepth && MaxRejectQueueDepth < rejectDepth)
+				{
+					hr = E_INVALIDARG;
+				}
+			}
+			else
+			{
+				hr = E_INVALIDARG;
+			}
+
+			if ( S_OK == hr )
+			{
+				jsonArg = jsonArguments[ SVRC::arg::prodList ];
+				hr = SVJsonUtilities::ConvertJsonArrayToStringSet( jsonArg, prodList );
+			}
+
+			if ( S_OK == hr )
+			{
+				jsonArg = jsonArguments[ SVRC::arg::rjctList ];
+				hr = SVJsonUtilities::ConvertJsonArrayToStringSet( jsonArg, rejectCondList );
+			}
+
+			jsonArg = jsonArguments[ SVRC::arg::failList ];
+			if ( S_OK == hr )
+			{
+				jsonArg = jsonArguments[ SVRC::arg::failList ];
+				hr = SVJsonUtilities::ConvertJsonArrayToStringSet( jsonArg, failStatusList );
+			}
+
+			if ( S_OK == hr )
+			{
+				hr = SVVisionProcessorHelper::Instance().RegisterMonitorList(listName, ppqName, rejectDepth, prodList, rejectCondList, failStatusList, itemErrorMap);
+			}
+		}
+		else
+		{
+			hr = E_INVALIDARG;
+		}
+	}
+	else
+	{
+		hr = E_INVALIDARG;
+	}
+
+	Json::Value results(Json::objectValue);
+	HRESULT tmp_hr = CreateJsonValueWithResultErrors( itemErrorMap, results );
+	if (S_OK == hr)
+	{
+		hr = tmp_hr;
+	}
+
+	std::string fileName = "C:\\temp\\RegisterMonitorList-rsp";
+	WriteResultToJsonAndFile(rJsonCommand, rJsonResults, results, fileName, hr);
 	return hr;
 }
 
@@ -2153,7 +2291,18 @@ void SVRemoteCommandFunctions::BuildErrorResponse(const std::string& rJsonComman
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVSocketRemoteCommandManager.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\svobserver\SVSocketRemoteCommandManager.cpp_v  $
+ * 
+ *    Rev 1.16   20 Nov 2014 05:05:16   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  918
+ * SCR Title:  Implement Method RegisterMonitorList for RemoteControl (SVO-369)
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   add regMon and method RegisterMonitorList
+ * remove AddResultStatusToJsonValue and replace it with two methods CreateJsonValueWithResultErrors
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.15   10 Nov 2014 17:10:46   sjones
  * Project:  SVObserver
