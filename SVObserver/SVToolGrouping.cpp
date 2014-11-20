@@ -2,8 +2,8 @@
 //* .Module Name     : SVToolGrouping
 //* .File Name       : $Workfile:   SVToolGrouping.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.8  $
-//* .Check In Date   : $Date:   10 Nov 2014 16:41:26  $
+//* .Current Version : $Revision:   1.9  $
+//* .Check In Date   : $Date:   19 Nov 2014 11:36:06  $
 //******************************************************************************
 #pragma region Includes
 #include "stdafx.h"
@@ -68,14 +68,15 @@ String SVToolGrouping::MakeNumericUniqueName(const String& rName) const
 			if (itemNameLower == nameLower)
 			{
 				// check for trailing digits
-				size_t last_char_pos = nameLower.find_last_not_of(_T("0123456789"));
+				size_t last_char_pos = itemNameLower.find_last_not_of(_T("0123456789"));
 				if (last_char_pos != String::npos)
 				{
-					// get base name (strip trailing numbers)
-					// String val = nameLower.substr(0, last_char_pos + 1);
-					String val = nameLower.substr(last_char_pos + 1);
-					int lastNum = atoi(val.c_str());
-					num = std::max(num, lastNum + 1);
+					String val = itemNameLower.substr(last_char_pos + 1);
+					if (!val.empty())
+					{
+						int lastNum = atoi(val.c_str());
+						num = std::max(num, lastNum + 1);
+					}
 				}
 				else
 				{
@@ -84,19 +85,17 @@ String SVToolGrouping::MakeNumericUniqueName(const String& rName) const
 			}
 			else
 			{
-				/*
-				String val = itemNameLower.substr(nameLower.length());
-				// check for all numerics
-				if (std::all_of(val.begin(), val.end(), ::isdigit))
-				*/
 				// check for trailing digits
-				size_t last_char_pos = nameLower.find_last_not_of(_T("0123456789"));
+				size_t last_char_pos = itemNameLower.find_last_not_of(_T("0123456789"));
 				if (last_char_pos != String::npos)
 				{
-					String val = nameLower.substr(last_char_pos + 1);
-					// convert and set max
-					int lastNum = atoi(val.c_str());
-					num = std::max(num, lastNum + 1);
+					String val = itemNameLower.substr(last_char_pos + 1);
+					if (!val.empty())
+					{
+						// convert and set max
+						int lastNum = atoi(val.c_str());
+						num = std::max(num, lastNum + 1);
+					}
 				}
 			}
 		}
@@ -106,7 +105,14 @@ String SVToolGrouping::MakeNumericUniqueName(const String& rName) const
 	if (num)
 	{
 		std::stringstream ss;
-		ss << rName << num;
+		// Get Base Name (can't end in a number)
+		String baseName = rName;
+		size_t last_char_pos = rName.find_last_not_of(_T("0123456789"));
+		if (last_char_pos != String::npos)
+		{
+			baseName = rName.substr(0, last_char_pos + 1);
+		}
+		ss << baseName << num;
 		newName = ss.str().c_str();
 	}
 	return newName;
@@ -693,6 +699,16 @@ size_t SVToolGrouping::size() const
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVToolGrouping.cpp_v  $
+ * 
+ *    Rev 1.9   19 Nov 2014 11:36:06   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  969
+ * SCR Title:  SVObserver Should Check the Name of Group Tools When Naming Other Tools
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   Revised MakeNumericUniqueName to handle base names that end in numerics correctly.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.8   10 Nov 2014 16:41:26   sjones
  * Project:  SVObserver
