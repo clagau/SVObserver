@@ -5,8 +5,8 @@
 //* .Module Name     : NameSelectionTreeCtrl
 //* .File Name       : $Workfile:   NameSelectionTreeCtrl.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   15 Aug 2014 15:28:46  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   21 Nov 2014 09:08:32  $
 //******************************************************************************
 
 #pragma once
@@ -59,6 +59,8 @@ protected:
 	MapIndexToHandleType m_mapIndexes;
 	CanSelectObjectCallbackFn m_fnCanSelectObject;
 
+private:
+	HTREEITEM GetItemsRoot(HTREEITEM iItem);
 // Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(NameSelectionTreeCtrl)
@@ -85,6 +87,16 @@ protected:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\NameSelectionTreeCtrl.h_v  $
+ * 
+ *    Rev 1.3   21 Nov 2014 09:08:32   ryoho
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  972
+ * SCR Title:  Fix "Remove All" issue with Monitor List Dialogs
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   added private method GetItemsRoot
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   15 Aug 2014 15:28:46   sjones
  * Project:  SVObserver

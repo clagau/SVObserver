@@ -5,8 +5,8 @@
 //* .Module Name     : NameSelectionTreeCtrl
 //* .File Name       : $Workfile:   NameSelectionTreeCtrl.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.8  $
-//* .Check In Date   : $Date:   15 Aug 2014 15:30:02  $
+//* .Current Version : $Revision:   1.9  $
+//* .Check In Date   : $Date:   21 Nov 2014 11:25:08  $
 //******************************************************************************
 
 #pragma region Includes
@@ -321,6 +321,8 @@ void NameSelectionTreeCtrl::Populate(const NameSelectionList& list)
 	}
 	//Set the display to top of the tree
 	SelectSetFirstVisible(GetRootItem());
+	//make sure root item is highlighted
+	Select(GetRootItem(),TVGN_CARET);
 }
 
 bool NameSelectionTreeCtrl::SelectItemByIndex(int index)
@@ -337,7 +339,14 @@ bool NameSelectionTreeCtrl::SelectItemByIndex(int index)
 void NameSelectionTreeCtrl::DeselectAll()
 {
 	HTREEITEM hItem = GetRootItem();
+	HTREEITEM hNextSibling = GetNextSiblingItem(hItem);
 	SetBranchChecks(hItem, false);
+	//check if there are sibling roots (each inspection is its own root)
+	while(hNextSibling != NULL)
+	{
+		SetBranchChecks(hNextSibling,false);
+		hNextSibling = GetNextSiblingItem(hNextSibling);
+	}
 }
 
 bool NameSelectionTreeCtrl::SetCheckState(HTREEITEM hItem, bool bCheck, bool bSelect)
@@ -473,7 +482,8 @@ bool NameSelectionTreeCtrl::Click(HTREEITEM hItem)
 			if (m_bAllowBranchCheck)
 			{
 				long l_lCheckState = 0;
-				UpdateNodeStateColor(GetRootItem(), l_lCheckState); 
+				HTREEITEM hItemRoot = GetItemsRoot(hItem);
+				UpdateNodeStateColor(hItemRoot, l_lCheckState); 
 			}
 			return true;
 		}
@@ -486,7 +496,8 @@ bool NameSelectionTreeCtrl::Click(HTREEITEM hItem)
 			bool l_bNewBranchState = l_bBranchState ? false : true;
 			SetBranchChecks( hItem, l_bNewBranchState);
 			long l_lCheckState = 0;
-			UpdateNodeStateColor(GetRootItem(), l_lCheckState); 
+			HTREEITEM hItemRoot = GetItemsRoot(hItem);
+			UpdateNodeStateColor(hItemRoot, l_lCheckState); 
 			return true;
 		}
 	}
@@ -527,11 +538,38 @@ void NameSelectionTreeCtrl::SetBranchChecks(HTREEITEM hItem , bool p_bNewBranchS
 	}
 }
 
+HTREEITEM NameSelectionTreeCtrl::GetItemsRoot(HTREEITEM hItem)
+{
+	HTREEITEM hRetItem = hItem;
+	HTREEITEM hTempItem = hItem;
+	
+	while (hTempItem != NULL)
+	{
+		hTempItem =	GetParentItem(hTempItem);
+		if (hTempItem != NULL)
+		{
+			hRetItem = hTempItem;
+		}
+	}
+	
+	return hRetItem;
+}
+
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\NameSelectionTreeCtrl.cpp_v  $
+ * 
+ *    Rev 1.9   21 Nov 2014 11:25:08   ryoho
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  972
+ * SCR Title:  Fix "Remove All" issue with Monitor List Dialogs
+ * Checked in by:  rYoho;  Rob Yoho
+ * Change Description:  
+ *   added method GetItemsRoot (each Inspection is its own Root).  Changed ::Populate to highlight first item in tree.  Changed ::DeselectAll to check for sibling roots to remove items. Changed ::Click to use GetItemsRoot to insure it is using the correct root.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.8   15 Aug 2014 15:30:02   sjones
  * Project:  SVObserver
