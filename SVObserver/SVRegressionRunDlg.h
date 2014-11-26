@@ -5,8 +5,8 @@
 // * .Module Name     : SVRegressionRunDlg
 // * .File Name       : $Workfile:   SVRegressionRunDlg.h  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.2  $
-// * .Check In Date   : $Date:   20 Nov 2014 08:14:38  $
+// * .Current Version : $Revision:   1.3  $
+// * .Check In Date   : $Date:   25 Nov 2014 20:32:06  $
 // ******************************************************************************
 
 #ifndef SVREGRESSIONRUNDLG_H
@@ -46,12 +46,10 @@ protected:
 	afx_msg void OnBtnMode();
 	afx_msg void OnBtnPlay();
 	afx_msg void OnBtnStop();
-	afx_msg void OnDeltaposSpinDelayTime(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
 	afx_msg void OnShowWindow(BOOL bShow, UINT nStatus);
 	afx_msg void OnClose();
 	afx_msg void OnBtnSettings();
-	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
 	afx_msg void OnBtnExit();
 	afx_msg LRESULT SetNextFiles(WPARAM, LPARAM);
 	afx_msg LRESULT SetPlayPauseBtn(WPARAM, LPARAM);
@@ -128,7 +126,17 @@ private:
 // * LOG HISTORY:
 // ******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\svobserver\SVRegressionRunDlg.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVRegressionRunDlg.h_v  $
+ * 
+ *    Rev 1.3   25 Nov 2014 20:32:06   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  930
+ * SCR Title:  Improve Regression Test Dialog (SVO-136)
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   Code review clean up
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   20 Nov 2014 08:14:38   mziegler
  * Project:  SVObserver

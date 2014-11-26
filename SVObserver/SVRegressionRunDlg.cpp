@@ -5,8 +5,8 @@
 // * .Module Name     : SVRegressionRunDlg
 // * .File Name       : $Workfile:   SVRegressionRunDlg.cpp  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.4  $
-// * .Check In Date   : $Date:   20 Nov 2014 08:14:40  $
+// * .Current Version : $Revision:   1.5  $
+// * .Check In Date   : $Date:   25 Nov 2014 20:32:04  $
 // ******************************************************************************
 // SVRegressionRunDlg.cpp : implementation file
 //
@@ -38,8 +38,10 @@ CSVRegressionRunDlg::CSVRegressionRunDlg(CWnd* pParent /*=NULL*/)
 	,m_iconModeRunToEnd(NULL)
 	,m_iconFrameUp(NULL)
 	,m_iconFrameBack(NULL)
-	,m_timeDelayText( " 0.0" )
+	,m_timeDelayText( _T( " 0.0" ) ) // Lead with a space for all values less than 10.
 {
+	//{{AFX_DATA_INIT(CSVRegressionRunDlg)
+	//}}AFX_DATA_INIT
 }
 
 CSVRegressionRunDlg::~CSVRegressionRunDlg()
@@ -67,7 +69,6 @@ void CSVRegressionRunDlg::DoDataExchange(CDataExchange* pDX)
 	//}}AFX_DATA_MAP
 }
 
-
 BEGIN_MESSAGE_MAP(CSVRegressionRunDlg, CDialog)
 	//{{AFX_MSG_MAP(CSVRegressionRunDlg)
 	ON_BN_CLICKED(IDC_BTN_BEGINNING, OnBtnBeginning)
@@ -86,102 +87,96 @@ BEGIN_MESSAGE_MAP(CSVRegressionRunDlg, CDialog)
 	ON_MESSAGE(WM_REGRESSION_TEST_SET_PREVIOUS, SetPreviousFrameBtn)
 	ON_MESSAGE(WM_REGRESSION_TEST_CLOSE_REGRESSION, CloseRegressionTest)
 	ON_BN_CLICKED(IDC_BTN_EXIT, OnBtnExit)
-	//}}AFX_MSG_MAP	
+	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
 // CSVRegressionRunDlg message handlers
 
-BOOL CSVRegressionRunDlg::OnInitDialog() 
+BOOL CSVRegressionRunDlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();
-	//load all bmp's
 	BOOL bRet;
-	m_iconPlay = AfxGetApp()->LoadIcon(IDI_ICON_PLAY);
-	m_iconPause = AfxGetApp()->LoadIcon(IDI_ICON_PAUSE);
-	m_iconStop = AfxGetApp()->LoadIcon(IDI_ICON_STOP);
-	m_iconModeContinue = AfxGetApp()->LoadIcon(IDI_ICON_MODE_CONTINUE);
-	m_iconModeRunToEnd = AfxGetApp()->LoadIcon(IDI_ICON_MODE_RUNTOEND);
-	m_iconFrameUp = AfxGetApp()->LoadIcon(IDI_ICON_FRAMEUP);
-	m_iconFrameBack = AfxGetApp()->LoadIcon(IDI_ICON_FRAMEBACK);
-	m_iconBeginning = AfxGetApp()->LoadIcon(IDI_ICON_BEGINNING);
+	CWinApp* app = AfxGetApp();
 
-
-	m_bFirst = TRUE;
-	//Set all BMP's to Buttons
-
-	m_btnStopExit.SetIcon(m_iconStop);
-	m_btnPlayPause.SetIcon(m_iconPlay);
-	m_btnMode.SetIcon(m_iconModeRunToEnd);
-	m_btnFrameUp.SetIcon(m_iconFrameUp);
-	m_btnFrameBack.SetIcon(m_iconFrameBack);
-	m_btnBeginning.SetIcon(m_iconBeginning);
-
-	//set default
-	m_enumPlayPause = Pause;
-	m_enumMode = RunToEnd;
-	m_btnPlayPause.SetIcon(m_iconPlay);
-	m_timeDelayInMS = 0;
-
-	m_ctlToolTip = new CToolTipCtrl;
-	//Add Tool Tips
-	m_ctlToolTip->Create(this, TTS_NOPREFIX | WS_VISIBLE);
-	m_ctlToolTip->Activate(TRUE);
-	m_ctlToolTip->SetDelayTime( 32000, TTDT_AUTOPOP );
-	m_ctlToolTip->SetDelayTime( 10,    TTDT_INITIAL );
-	m_ctlToolTip->SetDelayTime( 250,   TTDT_RESHOW );
-
-	bRet = m_ctlToolTip->AddTool(&m_btnSettings,IDS_REGTEST_SETTING);
-	bRet = m_ctlToolTip->AddTool(&m_btnStopExit,IDS_REGTEST_STOP);
-	bRet = m_ctlToolTip->AddTool(&m_btnPlayPause,IDS_REGTEST_PLAY);
-	bRet = m_ctlToolTip->AddTool(&m_btnMode,IDS_REGTEST_MODE_RUNTOEND);
-	bRet = m_ctlToolTip->AddTool(&m_btnFrameUp,IDS_REGTEST_FRAME_UP);
-	bRet = m_ctlToolTip->AddTool(&m_btnFrameBack,IDS_REGTEST_FRAME_BACK);
-	bRet = m_ctlToolTip->AddTool(&m_btnBeginning,IDS_REGTEST_BEGINNING);
-
-	m_sliderDelayTime.SetRange( 0, 100, TRUE );
-	//m_spnDelayTime.SetTic( 127 );
-	m_sliderDelayTime.SetPageSize( 1 );
-	m_sliderDelayTime.SetPos( 0 );
-
-//put in the window placement
-	WINDOWPLACEMENT *lwp;
-	UINT nl;
-
-	if(AfxGetApp()->GetProfileBinary("RegressionTest", "WP", (LPBYTE*)&lwp, &nl))
+	if ( nullptr != app )
 	{
-		SetWindowPlacement(lwp);
-		delete [] lwp;
-	}		
-	
-	if ( m_pIPDocParent->m_listRegCameras.GetCount() > 0 )
-	{
-		EnableButtons(TRUE);
+		//Load all BMP's
+		m_iconPlay = app->LoadIcon(IDI_ICON_PLAY);
+		m_iconPause = app->LoadIcon(IDI_ICON_PAUSE);
+		m_iconStop = app->LoadIcon(IDI_ICON_STOP);
+		m_iconModeContinue = app->LoadIcon(IDI_ICON_MODE_CONTINUE);
+		m_iconModeRunToEnd = app->LoadIcon(IDI_ICON_MODE_RUNTOEND);
+		m_iconFrameUp = app->LoadIcon(IDI_ICON_FRAMEUP);
+		m_iconFrameBack = app->LoadIcon(IDI_ICON_FRAMEBACK);
+		m_iconBeginning = app->LoadIcon(IDI_ICON_BEGINNING);
+
+		m_bFirst = TRUE;
+		//Set all BMP's to Buttons
+
+		m_btnStopExit.SetIcon(m_iconStop);
+		m_btnPlayPause.SetIcon(m_iconPlay);
+		m_btnMode.SetIcon(m_iconModeRunToEnd);
+		m_btnFrameUp.SetIcon(m_iconFrameUp);
+		m_btnFrameBack.SetIcon(m_iconFrameBack);
+		m_btnBeginning.SetIcon(m_iconBeginning);
+
+		//set default
+		m_enumPlayPause = Pause;
+		m_enumMode = RunToEnd;
+		m_btnPlayPause.SetIcon(m_iconPlay);
+		m_timeDelayInMS = 0;
+
+		//Add Tool Tips
+		m_ctlToolTip = new CToolTipCtrl;
+		m_ctlToolTip->Create(this, TTS_NOPREFIX | WS_VISIBLE);
+		m_ctlToolTip->Activate(TRUE);
+		m_ctlToolTip->SetDelayTime( 32000, TTDT_AUTOPOP );
+		m_ctlToolTip->SetDelayTime( 10,    TTDT_INITIAL );
+		m_ctlToolTip->SetDelayTime( 250,   TTDT_RESHOW );
+
+		bRet = m_ctlToolTip->AddTool(&m_btnSettings, IDS_REGTEST_SETTING);
+		bRet = m_ctlToolTip->AddTool(&m_btnStopExit, IDS_REGTEST_STOP);
+		bRet = m_ctlToolTip->AddTool(&m_btnPlayPause, IDS_REGTEST_PLAY);
+		bRet = m_ctlToolTip->AddTool(&m_btnMode, IDS_REGTEST_MODE_RUNTOEND);
+		bRet = m_ctlToolTip->AddTool(&m_btnFrameUp, IDS_REGTEST_FRAME_UP);
+		bRet = m_ctlToolTip->AddTool(&m_btnFrameBack, IDS_REGTEST_FRAME_BACK);
+		bRet = m_ctlToolTip->AddTool(&m_btnBeginning, IDS_REGTEST_BEGINNING);
+
+		m_sliderDelayTime.SetRange( 0, 100, TRUE );
+		m_sliderDelayTime.SetPageSize( 1 );
+		m_sliderDelayTime.SetPos( 0 );
+
+		//put in the window placement
+		WINDOWPLACEMENT *lwp;
+		UINT nl;
+
+		if(app->GetProfileBinary("RegressionTest", "WP", (LPBYTE*)&lwp, &nl))
+		{
+			SetWindowPlacement(lwp);
+			delete [] lwp;
+		}
+
+		EnableButtons(m_pIPDocParent->m_listRegCameras.GetCount() > 0);
+
+		UpdateData(FALSE);
+
+		m_btnSettings.SetFocus();
 	}
-	else
-	{
-		EnableButtons(FALSE);
-	}
-
-	UpdateData(FALSE);
-	
-	m_btnSettings.SetFocus();
 
 	return FALSE;  // return TRUE unless you set the focus to a control
 	              // EXCEPTION: OCX Property Pages should return FALSE
 }
 
-void CSVRegressionRunDlg::OnOK() 
+void CSVRegressionRunDlg::OnOK()
 {
-	return;
-	CDialog::OnOK();
 }
 
 void CSVRegressionRunDlg::OnCancel()
 {
 }
 
-BOOL CSVRegressionRunDlg::PreTranslateMessage(MSG* pMsg) 
+BOOL CSVRegressionRunDlg::PreTranslateMessage(MSG* pMsg)
 {
 	if ( pMsg->message && m_ctlToolTip )
 		m_ctlToolTip->RelayEvent(pMsg);
@@ -196,34 +191,34 @@ BOOL CSVRegressionRunDlg::PreTranslateMessage(MSG* pMsg)
 	if (!retValue && WM_KEYDOWN == pMsg->message)
 	{
 		retValue = TRUE;
-		switch (pMsg->wParam) 
+		switch (pMsg->wParam)
 		{
-		case 'S':
+		case 'S': // fall through...
 		case 's':
 			GetDlgItem(IDC_BTN_SETTINGS)->PostMessage(BM_CLICK);
 			break;
-		case 'P':
+		case 'P': // fall through...
 		case 'p':
 			GetDlgItem(IDC_BTN_PLAY)->PostMessage(BM_CLICK);
 			break;
-		case VK_HOME:
+		case VK_HOME: // HOME key
 			GetDlgItem(IDC_BTN_STOP)->PostMessage(BM_CLICK);
 			break;
-		case 'O':
-		case 'o':
-		case VK_NEXT:
+		case 'O': // fall through...
+		case 'o': // fall through...
+		case VK_NEXT: // PAGE DOWN key
 			GetDlgItem(IDC_BTN_FRAME_UP)->PostMessage(BM_CLICK);
 			break;
-		case 'I':
-		case 'i':
-		case VK_PRIOR:
+		case 'I': // fall through...
+		case 'i': // fall through...
+		case VK_PRIOR: // PAGE UP key
 			GetDlgItem(IDC_BTN_FRAME_BACK)->PostMessage(BM_CLICK);
 			break;
-		case 'J':
+		case 'J': // fall through...
 		case 'j':
 			GetDlgItem(IDC_BTN_BEGINNING)->PostMessage(BM_CLICK);
 			break;
-		case 'M':
+		case 'M': // fall through...
 		case 'm':
 			GetDlgItem(IDC_BTN_MODE)->PostMessage(BM_CLICK);
 			break;
@@ -231,17 +226,17 @@ BOOL CSVRegressionRunDlg::PreTranslateMessage(MSG* pMsg)
 			retValue = FALSE;
 			break;
 		}
-	}	
+	}
 
 	//if message was not translated, call base class
 	if (!retValue)
-	{	
+	{
 		retValue = CDialog::PreTranslateMessage(pMsg);
 	}
 	return retValue;
 }
 
-void CSVRegressionRunDlg::OnBtnBeginning() 
+void CSVRegressionRunDlg::OnBtnBeginning()
 {
 	if ( m_enumPlayPause == Play )
 	{
@@ -251,28 +246,22 @@ void CSVRegressionRunDlg::OnBtnBeginning()
 	{
 		m_pIPDocParent->SetRegressionTestRunMode(RegModeBackToBeginningStop);
 	}
-	// TODO: Add your control notification handler code here
-	
 }
 
-void CSVRegressionRunDlg::OnBtnFrameBack() 
+void CSVRegressionRunDlg::OnBtnFrameBack()
 {
 	m_pIPDocParent->SetRegressionTestRunMode(RegModeSingleStepBack);
-	// TODO: Add your control notification handler code here
-	
 }
 
-void CSVRegressionRunDlg::OnBtnFrameUp() 
+void CSVRegressionRunDlg::OnBtnFrameUp()
 {
 	m_pIPDocParent->SetRegressionTestRunMode(RegModeSingleStepForward);
-	// TODO: Add your control notification handler code here
-	
 }
 
-void CSVRegressionRunDlg::OnBtnMode() 
+void CSVRegressionRunDlg::OnBtnMode()
 {
 	if ( m_enumMode == RunToEnd )
-	{ 
+	{
 		//set to continue
 		m_enumMode = Continue;
 		m_btnMode.SetIcon(m_iconModeContinue);
@@ -287,12 +276,10 @@ void CSVRegressionRunDlg::OnBtnMode()
 		m_ctlToolTip->UpdateTipText(IDS_REGTEST_MODE_RUNTOEND,&m_btnMode);
 		m_pIPDocParent->SetRegressionTestPlayMode(RunToEnd);
 	}
-	
 }
 
-void CSVRegressionRunDlg::OnBtnPlay() 
+void CSVRegressionRunDlg::OnBtnPlay()
 {
-	
 	if ( m_enumPlayPause == Play )
 	{
 		m_pIPDocParent->SetRegressionTestRunMode(RegModePause);
@@ -301,7 +288,7 @@ void CSVRegressionRunDlg::OnBtnPlay()
 		m_btnPlayPause.SetIcon(m_iconPlay);
 		m_ctlToolTip->UpdateTipText(IDS_REGTEST_PLAY,&m_btnPlayPause);
 		m_btnFrameBack.EnableWindow(TRUE);
-		m_btnFrameUp.EnableWindow(TRUE);	
+		m_btnFrameUp.EnableWindow(TRUE);
 	}
 	else // must be paused
 	{
@@ -313,19 +300,17 @@ void CSVRegressionRunDlg::OnBtnPlay()
 		m_btnFrameBack.EnableWindow(FALSE);
 		m_btnFrameUp.EnableWindow(FALSE);
 	}
-	
 }
 
-void CSVRegressionRunDlg::OnBtnStop() 
+void CSVRegressionRunDlg::OnBtnStop()
 {
 	m_enumPlayPause = Pause;
 	OnBtnBeginning();
-	
 }
 
 void CSVRegressionRunDlg::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 {
-	UpdateData( TRUE ); // get data of dialog
+	UpdateData( TRUE ); // get data from dialog
 
 	if( &m_sliderDelayTime == ( CSliderCtrl* ) pScrollBar )
 	{
@@ -336,20 +321,19 @@ void CSVRegressionRunDlg::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScroll
 	CDialog::OnHScroll(nSBCode, nPos, pScrollBar);
 }
 
-void CSVRegressionRunDlg::OnShowWindow(BOOL bShow, UINT nStatus) 
+void CSVRegressionRunDlg::OnShowWindow(BOOL bShow, UINT nStatus)
 {
 	CDialog::OnShowWindow(bShow, nStatus);
-	
+
 	m_pIPDocParent->SetRegressionTimeoutPeriod(m_timeDelayInMS);
-	
 }
-void CSVRegressionRunDlg::OnClose() 
+void CSVRegressionRunDlg::OnClose()
 {
 	DestroyIcons();
 	CDialog::OnClose();
 }
 
-void CSVRegressionRunDlg::OnBtnSettings() 
+void CSVRegressionRunDlg::OnBtnSettings()
 {
 	if ( m_enumPlayPause != Pause )
 	{ //set to pause...
@@ -362,12 +346,11 @@ void CSVRegressionRunDlg::OnBtnSettings()
 
 	dlgRegFileSelect.m_psh.dwFlags |= PSH_NOAPPLYNOW;
 
-
 	SVVirtualCameraPtrSet CameraList;
 	HRESULT hrOk = m_pIPDocParent->GetCameras( CameraList );
 
 	dlgRegFileSelect.CreatePages(&m_pIPDocParent->m_listRegCameras,CameraList);
-	if ( dlgRegFileSelect.DoModal() == IDOK )
+	if ( IDOK == dlgRegFileSelect.DoModal() )
 	{
 		if ( m_pIPDocParent->m_listRegCameras.GetCount() > 0 )
 		{
@@ -385,26 +368,18 @@ void CSVRegressionRunDlg::OnBtnSettings()
 	}
 	else
 	{
-		if ( m_pIPDocParent->m_listRegCameras.GetCount() == 0 )
+		if ( 0 == m_pIPDocParent->m_listRegCameras.GetCount() )
 		{
 			EnableButtons(FALSE);
 		}
 	}
 }
 
-void CSVRegressionRunDlg::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) 
+void CSVRegressionRunDlg::OnBtnExit()
 {
-	// TODO: Add your message handler code here and/or call default
-	
-	CDialog::OnKeyDown(nChar, nRepCnt, nFlags);
-}
+	SVRegressionExitDlg* pDlg = new SVRegressionExitDlg();
 
-void CSVRegressionRunDlg::OnBtnExit() 
-{
-	SVRegressionExitDlg *pDlg;
-	pDlg = new SVRegressionExitDlg();
-
-	if ( pDlg )
+	if ( nullptr != pDlg )
 	{
 		pDlg->DoModal();
 		delete pDlg;
@@ -413,17 +388,16 @@ void CSVRegressionRunDlg::OnBtnExit()
 
 LRESULT  CSVRegressionRunDlg::SetNextFiles(WPARAM wParam, LPARAM lParam)
 //(CList<RegressionRunFileStruct*,RegressionRunFileStruct*>*RegressionFileList)
-{   //m_lstCameraImages
+{
 	HRESULT hRet = S_OK;
-	
-	CList<RegressionRunFileStruct*,RegressionRunFileStruct*> *RegressionFileList;
 
-	RegressionFileList = (CList<RegressionRunFileStruct*,RegressionRunFileStruct*>*) wParam;
+	CList<RegressionRunFileStruct*,RegressionRunFileStruct*> *RegressionFileList =
+	(CList<RegressionRunFileStruct*,RegressionRunFileStruct*>*) wParam;
 
 	//clear contents of list control
 	//m_lstCameraImages.DeleteAllItems();
 
-	int iCount = static_cast<int>(RegressionFileList->GetCount());	
+	int iCount = static_cast<int>(RegressionFileList->GetCount());
 
 	int iMaxStringSize = 0;
 	CString sTmpString;
@@ -433,7 +407,7 @@ LRESULT  CSVRegressionRunDlg::SetNextFiles(WPARAM wParam, LPARAM lParam)
 	{
 		bIsListUsed = true;
 	}
-	
+
 	for ( int i = 0; i <= iCount-1; i++ )
 	{
 		POSITION pos = RegressionFileList->FindIndex(i);
@@ -456,9 +430,8 @@ LRESULT  CSVRegressionRunDlg::SetNextFiles(WPARAM wParam, LPARAM lParam)
 					sTmpString = sTmp;
 				}
 			}
-				
-			iVal = m_lstCameraImages.AddString(sTmp);
 
+			iVal = m_lstCameraImages.AddString(sTmp);
 		}
 	}
 
@@ -478,14 +451,12 @@ LRESULT  CSVRegressionRunDlg::SetNextFiles(WPARAM wParam, LPARAM lParam)
 
 	Extent.cx += 3 * ::GetSystemMetrics(SM_CXBORDER);
 
-	
-		m_lstCameraImages.SetHorizontalExtent(Extent.cx);
-
+	m_lstCameraImages.SetHorizontalExtent(Extent.cx);
 
 	return hRet;
 }
 
-LRESULT  CSVRegressionRunDlg::SetPlayPauseBtn(WPARAM wParam, LPARAM lParam)
+LRESULT CSVRegressionRunDlg::SetPlayPauseBtn(WPARAM wParam, LPARAM lParam)
 {
 	HRESULT hRet = S_OK;
 
@@ -497,10 +468,9 @@ LRESULT  CSVRegressionRunDlg::SetPlayPauseBtn(WPARAM wParam, LPARAM lParam)
 		//set button to Play;
 		m_enumPlayPause = Play;
 		m_btnPlayPause.SetIcon(m_iconPause);
-		m_ctlToolTip->UpdateTipText(IDS_REGTEST_PAUSE,&m_btnPlayPause);
+		m_ctlToolTip->UpdateTipText(IDS_REGTEST_PAUSE, &m_btnPlayPause);
 		m_btnFrameBack.EnableWindow(FALSE);
 		m_btnFrameUp.EnableWindow(FALSE);
-
 	}
 	else // must be paused
 	{
@@ -508,23 +478,21 @@ LRESULT  CSVRegressionRunDlg::SetPlayPauseBtn(WPARAM wParam, LPARAM lParam)
 		//set button to Pause
 		m_enumPlayPause = Pause;
 		m_btnPlayPause.SetIcon(m_iconPlay);
-		m_ctlToolTip->UpdateTipText(IDS_REGTEST_PLAY,&m_btnPlayPause);
+		m_ctlToolTip->UpdateTipText(IDS_REGTEST_PLAY, &m_btnPlayPause);
 		m_btnFrameBack.EnableWindow(TRUE);
 		m_btnFrameUp.EnableWindow(TRUE);
 	}
 
-
 	return hRet;
 }
 
-LRESULT  CSVRegressionRunDlg::SetPreviousFrameBtn(WPARAM wParam, LPARAM lParam)
+LRESULT CSVRegressionRunDlg::SetPreviousFrameBtn(WPARAM wParam, LPARAM lParam)
 {
 	HRESULT hRet = S_OK;
 
-	bool l_bVal = lParam != 0;
-	
-	m_btnFrameBack.EnableWindow(l_bVal);
+	bool l_bVal = ( 0 != lParam );
 
+	m_btnFrameBack.EnableWindow(l_bVal);
 
 	return hRet;
 }
@@ -539,7 +507,6 @@ LRESULT CSVRegressionRunDlg::CloseRegressionTest(WPARAM, LPARAM)
 	delete m_ctlToolTip;
 
 	m_pIPDocParent->SetRegressionTestRunMode(RegModeStopExit);
-
 
 	return (LRESULT)TRUE;
 }
@@ -557,69 +524,57 @@ BOOL CSVRegressionRunDlg::EnableButtons(BOOL p_bValue)
 {
 	//if false first time, all btns enable = false, except for 'Settings'
 	//if true, files have been selected
-	if ( p_bValue )
-	{
-		m_btnStopExit.EnableWindow(TRUE);
-		m_btnPlayPause.EnableWindow(TRUE);
-		m_btnMode.EnableWindow(TRUE);
-		m_btnFrameUp.EnableWindow(TRUE);
-		m_btnFrameBack.EnableWindow(TRUE);
-		m_btnBeginning.EnableWindow(TRUE);
-	}
-	else
-	{
-		m_btnStopExit.EnableWindow(FALSE);
-		m_btnPlayPause.EnableWindow(FALSE);
-		m_btnMode.EnableWindow(FALSE);
-		m_btnFrameUp.EnableWindow(FALSE);
-		m_btnFrameBack.EnableWindow(FALSE);
-		m_btnBeginning.EnableWindow(FALSE);
-	}
+	m_btnStopExit.EnableWindow(p_bValue);
+	m_btnPlayPause.EnableWindow(p_bValue);
+	m_btnMode.EnableWindow(p_bValue);
+	m_btnFrameUp.EnableWindow(p_bValue);
+	m_btnFrameBack.EnableWindow(p_bValue);
+	m_btnBeginning.EnableWindow(p_bValue);
 
 	return TRUE;
 }
 
 void CSVRegressionRunDlg::DestroyIcons()
 {
-	if( m_iconPlay)
+	if(m_iconPlay)
 	{
-		DestroyIcon(m_iconPlay); 
-		m_iconPlay = NULL;
+		DestroyIcon(m_iconPlay);
+		m_iconPlay = nullptr;
 	}
-	if( m_iconPause)
+	if(m_iconPause)
 	{
-		DestroyIcon(m_iconPause );
-		m_iconPause = NULL;
+		DestroyIcon(m_iconPause);
+		m_iconPause = nullptr;
 	}
-	if( m_iconStop)
+	if(m_iconStop)
 	{
-		DestroyIcon(m_iconStop );
-		m_iconStop = NULL;
+		DestroyIcon(m_iconStop);
+		m_iconStop = nullptr;
 	}
-	if( m_iconModeContinue)
+	if(m_iconModeContinue)
 	{
-		DestroyIcon(m_iconModeContinue );
-		m_iconModeContinue = NULL;
+		DestroyIcon(m_iconModeContinue);
+		m_iconModeContinue = nullptr;
 	}
-	if( m_iconModeRunToEnd)
+	if(m_iconModeRunToEnd)
 	{
-		DestroyIcon(m_iconModeRunToEnd );
-		m_iconModeRunToEnd = NULL;
+		DestroyIcon(m_iconModeRunToEnd);
+		m_iconModeRunToEnd = nullptr;
 	}
-	if( m_iconFrameUp)
+	if(m_iconFrameUp)
 	{
-		DestroyIcon(m_iconFrameUp );
-		m_iconFrameUp = NULL;
+		DestroyIcon(m_iconFrameUp);
+		m_iconFrameUp = nullptr;
 	}
-	if( m_iconFrameBack)
+	if(m_iconFrameBack)
 	{
 		DestroyIcon(m_iconFrameBack);
-		m_iconFrameBack = NULL;
+		m_iconFrameBack = nullptr;
 	}
-	if( m_iconBeginning)
+	if(m_iconBeginning)
 	{
 		DestroyIcon(m_iconBeginning);
-		m_iconBeginning = NULL;
+		m_iconBeginning = nullptr;
 	}
 }
 
@@ -633,6 +588,7 @@ void CSVRegressionRunDlg::setDelayTime( int position )
 		m_timeDelayInMS = 0;
 	}
 
+	// check to make sure value does not go above 10000
 	if ( m_timeDelayInMS > 10000 )
 	{
 		m_timeDelayInMS = 10000;
@@ -650,7 +606,17 @@ void CSVRegressionRunDlg::setDelayTime( int position )
 // * LOG HISTORY:
 // ******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\svobserver\SVRegressionRunDlg.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVRegressionRunDlg.cpp_v  $
+ * 
+ *    Rev 1.5   25 Nov 2014 20:32:04   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  930
+ * SCR Title:  Improve Regression Test Dialog (SVO-136)
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   Code review clean up
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.4   20 Nov 2014 08:14:40   mziegler
  * Project:  SVObserver
@@ -842,4 +808,3 @@ $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\svobserver\SVRegressi
  * 
  * /////////////////////////////////////////////////////////////////////////////////////
 */
-
