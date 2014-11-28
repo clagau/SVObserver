@@ -5,8 +5,8 @@
 //* .Module Name     : Custom2 Filter dialog
 //* .File Name       : $Workfile:   Custom2FilterDlg.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.3  $
-//* .Check In Date   : $Date:   17 Nov 2014 09:15:48  $
+//* .Current Version : $Revision:   1.4  $
+//* .Check In Date   : $Date:   28 Nov 2014 04:27:22  $
 //******************************************************************************
 
 #pragma region Includes
@@ -270,7 +270,14 @@ void Custom2FilterDlg::OnBnClickedApplySum()
 
 void Custom2FilterDlg::OnEnChangeNormilizationFactor()
 {
+	long NormalizationFactor( m_NormalizationFactor );
+
 	UpdateData( TRUE );
+	//Check if ok otherwise set old value
+	if( 0 >= m_NormalizationFactor )
+	{
+		m_NormalizationFactor = NormalizationFactor;
+	}
 	calculateNormalizationResult();
 	UpdateData( FALSE );
 }
@@ -502,12 +509,18 @@ void Custom2FilterDlg::OnBnClickedExportFilter()
 
 void Custom2FilterDlg::OnBnClickedOk()
 {
-	UpdateData( TRUE );
+	SVString DataInvalidMessage;
 
-	if( 0 < m_NormalizationFactor )
+	UpdateData( TRUE );
+	
+	if( isDataValid( DataInvalidMessage ) )
 	{
 		SetInspectionData();
 		CDialog::OnOK();
+	}
+	else
+	{
+		AfxMessageBox( DataInvalidMessage.c_str() );
 	}
 }
 
@@ -1106,6 +1119,17 @@ bool Custom2FilterDlg::doesControlHaveFocus( UINT ControlID ) const
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\Custom2FilterDlg.cpp_v  $
+ * 
+ *    Rev 1.4   28 Nov 2014 04:27:22   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  942
+ * SCR Title:  Create new Custom2 Filter SVO-324 SVO-67 SVO-74
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Invalid normalization value will set it back to original value
+ * Changed: OnEnChangeNormilizationFactor()
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   17 Nov 2014 09:15:48   gramseier
  * Project:  SVObserver
