@@ -5,8 +5,8 @@
 //* .Module Name     : SVFileCamera
 //* .File Name       : $Workfile:   SVFileCamera.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   01 Oct 2013 06:14:50  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   01 Dec 2014 12:16:02  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -128,7 +128,7 @@ HRESULT SVFileCamera::Start(const EventHandler& startFrameHandler, const EventHa
 	m_loadSequence.Init(m_fileList.begin(), m_fileList.end(), !IsSingleIterationLoadMode());
 
 	// start loader thread
-	hr = m_thread.Create(&SVFileCamera::OnAPCEvent, boost::bind(&SVFileCamera::OnThreadEvent, this, _1), m_name.ToString());
+	hr = m_thread.Create(&SVFileCamera::OnAPCEvent, boost::bind(&SVFileCamera::OnThreadEvent, this, _1), m_name.ToString(), SVAffinityAcq);
 	return hr;
 }
 
@@ -427,6 +427,16 @@ void SVFileCamera::ClearTriggerCallback()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVFileAcquisitionDevice\SVFileCamera.cpp_v  $
+ * 
+ *    Rev 1.2   01 Dec 2014 12:16:02   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  960
+ * SCR Title:  Pipe/core management
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Thread Manager Settings
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   01 Oct 2013 06:14:50   tbair
  * Project:  SVObserver

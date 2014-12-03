@@ -5,13 +5,14 @@
 //* .Module Name     : SVThread
 //* .File Name       : $Workfile:   SVThread.inl  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   25 Apr 2013 18:03:02  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   01 Dec 2014 13:59:04  $
 //******************************************************************************
 
 #include <tchar.h>
 #include "SVStatusLibrary/SVException.h"
 #include "SVMessage/SVMessage.h"
+#include "SVThreadManager.h"
 
 template<typename SVThreadSignalHandler>
 SVThread<SVThreadSignalHandler>::SVThread()
@@ -102,7 +103,7 @@ DWORD WINAPI SVThread<SVThreadSignalHandler>::ThreadProc( LPVOID lpParam )
 }
 
 template<typename SVThreadSignalHandler>
-HRESULT SVThread<SVThreadSignalHandler>::Create(const SVThreadSignalHandler& threadHandler, LPCTSTR tag)
+HRESULT SVThread<SVThreadSignalHandler>::Create(const SVThreadSignalHandler& threadHandler, LPCTSTR tag, SVThreadAttribute eAttribute )
 {
 	HRESULT l_Status = S_OK;
 
@@ -142,7 +143,6 @@ HRESULT SVThread<SVThreadSignalHandler>::Create(const SVThreadSignalHandler& thr
 	if (!m_hThread)
 	{
 		m_hThread = ::CreateThread( NULL, 0, SVThread::ThreadProc, (LPVOID)this, 0, &m_ulThreadID );
-		//m_hThread = ::CreateThread( NULL, 0, SVThread::ThreadProc, (LPVOID)this, CREATE_SUSPENDED, &m_ulThreadID );
 
 		if (m_hThread == NULL)
 		{
@@ -156,33 +156,7 @@ HRESULT SVThread<SVThreadSignalHandler>::Create(const SVThreadSignalHandler& thr
 		}
 		else
 		{
-			/*
-			unsigned long l_ResumeCount = ::ResumeThread(m_hThread);
-
-			if( 1 < l_ResumeCount )
-			{
-				unsigned long l_PreviousCount = l_ResumeCount;
-
-				do
-				{
-					l_PreviousCount = l_ResumeCount;
-
-					l_ResumeCount = ::ResumeThread(m_hThread);
-				}
-				while( 1 < l_ResumeCount && l_PreviousCount != l_ResumeCount );
-
-				if( 1 < l_ResumeCount )
-				{
-					l_Status = SVMSG_THREAD_CREATION_ERROR;
-
-					DWORD l_ErrorCode = GetLastError();
-
-					SVException l_svLog;
-					l_svLog.SetException( l_Status, _T( __DATE__ ), _T( __TIME__ ), m_tag.c_str(), _T( __FILE__ ), _T( __LINE__ ), _T( __TIMESTAMP__ ), 669, l_ErrorCode );
-					l_svLog.LogException();
-				}
-			}
-			*/
+			SVThreadManager::Instance().Add(m_hThread, tag, eAttribute); // keep track of thread.
 
 			if( l_Status == S_OK )
 			{
@@ -223,7 +197,7 @@ HRESULT SVThread<SVThreadSignalHandler>::Restart()
 {
 	Destroy();
 
-	return Create( m_threadHandler, m_tag.c_str() );
+	return Create( m_threadHandler, m_tag.c_str(), SVNone );
 }
 
 template< typename SVThreadSignalHandler >
@@ -265,6 +239,7 @@ void SVThread< SVThreadSignalHandler >::Destroy()
 		}
 
 		::CloseHandle( m_hThread );
+		SVThreadManager::Instance().Remove( m_hThread );
 		m_hThread = NULL;
 	}
 
@@ -322,7 +297,17 @@ bool SVThread<SVThreadSignalHandler>::IsActive() const
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVSystemLibrary\SVThread.inl_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVSystemLibrary\SVThread.inl_v  $
+ * 
+ *    Rev 1.1   01 Dec 2014 13:59:04   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  960
+ * SCR Title:  Pipe/core management
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Added thread manager.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   25 Apr 2013 18:03:02   bWalter
  * Project:  SVObserver

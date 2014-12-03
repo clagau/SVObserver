@@ -5,12 +5,13 @@
 //* .Module Name     : SVInternalTrigger
 //* .File Name       : $Workfile:   SVInternalTrigger.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   25 Apr 2013 18:55:36  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   01 Dec 2014 14:15:24  $
 //******************************************************************************
 #include "stdafx.h"
 #include "SVInternalTrigger.h"
 #include <boost/bind.hpp>
+#include "SVSystemLibrary/SVThreadManager.h"
 
 SVInternalTrigger::SVInternalTrigger()
 {
@@ -21,9 +22,9 @@ SVInternalTrigger::~SVInternalTrigger()
 	Destroy();
 }
 
-void SVInternalTrigger::Create()
+void SVInternalTrigger::Create(LPCTSTR p_strOwner, SVThreadAttribute eAttr)
 {
-	m_thread.Create(boost::bind(&SVInternalTrigger::Dispatch, this, _1), _T("SVInternalTrigger"));
+	m_thread.Create(boost::bind(&SVInternalTrigger::Dispatch, this, _1), p_strOwner, eAttr);
 	m_thread.SetPriority(THREAD_PRIORITY_TIME_CRITICAL);
 }
 
@@ -97,7 +98,17 @@ void SVInternalTrigger::Dispatch( bool& p_WaitForEvents )
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVTriggerLibrary\SVInternalTrigger.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVTriggerLibrary\SVInternalTrigger.cpp_v  $
+ * 
+ *    Rev 1.1   01 Dec 2014 14:15:24   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  960
+ * SCR Title:  Pipe/core management
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Added thread attributer
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   25 Apr 2013 18:55:36   bWalter
  * Project:  SVObserver

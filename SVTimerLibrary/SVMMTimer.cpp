@@ -5,8 +5,8 @@
 //* .Module Name     : SVMMTimer
 //* .File Name       : $Workfile:   SVMMTimer.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   02 Oct 2013 10:18:18  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   01 Dec 2014 14:12:44  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -37,7 +37,7 @@ void SVMMTimer::Start()
 	// if have subscribers
 	if (timer.m_eventListeners.size())
 	{
-		timer.m_asyncProcedure.Create(&SVMMTimer::TimerAPCProc, boost::bind(&SVMMTimer::Dispatch, &timer, _1), _T("SVMMTimer"));
+		timer.m_asyncProcedure.Create(&SVMMTimer::TimerAPCProc, boost::bind(&SVMMTimer::Dispatch, &timer, _1), _T("SVMMTimer"), SVNone );
 
 		timer.m_asyncProcedure.SetPriority(THREAD_PRIORITY_TIME_CRITICAL);
 
@@ -158,6 +158,16 @@ void SVMMTimer::Dispatch( bool& p_WaitForEvents )
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVTimerLibrary\SVMMTimer.cpp_v  $
+ * 
+ *    Rev 1.2   01 Dec 2014 14:12:44   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  960
+ * SCR Title:  Pipe/core management
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Added thread attribute.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   02 Oct 2013 10:18:18   tbair
  * Project:  SVObserver

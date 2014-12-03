@@ -81,6 +81,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SVPictureDisplay", "SVPictu
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GridCtrlLibrary", "GridCtrlLibrary\GridCtrlLibrary.vcxproj", "{2BFBF5FA-1947-4A24-9F5A-697FB3EF6671}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SVThreadManager", "SVThreadManager\SVThreadManager.vcxproj", "{9BA00D52-356B-462C-ABF5-84DB3B232F82}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -525,6 +527,18 @@ Global
 		{2BFBF5FA-1947-4A24-9F5A-697FB3EF6671}.Unicode Release|Win32.Build.0 = Release|Win32
 		{2BFBF5FA-1947-4A24-9F5A-697FB3EF6671}.Unicode Release|x64.ActiveCfg = Release|x64
 		{2BFBF5FA-1947-4A24-9F5A-697FB3EF6671}.Unicode Release|x64.Build.0 = Release|x64
+		{9BA00D52-356B-462C-ABF5-84DB3B232F82}.Debug|Win32.ActiveCfg = Debug|Win32
+		{9BA00D52-356B-462C-ABF5-84DB3B232F82}.Debug|Win32.Build.0 = Debug|Win32
+		{9BA00D52-356B-462C-ABF5-84DB3B232F82}.Debug|x64.ActiveCfg = Debug|Win32
+		{9BA00D52-356B-462C-ABF5-84DB3B232F82}.Release|Win32.ActiveCfg = Release|Win32
+		{9BA00D52-356B-462C-ABF5-84DB3B232F82}.Release|Win32.Build.0 = Release|Win32
+		{9BA00D52-356B-462C-ABF5-84DB3B232F82}.Release|x64.ActiveCfg = Release|Win32
+		{9BA00D52-356B-462C-ABF5-84DB3B232F82}.Unicode Debug|Win32.ActiveCfg = Debug|Win32
+		{9BA00D52-356B-462C-ABF5-84DB3B232F82}.Unicode Debug|Win32.Build.0 = Debug|Win32
+		{9BA00D52-356B-462C-ABF5-84DB3B232F82}.Unicode Debug|x64.ActiveCfg = Debug|Win32
+		{9BA00D52-356B-462C-ABF5-84DB3B232F82}.Unicode Release|Win32.ActiveCfg = Release|Win32
+		{9BA00D52-356B-462C-ABF5-84DB3B232F82}.Unicode Release|Win32.Build.0 = Release|Win32
+		{9BA00D52-356B-462C-ABF5-84DB3B232F82}.Unicode Release|x64.ActiveCfg = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

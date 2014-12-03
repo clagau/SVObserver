@@ -5,8 +5,8 @@
 //* .Module Name     : SVRemoteFontManager
 //* .File Name       : $Workfile:   SVRemoteFontManager.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   02 Oct 2013 07:58:44  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   01 Dec 2014 13:22:50  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -101,7 +101,7 @@ bool SVRemoteFontManager::Startup()
 
 		m_hShutdown = ::CreateEvent( NULL, TRUE, FALSE, NULL );
 		m_hThread = ::CreateThread( NULL, 0, SVRemoteFontCleanupThread, this, 0, NULL );
-
+		SVThreadManager::Instance().Add( m_hThread, "SVFontManager");
 		::LeaveCriticalSection( &m_csLock );
 	}
 
@@ -128,6 +128,7 @@ bool SVRemoteFontManager::Shutdown()
 		if ( m_hThread != NULL )
 		{
 			::CloseHandle( m_hThread );
+			SVThreadManager::Instance().Remove( m_hThread );
 			m_hThread = NULL;
 		}
 
@@ -843,6 +844,16 @@ bool SVRemoteFontManager::UpdateCharMapFontId(long lCurrentFont, long NewFont)
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVRemoteFontManager.cpp_v  $
+ * 
+ *    Rev 1.3   01 Dec 2014 13:22:50   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  960
+ * SCR Title:  Pipe/core management
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Added Thread lables and attributes.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   02 Oct 2013 07:58:44   tbair
  * Project:  SVObserver

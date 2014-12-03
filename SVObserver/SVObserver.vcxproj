@@ -465,6 +465,7 @@ echo %time%
     <ClCompile Include="SVStaticStringValueObjectClass.cpp" />
     <ClCompile Include="SVStorage.cpp" />
     <ClCompile Include="SVStorageResult.cpp" />
+    <ClCompile Include="SVThreadInfoDlg.cpp" />
     <ClCompile Include="SVThresholdClass.cpp" />
     <ClCompile Include="SVToolGrouping.cpp" />
     <ClCompile Include="SVToolSetTreeCtrl.cpp" />
@@ -4300,6 +4301,7 @@ echo %time%
     <ClInclude Include="SVStaticValueObjectClassImpl.h" />
     <ClInclude Include="SVStorage.h" />
     <ClInclude Include="SVStorageResult.h" />
+    <ClInclude Include="SVThreadInfoDlg.h" />
     <ClInclude Include="SVThresholdClass.h" />
     <ClInclude Include="SVToolGrouping.h" />
     <ClInclude Include="SVToolSetTreeCtrl.h" />

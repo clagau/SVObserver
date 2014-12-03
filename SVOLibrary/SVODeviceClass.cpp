@@ -5,8 +5,8 @@
 // * .Module Name     : SVODeviceClass
 // * .File Name       : $Workfile:   SVODeviceClass.cpp  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.2  $
-// * .Check In Date   : $Date:   02 Oct 2013 08:47:30  $
+// * .Current Version : $Revision:   1.3  $
+// * .Check In Date   : $Date:   01 Dec 2014 13:26:40  $
 // ******************************************************************************
 
 #include "stdafx.h"
@@ -316,7 +316,7 @@ HRESULT SVODeviceClass::Start()
 
 	if ( mbIsValid )
 	{
-		hrOk = m_Thread.Create( &SVODeviceClass::APCProc, SVProcessFunctorImpl( this ), mDeviceName.c_str() );
+		hrOk = m_Thread.Create( &SVODeviceClass::APCProc, SVProcessFunctorImpl( this ), mDeviceName.c_str(), SVAffinityAcq );
 
 		if( hrOk == S_OK )
 		{
@@ -647,6 +647,16 @@ bool SVODeviceClass::IsStarted() const
 // ******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVOLibrary\SVODeviceClass.cpp_v  $
+ * 
+ *    Rev 1.3   01 Dec 2014 13:26:40   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  960
+ * SCR Title:  Pipe/core management
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Added thread attribute.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   02 Oct 2013 08:47:30   tbair
  * Project:  SVObserver

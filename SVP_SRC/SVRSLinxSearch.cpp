@@ -5,8 +5,8 @@
 // * .Module Name     : SVRSLinxSearch
 // * .File Name       : $Workfile:   SVRSLinxSearch.cpp  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.2  $
-// * .Check In Date   : $Date:   13 May 2013 11:21:04  $
+// * .Current Version : $Revision:   1.3  $
+// * .Check In Date   : $Date:   01 Dec 2014 13:35:50  $
 // ******************************************************************************
 
 #include "stdafx.h"
@@ -17,6 +17,7 @@
 #include "SVABSLC500Ethernet.h"
 #include "SVABSLC500KTX.h"
 #include "plc_interface.h"                 // IDC_FORCE_NEXT
+#include "SVSystemLibrary/SVThreadManager.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -113,6 +114,7 @@ BOOL SVRSLinxSearchClass::OnSetActive()
          lErr = -1330;
          break;
       }
+	  SVThreadManager::Instance().Add(svmhBuildRSLinxConnectionListThread, _T("RSLinxConnectionListThread"));
 
       if (!CPropertyPage::OnSetActive())
       {
@@ -251,6 +253,7 @@ LRESULT SVRSLinxSearchClass::OnWizardNext()
       do
       {
          GetExitCodeThread (svmhBuildRSLinxConnectionListThread, &dwExitCode);
+		 SVThreadManager::Instance().Remove(svmhBuildRSLinxConnectionListThread);
          if (10000 < SVClock::ConvertTo( SVClock::Milliseconds, ( SVClock::GetTimeStamp() - l_Start )))
          {
             lErr = -1332;
@@ -282,7 +285,17 @@ LRESULT SVRSLinxSearchClass::OnWizardNext()
 // * LOG HISTORY:
 // ******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVP_SRC\SVRSLinxSearch.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVP_SRC\SVRSLinxSearch.cpp_v  $
+ * 
+ *    Rev 1.3   01 Dec 2014 13:35:50   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  960
+ * SCR Title:  Pipe/core management
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Added thread attributes and lables
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   13 May 2013 11:21:04   bWalter
  * Project:  SVObserver

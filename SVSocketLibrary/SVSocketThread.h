@@ -5,14 +5,15 @@
 //* .Module Name     : SVSocketThread
 //* .File Name       : $Workfile:   SVSocketThread.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   25 Apr 2013 17:17:56  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   01 Dec 2014 13:47:40  $
 //******************************************************************************
 
 #pragma once
 
 #include <comdef.h>
 #include <string>
+#include "SVSystemLibrary/SVThreadManager.h"
 
 /*
 ThreadFunc must have the following prototype:
@@ -55,7 +56,17 @@ public:
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVSocketLibrary\SVSocketThread.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVSocketLibrary\SVSocketThread.h_v  $
+ * 
+ *    Rev 1.1   01 Dec 2014 13:47:40   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  960
+ * SCR Title:  Pipe/core management
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Added thread lable and attribute.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   25 Apr 2013 17:17:56   bWalter
  * Project:  SVObserver

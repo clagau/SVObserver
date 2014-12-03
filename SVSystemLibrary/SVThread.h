@@ -5,15 +5,15 @@
 //* .Module Name     : SVThread
 //* .File Name       : $Workfile:   SVThread.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   25 Apr 2013 18:02:46  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   01 Dec 2014 13:59:06  $
 //******************************************************************************
 
 #ifndef SVTHREAD_H
 #define SVTHREAD_H
 
 #include <string>
-
+#include "SVThreadManager.h"
 /*
 SVThreadSignalHandler must have the following prototype:
 
@@ -38,7 +38,7 @@ public:
 	SVThread();
 	~SVThread();
 
-	HRESULT Create(const SVThreadSignalHandler& threadHandler, LPCTSTR tag);
+	HRESULT Create(const SVThreadSignalHandler& threadHandler, LPCTSTR tag, SVThreadAttribute eAttribute );
 	void Destroy();
 
 	unsigned long GetThreadID() const;
@@ -60,7 +60,17 @@ public:
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVSystemLibrary\SVThread.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVSystemLibrary\SVThread.h_v  $
+ * 
+ *    Rev 1.1   01 Dec 2014 13:59:06   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  960
+ * SCR Title:  Pipe/core management
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Added thread manager.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   25 Apr 2013 18:02:46   bWalter
  * Project:  SVObserver

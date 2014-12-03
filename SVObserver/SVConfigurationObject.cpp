@@ -5,8 +5,8 @@
 //* .Module Name     : SVConfigurationObject
 //* .File Name       : $Workfile:   SVConfigurationObject.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.33  $
-//* .Check In Date   : $Date:   20 Nov 2014 05:01:58  $
+//* .Current Version : $Revision:   1.34  $
+//* .Check In Date   : $Date:   01 Dec 2014 13:07:48  $
 //******************************************************************************
 
 #pragma region Includes
@@ -63,6 +63,7 @@
 #include "RemoteMonitorNamedList.h"
 #include "RemoteMonitorListHelper.h"
 #include "EnvironmentObject.h"
+#include "SVSystemLibrary/SVThreadManager.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -877,6 +878,35 @@ HRESULT SVConfigurationObject::LoadConfiguration(SVTreeType& rTree)
 			if( nullptr != pValueObject)
 			{
 				pValueObject->ObjectAttributesAllowedRef() |= SV_REMOTELY_SETABLE | SV_SETABLE_ONLINE;
+			}
+
+			// Thread Affinity Setup
+			SVTreeType::SVBranchHandle htiThreadSetup = NULL;
+			CString strThreadTag;
+			CString strName;
+			int iThreadNum = 1;
+			bool bThreadOk = true;
+			while( bThreadOk )
+			{
+				long lAffinity;
+				strThreadTag.Format(_T("%s_%d"), CTAG_THREAD_SETUP, iThreadNum);
+				bThreadOk = SVNavigateTreeClass::GetItemBranch( rTree, strThreadTag, htiChild, htiThreadSetup );
+				if( bThreadOk )
+				{
+					bThreadOk = SVNavigateTreeClass::GetItem( rTree, CTAG_THREAD_AFFINITY, htiThreadSetup, svValue);
+					lAffinity = svValue;
+					bThreadOk &= SVNavigateTreeClass::GetItem( rTree, CTAG_THREAD_NAME, htiThreadSetup, svValue);
+					strName = svValue;
+					if( bThreadOk  )
+					{
+						SVThreadManager::Instance().Setup( strName, lAffinity );
+					}
+					else
+					{
+						bThreadOk = FALSE;
+					}
+				}
+				iThreadNum++;
 			}
 
 		}// end if ( SVNavigateTreeClass::GetItem( rTree, CTAG_ENVIRONMENT, NULL, &htiChild ) )
@@ -2631,6 +2661,8 @@ BOOL SVConfigurationObject::DestroyConfiguration()
 
 	SVDigitizerProcessingClass::Instance().ClearDevices();
 
+	SVThreadManager::Instance().Clear();
+
 	return bOk;
 }
 
@@ -2816,6 +2848,29 @@ BOOL SVConfigurationObject::SaveEnvironment(SVTreeType& rTree)
 			EnvironmentObject::getEnvironmentValue( ::EnvironmentResultUpdate, svValue );
 			bOk = SVNavigateTreeClass::AddItem( rTree, hEnvBranch, CTAG_RESULT_DISPLAY_UPDATE, svValue );
 		}
+
+		if ( bOk )
+		{
+			SVThreadManager::ThreadList threads;
+			SVThreadManager::Instance().GetThreadInfo(threads, SVThreadAttribute::SVAffinityEditAllowed );
+			SVTreeType::SVBranchHandle hThreadBranch = NULL;
+			int iCount = 1;
+			for( SVThreadManager::ThreadList::const_iterator it = threads.begin() ; it != threads.end(); ++it)
+			{
+				CString strBranch;
+				strBranch.Format( _T("%s_%d"), CTAG_THREAD_SETUP, iCount);
+				bool bThreadOk = SVNavigateTreeClass::SetBranch( rTree, hEnvBranch, strBranch, &hThreadBranch );
+				if( bThreadOk )
+				{
+					svValue = it->m_strName.c_str();
+					bThreadOk = SVNavigateTreeClass::AddItem( rTree, hThreadBranch, CTAG_THREAD_NAME, svValue );
+					svValue = it->m_lAffinity;
+					bThreadOk = SVNavigateTreeClass::AddItem( rTree, hThreadBranch, CTAG_THREAD_AFFINITY, svValue );
+				}
+				iCount++;
+			}
+		}
+
 	}// end if ( hEnvBranch != NULL )    // CTAG_ENVIRONMENT
 	return bOk;
 }
@@ -5484,7 +5539,17 @@ HRESULT SVConfigurationObject::LoadMonitoredObjectList( SVTreeType& rTree, SVTre
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\svobserver\SVConfigurationObject.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVConfigurationObject.cpp_v  $
+ * 
+ *    Rev 1.34   01 Dec 2014 13:07:48   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  960
+ * SCR Title:  Pipe/core management
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Added thread manager serialization.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.33   20 Nov 2014 05:01:58   mziegler
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : SVPPQObject
 //* .File Name       : $Workfile:   SVPPQObject.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.33  $
-//* .Check In Date   : $Date:   20 Nov 2014 05:03:12  $
+//* .Current Version : $Revision:   1.34  $
+//* .Check In Date   : $Date:   01 Dec 2014 13:22:50  $
 //******************************************************************************
 
 #pragma region Includes
@@ -1544,7 +1544,7 @@ HRESULT SVPPQObject::GoOnline()
 	if ( l_hrOk == S_OK )
 	{
 		// Create the PPQ's threads
-		l_hrOk = m_AsyncProcedure.Create( &SVPPQObject::APCThreadProcess, boost::bind(&SVPPQObject::ThreadProcess, this, _1), GetName() );
+		l_hrOk = m_AsyncProcedure.Create( &SVPPQObject::APCThreadProcess, boost::bind(&SVPPQObject::ThreadProcess, this, _1), GetName(), SVAffinityPPQ );
 	}
 	
 	if ( l_hrOk == S_OK )
@@ -5103,7 +5103,17 @@ void SVPPQObject::SVSharedMemoryFilters::clear()
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\svobserver\SVPPQObject.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVPPQObject.cpp_v  $
+ * 
+ *    Rev 1.34   01 Dec 2014 13:22:50   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  960
+ * SCR Title:  Pipe/core management
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Added Thread lables and attributes.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.33   20 Nov 2014 05:03:12   mziegler
  * Project:  SVObserver

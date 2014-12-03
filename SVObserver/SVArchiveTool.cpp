@@ -5,8 +5,8 @@
 //* .Module Name     : SVArchiveTool
 //* .File Name       : $Workfile:   SVArchiveTool.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.8  $
-//* .Check In Date   : $Date:   01 Jul 2014 07:41:54  $
+//* .Current Version : $Revision:   1.9  $
+//* .Check In Date   : $Date:   01 Dec 2014 13:06:58  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -949,6 +949,8 @@ HRESULT SVArchiveImageThreadClass::GoOnline()
 		m_hThread = ::CreateThread( NULL, 0, SVArchiveImageThreadClass::ThreadEntry, this, 0, &m_dwThreadId );
 
 		::SetThreadPriority( m_hThread, THREAD_PRIORITY_NORMAL );
+		
+		SVThreadManager::Instance().Add( m_hThread, "SVArchiveTool", SVAffinityEditAllowed );
 	}
 	return S_OK;
 }
@@ -961,6 +963,7 @@ HRESULT SVArchiveImageThreadClass::GoOffline()
 		ASSERT( m_hExitEvent != NULL );
 		::SetEvent( m_hExitEvent );
 		::CloseHandle( m_hThread );	// can be done on a live thread
+		SVThreadManager::Instance().Remove( m_hThread );
 		m_dwThreadId = 0;
 	}
 	return S_OK;
@@ -1408,6 +1411,7 @@ HRESULT SVArchiveTool::ResetObject()
 
 SVArchiveTool::~SVArchiveTool()
 {
+	TheSVArchiveImageThreadClass().GoOffline();
 }
 
 // Should be overridden and must be called in derived classes...
@@ -2351,6 +2355,16 @@ BOOL SVArchiveTool::renameToolSetSymbol(SVObjectClass* pObject, LPCTSTR orgName)
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVArchiveTool.cpp_v  $
+ * 
+ *    Rev 1.9   01 Dec 2014 13:06:58   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  960
+ * SCR Title:  Pipe/core management
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   SVThreadManager thread attribute and lables.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.8   01 Jul 2014 07:41:54   tbair
  * Project:  SVObserver

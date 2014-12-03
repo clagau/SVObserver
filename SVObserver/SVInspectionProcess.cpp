@@ -5,8 +5,8 @@
 //* .Module Name     : SVInspectionProcess
 //* .File Name       : $Workfile:   SVInspectionProcess.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.19  $
-//* .Check In Date   : $Date:   02 Sep 2014 13:23:00  $
+//* .Current Version : $Revision:   1.20  $
+//* .Check In Date   : $Date:   01 Dec 2014 13:06:58  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -665,7 +665,7 @@ BOOL SVInspectionProcess::CreateInspection( LPCTSTR szDocName )
 
 	::InterlockedExchange( &m_NotifyWithLastInspected, 0 );
 
-	if( m_AsyncProcedure.Create( &SVInspectionProcess::APCThreadProcess, boost::bind(&SVInspectionProcess::ThreadProcess, this, _1), GetName() ) != S_OK )
+	if( m_AsyncProcedure.Create( &SVInspectionProcess::APCThreadProcess, boost::bind(&SVInspectionProcess::ThreadProcess, this, _1), GetName(), SVThreadAttribute::SVAffinityEditAllowed ) != S_OK )
 	{
 		return FALSE;
 	}
@@ -4837,6 +4837,16 @@ void SVInspectionProcess::Persist(SVObjectWriter& rWriter)
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVInspectionProcess.cpp_v  $
+ * 
+ *    Rev 1.20   01 Dec 2014 13:06:58   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  960
+ * SCR Title:  Pipe/core management
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   SVThreadManager thread attribute and lables.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.19   02 Sep 2014 13:23:00   sjones
  * Project:  SVObserver

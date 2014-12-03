@@ -5,13 +5,14 @@
 //* .Module Name     : SVEventThread
 //* .File Name       : $Workfile:   SVEventThread.inl  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   25 Apr 2013 17:51:04  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   01 Dec 2014 13:59:04  $
 //******************************************************************************
 
 #include <tchar.h>
 #include "SVStatusLibrary/SVException.h"
 #include "SVMessage/SVMessage.h"
+#include "SVSystemLibrary\SVThreadManager.h"
 
 template<typename SVEventThreadSignalHandler>
 SVEventThread<SVEventThreadSignalHandler>::SVEventThread()
@@ -160,7 +161,7 @@ HRESULT SVEventThread<SVEventThreadSignalHandler>::Create(const SVEventThreadSig
 	if (!m_hThread)
 	{
 		m_hThread = ::CreateThread( NULL, 0, SVEventThread::ThreadProc, (LPVOID)this, 0, &m_ulThreadID );
-		//m_hThread = ::CreateThread( NULL, 0, SVEventThread::ThreadProc, (LPVOID)this, CREATE_SUSPENDED, &m_ulThreadID );
+		
 
 		if (m_hThread == NULL)
 		{
@@ -174,33 +175,7 @@ HRESULT SVEventThread<SVEventThreadSignalHandler>::Create(const SVEventThreadSig
 		}
 		else
 		{
-			/*
-			unsigned long l_ResumeCount = ::ResumeThread(m_hThread);
-
-			if( 1 < l_ResumeCount )
-			{
-				unsigned long l_PreviousCount = l_ResumeCount;
-
-				do
-				{
-					l_PreviousCount = l_ResumeCount;
-
-					l_ResumeCount = ::ResumeThread(m_hThread);
-				}
-				while( 1 < l_ResumeCount && l_PreviousCount != l_ResumeCount );
-
-				if( 1 < l_ResumeCount )
-				{
-					l_Status = SVMSG_THREAD_CREATION_ERROR;
-
-					DWORD l_ErrorCode = GetLastError();
-
-					SVException l_svLog;
-					l_svLog.SetException( l_Status, _T( __DATE__ ), _T( __TIME__ ), m_tag.c_str(), _T( __FILE__ ), _T( __LINE__ ), _T( __TIMESTAMP__ ), 669, l_ErrorCode );
-					l_svLog.LogException();
-				}
-			}
-			*/
+			SVThreadManager::Instance().Add(m_hThread, tag);
 
 			if( l_Status == S_OK )
 			{
@@ -275,7 +250,7 @@ void SVEventThread< SVEventThreadSignalHandler >::Destroy()
 				::TerminateThread( m_hThread, E_FAIL );
 			}
 		}
-
+		SVThreadManager::Instance().Remove(m_hThread);
 		::CloseHandle( m_hThread );
 		m_hThread = NULL;
 	}
@@ -369,7 +344,17 @@ HRESULT SVEventThread<SVEventThreadSignalHandler>::Signal()
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVSystemLibrary\SVEventThread.inl_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVSystemLibrary\SVEventThread.inl_v  $
+ * 
+ *    Rev 1.1   01 Dec 2014 13:59:04   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  960
+ * SCR Title:  Pipe/core management
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Added thread manager.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   25 Apr 2013 17:51:04   bWalter
  * Project:  SVObserver

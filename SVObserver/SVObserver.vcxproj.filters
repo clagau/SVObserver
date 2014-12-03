@@ -1631,6 +1631,9 @@
     <ClCompile Include="SVToolSetTreeCtrl.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="SVThreadInfoDlg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="ZoomToolBar.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -3396,6 +3399,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVToolSetTreeCtrl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVThreadInfoDlg.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ZoomToolBar.h">

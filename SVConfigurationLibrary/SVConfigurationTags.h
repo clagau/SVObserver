@@ -5,8 +5,8 @@
 // * .Module Name     : SVConfigurationTags
 // * .File Name       : $Workfile:   SVConfigurationTags.h  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.4  $
-// * .Check In Date   : $Date:   02 Sep 2014 12:01:40  $
+// * .Current Version : $Revision:   1.5  $
+// * .Check In Date   : $Date:   01 Dec 2014 12:11:18  $
 // ******************************************************************************
 // SVConfigurationTags.h
 
@@ -316,6 +316,11 @@ LPCTSTR const CTAG_TOOL							= _T("Tool");
 LPCTSTR const CTAG_ENDGROUP						= _T("EndGroup");
 LPCTSTR const CTAG_COLLAPSED					= _T("Collapsed");
 
+LPCTSTR const CTAG_THREAD_SETUP					= _T("Thread Setup");
+LPCTSTR const CTAG_THREAD_NAME					= _T("Thread Name");
+LPCTSTR const CTAG_THREAD_AFFINITY				= _T("Thread Affinity");
+
+
 #endif /* _INC_SVCONFIGURATIONTAGS_INCLUDED */
 
 // ******************************************************************************
@@ -323,6 +328,16 @@ LPCTSTR const CTAG_COLLAPSED					= _T("Collapsed");
 // ******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVConfigurationLibrary\SVConfigurationTags.h_v  $
+ * 
+ *    Rev 1.5   01 Dec 2014 12:11:18   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  960
+ * SCR Title:  Pipe/core management
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Initial check-in Tags for SVThreadManager
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.4   02 Sep 2014 12:01:40   bwalter
  * Project:  SVObserver

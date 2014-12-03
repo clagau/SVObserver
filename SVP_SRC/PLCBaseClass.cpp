@@ -5,8 +5,8 @@
 // * .Module Name     : SVPLC
 // * .File Name       : $Workfile:   PLCBaseClass.cpp  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.2  $
-// * .Check In Date   : $Date:   13 May 2013 11:21:00  $
+// * .Current Version : $Revision:   1.3  $
+// * .Check In Date   : $Date:   01 Dec 2014 13:35:50  $
 // ******************************************************************************
 
 #include "stdafx.h"
@@ -14,6 +14,7 @@
 #include "SVTimerLibrary/SVClock.h"
 #include "math.h"
 #include "plc_interface.h"
+#include "SVSystemLibrary\SVThreadManager.h"
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -92,6 +93,7 @@ long SVPLCBaseClass::Initialize ()
          lErr = -1150;
          break;
       }
+	  SVThreadManager::Instance().Add( svmhSendThread, _T("PLC SendThread"));
 
       svmhResponseThread = CreateThread (NULL, 
                                          0, 
@@ -104,6 +106,7 @@ long SVPLCBaseClass::Initialize ()
          lErr = -1151;
          break;
       }
+	  SVThreadManager::Instance().Add( svmhResponseThread, _T("PLC ResponseThread") );
 
       svmlInitialized = 1;
       break;
@@ -207,6 +210,7 @@ long SVPLCBaseClass::TerminateSendAndResponseThreads ()
 
       do
       {
+		  SVThreadManager::Instance().Remove(svmhSendThread);
          GetExitCodeThread (svmhSendThread, &dwExitCode);
 		 if( 10000 < SVClock::ConvertTo( SVClock::Milliseconds, ( SVClock::GetTimeStamp() - l_Start ) ) )
          {
@@ -219,6 +223,7 @@ long SVPLCBaseClass::TerminateSendAndResponseThreads ()
       
       do
       {
+		  SVThreadManager::Instance().Remove(svmhResponseThread);
          GetExitCodeThread (svmhResponseThread, &dwExitCode);
          if( 10000 < SVClock::ConvertTo( SVClock::Milliseconds, ( SVClock::GetTimeStamp() - l_Start ) ) )
          {
@@ -2567,7 +2572,17 @@ int	sv_strncpy (char		   *destString,
 // * LOG HISTORY:
 // ******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVP_SRC\PLCBaseClass.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVP_SRC\PLCBaseClass.cpp_v  $
+ * 
+ *    Rev 1.3   01 Dec 2014 13:35:50   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  960
+ * SCR Title:  Pipe/core management
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Added thread attributes and lables
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   13 May 2013 11:21:00   bWalter
  * Project:  SVObserver

@@ -158,6 +158,7 @@
     <ClCompile Include="SVImageConvertorGDI.cpp" />
     <ClCompile Include="SVMemoryChecker.cpp" />
     <ClCompile Include="SVSAXContentHandlerImpl.cpp" />
+    <ClCompile Include="SVThreadManager.cpp" />
     <ClCompile Include="SVThreadWait.cpp" />
     <ClCompile Include="SVVersionInfo.cpp" />
     <ClCompile Include="SVWaitFuncs.cpp" />
@@ -178,6 +179,7 @@
     <ClInclude Include="SVSAXErrorHandlerImpl.h" />
     <ClInclude Include="SVSequencer.h" />
     <ClInclude Include="SVThread.h" />
+    <ClInclude Include="SVThreadManager.h" />
     <ClInclude Include="SVThreadWait.h" />
     <ClInclude Include="SVVersionInfo.h" />
     <ClInclude Include="SVWaitFuncs.h" />

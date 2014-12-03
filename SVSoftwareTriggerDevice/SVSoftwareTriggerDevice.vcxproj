@@ -93,7 +93,7 @@
       <Culture>0x0409</Culture>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>SVStatusLibrary.lib;SVTimerLibrary.lib;SVUtilityLibrary.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SVSystemLibrary.lib;SVStatusLibrary.lib;SVTimerLibrary.lib;SVUtilityLibrary.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <ModuleDefinitionFile>.\SVSoftwareTriggerDevice.def</ModuleDefinitionFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -121,7 +121,7 @@
       <Culture>0x0409</Culture>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>SVStatusLibrary.lib;SVTimerLibrary.lib;SVUtilityLibrary.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SVSystemLibrary.lib;SVStatusLibrary.lib;SVTimerLibrary.lib;SVUtilityLibrary.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <ModuleDefinitionFile>.\SVSoftwareTriggerDevice.def</ModuleDefinitionFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -149,7 +149,7 @@
       <Culture>0x0409</Culture>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>SVStatusLibrary.lib;SVTimerLibrary.lib;SVUtilityLibrary.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SVSystemLibrary.lib;SVStatusLibrary.lib;SVTimerLibrary.lib;SVUtilityLibrary.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <ModuleDefinitionFile>.\SVSoftwareTriggerDevice.def</ModuleDefinitionFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -182,7 +182,7 @@
       <Culture>0x0409</Culture>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>SVStatusLibrary.lib;SVTimerLibrary.lib;SVUtilityLibrary.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SVSystemLibrary.lib;SVStatusLibrary.lib;SVTimerLibrary.lib;SVUtilityLibrary.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <ModuleDefinitionFile>.\SVSoftwareTriggerDevice.def</ModuleDefinitionFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>

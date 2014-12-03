@@ -1174,6 +1174,7 @@
 #define IDR_MONITOR_SUB_LIST            11106
 #define IDR_MONITOR_LIST_ITEM           11107
 #define IDR_TOOLBAR_ZOOM                11108
+#define IDD_THREAD_INFO                 11109
 #define IDS_CLASSNAME_CUSTOM2FILTER     11110
 #define IDS_OBJECTNAME_CUSTOMFILTER_KERNELCELL 11111
 #define IDS_OBJECTNAME_INPUT_01         14001
@@ -2506,6 +2507,8 @@
 #define IDC_IMPORT_FILTER               16039
 #define IDC_EXPORT_FILTER               16040
 #define IDC_BLOB_COLOR                  16041
+#define IDC_THREAD_LIST                 16042
+#define IDC_SAVE                        16043
 #define ID_TEST                         20000
 #define ID_BROWSE_BUTTON                20001
 #define ID_PLUSBUTTON                   20002
@@ -2713,6 +2716,7 @@
 #define ID_TOOLBAR_ZOOM                 20342
 #define ID_ZOOMTOOLBAR                  20343
 #define ID_OK                           20344
+#define ID_EXTRAS_THREAD_AFFINITY       20345
 #define ID_VIEW_TOOLSETDRAW             32999
 #define ID_VIEW_TOOLSETDRAW_POP_BASE    33000
 #define ID_VIEW_TOOLSETDRAW_POP_MAX     33049
@@ -2747,8 +2751,8 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_3D_CONTROLS                     1
 #define _APS_NEXT_RESOURCE_VALUE        11112
-#define _APS_NEXT_COMMAND_VALUE         20345
-#define _APS_NEXT_CONTROL_VALUE         16042
+#define _APS_NEXT_COMMAND_VALUE         20346
+#define _APS_NEXT_CONTROL_VALUE         16044
 #define _APS_NEXT_SYMED_VALUE           3002
 #endif
 #endif

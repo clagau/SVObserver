@@ -5,8 +5,8 @@
 // * .Module Name     : SVIntekFireStackClass
 // * .File Name       : $Workfile:   SVIntekFireStackClass.cpp  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.2  $
-// * .Check In Date   : $Date:   01 Oct 2013 09:09:48  $
+// * .Current Version : $Revision:   1.3  $
+// * .Check In Date   : $Date:   01 Dec 2014 14:48:06  $
 // ******************************************************************************
 
 #include "stdafx.h"
@@ -500,7 +500,7 @@ HRESULT SVIntekFireStackClass::Create()
 		}
 	}
 
-	m_triggerMgr.Create();
+	m_triggerMgr.Create(_T("Intek Fire Stack"), SVAffinityAcq);
 
 	return l_hrOk;
 }
@@ -4101,6 +4101,16 @@ void SVIntekFireStackClass::DoAcquisitionTrigger(const SVIntekCameraStruct& p_rC
 // ******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVIntek\SVIntekFireStackClass.cpp_v  $
+ * 
+ *    Rev 1.3   01 Dec 2014 14:48:06   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  960
+ * SCR Title:  Pipe/core management
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Added thred label and attribute.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   01 Oct 2013 09:09:48   tbair
  * Project:  SVObserver

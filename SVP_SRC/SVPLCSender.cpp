@@ -5,8 +5,8 @@
 //* .Module Name     : SVPLCSender
 //* .File Name       : $Workfile:   SVPLCSender.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   25 Apr 2013 16:04:04  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   01 Dec 2014 13:35:50  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -64,7 +64,7 @@ SVPLCSender::~SVPLCSender(void)
 HRESULT SVPLCSender::StartThread( CString p_strPLCID )
 {
 	CString strTmp = _T("PLC Send Thread ") + p_strPLCID;
-	return m_thread.Create( &SVPLCSender::OnAPCEvent, boost::bind(&SVPLCSender::OnThreadEvent, this, _1), strTmp);
+	return m_thread.Create( &SVPLCSender::OnAPCEvent, boost::bind(&SVPLCSender::OnThreadEvent, this, _1), strTmp, SVNone);
 }
 
 void SVPLCSender::StopThread()
@@ -402,7 +402,17 @@ HRESULT SVPLCSender::TestCommunications ( )
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVP_SRC\SVPLCSender.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVP_SRC\SVPLCSender.cpp_v  $
+ * 
+ *    Rev 1.1   01 Dec 2014 13:35:50   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  960
+ * SCR Title:  Pipe/core management
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Added thread attributes and lables
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   25 Apr 2013 16:04:04   bWalter
  * Project:  SVObserver

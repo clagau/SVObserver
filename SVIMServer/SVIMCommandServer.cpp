@@ -5,8 +5,8 @@
 // * .Module Name     : SVIMCommandServer
 // * .File Name       : $Workfile:   SVIMCommandServer.cpp  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.1  $
-// * .Check In Date   : $Date:   01 Oct 2013 09:05:48  $
+// * .Current Version : $Revision:   1.2  $
+// * .Check In Date   : $Date:   01 Dec 2014 12:19:38  $
 // ******************************************************************************
 
 #include "stdafx.h"
@@ -17,6 +17,7 @@
 #include "SVMessage/SVMessage.h"
 #include "SVCmnLib/utilities.h"
 #include "SVSystemLibrary/SVCrash.h"
+#include "SVSystemLibrary/SVThreadManager.h"
 
 BOOL CALLBACK SVIMServerIOCompleteProc (void *pVoidConnection, int nErrorCode, void *pBuffer, int cbBuffer, int Operation, void *pUserData)
 {
@@ -315,7 +316,7 @@ SVIMCommandServer::~SVIMCommandServer()
 	TRACE (_T("SVIMCommandServer Destructing\n"));
 
 	HANDLE mhThread = CreateThread (NULL, 0, DestroyPipeThread, mpConnection, 0, NULL);
-
+	SVThreadManager::Instance().Add(mhThread, "SVIM Server");
 	CloseHandle( mhThread );
 }
 
@@ -489,6 +490,16 @@ BOOL SVIMCommandServer::OnPutFile(char* szFileName, char * pData  )
 // ******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVIMServer\SVIMCommandServer.cpp_v  $
+ * 
+ *    Rev 1.2   01 Dec 2014 12:19:38   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  960
+ * SCR Title:  Pipe/core management
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Added thread names for SVThreadManager.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   01 Oct 2013 09:05:48   tbair
  * Project:  SVObserver

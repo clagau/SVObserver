@@ -5,14 +5,15 @@
 //* .Module Name     : SVJsonCommandServerSocket
 //* .File Name       : $Workfile:   SVJsonCommandServerSocket.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.6  $
-//* .Check In Date   : $Date:   02 Oct 2014 10:38:02  $
+//* .Current Version : $Revision:   1.7  $
+//* .Check In Date   : $Date:   01 Dec 2014 12:22:52  $
 //******************************************************************************
 
 #include "stdafx.h"
 #include <boost/bind.hpp>
 #include "SVJsonCommandServerSocket.h"
 #include "SVSystemLibrary/SVAutoLockAndReleaseTemplate.h"
+#include "SVSystemLibrary/SVThreadManager.h"
 
 SVJsonCommandServerSocket::SVJsonCommandServerSocket()
 {
@@ -48,7 +49,7 @@ bool SVJsonCommandServerSocket::Start(unsigned short portNo)
 				if (!m_thread.IsActive())
 				{
 					// Start thread for accepts and reads
-					m_thread.Create(boost::bind(&SVJsonCommandServerSocket::ThreadProcessHandler, this, _1), "SVJsonCommandServerSocketThread");
+					m_thread.Create(boost::bind(&SVJsonCommandServerSocket::ThreadProcessHandler, this, _1), "SVJsonCommandServerSocketThread", SVNone);
 					QueueUserAPC(SVJsonCommandServerSocket::OnAPCEvent, m_thread.GetThreadHandle(), NULL);
 				}
 			}
@@ -318,6 +319,16 @@ void SVJsonCommandServerSocket::CloseClient()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVJsonCommandServerLibrary\SVJsonCommandServerSocket.cpp_v  $
+ * 
+ *    Rev 1.7   01 Dec 2014 12:22:52   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  960
+ * SCR Title:  Pipe/core management
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Added thread attribute for SVThreadManager.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.6   02 Oct 2014 10:38:02   sjones
  * Project:  SVObserver

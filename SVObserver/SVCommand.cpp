@@ -5,8 +5,8 @@
 //* .Module Name     : SVCommand.cpp
 //* .File Name       : $Workfile:   SVCommand.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.17  $
-//* .Check In Date   : $Date:   22 Oct 2014 17:00:46  $
+//* .Current Version : $Revision:   1.18  $
+//* .Check In Date   : $Date:   01 Dec 2014 13:07:00  $
 //******************************************************************************
 
 #pragma region Includes
@@ -2428,6 +2428,7 @@ STDMETHODIMP CSVCommand::SVRegisterStream(SAFEARRAY* psaName, VARIANT vtInterfac
 
 			m_hStopStreamEvent = ::CreateEvent( NULL, FALSE, FALSE, NULL );
 			m_hStreamingThread = ::CreateThread( NULL, 0, SVStreamDataThread, this, 0, NULL);					
+			SVThreadManager::Instance().Add( m_hStreamingThread, "SIAC Streaming Data" );
 		}// end if
 	}//try
 	catch(...)
@@ -2483,6 +2484,7 @@ STDMETHODIMP CSVCommand::SVUnRegisterStream(VARIANT vtInterface)
 			if( m_hStreamingThread )
 			{
 				::CloseHandle(m_hStreamingThread);
+				SVThreadManager::Instance().Remove( m_hStreamingThread );
 				m_hStreamingThread = NULL;
 			}
 			
@@ -7173,6 +7175,16 @@ STDMETHODIMP CSVCommand::SVIsAvailiable()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVCommand.cpp_v  $
+ * 
+ *    Rev 1.18   01 Dec 2014 13:07:00   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  960
+ * SCR Title:  Pipe/core management
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   SVThreadManager thread attribute and lables.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.17   22 Oct 2014 17:00:46   sjones
  * Project:  SVObserver

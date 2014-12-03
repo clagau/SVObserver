@@ -5,8 +5,8 @@
 //* .Module Name     : SVObserver
 //* .File Name       : $Workfile:   SVObserver.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.42  $
-//* .Check In Date   : $Date:   23 Oct 2014 09:51:46  $
+//* .Current Version : $Revision:   1.43  $
+//* .Check In Date   : $Date:   01 Dec 2014 13:05:38  $
 //******************************************************************************
 
 #pragma region Includes
@@ -114,6 +114,7 @@
 #include "RootObject.h"
 #include "EnvironmentObject.h"
 #include "SVMonitorList.h"
+#include "SVThreadInfoDlg.h"
 #include "SVSharedMemorySingleton.h"
 #include "SVSystemLibrary\LoadDll.h"
 #pragma endregion Includes
@@ -223,6 +224,7 @@ BEGIN_MESSAGE_MAP(SVObserverApp, CWinApp)
 	ON_COMMAND(ID_EXTRAS_UTILITIES_EDIT, OnExtrasUtilitiesEdit)
 	ON_COMMAND(ID_EXTRAS_SECURITY_SETUP, OnExtrasSecuritySetup)
 	ON_COMMAND(ID_EXTRAS_ENVIRONMENTSETTINGS, OnEnvironmentSettings)
+	ON_COMMAND(ID_EXTRAS_THREAD_AFFINITY, OnThreadAffinitySetup)
 	ON_COMMAND_RANGE(ID_EXTRAS_UTILITIES_BASE, ID_EXTRAS_UTILITIES_LIMIT, OnRunUtility)
 
 	ON_COMMAND(ID_RC_GO_OFFLINE, OnRCGoOffline)
@@ -274,6 +276,7 @@ BEGIN_MESSAGE_MAP(SVObserverApp, CWinApp)
 	ON_UPDATE_COMMAND_UI(ID_PUBLISHED_RESULT_IMAGES_PICKER, OnUpdatePublishedImagesPicker)
 	ON_UPDATE_COMMAND_UI(ID_SELECT_PPQVARIABLE, OnUpdateSelectPPQVariable)
 	ON_UPDATE_COMMAND_UI(ID_EDIT_EDITREMOTEINPUTS, OnUpdateEditRemoteInputs)
+	ON_UPDATE_COMMAND_UI(ID_EXTRAS_THREAD_AFFINITY, OnUpdateThreadAffinitySetup)
 	ON_UPDATE_COMMAND_UI(ID_EXTRAS_LIGHTREFERENCE, OnUpdateExtrasLightReference)
 	ON_UPDATE_COMMAND_UI(ID_EXTRAS_TESTOUTPUTS, OnUpdateExtrasTestOutputs)
 	ON_UPDATE_COMMAND_UI(ID_HELP, OnUpdateHelp)
@@ -871,6 +874,22 @@ void SVObserverApp::OnEnvironmentSettings()
 		}
 	}
 }
+
+void SVObserverApp::OnUpdateThreadAffinitySetup(CCmdUI* PCmdUI)
+{
+	long lPipeCount=0;
+	SVThreadManager::Instance().GetPipeCount(lPipeCount);
+	PCmdUI->Enable( lPipeCount >=8 && !SVSVIMStateClass::CheckState( SV_STATE_RUNNING ) );
+}
+
+
+void SVObserverApp::OnThreadAffinitySetup()
+{
+	SVThreadInfoDlg dlg;
+	dlg.DoModal();
+}
+
+
 
 void SVObserverApp::OnUpdateModeRun( CCmdUI* PCmdUI ) 
 {
@@ -8869,6 +8888,16 @@ int SVObserverApp::FindMenuItem(CMenu* Menu, LPCTSTR MenuString)
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVObserver.cpp_v  $
+ * 
+ *    Rev 1.43   01 Dec 2014 13:05:38   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  960
+ * SCR Title:  Pipe/core management
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add ThreadInfo dialog.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.42   23 Oct 2014 09:51:46   ryoho
  * Project:  SVObserver

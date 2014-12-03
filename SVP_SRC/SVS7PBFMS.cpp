@@ -5,8 +5,8 @@
 // * .Module Name     : SVS7PBFMSClass
 // * .File Name       : $Workfile:   SVS7PBFMS.cpp  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.2  $
-// * .Check In Date   : $Date:   13 May 2013 11:21:06  $
+// * .Current Version : $Revision:   1.3  $
+// * .Check In Date   : $Date:   01 Dec 2014 13:33:28  $
 // ******************************************************************************
 
 /////////////////////////////////////////////////////////////////////
@@ -32,6 +32,7 @@
 #include "SVS7PBFMS.h"
 #include "SVTimerLibrary/SVClock.h"
 #include "plc_interface.h"
+#include "SVSystemLibrary/SVThreadManager.h"
 
 
 // ThreadID for Deferred operations thread
@@ -102,6 +103,7 @@ long  SVS7PBFMSClass::Initialize ()
             lErr = -1553;
          }
       }
+	  SVThreadManager::Instance().Add( m_svmhDeferThread, _T("PLC S7 DeferThread"));
       svmDeferThreadLock.Unlock ();
       
       if (lErr < 0)
@@ -147,6 +149,7 @@ SVS7PBFMSClass::~SVS7PBFMSClass()
          {
 
             GetExitCodeThread (m_svmhDeferThread, &dwExitCode);
+			SVThreadManager::Instance().Remove(m_svmhDeferThread);
 		    if (10000 < SVClock::ConvertTo( SVClock::Milliseconds, ( SVClock::GetTimeStamp() - l_Start )))
             {
                TRACE0 ("SVS7: Defered Thread termination forced.\n");
@@ -2337,7 +2340,17 @@ void SVS7PBFMSClass:: ClearRegisters ()
 // * LOG HISTORY:
 // ******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVP_SRC\SVS7PBFMS.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVP_SRC\SVS7PBFMS.cpp_v  $
+ * 
+ *    Rev 1.3   01 Dec 2014 13:33:28   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  960
+ * SCR Title:  Pipe/core management
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Added thread attributes and lables
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   13 May 2013 11:21:06   bWalter
  * Project:  SVObserver

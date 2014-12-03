@@ -5,8 +5,8 @@
 //* .Module Name     : SVInternalTrigger
 //* .File Name       : $Workfile:   SVInternalTrigger.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   25 Apr 2013 18:55:50  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   01 Dec 2014 14:15:24  $
 //******************************************************************************
 #ifndef SVINTERNALTRIGGER_H
 #define SVINTERNALTRIGGER_H
@@ -24,7 +24,7 @@ public:
 	SVInternalTrigger();
 	~SVInternalTrigger();
 
-	void Create();
+	void Create(LPCTSTR p_strOwner, SVThreadAttribute eAttr);
 	void Destroy();
 
 	HRESULT Subscribe(unsigned long p_ulIndex, SVTriggerHandler& handler);
@@ -46,7 +46,17 @@ private:
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVTriggerLibrary\SVInternalTrigger.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVTriggerLibrary\SVInternalTrigger.h_v  $
+ * 
+ *    Rev 1.1   01 Dec 2014 14:15:24   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  960
+ * SCR Title:  Pipe/core management
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Added thread attributer
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   25 Apr 2013 18:55:50   bWalter
  * Project:  SVObserver

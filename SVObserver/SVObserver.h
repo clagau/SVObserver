@@ -5,8 +5,8 @@
 //* .Module Name     : SVObserver
 //* .File Name       : $Workfile:   SVObserver.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.18  $
-//* .Check In Date   : $Date:   26 Jun 2014 17:54:24  $
+//* .Current Version : $Revision:   1.19  $
+//* .Check In Date   : $Date:   01 Dec 2014 13:05:38  $
 //******************************************************************************
 
 #ifndef SVOBSERVER_H
@@ -117,6 +117,8 @@ public:
 	afx_msg void OnRunMode();
 	afx_msg void OnStopTestMode();
 	afx_msg void OnEnvironmentSettings();
+	afx_msg void OnThreadAffinitySetup();
+	afx_msg void OnUpdateThreadAffinitySetup(CCmdUI* PCmdUI);
 	afx_msg void OnUpdateModeRun(CCmdUI* PCmdUI);
 	afx_msg void OnFileCloseConfig();
 	afx_msg void OnFileOpen();
@@ -619,6 +621,16 @@ extern SVObserverApp TheSVObserverApp;
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVObserver.h_v  $
+ * 
+ *    Rev 1.19   01 Dec 2014 13:05:38   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  960
+ * SCR Title:  Pipe/core management
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add ThreadInfo dialog.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.18   26 Jun 2014 17:54:24   mziegler
  * Project:  SVObserver

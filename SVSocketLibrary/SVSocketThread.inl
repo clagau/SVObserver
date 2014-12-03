@@ -5,8 +5,8 @@
 //* .Module Name     : SVSocketThread
 //* .File Name       : $Workfile:   SVSocketThread.inl  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   25 Apr 2013 17:18:10  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   01 Dec 2014 13:47:40  $
 //******************************************************************************
 
 template<typename ThreadFunc>
@@ -54,6 +54,7 @@ HRESULT SVSocketThread<ThreadFunc>::Create(const ThreadFunc& threadFunc, const _
 		{
 			l_Status = S_FALSE;
 		}
+		SVThreadManager::Instance().Add( m_hThread, p_rTag );
 	}
 	return l_Status;
 }
@@ -70,6 +71,7 @@ void SVSocketThread< ThreadFunc >::Destroy()
 			Sleep(1);
 		}
 		::CloseHandle( m_hThread );
+		SVThreadManager::Instance().Remove(m_hThread );
 		m_hThread = NULL;
 	}
 
@@ -114,7 +116,17 @@ bool SVSocketThread<ThreadFunc>::IsActive() const
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVSocketLibrary\SVSocketThread.inl_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVSocketLibrary\SVSocketThread.inl_v  $
+ * 
+ *    Rev 1.1   01 Dec 2014 13:47:40   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  960
+ * SCR Title:  Pipe/core management
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Added thread lable and attribute.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   25 Apr 2013 17:18:10   bWalter
  * Project:  SVObserver

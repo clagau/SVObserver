@@ -5,8 +5,8 @@
 //* .Module Name     : SVJsonCommandManager
 //* .File Name       : $Workfile:   SVJsonCommandManager.inl  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.3  $
-//* .Check In Date   : $Date:   02 Oct 2014 10:30:54  $
+//* .Current Version : $Revision:   1.4  $
+//* .Check In Date   : $Date:   01 Dec 2014 12:22:52  $
 //******************************************************************************
 
 #ifndef SVJSONCOMMANDMANAGER_INL
@@ -67,7 +67,7 @@ HRESULT SVJsonCommandManager< SVCommandProcessor >::ProcessJsonNotification( con
 template< typename SVCommandProcessor >
 void SVJsonCommandManager< SVCommandProcessor >::Startup(unsigned short p_PortNumber)
 {
-	m_AsyncProcedure.Create( &SVJsonCommandManager::APCThreadProcess, boost::bind(&SVJsonCommandManager::ThreadProcess, this, _1), "SVJsonCommandManager" );
+	m_AsyncProcedure.Create( &SVJsonCommandManager::APCThreadProcess, boost::bind(&SVJsonCommandManager::ThreadProcess, this, _1), "SVJsonCommandManager", SVNone );
 	m_SocketServer.ListenForClients( p_PortNumber, boost::bind( &SVJsonCommandManager::ProcessJsonCommand, this, _1, _2 ) );
 }
 
@@ -160,6 +160,16 @@ void SVJsonCommandManager< SVCommandProcessor >::ThreadProcess( bool& p_WaitForE
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVJsonCommandServerLibrary\SVJsonCommandManager.inl_v  $
+ * 
+ *    Rev 1.4   01 Dec 2014 12:22:52   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  960
+ * SCR Title:  Pipe/core management
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Added thread attribute for SVThreadManager.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   02 Oct 2014 10:30:54   sjones
  * Project:  SVObserver

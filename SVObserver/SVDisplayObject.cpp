@@ -5,8 +5,8 @@
 //* .Module Name     : SVDisplayObject
 //* .File Name       : $Workfile:   SVDisplayObject.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.6  $
-//* .Check In Date   : $Date:   17 Jul 2014 18:35:54  $
+//* .Current Version : $Revision:   1.7  $
+//* .Check In Date   : $Date:   01 Dec 2014 13:07:00  $
 //******************************************************************************
 
 #pragma region Includes
@@ -191,6 +191,7 @@ BOOL SVDisplayObject::Create()
 	m_hDisplayThread = ::CreateThread(NULL, 0, SVDisplayThreadFunc, (LPVOID)this, 0, &dwThreadID );
 	if( !m_hDisplayThread )
 		return FALSE;
+	SVThreadManager::Instance().Add( m_hDisplayThread,"Display", SVAffinityEditAllowed);
 
 	return TRUE;
 }// end Create
@@ -224,6 +225,7 @@ BOOL SVDisplayObject::Destroy()
 		m_hStartEvent = NULL;
 
 		CloseHandle( m_hDisplayThread );
+		SVThreadManager::Instance().Remove(m_hDisplayThread );
 		m_hDisplayThread = NULL;
 	}
 	return true;
@@ -482,6 +484,16 @@ void SVDisplayObject::UpdateNextDisplayEvent()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVDisplayObject.cpp_v  $
+ * 
+ *    Rev 1.7   01 Dec 2014 13:07:00   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  960
+ * SCR Title:  Pipe/core management
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   SVThreadManager thread attribute and lables.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.6   17 Jul 2014 18:35:54   gramseier
  * Project:  SVObserver

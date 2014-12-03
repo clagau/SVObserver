@@ -5,8 +5,8 @@
 // * .Module Name     : SVPipeConnection
 // * .File Name       : $Workfile:   SVPipeConnection.cpp  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.0  $
-// * .Check In Date   : $Date:   25 Apr 2013 14:01:12  $
+// * .Current Version : $Revision:   1.1  $
+// * .Check In Date   : $Date:   01 Dec 2014 13:43:30  $
 // ******************************************************************************
 
 #include "stdafx.h"
@@ -17,6 +17,7 @@
 #include "SVIPC/SVConnectionInterface.h"
 #include "SVMessage/SVMessage.h"
 #include "SVSystemLibrary/SVCrash.h"
+#include "SVSystemLibrary/SVThreadManager.h"
 
 SVPipeConnection::SVPipeConnection ()
 {
@@ -38,6 +39,7 @@ SVPipeConnection::~SVPipeConnection ()
 	if ( mhThread )
 	{
 		TerminateThread( mhThread, 0 );
+		SVThreadManager::Instance().Remove( mhThread);
 	}
 }
 
@@ -157,6 +159,7 @@ BOOL SVPipeConnection::Open (CString &szConnection, DWORD dwFlags, SV_IOCOMPLETE
         mhPipe = NULL;
         return FALSE;
       }
+		  SVThreadManager::Instance().Add( mhThread, _T("Pipe Thread..SVFocus"));
 			WaitThreadStart ();
     }
   }
@@ -199,6 +202,7 @@ BOOL SVPipeConnection::Open (CString &szConnection, DWORD dwFlags, SV_IOCOMPLETE
         mhPipe = NULL;
         return FALSE;
       }
+		  SVThreadManager::Instance().Add( mhThread, _T("Pipe Thread..SVFocus"));
 			WaitThreadStart();
     }
   }
@@ -247,6 +251,7 @@ void SVPipeConnection::Close(BOOL bDestroy)
 	{
 		if (mhThread)
 		{
+			SVThreadManager::Instance().Remove( mhThread );
 			TerminateThread( mhThread, 0 );
 			mhThread = NULL;
 		}
@@ -267,10 +272,12 @@ void SVPipeConnection::Close(BOOL bDestroy)
 	if (bDestroy)
 	{
 	  mhThread = CreateThread (NULL, 0, ShutDownThread, this, 0, NULL);
+	  SVThreadManager::Instance().Add( mhThread, _T("Pipe Thread Shutdown"));
 	}
 	else
 	{
 		mhThread = CreateThread (NULL, 0, CloseThread, this, 0, NULL);
+		SVThreadManager::Instance().Add( mhThread, _T("Pipe Thread Close"));
 	}
 
 	if (mhThread)
@@ -339,6 +346,7 @@ BOOL SVPipeConnection::Read (void *pDataBuffer, int cbDataBuffer, DWORD dwTimeOu
   {
     return FALSE;
   }
+	SVThreadManager::Instance().Add( mhThread, _T("Pipe Thread Read"));
 	WaitThreadStart();
 
   return TRUE;
@@ -395,6 +403,7 @@ BOOL SVPipeConnection::Write (void *pDataBuffer, int cbDataBuffer, DWORD dwTimeO
   {
     return FALSE;
   }
+	SVThreadManager::Instance().Add( mhThread, _T("Pipe Thread Write"));
 	WaitThreadStart();
 
   return TRUE;
@@ -502,7 +511,17 @@ DWORD SVPipeConnection::GetFlags()
 // * LOG HISTORY:
 // ******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVPipes\SVPipeConnection.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVPipes\SVPipeConnection.cpp_v  $
+ * 
+ *    Rev 1.1   01 Dec 2014 13:43:30   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  960
+ * SCR Title:  Pipe/core management
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Added thread lable and attribute.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   25 Apr 2013 14:01:12   bWalter
  * Project:  SVObserver

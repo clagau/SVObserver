@@ -5,8 +5,8 @@
 //* .Module Name     : SVMatroxGige
 //* .File Name       : $Workfile:   SVMatroxGige.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.5  $
-//* .Check In Date   : $Date:   12 Jun 2014 13:08:24  $
+//* .Current Version : $Revision:   1.6  $
+//* .Check In Date   : $Date:   01 Dec 2014 12:28:58  $
 //******************************************************************************
 
 #include "StdAfx.h"
@@ -246,7 +246,7 @@ HRESULT SVMatroxGige::Create()
 
 	if ( ::InterlockedIncrement( &m_lRefCount ) == 1 )
 	{
-		m_triggerMgr.Create();
+		m_triggerMgr.Create(_T("SVMatrox GigE"), SVAffinityAcq );
 
 		hr = CreateSystems();
 
@@ -1985,6 +1985,16 @@ HRESULT SVMatroxGige::SetAcquisitionTriggered(unsigned long p_ulHandle, bool bAc
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVMatroxGige\SVMatroxGige.cpp_v  $
+ * 
+ *    Rev 1.6   01 Dec 2014 12:28:58   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  960
+ * SCR Title:  Pipe/core management
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Added thread name and attribute for SVThreadManager.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.5   12 Jun 2014 13:08:24   tbair
  * Project:  SVObserver

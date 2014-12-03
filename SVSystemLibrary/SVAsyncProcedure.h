@@ -5,8 +5,8 @@
 //* .Module Name     : SVAsyncProcedure
 //* .File Name       : $Workfile:   SVAsyncProcedure.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   25 Apr 2013 17:48:24  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   01 Dec 2014 13:59:04  $
 //******************************************************************************
 #ifndef SVASYNCPROCEDURE_H
 #define SVASYNCPROCEDURE_H
@@ -28,7 +28,7 @@ public:
 	SVAsyncProcedure();
 	~SVAsyncProcedure();
 
-	HRESULT Create(const SVAPCSignalHandler& apcHandler, const SVThreadSignalHandler& threadHandler, LPCTSTR tag);
+	HRESULT Create(const SVAPCSignalHandler& apcHandler, const SVThreadSignalHandler& threadHandler, LPCTSTR tag, SVThreadAttribute eAttribute );
 	void Destroy();
 
 	unsigned long GetThreadID() const;
@@ -49,7 +49,17 @@ public:
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVSystemLibrary\SVAsyncProcedure.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVSystemLibrary\SVAsyncProcedure.h_v  $
+ * 
+ *    Rev 1.1   01 Dec 2014 13:59:04   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  960
+ * SCR Title:  Pipe/core management
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Added thread manager.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   25 Apr 2013 17:48:24   bWalter
  * Project:  SVObserver

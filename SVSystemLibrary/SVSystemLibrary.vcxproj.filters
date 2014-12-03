@@ -48,7 +48,7 @@
     <ClCompile Include="SVCrash.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="LoadDll.cpp">
+    <ClCompile Include="SVThreadManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -104,7 +104,7 @@
     <ClInclude Include="SVCrash.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="LoadDll.h">
+    <ClInclude Include="SVThreadManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

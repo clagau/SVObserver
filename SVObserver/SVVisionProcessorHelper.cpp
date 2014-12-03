@@ -5,8 +5,8 @@
 //* .Module Name     : SVVisionProcessorHelper
 //* .File Name       : $Workfile:   SVVisionProcessorHelper.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.25  $
-//* .Check In Date   : $Date:   20 Nov 2014 05:06:18  $
+//* .Current Version : $Revision:   1.26  $
+//* .Check In Date   : $Date:   01 Dec 2014 13:22:48  $
 //******************************************************************************
 
 #pragma region Includes
@@ -1066,7 +1066,7 @@ HRESULT SVVisionProcessorHelper::RegisterMonitorList( const SVString& rListName,
 
 void SVVisionProcessorHelper::Startup()
 {
-	m_AsyncProcedure.Create( &SVVisionProcessorHelper::APCThreadProcess, boost::bind(&SVVisionProcessorHelper::ThreadProcess, this, _1), "SVVisionProcessorHelper" );
+	m_AsyncProcedure.Create( &SVVisionProcessorHelper::APCThreadProcess, boost::bind(&SVVisionProcessorHelper::ThreadProcess, this, _1), "SVVisionProcessorHelper", SVNone );
 }
 
 void SVVisionProcessorHelper::Shutdown()
@@ -1171,7 +1171,17 @@ void SVVisionProcessorHelper::SetValuesOrImagesMonitoredObjectLists( const SVNam
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\svobserver\SVVisionProcessorHelper.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVVisionProcessorHelper.cpp_v  $
+ * 
+ *    Rev 1.26   01 Dec 2014 13:22:48   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  960
+ * SCR Title:  Pipe/core management
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Added Thread lables and attributes.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.25   20 Nov 2014 05:06:18   mziegler
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 // * .Module Name     : VicLPT
 // * .File Name       : $Workfile:   VicLPT.cpp  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.0  $
-// * .Check In Date   : $Date:   25 Apr 2013 19:09:46  $
+// * .Current Version : $Revision:   1.1  $
+// * .Check In Date   : $Date:   01 Dec 2014 14:21:14  $
 // ******************************************************************************
 
 //====================================================================
@@ -29,6 +29,8 @@
 #include <stdio.h>
 
 #include "VicLPT.h"
+#include "tchar.h"
+#include "SVSystemLibrary/SVThreadManager.h"
 
 static ULONG InstanceOpened[16] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 
@@ -811,7 +813,8 @@ USHORT TVicLPT::OpenTVicLPT(USHORT DriverInstance)
 					             this,
 					             0,
 					             (LPDWORD)&(m_ThreadId));
-			
+
+      SVThreadManager::Instance().Add( m_ThreadHandle, _T("SVTVic ISR Thread"));
 
       WaitForSingleObject(m_EventIRQSet,INFINITE);
     
@@ -943,7 +946,9 @@ void TVicLPT::CloseTVicLPT()
 		m_Terminated = 1;
 
 	    SetEvent(m_LocEvent);
-				
+		
+		SVThreadManager::Instance().Remove(m_ThreadHandle);
+
         WaitForSingleObject(m_ThreadHandle,INFINITE);
 	    CloseHandle(m_ThreadHandle);
 
@@ -2363,7 +2368,17 @@ BOOL TFindLpt::SearchLpt_NT()
 // * LOG HISTORY:
 // ******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVTVicLpt\VicLPT.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVTVicLpt\VicLPT.cpp_v  $
+ * 
+ *    Rev 1.1   01 Dec 2014 14:21:14   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  960
+ * SCR Title:  Pipe/core management
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Added thread attribute and label.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   25 Apr 2013 19:09:46   bWalter
  * Project:  SVObserver

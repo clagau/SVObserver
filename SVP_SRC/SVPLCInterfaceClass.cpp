@@ -5,8 +5,8 @@
 //* .Module Name     : SVPLCInterfaceClass
 //* .File Name       : $Workfile:   SVPLCInterfaceClass.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   25 Apr 2013 16:03:30  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   01 Dec 2014 13:35:50  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -469,6 +469,7 @@ HRESULT SVPLCInterfaceClass::Construct( LPCTSTR p_szPLCID, LPTSTR p_szConnection
 			m_hResetEvent = ::CreateEvent( NULL, TRUE, FALSE, NULL );
 			DWORD dwThreadID;
 			m_hHeartBeatThread = ::CreateThread(NULL, 0, SVHeartBeatThreadFunc, (LPVOID)this, 0, &dwThreadID );
+			SVThreadManager::Instance().Add(m_hHeartBeatThread, _T("PLC Heartbeat Thread"));
 		}
 	}
 
@@ -560,6 +561,7 @@ void SVPLCInterfaceClass::CloseHeartBeatThread()
 
 	if( m_hHeartBeatThread != NULL )
 	{
+		SVThreadManager::Instance().Remove(m_hHeartBeatThread);
 		::CloseHandle( m_hHeartBeatThread );
 		m_hHeartBeatThread = NULL;
 	}
@@ -1091,7 +1093,17 @@ HRESULT SVPLCInterfaceClass::TestCommunications(LPCTSTR p_szPLCID)
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVP_SRC\SVPLCInterfaceClass.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVP_SRC\SVPLCInterfaceClass.cpp_v  $
+ * 
+ *    Rev 1.1   01 Dec 2014 13:35:50   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  960
+ * SCR Title:  Pipe/core management
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Added thread attributes and lables
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   25 Apr 2013 16:03:30   bWalter
  * Project:  SVObserver

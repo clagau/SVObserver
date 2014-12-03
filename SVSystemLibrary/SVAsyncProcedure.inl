@@ -5,8 +5,8 @@
 //* .Module Name     : SVAsyncProcedure
 //* .File Name       : $Workfile:   SVAsyncProcedure.inl  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   02 Oct 2013 10:12:40  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   01 Dec 2014 13:59:04  $
 //******************************************************************************
 
 #include "SVStatusLibrary/SVException.h"
@@ -24,12 +24,12 @@ SVAsyncProcedure<SVAPCSignalHandler, SVThreadSignalHandler>::~SVAsyncProcedure()
 }
 
 template<typename SVAPCSignalHandler, typename SVThreadSignalHandler>
-HRESULT SVAsyncProcedure<SVAPCSignalHandler, SVThreadSignalHandler>::Create(const SVAPCSignalHandler& apcHandler, const SVThreadSignalHandler& threadHandler, LPCTSTR tag)
+HRESULT SVAsyncProcedure<SVAPCSignalHandler, SVThreadSignalHandler>::Create(const SVAPCSignalHandler& apcHandler, const SVThreadSignalHandler& threadHandler, LPCTSTR tag, SVThreadAttribute eAttribute )
 {
 	m_tag = tag;
 	m_apcHandler = apcHandler;
 
-	HRESULT hr = m_thread.Create(threadHandler, m_tag.c_str());
+	HRESULT hr = m_thread.Create(threadHandler, m_tag.c_str(), eAttribute);
 	return hr;
 }
 
@@ -118,6 +118,16 @@ bool SVAsyncProcedure<SVAPCSignalHandler, SVThreadSignalHandler>::IsActive() con
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVSystemLibrary\SVAsyncProcedure.inl_v  $
+ * 
+ *    Rev 1.2   01 Dec 2014 13:59:04   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  960
+ * SCR Title:  Pipe/core management
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Added thread manager.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   02 Oct 2013 10:12:40   tbair
  * Project:  SVObserver
