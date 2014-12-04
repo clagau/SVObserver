@@ -530,6 +530,11 @@
     <ClInclude Include="SVSiemensS7Applicom.h" />
     <ClInclude Include="TEventHandler.h" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SVSystemLibrary\SVSystemLibrary.vcxproj">
+      <Project>{1854674e-1c43-4305-a8af-8d96d40fce3e}</Project>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

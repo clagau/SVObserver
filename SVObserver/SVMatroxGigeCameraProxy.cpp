@@ -5,8 +5,8 @@
 //* .Module Name     : SVMatroxGigeCameraProxy.cpp
 //* .File Name       : $Workfile:   SVMatroxGigeCameraProxy.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.3  $
-//* .Check In Date   : $Date:   18 Jun 2013 19:23:10  $
+//* .Current Version : $Revision:   1.4  $
+//* .Check In Date   : $Date:   03 Dec 2014 19:51:22  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -268,8 +268,7 @@ HRESULT SVMatroxGigeCameraProxy::SetStandardCameraParameter( const SVDeviceParam
 				const SVLongValueDeviceParam* pParam = rw.DerivedValue( pParam );
 				if ( pParam )
 				{
-					l_oValue = pParam->lValue;
-
+					l_oValue = pParam->GetNormalizedValue();
 					hr = pDigitizer->ParameterSetValue( hDigitizer, SVGigeParameterFeatureGamma, 0, &l_oValue );
 				}
 				break;
@@ -282,8 +281,7 @@ HRESULT SVMatroxGigeCameraProxy::SetStandardCameraParameter( const SVDeviceParam
 				const SVLongValueDeviceParam* pParam = rw.DerivedValue( pParam );
 				if ( pParam )
 				{
-					l_oValue = pParam->lValue;
-
+					l_oValue = pParam->GetNormalizedValue();
 					hr = pDigitizer->ParameterSetValue( hDigitizer, SVGigeParameterFeatureBrightness, 0, &l_oValue );
 				}
 				break;
@@ -296,8 +294,7 @@ HRESULT SVMatroxGigeCameraProxy::SetStandardCameraParameter( const SVDeviceParam
 				const SVLongValueDeviceParam* pParam = rw.DerivedValue( pParam );
 				if ( pParam )
 				{
-					l_oValue = pParam->lValue;
-
+					l_oValue = pParam->GetNormalizedValue();
 					hr = pDigitizer->ParameterSetValue( hDigitizer, SVGigeParameterFeatureGain, 0, &l_oValue );
 				}
 				break;
@@ -310,8 +307,7 @@ HRESULT SVMatroxGigeCameraProxy::SetStandardCameraParameter( const SVDeviceParam
 				const SVLongValueDeviceParam* pParam = rw.DerivedValue( pParam );
 				if ( pParam )
 				{
-					l_oValue = pParam->lValue;
-
+					l_oValue = pParam->GetNormalizedValue();
 					hr = pDigitizer->ParameterSetValue( hDigitizer, SVGigeParameterFeatureWhiteBalanceU, 0, &l_oValue );
 				}
 				break;
@@ -324,8 +320,7 @@ HRESULT SVMatroxGigeCameraProxy::SetStandardCameraParameter( const SVDeviceParam
 				const SVLongValueDeviceParam* pParam = rw.DerivedValue( pParam );
 				if ( pParam )
 				{
-					l_oValue = pParam->lValue;
-
+					l_oValue = pParam->GetNormalizedValue();
 					hr = pDigitizer->ParameterSetValue( hDigitizer, SVGigeParameterFeatureWhiteBalanceV, 0, &l_oValue );
 				}
 				break;
@@ -338,8 +333,7 @@ HRESULT SVMatroxGigeCameraProxy::SetStandardCameraParameter( const SVDeviceParam
 				const SVLongValueDeviceParam* pParam = rw.DerivedValue( pParam );
 				if ( pParam )
 				{
-					l_oValue = pParam->lValue;
-
+					l_oValue = pParam->GetNormalizedValue();
 					hr = pDigitizer->ParameterSetValue( hDigitizer, SVGigeParameterFeatureSharpness, 0, &l_oValue );
 				}
 				break;
@@ -352,8 +346,7 @@ HRESULT SVMatroxGigeCameraProxy::SetStandardCameraParameter( const SVDeviceParam
 				const SVLongValueDeviceParam* pParam = rw.DerivedValue( pParam );
 				if ( pParam )
 				{
-					l_oValue = pParam->lValue;
-
+					l_oValue = pParam->GetNormalizedValue();
 					hr = pDigitizer->ParameterSetValue( hDigitizer, SVGigeParameterFeatureHue, 0, &l_oValue );
 				}
 				break;
@@ -366,8 +359,7 @@ HRESULT SVMatroxGigeCameraProxy::SetStandardCameraParameter( const SVDeviceParam
 				const SVLongValueDeviceParam* pParam = rw.DerivedValue( pParam );
 				if ( pParam )
 				{
-					l_oValue = pParam->lValue;
-
+					l_oValue = pParam->GetNormalizedValue();
 					hr = pDigitizer->ParameterSetValue( hDigitizer, SVGigeParameterFeatureSaturation, 0, &l_oValue );
 				}
 				break;
@@ -747,6 +739,14 @@ HRESULT SVMatroxGigeCameraProxy::SetStandardCameraParameter( const SVDeviceParam
 						{
 							case DeviceDataTypeLong:
 								hr = pHeldParam->GetValue(l_oValue);
+								if (S_OK == hr)
+								{
+									const SVLongValueDeviceParam* pLongParam = rDeviceParamWrapper.DerivedValue(pLongParam);
+									if (pLongParam)
+									{
+										l_oValue = pLongParam->GetNormalizedValue();
+									}
+								}
 								break;
 
 							case DeviceDataTypei64:
@@ -1209,7 +1209,17 @@ HRESULT SVMatroxGigeCameraProxy::SVLUTToSafeArray(const SVLut& lut, _variant_t& 
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVMatroxGigeCameraProxy.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVMatroxGigeCameraProxy.cpp_v  $
+ * 
+ *    Rev 1.4   03 Dec 2014 19:51:22   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  974
+ * SCR Title:  Revise Gain handling for Baumer cameras (SVO-401)
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   Revised SetStandardCameraParameter to call GetNormalizedValue for all Light Reference (SVLongDeviceParam) values to use the unit_divisor if specified via the camera file.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   18 Jun 2013 19:23:10   bwalter
  * Project:  SVObserver

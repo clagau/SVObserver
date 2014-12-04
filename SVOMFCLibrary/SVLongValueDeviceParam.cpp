@@ -5,8 +5,8 @@
 //* .Module Name     : SVLongValueDeviceParam
 //* .File Name       : $Workfile:   SVLongValueDeviceParam.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   25 Apr 2013 13:07:18  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   03 Dec 2014 19:41:32  $
 //******************************************************************************
 #include "Stdafx.h"
 #include <cmath>
@@ -115,6 +115,22 @@ long SVLongValueDeviceParam::GetScaledMax() const
 	return static_cast<long>(ceil(info.max * info.multiplier));
 }
 
+_variant_t SVLongValueDeviceParam::GetNormalizedValue() const
+{
+	_variant_t l_oValue;
+	if (info.unit_divisor > 1.0)
+	{
+		double val = static_cast<double>(lValue) / info.unit_divisor;
+		val = floor((val * info.unit_divisor) + 0.5) / info.unit_divisor; // round to X decimal places
+		l_oValue = val;
+	}
+	else
+	{
+		l_oValue = lValue;
+	}
+	return l_oValue;
+}
+
 HRESULT SVLongValueDeviceParam::SetMetadata(const SVDeviceParam* pBaseParam)
 {
 	HRESULT hr = S_FALSE;
@@ -170,7 +186,17 @@ SVDeviceParamWrapper DeviceParam(short i)
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVOMFCLibrary\SVLongValueDeviceParam.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVOMFCLibrary\SVLongValueDeviceParam.cpp_v  $
+ * 
+ *    Rev 1.1   03 Dec 2014 19:41:32   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  974
+ * SCR Title:  Revise Gain handling for Baumer cameras (SVO-401)
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   Added GetNormalizedValue method
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   25 Apr 2013 13:07:18   bWalter
  * Project:  SVObserver

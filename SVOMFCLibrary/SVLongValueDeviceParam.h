@@ -5,8 +5,8 @@
 //* .Module Name     : SVLongValueDeviceParam
 //* .File Name       : $Workfile:   SVLongValueDeviceParam.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   25 Apr 2013 13:07:34  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   03 Dec 2014 19:41:32  $
 //******************************************************************************
 #ifndef SVLONGVALUEDEVICEPARAM_H
 #define SVLONGVALUEDEVICEPARAM_H
@@ -20,6 +20,7 @@ public:
 	long GetScaledMin() const;
 	void SetScaledValue(long lvalue);
 	long GetScaledValue() const;
+	_variant_t GetNormalizedValue() const;
 	SVLongValueDeviceParam();
 	SVLongValueDeviceParam(SVDeviceParamEnum typeEnum);
 	SVLongValueDeviceParam(const SVLongValueDeviceParam& rhs);
@@ -68,7 +69,17 @@ private:
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVOMFCLibrary\SVLongValueDeviceParam.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVOMFCLibrary\SVLongValueDeviceParam.h_v  $
+ * 
+ *    Rev 1.1   03 Dec 2014 19:41:32   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  974
+ * SCR Title:  Revise Gain handling for Baumer cameras (SVO-401)
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   Added GetNormalizedValue method
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   25 Apr 2013 13:07:34   bWalter
  * Project:  SVObserver
