@@ -5,8 +5,8 @@
 //* .Module Name     : RemoteMonitorListController
 //* .File Name       : $Workfile:   RemoteMonitorListController.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.14  $
-//* .Check In Date   : $Date:   20 Nov 2014 04:59:56  $
+//* .Current Version : $Revision:   1.15  $
+//* .Check In Date   : $Date:   04 Dec 2014 10:30:00  $
 //******************************************************************************
 
 #pragma region Includes
@@ -104,15 +104,7 @@ void RemoteMonitorListController::SetRemoteMonitorList(const RemoteMonitorList& 
 
 void RemoteMonitorListController::ReplaceOrAddMonitorList( const RemoteMonitorNamedList& rList )
 {
-	RemoteMonitorList::iterator it = m_list.find(rList.GetName());
-	if (it != m_list.end())
-	{
-		it->second = rList;
-	}
-	else
-	{
-		m_list[rList.GetName()] = rList;
-	}
+	m_list[rList.GetName()] = rList;
 }
 
 void RemoteMonitorListController::HideShowViewTab()
@@ -394,7 +386,17 @@ HRESULT RemoteMonitorListController::GetRemoteMonitorListProductFilter(const SVS
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\svobserver\RemoteMonitorListController.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\RemoteMonitorListController.cpp_v  $
+ * 
+ *    Rev 1.15   04 Dec 2014 10:30:00   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  918
+ * SCR Title:  Implement Method RegisterMonitorList for RemoteControl (SVO-369)
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   Simplified the method ReplaceOrAddMonitorList
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.14   20 Nov 2014 04:59:56   mziegler
  * Project:  SVObserver
