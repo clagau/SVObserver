@@ -5,8 +5,8 @@
 //* .Module Name     : ObjectItemData
 //* .File Name       : $Workfile:   ObjectSelectorItem.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   25 Aug 2014 08:33:18  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   04 Dec 2014 09:02:54  $
 //******************************************************************************
 
 #pragma region Includes
@@ -47,6 +47,7 @@ void ObjectSelectorItem::Clear()
 {
 	m_Name = _T("");
 	m_Location = _T("");
+	m_DisplayLocation = _T("");
 	m_ItemType = ItNone;
 	m_TreeItem = NULL;
 	m_ItemKey = _T("");
@@ -64,6 +65,7 @@ const ObjectSelectorItem& ObjectSelectorItem::operator=( const ObjectSelectorIte
 	{
 		m_Name = rObject.m_Name;
 		m_Location = rObject.m_Location;
+		m_DisplayLocation = rObject.m_DisplayLocation;
 		m_ItemType = rObject.m_ItemType;
 		m_TreeItem = rObject.m_TreeItem;
 		m_ItemKey = rObject.m_ItemKey;
@@ -81,11 +83,12 @@ bool ObjectSelectorItem::operator==( const ObjectSelectorItem& rObject ) const
 {
 	bool Result = false;
 
-	if( ( m_Name == rObject.m_Name) &&
-		( m_Location == rObject.m_Location) &&
-		( m_ItemType == rObject.m_ItemType) &&
-		( m_TreeItem == rObject.m_TreeItem) &&
-		( m_ItemKey == rObject.m_ItemKey) &&
+	if( (m_Name == rObject.m_Name) &&
+		(m_Location == rObject.m_Location) &&
+		(m_DisplayLocation == rObject.m_DisplayLocation) &&
+		(m_ItemType == rObject.m_ItemType) &&
+		(m_TreeItem == rObject.m_TreeItem) &&
+		(m_ItemKey == rObject.m_ItemKey) &&
 		(m_Attribute == rObject.m_Attribute) &&
 		(m_IconNumber == rObject.m_IconNumber) &&
 		(m_ArrayIndex == rObject.m_ArrayIndex) &&
@@ -122,6 +125,16 @@ const SVString& ObjectSelectorItem::getLocation() const
 void ObjectSelectorItem::setLocation( const SVString& rLocation )
 {
 	m_Location = rLocation;
+}
+
+const SVString& ObjectSelectorItem::getDisplayLocation() const
+{
+	return m_DisplayLocation;
+}
+
+void ObjectSelectorItem::setDisplayLocation( const SVString& rDisplayLocation )
+{
+	m_DisplayLocation = rDisplayLocation;
 }
 
 const ObjectSelectorItem::ItemTypeEnum& ObjectSelectorItem::getItemType() const
@@ -234,7 +247,18 @@ bool ObjectSelectorItem::isModified() const
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSARCH65\PROJECTFILES\ARCHIVES\SVOBSERVER_SRC\SVTreeLibrary\ObjectSelectorItem.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVTreeLibrary\ObjectSelectorItem.cpp_v  $
+ * 
+ *    Rev 1.2   04 Dec 2014 09:02:54   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  965
+ * SCR Title:  Update Object Selector Text Label; Update Icons; Add List Output
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Single object selection mode state for different icons
+ * Added Methods getDisplayLocation;setDisplayLocation
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   25 Aug 2014 08:33:18   gramseier
  * Project:  SVObserver

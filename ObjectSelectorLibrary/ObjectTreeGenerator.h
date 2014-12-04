@@ -5,8 +5,8 @@
 //* .Module Name     : ObjectTreeGenerator
 //* .File Name       : $Workfile:   ObjectTreeGenerator.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   17 Jul 2014 11:16:26  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   04 Dec 2014 03:31:40  $
 //* ----------------------------------------------------------------------------
 //* This class is the interface between the object manager and object selector
 //******************************************************************************
@@ -35,6 +35,7 @@ namespace Seidenader
 				TypeNone				= 0,
 				TypeSetAttributes		= 1 << 1,
 				TypeSingleObject		= 1 << 2,
+				TypeMultipleObject		= 1 << 3,
 			};
 
 			/**********
@@ -147,6 +148,14 @@ namespace Seidenader
 			***********/
 			void setLocationFilter( const FilterEnum& rType, const SVString& rFilter, const SVString& rReplace );
 
+			//************************************
+			// Description:  The method converts the location if the object is an array.
+			// Parameter:  rObjectRef <in>:  reference to the object to check
+			// Parameter:  rLocation <in, out>:  reference to the location which is changed if an array
+			// Returns:  int - the object index number (if array) or -1 (if not an array)
+			//************************************
+			int convertObjectArrayName( const SVObjectReference& rObjectRef, SVString& rLocation ) const;
+
 			/**********
 			 The method sets the whole array flag
 			***********/
@@ -157,10 +166,17 @@ namespace Seidenader
 			***********/
 			inline bool getAllowWholeArrays() const;
 
+			//************************************
+			// Description:  The method gets the results of the object selection
+			// Returns:  const ObjectSelectorItems& - the reference to the results
+			//************************************
+			inline const SVTreeLibrary::ObjectSelectorItems& getResults() const;
+
 			/**********
-			 The method gets the single object result
+			 The method gets the single object selection result
+			 \return The single select object
 			***********/
-			inline const SVTreeLibrary::IObjectSelectorItem& getSingleObjectResult() const;
+			inline SVTreeLibrary::ObjectSelectorItem getSingleObjectResult() const;
 
 			/**********
 			 The method sets the selector type
@@ -202,12 +218,17 @@ namespace Seidenader
 			 \param rLocation <in>, <out> reference to the location before filtering
 			***********/
 			void checkLocationFilters( const TranslateMap& rFilters, SVString& rLocation ) const;
+
+			/**********
+			The method converts the location to the required format using the location filter and array index
+			***********/
+			void convertLocation();
 		#pragma endregion Private Methods
 
 		private:
 		#pragma region Member Variables
 			SVTreeLibrary::ObjectTreeItems	m_TreeContainer;//The tree container to store all tree items
-			SVTreeLibrary::ObjectSelectorItem m_SingleObjectResult; //The single object result
+			SVTreeLibrary::ObjectSelectorItems m_Results;	//The checked results
 			TranslateMap m_LocationInputFilters;			//The location input filters
 			TranslateMap m_LocationOutputFilters;			//The location output filters
 			SelectorTypeEnum m_SelectorType;				//The selector type
@@ -229,6 +250,18 @@ namespace Seidenader
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\ObjectSelectorLibrary\ObjectTreeGenerator.h_v  $
  * 
+ *    Rev 1.1   04 Dec 2014 03:31:40   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  965
+ * SCR Title:  Update Object Selector Text Label; Update Icons; Add List Output
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Added support for list of multiple item checked results
+ * Added Methds convertObjectArrayName; convertLocation; getResults
+ * 
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
  *    Rev 1.0   17 Jul 2014 11:16:26   gramseier
  * Project:  SVObserver
  * Change Request (SCR) nbr:  909
@@ -239,4 +272,3 @@ $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\ObjectSelectorLibrary
  * 
  * /////////////////////////////////////////////////////////////////////////////////////
 */
-

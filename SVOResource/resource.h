@@ -15,9 +15,11 @@
 #define IDI_UNCHECKED_DISABLED          2105
 #define IDI_CHECKED_DISABLED            2106
 #define IDI_TRI_STATE_DISABLED          2107
-#define IDR_TREE_ALL_SUB_NODES_MENU     2108
-#define IDR_TREE_ALL_TREE_MENU          2109
-#define IDR_TREE_ALL_VALUES_MENU        2110
+#define IDI_DOT_ENABLED                 2108
+#define IDI_DOT_DISABLED                2109
+#define IDR_TREE_ALL_SUB_NODES_MENU     2200
+#define IDR_TREE_ALL_TREE_MENU          2201
+#define IDR_TREE_ALL_VALUES_MENU        2202
 #define ID_TREE_EXPANDALL               3000
 #define ID_TREE_EXPANDTOCHECKEDITEMS    3001
 #define ID_TREE_COLLAPSEALL             3002
@@ -28,8 +30,8 @@
 #define IDC_LABEL_TREE_NODES            4001
 #define IDC_TREE_VALUES                 4002
 #define IDC_LABEL_TREE_VALUES           4003
-#define IDC_LABEL_LOCATION              4004
-#define IDC_LOCATION                    4005
+#define IDC_LABEL_HIGHLIGHTED_NODE      4004
+#define IDC_HIGHLIGHTED_NODE            4005
 
 // Next default values for new objects
 // 

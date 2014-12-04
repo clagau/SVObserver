@@ -5,8 +5,8 @@
 //* .Module Name     : ObjectTreeItems
 //* .File Name       : $Workfile:   ObjectTreeItems.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   25 Aug 2014 08:37:08  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   04 Dec 2014 09:02:54  $
 //* ----------------------------------------------------------------------------
 //* This class is used to define the object selector tree
 //******************************************************************************
@@ -24,7 +24,7 @@ namespace Seidenader
 {
 	namespace SVTreeLibrary
 	{
-		class ObjectTreeItems :	public SVTree< SVTreeAdapter<SVString, ObjectSelectorItem, SVString> >
+		class ObjectTreeItems : public SVTree< SVTreeAdapter<SVString, ObjectSelectorItem, SVString> >
 		{
 		public:
 		#pragma region Declarations
@@ -52,7 +52,7 @@ namespace Seidenader
 			/**********
 			 The class destructor
 			***********/
-			~ObjectTreeItems();
+			virtual ~ObjectTreeItems();
 		#pragma endregion Constructor
 
 		public:
@@ -65,11 +65,11 @@ namespace Seidenader
 
 			/**********
 			 The method inserts a leaf into the tree including required nodes
-			 \param rLocation <in> the dotted path of the item in the tree
+			 \param rDisplayLocation <in> the dotted path of the item in the tree
 			 \param rSelectorItem <in> a reference to the selector item to insert
 			 \return the iterator to the inserted item
 			***********/
-			iterator insertLeaf(const SVString& rLocation, ObjectSelectorItem& rSelectorItem);
+			iterator insertLeaf(const SVString& rDisplayLocation, ObjectSelectorItem& rSelectorItem);
 
 			/**********
 			 The method sets the states of all the nodes
@@ -90,11 +90,11 @@ namespace Seidenader
 
 			/**********
 			 The method finds the item at the specified location
-			 \param rLocation <in> a reference to the location of the item
+			 \param rDisplayLocation <in> a reference to the display location of the item
 			 \param CreateIfNone <in> creates the location if not available
 			 \return the iterator to the found item
 			***********/
-			iterator findItem( const SVString& rLocation, bool CreateIfNone = false );
+			iterator findItem( const SVString& rDisplayLocation, bool CreateIfNone = false );
 		#pragma endregion Public Methods
 		
 		private:
@@ -102,19 +102,19 @@ namespace Seidenader
 			/**********
 			 The method creates a node in the tree container
 			 \param rParentIter <in> the parent iterator where the node is to be created
-			 \param rLocation <in> the node location to create
+			 \param rDisplayLocation <in> the display node location to create
 			 \return the iterator that was created
 			***********/
-			iterator createNode( iterator& rParentIter, const SVString& rLocation);
+			iterator createNode( iterator& rParentIter, const SVString& rDisplayLocation);
 
 			/**********
 			 The method searches the location only in the given level
 			 \param rStartIter <in> a reference to start iterator of the level
 			 \param rEndIter <in> a reference to end iterator of the level
-			 \param rLocation <in> a reference to the location of the item
+			 \param rDisplayLocation <in> a reference to the display location of the item
 			 \return the iterator to the found item
 			***********/
-			iterator findLevelItem( const iterator& rStartIter, const iterator& rEnd, const SVString& rLocation );
+			iterator findLevelItem( const iterator& rStartIter, const iterator& rEnd, const SVString& rDisplayLocation );
 		#pragma endregion Private Methods
 
 		private:
@@ -129,7 +129,18 @@ namespace Seidenader
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSARCH65\PROJECTFILES\ARCHIVES\SVOBSERVER_SRC\SVTreeLibrary\ObjectTreeItems.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVTreeLibrary\ObjectTreeItems.h_v  $
+ * 
+ *    Rev 1.2   04 Dec 2014 09:02:54   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  965
+ * SCR Title:  Update Object Selector Text Label; Update Icons; Add List Output
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Single object selection mode state for different icons
+ * Added Methods getDisplayLocation;setDisplayLocation
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   25 Aug 2014 08:37:08   gramseier
  * Project:  SVObserver

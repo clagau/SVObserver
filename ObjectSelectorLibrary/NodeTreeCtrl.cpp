@@ -5,8 +5,8 @@
 //* .Module Name     : NodeTreeCtrl
 //* .File Name       : $Workfile:   NodeTreeCtrl.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   25 Aug 2014 07:40:16  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   04 Dec 2014 03:10:58  $
 //******************************************************************************
 
 #pragma region Includes
@@ -41,6 +41,10 @@ END_MESSAGE_MAP()
 NodeTreeCtrl::NodeTreeCtrl(  ObjectSelectorPpg& rParent, bool SingleSelect  )
 	: ObjectTreeCtrl( rParent, SingleSelect )
 {
+	if( SingleSelect )
+	{
+		setLeftButtonCheckFlag( TVHT_ONITEM );
+	}
 }
 
 NodeTreeCtrl::~NodeTreeCtrl()
@@ -90,7 +94,7 @@ void NodeTreeCtrl::loadTree()
 		//On initial load check if leaf value selected when in single object selection mode
 		if( isSingleSelect() && Iter->second.isLeaf() && IObjectSelectorItem::CheckedEnabled == Iter->second.getCheckedState() )
 		{
-			setCurrentSelection( Iter->second.getLocation() );
+			setCurrentSelection( Iter->second.getDisplayLocation() );
 			CurrentItems.insert( ParentItem );
 		}
 		++Iter;
@@ -246,7 +250,7 @@ void NodeTreeCtrl::changeSelectedItem( const HTREEITEM& rItem )
 		SVString* pLocation = reinterpret_cast<SVString*> ( GetItemData( rItem ) );
 		if( NULL != pLocation )
 		{
-			getParentPropPage().setNodeLocation( *pLocation );
+			getParentPropPage().setHighlightedNode( *pLocation );
 			getParentPropPage().updateData( this );
 
 		}
@@ -255,7 +259,7 @@ void NodeTreeCtrl::changeSelectedItem( const HTREEITEM& rItem )
 	{
 		//Set to no selection
 		SVString Location;
-		getParentPropPage().setNodeLocation( Location );
+		getParentPropPage().setHighlightedNode( Location );
 	}
 }
 
@@ -349,6 +353,16 @@ bool NodeTreeCtrl::ExpandToCheckedItems()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\ObjectSelectorLibrary\NodeTreeCtrl.cpp_v  $
+ * 
+ *    Rev 1.3   04 Dec 2014 03:10:58   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  965
+ * SCR Title:  Update Object Selector Text Label; Update Icons; Add List Output
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Changed field name from Location to Highlighted Node
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   25 Aug 2014 07:40:16   gramseier
  * Project:  SVObserver

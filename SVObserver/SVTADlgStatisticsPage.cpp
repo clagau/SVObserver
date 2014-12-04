@@ -5,8 +5,8 @@
 //* .Module Name     : SVToolAdjustmentDialogStatisticsPageClass
 //* .File Name       : $Workfile:   SVTADlgStatisticsPage.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.3  $
-//* .Check In Date   : $Date:   17 Jul 2014 20:32:52  $
+//* .Current Version : $Revision:   1.4  $
+//* .Check In Date   : $Date:   04 Dec 2014 04:52:22  $
 //******************************************************************************
 
 #pragma region Includes
@@ -358,7 +358,7 @@ void SVToolAdjustmentDialogStatisticsPageClass::OnBtnObjectPicker()
 
 	if( IDOK == Result )
 	{
-		m_strVariableToMonitor = ObjectTreeGenerator::Instance().getSingleObjectResult().getLocation().c_str();
+		m_strVariableToMonitor = ObjectTreeGenerator::Instance().getSingleObjectResult().getDisplayLocation().c_str();
 
 		SVGUID ResultObjectGuid( ObjectTreeGenerator::Instance().getSingleObjectResult().getItemKey() );
 		SVObjectClass *pResultObject = nullptr;
@@ -377,6 +377,16 @@ void SVToolAdjustmentDialogStatisticsPageClass::OnBtnObjectPicker()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVTADlgStatisticsPage.cpp_v  $
+ * 
+ *    Rev 1.4   04 Dec 2014 04:52:22   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  965
+ * SCR Title:  Update Object Selector Text Label; Update Icons; Add List Output
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Result selected object can now use both DisplayLocation and Location
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   17 Jul 2014 20:32:52   gramseier
  * Project:  SVObserver

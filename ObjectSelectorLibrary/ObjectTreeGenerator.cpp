@@ -5,8 +5,8 @@
 //* .Module Name     : ObjectTreeGenerator
 //* .File Name       : $Workfile:   ObjectTreeGenerator.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   08 Sep 2014 09:47:22  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   04 Dec 2014 03:29:20  $
 //******************************************************************************
 
 #pragma region Includes
@@ -36,7 +36,7 @@ static char THIS_FILE[] = __FILE__;
 #pragma region Constructor
 ObjectTreeGenerator::ObjectTreeGenerator()
 	: m_TreeContainer()
-	, m_SingleObjectResult()
+	, m_Results()
 	, m_LocationInputFilters()
 	, m_AttributesSetFilter( 0 )
 	, m_AttributesAllowedFilter( 0 )
@@ -62,7 +62,7 @@ void ObjectTreeGenerator::Clear( bool ClearAll )
 {
 	if ( ClearAll )
 	{
-		m_SingleObjectResult.Clear();
+		m_Results.clear();
 	}
 	m_TreeContainer.Clear();
 	m_LocationInputFilters.clear();
@@ -125,7 +125,7 @@ void ObjectTreeGenerator::insertTreeObjects( const ObjectTreeItems& rTree )
 		{
 			//InsertLeaf needs a reference to a non const item
 			ObjectSelectorItem SelectorItem( Iter->second );
-			m_TreeContainer.insertLeaf( Iter->second.getLocation(), SelectorItem );
+			m_TreeContainer.insertLeaf( Iter->second.getDisplayLocation(), SelectorItem );
 		}
 		++Iter;
 	}
@@ -136,32 +136,25 @@ void ObjectTreeGenerator::insertTreeObject( const SVObjectReference& rObjectRef 
 	ObjectSelectorItem SelectorItem;
 	IObjectSelectorItem::AttributeEnum Attribute( static_cast<IObjectSelectorItem::AttributeEnum> (IObjectSelectorItem::Leaf | IObjectSelectorItem::Checkable) );
 
-	setSelectorItemType(rObjectRef, SelectorItem);
+	setSelectorItemType( rObjectRef, SelectorItem );
 
 	SVString Location;
 	Location = rObjectRef.GetCompleteOneBasedObjectName();
 
-	//If location is array then place an additional level with the array group name
-	if( rObjectRef->IsArray() )
-	{
-		SVString Name;
-		size_t Pos = 0;
+	SelectorItem.setName( rObjectRef->GetName() );
+	SelectorItem.setLocation( Location );
+	SelectorItem.setItemKey( rObjectRef->GetUniqueObjectID().ToVARIANT() );
+	SelectorItem.setCheckedState( IObjectSelectorItem::UncheckedEnabled );
 
-		Name = rObjectRef->GetName();
-		Name.insert( Pos, _T(".") );
-		Pos = Location.rfind(_T('.'));
-		if( SVString::npos != Pos )
-		{
-			Location.insert( Pos, Name.c_str() );
-		}
-		SelectorItem.setArrayIndex( rObjectRef.ArrayIndex( true ) );
+	int ArrayIndex( -1 );
+	ArrayIndex = convertObjectArrayName( rObjectRef, Location );
+	if( -1 != ArrayIndex )
+	{
+		SelectorItem.setArrayIndex( ArrayIndex );
 		Attribute = static_cast<IObjectSelectorItem::AttributeEnum> (IObjectSelectorItem::Leaf | IObjectSelectorItem::Checkable | IObjectSelectorItem::Array);
 	}
 
-	SelectorItem.setName( rObjectRef->GetName() );
-	SelectorItem.setItemKey( rObjectRef->GetUniqueObjectID().ToVARIANT() );
 	SelectorItem.setAttibute( Attribute );
-	SelectorItem.setCheckedState( IObjectSelectorItem::UncheckedEnabled );
 	//Only set the checked states if of type attributes
 	if( TypeSetAttributes == (m_SelectorType & TypeSetAttributes) )
 	{
@@ -181,13 +174,13 @@ void ObjectTreeGenerator::insertTreeObject( const SVString& rLocation )
 	ObjectSelectorItem SelectorItem;
 	IObjectSelectorItem::AttributeEnum Attribute( static_cast<IObjectSelectorItem::AttributeEnum> (IObjectSelectorItem::Leaf | IObjectSelectorItem::Checkable) );
 
-	SelectorItem.setName( rLocation );
+	SelectorItem.setLocation( rLocation );
 	SelectorItem.setAttibute( Attribute );
 	SelectorItem.setCheckedState( IObjectSelectorItem::UncheckedEnabled );
 	//Make copy of location because reference is const
-	SVString Location( rLocation );
-	checkLocationFilters( m_LocationInputFilters, Location );
-	m_TreeContainer.insertLeaf( Location, SelectorItem );
+	SVString DisplayLocation( rLocation );
+	checkLocationFilters( m_LocationInputFilters, DisplayLocation );
+	m_TreeContainer.insertLeaf( DisplayLocation, SelectorItem );
 }
 
 void ObjectTreeGenerator::insertOutputList( SVOutputInfoListClass& rOutputList )
@@ -207,7 +200,7 @@ INT_PTR ObjectTreeGenerator::showDialog( const SVString& rTitle, const SVString&
 	HINSTANCE ResourceInstance( NULL );
 
 	//Make sure Object result cleared could still have previous result
-	m_SingleObjectResult.Clear();
+	m_Results.clear();
 
 	if( S_OK == LoadDll::Instance().getDll( SVOResourceDll, ResourceInstance ) && ( NULL != ResourceInstance) )
 	{
@@ -329,6 +322,29 @@ void ObjectTreeGenerator::setLocationFilter( const FilterEnum& rType, const SVSt
 	default:
 		break;
 	}
+}
+
+int ObjectTreeGenerator::convertObjectArrayName( const SVObjectReference& rObjectRef, SVString& rLocation ) const
+{
+	int Result( -1 );
+
+	//If location is array then place an additional level with the array group name
+	if( rObjectRef->IsArray() )
+	{
+		SVString Name;
+		size_t Pos = 0;
+
+		Name = rObjectRef->GetName();
+		Name.insert( Pos, _T(".") );
+		Pos = rLocation.rfind(_T('.'));
+		if( SVString::npos != Pos )
+		{
+			rLocation.insert( Pos, Name.c_str() );
+		}
+		Result = rObjectRef.ArrayIndex( true );
+	}
+
+	return Result;
 }
 #pragma endregion Public Methods
 
@@ -468,57 +484,35 @@ void ObjectTreeGenerator::filterObjects( SVOutputInfoListClass& rOutputList, SVO
 bool ObjectTreeGenerator::checkModifiedItems()
 {
 	bool Result( false );
-	ObjectSelectorItem SingleObjectResult;
 
+	m_Results.clear();
 	ObjectTreeItems::SVTree_pre_order_iterator Iter( m_TreeContainer.pre_order_begin() );
 
 	while( m_TreeContainer.pre_order_end() != Iter )
 	{
 		bool Modified( Iter->second.getCheckedState() != Iter->second.getOrgCheckedState() );
-		Iter->second.setModified( Modified );
 		if( Modified )
 		{
+			Iter->second.setModified( Modified );
 			Result = true;
 		}
-
-		if( IObjectSelectorItem::CheckedEnabled == Iter->second.getCheckedState() && TypeSingleObject == (TypeSingleObject & m_SelectorType) )
+		//Place items into the checked list when using Single or Multiple object
+		if( TypeSingleObject == (TypeSingleObject & m_SelectorType) || TypeMultipleObject == (TypeMultipleObject & m_SelectorType) )
 		{
-			SingleObjectResult = Iter->second;
-			//If it is an array we need to modify the location back to its original form
-			if( Iter->second.isArray() )
+			if( IObjectSelectorItem::CheckedEnabled == Iter->second.getCheckedState() )
 			{
-				SVString Location = SingleObjectResult.getLocation();
-
-				SVString Name( SingleObjectResult.getName() );
-
-				SVString::size_type Pos = 0;
-				//Array name will have [ ] 
-				if( SVString::npos != (Pos = Name.rfind("[")) )
-				{
-					Name = Name.Left( Pos );
-				}
-				Name += _T(".");
-				Location.replace( Name.c_str(), _T("") );
-				SingleObjectResult.setLocation( Location );
+				m_Results.push_back( Iter->second );
 			}
 		}
 		++Iter;
 	}
 
+	convertLocation();
 	if( TypeSetAttributes == (m_SelectorType & TypeSetAttributes) )
 	{
 		setItemAttributes();
 	}
-	if( TypeSingleObject == (m_SelectorType & TypeSingleObject) )
-	{
-		m_SingleObjectResult = SingleObjectResult;
-		SVString Location( m_SingleObjectResult.getLocation() );
-		checkLocationFilters( m_LocationOutputFilters, Location );
-		if( m_SingleObjectResult.getLocation() != Location )
-		{
-			m_SingleObjectResult.setLocation( Location );
-		}
-	}
+
 
 	return Result;
 }
@@ -587,6 +581,40 @@ void ObjectTreeGenerator::checkLocationFilters( const TranslateMap& rFilters, SV
 		++Iter;
 	}
 }
+
+void ObjectTreeGenerator::convertLocation()
+{
+	SVTreeLibrary::ObjectSelectorItems::iterator Iter( m_Results.begin() );
+	while( m_Results.end() != Iter )
+	{
+		SVString Location = Iter->getLocation();
+		checkLocationFilters( m_LocationOutputFilters, Location );
+		if( Iter->getLocation() != Location )
+		{
+			Iter->setLocation( Location );
+		}
+		//The extra group name for arrays must be removed
+		if( Iter->isArray() )
+		{
+			SVString DisplayLocation = Iter->getDisplayLocation();
+			SVString Name( Iter->getName() );
+
+			checkLocationFilters( m_LocationOutputFilters, DisplayLocation );
+			SVString::size_type Pos = 0;
+			//Array name will have [ ] 
+			if( SVString::npos != (Pos = Name.rfind("[")) )
+			{
+				Name = Name.Left( Pos );
+			}
+			Name += _T(".");
+			DisplayLocation.replace( Name.c_str(), _T("") );
+			Iter->setDisplayLocation( DisplayLocation );
+		}
+
+		++Iter;
+	}
+}
+
 #pragma endregion Private Methods
 
 //******************************************************************************
@@ -594,6 +622,18 @@ void ObjectTreeGenerator::checkLocationFilters( const TranslateMap& rFilters, SV
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\ObjectSelectorLibrary\ObjectTreeGenerator.cpp_v  $
+ * 
+ *    Rev 1.3   04 Dec 2014 03:29:20   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  965
+ * SCR Title:  Update Object Selector Text Label; Update Icons; Add List Output
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Added support for list of multiple item checked results
+ * Added DisplayLocation while Location is the original set dotted path name
+ * Added Methds convertObjectArrayName; convertLocation
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   08 Sep 2014 09:47:22   gramseier
  * Project:  SVObserver

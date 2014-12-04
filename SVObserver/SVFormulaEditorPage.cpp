@@ -5,8 +5,8 @@
 //* .Module Name     : SVFormulaEditorPageClass
 //* .File Name       : $Workfile:   SVFormulaEditorPage.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.8  $
-//* .Check In Date   : $Date:   07 Oct 2014 03:14:44  $
+//* .Current Version : $Revision:   1.9  $
+//* .Check In Date   : $Date:   04 Dec 2014 04:52:24  $
 //******************************************************************************
 
 #pragma region Includes
@@ -415,7 +415,7 @@ void SVFormulaEditorPageClass::OnLocalVariableSelect()
 
 	if( IDOK == Result )
 	{
-		m_strToolsetOutputVariable = ObjectTreeGenerator::Instance().getSingleObjectResult().getLocation().c_str();
+		m_strToolsetOutputVariable = ObjectTreeGenerator::Instance().getSingleObjectResult().getDisplayLocation().c_str();
 		UpdateData( FALSE );
 	}
 }
@@ -809,6 +809,16 @@ void SVFormulaEditorPageClass::enableControls()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVFormulaEditorPage.cpp_v  $
+ * 
+ *    Rev 1.9   04 Dec 2014 04:52:24   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  965
+ * SCR Title:  Update Object Selector Text Label; Update Icons; Add List Output
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Result selected object can now use both DisplayLocation and Location
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.8   07 Oct 2014 03:14:44   mziegler
  * Project:  SVObserver

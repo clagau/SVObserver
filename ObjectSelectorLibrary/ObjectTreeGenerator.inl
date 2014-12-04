@@ -5,8 +5,8 @@
 //* .Module Name     : ObjectTreeGenerator
 //* .File Name       : $Workfile:   ObjectTreeGenerator.inl  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   17 Jul 2014 11:16:26  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   04 Dec 2014 03:34:44  $
 //******************************************************************************
 
 #pragma region Public Methods
@@ -20,9 +20,20 @@ inline bool ObjectTreeGenerator::getAllowWholeArrays() const
 	return m_AllowWholeArray;
 }
 
-inline const SVTreeLibrary::IObjectSelectorItem& ObjectTreeGenerator::getSingleObjectResult() const
+inline const SVTreeLibrary::ObjectSelectorItems& ObjectTreeGenerator::getResults() const
 {
-	return m_SingleObjectResult;
+	return m_Results;
+}
+
+inline SVTreeLibrary::ObjectSelectorItem ObjectTreeGenerator::getSingleObjectResult() const
+{
+	SVTreeLibrary::ObjectSelectorItem Result;
+	//If Single select then it is the first result
+	if( 0 < m_Results.size() )
+	{
+		Result = m_Results.at(0);
+	}
+	return Result;
 }
 
 inline void ObjectTreeGenerator::setSelectorType( const SelectorTypeEnum& rSelectorType )
@@ -36,6 +47,17 @@ inline void ObjectTreeGenerator::setSelectorType( const SelectorTypeEnum& rSelec
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\ObjectSelectorLibrary\ObjectTreeGenerator.inl_v  $
+ * 
+ *    Rev 1.1   04 Dec 2014 03:34:44   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  965
+ * SCR Title:  Update Object Selector Text Label; Update Icons; Add List Output
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Added Methds getResults
+ * Changed getSingleObjectResult gets the first item of the results list
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   17 Jul 2014 11:16:26   gramseier
  * Project:  SVObserver

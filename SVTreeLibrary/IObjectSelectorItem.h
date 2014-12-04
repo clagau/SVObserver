@@ -5,8 +5,8 @@
 //* .Module Name     : IObjectSelectorItem
 //* .File Name       : $Workfile:   IObjectSelectorItem.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   25 Aug 2014 08:08:04  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   04 Dec 2014 09:02:54  $
 //* ----------------------------------------------------------------------------
 //* This interface is used to define a single selector item for the tree
 //******************************************************************************
@@ -96,6 +96,18 @@ namespace Seidenader
 			 \param rLocation <in> a reference to the location of the item
 			***********/
 			virtual void setLocation( const SVString& rLocation ) = 0;
+
+			/**********
+			 The method gets the tree display location of the item
+			 \return the display location of the item
+			***********/
+			virtual const SVString& getDisplayLocation() const = 0;
+
+			/**********
+			 The method sets the tree display location of the item
+			 \param rDisplayLocation <in> a reference to the display location of the item
+			***********/
+			virtual void setDisplayLocation( const SVString& rDisplayLocation ) = 0;
 
 			/**********
 			 The method gets the item type
@@ -231,7 +243,18 @@ namespace Seidenader
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSARCH65\PROJECTFILES\ARCHIVES\SVOBSERVER_SRC\SVTreeLibrary\IObjectSelectorItem.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVTreeLibrary\IObjectSelectorItem.h_v  $
+ * 
+ *    Rev 1.2   04 Dec 2014 09:02:54   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  965
+ * SCR Title:  Update Object Selector Text Label; Update Icons; Add List Output
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Single object selection mode state for different icons
+ * Added Methods getDisplayLocation;setDisplayLocation
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   25 Aug 2014 08:08:04   gramseier
  * Project:  SVObserver

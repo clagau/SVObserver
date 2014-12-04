@@ -5,8 +5,8 @@
 //* .Module Name     : LeafTreeCtrl
 //* .File Name       : $Workfile:   LeafTreeCtrl.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.3  $
-//* .Check In Date   : $Date:   25 Aug 2014 07:37:44  $
+//* .Current Version : $Revision:   1.4  $
+//* .Check In Date   : $Date:   04 Dec 2014 03:10:58  $
 //******************************************************************************
 
 #pragma region Includes
@@ -56,7 +56,7 @@ void LeafTreeCtrl::loadTree()
 
 	DeleteAllItems();
 	
-	m_NodeLocation = getParentPropPage().getNodeLocation();
+	m_NodeLocation = getParentPropPage().getHighlightedNode();
 	if( m_NodeLocation.empty() )
 	{
 		SetRedraw(TRUE);
@@ -97,7 +97,7 @@ void LeafTreeCtrl::loadTree()
 
 void LeafTreeCtrl::updateTree()
 {
-	SVString Location = getParentPropPage().getNodeLocation();
+	SVString Location = getParentPropPage().getHighlightedNode();
 
 	if( m_NodeLocation != Location  )
 	{
@@ -137,6 +137,7 @@ void LeafTreeCtrl::updateTree()
 			if( IterChild->second.isLeaf() && (NULL != IterChild->second.getTreeItem()) )
 			{
 				IObjectSelectorItem::CheckedStateEnum CheckedState( IObjectSelectorItem::EmptyEnabled );
+				//The checked state is saved in the upper nibble of the item state (Filtered with 0xF000) and must be shifted by 12 to get the required value
 				CheckedState = static_cast<IObjectSelectorItem::CheckedStateEnum> (GetItemState(IterChild->second.getTreeItem(), TVIS_STATEIMAGEMASK)>>12);
 				//Check if state has changed
 				if( IterChild->second.getCheckedState() != CheckedState )
@@ -209,6 +210,16 @@ void LeafTreeCtrl::OnUncheckAll()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\ObjectSelectorLibrary\LeafTreeCtrl.cpp_v  $
+ * 
+ *    Rev 1.4   04 Dec 2014 03:10:58   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  965
+ * SCR Title:  Update Object Selector Text Label; Update Icons; Add List Output
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Changed field name from Location to Highlighted Node
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   25 Aug 2014 07:37:44   gramseier
  * Project:  SVObserver

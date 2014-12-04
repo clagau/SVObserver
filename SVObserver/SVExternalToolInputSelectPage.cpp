@@ -5,8 +5,8 @@
 //* .Module Name     : SVExternalToolInputSelectPage
 //* .File Name       : $Workfile:   SVExternalToolInputSelectPage.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.7  $
-//* .Check In Date   : $Date:   30 Sep 2014 15:40:18  $
+//* .Current Version : $Revision:   1.8  $
+//* .Check In Date   : $Date:   04 Dec 2014 04:52:22  $
 //******************************************************************************
 
 // SVExternalToolInputSelectPage.cpp : implementation file
@@ -324,11 +324,7 @@ int SVExternalToolInputSelectPage::SelectObject(CString& rObjectName, SVRPropert
 
 	if( IDOK == Result )
 	{
-		SVString SelectedOutputName = ObjectTreeGenerator::Instance().getSingleObjectResult().getLocation();
-		if( !SelectedOutputName.empty() )
-		{
-			ObjectName = SelectedOutputName.c_str();
-		}
+		ObjectName = ObjectTreeGenerator::Instance().getSingleObjectResult().getDisplayLocation().c_str();
 	}
 
 	rObjectName = ObjectName;
@@ -498,6 +494,16 @@ int SVExternalToolInputSelectPage::GetItemIndex(SVRPropertyItem* pItem)
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVExternalToolInputSelectPage.cpp_v  $
+ * 
+ *    Rev 1.8   04 Dec 2014 04:52:22   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  965
+ * SCR Title:  Update Object Selector Text Label; Update Icons; Add List Output
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Result selected object can now use both DisplayLocation and Location
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.7   30 Sep 2014 15:40:18   bwalter
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : ObjectTreeItems
 //* .File Name       : $Workfile:   ObjectTreeItems.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   25 Aug 2014 08:34:42  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   04 Dec 2014 09:02:56  $
 //******************************************************************************
 
 #pragma region Includes
@@ -46,14 +46,14 @@ void ObjectTreeItems::setTreeType( bool SingleSelect )
 	m_SingleSelect = SingleSelect;
 }
 
-ObjectTreeItems::iterator ObjectTreeItems::insertLeaf( const SVString& rLocation, ObjectSelectorItem& rSelectorItem )
+ObjectTreeItems::iterator ObjectTreeItems::insertLeaf( const SVString& rDisplayLocation, ObjectSelectorItem& rSelectorItem )
 {
-	ObjectTreeItems::iterator Iter = findItem( rLocation, true );
+	ObjectTreeItems::iterator Iter = findItem( rDisplayLocation, true );
 
 	if( end() != Iter )
 	{
 		rSelectorItem.setName( Iter->second.getName() );
-		rSelectorItem.setLocation( Iter->second.getLocation() );
+		rSelectorItem.setDisplayLocation( Iter->second.getDisplayLocation() );
 		Iter->second = rSelectorItem;
 	}
 	return Iter;
@@ -64,13 +64,12 @@ void ObjectTreeItems::setNodeCheckedStates()
 	SVTree_post_order_iterator Iter( post_order_begin() );
 	iterator IterBase( begin() );
 
-
 	while( post_order_end() != Iter )
 	{
 		if( Iter->second.isNode() )
 		{
 			IObjectSelectorItem::CheckedStateEnum CheckedState = getNodeCheckedState( Iter.base() );
-			if( IObjectSelectorItem::EmptyEnabled != CheckedState && Iter->second.getCheckedState() != CheckedState )
+			if( Iter->second.getCheckedState() != CheckedState )
 			{
 				Iter->second.setCheckedState( CheckedState );
 			}
@@ -91,7 +90,7 @@ IObjectSelectorItem::CheckedStateEnum ObjectTreeItems::getNodeCheckedState( cons
 
 		if( m_SingleSelect )
 		{
-			CheckedState = IObjectSelectorItem::UncheckedDisabled;
+			CheckedState = IObjectSelectorItem::EmptyEnabled;
 		}
 		else
 		{
@@ -133,7 +132,8 @@ IObjectSelectorItem::CheckedStateEnum ObjectTreeItems::getNodeCheckedState( cons
 		{
 			if( m_SingleSelect )
 			{
-				CheckedState = IObjectSelectorItem::CheckedDisabled;
+				//For single select only use the tristate symbol
+				CheckedState = IObjectSelectorItem::TriStateEnabled;
 			}
 			else
 			{
@@ -142,14 +142,7 @@ IObjectSelectorItem::CheckedStateEnum ObjectTreeItems::getNodeCheckedState( cons
 		}
 		else if( SomeChecked )
 		{
-			if( m_SingleSelect )
-			{
-				CheckedState = IObjectSelectorItem::TriStateDisabled;
-			}
-			else
-			{
-				CheckedState = IObjectSelectorItem::TriStateEnabled;
-			}
+			CheckedState = IObjectSelectorItem::TriStateEnabled;
 		}
 	}
 
@@ -167,7 +160,7 @@ void ObjectTreeItems::synchronizeCheckedStates()
 	}
 }
 
-ObjectTreeItems::iterator ObjectTreeItems::findItem( const SVString& rLocation, bool CreateIfNone )
+ObjectTreeItems::iterator ObjectTreeItems::findItem( const SVString& rDisplayLocation, bool CreateIfNone )
 {
 	ObjectTreeItems::iterator Iter( end() );
 	ObjectTreeItems::iterator IterParent( end() );
@@ -178,14 +171,14 @@ ObjectTreeItems::iterator ObjectTreeItems::findItem( const SVString& rLocation, 
 	while( true )
 	{
 		SVString Branch;
-		Pos = rLocation.find( _T("."), Pos );
+		Pos = rDisplayLocation.find( _T("."), Pos );
 		if( SVString::npos == Pos )
 		{
-			Branch = rLocation;
+			Branch = rDisplayLocation;
 		}
 		else
 		{
-			Branch = rLocation.Left( Pos );
+			Branch = rDisplayLocation.Left( Pos );
 		}
 		Iter = findLevelItem( IterStart, IterEnd, Branch);
 		//Branch not found so create or exit
@@ -202,7 +195,7 @@ ObjectTreeItems::iterator ObjectTreeItems::findItem( const SVString& rLocation, 
 			}
 		}
 		//Found the search item 
-		if( rLocation == Iter->first )
+		if( rDisplayLocation == Iter->first )
 		{
 			break;
 		}
@@ -218,34 +211,34 @@ ObjectTreeItems::iterator ObjectTreeItems::findItem( const SVString& rLocation, 
 #pragma endregion Public Methods
 
 #pragma region Private Methods
-ObjectTreeItems::iterator ObjectTreeItems::createNode( ObjectTreeItems::iterator& rParentIter, const SVString& rLocation )
+ObjectTreeItems::iterator ObjectTreeItems::createNode( ObjectTreeItems::iterator& rParentIter, const SVString& rDisplayLocation )
 {
 	iterator Iter( end() );
 	ObjectSelectorItem SelectorItem;
 	SVString Name;
 
-	SVString::size_type Pos = rLocation.rfind( _T(".") );
+	SVString::size_type Pos = rDisplayLocation.rfind( _T(".") );
 	if( SVString::npos == Pos )
 	{
-		Name = rLocation;
+		Name = rDisplayLocation;
 	}
 	else
 	{
-		Name = rLocation.Mid( Pos + 1 );
+		Name = rDisplayLocation.Mid( Pos + 1 );
 	}
 
 	IObjectSelectorItem::CheckedStateEnum CheckedState;
 
 	if( m_SingleSelect )
 	{
-		CheckedState = IObjectSelectorItem::UncheckedDisabled;
+		CheckedState = IObjectSelectorItem::EmptyEnabled;
 	}
 	else
 	{
 		CheckedState = IObjectSelectorItem::UncheckedEnabled;
 	}
 	SelectorItem.setName( Name );
-	SelectorItem.setLocation( rLocation );
+	SelectorItem.setDisplayLocation( rDisplayLocation );
 	SelectorItem.setAttibute( IObjectSelectorItem::Node );
 	SelectorItem.setCheckedState( CheckedState );
 	SelectorItem.setOrgCheckedState( CheckedState );
@@ -253,11 +246,11 @@ ObjectTreeItems::iterator ObjectTreeItems::createNode( ObjectTreeItems::iterator
 	{
 		if( end() == rParentIter )
 		{
-			Iter = insert( ObjectTreeItems::ObjectItemsElement( rLocation, SelectorItem ), rParentIter );
+			Iter = insert( ObjectTreeItems::ObjectItemsElement( rDisplayLocation, SelectorItem ), rParentIter );
 		}
 		else
 		{
-			Iter = rParentIter.GetChildTree()->insert( ObjectTreeItems::ObjectItemsElement( rLocation, SelectorItem ) );
+			Iter = rParentIter.GetChildTree()->insert( ObjectTreeItems::ObjectItemsElement( rDisplayLocation, SelectorItem ) );
 		}
 	}
 	catch( ... )
@@ -268,13 +261,13 @@ ObjectTreeItems::iterator ObjectTreeItems::createNode( ObjectTreeItems::iterator
 	return Iter;
 }
 
-ObjectTreeItems::iterator ObjectTreeItems::findLevelItem(const iterator& rIter, const iterator& rEnd, const SVString& rLocation )
+ObjectTreeItems::iterator ObjectTreeItems::findLevelItem(const iterator& rIter, const iterator& rEnd, const SVString& rDisplayLocation )
 {
 	iterator Iter( rIter );
 	
 	while( rEnd != Iter )
 	{
-		if( rLocation == Iter->first )
+		if( rDisplayLocation == Iter->first )
 		{
 			break;
 		}
@@ -290,7 +283,18 @@ ObjectTreeItems::iterator ObjectTreeItems::findLevelItem(const iterator& rIter, 
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSARCH65\PROJECTFILES\ARCHIVES\SVOBSERVER_SRC\SVTreeLibrary\ObjectTreeItems.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVTreeLibrary\ObjectTreeItems.cpp_v  $
+ * 
+ *    Rev 1.2   04 Dec 2014 09:02:56   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  965
+ * SCR Title:  Update Object Selector Text Label; Update Icons; Add List Output
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Single object selection mode state for different icons
+ * Added Methods getDisplayLocation;setDisplayLocation
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   25 Aug 2014 08:34:42   gramseier
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : ObjectTreeCtrl
 //* .File Name       : $Workfile:   ObjectTreeCtrl.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.3  $
-//* .Check In Date   : $Date:   25 Aug 2014 07:42:44  $
+//* .Current Version : $Revision:   1.4  $
+//* .Check In Date   : $Date:   04 Dec 2014 03:20:50  $
 //******************************************************************************
 
 #pragma region Includes
@@ -38,12 +38,12 @@ BEGIN_MESSAGE_MAP(ObjectTreeCtrl, CTreeCtrl)
 	ON_WM_RBUTTONDOWN()
 	ON_WM_KEYDOWN()
 	ON_WM_DESTROY()
-	ON_NOTIFY_REFLECT( TVN_SELCHANGED, ObjectTreeCtrl::OnTvnSelchanged )
+	ON_NOTIFY_REFLECT( TVN_SELCHANGED, ObjectTreeCtrl::OnTvnSelChanged )
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 #pragma region Constructor
-ObjectTreeCtrl::ObjectTreeCtrl(  ObjectSelectorPpg& rParent, bool SingleSelect  )
+ObjectTreeCtrl::ObjectTreeCtrl( ObjectSelectorPpg& rParent, bool SingleSelect )
 	: CTreeCtrl()
 	, m_rParent( rParent )
 	, m_SingleSelect( SingleSelect)
@@ -58,12 +58,12 @@ ObjectTreeCtrl::~ObjectTreeCtrl()
 #pragma endregion Constructor
 
 #pragma region Protected Methods
-void ObjectTreeCtrl::OnTvnSelchanged(NMHDR *pNMHDR, LRESULT *pResult)
+void ObjectTreeCtrl::OnTvnSelChanged(NMHDR *pNMHDR, LRESULT *pResult)
 {
 	*pResult = 0;
 
 	HTREEITEM Item = GetSelectedItem();
-	
+
 	changeSelectedItem( Item );
 }
 
@@ -76,6 +76,7 @@ void ObjectTreeCtrl::OnLButtonDown( UINT Flags, CPoint Point )
 
 	if( setCheckItem( Item ) )
 	{
+		SelectItem( Item );
 		SetFocus();
 	}
 	else
@@ -84,7 +85,7 @@ void ObjectTreeCtrl::OnLButtonDown( UINT Flags, CPoint Point )
 	}
 }
 
-void ObjectTreeCtrl::OnRButtonDown( UINT Flags, CPoint Point ) 
+void ObjectTreeCtrl::OnRButtonDown( UINT Flags, CPoint Point )
 {
 	//Save the context point to be able to check which item the context menu action is destined for
 	m_ContextPoint = Point;
@@ -102,9 +103,9 @@ void ObjectTreeCtrl::OnRButtonDown( UINT Flags, CPoint Point )
 	CTreeCtrl::OnRButtonDown( Flags, Point );
 }
 
-void ObjectTreeCtrl::OnKeyDown( UINT Char, UINT RepCnt, UINT Flags ) 
+void ObjectTreeCtrl::OnKeyDown( UINT Char, UINT RepCnt, UINT Flags )
 {
-	bool KeyHandled( false);
+	bool KeyHandled( false );
 
 	if( VK_SPACE == Char )
 	{
@@ -113,13 +114,13 @@ void ObjectTreeCtrl::OnKeyDown( UINT Char, UINT RepCnt, UINT Flags )
 		KeyHandled = setCheckItem( Item );
 	}
 
-	if( !KeyHandled  )
+	if( !KeyHandled )
 	{
-		CTreeCtrl::OnKeyDown( Char, RepCnt, Flags);
+		CTreeCtrl::OnKeyDown( Char, RepCnt, Flags );
 	}
 }
 
-void ObjectTreeCtrl::OnDestroy() 
+void ObjectTreeCtrl::OnDestroy()
 {
 	CTreeCtrl::OnDestroy();
 
@@ -130,7 +131,7 @@ void ObjectTreeCtrl::getRootItems( TreeItemSet& rRootItems ) const
 {
 	HTREEITEM Item = GetRootItem();
 
-	while( NULL != Item )
+	while( nullptr != Item )
 	{
 		rRootItems.insert( Item );
 		Item = GetNextSiblingItem( Item );
@@ -143,13 +144,13 @@ void ObjectTreeCtrl::expandAll( const TreeItemSet& rParentItems, UINT Code )
 
 	while( rParentItems.end() != Iter )
 	{
-		if( (NULL != *Iter) &&  ItemHasChildren( *Iter ) )
+		if( (nullptr != *Iter) && ItemHasChildren( *Iter ) )
 		{
 			Expand( *Iter, Code );
-	
+
 			HTREEITEM ChildItem;
-	 		ChildItem = GetChildItem( *Iter );
-			while( NULL != ChildItem )
+			ChildItem = GetChildItem( *Iter );
+			while( nullptr != ChildItem )
 			{
 				TreeItemSet ChildItems;
 				ChildItems.insert(ChildItem);
@@ -178,9 +179,9 @@ const HTREEITEM ObjectTreeCtrl::checkItemHit( const CPoint& rPoint, const UINT F
 
 	HTREEITEM Item = HitTest( &HitTestInfo );
 	
-	if( NULL != Item && 0 == (HitTestInfo.flags & Flags) )
+	if( nullptr != Item && 0 == (HitTestInfo.flags & Flags) )
 	{
-		Item = NULL;
+		Item = nullptr;
 	}
 	
 	return Item;
@@ -190,7 +191,7 @@ bool ObjectTreeCtrl::setCheckItem( const HTREEITEM& rItem )
 {
 	bool Result( false );
 
-	if( NULL != rItem )
+	if( nullptr != rItem )
 	{
 		//Check if item is checkable
 		if( isCheckable() )
@@ -201,14 +202,12 @@ bool ObjectTreeCtrl::setCheckItem( const HTREEITEM& rItem )
 			Items.insert( rItem );
 			if( setCheckState( Items ) )
 			{
-				//If item is checked then this item should also be selected
-				SelectItem( rItem );
 				Result = true;
 			}
 		}
 		else
 		{
-			Result =  true;
+			Result = true;
 		}
 	}
 
@@ -221,13 +220,13 @@ bool ObjectTreeCtrl::setCheckState( const TreeItemSet& rParentItems, IObjectSele
 
 	while( rParentItems.end() != ParentIter )
 	{
-		if(NULL == *ParentIter )
+		if( nullptr == *ParentIter )
 		{
 			return false;
 		}
 
-		SVString* pLocation = reinterpret_cast<SVString*> ( GetItemData( *ParentIter ));
-		if( NULL == pLocation )
+		SVString* pLocation = reinterpret_cast<SVString*>( GetItemData( *ParentIter ));
+		if( nullptr == pLocation )
 		{
 			return false;
 		}
@@ -244,15 +243,15 @@ bool ObjectTreeCtrl::setCheckState( const TreeItemSet& rParentItems, IObjectSele
 					CheckedState =  IObjectSelectorItem::CheckedEnabled;
 					break;
 				case IObjectSelectorItem::CheckedEnabled:
-				case IObjectSelectorItem::TriStateEnabled:
-					CheckedState =  IObjectSelectorItem::UncheckedEnabled;
+				case IObjectSelectorItem::TriStateEnabled: // fall through...
+					CheckedState = IObjectSelectorItem::UncheckedEnabled;
 					break;
 				case IObjectSelectorItem::UncheckedDisabled:
-					CheckedState =  IObjectSelectorItem::CheckedDisabled;
+					CheckedState = IObjectSelectorItem::CheckedDisabled;
 					break;
 				case IObjectSelectorItem::CheckedDisabled:
-				case IObjectSelectorItem::TriStateDisabled:
-					CheckedState =  IObjectSelectorItem::UncheckedDisabled;
+				case IObjectSelectorItem::TriStateDisabled: // fall through...
+					CheckedState = IObjectSelectorItem::UncheckedDisabled;
 					break;
 				default:
 					break;
@@ -283,7 +282,7 @@ void ObjectTreeCtrl::setChildrenState( ObjectTreeItems::iterator& rIter, IObject
 	while( rIter.GetChildTree()->end() != ChildIter )
 	{
 		bool TriState = IObjectSelectorItem::TriStateEnabled == rCheckedState || IObjectSelectorItem::TriStateDisabled == rCheckedState;
-		if( !TriState  || ChildIter->second.isNode() )
+		if( !TriState || ChildIter->second.isNode() )
 		{
 			ChildIter->second.setCheckedState( rCheckedState );
 			m_UpdateItems.insert( ChildIter->first );
@@ -304,12 +303,12 @@ void ObjectTreeCtrl::setParentState( ObjectTreeItems::iterator& rIter )
 			IObjectSelectorItem::CheckedStateEnum CheckedState = IObjectSelectorItem::UncheckedEnabled;
 
 			CheckedState = getParentPropPage().getTreeContainer().getNodeCheckedState( ParentIter );
-			if( IObjectSelectorItem::EmptyEnabled != CheckedState && ParentIter->second.getCheckedState() != CheckedState )
+			if( ParentIter->second.getCheckedState() != CheckedState )
 			{
-				ParentIter->second.setCheckedState( CheckedState ); 
+				ParentIter->second.setCheckedState( CheckedState );
 				m_UpdateItems.insert( ParentIter->first );
 				setParentState( ParentIter );
-			}		
+			}
 		}
 	}
 }
@@ -319,12 +318,12 @@ void ObjectTreeCtrl::clearLastCheckedItem( const HTREEITEM& rItem )
 	if( isSingleSelect() )
 	{
 		SVString* pLocation = reinterpret_cast<SVString*> ( GetItemData( rItem ) );
-		if( NULL != pLocation )
+		if( nullptr != pLocation )
 		{
 			if( m_CurrentSelection != *pLocation )
 			{
 				ObjectTreeItems::iterator Iter( getParentPropPage().getTreeContainer().end() );
-				
+
 				Iter = getParentPropPage().getTreeContainer().findItem( m_CurrentSelection );
 				if( getParentPropPage().getTreeContainer().end() != Iter )
 				{
@@ -359,6 +358,16 @@ void ObjectTreeCtrl::clearLastCheckedItem( const HTREEITEM& rItem )
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\ObjectSelectorLibrary\ObjectTreeCtrl.cpp_v  $
+ * 
+ *    Rev 1.4   04 Dec 2014 03:20:50   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  965
+ * SCR Title:  Update Object Selector Text Label; Update Icons; Add List Output
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   In Single Selection mode icons are dotted for highlighted nodes otherwise no icons are displayed
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   25 Aug 2014 07:42:44   gramseier
  * Project:  SVObserver

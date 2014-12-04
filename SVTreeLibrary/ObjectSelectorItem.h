@@ -5,8 +5,8 @@
 //* .Module Name     : ObjectSelectorItem
 //* .File Name       : $Workfile:   ObjectSelectorItem.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   17 Jul 2014 17:04:48  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   04 Dec 2014 09:02:56  $
 //* ----------------------------------------------------------------------------
 //* This class is used to define a single selector item for the tree
 //******************************************************************************
@@ -95,6 +95,18 @@ namespace Seidenader
 			 \param rLocation <in> a reference to the location of the item
 			***********/
 			virtual void setLocation( const SVString& rLocation ) override;
+
+			/**********
+			 The method gets the tree display location of the item
+			 \return the display location of the item
+			***********/
+			virtual const SVString& getDisplayLocation() const override;
+
+			/**********
+			 The method sets the tree display location of the item
+			 \param rDisplayLocation <in> a reference to the display location of the item
+			***********/
+			virtual void setDisplayLocation( const SVString& rDisplayLocation ) override;
 
 			/**********
 			 The method gets the item type
@@ -227,6 +239,7 @@ namespace Seidenader
 		#pragma region Member Variables
 			SVString			m_Name;						//The name of the item
 			SVString			m_Location;					//The location of the item
+			SVString			m_DisplayLocation;			//The display location of the item
 			ItemTypeEnum		m_ItemType;					//The data type of the item
 			HTREEITEM			m_TreeItem;					//the corresponding tree item handle
 			_variant_t			m_ItemKey;					//The item key
@@ -248,6 +261,17 @@ namespace Seidenader
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVTreeLibrary\ObjectSelectorItem.h_v  $
+ * 
+ *    Rev 1.1   04 Dec 2014 09:02:56   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  965
+ * SCR Title:  Update Object Selector Text Label; Update Icons; Add List Output
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Single object selection mode state for different icons
+ * Added Methods getDisplayLocation;setDisplayLocation
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   17 Jul 2014 17:04:48   gramseier
  * Project:  SVObserver

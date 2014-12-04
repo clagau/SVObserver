@@ -5,9 +5,16 @@
 //* .Module Name     : ObjectTreeCtrl
 //* .File Name       : $Workfile:   ObjectTreeCtrl.inl  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   18 Aug 2014 07:46:20  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   04 Dec 2014 03:23:44  $
 //******************************************************************************
+
+#pragma region Public Methods
+inline bool ObjectTreeCtrl::isSingleSelect() const
+{
+	return m_SingleSelect;
+}
+#pragma endregion Public Methods
 
 #pragma region Protected Methods
 inline ObjectSelectorPpg& ObjectTreeCtrl::getParentPropPage() const
@@ -18,11 +25,6 @@ inline ObjectSelectorPpg& ObjectTreeCtrl::getParentPropPage() const
 inline const CPoint& ObjectTreeCtrl::getContextPoint() const
 {
 	return m_ContextPoint;
-}
-
-inline bool ObjectTreeCtrl::isSingleSelect() const
-{
-	return m_SingleSelect;
 }
 
 inline void ObjectTreeCtrl::setCurrentSelection( const SVString& rCurrentSelection )
@@ -52,6 +54,16 @@ inline void ObjectTreeCtrl::setLeftButtonCheckFlag( const UINT& rCheckFlag )
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\ObjectSelectorLibrary\ObjectTreeCtrl.inl_v  $
+ * 
+ *    Rev 1.3   04 Dec 2014 03:23:44   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  965
+ * SCR Title:  Update Object Selector Text Label; Update Icons; Add List Output
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Changed isSingleSelection method from protected to public
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   18 Aug 2014 07:46:20   gramseier
  * Project:  SVObserver

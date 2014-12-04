@@ -5,8 +5,8 @@
 //* .Module Name     : ObjectSelectorPpg
 //* .File Name       : $Workfile:   ObjectSelectorPpg.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   08 Sep 2014 09:44:14  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   04 Dec 2014 03:13:50  $
 //* ----------------------------------------------------------------------------
 //* This class is the object selector property page 
 //******************************************************************************
@@ -35,52 +35,51 @@ namespace Seidenader
 
 		public:
 		#pragma region Constructor
-			/**********
-			 The class constructor
-			 \param rTreeContainer <in> a reference to the tree to display
-			 \param rTitle <in> a reference to the page title
-			 \param SingleSelect <in> true for single selection mode
-			***********/
-			ObjectSelectorPpg( SVTreeLibrary::ObjectTreeItems& rTreeContainer, const SVString& rTitle, bool SingleSelect );
+			//************************************
+			// Description:  The class constructor
+			// Parameter:  rTreeContainer <in>:  a reference to the tree to display
+			// Parameter:  rTitle <in>:  a reference to the page title
+			// Parameter:  SingleSelect <in>:  true for single selection mode (default)
+			//************************************
+			ObjectSelectorPpg( SVTreeLibrary::ObjectTreeItems& rTreeContainer, const SVString& rTitle, bool SingleSelect = true );
 
-			/**********
-			 The class destructor
-			***********/
-			~ObjectSelectorPpg();
+			//************************************
+			// Description:  The virtual destructor
+			//************************************
+			virtual ~ObjectSelectorPpg();
 		#pragma endregion Constructor
 
 		public:
 		#pragma region Public Methods
-			/**********
-			 The method gets the tree container
-			 \return a reference to the tree container
-			***********/
+			//************************************
+			// Description:  The method gets the tree container
+			// Returns:  a reference to the tree container
+			//************************************
 			inline SVTreeLibrary::ObjectTreeItems& getTreeContainer() const;
 
-			/**********
-			 The method gets the current node location
-			 \return the node location
-			***********/
-			inline SVString getNodeLocation() const;
+			//************************************
+			// Description:  The method gets the display text for the current highlighted node.
+			// Returns:  the display text of the highlighted node
+			//************************************
+			inline SVString getHighlightedNode() const;
 
-			/**********
-			 The method sets the current node location
-			 \param rNodeLocation <in> a reference to the node location
-			***********/
-			inline void setNodeLocation( const SVString& rNodeLocation );
+			//************************************
+			// Description:  The method sets the current highlighted node.
+			// Parameter:  rHighlightedNode <in>:  a const reference to the display text of the node to be highlighted
+			//************************************
+			inline void setHighlightedNode( const SVString& rHighlightedNode );
 
-			/**********
-			 The method sets the current node location
-			 \param rNodeLocation <in> a reference to the node location
-			***********/
+			//************************************
+			// Description:  The method sets the Help ID for the dialog.
+			// Parameter:  HelpID <in>:  a unique identifier for this dialog
+			//************************************
 			inline void setHelpID( int HelpID );
 
-			/**********
-			 The method is called to update the dialog data
-			 \param pFromeTree <in> a pointer from which tree the update command originates
-			***********/
+			//************************************
+			// Description:  The method is called to update the dialog with new data
+			// Parameter:  pFromTree <in>:  a pointer to the tree containing the data to be displayed
+			//************************************
 			void updateData( const ObjectTreeCtrl* const pFromTree );
-
 		#pragma endregion Public Methods
 
 		protected:
@@ -93,9 +92,9 @@ namespace Seidenader
 			afx_msg void OnHelp();
 			afx_msg BOOL OnHelpInfo(HELPINFO* pHelpInfo);
 
-			/**********
-			 The method sets the controls which are resized when the page is resized
-			***********/
+			//************************************
+			// Description:  The method sets the controls which are resized when the page is resized
+			//************************************
 			void setResizeControls();
 		#pragma endregion Protected Methods
 
@@ -107,7 +106,7 @@ namespace Seidenader
 			LeafTreeCtrl m_LeafTree;						//The leaf tree control
 			CImageList m_StateImageList;					//The state image list
 			CImageList m_ImageList;							//The image list
-			CString m_NodeLocation;							//The currently selected node location
+			CString m_HighlightedNode;						//The currently highlighted node location
 			int m_HelpID;									//The help id used to identify the property page
 		#pragma endregion Member Variables
 		};
@@ -123,6 +122,16 @@ namespace Seidenader
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\ObjectSelectorLibrary\ObjectSelectorPpg.h_v  $
+ * 
+ *    Rev 1.3   04 Dec 2014 03:13:50   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  965
+ * SCR Title:  Update Object Selector Text Label; Update Icons; Add List Output
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Changed field name from Location to Highlighted Node
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   08 Sep 2014 09:44:14   gramseier
  * Project:  SVObserver

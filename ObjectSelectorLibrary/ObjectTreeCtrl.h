@@ -5,8 +5,8 @@
 //* .Module Name     : ObjectTreeCtrl
 //* .File Name       : $Workfile:   ObjectTreeCtrl.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.3  $
-//* .Check In Date   : $Date:   25 Aug 2014 07:44:16  $
+//* .Current Version : $Revision:   1.4  $
+//* .Check In Date   : $Date:   04 Dec 2014 03:23:42  $
 //* ----------------------------------------------------------------------------
 //* This class is used to display the object tree control
 //******************************************************************************
@@ -59,13 +59,19 @@ namespace Seidenader
 			The method updates the tree control
 			***********/
 			virtual void updateTree() = 0;
+
+			//************************************
+			// Description:  The method gets the single select mode.
+			// Returns true if single select, false otherwise.
+			//************************************
+			inline bool isSingleSelect() const;
 		#pragma endregion Public Methods
 
 		protected:
 		#pragma region Protected Methods
 			DECLARE_MESSAGE_MAP()
 			//{{AFX_MSG(ObjectTreeCtrl)
-			afx_msg void OnTvnSelchanged(NMHDR *pNMHDR, LRESULT *pResult);
+			afx_msg void OnTvnSelChanged(NMHDR *pNMHDR, LRESULT *pResult);
 			afx_msg void OnLButtonDown( UINT Flags, CPoint Point );
 			afx_msg void OnRButtonDown( UINT Flags, CPoint Point );
 			afx_msg void OnKeyDown( UINT Char, UINT RepCnt, UINT Flags );
@@ -164,12 +170,6 @@ namespace Seidenader
 			inline const CPoint& getContextPoint() const;
 
 			/**********
-			The method returns true if set to single select mode
-			\return true if single select
-			***********/
-			inline bool isSingleSelect() const;
-
-			/**********
 			The method sets the current selection
 			\param rCurrentSelection <in> a reference to the current selection
 			***********/
@@ -216,6 +216,16 @@ namespace Seidenader
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\ObjectSelectorLibrary\ObjectTreeCtrl.h_v  $
+ * 
+ *    Rev 1.4   04 Dec 2014 03:23:42   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  965
+ * SCR Title:  Update Object Selector Text Label; Update Icons; Add List Output
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Changed isSingleSelection method from protected to public
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   25 Aug 2014 07:44:16   gramseier
  * Project:  SVObserver

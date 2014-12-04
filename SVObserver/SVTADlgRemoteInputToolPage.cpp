@@ -5,8 +5,8 @@
 //* .Module Name     : SVTADlgRemoteInputToolPage
 //* .File Name       : $Workfile:   SVTADlgRemoteInputToolPage.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   17 Jul 2014 20:30:00  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   04 Dec 2014 04:52:24  $
 //******************************************************************************
 
 #pragma region Includes
@@ -108,9 +108,7 @@ void SVTADlgRemoteInputToolPage::OnBnClickedSelectInputButton()
 
 	SVString InspectionName( pToolSet->GetInspection()->GetName() );
 
-	ObjectTreeGenerator::SelectorTypeEnum SelectorType;
-	SelectorType = static_cast<ObjectTreeGenerator::SelectorTypeEnum> (ObjectTreeGenerator::SelectorTypeEnum::TypeSetAttributes | ObjectTreeGenerator::SelectorTypeEnum::TypeSingleObject);
-	ObjectTreeGenerator::Instance().setSelectorType( SelectorType );
+	ObjectTreeGenerator::Instance().setSelectorType( ObjectTreeGenerator::SelectorTypeEnum::TypeSingleObject );
 	ObjectTreeGenerator::Instance().setAttributeFilters( SV_ARCHIVABLE );
 	ObjectTreeGenerator::Instance().setLocationFilter( ObjectTreeGenerator::FilterInput, InspectionName, SVString( _T("") ) );
 
@@ -118,13 +116,14 @@ void SVTADlgRemoteInputToolPage::OnBnClickedSelectInputButton()
 	pToolSet->GetOutputList( OutputList );
 	ObjectTreeGenerator::Instance().insertOutputList( OutputList );
 
-	if( nullptr ==  m_pTool->GetInputObject() )
+	if( nullptr !=  m_pTool->GetInputObject() )
 	{
 		SVStringSet Items;
 
 		SVObjectReference ObjectRef( m_pTool->GetInputObject() );
-
-		Items.insert( SVString( ObjectRef.GetCompleteOneBasedObjectName() ) );
+		SVString Location( ObjectRef.GetCompleteOneBasedObjectName() );
+		ObjectTreeGenerator::Instance().convertObjectArrayName( ObjectRef, Location );
+		Items.insert( Location );
 		ObjectTreeGenerator::Instance().setCheckItems( Items );
 	}
 
@@ -132,21 +131,13 @@ void SVTADlgRemoteInputToolPage::OnBnClickedSelectInputButton()
 	ToolsetOutput.LoadString ( IDS_SELECT_TOOLSET_OUTPUT );
 	SVString Title;
 	Title.Format(_T("%s - %s"), ToolsetOutput , m_pTool->GetName() );
-	SVString TabTitle = ToolsetOutput; 
+	SVString TabTitle = ToolsetOutput;
 
 	INT_PTR Result = ObjectTreeGenerator::Instance().showDialog( Title, TabTitle, this );
 
 	if( IDOK == Result )
 	{
-		SVString SelectedOutputName = ObjectTreeGenerator::Instance().getSingleObjectResult().getLocation();
-		if( !SelectedOutputName.empty() )
-		{
-			m_InputName = pToolSet->GetInspection()->GetName() +  CString( _T( "." ) ) + SelectedOutputName.c_str();
-		}
-		else
-		{
-			m_InputName.Empty();
-		}
+		m_InputName  = ObjectTreeGenerator::Instance().getSingleObjectResult().getLocation().c_str();
 
 		SVGUID ObjectGuid(ObjectTreeGenerator::Instance().getSingleObjectResult().getItemKey());
 		m_pTool->SetInputObject( ObjectGuid );
@@ -165,6 +156,16 @@ void SVTADlgRemoteInputToolPage::RefreshSelectedInputName()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVTADlgRemoteInputToolPage.cpp_v  $
+ * 
+ *    Rev 1.2   04 Dec 2014 04:52:24   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  965
+ * SCR Title:  Update Object Selector Text Label; Update Icons; Add List Output
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Result selected object can now use both DisplayLocation and Location
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   17 Jul 2014 20:30:00   gramseier
  * Project:  SVObserver
