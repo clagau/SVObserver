@@ -5,8 +5,8 @@
 //* .Module Name     : SVMatroxDigitizerInterface
 //* .File Name       : $Workfile:   SVMatroxDigitizerInterface.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   01 Oct 2013 10:45:30  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   04 Dec 2014 13:53:44  $
 //******************************************************************************
 #include "stdafx.h"
 #include "SVMatroxLibrary/SVMatroxImagingLibrary.h"
@@ -133,7 +133,11 @@ SVMatroxDigitizerInterface::SVStatusCode SVMatroxDigitizerInterface::Channel(con
 	try
 #endif
 	{
+#if SV_CURRENT_MIL_VERSION == 0x0900
 		DIG_CONTROL_TYPE l_Channel = Channel;
+#else
+		long l_Channel = Channel;
+#endif
 		MdigChannel(DigitizerID.m_DigitizerIdentifier, l_Channel);
 		l_Code =  SVMatroxApplicationInterface::GetLastStatus();
 	}
@@ -2499,6 +2503,16 @@ SVMatroxDigitizerInterface::SVStatusCode SVMatroxDigitizerInterface::GetGigeEven
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVMatroxDigitizerLibrary\SVMatroxDigitizerInterface.cpp_v  $
+ * 
+ *    Rev 1.2   04 Dec 2014 13:53:44   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  974
+ * SCR Title:  Revise Gain handling for Baumer cameras (SVO-401)
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   Revised to allow compilation using MIL8
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   01 Oct 2013 10:45:30   tbair
  * Project:  SVObserver
