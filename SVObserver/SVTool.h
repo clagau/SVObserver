@@ -5,8 +5,8 @@
 //* .Module Name     : SVTool
 //* .File Name       : $Workfile:   SVTool.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.4  $
-//* .Check In Date   : $Date:   15 May 2014 13:10:54  $
+//* .Current Version : $Revision:   1.5  $
+//* .Check In Date   : $Date:   09 Dec 2014 09:47:26  $
 //******************************************************************************
 
 #ifndef SVTOOL_H
@@ -67,8 +67,6 @@ struct SVToolPropertyEntryStruct
 };
 
 class SVToolClass;
-
-struct OperatorMovable {};
 
 struct AllowResizeToParent{};
 
@@ -349,6 +347,16 @@ private:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVTool.h_v  $
+ * 
+ *    Rev 1.5   09 Dec 2014 09:47:26   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  908
+ * SCR Title:  Remove option for Operator Move (SVO 101)
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Removed OperatorMovable from class definition.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.4   15 May 2014 13:10:54   tbair
  * Project:  SVObserver

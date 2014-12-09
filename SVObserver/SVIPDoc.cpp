@@ -5,8 +5,8 @@
 //* .Module Name     : SVIPDoc
 //* .File Name       : $Workfile:   SVIPDoc.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.26  $
-//* .Check In Date   : $Date:   20 Nov 2014 08:11:04  $
+//* .Current Version : $Revision:   1.27  $
+//* .Check In Date   : $Date:   09 Dec 2014 11:41:48  $
 //******************************************************************************
 
 #pragma region Includes
@@ -2185,10 +2185,6 @@ void SVIPDoc::RunRegressionTest()
 				SVSVIMStateClass::RemoveState( SV_STATE_EDIT );
 			}
 
-			if ( SVSVIMStateClass::CheckState( SV_STATE_EDIT_MOVE ) )
-			{
-				SVSVIMStateClass::RemoveState( SV_STATE_EDIT_MOVE );
-			}
 
 			TheSVObserverApp.DeselectTool();
 
@@ -3191,31 +3187,6 @@ HRESULT SVIPDoc::GetCameras( SVVirtualCameraPtrSet& p_rCameras ) const
 	return l_Status;
 }
 
-BOOL SVIPDoc::SetSelectedToolForOperatorMove( BOOL bSetTool )
-{
-	BOOL l_Status = ( GetInspectionProcess() != NULL );
-
-	if (l_Status)
-	{
-		SVGUID l_TmpGUID = m_SelectedToolID;
-
-		l_Status = GetInspectionProcess()->SetSelectedToolForOperatorMove( bSetTool, l_TmpGUID );
-
-		if (l_Status)
-		{
-			m_SelectedToolID = l_TmpGUID;
-		}
-
-		SVToolSetTabViewClass* PView = GetToolSetTabView();
-		if (PView && l_Status)
-		{
-			// 'Select' the item in the list control associated with this tool
-			PView->SetSelectedTool(m_SelectedToolID);
-		}
-		UpdateAllViews(NULL);      
-	}
-	return l_Status;
-}
 
 HRESULT SVIPDoc::DeleteTool(SVTaskObjectClass* pTaskObject)
 {
@@ -4486,7 +4457,17 @@ void SVIPDoc::addViewableObject2ResultDefinitions( SVObjectClass* pObject, SVRes
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\svobserver\SVIPDoc.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVIPDoc.cpp_v  $
+ * 
+ *    Rev 1.27   09 Dec 2014 11:41:48   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  908
+ * SCR Title:  Remove option for Operator Move (SVO 101)
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   removed SetSelectedToolForOperatorMove function
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.26   20 Nov 2014 08:11:04   mziegler
  * Project:  SVObserver

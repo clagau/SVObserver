@@ -5,8 +5,8 @@
 // * .Module Name     : SVLinearToolClass.h
 // * .File Name       : $Workfile:   SVLinearToolClass.h  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.2  $
-// * .Check In Date   : $Date:   15 May 2014 13:12:50  $
+// * .Current Version : $Revision:   1.3  $
+// * .Check In Date   : $Date:   09 Dec 2014 09:47:26  $
 // ******************************************************************************
 
 #ifndef SV_LINEAR_TOOL_CLASS_H
@@ -17,7 +17,7 @@
 
 const LPCSTR g_strOrientationEnums = _T( "Horizontal=0,Vertical=90" );
 
-class SVLinearToolClass : public SVToolClass , public OperatorMovable
+class SVLinearToolClass : public SVToolClass
 {
 	SV_DECLARE_CLASS( SVLinearToolClass );
 
@@ -65,6 +65,16 @@ private:
 // ******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVLinearToolClass.h_v  $
+ * 
+ *    Rev 1.3   09 Dec 2014 09:47:26   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  908
+ * SCR Title:  Remove option for Operator Move (SVO 101)
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Removed OperatorMovable from class definition.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   15 May 2014 13:12:50   sjones
  * Project:  SVObserver

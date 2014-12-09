@@ -5,8 +5,8 @@
 //* .Module Name     : SVInspectionProcess
 //* .File Name       : $Workfile:   SVInspectionProcess.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.20  $
-//* .Check In Date   : $Date:   01 Dec 2014 13:06:58  $
+//* .Current Version : $Revision:   1.21  $
+//* .Check In Date   : $Date:   09 Dec 2014 09:20:50  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -3529,26 +3529,6 @@ HRESULT SVInspectionProcess::CollectConditionalHistoryData()
 	return hr;
 }
 
-/////////////////////////////////////////////////////////////////////////////
-//
-// Iterate the toolset list and set the tool that can be moved
-// by the SVIM operator, with previously determined access rights.
-//
-//
-// TRUE to set tool to move.
-// FALSE to clear tool to move.
-BOOL SVInspectionProcess::SetSelectedToolForOperatorMove( BOOL bSetTool, GUID& p_rToolID )
-{
-	SVToolSetClass* l_pToolSet( GetToolSet() );
-	BOOL l_Status( l_pToolSet != NULL );
-
-	if( l_Status )
-	{
-		l_Status = l_pToolSet->SetSelectedToolForOperatorMove( bSetTool, p_rToolID );
-	}
-
-	return l_Status;
-}
 
 BOOL SVInspectionProcess::IsColorInspectionDocument() const
 {
@@ -4837,6 +4817,16 @@ void SVInspectionProcess::Persist(SVObjectWriter& rWriter)
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVInspectionProcess.cpp_v  $
+ * 
+ *    Rev 1.21   09 Dec 2014 09:20:50   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  908
+ * SCR Title:  Remove option for Operator Move (SVO 101)
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Removed Operator Move
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.20   01 Dec 2014 13:06:58   tbair
  * Project:  SVObserver

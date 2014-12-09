@@ -5,8 +5,8 @@
 //* .Module Name     : SVInspectionProcess
 //* .File Name       : $Workfile:   SVInspectionProcess.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.10  $
-//* .Check In Date   : $Date:   14 Aug 2014 18:10:42  $
+//* .Current Version : $Revision:   1.11  $
+//* .Check In Date   : $Date:   09 Dec 2014 09:20:50  $
 //******************************************************************************
 
 #ifndef INC_SVINSPECTIONPROCESS_INCLUDED
@@ -193,7 +193,6 @@ public:
 	LPCTSTR GetDeviceName() const;
 	void SetDeviceName( LPCTSTR p_szDeviceName );
 
-	BOOL SetSelectedToolForOperatorMove(BOOL bSetTool, GUID& p_rToolID);
 
 	BOOL IsColorInspectionDocument() const;
 
@@ -562,6 +561,16 @@ inline HRESULT SVInspectionProcess::SetObjectArrayValues(SVValueObjectReference 
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVInspectionProcess.h_v  $
+ * 
+ *    Rev 1.11   09 Dec 2014 09:20:50   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  908
+ * SCR Title:  Remove option for Operator Move (SVO 101)
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Removed Operator Move
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.10   14 Aug 2014 18:10:42   sjones
  * Project:  SVObserver

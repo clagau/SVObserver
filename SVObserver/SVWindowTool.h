@@ -5,8 +5,8 @@
 //* .Module Name     : SVWindowTool
 //* .File Name       : $Workfile:   SVWindowTool.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   15 May 2013 19:46:52  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   09 Dec 2014 09:47:26  $
 //******************************************************************************
 
 #ifndef SVWINDOWTOOL_H
@@ -14,7 +14,7 @@
 
 #include "SVTool.h"
 
-class SVWindowToolClass : public SVToolClass , public OperatorMovable, public AllowResizeToParent
+class SVWindowToolClass : public SVToolClass, public AllowResizeToParent
 {
 	SV_DECLARE_CLASS( SVWindowToolClass );
 
@@ -52,7 +52,17 @@ public:
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVWindowTool.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVWindowTool.h_v  $
+ * 
+ *    Rev 1.3   09 Dec 2014 09:47:26   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  908
+ * SCR Title:  Remove option for Operator Move (SVO 101)
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Removed OperatorMovable from class definition.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   15 May 2013 19:46:52   bWalter
  * Project:  SVObserver

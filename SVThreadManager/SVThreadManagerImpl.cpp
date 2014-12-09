@@ -5,8 +5,8 @@
 //* .Module Name     : SVThreadManagerImpl
 //* .File Name       : $Workfile:   SVThreadManagerImpl.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   02 Dec 2014 07:25:02  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   09 Dec 2014 13:48:16  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -152,7 +152,7 @@ HRESULT SVThreadManagerImpl::Add( HANDLE hThread, LPCTSTR strName, SVThreadAttri
 	// Special cases for preset thread affinity
 	if( (eAttrib & SVAffinityDummy ) == SVAffinityDummy )
 	{
-		int Pipe = m_lNumPipes/2 + 1;  // from JB requirement. Attempt to keep windows off this pipe.
+		int Pipe = 2;  // from JB requirement. According to Jim, Attempt to keep windows off this pipe.
 		SetNewAffinity(hThread, Pipe );
 		newThread.m_lAffinity = Pipe;
 	}
@@ -433,6 +433,16 @@ DWORD WINAPI SVThreadManagerImpl::Process(LPVOID lpParam)
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVThreadManager\SVThreadManagerImpl.cpp_v  $
+ * 
+ *    Rev 1.2   09 Dec 2014 13:48:16   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  960
+ * SCR Title:  Pipe/core management
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Changed hard coded dummy thread to be on pipe 2 as per Jim's modifications of the IF00100.S960.002-InterfaceSpecificationForPipeThreadManagement.doc.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   02 Dec 2014 07:25:02   tbair
  * Project:  SVObserver

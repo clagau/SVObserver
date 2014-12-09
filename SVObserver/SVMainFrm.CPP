@@ -5,8 +5,8 @@
 //* .Module Name     : SVMainFrm
 //* .File Name       : $Workfile:   SVMainFrm.CPP  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.14  $
-//* .Check In Date   : $Date:   05 Sep 2014 13:17:36  $
+//* .Current Version : $Revision:   1.15  $
+//* .Check In Date   : $Date:   09 Dec 2014 10:12:42  $
 //******************************************************************************
 
 #pragma region Includes
@@ -101,7 +101,6 @@ BEGIN_MESSAGE_MAP(SVMainFrame, CMDIFrameWnd)
 	// Start Object Script Parser
 	ON_MESSAGE(SV_PARSE_OBJECT_SCRIPT_END, OnEndObjectScriptParse)
 	ON_MESSAGE(SV_PARSE_OBJECT_CREATE_DONE, OnEndObjectCreation)
-	ON_MESSAGE(SV_SET_TOOL_SELECTED_IN_TOOL_VIEW, OnMsgSetToolSelected)
 	ON_MESSAGE(SV_LOGGED_ON_USER_CHANGED,OnUserChanged)
 	ON_MESSAGE( SV_IOVIEW_HIDE_TAB, OnHideIOViewTab )
 	ON_MESSAGE(WM_DISPLAYCHANGE, OnDisplayChange)
@@ -1022,13 +1021,6 @@ void SVMainFrame::OnUpdateStatusInfo( CCmdUI *pCmdUI )
 					l_strMode += _T("Edit ");
 					break;
 				}
-				case SVIM_MODE_EDIT_MOVE:
-				{
-					m_wndStatusBar.m_lModeBKColor = RGB( 255, 255, 75 );
-					m_wndStatusBar.m_lModeForeColor = RGB( 0, 0, 0 );
-					l_strMode += _T("Edit Move ");
-					break;
-				}
 				case SVIM_MODE_CHANGING:
 				{
 					m_wndStatusBar.m_lModeBKColor = RGB( 255, 255, 255 );
@@ -1909,17 +1901,6 @@ void SVMainFrame::SetNotifyCommRC()
 	m_notifyCommRC = TRUE;
 }
 
-LRESULT SVMainFrame::OnMsgSetToolSelected( 
-	WPARAM wParam,       // TRUE to set tool, FALSE to clear tool
-	LPARAM lParam
-)
-{
-	BOOL bSetTool = (BOOL)wParam;
-
-	TheSVObserverApp.SetSelectedToolForOperatorMove( bSetTool );
-
-	return (LRESULT)TRUE;
-}
 
 LRESULT SVMainFrame::OnUserChanged( WPARAM wParam, LPARAM lParam )
 {
@@ -2181,6 +2162,16 @@ void SVMainFrame::RefreshAllSplitters()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVMainFrm.CPP_v  $
+ * 
+ *    Rev 1.15   09 Dec 2014 10:12:42   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  908
+ * SCR Title:  Remove option for Operator Move (SVO 101)
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Remove edit move state and supporting functions.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.14   05 Sep 2014 13:17:36   ryoho
  * Project:  SVObserver

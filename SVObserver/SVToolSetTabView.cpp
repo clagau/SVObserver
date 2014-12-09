@@ -5,8 +5,8 @@
 //* .Module Name     : SVToolSetTabView
 //* .File Name       : $Workfile:   SVToolSetTabView.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.11  $
-//* .Check In Date   : $Date:   10 Nov 2014 16:46:00  $
+//* .Current Version : $Revision:   1.12  $
+//* .Check In Date   : $Date:   09 Dec 2014 10:22:38  $
 //******************************************************************************
 
 #pragma region Includes
@@ -107,7 +107,6 @@ BEGIN_MESSAGE_MAP(SVToolSetTabViewClass, CFormView)
 	ON_NOTIFY(NM_RCLICK, IDC_TOOLSET_LIST, OnRightClickToolsetList)
 	ON_COMMAND(ID_EDIT_LABEL_ENDS, OnEditLabelEnds)
 	ON_COMMAND(ID_SELECTTOOL_TOOLCOMMENT, OnSelectToolComment)
-	ON_COMMAND(ID_SELECTTOOL_SELECTFORMOVE, OnSelectToolForOperatorMove)
 	ON_COMMAND(ID_SELECTTOOL_LEARN, OnSelectToolSetReference)
 	ON_COMMAND(ID_SELECTTOOL_NORMALIZE, OnSelectToolNormalize)
 	ON_COMMAND(ID_EDIT_NAME, OnEditToolName)
@@ -368,10 +367,6 @@ void SVToolSetTabViewClass::OnClickToolsetList(NMHDR* pNMHDR, LRESULT* pResult)
 	}
 }
 
-static bool is_moveable(SVToolClass* pTool)
-{ 
-	return (nullptr != dynamic_cast<OperatorMovable*>(pTool));
-}
 
 void SVToolSetTabViewClass::OnRightClickToolsetList(NMHDR* pNMHDR, LRESULT* pResult)
 {
@@ -401,22 +396,14 @@ void SVToolSetTabViewClass::OnRightClickToolsetList(NMHDR* pNMHDR, LRESULT* pRes
 					CMenu* l_pPopup;
 
 					BOOL l_bMenuLoaded = false;
-					bool l_bOperatorMove = is_moveable(pSelectedTool);
-					if (true == l_bOperatorMove)
+					SVShiftTool* pShiftTool = dynamic_cast< SVShiftTool* >(pSelectedTool);
+					if (nullptr != pShiftTool)
 					{
-						SVShiftTool* pShiftTool = dynamic_cast< SVShiftTool* >(pSelectedTool);
-						if (nullptr != pShiftTool)
+						long l_shiftMode;
+						pShiftTool->m_evoShiftMode.GetValue(l_shiftMode);
+						if (l_shiftMode == SV_SHIFT_ENUM::SV_SHIFT_REFERENCE)
 						{
-							long l_shiftMode;
-							pShiftTool->m_evoShiftMode.GetValue(l_shiftMode);
-							if (l_shiftMode == SV_SHIFT_ENUM::SV_SHIFT_REFERENCE)
-							{
-								l_bMenuLoaded = l_menu.LoadMenu(IDR_TOOL_LIST_CONTEXT_MENU_SHIFT);
-							}
-							else
-							{
-								l_bMenuLoaded = l_menu.LoadMenu(IDR_TOOL_LIST_CONTEXT_MENU);
-							}
+							l_bMenuLoaded = l_menu.LoadMenu(IDR_TOOL_LIST_CONTEXT_MENU_SHIFT);
 						}
 						else
 						{
@@ -425,8 +412,9 @@ void SVToolSetTabViewClass::OnRightClickToolsetList(NMHDR* pNMHDR, LRESULT* pRes
 					}
 					else
 					{
-						l_bMenuLoaded = l_menu.LoadMenu(IDR_TOOL_LIST_CONTEXT_MENU1);
+						l_bMenuLoaded = l_menu.LoadMenu(IDR_TOOL_LIST_CONTEXT_MENU);
 					}
+
 					if (TRUE == l_bMenuLoaded)
 					{
 						if (l_pPopup = l_menu.GetSubMenu(0))
@@ -612,86 +600,6 @@ void SVToolSetTabViewClass::OnEditLabelEnds()
 	::ReleaseCapture();     // release the mouse capture
 }
 
-void SVToolSetTabViewClass::OnSelectToolForOperatorMove()
-{
-	// Get the tool selected from tool list and make it the currently selected tool.
-	SVIPDoc* pCurrentDocument = GetIPDoc();
-	if (nullptr != pCurrentDocument)
-	{ 
-		SVToolSetClass* pToolSet = pCurrentDocument->GetToolSet();
-		if (nullptr != pToolSet)
-		{
-			// Determine current tool selected for move&resize if any.
-			CString csOldToolName;
-			SVToolClass* pToolOld = pToolSet->GetCurrentSelectedToolForOperatorMove(csOldToolName);
-
-			const SVGUID& rGuid = m_toolSetListCtrl.GetSelectedTool();
-			if (!rGuid.empty())
-			{
-				SVToolClass* pToolNew = dynamic_cast<SVToolClass *>(SVObjectManagerClass::Instance().GetObject(rGuid));
-				if (nullptr != pToolNew)
-				{
-					// Get the name for the New candidate.
-					CString csNewToolName;
-					csNewToolName = pToolNew->GetName();
-
-					// Confirm the change from old to new tool selected for move&resize.
-					CString s;
-					s = _T("Confirm change tool 'selected for move & resize'\n");
-					s +=   _T("From: ");
-					s += csOldToolName;
-					s += _T("\nTo:   ");
-					s += csNewToolName;
-					int nResult = AfxMessageBox(s, MB_OKCANCEL);
-					if (nResult != IDOK)
-					{
-						return;
-					}
-
-					// Clear the attribute for any tool that might have 
-					// been selected as the tool to 'move' when a 
-					// configuration is first loaded.
-					pToolSet->ClearSelectedToolForOperatorMove();
-
-					pCurrentDocument->SetSelectedToolID(pToolNew->GetUniqueObjectID());
-
-					pToolNew->ToolSelectedForOperatorMove.SetDefaultValue(true, true);
-
-					// Draw tools...
-					SVMainFrame * pWndMain = dynamic_cast<SVMainFrame *>(::AfxGetApp()->GetMainWnd());
-					if (nullptr != pWndMain)
-					{
-						pWndMain->PostMessage(SV_SET_TOOL_SELECTED_IN_TOOL_VIEW, static_cast<WPARAM>(true));
-					}
-				}
-				else
-				{
-					// Deselect all...
-					m_toolSetListCtrl.SetSelectionMark(-1);
-
-					// Clear the attribute for any tool that might have 
-					// been selected as the tool to 'move' when a 
-					// configuration is first loaded.
-
-					CString s;
-					s = _T("Confirm clearing tool 'selected for move & resize'\n");
-					//s +=   _T("From: ");
-					s += csOldToolName;
-					//s += _T("\nTo:   ");
-					//s += csNewToolName;
-					int nResult = AfxMessageBox(s, MB_OKCANCEL);
-					if (IDOK == nResult)
-					{
-						pToolSet->ClearSelectedToolForOperatorMove();
-
-						// Draw tools...
-						TheSVObserverApp.DeselectTool();
-					}
-				}
-			}
-		}
-	}
-}
 
 void SVToolSetTabViewClass::OnSelectToolComment()
 {
@@ -1146,6 +1054,16 @@ bool SVToolSetTabViewClass::IsToolsetListCtrlActive() const
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVToolSetTabView.cpp_v  $
+ * 
+ *    Rev 1.12   09 Dec 2014 10:22:38   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  908
+ * SCR Title:  Remove option for Operator Move (SVO 101)
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Removed functions that support Operator Move.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.11   10 Nov 2014 16:46:00   sjones
  * Project:  SVObserver

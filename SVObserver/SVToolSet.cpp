@@ -5,8 +5,8 @@
 //* .Module Name     : SVToolSet.cpp
 //* .File Name       : $Workfile:   SVToolSet.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.5  $
-//* .Check In Date   : $Date:   12 Jun 2014 16:20:48  $
+//* .Current Version : $Revision:   1.6  $
+//* .Check In Date   : $Date:   09 Dec 2014 10:22:38  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -1600,41 +1600,6 @@ BOOL SVToolSetClass::Edit()
 
 /////////////////////////////////////////////////////////////////////////////
 //
-// Iterate the toolset list and set the tool that can be moved
-// by the SVIM operator, with previously determined access rights.
-//
-//
-// TRUE to set tool to move.
-// FALSE to clear tool to move.
-BOOL SVToolSetClass::SetSelectedToolForOperatorMove( BOOL bSetTool, GUID& p_rToolID )
-{
-	SVGUID l_ObjectId;
-
-    if( bSetTool && SVSVIMStateClass::CheckState( SV_STATE_EDIT_MOVE ) ) 
-    {
-		for( SVTaskObjectPtrVector::iterator l_Iter = m_aTaskObjects.begin(); l_ObjectId.empty() && l_Iter != m_aTaskObjects.end(); ++l_Iter )
-		{
-			SVToolClass* l_pTool = dynamic_cast< SVToolClass* >( *l_Iter );
-
-			if( l_pTool != NULL )
-			{
-				BOOL bToolSelectedToMove = FALSE;
-				l_pTool->ToolSelectedForOperatorMove.GetValue(bToolSelectedToMove);
-				if(bToolSelectedToMove)
-				{
-					l_ObjectId = l_pTool->GetUniqueObjectID();
-				}
-			}
-		}
-		p_rToolID = l_ObjectId;
-	}
-
-
-    return !( l_ObjectId.empty() );
-}
-
-/////////////////////////////////////////////////////////////////////////////
-//
 //
 //
 SVToolClass * SVToolSetClass::GetCurrentSelectedToolForOperatorMove(
@@ -1771,6 +1736,16 @@ HRESULT SVToolSetClass::onCollectOverlays(SVImageClass *p_Image, SVExtentMultiLi
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVToolSet.cpp_v  $
+ * 
+ *    Rev 1.6   09 Dec 2014 10:22:38   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  908
+ * SCR Title:  Remove option for Operator Move (SVO 101)
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Removed functions that support Operator Move.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.5   12 Jun 2014 16:20:48   sjones
  * Project:  SVObserver

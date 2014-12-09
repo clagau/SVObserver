@@ -5,8 +5,8 @@
 //* .Module Name     : EnvironmentObject
 //* .File Name       : $Workfile:   EnvironmentObject.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.3  $
-//* .Check In Date   : $Date:   25 Aug 2014 02:40:18  $
+//* .Current Version : $Revision:   1.4  $
+//* .Check In Date   : $Date:   09 Dec 2014 09:16:42  $
 //* ----------------------------------------------------------------------------
 //* This class is used as the root child object Environment to 
 //* store specific objects 
@@ -31,7 +31,6 @@ const TCHAR EnvironmentModeIsStop[]		= _T("Mode.Is Stop");
 const TCHAR EnvironmentModeIsRegressionTest[]		= _T("Mode.Is Regression Test");
 const TCHAR EnvironmentModeIsTest[]		= _T("Mode.Is Test");
 const TCHAR EnvironmentModeIsEdit[]		= _T("Mode.Is Edit");
-const TCHAR EnvironmentModeIsEditMoveTool[]		= _T("Mode.Is Edit Move Tool");
 const TCHAR EnvironmentModeValue[]		= _T("Mode.Value");
 #pragma endregion Declarations
 
@@ -123,6 +122,16 @@ public:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\EnvironmentObject.h_v  $
+ * 
+ *    Rev 1.4   09 Dec 2014 09:16:42   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  908
+ * SCR Title:  Remove option for Operator Move (SVO 101)
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Removed EnvironmentModeIsEditMoveTool string.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   25 Aug 2014 02:40:18   mziegler
  * Project:  SVObserver

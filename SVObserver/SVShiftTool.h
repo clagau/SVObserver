@@ -5,8 +5,8 @@
 //* .Module Name     : SVShiftTool
 //* .File Name       : $Workfile:   SVShiftTool.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 15:03:22  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   09 Dec 2014 09:52:44  $
 //******************************************************************************
 
 #ifndef SVShiftTool_H
@@ -31,7 +31,7 @@ enum SV_SHIFT_ENUM
 const LPCSTR g_strShiftToolEnum = 
                 _T( "None=0,Absolute=1,Reference=2" );
 
-class SVShiftTool : public SVToolClass, public OperatorMovable
+class SVShiftTool : public SVToolClass
 {
 	SV_DECLARE_CLASS( SVShiftTool );
 
@@ -94,7 +94,17 @@ private:
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVShiftTool.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVShiftTool.h_v  $
+ * 
+ *    Rev 1.1   09 Dec 2014 09:52:44   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  908
+ * SCR Title:  Remove option for Operator Move (SVO 101)
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Removed OperatorMovable from class definition.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 15:03:22   bWalter
  * Project:  SVObserver

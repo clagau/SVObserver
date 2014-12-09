@@ -5,8 +5,8 @@
 //* .Module Name     : SVArchiveTool
 //* .File Name       : $Workfile:   SVArchiveTool.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.9  $
-//* .Check In Date   : $Date:   01 Dec 2014 13:06:58  $
+//* .Current Version : $Revision:   1.10  $
+//* .Check In Date   : $Date:   09 Dec 2014 13:28:30  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -950,7 +950,7 @@ HRESULT SVArchiveImageThreadClass::GoOnline()
 
 		::SetThreadPriority( m_hThread, THREAD_PRIORITY_NORMAL );
 		
-		SVThreadManager::Instance().Add( m_hThread, "SVArchiveTool", SVAffinityEditAllowed );
+		SVThreadManager::Instance().Add( m_hThread, "Archive Tools(Asynchronous)", SVAffinityEditAllowed );
 	}
 	return S_OK;
 }
@@ -2355,6 +2355,16 @@ BOOL SVArchiveTool::renameToolSetSymbol(SVObjectClass* pObject, LPCTSTR orgName)
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVArchiveTool.cpp_v  $
+ * 
+ *    Rev 1.10   09 Dec 2014 13:28:30   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  960
+ * SCR Title:  Pipe/core management
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Changed the text for the archive tool thread from "SVArchiveTool "to "Archive Tools(Asychronous)".
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.9   01 Dec 2014 13:06:58   tbair
  * Project:  SVObserver

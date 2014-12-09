@@ -5,8 +5,8 @@
 //* .Module Name     : SVToolSet
 //* .File Name       : $Workfile:   SVToolSet.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.3  $
-//* .Check In Date   : $Date:   15 May 2014 14:48:46  $
+//* .Current Version : $Revision:   1.4  $
+//* .Check In Date   : $Date:   09 Dec 2014 10:22:38  $
 //******************************************************************************
 
 #ifndef SVTOOLSET_H
@@ -77,7 +77,6 @@ public:
 
 	SVToolClass*		GetToolAt( int nIndex ) const;
 
-    BOOL SetSelectedToolForOperatorMove( BOOL bSetTool, GUID& p_rToolID );
     SVToolClass * GetCurrentSelectedToolForOperatorMove(CString& csName);
     void ClearSelectedToolForOperatorMove();
 
@@ -164,6 +163,16 @@ private:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVToolSet.h_v  $
+ * 
+ *    Rev 1.4   09 Dec 2014 10:22:38   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  908
+ * SCR Title:  Remove option for Operator Move (SVO 101)
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Removed functions that support Operator Move.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   15 May 2014 14:48:46   sjones
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : SVGageTool
 //* .File Name       : $Workfile:   SVGageTool.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 10:39:44  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   09 Dec 2014 09:17:56  $
 //******************************************************************************
 
 #ifndef SVGAGETOOL_H
@@ -28,7 +28,7 @@
 //	 Date		Author		Comment                                       
 //  :20.08.1999 RO			First Implementation
 ////////////////////////////////////////////////////////////////////////////////
-class SVGageToolClass : public SVToolClass , public OperatorMovable
+class SVGageToolClass : public SVToolClass
 {
 	SV_DECLARE_CLASS( SVGageToolClass );
 
@@ -76,7 +76,17 @@ protected:
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVGageTool.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVGageTool.h_v  $
+ * 
+ *    Rev 1.1   09 Dec 2014 09:17:56   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  908
+ * SCR Title:  Remove option for Operator Move (SVO 101)
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Revoved IsMoveable from class definition.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 10:39:44   bWalter
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : SVSVIMStateClass
 //* .File Name       : $Workfile:   SVSVIMStateClass.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   29 Aug 2014 15:44:02  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   09 Dec 2014 10:12:42  $
 //******************************************************************************
 
 #pragma once
@@ -37,7 +37,6 @@
 #define SV_STATE_TEST			0x00000100
 #define SV_STATE_REGRESSION		0x00000200
 #define SV_STATE_EDIT			0x00000400
-#define SV_STATE_EDIT_MOVE		0x00000800
 
 #define SV_STATE_SECURED		0x00000010
 #define SV_STATE_RAID_FAILURE	0x00000020
@@ -101,6 +100,16 @@ private:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVSVIMStateClass.h_v  $
+ * 
+ *    Rev 1.3   09 Dec 2014 10:12:42   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  908
+ * SCR Title:  Remove option for Operator Move (SVO 101)
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Remove edit move state and supporting functions.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   29 Aug 2014 15:44:02   bwalter
  * Project:  SVObserver

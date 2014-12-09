@@ -5,8 +5,8 @@
 //* .Module Name     : SVObserver
 //* .File Name       : $Workfile:   SVObserver.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.19  $
-//* .Check In Date   : $Date:   01 Dec 2014 13:05:38  $
+//* .Current Version : $Revision:   1.20  $
+//* .Check In Date   : $Date:   09 Dec 2014 10:12:42  $
 //******************************************************************************
 
 #ifndef SVOBSERVER_H
@@ -224,8 +224,6 @@ public:
 	afx_msg void OnExtrasSecuritySetup();
 	afx_msg void OnModeEdit();
 	afx_msg void OnUpdateModeEdit(CCmdUI* pCmdUI);
-	afx_msg void OnModeEditMove();
-	afx_msg void OnUpdateModeEditMove(CCmdUI* pCmdUI);
 	afx_msg void OnTriggerSettings();
 	afx_msg void OnUpdateTriggerSettings(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateExtrasUtilitiesEdit(CCmdUI* pCmdUI);
@@ -312,7 +310,6 @@ public:
 	HRESULT SetMode( unsigned long p_lNewMode );
 	HRESULT LoadConfiguration();
 
-	void SetSelectedToolForOperatorMove( BOOL bSetTool );
 	HRESULT RenameObject( const SVString& p_rOldName, const SVString& p_rNewName, const SVGUID& p_rObjectId );
 	HRESULT RebuildOutputList();
 	BOOL SetStatusText( LPCTSTR PStrStatusText );
@@ -331,7 +328,6 @@ public:
 	BOOL ShowConfigurationAssistant( int Page = 3, BOOL bFileNewConfiguration = FALSE );
 
 	bool OkToEdit();
-	bool OkToEditMove();
 	BOOL IsMonochromeImageAvailable();
 	void SVGetCurrentConfigName( CString &ConfigName ) const;
 	void OnRCOpenCurrentSVX();
@@ -360,7 +356,6 @@ public:
 	void SetGigePacketSizeDeviceParam(SVDeviceParamCollection* pDeviceParams);
 
 	HRESULT SetModeEdit( bool p_bState );
-	HRESULT SetModeEditMove( bool l_bState );
 	void SetTestMode(bool p_bNoSecurity = false);
 	HRESULT GetTriggersAndCounts( CString& p_strTrigCnts ) const;
 
@@ -621,6 +616,16 @@ extern SVObserverApp TheSVObserverApp;
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVObserver.h_v  $
+ * 
+ *    Rev 1.20   09 Dec 2014 10:12:42   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  908
+ * SCR Title:  Remove option for Operator Move (SVO 101)
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Remove edit move state and supporting functions.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.19   01 Dec 2014 13:05:38   tbair
  * Project:  SVObserver

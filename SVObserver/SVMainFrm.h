@@ -5,8 +5,8 @@
 //* .Module Name     : SVMainFrame
 //* .File Name       : $Workfile:   SVMainFrm.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.7  $
-//* .Check In Date   : $Date:   02 Sep 2014 12:16:48  $
+//* .Current Version : $Revision:   1.8  $
+//* .Check In Date   : $Date:   09 Dec 2014 10:12:42  $
 //******************************************************************************
 
 #pragma once
@@ -75,8 +75,6 @@ public:
 	// End Object Script Parsing
 	afx_msg LRESULT OnEndObjectScriptParse( WPARAM wParam, LPARAM lParam );
 	afx_msg LRESULT OnEndObjectCreation( WPARAM wParam, LPARAM lParam );
-
-	afx_msg LRESULT OnMsgSetToolSelected( WPARAM wParam, LPARAM lParam );
 
 	afx_msg LRESULT OnUserChanged( WPARAM wParam, LPARAM lParam );
 
@@ -228,6 +226,16 @@ public:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVMainFrm.h_v  $
+ * 
+ *    Rev 1.8   09 Dec 2014 10:12:42   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  908
+ * SCR Title:  Remove option for Operator Move (SVO 101)
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Remove edit move state and supporting functions.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.7   02 Sep 2014 12:16:48   bwalter
  * Project:  SVObserver

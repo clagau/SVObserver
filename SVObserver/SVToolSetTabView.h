@@ -5,8 +5,8 @@
 //* .Module Name     : SVToolSetTabView
 //* .File Name       : $Workfile:   SVToolSetTabView.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.5  $
-//* .Check In Date   : $Date:   10 Nov 2014 16:46:00  $
+//* .Current Version : $Revision:   1.6  $
+//* .Check In Date   : $Date:   09 Dec 2014 10:22:38  $
 //******************************************************************************
 
 #pragma once
@@ -53,7 +53,6 @@ public:
 	afx_msg void OnClickToolsetList(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnRightClickToolsetList(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnEditLabelEnds();
-	afx_msg void OnSelectToolForOperatorMove();
 	afx_msg void OnSelectToolComment();
 	afx_msg void OnSelectToolSetReference();
 	afx_msg void OnSelectToolNormalize();
@@ -122,6 +121,16 @@ protected:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVToolSetTabView.h_v  $
+ * 
+ *    Rev 1.6   09 Dec 2014 10:22:38   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  908
+ * SCR Title:  Remove option for Operator Move (SVO 101)
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Removed functions that support Operator Move.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.5   10 Nov 2014 16:46:00   sjones
  * Project:  SVObserver

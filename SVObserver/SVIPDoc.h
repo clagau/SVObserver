@@ -5,8 +5,8 @@
 //* .Module Name     : SVIPDoc
 //* .File Name       : $Workfile:   SVIPDoc.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.5  $
-//* .Check In Date   : $Date:   30 Sep 2014 15:46:42  $
+//* .Current Version : $Revision:   1.6  $
+//* .Check In Date   : $Date:   09 Dec 2014 11:41:48  $
 //******************************************************************************
 
 #pragma once
@@ -108,8 +108,6 @@ public:
 	SVImageClass* GetHSIMainImage();
 
 	HRESULT GetCameras( SVVirtualCameraPtrSet& p_rCameras ) const;
-
-	BOOL SetSelectedToolForOperatorMove( BOOL bSetTool );
 
 	HRESULT UpdateWithLastProduct();
 	BOOL RunOnce( SVToolClass* p_pTool = NULL );
@@ -389,6 +387,16 @@ private:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVIPDoc.h_v  $
+ * 
+ *    Rev 1.6   09 Dec 2014 11:41:48   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  908
+ * SCR Title:  Remove option for Operator Move (SVO 101)
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   removed SetSelectedToolForOperatorMove function
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.5   30 Sep 2014 15:46:42   bwalter
  * Project:  SVObserver

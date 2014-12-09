@@ -5,8 +5,8 @@
 //* .Module Name     : SVProfileTool
 //* .File Name       : $Workfile:   SVToolProfile.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 15:46:32  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   09 Dec 2014 10:23:34  $
 //******************************************************************************
 
 #ifndef SVTOOLPROFILE_H
@@ -15,7 +15,7 @@
 #include "SVTool.h"
 #include "SVValueObject.h"
 
-class SVProfileToolClass : public SVToolClass , public OperatorMovable
+class SVProfileToolClass : public SVToolClass
 {
 	SV_DECLARE_CLASS( SVProfileToolClass );
 
@@ -47,7 +47,17 @@ protected:
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVToolProfile.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVToolProfile.h_v  $
+ * 
+ *    Rev 1.1   09 Dec 2014 10:23:34   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  908
+ * SCR Title:  Remove option for Operator Move (SVO 101)
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Removed Movable from class definition.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 15:46:32   bWalter
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : SVImageView
 //* .File Name       : $Workfile:   SVImageView.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.11  $
-//* .Check In Date   : $Date:   02 Sep 2014 12:12:00  $
+//* .Current Version : $Revision:   1.12  $
+//* .Check In Date   : $Date:   09 Dec 2014 09:20:50  $
 //******************************************************************************
 
 #pragma region Includes
@@ -502,8 +502,7 @@ BOOL SVImageViewClass::OnCommand( WPARAM p_wParam, LPARAM p_lParam )
 		case ID_ADJUST_POSITION:
 		{
 			if( m_ImageId.empty() ||
-				( !TheSVObserverApp.OkToEdit() &&
-				!TheSVObserverApp.OkToEditMove() ) )
+				!TheSVObserverApp.OkToEdit() )
 			{
 				l_err = -1269;
 				break;
@@ -1078,8 +1077,7 @@ void SVImageViewClass::OnRButtonDblClk( UINT p_nFlags, CPoint p_point )
 void SVImageViewClass::OnLButtonDown( UINT p_nFlags, CPoint p_point )
 {
 	if( !SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) &&
-		TheSVObserverApp.OkToEdit() ||
-		TheSVObserverApp.OkToEditMove() )
+		TheSVObserverApp.OkToEdit() )
 	{
 		if( !( m_ImageId.empty() ) )
 		{
@@ -1132,8 +1130,7 @@ void SVImageViewClass::OnLButtonDown( UINT p_nFlags, CPoint p_point )
 void SVImageViewClass::OnMouseMove( UINT nFlags, CPoint point ) 
 {
 	if( !SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) &&
-		TheSVObserverApp.OkToEdit() ||
-		TheSVObserverApp.OkToEditMove() )
+		TheSVObserverApp.OkToEdit() )
 	{
 		CString l_text;
 
@@ -2829,6 +2826,16 @@ void SVImageViewClass::OnKillFocus(CWnd* pNewWnd)
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVImageView.cpp_v  $
+ * 
+ *    Rev 1.12   09 Dec 2014 09:20:50   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  908
+ * SCR Title:  Remove option for Operator Move (SVO 101)
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Removed Operator Move
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.11   02 Sep 2014 12:12:00   bwalter
  * Project:  SVObserver

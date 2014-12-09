@@ -5,8 +5,8 @@
 //* .Module Name     : SVPolarTransformation
 //* .File Name       : $Workfile:   SVPolarTransformationTool.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 13:30:24  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   09 Dec 2014 09:47:26  $
 //******************************************************************************
 
 #ifndef SVPOLARTRANSFORMATIONTOOL_H
@@ -15,7 +15,7 @@
 #include "SVTool.h"
 #include "SVValueObjectImpl.h"
 
-class SVPolarTransformationToolClass : public SVToolClass , public OperatorMovable
+class SVPolarTransformationToolClass : public SVToolClass
 {
 	SV_DECLARE_CLASS( SVPolarTransformationToolClass );
 
@@ -55,7 +55,17 @@ private:
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVPolarTransformationTool.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVPolarTransformationTool.h_v  $
+ * 
+ *    Rev 1.1   09 Dec 2014 09:47:26   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  908
+ * SCR Title:  Remove option for Operator Move (SVO 101)
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Removed OperatorMovable from class definition.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 13:30:24   bWalter
  * Project:  SVObserver

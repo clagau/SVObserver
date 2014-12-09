@@ -4184,7 +4184,6 @@ BEGIN
         MENUITEM "&Regression Test\tCtrl+R",    ID_RUN_REGRESSIONTEST,MFT_STRING,MFS_ENABLED
         MENUITEM "&Test\tCtrl+T",               ID_MODE_TEST,MFT_STRING,MFS_ENABLED
         MENUITEM "&Edit\tCtrl+D",               ID_MODE_EDIT,MFT_STRING,MFS_ENABLED
-        MENUITEM "Edit &Move Tool\tCtrl+M",     ID_MODE_EDIT_MOVE,MFT_STRING,MFS_ENABLED
     END
     POPUP "E&xtras",                        65535,MFT_STRING,MFS_ENABLED
     BEGIN
@@ -4262,7 +4261,6 @@ BEGIN
         MENUITEM "&Regression Test\tCtrl+R",    ID_RUN_REGRESSIONTEST,MFT_STRING,MFS_ENABLED
         MENUITEM "&Test\tCtrl+T",               ID_MODE_TEST,MFT_STRING,MFS_ENABLED
         MENUITEM "&Edit\tCtrl+D",               ID_MODE_EDIT,MFT_STRING,MFS_ENABLED
-        MENUITEM "Edit &Move Tool\tCtrl+M",     ID_MODE_EDIT_MOVE,MFT_STRING,MFS_ENABLED
     END
     POPUP "E&xtras",                        65535,MFT_STRING,MFS_ENABLED
     BEGIN
@@ -4394,7 +4392,6 @@ BEGIN
         MENUITEM "&Regression Test\tCtrl+R",    ID_RUN_REGRESSIONTEST,MFT_STRING,MFS_ENABLED
         MENUITEM "&Test\tCtrl+T",               ID_MODE_TEST,MFT_STRING,MFS_ENABLED
         MENUITEM "&Edit\tCtrl+D",               ID_MODE_EDIT,MFT_STRING,MFS_ENABLED
-        MENUITEM "Edit &Move Tool\tCtrl+M",     ID_MODE_EDIT_MOVE,MFT_STRING,MFS_ENABLED
     END
     POPUP "E&xtras",                        65535,MFT_STRING,MFS_ENABLED
     BEGIN
@@ -4516,15 +4513,6 @@ BEGIN
     POPUP "SelectTool"
     BEGIN
         MENUITEM "Tool Comment",                ID_SELECTTOOL_TOOLCOMMENT
-        MENUITEM "Select for Move",             ID_SELECTTOOL_SELECTFORMOVE
-    END
-END
-
-IDR_TOOL_LIST_CONTEXT_MENU1 MENU
-BEGIN
-    POPUP "SelectTool"
-    BEGIN
-        MENUITEM "Tool Comment",                ID_SELECTTOOL_TOOLCOMMENT
     END
 END
 
@@ -4533,7 +4521,6 @@ BEGIN
     POPUP "SelectTool"
     BEGIN
         MENUITEM "Tool Comment",                ID_SELECTTOOL_TOOLCOMMENT
-        MENUITEM "Select for Move",             ID_SELECTTOOL_SELECTFORMOVE
         MENUITEM SEPARATOR
         MENUITEM "Set Reference",               ID_SELECTTOOL_LEARN
         MENUITEM "Normalize",                   ID_SELECTTOOL_NORMALIZE

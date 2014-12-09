@@ -5,8 +5,8 @@
 //* .Module Name     : SVAngularProfileTool
 //* .File Name       : $Workfile:   SVAngularProfileTool.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.3  $
-//* .Check In Date   : $Date:   15 May 2014 10:09:08  $
+//* .Current Version : $Revision:   1.4  $
+//* .Check In Date   : $Date:   09 Dec 2014 09:17:56  $
 //******************************************************************************
 
 #ifndef SVANGULARPROFILETOOL_H
@@ -17,7 +17,7 @@
 
 class SVLineClass;
 
-class SVAngularProfileToolClass : public SVToolClass , public OperatorMovable
+class SVAngularProfileToolClass : public SVToolClass
 {
 	SV_DECLARE_CLASS( SVAngularProfileToolClass );
 
@@ -78,6 +78,16 @@ private:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVAngularProfileTool.h_v  $
+ * 
+ *    Rev 1.4   09 Dec 2014 09:17:56   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  908
+ * SCR Title:  Remove option for Operator Move (SVO 101)
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Revoved IsMoveable from class definition.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   15 May 2014 10:09:08   sjones
  * Project:  SVObserver

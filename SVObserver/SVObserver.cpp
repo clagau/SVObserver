@@ -5,8 +5,8 @@
 //* .Module Name     : SVObserver
 //* .File Name       : $Workfile:   SVObserver.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.43  $
-//* .Check In Date   : $Date:   01 Dec 2014 13:05:38  $
+//* .Current Version : $Revision:   1.44  $
+//* .Check In Date   : $Date:   09 Dec 2014 10:12:42  $
 //******************************************************************************
 
 #pragma region Includes
@@ -215,7 +215,6 @@ BEGIN_MESSAGE_MAP(SVObserverApp, CWinApp)
 	ON_COMMAND(ID_MODE_RUN, OnRunMode)
 	ON_COMMAND(ID_MODE_STOPTEST, OnStopTestMode)
 	ON_COMMAND(ID_MODE_EDIT, OnModeEdit)
-	ON_COMMAND(ID_MODE_EDIT_MOVE, OnModeEditMove)
 	ON_COMMAND(ID_GO_OFFLINE, OnGoOffline)
 	ON_COMMAND(ID_GO_ONLINE, OnGoOnline)
 
@@ -244,7 +243,6 @@ BEGIN_MESSAGE_MAP(SVObserverApp, CWinApp)
 	ON_UPDATE_COMMAND_UI(ID_MODE_STOPTEST, OnUpdateModeStopTest)
 	ON_UPDATE_COMMAND_UI(ID_MODE_TEST, OnUpdateModeTest)
 	ON_UPDATE_COMMAND_UI(ID_MODE_TEST_BTN, OnUpdateModeTestBtn)
-	ON_UPDATE_COMMAND_UI(ID_MODE_EDIT_MOVE, OnUpdateModeEditMove)
 	ON_UPDATE_COMMAND_UI(ID_MODE_EDIT, OnUpdateModeEdit)
 	ON_UPDATE_COMMAND_UI(ID_GO_OFFLINE, OnUpdateGoOffline)
 	ON_UPDATE_COMMAND_UI(ID_GO_ONLINE, OnUpdateGoOnline)
@@ -778,8 +776,7 @@ void SVObserverApp::OnRunMode()
 ////////////////////////////////////////////////////////////////////////////////
 void SVObserverApp::OnStopTestMode() 
 {
-	if( !SVSVIMStateClass::CheckState( SV_STATE_EDIT_MOVE 
-		| SV_STATE_EDIT 
+	if( !SVSVIMStateClass::CheckState( SV_STATE_EDIT 
 		| SV_STATE_REGRESSION
 		| SV_STATE_TEST
 		| SV_STATE_RUNNING ))
@@ -893,7 +890,7 @@ void SVObserverApp::OnThreadAffinitySetup()
 
 void SVObserverApp::OnUpdateModeRun( CCmdUI* PCmdUI ) 
 {
-	PCmdUI->Enable( SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION | SV_STATE_EDIT | SV_STATE_EDIT_MOVE | SV_STATE_READY )  &&	
+	PCmdUI->Enable( SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION | SV_STATE_EDIT | SV_STATE_READY )  &&	
 		! SVSVIMStateClass::CheckState( SV_STATE_RUNNING ) &&
 		m_svSecurityMgr.SVIsDisplayable( SECURITY_POINT_MODE_MENU_RUN ));
 }
@@ -1554,7 +1551,7 @@ void SVObserverApp::OnUpdateModeStopTest( CCmdUI* PCmdUI )
 
 void SVObserverApp::OnUpdateModeTest( CCmdUI* PCmdUI ) 
 {
-	PCmdUI->Enable( ( SVSVIMStateClass::CheckState( SV_STATE_TEST | SV_STATE_REGRESSION | SV_STATE_EDIT | SV_STATE_EDIT_MOVE | SV_STATE_READY | SV_STATE_RUNNING  ) ) &&
+	PCmdUI->Enable( ( SVSVIMStateClass::CheckState( SV_STATE_TEST | SV_STATE_REGRESSION | SV_STATE_EDIT | SV_STATE_READY | SV_STATE_RUNNING  ) ) &&
 		m_svSecurityMgr.SVIsDisplayable( SECURITY_POINT_MODE_MENU_TEST ) );
 
 	PCmdUI->SetCheck( SVSVIMStateClass::CheckState( SV_STATE_TEST ) && 
@@ -1563,7 +1560,7 @@ void SVObserverApp::OnUpdateModeTest( CCmdUI* PCmdUI )
 
 void SVObserverApp::OnUpdateModeTestBtn(CCmdUI* pCmdUI) 
 {
-	pCmdUI->Enable(( SVSVIMStateClass::CheckState( SV_STATE_REGRESSION | SV_STATE_EDIT | SV_STATE_EDIT_MOVE | SV_STATE_READY ) ) &&	 
+	pCmdUI->Enable(( SVSVIMStateClass::CheckState( SV_STATE_REGRESSION | SV_STATE_EDIT | SV_STATE_READY ) ) &&	 
 		SVSVIMStateClass::CheckState( SV_STATE_READY ) &&
 		!SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) &&
 		m_svSecurityMgr.SVIsDisplayable( SECURITY_POINT_MODE_MENU_TEST ));
@@ -1772,24 +1769,6 @@ void SVObserverApp::OnExtrasLogin()
 			}
 		}
 	}
-	// Check if Edit Move Tool selected
-	if( SVSVIMStateClass::CheckState( SV_STATE_EDIT_MOVE ) )
-	{   // if this user is not allowed to have move privileges then remove the state
-		if( !m_svSecurityMgr.SVIsDisplayable( SECURITY_POINT_MODE_MENU_EDIT_MOVE_TOOL ) )
-		{
-			SVSVIMStateClass::RemoveState( SV_STATE_EDIT_MOVE );
-		}
-		else
-		{	// If they are still allowed then select the current tool.
-			SVMainFrame* pWndMain = ( SVMainFrame* )GetMainWnd();
-			if(pWndMain)
-			{
-				pWndMain->PostMessage(SV_SET_TOOL_SELECTED_IN_TOOL_VIEW, (WPARAM)TRUE);
-				// Logged on User changed
-				pWndMain->PostMessage( SV_LOGGED_ON_USER_CHANGED, 0 );
-			}
-		}
-	}
 }
 
 void SVObserverApp::OnUpdateExtrasLogin( CCmdUI* PCmdUI ) 
@@ -1895,8 +1874,7 @@ void SVObserverApp::OnUpdateAddTransformationTool( CCmdUI* PCmdUI )
 ////////////////////////////////////////////////////////////////////////////////
 void SVObserverApp::OnGoOffline() 
 {
-	if( !SVSVIMStateClass::CheckState( SV_STATE_EDIT_MOVE 
-		| SV_STATE_EDIT 
+	if( !SVSVIMStateClass::CheckState( SV_STATE_EDIT 
 		| SV_STATE_REGRESSION
 		| SV_STATE_TEST
 		| SV_STATE_RUNNING ))
@@ -1904,7 +1882,7 @@ void SVObserverApp::OnGoOffline()
 		return;
 	}
 
-	SVSVIMStateClass::RemoveState( SV_STATE_EDIT | SV_STATE_EDIT_MOVE );
+	SVSVIMStateClass::RemoveState( SV_STATE_EDIT );
 
 	DeselectTool();
 
@@ -1931,10 +1909,6 @@ void SVObserverApp::OnGoOffline()
 			OnStop();
 		}
 
-		if( SVSVIMStateClass::CheckState( SV_STATE_EDIT_MOVE ) )
-		{
-			SetModeEditMove( false );
-		}
 	}// end if ( SVSVIMStateClass::CheckState( SV_STATE_RUNNING ) )
 }
 
@@ -1966,12 +1940,12 @@ void SVObserverApp::OnGoOffline()
 ////////////////////////////////////////////////////////////////////////////////
 void SVObserverApp::OnUpdateGoOffline( CCmdUI* PCmdUI ) 
 {
-	PCmdUI->Enable( ( SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION | SV_STATE_EDIT | SV_STATE_EDIT_MOVE | SV_STATE_READY ) ) &&	
+	PCmdUI->Enable( ( SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION | SV_STATE_EDIT | SV_STATE_READY ) ) &&	
 		SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_READY ) &&
 		( m_svSecurityMgr.SVIsDisplayable( SECURITY_POINT_MODE_MENU_EXIT_RUN_MODE ) || 
 		m_svSecurityMgr.SVIsDisplayable( SECURITY_POINT_MODE_MENU_STOP ) ));
 
-	PCmdUI->SetCheck( !SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_EDIT | SV_STATE_EDIT_MOVE | SV_STATE_REGRESSION ) 
+	PCmdUI->SetCheck( !SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_EDIT | SV_STATE_REGRESSION ) 
 		&& SVSVIMStateClass::CheckState( SV_STATE_READY));
 }
 
@@ -2005,11 +1979,6 @@ void SVObserverApp::OnGoOnline()
 {
 	long l_lPrevState = 0;
 
-	if( SVSVIMStateClass::CheckState( SV_STATE_EDIT_MOVE ))
-	{
-		l_lPrevState = SV_STATE_EDIT_MOVE;
-	}
-
 	if( SVSVIMStateClass::CheckState( SV_STATE_EDIT ))
 	{
 		l_lPrevState = SV_STATE_EDIT;
@@ -2036,7 +2005,6 @@ void SVObserverApp::OnGoOnline()
 			HRESULT l_hrStatus = S_OK;
 
 			SVSVIMStateClass::RemoveState( SV_STATE_EDIT );
-			SVSVIMStateClass::RemoveState( SV_STATE_EDIT_MOVE );
 			DeselectTool();
 
 			if ( m_hrHardwareFailure == S_OK )
@@ -2202,7 +2170,7 @@ void SVObserverApp::OnGoOnline()
 ////////////////////////////////////////////////////////////////////////////////
 void SVObserverApp::OnUpdateGoOnline( CCmdUI* PCmdUI ) 
 {
-	PCmdUI->Enable( SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION | SV_STATE_EDIT | SV_STATE_EDIT_MOVE | SV_STATE_READY ) &&	
+	PCmdUI->Enable( SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION | SV_STATE_EDIT  | SV_STATE_READY ) &&	
 		SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_READY ) &&
 		m_svSecurityMgr.SVIsDisplayable( SECURITY_POINT_MODE_MENU_RUN ) );
 
@@ -2219,11 +2187,6 @@ void SVObserverApp::OnExtrasLogout()
 {
 	// Force log out, regardless auto login mode...
 	m_svSecurityMgr.SVLogout();
-
-	if( SVSVIMStateClass::CheckState( SV_STATE_EDIT_MOVE ) )
-	{
-		SetModeEditMove( false );
-	}
 
 	if( SVSVIMStateClass::CheckState( SV_STATE_EDIT ) )
 	{
@@ -2785,11 +2748,6 @@ void SVObserverApp::OnExtrasSecuritySetup()
 			}
 		}
 
-		if( SVSVIMStateClass::CheckState( SV_STATE_EDIT_MOVE ) )
-		{
-			SetModeEditMove( false );
-		}
-
 		if( SVSVIMStateClass::CheckState( SV_STATE_EDIT ))
 		{
 			SVSVIMStateClass::RemoveState( SV_STATE_EDIT );
@@ -2850,67 +2808,14 @@ void SVObserverApp::OnModeEdit()
 
 void SVObserverApp::OnUpdateModeEdit(CCmdUI* pCmdUI) 
 {
-	pCmdUI->Enable( (SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION | SV_STATE_EDIT | SV_STATE_EDIT_MOVE | SV_STATE_READY ) ) &&	
+	pCmdUI->Enable( (SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION | SV_STATE_EDIT | SV_STATE_READY ) ) &&	
 		SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_READY ) &&
 		m_svSecurityMgr.SVIsDisplayable( SECURITY_POINT_MODE_MENU_EDIT_TOOLSET ) );
 
 	pCmdUI->SetCheck( SVSVIMStateClass::CheckState( SV_STATE_EDIT ) );
 }
 
-void SVObserverApp::OnModeEditMove() 
-{
-	bool l_bAllowAccess = false;
 
-	if ( SVSVIMStateClass::CheckState( SV_STATE_EDIT_MOVE ) )
-	{
-		return;
-	}
-
-	// If Running, check if access to exit run.
-	if ( SVSVIMStateClass::CheckState( SV_STATE_RUNNING ) )
-	{
-		if( m_svSecurityMgr.SVValidate( SECURITY_POINT_MODE_MENU_EXIT_RUN_MODE, 
-			SECURITY_POINT_MODE_MENU_EDIT_MOVE_TOOL ) == S_OK )
-		{
-			OnStop();
-			l_bAllowAccess = true;
-		}
-	}
-	else
-	{
-		if( m_svSecurityMgr.SVValidate( SECURITY_POINT_MODE_MENU_EDIT_MOVE_TOOL ) == S_OK )
-		{
-			l_bAllowAccess = true;
-		}
-	}
-
-	if( l_bAllowAccess )
-	{
-		if ( !SVSVIMStateClass::CheckState( SV_STATE_EDIT_MOVE ) )
-		{
-			if ( SVSVIMStateClass::CheckState( SV_STATE_REGRESSION ) )
-			{
-				StopRegression();
-			}
-
-			if( SVSVIMStateClass::CheckState( SV_STATE_TEST ) )
-			{
-				OnStop();
-			}
-
-			SetModeEditMove( true );
-		}
-	}
-}
-
-void SVObserverApp::OnUpdateModeEditMove(CCmdUI* pCmdUI) 
-{
-	pCmdUI->Enable(( SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION | SV_STATE_EDIT | SV_STATE_EDIT_MOVE | SV_STATE_READY ) ) &&	
-		SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_READY ) &&
-		m_svSecurityMgr.SVIsDisplayable( SECURITY_POINT_MODE_MENU_EDIT_MOVE_TOOL ));
-
-	pCmdUI->SetCheck( SVSVIMStateClass::CheckState( SV_STATE_EDIT_MOVE ));
-}
 
 void SVObserverApp::OnTriggerSettings()
 {
@@ -4296,7 +4201,7 @@ HRESULT SVObserverApp::DestroyConfig( BOOL AskForSavingOrClosing /* = TRUE */,
 
 			if ( bOk )
 			{
-				bOk = SVSVIMStateClass::RemoveState( SV_STATE_READY | SV_STATE_MODIFIED | SV_STATE_EDIT | SV_STATE_EDIT_MOVE );
+				bOk = SVSVIMStateClass::RemoveState( SV_STATE_READY | SV_STATE_MODIFIED | SV_STATE_EDIT );
 			}
 
 			if ( bOk )
@@ -5378,11 +5283,6 @@ HRESULT SVObserverApp::SetMode( unsigned long p_lNewMode )
 			SetModeEdit( false );
 		}
 
-		// Cancel edit move mode
-		if( SVSVIMStateClass::CheckState( SV_STATE_EDIT_MOVE ) )
-		{
-			SetModeEditMove( false );
-		}
 	}
 	else if( l_svMode == SVIM_MODE_TEST )
 	{
@@ -5433,24 +5333,6 @@ HRESULT SVObserverApp::SetMode( unsigned long p_lNewMode )
 			l_hr = SVMSG_SVIMCMD_REQUEST_REJECTED;
 		}
 	}
-	else if( l_svMode == SVIM_MODE_EDIT_MOVE )
-	{
-		if( SVSVIMStateClass::CheckState( SV_STATE_TEST ) ||
-			SVSVIMStateClass::CheckState( SV_STATE_RUNNING ) )
-		{
-			OnStop();
-		}
-
-		if( !SVSVIMStateClass::CheckState( SV_STATE_REGRESSION ) &&
-			SVSVIMStateClass::CheckState( SV_STATE_READY ) )
-		{
-			SetModeEditMove( true );
-		}
-		else
-		{
-			l_hr = SVMSG_SVIMCMD_REQUEST_REJECTED;
-		}
-	}
 	else
 	{
 		l_hr = SVMSG_SVIMCMD_REQUEST_REJECTED;
@@ -5487,39 +5369,6 @@ HRESULT SVObserverApp::LoadConfiguration()
 	return l_Status;
 }
 
-void SVObserverApp::SetSelectedToolForOperatorMove( BOOL bSetTool )
-{
-	POSITION pos = GetFirstDocTemplatePosition();
-	if( pos )
-	{
-		do
-		{
-			CDocTemplate* pDocTemplate = GetNextDocTemplate( pos );
-			if( pDocTemplate )
-			{
-				POSITION posDoc = pDocTemplate->GetFirstDocPosition();
-				if ( posDoc )
-				{
-					do
-					{
-						CDocument* newDoc = pDocTemplate->GetNextDoc(posDoc);
-						if ( newDoc )
-						{
-							SVIPDoc* pTmpDoc = dynamic_cast <SVIPDoc*> (newDoc);
-
-							if( pTmpDoc != NULL )
-							{
-								pTmpDoc->SetSelectedToolForOperatorMove( bSetTool );
-							}
-						}
-					}
-					while( posDoc );
-				}
-			}
-		}
-		while( pos );
-	}
-}
 
 HRESULT SVObserverApp::RenameObject( const SVString& p_rOldName, const SVString& p_rNewName, const SVGUID& p_rObjectId )
 {
@@ -6201,19 +6050,6 @@ bool SVObserverApp::OkToEdit()
 	return l_bOk;
 }
 
-bool SVObserverApp::OkToEditMove()
-{
-	bool l_bOk = false;
-	if( SVSVIMStateClass::CheckState( SV_STATE_EDIT_MOVE ))
-	{
-		if( m_svSecurityMgr.SVIsDisplayable( SECURITY_POINT_MODE_MENU_EDIT_MOVE_TOOL ))
-		{
-			l_bOk = true;
-		}
-	}
-	return l_bOk;
-}
-
 BOOL SVObserverApp::IsMonochromeImageAvailable()
 {
 	BOOL bOk = !IsColorSVIM();
@@ -6599,7 +6435,6 @@ HRESULT SVObserverApp::SetModeEdit( bool p_bState )
 	{
 		SVSVIMStateClass::AddState( SV_STATE_EDIT );
 		SVSVIMStateClass::AddState( SV_STATE_SECURED );
-		SVSVIMStateClass::RemoveState( SV_STATE_EDIT_MOVE );
 	}
 	else
 	{
@@ -6613,30 +6448,6 @@ HRESULT SVObserverApp::SetModeEdit( bool p_bState )
 	return l_hr;
 }
 
-HRESULT SVObserverApp::SetModeEditMove( bool l_bState ) 
-{
-	HRESULT l_hr = S_OK;
-
-	if( l_bState )
-	{
-		SVSVIMStateClass::AddState( SV_STATE_EDIT_MOVE );
-		SVSVIMStateClass::RemoveState( SV_STATE_EDIT );
-		SVSVIMStateClass::RemoveState( SV_STATE_SECURED );
-		SVMainFrame* pWndMain = ( SVMainFrame* )GetMainWnd();
-		if(pWndMain)
-		{
-			pWndMain->PostMessage(SV_SET_TOOL_SELECTED_IN_TOOL_VIEW, (WPARAM)TRUE);
-		}
-	}
-	else
-	{
-		// We need to deselect any tool that might be set for operator move.
-		DeselectTool();
-		SVSVIMStateClass::RemoveState( SV_STATE_SECURED );
-		SVSVIMStateClass::RemoveState( SV_STATE_EDIT_MOVE );
-	}
-	return l_hr;
-}
 
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : SetTestMode
@@ -6772,7 +6583,6 @@ void SVObserverApp::SetTestMode(bool p_bNoSecurity )
 
 				SVSVIMStateClass::AddState( SV_STATE_TEST );
 				SVSVIMStateClass::RemoveState( SV_STATE_EDIT );
-				SVSVIMStateClass::RemoveState( SV_STATE_EDIT_MOVE );
 
 				l_pConfig->SetModuleReady( true );
 
@@ -7209,7 +7019,7 @@ HRESULT SVObserverApp::Start()
 {
 	HRESULT l_hrOk = S_OK;
 
-	SVSVIMStateClass::RemoveState( SV_STATE_EDIT | SV_STATE_EDIT_MOVE );
+	SVSVIMStateClass::RemoveState( SV_STATE_EDIT );
 
 	if ( SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_STARTING ) )
 	{
@@ -8888,6 +8698,16 @@ int SVObserverApp::FindMenuItem(CMenu* Menu, LPCTSTR MenuString)
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVObserver.cpp_v  $
+ * 
+ *    Rev 1.44   09 Dec 2014 10:12:42   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  908
+ * SCR Title:  Remove option for Operator Move (SVO 101)
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Remove edit move state and supporting functions.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.43   01 Dec 2014 13:05:38   tbair
  * Project:  SVObserver

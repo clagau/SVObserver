@@ -5,8 +5,8 @@
 //* .Module Name     : SVSVIMStateClass
 //* .File Name       : $Workfile:   SVSVIMStateClass.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.4  $
-//* .Check In Date   : $Date:   02 Sep 2014 10:16:54  $
+//* .Current Version : $Revision:   1.5  $
+//* .Check In Date   : $Date:   09 Dec 2014 10:12:44  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -78,10 +78,6 @@ svModeEnum SVSVIMStateClass::GetMode()
 	{
 		retVal = SVIM_MODE_ONLINE;
 	}
-	else if( SVSVIMStateClass::CheckState( SV_STATE_EDIT_MOVE ) )
-	{
-		retVal = SVIM_MODE_EDIT_MOVE;
-	}
 	else if( SVSVIMStateClass::CheckState( SV_STATE_REGRESSION ) )
 	{
 		retVal = SVIM_MODE_REGRESSION;
@@ -99,8 +95,7 @@ svModeEnum SVSVIMStateClass::GetMode()
 		retVal = SVIM_MODE_CHANGING;
 	}
 	else if( SVSVIMStateClass::CheckState( SV_STATE_READY ) &&
-		!SVSVIMStateClass::CheckState( SV_STATE_EDIT ) &&
-		!SVSVIMStateClass::CheckState( SV_STATE_EDIT_MOVE ) )
+		!SVSVIMStateClass::CheckState( SV_STATE_EDIT ) )
 	{
 		retVal = SVIM_MODE_OFFLINE;
 	}
@@ -122,7 +117,6 @@ void SVSVIMStateClass::setEnvironmentParameters()
 	EnvironmentObject::setEnvironmentValue( ::EnvironmentModeIsRegressionTest, static_cast< BOOL >( SVIM_MODE_REGRESSION == modeValue ) );
 	EnvironmentObject::setEnvironmentValue( ::EnvironmentModeIsTest, static_cast< BOOL >( SVIM_MODE_TEST == modeValue ) );
 	EnvironmentObject::setEnvironmentValue( ::EnvironmentModeIsEdit, static_cast< BOOL >( SVIM_MODE_EDIT == modeValue ) );
-	EnvironmentObject::setEnvironmentValue( ::EnvironmentModeIsEditMoveTool, static_cast< BOOL >( SVIM_MODE_EDIT_MOVE == modeValue ) );
 }
 
 //******************************************************************************
@@ -130,6 +124,16 @@ void SVSVIMStateClass::setEnvironmentParameters()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVSVIMStateClass.cpp_v  $
+ * 
+ *    Rev 1.5   09 Dec 2014 10:12:44   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  908
+ * SCR Title:  Remove option for Operator Move (SVO 101)
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Remove edit move state and supporting functions.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.4   02 Sep 2014 10:16:54   bwalter
  * Project:  SVObserver
