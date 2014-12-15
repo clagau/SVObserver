@@ -5,8 +5,8 @@
 //* .Module Name     : SVThreadManager
 //* .File Name       : $Workfile:   SVThreadManager.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   01 Dec 2014 14:05:58  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   10 Dec 2014 16:49:50  $
 //******************************************************************************
 
 
@@ -64,7 +64,7 @@ public:
 
 	// GetThreadInfo will create a list of information about each thread.
 	// the list will be a comma seperated list of number, name, priority, Affinity
-	HRESULT GetThreadInfo( std::list<std::string>& p_rStrList);
+	HRESULT GetThreadInfo( std::list<std::string>& p_rStrList) const;
 
 	// Gets a list of SVThreadSetup filtered by Attribute.
 	HRESULT GetThreadInfo( std::list<SVThreadSetup>& rSetupList, SVThreadAttribute eFilter );
@@ -93,6 +93,9 @@ public:
 
 	HRESULT Create();
 	void Destroy();
+	BOOL GetThreadAffinityEnabled() const;
+	void SetThreadAffinityEnabled( BOOL bEnable );
+
 #pragma endregion
 
 #pragma region Private
@@ -108,7 +111,7 @@ private:
 	SetAffinityPtr m_pSetAffinity;
 	RemovePtr m_pRemove;
 	ClearPtr m_pClear;
-
+	BOOL m_bThreadAffinityEnabled;
 #pragma endregion
 };
 
@@ -117,6 +120,16 @@ private:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVSystemLibrary\SVThreadManager.h_v  $
+ * 
+ *    Rev 1.1   10 Dec 2014 16:49:50   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  960
+ * SCR Title:  Pipe/core management
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Added Get and SetThreadAffinityEnable methods.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   01 Dec 2014 14:05:58   tbair
  * Project:  SVObserver

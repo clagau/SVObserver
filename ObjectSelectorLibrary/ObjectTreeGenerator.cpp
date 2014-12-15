@@ -5,8 +5,8 @@
 //* .Module Name     : ObjectTreeGenerator
 //* .File Name       : $Workfile:   ObjectTreeGenerator.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.3  $
-//* .Check In Date   : $Date:   04 Dec 2014 03:29:20  $
+//* .Current Version : $Revision:   1.4  $
+//* .Check In Date   : $Date:   12 Dec 2014 03:28:20  $
 //******************************************************************************
 
 #pragma region Includes
@@ -593,13 +593,14 @@ void ObjectTreeGenerator::convertLocation()
 		{
 			Iter->setLocation( Location );
 		}
+
+		SVString DisplayLocation = Iter->getDisplayLocation();
+		checkLocationFilters( m_LocationOutputFilters, DisplayLocation );
 		//The extra group name for arrays must be removed
 		if( Iter->isArray() )
 		{
-			SVString DisplayLocation = Iter->getDisplayLocation();
 			SVString Name( Iter->getName() );
 
-			checkLocationFilters( m_LocationOutputFilters, DisplayLocation );
 			SVString::size_type Pos = 0;
 			//Array name will have [ ] 
 			if( SVString::npos != (Pos = Name.rfind("[")) )
@@ -608,6 +609,9 @@ void ObjectTreeGenerator::convertLocation()
 			}
 			Name += _T(".");
 			DisplayLocation.replace( Name.c_str(), _T("") );
+		}
+		if( Iter->getDisplayLocation() != DisplayLocation )
+		{
 			Iter->setDisplayLocation( DisplayLocation );
 		}
 
@@ -622,6 +626,17 @@ void ObjectTreeGenerator::convertLocation()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\ObjectSelectorLibrary\ObjectTreeGenerator.cpp_v  $
+ * 
+ *    Rev 1.4   12 Dec 2014 03:28:20   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  965
+ * SCR Title:  Update Object Selector Text Label; Update Icons; Add List Output
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Fix: DisplayLocation use Output filters
+ * Changed Method: convertLocation
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   04 Dec 2014 03:29:20   gramseier
  * Project:  SVObserver

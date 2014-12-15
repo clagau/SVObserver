@@ -5,8 +5,8 @@
 //* .Module Name     : SVStatusCodes
 //* .File Name       : $Workfile:   SVStatusCodes.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   07 Jul 2014 17:12:38  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   10 Dec 2014 12:12:38  $
 //******************************************************************************
 
 #ifndef SVSTATUSCODES_H
@@ -318,7 +318,6 @@ enum SVStatusCodesEnum
 	SV_INFORMATION_SVACCESS_0011 = SECURITY_POINT_MODE_MENU_RUN,
 	SV_INFORMATION_SVACCESS_0012 = SECURITY_POINT_MODE_MENU_STOP,
 	SV_INFORMATION_SVACCESS_0013 = SECURITY_POINT_MODE_MENU_EDIT_TOOLSET,
-	SV_INFORMATION_SVACCESS_0014 = SECURITY_POINT_MODE_MENU_EDIT_MOVE_TOOL,
 	SV_INFORMATION_SVACCESS_0015 = SECURITY_POINT_MODE_MENU_TEST,
 	SV_INFORMATION_SVACCESS_0016 = SECURITY_POINT_MODE_MENU_REGRESSION_TEST,
 	SV_INFORMATION_SVACCESS_0017 = SECURITY_POINT_EXTRAS_MENU,
@@ -427,6 +426,16 @@ enum SVStatusCodesEnum
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVStatusLibrary\SVStatusCodes.h_v  $
+ * 
+ *    Rev 1.2   10 Dec 2014 12:12:38   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  908
+ * SCR Title:  Remove option for Operator Move (SVO 101)
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Removed status code for Mode_Menu_Edit_Move_Tool.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   07 Jul 2014 17:12:38   gramseier
  * Project:  SVObserver

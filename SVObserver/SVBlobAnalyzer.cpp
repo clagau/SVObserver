@@ -5,8 +5,8 @@
 //* .Module Name     : SVBlobAnalyzer
 //* .File Name       : $Workfile:   SVBlobAnalyzer.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.7  $
-//* .Check In Date   : $Date:   18 Nov 2014 05:07:48  $
+//* .Current Version : $Revision:   1.8  $
+//* .Check In Date   : $Date:   12 Dec 2014 09:48:00  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -325,7 +325,7 @@ void SVBlobAnalyzerClass::init()
 	CreateArray();
 
 	m_colorBlobEnumValue.SetEnumTypes(g_strBlobColorEnums);
-	m_colorBlobEnumValue.SetDefaultValue(SV_BLOB_WHITE,FALSE);	
+	m_colorBlobEnumValue.SetDefaultValue(SV_BLOB_WHITE,TRUE);	
 	//set default values for the BlobFill value objects
 	m_bvoFillBlobs.SetDefaultValue(FALSE,TRUE);
 	m_evoBlobFillColor.SetEnumTypes(g_strBlobFillColorEnums);
@@ -1859,6 +1859,16 @@ void SVBlobAnalyzerClass::addDefaultInputObjects( BOOL BCallBaseClass, SVInputIn
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVBlobAnalyzer.cpp_v  $
+ * 
+ *    Rev 1.8   12 Dec 2014 09:48:00   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  938
+ * SCR Title:  Add Black Blob Mode to Blob Analyzer (SVO-336)
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   Changed m_colorBlobEnumValue.SetDefaultValue Flag to reset all.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.7   18 Nov 2014 05:07:48   mziegler
  * Project:  SVObserver

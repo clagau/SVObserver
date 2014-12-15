@@ -5,8 +5,8 @@
 //* .Module Name     : SVObserver
 //* .File Name       : $Workfile:   SVObserver.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.44  $
-//* .Check In Date   : $Date:   09 Dec 2014 10:12:42  $
+//* .Current Version : $Revision:   1.46  $
+//* .Check In Date   : $Date:   10 Dec 2014 16:43:44  $
 //******************************************************************************
 
 #pragma region Includes
@@ -1783,6 +1783,14 @@ void SVObserverApp::OnUpdateExtrasLogin( CCmdUI* PCmdUI )
 		pMenu->RemoveMenu( ID_EXTRAS_LOGIN, MF_BYCOMMAND );
 		pMenu->RemoveMenu( ID_EXTRAS_LOGOUT, MF_BYCOMMAND );
 	}
+	if( SVThreadManager::Instance().GetThreadAffinityEnabled() == 0 )
+	{
+		CMenu *pMenu;
+		CWnd* pWindow = AfxGetMainWnd();
+		pMenu = pWindow->GetMenu();
+		pMenu->RemoveMenu( ID_EXTRAS_THREAD_AFFINITY, MF_BYCOMMAND );
+	}
+
 }
 
 void SVObserverApp::OnUpdateExtrasUserManager( CCmdUI* PCmdUI ) 
@@ -7787,7 +7795,6 @@ HRESULT SVObserverApp::InitializeSecurity()
 		AddSecurityNode(hMessageDll, SECURITY_POINT_MODE_MENU_REGRESSION_TEST,  _T("") );
 		AddSecurityNode(hMessageDll, SECURITY_POINT_MODE_MENU_TEST,             _T("") );
 		AddSecurityNode(hMessageDll, SECURITY_POINT_MODE_MENU_EDIT_TOOLSET,     _T("") );
-		AddSecurityNode(hMessageDll, SECURITY_POINT_MODE_MENU_EDIT_MOVE_TOOL,   _T("") );
 		AddSecurityNode(hMessageDll, SECURITY_POINT_MODE_MENU_EXIT_RUN_MODE,    _T("") );
 
 		AddSecurityNode(hMessageDll, SECURITY_POINT_EXTRAS_MENU );   // Forth Child From Root
@@ -8698,6 +8705,26 @@ int SVObserverApp::FindMenuItem(CMenu* Menu, LPCTSTR MenuString)
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVObserver.cpp_v  $
+ * 
+ *    Rev 1.46   10 Dec 2014 16:43:44   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  960
+ * SCR Title:  Pipe/core management
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Added a disable method to the SVThreadManager
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.45   10 Dec 2014 12:02:22   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  908
+ * SCR Title:  Remove option for Operator Move (SVO 101)
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Removed Edit Move definitions.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.44   09 Dec 2014 10:12:42   tbair
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : SVUserMessage
 //* .File Name       : $Workfile:   SVUserMessage.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.3  $
-//* .Check In Date   : $Date:   24 Jun 2014 07:28:24  $
+//* .Current Version : $Revision:   1.4  $
+//* .Check In Date   : $Date:   12 Dec 2014 13:13:52  $
 //******************************************************************************
 
 #ifndef SVUSERMESSAGE_H
@@ -66,6 +66,7 @@
 #define SV_REFRESH_STATUS_BAR WM_USER + 35
 #define SV_SHUTDOWN WM_USER + 36
 
+#define SV_REGISTER_MONITOR_LIST WM_USER + 37
 /**************************************************************************/
 /* INCLUDE CONTROL:
 /**************************************************************************/
@@ -76,6 +77,16 @@
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVUserMessage.h_v  $
+ * 
+ *    Rev 1.4   12 Dec 2014 13:13:52   ryoho
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  918
+ * SCR Title:  Implement Method RegisterMonitorList for RemoteControl (SVO-369)
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   added new define SV_REGISTER_MONITOR_LIST
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   24 Jun 2014 07:28:24   tbair
  * Project:  SVObserver

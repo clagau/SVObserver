@@ -5,8 +5,8 @@
 //* .Module Name     : SVConfigurationObject
 //* .File Name       : $Workfile:   SVConfigurationObject.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.34  $
-//* .Check In Date   : $Date:   01 Dec 2014 13:07:48  $
+//* .Current Version : $Revision:   1.35  $
+//* .Check In Date   : $Date:   12 Dec 2014 13:08:58  $
 //******************************************************************************
 
 #pragma region Includes
@@ -5366,6 +5366,7 @@ void SVConfigurationObject::ReplaceOrAddMonitorList(const RemoteMonitorNamedList
 	if (nullptr != m_pIOController)
 	{
 		m_pIOController->ReplaceOrAddMonitorList(rList);
+		SendMessage(AfxGetApp()->m_pMainWnd->GetSafeHwnd(),SV_REGISTER_MONITOR_LIST, NULL, 0);
 	}
 }
 
@@ -5540,6 +5541,16 @@ HRESULT SVConfigurationObject::LoadMonitoredObjectList( SVTreeType& rTree, SVTre
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVConfigurationObject.cpp_v  $
+ * 
+ *    Rev 1.35   12 Dec 2014 13:08:58   ryoho
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  918
+ * SCR Title:  Implement Method RegisterMonitorList for RemoteControl (SVO-369)
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   Changed ReplaceOrAddMonitorList to send a message so that the IO page will add/show the Monitor List tab.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.34   01 Dec 2014 13:07:48   tbair
  * Project:  SVObserver

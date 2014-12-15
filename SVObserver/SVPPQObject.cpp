@@ -5,8 +5,8 @@
 //* .Module Name     : SVPPQObject
 //* .File Name       : $Workfile:   SVPPQObject.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.34  $
-//* .Check In Date   : $Date:   01 Dec 2014 13:22:50  $
+//* .Current Version : $Revision:   1.35  $
+//* .Check In Date   : $Date:   10 Dec 2014 06:44:10  $
 //******************************************************************************
 
 #pragma region Includes
@@ -2872,7 +2872,7 @@ HRESULT SVPPQObject::NotifyInspections( long p_Offset )
 		{
 			SVInspectionInfoStruct& l_rInfo = pTempProduct->m_svInspectionInfos[ m_arInspections[ i ]->GetUniqueObjectID() ];
 
-			if( !( l_rInfo.m_CanProcess ) && !( l_rInfo.m_StartProcess ) && pTempProduct->IsProductActive() )
+			if( !( l_rInfo.m_CanProcess ) && !( l_rInfo.m_InProcess ) && pTempProduct->IsProductActive() )
 			{
 				l_rInfo.m_CanProcess = ( m_arInspections[ i ]->CanProcess( pTempProduct ) != FALSE );
 
@@ -2950,9 +2950,12 @@ HRESULT SVPPQObject::StartInspection( const SVGUID& p_rInspectionID )
 			{
 				SVInspectionInfoStruct& l_rInfo = pTempProduct->m_svInspectionInfos[ p_rInspectionID ];
 
-				if( l_rInfo.m_CanProcess && !( l_rInfo.m_StartProcess )  )
+				
+				if( l_rInfo.m_CanProcess &&				// all inputs are available and inspection can start
+					!( l_rInfo.m_InProcess ) &&			// inspection in not currently running
+					!( l_rInfo.m_HasBeenQueued ) )		// This flag prevents the inspection from getting queued more than once
 				{
-					l_pProduct = pTempProduct;
+					l_pProduct = pTempProduct; // product info
 					l_ProductIndex = i;
 				}
 			}
@@ -3850,7 +3853,7 @@ HRESULT SVPPQObject::MarkProductInspectionsMissingAcquisiton( SVProductInfoStruc
 
 				l_InspectInfo.oInspectedState = PRODUCT_NOT_INSPECTED;
 				l_InspectInfo.m_CanProcess = false;
-				l_InspectInfo.m_StartProcess = true;
+				l_InspectInfo.m_InProcess = true;
 
 				l_InspectInfo.m_EndInspection  = SVClock::GetTimeStamp();
 
@@ -5104,6 +5107,16 @@ void SVPPQObject::SVSharedMemoryFilters::clear()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVPPQObject.cpp_v  $
+ * 
+ *    Rev 1.35   10 Dec 2014 06:44:10   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  977
+ * SCR Title:  Fix Double Processing of Inspections with 2 Inspections on 1 PPQ
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Added flag to InspectionInfoStruct to prevent additional queuing in Inspection::StartProcess from the PPQ::StartInspection. New Flag m_HasBeenQueued.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.34   01 Dec 2014 13:22:50   tbair
  * Project:  SVObserver

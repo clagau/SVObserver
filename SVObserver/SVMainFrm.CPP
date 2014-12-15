@@ -5,8 +5,8 @@
 //* .Module Name     : SVMainFrm
 //* .File Name       : $Workfile:   SVMainFrm.CPP  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.15  $
-//* .Check In Date   : $Date:   09 Dec 2014 10:12:42  $
+//* .Current Version : $Revision:   1.16  $
+//* .Check In Date   : $Date:   12 Dec 2014 13:12:22  $
 //******************************************************************************
 
 #pragma region Includes
@@ -111,6 +111,7 @@ BEGIN_MESSAGE_MAP(SVMainFrame, CMDIFrameWnd)
 	ON_MESSAGE(SV_SHUTDOWN, Shutdown )
 	ON_COMMAND(ID_TOOLBAR_ZOOM, &SVMainFrame::OnToolbarZoom)
 	ON_UPDATE_COMMAND_UI(ID_TOOLBAR_ZOOM, &SVMainFrame::OnUpdateToolbarZoom)
+	ON_MESSAGE(SV_REGISTER_MONITOR_LIST, &SVMainFrame::RemoteRegisterMonitorList)
 END_MESSAGE_MAP()
 
 #pragma region Constructor
@@ -1109,6 +1110,12 @@ void SVMainFrame::OnUpdateStatusInfo( CCmdUI *pCmdUI )
 LRESULT SVMainFrame::InvalidateStatusBar( WPARAM wParam, LPARAM lParam )
 {
 	m_wndStatusBar.Invalidate();
+	return 0;
+}
+
+LRESULT SVMainFrame::RemoteRegisterMonitorList( WPARAM wParam, LPARAM lParam )
+{
+	TheSVObserverApp.GetIODoc()->GetIOController()->ShowMonitorListTab();
 	return 0;
 }
 
@@ -2162,6 +2169,16 @@ void SVMainFrame::RefreshAllSplitters()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVMainFrm.CPP_v  $
+ * 
+ *    Rev 1.16   12 Dec 2014 13:12:22   ryoho
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  918
+ * SCR Title:  Implement Method RegisterMonitorList for RemoteControl (SVO-369)
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   added new message handler for SV_REGISTER_MONITOR_LIST RemoteRegisterMonitorList.,
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.15   09 Dec 2014 10:12:42   tbair
  * Project:  SVObserver

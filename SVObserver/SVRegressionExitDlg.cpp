@@ -5,8 +5,8 @@
 // * .Module Name     : SVRegressionExitDlg
 // * .File Name       : $Workfile:   SVRegressionExitDlg.cpp  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.0  $
-// * .Check In Date   : $Date:   23 Apr 2013 14:40:56  $
+// * .Current Version : $Revision:   1.2  $
+// * .Check In Date   : $Date:   12 Dec 2014 09:52:14  $
 // ******************************************************************************
 
 #include "stdafx.h"
@@ -59,7 +59,6 @@ BOOL SVRegressionExitDlg::OnInitDialog()
 	m_ctlExitModes.AddString("Stop");
 	m_ctlExitModes.AddString("Test");
 	m_ctlExitModes.AddString("Edit");
-	m_ctlExitModes.AddString("Edit Move");
 
 	m_ctlExitModes.SelectString(0,"Edit");
 	
@@ -96,11 +95,6 @@ void SVRegressionExitDlg::OnOK()
 		::PostMessage (AfxGetMainWnd()->m_hWnd, WM_COMMAND, ID_MODE_EDIT, 0L);
 	}
 
-	else if ( m_csExitModes.CompareNoCase("Edit Move") == 0)
-	{
-		::PostMessage (AfxGetMainWnd()->m_hWnd, WM_COMMAND, ID_MODE_EDIT_MOVE, 0L);
-	}	
-
 	CDialog::OnOK();
 }
 
@@ -108,7 +102,27 @@ void SVRegressionExitDlg::OnOK()
 // * LOG HISTORY:
 // ******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVRegressionExitDlg.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVRegressionExitDlg.cpp_v  $
+ * 
+ *    Rev 1.2   12 Dec 2014 09:52:14   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  960
+ * SCR Title:  Pipe/core management
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Removed text from mode selection drop list.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.1   10 Dec 2014 12:02:20   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  908
+ * SCR Title:  Remove option for Operator Move (SVO 101)
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Removed Edit Move definitions.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 14:40:56   bWalter
  * Project:  SVObserver

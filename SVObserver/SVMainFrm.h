@@ -5,8 +5,8 @@
 //* .Module Name     : SVMainFrame
 //* .File Name       : $Workfile:   SVMainFrm.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.8  $
-//* .Check In Date   : $Date:   09 Dec 2014 10:12:42  $
+//* .Current Version : $Revision:   1.9  $
+//* .Check In Date   : $Date:   12 Dec 2014 13:12:22  $
 //******************************************************************************
 
 #pragma once
@@ -80,6 +80,7 @@ public:
 
 	afx_msg LRESULT OnHideIOViewTab( WPARAM p_wParam, LPARAM p_lParam );
 
+	afx_msg LRESULT RemoteRegisterMonitorList( WPARAM wParam, LPARAM lParam );
 	// Toolbar Methods
 	afx_msg void OnToolbarZoom();
 	afx_msg void OnUpdateToolbarZoom(CCmdUI *pCmdUI);
@@ -226,6 +227,16 @@ public:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVMainFrm.h_v  $
+ * 
+ *    Rev 1.9   12 Dec 2014 13:12:22   ryoho
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  918
+ * SCR Title:  Implement Method RegisterMonitorList for RemoteControl (SVO-369)
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   added new message handler for SV_REGISTER_MONITOR_LIST RemoteRegisterMonitorList.,
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.8   09 Dec 2014 10:12:42   tbair
  * Project:  SVObserver

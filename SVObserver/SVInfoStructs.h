@@ -5,8 +5,8 @@
 //* .Module Name     : SVIOEntryStruct
 //* .File Name       : $Workfile:   SVInfoStructs.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.3  $
-//* .Check In Date   : $Date:   14 Aug 2014 18:02:08  $
+//* .Current Version : $Revision:   1.4  $
+//* .Check In Date   : $Date:   10 Dec 2014 06:44:10  $
 //******************************************************************************
 
 #ifndef INC_SVINFOSTRUCTS_INCLUDED
@@ -225,7 +225,8 @@ struct SVInspectionInfoStruct
 	SVDataManagerHandle m_ResultImageDMIndexHandle;
 
 	bool m_CanProcess;
-	bool m_StartProcess;
+	bool m_InProcess;
+	bool m_HasBeenQueued;
 	
 	SVClock::SVTimeStamp m_BeginInspection;
 	SVClock::SVTimeStamp m_EndInspection;
@@ -497,6 +498,16 @@ private:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVInfoStructs.h_v  $
+ * 
+ *    Rev 1.4   10 Dec 2014 06:44:10   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  977
+ * SCR Title:  Fix Double Processing of Inspections with 2 Inspections on 1 PPQ
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Added flag to InspectionInfoStruct to prevent additional queuing in Inspection::StartProcess from the PPQ::StartInspection. New Flag m_HasBeenQueued.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   14 Aug 2014 18:02:08   sjones
  * Project:  SVObserver

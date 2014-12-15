@@ -5,8 +5,8 @@
 //* .Module Name     : SVGlobal
 //* .File Name       : $Workfile:   SVGlobal.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.6  $
-//* .Check In Date   : $Date:   14 Aug 2014 15:49:14  $
+//* .Current Version : $Revision:   1.7  $
+//* .Check In Date   : $Date:   10 Dec 2014 12:02:22  $
 //******************************************************************************
 
 #pragma once
@@ -842,7 +842,6 @@ enum svModeEnum
 	SVIM_MODE_REGRESSION,
 	SVIM_MODE_TEST,
 	SVIM_MODE_EDIT,
-	SVIM_MODE_EDIT_MOVE,
 	SVIM_MODE_CHANGING = 100,
 	SVIM_MODE_REMOVE = 0x8000,
 };
@@ -852,7 +851,17 @@ enum svModeEnum
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVGlobal.h_v  $
+$Log:   N:\PVCSARCH65\PROJECTFILES\ARCHIVES\SVOBSERVER_SRC\SVObserver\SVGlobal.h_v  $
+ * 
+ *    Rev 1.7   10 Dec 2014 12:02:22   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  908
+ * SCR Title:  Remove option for Operator Move (SVO 101)
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Removed Edit Move definitions.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.6   14 Aug 2014 15:49:14   mEichengruen
  * Project:  SVObserver

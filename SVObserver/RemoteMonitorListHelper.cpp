@@ -5,8 +5,8 @@
 //* .Module Name     : RemoteMonitorListHelper
 //* .File Name       : $Workfile:   RemoteMonitorListHelper.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   08 Jul 2014 08:47:10  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   12 Dec 2014 13:06:44  $
 //******************************************************************************
 #include "stdafx.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
@@ -46,7 +46,20 @@ SVString RemoteMonitorListHelper::GetNameFromMonitoredObject(const MonitoredObje
 MonitoredObject RemoteMonitorListHelper::GetMonitoredObjectFromName(const SVString& name)
 {
 	MonitoredObject obj;
-	obj.guid = SVObjectManagerClass::Instance().GetObjectIdFromCompleteName(name);
+
+	SVString sObjectName;
+	size_t iLength = name.size();
+	//Check to see if first part of name is Inspections. if so remove it.
+	if ( name.Left(12) == "Inspections." )
+	{
+		sObjectName = name.Right(iLength - 12);
+	}
+	else
+	{
+		sObjectName = name;
+	}
+
+	obj.guid = SVObjectManagerClass::Instance().GetObjectIdFromCompleteName(sObjectName);
 	SVObjectNameInfo nameInfo;
 	SVObjectNameInfo::ParseObjectName(nameInfo, name.c_str());
 	
@@ -69,6 +82,16 @@ MonitoredObject RemoteMonitorListHelper::GetMonitoredObjectFromName(const SVStri
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\RemoteMonitorListHelper.cpp_v  $
+ * 
+ *    Rev 1.1   12 Dec 2014 13:06:44   ryoho
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  918
+ * SCR Title:  Implement Method RegisterMonitorList for RemoteControl (SVO-369)
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   changed GetMonitoredObjectFromName to remove "Inspections." if it exists.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   08 Jul 2014 08:47:10   sjones
  * Project:  SVObserver

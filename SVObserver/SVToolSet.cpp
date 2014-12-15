@@ -5,8 +5,8 @@
 //* .Module Name     : SVToolSet.cpp
 //* .File Name       : $Workfile:   SVToolSet.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.6  $
-//* .Check In Date   : $Date:   09 Dec 2014 10:22:38  $
+//* .Current Version : $Revision:   1.7  $
+//* .Check In Date   : $Date:   10 Dec 2014 12:07:48  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -1598,67 +1598,6 @@ BOOL SVToolSetClass::Edit()
 }
 */
 
-/////////////////////////////////////////////////////////////////////////////
-//
-//
-//
-SVToolClass * SVToolSetClass::GetCurrentSelectedToolForOperatorMove(
-    CString& csCurrentToolName       // Filled in with name of tool
-)
-{
-    SVToolClass * pToolCurrent = NULL;
-
-	for( SVTaskObjectPtrVector::iterator l_Iter = m_aTaskObjects.begin(); pToolCurrent == NULL && l_Iter != m_aTaskObjects.end(); ++l_Iter )
-	{
-		SVToolClass* l_pTool = dynamic_cast< SVToolClass* >( *l_Iter );
-
-		if( l_pTool != NULL )
-		{
-			BOOL bToolSelectedToMove = FALSE;
-			l_pTool->ToolSelectedForOperatorMove.GetValue(bToolSelectedToMove);
-			if(bToolSelectedToMove)
-			{
-				pToolCurrent = l_pTool;
-			}
-		}
-	}
-
-    if(pToolCurrent != NULL)
-    {
-        csCurrentToolName = pToolCurrent->GetName();
-    }
-    else
-    {
-        csCurrentToolName = _T("NO TOOL SELECTED");
-    }
-
-    return pToolCurrent;
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-//
-//
-//
-void SVToolSetClass::ClearSelectedToolForOperatorMove()
-{
-    //
-    // Clear the attribute for any tool that might have 
-    // been selected as the tool to 'move' when a 
-    // configuration is first loaded or an operator with
-    // move tool privilege logs into system.
-    //
-	for( SVTaskObjectPtrVector::iterator l_Iter = m_aTaskObjects.begin(); l_Iter != m_aTaskObjects.end(); ++l_Iter )
-	{
-		SVToolClass* l_pTool = dynamic_cast< SVToolClass* >( *l_Iter );
-
-		if( l_pTool != NULL )
-		{
-			l_pTool->ToolSelectedForOperatorMove.SetDefaultValue( false, true );
-		}
-	}
-}
-
 ///////////////////////////////////////////////////////////////////////////////
 //
 //
@@ -1736,6 +1675,16 @@ HRESULT SVToolSetClass::onCollectOverlays(SVImageClass *p_Image, SVExtentMultiLi
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVToolSet.cpp_v  $
+ * 
+ *    Rev 1.7   10 Dec 2014 12:07:48   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  908
+ * SCR Title:  Remove option for Operator Move (SVO 101)
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Removed ToolSelectedForOperatorMove embedded object and member functions.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.6   09 Dec 2014 10:22:38   tbair
  * Project:  SVObserver

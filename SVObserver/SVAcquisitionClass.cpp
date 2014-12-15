@@ -950,10 +950,6 @@ HRESULT SVAcquisitionClass::GetNextBuffer( SVImageBufferInterface& p_rBuffer )
 		{
 			SVSmartHandlePointer l_ImageHandle;
 
-			//long l = l_Handle.GetIndex();
-			//BOOL B = m_AcquisitionBuffersPtr->GetImageHandle( l, l_ImageHandle );
-			//bool b = l_ImageHandle.empty();
-			//if( B && !b )
 			if( m_AcquisitionBuffersPtr->GetImageHandle( l_Handle.GetIndex(), l_ImageHandle ) && ! l_ImageHandle.empty() )
 			{
 				l_Status = p_rBuffer.Assign( l_ImageHandle, l_Handle );

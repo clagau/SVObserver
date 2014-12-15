@@ -5,8 +5,8 @@
 //* .Module Name     : SVIOController
 //* .File Name       : $Workfile:   SVIOController.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.11  $
-//* .Check In Date   : $Date:   20 Nov 2014 05:01:58  $
+//* .Current Version : $Revision:   1.12  $
+//* .Check In Date   : $Date:   12 Dec 2014 13:10:18  $
 //******************************************************************************
 
 #ifndef SVIOCONTROLLER_H
@@ -107,6 +107,7 @@ public:
 	// Returns:   void
 	//************************************
 	void ReplaceOrAddMonitorList( const RemoteMonitorNamedList& rList );
+	void ShowMonitorListTab();
 	void ValidateRemoteMonitorList();
 	HRESULT ActivateRemoteMonitorList(const SVString& listName, bool bActivate);
 	void GetActiveRemoteMonitorList(RemoteMonitorList& rActiveList) const;
@@ -134,7 +135,17 @@ private:
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\svobserver\SVIOController.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVIOController.h_v  $
+ * 
+ *    Rev 1.12   12 Dec 2014 13:10:18   ryoho
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  918
+ * SCR Title:  Implement Method RegisterMonitorList for RemoteControl (SVO-369)
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   added new method ShowMonitorListTab
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.11   20 Nov 2014 05:01:58   mziegler
  * Project:  SVObserver

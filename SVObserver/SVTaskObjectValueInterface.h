@@ -5,8 +5,8 @@
 //* .Module Name     : SVTaskObjectValueInterface
 //* .File Name       : $Workfile:   SVTaskObjectValueInterface.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   05 Nov 2014 05:13:02  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   12 Dec 2014 15:17:52  $
 //******************************************************************************
 
 #ifndef SVTASKOBJECTVALUEINTERFACE_H
@@ -38,7 +38,7 @@ public:
 	{
 		HRESULT Result( S_OK );
 
-		ObjectRef->SetArraySize( std::distance(begin, end) );
+		ObjectRef->SetArraySize( static_cast< int >( std::distance( begin, end ) ) );
 
 		long Index = 0;
 		InIterator Iter( begin );
@@ -72,6 +72,16 @@ private:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVTaskObjectValueInterface.h_v  $
+ * 
+ *    Rev 1.2   12 Dec 2014 15:17:52   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  942
+ * SCR Title:  Create new Custom2 Filter SVO-324 SVO-67 SVO-74
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Added static_cast to std::distance call to avoid type conversion warning.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   05 Nov 2014 05:13:02   gramseier
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : SVIOEntryStruct
 //* .File Name       : $Workfile:   SVInfoStructs.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.3  $
-//* .Check In Date   : $Date:   14 Aug 2014 18:08:14  $
+//* .Current Version : $Revision:   1.5  $
+//* .Check In Date   : $Date:   11 Dec 2014 06:45:42  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -359,7 +359,8 @@ SVInspectionInfoStruct::SVInspectionInfoStruct()
 	oInspectedState(),
 	m_ResultImageDMIndexHandle(),
 	m_CanProcess( false ),
-	m_StartProcess( false ),
+	m_InProcess( false ),
+	m_HasBeenQueued( false ),
 	m_BeginInspection( 0 ),
 	m_EndInspection( 0 ),
 	m_BeginToolset( 0 ),
@@ -373,10 +374,11 @@ SVInspectionInfoStruct::SVInspectionInfoStruct()
 
 SVInspectionInfoStruct::SVInspectionInfoStruct( const SVInspectionInfoStruct &p_rsvData )
 :	pInspection( NULL ),
-	oInspectedState( PRODUCT_NOT_INSPECTED ),
+	oInspectedState(),
 	m_ResultImageDMIndexHandle(),
 	m_CanProcess( false ),
-	m_StartProcess( false ),
+	m_InProcess( false ),
+	m_HasBeenQueued( false ),
 	m_BeginInspection( 0 ),
 	m_EndInspection( 0 ),
 	m_BeginToolset( 0 ),
@@ -415,7 +417,8 @@ HRESULT SVInspectionInfoStruct::Assign( const SVInspectionInfoStruct &p_rsvData,
 		pInspection = p_rsvData.pInspection;
 		oInspectedState = p_rsvData.oInspectedState;
 		m_CanProcess = p_rsvData.m_CanProcess;
-		m_StartProcess = p_rsvData.m_StartProcess;
+		m_InProcess = p_rsvData.m_InProcess;
+		m_HasBeenQueued = p_rsvData.m_HasBeenQueued;
 		m_BeginInspection = p_rsvData.m_BeginInspection;
 		m_EndInspection = p_rsvData.m_EndInspection;
 		m_BeginToolset = p_rsvData.m_BeginToolset;
@@ -443,7 +446,8 @@ void SVInspectionInfoStruct::Reset()
 	oInspectedState = PRODUCT_NOT_INSPECTED;
 
 	m_CanProcess = false;
-	m_StartProcess = false;
+	m_InProcess = false;
+	m_HasBeenQueued = false;
 
 	m_BeginInspection = 0;
 	m_EndInspection = 0;
@@ -466,7 +470,8 @@ void SVInspectionInfoStruct::Init()
 	oInspectedState = PRODUCT_NOT_INSPECTED;
 
 	m_CanProcess = false;
-	m_StartProcess = false;
+	m_InProcess = false;
+	m_HasBeenQueued = false;
 
 	m_BeginInspection = 0;
 	m_EndInspection = 0;
@@ -488,7 +493,7 @@ void SVInspectionInfoStruct::Init()
 void SVInspectionInfoStruct::ClearIndexes()
 {
 	m_CanProcess = false;
-	m_StartProcess = false;
+	m_InProcess = false;
 
 	m_ResultImageDMIndexHandle.clear();
 }
@@ -1061,7 +1066,7 @@ void SVProductInfoStruct::SetProductComplete()
 	while( l_svInspectionIter != m_svInspectionInfos.end() )
 	{
 		l_svInspectionIter->second.m_CanProcess = false;
-		l_svInspectionIter->second.m_StartProcess = false;
+		l_svInspectionIter->second.m_InProcess = false;
 
 		++l_svInspectionIter;
 	}
@@ -1466,6 +1471,26 @@ HRESULT SVProductInfoRequestStruct::GetWaitHandle( HANDLE& p_rHandle ) const
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVInfoStructs.cpp_v  $
+ * 
+ *    Rev 1.5   11 Dec 2014 06:45:42   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  977
+ * SCR Title:  Fix Double Processing of Inspections with 2 Inspections on 1 PPQ
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Initializer list for copy constructor SVInspectionInfoStruct.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.4   10 Dec 2014 06:44:10   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  977
+ * SCR Title:  Fix Double Processing of Inspections with 2 Inspections on 1 PPQ
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Added flag to InspectionInfoStruct to prevent additional queuing in Inspection::StartProcess from the PPQ::StartInspection. New Flag m_HasBeenQueued.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   14 Aug 2014 18:08:14   sjones
  * Project:  SVObserver

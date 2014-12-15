@@ -5,8 +5,8 @@
 //* .Module Name     : SVIOController
 //* .File Name       : $Workfile:   SVIOController.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.13  $
-//* .Check In Date   : $Date:   20 Nov 2014 05:02:00  $
+//* .Current Version : $Revision:   1.14  $
+//* .Check In Date   : $Date:   12 Dec 2014 13:10:18  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -677,6 +677,11 @@ void SVIOController::ReplaceOrAddMonitorList( const RemoteMonitorNamedList& rLis
 	m_RemoteMonitorListController.ReplaceOrAddMonitorList(rList);
 }
 
+void SVIOController::ShowMonitorListTab()
+{
+	m_RemoteMonitorListController.HideShowViewTab();
+}
+
 void SVIOController::ValidateRemoteMonitorList()
 {
 	m_RemoteMonitorListController.ValidateInputs();
@@ -711,7 +716,17 @@ HRESULT SVIOController::GetRemoteMonitorListProductFilter(const SVString& listNa
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\svobserver\SVIOController.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVIOController.cpp_v  $
+ * 
+ *    Rev 1.14   12 Dec 2014 13:10:18   ryoho
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  918
+ * SCR Title:  Implement Method RegisterMonitorList for RemoteControl (SVO-369)
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   added new method ShowMonitorListTab
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.13   20 Nov 2014 05:02:00   mziegler
  * Project:  SVObserver

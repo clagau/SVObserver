@@ -5,8 +5,8 @@
 //* .Module Name     : SVThreadManager
 //* .File Name       : $Workfile:   SVThreadManager.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   01 Dec 2014 14:05:58  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   10 Dec 2014 16:49:50  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -30,9 +30,16 @@ SVThreadManager::SVThreadManager()
  ,m_pSetAffinity(nullptr)
  ,m_pRemove(nullptr)
  ,m_pClear(nullptr)
+ ,m_bThreadAffinityEnabled(FALSE)
 
 {
-	Create();
+	// Temperary place to de-activate SVThreadManager
+	m_bThreadAffinityEnabled = GetPrivateProfileInt( _T( "Settings" ), _T( "ThreadManagerActive" ), 0, _T( "c:\\SVObserver\\Bin\\SVim.ini" ) );
+
+	if( m_bThreadAffinityEnabled )
+	{
+		Create();
+	}
 }
 
 SVThreadManager::~SVThreadManager()
@@ -41,7 +48,7 @@ SVThreadManager::~SVThreadManager()
 }
 
 
-HRESULT SVThreadManager::GetThreadInfo( std::list<std::string>& p_rStrList)
+HRESULT SVThreadManager::GetThreadInfo( std::list<std::string>& p_rStrList) const
 {
 	HRESULT hr = S_FALSE;
 	if( m_pGetThreadInfo != nullptr )
@@ -152,6 +159,29 @@ HRESULT SVThreadManager::Setup( LPCTSTR strName, long Affinity )
 	return hr;
 }
 
+BOOL SVThreadManager::GetThreadAffinityEnabled() const
+{
+	return m_bThreadAffinityEnabled;
+}
+
+void SVThreadManager::SetThreadAffinityEnabled( BOOL bEnable )
+{
+	HRESULT hr = S_OK;
+	if( bEnable && !m_bThreadAffinityEnabled )
+	{
+		hr = Create();
+	}
+	if( !bEnable && m_bThreadAffinityEnabled )
+	{
+		Destroy();
+	}
+	if( hr == S_OK )
+	{
+		m_bThreadAffinityEnabled = bEnable;
+	}
+}
+
+
 HRESULT SVThreadManager::GetPipeCount( long& lrPipeCount)
 {
 	HRESULT hr = S_FALSE;
@@ -243,6 +273,15 @@ void SVThreadManager::Destroy()
 		FreeLibrary( m_hThreadManagerDll );
 		m_hThreadManagerDll = nullptr;
 	}
+	m_pGetThreadInfo = nullptr;
+	m_pGetThreadInfoFilter = nullptr;
+	m_pIsAllowed = nullptr;
+	m_pAdd = nullptr;
+	m_pSetup = nullptr;
+	m_pSetAffinity = nullptr;
+	m_pRemove = nullptr;
+	m_pClear = nullptr;
+	m_pGetPipeCount = nullptr;
 }
 
 
@@ -251,6 +290,16 @@ void SVThreadManager::Destroy()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVSystemLibrary\SVThreadManager.cpp_v  $
+ * 
+ *    Rev 1.1   10 Dec 2014 16:49:50   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  960
+ * SCR Title:  Pipe/core management
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Added Get and SetThreadAffinityEnable methods.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   01 Dec 2014 14:05:58   tbair
  * Project:  SVObserver

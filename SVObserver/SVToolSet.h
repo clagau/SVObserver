@@ -5,8 +5,8 @@
 //* .Module Name     : SVToolSet
 //* .File Name       : $Workfile:   SVToolSet.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.4  $
-//* .Check In Date   : $Date:   09 Dec 2014 10:22:38  $
+//* .Current Version : $Revision:   1.5  $
+//* .Check In Date   : $Date:   10 Dec 2014 12:07:46  $
 //******************************************************************************
 
 #ifndef SVTOOLSET_H
@@ -76,9 +76,6 @@ public:
 	int					GetIndex( SVToolClass* PTool );
 
 	SVToolClass*		GetToolAt( int nIndex ) const;
-
-    SVToolClass * GetCurrentSelectedToolForOperatorMove(CString& csName);
-    void ClearSelectedToolForOperatorMove();
 
 	SVEnumerateValueObjectClass* GetDrawFlagObject();
 
@@ -163,6 +160,16 @@ private:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVToolSet.h_v  $
+ * 
+ *    Rev 1.5   10 Dec 2014 12:07:46   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  908
+ * SCR Title:  Remove option for Operator Move (SVO 101)
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Removed ToolSelectedForOperatorMove embedded object and member functions.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.4   09 Dec 2014 10:22:38   tbair
  * Project:  SVObserver

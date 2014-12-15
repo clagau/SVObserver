@@ -5,8 +5,8 @@
 //* .Module Name     : SVSecurityGeneralPage.cpp
 //* .File Name       : $Workfile:   SVSecurityGeneralPage.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.3  $
-//* .Check In Date   : $Date:   07 Jul 2014 17:06:00  $
+//* .Current Version : $Revision:   1.4  $
+//* .Check In Date   : $Date:   10 Dec 2014 12:10:24  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -144,7 +144,6 @@ void SVSecurityGeneralPage::OnNoSecurityBtn()
 	m_pAccess->SetNTGroup( SECURITY_POINT_MODE_MENU_REGRESSION_TEST,        _T("Everybody") );
 	m_pAccess->SetNTGroup( SECURITY_POINT_MODE_MENU_TEST,                   _T("Everybody") );
 	m_pAccess->SetNTGroup( SECURITY_POINT_MODE_MENU_EDIT_TOOLSET,           _T("Everybody") );
-	m_pAccess->SetNTGroup( SECURITY_POINT_MODE_MENU_EDIT_MOVE_TOOL,         _T("Everybody") );
 	m_pAccess->SetNTGroup( SECURITY_POINT_MODE_MENU_EXIT_RUN_MODE,          _T("Everybody") );
 	m_pAccess->SetNTGroup( SECURITY_POINT_EXTRAS_MENU_ADDITIONAL_ENVIRON,   _T("Everybody") );
 	m_pAccess->SetNTGroup( SECURITY_POINT_EXTRAS_MENU_TEST_OUTPUTS,         _T("Everybody") );
@@ -172,7 +171,6 @@ void SVSecurityGeneralPage::OnNoSecurityBtn()
 	m_pAccess->SetForcedPrompt( SECURITY_POINT_MODE_MENU_REGRESSION_TEST,       FALSE);
 	m_pAccess->SetForcedPrompt( SECURITY_POINT_MODE_MENU_TEST,                  FALSE);
 	m_pAccess->SetForcedPrompt( SECURITY_POINT_MODE_MENU_EDIT_TOOLSET,          FALSE);
-	m_pAccess->SetForcedPrompt( SECURITY_POINT_MODE_MENU_EDIT_MOVE_TOOL,        FALSE);
 	m_pAccess->SetForcedPrompt( SECURITY_POINT_MODE_MENU_EXIT_RUN_MODE,         FALSE);
 	m_pAccess->SetForcedPrompt( SECURITY_POINT_EXTRAS_MENU_ADDITIONAL_ENVIRON,  FALSE);
 	m_pAccess->SetForcedPrompt( SECURITY_POINT_EXTRAS_MENU_TEST_OUTPUTS,        FALSE);
@@ -209,7 +207,6 @@ void SVSecurityGeneralPage::OnTraditionalSecurityBtn()
 	m_pAccess->SetNTGroup( SECURITY_POINT_MODE_MENU_REGRESSION_TEST,  _T("Supervisor Group,Vision Worker Group,Operator Group,Move Operator Group,Restricted Operator Group") );
 	m_pAccess->SetNTGroup( SECURITY_POINT_MODE_MENU_TEST,             _T("Supervisor Group,Vision Worker Group") );
 	m_pAccess->SetNTGroup( SECURITY_POINT_MODE_MENU_EDIT_TOOLSET,     _T("Supervisor Group,Vision Worker Group") );
-	m_pAccess->SetNTGroup( SECURITY_POINT_MODE_MENU_EDIT_MOVE_TOOL,   _T("Supervisor Group,Vision Worker Group,Move Operator Group") );
 	m_pAccess->SetNTGroup( SECURITY_POINT_MODE_MENU_EXIT_RUN_MODE,        _T("Supervisor Group,Vision Worker Group,Operator Group,Move Operator Group,Restricted Operator Group") );
 	m_pAccess->SetForcedPrompt( SECURITY_POINT_MODE_MENU_EXIT_RUN_MODE, TRUE );
 
@@ -248,6 +245,16 @@ void SVSecurityGeneralPage::OnHelp()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVSecurity\SVSecurityGeneralPage.cpp_v  $
+ * 
+ *    Rev 1.4   10 Dec 2014 12:10:24   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  908
+ * SCR Title:  Remove option for Operator Move (SVO 101)
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Removed default security for Mode Operator Move
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   07 Jul 2014 17:06:00   gramseier
  * Project:  SVObserver

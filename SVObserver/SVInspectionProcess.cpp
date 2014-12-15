@@ -5,8 +5,8 @@
 //* .Module Name     : SVInspectionProcess
 //* .File Name       : $Workfile:   SVInspectionProcess.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.21  $
-//* .Check In Date   : $Date:   09 Dec 2014 09:20:50  $
+//* .Current Version : $Revision:   1.22  $
+//* .Check In Date   : $Date:   10 Dec 2014 06:44:10  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -1146,7 +1146,7 @@ HRESULT SVInspectionProcess::StartProcess( SVProductInfoStruct *pProduct )
 		SVInspectionInfoStruct& l_rIPInfo = pProduct->m_svInspectionInfos[ GetUniqueObjectID() ];
 
 		l_rIPInfo.m_CanProcess = false;
-		l_rIPInfo.m_StartProcess = true;
+		l_rIPInfo.m_InProcess = true;
 
 		SVProductInfoStruct l_TempProduct;
 
@@ -1180,6 +1180,10 @@ HRESULT SVInspectionProcess::StartProcess( SVProductInfoStruct *pProduct )
 
 			++l_ImageIter;
 		}
+
+		// Set the flag in the Temp product because it gets reset when copying from the
+		// pProduct->m_svInspectionInfos to the Temp product. And that get put in the m_qInspectionsQueue.
+		l_TempProduct.m_svInspectionInfos[GetUniqueObjectID()].m_HasBeenQueued = true;
 
 		if( hr == S_OK && m_qInspectionsQueue.AddTail( l_TempProduct ) )
 		{
@@ -4817,6 +4821,16 @@ void SVInspectionProcess::Persist(SVObjectWriter& rWriter)
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVInspectionProcess.cpp_v  $
+ * 
+ *    Rev 1.22   10 Dec 2014 06:44:10   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  977
+ * SCR Title:  Fix Double Processing of Inspections with 2 Inspections on 1 PPQ
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Added flag to InspectionInfoStruct to prevent additional queuing in Inspection::StartProcess from the PPQ::StartInspection. New Flag m_HasBeenQueued.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.21   09 Dec 2014 09:20:50   tbair
  * Project:  SVObserver
