@@ -196,6 +196,7 @@
     </Bscmake>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="SVEditControlWithHelp.cpp" />
     <ClCompile Include="DisplayHelper.cpp" />
     <ClCompile Include="Regexp.cpp">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -313,6 +314,7 @@
     <ClCompile Include="ZoomHelper.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="SVEditControlWithHelp.h" />
     <ClInclude Include="DisplayHelper.h" />
     <ClInclude Include="Regexp.h" />
     <ClInclude Include="StdAfx.h" />

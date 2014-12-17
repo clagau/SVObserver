@@ -5,8 +5,8 @@
 //* .Module Name     : ObjectSelectorPpg
 //* .File Name       : $Workfile:   ObjectSelectorPpg.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.3  $
-//* .Check In Date   : $Date:   04 Dec 2014 03:13:50  $
+//* .Current Version : $Revision:   1.4  $
+//* .Check In Date   : $Date:   16 Dec 2014 17:39:38  $
 //* ----------------------------------------------------------------------------
 //* This class is the object selector property page 
 //******************************************************************************
@@ -88,6 +88,7 @@ namespace Seidenader
 
 			virtual void DoDataExchange(CDataExchange* pDX);
 			virtual BOOL OnInitDialog();
+			virtual BOOL OnSetActive();
 			afx_msg void OnSize(UINT nType, int cx, int cy);
 			afx_msg void OnHelp();
 			afx_msg BOOL OnHelpInfo(HELPINFO* pHelpInfo);
@@ -122,6 +123,16 @@ namespace Seidenader
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\ObjectSelectorLibrary\ObjectSelectorPpg.h_v  $
+ * 
+ *    Rev 1.4   16 Dec 2014 17:39:38   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  933
+ * SCR Title:  Add Filter Tab to Object Selector (SVO-377)
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   Added method OnSetActive.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   04 Dec 2014 03:13:50   gramseier
  * Project:  SVObserver

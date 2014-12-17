@@ -5,8 +5,8 @@
 //* .Module Name     : ObjectTreeCtrl
 //* .File Name       : $Workfile:   ObjectTreeCtrl.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.4  $
-//* .Check In Date   : $Date:   04 Dec 2014 03:20:50  $
+//* .Current Version : $Revision:   1.5  $
+//* .Check In Date   : $Date:   16 Dec 2014 17:40:30  $
 //******************************************************************************
 
 #pragma region Includes
@@ -196,7 +196,11 @@ bool ObjectTreeCtrl::setCheckItem( const HTREEITEM& rItem )
 		//Check if item is checkable
 		if( isCheckable() )
 		{
-			clearLastCheckedItem( rItem );
+			if( isSingleSelect() )
+			{
+				clearLastCheckedItem( rItem );
+			}
+
 			TreeItemSet Items;
 
 			Items.insert( rItem );
@@ -259,10 +263,11 @@ bool ObjectTreeCtrl::setCheckState( const TreeItemSet& rParentItems, IObjectSele
 			}
 
 			Iter->second.setCheckedState( CheckedState );
-			SetItemState( *ParentIter, INDEXTOSTATEIMAGEMASK( CheckedState ),  TVIS_STATEIMAGEMASK);
+			SetItemState( *ParentIter, INDEXTOSTATEIMAGEMASK( CheckedState ), TVIS_STATEIMAGEMASK );
 			m_UpdateItems.insert( Iter->first );
 
-			setParentState( Iter );
+			SVStringSet updateItems = getParentPropPage().getTreeContainer().setParentState( Iter );
+			m_UpdateItems.insert(updateItems.begin(), updateItems.end());
 			if( Iter->second.isNode() )
 			{
 				setChildrenState( Iter, CheckedState );
@@ -292,27 +297,6 @@ void ObjectTreeCtrl::setChildrenState( ObjectTreeItems::iterator& rIter, IObject
 	}
 }
 
-void ObjectTreeCtrl::setParentState( ObjectTreeItems::iterator& rIter )
-{
-	if( !rIter.parent()->is_root() )
-	{
-		ObjectTreeItems::iterator ParentIter = getParentPropPage().getTreeContainer().findItem( rIter.parent()->get()->first );
-
-		if( getParentPropPage().getTreeContainer().end() != ParentIter )
-		{
-			IObjectSelectorItem::CheckedStateEnum CheckedState = IObjectSelectorItem::UncheckedEnabled;
-
-			CheckedState = getParentPropPage().getTreeContainer().getNodeCheckedState( ParentIter );
-			if( ParentIter->second.getCheckedState() != CheckedState )
-			{
-				ParentIter->second.setCheckedState( CheckedState );
-				m_UpdateItems.insert( ParentIter->first );
-				setParentState( ParentIter );
-			}
-		}
-	}
-}
-
 void ObjectTreeCtrl::clearLastCheckedItem( const HTREEITEM& rItem )
 {
 	if( isSingleSelect() )
@@ -322,18 +306,10 @@ void ObjectTreeCtrl::clearLastCheckedItem( const HTREEITEM& rItem )
 		{
 			if( m_CurrentSelection != *pLocation )
 			{
-				ObjectTreeItems::iterator Iter( getParentPropPage().getTreeContainer().end() );
+				SVStringSet updateItems = getParentPropPage().getTreeContainer().clearItem (m_CurrentSelection);
+				m_UpdateItems.insert(updateItems.begin(), updateItems.end());
 
-				Iter = getParentPropPage().getTreeContainer().findItem( m_CurrentSelection );
-				if( getParentPropPage().getTreeContainer().end() != Iter )
-				{
-					Iter->second.setCheckedState( IObjectSelectorItem::UncheckedEnabled );
-
-					m_UpdateItems.insert( Iter->first );
-					setParentState( Iter );
-				}
-
-				Iter = getParentPropPage().getTreeContainer().findItem( *pLocation );
+				ObjectTreeItems::iterator Iter = getParentPropPage().getTreeContainer().findItem( *pLocation );
 
 				if( getParentPropPage().getTreeContainer().end() != Iter )
 				{
@@ -358,6 +334,16 @@ void ObjectTreeCtrl::clearLastCheckedItem( const HTREEITEM& rItem )
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\ObjectSelectorLibrary\ObjectTreeCtrl.cpp_v  $
+ * 
+ *    Rev 1.5   16 Dec 2014 17:40:30   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  933
+ * SCR Title:  Add Filter Tab to Object Selector (SVO-377)
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   Updated methods setCheckItem, setCheckState.  Moved method setParentState to ObjectTreeItems.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.4   04 Dec 2014 03:20:50   gramseier
  * Project:  SVObserver

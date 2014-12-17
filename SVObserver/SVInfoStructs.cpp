@@ -5,8 +5,8 @@
 //* .Module Name     : SVIOEntryStruct
 //* .File Name       : $Workfile:   SVInfoStructs.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.5  $
-//* .Check In Date   : $Date:   11 Dec 2014 06:45:42  $
+//* .Current Version : $Revision:   1.6  $
+//* .Check In Date   : $Date:   16 Dec 2014 06:54:08  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -356,7 +356,7 @@ void SVTriggerInfoStruct::Init()
 
 SVInspectionInfoStruct::SVInspectionInfoStruct()
 :	pInspection( NULL ),
-	oInspectedState(),
+	oInspectedState(PRODUCT_NOT_INSPECTED),
 	m_ResultImageDMIndexHandle(),
 	m_CanProcess( false ),
 	m_InProcess( false ),
@@ -1471,6 +1471,16 @@ HRESULT SVProductInfoRequestStruct::GetWaitHandle( HANDLE& p_rHandle ) const
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVInfoStructs.cpp_v  $
+ * 
+ *    Rev 1.6   16 Dec 2014 06:54:08   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  977
+ * SCR Title:  Fix Double Processing of Inspections with 2 Inspections on 1 PPQ
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Fixed merge error.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.5   11 Dec 2014 06:45:42   tbair
  * Project:  SVObserver

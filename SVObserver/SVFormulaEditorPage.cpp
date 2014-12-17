@@ -5,8 +5,8 @@
 //* .Module Name     : SVFormulaEditorPageClass
 //* .File Name       : $Workfile:   SVFormulaEditorPage.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.9  $
-//* .Check In Date   : $Date:   04 Dec 2014 04:52:24  $
+//* .Current Version : $Revision:   1.10  $
+//* .Check In Date   : $Date:   16 Dec 2014 17:58:22  $
 //******************************************************************************
 
 #pragma region Includes
@@ -22,6 +22,7 @@
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
 #include "SVPPQObject.h"
+#include "EnvironmentObject.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -95,7 +96,7 @@ void SVFormulaEditorPageClass::DoDataExchange(CDataExchange* pDX)
 	//}}AFX_DATA_MAP
 }
 
-BOOL SVFormulaEditorPageClass::OnInitDialog() 
+BOOL SVFormulaEditorPageClass::OnInitDialog()
 {
 	CPropertyPage::OnInitDialog();
 
@@ -134,7 +135,7 @@ BOOL SVFormulaEditorPageClass::OnInitDialog()
 	// EXCEPTION: OCX Property Pages should return FALSE
 }
 
-void SVFormulaEditorPageClass::OnOK() 
+void SVFormulaEditorPageClass::OnOK()
 {
 	CString equationText = getEquationText();
 
@@ -387,7 +388,14 @@ void SVFormulaEditorPageClass::OnLocalVariableSelect()
 	ObjectTreeGenerator::Instance().setLocationFilter( ObjectTreeGenerator::FilterOutput, FqnPPQVariables, SVString( _T("") ) );
 	ObjectTreeGenerator::Instance().setAllowWholeArrays( true );
 
-	ObjectTreeGenerator::Instance().insertTreeObjects( FqnEnvironmentMode );
+	EnvironmentObject* pEnvironment = nullptr;
+	SVObjectManagerClass::Instance().GetRootChildObject(pEnvironment, SVObjectManagerClass::Environment);
+	if ( nullptr != pEnvironment )
+	{
+		SVStringArray objectNameList;
+		pEnvironment->getEnvironmentObjectNameList(objectNameList, Seidenader::SVObjectLibrary::FqnEnvironmentMode, SV_VIEWABLE );
+		ObjectTreeGenerator::Instance().insertTreeObjects( objectNameList );
+	}
 	ObjectTreeGenerator::Instance().insertTreeObjects( PPQName );
 
 	SVStringArray PpqVariables = m_rFormulaController.getPPQVariableNames();
@@ -406,12 +414,14 @@ void SVFormulaEditorPageClass::OnLocalVariableSelect()
 	ObjectTreeGenerator::Instance().insertOutputList( OutputList );
 
 	CString ToolsetOutput;
-	ToolsetOutput.LoadString ( IDS_SELECT_TOOLSET_OUTPUT );
+	ToolsetOutput.LoadString( IDS_SELECT_TOOLSET_OUTPUT );
 	SVString Title;
-	Title.Format(_T("%s - %s"), ToolsetOutput , InspectionName.c_str() );
-	SVString TabTitle = ToolsetOutput; 
-
-	INT_PTR Result = ObjectTreeGenerator::Instance().showDialog( Title, TabTitle, this );
+	Title.Format( _T("%s - %s"), ToolsetOutput, InspectionName.c_str() );
+	SVString mainTabTitle = ToolsetOutput;
+	CString Filter;
+	Filter.LoadString( IDS_FILTER );
+	SVString filterTabTitle = Filter;
+	INT_PTR Result = ObjectTreeGenerator::Instance().showDialog( Title, mainTabTitle, filterTabTitle, this );
 
 	if( IDOK == Result )
 	{
@@ -420,7 +430,7 @@ void SVFormulaEditorPageClass::OnLocalVariableSelect()
 	}
 }
 
-void SVFormulaEditorPageClass::OnAddLocalVariableButton() 
+void SVFormulaEditorPageClass::OnAddLocalVariableButton()
 {
 	UpdateData( TRUE );
 
@@ -441,14 +451,14 @@ void SVFormulaEditorPageClass::OnAddLocalVariableButton()
 		}
 		else
 		{
-			// Variables are delimited by double qoutes
+			// Variables are delimited by double quotes
 			CString sName = QUOTE + m_strToolsetOutputVariable + QUOTE;
 			insertIntoRichEdit( sName );
 		}
 	}
 }
 
-void SVFormulaEditorPageClass::OnAddConstantButton() 
+void SVFormulaEditorPageClass::OnAddConstantButton()
 {
 	UpdateData( TRUE );
 
@@ -474,7 +484,6 @@ void SVFormulaEditorPageClass::OnAddConstantButton()
 	}
 }
 
-
 void SVFormulaEditorPageClass::OnDisable()
 {
 	if (m_isConditionalPage)
@@ -490,7 +499,7 @@ void SVFormulaEditorPageClass::OnDisable()
 
 //The function length breaks the programming guidelines, but it is only one switch statement.
 //To change this would reduce the understanding of the functionality.
-BOOL SVFormulaEditorPageClass::OnCommand(WPARAM wParam, LPARAM lParam) 
+BOOL SVFormulaEditorPageClass::OnCommand(WPARAM wParam, LPARAM lParam)
 {
 	// IDs must be sequential within a toolbar!
 	switch (LOWORD(wParam))
@@ -656,7 +665,7 @@ BOOL SVFormulaEditorPageClass::OnCommand(WPARAM wParam, LPARAM lParam)
 	return CPropertyPage::OnCommand(wParam, lParam);
 }
 
-bool SVFormulaEditorPageClass::validateAndSetEquation() 
+bool SVFormulaEditorPageClass::validateAndSetEquation()
 {
 	if( GetSafeHwnd() )
 	{
@@ -674,7 +683,7 @@ bool SVFormulaEditorPageClass::validateAndSetEquation()
 	return true;
 }
 
-void SVFormulaEditorPageClass::onValidate() 
+void SVFormulaEditorPageClass::onValidate()
 {
 	SVString equationText = getEquationText();
 
@@ -782,10 +791,10 @@ void SVFormulaEditorPageClass::enableControls()
 	{
 		m_validateBar.EnableWindow( state );
 	}
-	
+
 	m_ToolsetOutputSelectButton.EnableWindow( state );
 	m_AddLocalVariableCtrl.EnableWindow( state );
-	
+
 	m_ConstantEditCtrl.EnableWindow( state );
 	m_AddConstantCtrl.EnableWindow( state );
 	m_decimalRadioButton.EnableWindow( state );
@@ -809,6 +818,16 @@ void SVFormulaEditorPageClass::enableControls()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVFormulaEditorPage.cpp_v  $
+ * 
+ *    Rev 1.10   16 Dec 2014 17:58:22   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  933
+ * SCR Title:  Add Filter Tab to Object Selector (SVO-377)
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   Changed the OnLocalVariableSelect method to put the Environment.Mode items in the correct order and specify the title of the Object Selector's Filter Page.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.9   04 Dec 2014 04:52:24   gramseier
  * Project:  SVObserver

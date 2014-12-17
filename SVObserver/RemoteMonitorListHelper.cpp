@@ -5,8 +5,8 @@
 //* .Module Name     : RemoteMonitorListHelper
 //* .File Name       : $Workfile:   RemoteMonitorListHelper.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   12 Dec 2014 13:06:44  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   16 Dec 2014 10:01:22  $
 //******************************************************************************
 #include "stdafx.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
@@ -50,7 +50,7 @@ MonitoredObject RemoteMonitorListHelper::GetMonitoredObjectFromName(const SVStri
 	SVString sObjectName;
 	size_t iLength = name.size();
 	//Check to see if first part of name is Inspections. if so remove it.
-	if ( name.Left(12) == "Inspections." )
+	if ( iLength >= 12 && name.Left(12) == "Inspections." )
 	{
 		sObjectName = name.Right(iLength - 12);
 	}
@@ -82,6 +82,16 @@ MonitoredObject RemoteMonitorListHelper::GetMonitoredObjectFromName(const SVStri
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\RemoteMonitorListHelper.cpp_v  $
+ * 
+ *    Rev 1.2   16 Dec 2014 10:01:22   ryoho
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  918
+ * SCR Title:  Implement Method RegisterMonitorList for RemoteControl (SVO-369)
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   checked to make sure the length was at least 12 before checking to see if the first 12 characters were Inspections.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   12 Dec 2014 13:06:44   ryoho
  * Project:  SVObserver

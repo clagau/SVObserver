@@ -5,8 +5,8 @@
 //* .Module Name     : NodeTreeCtrl
 //* .File Name       : $Workfile:   NodeTreeCtrl.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.3  $
-//* .Check In Date   : $Date:   04 Dec 2014 03:10:58  $
+//* .Current Version : $Revision:   1.4  $
+//* .Check In Date   : $Date:   16 Dec 2014 17:32:42  $
 //******************************************************************************
 
 #pragma region Includes
@@ -38,7 +38,7 @@ BEGIN_MESSAGE_MAP(NodeTreeCtrl, ObjectTreeCtrl)
 END_MESSAGE_MAP()
 
 #pragma region Constructor
-NodeTreeCtrl::NodeTreeCtrl(  ObjectSelectorPpg& rParent, bool SingleSelect  )
+NodeTreeCtrl::NodeTreeCtrl( ObjectSelectorPpg& rParent, bool SingleSelect )
 	: ObjectTreeCtrl( rParent, SingleSelect )
 {
 	if( SingleSelect )
@@ -59,7 +59,7 @@ void NodeTreeCtrl::loadTree()
 
 	DeleteAllItems();
 
-	HTREEITEM ParentItem = NULL;
+	HTREEITEM ParentItem = nullptr;
 	TreeItemSet CurrentItems;
 
 	ObjectTreeItems::SVTree_pre_order_iterator Iter( getParentPropPage().getTreeContainer().pre_order_begin() );
@@ -88,7 +88,7 @@ void NodeTreeCtrl::loadTree()
 				ParentItem,
 				TVI_LAST );
 
-			SetItemState( Item, INDEXTOSTATEIMAGEMASK( Iter->second.getCheckedState() ),  TVIS_STATEIMAGEMASK );
+			SetItemState( Item, INDEXTOSTATEIMAGEMASK( Iter->second.getCheckedState() ), TVIS_STATEIMAGEMASK );
 			Iter->second.setTreeItem( Item );
 		}
 		//On initial load check if leaf value selected when in single object selection mode
@@ -106,38 +106,51 @@ void NodeTreeCtrl::loadTree()
 	}
 
 	selectFirstItem( CurrentItems );
-	
+
 	SetRedraw(TRUE);
 }
 
 void NodeTreeCtrl::updateTree()
 {
-	SVStringSet::const_iterator IterName = getUpdateItems().begin();
+	SVStringSet updateItems = getUpdateItems();
+	SVStringSet::const_iterator IterName = updateItems.begin();
 
-	while( getUpdateItems().end()  != IterName )
+	while( updateItems.end() != IterName )
 	{
-		ObjectTreeItems::iterator Iter;
+		ObjectTreeItems treeItems = getParentPropPage().getTreeContainer();
+		ObjectTreeItems::iterator Iter( treeItems.findItem( *IterName ) );
 
-		Iter = getParentPropPage().getTreeContainer().findItem( *IterName );
-		if( getParentPropPage().getTreeContainer().end() != Iter )
+		if( treeItems.end() != Iter )
 		{
-			if( Iter->second.isNode() && (NULL != Iter->second.getTreeItem()) )
-			{
-				IObjectSelectorItem::CheckedStateEnum CheckedState( IObjectSelectorItem::EmptyEnabled );
-				CheckedState = static_cast<IObjectSelectorItem::CheckedStateEnum> (GetItemState(Iter->second.getTreeItem(), TVIS_STATEIMAGEMASK)>>12);
-				//Check if state has changed
-				if( Iter->second.getCheckedState() != CheckedState )
-				{
-					SetItemState( Iter->second.getTreeItem(), INDEXTOSTATEIMAGEMASK( Iter->second.getCheckedState() ),  TVIS_STATEIMAGEMASK );
-				}
-			}
+			UpdateNode(Iter->second);
 		}
 		++IterName;
 	}
 
-	getUpdateItems().clear();
+	updateItems.clear();
 }
 
+void NodeTreeCtrl::UpdateAllNodes()
+{
+	ObjectTreeItems::SVTree_pre_order_iterator i( getParentPropPage().getTreeContainer().pre_order_begin() );
+
+	while( getParentPropPage().getTreeContainer().pre_order_end() != i )
+	{
+		if( i.node()->is_root() )
+		{
+			++i;
+			continue;
+		}
+
+		UpdateNode(i->second);
+
+		if( isSingleSelect() && i->second.isLeaf() && IObjectSelectorItem::CheckedEnabled == i->second.getCheckedState() )
+		{
+			setCurrentSelection( i->second.getLocation() );
+		}
+		++i;
+	}
+}
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
@@ -346,6 +359,23 @@ bool NodeTreeCtrl::ExpandToCheckedItems()
 
 	return Result;
 }
+
+void NodeTreeCtrl::UpdateNode( ObjectSelectorItem &Item )
+{
+	bool isNode = Item.isNode();
+	const HTREEITEM treeItem = Item.getTreeItem();
+
+	if( isNode && ( nullptr != treeItem ) )
+	{
+		IObjectSelectorItem::CheckedStateEnum CheckedState = static_cast<IObjectSelectorItem::CheckedStateEnum>(GetItemState(treeItem, TVIS_STATEIMAGEMASK)>>12);
+		IObjectSelectorItem::CheckedStateEnum itemCheckedState = Item.getCheckedState();
+		//Check if state has changed
+		if( itemCheckedState != CheckedState )
+		{
+			SetItemState( treeItem, INDEXTOSTATEIMAGEMASK( itemCheckedState ), TVIS_STATEIMAGEMASK );
+		}
+	}
+}
 #pragma endregion Protected Methods
 
 //******************************************************************************
@@ -353,6 +383,16 @@ bool NodeTreeCtrl::ExpandToCheckedItems()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\ObjectSelectorLibrary\NodeTreeCtrl.cpp_v  $
+ * 
+ *    Rev 1.4   16 Dec 2014 17:32:42   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  933
+ * SCR Title:  Add Filter Tab to Object Selector (SVO-377)
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   Code review clean up.  Optimized method updateTree.  Added methods UpdateAllNodes and UpdateNode.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   04 Dec 2014 03:10:58   gramseier
  * Project:  SVObserver

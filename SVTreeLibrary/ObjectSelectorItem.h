@@ -5,8 +5,8 @@
 //* .Module Name     : ObjectSelectorItem
 //* .File Name       : $Workfile:   ObjectSelectorItem.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   04 Dec 2014 09:02:56  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   16 Dec 2014 18:16:34  $
 //* ----------------------------------------------------------------------------
 //* This class is used to define a single selector item for the tree
 //******************************************************************************
@@ -109,16 +109,16 @@ namespace Seidenader
 			virtual void setDisplayLocation( const SVString& rDisplayLocation ) override;
 
 			/**********
-			 The method gets the item type
-			 \return the type of the item
+			 The method gets the name of the item type
+			 \return the type of the item as a string
 			***********/
-			virtual const ItemTypeEnum& getItemType() const override;
+			virtual const SVString& getItemTypeName() const override;
 
 			/**********
-			 The method sets the tree path of the item
-			 \param rItemType <in> a reference to the type of the item
+			 The method sets the name of the item type
+			 \param rItemType <in> a reference to the string indicating the item's type
 			***********/
-			virtual void setItemType( const ItemTypeEnum ItemType ) override;
+			virtual void setItemTypeName( const SVString& ItemTypeName ) override;
 
 			/**********
 			 The method gets the handle to the corresponding tree item
@@ -240,7 +240,7 @@ namespace Seidenader
 			SVString			m_Name;						//The name of the item
 			SVString			m_Location;					//The location of the item
 			SVString			m_DisplayLocation;			//The display location of the item
-			ItemTypeEnum		m_ItemType;					//The data type of the item
+			SVString			m_ItemTypeName;				//The name of the data type of the item
 			HTREEITEM			m_TreeItem;					//the corresponding tree item handle
 			_variant_t			m_ItemKey;					//The item key
 			AttributeEnum		m_Attribute;				//The item attribute
@@ -261,6 +261,16 @@ namespace Seidenader
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVTreeLibrary\ObjectSelectorItem.h_v  $
+ * 
+ *    Rev 1.2   16 Dec 2014 18:16:34   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  933
+ * SCR Title:  Add Filter Tab to Object Selector (SVO-377)
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   Changed types from ItemTypeEnum to SVString.  Changed the method getItemType to getItemTypeName.  Changed the method setItemType to setItemTypeName.  Changed m_ItemType to m_ItemTypeName.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   04 Dec 2014 09:02:56   gramseier
  * Project:  SVObserver

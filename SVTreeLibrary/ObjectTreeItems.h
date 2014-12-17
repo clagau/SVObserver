@@ -5,8 +5,8 @@
 //* .Module Name     : ObjectTreeItems
 //* .File Name       : $Workfile:   ObjectTreeItems.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   04 Dec 2014 09:02:54  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   16 Dec 2014 18:17:32  $
 //* ----------------------------------------------------------------------------
 //* This class is used to define the object selector tree
 //******************************************************************************
@@ -95,6 +95,20 @@ namespace Seidenader
 			 \return the iterator to the found item
 			***********/
 			iterator findItem( const SVString& rDisplayLocation, bool CreateIfNone = false );
+
+			/**********
+			The method sets the state of the parent items
+			\param rIter <in> a reference to the parent iterator
+			\return string set (location names) of changed parent
+			***********/
+			SVStringSet setParentState( const SVTreeLibrary::ObjectTreeItems::iterator& rIter );
+
+			/**********
+			 The method clears (unchecked) a item at the specified location and update also the parents if necessary.
+			 \param rLocation <in> a reference to the location of the item
+			 \return string set (location names) of changed items.
+			***********/
+			SVStringSet clearItem(const SVString& itemLocation);
 		#pragma endregion Public Methods
 		
 		private:
@@ -130,6 +144,16 @@ namespace Seidenader
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVTreeLibrary\ObjectTreeItems.h_v  $
+ * 
+ *    Rev 1.3   16 Dec 2014 18:17:32   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  933
+ * SCR Title:  Add Filter Tab to Object Selector (SVO-377)
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   Added methods setParentState (moved from ObjectTreeCtrl) and clearItem.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   04 Dec 2014 09:02:54   gramseier
  * Project:  SVObserver

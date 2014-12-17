@@ -5,8 +5,8 @@
 //* .Module Name     : ObjectTreeGenerator
 //* .File Name       : $Workfile:   ObjectTreeGenerator.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.4  $
-//* .Check In Date   : $Date:   12 Dec 2014 03:28:20  $
+//* .Current Version : $Revision:   1.5  $
+//* .Check In Date   : $Date:   16 Dec 2014 17:42:54  $
 //******************************************************************************
 
 #pragma region Includes
@@ -19,6 +19,10 @@
 #include "SVOResource\resource.h"
 #include "ResizablePropertySheet.h"
 #include "ObjectSelectorPpg.h"
+#include "ObjectFilterPpg.h"
+#include "SVObjectLibrary\SVObjectLibrary.h"
+#include "SVObserver\SVValueObjectClass.h"
+#include "SVObserver\BasicValueObject.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -194,15 +198,15 @@ void ObjectTreeGenerator::insertOutputList( SVOutputInfoListClass& rOutputList )
 	insertTreeObjects( ObjectList );
 }
 
-INT_PTR ObjectTreeGenerator::showDialog( const SVString& rTitle, const SVString& rTabTitle, CWnd* pParent )
+INT_PTR ObjectTreeGenerator::showDialog( const SVString& title, const SVString& mainTabTitle, const SVString& filterTabTitle, CWnd* pParent )
 {
 	INT_PTR Result( IDCANCEL );
-	HINSTANCE ResourceInstance( NULL );
+	HINSTANCE ResourceInstance( nullptr );
 
 	//Make sure Object result cleared could still have previous result
 	m_Results.clear();
 
-	if( S_OK == LoadDll::Instance().getDll( SVOResourceDll, ResourceInstance ) && ( NULL != ResourceInstance) )
+	if( S_OK == LoadDll::Instance().getDll( SVOResourceDll, ResourceInstance ) && ( nullptr != ResourceInstance) )
 	{
 		CWaitCursor* pWait = new CWaitCursor;
 
@@ -220,14 +224,15 @@ INT_PTR ObjectTreeGenerator::showDialog( const SVString& rTitle, const SVString&
 		{
 			pParent = AfxGetApp()->GetMainWnd();
 		}
-		CResizablePropertySheet Sheet( rTitle.c_str(), pParent );
-
-		ObjectSelectorPpg ObjectSelectorPage( m_TreeContainer, rTabTitle,  isSingleObject );
+		CResizablePropertySheet Sheet( title.c_str(), pParent );
+		ObjectSelectorPpg selectorPage( m_TreeContainer, mainTabTitle, isSingleObject );
+		ObjectFilterPpg filterPage( m_TreeContainer, filterTabTitle, isSingleObject );
 
 		//Don't display the apply button
 		Sheet.m_psh.dwFlags |= PSH_NOAPPLYNOW;
 
-		Sheet.AddPage( &ObjectSelectorPage );
+		Sheet.AddPage( &selectorPage );
+		Sheet.AddPage( &filterPage );
 		int HelpID( IDD_OBJECT_SELECTOR_PPG );
 		if( isSingleObject)
 		{
@@ -244,7 +249,7 @@ INT_PTR ObjectTreeGenerator::showDialog( const SVString& rTitle, const SVString&
 				HelpID = IDD_PUBLISHED_RESULTS;
 			}
 		}
-		ObjectSelectorPage.setHelpID( HelpID );
+		selectorPage.setHelpID( HelpID );
 
 		delete pWait;
 		pWait = nullptr;
@@ -351,60 +356,22 @@ int ObjectTreeGenerator::convertObjectArrayName( const SVObjectReference& rObjec
 #pragma region Private Methods
 void ObjectTreeGenerator::setSelectorItemType( const SVObjectReference& rObjectRef, ObjectSelectorItem &rSelectorItem )
 {
-	switch( rObjectRef->GetObjectType() )
+	SVObjectClass *pObject = rObjectRef.Object();
+
+	if ( SV_IS_KIND_OF( pObject, SVValueObjectClass ) )
 	{
-	case SVDWordValueObjectType:
-		{
-			rSelectorItem.setItemType( ObjectSelectorItem::ItDword );
-		}
-		break;
-	case SVLongValueObjectType:
-		{
-			rSelectorItem.setItemType( ObjectSelectorItem::ItLong );
-		}
-		break;
-	case SVDoubleValueObjectType:
-		{
-			rSelectorItem.setItemType( ObjectSelectorItem::ItDouble );
-		}
-		break;
-	case SVBoolValueObjectType:
-		{
-			rSelectorItem.setItemType( ObjectSelectorItem::ItBool );
-		}
-		break;
-	case SVPointValueObjectType:
-		{
-			rSelectorItem.setItemType( ObjectSelectorItem::ItPoint );
-		}
-		break;
-	case SVByteValueObjectType:
-		{
-			rSelectorItem.setItemType( ObjectSelectorItem::ItByte );
-		}
-		break;
-	case SVStringValueObjectType:
-		{
-			rSelectorItem.setItemType( ObjectSelectorItem::ItString );
-		}
-		break;
-	case SVInt64ValueObjectType:
-		{
-			rSelectorItem.setItemType( ObjectSelectorItem::ItInt64 );
-		}
-		break;
-	case SVCharValueObjectType:
-		{
-			rSelectorItem.setItemType( ObjectSelectorItem::ItChar );
-		}
-		break;
-	case SVVariantValueObjectType:
-		{
-			rSelectorItem.setItemType( ObjectSelectorItem::ItVariant );
-		}
-		break;
-	default:
-		break;
+		CString typeName = _T("");
+		(static_cast<SVValueObjectClass*>(pObject))->GetTypeName(typeName);
+		rSelectorItem.setItemTypeName(typeName);
+	}
+	else if( SV_IS_KIND_OF( pObject, BasicValueObject ) )
+	{
+		BasicValueObject *pBasicObject = static_cast<BasicValueObject*>(pObject);
+		rSelectorItem.setItemTypeName(pBasicObject->getTypeName());
+	}
+	else
+	{
+		rSelectorItem.setItemTypeName(_T(""));
 	}
 }
 
@@ -626,6 +593,16 @@ void ObjectTreeGenerator::convertLocation()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\ObjectSelectorLibrary\ObjectTreeGenerator.cpp_v  $
+ * 
+ *    Rev 1.5   16 Dec 2014 17:42:54   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  933
+ * SCR Title:  Add Filter Tab to Object Selector (SVO-377)
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   Changed showDialog method to show Filter page.  Simplified setSelectorItemType method.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.4   12 Dec 2014 03:28:20   gramseier
  * Project:  SVObserver

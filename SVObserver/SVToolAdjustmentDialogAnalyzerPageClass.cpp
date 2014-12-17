@@ -5,8 +5,8 @@
 //* .Module Name     : SVToolAdjustmentDialogAnalyzerPageClass
 //* .File Name       : $Workfile:   SVToolAdjustmentDialogAnalyzerPageClass.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.5  $
-//* .Check In Date   : $Date:   17 Jul 2014 20:59:58  $
+//* .Current Version : $Revision:   1.6  $
+//* .Check In Date   : $Date:   16 Dec 2014 18:04:26  $
 //******************************************************************************
 
 #pragma region Includes
@@ -414,10 +414,10 @@ void SVToolAdjustmentDialogAnalyzerPageClass::OnPublishButton()
 {
 	if( nullptr == m_pCurrentAnalyzer || nullptr == m_pTool ) { return; }
 
-	msvError.ClearLastErrorCd ();
+	msvError.ClearLastErrorCd();
 
 	SVInspectionProcess* pInspection = m_pTool->GetInspection();
-	if( NULL == pInspection ) { return; }
+	if( nullptr == pInspection ) { return; }
 
 	ObjectTreeGenerator::Instance().setSelectorType( ObjectTreeGenerator::SelectorTypeEnum::TypeSetAttributes );
 	ObjectTreeGenerator::Instance().setAttributeFilters( SV_PUBLISHABLE );
@@ -428,22 +428,24 @@ void SVToolAdjustmentDialogAnalyzerPageClass::OnPublishButton()
 	ObjectTreeGenerator::Instance().insertOutputList( OutputList );
 
 	CString PublishableResults;
-	PublishableResults.LoadString ( IDS_PUBLISHABLE_RESULTS );
+	PublishableResults.LoadString( IDS_PUBLISHABLE_RESULTS );
 	SVString Title;
 	SVString ToolName( m_pTool->GetName() );
-	Title.Format(_T("%s - %s"), PublishableResults , ToolName.c_str() );
-	SVString TabTitle = PublishableResults;
-	INT_PTR Result = ObjectTreeGenerator::Instance().showDialog( Title, TabTitle, this );
+	Title.Format( _T("%s - %s"), PublishableResults, ToolName.c_str() );
+	SVString mainTabTitle = PublishableResults;
+	CString Filter;
+	Filter.LoadString( IDS_FILTER );
+	SVString filterTabTitle = Filter;
+	INT_PTR Result = ObjectTreeGenerator::Instance().showDialog( Title, mainTabTitle, filterTabTitle, this );
 
 	if( IDOK == Result )
 	{
-
 		SVPublishListClass& PublishList = pInspection->GetPublishList();
-		PublishList.Refresh( static_cast <SVTaskObjectClass*> (pInspection->GetToolSet()) );
+		PublishList.Refresh( static_cast<SVTaskObjectClass*>(pInspection->GetToolSet()) );
 
 		SVIPDoc* pIPDoc = SVObjectManagerClass::Instance().GetIPDoc( pInspection->GetUniqueObjectID() );
 
-		if( NULL != pIPDoc )
+		if( nullptr != pIPDoc )
 		{
 			pIPDoc->SetModifiedFlag();
 		}
@@ -455,6 +457,16 @@ void SVToolAdjustmentDialogAnalyzerPageClass::OnPublishButton()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVToolAdjustmentDialogAnalyzerPageClass.cpp_v  $
+ * 
+ *    Rev 1.6   16 Dec 2014 18:04:26   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  933
+ * SCR Title:  Add Filter Tab to Object Selector (SVO-377)
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   Changed the OnPublishButton method to specify the title of the Object Selector's Filter Page.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.5   17 Jul 2014 20:59:58   gramseier
  * Project:  SVObserver
@@ -1551,4 +1563,3 @@ $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVToolAdju
    
    /////////////////////////////////////////////////////////////////////////////////////
 */
-

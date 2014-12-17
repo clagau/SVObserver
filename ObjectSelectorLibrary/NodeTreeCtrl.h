@@ -5,10 +5,11 @@
 //* .Module Name     : NodeTreeCtrl
 //* .File Name       : $Workfile:   NodeTreeCtrl.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   18 Aug 2014 07:46:18  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   16 Dec 2014 17:33:32  $
 //* ----------------------------------------------------------------------------
-//* This class is used to display the node tree control
+//* This class is used to display only the branch nodes of a tree.
+//* This is typically used in conjunction with the LeafTreeCtrl.
 //******************************************************************************
 
 #pragma once
@@ -51,9 +52,14 @@ namespace Seidenader
 			virtual void loadTree() override;
 
 			/**********
-			The method updates the tree control 
+			The method updates the changed nodes of the tree control.
 			***********/
 			virtual void updateTree() override;
+
+			/**********
+			This method updates all nodes of the tree control.
+			***********/
+			void UpdateAllNodes();
 		#pragma endregion Public Methods
 
 		protected:
@@ -90,7 +96,13 @@ namespace Seidenader
 			\return true if there is a checked item
 			***********/
 			bool ExpandToCheckedItems();
-		#pragma endregion Protected Methods
+
+			/**********
+			The method is called to update the state of a node.
+			\param Item <in> reference to the updating item
+			***********/
+			void UpdateNode( SVTreeLibrary::ObjectSelectorItem &Item );
+#pragma endregion Protected Methods
 		};
 	} //namespace ObjectSelectorLibrary
 } //namespace Seidenader
@@ -100,6 +112,16 @@ namespace Seidenader
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\ObjectSelectorLibrary\NodeTreeCtrl.h_v  $
+ * 
+ *    Rev 1.2   16 Dec 2014 17:33:32   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  933
+ * SCR Title:  Add Filter Tab to Object Selector (SVO-377)
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   Updated comments.  Added methods UpdateAllNodes and UpdateNode.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   18 Aug 2014 07:46:18   gramseier
  * Project:  SVObserver

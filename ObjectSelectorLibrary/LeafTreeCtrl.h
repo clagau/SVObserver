@@ -5,10 +5,11 @@
 //* .Module Name     : LeafTreeCtrl
 //* .File Name       : $Workfile:   LeafTreeCtrl.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   18 Aug 2014 07:46:18  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   16 Dec 2014 17:30:58  $
 //* ----------------------------------------------------------------------------
-//* This class is used to display the node tree control
+//* This class is used to display only the leaves of a tree for selection purposes.
+//* This is typically used in conjunction with the NodeTreeCtrl.
 //******************************************************************************
 
 #pragma once
@@ -93,6 +94,16 @@ namespace Seidenader
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\ObjectSelectorLibrary\LeafTreeCtrl.h_v  $
+ * 
+ *    Rev 1.2   16 Dec 2014 17:30:58   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  933
+ * SCR Title:  Add Filter Tab to Object Selector (SVO-377)
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   Updated class comment.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   18 Aug 2014 07:46:18   gramseier
  * Project:  SVObserver

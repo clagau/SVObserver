@@ -5,8 +5,8 @@
 //* .Module Name     : ObjectItemData
 //* .File Name       : $Workfile:   ObjectSelectorItem.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   04 Dec 2014 09:02:54  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   16 Dec 2014 18:16:34  $
 //******************************************************************************
 
 #pragma region Includes
@@ -48,7 +48,7 @@ void ObjectSelectorItem::Clear()
 	m_Name = _T("");
 	m_Location = _T("");
 	m_DisplayLocation = _T("");
-	m_ItemType = ItNone;
+	m_ItemTypeName = _T("");
 	m_TreeItem = NULL;
 	m_ItemKey = _T("");
 	m_Attribute = AttributeNone;
@@ -66,7 +66,7 @@ const ObjectSelectorItem& ObjectSelectorItem::operator=( const ObjectSelectorIte
 		m_Name = rObject.m_Name;
 		m_Location = rObject.m_Location;
 		m_DisplayLocation = rObject.m_DisplayLocation;
-		m_ItemType = rObject.m_ItemType;
+		m_ItemTypeName = rObject.m_ItemTypeName;
 		m_TreeItem = rObject.m_TreeItem;
 		m_ItemKey = rObject.m_ItemKey;
 		m_Attribute = rObject.m_Attribute;
@@ -86,7 +86,7 @@ bool ObjectSelectorItem::operator==( const ObjectSelectorItem& rObject ) const
 	if( (m_Name == rObject.m_Name) &&
 		(m_Location == rObject.m_Location) &&
 		(m_DisplayLocation == rObject.m_DisplayLocation) &&
-		(m_ItemType == rObject.m_ItemType) &&
+		(m_ItemTypeName == rObject.m_ItemTypeName) &&
 		(m_TreeItem == rObject.m_TreeItem) &&
 		(m_ItemKey == rObject.m_ItemKey) &&
 		(m_Attribute == rObject.m_Attribute) &&
@@ -137,14 +137,14 @@ void ObjectSelectorItem::setDisplayLocation( const SVString& rDisplayLocation )
 	m_DisplayLocation = rDisplayLocation;
 }
 
-const ObjectSelectorItem::ItemTypeEnum& ObjectSelectorItem::getItemType() const
+const SVString& ObjectSelectorItem::getItemTypeName() const
 {
-	return m_ItemType;
+	return m_ItemTypeName;
 }
 
-void ObjectSelectorItem::setItemType( const ItemTypeEnum ItemType )
+void ObjectSelectorItem::setItemTypeName( const SVString& ItemTypeName )
 {
-	m_ItemType = ItemType;
+	m_ItemTypeName = ItemTypeName;
 }
 
 const HTREEITEM& ObjectSelectorItem::getTreeItem() const
@@ -248,6 +248,16 @@ bool ObjectSelectorItem::isModified() const
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVTreeLibrary\ObjectSelectorItem.cpp_v  $
+ * 
+ *    Rev 1.3   16 Dec 2014 18:16:34   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  933
+ * SCR Title:  Add Filter Tab to Object Selector (SVO-377)
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   Changed types from ItemTypeEnum to SVString.  Changed the method getItemType to getItemTypeName.  Changed the method setItemType to setItemTypeName.  Changed m_ItemType to m_ItemTypeName.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   04 Dec 2014 09:02:54   gramseier
  * Project:  SVObserver

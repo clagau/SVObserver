@@ -3,6 +3,7 @@
 // Used by SVObserver.rc
 //
 #define IDD_PROPPAGE_REGRESSION_FILESELECT 102
+#define IDS_FILTER                      102
 #define IDS_IMAGE_SOURCE_STRING         103
 #define IDS_CONDITIONAL_STRING          104
 #define IDS_OBJECTNAME_LUT_EQUATION_CLIP 105

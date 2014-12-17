@@ -5,8 +5,8 @@
 //* .Module Name     : BasicValueObject
 //* .File Name       : $Workfile:   BasicValueObject.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   17 Jul 2014 17:39:38  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   16 Dec 2014 17:51:34  $
 //* ----------------------------------------------------------------------------
 //* This class is used as a value object to store different types in the 
 //* object manager 
@@ -129,6 +129,12 @@ public:
 	HRESULT getValue( double& rValue ) const;
 
 	/**********
+		The method get the type name of the value
+		\return type name
+	***********/
+	SVString getTypeName() const;
+
+	/**********
 		The method updates the corresponding device parameter
 		\param pDeviceParam <in> a reference to the parameter
 		\return SOK on success
@@ -199,6 +205,16 @@ private:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\BasicValueObject.h_v  $
+ * 
+ *    Rev 1.3   16 Dec 2014 17:51:34   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  933
+ * SCR Title:  Add Filter Tab to Object Selector (SVO-377)
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   Added method getTypeName.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   17 Jul 2014 17:39:38   gramseier
  * Project:  SVObserver

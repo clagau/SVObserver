@@ -5,10 +5,10 @@
 //* .Module Name     : ObjectTreeCtrl
 //* .File Name       : $Workfile:   ObjectTreeCtrl.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.4  $
-//* .Check In Date   : $Date:   04 Dec 2014 03:23:42  $
+//* .Current Version : $Revision:   1.5  $
+//* .Check In Date   : $Date:   16 Dec 2014 17:41:28  $
 //* ----------------------------------------------------------------------------
-//* This class is used to display the object tree control
+//* This class is the base class for the Object Selector tree controls.
 //******************************************************************************
 
 #pragma once
@@ -145,13 +145,6 @@ namespace Seidenader
 			void setChildrenState( SVTreeLibrary::ObjectTreeItems::iterator& rIter, SVTreeLibrary::IObjectSelectorItem::CheckedStateEnum& rCheckedState );
 
 			/**********
-			The method sets the state of the parent items
-			\param rIter <in> a reference to the parent iterator
-			\param rCheckedState <in> a reference to the checked state
-			***********/
-			void setParentState( SVTreeLibrary::ObjectTreeItems::iterator& rIter );
-
-			/**********
 			The method clears the last checked item for single select mode
 			\param rItem <in> a reference to the item selected
 			***********/
@@ -216,6 +209,16 @@ namespace Seidenader
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\ObjectSelectorLibrary\ObjectTreeCtrl.h_v  $
+ * 
+ *    Rev 1.5   16 Dec 2014 17:41:28   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  933
+ * SCR Title:  Add Filter Tab to Object Selector (SVO-377)
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   Moved method setParentState to ObjectTreeItems.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.4   04 Dec 2014 03:23:42   gramseier
  * Project:  SVObserver

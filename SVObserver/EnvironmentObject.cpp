@@ -5,8 +5,8 @@
 //* .Module Name     : EnvironmentObject
 //* .File Name       : $Workfile:   EnvironmentObject.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.3  $
-//* .Check In Date   : $Date:   12 Aug 2014 12:51:52  $
+//* .Current Version : $Revision:   1.4  $
+//* .Check In Date   : $Date:   16 Dec 2014 17:53:30  $
 //******************************************************************************
 
 #pragma region Includes
@@ -50,6 +50,29 @@ HRESULT EnvironmentObject::GetChildObject( SVObjectClass*& rpObject, const SVObj
 
 	return S_OK;
 }
+
+void EnvironmentObject::getEnvironmentObjectNameList(SVStringArray& rObjectNameList, const SVString& rPath, UINT AttributesAllowedFilter) const
+{
+	BasicValueObjects::ValueList list = m_EnvironmentValues.getValueList();
+	BasicValueObjects::ValueList::const_iterator it = list.cbegin();
+	for(it = list.cbegin(); it != list.cend(); it++)
+	{
+		SVString completeName = (*it)->GetCompleteObjectName();
+		size_t Pos = completeName.find( rPath.c_str() );
+		size_t endPathPos = Pos + rPath.size();
+		if( SVString::npos != Pos &&
+			completeName.size() > endPathPos &&
+			( (*it)->ObjectAttributesAllowed() & AttributesAllowedFilter) == AttributesAllowedFilter )
+		{
+			//check if current object a sub object of this path
+			//no check if rPath empty
+			if (rPath.empty() || completeName[endPathPos] == '.')
+			{
+				rObjectNameList.push_back(completeName);
+			}
+		}
+	}
+}
 #pragma endregion Public Methods
 
 //******************************************************************************
@@ -57,6 +80,16 @@ HRESULT EnvironmentObject::GetChildObject( SVObjectClass*& rpObject, const SVObj
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\EnvironmentObject.cpp_v  $
+ * 
+ *    Rev 1.4   16 Dec 2014 17:53:30   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  933
+ * SCR Title:  Add Filter Tab to Object Selector (SVO-377)
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   Added method getEnvironmentObjectNameList.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   12 Aug 2014 12:51:52   gramseier
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : SVTADlgRemoteInputToolPage
 //* .File Name       : $Workfile:   SVTADlgRemoteInputToolPage.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   04 Dec 2014 04:52:24  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   16 Dec 2014 18:01:22  $
 //******************************************************************************
 
 #pragma region Includes
@@ -102,7 +102,7 @@ void SVTADlgRemoteInputToolPage::OnBnClickedSelectInputButton()
 {
 	if( nullptr == m_pTool ) { return; }
 
-	SVToolSetClass* pToolSet = dynamic_cast<SVToolSetClass*> ( m_pTool->GetAncestor( SVToolSetObjectType ) );
+	SVToolSetClass* pToolSet = dynamic_cast<SVToolSetClass*>( m_pTool->GetAncestor( SVToolSetObjectType ) );
 
 	if( nullptr == pToolSet ) { return; }
 
@@ -128,16 +128,19 @@ void SVTADlgRemoteInputToolPage::OnBnClickedSelectInputButton()
 	}
 
 	CString ToolsetOutput;
-	ToolsetOutput.LoadString ( IDS_SELECT_TOOLSET_OUTPUT );
+	ToolsetOutput.LoadString( IDS_SELECT_TOOLSET_OUTPUT );
 	SVString Title;
-	Title.Format(_T("%s - %s"), ToolsetOutput , m_pTool->GetName() );
-	SVString TabTitle = ToolsetOutput;
+	Title.Format( _T("%s - %s"), ToolsetOutput, m_pTool->GetName() );
+	SVString mainTabTitle = ToolsetOutput;
+	CString Filter;
+	Filter.LoadString( IDS_FILTER );
+	SVString filterTabTitle = Filter;
 
-	INT_PTR Result = ObjectTreeGenerator::Instance().showDialog( Title, TabTitle, this );
+	INT_PTR Result = ObjectTreeGenerator::Instance().showDialog( Title, mainTabTitle, filterTabTitle, this );
 
 	if( IDOK == Result )
 	{
-		m_InputName  = ObjectTreeGenerator::Instance().getSingleObjectResult().getLocation().c_str();
+		m_InputName = ObjectTreeGenerator::Instance().getSingleObjectResult().getLocation().c_str();
 
 		SVGUID ObjectGuid(ObjectTreeGenerator::Instance().getSingleObjectResult().getItemKey());
 		m_pTool->SetInputObject( ObjectGuid );
@@ -156,6 +159,16 @@ void SVTADlgRemoteInputToolPage::RefreshSelectedInputName()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVTADlgRemoteInputToolPage.cpp_v  $
+ * 
+ *    Rev 1.3   16 Dec 2014 18:01:22   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  933
+ * SCR Title:  Add Filter Tab to Object Selector (SVO-377)
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   Changed the OnBnClickedSelectInputButton method to specify the title of the Object Selector's Filter Page.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   04 Dec 2014 04:52:24   gramseier
  * Project:  SVObserver
@@ -228,4 +241,3 @@ $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVTADlgRem
  * 
  * /////////////////////////////////////////////////////////////////////////////////////
 */
-

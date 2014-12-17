@@ -5,8 +5,8 @@
 //* .Module Name     : ObjectSelectorPpg
 //* .File Name       : $Workfile:   ObjectSelectorPpg.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.4  $
-//* .Check In Date   : $Date:   04 Dec 2014 03:16:52  $
+//* .Current Version : $Revision:   1.5  $
+//* .Check In Date   : $Date:   16 Dec 2014 17:39:38  $
 //******************************************************************************
 
 #pragma region Includes
@@ -106,6 +106,14 @@ BOOL ObjectSelectorPpg::OnInitDialog()
 	return TRUE;
 }
 
+BOOL ObjectSelectorPpg::OnSetActive()
+{
+	m_NodeTree.UpdateAllNodes();
+	m_LeafTree.updateTree();
+
+	return CPropertyPage::OnSetActive();
+}
+
 void ObjectSelectorPpg::OnSize(UINT nType, int cx, int cy)
 {
 	CPropertyPage::OnSize(nType, cx, cy);
@@ -144,6 +152,16 @@ void ObjectSelectorPpg::setResizeControls()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\ObjectSelectorLibrary\ObjectSelectorPpg.cpp_v  $
+ * 
+ *    Rev 1.5   16 Dec 2014 17:39:38   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  933
+ * SCR Title:  Add Filter Tab to Object Selector (SVO-377)
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   Added method OnSetActive.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.4   04 Dec 2014 03:16:52   gramseier
  * Project:  SVObserver

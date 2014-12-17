@@ -5,8 +5,8 @@
 //* .Module Name     : SVExternalToolInputSelectPage
 //* .File Name       : $Workfile:   SVExternalToolInputSelectPage.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.8  $
-//* .Check In Date   : $Date:   04 Dec 2014 04:52:22  $
+//* .Current Version : $Revision:   1.9  $
+//* .Check In Date   : $Date:   16 Dec 2014 17:57:44  $
 //******************************************************************************
 
 // SVExternalToolInputSelectPage.cpp : implementation file
@@ -272,7 +272,7 @@ void SVExternalToolInputSelectPage::OnItemButtonClick(NMHDR* pNotifyStruct, LRES
 
 
 // display VO picker dialog and return selection
-int SVExternalToolInputSelectPage::SelectObject(CString& rObjectName, SVRPropertyItem* pItem )
+int SVExternalToolInputSelectPage::SelectObject( CString& rObjectName, SVRPropertyItem* pItem )
 {
 	CString ObjectName;
 
@@ -315,12 +315,14 @@ int SVExternalToolInputSelectPage::SelectObject(CString& rObjectName, SVRPropert
 	}
 
 	CString ToolsetOutput;
-	ToolsetOutput.LoadString ( IDS_SELECT_TOOLSET_OUTPUT );
+	ToolsetOutput.LoadString( IDS_SELECT_TOOLSET_OUTPUT );
 	SVString Title;
-	Title.Format(_T("%s - %s"), ToolsetOutput , m_pTool->GetName() );
-	SVString TabTitle = ToolsetOutput; 
-
-	INT_PTR Result = ObjectTreeGenerator::Instance().showDialog( Title, TabTitle, this );
+	Title.Format( _T("%s - %s"), ToolsetOutput, m_pTool->GetName() );
+	SVString mainTabTitle = ToolsetOutput;
+	CString Filter;
+	Filter.LoadString( IDS_FILTER );
+	SVString filterTabTitle = Filter;
+	INT_PTR Result = ObjectTreeGenerator::Instance().showDialog( Title, mainTabTitle, filterTabTitle, this );
 
 	if( IDOK == Result )
 	{
@@ -329,7 +331,7 @@ int SVExternalToolInputSelectPage::SelectObject(CString& rObjectName, SVRPropert
 
 	rObjectName = ObjectName;
 
-	return static_cast<int> ( Result );
+	return static_cast<int>( Result );
 }
 
 void SVExternalToolInputSelectPage::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResult)
@@ -494,6 +496,16 @@ int SVExternalToolInputSelectPage::GetItemIndex(SVRPropertyItem* pItem)
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVExternalToolInputSelectPage.cpp_v  $
+ * 
+ *    Rev 1.9   16 Dec 2014 17:57:44   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  933
+ * SCR Title:  Add Filter Tab to Object Selector (SVO-377)
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   Changed the SelectObject method to specify the title of the Object Selector's Filter Page.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.8   04 Dec 2014 04:52:22   gramseier
  * Project:  SVObserver

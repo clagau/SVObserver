@@ -5,8 +5,8 @@
 //* .Module Name     : SVChildrenSetupDialog
 //* .File Name       : $Workfile:   SVChildrenSetupDialog.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.4  $
-//* .Check In Date   : $Date:   17 Jul 2014 18:22:00  $
+//* .Current Version : $Revision:   1.5  $
+//* .Check In Date   : $Date:   16 Dec 2014 17:56:48  $
 //******************************************************************************
 
 #pragma region Includes
@@ -276,9 +276,12 @@ void SVChildrenSetupDialogClass::OnPublishButton()
 	PublishableResults.LoadString( IDS_PUBLISHABLE_RESULTS );
 	SVString Title;
 	SVString ToolName( m_pParentOwner->GetName() );
-	Title.Format(_T("%s - %s"), PublishableResults , ToolName.c_str() );
-	SVString TabTitle = PublishableResults;
-	INT_PTR Result = ObjectTreeGenerator::Instance().showDialog( Title, TabTitle, this );
+	Title.Format( _T("%s - %s"), PublishableResults, ToolName.c_str() );
+	SVString mainTabTitle = PublishableResults;
+	CString Filter;
+	Filter.LoadString( IDS_FILTER );
+	SVString filterTabTitle = Filter;
+	INT_PTR Result = ObjectTreeGenerator::Instance().showDialog( Title, mainTabTitle, filterTabTitle, this );
 
 	if( IDOK == Result )
 	{
@@ -364,6 +367,16 @@ BOOL SVChildrenSetupDialogClass::checkOkToDelete( SVTaskObjectClass* pTaskObject
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVChildrenSetupDialog.cpp_v  $
+ * 
+ *    Rev 1.5   16 Dec 2014 17:56:48   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  933
+ * SCR Title:  Add Filter Tab to Object Selector (SVO-377)
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   Changed the OnPublishButton method to specify the title of the Object Selector's Filter Page.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.4   17 Jul 2014 18:22:00   gramseier
  * Project:  SVObserver

@@ -4295,7 +4295,7 @@ BEGIN
         MENUITEM MFT_SEPARATOR
         MENUITEM "S&elect Configuration",       ID_FILE_OPEN_SVC,MFT_STRING,MFS_ENABLED
         MENUITEM "&Close Configuration",        ID_FILE_CLOSE_SVC,MFT_STRING,MFS_ENABLED
-	MENUITEM MFT_SEPARATOR
+        MENUITEM MFT_SEPARATOR
         MENUITEM "&Save Configuration\tCtrl+S", ID_FILE_SAVE_ALL,MFT_STRING,MFS_ENABLED
         MENUITEM "Save Configuration &As...",   ID_FILE_SAVE_AS_SVC,MFT_STRING,MFS_ENABLED
         MENUITEM MFT_SEPARATOR
@@ -5754,6 +5754,7 @@ END
 
 STRINGTABLE
 BEGIN
+    IDS_FILTER              "Filter"
     IDS_IMAGE_SOURCE_STRING "Image Source"
     IDS_CONDITIONAL_STRING  "Conditional"
     IDS_OBJECTNAME_LUT_EQUATION_CLIP "LUT Equation Clip"
@@ -5915,7 +5916,7 @@ END
 
 STRINGTABLE
 BEGIN
-    ID_TOOLBAR_STANDARD         "Show or hide the tool bar\nToggle Tool Bar"
+    ID_TOOLBAR_STANDARD     "Show or hide the tool bar\nToggle Tool Bar"
     ID_VIEW_STATUS_BAR      "Show or hide the status bar\nToggle Status Bar"
 END
 
@@ -6871,7 +6872,7 @@ BEGIN
     ID_ZOOM_FIT             "zoom fit\nZoom []"
 END
 
-#endif    // Englisch (USA) resources
+#endif    // English (United States) resources
 /////////////////////////////////////////////////////////////////////////////
 
 

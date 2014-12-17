@@ -5,8 +5,8 @@
 //* .Module Name     : SVIPDoc
 //* .File Name       : $Workfile:   SVIPDoc.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.27  $
-//* .Check In Date   : $Date:   09 Dec 2014 11:41:48  $
+//* .Current Version : $Revision:   1.28  $
+//* .Check In Date   : $Date:   16 Dec 2014 17:59:30  $
 //******************************************************************************
 
 #pragma region Includes
@@ -1773,15 +1773,20 @@ void SVIPDoc::OnResultsPicker()
 	//ObjectTreeGenerator::Instance().insertTreeObjects( PPQName );
 
 	SVOutputInfoListClass OutputList;
+	// BRW - Should probably check the output from GetToolSet before dereferencing it.
+	// BRW - Should probably check the return value of GetOutputList before using OutputList.
 	GetToolSet()->GetOutputList( OutputList );
 	ObjectTreeGenerator::Instance().insertOutputList( OutputList );
 
 	CString ResultPicker;
-	ResultPicker.LoadString ( IDS_RESULT_PICKER );
+	ResultPicker.LoadString( IDS_RESULT_PICKER );
 	SVString Title;
-	Title.Format(_T("%s - %s"), ResultPicker , InspectionName.c_str() );
-	SVString TabTitle = ResultPicker;
-	INT_PTR Result = ObjectTreeGenerator::Instance().showDialog( Title, TabTitle );
+	Title.Format( _T("%s - %s"), ResultPicker, InspectionName.c_str() );
+	SVString mainTabTitle = ResultPicker;
+	CString Filter;
+	Filter.LoadString( IDS_FILTER );
+	SVString filterTabTitle = Filter;
+	INT_PTR Result = ObjectTreeGenerator::Instance().showDialog( Title, mainTabTitle, filterTabTitle );
 
 	if( IDOK == Result )
 	{
@@ -1791,7 +1796,7 @@ void SVIPDoc::OnResultsPicker()
 		UpdateWithLastProduct();
 	}
 
-	UpdateAllViews( NULL );
+	UpdateAllViews( nullptr );
 }
 
 void SVIPDoc::OnPublishedResultsPicker()
@@ -1810,11 +1815,14 @@ void SVIPDoc::OnPublishedResultsPicker()
 	ObjectTreeGenerator::Instance().insertOutputList( OutputList );
 
 	CString PublishableResults;
-	PublishableResults.LoadString ( IDS_PUBLISHABLE_RESULTS );
+	PublishableResults.LoadString( IDS_PUBLISHABLE_RESULTS );
 	SVString Title;
-	Title.Format(_T("%s - %s"), PublishableResults , InspectionName.c_str() );
-	SVString TabTitle = PublishableResults; 
-	INT_PTR Result = ObjectTreeGenerator::Instance().showDialog( Title, TabTitle );
+	Title.Format( _T("%s - %s"), PublishableResults, InspectionName.c_str() );
+	SVString mainTabTitle = PublishableResults;
+	CString Filter;
+	Filter.LoadString( IDS_FILTER );
+	SVString filterTabTitle = Filter;
+	INT_PTR Result = ObjectTreeGenerator::Instance().showDialog( Title, mainTabTitle, filterTabTitle );
 
 	if( IDOK == Result )
 	{
@@ -1845,7 +1853,7 @@ void SVIPDoc::OnPublishedResultsPicker()
 				}// end if
 			}
 		}// end for
-		TheSVObserverApp.GetIODoc()->UpdateAllViews( NULL );
+		TheSVObserverApp.GetIODoc()->UpdateAllViews( nullptr );
 	}
 }
 
@@ -1865,7 +1873,7 @@ void SVIPDoc::OnPublishedResultImagesPicker()
 	publishedResultString.LoadString ( IDS_PUBLISHABLE_RESULT_IMAGES );
 	CString inspectionName = l_pInspection->GetName();
 	CString title;
-	title.Format(_T("%s - %s"), publishedResultString, inspectionName);
+	title.Format( _T("%s - %s"), publishedResultString, inspectionName );
 	dlg.SetCaptionTitle(title);
 
 	INT_PTR dlgResult = dlg.DoModal();
@@ -4458,6 +4466,16 @@ void SVIPDoc::addViewableObject2ResultDefinitions( SVObjectClass* pObject, SVRes
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVIPDoc.cpp_v  $
+ * 
+ *    Rev 1.28   16 Dec 2014 17:59:30   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  933
+ * SCR Title:  Add Filter Tab to Object Selector (SVO-377)
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   Changed the OnResultsPicker and OnPublishedResultsPicker methods to specify the title of the Object Selector's Filter Page.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.27   09 Dec 2014 11:41:48   tbair
  * Project:  SVObserver

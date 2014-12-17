@@ -5,8 +5,8 @@
 //* .Module Name     : ObjectTreeGenerator
 //* .File Name       : $Workfile:   ObjectTreeGenerator.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   04 Dec 2014 03:31:40  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   16 Dec 2014 17:43:50  $
 //* ----------------------------------------------------------------------------
 //* This class is the interface between the object manager and object selector
 //******************************************************************************
@@ -124,14 +124,15 @@ namespace Seidenader
 			***********/
 			void insertOutputList( SVOutputInfoListClass& rOutputList );
 
-			/**********
-			 The method displays the object selector dialog
-			 \param rTitle <in> reference to the dialog title
-			 \param rTabTitle <in> reference to the tab title
-			 \param pParent <in> pointer to the parent, default is nullptr
-			 \return the result of the dialog
-			***********/
-			INT_PTR showDialog( const SVString& rTitle, const SVString& rTabTitle, CWnd* pParent = nullptr );
+			//**********
+			// Description:  The method displays the object selector dialog
+			// Parameter:  title <in>:  reference to the dialog title
+			// Parameter:  mainTabTitle <in>:  reference to the title for the main tab
+			// Parameter:  filterTabTitle <in>:  reference to the title for the filter tab
+			// Parameter:  pParent <in>:  pointer to the parent, default is nullptr
+			// Return:  INT_PTR:  the result of the dialog
+			//***********
+			INT_PTR showDialog( const SVString& title, const SVString& mainTabTitle, const SVString& filterTabTitle, CWnd* pParent = nullptr );
 
 			/**********
 			 The method checks the list of items
@@ -249,6 +250,16 @@ namespace Seidenader
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\ObjectSelectorLibrary\ObjectTreeGenerator.h_v  $
+ * 
+ *    Rev 1.2   16 Dec 2014 17:43:50   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  933
+ * SCR Title:  Add Filter Tab to Object Selector (SVO-377)
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   Added a parameter for the showDialog method to specify the text for the title of the Filter page.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   04 Dec 2014 03:31:40   gramseier
  * Project:  SVObserver

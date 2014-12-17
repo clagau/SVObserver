@@ -5,8 +5,8 @@
 //* .Module Name     : BasicValueObject
 //* .File Name       : $Workfile:   BasicValueObject.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.5  $
-//* .Check In Date   : $Date:   30 Sep 2014 15:33:38  $
+//* .Current Version : $Revision:   1.6  $
+//* .Check In Date   : $Date:   16 Dec 2014 17:51:34  $
 //******************************************************************************
 
 #pragma region Includes
@@ -289,6 +289,43 @@ HRESULT BasicValueObject::getValue( double& rValue ) const
 	return Result;
 }
 
+SVString BasicValueObject::getTypeName() const
+{
+	SVString retString = _T("");
+	switch(m_Value.vt)
+	{
+	case VT_BSTR:
+		{
+			retString = "Text";
+		}
+		break;
+	case VT_BOOL:
+		{
+			retString = "Bool";
+		}
+		break;
+	case VT_I4:
+		{
+			retString = "Integer32";
+		}
+		break;
+	case VT_I8:
+		{
+			retString = "Integer64";
+		}
+		break;
+	case VT_R4:  // fall through...
+	case VT_R8:
+		{
+			retString = "Decimal";
+		}
+		break;
+	default:
+		break;
+	}
+	return retString;
+}
+
 HRESULT BasicValueObject::updateDeviceParameter(SVDeviceParam* pDeviceParam)
 {
 	HRESULT Status = S_OK;
@@ -512,6 +549,16 @@ HRESULT BasicValueObject::ConvertArrayToVariant( _variant_t& rValue ) const
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\BasicValueObject.cpp_v  $
+ * 
+ *    Rev 1.6   16 Dec 2014 17:51:34   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  933
+ * SCR Title:  Add Filter Tab to Object Selector (SVO-377)
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   Added method getTypeName.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.5   30 Sep 2014 15:33:38   bwalter
  * Project:  SVObserver

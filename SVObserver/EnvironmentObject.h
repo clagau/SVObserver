@@ -5,8 +5,8 @@
 //* .Module Name     : EnvironmentObject
 //* .File Name       : $Workfile:   EnvironmentObject.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.4  $
-//* .Check In Date   : $Date:   09 Dec 2014 09:16:42  $
+//* .Current Version : $Revision:   1.5  $
+//* .Check In Date   : $Date:   16 Dec 2014 17:53:30  $
 //* ----------------------------------------------------------------------------
 //* This class is used as the root child object Environment to 
 //* store specific objects 
@@ -90,6 +90,14 @@ public:
 	static BasicValueObject* setEnvironmentValue( LPCSTR Name, const ELEMENT_TYPE& rValue );
 
 	/**********
+		The method gets an environment object name list.
+		\param rObjectNameList <out> The returned list of names.
+		\param rPath <in> the path of object to return. Default = "", means all objects.
+		\param AttributesAllowedFilter <in> the attributes of the objects must be set to return. Default = 0, means all objects.
+	***********/
+	void getEnvironmentObjectNameList(SVStringArray& rObjectNameList, const SVString& rPath = _T(""), UINT AttributesAllowedFilter = 0) const;
+
+	/**********
 		The method gets the value of a name
 		\param Name <in> the name of the object to get
 		\param rValue <out> reference to the value of the object
@@ -122,6 +130,16 @@ public:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\EnvironmentObject.h_v  $
+ * 
+ *    Rev 1.5   16 Dec 2014 17:53:30   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  933
+ * SCR Title:  Add Filter Tab to Object Selector (SVO-377)
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   Added method getEnvironmentObjectNameList.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.4   09 Dec 2014 09:16:42   tbair
  * Project:  SVObserver

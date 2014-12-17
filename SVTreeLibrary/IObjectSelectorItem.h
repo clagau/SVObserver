@@ -5,8 +5,8 @@
 //* .Module Name     : IObjectSelectorItem
 //* .File Name       : $Workfile:   IObjectSelectorItem.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   04 Dec 2014 09:02:54  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   16 Dec 2014 18:15:44  $
 //* ----------------------------------------------------------------------------
 //* This interface is used to define a single selector item for the tree
 //******************************************************************************
@@ -51,24 +51,6 @@ namespace Seidenader
 				CheckedDisabled,
 				TriStateDisabled
 			};
-
-			/**********
-			 The selector item type enumerations
-			***********/
-			enum ItemTypeEnum
-			{
-				ItNone,
-				ItDword,
-				ItLong,
-				ItDouble,
-				ItBool,
-				ItPoint,
-				ItByte,
-				ItString,
-				ItInt64,
-				ItChar,
-				ItVariant
-			};
 		#pragma endregion Declarations
 
 		public:
@@ -110,16 +92,16 @@ namespace Seidenader
 			virtual void setDisplayLocation( const SVString& rDisplayLocation ) = 0;
 
 			/**********
-			 The method gets the item type
-			 \return the type of the item
+			 The method gets the name of the item type
+			 \return the type of the item as a string
 			***********/
-			virtual const ItemTypeEnum& getItemType() const = 0;
+			virtual const SVString& getItemTypeName() const = 0;
 
 			/**********
-			 The method sets the tree path of the item
-			 \param rItemType <in> a reference to the type of the item
+			 The method sets the name of the item type
+			 \param rItemType <in> a reference to the string indicating the item's type
 			***********/
-			virtual void setItemType( const ItemTypeEnum ItemType ) = 0;
+			virtual void setItemTypeName( const SVString& ItemTypeName ) = 0;
 
 			/**********
 			 The method gets the handle to the corresponding tree item
@@ -244,6 +226,16 @@ namespace Seidenader
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVTreeLibrary\IObjectSelectorItem.h_v  $
+ * 
+ *    Rev 1.3   16 Dec 2014 18:15:44   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  933
+ * SCR Title:  Add Filter Tab to Object Selector (SVO-377)
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   Removed ItemTypeEnum.  Changed the method getItemType to getItemTypeName and use SVString instead of ItemTypeEnum.  Changed the method setItemType to setItemTypeName and use SVString instead of ItemTypeEnum.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   04 Dec 2014 09:02:54   gramseier
  * Project:  SVObserver

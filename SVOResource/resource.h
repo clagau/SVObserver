@@ -7,6 +7,7 @@
 #define IDD_RESULTS_PICKER              2001
 #define IDD_PUBLISHED_RESULTS           2002
 #define IDD_OUTPUT_SELECTOR             2003
+#define IDD_OBJECT_SELECTOR_FILTER      2004
 #define IDI_EMPTY_ENABLED               2100
 #define IDI_UNCHECKED_ENABLED           2101
 #define IDI_CHECKED_ENABLED             2102
@@ -32,14 +33,20 @@
 #define IDC_LABEL_TREE_VALUES           4003
 #define IDC_LABEL_HIGHLIGHTED_NODE      4004
 #define IDC_HIGHLIGHTED_NODE            4005
+#define IDC_GRID_CONTROL                4006
+#define IDC_EDIT_FILTER_NAME            4007
+#define IDC_EDIT_FILTER_LOCATION        4008
+#define IDC_COMBO_FILTER_CHECK          4009
+#define IDC_COMBO_FILTER_TYPE           4010
+#define IDC_RESET_BUTTON                4011
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        2004
+#define _APS_NEXT_RESOURCE_VALUE        2005
 #define _APS_NEXT_COMMAND_VALUE         3006
-#define _APS_NEXT_CONTROL_VALUE         4006
+#define _APS_NEXT_CONTROL_VALUE         4012
 #define _APS_NEXT_SYMED_VALUE           5000
 #endif
 #endif

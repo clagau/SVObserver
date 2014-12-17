@@ -5,8 +5,8 @@
 //* .Module Name     : SVString
 //* .File Name       : $Workfile:   SVString.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   25 Apr 2013 19:24:58  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   16 Dec 2014 18:20:02  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -867,6 +867,26 @@ void SVString::Remove(SVElementType ch)
 	m_String.erase(std::remove ( m_String.begin(), m_String.end(), ch ), m_String.end());
 }
 
+bool SVString::isSubmatch(SVString searchString, size_t offsetSource, size_t offsetSearch )
+{
+	bool retVal = false;
+	size_t wildcardPos = searchString.find_first_of('*', offsetSearch);
+	if (SVString::npos == wildcardPos)
+	{
+		retVal = (SVString::npos != m_String.find(searchString.c_str()+offsetSearch, offsetSource));
+	}
+	else
+	{
+		SVString firstSearchString = searchString.substr(offsetSearch, wildcardPos-offsetSearch);
+		size_t firstPos = m_String.find(firstSearchString.c_str(), offsetSource);
+		if (SVString::npos != firstPos)
+		{
+			retVal = isSubmatch(searchString, firstPos + firstSearchString.size(), wildcardPos+1);
+		}
+	}
+	return retVal;
+}
+
 SVString operator+( LPCTSTR psz1, const SVString& str2 )
 {
 	SVString l_Temp( psz1 );
@@ -894,7 +914,17 @@ bool operator!=( LPCTSTR psz1, const SVString& str2 )
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVUtilityLibrary\SVString.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVUtilityLibrary\SVString.cpp_v  $
+ * 
+ *    Rev 1.1   16 Dec 2014 18:20:02   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  933
+ * SCR Title:  Add Filter Tab to Object Selector (SVO-377)
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   Added method isSubmatch to support the Object Selector's Filter Page search.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   25 Apr 2013 19:24:58   bWalter
  * Project:  SVObserver

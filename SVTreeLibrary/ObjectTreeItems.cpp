@@ -5,8 +5,8 @@
 //* .Module Name     : ObjectTreeItems
 //* .File Name       : $Workfile:   ObjectTreeItems.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   04 Dec 2014 09:02:56  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   16 Dec 2014 18:17:32  $
 //******************************************************************************
 
 #pragma region Includes
@@ -208,6 +208,42 @@ ObjectTreeItems::iterator ObjectTreeItems::findItem( const SVString& rDisplayLoc
 
 	return Iter;
 }
+
+SVStringSet ObjectTreeItems::setParentState( const ObjectTreeItems::iterator& rIter )
+{
+	SVStringSet retValue;
+	if( !rIter.parent()->is_root() )
+	{
+		ObjectTreeItems::iterator ParentIter = findItem( rIter.parent()->get()->first );
+
+		if( end() != ParentIter )
+		{
+			IObjectSelectorItem::CheckedStateEnum CheckedState = getNodeCheckedState( ParentIter );
+			if( IObjectSelectorItem::EmptyEnabled != CheckedState && ParentIter->second.getCheckedState() != CheckedState )
+			{
+				ParentIter->second.setCheckedState( CheckedState );
+				retValue.insert( ParentIter->first );
+				SVStringSet tmpValue = setParentState( ParentIter );
+				retValue.insert( tmpValue.begin(), tmpValue.end() );
+			}
+		}
+	}
+	return retValue;
+}
+
+SVStringSet ObjectTreeItems::clearItem(const SVString &itemLocation)
+{
+	SVStringSet updateItems;
+	ObjectTreeItems::iterator Iter = findItem( itemLocation );
+	if( end() != Iter )
+	{
+		Iter->second.setCheckedState( IObjectSelectorItem::UncheckedEnabled );
+
+		updateItems = setParentState( Iter );
+		updateItems.insert( Iter->first );
+	}
+	return updateItems;
+}
 #pragma endregion Public Methods
 
 #pragma region Private Methods
@@ -284,6 +320,16 @@ ObjectTreeItems::iterator ObjectTreeItems::findLevelItem(const iterator& rIter, 
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVTreeLibrary\ObjectTreeItems.cpp_v  $
+ * 
+ *    Rev 1.3   16 Dec 2014 18:17:32   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  933
+ * SCR Title:  Add Filter Tab to Object Selector (SVO-377)
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   Added methods setParentState (moved from ObjectTreeCtrl) and clearItem.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   04 Dec 2014 09:02:56   gramseier
  * Project:  SVObserver

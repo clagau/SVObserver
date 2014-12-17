@@ -84,7 +84,7 @@
     </ClCompile>
     <Lib>
       <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>SVTreeLibrary.lib</AdditionalDependencies>
+      <AdditionalDependencies>SVTreeLibrary.lib;GridCtrlLibrary.lib</AdditionalDependencies>
       <IgnoreAllDefaultLibraries>true</IgnoreAllDefaultLibraries>
     </Lib>
     <ResourceCompile>
@@ -106,6 +106,7 @@
     </ClCompile>
     <Lib>
       <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>SVTreeLibrary.lib;GridCtrlLibrary.lib</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -125,7 +126,7 @@
     </ClCompile>
     <Lib>
       <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>SVTreeLibrary.lib</AdditionalDependencies>
+      <AdditionalDependencies>SVTreeLibrary.lib;GridCtrlLibrary.lib</AdditionalDependencies>
     </Lib>
     <ResourceCompile>
       <ResourceOutputFileName>$(IntDir)%(Filename).res</ResourceOutputFileName>
@@ -148,12 +149,14 @@
     </ClCompile>
     <Lib>
       <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>SVTreeLibrary.lib;GridCtrlLibrary.lib</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="DlgItemResizer.cpp" />
     <ClCompile Include="LeafTreeCtrl.cpp" />
     <ClCompile Include="NodeTreeCtrl.cpp" />
+    <ClCompile Include="ObjectFilterPpg.cpp" />
     <ClCompile Include="ObjectSelectorPpg.cpp" />
     <ClCompile Include="ObjectTreeCtrl.cpp" />
     <ClCompile Include="ObjectTreeGenerator.cpp" />
@@ -169,6 +172,7 @@
     <ClInclude Include="DlgItemResizer.h" />
     <ClInclude Include="LeafTreeCtrl.h" />
     <ClInclude Include="NodeTreeCtrl.h" />
+    <ClInclude Include="ObjectFilterPpg.h" />
     <ClInclude Include="ObjectSelectorPpg.h" />
     <ClInclude Include="ObjectTreeCtrl.h" />
     <ClInclude Include="ObjectTreeGenerator.h" />

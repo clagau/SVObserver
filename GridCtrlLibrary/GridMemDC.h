@@ -8,8 +8,8 @@
 //* .Module Name     : Titletip
 //* .File Name       : $Workfile:   GridMemDC.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   24 Oct 2014 10:32:32  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   16 Dec 2014 17:19:56  $
 //******************************************************************************
 
 // MemDC.h : header file
@@ -80,7 +80,7 @@ namespace Seidenader
 			}
 
 			// Destructor copies the contents of the mem DC to the original DC
-			~CGridMemDC()
+			virtual ~CGridMemDC()
 			{
 				if (m_bMemDC)
 				{
@@ -100,7 +100,7 @@ namespace Seidenader
 
 			// Allow usage as a pointer
 			CGridMemDC* operator->() {return this;}
-        
+
 			// Allow usage as a pointer
 			operator CGridMemDC*() {return this;}
 
@@ -119,6 +119,16 @@ namespace Seidenader
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\GridCtrlLibrary\GridMemDC.h_v  $
+ * 
+ *    Rev 1.1   16 Dec 2014 17:19:56   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  933
+ * SCR Title:  Add Filter Tab to Object Selector (SVO-377)
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   Changed destructor to virtual.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   24 Oct 2014 10:32:32   gramseier
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : SVToolAdjustmentDialogStatisticsPageClass
 //* .File Name       : $Workfile:   SVTADlgStatisticsPage.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.4  $
-//* .Check In Date   : $Date:   04 Dec 2014 04:52:22  $
+//* .Current Version : $Revision:   1.5  $
+//* .Check In Date   : $Date:   16 Dec 2014 18:03:14  $
 //******************************************************************************
 
 #pragma region Includes
@@ -288,12 +288,12 @@ void SVToolAdjustmentDialogStatisticsPageClass::OnSetRange()
 
 /////////////////////////////////////////////////////////////////////////////
 //
-void SVToolAdjustmentDialogStatisticsPageClass::OnPublishButton() 
+void SVToolAdjustmentDialogStatisticsPageClass::OnPublishButton()
 {
-	if( NULL == m_pTool ) { return; }
+	if( nullptr == m_pTool ) { return; }
 
 	SVInspectionProcess* pInspection = m_pTool->GetInspection();
-	if( NULL == pInspection ) { return; }
+	if( nullptr == pInspection ) { return; }
 
 	ObjectTreeGenerator::Instance().setSelectorType( ObjectTreeGenerator::SelectorTypeEnum::TypeSetAttributes );
 	ObjectTreeGenerator::Instance().setAttributeFilters( SV_PUBLISHABLE );
@@ -304,42 +304,43 @@ void SVToolAdjustmentDialogStatisticsPageClass::OnPublishButton()
 	ObjectTreeGenerator::Instance().insertOutputList( OutputList );
 
 	CString PublishableResults;
-	PublishableResults.LoadString ( IDS_PUBLISHABLE_RESULTS );
+	PublishableResults.LoadString( IDS_PUBLISHABLE_RESULTS );
 	SVString Title;
 	SVString ToolName( m_pTool->GetName() );
-	Title.Format(_T("%s - %s"), PublishableResults , ToolName.c_str() );
-	SVString TabTitle = PublishableResults; 
-	INT_PTR Result = ObjectTreeGenerator::Instance().showDialog( Title, TabTitle, this );
+	Title.Format( _T("%s - %s"), PublishableResults, ToolName.c_str() );
+	SVString mainTabTitle = PublishableResults;
+	CString Filter;
+	Filter.LoadString( IDS_FILTER );
+	SVString filterTabTitle = Filter;
+	INT_PTR Result = ObjectTreeGenerator::Instance().showDialog( Title, mainTabTitle, filterTabTitle, this );
 
 	if( IDOK == Result )
 	{
-
 		SVPublishListClass& PublishList = pInspection->GetPublishList();
-		PublishList.Refresh( static_cast <SVTaskObjectClass*> (pInspection->GetToolSet()) );
+		PublishList.Refresh( static_cast<SVTaskObjectClass*>(pInspection->GetToolSet()) );
 
 		SVIPDoc* l_pIPDoc = SVObjectManagerClass::Instance().GetIPDoc( pInspection->GetUniqueObjectID() );
 
-		if( NULL != l_pIPDoc )
+		if( nullptr != l_pIPDoc )
 		{
 			l_pIPDoc->SetModifiedFlag();
 		}
 	}
 }
 
-void SVToolAdjustmentDialogStatisticsPageClass::OnBtnObjectPicker() 
+void SVToolAdjustmentDialogStatisticsPageClass::OnBtnObjectPicker()
 {
-	
-	if( NULL == m_pTool || NULL == m_pToolSet ) { return; }
+	if( nullptr == m_pTool || nullptr == m_pToolSet ) { return; }
 
 	SVInspectionProcess* pInspection = m_pTool->GetInspection();
-	if( NULL == pInspection ) { return; }
+	if( nullptr == pInspection ) { return; }
 
 	m_pTool->UpdateTaskObjectOutputListAttributes();
 
 	SVString InspectionName( pInspection->GetName() );
 
 	ObjectTreeGenerator::SelectorTypeEnum SelectorType;
-	SelectorType = static_cast<ObjectTreeGenerator::SelectorTypeEnum> (ObjectTreeGenerator::SelectorTypeEnum::TypeSetAttributes | ObjectTreeGenerator::SelectorTypeEnum::TypeSingleObject);
+	SelectorType = static_cast<ObjectTreeGenerator::SelectorTypeEnum>(ObjectTreeGenerator::SelectorTypeEnum::TypeSetAttributes | ObjectTreeGenerator::SelectorTypeEnum::TypeSingleObject);
 	ObjectTreeGenerator::Instance().setSelectorType( SelectorType );
 	ObjectTreeGenerator::Instance().setAttributeFilters( SV_SELECTABLE_FOR_STATISTICS );
 	ObjectTreeGenerator::Instance().setLocationFilter( ObjectTreeGenerator::FilterInput, InspectionName, SVString( _T("") ) );
@@ -349,19 +350,21 @@ void SVToolAdjustmentDialogStatisticsPageClass::OnBtnObjectPicker()
 	ObjectTreeGenerator::Instance().insertOutputList( OutputList );
 
 	CString ToolsetOutput;
-	ToolsetOutput.LoadString ( IDS_SELECT_TOOLSET_OUTPUT );
+	ToolsetOutput.LoadString( IDS_SELECT_TOOLSET_OUTPUT );
 	SVString Title;
-	Title.Format(_T("%s - %s"), ToolsetOutput , m_pTool->GetName() );
-	SVString TabTitle = ToolsetOutput; 
-
-	INT_PTR Result = ObjectTreeGenerator::Instance().showDialog( Title, TabTitle, this );
+	Title.Format( _T("%s - %s"), ToolsetOutput, m_pTool->GetName() );
+	SVString mainTabTitle = ToolsetOutput;
+	CString Filter;
+	Filter.LoadString( IDS_FILTER );
+	SVString filterTabTitle = Filter;
+	INT_PTR Result = ObjectTreeGenerator::Instance().showDialog( Title, mainTabTitle, filterTabTitle, this );
 
 	if( IDOK == Result )
 	{
 		m_strVariableToMonitor = ObjectTreeGenerator::Instance().getSingleObjectResult().getDisplayLocation().c_str();
 
 		SVGUID ResultObjectGuid( ObjectTreeGenerator::Instance().getSingleObjectResult().getItemKey() );
-		SVObjectClass *pResultObject = nullptr;
+		SVObjectClass* pResultObject = nullptr;
 		SVObjectManagerClass::Instance().GetObjectByIdentifier( ResultObjectGuid,  pResultObject);
 		if( nullptr != pResultObject )
 		{
@@ -372,11 +375,22 @@ void SVToolAdjustmentDialogStatisticsPageClass::OnBtnObjectPicker()
 		UpdateData( FALSE );
 	}
 }
+
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVTADlgStatisticsPage.cpp_v  $
+ * 
+ *    Rev 1.5   16 Dec 2014 18:03:14   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  933
+ * SCR Title:  Add Filter Tab to Object Selector (SVO-377)
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   Changed the OnPublishButton and OnBtnObjectPicker methods to specify the title of the Object Selector's Filter Page.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.4   04 Dec 2014 04:52:22   gramseier
  * Project:  SVObserver

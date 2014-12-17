@@ -5,8 +5,8 @@
 //* .Module Name     : SVString
 //* .File Name       : $Workfile:   SVString.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   17 Jul 2014 17:17:18  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   16 Dec 2014 18:20:04  $
 //******************************************************************************
 
 #pragma once
@@ -114,6 +114,15 @@ public:
 	SVString Right( size_t count ) const;
 	void Remove(SVElementType ch);
 
+	//************************************
+	// Description:  Check if searchString is found in this string. For the searchString wildcard "*" can be used.
+	// Parameter:  searchString <in>:  the string to look for
+	// Parameter:  offsetSource <in>:  offset where the search in this string will started.  Default is 0 (the beginning).
+	// Parameter:  offsetSearch <in>:  offset where from the search string is used.  Default is 0 (the beginning)
+	// Returns:  bool:  true if searchString is found
+	//************************************
+	bool isSubmatch( SVString searchString, size_t offsetSource = 0, size_t offsetSearch = 0 );
+
 	void clear();
 
 	bool empty() const;
@@ -161,11 +170,6 @@ public:
 	reference at( size_type p_Offset );
 	const_reference at( size_type p_Offset ) const;
 
-	/* Need to use SVResourceManager singleton
-	bool LoadString( UINT uID );
-	bool LoadString( HINSTANCE hInst, UINT uID );
-	*/
-
 	void Format( const SVElementType* lpszFormat, ... );
 	void Format( const wchar_t* lpszFormat, ... );
 
@@ -184,7 +188,6 @@ public:
 
 protected:
 	SVDataType m_String;
-
 };
 
 SVString operator+( LPCTSTR psz1, const SVString& str2 );
@@ -200,6 +203,16 @@ typedef std::map< SVString, SVString > TranslateMap;
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVUtilityLibrary\SVString.h_v  $
+ * 
+ *    Rev 1.3   16 Dec 2014 18:20:04   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  933
+ * SCR Title:  Add Filter Tab to Object Selector (SVO-377)
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   Added method isSubmatch to support the Object Selector's Filter Page search.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   17 Jul 2014 17:17:18   gramseier
  * Project:  SVObserver

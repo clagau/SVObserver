@@ -5,34 +5,34 @@
 //* .Module Name     : SVObjectAppClass
 //* .File Name       : $Workfile:   SVObjectAppClass.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.3  $
-//* .Check In Date   : $Date:   15 May 2014 13:35:58  $
+//* .Current Version : $Revision:   1.4  $
+//* .Check In Date   : $Date:   16 Dec 2014 18:00:14  $
 //******************************************************************************
 
-#ifndef SVOBJECTAPPCLASS_H
-#define SVOBJECTAPPCLASS_H
+#pragma once
 
 #include "SVObjectLibrary/SVObjectClass.h"
+#include "resource.h"
 
 class SVInspectionProcess;
 class SVToolClass;
 class SVAnalyzerClass;
 
-class SVObjectAppClass : public SVObjectClass  
+class SVObjectAppClass : public SVObjectClass
 {
 	SV_DECLARE_CLASS( SVObjectAppClass )
 
 public:
 	virtual ~SVObjectAppClass();
 	SVObjectAppClass( LPCSTR LPSZObjectName );
-	SVObjectAppClass( SVObjectClass* POwner = NULL, int StringResourceID = IDS_CLASSNAME_SVOBJECTAPPCLASS );
+	SVObjectAppClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVOBJECTAPPCLASS );
 
 	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStruct );
 	virtual HRESULT ConnectObject( SVObjectLevelCreateStruct* PCreateStruct );
 
-	SVInspectionProcess *GetInspection() const;
-	SVToolClass *GetTool() const;
-	SVAnalyzerClass *GetAnalyzer() const;
+	SVInspectionProcess* GetInspection() const;
+	SVToolClass* GetTool() const;
+	SVAnalyzerClass* GetAnalyzer() const;
 
 protected:
 	virtual DWORD_PTR processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext );
@@ -40,9 +40,9 @@ protected:
 	void UpdateConnections( SVObjectLevelCreateStruct* PCreateStruct );
 
 private:
-	SVInspectionProcess *m_psvInspection;
-	SVToolClass *m_psvTool;
-	SVAnalyzerClass *m_psvAnalyzer;
+	SVInspectionProcess* m_psvInspection;
+	SVToolClass* m_psvTool;
+	SVAnalyzerClass* m_psvAnalyzer;
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -50,13 +50,21 @@ private:
 // DevStudio inserts additional declarations immediate in front of the preceding line
 ////////////////////////////////////////////////////////////////////////////////
 
-#endif
-
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVObjectAppClass.h_v  $
+ * 
+ *    Rev 1.4   16 Dec 2014 18:00:14   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  933
+ * SCR Title:  Add Filter Tab to Object Selector (SVO-377)
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   Added #include resource.h.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   15 May 2014 13:35:58   sjones
  * Project:  SVObserver
