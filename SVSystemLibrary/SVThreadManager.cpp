@@ -5,8 +5,8 @@
 //* .Module Name     : SVThreadManager
 //* .File Name       : $Workfile:   SVThreadManager.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   10 Dec 2014 16:49:50  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   17 Dec 2014 09:34:06  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -31,12 +31,12 @@ SVThreadManager::SVThreadManager()
  ,m_pRemove(nullptr)
  ,m_pClear(nullptr)
  ,m_bThreadAffinityEnabled(FALSE)
-
+ ,m_bThreadManagerInstalled(FALSE)
 {
+	::InitializeCriticalSection(&m_CritSec);
 	// Temperary place to de-activate SVThreadManager
-	m_bThreadAffinityEnabled = GetPrivateProfileInt( _T( "Settings" ), _T( "ThreadManagerActive" ), 0, _T( "c:\\SVObserver\\Bin\\SVim.ini" ) );
-
-	if( m_bThreadAffinityEnabled )
+	m_bThreadManagerInstalled = GetPrivateProfileInt( _T( "Settings" ), _T( "ThreadManagerActive" ), 1, _T( "c:\\SVObserver\\Bin\\SVim.ini" ) );
+	if( m_bThreadManagerInstalled )
 	{
 		Create();
 	}
@@ -133,11 +133,13 @@ HRESULT SVThreadManager::IsAllowed( LPCTSTR strName,  SVThreadAttribute eAttrib 
 HRESULT SVThreadManager::Add( HANDLE hThread, LPCTSTR strName, SVThreadAttribute eAttrib )
 {
 	HRESULT hr = S_FALSE;
+	::EnterCriticalSection( &m_CritSec );
 	if( m_pAdd != nullptr )
 	{
 		_bstr_t bstName(strName);
 		hr = m_pAdd(hThread, bstName.Detach(), eAttrib);
 	}
+	::LeaveCriticalSection( &m_CritSec );
 	return hr;
 }
 
@@ -166,19 +168,30 @@ BOOL SVThreadManager::GetThreadAffinityEnabled() const
 
 void SVThreadManager::SetThreadAffinityEnabled( BOOL bEnable )
 {
-	HRESULT hr = S_OK;
+	HRESULT hr = S_FALSE;
 	if( bEnable && !m_bThreadAffinityEnabled )
 	{
-		hr = Create();
+		if( m_pStartAffinityMgnt != nullptr )
+		{
+			hr = m_pStartAffinityMgnt();
+		}
 	}
 	if( !bEnable && m_bThreadAffinityEnabled )
 	{
-		Destroy();
+		if(m_pStopAffinityMgnt!= nullptr)
+		{
+			hr = m_pStopAffinityMgnt();
+		}
 	}
 	if( hr == S_OK )
 	{
 		m_bThreadAffinityEnabled = bEnable;
 	}
+}
+
+BOOL SVThreadManager::IsThreadManagerInstalled() const
+{
+	return m_bThreadManagerInstalled;
 }
 
 
@@ -213,10 +226,12 @@ BOOL SVThreadManager::SetAffinity( LPCTSTR ThreadName, DWORD_PTR dwAffinityBitNu
 HRESULT SVThreadManager::Remove( HANDLE p_hThread )
 {
 	HRESULT hr = S_FALSE;
+	::EnterCriticalSection( &m_CritSec );
 	if(m_pRemove != nullptr)
 	{
 		hr = m_pRemove(p_hThread);
 	}
+	::LeaveCriticalSection( &m_CritSec );
 	return hr;
 }
 
@@ -248,6 +263,9 @@ HRESULT SVThreadManager::Create()
 		m_pRemove = reinterpret_cast<RemovePtr>(GetProcAddress(m_hThreadManagerDll, _T("SVRemove")));
 		m_pClear = reinterpret_cast<ClearPtr>(GetProcAddress(m_hThreadManagerDll, _T("SVClear")));
 		m_pGetPipeCount = reinterpret_cast<GetPipeCountPtr>(GetProcAddress(m_hThreadManagerDll, _T("SVGetPipeCount")));
+		m_pStartAffinityMgnt = reinterpret_cast<StartAffinityMgntPtr>(GetProcAddress(m_hThreadManagerDll, _T("SVStartAffinityMgnt")));
+		m_pStopAffinityMgnt = reinterpret_cast<StopAffinityMgmtPtr>(GetProcAddress(m_hThreadManagerDll, _T("SVStopAffinityMgmt")));
+
 		if( m_pGetThreadInfo != nullptr &&
 			m_pGetThreadInfoFilter != nullptr &&
 			m_pIsAllowed != nullptr &&
@@ -256,7 +274,9 @@ HRESULT SVThreadManager::Create()
 			m_pSetAffinity != nullptr &&
 			m_pRemove != nullptr &&
 			m_pClear != nullptr &&
-			m_pGetPipeCount != nullptr)
+			m_pGetPipeCount != nullptr &&
+			m_pStartAffinityMgnt != nullptr &&
+			m_pStopAffinityMgnt != nullptr)
 		{
 			hr = S_OK;
 		}
@@ -267,12 +287,6 @@ HRESULT SVThreadManager::Create()
 
 void SVThreadManager::Destroy()
 {
-	// FreeLibrary
-	if( m_hThreadManagerDll != nullptr )
-	{
-		FreeLibrary( m_hThreadManagerDll );
-		m_hThreadManagerDll = nullptr;
-	}
 	m_pGetThreadInfo = nullptr;
 	m_pGetThreadInfoFilter = nullptr;
 	m_pIsAllowed = nullptr;
@@ -282,6 +296,13 @@ void SVThreadManager::Destroy()
 	m_pRemove = nullptr;
 	m_pClear = nullptr;
 	m_pGetPipeCount = nullptr;
+	// FreeLibrary
+	if( m_hThreadManagerDll != nullptr )
+	{
+		FreeLibrary( m_hThreadManagerDll );
+		m_hThreadManagerDll = nullptr;
+	}
+	::DeleteCriticalSection( &m_CritSec );
 }
 
 
@@ -290,6 +311,29 @@ void SVThreadManager::Destroy()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVSystemLibrary\SVThreadManager.cpp_v  $
+ * 
+ *    Rev 1.3   17 Dec 2014 09:34:06   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  960
+ * SCR Title:  Pipe/core management
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Added Critical Section to protect Threading issues.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.2   17 Dec 2014 07:23:06   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  960
+ * SCR Title:  Pipe/core management
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Added Thread Manager Enable functions.
+ * IsThreadManagerInstalled
+ * StartAffinityMgnt
+ * StopAffinityMgnt
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   10 Dec 2014 16:49:50   tbair
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : ObjectTreeItems
 //* .File Name       : $Workfile:   ObjectTreeItems.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.3  $
-//* .Check In Date   : $Date:   16 Dec 2014 18:17:32  $
+//* .Current Version : $Revision:   1.4  $
+//* .Check In Date   : $Date:   18 Dec 2014 02:07:12  $
 //******************************************************************************
 
 #pragma region Includes
@@ -219,7 +219,7 @@ SVStringSet ObjectTreeItems::setParentState( const ObjectTreeItems::iterator& rI
 		if( end() != ParentIter )
 		{
 			IObjectSelectorItem::CheckedStateEnum CheckedState = getNodeCheckedState( ParentIter );
-			if( IObjectSelectorItem::EmptyEnabled != CheckedState && ParentIter->second.getCheckedState() != CheckedState )
+			if( ParentIter->second.getCheckedState() != CheckedState )
 			{
 				ParentIter->second.setCheckedState( CheckedState );
 				retValue.insert( ParentIter->first );
@@ -320,6 +320,16 @@ ObjectTreeItems::iterator ObjectTreeItems::findLevelItem(const iterator& rIter, 
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVTreeLibrary\ObjectTreeItems.cpp_v  $
+ * 
+ *    Rev 1.4   18 Dec 2014 02:07:12   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  965
+ * SCR Title:  Update Object Selector Text Label; Update Icons; Add List Output
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Fix: SetParentNode not updating when the state is empty enabled
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   16 Dec 2014 18:17:32   bwalter
  * Project:  SVObserver

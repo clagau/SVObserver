@@ -5,8 +5,8 @@
 //* .Module Name     : SVThreadInfoDlg
 //* .File Name       : $Workfile:   SVThreadInfoDlg.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   01 Dec 2014 13:11:10  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   17 Dec 2014 07:08:56  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -14,6 +14,7 @@
 #include "SVThreadInfoDlg.h"
 #include "afxdialogex.h"
 #include "SVSystemLibrary/SVThreadManager.h"
+#include "SVSVIMStateClass.h"
 
 // SVThreadInfoDlg dialog
 
@@ -30,6 +31,7 @@ SVThreadInfoDlg::SVThreadInfoDlg(CWnd* pParent /*=nullptr*/)
 	: CDialog(SVThreadInfoDlg::IDD, pParent)
 	,m_IdIndex(0)
 	,m_DisplayState(0)
+	, m_bManagerEnable(FALSE)
 {
 	
 }
@@ -41,6 +43,7 @@ SVThreadInfoDlg::~SVThreadInfoDlg()
 void SVThreadInfoDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
+	DDX_Check(pDX, IDC_THREAD_MANAGER_ENABLE, m_bManagerEnable);
 }
 
 
@@ -48,6 +51,7 @@ BEGIN_MESSAGE_MAP(SVThreadInfoDlg, CDialog)
     ON_NOTIFY(PTN_ITEMBUTTONCLICK, IDC_PROPERTYTREE, OnItemButtonClick)
     ON_NOTIFY(PTN_ITEMCHANGED, IDC_PROPERTYTREE, OnItemChanged)
 	ON_BN_CLICKED(IDC_SAVE, &OnBnClickedSave)
+	ON_BN_CLICKED(IDC_THREAD_MANAGER_ENABLE, &OnEnableCheck)
 END_MESSAGE_MAP()
 
 
@@ -65,14 +69,21 @@ BOOL SVThreadInfoDlg::OnInitDialog()
 	m_ThreadList.SetColumn( (long) ( rc.Width() * 0.5 ) );
 
 	// Only show threads that have edit allowed.
-	UpdateThreadInfo(SVAffinityEditAllowed);
+	UpdateThreadInfo(SVAffinityUser);
 
 	// For showing all threads update with SVNone.
 	//UpdateThreadInfo(SVNone); 
 
-	// Enable button to save info to a file.
+	// Enable button to save info to a file for debugging.
 	//GetDlgItem(IDC_SAVE)->ShowWindow( SW_SHOW ); 
 	GetDlgItem(IDC_SAVE)->ShowWindow( SW_HIDE );
+
+	m_bManagerEnable = SVThreadManager::Instance().GetThreadAffinityEnabled();
+
+	// Enable thread list if manager is enabled.
+	m_ThreadList.EnableWindow( m_bManagerEnable );
+
+	UpdateData(FALSE);
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 	// EXCEPTION: OCX Property Pages should return FALSE
@@ -97,7 +108,7 @@ void SVThreadInfoDlg::UpdateThreadInfo( SVThreadAttribute eAttribute)
 						// An example is the Display threads which have the same name.
 
 		// Always show Affinity Edit Allowed threads...
-		if( (it->m_eAttribute & SVAffinityEditAllowed) == SVAffinityEditAllowed )
+		if( (it->m_eAttribute & SVAffinityBasic) == SVAffinityBasic )
 		{
 			// Name
 			InsertComboThreadItem( pRoot, it->m_strName.c_str(), it->m_lAffinity, PROP_THREADS_BASE + m_IdIndex);
@@ -268,11 +279,13 @@ void SVThreadInfoDlg::OnItemButtonClick(NMHDR* pNotifyStruct, LRESULT* plResult)
 			if( SVThreadManager::Instance().IsAllowed( strTmp, SVAffinityEditAllowed ) )
 			{
 				SVThreadManager::Instance().SetAffinity( strTmp, lValue );
+				SVSVIMStateClass::AddState( SV_STATE_MODIFIED );
 			}
 		}
 	}
 
 }
+
 void SVThreadInfoDlg::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResult)
 {
 	*plResult = TRUE;
@@ -286,6 +299,7 @@ void SVThreadInfoDlg::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResult)
 		pItem->GetItemValue(lValue);
 		CString strTmp = pItem->GetLabelText();
 		SVThreadManager::Instance().SetAffinity( strTmp, lValue );
+		SVSVIMStateClass::AddState( SV_STATE_MODIFIED );
 	}
 	int i = 0;
 }
@@ -307,11 +321,34 @@ void SVThreadInfoDlg::OnBnClickedSave()
 		file.Close();
 	}
 }
+
+void SVThreadInfoDlg::OnEnableCheck()
+{
+	UpdateData();
+	BOOL bEnabled =  SVThreadManager::Instance().GetThreadAffinityEnabled();
+	if( m_bManagerEnable != bEnabled )
+	{
+		SVThreadManager::Instance().SetThreadAffinityEnabled(m_bManagerEnable);
+	}
+	m_ThreadList.EnableWindow( m_bManagerEnable );
+	SVSVIMStateClass::AddState( SV_STATE_MODIFIED );
+}
+
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVThreadInfoDlg.cpp_v  $
+ * 
+ *    Rev 1.1   17 Dec 2014 07:08:56   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  941
+ * SCR Title:  Update SVObserver Version Number for the 7.10 Release
+ * Checked in by:  bWalter;  Ben Walter
+ * Change Description:  
+ *   Added Thread Manager Enable.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   01 Dec 2014 13:11:10   tbair
  * Project:  SVObserver

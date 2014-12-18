@@ -5,8 +5,8 @@
 //* .Module Name     : SVTool
 //* .File Name       : $Workfile:   SVTool.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.8  $
-//* .Check In Date   : $Date:   15 May 2014 13:10:54  $
+//* .Current Version : $Revision:   1.9  $
+//* .Check In Date   : $Date:   17 Dec 2014 10:48:04  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -198,7 +198,7 @@ BOOL SVToolClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
 	// Auxilliary Tool Source Extent
 	m_svUpdateAuxilliaryExtents.ObjectAttributesAllowedRef() |= SV_PRINTABLE | SV_SETABLE_ONLINE | SV_REMOTELY_SETABLE ;
 	
-	ToolSelectedForOperatorMove.ObjectAttributesAllowedRef() |= SV_PRINTABLE;
+	ToolSelectedForOperatorMove.ObjectAttributesAllowedRef() = SV_NO_ATTRIBUTES; //Clear Attributes ... No longer used.
 	drawToolFlag.ObjectAttributesAllowedRef() |= SV_PRINTABLE;
 
 	// Tool Comment Atributes...
@@ -1339,6 +1339,16 @@ SVValueObjectClass* SVToolClass::GetToolComment()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVTool.cpp_v  $
+ * 
+ *    Rev 1.9   17 Dec 2014 10:48:04   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  908
+ * SCR Title:  Remove option for Operator Move (SVO 101)
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Cleared attributes on ToolSelectedForOperatorMove Value Object because it is obsolete.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.8   15 May 2014 13:10:54   tbair
  * Project:  SVObserver

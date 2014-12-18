@@ -5,8 +5,8 @@
 //* .Module Name     : SVThreadInfoDlg
 //* .File Name       : $Workfile:   SVThreadInfoDlg.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   02 Dec 2014 09:53:22  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   17 Dec 2014 07:08:52  $
 //******************************************************************************
 #pragma once
 #pragma region Includes
@@ -40,6 +40,7 @@ protected:
     afx_msg void OnItemButtonClick(NMHDR* pNotifyStruct, LRESULT* plResult);
 	afx_msg void OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResult);
 	afx_msg void OnBnClickedSave();
+	afx_msg void OnEnableCheck();
 #pragma endregion
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 #pragma endregion
@@ -57,6 +58,8 @@ private:
 	int m_IdIndex;
 	int m_DisplayState;
 #pragma endregion
+public:
+	BOOL m_bManagerEnable;
 };
 
 //******************************************************************************
@@ -64,6 +67,16 @@ private:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVThreadInfoDlg.h_v  $
+ * 
+ *    Rev 1.2   17 Dec 2014 07:08:52   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  941
+ * SCR Title:  Update SVObserver Version Number for the 7.10 Release
+ * Checked in by:  bWalter;  Ben Walter
+ * Change Description:  
+ *   Added Thread Manager Enable.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   02 Dec 2014 09:53:22   tbair
  * Project:  SVObserver

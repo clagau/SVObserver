@@ -5,8 +5,8 @@
 //* .Module Name     : SVFormulaEditorPageClass
 //* .File Name       : $Workfile:   SVFormulaEditorPage.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.10  $
-//* .Check In Date   : $Date:   16 Dec 2014 17:58:22  $
+//* .Current Version : $Revision:   1.11  $
+//* .Check In Date   : $Date:   18 Dec 2014 01:53:28  $
 //******************************************************************************
 
 #pragma region Includes
@@ -413,6 +413,10 @@ void SVFormulaEditorPageClass::OnLocalVariableSelect()
 	m_rFormulaController.getToolSet()->GetOutputList( OutputList );
 	ObjectTreeGenerator::Instance().insertOutputList( OutputList );
 
+	SVStringSet Items;
+	Items.insert( SVString(m_strToolsetOutputVariable) );
+	ObjectTreeGenerator::Instance().setCheckItems( Items );
+
 	CString ToolsetOutput;
 	ToolsetOutput.LoadString( IDS_SELECT_TOOLSET_OUTPUT );
 	SVString Title;
@@ -818,6 +822,16 @@ void SVFormulaEditorPageClass::enableControls()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVFormulaEditorPage.cpp_v  $
+ * 
+ *    Rev 1.11   18 Dec 2014 01:53:28   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  965
+ * SCR Title:  Update Object Selector Text Label; Update Icons; Add List Output
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Formula editor sets the variable selection to the current value
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.10   16 Dec 2014 17:58:22   bwalter
  * Project:  SVObserver

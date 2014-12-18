@@ -5,8 +5,8 @@
 //* .Module Name     : SVConfigurationObject
 //* .File Name       : $Workfile:   SVConfigurationObject.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.35  $
-//* .Check In Date   : $Date:   12 Dec 2014 13:08:58  $
+//* .Current Version : $Revision:   1.36  $
+//* .Check In Date   : $Date:   17 Dec 2014 07:08:54  $
 //******************************************************************************
 
 #pragma region Includes
@@ -908,6 +908,15 @@ HRESULT SVConfigurationObject::LoadConfiguration(SVTreeType& rTree)
 				}
 				iThreadNum++;
 			}
+
+			// Thread Manager Enable
+			BOOL bThreadMgrEnable = FALSE;
+			if (SVNavigateTreeClass::GetItem( rTree, CTAG_THREAD_MGR_ENABLE, htiChild, svValue) )
+			{
+				bThreadMgrEnable = svValue;
+			}
+			SVThreadManager::Instance().SetThreadAffinityEnabled(bThreadMgrEnable);
+
 
 		}// end if ( SVNavigateTreeClass::GetItem( rTree, CTAG_ENVIRONMENT, NULL, &htiChild ) )
 
@@ -2851,8 +2860,14 @@ BOOL SVConfigurationObject::SaveEnvironment(SVTreeType& rTree)
 
 		if ( bOk )
 		{
+			// Thread Manager Enable.
+			BOOL bEnable = SVThreadManager::Instance().GetThreadAffinityEnabled();
+			svValue = bEnable;
+			bOk = SVNavigateTreeClass::AddItem( rTree, hEnvBranch, CTAG_THREAD_MGR_ENABLE, svValue );
+
+
 			SVThreadManager::ThreadList threads;
-			SVThreadManager::Instance().GetThreadInfo(threads, SVThreadAttribute::SVAffinityEditAllowed );
+			SVThreadManager::Instance().GetThreadInfo(threads, SVThreadAttribute::SVAffinityUser );
 			SVTreeType::SVBranchHandle hThreadBranch = NULL;
 			int iCount = 1;
 			for( SVThreadManager::ThreadList::const_iterator it = threads.begin() ; it != threads.end(); ++it)
@@ -5541,6 +5556,16 @@ HRESULT SVConfigurationObject::LoadMonitoredObjectList( SVTreeType& rTree, SVTre
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVConfigurationObject.cpp_v  $
+ * 
+ *    Rev 1.36   17 Dec 2014 07:08:54   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  941
+ * SCR Title:  Update SVObserver Version Number for the 7.10 Release
+ * Checked in by:  bWalter;  Ben Walter
+ * Change Description:  
+ *   Added Thread Manager Enable.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.35   12 Dec 2014 13:08:58   ryoho
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : SVArchiveTool
 //* .File Name       : $Workfile:   SVArchiveTool.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.10  $
-//* .Check In Date   : $Date:   09 Dec 2014 13:28:30  $
+//* .Current Version : $Revision:   1.12  $
+//* .Check In Date   : $Date:   17 Dec 2014 11:29:20  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -950,7 +950,7 @@ HRESULT SVArchiveImageThreadClass::GoOnline()
 
 		::SetThreadPriority( m_hThread, THREAD_PRIORITY_NORMAL );
 		
-		SVThreadManager::Instance().Add( m_hThread, "Archive Tools(Asynchronous)", SVAffinityEditAllowed );
+		SVThreadManager::Instance().Add( m_hThread, "Archive Tools(Asynchronous)", SVAffinityUser );
 	}
 	return S_OK;
 }
@@ -1369,6 +1369,15 @@ HRESULT SVArchiveTool::ResetObject()
 	m_evoArchiveMethod.GetValue( l_lArchiveMethod );
 
 	m_eArchiveMethod = static_cast<SVArchiveMethodEnum>( l_lArchiveMethod );
+
+	// Put the archive tool text in the thread affinity list.
+	if( m_eArchiveMethod == SVArchiveAsynchronous )
+	{	// IsAllowed will return S_FALSE if the thread is not found with SVNone.
+		if( S_FALSE == SVThreadManager::Instance().IsAllowed(_T( "Archive Tools(Asynchronous)") , SVNone))
+		{	// Add thread to list with null handle so the user can set affinity before the thread is created.
+			SVThreadManager::Instance().Add( nullptr, _T("Archive Tools(Asynchronous)"), SVAffinityUser );
+		}
+	}
 
 	CString csTemp;
 	m_stringArchiveImageGuids_OBSOLETE.GetValue(csTemp);
@@ -2355,6 +2364,26 @@ BOOL SVArchiveTool::renameToolSetSymbol(SVObjectClass* pObject, LPCTSTR orgName)
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVArchiveTool.cpp_v  $
+ * 
+ *    Rev 1.12   17 Dec 2014 11:29:20   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  960
+ * SCR Title:  Pipe/core management
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Added the archive name to thread affinity list before the archive thread is created so the user will see it in the thread list.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.11   17 Dec 2014 07:15:50   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  960
+ * SCR Title:  Pipe/core management
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Changed Enum name for thread attribute.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.10   09 Dec 2014 13:28:30   tbair
  * Project:  SVObserver

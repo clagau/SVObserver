@@ -5,8 +5,8 @@
 //* .Module Name     : SVThreadManager
 //* .File Name       : $Workfile:   SVThreadManager.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   10 Dec 2014 16:49:50  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   17 Dec 2014 08:18:16  $
 //******************************************************************************
 
 
@@ -15,20 +15,10 @@
 #include <map>
 #include <list>
 #include <comdef.h>
+#include "SVThreadManager\SVThreadAttribute.h"
 
 #pragma endregion
 
-enum SVThreadAttribute
-{
-	SVNone = 0,
-	SVAffinityEditAllowed = 1,
-	SVPriorityEditAllowed = 2,
-	SVOperatorViewable = 4,
-	SVAffinityPPQ = 8, // Not editable but on a seperate pipe. PPQs, Triggers, Acq.
-	SVAffinityAcq = 0x10,
-	SVAffinityTrigger = 0x20,
-	SVAffinityDummy = 0x40,
-};
 
 struct SVThreadSetup
 {	SVThreadSetup():m_lAffinity(0),m_lPriority(0),m_hThread(nullptr){};
@@ -50,6 +40,8 @@ typedef HRESULT (WINAPI *GetPipeCountPtr)(long* pLPipeCount);
 typedef BOOL (WINAPI *SetAffinityPtr)( BSTR ThreadName, DWORD_PTR dwNewAffinity );
 typedef HRESULT (WINAPI *RemovePtr)( HANDLE p_hThread );
 typedef HRESULT (WINAPI *ClearPtr)( );
+typedef HRESULT (WINAPI *StartAffinityMgntPtr)();
+typedef HRESULT (WINAPI *StopAffinityMgmtPtr)();
 
 
 
@@ -95,6 +87,7 @@ public:
 	void Destroy();
 	BOOL GetThreadAffinityEnabled() const;
 	void SetThreadAffinityEnabled( BOOL bEnable );
+	BOOL IsThreadManagerInstalled() const;
 
 #pragma endregion
 
@@ -111,7 +104,12 @@ private:
 	SetAffinityPtr m_pSetAffinity;
 	RemovePtr m_pRemove;
 	ClearPtr m_pClear;
+	StartAffinityMgntPtr m_pStartAffinityMgnt;
+	StopAffinityMgmtPtr m_pStopAffinityMgnt;
+
 	BOOL m_bThreadAffinityEnabled;
+	BOOL m_bThreadManagerInstalled;
+	CRITICAL_SECTION m_CritSec;
 #pragma endregion
 };
 
@@ -120,6 +118,16 @@ private:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVSystemLibrary\SVThreadManager.h_v  $
+ * 
+ *    Rev 1.3   17 Dec 2014 08:18:16   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  960
+ * SCR Title:  Pipe/core management
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Added Critical Section to protect threading issues in add and remove functions.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   10 Dec 2014 16:49:50   tbair
  * Project:  SVObserver

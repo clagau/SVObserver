@@ -5,8 +5,8 @@
 //* .Module Name     : SVThreadManagerExports
 //* .File Name       : $Workfile:   SVThreadManagerExports.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   01 Dec 2014 11:21:46  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   17 Dec 2014 07:31:18  $
 //******************************************************************************
 #include "stdafx.h"
 #include "SVThreadManagerExports.h"
@@ -116,11 +116,33 @@ HRESULT WINAPI SVClear( )
 	return hr;
 }
 
+// Start sets specific affinities and starts the dummy thread.
+HRESULT WINAPI SVStartAffinityMgnt()
+{
+	return gThreadManager.StartAffinityMgnt();
+}
+
+// Stop resets affinities to all processors and kills the dummy thread.
+HRESULT WINAPI SVStopAffinityMgmt()
+{
+	return gThreadManager.StopAffinityMgmt();
+}
+
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVThreadManager\SVThreadManagerExports.cpp_v  $
+ * 
+ *    Rev 1.1   17 Dec 2014 07:31:18   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  960
+ * SCR Title:  Pipe/core management
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Added startAffinityMgnt and stopAffinityMgnt functions.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   01 Dec 2014 11:21:46   tbair
  * Project:  SVObserver

@@ -201,6 +201,7 @@
   <ItemGroup>
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="SVThreadAttribute.h" />
     <ClInclude Include="SVThreadManagerDLL.h" />
     <ClInclude Include="SVThreadManagerExports.h" />
     <ClInclude Include="SVThreadManagerImpl.h" />

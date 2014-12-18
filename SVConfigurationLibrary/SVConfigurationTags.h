@@ -5,8 +5,8 @@
 // * .Module Name     : SVConfigurationTags
 // * .File Name       : $Workfile:   SVConfigurationTags.h  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.5  $
-// * .Check In Date   : $Date:   01 Dec 2014 12:11:18  $
+// * .Current Version : $Revision:   1.6  $
+// * .Check In Date   : $Date:   17 Dec 2014 06:54:04  $
 // ******************************************************************************
 // SVConfigurationTags.h
 
@@ -319,6 +319,7 @@ LPCTSTR const CTAG_COLLAPSED					= _T("Collapsed");
 LPCTSTR const CTAG_THREAD_SETUP					= _T("Thread Setup");
 LPCTSTR const CTAG_THREAD_NAME					= _T("Thread Name");
 LPCTSTR const CTAG_THREAD_AFFINITY				= _T("Thread Affinity");
+LPCTSTR const CTAG_THREAD_MGR_ENABLE			= _T("Thread Mgr Enable");
 
 
 #endif /* _INC_SVCONFIGURATIONTAGS_INCLUDED */
@@ -328,6 +329,16 @@ LPCTSTR const CTAG_THREAD_AFFINITY				= _T("Thread Affinity");
 // ******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVConfigurationLibrary\SVConfigurationTags.h_v  $
+ * 
+ *    Rev 1.6   17 Dec 2014 06:54:04   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  960
+ * SCR Title:  Pipe/core management
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Added Thread Manager Enable.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.5   01 Dec 2014 12:11:18   tbair
  * Project:  SVObserver

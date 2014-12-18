@@ -5,27 +5,17 @@
 //* .Module Name     : SVThreadManagerImpl
 //* .File Name       : $Workfile:   SVThreadManagerImpl.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   01 Dec 2014 11:21:48  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   17 Dec 2014 07:31:16  $
 //******************************************************************************
 
 #pragma once
 #pragma region Includes
 #include <map>
 #include <list>
+#include "SVThreadAttribute.h"
 #pragma endregion
 
-enum SVThreadAttribute
-{
-	SVNone = 0,
-	SVAffinityEditAllowed = 1,
-	SVPriorityEditAllowed = 2,
-	SVOperatorViewable = 4,
-	SVAffinityPPQ = 8, // Not editable but on a seperate pipe. PPQs, Triggers, Acq.
-	SVAffinityAcq = 0x10,
-	SVAffinityTrigger = 0x20,
-	SVAffinityDummy = 0x40,
-};
 
 struct SVThreadSetup
 {	SVThreadSetup():m_lAffinity(0),m_lPriority(0),m_hThread(nullptr){};
@@ -68,12 +58,16 @@ public:
 	HRESULT Setup( LPCTSTR strName, long Affinity );
 
 	long GetPipeCount( );
+
+	HRESULT StopAffinityMgmt();
+	HRESULT StartAffinityMgnt();
+
 #pragma endregion
 
 #pragma region private
 private:
 	// Set new Affinity to thread handle.
-	BOOL SetNewAffinity( HANDLE hThread, DWORD_PTR dwNewAffinity );
+	BOOL SetThreadHandleAffinity( HANDLE hThread, DWORD_PTR dwNewAffinity );
 	public:
 	// Set Affinity based on Thread Name.
 	BOOL SetAffinity( LPCTSTR ThreadName, DWORD_PTR dwNewAffinity );
@@ -81,8 +75,6 @@ private:
 	// Remove will delete the entry from the thread list.
 	HRESULT Remove( HANDLE p_hThread );
 
-	HRESULT Create();
-	void Destroy();
 
 	static DWORD WINAPI Process(LPVOID lpParam);
 	HANDLE m_hShutdown;
@@ -92,6 +84,7 @@ private:
 	// Current active threads
 	ThreadList m_threads;
 	long m_lNumPipes;
+	bool m_bThreadManagementActive;
 #pragma endregion
 };
 
@@ -100,6 +93,16 @@ private:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVThreadManager\SVThreadManagerImpl.h_v  $
+ * 
+ *    Rev 1.1   17 Dec 2014 07:31:16   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  960
+ * SCR Title:  Pipe/core management
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Added startAffinityMgnt and stopAffinityMgnt functions.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   01 Dec 2014 11:21:48   tbair
  * Project:  SVObserver

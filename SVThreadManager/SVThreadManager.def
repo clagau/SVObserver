@@ -13,3 +13,5 @@ EXPORTS
 	SVSetAffinity
 	SVRemove
 	SVClear
+	SVStartAffinityMgnt
+	SVStopAffinityMgmt

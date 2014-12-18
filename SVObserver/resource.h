@@ -2510,6 +2510,7 @@
 #define IDC_BLOB_COLOR                  16041
 #define IDC_THREAD_LIST                 16042
 #define IDC_SAVE                        16043
+#define IDC_THREAD_MANAGER_ENABLE       16044
 #define ID_TEST                         20000
 #define ID_BROWSE_BUTTON                20001
 #define ID_PLUSBUTTON                   20002
@@ -2751,7 +2752,7 @@
 #define _APS_3D_CONTROLS                     1
 #define _APS_NEXT_RESOURCE_VALUE        11112
 #define _APS_NEXT_COMMAND_VALUE         20346
-#define _APS_NEXT_CONTROL_VALUE         16044
+#define _APS_NEXT_CONTROL_VALUE         16045
 #define _APS_NEXT_SYMED_VALUE           3002
 #endif
 #endif

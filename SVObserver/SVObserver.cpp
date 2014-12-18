@@ -5,8 +5,8 @@
 //* .Module Name     : SVObserver
 //* .File Name       : $Workfile:   SVObserver.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.46  $
-//* .Check In Date   : $Date:   10 Dec 2014 16:43:44  $
+//* .Current Version : $Revision:   1.47  $
+//* .Check In Date   : $Date:   17 Dec 2014 07:08:54  $
 //******************************************************************************
 
 #pragma region Includes
@@ -1783,7 +1783,7 @@ void SVObserverApp::OnUpdateExtrasLogin( CCmdUI* PCmdUI )
 		pMenu->RemoveMenu( ID_EXTRAS_LOGIN, MF_BYCOMMAND );
 		pMenu->RemoveMenu( ID_EXTRAS_LOGOUT, MF_BYCOMMAND );
 	}
-	if( SVThreadManager::Instance().GetThreadAffinityEnabled() == 0 )
+	if( SVThreadManager::Instance().IsThreadManagerInstalled() == 0 )
 	{
 		CMenu *pMenu;
 		CWnd* pWindow = AfxGetMainWnd();
@@ -8705,6 +8705,16 @@ int SVObserverApp::FindMenuItem(CMenu* Menu, LPCTSTR MenuString)
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVObserver.cpp_v  $
+ * 
+ *    Rev 1.47   17 Dec 2014 07:08:54   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  941
+ * SCR Title:  Update SVObserver Version Number for the 7.10 Release
+ * Checked in by:  bWalter;  Ben Walter
+ * Change Description:  
+ *   Added Thread Manager Enable.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.46   10 Dec 2014 16:43:44   tbair
  * Project:  SVObserver

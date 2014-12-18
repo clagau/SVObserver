@@ -5,8 +5,8 @@
 //* .Module Name     : NodeTreeCtrl
 //* .File Name       : $Workfile:   NodeTreeCtrl.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.4  $
-//* .Check In Date   : $Date:   16 Dec 2014 17:32:42  $
+//* .Current Version : $Revision:   1.5  $
+//* .Check In Date   : $Date:   18 Dec 2014 01:48:38  $
 //******************************************************************************
 
 #pragma region Includes
@@ -112,22 +112,23 @@ void NodeTreeCtrl::loadTree()
 
 void NodeTreeCtrl::updateTree()
 {
-	SVStringSet updateItems = getUpdateItems();
-	SVStringSet::const_iterator IterName = updateItems.begin();
+	SVStringSet& rUpdateItems = getUpdateItems();
+	ObjectTreeItems& rTreeItems = getParentPropPage().getTreeContainer();
 
-	while( updateItems.end() != IterName )
+	SVStringSet::const_iterator IterName = rUpdateItems.begin();
+
+	while( rUpdateItems.end() != IterName )
 	{
-		ObjectTreeItems treeItems = getParentPropPage().getTreeContainer();
-		ObjectTreeItems::iterator Iter( treeItems.findItem( *IterName ) );
+		ObjectTreeItems::iterator Iter( rTreeItems.findItem( *IterName ) );
 
-		if( treeItems.end() != Iter )
+		if( rTreeItems.end() != Iter )
 		{
 			UpdateNode(Iter->second);
 		}
 		++IterName;
 	}
 
-	updateItems.clear();
+	rUpdateItems.clear();
 }
 
 void NodeTreeCtrl::UpdateAllNodes()
@@ -146,7 +147,7 @@ void NodeTreeCtrl::UpdateAllNodes()
 
 		if( isSingleSelect() && i->second.isLeaf() && IObjectSelectorItem::CheckedEnabled == i->second.getCheckedState() )
 		{
-			setCurrentSelection( i->second.getLocation() );
+			setCurrentSelection( i->second.getDisplayLocation() );
 		}
 		++i;
 	}
@@ -383,6 +384,16 @@ void NodeTreeCtrl::UpdateNode( ObjectSelectorItem &Item )
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\ObjectSelectorLibrary\NodeTreeCtrl.cpp_v  $
+ * 
+ *    Rev 1.5   18 Dec 2014 01:48:38   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  965
+ * SCR Title:  Update Object Selector Text Label; Update Icons; Add List Output
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Fix: UpdateTree to use reference instead of copies
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.4   16 Dec 2014 17:32:42   bwalter
  * Project:  SVObserver

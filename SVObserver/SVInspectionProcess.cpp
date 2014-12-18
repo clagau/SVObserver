@@ -5,8 +5,8 @@
 //* .Module Name     : SVInspectionProcess
 //* .File Name       : $Workfile:   SVInspectionProcess.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.22  $
-//* .Check In Date   : $Date:   10 Dec 2014 06:44:10  $
+//* .Current Version : $Revision:   1.23  $
+//* .Check In Date   : $Date:   17 Dec 2014 07:15:48  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -665,7 +665,7 @@ BOOL SVInspectionProcess::CreateInspection( LPCTSTR szDocName )
 
 	::InterlockedExchange( &m_NotifyWithLastInspected, 0 );
 
-	if( m_AsyncProcedure.Create( &SVInspectionProcess::APCThreadProcess, boost::bind(&SVInspectionProcess::ThreadProcess, this, _1), GetName(), SVThreadAttribute::SVAffinityEditAllowed ) != S_OK )
+	if( m_AsyncProcedure.Create( &SVInspectionProcess::APCThreadProcess, boost::bind(&SVInspectionProcess::ThreadProcess, this, _1), GetName(), SVThreadAttribute::SVAffinityUser ) != S_OK )
 	{
 		return FALSE;
 	}
@@ -4821,6 +4821,16 @@ void SVInspectionProcess::Persist(SVObjectWriter& rWriter)
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVInspectionProcess.cpp_v  $
+ * 
+ *    Rev 1.23   17 Dec 2014 07:15:48   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  960
+ * SCR Title:  Pipe/core management
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Changed Enum name for thread attribute.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.22   10 Dec 2014 06:44:10   tbair
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : SVThreadManagerExports
 //* .File Name       : $Workfile:   SVThreadManagerExports.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   01 Dec 2014 11:21:48  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   17 Dec 2014 07:31:18  $
 //******************************************************************************
 #ifndef _THREADMANAGEREXPORTS_
 #define _THREADMANAGEREXPORTS_
@@ -23,6 +23,7 @@ HRESULT WINAPI SVGetThreadInfo( BSTR* bstrInfo );
 // Gets a comma seperated list information filtered by Attribute.
 HRESULT WINAPI SVGetThreadInfoFilter( BSTR* bstInfo, SVThreadAttribute eFilter );
 
+// Checks if a thread has this attribute. 
 HRESULT WINAPI SVIsAllowed( BSTR Name, SVThreadAttribute eAttrib );
 
 // Add(... will register a name with a Thread ID
@@ -43,6 +44,12 @@ BOOL WINAPI SVSetAffinity( BSTR ThreadName, DWORD_PTR dwNewAffinity );
 // Remove will delete the entry from the thread list.
 HRESULT WINAPI SVRemove( HANDLE p_hThread );
 
+// Start will set affinities and start the dummy thread.
+HRESULT WINAPI SVStartAffinityMgnt();
+// Stop resets affinities to all processors and kills the dummy.
+HRESULT WINAPI SVStopAffinityMgmt();
+
+
 #endif
 
 //******************************************************************************
@@ -50,6 +57,16 @@ HRESULT WINAPI SVRemove( HANDLE p_hThread );
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVThreadManager\SVThreadManagerExports.h_v  $
+ * 
+ *    Rev 1.1   17 Dec 2014 07:31:18   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  960
+ * SCR Title:  Pipe/core management
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Added startAffinityMgnt and stopAffinityMgnt functions.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   01 Dec 2014 11:21:48   tbair
  * Project:  SVObserver

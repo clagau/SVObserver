@@ -5,19 +5,13 @@
 //* .Module Name     : SVThreadManagerImpl
 //* .File Name       : $Workfile:   SVThreadManagerImpl.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   09 Dec 2014 13:48:16  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   17 Dec 2014 07:31:18  $
 //******************************************************************************
 
 #include "stdafx.h"
 #include "sstream"
 #include "SVThreadManagerImpl.h"
-
-SVThreadManagerImpl& SVThreadManagerImpl::Instance()
-{
-	static SVThreadManagerImpl l_mgr;
-	return l_mgr;
-}
 
 
 SVThreadManagerImpl::SVThreadManagerImpl()
@@ -42,14 +36,18 @@ SVThreadManagerImpl::SVThreadManagerImpl()
 		}
 		m_lNumPipes = static_cast<long>(i);
 	}
-	Create();
 }
 
 SVThreadManagerImpl::~SVThreadManagerImpl()
 {
-	Destroy();
+	StopAffinityMgmt();
 }
 
+SVThreadManagerImpl& SVThreadManagerImpl::Instance()
+{
+	static SVThreadManagerImpl l_mgr;
+	return l_mgr;
+}
 
 HRESULT SVThreadManagerImpl::GetThreadInfo( std::list<std::string>& p_rStrList)
 {
@@ -89,7 +87,7 @@ HRESULT SVThreadManagerImpl::GetThreadInfo( std::list<SVThreadSetup>& rSetupList
 	rSetupList.clear();
 	for( ThreadList::iterator l_it = m_threads.begin() ; l_it != m_threads.end() ; ++l_it)
 	{
-		if( ((l_it->m_eAttribute & eFilter) == eFilter) /*&& (l_it->m_hThread != nullptr)*/)
+		if( (l_it->m_eAttribute & eFilter) == eFilter )
 		{
 			rSetupList.push_back( *l_it );
 		}
@@ -97,7 +95,7 @@ HRESULT SVThreadManagerImpl::GetThreadInfo( std::list<SVThreadSetup>& rSetupList
 	return hr;
 }
 
-// Gets a list of SVThreadSetup filtered by Attribute.
+// Checks if a thread has this attribute.
 HRESULT SVThreadManagerImpl::IsAllowed( LPCTSTR strName,  SVThreadAttribute eAttrib )
 {
 	HRESULT hr = S_FALSE;
@@ -126,37 +124,39 @@ HRESULT SVThreadManagerImpl::Add( HANDLE hThread, LPCTSTR strName, SVThreadAttri
 	ThreadList::iterator it = m_threads.begin();
 	for(  ; it != m_threads.end() ; ++it )
 	{
-		if( it->m_strName == Name )
+		if( strcmp(it->m_strName.c_str(), Name.c_str()) == 0 )
 		{
 			if( it->m_hThread == nullptr )
-			{
+			{	// Thread already in list but not created yet, Null handle.
 				break;
+			}
+			else
+			{	// Thread already exists and already has handle.
+				// So make this thread have the same affinity as the other one
+				// with the same name.
+				newThread.m_lAffinity = it->m_lAffinity;
 			}
 		}
 	}
-
-	// Special cases for preset thread affinity here...
-	if( (eAttrib & SVAffinityPPQ ) == SVAffinityPPQ )
+	switch(eAttrib )
 	{
-		SetNewAffinity(hThread, 1 );
-		newThread.m_lAffinity = 1;
+		case SVAffinityPPQ:
+		case SVAffinityAcq:
+		{
+			newThread.m_lAffinity = 1;
+			break;
+		}
+		case SVAffinityDummy:
+		{
+			int Pipe = 2;  // from JB requirement. According to Jim, Attempt to keep windows off this pipe.
+			newThread.m_lAffinity = Pipe;
+			break;
+		}
+		default:
+		{
+			break;
+		}
 	}
-
-	// Special cases for preset thread affinity here...
-	if( (eAttrib & SVAffinityAcq ) == SVAffinityAcq )
-	{
-		SetNewAffinity(hThread, 1 );
-		newThread.m_lAffinity = 1;
-	}
-
-	// Special cases for preset thread affinity
-	if( (eAttrib & SVAffinityDummy ) == SVAffinityDummy )
-	{
-		int Pipe = 2;  // from JB requirement. According to Jim, Attempt to keep windows off this pipe.
-		SetNewAffinity(hThread, Pipe );
-		newThread.m_lAffinity = Pipe;
-	}
-
 
 
 	if( it == m_threads.end() )
@@ -180,105 +180,15 @@ HRESULT SVThreadManagerImpl::Add( HANDLE hThread, LPCTSTR strName, SVThreadAttri
 			it->m_hThread = hThread;
 			newThread = *it;
 		}
-
-		if( (it->m_eAttribute & SVAffinityEditAllowed) == SVAffinityEditAllowed )
-		{
-			SetNewAffinity(hThread, it->m_lAffinity);
-		}
 	}
-	return hr;
-}
 
-// setup is used to restore data from the configuration.
-// At this point only the name and affinity are stored.
-HRESULT SVThreadManagerImpl::Setup( LPCTSTR strName, long Affinity )
-{
-	HRESULT hr = S_OK;
-	std::string Name(strName);
-
-
-	SVThreadSetup newThread;
-	newThread.m_eAttribute = SVAffinityEditAllowed;
-	newThread.m_hThread = nullptr;
-	newThread.m_strName = Name;
-	newThread.m_lAffinity = Affinity;
-	m_threads.push_back(newThread);
-	return hr;
-}
-
-long SVThreadManagerImpl::GetPipeCount( )
-{
-	return m_lNumPipes;
-}
-
-// Set new affinity 
-BOOL SVThreadManagerImpl::SetNewAffinity( HANDLE hThread, DWORD_PTR dwAffinityBitNum )
-{
-	// Set Thread Affinity
-	DWORD_PTR myCurrentMask;
-	DWORD_PTR systemAffinityMask;
-	DWORD_PTR newAffinityBits;
-	BOOL bRet = FALSE;
-	if( dwAffinityBitNum > 0 )
-		dwAffinityBitNum--;
-
-	if( hThread != nullptr )
+	if( newThread.m_eAttribute != SVNone
+		&& m_bThreadManagementActive )
 	{
-		bRet = ::GetProcessAffinityMask( GetCurrentProcess(), &systemAffinityMask, &myCurrentMask);
-		if( bRet )
-		{
-			if( dwAffinityBitNum >= 0 )
-			{
-				newAffinityBits = static_cast<unsigned long long>(1) << dwAffinityBitNum;
-				if( (newAffinityBits | myCurrentMask) == myCurrentMask )
-				{
-					DWORD_PTR dwPreviousAff = ::SetThreadAffinityMask(hThread, newAffinityBits );
-				}
-				else
-				{
-					bRet = FALSE;
-					//assert(0);
-				}
-			}
-			else
-			{
-				::SetThreadAffinityMask( hThread, myCurrentMask ); // Set to all processors.
-			}
-		}
+		// Set the affinity if the management is active.
+		SetThreadHandleAffinity( newThread.m_hThread, newThread.m_lAffinity );
 	}
-	return bRet;
-}
 
-BOOL SVThreadManagerImpl::SetAffinity( LPCTSTR ThreadName, DWORD_PTR dwAffinityBitNum )
-{
-	BOOL bRet = FALSE;
-	for( ThreadList::iterator it = m_threads.begin() ; it != m_threads.end() ; ++it)
-	{
-		if( it->m_strName == ThreadName )
-		{
-			it->m_lAffinity = static_cast<long>(dwAffinityBitNum);
-			bRet = SetNewAffinity( it->m_hThread, dwAffinityBitNum);
-		}
-	}
-	return bRet;
-}
-
-// Remove just clears the handle
-// the information stays.
-HRESULT SVThreadManagerImpl::Remove( HANDLE p_hThread )
-{
-	HRESULT hr = S_FALSE;
-
-	for( ThreadList::iterator it = m_threads.begin() ; it != m_threads.end() ; ++it)
-	{
-		if( it->m_hThread == p_hThread )
-		{
-			it->m_hThread = nullptr;
-			//m_threads.remove( *it );
-			hr = S_OK;
-			break;
-		}
-	}
 	return hr;
 }
 
@@ -301,11 +211,135 @@ HRESULT SVThreadManagerImpl::Clear( )
 	return hr;
 }
 
+// setup is used to restore data from the configuration.
+// At this point only the name and affinity are stored.
+HRESULT SVThreadManagerImpl::Setup( LPCTSTR strName, long Affinity )
+{
+	HRESULT hr = S_OK;
+	std::string Name(strName);
 
-HRESULT SVThreadManagerImpl::Create()
+
+	SVThreadSetup newThread;
+	newThread.m_eAttribute = SVAffinityUser;
+	newThread.m_hThread = nullptr;
+	newThread.m_strName = Name;
+	newThread.m_lAffinity = Affinity;
+
+	ThreadList::iterator it = m_threads.begin();
+	for(  ; it != m_threads.end() ; ++it)
+	{
+		if( it->m_strName == strName )
+		{
+			break;
+		}
+	}
+	if( it == m_threads.end() )
+	{
+		m_threads.push_back(newThread);
+	}
+	else
+	{
+		it->m_lAffinity = Affinity;
+	}
+	return hr;
+}
+
+long SVThreadManagerImpl::GetPipeCount( )
+{
+	return m_lNumPipes;
+}
+
+// Set new affinity 
+BOOL SVThreadManagerImpl::SetThreadHandleAffinity( HANDLE hThread, DWORD_PTR dwAffinityBitNum )
+{
+	// Set Thread Affinity
+	DWORD_PTR myCurrentMask;
+	DWORD_PTR systemAffinityMask;
+	DWORD_PTR newAffinityBits;
+	BOOL bRet = FALSE;
+
+	if( hThread != nullptr )
+	{
+		bRet = ::GetProcessAffinityMask( GetCurrentProcess(), &systemAffinityMask, &myCurrentMask);
+		if( bRet )
+		{
+			if( dwAffinityBitNum > 0 )
+			{
+				newAffinityBits = static_cast<unsigned long long>(1) << (dwAffinityBitNum-1);
+				if( (newAffinityBits | myCurrentMask) == myCurrentMask )
+				{
+					// SetThreadAffinityMask returns previous affinity, 0 is error
+					if( SetThreadAffinityMask(hThread, newAffinityBits ) == 0)
+					{
+						bRet = FALSE;
+					}
+				}
+				else
+				{
+					bRet = FALSE;
+				}
+			}
+			else
+			{
+				// SetThreadAffinityMask returns previous affinity, 0 is error
+				if( SetThreadAffinityMask( hThread, myCurrentMask ) == 0) // Set to all processors.
+				{
+					bRet = FALSE;
+				}
+			}
+		}
+	}
+	return bRet;
+}
+
+// Sets the affinity bit number if found in the thread affinity list.
+BOOL SVThreadManagerImpl::SetAffinity( LPCTSTR ThreadName, DWORD_PTR dwAffinityBitNum )
+{
+	BOOL bRet = FALSE;
+	for( ThreadList::iterator it = m_threads.begin() ; it != m_threads.end() ; ++it)
+	{
+		if( it->m_strName == ThreadName )
+		{
+			it->m_lAffinity = static_cast<long>(dwAffinityBitNum);
+			bRet = TRUE;
+			if( m_bThreadManagementActive )
+			{
+				SetThreadHandleAffinity( it->m_hThread, it->m_lAffinity );
+			}
+		}
+	}
+
+
+
+	return bRet;
+}
+
+// Remove clears the handle
+// the information stays.
+HRESULT SVThreadManagerImpl::Remove( HANDLE p_hThread )
+{
+	HRESULT hr = S_FALSE;
+
+	for( ThreadList::iterator it = m_threads.begin() ; it != m_threads.end() ; ++it)
+	{
+		if( it->m_hThread == p_hThread )
+		{
+			it->m_hThread = nullptr;
+			hr = S_OK;
+			break;
+		}
+	}
+	return hr;
+}
+
+
+// Starts the Dummy Thread. 
+// Sets Affinity on all threads in the list.
+HRESULT SVThreadManagerImpl::StartAffinityMgnt()
 {
 	HRESULT hr=S_FALSE;
 
+	// Dummy Thread Creation...
 	if( m_hShutdown == nullptr)
 	{
 		m_hShutdown = ::CreateEvent( nullptr, TRUE, FALSE, nullptr );
@@ -323,18 +357,87 @@ HRESULT SVThreadManagerImpl::Create()
 		return hr;
 	}
 
-
 	DWORD dwThreadID=0;
 	m_hThread = ::CreateThread( nullptr, 0, &SVThreadManagerImpl::Process, LPVOID(this),0, &dwThreadID );
 	if( m_hThread != nullptr)
 	{
 		hr = Add( m_hThread, _T("Dummy Thread"), SVAffinityDummy );
 	}
+
+	// for each thread setup item, set affinity.
+
+	for( ThreadList::const_iterator it = m_threads.begin() ; it != m_threads.end() ; ++it )
+	{
+		switch( it->m_eAttribute & SVAffinityBaseType )
+		{
+			// These cases, set thread affinity.
+			case SVAffinityBasic:
+			case SVAffinityPPQ:
+			case SVAffinityAcq:
+			case SVAffinityTrigger:
+			case SVAffinityDummy:
+			{
+				if( it->m_hThread != NULL )
+				{
+					BOOL bRet = SetThreadHandleAffinity(it->m_hThread, it->m_lAffinity);
+					if( bRet == 0 )
+					{
+						OutputDebugString("\nAffinity Set Failed");
+					}
+				}
+				break;
+			}
+			
+			default:
+			{
+				break;
+			}
+		}
+	}
+	m_bThreadManagementActive = true;
+
 	return hr;
 }
 
-void SVThreadManagerImpl::Destroy()
+// Stops the dummy thread. 
+// Resets thread affinity on each managed thread.
+HRESULT SVThreadManagerImpl::StopAffinityMgmt()
 {
+	HRESULT hr=S_OK;
+
+	// put thread affinity back to all processors..
+	for( ThreadList::const_iterator it = m_threads.begin() ; it != m_threads.end() ; ++it )
+	{
+		switch( it->m_eAttribute )
+		{
+			// These cases, set thread affinity.
+			case SVAffinityBasic:
+			case SVAffinityPPQ:
+			case SVAffinityAcq:
+			case SVAffinityTrigger:
+			case SVAffinityDummy:
+			{
+				if( it->m_hThread != NULL )
+				{
+					BOOL bRet = SetThreadHandleAffinity(it->m_hThread, 0); // 0 = all processors.
+					if( bRet == 0 )
+					{
+						OutputDebugString("\nAffinity Reset Failed");
+					}
+				}
+				break;
+			}
+			
+			default:
+			{
+				break;
+			}
+		}
+	}
+
+	// Here we manage Jims dummy thread.
+	Remove(m_hThread);
+
 	if( m_hThread )
 	{
 		if( ::WaitForSingleObject( m_hThreadComplete, 0 ) == WAIT_TIMEOUT )
@@ -378,6 +481,9 @@ void SVThreadManagerImpl::Destroy()
 		::CloseHandle( m_hShutdown );
 		m_hShutdown = nullptr;
 	}
+
+	m_bThreadManagementActive = false;
+	return hr;
 }
 
 // Dummy Thread as per Jim Brown to 
@@ -433,6 +539,16 @@ DWORD WINAPI SVThreadManagerImpl::Process(LPVOID lpParam)
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVThreadManager\SVThreadManagerImpl.cpp_v  $
+ * 
+ *    Rev 1.3   17 Dec 2014 07:31:18   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  960
+ * SCR Title:  Pipe/core management
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Added startAffinityMgnt and stopAffinityMgnt functions.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   09 Dec 2014 13:48:16   tbair
  * Project:  SVObserver
