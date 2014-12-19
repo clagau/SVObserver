@@ -5,8 +5,8 @@
 //* .Module Name     : SVBarCodeAnalyzerClass
 //* .File Name       : $Workfile:   SVBarCodeAnalyzerClass.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.10  $
-//* .Check In Date   : $Date:   15 May 2014 10:19:38  $
+//* .Current Version : $Revision:   1.11  $
+//* .Check In Date   : $Date:   19 Dec 2014 03:59:30  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -556,7 +556,7 @@ BOOL SVBarCodeAnalyzerClass::onRun (SVRunStatusClass &RRunStatus)
 }
 
 
-BOOL SVBarCodeAnalyzerClass::LoadRegExpression()
+BOOL SVBarCodeAnalyzerClass::LoadRegExpression( BOOL DisplayErrorMessage )
 {
 	BOOL bSaveStringInFile;
 
@@ -580,8 +580,8 @@ BOOL SVBarCodeAnalyzerClass::LoadRegExpression()
 			msv_szRegExpressionValue.SetValue(1, szRegExp);
 			fRegExp.Close();
 
-      msv_szRegExpressionValue.GetValue(m_csRegExpressionValue);
-      msv_szStringFileName.GetValue(m_csStringFileName);
+			msv_szRegExpressionValue.GetValue(m_csRegExpressionValue);
+		    msv_szStringFileName.GetValue(m_csStringFileName);
 
 			return TRUE;
 		}
@@ -589,7 +589,12 @@ BOOL SVBarCodeAnalyzerClass::LoadRegExpression()
 		{
 			TRACE( "Exception : File = %s -- Line = %d\n", _T(__FILE__), __LINE__ );
 
-			AfxMessageBox(_T("Bar Code Analyzer was unable to read\nthe match string from file. Check the\nanalyzer settings for proper match string."), MB_OK, 0);
+			errStr = _T("Bar Code Analyzer was unable to read\nthe match string from file. Check the\nanalyzer settings for proper match string.");
+
+			if( DisplayErrorMessage )
+			{
+				AfxMessageBox( errStr );
+			}
 			return FALSE;
 		}
 		END_CATCH
@@ -598,7 +603,7 @@ BOOL SVBarCodeAnalyzerClass::LoadRegExpression()
   return TRUE;
 }
 
-BOOL SVBarCodeAnalyzerClass::SaveRegExpression()
+BOOL SVBarCodeAnalyzerClass::SaveRegExpression( BOOL DisplayErrorMessage )
 {
 	BOOL bSaveStringInFile;
 	
@@ -621,14 +626,19 @@ BOOL SVBarCodeAnalyzerClass::SaveRegExpression()
 			
 			fRegExp.Close();
 
-      msv_szRegExpressionValue.GetValue(m_csRegExpressionValue);
-      msv_szStringFileName.GetValue(m_csStringFileName);
+			msv_szRegExpressionValue.GetValue(m_csRegExpressionValue);
+			msv_szStringFileName.GetValue(m_csStringFileName);
 
 			return TRUE;
 		}
 		CATCH (CFileException, e)
 		{
-			AfxMessageBox(_T("Bar Code Analyzer was unable to save\nthe match string to file. Check the\nanalyzer settings for proper match string."), MB_OK, 0);
+			errStr = _T("Bar Code Analyzer was unable to save\nthe match string to file. Check the\nanalyzer settings for proper match string.");
+
+			if( DisplayErrorMessage )
+			{
+				AfxMessageBox( errStr );
+			}
 			return FALSE;
 		}
 		END_CATCH
@@ -647,8 +657,12 @@ DWORD_PTR SVBarCodeAnalyzerClass::processMessage(DWORD DwMessageID, DWORD_PTR Dw
 			HRESULT l_ResetStatus = ResetObject();
 			if( l_ResetStatus != S_OK )
 			{
-				ASSERT( SUCCEEDED( l_ResetStatus ) );
+				BOOL SilentReset = static_cast<BOOL> (DwMessageValue);
 
+				if( !SilentReset && !errStr.IsEmpty() )
+				{
+					AfxMessageBox( errStr );
+				}
 				dwResult = SVMR_NO_SUCCESS;
 			}
 			else
@@ -677,13 +691,13 @@ HRESULT SVBarCodeAnalyzerClass::ResetObject()
 			( msv_szStringFileName.GetValue( m_csTempStringFileName ) == S_OK &&
 					m_csTempStringFileName.Compare( m_csStringFileName ) != 0 ) )
 			{
-				if( ! SaveRegExpression() )
+				if( ! SaveRegExpression( FALSE ) )
 				{
 					l_hrOk = S_FALSE;
 				}
 			}
 
-			if ( ! LoadRegExpression() )
+			if ( ! LoadRegExpression( FALSE ) )
 			{
 				l_hrOk = S_FALSE;
 			}
@@ -702,6 +716,16 @@ HRESULT SVBarCodeAnalyzerClass::ResetObject()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVBarCodeAnalyzerClass.cpp_v  $
+ * 
+ *    Rev 1.11   19 Dec 2014 03:59:30   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  978
+ * SCR Title:  Copy and Paste a Tool within an Inspection or Between Different Inspections
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Added that ResetObjects does not display messages
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.10   15 May 2014 10:19:38   sjones
  * Project:  SVObserver

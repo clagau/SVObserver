@@ -5,8 +5,8 @@
 //* .Module Name     : SVException
 //* .File Name       : $Workfile:   SVException.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   10 Nov 2014 16:55:58  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   19 Dec 2014 04:32:20  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -189,7 +189,7 @@ void SVException::SetException(long ErrorCode, TCHAR* szCompileDate, TCHAR* szCo
 	// Automatically log severe errors
 	if (GetSeverity() == 0x03)
 	{
-		LogException();
+		LogException( m_ErrorText.ToString() );
 	}
 }
 
@@ -590,6 +590,16 @@ SVString SVException::what() const
 // ******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVStatusLibrary\SVException.cpp_v  $
+ * 
+ *    Rev 1.3   19 Dec 2014 04:32:20   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  978
+ * SCR Title:  Copy and Paste a Tool within an Inspection or Between Different Inspections
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Set standrad error message for logging
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   10 Nov 2014 16:55:58   sjones
  * Project:  SVObserver

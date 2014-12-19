@@ -5,8 +5,8 @@
 //* .Module Name     : SVToolSetTabView
 //* .File Name       : $Workfile:   SVToolSetTabView.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.12  $
-//* .Check In Date   : $Date:   09 Dec 2014 10:22:38  $
+//* .Current Version : $Revision:   1.13  $
+//* .Check In Date   : $Date:   19 Dec 2014 04:26:40  $
 //******************************************************************************
 
 #pragma region Includes
@@ -221,6 +221,9 @@ void SVToolSetTabViewClass::OnInitialUpdate()
 	// Don't Allow editing of labels in Tree 
 	m_toolSetTreeCtrl.SetNoEditLabelsStyle();
 
+	// Only Single selection for List control 
+	m_toolSetListCtrl.SetSingleSelect();
+
 	SVIPDoc* pCurrentDocument = GetIPDoc();
 
 	if (nullptr != pCurrentDocument)
@@ -383,6 +386,12 @@ void SVToolSetTabViewClass::OnRightClickToolsetList(NMHDR* pNMHDR, LRESULT* pRes
 		SVToolSetClass* pToolSet = pCurrentDocument->GetToolSet();
 		if (nullptr != pToolSet)
 		{
+			POINT l_Point;
+			BOOL l_bMenuLoaded = false;
+			m_toolSetListCtrl.GetSelectedItemScreenPosition(l_Point);
+			CMenu l_menu;
+			CMenu* l_pPopup;
+
 			// Get the tool comment...
 			const SVGUID& rGuid = m_toolSetListCtrl.GetSelectedTool();
 			if (!rGuid .empty())
@@ -390,12 +399,6 @@ void SVToolSetTabViewClass::OnRightClickToolsetList(NMHDR* pNMHDR, LRESULT* pRes
 				SVToolClass* pSelectedTool = dynamic_cast<SVToolClass *>(SVObjectManagerClass::Instance().GetObject(rGuid));
 				if (nullptr != pSelectedTool)
 				{
-					POINT l_Point;
-					m_toolSetListCtrl.GetSelectedItemScreenPosition(l_Point);
-					CMenu l_menu;
-					CMenu* l_pPopup;
-
-					BOOL l_bMenuLoaded = false;
 					SVShiftTool* pShiftTool = dynamic_cast< SVShiftTool* >(pSelectedTool);
 					if (nullptr != pShiftTool)
 					{
@@ -414,17 +417,25 @@ void SVToolSetTabViewClass::OnRightClickToolsetList(NMHDR* pNMHDR, LRESULT* pRes
 					{
 						l_bMenuLoaded = l_menu.LoadMenu(IDR_TOOL_LIST_CONTEXT_MENU);
 					}
+				}
+			}
+			else
+			{
+				const ToolListSelectionInfo& info = GetToolListSelectionInfo();
+				if( -1 != info.m_listIndex )
+				{
+					l_bMenuLoaded = l_menu.LoadMenu(IDR_TOOL_LIST_CONTEXT_MENU1);
+				}
+			}
 
-					if (TRUE == l_bMenuLoaded)
-					{
-						if (l_pPopup = l_menu.GetSubMenu(0))
-						{
-							l_Point.y += 12;
-							l_Point.x += 20;
-							ClientToScreen(&l_Point);
-							l_pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, l_Point.x, l_Point.y, this);
-						}
-					}
+			if (TRUE == l_bMenuLoaded)
+			{
+				if (l_pPopup = l_menu.GetSubMenu(0))
+				{
+					l_Point.y += 12;
+					l_Point.x += 20;
+					ClientToScreen(&l_Point);
+					l_pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, l_Point.x, l_Point.y, AfxGetMainWnd());
 				}
 			}
 			// Run the toolset once to update the images/results.
@@ -1054,6 +1065,17 @@ bool SVToolSetTabViewClass::IsToolsetListCtrlActive() const
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVToolSetTabView.cpp_v  $
+ * 
+ *    Rev 1.13   19 Dec 2014 04:26:40   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  978
+ * SCR Title:  Copy and Paste a Tool within an Inspection or Between Different Inspections
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Changed Tool list control to select only one item
+ * Context menus for Copy and Paste
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.12   09 Dec 2014 10:22:38   tbair
  * Project:  SVObserver

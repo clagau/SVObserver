@@ -5,8 +5,8 @@
 //* .Module Name     : SVEquation.h
 //* .File Name       : $Workfile:   SVEquation.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.4  $
-//* .Check In Date   : $Date:   30 Sep 2014 15:38:48  $
+//* .Current Version : $Revision:   1.5  $
+//* .Check In Date   : $Date:   19 Dec 2014 03:59:32  $
 //******************************************************************************
 
 #ifndef SVEQUATIONCLASS_H
@@ -226,7 +226,7 @@ public:
 
 	virtual BOOL DisconnectToolSetSymbol( SVInObjectInfoStruct* pInObjectInfo );
 
-	virtual SVEquationTestResult Test();
+	virtual SVEquationTestResult Test( BOOL DisplayErrorMessage = TRUE );
 
 	virtual BOOL OnValidate();
 
@@ -237,7 +237,7 @@ public:
 
 	BOOL IsEnabled();
 
-	BOOL IsDataValid();
+//	BOOL IsDataValid();
 
 #ifdef USE_OBJECT_SCRIPT
 	virtual void GetObjectScript( CString& RStrScript, CString& RStrAliasTable, int Indent = 0 );
@@ -313,6 +313,16 @@ protected:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVEquation.h_v  $
+ * 
+ *    Rev 1.5   19 Dec 2014 03:59:32   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  978
+ * SCR Title:  Copy and Paste a Tool within an Inspection or Between Different Inspections
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Added that ResetObjects does not display messages
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.4   30 Sep 2014 15:38:48   bwalter
  * Project:  SVObserver

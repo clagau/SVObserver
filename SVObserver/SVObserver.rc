@@ -4311,6 +4311,8 @@ BEGIN
     END
     POPUP "&Edit",                          65535,MFT_STRING,MFS_ENABLED
     BEGIN
+        MENUITEM "&Copy Tool\tCtrl+C",          ID_EDIT_COPY,MFT_STRING,MFS_ENABLED
+        MENUITEM "&Paste Tool\tCtrl+V",         ID_EDIT_PASTE,MFT_STRING,MFS_ENABLED
         MENUITEM "&Delete\tDEL",                ID_EDIT_DELETE,MFT_STRING,MFS_ENABLED
         MENUITEM MFT_SEPARATOR
         MENUITEM "Edit &I/O List\tCtrl+I",      ID_EDIT_EDITIOLIST,MFT_STRING,MFS_ENABLED
@@ -4515,6 +4517,17 @@ BEGIN
     POPUP "SelectTool"
     BEGIN
         MENUITEM "Tool Comment",                ID_SELECTTOOL_TOOLCOMMENT
+        MENUITEM SEPARATOR
+        MENUITEM "Copy Tool",                   ID_EDIT_COPY
+        MENUITEM "Paste Tool",                  ID_EDIT_PASTE
+    END
+END
+
+IDR_TOOL_LIST_CONTEXT_MENU1 MENU
+BEGIN
+    POPUP "SelectTool"
+    BEGIN
+        MENUITEM "Paste Tool",                  ID_EDIT_PASTE
     END
 END
 
@@ -4523,6 +4536,9 @@ BEGIN
     POPUP "SelectTool"
     BEGIN
         MENUITEM "Tool Comment",                ID_SELECTTOOL_TOOLCOMMENT
+        MENUITEM SEPARATOR
+        MENUITEM "Copy Tool",                   ID_EDIT_COPY
+        MENUITEM "Paste Tool",                  ID_EDIT_PASTE
         MENUITEM SEPARATOR
         MENUITEM "Set Reference",               ID_SELECTTOOL_LEARN
         MENUITEM "Normalize",                   ID_SELECTTOOL_NORMALIZE
@@ -4575,6 +4591,7 @@ BEGIN
     "A",            ID_EDIT_ADJUSTTOOLPOSITION, VIRTKEY, CONTROL, NOINVERT
     "A",            ID_ADD_ARCHIVETOOL,     VIRTKEY, CONTROL, ALT, NOINVERT
     "C",            ID_ADD_COLORTOOL,       VIRTKEY, CONTROL, ALT, NOINVERT
+    "C",            ID_EDIT_COPY,           VIRTKEY, CONTROL, NOINVERT
     "D",            ID_MODE_EDIT,           VIRTKEY, CONTROL, NOINVERT
     "E",            ID_EDIT_EDITENVIRONMENT, VIRTKEY, CONTROL, NOINVERT
     "E",            ID_ADD_EXTERNAL_TOOL,   VIRTKEY, CONTROL, ALT, NOINVERT
@@ -4610,6 +4627,7 @@ BEGIN
     VK_F6,          ID_NEXT_PANE,           VIRTKEY, NOINVERT
     VK_F6,          ID_PREV_PANE,           VIRTKEY, SHIFT, NOINVERT
     VK_INSERT,      ID_EDIT_COPY,           VIRTKEY, CONTROL, NOINVERT
+    VK_INSERT,      ID_EDIT_PASTE,          VIRTKEY, SHIFT, NOINVERT
     VK_F2,          ID_EDIT_NAME,           VIRTKEY, NOINVERT
     VK_OEM_MINUS,   ID_ZOOM_MINUS,          VIRTKEY, CONTROL, NOINVERT
     VK_SUBTRACT,    ID_ZOOM_MINUS,          VIRTKEY, CONTROL, NOINVERT
@@ -4971,7 +4989,7 @@ BEGIN
                             "Invalid path or file name found\n\nCheck your  inputs and try it again!"
     IDS_STATTOOL_INVALID_VARIABLE 
                             "Error - The Selected Variable To Monitor does not exist."
-    IDS_EQUATION_PARSER_ERROR "Equation Parser Error!"
+    IDS_EQUATION_PARSER_ERROR "Syntax Error at position %d\n"
     IDS_SELECT_TOOLSET_OUTPUT "Select Toolset Output"
 END
 

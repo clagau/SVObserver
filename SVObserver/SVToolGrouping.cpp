@@ -2,8 +2,8 @@
 //* .Module Name     : SVToolGrouping
 //* .File Name       : $Workfile:   SVToolGrouping.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.9  $
-//* .Check In Date   : $Date:   19 Nov 2014 11:36:06  $
+//* .Current Version : $Revision:   1.10  $
+//* .Check In Date   : $Date:   19 Dec 2014 04:23:28  $
 //******************************************************************************
 #pragma region Includes
 #include "stdafx.h"
@@ -54,6 +54,13 @@ String SVToolGrouping::MakeNumericUniqueName(const String& rName) const
 	String newName = rName;
 	String nameLower;
 	std::transform(rName.begin(), rName.end(), std::back_inserter(nameLower), ::tolower);
+	
+	//This strips any numbers at the end of the name
+	size_t last_char_pos = nameLower.find_last_not_of(_T("0123456789"));
+	if (last_char_pos != String::npos)
+	{
+		nameLower = nameLower.substr(0, last_char_pos + 1);
+	}
 
 	int num = 0;
 	// find all names that start with this name (case insensitive)
@@ -76,6 +83,10 @@ String SVToolGrouping::MakeNumericUniqueName(const String& rName) const
 					{
 						int lastNum = atoi(val.c_str());
 						num = std::max(num, lastNum + 1);
+					}
+					else
+					{
+						num = std::max(num, 1);
 					}
 				}
 				else
@@ -699,6 +710,16 @@ size_t SVToolGrouping::size() const
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVToolGrouping.cpp_v  $
+ * 
+ *    Rev 1.10   19 Dec 2014 04:23:28   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  978
+ * SCR Title:  Copy and Paste a Tool within an Inspection or Between Different Inspections
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Changed CheckName for tool list to work with names including numbers at the end of the name
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.9   19 Nov 2014 11:36:06   sjones
  * Project:  SVObserver

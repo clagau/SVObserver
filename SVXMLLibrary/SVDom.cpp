@@ -5,8 +5,8 @@
 //* .Module Name     : SVDOMClass
 //* .File Name       : $Workfile:   SVDom.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   25 Apr 2013 19:47:02  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   19 Dec 2014 04:44:26  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -880,7 +880,7 @@ HRESULT	SVDOMClass::CopyXMLFileToDOM (BSTR	abstrLoadText)
 
 			lLineNbr = oXMLParseErrorPtr->line;
 			lLinePosition = oXMLParseErrorPtr->linepos;
-         bstrReason = oXMLParseErrorPtr->reason;
+			bstrReason = oXMLParseErrorPtr->reason;
 
 			hr = -1748;
 			break;
@@ -893,24 +893,25 @@ HRESULT	SVDOMClass::CopyXMLFileToDOM (BSTR	abstrLoadText)
 
 HRESULT SVDOMClass::CopyXMLTextToDOM (BSTR	abstrLoadText)
 {
-	HRESULT	hr = 0;
+	HRESULT	Result = S_OK;
 
-	while (1)
+	if (svmlInitialized == FALSE)
 	{
-		if (svmlInitialized == FALSE)
-		{
-			hr = -1746;
-			break;
-		}
-		
-		if (svmDOMPtr->load (abstrLoadText) != TRUE)
-		{
-			hr = -1747;
-			break;
-		}
-		break;
+		Result = -1746;
 	}
-	return hr;
+
+	if( S_OK == Result )
+	{
+		VARIANT_BOOL LoadXmlResult;
+		LoadXmlResult = svmDOMPtr->loadXML (abstrLoadText);
+		
+		if(LoadXmlResult == VARIANT_FALSE)	// VARIANT_TRUE is -1 or 0xffff
+		{
+			Result = -1747;
+		}
+	}
+
+	return Result;
 }
 
 HRESULT SVDOMClass::CreateElement (BSTR abstrElementName, SVXML::IXMLDOMElementPtr&	arDOMElementPtr)
@@ -1573,7 +1574,17 @@ HRESULT SVDOMClass::PreserveWhitespace(bool bPreserve)
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVXMLLibrary\SVDom.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVXMLLibrary\SVDom.cpp_v  $
+ * 
+ *    Rev 1.1   19 Dec 2014 04:44:26   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  978
+ * SCR Title:  Copy and Paste a Tool within an Inspection or Between Different Inspections
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Added CopyXMLTextToDOM to generate a DOM from a string
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   25 Apr 2013 19:47:02   bWalter
  * Project:  SVObserver

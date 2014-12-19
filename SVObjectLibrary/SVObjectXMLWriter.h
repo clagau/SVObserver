@@ -5,8 +5,8 @@
 //* .Module Name     : SVObjectXMLWriter
 //* .File Name       : $Workfile:   SVObjectXMLWriter.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   22 Apr 2013 17:19:56  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   19 Dec 2014 02:47:46  $
 //******************************************************************************
 #ifndef INCL_SVOBJECTXMLWRITER_H
 #define INCL_SVOBJECTXMLWRITER_H
@@ -39,6 +39,7 @@ public:
 
 	void StartElement(const SVString& rName);
 	void EndElement();
+	void EndAllElements();
 	void ElementAttribute(const SVString& rAttrName, const _variant_t& value);
 
 	void WriteRootElement(const SVString& rName);
@@ -51,7 +52,17 @@ public:
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObjectLibrary\SVObjectXMLWriter.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObjectLibrary\SVObjectXMLWriter.h_v  $
+ * 
+ *    Rev 1.1   19 Dec 2014 02:47:46   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  978
+ * SCR Title:  Copy and Paste a Tool within an Inspection or Between Different Inspections
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Method added: EndAllElements
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   22 Apr 2013 17:19:56   bWalter
  * Project:  SVObserver

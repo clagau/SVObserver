@@ -5,8 +5,8 @@
 //* .Module Name     : SVXMLMaterialsTree
 //* .File Name       : $Workfile:   SVXMLMaterialsTree.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   25 Apr 2013 19:56:12  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   19 Dec 2014 04:46:16  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -715,11 +715,82 @@ HRESULT SVXMLMaterialsTree::SetLeafData( const SVLeafHandle& p_rLeaf, const VARI
 	return l_Status;
 }
 
+HRESULT SVXMLMaterialsTree::ReplaceName( const SVBranchHandle& rParent, const VARIANT& rSearchName, const VARIANT& rReplaceName )
+{
+	HRESULT Result( S_OK );
+	SVLeafHandle Leaf;
+
+	GetFirstLeaf( rParent, Leaf);
+	while( S_OK == IsValidLeaf( rParent, Leaf ) )
+	{
+		_variant_t Value;
+		GetLeafData( Leaf, Value );
+		if( Value == rSearchName )
+		{
+			Value = rReplaceName;
+			SetLeafData( Leaf, Value );
+		}
+
+		GetNextLeaf( rParent, Leaf);
+	}
+
+	SVBranchHandle ChildBranch;
+	GetFirstBranch( rParent, ChildBranch );
+	while( S_OK == IsValidBranch( ChildBranch ) )
+	{
+		ReplaceName( ChildBranch, rSearchName, rReplaceName );
+		GetNextBranch( rParent, ChildBranch );
+	}
+
+	return Result;
+}
+
+HRESULT SVXMLMaterialsTree::getLeafValues( const SVBranchHandle& rParent, const SVString& rSearchName, SVStringSet& rLeafValues )
+{
+	HRESULT Result( S_OK );
+	SVLeafHandle Leaf;
+
+	GetFirstLeaf( rParent, Leaf);
+	while( S_OK == IsValidLeaf( rParent, Leaf ) )
+	{
+		_bstr_t LeafName;
+		GetLeafName( Leaf, LeafName.GetBSTR() );
+		if( rSearchName == SVString( LeafName) )
+		{
+			_variant_t Value;
+			GetLeafData( Leaf, Value );
+			rLeafValues.insert( SVString(Value) );
+		}
+
+		GetNextLeaf( rParent, Leaf);
+	}
+
+	SVBranchHandle ChildBranch;
+	GetFirstBranch( rParent, ChildBranch );
+	while( S_OK == IsValidBranch( ChildBranch ) )
+	{
+		getLeafValues( ChildBranch, rSearchName, rLeafValues );
+		GetNextBranch( rParent, ChildBranch );
+	}
+
+	return Result;
+}
+
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVXMLLibrary\SVXMLMaterialsTree.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVXMLLibrary\SVXMLMaterialsTree.cpp_v  $
+ * 
+ *    Rev 1.1   19 Dec 2014 04:46:16   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  978
+ * SCR Title:  Copy and Paste a Tool within an Inspection or Between Different Inspections
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Method added: ReplaceName and getLeafValues
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   25 Apr 2013 19:56:12   bWalter
  * Project:  SVObserver

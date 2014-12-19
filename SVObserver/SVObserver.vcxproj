@@ -4173,6 +4173,12 @@ echo %time%
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
+    <ClCompile Include="ToolClipboard.cpp">
+      <MultiProcessorCompilation Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</MultiProcessorCompilation>
+      <MultiProcessorCompilation Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</MultiProcessorCompilation>
+      <MultiProcessorCompilation Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</MultiProcessorCompilation>
+      <MultiProcessorCompilation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</MultiProcessorCompilation>
+    </ClCompile>
     <ClCompile Include="VisualFx.cpp" />
     <ClCompile Include="ZoomHelperEx.cpp" />
     <ClCompile Include="ZoomToolBar.cpp" />
@@ -4790,6 +4796,7 @@ echo %time%
     <ClInclude Include="SVWaterShedFilterDlg.h" />
     <ClInclude Include="SVWindowBar.h" />
     <ClInclude Include="SVWindowTool.h" />
+    <ClInclude Include="ToolClipboard.h" />
     <ClInclude Include="UseTypeExceptMatch.h" />
     <ClInclude Include="VisualFx.h" />
     <ClInclude Include="ZoomHelperEx.h" />

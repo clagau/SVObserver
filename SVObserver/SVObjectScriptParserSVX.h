@@ -5,8 +5,8 @@
 //* .Module Name     : SVObjectScriptParser
 //* .File Name       : $Workfile:   SVObjectScriptParserSVX.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 12:39:34  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   19 Dec 2014 04:14:46  $
 //******************************************************************************
 
 #ifndef SVOBJECTSCRIPTPARSERSVX_H
@@ -336,7 +336,7 @@ typedef SVVector< SVObjectScriptDataTypeKeywordStruct > SVDataTypeKeywordTable;
 class SVObjectScriptParserSVXClass : public SVObjectScriptParserBase
 {
 public:
-	SVObjectScriptParserSVXClass(unsigned long parserHandle, CString* pScript, const GUID& OwnerGuid, SVObjectClass* pOwnerObject, CWnd* pWnd);
+	SVObjectScriptParserSVXClass(unsigned long parserHandle,SVSharedPtr<CString> pScript, const GUID& OwnerGuid, SVObjectClass* pOwnerObject, CWnd* pWnd);
 	virtual ~SVObjectScriptParserSVXClass();
 
 	virtual size_t GetTotal() const;
@@ -389,7 +389,7 @@ protected:
 	SVKeywordTable			m_KeywordTable;
 	SVDataTypeKeywordTable	m_DataTypeKeywordTable;
 
-	CString* m_pParseString; // 
+	SVSharedPtr<CString> m_pParseString; // 
 };	// end SVObjectScriptParserSVXClass
 
 struct SVObjectScriptInputObjectTokenStruct
@@ -434,7 +434,17 @@ struct SVObjectScriptInputObjectTokenStruct
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVObjectScriptParserSVX.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVObjectScriptParserSVX.h_v  $
+ * 
+ *    Rev 1.1   19 Dec 2014 04:14:46   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  978
+ * SCR Title:  Copy and Paste a Tool within an Inspection or Between Different Inspections
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Changed script string to be a shared pointer to avoid memory leaks
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 12:39:34   bWalter
  * Project:  SVObserver

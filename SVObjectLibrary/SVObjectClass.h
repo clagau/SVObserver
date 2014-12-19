@@ -5,8 +5,8 @@
 //* .Module Name     : SVObjectClass
 //* .File Name       : $Workfile:   SVObjectClass.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.5  $
-//* .Check In Date   : $Date:   20 Nov 2014 04:39:28  $
+//* .Current Version : $Revision:   1.6  $
+//* .Check In Date   : $Date:   19 Dec 2014 02:45:14  $
 //******************************************************************************
 
 #ifndef SVOBJECTCLASS_H
@@ -67,6 +67,7 @@ public:
 
 	virtual void ResetPrivateInputInterface();
 
+	int GetObjectDepth() const;
 	virtual BOOL SetObjectDepth( int NewObjectDepth );
 	virtual BOOL SetObjectDepthWithIndex( int NewObjectDepth, int NewLastSetIndex );
 
@@ -259,6 +260,16 @@ typedef SVVector< SVObjectClass* > SVObjectClassPtrArray;
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObjectLibrary\SVObjectClass.h_v  $
+ * 
+ *    Rev 1.6   19 Dec 2014 02:45:14   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  978
+ * SCR Title:  Copy and Paste a Tool within an Inspection or Between Different Inspections
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Method added: GetObjectDepth
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.5   20 Nov 2014 04:39:28   mziegler
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : SVXMLMaterialsTree
 //* .File Name       : $Workfile:   SVXMLMaterialsTree.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   25 Apr 2013 19:56:28  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   19 Dec 2014 04:46:14  $
 //******************************************************************************
 
 #ifndef SVXMLMATERIALSTREE_H
@@ -70,6 +70,10 @@ public:
 
 	virtual HRESULT	SetLeafData( const SVLeafHandle& p_rLeaf, const VARIANT& p_rData );
 
+	virtual HRESULT	ReplaceName( const SVBranchHandle& rParent, const VARIANT& rSearchName, const VARIANT& rReplaceName );
+
+	virtual HRESULT	getLeafValues( const SVBranchHandle& rParent, const SVString& rSearchName, SVStringSet& rLeafValues );
+
 protected:
 	SVMaterialsTreeAdapter m_rTree;
 
@@ -81,7 +85,17 @@ protected:
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVXMLLibrary\SVXMLMaterialsTree.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVXMLLibrary\SVXMLMaterialsTree.h_v  $
+ * 
+ *    Rev 1.1   19 Dec 2014 04:46:14   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  978
+ * SCR Title:  Copy and Paste a Tool within an Inspection or Between Different Inspections
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Method added: ReplaceName and getLeafValues
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   25 Apr 2013 19:56:28   bWalter
  * Project:  SVObserver

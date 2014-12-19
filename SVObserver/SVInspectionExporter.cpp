@@ -5,8 +5,8 @@
 //* .Module Name     : SVInspectionExporter
 //* .File Name       : $Workfile:   SVInspectionExporter.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.4  $
-//* .Check In Date   : $Date:   13 Nov 2014 09:14:10  $
+//* .Current Version : $Revision:   1.5  $
+//* .Check In Date   : $Date:   19 Dec 2014 04:06:24  $
 //******************************************************************************
 
 #pragma region Includes
@@ -24,7 +24,7 @@
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVObjectLibrary/SVObjectClass.h"
 #include "SVConfigurationLibrary/SVConfigurationTags.h"
-#include "SVUtilityLibrary/zip.h"
+#include "SVUtilityLibrary/ZipHelper.h"
 #include "SVInspectionProcess.h"
 #include "SVPPQObject.h"
 #include "SVFileNameManagerClass.h"
@@ -106,12 +106,13 @@ static void WriteDependentFileList(SVObjectXMLWriter& rWriter, const SVString& d
 		::DeleteFile(dstZipFile.c_str());
 	}
 
-	HZIP hZip = NULL;
 	WIN32_FIND_DATA findFileData;
 	HANDLE hFind = ::FindFirstFile(scAllRunDirectoryFiles, &findFileData);
 
 	if (hFind != INVALID_HANDLE_VALUE) 
 	{
+		SVStringSet DependencyFileNames;
+
 		rWriter.StartElement(CTAG_DEPENDENT_FILES);
 		do
 		{
@@ -133,32 +134,19 @@ static void WriteDependentFileList(SVObjectXMLWriter& rWriter, const SVString& d
 					_variant_t value;
 					value.SetString(findFileData.cFileName);
 					rWriter.WriteAttribute(CTAG_FILENAME, value);
-			
-					if (hZip == NULL)
-					{
-						hZip = ::CreateZip(dstZipFile.c_str(), NULL);
-					}
-					if (hZip != NULL)
-					{
-						SVString srcFile = scRunDirectory;
-						srcFile += "\\";
-						srcFile += findFileData.cFileName;
-						::ZipAdd(hZip, findFileData.cFileName, srcFile.c_str());
-					}
-					else
-					{
-						// what to do...
-					}
+
+					SVString srcFile = scRunDirectory;
+					srcFile += "\\";
+					srcFile += findFileData.cFileName;
+					DependencyFileNames.insert( srcFile );
 				}
 			}
 		} while (::FindNextFile(hFind, &findFileData) != 0);
 		::FindClose(hFind);
 
 		rWriter.EndElement();
-	}
-	if (hZip != NULL)
-	{
-		::CloseZip(hZip);
+		
+		ZipHelper::makeZipFile( dstZipFile, DependencyFileNames, false );
 	}
 }
 
@@ -184,36 +172,6 @@ static std::string RemovePath(const SVString& fname)
 	name = filename;
 	name += ext;
 	return  name;
-}
-
-static void MakeSingleZipFile(const SVString& dstFile, const SVString& xmlFilename, const SVString& zipFilename, const SVString& exportFileExt)
-{
-	SVString exportFile = GetFilenameWithoutExt(dstFile);
-	exportFile += exportFileExt;
-
-	if (::_access(exportFile.c_str(), 0) == 0)
-	{
-		::DeleteFile(exportFile.c_str());
-	}
-
-	HZIP hZip = ::CreateZip(exportFile.c_str(), NULL);
-	if (hZip != NULL)
-	{
-		SVString dstXmlFilename = RemovePath(xmlFilename);
-		SVString dstZipFilename = RemovePath(zipFilename);
-
-		if (::_access(xmlFilename.c_str(), 0) == 0)
-		{
-			::ZipAdd(hZip, dstXmlFilename.c_str(), xmlFilename.c_str());
-			::DeleteFile(xmlFilename.c_str());
-		}
-		if (::_access(zipFilename.c_str(), 0) == 0)
-		{
-			::ZipAdd(hZip, dstZipFilename.c_str(), zipFilename.c_str());
-			::DeleteFile(zipFilename.c_str());
-		}
-		::CloseZip(hZip);
-	}
 }
 
 static void PersistDocument(const SVGUID& inspectionGuid, SVObjectWriter& rWriter)
@@ -252,8 +210,10 @@ HRESULT SVInspectionExporter::Export(const SVString& filename, const SVString& i
 		{
 			SVString dstXmlFile = GetFilenameWithoutExt(filename);
 			dstXmlFile += scXmlExt;
+			SVString dstDependencyZipFile = GetFilenameWithoutExt(filename);
+			dstDependencyZipFile += scDependentsZipExt;
 			SVString dstZipFile = GetFilenameWithoutExt(filename);
-			dstZipFile += scDependentsZipExt;
+			dstZipFile += (bColor) ? scColorExportExt : scExportExt;
 
 			std::ofstream os;
 			os.open( dstXmlFile.c_str() );
@@ -269,7 +229,7 @@ HRESULT SVInspectionExporter::Export(const SVString& filename, const SVString& i
 				
 				WritePPQInputs(writer, pObject);
 
-				WriteDependentFileList(writer, dstZipFile);
+				WriteDependentFileList(writer, dstDependencyZipFile);
 
 				pObject->Persist(writer);
 
@@ -281,8 +241,12 @@ HRESULT SVInspectionExporter::Export(const SVString& filename, const SVString& i
 
 				os.close();
 			}
-			// zip the xml and dependent zip file together
-			MakeSingleZipFile(filename, dstXmlFile, dstZipFile, (bColor) ? scColorExportExt : scExportExt);
+
+			SVStringSet FileNames;
+			FileNames.insert( dstXmlFile );
+			FileNames.insert( dstDependencyZipFile );
+
+			ZipHelper::makeZipFile( dstZipFile, FileNames, true );
 		}
 		else
 		{
@@ -303,6 +267,16 @@ HRESULT SVInspectionExporter::Export(const SVString& filename, const SVString& i
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVInspectionExporter.cpp_v  $
+ * 
+ *    Rev 1.5   19 Dec 2014 04:06:24   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  978
+ * SCR Title:  Copy and Paste a Tool within an Inspection or Between Different Inspections
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Zip functionality moved to ZipHelper
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.4   13 Nov 2014 09:14:10   gramseier
  * Project:  SVObserver

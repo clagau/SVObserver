@@ -5,8 +5,8 @@
 //* .Module Name     : SVEquation.cpp
 //* .File Name       : $Workfile:   SVEquation.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.8  $
-//* .Check In Date   : $Date:   10 Oct 2014 04:25:14  $
+//* .Current Version : $Revision:   1.9  $
+//* .Check In Date   : $Date:   19 Dec 2014 03:59:32  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -789,10 +789,12 @@ BOOL SVEquationClass::IsEnabled()
 ////////////////////////////////////////////////////////////////////////////////
 // 
 ////////////////////////////////////////////////////////////////////////////////
-SVEquationTestResult SVEquationClass::Test()
+SVEquationTestResult SVEquationClass::Test( BOOL DisplayErrorMessage )
 {
 	SVEquationTestResult ret;
 	m_lCurrentRunIndex = -1;
+	isDataValid = TRUE;
+	errStr.Empty();
 
 	if( HasCondition() && IsEnabled() )
 	{
@@ -859,23 +861,20 @@ SVEquationTestResult SVEquationClass::Test()
 	
 			if (yacc.yacc_err)
 			{
-				CString yaccErrorStr,tmp,fullObjectName;
+				CString yaccErrorStr,fullObjectName;
 				fullObjectName = GetCompleteObjectNameToObjectType( NULL, SVInspectionObjectType );
 				if( yacc.m_StatusCode != S_OK )
 				{
 					yaccErrorStr.LoadString( IDS_TOO_MANY_VARIABLES );
-
-					tmp.Format( _T( "%s \n%s" ), fullObjectName, yaccErrorStr );
+					errStr.Format( _T( "%s \n%s" ), fullObjectName, yaccErrorStr );
 				}
 				else
 				{
 					ret.iPositionFailed = yacc.lex_stack[yacc.sIndex-1].position+1;
-					yaccErrorStr.Format( _T( "Syntax Error at position %d\n" ), ret.iPositionFailed );
-					tmp.Format(_T( "%s \n%s" ), fullObjectName, yaccErrorStr );
+					yaccErrorStr.Format( IDS_EQUATION_PARSER_ERROR, ret.iPositionFailed );
+					errStr.Format(_T( "%s \n%s" ), fullObjectName, yaccErrorStr );
 				}
-				// Show Error
-				ASSERT( FALSE );
-				AfxMessageBox( tmp );
+				isDataValid = FALSE;
 			}
 			else
 			{
@@ -905,6 +904,11 @@ SVEquationTestResult SVEquationClass::Test()
 	// return true if no equation or disabled
 	if( !HasCondition() || !IsEnabled() )
 		ret.bPassed = true;
+
+	if( DisplayErrorMessage && !ret.bPassed )
+	{
+		AfxMessageBox( errStr );
+	}
 
 	return ret;
 }
@@ -958,14 +962,14 @@ SVEquationTestResult SVEquationClass::lexicalScan(LPSTR inBuf)
 
 	if (lex.lex_err)
 	{
-		CString lexErrorStr,tmp,fullObjectName;
+		CString lexErrorStr,fullObjectName;
 		fullObjectName = GetCompleteObjectNameToObjectType( NULL, SVInspectionObjectType );
 		ret.bPassed = false;
 		ret.iPositionFailed = static_cast< int >( lex.position + 1 );
-		lexErrorStr.Format( _T( "Syntax Error at position %d\n" ), ret.iPositionFailed );
-		tmp.Format(_T( "%s \n%s" ), fullObjectName, lexErrorStr );
-		ASSERT( FALSE );
-		AfxMessageBox( tmp );
+		lexErrorStr.Format( IDS_EQUATION_PARSER_ERROR, ret.iPositionFailed );
+		errStr.Format(_T( "%s \n%s" ), fullObjectName, lexErrorStr );
+
+		isDataValid = FALSE;
 	}
 	// Release the buffer
 	lex.yy_delete_buffer(b);
@@ -980,7 +984,10 @@ int SVEquationClass::AddSymbol( LPCTSTR name )
 {
 	int index = symbols.AddSymbol( name, this );
 
-	ASSERT( -1 < index );
+	if( -1 == index )
+	{
+		isDataValid = FALSE;
+	}
 
 	return index;
 }
@@ -1086,7 +1093,7 @@ BOOL SVEquationClass::buildDynamicInputList()
 ////////////////////////////////////////////////////////////////////////////////
 BOOL SVEquationClass::OnValidate()
 {
-	BOOL retVal = TRUE;
+	BOOL retVal = isDataValid;
 	
 	// validate our outputs
 	retVal = SVTaskObjectClass::OnValidate() && retVal;
@@ -1267,11 +1274,15 @@ DWORD_PTR SVEquationClass::processMessage( DWORD DwMessageID, DWORD_PTR DwMessag
 		// is sent in SVIPDoc::Validate() ( old PrepareForRunning() )
 	case SVMSGID_RESET_ALL_OBJECTS:
 		{
-			HRESULT l_ResetStatus = ResetObject();
-			if( l_ResetStatus != S_OK )
+			HRESULT ResetStatus = ResetObject();
+			if( ResetStatus != S_OK )
 			{
-				ASSERT( SUCCEEDED( l_ResetStatus ) );
+				BOOL SilentReset = static_cast<BOOL> (DwMessageValue);
 
+				if( !SilentReset && !errStr.IsEmpty() )
+				{
+					AfxMessageBox( errStr );
+				}
 				DwResult = SVMR_NO_SUCCESS;
 			}
 			else
@@ -1316,13 +1327,9 @@ HRESULT SVEquationClass::ResetObject()
 	// call Test()...( Rebuilds symbol table !!! )
 	if( HasCondition() && IsEnabled() )
 	{
-		if( ! Test().bPassed )
+		//In reset object call test without displaying error messages is done using the returned result
+		if( ! Test( FALSE ).bPassed )
 		{
-			CString tmp,fullObjectName;
-			fullObjectName = GetCompleteObjectNameToObjectType( NULL, SVInspectionObjectType );
-			tmp.LoadString(IDS_EQUATION_PARSER_ERROR);
-			errStr.Format(_T( "%s \n %s" ), fullObjectName, tmp );
-
 			l_hrOk = S_FALSE;
 		}
 	}
@@ -1481,6 +1488,16 @@ void SVEquationClass::addEnvironmentModeParameterToList( SVInputInfoListClass &a
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVEquation.cpp_v  $
+ * 
+ *    Rev 1.9   19 Dec 2014 03:59:32   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  978
+ * SCR Title:  Copy and Paste a Tool within an Inspection or Between Different Inspections
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Added that ResetObjects does not display messages
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.8   10 Oct 2014 04:25:14   mEichengruen
  * Project:  SVObserver

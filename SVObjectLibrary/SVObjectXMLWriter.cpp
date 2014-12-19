@@ -5,8 +5,8 @@
 //* .Module Name     : SVObjectXMLWriter
 //* .File Name       : $Workfile:   SVObjectXMLWriter.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   22 Apr 2013 17:19:48  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   19 Dec 2014 02:47:46  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -196,6 +196,15 @@ void SVObjectXMLWriter::StartElement(const SVString& rName)
 void SVObjectXMLWriter::EndElement()
 {
 	m_elements.pop_front();
+}
+
+void SVObjectXMLWriter::EndAllElements()
+{
+	//Order is important that is why we need to do them one by one
+	while( 0 < m_elements.size() )
+	{
+		m_elements.pop_front();
+	}
 }
 
 void SVObjectXMLWriter::ElementAttribute(const SVString& rAttrName, const variant_t& value)
@@ -398,7 +407,17 @@ void SVObjectXMLWriter::WriteSchema()
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObjectLibrary\SVObjectXMLWriter.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObjectLibrary\SVObjectXMLWriter.cpp_v  $
+ * 
+ *    Rev 1.1   19 Dec 2014 02:47:46   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  978
+ * SCR Title:  Copy and Paste a Tool within an Inspection or Between Different Inspections
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Method added: EndAllElements
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   22 Apr 2013 17:19:48   bWalter
  * Project:  SVObserver

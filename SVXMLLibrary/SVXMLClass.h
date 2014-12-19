@@ -5,8 +5,8 @@
 //* .Module Name     : SVXMLClass
 //* .File Name       : $Workfile:   SVXMLClass.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   25 Apr 2013 19:50:06  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   19 Dec 2014 04:44:28  $
 //******************************************************************************
 
 #ifndef SVXMLCLASS_H
@@ -224,6 +224,8 @@ public:
 	HRESULT CopyDOMToXMLFile(BSTR abstrFileName);
 
 	HRESULT CopyXMLFileToDOM(BSTR abstrFileName, BSTR* abstrpRevisionHistory);
+
+	HRESULT CopyXMLTextToDOM(BSTR XmlText);
 
 // CopyTreeNodeToDOMNode () -------------------------------------------------
 //  A tree must previously have been attached using AttachTree ().
@@ -622,7 +624,17 @@ protected:
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVXMLLibrary\SVXMLClass.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVXMLLibrary\SVXMLClass.h_v  $
+ * 
+ *    Rev 1.1   19 Dec 2014 04:44:28   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  978
+ * SCR Title:  Copy and Paste a Tool within an Inspection or Between Different Inspections
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Added CopyXMLTextToDOM to generate a DOM from a string
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   25 Apr 2013 19:50:06   bWalter
  * Project:  SVObserver

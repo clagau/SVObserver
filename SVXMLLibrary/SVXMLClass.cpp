@@ -5,8 +5,8 @@
 //* .Module Name     : SVXMLClass
 //* .File Name       : $Workfile:   SVXMLClass.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   25 Apr 2013 19:49:50  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   19 Dec 2014 04:44:28  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -194,6 +194,24 @@ HRESULT SVXMLClass::CopyXMLFileToDOM (BSTR	abstrFileName, BSTR* abstrpRevisionHi
 		break;
 	}
 	return hr;
+}
+
+HRESULT SVXMLClass::CopyXMLTextToDOM ( BSTR	XmlText )
+{
+	HRESULT	Result = S_OK;
+
+	if (svmlInitialized == 0)
+	{
+		Result = -1733;
+	}
+
+	if( S_OK == Result)
+	{
+		Result = svmopDOM->CopyXMLTextToDOM ( XmlText );
+	}
+
+
+	return Result;
 }
 
 HRESULT SVXMLClass::CreateDOMNode (SVXML::IXMLDOMElementPtr& arDOMNewElementPtr, BSTR abstrElementName, long alType)
@@ -2153,7 +2171,17 @@ HRESULT SVXMLClass::PreserveWhitespace(bool bPreserve)
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVXMLLibrary\SVXMLClass.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVXMLLibrary\SVXMLClass.cpp_v  $
+ * 
+ *    Rev 1.1   19 Dec 2014 04:44:28   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  978
+ * SCR Title:  Copy and Paste a Tool within an Inspection or Between Different Inspections
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Added CopyXMLTextToDOM to generate a DOM from a string
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   25 Apr 2013 19:49:50   bWalter
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : SVInspectionTreeParser
 //* .File Name       : $Workfile:   SVInspectionTreeParser.inl  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 11:01:30  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   19 Dec 2014 04:10:42  $
 //******************************************************************************
 
 #ifndef INCL_SVINSPECTIONTREEPARSER_INL
@@ -52,6 +52,7 @@ SVInspectionTreeParser< SVTreeType >::SVInspectionTreeParser(SVTreeType& rTreeCt
 , m_rTree(rTreeCtrl)
 , m_rootItem(hItem)
 , m_count(0)
+, m_ReplaceUniqueID(true)
 {
 	m_totalSize = m_rTree.GetCount();
 }
@@ -136,16 +137,31 @@ HRESULT SVInspectionTreeParser< SVTreeType >::Process(typename SVTreeType::SVBra
 
 		SVNavigateTreeClass::GetItem(m_rTree, scClassIDTag, hItem, classID);
 		m_count++;
-		
-		SVNavigateTreeClass::GetItem(m_rTree, scUniqueReferenceIDTag, hItem, uniqueID);
+
+		if( m_ReplaceUniqueID )
+		{
+			SVNavigateTreeClass::GetItem(m_rTree, scUniqueReferenceIDTag, hItem, uniqueID);
+		}
 		m_count++;
 		
 		SVNavigateTreeClass::GetItem(m_rTree, scAttributesAllowedTag, hItem, attributesAllowed);
 		m_count++;
 	
-		// Build the Object
-		GUID objectID = StringToGUID(uniqueID);
-		hr = SVObjectBuilder::CreateObject(StringToGUID(classID), StringToGUID(uniqueID), name, objectName, ownerID);
+		GUID objectID( GUID_NULL );
+		if( m_ReplaceUniqueID )
+		{
+			objectID = StringToGUID(uniqueID);
+		}
+		//Create this object only if it is not the same as the owner GUID
+		if( ownerID == objectID )
+		{
+			//If the owner and object ID are the same the
+			m_ReplaceUniqueID = false;
+		}
+		else
+		{
+			hr = SVObjectBuilder::CreateObject(StringToGUID(classID), objectID, name, objectName, ownerID);
+		}
 		if (hr == S_OK)
 		{
 			UpdateProgress(m_count, m_totalSize);
@@ -635,7 +651,17 @@ HRESULT SVInspectionTreeParser< SVTreeType >::CreateInspectionObject(GUID& inspe
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVInspectionTreeParser.inl_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVInspectionTreeParser.inl_v  $
+ * 
+ *    Rev 1.1   19 Dec 2014 04:10:42   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  978
+ * SCR Title:  Copy and Paste a Tool within an Inspection or Between Different Inspections
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Changed parser to be able to parse a single tool
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 11:01:30   bWalter
  * Project:  SVObserver

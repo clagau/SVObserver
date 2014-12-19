@@ -1655,6 +1655,9 @@
     <ClCompile Include="Custom2FilterDlg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ToolClipboard.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Midl Include="SVObserver.odl">
@@ -3423,6 +3426,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Custom2FilterDlg.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ToolClipboard.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -182,6 +182,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
       </PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="ZipHelper.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -211,6 +212,7 @@
     <ClInclude Include="Unzip.h" />
     <ClInclude Include="XMLWriter.h" />
     <ClInclude Include="Zip.h" />
+    <ClInclude Include="ZipHelper.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="SVHandleManager.inl" />

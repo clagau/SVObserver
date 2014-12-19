@@ -5,8 +5,8 @@
 //* .Module Name     : SVObjectClass
 //* .File Name       : $Workfile:   SVObjectClass.inl  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   27 Jun 2014 08:05:04  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   19 Dec 2014 02:45:14  $
 //******************************************************************************
 
 #ifndef SVOBJECTCLASS_INL
@@ -93,6 +93,14 @@ inline long SVObjectClass::GetImageDepth() const
 }
 
 /*
+This method return the object's data depth.
+*/
+inline int SVObjectClass::GetObjectDepth() const
+{
+	return objectDepth;
+}
+
+/*
 This method returns the creation state of the object.
 */
 inline BOOL SVObjectClass::IsCreated() const
@@ -124,7 +132,17 @@ HRESULT SVObjectClass::Accept( SVObjectVisitor& p_rVisitor )
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSARCH65\PROJECTFILES\ARCHIVES\SVOBSERVER_SRC\SVObjectLibrary\SVObjectClass.inl_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObjectLibrary\SVObjectClass.inl_v  $
+ * 
+ *    Rev 1.3   19 Dec 2014 02:45:14   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  978
+ * SCR Title:  Copy and Paste a Tool within an Inspection or Between Different Inspections
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Method added: GetObjectDepth
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   27 Jun 2014 08:05:04   mziegler
  * Project:  SVObserver

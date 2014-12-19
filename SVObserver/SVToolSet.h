@@ -5,8 +5,8 @@
 //* .Module Name     : SVToolSet
 //* .File Name       : $Workfile:   SVToolSet.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.5  $
-//* .Check In Date   : $Date:   10 Dec 2014 12:07:46  $
+//* .Current Version : $Revision:   1.6  $
+//* .Check In Date   : $Date:   19 Dec 2014 04:24:36  $
 //******************************************************************************
 
 #ifndef SVTOOLSET_H
@@ -59,6 +59,13 @@ public:
 	//void ResetCurrent();
 
 	void InsertToolAt( int nIndex, SVToolClass* newElement, int nCount = 1 );
+
+	//************************************
+	// Description: This moves a tool to the desired index
+	// Parameter: NewIndex <in> The new index for the tool
+	// Parameter: pTool <in> Pointer to the tool
+	//************************************
+	void moveTool( int NewIndex, SVToolClass* pTool );
 
 	void SetDefaultInputs();
     void CheckForExistingName(CString& newText,	SVToolClass* pTool);
@@ -160,6 +167,16 @@ private:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVToolSet.h_v  $
+ * 
+ *    Rev 1.6   19 Dec 2014 04:24:36   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  978
+ * SCR Title:  Copy and Paste a Tool within an Inspection or Between Different Inspections
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Added method: moveTool
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.5   10 Dec 2014 12:07:46   tbair
  * Project:  SVObserver

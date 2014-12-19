@@ -5,8 +5,8 @@
 //* .Module Name     : SVTaskObjectList
 //* .File Name       : $Workfile:   SVTaskObjectList.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.5  $
-//* .Check In Date   : $Date:   17 Jul 2014 20:39:32  $
+//* .Current Version : $Revision:   1.6  $
+//* .Check In Date   : $Date:   19 Dec 2014 04:22:30  $
 //******************************************************************************
 
 #ifndef SVTASKOBJECTLIST_H
@@ -78,8 +78,7 @@ public:
 	virtual void SetInvalid();
 	virtual void SetDisabled();
 
-private:
-	void checkName( SVTaskObjectClass* PTaskObject );
+	const SVString checkName( LPCTSTR ToolName ) const;
 
 public:
 	virtual void GetAllInputObjects();
@@ -138,6 +137,16 @@ protected:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVTaskObjectList.h_v  $
+ * 
+ *    Rev 1.6   19 Dec 2014 04:22:30   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  978
+ * SCR Title:  Copy and Paste a Tool within an Inspection or Between Different Inspections
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Changed CheckName for tool list to work with names including numbers at the end of the name
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.5   17 Jul 2014 20:39:32   gramseier
  * Project:  SVObserver

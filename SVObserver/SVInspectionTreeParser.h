@@ -5,8 +5,8 @@
 //* .Module Name     : SVInspectionTreeParser
 //* .File Name       : $Workfile:   SVInspectionTreeParser.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 11:03:16  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   19 Dec 2014 04:10:42  $
 //******************************************************************************
 #ifndef INCL_SVINSPECTIONTREEPARSER_H
 #define INCL_SVINSPECTIONTREEPARSER_H
@@ -24,7 +24,8 @@ private:
 	SVTreeType& m_rTree;
 	typename SVTreeType::SVBranchHandle m_rootItem;
 	size_t m_count;
-	size_t m_totalSize; 
+	size_t m_totalSize;
+	bool m_ReplaceUniqueID;
 
 public:
 	SVInspectionTreeParser(SVTreeType& rTreeCtrl, typename SVTreeType::SVBranchHandle hItem, unsigned long parserHandle, const GUID& OwnerGuid, SVObjectClass* pOwnerObject, CWnd* pWnd);
@@ -70,7 +71,17 @@ private:
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVInspectionTreeParser.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVInspectionTreeParser.h_v  $
+ * 
+ *    Rev 1.1   19 Dec 2014 04:10:42   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  978
+ * SCR Title:  Copy and Paste a Tool within an Inspection or Between Different Inspections
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Changed parser to be able to parse a single tool
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 11:03:16   bWalter
  * Project:  SVObserver

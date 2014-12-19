@@ -5,8 +5,8 @@
 //* .Module Name     : SVBarCodeAnalyzerClass
 //* .File Name       : $Workfile:   svbarcodeanalyzerclass.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   15 May 2014 10:19:40  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   19 Dec 2014 03:59:32  $
 //******************************************************************************
 
 #ifndef SVBARCODEANALYZERCLASS_H
@@ -79,8 +79,10 @@ protected:
 	void init ();
 	virtual BOOL onRun (SVRunStatusClass &RRunStatus);
 private:
-	BOOL SaveRegExpression ();
-	BOOL LoadRegExpression ();
+	BOOL SaveRegExpression ( BOOL DisplayErrorMessage = TRUE );
+	BOOL LoadRegExpression ( BOOL DisplayErrorMessage = TRUE );
+
+	CString errStr;							// for errorEvent
 
 	bool m_bHasLicenseError;
 };
@@ -92,6 +94,16 @@ private:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\svbarcodeanalyzerclass.h_v  $
+ * 
+ *    Rev 1.3   19 Dec 2014 03:59:32   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  978
+ * SCR Title:  Copy and Paste a Tool within an Inspection or Between Different Inspections
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Added that ResetObjects does not display messages
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   15 May 2014 10:19:40   sjones
  * Project:  SVObserver

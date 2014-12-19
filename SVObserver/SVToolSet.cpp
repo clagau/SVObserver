@@ -5,8 +5,8 @@
 //* .Module Name     : SVToolSet.cpp
 //* .File Name       : $Workfile:   SVToolSet.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.7  $
-//* .Check In Date   : $Date:   10 Dec 2014 12:07:48  $
+//* .Current Version : $Revision:   1.8  $
+//* .Check In Date   : $Date:   19 Dec 2014 04:24:36  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -431,6 +431,18 @@ void SVToolSetClass::ResetCurrent()
 void SVToolSetClass::InsertToolAt( int nIndex, SVToolClass* newElement, int nCount )
 {
 	SVTaskObjectListClass::InsertAt( nIndex, ( SVTaskObjectClass* ) newElement, nCount );
+}
+
+void SVToolSetClass::moveTool( int NewIndex, SVToolClass* pTool )
+{
+	int Index = GetIndex( pTool );
+	if( -1 != Index && NewIndex != Index )
+	{
+		//Remove first because inserting causes list to change!
+		m_aTaskObjects.RemoveAt(Index);
+		m_aTaskObjects.InsertAt( NewIndex, ( SVTaskObjectClass* ) pTool );
+		m_LastListUpdateTimestamp = SVClock::GetTimeStamp();
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -1675,6 +1687,16 @@ HRESULT SVToolSetClass::onCollectOverlays(SVImageClass *p_Image, SVExtentMultiLi
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVToolSet.cpp_v  $
+ * 
+ *    Rev 1.8   19 Dec 2014 04:24:36   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  978
+ * SCR Title:  Copy and Paste a Tool within an Inspection or Between Different Inspections
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Added method: moveTool
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.7   10 Dec 2014 12:07:48   tbair
  * Project:  SVObserver

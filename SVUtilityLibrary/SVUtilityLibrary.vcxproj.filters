@@ -54,6 +54,9 @@
     <ClCompile Include="SVProfiler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ZipHelper.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -135,6 +138,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVProfiler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ZipHelper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -5,8 +5,8 @@
 //* .Module Name     : SVToolSetListCtrl
 //* .File Name       : $Workfile:   SVToolSetListCtrl.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.3  $
-//* .Check In Date   : $Date:   25 Jun 2014 13:20:22  $
+//* .Current Version : $Revision:   1.4  $
+//* .Check In Date   : $Date:   19 Dec 2014 04:26:40  $
 //******************************************************************************
 #pragma once
 
@@ -52,6 +52,7 @@ public:
 	virtual void Rebuild();
 	virtual void RebuildImages();
 
+	void SetSingleSelect();
 	void SetTaskObjectList(SVTaskObjectListClass* pTaskObject);
 	
 	SVGUID GetSelectedTool() const;
@@ -103,6 +104,17 @@ protected:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVToolSetListCtrl.h_v  $
+ * 
+ *    Rev 1.4   19 Dec 2014 04:26:40   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  978
+ * SCR Title:  Copy and Paste a Tool within an Inspection or Between Different Inspections
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Changed Tool list control to select only one item
+ * Context menus for Copy and Paste
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   25 Jun 2014 13:20:22   sjones
  * Project:  SVObserver

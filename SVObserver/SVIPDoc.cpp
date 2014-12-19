@@ -5,8 +5,8 @@
 //* .Module Name     : SVIPDoc
 //* .File Name       : $Workfile:   SVIPDoc.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.28  $
-//* .Check In Date   : $Date:   16 Dec 2014 17:59:30  $
+//* .Current Version : $Revision:   1.29  $
+//* .Check In Date   : $Date:   19 Dec 2014 04:13:06  $
 //******************************************************************************
 
 #pragma region Includes
@@ -37,6 +37,7 @@
 #include "SVLutDlg.h"
 #include "SVMainFrm.h"
 #include "SVMathTool.h"
+#include "SVObjectLibrary/SVObjectXMLWriter.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVObjectScriptParser.h"
 #include "SVObserver.h"
@@ -90,6 +91,7 @@
 #include "SVShiftTool.h"
 #include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
 #include "SVObjectLibrary/GlobalConst.h"
+#include "ToolClipboard.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -134,6 +136,10 @@ BEGIN_MESSAGE_MAP(SVIPDoc, CDocument)
 	ON_COMMAND(ID_ADD_WINDOWTOOL, OnAddWindowTool)
 	ON_COMMAND(ID_ADD_CYLINDRICALWARPTOOL, OnAddCylindricalWarpTool)
 	ON_COMMAND(ID_EDIT_EDITTOOL, OnEditTool)
+	ON_COMMAND(ID_EDIT_COPY, OnEditCopy)
+	ON_UPDATE_COMMAND_UI(ID_EDIT_COPY, OnUpdateEditCopy)
+	ON_COMMAND(ID_EDIT_PASTE, OnEditPaste)
+	ON_UPDATE_COMMAND_UI(ID_EDIT_PASTE, OnUpdateEditPaste)
 	ON_COMMAND(ID_EDIT_DELETE, OnEditDelete)
 	ON_COMMAND(ID_EDIT_ADJUSTLIGHTREFERENCE, OnAdjustLightReference)
 	ON_COMMAND(ID_EDIT_ADJUSTLUT, OnAdjustLut)
@@ -437,16 +443,15 @@ BOOL SVIPDoc::InitAfterSystemIsDocked()
 	return l_bOk;
 }
 
-// @WARNING: CheckName method doesn't just check the name, it also changes the name if a duplicate is found.
-static void CheckName(SVToolClass* pTool, const SVToolGrouping& rGroupings)
+SVString SVIPDoc::CheckName( const SVString& rToolName ) const
 {
-	String name = pTool->GetName();
-	
-	if (!rGroupings.IsNameUnique(name))
+	SVString NewName( rToolName );
+	if (!m_toolGroupings.IsNameUnique( rToolName.c_str() ) )
 	{
-		const String& newName = rGroupings.MakeNumericUniqueName(name).c_str();
-		pTool->SetName(newName.c_str());
+		NewName = m_toolGroupings.MakeNumericUniqueName( rToolName.c_str() ).c_str();
 	}
+
+	return NewName;
 }
 
 //******************************************************************************
@@ -491,7 +496,9 @@ BOOL SVIPDoc::AddTool(SVToolClass* pTool)
 				}
 			}
 
-			CheckName(pTool, m_toolGroupings);
+			SVString ToolName( pTool->GetName() );
+			ToolName = CheckName( ToolName );
+			pTool->SetName( ToolName.c_str() );
 
 			SVAddTool l_AddTool(pTool, toolListIndex);
 
@@ -1615,6 +1622,147 @@ void SVIPDoc::OnEditDelete()
 	}
 }
 
+void SVIPDoc::OnEditCopy()
+{
+	if ( !SVSVIMStateClass::CheckState( SV_STATE_READY ) || !SVSVIMStateClass::CheckState( SV_STATE_EDIT ) )
+	{
+		return;
+	}
+
+	SVInspectionProcess* pInspection( GetInspectionProcess() );
+
+	if (nullptr != pInspection)
+	{
+		SVToolSetTabViewClass* pToolSetView = GetToolSetTabView();
+		if (nullptr != pToolSetView && !pToolSetView->IsLabelEditing())
+		{
+			const SVGUID& rGuid = pToolSetView->GetSelectedTool();
+			if( !rGuid.empty() )
+			{
+				ToolClipboard Clipboard( *pInspection );
+
+				Clipboard.writeToClipboard( rGuid );
+			}
+		}
+	}
+}
+
+void SVIPDoc::OnUpdateEditCopy( CCmdUI* pCmdUI )
+{
+	BOOL Enabled = SVSVIMStateClass::CheckState( SV_STATE_READY ) && SVSVIMStateClass::CheckState( SV_STATE_EDIT );
+	// Check current user access...
+	Enabled = Enabled && TheSVObserverApp.OkToEdit();
+
+	if( Enabled )
+	{
+		SVToolSetTabViewClass* pToolSetView = GetToolSetTabView();
+		SVToolSetClass* pToolSet = GetToolSet();
+		if( nullptr != pToolSet && nullptr != pToolSetView && !pToolSetView->IsLabelEditing())
+		{
+			ToolListSelectionInfo ToolListInfo = pToolSetView->GetToolListSelectionInfo();
+
+			const SVGUID& rGuid = pToolSetView->GetSelectedTool();
+			//No valid tool selected or tool tree selected
+			if( rGuid.empty() || -1 == ToolListInfo.m_listIndex || !pToolSetView->IsToolsetListCtrlActive() )
+			{
+				Enabled = FALSE;
+			}
+		}
+	}
+
+	pCmdUI->Enable( Enabled );
+}
+
+void SVIPDoc::OnEditPaste()
+{
+	if ( !SVSVIMStateClass::CheckState( SV_STATE_READY ) || !SVSVIMStateClass::CheckState( SV_STATE_EDIT ) )
+	{
+		return;
+	}
+
+	SVInspectionProcess* pInspection( GetInspectionProcess() );
+
+	if (nullptr != pInspection)
+	{
+		ToolClipboard Clipboard( *pInspection );
+		SVGUID ToolGuid( GUID_NULL );
+		SVToolSetTabViewClass* pView = GetToolSetTabView();
+		
+		const ToolListSelectionInfo& info = pView->GetToolListSelectionInfo();
+		int ToolListIndex = GetToolToInsertBefore(info.m_selection, info.m_listIndex);
+		Clipboard.readFromClipboard( ToolListIndex, ToolGuid );
+
+		SVObjectClass* pObject( SVObjectManagerClass::Instance().GetObject( ToolGuid ) );
+
+		SVToolClass* pTool = dynamic_cast<SVToolClass*> ( pObject );
+		SVToolSetClass* pToolSet( pInspection->GetToolSet() );
+
+		if( nullptr != pTool && nullptr != pToolSet )
+		{
+			//Set the time stamp to 0 to force an update of the tool list
+			SetSelectedToolID( ToolGuid );
+			m_ToolSetListTimestamp = 0;
+			pToolSet->moveTool( ToolListIndex, pTool );
+			//If this is the first tool then it has already been inserted otherwise the name is unique
+			if( m_toolGroupings.IsNameUnique( pTool->GetName() ))
+			{
+				m_toolGroupings.AddTool( pTool->GetName(), static_cast<LPCTSTR>(info.m_selection) );
+			}
+
+			pTool->SetObjectDepthWithIndex( pInspection->GetObjectDepth(), 1 );
+			pTool->SetImageDepth( pInspection->GetImageDepth() );
+
+			SVInspectionLevelCreateStruct createStruct;
+			createStruct.OwnerObjectInfo = pInspection;
+			createStruct.InspectionObjectInfo = pInspection;
+
+			::SVSendMessage( pInspection, SVM_CONNECT_ALL_OBJECTS, reinterpret_cast<DWORD_PTR>(&createStruct), NULL );
+			::SVSendMessage( pInspection, SVM_CONNECT_ALL_INPUTS, NULL, NULL );
+
+			SVObjectLevelCreateStruct createObjStruct;
+
+			::SVSendMessage( pInspection, SVM_CREATE_ALL_OBJECTS,reinterpret_cast<DWORD_PTR>(&createObjStruct), NULL );
+			//Reset only the inserted tool
+			::SVSendMessage( pTool, SVM_RESET_ALL_OBJECTS, TRUE, NULL );
+
+			RunOnce();
+			UpdateAllViews(nullptr);
+			SetModifiedFlag();
+		}
+	}
+}
+
+void SVIPDoc::OnUpdateEditPaste( CCmdUI* pCmdUI )
+{
+	BOOL Enabled = SVSVIMStateClass::CheckState( SV_STATE_READY ) && SVSVIMStateClass::CheckState( SV_STATE_EDIT );
+	// Check current user access...
+	Enabled = Enabled && TheSVObserverApp.OkToEdit();
+
+	if( Enabled )
+	{
+		SVToolSetTabViewClass* pToolSetView = GetToolSetTabView();
+		SVToolSetClass* pToolSet = GetToolSet();
+		if( nullptr != pToolSet && nullptr != pToolSetView && !pToolSetView->IsLabelEditing() )
+		{
+			const ToolListSelectionInfo& info = pToolSetView->GetToolListSelectionInfo();
+			//Only if tool list active and a selected index is valid
+			if ( -1 != info.m_listIndex &&  pToolSetView->IsToolsetListCtrlActive() )
+			{
+				if( !ToolClipboard::isClipboardDataValid() )
+				{
+					Enabled = FALSE;
+				}
+			}
+			else
+			{
+				Enabled = FALSE;
+			}
+		}
+	}
+
+	pCmdUI->Enable( Enabled );
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : OnEditTool
 // -----------------------------------------------------------------------------
@@ -2076,14 +2224,14 @@ HRESULT SVIPDoc::GetResultDefinitions( SVResultDefinitionDeque& p_rDefinitions )
 	l_Status |= addPPQ_XParameter2ResultDefinitions(p_rDefinitions);
 
 	if ( S_OK == l_Status )
-	{
+					{
 		l_Status |= addToolsetObject2ResultDefinitions(p_rDefinitions);
 
 		if ( S_OK == l_Status )
-		{
+	{
 			l_Status |= addPPQInputs2ResultDefinitions(p_rDefinitions);
-		}
 	}
+				}
 
 	if( l_Status == S_OK ) { m_ResultDefinitionsTimestamp = SVClock::GetTimeStamp(); }
 
@@ -4466,6 +4614,17 @@ void SVIPDoc::addViewableObject2ResultDefinitions( SVObjectClass* pObject, SVRes
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVIPDoc.cpp_v  $
+ * 
+ *    Rev 1.29   19 Dec 2014 04:13:06   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  978
+ * SCR Title:  Copy and Paste a Tool within an Inspection or Between Different Inspections
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Added Copy Paste command and UI handlers
+ * Changed CheckName to be part of the SVIPDoc class
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.28   16 Dec 2014 17:59:30   bwalter
  * Project:  SVObserver

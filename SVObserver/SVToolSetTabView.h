@@ -5,8 +5,8 @@
 //* .Module Name     : SVToolSetTabView
 //* .File Name       : $Workfile:   SVToolSetTabView.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.6  $
-//* .Check In Date   : $Date:   09 Dec 2014 10:22:38  $
+//* .Current Version : $Revision:   1.7  $
+//* .Check In Date   : $Date:   19 Dec 2014 04:26:40  $
 //******************************************************************************
 
 #pragma once
@@ -97,6 +97,7 @@ public:
 	void HandleExpandCollapse(const CString& name, bool bCollapse);
 	bool IsEndToolGroupAllowed() const;
 	CString GetSelectedGroup() const;
+	bool IsToolsetListCtrlActive() const;
 
 protected:
 	SVToolSetTabViewClass();           // protected constructor used by dynamic creation
@@ -106,7 +107,6 @@ protected:
 	void RenameItem(int item, const CString& oldName, const CString& newName);
 
 	void ToggleExpandCollapse(int item);
-	bool IsToolsetListCtrlActive() const;
 
 	bool CheckName(const CString& name) const;
 
@@ -121,6 +121,17 @@ protected:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVToolSetTabView.h_v  $
+ * 
+ *    Rev 1.7   19 Dec 2014 04:26:40   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  978
+ * SCR Title:  Copy and Paste a Tool within an Inspection or Between Different Inspections
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Changed Tool list control to select only one item
+ * Context menus for Copy and Paste
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.6   09 Dec 2014 10:22:38   tbair
  * Project:  SVObserver

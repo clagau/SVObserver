@@ -5,8 +5,8 @@
 //* .Module Name     : SVMainFrm
 //* .File Name       : $Workfile:   SVMainFrm.CPP  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.16  $
-//* .Check In Date   : $Date:   12 Dec 2014 13:12:22  $
+//* .Current Version : $Revision:   1.17  $
+//* .Check In Date   : $Date:   19 Dec 2014 04:14:46  $
 //******************************************************************************
 
 #pragma region Includes
@@ -1401,102 +1401,49 @@ HRESULT SVMainFrame::ParseToolsetScripts( SVTreeType& p_rTree )
 		p_rTree.GetFirstBranch( htiChild, htiSubChild );
 		while( l_Status == S_OK && htiSubChild != NULL )
 		{
-			CString* pToolsetScript = new CString;
+			SVSharedPtr<CString> pToolsetScript = new CString;
 			SVGUID ownerGuid;
 
-			if( pToolsetScript != NULL )
+			SVInspectionProcess* pInspect( nullptr );
+			SVTreeType::SVBranchHandle htiSVIPDoc = NULL;
+			SVTreeType::SVBranchHandle htiDataChild = NULL;
+			p_rTree.GetFirstBranch( htiSubChild, htiDataChild );
+
+			while( htiDataChild != NULL )
 			{
-				SVInspectionProcess* pInspect( NULL );
-				SVTreeType::SVBranchHandle htiSVIPDoc = NULL;
-				SVTreeType::SVBranchHandle htiDataChild = NULL;
-				p_rTree.GetFirstBranch( htiSubChild, htiDataChild );
+				_bstr_t DataName;
+				p_rTree.GetBranchName( htiDataChild, DataName.GetBSTR() );
+				CString csDataName = DataName;
 
-				while( htiDataChild != NULL )
+				if ( csDataName.Compare( CTAG_INSPECTION_PROCESS ) == 0 )
 				{
-					_bstr_t DataName;
-					p_rTree.GetBranchName( htiDataChild, DataName.GetBSTR() );
-					CString csDataName = DataName;
-
-					if ( csDataName.Compare( CTAG_INSPECTION_PROCESS ) == 0 )
+					if( SVNavigateTreeClass::GetItemBranch( p_rTree, CTAG_TOOLSET_SET, htiDataChild, hItemToolset ) )
 					{
-						if( SVNavigateTreeClass::GetItemBranch( p_rTree, CTAG_TOOLSET_SET, htiDataChild, hItemToolset ) )
-						{
-							_variant_t svVariant;
+						_variant_t svVariant;
 
-							if( SVNavigateTreeClass::GetItem( p_rTree, CTAG_UNIQUE_REFERENCE_ID, htiDataChild, svVariant ) )
-							{
-								ownerGuid = svVariant;
-							}
-						}
-					}
-					else if ( csDataName.Compare( CTAG_SVIPDOC ) == 0 )
-					{
-						htiSVIPDoc = htiDataChild;
-					}
-
-					p_rTree.GetNextBranch( htiSubChild, htiDataChild );
-				}
-
-				if( htiSVIPDoc != NULL )
-				{
-					_variant_t svVariant;
-
-					if( ownerGuid.empty() )
-					{
-						if( SVNavigateTreeClass::GetItem( p_rTree, CTAG_UNIQUE_REFERENCE_ID, htiSVIPDoc, svVariant ) )
+						if( SVNavigateTreeClass::GetItem( p_rTree, CTAG_UNIQUE_REFERENCE_ID, htiDataChild, svVariant ) )
 						{
 							ownerGuid = svVariant;
 						}
-						else
-						{
-							l_Status = E_FAIL;
-						}
-					}
-
-					if( l_Status == S_OK )
-					{
-						if( SVNavigateTreeClass::GetItem( p_rTree, CTAG_TOOLSET_SCRIPT, htiSVIPDoc, svVariant ) )
-						{
-							CString newString;
-							newString.LoadString(IDS_OBJECTNAME_PAT_DELTAPOS);
-
-							SVString l_String( svVariant );
-
-							// Pre-Parse Typo fix.
-							// This peice of code fixes the Angel to Angle typo.
-							l_String.replace( _T("Axis Secondary Angel"), _T("Axis Secondary Angle") );
-
-							// Pre-Parse Typo fix number two.
-							// This peice of code fixes the Principle to Principal typo.
-							l_String.replace( _T("Axis Principle Angle"), _T("Axis Principal Angle") );
-
-							// Pre-Parse Type fix number three.
-							// This piece of code changes "Angle delta Positive" to "Angle Delta Positive".
-							l_String.replace( _T("Angle delta Positive"), static_cast< LPCTSTR >( newString ) );
-
-							*pToolsetScript = l_String.ToString();
-						}
-						else if( hItemToolset == NULL )
-						{
-							l_Status = E_FAIL;
-						}
 					}
 				}
-				else
+				else if ( csDataName.Compare( CTAG_SVIPDOC ) == 0 )
 				{
-					l_Status = E_FAIL;
+					htiSVIPDoc = htiDataChild;
 				}
 
-				if( l_Status == S_OK )
-				{
-					if( !( ownerGuid.empty() ) )
-					{
-						pInspect = dynamic_cast< SVInspectionProcess* >( SVObjectManagerClass::Instance().GetObject( ownerGuid ) );
+				p_rTree.GetNextBranch( htiSubChild, htiDataChild );
+			}
 
-						if( pInspect == NULL )
-						{
-							l_Status = E_FAIL;
-						}
+			if( htiSVIPDoc != NULL )
+			{
+				_variant_t svVariant;
+
+				if( ownerGuid.empty() )
+				{
+					if( SVNavigateTreeClass::GetItem( p_rTree, CTAG_UNIQUE_REFERENCE_ID, htiSVIPDoc, svVariant ) )
+					{
+						ownerGuid = svVariant;
 					}
 					else
 					{
@@ -1506,55 +1453,100 @@ HRESULT SVMainFrame::ParseToolsetScripts( SVTreeType& p_rTree )
 
 				if( l_Status == S_OK )
 				{
-					SVConfigurationObject* pConfig = NULL;
-					SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
-
-					unsigned long parserHandle = SVObjectScriptParserClass::GetParserHandle();
-
-					unsigned long ulVersion = pConfig->GetFileVersion();
-
-					if (hItemToolset == NULL)
+					if( SVNavigateTreeClass::GetItem( p_rTree, CTAG_TOOLSET_SCRIPT, htiSVIPDoc, svVariant ) )
 					{
-						SVObjectScriptParserClass* pParser = NULL;
-						if ( ulVersion < 0x00042800 )	// SVO 4.40 minimum for new parser
-						{
-							pParser = new SVObjectScriptParserClass(new SVObjectScriptParserSVXClass(parserHandle, pToolsetScript, ownerGuid, pInspect, &l_ParserProgressDialog));
-						}
-						else
-						{
-							pParser = new SVObjectScriptParserClass(new SVObjectScriptParserSVXClass(parserHandle, pToolsetScript, ownerGuid, pInspect, &l_ParserProgressDialog));
-						}
-						if( pParser != NULL )
-						{
-							// Set the Parser Object
-							l_ParserProgressDialog.AddParser(parserHandle, pParser);
-						}
-						else
-						{
-							l_Status = E_FAIL;
-						}
+						CString newString;
+						newString.LoadString(IDS_OBJECTNAME_PAT_DELTAPOS);
+
+						SVString l_String( svVariant );
+
+						// Pre-Parse Typo fix.
+						// This peice of code fixes the Angel to Angle typo.
+						l_String.replace( _T("Axis Secondary Angel"), _T("Axis Secondary Angle") );
+
+						// Pre-Parse Typo fix number two.
+						// This peice of code fixes the Principle to Principal typo.
+						l_String.replace( _T("Axis Principle Angle"), _T("Axis Principal Angle") );
+
+						// Pre-Parse Type fix number three.
+						// This piece of code changes "Angle delta Positive" to "Angle Delta Positive".
+						l_String.replace( _T("Angle delta Positive"), static_cast< LPCTSTR >( newString ) );
+
+						*pToolsetScript = l_String.ToString();
 					}
-					else // new parsing
+					else if( hItemToolset == NULL )
 					{
-						SVObjectScriptParserClass* pParser = new SVObjectScriptParserClass(new SVInspectionTreeParser< SVTreeType >(p_rTree, hItemToolset, parserHandle, ownerGuid, pInspect, &l_ParserProgressDialog));
-						if( pParser != NULL )
-						{
-							// Set the Parser Object
-							l_ParserProgressDialog.AddParser(parserHandle, pParser);
-						}
-						else
-						{
-							l_Status = E_FAIL;
-						}
-						delete pToolsetScript;
+						l_Status = E_FAIL;
 					}
 				}
-				p_rTree.GetNextBranch( htiChild, htiSubChild );
 			}
 			else
 			{
 				l_Status = E_FAIL;
 			}
+
+			if( l_Status == S_OK )
+			{
+				if( !( ownerGuid.empty() ) )
+				{
+					pInspect = dynamic_cast< SVInspectionProcess* >( SVObjectManagerClass::Instance().GetObject( ownerGuid ) );
+
+					if( pInspect == NULL )
+					{
+						l_Status = E_FAIL;
+					}
+				}
+				else
+				{
+					l_Status = E_FAIL;
+				}
+			}
+
+			if( l_Status == S_OK )
+			{
+				SVConfigurationObject* pConfig = NULL;
+				SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
+
+				unsigned long parserHandle = SVObjectScriptParserClass::GetParserHandle();
+
+				unsigned long ulVersion = pConfig->GetFileVersion();
+
+				if (hItemToolset == NULL)
+				{
+					SVObjectScriptParserClass* pParser = NULL;
+					if ( ulVersion < 0x00042800 )	// SVO 4.40 minimum for new parser
+					{
+						pParser = new SVObjectScriptParserClass(new SVObjectScriptParserSVXClass(parserHandle, pToolsetScript, ownerGuid, pInspect, &l_ParserProgressDialog));
+					}
+					else
+					{
+						pParser = new SVObjectScriptParserClass(new SVObjectScriptParserSVXClass(parserHandle, pToolsetScript, ownerGuid, pInspect, &l_ParserProgressDialog));
+					}
+					if( pParser != NULL )
+					{
+						// Set the Parser Object
+						l_ParserProgressDialog.AddParser(parserHandle, pParser);
+					}
+					else
+					{
+						l_Status = E_FAIL;
+					}
+				}
+				else // new parsing
+				{
+					SVObjectScriptParserClass* pParser = new SVObjectScriptParserClass(new SVInspectionTreeParser< SVTreeType >(p_rTree, hItemToolset, parserHandle, ownerGuid, pInspect, &l_ParserProgressDialog));
+					if( pParser != NULL )
+					{
+						// Set the Parser Object
+						l_ParserProgressDialog.AddParser(parserHandle, pParser);
+					}
+					else
+					{
+						l_Status = E_FAIL;
+					}
+				}
+			}
+			p_rTree.GetNextBranch( htiChild, htiSubChild );
 		}
 
 		if( l_Status == S_OK )
@@ -2169,6 +2161,16 @@ void SVMainFrame::RefreshAllSplitters()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVMainFrm.CPP_v  $
+ * 
+ *    Rev 1.17   19 Dec 2014 04:14:46   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  978
+ * SCR Title:  Copy and Paste a Tool within an Inspection or Between Different Inspections
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Changed script string to be a shared pointer to avoid memory leaks
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.16   12 Dec 2014 13:12:22   ryoho
  * Project:  SVObserver

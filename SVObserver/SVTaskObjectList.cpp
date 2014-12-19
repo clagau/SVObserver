@@ -5,8 +5,8 @@
 //* .Module Name     : SVTaskObjectList
 //* .File Name       : $Workfile:   SVTaskObjectList.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.7  $
-//* .Check In Date   : $Date:   17 Jul 2014 20:39:34  $
+//* .Current Version : $Revision:   1.8  $
+//* .Check In Date   : $Date:   19 Dec 2014 04:22:28  $
 //******************************************************************************
 
 // @WARNING:  This filename (SVTaskObjectList) does not match the class name (SVTaskObjectListClass).
@@ -210,13 +210,12 @@ int SVTaskObjectListClass::GetSize() const
 	return static_cast< int >( m_aTaskObjects.GetSize() );
 }
 
-// @WARNING:  checkName method 	doesn't only check the name, but it also changes the name if neccessary.
-void SVTaskObjectListClass::checkName(SVTaskObjectClass* PTaskObject)
+const SVString SVTaskObjectListClass::checkName( LPCTSTR ToolName ) const
 {
-	CString name = PTaskObject->GetName();
+	CString name( ToolName );
 	CString objectName;
 	CString tmp;
-	CString newName;
+	SVString newName( ToolName );
 	
 	int num = 0;
 	for (int i = 0; i < m_aTaskObjects.GetSize(); i++)
@@ -266,9 +265,9 @@ void SVTaskObjectListClass::checkName(SVTaskObjectClass* PTaskObject)
 	{
 		tmp.Format("%d", num);
 		newName = name + tmp;
-		
-		PTaskObject->SetName(newName);
 	}
+
+	return newName;
 }
 
 SVTaskObjectClass *SVTaskObjectListClass::GetObjectAtPoint( const SVExtentPointStruct &p_rsvPoint )
@@ -407,9 +406,11 @@ int SVTaskObjectListClass::Add(SVTaskObjectClass* PTaskObject)
 	}
 	
 	// Check for Unique names 
-	// MZA: It doesn't check only the name, it also changes the name if neccessary.
-	checkName(PTaskObject);
-	
+	const SVString NewName( checkName( PTaskObject->GetName() ) );
+	if( NewName != PTaskObject->GetName() )
+	{
+		PTaskObject->SetName( NewName.c_str() );
+	}
 	// SEJ Aug 10,1999
 	PTaskObject->SetObjectOwner(this);
 	
@@ -444,7 +445,11 @@ void SVTaskObjectListClass::InsertAt(int nIndex, SVTaskObjectClass* PTaskObject,
 	}
 	
 	// Check for Unique names
-	checkName(PTaskObject);
+	const SVString NewName( checkName( PTaskObject->GetName() ) );
+	if( NewName != PTaskObject->GetName() )
+	{
+		PTaskObject->SetName( NewName.c_str() );
+	}
 	
 	// SEJ Aug 10,1999
 	PTaskObject->SetObjectOwner(this);
@@ -461,7 +466,12 @@ void SVTaskObjectListClass::SetAt(int nIndex, SVTaskObjectClass* PTaskObject)
 	if (PTaskObject)
 	{
 		// Check for Unique names
-		checkName(PTaskObject);
+		// Check for Unique names 
+		const SVString NewName( checkName( PTaskObject->GetName() ) );
+		if( NewName != PTaskObject->GetName() )
+		{
+			PTaskObject->SetName( NewName.c_str() );
+		}
 		
 		// SEJ Aug 10,1999
 		PTaskObject->SetObjectOwner(this);
@@ -1483,6 +1493,16 @@ HRESULT SVTaskObjectListClass::onCollectOverlays(SVImageClass *p_Image, SVExtent
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVTaskObjectList.cpp_v  $
+ * 
+ *    Rev 1.8   19 Dec 2014 04:22:28   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  978
+ * SCR Title:  Copy and Paste a Tool within an Inspection or Between Different Inspections
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Changed CheckName for tool list to work with names including numbers at the end of the name
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.7   17 Jul 2014 20:39:34   gramseier
  * Project:  SVObserver

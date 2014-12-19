@@ -5,8 +5,8 @@
 //* .Module Name     : SVStatisticsTool
 //* .File Name       : $Workfile:   SVStatTool.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.3  $
-//* .Check In Date   : $Date:   15 May 2014 12:40:12  $
+//* .Current Version : $Revision:   1.4  $
+//* .Check In Date   : $Date:   19 Dec 2014 03:59:32  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -209,16 +209,28 @@ BOOL SVStatisticsToolClass::CreateObject(SVObjectLevelCreateStruct* PCreateStruc
 
 HRESULT SVStatisticsToolClass::ResetObject()
 {
-	HRESULT hrOk = SVToolClass::ResetObject();
+	HRESULT Result = SVToolClass::ResetObject();
 	
-	if ( hrOk == S_OK )
+	if ( Result == S_OK )
 	{
 		CString strName;
 		msvVariableName.GetValue(strName);
 		SetVariableSelected( strName );
+
+		if( HasVariable() && IsEnabled() )
+		{
+			if( !Test() )
+			{
+				Result = S_FALSE;
+			}
+		}
+		else
+		{
+			resetValues();
+		}
 	}
 
-	return hrOk;
+	return Result;
 }
 
 CString SVStatisticsToolClass::GetFeatureString()
@@ -609,9 +621,17 @@ BOOL SVStatisticsToolClass::Test()
 				{
 					bRetVal = TRUE;
 				}
+				else
+				{
+					CString tmp,fullObjectName;
+					fullObjectName = refValueObject.Object()->GetCompleteObjectNameToObjectType( NULL, SVInspectionObjectType );
+					tmp.LoadString(IDS_STATTOOL_INVALID_VARIABLE);
+					m_errStr.Format(_T( "%s \n %s" ), fullObjectName, tmp );
+				}
 			}
 		}
 	}
+
 	return bRetVal;
 }
 
@@ -787,29 +807,20 @@ DWORD_PTR SVStatisticsToolClass::processMessage( DWORD DwMessageID, DWORD_PTR Dw
 		// is sent in SVIPDoc::Validate() ( old PrepareForRunning() )
 	case SVMSGID_RESET_ALL_OBJECTS:
 		{
-			ResetObject();
-
-			// is this redundant? (OnValidate)
-			// call Test()...( Verifys Variable Input !!! )
-			if( IsEnabled()  )
+			HRESULT ResetStatus = ResetObject();
+			if( ResetStatus != S_OK )
 			{
-				if( HasVariable() && ! Test() )
+				BOOL SilentReset = static_cast<BOOL> (DwMessageValue);
+
+				if( !SilentReset && !m_errStr.IsEmpty() )
 				{
-					ASSERT( FALSE );
-
-					CString tmp,fullObjectName;
-					fullObjectName = GetCompleteObjectNameToObjectType( NULL, SVInspectionObjectType );
-					tmp.LoadString(IDS_STATTOOL_INVALID_VARIABLE);
-					m_errStr.Format(_T( "%s \n %s" ), fullObjectName, tmp );
-
-					DwResult = SVMR_NO_SUCCESS;
+					AfxMessageBox( m_errStr );
 				}
-				else
-				{
-					resetValues();
-
-					DwResult = SVMR_SUCCESS;
-				}
+				DwResult = SVMR_NO_SUCCESS;
+			}
+			else
+			{
+				DwResult = SVMR_SUCCESS;
 			}
 		}
 		break;
@@ -843,6 +854,16 @@ DWORD_PTR SVStatisticsToolClass::processMessage( DWORD DwMessageID, DWORD_PTR Dw
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVStatTool.cpp_v  $
+ * 
+ *    Rev 1.4   19 Dec 2014 03:59:32   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  978
+ * SCR Title:  Copy and Paste a Tool within an Inspection or Between Different Inspections
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Added that ResetObjects does not display messages
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   15 May 2014 12:40:12   tbair
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : SVObjectScriptParser
 //* .File Name       : $Workfile:   SVObjectScriptParserSVX.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.4  $
-//* .Check In Date   : $Date:   15 May 2014 13:45:42  $
+//* .Current Version : $Revision:   1.5  $
+//* .Check In Date   : $Date:   19 Dec 2014 04:14:46  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -130,9 +130,9 @@ void SVObjectScriptAliasListClass::CleanUp()
 	//RemoveAll();
 }
 
-SVObjectScriptParserSVXClass::SVObjectScriptParserSVXClass(unsigned long parserHandle, CString* pScript, const GUID& OwnerGuid, SVObjectClass* pOwnerObject, CWnd* pWnd)
+SVObjectScriptParserSVXClass::SVObjectScriptParserSVXClass(unsigned long parserHandle, SVSharedPtr<CString> pScript, const GUID& OwnerGuid, SVObjectClass* pOwnerObject, CWnd* pWnd)
 : SVObjectScriptParserBase(parserHandle, OwnerGuid, pOwnerObject, pWnd)
-, m_pParseString(pScript)
+, m_pParseString( pScript )
 {
 	m_KeywordTable.Add( SVObjectScriptKeywordStruct( _T( "alias" ), ALIAS ) );
 	m_KeywordTable.Add( SVObjectScriptKeywordStruct( _T( "class$" ), CLASS ) );
@@ -156,10 +156,9 @@ SVObjectScriptParserSVXClass::~SVObjectScriptParserSVXClass()
 	m_DataTypeKeywordTable.RemoveAll();
 
 	// Cleanup
-	if (m_pParseString )
+	if ( !m_pParseString.empty() )
 	{
-		delete m_pParseString;
-		m_pParseString = NULL;
+		m_pParseString.clear();
 	}
 }
 
@@ -3037,6 +3036,16 @@ HRESULT SVObjectScriptParserSVXClass::DoParse()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVObjectScriptParserSVX.cpp_v  $
+ * 
+ *    Rev 1.5   19 Dec 2014 04:14:46   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  978
+ * SCR Title:  Copy and Paste a Tool within an Inspection or Between Different Inspections
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Changed script string to be a shared pointer to avoid memory leaks
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.4   15 May 2014 13:45:42   sjones
  * Project:  SVObserver

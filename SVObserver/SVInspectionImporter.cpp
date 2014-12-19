@@ -5,8 +5,8 @@
 //* .Module Name     : SVInspectionImporter
 //* .File Name       : $Workfile:   SVInspectionImporter.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   07 May 2013 08:20:40  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   19 Dec 2014 04:06:24  $
 //******************************************************************************
 #include "stdafx.h"
 #include <map>
@@ -22,7 +22,7 @@
 #include "SVXMLLibrary/SVXMLClass.h"
 #include "SVXMLLibrary/SVXMLMaterialsTree.h"
 #include "SVConfigurationLibrary/SVConfigurationTags.h"
-#include "SVUtilityLibrary/Unzip.h"
+#include "SVUtilityLibrary/ZipHelper.h"
 #include "SVInspectionTreeParser.h"
 #include "SVObjectScriptParser.h"
 #include "SVParserProgressDialog.h"
@@ -87,31 +87,6 @@ static bool isExportFile(const SVString& filename)
 	return bRetVal;
 }
 
-template<typename Insertor>
-static void unzipAll(const SVString& filename, Insertor insertor)
-{
-	SVString xmlFilename;
-	HZIP hZip = ::OpenZip(filename.c_str(), NULL);
-	if (hZip)
-	{
-		ZIPENTRY entry;
-		::SetUnzipBaseDir(hZip, scRunDirectory);
-		::GetZipItem(hZip, -1, &entry);
-		int count = entry.index;
-		for (int i = 0;i < count;i++)
-		{
-			::GetZipItem(hZip, i, &entry);
-			::UnzipItem(hZip, i, entry.name);
-
-			std::string path = scRunDirectory;
-			path += "\\";
-			path += entry.name;
-			insertor = path;
-		}
-		::CloseZip(hZip);
-	}
-}
-
 static int LaunchTransform(const char* inFilename, const char* outFilename, const char* inspectionName)
 {
 	DWORD exitCode = -Err_15018;
@@ -172,24 +147,6 @@ static std::string GetFilenameWithoutExt(const SVString& filename)
 	return result;
 }
 
-static void ImportDependentFiles(const SVString& zipFilename)
-{
-	HZIP hZip = ::OpenZip(zipFilename.c_str(), NULL);
-	if (hZip)
-	{
-		ZIPENTRY entry;
-		::SetUnzipBaseDir(hZip, scRunDirectory);
-		::GetZipItem(hZip, -1, &entry);
-		int count = entry.index;
-		for (int i = 0;i < count;i++)
-		{
-			::GetZipItem(hZip, i, &entry);
-			::UnzipItem(hZip, i, entry.name);
-		}
-		::CloseZip(hZip);
-		// verify ?
-	}
-}
 template<typename SVTreeType, typename Insertor>
 static bool ImportPPQInputs(SVTreeType& rTree, Insertor insertor)
 {
@@ -343,7 +300,8 @@ HRESULT LoadInspectionXml(const SVString& filename, const SVString& zipFilename,
 					rProgress.UpdateText(msg.c_str());
 					rProgress.UpdateProgress(++currentOp, numOperations);
 
-					ImportDependentFiles(zipFilename);
+					SVStringSet Files;
+					ZipHelper::unzipAll( zipFilename, SVString( scRunDirectory ), Files );
 
 					msg = _T("Importing PPQ Inputs...");
 					rProgress.UpdateText(msg.c_str());
@@ -473,19 +431,18 @@ HRESULT SVInspectionImporter::Import(const SVString& filename, const SVString& i
 	outFilename +=  _T("\\");
 	outFilename += inspectionName;
 	outFilename +=  scImportNewExt;
-	typedef std::deque<SVString> StringList;
-	StringList list;
 
 	int currentOp = 0;
 	int numOperations = 10;
 	rProgress.UpdateProgress(++currentOp, numOperations);
 
+	SVStringSet list;
+
 	// Deal with single zip file
 	if (isExportFile(inFilename))
 	{
-		typedef std::insert_iterator<StringList> Insertor;
-		unzipAll(inFilename, Insertor(list, list.begin()));
-		for (StringList::const_iterator it = list.begin();it != list.end();++it)
+		ZipHelper::unzipAll( inFilename, SVString( scRunDirectory ), list );
+		for (SVStringSet::const_iterator it = list.begin();it != list.end();++it)
 		{
 			if (isXMLFile(*it))
 			{
@@ -518,10 +475,10 @@ HRESULT SVInspectionImporter::Import(const SVString& filename, const SVString& i
 	}
 
 	// Deal with single zip file..
-	if (list.size())
+	if (0 != list.size())
 	{
 		// cleanup
-		for (StringList::const_iterator it = list.begin();it != list.end();++it)
+		for (SVStringSet::const_iterator it = list.begin();it != list.end();++it)
 		{
 			::DeleteFile(it->c_str());
 		}
@@ -608,15 +565,13 @@ HRESULT SVInspectionImporter::GetProperties(const SVString& filename, long& rNew
 	SVString zipFilename = GetFilenameWithoutExt(inFilename);
 	zipFilename += scDependentsZipExt;
 
-	typedef std::deque<SVString> StringList;
-	StringList list;
+	SVStringSet list;
 
 	// Deal with single zip file
 	if (isExportFile(inFilename))
 	{
-		typedef std::insert_iterator<StringList> Insertor;
-		unzipAll(inFilename, Insertor(list, list.begin()));
-		for (StringList::const_iterator it = list.begin();it != list.end();++it)
+		ZipHelper::unzipAll( inFilename, SVString( scRunDirectory ), list );
+		for (SVStringSet::const_iterator it = list.begin();it != list.end();++it)
 		{
 			if (isXMLFile(*it))
 			{
@@ -630,10 +585,10 @@ HRESULT SVInspectionImporter::GetProperties(const SVString& filename, long& rNew
 	}
 	hr = ExtractProperties(inFilename, rNewDisableMethod, rEnableAuxExtents, rVersionNumber);
 	// Deal with single zip file..
-	if (list.size())
+	if( 0 != list.size())
 	{
 		// cleanup
-		for (StringList::const_iterator it = list.begin();it != list.end();++it)
+		for (SVStringSet::const_iterator it = list.begin();it != list.end();++it)
 		{
 			::DeleteFile(it->c_str());
 		}
@@ -646,7 +601,17 @@ HRESULT SVInspectionImporter::GetProperties(const SVString& filename, long& rNew
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVInspectionImporter.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVInspectionImporter.cpp_v  $
+ * 
+ *    Rev 1.3   19 Dec 2014 04:06:24   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  978
+ * SCR Title:  Copy and Paste a Tool within an Inspection or Between Different Inspections
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Zip functionality moved to ZipHelper
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   07 May 2013 08:20:40   bWalter
  * Project:  SVObserver

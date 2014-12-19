@@ -5,8 +5,8 @@
 //* .Module Name     : SVIPDoc
 //* .File Name       : $Workfile:   SVIPDoc.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.6  $
-//* .Check In Date   : $Date:   09 Dec 2014 11:41:48  $
+//* .Current Version : $Revision:   1.7  $
+//* .Check In Date   : $Date:   19 Dec 2014 04:13:06  $
 //******************************************************************************
 
 #pragma once
@@ -126,6 +126,7 @@ public:
 	bool IsToolPreviousToSelected( const SVGUID& p_rToolID ) const;
 
 	CString GetCompleteToolSetName() const;
+	SVString CheckName( const SVString& rToolName ) const;
 
 	const SVToolGrouping& GetToolGroupings() const;
 	SVToolGrouping& GetToolGroupings();
@@ -153,6 +154,10 @@ public:
 	afx_msg void OnAddWindowTool();
 	afx_msg void OnAddCylindricalWarpTool();
 	afx_msg void OnEditTool();
+	afx_msg void OnEditCopy();
+	afx_msg void OnUpdateEditCopy( CCmdUI* PCmdUI );
+	afx_msg void OnEditPaste();
+	afx_msg void OnUpdateEditPaste( CCmdUI* PCmdUI );
 	afx_msg void OnEditDelete();
 	afx_msg void OnAdjustLightReference();
 	afx_msg void OnAdjustLut();
@@ -250,7 +255,7 @@ protected:
 	void SetMDIChild( CMDIChildWnd* p_pMDIChildWnd );
 
 	void EditToolSetCondition();
-
+	
 	BOOL AddTool( SVToolClass* PTool );
 	HRESULT DeleteTool(SVTaskObjectClass* pTaskObject);
 
@@ -387,6 +392,17 @@ private:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVIPDoc.h_v  $
+ * 
+ *    Rev 1.7   19 Dec 2014 04:13:06   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  978
+ * SCR Title:  Copy and Paste a Tool within an Inspection or Between Different Inspections
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Added Copy Paste command and UI handlers
+ * Changed CheckName to be part of the SVIPDoc class
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.6   09 Dec 2014 11:41:48   tbair
  * Project:  SVObserver
