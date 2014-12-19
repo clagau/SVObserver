@@ -5,13 +5,21 @@
 //* .Module Name     : SVRange.cpp
 //* .File Name       : $Workfile:   SVRange.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   15 May 2014 11:56:16  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   19 Dec 2014 14:22:02  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVRange.h"
 #include "SVObjectLibrary/SVAnalyzerLevelCreateStruct.h"
+#include "SVOBJectLibrary/SVObjectManagerClass.h"
+#include "SVTool.h"
+#pragma endregion Includes
+
+
+
+
 
 struct SVRangeClassCancelData : public SVCancelData	// this does not need to be visible to anyone but this file.
 {
@@ -20,7 +28,6 @@ struct SVRangeClassCancelData : public SVCancelData	// this does not need to be 
 	SVDoubleValueObjectClass WarnLow;
 	SVDoubleValueObjectClass WarnHigh;
 };
-
 
 //*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/
 //* Class Name : SVRangeClass
@@ -31,10 +38,16 @@ SV_IMPLEMENT_CLASS( SVRangeClass, SVRangeClassGuid );
 
 
 SVRangeClass::SVRangeClass( SVObjectClass* POwner, int StringResourceID )
-: SVTaskObjectClass( POwner, StringResourceID )
+	: SVTaskObjectClass( POwner, StringResourceID )
+
 {
 	init();
 }
+
+SVRangeClass::~SVRangeClass( )
+{
+}
+
 
 void SVRangeClass::init()
 {
@@ -48,20 +61,36 @@ void SVRangeClass::init()
 	RegisterEmbeddedObject( &WarnHigh, SVRangeClassWarnHighObjectGuid, IDS_OBJECTNAME_WARN_HIGH, false, SVResetItemNone );
 	RegisterEmbeddedObject( &FailLow, SVRangeClassFailLowObjectGuid, IDS_OBJECTNAME_FAIL_LOW, false, SVResetItemNone );
 	RegisterEmbeddedObject( &WarnLow, SVRangeClassWarnLowObjectGuid, IDS_OBJECTNAME_WARN_LOW, false, SVResetItemNone );
-	
+	RegisterEmbeddedObject( &m_ValueIndirect[ER_FailHigh], SVRangeClassFailHighIndirectObjectGuid, IDS_OBJECTNAME_FAIL_HIGH_INDIRECT, false, SVResetItemOwner );
+	RegisterEmbeddedObject( &m_ValueIndirect[ER_WarnHigh], SVRangeClassWarnHighIndirectObjectGuid, IDS_OBJECTNAME_WARN_HIGH_INDIRECT, false, SVResetItemOwner );
+	RegisterEmbeddedObject( &m_ValueIndirect[ER_FailLow], SVRangeClassFailLowIndirectObjectGuid, IDS_OBJECTNAME_FAIL_LOW_INDIRECT, false, SVResetItemOwner);
+	RegisterEmbeddedObject( &m_ValueIndirect[ER_WarnLow], SVRangeClassWarnLowIndirectObjectGuid, IDS_OBJECTNAME_WARN_LOW_INDIRECT, false, SVResetItemOwner);
+
 	// Set Embedded defaults
 	FailLow.SetDefaultValue( 0.0, TRUE );
 	FailHigh.SetDefaultValue( 99999, TRUE );
 	WarnLow.SetDefaultValue( 0.0, TRUE );
 	WarnHigh.SetDefaultValue( 99999, TRUE );
 
+	for(int i = 0 ; i < ER_COUNT; i++)
+	{
+		m_ValueIndirect[i].SetDefaultValue( _T(""), TRUE );
+	}
+
+	m_isValidRange = true;
+
+	isObjectValid.SetDefaultValue(true, TRUE);
+
 	// Setup up the input
-	inputObjectInfo.SetObject( GetObjectInfo() );
-	RegisterInputObject( &inputObjectInfo, _T( "RangeValue" ) );
+	m_inputObjectInfo.SetObject( GetObjectInfo() );
+	RegisterInputObject( &m_inputObjectInfo, _T( "RangeValue" ) );
 
 	// Add Default Inputs and Outputs
 	addDefaultInputObjects();
+	
 }
+
+
 
 BOOL SVRangeClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
 {
@@ -73,73 +102,274 @@ BOOL SVRangeClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
 	FailLow.ObjectAttributesAllowedRef() |= SV_PRINTABLE | SV_SETABLE_ONLINE | SV_REMOTELY_SETABLE;
 	WarnLow.ObjectAttributesAllowedRef() |= SV_PRINTABLE | SV_SETABLE_ONLINE | SV_REMOTELY_SETABLE;
 
+	for(int i = 0; i < ER_COUNT; i++)
+	{
+		m_ValueIndirect[i].ObjectAttributesAllowedRef() |= SV_PRINTABLE | SV_REMOTELY_SETABLE; 
+	}
+
 	return isCreated;
 }
 
+bool SVRangeClass::SetReference(const CString cdottetMame, SVValueObjectReference &ValueObjectReference)
+{
+	bool ret = false;
+	if(!cdottetMame.IsEmpty())
+	{
+		HRESULT hr = SVObjectManagerClass::Instance().GetObjectByDottedName( static_cast< LPCTSTR >( cdottetMame ), ValueObjectReference );
+		if(hr == S_OK)
+		{
+			ret = true;
+		}
+	}
+	return ret;
+}
+
+HRESULT SVRangeClass::ResetObject()
+{
+	InitReferencesAndInputs();
+	return SVTaskObjectClass::ResetObject();
+}
+
+BOOL SVRangeClass::CloseObject()
+{
+	DisconnectAllInputObjects();
+	return SVTaskObjectClass::CloseObject();
+}
+
+bool SVRangeClass::InitReferencesAndInputs()
+{
+	bool bRetVal = true;
+	DisconnectAllInputObjects();
+	SVValueObjectReference emptyRef;
+	CString csValueIndirect;
+
+	for(int i = 0 ; i < ER_COUNT; i++)
+	{
+		csValueIndirect.Empty();
+		m_ValueObjectReferences[i] = emptyRef;
+		m_ValueIndirect[i].ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
+		m_ValueIndirect[i].GetValue(csValueIndirect);
+		if(!csValueIndirect.IsEmpty())
+		{
+			if(!SetReference(csValueIndirect,m_ValueObjectReferences[i] ))
+			{
+				bRetVal = false;
+			}
+			else
+			{
+				m_ValueIndirect[i].ObjectAttributesAllowedRef() |= SV_PRINTABLE;
+			}
+		}
+
+	}
+
+	if( ! bRetVal )
+	{
+		m_isValidRange = false;
+		///SetInvalid();
+	}
+	else
+	{
+		m_isValidRange = true;
+	}
+
+	if(bRetVal)
+	{
+		ConnectAllInputObjects();
+	}
+
+
+	return bRetVal;
+
+}
+
+
 BOOL SVRangeClass::OnValidate()
 {
+	
+	//SetOwner();
 	BOOL bRetVal = SVTaskObjectClass::OnValidate();
 
-		// check if input is valid
-	if( bRetVal && inputObjectInfo.IsConnected() &&
-		inputObjectInfo.GetInputObjectInfo().PObject )
+	// check if input is valid
+	if( bRetVal && m_inputObjectInfo.IsConnected() &&
+		m_inputObjectInfo.GetInputObjectInfo().PObject )
 	{
 		bRetVal = TRUE;
 	}
-
-	// Note: Make sure this is called when Validate fails !!!
-	if( ! bRetVal )
+	
+	if(bRetVal)
+	{
+		bRetVal = InitReferencesAndInputs();
+	}
+	
+	if(!bRetVal)
+	{
+		m_isValidRange = false;
 		SetInvalid();
-
+	}
+	
 	return bRetVal;
 }
 
 /*	// inlined
 BOOL SVRangeClass::getInputValue( double& RVal )
 {
-	if( inputObjectInfo.IsConnected &&
-		inputObjectInfo.InputObjectInfo.PObject )
-	{
-		return ( static_cast <SVValueObjectClass*> (inputObjectInfo.InputObjectInfo.PObject) )->GetValue( RVal ) == S_OK;
-	}
-	return FALSE;
+if( inputObjectInfo.IsConnected &&
+inputObjectInfo.InputObjectInfo.PObject )
+{
+return ( static_cast <SVValueObjectClass*> (inputObjectInfo.InputObjectInfo.PObject) )->GetValue( RVal ) == S_OK;
+}
+return FALSE;
 }
 //*/
 
 BOOL SVRangeClass::onRun(SVRunStatusClass& RRunStatus)
 {
-	double failLow,failHigh;
-	double warnLow,warnHigh;
 
-	double v;
+	BOOL ret = TRUE;
+	if(!m_isValidRange)
+	{
+		RRunStatus.SetInvalid();
+		ret = FALSE;
+	}
 
-	getInputValue(v);
-	
-	FailLow.GetValue( failLow );
-	FailHigh.GetValue( failHigh );
-	WarnLow.GetValue( warnLow );
-	WarnHigh.GetValue( warnHigh );
-			
-	bool isFailed =  ( v < failLow || v > failHigh  );
-  	bool isWarned = ( !isFailed && ( v < warnLow || v > warnHigh ) );
 
-	if( isFailed )
-		RRunStatus.SetFailed();
+	if(ret)
+	{
+		try
+		{
+			double failLow,failHigh;
+			double warnLow,warnHigh;
+
+			double InputValue;
+			getInputValue(InputValue);
+
 			
-	if( isWarned )
-		RRunStatus.SetWarned();
 			
-	if( !isFailed && !isWarned )
-		RRunStatus.SetPassed();
-			
-	return TRUE;
+ 
+			if(nullptr != m_ValueObjectReferences[ER_FailLow].Object()  )
+			{
+
+				if(!HasIndirectValue(ER_FailLow))
+					throw(1);
+				m_ValueObjectReferences[ER_FailLow]->GetValue(failLow);
+				FailLow.SetValue( RRunStatus.m_lResultDataIndex, failLow );
+
+			}
+			else
+			{
+				FailLow.GetValue( failLow );
+			}
+
+			if(nullptr != m_ValueObjectReferences[ER_FailHigh].Object() )
+			{
+				 
+				if(!HasIndirectValue(ER_FailHigh))
+					throw(1);
+				m_ValueObjectReferences[ER_FailHigh].GetValue(failHigh);
+				FailHigh.SetValue( RRunStatus.m_lResultDataIndex,failHigh );
+			}
+			else
+			{
+				FailHigh.GetValue( failHigh );
+			}
+
+			if(nullptr !=m_ValueObjectReferences[ER_WarnLow].Object() )
+			{
+
+				if(!HasIndirectValue(ER_WarnLow))
+					throw(1);
+				
+					m_ValueObjectReferences[ER_WarnLow].GetValue(warnLow);
+				WarnLow.SetValue( RRunStatus.m_lResultDataIndex,warnLow );
+			}
+			else
+			{
+				WarnLow.GetValue( warnLow );
+			}
+
+			if(nullptr !=m_ValueObjectReferences[ER_WarnHigh].Object() )
+			{
+				if(! HasIndirectValue(ER_WarnHigh))
+				{
+					throw(1);
+				}
+				m_ValueObjectReferences[ER_WarnHigh]->GetValue(warnHigh);
+				WarnHigh.SetValue( RRunStatus.m_lResultDataIndex, warnHigh );
+			}
+			else
+			{
+				WarnHigh.GetValue( warnHigh );
+			}
+
+			bool isFailed =  ( InputValue < failLow || InputValue > failHigh  );
+			bool isWarned = ( !isFailed && ( InputValue < warnLow || InputValue > warnHigh ) );
+
+			if( isFailed )
+			{
+				RRunStatus.SetFailed();
+			}		
+			if( isWarned )
+			{
+				RRunStatus.SetWarned();
+			}		
+			if( !isFailed && !isWarned )
+			{	
+				RRunStatus.SetPassed();
+			}
+		
+		
+		}
+		
+		catch ( ... )
+		{
+			m_isValidRange = false;
+			RRunStatus.SetInvalid();
+			ret = FALSE;
+		}
+				
+	}
+
+	return ret;
 }
 
 
 DWORD_PTR SVRangeClass::processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext )
 {
 	DWORD_PTR DwResult = NULL;
+	
+	// Try to process message by yourself...
+	DWORD dwPureMessageID = DwMessageID & SVM_PURE_MESSAGE;
+	switch (dwPureMessageID)
+	{
 
+	case SVMSGID_RESET_ALL_OBJECTS:
+		{
+			HRESULT l_ResetStatus = ResetObject();
+			if( l_ResetStatus != S_OK )
+			{
+				ASSERT( SUCCEEDED( l_ResetStatus ) );
+
+				DwResult = SVMR_NO_SUCCESS;
+			}
+			else
+			{
+				DwResult = SVMR_SUCCESS;
+			}
+
+			break;
+		}
+
+		// This Message occurs for two scenarios
+		// 1. Some Object is using our outputs and they are no longer needed.
+		// 2. We are using some Object's outputs and the ouputs are no longer available
+	case SVMSGID_DISCONNECT_OBJECT_INPUT:
+		{
+			m_isValidRange = false;
+			//return SVMR_SUCCESS;
+		}
+		break;
+	}
 	return( SVTaskObjectClass::processMessage( DwMessageID, DwMessageValue, DwMessageContext ) | DwResult );
 }
 
@@ -183,18 +413,143 @@ HRESULT SVRangeClass::SetCancelData(SVCancelData* pCancelData)
 
 BOOL SVRangeClass::getInputValue( double& RVal )
 {
-	if( inputObjectInfo.IsConnected() && inputObjectInfo.GetInputObjectInfo().PObject )
+	if( m_inputObjectInfo.IsConnected() && m_inputObjectInfo.GetInputObjectInfo().PObject )
 	{
-		return ( static_cast <SVValueObjectClass*> (inputObjectInfo.GetInputObjectInfo().PObject) )->GetValue( RVal ) == S_OK;
+		return ( static_cast <SVValueObjectClass*> (m_inputObjectInfo.GetInputObjectInfo().PObject) )->GetValue( RVal ) == S_OK;
 	}
 	return FALSE;
 }
+
+
+
+
+void  SVRangeClass::ConnectAllInputObjects()
+{
+	for(int i =0 ; i< ER_COUNT;i++)
+	{
+		m_IsConnectedInput[i] = false;
+
+		if(nullptr !=  m_ValueObjectReferences[i].Object())
+		{
+			if( m_ValueObjectReferences[i].Guid() != SVInvalidGUID)
+			{
+				SVInObjectInfoStruct InObjectInfo;
+				InObjectInfo.PObject                    =this;
+				InObjectInfo.UniqueObjectID             = GetUniqueObjectID();
+				InObjectInfo.ObjectTypeInfo.ObjectType  = SVRangeObjectType;
+				DWORD_PTR rc = ::SVSendMessage( m_ValueObjectReferences[i].Guid(), 
+					SVM_CONNECT_OBJECT_INPUT, 
+					reinterpret_cast <DWORD_PTR> (&InObjectInfo), 
+					NULL );
+
+				m_IsConnectedInput[i] = (rc == SVMR_SUCCESS );
+			}
+		}
+	}
+	
+}
+
+void SVRangeClass::DisconnectAllInputObjects()
+{
+	for(int i =0 ; i< ER_COUNT;i++)
+	{
+		if(nullptr !=  m_ValueObjectReferences[i].Object() && m_IsConnectedInput[i] == true)
+		{
+			
+			if( m_ValueObjectReferences[i].Guid() != SVInvalidGUID)
+			{
+				SVInObjectInfoStruct InObjectInfo;
+
+				InObjectInfo.PObject                    =this;
+				InObjectInfo.UniqueObjectID             = GetUniqueObjectID();
+				InObjectInfo.ObjectTypeInfo.ObjectType  = SVRangeObjectType;
+
+				DWORD_PTR rc = ::SVSendMessage(	m_ValueObjectReferences[i].Guid(), 
+					SVM_DISCONNECT_OBJECT_INPUT, 
+					reinterpret_cast <DWORD_PTR> (&InObjectInfo), 
+					NULL );
+				m_IsConnectedInput[i]  = (rc == SVMR_SUCCESS );
+			}
+			
+		}
+	}
+
+}
+
+
+
+HRESULT SVRangeClass::GetIndirectValue(enum ERange ra, CString &ref)
+{
+	return m_ValueIndirect[ra].GetValue(ref);
+};
+
+bool SVRangeClass::HasIndirectValue(enum ERange ra)
+{
+	bool res = false;
+	CString cs;
+	if(S_OK== GetIndirectValue(ra, cs))
+	{
+		res = !cs.IsEmpty();
+	}
+
+	return res;
+};
+
+HRESULT SVRangeClass::GetValue(enum ERange ra, double &ref)
+{
+	switch (ra)
+	{
+	case ER_FailHigh:
+		return FailHigh.GetValue(ref);	 
+		break; 
+	case  ER_WarnHigh:
+		return WarnHigh.GetValue(ref);
+		break;
+
+	case ER_FailLow:
+		return FailLow.GetValue(ref);
+		break;
+
+	case 	 ER_WarnLow:
+		
+		return WarnLow.GetValue(ref);
+		break;
+
+		break;
+
+	}
+	return E_FAIL;
+
+};
+
+SVStringValueObjectClass*  SVRangeClass::GetIndirectObject(enum ERange ra )
+{
+
+	return &(m_ValueIndirect[ra]);
+};
+
+
+void SVRangeClass::InvalidateRange()
+{
+	m_isValidRange = false;
+}
+
 
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVRange.cpp_v  $
+ * 
+ *    Rev 1.3   19 Dec 2014 14:22:02   mEichengruen
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  979
+ * SCR Title:  Provide additional options to input the feature range for the blob analyzer.
+ * Checked in by:  mEichengruen;  Marcus Eichengruen
+ * Change Description:  
+ *   add SVStringValueObjectClass and SVValueObjectReference to SVRange 
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   15 May 2014 11:56:16   tbair
  * Project:  SVObserver

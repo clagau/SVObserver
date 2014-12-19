@@ -5,8 +5,8 @@
 //* .Module Name     : SVClsids
 //* .File Name       : $Workfile:   SVClsids.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.5  $
-//* .Check In Date   : $Date:   12 Nov 2014 07:04:28  $
+//* .Current Version : $Revision:   1.6  $
+//* .Check In Date   : $Date:   19 Dec 2014 14:05:40  $
 //******************************************************************************
 
 #pragma region Includes
@@ -542,6 +542,10 @@
 /*const*/ GUID SVRangeClassFailLowObjectGuid		= { 0x86dcf3d9, 0xc2de, 0x11d2, { 0xac, 0xb9, 0x0, 0xc1, 0x4f, 0xc3, 0x8f, 0x76 } };
 /*const*/ GUID SVRangeClassWarnHighObjectGuid		= { 0x86dcf3d9, 0xc2de, 0x11d2, { 0xac, 0xb9, 0x0, 0xc2, 0x4f, 0xc3, 0x8f, 0x76 } };
 /*const*/ GUID SVRangeClassWarnLowObjectGuid		= { 0x86dcf3d9, 0xc2de, 0x11d2, { 0xac, 0xb9, 0x0, 0xc3, 0x4f, 0xc3, 0x8f, 0x76 } };
+/*const*/ GUID SVRangeClassFailHighIndirectObjectGuid	= { 0xf6e663d2, 0xd1b4, 0x4d57, { 0xb9, 0xec, 0x32, 0x7f, 0x35, 0xad, 0x24, 0x4d } };
+/*const*/ GUID SVRangeClassFailLowIndirectObjectGuid	= { 0xfdcaa076, 0xa9ec, 0x46c8, { 0x89, 0x31, 0xe7, 0x49, 0x7c, 0xec, 0x80, 0x82 } };
+/*const*/ GUID SVRangeClassWarnHighIndirectObjectGuid	= { 0xf0ded566, 0xb19f, 0x4dba, { 0x81, 0x8d, 0xd1, 0xcd, 0xc4, 0x13, 0xca, 0x56 } };
+/*const*/ GUID SVRangeClassWarnLowIndirectObjectGuid	= { 0x3a942a77, 0x1e01, 0x4bfb, { 0xb0, 0x1, 0x53, 0x25, 0x58, 0x18, 0xd0, 0xd9 } };
 
 // GUIDs for the Embedded Objects in the SVOCRAnalyzeResultClass
 /*const*/ GUID SVOCRAnalyzerClassGuid					= { 0x68dcf5d9, 0xc2de, 0x11d2, { 0xac, 0xb9, 0x0, 0xc4, 0x4f, 0xc3, 0x8f, 0x76 } };
@@ -1610,6 +1614,16 @@
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVClsids.cpp_v  $
+ * 
+ *    Rev 1.6   19 Dec 2014 14:05:40   mEichengruen
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  979
+ * SCR Title:  Provide additional options to input the feature range for the blob analyzer.
+ * Checked in by:  mEichengruen;  Marcus Eichengruen
+ * Change Description:  
+ *   new classids for indirect values in Rangeclass
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.5   12 Nov 2014 07:04:28   mziegler
  * Project:  SVObserver

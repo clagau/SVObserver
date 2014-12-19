@@ -5,8 +5,8 @@
 //* .Module Name     : SVRangeClass
 //* .File Name       : $Workfile:   SVRange.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   15 May 2014 11:56:10  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   19 Dec 2014 14:22:02  $
 //******************************************************************************
 
 #ifndef SVRANGE_H
@@ -15,25 +15,101 @@
 #include "SVTaskObject.h"
 #include "ISVCancel.h"
 
+enum ERange { ER_FailHigh = 0, ER_WarnHigh, ER_FailLow, ER_WarnLow, ER_COUNT = 4 };
+
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : Class SVRangeClass
 // -----------------------------------------------------------------------------
 ////////////////////////////////////////////////////////////////////////////////
-
 class SVRangeClass : public SVTaskObjectClass, public ISVCancel
 {
 	SV_DECLARE_CLASS( SVRangeClass );
 
 public:
 	SVRangeClass( SVObjectClass* POwner = NULL, int StringResourceID = IDS_CLASSNAME_SVRANGE );
+	virtual ~SVRangeClass();
 
 	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure );
+
+	//************************************
+	// Description:  call InitReferencesAndInputs and base class
+	// Returns:  HRESULT:  S_OK if successful
+	//************************************
+	virtual HRESULT ResetObject();
+
+	//************************************
+	// Description:  Disconnect Inputs and call base class 
+	// Returns:  BOOL:  TRUE if succesful
+	//************************************
+	virtual BOOL CloseObject();
+
 	BOOL OnValidate();
 
 	// ISVCancel interface
 	virtual bool CanCancel();
 	virtual HRESULT GetCancelData(SVCancelData*& rpData);
 	virtual HRESULT SetCancelData(SVCancelData* pData);
+
+	//************************************
+	// Description:  Recalculate Reference Object for indirect range Variables.
+	//               Mark reference object as Input.
+	// Returns:  bool:  true if references are valid
+	//************************************
+	bool InitReferencesAndInputs();
+
+	//************************************
+	// Description:  Calculate Reference
+	// Parameter: IN CString cdottetMame @TODO:  Should this be dottedName?  Better to use SVString on this interface.
+	// Parameter: OUT SVValueObjectReference & ValueObjectReference
+	// Returns:  bool:  true if valid reference
+	//************************************
+	static bool SetReference(const CString cdottetMame, SVValueObjectReference &ValueObjectReference);
+
+	//************************************
+	// Description:  Connect all references as inputs.
+	//************************************
+	void ConnectAllInputObjects();
+
+	//************************************
+	// Description:  Disconnect all input references.
+	//************************************
+	void DisconnectAllInputObjects();
+
+	//************************************
+	// Description:  Retrieve the indirect value string for the specified ERange object
+	// Parameter:  ra <in>:  specifies which range object to retrieve
+	// Parameter:  ref <out>:  the returned indirect value string
+	// Returns:  HRESULT:  S_OK if sucessful
+	//************************************
+	HRESULT GetIndirectValue(enum ERange ra, CString& ref);
+
+	//************************************
+	// Description:  True if an indirect value exist.
+	// Parameter: enum ERange ra
+	// Returns:   bool
+	//************************************
+	bool HasIndirectValue(enum ERange ra);
+	
+	//************************************
+	// Description:  retrieve the direct value string for Erange
+	// Parameter: enum ERange
+	// Parameter: double & ref
+	// Returns:   HRESULT
+	//************************************
+	HRESULT GetValue(enum ERange, double &ref);
+	
+	//************************************
+	// Description:  retrieve the indirect object for ERange
+	// Parameter: enum ERange
+	// Returns:   SVStringValueObjectClass*
+	//************************************
+	SVStringValueObjectClass* GetIndirectObject(enum ERange);
+
+	//************************************
+	// Description:  Set m_isValidRange to false.
+	// Returns:   void
+	//************************************
+	void InvalidateRange();
 
 protected:
 	virtual void init();
@@ -48,8 +124,12 @@ public:
 	SVDoubleValueObjectClass WarnHigh;
 
 protected:
-	// Input: Result value
-	SVInObjectInfoStruct inputObjectInfo;
+	// BRW - It seems to me like it be easier to keep these 3 items together in a struct than in 3 different arrays that must be synchronized.
+	SVStringValueObjectClass m_ValueIndirect[ER_COUNT];
+	bool m_IsConnectedInput[ER_COUNT];
+	SVValueObjectReference m_ValueObjectReferences[ER_COUNT];
+	bool m_isValidRange;
+	SVInObjectInfoStruct m_inputObjectInfo;
 };
 
 #endif
@@ -59,6 +139,16 @@ protected:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVRange.h_v  $
+ * 
+ *    Rev 1.3   19 Dec 2014 14:22:02   mEichengruen
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  979
+ * SCR Title:  Provide additional options to input the feature range for the blob analyzer.
+ * Checked in by:  mEichengruen;  Marcus Eichengruen
+ * Change Description:  
+ *   add SVStringValueObjectClass and SVValueObjectReference to SVRange 
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   15 May 2014 11:56:10   tbair
  * Project:  SVObserver

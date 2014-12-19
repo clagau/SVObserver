@@ -5,8 +5,8 @@
 //* .Module Name     : SVClsids
 //* .File Name       : $Workfile:   SVClsids.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.5  $
-//* .Check In Date   : $Date:   12 Nov 2014 07:04:28  $
+//* .Current Version : $Revision:   1.6  $
+//* .Check In Date   : $Date:   19 Dec 2014 14:05:40  $
 //******************************************************************************
 
 #ifndef SVCLSIDS_H
@@ -477,6 +477,10 @@ extern /*const*/ GUID SVRangeClassFailHighObjectGuid;
 extern /*const*/ GUID SVRangeClassFailLowObjectGuid;
 extern /*const*/ GUID SVRangeClassWarnHighObjectGuid;
 extern /*const*/ GUID SVRangeClassWarnLowObjectGuid;
+extern/*const*/ GUID SVRangeClassFailHighIndirectObjectGuid;
+extern/*const*/ GUID SVRangeClassFailLowIndirectObjectGuid;
+extern/*const*/ GUID SVRangeClassWarnHighIndirectObjectGuid;
+extern/*const*/ GUID SVRangeClassWarnLowIndirectObjectGuid;
 
 // GUIDs for the Embedded Objects in the SVOCRAnalyzeResultClass
 extern /*const*/ GUID SVOCRAnalyzerClassGuid;
@@ -1260,6 +1264,16 @@ extern /*const*/ GUID SVStringHeaderGuid;
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVClsids.h_v  $
+ * 
+ *    Rev 1.6   19 Dec 2014 14:05:40   mEichengruen
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  979
+ * SCR Title:  Provide additional options to input the feature range for the blob analyzer.
+ * Checked in by:  mEichengruen;  Marcus Eichengruen
+ * Change Description:  
+ *   new classids for indirect values in Rangeclass
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.5   12 Nov 2014 07:04:28   mziegler
  * Project:  SVObserver

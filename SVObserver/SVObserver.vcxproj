@@ -376,6 +376,8 @@ echo %time%
     <ClCompile Include="MonitorListImagesPage.cpp" />
     <ClCompile Include="MonitorListSheet.cpp" />
     <ClCompile Include="MonitorListValuesPage.cpp" />
+    <ClCompile Include="RangeClassHelper.cpp" />
+    <ClCompile Include="RangeXDialogClass.cpp" />
     <ClCompile Include="RemoteCommand.cpp" />
     <ClCompile Include="RemoteMonitorListController.cpp" />
     <ClCompile Include="RemoteMonitorListHelper.cpp" />
@@ -4230,6 +4232,7 @@ echo %time%
     <ClInclude Include="Custom2Filter.h" />
     <ClInclude Include="Custom2FilterDlg.h" />
     <ClInclude Include="EnvironmentObject.h" />
+    <ClInclude Include="ErrorNumbers.h" />
     <ClInclude Include="FormulaController.h" />
     <ClInclude Include="HLB.H" />
     <ClInclude Include="IFormulaController.h" />
@@ -4242,6 +4245,9 @@ echo %time%
     <ClInclude Include="MonitorListSheet.h" />
     <ClInclude Include="MonitorListValuesPage.h" />
     <ClInclude Include="NameSelectionList.h" />
+    <ClInclude Include="ObjectNameHelper.h" />
+    <ClInclude Include="RangeClassHelper.h" />
+    <ClInclude Include="RangeXDialogClass.h" />
     <ClInclude Include="RemoteMonitorList.h" />
     <ClInclude Include="RemoteCommand.h" />
     <ClInclude Include="MonitorListAddRemoveDlg.h" />
@@ -4807,6 +4813,7 @@ echo %time%
     <None Include="BasicValueObjects.inl" />
     <None Include="Custom2Filter.inl" />
     <None Include="EnvironmentObject.inl" />
+    <None Include="ObjectNameHelper.inl" />
     <None Include="res\arrow_rotate.ico" />
     <None Include="res\korber.bmp" />
     <None Include="res\toolbarZoom.bmp" />

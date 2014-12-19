@@ -5,8 +5,8 @@
 //* .Module Name     : SVFormulaEditorPageClass
 //* .File Name       : $Workfile:   SVFormulaEditorPage.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.11  $
-//* .Check In Date   : $Date:   18 Dec 2014 01:53:28  $
+//* .Current Version : $Revision:   1.12  $
+//* .Check In Date   : $Date:   19 Dec 2014 14:02:00  $
 //******************************************************************************
 
 #pragma region Includes
@@ -43,7 +43,7 @@ enum
 	SV_FORMULA_BINARY_CONSTANT_TYPE = 2,
 
 	// Kludge
-	OBM_DNARROW         = 32752,
+	//OBM_DNARROW         = 32752,
 };
 
 #pragma endregion Declarations
@@ -822,6 +822,16 @@ void SVFormulaEditorPageClass::enableControls()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVFormulaEditorPage.cpp_v  $
+ * 
+ *    Rev 1.12   19 Dec 2014 14:02:00   mEichengruen
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  979
+ * SCR Title:  Provide additional options to input the feature range for the blob analyzer.
+ * Checked in by:  mEichengruen;  Marcus Eichengruen
+ * Change Description:  
+ *   add  oemresource (defines for nice cursor)  to stdafx.h
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.11   18 Dec 2014 01:53:28   gramseier
  * Project:  SVObserver

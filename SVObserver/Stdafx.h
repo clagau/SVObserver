@@ -5,8 +5,8 @@
 //* .Module Name     : stdafx
 //* .File Name       : $Workfile:   Stdafx.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   03 Jul 2014 16:30:48  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   19 Dec 2014 14:02:00  $
 //******************************************************************************
 
 #ifndef STDAFX_H
@@ -57,6 +57,7 @@
 #pragma warning( disable: 4786 )	// identifier truncation 255 chars
 #pragma warning( 4: 4786 )
 
+#define OEMRESOURCE	// OEM resource to use nicer cursors...
 #include <afx.h>
 #include <afxwin.h>         // MFC-Kern- und -Standardkomponenten
 #include <afxext.h>         // MFC-Erweiterungen
@@ -103,6 +104,16 @@
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\Stdafx.h_v  $
+ * 
+ *    Rev 1.3   19 Dec 2014 14:02:00   mEichengruen
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  979
+ * SCR Title:  Provide additional options to input the feature range for the blob analyzer.
+ * Checked in by:  mEichengruen;  Marcus Eichengruen
+ * Change Description:  
+ *   add  oemresource (defines for nice cursor)  to stdafx.h
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   03 Jul 2014 16:30:48   sjones
  * Project:  SVObserver

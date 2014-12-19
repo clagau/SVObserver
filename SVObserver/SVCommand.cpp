@@ -5,8 +5,8 @@
 //* .Module Name     : SVCommand.cpp
 //* .File Name       : $Workfile:   SVCommand.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.18  $
-//* .Check In Date   : $Date:   01 Dec 2014 13:07:00  $
+//* .Current Version : $Revision:   1.19  $
+//* .Check In Date   : $Date:   19 Dec 2014 15:01:48  $
 //******************************************************************************
 
 #pragma region Includes
@@ -65,6 +65,8 @@
 #include "BasicValueObject.h"
 #include "SVStorageResult.h"
 #include "SVVisionProcessorHelper.h"
+#include "RangeClassHelper.h"
+
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -515,17 +517,17 @@ STDMETHODIMP CSVCommand::GetSVIMFile(BSTR * pszXMLData, BSTR* pXMLError)
 	HRESULT hrResult = S_OK;
 	BSTR XMLData;
 	BSTR XMLError;
-	
+
 	//file data
 	do
 	{
 		if(!SvXmlCmd.InitXml())goto xmlerror;
-		
+
 		if(!SvXmlCmd.LoadDoc(pszXMLData))goto xmlerror;
-		
+
 		//read the binary file data
 		if(!SvXmlCmd.GetSVIMfilename(&szFilename))goto xmlerror;
-		
+
 		if(binFile.Open(szFilename, CFile::shareDenyNone | CFile::modeRead ))
 		{
 			// determine the file length
@@ -539,21 +541,21 @@ STDMETHODIMP CSVCommand::GetSVIMFile(BSTR * pszXMLData, BSTR* pXMLError)
 		}
 		else goto error;
 		if(!SvXmlCmd.InitXml())goto xmlerror;
-		
+
 		if(!SvXmlCmd.SetCommand(_T("GetSVIMFile")))goto xmlerror;
-		
+
 		if(!SvXmlCmd.SetBinData(pBuf,dwFileLength))goto xmlerror;
-		
+
 		//save the xml doc into an XML BSTR
 		if(!SvXmlCmd.GetXmlDoc(&XMLData))goto xmlerror;
-		
+
 		*pszXMLData = SysAllocString(XMLData);
-		
+
 		if(XMLData)
 		{
 			SysFreeString(XMLData);
 		}
-		
+
 		SETEXCEPTION0 (svException, SVMSG_CMDCOMSRV_NO_ERROR);
 		break;
 error:
@@ -570,25 +572,25 @@ xmlerror:
 		{
 			svException = SvXmlCmd.GetParserError();
 		}
-		
+
 		hrResult = S_FALSE;
 		break;
 	} while (0);
-	
+
 	if((svXmlException = svException) != TRUE)
 	{ //create an exception object for an XML parse error
 		SVException XmlException = svXmlException.GetParserError();
 		svXmlException = XmlException;
 	}
 	svXmlException.GetXmlDoc(&XMLError);
-	
+
 	*pXMLError = SysAllocString(XMLError);
-	
+
 	if(XMLError)
 	{
 		SysFreeString(XMLError);
 	}
-	
+
 	if(pBuf)free(pBuf);
 	return hrResult;
 }
@@ -608,23 +610,23 @@ STDMETHODIMP CSVCommand::PutSVIMFile(BSTR szXMLData, BSTR* pXMLError)
 	int nBackCount = 0;
 	int nBackIndex = 0;
 	BSTR XMLError;
-	
+
 	//xml data
 	do
 	{
 		if(!SvXmlCmd.InitXml())goto xmlerror;
-		
+
 		if(!SvXmlCmd.LoadDoc(&szXMLData))goto xmlerror;
-		
+
 		if(!SvXmlCmd.GetSVIMfilename(&szSVIMFilename))goto xmlerror;
-		
+
 		if(!SvXmlCmd.GetBinData(&pBuf,&dwFileLength))goto xmlerror;
-		
+
 		_tsplitpath (szSVIMFilename, szDrive, szDir, szFName, szExt);
-		
+
 		szPath = szDrive;
 		szPath += szDir;
-		
+
 		if(szPath.IsEmpty())
 		{
 			szPath = _T("c:\\run\\");
@@ -636,14 +638,14 @@ STDMETHODIMP CSVCommand::PutSVIMFile(BSTR szXMLData, BSTR* pXMLError)
 		{
 			if(!CreateDirPath(szPath))goto error;
 		}
-		
+
 		if(savFile.Open(szSVIMFilename,CFile::shareDenyNone | CFile::modeWrite | CFile::modeCreate))
 		{
 			savFile.Write(pBuf,dwFileLength);
 			savFile.Close();
 		}
 		else goto error;
-		
+
 		SETEXCEPTION0 (svException, SVMSG_CMDCOMSRV_NO_ERROR);
 		break;
 error:
@@ -660,25 +662,25 @@ xmlerror:
 		{
 			svException = SvXmlCmd.GetParserError();
 		}
-		
+
 		hrResult = S_FALSE;
 		break;
 	} while (0);
-	
+
 	if((svXmlException = svException) != TRUE)
 	{ //create an exception object for an XML parse error
 		SVException XmlException = svXmlException.GetParserError();
 		svXmlException = XmlException;
 	}
 	svXmlException.GetXmlDoc(&XMLError);
-	
+
 	*pXMLError = SysAllocString(XMLError);
-	
+
 	if(XMLError)
 	{
 		SysFreeString(XMLError);
 	}
-	
+
 	if(pBuf)free(pBuf);
 	return hrResult;
 }
@@ -785,29 +787,29 @@ STDMETHODIMP CSVCommand::GetSVIMInspectionResults(BSTR* pszXMLData, BSTR* pXMLEr
 	HRESULT hrResult = S_OK;
 	BSTR XMLData;
 	BSTR XMLError;
-	
+
 	do
 	{
 		if(!SvXmlCmd.InitXml())goto xmlerror;
-		
+
 		if(!SvXmlCmd.LoadDoc(pszXMLData))goto xmlerror;
-		
+
 		//the svimfilname element holds the IPD name
 		if(!SvXmlCmd.GetSVIMfilename(&pszIPD))goto xmlerror;
 		szIPD = pszIPD;
-		
+
 		if(!SvXmlCmd.InitXml())goto xmlerror;
-		
+
 		if(!SvXmlCmd.SetSVIMfilename(pszIPD))goto xmlerror;
-		
+
 		if(!SvXmlCmd.SetCommand(_T("GetSVIMInspectionResults")))goto xmlerror;
-		
+
 		//ADD THE REQUIRED RESULTS DATA FROM ALL IPDS AND ALL PUBLISHED RESULTS
 		//possibly in a loop using the following function
 		//NOTE:  The order in which in the results data per IPD is added to the XML
 		//Doc will determine the index number that must be used to retreive the data.
 		//i.e first data item added to XML doc will be index zero
-		
+
 		if( ! SVSVIMStateClass::CheckState( SV_STATE_LOADING ) )
 		{
 			SVIPDoc* pIPDoc = TheSVObserverApp.GetIPDoc( szIPD );
@@ -823,17 +825,17 @@ STDMETHODIMP CSVCommand::GetSVIMInspectionResults(BSTR* pszXMLData, BSTR* pXMLEr
 			else goto error;
 		}
 		else goto error;
-		
+
 		//save the xml doc into an XML BSTR
 		if(!SvXmlCmd.GetXmlDoc(&XMLData))goto xmlerror;
-		
+
 		*pszXMLData = SysAllocString(XMLData);
-		
+
 		if(XMLData)
 		{
 			SysFreeString(XMLData);
 		}
-		
+
 		SETEXCEPTION0 (svException, SVMSG_CMDCOMSRV_NO_ERROR);
 		break;
 error:
@@ -850,25 +852,25 @@ xmlerror:
 		{
 			svException = SvXmlCmd.GetParserError();
 		}
-		
+
 		hrResult = S_FALSE;
 		break;
 	} while (0);
-	
+
 	if((svXmlException = svException) != TRUE)
 	{ //create an exception object for an XML parse error
 		SVException XmlException = svXmlException.GetParserError();
 		svXmlException = XmlException;
 	}
 	svXmlException.GetXmlDoc(&XMLError);
-	
+
 	*pXMLError = SysAllocString(XMLError);
-	
+
 	if(XMLError)
 	{
 		SysFreeString(XMLError);
 	}
-	
+
 	return hrResult;
 }
 
@@ -1056,7 +1058,7 @@ STDMETHODIMP CSVCommand::SVSetSVIMState(unsigned long ulSVIMState)
 	{
 		hrResult = S_OK;
 		bSuccess = FALSE;
-		
+
 		try
 		{
 			if( ulSVIMState )
@@ -1363,15 +1365,15 @@ STDMETHODIMP CSVCommand::SVGetSVIMFile(BSTR bstrSourceFile, long lOffset, long *
 	TCHAR szPath[_MAX_PATH];
 
 	CString strFilename( bstrSourceFile, ::SysStringLen( bstrSourceFile ) );
-	
+
 	_tsplitpath( strFilename, szDrive, szDir, szFile, szExt );
-	
+
 	if( !_tcscmp( szDrive, _T("") ) )
 	{
 		_tcscpy( szDrive, _T("C:") );
 		_tcscpy( szDir, _T("\\Run\\") );
 	}
-	
+
 	_tmakepath( szPath, szDrive, szDir, szFile, szExt );
 
 	if( ::_access( szPath, 0 ) == 0 )
@@ -1398,10 +1400,10 @@ STDMETHODIMP CSVCommand::SVGetSVIMFile(BSTR bstrSourceFile, long lOffset, long *
 				{
 					AfxThrowMemoryException( );
 				}
-				
+
 				// Transfer the file data into the buffer
 				binFile.Seek( lOffset, CFile::begin );
-				
+
 				binFile.Read( *bstrFileData, *lBlockSize );
 
 				// Close the file
@@ -1409,12 +1411,12 @@ STDMETHODIMP CSVCommand::SVGetSVIMFile(BSTR bstrSourceFile, long lOffset, long *
 			}
 			catch(CFileException* theException)
 			{
-				#ifdef _DEBUG
-					TCHAR   szCause[255];
-					theException->GetErrorMessage(szCause, 255);
-					CString szFormatted = _T("ERROR - ");
-					szFormatted += szCause;
-				#endif
+#ifdef _DEBUG
+				TCHAR   szCause[255];
+				theException->GetErrorMessage(szCause, 255);
+				CString szFormatted = _T("ERROR - ");
+				szFormatted += szCause;
+#endif
 
 				hrResult = SVMSG_CMDCOMSRV_FILE_ERROR;
 
@@ -1422,12 +1424,12 @@ STDMETHODIMP CSVCommand::SVGetSVIMFile(BSTR bstrSourceFile, long lOffset, long *
 			}
 			catch (CMemoryException* memEx)
 			{
-				#ifdef _DEBUG
-					TCHAR szCause[255];
-					memEx->GetErrorMessage(szCause,255);
-					CString szFormatted = _T("ERROR - ");
-					szFormatted += szCause;
-				#endif
+#ifdef _DEBUG
+				TCHAR szCause[255];
+				memEx->GetErrorMessage(szCause,255);
+				CString szFormatted = _T("ERROR - ");
+				szFormatted += szCause;
+#endif
 
 				hrResult = SVMSG_CMDCOMSRV_MEMORY_ERROR; //use this value for now...
 
@@ -1442,7 +1444,7 @@ STDMETHODIMP CSVCommand::SVGetSVIMFile(BSTR bstrSourceFile, long lOffset, long *
 		{
 			hrResult = l_FileException.m_lOsError;
 		}
-		
+
 		if( ! SV_SUCCEEDED( hrResult ) )
 		{
 			SVException l_Exception;
@@ -1454,7 +1456,7 @@ STDMETHODIMP CSVCommand::SVGetSVIMFile(BSTR bstrSourceFile, long lOffset, long *
 	{
 		hrResult = ERROR_FILE_NOT_FOUND;
 	}
-	
+
 	return hrResult;
 }
 
@@ -1472,19 +1474,19 @@ STDMETHODIMP CSVCommand::SVPutSVIMFile(BSTR bstrDestFile, long lOffset, long lBl
 	CString strFilename( bstrDestFile, ::SysStringLen( bstrDestFile ) );
 
 	_tsplitpath( strFilename, szDrive, szDir, szFile, szExt );
-	
+
 	if( !_tcscmp( szDrive, _T("") ) )
 	{
 		_tcscpy( szDrive, _T("C") );
 		_tcscpy( szDir, _T("\\Run\\") );
 	}
-	
+
 	_tmakepath( szPath, szDrive, szDir, szFile, szExt );
-	
+
 	strPath = szDrive;
 	strPath += szDir;
 	strPath += strFilename;
-	
+
 	CreateDirPath( strPath );
 
 	CFile binFile;
@@ -1511,12 +1513,12 @@ STDMETHODIMP CSVCommand::SVPutSVIMFile(BSTR bstrDestFile, long lOffset, long lBl
 		}
 		catch (CFileException *theEx)
 		{
-			#ifdef _DEBUG
-				TCHAR szCause[255];
-				theEx->GetErrorMessage(szCause,255);
-				CString sFormatted = _T("ERROR - ");
-				sFormatted += szCause;
-			#endif
+#ifdef _DEBUG
+			TCHAR szCause[255];
+			theEx->GetErrorMessage(szCause,255);
+			CString sFormatted = _T("ERROR - ");
+			sFormatted += szCause;
+#endif
 
 			hrResult = SVMSG_CMDCOMCTRL_FILE_ERROR;
 
@@ -1538,7 +1540,7 @@ STDMETHODIMP CSVCommand::SVPutSVIMFile(BSTR bstrDestFile, long lOffset, long lBl
 	{
 		hrResult = l_FileException.m_lOsError;
 	}
-	
+
 	return hrResult;
 }
 
@@ -1767,12 +1769,12 @@ STDMETHODIMP CSVCommand::SVGetSVIMOfflineCount(unsigned long *ulOfflineCount)
 	SVException svException;
 	HRESULT hrResult;
 	BOOL bSuccess;
-	
+
 	do
 	{
 		hrResult = S_OK;
 		bSuccess = FALSE;
-		
+
 		try
 		{
 			*ulOfflineCount = TheSVObserverApp.getOfflineCount();
@@ -1782,15 +1784,15 @@ STDMETHODIMP CSVCommand::SVGetSVIMOfflineCount(unsigned long *ulOfflineCount)
 		{
 			bSuccess = FALSE;
 		}
-		
+
 		if( !bSuccess )
 		{
 			SETEXCEPTION0 (svException, SVMSG_CMDCOMSRV_ERROR);
 			hrResult = S_FALSE;
 		}
-		
+
 	} while (0);
-	
+
 	return hrResult;
 }
 
@@ -1799,12 +1801,12 @@ STDMETHODIMP CSVCommand::SVGetSVIMVersion(unsigned long *ulVersion)
 	SVException svException;
 	HRESULT hrResult;
 	BOOL bSuccess;
-	
+
 	do
 	{
 		hrResult = S_OK;
 		bSuccess = FALSE;
-		
+
 		try
 		{
 			*ulVersion = TheSVObserverApp.getCurrentVersion();
@@ -1814,15 +1816,15 @@ STDMETHODIMP CSVCommand::SVGetSVIMVersion(unsigned long *ulVersion)
 		{
 			bSuccess = FALSE;
 		}
-		
+
 		if( !bSuccess )
 		{
 			SETEXCEPTION0 (svException, SVMSG_CMDCOMSRV_ERROR);
 			hrResult = S_FALSE;
 		}
-		
+
 	} while (0);
-	
+
 	return hrResult;
 }
 
@@ -1832,36 +1834,36 @@ STDMETHODIMP CSVCommand::SVGetSVIMConfigPrint(long lOffset, long *lBlockSize, BS
 	CString strConfigPrint;
 	HRESULT hrResult;
 	BOOL bSuccess;
-	
+
 	do
 	{
 		hrResult = S_OK;
 		bSuccess = FALSE;
-		
+
 		try
 		{
 			SVConfigurationPrint printConfig;
 			printConfig.printConfigToStringBuffer( strConfigPrint );
-			
+
 			*bstrConfigPrint = strConfigPrint.AllocSysString();
 			*lBlockSize = ::SysStringByteLen( *bstrConfigPrint );
 			*bLastFlag = TRUE;
-			
+
 			bSuccess = TRUE;
 		}
 		catch (...)
 		{
 			bSuccess = FALSE;
 		}
-		
+
 		if( !bSuccess )
 		{
 			SETEXCEPTION0 (svException, SVMSG_CMDCOMSRV_ERROR);
 			hrResult = S_FALSE;
 		}
-		
+
 	} while (0);
-	
+
 	return hrResult;
 }
 
@@ -1897,7 +1899,7 @@ STDMETHODIMP CSVCommand::SVGetImageList(SAFEARRAY* psaNames, long lCompression, 
 			throw SVMSG_CONFIGURATION_NOT_LOADED;
 		}
 
-// BRW - SVImageCompression has been removed for x64.
+		// BRW - SVImageCompression has been removed for x64.
 #ifndef _WIN64
 		SVImageCompressionClass mainCompressionObject(SERVER_COMPRESSION_POOL_SIZE);
 
@@ -1917,31 +1919,30 @@ STDMETHODIMP CSVCommand::SVGetImageList(SAFEARRAY* psaNames, long lCompression, 
 #endif
 
 		long lNumberOfElements = psaNames->rgsabound[0].cElements;
-		
+
 		ASSERT( ppsaStatus != NULL );
 		ASSERT( *ppsaStatus != NULL );	// must provide allocated SafeArray(LONG)
 		ASSERT( (*ppsaStatus)->rgsabound[0].cElements == lNumberOfElements );
-		
+
 		ASSERT( ppsaImages != NULL );
 		ASSERT( *ppsaImages != NULL );	// must provide allocated SafeArray(LONG)
 		ASSERT( (*ppsaImages)->rgsabound[0].cElements == lNumberOfElements );
-		
+
 		ASSERT( ppsaOverlays != NULL );
 		ASSERT( *ppsaOverlays != NULL );// must provide allocated SafeArray(LONG)
 		ASSERT( (*ppsaOverlays)->rgsabound[0].cElements == lNumberOfElements );
-		
+
 		ASSERT( ppsaProcCounts != NULL );
 		ASSERT( *ppsaProcCounts != NULL );// must provide allocated SafeArray(LONG)
 		ASSERT( (*ppsaProcCounts)->rgsabound[0].cElements == lNumberOfElements );
-		
+
 		long lDefaultStatus = S_FALSE;
-		
+
 		// set default status for objects in list
 		for ( long lIndex = 0; lIndex < lNumberOfElements; lIndex++ )
 		{
 			HRESULT hrTemp = SafeArrayPutElement(*ppsaStatus, &lIndex, &lDefaultStatus);
 		}
-
 
 		bool l_bItemNotFound = false;
 		bool l_bInspectionNotFound = false;
@@ -1954,7 +1955,7 @@ STDMETHODIMP CSVCommand::SVGetImageList(SAFEARRAY* psaNames, long lCompression, 
 		// 2) Requested data item exists
 		SVInspectionProcess* pInspection = NULL;
 		HRESULT hrOK = S_OK;
-		
+
 		for ( long i = 0; i < lNumberOfElements && SUCCEEDED( hrOK ); i++ )
 		{
 			BSTR bstrName = NULL;
@@ -1993,7 +1994,7 @@ STDMETHODIMP CSVCommand::SVGetImageList(SAFEARRAY* psaNames, long lCompression, 
 				HRESULT hrTemp = SafeArrayPutElement(*ppsaStatus, &i, (void*) &hrOK);
 			}
 		}// end for ( long l = 0; l < lNumberOfElements && SUCCEEDED( hrOK ); l++ )
-		
+
 		// requested values are not valid - return an error...
 		if ( ! SUCCEEDED( hrOK ) )
 		{
@@ -2001,7 +2002,7 @@ STDMETHODIMP CSVCommand::SVGetImageList(SAFEARRAY* psaNames, long lCompression, 
 		}
 
 		SVInspectionImageDataMap l_InspectionImageData;
-			
+
 		SVInspectionImageIdMap::iterator l_InspectionIter;
 
 		for( l_InspectionIter = l_InspectionImageIds.begin(); l_InspectionIter != l_InspectionImageIds.end(); ++l_InspectionIter )
@@ -2032,7 +2033,7 @@ STDMETHODIMP CSVCommand::SVGetImageList(SAFEARRAY* psaNames, long lCompression, 
 			SVImageOverlayClass l_OverlayClass;
 
 			SVCommandInspectionCollectImageDataPtr l_DataPtr;
-			
+
 			SVInspectionImageDataMap::iterator l_Iter = l_InspectionImageData.find( l_ImageNameIds[ l ].m_pInspection );
 
 			if( l_Iter != l_InspectionImageData.end() )
@@ -2074,7 +2075,7 @@ STDMETHODIMP CSVCommand::SVGetImageList(SAFEARRAY* psaNames, long lCompression, 
 							pDIB = (char *) (bstrImage);    
 						}
 					}
-					
+
 					if ( hr == S_OK )
 					{
 						// Copy data to DIB memory locations
@@ -2097,7 +2098,7 @@ STDMETHODIMP CSVCommand::SVGetImageList(SAFEARRAY* psaNames, long lCompression, 
 								const BITMAPINFO* l_pInfo = reinterpret_cast< const BITMAPINFO* >( &(l_ImageIter->second.m_ImageDIB[0]) );
 
 								hr = mainCompressionObject.ExportBSTR(&bstrImage, l_pInfo->bmiHeader.biBitCount, lCompression);
-								
+
 								if (hr < 0)
 								{
 									hr = -1567;
@@ -2123,7 +2124,7 @@ STDMETHODIMP CSVCommand::SVGetImageList(SAFEARRAY* psaNames, long lCompression, 
 						{
 							throw -1580;
 						}
-						
+
 						// Add the image to the outgoing array
 						SafeArrayPutElementNoCopy( *ppsaImages, &l, bstrImage );
 						//::SysFreeString( bstrImage );
@@ -2134,11 +2135,11 @@ STDMETHODIMP CSVCommand::SVGetImageList(SAFEARRAY* psaNames, long lCompression, 
 						long lSize;
 						l_OverlayClass.GetBufferSize( lSize );
 						l_OverlayClass.GetBuffer( pBytes );
-						
+
 						BSTR bstrOverlay = ::SysAllocStringByteLen( NULL, lSize );
 						memcpy( bstrOverlay, pBytes, lSize );
 						//delete pOverlayClass;
-						
+
 						// Add overlays to the outgoing array
 						SafeArrayPutElementNoCopy( *ppsaOverlays, &l, bstrOverlay );
 						//::SysFreeString( bstrOverlay );
@@ -2159,7 +2160,7 @@ STDMETHODIMP CSVCommand::SVGetImageList(SAFEARRAY* psaNames, long lCompression, 
 				l_bItemNotFound = true;
 			}// end if ( !bImageOk )
 		}// end for( long l = 0; l < lNumberOfElements; l++ )
-		
+
 		if (hrResult < 0)
 		{
 			throw hrResult;
@@ -2219,7 +2220,7 @@ STDMETHODIMP CSVCommand::SVRegisterStream(SAFEARRAY* psaName, VARIANT vtInterfac
 		{ // set Id to vtInterface
 			m_dwStreamDataProcessId = vtInterface.ulVal;
 		}
-		
+
 		if ( m_bRegisteredStream ) 
 		{ // registration already happened...
 			// check vtInterface - if same set exception that the same control
@@ -2230,22 +2231,22 @@ STDMETHODIMP CSVCommand::SVRegisterStream(SAFEARRAY* psaName, VARIANT vtInterfac
 				hrRet = SVMSG_STREAM_ALREADY_REGISTERED_BY_ANOTHER_CONTROL;
 				SETEXCEPTION0 (svException, SVMSG_STREAM_ALREADY_REGISTERED_BY_ANOTHER_CONTROL);
 			}
-			
+
 			if ( m_dwStreamDataProcessId == vtInterface.ulVal )
 			{
 				hrRet = SVMSG_STREAM_ALREADY_REGISTERED_BY_THIS_CONTROL;
 				SETEXCEPTION0 (svException, SVMSG_STREAM_ALREADY_REGISTERED_BY_THIS_CONTROL);
 			}
-			
+
 			return hrRet;
 		}// end if
-		
-		hr = Fire_TestConnection();			
+
+		hr = Fire_TestConnection();
 		if ( hr != S_OK )
 		{
 			hrRet = SVMSG_SERVER_UNABLE_TO_CONNECT_TO_CONTROL;
 			SETEXCEPTION0 (svException, SVMSG_SERVER_UNABLE_TO_CONNECT_TO_CONTROL);
-			
+
 			return hrRet;
 		}// end else
 
@@ -2253,49 +2254,49 @@ STDMETHODIMP CSVCommand::SVRegisterStream(SAFEARRAY* psaName, VARIANT vtInterfac
 		{
 			CSVCommand* pThis = this;
 			StreamDataStruct* pstData;
-			
+
 			m_cslInspectionNames.RemoveAll();
 			m_arInspections.RemoveAll();
-			
+
 			//check list of names to make sure they are all on the same PPQ
 			long lNumberOfElements = psaName->rgsabound[0].cElements;
-			
+
 			for ( long lIndex = 0; lIndex < lNumberOfElements; lIndex++ )
 			{
 				SafeArrayGetElementNoCopy(psaName, &lIndex, &bstrName);
 				sName = bstrName;
 				sInspectionName = sName.Left(sName.Find('.'));
-				
-				if ( m_cslInspectionNames.Find(sInspectionName) == NULL )
+
+				if ( nullptr == m_cslInspectionNames.Find(sInspectionName) )
 				{
 					// add inspection name to list
 					m_cslInspectionNames.AddHead(sInspectionName);
 				}//end if
 			}// end for
-			
+
 			//go through list of inspection names and make sure they are all on same PPQ
 			int iInspectionCnt = static_cast< int >( m_cslInspectionNames.GetCount() );
 
 			SVGUID l_PPQId;
 			POSITION posIns;
 			int iInsDel = 0;
-			
-			SVConfigurationObject* l_pConfig = NULL;
+
+			SVConfigurationObject* l_pConfig = nullptr;
 			SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
 
 			for ( int i = 0; ( (i < iInspectionCnt) && (bSamePPQ) ); i++ )
 			{
 				CString sTmpInsName;
-				
+
 				posIns = m_cslInspectionNames.FindIndex(i-iInsDel);
 				if ( posIns )
 				{
-					sTmpInsName = m_cslInspectionNames.GetAt(posIns);                    
-					
+					sTmpInsName = m_cslInspectionNames.GetAt(posIns);
+
 					if ( l_pConfig->GetInspectionObject(sTmpInsName,&pInspection) )
 					{
 						if ( l_PPQId.empty() )
-						{   
+						{
 							l_PPQId = pInspection->GetPPQIdentifier();
 						}
 						else
@@ -2313,7 +2314,7 @@ STDMETHODIMP CSVCommand::SVRegisterStream(SAFEARRAY* psaName, VARIANT vtInterfac
 					}
 				}
 			}
-			
+
 			// requested values are not on same PPQ - return an error...
 			if ( !bSamePPQ )
 			{
@@ -2329,34 +2330,34 @@ STDMETHODIMP CSVCommand::SVRegisterStream(SAFEARRAY* psaName, VARIANT vtInterfac
 				hrRet = SVMSG_NOT_ALL_LIST_ITEMS_PROCESSED;
 				return hrRet;
 			}
-			
+
 			HRESULT hrStatus = S_OK;
 			//create list of value objects
 			for ( long x = 0; x < lNumberOfElements; x++ )
 			{
 				CString sTmp;
-				
+
 				SafeArrayGetElementNoCopy(psaName,&x,&bstrName);
 				sTmp = bstrName;
-				
+
 				sInspectionName = sTmp.Left(sTmp.Find('.'));
 				BOOL bFound = FALSE;
 
 				pstData = new StreamDataStruct;
-				
+
 				if (l_pConfig->GetInspectionObject(sTmp,&pInspection) )
 				{
 					if ( sInspectionName == pInspection->GetName() )
 					{
 						bFound = TRUE;
 					}
-					
+
 					if ( bFound )
 					{
 						l_bGoodInspection = TRUE;
 						pstData->m_InspectionID = pInspection->GetUniqueObjectID();
 						pstData->strValueName = sTmp;
-						
+
 						SVValueObjectReference ref;
 						HRESULT hrFind = SVObjectManagerClass::Instance().GetObjectByDottedName( static_cast< LPCTSTR >( sTmp ), ref );
 						if( hrFind != S_OK )
@@ -2381,25 +2382,25 @@ STDMETHODIMP CSVCommand::SVRegisterStream(SAFEARRAY* psaName, VARIANT vtInterfac
 								m_arStreamList.Add( pstData );
 								hrRet = SVMSG_OBJECT_NOT_PROCESSED;
 								::SafeArrayPutElement(*ppsaStatus,&x,&hrRet);
-								bNotAllItemsFound = TRUE;                            
+								bNotAllItemsFound = TRUE;
 							}// end else
 						}// end else
 					}// end if
 				} // if ( pInspection != NULL )
 				else
-				{   // Inspection Not Found
+				{	// Inspection Not Found
 					// put following error code in
 					pstData->m_InspectionID.clear();
 					pstData->pValueObject = NULL;
 					pstData->strValueName = sTmp;
 					m_arStreamList.Add( pstData );
-					
+
 					// to compile 
 					hrRet = SVMSG_ONE_OR_MORE_INSPECTIONS_DO_NOT_EXIST;
 					::SafeArrayPutElement(*ppsaStatus,&x,&hrRet);
 				}// end else
 			}// end for
-			
+
 			for ( int iAdd = 0; iAdd < iInspectionCnt; iAdd++ )
 			{
 				POSITION pos = m_cslInspectionNames.FindIndex(iAdd);
@@ -2416,12 +2417,12 @@ STDMETHODIMP CSVCommand::SVRegisterStream(SAFEARRAY* psaName, VARIANT vtInterfac
 					}// end if
 				}// end if
 			}// end for
-			
+
 			RebuildStreamingDataList();
 
 			m_bRunStreamData = TRUE;
 			m_bRegisteredStream = TRUE;
-			
+
 			SVCommandStreamManager::Instance().InsertCommandCallback( 
 				boost::bind( &CSVCommand::StreamingDataCallback, this, _1 ), 
 				boost::bind( &CSVCommand::RebuildStreamingDataList, this ) );
@@ -2434,10 +2435,10 @@ STDMETHODIMP CSVCommand::SVRegisterStream(SAFEARRAY* psaName, VARIANT vtInterfac
 	catch(...)
 	{
 		// send error message
-		 hr = S_FALSE;
-		 m_bRegisteredStream = FALSE;
-		 m_bRunStreamData = FALSE;
-		 m_dwStreamDataProcessId = 0;
+		hr = S_FALSE;
+		m_bRegisteredStream = FALSE;
+		m_bRunStreamData = FALSE;
+		m_dwStreamDataProcessId = 0;
 	}
 
 	if ( !(l_bGoodInspection) )
@@ -2446,7 +2447,7 @@ STDMETHODIMP CSVCommand::SVRegisterStream(SAFEARRAY* psaName, VARIANT vtInterfac
 		m_dwStreamDataProcessId = 0;
 		bNotAllItemsFound = TRUE;
 	}
-	
+
 	if ( hr != S_FALSE )
 	{
 		if (bNotAllItemsFound)
@@ -2458,7 +2459,7 @@ STDMETHODIMP CSVCommand::SVRegisterStream(SAFEARRAY* psaName, VARIANT vtInterfac
 			hr = hrRet;
 		}
 	}
-	
+
 	return hr;
 }
 
@@ -2469,7 +2470,7 @@ STDMETHODIMP CSVCommand::SVUnRegisterStream(VARIANT vtInterface)
 	ProductDataStruct *pProduct;
 	long l;
 	long lSize;
-	
+
 	if (m_dwStreamDataProcessId == vtInterface.ulVal || m_dwStreamDataProcessId == 0)
 	{
 		if ( m_bRegisteredStream )
@@ -2487,10 +2488,10 @@ STDMETHODIMP CSVCommand::SVUnRegisterStream(VARIANT vtInterface)
 				SVThreadManager::Instance().Remove( m_hStreamingThread );
 				m_hStreamingThread = NULL;
 			}
-			
+
 			m_bRegisteredStream = FALSE;
 			m_bRunStreamData = FALSE;
-			
+
 			SVCommandStreamManager::Instance().EraseCommandCallback();
 			m_cslInspectionNames.RemoveAll();
 			m_dwStreamDataProcessId = 0;
@@ -2538,17 +2539,17 @@ HRESULT CSVCommand::StreamingDataCallback( const SVInspectionCompleteInfoStruct&
 	BOOL bFound;
 	long l;
 	long lSize;
-	
+
 	if( m_bRegisteredStream )
 	{
 		// Protect the to be streamed list
 		::EnterCriticalSection( &m_hProductCritSect );
-		
+
 		// search the list for this product
 		bFound = FALSE;
 		pProductData = NULL;
 		lSize = static_cast< long >( m_arProductList.GetSize() );
-		
+
 		for( l = 0; l < lSize; l++ )
 		{
 			if( pProductData = m_arProductList.GetAt( l ) )
@@ -2560,18 +2561,18 @@ HRESULT CSVCommand::StreamingDataCallback( const SVInspectionCompleteInfoStruct&
 				}// end if
 			}// end if
 		}// end for
-		
+
 		// it is not in the list then we need to add it
 		if( !bFound )
 		{
 			pProductData = new ProductDataStruct;
 			pProductData->lProductCount = p_rData.m_ProductInfo.ProcessCount();
 			pProductData->arPacketData.SetSize( static_cast< int >( m_arStreamList.GetSize() ) );
-			
+
 			// add the product to the outgoing list
 			m_arProductList.Add( pProductData );
 		}// end if
-		
+
 		// We will go ahead and make a copy of the data now
 		lSize = static_cast< long >( m_arStreamList.GetSize() );
 		for( l = 0; l < lSize; l++ )
@@ -2624,7 +2625,7 @@ HRESULT CSVCommand::StreamingDataCallback( const SVInspectionCompleteInfoStruct&
 
 		// Unprotect the to be streamed list
 		::LeaveCriticalSection( &m_hProductCritSect );
-		
+
 		// if streaming thread is starved, temporarily boost it
 		if( m_arProductList.GetSize() > 20 )
 		{
@@ -2633,7 +2634,7 @@ HRESULT CSVCommand::StreamingDataCallback( const SVInspectionCompleteInfoStruct&
 
 		::QueueUserAPC( SVStreamingDataAPCProc, m_hStreamingThread, ( DWORD_PTR ) NULL );
 	}// end if
-	
+
 	return S_OK;
 }
 
@@ -2661,8 +2662,8 @@ DWORD WINAPI CSVCommand::SVStreamDataThread(LPVOID lpParam)
 	long lNoProduct;
 	long l;
 	long k;
-	
-	CSVCommand *pThis = (CSVCommand*) lpParam;
+
+	CSVCommand *pThis = (CSVCommand*) lpParam; //@TODO:  Should check pThis before dereferencing.  Avoid c-style casts.
 	lStreamSize = static_cast< long >( pThis->m_arStreamList.GetSize() );
 	lStreamCount = 0;
 	lNoProduct = -1;
@@ -2692,17 +2693,17 @@ DWORD WINAPI CSVCommand::SVStreamDataThread(LPVOID lpParam)
 			lProductCount = static_cast< long >( pThis->m_arProductList.GetSize() );
 			lStreamCount = 0;
 			hr = S_OK;
-		
+
 			for( l = 0; l < lProductCount; l++ )
 			{
-				pProductData = pThis->m_arProductList.GetAt( l );
+				pProductData = pThis->m_arProductList.GetAt( l ); // @TODO:  Should check pProductData before dereferencing.
 				if( pProductData->lCallbackCount == m_cslInspectionNames.GetCount() )
 				{
 					lStreamCount++;
 				}// end if
 
 			}//end for
-		
+
 			// pass two - build the packets to stream from these products
 			if( lStreamCount)
 			{
@@ -2715,13 +2716,14 @@ DWORD WINAPI CSVCommand::SVStreamDataThread(LPVOID lpParam)
 				saNames			= ::SafeArrayCreate( VT_BSTR, 1, sabound );
 				saValues		= ::SafeArrayCreate( VT_BSTR, 1, sabound );
 				saProcessCount	= ::SafeArrayCreate( VT_I4, 1, sabound );
-				
+
 				lProductCount = static_cast< long >( pThis->m_arProductList.GetSize() );
 				for( l = 0; lStreamCount && l < lProductCount; l++ )
 				{
 					pProductData = pThis->m_arProductList.GetAt( l );
-					
+
 					// Verify again that this is one of the ready products
+					// @TODO:  Should check pProductData before dereferencing.
 					if( pProductData->lCallbackCount != m_cslInspectionNames.GetCount() )
 					{
 						continue;
@@ -2777,14 +2779,14 @@ DWORD WINAPI CSVCommand::SVStreamDataThread(LPVOID lpParam)
 					lStreamCount--;
 
 					::EnterCriticalSection( &m_hProductCritSect );
-			
+
 					pThis->m_arProductList.RemoveAt( l );
 
 					::LeaveCriticalSection( &m_hProductCritSect );
 					delete pProductData;
 					l--;
 				} // end for
-			
+
 				try
 				{
 					hr = pThis->Fire_StreamingData( saProcessCount, saNames, saValues );
@@ -2793,16 +2795,16 @@ DWORD WINAPI CSVCommand::SVStreamDataThread(LPVOID lpParam)
 				{
 					hr = S_FALSE;
 				}// end catch
-					
+
 				::SafeArrayDestroy( saNames );
 				::SafeArrayDestroy( saValues );
-				::SafeArrayDestroy( saProcessCount );			
+				::SafeArrayDestroy( saProcessCount );
 			}// end if
 
 			// pass three - check for products to stream before we go back to sleep
 			lProductCount = static_cast< long >( pThis->m_arProductList.GetSize() );
 			lStreamCount = 0;
-		
+
 			for( l = 0; l < lProductCount; l++ )
 			{
 				pProductData = pThis->m_arProductList.GetAt( l );
@@ -2810,7 +2812,6 @@ DWORD WINAPI CSVCommand::SVStreamDataThread(LPVOID lpParam)
 				{
 					lStreamCount++;
 				}// end if
-
 			}//end for
 
 			// Make sure thread priority is set back down
@@ -2847,40 +2848,40 @@ DWORD WINAPI CSVCommand::SVStreamDataThread(LPVOID lpParam)
 			break;
 		}// end switch
 	} while( bRunning );
-	
+
 	//check to see if handle is still valid.  if it is close it
 	if( pThis->m_hStopStreamEvent )
 	{
 		::CloseHandle( pThis->m_hStopStreamEvent );
 		pThis->m_hStopStreamEvent = NULL;
 	}// end if
-	
+
 	if( pThis->m_hStreamingThread )
 	{
 		::CloseHandle( pThis->m_hStreamingThread );
 		pThis->m_hStreamingThread = NULL;
 	}// end if
-	
+
 	//reset flags
 	m_bRegisteredStream = FALSE;
 	m_bRunStreamData = FALSE;
-	
+
 	// Uninitialize COM
-	CoUninitialize();	
-	
+	CoUninitialize();
+
 	return 0L;
 }
 
 STDMETHODIMP CSVCommand::SVGetProductDataList(long lProcessCount, SAFEARRAY* psaNames, SAFEARRAY** ppsaData, SAFEARRAY** ppsaStatus)
 {
 	HRESULT hr = S_OK;
-	
+
 	BSTR bstr;
 	CStringArray saValueNames;
 	SVInspectionProcessArray aInspections;
 	SVValueObjectReferenceVector aValueObjects;
 	BOOL l_bItemNotExist = FALSE;
-	
+
 	//check to see if in Run Mode.  if not return SVMSG_53_SVIM_NOT_IN_RUN_MODE
 
 	if ( !SVSVIMStateClass::CheckState(SV_STATE_RUNNING) )
@@ -2889,59 +2890,59 @@ STDMETHODIMP CSVCommand::SVGetProductDataList(long lProcessCount, SAFEARRAY* psa
 	}
 
 	// VERIFY THE LIST OF NAMES
-	
-	SVConfigurationObject* l_pConfig = NULL;
+
+	SVConfigurationObject* l_pConfig = nullptr;
 	SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
 
 	long lNumberOfElements = psaNames->rgsabound[0].cElements;
-	
-	ASSERT( ppsaStatus != NULL );
-	ASSERT( *ppsaStatus != NULL );	// must provide allocated SafeArray(LONG)
+
+	ASSERT( ppsaStatus != nullptr );
+	ASSERT( *ppsaStatus != nullptr );	// must provide allocated SafeArray(LONG)
 	ASSERT( (*ppsaStatus)->rgsabound[0].cElements == lNumberOfElements );
-	
-	ASSERT( ppsaData != NULL );
-	ASSERT( *ppsaData != NULL );	// must provide allocated SafeArray(LONG)
+
+	ASSERT( ppsaData != nullptr );
+	ASSERT( *ppsaData != nullptr );	// must provide allocated SafeArray(LONG)
 	ASSERT( (*ppsaData)->rgsabound[0].cElements == lNumberOfElements );
-	
+
 	long lDefaultStatus = S_FALSE;
-	
+
 	// create String array of value names; set default Status
 	for ( long lIndex = 0; lIndex < lNumberOfElements; lIndex++ )
 	{
 		SafeArrayGetElementNoCopy(psaNames, &lIndex, &bstr);
 		CString sName( bstr );
 		saValueNames.Add( sName );
-		
+
 		SafeArrayPutElement(*ppsaStatus, &lIndex, &lDefaultStatus);
 	}
-	
-	if ( l_pConfig == NULL || !l_pConfig->IsConfigurationLoaded() )
+
+	if ( nullptr == l_pConfig || !l_pConfig->IsConfigurationLoaded() )
 	{
 		hr = SVMSG_CONFIGURATION_NOT_LOADED;
 		return hr;
 	}
-	
+
 	//go through list of names and make sure they are all valid
 	// 1) Inspection exists
 	// 2) Requested data item exists
 	// 3) all data items are on the same PPQ
 	HRESULT hrOK = S_OK;
 	SVGUID l_PPQId;
-	
+
 	for ( long i = 0; i < lNumberOfElements && SUCCEEDED( hrOK ); i++ )
 	{
-		SVInspectionProcess* pInspection = NULL;
+		SVInspectionProcess* pInspection = nullptr;
 
 		if (l_pConfig->GetInspectionObject(saValueNames[i], &pInspection))
 		{
 			aInspections.Add(pInspection);	// add inspection object to list
-			
+
 			SVObjectReference ref;
 			SVObjectManagerClass::Instance().GetObjectByDottedName( static_cast< LPCTSTR >( saValueNames[i] ), ref );
 			if( ref.Object() )
 			{
 				aValueObjects.push_back(ref);	// add data object pointer to the list
-				
+
 				if ( l_PPQId.empty() ) //set the first PPQ name as the comparison standard
 				{
 					l_PPQId = pInspection->GetPPQIdentifier();
@@ -2975,14 +2976,14 @@ STDMETHODIMP CSVCommand::SVGetProductDataList(long lProcessCount, SAFEARRAY* psa
 			HRESULT hrTemp = SafeArrayPutElement(*ppsaStatus, &i, (void*) &hrOK);
 		}
 	}
-	
+
 	// requested values are not valid - return an error...
 	if ( ! SUCCEEDED( hrOK ) )
 	{
 		hr = hrOK;
 		return hr;
 	}
-	
+
 	// Verify that the values are still alive on the PPQ (it has a TriggerCount that matches the specified ProcessCount)
 	SVProductInfoStruct l_ProductInfo;
 
@@ -2992,7 +2993,7 @@ STDMETHODIMP CSVCommand::SVGetProductDataList(long lProcessCount, SAFEARRAY* psa
 	{
 		// Product is still valid; 
 		// Build the array containing the result data
-		
+
 		for (long i=0; i < lNumberOfElements; i++)
 		{
 			SVValueObjectReference ref = aValueObjects[i];
@@ -3016,12 +3017,12 @@ STDMETHODIMP CSVCommand::SVGetProductDataList(long lProcessCount, SAFEARRAY* psa
 						BSTR bstrTemp = sValue.AllocSysString();
 						SafeArrayPutElementNoCopy(*ppsaData, &i, bstrTemp);
 						//::SysFreeString( bstrTemp );
-						
+
 						HRESULT hrItem = S_OK;
 						SafeArrayPutElement(*ppsaStatus, &i, &hrItem);
 					}// if OK
-					else if (    hrGet == SVMSG_SVO_33_OBJECT_INDEX_INVALID 
-							  || hrGet == SVMSG_SVO_34_OBJECT_INDEX_OUT_OF_RANGE )
+					else if ( hrGet == SVMSG_SVO_33_OBJECT_INDEX_INVALID 
+						|| hrGet == SVMSG_SVO_34_OBJECT_INDEX_OUT_OF_RANGE )
 					{
 						hrStatus = hrGet;
 						// did not get value.  set value to default
@@ -3089,7 +3090,7 @@ STDMETHODIMP CSVCommand::SVGetProductDataList(long lProcessCount, SAFEARRAY* psa
 				BSTR bstrTemp = sValue.AllocSysString();
 				SafeArrayPutElementNoCopy(*ppsaData, &i, bstrTemp);
 				//::SysFreeString( bstrTemp );
-				
+
 				HRESULT hrItem = SVMSG_ONE_OR_MORE_REQUESTED_OBJECTS_DO_NOT_EXIST;
 				SafeArrayPutElement(*ppsaStatus, &i, &hrItem);
 				l_bItemNotExist = TRUE;
@@ -3104,7 +3105,7 @@ STDMETHODIMP CSVCommand::SVGetProductDataList(long lProcessCount, SAFEARRAY* psa
 	{
 		hr = SVMSG_NOT_ALL_LIST_ITEMS_PROCESSED;
 	}
-	
+
 	return hr;
 }
 
@@ -3112,33 +3113,33 @@ STDMETHODIMP CSVCommand::SVGetProductImageList(long lProcessCount, SAFEARRAY* ps
 {
 	HRESULT hrResult = S_OK;
 	SVException svException;
-	
+
 	//check to see if in Run Mode.  if not return SVMSG_53_SVIM_NOT_IN_RUN_MODE
 
 	if ( !SVSVIMStateClass::CheckState(SV_STATE_RUNNING) )
 	{
 		return SVMSG_53_SVIM_NOT_IN_RUN_MODE;
 	}
-	
+
 	try
 	{
 		// SETUP
 		long l( 0 );
 
 		long lNumberOfElements = psaNames->rgsabound[0].cElements;
-		
+
 		ASSERT( ppsaStatus != NULL );
 		ASSERT( *ppsaStatus != NULL );	// must provide allocated SafeArray(LONG)
 		ASSERT( (*ppsaStatus)->rgsabound[0].cElements == lNumberOfElements );
-		
+
 		ASSERT( ppsaImages != NULL );
 		ASSERT( *ppsaImages != NULL );	// must provide allocated SafeArray(LONG)
 		ASSERT( (*ppsaImages)->rgsabound[0].cElements == lNumberOfElements );
-		
+
 		ASSERT( ppsaOverlays != NULL );
 		ASSERT( *ppsaOverlays != NULL );// must provide allocated SafeArray(LONG)
 		ASSERT( (*ppsaOverlays)->rgsabound[0].cElements == lNumberOfElements );
-		
+
 		BSTR bstr = NULL;
 		SVImageClassArray aImageObjects;
 		SVInspectionProcessArray aInspections;
@@ -3147,7 +3148,7 @@ STDMETHODIMP CSVCommand::SVGetProductImageList(long lProcessCount, SAFEARRAY* ps
 		BSTR bstrOverlay = NULL;
 
 		long lDefaultStatus = S_FALSE;
-		
+
 		// set default status for objects in list
 		for ( long lIndex = 0; lIndex < lNumberOfElements; lIndex++ )
 		{
@@ -3165,8 +3166,8 @@ STDMETHODIMP CSVCommand::SVGetProductImageList(long lProcessCount, SAFEARRAY* ps
 		{
 			throw SVMSG_CONFIGURATION_NOT_LOADED;
 		}
-		
-// BRW - SVImageCompression has been removed for x64.
+
+		// BRW - SVImageCompression has been removed for x64.
 #ifndef _WIN64
 		SVImageCompressionClass mainCompressionObject (SERVER_COMPRESSION_POOL_SIZE);
 
@@ -3192,7 +3193,7 @@ STDMETHODIMP CSVCommand::SVGetProductImageList(long lProcessCount, SAFEARRAY* ps
 		SVInspectionProcess* pInspection = NULL;
 		HRESULT hrOK = S_OK;
 		SVGUID l_PPQId;
-		
+
 		for ( l = 0; l < lNumberOfElements && SUCCEEDED( hrOK ); l++ )
 		{
 			BSTR bstrName = NULL;
@@ -3267,13 +3268,13 @@ STDMETHODIMP CSVCommand::SVGetProductImageList(long lProcessCount, SAFEARRAY* ps
 				HRESULT hrTemp = SafeArrayPutElement(*ppsaStatus, &l, (void*) &hrOK);
 			}
 		}// end for ( long l = 0; l < lNumberOfElements && SUCCEEDED( hrOK ); l++ )
-		
+
 		// requested values are not valid - return an error...
 		if ( ! SUCCEEDED( hrOK ) )
 		{
 			throw hrOK;
 		}
-		
+
 		// Verify that the values are still alive on the PPQ (it has a TriggerCount that matches the specified ProcessCount)
 		SVProductInfoStruct l_ProductInfo;
 
@@ -3298,13 +3299,13 @@ STDMETHODIMP CSVCommand::SVGetProductImageList(long lProcessCount, SAFEARRAY* ps
 							SVImageInfoClass svImageInfo;
 							SVSmartHandlePointer svImageHandle;
 							BSTR bstrImage = NULL;
-							
+
 							// this works for Source Images (SVMainImageClass) and Published Result images
 							SVImageIndexStruct svIndex( pImage->GetSourceImageIndex( &l_ProductInfo ) );
-							
+
 							// put image in return array
 							BSTR bstrTemp = NULL;
-							
+
 							// BRW - SVImageCompression has been removed for x64.
 							HRESULT hr = SafeImageToBSTR( pImage, svIndex, &bstrTemp
 #ifndef _WIN64
@@ -3321,7 +3322,7 @@ STDMETHODIMP CSVCommand::SVGetProductImageList(long lProcessCount, SAFEARRAY* ps
 								// Add the image to the outgoing array
 								SafeArrayPutElementNoCopy(*ppsaImages, &l, bstrTemp);
 								//::SysFreeString( bstrTemp );
-								
+
 								bImageOk = true;
 							}
 							else
@@ -3334,9 +3335,9 @@ STDMETHODIMP CSVCommand::SVGetProductImageList(long lProcessCount, SAFEARRAY* ps
 						{
 							// put NULL image in return array
 							SafeArrayPutElement(*ppsaImages, &l, NULL);
-							
+
 							if ( hrImage == S_OK )
-							hrImage = SVMSG_ONE_OR_MORE_REQUESTED_OBJECTS_DO_NOT_EXIST;
+								hrImage = SVMSG_ONE_OR_MORE_REQUESTED_OBJECTS_DO_NOT_EXIST;
 							SafeArrayPutElement(*ppsaStatus, &l, &hrImage);
 							l_bItemNotFound = true;
 						}// end if ( !bImageOk )
@@ -3386,7 +3387,7 @@ STDMETHODIMP CSVCommand::SVGetProductImageList(long lProcessCount, SAFEARRAY* ps
 STDMETHODIMP CSVCommand::SVSetLUT(BSTR bstrCameraName, SAFEARRAY* paulLUTTable)
 {
 	HRESULT hr = S_OK;
-	
+
 	CString sCameraName( bstrCameraName );
 	SVVirtualCamera* pCamera = NULL;
 
@@ -3400,12 +3401,12 @@ STDMETHODIMP CSVCommand::SVSetLUT(BSTR bstrCameraName, SAFEARRAY* paulLUTTable)
 		if ( vt == VT_UI4 || vt == VT_I4 )
 		{
 			SVLut lut;
-			
+
 			hr = pCamera->GetLut( lut );
-			
+
 			// Anything from the ActiveX we will set to freeform
 			lut.SetTransformOperation(SVLutTransformOperationFreeform());
-			
+
 			bool bResult = lut.SetBandData(paulLUTTable);
 			if (bResult)
 			{
@@ -3425,40 +3426,40 @@ STDMETHODIMP CSVCommand::SVSetLUT(BSTR bstrCameraName, SAFEARRAY* paulLUTTable)
 	{
 		hr = SVMSG_ONE_OR_MORE_REQUESTED_OBJECTS_DO_NOT_EXIST;
 	}
-	
+
 	return hr;
 }
 
 STDMETHODIMP CSVCommand::SVGetLUT(BSTR bstrCameraName, SAFEARRAY** ppaulLUTTable)
 {
 	HRESULT hr = S_OK;
-	
+
 	CString sCameraName( bstrCameraName );
 	SVVirtualCamera* pCamera = NULL;
-	
+
 	SVConfigurationObject* l_pConfig = NULL;
 	SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
 
 	if (l_pConfig->GetChildObjectByName(sCameraName, &pCamera))
 	{
 		SVLut lut;
-		
+
 		hr = pCamera->GetLut( lut );
-		
+
 		lut.GetBandData(*ppaulLUTTable);
 	}
 	else
 	{
 		hr = SVMSG_ONE_OR_MORE_REQUESTED_OBJECTS_DO_NOT_EXIST;
 	}
-	
+
 	return hr;
 }
 
 HRESULT CSVCommand::ImageToBSTR(SVImageInfoClass&  rImageInfo, 
 	SVSmartHandlePointer rImageHandle,
 	BSTR*              pbstr
-// BRW - SVImageCompression has been removed for x64.
+	// BRW - SVImageCompression has been removed for x64.
 #ifndef _WIN64
 	, long alCompression
 	, SVImageCompressionClass* apCompressionObject
@@ -3466,7 +3467,7 @@ HRESULT CSVCommand::ImageToBSTR(SVImageInfoClass&  rImageInfo,
 	)
 {
 	HRESULT hr = S_OK;
-	
+
 	SVImageBufferHandleImage l_MilBuffer;
 	if ( !( rImageHandle.empty() ) )
 	{
@@ -3477,7 +3478,7 @@ HRESULT CSVCommand::ImageToBSTR(SVImageInfoClass&  rImageInfo,
 	{
 		hr = -1578;
 	}
-// BRW - SVImageCompression has been removed for x64.
+	// BRW - SVImageCompression has been removed for x64.
 #ifndef _WIN64
 	else
 	{
@@ -3505,14 +3506,14 @@ HRESULT CSVCommand::ImageToBSTR(SVImageInfoClass&  rImageInfo,
 		long lHeight;
 		long lBufSize;
 		long lTabSize;
-		
+
 		char* pDIB = NULL;
-	
+
 		BOOL bDestroyHandle = FALSE;
-		
+
 		oChildInfo = rImageInfo;
 		oChildHandle = rImageHandle;
-		
+
 		long l_lType = SVImageTypeUnknown;
 		long l_lBandNumber = 1;
 		long l_lBandLink = 0;
@@ -3532,11 +3533,11 @@ HRESULT CSVCommand::ImageToBSTR(SVImageInfoClass&  rImageInfo,
 		if (!TheSVObserverApp.IsColorSVIM() && l_lType == SVImageTypePhysical && l_lBandNumber == 3)
 		{
 			bDestroyHandle = TRUE;
-			
+
 			oChildInfo.SetImageProperty( SVImagePropertyBandNumber, 1 );
 
 			HRESULT hrImage = SVImageProcessingClass::Instance().CreateImageBuffer( oChildInfo, oChildHandle );
-			
+
 			SVImageBufferHandleImage l_ChildMilBuffer;
 
 			if( !( oChildHandle.empty() ) )
@@ -3547,13 +3548,13 @@ HRESULT CSVCommand::ImageToBSTR(SVImageInfoClass&  rImageInfo,
 			// Copy input image to output image
 			l_Code = SVMatroxBufferInterface::CopyBuffer(l_ChildMilBuffer.GetBuffer(), l_MilBuffer.GetBuffer(), l_lBandLink );
 		} 
-		
+
 		if (l_lType == SVImageTypeLogical)
 		{
 			bDestroyHandle = TRUE;
-			
+
 			HRESULT hrImage = SVImageProcessingClass::Instance().CreateImageBuffer( oChildInfo, oChildHandle );
-			
+
 			SVImageBufferHandleImage l_ChildMilBuffer;
 
 			if( !( oChildHandle.empty() ) )
@@ -3580,22 +3581,22 @@ HRESULT CSVCommand::ImageToBSTR(SVImageInfoClass&  rImageInfo,
 		}
 
 		pbmhInfo = &( l_BitmapInfo.GetBitmapInfo()->bmiHeader );
-		
+
 		// Source images seem to be flipped even though MIL is not supposed to flip them
 		if( pbmhInfo->biHeight > 0 )
 		{
 			l_BitmapInfo.FlipHeight();
 		}
-		
+
 		// Calculate the absolute height
 		lHeight = pbmhInfo->biHeight * ( ( pbmhInfo->biHeight < 0 ) ? -1 : 1 );
-		
+
 		// Make sure image size is calculated
 		if( 0 == pbmhInfo->biSizeImage )
 		{
 			pbmhInfo->biSizeImage = ( ( ( ( pbmhInfo->biWidth * pbmhInfo->biBitCount ) + 31 ) & ~31 ) >> 3 ) * lHeight;
 		}
-		
+
 		// Make sure color table size is calculated
 		lNumColor = pbmhInfo->biClrUsed;
 		if( 0 == lNumColor )
@@ -3606,11 +3607,11 @@ HRESULT CSVCommand::ImageToBSTR(SVImageInfoClass&  rImageInfo,
 			}
 		}
 		lTabSize = lNumColor * sizeof( RGBQUAD );
-		
+
 		// Calculate total size buffer needed for image
 		lBufSize = sizeof( BITMAPINFOHEADER ) + lTabSize + pbmhInfo->biSizeImage;
-		
-// BRW - SVImageCompression has been removed for x64.
+
+		// BRW - SVImageCompression has been removed for x64.
 #ifndef _WIN64
 		if (alCompression != 0)
 		{
@@ -3638,7 +3639,7 @@ HRESULT CSVCommand::ImageToBSTR(SVImageInfoClass&  rImageInfo,
 				pDIB = (char *) (*pbstr);    
 			}
 		}
-		
+
 		if( oChildHandle.empty() )
 		{
 			hr = E_FAIL;
@@ -3652,7 +3653,7 @@ HRESULT CSVCommand::ImageToBSTR(SVImageInfoClass&  rImageInfo,
 				oChildHandle->GetBufferAddress(), 
 				pbmhInfo->biSizeImage );
 
-// BRW - SVImageCompression has been removed for x64.
+			// BRW - SVImageCompression has been removed for x64.
 #ifndef _WIN64
 			if (alCompression != 0)
 			{
@@ -3667,7 +3668,7 @@ HRESULT CSVCommand::ImageToBSTR(SVImageInfoClass&  rImageInfo,
 				else
 				{
 					hr = apCompressionObject->ExportBSTR(pbstr, pbmhInfo->biBitCount, alCompression);
-					
+
 					if (hr < 0)
 					{
 						hr = -1567;
@@ -3676,7 +3677,7 @@ HRESULT CSVCommand::ImageToBSTR(SVImageInfoClass&  rImageInfo,
 			}
 #endif
 		}
-		
+
 		//--- For the case where compression is not zero the pDIB value can no longer
 		//--- be used because the Global Memory Block has been unlocked. When 
 		//--- alCompression equals zero it is set to NULL only for compatabillity. 
@@ -3689,9 +3690,9 @@ HRESULT CSVCommand::ImageToBSTR(SVImageInfoClass&  rImageInfo,
 }
 
 HRESULT CSVCommand::SafeImageToBSTR( SVImageClass *p_pImage, SVImageIndexStruct p_svIndex, BSTR *pbstr
-// BRW - SVImageCompression has been removed for x64.
+	// BRW - SVImageCompression has been removed for x64.
 #ifndef _WIN64
-	 , long alCompression, SVImageCompressionClass *apCompressionObject
+	, long alCompression, SVImageCompressionClass *apCompressionObject
 #endif
 	)
 {
@@ -3715,7 +3716,7 @@ HRESULT CSVCommand::SafeImageToBSTR( SVImageClass *p_pImage, SVImageIndexStruct 
 		}
 
 		hr = ImageToBSTR( oChildInfo, oChildHandle, pbstr
-// BRW - SVImageCompression has been removed for x64.
+			// BRW - SVImageCompression has been removed for x64.
 #ifndef _WIN64
 			, alCompression, apCompressionObject
 #endif
@@ -3737,9 +3738,9 @@ HRESULT CSVCommand::BSTRToImage(bool bCreateNew, const BSTR bstr, SVImageInfoCla
 }
 
 HRESULT CSVCommand::SafeArrayGetElementNoCopy(SAFEARRAY* psa, long* rgIndices, void* pv)
-// Does a blind copy of the requested element.
-// E.G., if the element is a BSTR (wchar_t*), only the value of the pointer is copied,
-//      not the contents of the BSTR.
+	// Does a blind copy of the requested element.
+	// E.G., if the element is a BSTR (wchar_t*), only the value of the pointer is copied,
+	//      not the contents of the BSTR.
 {
 	void* pElement;
 	HRESULT hr = SafeArrayGetElementPointer(psa, rgIndices, &pElement);
@@ -3747,14 +3748,14 @@ HRESULT CSVCommand::SafeArrayGetElementNoCopy(SAFEARRAY* psa, long* rgIndices, v
 	{
 		memcpy(pv, pElement, psa->cbElements);
 	}
-	
+
 	return hr;
 }
 
 HRESULT CSVCommand::SafeArrayPutElementNoCopy(SAFEARRAY* psa, long* rgIndices, void* pv)
-// Does a blind put of the specified element.
-// E.G., if the element is a BSTR (wchar_t*), only the value of the pointer is copied,
-//      not the contents of the BSTR.
+	// Does a blind put of the specified element.
+	// E.G., if the element is a BSTR (wchar_t*), only the value of the pointer is copied,
+	//      not the contents of the BSTR.
 {
 	void* pElement;
 	HRESULT hr = SafeArrayGetElementPointer(psa, rgIndices, &pElement);
@@ -3762,12 +3763,12 @@ HRESULT CSVCommand::SafeArrayPutElementNoCopy(SAFEARRAY* psa, long* rgIndices, v
 	{
 		memcpy(pElement, &pv, psa->cbElements);
 	}
-	
+
 	return hr;
 }
 
 HRESULT CSVCommand::SafeArrayGetElementPointer(SAFEARRAY* psa, long* rgIndices, void** ppv)
-// sets the pointer to point to the actual memory of the SAFEARRAY that contains the element.
+	// sets the pointer to point to the actual memory of the SAFEARRAY that contains the element.
 {
 	DWORD dwOffset=0;
 	DWORD dwIndexOffset=1;
@@ -3779,17 +3780,17 @@ HRESULT CSVCommand::SafeArrayGetElementPointer(SAFEARRAY* psa, long* rgIndices, 
 		{
 			return DISP_E_BADINDEX;
 		}
-		
+
 		long dwIndex = (lIndex - psa->rgsabound[iDimensionIndex].lLbound);   // offset index in dimension used for figuring out memory offset
-		
+
 		dwOffset += dwIndex * dwIndexOffset;
 		dwIndexOffset *= psa->rgsabound[iDimensionIndex].cElements;   // offset of dimension used in calculating next dim
 	}
 	dwOffset *= psa->cbElements;    // scale by size of element
-	
+
 	BYTE* pElement = ((BYTE*) psa->pvData) + dwOffset;
 	*ppv = pElement;
-	
+
 	return S_OK;
 }
 
@@ -3799,22 +3800,22 @@ HRESULT CSVCommand::SVGetDataList(SAFEARRAY* psaNames, SAFEARRAY** ppsaValues, S
 	HRESULT Status = S_OK;
 	BOOL    ItemNotFound = FALSE;
 	BOOL    InspectionNotFound = FALSE;
-	
+
 	//get number of elements out of the incoming safearray
 	long Size = psaNames->rgsabound[0].cElements;
-	
+
 	ASSERT( ppsaStatus != NULL );
 	ASSERT( *ppsaStatus != NULL );	// must provide allocated SafeArray(LONG)
 	ASSERT( (*ppsaStatus)->rgsabound[0].cElements == Size );
-	
+
 	ASSERT( ppsaValues != NULL );
 	ASSERT( *ppsaValues != NULL );	// must provide allocated SafeArray(LONG)
 	ASSERT( (*ppsaValues)->rgsabound[0].cElements == Size );
-	
+
 	ASSERT( ppsaProcCounts != NULL );
 	ASSERT( *ppsaProcCounts != NULL );// must provide allocated SafeArray(LONG)
 	ASSERT( (*ppsaProcCounts)->rgsabound[0].cElements == Size );
-	
+
 	SVConfigurationObject* pConfig = NULL;
 	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
@@ -3828,7 +3829,7 @@ HRESULT CSVCommand::SVGetDataList(SAFEARRAY* psaNames, SAFEARRAY** ppsaValues, S
 		SVInspectionProcess *pInspection = nullptr;
 
 		Status = S_OK;
-		
+
 		// Get name of requested value out of the safearray
 		SafeArrayGetElementNoCopy(psaNames,&l,&bstrName);
 		Name = bstrName;
@@ -3883,7 +3884,7 @@ HRESULT CSVCommand::SVGetDataList(SAFEARRAY* psaNames, SAFEARRAY** ppsaValues, S
 							Status = S_OK;
 						}// if OK
 						else if (    hrGet == SVMSG_SVO_33_OBJECT_INDEX_INVALID 
-								  || hrGet == SVMSG_SVO_34_OBJECT_INDEX_OUT_OF_RANGE )
+							|| hrGet == SVMSG_SVO_34_OBJECT_INDEX_OUT_OF_RANGE )
 						{
 							Status = hrGet;
 							// did not get value.  set value to default
@@ -3967,17 +3968,17 @@ HRESULT CSVCommand::SVGetDataList(SAFEARRAY* psaNames, SAFEARRAY** ppsaValues, S
 	{
 		Result = Status;
 	}
-	
+
 	return Result;
 }
 
 STDMETHODIMP CSVCommand::SVRunOnce(BSTR bstrName)
 {
 	USES_CONVERSION;
-	
+
 	HRESULT              hrResult = S_FALSE;	
 	SVInspectionProcess* pInspection = NULL;
-	
+
 	do
 	{
 		if( !SVSVIMStateClass::CheckState( SV_STATE_RUNNING ) )
@@ -4005,14 +4006,14 @@ STDMETHODIMP CSVCommand::SVRunOnce(BSTR bstrName)
 		}// end else
 	}
 	while (0);
-	
+
 	return hrResult;
 }
 
 STDMETHODIMP CSVCommand::SVSetSourceImage(BSTR bstrName, BSTR bstrImage)
 {
 	USES_CONVERSION;
-	
+
 	HRESULT                  hrResult = S_OK;
 	SVInspectionProcess*     pInspection = NULL;
 	SVCameraImageTemplate*   pMainImage = NULL;
@@ -4035,14 +4036,14 @@ STDMETHODIMP CSVCommand::SVSetSourceImage(BSTR bstrName, BSTR bstrImage)
 			hrResult = SVMSG_ONE_OR_MORE_INSPECTIONS_DO_NOT_EXIST;
 			break;
 		}
-		
+
 		pMainImage = pInspection->GetToolSetMainImage();
 		if( pMainImage == NULL )
 		{
 			hrResult = S_FALSE;
 			break;
 		}
-		
+
 		if( pInspection->AddInputImageRequest( pMainImage, bstrImage ) != S_OK )
 		{
 			hrResult = SVMSG_INVALID_IMAGE_SOURCE;
@@ -4056,7 +4057,7 @@ STDMETHODIMP CSVCommand::SVSetSourceImage(BSTR bstrName, BSTR bstrImage)
 STDMETHODIMP CSVCommand::SVSetInputs(SAFEARRAY* psaNames, SAFEARRAY* psaValues, SAFEARRAY** ppsaStatus)
 {
 	USES_CONVERSION;
-	
+
 	HRESULT                hr = S_OK;
 	HRESULT                hrStatus = S_OK;
 	SVInspectionProcess*   pInspection = NULL;
@@ -4067,35 +4068,35 @@ STDMETHODIMP CSVCommand::SVSetInputs(SAFEARRAY* psaNames, SAFEARRAY* psaValues, 
 	CString                sTmpName;
 	CString                sTmpVal;
 	SVVector< SVInspectionProcess* > l_arInspections;
-	
+
 	do
 	{
 		long lNumberOfElements1 = psaNames->rgsabound[0].cElements;
 		long lNumberOfElements2 = psaValues->rgsabound[0].cElements;
-		
+
 		if ((lNumberOfElements1 == 0) || (lNumberOfElements1 != lNumberOfElements2))
 		{
 			hr = SVMSG_TOO_MANY_REQUESTED_ITEMS;
 			break;
 		}// end if
-		
+
 		SVConfigurationObject* l_pConfig = NULL;
 		SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
 
 		for (long l = 0; l < lNumberOfElements1; l++)
 		{
 			BOOL bAddRequest = FALSE;
-			
+
 			hrStatus = SafeArrayGetElementNoCopy(psaNames, &l, &bstrName);
 			if ( FAILED( hrStatus ) ) { break; }
 
 			sTmpName = bstrName;
-			
+
 			hrStatus = SafeArrayGetElementNoCopy(psaValues, &l, &bstrValue);
 			if ( FAILED( hrStatus ) ) { break; }
 
 			sTmpVal = bstrValue;
-			
+
 			if ( l_pConfig->GetInspectionObject(sTmpName,&pInspection) )
 			{
 				//got the inspection.
@@ -4104,7 +4105,7 @@ STDMETHODIMP CSVCommand::SVSetInputs(SAFEARRAY* psaNames, SAFEARRAY* psaValues, 
 				if( pValueObject != NULL )
 				{
 					SVObjectClass* pOwnerObject = pValueObject->GetOwner();
-					
+
 					if( SV_IS_KIND_OF(pOwnerObject, SVInspectionProcess) )
 					{
 						// this object was found and is an input
@@ -4131,7 +4132,7 @@ STDMETHODIMP CSVCommand::SVSetInputs(SAFEARRAY* psaNames, SAFEARRAY* psaValues, 
 				hrStatus = SVMSG_ONE_OR_MORE_INSPECTIONS_DO_NOT_EXIST;
 				::SafeArrayPutElement(*ppsaStatus,&l,&hrStatus);
 			} // end else
-			
+
 			if ( bAddRequest )
 			{
 				//add request to inspection process
@@ -4164,11 +4165,11 @@ STDMETHODIMP CSVCommand::SVSetInputs(SAFEARRAY* psaNames, SAFEARRAY* psaValues, 
 			//add request to inspection process
 			l_arInspections[j]->AddInputRequestMarker();
 		}// end for					
-		
+
 	} while(0); // end while
-	
+
 	hr = hrStatus;
-	
+
 	return hr;
 }
 
@@ -4221,7 +4222,7 @@ HRESULT CSVCommand::SVSetImageList(SAFEARRAY *psaNames, SAFEARRAY *psaImages, SA
 					l_pImageObject = dynamic_cast< SVImageClass* >( l_pObject );
 
 					if ( l_pImageObject != NULL &&
-						  (l_pImageObject->ObjectAttributesAllowed() & SV_REMOTELY_SETABLE) == SV_REMOTELY_SETABLE )
+						(l_pImageObject->ObjectAttributesAllowed() & SV_REMOTELY_SETABLE) == SV_REMOTELY_SETABLE )
 					{
 						// currently all SV_REMOTELY_SETABLE parameters are also SV_SETABLE_ONLINE
 						// if this changes, this code needs updated
@@ -4332,7 +4333,7 @@ HRESULT CSVCommand::SVSetToolParameterList(SAFEARRAY* psaNames, SAFEARRAY* psaVa
 	}
 
 	int						ItemErrorCount = 0;
-	BOOL					StateOnline;
+	bool					StateOnline;
 	SVNameSet				ParameterNames;
 	SVConfigurationObject*	pConfig = nullptr;
 	SVNameStorageMap		ParameterObjects;
@@ -4349,14 +4350,14 @@ HRESULT CSVCommand::SVSetToolParameterList(SAFEARRAY* psaNames, SAFEARRAY* psaVa
 		SVObjectReference		ObjectRef;
 
 		BOOL AddRequest = FALSE;
-			
-		BSTR bstrName = NULL;
+
+		BSTR bstrName = nullptr;
 		Status = SafeArrayGetElementNoCopy(psaNames, &l, &bstrName);
 		if ( FAILED( Status ) ) { break; }
 
 		Name = bstrName;
-			
-		BSTR bstrValue = NULL;
+
+		BSTR bstrValue = nullptr;
 		Status = SafeArrayGetElementNoCopy(psaValues, &l, &bstrValue);
 		if ( FAILED( Status ) ) { break; }
 
@@ -4366,8 +4367,8 @@ HRESULT CSVCommand::SVSetToolParameterList(SAFEARRAY* psaNames, SAFEARRAY* psaVa
 			pConfig->GetInspectionObject(Name, &pInspection);
 		}
 		HRESULT hrFind = SVObjectManagerClass::Instance().GetObjectByDottedName( static_cast< LPCTSTR >( Name ), ObjectRef );
-			
-		if ( NULL != ObjectRef.Object() || nullptr != pInspection )
+
+		if ( nullptr != ObjectRef.Object() || nullptr != pInspection )
 		{
 			if ( hrFind == S_OK && ObjectRef.ArrayIndex() < 0 && !ObjectRef->IsArray())
 			{
@@ -4384,49 +4385,41 @@ HRESULT CSVCommand::SVSetToolParameterList(SAFEARRAY* psaNames, SAFEARRAY* psaVa
 				// Check if item is already in the list
 				if( nullptr != ObjectRef.Object() )
 				{
+					HRESULT hres = S_OK;
 					SVString strCompleteObjectName( ObjectRef.GetCompleteObjectName() );
-					if ( ParameterNames.find( strCompleteObjectName ) == ParameterNames.end() )
-					{
-						if ( (ObjectRef.ObjectAttributesAllowed() & SV_REMOTELY_SETABLE) == SV_REMOTELY_SETABLE )
-						{
-							//Is Online?  if so, can item be set online?
-							if ( StateOnline )
-							{
-								if ( (ObjectRef.ObjectAttributesAllowed() & SV_SETABLE_ONLINE) == SV_SETABLE_ONLINE )
-								{
-									AddRequest = TRUE;
-									ParameterNames.insert( strCompleteObjectName );
-								}
-								else
-								{
-									Status = SVMSG_OBJECT_CANNOT_BE_SET_WHILE_ONLINE;
-									::SafeArrayPutElement(*ppsaStatus, &l, &Status);
-									ItemErrorCount++;
-								}
-							}// if ( bStateOnline )
-							else
-							{
-								// currently all SV_REMOTELY_SETABLE parameters are also SV_SETABLE_ONLINE
-								// if this changes, this code needs updated
-								AddRequest = TRUE;
-								ParameterNames.insert( strCompleteObjectName );
-							}// end if ( bStateOnline )else
-						}// if SV_REMOTELY_SETABLE
-						else
-						{
-							// Item is not allowed to be set remotely
-							Status = SVMSG_OBJECT_CANNOT_BE_SET_REMOTELY;
-							::SafeArrayPutElement(*ppsaStatus, &l, &Status);
-							ItemErrorCount++;
-						}// end if SV_REMOTELY_SETABLE else
-					}// if not in map
-					else
+					if ( ParameterNames.find( strCompleteObjectName ) != ParameterNames.end() )
 					{
 						// Item is already in the list
 						Status = SVMSG_OBJECT_ALREADY_SET_IN_THIS_LIST;
 						::SafeArrayPutElement(*ppsaStatus, &l, &Status);
 						ItemErrorCount++;
-					}// end if not in map else
+					}
+					else if ( (ObjectRef.ObjectAttributesAllowed() & SV_REMOTELY_SETABLE) != SV_REMOTELY_SETABLE )
+					{
+						// Item is not allowed to be set remotely
+						Status = SVMSG_OBJECT_CANNOT_BE_SET_REMOTELY;
+						::SafeArrayPutElement(*ppsaStatus, &l, &Status);
+						ItemErrorCount++;
+					}
+					else if (StateOnline && ((ObjectRef.ObjectAttributesAllowed() & SV_SETABLE_ONLINE) != SV_SETABLE_ONLINE)  ) 
+					{
+						Status = SVMSG_OBJECT_CANNOT_BE_SET_WHILE_ONLINE;
+						::SafeArrayPutElement(*ppsaStatus, &l, &Status);
+						ItemErrorCount++;
+					}
+					else if(RangeClassHelper::IsOwnedByRangeObject((*ObjectRef.Object())) && !RangeClassHelper::IsAllowedToSet(*ObjectRef.Object(),Value,StateOnline, hres))
+					{
+						Status = hres;
+						::SafeArrayPutElement(*ppsaStatus, &l, &Status);
+						ItemErrorCount++;
+					}
+					else
+					{
+						AddRequest = TRUE;
+						ParameterNames.insert( strCompleteObjectName );
+					}
+
+
 				}// end if ( nullptr != ObjectRef.Object() )	// object not a value object
 				else
 				{
@@ -4452,15 +4445,15 @@ HRESULT CSVCommand::SVSetToolParameterList(SAFEARRAY* psaNames, SAFEARRAY* psaVa
 			::SafeArrayPutElement(*ppsaStatus, &l, &Status);
 			ItemErrorCount++;
 		} // end else
-			
+
 		if ( AddRequest )
 		{
 			//Check if the parameter is for inspection or not
 			if(nullptr == pInspection)
 			{
-				SVStorage		Parameter;
-				SVSAFEARRAY		Values;
-				
+				SVStorage	Parameter;
+				SVSAFEARRAY	Values;
+
 				//Values must be in array format
 				Values.Add(_variant_t( bstrValue ));
 				Parameter.m_StorageType = SVVisionProcessor::SVStorageValue;
@@ -4495,7 +4488,7 @@ HRESULT CSVCommand::SVSetToolParameterList(SAFEARRAY* psaNames, SAFEARRAY* psaVa
 	if(0 != ParameterObjects.size())
 	{
 		SVNameStatusMap SetItemsResult;
-		SVVisionProcessorHelper::Instance().SetItems( ParameterObjects,  SetItemsResult);
+		SVVisionProcessorHelper::Instance().SetItems(ParameterObjects, SetItemsResult);
 	}
 	// New delimiter added after each SVSetToolParameterList call
 	// This breaks the list into pieces and we are only processing
@@ -4506,7 +4499,7 @@ HRESULT CSVCommand::SVSetToolParameterList(SAFEARRAY* psaNames, SAFEARRAY* psaVa
 		//add request to inspection process
 		Inspections[j]->AddInputRequestMarker();
 	}// end for
-	
+
 	if ( ItemErrorCount > 0 ) //some error happened
 	{
 		Result = SVMSG_NOT_ALL_LIST_ITEMS_PROCESSED;
@@ -4515,14 +4508,14 @@ HRESULT CSVCommand::SVSetToolParameterList(SAFEARRAY* psaNames, SAFEARRAY* psaVa
 	{
 		Result = S_OK;
 	}
-	
+
 	return Result;
 }
 
 HRESULT CSVCommand::SVLockImage(long p_lProcessCount, long p_lIndex, BSTR p_bsName)
 {
 	HRESULT hr = S_OK;
-	
+
 	SVConfigurationObject* l_pConfig = NULL;
 	SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
 
@@ -4531,37 +4524,37 @@ HRESULT CSVCommand::SVLockImage(long p_lProcessCount, long p_lIndex, BSTR p_bsNa
 		hr = SVMSG_CONFIGURATION_NOT_LOADED;
 		return hr;
 	}
-	
+
 	// 1) Inspection exists
 	// 2) Requested data item exists
 	// 3) all data items are on the same PPQ
 	SVActiveXLockStruct SVaxls;
-	
+
 	if(p_lIndex < m_aSVActXLock.GetSize())	// Check Lock Structure.
 	{
-		
+
 		SVaxls = m_aSVActXLock.GetAt(p_lIndex);
-		
+
 		if(SVaxls.Valid())	// Image is Locked so Release
 		{
 			SVaxls.clear();
 			m_aSVActXLock.SetAt(p_lIndex, SVaxls);
 		}
 	}
-	
+
 	SVImageClass* pImage = NULL;
 	SVImageIndexStruct l_svImageIndex;
 	SVDataManagerHandle l_DMImageIndexHandle;
-	
-	SVInspectionProcess* pInspection = NULL;
-	
+
+	SVInspectionProcess* pInspection = nullptr;
+
 	if (l_pConfig->GetInspectionObject(CString(p_bsName), &pInspection))
 	{
 		if (pInspection->GetChildObjectByName(CString(p_bsName), (SVObjectClass**) &pImage))
 		{
 			SVPPQObject* pPPQ = pInspection->GetPPQ();	// inspection can be part of only one PPQ
-			
-			if( pPPQ != NULL )
+
+			if( nullptr != pPPQ )
 			{
 				SVProductInfoStruct l_ProductInfo;
 
@@ -4588,9 +4581,10 @@ HRESULT CSVCommand::SVLockImage(long p_lProcessCount, long p_lIndex, BSTR p_bsNa
 				{
 					hr = SVMSG_PRODUCT_NO_LONGER_AVAILABLE;	// product no longer alive
 				}
-			}// end if(PPQ != NULL)
+			}// end if( nullptr != pPPQ )
 			else
 			{
+				// BRW - Why should we do nothing here?  If we should do nothing, then remove the else, but we should probably be setting an error.
 				NULL;//	hr = SVMSG_NO_PPQ_FOUND;
 			}
 		}
@@ -4603,23 +4597,23 @@ HRESULT CSVCommand::SVLockImage(long p_lProcessCount, long p_lIndex, BSTR p_bsNa
 	{
 		hr = SVMSG_ONE_OR_MORE_INSPECTIONS_DO_NOT_EXIST;
 	}
-	
+
 	// Call Lock Image
 	if ( hr == S_OK )
 	{
-		if ( pImage != NULL && 
+		if ( pImage != nullptr && 
 			!l_svImageIndex.IsNull() )
 		{
 			SVImageInfoClass l_svImageInfo = pImage->GetImageInfo();
 			SVSmartHandlePointer l_svImageHandle;
-			
+
 			if( pImage->GetImageHandle( l_svImageIndex, l_svImageHandle ) && !( l_svImageHandle.empty() ) )
 			{
 				SVImageBufferHandleImage l_MilBuffer;
 				l_svImageHandle->GetData( l_MilBuffer );
 
 				SVImageInfoClass l_ImageInfo = l_svImageInfo;
-				
+
 				if ( S_OK == SVImageProcessingClass::Instance().CreateImageBuffer( l_ImageInfo, SVaxls.m_ImageHandlePtr ) && !( SVaxls.m_ImageHandlePtr.empty() ) )
 				{
 					SVImageBufferHandleImage l_AxlsMilBuffer;
@@ -4627,7 +4621,7 @@ HRESULT CSVCommand::SVLockImage(long p_lProcessCount, long p_lIndex, BSTR p_bsNa
 
 					SVMatroxBufferInterface::SVStatusCode l_Code;
 					l_Code = SVMatroxBufferInterface::CopyBuffer( l_AxlsMilBuffer.GetBuffer(), l_MilBuffer.GetBuffer() );
-					
+
 					// Add locked image to Lock array
 					m_aSVActXLock.SetAtGrow(p_lIndex, SVaxls);// Store Info in lock array
 				}
@@ -4646,16 +4640,15 @@ HRESULT CSVCommand::SVLockImage(long p_lProcessCount, long p_lIndex, BSTR p_bsNa
 			hr = SVMSG_REQUESTED_OBJECTS_UNAVAILABLE;
 		}
 	}
-	
+
 	return hr;
 }
 
 HRESULT CSVCommand::SVGetLockedImage(long p_lIndex, long p_lCompression, BSTR* p_pbstrImage, BSTR* p_pbstrOverlay)
 {
-	
 	SVActiveXLockStruct SVaxls;
 	HRESULT hr = S_FALSE;
-	
+
 // BRW - SVImageCompression has been removed for x64.
 #ifndef _WIN64
 	SVImageCompressionClass mainCompressionObject(SERVER_COMPRESSION_POOL_SIZE);
@@ -4679,38 +4672,38 @@ HRESULT CSVCommand::SVGetLockedImage(long p_lIndex, long p_lCompression, BSTR* p
 			}
 		}
 #endif
-		SVConfigurationObject* l_pConfig = NULL;
+		SVConfigurationObject* l_pConfig = nullptr;
 		SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
 
-		if ( l_pConfig == NULL || !l_pConfig->IsConfigurationLoaded() )
+		if ( nullptr == l_pConfig || !l_pConfig->IsConfigurationLoaded() )
 		{
 			hr = SVMSG_CONFIGURATION_NOT_LOADED;
 			break;
 		}
-		
+
 		if( p_lIndex >= m_aSVActXLock.GetSize() )
 		{
 			hr = SVMSG_IMAGE_NOT_LOCKED;
 			break;
 		}
-		
+
 		SVaxls = m_aSVActXLock.GetAt(p_lIndex);
 		if( !SVaxls.Valid() )
 		{
 			hr = SVMSG_IMAGE_NOT_LOCKED;
 			break;
 		}
-		
+
 		// for right now locked image will not have overlays
 		// this is because the overlay data is not bucketized
 		*p_pbstrOverlay = NULL;
-		
+
 		// Verify that the values are still alive on the PPQ (it has a TriggerCount that matches the specified ProcessCount)
 		// Product is still valid; 
 		// Build the output images from the result data index in the product and the source images by name  (?)
-		
+
 		SVImageInfoClass l_ImageInfo;
-				
+
 		// put image in return array
 		// BRW - SVImageCompression has been removed for x64.
 		hr = ImageToBSTR( l_ImageInfo, SVaxls.m_ImageHandlePtr, p_pbstrImage
@@ -4721,7 +4714,7 @@ HRESULT CSVCommand::SVGetLockedImage(long p_lIndex, long p_lCompression, BSTR* p
 
 		break;
 	} while (false);
-	
+
 	return hr;
 }
 
@@ -4731,17 +4724,17 @@ HRESULT CSVCommand::SVUnlockImage(long p_lIndex)
 	if( p_lIndex < m_aSVActXLock.GetSize() )
 	{
 		SVActiveXLockStruct SVaxls;
-		
+
 		SVaxls = m_aSVActXLock.GetAt( p_lIndex );
 		if( !SVaxls.Valid() )
 		{
 			return SVMSG_IMAGE_NOT_LOCKED;
 		}
-		
+
 		SVaxls.clear();
 		m_aSVActXLock.SetAt(p_lIndex, SVaxls);
 	}
-	
+
 	return hres;
 }
 
@@ -4749,7 +4742,7 @@ HRESULT CSVCommand::SVUnlockAllImages()
 {
 	SVActiveXLockStruct SVaxls;
 	HRESULT hr = S_OK;
-	
+
 	for( int x = static_cast< int >( m_aSVActXLock.GetSize() - 1 );  x > -1; x-- )
 	{
 		SVaxls = m_aSVActXLock.GetAt(x);
@@ -4759,7 +4752,7 @@ HRESULT CSVCommand::SVUnlockAllImages()
 			m_aSVActXLock.SetAt(x, SVaxls);
 		}
 	}
-	
+
 	return hr;
 }
 
@@ -4769,38 +4762,38 @@ STDMETHODIMP CSVCommand::SVGetRemoteInputCount(long *lCount)
 	SVInputObjectList *pInputObjectList;
 	HRESULT hrResult;
 	BOOL bSuccess;
-	
+
 	do
 	{
 		hrResult = S_OK;
 		bSuccess = FALSE;
-		
+
 		try
 		{
-			SVConfigurationObject* l_pConfig = NULL;
+			SVConfigurationObject* l_pConfig = nullptr;
 			SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
 
 			l_pConfig->GetInputObjectList( &pInputObjectList );
-			
+
 			if( !pInputObjectList->GetRemoteInputCount( *lCount ) )
 			{
 				bSuccess = FALSE;
 			}// end if
-			
+
 			bSuccess = TRUE;
 		}
 		catch (...)
 		{
 			bSuccess = FALSE;
 		}
-		
+
 		if( !bSuccess )
 		{
 			SETEXCEPTION0 (svException, SVMSG_CMDCOMSRV_ERROR);
 			hrResult = S_FALSE;
 		}
 	} while (0);
-	
+
 	return hrResult;
 }// end SVGetRemoteInputCount
 
@@ -4810,39 +4803,39 @@ STDMETHODIMP CSVCommand::SVSetRemoteInput(long lIndex, VARIANT vtValue)
 	SVInputObjectList *pInputObjectList;
 	HRESULT hrResult;
 	BOOL bSuccess;
-	
+
 	do
 	{
 		hrResult = S_OK;
 		bSuccess = FALSE;
-		
+
 		try
 		{
-			SVConfigurationObject* l_pConfig = NULL;
+			SVConfigurationObject* l_pConfig = nullptr;
 			SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
 
 			l_pConfig->GetInputObjectList( &pInputObjectList );
-			
+
 			if( !pInputObjectList->SetRemoteInput( lIndex, vtValue ) )
 			{
 				bSuccess = FALSE;
 			}// end if
-			
+
 			bSuccess = TRUE;
 		}
 		catch (...)
 		{
 			bSuccess = FALSE;
 		}
-		
+
 		if( !bSuccess )
 		{
 			SETEXCEPTION0 (svException, SVMSG_CMDCOMSRV_ERROR);
 			hrResult = SVMSG_CMDCOMSRV_ERROR;
 		}
-		
+
 	} while (0);
-	
+
 	return hrResult;
 }// end SVSetRemoteInput
 
@@ -5115,10 +5108,10 @@ STDMETHODIMP CSVCommand::SVLoadFont(long lFontIdentifier, BSTR bstrFontFile, BST
 			CString strControlsFileName		= _T( "C:\\temp\\svlfcont.mfo" );
 			CString strConstraintsFileName	= _T( "C:\\temp\\svlfstra.mfo" );
 			CFile oFile;
-			
+
 			SVMatroxOcrInterface::SVStatusCode l_Code;
 
-			if( bstrFontFile != NULL )
+			if( bstrFontFile != nullptr )
 			{
 				oFile.Open( strFontFileName, CFile::modeCreate | CFile::modeWrite );
 				oFile.Write( bstrFontFile, ::SysStringByteLen( bstrFontFile ) );
@@ -5145,8 +5138,8 @@ STDMETHODIMP CSVCommand::SVLoadFont(long lFontIdentifier, BSTR bstrFontFile, BST
 					hr = SVMSG_46_LOADFONT_ERROR;
 				}
 			}// end if
-			
-			if( bstrFontControls != NULL )
+
+			if( bstrFontControls != nullptr )
 			{
 				oFile.Open( strControlsFileName, CFile::modeCreate | CFile::modeWrite );
 				oFile.Write( bstrFontControls, ::SysStringByteLen( bstrFontControls ) );
@@ -5166,7 +5159,7 @@ STDMETHODIMP CSVCommand::SVLoadFont(long lFontIdentifier, BSTR bstrFontFile, BST
 				}
 			}// end if
 
-			if( bstrFontConstraints != NULL )
+			if( bstrFontConstraints != nullptr )
 			{
 				oFile.Open( strConstraintsFileName, CFile::modeCreate | CFile::modeWrite );
 				oFile.Write( bstrFontConstraints, ::SysStringByteLen( bstrFontConstraints ) );
@@ -5175,7 +5168,7 @@ STDMETHODIMP CSVCommand::SVLoadFont(long lFontIdentifier, BSTR bstrFontFile, BST
 				l_Code = SVMatroxOcrInterface::RestoreFont( lFontHandle, l_strConstraintsFileName, SVOcrLoadConstraint );
 				if( l_Code != SVMEE_STATUS_OK )
 				{
-					
+
 					SVMatroxStatusInformation l_info;
 					CString l_sErrorStr;
 					SVMatroxApplicationInterface::GetLastStatus( l_info );
@@ -5187,8 +5180,8 @@ STDMETHODIMP CSVCommand::SVLoadFont(long lFontIdentifier, BSTR bstrFontFile, BST
 			}// end if
 
 			// fill the character's / ID mapping for the font
-			double NbChar;		
-			l_Code = SVMatroxOcrInterface::Get( lFontHandle, SVCharNumberInFont, NbChar);
+			double NbChar;
+			l_Code = SVMatroxOcrInterface::Get( lFontHandle, SVCharNumberInFont, NbChar );
 			SVMatroxString l_strCharacters;
 			l_Code = SVMatroxOcrInterface::Get( lFontHandle, SVCharInFont, l_strCharacters );
 
@@ -5224,15 +5217,15 @@ STDMETHODIMP CSVCommand::SVSaveFont(long lFontIdentifier, BSTR* bstrFontFile, BS
 			SVMatroxString strConstraintsFileName	= _T( "C:\\temp\\svsfstra.mfo" );
 			CFileStatus rStatus;
 			CFile oFile;
-			
+
 			SVMatroxOcrInterface::SVStatusCode l_Code;
 
-			if( *bstrFontFile != NULL )
+			if( *bstrFontFile != nullptr )
 			{
 				l_Code = SVMatroxOcrInterface::SaveFont( lFontHandle, strFontFileName, SVOcrSave );
 				if ( l_Code != SVMEE_STATUS_OK )
 				{
-					
+
 					SVMatroxStatusInformation l_info;
 					CString l_sErrorStr;
 					SVMatroxApplicationInterface::GetLastStatus( l_info );
@@ -5250,8 +5243,8 @@ STDMETHODIMP CSVCommand::SVSaveFont(long lFontIdentifier, BSTR* bstrFontFile, BS
 				oFile.Read( *bstrFontFile, ::SysStringByteLen( *bstrFontFile ) );
 				oFile.Close();
 			}// end if
-			
-			if( *bstrFontControls != NULL )
+
+			if( *bstrFontControls != nullptr )
 			{
 				l_Code = SVMatroxOcrInterface::SaveFont( lFontHandle,  strControlsFileName, SVOcrSaveControl );
 				if ( l_Code != SVMEE_STATUS_OK )
@@ -5275,7 +5268,7 @@ STDMETHODIMP CSVCommand::SVSaveFont(long lFontIdentifier, BSTR* bstrFontFile, BS
 				oFile.Close();
 			}// end if
 
-			if( *bstrFontConstraints != NULL )
+			if( *bstrFontConstraints != nullptr )
 			{
 				l_Code = SVMatroxOcrInterface::SaveFont( lFontHandle, strConstraintsFileName, SVOcrSaveConstraint );
 				if ( l_Code != SVMEE_STATUS_OK )
@@ -5354,13 +5347,15 @@ STDMETHODIMP CSVCommand::SVCalibrateFont(long lFontIdentifier,
 					SVMatroxStatusInformation l_info;
 					SVMatroxApplicationInterface::GetLastStatus( l_info );
 					CString l_sErrorStr;
-					l_sErrorStr.Format("An error has occured, MIL error code = %d, MIL error Text = %s",l_Code, l_info.m_StatusString.c_str() );
-					SETEXCEPTION1(svE,SVMSG_45_CALIBRATEFONT_ERROR,l_sErrorStr);
+					l_sErrorStr.Format("An error has occured, MIL error code = %d, MIL error Text = %s", l_Code, l_info.m_StatusString.c_str() );
+					SETEXCEPTION1(svE, SVMSG_45_CALIBRATEFONT_ERROR, l_sErrorStr);
 					svE.LogException(l_sErrorStr);
 					hr = SVMSG_45_CALIBRATEFONT_ERROR;
 					//return some mil error
 				}
 				l_milImage.clear();
+
+				// BRW - Who could have changed l_Code since the previous if?
 				if( l_Code != SVMEE_STATUS_OK )
 				{
 					SVMatroxStatusInformation l_info;
@@ -5402,6 +5397,7 @@ STDMETHODIMP CSVCommand::SVReadString(long lFontIdentifier, BSTR* bstrFoundStrin
 			SVMatroxBuffer l_milImage = CreateImageFromBSTR( bstrReadImage );
 			SVMatroxOcrResult l_milResult;
 			l_Code = SVMatroxOcrInterface::Create( l_milResult );
+			// BRW - This l_Code is never checked.
 
 			lFontHandle.m_bVerify = false;
 			l_Code = SVMatroxOcrInterface::Execute( l_milResult, lFontHandle, l_milImage );
@@ -5425,6 +5421,7 @@ STDMETHODIMP CSVCommand::SVReadString(long lFontIdentifier, BSTR* bstrFoundStrin
 			if( l_lLength != 0 )
 			{
 				l_Code = SVMatroxOcrInterface::GetResult(l_milResult, SVOcrStringScore, *dMatchScore );
+				// BRW - This l_Code is never checked.
 				SVMatroxString l_strRead;
 				l_Code = SVMatroxOcrInterface::GetResult(l_milResult, SVOcrString, l_strRead );
 				strRead = l_strRead.c_str();
@@ -5454,7 +5451,7 @@ STDMETHODIMP CSVCommand::SVReadString(long lFontIdentifier, BSTR* bstrFoundStrin
 				SVMatroxStatusInformation l_info;
 				SVMatroxApplicationInterface::GetLastStatus( l_info );
 				CString l_sErrorStr;
-				l_sErrorStr.Format("SVReadString - An error has occured, MIL error code = %d, MIL error Text = %s",l_Code, l_info.m_StatusString.c_str() );
+				l_sErrorStr.Format("SVReadString - An error has occured, MIL error code = %d, MIL error Text = %s", l_Code, l_info.m_StatusString.c_str() );
 				SETEXCEPTION1(svE,SVMSG_48_READSTRING_ERROR,l_sErrorStr);
 				svE.LogException(l_sErrorStr);
 				hr = SVMSG_48_READSTRING_ERROR;
@@ -5658,7 +5655,7 @@ STDMETHODIMP CSVCommand::SVAddCharacter(long lFontIdentifier, long lXPosition, l
 
 				long lOcrWidth;
 				long lOcrHeight;
-				
+
 				l_Code = SVMatroxOcrInterface::Get(lFontHandle, SVOcrCharSizeX, lOcrWidth );
 				KeepPrevError( l_Code,SVMatroxOcrInterface::Get(lFontHandle, SVOcrCharSizeY, lOcrHeight ));
 
@@ -5668,7 +5665,7 @@ STDMETHODIMP CSVCommand::SVAddCharacter(long lFontIdentifier, long lXPosition, l
 				l_Create.m_lOffY = lYPosition;
 				l_Create.m_lSizeX = lWidth;
 				l_Create.m_lSizeY = lHeight;
-				
+
 				SVMatroxBufferInterface::Create(milTmpID, l_Create );
 				if (  !milTmpID.empty() )
 				{
@@ -5856,14 +5853,14 @@ STDMETHODIMP CSVCommand::SVGetStringLength(long p_lFontIdentifier, double* p_plL
 {
 	HRESULT l_hr = S_FALSE;
 	SVMatroxOcr l_lFontHandle;
-	
+
 	if (TheSVOLicenseManager().HasMatroxIdentificationLicense())
 	{
 		if( TheSVObserverApp.m_mgrRemoteFonts.IsValidFont( p_lFontIdentifier, l_lFontHandle ) &&
 			TheSVObserverApp.m_mgrRemoteFonts.UpdateFontTime( p_lFontIdentifier ))
 		{
 			SVMatroxOcrInterface::Get(l_lFontHandle, SVOcrStringSize, *p_plLength );
-			
+
 			l_hr = S_OK;
 		}// end if
 	}
@@ -5874,11 +5871,11 @@ STDMETHODIMP CSVCommand::SVSetStringLength(long p_lFontIdentifier, double p_dLen
 {
 	HRESULT l_hr = S_FALSE;
 	SVMatroxOcr l_lFontHandle;
-	
+
 	if (TheSVOLicenseManager().HasMatroxIdentificationLicense())
 	{
 		if( TheSVObserverApp.m_mgrRemoteFonts.IsValidFont( p_lFontIdentifier, l_lFontHandle ) &&
-			  TheSVObserverApp.m_mgrRemoteFonts.UpdateFontTime( p_lFontIdentifier ))
+			TheSVObserverApp.m_mgrRemoteFonts.UpdateFontTime( p_lFontIdentifier ))
 		{
 			double l_dMaxLength = 0.0;
 
@@ -5891,7 +5888,7 @@ STDMETHODIMP CSVCommand::SVSetStringLength(long p_lFontIdentifier, double p_dLen
 			else
 			{
 				SVMatroxOcrInterface::Set( l_lFontHandle, SVOcrStringSize, p_dLength );
-				
+
 				l_hr = S_OK;
 			}
 		}// end if
@@ -5926,7 +5923,7 @@ STDMETHODIMP CSVCommand::SVGetFontCharacterList(long p_lFontIdentifier, BSTR *bs
 {
 	HRESULT l_hr = S_OK;
 	SVMatroxOcr lFontHandle;
-	
+
 	if (TheSVOLicenseManager().HasMatroxIdentificationLicense())
 	{
 		if( TheSVObserverApp.m_mgrRemoteFonts.IsValidFont( p_lFontIdentifier, lFontHandle ) &&
@@ -5940,7 +5937,7 @@ STDMETHODIMP CSVCommand::SVGetFontCharacterList(long p_lFontIdentifier, BSTR *bs
 			CString sTmp(Characters.c_str());
 
 			*bstrCharacterList = sTmp.AllocSysString();
-			
+
 			SAFEARRAYBOUND saBounds[1];
 			saBounds[0].lLbound=0;
 			saBounds[0].cElements = sTmp.GetLength();
@@ -5965,7 +5962,7 @@ STDMETHODIMP CSVCommand::SVGetExpectedTargetCharacterSize(long p_lFontIdentifier
 {
 	HRESULT l_hr = S_OK;
 	SVMatroxOcr lFontHandle;
-	
+
 	if (TheSVOLicenseManager().HasMatroxIdentificationLicense())
 	{
 		if( TheSVObserverApp.m_mgrRemoteFonts.IsValidFont( p_lFontIdentifier, lFontHandle ) &&
@@ -6081,7 +6078,7 @@ BOOL CSVCommand::ResetStreamingDataAndLockedImages()
 	ProductDataStruct *pProduct;
 	long l;
 	long lSize;
-	
+
 	for( int x = static_cast< int >( m_aSVActXLock.GetSize() - 1 );  x > -1; x-- )
 	{
 		SVaxls = m_aSVActXLock.GetAt( x );
@@ -6105,10 +6102,10 @@ BOOL CSVCommand::ResetStreamingDataAndLockedImages()
 		::CloseHandle( m_hStreamingThread );
 		m_hStreamingThread = NULL;
 	}// end if
-	
+
 	m_bRegisteredStream = FALSE;
 	m_bRunStreamData = FALSE;
-	
+
 	SVCommandStreamManager::Instance().EraseCommandCallback();
 	m_dwStreamDataProcessId = 0;
 
@@ -6335,7 +6332,7 @@ namespace local
 			*ppsaStatus = ::SafeArrayCreate( VT_I4,   1, saBounds);
 		}
 
-// BRW - SVImageCompression has been removed for x64.
+		// BRW - SVImageCompression has been removed for x64.
 #ifndef _WIN64
 		SVImageCompressionClass mainCompressionObject(SERVER_COMPRESSION_POOL_SIZE);
 
@@ -6371,7 +6368,7 @@ namespace local
 #ifndef _WIN64
 					, lCompression, &mainCompressionObject
 #endif
-				);
+					);
 				CSVCommand::SafeArrayPutElementNoCopy( *ppsaImages, &l, bstrImage );
 			}
 
@@ -6381,10 +6378,10 @@ namespace local
 				long lSize = 0;
 				rImage.overlay.GetBufferSize( lSize );
 				rImage.overlay.GetBuffer( pBytes );
-				
+
 				BSTR bstrOverlay = ::SysAllocStringByteLen( NULL, lSize );
 				memcpy( bstrOverlay, pBytes, lSize );
-				
+
 				CSVCommand::SafeArrayPutElementNoCopy( *ppsaOverlays, &l, bstrOverlay );
 			}
 
@@ -6485,10 +6482,10 @@ namespace local
 					long lSize = 0;
 					rImage.overlay.GetBufferSize( lSize );
 					rImage.overlay.GetBuffer( pBytes );
-					
+
 					BSTR bstrOverlay = ::SysAllocStringByteLen( NULL, lSize );
 					memcpy( bstrOverlay, pBytes, lSize );
-					
+
 					CSVCommand::SafeArrayPutElementNoCopy( *ppsaOverlays, alDimIndex, bstrOverlay );
 				}
 
@@ -6690,7 +6687,7 @@ STDMETHODIMP CSVCommand::SVGetConditionalHistoryAndClear(
 			std::vector<SVScalarValueVectorType> vecValues, vecConditionals;
 			std::vector<SVImageBufferStructVectorType> vecImages;
 			std::vector<long> vecProcessCount;
-			
+
 			hr = pInspection->GetConditionalHistoryAndClear( vecValues, vecImages, vecConditionals, vecProcessCount );
 
 			if ( hr == S_OK )
@@ -6748,7 +6745,7 @@ STDMETHODIMP CSVCommand::SVGetMostRecentConditionalHistory(
 			SVScalarValueVectorType vecValues, vecConditionals;
 			SVImageBufferStructVectorType vecImages;
 			long lProcessCount = -1;
-			
+
 			hr = pInspection->GetMostRecentConditionalHistory( vecValues, vecImages, vecConditionals, lProcessCount );
 
 			if ( hr == S_OK )
@@ -6933,7 +6930,7 @@ STDMETHODIMP CSVCommand::SVGetTransferValueDefinitionList(BSTR p_bstrInspectionN
 					// Put the Safearray in the Variant.
 					l_vTmp.vt = VT_ARRAY | VT_BSTR;
 					l_vTmp.parray = l_psaTemp;
-					
+
 				}
 			}
 			hr = ::SafeArrayPutElement( l_psaData, l_Index, &l_vTmp);
@@ -6947,7 +6944,7 @@ STDMETHODIMP CSVCommand::SVGetTransferValueDefinitionList(BSTR p_bstrInspectionN
 		_variant_t l_vTemp;
 		l_vTemp.vt = VT_ARRAY | VT_VARIANT ;
 		l_vTemp.parray = l_psaData ;
-		 *p_pvData = l_vTemp.Detach();
+		*p_pvData = l_vTemp.Detach();
 	}
 	else
 	{
@@ -6985,7 +6982,7 @@ STDMETHODIMP CSVCommand::SVGetTransferImageDefinitionList(BSTR p_bstrInspectionN
 		for( int i = 0; i < nCount; i++ )
 		{
 			SVImageClass* pImage = l_ImageList.GetAt(i);
-			
+
 			if ( pImage )
 			{
 				//
@@ -7040,7 +7037,7 @@ STDMETHODIMP CSVCommand::SVGetTransferImageDefinitionList(BSTR p_bstrInspectionN
 			l_vTmp = (objectList[i]->ObjectAttributesSet() & SV_PUBLISH_RESULT_IMAGE) != 0;
 			//l_saData.PutElement( l_Index, l_vTmp );
 			hr = ::SafeArrayPutElement( l_psaData, l_Index, &l_vTmp );
-			
+
 			// Fully Qualified Source Image Name
 			CString l_strNames;
 			SVToolClass* l_pTool = objectList[i]->GetTool();
@@ -7084,7 +7081,7 @@ STDMETHODIMP CSVCommand::SVGetTransferImageDefinitionList(BSTR p_bstrInspectionN
 		_variant_t l_vTemp;
 		l_vTemp.vt = VT_ARRAY | VT_VARIANT ;
 		l_vTemp.parray = l_psaData ;
-		 *p_pvData = l_vTemp.Detach();
+		*p_pvData = l_vTemp.Detach();
 	}
 	else
 	{
@@ -7175,6 +7172,16 @@ STDMETHODIMP CSVCommand::SVIsAvailiable()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVCommand.cpp_v  $
+ * 
+ *    Rev 1.19   19 Dec 2014 15:01:48   mEichengruen
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  979
+ * SCR Title:  Provide additional options to input the feature range for the blob analyzer.
+ * Checked in by:  mEichengruen;  Marcus Eichengruen
+ * Change Description:  
+ *   check if it is allowed to set indirectdirect values for range Object
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.18   01 Dec 2014 13:07:00   tbair
  * Project:  SVObserver

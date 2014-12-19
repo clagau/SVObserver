@@ -5,8 +5,8 @@
 //* .Module Name     : SVSetupDialogManager
 //* .File Name       : $Workfile:   SVSetupDialogManager.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.5  $
-//* .Check In Date   : $Date:   23 Oct 2014 14:45:46  $
+//* .Current Version : $Revision:   1.6  $
+//* .Check In Date   : $Date:   19 Dec 2014 15:03:10  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -65,6 +65,8 @@
 #include "SVTADlgColorThresholdSheet.h"
 #include "SVTool.h"
 #include "SVOLicenseManager/SVOLicenseManager.h"
+#include "RangeXDialogClass.h"
+#include "SVRange.h"
 
 SVSetupDialogManager& SVSetupDialogManager::Instance()
 {
@@ -2205,10 +2207,33 @@ HRESULT SVSetupDialogManager::SVResultClassSetupDialog( const SVGUID& p_rObjectI
 		SVRangeClass* pRange = l_pResult->GetResultRange();
 		if( pRange )
 		{
-			SVRangeDialogClass dlg( pRange, PParentWnd );
+			RangeXDialogClass dlg( pRange, PParentWnd );
 			if( dlg.DoModal() != IDOK )
 			{
 				l_Status = S_FALSE;
+			}
+			else
+			{
+				////mec_Range Call validate for tool which owns the range
+				//SVObjectClass*  pObjectclass = pRange;
+				//SVObjectClass*  pObjectclassOwner = nullptr;
+				//SVToolClass*   pToolclass = nullptr; 
+				//while(nullptr != pObjectclass) 
+				//{
+				//	pObjectclassOwner = pObjectclass->GetOwner();
+				//	pToolclass = dynamic_cast<SVToolClass* >(pObjectclassOwner);
+				//	if(pToolclass)
+				//	{
+				//		pToolclass->Validate();
+				//		break;
+				//	}
+				//	else
+				//	{
+				//		pObjectclass = pObjectclassOwner;
+				//	}
+
+				//} 
+
 			}
 		}
 		else
@@ -2229,6 +2254,16 @@ HRESULT SVSetupDialogManager::SVResultClassSetupDialog( const SVGUID& p_rObjectI
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVSetupDialogManager.cpp_v  $
+ * 
+ *    Rev 1.6   19 Dec 2014 15:03:10   mEichengruen
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  979
+ * SCR Title:  Provide additional options to input the feature range for the blob analyzer.
+ * Checked in by:  mEichengruen;  Marcus Eichengruen
+ * Change Description:  
+ *   call  RangeXDialogClass
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.5   23 Oct 2014 14:45:46   bwalter
  * Project:  SVObserver

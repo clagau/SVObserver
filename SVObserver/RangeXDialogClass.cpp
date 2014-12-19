@@ -1,0 +1,376 @@
+//******************************************************************************
+//* COPYRIGHT (c) 2014 by Seidenader
+//* All Rights Reserved 
+//******************************************************************************
+//* .Module Name     : SVRangeXDialog D
+//* .File Name       : $Workfile:   RangeXDialogClass.cpp  $
+//* .Description     : RangeXDialogClass this dialog is used instead of RangeDialogclass when indirect values for the rangeobjects are allowed
+//* ----------------------------------------------------------------------------
+//* .Current Version : $Revision:   1.0  $
+//* .Check In Date   : $Date:   19 Dec 2014 13:53:42  $
+//******************************************************************************
+
+#pragma region Includes
+#include "stdafx.h"
+#include <Windows.h>
+#include "SVObserver.h"
+#include "RangeXDialogClass.h"
+#include "afxdialogex.h"
+#include "SVRange.h"
+#include "svresult.h"
+#include "ObjectNameHelper.h"
+#include "NameSelectionList.h"
+#include "SVInspectionProcess.h" 
+#include "SVToolSet.h"
+#include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
+#include "SVTool.h"
+#pragma endregion Includes
+
+#pragma region Declarations
+namespace OSL = Seidenader::ObjectSelectorLibrary;
+#pragma endregion Declarations
+
+
+IMPLEMENT_DYNAMIC(RangeXDialogClass, CDialog)
+
+RangeXDialogClass::RangeXDialogClass(SVRangeClass* range, CWnd* parent /*=NULL*/)
+: CDialog(RangeXDialogClass::IDD, parent)
+, m_RangeClassHelper(range)
+, m_LastSelected(ER_COUNT)
+{
+}
+
+RangeXDialogClass::~RangeXDialogClass()
+{
+}
+
+void RangeXDialogClass::DoDataExchange(CDataExchange* pDX)
+{
+	CDialog::DoDataExchange(pDX);
+	DDX_Control(pDX, IDC_EDIT_FAILHIGH, m_EditFailHigh);
+	DDX_Control(pDX, IDC_EDIT_WARNHIGH, m_EditWarnHigh);
+	DDX_Control(pDX, IDC_EDIT_WARNLOW, m_EditWarnLow);
+	DDX_Control(pDX, IDC_EDIT_FAILLOW, m_EditFailLow);
+	DDX_Control(pDX, IDC_BUTTON_FAILHIGH, m_ButtonFailHigh);
+	DDX_Control(pDX, IDC_BUTTON_WARNHIGH, m_ButtonWarnHigh);
+	DDX_Control(pDX, IDC_BUTTON_WARNLOW, m_ButtonWarnLow);
+	DDX_Control(pDX, IDC_BUTTON_FAILLOW, m_ButtonFailLow);
+}
+
+BEGIN_MESSAGE_MAP(RangeXDialogClass, CDialog)
+	ON_BN_CLICKED(IDOK, &RangeXDialogClass::OnBnClickedOk)
+	ON_BN_CLICKED(IDCANCEL, &RangeXDialogClass::OnBnClickedCancel)
+	ON_BN_CLICKED(IDC_BUTTON_FAILHIGH, &RangeXDialogClass::OnBnClickedFailHighIndirect)
+	ON_BN_CLICKED(IDC_BUTTON_WARNHIGH, &RangeXDialogClass::OnBnClickedWarnlHighIndirect)
+	ON_BN_CLICKED(IDC_BUTTON_WARNLOW, &RangeXDialogClass::OnBnClickedWarnLowIndirect)
+	ON_BN_CLICKED(IDC_BUTTON_FAILLOW, &RangeXDialogClass::OnBnClickedFailedLowIndirect)
+END_MESSAGE_MAP()
+
+
+
+void RangeXDialogClass::OnBnClickedOk()
+{
+	CString errorMsg;
+	bool bOK = GetDlgData();
+
+	if(bOK)
+	{
+		HRESULT hres = m_RangeClassHelper.CheckInternalData(errorMsg);
+		if( S_OK != hres)
+		{
+			bOK = false;
+			AfxMessageBox(errorMsg, MB_OK | MB_ICONERROR);
+		}
+	}
+
+	if(bOK)
+	{
+		m_RangeClassHelper.SetInspectionData();
+		CDialog::OnOK();
+	}
+}
+
+void RangeXDialogClass::OnBnClickedCancel()
+{
+	CDialog::OnCancel();
+}
+
+BOOL RangeXDialogClass::OnInitDialog()
+{
+	__super::OnInitDialog();
+
+	// Put the Down Arrow on the Button
+	m_downArrowBitmap.LoadOEMBitmap( OBM_DNARROW );
+	
+	//(HBITMAP) is a call to the overloaded function operator HBITMAP and no c style cast
+	m_ButtonFailHigh.SetBitmap( ( HBITMAP )m_downArrowBitmap ); 
+	m_ButtonWarnHigh.SetBitmap( ( HBITMAP )m_downArrowBitmap );
+	m_ButtonWarnLow.SetBitmap( ( HBITMAP )m_downArrowBitmap );
+	m_ButtonFailLow.SetBitmap( ( HBITMAP )m_downArrowBitmap );
+
+	m_RangeClassHelper.SetRangeTaskObject();
+	m_RangeClassHelper.GetAllInspectionData();
+
+	SetDlgData();
+
+	CString title = m_RangeClassHelper.GetOwnerName();
+	SetWindowText( title );
+
+	// Ensure the title is readable
+	CRect rect;
+	CSize size;
+	GetWindowRect(&rect);
+	CDC* pDC = GetDC();
+	if(nullptr != pDC )
+	{
+		size = pDC->GetTextExtent(title);
+		ReleaseDC(pDC);
+	}
+	if (size.cx > rect.Width())
+	{
+		int borderWidth = GetSystemMetrics(SM_CXDLGFRAME);
+		//make the windows with 24 pixel wider then the text. 
+		int width = size.cx + (borderWidth * 2) + 24;  
+		SetWindowPos(&CWnd::wndTop, 0, 0, width, rect.Height(), SWP_NOMOVE | SWP_NOZORDER);
+	}
+
+	return TRUE;  
+}
+
+void RangeXDialogClass::SetDlgData()
+{
+	CString csText;
+	if(m_RangeClassHelper.m_FailHighIndirect.GetLength() > 0)
+	{
+		m_EditFailHigh.SetWindowText(m_RangeClassHelper.m_FailHighIndirect);
+	}
+	else
+	{
+		csText.Format(_T("%lf"),m_RangeClassHelper.m_FailHigh );
+		m_EditFailHigh.SetWindowText(csText);
+	}
+
+	if(m_RangeClassHelper.m_WarnHighIndirect.GetLength() > 0)
+	{
+		m_EditWarnHigh.SetWindowText(m_RangeClassHelper.m_WarnHighIndirect);
+	}
+	else
+	{
+		csText.Format(_T("%lf"),m_RangeClassHelper.m_WarnHigh );
+		m_EditWarnHigh.SetWindowText(csText);
+	}
+
+	if(m_RangeClassHelper.m_FailLowIndirect.GetLength() > 0)
+	{
+		m_EditFailLow.SetWindowText(m_RangeClassHelper.m_FailLowIndirect);
+	}
+	else
+	{
+		csText.Format(_T("%lf"),m_RangeClassHelper.m_FailLow );
+		m_EditFailLow.SetWindowText(csText);
+	}
+
+	if(m_RangeClassHelper.m_WarnLowIndirect.GetLength() > 0)
+	{
+		m_EditWarnLow.SetWindowText(m_RangeClassHelper.m_WarnLowIndirect);
+	}
+	else
+	{
+		csText.Format(_T("%lf"),m_RangeClassHelper.m_WarnLow );
+		m_EditWarnLow.SetWindowText(csText);
+	}
+}
+
+bool RangeXDialogClass::GetDlgData()
+{
+	bool res = true;
+	CString errormsg, csText;
+	ERange Eerror = ER_COUNT;
+
+	if(res)
+	{
+		m_EditFailHigh.GetWindowText(csText);
+		if( S_OK != m_RangeClassHelper.SetInternalData(ER_FailHigh, csText, errormsg))
+		{
+			res = false;
+			m_EditFailHigh.SetFocus();
+			AfxMessageBox(errormsg,MB_OK | MB_ICONERROR);
+			Eerror = ER_FailHigh; 
+			csText = m_RangeClassHelper.GetStringFromRange(ER_FailHigh);
+			m_EditFailHigh.SetWindowText(csText);
+		}
+	}
+
+	if(res)
+	{
+		m_EditWarnHigh.GetWindowText(csText);
+		if(S_OK != m_RangeClassHelper.SetInternalData(ER_WarnHigh, csText, errormsg) )
+		{
+			m_EditWarnHigh.SetFocus();
+			res = false;
+			Eerror = ER_WarnHigh; 
+
+			AfxMessageBox(errormsg, MB_OK | MB_ICONERROR);
+			csText = m_RangeClassHelper.GetStringFromRange(ER_WarnHigh);
+			m_EditFailHigh.SetWindowText(csText);
+		}
+	}
+
+	if(res)
+	{
+		m_EditFailLow.GetWindowText(csText);
+		if(S_OK != m_RangeClassHelper.SetInternalData(ER_FailLow, csText, errormsg) )
+		{
+			m_EditFailLow.SetFocus();
+			res = false;
+			Eerror = ER_FailLow;
+			AfxMessageBox(errormsg, MB_OK | MB_ICONERROR);
+			csText = m_RangeClassHelper.GetStringFromRange(ER_FailLow);
+			m_EditFailHigh.SetWindowText(csText);
+		}
+	}
+
+	if(res)
+	{
+		m_EditWarnLow.GetWindowText(csText);
+		if(S_OK != m_RangeClassHelper.SetInternalData(ER_WarnLow, csText, errormsg) )
+		{
+			m_EditWarnLow.SetFocus();
+			res = false;
+			Eerror = ER_WarnLow;
+			AfxMessageBox(errormsg, MB_OK | MB_ICONERROR);
+			csText = m_RangeClassHelper.GetStringFromRange(ER_WarnLow);
+			m_EditFailHigh.SetWindowText(csText);
+		}
+	}
+
+	return res;
+}
+
+bool RangeXDialogClass::ShowObjectSelector(CString& name)
+{
+	
+	if (nullptr == m_RangeClassHelper.m_pRange)
+	{
+		return false;
+	}
+	
+	SVInspectionProcess* pInspectionProcess = m_RangeClassHelper.m_pRange->GetInspection();
+	if(nullptr == pInspectionProcess)
+	{
+		return false; // @TODO:  Better to return a unique error code.
+	}
+
+	SVTaskObjectListClass* pTaskObjectList = dynamic_cast<SVTaskObjectListClass*>(pInspectionProcess->GetToolSet());
+	if(nullptr == pTaskObjectList)
+	{
+		return false; // @TODO:  Better to return a unique error code.
+	}
+
+	bool result = false; 
+	SVToolClass* pTool = m_RangeClassHelper.m_pRange->GetTool();
+	CString csToolCompleteName;
+	if(pTool)
+	{
+		csToolCompleteName = pTool->GetCompleteObjectName();
+		csToolCompleteName += _T(".");
+	}
+
+	SVStringArray nameArray;
+	typedef std::insert_iterator<SVStringArray> Inserter;
+
+	ObjectNameHelper::BuildObjectNameList(pTaskObjectList, Inserter(nameArray, nameArray.begin()), csToolCompleteName);
+	OSL::ObjectTreeGenerator::Instance().setSelectorType( OSL::ObjectTreeGenerator::SelectorTypeEnum::TypeSingleObject );
+
+	OSL::ObjectTreeGenerator::Instance().setSelectorType( OSL::ObjectTreeGenerator::SelectorTypeEnum::TypeSingleObject );
+	OSL::ObjectTreeGenerator::Instance().insertTreeObjects( nameArray );
+
+	if(name.GetLength() > 0)
+	{
+		SVStringSet nameSet;
+		nameSet.insert(name);
+		OSL::ObjectTreeGenerator::Instance().setCheckItems(nameSet);
+	}
+
+	CString Title = m_RangeClassHelper.GetOwnerName();
+	Title += _T(": ");
+	Title +=  RangeClassHelper::ERange2String(m_LastSelected);
+
+	CString mainTabTitle;
+	mainTabTitle.LoadString( IDS_RESULT_PICKER );
+	CString FilterTab;
+	FilterTab.LoadString( IDS_FILTER );
+	
+	INT_PTR Result = OSL::ObjectTreeGenerator::Instance().showDialog( Title, mainTabTitle,FilterTab, this );
+
+	CString strResult;
+	if( IDOK == Result )
+	{
+		name = OSL::ObjectTreeGenerator::Instance().getSingleObjectResult().getLocation().c_str(); // @TODO:  Should we check the return values of getSingleObjectResult and getLocation?
+		result = true;
+	}
+
+	return result;
+}
+
+// @TODO:  The next 4 methods are very similar.  Consider refactoring to call a common method.  Otherwise, clean up the camelcase and result checking in all the methods.
+void RangeXDialogClass::OnBnClickedFailHighIndirect()
+{
+	m_LastSelected = ER_FailHigh;
+	CString csText;
+	m_EditFailHigh.GetWindowText(csText); // @TODO:  Should check to see if GetWindowText worked before using the value it returned.
+	if (ShowObjectSelector(csText))
+	{
+		m_EditFailHigh.SetWindowText(csText);
+	}
+}
+
+void RangeXDialogClass::OnBnClickedWarnlHighIndirect()
+{
+	m_LastSelected =  ER_WarnHigh;
+	CString csText;
+	m_EditWarnHigh.GetWindowText(csText);
+	if (ShowObjectSelector(csText) )
+	{
+		m_EditWarnHigh.SetWindowText(csText);
+	}
+}
+
+void RangeXDialogClass::OnBnClickedWarnLowIndirect()
+{
+	m_LastSelected =  ER_WarnLow;
+	CString csText;
+	m_EditWarnLow.GetWindowText(csText);
+	if (ShowObjectSelector(csText) )
+	{
+		m_EditWarnLow.SetWindowText(csText);
+	}
+}
+
+void RangeXDialogClass::OnBnClickedFailedLowIndirect()
+{
+	m_LastSelected =  ER_FailLow;
+	CString csText;
+	m_EditFailLow.GetWindowText(csText);
+	if (ShowObjectSelector(csText) )
+	{
+		m_EditFailLow.SetWindowText(csText);
+	}
+}
+
+//******************************************************************************
+//* LOG HISTORY:
+//******************************************************************************
+/*
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\RangeXDialogClass.cpp_v  $
+ * 
+ *    Rev 1.0   19 Dec 2014 13:53:42   mEichengruen
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  979
+ * SCR Title:  Provide additional options to input the feature range for the blob analyzer.
+ * Checked in by:  mEichengruen;  Marcus Eichengruen
+ * Change Description:  
+ *   Initial Check In for SCR 979 Indirect Range Objects 
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+*/

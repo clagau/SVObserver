@@ -5,8 +5,8 @@
 //* .Module Name     : SVThreadInfoDlg
 //* .File Name       : $Workfile:   SVThreadInfoDlg.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   17 Dec 2014 07:08:56  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   19 Dec 2014 06:50:38  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -175,12 +175,12 @@ void SVThreadInfoDlg::InsertComboThreadItem( SVRPropertyItem* pRoot, CString nam
 
 	std::list<int> AffList;
 	AffList.push_back( 0 );
-	//AffList.push_back( 1 );
+	//AffList.push_back( 1 ); Reserve these pipes as per IF00100.S960.003
 	//AffList.push_back( 2 );
-	AffList.push_back( 3 );
-	AffList.push_back( 4 );
-	//AffList.push_back( 5 );
-	//AffList.push_back( 6 );
+	//AffList.push_back( 3 );
+	//AffList.push_back( 4 );
+	AffList.push_back( 5 );
+	AffList.push_back( 6 );
 	AffList.push_back( 7 );
 	AffList.push_back( 8 );
 
@@ -339,6 +339,16 @@ void SVThreadInfoDlg::OnEnableCheck()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVThreadInfoDlg.cpp_v  $
+ * 
+ *    Rev 1.2   19 Dec 2014 06:50:38   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  960
+ * SCR Title:  Pipe/core management
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Updated pipe combo pick list as per document.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   17 Dec 2014 07:08:56   tbair
  * Project:  SVObserver

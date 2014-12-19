@@ -5,8 +5,8 @@
 //* .Module Name     : SVConfigurationObject
 //* .File Name       : $Workfile:   SVConfigurationObject.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.36  $
-//* .Check In Date   : $Date:   17 Dec 2014 07:08:54  $
+//* .Current Version : $Revision:   1.37  $
+//* .Check In Date   : $Date:   19 Dec 2014 15:01:46  $
 //******************************************************************************
 
 #pragma region Includes
@@ -64,6 +64,7 @@
 #include "RemoteMonitorListHelper.h"
 #include "EnvironmentObject.h"
 #include "SVSystemLibrary/SVThreadManager.h"
+#include "RangeClassHelper.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -4899,13 +4900,14 @@ HRESULT SVConfigurationObject::SetInspectionItems( const SVNameStorageMap& p_rIt
 
 			SVObjectNameInfo::ParseObjectName( l_Info, l_Iter->first );
 
-			if( FqnInspections == l_Info.m_NameArray[ 0 ] )
+			if( l_Info.m_NameArray.size() >0 &&  FqnInspections == l_Info.m_NameArray[ 0 ] )
 			{
 				SVObjectReference ref;
 				SVObjectManagerClass::Instance().GetObjectByDottedName( l_Info.GetObjectArrayName( 0 ), ref );
 
-				if( ref.Object() != NULL )
+				if( ref.Object() != nullptr )
 				{
+					///someone wants to set this variable check if this is allowed
 					bool l_AddParameter = ( ( ref.ObjectAttributesAllowed() & SV_REMOTELY_SETABLE ) == SV_REMOTELY_SETABLE );
 
 					if( l_AddParameter )
@@ -4921,12 +4923,37 @@ HRESULT SVConfigurationObject::SetInspectionItems( const SVNameStorageMap& p_rIt
 								l_Status = SVMSG_NOT_ALL_LIST_ITEMS_PROCESSED;
 							}
 						}
+
+						bool rangeParameter = RangeClassHelper::IsOwnedByRangeObject(*ref.Object());
+
+						if( l_AddParameter && rangeParameter )
+						{
+							HRESULT hresult;
+							CString csValue;
+							if( l_Iter->second.m_Variant.vt == (VT_BSTR | VT_ARRAY) )
+							{
+								long  index=0;
+								BSTR bstrValue = nullptr;
+								SafeArrayGetElementNoCopy( l_Iter->second.m_Variant.parray, &index,&bstrValue);
+								csValue = bstrValue;
+							}
+
+							if (!RangeClassHelper::IsAllowedToSet(*ref.Object(),csValue,l_Online, hresult))
+							{
+								p_rStatus[ l_Iter->first ] = hresult;
+								l_AddParameter = false;
+								if( l_Status == S_OK )
+								{
+									l_Status = SVMSG_NOT_ALL_LIST_ITEMS_PROCESSED;
+								}
+							}
+						}
 					}
 					else
 					{
 						p_rStatus[ l_Iter->first ] = SVMSG_OBJECT_CANNOT_BE_SET_REMOTELY;
 
-						if( l_Status == S_OK )
+						if( S_OK == l_Status )
 						{
 							l_Status = SVMSG_NOT_ALL_LIST_ITEMS_PROCESSED;
 						}
@@ -4934,11 +4961,11 @@ HRESULT SVConfigurationObject::SetInspectionItems( const SVNameStorageMap& p_rIt
 
 					if( l_AddParameter )
 					{
-						SVInspectionProcess* l_pInsection = NULL;
+						SVInspectionProcess* l_pInsection = nullptr;
 
 						GetInspectionObject( l_Info.GetObjectArrayName( 1 ).c_str(), &l_pInsection );
 
-						if( l_pInsection != NULL )
+						if( l_pInsection != nullptr )
 						{
 							l_Inspections[ l_pInsection->GetName() ] = l_pInsection;
 
@@ -4946,7 +4973,7 @@ HRESULT SVConfigurationObject::SetInspectionItems( const SVNameStorageMap& p_rIt
 							{
 								SVImageClass* l_pImage = dynamic_cast< SVImageClass* >( ref.Object() );
 
-								if( l_pImage != NULL )
+								if( l_pImage != nullptr )
 								{
 									p_rStatus[ l_Iter->first ] = l_pInsection->AddInputImageFileNameRequest( l_pImage, l_Iter->second.m_Variant );
 								}
@@ -4972,7 +4999,7 @@ HRESULT SVConfigurationObject::SetInspectionItems( const SVNameStorageMap& p_rIt
 								{
 									p_rStatus[ l_Iter->first ] = SVMSG_OBJECT_NOT_PROCESSED;
 
-									if( l_Status == S_OK )
+									if( S_OK == l_Status )
 									{
 										l_Status = SVMSG_NOT_ALL_LIST_ITEMS_PROCESSED;
 									}
@@ -4982,7 +5009,7 @@ HRESULT SVConfigurationObject::SetInspectionItems( const SVNameStorageMap& p_rIt
 							{
 								p_rStatus[ l_Iter->first ] = E_INVALIDARG;
 
-								if( l_Status == S_OK )
+								if( S_OK == l_Status )
 								{
 									l_Status = SVMSG_NOT_ALL_LIST_ITEMS_PROCESSED;
 								}
@@ -4992,7 +5019,7 @@ HRESULT SVConfigurationObject::SetInspectionItems( const SVNameStorageMap& p_rIt
 						{
 							p_rStatus[ l_Iter->first ] = SVMSG_ONE_OR_MORE_INSPECTIONS_DO_NOT_EXIST;
 
-							if( l_Status == S_OK )
+							if( S_OK == l_Status )
 							{
 								l_Status = SVMSG_NOT_ALL_LIST_ITEMS_PROCESSED;
 							}
@@ -5003,7 +5030,7 @@ HRESULT SVConfigurationObject::SetInspectionItems( const SVNameStorageMap& p_rIt
 				{
 					p_rStatus[ l_Iter->first ] = SVMSG_ONE_OR_MORE_REQUESTED_OBJECTS_DO_NOT_EXIST;
 
-					if( l_Status == S_OK )
+					if( S_OK == l_Status )
 					{
 						l_Status = SVMSG_NOT_ALL_LIST_ITEMS_PROCESSED;
 					}
@@ -5013,7 +5040,7 @@ HRESULT SVConfigurationObject::SetInspectionItems( const SVNameStorageMap& p_rIt
 			{
 				p_rStatus[ l_Iter->first ] = SVMSG_ONE_OR_MORE_REQUESTED_OBJECTS_DO_NOT_EXIST;
 
-				if( l_Status == S_OK )
+				if( S_OK == l_Status )
 				{
 					l_Status = SVMSG_NOT_ALL_LIST_ITEMS_PROCESSED;
 				}
@@ -5024,7 +5051,7 @@ HRESULT SVConfigurationObject::SetInspectionItems( const SVNameStorageMap& p_rIt
 		{
 			SVInspectionProcess* l_pInsection = l_ValueInspectionIter->second;
 
-			if( l_pInsection != NULL )
+			if( l_pInsection != nullptr )
 			{
 				l_pInsection->AddInputRequestMarker();
 			}
@@ -5036,7 +5063,7 @@ HRESULT SVConfigurationObject::SetInspectionItems( const SVNameStorageMap& p_rIt
 			{
 				SVInspectionProcess* l_pInsection = l_InspectionIter->second;
 
-				if( l_pInsection != NULL )
+				if( l_pInsection != nullptr )
 				{
 					SVCommandInspectionRunOncePtr l_CommandPtr = new SVCommandInspectionRunOnce( l_pInsection->GetUniqueObjectID() );
 					SVObjectSynchronousCommandTemplate< SVCommandInspectionRunOncePtr > l_Command( l_pInsection->GetUniqueObjectID(), l_CommandPtr );
@@ -5556,6 +5583,16 @@ HRESULT SVConfigurationObject::LoadMonitoredObjectList( SVTreeType& rTree, SVTre
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVConfigurationObject.cpp_v  $
+ * 
+ *    Rev 1.37   19 Dec 2014 15:01:46   mEichengruen
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  979
+ * SCR Title:  Provide additional options to input the feature range for the blob analyzer.
+ * Checked in by:  mEichengruen;  Marcus Eichengruen
+ * Change Description:  
+ *   check if it is allowed to set indirectdirect values for range Object
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.36   17 Dec 2014 07:08:54   tbair
  * Project:  SVObserver
