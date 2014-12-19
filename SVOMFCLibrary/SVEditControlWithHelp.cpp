@@ -7,8 +7,8 @@
 //* .Description     : This class is a CEdit-control with the add-on of a gray help text 
 //*                    if the text of the control is empty and the control does not have focus.
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   16 Dec 2014 18:08:28  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   19 Dec 2014 01:54:16  $
 //******************************************************************************
 
 #pragma region Includes
@@ -113,13 +113,25 @@ namespace Seidenader
 			{
 				SetWindowText(m_currentString);
 			}
+			else
+			{
+				//set help text if edit text empty
+				if (_T("") == m_currentString)
+				{
+					SetWindowText(m_helpString);
+				}
+				else
+				{
+					SetWindowText(m_currentString);
+				}
+			}
 		}
 
 		void SVEditControlWithHelp::setHelpText(CString text)
 		{
 			m_helpString = text;
 
-			if (GetFocus() != this)
+			if (GetFocus() != this && _T("") == m_currentString)
 			{
 				SetWindowText(m_helpString);
 			}
@@ -133,6 +145,16 @@ namespace Seidenader
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVOMFCLibrary\SVEditControlWithHelp.cpp_v  $
+ * 
+ *    Rev 1.1   19 Dec 2014 01:54:16   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  933
+ * SCR Title:  Add Filter Tab to Object Selector (SVO-377)
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   bugfix: setEditWindow have to set WindowText also if control is not in focus
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   16 Dec 2014 18:08:28   bwalter
  * Project:  SVObserver
