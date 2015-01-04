@@ -5,8 +5,8 @@
 //* .Module Name     : SVInspectionProcess
 //* .File Name       : $Workfile:   SVInspectionProcess.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.24  $
-//* .Check In Date   : $Date:   19 Dec 2014 04:08:58  $
+//* .Current Version : $Revision:   1.23  $
+//* .Check In Date   : $Date:   17 Dec 2014 07:15:48  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -3855,6 +3855,11 @@ HRESULT SVInspectionProcess::ResetObject()
 		}
 	}
 
+	if( ::SVSendMessage( m_pCurrentToolset, SVM_RESET_ALL_OBJECTS, NULL, NULL ) != SVMR_SUCCESS )
+	{
+		l_hrOk = S_FALSE;
+	}
+
 	BuildValueObjectMap();
 
 	m_bForceOffsetUpdate = true;
@@ -4816,16 +4821,6 @@ void SVInspectionProcess::Persist(SVObjectWriter& rWriter)
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVInspectionProcess.cpp_v  $
- * 
- *    Rev 1.24   19 Dec 2014 04:08:58   gramseier
- * Project:  SVObserver
- * Change Request (SCR) nbr:  978
- * SCR Title:  Copy and Paste a Tool within an Inspection or Between Different Inspections
- * Checked in by:  gRamseier;  Guido Ramseier
- * Change Description:  
- *   ResetObject called twice removed
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.23   17 Dec 2014 07:15:48   tbair
  * Project:  SVObserver
