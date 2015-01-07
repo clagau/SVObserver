@@ -5,8 +5,8 @@
 //* .Module Name     : SVConfigurationPrint
 //* .File Name       : $Workfile:   SVConfigurationPrint.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.3  $
-//* .Check In Date   : $Date:   16 Jul 2014 07:53:50  $
+//* .Current Version : $Revision:   1.4  $
+//* .Check In Date   : $Date:   06 Jan 2015 10:21:34  $
 //******************************************************************************
 
 #ifndef SVCONFIGURATIONPRINT_H
@@ -90,6 +90,7 @@ protected:
 	void PrintMonitorListItem(CDC* pDC, CPoint& ptCurPos, int nIndentLevel, LPCTSTR lpszName, LPCTSTR lpszValue);
 	void PrintIOSection(CDC* pDC, CPoint& ptCurPos, int nIndentLevel);
 	void PrintModuleIO(CDC* pDC, CPoint& ptCurPos, int nIndentLevel);
+	void PrintThreadAffinity(CDC* pDC, CPoint& ptCurPos, int nIndentLevel);
 	void PrintResultIO(CDC* pDC, CPoint& ptCurPos, int nIndentLevel);
 	void PrintMonitorListSection(CDC* pDC, CPoint& ptCurPos, int nIndentLevel);
 	void PrintPPQBarSection(CDC* pDC, CPoint& ptCurPos, int nIndentLevel);
@@ -146,6 +147,16 @@ protected:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVConfigurationPrint.h_v  $
+ * 
+ *    Rev 1.4   06 Jan 2015 10:21:34   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  960
+ * SCR Title:  Pipe/core management
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add print capability for Thread Management
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   16 Jul 2014 07:53:50   ryoho
  * Project:  SVObserver

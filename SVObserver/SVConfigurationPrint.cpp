@@ -5,8 +5,8 @@
 //* .Module Name     : SVConfigurationPrint
 //* .File Name       : $Workfile:   SVConfigurationPrint.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.15  $
-//* .Check In Date   : $Date:   18 Sep 2014 12:51:58  $
+//* .Current Version : $Revision:   1.16  $
+//* .Check In Date   : $Date:   06 Jan 2015 10:21:34  $
 //******************************************************************************
 
 #pragma region Includes
@@ -57,6 +57,7 @@
 #include "SVResultDouble.h"
 #include "RemoteMonitorList.h"
 #include "RemoteMonitorListHelper.h"
+#include "SVSystemLibrary\SVThreadManager.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -1632,6 +1633,7 @@ void SVConfigurationPrint::OnVirtualPrint(BOOL bRealPrintInput /* = FALSE */)
 	ptCurPos.y += PrintString(pDC, ptTemp, _T("\nConfiguration Settings"));
 	
 	ptCurPos.x  = ++nIndentLevel * m_shortTabPixels;
+	PrintThreadAffinity(pDC, ptCurPos, nIndentLevel);
 	PrintTriggerSummary(pDC, ptCurPos, nIndentLevel);
 	PrintCameraSummary(pDC, ptCurPos, nIndentLevel);
 	PrintInspectionSummary(pDC, ptCurPos, nIndentLevel);
@@ -2477,6 +2479,38 @@ void SVConfigurationPrint::PrintModuleIO(CDC* pDC, CPoint& ptCurPos, int nIndent
 	}
 }  // end function void SVObserverApp::PrintModuleIOP( CDC* pDC, ... )
 
+void SVConfigurationPrint::PrintThreadAffinity(CDC* pDC, CPoint& ptCurPos, int nIndentLevel)
+{
+	CString value;
+		
+	// Thread Enable
+	ptCurPos.y += PrintString(pDC,ptCurPos,_T("\n"));
+	BOOL bEnabled = SVThreadManager::Instance().GetThreadAffinityEnabled();
+	value = bEnabled ? _T("Enabled") : _T("Disabled");
+	ptCurPos.x   = nIndentLevel * m_shortTabPixels;
+	PrintValueObject(pDC, ptCurPos, _T("Thread Setup :"), value);
+
+	// Set Thread Affinities
+	ptCurPos.x   = (nIndentLevel + 1) * m_shortTabPixels;
+	SVThreadManager::ThreadList Threads;
+	HRESULT hRet = SVThreadManager::Instance().GetThreadInfo(Threads, SVAffinityUser );
+	for( SVThreadManager::ThreadList::const_iterator it = Threads.begin() ; it != Threads.end() ; ++it)
+	{
+		SVString strName;
+		SVString strValue;
+		if( it->m_lAffinity > 0 )
+		{
+			strValue.Format( "%d", it->m_lAffinity);
+		}
+		else
+		{
+			strValue = "Not Set";
+		}
+		strName.Format("Name: %s:", it->m_strName.c_str() );
+		PrintValueObject(pDC, ptCurPos, strName.c_str(), strValue.c_str());
+	}
+}  // end function void SVObserverApp::PrintThreadAffinity( CDC* pDC, ... )
+
 void SVConfigurationPrint::PrintResultIO(CDC* pDC, CPoint& ptCurPos, int nIndentLevel)
 {
 	CString				label, value;
@@ -2805,6 +2839,16 @@ HRESULT SVDeviceParamConfigPrintHelper::Visit(SVCustomDeviceParam& param)
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVConfigurationPrint.cpp_v  $
+ * 
+ *    Rev 1.16   06 Jan 2015 10:21:34   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  960
+ * SCR Title:  Pipe/core management
+ * Checked in by:  tBair;  Tom Bair
+ * Change Description:  
+ *   Add print capability for Thread Management
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.15   18 Sep 2014 12:51:58   sjones
  * Project:  SVObserver
