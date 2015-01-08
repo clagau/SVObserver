@@ -5,12 +5,11 @@
 //* .Module Name     : SVObjectReference
 //* .File Name       : $Workfile:   SVObjectReference.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   22 Apr 2013 17:00:20  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   07 Jan 2015 16:06:02  $
 //******************************************************************************
 
-#ifndef SVOBJECTREFERENCE_H_
-#define SVOBJECTREFERENCE_H_
+#pragma once
 
 #include <vector>
 #include "SVObjectAttributeShim.h"
@@ -40,7 +39,7 @@ public:
 	SVObjectReference( GUID guid );
 	const SVObjectReference& operator = ( const SVObjectReference& rhs );
 	bool operator == ( const SVObjectReference& rhs ) const;
-	
+
 	// we don't want automatic conversion to SVObjectClass* (silent loss of information).
 	// use the Object() accessor instead
 	//operator SVObjectClass*();
@@ -61,7 +60,7 @@ public:
 	CString GetName() const;
 	CString GetCompleteObjectName() const;
 	CString GetCompleteObjectNameToObjectType( LPCSTR lpszCompleteName = NULL, SVObjectTypeEnum objectTypeToInclude = SVToolSetObjectType ) const;
-			
+
 	CString GetOneBasedName() const;
 	CString GetCompleteOneBasedObjectName() const;
 	CString GetCompleteOneBasedObjectNameToObjectType( LPCSTR lpszCompleteName = NULL, SVObjectTypeEnum objectTypeToInclude = SVToolSetObjectType ) const;
@@ -77,18 +76,16 @@ public:
 
 	CString GetOneBasedIndexString() const;
 	CString GetZeroBasedIndexString() const;
-	SVString GetIndex() const;
+	const SVString& GetIndex() const;
 
 protected:
 	static GUID GetObjectGuid( SVObjectClass* );	// for compilation dependency separation
-	//static GUID IsObjectArray( SVObjectClass* );	// for compilation dependency separation
 	void init();
 
 	SVObjectClass* m_pObject;
 	GUID m_Guid;
 
 	SVObjectNameInfo m_NameInfo;
-
 };
 
 typedef std::vector<SVObjectReference> SVObjectReferenceVector;
@@ -98,24 +95,22 @@ class SVCheckedObjectReference : public SVObjectReference
 {
 public:
 	SVCheckedObjectReference() : SVObjectReference() {}
-	
+
 	SVCheckedObjectReference( SVObjectClass* pObject, long lArrayIndex, CString strDefaultValue = CString() );
 	SVCheckedObjectReference( T* pObject, long lArrayIndex, CString strDefaultValue = CString() );
 
 	SVCheckedObjectReference( SVObjectClass* pObject, const SVObjectNameInfo& p_rNameInfo );
 	SVCheckedObjectReference( T* pObject, const SVObjectNameInfo& p_rNameInfo );
-	
+
 	SVCheckedObjectReference( SVObjectClass* pObject );
 	SVCheckedObjectReference( T* pObject );
-	
+
 	SVCheckedObjectReference( const SVObjectReference& rhs );
 	SVCheckedObjectReference( const SVCheckedObjectReference<T>& rhs );
 
 	const SVCheckedObjectReference<T>& operator = ( const SVObjectReference& rhs );
 	const SVCheckedObjectReference<T>& operator = ( const SVCheckedObjectReference<T>& rhs );
 
-	//operator T*();
-	//operator const T*() const;
 	T* operator -> ();
 	const T* operator -> () const;
 
@@ -125,13 +120,21 @@ public:
 
 #include "SVObjectReference.inl"
 
-#endif	//#ifndef SVOBJECTREFERENCE_H_
-
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObjectLibrary\SVObjectReference.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObjectLibrary\SVObjectReference.h_v  $
+ * 
+ *    Rev 1.1   07 Jan 2015 16:06:02   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  980
+ * SCR Title:  Add Non-Inspection Objects to the Result View
+ * Checked in by:  mEichengruen;  Marcus Eichengruen
+ * Change Description:  
+ *   Changed method GetIndex to return const reference.  Changed to use "pragma once".  Added includes region.  Removed dead code.  Cleaned up spacing.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   22 Apr 2013 17:00:20   bWalter
  * Project:  SVObserver

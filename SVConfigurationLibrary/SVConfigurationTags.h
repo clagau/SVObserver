@@ -5,8 +5,8 @@
 // * .Module Name     : SVConfigurationTags
 // * .File Name       : $Workfile:   SVConfigurationTags.h  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.6  $
-// * .Check In Date   : $Date:   17 Dec 2014 06:54:04  $
+// * .Current Version : $Revision:   1.7  $
+// * .Check In Date   : $Date:   07 Jan 2015 15:52:10  $
 // ******************************************************************************
 // SVConfigurationTags.h
 
@@ -321,6 +321,11 @@ LPCTSTR const CTAG_THREAD_NAME					= _T("Thread Name");
 LPCTSTR const CTAG_THREAD_AFFINITY				= _T("Thread Affinity");
 LPCTSTR const CTAG_THREAD_MGR_ENABLE			= _T("Thread Mgr Enable");
 
+LPCTSTR const CTAG_VIEWEDVARIABLES		= _T("ViewedVariables");
+LPCTSTR const CTAG_VIEWEDENVARIABLES	= _T("ViewedEnvVariables");
+LPCTSTR const CTAG_VIEWEDTOOLVARIABLES	= _T("ViewedToolVariables");
+LPCTSTR const CTAG_VIEWEDPPQINPUTS		= _T("ViewedPPQInputs");
+LPCTSTR const CTAG_COMPLETENAME			= _T("CompleteName"); 
 
 #endif /* _INC_SVCONFIGURATIONTAGS_INCLUDED */
 
@@ -329,6 +334,16 @@ LPCTSTR const CTAG_THREAD_MGR_ENABLE			= _T("Thread Mgr Enable");
 // ******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVConfigurationLibrary\SVConfigurationTags.h_v  $
+ * 
+ *    Rev 1.7   07 Jan 2015 15:52:10   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  980
+ * SCR Title:  Add Non-Inspection Objects to the Result View
+ * Checked in by:  mEichengruen;  Marcus Eichengruen
+ * Change Description:  
+ *   Added new tags for saving Result View variables in configuration file.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.6   17 Dec 2014 06:54:04   tbair
  * Project:  SVObserver

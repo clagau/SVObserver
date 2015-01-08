@@ -5,13 +5,13 @@
 //* .Module Name     : SVInspectionProcess
 //* .File Name       : $Workfile:   SVInspectionProcess.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.11  $
-//* .Check In Date   : $Date:   09 Dec 2014 09:20:50  $
+//* .Current Version : $Revision:   1.12  $
+//* .Check In Date   : $Date:   07 Jan 2015 17:42:46  $
 //******************************************************************************
 
-#ifndef INC_SVINSPECTIONPROCESS_INCLUDED
-#define INC_SVINSPECTIONPROCESS_INCLUDED
+#pragma once
 
+#pragma region Includes
 #include <boost/function.hpp>
 #include <boost/tokenizer.hpp>
 #include <boost/lexical_cast.hpp>
@@ -43,7 +43,9 @@
 #include "SVValueObjectReference.h"
 #include "SVVirtualCamera.h"
 #include "SVMonitorList.h"
+#pragma endregion Includes
 
+#pragma region Declarations
 class SVCameraImageTemplate;
 class SVConditionalClass;
 class SVDisplayObject;
@@ -51,6 +53,8 @@ class SVIPDoc;
 class SVPPQObject;
 class SVToolSetClass;
 class SVTaskObjectClass;
+class SVResultListClass;
+#pragma endregion Declarations
 
 class SVInspectionProcess : 
 	public SVObjectClass,
@@ -77,7 +81,7 @@ public:
 	virtual BOOL GetChildObjectByName( LPCTSTR tszName, SVObjectClass** ppObject );
 
 	virtual HRESULT GetChildObject( SVObjectClass*& p_rpObject, const SVObjectNameInfo& p_rNameInfo, long p_Index = 0 ) const;
-	
+
 	virtual BOOL SetObjectDepth( int NewObjectDepth );
 	virtual BOOL SetObjectDepthWithIndex( int NewObjectDepth, int NewLastSetIndex );
 	virtual BOOL SetImageDepth( long lDepth );
@@ -126,9 +130,9 @@ public:
 	HRESULT StartProcess( SVProductInfoStruct *pProduct );
 
 	BOOL RebuildInspectionInputList();
-	
+
 	BOOL RemoveCamera(CString sCameraName);
-	
+
 	BOOL AddInputRequest( SVValueObjectReference p_svObjectRef, const _variant_t& p_rValue );
 	BOOL AddInputRequestMarker();
 
@@ -151,7 +155,7 @@ public:
 	BOOL ConnectToolSetMainImage();
 
 	BOOL GetNewDisableMethod();
-	void SetNewDisableMethod( BOOL bNewDisableMethod ); 
+	void SetNewDisableMethod( BOOL bNewDisableMethod );
 
 	long GetEnableAuxiliaryExtent();
 	void SetEnableAuxiliaryExtent( long p_lEnableAuxiliaryExtents );
@@ -170,6 +174,7 @@ public:
 	void DumpDMInfo( LPCTSTR p_szName ) const;
 
 	SVToolSetClass* GetToolSet() const;
+	SVResultListClass* GetResultList() const;
 
 	void SetDefaultInputs();
 
@@ -186,13 +191,12 @@ public:
 	HRESULT RebuildInspection();
 	void ValidateAndInitialize( bool p_Validate, bool p_IsNew );
 	void ClearResetCounts();
-	void SetResetCounts( );
+	void SetResetCounts();
 
 	SVPublishListClass& GetPublishList();
 
 	LPCTSTR GetDeviceName() const;
 	void SetDeviceName( LPCTSTR p_szDeviceName );
-
 
 	BOOL IsColorInspectionDocument() const;
 
@@ -220,8 +224,6 @@ public:
 	HRESULT UpdateSharedMemoryLastInspectedImages( const SVMonitorItemList& p_rImageList );
 	virtual void Persist(SVObjectWriter& rWriter);
 
-	// PPQ objects needed for inputs
-	//SVPPQObject* m_pPPQ;
 	SVIOEntryStructVector m_PPQInputs;
 
 	bool m_bForceOffsetUpdate; // Force Global Extent data to update
@@ -236,7 +238,7 @@ protected:
 		SVSharedMemoryFilters();
 
 		void clear();
-		
+
 		SVFilterElementMap m_LastInspectedValues;
 		SVFilterElementMap m_LastInspectedImages;
 	};
@@ -254,7 +256,6 @@ protected:
 		void clear();
 
 		SVClock::SVTimeStamp m_StartTime;
-
 		SVTimeCountMap m_Start;
 		SVTimeCountMap m_End;
 		SVTimeCountMap m_Duration;
@@ -277,13 +278,11 @@ protected:
 		void EventEnd( const SVString& p_rName );
 
 		SVClock::SVTimeStamp m_StartTime;
-
 		SVEventTrackingMap m_EventCounts;
-
 	};
 #endif //EnableTracking
 
-	typedef void ( CALLBACK * SVAPCSignalHandler )( DWORD_PTR );
+	typedef void ( CALLBACK* SVAPCSignalHandler )( DWORD_PTR );
 	typedef boost::function<void ( bool& )> SVThreadProcessHandler;
 
 	typedef SVTQueueObject< SVCommandTemplatePtr > SVCommandQueue;
@@ -294,7 +293,7 @@ protected:
 	typedef SVTQueueObject< SVProductInfoStruct > SVProductQueue;
 	typedef SVTQueueObject<SVInspectionTransactionStruct> SVTransactionQueueType;
 	typedef SVSingleLockT<SVTransactionQueueType> SVTransactionQueueObjectLock;
-	
+
 	virtual HRESULT SubmitCommand( const SVCommandTemplatePtr& p_rCommandPtr );
 
 	virtual SVObjectPtrDeque GetPreProcessObjects() const;
@@ -302,7 +301,7 @@ protected:
 
 	virtual SVObjectClass* UpdateObject( const GUID &friendGuid, SVObjectClass *p_psvObject, SVObjectClass *p_psvNewOwner );
 
-	BOOL RunOnce( SVToolClass *p_psvTool = NULL );
+	BOOL RunOnce( SVToolClass* p_psvTool = nullptr );
 	BOOL RunInspection( long lResultDataIndex, SVImageIndexStruct svResultImageIndex, SVProductInfoStruct *pProduct, bool p_UpdateCounts = true );
 
 	BOOL DestroyInspection();
@@ -332,7 +331,7 @@ protected:
 	HRESULT RestoreCameraImages();
 
 	template<typename T>
-	HRESULT SetObjectArrayValues(SVValueObjectReference & object, int bucket, const CString & values, bool & reset);
+	HRESULT SetObjectArrayValues(SVValueObjectReference& object, int bucket, const CString& values, bool& reset);
 
 	void SingleRunModeLoop( bool p_Refresh = false );
 
@@ -378,16 +377,12 @@ protected:
 	// Inspection pointers
 	SVToolSetClass* m_pCurrentToolset;
 
-	// Callback pointers
-	//LPSVFINISHPROC      m_pFinishProc;
-	//void*               m_pOwner;
-
 	volatile bool m_bInspecting;
 
 	SVTransactionQueueType m_qTransactions;// don't AddTail directly; call AddTransaction
 
 	// Inspection Queue
-	SVProductQueue       m_qInspectionsQueue;
+	SVProductQueue m_qInspectionsQueue;
 
 	// Map of All Value Objects
 	SVValueObjectMap m_mapValueObjects;
@@ -415,16 +410,16 @@ private:
 	void FillSharedData(long sharedSlotIndex, SVSharedData& rData, const SVFilterElementMap& rValues, const SVFilterElementMap& rImages, SVProductInfoStruct& rProductInfo, SeidenaderVision::SVSharedInspectionWriter& rWriter);
 
 	DWORD m_dwCHTimeout;
-	SVConditionalHistory  m_ConditionalHistory;
+	SVConditionalHistory m_ConditionalHistory;
 
 	SVCriticalSectionPtr m_LastRunLockPtr;
 	bool m_LastRunProductNULL;
 	SVProductInfoStruct m_svLastRunProduct;
 
-	BOOL                m_bNewDisableMethod;
-	long                m_lEnableAuxiliaryExtents;
+	BOOL m_bNewDisableMethod;
+	long m_lEnableAuxiliaryExtents;
 
-	DWORD               m_dwThreadId;
+	DWORD m_dwThreadId;
 
 	// JMS - this variable is only used for configuration conversion.
 	SVConditionalClass* m_pToolSetConditional;
@@ -439,14 +434,12 @@ typedef SVVector< SVInspectionProcess* > SVInspectionProcessArray;
 
 namespace SVDetail
 {
-	typedef std::string String;
-
 	template<typename T>
 	struct ValueObjectTraits
 	{
 		typedef T value_type;
 		typedef SVValueObjectClassImpl<T> object_type;
-		inline static bool validate(const String &) { return true; }
+		inline static bool validate(const std::string&) { return true; }
 	};
 
 	template<>
@@ -454,7 +447,7 @@ namespace SVDetail
 	{
 		typedef CString value_type;
 		typedef SVValueObjectClassImpl<CString> object_type;
-		inline static bool validate(const String & str)
+		inline static bool validate(const std::string& str)
 		{
 			CFileStatus rStatus;
 			return CFile::GetStatus( str.c_str(), rStatus ) != 0 && 0L <= rStatus.m_size;
@@ -462,14 +455,14 @@ namespace SVDetail
 	};
 
 	template<typename T>
-	inline T str2int(const String & str)
+	inline T str2int(const std::string& str)
 	{
 		int base = (str[0] == '0' && toupper(str[1]) == 'X')?16:10;
 		return static_cast<T>(_tcstol(str.c_str(), NULL, base));
 	}
 
 	template<typename T>
-	inline T str2(const String & str)
+	inline T str2(const std::string& str)
 	{
 		if (boost::is_integral<T>::value)
 			return str2int<T>(str);
@@ -478,12 +471,12 @@ namespace SVDetail
 	}
 
 	template<>
-	inline CString str2<CString>(const String & str)
+	inline CString str2<CString>(const std::string& str)
 	{
 		return str.c_str();
 	}
 
-	typedef boost::function<bool (const String &)> Validator;
+	typedef boost::function<bool (const std::string&)> Validator;
 }
 
 template<typename T>
@@ -496,11 +489,9 @@ inline HRESULT Parse(std::vector<T> & vec, const CString & values, SVDetail::Val
 	{
 		return S_FALSE;
 	}
-	typedef SVDetail::String String;
-	typedef String::const_iterator Iter;
 	typedef boost::escaped_list_separator<TCHAR> Sep;
-	typedef boost::tokenizer<Sep, Iter, String> Tokenizer;
-	String str = values;
+	typedef boost::tokenizer<Sep, std::string::const_iterator, std::string> Tokenizer;
+	std::string str = values;
 	Sep sep(escape, separator, quote);
 	Tokenizer tok(str, sep);
 	try
@@ -523,7 +514,6 @@ inline HRESULT Parse(std::vector<T> & vec, const CString & values, SVDetail::Val
 	}
 	return S_OK;
 }
-
 
 template<typename T>
 inline HRESULT SVInspectionProcess::SetObjectArrayValues(SVValueObjectReference & object, int bucket, const CString & values, bool & reset)
@@ -554,13 +544,24 @@ inline HRESULT SVInspectionProcess::SetObjectArrayValues(SVValueObjectReference 
 	}
 }
 
-#endif
-
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVInspectionProcess.h_v  $
+ * 
+ *    Rev 1.12   07 Jan 2015 17:42:46   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  980
+ * SCR Title:  Add Non-Inspection Objects to the Result View
+ * Checked in by:  mEichengruen;  Marcus Eichengruen
+ * Change Description:  
+ *   Added method GetResultList.
+ * Removed poorly named typedef "String".
+ * Removed dead code.
+ * Cleaned up spacing.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.11   09 Dec 2014 09:20:50   tbair
  * Project:  SVObserver

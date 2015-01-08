@@ -5,11 +5,12 @@
 //* .Module Name     : SVIPDoc
 //* .File Name       : $Workfile:   SVIPDoc.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.7  $
-//* .Check In Date   : $Date:   19 Dec 2014 04:13:06  $
+//* .Current Version : $Revision:   1.8  $
+//* .Check In Date   : $Date:   07 Jan 2015 17:44:56  $
 //******************************************************************************
 
 #pragma once
+
 #pragma region Includes
 #include "SVContainerLibrary/SVList.h"
 #include "SVContainerLibrary/SVRingBuffer.h"
@@ -30,6 +31,7 @@
 #include "SVToolGrouping.h"
 #pragma endregion Includes
 
+#pragma region Declarations
 class SVConditionalClass;
 class SVInspectionThreadClass;
 class SVObserverSrvrItem;
@@ -45,6 +47,7 @@ class SVToolSetTabViewClass;
 class SVResultViewClass;
 class SVResultsWrapperClass;
 class SVObjectWriter;
+#pragma endregion Declarations
 
 class SVIPDoc : public CDocument
 {
@@ -89,6 +92,7 @@ public:
 	void SaveViewPlacements(SVObjectWriter& rWriter);
 	void SaveConditionalHistory(SVObjectWriter& rWriter);
 	void SaveToolGroupings(SVObjectWriter& rWriter);
+	void SaveViewedVariables(SVObjectWriter& rWriter);
 
 	BOOL GetParameters(SVObjectWriter& rWriter);
 
@@ -176,7 +180,7 @@ public:
 	afx_msg void OnUpdateViewToolSetDraw(CCmdUI* pCmdUI);
 	afx_msg void OnAddPolarUnwrapTool();
 	afx_msg void OnUpdateFileExit(CCmdUI* pCmdUI);
-	afx_msg void OnSelectPPQVariable(); 
+	afx_msg void OnSelectPPQVariable();
 	afx_msg void OnAddColorTool();
 	afx_msg void OnAddExternalTool();
 	afx_msg void OnAddLinearTool();
@@ -195,7 +199,7 @@ public:
 	afx_msg void OnUpdateConditionalHistory( CCmdUI *pCmdUI );
 	afx_msg void OnEditDataDefinitionLists();
 	afx_msg void OnUpdateEditDataDefinitionLists(CCmdUI *pCmdUI);
-    afx_msg void OnUpdateRunRegressionTest( CCmdUI *pCmdUI );
+	afx_msg void OnUpdateRunRegressionTest( CCmdUI *pCmdUI );
 	afx_msg void OnChangeToolSetDrawFlag( UINT nId );
 	afx_msg void OnUpdateViewToolSetDrawSubMenus( CCmdUI* PCmdUI );
 	afx_msg void OnPublishedResultImagesPicker();
@@ -270,6 +274,8 @@ protected:
 	SVConditionalClass* GetToolSetCondition();
 	SVInspectionProcess* GetInspectionProcess() const;
 
+	SVResultListClass* GetResultList() const;
+
 	void RefreshDocument();
 
 	void UpdateAllData();
@@ -328,46 +334,7 @@ private:
 
 	void ClearRegressionTestStructures();
 
-	//************************************
-	// Method:    addToolsetObject2ResultDefinitions
-	// Description:  Add all viewable toolset objects to the result definition list
-	// Parameter: SVResultDefinitionDeque& p_rDefinitions
-	// Returns:   HRESULT S_OK if no error, else E_FAIL.
-	//************************************
-	HRESULT addToolsetObject2ResultDefinitions( SVResultDefinitionDeque& p_rDefinitions ) const;
-
-	//************************************
-	// Method:    addPPQInputs2ResultDefinitions
-	// Description:  Add all viewable PPQ input objects to the result definition list
-	// Parameter: SVResultDefinitionDeque& p_rDefinitions
-	// Returns:   HRESULT S_OK if no error, else E_FAIL.
-	//************************************
-	HRESULT addPPQInputs2ResultDefinitions( SVResultDefinitionDeque& p_rDefinitions ) const;
-
-	//************************************
-	// Method:    addPPQ_XParameter2ResultDefinitions
-	// Description:  Add all viewable PPQ parameter to the result definition list
-	// Parameter: SVResultDefinitionDeque& p_rDefinitions
-	// Returns:   HRESULT S_OK if no error, else E_FAIL.
-	//************************************
-	HRESULT addPPQ_XParameter2ResultDefinitions( SVResultDefinitionDeque& p_rDefinitions ) const;
-
-	//************************************
-	// Method:    addEnvironmentObject2ResultDefinitions
-	// Description:  Add all viewable environment object to the result definition list
-	// Parameter: SVResultDefinitionDeque& p_rDefinitions
-	// Returns:   void
-	//************************************
-	void addEnvironmentObject2ResultDefinitions( SVResultDefinitionDeque& p_rDefinitions ) const;
-
-	//************************************
-	// Method:    addViewableObject2ResultDefinitions
-	// Description:  Add one object to the result definition list, if it viewable.
-	// Parameter: SVObjectClass* pObject
-	// Parameter: SVResultDefinitionDeque& p_rDefinitions
-	// Returns:   void
-	//************************************
-	void addViewableObject2ResultDefinitions( SVObjectClass* pObject, SVResultDefinitionDeque& p_rDefinitions ) const;
+	bool LoadViewedVariables(SVTreeType& rTree, SVTreeType::SVBranchHandle htiParent);
 
 	RegressionRunModeEnum m_regtestRunMode;
 	RegressionPlayModeEnum m_regtestRunPlayMode;
@@ -392,6 +359,18 @@ private:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVIPDoc.h_v  $
+ * 
+ *    Rev 1.8   07 Jan 2015 17:44:56   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  980
+ * SCR Title:  Add Non-Inspection Objects to the Result View
+ * Checked in by:  mEichengruen;  Marcus Eichengruen
+ * Change Description:  
+ *   Added methods GetResultList, SaveViewedVariables, and LoadViewedVariables.
+ * Removed methods addToolsetObject2ResultDefinitions, addPPQInputs2ResultDefinitions, addPPQ_XParameter2ResultDefinitions, addEnvironmentObject2ResultDefinitions, and addViewableObject2ResultDefinitions (never implemented).
+ * Cleaned up spacing.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.7   19 Dec 2014 04:13:06   gramseier
  * Project:  SVObserver

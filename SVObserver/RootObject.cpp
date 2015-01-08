@@ -5,8 +5,8 @@
 //* .Module Name     : RootObject
 //* .File Name       : $Workfile:   RootObject.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   17 Jul 2014 17:56:30  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   07 Jan 2015 17:37:28  $
 //******************************************************************************
 
 #pragma region Includes
@@ -34,6 +34,8 @@ RootObject::RootObject( LPCSTR ObjectName )
 , m_pConfigurationObject(nullptr)
 
 {
+	//The Root object should have an empty name
+	SetName(_T(""));
 	createEnvironmentObject();
 	createConfigurationObject();
 }
@@ -43,6 +45,8 @@ RootObject::RootObject( SVObjectClass* POwner, int StringResourceID )
 , m_EnvironmentObject()
 , m_pConfigurationObject(nullptr)
 {
+	//The Root object should have an empty name
+	SetName(_T(""));
 	createEnvironmentObject();
 	createConfigurationObject();
 }
@@ -96,6 +100,16 @@ BOOL RootObject::destroyConfigurationObject()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\RootObject.cpp_v  $
+ * 
+ *    Rev 1.2   07 Jan 2015 17:37:28   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  980
+ * SCR Title:  Add Non-Inspection Objects to the Result View
+ * Checked in by:  mEichengruen;  Marcus Eichengruen
+ * Change Description:  
+ *   Changed constructors to set the name of the RootObject to empty.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   17 Jul 2014 17:56:30   gramseier
  * Project:  SVObserver

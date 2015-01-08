@@ -5,59 +5,77 @@
 //* .Module Name     : SVREsultList.h
 //* .File Name       : $Workfile:   SVResultList.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   08 May 2013 16:43:42  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   07 Jan 2015 17:49:30  $
 //******************************************************************************
 
-#ifndef SVRESULTLIST_H
-#define SVRESULTLIST_H
+#pragma once
 
+#pragma region Includes
 #include "SVObjectLibrary/SVObjectClass.h"
 #include "SVObjectLibrary/SVOutputInfoListClass.h"
 #include "SVInfoStructs.h"
+#include "ResultViewEnvReferences.h"
+#include "ResultViewToolReferences.h"
+#include "ResultViewPPQInputReferences.h"
+#pragma endregion Includes
 
+#pragma region Declarations
 class SVResultClass;
 class SVResultViewClass;
 class SVTaskObjectClass;
 class SVToolSetClass;
 
 enum SVInspectionStateEnum;
+#pragma endregion Declarations
 
-class SVResultListClass// : public SVOutputInfoListClass
+class SVResultListClass
 {
 public:
+#pragma region Constructor
 	SVResultListClass();
 	virtual ~SVResultListClass();	// no heirarchy; but so we can have RTTI
+#pragma endregion Constructor
 
+#pragma region Public Methods
 	void Destroy();
 	void Refresh(SVTaskObjectClass* pRootObject);
 
-	void SetView( SVResultViewClass* PResultView );
+	void SetToolSet(SVToolSetClass* pToolSet);
 
-	SVResultViewClass*       GetView();
-	SVProductInspectedState  GetInspectionState();
+	SVProductInspectedState GetInspectionState();
+#pragma endregion Public Methods
 
-	SVClock::SVTimeStamp m_LastUpdateTimestamp;
-
-public:
-	SVToolSetClass*           m_pToolSet;
-	SVObjectReferenceVector   m_vecObjects;
+#pragma region Member Variables
+	ResultViewEnvReferences m_EnvResults; // BRW - Don't make member variables public.
+	ResultViewToolReferences m_ToolReferences; // BRW - Don't make member variables public.
+	ResultViewPPQInputReferences m_PPQInputReferences; // BRW - Don't make member variables public.
 
 protected:
-
-	SVResultViewClass*        m_pCurrentResultView;
-
+	SVToolSetClass* m_pToolSet;
 	SVVector< SVResultClass* > m_results;
-
+#pragma endregion Member Variables
 };
-
-#endif
 
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVResultList.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVResultList.h_v  $
+ * 
+ *    Rev 1.2   07 Jan 2015 17:49:30   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  980
+ * SCR Title:  Add Non-Inspection Objects to the Result View
+ * Checked in by:  mEichengruen;  Marcus Eichengruen
+ * Change Description:  
+ *   Add new members for referenced PPQ variables, tool variables, and environment variables.
+ * Added method SetToolSet.
+ * Removed methods GetView and SetView.
+ * Changed m_pToolSet to protected.
+ * Removed members m_LastUpdateTimestamp, m_vecObjects, and m_pCurrentResultView.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   08 May 2013 16:43:42   bWalter
  * Project:  SVObserver

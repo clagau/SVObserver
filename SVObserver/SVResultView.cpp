@@ -5,8 +5,8 @@
 //* .Module Name     : SVResultView
 //* .File Name       : $Workfile:   SVResultView.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.7  $
-//* .Check In Date   : $Date:   17 Jul 2014 20:21:28  $
+//* .Current Version : $Revision:   1.8  $
+//* .Check In Date   : $Date:   07 Jan 2015 17:50:18  $
 //******************************************************************************
 
 #pragma region Includes
@@ -48,6 +48,7 @@ BEGIN_MESSAGE_MAP( SVResultViewClass, CListView )
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
+#pragma region Constructor
 SVResultViewClass::SVResultViewClass()
 : CListView()
 {
@@ -62,6 +63,7 @@ SVResultViewClass::SVResultViewClass()
 SVResultViewClass::~SVResultViewClass()
 {
 }
+#pragma endregion Constructor
 
 SVIPDoc* SVResultViewClass::GetIPDoc() const
 {
@@ -70,22 +72,17 @@ SVIPDoc* SVResultViewClass::GetIPDoc() const
 
 BOOL SVResultViewClass::OnEraseBkgnd( CDC* p_pDC )
 {
-	BOOL l_bOk = TRUE;
-	
-	//if( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) )
-	{
-		l_bOk = CListView::OnEraseBkgnd( p_pDC );
-	}
+	BOOL l_bOk = CListView::OnEraseBkgnd( p_pDC );
 
 	return l_bOk;
 }
 
-void SVResultViewClass::OnTimer( UINT_PTR nIDEvent ) 
+void SVResultViewClass::OnTimer( UINT_PTR nIDEvent )
 {
 	CListView::OnTimer(nIDEvent);
 }
 
-void SVResultViewClass::OnInitialUpdate() 
+void SVResultViewClass::OnInitialUpdate()
 {
 	if( GetIPDoc() == NULL )
 	{
@@ -99,12 +96,12 @@ void SVResultViewClass::OnInitialUpdate()
 	CListView::OnInitialUpdate();
 }
 
-void SVResultViewClass::OnDestroy() 
+void SVResultViewClass::OnDestroy()
 {
 	CListView::OnDestroy();
 }
 
-void SVResultViewClass::OnUpdate( CView* pSender, LPARAM lHint, CObject* pHint ) 
+void SVResultViewClass::OnUpdate( CView* pSender, LPARAM lHint, CObject* pHint )
 {
 	SVIPDoc* l_pIPDoc = GetIPDoc();
 
@@ -125,11 +122,13 @@ void SVResultViewClass::OnUpdate( CView* pSender, LPARAM lHint, CObject* pHint )
 
 		l_pIPDoc->GetResultData( m_ResultData );
 
+		bool bRedrawDefinitions = false;
 		if( l_pIPDoc->IsResultDefinitionsUpdated() == S_OK )
 		{
 			listCtrl.DeleteAllItems();
-
 			l_pIPDoc->GetResultDefinitions( m_ResultDefinitions );
+			///MEC_SVO_475  only necessary when Definition changed.
+			bRedrawDefinitions = true;
 		}
 
 		int i = 0;
@@ -144,9 +143,13 @@ void SVResultViewClass::OnUpdate( CView* pSender, LPARAM lHint, CObject* pHint )
 
 			SVIPResultItemDefinition& l_rDef = m_ResultDefinitions[ i ];
 
-			SVObjectClass* l_pObject = SVObjectManagerClass::Instance().GetObject( l_rDef.GetObjectID() );
+			SVObjectClass* l_pObject = nullptr;
+			if(bRedrawDefinitions)
+			{
+				l_pObject = SVObjectManagerClass::Instance().GetObject( l_rDef.GetObjectID() );
+			}
 
-			if( l_pObject != NULL )
+			if( l_pObject != nullptr)
 			{
 				if( l_rDef.GetIndexPresent())
 				{
@@ -183,20 +186,23 @@ void SVResultViewClass::OnUpdate( CView* pSender, LPARAM lHint, CObject* pHint )
 				}
 			}
 
-			if( listCtrl.GetItemCount() <= i )
+			if(bRedrawDefinitions)
 			{
-				listCtrl.InsertItem( i, l_Name );
-				listCtrl.SetItemText( i, 2, l_NameToType );
-				listCtrl.SetItemText( i, 3, l_ItemIndex );
-			}
-			else
-			{
-				CString l_TempName = listCtrl.GetItemText( i, 0 );
-
-				if( l_TempName != l_Name )
+				if( listCtrl.GetItemCount() <= i )
 				{
-					listCtrl.SetItemText( i, 0, l_Name );
+					listCtrl.InsertItem( i, l_Name );
 					listCtrl.SetItemText( i, 2, l_NameToType );
+					listCtrl.SetItemText( i, 3, l_ItemIndex );
+				}
+				else
+				{
+					CString l_TempName = listCtrl.GetItemText( i, 0 );
+
+					if( l_TempName != l_Name )
+					{
+						listCtrl.SetItemText( i, 0, l_Name );
+						listCtrl.SetItemText( i, 2, l_NameToType );
+					}
 				}
 			}
 
@@ -206,14 +212,14 @@ void SVResultViewClass::OnUpdate( CView* pSender, LPARAM lHint, CObject* pHint )
 
 		CString strTemp;
 
-		if( listCtrl.GetItemCount() <= i )
+		if( bRedrawDefinitions && (listCtrl.GetItemCount() <= i) )
 		{
 			// Add the Toolset Time
 			strTemp = _T( "Toolset Time" );
 			listCtrl.InsertItem( i, strTemp );
 		}
 
-		if( listCtrl.GetItemCount() <= ( i + 1 ) )
+		if( bRedrawDefinitions && (listCtrl.GetItemCount() <= ( i + 1 )) )
 		{
 			// Add the Toolset Complete Process per Second
 			strTemp = _T( "Complete Processes per Second" );
@@ -229,25 +235,35 @@ void SVResultViewClass::OnUpdate( CView* pSender, LPARAM lHint, CObject* pHint )
 		{
 			strTemp.Format( _T( "%.3f ms ( %.3f ms )" ), m_ResultData.m_ToolSetEndTime * 1000, m_ResultData.m_ToolSetAvgTime * 1000 );
 		}
-		listCtrl.SetItemText( i, 1, strTemp );
+
+		CString csPrev = listCtrl.GetItemText( i, 1 );
+		if( csPrev != strTemp )
+		{
+			listCtrl.SetItemText( i, 1, strTemp );
+		}
 
 		// Get ToolSet complete processes per second
 		strTemp = CalcProcessesPerSecond( m_ResultData.m_TriggerDistance );
-		listCtrl.SetItemText( i + 1, 1, strTemp );
-			
-		l_Color = 0x00ffffff;
-			
-		listCtrl.SetItemData( i, l_Color );     // toolset time
-		listCtrl.SetItemData( i + 1, l_Color ); // processes/sec
 
-		strTemp = l_pIPDoc->GetCompleteToolSetName();
-		listCtrl.SetItemText( i, 2, strTemp );     // toolset time
-		listCtrl.SetItemText( i + 1, 2, strTemp ); // processes/sec
+		csPrev = listCtrl.GetItemText( i+1 , 1 );
+		if( csPrev != strTemp )
+		{
+			listCtrl.SetItemText( i + 1, 1, strTemp );
+		}
+
+		if(bRedrawDefinitions)
+		{
+			l_Color = 0x00ffffff;
+			listCtrl.SetItemData( i, l_Color );     // toolset time
+			listCtrl.SetItemData( i + 1, l_Color ); // processes/sec
+
+			strTemp = l_pIPDoc->GetCompleteToolSetName();
+			listCtrl.SetItemText( i, 2, strTemp );     // toolset time
+			listCtrl.SetItemText( i + 1, 2, strTemp ); // processes/sec
+		}
 
 		listCtrl.SetRedraw( true );
 	}
-
-	//CListView::OnUpdate( pSender, lHint, pHint );   // This call causes flicker
 }
 
 CString SVResultViewClass::CalcProcessesPerSecond( double p_LastTriggerDistance )
@@ -262,15 +278,15 @@ CString SVResultViewClass::CalcProcessesPerSecond( double p_LastTriggerDistance 
 	{
 		timeStr.Format( _T( "%.3f / sec (%.3f / min)" ), 1.0 / dTime, 1.0 / dTime * 60.0 );
 	}// end if
-	
+
 	return timeStr;
 }// end CalcProcessesPerSecond
 
-BOOL SVResultViewClass::Create( LPCTSTR LPSZClassName, LPCTSTR LPSZWindowName, DWORD DwStyle, const RECT& Rect, CWnd* PParentWnd, UINT NID, CCreateContext* PContext ) 
+BOOL SVResultViewClass::Create( LPCTSTR LPSZClassName, LPCTSTR LPSZWindowName, DWORD DwStyle, const RECT& Rect, CWnd* PParentWnd, UINT NID, CCreateContext* PContext )
 {
 	DWORD viewStyle = LVS_REPORT | LVS_NOSORTHEADER | LVS_SINGLESEL | LVS_OWNERDRAWFIXED;
 	BOOL rc = CWnd::Create( LPSZClassName, _T( "Result Page" ), DwStyle |viewStyle, Rect, PParentWnd, NID, PContext );
-	
+
 	return rc;
 }
 
@@ -278,7 +294,7 @@ void SVResultViewClass::addColumnHeadings()
 {
 	CString columnName;
 	CListCtrl& listCtrl = GetListCtrl();
-		
+
 	// load the Column names
 	for( int i = 0; i < SV_NUMBER_RESULTVIEW_COLUMNS; i++ )
 	{
@@ -291,14 +307,14 @@ void SVResultViewClass::addColumnHeadings()
 void SVResultViewClass::setColumnWidths()
 {
 	CListCtrl& listCtrl = GetListCtrl();
-	
+
 	if (!columnWidthSet )
 	{
 		CRect viewRect;
 		listCtrl.GetClientRect( viewRect );
 
 		//the last column is only used so that we can use the LVSCW_AUTOSIZE_USEHEADER style
-		//on autisizing the 2nd last column.
+		//on autosizing the 2nd last column.
 
 		//calc the width of the first three columns
 		int columnWidth = ( viewRect.Width() - 50 ) / ( SV_NUMBER_RESULTVIEW_COLUMNS - 1 );
@@ -310,211 +326,10 @@ void SVResultViewClass::setColumnWidths()
 		}
 
 		listCtrl.SetColumnWidth(SV_NUMBER_RESULTVIEW_COLUMNS - 1,LVSCW_AUTOSIZE_USEHEADER);
-		
+
 		columnWidthSet = TRUE;
 	}
 }
-
-int SVResultViewClass::addResults( SVResultListClass* pResultList, SVResultsWrapperClass* pSVRWC )
-{
-	CString szCol1, szCol2, szCol3, szCol4;
-	DWORD dwColor = 0;
-	size_t i = 0;
-	int iNumberOfItems = 0;
-	int nType;
-
-	BOOL bRefreshComplete = ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST );
-
-	SVIPDoc* pCurrentDocument = dynamic_cast <SVIPDoc*> (GetDocument());
-
-	for( i = 0; i < pResultList->m_vecObjects.size(); ++i )
-	{
-		SVObjectReference ref = pResultList->m_vecObjects.at(i);
-		if( ref.Object() )
-		{
-			// Insert all items that are picked for viewing
-			szCol1 = ref.GetName();
-
-			dwColor = 0;
-
-			SVValueObjectReference voref(ref);  // try to assign to value object
-			if( voref.Object() )                // if successful
-			{
-				if( voref->GetObjectType() == SVStringValueObjectType)
-				{
-					CString l_strQuotes;
-					CString l_strValue;
-					voref.GetValue( l_strValue );
-					// Wrap string in Quotes...
-					l_strQuotes.Format(_T("\042%s\042"),l_strValue);
-					szCol2 = l_strQuotes;
-				}
-				else
-				{
-					HRESULT hr = voref.GetValue( szCol2 );
-					if ( hr == SVMSG_SVO_34_OBJECT_INDEX_OUT_OF_RANGE )
-						szCol2 = _T("< ") + szCol2 + _T(" >");
-					else if ( hr != S_OK )
-						szCol2 = _T( "<Not Valid>" );
-				}
-
-				// Set Color...
-				dwColor = ref.Object()->GetObjectColor();
-				if( ref.Object()->GetOwner() )
-					dwColor = ref.Object()->GetOwner()->GetObjectColor();
-
-				nType = ref.Object()->GetObjectType();
-			}
-
-			szCol3 = ref.GetCompleteObjectNameToObjectType( NULL, SVToolObjectType );
-			szCol4.Format(_T("%d"),iNumberOfItems);
-
-			CString szIPD = pCurrentDocument->GetTitle();
-			szIPD += _T( ".ipd" );
-			pSVRWC->AddData( iNumberOfItems, szIPD, szCol1, szCol2, szCol3, szCol4, dwColor, nType);
-			
-			++iNumberOfItems;
-		}
-	}
-
-	return iNumberOfItems;
-}// end addResults
-
-/*
-void SVResultViewClass::addItems()
-{
-	DWORD dwColor;
-
-	BOOL bRefreshComplete = ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST );
-	CListCtrl& listCtrl = GetListCtrl();
-
-	listCtrl.SetRedraw( FALSE );       // 10 Nov 1999 - frb.
-
-	CRect l_rectTopItem;
-	int l_iTopIndex = listCtrl.GetTopIndex();
-	BOOL l_bGetItemPosition = listCtrl.GetItemRect( l_iTopIndex, &l_rectTopItem, LVIR_BOUNDS );
-	
-
-	if( bRefreshComplete )
-	{
-		listCtrl.DeleteAllItems();
-	}// end if
-	
-	SVIPDoc* pCurrentDocument = dynamic_cast< SVIPDoc* >( GetDocument() );
-
-	if( pCurrentDocument )
-	{
-		// Get the ToolSet
-		SVToolSetClass* pToolSet;
-		pToolSet = pCurrentDocument->GetToolSet();
-		if( pToolSet )
-		{
-			size_t l;
-			int iNumberOfItems = 0;
-			CString strTemp;
-
-			// Get the OutputList
-			SVResultListClass* pResultList = pToolSet->GetResultList();
-			if( pResultList )
-			{
-				SVResultsListCtrlWrapper SVRLCW(&listCtrl);
-				iNumberOfItems = addResults( pResultList, &SVRLCW);
-			}// end if
-
-			dwColor = 0x00ffffff;
-			// Insert all PPQ input items that are picked for viewing
-			for( l = 0; pCurrentDocument->GetInspectionProcess() && l < pCurrentDocument->GetInspectionProcess()->m_PPQInputs.size(); l++ )
-			{
-				SVIOEntryStruct pIOEntry;
-				SVValueObjectClass* pObject;			
-				pIOEntry = pCurrentDocument->GetInspectionProcess()->m_PPQInputs[l];
-				pObject = dynamic_cast <SVValueObjectClass*> (pIOEntry.m_IOEntryPtr->m_pValueObject);
-				if ( pObject )
-				{
-					if( !( pObject->ObjectAttributesSet() & SV_VIEWABLE ) )
-						continue;
-
-					if( bRefreshComplete )
-					{
-						strTemp = pObject->GetName();
-						listCtrl.InsertItem( iNumberOfItems, strTemp );
-					}// end if
-
-					if( m_lLastResultDataIndex > -1)
-					{
-						// Get the Data
-						pObject->GetValue( m_lLastResultDataIndex, strTemp );
-						listCtrl.SetItemText( iNumberOfItems, 1, strTemp );
-
-						// Set Color...
-						listCtrl.SetItemData( iNumberOfItems, dwColor );
-					}// end if
-
-					if( bRefreshComplete )
-					{
-						if( pIOEntry.m_IOEntryPtr->m_ObjectType == IO_DIGITAL_INPUT )
-						{
-							strTemp.LoadString( IDS_OBJECTNAME_DIGITAL_INPUT );
-						}
-						else if( pIOEntry.m_IOEntryPtr->m_ObjectType == IO_DDE_INPUT )
-						{
-							strTemp.LoadString( IDS_OBJECTNAME_DDE_INPUT );
-						}
-						else if( pIOEntry.m_IOEntryPtr->m_ObjectType == IO_REMOTE_INPUT )
-						{
-							strTemp.LoadString( IDS_OBJECTNAME_REMOTE_INPUT );
-						}
-
-						listCtrl.SetItemText( iNumberOfItems, 2, strTemp );
-					}// end if
-
-					iNumberOfItems++;
-
-				}// end if ( pObject )
-
-			}
-
-			if( bRefreshComplete )
-			{
-				// Add the Toolset Time
-				strTemp = _T( "Toolset Time" );
-				listCtrl.InsertItem( iNumberOfItems, strTemp );
-
-				// Add the Toolset Complete Process per Second
-				strTemp = _T( "Complete Processes per Second" );
-				listCtrl.InsertItem( iNumberOfItems + 1, strTemp );
-			}
-
-			// Get ToolSet Time
-			strTemp = CalcToolSetTime( pToolSet );
-			listCtrl.SetItemText( iNumberOfItems, 1, strTemp );
-
-			// Get ToolSet complete processes per second
-			strTemp = CalcProcessesPerSecond();
-			listCtrl.SetItemText( iNumberOfItems + 1, 1, strTemp );
-			
-			dwColor = 0x00ffffff;
-			
-			listCtrl.SetItemData( iNumberOfItems, dwColor );     // toolset time
-			listCtrl.SetItemData( iNumberOfItems + 1, dwColor ); // processes/sec
-
-			if( bRefreshComplete )
-			{
-				strTemp = pToolSet->GetCompleteObjectNameToObjectType( NULL, SVToolObjectType ); //pToolSet->GetName();
-				listCtrl.SetItemText( iNumberOfItems, 2, strTemp );     // toolset time
-				listCtrl.SetItemText( iNumberOfItems + 1, 2, strTemp ); // processes/sec
-
-			}// end if
-		}// end if( pToolSet )
-	}// end if( pCurrentDocument )
-
-	listCtrl.SetRedraw(TRUE);        // 10 Nov 1999 - frb.
-	if ( bRefreshComplete && l_bGetItemPosition )
-	{
-		listCtrl.Scroll(CSize(0, l_rectTopItem.Height() * l_iTopIndex));
-	}
-}// end addItems
-*/
 
 void SVResultViewClass::OnSize(UINT nType, int cx, int cy)
 {
@@ -543,206 +358,154 @@ void SVResultViewClass::SetViewSize(CSize &Size)
 	}
 }
 
-
 void SVResultViewClass::DrawItem( LPDRAWITEMSTRUCT lpDrawItemStruct )
 {
 	CListCtrl& listCtrl = GetListCtrl();
 
 	CDC* pDC = CDC::FromHandle( lpDrawItemStruct->hDC );
-	CRect rcItem( lpDrawItemStruct->rcItem );	
+	CRect rcItem( lpDrawItemStruct->rcItem );
 	int nItem = lpDrawItemStruct->itemID;
 	CImageList* pImageList;
-	
-	// Save dc state	
+
+	// Save dc state
 	int nSavedDC = pDC->SaveDC();
 
-	// Get item image and state info	
+	// Get item image and state info
 	LV_ITEM lvi;
-	lvi.mask = LVIF_IMAGE | LVIF_STATE;	lvi.iItem = nItem;	
+	lvi.mask = LVIF_IMAGE | LVIF_STATE;
+	lvi.iItem = nItem;
 	lvi.iSubItem = 0;
-	lvi.stateMask = 0xFFFF;		
-	
-	// get all state flags	
+	lvi.stateMask = 0xFFFF;
+
+	// get all state flags
 	listCtrl.GetItem(&lvi);
-	
+
 	// Should the item be highlighted
 	BOOL bHighlight =( ( lvi.state & LVIS_DROPHILITED ) ||
-					   ( ( lvi.state & LVIS_SELECTED ) && ( ( GetFocus() == this ) ||
-						 ( GetStyle() & LVS_SHOWSELALWAYS) ) ) );
+		( ( lvi.state & LVIS_SELECTED ) && ( ( GetFocus() == this ) ||
+		( GetStyle() & LVS_SHOWSELALWAYS) ) ) );
 
-	// Get rectangles for drawing	
+	// Get rectangles for drawing
 	CRect rcBounds, rcLabel, rcIcon;
 	listCtrl.GetItemRect( nItem, rcBounds, LVIR_BOUNDS );
-	listCtrl.GetItemRect( nItem, rcLabel, LVIR_LABEL );	
+	listCtrl.GetItemRect( nItem, rcLabel, LVIR_LABEL );
 	listCtrl.GetItemRect( nItem, rcIcon, LVIR_ICON );
-	CRect rcCol( rcBounds ); 	
+	CRect rcCol( rcBounds );
 	CString sLabel = listCtrl.GetItemText( nItem, 0 );
 	DWORD_PTR dwColor = listCtrl.GetItemData( nItem );
 
-	// Labels are offset by a certain amount  
+	// Labels are offset by a certain amount
 	// This offset is related to the width of a space character
-	int offset = pDC->GetTextExtent( _T( " " ), 1 ).cx * 2;	
+	int offset = pDC->GetTextExtent( _T( " " ), 1 ).cx * 2;
 	CRect rcHighlight;
-	CRect rcWnd;	
+	CRect rcWnd;
 	int nExt;
-	
-	nExt = pDC->GetOutputTextExtent( sLabel ).cx + offset;		
-			rcHighlight = rcLabel;
-		
+
+	nExt = pDC->GetOutputTextExtent( sLabel ).cx + offset;
+	rcHighlight = rcLabel;
+
 	if( rcLabel.left + nExt < rcLabel.right )
 		rcHighlight.right = rcLabel.left + nExt;
-
 
 	GetClientRect( &rcWnd );
 	rcHighlight = rcBounds;
 	rcHighlight.left = rcLabel.left;
 	rcHighlight.right = rcWnd.right-1;
 
-	/*
-	switch( m_nHighlight )	
-	{	
-		case 0: 
-			nExt = pDC->GetOutputTextExtent( sLabel ).cx + offset;		
-			rcHighlight = rcLabel;
-		
-			if( rcLabel.left + nExt < rcLabel.right )
-				rcHighlight.right = rcLabel.left + nExt;		
-			break;	
-		
-		case 1:
-			rcHighlight = rcBounds;		
-			rcHighlight.left = rcLabel.left;		
-			break;	
-		
-		case 2:
-			GetClientRect( &rcWnd );		
-			rcHighlight = rcBounds;
-			rcHighlight.left = rcLabel.left;		
-			rcHighlight.right = rcWnd.right;		
-			break;
-	
-		default:		
-			rcHighlight = rcLabel;	
-	}
-	*/
-
-	// Draw the background color
-	
-	/*
-	if( bHighlight )	
-	{		
-		pDC->SetTextColor( ::GetSysColor(COLOR_HIGHLIGHTTEXT ) );
-		pDC->SetBkColor( dwColor );
-		//pDC->FillRect( rcHighlight, &CBrush( ::GetSysColor( COLOR_HIGHLIGHT ) ) );	
-		pDC->FillSolidRect( rcHighlight, ::GetSysColor( COLOR_HIGHLIGHT ) );	
-	}	
-	else
-	{
-		pDC->SetTextColor( dwColor );
-		//pDC->FillRect( rcHighlight, &CBrush( ::GetSysColor( COLOR_WINDOW ) ) );	
-		pDC->FillSolidRect( rcHighlight,::GetSysColor( COLOR_WINDOW ) );	
-	}
-	*/
-	
-	
-	pDC->FillSolidRect( rcHighlight,::GetSysColor( COLOR_WINDOW ) );	
+	pDC->FillSolidRect( rcHighlight,::GetSysColor( COLOR_WINDOW ) );
 	pDC->SetTextColor( RGB( 0, 0, 0 ) );
-	
 
-	// Set clip region	
-	rcCol.right = rcCol.left + listCtrl.GetColumnWidth( 0 );	
+	// Set clip region
+	rcCol.right = rcCol.left + listCtrl.GetColumnWidth( 0 );
 	CRgn rgn;
-	rgn.CreateRectRgnIndirect( &rcCol );	
+	rgn.CreateRectRgnIndirect( &rcCol );
 	pDC->SelectClipRgn( &rgn );
 	rgn.DeleteObject();
-	
-	// Draw state icon	
-	if( lvi.state & LVIS_STATEIMAGEMASK )	
+
+	// Draw state icon
+	if( lvi.state & LVIS_STATEIMAGEMASK )
 	{
 		int nImage = ( ( lvi.state & LVIS_STATEIMAGEMASK ) >> 12 ) - 1;
-		pImageList = listCtrl.GetImageList( LVSIL_STATE );		
-		if( pImageList )		
+		pImageList = listCtrl.GetImageList( LVSIL_STATE );
+		if( pImageList )
 		{
 			pImageList->Draw( pDC, nImage,
-				CPoint( rcCol.left, rcCol.top ), ILD_TRANSPARENT );		
-		}	
-	}	
-	// Draw normal and overlay icon	
+				CPoint( rcCol.left, rcCol.top ), ILD_TRANSPARENT );
+		}
+	}
+	// Draw normal and overlay icon
 	pImageList = listCtrl.GetImageList( LVSIL_SMALL );
-	if( pImageList )	
-	{		
+	if( pImageList )
+	{
 		UINT nOvlImageMask=lvi.state & LVIS_OVERLAYMASK;
 		pImageList->Draw( pDC, lvi.iImage, CPoint( rcIcon.left, rcIcon.top ),
-			( bHighlight ? ILD_BLEND50 : 0 ) | ILD_TRANSPARENT | nOvlImageMask );	
-	}		
-	// Draw item label - Column 0	
+			( bHighlight ? ILD_BLEND50 : 0 ) | ILD_TRANSPARENT | nOvlImageMask );
+	}
+	// Draw item label - Column 0
 	rcLabel.left += offset/2;
 	rcLabel.right -= offset;
 	pDC->DrawText( sLabel, -1, rcLabel, DT_LEFT | DT_SINGLELINE | DT_NOPREFIX | DT_NOCLIP 
-					| DT_VCENTER | DT_END_ELLIPSIS);
+		| DT_VCENTER | DT_END_ELLIPSIS);
 	
 	// Draw labels for remaining columns
-	LV_COLUMN lvc;	lvc.mask = LVCF_FMT | LVCF_WIDTH;
+	LV_COLUMN lvc;
+	lvc.mask = LVCF_FMT | LVCF_WIDTH;
 	
 	rcBounds.right = rcHighlight.right > rcBounds.right ? rcHighlight.right :
-							rcBounds.right;	rgn.CreateRectRgnIndirect( &rcBounds );
-	pDC->SelectClipRgn( &rgn );				   
-	for(int nColumn = 1; listCtrl.GetColumn( nColumn, &lvc ); nColumn++)	
+		rcBounds.right;
+	rgn.CreateRectRgnIndirect( &rcBounds );
+	pDC->SelectClipRgn( &rgn );
+	for(int nColumn = 1; listCtrl.GetColumn( nColumn, &lvc ); nColumn++)
 	{
-		rcCol.left = rcCol.right;		
+		rcCol.left = rcCol.right;
 		rcCol.right += lvc.cx;
 
-		sLabel = listCtrl.GetItemText( nItem, nColumn );		
+		sLabel = listCtrl.GetItemText( nItem, nColumn );
 		if( sLabel.GetLength() == 0 )
 			continue;
-		
-		// Get the text justification		
-		UINT nJustify = DT_LEFT;
-		switch(lvc.fmt & LVCFMT_JUSTIFYMASK)		
-		{		
-			case LVCFMT_RIGHT:
-				nJustify = DT_RIGHT;			
-				break;
-				
-			case LVCFMT_CENTER:			
-				nJustify = DT_CENTER;
-				break;		
 
-			default:			
-				break;		
-		}		
-		rcLabel = rcCol;		
+		// Get the text justification
+		UINT nJustify = DT_LEFT;
+		switch(lvc.fmt & LVCFMT_JUSTIFYMASK)
+		{
+			case LVCFMT_RIGHT:
+				nJustify = DT_RIGHT;
+				break;
+
+			case LVCFMT_CENTER:
+				nJustify = DT_CENTER;
+				break;
+
+			default:
+				break;
+		}
+		rcLabel = rcCol;
 		rcLabel.left += offset;
 		rcLabel.right -= offset;
-		
-		
-		//if( bHighlight && nColumn == 1 )
+
 		if( nColumn == 1 )
 		{
 			int h = rcLabel.Height();
 			CRect rcState( rcLabel.left, rcLabel.top + 2, rcLabel.left + h, rcLabel.bottom - 2 );
-			
-			pDC->FillSolidRect( rcState, static_cast<COLORREF>(dwColor ));
+
+			pDC->FillSolidRect( rcState, static_cast<COLORREF>(dwColor) );
 			rcLabel.left += (h + 4);
 		}
-		
+
 		pDC->DrawText(sLabel, -1, rcLabel, nJustify | DT_SINGLELINE | 
-					DT_NOPREFIX | DT_VCENTER | DT_END_ELLIPSIS);	
+			DT_NOPREFIX | DT_VCENTER | DT_END_ELLIPSIS);
 	}
 	// Draw focus rectangle if item has focus
 	if ( ( lvi.state & LVIS_FOCUSED ) && ( GetFocus() == this ) )
 		pDC->DrawFocusRect(rcHighlight);
-	
-	// Restore dc	
+
 	pDC->RestoreDC( nSavedDC );
 }// end DrawItem
 
-
-void SVResultViewClass::OnWindowPosChanged(WINDOWPOS FAR* lpwndpos) 
+void SVResultViewClass::OnWindowPosChanged(WINDOWPOS FAR* lpwndpos)
 {
 	CListView ::OnWindowPosChanged(lpwndpos);
 
-	
 	setColumnWidths();
 }
 
@@ -758,13 +521,12 @@ void SVResultViewClass::Dump(CDumpContext& dc) const
 }
 #endif //_DEBUG
 
-
-void SVResultViewClass::OnRButtonUp(UINT nFlags, CPoint point) 
+void SVResultViewClass::OnRButtonUp(UINT nFlags, CPoint point)
 {
 	CListView ::OnRButtonUp(nFlags, point);
 }
 
-void SVResultViewClass::OnRButtonDown(UINT nFlags, CPoint point) 
+void SVResultViewClass::OnRButtonDown(UINT nFlags, CPoint point)
 {
 	CMenu ResultsMenu;
 
@@ -881,6 +643,19 @@ BOOL SVResultViewClass::CheckParameters( SVTreeType& rTree, SVTreeType::SVBranch
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVResultView.cpp_v  $
+ * 
+ *    Rev 1.8   07 Jan 2015 17:50:18   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  980
+ * SCR Title:  Add Non-Inspection Objects to the Result View
+ * Checked in by:  mEichengruen;  Marcus Eichengruen
+ * Change Description:  
+ *   Avoid unnecessary redrawing and change functionality to use new ResultView*References classes.
+ * Removed method addResults.
+ * Removed dead code.
+ * Cleaned up spacing.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.7   17 Jul 2014 20:21:28   gramseier
  * Project:  SVObserver

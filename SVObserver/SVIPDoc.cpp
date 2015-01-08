@@ -5,8 +5,8 @@
 //* .Module Name     : SVIPDoc
 //* .File Name       : $Workfile:   SVIPDoc.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.29  $
-//* .Check In Date   : $Date:   19 Dec 2014 04:13:06  $
+//* .Current Version : $Revision:   1.30  $
+//* .Check In Date   : $Date:   07 Jan 2015 17:43:58  $
 //******************************************************************************
 
 #pragma region Includes
@@ -91,11 +91,14 @@
 #include "SVShiftTool.h"
 #include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
 #include "SVObjectLibrary/GlobalConst.h"
+#include "SVTreeLibrary/ObjectSelectorItem.h"
+#include "EnvironmentObject.h"
 #include "ToolClipboard.h"
 #pragma endregion Includes
 
 #pragma region Declarations
 using namespace Seidenader::ObjectSelectorLibrary;
+using namespace Seidenader::SVTreeLibrary;
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -118,7 +121,6 @@ static const CString scColorToolMustBeFirstMessage = _T("A Color Tool must ALWAY
 
 //*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/
 //* Class Name : Class SVIPDoc
-//* Note(s)    : 
 //*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/
 
 //******************************************************************************
@@ -240,7 +242,7 @@ void SVIPDoc::UpdateAllData()
 			m_oDisplay.SetIPDocDisplayComplete();
 		}
 
-		UpdateAllViews( NULL );
+		UpdateAllViews( nullptr );
 	}
 }
 
@@ -266,7 +268,7 @@ void SVIPDoc::init()
 	IsNew = true;
 
 	TheSVObserverApp.setCurrentDocument( this );
-	
+
 	//
 	// Default result height and tool set view width.
 	//
@@ -280,9 +282,8 @@ void SVIPDoc::init()
 }
 
 //******************************************************************************
-// Destructor(s):
+// Destructor:
 //******************************************************************************
-
 SVIPDoc::~SVIPDoc()
 {
 	::InterlockedExchange( &m_AllViewsUpdated, 1 );
@@ -297,7 +298,7 @@ SVIPDoc::~SVIPDoc()
 
 	ClearRegressionTestStructures();
 
-	TheSVObserverApp.setCurrentDocument( NULL );
+	TheSVObserverApp.setCurrentDocument( nullptr );
 }
 
 //******************************************************************************
@@ -332,78 +333,69 @@ void SVIPDoc::SetMDIChild( CMDIChildWnd* p_pMDIChildWnd )
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// .Title       : InitAfterSystemIsDocked
-// -----------------------------------------------------------------------------
 // .Description : "Creates this IPDoc" and his embedded tool and freeze set.
 //              : Shall become some kind of CreateObject(...) in future time.
 ////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :dd.mm.yyyy				First Implementation
-//	:15.02.2000 RO			Introduced Freeze Set.
-////////////////////////////////////////////////////////////////////////////////
 BOOL SVIPDoc::InitAfterSystemIsDocked()
 {
-	// Init Utility and Tool Set Draw menues...
+	// Init Utility and Tool Set Draw menus...
 	InitMenu();
-	
+
 	SVInspectionProcess* l_pInspection( GetInspectionProcess() );
 
-	BOOL l_bOk = ( l_pInspection != NULL );
-	
+	BOOL l_bOk = ( l_pInspection != nullptr );
+
 	if( l_bOk )
 	{
-		BOOL rc = TRUE;
-		SVImageViewClass* pView = NULL;
+		SVImageViewClass* pView = nullptr;
 		int i;
 
 		if (IsNew)
 		{
 			pView = GetImageView();
 
-			if( pView != NULL )
+			if( pView != nullptr )
 			{
 				SVGUID l_ImageId;
 
-				if( GetToolSet()->getCurrentImage() != NULL )
+				if( GetToolSet()->getCurrentImage() != nullptr )
 				{
 					l_ImageId = GetToolSet()->getCurrentImage()->GetUniqueObjectID();
 				}
 
 				pView->AttachToImage( l_ImageId );
-				//pView->AttachToImage( GetToolSet()->getCurrentImage() );
 
-				SVImageViewScroll* pScroll( NULL );
+				SVImageViewScroll* pScroll( nullptr );
 
 				pScroll = dynamic_cast< SVImageViewScroll* >( pView->GetParent() );
 
-				if( pScroll != NULL )
+				if( pScroll != nullptr )
 				{
 					CWnd* pWnd( pScroll->GetParent() );
 
-					SVIPSplitterFrame* pSplitterFrame( NULL );
+					SVIPSplitterFrame* pSplitterFrame( nullptr );
 
 					do
 					{
 						pSplitterFrame = dynamic_cast< SVIPSplitterFrame* >( pWnd );
-	
-						if( pSplitterFrame == NULL )
+
+						if( pSplitterFrame == nullptr )
 						{
 							pWnd = pWnd->GetParent();
 						}
 					}
-					while( pWnd != NULL && pSplitterFrame == NULL );
-					
-					if( pSplitterFrame != NULL )
+					while( pWnd != nullptr && nullptr == pSplitterFrame );
+
+					if( pSplitterFrame != nullptr )
 					{
 						RECT IPRect = {0, 0, 0, 0};
 						CMDIChildWnd* l_pMDIChild = GetMDIChild();
-						
-						if( l_pMDIChild != NULL )
+
+						if( l_pMDIChild != nullptr )
 						{
 							l_pMDIChild->GetWindowRect( &IPRect );
 						}
-						
+
 						pSplitterFrame->SetDefaultPaneSizes( IPRect );
 					}
 				}
@@ -411,11 +403,11 @@ BOOL SVIPDoc::InitAfterSystemIsDocked()
 		}
 		else
 		{
-			for (i = 0; i < MaxImageViews; i++)
+			for (i = 0; i < MaxImageViews; ++i)
 			{
 				pView = GetImageView( i );
 
-				if( pView != NULL )
+				if( pView != nullptr )
 				{
 					if (mbInitImagesByName)
 					{
@@ -425,13 +417,12 @@ BOOL SVIPDoc::InitAfterSystemIsDocked()
 					{
 						SVGUID l_ImageId;
 
-						if( GetToolSet()->getCurrentImage() != NULL )
+						if( GetToolSet()->getCurrentImage() != nullptr )
 						{
 							l_ImageId = GetToolSet()->getCurrentImage()->GetUniqueObjectID();
 						}
 
 						pView->AttachToImage( l_ImageId );
-						//pView->AttachToImage( GetToolSet()->getCurrentImage() );
 					}
 				}
 			}
@@ -458,16 +449,6 @@ SVString SVIPDoc::CheckName( const SVString& rToolName ) const
 // Operation(s) Of Writing Access:
 //******************************************************************************
 
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : AddTool
-// -----------------------------------------------------------------------------
-// .Description : ...
-//              :
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :dd.mm.yyyy				First Implementation
-////////////////////////////////////////////////////////////////////////////////
 BOOL SVIPDoc::AddTool(SVToolClass* pTool)
 {
 	if (nullptr != pTool)
@@ -479,7 +460,7 @@ BOOL SVIPDoc::AddTool(SVToolClass* pTool)
 
 			const ToolListSelectionInfo& info = pView->GetToolListSelectionInfo();
 			int toolListIndex = GetToolToInsertBefore(info.m_selection, info.m_listIndex);
-			
+
 			// A Color Tool must always be first on a RGB Color System.
 			// There can be multiple Color Tools on a RGB Color System, one of them must be first.
 			if (0 == toolListIndex)
@@ -504,15 +485,14 @@ BOOL SVIPDoc::AddTool(SVToolClass* pTool)
 
 			if (S_OK == SVObjectManagerClass::Instance().UpdateObserver(GetInspectionID(), l_AddTool))
 			{
-					
 				const SVGUID& rGuid = pTool->GetUniqueObjectID();
 				SetSelectedToolID(rGuid);
 
 				m_toolGroupings.AddTool(pTool->GetName(), static_cast<LPCTSTR>(info.m_selection));
-			
+
 				// Refresh all views...
-				UpdateAllViews(NULL);
-				
+				UpdateAllViews(nullptr);
+
 				SetModifiedFlag();
 
 				return true;
@@ -525,7 +505,7 @@ BOOL SVIPDoc::AddTool(SVToolClass* pTool)
 bool SVIPDoc::AddToolGrouping(bool bStartGroup)
 {
 	bool bRetVal = false;
-	
+
 	SVToolSetTabViewClass* pView = GetToolSetTabView();
 	if (pView )
 	{
@@ -545,12 +525,9 @@ bool SVIPDoc::AddToolGrouping(bool bStartGroup)
 			}
 		}
 
-		// change the selection to the group ?
-		//SetSelectedToolID( PTool->GetUniqueObjectID() );
-
 		// Refresh all views...
-		UpdateAllViews(NULL, SVIPDoc::RefreshView);
-				
+		UpdateAllViews(nullptr, SVIPDoc::RefreshView);
+
 		SetModifiedFlag();
 
 		bRetVal = true;
@@ -558,33 +535,11 @@ bool SVIPDoc::AddToolGrouping(bool bStartGroup)
 	return bRetVal;
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : SetTitle
-// -----------------------------------------------------------------------------
-// .Description : ...
-//              :
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :dd.mm.yyyy				First Implementation
-//	:
-////////////////////////////////////////////////////////////////////////////////
 void SVIPDoc::SetTitle( LPCTSTR LPSZTitle )
 {
 	CDocument::SetTitle( LPSZTitle );
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : SetPathName
-// -----------------------------------------------------------------------------
-// .Description : ...
-//              :
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :dd.mm.yyyy				First Implementation
-//	:
-////////////////////////////////////////////////////////////////////////////////
 void SVIPDoc::SetPathName( LPCTSTR LPSZPathName, BOOL bAddToMRU )
 {
 	BOOL bMod = GetPathName().CollateNoCase( LPSZPathName ) != 0;
@@ -607,39 +562,31 @@ void SVIPDoc::SetPathName( LPCTSTR LPSZPathName, BOOL bAddToMRU )
 // Operation(s) Of Reading Access:
 //******************************************************************************
 
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : getView
-// -----------------------------------------------------------------------------
-// .Description : ...
-//              :
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :dd.mm.yyyy				First Implementation
-//	:
-////////////////////////////////////////////////////////////////////////////////
 CView* SVIPDoc::getView() const
 {
+	CView* retVal( nullptr );
 	POSITION pos = GetFirstViewPosition();
-	if( pos != NULL )
-		return( GetNextView(pos) );
+	if( pos != nullptr )
+	{
+		retVal = GetNextView(pos);
+	}
 
-	return( NULL );  
+	return retVal;
 }
 
 SVToolSetTabViewClass* SVIPDoc::GetToolSetTabView()
 {
-	SVToolSetTabViewClass* l_pView( NULL );
+	SVToolSetTabViewClass* l_pView( nullptr );
 
 	POSITION pos( GetFirstViewPosition() );
 
-	CView* pIPView( NULL );
+	CView* pIPView( nullptr );
 
-	while( l_pView == NULL && pos != NULL )
+	while( nullptr == l_pView && pos != NULL )
 	{
 		pIPView = GetNextView( pos );
 
-		if( pIPView != NULL && pIPView->IsKindOf( RUNTIME_CLASS( SVToolSetTabViewClass ) ) )
+		if( pIPView != nullptr && pIPView->IsKindOf( RUNTIME_CLASS( SVToolSetTabViewClass ) ) )
 		{
 			l_pView = static_cast< SVToolSetTabViewClass* >( pIPView );
 		}
@@ -650,18 +597,18 @@ SVToolSetTabViewClass* SVIPDoc::GetToolSetTabView()
 
 SVImageViewClass* SVIPDoc::GetImageView( int p_Index )
 {
-	SVImageViewClass* l_pView( NULL );
+	SVImageViewClass* l_pView( nullptr );
 
 	POSITION pos( GetFirstViewPosition() );
 
 	long l_Count( 0 );
-	CView* pIPView( NULL );
+	CView* pIPView( nullptr );
 
-	while( l_pView == NULL && pos != NULL )
+	while( nullptr == l_pView && pos != nullptr )
 	{
 		pIPView = GetNextView( pos );
 
-		if( pIPView != NULL && pIPView->IsKindOf( RUNTIME_CLASS( SVImageViewClass ) ) )
+		if( pIPView != nullptr && pIPView->IsKindOf( RUNTIME_CLASS( SVImageViewClass ) ) )
 		{
 			if( l_Count == p_Index )
 			{
@@ -679,17 +626,17 @@ SVImageViewClass* SVIPDoc::GetImageView( int p_Index )
 
 SVResultViewClass* SVIPDoc::GetResultView()
 {
-	SVResultViewClass* l_pView( NULL );
+	SVResultViewClass* l_pView( nullptr );
 
 	POSITION pos( GetFirstViewPosition() );
 
-	CView* pIPView( NULL );
+	CView* pIPView( nullptr );
 
-	while( l_pView == NULL && pos != NULL )
+	while( nullptr == l_pView && pos != nullptr )
 	{
 		pIPView = GetNextView( pos );
 
-		if( pIPView != NULL && pIPView->IsKindOf( RUNTIME_CLASS( SVResultViewClass ) ) )
+		if( pIPView != nullptr && pIPView->IsKindOf( RUNTIME_CLASS( SVResultViewClass ) ) )
 		{
 			l_pView = static_cast< SVResultViewClass* >( pIPView );
 		}
@@ -700,11 +647,11 @@ SVResultViewClass* SVIPDoc::GetResultView()
 
 SVInspectionProcess* SVIPDoc::GetInspectionProcess() const
 {
-	SVInspectionProcess* l_pInspect = NULL;
+	SVInspectionProcess* l_pInspect = nullptr;
 
 	SVObjectClass* l_pObject = SVObjectManagerClass::Instance().GetObject( m_InspectionID );
 
-	if( l_pObject != NULL )
+	if( l_pObject != nullptr )
 	{
 		l_pInspect = dynamic_cast< SVInspectionProcess* >( l_pObject );
 	}
@@ -712,23 +659,12 @@ SVInspectionProcess* SVIPDoc::GetInspectionProcess() const
 	return l_pInspect;
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : GetToolSet
-// -----------------------------------------------------------------------------
-// .Description : ...
-//              :
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :dd.mm.yyyy				First Implementation
-//	:
-////////////////////////////////////////////////////////////////////////////////
 SVToolSetClass* SVIPDoc::GetToolSet() const
 {
-	SVToolSetClass* l_pObject( NULL );
+	SVToolSetClass* l_pObject( nullptr );
 	SVInspectionProcess* l_pInspection( GetInspectionProcess() );
 
-	if( l_pInspection != NULL )
+	if( l_pInspection != nullptr )
 	{
 		l_pObject = l_pInspection->GetToolSet();
 	}
@@ -736,23 +672,23 @@ SVToolSetClass* SVIPDoc::GetToolSet() const
 	return l_pObject;
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : GetToolSetCondition
-// -----------------------------------------------------------------------------
-// .Description : ...
-//              :
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :26.08.1999	SEJ			First Implementation
-//	:
-////////////////////////////////////////////////////////////////////////////////
+SVResultListClass* SVIPDoc::GetResultList() const
+{
+	SVResultListClass* pResultList( nullptr );
+	SVToolSetClass* pToolSet = GetToolSet();
+	if(pToolSet)
+	{
+		pResultList = pToolSet->GetResultList();
+	}
+	return pResultList;
+}
+
 SVConditionalClass* SVIPDoc::GetToolSetCondition()
 {
-	SVConditionalClass* l_pObject( NULL );
+	SVConditionalClass* l_pObject( nullptr );
 	SVToolSetClass* l_pToolSet( GetToolSet() );
 
-	if( l_pToolSet != NULL )
+	if( l_pToolSet != nullptr )
 	{
 		l_pObject = l_pToolSet->GetToolSetConditional();
 	}
@@ -774,69 +710,31 @@ BOOL SVIPDoc::GoOffline()
 	return m_oDisplay.GoOffline();
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : CanCloseFrame
-// -----------------------------------------------------------------------------
-// .Description : ...
-//              :
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :dd.mm.yyyy				First Implementation
-//	:
-////////////////////////////////////////////////////////////////////////////////
 BOOL SVIPDoc::CanCloseFrame(CFrameWnd* pFrame)
 {
 	BOOL bCanClose = FALSE;
-		
-	if( TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable( SECURITY_POINT_FILE_MENU_CLOSE_CONFIGURATION ) ) 
+
+	if( TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable( SECURITY_POINT_FILE_MENU_CLOSE_CONFIGURATION ) )
 	{
 		if( SVSVIMStateClass::CheckState( SV_STATE_CANCELING ) || SVSVIMStateClass::CheckState( SV_STATE_CLOSING ) )
 		{
 			bCanClose = CDocument::CanCloseFrame(pFrame);
 		}
 	}
-	
+
 	if (!bCanClose)
 	{
 		AfxMessageBox(_T("Invalid Operation!\n")
 			_T("If You wish to remove this inspection\n")
 			_T("Go to the Edit menu and Select Edit Configuration."), MB_OK|MB_ICONSTOP, 0);
 	}
-		
+
 	return bCanClose;
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : SaveModified
-// -----------------------------------------------------------------------------
-// .Description : ...
-//              :
-// -----------------------------------------------------------------------------
-// .Input(s)
-//	 Type				Name				Description
-//	: 
-//  :
-// .Output(s)
-//	:
-//  :
-// .Return Value
-//	: 
-// -----------------------------------------------------------------------------
-// .Import Function Reference(s)
-//	:
-// -----------------------------------------------------------------------------
-// .Import Variable Reference(s)
-//	:
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :dd.mm.yyyy				First Implementation
-//	:
-////////////////////////////////////////////////////////////////////////////////
 BOOL SVIPDoc::SaveModified()
 {
-	// Don´t save modified
+	// Don't save modified
 	if ( SVSVIMStateClass::CheckState( SV_STATE_CANCELING ) ) { return TRUE; }
 
 	int index = 0;
@@ -848,33 +746,6 @@ BOOL SVIPDoc::SaveModified()
 	return CDocument::SaveModified();
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : OnNewDocument
-// -----------------------------------------------------------------------------
-// .Description : ...
-//              :
-// -----------------------------------------------------------------------------
-// .Input(s)
-//	 Type				Name				Description
-//	: 
-//  :
-// .Output(s)
-//	:
-//  :
-// .Return Value
-//	: 
-// -----------------------------------------------------------------------------
-// .Import Function Reference(s)
-//	:
-// -----------------------------------------------------------------------------
-// .Import Variable Reference(s)
-//	:
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :dd.mm.yyyy				First Implementation
-//	:
-////////////////////////////////////////////////////////////////////////////////
 BOOL SVIPDoc::OnNewDocument()
 {
 	if( ! CDocument::OnNewDocument() ) { return FALSE; }
@@ -885,33 +756,6 @@ BOOL SVIPDoc::OnNewDocument()
 	return TRUE;
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : // e.g. Compare member function of class ...
-// -----------------------------------------------------------------------------
-// .Description : ...
-//              :
-// -----------------------------------------------------------------------------
-// .Input(s)
-//	 Type				Name				Description
-//	: 
-//  :
-// .Output(s)
-//	:
-//  :
-// .Return Value
-//	: 
-// -----------------------------------------------------------------------------
-// .Import Function Reference(s)
-//	:
-// -----------------------------------------------------------------------------
-// .Import Variable Reference(s)
-//	:
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :dd.mm.yyyy				First Implementation
-//	:
-////////////////////////////////////////////////////////////////////////////////
 void SVIPDoc::OnCloseDocument()
 {
 	if( this )
@@ -929,33 +773,6 @@ void SVIPDoc::OnCloseDocument()
 	CDocument::OnCloseDocument();
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : CloseDocument
-// -----------------------------------------------------------------------------
-// .Description : ...
-//              :
-// -----------------------------------------------------------------------------
-// .Input(s)
-//	 Type				Name				Description
-//	: 
-//  :
-// .Output(s)
-//	:
-//  :
-// .Return Value
-//	: 
-// -----------------------------------------------------------------------------
-// .Import Function Reference(s)
-//	:
-// -----------------------------------------------------------------------------
-// .Import Variable Reference(s)
-//	:
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :dd.mm.yyyy				First Implementation
-//	:
-////////////////////////////////////////////////////////////////////////////////
 void SVIPDoc::CloseDocument()
 {
 	if( !SVSVIMStateClass::CheckState( SV_STATE_CANCELING | SV_STATE_CLOSING ) &&
@@ -967,41 +784,26 @@ void SVIPDoc::CloseDocument()
 	OnFileClose();
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : OnUpdateStatusInfo
-// -----------------------------------------------------------------------------
-// .Description : ...
-//              :
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :dd.mm.yyyy				First Implementation
-//	:
-////////////////////////////////////////////////////////////////////////////////
 void SVIPDoc::OnUpdateStatusInfo( CCmdUI *pCmdUI )
 {
 	switch( pCmdUI->m_nID )
 	{
 		case ID_INDICATOR_INFO:
-
+		{
 			( ( SVMainFrame* ) AfxGetApp()->m_pMainWnd )->OnUpdateStatusInfo( pCmdUI );
+			break;
+		}
+		default:
+		{
+			// Do nothing.
+			break;
+		}
 	};
-
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : OnUpdateRunRegressionTest
-// -----------------------------------------------------------------------------
-// .Description : ...
-//              :
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :dd.mm.yyyy				First Implementation
-//	:
-////////////////////////////////////////////////////////////////////////////////
-void SVIPDoc::OnUpdateRunRegressionTest( CCmdUI * PCmdUI )
+void SVIPDoc::OnUpdateRunRegressionTest( CCmdUI* PCmdUI )
 {
+	// @WARNING:  Pointers should be checked before they are dereferenced.
 	PCmdUI->Enable(TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable( SECURITY_POINT_MODE_MENU_REGRESSION_TEST ));
 	PCmdUI->SetCheck( SVSVIMStateClass::CheckState( SV_STATE_REGRESSION ) );
 }
@@ -1015,9 +817,11 @@ void SVIPDoc::OnAllowAdjustLightReference(CCmdUI* pCmdUI)
 	{
 		SVVirtualCameraPtrSet cameraSet;
 		SVInspectionProcess* pInspection = GetInspectionProcess();
+		// @WARNING:  Pointers should be checked before they are dereferenced.
 		HRESULT hr = pInspection->GetCamerasForLightReference(cameraSet);
 		bEnable = (hr == S_OK && cameraSet.size() > 0) ? true : false;
 	}
+	// @WARNING:  Pointers should be checked before they are dereferenced.
 	pCmdUI->Enable(bEnable);
 }
 
@@ -1030,22 +834,14 @@ void SVIPDoc::OnAllowAdjustLut(CCmdUI* pCmdUI)
 	{
 		SVVirtualCameraPtrSet cameraSet;
 		SVInspectionProcess* pInspection = GetInspectionProcess();
+		// @WARNING:  Pointers should be checked before they are dereferenced.
 		HRESULT hr = pInspection->GetCamerasForLut(cameraSet);
 		bEnable = (hr == S_OK && cameraSet.size() > 0) ? true : false;
 	}
+	// @WARNING:  Pointers should be checked before they are dereferenced.
 	pCmdUI->Enable(bEnable);
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : OnAdjustLightReference
-// -----------------------------------------------------------------------------
-// .Description : ...
-//              :
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :02.10.1997 RO			First Implementation
-////////////////////////////////////////////////////////////////////////////////
 void SVIPDoc::OnAdjustLightReference()
 {
 	SVInspectionProcess* l_pInspection( GetInspectionProcess() );
@@ -1059,18 +855,17 @@ void SVIPDoc::OnAdjustLightReference()
 
 	// NOTE:
 	//		 At this time an IPDoc has only one camera image input!!!
-	
+
 	int iChannel = 0;
 	// Show extreme LUT: black --> blue, white --> green...
 	GetImageView()->ShowExtremeLUT();
 
-//!!		SVLightReferenceDialogPropertySheetClass dlg( CString( _T( "Light Reference Adjustment - " ) ) + pCurrentSystem->GetBoardType() + _T( " - [" ) + GetTitle() + _T( "]" ) );
 	SVLightReferenceDialogPropertySheetClass dlg( CString( _T( "Light Reference Adjustment - [" ) + GetTitle() + _T( "]" ) ));
-	
+
 	// obtain copies of the arrays to set if IDOK
 	SVLightReferenceArray apLRA;
 	SVLightReferenceArray apLRAorig;
-	
+
 	SVVirtualCameraPtrSet setCameras;
 
 	l_pInspection->GetCameras( setCameras );
@@ -1084,7 +879,7 @@ void SVIPDoc::OnAdjustLightReference()
 			SVLightReference* pLRA = new SVLightReference();
 			( *l_Iter )->GetAcquisitionDevice()->GetLightReference(*pLRA);
 			apLRA.Add(pLRA);
-			
+
 			// make another copy for cancel... this should move into the propsheet
 			SVLightReference* pLRAorig = new SVLightReference();
 			( *l_Iter )->GetAcquisitionDevice()->GetLightReference(*pLRAorig);
@@ -1093,21 +888,21 @@ void SVIPDoc::OnAdjustLightReference()
 
 		++l_Iter;
 	}
-	
+
 	//remove apply button
 	dlg.m_psh.dwFlags |= PSH_NOAPPLYNOW;
 
 	if (dlg.CreatePages(setCameras, apLRA))
 	{
 		SVSVIMStateClass::AddState( SV_STATE_EDITING );
-		
+
 		SVConfigurationObject* pConfig = NULL;
 		SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
 		if( dlg.DoModal() == IDOK )
 		{
 			SetModifiedFlag();
-			
+
 			for (i=0, l_Iter = setCameras.begin(); l_Iter != setCameras.end(); ++i, ++l_Iter )
 			{
 				( *l_Iter )->SetLightReference(*(apLRA.GetAt(i)));
@@ -1155,11 +950,11 @@ void SVIPDoc::OnAdjustLut()
 	GetImageView()->ShowExtremeLUT();
 
 	SVLutDlg dlg( CString( _T( "LUT Adjustment - [" ) + GetTitle() + _T( "]" ) ));
-	
+
 	// obtain copies of the luts to set if IDOK / IDCANCEL
 	SVLutDlg::SVLutMap aLut;
 	SVLutDlg::SVLutMap aLutOrig;
-	
+
 	SVVirtualCameraPtrSet setCameras;
 
 	l_pInspection->GetCameras( setCameras );
@@ -1182,7 +977,7 @@ void SVIPDoc::OnAdjustLut()
 	dlg.m_psh.dwFlags |= PSH_NOAPPLYNOW;
 
 	bool bSuccess = dlg.Create(setCameras, aLut);
-	
+
 	if ( bSuccess )
 	{
 		SVSVIMStateClass::AddState( SV_STATE_EDITING );
@@ -1230,17 +1025,6 @@ void SVIPDoc::OnAddShiftTool()
 	if( pTool ) { delete( pTool ); }
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : OnAddWindowTool
-// -----------------------------------------------------------------------------
-// .Description : ...
-//              :
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :dd.mm.yyyy				First Implementation
-//	:
-////////////////////////////////////////////////////////////////////////////////
 void SVIPDoc::OnAddWindowTool()
 {
 	SVToolClass* pTool = new SVWindowToolClass( TRUE );
@@ -1268,17 +1052,6 @@ void SVIPDoc::OnAddPerspectiveTool()
 	if( pTool ) { delete( pTool ); }
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : OnAddImageTool
-// -----------------------------------------------------------------------------
-// .Description : ...
-//              :
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :dd.mm.yyyy				First Implementation
-//	:
-////////////////////////////////////////////////////////////////////////////////
 void SVIPDoc::OnAddImageTool()
 {
 	SVToolClass* pTool = new SVImageToolClass( TRUE );
@@ -1288,16 +1061,6 @@ void SVIPDoc::OnAddImageTool()
 	if( pTool ) { delete( pTool ); }
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : OnAddAcquisitionTool
-// -----------------------------------------------------------------------------
-// .Description : ...
-//              :
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :24.01.2000 RO			First Implementation
-////////////////////////////////////////////////////////////////////////////////
 void SVIPDoc::OnAddAcquisitionTool()
 {
 	SVToolClass* pTool = new SVAcquisitionToolClass( TRUE );
@@ -1307,16 +1070,6 @@ void SVIPDoc::OnAddAcquisitionTool()
 	if( pTool ) { delete( pTool ); }
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : OnAddArchiveTool
-// -----------------------------------------------------------------------------
-// .Description : ...
-//              :
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :27.05.1999 FRB			First Implementation
-////////////////////////////////////////////////////////////////////////////////
 void SVIPDoc::OnAddArchiveTool()
 {
 	SVToolClass* pTool = new SVArchiveTool;
@@ -1335,17 +1088,6 @@ void SVIPDoc::OnAddLinearTool()
 	if( pTool ) { delete( pTool ); }
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : OnAddLoadImageTool
-// -----------------------------------------------------------------------------
-// .Description : ...
-//              :
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :dd.mm.yyyy				First Implementation
-//	:
-////////////////////////////////////////////////////////////////////////////////
 void SVIPDoc::OnAddLoadImageTool()
 {
 	SVToolClass* pTool = new SVLoadImageToolClass( TRUE );
@@ -1355,16 +1097,6 @@ void SVIPDoc::OnAddLoadImageTool()
 	if( pTool ) { delete( pTool ); }
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : OnAddMathTool
-// -----------------------------------------------------------------------------
-// .Description : ...
-//              :
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :dd.mm.yyyy				First Implementation
-////////////////////////////////////////////////////////////////////////////////
 void SVIPDoc::OnAddMathTool()
 {
 	SVToolClass* pTool = new SVMathToolClass;
@@ -1374,16 +1106,6 @@ void SVIPDoc::OnAddMathTool()
 	if( pTool ) { delete( pTool ); }
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : OnAddStatisticsTool
-// -----------------------------------------------------------------------------
-// .Description : ...
-//              :
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :dd.mm.yyyy				First Implementation
-////////////////////////////////////////////////////////////////////////////////
 void SVIPDoc::OnAddStatisticsTool()
 {
 	SVToolClass* pTool = new SVStatisticsToolClass( TRUE );
@@ -1393,16 +1115,6 @@ void SVIPDoc::OnAddStatisticsTool()
 	if( pTool ) { delete( pTool ); }
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : OnAddTransformationTool
-// -----------------------------------------------------------------------------
-// .Description : ...
-//              :
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :08.02.2000 SEJ			First Implementation
-////////////////////////////////////////////////////////////////////////////////
 void SVIPDoc::OnAddTransformationTool()
 {
 	SVToolClass* pTool = new SVTransformationToolClass;
@@ -1421,17 +1133,6 @@ void SVIPDoc::OnAddRemoteInputTool()
 	if( pTool ) { delete( pTool ); }
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : OnAddPolarUnwrapTool
-// -----------------------------------------------------------------------------
-// .Description : ...
-//              :
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :27.02.2000 RO			First Implementation
-//	:23.03.2000 RO			Moved call to set default formulas into AddTool(...)
-////////////////////////////////////////////////////////////////////////////////
 void SVIPDoc::OnAddPolarUnwrapTool()
 {
 	SVPolarTransformationToolClass* pTool = new SVPolarTransformationToolClass;
@@ -1447,16 +1148,6 @@ void SVIPDoc::OnAddPolarUnwrapTool()
 	if( pTool ) { delete( pTool ); }
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : OnAddColorTool
-// -----------------------------------------------------------------------------
-// .Description : ...
-//              :
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :dd.mm.yyyy				First Implementation
-////////////////////////////////////////////////////////////////////////////////
 void SVIPDoc::OnAddColorTool()
 {
 	SVToolClass* pTool = new SVColorToolClass( TRUE );
@@ -1468,6 +1159,7 @@ void SVIPDoc::OnAddColorTool()
 
 void SVIPDoc::OnUpdateAddStartToolGrouping(CCmdUI* pCmdUI)
 {
+	// @WARNING:  Pointers should be checked before they are dereferenced.
 	pCmdUI->Enable(!SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST) && SVSVIMStateClass::CheckState(SV_STATE_EDIT));
 }
 
@@ -1483,6 +1175,7 @@ void SVIPDoc::OnUpdateAddEndToolGrouping(CCmdUI* pCmdUI)
 			bEnable = pView->IsEndToolGroupAllowed();
 		}
 	}
+	// @WARNING:  Pointers should be checked before they are dereferenced.
 	pCmdUI->Enable(bEnable);
 }
 
@@ -1496,16 +1189,6 @@ void SVIPDoc::OnAddEndToolGrouping()
 	AddToolGrouping(false);
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : OnEditDelete
-// -----------------------------------------------------------------------------
-// .Description : ...
-//              :
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :27.05.1997 RO			First Implementation
-////////////////////////////////////////////////////////////////////////////////
 void SVIPDoc::OnEditDelete()
 {
 	SVInspectionProcess* pInspection(GetInspectionProcess());
@@ -1527,15 +1210,15 @@ void SVIPDoc::OnEditDelete()
 		if (!rGuid.empty())
 		{
 			// Don't let the first tool be deleted if it is a Color Tool and 
-			// the next tool isn't a Color Tool
+			// the next tool isn't a Color Tool.
 			// A Color Tool must always be first on a RGB Color System.
 			SVTaskObjectClass* pFirstTaskObject = pToolSet->GetAt(0);
-			if (pFirstTaskObject && pFirstTaskObject->GetUniqueObjectID() == rGuid) // If deleting fist item
+			if (pFirstTaskObject && pFirstTaskObject->GetUniqueObjectID() == rGuid) // If deleting first item
 			{
 				if (pToolSet->GetSize() > 1)
 				{
 					SVToolClass* pNextTool = dynamic_cast<SVToolClass*>(pToolSet->GetAt(1));
-			
+
 					if( pFirstTaskObject && SV_IS_KIND_OF(pFirstTaskObject, SVColorToolClass) &&
 						pNextTool && !SV_IS_KIND_OF(pNextTool, SVColorToolClass))
 					{
@@ -1550,7 +1233,7 @@ void SVIPDoc::OnEditDelete()
 				int index = GetSelectedToolIndex(rInfo.m_selection);
 
 				HRESULT hr = DeleteTool(pTaskObject);
-			
+
 				if (S_OK == hr)
 				{
 					m_toolGroupings.RemoveTool(static_cast<LPCTSTR>(rInfo.m_selection));
@@ -1593,7 +1276,7 @@ void SVIPDoc::OnEditDelete()
 			int index = rInfo.m_listIndex;
 			index--;
 			m_toolGroupings.RemoveGroup(static_cast<LPCTSTR>(rInfo.m_selection));
-				
+
 			pToolSetView->m_toolSetListCtrl.SaveScrollPos();
 			pToolSetView->m_toolSetListCtrl.Rebuild();
 			// Select previous..
@@ -1687,7 +1370,7 @@ void SVIPDoc::OnEditPaste()
 		ToolClipboard Clipboard( *pInspection );
 		SVGUID ToolGuid( GUID_NULL );
 		SVToolSetTabViewClass* pView = GetToolSetTabView();
-		
+
 		const ToolListSelectionInfo& info = pView->GetToolListSelectionInfo();
 		int ToolListIndex = GetToolToInsertBefore(info.m_selection, info.m_listIndex);
 		Clipboard.readFromClipboard( ToolListIndex, ToolGuid );
@@ -1763,17 +1446,6 @@ void SVIPDoc::OnUpdateEditPaste( CCmdUI* pCmdUI )
 	pCmdUI->Enable( Enabled );
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : OnEditTool
-// -----------------------------------------------------------------------------
-// .Description : ...
-//              :
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :dd.mm.yyyy				First Implementation
-//	:10.08.1999 RO			Added User Check
-////////////////////////////////////////////////////////////////////////////////
 void SVIPDoc::OnEditTool()
 {
 	// Check current user access...
@@ -1791,7 +1463,7 @@ void SVIPDoc::OnEditTool()
 				AfxMessageBox("This tool is now obsolete.  Please replace with a Linear Tool.");
 				return;
 			}
-			if (rToolType.SubType == SVToolBuildReferenceObjectType) 
+			if (rToolType.SubType == SVToolBuildReferenceObjectType)
 			{
 				AfxMessageBox("This tool is now obsolete. Please replace with either a Shift Tool or Transformation Tool");
 				return;
@@ -1822,17 +1494,6 @@ void SVIPDoc::OnEditTool()
 	}
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : OnEditToolSetCondition
-// -----------------------------------------------------------------------------
-// .Description : ...
-//              :
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :16.06.1999 RO			First Implementation
-//	:10.08.1999 RO			Added User Check
-////////////////////////////////////////////////////////////////////////////////
 void SVIPDoc::OnEditToolSetCondition()
 {
 	// Check current user access...
@@ -1847,15 +1508,6 @@ void SVIPDoc::OnEditToolSetCondition()
 	}
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : OnFileSaveImage
-// -----------------------------------------------------------------------------
-// .Description : Opens Save Image Panel.
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :dd.mm.yyyy				First Implementation
-////////////////////////////////////////////////////////////////////////////////
 void SVIPDoc::OnFileSaveImage()
 {
 	SVSaveToolSetImageDialogClass dlg( GetToolSet() );
@@ -1866,34 +1518,12 @@ void SVIPDoc::OnFileSaveImage()
 // Debug Operation(s):
 //******************************************************************************
 
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : AssertValid
-// -----------------------------------------------------------------------------
-// .Description : Only in Debug version!
-//              :
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :dd.mm.yyyy				First Implementation
-//	:
-////////////////////////////////////////////////////////////////////////////////
 #ifdef _DEBUG
 void SVIPDoc::AssertValid() const
 {
 	CDocument::AssertValid();
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : Dump
-// -----------------------------------------------------------------------------
-// .Description : Only in Debug version!
-//              :
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :dd.mm.yyyy				First Implementation
-//	:
-////////////////////////////////////////////////////////////////////////////////
 void SVIPDoc::Dump(CDumpContext& dc) const
 {
 	CDocument::Dump(dc);
@@ -1903,28 +1533,54 @@ void SVIPDoc::Dump(CDumpContext& dc) const
 void SVIPDoc::OnResultsPicker()
 {
 	SVInspectionProcess* l_pInspection( GetInspectionProcess() );
-	if( nullptr == l_pInspection ) { return; }
-	
+	SVResultListClass* pResultList( GetResultList() );
+	if( nullptr == l_pInspection || nullptr == pResultList ) { return; }
+
 	SVString InspectionName( l_pInspection->GetName() );
 
-	ObjectTreeGenerator::Instance().setSelectorType( ObjectTreeGenerator::SelectorTypeEnum::TypeSetAttributes );
+	ObjectTreeGenerator::Instance().setSelectorType( ObjectTreeGenerator::SelectorTypeEnum::TypeMultipleObject);
 	ObjectTreeGenerator::Instance().setAttributeFilters( SV_VIEWABLE );
+
+	CString tmp;
+	tmp.LoadString(IDS_CLASSNAME_ROOTOBJECT);
+	ObjectTreeGenerator::Instance().setLocationFilter( ObjectTreeGenerator::FilterInput, tmp, SVString( _T("") ) );
+
+	SVString EnvName(Seidenader::SVObjectLibrary::FqnEnvironmentMode);
+
+	// The environment variables in the dialog should have the same order as in the menu.
+	SVStringArray ObjectNameList;
+	EnvironmentObject* pEnvironment( nullptr );
+	SVObjectManagerClass::Instance().GetRootChildObject(pEnvironment, SVObjectManagerClass::Environment);
+	if(nullptr != pEnvironment)
+	{
+		pEnvironment->getEnvironmentObjectNameList(ObjectNameList, EnvName, SV_VIEWABLE);
+		ObjectTreeGenerator::Instance().insertTreeObjects( ObjectNameList);
+	}
+
+	SVPPQObject* ppq( l_pInspection->GetPPQ() );
+	SVString PPQName;
+	if(nullptr != ppq)
+	{
+		PPQName = ppq->GetName();
+		ObjectTreeGenerator::Instance().insertTreeObjects( PPQName );
+	}
+
 	ObjectTreeGenerator::Instance().setLocationFilter( ObjectTreeGenerator::FilterInput, InspectionName, SVString( _T("") ) );
-
-	//The next code is commented out because this task is moved form 7.00 to 7.10 (see SVO-95 and SVO-475).
-	//CString tmp;
-	//tmp.LoadString(IDS_CLASSNAME_ROOTOBJECT);
-	//ObjectTreeGenerator::Instance().setLocationFilter( ObjectTreeGenerator::FilterInput, tmp, SVString( _T("") ) );
-	//ObjectTreeGenerator::Instance().insertTreeObjects( Seidenader::SVObjectLibrary::FqnEnvironmentMode );
-	//SVPPQObject* ppq = GetInspectionProcess()->GetPPQ();
-	//SVString PPQName = ppq->GetName();
-	//ObjectTreeGenerator::Instance().insertTreeObjects( PPQName );
-
 	SVOutputInfoListClass OutputList;
-	// BRW - Should probably check the output from GetToolSet before dereferencing it.
-	// BRW - Should probably check the return value of GetOutputList before using OutputList.
-	GetToolSet()->GetOutputList( OutputList );
-	ObjectTreeGenerator::Instance().insertOutputList( OutputList );
+
+	SVToolSetClass* pToolset( GetToolSet() );
+	if(nullptr != pToolset)
+	{
+		pToolset->GetOutputList( OutputList );
+		ObjectTreeGenerator::Instance().insertOutputList( OutputList );
+	}
+
+	SVStringSet SelectedNames;
+
+	pResultList->m_EnvResults.GetNameSet(SelectedNames);
+	pResultList->m_ToolReferences.GetNameSet(SelectedNames);
+
+	ObjectTreeGenerator::Instance().setCheckItems(SelectedNames);
 
 	CString ResultPicker;
 	ResultPicker.LoadString( IDS_RESULT_PICKER );
@@ -1938,6 +1594,32 @@ void SVIPDoc::OnResultsPicker()
 
 	if( IDOK == Result )
 	{
+		const std::deque<ObjectSelectorItem>& SelectedItems = ObjectTreeGenerator::Instance().getResults();
+		std::deque<ObjectSelectorItem>::const_iterator it;
+
+		pResultList->m_EnvResults.Clear();
+		pResultList->m_ToolReferences.Clear();
+
+		size_t EnvSize = EnvName.size();
+		size_t PPQSize = PPQName.size();
+
+		for( it = SelectedItems.begin(); it != SelectedItems.end(); it++ )
+		{
+			if(it->isLeaf())
+			{
+				// @WARNING:  It's dangerous to call .Left before checking the length of the string returned by getLocation().
+				if( ( EnvSize > 0 && it->getLocation().Left(EnvSize).Compare(EnvName) == 0 ) || 
+					( PPQSize > 0 && it->getLocation().Left(PPQSize).Compare(PPQName) == 0 ) )
+				{
+					pResultList->m_EnvResults.Insert(it->getLocation());
+				}
+				else
+				{
+					pResultList->m_ToolReferences.Insert(it->getLocation());
+				}
+			}
+		}
+
 		// Set the Document as modified
 		SetModifiedFlag();
 		RebuildResultsList();
@@ -2096,9 +1778,9 @@ void SVIPDoc::OnSelectPPQVariable()
 			dlg.m_ppPPQInputs.push_back( l_pInspection->m_PPQInputs[ z ].m_IOEntryPtr );
 		}
 	}
-	
+
 	std::sort( dlg.m_ppPPQInputs.begin(), dlg.m_ppPPQInputs.end(), &SVIOEntryHostStruct::PtrGreater );
-	
+
 	INT_PTR dlgResult = dlg.DoModal();
 	if( dlgResult == IDOK )
 	{
@@ -2146,27 +1828,18 @@ void SVIPDoc::OnSelectPPQVariable()
 		// Set the Document as modified
 		SetModifiedFlag();
 
+		SVResultListClass* pResultList = l_pInspection->GetResultList();
+		if(pResultList)
+		{
+			pResultList->m_PPQInputReferences.BuildReferenceVector(l_pInspection);
+		}
+
 		l_pInspection->LastProductNotify();
 
 		m_PPQListTimestamp = SVClock::GetTimeStamp();
 	}// end if
 }// end OnSelectPPQVariable
 
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : EditToolSetCondition()
-// -----------------------------------------------------------------------------
-// .Description : 
-// -----------------------------------------------------------------------------
-// .Input(s)
-//	 Type				Name				Description
-//	:None
-// .Return Value
-//	:BOOL
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment
-//  :26.08.1999 SEJ			First Implementation
-////////////////////////////////////////////////////////////////////////////////
 void SVIPDoc::EditToolSetCondition()
 {
 	SVConditionalClass* pCondition = GetToolSetCondition();
@@ -2174,64 +1847,59 @@ void SVIPDoc::EditToolSetCondition()
 	SVToolSetAdjustmentDialogSheetClass dlg( *pCondition, GetToolSet()->GetName() );
 
 	dlg.m_psh.dwFlags |= PSH_NOAPPLYNOW;
-	
+
 	INT_PTR dlgResult = dlg.DoModal();
 	if( dlgResult == IDOK ) { SetModifiedFlag(); }
 }
 
 void SVIPDoc::RebuildResultsList()
 {
-	SVResultListClass* pResultList = GetToolSet()->GetResultList();
+	SVResultListClass* pResultList = GetResultList();
+
 	if( pResultList ) { pResultList->Refresh( GetToolSet() ); }
 }
 
 HRESULT SVIPDoc::IsResultDefinitionsUpdated() const
 {
 	HRESULT l_Status = S_OK;
+	SVResultListClass* pResultList = GetResultList();
 
-	SVToolSetClass* pToolSet = GetToolSet();
-	if( pToolSet )
+	if( pResultList )
 	{
-		// Get the OutputList
-		SVResultListClass* pResultList = pToolSet->GetResultList();
-		if( pResultList )
+		if( pResultList->m_PPQInputReferences.getUpdateTimeStamp() < m_ResultDefinitionsTimestamp 
+			&& pResultList->m_ToolReferences.getUpdateTimeStamp() < m_ResultDefinitionsTimestamp 
+			&& pResultList->m_EnvResults.getUpdateTimeStamp() < m_ResultDefinitionsTimestamp )
 		{
-			if( m_PPQListTimestamp < m_ResultDefinitionsTimestamp && pResultList->m_LastUpdateTimestamp < m_ResultDefinitionsTimestamp )
-			{
-				l_Status = S_FALSE;
-			}
-		}
-		else
-		{
-			l_Status = E_FAIL;
+			l_Status = S_FALSE;
 		}
 	}
 	else
 	{
 		l_Status = E_FAIL;
 	}
-
 	return l_Status;
 }
 
 HRESULT SVIPDoc::GetResultDefinitions( SVResultDefinitionDeque& p_rDefinitions ) const
 {
 	HRESULT l_Status = S_OK;
-
+	bool bOK = false;
 	p_rDefinitions.clear();
-
-	addEnvironmentObject2ResultDefinitions(p_rDefinitions);
-	l_Status |= addPPQ_XParameter2ResultDefinitions(p_rDefinitions);
-
-	if ( S_OK == l_Status )
-					{
-		l_Status |= addToolsetObject2ResultDefinitions(p_rDefinitions);
-
-		if ( S_OK == l_Status )
+	SVResultListClass* pResultList = GetResultList();
+	if(pResultList)
 	{
-			l_Status |= addPPQInputs2ResultDefinitions(p_rDefinitions);
+		bOK = pResultList->m_EnvResults.SetResultDefinitions(p_rDefinitions);
+
+		if(bOK)
+		{
+			bOK = pResultList->m_ToolReferences.SetResultDefinitions(p_rDefinitions);
+
+			if(bOK)
+			{
+				bOK = pResultList->m_PPQInputReferences.SetResultDefinitions(p_rDefinitions);
+			}
+		}
 	}
-				}
 
 	if( l_Status == S_OK ) { m_ResultDefinitionsTimestamp = SVClock::GetTimeStamp(); }
 
@@ -2272,7 +1940,7 @@ HRESULT SVIPDoc::IsToolSetListUpdated() const
 BOOL SVIPDoc::checkOkToDelete( SVTaskObjectClass* pTaskObject )
 {
 	BOOL bRetVal = TRUE;
-	
+
 	// show dependents dialog
 	SVShowDependentsDialog dlg;
 	dlg.PTaskObject = pTaskObject;
@@ -2299,7 +1967,7 @@ void SVIPDoc::RunRegressionTest()
 	if ( SVSVIMStateClass::CheckState( SV_STATE_TEST ) ) { l_bWasTestMode = true; }
 
 	if ( l_bWasRunMode || l_bWasTestMode ) { TheSVObserverApp.OnStop(); }
-	
+
 	SVInspectionProcess* l_pInspection( GetInspectionProcess() );
 
 	if( nullptr == l_pInspection ) { return; }
@@ -2341,7 +2009,6 @@ void SVIPDoc::RunRegressionTest()
 				SVSVIMStateClass::RemoveState( SV_STATE_EDIT );
 			}
 
-
 			TheSVObserverApp.DeselectTool();
 
 			SVSVIMStateClass::AddState(SV_STATE_REGRESSION);
@@ -2358,7 +2025,7 @@ void SVIPDoc::RunRegressionTest()
 			( ( SVMainFrame* ) AfxGetApp()->m_pMainWnd )->m_pregTestDlg->SetIPDocParent(this);
 
 			( ( SVMainFrame* ) AfxGetApp()->m_pMainWnd )->m_pregTestDlg->Create(IDD_DIALOG_REGRESSIONTEST_RUN);
-			
+
 			( ( SVMainFrame* ) AfxGetApp()->m_pMainWnd )->m_pregTestDlg->ShowWindow(SW_SHOW);
 
 			DWORD dwThreadID;
@@ -2368,21 +2035,14 @@ void SVIPDoc::RunRegressionTest()
 	}
 	else
 	{
-			AfxMessageBox("Inspection is unable to go into Regression Test Mode.  There is an unknown error with the inspection.");
+		AfxMessageBox("Inspection is unable to go into Regression Test Mode.  There is an unknown error with the inspection.");
 	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// .Title       : InitMenu
-// -----------------------------------------------------------------------------
-// .Description : Loads and inits dyn. Menues.
-//              :	Utility Menu
+// .Description : Loads and inits dyn. Menus
+//				:	Utility Menu
 //				:	Tool Set Draw Menu
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :dd.mm.yyyy				First Implementation
-//	:22.02.2000 RO			Added Tool Set Draw Menu support.
 ////////////////////////////////////////////////////////////////////////////////
 void SVIPDoc::InitMenu()
 {
@@ -2437,15 +2097,9 @@ void SVIPDoc::InitMenu()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// .Title       : OnUpdateViewToolSetDraw
-// -----------------------------------------------------------------------------
 // .Description : To deactivate dummy tool set draw menu, if tool set draw menu
-//              : can not be inited.
-//				: Refer to Initmenu().
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :22.02.2000 RO			First Implementation
+//				: cannot be inited.
+//				: Refer to InitMenu().
 ////////////////////////////////////////////////////////////////////////////////
 void SVIPDoc::OnUpdateViewToolSetDraw(CCmdUI* pCmdUI)
 {
@@ -2461,18 +2115,12 @@ void SVIPDoc::OnUpdateViewToolSetDraw(CCmdUI* pCmdUI)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// .Title       : OnUpdateViewToolSetDrawSubMenues
-// -----------------------------------------------------------------------------
 // .Description : Updates all Tool Set Draw menu items, depending on
 //				: CheckCurrentUserAccess( ID_VIEW_TOOLSETDRAW ) and
 //				: current set draw flag.
 //				:
 //				: Range of nId must be 
 //				: [ ID_VIEW_TOOLSETDRAW_POP_BASE...ID_VIEW_TOOLSETDRAW_POP_MAX ]
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :22.02.2000 RO			First Implementation
 ////////////////////////////////////////////////////////////////////////////////
 void SVIPDoc::OnUpdateViewToolSetDrawSubMenus( CCmdUI* PCmdUI )
 {
@@ -2499,15 +2147,9 @@ void SVIPDoc::OnUpdateViewToolSetDrawSubMenus( CCmdUI* PCmdUI )
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// .Title       : OnChangeToolSetDrawFlag
-// -----------------------------------------------------------------------------
 // .Description : Called if user 'clicks' on a tool set draw menu item.
 //				: Range of nId must be 
 //				: [ ID_VIEW_TOOLSETDRAW_POP_BASE...ID_VIEW_TOOLSETDRAW_POP_MAX ]
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :22.02.2000 RO			First Implementation
 ////////////////////////////////////////////////////////////////////////////////
 void SVIPDoc::OnChangeToolSetDrawFlag( UINT nId )
 {
@@ -2626,11 +2268,11 @@ BOOL SVIPDoc::OnOpenDocument(LPCTSTR lpszPathName)
 		SVFileNameManagerClass svFileManager;
 
 		bOk = svFileManager.LoadItem( &msvFileName );
-	}
 
-	if ( bOk )
-	{
-		bOk = CDocument::OnOpenDocument( msvFileName.GetFullFileName() );
+		if ( bOk )
+		{
+			bOk = CDocument::OnOpenDocument( msvFileName.GetFullFileName() );
+		}
 	}
 
 	return bOk;
@@ -2651,19 +2293,19 @@ BOOL SVIPDoc::OnSaveDocument(LPCTSTR lpszPathName)
 	{
 		bOk = msvFileName.SetExtension( ".ipd" );
 	}
-	
+
 	if ( bOk )
 	{
 		bOk = CDocument::OnSaveDocument( msvFileName.GetFullFileName() );
-	}
-	
-	if ( bOk )
-	{
-		bOk = svFileManager.SaveItem( &msvFileName );
 
 		if ( bOk )
 		{
-			CDocument::SetPathName( msvFileName.GetFullFileName(), FALSE );
+			bOk = svFileManager.SaveItem( &msvFileName );
+
+			if ( bOk )
+			{
+				CDocument::SetPathName( msvFileName.GetFullFileName(), FALSE );
+			}
 		}
 	}
 
@@ -2712,14 +2354,56 @@ BOOL SVIPDoc::GetParameters(SVObjectWriter& rWriter)
 #endif
 
 	SaveViews(rWriter);
-	
+
 	SaveConditionalHistory(rWriter);
 
 	// Save the View Placements
 	SaveViewPlacements(rWriter);
 
 	SaveToolGroupings(rWriter);
+
+	SaveViewedVariables(rWriter);
+
 	return bOk;
+}
+
+void SVIPDoc::SaveViewedVariables(SVObjectWriter& rWriter)
+{
+	SVResultListClass* pResultList = GetResultList();
+
+	rWriter.StartElement(CTAG_VIEWEDVARIABLES);
+	if(pResultList)
+	{
+		pResultList->m_EnvResults.Save(rWriter);
+		pResultList->m_ToolReferences.Save(rWriter);
+	}
+	rWriter.EndElement();
+}
+
+bool SVIPDoc::LoadViewedVariables(SVTreeType& rTree, SVTreeType::SVBranchHandle htiParent)
+{
+	SVResultListClass* pResultList = GetResultList();
+	bool bOK = (nullptr != pResultList);
+
+	bool toolVariablesLoaded = false;
+
+	SVTreeType::SVBranchHandle htiChild = nullptr;
+	if (bOK && SVNavigateTreeClass::GetItemBranch(rTree, CTAG_VIEWEDVARIABLES, htiParent, htiChild))
+	{
+		pResultList->m_EnvResults.Load( rTree, htiChild );
+
+		if(!pResultList->m_ToolReferences.Load( rTree, htiChild ))
+		{
+			toolVariablesLoaded = true;
+		}
+	}
+
+	if(bOK && !toolVariablesLoaded)
+	{
+		pResultList->m_ToolReferences.BuildReferenceVector(GetInspectionProcess());
+	}
+
+	return bOK;
 }
 
 void SVIPDoc::SaveViews(SVObjectWriter& rWriter)
@@ -2786,7 +2470,7 @@ void SVIPDoc::SaveConditionalHistory(SVObjectWriter& rWriter)
 
 		// Conditional History
 		rWriter.StartElement(CTAG_CONDITIONAL_HISTORY);
-		
+
 		SVScalarValueVectorType vecProperties;
 		l_pInspection->GetConditionalHistoryProperties(vecProperties);
 		for (size_t i = 0;i < vecProperties.size();++i)
@@ -2809,24 +2493,24 @@ void SVIPDoc::SaveViewPlacements(SVObjectWriter& rWriter)
 	ZeroMemory(&wndpl,sizeof(WINDOWPLACEMENT));
 	wndpl.length = sizeof(WINDOWPLACEMENT);
 
-	View.pToolSetTabView = (SVToolSetTabViewClass *)getView();
+	View.pToolSetTabView = (SVToolSetTabViewClass*)getView();
 	if (View.pToolSetTabView && View.pToolSetTabView->GetSafeHwnd())
 	{
-		CSplitterWnd * pWndSplitter = (CSplitterWnd *)View.pToolSetTabView->GetParent();
+		CSplitterWnd* pWndSplitter = (CSplitterWnd*)View.pToolSetTabView->GetParent();
 		if (pWndSplitter && pWndSplitter->GetSafeHwnd())
 		{
-			CSplitterWnd * pWndSplitter2 = (CSplitterWnd *)pWndSplitter->GetParent();
+			CSplitterWnd* pWndSplitter2 = (CSplitterWnd*)pWndSplitter->GetParent();
 			ASSERT(pWndSplitter2 && pWndSplitter2->GetSafeHwnd());
 
-			SVIPSplitterFrame * pFrame = (SVIPSplitterFrame *)pWndSplitter2->GetParent();
+			SVIPSplitterFrame* pFrame = (SVIPSplitterFrame*)pWndSplitter2->GetParent();
 
-			CRuntimeClass * pClass = pFrame->GetRuntimeClass();
+			CRuntimeClass* pClass = pFrame->GetRuntimeClass();
 			CString csClass = pClass->m_lpszClassName;
 			ASSERT(csClass == _T("SVIPSplitterFrame"));
 
 			if (pFrame &&pFrame->GetSafeHwnd())
 			{
-				BOOL bResult = pFrame->GetWindowPlacement(	&wndpl );
+				BOOL bResult = pFrame->GetWindowPlacement( &wndpl );
 			}
 		}
 	}
@@ -2904,16 +2588,18 @@ BOOL SVIPDoc::SetParameters( SVTreeType& rTree, SVTreeType::SVBranchHandle htiPa
 
 	SVInspectionProcess* l_pInspection( GetInspectionProcess() );
 
-	if( l_pInspection == NULL )
-	{ return false; }
+	if( l_pInspection == nullptr ) { return false; }
 
 	bOk = SVNavigateTreeClass::GetItem( rTree, CTAG_HEIGHT_RESULT_VIEW, htiParent, svVariant );
-	if ( bOk ) { m_nHeightResultView = svVariant; }
-
 	if ( bOk )
 	{
+		m_nHeightResultView = svVariant;
+
 		bOk = SVNavigateTreeClass::GetItem( rTree, CTAG_WIDTH_TOOLSET_VIEW, htiParent, svVariant );
-		if ( bOk ) { m_nWidthToolSetView = svVariant; }
+		if ( bOk )
+		{
+			m_nWidthToolSetView = svVariant;
+		}
 	}
 
 	// Conditional History
@@ -2927,7 +2613,7 @@ BOOL SVIPDoc::SetParameters( SVTreeType& rTree, SVTreeType::SVBranchHandle htiPa
 			VARIANT* pVariant = NULL;
 			SVScalarValueVectorType vecProperties;
 			SVTreeType::SVLeafHandle htiChild;
-			
+
 			rTree.GetFirstLeaf( htiCH, htiChild );
 
 			while( rTree.IsValidLeaf( htiCH, htiChild ) == S_OK )
@@ -3048,23 +2734,23 @@ BOOL SVIPDoc::SetParameters( SVTreeType& rTree, SVTreeType::SVBranchHandle htiPa
 		if ( bOk )
 		{
 			//
-			// The first view is the TOOL Set view.
+			// The first view is the Tool Set view.
 			//
 			View.pToolSetTabView = (SVToolSetTabViewClass*) getView();
 			if( View.pToolSetTabView && View.pToolSetTabView->GetSafeHwnd() )
 			{
-				CSplitterWnd * pWndSplitter = (CSplitterWnd *) View.pToolSetTabView->GetParent();
+				CSplitterWnd* pWndSplitter = (CSplitterWnd *) View.pToolSetTabView->GetParent();
 				if( pWndSplitter && pWndSplitter->GetSafeHwnd() )
 				{
 					//
 					// This the one we want to retrieve the size and position.
 					//
-					CSplitterWnd * pWndSplitter2 = (CSplitterWnd *) pWndSplitter->GetParent();
+					CSplitterWnd* pWndSplitter2 = (CSplitterWnd *) pWndSplitter->GetParent();
 					ASSERT( pWndSplitter2 && pWndSplitter2->GetSafeHwnd() );
 
-					SVIPSplitterFrame * pFrame = (SVIPSplitterFrame*) pWndSplitter2->GetParent();
+					SVIPSplitterFrame* pFrame = (SVIPSplitterFrame*) pWndSplitter2->GetParent();
 
-					CRuntimeClass * pClass = pFrame->GetRuntimeClass();
+					CRuntimeClass* pClass = pFrame->GetRuntimeClass();
 					CString csClass = pClass->m_lpszClassName;
 					ASSERT( csClass == _T( "SVIPSplitterFrame" ) );
 
@@ -3100,7 +2786,7 @@ BOOL SVIPDoc::SetParameters( SVTreeType& rTree, SVTreeType::SVBranchHandle htiPa
 			if ( bOk )
 			{
 				SVTreeType::SVBranchHandle htiItem; 
-					
+
 				rTree.GetFirstBranch( htiViews, htiItem );
 
 				while ( bOk && htiItem != NULL )
@@ -3125,17 +2811,17 @@ BOOL SVIPDoc::SetParameters( SVTreeType& rTree, SVTreeType::SVBranchHandle htiPa
 							{
 								View.pView = GetNextView(vPos);
 								if (!View.pView)
-								break;  // if there are not enough views, exit the loop
+									break;  // if there are not enough views, exit the loop
 							}
 
 							// if there were not enough views or the view found is the
 							// wrong class, find the first matching view
 							if ( !View.pView || 
-									 csName.Compare(View.pView->GetRuntimeClass()->m_lpszClassName))
+								csName.Compare(View.pView->GetRuntimeClass()->m_lpszClassName))
 							{
 								vPos = GetFirstViewPosition();
 								while( ( View.pView = GetNextView( vPos ) ) && 
-											 ( csName.Compare( View.pView->GetRuntimeClass()->m_lpszClassName ) ) );
+									( csName.Compare( View.pView->GetRuntimeClass()->m_lpszClassName ) ) );
 							}
 
 							if (View.pView)  // this should never fail, but if it does, we'll try to continue
@@ -3167,7 +2853,7 @@ BOOL SVIPDoc::SetParameters( SVTreeType& rTree, SVTreeType::SVBranchHandle htiPa
 			if ( bOk )
 			{
 				SVTreeType::SVBranchHandle htiItem;
-				
+
 				rTree.GetFirstBranch( htiViews, htiItem );
 
 				while ( bOk && htiItem != NULL )
@@ -3192,17 +2878,17 @@ BOOL SVIPDoc::SetParameters( SVTreeType& rTree, SVTreeType::SVBranchHandle htiPa
 							{
 								View.pView = GetNextView(vPos);
 								if (!View.pView)
-								break;  // if there are not enough views, exit the loop
+									break;  // if there are not enough views, exit the loop
 							}
 
 							// if there were not enough views or the view found is the
 							// wrong class, find the first matching view
 							if ( !View.pView || 
-									 csName.Compare(View.pView->GetRuntimeClass()->m_lpszClassName))
+								csName.Compare(View.pView->GetRuntimeClass()->m_lpszClassName))
 							{
 								vPos = GetFirstViewPosition();
 								while( ( View.pView = GetNextView( vPos ) ) && 
-											 ( csName.Compare( View.pView->GetRuntimeClass()->m_lpszClassName ) ) );
+									( csName.Compare( View.pView->GetRuntimeClass()->m_lpszClassName ) ) );
 							}
 
 							if (View.pView)  // this should never fail, but if it does, we'll try to continue
@@ -3235,6 +2921,13 @@ BOOL SVIPDoc::SetParameters( SVTreeType& rTree, SVTreeType::SVBranchHandle htiPa
 			HRESULT hr = m_toolGroupings.SetParameters(rTree, htiParent);
 			bOk = (S_OK == hr) ? true : false;
 		}
+
+		if (bOk)
+		{
+			bOk = LoadViewedVariables(rTree, htiParent);
+
+		}
+
 	}
 	return bOk;
 }
@@ -3257,7 +2950,7 @@ void SVIPDoc::OnAddExternalTool()
 	if( pTool ) { delete( pTool ); }
 }
 
-HRESULT SVIPDoc::RemoveImage(SVImageClass * pImage)
+HRESULT SVIPDoc::RemoveImage(SVImageClass* pImage)
 {
 	GUID sourceID = pImage->GetUniqueObjectID();
 
@@ -3286,33 +2979,44 @@ HRESULT SVIPDoc::RemoveImage(const SVGUID& p_rImageId)
 void SVIPDoc::RefreshPublishedList()
 {
 	SVPublishListClass& publishList = GetInspectionProcess()->GetPublishList();
-	publishList.Refresh( ( SVTaskObjectClass * )GetToolSet() );
+	publishList.Refresh( ( SVTaskObjectClass* )GetToolSet() );
 
 	SetModifiedFlag();
 }
 
 HRESULT SVIPDoc::GetResults( SVResultsWrapperClass* p_pResults )
 {
-	HRESULT l_Status = S_OK;
-
-	// Get the ToolSet
-	SVToolSetClass* pToolSet = GetToolSet();
-	if( pToolSet )
+	///MEC_SVO_475 this is used by remote interface !!!!
+	HRESULT Status = E_FAIL;
+	int item(0);
+	SVResultListClass* pResultList = GetResultList();
+	if( nullptr != pResultList)
 	{
-		int itemNo = 0;
-		// Get the OutputList
-		SVResultListClass* pResultList = pToolSet->GetResultList();
-		if( pResultList )
-		{
-			itemNo = GetResultView()->addResults( pResultList, p_pResults );
-		}
-		else
-		{
-			l_Status = E_FAIL;
-		}
+		item += pResultList->m_ToolReferences.AddResults( p_pResults, GetTitle() );
+		///TODO_MEC_SVO_475 add environment ///MEC_SVO_475 ?????????
+		//pResultList->m_EnvResults.addResults( pResultList, p_pResults );
+		//pResultList->m_PPQInputReferences.addResults( pResultList, p_pResults );
+		Status = S_OK;
 	}
 
-	return l_Status;
+	// Get the ToolSet
+	//SVToolSetClass* pToolSet = GetToolSet();
+	//if( pToolSet )
+	//{
+	//	int itemNo = 0;
+	//	// Get the OutputList
+	//	SVResultListClass* pResultList = pToolSet->GetResultList();
+	//	if( pResultList )
+	//	{
+	//		itemNo = GetResultView()->addResults( pResultList, p_pResults );
+	//	}
+	//	else
+	//	{
+	//		l_Status = E_FAIL;
+	//	}
+	//}
+
+	return Status;
 }
 
 SVImageClass* SVIPDoc::GetHSIMainImage()
@@ -3331,7 +3035,7 @@ HRESULT SVIPDoc::GetCameras( SVVirtualCameraPtrSet& p_rCameras ) const
 {
 	HRESULT l_Status = S_OK;
 
-	if( GetInspectionProcess() != NULL )
+	if( GetInspectionProcess() != nullptr )
 	{
 		l_Status = GetInspectionProcess()->GetCameras( p_rCameras );
 	}
@@ -3343,7 +3047,6 @@ HRESULT SVIPDoc::GetCameras( SVVirtualCameraPtrSet& p_rCameras ) const
 	return l_Status;
 }
 
-
 HRESULT SVIPDoc::DeleteTool(SVTaskObjectClass* pTaskObject)
 {
 	ASSERT( pTaskObject );
@@ -3351,7 +3054,7 @@ HRESULT SVIPDoc::DeleteTool(SVTaskObjectClass* pTaskObject)
 
 	SVInspectionProcess* l_pInspection( GetInspectionProcess() );
 
-	if( l_pInspection == NULL )
+	if( nullptr == l_pInspection )
 	{
 		return E_FAIL;
 	}
@@ -3360,7 +3063,7 @@ HRESULT SVIPDoc::DeleteTool(SVTaskObjectClass* pTaskObject)
 	{
 		// Check for Dependents
 		int rc = checkOkToDelete( pTaskObject );
-		
+
 		if( rc )
 		{
 			CWaitCursor l_cwcMouse;
@@ -3381,7 +3084,7 @@ HRESULT SVIPDoc::DeleteTool(SVTaskObjectClass* pTaskObject)
 				if (pImageView->GetImage())
 				{
 					ViewImageUniqueId = pImageView->GetImage()->GetUniqueObjectID();
-				
+
 					for (j = 0; j < l_OutputList.GetSize(); j++)
 					{
 						pOutputObjectInfo = l_OutputList.GetAt(j);
@@ -3423,20 +3126,14 @@ HRESULT SVIPDoc::DeleteTool(SVTaskObjectClass* pTaskObject)
 	return l_hr;
 }
 
-
 void SVIPDoc::OnEditAdjustToolPosition()
 {
-	SVToolClass* l_pTool = NULL;
-	
-	l_pTool = dynamic_cast< SVToolClass* >( SVObjectManagerClass::Instance().GetObject( m_SelectedToolID ) );
+	SVToolClass* l_pTool = dynamic_cast< SVToolClass* >( SVObjectManagerClass::Instance().GetObject( m_SelectedToolID ) );
 
 	if( l_pTool )
 	{
-		SVObjectInfoStruct info;
-		SVObjectTypeInfoStruct typeInfo;
-
-		info = l_pTool->GetObjectInfo();
-		typeInfo = info.ObjectTypeInfo;
+		SVObjectInfoStruct info = l_pTool->GetObjectInfo();
+		SVObjectTypeInfoStruct typeInfo = info.ObjectTypeInfo;
 		//------ Warp tool hands back a SVPolarTransformObjectType. Sub type 1792.
 		//------ Window tool, Luminance hands back a SVImageObjectType. Sub type 0.
 		//------ Gage tool (edge counting analyzer) hands back a SVROIObjectType. Sub type 1280.
@@ -3452,13 +3149,11 @@ void SVIPDoc::OnEditAdjustToolPosition()
 
 void SVIPDoc::OnUpdateEditAdjustToolPosition(CCmdUI* pCmdUI)
 {
-	SVToolClass* l_pTool = NULL;
-	
-	l_pTool = dynamic_cast< SVToolClass* >( SVObjectManagerClass::Instance().GetObject( m_SelectedToolID ) );
+	SVToolClass* l_pTool = dynamic_cast< SVToolClass* >( SVObjectManagerClass::Instance().GetObject( m_SelectedToolID ) );
 
-	BOOL l_bOk = l_pTool != NULL;
+	BOOL l_bOk = l_pTool != nullptr;
 
-	l_bOk = l_bOk && dynamic_cast< SVGageToolClass* >( l_pTool ) == NULL;
+	l_bOk = l_bOk && dynamic_cast< SVGageToolClass* >( l_pTool ) == nullptr;
 	l_bOk = l_bOk && TheSVObserverApp.OkToEdit() ? 1 : 0;
 	l_bOk = l_bOk && SVSVIMStateClass::CheckState( SV_STATE_READY );
 	l_bOk = l_bOk && ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST );
@@ -3470,7 +3165,7 @@ void SVIPDoc::OnUpdateEditAdjustToolPosition(CCmdUI* pCmdUI)
 
 void SVIPDoc::OnViewResetAllCounts()
 {
-	if( TheSVObserverApp.m_svSecurityMgr.SVValidate( SECURITY_POINT_VIEW_MENU_RESET_COUNTS_ALL ) == S_OK )
+	if( S_OK == TheSVObserverApp.m_svSecurityMgr.SVValidate( SECURITY_POINT_VIEW_MENU_RESET_COUNTS_ALL ) )
 	{
 		TheSVObserverApp.ResetAllCounts();
 	}
@@ -3478,10 +3173,13 @@ void SVIPDoc::OnViewResetAllCounts()
 
 void SVIPDoc::OnViewResetCountsCurrentIP()
 {
-	if( TheSVObserverApp.m_svSecurityMgr.SVValidate( SECURITY_POINT_VIEW_MENU_RESET_COUNTS_CURRENT ) == S_OK )
+	if( S_OK == TheSVObserverApp.m_svSecurityMgr.SVValidate( SECURITY_POINT_VIEW_MENU_RESET_COUNTS_CURRENT ) )
 	{
 		SVInspectionProcess* pIP = GetInspectionProcess();
 
+		// @WARNING:  Should check pIP here before dereferencing.
+		// Should check the results of GetToolSet() before dereferencing.
+		// @TODO:  What should we do if there's an error?  (Method is void.)
 		pIP->GetToolSet()->ResetCounts();
 
 		if( !SVSVIMStateClass::CheckState( SV_STATE_RUNNING ) )
@@ -3490,9 +3188,10 @@ void SVIPDoc::OnViewResetCountsCurrentIP()
 		}
 	}
 }
+
 void SVIPDoc::SetRegressionTestRunMode(RegressionRunModeEnum newMode)
 {
-	m_regtestRunMode = (RegressionRunModeEnum)newMode;
+	m_regtestRunMode = static_cast< RegressionRunModeEnum >( newMode );
 }
 
 void SVIPDoc::SetRegressionTestPlayMode(RegressionPlayModeEnum newPlayMode)
@@ -3554,7 +3253,7 @@ DWORD WINAPI SVIPDoc::SVRegressionTestRunThread( LPVOID lpParam )
 			ptmpRunFileStruct->csCameraName = ptmpRegTestStruct->csCamera;
 			switch (l_IPDoc->m_regtestRunMode)
 			{
-				case RegModePlay:
+			case RegModePlay:
 				{
 					bDisplayFile = TRUE;
 					if ( !l_bFirst )
@@ -3572,8 +3271,8 @@ DWORD WINAPI SVIPDoc::SVRegressionTestRunThread( LPVOID lpParam )
 						{
 							if ( ptmpRegTestStruct->stdIteratorCurrent == ptmpRegTestStruct->stdIteratorStart )
 							{
-									l_bListDone = true;
-									bDisplayFile = FALSE;
+								l_bListDone = true;
+								bDisplayFile = FALSE;
 							}
 						}
 					}
@@ -3619,7 +3318,7 @@ DWORD WINAPI SVIPDoc::SVRegressionTestRunThread( LPVOID lpParam )
 					ptmpRunFileStruct->csFileName = *ptmpRegTestStruct->stdIteratorCurrent;
 					break;
 				}
-				case RegModeSingleStepForward:
+			case RegModeSingleStepForward:
 				{
 					if ( !l_bFirst )
 					{
@@ -3634,20 +3333,20 @@ DWORD WINAPI SVIPDoc::SVRegressionTestRunThread( LPVOID lpParam )
 					bDisplayFile = TRUE;
 					break;
 				}
-				case RegModeSingleStepBack:
+			case RegModeSingleStepBack:
 				{
 					if ( !l_bFirst )
 					{
 						if( ptmpRegTestStruct->stdIteratorCurrent == ptmpRegTestStruct->stdVectorFile.begin() )
 						{
-							ptmpRegTestStruct->stdIteratorCurrent =  ptmpRegTestStruct->stdVectorFile.end() - 1;
+							ptmpRegTestStruct->stdIteratorCurrent = ptmpRegTestStruct->stdVectorFile.end() - 1;
 						}
 						else
 						{
 							ptmpRegTestStruct->stdIteratorCurrent--;
 						}
 					}
-				
+
 					if ( ptmpRegTestStruct->stdIteratorCurrent == ptmpRegTestStruct->stdVectorFile.end() )
 					{
 						ptmpRegTestStruct->stdIteratorCurrent = ptmpRegTestStruct->stdVectorFile.end() - 1;
@@ -3658,21 +3357,21 @@ DWORD WINAPI SVIPDoc::SVRegressionTestRunThread( LPVOID lpParam )
 
 					break;
 				}
-				case RegModeBackToBeginningPlay:
+			case RegModeBackToBeginningPlay:
 				{
 					ptmpRegTestStruct->stdIteratorCurrent = ptmpRegTestStruct->stdIteratorStart;
 					ptmpRunFileStruct->csFileName = *ptmpRegTestStruct->stdIteratorCurrent;
 					bDisplayFile = TRUE;
 					break;
 				}
-				case RegModeBackToBeginningStop:
+			case RegModeBackToBeginningStop:
 				{
 					ptmpRegTestStruct->stdIteratorCurrent = ptmpRegTestStruct->stdIteratorStart;
 					ptmpRunFileStruct->csFileName = *ptmpRegTestStruct->stdIteratorCurrent;
 					bDisplayFile = TRUE;
 					break;
 				}
-				case RegModeResetSettings:
+			case RegModeResetSettings:
 				{
 					l_bFirst = TRUE;
 					ptmpRegTestStruct->stdIteratorCurrent = ptmpRegTestStruct->stdIteratorStart;
@@ -3688,7 +3387,7 @@ DWORD WINAPI SVIPDoc::SVRegressionTestRunThread( LPVOID lpParam )
 					bModeReset = TRUE;
 					break;
 				}
-				default:
+			default:
 				{
 					break;
 				}
@@ -3730,11 +3429,11 @@ DWORD WINAPI SVIPDoc::SVRegressionTestRunThread( LPVOID lpParam )
 
 			l_IPDoc->RunOnce();
 
-//////////////////////////////////////////////////////////////////////////////////
-		//clean up 
+			//////////////////////////////////////////////////////////////////////////////////
+			//clean up
 			INT_PTR iNumList = l_lstFileNames.GetCount();
 			//delete l_lstFileNames
-			for ( int iNumDel = static_cast<int>(iNumList) - 1; iNumDel >= 0; iNumDel-- )
+			for ( int iNumDel = static_cast<int>(iNumList) - 1; iNumDel >= 0; --iNumDel )
 			{
 				POSITION posDel = l_lstFileNames.FindIndex(iNumDel);
 				if ( posDel != NULL )
@@ -3772,7 +3471,8 @@ DWORD WINAPI SVIPDoc::SVRegressionTestRunThread( LPVOID lpParam )
 	}//end of while loop
 
 	//let the IP know that the regression test is done.
-//	CWnd* pWnd = AfxGetMainWnd(); // SEJ -this fails in VC8 (could be cause we are in a different thread?)
+	//	CWnd* pWnd = AfxGetMainWnd(); // SEJ -this fails in VC8 (could be cause we are in a different thread?)
+	// @WARNING:  Pointers should be checked before they are dereferenced.
 	CWnd* pWnd = AfxGetApp()->m_pMainWnd;
 	PostMessage (pWnd->m_hWnd, WM_COMMAND, WM_REGRESSION_TEST_COMPLETE, 0L);
 
@@ -3784,6 +3484,7 @@ DWORD WINAPI SVIPDoc::SVRegressionTestRunThread( LPVOID lpParam )
 
 void SVIPDoc::RegressionTestComplete()
 {
+	// @WARNING:  Pointers should be checked before they are dereferenced.
 	( ( SVMainFrame* ) AfxGetApp()->m_pMainWnd )->m_pregTestDlg->DestroyWindow();
 	delete ( ( SVMainFrame* ) AfxGetApp()->m_pMainWnd )->m_pregTestDlg;
 	( ( SVMainFrame* ) AfxGetApp()->m_pMainWnd )->m_pregTestDlg = NULL;
@@ -3793,8 +3494,9 @@ void SVIPDoc::RegressionTestComplete()
 
 void SVIPDoc::RegressionTestModeChanged()
 {
+	// @WARNING:  Pointers should be checked before they are dereferenced.
 	::BringWindowToTop(AfxGetMainWnd()->GetSafeHwnd() );
-	m_bRegressionTestRunning = false; 
+	m_bRegressionTestRunning = false;
 	m_regtestRunPlayMode = RunToEnd;
 	m_bRegressionTestStopping = true;
 	m_regtestRunMode = RegModeStopExit;  //should cause dialog to go away...
@@ -3802,6 +3504,7 @@ void SVIPDoc::RegressionTestModeChanged()
 	SVSVIMStateClass::RemoveState(SV_STATE_REGRESSION);
 
 	SVSendMessage( GetInspectionProcess(), SVM_GOING_OFFLINE, NULL, NULL ); // Mainly used to tell Archive Tool to shutdown
+	// @WARNING:  Pointers should be checked before they are dereferenced.
 	GetToolSet()->ResetObject();
 	RunOnce();
 }
@@ -3837,7 +3540,7 @@ bool SVIPDoc::IsToolPreviousToSelected( const SVGUID& p_rToolID ) const
 
 	SVToolSetClass::SVToolIdDeque l_ToolIds;
 
-	if( GetToolSet() != NULL )
+	if( GetToolSet() != nullptr )
 	{
 		GetToolSet()->GetToolIds( l_ToolIds );
 	}
@@ -3856,9 +3559,9 @@ CString SVIPDoc::GetCompleteToolSetName() const
 
 	SVToolSetClass* l_pToolSet = GetToolSet();
 
-	if( l_pToolSet != NULL )
+	if( l_pToolSet != nullptr )
 	{
-		l_Name = l_pToolSet->GetCompleteObjectNameToObjectType( NULL, SVToolObjectType );
+		l_Name = l_pToolSet->GetCompleteObjectNameToObjectType( nullptr, SVToolObjectType );
 	}
 
 	return l_Name;
@@ -3876,11 +3579,13 @@ SVToolGrouping& SVIPDoc::GetToolGroupings()
 
 void SVIPDoc::OnUpdateViewResetCountsAllIPs(CCmdUI* pCmdUI)
 {
+	// @WARNING:  Pointers should be checked before they are dereferenced.
 	pCmdUI->Enable( TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable( SECURITY_POINT_VIEW_MENU_RESET_COUNTS_ALL) );
 }
 
 void SVIPDoc::OnUpdateViewResetCountsCurrentIP(CCmdUI* pCmdUI)
 {
+	// @WARNING:  Pointers should be checked before they are dereferenced.
 	pCmdUI->Enable( TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable( SECURITY_POINT_VIEW_MENU_RESET_COUNTS_CURRENT) );
 }
 
@@ -3890,38 +3595,41 @@ void SVIPDoc::ClearRegressionTestStructures()
 	if ( iCnt > 0 )
 	{
 		//empty list
-		RegressionTestStruct *pTmpStruct = NULL;
-		for ( INT_PTR i = iCnt - 1; i >= 0; i-- )
+		RegressionTestStruct* pTmpStruct = nullptr;
+		for ( INT_PTR i = iCnt - 1; i >= 0; --i )
 		{
 			POSITION pos = m_listRegCameras.FindIndex(i);
 			pTmpStruct = m_listRegCameras.GetAt(pos);
 			if ( pTmpStruct )
 			{
 				delete pTmpStruct;
-				pTmpStruct = NULL;
+				pTmpStruct = nullptr;
 				m_listRegCameras.RemoveAt(pos);
 			}
 		}
 	}
 }
 
-void SVIPDoc::OnEditDataDefinitionLists() 
+void SVIPDoc::OnEditDataDefinitionLists()
 {
-	if( GetInspectionProcess() == NULL ) { return; }
+	SVInspectionProcess* pIP = GetInspectionProcess();
 
-	// TODO: Add your command handler code here
-	CString strTitle = _T("Data Definition Lists - ");
-	strTitle += GetInspectionProcess()->GetName();
-	SVDataDefinitionSheet sheet(strTitle, GetInspectionProcess() );
-	
-	//remove apply button
-	sheet.m_psh.dwFlags |= PSH_NOAPPLYNOW;
+	if( pIP != nullptr )
+	{
+		CString strTitle = _T("Data Definition Lists - ");
+		strTitle += pIP->GetName();
+		SVDataDefinitionSheet sheet(strTitle, GetInspectionProcess() );
 
-	sheet.DoModal();
+		//remove apply button
+		sheet.m_psh.dwFlags |= PSH_NOAPPLYNOW;
+
+		sheet.DoModal();
+	}
 }
 
 void SVIPDoc::OnUpdateEditDataDefinitionLists(CCmdUI *pCmdUI)
 {
+	// @WARNING:  Pointers should be checked before they are dereferenced.
 	pCmdUI->Enable( SVSVIMStateClass::CheckState( SV_STATE_READY ) && SVSVIMStateClass::CheckState( SV_STATE_EDIT ) );
 }
 
@@ -4075,7 +3783,7 @@ HRESULT SVIPDoc::RegisterImage( const SVGUID& p_rImageId, SVImageViewClass* p_pI
 
 	SVInspectionProcess* l_pInspect = GetInspectionProcess();
 
-	if( l_pInspect != NULL ) { l_pInspect->LastProductNotify(); }
+	if( l_pInspect != nullptr ) { l_pInspect->LastProductNotify(); }
 
 	return l_Status;
 }
@@ -4204,7 +3912,7 @@ HRESULT SVIPDoc::GetBitmapInfo( const SVGUID& p_rImageId, SVBitmapInfo& p_rBitma
 
 	SVImageClass* l_pImage = dynamic_cast< SVImageClass* >( SVObjectManagerClass::Instance().GetObject( p_rImageId.ToGUID() ) );
 
-	if( l_pImage != NULL )
+	if( l_pImage != nullptr )
 	{
 		SVImageInfoClass l_svImageInfo = l_pImage->GetImageInfo();
 
@@ -4413,7 +4121,7 @@ HRESULT SVIPDoc::UpdateWithLastProduct()
 
 	SVInspectionProcess* l_pInspection = GetInspectionProcess();
 
-	if( l_pInspection != NULL )
+	if( l_pInspection != nullptr )
 	{
 		l_Status = l_pInspection->LastProductNotify();
 	}
@@ -4428,13 +4136,13 @@ HRESULT SVIPDoc::UpdateWithLastProduct()
 BOOL SVIPDoc::RunOnce( SVToolClass* p_pTool )
 {
 	SVInspectionProcess* l_pInspection = GetInspectionProcess();
-	BOOL l_Status = ( l_pInspection != NULL );
+	BOOL l_Status = ( l_pInspection != nullptr );
 
 	if( l_Status )
 	{
 		SVGUID l_ToolId;
 
-		if( p_pTool != NULL ) { l_ToolId = p_pTool->GetUniqueObjectID(); }
+		if( p_pTool != nullptr ) { l_ToolId = p_pTool->GetUniqueObjectID(); }
 
 		SVCommandInspectionRunOncePtr l_CommandPtr = new SVCommandInspectionRunOnce( l_pInspection->GetUniqueObjectID(), l_ToolId );
 		SVObjectSynchronousCommandTemplate< SVCommandInspectionRunOncePtr > l_Command( l_pInspection->GetUniqueObjectID(), l_CommandPtr );
@@ -4449,15 +4157,15 @@ int SVIPDoc::GetSelectedToolIndex(const CString& toolName) const
 {
 	int toolListIndex = 0;
 	const SVToolSetClass* pToolSet = GetToolSet();
-	if (pToolSet)
+	if (pToolSet != nullptr)
 	{
 		toolListIndex = pToolSet->GetSize();
 		bool bFound = false;
 		// FindTool by Name in SVTaskObjectList
-		for (int i = 0;i < pToolSet->GetSize() && !bFound;i++)
+		for (int i = 0; i < pToolSet->GetSize() && !bFound; i++)
 		{
 			SVTaskObjectClass* pTool = pToolSet->GetAt(i);
-			if (pTool && pTool->GetName() == toolName)
+			if (pTool != nullptr && pTool->GetName() == toolName)
 			{
 				toolListIndex = i;
 				bFound = true;
@@ -4470,7 +4178,7 @@ int SVIPDoc::GetSelectedToolIndex(const CString& toolName) const
 int SVIPDoc::GetToolToInsertBefore(const CString& name, int listIndex) const
 {
 	int toolListIndex = 0;
-	
+
 	const SVToolSetClass* pToolSet = GetToolSet();
 	if (pToolSet)
 	{
@@ -4501,119 +4209,30 @@ int SVIPDoc::GetToolToInsertBefore(const CString& name, int listIndex) const
 	return toolListIndex;
 }
 
-HRESULT SVIPDoc::addToolsetObject2ResultDefinitions( SVResultDefinitionDeque &p_rDefinitions ) const
-{
-	HRESULT hRet = S_OK;
-	SVToolSetClass* pToolSet = GetToolSet();
-	if( pToolSet )
-	{
-		// Get the OutputList
-		SVResultListClass* pResultList = pToolSet->GetResultList();
-		if( pResultList )
-		{
-			for( size_t i = 0; i < pResultList->m_vecObjects.size(); ++i )
-			{
-				SVObjectReference ref = pResultList->m_vecObjects.at(i);
-				if( nullptr != ref.Object() )
-				{
-					SVIPResultItemDefinition l_Def;
-
-					if( ref.IsIndexPresent() )
-					{
-						if( ref.IsEntireArray() )
-						{
-							l_Def = SVIPResultItemDefinition( ref.Guid(), SVString() );
-						}
-						else
-						{
-							l_Def = SVIPResultItemDefinition( ref.Guid(), ref.GetIndex() );
-						}
-					}
-					else
-					{
-						l_Def = SVIPResultItemDefinition( ref.Guid() );
-					}
-
-					p_rDefinitions.push_back( l_Def );
-				}
-			}
-		}
-	}
-	else
-	{
-		hRet = E_FAIL;
-	}	
-	return hRet;
-}
-
-HRESULT SVIPDoc::addPPQInputs2ResultDefinitions( SVResultDefinitionDeque &p_rDefinitions ) const
-{
-	HRESULT hRet = S_OK;
-	SVInspectionProcess* l_pInspect = GetInspectionProcess();
-
-	if( nullptr != l_pInspect )
-	{
-		// Insert all PPQ input items that are picked for viewing
-		for( size_t l = 0; l_pInspect && l < l_pInspect->m_PPQInputs.size(); ++l )
-		{
-			SVIOEntryStruct pIOEntry = l_pInspect->m_PPQInputs[l];
-			addViewableObject2ResultDefinitions(pIOEntry.m_IOEntryPtr->m_pValueObject, p_rDefinitions);
-		}
-	}
-	else
-	{
-		hRet = E_FAIL;
-	}	
-	return hRet;
-}
-
-HRESULT SVIPDoc::addPPQ_XParameter2ResultDefinitions( SVResultDefinitionDeque &p_rDefinitions ) const
-{
-	SVInspectionProcess *pInspect = GetInspectionProcess();
-	if( nullptr != pInspect )
-	{
-		SVPPQObject *ppq = pInspect->GetPPQ();
-		if ( nullptr != ppq )
-		{
-			//add PPQ_X parameter to the equation selection list
-			SVString PPQName = ppq->GetName();
-			SVObjectReferenceVector ObjectList;
-			SVObjectManagerClass::Instance().getTreeList( PPQName, ObjectList, SV_VIEWABLE );
-			for(SVObjectReferenceVector::const_iterator iter = ObjectList.begin(); iter != ObjectList.end(); ++iter) 
-			{
-				addViewableObject2ResultDefinitions(iter->Object(), p_rDefinitions);
-			}
-			return S_OK;
-		}
-	}
-
-	return E_FAIL;
-}
-
-void SVIPDoc::addEnvironmentObject2ResultDefinitions( SVResultDefinitionDeque &p_rDefinitions ) const
-{
-	SVObjectReferenceVector ObjectList;
-	SVObjectManagerClass::Instance().getTreeList( Seidenader::SVObjectLibrary::FqnEnvironmentMode, ObjectList, SV_VIEWABLE );
-	for(SVObjectReferenceVector::const_iterator iter = ObjectList.begin(); iter != ObjectList.end(); ++iter) 
-	{
-		addViewableObject2ResultDefinitions(iter->Object(), p_rDefinitions);
-	}
-}
-
-void SVIPDoc::addViewableObject2ResultDefinitions( SVObjectClass* pObject, SVResultDefinitionDeque &p_rDefinitions ) const
-{
-	if ( pObject && pObject->ObjectAttributesSet() & SV_VIEWABLE )
-	{
-		SVIPResultItemDefinition l_Def( pObject->GetUniqueObjectID() );
-		p_rDefinitions.push_back( l_Def );
-	}
-}
-
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVIPDoc.cpp_v  $
+ * 
+ *    Rev 1.30   07 Jan 2015 17:43:58   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  980
+ * SCR Title:  Add Non-Inspection Objects to the Result View
+ * Checked in by:  mEichengruen;  Marcus Eichengruen
+ * Change Description:  
+ *   Added methods GetResultList, SaveViewedVariables, and LoadViewedVariables.
+ * Changed method OnResultsPicker to show environment variables.
+ * Changed method OnSelectPPQVariable to rebuild results list.
+ * Changed methods IsResultDefinitionsUpdated, GetResultDefinitions, GetParameters, SetParameters, and GetResults to use new result list format.
+ * Removed methods addToolsetObject2ResultDefinitions, addPPQInputs2ResultDefinitions, addPPQ_XParameter2ResultDefinitions, and addEnvironmentObject2ResultDefinitions.
+ * Removed useless comment lines.
+ * Removed dead code.
+ * Changed NULL to nullptr.  
+ * Cleaned up spacing.
+ * Added @WARNING notes.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.29   19 Dec 2014 04:13:06   gramseier
  * Project:  SVObserver

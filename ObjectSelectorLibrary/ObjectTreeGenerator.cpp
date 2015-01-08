@@ -5,8 +5,8 @@
 //* .Module Name     : ObjectTreeGenerator
 //* .File Name       : $Workfile:   ObjectTreeGenerator.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.5  $
-//* .Check In Date   : $Date:   16 Dec 2014 17:42:54  $
+//* .Current Version : $Revision:   1.6  $
+//* .Check In Date   : $Date:   07 Jan 2015 18:10:20  $
 //******************************************************************************
 
 #pragma region Includes
@@ -169,21 +169,41 @@ void ObjectTreeGenerator::insertTreeObject( const SVObjectReference& rObjectRef 
 			SelectorItem.setCheckedState( IObjectSelectorItem::CheckedEnabled );
 		}
 	}
-	checkLocationFilters( m_LocationInputFilters, Location );
+	Location = getFilteredLocation( m_LocationInputFilters, Location );
 	m_TreeContainer.insertLeaf( Location, SelectorItem );
 }
 
 void ObjectTreeGenerator::insertTreeObject( const SVString& rLocation )
 {
-	ObjectSelectorItem SelectorItem;
+	SVObjectReference objectRef;
+	HRESULT hOk = SVObjectManagerClass::Instance().GetObjectByDottedName( rLocation, objectRef );
+	if (S_OK == hOk)
+	{
+		insertTreeObject( objectRef );
+	}
+	else
+	{
+		ObjectSelectorItem SelectorItem;
+		IObjectSelectorItem::AttributeEnum Attribute( static_cast<IObjectSelectorItem::AttributeEnum> (IObjectSelectorItem::Leaf | IObjectSelectorItem::Checkable) );
+
+		SelectorItem.setLocation( rLocation );
+		SelectorItem.setAttibute( Attribute );
+		SelectorItem.setCheckedState( IObjectSelectorItem::UncheckedEnabled );
+		//Make copy of location because reference is const
+		SVString DisplayLocation = getFilteredLocation( m_LocationInputFilters, rLocation );
+		m_TreeContainer.insertLeaf( DisplayLocation, SelectorItem );
+	}
+}
+
+void ObjectTreeGenerator::insertTreeObject( const ObjectSelectorItem& rObjectItem )
+{
+	ObjectSelectorItem SelectorItem(rObjectItem);
 	IObjectSelectorItem::AttributeEnum Attribute( static_cast<IObjectSelectorItem::AttributeEnum> (IObjectSelectorItem::Leaf | IObjectSelectorItem::Checkable) );
 
-	SelectorItem.setLocation( rLocation );
 	SelectorItem.setAttibute( Attribute );
 	SelectorItem.setCheckedState( IObjectSelectorItem::UncheckedEnabled );
 	//Make copy of location because reference is const
-	SVString DisplayLocation( rLocation );
-	checkLocationFilters( m_LocationInputFilters, DisplayLocation );
+	SVString DisplayLocation = getFilteredLocation( m_LocationInputFilters, SelectorItem.getLocation() );
 	m_TreeContainer.insertLeaf( DisplayLocation, SelectorItem );
 }
 
@@ -280,8 +300,7 @@ bool ObjectTreeGenerator::setCheckItems( const SVStringSet& rItems )
 	{
 		ObjectTreeItems::SVTree_iterator Iter( m_TreeContainer.begin() );
 		//Need to check if input filters are used
-		SVString Location( *IterName );
-		checkLocationFilters( m_LocationInputFilters,  Location );
+		SVString Location = getFilteredLocation( m_LocationInputFilters,  *IterName );
 		//If an array we need the extra branch
 		SVString::size_type BracketPos( SVString::npos );
 		BracketPos = Location.rfind( _T("[") );
@@ -351,9 +370,7 @@ int ObjectTreeGenerator::convertObjectArrayName( const SVObjectReference& rObjec
 
 	return Result;
 }
-#pragma endregion Public Methods
 
-#pragma region Private Methods
 void ObjectTreeGenerator::setSelectorItemType( const SVObjectReference& rObjectRef, ObjectSelectorItem &rSelectorItem )
 {
 	SVObjectClass *pObject = rObjectRef.Object();
@@ -374,7 +391,9 @@ void ObjectTreeGenerator::setSelectorItemType( const SVObjectReference& rObjectR
 		rSelectorItem.setItemTypeName(_T(""));
 	}
 }
+#pragma endregion Public Methods
 
+#pragma region Private Methods
 void ObjectTreeGenerator::filterObjects( SVOutputInfoListClass& rOutputList, SVObjectReferenceVector& rObjectList )
 {
 	int nCount = rOutputList.GetSize();
@@ -527,15 +546,16 @@ void ObjectTreeGenerator::setItemAttributes()
 	}
 }
 
-void ObjectTreeGenerator::checkLocationFilters( const TranslateMap& rFilters, SVString& rLocation ) const
+SVString ObjectTreeGenerator::getFilteredLocation( const TranslateMap& rFilters, const SVString& rLocation ) const
 {
 	TranslateMap::const_iterator Iter( rFilters.begin() );
+	SVString rFilterLocation(rLocation);
 
 	while( rFilters.end() != Iter )
 	{
 		SVString Filter = Iter->first;
 
-		if( 0 == rLocation.find( Filter.c_str() ) )
+		if( 0 == rFilterLocation.find( Filter.c_str() ) )
 		{
 			//if the dot is not at the end of the filter add it
 			if( Filter.size() != Filter.rfind( _T(".") ))
@@ -543,10 +563,11 @@ void ObjectTreeGenerator::checkLocationFilters( const TranslateMap& rFilters, SV
 				Filter += _T(".");
 			}
 
-			rLocation.replace( Filter.c_str(), Iter->second.c_str() );
+			rFilterLocation.replace( Filter.c_str(), Iter->second.c_str() );
 		}
 		++Iter;
 	}
+	return rFilterLocation;
 }
 
 void ObjectTreeGenerator::convertLocation()
@@ -554,15 +575,13 @@ void ObjectTreeGenerator::convertLocation()
 	SVTreeLibrary::ObjectSelectorItems::iterator Iter( m_Results.begin() );
 	while( m_Results.end() != Iter )
 	{
-		SVString Location = Iter->getLocation();
-		checkLocationFilters( m_LocationOutputFilters, Location );
+		SVString Location = getFilteredLocation( m_LocationOutputFilters, Iter->getLocation() );
 		if( Iter->getLocation() != Location )
 		{
 			Iter->setLocation( Location );
 		}
 
-		SVString DisplayLocation = Iter->getDisplayLocation();
-		checkLocationFilters( m_LocationOutputFilters, DisplayLocation );
+		SVString DisplayLocation = getFilteredLocation( m_LocationOutputFilters, Iter->getDisplayLocation() );
 		//The extra group name for arrays must be removed
 		if( Iter->isArray() )
 		{
@@ -593,6 +612,18 @@ void ObjectTreeGenerator::convertLocation()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\ObjectSelectorLibrary\ObjectTreeGenerator.cpp_v  $
+ * 
+ *    Rev 1.6   07 Jan 2015 18:10:20   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  933
+ * SCR Title:  Add Filter Tab to Object Selector (SVO-377)
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   Added method insertTreeObject.
+ * Changed method setSelectorItemType to public.
+ * Renamed method checkLocationFilters to getFilteredLocation to fix the issue where environment items did not show type information on the Object Selector Filter page.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.5   16 Dec 2014 17:42:54   bwalter
  * Project:  SVObserver

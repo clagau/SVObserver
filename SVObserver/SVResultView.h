@@ -5,22 +5,25 @@
 //* .Module Name     : SVResultView
 //* .File Name       : $Workfile:   SVResultView.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   02 Oct 2013 12:05:38  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   07 Jan 2015 17:51:18  $
 //******************************************************************************
 
-#ifndef SVRESULTVIEW_H
-#define SVRESULTVIEW_H
+#pragma once
 
+#pragma region Includes
 #include "SVObjectLibrary/SVObjectClass.h"
 #include "SVXMLLibrary/SVXMLMaterialsTree.h"
 #include "SVResultList.h"
 #include "SVIPResultData.h"
+#pragma endregion Includes
 
+#pragma region Declarations
 enum { SV_LINE_STEP = 10 };
 
 class SVIPDoc;
 class SVResultsWrapperClass;
+#pragma endregion Declarations
 
 class SVResultViewClass : public CListView
 {
@@ -63,7 +66,6 @@ public:
 
 	void SetViewSize (CSize &Size);
 	void OnSize( UINT nType, int cx, int cy );
-	int addResults( SVResultListClass* pResultList, SVResultsWrapperClass* pSVRWC );
 
 	#ifdef _DEBUG
 		virtual void AssertValid() const;
@@ -89,23 +91,29 @@ protected:
 	double oldValue;
 	double oldEndTime;
 	BOOL columnWidthSet;
-	SVResultListClass viewedResultList;
-
 };
-
 
 ////////////////////////////////////////////////////////////////////////////////
 //{{AFX_INSERT_LOCATION}}
 // DevStudio inserts additional declarations immediate in front of the preceding line
 ////////////////////////////////////////////////////////////////////////////////
 
-#endif
-
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVResultView.h_v  $
+ * 
+ *    Rev 1.3   07 Jan 2015 17:51:18   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  980
+ * SCR Title:  Add Non-Inspection Objects to the Result View
+ * Checked in by:  mEichengruen;  Marcus Eichengruen
+ * Change Description:  
+ *   Removed method addResults.
+ * Removed member variable viewedResultList.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   02 Oct 2013 12:05:38   tbair
  * Project:  SVObserver

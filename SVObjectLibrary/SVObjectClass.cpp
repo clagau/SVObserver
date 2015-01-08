@@ -5,8 +5,8 @@
 //* .Module Name     : SVObject
 //* .File Name       : $Workfile:   SVObjectClass.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.8  $
-//* .Check In Date   : $Date:   20 Nov 2014 04:39:28  $
+//* .Current Version : $Revision:   1.9  $
+//* .Check In Date   : $Date:   07 Jan 2015 16:03:08  $
 //******************************************************************************
 
 #pragma region Includes
@@ -955,31 +955,42 @@ void SVObjectClass::GetCompleteObjectName( CString& rString ) const
 }
 
 /*
-Get the complete object name starting and including selected SVObjectTypeEnum value.
+Get the complete object name including selected SVObjectTypeEnum value.
 */
 CString SVObjectClass::GetCompleteObjectNameToObjectType( LPCSTR LPSZCompleteName, SVObjectTypeEnum objectTypeToInclude ) const
 {
-	CString StrCompleteName;
-	if( LPSZCompleteName )
-		StrCompleteName.Format( _T( ".%s" ), LPSZCompleteName );
+	CString completeName;
+	const CString name = GetName();
 
-	StrCompleteName = GetName() + StrCompleteName;
+	if( LPSZCompleteName )
+	{
+		if (0 >= strlen(name))
+		{
+			completeName.Format( _T( "%s" ), LPSZCompleteName );
+		}
+		else
+		{
+			completeName.Format( _T( "%s.%s" ), namename.GetString(), LPSZCompleteName );
+		}
+	}
+	else
+	{
+		completeName = name;
+	}
 
 	//
 	// Look for Tool Set type object.
 	//
-	SVObjectTypeEnum objectType = GetObjectType();  //ObjectTypeInfo.ObjectType;
-	if(objectType == objectTypeToInclude)
+	SVObjectTypeEnum objectType = GetObjectType();
+	if(objectType != objectTypeToInclude)
 	{
-		return StrCompleteName;
+		if( ownerObjectInfo.PObject != nullptr && ownerObjectInfo.PObject != this )
+		{
+			completeName = ownerObjectInfo.PObject->GetCompleteObjectNameToObjectType( completeName, objectTypeToInclude );
+		}
 	}
 
-	if( ownerObjectInfo.PObject != NULL && ownerObjectInfo.PObject != this )
-	{
-		StrCompleteName = ownerObjectInfo.PObject->GetCompleteObjectNameToObjectType( StrCompleteName, objectTypeToInclude );
-	}
-
-	return StrCompleteName;
+	return completeName;
 }
 
 /*
@@ -1713,6 +1724,16 @@ void SVObjectClass::SetDefaultObjectAttributesSet(UINT uAttributes)
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObjectLibrary\SVObjectClass.cpp_v  $
+ * 
+ *    Rev 1.9   07 Jan 2015 16:03:08   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  980
+ * SCR Title:  Add Non-Inspection Objects to the Result View
+ * Checked in by:  mEichengruen;  Marcus Eichengruen
+ * Change Description:  
+ *   Changed method GetCompleteObjectNameToObjectType to avoid returning a name starting with ".".
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.8   20 Nov 2014 04:39:28   mziegler
  * Project:  SVObserver

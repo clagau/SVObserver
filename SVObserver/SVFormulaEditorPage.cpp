@@ -5,8 +5,8 @@
 //* .Module Name     : SVFormulaEditorPageClass
 //* .File Name       : $Workfile:   SVFormulaEditorPage.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.12  $
-//* .Check In Date   : $Date:   19 Dec 2014 14:02:00  $
+//* .Current Version : $Revision:   1.13  $
+//* .Check In Date   : $Date:   07 Jan 2015 18:09:34  $
 //******************************************************************************
 
 #pragma region Includes
@@ -23,6 +23,7 @@
 #include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
 #include "SVPPQObject.h"
 #include "EnvironmentObject.h"
+#include "SVTreeLibrary/ObjectSelectorItem.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -41,9 +42,6 @@ enum
 	SV_FORMULA_DECIMAL_CONSTANT_TYPE = 0,
 	SV_FORMULA_HEXADECIMAL_CONSTANT_TYPE = 1,
 	SV_FORMULA_BINARY_CONSTANT_TYPE = 2,
-
-	// Kludge
-	//OBM_DNARROW         = 32752,
 };
 
 #pragma endregion Declarations
@@ -402,12 +400,20 @@ void SVFormulaEditorPageClass::OnLocalVariableSelect()
 
 	//Need to replace the inspection name with the PPQ Variables name
 	SVStringArray::iterator Iter( PpqVariables.begin() );
+	Seidenader::SVTreeLibrary::ObjectSelectorItem objectItem;
 	while( Iter != PpqVariables.end() )
 	{
+		SVObjectReference objectRef;
+		HRESULT hOk = SVObjectManagerClass::Instance().GetObjectByDottedName( *Iter, objectRef );
+		if (S_OK == hOk)
+		{
+			ObjectTreeGenerator::setSelectorItemType(objectRef, objectItem);
+		}
 		Iter->replace( InspectionName.c_str(), FqnPPQVariables );
+		objectItem.setLocation(*Iter);
+		ObjectTreeGenerator::Instance().insertTreeObject(objectItem);
 		Iter++;
 	}
-	ObjectTreeGenerator::Instance().insertTreeObjects( PpqVariables );
 
 	SVOutputInfoListClass OutputList;
 	m_rFormulaController.getToolSet()->GetOutputList( OutputList );
@@ -822,6 +828,16 @@ void SVFormulaEditorPageClass::enableControls()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVFormulaEditorPage.cpp_v  $
+ * 
+ *    Rev 1.13   07 Jan 2015 18:09:34   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  933
+ * SCR Title:  Add Filter Tab to Object Selector (SVO-377)
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   Changed method OnLocalVariableSelect to fix the issue where environment items did not show type information on the Object Selector Filter page.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.12   19 Dec 2014 14:02:00   mEichengruen
  * Project:  SVObserver

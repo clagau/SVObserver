@@ -452,6 +452,9 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SVSharedMemoryLibrary", "SVSharedMemoryLibrary\SVSharedMemoryLibrary.vcxproj", "{B479E2E3-2B4F-4E2C-A6AD-A0A03579FE59}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "RunRejectServer", "RunRejectServer\runrejctsvr.vcxproj", "{9B0560C0-FEE5-4806-9594-CFED40E28A18}"
+	ProjectSection(ProjectDependencies) = postProject
+		{B479E2E3-2B4F-4E2C-A6AD-A0A03579FE59} = {B479E2E3-2B4F-4E2C-A6AD-A0A03579FE59}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GridCtrlLibrary", "GridCtrlLibrary\GridCtrlLibrary.vcxproj", "{2BFBF5FA-1947-4A24-9F5A-697FB3EF6671}"
 EndProject

@@ -5,8 +5,8 @@
 //* .Module Name     : ObjectTreeGenerator
 //* .File Name       : $Workfile:   ObjectTreeGenerator.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   16 Dec 2014 17:43:50  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   07 Jan 2015 18:10:22  $
 //* ----------------------------------------------------------------------------
 //* This class is the interface between the object manager and object selector
 //******************************************************************************
@@ -119,6 +119,12 @@ namespace Seidenader
 			void insertTreeObject( const SVString& rLocation );
 
 			/**********
+			 The method inserts an object into the tree list
+			 \param rObjectItem <in> reference to a object selector item
+			***********/
+			void insertTreeObject( const SVTreeLibrary::ObjectSelectorItem& rObjectItem );
+
+			/**********
 			 The method inserts the tool set output object list
 			 \param rOutputList <out> reference to the output list
 			***********/
@@ -184,17 +190,17 @@ namespace Seidenader
 			 \param rSelectorType <in> reference to the object selector type
 			***********/
 			inline void setSelectorType( const SelectorTypeEnum& rSelectorType );
-		#pragma endregion Public Methods
 
-		private:
-		#pragma region Private Methods
 			/**********
 			 The method sets the selector item variable type int string etc.. 
 			 \param rObjectRef <in> reference to the object
 			 \param rSelectorItem <in, out> reference to the selector item
 			***********/
-			void setSelectorItemType( const SVObjectReference& rObjectRef, SVTreeLibrary::ObjectSelectorItem& rSelectorItem );
+			static void setSelectorItemType( const SVObjectReference& rObjectRef, SVTreeLibrary::ObjectSelectorItem& rSelectorItem );
+		#pragma endregion Public Methods
 
+		private:
+		#pragma region Private Methods
 			/**********
 			 The method filters the object list
 			 \param rOutputList <in> reference to the output list (Tried to make it const however failed due to methods not const)
@@ -214,11 +220,12 @@ namespace Seidenader
 			void setItemAttributes();
 
 			/**********
-			 The method checks the location filters 
+			 The method filter a location and return it. 
 			 \param rFilters<in>, reference to the filters to be used
-			 \param rLocation <in>, <out> reference to the location before filtering
+			 \param rLocation <in> reference to the location before filtering
+			 \return filtered location
 			***********/
-			void checkLocationFilters( const TranslateMap& rFilters, SVString& rLocation ) const;
+			SVString getFilteredLocation( const TranslateMap& rFilters, const SVString& rLocation ) const;
 
 			/**********
 			The method converts the location to the required format using the location filter and array index
@@ -250,6 +257,18 @@ namespace Seidenader
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\ObjectSelectorLibrary\ObjectTreeGenerator.h_v  $
+ * 
+ *    Rev 1.3   07 Jan 2015 18:10:22   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  933
+ * SCR Title:  Add Filter Tab to Object Selector (SVO-377)
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   Added method insertTreeObject.
+ * Changed method setSelectorItemType to public.
+ * Renamed method checkLocationFilters to getFilteredLocation to fix the issue where environment items did not show type information on the Object Selector Filter page.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   16 Dec 2014 17:43:50   bwalter
  * Project:  SVObserver

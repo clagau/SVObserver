@@ -5,8 +5,8 @@
 //* .Module Name     : SVToolSet.cpp
 //* .File Name       : $Workfile:   SVToolSet.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.8  $
-//* .Check In Date   : $Date:   19 Dec 2014 04:24:36  $
+//* .Current Version : $Revision:   1.9  $
+//* .Check In Date   : $Date:   07 Jan 2015 17:52:44  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -41,7 +41,6 @@ void SVToolSetClass::init()
 
 	// SetObjectDepth() already called in SVObjectClass Ctor
 
-
 	// Register Embedded Objects
 	RegisterEmbeddedObject( &enabled, SVToolSetEnabledObjectGuid, IDS_OBJECTNAME_ENABLED, false, SVResetItemNone );
 	RegisterEmbeddedObject( &mainImageObject, SVOutputImageObjectGuid, IDS_OBJECTNAME_IMAGE1 );
@@ -64,7 +63,7 @@ void SVToolSetClass::init()
 
 	RegisterEmbeddedObject( &RegressionTestMode, SVRegressionTestModeGuid, IDS_OBJECTNAME_REGRESSIONTESTMODE, false, SVResetItemNone );
 
- 	RegisterEmbeddedObject( &drawFlag, SVConditionalToolSetDrawFlagObjectGuid, IDS_OBJECTNAME_DRAWTOOL_FLAG, false, SVResetItemNone );
+	RegisterEmbeddedObject( &drawFlag, SVConditionalToolSetDrawFlagObjectGuid, IDS_OBJECTNAME_DRAWTOOL_FLAG, false, SVResetItemNone );
 	RegisterEmbeddedObject( &m_bvoResetCounts, SVResetInspectionCountsGuid, IDS_OBJECTNAME_RESET_COUNTS, false, SVResetItemIP );
 	RegisterEmbeddedObject( &m_lvoTriggerCount, SVTriggerCountGuid, IDS_OBJECTNAME_TRIGGER_COUNT, false, SVResetItemNone );
 
@@ -82,7 +81,7 @@ void SVToolSetClass::init()
 	enabledCount.SetDefaultValue( 0, TRUE );
 	processedCount.SetDefaultValue( 0, TRUE );
 
-	ToolTime.SetDefaultValue(0,TRUE);
+	ToolTime.SetDefaultValue(0, TRUE);
 	ToolTime.SetName( "Tool Set Time" );
 
 	m_bResetMinMaxToolsetTime = true;
@@ -90,7 +89,7 @@ void SVToolSetClass::init()
 	m_svMinToolsetTime.SetDefaultValue( 0, TRUE );
 	m_svMaxToolsetTime.SetDefaultValue( 0, TRUE );
 
-	RegressionTestMode.SetDefaultValue (FALSE, TRUE);
+	RegressionTestMode.SetDefaultValue(FALSE, TRUE);
 
 	drawFlag.SetEnumTypes( IDS_TOOLSETDRAW_ENUMOBJECT_LIST );
 	drawFlag.SetDefaultValue( ( const long ) 0, TRUE ); // 0 Should be show 'All Tools'
@@ -115,10 +114,8 @@ void SVToolSetClass::init()
 	// Set default inputs and outputs
 	// Note:: Call the Derived Class (this) here
 	addDefaultInputObjects();
-
-	m_ResultList.m_pToolSet = this;
+	m_ResultList.SetToolSet(this);
 }
-
 
 //******************************************************************************
 // Destructor(s):
@@ -1687,6 +1684,17 @@ HRESULT SVToolSetClass::onCollectOverlays(SVImageClass *p_Image, SVExtentMultiLi
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVToolSet.cpp_v  $
+ * 
+ *    Rev 1.9   07 Jan 2015 17:52:44   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  980
+ * SCR Title:  Add Non-Inspection Objects to the Result View
+ * Checked in by:  mEichengruen;  Marcus Eichengruen
+ * Change Description:  
+ *   Changed init method to call m_ResultList.SetToolSet.
+ * Cleaned up spacing.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.8   19 Dec 2014 04:24:36   gramseier
  * Project:  SVObserver

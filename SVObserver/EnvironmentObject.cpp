@@ -1,12 +1,12 @@
-//******************************************************************************
++//******************************************************************************
 //* COPYRIGHT (c) 2014 by Seidenader
 //* All Rights Reserved
 //******************************************************************************
 //* .Module Name     : EnvironmentObject
 //* .File Name       : $Workfile:   EnvironmentObject.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.4  $
-//* .Check In Date   : $Date:   16 Dec 2014 17:53:30  $
+//* .Current Version : $Revision:   1.5  $
+//* .Check In Date   : $Date:   07 Jan 2015 17:33:50  $
 //******************************************************************************
 
 #pragma region Includes
@@ -53,22 +53,26 @@ HRESULT EnvironmentObject::GetChildObject( SVObjectClass*& rpObject, const SVObj
 
 void EnvironmentObject::getEnvironmentObjectNameList(SVStringArray& rObjectNameList, const SVString& rPath, UINT AttributesAllowedFilter) const
 {
-	BasicValueObjects::ValueList list = m_EnvironmentValues.getValueList();
+	SVString path = rPath + _T(".");
+	const BasicValueObjects::ValueList& list = m_EnvironmentValues.getValueList();
 	BasicValueObjects::ValueList::const_iterator it = list.cbegin();
-	for(it = list.cbegin(); it != list.cend(); it++)
+	for(it = list.cbegin(); it != list.cend(); ++it)
 	{
 		SVString completeName = (*it)->GetCompleteObjectName();
-		size_t Pos = completeName.find( rPath.c_str() );
-		size_t endPathPos = Pos + rPath.size();
-		if( SVString::npos != Pos &&
-			completeName.size() > endPathPos &&
-			( (*it)->ObjectAttributesAllowed() & AttributesAllowedFilter) == AttributesAllowedFilter )
+		if( ((*it)->ObjectAttributesAllowed() & AttributesAllowedFilter) == AttributesAllowedFilter )
 		{
-			//check if current object a sub object of this path
-			//no check if rPath empty
-			if (rPath.empty() || completeName[endPathPos] == '.')
+			// Check if current object is a sub-object of this path.
+			size_t completeSize = completeName.size();
+			size_t pathSize = path.size();
+			if ( completeSize >= pathSize )
 			{
-				rObjectNameList.push_back(completeName);
+				SVString checkName = completeName.Left( path.size() );
+				int diff = checkName.Compare( path );
+
+				if ( rPath.empty() || diff == 0 )
+				{
+					rObjectNameList.push_back( completeName );
+				}
 			}
 		}
 	}
@@ -80,6 +84,16 @@ void EnvironmentObject::getEnvironmentObjectNameList(SVStringArray& rObjectNameL
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\EnvironmentObject.cpp_v  $
+ * 
+ *    Rev 1.5   07 Jan 2015 17:33:50   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  980
+ * SCR Title:  Add Non-Inspection Objects to the Result View
+ * Checked in by:  mEichengruen;  Marcus Eichengruen
+ * Change Description:  
+ *   Changed conditions in method getEnvironmentObjectNameList.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.4   16 Dec 2014 17:53:30   bwalter
  * Project:  SVObserver

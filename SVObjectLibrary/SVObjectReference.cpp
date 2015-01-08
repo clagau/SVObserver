@@ -5,14 +5,15 @@
 //* .Module Name     : SVObjectReference
 //* .File Name       : $Workfile:   SVObjectReference.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   22 Apr 2013 16:57:02  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   07 Jan 2015 16:04:36  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVObjectClass.h"
 #include "SVObjectReference.h"
-
+#pragma endregion Includes
 
 SVObjectReference::SVObjectReference( SVObjectClass* pObject )
 {
@@ -86,6 +87,7 @@ CString SVObjectReference::GetCompleteObjectNameToObjectType( LPCSTR lpszComplet
 	}
 	return strName;
 }
+
 CString SVObjectReference::GetOneBasedName() const
 {
 	CString strName;
@@ -158,34 +160,32 @@ CString SVObjectReference::GetOneBasedIndexString() const
 	return s;
 }
 
-SVString SVObjectReference::GetIndex() const
+const SVString& SVObjectReference::GetIndex() const
 {
-	SVString s;
 	return m_NameInfo.m_Index;
 }
 
-
 const UINT SVObjectReference::ObjectAttributesAllowed() const
 {
-	ASSERT( m_pObject != NULL );
+	ASSERT( m_pObject != nullptr );
 	return m_pObject->ObjectAttributesAllowed();
 }
 
 const UINT SVObjectReference::ObjectAttributesSet() const
 {
-	ASSERT( m_pObject != NULL );
+	ASSERT( m_pObject != nullptr );
 	return m_pObject->ObjectAttributesSet(::atol( m_NameInfo.m_Index.c_str() ));
 }
 
 UINT& SVObjectReference::ObjectAttributesAllowedRef()
 {
-	ASSERT( m_pObject != NULL );
+	ASSERT( m_pObject != nullptr );
 	return m_pObject->ObjectAttributesAllowedRef();
 }
 
 SVObjectAttributeShim SVObjectReference::ObjectAttributesSetRef()
 {
-	ASSERT( m_pObject != NULL );
+	ASSERT( m_pObject != nullptr );
 	return m_pObject->ObjectAttributesSetRef(::atol( m_NameInfo.m_Index.c_str() ));
 }
 
@@ -193,18 +193,22 @@ GUID SVObjectReference::GetObjectGuid( SVObjectClass* pObject )
 {
 	return pObject->GetUniqueObjectID();
 }
-/*
-static GUID SVObjectReference::IsObjectArray( SVObjectClass* pObject )
-{
-	return pObject->IsArray();
-}
-*/
 
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObjectLibrary\SVObjectReference.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObjectLibrary\SVObjectReference.cpp_v  $
+ * 
+ *    Rev 1.1   07 Jan 2015 16:04:36   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  980
+ * SCR Title:  Add Non-Inspection Objects to the Result View
+ * Checked in by:  mEichengruen;  Marcus Eichengruen
+ * Change Description:  
+ *   Changed method GetIndex to return const reference.  Changed NULL to nullptr.  Removed dead code.  Cleaned up spacing.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   22 Apr 2013 16:57:02   bWalter
  * Project:  SVObserver

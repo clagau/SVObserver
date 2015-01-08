@@ -5,10 +5,11 @@
 //* .Module Name     : SVInspectionProcess
 //* .File Name       : $Workfile:   SVInspectionProcess.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.23  $
-//* .Check In Date   : $Date:   17 Dec 2014 07:15:48  $
+//* .Current Version : $Revision:   1.24  $
+//* .Check In Date   : $Date:   07 Jan 2015 17:41:16  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include <mbstring.h>
 #include <fstream>
@@ -27,7 +28,6 @@
 #include "SVTimerLibrary/SVClock.h"
 #include "SVConfigurationLibrary/SVConfigurationTags.h"
 #include "SVSharedMemoryLibrary/SVSharedConfiguration.h"
-
 #include "SVObserver.h"
 #include "SVGetObjectDequeByTypeVisitor.h"
 #include "SVGlobal.h"
@@ -49,6 +49,7 @@
 #include "SVCommandStreamManager.h"
 #include "SVOLicenseManager/SVOLicenseManager.h"
 #include "SVSharedMemorySingleton.h"
+#pragma endregion Includes
 
 #define SEJ_ErrorBase 15000
 #define Err_15021 (SEJ_ErrorBase+21)
@@ -74,7 +75,7 @@ HRESULT SVInspectionProcess::ProcessInspection( bool& p_rProcessed, SVProductInf
 #ifdef EnableTracking
 		m_InspectionTracking.EventStart( _T( "Process Inspections" ) );
 #endif
-		SVInspectionInfoStruct*      pIPInfo     = NULL;
+		SVInspectionInfoStruct* pIPInfo = nullptr;
 
 		size_t l_InputXferCount = 0;
 		m_bInspecting = true;	// do this before RemoveHead
@@ -368,7 +369,7 @@ HRESULT SVInspectionProcess::ProcessNotifyWithLastInspected(bool& p_rProcessed, 
 			try
 			{
 				if (l_Product.ProcessCount() > 0 && sharedSlotIndex >= 0)
-				{			
+				{
 #ifdef COLLECT_SHAREDMEMORY_STATS
 					SeidenaderVision::SVProfiler totalProfiler;
 					SeidenaderVision::SVProfiler rejectProfiler;
@@ -772,7 +773,7 @@ BOOL SVInspectionProcess::DestroyInspection()
 		m_publishList.Release( m_pCurrentToolset );
 	}
 
-	if( m_pCurrentToolset != NULL )
+	if( m_pCurrentToolset != nullptr )
 	{
 		::SVSendMessage(this, SVM_DESTROY_CHILD_OBJECT,reinterpret_cast<DWORD_PTR>( m_pCurrentToolset ), NULL);
 	}
@@ -803,9 +804,14 @@ BOOL SVInspectionProcess::DestroyInspection()
 	m_PPQInputs.clear();
 
 	m_PPQId.clear();
-	//m_pPPQ = NULL;
 
 	m_pResultImageCircleBuffer.clear();
+
+	SVResultListClass* pResultlist = GetResultList();
+	if(pResultlist)
+	{
+		pResultlist->m_PPQInputReferences.BuildReferenceVector(this);
+	}
 
 	return TRUE;
 }// end Destroy
@@ -1200,30 +1206,6 @@ HRESULT SVInspectionProcess::StartProcess( SVProductInfoStruct *pProduct )
 	return hr;
 }// end StartProcess
 
-/*
-BOOL SVInspectionProcess::RegisterFinishProcess( void *pOwner, LPSVFINISHPROC pFunc )
-{
-	m_pFinishProc	= pFunc;
-	m_pOwner		= pOwner;
-	return TRUE;
-}
-*/
-
-/*
-BOOL SVInspectionProcess::UnregisterFinishProcess( void *pOwner )
-{
-	BOOL l_Status = ( m_pOwner == pOwner );
-
-	if( l_Status )
-	{
-		m_pFinishProc = NULL;
-		m_pOwner = NULL;
-	}
-
-	return TRUE;
-}
-*/
-
 BOOL SVInspectionProcess::RebuildInspectionInputList()
 {
 	SVIOEntryStructVector ppOldPPQInputs;
@@ -1240,7 +1222,7 @@ BOOL SVInspectionProcess::RebuildInspectionInputList()
 
 	SVPPQObject* l_pPPQ = GetPPQ();
 
-	if( l_pPPQ == NULL )
+	if( l_pPPQ == nullptr )
 	{
 		return false;
 	}
@@ -1298,25 +1280,25 @@ BOOL SVInspectionProcess::RebuildInspectionInputList()
 
 		if( !bFound )
 		{
-			SVValueObjectClass* pValueObject = NULL;
+			SVValueObjectClass* pValueObject = nullptr;
 
 			switch ( pNewEntry->m_ObjectType )
 			{
 				case IO_DIGITAL_INPUT:
 				{
-					pValueObject	= new SVBoolValueObjectClass(this);
+					pValueObject = new SVBoolValueObjectClass(this);
 					pValueObject->ObjectAttributesAllowedRef() |= SV_REMOTELY_SETABLE;
 					break;
 				}
 				case IO_REMOTE_INPUT:
 				{
-					pValueObject	= new SVVariantValueObjectClass(this);
+					pValueObject = new SVVariantValueObjectClass(this);
 					pValueObject->ObjectAttributesAllowedRef() |= SV_REMOTELY_SETABLE;
 					break;
 				}
 				default:
 				{
-					pValueObject	= new SVVariantValueObjectClass(this);
+					pValueObject = new SVVariantValueObjectClass(this);
 					break;
 				}
 			}
@@ -1351,7 +1333,6 @@ BOOL SVInspectionProcess::RebuildInspectionInputList()
 				bFound = TRUE;
 				break;
 			}// end if
-
 		}// end for
 
 		if( !bFound || !m_PPQInputs[iList].m_IOEntryPtr->m_Enabled )
@@ -1360,6 +1341,12 @@ BOOL SVInspectionProcess::RebuildInspectionInputList()
 		}// end if
 
 	}// end for
+
+	SVResultListClass* pResultlist = GetResultList();
+	if(pResultlist)
+	{
+		pResultlist->m_PPQInputReferences.BuildReferenceVector(this);
+	}
 
 	BuildValueObjectMap();
 
@@ -4064,7 +4051,7 @@ BOOL SVInspectionProcess::RunInspection( long lResultDataIndex, SVImageIndexStru
 	{
 		// Process all input requests
 		if( !ProcessInputRequests( lResultDataIndex, m_bForceOffsetUpdate ) )
-		{				
+		{
 			SETEXCEPTION0( l_svLog, SVMSG_SVO_38_INPUT_REQUEST_FAILED );
 			l_svLog.LogException();
 
@@ -4073,7 +4060,7 @@ BOOL SVInspectionProcess::RunInspection( long lResultDataIndex, SVImageIndexStru
 		}
 
 		if( !ProcessInputImageRequests( pProduct ) )
-		{				
+		{
 			SETEXCEPTION0( l_svLog, SVMSG_SVO_39_IMAGE_REQUEST_FAILED );
 			l_svLog.LogException();
 
@@ -4084,7 +4071,7 @@ BOOL SVInspectionProcess::RunInspection( long lResultDataIndex, SVImageIndexStru
 		HRESULT l_MainImageStatus = UpdateMainImagesByProduct( pProduct );
 
 		if( l_MainImageStatus != S_OK )
-		{				
+		{
 			SETEXCEPTION0( l_svLog, l_MainImageStatus );
 			l_svLog.LogException();
 
@@ -4816,11 +4803,46 @@ void SVInspectionProcess::Persist(SVObjectWriter& rWriter)
 	rWriter.EndElement();
 }
 
+SVResultListClass* SVInspectionProcess::GetResultList() const
+{
+	SVResultListClass* retVal = nullptr;
+	SVToolSetClass *pToolSet = GetToolSet();
+	if(pToolSet)
+	{
+		retVal = pToolSet->GetResultList();
+	}
+	return retVal;
+}
+
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVInspectionProcess.cpp_v  $
+ * 
+ *    Rev 1.24   07 Jan 2015 17:41:16   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  980
+ * SCR Title:  Add Non-Inspection Objects to the Result View
+ * Checked in by:  mEichengruen;  Marcus Eichengruen
+ * Change Description:  
+ *   Build reference vector when m_ppQInputs are changing
+ * Changed method DestroyInspection to call BuildReferenceVector.
+ * Changed method RebuildInspectionInputList to call BuildReferenceVector.
+ * Added method GetResultList.
+ * Replaced code in ResetObject which was previously removed.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.24   19 Dec 2014 04:08:58   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  978
+ * SCR Title:  Copy and Paste a Tool within an Inspection or Between Different Inspections
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   ResetObject called twice removed
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.23   17 Dec 2014 07:15:48   tbair
  * Project:  SVObserver

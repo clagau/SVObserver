@@ -5,29 +5,33 @@
 //* .Module Name     : SVResultList.cpp
 //* .File Name       : $Workfile:   SVResultList.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   15 May 2014 13:48:26  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   07 Jan 2015 17:48:18  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVResultList.h"
 
+#include "SVObjectLibrary/GlobalConst.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVTimerLibrary/SVClock.h"
 #include "SVGetObjectDequeByTypeVisitor.h"
 #include "SVResult.h"
+#include "SVInspectionProcess.h"
+#pragma endregion Includes
 
+#pragma region Declarations
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
+#pragma endregion Declarations
 
-
+#pragma region Constructor
 SVResultListClass::SVResultListClass()
-: m_LastUpdateTimestamp( 0 )
 {
-	m_pCurrentResultView = NULL;
 }
 
 SVResultListClass::~SVResultListClass()
@@ -37,17 +41,19 @@ SVResultListClass::~SVResultListClass()
 	m_results.RemoveAll();
 
 }
+#pragma endregion Constructor
 
 void SVResultListClass::Destroy()
 {
-	m_vecObjects.clear();
+	m_EnvResults.Clear();
+	m_ToolReferences.Clear();
+	m_PPQInputReferences.Clear();
 }
 
-void SVResultListClass::SetView( SVResultViewClass* p_pResultView )
+void SVResultListClass::SetToolSet(SVToolSetClass* pToolSet)
 {
-	m_pCurrentResultView = p_pResultView;
+	m_pToolSet = pToolSet;
 }
-
 
 void SVResultListClass::Refresh(SVTaskObjectClass* pRootObject)
 {
@@ -71,36 +77,9 @@ void SVResultListClass::Refresh(SVTaskObjectClass* pRootObject)
 		m_results.Add( pResult );
 	}
 
-	/*
-	SVResultClass* pResult = dynamic_cast <SVResultClass*> ( reinterpret_cast <SVObjectClass*> (::SVSendMessage(pRootObject, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast <DWORD_PTR> (&info) ) ) );
-	while( pResult )
-	{
-		m_results.Add( pResult );
-		pResult = dynamic_cast <SVResultClass*> ( reinterpret_cast <SVObjectClass*> (::SVSendMessage(pRootObject, SVM_GETNEXT_OBJECT, reinterpret_cast <DWORD> (pResult), reinterpret_cast <DWORD_PTR> (&info) ) ) );
-	}
-	*/
+	m_ToolReferences.RebuildReferenceVector();
 
-	m_vecObjects.clear();
-
-	// Find all outputs marked as selected for viewing
-	SVOutputInfoListClass l_OutputList;
-
-	pRootObject->GetOutputList( l_OutputList );
-
-	l_OutputList.GetSetAttributesList( SV_VIEWABLE, m_vecObjects );
-
-	/*
-	SVResultView* pView = GetView();
-	if( pView )
-		pView->Rebuild();
-	*/
-
-	m_LastUpdateTimestamp = SVClock::GetTimeStamp();
-}
-
-SVResultViewClass* SVResultListClass::GetView()
-{
-	return m_pCurrentResultView;
+	m_EnvResults.RebuildReferenceVector();
 }
 
 SVProductInspectedState SVResultListClass::GetInspectionState()
@@ -114,7 +93,7 @@ SVProductInspectedState SVResultListClass::GetInspectionState()
 		masterFailed |= m_results.GetAt( i )->IsFailed();
 		masterWarned |= m_results.GetAt( i )->IsWarned();
 	}
-	
+
 	if( masterFailed )
 		return( PRODUCT_INSPECTION_FAILED );
 
@@ -129,6 +108,18 @@ SVProductInspectedState SVResultListClass::GetInspectionState()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVResultList.cpp_v  $
+ * 
+ *    Rev 1.3   07 Jan 2015 17:48:18   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  980
+ * SCR Title:  Add Non-Inspection Objects to the Result View
+ * Checked in by:  mEichengruen;  Marcus Eichengruen
+ * Change Description:  
+ *   Add new members for referenced PPQ variables, tool variables, and environment variables.
+ * Added method SetToolSet.
+ * Removed methods GetView and SetView.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   15 May 2014 13:48:26   sjones
  * Project:  SVObserver
@@ -243,4 +234,3 @@ $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVResultLi
    
    /////////////////////////////////////////////////////////////////////////////////////
 */
-

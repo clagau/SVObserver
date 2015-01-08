@@ -5,8 +5,8 @@
 //* .Module Name     : SVResult.cpp
 //* .File Name       : $Workfile:   SVResult.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   15 May 2014 12:40:06  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   07 Jan 2015 17:47:10  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -66,7 +66,7 @@ void SVResultClass::init()
 {
 	m_bUseOverlays = false;
 
-	// Indentify our type in the Output List
+	// Identify our type in the Output List
 	outObjectInfo.ObjectTypeInfo.ObjectType = SVResultObjectType;
 
 	// Register Embedded Objects
@@ -79,7 +79,7 @@ void SVResultClass::init()
 	failed.SetDefaultValue( TRUE, TRUE );			// Default for Failed is TRUE !!!
 	warned.SetDefaultValue( TRUE, TRUE );			// Default for Warned is TRUE !!!
 
-	// Set up the Defualt Inputs/Outputs
+	// Set up the Default Inputs/Outputs
 	addDefaultInputObjects();
 }
 
@@ -183,7 +183,7 @@ CRect SVResultClass::Draw( HDC DC, CRect R )
 			::TextOut( DC, R.left, R.top, strText, strText.GetLength() );
 			R.top += SV_DEFAULT_TEXT_HEIGHT;
 
-			// Idention
+			// Indent
 			R.left += SV_DEFAULT_TEXT_HEIGHT;
 		}
 
@@ -194,7 +194,7 @@ CRect SVResultClass::Draw( HDC DC, CRect R )
 			::TextOut( DC, R.left, R.top, strText, strText.GetLength() );
 			R.top += SV_DEFAULT_TEXT_HEIGHT;
 
-			// Idention
+			// Indent
 			R.left += SV_DEFAULT_TEXT_HEIGHT;
 		}
 
@@ -766,6 +766,16 @@ void SVRangeDialogClass::OnOK()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVResult.cpp_v  $
+ * 
+ *    Rev 1.3   07 Jan 2015 17:47:10   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  980
+ * SCR Title:  Add Non-Inspection Objects to the Result View
+ * Checked in by:  mEichengruen;  Marcus Eichengruen
+ * Change Description:  
+ *   Fixed spelling in comments.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   15 May 2014 12:40:06   tbair
  * Project:  SVObserver
