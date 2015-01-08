@@ -5,8 +5,8 @@
 //* .Module Name     : SVObject
 //* .File Name       : $Workfile:   SVObjectClass.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.9  $
-//* .Check In Date   : $Date:   07 Jan 2015 16:03:08  $
+//* .Current Version : $Revision:   1.10  $
+//* .Check In Date   : $Date:   08 Jan 2015 05:41:38  $
 //******************************************************************************
 
 #pragma region Includes
@@ -970,7 +970,7 @@ CString SVObjectClass::GetCompleteObjectNameToObjectType( LPCSTR LPSZCompleteNam
 		}
 		else
 		{
-			completeName.Format( _T( "%s.%s" ), namename.GetString(), LPSZCompleteName );
+			completeName.Format( _T( "%s.%s" ), name.GetString(), LPSZCompleteName );
 		}
 	}
 	else
@@ -1724,6 +1724,16 @@ void SVObjectClass::SetDefaultObjectAttributesSet(UINT uAttributes)
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObjectLibrary\SVObjectClass.cpp_v  $
+ * 
+ *    Rev 1.10   08 Jan 2015 05:41:38   mEichengruen
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  980
+ * SCR Title:  Add Non-Inspection Objects to the Result View
+ * Checked in by:  mEichengruen;  Marcus Eichengruen
+ * Change Description:  
+ *   fix parametername to avoid compile error
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.9   07 Jan 2015 16:03:08   bwalter
  * Project:  SVObserver
