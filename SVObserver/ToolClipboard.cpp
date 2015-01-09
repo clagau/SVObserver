@@ -5,8 +5,8 @@
 //* .Module Name     : Tool clipboard
 //* .File Name       : $Workfile:   ToolClipboard.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   19 Dec 2014 04:20:18  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   09 Jan 2015 01:46:30  $
 //* ----------------------------------------------------------------------------
 //* This class is used to write and read the selected tool to and from the clipboard
 //******************************************************************************
@@ -79,7 +79,7 @@ static const TCHAR GetClipboardDataFailed[] = _T("Failed to retrieve the clipboa
 static const TCHAR ToolInvalid[] = _T("The tool to be copied is invalid.");
 static const TCHAR ClipboardDataConverionFailed[] = _T("The clipboard data conversion failed.");
 static const TCHAR VersionMismatch[] = _T("The current SVObserver Version does not match the version coming from the clipboard.");
-static const TCHAR ColorToolInsertFailed[] = _T("A color tool cannot be inserted into a none color system.");
+static const TCHAR ColorToolInsertFailed[] = _T("A color tool cannot be inserted into a non-color system.");
 static const TCHAR NonColorToolInsertFailed[] = _T("A color tool must always be the first tool in a color system.");
 #pragma endregion Declarations
 
@@ -710,6 +710,16 @@ HRESULT ToolClipboard::parseTreeToTool( SVXMLMaterialsTree& rTree, SVGUID& rTool
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\ToolClipboard.cpp_v  $
+ * 
+ *    Rev 1.1   09 Jan 2015 01:46:30   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  978
+ * SCR Title:  Copy and Paste a Tool within an Inspection or Between Different Inspections
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Typo in error message
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   19 Dec 2014 04:20:18   gramseier
  * Project:  SVObserver

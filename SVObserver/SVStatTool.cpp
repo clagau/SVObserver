@@ -5,8 +5,8 @@
 //* .Module Name     : SVStatisticsTool
 //* .File Name       : $Workfile:   SVStatTool.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.4  $
-//* .Check In Date   : $Date:   19 Dec 2014 03:59:32  $
+//* .Current Version : $Revision:   1.5  $
+//* .Check In Date   : $Date:   09 Jan 2015 01:45:14  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -37,6 +37,9 @@ enum
 	Err_15003 = (ErrorBase+3),
 	Err_15004 = (ErrorBase+4),
 };
+
+static const UINT GRA_ErrorBase = 25000;
+static const UINT Err_25011 = GRA_ErrorBase + 11;
 
 SV_IMPLEMENT_CLASS( SVStatisticsToolClass, SVStatisticsToolClassGuid );
 
@@ -221,7 +224,7 @@ HRESULT SVStatisticsToolClass::ResetObject()
 		{
 			if( !Test() )
 			{
-				Result = S_FALSE;
+				Result = -Err_25011;
 			}
 		}
 		else
@@ -854,6 +857,16 @@ DWORD_PTR SVStatisticsToolClass::processMessage( DWORD DwMessageID, DWORD_PTR Dw
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVStatTool.cpp_v  $
+ * 
+ *    Rev 1.5   09 Jan 2015 01:45:14   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  978
+ * SCR Title:  Copy and Paste a Tool within an Inspection or Between Different Inspections
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Changed ResetObject to return a unique result value
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.4   19 Dec 2014 03:59:32   gramseier
  * Project:  SVObserver

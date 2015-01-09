@@ -5,8 +5,8 @@
 //* .Module Name     : SVIPDoc
 //* .File Name       : $Workfile:   SVIPDoc.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.30  $
-//* .Check In Date   : $Date:   07 Jan 2015 17:43:58  $
+//* .Current Version : $Revision:   1.31  $
+//* .Check In Date   : $Date:   09 Jan 2015 01:40:54  $
 //******************************************************************************
 
 #pragma region Includes
@@ -1338,6 +1338,7 @@ void SVIPDoc::OnUpdateEditCopy( CCmdUI* pCmdUI )
 
 	if( Enabled )
 	{
+		Enabled = FALSE;
 		SVToolSetTabViewClass* pToolSetView = GetToolSetTabView();
 		SVToolSetClass* pToolSet = GetToolSet();
 		if( nullptr != pToolSet && nullptr != pToolSetView && !pToolSetView->IsLabelEditing())
@@ -1345,10 +1346,10 @@ void SVIPDoc::OnUpdateEditCopy( CCmdUI* pCmdUI )
 			ToolListSelectionInfo ToolListInfo = pToolSetView->GetToolListSelectionInfo();
 
 			const SVGUID& rGuid = pToolSetView->GetSelectedTool();
-			//No valid tool selected or tool tree selected
-			if( rGuid.empty() || -1 == ToolListInfo.m_listIndex || !pToolSetView->IsToolsetListCtrlActive() )
+			//Tool list active and valid tool
+			if( !rGuid.empty() && -1 != ToolListInfo.m_listIndex && pToolSetView->IsToolsetListCtrlActive() )
 			{
-				Enabled = FALSE;
+				Enabled = TRUE;
 			}
 		}
 	}
@@ -1423,6 +1424,7 @@ void SVIPDoc::OnUpdateEditPaste( CCmdUI* pCmdUI )
 
 	if( Enabled )
 	{
+		Enabled = FALSE;
 		SVToolSetTabViewClass* pToolSetView = GetToolSetTabView();
 		SVToolSetClass* pToolSet = GetToolSet();
 		if( nullptr != pToolSet && nullptr != pToolSetView && !pToolSetView->IsLabelEditing() )
@@ -1431,14 +1433,10 @@ void SVIPDoc::OnUpdateEditPaste( CCmdUI* pCmdUI )
 			//Only if tool list active and a selected index is valid
 			if ( -1 != info.m_listIndex &&  pToolSetView->IsToolsetListCtrlActive() )
 			{
-				if( !ToolClipboard::isClipboardDataValid() )
+				if( ToolClipboard::isClipboardDataValid() )
 				{
-					Enabled = FALSE;
+					Enabled = TRUE;
 				}
-			}
-			else
-			{
-				Enabled = FALSE;
 			}
 		}
 	}
@@ -4214,6 +4212,16 @@ int SVIPDoc::GetToolToInsertBefore(const CString& name, int listIndex) const
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVIPDoc.cpp_v  $
+ * 
+ *    Rev 1.31   09 Jan 2015 01:40:54   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  978
+ * SCR Title:  Copy and Paste a Tool within an Inspection or Between Different Inspections
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Fixed: copy paste commands enabled while editing name
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.30   07 Jan 2015 17:43:58   bwalter
  * Project:  SVObserver
