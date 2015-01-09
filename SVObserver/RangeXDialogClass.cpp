@@ -6,8 +6,8 @@
 //* .File Name       : $Workfile:   RangeXDialogClass.cpp  $
 //* .Description     : RangeXDialogClass this dialog is used instead of RangeDialogclass when indirect values for the rangeobjects are allowed
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   19 Dec 2014 13:53:42  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   09 Jan 2015 11:59:22  $
 //******************************************************************************
 
 #pragma region Includes
@@ -23,11 +23,14 @@
 #include "SVInspectionProcess.h" 
 #include "SVToolSet.h"
 #include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
+#include "SVObjectLibrary/GlobalConst.h"
 #include "SVTool.h"
+#include "FormulaController.h"
 #pragma endregion Includes
 
 #pragma region Declarations
-namespace OSL = Seidenader::ObjectSelectorLibrary;
+using namespace Seidenader::SVObjectLibrary;
+using namespace Seidenader::ObjectSelectorLibrary;
 #pragma endregion Declarations
 
 
@@ -212,7 +215,7 @@ bool RangeXDialogClass::GetDlgData()
 
 			AfxMessageBox(errormsg, MB_OK | MB_ICONERROR);
 			csText = m_RangeClassHelper.GetStringFromRange(ER_WarnHigh);
-			m_EditFailHigh.SetWindowText(csText);
+			m_EditWarnHigh.SetWindowText(csText);
 		}
 	}
 
@@ -226,7 +229,7 @@ bool RangeXDialogClass::GetDlgData()
 			Eerror = ER_FailLow;
 			AfxMessageBox(errormsg, MB_OK | MB_ICONERROR);
 			csText = m_RangeClassHelper.GetStringFromRange(ER_FailLow);
-			m_EditFailHigh.SetWindowText(csText);
+			m_EditFailLow.SetWindowText(csText);
 		}
 	}
 
@@ -240,7 +243,7 @@ bool RangeXDialogClass::GetDlgData()
 			Eerror = ER_WarnLow;
 			AfxMessageBox(errormsg, MB_OK | MB_ICONERROR);
 			csText = m_RangeClassHelper.GetStringFromRange(ER_WarnLow);
-			m_EditFailHigh.SetWindowText(csText);
+			m_EditWarnLow.SetWindowText(csText);
 		}
 	}
 
@@ -280,16 +283,51 @@ bool RangeXDialogClass::ShowObjectSelector(CString& name)
 	typedef std::insert_iterator<SVStringArray> Inserter;
 
 	ObjectNameHelper::BuildObjectNameList(pTaskObjectList, Inserter(nameArray, nameArray.begin()), csToolCompleteName);
-	OSL::ObjectTreeGenerator::Instance().setSelectorType( OSL::ObjectTreeGenerator::SelectorTypeEnum::TypeSingleObject );
+	
+	
+	
+	SVString InspectionName;
+	if(pTaskObjectList->GetInspection())
+	{
+		InspectionName = pTaskObjectList->GetInspection()->GetName() ; 
+	}
+	ObjectTreeGenerator::Instance().setLocationFilter( ObjectTreeGenerator::FilterInput, InspectionName, SVString( _T("") ) );
+	
+	SVString InspectionNameDot = InspectionName + SVString( _T("."));
+	SVString FqnPPQVariablesDot = FqnPPQVariables + SVString( _T("."));
+	ObjectTreeGenerator::Instance().setLocationFilter( ObjectTreeGenerator::FilterOutput,  FqnPPQVariables , InspectionNameDot );
+	ObjectTreeGenerator::Instance().setSelectorType( ObjectTreeGenerator::SelectorTypeEnum::TypeSingleObject );
+	ObjectTreeGenerator::Instance().insertTreeObjects( nameArray );
 
-	OSL::ObjectTreeGenerator::Instance().setSelectorType( OSL::ObjectTreeGenerator::SelectorTypeEnum::TypeSingleObject );
-	OSL::ObjectTreeGenerator::Instance().insertTreeObjects( nameArray );
+	///Insert PPPqInputs
+	FormulaController FormCont;
+	FormCont.setTaskObject(*pTaskObjectList);
+	nameArray = FormCont.getPPQVariableNames();
+	bool IsPPQVariableSelected = false;
+	for_each(nameArray.begin(), nameArray.end(),[&] (SVString &string)
+	{
+		if(string.Compare(name) ==  0)
+		{
+			IsPPQVariableSelected = true;
+		}
+		string.replace(InspectionNameDot.ToString(),FqnPPQVariablesDot.ToString());
+	}
 
+	);
+	ObjectTreeGenerator::Instance().insertTreeObjects( nameArray );
+	////////////////////////
+	
+	
 	if(name.GetLength() > 0)
 	{
+		SVString SelectedName = name;
 		SVStringSet nameSet;
-		nameSet.insert(name);
-		OSL::ObjectTreeGenerator::Instance().setCheckItems(nameSet);
+		if(IsPPQVariableSelected)
+		{
+			SelectedName.replace(InspectionNameDot.ToString(),FqnPPQVariablesDot.ToString());
+		}
+		nameSet.insert(SelectedName);
+		ObjectTreeGenerator::Instance().setCheckItems(nameSet);
 	}
 
 	CString Title = m_RangeClassHelper.GetOwnerName();
@@ -301,12 +339,12 @@ bool RangeXDialogClass::ShowObjectSelector(CString& name)
 	CString FilterTab;
 	FilterTab.LoadString( IDS_FILTER );
 	
-	INT_PTR Result = OSL::ObjectTreeGenerator::Instance().showDialog( Title, mainTabTitle,FilterTab, this );
+	INT_PTR Result = ObjectTreeGenerator::Instance().showDialog( Title, mainTabTitle,FilterTab, this );
 
 	CString strResult;
 	if( IDOK == Result )
 	{
-		name = OSL::ObjectTreeGenerator::Instance().getSingleObjectResult().getLocation().c_str(); // @TODO:  Should we check the return values of getSingleObjectResult and getLocation?
+		name = ObjectTreeGenerator::Instance().getSingleObjectResult().getLocation().c_str(); // @TODO:  Should we check the return values of getSingleObjectResult and getLocation?
 		result = true;
 	}
 
@@ -363,6 +401,23 @@ void RangeXDialogClass::OnBnClickedFailedLowIndirect()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\RangeXDialogClass.cpp_v  $
+ * 
+ *    Rev 1.1   09 Jan 2015 11:59:22   mEichengruen
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  979
+ * SCR Title:  Provide additional options to input the feature range for the blob analyzer.
+ * Checked in by:  mEichengruen;  Marcus Eichengruen
+ * Change Description:  
+ *   Fix bug when using  last valid values by wrong user input.
+ * 
+ * Allow PPQ Variables for indirect range values 
+ * 
+ * Dont show Inspection_1 in Selector for Range Values
+ * Show PPQ Varaiables in Selector for Range Values 
+ * 
+ * 
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   19 Dec 2014 13:53:42   mEichengruen
  * Project:  SVObserver

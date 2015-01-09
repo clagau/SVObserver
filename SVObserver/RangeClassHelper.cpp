@@ -5,8 +5,8 @@
 //* .Module Name     : SVRangeClassHelper
 //* .File Name       : $Workfile:   RangeClassHelper.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   19 Dec 2014 13:53:42  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   09 Jan 2015 11:58:12  $
 //******************************************************************************
 
 #pragma region Includes
@@ -224,11 +224,32 @@ HRESULT RangeClassHelper::CheckInternalData(CString &csmsg) const
 		return Err_16012;
 	}
 
+	if( m_FailHighIndirect.IsEmpty() && m_WarnLowIndirect.IsEmpty() && m_FailHigh < m_WarnLow)
+	{
+		//IDS_IS_LESS_THAN			"ERROR:\n%1\nis less than\n%2"
+		AfxFormatString2(csmsg,IDS_IS_LESS_THAN, csFailHigh.GetString(),csWarnLow.GetString());
+		return Err_16012;
+	}
+	if( m_FailHighIndirect.IsEmpty() && m_FailLowIndirect.IsEmpty() && m_FailHigh < m_FailLow)
+	{
+		//IDS_IS_LESS_THAN			"ERROR:\n%1\nis less than\n%2"
+		AfxFormatString2(csmsg,IDS_IS_LESS_THAN, csFailHigh.GetString(),csFailLow.GetString());
+		return Err_16012;
+	}
+
 	if( m_WarnHighIndirect.IsEmpty() && m_WarnLowIndirect.IsEmpty() && m_WarnHigh < m_WarnLow)
 	{
 		
 		//IDS_IS_LESS_THAN			"ERROR:\n%1\nis less than\n%2"
 		AfxFormatString2(csmsg,IDS_IS_LESS_THAN, csWarnHigh.GetString(),csWarnLow.GetString());
+		return  Err_16013;
+	}
+
+	if( m_WarnHighIndirect.IsEmpty() && m_FailLowIndirect.IsEmpty() && m_WarnHigh < m_FailLow)
+	{
+
+		//IDS_IS_LESS_THAN			"ERROR:\n%1\nis less than\n%2"
+		AfxFormatString2(csmsg,IDS_IS_LESS_THAN, csWarnHigh.GetString(),csFailLow.GetString());
 		return  Err_16013;
 	}
 
@@ -509,6 +530,16 @@ LPCTSTR RangeClassHelper::GetOwnerName() const
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\RangeClassHelper.cpp_v  $
+ * 
+ *    Rev 1.1   09 Jan 2015 11:58:12   mEichengruen
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  979
+ * SCR Title:  Provide additional options to input the feature range for the blob analyzer.
+ * Checked in by:  mEichengruen;  Marcus Eichengruen
+ * Change Description:  
+ *   Check range constant when using constant and indirect values mixed 
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   19 Dec 2014 13:53:42   mEichengruen
  * Project:  SVObserver
