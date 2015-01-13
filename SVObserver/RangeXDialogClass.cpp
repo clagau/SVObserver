@@ -1,13 +1,13 @@
 //******************************************************************************
 //* COPYRIGHT (c) 2014 by Seidenader
-//* All Rights Reserved 
+//* All Rights Reserved
 //******************************************************************************
 //* .Module Name     : SVRangeXDialog D
 //* .File Name       : $Workfile:   RangeXDialogClass.cpp  $
 //* .Description     : RangeXDialogClass this dialog is used instead of RangeDialogclass when indirect values for the rangeobjects are allowed
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   09 Jan 2015 11:59:22  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   12 Jan 2015 17:31:18  $
 //******************************************************************************
 
 #pragma region Includes
@@ -20,7 +20,7 @@
 #include "svresult.h"
 #include "ObjectNameHelper.h"
 #include "NameSelectionList.h"
-#include "SVInspectionProcess.h" 
+#include "SVInspectionProcess.h"
 #include "SVToolSet.h"
 #include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
 #include "SVObjectLibrary/GlobalConst.h"
@@ -32,7 +32,6 @@
 using namespace Seidenader::SVObjectLibrary;
 using namespace Seidenader::ObjectSelectorLibrary;
 #pragma endregion Declarations
-
 
 IMPLEMENT_DYNAMIC(RangeXDialogClass, CDialog)
 
@@ -69,8 +68,6 @@ BEGIN_MESSAGE_MAP(RangeXDialogClass, CDialog)
 	ON_BN_CLICKED(IDC_BUTTON_FAILLOW, &RangeXDialogClass::OnBnClickedFailedLowIndirect)
 END_MESSAGE_MAP()
 
-
-
 void RangeXDialogClass::OnBnClickedOk()
 {
 	CString errorMsg;
@@ -104,9 +101,9 @@ BOOL RangeXDialogClass::OnInitDialog()
 
 	// Put the Down Arrow on the Button
 	m_downArrowBitmap.LoadOEMBitmap( OBM_DNARROW );
-	
+
 	//(HBITMAP) is a call to the overloaded function operator HBITMAP and no c style cast
-	m_ButtonFailHigh.SetBitmap( ( HBITMAP )m_downArrowBitmap ); 
+	m_ButtonFailHigh.SetBitmap( ( HBITMAP )m_downArrowBitmap );
 	m_ButtonWarnHigh.SetBitmap( ( HBITMAP )m_downArrowBitmap );
 	m_ButtonWarnLow.SetBitmap( ( HBITMAP )m_downArrowBitmap );
 	m_ButtonFailLow.SetBitmap( ( HBITMAP )m_downArrowBitmap );
@@ -129,20 +126,22 @@ BOOL RangeXDialogClass::OnInitDialog()
 		size = pDC->GetTextExtent(title);
 		ReleaseDC(pDC);
 	}
+
 	if (size.cx > rect.Width())
 	{
 		int borderWidth = GetSystemMetrics(SM_CXDLGFRAME);
-		//make the windows with 24 pixel wider then the text. 
-		int width = size.cx + (borderWidth * 2) + 24;  
+		//make the windows with 24 pixel wider then the text.
+		int width = size.cx + (borderWidth * 2) + 24;
 		SetWindowPos(&CWnd::wndTop, 0, 0, width, rect.Height(), SWP_NOMOVE | SWP_NOZORDER);
 	}
 
-	return TRUE;  
+	return TRUE;
 }
 
 void RangeXDialogClass::SetDlgData()
 {
 	CString csText;
+
 	if(m_RangeClassHelper.m_FailHighIndirect.GetLength() > 0)
 	{
 		m_EditFailHigh.SetWindowText(m_RangeClassHelper.m_FailHighIndirect);
@@ -198,7 +197,7 @@ bool RangeXDialogClass::GetDlgData()
 			res = false;
 			m_EditFailHigh.SetFocus();
 			AfxMessageBox(errormsg,MB_OK | MB_ICONERROR);
-			Eerror = ER_FailHigh; 
+			Eerror = ER_FailHigh;
 			csText = m_RangeClassHelper.GetStringFromRange(ER_FailHigh);
 			m_EditFailHigh.SetWindowText(csText);
 		}
@@ -211,7 +210,7 @@ bool RangeXDialogClass::GetDlgData()
 		{
 			m_EditWarnHigh.SetFocus();
 			res = false;
-			Eerror = ER_WarnHigh; 
+			Eerror = ER_WarnHigh;
 
 			AfxMessageBox(errormsg, MB_OK | MB_ICONERROR);
 			csText = m_RangeClassHelper.GetStringFromRange(ER_WarnHigh);
@@ -252,12 +251,11 @@ bool RangeXDialogClass::GetDlgData()
 
 bool RangeXDialogClass::ShowObjectSelector(CString& name)
 {
-	
 	if (nullptr == m_RangeClassHelper.m_pRange)
 	{
 		return false;
 	}
-	
+
 	SVInspectionProcess* pInspectionProcess = m_RangeClassHelper.m_pRange->GetInspection();
 	if(nullptr == pInspectionProcess)
 	{
@@ -270,7 +268,7 @@ bool RangeXDialogClass::ShowObjectSelector(CString& name)
 		return false; // @TODO:  Better to return a unique error code.
 	}
 
-	bool result = false; 
+	bool result = false;
 	SVToolClass* pTool = m_RangeClassHelper.m_pRange->GetTool();
 	CString csToolCompleteName;
 	if(pTool)
@@ -281,50 +279,47 @@ bool RangeXDialogClass::ShowObjectSelector(CString& name)
 
 	SVStringArray nameArray;
 	typedef std::insert_iterator<SVStringArray> Inserter;
-
-	ObjectNameHelper::BuildObjectNameList(pTaskObjectList, Inserter(nameArray, nameArray.begin()), csToolCompleteName);
-	
-	
-	
 	SVString InspectionName;
 	if(pTaskObjectList->GetInspection())
 	{
-		InspectionName = pTaskObjectList->GetInspection()->GetName() ; 
+		InspectionName = pTaskObjectList->GetInspection()->GetName();
 	}
 	ObjectTreeGenerator::Instance().setLocationFilter( ObjectTreeGenerator::FilterInput, InspectionName, SVString( _T("") ) );
-	
+
 	SVString InspectionNameDot = InspectionName + SVString( _T("."));
 	SVString FqnPPQVariablesDot = FqnPPQVariables + SVString( _T("."));
-	ObjectTreeGenerator::Instance().setLocationFilter( ObjectTreeGenerator::FilterOutput,  FqnPPQVariables , InspectionNameDot );
+	ObjectTreeGenerator::Instance().setLocationFilter( ObjectTreeGenerator::FilterOutput, FqnPPQVariables, InspectionNameDot );
 	ObjectTreeGenerator::Instance().setSelectorType( ObjectTreeGenerator::SelectorTypeEnum::TypeSingleObject );
-	ObjectTreeGenerator::Instance().insertTreeObjects( nameArray );
 
-	///Insert PPPqInputs
+	// Insert PPQ Inputs
 	FormulaController FormCont;
 	FormCont.setTaskObject(*pTaskObjectList);
 	nameArray = FormCont.getPPQVariableNames();
 	bool IsPPQVariableSelected = false;
 	for_each(nameArray.begin(), nameArray.end(),[&] (SVString &string)
-	{
-		if(string.Compare(name) ==  0)
 		{
-			IsPPQVariableSelected = true;
+			if(string.Compare(name) == 0)
+			{
+				IsPPQVariableSelected = true;
+			}
+			string.replace(InspectionNameDot.ToString(), FqnPPQVariablesDot.ToString());
 		}
-		string.replace(InspectionNameDot.ToString(),FqnPPQVariablesDot.ToString());
-	}
-
 	);
+
 	ObjectTreeGenerator::Instance().insertTreeObjects( nameArray );
-	////////////////////////
-	
-	
+	nameArray.clear();
+
+	// Insert Tool Set Objects
+	ObjectNameHelper::BuildObjectNameList(pTaskObjectList, Inserter(nameArray, nameArray.begin()), csToolCompleteName);
+	ObjectTreeGenerator::Instance().insertTreeObjects( nameArray );
+
 	if(name.GetLength() > 0)
 	{
 		SVString SelectedName = name;
 		SVStringSet nameSet;
 		if(IsPPQVariableSelected)
 		{
-			SelectedName.replace(InspectionNameDot.ToString(),FqnPPQVariablesDot.ToString());
+			SelectedName.replace(InspectionNameDot.ToString(), FqnPPQVariablesDot.ToString());
 		}
 		nameSet.insert(SelectedName);
 		ObjectTreeGenerator::Instance().setCheckItems(nameSet);
@@ -332,16 +327,15 @@ bool RangeXDialogClass::ShowObjectSelector(CString& name)
 
 	CString Title = m_RangeClassHelper.GetOwnerName();
 	Title += _T(": ");
-	Title +=  RangeClassHelper::ERange2String(m_LastSelected);
+	Title += RangeClassHelper::ERange2String(m_LastSelected);
 
 	CString mainTabTitle;
 	mainTabTitle.LoadString( IDS_RESULT_PICKER );
 	CString FilterTab;
 	FilterTab.LoadString( IDS_FILTER );
-	
-	INT_PTR Result = ObjectTreeGenerator::Instance().showDialog( Title, mainTabTitle,FilterTab, this );
 
-	CString strResult;
+	INT_PTR Result = ObjectTreeGenerator::Instance().showDialog( Title, mainTabTitle, FilterTab, this );
+
 	if( IDOK == Result )
 	{
 		name = ObjectTreeGenerator::Instance().getSingleObjectResult().getLocation().c_str(); // @TODO:  Should we check the return values of getSingleObjectResult and getLocation?
@@ -365,7 +359,7 @@ void RangeXDialogClass::OnBnClickedFailHighIndirect()
 
 void RangeXDialogClass::OnBnClickedWarnlHighIndirect()
 {
-	m_LastSelected =  ER_WarnHigh;
+	m_LastSelected = ER_WarnHigh;
 	CString csText;
 	m_EditWarnHigh.GetWindowText(csText);
 	if (ShowObjectSelector(csText) )
@@ -376,7 +370,7 @@ void RangeXDialogClass::OnBnClickedWarnlHighIndirect()
 
 void RangeXDialogClass::OnBnClickedWarnLowIndirect()
 {
-	m_LastSelected =  ER_WarnLow;
+	m_LastSelected = ER_WarnLow;
 	CString csText;
 	m_EditWarnLow.GetWindowText(csText);
 	if (ShowObjectSelector(csText) )
@@ -387,7 +381,7 @@ void RangeXDialogClass::OnBnClickedWarnLowIndirect()
 
 void RangeXDialogClass::OnBnClickedFailedLowIndirect()
 {
-	m_LastSelected =  ER_FailLow;
+	m_LastSelected = ER_FailLow;
 	CString csText;
 	m_EditFailLow.GetWindowText(csText);
 	if (ShowObjectSelector(csText) )
@@ -401,6 +395,16 @@ void RangeXDialogClass::OnBnClickedFailedLowIndirect()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\RangeXDialogClass.cpp_v  $
+ * 
+ *    Rev 1.2   12 Jan 2015 17:31:18   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  979
+ * SCR Title:  Provide additional options to input the feature range for the blob analyzer.
+ * Checked in by:  mEichengruen;  Marcus Eichengruen
+ * Change Description:  
+ *   Changed method ShowObjectSelector to add "PPQ Variables" at the top of the list.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   09 Jan 2015 11:59:22   mEichengruen
  * Project:  SVObserver
