@@ -8,8 +8,8 @@
 //*						Contains Variable for values.
 //*                    The values can be Get and set from the RangeClass and can be checked. 
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   19 Dec 2014 13:53:42  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   13 Jan 2015 13:10:52  $
 //******************************************************************************
 
 #pragma once
@@ -99,6 +99,14 @@ public:
 	LPCTSTR GetOwnerName() const;
 
 	//************************************
+	//! Change the Indirectnames if necessary
+	//! \param oldPefix [in]  old Toolname 
+	//! \param newPrefix [in] new Toolname 
+	//! \returns bool true if an indirectname was changed
+	//************************************
+	bool RenameIndirectValues(LPCTSTR oldPefix, LPCTSTR newPrefix  );
+
+	//************************************
 	// Description:  Translate enum to string 
 	// Returns:  Cstring:  name of the range variable
 	//************************************
@@ -146,7 +154,19 @@ private:
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\RangeClassHelper.h_v  $
+$Log:   N:\PVCSARCH65\PROJECTFILES\ARCHIVES\SVOBSERVER_SRC\SVObserver\RangeClassHelper.h_v  $
+ * 
+ *    Rev 1.1   13 Jan 2015 13:10:52   mEichengruen
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  979
+ * SCR Title:  Provide additional options to input the feature range for the blob analyzer.
+ * Checked in by:  mEichengruen;  Marcus Eichengruen
+ * Change Description:  
+ *   Range Indirect name String without inspection Name 
+ * Rename Range Indirect name String when a Toolname  is renamed  
+ * add function to rename in direct values 
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   19 Dec 2014 13:53:42   mEichengruen
  * Project:  SVObserver

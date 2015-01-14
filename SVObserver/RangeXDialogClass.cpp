@@ -6,8 +6,8 @@
 //* .File Name       : $Workfile:   RangeXDialogClass.cpp  $
 //* .Description     : RangeXDialogClass this dialog is used instead of RangeDialogclass when indirect values for the rangeobjects are allowed
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   12 Jan 2015 17:31:18  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   13 Jan 2015 13:12:10  $
 //******************************************************************************
 
 #pragma region Includes
@@ -285,10 +285,12 @@ bool RangeXDialogClass::ShowObjectSelector(CString& name)
 		InspectionName = pTaskObjectList->GetInspection()->GetName();
 	}
 	ObjectTreeGenerator::Instance().setLocationFilter( ObjectTreeGenerator::FilterInput, InspectionName, SVString( _T("") ) );
+	ObjectTreeGenerator::Instance().setLocationFilter( ObjectTreeGenerator::FilterOutput, InspectionName, SVString( _T("") ) );
 
 	SVString InspectionNameDot = InspectionName + SVString( _T("."));
 	SVString FqnPPQVariablesDot = FqnPPQVariables + SVString( _T("."));
-	ObjectTreeGenerator::Instance().setLocationFilter( ObjectTreeGenerator::FilterOutput, FqnPPQVariables, InspectionNameDot );
+	
+	ObjectTreeGenerator::Instance().setLocationFilter( ObjectTreeGenerator::FilterOutput, FqnPPQVariables, SVString( _T("")  ));
 	ObjectTreeGenerator::Instance().setSelectorType( ObjectTreeGenerator::SelectorTypeEnum::TypeSingleObject );
 
 	// Insert PPQ Inputs
@@ -296,13 +298,15 @@ bool RangeXDialogClass::ShowObjectSelector(CString& name)
 	FormCont.setTaskObject(*pTaskObjectList);
 	nameArray = FormCont.getPPQVariableNames();
 	bool IsPPQVariableSelected = false;
+	SVString PPQSelectedName = FqnPPQVariablesDot.ToString() + name;
 	for_each(nameArray.begin(), nameArray.end(),[&] (SVString &string)
 		{
-			if(string.Compare(name) == 0)
+			string.replace(InspectionNameDot.ToString(), FqnPPQVariablesDot.ToString());
+			
+			if(string.Compare(PPQSelectedName) == 0)
 			{
 				IsPPQVariableSelected = true;
 			}
-			string.replace(InspectionNameDot.ToString(), FqnPPQVariablesDot.ToString());
 		}
 	);
 
@@ -315,13 +319,17 @@ bool RangeXDialogClass::ShowObjectSelector(CString& name)
 
 	if(name.GetLength() > 0)
 	{
-		SVString SelectedName = name;
 		SVStringSet nameSet;
 		if(IsPPQVariableSelected)
 		{
-			SelectedName.replace(InspectionNameDot.ToString(), FqnPPQVariablesDot.ToString());
+			nameSet.insert(PPQSelectedName);
+			
 		}
-		nameSet.insert(SelectedName);
+		else
+		{
+			nameSet.insert(name);
+		}
+		
 		ObjectTreeGenerator::Instance().setCheckItems(nameSet);
 	}
 
@@ -395,6 +403,17 @@ void RangeXDialogClass::OnBnClickedFailedLowIndirect()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\RangeXDialogClass.cpp_v  $
+ * 
+ *    Rev 1.3   13 Jan 2015 13:12:10   mEichengruen
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  979
+ * SCR Title:  Provide additional options to input the feature range for the blob analyzer.
+ * Checked in by:  mEichengruen;  Marcus Eichengruen
+ * Change Description:  
+ *   Range Indirect name String without inspection Name 
+ * 
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   12 Jan 2015 17:31:18   bwalter
  * Project:  SVObserver

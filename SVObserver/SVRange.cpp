@@ -5,8 +5,8 @@
 //* .Module Name     : SVRange.cpp
 //* .File Name       : $Workfile:   SVRange.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.3  $
-//* .Check In Date   : $Date:   19 Dec 2014 14:22:02  $
+//* .Current Version : $Revision:   1.4  $
+//* .Check In Date   : $Date:   13 Jan 2015 13:10:52  $
 //******************************************************************************
 
 #pragma region Includes
@@ -15,6 +15,8 @@
 #include "SVObjectLibrary/SVAnalyzerLevelCreateStruct.h"
 #include "SVOBJectLibrary/SVObjectManagerClass.h"
 #include "SVTool.h"
+#include "SVInspectionProcess.h"
+#include "RangeClassHelper.h"
 #pragma endregion Includes
 
 
@@ -110,12 +112,14 @@ BOOL SVRangeClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
 	return isCreated;
 }
 
-bool SVRangeClass::SetReference(const CString cdottetMame, SVValueObjectReference &ValueObjectReference)
+bool SVRangeClass::SetReference(LPCTSTR  Name, SVValueObjectReference &ValueObjectReference)
 {
 	bool ret = false;
-	if(!cdottetMame.IsEmpty())
+	
+	
+	if(nullptr != Name)
 	{
-		HRESULT hr = SVObjectManagerClass::Instance().GetObjectByDottedName( static_cast< LPCTSTR >( cdottetMame ), ValueObjectReference );
+		HRESULT hr = SVObjectManagerClass::Instance().GetObjectByDottedName( Name, ValueObjectReference );
 		if(hr == S_OK)
 		{
 			ret = true;
@@ -143,6 +147,13 @@ bool SVRangeClass::InitReferencesAndInputs()
 	SVValueObjectReference emptyRef;
 	CString csValueIndirect;
 
+	CString InspectionName ;
+	if(GetInspection())
+	{
+		InspectionName = GetInspection()->GetName();
+	}
+	InspectionName += _T(".");
+
 	for(int i = 0 ; i < ER_COUNT; i++)
 	{
 		csValueIndirect.Empty();
@@ -151,10 +162,16 @@ bool SVRangeClass::InitReferencesAndInputs()
 		m_ValueIndirect[i].GetValue(csValueIndirect);
 		if(!csValueIndirect.IsEmpty())
 		{
-			if(!SetReference(csValueIndirect,m_ValueObjectReferences[i] ))
+			CString dottetName = InspectionName + csValueIndirect;
+			if(!SetReference(dottetName,m_ValueObjectReferences[i] ))
 			{
 				bRetVal = false;
 			}
+			//Mec Do we have to check if we have an valid but disabled input!!!!!!!
+			/*else if( FALSE == (m_ValueObjectReferences[i].ObjectAttributesAllowed()& SV_VIEWABLE)  )
+			{
+			bRetVal = false;
+			}*/
 			else
 			{
 				m_ValueIndirect[i].ObjectAttributesAllowedRef() |= SV_PRINTABLE;
@@ -162,6 +179,7 @@ bool SVRangeClass::InitReferencesAndInputs()
 		}
 
 	}
+	
 
 	if( ! bRetVal )
 	{
@@ -369,8 +387,51 @@ DWORD_PTR SVRangeClass::processMessage( DWORD DwMessageID, DWORD_PTR DwMessageVa
 			//return SVMR_SUCCESS;
 		}
 		break;
+
+	case SVMSGID_OBJECT_RENAMED:
+		{
+			SVObjectClass* pObject = reinterpret_cast <SVObjectClass*> (DwMessageValue); // Object with new name
+			LPCTSTR orgName = ( LPCTSTR )DwMessageContext;
+
+			if( renameToolSetSymbol(pObject, orgName ) )
+			{
+				DwResult = SVMR_SUCCESS;
+			}
+		}
+		break;
 	}
 	return( SVTaskObjectClass::processMessage( DwMessageID, DwMessageValue, DwMessageContext ) | DwResult );
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// 
+////////////////////////////////////////////////////////////////////////////////
+BOOL SVRangeClass::renameToolSetSymbol(SVObjectClass* pObject, LPCTSTR orgName)
+{
+	CString newPrefix;
+	CString oldPrefix;
+
+	if( SVInspectionProcess* l_pInspection = dynamic_cast< SVInspectionProcess* >( pObject ) )
+	{
+		newPrefix = l_pInspection->GetCompleteObjectNameToObjectType( NULL, SVInspectionObjectType ) + _T( "." );
+		oldPrefix = newPrefix;
+		oldPrefix.Replace( l_pInspection->GetName(), orgName );
+	}// end if
+	else
+	{
+		newPrefix = pObject->GetCompleteObjectNameToObjectType( NULL, SVToolSetObjectType ) + _T( "." );
+		oldPrefix = newPrefix;
+		oldPrefix.Replace( pObject->GetName(), orgName );
+	}// end else
+
+	RangeClassHelper rangeHelper(this);
+	rangeHelper.SetRangeTaskObject();
+	rangeHelper.GetAllInspectionData();
+	if(rangeHelper.RenameIndirectValues(oldPrefix,newPrefix ))
+	{
+		rangeHelper.SetInspectionData();
+	}
+	return TRUE;
 }
 
 // ISVCancel interface
@@ -539,7 +600,19 @@ void SVRangeClass::InvalidateRange()
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVRange.cpp_v  $
+$Log:   N:\PVCSARCH65\PROJECTFILES\ARCHIVES\SVOBSERVER_SRC\SVObserver\SVRange.cpp_v  $
+ * 
+ *    Rev 1.4   13 Jan 2015 13:10:52   mEichengruen
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  979
+ * SCR Title:  Provide additional options to input the feature range for the blob analyzer.
+ * Checked in by:  mEichengruen;  Marcus Eichengruen
+ * Change Description:  
+ *   Range Indirect name String without inspection Name 
+ * Rename Range Indirect name String when a Toolname  is renamed  
+ * add function to rename in direct values 
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   19 Dec 2014 14:22:02   mEichengruen
  * Project:  SVObserver

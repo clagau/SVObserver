@@ -5,8 +5,8 @@
 //* .Module Name     : SVRangeClass
 //* .File Name       : $Workfile:   SVRange.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.3  $
-//* .Check In Date   : $Date:   19 Dec 2014 14:22:02  $
+//* .Current Version : $Revision:   1.4  $
+//* .Check In Date   : $Date:   13 Jan 2015 13:10:52  $
 //******************************************************************************
 
 #ifndef SVRANGE_H
@@ -59,11 +59,11 @@ public:
 
 	//************************************
 	// Description:  Calculate Reference
-	// Parameter: IN CString cdottetMame @TODO:  Should this be dottedName?  Better to use SVString on this interface.
+	// Parameter: IN LPCTSTR dottedName
 	// Parameter: OUT SVValueObjectReference & ValueObjectReference
 	// Returns:  bool:  true if valid reference
 	//************************************
-	static bool SetReference(const CString cdottetMame, SVValueObjectReference &ValueObjectReference);
+	static bool SetReference(LPCTSTR dottedName, SVValueObjectReference &ValueObjectReference);
 
 	//************************************
 	// Description:  Connect all references as inputs.
@@ -116,8 +116,14 @@ protected:
 	BOOL getInputValue( double& RVal );
 	BOOL onRun(SVRunStatusClass& RRunStatus);
 	virtual DWORD_PTR processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext );
-
-public:
+	//************************************
+	//! function is called when an object was renamed
+	//! \param pObject [in] object name 
+	//! \param orgName [in] previous name 
+	//! \returns BOOL
+	//************************************
+	virtual BOOL renameToolSetSymbol(SVObjectClass* pObject, LPCTSTR orgName);
+	public:
 	SVDoubleValueObjectClass FailLow;
 	SVDoubleValueObjectClass FailHigh;
 	SVDoubleValueObjectClass WarnLow;
@@ -138,7 +144,19 @@ protected:
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVRange.h_v  $
+$Log:   N:\PVCSARCH65\PROJECTFILES\ARCHIVES\SVOBSERVER_SRC\SVObserver\SVRange.h_v  $
+ * 
+ *    Rev 1.4   13 Jan 2015 13:10:52   mEichengruen
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  979
+ * SCR Title:  Provide additional options to input the feature range for the blob analyzer.
+ * Checked in by:  mEichengruen;  Marcus Eichengruen
+ * Change Description:  
+ *   Range Indirect name String without inspection Name 
+ * Rename Range Indirect name String when a Toolname  is renamed  
+ * add function to rename in direct values 
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   19 Dec 2014 14:22:02   mEichengruen
  * Project:  SVObserver

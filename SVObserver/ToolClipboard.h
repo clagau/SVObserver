@@ -5,8 +5,8 @@
 //* .Module Name     : Tool clipboard
 //* .File Name       : $Workfile:   ToolClipboard.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   19 Dec 2014 04:20:18  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   13 Jan 2015 10:38:48  $
 //* ----------------------------------------------------------------------------
 //* This class is used to write and read the selected tool to and from the clipboard
 //******************************************************************************
@@ -150,10 +150,17 @@ protected:
 	HRESULT validateGuids( SVString& rXmlData, SVXMLMaterialsTree& rTree, int ToolListindex ) const;
 
 	//************************************
+	// Description: This method replaces the tool name
+	// Parameter: rXmlData <in, out> Reference to the XML data to search and replace
+	// Parameter: rTree <in> Reference to the tree generated from the clipboard
+	// Return: S_OK on success
+	//************************************
+	HRESULT replaceToolName( SVString& rXmlData, SVXMLMaterialsTree& rTree ) const;
+
+	//************************************
 	// Description: This method replaces all the unique Guids
 	// Parameter: rXmlData <in, out> Reference to the XML data to search and replace
 	// Parameter: rTree <in> Reference to the tree generated from the clipboard
-	// Parameter: ToolListindex <in> The tool list index where the tool will be inserted
 	// Return: S_OK on success
 	//************************************
 	HRESULT replaceUniqueGuids( SVString& rXmlData, SVXMLMaterialsTree& rTree ) const;
@@ -179,6 +186,17 @@ private:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\ToolClipboard.h_v  $
+ * 
+ *    Rev 1.1   13 Jan 2015 10:38:48   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  978
+ * SCR Title:  Copy and Paste a Tool within an Inspection or Between Different Inspections
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Added renameTool method
+ * Fixed: references to the tool itself are changed
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   19 Dec 2014 04:20:18   gramseier
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : SVRangeClassHelper
 //* .File Name       : $Workfile:   RangeClassHelper.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   09 Jan 2015 11:58:12  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   13 Jan 2015 13:10:52  $
 //******************************************************************************
 
 #pragma region Includes
@@ -18,6 +18,7 @@
 #include "SVObjectLibrary/SVObjectSynchronousCommandTemplate.h"
 #include "SVObjectLibrary/SVObjectScriptUsage.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
+#include "SVInspectionProcess.h"
 #include "ErrorNumbers.h"
 #pragma endregion Includes
 
@@ -209,6 +210,19 @@ HRESULT  RangeClassHelper::SetInternalData(ERange er, LPCTSTR lp, CString &Error
 HRESULT RangeClassHelper::CheckInternalData(CString &csmsg) const
 {
 
+	CString InspectionName ;
+	if(m_pRange )
+	{
+		SVInspectionProcess* pInspectionProc =  m_pRange->GetInspection();
+		if(pInspectionProc)
+		{
+			InspectionName = pInspectionProc->GetName();
+		}
+		
+	}
+	InspectionName += _T(".");
+
+
 	CString csFailHigh,csWarnHigh,csFailLow, csWarnLow; 
 	csFailHigh.LoadString(IDS_FAIL_HIGH);
 	csWarnHigh.LoadString(IDS_WARN_HIGH);
@@ -263,7 +277,8 @@ HRESULT RangeClassHelper::CheckInternalData(CString &csmsg) const
 	if( !m_FailHighIndirect.IsEmpty() )
 	{
 		SVValueObjectReference objRef;
-		if( false == SVRangeClass::SetReference(m_FailHighIndirect, objRef) )
+		CString dottetName = InspectionName + m_FailHighIndirect;
+		if( false == SVRangeClass::SetReference(dottetName, objRef) )
 		{
 			//IDS_ISANINVALID_REFERENCE  "ERROR:\n%1: %2\nis an invalid reference."
 			AfxFormatString2(csmsg,IDS_ISANINVALID_REFERENCE,csFailHigh.GetString(),m_FailHighIndirect.GetString() );
@@ -274,7 +289,8 @@ HRESULT RangeClassHelper::CheckInternalData(CString &csmsg) const
 	if( !m_WarnHighIndirect.IsEmpty() )
 	{
 		SVValueObjectReference objRef;
-		if( false == SVRangeClass::SetReference(m_WarnHighIndirect, objRef) )
+		CString dottetName = InspectionName + m_WarnHighIndirect;
+		if( false == SVRangeClass::SetReference(dottetName, objRef) )
 		{
 			//IDS_ISANINVALID_REFERENCE  "ERROR:\n%1: %2\nis an invalid reference."
 			AfxFormatString2(csmsg,IDS_ISANINVALID_REFERENCE,csWarnHigh.GetString(),m_WarnHighIndirect.GetString() );
@@ -285,7 +301,8 @@ HRESULT RangeClassHelper::CheckInternalData(CString &csmsg) const
 	if( !m_WarnLowIndirect.IsEmpty() )
 	{
 		SVValueObjectReference objRef;
-		if( false == SVRangeClass::SetReference(m_WarnLowIndirect,objRef) )
+		CString dottetName = InspectionName + m_WarnLowIndirect;
+		if( false == SVRangeClass::SetReference(dottetName,objRef) )
 		{
 			//IDS_ISANINVALID_REFERENCE  "ERROR:\n%1: %2\nis an invalid reference."
 			AfxFormatString2(csmsg,IDS_ISANINVALID_REFERENCE,csWarnLow.GetString(),m_WarnLowIndirect.GetString() );
@@ -296,13 +313,14 @@ HRESULT RangeClassHelper::CheckInternalData(CString &csmsg) const
 	if(!m_FailLowIndirect.IsEmpty())
 	{
 		SVValueObjectReference objRef;
-		if(false == SVRangeClass::SetReference(m_FailLowIndirect,objRef ))
+		CString dottetName = InspectionName + m_FailLowIndirect;
+		if(false == SVRangeClass::SetReference(dottetName,objRef ))
 		{
 			AfxFormatString2(csmsg,IDS_ISANINVALID_REFERENCE,csFailLow.GetString(),m_FailLowIndirect.GetString() );
 			return Err_16018;
 		}
 	}
-
+	
 	return S_OK;
 }
 
@@ -523,13 +541,51 @@ LPCTSTR RangeClassHelper::GetOwnerName() const
 	}
 	return ret;
 }
+
+bool RangeClassHelper::RenameIndirectValues(LPCTSTR oldPefix , LPCTSTR newPrefix )
+{
+
+	bool result = false;
+
+	if(m_FailHighIndirect.Replace(oldPefix,newPrefix) > 0)
+	{
+		result = true;
+	}
+	if(m_WarnHighIndirect.Replace(oldPefix,newPrefix) > 0)
+	{
+		result = true;
+	}
+	if(m_FailLowIndirect.Replace(oldPefix,newPrefix) > 0)
+	{
+		result = true;
+	}
+	if(m_WarnLowIndirect.Replace(oldPefix,newPrefix) > 0)
+	{
+		result = true;
+	}
+
+	return result;
+}
+
 #pragma endregion Public Methods
 
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\RangeClassHelper.cpp_v  $
+$Log:   N:\PVCSARCH65\PROJECTFILES\ARCHIVES\SVOBSERVER_SRC\SVObserver\RangeClassHelper.cpp_v  $
+ * 
+ *    Rev 1.2   13 Jan 2015 13:10:52   mEichengruen
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  979
+ * SCR Title:  Provide additional options to input the feature range for the blob analyzer.
+ * Checked in by:  mEichengruen;  Marcus Eichengruen
+ * Change Description:  
+ *   Range Indirect name String without inspection Name 
+ * Rename Range Indirect name String when a Toolname  is renamed  
+ * add function to rename in direct values 
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   09 Jan 2015 11:58:12   mEichengruen
  * Project:  SVObserver

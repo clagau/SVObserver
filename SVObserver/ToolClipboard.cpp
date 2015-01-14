@@ -5,8 +5,8 @@
 //* .Module Name     : Tool clipboard
 //* .File Name       : $Workfile:   ToolClipboard.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   09 Jan 2015 01:46:30  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   13 Jan 2015 10:38:46  $
 //* ----------------------------------------------------------------------------
 //* This class is used to write and read the selected tool to and from the clipboard
 //******************************************************************************
@@ -31,6 +31,7 @@
 #include "SVParserProgressDialog.h"
 #include "SVInspectionTreeParser.h"
 #include "SVIPDoc.h"
+#include "ErrorNumbers.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -39,19 +40,6 @@
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
-
-static const UINT GRA_ErrorBase = 25000;
-static const UINT Err_25000 = GRA_ErrorBase + 0;
-static const UINT Err_25001 = GRA_ErrorBase + 1;
-static const UINT Err_25002 = GRA_ErrorBase + 2;
-static const UINT Err_25003 = GRA_ErrorBase + 3;
-static const UINT Err_25004 = GRA_ErrorBase + 4;
-static const UINT Err_25005 = GRA_ErrorBase + 5;
-static const UINT Err_25006 = GRA_ErrorBase + 6;
-static const UINT Err_25007 = GRA_ErrorBase + 7;
-static const UINT Err_25008 = GRA_ErrorBase + 8;
-static const UINT Err_25009 = GRA_ErrorBase + 9;
-static const UINT Err_25010 = GRA_ErrorBase + 10;
 
 static const TCHAR ToolClipboardFormat[] = _T("SVO-Tool");
 static const TCHAR TempFolder[] = _T("C:\\Temp");
@@ -204,7 +192,14 @@ HRESULT ToolClipboard::readFromClipboard( int ToolListindex, SVGUID& rToolGuid )
 		}
 		if( S_OK == Result )
 		{
-			replaceUniqueGuids( XmlData, Tree );
+			Result = replaceToolName( XmlData, Tree );
+		}
+		if( S_OK == Result )
+		{
+			Result = replaceUniqueGuids( XmlData, Tree );
+		}
+		if( S_OK == Result )
+		{
 			Tree.Clear();
 			Result = convertXmlToTree( XmlData, Tree );
 		}
@@ -255,7 +250,7 @@ HRESULT ToolClipboard::streamToolToZip( const SVString rFileName, const SVGUID& 
 	{
 		Result = S_FALSE;
 		SVException Exception;
-		SETEXCEPTION5( Exception, SVMSG_SVO_51_CLIPBOARD_ERROR, Err_25003, ToolInvalid );
+		SETEXCEPTION5( Exception, SVMSG_SVO_51_CLIPBOARD_ERROR, Err_25002, ToolInvalid );
 		throw Exception;
 	}
 	else
@@ -422,7 +417,7 @@ HRESULT ToolClipboard::convertClipboardDataToString( SVString& rClipboardData )
 
 			Result = S_FALSE;
 			SVException Exception;
-			SETEXCEPTION5( Exception, SVMSG_SVO_51_CLIPBOARD_ERROR, Err_25002, GetClipboardDataFailed );
+			SETEXCEPTION5( Exception, SVMSG_SVO_51_CLIPBOARD_ERROR, Err_25003, GetClipboardDataFailed );
 			throw Exception;
 		}
 		else
@@ -605,6 +600,50 @@ HRESULT ToolClipboard::validateGuids( SVString& rXmlData, SVXMLMaterialsTree& rT
 	return Result;
 }
 
+HRESULT ToolClipboard::replaceToolName( SVString& rXmlData, SVXMLMaterialsTree& rTree ) const
+{
+	HRESULT Result( S_FALSE );
+
+	SVTreeType::SVBranchHandle ToolsItem = NULL;
+
+	if( SVNavigateTreeClass::GetItemBranch( rTree, ToolsTag, NULL, ToolsItem ) )
+	{
+		SVTreeType::SVBranchHandle ToolItem = NULL;
+
+		rTree.GetFirstBranch( ToolsItem, ToolItem );
+
+		if ( S_OK == rTree.IsValidBranch( ToolItem ) )
+		{
+			_variant_t ObjectName;
+
+			SVNavigateTreeClass::GetItem( rTree, scObjectNameTag, ToolItem, ObjectName);
+			SVString ToolName( ObjectName.bstrVal );
+			SVString NewName;
+
+			SVIPDoc* pDoc = SVObjectManagerClass::Instance().GetIPDoc( m_rInspection.GetUniqueObjectID() );
+			if( nullptr != pDoc )
+			{
+				// Check to make sure the tool name is unique
+				NewName = pDoc->CheckName( ToolName );
+			}
+			if( NewName != ToolName )
+			{
+				rXmlData.replace( ToolName.c_str(), NewName.c_str() );
+			}
+			Result = S_OK;
+		}
+	}
+
+	if( S_OK != Result )
+	{
+		SVException Exception;
+		SETEXCEPTION5( Exception, SVMSG_SVO_51_CLIPBOARD_ERROR, Err_25009, ClipboardDataConverionFailed );
+		throw Exception;
+	}
+
+	return Result;
+}
+
 HRESULT ToolClipboard::replaceUniqueGuids( SVString& rXmlData, SVXMLMaterialsTree& rTree ) const
 {
 	HRESULT Result( S_FALSE );
@@ -633,7 +672,7 @@ HRESULT ToolClipboard::replaceUniqueGuids( SVString& rXmlData, SVXMLMaterialsTre
 	{
 		Result = S_FALSE;
 		SVException Exception;
-		SETEXCEPTION5( Exception, SVMSG_SVO_51_CLIPBOARD_ERROR, Err_25008, ClipboardDataConverionFailed );
+		SETEXCEPTION5( Exception, SVMSG_SVO_51_CLIPBOARD_ERROR, Err_25010, ClipboardDataConverionFailed );
 		throw Exception;
 	}
 
@@ -654,29 +693,13 @@ HRESULT ToolClipboard::parseTreeToTool( SVXMLMaterialsTree& rTree, SVGUID& rTool
 
 		if ( S_OK == rTree.IsValidBranch( ToolItem ) )
 		{
-			_variant_t ClassID;
-			_variant_t ObjectName;
 			_variant_t UniqueID;
 
-			SVNavigateTreeClass::GetItem( rTree, scObjectNameTag, ToolItem, ObjectName);
-			SVNavigateTreeClass::GetItem( rTree, scClassIDTag, ToolItem, ClassID);
 			SVNavigateTreeClass::GetItem( rTree, scUniqueReferenceIDTag, ToolItem, UniqueID);
 
 			SVToolSetClass* pToolset( m_rInspection.GetToolSet() );
 			if( nullptr != pToolset )
 			{
-				SVIPDoc* pDoc = SVObjectManagerClass::Instance().GetIPDoc( m_rInspection.GetUniqueObjectID() );
-				SVString NewName;
-				if( nullptr != pDoc )
-				{
-					// Check to make sure the tool name is unique
-					NewName = pDoc->CheckName( SVString( ObjectName.bstrVal ).c_str() );
-				}
-				if( NewName != SVString( ObjectName.bstrVal ) )
-				{
-					rTree.ReplaceName( ToolItem, ObjectName, _variant_t( NewName.c_str() ));
-				}
-
 				SVParserProgressDialog ParserProgressDialog( InsertingTool, AfxGetMainWnd() );
 				unsigned long parserHandle = SVObjectScriptParserClass::GetParserHandle();
 
@@ -698,7 +721,7 @@ HRESULT ToolClipboard::parseTreeToTool( SVXMLMaterialsTree& rTree, SVGUID& rTool
 	if( S_OK != Result )
 	{
 		SVException Exception;
-		SETEXCEPTION5( Exception, SVMSG_SVO_51_CLIPBOARD_ERROR, Err_25009, ClipboardDataConverionFailed );
+		SETEXCEPTION5( Exception, SVMSG_SVO_51_CLIPBOARD_ERROR, Err_25011, ClipboardDataConverionFailed );
 		throw Exception;
 	}
 	return Result;
@@ -710,6 +733,17 @@ HRESULT ToolClipboard::parseTreeToTool( SVXMLMaterialsTree& rTree, SVGUID& rTool
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\ToolClipboard.cpp_v  $
+ * 
+ *    Rev 1.2   13 Jan 2015 10:38:46   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  978
+ * SCR Title:  Copy and Paste a Tool within an Inspection or Between Different Inspections
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Added renameTool method
+ * Fixed: references to the tool itself are changed
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   09 Jan 2015 01:46:30   gramseier
  * Project:  SVObserver
