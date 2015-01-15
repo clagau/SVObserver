@@ -5,8 +5,8 @@
 //* .Module Name     : SVResult.cpp
 //* .File Name       : $Workfile:   SVResult.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.3  $
-//* .Check In Date   : $Date:   07 Jan 2015 17:47:10  $
+//* .Current Version : $Revision:   1.4  $
+//* .Check In Date   : $Date:   14 Jan 2015 16:43:20  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -36,7 +36,7 @@ struct SVResultClassCancelData : public SVCancelData	// this does not need to be
 };
 
 //*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/
-//* Class Name : SVResultClass 
+//* Class Name : SVResultClass
 //* Note(s)    : Base Class
 //*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/
 
@@ -354,81 +354,6 @@ BOOL SVAnalyzeFeatureClass::IsWarned()
 	return warned;
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : // e.g. Compare member function of class ...
-// -----------------------------------------------------------------------------
-// .Description : ...
-//              :
-// -----------------------------------------------------------------------------
-// .Input(s)
-//	 Type				Name				Description
-//	: 
-//  :
-// .Output(s)
-//	:
-//  :
-// .Return Value
-//	: 
-// -----------------------------------------------------------------------------
-// .Import Function Reference(s)
-//	:
-// -----------------------------------------------------------------------------
-// .Import Variable Reference(s)
-//	:
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :27.05.1997 RO			First Implementation
-//	:01.07.1998 RO			Returns NULL, if copying is not possible...
-////////////////////////////////////////////////////////////////////////////////
-/*
-SVAnalyzeFeatureClass* SVAnalyzeFeatureClass::BuildCopy()
-{
-	// Build an exactly copy and return it
-	//char* name = new char[ getNameLength() + 1 ];
-	//strcpy( name, getName() );
-
-	SVAnalyzeFeatureClass* pNewFeature = new SVAnalyzeFeatureClass();
-	if( pNewFeature )
-	{
-		pNewFeature->Create( GetName(), feature );
-		pNewFeature->resultArraySize	= resultArraySize;
-		pNewFeature->resultArray		= new double[resultArraySize];
-		pNewFeature->resultString		= new char[ resultArraySize * 20 ];
-		if( pNewFeature->resultArray && pNewFeature->resultString )
-		{
-			for( int i = 0; i < resultArraySize; i++ )
-				pNewFeature->resultArray[ i ] = resultArray[ i ];
-		
-			if( featureResultRange == NULL )
-				pNewFeature->featureResultRange = NULL;
-			else
-			{
-				pNewFeature->featureResultRange = 
-								new SVRangeClass( featureResultRange->FailLow, 
-												  featureResultRange->FailHigh, 
-												  featureResultRange->WarnLow, 
-												  featureResultRange->WarnHigh,
-												  pNewFeature->GetName() );
-			}
-		}
-		else
-		{
-			// No success...
-			if( pNewFeature->resultArray )
-				delete [] pNewFeature->resultArray;
-
-			if( pNewFeature->resultString )
-				delete [] pNewFeature->resultString;
-
-			delete pNewFeature;
-			pNewFeature = NULL;
-		}
-	}
-	return pNewFeature;
-}
-*/
-
 void SVAnalyzeFeatureClass::setFeatureResultRange( SVRangeClass* R )
 {
 	if( featureResultRange != R )
@@ -437,7 +362,6 @@ void SVAnalyzeFeatureClass::setFeatureResultRange( SVRangeClass* R )
 		featureResultRange = R;
 	}
 }
-
 
 SVRangeClass* SVAnalyzeFeatureClass::getFeatureResultRange()
 {
@@ -473,299 +397,22 @@ TCHAR* SVAnalyzeFeatureClass::GetResultArrayString( int N )
 	return( _T( "\0" ) );
 }
 
-BOOL SVAnalyzeFeatureClass::calculateRanges( int N )
-{
-	/* SEJ (OLD)
-	if( resultArray == NULL )
-	{
-		SV_MESSAGE_OK( "No resultArray in calculateRanges!", NULL );
-		return TRUE;
-	}
-
-	failed = FALSE;		// Good Product
-	warned = FALSE;
-	for( register int i = 0; i < N && i < resultArraySize; ++i )
-	{
-		failed = ( featureResultRange->FailLow <= *( resultArray + i ) && 
-			       featureResultRange->FailHigh >= *( resultArray + i )  ) 
-				 ? failed : TRUE;
-		warned = ( featureResultRange->WarnLow <= *( resultArray + i ) && 
-			       featureResultRange->WarnHigh >= *( resultArray + i )  ) 
-				 ? warned : TRUE;
-	}
-	return( failed || warned );
-	*/
-	// Kludge
-	return FALSE;
-}
-
-//*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/
-//* Class Name : SVAnalyzeFeatureListClass 
-//* Note(s)    : Base Class, built by a CArray ( template ) with 
-//*            : SVAnalyzeFeatureClass elements
-//*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/
-
-SVAnalyzeFeatureListClass::SVAnalyzeFeatureListClass()
-{
-}
-
-SVAnalyzeFeatureListClass::~SVAnalyzeFeatureListClass()
-{
-	clearList();
-}
-
-void SVAnalyzeFeatureListClass::DestroyAt( int I )
-{
-	if( I >= 0 && I < GetSize() )
-	{
-		delete( GetAt( I ) );
-		RemoveAt( I );
-	}
-	else
-		SV_MESSAGE_OK( "Wrong Index Access!\nSVAnalyzeFeatureListClass::DestroyAt", "Programmer Message" );
-		
-}
-
-void SVAnalyzeFeatureListClass::clearList()
-{
-	for( int i = 0; i < GetSize(); i++ )
-		delete( GetAt( i ) );
-		
-	RemoveAll();
-}
-
-BOOL SVAnalyzeFeatureListClass::Init( SVAnalyzeFeatureListClass* PSourceList )
-{
-	/* SEJ (OLD)
-	clearList();
-
-	SVAnalyzeFeatureClass* pFeature = NULL;
-	if( PSourceList )
-	{
-		for( int i = 0; i < PSourceList->GetSize(); i++ )
-			if( PSourceList->GetAt( i ) && ( pFeature = PSourceList->GetAt( i )->BuildCopy() ) )
-				Add( pFeature );
-
-		return TRUE;
-	}
-	*/
-	return FALSE;
-}
-
-SVAnalyzeFeatureClass* SVAnalyzeFeatureListClass::getFeatureObject( int I )
-{
-	ASSERT( I >= 0 && I < GetSize() );
-	if( I >= 0 && I < GetSize() )
-	{
-		SVAnalyzeFeatureClass* pFeature = new SVAnalyzeFeatureClass();
-		if( pFeature->Create( GetAt( I )->GetName(), GetAt( I )->getFeature() ) )
-			return( pFeature );
-		delete( pFeature );
-	};
-	return NULL;
-}
-
-//*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/
-//* Class Name : SVRangeDialogClass 
-//* Note(s)    : Dialog
-//*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/
-
-BEGIN_MESSAGE_MAP(SVRangeDialogClass, CDialog)
-	//{{AFX_MSG_MAP(SVRangeDialogClass)
-	//}}AFX_MSG_MAP
-END_MESSAGE_MAP()
-
-SVRangeDialogClass::SVRangeDialogClass( SVRangeClass* PRange, CWnd* pParent )
-				   : CDialog(SVRangeDialogClass::IDD, pParent)
-{
-	pRange = PRange;
-
-	// Get the Range
-	pRange->FailHigh.GetValue(failHigh);
-	pRange->WarnHigh.GetValue(warnHigh);
-	pRange->FailLow.GetValue(failLow);
-	pRange->WarnLow.GetValue(warnLow);
-	
-	//{{AFX_DATA_INIT(SVRangeDialogClass)
-	//}}AFX_DATA_INIT
-}
-
-HRESULT SVRangeDialogClass::SetInspectionData()
-{
-	HRESULT l_hrOk = S_FALSE;
-
-	if( pRange )
-	{
-		UpdateData( TRUE ); // get data from dialog
-
-		l_hrOk = AddInputRequest( &( pRange->FailHigh ), failHigh );
-
-		if( l_hrOk == S_OK )
-		{
-			l_hrOk = AddInputRequest( &( pRange->FailLow ), failLow );
-		}
-
-		if( l_hrOk == S_OK )
-		{
-			l_hrOk = AddInputRequest( &( pRange->WarnHigh ), warnHigh );
-		}
-
-		if( l_hrOk == S_OK )
-		{
-			l_hrOk = AddInputRequest( &( pRange->WarnLow ), warnLow );
-		}
-
-		if( l_hrOk == S_OK )
-		{
-			l_hrOk = AddInputRequestMarker();
-		}
-
-		if( l_hrOk == S_OK )
-		{
-			l_hrOk = RunOnce( pRange->GetTool() );
-		}
-
-		UpdateData( FALSE );
-	}
-
-	return l_hrOk;
-}
-
-void SVRangeDialogClass::DoDataExchange(CDataExchange* pDX)
-{
-	CDialog::DoDataExchange(pDX);
-
-	DDX_Text(pDX, IDC_EDIT1, failHigh);
-	DDX_Text(pDX, IDC_EDIT3, warnHigh);
-	DDX_Text(pDX, IDC_EDIT4, warnLow);
-	DDX_Text(pDX, IDC_EDIT5, failLow);
-
-	DDV_MinMaxDouble(pDX, failHigh, -17000000.0, 17000000.0);
-	DDV_MinMaxDouble(pDX, warnHigh, -17000000.0, 17000000.0);
-	DDV_MinMaxDouble(pDX, warnLow,  -17000000.0, 17000000.0);
-	DDV_MinMaxDouble(pDX, failLow,  -17000000.0, 17000000.0);
-
-	//{{AFX_DATA_MAP(SVRangeDialogClass)
-	//}}AFX_DATA_MAP
-}
-
-BOOL SVRangeDialogClass::OnInitDialog() 
-{
-	CDialog::OnInitDialog();
-	
-	SetTaskObject( pRange );
-	pRange->FailHigh.GetValue( failHigh );
-	pRange->FailLow.GetValue( failLow );
-	pRange->WarnHigh.GetValue( warnHigh );
-	pRange->WarnLow.GetValue( warnLow );
-	
-	UpdateData( FALSE ); // set data to dialog
-
-	// Set the Caption for the Window
-	SVResultClass* pResult = ( SVResultClass* )pRange->GetOwner();
-	CString title = pResult->GetName();
-	SetWindowText( title );
-
-	// Ensure the title is readable
-	CRect rect;
-	GetWindowRect(&rect);
-
-	CDC* pDC = GetDC();
-	CSize size = pDC->GetTextExtent(title);
-	ReleaseDC(pDC);
-	
-	if (size.cx > rect.Width())
-	{
-		int borderWidth = GetSystemMetrics(SM_CXDLGFRAME);
-		int width = size.cx + (borderWidth * 2) + 24;
-		SetWindowPos(&CWnd::wndTop, 0, 0, width, rect.Height(), SWP_NOMOVE | SWP_NOZORDER);
-	}
-	
-	return TRUE;  // return TRUE unless you set the focus to a control
-	              // EXCEPTION: OCX-Eigenschaftenseiten sollten FALSE zurückgeben
-}
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// Make sure the failHigh, warnHigh, warnLow, failLow are valid with 
-// respect to each other.
-// 
-//
-BOOL SVRangeDialogClass::CheckRangeValues()
-{
-    CWnd * pWnd;
-    CString s;
-
-    if(failHigh < warnHigh)
-    {
-        s.Format(_T("ERROR:\n Fail High (%.3f)\n is less than\n Warn High (%.3f)"),
-            failHigh, warnHigh);
-        AfxMessageBox((LPCTSTR)s,MB_OK | MB_ICONERROR);
-        pWnd = GetDlgItem(IDC_EDIT1);
-        ASSERT_VALID(pWnd);
-        pWnd->SetFocus();
-        return FALSE;
-    }
-    
-	if(warnHigh < warnLow)
-    {
-        s.Format(_T("ERROR:\n Warn High (%.3f)\n is less than\n Warn Low (%.3f)"),
-            warnHigh, warnLow);
-        AfxMessageBox((LPCTSTR)s,MB_OK | MB_ICONERROR);
-        pWnd = GetDlgItem(IDC_EDIT3);
-        ASSERT_VALID(pWnd);
-        pWnd->SetFocus();
-        return FALSE;
-    }
-
-    if(warnLow < failLow)
-    {
-        s.Format(_T("ERROR:\n Warn Low (%.3f)\n is less than\n Fail Low (%.3f)"),
-            warnLow, failLow);
-        AfxMessageBox((LPCTSTR)s,MB_OK | MB_ICONERROR);
-        pWnd = GetDlgItem(IDC_EDIT4);
-        ASSERT_VALID(pWnd);
-        pWnd->SetFocus();
-        return FALSE;
-    }
-    return TRUE;      // passed all tests.
-}
-
-void SVRangeDialogClass::OnCancel() 
-{
-	CDialog::OnCancel();
-}
-
-void SVRangeDialogClass::OnOK() 
-{
-	UpdateData( TRUE ); // get data from dialog
-
-    //
-    // Make sure the values 'make sense'.
-    //
-    BOOL bResult = CheckRangeValues();
-    if(!bResult)
-    {
-        return;
-    }
-
-	SetInspectionData();
-	
-	if( failHigh >= -17000000.0 && failHigh <= 17000000.0 &&
-		warnHigh >= -17000000.0 && warnHigh <= 17000000.0 &&
-		warnLow  >= -17000000.0 && warnLow  <= 17000000.0 &&
-		failLow  >= -17000000.0 && failLow  <= 17000000.0 )
-
-	{
-		CDialog::OnOK();
-	}
-}
-
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVResult.cpp_v  $
+ * 
+ *    Rev 1.4   14 Jan 2015 16:43:20   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  979
+ * SCR Title:  Provide additional options to input the feature range for the blob analyzer.
+ * Checked in by:  mEichengruen;  Marcus Eichengruen
+ * Change Description:  
+ *   Removed unused classes SVAnalyzeFeatureListClass and SVRangeDialogClass (replaced by RangeXDialogClass).
+ *   Removed dead code.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   07 Jan 2015 17:47:10   bwalter
  * Project:  SVObserver

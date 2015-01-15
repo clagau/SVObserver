@@ -5,12 +5,11 @@
 //* .Module Name     : SVResult.h
 //* .File Name       : $Workfile:   SVResult.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   15 May 2014 12:40:06  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   14 Jan 2015 16:43:46  $
 //******************************************************************************
 
-#ifndef SVRESULT_H
-#define SVRESULT_H
+#pragma once
 
 #include "SVContainerLibrary/SVVector.h"
 #include "ISVCancel.h"
@@ -110,31 +109,14 @@ class SVAnalyzeFeatureClass : public SVTaskObjectClass
 {
 	SV_DECLARE_CLASS( SVAnalyzeFeatureClass );
 
-protected:
-//******************************************************************************
-// Friend Declaration(s):
-//******************************************************************************
-
 //******************************************************************************
 // Constructor(s):
 //******************************************************************************
 public:
 // Standard constructor
 	SVAnalyzeFeatureClass( LPCSTR ObjectName = "Unknown Analyze Feature" );
-protected:
-// Create from serialization only
-private:
-
-//******************************************************************************
-// Destructor(s):
-//******************************************************************************
-public:
 // Standard destructor
 	virtual ~SVAnalyzeFeatureClass();
-
-protected:
-private:
-
 
 //******************************************************************************
 // Operator(s):
@@ -148,27 +130,16 @@ public:
 	void create( int MaxNumber = SV_DEFAULT_MAX_BLOB_NUMBER, SVRangeClass* R = NULL );
 
 ////////////////////////////////////////////////////////////////////////////////
-// Copy Operator
-////////////////////////////////////////////////////////////////////////////////
-// SEJ (OLD)	SVAnalyzeFeatureClass* BuildCopy();
-
-////////////////////////////////////////////////////////////////////////////////
 // is... Operator
 ////////////////////////////////////////////////////////////////////////////////
 	BOOL IsFailed();
 	BOOL IsWarned();
-
-protected:
-private:
 
 //******************************************************************************
 // Operation(s) Of Writing Access:
 //******************************************************************************
 public:
 	void setFeatureResultRange( SVRangeClass* R );
-
-protected:
-private:
 
 //******************************************************************************
 // Operation(s) Of Reading Access:
@@ -179,29 +150,9 @@ public:
 	long			getFeature();
 	TCHAR*			GetResultArrayString( int N );
 
-protected:
-private:
-
-//******************************************************************************
-// Operation(s) Of Representation:
-//******************************************************************************
-public:
-protected:
-private:
-
-//******************************************************************************
-// Operation(s) Of Process:
-//******************************************************************************
-public:
-	BOOL calculateRanges( int N );
-
-protected:
-private:
-
 //******************************************************************************
 // Data Element(s):
 //******************************************************************************
-public:
 protected:
 	long			feature;
 	double*			resultArray;
@@ -211,139 +162,25 @@ protected:
 	BOOL			warned;
 
 	char*			resultString;
-
-private:
-
 };
-
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : Base Class SVAnalyzeFeatureListClass 
-// -----------------------------------------------------------------------------
-// .Description : e.g. This base class capsules an Image and provides its ...
-//              :
-//              :
-// -----------------------------------------------------------------------------
-// .Export
-//	 Public Method				Description
-//  :
-//  :
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :27.05.1997 RO			First Implementation
-//	:
-////////////////////////////////////////////////////////////////////////////////
-class SVAnalyzeFeatureListClass : public SVVector< SVAnalyzeFeatureClass* >
-{
-public:
-	SVAnalyzeFeatureListClass();
-
-	virtual ~SVAnalyzeFeatureListClass();
-
-public:
-	void clearList();
-	void DestroyAt( int I );
-	BOOL Init( SVAnalyzeFeatureListClass* PSourceList );
-
-	SVAnalyzeFeatureClass* getFeatureObject( int I );
-
-};
-
-/*------------- 08 Nov 1999 - frb
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : Class SVAvailableFeatureListClass - CArray
-// -----------------------------------------------------------------------------
-// .Description : e.g. This base class capsules an Image and provides its ...
-//              :
-//              :
-// -----------------------------------------------------------------------------
-// .Export
-//	 Public Method				Description
-//  :
-//  :
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :27.05.1997 RO			First Implementation
-//	:
-////////////////////////////////////////////////////////////////////////////////
-class SVAvailableFeatureListClass : public SVAnalyzeFeatureListClass
-{
-//******************************************************************************
-// Constructor(s):
-//******************************************************************************
-public:
-// Standard constructor
-	SVAvailableFeatureListClass();
-
-//******************************************************************************
-// Destructor(s):
-//******************************************************************************
-public:
-// Standard destructor
-	virtual ~SVAvailableFeatureListClass();
-
-//******************************************************************************
-// Operator(s):
-//******************************************************************************
-public:
-
-//******************************************************************************
-// Data Element(s):
-//******************************************************************************
-public:
-
-};
----------------*/
-
-////////////////////////////////////////////////////////////////////////////////
-//  SVRangeDialogClass 
-//
-//
-class SVRangeDialogClass : public CDialog, public SVTaskObjectInterfaceClass
-{
-	//{{AFX_MSG(SVRangeDialogClass)
-	virtual BOOL OnInitDialog();
-	virtual void OnCancel();
-	virtual void OnOK();
-	//}}AFX_MSG
-
-	DECLARE_MESSAGE_MAP()
-
-public:
-// Standard constructor
-	SVRangeDialogClass( SVRangeClass* PRange, CWnd* pParent = NULL );
-
-	virtual HRESULT SetInspectionData();
-
-	//{{AFX_VIRTUAL(SVRangeDialogClass)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV-Unterstützung
-	//}}AFX_VIRTUAL
-
-	//{{AFX_DATA(SVRangeDialogClass)
-	enum { IDD = IDD_RANGE_DIALOG };
-	//}}AFX_DATA
-
-protected:
-    BOOL CheckRangeValues();
-
-protected:
-	SVRangeClass*	pRange;
-
-	double	failHigh;
-	double	warnHigh;
-	double	warnLow;
-	double	failLow;
-};
-
-#endif	//	SVRESULT_H
 
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVResult.h_v  $
+ * 
+ *    Rev 1.3   14 Jan 2015 16:43:46   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  979
+ * SCR Title:  Provide additional options to input the feature range for the blob analyzer.
+ * Checked in by:  mEichengruen;  Marcus Eichengruen
+ * Change Description:  
+ *   Removed unused classes SVAnalyzeFeatureListClass and SVRangeDialogClass (replaced by RangeXDialogClass).
+ *   Changed to use pragma once.
+ *   Removed unnecessary items.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   15 May 2014 12:40:06   tbair
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : SVInspectionProcess
 //* .File Name       : $Workfile:   SVInspectionProcess.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.12  $
-//* .Check In Date   : $Date:   07 Jan 2015 17:42:46  $
+//* .Current Version : $Revision:   1.13  $
+//* .Check In Date   : $Date:   14 Jan 2015 16:42:48  $
 //******************************************************************************
 
 #pragma once
@@ -434,12 +434,14 @@ typedef SVVector< SVInspectionProcess* > SVInspectionProcessArray;
 
 namespace SVDetail
 {
+	typedef std::string String;
+
 	template<typename T>
 	struct ValueObjectTraits
 	{
 		typedef T value_type;
 		typedef SVValueObjectClassImpl<T> object_type;
-		inline static bool validate(const std::string&) { return true; }
+		inline static bool validate(const String &) { return true; }
 	};
 
 	template<>
@@ -447,7 +449,7 @@ namespace SVDetail
 	{
 		typedef CString value_type;
 		typedef SVValueObjectClassImpl<CString> object_type;
-		inline static bool validate(const std::string& str)
+		inline static bool validate(const String & str)
 		{
 			CFileStatus rStatus;
 			return CFile::GetStatus( str.c_str(), rStatus ) != 0 && 0L <= rStatus.m_size;
@@ -455,14 +457,14 @@ namespace SVDetail
 	};
 
 	template<typename T>
-	inline T str2int(const std::string& str)
+	inline T str2int(const String & str)
 	{
 		int base = (str[0] == '0' && toupper(str[1]) == 'X')?16:10;
 		return static_cast<T>(_tcstol(str.c_str(), NULL, base));
 	}
 
 	template<typename T>
-	inline T str2(const std::string& str)
+	inline T str2(const String & str)
 	{
 		if (boost::is_integral<T>::value)
 			return str2int<T>(str);
@@ -471,12 +473,12 @@ namespace SVDetail
 	}
 
 	template<>
-	inline CString str2<CString>(const std::string& str)
+	inline CString str2<CString>(const String & str)
 	{
 		return str.c_str();
 	}
 
-	typedef boost::function<bool (const std::string&)> Validator;
+	typedef boost::function<bool (const String &)> Validator;
 }
 
 template<typename T>
@@ -489,9 +491,11 @@ inline HRESULT Parse(std::vector<T> & vec, const CString & values, SVDetail::Val
 	{
 		return S_FALSE;
 	}
+	typedef SVDetail::String String;
+	typedef String::const_iterator Iter;
 	typedef boost::escaped_list_separator<TCHAR> Sep;
-	typedef boost::tokenizer<Sep, std::string::const_iterator, std::string> Tokenizer;
-	std::string str = values;
+	typedef boost::tokenizer<Sep, Iter, String> Tokenizer;
+	String str = values;
 	Sep sep(escape, separator, quote);
 	Tokenizer tok(str, sep);
 	try
@@ -549,6 +553,16 @@ inline HRESULT SVInspectionProcess::SetObjectArrayValues(SVValueObjectReference 
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVInspectionProcess.h_v  $
+ * 
+ *    Rev 1.13   14 Jan 2015 16:42:48   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  979
+ * SCR Title:  Provide additional options to input the feature range for the blob analyzer.
+ * Checked in by:  mEichengruen;  Marcus Eichengruen
+ * Change Description:  
+ *   Replaced typedef "String" in the SVDetail namespace.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.12   07 Jan 2015 17:42:46   bwalter
  * Project:  SVObserver

@@ -4,12 +4,12 @@
 //******************************************************************************
 //* .Module Name     : SVRangeClassHelper
 //* .File Name       : $Workfile:   RangeClassHelper.h  $
-//* .Description	    : Helper class for the  SVRAngeClass.  implements interface of SVTaskObjectInterfaceClass
-//*						Contains Variable for values.
-//*                    The values can be Get and set from the RangeClass and can be checked. 
+//* .Description     : Helper class for the SVRangeClass.  Implements the interface SVTaskObjectInterfaceClass.
+//*                    Contains variables for range values.
+//*                    Allows the RangeClass to get, set, and check the values.
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   13 Jan 2015 13:10:52  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   14 Jan 2015 16:41:56  $
 //******************************************************************************
 
 #pragma once
@@ -29,13 +29,11 @@ class RangeClassHelper : public SVTaskObjectInterfaceClass
 {
 #pragma region Constructor
 public:
-	RangeClassHelper(SVRangeClass* PRange );
+	RangeClassHelper(SVRangeClass* PRange);
 	virtual ~RangeClassHelper();
 #pragma endregion Constructor
 
 #pragma region Public Methods
-public:
-
 	//************************************
 	// Description: get the double value from string
 	// Parameter:  Value <out>:  value
@@ -99,21 +97,21 @@ public:
 	LPCTSTR GetOwnerName() const;
 
 	//************************************
-	//! Change the Indirectnames if necessary
-	//! \param oldPefix [in]  old Toolname 
-	//! \param newPrefix [in] new Toolname 
-	//! \returns bool true if an indirectname was changed
+	// Description:  Change the indirect names, if necessary
+	// Parameter:  oldPefix <in>:  old tool name
+	// Parameter:  newPrefix <in>:  new tool name
+	// Returns:  bool:  true if an indirect name was changed
 	//************************************
-	bool RenameIndirectValues(LPCTSTR oldPefix, LPCTSTR newPrefix  );
+	bool RenameIndirectValues(LPCTSTR oldPefix, LPCTSTR newPrefix);
 
 	//************************************
-	// Description:  Translate enum to string 
+	// Description:  Translate enum to string
 	// Returns:  Cstring:  name of the range variable
 	//************************************
 	static CString ERange2String(ERange range);
 
 	//************************************
-	// Description:  Checks if the owner of ref is a SVRangeObjectType 
+	// Description:  Checks if the owner of ref is a SVRangeObjectType
 	// Parameter:  ref:  const reference to the object to check
 	// Returns:  bool:  true if the object is owned by a range object else false
 	//************************************
@@ -124,23 +122,20 @@ public:
 	// if the object is a reference object it is only allowed when we are not in run mode and it is a valid reference
 	// Parameter:  ref <in>: the object
 	// Parameter:  value<in?>:   
-	// Parameter:  bOnline <in>:  true if we are in runmode
-	// Parameter:  status <out>:  the reason wy it is not allowed
-	// Returns:  bool:  if true the value can be set 
+	// Parameter:  bOnline <in>:  true if we are in run mode
+	// Parameter:  status <out>:  the reason why it is not allowed
+	// Returns:  bool:  if true the value can be set
 	//************************************
-	static bool IsAllowedToSet(const SVObjectClass& ref, const CString& value, bool bOnline, HRESULT&  hres);
+	static bool IsAllowedToSet(const SVObjectClass& ref, const CString& value, bool bOnline, HRESULT& hres);
 #pragma endregion Public Methods
 
 #pragma region Member variables
 private:
-	static double s_MaxValue;
-	static double s_MinValue;
-
 	SVRangeClass* m_pRange;
-	double	m_FailHigh;
-	double	m_WarnHigh;
-	double	m_WarnLow;
-	double	m_FailLow;
+	double m_FailHigh;
+	double m_WarnHigh;
+	double m_WarnLow;
+	double m_FailLow;
 	CString m_FailHighIndirect;
 	CString m_WarnHighIndirect;
 	CString m_WarnLowIndirect;
@@ -154,7 +149,18 @@ private:
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSARCH65\PROJECTFILES\ARCHIVES\SVOBSERVER_SRC\SVObserver\RangeClassHelper.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\RangeClassHelper.h_v  $
+ * 
+ *    Rev 1.2   14 Jan 2015 16:41:56   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  979
+ * SCR Title:  Provide additional options to input the feature range for the blob analyzer.
+ * Checked in by:  mEichengruen;  Marcus Eichengruen
+ * Change Description:  
+ *   Removed Min/Max member variables, which were only used in one method.
+ *   Cleaned up comment and spacing.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   13 Jan 2015 13:10:52   mEichengruen
  * Project:  SVObserver
