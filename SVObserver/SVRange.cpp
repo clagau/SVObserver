@@ -5,8 +5,8 @@
 //* .Module Name     : SVRange.cpp
 //* .File Name       : $Workfile:   SVRange.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.4  $
-//* .Check In Date   : $Date:   13 Jan 2015 13:10:52  $
+//* .Current Version : $Revision:   1.5  $
+//* .Check In Date   : $Date:   15 Jan 2015 08:30:26  $
 //******************************************************************************
 
 #pragma region Includes
@@ -17,6 +17,7 @@
 #include "SVTool.h"
 #include "SVInspectionProcess.h"
 #include "RangeClassHelper.h"
+#include "ErrorNumbers.h"
 #pragma endregion Includes
 
 
@@ -130,8 +131,21 @@ bool SVRangeClass::SetReference(LPCTSTR  Name, SVValueObjectReference &ValueObje
 
 HRESULT SVRangeClass::ResetObject()
 {
-	InitReferencesAndInputs();
-	return SVTaskObjectClass::ResetObject();
+	HRESULT  hresult = S_OK;
+	hresult = InitReferencesAndInputs(); 
+	if(S_OK != hresult)
+	{
+		SetInvalid();
+	}
+
+	HRESULT hres = SVTaskObjectClass::ResetObject();
+	
+	if (hresult == S_OK)
+	{
+		hresult = hres;
+	}
+
+	return hresult;
 }
 
 BOOL SVRangeClass::CloseObject()
@@ -140,9 +154,9 @@ BOOL SVRangeClass::CloseObject()
 	return SVTaskObjectClass::CloseObject();
 }
 
-bool SVRangeClass::InitReferencesAndInputs()
+HRESULT SVRangeClass::InitReferencesAndInputs()
 {
-	bool bRetVal = true;
+	HRESULT hResult  = S_OK;
 	DisconnectAllInputObjects();
 	SVValueObjectReference emptyRef;
 	CString csValueIndirect;
@@ -165,13 +179,13 @@ bool SVRangeClass::InitReferencesAndInputs()
 			CString dottetName = InspectionName + csValueIndirect;
 			if(!SetReference(dottetName,m_ValueObjectReferences[i] ))
 			{
-				bRetVal = false;
+				hResult = -Err_16025; //invalid Reference;
 			}
-			//Mec Do we have to check if we have an valid but disabled input!!!!!!!
-			/*else if( FALSE == (m_ValueObjectReferences[i].ObjectAttributesAllowed()& SV_VIEWABLE)  )
+			//check if we have an valid but disabled input
+			else if( FALSE == (m_ValueObjectReferences[i].ObjectAttributesAllowed()& SV_VIEWABLE)  )
 			{
-			bRetVal = false;
-			}*/
+				hResult = -Err_16026; //Reference not allowed
+			}
 			else
 			{
 				m_ValueIndirect[i].ObjectAttributesAllowedRef() |= SV_PRINTABLE;
@@ -181,7 +195,7 @@ bool SVRangeClass::InitReferencesAndInputs()
 	}
 	
 
-	if( ! bRetVal )
+	if( S_OK != hResult  )
 	{
 		m_isValidRange = false;
 		///SetInvalid();
@@ -191,13 +205,13 @@ bool SVRangeClass::InitReferencesAndInputs()
 		m_isValidRange = true;
 	}
 
-	if(bRetVal)
+	if( S_OK == hResult  )
 	{
 		ConnectAllInputObjects();
 	}
 
 
-	return bRetVal;
+	return hResult;
 
 }
 
@@ -217,7 +231,7 @@ BOOL SVRangeClass::OnValidate()
 	
 	if(bRetVal)
 	{
-		bRetVal = InitReferencesAndInputs();
+		bRetVal = ( InitReferencesAndInputs() == S_OK);
 	}
 	
 	if(!bRetVal)
@@ -363,18 +377,23 @@ DWORD_PTR SVRangeClass::processMessage( DWORD DwMessageID, DWORD_PTR DwMessageVa
 
 	case SVMSGID_RESET_ALL_OBJECTS:
 		{
-			HRESULT l_ResetStatus = ResetObject();
-			if( l_ResetStatus != S_OK )
+			HRESULT ResetStatus = ResetObject();
+			if( ResetStatus != S_OK )
 			{
-				ASSERT( SUCCEEDED( l_ResetStatus ) );
-
+				BOOL SilentReset = static_cast<BOOL> (DwMessageValue);
+				if(!SilentReset && (ResetStatus == -Err_16025 || ResetStatus == -Err_16026))
+				{
+					CString ErrorMsg;
+					ErrorMsg = GetCompleteObjectNameToObjectType( NULL, SVInspectionObjectType );
+					ErrorMsg +=  _T(": Invalid reference");
+					AfxMessageBox(ErrorMsg);
+				}
 				DwResult = SVMR_NO_SUCCESS;
 			}
 			else
 			{
 				DwResult = SVMR_SUCCESS;
 			}
-
 			break;
 		}
 
@@ -600,7 +619,22 @@ void SVRangeClass::InvalidateRange()
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSARCH65\PROJECTFILES\ARCHIVES\SVOBSERVER_SRC\SVObserver\SVRange.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVRange.cpp_v  $
+ * 
+ *    Rev 1.5   15 Jan 2015 08:30:26   mEichengruen
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  979
+ * SCR Title:  Provide additional options to input the feature range for the blob analyzer.
+ * Checked in by:  mEichengruen;  Marcus Eichengruen
+ * Change Description:  
+ *   Change Returnvalue for InitReferencesAndInput to HRESULT
+ * 
+ * ResetObject: Check References ObjectAttributesAllowed for SV_VIEWABLE. Add Return values
+ * Add Error Messages for invalid Ranges 
+ * Check Result for Reseet.
+ *  
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.4   13 Jan 2015 13:10:52   mEichengruen
  * Project:  SVObserver

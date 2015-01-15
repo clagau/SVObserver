@@ -6,8 +6,8 @@
 //* .File Name       : $Workfile:   ErrorNumbers.h  $
 //* .Description     : PLEASE ENTER A DESCRIPTION
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   14 Jan 2015 16:40:08  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   15 Jan 2015 08:23:34  $
 //******************************************************************************
 
 #pragma once
@@ -39,6 +39,8 @@ static const int Err_16021 = Mec_ErrorBase + 21;
 static const int Err_16022 = Mec_ErrorBase + 22;
 static const int Err_16023 = Mec_ErrorBase + 23;
 static const int Err_16024 = Mec_ErrorBase + 24;
+static const UINT Err_16025 = Mec_ErrorBase + 25;
+static const UINT Err_16026 = Mec_ErrorBase + 26;
 
 //Guido Ramseier error base
 static const int Gra_ErrorBase = 25000;
@@ -61,6 +63,16 @@ static const int Err_25012 = Gra_ErrorBase + 12;
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\ErrorNumbers.h_v  $
+ * 
+ *    Rev 1.3   15 Jan 2015 08:23:34   mEichengruen
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  979
+ * SCR Title:  Provide additional options to input the feature range for the blob analyzer.
+ * Checked in by:  mEichengruen;  Marcus Eichengruen
+ * Change Description:  
+ *   Add new Errornumbers
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   14 Jan 2015 16:40:08   bwalter
  * Project:  SVObserver

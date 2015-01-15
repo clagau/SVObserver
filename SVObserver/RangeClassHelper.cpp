@@ -5,8 +5,8 @@
 //* .Module Name     : SVRangeClassHelper
 //* .File Name       : $Workfile:   RangeClassHelper.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.3  $
-//* .Check In Date   : $Date:   14 Jan 2015 16:40:42  $
+//* .Current Version : $Revision:   1.4  $
+//* .Check In Date   : $Date:   15 Jan 2015 08:25:38  $
 //******************************************************************************
 
 #pragma region Includes
@@ -22,13 +22,14 @@
 #include "ErrorNumbers.h"
 #pragma endregion Includes
 
+
 #pragma region Constructor
 RangeClassHelper::RangeClassHelper(SVRangeClass *pRange)
-: m_FailHigh(0.0)
-, m_WarnHigh(0.0)
-, m_WarnLow(0.0)
-, m_FailLow(0.0)
-, m_pRange(pRange)
+	: m_FailHigh(0.0)
+	, m_WarnHigh(0.0)
+	, m_WarnLow(0.0)
+	, m_FailLow(0.0)
+	, m_pRange(pRange)
 {
 }
 
@@ -110,7 +111,7 @@ bool RangeClassHelper::Convert2Number(double &Value, LPCTSTR str) const
 {
 	// @TODO:  Better to use SVString here instead of CString.  (Apply this principle throughout the class.)
 	CString number = str;
-	int point = 0;
+	int point =0;
 	number.Trim();
 	number.TrimLeft( _T("+-."));
 
@@ -122,14 +123,14 @@ bool RangeClassHelper::Convert2Number(double &Value, LPCTSTR str) const
 		TCHAR tchar = number.GetAt(i);
 		if( tchar == _T('.'))
 		{
-			if(++point > 1)
-			{
-				return false;
+			if(++point > 1) 
+			{ 
+				return false; 
 			}
 		}
-		else if( !_istdigit( tchar ) )
-		{
-			return false;
+		else if( !_istdigit( tchar ) ) 
+		{ 
+			return false; 
 		}
 	}
 
@@ -137,7 +138,7 @@ bool RangeClassHelper::Convert2Number(double &Value, LPCTSTR str) const
 	return true;
 }
 
-HRESULT RangeClassHelper::SetInternalData(ERange er, LPCTSTR lp, CString &Errorsmsg)
+HRESULT  RangeClassHelper::SetInternalData(ERange er, LPCTSTR lp, CString &Errorsmsg)
 {
 	HRESULT hr = S_OK;
 	CString csText = lp;
@@ -145,11 +146,12 @@ HRESULT RangeClassHelper::SetInternalData(ERange er, LPCTSTR lp, CString &Errors
 	const double s_RangeMax = 17000000;
 	const double s_RangeMin = -17000000;
 	int textLength = csText.GetLength();
+
 	if( textLength == 0)
 	{
 		//IDS_IS_MISSING            "ERROR:\n%1 is missing."
-		AfxFormatString1(Errorsmsg, IDS_IS_MISSING, ERange2String(er).GetString());
-
+		AfxFormatString1(Errorsmsg,IDS_IS_MISSING,ERange2String(er).GetString());
+		
 		return -Err_16022;
 	}
 
@@ -160,11 +162,11 @@ HRESULT RangeClassHelper::SetInternalData(ERange er, LPCTSTR lp, CString &Errors
 		if(val > s_RangeMax || val < s_RangeMin )
 		{
 			//IDS_MUST_BETWEEN           "ERROR:\n%1 must between "
-			AfxFormatString1(Errorsmsg, IDS_MUST_BETWEEN, ERange2String(er).GetString());
+			AfxFormatString1(Errorsmsg,IDS_MUST_BETWEEN,ERange2String(er).GetString());
 			CString csValues;
 			csValues.Format(_T(" %i and %i"), static_cast< int >( s_RangeMin ), static_cast< int >( s_RangeMax ));
 			Errorsmsg += csValues;
-
+			
 			return -Err_16023;
 		}
 	}
@@ -209,50 +211,50 @@ HRESULT RangeClassHelper::CheckInternalData(CString &csmsg) const
 	}
 	InspectionName += _T(".");
 
-	CString csFailHigh, csWarnHigh, csFailLow, csWarnLow;
+	CString csFailHigh,csWarnHigh,csFailLow, csWarnLow; 
 	csFailHigh.LoadString(IDS_FAIL_HIGH);
 	csWarnHigh.LoadString(IDS_WARN_HIGH);
 	csFailLow.LoadString(IDS_FAIL_LOW);
 	csWarnLow.LoadString(IDS_WARN_LOW);
 
-	if( m_FailHighIndirect.IsEmpty() && m_WarnHighIndirect.IsEmpty() && m_FailHigh < m_WarnHigh )
+	if( m_FailHighIndirect.IsEmpty() && m_WarnHighIndirect.IsEmpty() && m_FailHigh < m_WarnHigh)
 	{
 		//IDS_IS_LESS_THAN			"ERROR:\n%1\nis less than\n%2"
-		AfxFormatString2( csmsg, IDS_IS_LESS_THAN, csFailHigh.GetString(), csWarnHigh.GetString() );
+		AfxFormatString2(csmsg,IDS_IS_LESS_THAN, csFailHigh.GetString(),csWarnHigh.GetString());
 		return -Err_16012;
 	}
 
-	if( m_FailHighIndirect.IsEmpty() && m_WarnLowIndirect.IsEmpty() && m_FailHigh < m_WarnLow )
+	if( m_FailHighIndirect.IsEmpty() && m_WarnLowIndirect.IsEmpty() && m_FailHigh < m_WarnLow)
 	{
 		//IDS_IS_LESS_THAN			"ERROR:\n%1\nis less than\n%2"
-		AfxFormatString2( csmsg, IDS_IS_LESS_THAN, csFailHigh.GetString(), csWarnLow.GetString() );
+		AfxFormatString2(csmsg,IDS_IS_LESS_THAN, csFailHigh.GetString(),csWarnLow.GetString());
 		return -Err_16013;
 	}
 
-	if( m_FailHighIndirect.IsEmpty() && m_FailLowIndirect.IsEmpty() && m_FailHigh < m_FailLow )
+	if( m_FailHighIndirect.IsEmpty() && m_FailLowIndirect.IsEmpty() && m_FailHigh < m_FailLow)
 	{
 		//IDS_IS_LESS_THAN			"ERROR:\n%1\nis less than\n%2"
-		AfxFormatString2( csmsg, IDS_IS_LESS_THAN, csFailHigh.GetString(), csFailLow.GetString() );
+		AfxFormatString2(csmsg,IDS_IS_LESS_THAN, csFailHigh.GetString(),csFailLow.GetString());
 		return -Err_16014;
 	}
 
-	if( m_WarnHighIndirect.IsEmpty() && m_WarnLowIndirect.IsEmpty() && m_WarnHigh < m_WarnLow )
+	if( m_WarnHighIndirect.IsEmpty() && m_WarnLowIndirect.IsEmpty() && m_WarnHigh < m_WarnLow)
 	{
 		//IDS_IS_LESS_THAN			"ERROR:\n%1\nis less than\n%2"
-		AfxFormatString2( csmsg, IDS_IS_LESS_THAN, csWarnHigh.GetString(), csWarnLow.GetString() );
+		AfxFormatString2(csmsg,IDS_IS_LESS_THAN, csWarnHigh.GetString(),csWarnLow.GetString());
 		return -Err_16015;
 	}
 
-	if( m_WarnHighIndirect.IsEmpty() && m_FailLowIndirect.IsEmpty() && m_WarnHigh < m_FailLow )
+	if( m_WarnHighIndirect.IsEmpty() && m_FailLowIndirect.IsEmpty() && m_WarnHigh < m_FailLow)
 	{
 		//IDS_IS_LESS_THAN			"ERROR:\n%1\nis less than\n%2"
-		AfxFormatString2( csmsg, IDS_IS_LESS_THAN, csWarnHigh.GetString(), csFailLow.GetString() );
+		AfxFormatString2(csmsg,IDS_IS_LESS_THAN, csWarnHigh.GetString(),csFailLow.GetString());
 		return -Err_16016;
 	}
 
-	if( m_WarnLowIndirect.IsEmpty() && m_FailLowIndirect.IsEmpty() && m_WarnLow < m_FailLow )
+	if( m_WarnLowIndirect.IsEmpty() && m_FailLowIndirect.IsEmpty() && m_WarnLow < m_FailLow)
 	{
-		AfxFormatString2( csmsg, IDS_IS_LESS_THAN, csWarnLow.GetString(), csFailLow.GetString() );
+		AfxFormatString2(csmsg,IDS_IS_LESS_THAN,csWarnLow.GetString(),csFailLow.GetString());
 		return -Err_16017;
 	}
 
@@ -260,10 +262,19 @@ HRESULT RangeClassHelper::CheckInternalData(CString &csmsg) const
 	{
 		SVValueObjectReference objRef;
 		CString dottedName = InspectionName + m_FailHighIndirect;
+		bool isInvalidReference = false;
 		if( false == SVRangeClass::SetReference(dottedName, objRef) )
 		{
+			isInvalidReference = true; 
+		}
+		else if( FALSE == (objRef.ObjectAttributesAllowed()& SV_VIEWABLE)  )
+		{
+			isInvalidReference = true; 
+		}
+		if(isInvalidReference)
+		{
 			//IDS_ISANINVALID_REFERENCE  "ERROR:\n%1: %2\nis an invalid reference."
-			AfxFormatString2( csmsg, IDS_ISANINVALID_REFERENCE, csFailHigh.GetString(), m_FailHighIndirect.GetString() );
+			AfxFormatString2(csmsg,IDS_ISANINVALID_REFERENCE,csFailHigh.GetString(),m_FailHighIndirect.GetString() );
 			return -Err_16018;
 		}
 	}
@@ -272,22 +283,41 @@ HRESULT RangeClassHelper::CheckInternalData(CString &csmsg) const
 	{
 		SVValueObjectReference objRef;
 		CString dottedName = InspectionName + m_WarnHighIndirect;
+		bool isInvalidReference = false;
 		if( false == SVRangeClass::SetReference(dottedName, objRef) )
 		{
+			isInvalidReference = true; 
+		}
+		else if( FALSE == (objRef.ObjectAttributesAllowed()& SV_VIEWABLE)  )
+		{
+			isInvalidReference = true; 
+		}
+		if(isInvalidReference)
+		{
 			//IDS_ISANINVALID_REFERENCE  "ERROR:\n%1: %2\nis an invalid reference."
-			AfxFormatString2( csmsg, IDS_ISANINVALID_REFERENCE, csWarnHigh.GetString(), m_WarnHighIndirect.GetString() );
+			AfxFormatString2(csmsg,IDS_ISANINVALID_REFERENCE,csWarnHigh.GetString(),m_WarnHighIndirect.GetString() );
 			return -Err_16019;
 		}
+
 	}
 
 	if( !m_WarnLowIndirect.IsEmpty() )
 	{
 		SVValueObjectReference objRef;
 		CString dottedName = InspectionName + m_WarnLowIndirect;
+		bool isInvalidReference = false;
 		if( false == SVRangeClass::SetReference(dottedName, objRef) )
 		{
+			isInvalidReference = true; 
+		}
+		else if( FALSE == (objRef.ObjectAttributesAllowed()& SV_VIEWABLE)  )
+		{
+			isInvalidReference = true; 
+		}
+		if(isInvalidReference)
+		{
 			//IDS_ISANINVALID_REFERENCE  "ERROR:\n%1: %2\nis an invalid reference."
-			AfxFormatString2( csmsg, IDS_ISANINVALID_REFERENCE, csWarnLow.GetString(), m_WarnLowIndirect.GetString() );
+			AfxFormatString2(csmsg,IDS_ISANINVALID_REFERENCE,csWarnLow.GetString(),m_WarnLowIndirect.GetString() );
 			return -Err_16020;
 		}
 	}
@@ -296,13 +326,22 @@ HRESULT RangeClassHelper::CheckInternalData(CString &csmsg) const
 	{
 		SVValueObjectReference objRef;
 		CString dottedName = InspectionName + m_FailLowIndirect;
-		if(false == SVRangeClass::SetReference(dottedName, objRef))
+		bool isInvalidReference = false;
+		if( false == SVRangeClass::SetReference(dottedName, objRef) )
 		{
-			AfxFormatString2( csmsg, IDS_ISANINVALID_REFERENCE, csFailLow.GetString(), m_FailLowIndirect.GetString() );
+			isInvalidReference = true; 
+		}
+		else if( FALSE == (objRef.ObjectAttributesAllowed()& SV_VIEWABLE)  )
+		{
+			isInvalidReference = true; 
+		}
+		if(isInvalidReference)
+		{
+			AfxFormatString2(csmsg,IDS_ISANINVALID_REFERENCE,csFailLow.GetString(),m_FailLowIndirect.GetString() );
 			return -Err_16021;
 		}
 	}
-
+	
 	return S_OK;
 }
 
@@ -319,10 +358,10 @@ HRESULT RangeClassHelper::SetInspectionData()
 		}
 		else
 		{
-			hr = AddInputRequest( &( m_pRange->FailLow ), m_FailLow );
+			hr = AddInputRequest( &( m_pRange->FailLow ),  m_FailLow );
 		}
 
-		if(hr != S_OK)
+		if(hr !=  S_OK)
 		{
 			hr = -Err_16002;
 		}
@@ -337,7 +376,7 @@ HRESULT RangeClassHelper::SetInspectionData()
 		}
 		else
 		{
-			hr = AddInputRequest( &( m_pRange->WarnLow ), m_WarnLow );
+			hr = AddInputRequest( &( m_pRange->WarnLow ),  m_WarnLow );
 		}
 
 		if( hr != S_OK )
@@ -346,7 +385,7 @@ HRESULT RangeClassHelper::SetInspectionData()
 		}
 		else
 		{
-			hr = AddInputRequest( m_pRange->GetIndirectObject(ER_FailHigh), m_FailHighIndirect );
+			hr = AddInputRequest( m_pRange->GetIndirectObject(ER_FailHigh) , m_FailHighIndirect  );
 		}
 
 		if( hr != S_OK )
@@ -355,7 +394,7 @@ HRESULT RangeClassHelper::SetInspectionData()
 		}
 		else
 		{
-			hr = AddInputRequest( m_pRange->GetIndirectObject(ER_FailLow), m_FailLowIndirect );
+			hr = AddInputRequest(  m_pRange->GetIndirectObject(ER_FailLow) ,  m_FailLowIndirect  );
 		}
 
 		if( hr != S_OK )
@@ -364,7 +403,7 @@ HRESULT RangeClassHelper::SetInspectionData()
 		}
 		else
 		{
-			hr = AddInputRequest( m_pRange->GetIndirectObject(ER_WarnHigh), m_WarnHighIndirect );
+			hr = AddInputRequest(  m_pRange->GetIndirectObject(ER_WarnHigh), m_WarnHighIndirect  );
 		}
 
 		if( hr != S_OK )
@@ -373,7 +412,7 @@ HRESULT RangeClassHelper::SetInspectionData()
 		}
 		else
 		{
-			hr = AddInputRequest( m_pRange->GetIndirectObject(ER_WarnLow), m_WarnLowIndirect );
+			hr = AddInputRequest(m_pRange->GetIndirectObject(ER_WarnLow),  m_WarnLowIndirect  );
 		}
 
 		if( hr != S_OK )
@@ -420,7 +459,7 @@ CString RangeClassHelper::ERange2String(ERange range)
 	case ER_WarnLow:
 		ret.LoadStringA(IDS_WARN_LOW);
 		break;
-	default:
+	default: 
 		ret = _T("");
 	}
 	return ret;
@@ -436,11 +475,11 @@ CString RangeClassHelper::GetStringFromRange(enum ERange ra) const
 		return ret;
 	}
 
-	m_pRange->GetIndirectValue(ra, ret);
+	m_pRange->GetIndirectValue(ra ,ret);
 
 	if(ret.IsEmpty())
 	{
-		if(m_pRange->GetValue(ra, val) == S_OK)
+		if(m_pRange->GetValue(ra ,val)== S_OK)
 		{
 			ret.Format(_T("%lf"), val);
 		}
@@ -451,7 +490,7 @@ CString RangeClassHelper::GetStringFromRange(enum ERange ra) const
 
 bool RangeClassHelper::IsOwnedByRangeObject(const SVObjectClass& ref)
 {
-	bool result = false;
+	bool result = false; 
 
 	if(ref.GetOwner())
 	{
@@ -516,7 +555,7 @@ LPCTSTR RangeClassHelper::GetOwnerName() const
 	return ret;
 }
 
-bool RangeClassHelper::RenameIndirectValues(LPCTSTR oldPefix , LPCTSTR newPrefix)
+bool RangeClassHelper::RenameIndirectValues(LPCTSTR oldPefix , LPCTSTR newPrefix )
 {
 	bool result = false;
 
@@ -549,6 +588,16 @@ bool RangeClassHelper::RenameIndirectValues(LPCTSTR oldPefix , LPCTSTR newPrefix
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\RangeClassHelper.cpp_v  $
+ * 
+ *    Rev 1.4   15 Jan 2015 08:25:38   mEichengruen
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  979
+ * SCR Title:  Provide additional options to input the feature range for the blob analyzer.
+ * Checked in by:  mEichengruen;  Marcus Eichengruen
+ * Change Description:  
+ *   Test SV_VIEWABLE flag for Range References
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   14 Jan 2015 16:40:42   bwalter
  * Project:  SVObserver

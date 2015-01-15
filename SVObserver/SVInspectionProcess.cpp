@@ -5,8 +5,8 @@
 //* .Module Name     : SVInspectionProcess
 //* .File Name       : $Workfile:   SVInspectionProcess.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.24  $
-//* .Check In Date   : $Date:   07 Jan 2015 17:41:16  $
+//* .Current Version : $Revision:   1.25  $
+//* .Check In Date   : $Date:   15 Jan 2015 08:27:50  $
 //******************************************************************************
 
 #pragma region Includes
@@ -1340,6 +1340,19 @@ BOOL SVInspectionProcess::RebuildInspectionInputList()
 			m_PPQInputs[iList].m_IOEntryPtr->m_pValueObject->ObjectAttributesSetRef() &= ~SV_VIEWABLE;
 		}// end if
 
+		///mec set all enabled input as viewable 
+		if(m_PPQInputs[iList].m_IOEntryPtr->m_Enabled)
+		{
+			m_PPQInputs[iList].m_IOEntryPtr->m_pValueObject->ObjectAttributesAllowedRef()  |= SV_VIEWABLE;
+		}
+		else
+		{
+			m_PPQInputs[iList].m_IOEntryPtr->m_pValueObject->ObjectAttributesAllowedRef()   &= ~SV_VIEWABLE;
+		}
+		
+		
+			
+
 	}// end for
 
 	SVResultListClass* pResultlist = GetResultList();
@@ -1743,11 +1756,15 @@ void SVInspectionProcess::ValidateAndInitialize( bool p_Validate, bool p_IsNew )
 
 		SVResetItemEnum l_eResetItem = SVResetItemIP;
 
-		ProcessInputRequests( 1, l_eResetItem, l_svToolMap );
+		BOOL bok = ProcessInputRequests( 1, l_eResetItem, l_svToolMap );
 
-		m_svReset.RemoveState( SVResetAutoMoveAndResize | SVResetStateInitializeOnReset |	SVResetStateArchiveToolCreateFiles | SVResetStateLoadFiles );
+		 m_svReset.RemoveState( SVResetAutoMoveAndResize | SVResetStateInitializeOnReset |	SVResetStateArchiveToolCreateFiles | SVResetStateLoadFiles );
 
-		Validate();
+		if(bok) ///Avoid Assertions when Ranges are invalid @TODO Check 
+		{
+		 Validate();
+		}
+		
 	}
 
 	if( !p_IsNew )
@@ -4819,6 +4836,17 @@ SVResultListClass* SVInspectionProcess::GetResultList() const
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVInspectionProcess.cpp_v  $
+ * 
+ *    Rev 1.25   15 Jan 2015 08:27:50   mEichengruen
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  979
+ * SCR Title:  Provide additional options to input the feature range for the blob analyzer.
+ * Checked in by:  mEichengruen;  Marcus Eichengruen
+ * Change Description:  
+ *   set ObjectAttributAllowed for enabled or disabled digital Inputs.
+ * Avoid Assertions when Ranges are invalid
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.24   07 Jan 2015 17:41:16   bwalter
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : SVRangeClass
 //* .File Name       : $Workfile:   SVRange.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.4  $
-//* .Check In Date   : $Date:   13 Jan 2015 13:10:52  $
+//* .Current Version : $Revision:   1.5  $
+//* .Check In Date   : $Date:   15 Jan 2015 08:28:58  $
 //******************************************************************************
 
 #ifndef SVRANGE_H
@@ -53,9 +53,9 @@ public:
 	//************************************
 	// Description:  Recalculate Reference Object for indirect range Variables.
 	//               Mark reference object as Input.
-	// Returns:  bool:  true if references are valid
+	// Returns:  S_OK if references are valid
 	//************************************
-	bool InitReferencesAndInputs();
+	HRESULT InitReferencesAndInputs();
 
 	//************************************
 	// Description:  Calculate Reference
@@ -144,7 +144,17 @@ protected:
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSARCH65\PROJECTFILES\ARCHIVES\SVOBSERVER_SRC\SVObserver\SVRange.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVRange.h_v  $
+ * 
+ *    Rev 1.5   15 Jan 2015 08:28:58   mEichengruen
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  979
+ * SCR Title:  Provide additional options to input the feature range for the blob analyzer.
+ * Checked in by:  mEichengruen;  Marcus Eichengruen
+ * Change Description:  
+ *   Change Returnvalue for InitReferencesAndInput to HRESULT
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.4   13 Jan 2015 13:10:52   mEichengruen
  * Project:  SVObserver
