@@ -5,8 +5,8 @@
 //* .Module Name     : SVPPQObject
 //* .File Name       : $Workfile:   SVPPQObject.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.35  $
-//* .Check In Date   : $Date:   10 Dec 2014 06:44:10  $
+//* .Current Version : $Revision:   1.36  $
+//* .Check In Date   : $Date:   19 Jan 2015 11:42:18  $
 //******************************************************************************
 
 #pragma region Includes
@@ -2083,16 +2083,16 @@ BOOL SVPPQObject::AddToAvailableInputs(SVIOObjectType eType, CString strName )
 
 	if( !bFound )
 	{
-		SVValueObjectClass	*pObject=NULL;
+		SVValueObjectClass* pObject = nullptr;
 		if( eType == IO_REMOTE_INPUT )
 		{
 			// new variant value object for Remote Inputs.
-			pObject = new SVVariantValueObjectClass( this );
+			pObject = new SVVariantValueObjectClass();
 		}
 		else
 		{
 			// new Bool Value Object for Digital Inputs.
-			pObject = new SVBoolValueObjectClass( this );
+			pObject = new SVBoolValueObjectClass();
 		}
 
 		pObject->SetName( strName );
@@ -5107,6 +5107,16 @@ void SVPPQObject::SVSharedMemoryFilters::clear()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVPPQObject.cpp_v  $
+ * 
+ *    Rev 1.36   19 Jan 2015 11:42:18   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  979
+ * SCR Title:  Provide additional options to input the feature range for the blob analyzer.
+ * Checked in by:  mEichengruen;  Marcus Eichengruen
+ * Change Description:  
+ *   Changed the method AddToAvailableInputs to fix DIO and remote inputs being displayed in the Object Selector when the shouldn't be.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.35   10 Dec 2014 06:44:10   tbair
  * Project:  SVObserver

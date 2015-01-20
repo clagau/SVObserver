@@ -6,8 +6,8 @@
 //* .File Name       : $Workfile:   RangeXDialogClass.cpp  $
 //* .Description     : RangeXDialogClass this dialog is used instead of RangeDialogclass when indirect values for the rangeobjects are allowed
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.4  $
-//* .Check In Date   : $Date:   15 Jan 2015 08:26:44  $
+//* .Current Version : $Revision:   1.5  $
+//* .Check In Date   : $Date:   19 Jan 2015 11:41:20  $
 //******************************************************************************
 
 #pragma region Includes
@@ -300,26 +300,6 @@ bool RangeXDialogClass::ShowObjectSelector(CString& name)
 	ObjectTreeGenerator::Instance().setLocationFilter( ObjectTreeGenerator::FilterOutput, PPQName, SVString( _T("")  ));
 	ObjectTreeGenerator::Instance().setSelectorType( ObjectTreeGenerator::SelectorTypeEnum::TypeSingleObject );
 
-	// Insert PPQ Inputs
-	FormulaController FormCont;
-	FormCont.setTaskObject(*pTaskObjectList);
-	nameArray = FormCont.getPPQVariableNames();
-	bool IsPPQVariableSelected = false;
-	SVString PPQSelectedName = PPQNameDot.ToString() + name;
-	for_each(nameArray.begin(), nameArray.end(),[&] (SVString &string)
-		{
-			string.replace(InspectionNameDot.ToString(), PPQNameDot.ToString());
-			
-			if(string.Compare(PPQSelectedName) == 0)
-			{
-				IsPPQVariableSelected = true;
-			}
-		}
-	);
-
-	ObjectTreeGenerator::Instance().insertTreeObjects( nameArray );
-	nameArray.clear();
-
 	// Insert Tool Set Objects
 	ObjectNameHelper::BuildObjectNameList(pTaskObjectList, Inserter(nameArray, nameArray.begin()), csToolCompleteName);
 	ObjectTreeGenerator::Instance().insertTreeObjects( nameArray );
@@ -327,16 +307,7 @@ bool RangeXDialogClass::ShowObjectSelector(CString& name)
 	if(name.GetLength() > 0)
 	{
 		SVStringSet nameSet;
-		if(IsPPQVariableSelected)
-		{
-			nameSet.insert(PPQSelectedName);
-			
-		}
-		else
-		{
-			nameSet.insert(name);
-		}
-		
+		nameSet.insert(name);
 		ObjectTreeGenerator::Instance().setCheckItems(nameSet);
 	}
 
@@ -410,6 +381,16 @@ void RangeXDialogClass::OnBnClickedFailedLowIndirect()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\RangeXDialogClass.cpp_v  $
+ * 
+ *    Rev 1.5   19 Jan 2015 11:41:20   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  979
+ * SCR Title:  Provide additional options to input the feature range for the blob analyzer.
+ * Checked in by:  mEichengruen;  Marcus Eichengruen
+ * Change Description:  
+ *   Changed method ShowObjectSelector to remove PPQ node.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.4   15 Jan 2015 08:26:44   mEichengruen
  * Project:  SVObserver

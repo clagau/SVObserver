@@ -5,8 +5,8 @@
 //* .Module Name     : SVInspectionProcess
 //* .File Name       : $Workfile:   SVInspectionProcess.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.25  $
-//* .Check In Date   : $Date:   15 Jan 2015 08:27:50  $
+//* .Current Version : $Revision:   1.26  $
+//* .Check In Date   : $Date:   19 Jan 2015 11:41:50  $
 //******************************************************************************
 
 #pragma region Includes
@@ -1226,7 +1226,7 @@ BOOL SVInspectionProcess::RebuildInspectionInputList()
 	{
 		return false;
 	}
-	
+
 	// Save old list
 	ppOldPPQInputs = m_PPQInputs;
 	
@@ -1268,14 +1268,13 @@ BOOL SVInspectionProcess::RebuildInspectionInputList()
 				// We found it
 				bFound = TRUE;
 				m_PPQInputs[iList] = pIOEntry;
-				pIOEntry.m_IOEntryPtr->m_PPQIndex  = pNewEntry->m_PPQIndex;
-				pIOEntry.m_IOEntryPtr->m_Enabled	 = pNewEntry->m_Enabled;
+				pIOEntry.m_IOEntryPtr->m_PPQIndex = pNewEntry->m_PPQIndex;
+				pIOEntry.m_IOEntryPtr->m_Enabled = pNewEntry->m_Enabled;
 				pIOEntry.m_IOEntryPtr->m_pValueObject->SetObjectDepth( lLength + 50 );
 				pIOEntry.m_IOEntryPtr->m_pValueObject->ResetObject();
 
 				break;
 			}// end if
-
 		}// end for
 
 		if( !bFound )
@@ -1339,20 +1338,6 @@ BOOL SVInspectionProcess::RebuildInspectionInputList()
 		{
 			m_PPQInputs[iList].m_IOEntryPtr->m_pValueObject->ObjectAttributesSetRef() &= ~SV_VIEWABLE;
 		}// end if
-
-		///mec set all enabled input as viewable 
-		if(m_PPQInputs[iList].m_IOEntryPtr->m_Enabled)
-		{
-			m_PPQInputs[iList].m_IOEntryPtr->m_pValueObject->ObjectAttributesAllowedRef()  |= SV_VIEWABLE;
-		}
-		else
-		{
-			m_PPQInputs[iList].m_IOEntryPtr->m_pValueObject->ObjectAttributesAllowedRef()   &= ~SV_VIEWABLE;
-		}
-		
-		
-			
-
 	}// end for
 
 	SVResultListClass* pResultlist = GetResultList();
@@ -1758,13 +1743,9 @@ void SVInspectionProcess::ValidateAndInitialize( bool p_Validate, bool p_IsNew )
 
 		BOOL bok = ProcessInputRequests( 1, l_eResetItem, l_svToolMap );
 
-		 m_svReset.RemoveState( SVResetAutoMoveAndResize | SVResetStateInitializeOnReset |	SVResetStateArchiveToolCreateFiles | SVResetStateLoadFiles );
+		m_svReset.RemoveState( SVResetAutoMoveAndResize | SVResetStateInitializeOnReset | SVResetStateArchiveToolCreateFiles | SVResetStateLoadFiles );
 
-		if(bok) ///Avoid Assertions when Ranges are invalid @TODO Check 
-		{
-		 Validate();
-		}
-		
+		Validate();
 	}
 
 	if( !p_IsNew )
@@ -1775,7 +1756,7 @@ void SVInspectionProcess::ValidateAndInitialize( bool p_Validate, bool p_IsNew )
 	SVSVIMStateClass::RemoveState( SV_STATE_INTERNAL_RUN );
 }
 
-void SVInspectionProcess::SingleRunModeLoop( bool p_Refresh ) 
+void SVInspectionProcess::SingleRunModeLoop( bool p_Refresh )
 {
 	SVProductInfoStruct l_svProduct;
 
@@ -4836,6 +4817,16 @@ SVResultListClass* SVInspectionProcess::GetResultList() const
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVInspectionProcess.cpp_v  $
+ * 
+ *    Rev 1.26   19 Jan 2015 11:41:50   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  979
+ * SCR Title:  Provide additional options to input the feature range for the blob analyzer.
+ * Checked in by:  mEichengruen;  Marcus Eichengruen
+ * Change Description:  
+ *   Removed code from the method RebuildInspectionInputList that added and removed the SV_VIEWABLE attribute from the allowed list.  Removed the condition around the call to Validate from the method ValidateAndInitialize.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.25   15 Jan 2015 08:27:50   mEichengruen
  * Project:  SVObserver
