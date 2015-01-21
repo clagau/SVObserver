@@ -5,8 +5,8 @@
 //* .Module Name     : AutoBuild
 //* .File Name       : $Workfile:   AutoBuild.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.23  $
-//* .Check In Date   : $Date:   19 Jan 2015 11:44:32  $
+//* .Current Version : $Revision:   1.24  $
+//* .Check In Date   : $Date:   20 Jan 2015 10:48:02  $
 //******************************************************************************
 
 #pragma once
@@ -23,7 +23,7 @@
 //    c is the beta version number - if c equals 0 or is greater than 254 then the application is marked as Released
 //    d is unused
 
-#define FILEVER        7,10,17,0
+#define FILEVER        7,10,18,0
 #define PRODUCTVER     FILEVER
 #define STRFILEVER     SV_STRINGIZE( FILEVER )
 #define STRPRODUCTVER  SV_STRINGIZE( PRODUCTVER )
@@ -33,6 +33,16 @@
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\AutoBuild\AutoBuild.h_v  $
+ * 
+ *    Rev 1.24   20 Jan 2015 10:48:02   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  941
+ * SCR Title:  Update SVObserver Version Number for the 7.10 Release
+ * Checked in by:  bWalter;  Ben Walter
+ * Change Description:  
+ *   Changed version to SVO 7.10 Beta 018
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.23   19 Jan 2015 11:44:32   bwalter
  * Project:  SVObserver

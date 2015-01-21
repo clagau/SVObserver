@@ -5,8 +5,8 @@
 //* .Module Name     : ObjectTreeGenerator
 //* .File Name       : $Workfile:   ObjectTreeGenerator.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.6  $
-//* .Check In Date   : $Date:   07 Jan 2015 18:10:20  $
+//* .Current Version : $Revision:   1.7  $
+//* .Check In Date   : $Date:   20 Jan 2015 09:50:48  $
 //******************************************************************************
 
 #pragma region Includes
@@ -42,6 +42,7 @@ ObjectTreeGenerator::ObjectTreeGenerator()
 	: m_TreeContainer()
 	, m_Results()
 	, m_LocationInputFilters()
+	, m_LocationOutputFilters()
 	, m_AttributesSetFilter( 0 )
 	, m_AttributesAllowedFilter( 0 )
 	, m_AllowWholeArray( false )
@@ -70,6 +71,7 @@ void ObjectTreeGenerator::Clear( bool ClearAll )
 	}
 	m_TreeContainer.Clear();
 	m_LocationInputFilters.clear();
+	m_LocationOutputFilters.clear();
 	m_AttributesSetFilter = 0;
 	m_AttributesAllowedFilter = 0;
 	m_AllowWholeArray = false;
@@ -612,6 +614,16 @@ void ObjectTreeGenerator::convertLocation()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\ObjectSelectorLibrary\ObjectTreeGenerator.cpp_v  $
+ * 
+ *    Rev 1.7   20 Jan 2015 09:50:48   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  965
+ * SCR Title:  Update Object Selector Text Label; Update Icons; Add List Output
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Fix: Output filters not cleared in Clear method of singelton
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.6   07 Jan 2015 18:10:20   bwalter
  * Project:  SVObserver
