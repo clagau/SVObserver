@@ -5,15 +5,16 @@
 //* .Module Name     : SVRangeClass
 //* .File Name       : $Workfile:   SVRange.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.5  $
-//* .Check In Date   : $Date:   15 Jan 2015 08:28:58  $
+//* .Current Version : $Revision:   1.6  $
+//* .Check In Date   : $Date:   23 Jan 2015 11:19:42  $
 //******************************************************************************
 
-#ifndef SVRANGE_H
-#define SVRANGE_H
+#pragma once
 
+#pragma region Includes
 #include "SVTaskObject.h"
 #include "ISVCancel.h"
+#pragma endregion Includes
 
 enum ERange { ER_FailHigh = 0, ER_WarnHigh, ER_FailLow, ER_WarnLow, ER_COUNT = 4 };
 
@@ -26,7 +27,7 @@ class SVRangeClass : public SVTaskObjectClass, public ISVCancel
 	SV_DECLARE_CLASS( SVRangeClass );
 
 public:
-	SVRangeClass( SVObjectClass* POwner = NULL, int StringResourceID = IDS_CLASSNAME_SVRANGE );
+	SVRangeClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVRANGE );
 	virtual ~SVRangeClass();
 
 	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure );
@@ -79,7 +80,7 @@ public:
 	// Description:  Retrieve the indirect value string for the specified ERange object
 	// Parameter:  ra <in>:  specifies which range object to retrieve
 	// Parameter:  ref <out>:  the returned indirect value string
-	// Returns:  HRESULT:  S_OK if sucessful
+	// Returns:  HRESULT:  S_OK if successful
 	//************************************
 	HRESULT GetIndirectValue(enum ERange ra, CString& ref);
 
@@ -94,7 +95,7 @@ public:
 	// Description:  retrieve the direct value string for Erange
 	// Parameter: enum ERange
 	// Parameter: double & ref
-	// Returns:   HRESULT
+	// Returns:  HRESULT:  S_OK if successful
 	//************************************
 	HRESULT GetValue(enum ERange, double &ref);
 	
@@ -111,11 +112,26 @@ public:
 	//************************************
 	void InvalidateRange();
 
+	//************************************
+	// Description:  Gets the updated Fail Low object
+	// Parameter:  bucket <in>:  the bucket index
+	// Returns:  const SVDoubleValueObjectClass&:  const reference to the Fail Low object
+	//************************************
+	const SVDoubleValueObjectClass& getUpdatedFailLow( int bucket );
+
+	//************************************
+	// Description:  Gets the value of the updated Fail High object
+	// Parameter:  bucket <in>:  the bucket index
+	// Returns:  const SVDoubleValueObjectClass&:  const reference to the Fail High object
+	//************************************
+	const SVDoubleValueObjectClass& getUpdatedFailHigh( int bucket );
+
 protected:
 	virtual void init();
 	BOOL getInputValue( double& RVal );
 	BOOL onRun(SVRunStatusClass& RRunStatus);
 	virtual DWORD_PTR processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext );
+
 	//************************************
 	//! function is called when an object was renamed
 	//! \param pObject [in] object name 
@@ -123,14 +139,14 @@ protected:
 	//! \returns BOOL
 	//************************************
 	virtual BOOL renameToolSetSymbol(SVObjectClass* pObject, LPCTSTR orgName);
-	public:
+
+public: // Bad
 	SVDoubleValueObjectClass FailLow;
 	SVDoubleValueObjectClass FailHigh;
 	SVDoubleValueObjectClass WarnLow;
 	SVDoubleValueObjectClass WarnHigh;
 
 protected:
-	// BRW - It seems to me like it be easier to keep these 3 items together in a struct than in 3 different arrays that must be synchronized.
 	SVStringValueObjectClass m_ValueIndirect[ER_COUNT];
 	bool m_IsConnectedInput[ER_COUNT];
 	SVValueObjectReference m_ValueObjectReferences[ER_COUNT];
@@ -138,13 +154,21 @@ protected:
 	SVInObjectInfoStruct m_inputObjectInfo;
 };
 
-#endif
-
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVRange.h_v  $
+ * 
+ *    Rev 1.6   23 Jan 2015 11:19:42   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  979
+ * SCR Title:  Provide additional options to input the feature range for the blob analyzer.
+ * Checked in by:  mEichengruen;  Marcus Eichengruen
+ * Change Description:  
+ *   Added methods getUpdatedFailLow and getUpdatedFailHigh.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.5   15 Jan 2015 08:28:58   mEichengruen
  * Project:  SVObserver

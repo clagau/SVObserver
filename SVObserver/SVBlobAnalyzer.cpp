@@ -5,8 +5,8 @@
 //* .Module Name     : SVBlobAnalyzer
 //* .File Name       : $Workfile:   SVBlobAnalyzer.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.8  $
-//* .Check In Date   : $Date:   12 Dec 2014 09:48:00  $
+//* .Current Version : $Revision:   1.9  $
+//* .Check In Date   : $Date:   23 Jan 2015 11:20:50  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -1051,18 +1051,28 @@ BOOL SVBlobAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 						SV_TRAP_ERROR_BRK (msvError, 25031);// Break out of for loop
 					}
 
-					double dLow, dHigh;
-					pRange->FailHigh.GetValue(dHigh);
-					pRange->FailLow.GetValue(dLow);
+					double dLow;
+					double dHigh;
+					pRange->getUpdatedFailHigh(RRunStatus.m_lResultDataIndex).GetValue(dHigh);
+					pRange->getUpdatedFailLow(RRunStatus.m_lResultDataIndex).GetValue(dLow);
 
-					// check to see if the feature is SV_CENTER_X_SOURCE or SV_CENTER_Y_SOURCE
-					// if so do not call the MIL functions.
-
-					if ( (eFeature == SV_CENTER_X_SOURCE) || (eFeature == SV_CENTER_Y_SOURCE) )
+					// Now that we have indirect high and low ranges it is possible that dLow is larger than dHigh.
+					// This would cause the MIL function to return an error.  To avoid this exception, we set both to NULL (0).
+					// Desired behavior in this case is that ALL blobs are excluded.
+					if( dLow > dHigh )
 					{
-						continue;
+						dLow = NULL;
+						dHigh = NULL;
+						// To exclude all blobs, also exclude any blobs which are in the range.
+						l_Code = SVMatroxBlobInterface::BlobSelect( msvResultBufferID, 
+							SVEBlobExclude, 
+							BlobFeatureConstants[eFeature].MILFeatureDef, 
+							SVECondInRange, 
+							dLow, 
+							dHigh );
 					}
 
+					// Exclude all blobs that are out of the range for this feature.
 					l_Code = SVMatroxBlobInterface::BlobSelect(msvResultBufferID, 
 						SVEBlobExclude, 
 						BlobFeatureConstants[eFeature].MILFeatureDef, 
@@ -1224,8 +1234,8 @@ BOOL SVBlobAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 							pData );
 					}
 				}// end if (msvszFeaturesEnabled [eFeature] == _T('1'))
-
 			}// end for (eFeature = SV_AREA; eFeature < SV_TOPOF_LIST; eFeature = (SVBlobFeatureEnum) (eFeature + 1))
+
 			if ( (msvszFeaturesEnabled [SV_CENTER_X_SOURCE] == _T('1')) || 
 				 (msvszFeaturesEnabled [SV_CENTER_Y_SOURCE] == _T('1')) )
 			{
@@ -1859,6 +1869,16 @@ void SVBlobAnalyzerClass::addDefaultInputObjects( BOOL BCallBaseClass, SVInputIn
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVBlobAnalyzer.cpp_v  $
+ * 
+ *    Rev 1.9   23 Jan 2015 11:20:50   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  979
+ * SCR Title:  Provide additional options to input the feature range for the blob analyzer.
+ * Checked in by:  mEichengruen;  Marcus Eichengruen
+ * Change Description:  
+ *   Changed method onRun to exclude ALL blobs when Fail High is less than Fail Low.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.8   12 Dec 2014 09:48:00   tbair
  * Project:  SVObserver
