@@ -6,8 +6,8 @@
 //* .File Name       : $Workfile:   RangeXDialogClass.cpp  $
 //* .Description     : RangeXDialogClass this dialog is used instead of RangeDialogclass when indirect values for the rangeobjects are allowed
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.5  $
-//* .Check In Date   : $Date:   19 Jan 2015 11:41:20  $
+//* .Current Version : $Revision:   1.6  $
+//* .Check In Date   : $Date:   26 Jan 2015 11:17:46  $
 //******************************************************************************
 
 #pragma region Includes
@@ -316,7 +316,7 @@ bool RangeXDialogClass::ShowObjectSelector(CString& name)
 	Title += RangeClassHelper::ERange2String(m_LastSelected);
 
 	CString mainTabTitle;
-	mainTabTitle.LoadString( IDS_RESULT_PICKER );
+	mainTabTitle.LoadString( IDS_SELECT_TOOLSET_OUTPUT );
 	CString FilterTab;
 	FilterTab.LoadString( IDS_FILTER );
 
@@ -381,6 +381,16 @@ void RangeXDialogClass::OnBnClickedFailedLowIndirect()
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\RangeXDialogClass.cpp_v  $
+ * 
+ *    Rev 1.6   26 Jan 2015 11:17:46   tbair
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  979
+ * SCR Title:  Provide additional options to input the feature range for the blob analyzer.
+ * Checked in by:  mEichengruen;  Marcus Eichengruen
+ * Change Description:  
+ *   Change window text to Select Toolset Output.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.5   19 Jan 2015 11:41:20   bwalter
  * Project:  SVObserver
