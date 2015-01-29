@@ -5,8 +5,8 @@
 //* .Module Name     : SVStatisticsTool
 //* .File Name       : $Workfile:   SVStatTool.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.6  $
-//* .Check In Date   : $Date:   13 Jan 2015 10:35:54  $
+//* .Current Version : $Revision:   1.7  $
+//* .Check In Date   : $Date:   28 Jan 2015 11:09:06  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -218,16 +218,16 @@ HRESULT SVStatisticsToolClass::ResetObject()
 		msvVariableName.GetValue(strName);
 		SetVariableSelected( strName );
 
-		if( HasVariable() && IsEnabled() )
+		if( IsEnabled() )
 		{
-			if( !Test() )
+			if( HasVariable() && !Test() )
 			{
 				Result = -Err_25012;
 			}
-		}
-		else
-		{
-			resetValues();
+			else
+			{
+				resetValues();
+			}
 		}
 	}
 
@@ -855,6 +855,16 @@ DWORD_PTR SVStatisticsToolClass::processMessage( DWORD DwMessageID, DWORD_PTR Dw
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVStatTool.cpp_v  $
+ * 
+ *    Rev 1.7   28 Jan 2015 11:09:06   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  978
+ * SCR Title:  Copy and Paste a Tool within an Inspection or Between Different Inspections
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Fixed conditions in method ResetObject to make the tool call resetValues when appropriate.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.6   13 Jan 2015 10:35:54   gramseier
  * Project:  SVObserver
