@@ -516,6 +516,9 @@ void SVToolSetTabViewClass::OnBeginlabeleditToolsetList(NMHDR* pNMHDR, LRESULT* 
 // Validate label text and remove unwanted characters.
 void SVToolSetTabViewClass::ValidateLabelText(CString& newText)
 {
+	// strip leading and trailing spaces
+	newText.Trim();
+
 	// The characters we do not want in the label.
 	static const CString csUndesirables = SVEXCLUDECHARS_TOOL_NAME;
 
