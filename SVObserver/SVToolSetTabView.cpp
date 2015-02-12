@@ -106,7 +106,7 @@ BEGIN_MESSAGE_MAP(SVToolSetTabViewClass, CFormView)
 	ON_NOTIFY(NM_CLICK, IDC_TOOLSET_LIST, OnClickToolsetList)
 	ON_NOTIFY(NM_RCLICK, IDC_TOOLSET_LIST, OnRightClickToolsetList)
 	ON_COMMAND(ID_EDIT_LABEL_ENDS, OnEditLabelEnds)
-	ON_COMMAND(ID_SELECTTOOL_TOOLCOMMENT, OnSelectToolComment)
+	ON_COMMAND(ID_SELECTTOOL_TOOLCOMMENT, OnSelectComment)
 	ON_COMMAND(ID_SELECTTOOL_LEARN, OnSelectToolSetReference)
 	ON_COMMAND(ID_SELECTTOOL_NORMALIZE, OnSelectToolNormalize)
 	ON_COMMAND(ID_EDIT_NAME, OnEditToolName)
@@ -422,9 +422,15 @@ void SVToolSetTabViewClass::OnRightClickToolsetList(NMHDR* pNMHDR, LRESULT* pRes
 			else
 			{
 				const ToolListSelectionInfo& info = GetToolListSelectionInfo();
-				if( -1 != info.m_listIndex )
+				if (-1 != info.m_listIndex)
 				{
 					l_bMenuLoaded = l_menu.LoadMenu(IDR_TOOL_LIST_CONTEXT_MENU1);
+					// Remove Tool Comment menu item if Group is Not Selected 
+					CString name = m_toolSetListCtrl.GetItemText(info.m_listIndex, 0);
+					if (m_toolSetListCtrl.IsEndListDelimiter(name) || m_toolSetListCtrl.IsEmptyStringPlaceHolder(name))
+					{
+						l_menu.RemoveMenu(ID_SELECTTOOL_TOOLCOMMENT, MF_BYCOMMAND);
+					}
 				}
 			}
 
@@ -463,8 +469,12 @@ void SVToolSetTabViewClass::OnDblclkToolsetList(NMHDR* pNMHDR, LRESULT* pResult)
 		}
 		else
 		{
-			// Deselect all...
-			m_toolSetListCtrl.SetSelectedTool(SVGUID());
+			// check if tool group is selected
+			if (!EditToolGroupingComment())
+			{
+				// Deselect all...
+				m_toolSetListCtrl.SetSelectedTool(SVGUID());
+			}
 		}
 	}
 	*pResult = 0;
@@ -614,6 +624,45 @@ void SVToolSetTabViewClass::OnEditLabelEnds()
 	::ReleaseCapture();     // release the mouse capture
 }
 
+bool SVToolSetTabViewClass::EditToolGroupingComment()
+{
+	bool bRetVal  = false;
+	const ToolListSelectionInfo& info = m_toolSetListCtrl.GetToolListSelectionInfo();
+	if (!m_toolSetListCtrl.IsEndListDelimiter(info.m_selection) && 
+		!m_toolSetListCtrl.IsEmptyStringPlaceHolder(info.m_selection))
+	{
+		SVIPDoc* pDoc = GetIPDoc();
+		if (pDoc)
+		{
+			SVToolGrouping& rGroupings = pDoc->GetToolGroupings();
+			if (rGroupings.IsStartTag(info.m_selection.GetString()) || rGroupings.IsEndTag(info.m_selection.GetString()))
+			{
+				bRetVal = true;
+				SVTextEditDialog dlg;
+				dlg.m_strText = rGroupings.GetComment(info.m_selection.GetString()).c_str();
+				INT_PTR rc = dlg.DoModal();
+				if (IDOK == rc)
+				{
+					rGroupings.SetComment(info.m_selection.GetString(), dlg.m_strText.GetString());
+				}
+			}
+		}
+	}
+	return bRetVal;
+}
+
+void SVToolSetTabViewClass::OnSelectComment()
+{
+	const SVGUID& rGuid = m_toolSetListCtrl.GetSelectedTool();
+	if (rGuid.empty())
+	{
+		EditToolGroupingComment();
+	}
+	else
+	{
+		OnSelectToolComment();
+	}
+}
 
 void SVToolSetTabViewClass::OnSelectToolComment()
 {

@@ -31,6 +31,7 @@ public:
 	String m_endName;
 	Type m_type;
 	bool m_bCollapsed;
+	String m_comment;
 
 	ToolGroupData(Type rType, const String& rName) : m_type(rType), m_name(rName), m_bCollapsed(false) {}
 	ToolGroupData(Type rType, const String& rName, const String& rEndName, bool bCollapsed) : m_type(rType), m_name(rName), m_endName(rEndName), m_bCollapsed(bCollapsed) {}
@@ -78,6 +79,20 @@ public:
 	const_iterator find(const String& rName) const;
 	bool empty() const;
 	size_t size() const;
+
+	//************************************
+	/// Get the Comment for the Start or End Group
+	/// \param rName [in] The name of the start or end group
+	/// \returns String - which is the associated comment
+	//************************************
+	String GetComment(const String& rName) const;
+
+	//************************************
+	/// Set the Comment for the Start or End Group
+	/// \param rName [in] The name of the start or end group
+	/// \param rComment [in] the comment to associate with the group
+	//************************************
+	void SetComment(const String& rName, const String& rComment);
 
 private:
 	HRESULT LoadTools(SVTreeType& rTree, SVTreeType::SVBranchHandle htiParent, SVToolGrouping& rGroupings);

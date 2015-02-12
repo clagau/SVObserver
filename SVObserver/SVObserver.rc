@@ -4555,6 +4555,7 @@ IDR_TOOL_LIST_CONTEXT_MENU1 MENU
 BEGIN
     POPUP "SelectTool"
     BEGIN
+	MENUITEM "Tool Comment",                ID_SELECTTOOL_TOOLCOMMENT
         MENUITEM "Paste Tool",                  ID_EDIT_PASTE
     END
 END

@@ -516,16 +516,31 @@ HRESULT SVToolGrouping::SetParameters(SVTreeType& rTree, SVTreeType::SVBranchHan
 					{
 						String groupName = static_cast<LPCTSTR>(static_cast<_bstr_t>(svValue));
 						String endGroupName;
+						String startGroupComment;
+						String endGroupComment;
 						bool bCollapsed = false;
 						if (SVNavigateTreeClass::GetItem(rTree, CTAG_COLLAPSED, htiSubChild, svValue))
 						{
 							bCollapsed = (VARIANT_TRUE == svValue.boolVal);
+
+							if (SVNavigateTreeClass::GetItem(rTree, CTAG_STARTGROUP_COMMENT, htiSubChild, svValue))
+							{
+								startGroupComment = static_cast<LPCTSTR>(static_cast<_bstr_t>(svValue));
+							}
 							if (SVNavigateTreeClass::GetItem(rTree, CTAG_ENDGROUP, htiSubChild, svValue))
 							{
-								 endGroupName = static_cast<LPCTSTR>(static_cast<_bstr_t>(svValue));
+								endGroupName = static_cast<LPCTSTR>(static_cast<_bstr_t>(svValue));
+								if (SVNavigateTreeClass::GetItem(rTree, CTAG_ENDGROUP_COMMENT, htiSubChild, svValue))
+								{
+									endGroupComment = static_cast<LPCTSTR>(static_cast<_bstr_t>(svValue));
+								}
 							}
 							groupings.m_list.insert(groupings.m_list.end(), std::make_pair(groupName, ToolGroupData(ToolGroupData::StartOfGroup, groupName, endGroupName, bCollapsed)));
-
+							// Update Comments
+							if (!startGroupComment.empty())
+							{
+								groupings.SetComment(groupName, startGroupComment);
+							}
 							// Get The Tools...
 							SVTreeType::SVBranchHandle htiTools = nullptr;
 							rTree.GetFirstBranch(htiSubChild, htiTools);
@@ -539,6 +554,10 @@ HRESULT SVToolGrouping::SetParameters(SVTreeType& rTree, SVTreeType::SVBranchHan
 								if (!endGroupName.empty())
 								{
 									groupings.m_list.insert(groupings.m_list.end(), std::make_pair(endGroupName, ToolGroupData(ToolGroupData::EndOfGroup, groupName, endGroupName, false)));
+									if (!endGroupComment.empty())
+									{
+										groupings.SetComment(endGroupName, endGroupComment);
+									}
 								}
 							}
 						}
@@ -578,11 +597,13 @@ HRESULT SVToolGrouping::SetParameters(SVTreeType& rTree, SVTreeType::SVBranchHan
   <NODE Name="CTAG_GROUP">
 	<DATA Name=CTAG_STARTGROUP Type="VT_BSTR">Group1</DATA>
     <DATA Name=CTAG_COLLAPSED Type="VT_BOOL">TRUE</DATA>
+	<DATA Name=CTAG_STARTGROUP_COMMENT Type="VT_BSTR">Optional Comment</DATA>
     <NODE Name="CTAG_TOOLS">
 	  <DATA Name=CTAG_TOOL Type="VT_BSTR">Dotted.Name</DATA>
 	  <DATA Name=CTAG_TOOL Type="VT_BSTR">Dotted.Name</DATA>
 	</NODE>
 	<DATA Name=CTAG_ENDGROUP Type="VT_BSTR">EndGroup1</DATA>
+	<DATA Name=CTAG_ENDGROUP_COMMENT Type="VT_BSTR">Optional Comment</DATA>
   </NODE>
   <NODE Name="CTAG_GROUP">
 	<DATA Name=CTAG_NAME Type="VT_BSTR">Group2</DATA>
@@ -628,6 +649,10 @@ bool SVToolGrouping::GetParameters(SVObjectWriter& rWriter)
 				_bstr_t name(it->first.c_str());
 				_variant_t value(name);
 				rWriter.WriteAttribute(CTAG_STARTGROUP, value);
+
+				_bstr_t comment(it->second.m_comment.c_str());
+				_variant_t commentValue(comment);
+				rWriter.WriteAttribute(CTAG_STARTGROUP_COMMENT, commentValue);
 				
 				_variant_t collapsedValue(it->second.m_bCollapsed);
 				rWriter.WriteAttribute(CTAG_COLLAPSED, collapsedValue);
@@ -643,6 +668,10 @@ bool SVToolGrouping::GetParameters(SVObjectWriter& rWriter)
 				_bstr_t name(it->second.m_endName.c_str());
 				_variant_t value(name);
 				rWriter.WriteAttribute(CTAG_ENDGROUP, value);
+
+				_bstr_t comment(it->second.m_comment.c_str());
+				_variant_t commentValue(comment);
+				rWriter.WriteAttribute(CTAG_ENDGROUP_COMMENT, commentValue);
 
 				if (bGroupActive)
 				{
@@ -703,6 +732,54 @@ bool SVToolGrouping::empty() const
 size_t SVToolGrouping::size() const
 {
 	return m_list.size();
+}
+
+String SVToolGrouping::GetComment(const String& rName) const
+{
+	String comment;
+	if (IsEndTag(rName))
+	{
+		ToolGroupList::const_iterator it = std::find_if(m_list.begin(), m_list.end(),
+		[&rName](const ToolGroup& rGroup)->bool { return (rName == rGroup.first && ToolGroupData::EndOfGroup == rGroup.second.m_type); });
+		if (it != m_list.end())
+		{
+			comment = it->second.m_comment;
+		}
+	}
+	else if (IsStartTag(rName))
+	{
+		// Remove Start and End
+		ToolGroupList::const_iterator it = std::find_if(m_list.begin(), m_list.end(),
+		[&rName](const ToolGroup& rGroup)->bool { return (rName == rGroup.first && ToolGroupData::StartOfGroup == rGroup.second.m_type); });
+		if (it != m_list.end())
+		{
+			comment = it->second.m_comment;
+		}
+	}
+	return comment;
+}
+
+void SVToolGrouping::SetComment(const String& rName, const String& rComment)
+{
+	if (IsEndTag(rName))
+	{
+		ToolGroupList::iterator it = std::find_if(m_list.begin(), m_list.end(),
+		[&rName](const ToolGroup& rGroup)->bool { return (rName == rGroup.first && ToolGroupData::EndOfGroup == rGroup.second.m_type); });
+		if (it != m_list.end())
+		{
+			it->second.m_comment = rComment;
+		}
+	}
+	else if (IsStartTag(rName))
+	{
+		// Remove Start and End
+		ToolGroupList::iterator it = std::find_if(m_list.begin(), m_list.end(),
+		[&rName](const ToolGroup& rGroup)->bool { return (rName == rGroup.first && ToolGroupData::StartOfGroup == rGroup.second.m_type); });
+		if (it != m_list.end())
+		{
+			it->second.m_comment = rComment;
+		}
+	}
 }
 
 //******************************************************************************

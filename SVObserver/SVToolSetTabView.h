@@ -53,6 +53,7 @@ public:
 	afx_msg void OnClickToolsetList(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnRightClickToolsetList(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnEditLabelEnds();
+	afx_msg void OnSelectComment();
 	afx_msg void OnSelectToolComment();
 	afx_msg void OnSelectToolSetReference();
 	afx_msg void OnSelectToolNormalize();
@@ -109,6 +110,7 @@ protected:
 	void ToggleExpandCollapse(int item);
 
 	bool CheckName(const CString& name) const;
+	bool EditToolGroupingComment();
 
 	bool m_isLabeling;
 	int m_labelingIndex;

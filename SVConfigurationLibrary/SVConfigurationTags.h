@@ -315,6 +315,8 @@ LPCTSTR const CTAG_TOOLS						= _T("Tools");
 LPCTSTR const CTAG_TOOL							= _T("Tool");
 LPCTSTR const CTAG_ENDGROUP						= _T("EndGroup");
 LPCTSTR const CTAG_COLLAPSED					= _T("Collapsed");
+LPCTSTR const CTAG_STARTGROUP_COMMENT			= _T("StartGroupComment");
+LPCTSTR const CTAG_ENDGROUP_COMMENT				= _T("EndGroupComment");
 
 LPCTSTR const CTAG_THREAD_SETUP					= _T("Thread Setup");
 LPCTSTR const CTAG_THREAD_NAME					= _T("Thread Name");
