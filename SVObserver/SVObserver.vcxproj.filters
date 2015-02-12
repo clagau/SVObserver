@@ -1679,6 +1679,9 @@
     <ClCompile Include="ResultViewToolReferences.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="SVCommandInspectionExtentUpdater.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Midl Include="SVObserver.odl">
@@ -3477,6 +3480,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ResultViewToolReferences.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVCommandInspectionExtentUpdater.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

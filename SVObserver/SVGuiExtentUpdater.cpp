@@ -5,151 +5,87 @@
 //* .Module Name     : SVGuiExtentUpdater
 //* .File Name       : $Workfile:   SVGuiExtentUpdater.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   07 May 2013 08:20:26  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   12 Feb 2015 03:00:46  $
 //******************************************************************************
 #include "stdafx.h"
 #include "SVGuiExtentUpdater.h"
 #include "SVInspectionProcess.h"
 #include "SVTool.h"
-#include "SVCommandInspectionRunOnce.h"
 #include "SVObjectLibrary/SVObjectSynchronousCommandTemplate.h"
-
-static bool RunOnce(SVInspectionProcess* p_pInspection, SVToolClass* p_pTool)
-{
-	bool l_Status = (p_pInspection != NULL);
-
-	if (l_Status)
-	{
-		SVGUID l_ToolId;
-
-		if (p_pTool != NULL)
-		{
-			l_ToolId = p_pTool->GetUniqueObjectID();
-		}
-
-		SVCommandInspectionRunOncePtr l_CommandPtr = new SVCommandInspectionRunOnce( p_pInspection->GetUniqueObjectID(), l_ToolId );
-		SVObjectSynchronousCommandTemplate< SVCommandInspectionRunOncePtr > l_Command( p_pInspection->GetUniqueObjectID(), l_CommandPtr );
-
-		l_Status = ( l_Command.Execute( 120000 ) == S_OK );
-	}
-	return l_Status;
-}
+#include "SVCommandInspectionExtentUpdater.h"
+#include "ErrorNumbers.h"
 
 HRESULT SVGuiExtentUpdater::SetImageExtent(SVTaskObjectClass* p_pTaskObject, const SVImageExtentClass& p_rExtents)
 {
-	HRESULT l_Status = S_OK;
-
-	SVInspectionProcess* l_pInspection = p_pTaskObject->GetInspection();
-
-	if (l_pInspection != NULL)
+	HRESULT status = Err_SetImageExtent_InvalidParameter_2001;
+	
+	if ( nullptr != p_pTaskObject )
 	{
-		SVProductInfoStruct l_svProduct = l_pInspection->LastProductGet(SV_DISPLAY);
-
-		SVDataManagerHandle l_DMIndexHandle;
-
-		l_svProduct.GetResultDataIndex( l_DMIndexHandle );
-
-		l_Status = p_pTaskObject->SetImageExtent(l_DMIndexHandle.GetIndex(), p_rExtents);
-
-		if (l_Status == S_OK)
+		SVInspectionProcess* pInspection = p_pTaskObject->GetInspection();
+		if ( nullptr != pInspection )
 		{
-			l_pInspection->m_bForceOffsetUpdate = true;
-			l_pInspection->AddResetState( SVResetAutoMoveAndResize );
-
-			if (::SVSendMessage(p_pTaskObject, SVM_RESET_ALL_OBJECTS, NULL, NULL) != SVMR_SUCCESS)
-			{
-				l_Status = S_FALSE;
-			}
-			else
-			{
-				RunOnce(l_pInspection, NULL);
-			}
-
-			l_pInspection->RemoveResetState( SVResetAutoMoveAndResize );
+			SVCommandInspectionSetImageExtentPtr commandPtr = new SVCommandInspectionExtentUpdater( pInspection->GetUniqueObjectID(), p_pTaskObject->GetUniqueObjectID(), ExtentUpdaterMode_SetImageExtent, p_rExtents );
+			SVObjectSynchronousCommandTemplate< SVCommandInspectionSetImageExtentPtr > command( pInspection->GetUniqueObjectID(), commandPtr );
+			status = command.Execute( TIMEOUT_FOR_SYNCHRONOUS_EXECUTE_IN_MS );
 		}
 	}
-	return l_Status;
+
+	return status;
 }
 
 HRESULT SVGuiExtentUpdater::SetImageExtentToParent(SVTaskObjectClass* p_pTaskObject)
 {
-	HRESULT l_Status = S_OK;
+	HRESULT status = Err_SetImageExtentToParent_InvalidParameter_2002;
 
-	SVInspectionProcess* l_pInspection = p_pTaskObject->GetInspection();
-
-	if (l_pInspection != NULL)
+	if ( nullptr != p_pTaskObject )
 	{
-		SVProductInfoStruct l_svProduct = l_pInspection->LastProductGet(SV_DISPLAY);
-
-		SVDataManagerHandle l_DMIndexHandle;
-
-		l_svProduct.GetResultDataIndex( l_DMIndexHandle );
-
-		l_Status = p_pTaskObject->SetImageExtentToParent(l_DMIndexHandle.GetIndex());
-
-		if (l_Status == S_OK)
+		SVInspectionProcess* pInspection = p_pTaskObject->GetInspection();
+		if ( nullptr != pInspection )
 		{
-			l_pInspection->m_bForceOffsetUpdate = true;
-			l_pInspection->AddResetState( SVResetAutoMoveAndResize );
-
-			if (::SVSendMessage(p_pTaskObject, SVM_RESET_ALL_OBJECTS, NULL, NULL ) != SVMR_SUCCESS)
-			{
-				l_Status = S_FALSE;
-			}
-			else
-			{
-				RunOnce(l_pInspection, NULL);
-			}
-
-			l_pInspection->RemoveResetState( SVResetAutoMoveAndResize );
+			SVCommandInspectionSetImageExtentPtr commandPtr = new SVCommandInspectionExtentUpdater( pInspection->GetUniqueObjectID(), p_pTaskObject->GetUniqueObjectID(), ExtentUpdaterMode_SetImageExtentToParent);
+			SVObjectSynchronousCommandTemplate< SVCommandInspectionSetImageExtentPtr > command( pInspection->GetUniqueObjectID(), commandPtr );
+			status = command.Execute( TIMEOUT_FOR_SYNCHRONOUS_EXECUTE_IN_MS );
 		}
 	}
-	return l_Status;
+
+	return status;
 }
 
 
 HRESULT SVGuiExtentUpdater::SetImageExtentToFit(SVTaskObjectClass* p_pTaskObject, const SVImageExtentClass& p_rExtents)
 {
-	HRESULT l_Status = S_OK;
+	HRESULT status = Err_SetImageExtentToFit_InvalidParameter_2003;
 
-	SVInspectionProcess* l_pInspection = p_pTaskObject->GetInspection();
-
-	if (l_pInspection != NULL)
+	if ( nullptr != p_pTaskObject )
 	{
-		SVProductInfoStruct l_svProduct = l_pInspection->LastProductGet(SV_DISPLAY);
-
-		SVDataManagerHandle l_DMIndexHandle;
-
-		l_svProduct.GetResultDataIndex( l_DMIndexHandle );
-
-		l_Status = p_pTaskObject->SetImageExtentToFit(l_DMIndexHandle.GetIndex(), p_rExtents);
-
-		if (l_Status == S_OK)
+		SVInspectionProcess* pInspection = p_pTaskObject->GetInspection();
+		if ( nullptr != pInspection )
 		{
-			l_pInspection->m_bForceOffsetUpdate = true;
-			l_pInspection->AddResetState( SVResetAutoMoveAndResize );
-
-			if (::SVSendMessage(p_pTaskObject, SVM_RESET_ALL_OBJECTS, NULL, NULL ) != SVMR_SUCCESS)
-			{
-				l_Status = S_FALSE;
-			}
-			else
-			{
-				RunOnce(l_pInspection, NULL);
-			}
-
-			l_pInspection->RemoveResetState( SVResetAutoMoveAndResize );
+			SVCommandInspectionSetImageExtentPtr commandPtr = new SVCommandInspectionExtentUpdater( pInspection->GetUniqueObjectID(), p_pTaskObject->GetUniqueObjectID(), ExtentUpdaterMode_SetImageExtentToFit, p_rExtents );
+			SVObjectSynchronousCommandTemplate< SVCommandInspectionSetImageExtentPtr > command( pInspection->GetUniqueObjectID(), commandPtr );
+			status = command.Execute( TIMEOUT_FOR_SYNCHRONOUS_EXECUTE_IN_MS );
 		}
 	}
-	return l_Status;
+
+	return status;
 }
 
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVGuiExtentUpdater.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVGuiExtentUpdater.cpp_v  $
+ * 
+ *    Rev 1.2   12 Feb 2015 03:00:46   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  983
+ * SCR Title:  Linear Tool - Crash while continuous resizing tool SVO-392
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   Do functionality not directly in this class, instead use new class SVCommandInspectionExtetnUpdater to run it in inspection thread
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   07 May 2013 08:20:26   bWalter
  * Project:  SVObserver

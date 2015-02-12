@@ -5,8 +5,8 @@
 //* .Module Name     : SVInspectionProcess
 //* .File Name       : $Workfile:   SVInspectionProcess.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.13  $
-//* .Check In Date   : $Date:   14 Jan 2015 16:42:48  $
+//* .Current Version : $Revision:   1.14  $
+//* .Check In Date   : $Date:   12 Feb 2015 02:58:54  $
 //******************************************************************************
 
 #pragma once
@@ -64,6 +64,7 @@ class SVInspectionProcess :
 	public SVObserverTemplate< SVRenameObject >
 {
 	friend class SVCommandInspectionRunOnce;
+	friend class SVCommandInspectionExtentUpdater;
 	friend class SVConditionalHistory;
 
 	SV_DECLARE_CLASS( SVInspectionProcess );
@@ -553,6 +554,16 @@ inline HRESULT SVInspectionProcess::SetObjectArrayValues(SVValueObjectReference 
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVInspectionProcess.h_v  $
+ * 
+ *    Rev 1.14   12 Feb 2015 02:58:54   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  983
+ * SCR Title:  Linear Tool - Crash while continuous resizing tool SVO-392
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   add new class SVCommandInspectionExtentUpdater as friend
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.13   14 Jan 2015 16:42:48   bwalter
  * Project:  SVObserver

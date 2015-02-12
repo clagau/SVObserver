@@ -5,8 +5,8 @@
 //* .Module Name     : SVGuiExtentUpdater
 //* .File Name       : $Workfile:   SVGuiExtentUpdater.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   07 May 2013 08:20:28  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   12 Feb 2015 03:00:46  $
 //******************************************************************************
 #ifndef INCL_SVGUIEXTENTUPDATER_H
 #define INCL_SVGUIEXTENTUPDATER_H
@@ -20,6 +20,9 @@ public:
 	static HRESULT SetImageExtent(SVTaskObjectClass* p_pTaskObject, const SVImageExtentClass& p_rExtents);
 	static HRESULT SetImageExtentToParent(SVTaskObjectClass* p_pTaskObject);
 	static HRESULT SetImageExtentToFit(SVTaskObjectClass* p_pTaskObject, const SVImageExtentClass& p_rExtents);
+
+private:
+	static const int TIMEOUT_FOR_SYNCHRONOUS_EXECUTE_IN_MS = 120000;
 };
 
 #endif
@@ -28,7 +31,17 @@ public:
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVGuiExtentUpdater.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVGuiExtentUpdater.h_v  $
+ * 
+ *    Rev 1.2   12 Feb 2015 03:00:46   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  983
+ * SCR Title:  Linear Tool - Crash while continuous resizing tool SVO-392
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   Do functionality not directly in this class, instead use new class SVCommandInspectionExtetnUpdater to run it in inspection thread
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   07 May 2013 08:20:28   bWalter
  * Project:  SVObserver

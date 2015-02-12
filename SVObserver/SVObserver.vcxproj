@@ -457,6 +457,7 @@ echo %time%
     <ClCompile Include="SVCameraTriggerData.cpp" />
     <ClCompile Include="SVClosingFilterClass.cpp" />
     <ClCompile Include="SVCommandInspectionGetItems.cpp" />
+    <ClCompile Include="SVCommandInspectionExtentUpdater.cpp" />
     <ClCompile Include="SVConditional.cpp" />
     <ClCompile Include="SVDataDefinitionStruct.cpp" />
     <ClCompile Include="SVDilationFilterClass.cpp" />
@@ -4307,6 +4308,7 @@ echo %time%
     <ClInclude Include="SVCameraTriggerData.h" />
     <ClInclude Include="SVClosingFilterClass.h" />
     <ClInclude Include="SVCommandInspectionGetItems.h" />
+    <ClInclude Include="SVCommandInspectionExtentUpdater.h" />
     <ClInclude Include="SVConditional.h" />
     <ClInclude Include="SVConfigXMLPrint.h" />
     <ClInclude Include="SVDataDefinitionStruct.h" />

@@ -6,11 +6,24 @@
 //* .File Name       : $Workfile:   ErrorNumbers.h  $
 //* .Description     : PLEASE ENTER A DESCRIPTION
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.3  $
-//* .Check In Date   : $Date:   15 Jan 2015 08:23:34  $
+//* .Current Version : $Revision:   1.4  $
+//* .Check In Date   : $Date:   12 Feb 2015 02:57:36  $
 //******************************************************************************
 
 #pragma once
+
+
+//Marc Ziegler error base
+static const int Maz_ErrorBase = 2000;
+//SVGuiExtentUpdater
+static const int Err_SetImageExtent_InvalidParameter_2001 = Maz_ErrorBase + 1;
+static const int Err_SetImageExtentToParent_InvalidParameter_2002 = Maz_ErrorBase + 2;
+static const int Err_SetImageExtentToFit_InvalidParameter_2003 = Maz_ErrorBase + 3;
+//SVCommandInspectionExtentUpdater
+static const int Err_SVCommandInspectionExtentUpdater_InvalidMode_2004 = Maz_ErrorBase + 4;
+static const int Err_SVCommandInspectionExtentUpdater_ResetAllObjects_2005 = Maz_ErrorBase + 5;
+static const int Err_SVCommandInspectionExtentUpdater_RunOnce_2006 = Maz_ErrorBase + 6;
+static const int Err_SVCommandInspectionExtentUpdater_InvalidParameter_2007 = Maz_ErrorBase + 7;
 
 //Marcus Eichengrün error base
 static const int Mec_ErrorBase = 16000;
@@ -63,6 +76,16 @@ static const int Err_25012 = Gra_ErrorBase + 12;
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\ErrorNumbers.h_v  $
+ * 
+ *    Rev 1.4   12 Feb 2015 02:57:36   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  983
+ * SCR Title:  Linear Tool - Crash while continuous resizing tool SVO-392
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   add error numbers from MZA
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   15 Jan 2015 08:23:34   mEichengruen
  * Project:  SVObserver
