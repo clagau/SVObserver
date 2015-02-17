@@ -5,8 +5,8 @@
 //* .Module Name     : SVRangeClass
 //* .File Name       : $Workfile:   SVRange.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.6  $
-//* .Check In Date   : $Date:   23 Jan 2015 11:19:42  $
+//* .Current Version : $Revision:   1.7  $
+//* .Check In Date   : $Date:   17 Feb 2015 18:14:06  $
 //******************************************************************************
 
 #pragma once
@@ -126,6 +126,12 @@ public:
 	//************************************
 	const SVDoubleValueObjectClass& getUpdatedFailHigh( int bucket );
 
+	//************************************
+	/// Removes attributes from m_ValueIndirect[] so they are hidden 
+	/// (NOT viewable, publishable, selectable, remotely setable, printable, archivable)
+	//************************************
+	void HideIndirectValueObjects();
+
 protected:
 	virtual void init();
 	BOOL getInputValue( double& RVal );
@@ -159,6 +165,16 @@ protected:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVRange.h_v  $
+ * 
+ *    Rev 1.7   17 Feb 2015 18:14:06   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  985
+ * SCR Title:  Range Indirect Objects exists for Math Tool but cannot be set via GUI
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   Added HideIndirectValueObjects method.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.6   23 Jan 2015 11:19:42   bwalter
  * Project:  SVObserver

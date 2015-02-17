@@ -5,8 +5,8 @@
 //* .Module Name     : SVMathTool
 //* .File Name       : $Workfile:   SVMathTool.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   23 Apr 2013 12:29:48  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   17 Feb 2015 18:21:56  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -15,6 +15,7 @@
 #include "SVMathEquation.h"
 #include "SVResultDouble.h"
 #include "SVInspectionProcess.h"
+#include "SVRange.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -125,7 +126,6 @@ SVMathToolClass::~SVMathToolClass()
 { 
 }
 
-
 //******************************************************************************
 // Operator(s):
 //******************************************************************************
@@ -137,6 +137,16 @@ BOOL SVMathToolClass::CreateObject(SVObjectLevelCreateStruct* PCreateStruct )
 {
 	isCreated = SVToolClass::CreateObject( PCreateStruct );
 
+	// override the attributes for the range indirect value objects
+	SVResultClass* pResult = dynamic_cast<SVResultClass*>(GetAt(0));
+	if (pResult)
+	{
+		SVRangeClass* pRange = pResult->GetResultRange();
+		if (pRange)
+		{
+			pRange->HideIndirectValueObjects();
+		}
+	}
 	return isCreated;
 }
 
@@ -177,7 +187,17 @@ BOOL SVMathToolClass::OnValidate()
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_src\SVObserver\SVMathTool.cpp_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVMathTool.cpp_v  $
+ * 
+ *    Rev 1.1   17 Feb 2015 18:21:56   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  985
+ * SCR Title:  Range Indirect Objects exists for Math Tool but cannot be set via GUI
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   Revised CreateObject to call SVRange::HideIndirectValueObjects method.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   23 Apr 2013 12:29:48   bWalter
  * Project:  SVObserver

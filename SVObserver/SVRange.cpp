@@ -5,8 +5,8 @@
 //* .Module Name     : SVRange.cpp
 //* .File Name       : $Workfile:   SVRange.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.7  $
-//* .Check In Date   : $Date:   23 Jan 2015 14:21:34  $
+//* .Current Version : $Revision:   1.8  $
+//* .Check In Date   : $Date:   17 Feb 2015 18:14:06  $
 //******************************************************************************
 
 #pragma region Includes
@@ -589,11 +589,29 @@ const SVDoubleValueObjectClass& SVRangeClass::getUpdatedFailHigh( int bucket )
 	return FailHigh;
 }
 
+void SVRangeClass::HideIndirectValueObjects()
+{
+	for (int i = 0; i < ER_COUNT; i++)
+	{
+		m_ValueIndirect[i].ObjectAttributesAllowedRef() = SV_EMBEDABLE | SV_HIDDEN; // remove all other attributes except these 2
+	}
+}
+
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVRange.cpp_v  $
+ * 
+ *    Rev 1.8   17 Feb 2015 18:14:06   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  985
+ * SCR Title:  Range Indirect Objects exists for Math Tool but cannot be set via GUI
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   Added HideIndirectValueObjects method.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.7   23 Jan 2015 14:21:34   bwalter
  * Project:  SVObserver
