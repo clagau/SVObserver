@@ -5,8 +5,8 @@
 //* .Module Name     : SVJsonCommandServer
 //* .File Name       : $Workfile:   SVJsonCommandServer.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   02 Oct 2014 10:39:38  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   18 Feb 2015 11:00:08  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -70,6 +70,11 @@ HRESULT SVJsonCommandServer::WriteJson(const std::string& data)
 	return l_Status;
 }
 
+bool SVJsonCommandServer::HasClient() const
+{
+	return m_ServerSocket.HasClient();
+}
+
 void SVJsonCommandServer::OnClientAccepted()
 {
 	if( !( m_ClientAcceptFunction.empty() ) )
@@ -95,6 +100,16 @@ void SVJsonCommandServer::OnClientJsonReceived(const std::string& data)
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVJsonCommandServerLibrary\SVJsonCommandServer.cpp_v  $
+ * 
+ *    Rev 1.3   18 Feb 2015 11:00:08   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  975
+ * SCR Title:  Add Fail Status Stream (SVO-354)
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   Added HasClient method
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   02 Oct 2014 10:39:38   sjones
  * Project:  SVObserver

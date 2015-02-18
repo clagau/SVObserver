@@ -5,8 +5,8 @@
 //* .Module Name     : SVObserver
 //* .File Name       : $Workfile:   SVObserver.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.20  $
-//* .Check In Date   : $Date:   09 Dec 2014 10:12:42  $
+//* .Current Version : $Revision:   1.21  $
+//* .Check In Date   : $Date:   18 Feb 2015 11:06:14  $
 //******************************************************************************
 
 #ifndef SVOBSERVER_H
@@ -596,9 +596,10 @@ private:
 	HMENU m_hAddMenu;
 	HANDLE m_hEvent;
 
-	short m_InputStreamPortNumber;
-	short m_OutputStreamPortNumber;
-	short m_RemoteCommandsPortNumber;
+	unsigned short m_InputStreamPortNumber;
+	unsigned short m_OutputStreamPortNumber;
+	unsigned short m_RemoteCommandsPortNumber;
+	unsigned short m_FailStatusStreamPortNumber;
 #pragma endregion Member variables
 };
 
@@ -616,6 +617,17 @@ extern SVObserverApp TheSVObserverApp;
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVObserver.h_v  $
+ * 
+ *    Rev 1.21   18 Feb 2015 11:06:14   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  975
+ * SCR Title:  Add Fail Status Stream (SVO-354)
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   Added FailStatusStreamPortNumber member variable.
+ * Revised all port number member variables to be of type unsigned short.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.20   09 Dec 2014 10:12:42   tbair
  * Project:  SVObserver

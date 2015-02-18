@@ -5,8 +5,8 @@
 //* .Module Name     : SVObserver
 //* .File Name       : $Workfile:   SVObserver.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.48  $
-//* .Check In Date   : $Date:   18 Feb 2015 02:47:40  $
+//* .Current Version : $Revision:   1.49  $
+//* .Check In Date   : $Date:   18 Feb 2015 11:10:54  $
 //******************************************************************************
 
 #pragma region Includes
@@ -98,6 +98,7 @@
 #include "SVInputStreamManager.h"
 #include "SVOutputStreamManager.h"
 #include "SVCommandStreamManager.h"
+#include "SVFailStatusStreamManager.h"
 #include "SVGetObjectDequeByTypeVisitor.h"
 #include "SVSystemLibrary/SVVersionInfo.h"
 #include "SVCommandInspectionRunOnce.h"
@@ -130,6 +131,14 @@ LPCTSTR const FRAME_GRABBER_VIPER_DIGITAL                 = (_T("03"));
 
 extern bool g_bUseCorrectListRecursion;
 #pragma endregion Declarations
+
+enum PortNumbers: uint16_t
+{ 
+	InputStreamPortNumber = 32100,
+	OutputStreamPortNumber = 32101,
+	FailStatusStreamPortNumber= 28969,
+	RemoteCommandsPortNumber = 28960
+};
 
 /**
 @SVObjectName SVObserver COM Module
@@ -345,9 +354,10 @@ SVObserverApp::SVObserverApp()
 	:
 #endif
 	  m_gigePacketSize( 0 )
-	  , m_InputStreamPortNumber( 32100 )
-	  , m_OutputStreamPortNumber( 32101 )
-	  , m_RemoteCommandsPortNumber( 28960 )
+	  , m_InputStreamPortNumber( InputStreamPortNumber )
+	  , m_OutputStreamPortNumber( OutputStreamPortNumber )
+	  , m_FailStatusStreamPortNumber( FailStatusStreamPortNumber )
+	  , m_RemoteCommandsPortNumber( RemoteCommandsPortNumber )
 	  , m_XMLTree( m_MaterialsTree )
 	  , m_MaterialsTree()
 {
@@ -881,14 +891,11 @@ void SVObserverApp::OnUpdateThreadAffinitySetup(CCmdUI* PCmdUI)
 	PCmdUI->Enable( lPipeCount >=8 && !SVSVIMStateClass::CheckState( SV_STATE_RUNNING ) );
 }
 
-
 void SVObserverApp::OnThreadAffinitySetup()
 {
 	SVThreadInfoDlg dlg;
 	dlg.DoModal();
 }
-
-
 
 void SVObserverApp::OnUpdateModeRun( CCmdUI* PCmdUI ) 
 {
@@ -1306,6 +1313,8 @@ void SVObserverApp::OnStop()
 		l_pConfig->GetPPQ( l, &pPPQ );
 		pPPQ->GoOffline();
 	}
+	// Stop the FailStatus Stream PPQ Listeners
+	SVFailStatusStreamManager::Instance().RemovePPQObservers();
 
 	SetAllIPDocumentsOffline();
 
@@ -1792,7 +1801,6 @@ void SVObserverApp::OnUpdateExtrasLogin( CCmdUI* PCmdUI )
 		pMenu = pWindow->GetMenu();
 		pMenu->RemoveMenu( ID_EXTRAS_THREAD_AFFINITY, MF_BYCOMMAND );
 	}
-
 }
 
 void SVObserverApp::OnUpdateExtrasUserManager( CCmdUI* PCmdUI ) 
@@ -2825,8 +2833,6 @@ void SVObserverApp::OnUpdateModeEdit(CCmdUI* pCmdUI)
 	pCmdUI->SetCheck( SVSVIMStateClass::CheckState( SV_STATE_EDIT ) );
 }
 
-
-
 void SVObserverApp::OnTriggerSettings()
 {
 	SVSoftwareTriggerDlg::Instance().ShowWindow(SW_SHOW);
@@ -3406,7 +3412,7 @@ BOOL SVObserverApp::InitInstance()
 	m_RemoteCommandsPortNumber = INI().GetValueInt( _T("Settings"), _T("RemoteCommandsPortNumber"), -1 );
 	if ( m_RemoteCommandsPortNumber == -1 )
 	{
-		m_RemoteCommandsPortNumber = 28960;
+		m_RemoteCommandsPortNumber = RemoteCommandsPortNumber;
 
 		INI().SetValue(_T( "Settings" ),_T( "RemoteCommandsPortNumber" ), m_RemoteCommandsPortNumber );
 	}
@@ -3414,7 +3420,7 @@ BOOL SVObserverApp::InitInstance()
 	m_InputStreamPortNumber = INI().GetValueInt( _T("Settings"), _T("InputStreamPortNumber"), -1 );
 	if ( m_InputStreamPortNumber == -1 )
 	{
-		m_InputStreamPortNumber = 32100;
+		m_InputStreamPortNumber = InputStreamPortNumber;
 
 		INI().SetValue(_T( "Settings" ),_T( "InputStreamPortNumber" ), m_InputStreamPortNumber );
 	}
@@ -3422,14 +3428,23 @@ BOOL SVObserverApp::InitInstance()
 	m_OutputStreamPortNumber = INI().GetValueInt( _T("Settings"), _T("OutputStreamPortNumber"), -1 );
 	if ( m_OutputStreamPortNumber == -1 )
 	{
-		m_OutputStreamPortNumber = 32101;
+		m_OutputStreamPortNumber = OutputStreamPortNumber;
 
 		INI().SetValue(_T( "Settings" ),_T( "OutputStreamPortNumber" ), m_OutputStreamPortNumber );
+	}
+
+	m_FailStatusStreamPortNumber = INI().GetValueInt( _T("Settings"), _T("FailStatusStreamPortNumber"), -1 );
+	if ( m_FailStatusStreamPortNumber == -1 )
+	{
+		m_FailStatusStreamPortNumber = FailStatusStreamPortNumber;
+
+		INI().SetValue(_T( "Settings" ),_T( "FailStatusStreamPortNumber" ), m_FailStatusStreamPortNumber );
 	}
 
 	SVSocketRemoteCommandManager::Instance().Startup( m_RemoteCommandsPortNumber );
 	SVInputStreamManager::Instance().Startup( m_InputStreamPortNumber );
 	SVOutputStreamManager::Instance().Startup( m_OutputStreamPortNumber );
+	SVFailStatusStreamManager::Instance().Startup( m_FailStatusStreamPortNumber );
 
 	if ( !TheSVOLicenseManager().HasMatroxLicense() )
 	{
@@ -3496,6 +3511,7 @@ int SVObserverApp::ExitInstance()
 	SVDirectX::Instance().clear();
 
 	SVVisionProcessorHelper::Instance().Shutdown();
+	SVFailStatusStreamManager::Instance().Shutdown();
 	SVOutputStreamManager::Instance().Shutdown();
 	SVInputStreamManager::Instance().Shutdown();
 	SVSocketRemoteCommandManager::Instance().Shutdown();
@@ -4207,6 +4223,9 @@ HRESULT SVObserverApp::DestroyConfig( BOOL AskForSavingOrClosing /* = TRUE */,
 			// Disallow Client Connections
 			SVInputStreamManager::Instance().Shutdown();
 			SVOutputStreamManager::Instance().Shutdown();
+
+			// Remove all FailStatus Streams
+			SVFailStatusStreamManager::Instance().Clear();
 
 			bOk = SVSVIMStateClass::AddState( SV_STATE_UNAVAILABLE | SV_STATE_CLOSING );
 
@@ -5293,7 +5312,6 @@ HRESULT SVObserverApp::SetMode( unsigned long p_lNewMode )
 		{
 			SetModeEdit( false );
 		}
-
 	}
 	else if( l_svMode == SVIM_MODE_TEST )
 	{
@@ -5379,7 +5397,6 @@ HRESULT SVObserverApp::LoadConfiguration()
 
 	return l_Status;
 }
-
 
 HRESULT SVObserverApp::RenameObject( const SVString& p_rOldName, const SVString& p_rNewName, const SVGUID& p_rObjectId )
 {
@@ -6458,7 +6475,6 @@ HRESULT SVObserverApp::SetModeEdit( bool p_bState )
 	}
 	return l_hr;
 }
-
 
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : SetTestMode
@@ -8708,6 +8724,20 @@ int SVObserverApp::FindMenuItem(CMenu* Menu, LPCTSTR MenuString)
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVObserver.cpp_v  $
+ * 
+ *    Rev 1.49   18 Feb 2015 11:10:54   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  975
+ * SCR Title:  Add Fail Status Stream (SVO-354)
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   Added enum for default port numbers.
+ * Revised OnStop method to call SVFailStatusStreamManager::RemovePPQObservers.
+ * Added logic to initialize the failstatusstream port.
+ * Added logic to start and stop the failstatusstream socket.
+ * Revised DestroyConfig to clear the fail status stream(s).
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.48   18 Feb 2015 02:47:40   gramseier
  * Project:  SVObserver

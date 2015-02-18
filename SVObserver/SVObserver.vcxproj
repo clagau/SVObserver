@@ -465,6 +465,8 @@ echo %time%
     <ClCompile Include="SVEdgeDetect2FilterClass.cpp" />
     <ClCompile Include="SVEdgeDetectFilterClass.cpp" />
     <ClCompile Include="SVErosionFilterClass.cpp" />
+    <ClCompile Include="SVFailStatusStream.cpp" />
+    <ClCompile Include="SVFailStatusStreamManager.cpp" />
     <ClCompile Include="SVFilterClass.cpp" />
     <ClCompile Include="SVFilterListBoxClass.cpp" />
     <ClCompile Include="SVGigeCameraListCtrl.cpp" />
@@ -4317,6 +4319,8 @@ echo %time%
     <ClInclude Include="SVEdgeDetectFilterClass.h" />
     <ClInclude Include="SVErosionFilterClass.h" />
     <ClInclude Include="SVExtentPropertiesInfoStruct.h" />
+    <ClInclude Include="SVFailStatusStream.h" />
+    <ClInclude Include="SVFailStatusStreamManager.h" />
     <ClInclude Include="SVFilterClass.h" />
     <ClInclude Include="SVFilterListBoxClass.h" />
     <ClInclude Include="SVGigeCameraListCtrl.h" />

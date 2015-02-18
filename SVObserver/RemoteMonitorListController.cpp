@@ -5,8 +5,8 @@
 //* .Module Name     : RemoteMonitorListController
 //* .File Name       : $Workfile:   RemoteMonitorListController.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.15  $
-//* .Check In Date   : $Date:   04 Dec 2014 10:30:00  $
+//* .Current Version : $Revision:   1.16  $
+//* .Check In Date   : $Date:   18 Feb 2015 11:04:06  $
 //******************************************************************************
 
 #pragma region Includes
@@ -27,6 +27,8 @@
 #include "RemoteMonitorListHelper.h"
 #include "SVToolSet.h"
 #include "SVSVIMStateClass.h"
+#include "SVFailStatusStreamManager.h"
+
 #pragma endregion Includes
 
 #define SEJ_ErrorBase 15000
@@ -100,11 +102,13 @@ void RemoteMonitorListController::SetRemoteMonitorList(const RemoteMonitorList& 
 {
 	m_list = rList;
 	HideShowViewTab();
+	SVFailStatusStreamManager::Instance().ManageFailStatus(m_list);
 }
 
 void RemoteMonitorListController::ReplaceOrAddMonitorList( const RemoteMonitorNamedList& rList )
 {
 	m_list[rList.GetName()] = rList;
+	SVFailStatusStreamManager::Instance().ManageFailStatus(m_list);
 }
 
 void RemoteMonitorListController::HideShowViewTab()
@@ -254,6 +258,9 @@ static void WriteMonitorListToSharedMemory(const std::string& name, const std::s
 
 void RemoteMonitorListController::BuildPPQMonitorList(PPQMonitorList& ppqMonitorList) const
 {
+	// Setup failStatus Streaming
+	SVFailStatusStreamManager::Instance().AttachPPQObservers(m_list);
+
 	// combine the lists by PPQName
 	for (RemoteMonitorList::const_iterator it = m_list.begin();it != m_list.end();++it)
 	{
@@ -387,6 +394,18 @@ HRESULT RemoteMonitorListController::GetRemoteMonitorListProductFilter(const SVS
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\RemoteMonitorListController.cpp_v  $
+ * 
+ *    Rev 1.16   18 Feb 2015 11:04:06   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  975
+ * SCR Title:  Add Fail Status Stream (SVO-354)
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   Revised SetRemoteMonitorList method to call SVFailStatusStreamManager::ManageFailStatus.
+ * Revised ReplaceOrAddMonitorList method to call SVFailStatusStreamManager::ManageFailStatus.
+ * Revised BuildPPQMonitorList method to call SVFailStatusStreamManager::AttachPPQObservers.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.15   04 Dec 2014 10:30:00   bwalter
  * Project:  SVObserver
