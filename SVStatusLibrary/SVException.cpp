@@ -5,8 +5,8 @@
 //* .Module Name     : SVException
 //* .File Name       : $Workfile:   SVException.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.3  $
-//* .Check In Date   : $Date:   19 Dec 2014 04:32:20  $
+//* .Current Version : $Revision:   1.4  $
+//* .Check In Date   : $Date:   18 Feb 2015 03:14:50  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -17,10 +17,20 @@
 #define SVEVENTSOURCE _T("SVException")
 #define SVSECURITYSOURCE _T("SVSecurity")
 #define SVACCESSSOURCE _T("SVAccess")
-#define SEV_WARNING                      0x2
-#define SEV_SUCCESS                      0x0
-#define SEV_INFORMATIONAL                0x1
-#define SEV_FATAL                        0x3
+
+static const UINT CategoryNr = 31;
+static const UINT CategoryBase = FAC_SVPLC;
+static const TCHAR CategoryUnknown[] = _T("Unknown");
+static const TCHAR CategoryNone[] = _T("None");
+static const TCHAR CategorySystem[] = _T("System");
+static const TCHAR CategoryApplication[] = _T("Application");
+static const TCHAR TaskCategory[][CategoryNr]= { _T("SVPLC"), _T("SVBatchReport"), _T("SVFocusNT"), _T("SVFocusDB"), _T("SVFocusDBManager"),
+								_T("SVIMCommand"), _T("SVIPC"), _T("SVLanguageManager"), _T("SVLibrary"), _T("SVPipes"), 
+								_T("SVPLCCommand"), _T("SVTCPIP"), _T("SVObserver"), _T("SVSecurity"), _T("SVPLCRSLinx"),
+								_T("SVMachineMessage"), _T("SVCmdComServer"), _T("SVCmdComClient"), _T("SVDataManager"),
+								_T("SVAccess"), _T("SVIntek"), _T("SVImageCompression"), _T("SVEquation"), _T("SVFileAcquisition"),
+								_T("SVMatroxGige"), _T("SVTVicLpt"), _T("SVOLibrary"), _T("SVSystemLibrary"), _T("SVMatroxLibrary"),
+								_T("SVCI"), _T("SVXMLLibrary") };
 				
 /*
 This parameterized constructer is used to fill this class with all of the appropriate data to be maintained for later use.
@@ -187,7 +197,7 @@ void SVException::SetException(long ErrorCode, TCHAR* szCompileDate, TCHAR* szCo
 	mdwProgramCode = dwProgramCode;
 
 	// Automatically log severe errors
-	if (GetSeverity() == 0x03)
+	if (GetSeverity() == SEV_FATAL)
 	{
 		LogException( m_ErrorText.ToString() );
 	}
@@ -304,9 +314,12 @@ DWORD SVException::GetOSErrorCode() const
 /*
 Formats an SVException object into a readable sting.
 */
-void SVException::Format(SVString &szMsg , LPCTSTR pszMessage , LANGID Language) const
+SVString SVException::Format(SVString &szMsg , LPCTSTR pszMessage , LANGID Language) const
 {
+	SVString Result;
+	SVString MsgDetails;
 	SVString szMessageDll;
+	SVString Source;
 	LPVOID pszTemp;
 	HMODULE hMessageDll;
 	SVString szKey;
@@ -331,20 +344,21 @@ void SVException::Format(SVString &szMsg , LPCTSTR pszMessage , LANGID Language)
 	{
 		case FAC_SVSECURITY:
 		{
-			szKey += SVSECURITYSOURCE;
+			Source =  SVSECURITYSOURCE;
 			break;
 		}
 		case FAC_SVACCESS:
 		{
-			szKey += SVACCESSSOURCE;
+			Source = SVACCESSSOURCE;
 			break;
 		}
 		default :
 		{
-			szKey += SVEVENTSOURCE;
+			Source = SVEVENTSOURCE;
 			break;
 		}
 	}
+	szKey += Source;
 	SVRegistryClass reg(szKey.ToString());
 
 	szMsg.clear();
@@ -372,9 +386,15 @@ void SVException::Format(SVString &szMsg , LPCTSTR pszMessage , LANGID Language)
 				szSubstituteString[7] = (LPCTSTR) mszCompileTime;
 				szSubstituteString[8] = szProgramCode.ToString();
 				szSubstituteString[9] = szProgramCodeHex.ToString();
-				szSubstituteString[10] = _T("");
 				if (pszMessage)
+				{
 					szSubstituteString[10] = pszMessage;
+				}
+				else
+				{
+					szSubstituteString[10] = m_ErrorText.ToString();
+				}
+
 
 				if (FormatMessage (FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_ARGUMENT_ARRAY |
 													 FORMAT_MESSAGE_FROM_HMODULE,
@@ -383,9 +403,22 @@ void SVException::Format(SVString &szMsg , LPCTSTR pszMessage , LANGID Language)
 				{
 					szMsg = (TCHAR *) pszTemp;
 					size_t iIndex = szMsg.find_first_of(_T("\r\n"));
-					if (iIndex != -1)
+					if ( -1 != iIndex )
 					{
+						Result.Format( _T("Source: %s\r\nCategory: %s\r\nEventID: %d\r\n"), Source.c_str(), GetCategoryName().c_str(), GetEventID() );
+
+						szMsg.replace(_T("\r\n\r\n"), _T("\r\n") );
+						szMsg.replace(_T("\\n"), _T("\r\n") );
+						MsgDetails += szMsg.Mid( iIndex );
+						//Remove unnecessary new lines from the details
+						size_t Pos = MsgDetails.find_first_not_of(_T("\r\n"));
+						if ( -1 != Pos )
+						{
+							MsgDetails = MsgDetails.substr( Pos );
+						}
 						szMsg.erase(iIndex, (szMsg.size() - iIndex));
+
+						Result += MsgDetails;
 					}
 				}
 				LocalFree (pszTemp);
@@ -412,6 +445,8 @@ void SVException::Format(SVString &szMsg , LPCTSTR pszMessage , LANGID Language)
 									mszCompileDate,
 									mszCompileTime);
 	}
+
+	return Result;
 }
 
 /*
@@ -435,12 +470,54 @@ UINT SVException::GetFacility() const
 	return (GetErrorCode () & 0x0fff0000) >> 16;
 }
 
+UINT SVException::GetEventID() const
+{
+	return (GetErrorCode () & 0x0000ffff);
+}
+
 /*
 Returns a category value (based upon the facility) that can be used with ReportEvent.
 */
 WORD SVException::GetCategory() const
 {
 	return (GetFacility() & 0x00ff);
+}
+
+SVString SVException::GetCategoryName() const
+{
+	SVString Result( CategoryUnknown );
+
+	WORD Facility = GetFacility();
+	switch( Facility )
+	{
+	case FAC_NONE:
+		{
+			Result = CategoryNone;
+		}
+		break;
+	case FAC_SYSTEM:
+		{
+			Result = CategorySystem;
+		}
+		break;
+	case FAC_APPLICATION:
+		{
+			Result = CategoryApplication;
+		}
+		break;
+	default:
+		{
+			int Index(0);
+			Index = Facility - CategoryBase;
+			if( 0 <= Index && CategoryNr > Index )
+			{
+				Result = TaskCategory[Index];
+			}
+		}
+		break;
+	}
+
+	return Result;
 }
 
 /*
@@ -590,6 +667,16 @@ SVString SVException::what() const
 // ******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVStatusLibrary\SVException.cpp_v  $
+ * 
+ *    Rev 1.4   18 Feb 2015 03:14:50   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  984
+ * SCR Title:  Exception Display Class with Exception Manager Template SVO-524
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Adapted Format method to display the message similar to the event log
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.3   19 Dec 2014 04:32:20   gramseier
  * Project:  SVObserver

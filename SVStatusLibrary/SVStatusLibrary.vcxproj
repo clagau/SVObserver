@@ -150,6 +150,9 @@
     <ClCompile Include="ec200249.cpp" />
     <ClCompile Include="ec250299.cpp" />
     <ClCompile Include="ec300349.cpp" />
+    <None Include="ExceptionManager.inl">
+      <FileType>CppCode</FileType>
+    </None>
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -163,6 +166,7 @@
     <ClCompile Include="SVRegistry.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ExceptionManager.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="SVErrorClass.h" />
     <ClInclude Include="SVErrorException.h" />

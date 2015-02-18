@@ -5,8 +5,8 @@
 // * .Module Name     : SVConfigurationTags
 // * .File Name       : $Workfile:   SVConfigurationTags.h  $
 // * ----------------------------------------------------------------------------
-// * .Current Version : $Revision:   1.7  $
-// * .Check In Date   : $Date:   07 Jan 2015 15:52:10  $
+// * .Current Version : $Revision:   1.8  $
+// * .Check In Date   : $Date:   12 Feb 2015 13:42:02  $
 // ******************************************************************************
 // SVConfigurationTags.h
 
@@ -336,6 +336,16 @@ LPCTSTR const CTAG_COMPLETENAME			= _T("CompleteName");
 // ******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVConfigurationLibrary\SVConfigurationTags.h_v  $
+ * 
+ *    Rev 1.8   12 Feb 2015 13:42:02   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  981
+ * SCR Title:  Revise Tool Groupings to have comments
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   Added tags for start and end group comments
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.7   07 Jan 2015 15:52:10   bwalter
  * Project:  SVObserver

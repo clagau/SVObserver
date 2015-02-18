@@ -77,6 +77,9 @@
     <ClCompile Include="SVEditControlWithHelp.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="DisplayMessageBox.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Regexp.h">
@@ -164,6 +167,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVEditControlWithHelp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DisplayMessageBox.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

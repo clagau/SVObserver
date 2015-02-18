@@ -5,8 +5,8 @@
 //* .Module Name     : LoadDll
 //* .File Name       : $Workfile:   LoadDll.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.0  $
-//* .Check In Date   : $Date:   17 Jul 2014 16:05:34  $
+//* .Current Version : $Revision:   1.1  $
+//* .Check In Date   : $Date:   18 Feb 2015 03:20:46  $
 //******************************************************************************
 
 #pragma once
@@ -73,11 +73,23 @@ namespace Seidenader
 	}
 }
 
+namespace SvSyl = Seidenader::SVSystemLibrary;
+
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVSystemLibrary\LoadDll.h_v  $
+$Log:   N:\PVCSARCH65\PROJECTFILES\ARCHIVES\SVOBSERVER_SRC\SVSystemLibrary\LoadDll.h_v  $
+ * 
+ *    Rev 1.1   18 Feb 2015 03:20:46   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  984
+ * SCR Title:  Exception Display Class with Exception Manager Template SVO-524
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Changed to use short namespace names
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   17 Jul 2014 16:05:34   gramseier
  * Project:  SVObserver

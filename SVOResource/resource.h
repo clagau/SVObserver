@@ -8,6 +8,7 @@
 #define IDD_PUBLISHED_RESULTS           2002
 #define IDD_OUTPUT_SELECTOR             2003
 #define IDD_OBJECT_SELECTOR_FILTER      2004
+#define IDD_DISPLAY_MSG_BOX             2005
 #define IDI_EMPTY_ENABLED               2100
 #define IDI_UNCHECKED_ENABLED           2101
 #define IDI_CHECKED_ENABLED             2102
@@ -39,14 +40,22 @@
 #define IDC_COMBO_FILTER_CHECK          4009
 #define IDC_COMBO_FILTER_TYPE           4010
 #define IDC_RESET_BUTTON                4011
+#define IDC_MSG_BOX_ICON                4012
+#define ID_BUTTON1                      4013
+#define ID_BUTTON2                      4014
+#define ID_BUTTON3                      4015
+#define IDC_MESSAGE                     4016
+#define IDC_SHOW_HIDE_DETAILS           4017
+#define IDC_MESSAGE_DETAILS             4018
+#define IDC_DETAILS_BORDER              4019
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        2005
+#define _APS_NEXT_RESOURCE_VALUE        2006
 #define _APS_NEXT_COMMAND_VALUE         3006
-#define _APS_NEXT_CONTROL_VALUE         4012
+#define _APS_NEXT_CONTROL_VALUE         4020
 #define _APS_NEXT_SYMED_VALUE           5000
 #endif
 #endif

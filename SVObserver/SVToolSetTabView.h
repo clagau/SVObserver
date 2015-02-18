@@ -5,8 +5,8 @@
 //* .Module Name     : SVToolSetTabView
 //* .File Name       : $Workfile:   SVToolSetTabView.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.7  $
-//* .Check In Date   : $Date:   19 Dec 2014 04:26:40  $
+//* .Current Version : $Revision:   1.8  $
+//* .Check In Date   : $Date:   12 Feb 2015 13:47:08  $
 //******************************************************************************
 
 #pragma once
@@ -123,6 +123,16 @@ protected:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVToolSetTabView.h_v  $
+ * 
+ *    Rev 1.8   12 Feb 2015 13:47:08   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  981
+ * SCR Title:  Revise Tool Groupings to have comments
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   Revised to allow the editing of comments for Tool Groups, both start and end grpups
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.7   19 Dec 2014 04:26:40   gramseier
  * Project:  SVObserver

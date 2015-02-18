@@ -86,5 +86,13 @@
     <ClInclude Include="SVStatusLibrary.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ExceptionManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ExceptionManager.inl">
+      <Filter>Header Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

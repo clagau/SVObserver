@@ -5,8 +5,8 @@
 //* .Module Name     : SVException
 //* .File Name       : $Workfile:   SVException.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.1  $
-//* .Check In Date   : $Date:   10 Nov 2014 16:55:58  $
+//* .Current Version : $Revision:   1.2  $
+//* .Check In Date   : $Date:   18 Feb 2015 03:14:50  $
 //******************************************************************************
 
 #ifndef _INC_SVEXCEPTION_38BBBEC2003E_INCLUDED
@@ -62,14 +62,15 @@ public:
     void SetException(long ErrorCode, TCHAR* szCompileDate, TCHAR* szCompileTime, LPCTSTR szErrorText, TCHAR* szSourceFile, long SourceLine, TCHAR* szSourceDateTime, DWORD dwProgramCode, DWORD dwOsErrorCode);
 	void SetException(long ErrorCode, TCHAR* szCompileDate, TCHAR* szCompileTime, LPVOID pErrorData, UINT cbErrorData, TCHAR* szSourceFile, long SourceLine, TCHAR* szSourceDateTime, DWORD dwProgramCode, DWORD dwOsErrorCode);
 	void SetException(long ErrorCode, TCHAR* szCompileDate, TCHAR* szCompileTime, LPCTSTR sErrorText, TCHAR* szSourceFile, long SourceLine, TCHAR* szSourceDateTime, DWORD dwProgramCode = 0);
+
 	UINT GetSeverity() const;
-
 	UINT GetFacility() const;
-
+	UINT GetEventID() const;
 	WORD GetCategory() const;
+	SVString GetCategoryName() const;
 
 	DWORD GetOSErrorCode() const;
-	void Format (SVString& szMsg , LPCTSTR pszMessage = nullptr, LANGID Language = 0) const;
+	SVString Format (SVString& szMsg , LPCTSTR pszMessage = nullptr, LANGID Language = 0) const;
 	DWORD GetErrorCode() const;
 
 	const SVException& operator=(const SVException& rhs);
@@ -121,6 +122,16 @@ private:
 // ******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVStatusLibrary\SVException.h_v  $
+ * 
+ *    Rev 1.2   18 Feb 2015 03:14:50   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  984
+ * SCR Title:  Exception Display Class with Exception Manager Template SVO-524
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Adapted Format method to display the message similar to the event log
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.1   10 Nov 2014 16:55:58   sjones
  * Project:  SVObserver

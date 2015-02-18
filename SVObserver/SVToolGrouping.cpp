@@ -2,8 +2,8 @@
 //* .Module Name     : SVToolGrouping
 //* .File Name       : $Workfile:   SVToolGrouping.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.10  $
-//* .Check In Date   : $Date:   19 Dec 2014 04:23:28  $
+//* .Current Version : $Revision:   1.11  $
+//* .Check In Date   : $Date:   12 Feb 2015 13:45:42  $
 //******************************************************************************
 #pragma region Includes
 #include "stdafx.h"
@@ -787,6 +787,18 @@ void SVToolGrouping::SetComment(const String& rName, const String& rComment)
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVToolGrouping.cpp_v  $
+ * 
+ *    Rev 1.11   12 Feb 2015 13:45:42   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  981
+ * SCR Title:  Revise Tool Groupings to have comments
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   Added GetComment method
+ * Added SetComment method
+ * Revised  persistence methods to load and save group comments
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.10   19 Dec 2014 04:23:28   gramseier
  * Project:  SVObserver

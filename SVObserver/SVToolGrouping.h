@@ -2,8 +2,8 @@
 //* .Module Name     : SVToolGrouping
 //* .File Name       : $Workfile:   SVToolGrouping.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.4  $
-//* .Check In Date   : $Date:   10 Nov 2014 16:41:24  $
+//* .Current Version : $Revision:   1.5  $
+//* .Check In Date   : $Date:   12 Feb 2015 13:45:42  $
 //******************************************************************************
 #pragma once
 
@@ -103,6 +103,18 @@ private:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVToolGrouping.h_v  $
+ * 
+ *    Rev 1.5   12 Feb 2015 13:45:42   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  981
+ * SCR Title:  Revise Tool Groupings to have comments
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   Added GetComment method
+ * Added SetComment method
+ * Revised  persistence methods to load and save group comments
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.4   10 Nov 2014 16:41:24   sjones
  * Project:  SVObserver

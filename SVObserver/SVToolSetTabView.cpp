@@ -5,8 +5,8 @@
 //* .Module Name     : SVToolSetTabView
 //* .File Name       : $Workfile:   SVToolSetTabView.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.13  $
-//* .Check In Date   : $Date:   19 Dec 2014 04:26:40  $
+//* .Current Version : $Revision:   1.15  $
+//* .Check In Date   : $Date:   12 Feb 2015 15:38:20  $
 //******************************************************************************
 
 #pragma region Includes
@@ -1117,6 +1117,27 @@ bool SVToolSetTabViewClass::IsToolsetListCtrlActive() const
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVToolSetTabView.cpp_v  $
+ * 
+ *    Rev 1.15   12 Feb 2015 15:38:20   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  982
+ * SCR Title:  Do not allow leading, trailing, or just whitespace in Tool names
+ * Checked in by:  una;  <<Unassigned>>
+ * Change Description:  
+ *   Revised ValidateLabelText method to trim leading and trailing whitespace from the tool name
+ * 
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.14   12 Feb 2015 13:47:08   sjones
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  981
+ * SCR Title:  Revise Tool Groupings to have comments
+ * Checked in by:  sJones;  Steve Jones
+ * Change Description:  
+ *   Revised to allow the editing of comments for Tool Groups, both start and end grpups
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.13   19 Dec 2014 04:26:40   gramseier
  * Project:  SVObserver

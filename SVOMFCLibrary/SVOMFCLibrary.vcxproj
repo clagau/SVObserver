@@ -198,6 +198,7 @@
   <ItemGroup>
     <ClCompile Include="SVEditControlWithHelp.cpp" />
     <ClCompile Include="DisplayHelper.cpp" />
+    <ClCompile Include="DisplayMessageBox.cpp" />
     <ClCompile Include="Regexp.cpp">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -316,6 +317,7 @@
   <ItemGroup>
     <ClInclude Include="SVEditControlWithHelp.h" />
     <ClInclude Include="DisplayHelper.h" />
+    <ClInclude Include="DisplayMessageBox.h" />
     <ClInclude Include="Regexp.h" />
     <ClInclude Include="StdAfx.h" />
     <ClInclude Include="StringMunge.h" />

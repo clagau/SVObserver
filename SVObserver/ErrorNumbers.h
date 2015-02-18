@@ -6,8 +6,8 @@
 //* .File Name       : $Workfile:   ErrorNumbers.h  $
 //* .Description     : PLEASE ENTER A DESCRIPTION
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.4  $
-//* .Check In Date   : $Date:   12 Feb 2015 02:57:36  $
+//* .Current Version : $Revision:   1.5  $
+//* .Check In Date   : $Date:   18 Feb 2015 02:47:42  $
 //******************************************************************************
 
 #pragma once
@@ -70,12 +70,23 @@ static const int Err_25009 = Gra_ErrorBase + 9;
 static const int Err_25010 = Gra_ErrorBase + 10;
 static const int Err_25011 = Gra_ErrorBase + 11;
 static const int Err_25012 = Gra_ErrorBase + 12;
+static const UINT Err_25013 = Gra_ErrorBase + 13;
 
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\ErrorNumbers.h_v  $
+ * 
+ *    Rev 1.5   18 Feb 2015 02:47:42   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  984
+ * SCR Title:  Exception Display Class with Exception Manager Template SVO-524
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Added no Matrox Dongle exception error
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.4   12 Feb 2015 02:57:36   mziegler
  * Project:  SVObserver
