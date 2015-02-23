@@ -5,8 +5,8 @@
 //* .Module Name     : SVException
 //* .File Name       : $Workfile:   SVException.h  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   18 Feb 2015 03:14:50  $
+//* .Current Version : $Revision:   1.3  $
+//* .Check In Date   : $Date:   23 Feb 2015 03:47:16  $
 //******************************************************************************
 
 #ifndef _INC_SVEXCEPTION_38BBBEC2003E_INCLUDED
@@ -64,6 +64,7 @@ public:
 	void SetException(long ErrorCode, TCHAR* szCompileDate, TCHAR* szCompileTime, LPCTSTR sErrorText, TCHAR* szSourceFile, long SourceLine, TCHAR* szSourceDateTime, DWORD dwProgramCode = 0);
 
 	UINT GetSeverity() const;
+	UINT getSeverityIcon() const;
 	UINT GetFacility() const;
 	UINT GetEventID() const;
 	WORD GetCategory() const;
@@ -122,6 +123,16 @@ private:
 // ******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVStatusLibrary\SVException.h_v  $
+ * 
+ *    Rev 1.3   23 Feb 2015 03:47:16   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  984
+ * SCR Title:  Exception Display Class with Exception Manager Template SVO-524
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Added method getSevirityIcon
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.2   18 Feb 2015 03:14:50   gramseier
  * Project:  SVObserver

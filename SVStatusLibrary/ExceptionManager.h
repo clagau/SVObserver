@@ -7,8 +7,8 @@
 /// .Description	 : The exception manager controls the storing, displaying and logging
 ///					   of information warning and error messages
 /// ----------------------------------------------------------------------------
-/// .Current Version : $Revision:   1.0  $
-/// .Check In Date   : $Date:   18 Feb 2015 03:12:16  $
+/// .Current Version : $Revision:   1.1  $
+/// .Check In Date   : $Date:   23 Feb 2015 03:44:56  $
 //******************************************************************************
 #pragma once
  
@@ -49,17 +49,17 @@ namespace Seidenader
 		public:
 			ExceptionManager<EM_Data, EM_Display, EM_Log>();
 
+			//************************************
+			//! Constructor which sets the message type
+			//! \param Type [in] Determines if the message is logged, or displayed and logged
+			//************************************
+			ExceptionManager<EM_Data, EM_Display, EM_Log>( const ExpTypeEnum Type );
+
 			virtual ~ExceptionManager();
 		#pragma endregion Constructor
 
 		#pragma region Public Methods
 		public:
-			//************************************
-			//! The method returns the instance to the class
-			//! \returns a reference to the static object
-			//************************************
-			static ExceptionManager<EM_Data, EM_Display, EM_Log>& Instance();
-
 			//************************************
 			//! Sets the exception type
 			//! \param Type [in] Determines if the exception is logged, or displayed and logged
@@ -76,10 +76,10 @@ namespace Seidenader
 			//! \param MsgBoxType [in] is the display message box type
 			//! \returns the result of the message box or IDCANCEL if not displayed
 			//************************************
-			INT_PTR Process( const UINT MsgBoxType = MB_OK | MB_ICONEXCLAMATION );
+			INT_PTR Process( const UINT MsgBoxType = MB_OK );
 
 			//************************************
-			//! Sets the exception data
+			//! Sets the message data
 			//! \param ErrorCode [in] is the unique error number
 			//! \param ErrorText [in] the accompanying text to the error code
 			//! \param CompileDate [in] the source file compile date
@@ -92,18 +92,18 @@ namespace Seidenader
 			//! \param MsgBoxType [in] is the display message box type
 			//! \returns the result of the message box or IDCANCEL if not displayed
 			//************************************
-			INT_PTR setException( long ErrorCode, LPCTSTR sErrorText, TCHAR* CompileDate, TCHAR* CompileTime, TCHAR* SourceFile, const long SourceLine, TCHAR* SourceDateTime, DWORD ProgramCode = 0, DWORD OSErrorCode = 0, const UINT MsgBoxType = MB_OK | MB_ICONEXCLAMATION );
+			INT_PTR setMessage( long ErrorCode, LPCTSTR sErrorText, TCHAR* CompileDate, TCHAR* CompileTime, TCHAR* SourceFile, const long SourceLine, TCHAR* SourceDateTime, DWORD ProgramCode = 0, DWORD OSErrorCode = 0, const UINT MsgBoxType = MB_OK );
 
 			//************************************
-			//! Sets the exception data
+			//! Sets the message data
 			//! \param rData[in] reference to the exception data container
 			//! \param MsgBoxType [in] is the display message box type
 			//! \returns the result of the message box or IDCANCEL if not displayed
 			//************************************
-			INT_PTR setException( const EM_Data& rData, const UINT MsgBoxType = MB_OK | MB_ICONEXCLAMATION );
+			INT_PTR setMessage( const EM_Data& rData, const UINT MsgBoxType = MB_OK );
 
 			//************************************
-			//! Sets the exception data
+			//! Sets the message data
 			//! \param ErrorCode [in] is the unique error number
 			//! \param pErrorData [in] pointer to the binary error data
 			//! \param ErrorDataSize [in] the binary data size
@@ -117,7 +117,7 @@ namespace Seidenader
 			//! \param MsgBoxType [in] is the display message box type
 			//! \returns the result of the message box or IDCANCEL if not displayed
 			//************************************
-			INT_PTR setException( long ErrorCode, LPVOID pErrorData, UINT ErrorDataSize, TCHAR* CompileDate, TCHAR* CompileTime, TCHAR* SourceFile, long SourceLine, TCHAR* SourceDateTime, DWORD ProgramCode = 0, DWORD OSErrorCode = 0, const UINT MsgBoxType = MB_OK | MB_ICONEXCLAMATION );
+			INT_PTR setMessage( long ErrorCode, LPVOID pErrorData, UINT ErrorDataSize, TCHAR* CompileDate, TCHAR* CompileTime, TCHAR* SourceFile, long SourceLine, TCHAR* SourceDateTime, DWORD ProgramCode = 0, DWORD OSErrorCode = 0, const UINT MsgBoxType = MB_OK );
 		#pragma endregion Public Methods
 
 		#pragma region Private Methods
@@ -160,6 +160,17 @@ namespace SvStl = Seidenader::SVStatusLibrary;
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVStatusLibrary\ExceptionManager.h_v  $
+ * 
+ *    Rev 1.1   23 Feb 2015 03:44:56   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  984
+ * SCR Title:  Exception Display Class with Exception Manager Template SVO-524
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Removed exception manager singelton
+ * Display Dialog icon set by message type
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.0   18 Feb 2015 03:12:16   gramseier
  * Project:  SVObserver

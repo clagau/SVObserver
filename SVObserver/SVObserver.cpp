@@ -5,8 +5,8 @@
 //* .Module Name     : SVObserver
 //* .File Name       : $Workfile:   SVObserver.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.49  $
-//* .Check In Date   : $Date:   18 Feb 2015 11:10:54  $
+//* .Current Version : $Revision:   1.50  $
+//* .Check In Date   : $Date:   23 Feb 2015 03:38:38  $
 //******************************************************************************
 
 #pragma region Includes
@@ -3448,8 +3448,8 @@ BOOL SVObserverApp::InitInstance()
 
 	if ( !TheSVOLicenseManager().HasMatroxLicense() )
 	{
-		SvStl::ExceptionMgr1::Instance().setType( SvStl::ExpTypeEnum::LogAndDisplay );
-		SvStl::ExceptionMgr1::Instance().setException( SVMSG_SVO_52_NOMATAROX_DONGLE, nullptr, StdExceptionParams, Err_25013 );
+		SvStl::ExceptionMgr1 Exception( SvStl::ExpTypeEnum::LogAndDisplay );
+		Exception.setMessage( SVMSG_SVO_52_NOMATAROX_DONGLE, nullptr, StdExceptionParams, Err_NoMatroxDongle_25013 );
 	}
 
 	if ( TheSVOLicenseManager().HasMatroxLicense() && (!TheSVOLicenseManager().HasMatroxGigELicense()) && IsMatroxGige()  )
@@ -8724,6 +8724,16 @@ int SVObserverApp::FindMenuItem(CMenu* Menu, LPCTSTR MenuString)
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVObserver.cpp_v  $
+ * 
+ *    Rev 1.50   23 Feb 2015 03:38:38   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  984
+ * SCR Title:  Exception Display Class with Exception Manager Template SVO-524
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Removed exception manager singelton
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.49   18 Feb 2015 11:10:54   sjones
  * Project:  SVObserver

@@ -5,8 +5,8 @@
 //* .Module Name     : SVException
 //* .File Name       : $Workfile:   SVException.cpp  $
 //* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.4  $
-//* .Check In Date   : $Date:   18 Feb 2015 03:14:50  $
+//* .Current Version : $Revision:   1.5  $
+//* .Check In Date   : $Date:   23 Feb 2015 03:47:14  $
 //******************************************************************************
 
 #include "stdafx.h"
@@ -246,10 +246,7 @@ Writes the exception to the exception log.
 */
 void SVException::LogException()
 {
-	SVString szEmpty;
-
-	szEmpty.clear();
-	LogException (szEmpty.ToString());
+	LogException (m_ErrorText.ToString());
 }
 
 /*
@@ -462,6 +459,32 @@ UINT SVException::GetSeverity() const
 	return (GetErrorCode () & 0xc0000000) >> 30;
 }
 
+UINT SVException::getSeverityIcon() const
+{
+	UINT Icon( 0 );
+
+	switch (GetSeverity())
+	{
+	case SEV_SUCCESS :
+		Icon = MB_ICONINFORMATION;
+		break;
+
+	case SEV_INFORMATIONAL :
+		Icon = MB_ICONINFORMATION;
+		break;
+
+	case SEV_WARNING :
+		Icon = MB_ICONWARNING;
+		break;
+
+	case SEV_FATAL :
+		Icon = MB_ICONERROR;
+		break;
+	}
+
+	return Icon;
+}
+
 /*
 Returns the 12 bit facility code. (see SVMessage.h for a complete list).
 */
@@ -667,6 +690,16 @@ SVString SVException::what() const
 // ******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVStatusLibrary\SVException.cpp_v  $
+ * 
+ *    Rev 1.5   23 Feb 2015 03:47:14   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  984
+ * SCR Title:  Exception Display Class with Exception Manager Template SVO-524
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Added method getSevirityIcon
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
  * 
  *    Rev 1.4   18 Feb 2015 03:14:50   gramseier
  * Project:  SVObserver
