@@ -111,57 +111,6 @@ protected:
 };
 
 /**
-@SVObjectName Equation Parsing Data
-
-@SVObjectOverview This object holds the parsing data for the equation object.
-
-@SVObjectOperations This object has simple operators to duplicate itself, set the equation string, get the equation string.
-
-*/
-struct SVEquationStruct 
-{
-	SVEquationStruct ()
-	{
-		EquationBuffer.Empty();
-		StartPos = 0;
-		EndPos = 0;
-	};
-
-	SVEquationStruct& operator=( const SVEquationStruct &REquationStruct)
-	{
-		EquationBuffer = REquationStruct.EquationBuffer;
-		StartPos = REquationStruct.StartPos;
-		EndPos = REquationStruct.EndPos;
-		return (*this);
-	};
-
-	void GetEquationText(CString &text)
-	{
-		text = EquationBuffer;	
-	};
-
-	void GetEquationText(SVString &text)
-	{
-		text = EquationBuffer;	
-	};
-
-	void SetEquationText(const CString text)
-	{
-		EquationBuffer = text;
-	};
-
-	void SetEquationText(const SVString text)
-	{
-		EquationBuffer = text.ToString();
-	};
-
-	CString EquationBuffer;
-	int StartPos;
-	int EndPos;
-};
-
-
-/**
 @SVObjectName Equation Test Result
 
 @SVObjectOverview This object holds the result information of the test operation.
@@ -204,14 +153,52 @@ class SVEquationClass :
 {
 	SV_DECLARE_CLASS( SVEquationClass );
 
+	/**
+	@SVObjectName Equation Parsing Data
+
+	@SVObjectOverview This object holds the parsing data for the equation object.
+
+	@SVObjectOperations This object has simple operators to duplicate itself, set the equation string, get the equation string.
+
+	*/
+	struct SVEquationStruct 
+	{
+		SVEquationStruct ()
+		{
+			EquationBuffer.Empty();
+			StartPos = 0;
+			EndPos = 0;
+		};
+
+		SVEquationStruct& operator=( const SVEquationStruct &REquationStruct)
+		{
+			EquationBuffer = REquationStruct.EquationBuffer;
+			StartPos = REquationStruct.StartPos;
+			EndPos = REquationStruct.EndPos;
+			return (*this);
+		};
+
+		void GetEquationText(CString &text) const
+		{
+			text = EquationBuffer;	
+		};
+
+		void SetEquationText(const CString& text)
+		{
+			EquationBuffer = text;
+		};
+
+		CString EquationBuffer;
+		int StartPos;
+		int EndPos;
+	};
+
 public:
 	SVEquationClass( SVObjectClass* POwner = NULL, int StringResourceID = IDS_CLASSNAME_SVEQUATION );
 	virtual ~SVEquationClass();
 
 	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure );
 
-	SVEquationStruct* GetEquationStruct();
-	
 	double GetYACCResult();
 
 	// For Conditional
@@ -219,8 +206,10 @@ public:
 
 	BOOL HasCondition();
 
-	void GetEquationText(CString &text);
-	void SetEquationText(CString &text);
+	void GetEquationText(CString& text) const;
+	void GetEquationText(SVString& text) const;
+	void SetEquationText(const CString& text);
+	void SetEquationText(const SVString& text);
 
 	virtual int AddSymbol( LPCTSTR name );
 

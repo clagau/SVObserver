@@ -534,37 +534,6 @@ BOOL SVEquationClass::HasCondition()
 	return !equationStruct.EquationBuffer.IsEmpty();
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : GetEquationStruct
-// -----------------------------------------------------------------------------
-// .Description : ...
-//              :
-// -----------------------------------------------------------------------------
-// .Input(s)
-//	 Type				Name				Description
-//	: 
-//  :
-// .Output(s)
-//	:
-//  :
-// .Return Value
-//	: 
-// -----------------------------------------------------------------------------
-// .Import Function Reference(s)
-//	:
-// -----------------------------------------------------------------------------
-// .Import Variable Reference(s)
-//	:
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :25.05.1999 SEJ			First Implementation
-////////////////////////////////////////////////////////////////////////////////
-SVEquationStruct* SVEquationClass::GetEquationStruct()
-{
-	return &equationStruct;
-}
-
 double SVEquationClass::GetYACCResult()
 {
 	return yacc.equationResult;
@@ -596,9 +565,14 @@ double SVEquationClass::GetYACCResult()
 //	 Date		Author		Comment                                       
 //  :25.05.1999 SEJ			First Implementation
 ////////////////////////////////////////////////////////////////////////////////
-void SVEquationClass::GetEquationText(CString &text)
+void SVEquationClass::GetEquationText(CString& text) const
 {
 	text = equationStruct.EquationBuffer;
+}
+
+void SVEquationClass::GetEquationText(SVString& text) const
+{
+	text = equationStruct.EquationBuffer.GetString();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -627,9 +601,18 @@ void SVEquationClass::GetEquationText(CString &text)
 //	 Date		Author		Comment                                       
 //  :25.05.1999 SEJ			First Implementation
 ////////////////////////////////////////////////////////////////////////////////
-void SVEquationClass::SetEquationText(CString &text)
+void SVEquationClass::SetEquationText(const CString& text)
 {
 	equationStruct.EquationBuffer = text;
+	if (text.IsEmpty())
+	{
+		symbols.ClearAll();
+	}
+}
+
+void SVEquationClass::SetEquationText(const SVString& text)
+{
+	SetEquationText(CString(text.ToString()));
 }
 
 #ifdef USE_OBJECT_SCRIPT

@@ -128,6 +128,13 @@ void SVExternalToolImageSelectPage::OnItemChanged(NMHDR* pNotifyStruct, LRESULT*
 			{
 				SVImageClass* image = m_AvailableImages[comboData];
 				SVInObjectInfoStruct& rInfo = *(m_pInputImageInfo[pItem->GetCtrlID()]);
+				// disconnect old selected image
+				if ( rInfo.GetInputObjectInfo().PObject )
+				{	// disconnect existing connection
+					BOOL bSuccess = (::SVSendMessage( rInfo.GetInputObjectInfo().PObject, SVM_DISCONNECT_OBJECT_INPUT, reinterpret_cast<DWORD_PTR>(&rInfo), NULL ) == SVMR_SUCCESS);
+					ASSERT( bSuccess );
+					rInfo.SetInputObject( nullptr );
+				}
 				//set new image to the Input image info
 				rInfo.SetInputObject(image);
 

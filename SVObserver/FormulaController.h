@@ -60,7 +60,6 @@ protected:
 	SVInspectionProcess* m_pInspection;
 	SVToolSetClass*      m_pToolSet;
 	SVEquationClass*     m_pEquation;
-	SVEquationStruct*    m_pEquationStruct;
 #pragma endregion Member Variables
 };
 

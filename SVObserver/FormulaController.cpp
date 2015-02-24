@@ -34,7 +34,6 @@ FormulaController::FormulaController( SVTaskObjectClass& pObject )
 : m_pInspection(nullptr)
 , m_pToolSet(nullptr)
 , m_pEquation (nullptr)
-, m_pEquationStruct (nullptr)
 {
 	setTaskObject( pObject );
 }
@@ -43,7 +42,6 @@ FormulaController::FormulaController()
 : m_pInspection(nullptr)
 , m_pToolSet(nullptr)
 , m_pEquation (nullptr)
-, m_pEquationStruct (nullptr)
 {
 }
 #pragma endregion Constructor
@@ -53,10 +51,10 @@ FormulaController::FormulaController()
 SVString FormulaController::getEquationText() const
 {
 	SVString equationText("");
-	ASSERT( m_pEquationStruct );
-	if( nullptr != m_pEquationStruct )
+	ASSERT( m_pEquation );
+	if( nullptr != m_pEquation )
 	{
-		m_pEquationStruct->GetEquationText( equationText );
+		m_pEquation->GetEquationText( equationText );
 	}
 	return equationText;
 }
@@ -143,8 +141,8 @@ int FormulaController::validateEquation( const SVString &equationString, double&
 	int retValue = validateSuccessful;
 	SVString oldString("");
 	//save old string
-	m_pEquationStruct->GetEquationText(oldString);
-	m_pEquationStruct->SetEquationText(equationString);
+	m_pEquation->GetEquationText(oldString);
+	m_pEquation->SetEquationText(equationString);
 
 	SVEquationTestResult testResult = m_pEquation->Test();
 	if (testResult.bPassed)
@@ -157,7 +155,7 @@ int FormulaController::validateEquation( const SVString &equationString, double&
 		retValue = testResult.iPositionFailed;
 	}
 	//reset old string
-	m_pEquationStruct->SetEquationText(oldString);
+	m_pEquation->SetEquationText(oldString);
 	return retValue;
 }
 
@@ -168,7 +166,7 @@ int FormulaController::validateAndSetEquation( const SVString &equationString, d
 	if ( validateSuccessful == retValue )
 	{
 		//set new equation text and reset all objects for using the new value
-		m_pEquationStruct->SetEquationText(equationString);
+		m_pEquation->SetEquationText(equationString);
 		SVObjectClass* object = dynamic_cast<SVObjectClass*>(m_pEquation->GetTool());
 		if( nullptr != object )
 		{
@@ -188,14 +186,6 @@ int FormulaController::validateAndSetEquation( const SVString &equationString, d
 void FormulaController::setEquation( SVEquationClass* pEquation )
 {
 	m_pEquation = pEquation;
-	if( nullptr != m_pEquation )
-	{
-		m_pEquationStruct = m_pEquation->GetEquationStruct();
-	}
-	else
-	{
-		m_pEquationStruct = nullptr;
-	}
 }
 #pragma endregion Protected Methods
 
