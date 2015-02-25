@@ -4636,7 +4636,7 @@ BEGIN
     "N",            ID_ADD_LINEARTOOL,      VIRTKEY, CONTROL, ALT, NOINVERT
     "O",            ID_FILE_OPEN,           VIRTKEY, CONTROL, NOINVERT
     "O",            ID_ADD_ROUNDWINDOWTOOL, VIRTKEY, CONTROL, ALT, NOINVERT
-    "P",            ID_FILE_PRINT,          VIRTKEY, CONTROL, NOINVERT
+    "P",            ID_FILE_PRINT_CONFIG,   VIRTKEY, CONTROL, NOINVERT
     "P",            ID_ADD_PROFILETOOL,     VIRTKEY, CONTROL, ALT, NOINVERT
     "R",            ID_RUN_REGRESSIONTEST,  VIRTKEY, CONTROL, NOINVERT
     "R",            ID_ADD_REMOTEINPUTTOOL, VIRTKEY, CONTROL, ALT, NOINVERT
@@ -5893,7 +5893,6 @@ BEGIN
     ID_FILE_SAVE_AS         "Save the active inspection process document with a new name\nSave As"
     ID_FILE_PAGE_SETUP      "Change the printing options\nPage Setup"
     ID_FILE_PRINT_SETUP     "Change the printer and printing options\nPrint Setup"
-    ID_FILE_PRINT           "Print the active document\nPrint"
     ID_FILE_PRINT_PREVIEW   "Display full pages\nPrint Preview"
     ID_FILE_UPDATE          "Update the container to show any changes\nUpdate"
     ID_FILE_SAVE_COPY_AS    "Save a copy of the active document with a new name\nSave Copy"
@@ -6122,7 +6121,6 @@ BEGIN
     ID_ADD_GAGETOOL         "Insert a blank Gage Tool!\nAdd Gage Tool"
     ID_ADD_PROFILETOOL      "Insert a blank Profile Tool!\nAdd Profile Tool"
     ID_FILE_PRINT_CONFIG    "Print the active configuration\nPrint"
-    ID_FILE_PRINT_PREVIEW_CONFIG "Display full pages\nPrint Preview"
     ID_EXTRAS_USERMANAGER   "Opens the SVObserver user manager."
     ID_ADD_ROUNDWINDOWTOOL  "Insert a blank Round Window Tool!\nAdd Round Window Tool"
     ID_ADD_ROTATETOOL       "Insert a blank Rotate Tool!\nAdd Rotate Tool"

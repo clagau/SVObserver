@@ -214,7 +214,6 @@ BEGIN_MESSAGE_MAP(SVObserverApp, CWinApp)
 	ON_COMMAND(ID_FILE_SAVE_ALL, OnFileSaveAll)
 	ON_COMMAND(ID_FILE_PRINT_SETUP, OnFilePrintSetup)
 	ON_COMMAND(ID_FILE_PRINT_CONFIG, OnFilePrintConfig)
-	ON_COMMAND(ID_FILE_PRINT_PREVIEW_CONFIG, OnFilePrintPreviewConfig)
 	ON_COMMAND(ID_FILE_SAVE_AS_SVC, OnFileSaveAsSVC)
 	ON_COMMAND_EX_RANGE(ID_FILE_MRU_FILE1, ID_FILE_MRU_FILE16, OnOpenRecentFile)
 
@@ -269,7 +268,6 @@ BEGIN_MESSAGE_MAP(SVObserverApp, CWinApp)
 	ON_UPDATE_COMMAND_UI(ID_FILE_SAVE_COPY_AS, OnUpdateFileSaveCopyAs)
 	ON_UPDATE_COMMAND_UI(ID_FILE_SAVE_IMAGE, OnUpdateFileSaveImage)
 	ON_UPDATE_COMMAND_UI(ID_FILE_UPDATE, OnUpdateFileUpdate)
-	ON_UPDATE_COMMAND_UI(ID_FILE_PRINT, OnUpdateFilePrint)
 	ON_UPDATE_COMMAND_UI(ID_FILE_PRINT_CONFIG, OnUpdateFilePrintConfig)
 	ON_UPDATE_COMMAND_UI(ID_FILE_PRINT_PREVIEW, OnUpdateFilePrintPreview)
 	ON_UPDATE_COMMAND_UI(ID_FILE_PRINT_SETUP, OnUpdateFilePrintSetup)
@@ -1520,12 +1518,6 @@ void SVObserverApp::OnUpdateExtrasLightReference( CCmdUI* PCmdUI )
 		OkToEdit());
 }
 
-void SVObserverApp::OnUpdateFilePrint( CCmdUI* PCmdUI ) 
-{
-	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_REGRESSION )  
-		&& m_svSecurityMgr.SVIsDisplayable( SECURITY_POINT_FILE_MENU_PRINT ) );
-}
-
 void SVObserverApp::OnUpdateFilePrintPreview( CCmdUI* PCmdUI ) 
 {
 	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_REGRESSION ) 
@@ -1735,27 +1727,6 @@ void SVObserverApp::OnFilePrintConfig()
 
 	SVConfigurationPrint printConfig;
 	printConfig.DoPrintConfig();
-}
-
-/////////////////////////////////////////////////////////////////////////////
-//
-//
-//  Not Called..  BRW - We should delete this.
-//
-void SVObserverApp::OnFilePrintPreviewConfig() 
-{
-	CMDIChildWnd* pMDIChild;
-	if( m_pMainWnd && ( pMDIChild = ( ( CMDIFrameWnd* ) m_pMainWnd )->MDIGetActive() ) )
-	{
-		CDocument* pCurrentDocument;
-		if( ( pCurrentDocument = pMDIChild->GetActiveDocument() ) )
-		{
-			CRect    defaultRect;
-
-			pMDIChild->GetClientRect( &defaultRect );
-
-		}
-	}
 }
 
 void SVObserverApp::OnExtrasLogin() 

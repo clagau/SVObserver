@@ -147,7 +147,6 @@ public:
 #endif
 	afx_msg void OnUpdateEditAddRemoteOutputs(CCmdUI *pCmdUI);
 	afx_msg void OnUpdateExtrasLightReference(CCmdUI* PCmdUI);
-	afx_msg void OnUpdateFilePrint(CCmdUI* PCmdUI);
 	afx_msg void OnUpdateFilePrintPreview(CCmdUI* PCmdUI);
 	afx_msg void OnUpdateFilePrintSetup(CCmdUI* PCmdUI);
 	afx_msg void OnUpdateExtrasTestOutputs(CCmdUI* PCmdUI);
@@ -175,7 +174,6 @@ public:
 	afx_msg void OnUpdateAddMathTool(CCmdUI* PCmdUI);
 	afx_msg void OnUpdateAddStatisticsTool(CCmdUI* PCmdUI);
 	afx_msg void OnFilePrintConfig();
-	afx_msg void OnFilePrintPreviewConfig();
 	afx_msg void OnExtrasLogin();
 	afx_msg void OnUpdateExtrasLogin(CCmdUI* PCmdUI);
 	afx_msg void OnUpdateExtrasUserManager(CCmdUI* PCmdUI);
