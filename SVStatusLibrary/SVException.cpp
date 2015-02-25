@@ -480,6 +480,10 @@ UINT SVException::getSeverityIcon() const
 	case SEV_FATAL :
 		Icon = MB_ICONERROR;
 		break;
+
+	default:
+		Icon = 0;
+		break;
 	}
 
 	return Icon;
