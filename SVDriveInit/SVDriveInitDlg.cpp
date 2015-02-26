@@ -14,7 +14,9 @@
 #include "resource.h"
 #include "SVDriveInitDlg.h"
 
-#include "utilities.h"
+DWORD GetLastSystemErrorText(CString & szMsg);///< also in SVDriveInitDlg.cpp
+HRESULT GetSystemErrorText(DWORD dwError, CString & szMsg);///< also in SVDriveInitDlg.cpp
+
 #include "cpassdlg.h"
 
 #ifdef _DEBUG
@@ -39,6 +41,9 @@ static _TCHAR sysprepEditPath[_MAX_PATH];
 static _TCHAR hardwareFileName[_MAX_PATH];
 static _TCHAR sviminfoFileName[_MAX_PATH];
 static _TCHAR windowsDriverPath[_MAX_PATH];
+
+void DisplayLastSystemError();
+
 
 /////////////////////////////////////////////////////////////////////////////
 // CAboutDlg dialog used for App About
@@ -306,8 +311,8 @@ void SVDriveInitDlg::OnOK()
     dwAttr = dwAttr | FILE_ATTRIBUTE_READONLY;
     
 
-		if( ! m_CDKey.UpdateProductId() )
-		{
+	if( ! m_CDKey.UpdateProductId() )
+	{
       DisplayLastSystemError();
       MessageBox( "Create Process Failed", title, MB_ICONINFORMATION );
       rc = false;
@@ -1338,6 +1343,44 @@ HRESULT SVDriveInitDlg::AddCommandBeforeSVObserver( LPCTSTR p_strNewCommand, boo
 
 	return l_Status;
 }
+
+
+void DisplayLastSystemError()
+{
+	CString szTemp, szText;
+	DWORD dwError = GetLastSystemErrorText(szText);
+	szTemp.Format(_T("(%04X) %s"),dwError,szText);
+	MessageBox(NULL,szTemp,_T("ERROR"),MB_OK);
+}
+
+
+DWORD GetLastSystemErrorText(CString & szMsg)
+{
+	DWORD dwError = GetLastError();
+	GetSystemErrorText(dwError, szMsg);
+	return dwError;
+}
+
+HRESULT GetSystemErrorText(DWORD dwError, CString & szMsg)
+{
+	LPVOID lpMsgBuf;
+	if(FormatMessage( 
+		FORMAT_MESSAGE_ALLOCATE_BUFFER | 
+		FORMAT_MESSAGE_FROM_SYSTEM | 
+		FORMAT_MESSAGE_IGNORE_INSERTS,
+		NULL,
+		dwError,
+		MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), // Default language
+		(LPTSTR) &lpMsgBuf,
+		0,
+		NULL 
+		) == 0)return S_FALSE;
+	szMsg.Format(_T("%s"),lpMsgBuf);
+	LocalFree(lpMsgBuf);
+	return S_OK;
+}
+
+
 
 
 //******************************************************************************

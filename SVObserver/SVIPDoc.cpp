@@ -94,6 +94,7 @@
 #include "SVTreeLibrary/ObjectSelectorItem.h"
 #include "EnvironmentObject.h"
 #include "ToolClipboard.h"
+#include "AutoSaver.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -1475,6 +1476,7 @@ void SVIPDoc::OnEditTool()
 				INT_PTR dlgResult = toolAdjustmentDialog.DoModal();
 				if ( IDOK == dlgResult )
 				{
+					AutoSaver::Instance().ExecuteAutosaveIfSelected(false);//Arvid: after tool was edited: update the autosave timestamp
 					SVConfigurationObject* pConfig = nullptr;
 					SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 					if (pConfig)

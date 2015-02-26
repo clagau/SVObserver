@@ -318,6 +318,7 @@ echo %time%
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AutoSaver.cpp" />
     <ClCompile Include="CDSVPictureDisplay.cpp" />
     <ClCompile Include="ConditionalController.cpp" />
     <ClCompile Include="BasicValueObject.cpp" />
@@ -4256,6 +4257,7 @@ echo %time%
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\AutoBuild\AutoBuild.h" />
+    <ClInclude Include="AutoSaver.h" />
     <ClInclude Include="BasicValueObject.h" />
     <ClInclude Include="BasicValueObjects.h" />
     <ClInclude Include="CDSVPictureDisplay.h" />

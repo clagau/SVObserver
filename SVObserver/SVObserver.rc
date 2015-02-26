@@ -68,6 +68,7 @@ END
 //
 
 IDB_START               BITMAP                  "Res\\Start.bmp"
+
 #endif    // German (Germany) resources
 /////////////////////////////////////////////////////////////////////////////
 
@@ -155,6 +156,14 @@ IDI_ARROW_ROTATE        ICON                    "res\\arrow_rotate.ico"
 //
 // Dialog
 //
+
+IDD_AUTOSAVE_IN_PROGRESS DIALOGEX 0, 0, 216, 92
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_POPUP
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CTEXT           "Autosaving current configuration ....",IDC_STATIC,43,41,128,8
+END
+
 
 IDD_RESULT_PICKER DIALOGEX 0, 0, 203, 218
 STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
@@ -4228,6 +4237,7 @@ BEGIN
             MENUITEM "&Customize Utilities",        ID_EXTRAS_UTILITIES_EDIT,MFT_STRING,MFS_ENABLED
             MENUITEM MFT_SEPARATOR
         END
+        MENUITEM "Enable Autosave",             ID_EXTRAS_ENABLEAUTOSAVE,MFT_STRING,MFS_ENABLED
     END
     POPUP "&Help",                          65535,MFT_STRING | MFT_RIGHTJUSTIFY,MFS_ENABLED
     BEGIN
@@ -4307,6 +4317,7 @@ BEGIN
             MENUITEM "&Customize Utilities",        ID_EXTRAS_UTILITIES_EDIT,MFT_STRING,MFS_ENABLED
             MENUITEM MFT_SEPARATOR
         END
+        MENUITEM "Enable Autosave",             ID_EXTRAS_ENABLEAUTOSAVE,MFT_STRING,MFS_ENABLED
     END
     POPUP "&Help",                          65535,MFT_STRING | MFT_RIGHTJUSTIFY,MFS_ENABLED
     BEGIN
@@ -4439,6 +4450,7 @@ BEGIN
             MENUITEM "&Customize Utilities",        ID_EXTRAS_UTILITIES_EDIT,MFT_STRING,MFS_ENABLED
             MENUITEM MFT_SEPARATOR
         END
+        MENUITEM "Enable Autosave",             ID_EXTRAS_ENABLEAUTOSAVE,MFT_STRING,MFS_ENABLED
     END
     POPUP "&Help",                          65535,MFT_STRING | MFT_RIGHTJUSTIFY,MFS_ENABLED
     BEGIN
@@ -4923,6 +4935,7 @@ BEGIN
 0x6857, 0x7469, 0x0065, 
     0
 END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //

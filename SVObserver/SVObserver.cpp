@@ -50,6 +50,7 @@
 #include "SVMessageWindow.h"
 #include "SVIO.h"
 #include "SVToolSet.h"
+#include "AutoSaver.h"
 
 #include "SVInputObjectList.h"
 #include "SVOutputObjectList.h"
@@ -160,6 +161,7 @@ public:
 };
 
 CSVObserverModule _Module;
+
 
 SVObserverApp TheSVObserverApp;
 
@@ -340,7 +342,7 @@ BEGIN_MESSAGE_MAP(SVObserverApp, CWinApp)
 	ON_COMMAND(ID_EDIT_ADD_MONITORLIST, &SVObserverApp::OnEditMonitorList)
 	ON_UPDATE_COMMAND_UI(ID_EDIT_ADD_MONITORLIST, &SVObserverApp::OnUpdateEditAddMonitorList)
 
-END_MESSAGE_MAP()
+	END_MESSAGE_MAP()
 
 #pragma region Constructor
 SVObserverApp::SVObserverApp()
@@ -671,16 +673,19 @@ void SVObserverApp::OnFileOpenSVC()
 					{
 						TheSVOLicenseManager().ShowLicenseManagerErrors();
 					}
+					AutoSaver::Instance().SetAutosaveTimestamp(); //Arvid: reset autosave timestamp after configuration was loaded
 				}
 			}
 			if( !m_svSecurityMgr.SVIsSecured( SECURITY_POINT_MODE_MENU_EDIT_TOOLSET ) )
 			{
 				SetModeEdit( true ); // Set Edit mode
 			}
+
 		}// end if ( svFileName.SelectFile() )
 	}// end if ( m_svSecurityMgr.Validate( SECURITY_POINT_FILE_MENU_SELECT_CONFIGURATION) == S_OK )
 	// Update Remote Inputs Tab
 	UpdateRemoteInputTabs();
+
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -744,6 +749,8 @@ void SVObserverApp::OnEditEnvironment()
 ////////////////////////////////////////////////////////////////////////////////
 void SVObserverApp::OnTestMode() 
 {
+	AutoSaver::Instance().ExecuteAutosaveIfSelected(false);//Arvid: before entering test mode: perform autosave
+
 	SetTestMode();
 }
 
@@ -799,6 +806,7 @@ void SVObserverApp::OnStopTestMode()
 		OnStop();
 	}
 }
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : OnEnvironmentSettings
@@ -1966,6 +1974,8 @@ void SVObserverApp::OnUpdateGoOffline( CCmdUI* PCmdUI )
 ////////////////////////////////////////////////////////////////////////////////
 void SVObserverApp::OnGoOnline() 
 {
+	AutoSaver::Instance().ExecuteAutosaveIfSelected(true);
+	
 	long l_lPrevState = 0;
 
 	if( SVSVIMStateClass::CheckState( SV_STATE_EDIT ))
@@ -7773,15 +7783,15 @@ HRESULT SVObserverApp::InitializeSecurity()
 		AddSecurityNode(hMessageDll, SECURITY_POINT_UNRESTRICTED_FILE_ACCESS        , _T("") );
 
 		AddSecurityNode(hMessageDll, SECURITY_POINT_VIEW_MENU );     // Second Child From Root
-		AddSecurityNode(hMessageDll, SECURITY_POINT_VIEW_MENU_PPQ_BAR       , _T("") );
-		AddSecurityNode(hMessageDll, SECURITY_POINT_VIEW_MENU_IMAGE_DISPLAY_UPDATE, _T("") );
-		AddSecurityNode(hMessageDll, SECURITY_POINT_VIEW_MENU_RESULT_DISPLAY_UPDATE, _T("") );
-		AddSecurityNode(hMessageDll, SECURITY_POINT_VIEW_MENU_RESET_COUNTS_CURRENT, _T("") );
-		AddSecurityNode(hMessageDll, SECURITY_POINT_VIEW_MENU_RESET_COUNTS_ALL, _T("") );
+		AddSecurityNode(hMessageDll, SECURITY_POINT_VIEW_MENU_PPQ_BAR               , _T("") );
+		AddSecurityNode(hMessageDll, SECURITY_POINT_VIEW_MENU_IMAGE_DISPLAY_UPDATE  , _T("") );
+		AddSecurityNode(hMessageDll, SECURITY_POINT_VIEW_MENU_RESULT_DISPLAY_UPDATE , _T("") );
+		AddSecurityNode(hMessageDll, SECURITY_POINT_VIEW_MENU_RESET_COUNTS_CURRENT  , _T("") );
+		AddSecurityNode(hMessageDll, SECURITY_POINT_VIEW_MENU_RESET_COUNTS_ALL      , _T("") );
 
 		AddSecurityNode(hMessageDll, SECURITY_POINT_MODE_MENU );     // Third Child From Root
-		AddSecurityNode(hMessageDll, SECURITY_POINT_MODE_MENU_RUN,        _T("") );
-		AddSecurityNode(hMessageDll, SECURITY_POINT_MODE_MENU_STOP,       _T("") );
+		AddSecurityNode(hMessageDll, SECURITY_POINT_MODE_MENU_RUN,              _T("") );
+		AddSecurityNode(hMessageDll, SECURITY_POINT_MODE_MENU_STOP,             _T("") );
 		AddSecurityNode(hMessageDll, SECURITY_POINT_MODE_MENU_REGRESSION_TEST,  _T("") );
 		AddSecurityNode(hMessageDll, SECURITY_POINT_MODE_MENU_TEST,             _T("") );
 		AddSecurityNode(hMessageDll, SECURITY_POINT_MODE_MENU_EDIT_TOOLSET,     _T("") );
@@ -7793,6 +7803,7 @@ HRESULT SVObserverApp::InitializeSecurity()
 		AddSecurityNode(hMessageDll, SECURITY_POINT_EXTRAS_MENU_TEST_OUTPUTS,       _T("") );
 		AddSecurityNode(hMessageDll, SECURITY_POINT_EXTRAS_MENU_UTILITIES_SETUP,    _T("") );
 		AddSecurityNode(hMessageDll, SECURITY_POINT_EXTRAS_MENU_UTILITIES_RUN,      _T("") );
+		AddSecurityNode(hMessageDll, SECURITY_POINT_EXTRAS_MENU_AUTOSAVE_CONFIGURATION, _T("") );
 		m_svSecurityMgr.SVProtectData( SECURITY_POINT_EXTRAS_MENU_SECURITY_MANAGER ); // Sets Flag that will prevent data from being changed.
 	}
 
@@ -7811,7 +7822,7 @@ HRESULT SVObserverApp::InitializeSecurity()
 	return S_OK;
 }
 
-void SVObserverApp::fileSaveAsSVX( CString StrSaveAsPathName ) 
+void SVObserverApp::fileSaveAsSVX( CString StrSaveAsPathName ,bool isRegularSave) 
 {
 	SVFileNameManagerClass svFileManager;
 	CWaitCursor wait;
@@ -7847,12 +7858,15 @@ void SVObserverApp::fileSaveAsSVX( CString StrSaveAsPathName )
 
 		if ( svFileName.SaveFile() )
 		{
-			bOk = setConfigFullFileName( svFileName.GetFullFileName(), RENAME );
-			if ( bOk )
+			if(isRegularSave) //Arvid in non regular save the configuration name must not be changed
 			{
-				AfxGetApp()->WriteProfileString( _T( "Settings" ), 
-					_T( "ConfigurationFilePath" ), 
-					svFileName.GetPathName() );
+				bOk = setConfigFullFileName( svFileName.GetFullFileName(), RENAME );
+				if ( bOk )
+				{
+					AfxGetApp()->WriteProfileString( _T( "Settings" ), 
+						_T( "ConfigurationFilePath" ), 
+						svFileName.GetPathName() );
+				}
 			}
 		}
 		else
@@ -7862,7 +7876,10 @@ void SVObserverApp::fileSaveAsSVX( CString StrSaveAsPathName )
 	}// end if ( StrSaveAsPathName.IsEmpty() )
 	else
 	{
-		bOk = setConfigFullFileName( StrSaveAsPathName, FALSE );
+		if(isRegularSave) //Arvid in non regular save the configuration name must not be changed
+		{
+			bOk = setConfigFullFileName( StrSaveAsPathName, FALSE );
+		}
 	}
 
 	if ( bOk && !CString( m_ConfigFileName.GetExtension() ).CompareNoCase( ".svx" ) )
@@ -7901,7 +7918,10 @@ void SVObserverApp::fileSaveAsSVX( CString StrSaveAsPathName )
 		svFileManager.SaveItems();
 		svFileManager.RemoveUnusedFiles();
 
-		SVSVIMStateClass::RemoveState( SV_STATE_MODIFIED );
+		if(isRegularSave)
+		{
+			SVSVIMStateClass::RemoveState( SV_STATE_MODIFIED );
+		}
 
 		SVNavigateTreeClass::DeleteAllItems( m_XMLTree );
 
@@ -7913,14 +7933,21 @@ void SVObserverApp::fileSaveAsSVX( CString StrSaveAsPathName )
 			}
 			else
 			{
-				AddToRecentFileList( CString( svFileManager.GetConfigurationPathName() ) + 
-					"\\" + getConfigFileName() );
+				if(isRegularSave) //Arvid in a non-regular save (such as an autosave) the configuration name must not be added to the LRU list
+				{
+					AddToRecentFileList( CString( svFileManager.GetConfigurationPathName() ) + 
+						"\\" + getConfigFileName() );
+				}
 			}
+			
+			AutoSaver::Instance().SetAutosaveTimestamp(); //Arvid: save was successful: update autosave timestamp
 		}
 
 		( (CMDIFrameWnd*) AfxGetMainWnd() )->OnUpdateFrameTitle(TRUE);
 
 		// Success...
+
+
 		return;
 	}// end if ( !CString( m_ConfigFileName.GetExtension() ).CompareNoCase( ".svx" ) )
 	else
@@ -8688,6 +8715,9 @@ int SVObserverApp::FindMenuItem(CMenu* Menu, LPCTSTR MenuString)
 
 	return -1;
 }
+
+
+
 #pragma endregion Private Methods
 
 //******************************************************************************

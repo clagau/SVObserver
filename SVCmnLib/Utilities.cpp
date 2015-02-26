@@ -82,14 +82,6 @@ DWORD GetLastSystemErrorText(CString & szMsg)
 	return dwError;
 }
 
-void DisplayLastSystemError()
-{
-	CString szTemp, szText;
-	DWORD dwError = GetLastSystemErrorText(szText);
-	szTemp.Format(_T("(%04X) %s"),dwError,szText);
-	MessageBox(NULL,szTemp,_T("ERROR"),MB_OK);
-}
-
 BOOL CopyDir(LPCTSTR szOrigPath, LPCTSTR szNewPath)
 {
 
@@ -128,55 +120,51 @@ BOOL CopyDir(LPCTSTR szOrigPath, LPCTSTR szNewPath)
 }
 
 
-BOOL DeleteDir(LPCTSTR szPath)
+void moveContainedDirectory(const CString &containingDirectoryPath,const CString &sourceDirectory,const CString &destinationDirectory)
 {
-	CString			csFileToFind;
-	CString			csFile;
-	CFileFind*		pcffFinder = NULL;
-	BOOL			blReturn = TRUE;
+	CString sourcePath=containingDirectoryPath+"\\"+sourceDirectory;
+	CString destinationPath=containingDirectoryPath+"\\"+destinationDirectory;
 
-	pcffFinder = new CFileFind(); 
-	
-	if(!pcffFinder)return FALSE;
-	
-	csFileToFind	= szPath;
-	csFileToFind += _T("*.*");
+	deleteTree(destinationPath);
 
-	BOOL bWorking = pcffFinder->FindFile ( csFileToFind );
+	MoveFile(sourcePath,destinationPath); //Arvid: this should work for directories: https://msdn.microsoft.com/en-us/library/aa365239(VS.85).aspx
+}
 
-	while ( bWorking )
+
+void deleteTree(const CString &originalPath)
+{
+	//Arvid: this solution was taken (and modified somewhat) from here: http://www.codeproject.com/Articles/1862/Delete-folders-subfolders-and-files-easily
+	CFileFind ff;
+	CString searchpath = originalPath;
+
+	if(searchpath.Right(1) != "\\")
+		searchpath += "\\";
+
+	searchpath += "*.*";
+
+	BOOL res = ff.FindFile(searchpath);
+
+	while(res)
+	{
+		res = ff.FindNextFile();
+		if (!ff.IsDots() && !ff.IsDirectory())
 		{
-		bWorking = pcffFinder->FindNextFile ( );
-
-		// If file is directory ...
-		if ( !pcffFinder->IsDirectory ( ) )
+			DeleteFile(ff.GetFilePath());
+		}
+		else if (ff.IsDirectory())
+		{
+			if(!ff.IsDots()) //Arvid: do not remove the "." and ".." directories
 			{
-			csFile = (LPCTSTR) pcffFinder->GetFilePath ( );
-			if(!DeleteFile(csFile))
-				{
-				blReturn = FALSE;
-				break;
-				}
+				deleteTree(ff.GetFilePath());
 			}
 		}
-
-	if(pcffFinder)delete pcffFinder;
-
-	CString szTemp = szPath;
-	szTemp.Delete(szTemp.GetLength() - 1,1);	   
-	if(blReturn)
-		{
-		BOOL bl = RemoveDirectory(szTemp);
-
-		if(!bl)
-			{
-			CString szMsg;
-			GetLastSystemErrorText(szMsg);
-			}	  
-		}
-
-	return blReturn;
+	}
+	RemoveDirectory(originalPath);//Arvid: the directory path is removed only when empty (which should be the case at this stage)
 }
+
+
+
+
 
 // ******************************************************************************
 // * LOG HISTORY:

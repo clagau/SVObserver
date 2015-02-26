@@ -94,6 +94,7 @@ LPCTSTR const SVEXCLUDECHARS_INSPECTION_NAME = (_T("\\/:*\";,.+-$@'[]{}()<>|"));
 typedef SVXMLMaterialsTree SVTreeType;
 #pragma endregion Declarations
 
+
 class SVObserverApp : public CWinApp
 {
 	DECLARE_SERIAL( SVObserverApp )
@@ -374,6 +375,9 @@ public:
 	void UpdateRemoteInputTabs();
 
 	HRESULT CheckDrive(const CString& p_strDrive) const;
+	//Arvid 150202: made this public because it is needed by AutoSaver
+	//Arvid 150206: added parameter resetModifiedState so the main Modify flag is not changed when called during auto save
+	void fileSaveAsSVX( CString StrSaveAsPathName = _T( "" ) ,bool isRegularSave=true );
 
 #pragma region Encapsulation Methods
 	BOOL getShowUpdateFirmwareInMenu() const { return m_ShowUpdateFirmwareInMenu; }
@@ -428,7 +432,6 @@ protected:
 	HRESULT ConnectCameraBuffers( const CStringArray& rCamerasToConnect );
 	HRESULT InitializeSecurity();
 
-	void fileSaveAsSVX( CString StrSaveAsPathName = _T( "" ) );
     BOOL OpenConfigFileFromMostRecentList(int nID);
 	void EnableTriggerSettings();
 	void DisableTriggerSettings();
@@ -454,10 +457,12 @@ private:
 	bool AddSecurityNode( HMODULE hMessageDll, long lId );
 
 	static int FindMenuItem(CMenu* Menu, LPCTSTR MenuString);
+
 #pragma endregion Private Methods
 
 //@HACK Public Member variables
-#pragma region Public Member variables
+
+#pragma region Public member variables
 public:
 	//firmware command strings
 	CString m_csFirmwareCommand;
@@ -599,7 +604,9 @@ private:
 	unsigned short m_RemoteCommandsPortNumber;
 	unsigned short m_FailStatusStreamPortNumber;
 #pragma endregion Member variables
+
 };
+
 
 extern SVObserverApp TheSVObserverApp;
 

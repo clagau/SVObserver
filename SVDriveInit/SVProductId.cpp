@@ -11,7 +11,7 @@
 
 #include "stdafx.h"
 #include "SVProductId.h"
-#include "Utilities.h"
+
 
 SVProductId::SVProductId()
 : m_ResealWindows( false ), m_PreviousProductId( _T( "\"     -     -     -     -     \"" ) )

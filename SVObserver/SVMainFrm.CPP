@@ -43,6 +43,8 @@
 #include "SVImageView.h"
 #include "SVOLicenseManager/SVOLicenseManager.h"
 #include "SVIPChildFrm.h" 
+#include "AutoSaver.h"
+
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -80,6 +82,8 @@ BEGIN_MESSAGE_MAP(SVMainFrame, CMDIFrameWnd)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_IMAGE_DISPLAY_UPDATE, OnUpdateViewImageDisplayUpdate)
 	ON_COMMAND(ID_VIEW_RESULT_DISPLAY_UPDATE, OnViewResultDisplayUpdate)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_RESULT_DISPLAY_UPDATE, OnUpdateViewResultDisplayUpdate)
+	ON_COMMAND(ID_EXTRAS_ENABLEAUTOSAVE, OnExtrasEnableAutosave)
+	ON_UPDATE_COMMAND_UI(ID_EXTRAS_ENABLEAUTOSAVE, OnUpdateExtrasEnableAutosave)
 	ON_WM_SIZE()
 	ON_WM_SIZING()
 	//}}AFX_MSG_MAP
@@ -112,6 +116,7 @@ BEGIN_MESSAGE_MAP(SVMainFrame, CMDIFrameWnd)
 	ON_COMMAND(ID_TOOLBAR_ZOOM, &SVMainFrame::OnToolbarZoom)
 	ON_UPDATE_COMMAND_UI(ID_TOOLBAR_ZOOM, &SVMainFrame::OnUpdateToolbarZoom)
 	ON_MESSAGE(SV_REGISTER_MONITOR_LIST, &SVMainFrame::RemoteRegisterMonitorList)
+
 END_MESSAGE_MAP()
 
 #pragma region Constructor
@@ -1825,6 +1830,7 @@ LRESULT SVMainFrame::OnLoadConfiguration( WPARAM wParam, LPARAM lParam )
 	return TheSVObserverApp.LoadConfiguration();
 }
 
+
 //******************************************************************************
 // Debug Operation(s):
 //******************************************************************************
@@ -1986,13 +1992,32 @@ void SVMainFrame::OnViewResultDisplayUpdate()
 
 void SVMainFrame::OnUpdateViewResultDisplayUpdate( CCmdUI* pCmdUI )
 {
-	BOOL bEnable = TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable( SECURITY_POINT_VIEW_MENU_RESULT_DISPLAY_UPDATE );
+	BOOL bEnable = TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_VIEW_MENU_RESULT_DISPLAY_UPDATE );
 	bEnable &= !SVSVIMStateClass::CheckState( SV_STATE_REGRESSION );
 	pCmdUI->Enable( bEnable);
 
 	BOOL ResultOnline;
 	EnvironmentObject::getEnvironmentValue( ::EnvironmentResultUpdate, ResultOnline );
 	pCmdUI->SetCheck( ResultOnline );
+}
+
+void SVMainFrame::OnExtrasEnableAutosave()
+{
+	if( TheSVObserverApp.m_svSecurityMgr.SVValidate(
+		SECURITY_POINT_EXTRAS_MENU_AUTOSAVE_CONFIGURATION) != S_OK )
+	{
+		return; //Arvid: not validated:do nothing
+	}
+
+	AutoSaver::Instance().ToggleEnable();
+}
+
+void SVMainFrame::OnUpdateExtrasEnableAutosave(CCmdUI *pCmdUI)
+{
+	BOOL bEnable = TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable( SECURITY_POINT_EXTRAS_MENU_AUTOSAVE_CONFIGURATION );
+
+	pCmdUI->Enable( bEnable );
+	pCmdUI->SetCheck( AutoSaver::Instance().IsEnabled()==TRUE );
 }
 
 BOOL SVMainFrame::VerifyBarStates(LPCTSTR lpszProfileName)

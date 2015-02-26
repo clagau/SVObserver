@@ -41,9 +41,8 @@ class SVMainFrame : public CMDIFrameWnd
 //******************************************************************************
 // Manual Generated Message Map Entries:
 //******************************************************************************
-public:
+private:
 	//{{AFX_MSG(SVMainFrame)
-	afx_msg void OnUpdateStatusInfo(CCmdUI *pCmdUI);
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
 	afx_msg void OnRButtonDown(UINT nFlags, CPoint point);
@@ -51,7 +50,6 @@ public:
 	afx_msg void OnLButtonDblClk(UINT nFlags, CPoint point);
 	afx_msg void OnClose();
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
-	afx_msg void OnViewPPQBar();
 	afx_msg void OnViewToolBar();
 	afx_msg void OnUpdateViewPPQBar(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateViewToolbar(CCmdUI* pCmdUI);
@@ -64,6 +62,21 @@ public:
 	afx_msg LRESULT OnDisplayChange(WPARAM p_p1, LPARAM p_p2);
 	afx_msg LRESULT OnSetMode( WPARAM wParam, LPARAM lParam );
 	afx_msg LRESULT OnLoadConfiguration( WPARAM wParam, LPARAM lParam );
+
+	//************************************
+	/// called by the MFC framework when automatic 
+	/// configuration backups are enabled by the user
+	//************************************
+	afx_msg void OnExtrasEnableAutosave();
+
+	//************************************
+	/// called by the MFC framework
+	/// \param pCmdUI [in]
+	//************************************
+	afx_msg void OnUpdateExtrasEnableAutosave(CCmdUI *pCmdUI);
+public:
+	afx_msg void OnUpdateStatusInfo(CCmdUI *pCmdUI);
+	afx_msg void OnViewPPQBar();
 	//}}AFX_MSG
 
 	// DDE Server Connect Confirm Message...
@@ -193,7 +206,7 @@ public:
 	//************************************
 	bool IsZoomingPossible();
 
-protected:
+private: //Arvid 150203: changed access class from protected
 	// Bars...
 	SVStatusBar				m_wndStatusBar;
 	CToolBar				m_wndToolBar;
@@ -211,6 +224,7 @@ protected:
 	HICON m_oemSmallIcon;
 
 private:
+
 	BOOL m_notifyCommRC;
 
 	BOOL m_bSizeChanged;
