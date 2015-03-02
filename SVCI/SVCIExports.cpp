@@ -14,7 +14,6 @@
 
 #include "SVCISapera.h"
 
-#include "SVImageLibrary/SVImageEnums.h"
 #include "SVOMFCLibrary/SVDeviceParams.h"
 #include "SVImageLibrary/SVImagingDeviceParams.h"
 #include "SVImageLibrary/SVLut.h"

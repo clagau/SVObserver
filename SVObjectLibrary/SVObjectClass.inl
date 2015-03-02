@@ -36,6 +36,7 @@ inline const SVGUID& SVObjectClass::GetOwnerID() const
 	return ownerObjectInfo.UniqueObjectID;
 }
 
+#pragma region virtual method (IObjectClass)
 /*
 This method returns the object's type.
 */
@@ -43,6 +44,7 @@ inline const SVObjectTypeEnum& SVObjectClass::GetObjectType() const
 {
 	return outObjectInfo.ObjectTypeInfo.ObjectType;
 }
+#pragma endregion virtual method (IObjectClass)
 
 /*
 This method returns the object's subtype.

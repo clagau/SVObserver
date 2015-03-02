@@ -14,17 +14,14 @@
 #pragma region Includes
 #include "SVFilterClass.h"
 #include "SVMatroxLibrary/SVMatroxBuffer.h"
+#include "ObjectInterfaces/ICustom2Filter.h"
 #pragma endregion Includes
 
-class Custom2Filter : public SVFilterClass
+class Custom2Filter : virtual public SvOi::ICustom2Filter
+	,public SVFilterClass
 {
 public:
 #pragma region Declarations
-	static const long StandardKernelSize = 3;
-	static const int MaxKernelSize = 21;
-
-	typedef std::vector<long> LongArray;
-
 	SV_DECLARE_CLASS( Custom2Filter );
 #pragma endregion Declarations
 
@@ -57,47 +54,28 @@ public:
 	//************************************
 	virtual HRESULT ResetObject() override;
 
+#pragma region virtual method (IFilter)
 	//************************************
 	// Description: Determines if the IP Doc needs to be reset
 	// Return: True as it should always reset
 	//************************************
-	virtual bool ShouldResetIPDoc() override { return true; }
+	virtual bool shouldResetInspection() const override { return true; }
+#pragma region virtual method (IFilter)
 
-	//************************************
-	// Description: Gets a reference to the required variable which is private
-	// Return: Reference to the KernelArray can not be const
-	//************************************
-	inline SVLongValueObjectClass& getKernelArray();
-
-	//************************************
-	// Description: Gets a reference to the required variable which is private
-	// Return: Reference to the KernelWidth can not be const
-	//************************************
-	inline SVLongValueObjectClass& getKernelWidth();
-
-	//************************************
-	// Description: Gets a reference to the required variable which is private
-	// Return: Reference to the KernelHeight can not be const
-	//************************************
-	inline SVLongValueObjectClass& getKernelHeight();
-
-	//************************************
-	// Description: Gets a reference to the required variable which is private
-	// Return: Reference to the NormalizationFactor can not be const
-	//************************************
-	inline SVLongValueObjectClass& getNormalizationFactor();
-
-	//************************************
-	// Description: Gets a reference to the required variable which is private
-	// Return: Reference to the AbsoluteValue can not be const
-	//************************************
-	inline SVBoolValueObjectClass& getAbsoluteValue();
-
-	//************************************
-	// Description: Gets a reference to the required variable which is private
-	// Return: Reference to the ClippingEnabled can not be const
-	//************************************
-	inline SVBoolValueObjectClass& getClippingEnabled();
+#pragma region virtual method (ICustom2Filter)
+	virtual HRESULT addKernelWidthRequest(long value) override;
+	virtual long getKernelWidth() const override;
+	virtual HRESULT addKernelHeightRequest(long value) override;
+	virtual long getKernelHeight() const override;
+	virtual HRESULT addClippingEnabledRequest(bool value) override;
+	virtual bool isClippingEnabled() const  override;
+	virtual HRESULT addAbsoluteValueRequest(bool value) override;
+	virtual bool isAbsoluteValue() const override;
+	virtual HRESULT addNormalizationFactorRequest(long value) override;
+	virtual long getNormalizationFactor() const override;
+	virtual HRESULT addKernelValueRequest(LongArray value) override;
+	virtual LongArray getKernelValues() const override;
+#pragma endregion virtual method (ICustom2Filter)
 #pragma endregion Public Methods
 
 protected:

@@ -78,8 +78,6 @@ public:
 
 	friend class SVUnaryImageOperatorClass;
 
-	friend class SVToolAdjustmentDialogThresholdPageClass;
-	friend class SVToolAdjustmentDialogFilterPageClass;
 
 //******************************************************************************
 // Constructor(s):

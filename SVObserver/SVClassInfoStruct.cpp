@@ -142,6 +142,35 @@ int SVClassInfoStructListClass::Find( const GUID& ClassID )
 	return -1;
 };
 
+
+long SVClassInfoStructListClass::Size() const
+{
+	return GetSize();
+}
+
+CString SVClassInfoStructListClass::GetClassName(int index) const
+{
+	return GetAt(index).ClassName;
+}
+
+GUID SVClassInfoStructListClass::GetClassID(int index) const
+{
+	return GetAt(index).ClassId;
+}
+
+SvOi::IClassInfoStructList* SvOi::createSVClassInfoStructList()
+{
+	return new SVClassInfoStructListClass();
+}
+
+void SvOi::deleteSVClassInfoStructList( SvOi::IClassInfoStructList* pObject )
+{
+	SVClassInfoStructListClass *pOb = dynamic_cast<SVClassInfoStructListClass*>(pObject);
+	if (nullptr != pOb)
+	{
+		delete pOb;
+	}
+}
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************

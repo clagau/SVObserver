@@ -12,6 +12,8 @@
 #include "stdafx.h"
 #include "SVGUID.h"
 
+const GUID  SVInvalidGUID = { 0, 0, 0, { 0, 0, 0, 0, 0, 0, 0, 0 } };
+
 SVGUID::SVGUID()
 : m_Guid( SV_GUID_NULL )
 {

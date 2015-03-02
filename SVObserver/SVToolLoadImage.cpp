@@ -10,6 +10,7 @@
 //******************************************************************************
 
 #include "stdafx.h"
+#include "SVHBitmapUtilitiesLibrary\SVImageFormatEnum.h"
 #include "SVToolLoadImage.h"
 #include "SVAnalyzer.h"
 #include "SVGlobal.h"

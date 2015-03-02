@@ -12,6 +12,8 @@
 #ifndef SVWATERSHEDFILTERS_H
 #define SVWATERSHEDFILTERS_H
 
+#include "ObjectInterfaces\IWatershedFilter.h"
+#include "SVGetObjectDequeByTypeVisitor.h"
 #include "SVFilterClass.h"
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -25,7 +27,8 @@
 // .History
 //	 Date		Author		Comment                                       
 ////////////////////////////////////////////////////////////////////////////////
-class SVWatershedFilterClass : public SVFilterClass
+class SVWatershedFilterClass : virtual public SvOi::IWatershedFilter
+	,public SVFilterClass
 {
 	SV_DECLARE_CLASS( SVWatershedFilterClass );
 
@@ -39,7 +42,24 @@ public:
 	
 	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure );
 
-	virtual bool ShouldResetIPDoc() { return true; }
+#pragma region virtual method (IFilter)
+	virtual bool shouldResetInspection() const override { return true; }
+#pragma region virtual method (IFilter)
+
+#pragma region virtual method (IWatershedFilter)
+public:
+			virtual HRESULT addControlFlagRequest(long value) override;
+			virtual long getControlFlag() const override;
+			virtual HRESULT addMinVariationRequest(long value) override;
+			virtual long getMinVariation() const override;
+			virtual HRESULT addMarkerUsedRequest(bool value) override;
+			virtual bool isMarkerUsed() const override;
+
+			virtual SVString getMarkerImage() const override;
+			virtual HRESULT setMarkerImage(const SVString imageName) override;
+
+			virtual std::vector<SVString> getAvailableMarkerImageNames() override;
+#pragma region virtual method (IWatershedFilter)
 
 private:
 	void init();
@@ -47,6 +67,20 @@ private:
 protected:
 	virtual BOOL onRun( BOOL First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& RRunStatus );
 	virtual BOOL OnValidate();
+	
+	//************************************
+	//! Return if image a valid pointer and image for a marker for this watershed.
+	//! \param pImage [in] Pointer to the image to test. 
+	//! \param rToolSet [in] Reference of the tool set.
+	//! \returns bool
+	//************************************
+	bool isValidMarkerImage(const SVImageClass* pImage, const SVToolSetClass &rToolSet) const;
+	//************************************
+	//! Return a list of available source image for this tool.
+	//! \param toolsetGUID [in] GUID for this tool set.
+	//! \returns SVGetObjectDequeByTypeVisitor::SVObjectPtrDeque
+	//************************************
+	static SVGetObjectDequeByTypeVisitor::SVObjectPtrDeque getAvailableSourceImage(const SVGUID toolsetGUID);
 
 //******************************************************************************
 // Operator(s):

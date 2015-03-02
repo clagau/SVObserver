@@ -17,6 +17,7 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/type_traits.hpp>
 
+#include "ObjectInterfaces/IInspectionProcess.h"
 #include "SVCommandLibrary/SVCommandTemplate.h"
 #include "SVContainerLibrary/SVBiUniqueMap.h"
 #include "SVDataManagerLibrary/DataManager.h"
@@ -57,7 +58,8 @@ class SVResultListClass;
 #pragma endregion Declarations
 
 class SVInspectionProcess : 
-	public SVObjectClass,
+	virtual public SvOi::IInspectionProcess,
+	virtual public SVObjectClass,
 	public SVObjectSubmitCommandFacade,
 	public SVObserverTemplate< SVAddTool >,
 	public SVObserverTemplate< SVDeleteTool >,
@@ -82,7 +84,7 @@ public:
 	virtual BOOL GetChildObjectByName( LPCTSTR tszName, SVObjectClass** ppObject );
 
 	virtual HRESULT GetChildObject( SVObjectClass*& p_rpObject, const SVObjectNameInfo& p_rNameInfo, long p_Index = 0 ) const;
-
+	
 	virtual BOOL SetObjectDepth( int NewObjectDepth );
 	virtual BOOL SetObjectDepthWithIndex( int NewObjectDepth, int NewLastSetIndex );
 	virtual BOOL SetImageDepth( long lDepth );
@@ -113,6 +115,11 @@ public:
 	const SVGUID& GetPPQIdentifier() const;
 	SVPPQObject* GetPPQ() const;
 
+#pragma region virtual method (IInspectionProcess)
+	virtual SvOi::IObjectClass* GetPPQInterface() const override;
+	virtual void SetDefaultInputs() override;
+#pragma region virtual method (IInspectionProcess)
+
 	bool IsCameraInInspection( const CString& p_rName ) const;
 
 	bool IsResetStateSet( unsigned long p_State ) const;
@@ -131,9 +138,9 @@ public:
 	HRESULT StartProcess( SVProductInfoStruct *pProduct );
 
 	BOOL RebuildInspectionInputList();
-
+	
 	BOOL RemoveCamera(CString sCameraName);
-
+	
 	BOOL AddInputRequest( SVValueObjectReference p_svObjectRef, const _variant_t& p_rValue );
 	BOOL AddInputRequestMarker();
 
@@ -156,7 +163,7 @@ public:
 	BOOL ConnectToolSetMainImage();
 
 	BOOL GetNewDisableMethod();
-	void SetNewDisableMethod( BOOL bNewDisableMethod );
+	void SetNewDisableMethod( BOOL bNewDisableMethod ); 
 
 	long GetEnableAuxiliaryExtent();
 	void SetEnableAuxiliaryExtent( long p_lEnableAuxiliaryExtents );
@@ -177,8 +184,6 @@ public:
 	SVToolSetClass* GetToolSet() const;
 	SVResultListClass* GetResultList() const;
 
-	void SetDefaultInputs();
-
 	SVImageClass* GetRGBMainImage();
 	SVImageClass* GetHSIMainImage();
 
@@ -192,7 +197,7 @@ public:
 	HRESULT RebuildInspection();
 	void ValidateAndInitialize( bool p_Validate, bool p_IsNew );
 	void ClearResetCounts();
-	void SetResetCounts();
+	void SetResetCounts( );
 
 	SVPublishListClass& GetPublishList();
 
@@ -239,7 +244,7 @@ protected:
 		SVSharedMemoryFilters();
 
 		void clear();
-
+		
 		SVFilterElementMap m_LastInspectedValues;
 		SVFilterElementMap m_LastInspectedImages;
 	};
@@ -283,7 +288,7 @@ protected:
 	};
 #endif //EnableTracking
 
-	typedef void ( CALLBACK* SVAPCSignalHandler )( DWORD_PTR );
+	typedef void ( CALLBACK * SVAPCSignalHandler )( DWORD_PTR );
 	typedef boost::function<void ( bool& )> SVThreadProcessHandler;
 
 	typedef SVTQueueObject< SVCommandTemplatePtr > SVCommandQueue;
@@ -294,7 +299,7 @@ protected:
 	typedef SVTQueueObject< SVProductInfoStruct > SVProductQueue;
 	typedef SVTQueueObject<SVInspectionTransactionStruct> SVTransactionQueueType;
 	typedef SVSingleLockT<SVTransactionQueueType> SVTransactionQueueObjectLock;
-
+	
 	virtual HRESULT SubmitCommand( const SVCommandTemplatePtr& p_rCommandPtr );
 
 	virtual SVObjectPtrDeque GetPreProcessObjects() const;
@@ -332,7 +337,7 @@ protected:
 	HRESULT RestoreCameraImages();
 
 	template<typename T>
-	HRESULT SetObjectArrayValues(SVValueObjectReference& object, int bucket, const CString& values, bool& reset);
+	HRESULT SetObjectArrayValues(SVValueObjectReference & object, int bucket, const CString & values, bool & reset);
 
 	void SingleRunModeLoop( bool p_Refresh = false );
 
@@ -383,7 +388,7 @@ protected:
 	SVTransactionQueueType m_qTransactions;// don't AddTail directly; call AddTransaction
 
 	// Inspection Queue
-	SVProductQueue m_qInspectionsQueue;
+	SVProductQueue       m_qInspectionsQueue;
 
 	// Map of All Value Objects
 	SVValueObjectMap m_mapValueObjects;
@@ -411,16 +416,16 @@ private:
 	void FillSharedData(long sharedSlotIndex, SVSharedData& rData, const SVFilterElementMap& rValues, const SVFilterElementMap& rImages, SVProductInfoStruct& rProductInfo, SeidenaderVision::SVSharedInspectionWriter& rWriter);
 
 	DWORD m_dwCHTimeout;
-	SVConditionalHistory m_ConditionalHistory;
+	SVConditionalHistory  m_ConditionalHistory;
 
 	SVCriticalSectionPtr m_LastRunLockPtr;
 	bool m_LastRunProductNULL;
 	SVProductInfoStruct m_svLastRunProduct;
 
-	BOOL m_bNewDisableMethod;
-	long m_lEnableAuxiliaryExtents;
+	BOOL                m_bNewDisableMethod;
+	long                m_lEnableAuxiliaryExtents;
 
-	DWORD m_dwThreadId;
+	DWORD               m_dwThreadId;
 
 	// JMS - this variable is only used for configuration conversion.
 	SVConditionalClass* m_pToolSetConditional;

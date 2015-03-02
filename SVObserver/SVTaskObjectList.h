@@ -12,13 +12,14 @@
 #ifndef SVTASKOBJECTLIST_H
 #define SVTASKOBJECTLIST_H
 
+#include "ObjectInterfaces/ITaskObjectListClass.h"
 #include "SVObjectLibrary/SVObjectScriptUsage.h"
 #include "SVRunControlLibrary/SVRunStatus.h"
 #include "SVClassInfoStruct.h"
 #include "SVValueObject.h"
 #include "SVTaskObject.h"
 
-class SVTaskObjectListClass : public SVTaskObjectClass
+class SVTaskObjectListClass : public SVTaskObjectClass, virtual public SvOi::ITaskObjectListClass
 {
 	SV_DECLARE_CLASS( SVTaskObjectListClass )
 
@@ -29,6 +30,7 @@ public:
 	SVTaskObjectListClass( BOOL BCreateDefaultTaskList = FALSE, SVObjectClass* POwner = NULL, int StringResourceID = IDS_CLASSNAME_SVTASKOBJECTLIST );
 	virtual ~SVTaskObjectListClass();
 
+#pragma region public methods
 	virtual HRESULT GetOutputList( SVOutputInfoListClass& p_rOutputInfoList ) const;
 
 	void AppendInputObjects();
@@ -51,17 +53,28 @@ public:
 	virtual HRESULT GetChildObject( SVObjectClass*& p_rpObject, const SVObjectNameInfo& p_rNameInfo, long p_Index = 0 ) const;
 
 	const SVClock::SVTimeStamp& GetLastListUpdateTimestamp() const;
-	
+
+#pragma region virtual methods (ITaskObjectListClass)
+	virtual bool getAvailableObjects(SvOi::IClassInfoStructList& list, const SVObjectTypeInfoStruct objectType) const override;
+	virtual int GetSize() const override;
+	virtual SvOi::IObjectClass* GetInterfaceAt( int index ) const {return GetAt( index );}
+	virtual void Delete(GUID& objectID) override;
+	virtual void InsertAt(int index, SvOi::ITaskObject& rObject, int count = 1) override;
+	virtual DWORD_PTR DestroyChildObject(SvOi::ITaskObject& rObject, DWORD context) override;
+	virtual SvOi::ISVImage* getFirstImage() override;
+#pragma endregion virtual methods (ITaskObjectListClass)
+#pragma endregion public methods	
+
 protected:
 	virtual SVObjectClass *UpdateObject( const GUID &friendGuid, SVObjectClass *p_psvObject, SVObjectClass *p_psvNewOwner );
-	virtual BOOL getAvailableObjects( SVClassInfoStructListClass* pList, SVObjectTypeInfoStruct* pObjectTypeInfo );
+	BOOL getAvailableObjects( SVClassInfoStructListClass* pList, const SVObjectTypeInfoStruct* pObjectTypeInfo ) const;
 
 
 private:
 	void cleanUpEmptyEntries();
 
+
 public:
-	int GetSize() const;
 	int GetUpperBound() const {return GetSize()-1;}
 	virtual void InsertAt( int nIndex, SVTaskObjectClass* PTaskObject, int nCount = 1 );
 	void SetAt( int nIndex, SVTaskObjectClass* PTaskObject );
@@ -73,7 +86,6 @@ public:
 	virtual BOOL SetObjectDepth( int NewObjectDepth );
 	virtual BOOL SetObjectDepthWithIndex( int NewObjectDepth, int NewLastSetIndex );
 	virtual BOOL SetImageDepth( long lDepth );
-	virtual void Delete( GUID& objectID );
 
 	virtual void SetInvalid();
 	virtual void SetDisabled();
@@ -101,6 +113,13 @@ public:
  
 protected:
 	typedef SVVector< SVTaskObjectClass*, SVTaskObjectClass* > SVTaskObjectPtrVector;
+
+	/**********
+	  The method destroy a child object. 
+	  /param pTaskObject <in> object to destroy.
+	  /param context <in>.
+	***********/
+	DWORD_PTR DestroyChildObject(SVTaskObjectClass* pTaskObject, DWORD context);
 
 	// Direct Method Call
 	// NOTE:

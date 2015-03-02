@@ -16,6 +16,7 @@
 #include <boost/bind.hpp>
 #include "SVHistogramAnalyzer.h"
 
+#include "SVHBitmapUtilitiesLibrary\SVImageFormatEnum.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "SVMatroxLibrary/SVMatroxLibrary.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"

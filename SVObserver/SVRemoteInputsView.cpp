@@ -12,7 +12,6 @@
 #include "stdafx.h"
 #include <boost/config.hpp>
 #include <boost/bind.hpp>
-#include "resource.h"
 #include "SVRemoteInputsView.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVObserver.h"

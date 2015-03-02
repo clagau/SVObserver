@@ -3537,17 +3537,9 @@ void SVIPDoc::SetSelectedToolID( const SVGUID& p_rToolID )
 bool SVIPDoc::IsToolPreviousToSelected( const SVGUID& p_rToolID ) const
 {
 	bool l_Status = false;
-
-	SVToolSetClass::SVToolIdDeque l_ToolIds;
-
 	if( GetToolSet() != nullptr )
 	{
-		GetToolSet()->GetToolIds( l_ToolIds );
-	}
-
-	for( SVToolSetClass::SVToolIdDeque::const_iterator l_Iter = l_ToolIds.begin(); !l_Status && l_Iter != l_ToolIds.end(); ++l_Iter )
-	{
-		l_Status = ( p_rToolID == ( *l_Iter ) );
+		l_Status = GetToolSet()->IsToolPreviousToSelected( p_rToolID );
 	}
 
 	return l_Status;

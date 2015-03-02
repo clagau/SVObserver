@@ -10,6 +10,7 @@
 //******************************************************************************
 
 #include "stdafx.h"
+#include "SVHBitmapUtilitiesLibrary/SVImageFormatEnum.h"
 #include "SVColorTool.h"
 #include "SVStatusLibrary/SVStatusCodes.h"
 #include "SVInspectionProcess.h"

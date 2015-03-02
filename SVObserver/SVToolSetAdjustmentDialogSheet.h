@@ -14,7 +14,7 @@
 #pragma region Includes
 #include "SVConditional.h"
 #include "ConditionalController.h"
-#include "SVFormulaEditorPage.h"
+#include "SVOGui/SVFormulaEditorPage.h"
 #pragma endregion Includes
 
 class SVToolSetAdjustmentDialogSheetClass : public CPropertySheet
@@ -89,7 +89,7 @@ protected:
 // Data Element(s):
 //******************************************************************************
 private:
-	SVFormulaEditorPageClass m_formulaPage;
+	SvOg::SVFormulaEditorPageClass m_formulaPage;
 	ConditionalController m_conditionalController;
 	SVToolSetClass* m_pToolSet;
 };

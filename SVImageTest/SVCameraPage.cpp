@@ -14,7 +14,6 @@
 #include "SVCameraPage.h"
 #include "SVOMFCLibrary/SVDeviceParams.h"
 #include "SVOMFCLibrary/SVLongValueDeviceParam.h"
-#include "SVImageLibrary/SVImageEnums.h"
 #include "SVCameraPropDlgClass.h"
 #include "SVCameraFilePropertyPageDlg.h"
 #include "SVTestAcquisitionClass.h"

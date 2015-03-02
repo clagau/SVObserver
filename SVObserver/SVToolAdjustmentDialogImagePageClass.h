@@ -15,7 +15,8 @@
 #include "SVImageListClass.h"
 #include "SVObjectLibrary/SVInputInfoListClass.h"
 #include "SVTaskObjectInterfaceClass.h"
-#include "PictureDisplay.h"
+//TODO: MZA(10.Nov 2014): Move this files to SVOGui project and then remove folder from include and Namespace add-on add PictureDisplay declaration.
+#include "SVOGui/PictureDisplay.h"
 #include "SVView.h"
 
 class SVToolAdjustmentDialogSheetClass;
@@ -49,7 +50,7 @@ protected:
 	//{{AFX_DATA(SVToolAdjustmentDialogImagePageClass)
 	enum { IDD = IDD_TA_IMAGE_DIALOG };
 	SVAvailableSourceImageListComboBoxClass	availableSourceImageListBox;
-	PictureDisplay	dialogImage;
+	SvOg::PictureDisplay	dialogImage;
 	//}}AFX_DATA
 	
 protected:

@@ -24,7 +24,8 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
-#include "PictureDisplay.h"
+//TODO: MZA(10.Nov 2014): Move this files to SVOGui project and then remove folder from include and Namespace add-on add PictureDisplay declaration.
+#include "SVOGui/PictureDisplay.h"
 
 class SVToolSetClass;
 
@@ -71,7 +72,7 @@ private:
 	SVToolSetClass*		m_pToolSet;
 	//{{AFX_DATA(SVSaveToolSetImageDialogClass)
 	enum { IDD = IDD_SELECT_TOOLSET_IMAGE_TO_SAVE_DIALOG };
-	PictureDisplay	m_currentSelectedImageCtrl;
+	SvOg::PictureDisplay	m_currentSelectedImageCtrl;
 	CComboBox	m_availableImagesComboCtrl;
 	//}}AFX_DATA
 

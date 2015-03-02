@@ -773,69 +773,14 @@ DWORD_PTR SVToolClass::processMessage( DWORD DwMessageID, DWORD_PTR DwMessageVal
 
 	case SVMSGID_CREATE_CHILD_OBJECT:
 		{
-			// Send this message to the object owner to create an object.
-			// If the owner object is not created yet, it returns SVMR_NOT_PROCESSED.
-			// Otherwise the owner object sends SVM_CREATE_ALL_OBJECTS to the child object
-			// and returns the result of this message.
 			// ...use second message parameter ( DwMessageValue ) as SVObjectClass* of the child object
 			// ...returns SVMR_SUCCESS, SVMR_NO_SUCCESS or SVMR_NOT_PROCESSED
 			SVObjectClass* pChildObject = reinterpret_cast<SVObjectClass*>(DwMessageValue);
-			if( IsCreated() && SV_IS_KIND_OF( pChildObject, SVObjectClass ) )
-			{
-				long l_LastIndex = 1;
-				SVInspectionProcess* l_pInspect = GetInspection();
-
-				if( l_pInspect != NULL )
-				{
-					SVProductInfoStruct l_Product = l_pInspect->LastProductGet( SV_INSPECTION );
-
-					if( !( l_Product.empty() ) )
-					{
-						SVDataManagerHandle l_Handle;
-
-						l_Product.GetResultDataIndex( l_Handle );
-
-						l_LastIndex = l_Handle.GetIndex();
-					}
-				}
-
-				// Set first object depth...
-				pChildObject->SetObjectDepthWithIndex( objectDepth, l_LastIndex );
-				pChildObject->SetImageDepth( mlImageDepth );
-
-				createStruct.OwnerObjectInfo        = this;
-				createStruct.ToolObjectInfo			= this;
-				createStruct.InspectionObjectInfo	= GetInspection();
-
-				DWORD_PTR l_Return = SVSendMessage( pChildObject, SVM_CREATE_ALL_OBJECTS, reinterpret_cast<DWORD_PTR>(&createStruct), NULL );
-
-				if( ( DwMessageContext & SVMFResetObject ) == SVMFResetObject )
-				{
-					::SVSendMessage( pChildObject, SVM_RESET_ALL_OBJECTS, NULL, NULL );
-				}
-
-				if( ( DwMessageContext & SVMFSetDefaultInputs ) == SVMFSetDefaultInputs )
-				{
-					GetInspection()->SetDefaultInputs();
-				}
-
-				if( ( DwMessageContext & SVMFResetInspection ) == SVMFResetInspection )
-				{
-					::SVSendMessage( GetInspection(), SVM_RESET_ALL_OBJECTS, NULL, NULL );
-				}
-
-				return l_Return;
-			}
-			return SVMR_NOT_PROCESSED;
+			return CreateChildObject(pChildObject, static_cast<DWORD>(DwMessageContext));
 		}
 	case SVMSGID_CONNECT_CHILD_OBJECT:
 		{
-			// Send this message to the object owner to create an object.
-			// If the owner object is not created yet, it returns SVMR_NOT_PROCESSED.
-			// Otherwise the owner object sends SVM_CREATE_ALL_OBJECTS to the child object
-			// and returns the result of this message.
 			// ...use second message parameter ( DwMessageValue ) as SVObjectClass* of the child object
-			// ...returns SVMR_SUCCESS, SVMR_NO_SUCCESS or SVMR_NOT_PROCESSED
 			SVObjectClass* pChildObject = reinterpret_cast<SVObjectClass*>(DwMessageValue);
 			if( SV_IS_KIND_OF( pChildObject, SVObjectClass ) )
 			{
@@ -1334,6 +1279,15 @@ SVValueObjectClass* SVToolClass::GetToolComment()
 	return &m_svToolComment;
 }
 
+DWORD_PTR SVToolClass::createAllObjectsFromChild( SVObjectClass* pChildObject )
+{
+	SVToolLevelCreateStruct createStruct;
+	createStruct.OwnerObjectInfo        = this;
+	createStruct.ToolObjectInfo			= this;
+	createStruct.InspectionObjectInfo	= GetInspection();
+
+	return SVSendMessage( pChildObject, SVM_CREATE_ALL_OBJECTS, reinterpret_cast<DWORD_PTR>(&createStruct), NULL );
+}
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************

@@ -12,13 +12,15 @@
 #pragma once
 
 #include "SVObjectLibrary/SVObjectClass.h"
-#include "resource.h"
+#include "ObjectInterfaces/IObjectAppClass.h"
+#include "ObjectInterfaces/IObjectClass.h"
 
 class SVInspectionProcess;
 class SVToolClass;
 class SVAnalyzerClass;
 
-class SVObjectAppClass : public SVObjectClass
+class SVObjectAppClass : virtual public SvOi::IObjectAppClass
+								, public SVObjectClass  
 {
 	SV_DECLARE_CLASS( SVObjectAppClass )
 
@@ -34,10 +36,25 @@ public:
 	SVToolClass* GetTool() const;
 	SVAnalyzerClass* GetAnalyzer() const;
 
+#pragma region virtual methods (IObjectAppClass)
+	virtual SvOi::IObjectClass* GetToolInterface() const override;
+	virtual DWORD_PTR CreateChildObject(SvOi::IObjectClass& rChildObject, DWORD context) override;
+#pragma endregion virtual methods (IObjectAppClass)
+
 protected:
 	virtual DWORD_PTR processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext );
 
 	void UpdateConnections( SVObjectLevelCreateStruct* PCreateStruct );
+
+	// Sends SVM_CREATE_ALL_OBJECTS to the child object
+	// and returns the result of this message.
+	virtual DWORD_PTR SVObjectAppClass::createAllObjectsFromChild( SVObjectClass* pChildObject );
+	// Call this method at the object owner to create an object.
+	// If the owner object is not created yet, it returns SVMR_NOT_PROCESSED.
+	// Otherwise called the method createAllOBjectsFromChild
+	// and returns the result of this message.
+	// ...returns SVMR_SUCCESS, SVMR_NO_SUCCESS or SVMR_NOT_PROCESSED
+	DWORD_PTR CreateChildObject( SVObjectClass* pChildObject, DWORD context );
 
 private:
 	SVInspectionProcess* m_psvInspection;

@@ -31,7 +31,8 @@
 
 #include "SVClassInfoStruct.h"
 #include "SVView.h"
-#include "PictureDisplay.h"
+//TODO: MZA(10.Nov 2014): Move this files to SVOGui project and then remove folder from include and Namespace add-on add PictureDisplay declaration.
+#include "SVOGui/PictureDisplay.h"
 #include "SVImageListClass.h"
 #include "SVEnumerateCombo.h"
 
@@ -66,12 +67,6 @@ protected:
 	//}}AFX_MSG
 
 	DECLARE_MESSAGE_MAP()
-
-	//******************************************************************************
-	// Friend Declaration(s):
-	//******************************************************************************
-	friend class SVTAReferenceAdjustmentDialogClass;
-
 
 	//******************************************************************************
 	// Constructor(s):
@@ -120,7 +115,7 @@ protected:
 	//{{AFX_DATA(SVToolAdjustmentDialogAnalyzerPageClass)
 	enum { IDD = IDD_TA_ANALYZER_DIALOG };
 	SVAvailableAnalyzerListComboBoxClass	availableAnalyzerListBox;
-	PictureDisplay	dialogImage;
+	SvOg::PictureDisplay	dialogImage;
 	//}}AFX_DATA
 
 	//******************************************************************************

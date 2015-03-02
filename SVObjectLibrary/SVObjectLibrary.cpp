@@ -10,14 +10,12 @@
 //******************************************************************************
 
 #include "stdafx.h"
+#include "ObjectInterfaces/SVObjectTypeInfoStruct.h"
 #include "SVObjectLibrary.h"
 
 #include "SVObjectClass.h"
 #include "SVObjectInfoStruct.h"
 #include "SVObjectManagerClass.h"
-#include "SVObjectTypeInfoStruct.h"
-
-const GUID  SVInvalidGUID = { 0, 0, 0, { 0, 0, 0, 0, 0, 0, 0, 0 } };
 
 const SVObjectInfoStruct		SVInvalidObjectInfo;
 const SVObjectTypeInfoStruct	SVInvalidObjectTypeInfo;

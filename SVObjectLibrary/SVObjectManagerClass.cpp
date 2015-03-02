@@ -13,6 +13,7 @@
 #include "stdafx.h"
 #include "GlobalConst.h"
 #include "SVObjectManagerClass.h"
+#include "ObjectInterfaces/IObjectManager.h"
 
 #include "SVSystemLibrary/SVAutoLockAndReleaseTemplate.h"
 
@@ -1920,6 +1921,22 @@ HRESULT SVObjectManagerClass::GetObservers( const SVString& rSubjectDataName, co
 	return l_Status;
 }
 
+#pragma region IObjectManager-function
+SvOi::IObjectClass* SvOi::getObjectByDottedName( const SVString& rFullName )
+{
+	SVObjectClass* pObject = nullptr;
+	//To have the function available without to know the class EvironmentObject
+	SVObjectManagerClass::Instance().GetObjectByDottedName(rFullName, pObject);
+	return pObject;
+}
+
+SvOi::IObjectClass* SvOi::ConstructObject( const SVGUID& rClassID )
+{
+	SVObjectClass* pObject = nullptr;
+	SVObjectManagerClass::Instance().ConstructObject(rClassID, pObject);
+	return pObject;
+}
+#pragma endregion IObjectManager-function
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************

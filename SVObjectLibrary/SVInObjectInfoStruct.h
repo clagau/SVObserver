@@ -15,9 +15,11 @@
 #include <vector>
 #include "SVUtilityLibrary/SVGUID.h"
 #include "SVUtilityLibrary/SVString.h"
+#include "ObjectInterfaces/IInObjectInfoStruct.h"
 #include "SVObjectInfoStruct.h"
 
-struct SVInObjectInfoStruct : public SVObjectInfoStruct
+struct SVInObjectInfoStruct : virtual public SvOi::IInObjectInfoStruct
+	, public SVObjectInfoStruct
 {
 	SVInObjectInfoStruct();
 	SVInObjectInfoStruct( const SVInObjectInfoStruct& rSrc );
@@ -26,7 +28,11 @@ struct SVInObjectInfoStruct : public SVObjectInfoStruct
 
 	const SVInObjectInfoStruct& operator = ( const SVInObjectInfoStruct& rhs );
 
-	bool IsConnected() const;
+#pragma region virtual method (IObjectInfoStruct)
+	virtual bool IsConnected() const override;
+
+	virtual const SvOi::IObjectInfoStruct& GetInputObjectInfoInterface() const override;
+#pragma endregion virtual method (IObjectInfoStruct)
 
 	const SVObjectInfoStruct& GetInputObjectInfo() const;
 

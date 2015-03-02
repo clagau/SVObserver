@@ -14,7 +14,6 @@
 
 #include <comdef.h>
 #include <vector>
-#include "SVImageLibrary/SVImageEnums.h"
 
 #pragma pack (push, 1)
 struct InputValueDefinitionStruct

@@ -10,7 +10,6 @@
 //******************************************************************************
 
 #include "stdafx.h"
-#include "SVObserver.h"
 #include "SVKnobControl.h"
 
 IMPLEMENT_DYNAMIC(SVKnobControl, CStatic)
@@ -43,7 +42,7 @@ END_MESSAGE_MAP()
 BOOL SVKnobControl::RegisterWindowClass()
 {
     WNDCLASS wndcls;
-    HINSTANCE hInst = AfxGetInstanceHandle();
+    HINSTANCE hInst = AfxGetResourceHandle();
 
     if (!(::GetClassInfo(hInst, SVKNOB_CLASSNAME, &wndcls)))
     {

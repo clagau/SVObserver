@@ -10,20 +10,15 @@
 //******************************************************************************
 
 #include "stdafx.h"
-#include "SVObserver.h"
 
 #include "SVIODoc.h"
-
 #include "SVIOAdjustDialog.h"
-
 #include "SVObjectLibrary/SVObjectManagerClass.h"
-
 #include "SVSVIMStateClass.h"
 #include "SVDigitalInputObject1.h"
 #include "SVDigitalOutputObject1.h"
 #include "SVPPQObject.h"
 #include "SVConfigurationObject.h"
-#include "SVIOController.h"
 #include "SVHardwareManifest.h"
 
 #ifdef _DEBUG

@@ -13,10 +13,10 @@
 #include "stdafx.h"
 #include "SVToolAdjustmentDialogSheetClass.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
+#include "SVOGui/SVFormulaEditorPage.h"
 #include "ISVPropertyPageDialog.h"
 #include "SVCylindricalWarpDlg.h"
 #include "SVExternalToolDlg.h"
-#include "SVFormulaEditorPage.h"
 #include "SVIPDoc.h"
 #include "SVInspectionProcess.h"
 #include "SVPerspectiveWarpDlg.h"
@@ -38,7 +38,7 @@
 #include "SVTADlgTranslationPage.h"
 #include "SVTool.h"
 #include "SVToolAdjustmentDialogAnalyzerPageClass.h"
-#include "SVToolAdjustmentDialogFilterPageClass.h"
+#include "SVOGui/SVToolAdjustmentDialogFilterPageClass.h"
 #include "SVToolAdjustmentDialogImagePageClass.h"
 #include "SVToolAdjustmentDialogLinearSpecialPageClass.h"
 #include "SVToolAdjustmentDialogMaskPageClass.h"
@@ -57,6 +57,8 @@
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
+
+using namespace SvOg;
 #pragma endregion Declarations
 
 IMPLEMENT_DYNAMIC(SVToolAdjustmentDialogSheetClass, CPropertySheet)
@@ -144,7 +146,7 @@ void SVToolAdjustmentDialogSheetClass::addPages()
 			if( bHasLUT )
 			{
 				// New image tool has also this pages...RO_22Mar2000
-				AddPage( new SVToolAdjustmentDialogFilterPageClass( this ) );
+				AddPage( new SVToolAdjustmentDialogFilterPageClass( m_rTool ) );
 				AddPage( new SVToolAdjustmentDialogThresholdPageClass( this ) );
 				AddPage( new SVToolAdjustmentDialogMaskPageClass( this ) );
 				AddPage( new SVToolAdjustmentDialogLUTPageClass( this ) );
@@ -162,7 +164,7 @@ void SVToolAdjustmentDialogSheetClass::addPages()
 
 		case SVWindowToolObjectType:
 			AddPage( new SVToolAdjustmentDialogImagePageClass( this ) );
-			AddPage( new SVToolAdjustmentDialogFilterPageClass( this ) );
+			AddPage( new SVToolAdjustmentDialogFilterPageClass( m_rTool ) );
 			AddPage( new SVToolAdjustmentDialogThresholdPageClass( this ) );
 			AddPage( new SVToolAdjustmentDialogMaskPageClass( this ) );
 			if( bHasLUT )
@@ -177,7 +179,7 @@ void SVToolAdjustmentDialogSheetClass::addPages()
 
 		case SVToolProfileObjectType:
 			AddPage( new SVToolAdjustmentDialogImagePageClass( this ) );
-			AddPage( new SVToolAdjustmentDialogFilterPageClass( this ) );
+			AddPage( new SVToolAdjustmentDialogFilterPageClass( m_rTool ) );
 			AddPage( new SVToolAdjustmentDialogThresholdPageClass( this ) );
 			AddPage( new SVToolAdjustmentDialogAnalyzerPageClass( this ) );
 			AddPage( new SVToolAdjustmentDialogSpecialPropertiesPageClass( this ) );
@@ -187,7 +189,7 @@ void SVToolAdjustmentDialogSheetClass::addPages()
 
 		case SVLinearToolObjectType:
 			AddPage( new SVToolAdjustmentDialogImagePageClass( this ) );
-			AddPage( new SVToolAdjustmentDialogFilterPageClass( this ) );
+			AddPage( new SVToolAdjustmentDialogFilterPageClass( m_rTool ) );
 			AddPage( new SVToolAdjustmentDialogThresholdPageClass( this ) );
 			AddPage( new SVToolAdjustmentDialogAnalyzerPageClass( this ) );
 			//add the new page.

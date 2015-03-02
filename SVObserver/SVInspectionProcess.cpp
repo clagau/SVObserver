@@ -2296,6 +2296,11 @@ SVPPQObject* SVInspectionProcess::GetPPQ() const
 	return l_pPPQ; 
 }
 
+SvOi::IObjectClass* SVInspectionProcess::GetPPQInterface() const
+{
+	return GetPPQ();
+}
+
 BOOL SVInspectionProcess::RunOnce( SVToolClass *p_psvTool )
 {
 	BOOL bRet( true );

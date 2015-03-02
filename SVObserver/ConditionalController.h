@@ -15,7 +15,7 @@
 #pragma once
 
 #pragma region Includes
-#include "IFormulaController.h"
+#include "ObjectInterfaces\IObjectClass.h"
 #include "FormulaController.h"
 #include "SVTaskObject.h"
 #include "SVMathContainer.h"
@@ -37,13 +37,18 @@ public:
 	virtual HRESULT isToolAndEquationEnabled(bool& toolEnabled, bool& equationEnabled) const override;
 
 	virtual HRESULT setToolAndEquationEnabled(bool toolEnabled, bool equationEnabled) override;
-	virtual void setTaskObject( SVTaskObjectClass& pObject ) override;
 #pragma endregion Virtual Methods (IFormulaController)
 #pragma endregion Public Methods
 
+#pragma region Protected Methods
+protected:
+#pragma region Virtual Methods (FormulaController)
+	virtual void setTaskObjectClass( SVTaskObjectClass &rObject );
+#pragma endregion Virtual Methods (FormulaController)
+#pragma endregion Proctected Methods
+
 #pragma region Member Variables
 private:
-	SVIPDoc* m_pIPDoc;
 	SVToolClass* m_pTool;
 	SVTaskObjectValueInterface m_objectValueInterface;
 #pragma endregion Member Variables

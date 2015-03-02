@@ -37,6 +37,7 @@ const TCHAR	PpqLength[]			= _T("Length");
 const long	StandardPpqLength	= 2;
 
 class SVInspectionProcess;
+
 #pragma endregion Declarations
 
 class SVPPQObject : 

@@ -12,6 +12,7 @@
 #ifndef SVTHINNINGFILTERS_H
 #define SVTHINNINGFILTERS_H
 
+#include "ObjectInterfaces\IThinningFilter.h"
 #include "SVFilterClass.h"
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -25,7 +26,8 @@
 // .History
 //	 Date		Author		Comment                                       
 ////////////////////////////////////////////////////////////////////////////////
-class SVThinningFilterClass : public SVFilterClass
+class SVThinningFilterClass : virtual public SvOi::IThinningFilter
+	,public SVFilterClass
 {
 	SV_DECLARE_CLASS( SVThinningFilterClass );
 
@@ -39,7 +41,17 @@ public:
 	
 	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure );
 
-	virtual bool ShouldResetIPDoc() { return true; }
+#pragma region virtual method (IFilter)
+	virtual bool shouldResetInspection() const override { return true; }
+#pragma region virtual method (IFilter)
+
+#pragma region virtual method (IThinningFilter)
+public:
+	virtual HRESULT addGrayOnRequest(bool value) override;
+	virtual bool isGrayOn() const override;
+	virtual HRESULT addIterationRequest(long value) override;
+	virtual long getIteration() const override;
+#pragma endregion virtual method (IThinningFilter)
 
 private:
 	void init();

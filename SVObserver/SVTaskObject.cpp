@@ -34,6 +34,8 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
+using namespace SvOi;
+
 SV_IMPLEMENT_CLASS(SVTaskObjectClass, SVTaskObjectClassGuid)
 
 SVTaskObjectClass::SVTaskObjectClass(LPCSTR ObjectName)
@@ -51,6 +53,8 @@ SVTaskObjectClass::SVTaskObjectClass(SVObjectClass* POwner, int StringResourceID
 HRESULT SVTaskObjectClass::LocalInitialize()
 {
 	HRESULT l_hrOk = S_OK;
+
+	m_taskObjectValueInterface.SetTaskObject(this);
 
 	m_bUseOverlays = true;	// most objects use overlays; must change if needed in derived classes
 
@@ -308,6 +312,23 @@ HRESULT SVTaskObjectClass::GetChildObject( SVObjectClass*& p_rpObject, const SVO
 	return l_Status;
 }
 	
+#pragma region virtual method (ITaskObject)
+HRESULT SVTaskObjectClass::AddInputRequestMarker()
+{
+	return m_taskObjectValueInterface.AddInputRequestMarker();
+}
+
+HRESULT SVTaskObjectClass::RunOnce(IObjectClass* pTool)
+{
+	SVToolClass* pToolClass = nullptr;
+	if (nullptr != pTool)
+	{
+		pToolClass = dynamic_cast<SVToolClass*>(pTool);
+		ASSERT(pToolClass);
+	}
+	return m_taskObjectValueInterface.RunOnce(pToolClass);
+}
+#pragma endregion virtual method (ITaskObject)
 
 ////////////////////////////////////////////////////////////////////////////////
 // Other Operators

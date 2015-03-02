@@ -12,15 +12,19 @@
 #ifndef SVFILTERCLASS_H
 #define SVFILTERCLASS_H
 
+#include "ObjectInterfaces\ISVFilter.h"
 #include "SVUnaryImageOperatorClass.h"
 
-class SVFilterClass : public SVUnaryImageOperatorClass
+class SVFilterClass : virtual public SvOi::ISVFilter
+	,public SVUnaryImageOperatorClass
 {
 	SV_DECLARE_CLASS( SVFilterClass );
 public:
 	SVFilterClass( SVObjectClass* POwner = NULL, int StringResourceID = IDS_CLASSNAME_SVFILTER );
 
-	virtual bool ShouldResetIPDoc() { return false; }
+#pragma region virtual methods (IFilter)
+	virtual bool shouldResetInspection() const override { return false; };
+#pragma endregion virtual methods (IFilter)
 
 private:
 	void init();

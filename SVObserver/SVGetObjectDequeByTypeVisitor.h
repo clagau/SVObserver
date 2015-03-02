@@ -14,7 +14,7 @@
 
 #include <deque>
 
-#include "SVObjectLibrary/SVObjectTypeInfoStruct.h"
+#include "ObjectInterfaces/SVObjectTypeInfoStruct.h"
 
 class SVObjectClass;
 

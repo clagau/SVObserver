@@ -13,7 +13,7 @@
 #define _SVTOOLEXTENTCLASS_H
 
 #include <set>
-#include "SVImageLibrary/SVImageEnums.h"
+#include "ObjectInterfaces/SVImageEnums.h"
 #include "SVImageLibrary/SVImageExtentClass.h"
 #include "SVToolExtentPropertiesClass.h"
 

@@ -10,7 +10,6 @@
 //******************************************************************************
 #pragma once
 #include "afxwin.h"
-#include "resource.h"
 #include "sveditablelistbox.h"
 
 

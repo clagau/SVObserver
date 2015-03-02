@@ -23,6 +23,7 @@
 #include "SVLibrary/SVWinUtility.h"	// for SVYieldPaintMessages
 #include "SVUserMaskOperatorClass.h"
 #include "SVOMFCLibrary/DisplayHelper.h"
+#include "SVImageLibrary/MatroxImageData.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -853,7 +854,8 @@ void SVMaskShapeEditorDlg::setImages()
 	m_dialogImage.setImageFromParent( m_pMask->getReferenceImage(), tabIndex );
 	tabIndex++;
 	// Set second tab to Mask
-	m_dialogImage.setImage( m_pMask->m_MaskBufferHandlePtr, tabIndex ); 
+	MatroxImageData data(m_pMask->m_MaskBufferHandlePtr);
+	m_dialogImage.setImage( &data, tabIndex );
 	tabIndex++;
 	// Set third tab to source image
 	SVImageInfoClass* pImageInfo = reinterpret_cast < SVImageInfoClass*> (::SVSendMessage( m_pTool, SVM_GETFIRST_IMAGE_INFO, NULL, NULL ) );

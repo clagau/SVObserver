@@ -12,7 +12,7 @@
 #include "stdafx.h"
 #include "SVIntekCameraStruct.h"
 
-#include "SVImageLibrary/SVImageEnums.h"
+#include "SVHBitmapUtilitiesLibrary\SVImageFormatEnum.h"
 
 #ifdef _DEBUG
 #undef THIS_FILE

@@ -9,7 +9,6 @@
 //* .Check In Date   : $Date:   23 Apr 2013 09:48:56  $
 //******************************************************************************
 #include "stdafx.h"
-#include "resource.h"
 #include "SVCameraTriggerData.h"
 
 SVCameraTriggerData::SVCameraTriggerData()

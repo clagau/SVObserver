@@ -12,7 +12,7 @@
 #include "StdAfx.h"
 #include "SVCISapera.h"
 
-#include "SVImageLibrary/SVImageEnums.h"
+#include "ObjectInterfaces/SVImageEnums.h"
 #include "SVImageLibrary/SVAcquisitionBufferInterface.h"
 #include "SVOLibrary/SVQueueObject.h"
 #include "SVUtilityLibrary/SVUtilityGlobals.h"

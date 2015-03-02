@@ -17,7 +17,8 @@
 #include "SVImageLibrary/SVImageInfoClass.h"
 #include "SVImageLibrary/SVImageBufferHandleInterface.h"
 #include "PropertyTree/PropTree.h"
-#include "PictureDisplay.h"
+//TODO: MZA(10.Nov 2014): Move this files to SVOGui project and then remove folder from include and Namespace add-on add PictureDisplay declaration.
+#include "SVOGui/PictureDisplay.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -46,7 +47,7 @@ public:
 	//{{AFX_DATA(SVPatModelPageClass)
 	enum { IDD = IDD_PAT_SETUP_MODEL };
 	CButton m_CircularOverscanCheckbox;
-	PictureDisplay m_dialogImage;
+	SvOg::PictureDisplay m_dialogImage;
 	CString	m_strModelName;
 	BOOL m_bCircularOverscan;
 	SVRPropTree          m_Tree;

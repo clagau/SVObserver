@@ -25,14 +25,12 @@
 #pragma region Constructor
 ConditionalController::ConditionalController( SVTaskObjectClass& pObject ) : FormulaController()
 	, m_pTool(nullptr)
-	, m_pIPDoc(nullptr)
 {
 	setTaskObject( pObject );
 }
 
 ConditionalController::ConditionalController() : FormulaController()
 	, m_pTool(nullptr)
-	, m_pIPDoc(nullptr)
 {
 }
 #pragma endregion Constructor
@@ -92,16 +90,19 @@ HRESULT ConditionalController::setToolAndEquationEnabled(bool toolEnabled, bool 
 
 	return retVal;
 }
+#pragma endregion Virtual Methods IFormulaController
+#pragma endregion Public Methods
 
-void ConditionalController::setTaskObject( SVTaskObjectClass& pObject )
+#pragma region Protected Methods
+#pragma region Virtual Methods FormulaController
+void ConditionalController::setTaskObjectClass( SVTaskObjectClass& rObject )
 {
-	m_objectValueInterface.SetTaskObject(&pObject);
+	m_objectValueInterface.SetTaskObject(&rObject);
 	SVEquationClass* pCondition = nullptr;
-	m_pIPDoc = nullptr;
 
-	m_pInspection = pObject.GetInspection();
+	m_pInspection = rObject.GetInspection();
 	m_pToolSet = m_pInspection->GetToolSet();
-	m_pTool = dynamic_cast<SVToolClass*>(&pObject); 
+	m_pTool = dynamic_cast<SVToolClass*>(&rObject); 
 
 	// Set the pointer to the Equation Class Object 
 	SVObjectTypeInfoStruct info;
@@ -116,15 +117,9 @@ void ConditionalController::setTaskObject( SVTaskObjectClass& pObject )
 		pCondition = reinterpret_cast<SVEquationClass*>(::SVSendMessage( m_pToolSet, SVM_GETFIRST_OBJECT | SVM_NOTIFY_ONLY_FRIENDS, NULL,reinterpret_cast<DWORD_PTR>( &info )) );
 	}
 	setEquation( pCondition );
-
-	if( nullptr != m_pInspection )
-	{
-		m_pIPDoc = SVObjectManagerClass::Instance().GetIPDoc( m_pInspection->GetUniqueObjectID() );
-	}
 }
-#pragma endregion Virtual Methods IFormulaController
-#pragma endregion Public Methods
-
+#pragma endregion Virtual Methods FormulaController
+#pragma endregion Protected Methods
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************

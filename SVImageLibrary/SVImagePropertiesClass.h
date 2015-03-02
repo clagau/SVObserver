@@ -12,7 +12,7 @@
 #ifndef SVIMAGEPROPERTIESCLASS_H
 #define SVIMAGEPROPERTIESCLASS_H
 
-#include "SVImageEnums.h"
+#include "ObjectInterfaces\SVImageEnums.h"
 
 class SVImagePropertiesClass
 {

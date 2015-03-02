@@ -11,7 +11,7 @@
 
 #include "StdAfx.h"
 #include "SVEmptyIOExports.h"
-#include "SVImageLibrary/SVImageEnums.h"
+#include "SVHBitmapUtilitiesLibrary\SVImageFormatEnum.h"
 #include "SVOMFCLibrary/SVDeviceParams.h"
 
 HRESULT WINAPI SVCreate()

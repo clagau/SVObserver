@@ -12,6 +12,7 @@
 #include "stdafx.h"
 #include "SVColorThreshold.h"
 
+#include "SVHBitmapUtilitiesLibrary/SVImageFormatEnum.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "SVImageLibrary/SVImageBufferHandleInterface.h"
 #include "SVRunControlLibrary/SVRunControlLibrary.h"

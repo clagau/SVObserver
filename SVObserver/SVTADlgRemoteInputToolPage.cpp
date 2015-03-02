@@ -11,7 +11,6 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include "resource.h"
 #include "SVTADlgRemoteInputToolPage.h"
 
 #include "SVInspectionProcess.h"

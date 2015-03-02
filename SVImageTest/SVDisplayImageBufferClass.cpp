@@ -11,7 +11,7 @@
 
 #include "stdafx.h"
 #include "SVDisplayImageBufferClass.h"
-#include "SVImageLibrary/SVImageEnums.h"
+#include "SVHBitmapUtilitiesLibrary\SVImageFormatEnum.h"
 
 SVDisplayImageBufferClass::SVDisplayImageBufferClass()
 {

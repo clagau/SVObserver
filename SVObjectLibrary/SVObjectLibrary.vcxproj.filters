@@ -71,9 +71,6 @@
     <ClCompile Include="SVObjectReference.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVObjectTypeInfoStruct.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVObjectXMLWriter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -206,9 +203,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVObjectScriptUsage.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVObjectTypeInfoStruct.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVObjectWriter.h">

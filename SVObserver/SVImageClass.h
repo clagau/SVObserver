@@ -13,6 +13,7 @@
 #define SVIMAGECLASS_H
 
 #include <set>
+#include "ObjectInterfaces/ISVImage.h"
 #include "SVContainerLibrary/SVVector.h"
 #include "SVImageLibrary/SVImageBufferHandleInterface.h"
 #include "SVImageLibrary/SVImageInfoClass.h"
@@ -35,7 +36,8 @@ struct SVProductInfoStruct;
 
 typedef SVVector< long > SVImageChildIndexCArray;
 
-class SVImageClass : public SVObjectAppClass
+class SVImageClass : virtual public SvOi::ISVImage
+	,public SVObjectAppClass
 {
 	SV_DECLARE_CLASS( SVImageClass );
 
@@ -50,7 +52,6 @@ public:
 	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStruct );
 	virtual BOOL CloseObject();
 
-	virtual SVImageTypeEnum GetImageType(); //@TODO:  Change method to const?
 	virtual SVImageClass* GetParentImage() const;
 	virtual const GUID& GetParentImageID() const;
 	virtual const SVImageInfoClass& GetImageInfo() const;
@@ -94,7 +95,7 @@ public:
 	virtual BOOL CopyImageTo( SVImageIndexStruct svIndex );
 
 	virtual BOOL GetImageHandle( SVSmartHandlePointer& p_rHandlePtr ); //@TODO:  Change method to const?
-	virtual BOOL GetImageHandle( SVImageIndexStruct svIndex, SVSmartHandlePointer& rHandle );
+		virtual BOOL GetImageHandle( SVImageIndexStruct svIndex, SVSmartHandlePointer& rHandle );
 
 	virtual BOOL SafeImageCopyToHandle     ( SVSmartHandlePointer& p_rHandle );
 	virtual BOOL SafeImageCopyToHandle     ( SVImageIndexStruct p_svFromIndex, SVSmartHandlePointer& p_rHandle );
@@ -131,6 +132,13 @@ public:
 	HRESULT TranslateFromOutputSpaceToImage(SVImageClass* p_pImage, SVExtentPointStruct p_InPt, SVExtentPointStruct& p_OutPt); //@TODO:  Change method to const?
 
 	void GetChildExtents( SVChildExtentDeque& p_rChildExtents ) const;
+
+#pragma region virtual method (ISVImage)
+	virtual SVImageTypeEnum GetImageType() const override;
+	virtual SvOi::ISVImage* GetParentImageInterface() const override;
+	virtual SvOi::IMatroxImageData* getImageData() override;
+	virtual SvOi::IMatroxImageData*  getParentImageData() override;
+#pragma region virtual method (ISVImage)
 
 protected:
 	typedef std::pair< SVGUID, SVImageClass* > SVParentObjectPair;

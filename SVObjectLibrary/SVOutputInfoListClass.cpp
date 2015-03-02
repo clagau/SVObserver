@@ -128,10 +128,17 @@ BOOL SVOutputInfoListClass::CheckExistence( int Index /*= -1*/ )
 	return BRetVal;
 }
 
-int SVOutputInfoListClass::GetSize()
+#pragma region virtual method (IOutputInfoListClass)
+int SVOutputInfoListClass::GetSize() const
 {
 	return m_svObjectArray.GetSize();
 }
+
+SvOi::IObjectInfoStruct* SVOutputInfoListClass::GetInterfaceAt( int p_iIndex )
+{
+	return GetAt(p_iIndex);
+}
+#pragma region virtual method (IOutputInfoListClass)
 
 SVOutObjectInfoStruct* SVOutputInfoListClass::GetAt( int p_iIndex )
 {

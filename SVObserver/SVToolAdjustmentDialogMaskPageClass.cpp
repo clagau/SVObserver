@@ -27,6 +27,7 @@
 #include "SVToolAdjustmentDialogSheetClass.h"
 #include "SVToolSet.h"
 #include "SVUnaryImageOperatorList.h"
+#include "SVImageLibrary/MatroxImageData.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -909,7 +910,8 @@ void SVToolAdjustmentDialogMaskPageClass::setImages()
 	// Get the Image for this tool and set to first tab
 	m_dialogImage.setImageFromParent( m_pMask->getReferenceImage(), 0 );
 	// Set second tab to Mask
-	m_dialogImage.setImage( m_pMask->m_MaskBufferHandlePtr, 1 );
+	MatroxImageData data( m_pMask->m_MaskBufferHandlePtr );
+	m_dialogImage.setImage( &data, 1 );
 	// Set third tab to source image
 	SVImageInfoClass* pImageInfo = reinterpret_cast < SVImageInfoClass*> (::SVSendMessage( m_pTool, SVM_GETFIRST_IMAGE_INFO, NULL, NULL ) );
 	if( nullptr != pImageInfo )

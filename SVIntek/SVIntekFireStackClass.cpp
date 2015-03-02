@@ -12,6 +12,7 @@
 #include "stdafx.h"
 #include "SVIntekFireStackClass.h"
 
+#include "SVHBitmapUtilitiesLibrary/SVImageFormatEnum.h"
 #include "SVIntek.h"
 #include "SVConvert.h"
 #include "SVCFireBus.h"

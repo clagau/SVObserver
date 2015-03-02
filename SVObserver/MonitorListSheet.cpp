@@ -15,7 +15,6 @@
 #include <algorithm>
 #include <boost/function.hpp>
 #include <boost/assign/list_of.hpp>
-#include "resource.h"
 #include "MonitorListSheet.h"
 #include "ISVPropertyPageDialog.h"
 #include "MonitorListValuesPage.h"

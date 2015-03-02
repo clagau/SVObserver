@@ -26,7 +26,8 @@
 
 #pragma region Includes
 #include "SVFileNameClass.h"
-#include "PictureDisplay.h"
+//TODO: MZA(10.Nov 2014): Move this files to SVOGui project and then remove folder from include and Namespace add-on add PictureDisplay declaration.
+#include "SVOGui/PictureDisplay.h"
 #include "SVTaskObjectInterfaceClass.h"
 #pragma endregion Includes
 
@@ -35,6 +36,7 @@ class SVToolAdjustmentDialogSheetClass;
 class SVToolClass;
 class SVBoolValueObjectClass;
 class SVFileNameValueObjectClass;
+class SVImageClass;
 #pragma endregion Declarations
 //******************************************************************************
 //* CLASS(ES) & TYPE(S):
@@ -85,7 +87,7 @@ private:
 
 	//{{AFX_DATA(SVToolAdjustmentDialogFileImageSourcePageClass)
 	enum { IDD = IDD_TA_FILE_IMAGE_DIALOG };
-	PictureDisplay	m_imageCtrl;
+	SvOg::PictureDisplay	m_imageCtrl;
 	CString	m_StrPathName;
 	BOOL	m_BContinuousReload;
 	//}}AFX_DATA

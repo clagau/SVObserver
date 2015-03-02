@@ -14,7 +14,8 @@
 #pragma region Includes
 #include "SVImageLibrary/SVImageInfoClass.h"
 #include "SVImageLibrary/SVImageBufferHandleInterface.h"
-#include "PictureDisplay.h"
+//TODO: MZA(10.Nov 2014): Move this files to SVOGui project and then remove folder from include and Namespace add-on add PictureDisplay declaration.
+#include "SVOGui/PictureDisplay.h"
 #include "SVOMFCLibrary/SVDeviceParams.h"
 #include "SVImageLibrary/SVImagingDeviceParams.h"
 #include "SVAcquisitionClass.h"
@@ -82,7 +83,7 @@ private:
 #pragma region Member Variables
 	//{{AFX_DATA(SVCameraFormat7Dlg)
 	enum { IDD = IDD_CAMERA_FORMAT7_DLG };
-	PictureDisplay m_Image;
+	SvOg::PictureDisplay m_Image;
 	CSpinButtonCtrl m_SpinHeight;
 	CSpinButtonCtrl m_SpinLeft;
 	CSpinButtonCtrl m_SpinWidth;

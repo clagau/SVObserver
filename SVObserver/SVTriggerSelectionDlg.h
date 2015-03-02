@@ -13,7 +13,6 @@
 
 #include <map>
 #include "SVUtilityLibrary/SVString.h"
-#include "resource.h"
 #include "afxwin.h"
 
 typedef std::map<SVString, int> SVTriggerNameIdList;

@@ -13,7 +13,7 @@
 #define LICMGRMODELESSDLG_H_
 
 #include "SVOLicenseManager\SVOLicenseManager.h"
-#include "resource.h"
+#include "SVOResource\resource.h"
 
 class SVLicenseMgrModelessDlg;
 

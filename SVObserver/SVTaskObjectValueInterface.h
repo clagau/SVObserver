@@ -59,7 +59,7 @@ public:
 	virtual HRESULT AddInputRequest( const SVGUID& p_rTaskId, const SVGUID& p_rEmbeddedId, LPCTSTR p_szValue );
 	virtual HRESULT AddInputRequest( const SVGUID& p_rTaskId, const SVGUID& p_rEmbeddedId, double p_dValue );
 	virtual HRESULT AddInputRequestMarker();
-	virtual HRESULT RunOnce( SVToolClass *p_psvTool = NULL );
+	virtual HRESULT RunOnce( SVToolClass *p_psvTool = nullptr );
 
 private:
 	SVTaskObjectClass *m_psvTaskObject;

@@ -22,6 +22,7 @@
 #include "SVImageClass.h"
 #include "SVOMFCLibrary\SVGraphix.h"
 #include "SVOMFCLibrary\DisplayHelper.h"
+#include "SVImageLibrary\MatroxImageData.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -778,7 +779,8 @@ void SVPatModelPageClass::setImages()
 	if ( m_pPatAnalyzer != NULL )
 	{
 		m_dialogImage.setImage( m_pPatAnalyzer->getInputImage(), 0 );
-		m_dialogImage.setImage( m_pPatAnalyzer->m_patBufferHandlePtr, 1 );
+		MatroxImageData data(m_pPatAnalyzer->m_patBufferHandlePtr);
+		m_dialogImage.setImage( &data, 1 );
 	}
 	
 	setOverlay();

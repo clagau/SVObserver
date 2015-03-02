@@ -10,7 +10,6 @@
 //******************************************************************************
 
 #include "stdafx.h"
-#include "resource.h"
 #include "SVRemoteIOAdjustDialog.h"
 
 IMPLEMENT_DYNAMIC(SVRemoteIOAdjustDialog, CDialog)

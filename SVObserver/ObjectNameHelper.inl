@@ -13,7 +13,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "ObjectNameHelper.h"
-#include "SVObjectLibrary/SVObjectTypeInfoStruct.h"
+#include "ObjectInterfaces/SVObjectTypeInfoStruct.h"
 #include <vector>
 #include <set>
 #pragma endregion Includes

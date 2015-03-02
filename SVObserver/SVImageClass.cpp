@@ -32,6 +32,7 @@
 #include "SVTool.h"
 #include "SVToolSet.h"
 #include "SVObjectLibrary\SVToolsetScriptTags.h"
+#include "SVImageLibrary\MatroxImageData.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -92,7 +93,7 @@ BOOL SVImageClass::CloseObject()
 	return rc;
 }
 
-SVImageTypeEnum SVImageClass::GetImageType()
+SVImageTypeEnum SVImageClass::GetImageType() const
 {
 	return m_ImageType;
 }
@@ -2661,6 +2662,37 @@ void SVImageClass::GetChildExtents( SVChildExtentDeque& p_rChildExtents ) const
 		++l_Iter;
 	}
 }
+
+#pragma region virtual method (ISVImage)
+SvOi::ISVImage* SVImageClass::GetParentImageInterface() const
+{
+	return GetParentImage();
+}
+
+SvOi::IMatroxImageData* SVImageClass::getImageData()
+{
+	SVSmartHandlePointer handle;
+	static MatroxImageData data(handle);
+	if (GetImageHandle(handle))
+	{
+		data.setImageHandle(handle);
+		return &data;
+	}
+	return nullptr; 
+}
+
+SvOi::IMatroxImageData*  SVImageClass::getParentImageData()
+{
+	SVSmartHandlePointer handle;
+	static MatroxImageData data(handle);
+	if (S_OK == GetParentImageHandle(handle))
+	{
+		data.setImageHandle(handle);
+		return &data;
+	}
+	return nullptr; 
+}
+#pragma endregion virtual method (ISVImage)
 
 BOOL SVImageClass::OnValidate()
 {

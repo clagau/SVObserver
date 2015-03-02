@@ -13,6 +13,7 @@
 #define SVTASKOBJECT_H
 
 #include <vector>
+#include "ObjectInterfaces/ITaskObject.h"
 #include "SVRunControlLibrary/SVRunStatus.h"
 #include "SVObjectLibrary/SVObjectScriptUsage.h"
 #include "SVObjectLibrary/SVInputInfoListClass.h"
@@ -24,6 +25,7 @@
 #include "SVExtentPropertiesInfoStruct.h"
 #include "SVObjectLibrary/SVObjectListClass.h"
 #include "SVImageLibrary/SVExtentMultiLineStruct.h"
+#include "SVTaskObjectValueInterface.h"
 
 class SVLineClass;
 class SVIPDoc;
@@ -31,7 +33,7 @@ class SVIPDoc;
 typedef std::vector<SVObjectClass*> SVObjectVector;
 typedef SVVector< SVObjectClass* > SVObjectClassArray;
 
-class SVTaskObjectClass : public SVObjectAppClass  
+class SVTaskObjectClass : virtual public SvOi::ITaskObject, public SVObjectAppClass  
 {
 	SV_DECLARE_CLASS( SVTaskObjectClass )
 
@@ -109,7 +111,12 @@ public:
 	HRESULT FindNextInputImageInfo( SVInObjectInfoStruct*& p_rpsvFoundInfo, const SVInObjectInfoStruct* p_psvLastInfo = NULL );
 
 	virtual HRESULT GetChildObject( SVObjectClass*& p_rpObject, const SVObjectNameInfo& p_rNameInfo, long p_Index = 0 ) const;
-	
+
+#pragma region virtual method (ITaskObject)
+	virtual HRESULT AddInputRequestMarker() override;
+	virtual HRESULT RunOnce(IObjectClass* pTool = nullptr) override;
+#pragma endregion virtual method (ITaskObject)
+
 protected:
 
 	SVInputInfoListClass m_svToolInputList;
@@ -228,6 +235,8 @@ protected:
 	SVInputInfoListClass            inputInterfaceList;
 
 	bool                            m_bUseOverlays;
+
+	SVTaskObjectValueInterface      m_taskObjectValueInterface;  ///< this parameter is needed for the interface implementation from RunOnce and AddInputRequestMarker
 
 private:
 	HRESULT LocalInitialize();

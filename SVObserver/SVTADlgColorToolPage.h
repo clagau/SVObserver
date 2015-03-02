@@ -19,7 +19,8 @@
 //
 
 #include "SVTaskObjectInterfaceClass.h"
-#include "PictureDisplay.h"
+//TODO: MZA(10.Nov 2014): Move this files to SVOGui project and then remove folder from include and Namespace add-on add PictureDisplay declaration.
+#include "SVOGui/PictureDisplay.h"
 
 class SVColorToolClass;
 class SVToolClass;
@@ -61,7 +62,7 @@ protected:
 	// Dialog Data
 	//{{AFX_DATA(SVTADlgColorToolPageClass)
 	enum { IDD = IDD_TA_COLOR_TOOL_DIALOG };
-	PictureDisplay	m_dialogImage;
+	SvOg::PictureDisplay	m_dialogImage;
 	BOOL	m_convertToHSI;
 	//}}AFX_DATA
 

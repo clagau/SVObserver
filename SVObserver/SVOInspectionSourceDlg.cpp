@@ -12,7 +12,6 @@
 #include "stdafx.h"
 #include <boost/config.hpp>
 #include <boost/bind.hpp>
-#include "resource.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVOInspectionSourceDlg.h"
 #include "SVOConfigAssistantDlg.h"
@@ -375,7 +374,7 @@ BOOL CSVOInspectionSourceDlg::OnInitDialog()
 		m_ctlExportIPDbtn.EnableWindow(FALSE);
 	}
 
-	SetWindowContextHelpId(IDD+0x20000);
+	SetWindowContextHelpId(IDD+HELPFILE_SVORESOURCE_OFFSET);
 	
 	return TRUE;  // return TRUE unless you set the focus to a control
 				  // EXCEPTION: OCX Property Pages should return FALSE

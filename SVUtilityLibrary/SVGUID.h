@@ -17,6 +17,8 @@
 #include "SVUtilityLibrary/SVString.h"
 #include "SVUtilityLibrary/SVUtilityGlobals.h"
 
+extern const GUID  SVInvalidGUID;
+
 /**
 @SVObjectName Global Unique Identifier (GUID)
 

@@ -51,7 +51,19 @@ HRESULT EnvironmentObject::GetChildObject( SVObjectClass*& rpObject, const SVObj
 	return S_OK;
 }
 
-void EnvironmentObject::getEnvironmentObjectNameList(SVStringArray& rObjectNameList, const SVString& rPath, UINT AttributesAllowedFilter) const
+/*static*/ void EnvironmentObject::getEnvironmentObjectNameList(SVStringArray& rObjectNameList, const SVString& rPath, UINT AttributesAllowedFilter)
+{
+	EnvironmentObject *pEnvironment = nullptr;
+
+	SVObjectManagerClass::Instance().GetRootChildObject(pEnvironment, SVObjectManagerClass::Environment);
+
+	if(nullptr != pEnvironment)
+	{
+		pEnvironment->getObjectNameList( rObjectNameList, rPath, AttributesAllowedFilter );
+	}
+}
+
+void EnvironmentObject::getObjectNameList(SVStringArray& rObjectNameList, const SVString& rPath, UINT AttributesAllowedFilter) const
 {
 	SVString path = rPath + _T(".");
 	const BasicValueObjects::ValueList& list = m_EnvironmentValues.getValueList();
@@ -71,7 +83,7 @@ void EnvironmentObject::getEnvironmentObjectNameList(SVStringArray& rObjectNameL
 
 				if ( rPath.empty() || diff == 0 )
 				{
-					rObjectNameList.push_back( completeName );
+					rObjectNameList.push_back(completeName);
 				}
 			}
 		}
@@ -79,6 +91,13 @@ void EnvironmentObject::getEnvironmentObjectNameList(SVStringArray& rObjectNameL
 }
 #pragma endregion Public Methods
 
+#pragma region IEnvironmentObject-function
+void SvOi::getEnvironmentObjectNameList(SVStringArray& rObjectNameList, const SVString& rPath, UINT AttributesAllowedFilter)
+{
+	//To have the function available without to know the class EvironmentObject
+	EnvironmentObject::getEnvironmentObjectNameList(rObjectNameList, rPath, AttributesAllowedFilter);
+}
+#pragma endregion IEnvironmentObject-function
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************

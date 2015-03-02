@@ -37,7 +37,7 @@ void SVSquare::OnPaint()
 BOOL SVSquare::RegisterWindowClass()
 {
     WNDCLASS wndcls;
-    HINSTANCE hInst = AfxGetInstanceHandle();
+    HINSTANCE hInst = AfxGetResourceHandle();
 
     if (!(::GetClassInfo(hInst, _T("SVCuteSquare"), &wndcls)))
     {

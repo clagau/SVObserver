@@ -15,13 +15,13 @@
 #pragma once
 
 #pragma region Includes
-#include "IFormulaController.h"
+#include "ObjectInterfaces/IFormulaController.h"
 #include "SVTaskObject.h"
 #include "SVMathContainer.h"
 #include "SVEquation.h"
 #pragma endregion
 
-class FormulaController : public IFormulaController
+class FormulaController : public SvOi::IFormulaController
 {
 #pragma region Constructor
 public:
@@ -34,12 +34,12 @@ public:
 #pragma region Virtual Methods (IFormulaController)
 	virtual SVString getEquationText() const override;
 	virtual SVStringArray getPPQVariableNames() const override;
-	virtual SVInspectionProcess* getInspectionProcess() const override;
-	virtual SVToolSetClass* getToolSet() const override;
+	virtual SvOi::IInspectionProcess* getInspectionProcess() const override;
+	virtual SvOi::IOutputInfoListClass& GetToolSetOutputList( ) const override;
 	virtual HRESULT isToolAndEquationEnabled(bool& toolEnabled, bool& equationEnabled) const override;
 
 	virtual HRESULT setToolAndEquationEnabled(bool toolEnabled, bool equationEnabled) override;
-	virtual void setTaskObject( SVTaskObjectClass& pObject ) override;
+	virtual void setTaskObject( SvOi::IObjectClass& rObject ) override;
 
 	virtual int validateEquation(const SVString &equationString, double& result) const override;
 	virtual int validateAndSetEquation(const SVString &equationString, double& result) override;
@@ -49,9 +49,15 @@ public:
 #pragma region Protected Methods
 protected:
 	/**********
-		Set equation-class and struct.
-		\param pEquation [in] the equation class.
-		**********/
+	Set the task object which use the equation. The virtual protected method, is called from public version.
+	\param pObject [in] task object.
+	**********/
+	virtual void setTaskObjectClass( SVTaskObjectClass& rObject );
+
+	/**********
+	Set equation-class and struct.
+	\param pEquation [in] the equation class.
+	**********/
 	void setEquation( SVEquationClass* pEquation );
 #pragma endregion Protected Methods
 

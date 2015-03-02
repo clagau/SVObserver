@@ -92,6 +92,31 @@ BOOL SVThickeningFilterClass::CreateObject( SVObjectLevelCreateStruct* PCreateSt
 	return bOk;
 }
 
+#pragma region virtual method (IThinningFilter)
+HRESULT SVThickeningFilterClass::addGrayOnRequest(bool value)
+{
+	return m_taskObjectValueInterface.AddInputRequest( &m_bvoGrayOn, value );
+}
+
+bool SVThickeningFilterClass::isGrayOn() const
+{ 
+	bool value = 0;
+	m_bvoGrayOn.GetValue(value);
+	return value;
+}
+
+HRESULT SVThickeningFilterClass::addIterationRequest(long value) 
+{
+	return m_taskObjectValueInterface.AddInputRequest( &m_lvoItterations, value );
+}
+
+long SVThickeningFilterClass::getIteration() const
+{ 
+	long value = 0;
+	m_lvoItterations.GetValue(value);
+	return value;
+}
+#pragma endregion virtual method (IThinningFilter)
 
 //******************************************************************************
 // Operation(s) Of Process:

@@ -22,7 +22,6 @@
 #include "SVInspectionProcess.h"
 #include "SVSVIMStateClass.h"
 #include "SVTool.h"
-#include "SVToolAdjustmentDialogSheetClass.h"
 
 SV_IMPLEMENT_CLASS( SVToolSetClass, SVToolSetClassGuid );
 
@@ -788,6 +787,23 @@ void SVToolSetClass::GetToolIds( SVToolIdDeque& p_rToolIds ) const
 	}
 }
 
+#pragma region virtual method (IToolSet)
+bool SVToolSetClass::IsToolPreviousToSelected( const SVGUID& p_rToolID ) const
+{
+	bool l_Status = false;
+	SVToolSetClass::SVToolIdDeque l_ToolIds;
+	GetToolIds( l_ToolIds );
+
+	for( SVToolSetClass::SVToolIdDeque::const_iterator l_Iter = l_ToolIds.begin(); !l_Status && l_Iter != l_ToolIds.end(); ++l_Iter )
+	{
+		l_Status = ( p_rToolID == ( *l_Iter ) );
+	}
+
+	return l_Status;
+}
+
+#pragma region virtual method (IToolSet)
+
 BOOL SVToolSetClass::OnValidate()
 {
 	BOOL bRetVal = FALSE;
@@ -1471,75 +1487,16 @@ DWORD_PTR SVToolSetClass::processMessage( DWORD DwMessageID, DWORD_PTR DwMessage
 
 	case SVMSGID_CREATE_CHILD_OBJECT:
 		{
-			// Send this message to the object owner to create an object.
-			// If the owner object is not created yet, it returns SVMR_NOT_PROCESSED.
-			// Otherwise the owner object sends SVM_CREATE_ALL_OBJECTS to the child object
-			// and returns the result of this message.
 			// ...use second message parameter ( DwMessageValue ) as SVObjectClass* of the child object
 			// ...returns SVMR_SUCCESS, SVMR_NO_SUCCESS or SVMR_NOT_PROCESSED
 			SVObjectClass* pChildObject = reinterpret_cast<SVObjectClass*>(DwMessageValue);
-			if( IsCreated() && SV_IS_KIND_OF( pChildObject, SVObjectClass ) )
-			{
-				long l_LastIndex = 1;
-				SVInspectionProcess* l_pInspect = GetInspection();
-
-				if( l_pInspect != NULL )
-				{
-					SVProductInfoStruct l_Product = l_pInspect->LastProductGet( SV_INSPECTION );
-
-					if( !( l_Product.empty() ) )
-					{
-						SVDataManagerHandle l_Handle;
-
-						l_Product.GetResultDataIndex( l_Handle );
-
-						l_LastIndex = l_Handle.GetIndex();
-					}
-				}
-
-				// Set first object depth...
-				pChildObject->SetObjectDepthWithIndex( objectDepth, l_LastIndex );
-				pChildObject->SetImageDepth( mlImageDepth );
-
-				// Set defaults, to ensure that no invalid input info exists...
-				SetDefaultInputs();
-
-				SVInspectionLevelCreateStruct createStruct;
-				createStruct.OwnerObjectInfo        = this;
-				createStruct.InspectionObjectInfo	= GetInspection();
-
-				DWORD_PTR l_Return = SVSendMessage( pChildObject, SVM_CREATE_ALL_OBJECTS, reinterpret_cast<DWORD_PTR>(&createStruct), NULL );
-
-				if( ( DwMessageContext & SVMFResetObject ) == SVMFResetObject )
-				{
-					::SVSendMessage( pChildObject, SVM_RESET_ALL_OBJECTS, NULL, NULL );
-				}
-
-				if( ( DwMessageContext & SVMFSetDefaultInputs ) == SVMFSetDefaultInputs )
-				{
-					GetInspection()->SetDefaultInputs();
-				}
-
-				if( ( DwMessageContext & SVMFResetInspection ) == SVMFResetInspection )
-				{
-					::SVSendMessage( GetInspection(), SVM_RESET_ALL_OBJECTS, NULL, NULL );
-				}
-
-				return l_Return;
-
-			}
-			return SVMR_NOT_PROCESSED;
+			return CreateChildObject(pChildObject, static_cast<DWORD>(DwMessageContext));
 		}
 		break;
 
 	case SVMSGID_CONNECT_CHILD_OBJECT:
 		{
-			// Send this message to the object owner to create an object.
-			// If the owner object is not created yet, it returns SVMR_NOT_PROCESSED.
-			// Otherwise the owner object sends SVM_CREATE_ALL_OBJECTS to the child object
-			// and returns the result of this message.
 			// ...use second message parameter ( DwMessageValue ) as SVObjectClass* of the child object
-			// ...returns SVMR_SUCCESS, SVMR_NO_SUCCESS or SVMR_NOT_PROCESSED
 			SVObjectClass* pChildObject = reinterpret_cast<SVObjectClass*>(DwMessageValue);
 			if( SV_IS_KIND_OF( pChildObject, SVObjectClass ) )
 			{
@@ -1679,6 +1636,19 @@ HRESULT SVToolSetClass::onCollectOverlays(SVImageClass *p_Image, SVExtentMultiLi
 	return S_FALSE;	// no overlays for toolset
 }
 
+DWORD_PTR SVToolSetClass::createAllObjectsFromChild( SVObjectClass* pChildObject )
+{
+	//MZA: 5. Nov 2014: the method call SetDefaultInputs is missing in the other method
+	//do we need this method call SetDefaultInputs here?
+	// Set defaults, to ensure that no invalid input info exists...
+	SetDefaultInputs();
+
+	SVInspectionLevelCreateStruct createStruct;
+	createStruct.OwnerObjectInfo        = this;
+	createStruct.InspectionObjectInfo	= GetInspection();
+
+	return SVSendMessage( pChildObject, SVM_CREATE_ALL_OBJECTS, reinterpret_cast<DWORD_PTR>(&createStruct), NULL );
+}
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************

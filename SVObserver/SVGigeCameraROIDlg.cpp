@@ -17,6 +17,7 @@
 #include "SVImageLibrary/SVImageBufferHandleInterface.h"
 #include "SVOMFCLibrary/SVStringValueDeviceParam.h"
 #include "SVOMFCLibrary/DisplayHelper.h"
+#include "SVImageLibrary/MatroxImageData.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -675,7 +676,8 @@ double SVGigeCameraROIDlg::GetScaledValue(long value, double scaleFactor) const
 
 void SVGigeCameraROIDlg::setImages()
 {
-	m_Image.setImage( m_pImageHandle );
+	MatroxImageData data(m_pImageHandle);
+	m_Image.setImage( &data );
 	m_Image.Refresh();
 }
 #pragma endregion Private Methods

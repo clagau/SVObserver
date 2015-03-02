@@ -12,7 +12,6 @@
 #ifndef SVCAMERADATAINPUTOBJECT_H
 #define SVCAMERADATAINPUTOBJECT_H
 
-#include "resource.h"
 #include "SVInputObject.h"
 
 class SVCameraDataInputObject : public SVInputObject

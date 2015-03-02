@@ -298,7 +298,7 @@ void SVHistogram::PaintBitmap()
 BOOL SVHistogram::RegisterWindowClass()
 {
     WNDCLASS wndcls;
-    HINSTANCE hInst = AfxGetInstanceHandle();
+    HINSTANCE hInst = AfxGetResourceHandle();
 
     if (!(::GetClassInfo(hInst, HISTOGRAM_CLASSNAME, &wndcls)))
     {

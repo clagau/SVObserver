@@ -439,6 +439,7 @@ void SVObjectClass::ResetName()
 	strName = strObjectName;
 }
 
+#pragma region virtual method (IObjectClass)
 /*
 This method return the object name.  This name is changeable by the user.
 */
@@ -446,6 +447,22 @@ LPCTSTR SVObjectClass::GetName() const
 {
 	return strName;
 }
+
+SvOi::IObjectClass* SVObjectClass::GetAncestorInterface(SVObjectTypeEnum ancestorObjectType)
+{
+	return GetAncestor(ancestorObjectType);
+}
+
+SvOi::IObjectClass* SVObjectClass::GetFirstObject(const SVObjectTypeInfoStruct& type)
+{
+	return reinterpret_cast<SVObjectClass*>(processMessage(SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&type) ));
+}
+
+DWORD_PTR SVObjectClass::resetAllObjects()
+{
+	return processMessage(SVM_RESET_ALL_OBJECTS, NULL, NULL);
+}
+#pragma endregion virtual method (IObjectClass)
 
 /*
 Set user changeable name.

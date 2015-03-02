@@ -41,6 +41,9 @@
 
 #include <afxcmn.h>             // MFC support for Windows Common Controls
 
+// Global includes that everyone needs
+#include "SVOResource\resource.h"
+
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************

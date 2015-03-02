@@ -14,8 +14,9 @@
 #pragma once
 
 #pragma region Includes
+#include "ObjectInterfaces\IOutputInfoListClass.h"
+#include "ObjectInterfaces\IObjectClass.h"
 #include "SVObjectLibrary\SVObjectReference.h"
-#include "SVObjectLibrary\SVOutputInfoListClass.h"
 #include "SVTreeLibrary\ObjectTreeItems.h"
 #pragma endregion Includes
 
@@ -128,7 +129,7 @@ namespace Seidenader
 			 The method inserts the tool set output object list
 			 \param rOutputList <out> reference to the output list
 			***********/
-			void insertOutputList( SVOutputInfoListClass& rOutputList );
+			void insertOutputList( SvOi::IOutputInfoListClass& rOutputList );
 
 			//**********
 			// Description:  The method displays the object selector dialog
@@ -197,6 +198,15 @@ namespace Seidenader
 			 \param rSelectorItem <in, out> reference to the selector item
 			***********/
 			static void setSelectorItemType( const SVObjectReference& rObjectRef, SVTreeLibrary::ObjectSelectorItem& rSelectorItem );
+
+			//************************************
+			//!  The method sets the selector item variable type int string etc..
+			//! \param pObject [in] object to set
+			//! \param rSelectorItem [in] selector item value to set
+			//! \returns void
+			//************************************
+			static void setSelectorItemType( const SvOi::IObjectClass* pObject, SVTreeLibrary::ObjectSelectorItem &rSelectorItem );
+			static void setSelectorItemType( const SVObjectClass* pObject, SVTreeLibrary::ObjectSelectorItem &rSelectorItem );
 		#pragma endregion Public Methods
 
 		private:
@@ -206,7 +216,7 @@ namespace Seidenader
 			 \param rOutputList <in> reference to the output list (Tried to make it const however failed due to methods not const)
 			 \param rObjectList <out> reference to the object list
 			***********/
-			void filterObjects( SVOutputInfoListClass& rOutputList, SVObjectReferenceVector& rObjectList );
+			void filterObjects( SvOi::IOutputInfoListClass& rOutputList, SVObjectReferenceVector& rObjectList );
 
 			/**********
 			 The method checks if the tree has been modified

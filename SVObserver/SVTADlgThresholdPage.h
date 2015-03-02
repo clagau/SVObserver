@@ -29,7 +29,8 @@
 
 #include "SVTaskObjectInterfaceClass.h"
 #include "svhistogram.h"
-#include "PictureDisplay.h"
+//TODO: MZA(10.Nov 2014): Move this files to SVOGui project and then remove folder from include and Namespace add-on add PictureDisplay declaration.
+#include "SVOGui/PictureDisplay.h"
 
 class SVToolAdjustmentDialogSheetClass;
 class SVToolClass;
@@ -140,7 +141,7 @@ protected:
 	CButton	autoThresholdWhiteRadio;
 	CButton	autoThresholdBlackRadio;
 	SVSliderCtrl	autoThresholdCtrl;
-	PictureDisplay	dialogImage;
+	SvOg::PictureDisplay	dialogImage;
 	SVSliderCtrl	lowerThreshold;
 	SVSliderCtrl	upperThreshold;
 	BOOL	upperThresholdActive;

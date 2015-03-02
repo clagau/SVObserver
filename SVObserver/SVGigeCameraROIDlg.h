@@ -12,7 +12,6 @@
 #pragma once
 
 #pragma region Includes
-#include "resource.h"
 #include "SVImageLibrary/SVImageInfoClass.h"
 #include "SVImageLibrary/SVImageBufferHandleInterface.h"
 #include "SVOMFCLibrary/SVDeviceParam.h"
@@ -21,7 +20,8 @@
 #include "SVOMFCLibrary/SVLongValueDeviceParam.h"
 #include "SVImageLibrary/SVImagingDeviceParams.h"
 #include "SVAcquisitionClass.h"
-#include "PictureDisplay.h"
+//TODO: MZA(10.Nov 2014): Move this files to SVOGui project and then remove folder from include and Namespace add-on add PictureDisplay declaration.
+#include "SVOGui/PictureDisplay.h"
 #pragma endregion Includes
 
 class ISVCameraDeviceImageFormatUpdater
@@ -127,7 +127,7 @@ private:
 
 	//{{AFX_DATA(SVGigeCameraROIDlg)
 	enum { IDD = IDD_GIGE_CAMERA_ROI_DLG };
-	PictureDisplay m_Image;
+	SvOg::PictureDisplay m_Image;
 	CSpinButtonCtrl m_SpinHeight;
 	CSpinButtonCtrl m_SpinLeft;
 	CSpinButtonCtrl m_SpinWidth;

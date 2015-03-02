@@ -56,10 +56,17 @@ SVString SVInObjectInfoStruct::GetOneBasedInputObjectShortName() const
 	return l_Result;
 }
 
+#pragma region virtual method (IObjectInfoStruct)
 bool SVInObjectInfoStruct::IsConnected() const
 {
 	return m_IsConnected;
 }
+
+const SvOi::IObjectInfoStruct& SVInObjectInfoStruct::GetInputObjectInfoInterface() const
+{
+	return m_InputObjectInfo;
+}
+#pragma region virtual method (IObjectInfoStruct)
 
 void SVInObjectInfoStruct::SetInputObjectType( SVObjectTypeEnum p_ObjectType, long p_SubType )
 {

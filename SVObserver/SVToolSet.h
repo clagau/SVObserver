@@ -12,19 +12,20 @@
 #ifndef SVTOOLSET_H
 #define SVTOOLSET_H
 
+#include "ObjectInterfaces\IToolSet.h"
 #include "SVMainImageClass.h"
 #include "SVResultList.h"
 #include "SVTaskObjectList.h"
 #include "SVValueObjectImpl.h"
 
-class SVToolAdjustmentDialogSheetClass;
 class SVConditionalClass;
 
 /*
 This class capsules basic properties to handle and execute an Image Processing Tool Set
 */
 
-class SVToolSetClass : public SVTaskObjectListClass	
+class SVToolSetClass : virtual public SvOi::IToolSet,
+		public SVTaskObjectListClass	
 {
 	SV_DECLARE_CLASS( SVToolSetClass );
 
@@ -93,6 +94,10 @@ public:
 
 	void GetToolIds( SVToolIdDeque& p_rToolIds ) const;
 
+#pragma region virtual method (IToolSet)
+	virtual bool IsToolPreviousToSelected( const SVGUID& rToolID ) const override;
+#pragma region virtual method (IToolSet)
+
 	SVBoolValueObjectClass RegressionTestMode;
 
 	long		setNumber;
@@ -116,6 +121,10 @@ protected:
 	virtual BOOL onRun( SVRunStatusClass& RRunStatus );
 	virtual DWORD_PTR processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext );
 	virtual HRESULT onCollectOverlays(SVImageClass *p_Image, SVExtentMultiLineStructCArray &p_MultiLineArray );
+
+	// Sends SVM_CREATE_ALL_OBJECTS to the child object
+	// and returns the result of this message.
+	virtual DWORD_PTR createAllObjectsFromChild( SVObjectClass* pChildObject ) override;
 
 	SVResultListClass	m_ResultList;
 

@@ -15,6 +15,7 @@
 #pragma once
 
 #pragma region Includes
+#include "ObjectInterfaces\IEnvironmentObject.h"
 #include "SVObjectLibrary\SVObjectClass.h"
 #include "BasicValueObjects.h"
 #pragma endregion Includes
@@ -95,7 +96,15 @@ public:
 		\param rPath <in> the path of object to return. Default = "", means all objects.
 		\param AttributesAllowedFilter <in> the attributes of the objects must be set to return. Default = 0, means all objects.
 	***********/
-	void getEnvironmentObjectNameList(SVStringArray& rObjectNameList, const SVString& rPath = _T(""), UINT AttributesAllowedFilter = 0) const;
+	static void getEnvironmentObjectNameList(SVStringArray& rObjectNameList, const SVString& rPath = _T(""), UINT AttributesAllowedFilter = 0);
+
+	/**********
+		The method gets an environment object name list.
+		\param rObjectNameList <out> The returned list of names.
+		\param rPath <in> the path of object to return. Default = "", means all objects.
+		\param AttributesAllowedFilter <in> the attributes of the objects must be set to return. Default = 0, means all objects.
+	***********/
+	void getObjectNameList(SVStringArray& rObjectNameList, const SVString& rPath = _T(""), UINT AttributesAllowedFilter = 0) const;
 
 	/**********
 		The method gets the value of a name

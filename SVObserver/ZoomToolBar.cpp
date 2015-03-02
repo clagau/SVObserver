@@ -12,7 +12,6 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "ZoomToolBar.h"
-#include "resource.h"
 #pragma endregion Includes
 
 #pragma region Constructor

@@ -18,19 +18,6 @@
 #include "SVEquationLibrary/SVEquationYacc.h"
 #include "SVTaskObject.h"
 
-/**
-@SVObjectName Equation Buffer Size Enumeration
-
-@SVObjectOverview This enumeration defines the Equation Buffer Size.
-
-@SVObjectOperations This enumeration has no operations.
-
-*/
-enum SVEquationBufferSizeEnum
-{
-	SV_EQUATION_BUFFER_SIZE = 4096
-};
-
 class SVIPDoc;
 
 /**

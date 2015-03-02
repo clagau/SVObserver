@@ -14,7 +14,6 @@
 #include <comdef.h>
 #include "SVToolSetTabView.h"
 #include "SVObserver.h"
-#include "SVImageView.h"
 #include "SVIPDoc.h"
 #include "SVToolSet.h"
 #include "SVTool.h"
@@ -26,7 +25,6 @@
 #include "SVConfigurationObject.h"
 #include "SVUserMessage.h"
 #include "SVMessage/SVMessage.h"
-#include "SVToolSetTabView.h"
 #include "SVIPChildFrm.h"
 #include "SVSVIMStateClass.h"
 #include "SVXMLLibrary/SVNavigateTreeClass.h"

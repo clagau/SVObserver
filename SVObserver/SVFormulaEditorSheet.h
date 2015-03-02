@@ -12,7 +12,7 @@
 #pragma once
 
 #pragma region Includes
-#include "SVFormulaEditorPage.h"
+#include "SVOGui/SVFormulaEditorPage.h"
 #include "FormulaController.h"
 #pragma endregion Includes
 
@@ -73,7 +73,7 @@ protected:
 //******************************************************************************
 protected:
 
-	SVFormulaEditorPageClass	m_formulaPage;
+	SvOg::SVFormulaEditorPageClass	m_formulaPage;
 	FormulaController m_formulaController;
 };
 

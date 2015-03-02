@@ -56,6 +56,7 @@
 #pragma warning( disable: 4503 )
 #pragma warning( disable: 4786 )	// identifier truncation 255 chars
 #pragma warning( 4: 4786 )
+#pragma warning( disable: 4250 )	// disable warning for dominance of inherits (need e.g. for ISVObjectClass)
 
 #define OEMRESOURCE	// OEM resource to use nicer cursors...
 #include <afx.h>
@@ -94,7 +95,7 @@
 #include <math.h>
 
 // Global includes that everyone needs
-#include "resource.h"
+#include "SVOResource\resource.h"
 #include "SVClsIds.h"
 
 #endif

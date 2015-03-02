@@ -13,7 +13,6 @@
 #include "SVFileAcquisitionDeviceApp.h"
 #include "SVFileAcquisitionDeviceExports.h"
 #include "SVFileAcquisitionDeviceParamEnum.h"
-#include "SVImageLibrary/SVImageEnums.h"
 #include "SVImageLibrary/SVImagingDeviceParams.h"
 #include "SVOMFCLibrary/SVDeviceParams.h"
 #include "SVOMFCLibrary/SVLongValueDeviceParam.h"

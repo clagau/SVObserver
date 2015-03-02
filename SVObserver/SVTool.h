@@ -278,6 +278,10 @@ protected:
 
 	virtual HRESULT UpdateOverlayIDs( SVExtentMultiLineStruct& p_rMultiLine );
 
+	// Sends SVM_CREATE_ALL_OBJECTS to the child object
+	// and returns the result of this message.
+	virtual DWORD_PTR createAllObjectsFromChild( SVObjectClass* pChildObject ) override;
+
 	SVToolSetClass*					pCurrentToolSet;
 
 	SVClassInfoStructListClass		availableAnalyzerList;

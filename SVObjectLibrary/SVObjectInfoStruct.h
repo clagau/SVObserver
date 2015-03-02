@@ -12,15 +12,17 @@
 #ifndef SVOBJECTINFOSTRUCT_H
 #define SVOBJECTINFOSTRUCT_H
 
+#include "ObjectInterfaces/IObjectInfoStruct.h"
+#include "ObjectInterfaces/IObjectClass.h"
 #include "SVContainerLibrary/SVVector.h"
 #include "SVSystemLibrary/SVCriticalSection.h"
 #include "SVUtilityLibrary/SVGUID.h"
-#include "SVObjectTypeInfoStruct.h"
+#include "ObjectInterfaces/SVObjectTypeInfoStruct.h"
 #include "SVObjectReference.h"
 
 class SVObjectClass;
 
-struct SVObjectInfoStruct
+struct SVObjectInfoStruct : virtual public SvOi::IObjectInfoStruct
 {
 	SVObjectInfoStruct();
 	SVObjectInfoStruct( const SVObjectInfoStruct& p_rsvObject );
@@ -47,6 +49,10 @@ struct SVObjectInfoStruct
 
 	SVObjectReference GetObjectReference() const;
 	BOOL CheckExistence();
+	
+#pragma region virtual method (IObjectInfoStruct)
+	virtual SvOi::IObjectClass* getObject() const override { return reinterpret_cast<SvOi::IObjectClass*>(PObject); };
+#pragma endregion virtual method (IObjectInfoStruct)
 
 	SVObjectClass* PObject;                // Where I am
 	SVGUID UniqueObjectID;         // Who I am

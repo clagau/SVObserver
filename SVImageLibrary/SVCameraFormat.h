@@ -15,7 +15,7 @@
 #include "SVOMFCLibrary/SVTemplate.h"
 #include "SVHBitmapUtilitiesLibrary/SVHBitmapUtilities.h"
 #include "SVUtilityLibrary/SVString.h"
-#include "SVImageEnums.h"
+#include "ObjectInterfaces/SVImageEnums.h"
 
 class SVCameraFormat
 {

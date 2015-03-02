@@ -12,7 +12,6 @@
 #include "StdAfx.h"
 #include "SVIntekExports.h"
 #include "SVIntek.h"
-#include "SVImageLibrary/SVImageEnums.h"
 #include "SVOMFCLibrary/SVDeviceParams.h"
 #include "SVImageLibrary/SVImagingDeviceParams.h"
 #include "SVImageLibrary/SVLut.h"

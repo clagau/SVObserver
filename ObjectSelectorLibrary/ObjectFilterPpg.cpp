@@ -30,10 +30,8 @@ static char THIS_FILE[] = __FILE__;
 #pragma endregion Declarations
 
 BEGIN_MESSAGE_MAP(ObjectFilterPpg, CPropertyPage)
-	ON_COMMAND(ID_HELP, OnHelp)
 	ON_WM_SIZE()
 	ON_WM_RBUTTONDOWN()
-	ON_WM_HELPINFO()
 	ON_NOTIFY(NM_CLICK, IDC_GRID_CONTROL, OnGridClick)
 	ON_NOTIFY(NM_RCLICK, IDC_GRID_CONTROL, OnGridRClick)
 	ON_EN_CHANGE(IDC_EDIT_FILTER_NAME, OnChangeFilter)
@@ -127,18 +125,6 @@ void ObjectFilterPpg::OnSize(UINT nType, int cx, int cy)
 
 	//Resize all controls
 	m_Resizer.Resize(this);
-}
-
-void ObjectFilterPpg::OnHelp()
-{
-	AfxGetApp()->HtmlHelp( IDD + 0x80000 );
-}
-
-BOOL ObjectFilterPpg::OnHelpInfo(HELPINFO* pHelpInfo) 
-{
-	pHelpInfo->iCtrlId = IDD + 0x80000;
-	AfxGetApp()->HtmlHelp( pHelpInfo->iCtrlId,HH_HELP_CONTEXT );
-	return TRUE ; 
 }
 
 void ObjectFilterPpg::OnGridClick(NMHDR *pNotifyStruct, LRESULT* /*pResult*/)

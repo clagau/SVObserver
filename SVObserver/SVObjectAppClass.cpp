@@ -84,6 +84,19 @@ SVAnalyzerClass *SVObjectAppClass::GetAnalyzer() const
 	return m_psvAnalyzer;
 }
 
+#pragma region virtual methods (IObjectAppClass)
+SvOi::IObjectClass* SVObjectAppClass::GetToolInterface() const
+{
+	return m_psvTool;
+}
+
+DWORD_PTR SVObjectAppClass::CreateChildObject(SvOi::IObjectClass& rChildObject, DWORD context)
+{
+	SVObjectClass* pObject = dynamic_cast<SVObjectClass*>(&rChildObject);
+	return CreateChildObject(pObject, context);
+}
+#pragma endregion virtual methods (IObjectAppClass)
+
 DWORD_PTR SVObjectAppClass::processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext )
 {
 	DWORD_PTR DwResult = NULL;
@@ -94,74 +107,13 @@ DWORD_PTR SVObjectAppClass::processMessage( DWORD DwMessageID, DWORD_PTR DwMessa
 	{
 		case SVMSGID_CREATE_CHILD_OBJECT:
 		{
-			// Send this message to the object owner to create an object.
-			// If the owner object is not created yet, it returns SVMR_NOT_PROCESSED.
-			// Otherwise the owner object sends SVM_CREATE_ALL_OBJECTS to the child object
-			// and returns the result of this message.
-			// ...use second message parameter ( DwMessageValue ) as SVObjectClass* of the child object
-			// ...returns SVMR_SUCCESS, SVMR_NO_SUCCESS or SVMR_NOT_PROCESSED
 			SVObjectClass* pChildObject = ( SVObjectClass* ) DwMessageValue;
-			if( IsCreated() && SV_IS_KIND_OF( pChildObject, SVObjectClass ) )
-			{
-				long l_LastIndex = 1;
-				SVInspectionProcess* l_pInspect = GetInspection();
-
-				if( l_pInspect != NULL )
-				{
-					SVProductInfoStruct l_Product = l_pInspect->LastProductGet( SV_INSPECTION );
-
-					if( !( l_Product.empty() ) )
-					{
-						SVDataManagerHandle l_Handle;
-
-						l_Product.GetResultDataIndex( l_Handle );
-
-						l_LastIndex = l_Handle.GetIndex();
-					}
-				}
-
-				// Set first object depth...
-				pChildObject->SetObjectDepthWithIndex( objectDepth, l_LastIndex );
-				pChildObject->SetImageDepth( mlImageDepth );
-
-				SVAnalyzerLevelCreateStruct createStruct;
-
-				createStruct.OwnerObjectInfo = this;
-				createStruct.AnalyzerObjectInfo = GetAnalyzer();
-				createStruct.ToolObjectInfo	= GetTool();
-				createStruct.InspectionObjectInfo	= GetInspection();
-				
-				DWORD_PTR l_Return = SVSendMessage( pChildObject, SVM_CREATE_ALL_OBJECTS, reinterpret_cast<DWORD_PTR>(&createStruct), NULL );
-
-				if( ( DwMessageContext & SVMFResetObject ) == SVMFResetObject )
-				{
-					::SVSendMessage( pChildObject, SVM_RESET_ALL_OBJECTS, NULL, NULL );
-				}
-
-				if( ( DwMessageContext & SVMFSetDefaultInputs ) == SVMFSetDefaultInputs )
-				{
-					GetInspection()->SetDefaultInputs();
-				}
-
-				if( ( DwMessageContext & SVMFResetInspection ) == SVMFResetInspection )
-				{
-					::SVSendMessage( GetInspection(), SVM_RESET_ALL_OBJECTS, NULL, NULL );
-				}
-
-				return l_Return;
-			}
-
-			return SVMR_NOT_PROCESSED;
+			return CreateChildObject(pChildObject, static_cast<DWORD>(DwMessageContext));
 		}
 
 		case SVMSGID_CONNECT_CHILD_OBJECT:
 		{
-			// Send this message to the object owner to create an object.
-			// If the owner object is not created yet, it returns SVMR_NOT_PROCESSED.
-			// Otherwise the owner object sends SVM_CREATE_ALL_OBJECTS to the child object
-			// and returns the result of this message.
 			// ...use second message parameter ( DwMessageValue ) as SVObjectClass* of the child object
-			// ...returns SVMR_SUCCESS, SVMR_NO_SUCCESS or SVMR_NOT_PROCESSED
 			SVObjectClass* pChildObject = ( SVObjectClass* ) DwMessageValue;
 			if( SV_IS_KIND_OF( pChildObject, SVObjectClass ) )
 			{
@@ -221,6 +173,63 @@ void SVObjectAppClass::UpdateConnections( SVObjectLevelCreateStruct* PCreateStru
 			m_psvInspection = dynamic_cast<SVInspectionProcess *>(l_psvTemp->InspectionObjectInfo.PObject);
 		}
 	}
+}
+
+DWORD_PTR SVObjectAppClass::createAllObjectsFromChild( SVObjectClass* pChildObject )
+{
+	SVAnalyzerLevelCreateStruct createStruct;
+	createStruct.OwnerObjectInfo = this;
+	createStruct.AnalyzerObjectInfo = GetAnalyzer();
+	createStruct.ToolObjectInfo	= GetTool();
+	createStruct.InspectionObjectInfo	= GetInspection();
+
+	return SVSendMessage( pChildObject, SVM_CREATE_ALL_OBJECTS, reinterpret_cast<DWORD_PTR>(&createStruct), NULL );
+}
+
+DWORD_PTR SVObjectAppClass::CreateChildObject( SVObjectClass* pChildObject, DWORD context )
+{
+	if( IsCreated() && SV_IS_KIND_OF( pChildObject, SVObjectClass ) )
+	{
+		long l_LastIndex = 1;
+		SVInspectionProcess* l_pInspect = GetInspection();
+
+		if( nullptr != l_pInspect )
+		{
+			SVProductInfoStruct l_Product = l_pInspect->LastProductGet( SV_INSPECTION );
+
+			if( !( l_Product.empty() ) )
+			{
+				SVDataManagerHandle l_Handle;
+				l_Product.GetResultDataIndex( l_Handle );
+				l_LastIndex = l_Handle.GetIndex();
+			}
+		}
+
+		// Set first object depth...
+		pChildObject->SetObjectDepthWithIndex( objectDepth, l_LastIndex );
+		pChildObject->SetImageDepth( mlImageDepth );
+
+		DWORD_PTR l_Return = createAllObjectsFromChild( pChildObject );
+
+		if( ( context & SVMFResetObject ) == SVMFResetObject )
+		{
+			::SVSendMessage( pChildObject, SVM_RESET_ALL_OBJECTS, NULL, NULL );
+		}
+
+		if( ( context & SVMFSetDefaultInputs ) == SVMFSetDefaultInputs )
+		{
+			GetInspection()->SetDefaultInputs();
+		}
+
+		if( ( context & SVMFResetInspection ) == SVMFResetInspection )
+		{
+			::SVSendMessage( GetInspection(), SVM_RESET_ALL_OBJECTS, NULL, NULL );
+		}
+
+		return l_Return;
+	}
+
+	return SVMR_NOT_PROCESSED;
 }
 
 //******************************************************************************

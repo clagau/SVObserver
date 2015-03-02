@@ -10,7 +10,6 @@
 //******************************************************************************
 
 #include "stdafx.h"
-#include "resource.h"
 #include "SVTriggerSelectionDlg.h"
 
 IMPLEMENT_DYNAMIC(SVTriggerSelectionDlg, CDialog)

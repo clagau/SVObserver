@@ -77,9 +77,6 @@
     <ClCompile Include="SVActiveXLockStruct.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVAdjustmentDialog.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVAdjustToolSizePositionDlg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -222,9 +219,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVCorecoAcquisitionClass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVCustomFilterDlg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVCustomFilters.cpp">
@@ -399,9 +393,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVFillBlobDlg.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVFormulaEditorPage.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVFormulaEditorSheet.cpp">
@@ -941,9 +932,6 @@
     <ClCompile Include="SVRange.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVRankingFilterDlg.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVRankingFilters.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -1169,9 +1157,6 @@
     <ClCompile Include="SVTaskObjectListCtrl.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVTaskObjectTreeCtrl.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVTaskObjectValueInterface.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -1181,13 +1166,7 @@
     <ClCompile Include="SVThickeningFilter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVThickeningFilterDlg.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVThinningFilter.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVThinningFilterDlg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVThresholdAdjustmentPageClass.cpp">
@@ -1206,9 +1185,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVToolAdjustmentDialogCommentPageClass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVToolAdjustmentDialogFilterPageClass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVToolAdjustmentDialogImagePageClass.cpp">
@@ -1230,9 +1206,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVToolArchivePage.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVToolBar.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVToolBuildReference.cpp">
@@ -1335,9 +1308,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVWaterShedFilter.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVWaterShedFilterDlg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVWindowBar.cpp">
@@ -1469,9 +1439,6 @@
     <ClCompile Include="SV1394CameraStruct.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVAvailableFilterListComboBoxClass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVBinaryOperatorClass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -1491,9 +1458,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVFilterClass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVFilterListBoxClass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVHorizEdgeFilterClass.cpp">
@@ -1589,12 +1553,6 @@
     <ClCompile Include="EnvironmentObject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CDSVPictureDisplay.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="PictureDisplay.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="RemoteCommand.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -1655,9 +1613,6 @@
     <ClCompile Include="Custom2Filter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Custom2FilterDlg.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="ToolClipboard.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -1679,6 +1634,12 @@
     <ClCompile Include="ResultViewToolReferences.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Custom2Filter_ImportExport.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SVOApp_Helper.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="SVCommandInspectionExtentUpdater.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -1693,11 +1654,6 @@
     <Midl Include="SVObserver.odl">
       <Filter>Source Files</Filter>
     </Midl>
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="SVObserver.rc">
-      <Filter>Source Files</Filter>
-    </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\AutoBuild\AutoBuild.h">
@@ -1716,9 +1672,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ModelessMessageBox.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SoftwareTriggerDlg.h">
@@ -1758,9 +1711,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVActiveXLockStruct.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVAdjustmentDialog.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVAdjustToolSizePositionDlg.h">
@@ -1911,9 +1861,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVCorecoAcquisitionClass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVCustomFilterDlg.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVCustomFilters.h">
@@ -2091,9 +2038,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVFillBlobDlg.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVFormulaEditorPage.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVFormulaEditorSheet.h">
@@ -2672,9 +2616,6 @@
     <ClInclude Include="SVRange.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVRankingFilterDlg.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVRankingFilters.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -2918,9 +2859,6 @@
     <ClInclude Include="SVTaskObjectListCtrl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVTaskObjectTreeCtrl.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVTaskObjectValueInterface.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -2930,13 +2868,7 @@
     <ClInclude Include="SVThickeningFilter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVThickeningFilterDlg.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVThinningFilter.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVThinningFilterDlg.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVThresholdAdjustmentPageClass.h">
@@ -2955,9 +2887,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVToolAdjustmentDialogCommentPageClass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVToolAdjustmentDialogFilterPageClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVToolAdjustmentDialogImagePageClass.h">
@@ -2979,9 +2908,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVToolArchivePage.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVToolBar.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVToolBuildReference.h">
@@ -3099,9 +3025,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVWaterShedFilter.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVWaterShedFilterDlg.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVWindowBar.h">
@@ -3263,9 +3186,6 @@
     <ClInclude Include="ISVCancel.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVAvailableFilterListComboBoxClass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVBinaryOperatorClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -3285,9 +3205,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVFilterClass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVFilterListBoxClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVHorizEdgeFilterClass.h">
@@ -3344,9 +3261,6 @@
     <ClInclude Include="SVDataDefinitionStruct.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="IFormulaController.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="FormulaController.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -3390,12 +3304,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="RootObject.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="CDSVPictureDisplay.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="PictureDisplay.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="RemoteMonitorNamedList.h">
@@ -3462,9 +3370,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Custom2Filter.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Custom2FilterDlg.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ToolClipboard.h">
@@ -3534,183 +3439,6 @@
     </None>
     <None Include="SVValueObjectClassImpl.inl">
       <Filter>Header Files</Filter>
-    </None>
-    <None Include="RES\array_toolbar.bmp">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="RES\arrow_clockwise.ico">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="RES\arrow_counterclockwise.ico">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="RES\arrow_down.ico">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="RES\arrow_left.ico">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="RES\arrow_right.ico">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="RES\arrow_up.ico">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="RES\beginning.ico">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="Res\bmp00001.bmp">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="RES\downarrow.bmp">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="RES\formulaCursor.bmp">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="RES\frame_back.ico">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="RES\frame_up.ico">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="RES\ico00001.ico">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="RES\ico00002.ico">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="RES\ico00003.ico">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="RES\ico_status_black.ico">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="RES\ico_status_blue.ico">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="RES\ico_status_gray.ico">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="RES\ico_status_green.ico">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="RES\ico_status_none.ico">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="RES\ico_status_red.ico">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="RES\ico_status_yellow.ico">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="Res\icon1.ico">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="Res\icon2.ico">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="RES\icon_cam.ico">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="RES\icon_exi.ico">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="RES\icon_exist1.ico">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="RES\icon_not.ico">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="RES\input_ic.ico">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="RES\ioitem_i.ico">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="res\IToolbar.bmp">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="RES\mode_continue.ico">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="RES\mode_runtoend.ico">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="RES\noioitem.ico">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="RES\output_i.ico">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="RES\pause.ico">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="RES\play.ico">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="Res\Start.bmp">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="RES\stop.ico">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="RES\SVIODoc.ico">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="res\SVIPDoc.ico">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="RES\SVKnob.bmp">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="RES\SVKnob_mask.bmp">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="RES\SVKnobDot.bmp">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="RES\SVKnobDot_mask.bmp">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="RES\svobserv.bmp">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="res\SVObserver.rc2">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="res\Toolbar.bmp">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="RES\ToolbarBasic.bmp">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="RES\ToolbarConditional.bmp">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="RES\ToolbarCursor.bmp">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="RES\ToolbarLogical.bmp">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="RES\ToolbarMisc.bmp">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="RES\toolbarPunctuation.bmp">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="RES\ToolbarStat.bmp">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="RES\ToolbarTrig.bmp">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="RES\uparrow.bmp">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="RES\W95MBX03.ICO">
-      <Filter>Resource Files</Filter>
     </None>
     <None Include="hlp\AfxCore.rtf">
       <Filter>Help Files</Filter>
@@ -3793,11 +3521,6 @@
     <None Include="hlp\Scmin.bmp">
       <Filter>Help Files</Filter>
     </None>
-    <None Include="SVCommand.rgs" />
-    <None Include="SVObserver.rgs" />
-    <None Include="SVObserverd.rgs" />
-    <None Include="SVRemoteCommand.rgs" />
-    <None Include="SVRemoteCommandData.rgs" />
     <None Include="SVConfigurationTreeWriter.inl">
       <Filter>Source Files</Filter>
     </None>
@@ -3809,9 +3532,6 @@
     </None>
     <None Include="SVConfigXMLPrint.inl">
       <Filter>Header Files</Filter>
-    </None>
-    <None Include="res\arrow_rotate.ico">
-      <Filter>Resource Files</Filter>
     </None>
     <None Include="SVStaticValueObjectClassImpl.inl">
       <Filter>Header Files</Filter>
@@ -3828,14 +3548,13 @@
     <None Include="ObjectNameHelper.inl">
       <Filter>Header Files</Filter>
     </None>
-    <None Include="res\toolbarZoom.bmp">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="res\korber.bmp">
-      <Filter>Resource Files</Filter>
-    </None>
     <None Include="Custom2Filter.inl">
       <Filter>Header Files</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="SVObserver.rc">
+      <Filter>Source Files</Filter>
+    </ResourceCompile>
   </ItemGroup>
 </Project>

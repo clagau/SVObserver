@@ -13,7 +13,6 @@
 #include "stdafx.h"
 #include <boost/config.hpp>
 #include <boost/bind.hpp>
-#include "resource.h"
 #include "MonitorListView.h"
 #include "SVObserver.h"
 #include "SVIODoc.h"

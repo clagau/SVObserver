@@ -14,7 +14,8 @@
 #include <algorithm>
 #include "SVMaskShape.h"
 #include "SVLibrary/Intersect.h"
-#include "PictureDisplay.h"
+//TODO: MZA(10.Nov 2014): Move this files to SVOGui project and then remove folder from include and Namespace add-on add PictureDisplay declaration.
+#include "SVOGui/PictureDisplay.h"
 #pragma endregion Includes
 
 #pragma warning ( disable : 4503 )

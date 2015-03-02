@@ -77,7 +77,7 @@ unsigned char* SVImageBufferHandleStruct::GetBufferAddress() const
 
 HRESULT SVImageBufferHandleStruct::GetData( SVImageBufferHandleData& p_rData ) const
 {
-	return p_rData.SetData( *this );
+	return p_rData.SetHandleData( *this );
 }
 
 void SVImageBufferHandleStruct::LocalClear()

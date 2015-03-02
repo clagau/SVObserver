@@ -11,7 +11,6 @@
 
 #pragma once
 
-#include "resource.h"
 #include "SVRemoteOutputPropSheet.h"
 #include "afxcmn.h"
 // BRW - PLC has been deprecated.

@@ -11,7 +11,7 @@
 
 #pragma once
 
-#include "IFormulaController.h"
+#include "ObjectInterfaces/IFormulaController.h"
 #include "FormulaController.h"
 #include "ConditionalController.h"
 class SVIPDoc;

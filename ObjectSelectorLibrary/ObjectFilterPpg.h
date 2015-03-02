@@ -16,7 +16,6 @@
 #pragma region Includes
 #include "SVTreeLibrary\ObjectTreeItems.h"
 #include "GridCtrlLibrary\GridCtrl.h"
-#include "SVOResource\resource.h"
 #include "SVOMFCLibrary\SVEditControlWithHelp.h"
 #include "DlgItemResizer.h"
 #pragma endregion Includes
@@ -56,8 +55,6 @@ namespace Seidenader
 			virtual BOOL OnInitDialog();
 			virtual BOOL OnSetActive( );
 			afx_msg void OnSize(UINT nType, int cx, int cy);
-			afx_msg void OnHelp();
-			afx_msg BOOL OnHelpInfo(HELPINFO* pHelpInfo);
 			afx_msg void OnGridClick(NMHDR *pNotifyStruct, LRESULT* /*pResult*/);
 			afx_msg void OnGridRClick(NMHDR *pNotifyStruct, LRESULT* /*pResult*/);
 			afx_msg void OnChangeFilter();

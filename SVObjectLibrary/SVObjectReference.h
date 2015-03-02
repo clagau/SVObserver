@@ -13,7 +13,7 @@
 
 #include <vector>
 #include "SVObjectAttributeShim.h"
-#include "SVObjectTypeInfoStruct.h"
+#include "ObjectInterfaces/SVObjectTypeInfoStruct.h"
 #include "SVObjectNameInfo.h"
 
 class SVObjectClass;

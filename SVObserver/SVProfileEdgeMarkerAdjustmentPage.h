@@ -16,7 +16,8 @@
 #pragma region Includes
 #include "SVEdgeMarkerAdjustmentPageClass.h"
 #include "SVLineAnalyzer.h"
-#include "PictureDisplay.h"
+//TODO: MZA(10.Nov 2014): Move this files to SVOGui project and then remove folder from include and Namespace add-on add PictureDisplay declaration.
+#include "SVOGui/PictureDisplay.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -120,7 +121,7 @@ private:
 	int 	m_upperThresholdMaxPercentDiff;
 	int		m_lowerThresholdOption;
 	int		m_upperThresholdOption;
-	PictureDisplay m_dialogImage;
+	SvOg::PictureDisplay m_dialogImage;
 	//}}AFX_DATA
 #pragma endregion Member variables
 };

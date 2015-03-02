@@ -13,7 +13,8 @@
 #define SVCLASSINFOSTRUCT_H
 
 #include "SVContainerLibrary/SVVector.h"
-#include "SVObjectLibrary/SVObjectTypeInfoStruct.h"
+#include "ObjectInterfaces/SVObjectTypeInfoStruct.h"
+#include "ObjectInterfaces/IClassInfoStructList.h"
 
 class SVObjectClass;
 
@@ -45,12 +46,23 @@ struct SVClassInfoStruct
 	SVInterfaceListClass	DesiredInputInterface;
 };
 
-class SVClassInfoStructListClass : public SVVector< SVClassInfoStruct >
+class SVClassInfoStructListClass : virtual public SvOi::IClassInfoStructList,
+	public SVVector< SVClassInfoStruct >
 {
 public:
 	SVClassInfoStructListClass();
 	virtual ~SVClassInfoStructListClass();
+
+#pragma region public methods
+public:
 	virtual int Find( const GUID& ClassID ); 
+
+#pragma region virtual methods (IClassInfoStructList)
+	virtual long Size() const override;
+	virtual CString GetClassName(int index) const override;
+	virtual GUID GetClassID(int index) const override;
+#pragma endregion virtual methods (IClassInfoStructList)
+#pragma endregion public methods
 };
 
 #endif

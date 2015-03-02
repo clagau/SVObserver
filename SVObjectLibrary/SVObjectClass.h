@@ -16,6 +16,7 @@
 #include <set>
 #include <vector>
 
+#include "ObjectInterfaces/IObjectClass.h"
 #include "SVStatusLibrary/SVErrorClass.h"
 #include "SVUtilityLibrary/SVGUID.h"
 
@@ -40,7 +41,7 @@ class SVObjectAttributeClass;
 /*
 This class is the base class to all configuration level objects.  These objects will get created and managed by the object manager object.
 */
-class SVObjectClass
+class SVObjectClass : virtual public SvOi::IObjectClass
 {
 	SV_DECLARE_CLASS( SVObjectClass );
 
@@ -120,7 +121,6 @@ public:
 	BOOL ConnectObjectInput( SVInObjectInfoStruct* PObjectInInfo );
 	BOOL DisconnectObjectInput( SVInObjectInfoStruct* PObjectInInfo );
 	BOOL IsObjectValid( GUID& RValidationReferenceID );
-	BOOL IsCreated() const;
 	BOOL IsDescendantOf( SVObjectClass* PAncestorObject );
 	BOOL IsDescendantOfType( const SVObjectInfoStruct& rAncestorInfo );
 
@@ -142,7 +142,6 @@ public:
 	// Returns:   SVObjectClass*
 	//************************************
 	SVObjectClass* GetAncestor( SVObjectTypeEnum AncestorObjectType ) const;
-	LPCTSTR GetName() const;
 	int GetNameLength() const;
 	LPCTSTR GetObjectName() const;
 	int GetObjectNameLength() const;
@@ -157,10 +156,18 @@ public:
 	long GetObjectSubType() const;
 	SVOutObjectInfoStruct& GetObjectOutputInfo();
 
-	const SVGUID& GetUniqueObjectID() const;
+	
 	const SVGUID& GetEmbeddedID() const;
 	const SVGUID& GetOwnerID() const;
-	const SVObjectTypeEnum& GetObjectType() const;
+#pragma region virtual method (IObjectClass)
+	virtual LPCTSTR GetName() const override;
+	virtual const SVObjectTypeEnum& GetObjectType() const override;
+	virtual SvOi::IObjectClass* GetAncestorInterface(SVObjectTypeEnum ancestorObjectType) override;
+	virtual SvOi::IObjectClass* GetFirstObject(const SVObjectTypeInfoStruct& type) override;
+	virtual const SVGUID& GetUniqueObjectID() const override;
+	virtual BOOL IsCreated() const override;
+	virtual DWORD_PTR resetAllObjects() override;
+#pragma region virtual method (IObjectClass)
 	const SVObjectInfoStruct& GetOwnerInfo() const;
 	const SVObjectInfoStruct& GetObjectInfo() const;
 	const SVObjectInfoArrayClass& GetFriendList() const;

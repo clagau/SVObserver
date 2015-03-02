@@ -14,7 +14,6 @@
 
 #include "SVOMFCLibrary/SVDataItemManagerTemplate.h"
 #include "SVIOEntryHostStruct.h"
-#include "SVInfoStructs.h"
 
 class SVDigitalInputObject;
 class SVDigitalOutputObject;

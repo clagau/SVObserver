@@ -54,6 +54,198 @@
     <None Include="res\unchecked_enabled.ico">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="Res\Start.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\toolbarZoom.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\Toolbar.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\svobserv.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\ToolbarConditional.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\ToolbarLogical.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\ToolbarBasic.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\ToolbarTrig.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\ToolbarMisc.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\ToolbarStat.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\toolbarPunctuation.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="RES\downarrow.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="RES\uparrow.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\formulaCursor.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\bmp00001.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\array_toolbar.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="RES\SVKnob.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="RES\SVKnob_mask.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="RES\SVKnobDot.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="RES\SVKnobDot_mask.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\Korber.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\icon1.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\SVIPDoc.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\icon_cam.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\output_i.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\ioitem_i.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\input_ic.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\SVIODoc.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\noioitem.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\icon_exi.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\icon_not.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="RES\arrow_counterclockwise.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\arrow_clockwise.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\arrow_down.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\arrow_left.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\arrow_right.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\arrow_up.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\beginning.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\frame_back.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\frame_up.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\mode_continue.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\mode_runtoend.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\pause.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\play.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\stop.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\ico_status_green.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\ico_status_black.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\ico_status_none.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\ico_status_gray.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\ico_status_red.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\ico_status_yellow.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\ico_status_blue.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\W95MBX03.ICO">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\icon_exist1.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\ico00001.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\ico00002.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\ico00003.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\icon2.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\arrow_rotate.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="SVObserver.rgs">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="SVObserverd.rgs">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="SVCommand.rgs">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="SVRemoteCommandData.rgs">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="SVRemoteCommand.rgs">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">

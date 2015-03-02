@@ -16,7 +16,6 @@
 #pragma region Includes
 #include "SVTreeLibrary\ObjectSelectorItem.h"
 #include "SVTreeLibrary\ObjectTreeItems.h"
-#include "SVOResource\resource.h"
 #include "DlgItemResizer.h"
 #include "NodeTreeCtrl.h"
 #include "LeafTreeCtrl.h"

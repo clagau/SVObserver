@@ -17,7 +17,6 @@
 #include "SVMatroxLibrary/SVMatroxSystemInterface.h"
 #include "SVMatroxDigitizerLibrary/SVMatroxDigitizerInterface.h"
 #include "SVUtilityLibrary/SVUtilityGlobals.h"
-#include "SVImageLibrary/SVImageEnums.h"
 #include "SVTriggerLibrary/SVTriggerActivatorFunc.h"
 #include "SVTriggerLibrary/SVTriggerCallbackFunc.h"
 #include "SVTriggerLibrary/SVTriggerEnums.h"

@@ -15,7 +15,8 @@
 #include "SVExternalToolTask.h"
 #include "SVImageListClass.h"
 #include "SVView.h"
-#include "PictureDisplay.h"
+//TODO: MZA(10.Nov 2014): Move this files to SVOGui project and then remove folder from include and Namespace add-on add PictureDisplay declaration.
+#include "SVOGui/PictureDisplay.h"
 #include "PropertyTree\PropTree.h"
 #pragma endregion Includes
 
@@ -83,7 +84,7 @@ private:
 	// Dialog Data
 	//{{AFX_DATA(SVExternalToolImageSelectPage)
 	enum { IDD = IDD_EXTERNAL_TOOL_IMAGES };
-	PictureDisplay m_ImageDisplay;
+	SvOg::PictureDisplay m_ImageDisplay;
 	//}}AFX_DATA
 
 	SVExternalToolDetailsSheet*	m_pParentDialog;

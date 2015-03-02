@@ -16,7 +16,8 @@
 #include "SVImageListClass.h"
 #include "SVObjectLibrary/SVInputInfoListClass.h"
 #include "SVTaskObjectInterfaceClass.h"
-#include "PictureDisplay.h"
+//TODO: MZA(10.Nov 2014): Move this files to SVOGui project and then remove folder from include and Namespace add-on add PictureDisplay declaration.
+#include "SVOGui/PictureDisplay.h"
 #include "SVView.h"
 
 class CSVMaskEditor;
@@ -80,7 +81,7 @@ protected:
 	CButton	m_btnFillColorMore;
 	SVAvailableSourceImageListComboBoxClass	m_cbAvailableSourceImageList;
 	CComboBox           m_cbMaskOperator;
-	PictureDisplay      m_dialogImage;
+	SvOg::PictureDisplay      m_dialogImage;
 	BOOL                m_bActivateMask;
 	int                 m_iMaskType;
 	CString	m_sFillColor;

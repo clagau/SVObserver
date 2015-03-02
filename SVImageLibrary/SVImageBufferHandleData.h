@@ -20,15 +20,7 @@ public:
 	SVImageBufferHandleData() {}
 	virtual ~SVImageBufferHandleData() {}
 
-	template< typename SVObject >
-	HRESULT SetData( const SVObject& p_rObject )
-	{
-		return SetHandleData( p_rObject );
-	}
-
-protected:
 	virtual HRESULT SetHandleData( const SVImageBufferHandleStruct& p_rObject ) = 0;
-
 };
 
 #endif

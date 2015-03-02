@@ -16,7 +16,6 @@
 #include "SVObjectLibrary\SVObjectManagerClass.h"
 #include "SVTreeLibrary\ObjectSelectorItem.h"
 #include "SVSystemLibrary\LoadDll.h"
-#include "SVOResource\resource.h"
 #include "ResizablePropertySheet.h"
 #include "ObjectSelectorPpg.h"
 #include "ObjectFilterPpg.h"
@@ -209,7 +208,7 @@ void ObjectTreeGenerator::insertTreeObject( const ObjectSelectorItem& rObjectIte
 	m_TreeContainer.insertLeaf( DisplayLocation, SelectorItem );
 }
 
-void ObjectTreeGenerator::insertOutputList( SVOutputInfoListClass& rOutputList )
+void ObjectTreeGenerator::insertOutputList( SvOi::IOutputInfoListClass& rOutputList )
 {
 	CWaitCursor Wait;
 
@@ -237,9 +236,6 @@ INT_PTR ObjectTreeGenerator::showDialog( const SVString& title, const SVString& 
 		m_TreeContainer.setTreeType( isSingleObject );
 		m_TreeContainer.setNodeCheckedStates();
 		m_TreeContainer.synchronizeCheckedStates();
-
-		//Set the resource instance to the resource dll
-		AfxSetResourceHandle( ResourceInstance );
 
 		//If no parent then set it to the main application window
 		if( nullptr == pParent )
@@ -277,8 +273,6 @@ INT_PTR ObjectTreeGenerator::showDialog( const SVString& title, const SVString& 
 		pWait = nullptr;
 
 		Result = Sheet.DoModal();
-
-		AfxSetResourceHandle( AfxGetApp()->m_hInstance );
 
 		if( IDOK == Result )
 		{
@@ -376,16 +370,26 @@ int ObjectTreeGenerator::convertObjectArrayName( const SVObjectReference& rObjec
 void ObjectTreeGenerator::setSelectorItemType( const SVObjectReference& rObjectRef, ObjectSelectorItem &rSelectorItem )
 {
 	SVObjectClass *pObject = rObjectRef.Object();
+	setSelectorItemType(pObject, rSelectorItem);
+}
 
-	if ( SV_IS_KIND_OF( pObject, SVValueObjectClass ) )
+void ObjectTreeGenerator::setSelectorItemType( const SvOi::IObjectClass* pObject, ObjectSelectorItem &rSelectorItem )
+{
+	const SVObjectClass *pObjectClass = dynamic_cast<const SVObjectClass*>(pObject);
+	setSelectorItemType(pObjectClass, rSelectorItem);
+}
+
+void ObjectTreeGenerator::setSelectorItemType( const SVObjectClass* pObject, ObjectSelectorItem &rSelectorItem )
+{
+	if ( SV_IS_KIND_OF( pObject, const SVValueObjectClass ) )
 	{
 		CString typeName = _T("");
-		(static_cast<SVValueObjectClass*>(pObject))->GetTypeName(typeName);
+		(static_cast<const SVValueObjectClass*>(pObject))->GetTypeName(typeName);
 		rSelectorItem.setItemTypeName(typeName);
 	}
-	else if( SV_IS_KIND_OF( pObject, BasicValueObject ) )
+	else if( SV_IS_KIND_OF( pObject, const BasicValueObject ) )
 	{
-		BasicValueObject *pBasicObject = static_cast<BasicValueObject*>(pObject);
+		const BasicValueObject *pBasicObject = static_cast<const BasicValueObject*>(pObject);
 		rSelectorItem.setItemTypeName(pBasicObject->getTypeName());
 	}
 	else
@@ -396,7 +400,7 @@ void ObjectTreeGenerator::setSelectorItemType( const SVObjectReference& rObjectR
 #pragma endregion Public Methods
 
 #pragma region Private Methods
-void ObjectTreeGenerator::filterObjects( SVOutputInfoListClass& rOutputList, SVObjectReferenceVector& rObjectList )
+void ObjectTreeGenerator::filterObjects( SvOi::IOutputInfoListClass& rOutputList, SVObjectReferenceVector& rObjectList )
 {
 	int nCount = rOutputList.GetSize();
 	for( int i = 0; i < nCount; i++ )
@@ -405,7 +409,7 @@ void ObjectTreeGenerator::filterObjects( SVOutputInfoListClass& rOutputList, SVO
 
 		try
 		{
-			pInfoItem = rOutputList.GetAt(i);
+			pInfoItem = dynamic_cast<SVOutObjectInfoStruct*>(rOutputList.GetInterfaceAt(i));
 		}
 		catch( ... )
 		{

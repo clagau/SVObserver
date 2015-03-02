@@ -3012,6 +3012,13 @@ BOOL SVObserverApp::InitInstance()
 {
 	CWinApp::InitInstance();
 
+	HINSTANCE ResourceInstance( NULL );
+	//Load resource dll explicitly
+	LoadDll::Instance().getDll( SVOResourceDll, ResourceInstance );
+
+	//Set the resource instance to the resource dll
+	AfxSetResourceHandle( ResourceInstance );
+
 	m_hEvent = CreateEvent(NULL, FALSE, TRUE, AfxGetAppName()); 
 
 	if ( GetLastError()==ERROR_ALREADY_EXISTS )
@@ -3344,9 +3351,6 @@ BOOL SVObserverApp::InitInstance()
 		InitSVIMServer();
 	}
 
-	HINSTANCE ResourceInstance( NULL );
-	//Load resource dll explicitly
-	LoadDll::Instance().getDll( SVOResourceDll, ResourceInstance );
 	//
 	// Init user list...
 

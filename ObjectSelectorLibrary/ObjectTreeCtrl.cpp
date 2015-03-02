@@ -11,7 +11,6 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include "SVOResource\resource.h"
 #include "ObjectTreeCtrl.h"
 #include "ObjectSelectorPpg.h"
 #pragma endregion Includes

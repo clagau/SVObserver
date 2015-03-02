@@ -14,7 +14,6 @@
 #include "SVMatroxGigeApp.h"
 
 #include "SVHBitmapUtilitiesLibrary/SVImageFormatEnum.h"
-#include "SVImageLibrary/SVImageEnums.h"
 #include "SVOMFCLibrary/SVDeviceParams.h"
 #include "SVImageLibrary/SVImagingDeviceParams.h"
 #include "SVImageLibrary/SVLut.h"

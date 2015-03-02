@@ -15,7 +15,8 @@
 #pragma region Includes
 #include "SVShapeMaskHelperClass.h"
 #include "SVMaskShape.h"
-#include "PictureDisplay.h"
+//TODO: MZA(10.Nov 2014): Move this files to SVOGui project and then remove folder from include and Namespace add-on add PictureDisplay declaration.
+#include "SVOGui/PictureDisplay.h"
 #include "PropertyTree/PropTree.h"
 #include "ISVCancel.h"
 #include "SVTaskObjectInterfaceClass.h"
@@ -148,7 +149,7 @@ private:
 	CString	m_sFillColor;
 	CString	m_sCoordinates;
 	BOOL	m_bAutoResize;
-	PictureDisplay       m_dialogImage;
+	SvOg::PictureDisplay       m_dialogImage;
 	SVRPropTree          m_Tree;
 	//}}AFX_DATA
 

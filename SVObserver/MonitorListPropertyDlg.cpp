@@ -11,7 +11,6 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include "resource.h"
 #include "MonitorListPropertyDlg.h"
 #include "RemoteMonitorNamedList.h"
 #include "SVObserver.h"

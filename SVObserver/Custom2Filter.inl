@@ -10,35 +10,80 @@
 //******************************************************************************
 
 #pragma region Public Methods
-inline SVLongValueObjectClass& Custom2Filter::getKernelArray()
+#pragma region virtual method (ICustom2Filter)
+inline HRESULT Custom2Filter::addKernelWidthRequest(long value)
 {
-	return m_KernelArray;
+	return m_taskObjectValueInterface.AddInputRequest( &m_KernelWidth, value );
 }
 
-inline SVLongValueObjectClass& Custom2Filter::getKernelWidth()
-{
-	return m_KernelWidth;
+inline long Custom2Filter::getKernelWidth() const
+{ 
+	long value = 0;
+	m_KernelWidth.GetValue(value);
+	return value;
 }
 
-inline SVLongValueObjectClass& Custom2Filter::getKernelHeight()
+inline HRESULT Custom2Filter::addKernelHeightRequest(long value)
 {
-	return m_KernelHeight;
+	return m_taskObjectValueInterface.AddInputRequest( &m_KernelHeight, value );
 }
 
-inline SVLongValueObjectClass& Custom2Filter::getNormalizationFactor()
-{
-	return m_NormalizationFactor;
+inline long Custom2Filter::getKernelHeight() const
+{ 
+	long value = 0;
+	m_KernelHeight.GetValue(value);
+	return value;
 }
 
-inline SVBoolValueObjectClass& Custom2Filter::getAbsoluteValue()
+inline HRESULT Custom2Filter::addClippingEnabledRequest(bool value)
 {
-	return m_AbsoluteValue;
+	return m_taskObjectValueInterface.AddInputRequest( &m_ClippingEnabled, value );
 }
 
-inline SVBoolValueObjectClass& Custom2Filter::getClippingEnabled()
-{
-	return m_ClippingEnabled;
+inline bool Custom2Filter::isClippingEnabled() const
+{ 
+	bool value = 0;
+	m_ClippingEnabled.GetValue(value);
+	return value;
 }
+
+inline HRESULT Custom2Filter::addAbsoluteValueRequest(bool value)
+{
+	return m_taskObjectValueInterface.AddInputRequest( &m_AbsoluteValue, value );
+}
+
+inline bool Custom2Filter::isAbsoluteValue() const
+{ 
+	bool value = 0;
+	m_AbsoluteValue.GetValue(value);
+	return value;
+}
+
+inline HRESULT Custom2Filter::addNormalizationFactorRequest(long value)
+{
+	return m_taskObjectValueInterface.AddInputRequest( &m_NormalizationFactor, value );
+}
+
+inline long Custom2Filter::getNormalizationFactor() const
+{ 
+	long value = 0;
+	m_NormalizationFactor.GetValue(value);
+	return value;
+}
+
+inline HRESULT Custom2Filter::addKernelValueRequest(LongArray value)
+{
+	return m_taskObjectValueInterface.AddInputRequest( &m_KernelArray, value.begin(), value.end() );
+}
+
+inline Custom2Filter::LongArray Custom2Filter::getKernelValues() const
+{ 
+	LongArray value;
+	m_KernelArray.GetValues(value);
+	return value;
+}
+
+#pragma endregion virtual method (ICustom2Filter)
 #pragma endregion Public Methods
 
 //******************************************************************************

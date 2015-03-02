@@ -29,7 +29,6 @@ static char THIS_FILE[] = __FILE__;
 static const int IconSize = 16;
 static const int IconNumber = 8;
 static const int IconGrowBy = 4;
-static const int HelpBaseResourceDll = 0x80000;
 #pragma endregion Declarations
 
 BEGIN_MESSAGE_MAP(ObjectSelectorPpg, CPropertyPage)
@@ -124,12 +123,12 @@ void ObjectSelectorPpg::OnSize(UINT nType, int cx, int cy)
 
 void ObjectSelectorPpg::OnHelp()
 {
-	AfxGetApp()->HtmlHelp( m_HelpID + HelpBaseResourceDll );
+	AfxGetApp()->HtmlHelp( m_HelpID + HELPFILE_SVORESOURCE_OFFSET );
 }
 
 BOOL ObjectSelectorPpg::OnHelpInfo(HELPINFO* pHelpInfo)
 {
-	pHelpInfo->iCtrlId = m_HelpID + HelpBaseResourceDll;
+	pHelpInfo->iCtrlId = m_HelpID + HELPFILE_SVORESOURCE_OFFSET;
 	AfxGetApp()->HtmlHelp( pHelpInfo->iCtrlId, HH_HELP_CONTEXT );
 	return TRUE ;
 }

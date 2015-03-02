@@ -90,14 +90,23 @@ SVStringArray FormulaController::getPPQVariableNames() const
 	return retVals;
 }
 
-SVInspectionProcess* FormulaController::getInspectionProcess() const
+SvOi::IInspectionProcess* FormulaController::getInspectionProcess() const
 {
 	return m_pInspection;
 }
 
-SVToolSetClass* FormulaController::getToolSet() const
+SvOi::IOutputInfoListClass& FormulaController::GetToolSetOutputList( ) const
 {
-	return m_pToolSet;
+	//Need to be static not to loss information at return point
+	static SVOutputInfoListClass outputInfoList;
+	//Need to be deleted because it is static and can be used before.
+	outputInfoList.RemoveAll();
+	if (nullptr != m_pToolSet )
+	{
+		m_pToolSet->GetOutputList(outputInfoList);
+	}
+	
+	return outputInfoList;
 }
 
 HRESULT FormulaController::isToolAndEquationEnabled(bool& toolEnabled, bool& equationEnabled) const
@@ -118,22 +127,10 @@ HRESULT FormulaController::setToolAndEquationEnabled(bool toolEnabled, bool equa
 	return S_FALSE;
 }
 
-void FormulaController::setTaskObject( SVTaskObjectClass& pObject )
+void FormulaController::setTaskObject( SvOi::IObjectClass& rObject )
 {
-	m_pInspection = pObject.GetInspection();
-	m_pToolSet = m_pInspection->GetToolSet();
-
-	SVEquationClass* pEquation = dynamic_cast <SVEquationClass*> (&pObject);
-	if ( pEquation == nullptr )
-	{
-		SVObjectTypeInfoStruct info;
-		info.ObjectType = SVEquationObjectType;
-		info.SubType    = SVMathEquationObjectType;	// we are not looking for conditional equation !!!
-		pEquation = dynamic_cast < SVEquationClass* >
-			( reinterpret_cast < SVObjectClass* > (::SVSendMessage( &pObject, SVM_GETFIRST_OBJECT | SVM_NOTIFY_ONLY_FRIENDS, 0, reinterpret_cast<DWORD_PTR>( &info ) )));
-	}
-	// Set the pointer to the Equation Class Object 
-	setEquation( pEquation );
+	SVTaskObjectClass &rTaskObject = dynamic_cast<SVTaskObjectClass&>(rObject);
+	setTaskObjectClass(rTaskObject);
 }
 
 int FormulaController::validateEquation( const SVString &equationString, double& result ) const
@@ -183,6 +180,24 @@ int FormulaController::validateAndSetEquation( const SVString &equationString, d
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
+void FormulaController::setTaskObjectClass( SVTaskObjectClass& rObject )
+{
+	m_pInspection = rObject.GetInspection();
+	m_pToolSet = m_pInspection->GetToolSet();
+
+	SVEquationClass* pEquation = dynamic_cast <SVEquationClass*> (&rObject);
+	if ( pEquation == nullptr )
+	{
+		SVObjectTypeInfoStruct info;
+		info.ObjectType = SVEquationObjectType;
+		info.SubType    = SVMathEquationObjectType;	// we are not looking for conditional equation !!!
+		pEquation = dynamic_cast < SVEquationClass* >
+			( reinterpret_cast < SVObjectClass* > (::SVSendMessage( &rObject, SVM_GETFIRST_OBJECT | SVM_NOTIFY_ONLY_FRIENDS, 0, reinterpret_cast<DWORD_PTR>( &info ) )));
+	}
+	// Set the pointer to the Equation Class Object 
+	setEquation( pEquation );
+}
+
 void FormulaController::setEquation( SVEquationClass* pEquation )
 {
 	m_pEquation = pEquation;

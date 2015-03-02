@@ -15,7 +15,8 @@
 #include "SVView.h"
 
 #include "SVTaskObjectInterfaceClass.h"
-#include "PictureDisplay.h"
+//TODO: MZA(10.Nov 2014): Move this files to SVOGui project and then remove folder from include and Namespace add-on add PictureDisplay declaration.
+#include "SVOGui/PictureDisplay.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -85,8 +86,8 @@ protected:
 	//{{AFX_DATA(SVToolAdjustmentDialogTwoImagePageClass)
 	enum { IDD = IDD_TA_TWO_IMAGE_DIALOG };
 	CComboBox	m_operatorCtrl;
-	PictureDisplay	m_secondImageCtrl;
-	PictureDisplay	m_firstImageCtrl;
+	SvOg::PictureDisplay	m_secondImageCtrl;
+	SvOg::PictureDisplay	m_firstImageCtrl;
 	SVAvailableSourceImageListComboBoxClass	m_firstAvailableSourceImageListBoxCtl;
 	SVAvailableSourceImageListComboBoxClass	m_secondAvailableSourceImageListBoxCtl;
 	//}}AFX_DATA
