@@ -18,6 +18,8 @@
 
 #include <assert.h>
 
+static const long MATROX_FILTER_EVENT = 2622995;
+
 SVMatroxInt _stdcall SVMatroxApplicationInterface::SVMatroxHookHandler( SVMatroxInt HookType, SVMatroxIdentifier EventId, void* UserDataPtr )
 {
 	MIL_TEXT_CHAR l_strMilText[M_ERROR_MESSAGE_SIZE];
@@ -83,6 +85,13 @@ SVMatroxInt _stdcall SVMatroxApplicationInterface::SVMatroxHookHandler( SVMatrox
 //-		when we attempt to retreive an OCR result when an OCR string was not 
 //-		found.
 	}
+	else if (l_StatusInfo.m_FunctionCode == MATROX_FILTER_EVENT)
+	{
+//-		RPY240215 - This case is put here to filter out
+//-		the EventGigEVisionError.  Most of the GigE Cameras 
+//-		do not support Events and should not show up in the event
+//-		log as an error
+	}
 	else
 	{
 //-		JAB110708 - I put the following code here to force the Log function, and 
@@ -102,7 +111,7 @@ void SVMatroxApplicationInterface::Log( SVMatroxStatusInformation &p_rStatusInfo
 	{
 		SVException e;
 
-		if( SUCCEEDED( p_rStatusInfo.m_StatusCode ) )
+		if( SUCCEEDED( p_rStatusInfo.m_StatusCode ) ) 
 		{
 			e.SetException( SVMSG_SVMATROXLIBRARY_NO_ERROR, -15408, static_cast< DWORD >( p_rStatusInfo.m_StatusCode ) );
 		}
