@@ -27,6 +27,7 @@
 #include "SVVisionProcessorConstants.h"
 #include "SVDataDefinitionStruct.h"
 #include "RemoteMonitorNamedList.h"
+#include "SVUtilityLibrary/SVGUID.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -46,6 +47,8 @@ enum SVDataDefinitionListType
 
 const TCHAR			StandardItems[]				= _T( "StandardItems" );
 #pragma endregion Declarations
+
+typedef std::map<SVGUID,SVString> SVErrorMap;
 
 class SVVisionProcessorHelper
 {
@@ -87,6 +90,35 @@ public:
 	HRESULT SetProductFilter( const SVString& rListName, SVProductFilterEnum filter );
 	HRESULT GetProductFilter( const SVString& rListName, SVProductFilterEnum& filter ) const;
 	HRESULT RegisterMonitorList( const SVString& rListName, const SVString& rPPQName, int rejectDepth, const SVNameSet& rProdList, const SVNameSet& rRejectCondList, const SVNameSet& rFailStatusList, SVNameStatusMap& rStatusOfItemsWithError );
+
+
+	//methods for Tool Errors for going into RunMode
+	//////////////////////////////////////////
+	// ClearToolErrorMap 
+	// Clears the map of tool errors before the start of going into RunMode
+	//////////////////////////////////////////
+	void ClearToolErrorMap();
+	
+	//////////////////////////////////////////
+    // AddToolError
+	// Parameters:
+	//     - SVGUID - the Tool's Unique ID
+	//     - SVString - Error Message for that tool
+	//////////////////////////////////////////
+	void AddToolError(SVGUID guid, SVString sErrorMessage);
+
+	//////////////////////////////////////////
+    // GetNumberofToolError
+	// Returns the number of errors in the map. 
+	//////////////////////////////////////////
+	int GetNumberOfToolErrors();
+
+	//////////////////////////////////////////
+	// GetFirstErrorMessage
+	// returns true along with the SVGUID and ErrorMessage string.
+	// returns false if it was unable to get anything from the map. this should never happen
+	//////////////////////////////////////////
+	bool GetFirstErrorMessage(SVGUID &guid, SVString &sErrorMessage);
 
 protected:
 	typedef boost::function< HRESULT ( const SVNameSet&, SVNameStorageResultMap& ) > SVGetItemsFunctor;
@@ -144,6 +176,8 @@ private:
 	//************************************
 	void SetValuesOrImagesMonitoredObjectLists( const SVNameSet& rObjectNameList, const SVPPQObject& pPPQ, MonitoredObjectList &rMonitoredValueObjectList, MonitoredObjectList *pMonitoredImageObjectList, SVNameStatusMap &rStatus, HRESULT &hr );
 #pragma endregion Private Methods
+private:   //Data
+	SVErrorMap m_ToolErrorMap;
 };
 
 #endif

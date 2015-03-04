@@ -27,6 +27,7 @@
 #include "SVSVIMStateClass.h"
 #include "SVToolSet.h"
 #include "SVArchiveHeaderEditDlg.h"
+#include "SVVisionProcessorHelper.h"
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -1194,6 +1195,7 @@ SVArchiveTool::SVArchiveTool( BOOL BCreateDefaultTaskList,
               : SVToolClass(BCreateDefaultTaskList, POwner, StringResourceID)
 {
 	initializeArchiveTool();
+	m_bDriveError = false;
 }
 
 void SVArchiveTool::initializeArchiveTool()
@@ -1580,7 +1582,6 @@ BOOL SVArchiveTool::Validate()	// called once when going online
 	GetImageArchivePath( csImagePath );
 
 	bOk = ! csImagePath.IsEmpty();
-
 	if ( bOk )
 	{
 		bOk = _access( csImagePath, 0 ) == 0;
@@ -1606,50 +1607,69 @@ BOOL SVArchiveTool::OnValidate()	// called each onRun
 
 	if ( bOk )
 	{
-		if((m_uiValidateCount % 10 == 0) || (m_uiValidateCount == 0))
+		int iSize = m_arrayImagesInfoObjectsToArchive.GetSize();
+
+		//Only need to verify space if there are images to be archived.  If no images are checked we do not need to 
+		//run through the checking of disk space.
+		if (iSize > 0)
 		{
-			CString csImagePath;
-			GetImageArchivePath( csImagePath );
+			if((m_uiValidateCount % 10 == 0) || (m_uiValidateCount == 0))
 			{
-
-				//
-				// Check the available space for storing image archive files.
-				//
-				
-				ULARGE_INTEGER lFreeBytesAvailableToCaller;
-				ULARGE_INTEGER lTotalNumberOfBytes;
-				ULARGE_INTEGER lTotalNumberOfFreeBytes;
-				
-				bOk = ::GetDiskFreeSpaceEx( (LPCTSTR)csImagePath,         // pointer to the directory name
-				                            &lFreeBytesAvailableToCaller, // receives the number of bytes on
-				                                                          // disk available to the caller
-				                            &lTotalNumberOfBytes,         // receives the number of bytes on disk
-				                            &lTotalNumberOfFreeBytes );   // receives the free bytes on disk
-				
-				if(!bOk)  
+				CString csImagePath;
+				GetImageArchivePath( csImagePath );
 				{
-					msvError.msvlErrorCd = (DWORD)(-(long)(GetLastError()));
 
-					if ( msvError.msvlErrorCd == -3 )
-					{ //should not ever get here since the path is validated above
-						CString temp;
-						temp.Format ("Path/File not found:  %s", csImagePath);
-						AfxMessageBox (temp);
+					//
+					// Check the available space for storing image archive files.
+					//
+				
+					ULARGE_INTEGER lFreeBytesAvailableToCaller;
+					ULARGE_INTEGER lTotalNumberOfBytes;
+					ULARGE_INTEGER lTotalNumberOfFreeBytes;
+				
+					bOk = ::GetDiskFreeSpaceEx( (LPCTSTR)csImagePath,         // pointer to the directory name
+												&lFreeBytesAvailableToCaller, // receives the number of bytes on
+																			  // disk available to the caller
+												&lTotalNumberOfBytes,         // receives the number of bytes on disk
+												&lTotalNumberOfFreeBytes );   // receives the free bytes on disk
+				
+					if(!bOk)  
+					{
+						msvError.msvlErrorCd = (DWORD)(-(long)(GetLastError()));
 
-						bOk = FALSE;
+						if ( msvError.msvlErrorCd == -3 )
+						{ //should not ever get here since the path is validated above
+							CString temp;
+							temp.Format ("Path/File not found:  %s", csImagePath);
+							AfxMessageBox (temp);
+
+							bOk = FALSE;
+						}
 					}
-				}
 				
-				//
-				// Make sure we have at least 100 Meg bytes space on the drive.
-				//
-				if ( bOk )
-				{
-					bOk = ((__int64)100000000) < lFreeBytesAvailableToCaller.QuadPart;
+					//
+					// Make sure we have at least 100 Meg bytes space on the drive.
+					//
+					if ( bOk )
+					{
+						bOk = ((__int64)100000000) < lFreeBytesAvailableToCaller.QuadPart;
+						if (!bOk)
+						{
+							m_bDriveError = true;
+						}
+						else
+						{
+							m_bDriveError = false;
+						}
+					}
 				}
 			}
 		}
-
+		else
+		{
+			//don't worry about drive space because no images are selected for archiving.
+			m_bDriveError = false;
+		}
 		m_uiValidateCount++;
 
 	}
@@ -2358,6 +2378,21 @@ BOOL SVArchiveTool::renameToolSetSymbol(SVObjectClass* pObject, LPCTSTR orgName)
 	}
 
 	return bReplaced;
+}
+
+HRESULT SVArchiveTool::ValidateArchiveTool()
+{
+	HRESULT hRet = S_OK;
+
+	//reset m_uiValidateCount back to 0 so it will check the drive space
+	m_uiValidateCount = 0;
+
+	if (!OnValidate())
+	{
+		hRet = S_FALSE;
+	}
+	
+	return hRet;
 }
 
 //******************************************************************************

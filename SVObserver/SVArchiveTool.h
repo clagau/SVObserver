@@ -222,6 +222,11 @@ public:
 	static long CalculateImageMemory( SVImageClass* p_pImage );
 	static long CalculateImageMemory( std::vector<SVImageClass*> p_apImages );
 
+	//--ValidateArvhiveTool - called from the Tool Adjustment Dialog
+	//-- This will cause the Archive Tool to run through a full validation cycle
+	//--Previously the OnValidate would only run through the initial time or every 10th time
+	//--This method guarantees that the OnValidate will run. 
+	HRESULT ValidateArchiveTool();
 public:
 	//
 	// The arrays for results and images to archive.

@@ -2094,8 +2094,23 @@ void SVObserverApp::OnGoOnline()
 				else if ( ( l_hrStatus & SV_CAN_GO_ONLINE_FAILURE_INSPECTION ) == 
 					SV_CAN_GO_ONLINE_FAILURE_INSPECTION )
 				{
-					l_csMessage =  _T( "Configuration cannot enter Run.  There is an "
-						"unknown error with an inspection when the system attempted to enter Run." );
+					bool bShowToolError = false;
+					if ( SVVisionProcessorHelper::Instance().GetNumberOfToolErrors() > 0 )
+					{
+						SVGUID ToolGuid;
+						SVString sToolErrorTxt;
+						if ( SVVisionProcessorHelper::Instance().GetFirstErrorMessage(ToolGuid,sToolErrorTxt) )
+						{
+							bShowToolError = true;
+							SVString sToolName = SVObjectManagerClass::Instance().GetCompleteObjectName(ToolGuid);
+							l_csMessage.Format("Configuration cannot enter Run.\n Error with \"%s\" : %s",sToolName.c_str(),sToolErrorTxt.c_str());
+						}
+					}
+					if (!bShowToolError)
+					{
+						l_csMessage =  _T( "Configuration cannot enter Run.  There is an "
+							"unknown error with an inspection when the system attempted to enter Run." );
+					}
 				}
 				else if ( ( l_hrStatus & SV_GO_ONLINE_FAILURE_RECYCLE_PRODUCT ) == 
 					SV_GO_ONLINE_FAILURE_RECYCLE_PRODUCT )
@@ -2133,8 +2148,10 @@ void SVObserverApp::OnGoOnline()
 					l_csMessage =  _T( "Configuration cannot enter Run.  There is an "
 						"unknown error when the system was going online." );
 				}
+				INT_PTR Res(0);
+				SvStl::ExceptionMgr1 Exception(SvStl::ExpTypeEnum::LogAndDisplay);
 
-				::AfxMessageBox( l_csMessage, MB_OK | MB_ICONERROR ); 
+				Res = Exception.setMessage(SVMSG_SVO_43_GENERAL,l_csMessage,StdExceptionParams, Err_45000, 0, MB_OK);
 				SVSVIMStateClass::AddState( l_lPrevState );
 			}
 		}

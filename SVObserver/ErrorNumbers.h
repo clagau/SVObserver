@@ -72,6 +72,10 @@ static const int Err_25011 = Gra_ErrorBase + 11;
 static const int Err_25012 = Gra_ErrorBase + 12;
 static const int Err_NoMatroxDongle_25013 = Gra_ErrorBase + 13;
 
+//Robert Yoho error base
+static const int Rpy_ErrorBase = 45000;
+static const int Err_45000 = Rpy_ErrorBase + 0;
+
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************

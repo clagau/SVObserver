@@ -463,6 +463,7 @@ bool SVToolAdjustmentArchivePage::QueryAllowExit()
 		GetSelectedHeaderNamePairs(l_HeaderPairs); // filters by what is selected.
 		StoreHeaderValuesToTool( l_HeaderPairs );
 	}
+	HRESULT hRet = m_pTool->ValidateArchiveTool();
 
 	SVSendMessage( m_pTool, SVM_RESET_ALL_OBJECTS, NULL, NULL );
 
