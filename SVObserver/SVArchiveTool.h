@@ -293,6 +293,11 @@ private:
 private:
 	SVStringValueObjectClass	m_stringImageFileRootPath;
 	SVStringValueObjectClass	m_stringFileArchivePath;
+
+	//--m_bDriveError will will hold the error state of the drive.
+	//--will be true if the hard drive has less than 100 MG of free space
+	//--if images are selected for archive.
+	bool m_bDriveError;
 };
 
 #endif
