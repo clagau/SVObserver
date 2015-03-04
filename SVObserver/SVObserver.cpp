@@ -214,7 +214,7 @@ BEGIN_MESSAGE_MAP(SVObserverApp, CWinApp)
 	ON_COMMAND(ID_FILE_CLOSE_SVC, OnFileCloseConfig)
 	ON_COMMAND(ID_FILE_OPEN, OnFileOpen)
 	ON_COMMAND(ID_FILE_SAVE_ALL, OnFileSaveAll)
-	ON_COMMAND(ID_FILE_PRINT_SETUP, OnFilePrintSetup)
+	ON_COMMAND(ID_FILE_PRINT_SETUP, OnSVOFilePrintSetup)
 	ON_COMMAND(ID_FILE_PRINT_CONFIG, OnFilePrintConfig)
 	ON_COMMAND(ID_FILE_SAVE_AS_SVC, OnFileSaveAsSVC)
 	ON_COMMAND_EX_RANGE(ID_FILE_MRU_FILE1, ID_FILE_MRU_FILE16, OnOpenRecentFile)
@@ -1727,14 +1727,26 @@ void SVObserverApp::OnUpdateAddStatisticsTool( CCmdUI* PCmdUI )
 
 void SVObserverApp::OnFilePrintConfig() 
 {
-	if ( ! SVSVIMStateClass::CheckState( SV_STATE_READY | SV_STATE_RUNNING ) || 
-		CString( getConfigFullFileName() ).IsEmpty() )
+	if( m_svSecurityMgr.SVValidate( SECURITY_POINT_FILE_MENU_PRINT ) == S_OK )
 	{
-		return;
-	}
+		if ( ! SVSVIMStateClass::CheckState( SV_STATE_READY | SV_STATE_RUNNING ) || 
+			CString( getConfigFullFileName() ).IsEmpty() )
+		{
+			return;
+		}
 
-	SVConfigurationPrint printConfig;
-	printConfig.DoPrintConfig();
+		SVConfigurationPrint printConfig;
+		printConfig.DoPrintConfig();
+	}
+}
+
+//Override OnFilePrintSetup
+void SVObserverApp::OnSVOFilePrintSetup()
+{
+	if( m_svSecurityMgr.SVValidate( SECURITY_POINT_FILE_MENU_PRINT_SETUP ) == S_OK )
+	{
+		OnFilePrintSetup();
+	}
 }
 
 void SVObserverApp::OnExtrasLogin() 
@@ -2327,7 +2339,7 @@ void SVObserverApp::OnUpdateEditPublishedResults(CCmdUI* PCmdUI)
 ////////////////////////////////////////////////////////////////////////////////
 void SVObserverApp::OnAppExit() 
 {
-	bool l_bAllowAccess = false;
+	bool l_bAllowAccess = true;
 
 	if ( SVSVIMStateClass::CheckState(SV_STATE_REGRESSION) )
 	{
@@ -2342,21 +2354,15 @@ void SVObserverApp::OnAppExit()
 			OnStop();
 			l_bAllowAccess = true;
 		}
-	}
-	else
-	{
-		if( m_svSecurityMgr.SVValidate( SECURITY_POINT_FILE_MENU_EXIT ) == S_OK )
+		else
 		{
-			l_bAllowAccess = true;
+			l_bAllowAccess = false;
 		}
 	}
 
 	if( l_bAllowAccess )
 	{
-		if( m_svSecurityMgr.SVValidate( SECURITY_POINT_FILE_MENU_EXIT ) == S_OK )
-		{
-			CWinApp::OnAppExit();
-		}
+		CWinApp::OnAppExit();
 	}
 }
 

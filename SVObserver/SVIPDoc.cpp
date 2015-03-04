@@ -1510,8 +1510,12 @@ void SVIPDoc::OnEditToolSetCondition()
 
 void SVIPDoc::OnFileSaveImage()
 {
-	SVSaveToolSetImageDialogClass dlg( GetToolSet() );
-	dlg.DoModal();
+
+	if(TheSVObserverApp.m_svSecurityMgr.SVValidate( SECURITY_POINT_FILE_MENU_SAVE_IMAGE ) == S_OK )
+	{
+		SVSaveToolSetImageDialogClass dlg( GetToolSet() );
+		dlg.DoModal();
+	}
 }
 
 //******************************************************************************

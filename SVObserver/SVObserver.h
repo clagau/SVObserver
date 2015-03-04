@@ -175,6 +175,7 @@ public:
 	afx_msg void OnUpdateAddMathTool(CCmdUI* PCmdUI);
 	afx_msg void OnUpdateAddStatisticsTool(CCmdUI* PCmdUI);
 	afx_msg void OnFilePrintConfig();
+	afx_msg void OnSVOFilePrintSetup();
 	afx_msg void OnExtrasLogin();
 	afx_msg void OnUpdateExtrasLogin(CCmdUI* PCmdUI);
 	afx_msg void OnUpdateExtrasUserManager(CCmdUI* PCmdUI);

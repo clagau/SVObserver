@@ -88,7 +88,11 @@ BOOL SVSecuritySetupPage::OnInitDialog()
 
 	SVSecurityStorage& svStore( m_pAccess->m_svStorage );
 	HTREEITEM hItem( TVI_ROOT );
-	long l_Index( 0 );
+
+	//-RPY 270215
+	// set l_Index to 2 - which gets rid of the extra Root & File Menu which does not contain
+	// any real items that security can be set.
+	long l_Index( 2 );
 
 	BuildTree( l_Index, hItem, true );
 
