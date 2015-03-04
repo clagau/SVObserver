@@ -329,7 +329,7 @@ class regexp : public CRegProgramAccessor
 public:
 	
 	regexp( LPCTSTR exp, BOOL iCase );
-	regexp( const regexp & r );
+
 	~regexp();
 	
 	void ignoreCase( const TCHAR * in, TCHAR * out );
@@ -523,32 +523,6 @@ regexp::regexp( LPCTSTR exp, BOOL iCase )
 		status = regcomp( exp );
 
 	count = numSubs = 0;
-}
-
-regexp::regexp( const regexp & orig )
-	: regstart(orig.regstart),
-	reganch(orig.reganch),
-	regmlen(orig.regmlen),
-	m_programSize(orig.m_programSize),
-	numSubs(orig.numSubs),
-	regmust(0)
-{
-#if _DEBUG
-	m_originalPattern = orig.m_originalPattern;
-	m_modifiedPattern = orig.m_modifiedPattern;
-#endif
-	status = orig.status;
-	count = 0;
-	program = new TCHAR[m_programSize];
-	memcpy( program, orig.program, m_programSize * sizeof( TCHAR ) );
-	if ( orig.regmust )
-		regmust = program + ( orig.regmust - orig.program );
-
-	for ( int i = Regexp::NSUBEXP; i > 0; i--)
-	{
-		startp[i] = orig.startp[i];
-		endp[i] = orig.endp[i];
-	}
 }
 
 regexp::~regexp()

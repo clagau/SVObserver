@@ -2461,7 +2461,7 @@ BOOL CGridCtrl::PasteTextToGrid(CCellID cell, COleDataObject* pDataObject,
     // Now store in generic TCHAR form so we no longer have to deal with
     // ANSI/UNICODE problems
     CString strText(szBuffer);
-    delete szBuffer;
+    delete[] szBuffer; // Arvid 2015-01-08 added brackets 
 
     // Parse text data and set in cells...
     strText.LockBuffer();

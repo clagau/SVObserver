@@ -338,7 +338,7 @@ HRESULT SVLptIOImpl::GetBoardVersion(long& rlVer)
 HRESULT SVLptIOImpl::GetInputBit(unsigned long bitNum, bool& rBitVal)
 {
 	HRESULT hr = S_OK;
-	unsigned long lValue;
+	unsigned long lValue=0;//Arvid 150108 added a default value to avoid Cppcheck warning
 	if (bitNum < 8)
 	{
 		SVReadWriteLpt(lValue, SVControlReadDigitalInputs, bitNum);

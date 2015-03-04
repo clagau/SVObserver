@@ -1914,7 +1914,7 @@ DWORD WINAPI S7DeferManager (LPVOID apCallingClass)
 
    SVPLCCommQueueStruct* pCurrent;
 
-// pThreadParent may have only a limitted life span.
+// pThreadParent may have only a limited life span.
    SVS7PBFMSClass*   pThreadParent;
    SVS7PBFMSClass*   pTransactionParent;
 
@@ -2126,9 +2126,11 @@ DWORD WINAPI S7DeferManager (LPVOID apCallingClass)
                case SV_PLC_STRING:
                case SV_PLC_ASCII:
                   {
-                     // String length is inthe fixed length in the case of a string
+                     // String length is in the fixed length in the case of a string
                      nNbrElements = (short) pBlock->svmlPLCDataFixedLength;
-                     tCS.Format( _T("Send string, addr = %d, %d bytes\n"), nNbrElements);
+                     tCS.Format( _T("Send string, %d elements\n"), nNbrElements);
+					 //Arvid 150108 changed the format string so that it matches the parameters
+
                      TRACE( tCS );
 
                      if (hpApplicomLib)

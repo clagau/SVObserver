@@ -600,7 +600,15 @@ void Element::AddChildAttribute(Attribute* pChild)
 
 	pChild->SetAsAttribute();
 
+	//Arvid 2015-02-26 Added oldPpAttributes to avoid Cppcheck realloc warning
+	Attribute** oldPpAttributes=ppAttributes;
 	ppAttributes = (Attribute**)realloc(ppAttributes, sizeof(Attribute *) * size);
+	
+	if(ppAttributes==nullptr)
+	{
+		ppAttributes=oldPpAttributes;
+	}
+
 	ppAttributes[size - 2] = pChild;
 	ppAttributes[size - 1] = NULL;
 }
@@ -613,21 +621,30 @@ void Element::AddChildElement(Element* pChild)
 	pChild->SetParent(this);
 	pChild->SetAsElement();
 
+	//Arvid 2015-02-26 Added oldPpElements to avoid Cppcheck realloc warning
+	Element** oldPpElements=ppElements;
+
 	ppElements = (Element**)realloc(ppElements, sizeof(Element *) * size);
+
+	if(ppElements==nullptr)
+	{
+		ppElements=oldPpElements;
+	}
+
 	ppElements[size - 2] = pChild;
 	ppElements[size - 1] = NULL;
 }
 
-int Element::FindChildElements(LPTSTR pName, Element *** ppElmnts, BOOL blSubs /* = FALSE */)
+int Element::FindChildElements(LPTSTR pName, Element *** pppElmnts, BOOL blSubs /* = FALSE */)
 {
-//	Element ** lppElements = *ppElmnts;
+//	Element ** lppElements = *pppElmnts;
 	//init if NULL
 	// this is a NULL TERMINATED LIST (ARRAY) OF Element pointers
 	//is this redundant ?
-	if(*ppElmnts == NULL)
+	if(*pppElmnts == NULL)
 		{
-		*ppElmnts = (Element**)malloc(sizeof(Element *));
-		(*ppElmnts)[0] = NULL;
+		*pppElmnts = (Element**)malloc(sizeof(Element *));
+		(*pppElmnts)[0] = NULL;
 		}
 
 	//walk this list of child elements searching for the elements with the 
@@ -638,27 +655,37 @@ int Element::FindChildElements(LPTSTR pName, Element *** ppElmnts, BOOL blSubs /
 			{
 			int size = 0;
 			//determine size,  this is a NULL TERMINATED ARRAY OF POINTERS
-			if((*ppElmnts)[0] == NULL)size = 0;
+			if((*pppElmnts)[0] == NULL)size = 0;
 			else
 				{
-				Element** pPtr =  (*ppElmnts);
+				Element** pPtr =  (*pppElmnts);
 				while(*pPtr != NULL){size++;pPtr++;}
 				}
 			size++;
-			(*ppElmnts) = (Element**)realloc((*ppElmnts), sizeof(Element *) * (size + 1));
-			(*ppElmnts)[size -1] = ppElements[x];
-			(*ppElmnts)[size] = NULL;
+
+			//Arvid 2015-02-26 Added oldPpElements to avoid Cppcheck realloc warning
+			Element** oldPpElements=*pppElmnts;
+
+			*pppElmnts = (Element**)realloc(*pppElmnts, sizeof(Element *) * size);
+
+			if(*pppElmnts==nullptr)
+			{
+				*pppElmnts=oldPpElements;
+			}
+
+			(*pppElmnts)[size -1] = ppElements[x];
+			(*pppElmnts)[size] = NULL;
 			
 			}
-		if(blSubs)ppElements[x]->FindChildElements(pName,ppElmnts,blSubs);
+		if(blSubs)ppElements[x]->FindChildElements(pName,pppElmnts,blSubs);
 		}
 	//return the size
 	int size = 0;
 	//determine size,  this is a NULL TERMINATED ARRAY OF POINTERS
-	if((*ppElmnts)[0] == NULL)return 0;
+	if((*pppElmnts)[0] == NULL)return 0;
 	else
 		{
-		Element** pPtr =  (*ppElmnts);
+		Element** pPtr =  (*pppElmnts);
 		while(*pPtr != NULL){size++;pPtr++;}
 		}
 	return size;
@@ -741,7 +768,17 @@ void Element::DeleteChildElement(Element * pElement)
 				ppElements[index] = ppElements[index+1];
 				}
 			//reallocate
+
+			Element** oldPpElements=ppElements;
+
 			ppElements = (Element**)realloc(ppElements, sizeof(Element *) * size);
+
+			if(ppElements==nullptr)
+			{
+				ppElements=oldPpElements;
+			}
+
+
 			delete pElement;
 			}
 		}

@@ -2174,7 +2174,7 @@ HRESULT SVConfigurationObject::LoadConfiguration(SVTreeType& rTree)
 							CString strName;
 							CString strType;
 							long lIndex;
-							long lPPQPosition;
+							long lPPQPosition=0;
 
 							bOk = SVNavigateTreeClass::GetItem( rTree, CTAG_IO_TYPE, htiDataChild, svValue );
 							if ( bOk )
@@ -2200,7 +2200,8 @@ HRESULT SVConfigurationObject::LoadConfiguration(SVTreeType& rTree)
 								}// end if
 
 								// Add Digital Input to the PPQ
-								AddDigitalInput(pPPQ, csDataName, lPPQPosition);
+								AddDigitalInput(pPPQ, csDataName, lPPQPosition); //Arvid 150108 should this really be called if bOk == false?
+																				 //Arvid 150108 if so: what value of lPPQPosition should be used
 							}// end if
 
 							// This means it is a Remote input

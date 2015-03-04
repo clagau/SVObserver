@@ -125,7 +125,7 @@ BOOL __stdcall DisableCrashFilter()
 // A static function to get the TIB.
 static PTIB GetTIB ( void )
 {
-    PTIB pTib;
+    PTIB pTib=nullptr;
 #ifdef USE_CRASH
 
     __asm

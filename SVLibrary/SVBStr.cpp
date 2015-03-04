@@ -33,7 +33,7 @@ static char THIS_FILE[]=__FILE__;
 
 SVBStr::SVBStr()
 {
-   svmlAllocationPageSize = 4000;
+
 
 // We are not going to pre-allocate here because of the lack of error 
 // handling. ----------------------------------------------------------------
@@ -231,7 +231,7 @@ SVBStr::operator const char*() const
 
 const SVBStr& SVBStr::operator=(const SVBStr& stringSrc)
 {
-//   WCHAR wcsWideCharacterSource [4000];
+//   WCHAR wcsWideCharacterSource [svmlAllocationPageSize]; //Arvid 2015-01-08 was: 4000
 //   long  lNbrOfCharacters;
 
    while (1)
@@ -261,14 +261,14 @@ const SVBStr& SVBStr::operator=(const SVBStr& stringSrc)
 
 const SVBStr& SVBStr::operator=(const TCHAR& stringSrc)
 {
-   WCHAR wcsWideCharacterSource [4000];
+   WCHAR wcsWideCharacterSource [svmlAllocationPageSize]; //Arvid 2015-01-08 was: 4000
    long  lNbrOfCharacters;
    
    USES_CONVERSION;
 
    while (1)
    {
-//-	This limits us to the 4000 character wide char array.
+//-	This limits us to the svmlAllocationPageSize character wide char array. 
       lNbrOfCharacters = sizeof (wcsWideCharacterSource) / sizeof (WCHAR);
 	   wcsncpy (wcsWideCharacterSource, 
                T2W(&((TCHAR) stringSrc)), 
@@ -311,7 +311,7 @@ const SVBStr& SVBStr::operator=(const CString& stringSrc)
 {
 	long	lErr;
 
-   WCHAR wcsWideCharacterSource [4000];
+   WCHAR wcsWideCharacterSource [svmlAllocationPageSize];
 //   long  lNbrOfBytes;
    long  lNbrOfCharacters;
    TCHAR*	czpStringSrc;
@@ -330,6 +330,7 @@ const SVBStr& SVBStr::operator=(const CString& stringSrc)
 //      lNbrOfBytes = stringSrc.GetLength ();
 //-	CString GetLength does not include NULL, so we will add 1 for the NULL. 
       lNbrOfCharacters = stringSrc.GetLength () + 1;
+	  //Arvid 2015-01-08 suggestion: use svmlAllocationPageSize rather than sizeof (wcsWideCharacterSource) / sizeof (WCHAR))
 		if (lNbrOfCharacters > (sizeof (wcsWideCharacterSource) / sizeof (WCHAR)))
 		{
 //-		We must do -1 here because we will do +1 later.
@@ -349,7 +350,7 @@ const SVBStr& SVBStr::operator=(const CString& stringSrc)
                T2W(czpStringSrc), 
                lNbrOfCharacters);
 
-      wcsWideCharacterSource [lNbrOfCharacters] = 0;
+      wcsWideCharacterSource [lNbrOfCharacters-1] = 0; //Arvid 2015-01-08 added -1 to avoid "out of Bounds warning" from Cppcheck 
 
       lErr = CopyFromWChar (wcsWideCharacterSource);
 		if (lErr & 0xc0000000)

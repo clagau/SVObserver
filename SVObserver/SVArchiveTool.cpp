@@ -1662,6 +1662,31 @@ BOOL SVArchiveTool::OnValidate()	// called each onRun
 	return bOk;
 }
 
+
+
+void local_remove_items( std::vector<CString>& rVec, SVStringValueObjectClass& rvo )//Arvid 2015-01-13 made this a free function to avoid Cppcheck warning
+{
+	std::vector<CString> vecNames;
+	std::vector<CString>::iterator iterRemoved;
+
+	if ( !rVec.empty() )
+	{
+		rvo.GetValues( vecNames );
+
+		for ( iterRemoved = rVec.begin(); iterRemoved != rVec.end(); ++iterRemoved )
+		{
+			std::vector<CString>::iterator iterName;
+			iterName = std::find(vecNames.begin(), vecNames.end(), *iterRemoved );
+			if ( iterName != vecNames.end() )
+				vecNames.erase( iterName );
+		}
+
+		rvo.SetArraySize( static_cast< int >( vecNames.size() ) );
+		rvo.SetArrayValues(1, vecNames );
+	}
+}
+
+
 /////////////////////////////////////////////////////////////////////////////
 //
 DWORD_PTR SVArchiveTool::processMessage( DWORD dwMessageID, 
@@ -1706,7 +1731,7 @@ DWORD_PTR SVArchiveTool::processMessage( DWORD dwMessageID,
 				
 		// This Message occurs for two scenarios
 		// 1. Some Object is using our outputs and they are no longer needed.
-		// 2. We are using some Object's outputs and the ouputs are no longer available
+		// 2. We are using some Object's outputs and the outputs are no longer available
 		case SVMSGID_DISCONNECT_OBJECT_INPUT:
 		{
 			// ...use second message parameter ( DwMessageValue ) 
@@ -1717,32 +1742,8 @@ DWORD_PTR SVArchiveTool::processMessage( DWORD dwMessageID,
 			std::vector<CString> vecRemovedImage  = m_arrayImagesInfoObjectsToArchive. RemoveDisconnectedObject( pInObjectInfo->GetInputObjectInfo() );
 			std::vector<CString> vecRemovedResult = m_arrayResultsInfoObjectsToArchive.RemoveDisconnectedObject( pInObjectInfo->GetInputObjectInfo() );
 
-			struct local_remove_items
-			{
-				local_remove_items( std::vector<CString>& rVec, SVStringValueObjectClass& rvo )
-				{
-					std::vector<CString> vecNames;
-					std::vector<CString>::iterator iterRemoved;
-
-					if ( !rVec.empty() )
-					{
-						rvo.GetValues( vecNames );
-
-						for ( iterRemoved = rVec.begin(); iterRemoved != rVec.end(); ++iterRemoved )
-						{
-							std::vector<CString>::iterator iterName;
-							iterName = std::find(vecNames.begin(), vecNames.end(), *iterRemoved );
-							if ( iterName != vecNames.end() )
-								vecNames.erase( iterName );
-						}
-
-						rvo.SetArraySize( static_cast< int >( vecNames.size() ) );
-						rvo.SetArrayValues(1, vecNames );
-					}
-				}
-			};
-			local_remove_items( vecRemovedImage, m_svoArchiveImageNames );
-			local_remove_items( vecRemovedResult, m_svoArchiveResultNames );
+			local_remove_items ( vecRemovedImage, m_svoArchiveImageNames );
+			local_remove_items ( vecRemovedResult, m_svoArchiveResultNames );
 
 			return SVMR_SUCCESS;
 		}

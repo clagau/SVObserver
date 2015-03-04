@@ -379,7 +379,7 @@ HRESULT SVTVicLptImpl::GetInputValue(unsigned long* pVal)
 HRESULT SVTVicLptImpl::GetInputBit(unsigned long bitNum, bool& bitVal)
 {
 	HRESULT hr = S_OK;
-	unsigned long l_lValue;
+	unsigned long l_lValue=0;
 	if( bitNum < 8 )
 	{
 		SVReadWriteLpt( l_lValue, SVControlReadDigitalInputs, bitNum );

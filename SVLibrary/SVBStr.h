@@ -160,7 +160,7 @@ private:
 // svmlAllocationPageSize ---------------------------------------------------
 // Number of bytes!!!	
 	//##ModelId=3D3C8192029F
-   long     svmlAllocationPageSize;
+   static const long svmlAllocationPageSize=4000; //Arvid 2015-01-08 made this a static const since it is always set to 4000 anyway
 
 // svmlCurrrentAllocationSize -----------------------------------------------
 // Number of bytes!!!

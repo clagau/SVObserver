@@ -207,7 +207,7 @@ long SVASABtcpClass::CheckStatus (SVPLCBlockStruct* apBlock)
 
 long SVASABtcpClass::Open (TCHAR *apConnectionString)
 {
-   long  lErr;
+   long  lErr=0;
 
    svmNbrOpenLock.Lock ();
 

@@ -12,7 +12,6 @@
 #include "stdafx.h"
 #include "SVDCamDragonflyDriver.h"
 #include "SVImageLibrary/SVImagingDeviceParams.h"
-#include "SVOMFCLibrary/Regexp.h"
 #include "SVOMFCLibrary/SVDeviceParamCollection.h"
 #include "SVOMFCLibrary/SVDeviceParams.h"
 #include "SVOMFCLibrary/SVBoolValueDeviceParam.h"
