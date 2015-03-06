@@ -23,6 +23,7 @@
 #include "SVToolSet.h"
 #include "SVObjectLibrary\SVToolsetScriptTags.h"
 #include "SVObjectLibrary\GlobalConst.h"
+#include "EnvironmentObject.h"
 
 SVEquationSymbolTableClass::SVEquationSymbolTableClass()
 {
@@ -1443,25 +1444,27 @@ void SVEquationClass::addPPQ_XParameterToList( SVInputInfoListClass &arInputAvai
 {
 	//add PPQ_X parameter to the equation selection list
 	SVPPQObject *ppq = GetInspection()->GetPPQ();
-	SVString PPQName = ppq->GetName();
-	SVObjectReferenceVector ObjectList;
-	SVObjectManagerClass::Instance().getTreeList( PPQName, ObjectList, SV_SELECTABLE_FOR_EQUATION );
-	for(SVObjectReferenceVector::const_iterator iter = ObjectList.begin(); iter != ObjectList.end(); ++iter) 
+	if ( nullptr != ppq )
 	{
-		SVInObjectInfoStruct *pInInfoStruct = new SVInObjectInfoStruct;
-		pInInfoStruct->SetInputObject( iter->Object() );
-		arInputAvailList.Add( pInInfoStruct );
+		SVObjectPtrDeque objectList;
+		ppq->fillChildObjectList(objectList, SV_SELECTABLE_FOR_EQUATION);
+		for(SVObjectPtrDeque::const_iterator iter = objectList.begin(); iter != objectList.end(); ++iter) 
+		{
+			SVInObjectInfoStruct *pInInfoStruct = new SVInObjectInfoStruct;
+			pInInfoStruct->SetInputObject( *iter );
+			arInputAvailList.Add( pInInfoStruct );
+		}
 	}
 }
 
 void SVEquationClass::addEnvironmentModeParameterToList( SVInputInfoListClass &arInputAvailList )
 {
-	SVObjectReferenceVector ObjectList;
-	SVObjectManagerClass::Instance().getTreeList( Seidenader::SVObjectLibrary::FqnEnvironmentMode, ObjectList, SV_SELECTABLE_FOR_EQUATION );
-	for(SVObjectReferenceVector::const_iterator iter = ObjectList.begin(); iter != ObjectList.end(); ++iter) 
+	BasicValueObjects::ValueList list;
+	EnvironmentObject::fillEnvironmentObjectList( list, Seidenader::SVObjectLibrary::FqnEnvironmentMode, SV_SELECTABLE_FOR_EQUATION );
+	for(BasicValueObjects::ValueList::const_iterator iter = list.begin(); iter != list.end(); ++iter) 
 	{
 		SVInObjectInfoStruct *pInInfoStruct = new SVInObjectInfoStruct;
-		pInInfoStruct->SetInputObject( iter->Object() );
+		pInInfoStruct->SetInputObject( *iter );
 		arInputAvailList.Add( pInInfoStruct );
 	}
 }

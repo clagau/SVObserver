@@ -15,6 +15,7 @@
 #pragma once
 
 #pragma region Includes
+#include "SVUtilityLibrary\SVString.h"
 #include "ObjectInterfaces\IEnvironmentObject.h"
 #include "SVObjectLibrary\SVObjectClass.h"
 #include "BasicValueObjects.h"
@@ -106,6 +107,21 @@ public:
 	***********/
 	void getObjectNameList(SVStringArray& rObjectNameList, const SVString& rPath = _T(""), UINT AttributesAllowedFilter = 0) const;
 
+	//************************************
+	/// The method fill up a list with filtered environment objects.
+	/// \param rObjectList [in,out] The list which will be filled.
+	/// \param rPath [in] The path of the requested objects. Default = "", means all objects.
+	/// \param AttributesAllowedFilter [in] the attributes of the objects must be set to added. Default = 0, means all objects.
+	//************************************
+	static void fillEnvironmentObjectList(BasicValueObjects::ValueList& rObjectList, const SVString& rPath = _T(""), UINT AttributesAllowedFilter = 0);
+	//************************************
+	/// The method fill up a list with filtered environment objects.
+	/// \param rObjectList [in,out] The list which will be filled.
+	/// \param rPath [in] The path of the requested objects. Default = "", means all objects.
+	/// \param AttributesAllowedFilter [in] the attributes of the objects must be set to added. Default = 0, means all objects.
+	//************************************
+	void fillObjectList(BasicValueObjects::ValueList& rObjectList, const SVString& rPath = _T(""), UINT AttributesAllowedFilter = 0) const;
+
 	/**********
 		The method gets the value of a name
 		\param Name <in> the name of the object to get
@@ -126,7 +142,14 @@ public:
 #pragma endregion Public Methods
 
 #pragma region Member Variables
+private:
 	BasicValueObjects m_EnvironmentValues; //Container for environment values
+
+	//This parameter a temporary parameter to speed up the method fillObjectList. 
+	//They are not a state of the object only a help for the method. To be able to set the method const, this parameter are mutable.
+	mutable BasicValueObjects::ValueList m_lastListOfFillObjectList;  //<This list is saved for the method fillObjectList, to reuse it if the same filter (m_lastAttributesAllowedFilterOfFillObjectList) and path (m_lastPathOfFillObjectList) is used. 
+	mutable SVString m_lastPathOfFillObjectList; //<This path was used in the last run of the method fillObjectList.
+	mutable UINT m_lastAttributesAllowedFilterOfFillObjectList; //<This filter flag was used in the last run of the method fillObjectList.
 #pragma endregion Member Variables
 };
 

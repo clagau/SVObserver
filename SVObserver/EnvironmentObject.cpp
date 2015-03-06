@@ -30,16 +30,21 @@ SV_IMPLEMENT_CLASS( EnvironmentObject, EnvironmentObjectGuid );
 #pragma region Constructor
 EnvironmentObject::EnvironmentObject( LPCSTR ObjectName )
 : SVObjectClass( ObjectName )
+, m_lastAttributesAllowedFilterOfFillObjectList(0)
+, m_lastPathOfFillObjectList(_T(""))
 {
 }
 
 EnvironmentObject::EnvironmentObject( SVObjectClass* pOwner, int StringResourceID )
 : SVObjectClass( pOwner, StringResourceID )
+, m_lastAttributesAllowedFilterOfFillObjectList(0)
+, m_lastPathOfFillObjectList(_T(""))
 {
 }
 
 EnvironmentObject::~EnvironmentObject()
 {
+	m_lastListOfFillObjectList.clear();
 }
 #pragma endregion Constructor
 
@@ -57,6 +62,7 @@ HRESULT EnvironmentObject::GetChildObject( SVObjectClass*& rpObject, const SVObj
 
 	SVObjectManagerClass::Instance().GetRootChildObject(pEnvironment, SVObjectManagerClass::Environment);
 
+	ASSERT(pEnvironment);
 	if(nullptr != pEnvironment)
 	{
 		pEnvironment->getObjectNameList( rObjectNameList, rPath, AttributesAllowedFilter );
@@ -65,29 +71,67 @@ HRESULT EnvironmentObject::GetChildObject( SVObjectClass*& rpObject, const SVObj
 
 void EnvironmentObject::getObjectNameList(SVStringArray& rObjectNameList, const SVString& rPath, UINT AttributesAllowedFilter) const
 {
-	SVString path = rPath + _T(".");
-	const BasicValueObjects::ValueList& list = m_EnvironmentValues.getValueList();
-	BasicValueObjects::ValueList::const_iterator it = list.cbegin();
-	for(it = list.cbegin(); it != list.cend(); ++it)
+	BasicValueObjects::ValueList list;
+	fillObjectList(list, rPath, AttributesAllowedFilter);
+	for(BasicValueObjects::ValueList::const_iterator it = list.cbegin(); it != list.cend(); ++it)
 	{
-		SVString completeName = (*it)->GetCompleteObjectName();
-		if( ((*it)->ObjectAttributesAllowed() & AttributesAllowedFilter) == AttributesAllowedFilter )
-		{
-			// Check if current object is a sub-object of this path.
-			size_t completeSize = completeName.size();
-			size_t pathSize = path.size();
-			if ( completeSize >= pathSize )
-			{
-				SVString checkName = completeName.Left( path.size() );
-				int diff = checkName.Compare( path );
+		rObjectNameList.push_back((*it)->GetCompleteObjectName());
+	}
+}
 
-				if ( rPath.empty() || diff == 0 )
+/*static*/ void EnvironmentObject::fillEnvironmentObjectList(BasicValueObjects::ValueList& rObjectList, const SVString& rPath, UINT AttributesAllowedFilter)
+{
+	EnvironmentObject *pEnvironment = nullptr;
+
+	SVObjectManagerClass::Instance().GetRootChildObject(pEnvironment, SVObjectManagerClass::Environment);
+
+	ASSERT(pEnvironment);
+	if(nullptr != pEnvironment)
+	{
+		 pEnvironment->fillObjectList( rObjectList, rPath, AttributesAllowedFilter );
+	}
+}
+
+void EnvironmentObject::fillObjectList(BasicValueObjects::ValueList& rObjectList, const SVString& rPath, UINT AttributesAllowedFilter) const
+{
+	if (_T("") != rPath || 0 != AttributesAllowedFilter)
+	{
+		if (rPath != m_lastPathOfFillObjectList || AttributesAllowedFilter != m_lastAttributesAllowedFilterOfFillObjectList)
+		{ //not default value of filter and path, not add all objects
+			m_lastListOfFillObjectList.clear();
+
+			SVString path = rPath + _T(".");
+			const BasicValueObjects::ValueList& list = m_EnvironmentValues.getValueList();
+			BasicValueObjects::ValueList::const_iterator it = list.cbegin();
+			for(it = list.cbegin(); it != list.cend(); ++it)
+			{
+				SVString completeName = (*it)->GetCompleteObjectName();
+				if( ((*it)->ObjectAttributesAllowed() & AttributesAllowedFilter) == AttributesAllowedFilter )
 				{
-					rObjectNameList.push_back(completeName);
+					// Check if current object is a sub-object of this path.
+					size_t completeSize = completeName.size();
+					size_t pathSize = path.size();
+					if ( completeSize >= pathSize )
+					{
+						SVString checkName = completeName.Left( path.size() );
+						int diff = checkName.Compare( path );
+
+						if ( rPath.empty() || diff == 0 )
+						{
+							m_lastListOfFillObjectList.push_back(*it);
+						}
+					}
 				}
 			}
 		}
 	}
+	else
+	{	//default value of filter and path, add all objects
+		m_lastListOfFillObjectList = m_EnvironmentValues.getValueList();
+	}
+
+	//add local list to in/out list
+	rObjectList.insert(rObjectList.end(), m_lastListOfFillObjectList.begin(), m_lastListOfFillObjectList.end());
 }
 #pragma endregion Public Methods
 

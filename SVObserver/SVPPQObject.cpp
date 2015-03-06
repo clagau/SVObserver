@@ -263,6 +263,7 @@ SVPPQObject::SVPPQObject( LPCSTR ObjectName )
 , m_NAKCount( 0 )
 , m_conditionalOutputName( PPQ_CONDITIONAL_OUTPUT_ALWAYS )
 , m_bActiveMonitorList(false)
+, m_AttributesAllowedFilterForFillChildObjectList( 0 )
 {
 	init();
 }
@@ -273,12 +274,15 @@ SVPPQObject::SVPPQObject( SVObjectClass* POwner, int StringResourceID )
 , m_NAKCount( 0 )
 , m_conditionalOutputName ( PPQ_CONDITIONAL_OUTPUT_ALWAYS ) 
 , m_bActiveMonitorList(false)
+, m_AttributesAllowedFilterForFillChildObjectList( 0 )
 {
 	init();
 }
 
 SVPPQObject::~SVPPQObject()
 {
+	m_childObjectsForFillChildObjectList.clear();
+
 	if( GetPPQLength() < 3 )
 	{
 		SVObjectManagerClass::Instance().DecrementShortPPQIndicator();
@@ -353,9 +357,27 @@ void SVPPQObject::init()
 	m_voMasterWarning.ObjectAttributesAllowedRef()	= SV_EMBEDABLE | SV_PRINTABLE;
 	m_voNotInspected.ObjectAttributesAllowedRef()	= SV_EMBEDABLE | SV_PRINTABLE;
 	m_voDataValid.ObjectAttributesAllowedRef()		= SV_EMBEDABLE | SV_PRINTABLE;
+	m_voOutputState.ObjectAttributesAllowedRef()		= SV_EMBEDABLE | SV_PRINTABLE;
 
 	m_PpqValues.setValueObject( PpqLength, StandardPpqLength, this );
 	SVObjectManagerClass::Instance().IncrementShortPPQIndicator();
+
+	//fill up the child object list
+	m_childObjects.push_back(&m_voTriggerToggle);
+	m_childObjects.push_back(&m_voOutputToggle);
+	m_childObjects.push_back(&m_voACK);
+	m_childObjects.push_back(&m_voNAK);
+	m_childObjects.push_back(&m_voMasterFault);
+	m_childObjects.push_back(&m_voMasterWarning);
+	m_childObjects.push_back(&m_voNotInspected);
+	m_childObjects.push_back(&m_voDataValid);
+	m_childObjects.push_back(&m_voOutputState);
+	m_childObjects.push_back(&m_voTriggerCount);
+	m_childObjects.push_back(m_PpqValues.getValueObject(PpqLength));
+
+	//copy full child object list to the temporary list for the method fillChildObjectList,
+	//because this is the same as filter = 0 (default)
+	m_childObjectsForFillChildObjectList = m_childObjects;
 }
 
 HRESULT SVPPQObject::GetChildObject( SVObjectClass*& p_rpObject, const SVObjectNameInfo& p_rNameInfo, long p_Index ) const
@@ -368,60 +390,12 @@ HRESULT SVPPQObject::GetChildObject( SVObjectClass*& p_rpObject, const SVObjectN
 		{
 			if( ( p_Index + 1 ) == ( p_rNameInfo.m_NameArray.size() - 1 ) )
 			{
-				l_Status = m_voTriggerToggle.GetChildObject( p_rpObject, p_rNameInfo, p_Index + 1 );
-
-				if( p_rpObject == NULL )
+				SVObjectPtrDeque::const_iterator iter = m_childObjects.cbegin();
+				while (iter != m_childObjects.cend() && nullptr == p_rpObject )
 				{
-					l_Status = m_voOutputToggle.GetChildObject( p_rpObject, p_rNameInfo, p_Index + 1 );
-				}
-
-				if( p_rpObject == NULL )
-				{
-					l_Status = m_voACK.GetChildObject( p_rpObject, p_rNameInfo, p_Index + 1 );
-				}
-
-				if( p_rpObject == NULL )
-				{
-					l_Status = m_voNAK.GetChildObject( p_rpObject, p_rNameInfo, p_Index + 1 );
-				}
-
-				if( p_rpObject == NULL )
-				{
-					l_Status = m_voMasterFault.GetChildObject( p_rpObject, p_rNameInfo, p_Index + 1 );
-				}
-
-				if( p_rpObject == NULL )
-				{
-					l_Status = m_voMasterWarning.GetChildObject( p_rpObject, p_rNameInfo, p_Index + 1 );
-				}
-
-				if( p_rpObject == NULL )
-				{
-					l_Status = m_voNotInspected.GetChildObject( p_rpObject, p_rNameInfo, p_Index + 1 );
-				}
-
-				if( p_rpObject == NULL )
-				{
-					l_Status = m_voDataValid.GetChildObject( p_rpObject, p_rNameInfo, p_Index + 1 );
-				}
-
-				if( p_rpObject == NULL )
-				{
-					l_Status = m_voOutputState.GetChildObject( p_rpObject, p_rNameInfo, p_Index + 1 );
-				}
-
-				if( p_rpObject == NULL )
-				{
-					l_Status = m_voTriggerCount.GetChildObject( p_rpObject, p_rNameInfo, p_Index + 1 );
-				}
-
-				if( p_rpObject == NULL )
-				{
-					BasicValueObject* pValue  = m_PpqValues.getValueObject(PpqLength);
-					if( nullptr != pValue )
-					{
-						l_Status = pValue->GetChildObject( p_rpObject, p_rNameInfo, p_Index + 1 );
-					}
+					const SVObjectClass* pObject = *iter;
+					l_Status = pObject->GetChildObject( p_rpObject, p_rNameInfo, p_Index + 1 );
+					++iter;
 				}
 			}
 		}
@@ -4717,6 +4691,25 @@ HRESULT SVPPQObject::SetMonitorList(const ActiveMonitorList& rActiveList)
 bool SVPPQObject::HasActiveMonitorList() const
 {
 	return m_bActiveMonitorList;
+}
+
+void SVPPQObject::fillChildObjectList(SVObjectClass::SVObjectPtrDeque& objectList, UINT AttributesAllowedFilter) const
+{
+	if (AttributesAllowedFilter != m_AttributesAllowedFilterForFillChildObjectList)
+	{ //only recreate the list if the attributes changed.
+		m_childObjectsForFillChildObjectList.clear();
+		for (SVObjectPtrDeque::const_iterator iter = m_childObjects.cbegin(); iter != m_childObjects.cend(); ++iter)
+		{
+			if( ((*iter)->ObjectAttributesAllowed() & AttributesAllowedFilter) == AttributesAllowedFilter )
+			{
+				m_childObjectsForFillChildObjectList.push_back(*iter);
+			}
+		}
+		//save the attribute value for the created list.
+		m_AttributesAllowedFilterForFillChildObjectList = AttributesAllowedFilter;
+	}
+
+	objectList.insert(objectList.end(), m_childObjectsForFillChildObjectList.begin(), m_childObjectsForFillChildObjectList.end());
 }
 
 const SVString& SVPPQObject::GetConditionalOutputName() const

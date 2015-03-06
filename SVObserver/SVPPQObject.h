@@ -19,6 +19,7 @@
 #include "SVMaterialsLibrary/SVMaterials.h"
 #include "SVObjectLibrary/SVObserverTemplate.h"
 #include "SVObjectLibrary/SVObjectWriter.h"
+#include "SVObjectLibrary/SVObjectClass.h"
 #include "SVOLibrary/SVQueueObject.h"
 #include "SVSystemLibrary/SVAsyncProcedure.h"
 #include "SVSharedMemorySingleton.h"
@@ -181,6 +182,13 @@ public:
 
 	HRESULT SetMonitorList(const ActiveMonitorList& rActiveList);
 	bool HasActiveMonitorList() const;
+
+	//************************************
+	/// Insert objects of the children which fit to the attribute filter.
+	/// \param objectList [in, out] The list where the object will be added.
+	/// \param AttributesAllowedFilter [in] The filter for the attributes.
+	//************************************
+	void fillChildObjectList(SVObjectPtrDeque& objectList, UINT AttributesAllowedFilter = 0) const;
 
 protected:
 	typedef SVVector< SVInspectionProcess* > SVPPQInspectionProcessVector;
@@ -441,6 +449,12 @@ private:
 	UINT				m_uOutputTimer;
 
 	long m_NAKCount;
+	SVObjectPtrDeque m_childObjects;
+
+	//This parameter a temporary parameter to speed up the method fillChildObjectList. 
+	//They are not a state of the object only a help for the method. To be able to set the method const, this parameter are muteable.
+	mutable SVObjectPtrDeque m_childObjectsForFillChildObjectList;  //<This list is saved for the method fillChildObjectList, to reuse it if the same filter (m_AttributesAllowedFilterForFillChildObjectList) is used. 
+	mutable UINT m_AttributesAllowedFilterForFillChildObjectList; //<This filter flag was used in the last run of the method fillChildObjectList.
 };
 
 typedef SVVector< SVPPQObject* > SVPPQObjectArray;
