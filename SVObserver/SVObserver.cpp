@@ -121,6 +121,7 @@
 #include "SVSystemLibrary\LoadDll.h"
 #include "SVStatusLibrary\ExceptionManager.h"
 #include "ErrorNumbers.h"
+#include "TextDefinesSvO.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -3037,7 +3038,13 @@ BOOL SVObserverApp::InitInstance()
 
 	HINSTANCE ResourceInstance( NULL );
 	//Load resource dll explicitly
-	LoadDll::Instance().getDll( SVOResourceDll, ResourceInstance );
+	HRESULT retValue = LoadDll::Instance().getDll( SVOResourceDll, ResourceInstance );
+	if (S_OK != retValue || nullptr == ResourceInstance)
+	{
+		//Because our Execption handler (message box), needs the resources, we have to use here the standard message box. 
+		MessageBox(nullptr, SvO::c_textLoadingOfResourcesDllFailed, nullptr, MB_OK | MB_ICONSTOP );
+		exit(-1);
+	}
 
 	//Set the resource instance to the resource dll
 	AfxSetResourceHandle( ResourceInstance );

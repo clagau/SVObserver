@@ -21,6 +21,7 @@
 #include "SVTool.h"
 #include "SVOMFCLibrary/SVOMFCLibraryGlobals.h"
 #include "SVSVIMStateClass.h"
+#include "SVOResource/ConstGlobalSvOr.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -481,29 +482,30 @@ bool SVAdjustToolSizePositionDlg::IsFullSize()
 
 void SVAdjustToolSizePositionDlg::createIcons()
 {
-	m_icoArrowDown = ::LoadImage(AfxGetApp()->m_hInstance,
+	HINSTANCE hInstance = ::AfxGetResourceHandle();
+	m_icoArrowDown = ::LoadImage(hInstance,
 		MAKEINTRESOURCE(IDI_ARROW_DOWN),
-		IMAGE_ICON, 16,16, LR_DEFAULTCOLOR);
+		IMAGE_ICON, SvOr::IconSize, SvOr::IconSize, LR_DEFAULTCOLOR);
 
-	m_icoArrowUp = ::LoadImage(AfxGetApp()->m_hInstance,
+	m_icoArrowUp = ::LoadImage(hInstance,
 		MAKEINTRESOURCE(IDI_ARROW_UP),
-		IMAGE_ICON, 16,16, LR_DEFAULTCOLOR);
+		IMAGE_ICON, SvOr::IconSize, SvOr::IconSize, LR_DEFAULTCOLOR);
 
-	m_icoArrowLeft = ::LoadImage(AfxGetApp()->m_hInstance,
+	m_icoArrowLeft = ::LoadImage(hInstance,
 		MAKEINTRESOURCE(IDI_ARROW_LEFT),
-		IMAGE_ICON, 16,16, LR_DEFAULTCOLOR);
+		IMAGE_ICON, SvOr::IconSize, SvOr::IconSize, LR_DEFAULTCOLOR);
 
-	m_icoArrowRight = ::LoadImage(AfxGetApp()->m_hInstance,
+	m_icoArrowRight = ::LoadImage(hInstance,
 		MAKEINTRESOURCE(IDI_ARROW_RIGHT),
-		IMAGE_ICON, 16,16, LR_DEFAULTCOLOR);
+		IMAGE_ICON, SvOr::IconSize, SvOr::IconSize, LR_DEFAULTCOLOR);
 
-	m_icoArrowClockwise = ::LoadImage(AfxGetApp()->m_hInstance,
+	m_icoArrowClockwise = ::LoadImage(hInstance,
 		MAKEINTRESOURCE(IDI_ARROW_CLOCKWISE),
-		IMAGE_ICON, 16,16, LR_DEFAULTCOLOR);
+		IMAGE_ICON, SvOr::IconSize, SvOr::IconSize, LR_DEFAULTCOLOR);
 
-	m_icoArrowCounterclockwise = ::LoadImage(AfxGetApp()->m_hInstance,
+	m_icoArrowCounterclockwise = ::LoadImage(hInstance,
 		MAKEINTRESOURCE(IDI_ARROW_COUNTERCLOCKWISE),
-		IMAGE_ICON, 16,16, LR_DEFAULTCOLOR);
+		IMAGE_ICON, SvOr::IconSize, SvOr::IconSize, LR_DEFAULTCOLOR);
 }
 #pragma endregion Private Methods
 //******************************************************************************

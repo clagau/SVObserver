@@ -780,7 +780,7 @@ void SVToolAdjustmentDialogMaskPageClass::OnButtonFillColorMore()
 
 	dlg.m_cc.Flags |= CC_ENABLETEMPLATE;
 	dlg.m_cc.lpTemplateName = MAKEINTRESOURCE(IDD_CHOOSEGRAYCOLOR);
-	dlg.m_cc.hInstance = (HWND)AfxGetApp()->m_hInstance;
+	dlg.m_cc.hInstance = (HWND)::AfxGetResourceHandle();
 
 	dlg.m_cc.Flags |= CC_ENABLEHOOK;
 	dlg.m_cc.lpfnHook = ColorDlgHookFn;

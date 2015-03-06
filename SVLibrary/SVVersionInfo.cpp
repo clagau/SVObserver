@@ -70,8 +70,7 @@ BOOL SVVersionInfo::GetAppVersionInfo()
 	memset((VS_FIXEDFILEINFO*)this, 0, sizeof(VS_FIXEDFILEINFO));
 	ReleaseVersionInfo();
 	
-	CWinApp* app = AfxGetApp();
-	HRSRC hRsrc1 = FindResource(app->m_hInstance,
+	HRSRC hRsrc1 = FindResource(AfxGetInstanceHandle(),
 															MAKEINTRESOURCE(VS_VERSION_INFO),
 															RT_VERSION);
 	if (!hRsrc1)
@@ -80,8 +79,8 @@ BOOL SVVersionInfo::GetAppVersionInfo()
 	LPVOID	lpvi;
 	UINT		iLen;
 
-	hGlobal = LoadResource(app->m_hInstance, hRsrc1);
-	len     = SizeofResource(app->m_hInstance, hRsrc1);
+	hGlobal = LoadResource(AfxGetInstanceHandle(), hRsrc1);
+	len     = SizeofResource(AfxGetInstanceHandle(), hRsrc1);
 	m_pVersionInfo = new BYTE[len];	// allocate version info
 	memcpy(m_pVersionInfo, hGlobal, len);
 

@@ -21,7 +21,7 @@ END_MESSAGE_MAP()
 SVDialog::SVDialog(UINT DlgId, CWnd *pParent)
 	:	CDialog (DlgId, pParent)
 {
-	mhAccel = LoadAccelerators (AfxGetApp()->m_hInstance, MAKEINTRESOURCE (DlgId));
+	mhAccel = LoadAccelerators (AfxGetResourceHandle(), MAKEINTRESOURCE (DlgId));
 }
 
 //##ModelId=38D12F6D00F0

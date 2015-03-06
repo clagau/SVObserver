@@ -14,6 +14,7 @@
 #include "ObjectSelectorPpg.h"
 
 #include "SVUtilityLibrary\SVString.h"
+#include "SVOResource\ConstGlobalSvOr.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -26,7 +27,6 @@ using namespace Seidenader::SVTreeLibrary;
 static char THIS_FILE[] = __FILE__;
 #endif
 
-static const int IconSize = 16;
 static const int IconNumber = 8;
 static const int IconGrowBy = 4;
 #pragma endregion Declarations
@@ -77,7 +77,7 @@ BOOL ObjectSelectorPpg::OnInitDialog()
 
 	setResizeControls();
 
-	m_StateImageList.Create( IconSize, IconSize, ILC_COLOR24 | ILC_MASK, IconNumber, IconGrowBy );
+	m_StateImageList.Create( SvOr::IconSize, SvOr::IconSize, ILC_COLOR24 | ILC_MASK, IconNumber, IconGrowBy );
 
 	for(int i = IDI_EMPTY_ENABLED; i <= IDI_TRI_STATE_DISABLED; i++)
 	{

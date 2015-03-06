@@ -82,19 +82,11 @@ DisplayMessageBox::~DisplayMessageBox()
 #pragma region Public Methods
 INT_PTR DisplayMessageBox::showDialog( CWnd* pParent, CString& rMessage, CString& rMessageDetails, UINT Type )
 {
-	HINSTANCE ResourceInstance( nullptr );
 	INT_PTR Result( IDCANCEL );
 
-	if( S_OK == SvSyl::LoadDll::Instance().getDll( SvSyl::SVOResourceDll, ResourceInstance ) && ( nullptr != ResourceInstance) )
-	{
-		//Set the resource instance to the resource dll
-		AfxSetResourceHandle( ResourceInstance );
-		DisplayMessageBox ErrorMsgBox(nullptr, rMessage, rMessageDetails, Type );
+	DisplayMessageBox ErrorMsgBox(nullptr, rMessage, rMessageDetails, Type );
 
-		Result = ErrorMsgBox.DoModal();
-
-		AfxSetResourceHandle( AfxGetApp()->m_hInstance );
-	}
+	Result = ErrorMsgBox.DoModal();
 
 	return Result;
 }

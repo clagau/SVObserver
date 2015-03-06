@@ -222,66 +222,62 @@ void ObjectTreeGenerator::insertOutputList( SvOi::IOutputInfoListClass& rOutputL
 INT_PTR ObjectTreeGenerator::showDialog( const SVString& title, const SVString& mainTabTitle, const SVString& filterTabTitle, CWnd* pParent )
 {
 	INT_PTR Result( IDCANCEL );
-	HINSTANCE ResourceInstance( nullptr );
 
 	//Make sure Object result cleared could still have previous result
 	m_Results.clear();
 
-	if( S_OK == LoadDll::Instance().getDll( SVOResourceDll, ResourceInstance ) && ( nullptr != ResourceInstance) )
+	CWaitCursor* pWait = new CWaitCursor;
+
+	bool isSingleObject = TypeSingleObject == (TypeSingleObject & m_SelectorType);
+
+	m_TreeContainer.setTreeType( isSingleObject );
+	m_TreeContainer.setNodeCheckedStates();
+	m_TreeContainer.synchronizeCheckedStates();
+
+	//If no parent then set it to the main application window
+	if( nullptr == pParent )
 	{
-		CWaitCursor* pWait = new CWaitCursor;
-
-		bool isSingleObject = TypeSingleObject == (TypeSingleObject & m_SelectorType);
-
-		m_TreeContainer.setTreeType( isSingleObject );
-		m_TreeContainer.setNodeCheckedStates();
-		m_TreeContainer.synchronizeCheckedStates();
-
-		//If no parent then set it to the main application window
-		if( nullptr == pParent )
-		{
-			pParent = AfxGetApp()->GetMainWnd();
-		}
-		CResizablePropertySheet Sheet( title.c_str(), pParent );
-		ObjectSelectorPpg selectorPage( m_TreeContainer, mainTabTitle, isSingleObject );
-		ObjectFilterPpg filterPage( m_TreeContainer, filterTabTitle, isSingleObject );
-
-		//Don't display the apply button
-		Sheet.m_psh.dwFlags |= PSH_NOAPPLYNOW;
-
-		Sheet.AddPage( &selectorPage );
-		Sheet.AddPage( &filterPage );
-		int HelpID( IDD_OBJECT_SELECTOR_PPG );
-		if( isSingleObject)
-		{
-			HelpID = IDD_OUTPUT_SELECTOR;
-		}
-		else
-		{
-			if( SV_VIEWABLE == m_AttributesSetFilter )
-			{
-				HelpID = IDD_RESULTS_PICKER;
-			}
-			else if( SV_PUBLISHABLE == m_AttributesSetFilter )
-			{
-				HelpID = IDD_PUBLISHED_RESULTS;
-			}
-		}
-		selectorPage.setHelpID( HelpID );
-
-		delete pWait;
-		pWait = nullptr;
-
-		Result = Sheet.DoModal();
-
-		if( IDOK == Result )
-		{
-			checkModifiedItems();
-		}
-
-		//Clear except for single select results which is still needed
-		Clear( false );
+		pParent = AfxGetApp()->GetMainWnd();
 	}
+	CResizablePropertySheet Sheet( title.c_str(), pParent );
+	ObjectSelectorPpg selectorPage( m_TreeContainer, mainTabTitle, isSingleObject );
+	ObjectFilterPpg filterPage( m_TreeContainer, filterTabTitle, isSingleObject );
+
+	//Don't display the apply button
+	Sheet.m_psh.dwFlags |= PSH_NOAPPLYNOW;
+
+	Sheet.AddPage( &selectorPage );
+	Sheet.AddPage( &filterPage );
+	int HelpID( IDD_OBJECT_SELECTOR_PPG );
+	if( isSingleObject)
+	{
+		HelpID = IDD_OUTPUT_SELECTOR;
+	}
+	else
+	{
+		if( SV_VIEWABLE == m_AttributesSetFilter )
+		{
+			HelpID = IDD_RESULTS_PICKER;
+		}
+		else if( SV_PUBLISHABLE == m_AttributesSetFilter )
+		{
+			HelpID = IDD_PUBLISHED_RESULTS;
+		}
+	}
+	selectorPage.setHelpID( HelpID );
+
+	delete pWait;
+	pWait = nullptr;
+
+	Result = Sheet.DoModal();
+
+	if( IDOK == Result )
+	{
+		checkModifiedItems();
+	}
+
+	//Clear except for single select results which is still needed
+	Clear( false );
 	
 	return Result;
 }

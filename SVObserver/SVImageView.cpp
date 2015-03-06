@@ -1812,7 +1812,7 @@ HICON SVImageViewClass::GetObjectCursor( SVExtentLocationPropertyEnum p_svLocati
 		case SVExtentLocationPropertyRotate:
 		{
 			l_cursorId = 0;
-			m_hActionIcon = ::LoadImage(AfxGetApp()->m_hInstance,
+			m_hActionIcon = ::LoadImage(AfxGetResourceHandle(),
 	                                   MAKEINTRESOURCE(IDI_ARROW_ROTATE),
 	                                   IMAGE_ICON, 16, 16, LR_DEFAULTCOLOR);
 			l_hCursor = m_hActionIcon;

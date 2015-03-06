@@ -1649,6 +1649,12 @@
     <ClCompile Include="SVFailStatusStreamManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="AutoSaver.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TextDefinesSvO.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Midl Include="SVObserver.odl">
@@ -3400,6 +3406,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVFailStatusStreamManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AutoSaver.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TextDefinesSvO.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
