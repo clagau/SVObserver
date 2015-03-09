@@ -709,6 +709,10 @@ SVString SVRemoteOutputGroup::GetGroupName()
 	return l_strName;
 }
 
+const SVGUID& SVRemoteOutputGroup::GetPPQObjectId() const
+{
+	return m_PPQObjectId;
+}
 
 SVString SVRemoteOutputGroup::GetPPQName() const
 {

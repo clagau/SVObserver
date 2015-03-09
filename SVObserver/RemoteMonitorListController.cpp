@@ -180,9 +180,10 @@ void RemoteMonitorListController::ValidateInputs()
 	{
 		RemoteMonitorNamedList& namedList = it->second;
 		const SVString& ppqName = namedList.GetPPQName();
+		const SVGUID& ppqGuid = namedList.GetPPQObjectID();
 		// Check that the PPQ still exists
 		const SVGUID& guid = SVObjectManagerClass::Instance().GetObjectIdFromCompleteName(ppqName);
-		if (guid.empty())
+		if (guid.empty() || guid != ppqGuid)
 		{
 			// remove this list
 			it = m_list.erase(it);

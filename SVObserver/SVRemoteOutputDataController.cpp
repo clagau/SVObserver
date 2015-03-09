@@ -790,56 +790,62 @@ size_t SVRemoteOutputDataController::GetRemoteOutputGroupCount()
 	return m_RemoteGroupParameters.size();
 }
 
-
-
 // After a ppq is deleted this function cleans up data from the map.
 HRESULT SVRemoteOutputDataController::ClearUnUsedData( )
 {
-	long l_lCount =0; //GetRemoteOutputGroupCount( );
-	SVConfigurationObject* pConfig = NULL;
+	long l_lCount = 0;
+	SVConfigurationObject* pConfig = nullptr;
 	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
-	pConfig->GetPPQCount(l_lCount);
-	std::vector<CString > l_strPPQs;
-	for( long l_lIndex = 0 ; l_lIndex < l_lCount ; l_lIndex++ )
+	if (pConfig)
 	{
-		SVPPQObject* l_pPPQ = NULL;
-		pConfig->GetPPQ(l_lIndex, &l_pPPQ );
-		if( l_pPPQ != NULL )
+		pConfig->GetPPQCount(l_lCount);
+		typedef std::pair<SVString, SVGUID> PPQInfo;
+		typedef std::deque<PPQInfo> PPQInfoList;
+		PPQInfoList l_PPQInfos;
+		for( long l_lIndex = 0 ; l_lIndex < l_lCount ; l_lIndex++ )
 		{
-			l_strPPQs.push_back( l_pPPQ->GetName() );
+			SVPPQObject* l_pPPQ = nullptr;
+			pConfig->GetPPQ(l_lIndex, &l_pPPQ );
+			if( nullptr != l_pPPQ )
+			{
+				l_PPQInfos.push_back( std::make_pair(l_pPPQ->GetName(), l_pPPQ->GetUniqueObjectID()) );
+			}
 		}
-	}
-
-
-	SVRemoteOutputGroupMap::iterator l_EraseIt = m_RemoteGroupParameters.end();
-
-	for( SVRemoteOutputGroupMap::iterator l_it = m_RemoteGroupParameters.begin(); l_it != m_RemoteGroupParameters.end() ; ++l_it)
-	{
-		if( l_EraseIt != m_RemoteGroupParameters.end() )
-		{
-			m_RemoteGroupParameters.erase( l_EraseIt );
-			l_EraseIt = m_RemoteGroupParameters.end();
-		}
-		if( std::find( l_strPPQs.begin(), l_strPPQs.end(), l_it->second->GetPPQName()  ) == l_strPPQs.end() )
-		{
-			CString l_strTmp;
-			l_strTmp.Format(_T("Deleting Control Parameter associated with PPQ %s\n"), l_it->second->GetPPQName() );
-			OutputDebugString(l_strTmp);
-			l_EraseIt = l_it;
-		}
-	}
-
-	if( l_EraseIt != m_RemoteGroupParameters.end() )
-	{
-		m_RemoteGroupParameters.erase( l_EraseIt );
-	}
-	TheSVObserverApp.OnUpdateAllIOViews(); // updates the view after clearing unused.
 	
+		// Find dead PPQs...
+		for( SVRemoteOutputGroupMap::iterator l_it = m_RemoteGroupParameters.begin(); l_it != m_RemoteGroupParameters.end(); )
+		{
+			// match PPQ name and GUID, because it could have been deleted and re-added...
+			PPQInfo ppqInfo(std::make_pair(l_it->second->GetPPQName(), l_it->second->GetPPQObjectId()));
+			PPQInfoList::const_iterator l_ppqIt = std::find_if( l_PPQInfos.begin(), l_PPQInfos.end(), [&ppqInfo](const PPQInfo& rInfo)->bool
+			{
+				bool bRetVal = (ppqInfo.first == rInfo.first); 
+				bRetVal = bRetVal && (ppqInfo.second == rInfo.second);
+				return bRetVal;
+			} );
+			if (l_ppqIt == l_PPQInfos.end())
+			{
+				CString l_strTmp;
+				l_strTmp.Format(_T("Deleting Remote Output Group associated with PPQ %s\n"), ppqInfo.first.c_str() );
+				OutputDebugString(l_strTmp);
+				l_it = m_RemoteGroupParameters.erase(l_it);
+			}
+			else
+			{
+				++l_it;
+			}
+		}
+		if( m_RemoteGroupParameters.empty() )
+		{
+			// Hide the Remote Output Tab if no outputs exist.
+			TheSVObserverApp.HideRemoteOutputTab( );
+		}
+		TheSVObserverApp.OnUpdateAllIOViews(); // updates the view after clearing unused.
+	}
 	return S_OK;
 }
 
-
-// Adds the trigger count if the plc parameter map is empty
+// Adds the trigger count if the parameter map is empty
 HRESULT SVRemoteOutputDataController::AddDefaultOutputs(CString p_strRemoteGroupID, SVPPQObject* p_pPPQ )
 {
 	HRESULT l_hr = S_FALSE;
@@ -850,10 +856,6 @@ HRESULT SVRemoteOutputDataController::AddDefaultOutputs(CString p_strRemoteGroup
 			SVRemoteOutputObject* l_pNewOutput = NULL;
 			
 			AddItem( p_strRemoteGroupID, l_pNewOutput, p_pPPQ->m_voTriggerCount.GetUniqueObjectID(), p_pPPQ->GetName() );
-
-			//SVRemoteOutputGroup l_Pars = GetControlPar( p_strRemoteGroupID );
-
-			//SetControlPar( p_strRemoteGroupID, l_Pars );
 		}
 		l_hr = S_OK;
 	}

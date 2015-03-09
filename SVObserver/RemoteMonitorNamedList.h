@@ -43,6 +43,7 @@ class RemoteMonitorNamedList
 private:
 	SVString m_name; // List Name
 	SVString m_PPQName; // PPQ Name
+	SVGUID m_PPQObjectID; // PPQ instance Guid
 	int m_rejectQueueDepth;
 	MonitoredObjectList m_productValuesList;
 	MonitoredObjectList m_productImagesList;
@@ -52,12 +53,17 @@ private:
 	SVProductFilterEnum m_filter;
 #pragma endregion PrivateData
 
+#pragma region PrivateMethods
+	void ResolveGuidForPPQName();
+#pragma endregion PrivateMethods
+
 #pragma region PublicMethods
 public:
 	RemoteMonitorNamedList();
 	RemoteMonitorNamedList(const SVString& PPQName, const SVString& name);
 	RemoteMonitorNamedList(const SVString& PPQName, const SVString& name, const MonitoredObjectList& productValuesList, const MonitoredObjectList& productImagesList, const MonitoredObjectList& rejectConditionList, const MonitoredObjectList& failStatusList, int rejectDepth);
 	
+	const SVGUID& GetPPQObjectID() const;
 	const SVString& GetPPQName() const;
 	void SetPPQName(const SVString& PPQName); // is a blank name allowed?
 

@@ -16,6 +16,7 @@
 #include "SVObjectLibrary/SVObserverTemplate.h"
 #include "SVSystemLibrary/SVCriticalSection.h"
 #include "SVXMLLibrary/SVXMLMaterialsTree.h"
+#include "SVUtilityLibrary/SVGUID.h"
 
 #include "SVInfoStructs.h"
 #include "SVObjectCommandDataJson.h"
@@ -65,6 +66,7 @@ public:
 	SVRemoteOutputObject* GetLastObject( );
 	SVRemoteOutputObject* GetFirstObject( );
 
+	const SVGUID& GetPPQObjectId() const;
 	SVString GetPPQName() const;
 	HRESULT SetPPQName( const SVString& p_rPPQ );
 

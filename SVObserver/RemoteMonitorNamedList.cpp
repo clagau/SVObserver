@@ -11,6 +11,7 @@
 #pragma region Includes
 #include "Stdafx.h"
 #include "RemoteMonitorNamedList.h"
+#include "SVObjectLibrary/SVObjectManagerClass.h"
 #pragma endregion Includes
 
 RemoteMonitorNamedList::RemoteMonitorNamedList()
@@ -25,6 +26,7 @@ RemoteMonitorNamedList::RemoteMonitorNamedList(const SVString& PPQName, const SV
 , m_rejectQueueDepth(DefaultRejectQueueDepth)
 , m_bActive(false)
 {
+	ResolveGuidForPPQName();
 }
 
 RemoteMonitorNamedList::RemoteMonitorNamedList(const SVString& PPQName, const SVString& name, const MonitoredObjectList& productValuesList, const MonitoredObjectList& productImageList, const MonitoredObjectList& rejectConditionList, const MonitoredObjectList& failStatusList, int rejectDepth)
@@ -37,6 +39,12 @@ RemoteMonitorNamedList::RemoteMonitorNamedList(const SVString& PPQName, const SV
 , m_rejectQueueDepth(rejectDepth)
 , m_bActive(false)
 {
+	ResolveGuidForPPQName();
+}
+
+const SVGUID& RemoteMonitorNamedList::GetPPQObjectID() const
+{
+	return m_PPQObjectID;
 }
 
 const SVString& RemoteMonitorNamedList::GetPPQName() const
@@ -47,6 +55,7 @@ const SVString& RemoteMonitorNamedList::GetPPQName() const
 void RemoteMonitorNamedList::SetPPQName(const SVString& PPQName)
 {
 	m_PPQName = PPQName;
+	ResolveGuidForPPQName();
 }
 
 const SVString& RemoteMonitorNamedList::GetName() const
@@ -127,6 +136,11 @@ void RemoteMonitorNamedList::SetProductFilter(SVProductFilterEnum filter)
 SVProductFilterEnum RemoteMonitorNamedList::GetProductFilter() const
 {
 	return m_filter;
+}
+
+void RemoteMonitorNamedList::ResolveGuidForPPQName()
+{
+	m_PPQObjectID = SVObjectManagerClass::Instance().GetObjectIdFromCompleteName(m_PPQName);
 }
 
 //******************************************************************************
