@@ -35,6 +35,7 @@
 #include "SVMainFrm.h"
 #include "EnvironmentObject.h"
 #include "SVIPChildFrm.h"
+#include "SVOResource/ConstGlobalSvOr.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -1814,7 +1815,7 @@ HICON SVImageViewClass::GetObjectCursor( SVExtentLocationPropertyEnum p_svLocati
 			l_cursorId = 0;
 			m_hActionIcon = ::LoadImage(AfxGetResourceHandle(),
 	                                   MAKEINTRESOURCE(IDI_ARROW_ROTATE),
-	                                   IMAGE_ICON, 16, 16, LR_DEFAULTCOLOR);
+	                                   IMAGE_ICON, SvOr::IconSize, SvOr::IconSize, LR_DEFAULTCOLOR);
 			l_hCursor = m_hActionIcon;
 			break;
 		}
