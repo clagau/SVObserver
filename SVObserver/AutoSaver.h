@@ -45,16 +45,19 @@ public:
 	bool IsEnabled(){return m_AutosaveEnabled;}
 
 	//************************************
-	/// performs an automatic configuration backup (when always is false, 
+	/// performs an automatic configuration backup if enabled and required (when always is false, 
 	/// only if IsAutosaveTimestampOlderThanDeltaTime() returns true)
 	/// \param always [in] forces an autosave regardless of last autosave timestamp)
 	//************************************
-	void ExecuteAutosaveIfSelected(bool always);
+	void ExecuteAutosaveIfAppropriate(bool always);
 
 	//************************************
-	/// updates the autosave timestamp
+	/// updates the autosave timestamp and resets the "autosave required" flag
 	//************************************
-	void SetAutosaveTimestamp();
+	void ResetAutosaveInformation();
+
+	bool IsAutosaveRequired(){return m_AutosaveRequired;}
+	void SetAutosaveRequired(bool required){m_AutosaveRequired=required;}
 
 #pragma endregion Public Methods
 
@@ -82,6 +85,7 @@ private:
 	double m_AutoSaveDeltaTime_s; ///< the minimum (for most purposes) autosave interval in seconds
 	time_t  m_lastAutosaveTimestamp; ///< when was the latest automatic configuration backup done?
 	bool m_AutosaveEnabled; ///< is automatic saving of configurations enabled?
+	bool m_AutosaveRequired ; ///< should an autosave be performed at the next appropriate time?
 
 #pragma endregion Member Variables
 };

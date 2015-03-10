@@ -674,7 +674,7 @@ void SVObserverApp::OnFileOpenSVC()
 					{
 						TheSVOLicenseManager().ShowLicenseManagerErrors();
 					}
-					AutoSaver::Instance().SetAutosaveTimestamp(); //Arvid: reset autosave timestamp after configuration was loaded
+					AutoSaver::Instance().ResetAutosaveInformation(); //Arvid: reset autosave timestamp after configuration was loaded
 				}
 			}
 			if( !m_svSecurityMgr.SVIsSecured( SECURITY_POINT_MODE_MENU_EDIT_TOOLSET ) )
@@ -750,7 +750,7 @@ void SVObserverApp::OnEditEnvironment()
 ////////////////////////////////////////////////////////////////////////////////
 void SVObserverApp::OnTestMode() 
 {
-	AutoSaver::Instance().ExecuteAutosaveIfSelected(false);//Arvid: before entering test mode: perform autosave
+	AutoSaver::Instance().ExecuteAutosaveIfAppropriate(false);//Arvid: before entering test mode: perform autosave
 
 	SetTestMode();
 }
@@ -1987,7 +1987,7 @@ void SVObserverApp::OnUpdateGoOffline( CCmdUI* PCmdUI )
 ////////////////////////////////////////////////////////////////////////////////
 void SVObserverApp::OnGoOnline() 
 {
-	AutoSaver::Instance().ExecuteAutosaveIfSelected(true);
+	AutoSaver::Instance().ExecuteAutosaveIfAppropriate(true);
 	
 	long l_lPrevState = 0;
 
@@ -7892,7 +7892,7 @@ void SVObserverApp::fileSaveAsSVX( CString StrSaveAsPathName ,bool isRegularSave
 
 		if ( svFileName.SaveFile() )
 		{
-			if(isRegularSave) //Arvid in non regular save the configuration name must not be changed
+			if(isRegularSave) //Arvid in non-regular save the configuration name must not be changed
 			{
 				bOk = setConfigFullFileName( svFileName.GetFullFileName(), RENAME );
 				if ( bOk )
@@ -7910,7 +7910,7 @@ void SVObserverApp::fileSaveAsSVX( CString StrSaveAsPathName ,bool isRegularSave
 	}// end if ( StrSaveAsPathName.IsEmpty() )
 	else
 	{
-		if(isRegularSave) //Arvid in non regular save the configuration name must not be changed
+		if(isRegularSave) //Arvid in non-regular save the configuration name must not be changed
 		{
 			bOk = setConfigFullFileName( StrSaveAsPathName, FALSE );
 		}
@@ -7974,7 +7974,7 @@ void SVObserverApp::fileSaveAsSVX( CString StrSaveAsPathName ,bool isRegularSave
 				}
 			}
 			
-			AutoSaver::Instance().SetAutosaveTimestamp(); //Arvid: save was successful: update autosave timestamp
+			AutoSaver::Instance().ResetAutosaveInformation(); //Arvid: save was successful: update autosave timestamp
 		}
 
 		( (CMDIFrameWnd*) AfxGetMainWnd() )->OnUpdateFrameTitle(TRUE);

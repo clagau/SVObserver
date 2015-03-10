@@ -14,6 +14,7 @@
 #include "SVObserver.h" //Arvid: needed only for one call to SVObserverApp::fileSaveAsSVX()
 #include "SVMainFrm.h"
 #include "SVCmnLib\Utilities.h"
+#include "SVSVIMStateClass.h"
 #include "AutoSaver.h"
 #pragma endregion Includes
 
@@ -29,9 +30,10 @@ static char THIS_FILE[] = __FILE__;
 
 #pragma region Constructor
 
-AutoSaver::AutoSaver():m_lastAutosaveTimestamp(0),m_AutosaveEnabled(true),m_AutoSaveDeltaTime_s(ms_defaultDeltaTimeInMinutes*ms_secondsPerMinute)//Arvid 10 minutes in seconds
+AutoSaver::AutoSaver():m_lastAutosaveTimestamp(0),m_AutosaveEnabled(true),m_AutosaveRequired(false),
+	m_AutoSaveDeltaTime_s(ms_defaultDeltaTimeInMinutes*ms_secondsPerMinute)
 {
-	SetAutosaveTimestamp();
+	ResetAutosaveInformation();
 }
 
 #pragma endregion Constructor
@@ -44,11 +46,11 @@ AutoSaver& AutoSaver::Instance()
 	return s_theAutoSaver;
 }
 
-void AutoSaver::ExecuteAutosaveIfSelected(bool always)
+void AutoSaver::ExecuteAutosaveIfAppropriate(bool always)
 {
-	if(!IsEnabled())
+	if(!(IsEnabled()&&IsAutosaveRequired()))
 	{
-		return; //Arvid: not enabled by user:do nothing
+		return; //Arvid: not enabled by user (or configuration not modified):do nothing
 	}
 
 	if(!IsAutosaveTimestampOlderThanDeltaTime()) 
@@ -88,14 +90,13 @@ void AutoSaver::ExecuteAutosaveIfSelected(bool always)
 
 	moveContainedDirectory(autosaveDirectoryPath,"Temp","Temp1MostRecent");
 
-	//Arvid:	AutoSaver::Instance().SetAutosaveTimestamp() not required here: it was already done when the configuration was saved
-
 	autosavePopupDialog.DestroyWindow();
 }
 
-void AutoSaver::SetAutosaveTimestamp()
+void AutoSaver::ResetAutosaveInformation()
 {
 	time(&m_lastAutosaveTimestamp);
+	SetAutosaveRequired(false);
 }
 
 

@@ -14,6 +14,7 @@
 #include "SVSVIMStateClass.h"
 #include "SVVisionProcessorHelper.h"
 #include "EnvironmentObject.h"
+#include "AutoSaver.h"
 
 #pragma intrinsic(_InterlockedAnd)
 #pragma intrinsic(_InterlockedOr)
@@ -40,6 +41,7 @@ bool SVSVIMStateClass::AddState( DWORD dwState )
 	if( dwState & SV_STATE_MODIFIED )
 	{
 		SVVisionProcessorHelper::Instance().SetLastModifiedTime();
+		AutoSaver::Instance().SetAutosaveRequired(true);
 	}
 
 	setEnvironmentParameters();
