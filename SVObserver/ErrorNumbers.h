@@ -24,6 +24,8 @@ static const int Err_SVCommandInspectionExtentUpdater_InvalidMode_2004 = Maz_Err
 static const int Err_SVCommandInspectionExtentUpdater_ResetAllObjects_2005 = Maz_ErrorBase + 5;
 static const int Err_SVCommandInspectionExtentUpdater_RunOnce_2006 = Maz_ErrorBase + 6;
 static const int Err_SVCommandInspectionExtentUpdater_InvalidParameter_2007 = Maz_ErrorBase + 7;
+//Misc
+static const int Err_SVCommandInspectionExtentUpdater_LoadOfResourceDllFailed_2009 = Maz_ErrorBase + 9;
 
 //Marcus Eichengrün error base
 static const int Mec_ErrorBase = 16000;

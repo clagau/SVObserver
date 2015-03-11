@@ -3042,8 +3042,10 @@ BOOL SVObserverApp::InitInstance()
 	if (S_OK != retValue || nullptr == ResourceInstance)
 	{
 		//Because our Execption handler (message box), needs the resources, we have to use here the standard message box. 
+		SvStl::ExceptionMgr1 Exception( SvStl::ExpTypeEnum::LogOnly );
+		Exception.setMessage( SVMSG_SVO_53_RESOURCE_DLL_LOADING_FAILED, nullptr, StdExceptionParams, Err_SVCommandInspectionExtentUpdater_LoadOfResourceDllFailed_2009 );
 		MessageBox(nullptr, SvO::c_textLoadingOfResourcesDllFailed, nullptr, MB_OK | MB_ICONSTOP );
-		exit(-1);
+		exit(-Err_SVCommandInspectionExtentUpdater_LoadOfResourceDllFailed_2009);
 	}
 
 	//Set the resource instance to the resource dll
