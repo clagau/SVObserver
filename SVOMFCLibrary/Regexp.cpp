@@ -315,8 +315,8 @@ class regexp : public CRegProgramAccessor
 	friend class Regexp;
 	
 	int m_programSize;
-	LPTSTR startp[Regexp::NSUBEXP];
-	LPTSTR endp[Regexp::NSUBEXP];
+	LPTSTR startp[Regexp::NSUBEXP+1];//Arvid 2015-03-11 Increased the array size by one for SVO-554
+	LPTSTR endp[Regexp::NSUBEXP+1];  //Arvid 2015-03-11 Increased the array size by one for SVO-554
 	TCHAR regstart;		// Internal use only.
 	TCHAR reganch;		// Internal use only.
 	LPTSTR regmust;		// Internal use only.
@@ -326,9 +326,13 @@ class regexp : public CRegProgramAccessor
 	bool status;
 	int count;			// used by Regexp to manage the reference counting of regexps
 	int numSubs;
+
+private: 
+	//Arvid no implementation!
+	regexp& operator=( const regexp & orig );
 public:
-	
 	regexp( LPCTSTR exp, BOOL iCase );
+	regexp( const regexp & orig );
 
 	~regexp();
 	
@@ -524,6 +528,35 @@ regexp::regexp( LPCTSTR exp, BOOL iCase )
 
 	count = numSubs = 0;
 }
+
+regexp::regexp( const regexp & orig )
+	: regstart(orig.regstart),
+	reganch(orig.reganch),
+	regmlen(orig.regmlen),
+	m_programSize(orig.m_programSize),
+	numSubs(orig.numSubs),
+	regmust(0)
+{
+#if _DEBUG
+	m_originalPattern = orig.m_originalPattern;
+	m_modifiedPattern = orig.m_modifiedPattern;
+#endif
+	status = orig.status;
+	count = 0;
+	program = new TCHAR[m_programSize];
+	memcpy( program, orig.program, m_programSize * sizeof( TCHAR ) );
+	if ( orig.regmust )
+		regmust = program + ( orig.regmust - orig.program );
+
+	for ( int i = Regexp::NSUBEXP; i > 0; i--) //Arvid 2015-03-10 this looks strange. But rather than change the loop range by one
+											   //I have increased the array sizes for startp and endp by one for SVO-554
+	{
+		startp[i] = orig.startp[i];
+		endp[i] = orig.endp[i];
+	}
+}
+
+
 
 regexp::~regexp()
 {
@@ -1492,7 +1525,8 @@ bool Regexp::Match( const TCHAR * s )
 		if ( rc->count )
 		{
 			rc->count--;
-			rc = rc->getCopy();
+			rc = rc->getCopy();//@WARNING this is leaky. 
+			//@WARNING rewrite Regexp.cpp or preferably use regular expressions from boost instead.
 		}
 
 		ret = rc->regexec( s );

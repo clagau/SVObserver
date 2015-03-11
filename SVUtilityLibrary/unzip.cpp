@@ -2749,10 +2749,9 @@ typedef struct unzs
 	unz_file_info_internal cur_file_info_internal; // private info about it
     file_in_zip_read_info_s* pfile_in_zip_read; // structure about the current file if we are decompressing it
 
-	unzs():num_file(0),pos_in_central_dir(0),current_file_ok(0){} //Arvid 2015-02-26 added constructor to avoid cppcheck warning
+	unzs():file(nullptr),byte_before_the_zipfile(0),num_file(0),pos_in_central_dir(0),
+		current_file_ok(0),central_pos(0),size_central_dir(0),offset_central_dir(0),pfile_in_zip_read(nullptr){} //Arvid 2015-02-26 added constructor to avoid cppcheck warning
 } unz_s, *unzFile;
-
-
 
 
 int unzStringFileNameCompare (const char* fileName1,const char* fileName2,int iCaseSensitivity);
@@ -3778,8 +3777,7 @@ ZRESULT TUnzip::Open(void *z,unsigned int len,DWORD flags)
 #ifdef GetCurrentDirectory
   GetCurrentDirectory(MAX_PATH,rootdir);
 #else
- wcscpy(rootdir,_T("\\"));   //Arvid 2015-01-09 was.   _tcscpy(rootdir,_T("\\"));
-							 //Arvid 2015-01-09 changed to  wcscpy() to avoid out-of-bounds warning
+  _tcscpy_s(rootdir,MAX_PATH,_T("\\"));
 #endif
   TCHAR lastchar = rootdir[_tcslen(rootdir)-1];
   if (lastchar!='\\' && lastchar!='/') _tcscat(rootdir,_T("\\"));
