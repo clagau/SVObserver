@@ -95,7 +95,7 @@ public:
 		The method gets an environment object name list.
 		\param rObjectNameList <out> The returned list of names.
 		\param rPath <in> the path of object to return. Default = "", means all objects.
-		\param AttributesAllowedFilter <in> the attributes of the objects must be set to return. Default = 0, means all objects.
+		\param AttributesAllowedFilter <in> These flags indicate which attributes must be set for the objects to be returned. For each flag, 1 means "must be set", and 0 mean "don't care".  Default = 0, means all objects.
 	***********/
 	static void getEnvironmentObjectNameList(SVStringArray& rObjectNameList, const SVString& rPath = _T(""), UINT AttributesAllowedFilter = 0);
 
@@ -103,7 +103,7 @@ public:
 		The method gets an environment object name list.
 		\param rObjectNameList <out> The returned list of names.
 		\param rPath <in> the path of object to return. Default = "", means all objects.
-		\param AttributesAllowedFilter <in> the attributes of the objects must be set to return. Default = 0, means all objects.
+		\param AttributesAllowedFilter <in> These flags indicate which attributes must be set for the objects to be returned. For each flag, 1 means "must be set", and 0 mean "don't care".  Default = 0, means all objects.
 	***********/
 	void getObjectNameList(SVStringArray& rObjectNameList, const SVString& rPath = _T(""), UINT AttributesAllowedFilter = 0) const;
 
@@ -111,14 +111,14 @@ public:
 	/// The method fill up a list with filtered environment objects.
 	/// \param rObjectList [in,out] The list which will be filled.
 	/// \param rPath [in] The path of the requested objects. Default = "", means all objects.
-	/// \param AttributesAllowedFilter [in] the attributes of the objects must be set to added. Default = 0, means all objects.
+	/// \param AttributesAllowedFilter [in] These flags indicate which attributes must be set for the objects to be added. For each flag, 1 means "must be set", and 0 mean "don't care".  Default = 0, means all objects.
 	//************************************
 	static void fillEnvironmentObjectList(BasicValueObjects::ValueList& rObjectList, const SVString& rPath = _T(""), UINT AttributesAllowedFilter = 0);
 	//************************************
 	/// The method fill up a list with filtered environment objects.
 	/// \param rObjectList [in,out] The list which will be filled.
 	/// \param rPath [in] The path of the requested objects. Default = "", means all objects.
-	/// \param AttributesAllowedFilter [in] the attributes of the objects must be set to added. Default = 0, means all objects.
+	/// \param AttributesAllowedFilter [in] These flags indicate which attributes must be set for the objects to be added. For each flag, 1 means "must be set", and 0 mean "don't care".  Default = 0, means all objects.
 	//************************************
 	void fillObjectList(BasicValueObjects::ValueList& rObjectList, const SVString& rPath = _T(""), UINT AttributesAllowedFilter = 0) const;
 
