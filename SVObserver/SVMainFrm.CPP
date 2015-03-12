@@ -859,6 +859,12 @@ void SVMainFrame::OnClose()
 {
 	bool l_bAllowAccess = false;
 
+	if ( SVSVIMStateClass::CheckState( SV_STATE_REGRESSION ) )
+	{
+		//not allowed to exit during regression test
+		return;
+	}
+
 	// If Running, check if access to exit run.
 	if ( SVSVIMStateClass::CheckState( SV_STATE_RUNNING ) )
 	{
@@ -877,11 +883,6 @@ void SVMainFrame::OnClose()
 
 	if( l_bAllowAccess )
 	{
-		if ( SVSVIMStateClass::CheckState( SV_STATE_REGRESSION ) )
-		{
-			return;
-		}
-
 		if( SVSVIMStateClass::CheckState( SV_STATE_TEST ) )
 		{
 			TheSVObserverApp.OnStop();

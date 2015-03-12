@@ -1741,7 +1741,6 @@ void SVObserverApp::OnFilePrintConfig()
 	}
 }
 
-//Override OnFilePrintSetup
 void SVObserverApp::OnSVOFilePrintSetup()
 {
 	if( m_svSecurityMgr.SVValidate( SECURITY_POINT_FILE_MENU_PRINT_SETUP ) == S_OK )
