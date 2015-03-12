@@ -19,6 +19,8 @@
 #include <assert.h>
 
 static const long MATROX_FILTER_EVENT = 2622995;
+static const long MATROX_FILTER_EVENT_STATUS_CODE = 4455;
+static const long MATROX_FILTER_EVENT_SUBCODE_COUNT = 3;
 
 SVMatroxInt _stdcall SVMatroxApplicationInterface::SVMatroxHookHandler( SVMatroxInt HookType, SVMatroxIdentifier EventId, void* UserDataPtr )
 {
@@ -85,8 +87,12 @@ SVMatroxInt _stdcall SVMatroxApplicationInterface::SVMatroxHookHandler( SVMatrox
 //-		when we attempt to retreive an OCR result when an OCR string was not 
 //-		found.
 	}
-	else if (l_StatusInfo.m_FunctionCode == MATROX_FILTER_EVENT)
+	else if ((l_StatusInfo.m_FunctionCode == MATROX_FILTER_EVENT) &&
+			 (l_StatusInfo.m_StatusCode  == MATROX_FILTER_EVENT_STATUS_CODE) &&
+			 (l_StatusInfo.m_StatusSubCodeCount == MATROX_FILTER_EVENT_SUBCODE_COUNT) &&	
+			 (l_StatusInfo.m_StatusSubCode[0] == S_FALSE))	
 	{
+		bool bStop = true;
 //-		RPY240215 - This case is put here to filter out
 //-		the EventGigEVisionError.  Most of the GigE Cameras 
 //-		do not support Events and should not show up in the event
