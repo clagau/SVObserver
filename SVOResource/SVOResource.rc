@@ -4629,6 +4629,7 @@ BEGIN
         MENUITEM SEPARATOR
         MENUITEM "Copy Tool",                   ID_EDIT_COPY
         MENUITEM "Paste Tool",                  ID_EDIT_PASTE
+        MENUITEM "Adjust Tool Position",        ID_EDIT_ADJUSTTOOLPOSITION
     END
 END
 

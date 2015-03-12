@@ -3153,18 +3153,38 @@ void SVIPDoc::OnEditAdjustToolPosition()
 
 void SVIPDoc::OnUpdateEditAdjustToolPosition(CCmdUI* pCmdUI)
 {
-	SVToolClass* l_pTool = dynamic_cast< SVToolClass* >( SVObjectManagerClass::Instance().GetObject( m_SelectedToolID ) );
+	BOOL Enabled = SVSVIMStateClass::CheckState( SV_STATE_READY ) && SVSVIMStateClass::CheckState( SV_STATE_EDIT );
+	// Check current user access...
+	Enabled = Enabled && TheSVObserverApp.OkToEdit();
 
-	BOOL l_bOk = l_pTool != nullptr;
+	if( Enabled )
+	{
+		Enabled = FALSE;
+		SVToolSetTabViewClass* pToolSetView = GetToolSetTabView();
+		SVToolSetClass* pToolSet = GetToolSet();
+		if( nullptr != pToolSet && nullptr != pToolSetView && !pToolSetView->IsLabelEditing())
+		{
+			ToolListSelectionInfo ToolListInfo = pToolSetView->GetToolListSelectionInfo();
 
-	l_bOk = l_bOk && dynamic_cast< SVGageToolClass* >( l_pTool ) == nullptr;
-	l_bOk = l_bOk && TheSVObserverApp.OkToEdit() ? 1 : 0;
-	l_bOk = l_bOk && SVSVIMStateClass::CheckState( SV_STATE_READY );
-	l_bOk = l_bOk && ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST );
-	l_bOk = l_bOk && ! SVSVIMStateClass::CheckState( SV_STATE_REGRESSION );
-	l_bOk = l_bOk && (l_pTool->DoesObjectHaveExtents() == S_OK);
+			const SVGUID& rGuid = pToolSetView->GetSelectedTool();
+			SVToolClass* l_pTool = dynamic_cast< SVToolClass* >( SVObjectManagerClass::Instance().GetObject(rGuid));
+			//Tool list active and valid tool
+			if( !rGuid.empty() && -1 != ToolListInfo.m_listIndex && pToolSetView->IsToolsetListCtrlActive() )
+			{
+				SVToolClass* Tool = dynamic_cast< SVToolClass* >( SVObjectManagerClass::Instance().GetObject(rGuid));
+				if (Tool)
+				{
+					if (S_OK == Tool->DoesObjectHaveExtents())
+					{
+						Enabled = TRUE;
+					}
+				}
+			}
+		}
+	}
 
-	pCmdUI->Enable( l_bOk );
+
+	pCmdUI->Enable( Enabled );
 }
 
 void SVIPDoc::OnViewResetAllCounts()

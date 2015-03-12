@@ -389,6 +389,7 @@ void SVToolSetTabViewClass::OnRightClickToolsetList(NMHDR* pNMHDR, LRESULT* pRes
 			m_toolSetListCtrl.GetSelectedItemScreenPosition(l_Point);
 			CMenu l_menu;
 			CMenu* l_pPopup;
+			bool bRemoveAdjustToolPos = false;
 
 			// Get the tool comment...
 			const SVGUID& rGuid = m_toolSetListCtrl.GetSelectedTool();
@@ -415,6 +416,11 @@ void SVToolSetTabViewClass::OnRightClickToolsetList(NMHDR* pNMHDR, LRESULT* pRes
 					{
 						l_bMenuLoaded = l_menu.LoadMenu(IDR_TOOL_LIST_CONTEXT_MENU);
 					}
+					//if the selected tool does not have an ROI remove the Adjust Tool Position menu item
+					if (S_OK != pSelectedTool->DoesObjectHaveExtents())
+					{
+						bRemoveAdjustToolPos = true;
+					}
 				}
 			}
 			else
@@ -430,6 +436,11 @@ void SVToolSetTabViewClass::OnRightClickToolsetList(NMHDR* pNMHDR, LRESULT* pRes
 						l_menu.RemoveMenu(ID_SELECTTOOL_TOOLCOMMENT, MF_BYCOMMAND);
 					}
 				}
+			}
+
+			if (bRemoveAdjustToolPos)
+			{
+				l_menu.RemoveMenu(ID_EDIT_ADJUSTTOOLPOSITION, MF_BYCOMMAND);
 			}
 
 			if (TRUE == l_bMenuLoaded)
