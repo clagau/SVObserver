@@ -57,7 +57,10 @@
 #include "SVResultDouble.h"
 #include "RemoteMonitorList.h"
 #include "RemoteMonitorListHelper.h"
-#include "SVSystemLibrary\SVThreadManager.h"
+#include "SVSystemLibrary/SVThreadManager.h"
+#include "ErrorNumbers.h"
+#include "SVStatusLibrary/ExceptionManager.h"
+#include "TextDefinesSvO.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -2204,38 +2207,42 @@ void SVConfigurationPrint::PrintPPQBarSection(CDC* pDC, CPoint& ptCurPos, int nI
 {
 	SVConfigurationObject* pConfig = NULL;
 	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
-	
-	CString	sLabel, sValue;
+
+	CString sLabel, sValue;
 	int     nFirstHeight = 0;
 	int     nLastHeight  = 0;
-	CPoint	ptTemp(0, 0);
-	
+	CPoint  ptTemp(0, 0);
+
 	pDC->SelectObject(&m_fontSection);
 	ptCurPos.x  = nIndentLevel * m_shortTabPixels;
 	ptTemp      = ptCurPos;
 	ptCurPos.y += PrintString(pDC, ptTemp, _T("\nPPQ Bar Section"));
 	pDC->SelectObject(&m_fontText);
-	
-	long	lPPQ;
+
+	long lPPQ;
 	pConfig->GetPPQCount(lPPQ);
 	for (int intPPQ = 0; intPPQ < lPPQ; intPPQ++)
 	{
-		SVPPQObject*	pPPQ;
-		
-		if ( !pConfig->GetPPQ( intPPQ, &pPPQ ) ) { DebugBreak(); }
-			
-		
+		SVPPQObject* pPPQ;
+
+		if ( !pConfig->GetPPQ( intPPQ, &pPPQ ) )
+		{
+			SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
+			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::c_textErrorGettingPPQ, StdExceptionParams, Err_17000_SVConfigurationPrint_PrintPPQBarSection_ErrorGettingPPQ );
+			DebugBreak();
+		}
+
 		if ( !pPPQ ) { continue; }
-		
+
 		ptCurPos.x  = ++nIndentLevel * m_shortTabPixels;
 		ptTemp      = ptCurPos;
 		ptCurPos.y += PrintString(pDC, ptTemp, pPPQ->GetName());
-		
-		long	lPPQLength = 0;
+
+		long lPPQLength = 0;
 		pPPQ->GetPPQLength(lPPQLength);
 		for (int intPPQPos = 0; intPPQPos < lPPQLength; intPPQPos++)
 		{
-			bool	bPosPrint = false;
+			bool bPosPrint = false;
 			std::deque< SVVirtualCamera* > l_Cameras;
 
 			pPPQ->GetCameraList( l_Cameras );
@@ -2262,7 +2269,7 @@ void SVConfigurationPrint::PrintPPQBarSection(CDC* pDC, CPoint& ptCurPos, int nI
 							ptCurPos.y += PrintString(pDC, ptTemp, sLabel);
 							bPosPrint = true;
 						}
-						
+
 						ptCurPos.x  = (nIndentLevel + 2) * m_shortTabPixels;
 						ptTemp      = ptCurPos;
 						ptCurPos.y += PrintString(pDC, ptTemp, pCamera->GetName());
@@ -2271,10 +2278,10 @@ void SVConfigurationPrint::PrintPPQBarSection(CDC* pDC, CPoint& ptCurPos, int nI
 
 				++l_Iter;
 			}
-			
-			long					lIOEntries;
+
+			long lIOEntries;
 			SVIOEntryHostStructPtrList ppIOEntries;
-			
+
 			pPPQ->GetAllInputs( ppIOEntries );
 
 			lIOEntries = static_cast< long >( ppIOEntries.size() );
@@ -2293,7 +2300,7 @@ void SVConfigurationPrint::PrintPPQBarSection(CDC* pDC, CPoint& ptCurPos, int nI
 						ptCurPos.y += PrintString(pDC, ptTemp, sLabel);
 						bPosPrint = true;
 					}
-					
+
 					ptCurPos.x  = (nIndentLevel + 2) * m_shortTabPixels;
 					ptTemp      = ptCurPos;
                     if ( l_pObject != NULL )
@@ -2392,57 +2399,63 @@ void SVConfigurationPrint::PrintIOSection(CDC* pDC, CPoint& ptCurPos, int nInden
 
 void SVConfigurationPrint::PrintModuleIO(CDC* pDC, CPoint& ptCurPos, int nIndentLevel)
 {
-	CString				label, value;
-	int					nFirstHeight = 0;
-	int					nLastHeight = 0;
-	long				lSize = 0;
-	CPoint				ptTemp(0, 0);
-	
+	CString label, value;
+	int		nFirstHeight = 0;
+	int		nLastHeight = 0;
+	long	lSize = 0;
+	CPoint	ptTemp(0, 0);
+
 	SVConfigurationObject* pConfig = NULL;
 	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
-	SVObserverApp*         pApp    = dynamic_cast <SVObserverApp*> (AfxGetApp());
-	
+	SVObserverApp* pApp = dynamic_cast<SVObserverApp*>(AfxGetApp());
+
 	// Print IODoc contents
 	if (pApp->GetIODoc())
 	{
-		SVInputObjectList		*pInputList;
-		SVDigitalInputObject	*pDigInput;
+		SVInputObjectList* pInputList;
+		SVDigitalInputObject* pDigInput;
 		SVIOEntryHostStructPtrList ppIOEntries;
-		
+
 		// Get list of available inputs
 		if (!pConfig->GetInputObjectList(&pInputList))
+		{
+			SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
+			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::c_textErrorGettingInputObjectList, StdExceptionParams, Err_17001_SVConfigurationPrint_PrintModuleIO_ErrorGettingInputObjectList );
 			DebugBreak();
-		
+		}
+
 		if (!pInputList->FillInputs( ppIOEntries ))
+		{
+			SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
+			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::c_textErrorFillingInputs, StdExceptionParams, Err_17002_SVConfigurationPrint_PrintModuleIO_ErrorFillingInputs );
 			DebugBreak();
+		}
 
 		lSize = static_cast< long >( ppIOEntries.size() );
-		
+
 		// Print module input title...
 		DWORD dwMaxInput = 0;
 		SVIOConfigurationInterfaceClass::Instance().GetDigitalInputCount( dwMaxInput );
 
 		value.Format(_T("%ld"), dwMaxInput);
-		ptCurPos.x   = nIndentLevel * m_shortTabPixels;
+		ptCurPos.x = nIndentLevel * m_shortTabPixels;
 		PrintValueObject(pDC, ptCurPos, _T("Digital Inputs:"), value);
-		
+
 		// Module Inputs
-		for (long i = 0; i < (long) dwMaxInput; ++i)
+		for (long i = 0; i < static_cast<long>(dwMaxInput); ++i)
 		{
 			label.Format(_T("Digital Input %d:"), i+1);
-				
+
 			// Find each digital input
 			for (int j = 0; j < lSize; j++)
 			{
-				if (ppIOEntries[j]->m_ObjectType != IO_DIGITAL_INPUT)
-					continue;
+				if (ppIOEntries[j]->m_ObjectType != IO_DIGITAL_INPUT) { continue; }
 
 				SVObjectClass* l_pObject = SVObjectManagerClass::Instance().GetObject( ppIOEntries[j]->m_IOId );
 
 				pDigInput = dynamic_cast< SVDigitalInputObject* >( l_pObject );
 
-				if (!pDigInput)
-					continue;
+				if (!pDigInput) { continue; }
 
 				if (i == pDigInput->GetChannel())
 				{
@@ -2451,7 +2464,7 @@ void SVConfigurationPrint::PrintModuleIO(CDC* pDC, CPoint& ptCurPos, int nIndent
 				}
 			}
 		}
-		
+
 		// Find each Remote input
 		int j = 0;
 		for (int i = 0; i < lSize; i++)
@@ -2469,8 +2482,7 @@ void SVConfigurationPrint::PrintModuleIO(CDC* pDC, CPoint& ptCurPos, int nIndent
 		{
 			for( int k = 0, l = 0; k < lSize; k++ )
 			{
-				if (ppIOEntries[k]->m_ObjectType != IO_REMOTE_INPUT)
-					continue;
+				if (ppIOEntries[k]->m_ObjectType != IO_REMOTE_INPUT) { continue; }
 
 				label.Format(_T("Remote Input %d"), (l++)+1);
 				PrintIOEntryObject(pDC, ptCurPos, nIndentLevel+1, label, ppIOEntries[k]);
@@ -2513,44 +2525,48 @@ void SVConfigurationPrint::PrintThreadAffinity(CDC* pDC, CPoint& ptCurPos, int n
 
 void SVConfigurationPrint::PrintResultIO(CDC* pDC, CPoint& ptCurPos, int nIndentLevel)
 {
-	CString				label, value;
-	int					nFirstHeight = 0;
-	int					nLastHeight  = 0;
-	long				lSize        = 0;
-	CPoint				ptTemp(0, 0);
-	
-	SVConfigurationObject* pConfig = NULL;
+	CString label, value;
+	int		nFirstHeight = 0;
+	int		nLastHeight  = 0;
+	long	lSize        = 0;
+	CPoint	ptTemp(0, 0);
+
+	SVConfigurationObject* pConfig = nullptr;
 	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
-	SVObserverApp*         pApp    = dynamic_cast <SVObserverApp*> (AfxGetApp());
-	
+	SVObserverApp* pApp = dynamic_cast<SVObserverApp*>(AfxGetApp());
+
 	// Get the number of PPQs
-	long	lPPQSize = 0;
+	long lPPQSize = 0;
 	if (!pConfig->GetPPQCount(lPPQSize))
+	{
+		SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
+		e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::c_textErrorGettingPPQCount, StdExceptionParams, Err_17003_SVConfigurationPrint_PrintResultIO_ErrorGettingPPQCount );
 		DebugBreak();
-	
+	}
+
 	// Print IODoc contents
 	if (pApp->GetIODoc())
 	{
-		SVPPQObject				*pPPQ;
-		SVDigitalOutputObject	*pDigOutput;
+		SVPPQObject* pPPQ;
+		SVDigitalOutputObject* pDigOutput;
 		SVIOEntryHostStructPtrList ppIOEntries;
-		
+
 		// Print Result Output title...
 		DWORD dwMaxOutput = 0;
 		SVIOConfigurationInterfaceClass::Instance().GetDigitalOutputCount( dwMaxOutput );
 		value.Format(_T("%ld"), dwMaxOutput);
 		ptCurPos.x = nIndentLevel * m_shortTabPixels;
 		PrintValueObject(pDC, ptCurPos, _T("Result Outputs:"), value);
-		
+
 		// Result Outputs
-		for (long i = 0; i < (long) dwMaxOutput; ++i)
+		for (long i = 0; i < static_cast<long>(dwMaxOutput); ++i)
 		{
 			label.Format(_T("Digital Output %d"), i+1);
-			
+
 			SVIOEntryHostStructPtr l_pModuleReady = pConfig->GetModuleReady();
 
 			SVObjectClass* l_pObject = SVObjectManagerClass::Instance().GetObject( l_pModuleReady->m_IOId );
-					
+
 			// Check Module Ready first
 			pDigOutput = dynamic_cast< SVDigitalOutputObject* >( l_pObject );
 			if (pDigOutput)
@@ -2561,28 +2577,38 @@ void SVConfigurationPrint::PrintResultIO(CDC* pDC, CPoint& ptCurPos, int nIndent
 					continue;
 				}// end if
 			}// end if
-			
+
 			for (int j = 0; j < lPPQSize; j++)
 			{
-				if ( !pConfig->GetPPQ( j, &pPPQ ) ) { DebugBreak(); }
-				
+				if ( !pConfig->GetPPQ( j, &pPPQ ) )
+				{
+					SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
+					e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::c_textErrorGettingPPQ, StdExceptionParams, Err_17004_SVConfigurationPrint_PrintResultIO_ErrorGettingPPQ );
+					DebugBreak();
+				}
+
 				// Get list of available outputs
-				long	lIOEntries = 0;
-				if ( !pPPQ->GetAllOutputs( ppIOEntries ) ) { DebugBreak(); }
+				long lIOEntries = 0;
+				if ( !pPPQ->GetAllOutputs( ppIOEntries ) )
+				{
+					SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
+					e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::c_textErrorGettingOutputs, StdExceptionParams, Err_17005_SVConfigurationPrint_PrintResultIO_ErrorGettingOutputs );
+					DebugBreak();
+				}
 
 				lIOEntries = static_cast< long >( ppIOEntries.size() );
-				
+
 				// Find each digital output
 				for (int k = 0; k < lIOEntries; k++)
 				{
 					if ( ppIOEntries[ k ]->m_ObjectType != IO_DIGITAL_OUTPUT ) { continue; }
-					
+
 					SVObjectClass* l_pObject = SVObjectManagerClass::Instance().GetObject( ppIOEntries[k]->m_IOId );
 
 					pDigOutput = dynamic_cast< SVDigitalOutputObject* >( l_pObject );
-					
+
 					if ( !pDigOutput ) { continue; }
-					
+
 					if (i == pDigOutput->GetChannel())
 					{
 						PrintIOEntryObject(pDC, ptCurPos, nIndentLevel + 1, label, ppIOEntries[k]);

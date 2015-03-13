@@ -9,6 +9,7 @@
 //* .Check In Date   : $Date:   01 Oct 2013 14:31:02  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include <comdef.h>
 #include "SVIODoc.h"
@@ -33,6 +34,10 @@
 #include "SVMainFrm.h"
 #include "SVUserMessage.h"
 #include "SVIOController.h"
+#include "ErrorNumbers.h"
+#include "SVStatusLibrary/ExceptionManager.h"
+#include "TextDefinesSvO.h"
+#pragma endregion Includes
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -152,7 +157,7 @@ void SVIODoc::Dump(CDumpContext& dc) const
 /////////////////////////////////////////////////////////////////////////////
 // SVIODoc Befehle
 
-void SVIODoc::SetPathName( LPCTSTR lpszPathName, BOOL bAddToMRU ) 
+void SVIODoc::SetPathName( LPCTSTR lpszPathName, BOOL bAddToMRU )
 {
 	msvFileName.SetFullFileName( lpszPathName );
 
@@ -163,12 +168,12 @@ void SVIODoc::SetPathName( LPCTSTR lpszPathName, BOOL bAddToMRU )
 	CDocument::SetPathName( msvFileName.GetFullFileName(), FALSE );
 }
 
-void SVIODoc::SetTitle(LPCTSTR lpszTitle) 
+void SVIODoc::SetTitle(LPCTSTR lpszTitle)
 {
 	CDocument::SetTitle(lpszTitle);
 }
 
-BOOL SVIODoc::SaveModified() 
+BOOL SVIODoc::SaveModified()
 {
 	if ( SVSVIMStateClass::CheckState( SV_STATE_CANCELING ) )
 	{
@@ -182,8 +187,7 @@ BOOL SVIODoc::SaveModified()
 	return CDocument::SaveModified();
 }
 
-
-BOOL SVIODoc::CanCloseFrame(CFrameWnd* pFrame) 
+BOOL SVIODoc::CanCloseFrame(CFrameWnd* pFrame)
 {
 	BOOL bCanClose = FALSE;
 		
@@ -203,7 +207,7 @@ BOOL SVIODoc::CanCloseFrame(CFrameWnd* pFrame)
 	return bCanClose;
 }
 
-void SVIODoc::OnExtrasTestoutputs() 
+void SVIODoc::OnExtrasTestoutputs()
 {
 	if( TheSVObserverApp.m_svSecurityMgr.SVValidate(SECURITY_POINT_EXTRAS_MENU_TEST_OUTPUTS)  == S_OK )
 	{
@@ -216,24 +220,24 @@ void SVIODoc::OnExtrasTestoutputs()
 	}
 }
 
-void SVIODoc::OnExtrasEditRemoteInputs() 
+void SVIODoc::OnExtrasEditRemoteInputs()
 {
 	SVRemoteInputDialog oDlg;
 	SVPPQObject* pPPQ;
-	SVRemoteInputObject *pRemInput;
-	SVInputObjectList *pInputList = NULL;
+	SVRemoteInputObject* pRemInput;
+	SVInputObjectList* pInputList = nullptr;
 	SVIOEntryHostStructPtrList ppIOEntries;
 	SVIOEntryHostStructPtr pIOEntry;
-	SVValueObjectClass *pObject;
+	SVValueObjectClass* pObject;
 	CString strName;
 	long lSize;
 	long lCount;
-	long lPPQSize;	
+	long lPPQSize;
 	int i;
 	int j;
 	int k;
 
-	SVConfigurationObject* pConfig = NULL;
+	SVConfigurationObject* pConfig = nullptr;
 	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
 	pConfig->GetPPQCount( lPPQSize );
@@ -241,7 +245,11 @@ void SVIODoc::OnExtrasEditRemoteInputs()
 	if( pInputList )
 	{
 		if( !pInputList->FillInputs( ppIOEntries ) )
+		{
+			SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
+			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::c_textErrorFillingInputs, StdExceptionParams, Err_17032_SVIODoc_OnExtrasEditRemoteInputs_ErrorFillingInputs );
 			DebugBreak();
+		}
 
 		lSize = static_cast<long>(ppIOEntries.size());
 
@@ -289,15 +297,10 @@ void SVIODoc::OnExtrasEditRemoteInputs()
 
 									pPPQ->AddInput( pIOEntry );
 								}// end if
-
 							}// end if
-
 						}// end for
-					
 					}// end if
-
 				}// end for
-
 			}// end if
 			else
 			{
@@ -314,7 +317,7 @@ void SVIODoc::OnExtrasEditRemoteInputs()
 						pIOEntry = ppIOEntries[iRI];
 
 						if ( pIOEntry->m_ObjectType != IO_REMOTE_INPUT )
-							continue;  
+							continue;
 
 						SVObjectClass* l_pObject = SVObjectManagerClass::Instance().GetObject( pIOEntry->m_IOId );
 						if ( !l_pObject )
@@ -326,14 +329,16 @@ void SVIODoc::OnExtrasEditRemoteInputs()
 							pRemInput = dynamic_cast< SVRemoteInputObject* >( l_pObject );
 
 							if( pInputList->DetachInput( pRemInput->GetUniqueObjectID() ) != S_OK )
+							{
+								SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
+								e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::c_textErrorDetachingInput, StdExceptionParams, Err_17033_SVIODoc_OnExtrasEditRemoteInputs_ErrorDetachingInput );
 								DebugBreak();
+							}
 
-							for( k = 0; k< lPPQSize; k++ )
+							for( k = 0; k < lPPQSize; k++ )
 							{
 								pConfig->GetPPQ( k, &pPPQ );
-								if( pPPQ )
-									pPPQ->RemoveInput( pIOEntry );
-
+								if( pPPQ ) { pPPQ->RemoveInput( pIOEntry ); }
 							}// end for
 
 							pIOEntry.clear();
@@ -342,14 +347,12 @@ void SVIODoc::OnExtrasEditRemoteInputs()
 							j++;
 						}// end if
 					}// for
-
 				}// end for
-
 			}// end else
 
 			pConfig->RebuildInputOutputLists();
 
-			UpdateAllViews( NULL );
+			UpdateAllViews( nullptr );
 		}// end if
 		SVSVIMStateClass::RemoveState( SV_STATE_EDITING );
 
@@ -361,32 +364,29 @@ void SVIODoc::OnExtrasEditRemoteInputs()
 		else
 		{
 			TheSVObserverApp.SetActiveIOTabView( SVIODiscreteInputsViewID );
-		    SVMainFrame * pWndMain = (SVMainFrame *)TheSVObserverApp.GetMainWnd( );
+			SVMainFrame* pWndMain = (SVMainFrame*)TheSVObserverApp.GetMainWnd();
 			pWndMain->PostMessage( SV_IOVIEW_HIDE_TAB, SVIORemoteInputsViewID );
 		}
-
-	}// end if	
-
+	}// end if
 }// end OnExtrasEditRemoteInputs
 
 void SVIODoc::InitMenu()
 {
-  // Load Utilities Menu
+	// Load Utilities Menu
 	SVUtilitiesClass util;
-  CWnd *pWindow;
-  CMenu *pMenu;
-  CString szMenuText;
+	CWnd* pWindow;
+	CMenu* pMenu;
+	CString szMenuText;
 
-  pWindow = AfxGetMainWnd ();
-  pMenu = pWindow->GetMenu();
-  szMenuText = _T("&Utilities");
+	pWindow = AfxGetMainWnd();
+	pMenu = pWindow->GetMenu();
+	szMenuText = _T("&Utilities");
 
-  if (pMenu = util.FindSubMenuByName (pMenu, szMenuText))
-  {
-    util.LoadMenu (pMenu);
-  }
+	if (pMenu = util.FindSubMenuByName(pMenu, szMenuText))
+	{
+		util.LoadMenu(pMenu);
+	}
 }
-
 
 void SVIODoc::OnUpdateFileExit( CCmdUI* pCmdUI )
 {
@@ -401,7 +401,7 @@ CFile* SVIODoc::GetFile( LPCTSTR lpszFileName, UINT nOpenFlags, CFileException* 
 	return CDocument::GetFile( lpszFileName, nNewFlags, pError );
 }
 
-BOOL SVIODoc::OnOpenDocument(LPCTSTR lpszPathName) 
+BOOL SVIODoc::OnOpenDocument(LPCTSTR lpszPathName)
 {
 	BOOL bOk = FALSE;
 
@@ -429,7 +429,7 @@ BOOL SVIODoc::OnOpenDocument(LPCTSTR lpszPathName)
 	return bOk;
 }
 
-BOOL SVIODoc::OnSaveDocument(LPCTSTR lpszPathName) 
+BOOL SVIODoc::OnSaveDocument(LPCTSTR lpszPathName)
 {
 	SVFileNameManagerClass svFileManager;
 
@@ -467,7 +467,6 @@ SVIOController* SVIODoc::GetIOController() const
 {
 	return m_pIOController;
 }
-
 
 //******************************************************************************
 //* LOG HISTORY:

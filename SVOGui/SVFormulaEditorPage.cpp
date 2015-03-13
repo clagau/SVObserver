@@ -380,7 +380,7 @@ namespace Seidenader
 			}
 			CString tmp;
 			tmp.LoadString(IDS_CLASSNAME_ROOTOBJECT);
-			ObjectTreeGenerator::Instance().setSelectorType( ObjectTreeGenerator::SelectorTypeEnum::TypeSingleObject );
+			ObjectTreeGenerator::Instance().setSelectorType( ObjectTreeGenerator::TypeSingleObject );
 			ObjectTreeGenerator::Instance().setAttributeFilters( SV_SELECTABLE_FOR_EQUATION );
 			ObjectTreeGenerator::Instance().setLocationFilter( ObjectTreeGenerator::FilterInput, InspectionName, SVString( _T("") ) );
 			ObjectTreeGenerator::Instance().setLocationFilter( ObjectTreeGenerator::FilterInput, tmp, SVString( _T("") ) );

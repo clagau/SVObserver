@@ -9,6 +9,7 @@
 //* .Check In Date   : $Date:   15 May 2014 12:31:44  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVPublishList.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
@@ -20,6 +21,10 @@
 #include "SVInspectionProcess.h"
 #include "SVConfigurationObject.h"
 #include "SVPPQObject.h"
+#include "ErrorNumbers.h"
+#include "SVStatusLibrary/ExceptionManager.h"
+#include "TextDefinesSvO.h"
+#pragma endregion Includes
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -45,7 +50,7 @@ void SVPublishListClass::Destroy()
 		if( WaitForSingleObject( hProtectionMutex, dwWaitTime ) != WAIT_OBJECT_0 )
 			return;
 
-		CloseHandle( hProtectionMutex );		
+		CloseHandle( hProtectionMutex );
 		hProtectionMutex = NULL;
 	}
 
@@ -65,14 +70,14 @@ void SVPublishListClass::Refresh(SVTaskObjectClass * pRootObject)
 
 	l_OutputList.GetSetAttributesList( SV_PUBLISHABLE, &newList );
 
-	SVPPQObject *pPPQ;
-	SVOutputObjectList *pOutputList;
+	SVPPQObject* pPPQ;
+	SVOutputObjectList* pOutputList;
 	SVIOEntryHostStructPtrList ppPPQEntries;
 	SVIOEntryHostStructPtr pIOEntry;
 	BOOL bOk;
 	long lPPQSize;
 	long lPPQ;
-	
+
 	SVConfigurationObject* pConfig = NULL;
 	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
@@ -92,9 +97,9 @@ void SVPublishListClass::Refresh(SVTaskObjectClass * pRootObject)
 				break;
 			}
 		}
+
 		if( !found ) // not found - have to remove it
 		{
-
 			bOk = ( SVObjectManagerClass::Instance().GetObject( pPublishedOutObjectInfo->UniqueObjectID ) != NULL );
 			if( !bOk )
 			{
@@ -109,7 +114,7 @@ void SVPublishListClass::Refresh(SVTaskObjectClass * pRootObject)
 
 			// Disconnect
 			::SVSendMessage(pPublishedOutObjectInfo->UniqueObjectID, SVM_DISCONNECT_OBJECT_INPUT, reinterpret_cast<DWORD_PTR>(&InObjectInfo), NULL );
-			
+
 			//if( should not be anymore published )
 			SVPublicAttributeEntryStruct* pPublicAttribute = pPublishedOutObjectInfo->PObject->GetPublicAttribute();
 
@@ -137,21 +142,22 @@ void SVPublishListClass::Refresh(SVTaskObjectClass * pRootObject)
 					pPPQ->RemoveOutput( pIOEntry );
 					found = true;
 				}// end if
-
 			}// end for
 
 			if( !found )
+			{
+				SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
+				e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::c_textErrorFindingPPQEntries, StdExceptionParams, Err_17043_SVPublishListClass_Refresh_ErrorFindingPPQEntries );
 				DebugBreak();
-
+			}
 		}// end if
-
 	}// end for
 
 	// check for new items
 	for( int n = 0; n < newList.GetSize(); n++ )
 	{
 		SVOutObjectInfoStruct* pOutObjectInfo = newList.GetAt( n );
-		
+
 		bool found = false;
 
 		// check for new items
@@ -165,7 +171,7 @@ void SVPublishListClass::Refresh(SVTaskObjectClass * pRootObject)
 			}
 		}
 
-		if( !found) // not in original list - have to add it
+		if( !found ) // not in original list - have to add it
 		{
 			//if( not yet published )
 			SVPublicAttributeEntryStruct* pPublicAttribute = pOutObjectInfo->PObject->GetPublicAttribute();
@@ -178,7 +184,6 @@ void SVPublishListClass::Refresh(SVTaskObjectClass * pRootObject)
 			// connect to the object
 			if( ::SVSendMessage( pOutObjectInfo->PObject, SVM_CONNECT_OBJECT_INPUT, reinterpret_cast<DWORD_PTR>(&InObjectInfo), NULL ) == SVMR_SUCCESS )
 			{
-				// *** // ***
 				SVValueObjectClass* pValueObject = dynamic_cast< SVValueObjectClass* >( SVObjectManagerClass::Instance().GetObject( pOutObjectInfo->UniqueObjectID ) );
 				if( pValueObject )
 				{
@@ -194,14 +199,14 @@ void SVPublishListClass::Refresh(SVTaskObjectClass * pRootObject)
 
 					SVObjectClass* pValueParent = pValueObject->GetInspection();
 
-					if( pValueParent == NULL )
+					if( nullptr == pValueParent )
 					{
 						pValueParent = pValueObject->GetOwner();
 						while( pValueParent != NULL && !SV_IS_KIND_OF( pValueParent, SVInspectionProcess ) )
 							pValueParent = pValueParent->GetOwner();
 					}
 
-					pPPQ = m_pInspection->GetPPQ();						
+					pPPQ = m_pInspection->GetPPQ();
 					BOOL bDigital = SV_IS_KIND_OF( pValueObject, SVBoolValueObjectClass );
 
 					if( bDigital )
@@ -210,10 +215,9 @@ void SVPublishListClass::Refresh(SVTaskObjectClass * pRootObject)
 						pIOEntry->m_DeleteValueObject = false;
 						pIOEntry->m_pValueObject	= pValueObject;
 						pIOEntry->m_pValueParent	= pValueParent;
-						pIOEntry->m_ObjectType	= IO_DIGITAL_OUTPUT;
+						pIOEntry->m_ObjectType		= IO_DIGITAL_OUTPUT;
 						pIOEntry->m_PPQIndex		= -1;
-
-						pIOEntry->m_Enabled		= ( l_pDigital != NULL );
+						pIOEntry->m_Enabled			= ( l_pDigital != nullptr );
 
 						if( pIOEntry->m_Enabled )
 						{
@@ -228,26 +232,21 @@ void SVPublishListClass::Refresh(SVTaskObjectClass * pRootObject)
 						pIOEntry->m_DeleteValueObject = false;
 						pIOEntry->m_pValueObject	= pValueObject;
 						pIOEntry->m_pValueParent	= pValueParent;
-						pIOEntry->m_ObjectType	= IO_REMOTE_OUTPUT;
+						pIOEntry->m_ObjectType		= IO_REMOTE_OUTPUT;
 						pIOEntry->m_PPQIndex		= -1;
-
-						pIOEntry->m_Enabled		= true;
+						pIOEntry->m_Enabled			= true;
 
 						pIOEntry->m_IOId = pValueObject->GetUniqueObjectID();
 
 						pPPQ->AddOutput( pIOEntry );
 					}
 				}// end if
-				// *** // ***
 
 				// add to the list
 				Add( pOutObjectInfo );
 			}// end if
-
 		}// end if
-
 	}// end for
-
 }// end Refresh
 
 void SVPublishListClass::Release(SVTaskObjectClass * pRootObject)

@@ -9,6 +9,7 @@
 //* .Check In Date   : $Date:   01 Oct 2013 12:48:26  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVDiscreteOutputsView.h"
 #include "SVIOLibrary/SVIOConfigurationInterfaceClass.h"
@@ -23,6 +24,10 @@
 #include "SVOutputObjectList.h"
 #include "SVMessage/SVMessage.h"
 #include "SVIOController.h"
+#include "ErrorNumbers.h"
+#include "SVStatusLibrary/ExceptionManager.h"
+#include "TextDefinesSvO.h"
+#pragma endregion Includes
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -125,7 +130,7 @@ void SVDiscreteOutputsView::OnUpdate( CView* pSender, LPARAM lHint, CObject* pHi
 	{
 		l_pIOController = pIODoc->GetIOController();
 	}
-	
+
 	if( l_pIOController != NULL && ::IsWindow( m_hWnd ) )
 	{
 		GetListCtrl().SetRedraw(false);
@@ -134,7 +139,7 @@ void SVDiscreteOutputsView::OnUpdate( CView* pSender, LPARAM lHint, CObject* pHi
 		GetListCtrl().DeleteAllItems();
 
 		m_Items.clear();
-		
+
 		CString strItem;
 		long lSize;
 		long lPPQSize;
@@ -145,22 +150,25 @@ void SVDiscreteOutputsView::OnUpdate( CView* pSender, LPARAM lHint, CObject* pHi
 		SVDigitalOutputObject *pDigOutput;
 		SVIOEntryHostStructPtrList ppIOEntries;
 		SVIOEntryHostStructPtr pIOEntry;
-		
+
 		SVConfigurationObject* pConfig = NULL;
 		SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
 		// Get the number of PPQs
 		if( !pConfig->GetPPQCount( lPPQSize ) )
+		{
+			SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
+			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::c_textErrorGettingPPQCount, StdExceptionParams, Err_17010_SVDiscreteOutputsView_OnUpdate_ErrorGettingPPQCount );
 			DebugBreak();
+		}
 
 		// Check if any PPQs are here yet
-		if( lPPQSize == 0 )
-			return;
-		
+		if( 0 == lPPQSize ) { return; }
+
 		// Result Outputs
 		DWORD maxOutput = 0;
 		SVIOConfigurationInterfaceClass::Instance().GetDigitalOutputCount( maxOutput );
-		for( i = 0; i < (long) maxOutput; ++i )
+		for( i = 0; i < static_cast<int>(maxOutput); ++i )
 		{
 			// First column: Result I/O
 			strItem.Format( _T( "Digital Output %d" ), i + 1 );
@@ -169,32 +177,32 @@ void SVDiscreteOutputsView::OnUpdate( CView* pSender, LPARAM lHint, CObject* pHi
 				INDEXTOSTATEIMAGEMASK( 2 ),	// state
 				LVIS_STATEIMAGEMASK,		// stateMask
 				1, 0 );						// Set item data to NULL
-			
+
 			// Check Module Ready first
 			pIOEntry = l_pIOController->GetModuleReady();
 			pDigOutput = dynamic_cast< SVDigitalOutputObject* >( SVObjectManagerClass::Instance().GetObject( pIOEntry->m_IOId ) );
 			if( pDigOutput )
-			{			
+			{
 				if( i == pDigOutput->GetChannel() )
 				{
 					GetListCtrl().SetItem( i, 0, LVIF_IMAGE, NULL, 0, 0, 0, 0 );
 
 					m_Items.SetItemData( i, pIOEntry );
-					
+
 					// Column: Description
 					GetListCtrl().SetItemText( i, 1, pDigOutput->GetName() );
-					
+
 					// Column: Force
 					if( pDigOutput->IsForced() )
 					{
 						strItem.Format( _T( "%d" ), pDigOutput->GetForcedValue() ? 1 : 0 );
 						GetListCtrl().SetItemText( i, 2, strItem );
 					}// end if
-					
+
 					// Column: Inverted
 					strItem.Format( _T( "%s" ), pDigOutput->IsInverted() ? _T( "1" ) : _T( "" ) );
 					GetListCtrl().SetItemText( i, 3, strItem );
-					
+
 					continue;
 				}// end if
 			}// end if
@@ -203,27 +211,27 @@ void SVDiscreteOutputsView::OnUpdate( CView* pSender, LPARAM lHint, CObject* pHi
 			pIOEntry = l_pIOController->GetRaidErrorBit();
 			pDigOutput = dynamic_cast< SVDigitalOutputObject* >( SVObjectManagerClass::Instance().GetObject( pIOEntry->m_IOId ) );
 			if( pDigOutput )
-			{			
+			{
 				if( i == pDigOutput->GetChannel() )
 				{
 					GetListCtrl().SetItem( i, 0, LVIF_IMAGE, NULL, 0, 0, 0, 0 );
 
 					m_Items.SetItemData( i, pIOEntry );
-					
+
 					// Column: Description
 					GetListCtrl().SetItemText( i, 1, pDigOutput->GetName() );
-					
+
 					// Column: Force
 					if( pDigOutput->IsForced() )
 					{
 						strItem.Format( _T( "%d" ), pDigOutput->GetForcedValue() ? 1 : 0 );
 						GetListCtrl().SetItemText( i, 2, strItem );
 					}// end if
-					
+
 					// Column: Inverted
 					strItem.Format( _T( "%s" ), pDigOutput->IsInverted() ? _T( "1" ) : _T( "" ) );
 					GetListCtrl().SetItemText( i, 3, strItem );
-					
+
 					continue;
 				}// end if
 			}// end if
@@ -232,46 +240,52 @@ void SVDiscreteOutputsView::OnUpdate( CView* pSender, LPARAM lHint, CObject* pHi
 			{
 				// Get the number of PPQs
 				if( !pConfig->GetPPQ( k, &pPPQ ) )
+				{
+					SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
+					e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::c_textErrorGettingPPQ, StdExceptionParams, Err_17011_SVDiscreteOutputsView_OnUpdate_ErrorGettingPPQ );
 					DebugBreak();
-				
+				}
+
 				// Get list of available outputs
 				if( !pPPQ->GetAllOutputs( ppIOEntries ) )
+				{
+					SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
+					e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::c_textErrorGettingOutputs, StdExceptionParams, Err_17012_SVDiscreteOutputsView_OnUpdate_ErrorGettingOutputs );
 					DebugBreak();
+				}
 
 				lSize = static_cast< long >( ppIOEntries.size() );
-				
+
 				// Find each digital output
 				for( j = 0; j < lSize; j++ )
 				{
 					pIOEntry = ppIOEntries[j];
-					if( pIOEntry->m_ObjectType != IO_DIGITAL_OUTPUT )
-						continue;
-				
+					if( pIOEntry->m_ObjectType != IO_DIGITAL_OUTPUT ) { continue; }
+
 					pDigOutput = dynamic_cast< SVDigitalOutputObject* >( SVObjectManagerClass::Instance().GetObject( pIOEntry->m_IOId ) );
-					
-					if( !pDigOutput )
-						continue;
-					
+
+					if( !pDigOutput ) { continue; }
+
 					if( i == pDigOutput->GetChannel() )
 					{
 						GetListCtrl().SetItem( i, 0, LVIF_IMAGE, NULL, 0, 0, 0, 0 );
 
 						m_Items.SetItemData( i, pIOEntry );
-						
+
 						// Column: Description
 						GetListCtrl().SetItemText( i, 1, pDigOutput->GetName() );
-						
+
 						// Column: Force
 						if( pDigOutput->IsForced() )
 						{
 							strItem.Format( _T( "%d" ), pDigOutput->GetForcedValue() ? 1 : 0 );
 							GetListCtrl().SetItemText( i, 2, strItem );
 						}// end if
-						
+
 						// Column: Inverted
 						strItem.Format( _T( "%s" ), pDigOutput->IsInverted() ? _T( "1" ) : _T( "" ) );
 						GetListCtrl().SetItemText( i, 3, strItem );
-						
+
 						break;
 					}// end if
 				}// end for
@@ -279,7 +293,7 @@ void SVDiscreteOutputsView::OnUpdate( CView* pSender, LPARAM lHint, CObject* pHi
 		}// end for
 		GetListCtrl().SetRedraw(true);
 	}// end if
-	
+
 	//CListView::OnUpdate( pSender, lHint, pHint );   //This call will cause flicker
 }// end OnUpdate
 

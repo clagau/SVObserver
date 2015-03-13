@@ -4,14 +4,14 @@
 //******************************************************************************
 //* .Module Name     : ErrorNumbers
 //* .File Name       : $Workfile:   ErrorNumbers.h  $
-//* .Description     : PLEASE ENTER A DESCRIPTION
+//* .Description     : This is the central location to define error numbers
+//*                    for the SVObserver project.
 //* ----------------------------------------------------------------------------
 //* .Current Version : $Revision:   1.6  $
 //* .Check In Date   : $Date:   23 Feb 2015 03:37:16  $
 //******************************************************************************
 
 #pragma once
-
 
 //Marc Ziegler error base
 static const int Maz_ErrorBase = 2000;
@@ -56,6 +56,62 @@ static const int Err_16023 = Mec_ErrorBase + 23;
 static const int Err_16024 = Mec_ErrorBase + 24;
 static const int Err_16025 = Mec_ErrorBase + 25;
 static const int Err_16026 = Mec_ErrorBase + 26;
+
+// Ben Walter
+static const int BRW_ErrorBase = 17000;
+static const int Err_17000_SVConfigurationPrint_PrintPPQBarSection_ErrorGettingPPQ = BRW_ErrorBase;
+static const int Err_17001_SVConfigurationPrint_PrintModuleIO_ErrorGettingInputObjectList = BRW_ErrorBase + 1;
+static const int Err_17002_SVConfigurationPrint_PrintModuleIO_ErrorFillingInputs = BRW_ErrorBase + 2;
+static const int Err_17003_SVConfigurationPrint_PrintResultIO_ErrorGettingPPQCount = BRW_ErrorBase + 3;
+static const int Err_17004_SVConfigurationPrint_PrintResultIO_ErrorGettingPPQ = BRW_ErrorBase + 4;
+static const int Err_17005_SVConfigurationPrint_PrintResultIO_ErrorGettingOutputs = BRW_ErrorBase + 5;
+static const int Err_17006_SVDiscreteInputsView_OnUpdate_ErrorGettingInputObjectList = BRW_ErrorBase + 6;
+static const int Err_17007_SVDiscreteInputsView_OnUpdate_ErrorFillingInputs = BRW_ErrorBase + 7;
+static const int Err_17008_SVDiscreteInputsView_OnUpdate_ErrorGettingInputObjectList = BRW_ErrorBase + 8;
+static const int Err_17009_SVDiscreteInputsView_OnUpdate_ErrorFillingInputs = BRW_ErrorBase + 9;
+static const int Err_17010_SVDiscreteOutputsView_OnUpdate_ErrorGettingPPQCount = BRW_ErrorBase + 10;
+static const int Err_17011_SVDiscreteOutputsView_OnUpdate_ErrorGettingPPQ = BRW_ErrorBase + 11;
+static const int Err_17012_SVDiscreteOutputsView_OnUpdate_ErrorGettingOutputs = BRW_ErrorBase + 12;
+static const int Err_17013_SVInspectionProcess_AddInputRequest_ErrorLockingInputRequests = BRW_ErrorBase + 13;
+static const int Err_17014_SVInspectionProcess_AddInputRequest_ErrorUnlockingInputRequests = BRW_ErrorBase + 14;
+static const int Err_17015_SVInspectionProcess_AddInputRequest_ErrorUnlockingInputRequests = BRW_ErrorBase + 15;
+static const int Err_17016_SVInspectionProcess_AddInputImageRequest_ErrorLockingInputImageRequests = BRW_ErrorBase + 16;
+static const int Err_17017_SVInspectionProcess_AddInputImageRequest_ErrorUnlockingInputImageRequests = BRW_ErrorBase + 17;
+static const int Err_17018_SVInspectionProcess_AddInputImageRequest_ErrorUnlockingInputImageRequests = BRW_ErrorBase + 18;
+static const int Err_17019_SVInspectionProcess_RemoveAllInputRequests_ErrorLockingInputRequests = BRW_ErrorBase + 19;
+static const int Err_17020_SVInspectionProcess_RemoveAllInputRequests_ErrorRemovingAllInputRequests = BRW_ErrorBase + 20;
+static const int Err_17021_SVInspectionProcess_RemoveAllInputRequests_ErrorUnlockingInputRequests = BRW_ErrorBase + 21;
+static const int Err_17022_SVInspectionProcess_RemoveAllInputRequests_ErrorLockingInputImageRequests = BRW_ErrorBase + 22;
+static const int Err_17023_SVInspectionProcess_RemoveAllInputRequests_ErrorRemovingAllInputImageRequests = BRW_ErrorBase + 23;
+static const int Err_17024_SVInspectionProcess_RemoveAllInputRequests_ErrorUnlockingInputImageRequests = BRW_ErrorBase + 24;
+static const int Err_17025_SVInspectionProcess_ProcessInputRequests_ErrorLockingInputRequests = BRW_ErrorBase + 25;
+static const int Err_17026_ProcessInputRequests_ErrorUnlockingInputRequests = BRW_ErrorBase + 26;
+static const int Err_17027_SVInspectionProcess_RunInspection_ErrorGettingTimeStamp = BRW_ErrorBase + 27;
+static const int Err_17028_SVInspectionProcess_RunInspection_ErrorGettingTimeStamp = BRW_ErrorBase + 28;
+static const int Err_17029_SVIOAdjustDialogClass_OnInitDialog_ErrorGettingPPQCount = BRW_ErrorBase + 29;
+static const int Err_17030_SVIOAdjustDialogClass_OnInitDialog_ErrorGettingPPQ = BRW_ErrorBase + 30;
+static const int Err_17031_SVIOAdjustDialogClass_OnInitDialog_ErrorGettingOutputs = BRW_ErrorBase + 31;
+static const int Err_17032_SVIODoc_OnExtrasEditRemoteInputs_ErrorFillingInputs = BRW_ErrorBase + 32;
+static const int Err_17033_SVIODoc_OnExtrasEditRemoteInputs_ErrorDetachingInput = BRW_ErrorBase + 33;
+static const int Err_17034_SVPLCOutputEditDialog_OnInitDialog_ErrorGettingPPQCount = BRW_ErrorBase + 34;
+static const int Err_17035_SVPLCOutputEditDialog_OnInitDialog_ErrorGettingPPQ = BRW_ErrorBase + 35;
+static const int Err_17036_SVPLCOutputEditDialog_OnInitDialog_ErrorGettingOutputs = BRW_ErrorBase + 36;
+static const int Err_17037_SVPLCOutputsView_OnUpdate_ErrorGettingPPQCount = BRW_ErrorBase + 37;
+static const int Err_17038_SVPLCOutputsView_OnUpdate_ErrorGettingPPQ = BRW_ErrorBase + 38;
+static const int Err_17039_SVPLCOutputsView_OnUpdate_ErrorGettingPLCData = BRW_ErrorBase + 39;
+static const int Err_17040_SVPLCOutputsView_OnLButtonDblClk_ErrorGettingPPQCount = BRW_ErrorBase + 40;
+static const int Err_17041_SVPPQEntryDialogDigInPageClass_OnInitDialog_ErrorGettingInputs = BRW_ErrorBase + 41;
+static const int Err_17042_SVPPQEntryDialogRemotePageClass_OnInitDialog_ErrorGettingInputs = BRW_ErrorBase + 42;
+static const int Err_17043_SVPublishListClass_Refresh_ErrorFindingPPQEntries = BRW_ErrorBase + 43;
+static const int Err_17044_SVRemoteInputsView_OnUpdate_ErrorGettingInputObjectList = BRW_ErrorBase + 44;
+static const int Err_17045_SVRemoteInputsView_OnUpdate_ErrorFillingInputs = BRW_ErrorBase + 45;
+static const int Err_17046_SVRemoteInputsView_OnLButtonDblClk_ErrorGettingInputObjectList = BRW_ErrorBase + 46;
+static const int Err_17047_SVRemoteInputsView_OnLButtonDblClk_ErrorFillingInputs = BRW_ErrorBase + 47;
+static const int Err_17048_SVRemoteOutputEditDialog_OnInitDialog_ErrorGettingPPQCount = BRW_ErrorBase + 48;
+static const int Err_17049_SVRemoteOutputEditDialog_OnInitDialog_ErrorGettingPPQ = BRW_ErrorBase + 49;
+static const int Err_17050_SVRemoteOutputEditDialog_OnInitDialog_ErrorGettingOutputs = BRW_ErrorBase + 50;
+static const int Err_17051_SVRemoteOutputsView_OnUpdate_ErrorGettingPPQCount = BRW_ErrorBase + 51;
+static const int Err_17052_SVRemoteOutputsView_OnLButtonDblClk_ErrorGettingPPQCount = BRW_ErrorBase + 52;
 
 //Guido Ramseier error base
 static const int Gra_ErrorBase = 25000;

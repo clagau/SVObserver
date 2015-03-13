@@ -9,6 +9,7 @@
 //* .Check In Date   : $Date:   02 Oct 2013 07:58:46  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include <boost/config.hpp>
 #include <boost/bind.hpp>
@@ -22,7 +23,10 @@
 #include "SVDigitalInputObject1.h"
 #include "SVConfigurationObject.h"
 #include "SVSVIMStateClass.h"
-
+#include "ErrorNumbers.h"
+#include "SVStatusLibrary/ExceptionManager.h"
+#include "TextDefinesSvO.h"
+#pragma endregion Includes
 
 IMPLEMENT_DYNCREATE(SVRemoteInputsView, CListView)
 
@@ -103,31 +107,36 @@ void SVRemoteInputsView::OnUpdate( CView* pSender, LPARAM lHint, CObject* pHint 
 
 		CString strItem;
 		long lSize;
-		int h;
 		int j;
-		SVInputObjectList *pInputList;
-		SVRemoteInputObject *pRemInput;
+		SVInputObjectList* pInputList;
+		SVRemoteInputObject* pRemInput;
 		SVIOEntryHostStructPtrList ppIOEntries;
 		SVIOEntryHostStructPtr pIOEntry;
 
-		SVConfigurationObject* pConfig = NULL;
+		SVConfigurationObject* pConfig = nullptr;
 		SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
 		// Get list of available inputs
 		if( !pConfig->GetInputObjectList( &pInputList ) )
+		{
+			SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
+			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::c_textErrorGettingInputObjectList, StdExceptionParams, Err_17044_SVRemoteInputsView_OnUpdate_ErrorGettingInputObjectList );
 			DebugBreak();
+		}
 
 		// Check if the list is up yet
-		if( pInputList  == NULL )
-			return;
-		
+		if( nullptr == pInputList ) { return; }
+
 		if( !pInputList->FillInputs( ppIOEntries ) )
+		{
+			SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
+			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::c_textErrorFillingInputs, StdExceptionParams, Err_17045_SVRemoteInputsView_OnUpdate_ErrorFillingInputs );
 			DebugBreak();
+		}
 
 		lSize = static_cast<long>(ppIOEntries.size());
 
-//////////////////////////////////////////////////////////////////
-		h = 0;
+		int h = 0;
 		// Find each remote input
 		for( j = 0; j < lSize; j++ )
 		{
@@ -140,25 +149,19 @@ void SVRemoteInputsView::OnUpdate( CView* pSender, LPARAM lHint, CObject* pHint 
 			{
 				pIOEntry = ppIOEntries[i];
 
-				if( pIOEntry->m_ObjectType != IO_REMOTE_INPUT )
-				continue;
+				if( pIOEntry->m_ObjectType != IO_REMOTE_INPUT ) { continue; }
 
 				SVObjectClass* l_pObject = SVObjectManagerClass::Instance().GetObject( pIOEntry->m_IOId );
 
 				pRemInput = dynamic_cast< SVRemoteInputObject* >( l_pObject );
 
-				if( !pRemInput )
-					continue;
+				if( !pRemInput ) { continue; }
 
-				if ( strItem == pRemInput->GetName() )
-				{
-					bFound = TRUE;
-				}
+				if ( strItem == pRemInput->GetName() ) { bFound = TRUE; }
 			}
 
 			if ( bFound )
 			{
-
 				// First column: Result I/O
 				//strItem.Format( _T( "Remote Input %d" ), h + 1 );
 				GetListCtrl().InsertItem( LVIF_IMAGE | LVIF_TEXT | LVIF_STATE,
@@ -207,10 +210,18 @@ void SVRemoteInputsView::OnLButtonDblClk( UINT nFlags, CPoint point )
 		{
 			// Get list of available inputs
 			if( !pConfig->GetInputObjectList( &pInputList ) )
+			{
+				SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
+				e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::c_textErrorGettingInputObjectList, StdExceptionParams, Err_17046_SVRemoteInputsView_OnLButtonDblClk_ErrorGettingInputObjectList );
 				DebugBreak();
+			}
 
 			if( !pInputList->FillInputs( ppIOEntries ) )
+			{
+				SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
+				e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::c_textErrorFillingInputs, StdExceptionParams, Err_17047_SVRemoteInputsView_OnLButtonDblClk_ErrorFillingInputs );
 				DebugBreak();
+			}
 
 			lSize = static_cast<long>(ppIOEntries.size());
 
@@ -476,4 +487,3 @@ $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVRemoteIn
  * 
  * /////////////////////////////////////////////////////////////////////////////////////
 */
-

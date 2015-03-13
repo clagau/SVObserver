@@ -9,16 +9,19 @@
 //* .Check In Date   : $Date:   17 Jul 2014 20:21:28  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
-
 #include "SVRemoteOutputEditDialog.h"
-
 #include "SVObserver.h"
 #include "SVConfigurationObject.h"
 #include "SVRemoteOutputDataController.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVInspectionProcess.h"
 #include "SVToolSet.h"
+#include "ErrorNumbers.h"
+#include "SVStatusLibrary/ExceptionManager.h"
+#include "TextDefinesSvO.h"
+#pragma endregion Includes
 
 IMPLEMENT_DYNAMIC(SVRemoteOutputEditDialog, CDialog)
 
@@ -54,7 +57,7 @@ BOOL SVRemoteOutputEditDialog::OnInitDialog()
 	CDialog::OnInitDialog();
 	SVPPQObject* pPPQ;
 	SVIOEntryHostStructPtrList ppIOEntries;
-	long lPPQSize=0;
+	long lPPQSize = 0;
 	int iCurrentSel = 0;
 
 	SVObjectClass* l_pObject = SVObjectManagerClass::Instance().GetObjectA( m_InputObjectGUID );
@@ -67,7 +70,11 @@ BOOL SVRemoteOutputEditDialog::OnInitDialog()
 	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
 	if( !pConfig->GetPPQCount( lPPQSize ) )
+	{
+		SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
+		e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::c_textErrorGettingPPQCount, StdExceptionParams, Err_17048_SVRemoteOutputEditDialog_OnInitDialog_ErrorGettingPPQCount );
 		DebugBreak();
+	}
 
 	SVRemoteOutputGroup* l_pRemoteGroup = pConfig->GetRemoteOutputGroup( m_strGroupName );
 
@@ -76,15 +83,23 @@ BOOL SVRemoteOutputEditDialog::OnInitDialog()
 		CString l_strPPQName;
 		// Get the number of PPQs
 		if( !pConfig->GetPPQ( k, &pPPQ ) )
+		{
+			SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
+			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::c_textErrorGettingPPQ, StdExceptionParams, Err_17049_SVRemoteOutputEditDialog_OnInitDialog_ErrorGettingPPQ );
 			DebugBreak();
+		}
 
 		l_strPPQName = pPPQ->GetName();
 		if( l_strPPQName == l_pRemoteGroup->GetPPQName() )
 		{
-			long lSize=0;
+			long lSize = 0;
 			// Get list of available outputs
 			if( !pPPQ->GetAllOutputs( ppIOEntries ) )
+			{
+				SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
+				e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::c_textErrorGettingOutputs, StdExceptionParams, Err_17050_SVRemoteOutputEditDialog_OnInitDialog_ErrorGettingOutputs );
 				DebugBreak();
+			}
 
 			lSize = static_cast<long>(ppIOEntries.size());
 
@@ -363,4 +378,3 @@ $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVRemoteOu
  * 
  * /////////////////////////////////////////////////////////////////////////////////////
 */
-

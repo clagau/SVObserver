@@ -9,6 +9,7 @@
 //* .Check In Date   : $Date:   28 Feb 2014 08:31:08  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include <boost/config.hpp>
 #include <boost/bind.hpp>
@@ -19,6 +20,10 @@
 #include "SVDigitalInputObject1.h"
 #include "SVInfoStructs.h"
 #include "SVPPQObject.h"
+#include "ErrorNumbers.h"
+#include "SVStatusLibrary/ExceptionManager.h"
+#include "TextDefinesSvO.h"
+#pragma endregion Includes
 
 //******************************************************************************
 //* DEFINITIONS OF MODULE-LOCAL VARIABLES:
@@ -56,7 +61,7 @@ SVPPQEntryDialogDigInPageClass::SVPPQEntryDialogDigInPageClass()
 	//{{AFX_DATA_INIT(SVPPQEntryDialogDigInPageClass)
 	StrCurPos = _T("");
 	//}}AFX_DATA_INIT
-    m_bIsTaken = FALSE;
+	m_bIsTaken = FALSE;
 }
 
 SVPPQEntryDialogDigInPageClass::~SVPPQEntryDialogDigInPageClass()
@@ -84,9 +89,9 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // SVPPQEntryDialogDigInPageClass message handlers
 
-BOOL SVPPQEntryDialogDigInPageClass::OnInitDialog() 
+BOOL SVPPQEntryDialogDigInPageClass::OnInitDialog()
 {
-	CPropertyPage::OnInitDialog();	
+	CPropertyPage::OnInitDialog();
 	ASSERT( m_pSheet );
 
 	long lSize;
@@ -97,7 +102,11 @@ BOOL SVPPQEntryDialogDigInPageClass::OnInitDialog()
 
 	// Get list of available inputs
 	if( !m_pSheet->m_pPPQ->GetAllInputs( ppIOEntries ) )
+	{
+		SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
+		e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::c_textErrorGettingInputs, StdExceptionParams, Err_17041_SVPPQEntryDialogDigInPageClass_OnInitDialog_ErrorGettingInputs );
 		DebugBreak();
+	}
 
 	lSize = static_cast<long>(ppIOEntries.size());
 

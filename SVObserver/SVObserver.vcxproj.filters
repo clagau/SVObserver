@@ -1652,9 +1652,6 @@
     <ClCompile Include="AutoSaver.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="TextDefinesSvO.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Midl Include="SVObserver.odl">

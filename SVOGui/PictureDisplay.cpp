@@ -46,7 +46,7 @@ namespace Seidenader
 		void PictureDisplay::setImageFromParent( SvOi::ISVImage* pImage, long tabNumber )
 		{
 			SvOi::IMatroxImageData *data = nullptr;
-			if( pImage->GetImageType() == SVImageTypeEnum::SVImageTypePhysical )
+			if( pImage->GetImageType() == SVImageTypePhysical )
 			{
 				data = pImage->GetParentImageInterface()->getImageData();
 			}

@@ -9,6 +9,7 @@
 //* .Check In Date   : $Date:   01 Oct 2013 12:48:26  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include <boost/config.hpp>
 #include <boost/bind.hpp>
@@ -24,6 +25,10 @@
 #include "SVConfigurationObject.h"
 #include "SVSVIMStateClass.h"
 #include "SVMessage/SVMessage.h"
+#include "ErrorNumbers.h"
+#include "SVStatusLibrary/ExceptionManager.h"
+#include "TextDefinesSvO.h"
+#pragma endregion Includes
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -125,8 +130,8 @@ void SVDiscreteInputsView::OnUpdate( CView* pSender, LPARAM lHint, CObject* pHin
 		long lSize;
 		int j;
 		int i;
-		SVInputObjectList *pInputList;
-		SVDigitalInputObject *pDigInput;
+		SVInputObjectList* pInputList;
+		SVDigitalInputObject* pDigInput;
 		SVIOEntryHostStructPtrList ppIOEntries;
 		SVIOEntryHostStructPtr pIOEntry;
 
@@ -135,21 +140,28 @@ void SVDiscreteInputsView::OnUpdate( CView* pSender, LPARAM lHint, CObject* pHin
 
 		// Get list of available inputs
 		if( !pConfig->GetInputObjectList( &pInputList ) )
+		{
+			SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
+			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::c_textErrorGettingInputObjectList, StdExceptionParams, Err_17006_SVDiscreteInputsView_OnUpdate_ErrorGettingInputObjectList );
 			DebugBreak();
+		}
 
 		// Check if the list is up yet
-		if( pInputList  == NULL )
-			return;
-		
+		if( pInputList == nullptr ) { return; }
+
 		if( !pInputList->FillInputs( ppIOEntries ) )
+		{
+			SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
+			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::c_textErrorFillingInputs, StdExceptionParams, Err_17007_SVDiscreteInputsView_OnUpdate_ErrorFillingInputs );
 			DebugBreak();
+		}
 
 		lSize = static_cast< long >( ppIOEntries.size() );
 
 		// Module Inputs
 		DWORD maxInput = 0;
 		SVIOConfigurationInterfaceClass::Instance().GetDigitalInputCount( maxInput );
-		for( i = 0; i < (long) maxInput; ++i )
+		for( i = 0; i < static_cast<long>(maxInput); ++i )
 		{
 			// First column: Module I/O
 			strItem.Format( _T( "Digital Input %d" ), i + 1 );
@@ -163,13 +175,11 @@ void SVDiscreteInputsView::OnUpdate( CView* pSender, LPARAM lHint, CObject* pHin
 			for( j = 0; j < lSize; j++ )
 			{
 				pIOEntry = ppIOEntries[j];
-				if( pIOEntry->m_ObjectType != IO_DIGITAL_INPUT )
-					continue;
+				if( pIOEntry->m_ObjectType != IO_DIGITAL_INPUT ) { continue; }
 
 				pDigInput = dynamic_cast< SVDigitalInputObject* >( SVObjectManagerClass::Instance().GetObject( pIOEntry->m_IOId ) );
 
-				if( !pDigInput )
-					continue;
+				if( !pDigInput ) { continue; }
 
 				if( i == pDigInput->GetChannel() )
 				{
@@ -215,22 +225,29 @@ void SVDiscreteInputsView::OnLButtonDblClk( UINT nFlags, CPoint point )
 
 	if ( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) &&
 		TheSVObserverApp.OkToEdit() &&
-	     pIODoc )
+		pIODoc )
 	{
 		if( item >= 0 && item < GetListCtrl().GetItemCount() &&
 			( flags & ( LVHT_ONITEMSTATEICON | LVHT_ONITEMICON | LVHT_ONITEMLABEL ) ) )
 		{
 			SVIOAdjustDialogClass dlg;
-
 			SVConfigurationObject* pConfig = NULL;
 			SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
 			// Get list of available inputs
 			if( !pConfig->GetInputObjectList( &pInputList ) )
+			{
+				SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
+				e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::c_textErrorGettingInputObjectList, StdExceptionParams, Err_17008_SVDiscreteInputsView_OnUpdate_ErrorGettingInputObjectList );
 				DebugBreak();
+			}
 
 			if( !pInputList->FillInputs( ppIOEntries ) )
+			{
+				SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
+				e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::c_textErrorFillingInputs, StdExceptionParams, Err_17009_SVDiscreteInputsView_OnUpdate_ErrorFillingInputs );
 				DebugBreak();
+			}
 
 			lSize = static_cast< long >( ppIOEntries.size() );
 

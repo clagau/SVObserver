@@ -28,6 +28,9 @@
 #include <boost/bind.hpp>
 #include "SVConfigurationLibrary/SVConfigurationTags.h"
 #include "SVPLCAddRemoveDlg.h"
+#include "ErrorNumbers.h"
+#include "SVStatusLibrary/ExceptionManager.h"
+#include "TextDefinesSvO.h"
 
 IMPLEMENT_DYNCREATE(SVPLCOutputsView, CListView )
 
@@ -131,7 +134,7 @@ BOOL SVPLCOutputsView::PreCreateWindow(CREATESTRUCT& cs)
 
 void SVPLCOutputsView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 {
-	SVIODoc* pIODoc = /*(SVIODoc*)*/ GetDocument();
+	SVIODoc* pIODoc = GetDocument();
 	
 	if( pIODoc && ::IsWindow( m_hWnd ) )
 	{
@@ -139,7 +142,7 @@ void SVPLCOutputsView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 
 		// First clean up list view
 		GetListCtrl().DeleteAllItems();
-		
+
 		CString strItem;
 		long lSize;
 		long lPPQSize;
@@ -149,17 +152,20 @@ void SVPLCOutputsView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 		int l_PPQNum = 0;
 
 		SVPPQObject* pPPQ;
-	
+
 		SVConfigurationObject* pConfig = NULL;
 		SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
 		// Get the number of PPQs
 		if( !pConfig->GetPPQCount( lPPQSize ) )
+		{
+			SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
+			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::c_textErrorGettingPPQCount, StdExceptionParams, Err_17037_SVPLCOutputsView_OnUpdate_ErrorGettingPPQCount );
 			DebugBreak();
+		}
 
 		// Check if any PPQs are here yet
-		if( lPPQSize == 0 )
-			return;
+		if( lPPQSize == 0 ) { return; }
 
 		// Result Outputs
 		DWORD maxOutput = 0;
@@ -168,16 +174,19 @@ void SVPLCOutputsView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 		m_aPPQGUIDs.clear();	// Empty the PPQ GUID List
 		for( int iPPQLoop = 0; iPPQLoop < lPPQSize; iPPQLoop++ )
 		{
-
 			// Get the PPQ
 			if( !pConfig->GetPPQ( iPPQLoop, &pPPQ ) )
 			{
+				SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
+				e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::c_textErrorGettingPPQ, StdExceptionParams, Err_17038_SVPLCOutputsView_OnUpdate_ErrorGettingPPQ );
 				DebugBreak();
 				continue;
 			}
 
-			if( pConfig->GetPLCData() == NULL )
+			if( pConfig->GetPLCData() == nullptr )
 			{
+				SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
+				e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::c_textErrorGettingPLCData, StdExceptionParams, Err_17039_SVPLCOutputsView_OnUpdate_ErrorGettingPLCData );
 				DebugBreak();
 				continue;
 			}
@@ -190,10 +199,7 @@ void SVPLCOutputsView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 			CString l_strPLCName = pPPQ->GetPLCName();
 
 			lSize = l_PLCData.GetItemCount(l_strPLCName);
-			if( lSize == 0 )
-			{
-				continue;
-			}
+			if( 0 == lSize ) { continue; }
 
 			bool l_bCollapse = l_PLCData.GetCollapse( l_strPLCName );
 			strItem.Format( _T( "%s       Block Count %d" ),pPPQ->GetName(),
@@ -208,7 +214,7 @@ void SVPLCOutputsView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 			GetListCtrl().SetItemData( ipos, reinterpret_cast<DWORD_PTR>(pPPQ) );
 
 			// size of the blocks
-			SVPLCControlPar* l_pControl = NULL;
+			SVPLCControlPar* l_pControl = nullptr;
 			CString l_strFirstBlockAddress;
 			if( l_PLCData.GetControlPar( l_strPLCName, &l_pControl ) == S_OK )
 			{
@@ -216,10 +222,7 @@ void SVPLCOutputsView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 			}
 
 			// Keep track of the PPQ GUID so when we click on the item we will know which ppq.
-			if( pPPQ == NULL )
-			{
-				continue;
-			}
+			if( nullptr == pPPQ ) { continue; }
 
 			int lInsertedEntry = 0;
 
@@ -228,10 +231,10 @@ void SVPLCOutputsView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 				// PLC outputs 
 				for( j = 0; j < lSize; j++ )
 				{
-					SVPLCOutputObject* l_pPLCOutput = NULL;
+					SVPLCOutputObject* l_pPLCOutput = nullptr;
 					HRESULT l_hr = l_PLCData.GetItem( l_strPLCName, j, l_pPLCOutput);
 
-					if( l_pPLCOutput == NULL )
+					if( nullptr == l_pPLCOutput )
 					{
 						continue;
 					}
@@ -239,10 +242,8 @@ void SVPLCOutputsView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 					{
 						CString l_strPLCName;
 						l_pPLCOutput->GetPLCName(l_strPLCName);
-						if( pPPQ->GetPLCName() != l_strPLCName )
-							continue;
+						if( pPPQ->GetPLCName() != l_strPLCName ) { continue; }
 					}
-
 
 					// First column: Result I/O
 					CString l_strName = l_pPLCOutput->GetInputValueObjectName();
@@ -271,7 +272,7 @@ void SVPLCOutputsView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 
 					//l_strAddress.Format( _T("%d"), l_pPLCOutput->GetElement( ));
 					GetListCtrl().SetItemText( lInsertedEntry + iCurrentPPQ + k, 1, l_strAddress );
-					
+
 					// Column: Size - Number of PLC Elements
 					if( l_pPLCOutput->SizeInBits() )
 					{
@@ -282,7 +283,7 @@ void SVPLCOutputsView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 						strItem.Format( _T( "%d" ), l_pPLCOutput->GetSize() );
 					}
 					GetListCtrl().SetItemText( lInsertedEntry + iCurrentPPQ + k, 2, strItem );
-					
+
 					lInsertedEntry++;
 				}// end for
 			}
@@ -293,18 +294,17 @@ void SVPLCOutputsView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 		}// end for
 		GetListCtrl().SetRedraw(true);
 	}// end if
-	
+
 	//CListView::OnUpdate( pSender, lHint, pHint );   //This call will cause flicker
 }
 
 void SVPLCOutputsView::OnLButtonDblClk(UINT nFlags, CPoint point)
 {
-
 	CString strAddress;
-	SVPLCOutputObject *pPLCOutput = NULL;
+	SVPLCOutputObject* pPLCOutput = nullptr;
 	UINT flags;
 
-	SVConfigurationObject* pConfig = NULL;
+	SVConfigurationObject* pConfig = nullptr;
 	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
 	int l_item = GetListCtrl().HitTest( point, &flags );
@@ -312,19 +312,21 @@ void SVPLCOutputsView::OnLButtonDblClk(UINT nFlags, CPoint point)
 	if ( l_item >= 0 && ((flags & LVHT_ONITEMLABEL) == LVHT_ONITEMLABEL) && ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) &&
 		 TheSVObserverApp.OkToEdit() )
 	{
-
 		long lPPQSize=0;
 
 		// Get the number of PPQs
 		if( !pConfig->GetPPQCount( lPPQSize ) )
+		{
+			SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
+			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::c_textErrorGettingPPQCount, StdExceptionParams, Err_17040_SVPLCOutputsView_OnLButtonDblClk_ErrorGettingPPQCount );
 			DebugBreak();
-
+		}
 
 		SVSVIMStateClass::AddState( SV_STATE_EDITING );
 
 		pPLCOutput = dynamic_cast<SVPLCOutputObject*>( reinterpret_cast<SVObjectClass*>(GetListCtrl().GetItemData( l_item )));
 		if( pPLCOutput )
-		{	
+		{
 			// The User clicked on the Item 
 			if( EditOutput( l_item ) )
 			{
@@ -342,7 +344,7 @@ void SVPLCOutputsView::OnLButtonDblClk(UINT nFlags, CPoint point)
 				OnPlcProperties();
 			}
 		}
-		
+
 		SVSVIMStateClass::RemoveState( SV_STATE_EDITING );
 		OnUpdate( NULL, NULL, NULL );
 		GetListCtrl().SetItemState( l_item, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED );
@@ -357,7 +359,7 @@ BOOL SVPLCOutputsView::PreTranslateMessage(MSG* pMsg)
 	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
 	if(pMsg->message==WM_KEYDOWN && TheSVObserverApp.OkToEdit() )
-    {
+	{
 		POSITION l_Pos = GetListCtrl().GetFirstSelectedItemPosition();
 		if( l_Pos != NULL )
 		{
@@ -370,8 +372,7 @@ BOOL SVPLCOutputsView::PreTranslateMessage(MSG* pMsg)
 					OnPlcDelete();
 					l_bRet = TRUE;
 				}
-				else
-				if(pMsg->wParam== VK_INSERT)
+				else if( VK_INSERT == pMsg->wParam )
 				{
 					CString l_strPLCName;
 					if( PLCNameAtItem( l_strPLCName, l_item ) == S_OK )
@@ -389,8 +390,7 @@ BOOL SVPLCOutputsView::PreTranslateMessage(MSG* pMsg)
 						l_bRet = TRUE;
 					}
 				}
-				else
-				if(pMsg->wParam == VK_RETURN )
+				else if( VK_RETURN == pMsg->wParam )
 				{
 					CString l_strPLCName;
 					if( PLCNameAtItem( l_strPLCName, l_item ) == S_OK )
@@ -417,8 +417,7 @@ BOOL SVPLCOutputsView::PreTranslateMessage(MSG* pMsg)
 						l_bRet = TRUE;
 					}
 				}
-				else
-				if(pMsg->wParam == VK_ADD )
+				else if( VK_ADD == pMsg->wParam )
 				{
 					// Expand
 					SVPPQObject* pPPQ = dynamic_cast<SVPPQObject*>( reinterpret_cast<SVObjectClass*>(l_pdwItemData));
@@ -438,7 +437,8 @@ BOOL SVPLCOutputsView::PreTranslateMessage(MSG* pMsg)
 						l_bRet = TRUE;
 					}
 				}
-				if(pMsg->wParam == VK_SUBTRACT )
+
+				if( VK_SUBTRACT == pMsg->wParam )
 				{
 					// Collapse
 					SVPPQObject* pPPQ = dynamic_cast<SVPPQObject*>( reinterpret_cast<SVObjectClass*>(l_pdwItemData));
@@ -460,11 +460,13 @@ BOOL SVPLCOutputsView::PreTranslateMessage(MSG* pMsg)
 				}
 			}
 		}
-    }
+	}
+
 	if( !l_bRet )
 	{
 		l_bRet = CListView::PreTranslateMessage(pMsg);
 	}
+
 	return l_bRet;
 }
 
@@ -692,7 +694,7 @@ void SVPLCOutputsView::OnPlcEdit()
 		SVSVIMStateClass::AddState( SV_STATE_EDITING );
 
 		EditOutput(m_CurrentItem);
-		
+
 		SVSVIMStateClass::RemoveState( SV_STATE_EDITING );
 		OnUpdate( NULL, NULL, NULL );
 	}
@@ -722,14 +724,14 @@ bool SVPLCOutputsView::AddOutput(int p_iWhere)
 
 		// Check if this is the first.
 		if( l_PLCData.GetFirstObject( l_strPLCName ) == NULL )
-		{	
+		{
 			// First Item in the list...
 			dlg.m_bDisableObject = true;
 			dlg.m_bDisableElement = true;
 			dlg.m_lElement = 0;
 		}
 		else
-		{	
+		{
 			// Not the first item in the list..
 			long l_lNewElement;
 			l_PLCData.GetNextValidElement( l_lNewElement, l_PLCData.GetLastObject( dlg.m_strPLCId ) );
@@ -754,6 +756,7 @@ bool SVPLCOutputsView::AddOutput(int p_iWhere)
 			TheSVObserverApp.m_PLCManager.Startup( pConfig );
 			l_bRet = true;
 		}
+
 		if( p_iWhere >= GetListCtrl().GetItemCount() )
 		{
 			p_iWhere--;
@@ -761,6 +764,7 @@ bool SVPLCOutputsView::AddOutput(int p_iWhere)
 				p_iWhere = 0;
 		}
 	}
+
 	return l_bRet;
 }
 
@@ -816,7 +820,7 @@ bool SVPLCOutputsView::EditOutput(int p_iWhere)
 				l_bRet = true;
 				break;
 			}
-			case IDCANCEL:
+			case IDCANCEL: // fall through...
 			default:
 			{
 				break;
@@ -850,7 +854,7 @@ void SVPLCOutputsView::OnLButtonDown(UINT nFlags, CPoint point)
 				l_PLCData.SetCollapse(pPPQ->GetPLCName(), !l_bCollapse );
 				OnUpdate( NULL, NULL, NULL );
 				LVFINDINFOA l_fi;
-				l_fi.flags = LVFI_PARTIAL | LVFI_STRING;		
+				l_fi.flags = LVFI_PARTIAL | LVFI_STRING;
 				l_fi.psz = pPPQ->GetName();
 				int l_iPos = GetListCtrl().FindItem(&l_fi );
 				if( l_iPos > -1 )
@@ -1084,4 +1088,3 @@ $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVPLCOutpu
  * 
  * /////////////////////////////////////////////////////////////////////////////////////
 */
-

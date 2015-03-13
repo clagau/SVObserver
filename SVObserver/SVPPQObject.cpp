@@ -357,7 +357,7 @@ void SVPPQObject::init()
 	m_voMasterWarning.ObjectAttributesAllowedRef()	= SV_EMBEDABLE | SV_PRINTABLE;
 	m_voNotInspected.ObjectAttributesAllowedRef()	= SV_EMBEDABLE | SV_PRINTABLE;
 	m_voDataValid.ObjectAttributesAllowedRef()		= SV_EMBEDABLE | SV_PRINTABLE;
-	m_voOutputState.ObjectAttributesAllowedRef()		= SV_EMBEDABLE | SV_PRINTABLE;
+	m_voOutputState.ObjectAttributesAllowedRef()	= SV_EMBEDABLE | SV_PRINTABLE;
 
 	m_PpqValues.setValueObject( PpqLength, StandardPpqLength, this );
 	SVObjectManagerClass::Instance().IncrementShortPPQIndicator();

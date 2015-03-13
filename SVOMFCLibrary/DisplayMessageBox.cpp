@@ -90,7 +90,7 @@ INT_PTR DisplayMessageBox::showDialog( CWnd* pParent, CString& rMessage, CString
 
 	return Result;
 }
-#pragma end region Public Methods
+#pragma endregion Public Methods
 
 #pragma region Private Methods
 void DisplayMessageBox::DoDataExchange(CDataExchange* pDX)

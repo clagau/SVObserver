@@ -9,8 +9,8 @@
 //* .Check In Date   : $Date:   15 May 2014 12:56:58  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
-
 #include "SVIODoc.h"
 #include "SVIOAdjustDialog.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
@@ -20,20 +20,23 @@
 #include "SVPPQObject.h"
 #include "SVConfigurationObject.h"
 #include "SVHardwareManifest.h"
+#include "ErrorNumbers.h"
+#include "SVStatusLibrary/ExceptionManager.h"
+#include "TextDefinesSvO.h"
+#pragma endregion Includes
 
+#pragma region Declarations
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
+#pragma endregion Declarations
 
-/////////////////////////////////////////////////////////////////////////////
-// Dialogfeld SVIOAdjustDialogClass 
-
-
+#pragma region Constructor
 SVIOAdjustDialogClass::SVIOAdjustDialogClass(CWnd* pParent /*=NULL*/)
 : CDialog(SVIOAdjustDialogClass::IDD, pParent)
-, m_Items( boost::bind( &( CComboBox::GetItemData ), &IOCombo, _1 ) , boost::bind( &( CComboBox::SetItemData ), &IOCombo, _1, _2 ) ) 
+, m_Items( boost::bind( &( CComboBox::GetItemData ), &IOCombo, _1 ), boost::bind( &( CComboBox::SetItemData ), &IOCombo, _1, _2 ) )
 {
 	//{{AFX_DATA_INIT(SVIOAdjustDialogClass)
 	StrIOName = _T("");
@@ -46,14 +49,15 @@ SVIOAdjustDialogClass::SVIOAdjustDialogClass(CWnd* pParent /*=NULL*/)
 	IsCombinedACK = FALSE;
 	IsCombinedNAK = FALSE;
 	//}}AFX_DATA_INIT
-	m_pDigInput		= NULL;
-	m_pDigOutput	= NULL;
-	m_pIODoc		= NULL;
+	m_pDigInput = nullptr;
+	m_pDigOutput = nullptr;
+	m_pIODoc = nullptr;
 }
 
 SVIOAdjustDialogClass::~SVIOAdjustDialogClass()
 {
 }
+#pragma endregion Constructor
 
 void SVIOAdjustDialogClass::DoDataExchange(CDataExchange* pDX)
 {
@@ -63,8 +67,8 @@ void SVIOAdjustDialogClass::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_VALUE_STATIC, StrIOValue);
 	DDX_Check(pDX, IDC_FORCE_CHECK, IsForced);
 	DDX_Check(pDX, IDC_INVERT_CHECK, IsInverted);
-	DDX_Check(pDX, IDC_FORCE_1_RADIO, IsForcedTrue );
-	DDX_Check(pDX, IDC_FORCE_0_RADIO, IsForcedFalse );
+	DDX_Check(pDX, IDC_FORCE_1_RADIO, IsForcedTrue);
+	DDX_Check(pDX, IDC_FORCE_0_RADIO, IsForcedFalse);
 	DDX_Check(pDX, IDC_COMBINE_CHECK, IsCombined);
 	DDX_Check(pDX, IDC_COMBINE_ACK_RADIO, IsCombinedACK);
 	DDX_Check(pDX, IDC_COMBINE_NAK_RADIO, IsCombinedNAK);
@@ -80,7 +84,7 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // Behandlungsroutinen für Nachrichten SVIOAdjustDialogClass 
 
-void SVIOAdjustDialogClass::OnOK() 
+void SVIOAdjustDialogClass::OnOK()
 {
 	DWORD dwData;
 
@@ -114,7 +118,7 @@ void SVIOAdjustDialogClass::OnOK()
 	}
 }
 
-BOOL SVIOAdjustDialogClass::OnInitDialog() 
+BOOL SVIOAdjustDialogClass::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
@@ -149,29 +153,29 @@ BOOL SVIOAdjustDialogClass::OnInitDialog()
 	{
 		// disable Force unit...
 		CWnd* pWnd = GetDlgItem( IDC_FORCE_0_RADIO );
-		if( pWnd )
-			pWnd->EnableWindow( FALSE );
+		if( pWnd ) { pWnd->EnableWindow( FALSE ); }
 		pWnd = GetDlgItem( IDC_FORCE_1_RADIO );
-		if( pWnd )
-			pWnd->EnableWindow( FALSE );
+		if( pWnd ) { pWnd->EnableWindow( FALSE ); }
 		pWnd = GetDlgItem( IDC_FORCE_CHECK );
-		if( pWnd )
-			pWnd->EnableWindow( FALSE );
-		
+		if( pWnd ) { pWnd->EnableWindow( FALSE ); }
+
 		// disable Invert unit...
 		pWnd = GetDlgItem( IDC_INVERT_CHECK );
-		if( pWnd )
-			pWnd->EnableWindow( FALSE );
+		if( pWnd ) { pWnd->EnableWindow( FALSE ); }
 	}// end else
 
 	if( !m_bInputMode && !SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) )
 	{
-		SVConfigurationObject* pConfig = NULL;
+		SVConfigurationObject* pConfig = nullptr;
 		SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
 		// Get the number of PPQs
 		if( !pConfig->GetPPQCount( lPPQSize ) )
+		{
+			SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
+			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::c_textErrorGettingPPQCount, StdExceptionParams, Err_17029_SVIOAdjustDialogClass_OnInitDialog_ErrorGettingPPQCount );
 			DebugBreak();
+		}
 
 		// Check Module Ready first
 		if( m_pIODoc )
@@ -183,7 +187,6 @@ BOOL SVIOAdjustDialogClass::OnInitDialog()
 				nIndex = IOCombo.AddString( pIOEntry->m_pValueObject->GetCompleteObjectName() );
 				m_Items.SetItemData( nIndex, pIOEntry );
 			}// end if
-
 		}// end if
 
 		if ( m_pIODoc )
@@ -203,11 +206,19 @@ BOOL SVIOAdjustDialogClass::OnInitDialog()
 		{
 			// Get the number of PPQs
 			if( !pConfig->GetPPQ( k, &pPPQ ) )
+			{
+				SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
+				e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::c_textErrorGettingPPQ, StdExceptionParams, Err_17030_SVIOAdjustDialogClass_OnInitDialog_ErrorGettingPPQ );
 				DebugBreak();
-			
+			}
+
 			// Get list of available outputs
 			if( !pPPQ->GetAllOutputs( ppIOEntries ) )
+			{
+				SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
+				e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::c_textErrorGettingOutputs, StdExceptionParams, Err_17031_SVIOAdjustDialogClass_OnInitDialog_ErrorGettingOutputs );
 				DebugBreak();
+			}
 
 			lSize = static_cast< long >( ppIOEntries.size() );
 
@@ -216,16 +227,13 @@ BOOL SVIOAdjustDialogClass::OnInitDialog()
 			{
 				pIOEntry = ppIOEntries[i];
 				if( ( pIOEntry->m_IOId.empty() ) && SV_IS_KIND_OF( pIOEntry->m_pValueObject, SVBoolValueObjectClass ) &&
-					 pIOEntry->m_ObjectType == IO_DIGITAL_OUTPUT )
+					pIOEntry->m_ObjectType == IO_DIGITAL_OUTPUT )
 				{
 					nIndex = IOCombo.AddString( pIOEntry->m_pValueObject->GetCompleteObjectName() );
 					m_Items.SetItemData( nIndex, pIOEntry );
 				}// end if
-
 			}// end for
-
 		}// end for
-		
 	}// end if
 	else
 	{
@@ -240,10 +248,10 @@ BOOL SVIOAdjustDialogClass::OnInitDialog()
 	              // EXCEPTION: OCX-Eigenschaftenseiten sollten FALSE zurückgeben
 }// end OnInitDialog
 
-void SVIOAdjustDialogClass::OnSelChangeIOCombo() 
+void SVIOAdjustDialogClass::OnSelChangeIOCombo()
 {
 	DWORD_PTR dwData = IOCombo.GetCurSel();
-	CWnd *pWnd;
+	CWnd* pWnd;
 
 	if( dwData != CB_ERR )
 	{
@@ -278,33 +286,26 @@ void SVIOAdjustDialogClass::OnSelChangeIOCombo()
 
 			// enable Force unit...
 			pWnd = GetDlgItem( IDC_FORCE_0_RADIO );
-			if( pWnd )
-				pWnd->EnableWindow( TRUE );
+			if( pWnd ) { pWnd->EnableWindow( TRUE ); }
 			pWnd = GetDlgItem( IDC_FORCE_1_RADIO );
-			if( pWnd )
-				pWnd->EnableWindow( TRUE );
+			if( pWnd ) { pWnd->EnableWindow( TRUE ); }
 			pWnd = GetDlgItem( IDC_FORCE_CHECK );
-			if( pWnd )
-				pWnd->EnableWindow( TRUE );
+			if( pWnd ) { pWnd->EnableWindow( TRUE ); }
 
 			// enable Invert unit...
 			pWnd = GetDlgItem( IDC_INVERT_CHECK );
-			if( pWnd )
-				pWnd->EnableWindow( TRUE );
+			if( pWnd ) { pWnd->EnableWindow( TRUE ); }
 
 			// You can't combine inputs or non inspection results
 			if( m_bInputMode || SV_IS_KIND_OF( pIOEntry->m_pValueParent, SVPPQObject ) )
 			{
 				// disable Combine unit...
 				pWnd = GetDlgItem( IDC_COMBINE_ACK_RADIO );
-				if( pWnd )
-					pWnd->EnableWindow( FALSE );
+				if( pWnd ) { pWnd->EnableWindow( FALSE ); }
 				pWnd = GetDlgItem( IDC_COMBINE_NAK_RADIO );
-				if( pWnd )
-					pWnd->EnableWindow( FALSE );
+				if( pWnd ) { pWnd->EnableWindow( FALSE ); }
 				pWnd = GetDlgItem( IDC_COMBINE_CHECK );
-				if( pWnd )
-					pWnd->EnableWindow( FALSE );
+				if( pWnd ) { pWnd->EnableWindow( FALSE ); }
 
 				// Clear the current status of combine if it is leftover from a previous output type
 				IsCombined = FALSE;
@@ -313,47 +314,35 @@ void SVIOAdjustDialogClass::OnSelChangeIOCombo()
 			{
 				// enable Combine unit...
 				pWnd = GetDlgItem( IDC_COMBINE_ACK_RADIO );
-				if( pWnd )
-					pWnd->EnableWindow( TRUE );
+				if( pWnd ) { pWnd->EnableWindow( TRUE ); }
 				pWnd = GetDlgItem( IDC_COMBINE_NAK_RADIO );
-				if( pWnd )
-					pWnd->EnableWindow( TRUE );
+				if( pWnd ) { pWnd->EnableWindow( TRUE ); }
 				pWnd = GetDlgItem( IDC_COMBINE_CHECK );
-				if( pWnd )
-					pWnd->EnableWindow( TRUE );
+				if( pWnd ) { pWnd->EnableWindow( TRUE ); }
 			}// end else
-
 		}// end if
 		else
 		{
 			// disable Force unit...
 			pWnd = GetDlgItem( IDC_FORCE_0_RADIO );
-			if( pWnd )
-				pWnd->EnableWindow( FALSE );
+			if( pWnd ) { pWnd->EnableWindow( FALSE ); }
 			pWnd = GetDlgItem( IDC_FORCE_1_RADIO );
-			if( pWnd )
-				pWnd->EnableWindow( FALSE );
+			if( pWnd ) { pWnd->EnableWindow( FALSE ); }
 			pWnd = GetDlgItem( IDC_FORCE_CHECK );
-			if( pWnd )
-				pWnd->EnableWindow( FALSE );
+			if( pWnd ) { pWnd->EnableWindow( FALSE ); }
 
 			// disable Invert unit...
 			pWnd = GetDlgItem( IDC_INVERT_CHECK );
-			if( pWnd )
-				pWnd->EnableWindow( FALSE );
+			if( pWnd ) { pWnd->EnableWindow( FALSE ); }
 
 			// disable Combine unit...
 			pWnd = GetDlgItem( IDC_COMBINE_ACK_RADIO );
-			if( pWnd )
-				pWnd->EnableWindow( FALSE );
+			if( pWnd ) { pWnd->EnableWindow( FALSE ); }
 			pWnd = GetDlgItem( IDC_COMBINE_NAK_RADIO );
-			if( pWnd )
-				pWnd->EnableWindow( FALSE );
+			if( pWnd ) { pWnd->EnableWindow( FALSE ); }
 			pWnd = GetDlgItem( IDC_COMBINE_CHECK );
-			if( pWnd )
-				pWnd->EnableWindow( FALSE );
+			if( pWnd ) { pWnd->EnableWindow( FALSE ); }
 		}// end else
-
 	}// end if
 
 	UpdateData( FALSE );

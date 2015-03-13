@@ -9,6 +9,7 @@
 //* .Check In Date   : $Date:   12 Jun 2014 16:11:36  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include <boost/config.hpp>
 #include <boost/bind.hpp>
@@ -27,6 +28,10 @@
 #include "SVRemoteOutputPropPageList.h"
 #include "SVRemoteOutputPropSheet.h"
 #include "SVSVIMStateClass.h"
+#include "ErrorNumbers.h"
+#include "SVStatusLibrary/ExceptionManager.h"
+#include "TextDefinesSvO.h"
+#pragma endregion Includes
 
 IMPLEMENT_DYNCREATE(SVRemoteOutputsView, CListView )
 
@@ -131,9 +136,9 @@ BOOL SVRemoteOutputsView::PreCreateWindow(CREATESTRUCT& cs)
 
 void SVRemoteOutputsView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 {
-	SVIODoc* pIODoc = /*(SVIODoc*)*/ GetDocument();
-	
-	SVConfigurationObject* pConfig = NULL;
+	SVIODoc* pIODoc = GetDocument();
+
+	SVConfigurationObject* pConfig = nullptr;
 	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
 	if( pIODoc && ::IsWindow( m_hWnd ) )
@@ -152,7 +157,11 @@ void SVRemoteOutputsView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 	
 		// Get the number of PPQs
 		if( !pConfig->GetPPQCount( lPPQSize ) )
+		{
+			SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
+			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::c_textErrorGettingPPQCount, StdExceptionParams, Err_17051_SVRemoteOutputsView_OnUpdate_ErrorGettingPPQCount );
 			DebugBreak();
+		}
 
 		// Check if any PPQs are here yet
 		if( lPPQSize == 0 )
@@ -257,7 +266,7 @@ void SVRemoteOutputsView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 void SVRemoteOutputsView::OnLButtonDblClk(UINT nFlags, CPoint point)
 {
 	CString strAddress;
-	SVRemoteOutputObject *pRemoteOutput = NULL;
+	SVRemoteOutputObject* pRemoteOutput = nullptr;
 	UINT flags;
 
 	int l_item = GetListCtrl().HitTest( point, &flags );
@@ -266,22 +275,25 @@ void SVRemoteOutputsView::OnLButtonDblClk(UINT nFlags, CPoint point)
 		 TheSVObserverApp.OkToEdit() )
 	{
 
-		SVConfigurationObject* pConfig = NULL;
+		SVConfigurationObject* pConfig = nullptr;
 		SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
-		long lPPQSize=0;
+		long lPPQSize = 0;
 
 		// Get the number of PPQs
 		if( !pConfig->GetPPQCount( lPPQSize ) )
+		{
+			SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
+			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::c_textErrorGettingPPQCount, StdExceptionParams, Err_17052_SVRemoteOutputsView_OnLButtonDblClk_ErrorGettingPPQCount );
 			DebugBreak();
-
+		}
 
 		SVSVIMStateClass::AddState( SV_STATE_EDITING );
 
 		pRemoteOutput = dynamic_cast<SVRemoteOutputObject*>( reinterpret_cast<SVObjectClass*>(GetListCtrl().GetItemData( l_item )));
 		if( pRemoteOutput )
-		{	
-			// The User clicked on the Item 
+		{
+			// The User clicked on the Item
 			if( EditOutput( l_item ) )
 			{
 				SVSVIMStateClass::AddState( SV_STATE_MODIFIED );
@@ -297,7 +309,7 @@ void SVRemoteOutputsView::OnLButtonDblClk(UINT nFlags, CPoint point)
 				OnRemoteOutputProperties();
 			}
 		}
-		
+
 		SVSVIMStateClass::RemoveState( SV_STATE_EDITING );
 		OnUpdate( NULL, NULL, NULL );
 		GetListCtrl().SetItemState( l_item, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED );
@@ -308,7 +320,7 @@ BOOL SVRemoteOutputsView::PreTranslateMessage(MSG* pMsg)
 {
 	BOOL l_bRet = FALSE;
 	if(pMsg->message==WM_KEYDOWN && TheSVObserverApp.OkToEdit() )
-    {
+	{
 		POSITION l_Pos = GetListCtrl().GetFirstSelectedItemPosition();
 		if( l_Pos != NULL )
 		{
@@ -874,4 +886,3 @@ $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVRemoteOu
  * 
  * /////////////////////////////////////////////////////////////////////////////////////
 */
-

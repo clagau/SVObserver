@@ -18,6 +18,9 @@
 #include "SVInspectionProcess.h"
 #include "SVToolSet.h"
 #include "SVPLCValidateReasons.h"
+#include "ErrorNumbers.h"
+#include "SVStatusLibrary/ExceptionManager.h"
+#include "TextDefinesSvO.h"
 
 IMPLEMENT_DYNAMIC(SVPLCOutputEditDialog, CDialog)
 
@@ -87,14 +90,22 @@ BOOL SVPLCOutputEditDialog::OnInitDialog()
 	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
 	if( !pConfig->GetPPQCount( lPPQSize ) )
+	{
+		SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
+		e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::c_textErrorGettingPPQCount, StdExceptionParams, Err_17034_SVPLCOutputEditDialog_OnInitDialog_ErrorGettingPPQCount );
 		DebugBreak();
+	}
 
 	for( int k = 0; k < lPPQSize; k++ )
 	{
 		CString l_strPLCName;
 		// Get the number of PPQs
 		if( !pConfig->GetPPQ( k, &pPPQ ) )
+		{
+			SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
+			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::c_textErrorGettingPPQ, StdExceptionParams, Err_17035_SVPLCOutputEditDialog_OnInitDialog_ErrorGettingPPQ );
 			DebugBreak();
+		}
 
 		pPPQ->GetPLCName(l_strPLCName);
 		if( l_strPLCName == m_strPLCId )
@@ -102,7 +113,11 @@ BOOL SVPLCOutputEditDialog::OnInitDialog()
 			long lSize=0;
 			// Get list of available outputs
 			if( !pPPQ->GetAllOutputs( ppIOEntries ) )
+			{
+				SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
+				e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::c_textErrorGettingOutputs, StdExceptionParams, Err_17036_SVPLCOutputEditDialog_OnInitDialog_ErrorGettingOutputs );
 				DebugBreak();
+			}
 
 			lSize = ppIOEntries.size();
 
@@ -499,4 +514,3 @@ $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVPLCOutpu
  * 
  * /////////////////////////////////////////////////////////////////////////////////////
 */
-

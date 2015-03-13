@@ -9,6 +9,7 @@
 //* .Check In Date   : $Date:   28 Feb 2014 08:31:08  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include <boost/config.hpp>
 #include <boost/bind.hpp>
@@ -19,6 +20,10 @@
 #include "SVRemoteInputObject.h"
 #include "SVInfoStructs.h"
 #include "SVPPQObject.h"
+#include "ErrorNumbers.h"
+#include "SVStatusLibrary/ExceptionManager.h"
+#include "TextDefinesSvO.h"
+#pragma endregion Includes
 
 //******************************************************************************
 //* DEFINITIONS OF MODULE-LOCAL VARIABLES:
@@ -84,7 +89,7 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // SVPPQEntryDialogRemotePageClass message handlers
 
-BOOL SVPPQEntryDialogRemotePageClass::OnInitDialog() 
+BOOL SVPPQEntryDialogRemotePageClass::OnInitDialog()
 {
 	CPropertyPage::OnInitDialog();
 	ASSERT( m_pSheet );
@@ -97,7 +102,11 @@ BOOL SVPPQEntryDialogRemotePageClass::OnInitDialog()
 
 	// Get list of available inputs
 	if( !m_pSheet->m_pPPQ->GetAllInputs( ppIOEntries ) )
+	{
+		SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
+		e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::c_textErrorGettingInputs, StdExceptionParams, Err_17042_SVPPQEntryDialogRemotePageClass_OnInitDialog_ErrorGettingInputs );
 		DebugBreak();
+	}
 
 	lSize = static_cast<long>(ppIOEntries.size());
 
@@ -105,8 +114,7 @@ BOOL SVPPQEntryDialogRemotePageClass::OnInitDialog()
 	{
 		pIOEntry = ppIOEntries[j];
 
-		if( pIOEntry->m_ObjectType != IO_REMOTE_INPUT )
-			continue;
+		if( pIOEntry->m_ObjectType != IO_REMOTE_INPUT ) { continue; }
 
 		// Fill selected input list box...
 		if( pIOEntry->m_PPQIndex == m_pSheet->m_lCurrentPosition )
@@ -125,7 +133,6 @@ BOOL SVPPQEntryDialogRemotePageClass::OnInitDialog()
 			nIndex = availableInputListCtrl.AddString( l_pObject->GetName() );
 			m_AvailableItems.SetItemData( nIndex, pIOEntry );
 		}// end if
-
 	}// end for
 
 	StrCurPos.Format( "Current PPQ\r\nPosition : %d", m_pSheet->m_lCurrentPosition + 1 );
@@ -137,7 +144,7 @@ BOOL SVPPQEntryDialogRemotePageClass::OnInitDialog()
 	              // EXCEPTION: OCX Property Pages should return FALSE
 }
 
-void SVPPQEntryDialogRemotePageClass::OnAddButton() 
+void SVPPQEntryDialogRemotePageClass::OnAddButton()
 {
 	ASSERT( m_pSheet );
 	UpdateData( TRUE );
@@ -168,7 +175,7 @@ void SVPPQEntryDialogRemotePageClass::OnAddButton()
 	UpdateData( FALSE );
 }
 
-void SVPPQEntryDialogRemotePageClass::OnRemoveButton() 
+void SVPPQEntryDialogRemotePageClass::OnRemoveButton()
 {
 	ASSERT( m_pSheet );
 	UpdateData( TRUE );
@@ -199,7 +206,7 @@ void SVPPQEntryDialogRemotePageClass::OnRemoveButton()
 	UpdateData( FALSE );
 }
 
-void SVPPQEntryDialogRemotePageClass::OnOK() 
+void SVPPQEntryDialogRemotePageClass::OnOK()
 {
 	UpdateData( TRUE );
 	ASSERT( m_pSheet );
@@ -226,7 +233,7 @@ void SVPPQEntryDialogRemotePageClass::OnOK()
 			pIOEntry->m_PPQIndex = m_pSheet->m_lCurrentPosition;
 		}
 	}
-	
+
 	// And now add new items...( remainder in selected list box control )
 	for( int i = availableInputListCtrl.GetCount() - 1; i >= 0;  -- i )
 	{
@@ -246,16 +253,14 @@ void SVPPQEntryDialogRemotePageClass::OnOK()
 			pIOEntry->m_Enabled = FALSE;
 			pIOEntry->m_PPQIndex = -1;
 		}// end if
-	
 	}// end for
 
 	SVSVIMStateClass::AddState( SV_STATE_MODIFIED );
 
 	CPropertyPage::OnOK();
-
 }// end OnOK
 
-BOOL SVPPQEntryDialogRemotePageClass::OnApply() 
+BOOL SVPPQEntryDialogRemotePageClass::OnApply()
 {
 	// Set is taken flag...
 	m_bIsTaken = ( selectedInputListCtrl.GetCount() > 0 );
