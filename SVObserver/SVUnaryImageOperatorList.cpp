@@ -18,6 +18,7 @@
 #include "SVImageProcessingClass.h"
 #include "SVUnaryImageOperatorClass.h"
 #include "SVTool.h"
+#include "SVMatroxImageProcessingClass.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -417,6 +418,15 @@ HRESULT SVStdImageOperatorListClass::ResetObject()
 		l_hrOk = S_FALSE;
 	}
 
+	//create tmp mil buffer for operator
+	SVImageClass* pImage = getOutputImage();
+	if (pImage)
+	{
+		SVImageInfoClass imageInfo = pImage->GetImageInfo();
+		SVMatroxImageProcessingClass::Instance().CreateImageMilBuffer(imageInfo, m_milTmpImageObjectInfo1);
+		SVMatroxImageProcessingClass::Instance().CreateImageMilBuffer(imageInfo, m_milTmpImageObjectInfo2);
+	}
+
 	return l_hrOk;
 }
 
@@ -463,8 +473,8 @@ BOOL SVStdImageOperatorListClass::Run( SVRunStatusClass& RRunStatus )
 	SVImageClass* pInputImage = getInputImage();
 	SVImageClass* pOutputImage = getOutputImage();
 	
-	bRetVal = bRetVal && ( pInputImage != NULL );
-	bRetVal = bRetVal && ( pOutputImage != NULL );
+	bRetVal = bRetVal && ( nullptr != pInputImage );
+	bRetVal = bRetVal && ( nullptr != pOutputImage );
 
 	if( bRetVal )
 	{
@@ -475,7 +485,7 @@ BOOL SVStdImageOperatorListClass::Run( SVRunStatusClass& RRunStatus )
 			CollectInputImageNames(RRunStatus);
 
 			// Check for new image type...
-			if( pOutputImage->GetParentImage() == NULL )
+			if( nullptr == pOutputImage->GetParentImage() )
 			{
 				// Use just the image input of this unary image operator list...
 				pInputImage->GetImageHandle( input );
@@ -488,7 +498,7 @@ BOOL SVStdImageOperatorListClass::Run( SVRunStatusClass& RRunStatus )
 				// The old image type 'S' provided also a child layer in his derived image info!!!
 				
 				// Use the Child layer on Input Image as our input image
-				if( GetTool() != NULL && pOutputImage->GetLastResetTimeStamp() <= pInputImage->GetLastResetTimeStamp() )
+				if( nullptr != GetTool() && pOutputImage->GetLastResetTimeStamp() <= pInputImage->GetLastResetTimeStamp() )
 				{
 					GetTool()->UpdateImageWithExtent( RRunStatus.m_lResultDataIndex );
 				}
@@ -497,8 +507,6 @@ BOOL SVStdImageOperatorListClass::Run( SVRunStatusClass& RRunStatus )
 			}
 
 			pOutputImage->GetImageHandle( output );
-			
-			BOOL bFirstFlag = TRUE;
 
 			bRetVal = bRetVal && !( input.empty() );
 			bRetVal = bRetVal && !( output.empty() );
@@ -510,77 +518,71 @@ BOOL SVStdImageOperatorListClass::Run( SVRunStatusClass& RRunStatus )
 				input = output;
 			}
 
-			// Run children...
-			for( int i = 0; i < GetSize(); i++ )
+			//set tmp variable
+			SVSmartHandlePointer sourceImage = m_milTmpImageObjectInfo1;
+			SVSmartHandlePointer destinationImage = m_milTmpImageObjectInfo2;
+			bRetVal = bRetVal && !( sourceImage->empty() );
+			bRetVal = bRetVal && !( destinationImage->empty() );
+			bRetVal = bRetVal && copyBuffer( input, sourceImage );
+
+			if (bRetVal)
 			{
-				ChildRunStatus.ClearAll();
-				
-				SVUnaryImageOperatorClass*  pOperator = ( SVUnaryImageOperatorClass* )GetAt( i );
-
-				bRetVal &= ( pOperator != NULL );
-
-				if( pOperator != NULL )
+				// Run children...
+				for( int i = 0; i < GetSize(); i++ )
 				{
-					if( pOperator->Run( bFirstFlag, input, output, ChildRunStatus ) )
+					ChildRunStatus.ClearAll();
+
+					SVUnaryImageOperatorClass*  pOperator = ( SVUnaryImageOperatorClass* )GetAt( i );
+
+					bRetVal &= ( nullptr != pOperator );
+
+					if( nullptr != pOperator )
 					{
-						// Switch first flag off ( FALSE )...
-						bFirstFlag = FALSE;
-						
+						if( pOperator->Run( true, sourceImage, destinationImage, ChildRunStatus ) )
+						{
+							//switch image buffer for next run
+							SVSmartHandlePointer tmpImage = sourceImage;
+							sourceImage = destinationImage;
+							destinationImage = tmpImage;
+						}
 						// NOTE:
 						// If operator returns FALSE, he was not running ( may be deactivated )
 						// So, don't switch first flag off, so that a following operator knows
 						// he is the first one or the 'no operator was running' check can do his job!!!
 						// RO_22Mar2000
-						
+
 						// WARNING:
 						// Do not set bRetVal automatically to FALSE, if operator was not running !!!
-						// ChildRunStatus keeps information about, if an error occured while running !!!
+						// ChildRunStatus keeps information about, if an error occurred while running !!!
 					}
-				}
-				
-				// Update our Run Status
-				if( ChildRunStatus.IsDisabled() )
-					RRunStatus.SetDisabled();
-				
-				if( ChildRunStatus.IsDisabledByCondition() )
-					RRunStatus.SetDisabledByCondition();
-				
-				if( ChildRunStatus.IsWarned() )
-					RRunStatus.SetWarned();
-				
-				if( ChildRunStatus.IsFailed() )
-					RRunStatus.SetFailed();
-				
-				if( ChildRunStatus.IsPassed() )
-					RRunStatus.SetPassed();
 
-				if( ChildRunStatus.IsCriticalFailure() )
-					RRunStatus.SetCriticalFailure();
+					// Update our Run Status
+					if( ChildRunStatus.IsDisabled() )
+						RRunStatus.SetDisabled();
+
+					if( ChildRunStatus.IsDisabledByCondition() )
+						RRunStatus.SetDisabledByCondition();
+
+					if( ChildRunStatus.IsWarned() )
+						RRunStatus.SetWarned();
+
+					if( ChildRunStatus.IsFailed() )
+						RRunStatus.SetFailed();
+
+					if( ChildRunStatus.IsPassed() )
+						RRunStatus.SetPassed();
+
+					if( ChildRunStatus.IsCriticalFailure() )
+						RRunStatus.SetCriticalFailure();
+				}
 			}
 			
 			// 'no operator was running' check...
 			// RO_22Mar2000
 			
-			if( bFirstFlag ) // no operators
+			if( bRetVal )
 			{
-				// Copy input image to output image
-				if( bRetVal )
-				{
-					SVImageBufferHandleImage l_InMilHandle;
-					SVImageBufferHandleImage l_OutMilHandle;
-
-					input->GetData( l_InMilHandle );
-					output->GetData( l_OutMilHandle );
-					
-					bRetVal = bRetVal && !( l_InMilHandle.empty() );
-					bRetVal = bRetVal && !( l_OutMilHandle.empty() );
-
-					if( bRetVal )
-					{
-						SVMatroxBufferInterface::SVStatusCode l_Code;
-						l_Code = SVMatroxBufferInterface::CopyBuffer( l_OutMilHandle.GetBuffer(), l_InMilHandle.GetBuffer() );
-					}
-				}
+				bRetVal = copyBuffer(sourceImage, output);
 			}
 		}
 	}
@@ -668,10 +670,26 @@ HRESULT SVStdImageOperatorListClass::CollectInputImageNames( SVRunStatusClass& R
 	return l_hr;
 }
 
+bool SVStdImageOperatorListClass::copyBuffer( const SVSmartHandlePointer input, SVSmartHandlePointer output )
+{
+	bool bRetVal = true;
+	SVImageBufferHandleImage sourceMilHandle;
+	SVImageBufferHandleImage destinationMilHandle;
 
+	input->GetData( sourceMilHandle );
+	output->GetData( destinationMilHandle );
 
+	bRetVal = bRetVal && !( sourceMilHandle.empty() );
+	bRetVal = bRetVal && !( destinationMilHandle.empty() );
 
-
+	if( bRetVal )
+	{
+		SVMatroxBufferInterface::SVStatusCode  l_Code = SVMatroxBufferInterface::CopyBuffer( destinationMilHandle.GetBuffer(), sourceMilHandle.GetBuffer() );
+		bRetVal = (SVMEE_STATUS_OK == l_Code);
+	}	
+	
+	return bRetVal;
+}
 
 
 
@@ -820,7 +838,7 @@ BOOL SVInPlaceImageOperatorListClass::Run( SVRunStatusClass& RRunStatus )
 		getInputImage()->GetImageHandle( input );
 		getInputImage()->GetImageHandle( output );
 		
-		BOOL bFirstFlag = TRUE;
+		bool bFirstFlag = true;
 
 		// Run children...
 		for( int i = 0; i < GetSize(); i++ )
@@ -837,7 +855,7 @@ BOOL SVInPlaceImageOperatorListClass::Run( SVRunStatusClass& RRunStatus )
 				if( pOperator->Run( bFirstFlag, input, output, ChildRunStatus ) )
 				{
 					// Switch first flag off ( FALSE )...
-					bFirstFlag = FALSE;
+					bFirstFlag = false;
 
 					// NOTE:
 					// If operator returns FALSE, he was not running ( may be deactivated )

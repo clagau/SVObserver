@@ -114,15 +114,9 @@ public:
 
 protected:
 	SVInObjectInfoStruct		inputImageObjectInfo;
-
+	SVSmartHandlePointer		m_milTmpImageObjectInfo1;
+	SVSmartHandlePointer		m_milTmpImageObjectInfo2;
 };
-
-
-
-
-
-
-
 
 
 
@@ -183,6 +177,14 @@ protected:
 
 private:
 	void init();
+
+	//************************************
+	//! Copy a image from one buffer to another buffer
+	//! \param input [in] Input buffer
+	//! \param output [in,out] Output buffer, has to be allocated and the same size as input.
+	//! \returns bool If copy was successfully.
+	//************************************
+	bool copyBuffer( const SVSmartHandlePointer input, SVSmartHandlePointer output );
 
 public:
 	HRESULT CollectInputImageNames( SVRunStatusClass& RRunStatus );

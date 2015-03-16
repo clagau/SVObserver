@@ -29,6 +29,13 @@ public:
 	virtual ~SVMatroxImageProcessingClass();
 
 	HRESULT CreateImageBuffer( const SVImageInfoClass& rInfo, SVSmartHandlePointer& rHandle );
+	//************************************
+	//! Create a image mil buffer
+	//! \param rInfo [in] information data for the new image
+	//! \param rHandle [out] handle to the new image
+	//! \returns HRESULT
+	//************************************
+	HRESULT CreateImageMilBuffer( const SVImageInfoClass& rInfo, SVSmartHandlePointer& rHandle );
 	HRESULT CreateImageBuffer( const SVSmartHandlePointer& rFromHandle, SVImageOperationTypeEnum p_lConversionType, SVSmartHandlePointer& rToHandle );
 
 	HRESULT CreateImageChildBuffer( const SVImageInfoClass& rParentInfo, SVSmartHandlePointer rParentHandle,
@@ -79,6 +86,18 @@ protected:
 	
 
 private:
+	//************************************
+	//! Create a image buffer
+	//! \param pixelDepth [in] 
+	//! \param bandNumber [in]
+	//! \param width [in]
+	//! \param height [in]
+	//! \param format [in]
+	//! \param rHandle [out] handle to the new image buffer
+	//! \returns HRESULT
+	//************************************
+	HRESULT CreateImageBuffer( int pixelDepth, int bandNumber, long width, long height, SVMatroxBufferAttributeEnum format, SVSmartHandlePointer &rHandle );
+
 	//Do not implement this method
 	SVMatroxImageProcessingClass( const SVMatroxImageProcessingClass& p_rObject );
 

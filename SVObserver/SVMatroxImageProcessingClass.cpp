@@ -48,69 +48,72 @@ HRESULT SVMatroxImageProcessingClass::CreateImageBuffer( const SVImageInfoClass&
 	int l_iPixelDepth = 0;
 	long l_lWidth = 0;
 	long l_lHeight = 0;
+	SVMatroxBufferAttributeEnum format;
 
 	rHandle.clear();
 
 	hrOk = GetOutputImageCreateData( rInfo, l_eFormat, l_iPixelDepth, l_iBandNumber, l_iBandLink, l_lWidth, l_lHeight );
-
-	if( hrOk == S_OK && 
-		0 < l_iPixelDepth && 0 < l_iBandNumber &&
-		0 < l_lWidth && 0 < l_lHeight )
+	
+	if (S_OK == hrOk)
 	{
-		SVMatroxBufferInterface::SVStatusCode l_Code;
-		SVMatroxBufferCreateStruct l_Create;
-
-		l_Create.m_lSizeBand = l_iBandNumber;
-		l_Create.m_lSizeX = l_lWidth;
-		l_Create.m_lSizeY = l_lHeight;
-		l_Create.SetImageDepth( l_iPixelDepth );
-
 		switch( l_eFormat )
 		{
 		case SVImageFormatRGB565:
 			{
-				l_Create.m_eAttribute = SVBuffAttImageProcPackedOffBoardDibPagedRgb16;
+				format = SVBuffAttImageProcPackedOffBoardDibPagedRgb16;
 				break;
 			}
 		case SVImageFormatRGB888:
 			{
-				l_Create.m_eAttribute = SVBuffAttImageProcPackedOffBoardDibPagedBgr24;
+				format = SVBuffAttImageProcPackedOffBoardDibPagedBgr24;
 				break;
 			}
 		case SVImageFormatRGB8888:
 			{
-				l_Create.m_eAttribute = SVBufAttImageProcPackedOffBoardDibPagedBgr32;
+				format = SVBufAttImageProcPackedOffBoardDibPagedBgr32;
 				break;
 			}
 		default:
 			{
-				l_Create.m_eAttribute = SVBufAttImageProcDib;
+				format = SVBufAttImageProcDib;
 			}
 		}
 
-		SVMatroxBuffer l_NewBuffer;
-
-		// Allocate a workable multi or single band image buffer
-		l_Code = SVMatroxBufferInterface::Create( l_NewBuffer, l_Create );
-
-		rHandle = new SVImageBufferHandleStruct( l_NewBuffer );
-
-		hrOk = l_Code == SVMEE_STATUS_OK ? S_OK : l_Code | SVMEE_MATROX_ERROR;
-		if ( hrOk == S_OK )
-		{
-			InitBuffer( rHandle );
-		}
-		else
-		{
-			rHandle.clear();
-		}
+		hrOk = CreateImageBuffer(l_iPixelDepth, l_iBandNumber, l_lWidth, l_lHeight, format, rHandle);
 	}
-	else
+
+	if ( S_OK != hrOk && !bDisplayedErrorMessage )
 	{
-		hrOk = S_FALSE;
+		ASSERT(FALSE);
+		AfxMessageBox( "Failed to create an image buffer!", MB_ICONEXCLAMATION );
 	}
 
-	if ( hrOk != S_OK && !bDisplayedErrorMessage )
+	return hrOk;
+}
+
+HRESULT SVMatroxImageProcessingClass::CreateImageMilBuffer( const SVImageInfoClass& rInfo, SVSmartHandlePointer& rHandle )
+{
+	HRESULT hrOk = S_OK;
+
+	bool bDisplayedErrorMessage = false;
+
+	SVImageFormatEnum format;
+	int bandNumber = 0;
+	int bandLink = 0;
+	int pixelDepth = 0;
+	long width = 0;
+	long height = 0;
+
+	rHandle.clear();
+
+	hrOk = GetOutputImageCreateData( rInfo, format, pixelDepth, bandNumber, bandLink, width, height );
+
+	if (S_OK == hrOk)
+	{
+		hrOk = CreateImageBuffer(pixelDepth, bandNumber, width, height, SVBufAttImageProc, rHandle);
+	}
+
+	if ( S_OK != hrOk && !bDisplayedErrorMessage )
 	{
 		ASSERT(FALSE);
 		AfxMessageBox( "Failed to create an image buffer!", MB_ICONEXCLAMATION );
@@ -1241,6 +1244,44 @@ HRESULT SVMatroxImageProcessingClass::GetChildImageCreateData( const SVImageInfo
 	}
 
 	return l_hrOk;
+}
+
+HRESULT SVMatroxImageProcessingClass::CreateImageBuffer( int pixelDepth, int bandNumber, long width, long height, SVMatroxBufferAttributeEnum format, SVSmartHandlePointer &rHandle )
+{
+	HRESULT hrOk = S_OK;
+	if( 0 < pixelDepth && 0 < bandNumber &&
+		0 < width && 0 < height )
+	{
+		SVMatroxBufferInterface::SVStatusCode code;
+		SVMatroxBufferCreateStruct createStruct;
+
+		createStruct.m_lSizeBand = bandNumber;
+		createStruct.m_lSizeX = width;
+		createStruct.m_lSizeY = height;
+		createStruct.SetImageDepth( pixelDepth );
+		createStruct.m_eAttribute = format;
+
+		SVMatroxBuffer newBuffer;
+		// Allocate a workable multi or single band image buffer
+		code = SVMatroxBufferInterface::Create( newBuffer, createStruct );
+
+		rHandle = new SVImageBufferHandleStruct( newBuffer );
+
+		hrOk = code == SVMEE_STATUS_OK ? S_OK : code | SVMEE_MATROX_ERROR;
+		if ( S_OK == hrOk )
+		{
+			InitBuffer( rHandle );
+		}
+		else
+		{
+			rHandle.clear();
+		}
+	}
+	else
+	{
+		hrOk = S_FALSE;
+	}	
+	return hrOk;
 }
 
 //******************************************************************************
