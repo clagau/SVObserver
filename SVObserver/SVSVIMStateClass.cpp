@@ -41,7 +41,7 @@ bool SVSVIMStateClass::AddState( DWORD dwState )
 	if( dwState & SV_STATE_MODIFIED )
 	{
 		SVVisionProcessorHelper::Instance().SetLastModifiedTime();
-		AutoSaver::Instance().SetAutosaveRequired(true);
+		AutoSaver::Instance().SetAutoSaveRequired(true);
 	}
 
 	setEnvironmentParameters();

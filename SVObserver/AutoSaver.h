@@ -4,16 +4,9 @@
 /// \Author	Arvid Breitenbach
 //*****************************************************************************
 /// Contains the class AutoSaver which contains all functionality to 
-/// control periodic backups of the current configuration
-/// A DESCRIPTION
+/// control automatic backups of the current configuration
 //******************************************************************************
 #pragma once
-
-#pragma region Includes
-#pragma endregion Includes
-
-#pragma region Declarations
-#pragma endregion Declarations
 
 class AutoSaver
 {
@@ -41,30 +34,25 @@ public:
 	//************************************
 	/// toggles the enable status
 	//************************************
-	void ToggleEnable(){m_AutosaveEnabled=!m_AutosaveEnabled;}
-	bool IsEnabled(){return m_AutosaveEnabled;}
+	void ToggleEnable(){m_AutoSaveEnabled=!m_AutoSaveEnabled;}
+	bool IsEnabled(){return m_AutoSaveEnabled;}
 
 	//************************************
 	/// performs an automatic configuration backup if enabled and required (when always is false, 
-	/// only if IsAutosaveTimestampOlderThanDeltaTime() returns true)
+	/// only if IsAutoSaveTimestampOlderThanDeltaTime() returns true)
 	/// \param always [in] forces an autosave regardless of last autosave timestamp)
 	//************************************
-	void ExecuteAutosaveIfAppropriate(bool always);
+	void ExecuteAutoSaveIfAppropriate(bool always);
 
 	//************************************
 	/// updates the autosave timestamp and resets the "autosave required" flag
 	//************************************
-	void ResetAutosaveInformation();
+	void ResetAutoSaveInformation();
 
-	bool IsAutosaveRequired(){return m_AutosaveRequired;}
-	void SetAutosaveRequired(bool required){m_AutosaveRequired=required;}
+	bool IsAutoSaveRequired(){return m_AutoSaveRequired;}
+	void SetAutoSaveRequired(bool required){m_AutoSaveRequired=required;}
 
 #pragma endregion Public Methods
-
-#pragma region Protected Methods
-protected:
-
-#pragma endregion Protected Methods
 
 #pragma region Private Methods
 private:
@@ -72,7 +60,7 @@ private:
 	/// Determines whether the last autosave happened at least 10 minutes ago
 	/// \returns bool is the autosave timestamp old enough to warrant an autosave?
 	//************************************
-	bool IsAutosaveTimestampOlderThanDeltaTime();
+	bool IsAutoSaveTimestampOlderThanDeltaTime();
 
 #pragma endregion Private Methods
 
@@ -80,12 +68,12 @@ private:
 
 private:
 	static const int ms_defaultDeltaTimeInMinutes=10;///< the minimum (for most purposes) autosave interval in seconds, m_AutoSaveDeltaTime_s is derived from it
-	static const int ms_secondsPerMinute=60; ///< the number of seconds per minute //@TODO[Arvid] this should not be member of this class
+	static const int ms_secondsPerMinute=60; ///< the number of seconds per minute //@TODO ideally, this should not be member of this class (the number of seconds in a minute has nothing to do with the autosave functionality) but of some module with globals constants
 
 	double m_AutoSaveDeltaTime_s; ///< the minimum (for most purposes) autosave interval in seconds
-	time_t  m_lastAutosaveTimestamp; ///< when was the latest automatic configuration backup done?
-	bool m_AutosaveEnabled; ///< is automatic saving of configurations enabled?
-	bool m_AutosaveRequired ; ///< should an autosave be performed at the next appropriate time?
+	time_t  m_lastAutoSaveTimestamp; ///< when was the latest automatic configuration backup done?
+	bool m_AutoSaveEnabled; ///< is automatic saving of configurations enabled?
+	bool m_AutoSaveRequired ; ///< should an autosave be performed at the next appropriate time?
 
 #pragma endregion Member Variables
 };

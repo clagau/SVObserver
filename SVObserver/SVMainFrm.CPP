@@ -82,8 +82,8 @@ BEGIN_MESSAGE_MAP(SVMainFrame, CMDIFrameWnd)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_IMAGE_DISPLAY_UPDATE, OnUpdateViewImageDisplayUpdate)
 	ON_COMMAND(ID_VIEW_RESULT_DISPLAY_UPDATE, OnViewResultDisplayUpdate)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_RESULT_DISPLAY_UPDATE, OnUpdateViewResultDisplayUpdate)
-	ON_COMMAND(ID_EXTRAS_ENABLEAUTOSAVE, OnExtrasEnableAutosave)
-	ON_UPDATE_COMMAND_UI(ID_EXTRAS_ENABLEAUTOSAVE, OnUpdateExtrasEnableAutosave)
+	ON_COMMAND(ID_EXTRAS_ENABLEAUTOSAVE, OnExtrasEnableAutoSave)
+	ON_UPDATE_COMMAND_UI(ID_EXTRAS_ENABLEAUTOSAVE, OnUpdateExtrasEnableAutoSave)
 	ON_WM_SIZE()
 	ON_WM_SIZING()
 	//}}AFX_MSG_MAP
@@ -2002,7 +2002,7 @@ void SVMainFrame::OnUpdateViewResultDisplayUpdate( CCmdUI* pCmdUI )
 	pCmdUI->SetCheck( ResultOnline );
 }
 
-void SVMainFrame::OnExtrasEnableAutosave()
+void SVMainFrame::OnExtrasEnableAutoSave()
 {
 	if( TheSVObserverApp.m_svSecurityMgr.SVValidate(
 		SECURITY_POINT_EXTRAS_MENU_AUTOSAVE_CONFIGURATION) != S_OK )
@@ -2013,7 +2013,7 @@ void SVMainFrame::OnExtrasEnableAutosave()
 	AutoSaver::Instance().ToggleEnable();
 }
 
-void SVMainFrame::OnUpdateExtrasEnableAutosave(CCmdUI *pCmdUI)
+void SVMainFrame::OnUpdateExtrasEnableAutoSave(CCmdUI *pCmdUI)
 {
 	BOOL bEnable = TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable( SECURITY_POINT_EXTRAS_MENU_AUTOSAVE_CONFIGURATION );
 

@@ -67,13 +67,13 @@ private:
 	/// called by the MFC framework when automatic 
 	/// configuration backups are enabled by the user
 	//************************************
-	afx_msg void OnExtrasEnableAutosave();
+	afx_msg void OnExtrasEnableAutoSave();
 
 	//************************************
 	/// called by the MFC framework
 	/// \param pCmdUI [in]
 	//************************************
-	afx_msg void OnUpdateExtrasEnableAutosave(CCmdUI *pCmdUI);
+	afx_msg void OnUpdateExtrasEnableAutoSave(CCmdUI *pCmdUI);
 public:
 	afx_msg void OnUpdateStatusInfo(CCmdUI *pCmdUI);
 	afx_msg void OnViewPPQBar();

@@ -1,11 +1,10 @@
 //*****************************************************************************
-/// \copyright COPYRIGHT (c) 2015,2015 by Seidenader Maschinenbau GmbH
+/// \copyright COPYRIGHT (c) 2015, 2015 by Seidenader Maschinenbau GmbH
 /// All Rights Reserved 
 /// \Author	Arvid: Breitenbach
 //*****************************************************************************
-/// PLEASE 
-/// ENTER 
-/// A DESCRIPTION
+/// Contains the class AutoSaver which contains all functionality to 
+/// control automatic backups of the current configuration
 //*****************************************************************************
 
 #pragma region Includes
@@ -30,10 +29,10 @@ static char THIS_FILE[] = __FILE__;
 
 #pragma region Constructor
 
-AutoSaver::AutoSaver():m_lastAutosaveTimestamp(0),m_AutosaveEnabled(true),m_AutosaveRequired(false),
+AutoSaver::AutoSaver():m_lastAutoSaveTimestamp(0), m_AutoSaveEnabled(true), m_AutoSaveRequired(false), 
 	m_AutoSaveDeltaTime_s(ms_defaultDeltaTimeInMinutes*ms_secondsPerMinute)
 {
-	ResetAutosaveInformation();
+	ResetAutoSaveInformation();
 }
 
 #pragma endregion Constructor
@@ -46,14 +45,14 @@ AutoSaver& AutoSaver::Instance()
 	return s_theAutoSaver;
 }
 
-void AutoSaver::ExecuteAutosaveIfAppropriate(bool always)
+void AutoSaver::ExecuteAutoSaveIfAppropriate(bool always)
 {
-	if(!(IsEnabled()&&IsAutosaveRequired()))
+	if(!(IsEnabled() && IsAutoSaveRequired()))
 	{
 		return; //Arvid: not enabled by user (or configuration not modified):do nothing
 	}
 
-	if(!IsAutosaveTimestampOlderThanDeltaTime()) 
+	if(!IsAutoSaveTimestampOlderThanDeltaTime()) 
 	{
 		if(!always)
 		{
@@ -61,10 +60,10 @@ void AutoSaver::ExecuteAutosaveIfAppropriate(bool always)
 		}
 	}	//Arvid: this means the last autosave was less than m_AutoSaveDeltaTime_s seconds ago and the autosave is not automatic: nothing to do!
 
-	CWnd *pMainFrame=TheSVObserverApp.GetMainFrame(); 
+	CWnd *pMainFrame = TheSVObserverApp.GetMainFrame(); 
 
 	CDialog autosavePopupDialog; 
-	autosavePopupDialog.Create(IDD_AUTOSAVE_IN_PROGRESS,pMainFrame);
+	autosavePopupDialog.Create(IDD_AUTOSAVE_IN_PROGRESS, pMainFrame);
 
 	autosavePopupDialog.CenterWindow(pMainFrame);
 
@@ -74,49 +73,47 @@ void AutoSaver::ExecuteAutosaveIfAppropriate(bool always)
 	//Arvid: ensure that the autosave directory exists.
 	//Arvid: svObserverDirectoryPath should better not be hardcoded - but I could find no instance from which it could be obtained
 
-	CString svObserverDirectoryPath="D:\\SVObserver";
-	CString autosaveDirectoryPath="D:\\SVObserver\\Autosave";
+	CString svObserverDirectoryPath = "D:\\SVObserver";
+	CString autosaveDirectoryPath = "D:\\SVObserver\\Autosave";
 
-	//Arvid: create the Autosave directory step by step
-	CreateDirectory(svObserverDirectoryPath,NULL); //Arvid: this will fail if the directory already exists, but so what?
-	CreateDirectory(autosaveDirectoryPath,NULL); //Arvid: this will fail if the directory already exists, but so what?
-	moveContainedDirectory(autosaveDirectoryPath,"Temp2","Temp3");
-	moveContainedDirectory(autosaveDirectoryPath,"Temp1MostRecent","Temp2");
+	//Arvid: create the AutoSave directory step by step
+	CreateDirectory(svObserverDirectoryPath, NULL); //Arvid: this will fail if the directory already exists, but so what?
+	CreateDirectory(autosaveDirectoryPath, NULL); //Arvid: this will fail if the directory already exists, but so what?
+	moveContainedDirectory(autosaveDirectoryPath, "Temp2", "Temp3");
+	moveContainedDirectory(autosaveDirectoryPath, "Temp1MostRecent", "Temp2");
 
-	CreateDirectory(autosaveDirectoryPath+"\\Temp",NULL);
+	CreateDirectory(autosaveDirectoryPath+"\\Temp", NULL);
 
 	//Arvid: save the current configuration
-	TheSVObserverApp.fileSaveAsSVX(autosaveDirectoryPath+"\\Temp\\Autosave.svx",false);
+	CString path=autosaveDirectoryPath + "\\Temp\\Autosave.svx";
+	bool isRegular = false;
+	TheSVObserverApp.fileSaveAsSVX(path, isRegular);
 
-	moveContainedDirectory(autosaveDirectoryPath,"Temp","Temp1MostRecent");
+	moveContainedDirectory(autosaveDirectoryPath, "Temp", "Temp1MostRecent");
 
 	autosavePopupDialog.DestroyWindow();
 }
 
-void AutoSaver::ResetAutosaveInformation()
+void AutoSaver::ResetAutoSaveInformation()
 {
-	time(&m_lastAutosaveTimestamp);
-	SetAutosaveRequired(false);
+	time(&m_lastAutoSaveTimestamp);
+	SetAutoSaveRequired(false);
 }
 
 
 #pragma endregion Public Methods
 
-#pragma region Protected Methods
-
-#pragma endregion Protected Methods
-
 #pragma region Private Methods
 
-bool AutoSaver::IsAutosaveTimestampOlderThanDeltaTime()
+bool AutoSaver::IsAutoSaveTimestampOlderThanDeltaTime()
 {
 	time_t now;
 
 	time(&now);
 
-	double secondSinceLastAutosave=difftime(now, m_lastAutosaveTimestamp);
+	double secondSinceLastAutoSave = difftime(now, m_lastAutoSaveTimestamp);
 
-	bool isOlder = secondSinceLastAutosave > m_AutoSaveDeltaTime_s;
+	bool isOlder = secondSinceLastAutoSave > m_AutoSaveDeltaTime_s;
 
 	return isOlder;
 }
