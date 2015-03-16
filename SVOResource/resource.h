@@ -2578,6 +2578,12 @@ const int HELPFILE_SVORESOURCE_OFFSET = 0x20000;
 #define IDC_SHOW_HIDE_DETAILS           16070
 #define IDC_MESSAGE_DETAILS             16071
 #define IDC_DETAILS_BORDER              16072
+#define IDC_XAXISLABEL                  16073
+#define IDC_YAXISLABEL                  16074
+#define IDC_XAXISLABEL0                 16075
+#define IDC_XAXISLABEL255               16076
+#define IDC_YAXISLABEL0                 16077
+#define IDC_YAXISLABEL255               16078
 #define ID_TEST                         20000
 #define ID_BROWSE_BUTTON                20001
 #define ID_PLUSBUTTON                   20002
@@ -2824,7 +2830,7 @@ const int HELPFILE_SVORESOURCE_OFFSET = 0x20000;
 #define _APS_3D_CONTROLS                     1
 #define _APS_NEXT_RESOURCE_VALUE        11119
 #define _APS_NEXT_COMMAND_VALUE         20347
-#define _APS_NEXT_CONTROL_VALUE         16073
+#define _APS_NEXT_CONTROL_VALUE         16079
 #define _APS_NEXT_SYMED_VALUE           3002
 #endif
 #endif

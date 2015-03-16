@@ -17,7 +17,10 @@
     <ClCompile Include="StdAfx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-   </ItemGroup>
+    <ClCompile Include="CLabel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
   <ItemGroup>
     <ClInclude Include="StdAfx.h">
       <Filter>Header Files</Filter>
@@ -25,5 +28,8 @@
     <ClInclude Include="SVToolBar.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-   </ItemGroup>
+    <ClInclude Include="CLabel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
 </Project>

@@ -179,6 +179,7 @@ void SVToolAdjustmentDialogLUTPageClass::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_LOWER_SLIDER, m_lowerSlider);
 	DDX_Control(pDX, IDC_LUT_GRAPH, m_LUTGraph);
 	DDX_Control(pDX, IDC_LUT_MODE_COMBO, m_LUTModeCombo);
+	DDX_Control(pDX, IDC_YAXISLABEL, m_yAxisLabel);
 	DDX_Text(pDX, IDC_UPPER_EDIT, m_strUpperClipValue);
 	DDX_Text(pDX, IDC_LOWER_EDIT, m_strLowerClipValue);
 	DDX_Check(pDX, IDC_ACTIVATE_CHECK, m_bUseLUT);
@@ -187,13 +188,16 @@ void SVToolAdjustmentDialogLUTPageClass::DoDataExchange(CDataExchange* pDX)
 	//}}AFX_DATA_MAP
 }
 
-BOOL SVToolAdjustmentDialogLUTPageClass::OnInitDialog() 
+BOOL SVToolAdjustmentDialogLUTPageClass::OnInitDialog()
 {
 	CPropertyPage::OnInitDialog();
 
 	if( m_pParentDialog && ( m_pTool = m_pParentDialog->GetTool() ) )
 	{
 		SetTaskObject( m_pTool );
+
+		// Rotate the text for the vertical axis.
+		m_yAxisLabel.SetRotationAngle( 90, true );
 
 		// Set Normalize Mode of Graph Control...
 		m_LUTGraph.SetNormalizeMode( SVNormalize2D );
@@ -278,9 +282,8 @@ BOOL SVToolAdjustmentDialogLUTPageClass::OnInitDialog()
 			}
 		}
 
-
 		// Check...
-		if( m_pLUTOperator &&	
+		if( m_pLUTOperator && 
 			m_pUseLUT && 
 			m_pLUTEquation && 
 			m_pLUTMode && 
@@ -288,8 +291,7 @@ BOOL SVToolAdjustmentDialogLUTPageClass::OnInitDialog()
 			m_pLUTVector &&
 			m_pLUTUpperClip &&
 			m_pLUTLowerClip &&
-			m_pIsLUTFormulaClipped
-		  )
+			m_pIsLUTFormulaClipped )
 		{
 			refresh( false );
 
@@ -312,21 +314,20 @@ BOOL SVToolAdjustmentDialogLUTPageClass::OnInitDialog()
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 	              // EXCEPTION: OCX-Eigenschaftenseiten sollten FALSE zurückgeben
-
 }
 #pragma endregion virtual
 
-void SVToolAdjustmentDialogLUTPageClass::OnActivateCheck() 
+void SVToolAdjustmentDialogLUTPageClass::OnActivateCheck()
 {
 	refresh();
 }
 
-void SVToolAdjustmentDialogLUTPageClass::OnSelChangeLutModeCombo() 
+void SVToolAdjustmentDialogLUTPageClass::OnSelChangeLutModeCombo()
 {
 	refresh();
 }
 
-void SVToolAdjustmentDialogLUTPageClass::OnLUTFormulaButton() 
+void SVToolAdjustmentDialogLUTPageClass::OnLUTFormulaButton()
 {
 	if( m_pLUTEquation )
 	{
@@ -347,12 +348,12 @@ void SVToolAdjustmentDialogLUTPageClass::OnLUTFormulaButton()
 	}
 }
 
-void SVToolAdjustmentDialogLUTPageClass::OnContinuousRecalcCheck() 
+void SVToolAdjustmentDialogLUTPageClass::OnContinuousRecalcCheck()
 {
 	refresh();
 }
 
-void SVToolAdjustmentDialogLUTPageClass::OnClipModeCheck() 
+void SVToolAdjustmentDialogLUTPageClass::OnClipModeCheck()
 {
 	refresh();
 }
@@ -364,7 +365,7 @@ LRESULT SVToolAdjustmentDialogLUTPageClass::OnGraphRefresh( WPARAM mp1, LPARAM m
 	return 0;
 }
 
-void SVToolAdjustmentDialogLUTPageClass::OnLButtonDown(UINT nFlags, CPoint point) 
+void SVToolAdjustmentDialogLUTPageClass::OnLButtonDown(UINT nFlags, CPoint point)
 {
 	CWnd* pWnd = ChildWindowFromPoint( point );
 	if( pWnd == &m_LUTGraph )
@@ -377,7 +378,7 @@ void SVToolAdjustmentDialogLUTPageClass::OnLButtonDown(UINT nFlags, CPoint point
 		CPropertyPage::OnLButtonDown(nFlags, point);
 }
 
-void SVToolAdjustmentDialogLUTPageClass::OnLButtonUp(UINT nFlags, CPoint point) 
+void SVToolAdjustmentDialogLUTPageClass::OnLButtonUp(UINT nFlags, CPoint point)
 {
 	CWnd* pWnd = ChildWindowFromPoint( point );
 	if( pWnd == &m_LUTGraph )
@@ -390,7 +391,7 @@ void SVToolAdjustmentDialogLUTPageClass::OnLButtonUp(UINT nFlags, CPoint point)
 		CPropertyPage::OnLButtonUp(nFlags, point);
 }
 
-void SVToolAdjustmentDialogLUTPageClass::OnMouseMove(UINT nFlags, CPoint point) 
+void SVToolAdjustmentDialogLUTPageClass::OnMouseMove(UINT nFlags, CPoint point)
 {
 	CWnd* pWnd = ChildWindowFromPoint( point );
 	if( pWnd == &m_LUTGraph )
@@ -403,7 +404,7 @@ void SVToolAdjustmentDialogLUTPageClass::OnMouseMove(UINT nFlags, CPoint point)
 		CPropertyPage::OnMouseMove(nFlags, point);
 }
 
-void SVToolAdjustmentDialogLUTPageClass::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar) 
+void SVToolAdjustmentDialogLUTPageClass::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 {
 	UpdateData( TRUE ); // Get data from dialog...
 
@@ -421,11 +422,11 @@ void SVToolAdjustmentDialogLUTPageClass::OnVScroll(UINT nSBCode, UINT nPos, CScr
 
 		return;
 	}
-	
+
 	CPropertyPage::OnVScroll(nSBCode, nPos, pScrollBar);
 }
 
-void SVToolAdjustmentDialogLUTPageClass::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar) 
+void SVToolAdjustmentDialogLUTPageClass::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 {
 	UpdateData( TRUE ); // Get data from dialog...
 
@@ -476,8 +477,7 @@ void SVToolAdjustmentDialogLUTPageClass::refresh( bool p_bSave /*= true*/ )
 	CWnd* pWnd = NULL;
 	if( nullptr != m_pTool )
 	{
-		if( p_bSave )
-			SetInspectionData();
+		if( p_bSave ) { SetInspectionData(); }
 
 		refreshLUTGraph();
 		refreshClip();
@@ -537,7 +537,7 @@ void SVToolAdjustmentDialogLUTPageClass::refresh( bool p_bSave /*= true*/ )
 					m_LUTGraph.SetMousePointProcFunc( SVLutGraphMousePointFunction, this );
 					hideAllUncommonControls();
 					break;
-					
+
 				default: // Unknown Mode...
 					// Deactivate Mouse Proc Func of SVDlgGraph Control...
 					m_LUTGraph.SetMousePointProcFunc( NULL, NULL );
@@ -640,7 +640,7 @@ void SVToolAdjustmentDialogLUTPageClass::showFormulaControls()
 	if( pWnd = GetDlgItem( IDC_LOWER_STATIC ) )
 		pWnd->ShowWindow( SW_HIDE );
 }
-	
+
 void SVToolAdjustmentDialogLUTPageClass::showClipControls()
 {
 	CWnd* pWnd = nullptr;
@@ -663,7 +663,7 @@ void SVToolAdjustmentDialogLUTPageClass::showClipControls()
 	if( pWnd = GetDlgItem( IDC_CLIP_MODE_CHECK ) )
 		pWnd->ShowWindow( SW_HIDE );
 }
-	
+
 void SVToolAdjustmentDialogLUTPageClass::hideAllUncommonControls()
 {
 	CWnd* pWnd = nullptr;
@@ -714,6 +714,7 @@ void SVToolAdjustmentDialogLUTPageClass::enableAllControls(BOOL isEnable)
 		pWnd->EnableWindow( isEnable );
 }
 #pragma endregion Protected Methods
+
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************

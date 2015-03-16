@@ -15,7 +15,7 @@
 #undef APSTUDIO_READONLY_SYMBOLS
 
 /////////////////////////////////////////////////////////////////////////////
-// Deutsch (Deutschland) resources
+// German (Germany) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_DEU)
 LANGUAGE LANG_GERMAN, SUBLANG_GERMAN
@@ -68,12 +68,12 @@ END
 //
 
 IDB_START               BITMAP                  "Res\\Start.bmp"
-#endif    // Deutsch (Deutschland) resources
+#endif    // German (Germany) resources
 /////////////////////////////////////////////////////////////////////////////
 
 
 /////////////////////////////////////////////////////////////////////////////
-// Englisch (USA) resources
+// English (United States) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
 LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
@@ -456,8 +456,8 @@ BEGIN
     GROUPBOX        "Parameters",IDC_STATIC,108,206,209,42
     EDITTEXT        IDC_EDIT_MAX_BLOB_DATA_ARRAY_SIZE,262,231,50,14,ES_AUTOHSCROLL
     LTEXT           "Maximum blob data array size",IDC_STATIC,166,234,93,8
-	 PUSHBUTTON      "Set Feature &Properties",IDC_BUTTON_SET_FEATURE_PROPERTIES,257,100,55,24,BS_MULTILINE,WS_EX_CLIENTEDGE | WS_EX_STATICEDGE
-	 COMBOBOX        IDC_BLOB_COLOR,47,201,48,43,CBS_DROPDOWNLIST | CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      "Set Feature &Properties",IDC_BUTTON_SET_FEATURE_PROPERTIES,257,100,55,24,BS_MULTILINE,WS_EX_CLIENTEDGE | WS_EX_STATICEDGE
+    COMBOBOX        IDC_BLOB_COLOR,47,201,48,43,CBS_DROPDOWNLIST | CBS_SORT | WS_VSCROLL | WS_TABSTOP
     LTEXT           "Blob Color",IDC_STATIC,7,204,33,8
 END
 
@@ -1533,7 +1533,7 @@ BEGIN
     EDITTEXT        IDC_WXH_EDIT,131,47,32,12,ES_AUTOHSCROLL | ES_READONLY
 END
 
-IDD_TA_LUT_DIALOG DIALOGEX 0, 0, 453, 186
+IDD_TA_LUT_DIALOG DIALOGEX 0, 0, 453, 207
 STYLE DS_SETFONT | WS_CHILD | WS_DISABLED | WS_CAPTION
 CAPTION "LUT"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
@@ -1552,6 +1552,12 @@ BEGIN
     CONTROL         "Continuously Recalculate",IDC_CONTINUOUS_RECALC_CHECK,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,120,31,96,10
     CONTROL         "Clip",IDC_CLIP_MODE_CHECK,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,120,44,27,10
+    LTEXT           "Output Grayscale Level",IDC_YAXISLABEL,214,53,12,149
+    LTEXT           "Input Grayscale Level",IDC_XAXISLABEL,301,183,70,8
+    LTEXT           "0",IDC_XAXISLABEL0,225,183,8,8
+    LTEXT           "255",IDC_XAXISLABEL255,433,183,13,8
+    LTEXT           "0",IDC_YAXISLABEL0,218,171,8,8
+    LTEXT           "255",IDC_YAXISLABEL255,212,7,13,8
 END
 
 IDD_PAT_SETUP_MODEL DIALOGEX 0, 0, 290, 232
@@ -3560,7 +3566,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 446
         TOPMARGIN, 7
-        BOTTOMMARGIN, 179
+        BOTTOMMARGIN, 200
     END
 
     IDD_PAT_SETUP_MODEL, DIALOG
@@ -3719,8 +3725,8 @@ BEGIN
         TOPMARGIN, 7
         BOTTOMMARGIN, 192
     END
-	     
-	 IDD_CUSTOM2_FILTER, DIALOG
+
+    IDD_CUSTOM2_FILTER, DIALOG
     BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 473
@@ -4104,7 +4110,7 @@ BEGIN
         TOPMARGIN, 7
         BOTTOMMARGIN, 234
     END
- 
+
     IDD_RANGE_X_DIALOG, DIALOG
     BEGIN
         LEFTMARGIN, 7
@@ -4731,7 +4737,6 @@ BEGIN
         MENUITEM "Uncheck all values",          ID_TREE_UNCHECKALL
     END
 END
-
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -7064,8 +7069,6 @@ END
 
 #endif    // Englisch (USA) resources
 /////////////////////////////////////////////////////////////////////////////
-
-
 
 #ifndef APSTUDIO_INVOKED
 /////////////////////////////////////////////////////////////////////////////
