@@ -9,27 +9,35 @@
 // * .Check In Date   : $Date:   09 Dec 2014 09:47:26  $
 // ******************************************************************************
 
-#ifndef SV_LINEAR_TOOL_CLASS_H
-#define SV_LINEAR_TOOL_CLASS_H
+#pragma once
 
+#pragma region Includes
 #include "SVTool.h"
 #include "SVImageClass.h"
+#pragma endregion Includes
 
+#pragma region Declarations
 const LPCSTR g_strOrientationEnums = _T( "Horizontal=0,Vertical=90" );
+#pragma endregion Declarations
 
 class SVLinearToolClass : public SVToolClass
+, public AllowResizeToParent
 {
 	SV_DECLARE_CLASS( SVLinearToolClass );
 
 public:
+#pragma region Constructor
 	SVLinearToolClass( BOOL BCreateDefaultTaskList = FALSE, SVObjectClass* POwner = NULL, int StringResourceID = IDS_CLASSNAME_SVLINEARTOOL );
 	virtual ~SVLinearToolClass();
+#pragma endregion Constructor
 
+#pragma region Public Methods
 	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure );
 	virtual BOOL CloseObject();
 
 	virtual HRESULT ResetObject();
 
+	virtual HRESULT SetImageExtentToParent( unsigned long p_ulIndex );
 	virtual SVTaskObjectClass *GetObjectAtPoint( const SVExtentPointStruct &p_rsvPoint );
 	virtual HRESULT DoesObjectHaveExtents() const;
 
@@ -39,26 +47,28 @@ public:
 	BOOL IsToolRotated();
 
 	virtual HRESULT GetInputImageNames( SVStringValueObjectClass*& p_pSourceNames );
+#pragma endregion Public Methods
 
 	//Embedded Object : Profile Orientation
-	SVEnumerateValueObjectClass m_voProfileOrientation;
-	SVBoolValueObjectClass m_voUseProfileRotation;
-	SVStringValueObjectClass m_svSourceImageNames;
+	SVEnumerateValueObjectClass m_voProfileOrientation; // @WARNING:  bad practice making members public
+	SVBoolValueObjectClass m_voUseProfileRotation; // @WARNING:  bad practice making members public
+	SVStringValueObjectClass m_svSourceImageNames; // @WARNING:  bad practice making members public
 
 protected:
+#pragma region Protected Methods
 	virtual BOOL onRun( SVRunStatusClass& RRunStatus );
 	virtual DWORD_PTR processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext );
+#pragma endregion Protected Methods
 
 	SVDoubleValueObjectClass m_svRotationAngle;
 	SVDoubleValueObjectClass m_svRotationPointX;
 	SVDoubleValueObjectClass m_svRotationPointY;
 
 private:
+#pragma region Private Methods
 	virtual void init();
-
+#pragma endregion Private Methods
 };
-
-#endif
 
 // ******************************************************************************
 // * LOG HISTORY:

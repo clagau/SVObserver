@@ -9,15 +9,26 @@
 //* .Check In Date   : $Date:   23 Apr 2013 15:03:10  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVShiftTool.h"
 
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "SVMatroxLibrary/SVMatroxLibrary.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
+#pragma endregion Includes
+
+#pragma region Declarations
+#ifdef _DEBUG
+#define new DEBUG_NEW
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
+#endif
 
 SV_IMPLEMENT_CLASS( SVShiftTool, SVShiftToolClassGuid );
+#pragma endregion Declarations
 
+#pragma region Constructor
 SVShiftTool::SVShiftTool( BOOL BCreateDefaultTaskList, SVObjectClass* POwner, int StringResourceID )
 : SVToolClass( BCreateDefaultTaskList, POwner, StringResourceID )
 {
@@ -28,7 +39,9 @@ SVShiftTool::~SVShiftTool()
 {
 	LocalDestroy();
 }
+#pragma endregion Constructor
 
+#pragma region Public Methods
 BOOL SVShiftTool::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
 {
 	BOOL l_Status = SVToolClass::CreateObject( PCreateStructure );
@@ -75,6 +88,20 @@ HRESULT SVShiftTool::ResetObject()
 	HRESULT l_Status = SVToolClass::ResetObject();
 
 	return l_Status;
+}
+
+HRESULT SVShiftTool::SetImageExtentToParent( unsigned long p_ulIndex )
+{
+	HRESULT l_hrOk = S_OK;
+	SVImageExtentClass l_NewExtent;
+
+	l_hrOk = m_svToolExtent.UpdateExtentToParentExtents( p_ulIndex, l_NewExtent );
+
+	if( l_hrOk == S_OK )
+	{
+		l_hrOk = SVToolClass::SetImageExtent( p_ulIndex, l_NewExtent );
+	}
+	return l_hrOk;
 }
 
 HRESULT SVShiftTool::CollectInputImageNames( SVRunStatusClass& RRunStatus )
@@ -133,7 +160,9 @@ HRESULT SVShiftTool::DoesObjectHaveExtents() const
 {
 	return S_OK;
 }
+#pragma endregion Public Methods
 
+#pragma region Protected Methods
 BOOL SVShiftTool::onRun( SVRunStatusClass& p_rRunStatus )
 {
 	BOOL l_Status = SVToolClass::onRun( p_rRunStatus );
@@ -146,10 +175,8 @@ BOOL SVShiftTool::onRun( SVRunStatusClass& p_rRunStatus )
 
 	if ( l_Status )
 	{
-
 		if (!p_rRunStatus.IsDisabled() && !p_rRunStatus.IsDisabledByCondition())
 		{
-
 			SVSmartHandlePointer OutImageHandle;
 			SVImageBufferHandleImage l_OutMilHandle;
 
@@ -173,22 +200,13 @@ BOOL SVShiftTool::onRun( SVRunStatusClass& p_rRunStatus )
 			if( l_Status )
 			{
 				BOOL l_PerformTranslation = false;
-				
-
 				long l_LearnedTranslationX = 0;
 				long l_LearnedTranslationY = 0;
-
 				double l_InputTranslationX = 0.0;
 				double l_InputTranslationY = 0.0;
 
-				
-
-				
-
 				if ( (l_Status ) && ( (l_Mode == SV_SHIFT_ENUM::SV_SHIFT_REFERENCE) || (l_Mode == SV_SHIFT_ENUM::SV_SHIFT_ABSOLUTE) ) )
 				{
-				//if( l_Status && l_PerformTranslation )
-				//{
 					SVDoubleValueObjectClass* l_pTranslationXInput = GetTranslationXInput();
 					SVDoubleValueObjectClass* l_pTranslationYInput = GetTranslationYInput();
 
@@ -200,13 +218,7 @@ BOOL SVShiftTool::onRun( SVRunStatusClass& p_rRunStatus )
 				}
 
 				if ( (l_Status ) && ( (l_Mode == SV_SHIFT_ENUM::SV_SHIFT_REFERENCE) || (l_Mode == SV_SHIFT_ENUM::SV_SHIFT_ABSOLUTE) ) )
-//				if( l_Status && l_PerformTranslation )
 				{
-					/*m_TranslationX.SetValue( p_rRunStatus.m_lResultDataIndex, (l_InputTranslationX + 0.5) );
-					m_TranslationY.SetValue( p_rRunStatus.m_lResultDataIndex, (l_InputTranslationY + 0.5) );
-					m_DisplacementX.SetValue( p_rRunStatus.m_lResultDataIndex, l_DisplacementX );
-					m_DisplacementY.SetValue( p_rRunStatus.m_lResultDataIndex, l_DisplacementY ); */
-
 					if ( l_Mode == SV_SHIFT_ENUM::SV_SHIFT_REFERENCE )
 					{
 						long l_DisplacementX = static_cast< long >( (l_InputTranslationX + 0.5) - l_LearnedTranslationX );
@@ -236,7 +248,6 @@ BOOL SVShiftTool::onRun( SVRunStatusClass& p_rRunStatus )
 						m_LeftResult.SetValue( p_rRunStatus.m_lResultDataIndex, (l_InputTranslationX + 0.5)  );
 						m_TopResult.SetValue( p_rRunStatus.m_lResultDataIndex, (l_InputTranslationY + 0.5) );
 					}
-
 				}
 				else
 				{
@@ -405,7 +416,9 @@ SVDoubleValueObjectClass* SVShiftTool::GetTranslationYInput() const
 
 	return l_pValue;
 }
+#pragma endregion Protected Methods
 
+#pragma region Private Methods
 void SVShiftTool::LocalInitialize()
 {
 	outObjectInfo.ObjectTypeInfo.ObjectType = SVToolObjectType;
@@ -444,11 +457,8 @@ void SVShiftTool::LocalInitialize()
 	m_TranslationYInput.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_TranslationYInput, _T( "ShiftToolTranslationY" ) );
 
-
 	//Register Embedded Objects
-
 	RegisterEmbeddedObject( &m_evoShiftMode, SVShiftToolModeGuid, IDS_OBJECTNAME_SHIFT_TOOL_MODE, false, SVResetItemTool );
-
 	RegisterEmbeddedObject( &m_SourceImageNames, SVSourceImageNamesGuid, IDS_OBJECTNAME_SOURCE_IMAGE_NAMES, false, SVResetItemNone );
 	RegisterEmbeddedObject( &m_TranslationX, SVTranslationXObjectGuid, IDS_OBJECTNAME_TRANSLATION_X_RESULT, false, SVResetItemNone );
 	RegisterEmbeddedObject( &m_TranslationY, SVTranslationYObjectGuid, IDS_OBJECTNAME_TRANSLATION_Y_RESULT, false, SVResetItemNone );
@@ -464,7 +474,6 @@ void SVShiftTool::LocalInitialize()
 	m_LearnedTranslationX.ObjectAttributesAllowedRef() &= ~SV_EXTENT_OBJECT;
 	m_LearnedTranslationY.ObjectAttributesAllowedRef() &= ~SV_EXTENT_OBJECT;
 
-
 	//Set Extent Information
 	m_svToolExtent.SetExtentObject( SVExtentPropertyTranslationOffsetX, &m_DisplacementX );
 	m_svToolExtent.SetExtentObject( SVExtentPropertyTranslationOffsetY, &m_DisplacementY );
@@ -474,7 +483,6 @@ void SVShiftTool::LocalInitialize()
 	extentLeft.SetDefaultValue( 10, true );
 	extentWidth.SetDefaultValue( 100, true );
 	extentHeight.SetDefaultValue( 100, true );
-
 
 	m_TranslationX.SetDefaultValue( 0, true );
 	m_TranslationY.SetDefaultValue( 0, true );
@@ -532,8 +540,6 @@ void SVShiftTool::SetAttributeData()
 			m_svToolExtent.GetExtentPropertyInfo(SVExtentPropertyPositionPointY,info);
 			info.bHidden = false;
 			m_svToolExtent.SetExtentPropertyInfo(SVExtentPropertyPositionPointY,info);
-
-
 		}
 		else if (l_Mode == SV_SHIFT_ENUM::SV_SHIFT_NONE) 
 		{
@@ -554,12 +560,9 @@ void SVShiftTool::SetAttributeData()
 			m_svToolExtent.GetExtentPropertyInfo(SVExtentPropertyPositionPointY,info);
 			info.bHidden = false;
 			m_svToolExtent.SetExtentPropertyInfo(SVExtentPropertyPositionPointY,info);
-
 		}
 		else
 		{
-			//l_Mode == SV_SHIFT_ABSOLUTE
-	
 			//Set Extent Property Info so items don't show up in the Adjust Tool Position Dlg
 			m_svToolExtent.GetExtentPropertyInfo(SVExtentPropertyTranslationOffsetX,info);
 			info.bHidden = true;
@@ -580,10 +583,10 @@ void SVShiftTool::SetAttributeData()
 			//set default value to be 0,0
 			extentLeft.SetDefaultValue(0,true);
 			extentTop.SetDefaultValue(0,true);
-
 		}
 	}
 }
+#pragma endregion Private Methods
 
 //******************************************************************************
 //* LOG HISTORY:

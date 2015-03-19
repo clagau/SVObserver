@@ -8,6 +8,7 @@
 //* .Current Version : $Revision:   1.8  $
 //* .Check In Date   : $Date:   17 Sep 2014 08:07:18  $
 //******************************************************************************
+
 #pragma region Includes
 #include "stdafx.h"
 #include <limits>
@@ -22,6 +23,7 @@
 #include "SVOMFCLibrary/SVOMFCLibraryGlobals.h"
 #include "SVSVIMStateClass.h"
 #include "SVOResource/ConstGlobalSvOr.h"
+#include "SVLinearToolClass.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -102,6 +104,18 @@ BOOL SVAdjustToolSizePositionDlg::OnInitDialog()
 
 	createIcons();
 	bool l_bShow = ( nullptr != dynamic_cast< AllowResizeToParent* >( m_pToolTask ) );
+
+	// If it's a Linear Tool, hide the "Full Image" button if rotation is enabled.
+	SVLinearToolClass* lt = dynamic_cast< SVLinearToolClass* >( m_pToolTask );
+	if( nullptr != lt )
+	{
+		BOOL rotation = lt->GetRotation();
+		if ( rotation )
+		{
+			l_bShow = false;
+		}
+	}
+
 	GetDlgItem(IDC_FULL_ROI_BTN)->ShowWindow( l_bShow ? SW_SHOW : SW_HIDE );
 	GetDlgItem(IDC_FULL_ROI_BTN)->EnableWindow( !IsFullSize() );
 
@@ -169,7 +183,6 @@ void SVAdjustToolSizePositionDlg::OnTimer( UINT_CUSTOM nIDEvent )
 		default:
 			CDialog::OnTimer(nIDEvent);
 	}
-	
 }
 
 void SVAdjustToolSizePositionDlg::OnModeRadio() 

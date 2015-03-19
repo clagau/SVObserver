@@ -9,16 +9,17 @@
 //* .Check In Date   : $Date:   09 Dec 2014 09:52:44  $
 //******************************************************************************
 
-#ifndef SVShiftTool_H
-#define SVShiftTool_H
+#pragma once
 
+#pragma region Includes
 #include "SVBoolValueObjectClass.h"
 #include "SVDoubleValueObjectClass.h"
 #include "SVEnumerateValueObjectClass.h"
 #include "SVImageClass.h"
 #include "SVTool.h"
+#pragma endregion Includes
 
-
+#pragma region Declarations
 enum SV_SHIFT_ENUM
 {
 	SV_SHIFT_NONE		= 0,
@@ -26,47 +27,51 @@ enum SV_SHIFT_ENUM
 	SV_SHIFT_REFERENCE	= 2
 };
 
-
 // Add String for SVEnumerateValueObjectClass
 const LPCSTR g_strShiftToolEnum = 
                 _T( "None=0,Absolute=1,Reference=2" );
+#pragma endregion Declarations
 
-class SVShiftTool : public SVToolClass
+class SVShiftTool : public SVToolClass,
+public AllowResizeToParent
 {
 	SV_DECLARE_CLASS( SVShiftTool );
 
 public:
+#pragma region Constructor
 	SVShiftTool( BOOL BCreateDefaultTaskList = FALSE, SVObjectClass* POwner = NULL, int StringResourceID = IDS_CLASSNAME_SVSHIFTTOOL );
 	virtual ~SVShiftTool();
+#pragma endregion Constructor
 
+#pragma region Public Methods
 	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure );
 	virtual HRESULT ResetObject();
 
+	virtual HRESULT SetImageExtentToParent( unsigned long p_ulIndex );
 	virtual HRESULT CollectInputImageNames( SVRunStatusClass& RRunStatus );
 	virtual HRESULT GetInputImageNames( SVStringValueObjectClass*& p_pSourceNames );
 
 	virtual HRESULT IsInputImage( SVImageClass *p_psvImage );
 	virtual SVTaskObjectClass* GetObjectAtPoint( const SVExtentPointStruct &p_rPoint );
 	virtual HRESULT DoesObjectHaveExtents() const;
+#pragma endregion Public Methods
 
 protected:
+#pragma region Protected Methods
 	virtual BOOL onRun( SVRunStatusClass &p_rRunStatus );
 	virtual BOOL OnValidate();
 	virtual HRESULT UpdateImageWithExtent( unsigned long p_Index );
-
 	SVImageClass* GetImageInput() const;
 	SVDoubleValueObjectClass* GetTranslationXInput() const;
 	SVDoubleValueObjectClass* GetTranslationYInput() const;
+#pragma endregion Protected Methods
 
+#pragma region Member Variables
 	SVInObjectInfoStruct m_ImageInput;
 	SVInObjectInfoStruct m_TranslationYInput;
 	SVInObjectInfoStruct m_TranslationXInput;
 
-
-
 	SVStringValueObjectClass m_SourceImageNames;
-//	SVDoubleValueObjectClass m_TranslationX;
-//	SVDoubleValueObjectClass m_TranslationY;
 	SVLongValueObjectClass m_TranslationX;
 	SVLongValueObjectClass m_TranslationY;
 	SVDoubleValueObjectClass m_LearnedTranslationX;
@@ -78,17 +83,17 @@ protected:
 	SVImageClass m_OutputImage;
 
 public:
-	SVEnumerateValueObjectClass m_evoShiftMode;
-	SVBoolValueObjectClass m_EnableSourceImageExtents;
+	SVEnumerateValueObjectClass m_evoShiftMode; // @WARNING:  bad practice making members public
+	SVBoolValueObjectClass m_EnableSourceImageExtents;// @WARNING:  bad practice making members public
+#pragma endregion Member Variables
 
 private:
+#pragma region Private Methods
 	void LocalInitialize();
 	void LocalDestroy();
 	void SetAttributeData();
-
+#pragma endregion Private Methods
 };
-
-#endif
 
 //******************************************************************************
 //* LOG HISTORY:

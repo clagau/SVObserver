@@ -9,6 +9,7 @@
 // * .Check In Date   : $Date:   15 May 2014 13:12:48  $
 // ******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVLinearToolClass.h"
 
@@ -20,7 +21,9 @@
 #include "SVLinearImageOperatorList.h"
 #include "SVThresholdClass.h"
 #include "SVUserMaskOperatorClass.h"
+#pragma endregion Includes
 
+#pragma region Declarations
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #undef THIS_FILE
@@ -28,120 +31,22 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 SV_IMPLEMENT_CLASS( SVLinearToolClass, SVLinearToolClassGuid );
+#pragma endregion Declarations
 
+#pragma region Constructor
 SVLinearToolClass::SVLinearToolClass( BOOL BCreateDefaultTaskList, SVObjectClass* POwner, int StringResourceID )
-				   :SVToolClass( BCreateDefaultTaskList, POwner, StringResourceID )
+: SVToolClass( BCreateDefaultTaskList, POwner, StringResourceID )
 {
 	init();
-}
-
-void SVLinearToolClass::init()
-{
-	// Set up your type...
-	outObjectInfo.ObjectTypeInfo.ObjectType = SVToolObjectType;
-	outObjectInfo.ObjectTypeInfo.SubType    = SVLinearToolObjectType;
-
-	// Register Embedded Objects
-	RegisterEmbeddedObject( &m_svRotationAngle, SVRotationAngleObjectGuid, IDS_OBJECTNAME_ROTATION_ANGLE, false, SVResetItemTool, _T("Extent Angle") );
-	RegisterEmbeddedObject( &m_svRotationPointX, SVRotationPointXObjectGuid, IDS_OBJECTNAME_ROTATION_POINT_X, false, SVResetItemTool, _T("Extent X") );
-	RegisterEmbeddedObject( &m_svRotationPointY, SVRotationPointYObjectGuid, IDS_OBJECTNAME_ROTATION_POINT_Y, false, SVResetItemTool, _T("Extent Y") );
-	RegisterEmbeddedObject( &m_voProfileOrientation, SVProfileOrientationGuid,IDS_OBJECTNAME_LINEARTOOL_ORIENTATION, false, SVResetItemTool );
-	RegisterEmbeddedObject( &m_voUseProfileRotation, SVLinearToolUseRotationGuid, IDS_OBJECTNAME_LINEAR_TOOL_USE_ROTATION, false, SVResetItemTool, _T("Extent Angle") );
-	RegisterEmbeddedObject( &m_svSourceImageNames, SVSourceImageNamesGuid, IDS_OBJECTNAME_SOURCE_IMAGE_NAMES, false, SVResetItemTool );
-
-	// Set Embedded defaults
-	m_svRotationAngle.SetDefaultValue( 0.0, TRUE );
-	m_svRotationPointX.SetDefaultValue( SV_DEFAULT_WINDOWTOOL_LEFT, TRUE );
-	m_svRotationPointY.SetDefaultValue( ( SV_DEFAULT_WINDOWTOOL_TOP + ( SV_DEFAULT_WINDOWTOOL_HEIGHT / 2 ) ), TRUE );
-	m_voProfileOrientation.SetEnumTypes(g_strOrientationEnums);
-	m_voProfileOrientation.SetDefaultValue( "Horizontal", TRUE );
-	m_voUseProfileRotation.SetDefaultValue(TRUE,TRUE);
-
-	m_svToolExtent.SetImageType( SVImageTypePhysical );
-	m_svToolExtent.SetTranslation( SVExtentTranslationProfile );
-	m_svToolExtent.SetExtentObject( SVExtentPropertyPositionPointX, &m_svRotationPointX );
-	m_svToolExtent.SetExtentObject( SVExtentPropertyPositionPointY, &m_svRotationPointY );
-	m_svToolExtent.SetExtentObject( SVExtentPropertyRotationAngle, &m_svRotationAngle );
-
-	// Populate the available analyzer list
-	SVClassInfoStruct analyzerClassInfo;
-	
-	// Add the Line Pixel Count Analyzer...
-	analyzerClassInfo.ObjectTypeInfo.ObjectType = SVAnalyzerObjectType;
-	analyzerClassInfo.ObjectTypeInfo.SubType	= SVLinearPixelCountingAnalyzerObjectType;
-	analyzerClassInfo.ClassId = SVLinearPixelCountingLineAnalyzerClassGuid;
-	analyzerClassInfo.ClassName.LoadString( IDS_CLASSNAME_SVLINEARPIXELCOUNTINGLINEANALYZER );
-	availableChildren.Add( analyzerClassInfo );
-
-	// Add the Line Edge Count Analyzer...
-	analyzerClassInfo.ObjectTypeInfo.ObjectType = SVAnalyzerObjectType;
-	analyzerClassInfo.ObjectTypeInfo.SubType	= SVLinearEdgeCountingAnalyzerObjectType;
-	analyzerClassInfo.ClassId = SVLinearEdgeCountingLineAnalyzerClassGuid;
-	analyzerClassInfo.ClassName.LoadString( IDS_CLASSNAME_SVLINEAREDGECOUNTINGLINEANALYZER );
-	availableChildren.Add(analyzerClassInfo);
-	
-	// Add the Line Edge Position Analyzer...
-	analyzerClassInfo.ObjectTypeInfo.ObjectType = SVAnalyzerObjectType;
-	analyzerClassInfo.ObjectTypeInfo.SubType	= SVLinearEdgePositionAnalyzerObjectType;
-	analyzerClassInfo.ClassId = SVLinearEdgePositionLineAnalyzerClassGuid;
-	analyzerClassInfo.ClassName.LoadString( IDS_CLASSNAME_SVLINEAREDGEPOSITIONLINEANALYZER );
-	availableChildren.Add(analyzerClassInfo);
-
-	// Add the Line Linear Measurement Analyzer...
-	analyzerClassInfo.ObjectTypeInfo.ObjectType = SVAnalyzerObjectType;
-	analyzerClassInfo.ObjectTypeInfo.SubType	= SVLinearMeasurementAnalyzerObjectType;
-	analyzerClassInfo.ClassId = SVLinearMeasurementAnalyzerClassGuid;
-	analyzerClassInfo.ClassName.LoadString( IDS_CLASSNAME_SVLINEARMEASUREMENTLINEANALYZER );
-	availableChildren.Add(analyzerClassInfo);
-
-	// Add the Line Maximum Foreground Object Analyzer...
-	analyzerClassInfo.ObjectTypeInfo.ObjectType = SVAnalyzerObjectType;
-	analyzerClassInfo.ObjectTypeInfo.SubType	= SVLinearMaximumForegroundObjectAnalyzerObjectType;
-	analyzerClassInfo.ClassId = SVLinearMaximumForegroundObjectLineAnalyzerClassGuid;
-	analyzerClassInfo.ClassName.LoadString( IDS_CLASSNAME_SVLINEARMAXIMUMFOREGROUNDOBJECTLINEANALYZER );
-	availableChildren.Add(analyzerClassInfo);
-
-	// Add the Line Maximum Background Object Analyzer...
-	analyzerClassInfo.ObjectTypeInfo.ObjectType = SVAnalyzerObjectType;
-	analyzerClassInfo.ObjectTypeInfo.SubType	= SVLinearMaximumBackgroundObjectAnalyzerObjectType;
-	analyzerClassInfo.ClassId = SVLinearMaximumBackgroundObjectLineAnalyzerClassGuid;
-	analyzerClassInfo.ClassName.LoadString( IDS_CLASSNAME_SVLINEARMAXIMUMBACKGROUNDOBJECTLINEANALYZER );
-	availableChildren.Add(analyzerClassInfo);
-
-	// Add the Line Maximum Object Analyzer...
-	analyzerClassInfo.ObjectTypeInfo.ObjectType = SVAnalyzerObjectType;
-	analyzerClassInfo.ObjectTypeInfo.SubType	= SVLinearMaximumObjectAnalyzerObjectType;
-	analyzerClassInfo.ClassId = SVLinearMaximumObjectLineAnalyzerClassGuid;
-	analyzerClassInfo.ClassName.LoadString( IDS_CLASSNAME_SVLINEARMAXIMUMOBJECTLINEANALYZER );
-	availableChildren.Add(analyzerClassInfo);
-		
-	// Build an operator list...
-
-	// ...use In Place image operator list, because we already have an output image! SEJ_24Mar2000
-//	SVUnaryImageOperatorListClass* pOperatorList = new SVInPlaceImageOperatorListClass;
-	SVUnaryImageOperatorListClass* pOperatorList = new SVLinearImageOperatorListClass;
-
-	// Operator list defaults:
-	if( pOperatorList )
-	{
-		// Requires a SVThresholdClass Object
-		pOperatorList->Add( new SVThresholdClass( pOperatorList ) );
-
-		// and Requires a SVUsermaskOperatorClass Object
-		pOperatorList->Add( new SVUserMaskOperatorClass( pOperatorList ) );
-
-		// Add the UnaruyImageOperatorList to the Tool's List
-		Add( pOperatorList );
-	}
-	addDefaultInputObjects();
-
 }
 
 SVLinearToolClass::~SVLinearToolClass()
 {
 	CloseObject();
 }
+#pragma endregion Constructor
 
+#pragma region Public Methods
 BOOL SVLinearToolClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
 {
 	BOOL bOk = FALSE;
@@ -269,7 +174,21 @@ HRESULT SVLinearToolClass::ResetObject()
 	return l_hrOk;
 }
 
-SVTaskObjectClass *SVLinearToolClass::GetObjectAtPoint( const SVExtentPointStruct &p_rsvPoint )
+HRESULT SVLinearToolClass::SetImageExtentToParent( unsigned long p_ulIndex )
+{
+	HRESULT l_hrOk = S_OK;
+	SVImageExtentClass l_NewExtent;
+
+	l_hrOk = m_svToolExtent.UpdateExtentToParentExtents( p_ulIndex, l_NewExtent );
+
+	if( l_hrOk == S_OK )
+	{
+		l_hrOk = SVToolClass::SetImageExtent( p_ulIndex, l_NewExtent );
+	}
+	return l_hrOk;
+}
+
+SVTaskObjectClass* SVLinearToolClass::GetObjectAtPoint( const SVExtentPointStruct &p_rsvPoint )
 {
 	SVImageExtentClass l_svExtents;
 
@@ -287,21 +206,6 @@ SVTaskObjectClass *SVLinearToolClass::GetObjectAtPoint( const SVExtentPointStruc
 HRESULT SVLinearToolClass::DoesObjectHaveExtents() const
 {
 	return S_OK;
-}
-
-BOOL SVLinearToolClass::onRun( SVRunStatusClass& RRunStatus )
-{
-	return SVToolClass::onRun( RRunStatus );
-}
-
-DWORD_PTR SVLinearToolClass::processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext )
-{
-	DWORD_PTR DwResult = NULL;
-
-	// Try to process message by yourself...
-	DWORD dwPureMessageID = DwMessageID & SVM_PURE_MESSAGE;
-
-	return( SVToolClass::processMessage( DwMessageID, DwMessageValue, DwMessageContext ) | DwResult );
 }
 
 CString SVLinearToolClass::GetProfileOrientation()
@@ -343,6 +247,127 @@ HRESULT SVLinearToolClass::GetInputImageNames( SVStringValueObjectClass*& p_pSou
 	p_pSourceNames = &m_svSourceImageNames;
 	return S_OK;
 }
+#pragma endregion Public Methods
+
+#pragma region Protected Methods
+BOOL SVLinearToolClass::onRun( SVRunStatusClass& RRunStatus )
+{
+	return SVToolClass::onRun( RRunStatus );
+}
+
+DWORD_PTR SVLinearToolClass::processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext )
+{
+	DWORD_PTR DwResult = NULL;
+
+	// Try to process message by yourself...
+	DWORD dwPureMessageID = DwMessageID & SVM_PURE_MESSAGE;
+
+	return( SVToolClass::processMessage( DwMessageID, DwMessageValue, DwMessageContext ) | DwResult );
+}
+#pragma endregion Protected Methods
+
+#pragma region Private Methods
+void SVLinearToolClass::init()
+{
+	// Set up your type...
+	outObjectInfo.ObjectTypeInfo.ObjectType = SVToolObjectType;
+	outObjectInfo.ObjectTypeInfo.SubType    = SVLinearToolObjectType;
+
+	// Register Embedded Objects
+	RegisterEmbeddedObject( &m_svRotationAngle, SVRotationAngleObjectGuid, IDS_OBJECTNAME_ROTATION_ANGLE, false, SVResetItemTool, _T("Extent Angle") );
+	RegisterEmbeddedObject( &m_svRotationPointX, SVRotationPointXObjectGuid, IDS_OBJECTNAME_ROTATION_POINT_X, false, SVResetItemTool, _T("Extent X") );
+	RegisterEmbeddedObject( &m_svRotationPointY, SVRotationPointYObjectGuid, IDS_OBJECTNAME_ROTATION_POINT_Y, false, SVResetItemTool, _T("Extent Y") );
+	RegisterEmbeddedObject( &m_voProfileOrientation, SVProfileOrientationGuid,IDS_OBJECTNAME_LINEARTOOL_ORIENTATION, false, SVResetItemTool );
+	RegisterEmbeddedObject( &m_voUseProfileRotation, SVLinearToolUseRotationGuid, IDS_OBJECTNAME_LINEAR_TOOL_USE_ROTATION, false, SVResetItemTool, _T("Extent Angle") );
+	RegisterEmbeddedObject( &m_svSourceImageNames, SVSourceImageNamesGuid, IDS_OBJECTNAME_SOURCE_IMAGE_NAMES, false, SVResetItemTool );
+
+	// Set Embedded defaults
+	m_svRotationAngle.SetDefaultValue( 0.0, TRUE );
+	m_svRotationPointX.SetDefaultValue( SV_DEFAULT_WINDOWTOOL_LEFT, TRUE );
+	m_svRotationPointY.SetDefaultValue( ( SV_DEFAULT_WINDOWTOOL_TOP + ( SV_DEFAULT_WINDOWTOOL_HEIGHT / 2 ) ), TRUE );
+	m_voProfileOrientation.SetEnumTypes(g_strOrientationEnums);
+	m_voProfileOrientation.SetDefaultValue( "Horizontal", TRUE );
+	m_voUseProfileRotation.SetDefaultValue(TRUE,TRUE);
+
+	m_svToolExtent.SetImageType( SVImageTypePhysical );
+	m_svToolExtent.SetTranslation( SVExtentTranslationProfile );
+	m_svToolExtent.SetExtentObject( SVExtentPropertyPositionPointX, &m_svRotationPointX );
+	m_svToolExtent.SetExtentObject( SVExtentPropertyPositionPointY, &m_svRotationPointY );
+	m_svToolExtent.SetExtentObject( SVExtentPropertyRotationAngle, &m_svRotationAngle );
+
+	// Populate the available analyzer list
+	SVClassInfoStruct analyzerClassInfo;
+
+	// Add the Line Pixel Count Analyzer...
+	analyzerClassInfo.ObjectTypeInfo.ObjectType = SVAnalyzerObjectType;
+	analyzerClassInfo.ObjectTypeInfo.SubType	= SVLinearPixelCountingAnalyzerObjectType;
+	analyzerClassInfo.ClassId = SVLinearPixelCountingLineAnalyzerClassGuid;
+	analyzerClassInfo.ClassName.LoadString( IDS_CLASSNAME_SVLINEARPIXELCOUNTINGLINEANALYZER );
+	availableChildren.Add( analyzerClassInfo );
+
+	// Add the Line Edge Count Analyzer...
+	analyzerClassInfo.ObjectTypeInfo.ObjectType = SVAnalyzerObjectType;
+	analyzerClassInfo.ObjectTypeInfo.SubType	= SVLinearEdgeCountingAnalyzerObjectType;
+	analyzerClassInfo.ClassId = SVLinearEdgeCountingLineAnalyzerClassGuid;
+	analyzerClassInfo.ClassName.LoadString( IDS_CLASSNAME_SVLINEAREDGECOUNTINGLINEANALYZER );
+	availableChildren.Add(analyzerClassInfo);
+	
+	// Add the Line Edge Position Analyzer...
+	analyzerClassInfo.ObjectTypeInfo.ObjectType = SVAnalyzerObjectType;
+	analyzerClassInfo.ObjectTypeInfo.SubType	= SVLinearEdgePositionAnalyzerObjectType;
+	analyzerClassInfo.ClassId = SVLinearEdgePositionLineAnalyzerClassGuid;
+	analyzerClassInfo.ClassName.LoadString( IDS_CLASSNAME_SVLINEAREDGEPOSITIONLINEANALYZER );
+	availableChildren.Add(analyzerClassInfo);
+
+	// Add the Line Linear Measurement Analyzer...
+	analyzerClassInfo.ObjectTypeInfo.ObjectType = SVAnalyzerObjectType;
+	analyzerClassInfo.ObjectTypeInfo.SubType	= SVLinearMeasurementAnalyzerObjectType;
+	analyzerClassInfo.ClassId = SVLinearMeasurementAnalyzerClassGuid;
+	analyzerClassInfo.ClassName.LoadString( IDS_CLASSNAME_SVLINEARMEASUREMENTLINEANALYZER );
+	availableChildren.Add(analyzerClassInfo);
+
+	// Add the Line Maximum Foreground Object Analyzer...
+	analyzerClassInfo.ObjectTypeInfo.ObjectType = SVAnalyzerObjectType;
+	analyzerClassInfo.ObjectTypeInfo.SubType	= SVLinearMaximumForegroundObjectAnalyzerObjectType;
+	analyzerClassInfo.ClassId = SVLinearMaximumForegroundObjectLineAnalyzerClassGuid;
+	analyzerClassInfo.ClassName.LoadString( IDS_CLASSNAME_SVLINEARMAXIMUMFOREGROUNDOBJECTLINEANALYZER );
+	availableChildren.Add(analyzerClassInfo);
+
+	// Add the Line Maximum Background Object Analyzer...
+	analyzerClassInfo.ObjectTypeInfo.ObjectType = SVAnalyzerObjectType;
+	analyzerClassInfo.ObjectTypeInfo.SubType	= SVLinearMaximumBackgroundObjectAnalyzerObjectType;
+	analyzerClassInfo.ClassId = SVLinearMaximumBackgroundObjectLineAnalyzerClassGuid;
+	analyzerClassInfo.ClassName.LoadString( IDS_CLASSNAME_SVLINEARMAXIMUMBACKGROUNDOBJECTLINEANALYZER );
+	availableChildren.Add(analyzerClassInfo);
+
+	// Add the Line Maximum Object Analyzer...
+	analyzerClassInfo.ObjectTypeInfo.ObjectType = SVAnalyzerObjectType;
+	analyzerClassInfo.ObjectTypeInfo.SubType	= SVLinearMaximumObjectAnalyzerObjectType;
+	analyzerClassInfo.ClassId = SVLinearMaximumObjectLineAnalyzerClassGuid;
+	analyzerClassInfo.ClassName.LoadString( IDS_CLASSNAME_SVLINEARMAXIMUMOBJECTLINEANALYZER );
+	availableChildren.Add(analyzerClassInfo);
+
+	// Build an operator list...
+
+	// ...use In Place image operator list, because we already have an output image! SEJ_24Mar2000
+//	SVUnaryImageOperatorListClass* pOperatorList = new SVInPlaceImageOperatorListClass;
+	SVUnaryImageOperatorListClass* pOperatorList = new SVLinearImageOperatorListClass;
+
+	// Operator list defaults:
+	if( pOperatorList )
+	{
+		// Requires a SVThresholdClass Object
+		pOperatorList->Add( new SVThresholdClass( pOperatorList ) );
+
+		// and Requires a SVUsermaskOperatorClass Object
+		pOperatorList->Add( new SVUserMaskOperatorClass( pOperatorList ) );
+
+		// Add the UnaruyImageOperatorList to the Tool's List
+		Add( pOperatorList );
+	}
+	addDefaultInputObjects();
+}
+#pragma endregion Private Methods
 
 // ******************************************************************************
 // * LOG HISTORY:
