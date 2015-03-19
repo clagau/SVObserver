@@ -41,6 +41,11 @@ SVClock::SVTimeStamp ResultViewReferences::getUpdateTimeStamp()
 	return m_LastUpdateTimeStamp;
 }
 
+bool ResultViewReferences::IsViewable(const SVObjectReference& objectRef) const
+{
+	return (objectRef.ObjectAttributesAllowed() & SV_VIEWABLE);
+}
+
 bool ResultViewReferences::Load( SVXMLMaterialsTree& rTree, SVXMLMaterialsTree::SVBranchHandle htiParent )
 {
 	m_ReferenceVector.clear();
@@ -93,9 +98,12 @@ bool ResultViewReferences::LoadResultViewItemDef( SVXMLMaterialsTree& rTree, SVX
 				}
 				
 			}
-			ResultViewItemDef itemDef(objRef);
-			m_ResultViewItemDefList.push_back(itemDef);
-			m_ReferenceVector.push_back(objRef);
+			if (IsViewable(objRef))
+			{
+				ResultViewItemDef itemDef(objRef);
+				m_ResultViewItemDefList.push_back(itemDef);
+				m_ReferenceVector.push_back(objRef);
+			}
 		}
 	}
 	return bOK;

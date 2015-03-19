@@ -113,6 +113,14 @@ public:
 	// Returns:  SVClock::SVTimeStamp:  the value of the member variable m_LastUpdateTimeStamp
 	//************************************
 	SVClock::SVTimeStamp getUpdateTimeStamp();
+
+	//************************************
+	/// Check if the Object is Viewable
+	/// this is only called when loading as the original ObjectAttributesAllowed may have changed
+	/// \param reference to the SVObjectRefernce
+	/// \return boolean true=viewable, false=not viewable
+	//************************************
+	virtual bool IsViewable(const SVObjectReference& objectRef) const;
 #pragma endregion Public Methods
 
 protected:

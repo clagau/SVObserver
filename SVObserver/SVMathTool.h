@@ -31,9 +31,10 @@ public:
 
 protected:
 	virtual void init(void);
+	void HideRangeIndirectValueObjects();
+	virtual DWORD_PTR processMessage(DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext);
 
 	SVMathEquationClass* pMathEquation;
-
 };
 
 #endif

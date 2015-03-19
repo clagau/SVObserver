@@ -23,7 +23,6 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-
 //*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/
 //* Class Name : SVMathToolClass
 //* Note(s)    : 
@@ -34,7 +33,6 @@ static char THIS_FILE[] = __FILE__;
 //******************************************************************************
 
 SV_IMPLEMENT_CLASS( SVMathToolClass, SVMathToolClassGuid );
-
 
 //******************************************************************************
 // Constructor(s):
@@ -67,7 +65,7 @@ SV_IMPLEMENT_CLASS( SVMathToolClass, SVMathToolClassGuid );
 //  :04.05.1999 SEJ			First Implementation
 ////////////////////////////////////////////////////////////////////////////////
 SVMathToolClass::SVMathToolClass( BOOL BCreateDefaultTaskList, SVObjectClass* POwner, int StringResourceID )
-				:SVToolClass( BCreateDefaultTaskList, POwner, StringResourceID )
+: SVToolClass( BCreateDefaultTaskList, POwner, StringResourceID )
 {
 	init();
 }
@@ -136,24 +134,8 @@ SVMathToolClass::~SVMathToolClass()
 BOOL SVMathToolClass::CreateObject(SVObjectLevelCreateStruct* PCreateStruct )
 {
 	isCreated = SVToolClass::CreateObject( PCreateStruct );
-
-	// override the attributes for the range indirect value objects
-	SVResultClass* pResult = dynamic_cast<SVResultClass*>(GetAt(0));
-	if (pResult)
-	{
-		SVRangeClass* pRange = pResult->GetResultRange();
-		if (pRange)
-		{
-			pRange->HideIndirectValueObjects();
-		}
-	}
 	return isCreated;
 }
-
-//******************************************************************************
-// Operation(s) Of Reading Access:
-//******************************************************************************
-
 
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : OnValidate
@@ -182,6 +164,39 @@ BOOL SVMathToolClass::OnValidate()
 	return FALSE;
 }
 
+void SVMathToolClass::HideRangeIndirectValueObjects()
+{
+	// override the attributes for the range indirect value objects
+	SVResultClass* pResult = dynamic_cast<SVResultClass*>(GetAt(0));
+	if (pResult)
+	{
+		SVRangeClass* pRange = pResult->GetResultRange();
+		if (pRange)
+		{
+			pRange->HideIndirectValueObjects();
+		}
+	}
+}
+
+DWORD_PTR SVMathToolClass::processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext )
+{
+	DWORD_PTR DwResult = NULL;
+
+	// Try to process message by yourself...
+	DWORD dwPureMessageID = DwMessageID & SVM_PURE_MESSAGE;
+	switch( dwPureMessageID )
+	{
+		case SVMSGID_CREATE_ALL_OBJECTS:
+		{
+			DwResult = SVToolClass::processMessage( DwMessageID, DwMessageValue, DwMessageContext );
+			HideRangeIndirectValueObjects();
+			return DwResult;
+		}
+	}
+
+	DWORD_PTR l_Status = ( SVTaskObjectListClass::processMessage( DwMessageID, DwMessageValue, DwMessageContext ) | DwResult );
+	return l_Status;
+}
 
 //******************************************************************************
 //* LOG HISTORY:
