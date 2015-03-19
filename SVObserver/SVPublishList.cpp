@@ -147,7 +147,7 @@ void SVPublishListClass::Refresh(SVTaskObjectClass * pRootObject)
 			if( !found )
 			{
 				SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
-				e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::c_textErrorFindingPPQEntries, StdExceptionParams, Err_17043_SVPublishListClass_Refresh_ErrorFindingPPQEntries );
+				e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorFindingPPQEntries, StdExceptionParams, Err_17043_SVPublishListClass_Refresh_ErrorFindingPPQEntries );
 				DebugBreak();
 			}
 		}// end if

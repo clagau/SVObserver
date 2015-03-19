@@ -67,11 +67,14 @@ void LoadDll::freeDlls()
 {
 	DllMap::const_iterator Iter( m_DllsLoaded.begin() );
 
-	BOOL Unloaded;
-
 	while( m_DllsLoaded.end() != Iter )
 	{
-		Unloaded = ::FreeLibrary( Iter->second );
+		if( ::FreeLibrary( Iter->second ) )
+		{
+			//We are not setting the instance handle to NULL because the list is anyway being cleared after the loop
+			//This Sleep(0) was added after the FreeLibrary to fix a bug where the system ran out of resources.
+			Sleep(0);
+		}
 		Iter++;
 	}
 	m_DllsLoaded.clear();

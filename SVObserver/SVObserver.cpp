@@ -3043,7 +3043,7 @@ BOOL SVObserverApp::InitInstance()
 		//Because our exception handler (message box) needs the resources, we have to use here the standard message box.
 		SvStl::ExceptionMgr1 Exception( SvStl::ExpTypeEnum::LogOnly );
 		Exception.setMessage( SVMSG_SVO_53_RESOURCE_DLL_LOADING_FAILED, nullptr, StdExceptionParams, Err_SVCommandInspectionExtentUpdater_LoadOfResourceDllFailed_2009 );
-		MessageBox(nullptr, SvO::c_textLoadingResourceDllFailed, nullptr, MB_OK | MB_ICONSTOP );
+		MessageBox(nullptr, SvO::LoadingResourceDllFailed, nullptr, MB_OK | MB_ICONSTOP );
 		exit(-Err_SVCommandInspectionExtentUpdater_LoadOfResourceDllFailed_2009);
 	}
 
@@ -3465,7 +3465,7 @@ BOOL SVObserverApp::InitInstance()
 	if ( !TheSVOLicenseManager().HasMatroxLicense() )
 	{
 		SvStl::ExceptionMgr1 Exception( SvStl::ExpTypeEnum::LogAndDisplay );
-		Exception.setMessage( SVMSG_SVO_52_NOMATAROX_DONGLE, nullptr, StdExceptionParams, Err_NoMatroxDongle_25013 );
+		Exception.setMessage( SVMSG_SVO_52_NOMATAROX_DONGLE, nullptr, StdExceptionParams, Err_25013_NoMatroxDongle );
 	}
 
 	if ( TheSVOLicenseManager().HasMatroxLicense() && (!TheSVOLicenseManager().HasMatroxGigELicense()) && IsMatroxGige()  )

@@ -104,7 +104,7 @@ BOOL SVPPQEntryDialogRemotePageClass::OnInitDialog()
 	if( !m_pSheet->m_pPPQ->GetAllInputs( ppIOEntries ) )
 	{
 		SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
-		e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::c_textErrorGettingInputs, StdExceptionParams, Err_17042_SVPPQEntryDialogRemotePageClass_OnInitDialog_ErrorGettingInputs );
+		e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorGettingInputs, StdExceptionParams, Err_17042_SVPPQEntryDialogRemotePageClass_OnInitDialog_ErrorGettingInputs );
 		DebugBreak();
 	}
 

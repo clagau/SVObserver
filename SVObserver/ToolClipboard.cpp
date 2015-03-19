@@ -23,6 +23,7 @@
 #include "SVConfigurationLibrary/SVConfigurationTags.h"
 #include "SVUtilityLibrary/ZipHelper.h"
 #include "SVSystemLibrary/SVEncodeDecodeUtilities.h"
+#include "SVStatusLibrary/ExceptionManager.h"
 #include "SVObserver.h"
 #include "SVInspectionProcess.h"
 #include "SVObjectScriptParser.h"
@@ -32,6 +33,7 @@
 #include "SVInspectionTreeParser.h"
 #include "SVIPDoc.h"
 #include "ErrorNumbers.h"
+#include "TextDefinesSvO.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -41,34 +43,6 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-static const TCHAR ToolClipboardFormat[] = _T("SVO-Tool");
-static const TCHAR TempFolder[] = _T("C:\\Temp");
-static const TCHAR RunFolder[] = _T("C:\\RUN");
-static const TCHAR ClipboardFileName[] = _T("ClipboardFile");
-static const TCHAR ZipExtension[] = _T(".zip");
-static const TCHAR XmlExtension[] = _T(".xml");
-static const TCHAR XmlNameSpace[] = _T("xmlns");
-static const TCHAR SvrNameSpace[] = _T("x-schema:#SVR00001");
-static const TCHAR SV_BaseNode[] = _T("SV_BASENODE");
-static const TCHAR ToolCopyTag[] = _T( "Tool-Copy");
-static const TCHAR ToolsTag[] = _T("Tools");
-static const TCHAR ToolTypeTag[] = _T("ToolType");
-static const TCHAR ToolImageTag[] = _T("ToolImage");
-static const TCHAR DependencyFilesTag[] =  _T("DependencyFiles");
-static const TCHAR BaseTag[] = _T("Base");
-static const TCHAR TypeTag[] = _T("Type");
-static const TCHAR ElementTag[] = _T("Element");
-static const TCHAR DataTag[] = _T("</DATA>");
-static const TCHAR InsertingTool[] = _T("Inserting Tool ...");
-
-static const TCHAR SetClipboardDataFailed[] = _T("Setting the data into the clipboard failed.");
-static const TCHAR ClipboardMemoryFailed[] = _T("Clipboard memory allocation failed.");
-static const TCHAR GetClipboardDataFailed[] = _T("Failed to retrieve the clipboard data.");
-static const TCHAR ToolInvalid[] = _T("The tool to be copied is invalid.");
-static const TCHAR ClipboardDataConverionFailed[] = _T("The clipboard data conversion failed.");
-static const TCHAR VersionMismatch[] = _T("The current SVObserver Version does not match the version coming from the clipboard.");
-static const TCHAR ColorToolInsertFailed[] = _T("A color tool cannot be inserted into a non-color system.");
-static const TCHAR NonColorToolInsertFailed[] = _T("A color tool must always be the first tool in a color system.");
 #pragma endregion Declarations
 
 #pragma region Constructor
@@ -91,21 +65,21 @@ HRESULT ToolClipboard::writeToClipboard( const SVGUID& rToolGuid ) const
 	{
 		if( ::OpenClipboard( AfxGetMainWnd()->m_hWnd ) )
 		{    
-			UINT  ClipboardFormat( ::RegisterClipboardFormat( ToolClipboardFormat ) );
+			UINT  ClipboardFormat( ::RegisterClipboardFormat( SvO::ToolClipboardFormat ) );
 
 			if( ::EmptyClipboard() && 0 != ClipboardFormat )
 			{
-				SVString FileName( TempFolder );
+				SVString FileName( SvO::TempFolder );
 
 				FileName += _T("\\");
-				FileName += ClipboardFileName;
+				FileName += SvO::ClipboardFileName;
 				Result = streamToolToZip( FileName, rToolGuid );
 
 				if( S_OK == Result)
 				{
 					SVString FileData;
 
-					FileName += ZipExtension;
+					FileName += SvO::ZipExtension;
 					readFileToString( FileName, FileData );
 					::DeleteFile( FileName.c_str() );
 					HGLOBAL ClipboardData = GlobalAlloc( GMEM_MOVEABLE,	FileData.size() + 1 );
@@ -118,26 +92,27 @@ HRESULT ToolClipboard::writeToClipboard( const SVGUID& rToolGuid ) const
 						if( NULL == ::SetClipboardData( ClipboardFormat, ClipboardData ) )
 						{
 							Result = S_FALSE;
-							SVException Exception;
-							SETEXCEPTION5( Exception, SVMSG_SVO_51_CLIPBOARD_ERROR, Err_25000, SetClipboardDataFailed );
-							throw Exception;
+							SvStl::ExceptionMgr1 e( SvStl::ExpTypeNone );
+							e.setMessage( SVMSG_SVO_51_CLIPBOARD_WARNING, SvO::SetClipboardDataFailed, StdExceptionParams, Err_25000_SetClipboardData );
+							e.Throw();
 						}
 					}
 					else
 					{
 						Result = S_FALSE;
-						SVException Exception;
-						SETEXCEPTION5( Exception, SVMSG_SVO_51_CLIPBOARD_ERROR, Err_25001, ClipboardMemoryFailed );
-						throw Exception;
+						SvStl::ExceptionMgr1 e( SvStl::ExpTypeNone );
+						e.setMessage( SVMSG_SVO_51_CLIPBOARD_WARNING, SvO::ClipboardMemoryFailed, StdExceptionParams, Err_25001_ClipboardMemory );
+						e.Throw();
 					}
 				}
 			}
 			::CloseClipboard();
 		}
 	}
-	catch( SVException e )
+	catch( const SVException& rSvE )
 	{
-		::MessageBox( AfxGetMainWnd()->GetSafeHwnd(), e.what().c_str(), NULL, MB_ICONEXCLAMATION | MB_OK );
+		SvStl::ExceptionMgr1 e( SvStl::LogAndDisplay );
+		e.setMessage( rSvE );
 	}
 
 	return Result;
@@ -156,20 +131,20 @@ HRESULT ToolClipboard::readFromClipboard( int ToolListindex, SVGUID& rToolGuid )
 		Result = convertClipboardDataToString( ClipboardData );
 		if( S_OK == Result )
 		{
-			SVString FileName( TempFolder );
+			SVString FileName( SvO::TempFolder );
 
 			FileName += _T("\\");
-			FileName += ClipboardFileName;
-			FileName += ZipExtension;
+			FileName += SvO::ClipboardFileName;
+			FileName += SvO::ZipExtension;
 			writeStringToFile( FileName, ClipboardData.ToDataType(), false );
 
 			SVStringSet ZippedFiles;
-			ZipHelper::unzipAll( FileName, SVString( TempFolder ), ZippedFiles );
+			ZipHelper::unzipAll( FileName, SVString( SvO::TempFolder ), ZippedFiles );
 			::DeleteFile( FileName.c_str() );
 			updateDependencyFiles( ZippedFiles );
 			
 			//Same file name just different extensions
-			FileName.replace( ZipExtension, XmlExtension );
+			FileName.replace( SvO::ZipExtension, SvO::XmlExtension );
 			readFileToString( FileName, XmlData );
 			XmlData.append( _T("\0") );
 			::DeleteFile( FileName.c_str() );
@@ -208,9 +183,10 @@ HRESULT ToolClipboard::readFromClipboard( int ToolListindex, SVGUID& rToolGuid )
 			Result = parseTreeToTool( Tree, rToolGuid );
 		}
 	}
-	catch( SVException e )
+	catch( const SVException& rSvE )
 	{
-		::MessageBox( AfxGetMainWnd()->GetSafeHwnd(), e.what().c_str(), NULL, MB_ICONEXCLAMATION | MB_OK );
+		SvStl::ExceptionMgr1 e( SvStl::LogAndDisplay );
+		e.setMessage( rSvE );
 	}
 
 	return Result;
@@ -224,13 +200,10 @@ bool ToolClipboard::isClipboardDataValid()
 	{
 		SVString ClipboardData;
 		convertClipboardDataToString( ClipboardData );
-		if( ClipboardData.empty() )
-		{
-			Result = true;
-		}
 	}
 	catch( SVException e )
 	{
+		//Exception means data not correct format
 		Result = false;
 	}
 
@@ -249,9 +222,9 @@ HRESULT ToolClipboard::streamToolToZip( const SVString rFileName, const SVGUID& 
 	if( nullptr == pTool)
 	{
 		Result = S_FALSE;
-		SVException Exception;
-		SETEXCEPTION5( Exception, SVMSG_SVO_51_CLIPBOARD_ERROR, Err_25002, ToolInvalid );
-		throw Exception;
+		SvStl::ExceptionMgr1 e( SvStl::ExpTypeNone );
+		e.setMessage( SVMSG_SVO_51_CLIPBOARD_WARNING, SvO::ToolInvalid, StdExceptionParams, Err_25002_ToolInvalid );
+		e.Throw();
 	}
 	else
 	{
@@ -273,12 +246,12 @@ HRESULT ToolClipboard::streamToolToZip( const SVString rFileName, const SVGUID& 
 		findDependencyFiles( MemoryStream.str(), FileNames );
 
 		SVString XmlFileName( rFileName );
-		XmlFileName += XmlExtension;
+		XmlFileName += SvO::XmlExtension;
 		FileNames.insert( XmlFileName );
 		writeStringToFile( XmlFileName, MemoryStream.str(), true );
 
 		SVString ZipFileName( rFileName );
-		ZipFileName += ZipExtension;
+		ZipFileName += SvO::ZipExtension;
 		ZipHelper::makeZipFile( ZipFileName, FileNames, true );
 	}
 
@@ -290,12 +263,12 @@ void ToolClipboard::writeBaseAndEnvironmentNodes( SVObjectXMLWriter& rXmlWriter 
 	_variant_t xmlnsValue;
 	_variant_t Value;
 
-	xmlnsValue.SetString( SvrNameSpace );
+	xmlnsValue.SetString( SvO::SvrNameSpace );
 
-	Value.SetString( SV_BaseNode );
+	Value.SetString( SvO::SV_BaseNode );
 
 	rXmlWriter.StartElement( BaseTag );
-	rXmlWriter.ElementAttribute( XmlNameSpace, xmlnsValue );
+	rXmlWriter.ElementAttribute( SvO::XmlNameSpace, xmlnsValue );
 	rXmlWriter.ElementAttribute(TypeTag, Value );
 
 	Value.Clear();
@@ -346,7 +319,7 @@ void ToolClipboard::findDependencyFiles( const std::string& rToolXmlString, SVSt
 {
 	size_t StartPos( 0 );
 	size_t EndPos( 0 );
-	SVString SearchString( RunFolder );
+	SVString SearchString( SvO::RunFolder );
 	SearchString += _T("\\");
 
 	StartPos = rToolXmlString.find( SearchString.c_str(), EndPos );
@@ -370,8 +343,8 @@ void ToolClipboard::findDependencyFiles( const std::string& rToolXmlString, SVSt
 
 void ToolClipboard::updateDependencyFiles( const SVStringSet& rDependencyFiles ) const
 {
-	SVString XmlFileName( ClipboardFileName );
-	XmlFileName += XmlExtension;
+	SVString XmlFileName( SvO::ClipboardFileName );
+	XmlFileName += SvO::XmlExtension;
 
 	SVStringSet::const_iterator Iter( rDependencyFiles.begin() );
 	while( rDependencyFiles.end() != Iter )
@@ -383,7 +356,7 @@ void ToolClipboard::updateDependencyFiles( const SVStringSet& rDependencyFiles )
 			_TCHAR Extension[_MAX_EXT];
 			_splitpath( Iter->c_str(), NULL, NULL, Name, Extension );
 
-			SVString DestinationFile( RunFolder );
+			SVString DestinationFile( SvO::RunFolder );
 			DestinationFile += _T("\\");
 			DestinationFile += Name;
 			DestinationFile += Extension;
@@ -408,7 +381,7 @@ HRESULT ToolClipboard::convertClipboardDataToString( SVString& rClipboardData )
 
 	if( ::OpenClipboard( AfxGetMainWnd()->GetSafeHwnd() ) )
 	{
-		UINT  ClipboardFormat( ::RegisterClipboardFormat( ToolClipboardFormat ) );
+		UINT  ClipboardFormat( ::RegisterClipboardFormat( SvO::ToolClipboardFormat ) );
 		HGLOBAL ClipboardMemData = NULL;
 
 		if( NULL == (ClipboardMemData = ::GetClipboardData( ClipboardFormat )) )
@@ -416,9 +389,9 @@ HRESULT ToolClipboard::convertClipboardDataToString( SVString& rClipboardData )
 			::CloseClipboard();
 
 			Result = S_FALSE;
-			SVException Exception;
-			SETEXCEPTION5( Exception, SVMSG_SVO_51_CLIPBOARD_ERROR, Err_25003, GetClipboardDataFailed );
-			throw Exception;
+			SvStl::ExceptionMgr1 e( SvStl::ExpTypeNone );
+			e.setMessage( SVMSG_SVO_51_CLIPBOARD_WARNING, SvO::GetClipboardDataFailed, StdExceptionParams, Err_25003_GetClipboardData );
+			e.Throw();
 		}
 		else
 		{
@@ -493,9 +466,9 @@ HRESULT ToolClipboard::convertXmlToTree( const SVString& rXmlData, SVXMLMaterial
 
 	if( S_OK != Result )
 	{
-		SVException Exception;
-		SETEXCEPTION5( Exception, SVMSG_SVO_51_CLIPBOARD_ERROR, Err_25004, ClipboardDataConverionFailed );
-		throw Exception;
+		SvStl::ExceptionMgr1 e( SvStl::ExpTypeNone );
+		e.setMessage( SVMSG_SVO_51_CLIPBOARD_WARNING, SvO::ClipboardDataConverionFailed, StdExceptionParams, Err_25004_ClipboardDataConversion );
+		e.Throw();
 	}
 	return Result;
 }
@@ -521,9 +494,9 @@ HRESULT ToolClipboard::checkVersion( SVXMLMaterialsTree& rTree ) const
 
 	if( S_OK != Result )
 	{
-		SVException Exception;
-		SETEXCEPTION5( Exception, SVMSG_SVO_51_CLIPBOARD_ERROR, Err_25005, VersionMismatch );
-		throw Exception;
+		SvStl::ExceptionMgr1 e( SvStl::ExpTypeNone );
+		e.setMessage( SVMSG_SVO_51_CLIPBOARD_WARNING, SvO::VersionMismatch, StdExceptionParams, Err_25005_VersionMismatch );
+		e.Throw();
 	}
 	return Result;
 }
@@ -552,17 +525,17 @@ HRESULT ToolClipboard::validateGuids( SVString& rXmlData, SVXMLMaterialsTree& rT
 		if( SVColorToolClassGuid == ToolTypeGuid && !TheSVObserverApp.IsColorSVIM() )
 		{
 			Result = S_FALSE;
-			SVException Exception;
-			SETEXCEPTION5( Exception, SVMSG_SVO_51_CLIPBOARD_ERROR, Err_25006, ColorToolInsertFailed );
-			throw Exception;
+			SvStl::ExceptionMgr1 e( SvStl::ExpTypeNone );
+			e.setMessage( SVMSG_SVO_51_CLIPBOARD_WARNING, SvO::ColorToolInsertFailed, StdExceptionParams, Err_25006_ColorToolInsert );
+			e.Throw();
 		}
 		//Only color tools are allowed to be the first tool in a color system
 		else if( 0 == ToolListindex && SVColorToolClassGuid != ToolTypeGuid && TheSVObserverApp.IsColorSVIM() )
 		{
 			Result = S_FALSE;
-			SVException Exception;
-			SETEXCEPTION5( Exception, SVMSG_SVO_51_CLIPBOARD_ERROR, Err_25007, NonColorToolInsertFailed );
-			throw Exception;
+			SvStl::ExceptionMgr1 e( SvStl::ExpTypeNone );
+			e.setMessage( SVMSG_SVO_51_CLIPBOARD_WARNING, SvO::NonColorToolInsertFailed, StdExceptionParams, Err_25007_NonColorToolInsert );
+			e.Throw();
 		}
 		else
 		{
@@ -592,9 +565,9 @@ HRESULT ToolClipboard::validateGuids( SVString& rXmlData, SVXMLMaterialsTree& rT
 	else
 	{
 		Result = S_FALSE;
-		SVException Exception;
-		SETEXCEPTION5( Exception, SVMSG_SVO_51_CLIPBOARD_ERROR, Err_25008, ClipboardDataConverionFailed );
-		throw Exception;
+		SvStl::ExceptionMgr1 e( SvStl::ExpTypeNone );
+		e.setMessage( SVMSG_SVO_51_CLIPBOARD_WARNING, SvO::ClipboardDataConverionFailed, StdExceptionParams, Err_25008_ClipboardDataConversion );
+		e.Throw();
 	}
 
 	return Result;
@@ -636,9 +609,9 @@ HRESULT ToolClipboard::replaceToolName( SVString& rXmlData, SVXMLMaterialsTree& 
 
 	if( S_OK != Result )
 	{
-		SVException Exception;
-		SETEXCEPTION5( Exception, SVMSG_SVO_51_CLIPBOARD_ERROR, Err_25009, ClipboardDataConverionFailed );
-		throw Exception;
+		SvStl::ExceptionMgr1 e( SvStl::ExpTypeNone );
+		e.setMessage( SVMSG_SVO_51_CLIPBOARD_WARNING, SvO::ClipboardDataConverionFailed, StdExceptionParams, Err_25009_ClipboardDataConversion );
+		e.Throw();
 	}
 
 	return Result;
@@ -671,9 +644,9 @@ HRESULT ToolClipboard::replaceUniqueGuids( SVString& rXmlData, SVXMLMaterialsTre
 	else
 	{
 		Result = S_FALSE;
-		SVException Exception;
-		SETEXCEPTION5( Exception, SVMSG_SVO_51_CLIPBOARD_ERROR, Err_25010, ClipboardDataConverionFailed );
-		throw Exception;
+		SvStl::ExceptionMgr1 e( SvStl::ExpTypeNone );
+		e.setMessage( SVMSG_SVO_51_CLIPBOARD_WARNING, SvO::ClipboardDataConverionFailed, StdExceptionParams, Err_25010_ClipboardDataConversion );
+		e.Throw();
 	}
 
 	return Result;
@@ -700,7 +673,7 @@ HRESULT ToolClipboard::parseTreeToTool( SVXMLMaterialsTree& rTree, SVGUID& rTool
 			SVToolSetClass* pToolset( m_rInspection.GetToolSet() );
 			if( nullptr != pToolset )
 			{
-				SVParserProgressDialog ParserProgressDialog( InsertingTool, AfxGetMainWnd() );
+				SVParserProgressDialog ParserProgressDialog( SvO::InsertingTool, AfxGetMainWnd() );
 				unsigned long parserHandle = SVObjectScriptParserClass::GetParserHandle();
 
 				SVObjectScriptParserClass* pParser = new SVObjectScriptParserClass(new SVInspectionTreeParser< SVTreeType >(rTree, ToolItem, parserHandle, pToolset->GetUniqueObjectID(), pToolset, &ParserProgressDialog));
@@ -720,9 +693,9 @@ HRESULT ToolClipboard::parseTreeToTool( SVXMLMaterialsTree& rTree, SVGUID& rTool
 
 	if( S_OK != Result )
 	{
-		SVException Exception;
-		SETEXCEPTION5( Exception, SVMSG_SVO_51_CLIPBOARD_ERROR, Err_25011, ClipboardDataConverionFailed );
-		throw Exception;
+		SvStl::ExceptionMgr1 e( SvStl::ExpTypeNone );
+		e.setMessage( SVMSG_SVO_51_CLIPBOARD_WARNING, SvO::ClipboardDataConverionFailed, StdExceptionParams, Err_25011_ClipboardDataConversion );
+		e.Throw();
 	}
 	return Result;
 }

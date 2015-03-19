@@ -159,7 +159,7 @@ void SVRemoteOutputsView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 		if( !pConfig->GetPPQCount( lPPQSize ) )
 		{
 			SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
-			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::c_textErrorGettingPPQCount, StdExceptionParams, Err_17051_SVRemoteOutputsView_OnUpdate_ErrorGettingPPQCount );
+			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorGettingPPQCount, StdExceptionParams, Err_17051_SVRemoteOutputsView_OnUpdate_ErrorGettingPPQCount );
 			DebugBreak();
 		}
 
@@ -284,7 +284,7 @@ void SVRemoteOutputsView::OnLButtonDblClk(UINT nFlags, CPoint point)
 		if( !pConfig->GetPPQCount( lPPQSize ) )
 		{
 			SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
-			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::c_textErrorGettingPPQCount, StdExceptionParams, Err_17052_SVRemoteOutputsView_OnLButtonDblClk_ErrorGettingPPQCount );
+			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorGettingPPQCount, StdExceptionParams, Err_17052_SVRemoteOutputsView_OnLButtonDblClk_ErrorGettingPPQCount );
 			DebugBreak();
 		}
 

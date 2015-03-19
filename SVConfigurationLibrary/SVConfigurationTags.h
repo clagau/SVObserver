@@ -10,8 +10,7 @@
 // ******************************************************************************
 // SVConfigurationTags.h
 
-#ifndef _INC_SVCONFIGURATIONTAGS_INCLUDED
-#define _INC_SVCONFIGURATIONTAGS_INCLUDED
+#pragma once
 
 LPCTSTR const CTAG_DESCRIPTION                    = (_T("Description"));
 LPCTSTR const CTAG_HISTORY_LEVEL                  = (_T("HistoryLevel"));
@@ -329,7 +328,17 @@ LPCTSTR const CTAG_VIEWEDTOOLVARIABLES	= _T("ViewedToolVariables");
 LPCTSTR const CTAG_VIEWEDPPQINPUTS		= _T("ViewedPPQInputs");
 LPCTSTR const CTAG_COMPLETENAME			= _T("CompleteName"); 
 
-#endif /* _INC_SVCONFIGURATIONTAGS_INCLUDED */
+/// These are tool copy / paste tags
+const TCHAR* const ToolCopyTag = _T( "Tool-Copy" );
+const TCHAR* const ToolsTag = _T( "Tools" );
+const TCHAR* const ToolTypeTag = _T( "ToolType" );
+const TCHAR* const ToolImageTag = _T("ToolImage");
+const TCHAR* const DependencyFilesTag =  _T( "DependencyFiles" );
+const TCHAR* const BaseTag = _T( "Base" );
+const TCHAR* const TypeTag = _T( "Type" );
+const TCHAR* const ElementTag = _T( "Element" );
+const TCHAR* const DataTag = _T( "</DATA>" );
+
 
 // ******************************************************************************
 // * LOG HISTORY:

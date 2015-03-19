@@ -247,7 +247,7 @@ void SVIODoc::OnExtrasEditRemoteInputs()
 		if( !pInputList->FillInputs( ppIOEntries ) )
 		{
 			SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
-			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::c_textErrorFillingInputs, StdExceptionParams, Err_17032_SVIODoc_OnExtrasEditRemoteInputs_ErrorFillingInputs );
+			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorFillingInputs, StdExceptionParams, Err_17032_SVIODoc_OnExtrasEditRemoteInputs_ErrorFillingInputs );
 			DebugBreak();
 		}
 
@@ -331,7 +331,7 @@ void SVIODoc::OnExtrasEditRemoteInputs()
 							if( pInputList->DetachInput( pRemInput->GetUniqueObjectID() ) != S_OK )
 							{
 								SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
-								e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::c_textErrorDetachingInput, StdExceptionParams, Err_17033_SVIODoc_OnExtrasEditRemoteInputs_ErrorDetachingInput );
+								e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorDetachingInput, StdExceptionParams, Err_17033_SVIODoc_OnExtrasEditRemoteInputs_ErrorDetachingInput );
 								DebugBreak();
 							}
 

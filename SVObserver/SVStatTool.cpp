@@ -222,7 +222,7 @@ HRESULT SVStatisticsToolClass::ResetObject()
 		{
 			if( HasVariable() && !Test() )
 			{
-				Result = -Err_25012;
+				Result = -Err_25012_StatTool_Test;
 			}
 			else
 			{

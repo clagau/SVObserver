@@ -160,7 +160,7 @@ void SVPLCOutputsView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 		if( !pConfig->GetPPQCount( lPPQSize ) )
 		{
 			SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
-			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::c_textErrorGettingPPQCount, StdExceptionParams, Err_17037_SVPLCOutputsView_OnUpdate_ErrorGettingPPQCount );
+			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorGettingPPQCount, StdExceptionParams, Err_17037_SVPLCOutputsView_OnUpdate_ErrorGettingPPQCount );
 			DebugBreak();
 		}
 
@@ -178,7 +178,7 @@ void SVPLCOutputsView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 			if( !pConfig->GetPPQ( iPPQLoop, &pPPQ ) )
 			{
 				SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
-				e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::c_textErrorGettingPPQ, StdExceptionParams, Err_17038_SVPLCOutputsView_OnUpdate_ErrorGettingPPQ );
+				e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorGettingPPQ, StdExceptionParams, Err_17038_SVPLCOutputsView_OnUpdate_ErrorGettingPPQ );
 				DebugBreak();
 				continue;
 			}
@@ -186,7 +186,7 @@ void SVPLCOutputsView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 			if( pConfig->GetPLCData() == nullptr )
 			{
 				SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
-				e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::c_textErrorGettingPLCData, StdExceptionParams, Err_17039_SVPLCOutputsView_OnUpdate_ErrorGettingPLCData );
+				e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorGettingPLCData, StdExceptionParams, Err_17039_SVPLCOutputsView_OnUpdate_ErrorGettingPLCData );
 				DebugBreak();
 				continue;
 			}
@@ -318,7 +318,7 @@ void SVPLCOutputsView::OnLButtonDblClk(UINT nFlags, CPoint point)
 		if( !pConfig->GetPPQCount( lPPQSize ) )
 		{
 			SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
-			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::c_textErrorGettingPPQCount, StdExceptionParams, Err_17040_SVPLCOutputsView_OnLButtonDblClk_ErrorGettingPPQCount );
+			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorGettingPPQCount, StdExceptionParams, Err_17040_SVPLCOutputsView_OnLButtonDblClk_ErrorGettingPPQCount );
 			DebugBreak();
 		}
 

@@ -92,7 +92,7 @@ BOOL SVPLCOutputEditDialog::OnInitDialog()
 	if( !pConfig->GetPPQCount( lPPQSize ) )
 	{
 		SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
-		e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::c_textErrorGettingPPQCount, StdExceptionParams, Err_17034_SVPLCOutputEditDialog_OnInitDialog_ErrorGettingPPQCount );
+		e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorGettingPPQCount, StdExceptionParams, Err_17034_SVPLCOutputEditDialog_OnInitDialog_ErrorGettingPPQCount );
 		DebugBreak();
 	}
 
@@ -103,7 +103,7 @@ BOOL SVPLCOutputEditDialog::OnInitDialog()
 		if( !pConfig->GetPPQ( k, &pPPQ ) )
 		{
 			SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
-			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::c_textErrorGettingPPQ, StdExceptionParams, Err_17035_SVPLCOutputEditDialog_OnInitDialog_ErrorGettingPPQ );
+			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorGettingPPQ, StdExceptionParams, Err_17035_SVPLCOutputEditDialog_OnInitDialog_ErrorGettingPPQ );
 			DebugBreak();
 		}
 
@@ -115,7 +115,7 @@ BOOL SVPLCOutputEditDialog::OnInitDialog()
 			if( !pPPQ->GetAllOutputs( ppIOEntries ) )
 			{
 				SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
-				e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::c_textErrorGettingOutputs, StdExceptionParams, Err_17036_SVPLCOutputEditDialog_OnInitDialog_ErrorGettingOutputs );
+				e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorGettingOutputs, StdExceptionParams, Err_17036_SVPLCOutputEditDialog_OnInitDialog_ErrorGettingOutputs );
 				DebugBreak();
 			}
 

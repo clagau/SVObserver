@@ -115,20 +115,20 @@ static const int Err_17052_SVRemoteOutputsView_OnLButtonDblClk_ErrorGettingPPQCo
 
 //Guido Ramseier error base
 static const int Gra_ErrorBase = 25000;
-static const int Err_25000 = Gra_ErrorBase + 0;
-static const int Err_25001 = Gra_ErrorBase + 1;
-static const int Err_25002 = Gra_ErrorBase + 2;
-static const int Err_25003 = Gra_ErrorBase + 3;
-static const int Err_25004 = Gra_ErrorBase + 4;
-static const int Err_25005 = Gra_ErrorBase + 5;
-static const int Err_25006 = Gra_ErrorBase + 6;
-static const int Err_25007 = Gra_ErrorBase + 7;
-static const int Err_25008 = Gra_ErrorBase + 8;
-static const int Err_25009 = Gra_ErrorBase + 9;
-static const int Err_25010 = Gra_ErrorBase + 10;
-static const int Err_25011 = Gra_ErrorBase + 11;
-static const int Err_25012 = Gra_ErrorBase + 12;
-static const int Err_NoMatroxDongle_25013 = Gra_ErrorBase + 13;
+static const int Err_25000_SetClipboardData = Gra_ErrorBase + 0;
+static const int Err_25001_ClipboardMemory = Gra_ErrorBase + 1;
+static const int Err_25002_ToolInvalid = Gra_ErrorBase + 2;
+static const int Err_25003_GetClipboardData = Gra_ErrorBase + 3;
+static const int Err_25004_ClipboardDataConversion = Gra_ErrorBase + 4;
+static const int Err_25005_VersionMismatch = Gra_ErrorBase + 5;
+static const int Err_25006_ColorToolInsert = Gra_ErrorBase + 6;
+static const int Err_25007_NonColorToolInsert = Gra_ErrorBase + 7;
+static const int Err_25008_ClipboardDataConversion = Gra_ErrorBase + 8;
+static const int Err_25009_ClipboardDataConversion = Gra_ErrorBase + 9;
+static const int Err_25010_ClipboardDataConversion = Gra_ErrorBase + 10;
+static const int Err_25011_ClipboardDataConversion = Gra_ErrorBase + 11;
+static const int Err_25012_StatTool_Test = Gra_ErrorBase + 12;
+static const int Err_25013_NoMatroxDongle = Gra_ErrorBase + 13;
 
 //Robert Yoho error base
 static const int Rpy_ErrorBase = 45000;
