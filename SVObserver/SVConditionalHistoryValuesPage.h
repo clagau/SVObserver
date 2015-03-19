@@ -9,13 +9,13 @@
 //* .Check In Date   : $Date:   23 Apr 2013 10:02:28  $
 //******************************************************************************
 
-#if !defined(AFX_SVCONDITIONALHISTORYVALUESPAGE_H__704459BA_6EC0_442F_9017_4899FA61C649__INCLUDED_)
-#define AFX_SVCONDITIONALHISTORYVALUESPAGE_H__704459BA_6EC0_442F_9017_4899FA61C649__INCLUDED_
 #pragma once
 
+#pragma region Includes
 #include "ISVPropertyPageDialog.h"
 #include "SVOutputInfoListTreeCtrl.h"
 #include "SVConditionalHistoryBasePage.h"
+#pragma endregion Includes
 
 /////////////////////////////////////////////////////////////////////////////
 // SVConditionalHistoryValuesPage dialog
@@ -25,8 +25,10 @@ class SVConditionalHistorySheet;
 class SVConditionalHistoryValuesPage : public SVConditionalHistoryBasePage
 {
 public:
+#pragma region Constructor
 	SVConditionalHistoryValuesPage( SVConditionalHistorySheet* pParentSheet, const CString& szCaption, int id = IDD );
-	~SVConditionalHistoryValuesPage();
+	virtual ~SVConditionalHistoryValuesPage();
+#pragma endregion Constructor
 
 	// ISVPropertyPageDialog
 	virtual bool QueryAllowExit();
@@ -53,15 +55,13 @@ protected:
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 
-	virtual void OnSelchangeListSelected();
+	virtual void OnSelChangeListSelected();
 
 	virtual void InitPage( SVInspectionProcess* pInspection );
 };
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_SVCONDITIONALHISTORYVALUESPAGE_H__704459BA_6EC0_442F_9017_4899FA61C649__INCLUDED_)
 
 //******************************************************************************
 //* LOG HISTORY:

@@ -9,81 +9,77 @@
 //* .Check In Date   : $Date:   23 Apr 2013 10:00:22  $
 //******************************************************************************
 
-#ifndef SVCONDITIONALHISTORYBASEPAGE_H_
-#define SVCONDITIONALHISTORYBASEPAGE_H_
+#pragma once
 
+#pragma region Includes
 #include "ISVPropertyPageDialog.h"
 #include "SVOutputInfoListTreeCtrl.h"
+#pragma endregion Includes
 
+#pragma region Declarations
 class SVConditionalHistorySheet;
 class SVInspectionProcess;
+#pragma endregion Declarations
 
 class SVConditionalHistoryBasePage : public CPropertyPage, public ISVPropertyPageDialog
 {
 public:
+#pragma region Constructor
 	SVConditionalHistoryBasePage( SVConditionalHistorySheet* pParentSheet, const CString& szCaption, int id );
-	~SVConditionalHistoryBasePage();
+	virtual ~SVConditionalHistoryBasePage();
+#pragma endregion Constructor
 
 	// ISVPropertyPageDialog
 	virtual bool QueryAllowExit();
 
 	// output of OnOK
-	bool m_bObjectsChanged;
+	bool m_bObjectsChanged; // @WARNING:  bad practice making members public
 
 // Dialog Data
 	//{{AFX_DATA(SVConditionalHistoryBasePage)
 	enum { IDD = IDD_CONDITIONAL_HISTORY_PAGE };
-	SVOutputInfoListTreeCtrlClass	m_Tree;
-	CEdit       m_ebMaxHistory;
-	CButton     m_btnClearAll;
-	CButton     m_btnClear;
-	CComboBox   m_cbInspection;
-	CListBox    m_lbSelected;
-	//CString     m_strInspection;
-	//CString     m_strMaxHistory;
-	//BOOL        m_bOverwrite;
+	SVOutputInfoListTreeCtrlClass m_Tree; // @WARNING:  bad practice making members public
+	CEdit       m_ebMaxHistory; // @WARNING:  bad practice making members public
+	CButton     m_btnClearAll; // @WARNING:  bad practice making members public
+	CButton     m_btnClear; // @WARNING:  bad practice making members public
+	CComboBox   m_cbInspection; // @WARNING:  bad practice making members public
+	CListBox    m_lbSelected; // @WARNING:  bad practice making members public
 	//}}AFX_DATA
-
 
 // Overrides
 	// ClassWizard generate virtual function overrides
 	//{{AFX_VIRTUAL(SVConditionalHistoryBasePage)
-	public:
 	virtual BOOL OnSetActive();
 	virtual BOOL OnKillActive();
-	protected:
+protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 	//}}AFX_VIRTUAL
 
 // Implementation
-protected:
 	// Generated message map functions
 	//{{AFX_MSG(SVConditionalHistoryBasePage)
 	virtual BOOL OnInitDialog();
-	afx_msg void OnSelchangeListSelected_Base();
+	afx_msg void OnSelChangeListSelected_Base();
 	afx_msg void OnBtnClear();
 	afx_msg void OnBtnClearAll();
 	afx_msg void OnCheckOverwrite();
-	afx_msg void OnSelchangeComboInspection_Base();
+	afx_msg void OnSelChangeComboInspection_Base();
 	afx_msg void OnChangeEditMaxHistory();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 
 	bool CanSelectObjectCallback( SVObjectReference refObject, bool bCurrentState, int iIndex );
 
-	virtual void OnSelchangeListSelected() {};
-	virtual void OnSelchangeComboInspection() {};
+	virtual void OnSelChangeListSelected() {};
+	virtual void OnSelChangeComboInspection() {};
 
 	virtual void InitPage( SVInspectionProcess* pInspection ) = 0;
 
 	SVConditionalHistorySheet* m_pSheet;
-
 };
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // #ifndef SVCONDITIONALHISTORYBASEPAGE_H_
 
 //******************************************************************************
 //* LOG HISTORY:

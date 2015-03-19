@@ -9,6 +9,7 @@
 //* .Check In Date   : $Date:   23 Apr 2013 10:02:20  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "svobserver.h"
 #include "SVConditionalHistoryValuesPage.h"
@@ -17,7 +18,9 @@
 #include "SVTaskObjectList.h"
 #include "SVToolSet.h"
 #include "SVIPDoc.h"
+#pragma endregion Includes
 
+#pragma region Declarations
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #undef THIS_FILE
@@ -31,7 +34,9 @@ BEGIN_MESSAGE_MAP(SVConditionalHistoryValuesPage, SVConditionalHistoryBasePage)
 	//{{AFX_MSG_MAP(SVConditionalHistoryValuesPage)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
+#pragma endregion Declarations
 
+#pragma region Constructor
 SVConditionalHistoryValuesPage::SVConditionalHistoryValuesPage( SVConditionalHistorySheet* pParent, const CString& szCaption, int id )
 : SVConditionalHistoryBasePage(pParent, szCaption, id)
 {
@@ -42,6 +47,7 @@ SVConditionalHistoryValuesPage::SVConditionalHistoryValuesPage( SVConditionalHis
 SVConditionalHistoryValuesPage::~SVConditionalHistoryValuesPage()
 {
 }
+#pragma endregion Constructor
 
 void SVConditionalHistoryValuesPage::DoDataExchange(CDataExchange* pDX)
 {
@@ -50,22 +56,19 @@ void SVConditionalHistoryValuesPage::DoDataExchange(CDataExchange* pDX)
 	//}}AFX_DATA_MAP
 }
 
-
 bool SVConditionalHistoryValuesPage::QueryAllowExit()
 {
 	return true;
 }
 
-void SVConditionalHistoryValuesPage::OnSelchangeListSelected() 
+void SVConditionalHistoryValuesPage::OnSelChangeListSelected()
 {
-	
 }
 
-BOOL SVConditionalHistoryValuesPage::OnInitDialog() 
+BOOL SVConditionalHistoryValuesPage::OnInitDialog()
 {
 	SVConditionalHistoryBasePage::OnInitDialog();
-	
-	
+
 	return TRUE;  // return TRUE unless you set the focus to a control
 	              // EXCEPTION: OCX Property Pages should return FALSE
 }

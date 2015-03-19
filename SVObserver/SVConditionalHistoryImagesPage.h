@@ -9,13 +9,13 @@
 //* .Check In Date   : $Date:   23 Apr 2013 09:59:18  $
 //******************************************************************************
 
-#if !defined(AFX_SVCONDITIONALHISTORYIMAGESPAGE_H__2EF2EE09_BEC4_4281_B65E_702351EAC4FC__INCLUDED_)
-#define AFX_SVCONDITIONALHISTORYIMAGESPAGE_H__2EF2EE09_BEC4_4281_B65E_702351EAC4FC__INCLUDED_
 #pragma once
 
+#pragma region Includes
 #include "ISVPropertyPageDialog.h"
 #include "SVOutputInfoListTreeCtrl.h"
 #include "SVConditionalHistoryBasePage.h"
+#pragma endregion Includes
 
 /////////////////////////////////////////////////////////////////////////////
 // SVConditionalHistoryImagesPage dialog
@@ -25,8 +25,10 @@ class SVConditionalHistorySheet;
 class SVConditionalHistoryImagesPage : public SVConditionalHistoryBasePage
 {
 public:
+#pragma region Constructor
 	SVConditionalHistoryImagesPage( SVConditionalHistorySheet* pParentSheet, const CString& szCaption, int id = IDD );
-	~SVConditionalHistoryImagesPage();
+	virtual ~SVConditionalHistoryImagesPage();
+#pragma endregion Constructor
 
 	// ISVPropertyPageDialog
 	virtual bool QueryAllowExit();
@@ -37,31 +39,27 @@ public:
 	enum { IDD = IDD_CONDITIONAL_HISTORY_PAGE };
 	//}}AFX_DATA
 
-
 // Overrides
 	// ClassWizard generate virtual function overrides
 	//{{AFX_VIRTUAL(SVConditionalHistoryImagesPage)
-	protected:
+protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 	//}}AFX_VIRTUAL
 
 // Implementation
-protected:
 	// Generated message map functions
 	//{{AFX_MSG(SVConditionalHistoryImagesPage)
 	virtual BOOL OnInitDialog();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 
-	virtual void OnSelchangeListSelected();
+	virtual void OnSelChangeListSelected();
 
 	virtual void InitPage( SVInspectionProcess* pInspection );
 };
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_SVCONDITIONALHISTORYIMAGESPAGE_H__2EF2EE09_BEC4_4281_B65E_702351EAC4FC__INCLUDED_)
 
 //******************************************************************************
 //* LOG HISTORY:

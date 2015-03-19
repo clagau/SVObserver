@@ -9,15 +9,13 @@
 //* .Check In Date   : $Date:   23 Apr 2013 10:02:12  $
 //******************************************************************************
 
-#ifndef SVCONDITIONALHISTORYSHEET_H_
-#define SVCONDITIONALHISTORYSHEET_H_
 #pragma once
 
-/////////////////////////////////////////////////////////////////////////////
-// SVConditionalHistorySheet
+#pragma region Includes
 #include "SVPropertySheetCancelImpl.h"
 #include "SVExternalTool.h"
 #include <map>
+#pragma endregion Includes
 
 class SVInspectionProcess;
 
@@ -27,8 +25,10 @@ class SVConditionalHistorySheet : public CPropertySheet, public ISVCancel//, pub
 
 // Construction
 public:
+#pragma region Constructor
 	SVConditionalHistorySheet( LPCTSTR pszCaption, SVInspectionProcess* pInspection, CWnd* pParentWnd = NULL, UINT iSelectPage = 0 );
 	virtual ~SVConditionalHistorySheet();
+#pragma endregion Constructor
 
 	HRESULT CreatePages();
 
@@ -38,25 +38,19 @@ public:
 	virtual HRESULT SetCancelData(SVCancelData* pData);
 
 // Attributes
-public:
-	SVInspectionProcess* m_pInspection;
+	SVInspectionProcess* m_pInspection; // @WARNING:  bad practice making members public
 
-	CString    m_strInspection;
-	CString    m_strMaxHistory;
-	BOOL       m_bOverwrite;
-
-
-// Operations
-public:
+	CString    m_strInspection; // @WARNING:  bad practice making members public
+	CString    m_strMaxHistory; // @WARNING:  bad practice making members public
+	BOOL       m_bOverwrite; // @WARNING:  bad practice making members public
 
 // Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(SVConditionalHistorySheet)
-	public:
+
 	virtual BOOL OnInitDialog();
 	//}}AFX_VIRTUAL
 	void OnOK();
-
 
 	// Generated message map functions
 protected:
@@ -72,8 +66,6 @@ protected:
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif //#ifndef SVCONDITIONALHISTORYSHEET_H_
 
 //******************************************************************************
 //* LOG HISTORY:

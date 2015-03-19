@@ -9,13 +9,13 @@
 //* .Check In Date   : $Date:   23 Apr 2013 10:00:36  $
 //******************************************************************************
 
-#if !defined(AFX_SVCONDITIONALHISTORYCONDITIONALPAGE_H__66E27060_797F_43D7_B929_EF2C2ACE15C3__INCLUDED_)
-#define AFX_SVCONDITIONALHISTORYCONDITIONALPAGE_H__66E27060_797F_43D7_B929_EF2C2ACE15C3__INCLUDED_
 #pragma once
 
+#pragma region Includes
 #include "ISVPropertyPageDialog.h"
 #include "SVOutputInfoListTreeCtrl.h"
 #include "SVConditionalHistoryBasePage.h"
+#pragma endregion Includes
 
 /////////////////////////////////////////////////////////////////////////////
 // SVConditionalHistoryConditionalPage dialog
@@ -25,8 +25,10 @@ class SVConditionalHistorySheet;
 class SVConditionalHistoryConditionalPage : public SVConditionalHistoryBasePage
 {
 public:
+#pragma region Constructor
 	SVConditionalHistoryConditionalPage( SVConditionalHistorySheet* pParentSheet, const CString& szCaption, int id = IDD );
-	~SVConditionalHistoryConditionalPage();
+	virtual ~SVConditionalHistoryConditionalPage();
+#pragma endregion Constructor
 
 	// ISVPropertyPageDialog
 	virtual bool QueryAllowExit();
@@ -37,31 +39,27 @@ public:
 	enum { IDD = IDD_CONDITIONAL_HISTORY_PAGE };
 	//}}AFX_DATA
 
-
 // Overrides
 	// ClassWizard generate virtual function overrides
 	//{{AFX_VIRTUAL(SVConditionalHistoryConditionalPage)
-	protected:
+protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 	//}}AFX_VIRTUAL
 
 // Implementation
-protected:
 	// Generated message map functions
 	//{{AFX_MSG(SVConditionalHistoryConditionalPage)
 	virtual BOOL OnInitDialog();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 
-	virtual void OnSelchangeListSelected();
+	virtual void OnSelChangeListSelected();
 
 	virtual void InitPage( SVInspectionProcess* pInspection );
 };
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_SVCONDITIONALHISTORYCONDITIONALPAGE_H__66E27060_797F_43D7_B929_EF2C2ACE15C3__INCLUDED_)
 
 //******************************************************************************
 //* LOG HISTORY:

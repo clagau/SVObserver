@@ -9,6 +9,7 @@
 //* .Check In Date   : $Date:   01 Oct 2013 12:16:28  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "svobserver.h"
 #include "SVConditionalHistoryBasePage.h"
@@ -16,7 +17,9 @@
 #include "SVConditionalHistorySheet.h"
 #include "SVConfigurationObject.h"
 #include "SVIPDoc.h"
+#pragma endregion Includes
 
+#pragma region Declarations
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #undef THIS_FILE
@@ -28,22 +31,21 @@ static char THIS_FILE[] = __FILE__;
 
 BEGIN_MESSAGE_MAP(SVConditionalHistoryBasePage, CPropertyPage)
 	//{{AFX_MSG_MAP(SVConditionalHistoryBasePage)
-	ON_LBN_SELCHANGE(IDC_LIST_SELECTED, OnSelchangeListSelected_Base)
-	ON_CBN_SELCHANGE(IDC_COMBO_INSPECTION, OnSelchangeComboInspection_Base)
+	ON_LBN_SELCHANGE(IDC_LIST_SELECTED, OnSelChangeListSelected_Base)
+	ON_CBN_SELCHANGE(IDC_COMBO_INSPECTION, OnSelChangeComboInspection_Base)
 	ON_BN_CLICKED(IDC_BTN_CLEAR, OnBtnClear)
 	ON_BN_CLICKED(IDC_BTN_CLEAR_ALL, OnBtnClearAll)
 	ON_BN_CLICKED(IDC_CHECK_OVERWRITE, OnCheckOverwrite)
 	ON_EN_CHANGE(IDC_EDIT_MAX_HISTORY, OnChangeEditMaxHistory)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
+#pragma endregion Declarations
 
+#pragma region Constructor
 SVConditionalHistoryBasePage::SVConditionalHistoryBasePage( SVConditionalHistorySheet* pParent, const CString& szCaption, int id )
 : CPropertyPage(id)
 {
 	//{{AFX_DATA_INIT(SVConditionalHistoryBasePage)
-	//m_strInspection = _T("");
-	//m_strMaxHistory = _T("");
-	//m_bOverwrite = FALSE;
 	//}}AFX_DATA_INIT
 
 	m_strCaption = szCaption;
@@ -57,6 +59,7 @@ SVConditionalHistoryBasePage::SVConditionalHistoryBasePage( SVConditionalHistory
 SVConditionalHistoryBasePage::~SVConditionalHistoryBasePage()
 {
 }
+#pragma endregion Constructor
 
 void SVConditionalHistoryBasePage::DoDataExchange(CDataExchange* pDX)
 {
@@ -68,16 +71,13 @@ void SVConditionalHistoryBasePage::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_COMBO_INSPECTION, m_cbInspection);
 	DDX_Control(pDX, IDC_TREE, m_Tree);
 	DDX_Control(pDX, IDC_LIST_SELECTED, m_lbSelected);
-//	DDX_CBString(pDX, IDC_COMBO_INSPECTION, m_strInspection);
-//	DDX_Text(pDX, IDC_EDIT_MAX_HISTORY, m_strMaxHistory);
-//	DDX_Check(pDX, IDC_CHECK_OVERWRITE, m_bOverwrite);
 	//}}AFX_DATA_MAP
 	DDX_CBString(pDX, IDC_COMBO_INSPECTION, m_pSheet->m_strInspection);
 	DDX_Text(pDX, IDC_EDIT_MAX_HISTORY, m_pSheet->m_strMaxHistory);
 	DDX_Check(pDX, IDC_CHECK_OVERWRITE, m_pSheet->m_bOverwrite);
 }
 
-BOOL SVConditionalHistoryBasePage::OnInitDialog() 
+BOOL SVConditionalHistoryBasePage::OnInitDialog()
 {
 	size_t i( 0 );
 
@@ -86,7 +86,7 @@ BOOL SVConditionalHistoryBasePage::OnInitDialog()
 	m_cbInspection.ShowWindow( SW_HIDE );
 
 	m_Tree.SetCanSelectObjectCallback( SVObjectTreeCanSelectObjectCallbackFn(this, &SVConditionalHistoryBasePage::CanSelectObjectCallback) );
-	
+
 	SVConfigurationObject* l_pConfig = NULL;
 	SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
 
@@ -121,14 +121,12 @@ BOOL SVConditionalHistoryBasePage::OnInitDialog()
 	for ( i = 0; i < vecObjects.size(); ++i )
 	{
 		SVObjectReference refObject = vecObjects.at(i);
-		CString strName = refObject.GetCompleteObjectName();
+		CString strName = refObject.GetCompleteOneBasedObjectName();
 		if ( strName.GetLength() > 0 )
 			strName = strName.Mid( strPrefix.GetLength() );
 		int iIndex = m_lbSelected.AddString( strName );
 		m_lbSelected.SetItemData( iIndex, vecIndexes.at(i) );
 	}
-	
-
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 	              // EXCEPTION: OCX Property Pages should return FALSE
@@ -141,7 +139,7 @@ bool SVConditionalHistoryBasePage::CanSelectObjectCallback( SVObjectReference re
 	CString strPrefix = m_pSheet->m_pInspection->GetName();
 	strPrefix += _T(".Tool Set.");
 
-	CString strName = refObject.GetCompleteObjectName();
+	CString strName = refObject.GetCompleteOneBasedObjectName();
 
 	if ( strName.GetLength() > 0 )
 		strName = strName.Mid( strPrefix.GetLength() );
@@ -180,17 +178,17 @@ bool SVConditionalHistoryBasePage::QueryAllowExit()
 	return true;
 }
 
-void SVConditionalHistoryBasePage::OnSelchangeListSelected_Base() 
+void SVConditionalHistoryBasePage::OnSelChangeListSelected_Base()
 {
-	OnSelchangeListSelected();
+	OnSelChangeListSelected();
 }
 
-void SVConditionalHistoryBasePage::OnSelchangeComboInspection_Base() 
+void SVConditionalHistoryBasePage::OnSelChangeComboInspection_Base()
 {
-	OnSelchangeComboInspection();
+	OnSelChangeComboInspection();
 }
 
-void SVConditionalHistoryBasePage::OnBtnClear() 
+void SVConditionalHistoryBasePage::OnBtnClear()
 {
 	std::vector<int> vecIndexes;
 	if ( m_lbSelected.GetCount() > 0 )
@@ -208,7 +206,7 @@ void SVConditionalHistoryBasePage::OnBtnClear()
 	// call ppq -> get_ch_list
 }
 
-void SVConditionalHistoryBasePage::OnBtnClearAll() 
+void SVConditionalHistoryBasePage::OnBtnClearAll()
 {
 	int iItems = m_lbSelected.GetCount();
 	for ( int i = iItems-1; i >= 0; --i )
@@ -220,39 +218,30 @@ void SVConditionalHistoryBasePage::OnBtnClearAll()
 	// call ppq -> get_ch_list
 }
 
-void SVConditionalHistoryBasePage::OnCheckOverwrite() 
+void SVConditionalHistoryBasePage::OnCheckOverwrite()
 {
 	// send ppq -> set_ch_prop
 	// call ppq -> get_ch_prop
 //	UpdateData();
 }
 
-void SVConditionalHistoryBasePage::OnChangeEditMaxHistory() 
+void SVConditionalHistoryBasePage::OnChangeEditMaxHistory()
 {
 	// send ppq -> set_ch_prop
 	// call ppq -> get_ch_prop
 //	UpdateData();
 }
 
-
-BOOL SVConditionalHistoryBasePage::OnSetActive() 
+BOOL SVConditionalHistoryBasePage::OnSetActive()
 {
-//	m_bOverwrite    = m_pSheet->m_bOverwrite;
-//	m_strMaxHistory = m_pSheet->m_strMaxHistory;
-//	m_strInspection = m_pSheet->m_strInspection;
-
 	UpdateData(FALSE);
 
 	return CPropertyPage::OnSetActive();
 }
 
-BOOL SVConditionalHistoryBasePage::OnKillActive() 
+BOOL SVConditionalHistoryBasePage::OnKillActive()
 {
 	UpdateData(TRUE);
-	
-//	m_pSheet->m_bOverwrite    = m_bOverwrite;
-//	m_pSheet->m_strMaxHistory = m_strMaxHistory;
-//	m_pSheet->m_strInspection = m_strInspection;
 
 	return CPropertyPage::OnKillActive();
 }

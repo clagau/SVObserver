@@ -9,6 +9,7 @@
 //* .Check In Date   : $Date:   23 Apr 2013 10:00:46  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "svobserver.h"
 #include "SVConditionalHistoryImagesPage.h"
@@ -17,7 +18,9 @@
 #include "SVTaskObjectList.h"
 #include "SVToolSet.h"
 #include "SVIPDoc.h"
+#pragma endregion Includes
 
+#pragma region Declarations
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #undef THIS_FILE
@@ -31,18 +34,20 @@ BEGIN_MESSAGE_MAP(SVConditionalHistoryImagesPage, SVConditionalHistoryBasePage)
 	//{{AFX_MSG_MAP(SVConditionalHistoryImagesPage)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
+#pragma endregion Declarations
 
+#pragma region Constructor
 SVConditionalHistoryImagesPage::SVConditionalHistoryImagesPage( SVConditionalHistorySheet* pParent, const CString& szCaption, int id )
 : SVConditionalHistoryBasePage(pParent, szCaption, id)
 {
 	//{{AFX_DATA_INIT(SVConditionalHistoryImagesPage)
 	//}}AFX_DATA_INIT
-
 }
 
 SVConditionalHistoryImagesPage::~SVConditionalHistoryImagesPage()
 {
 }
+#pragma endregion Constructor
 
 void SVConditionalHistoryImagesPage::DoDataExchange(CDataExchange* pDX)
 {
@@ -56,16 +61,14 @@ bool SVConditionalHistoryImagesPage::QueryAllowExit()
 	return true;
 }
 
-void SVConditionalHistoryImagesPage::OnSelchangeListSelected() 
+void SVConditionalHistoryImagesPage::OnSelChangeListSelected()
 {
-	
 }
 
-BOOL SVConditionalHistoryImagesPage::OnInitDialog() 
+BOOL SVConditionalHistoryImagesPage::OnInitDialog()
 {
 	SVConditionalHistoryBasePage::OnInitDialog();
-	
-	
+
 	return TRUE;  // return TRUE unless you set the focus to a control
 	              // EXCEPTION: OCX Property Pages should return FALSE
 }
