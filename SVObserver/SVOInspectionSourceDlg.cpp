@@ -23,6 +23,10 @@
 #include "SVInspectionImporter.h"
 #include "SVObserver.h"
 #include "SVLibrary/SVFileDialog.h"
+#include "SVGlobal.h"
+#include "SVStatusLibrary/ExceptionManager.h"
+#include "ErrorNumbers.h"
+#include "TextDefinesSvO.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -292,7 +296,8 @@ void CSVOInspectionSourceDlg::OnBtnImportIpd()
 			HRESULT hr = SVInspectionImporter::GetProperties(pathName, l_NewDisableMethod, l_EnableAuxExtents, l_VersionNumber);
 			if (hr == S_OK)
 			{
-				if ( l_VersionNumber == TheSVObserverApp.getCurrentVersion() )
+				bool shouldLoad = l_VersionNumber <= TheSVObserverApp.getCurrentVersion();
+				if( shouldLoad )
 				{
 					// Save it for later, when we exit the dialog
 					pObj->SetImportFilename(pathName);
@@ -301,9 +306,16 @@ void CSVOInspectionSourceDlg::OnBtnImportIpd()
 				}
 				else
 				{
-					CString msg;
-					msg.Format(_T("Inspection Import failed, Version mismatch."));
-					AfxMessageBox(msg);
+					CString strText;
+					CString strFile;
+					CString strApp;
+
+					::SVGetVersionString( strApp, TheSVObserverApp.getCurrentVersion() );
+					::SVGetVersionString( strFile, l_VersionNumber );
+					strText.Format(SvO::c_textImportInspectionError, strFile, strApp);
+					SvStl::ExceptionMgr1 Exception( SvStl::ExpTypeEnum::LogAndDisplay );
+					Exception.setMessage( SVMSG_SVO_56_INSPECTION_IMPORT_ERROR, strText, StdExceptionParams, Err_ImportInspectionWrongVersion_2008 );
+
 					OnBtnDeleteVi();
 				}
 			}

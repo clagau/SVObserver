@@ -23,7 +23,7 @@ private:
 	~SVInspectionImporter();
 
 public:
-	static HRESULT Import(const SVString& filename, const SVString& inspectionName, const SVString& cameraName, unsigned long version, SVImportedInspectionInfo& inspectionInfo, SVIProgress& rProgress);
+	static HRESULT Import(const SVString& filename, const SVString& inspectionName, const SVString& cameraName, SVImportedInspectionInfo& inspectionInfo, SVIProgress& rProgress);
 	static HRESULT GetProperties(const SVString& filename, long& rNewDisbaleMethod, long& rEnableAuxExtents, unsigned long& rVersionNumber);
 };
 
@@ -32,20 +32,18 @@ struct SVInspectionImportHelper
 	SVString filename;
 	SVString inspectionName;
 	SVString cameraName;
-	unsigned long version;
 	SVImportedInspectionInfo info;
 
-	SVInspectionImportHelper(const SVString& p_filename, const SVString& p_inspectionName, const SVString& p_cameraName, unsigned long p_version)
+	SVInspectionImportHelper(const SVString& p_filename, const SVString& p_inspectionName, const SVString& p_cameraName)
 	: filename(p_filename)
 	, inspectionName(p_inspectionName)
 	, cameraName(p_cameraName)
-	, version(p_version)
 	{
 	}
 
 	HRESULT Import(SVIProgress& rProgress)
 	{
-		return SVInspectionImporter::Import(filename, inspectionName, cameraName, version, info, rProgress);
+		return SVInspectionImporter::Import(filename, inspectionName, cameraName, info, rProgress);
 	}
 };
 

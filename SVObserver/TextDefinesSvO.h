@@ -28,6 +28,7 @@ namespace Seidenader
 		const TCHAR* const ErrorRemovingAllInputImageRequests = _T( "Error removing all input image requests." );
 		const TCHAR* const ErrorUnlockingInputImageRequests = _T( "Error unlocking input image requests." );
 		const TCHAR* const ErrorUnlockingInputRequests = _T( "Error unlocking input requests." );
+		const TCHAR* const c_textImportInspectionError = _T("Inspection was exported using SVObserver %s. \tThis is incompatible with SVObserver %s.");
 		const TCHAR* const ToolClipboardFormat = _T( "SVO-Tool" );
 		const TCHAR* const TempFolder = _T( "C:\\Temp" );
 		const TCHAR* const RunFolder = _T( "C:\\RUN" );

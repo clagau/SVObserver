@@ -1394,28 +1394,28 @@ HRESULT SVMainFrame::ParseToolsetScripts( SVTreeType& p_rTree )
 {
 	HRESULT l_Status( S_OK );
 
-	SVTreeType::SVBranchHandle hItemToolset = NULL;
-	SVTreeType::SVBranchHandle htiChild = NULL;
+	SVTreeType::SVBranchHandle hItemToolset = nullptr;
+	SVTreeType::SVBranchHandle htiChild = nullptr;
 
-	if( SVNavigateTreeClass::GetItemBranch( p_rTree, CTAG_INSPECTION, NULL, htiChild ) )
+	if( SVNavigateTreeClass::GetItemBranch( p_rTree, CTAG_INSPECTION, nullptr, htiChild ) )
 	{
 		// Set the Caption
 		CString title = _T( "Loading Toolset(s) ..." );
 		SVParserProgressDialog l_ParserProgressDialog( title, this );
 
-		SVTreeType::SVBranchHandle htiSubChild = NULL;
+		SVTreeType::SVBranchHandle htiSubChild = nullptr;
 		p_rTree.GetFirstBranch( htiChild, htiSubChild );
-		while( l_Status == S_OK && htiSubChild != NULL )
+		while( l_Status == S_OK && nullptr != htiSubChild )
 		{
 			SVSharedPtr<CString> pToolsetScript = new CString;
 			SVGUID ownerGuid;
 
 			SVInspectionProcess* pInspect( nullptr );
-			SVTreeType::SVBranchHandle htiSVIPDoc = NULL;
-			SVTreeType::SVBranchHandle htiDataChild = NULL;
+			SVTreeType::SVBranchHandle htiSVIPDoc = nullptr;
+			SVTreeType::SVBranchHandle htiDataChild = nullptr;
 			p_rTree.GetFirstBranch( htiSubChild, htiDataChild );
 
-			while( htiDataChild != NULL )
+			while( nullptr != htiDataChild )
 			{
 				_bstr_t DataName;
 				p_rTree.GetBranchName( htiDataChild, DataName.GetBSTR() );
@@ -1441,7 +1441,7 @@ HRESULT SVMainFrame::ParseToolsetScripts( SVTreeType& p_rTree )
 				p_rTree.GetNextBranch( htiSubChild, htiDataChild );
 			}
 
-			if( htiSVIPDoc != NULL )
+			if( nullptr != htiSVIPDoc )
 			{
 				_variant_t svVariant;
 
@@ -1457,7 +1457,7 @@ HRESULT SVMainFrame::ParseToolsetScripts( SVTreeType& p_rTree )
 					}
 				}
 
-				if( l_Status == S_OK )
+				if( S_OK == l_Status )
 				{
 					if( SVNavigateTreeClass::GetItem( p_rTree, CTAG_TOOLSET_SCRIPT, htiSVIPDoc, svVariant ) )
 					{
@@ -1480,7 +1480,7 @@ HRESULT SVMainFrame::ParseToolsetScripts( SVTreeType& p_rTree )
 
 						*pToolsetScript = l_String.ToString();
 					}
-					else if( hItemToolset == NULL )
+					else if( nullptr == hItemToolset )
 					{
 						l_Status = E_FAIL;
 					}
@@ -1491,13 +1491,13 @@ HRESULT SVMainFrame::ParseToolsetScripts( SVTreeType& p_rTree )
 				l_Status = E_FAIL;
 			}
 
-			if( l_Status == S_OK )
+			if( S_OK == l_Status )
 			{
 				if( !( ownerGuid.empty() ) )
 				{
 					pInspect = dynamic_cast< SVInspectionProcess* >( SVObjectManagerClass::Instance().GetObject( ownerGuid ) );
 
-					if( pInspect == NULL )
+					if( nullptr == pInspect )
 					{
 						l_Status = E_FAIL;
 					}
@@ -1508,18 +1508,18 @@ HRESULT SVMainFrame::ParseToolsetScripts( SVTreeType& p_rTree )
 				}
 			}
 
-			if( l_Status == S_OK )
+			if( S_OK == l_Status )
 			{
-				SVConfigurationObject* pConfig = NULL;
+				SVConfigurationObject* pConfig = nullptr;
 				SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
 				unsigned long parserHandle = SVObjectScriptParserClass::GetParserHandle();
 
 				unsigned long ulVersion = pConfig->GetFileVersion();
 
-				if (hItemToolset == NULL)
+				if (nullptr == hItemToolset)
 				{
-					SVObjectScriptParserClass* pParser = NULL;
+					SVObjectScriptParserClass* pParser = nullptr;
 					if ( ulVersion < 0x00042800 )	// SVO 4.40 minimum for new parser
 					{
 						pParser = new SVObjectScriptParserClass(new SVObjectScriptParserSVXClass(parserHandle, pToolsetScript, ownerGuid, pInspect, &l_ParserProgressDialog));
@@ -1528,7 +1528,7 @@ HRESULT SVMainFrame::ParseToolsetScripts( SVTreeType& p_rTree )
 					{
 						pParser = new SVObjectScriptParserClass(new SVObjectScriptParserSVXClass(parserHandle, pToolsetScript, ownerGuid, pInspect, &l_ParserProgressDialog));
 					}
-					if( pParser != NULL )
+					if( nullptr != pParser )
 					{
 						// Set the Parser Object
 						l_ParserProgressDialog.AddParser(parserHandle, pParser);
@@ -1540,8 +1540,9 @@ HRESULT SVMainFrame::ParseToolsetScripts( SVTreeType& p_rTree )
 				}
 				else // new parsing
 				{
+					SVConfigurationObject::updateConfTreeToNewestVersion(p_rTree, hItemToolset);
 					SVObjectScriptParserClass* pParser = new SVObjectScriptParserClass(new SVInspectionTreeParser< SVTreeType >(p_rTree, hItemToolset, parserHandle, ownerGuid, pInspect, &l_ParserProgressDialog));
-					if( pParser != NULL )
+					if( nullptr != pParser )
 					{
 						// Set the Parser Object
 						l_ParserProgressDialog.AddParser(parserHandle, pParser);
@@ -1555,7 +1556,7 @@ HRESULT SVMainFrame::ParseToolsetScripts( SVTreeType& p_rTree )
 			p_rTree.GetNextBranch( htiChild, htiSubChild );
 		}
 
-		if( l_Status == S_OK )
+		if( S_OK == l_Status )
 		{
 			// Show the Dialog
 			l_ParserProgressDialog.DoModal();

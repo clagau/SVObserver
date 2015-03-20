@@ -48,6 +48,30 @@ struct SVConfigurationAcquisitionDeviceInfoStruct;
 typedef std::vector<SVInspectionProcess *> SVInspectionProcessPtrList;
 #pragma endregion Declarations
 
+struct SVFindPredicate
+{
+	SVXMLMaterialsTree& m_rTree;
+	SVString m_Name;
+
+	SVFindPredicate( SVXMLMaterialsTree& p_rTree, const SVString& p_rName ) : m_rTree( p_rTree ), m_Name( p_rName ) {}
+	SVFindPredicate( SVXMLMaterialsTree& p_rTree, int StringResourceID ) : m_rTree( p_rTree ) 
+	{
+		CString tmp;
+		tmp.Format(StringResourceID);
+		m_Name = tmp;
+	}
+
+	bool operator()( const SVXMLMaterialsTree::SVBranchHandle& p_rRight ) const
+	{
+		_bstr_t l_Name;
+
+		bool ok = ( m_rTree.GetBranchName( p_rRight, l_Name.GetBSTR() ) == S_OK );
+		ok = ok && ( m_Name == SVString( l_Name ) );
+
+		return ok;
+	}
+};
+
 class SVConfigurationObject : public SVObjectClass,	public SVObserverTemplate< SVRenameObject >
 {
 	SV_DECLARE_CLASS( SVConfigurationObject );
@@ -226,6 +250,14 @@ public:
 	HRESULT LoadRemoteMonitorList( SVTreeType& rTree );
 
 	bool HasCameraTrigger(SVPPQObject* p_pPPQ) const;
+
+	//************************************
+	/// Update a toolset of a configuration tree and change older version to fit to the newer application. 
+	/// (e.g. if LUT Equation Clip is missing, it add them with the value false)
+	/// \param rTree [in,out] The whole tree of the xml-configuration.
+	/// \param rToolset [in,out] The branch of the tool set which should be updated.
+	//************************************
+	static void updateConfTreeToNewestVersion(SVXMLMaterialsTree &rTree, SVXMLMaterialsTree::SVBranchHandle &rToolset);
 
 protected:
 	BOOL FinishIPDoc( SVInspectionProcess* pIP );

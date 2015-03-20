@@ -58,15 +58,8 @@ void SVLUTEquationClass::init()
 
 	// Set Embedded defaults
 	m_byteVectorResult.SetDefaultValue( 0, TRUE );
-	
-	if ( TheSVObserverApp.getLoadingVersion() > 0x60A00 ) //0x60A00 is the version 6.10
-	{  //the default value should be for new tools TRUE
-		m_isLUTFormulaClipped.SetDefaultValue( TRUE, TRUE );
-	}
-	else
-	{  //the default value should be for old configurations FALSE
-		m_isLUTFormulaClipped.SetDefaultValue( FALSE, TRUE );
-	}
+	m_isLUTFormulaClipped.SetDefaultValue( TRUE, TRUE );
+
 	// NOTE: Vector Size Setting...
 	// Set default vector size in CreateObject, since objectDepth must be set before!!!
 	//m_byteVectorResult.SetSize( 256, TRUE );

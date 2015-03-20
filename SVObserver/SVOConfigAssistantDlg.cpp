@@ -2649,11 +2649,11 @@ CSVOPPQObj* CSVOConfigAssistantDlg::GetPPQObjectByInspectionName(const SVString&
 BOOL CSVOConfigAssistantDlg::SendInspectionDataToConfiguration()
 {
 	BOOL bRet = true;
-	SVConfigurationObject* pConfig = NULL;
+	SVConfigurationObject* pConfig = nullptr;
 	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
 	long lCfgInsCnt = 0;
-	SVInspectionProcess *pNewInspect = NULL;
+	SVInspectionProcess *pNewInspect = nullptr;
 
 	pConfig->GetInspectionCount(lCfgInsCnt);
 
@@ -2661,11 +2661,11 @@ BOOL CSVOConfigAssistantDlg::SendInspectionDataToConfiguration()
 	{
 		BOOL bDeleteInspect = FALSE;
 		bRet = pConfig->GetInspection(l1,&pNewInspect) && bRet;
-		if ( pNewInspect != NULL )
+		if ( nullptr != pNewInspect )
 		{
 			CSVOInspectionObj *pInsTmp = GetInspectionObjectByName(pNewInspect->GetName());
 
-			if ( pInsTmp != NULL )
+			if ( nullptr != pInsTmp )
 			{
 				if ( (!IsInspectionInList(pNewInspect->GetName()))  || (pInsTmp->IsNewInspection()) )
 				{
@@ -2681,7 +2681,7 @@ BOOL CSVOConfigAssistantDlg::SendInspectionDataToConfiguration()
 				pConfig->RemoveInspection(pNewInspect);
 				delete pNewInspect;	// also destroys IPDoc
 			}
-			pNewInspect = NULL;
+			pNewInspect = nullptr;
 		}
 	}
 
@@ -2709,7 +2709,7 @@ BOOL CSVOConfigAssistantDlg::SendInspectionDataToConfiguration()
 			for ( long l = lCfgInsCnt -1; -1 < l; l-- )
 			{
 				bRet = pConfig->GetInspection(l,&pNewInspect) && bRet;
-				if (pNewInspect != NULL)
+				if (nullptr != pNewInspect)
 				{
 					if ( sKey.Compare(pNewInspect->GetName()) == 0 )
 					{
@@ -2720,39 +2720,37 @@ BOOL CSVOConfigAssistantDlg::SendInspectionDataToConfiguration()
 						TheSVObserverApp.OnUpdateAllIOViews();
 						break;
 					}
-					pNewInspect = NULL;
+					pNewInspect = nullptr;
 				}
 			}
 
 			BOOL bAddInspection = FALSE;
 
-			if ( pNewInspect == NULL )
+			if ( nullptr == pNewInspect )
 			{
 				const CString& importFilename = pInsObj->GetImportFilename();
 				if (!importFilename.IsEmpty())
 				{
-					unsigned long ulVersion = TheSVObserverApp.getCurrentVersion();
-
-					SVInspectionImportHelper importer(importFilename, sFileName, sToolsetImage, ulVersion);
+					SVInspectionImportHelper importer(importFilename, sFileName, sToolsetImage);
 					SVString title = _T( "Importing Inspection..." );
 					SVImportProgress<SVInspectionImportHelper> progress(importer, title.c_str());
 					progress.DoModal();
 
 					HRESULT hr = progress.GetStatus();
-					if (hr == S_OK)
+					if (S_OK == hr)
 					{
 						if (importer.info.m_inspectionGuid != GUID_NULL)
 						{
 							// SEJ - add info to list
 							m_ImportedInspectionInfoList.push_back(importer.info);
-							SVObjectClass* pObject(NULL);
+							SVObjectClass* pObject(nullptr);
 							SVObjectManagerClass::Instance().GetObjectByIdentifier(importer.info.m_inspectionGuid, pObject);
 
-							bRet = pObject != NULL;
+							bRet = (nullptr != pObject);
 
 							if( bRet )
 							{
-								pNewInspect = reinterpret_cast<SVInspectionProcess *>(pObject);
+								pNewInspect = dynamic_cast<SVInspectionProcess *>(pObject);
 								RenameInspectionObjects(sKey, sFileName);
 								bRet = pConfig->AddInspection( pNewInspect );
 
@@ -2768,14 +2766,7 @@ BOOL CSVOConfigAssistantDlg::SendInspectionDataToConfiguration()
 					else
 					{
 						CString msg;
-						if (hr == -15016)
-						{
-							msg.Format(_T("Inspection Import failed, version mismatch."));
-						}
-						else
-						{
-							msg.Format(_T("Inspection Import failed. Error = %d"), hr);
-						}
+						msg.Format(_T("Inspection Import failed. Error = %d"), hr);
 						AfxMessageBox(msg);
 					}
 					pInsObj->ClearImportFilename();
@@ -2784,7 +2775,7 @@ BOOL CSVOConfigAssistantDlg::SendInspectionDataToConfiguration()
 				{
 					SVObjectManagerClass::Instance().ConstructObject( SVInspectionProcessGuid, pNewInspect );
 
-					bRet = pNewInspect != NULL;
+					bRet = (nullptr != pNewInspect);
 
 					if( bRet )
 					{
@@ -2803,7 +2794,7 @@ BOOL CSVOConfigAssistantDlg::SendInspectionDataToConfiguration()
 				}
 			}
 
-			if ( pNewInspect != NULL )
+			if ( nullptr != pNewInspect )
 			{
 				pNewInspect->SetToolsetImage(sToolsetImage);
 
@@ -2816,7 +2807,7 @@ BOOL CSVOConfigAssistantDlg::SendInspectionDataToConfiguration()
 					::SVSendMessage( pNewInspect, SVM_RESET_ALL_OBJECTS, NULL, NULL );
 				}
 			}
-			pNewInspect = NULL;
+			pNewInspect = nullptr;
 		}
 	}
 	return bRet;

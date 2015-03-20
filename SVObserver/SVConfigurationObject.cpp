@@ -65,6 +65,7 @@
 #include "EnvironmentObject.h"
 #include "SVSystemLibrary/SVThreadManager.h"
 #include "RangeClassHelper.h"
+#include "SVObjectLibrary/SVToolsetScriptTags.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -5367,6 +5368,32 @@ bool SVConfigurationObject::HasCameraTrigger(SVPPQObject* p_pPPQ) const
 		}
 	}
 	return bRetVal;
+}
+
+void SVConfigurationObject::updateConfTreeToNewestVersion(SVXMLMaterialsTree &rTree, SVXMLMaterialsTree::SVBranchHandle &rToolset)
+{
+	SVXMLMaterialsTree::SVBranchHandle lutEquationBranch;
+	//check for LUT Equation clip-value
+	if ( SVNavigateTreeClass::FindBranch( rTree, rToolset, SVFindPredicate( rTree, IDS_CLASSNAME_SVLUTEQUATION ), lutEquationBranch ) )
+	{
+		SVXMLMaterialsTree::SVBranchHandle lutEquationClipBranch;
+		SVXMLMaterialsTree::SVBranchHandle lutEquationEmbeddedsBranch;
+		if ( SVNavigateTreeClass::FindBranch( rTree, lutEquationBranch, SVFindPredicate( rTree, scEmbeddedsTag ), lutEquationEmbeddedsBranch ) )
+		{
+			//check if clip for LUT equation is existing.
+			if ( !SVNavigateTreeClass::FindBranch( rTree, lutEquationEmbeddedsBranch, SVFindPredicate( rTree, IDS_OBJECTNAME_LUT_EQUATION_CLIP ), lutEquationClipBranch ) )
+			{
+				//add clip value to tree, with value FALSE
+				SVConfigurationTreeWriter< SVXMLMaterialsTree > writer(rTree, lutEquationEmbeddedsBranch);
+				SVBoolValueObjectClass isLUTFormulaClipped;
+				isLUTFormulaClipped.SetResetOptions( false, SVResetItemTool );
+				isLUTFormulaClipped.SetObjectEmbedded(SVLUTEquationClipFlagObjectGuid, nullptr, IDS_OBJECTNAME_LUT_EQUATION_CLIP);
+				isLUTFormulaClipped.SetDefaultValue( TRUE, TRUE );
+				isLUTFormulaClipped.SetValue(0, FALSE);
+				isLUTFormulaClipped.Persist(writer);
+			}
+		}
+	}
 }
 
 bool SVConfigurationObject::SetupRemoteMonitorList()
