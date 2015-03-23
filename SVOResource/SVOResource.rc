@@ -4312,7 +4312,7 @@ BEGIN
             MENUITEM "&Customize Utilities",        ID_EXTRAS_UTILITIES_EDIT,MFT_STRING,MFS_ENABLED
             MENUITEM MFT_SEPARATOR
         END
-        MENUITEM "Enable AutoSave",             ID_EXTRAS_ENABLEAUTOSAVE,MFT_STRING,MFS_ENABLED
+        MENUITEM "AutoSave",             ID_EXTRAS_ENABLEAUTOSAVE,MFT_STRING,MFS_ENABLED
     END
     POPUP "&Help",                          65535,MFT_STRING | MFT_RIGHTJUSTIFY,MFS_ENABLED
     BEGIN
@@ -4387,12 +4387,12 @@ BEGIN
         MENUITEM MFT_SEPARATOR
         MENUITEM "Test Outputs",                ID_EXTRAS_TESTOUTPUTS,MFT_STRING,MFS_ENABLED
         MENUITEM MFT_SEPARATOR
-        POPUP "&Utilities",                     65535,MFT_STRING,MFS_ENABLED
+        POPUP "&Utilities",                 65535,MFT_STRING,MFS_ENABLED
         BEGIN
-            MENUITEM "&Customize Utilities",        ID_EXTRAS_UTILITIES_EDIT,MFT_STRING,MFS_ENABLED
+            MENUITEM "&Customize Utilities",    ID_EXTRAS_UTILITIES_EDIT,MFT_STRING,MFS_ENABLED
             MENUITEM MFT_SEPARATOR
         END
-        MENUITEM "Enable AutoSave",             ID_EXTRAS_ENABLEAUTOSAVE,MFT_STRING,MFS_ENABLED
+        MENUITEM "AutoSave",                    ID_EXTRAS_ENABLEAUTOSAVE,MFT_STRING,MFS_ENABLED
     END
     POPUP "&Help",                          65535,MFT_STRING | MFT_RIGHTJUSTIFY,MFS_ENABLED
     BEGIN

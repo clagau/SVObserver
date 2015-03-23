@@ -3424,6 +3424,17 @@ BOOL SVObserverApp::InitInstance()
 	SVDirectX::Instance().Initialize();
 
 	SVSocketLibrary::Init();
+
+	int AutoSaveValue = INI().GetValueInt( _T("Settings"), _T("EnableAutosave"), 0); //Arvid accept a number: non-zero enables
+
+	std::string AutoSaveValueString=INI().GetValueString( _T("Settings"), _T("EnableAutosave"), _T("FALSE")); //Arvid accept a string
+
+	if ( AutoSaveValueString == std::string("TRUE") || AutoSaveValueString == std::string("true"))
+	{
+		AutoSaveValue = 1;
+	}
+
+	AutoSaver::Instance().SetEnabled(AutoSaveValue != 0);
 	
 	m_RemoteCommandsPortNumber = INI().GetValueInt( _T("Settings"), _T("RemoteCommandsPortNumber"), -1 );
 	if ( m_RemoteCommandsPortNumber == -1 )

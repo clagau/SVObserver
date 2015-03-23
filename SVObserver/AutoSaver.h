@@ -36,6 +36,7 @@ public:
 	//************************************
 	void ToggleEnable(){m_AutoSaveEnabled=!m_AutoSaveEnabled;}
 	bool IsEnabled(){return m_AutoSaveEnabled;}
+	void SetEnabled(bool enabled){m_AutoSaveEnabled = enabled;}
 
 	//************************************
 	/// performs an automatic configuration backup if enabled and required (when always is false, 
