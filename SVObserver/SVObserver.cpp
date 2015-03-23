@@ -2163,7 +2163,7 @@ void SVObserverApp::OnGoOnline()
 				INT_PTR Res(0);
 				SvStl::ExceptionMgr1 Exception(SvStl::ExpTypeEnum::LogAndDisplay);
 
-				Res = Exception.setMessage(SVMSG_SVO_43_GENERAL,l_csMessage,StdExceptionParams, Err_45000, 0, MB_OK);
+				Res = Exception.setMessage(SVMSG_SVO_54_EMPTY,l_csMessage,StdExceptionParams, Err_45000, 0, MB_OK);
 				SVSVIMStateClass::AddState( l_lPrevState );
 			}
 		}

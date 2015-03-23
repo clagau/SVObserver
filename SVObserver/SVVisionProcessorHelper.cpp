@@ -1181,7 +1181,7 @@ void SVVisionProcessorHelper::AddToolError(SVGUID guid, SVString sErrorMessage)
 	}
 }
 
-int SVVisionProcessorHelper::GetNumberOfToolErrors()
+int SVVisionProcessorHelper::GetNumberOfToolErrors() const
 {
 	int iSize;
 	iSize = (int)m_ToolErrorMap.size();
@@ -1189,7 +1189,7 @@ int SVVisionProcessorHelper::GetNumberOfToolErrors()
 	return iSize;
 }
 
-bool SVVisionProcessorHelper::GetFirstErrorMessage(SVGUID &guid, SVString &sErrorMessage)
+bool SVVisionProcessorHelper::GetFirstErrorMessage(SVGUID &guid, SVString &sErrorMessage) const
 {
 	bool bRet = false;
 	SVErrorMap::const_iterator it = m_ToolErrorMap.begin();

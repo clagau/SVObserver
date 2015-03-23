@@ -111,14 +111,14 @@ public:
     // GetNumberofToolError
 	// Returns the number of errors in the map. 
 	//////////////////////////////////////////
-	int GetNumberOfToolErrors();
+	int GetNumberOfToolErrors() const;
 
 	//////////////////////////////////////////
 	// GetFirstErrorMessage
 	// returns true along with the SVGUID and ErrorMessage string.
 	// returns false if it was unable to get anything from the map. this should never happen
 	//////////////////////////////////////////
-	bool GetFirstErrorMessage(SVGUID &guid, SVString &sErrorMessage);
+	bool GetFirstErrorMessage(SVGUID &guid, SVString &sErrorMessage) const;
 
 protected:
 	typedef boost::function< HRESULT ( const SVNameSet&, SVNameStorageResultMap& ) > SVGetItemsFunctor;
@@ -176,8 +176,11 @@ private:
 	//************************************
 	void SetValuesOrImagesMonitoredObjectLists( const SVNameSet& rObjectNameList, const SVPPQObject& pPPQ, MonitoredObjectList &rMonitoredValueObjectList, MonitoredObjectList *pMonitoredImageObjectList, SVNameStatusMap &rStatus, HRESULT &hr );
 #pragma endregion Private Methods
+
+#pragma region Private Members
 private:   //Data
 	SVErrorMap m_ToolErrorMap;
+#pragma endregion Private Members
 };
 
 #endif
