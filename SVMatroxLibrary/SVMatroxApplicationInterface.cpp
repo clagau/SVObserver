@@ -92,7 +92,6 @@ SVMatroxInt _stdcall SVMatroxApplicationInterface::SVMatroxHookHandler( SVMatrox
 			 (l_StatusInfo.m_StatusSubCodeCount == MATROX_FILTER_EVENT_SUBCODE_COUNT) &&	
 			 (l_StatusInfo.m_StatusSubCode[0] == S_FALSE))	
 	{
-		bool bStop = true;
 //-		RPY240215 - This case is put here to filter out
 //-		the EventGigEVisionError.  Most of the GigE Cameras 
 //-		do not support Events and should not show up in the event
