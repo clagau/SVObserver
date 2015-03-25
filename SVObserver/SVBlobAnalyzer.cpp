@@ -1176,177 +1176,166 @@ BOOL SVBlobAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 			}
 		}
 
-		if( m_lNumberOfBlobsToProcess > 0 )
+		// do the following even if no blobs have been found.
+
+		register SVBlobFeatureEnum eFeature;
+
+		//
+		// Get the array of features values for each feature selected.
+		//
+		for (eFeature = SV_AREA; eFeature < SV_TOPOF_LIST; eFeature = (SVBlobFeatureEnum) (eFeature + 1))
 		{
-			register SVBlobFeatureEnum eFeature;
-
-			//
-			// Get the array of features values for each feature selected.
-			//
-			for (eFeature = SV_AREA; eFeature < SV_TOPOF_LIST; eFeature = (SVBlobFeatureEnum) (eFeature + 1))
+			if (msvszFeaturesEnabled[ eFeature ] == _T('1'))
 			{
-				if (msvszFeaturesEnabled[ eFeature ] == _T('1'))
+				if ( (eFeature == SV_CENTER_X_SOURCE) || (eFeature == SV_CENTER_Y_SOURCE) ) // not a MIL Feature, do not process
 				{
-					if ( (eFeature == SV_CENTER_X_SOURCE) || (eFeature == SV_CENTER_Y_SOURCE) ) // not a MIL Feature, do not process
-					{
-						//calculate the values if the feature is enabled.  
-						// do not continue with rest of feature code for these two
-						// feature, since they are not MIL features.
-						continue;
-					}
+					//calculate the values if the feature is enabled.  
+					// do not continue with rest of feature code for these two
+					// feature, since they are not MIL features.
+					continue;
+				}
 
-					//
-					// Get a pointer to the row of values assigned to this blob
-					// feature.
-					//
-					vector2d<double>::row_type& row = m_vec2dBlobResults[eFeature];
-					row.resize( m_lNumberOfBlobsFound );
-					//m_vec2dBlobResults[ eFeature ].resize( m_lNumberOfBlobsFound );
-					double* pData = &(row[0]);
+				//
+				// Get a pointer to the row of values assigned to this blob
+				// feature.
+				//
+
+				vector2d<double>::row_type& row = m_vec2dBlobResults[eFeature];
+				row.resize( m_lNumberOfBlobsFound );
+				//m_vec2dBlobResults[ eFeature ].resize( m_lNumberOfBlobsFound );
+				double* pData = nullptr;
+				if(row.size() != 0)
+				{
+					pData = &(row[0]);
 					memset( pData, 0L, sizeof( double ) * row.size() );
-
-					//
-					// Check to make sure we don't try to get M_SUM_PIXEL result
-					// on a binary image.  We can't do M_SUM_PIXEL
-					//
-					if(BlobFeatureConstants[eFeature].MILFeatureDef == SVEBlobSumPixel)
-					{
-						//
-						// If we could find out if this was a binarized image. We could
-						// possibly do more.  MBufInquire() had no option to return an 
-						// indication a binarized image property.
-						//
-						// Zero the M_SUM_PIXEL blob features values
-						//
-						for ( int n = 0; n < m_lNumberOfBlobsFound; n++ )
-						{
-							pData[n] = 0.0;
-						}
-						continue;     // Next i;
-					}
-					//
-					// Get the results for each feature for each blob found.
-					//
-					if ( (eFeature != SV_CENTER_X_SOURCE) || (eFeature != SV_CENTER_Y_SOURCE) )
-					{
-						l_Code = SVMatroxBlobInterface::GetResult( msvResultBufferID, 
-							BlobFeatureConstants [eFeature]. MILFeatureDef,
-							pData );
-					}
-				}// end if (msvszFeaturesEnabled [eFeature] == _T('1'))
-			}// end for (eFeature = SV_AREA; eFeature < SV_TOPOF_LIST; eFeature = (SVBlobFeatureEnum) (eFeature + 1))
-
-			if ( (msvszFeaturesEnabled [SV_CENTER_X_SOURCE] == _T('1')) || 
-				 (msvszFeaturesEnabled [SV_CENTER_Y_SOURCE] == _T('1')) )
-			{
-				double * pCenterXData = NULL;
-				bool l_bCenterXSet = false;
-				if (msvszFeaturesEnabled [SV_CENTER_X_SOURCE] == _T('1') )
-				{
-					vector2d<double>::row_type& row = m_vec2dBlobResults[SV_CENTER_X_SOURCE];
-					pCenterXData = &(row[0]);
-					memset( pCenterXData, 0L, sizeof( double ) * row.size() );
-					l_bCenterXSet = true;
 				}
 
-				double * pCenterYData = NULL;
-				bool l_bCenterYSet = false;
-				if (msvszFeaturesEnabled [SV_CENTER_Y_SOURCE] == _T('1') )
+				//
+				// Check to make sure we don't try to get M_SUM_PIXEL result
+				// on a binary image.  We can't do M_SUM_PIXEL
+				//
+				if(BlobFeatureConstants[eFeature].MILFeatureDef == SVEBlobSumPixel)
 				{
-					vector2d<double>::row_type& row = m_vec2dBlobResults[SV_CENTER_Y_SOURCE];
-					pCenterYData = &(row[0]);
-					memset( pCenterYData, 0L, sizeof( double ) * row.size() );
-					l_bCenterYSet = true;
-				}
-
-				double * pBoxXMaxData = &(m_vec2dBlobResults[SV_BOXX_MAX][0]);
-				double * pBoxXMinData = &(m_vec2dBlobResults[SV_BOXX_MIN][0]);
-				double * pBoxYMaxData = &(m_vec2dBlobResults[SV_BOXY_MAX][0]);
-				double * pBoxYMinData = &(m_vec2dBlobResults[SV_BOXY_MIN][0]);
-
-				for(int n=0; n < m_lBlobSampleSize; n++)
-				{
-					double l_dMaxX = 0.0;
-					double l_dMinX = 0.0;
-					double l_dMaxY = 0.0;
-					double l_dMinY = 0.0;
-					double l_dCenterX = 0.0;
-					double l_dCenterY = 0.0;
-					SVExtentPointStruct ptSt;
-
-					l_dMaxX = pBoxXMaxData[n];
-					l_dMinX = pBoxXMinData[n];
-					l_dMaxY = pBoxYMaxData[n];
-					l_dMinY = pBoxYMinData[n];
-
-					l_dCenterX = (l_dMaxX - l_dMinX)/2 + l_dMinX;
-					l_dCenterY = (l_dMaxY - l_dMinY)/2 + l_dMinY;
-
-					ptSt.m_dPositionX = l_dCenterX;
-					ptSt.m_dPositionY = l_dCenterY;
-
-					SVImageClass* pTmpImage = NULL;
-
-					if ( pImage )
+					//
+					// If we could find out if this was a binarized image. We could
+					// possibly do more.  MBufInquire() had no option to return an 
+					// indication a binarized image property.
+					//
+					// Zero the M_SUM_PIXEL blob features values
+					//
+					for ( int n = 0; n < m_lNumberOfBlobsFound; n++ )
 					{
-						pTmpImage = pImage;
-						while ( pTmpImage->GetParentImage() != NULL )
-						{
-							pTmpImage = pTmpImage->GetParentImage();
-						}
-						pImage->TranslateFromOutputSpaceToImage(pTmpImage,ptSt,ptSt);
-
-						if ( l_bCenterXSet )
-						{
-							pCenterXData[n] = ptSt.m_dPositionX;
-						}
-						if ( l_bCenterYSet )
-						{
-							pCenterYData[n] = ptSt.m_dPositionY;
-						}
-						
-					} // if (pImage) 
-				}//for number of blobs
-			}//if the feature SV_CENTER_X(Y)_SOURCE is set
-
-			msvSortFeature.GetValue( lSortFeature );
-			msvlSortMap.SetSize( m_lNumberOfBlobsFound );
-			// Check for Sort Feature
-			// Note Sort Feature will be -1 if no features have been selected
-			// otherwise if at least one feature has been selected
-			// lSortFeature will be a valid feature index
-			if( lSortFeature >= SV_AREA && lSortFeature < SV_TOPOF_LIST )
-			{
-				SortBlobs( lSortFeature, msvlSortMap.GetData(), static_cast< long >( msvlSortMap.GetSize() ) );
-			}
-
-			for (eFeature = SV_AREA; eFeature < SV_TOPOF_LIST; eFeature = (SVBlobFeatureEnum) (eFeature + 1))
-			{
-				if (msvszFeaturesEnabled [eFeature] == _T('1'))
-				{
-					// EB 2005 01 28
-					// add array capability to blob results
-					for ( int iBlob = 0; iBlob < m_lNumberOfBlobsToProcess; iBlob++ )
-					{
-						msvValue[eFeature].SetValue( RRunStatus.m_lResultDataIndex, iBlob, m_vec2dBlobResults[eFeature][ msvlSortMap[iBlob] ] );
+						pData[n] = 0.0;
 					}
+					continue;     // Next i;
 				}
-			}
-		}// if( m_lNumberOfBlobsFound )
-		else // No blobs found is ok - but need to mark outputs as invalid
+				//
+				// Get the results for each feature for each blob found.
+				//
+				if (m_lNumberOfBlobsFound != 0 && ((eFeature != SV_CENTER_X_SOURCE) || (eFeature != SV_CENTER_Y_SOURCE)) )
+				{
+					l_Code = SVMatroxBlobInterface::GetResult( msvResultBufferID, 
+						BlobFeatureConstants [eFeature]. MILFeatureDef,
+						pData );
+				}
+			}// end if (msvszFeaturesEnabled [eFeature] == _T('1'))
+
+		}// end for (eFeature = SV_AREA; eFeature < SV_TOPOF_LIST; eFeature = (SVBlobFeatureEnum) (eFeature + 1))
+		if (m_lNumberOfBlobsFound != 0 && ((msvszFeaturesEnabled [SV_CENTER_X_SOURCE] == _T('1')) || 
+				(msvszFeaturesEnabled [SV_CENTER_Y_SOURCE] == _T('1'))) )
 		{
-			// Sri 04-12-00
-			// Make all blob features to 0.0, if there are no blobs found
-			for (SVBlobFeatureEnum eFeature = SV_AREA; eFeature < SV_TOPOF_LIST; eFeature = (SVBlobFeatureEnum)(eFeature + 1))
-			{	
-				if (msvszFeaturesEnabled[ eFeature ] == _T('1'))
+			double * pCenterXData = NULL;
+			bool l_bCenterXSet = false;
+			if (msvszFeaturesEnabled [SV_CENTER_X_SOURCE] == _T('1') )
+			{
+				vector2d<double>::row_type& row = m_vec2dBlobResults[SV_CENTER_X_SOURCE];
+				pCenterXData = &(row[0]);
+				memset( pCenterXData, 0L, sizeof( double ) * row.size() );
+				l_bCenterXSet = true;
+			}
+
+			double * pCenterYData = NULL;
+			bool l_bCenterYSet = false;
+			if (msvszFeaturesEnabled [SV_CENTER_Y_SOURCE] == _T('1') )
+			{
+				vector2d<double>::row_type& row = m_vec2dBlobResults[SV_CENTER_Y_SOURCE];
+				pCenterYData = &(row[0]);
+				memset( pCenterYData, 0L, sizeof( double ) * row.size() );
+				l_bCenterYSet = true;
+			}
+
+			double * pBoxXMaxData = &(m_vec2dBlobResults[SV_BOXX_MAX][0]);
+			double * pBoxXMinData = &(m_vec2dBlobResults[SV_BOXX_MIN][0]);
+			double * pBoxYMaxData = &(m_vec2dBlobResults[SV_BOXY_MAX][0]);
+			double * pBoxYMinData = &(m_vec2dBlobResults[SV_BOXY_MIN][0]);
+
+			for(int n=0; n < m_lBlobSampleSize; n++)
+			{
+				double l_dMaxX = 0.0;
+				double l_dMinX = 0.0;
+				double l_dMaxY = 0.0;
+				double l_dMinY = 0.0;
+				double l_dCenterX = 0.0;
+				double l_dCenterY = 0.0;
+				SVExtentPointStruct ptSt;
+
+				l_dMaxX = pBoxXMaxData[n];
+				l_dMinX = pBoxXMinData[n];
+				l_dMaxY = pBoxYMaxData[n];
+				l_dMinY = pBoxYMinData[n];
+
+				l_dCenterX = (l_dMaxX - l_dMinX)/2 + l_dMinX;
+				l_dCenterY = (l_dMaxY - l_dMinY)/2 + l_dMinY;
+
+				ptSt.m_dPositionX = l_dCenterX;
+				ptSt.m_dPositionY = l_dCenterY;
+
+				SVImageClass* pTmpImage = NULL;
+
+				if ( pImage )
 				{
-					msvValue[ eFeature ].SetResultSize( RRunStatus.m_lResultDataIndex, 1 );
-					msvValue[ eFeature ].SetValue( RRunStatus.m_lResultDataIndex, 0.0 );
+					pTmpImage = pImage;
+					while ( pTmpImage->GetParentImage() != NULL )
+					{
+						pTmpImage = pTmpImage->GetParentImage();
+					}
+					pImage->TranslateFromOutputSpaceToImage(pTmpImage,ptSt,ptSt);
+
+					if ( l_bCenterXSet )
+					{
+						pCenterXData[n] = ptSt.m_dPositionX;
+					}
+					if ( l_bCenterYSet )
+					{
+						pCenterYData[n] = ptSt.m_dPositionY;
+					}
+						
+				} // if (pImage) 
+			}//for number of blobs
+		}//if the feature SV_CENTER_X(Y)_SOURCE is set
+
+		msvSortFeature.GetValue( lSortFeature );
+		msvlSortMap.SetSize( m_lNumberOfBlobsFound );
+		// Check for Sort Feature
+		// Note Sort Feature will be -1 if no features have been selected
+		// otherwise if at least one feature has been selected
+		// lSortFeature will be a valid feature index
+		if( lSortFeature >= SV_AREA && lSortFeature < SV_TOPOF_LIST )
+		{
+			SortBlobs( lSortFeature, msvlSortMap.GetData(), static_cast< long >( msvlSortMap.GetSize() ) );
+		}
+
+		for (eFeature = SV_AREA; eFeature < SV_TOPOF_LIST; eFeature = (SVBlobFeatureEnum) (eFeature + 1))
+		{
+			if (msvszFeaturesEnabled [eFeature] == _T('1'))
+			{
+				// EB 2005 01 28
+				// add array capability to blob results
+				for ( int iBlob = 0; iBlob < m_lNumberOfBlobsToProcess; iBlob++ )
+				{
+					msvValue[eFeature].SetValue( RRunStatus.m_lResultDataIndex, iBlob, m_vec2dBlobResults[eFeature][ msvlSortMap[iBlob] ] );
 				}
 			}
-			// End. sri
-			SetInvalid();
 		}
 
 		// Now fill the blobs
@@ -1414,7 +1403,9 @@ DWORD SVBlobAnalyzerClass::SortBlobs (long alSortFeature,
 
 	BOOL ascending;
 	msvSortAscending.GetValue(ascending);
-	MapQuickSort (&(m_vec2dBlobResults[alSortFeature][0]),
+	if (m_vec2dBlobResults[alSortFeature].size() > 0)
+	{
+		MapQuickSort (&(m_vec2dBlobResults[alSortFeature][0]),
 	                alSortMap,
 	                0, 
 	                p_lArraySize - 1, 
@@ -1424,7 +1415,7 @@ DWORD SVBlobAnalyzerClass::SortBlobs (long alSortFeature,
 	                ascending,
 	                m_vec2dBlobResults[alSortFeature]);     // Ascending
 #endif
-	
+	}
 	return msvError.GetLastErrorCd ();
 }
 
@@ -1651,7 +1642,8 @@ BOOL SVBlobAnalyzerClass::IsPtOverResult( CPoint point )
 
 	m_nBlobIndex = -1;
 
-	if ( m_lvoNumberOfBlobsFound.GetValue( l_lCurrentNbrOfBlobs ) == S_OK )
+	if (( m_lvoNumberOfBlobsFound.GetValue( l_lCurrentNbrOfBlobs ) == S_OK ) &&
+		(l_lCurrentNbrOfBlobs != 0))
 	{
 		SVImageExtentClass l_svExtents;
 		HRESULT hr = GetTool()->GetImageExtent( l_svExtents );

@@ -46,9 +46,6 @@ protected:
 	virtual BOOL onRun( SVRunStatusClass& RRunStatus );
 
 // Data Element(s):
-public:
-	// Input: Point
-	SVInObjectInfoStruct		inputDoubleObjectInfo;
 protected:
 	// Output
 	SVDoubleValueObjectClass		value;

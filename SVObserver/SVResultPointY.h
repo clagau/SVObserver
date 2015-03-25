@@ -82,10 +82,6 @@ protected:
 // Data Element(s):
 //******************************************************************************
 protected:
-
-	// Input: Point
-	SVInObjectInfoStruct		inputPointObjectInfo;
-
 	// Output
 	SVLongValueObjectClass		y;
 };

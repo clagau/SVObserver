@@ -214,20 +214,56 @@ CRect SVResultClass::Draw( HDC DC, CRect R )
 
 BOOL SVResultClass::Run( SVRunStatusClass& RRunStatus )
 {
-	if( SVTaskObjectListClass::Run( RRunStatus ) )
+	SVValueObjectClass* pValue = getInput();
+	
+	long	resultSize = -1;
+	if (nullptr != pValue)
 	{
-		// set our state according to the runStatus
-		passed.SetValue( RRunStatus.m_lResultDataIndex, RRunStatus.IsPassed() );
-		failed.SetValue( RRunStatus.m_lResultDataIndex, RRunStatus.IsFailed() );
-		warned.SetValue( RRunStatus.m_lResultDataIndex, RRunStatus.IsWarned() );
+		resultSize = pValue->GetResultSize();
+	}
 
+	// This is testing to verify that a result was found.  Analyzers such as 
+	// Blob, Character, and Barcode deal with variable numbers of valid 
+	// results, and need to deal with the possibillity of not finding blobs,
+	// characters, or getting a barcode read.
+	if (0 == resultSize)
+	{
+		// no results to process.
+		// if there are no results outside the range, we want the ResultObject
+		// to pass.
+		passed.SetValue( RRunStatus.m_lResultDataIndex, true );
+		failed.SetValue( RRunStatus.m_lResultDataIndex, false );
+		warned.SetValue( RRunStatus.m_lResultDataIndex, false );
 		return TRUE;
+	}
+	else
+	{
+		// valid results to process.
+		if( SVTaskObjectListClass::Run(RRunStatus) )
+		{
+
+			// set our state according to the runStatus
+			passed.SetValue( RRunStatus.m_lResultDataIndex, RRunStatus.IsPassed() );
+			failed.SetValue( RRunStatus.m_lResultDataIndex, RRunStatus.IsFailed() );
+			warned.SetValue( RRunStatus.m_lResultDataIndex, RRunStatus.IsWarned() );
+
+			return TRUE;
+		}
 	}
 
 	SetInvalid();
 	RRunStatus.SetInvalid();
 	return FALSE;
 }
+
+SVValueObjectClass* SVResultClass::getInput()
+{
+	if( inputObjectInfo.IsConnected() && inputObjectInfo.GetInputObjectInfo().PObject )
+		return static_cast <SVValueObjectClass*> ( inputObjectInfo.GetInputObjectInfo().PObject);
+
+	return nullptr;
+}
+
 
 BOOL SVResultClass::onRun( SVRunStatusClass& RRunStatus )
 {

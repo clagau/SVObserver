@@ -50,16 +50,13 @@ protected:
 
 // Data Element(s):
 protected:
-	// Input: Point
-	SVInObjectInfoStruct		inputLongObjectInfo;
-
 	// Output
 	SVLongValueObjectClass		value;
 };
 
 inline const GUID & SVLongResultClass::GetInputEmbeddedID() const
 {
-	const SVLongValueObjectClass * l_vo = const_cast<SVLongResultClass *>(this)->getInputLong();
+	const SVLongValueObjectClass * l_vo = static_cast <SVLongValueObjectClass *> (const_cast<SVLongResultClass *>(this)->getInput());
 	if (l_vo)
 	{
 		return l_vo->GetEmbeddedID();

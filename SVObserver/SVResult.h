@@ -70,12 +70,25 @@ public:
 	virtual CRect Draw( HDC DC, CRect R );
 
 	virtual BOOL Run(SVRunStatusClass& RRunStatus);
+	
+	
+	// Only valid for single input Results that can use the inputObjectInfo 
+	// shortcut.
+	SVValueObjectClass* getInput();
+
 
 protected:
 	virtual BOOL onRun( SVRunStatusClass& RRunStatus );
 	virtual DWORD_PTR processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext );
 
 	void init();
+
+public:
+	// Input: Pointer to the Input Object
+	// This gives an easy shortcut to the input object.  Really only useful 
+	// with objects that KNOW they only have a single input object (otherwise walk 
+	// the input object list).  Objects that can use this are Double and Long.
+	SVInObjectInfoStruct		inputObjectInfo;
 
 protected:
 	// Passed, if TRUE ( Reset Value: FALSE )

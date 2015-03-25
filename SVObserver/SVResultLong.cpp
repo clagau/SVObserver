@@ -47,9 +47,9 @@ SVLongResultClass::SVLongResultClass( BOOL BCreateDefaultTaskList, SVObjectClass
 	outObjectInfo.ObjectTypeInfo.SubType = SVResultLongObjectType;
 
 	// Identify our input type needs
-	inputLongObjectInfo.SetInputObjectType( SVLongValueObjectType );
-	inputLongObjectInfo.SetObject( GetObjectInfo() );
-	RegisterInputObject( &inputLongObjectInfo, _T( "LongResultValue" ) );
+	inputObjectInfo.SetInputObjectType( SVLongValueObjectType );
+	inputObjectInfo.SetObject( GetObjectInfo() );
+	RegisterInputObject( &inputObjectInfo, _T( "LongResultValue" ) );
 
 
 	// Register Embedded Objects
@@ -95,7 +95,7 @@ BOOL SVLongResultClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructur
 
 	if( SVResultClass::CreateObject( PCreateStructure ) )
 	{
-		bOk = getInputLong() != NULL;
+		bOk = getInput() != NULL;
 	}
 
 	value.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
@@ -110,21 +110,11 @@ BOOL SVLongResultClass::CloseObject()
 	return SVResultClass::CloseObject();
 }
 
-/* // inlined
-SVLongValueObjectClass* SVLongResultClass::getInputLong()
-{
-	if( inputLongObjectInfo.IsConnected && inputLongObjectInfo.InputObjectInfo.PObject )
-		return ( SVLongValueObjectClass* ) inputLongObjectInfo.InputObjectInfo.PObject;
-
-	return NULL;
-}
-//*/
-
 BOOL SVLongResultClass::OnValidate()
 {
 	BOOL bRetVal = FALSE;
-	if( inputLongObjectInfo.IsConnected() &&
-		inputLongObjectInfo.GetInputObjectInfo().PObject )
+	if( inputObjectInfo.IsConnected() &&
+		inputObjectInfo.GetInputObjectInfo().PObject )
 	{
 		bRetVal = TRUE;
 		bRetVal = SVResultClass::OnValidate() && bRetVal;
@@ -142,7 +132,7 @@ BOOL SVLongResultClass::onRun( SVRunStatusClass& RRunStatus )
 	// All inputs and outputs must be validated first
 	if( SVResultClass::onRun( RRunStatus ) )
 	{
-		SVLongValueObjectClass* pValue = getInputLong();
+		SVLongValueObjectClass* pValue = static_cast <SVLongValueObjectClass*> (getInput());
 		ASSERT( pValue );
 
 		long v;
@@ -159,11 +149,12 @@ BOOL SVLongResultClass::onRun( SVRunStatusClass& RRunStatus )
 
 SVLongValueObjectClass* SVLongResultClass::getInputLong()
 {
-	if( inputLongObjectInfo.IsConnected() && inputLongObjectInfo.GetInputObjectInfo().PObject )
-		return ( SVLongValueObjectClass* ) inputLongObjectInfo.GetInputObjectInfo().PObject;
+	if( inputObjectInfo.IsConnected() && inputObjectInfo.GetInputObjectInfo().PObject )
+		return static_cast<SVLongValueObjectClass*>(inputObjectInfo.GetInputObjectInfo().PObject);
 
 	return NULL;
 }
+
 
 //******************************************************************************
 //* LOG HISTORY:

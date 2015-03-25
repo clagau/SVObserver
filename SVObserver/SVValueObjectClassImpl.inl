@@ -37,7 +37,8 @@ const SVValueObjectClassImpl<T>& SVValueObjectClassImpl<T>::operator = (const SV
 				if ( rhs.ArraySize() == 1 )
 					m_ScalarBuckets = rhs.m_ScalarBuckets;
 				else
-					Buckets() = Buckets(rhs);
+// Jim 10.02.15 - allow the copy of empty vector.
+					BucketsNoAssert() = Buckets(rhs);
 
 				DefaultValue() = DefaultValue(rhs);
 
@@ -133,7 +134,7 @@ HRESULT SVValueObjectClassImpl<T>::CreateBuckets()
 		objectDepth = 2;
 	}
 
-	if ( m_iNumberOfBuckets != objectDepth && objectDepth > 0)
+	if ( (m_iNumberOfBuckets != objectDepth) && (objectDepth > 0))
 	{
 		if ( ArraySize() == 1 )
 		{
