@@ -3144,7 +3144,9 @@ void SVIPDoc::OnEditAdjustToolPosition()
 		if( SVImageViewClass* pImageView = GetImageView() )
 		{
 			SVSVIMStateClass::AddState( SV_STATE_EDITING );
-			SVAdjustToolSizePositionDlg dlg( _T( "Adjust Tool Size / Position" ), dynamic_cast< CWnd* >( this->GetMDIChild() ), l_pTool );
+			CString DlgName;
+			DlgName.Format("Adjust Tool Size and Position - %s",l_pTool->GetObjectName());
+			SVAdjustToolSizePositionDlg dlg(DlgName, dynamic_cast< CWnd* >( this->GetMDIChild() ), l_pTool );
 			dlg.DoModal();
 			SVSVIMStateClass::RemoveState( SV_STATE_EDITING );
 		}
@@ -3174,6 +3176,8 @@ void SVIPDoc::OnUpdateEditAdjustToolPosition(CCmdUI* pCmdUI)
 				SVToolClass* Tool = dynamic_cast< SVToolClass* >( SVObjectManagerClass::Instance().GetObject(rGuid));
 				if (Tool)
 				{
+					//make sure m_SelectedToolID is updated to the correct tool when a right mouse click selects the tool
+					m_SelectedToolID = rGuid;
 					if (S_OK == Tool->DoesObjectHaveExtents())
 					{
 						Enabled = TRUE;

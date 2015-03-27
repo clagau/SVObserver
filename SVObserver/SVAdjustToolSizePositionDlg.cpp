@@ -102,6 +102,8 @@ BOOL SVAdjustToolSizePositionDlg::OnInitDialog()
 	m_iMode = MODE_MOVE;	// Default action: Move
 	CDialog::OnInitDialog();
 
+	SetWindowText(m_sTitle);
+
 	createIcons();
 	bool l_bShow = ( nullptr != dynamic_cast< AllowResizeToParent* >( m_pToolTask ) );
 
