@@ -138,7 +138,7 @@ enum PortNumbers: uint16_t
 { 
 	InputStreamPortNumber = 32100,
 	OutputStreamPortNumber = 32101,
-	FailStatusStreamPortNumber= 28969,
+	FailStatusStreamPortNumber = 28969,
 	RemoteCommandsPortNumber = 28960
 };
 
@@ -3435,33 +3435,33 @@ BOOL SVObserverApp::InitInstance()
 	}
 
 	AutoSaver::Instance().SetEnabled(AutoSaveValue != 0);
-	
-	m_RemoteCommandsPortNumber = INI().GetValueInt( _T("Settings"), _T("RemoteCommandsPortNumber"), -1 );
-	if ( m_RemoteCommandsPortNumber == -1 )
+	unsigned short defaultPortNo = -1;
+	m_RemoteCommandsPortNumber = INI().GetValueInt( _T("Settings"), _T("RemoteCommandsPortNumber"), defaultPortNo );
+	if ( m_RemoteCommandsPortNumber == defaultPortNo )
 	{
 		m_RemoteCommandsPortNumber = RemoteCommandsPortNumber;
 
 		INI().SetValue(_T( "Settings" ),_T( "RemoteCommandsPortNumber" ), m_RemoteCommandsPortNumber );
 	}
 
-	m_InputStreamPortNumber = INI().GetValueInt( _T("Settings"), _T("InputStreamPortNumber"), -1 );
-	if ( m_InputStreamPortNumber == -1 )
+	m_InputStreamPortNumber = INI().GetValueInt( _T("Settings"), _T("InputStreamPortNumber"), defaultPortNo );
+	if ( m_InputStreamPortNumber == defaultPortNo )
 	{
 		m_InputStreamPortNumber = InputStreamPortNumber;
 
 		INI().SetValue(_T( "Settings" ),_T( "InputStreamPortNumber" ), m_InputStreamPortNumber );
 	}
 
-	m_OutputStreamPortNumber = INI().GetValueInt( _T("Settings"), _T("OutputStreamPortNumber"), -1 );
-	if ( m_OutputStreamPortNumber == -1 )
+	m_OutputStreamPortNumber = INI().GetValueInt( _T("Settings"), _T("OutputStreamPortNumber"), defaultPortNo );
+	if ( m_OutputStreamPortNumber == defaultPortNo)
 	{
 		m_OutputStreamPortNumber = OutputStreamPortNumber;
 
 		INI().SetValue(_T( "Settings" ),_T( "OutputStreamPortNumber" ), m_OutputStreamPortNumber );
 	}
 
-	m_FailStatusStreamPortNumber = INI().GetValueInt( _T("Settings"), _T("FailStatusStreamPortNumber"), -1 );
-	if ( m_FailStatusStreamPortNumber == -1 )
+	m_FailStatusStreamPortNumber = INI().GetValueInt( _T("Settings"), _T("FailStatusStreamPortNumber"), defaultPortNo );
+	if ( m_FailStatusStreamPortNumber == defaultPortNo )
 	{
 		m_FailStatusStreamPortNumber = FailStatusStreamPortNumber;
 
