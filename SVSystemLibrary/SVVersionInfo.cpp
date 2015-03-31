@@ -39,9 +39,15 @@ std::string SVVersionInfo::GetVersion()
 			std::stringstream buf;
 			buf << HIWORD(pFileInfo->dwFileVersionMS) << "." << std::setfill( '0' ) << std::setw( 2 ) << LOWORD(pFileInfo->dwFileVersionMS);
 
-			if( HIWORD(pFileInfo->dwFileVersionLS) < 255 )
+			auto betaNumber=HIWORD(pFileInfo->dwFileVersionLS) < 255;
+			if( betaNumber > 0 && betaNumber < 254)
 			{
 				buf << " Beta " << std::setfill( '0' ) << std::setw( 3 ) << HIWORD(pFileInfo->dwFileVersionLS);
+			}
+
+			if( LOWORD(pFileInfo->dwFileVersionLS) > 0 )
+			{
+				buf << ", Revision " << LOWORD(pFileInfo->dwFileVersionLS);
 			}
 
 			verStr = buf.str();
@@ -177,14 +183,21 @@ std::string SVVersionInfo::GetShortTitleVersion()
 			buf << ".";
 			buf << std::setfill('0') << std::setw(2) << LOWORD(pFileInfo->dwFileVersionMS);
 
-			if( HIWORD(pFileInfo->dwFileVersionLS) < 255 )
+			auto betaNumber=HIWORD(pFileInfo->dwFileVersionLS) < 255;
+			if( betaNumber > 0 && betaNumber < 254)
 			{
 				buf << "b" << HIWORD(pFileInfo->dwFileVersionLS);
+			}
+
+			if( LOWORD(pFileInfo->dwFileVersionLS) > 0 )
+			{
+				buf << "r" << LOWORD(pFileInfo->dwFileVersionLS);
 			}
 
 			verStr = buf.str();
 		}
 	}
+
 	delete [] lpData;
 
 	#ifdef _DEBUG
