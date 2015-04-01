@@ -645,12 +645,17 @@ HRESULT SVTestGigeCameraProxy::SetStandardCameraParameter( const SVDeviceParamWr
 
 				// convert to safearray
 				hr = SVLUTToSafeArray(pLutParam->lut, l_oValue);
-				if (hr == S_OK)
+				if (S_OK == hr)
 				{
-					// Enable LUT
-					_variant_t enableLut(true);
-					hr = pDigitizer->ParameterSetValue( hDigitizer, SVGigeParameterLutEnable, 0, &enableLut );
-					if (hr == S_OK)
+					// LUT is only enabled when the transform operation type is not "Normal"
+					const SVLutTransformOperation* pOperation = pLutParam->lut.Info().GetTransformOperation();
+					SVLutTransformOperationEnum TransformOperationEnum = SVLutTransform::GetEquivalentType(pOperation);
+
+					bool EnableLUT = LutTransformTypeNormal != TransformOperationEnum;
+
+					_variant_t EnableLUTVariant( EnableLUT );
+					hr = pDigitizer->ParameterSetValue( hDigitizer, SVGigeParameterLutEnable, 0, &EnableLUTVariant );
+					if (S_OK == hr)
 					{
 						// Set LUT values
 						hr = pDigitizer->ParameterSetValue( hDigitizer, SVGigeParameterLutArray, 0, &l_oValue );
