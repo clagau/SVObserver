@@ -530,7 +530,8 @@ void SVResultViewClass::OnRButtonDown(UINT nFlags, CPoint point)
 {
 	CMenu ResultsMenu;
 
-	if( SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_READY ) &&
+	//	Allow the Result Picker in every mode except Stop
+	if( SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_EDIT | SV_STATE_TEST | SV_STATE_REGRESSION ) &&
 		TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable( SECURITY_POINT_MODE_MENU_EDIT_TOOLSET ) )
 	{
 		if( ResultsMenu.LoadMenu( IDR_RESULTS_CONTEXT_MENU ) )
