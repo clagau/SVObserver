@@ -122,29 +122,24 @@ HRESULT SVTaskObjectClass::GetOutputList( SVOutputInfoListClass& p_rOutputInfoLi
 {
 	HRESULT l_Status( S_OK );
 
-	if( friendList.Lock() )
+	for (int i = 0; i < friendList.size(); ++ i)
 	{
-		for (int i = 0; i < friendList.GetSize(); ++ i)
+		const SVObjectInfoStruct& rFriend = friendList[ i ];
+
+		// Check if Friend is alive...
+		SVTaskObjectClass* l_pObject( NULL );
+
+		l_pObject = dynamic_cast< SVTaskObjectClass* >( SVObjectManagerClass::Instance().GetObject( rFriend.UniqueObjectID ) );
+
+		if( l_pObject != NULL )
 		{
-			const SVObjectInfoStruct& rFriend = friendList[ i ];
+			HRESULT l_Temp = l_pObject->GetOutputList( p_rOutputInfoList );
 
-			// Check if Friend is alive...
-			SVTaskObjectClass* l_pObject( NULL );
-
-			l_pObject = dynamic_cast< SVTaskObjectClass* >( SVObjectManagerClass::Instance().GetObject( rFriend.UniqueObjectID ) );
-
-			if( l_pObject != NULL )
+			if( l_Status == S_OK )
 			{
-				HRESULT l_Temp = l_pObject->GetOutputList( p_rOutputInfoList );
-
-				if( l_Status == S_OK )
-				{
-					l_Status = l_Temp;
-				}
+				l_Status = l_Temp;
 			}
 		}
-		
-		friendList.Unlock();
 	}
 
 	for( long i = 0; i < embeddedList.GetSize(); i++ )
@@ -275,19 +270,14 @@ HRESULT SVTaskObjectClass::GetChildObject( SVObjectClass*& p_rpObject, const SVO
 	{
 		if( 0 < p_rNameInfo.m_NameArray.size() && p_rNameInfo.m_NameArray[ p_Index ] == GetName() )
 		{
-			if (friendList.Lock())
+			// Notify friends...
+			for (int i = 0; p_rpObject == NULL && i < friendList.size(); ++ i)
 			{
-				// Notify friends...
-				for (int i = 0; p_rpObject == NULL && i < friendList.GetSize(); ++ i)
+				const SVObjectInfoStruct& rfriend = friendList[i];
+				if (rfriend.PObject)
 				{
-					const SVObjectInfoStruct& rfriend = friendList[i];
-					if (rfriend.PObject)
-					{
-						l_Status = rfriend.PObject->GetChildObject( p_rpObject, p_rNameInfo, p_Index + 1 );
-					}
+					l_Status = rfriend.PObject->GetChildObject( p_rpObject, p_rNameInfo, p_Index + 1 );
 				}
-				
-				friendList.Unlock();
 			}
 
 			if( ( l_Status != S_OK ) && ( ( p_Index + 1 ) == ( p_rNameInfo.m_NameArray.size() - 1 ) ) )
@@ -342,22 +332,17 @@ HRESULT SVTaskObjectClass::IsInputImage( SVImageClass *p_psvImage )
 	{
 		SVTaskObjectClass *l_psvObject = NULL;
 
-		if( friendList.Lock() )
+		// Notify friends...
+		for( int i = 0; l_hrOk != S_OK && i < friendList.size(); ++i )
 		{
-			// Notify friends...
-			for( int i = 0; l_hrOk != S_OK && i < friendList.GetSize(); ++i )
+			const SVObjectInfoStruct &l_rsvFriend = friendList[i];
+
+			l_psvObject = dynamic_cast<SVTaskObjectClass *>(l_rsvFriend.PObject);
+
+			if( nullptr != l_psvObject && l_psvObject->GetOwner() == this )
 			{
-				SVObjectInfoStruct &l_rsvFriend = friendList[i];
-
-				l_psvObject = dynamic_cast<SVTaskObjectClass *>(l_rsvFriend.PObject);
-
-				if( l_psvObject != NULL && l_psvObject->GetOwner() == this )
-				{
-					l_hrOk = l_psvObject->IsInputImage( p_psvImage );
-				}
+				l_hrOk = l_psvObject->IsInputImage( p_psvImage );
 			}
-			
-			friendList.Unlock();
 		}
 
 		// Notify embeddeds...
@@ -379,22 +364,17 @@ SVTaskObjectClass *SVTaskObjectClass::GetObjectAtPoint( const SVExtentPointStruc
 {
 	SVTaskObjectClass *l_psvObject = NULL;
 
-	if( friendList.Lock() )
+	// Notify friends...
+	for( int i = 0; l_psvObject == NULL && i < friendList.size(); ++i )
 	{
-		// Notify friends...
-		for( int i = 0; l_psvObject == NULL && i < friendList.GetSize(); ++i )
+		const SVObjectInfoStruct &l_rsvFriend = friendList[i];
+
+		l_psvObject = dynamic_cast<SVTaskObjectClass *>(l_rsvFriend.PObject);
+
+		if( nullptr != l_psvObject && l_psvObject->GetOwner() == this )
 		{
-			SVObjectInfoStruct &l_rsvFriend = friendList[i];
-
-			l_psvObject = dynamic_cast<SVTaskObjectClass *>(l_rsvFriend.PObject);
-
-			if( l_psvObject != NULL && l_psvObject->GetOwner() == this )
-			{
-				l_psvObject = l_psvObject->GetObjectAtPoint( p_rsvPoint );
-			}
+			l_psvObject = l_psvObject->GetObjectAtPoint( p_rsvPoint );
 		}
-		
-		friendList.Unlock();
 	}
 
 	// Notify embeddeds...
@@ -500,16 +480,12 @@ BOOL SVTaskObjectClass::ConnectAllInputs()
 	addDefaultInputObjects(TRUE, &inputList);
 	
 	// tell friends to connect...
-	if (friendList.Lock())
+	for (int j = 0; j < friendList.size(); ++ j)
 	{
-		for (int j = 0; j < friendList.GetSize(); ++ j)
-		{
-			SVObjectInfoStruct& rFriend = friendList[j];
-			::SVSendMessage(rFriend.UniqueObjectID, SVM_CONNECT_ALL_INPUTS, NULL, NULL);
-		}
-		friendList.Unlock();
+		const SVObjectInfoStruct& rFriend = friendList[j];
+		::SVSendMessage(rFriend.UniqueObjectID, SVM_CONNECT_ALL_INPUTS, NULL, NULL);
 	}
-	
+
 	// find our inputs
 	for (int i = 0; i < inputList.GetSize(); ++ i)
 	{
@@ -539,22 +515,17 @@ BOOL SVTaskObjectClass::ConnectAllInputs()
 						BOOL bSuccess = FALSE;
 						
 						// Ask first friends...
-						if (friendList.Lock())
+						for (int j = 0; j < friendList.size(); ++ j)
 						{
-							for (int j = 0; j < friendList.GetSize(); ++ j)
+							const SVObjectInfoStruct& rFriend = friendList[j];
+							pObject = reinterpret_cast<SVObjectClass *>(::SVSendMessage(rFriend.UniqueObjectID, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&info)));
+							if (pObject)
 							{
-								SVObjectInfoStruct& rFriend = friendList[j];
-								pObject = reinterpret_cast<SVObjectClass *>(::SVSendMessage(rFriend.UniqueObjectID, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&info)));
-								if (pObject)
-								{
-									// Connect input ...
-									pInInfo->SetInputObject( pObject->GetUniqueObjectID() );
-									bSuccess = TRUE;
-									break;
-								}
+								// Connect input ...
+								pInInfo->SetInputObject( pObject->GetUniqueObjectID() );
+								bSuccess = TRUE;
+								break;
 							}
-							
-							friendList.Unlock();
 						}
 						
 						// Then ask owner...
@@ -687,30 +658,25 @@ BOOL SVTaskObjectClass::CreateObject(SVObjectLevelCreateStruct* PCreateStruct)
 	retVal = SVObjectAppClass::CreateObject(PCreateStruct);
 	
 	// Create our friends
-	if (friendList.Lock())
+	for (int j = 0; j < friendList.size(); ++ j)
 	{
-		for (int j = 0; j < friendList.GetSize(); ++ j)
+		const SVObjectInfoStruct& rFriend = friendList[j];
+		SVObjectClass* pFriend = SVObjectManagerClass::Instance().GetObject(rFriend.UniqueObjectID);
+		if (pFriend)
 		{
-			SVObjectInfoStruct& rFriend = friendList[j];
-			SVObjectClass* pFriend = SVObjectManagerClass::Instance().GetObject(rFriend.UniqueObjectID);
-			if (pFriend)
-			{
-				DwResult = ::SVSendMessage( this, SVM_CREATE_CHILD_OBJECT, reinterpret_cast<DWORD_PTR>(pFriend), NULL );
+			DwResult = ::SVSendMessage( this, SVM_CREATE_CHILD_OBJECT, reinterpret_cast<DWORD_PTR>(pFriend), NULL );
 
-				ASSERT(DwResult == SVMR_SUCCESS);
-			}
-			else
-			{
-				ASSERT(0);
-				retVal = FALSE;
-			}
-			
-			retVal = (DwResult == SVMR_SUCCESS) && retVal;
+			ASSERT(DwResult == SVMR_SUCCESS);
 		}
-
-		friendList.Unlock();
+		else
+		{
+			ASSERT(0);
+			retVal = FALSE;
+		}
+			
+		retVal = (DwResult == SVMR_SUCCESS) && retVal;
 	}
-	
+
 	// Create the embeddeds...
 	// Save the owner and set the owner of our embeddeds to us!
 	
@@ -861,20 +827,15 @@ BOOL SVTaskObjectClass::SetObjectDepth(int NewObjectDepth)
 	// Set object depth of members here...
 	
 	// Set Depth of our Friends...
-	if (friendList.Lock())
+	for (int i = 0; i < friendList.size(); ++ i)
 	{
-		for (int i = 0; i < friendList.GetSize(); ++ i)
+		const SVObjectInfoStruct& rFriend = friendList[i];
+		// Check if Friend is alive...
+		SVObjectClass* pFriend = SVObjectManagerClass::Instance().GetObject(rFriend.UniqueObjectID);
+		if (pFriend)
 		{
-			SVObjectInfoStruct& rFriend = friendList[i];
-			// Check if Friend is alive...
-			SVObjectClass* pFriend = SVObjectManagerClass::Instance().GetObject(rFriend.UniqueObjectID);
-			if (pFriend)
-			{
-				pFriend->SetObjectDepth(NewObjectDepth);
-			}
+			pFriend->SetObjectDepth(NewObjectDepth);
 		}
-		
-		friendList.Unlock();
 	}
 	
 	// SEJ - July 8,1999
@@ -895,20 +856,15 @@ BOOL SVTaskObjectClass::SetObjectDepthWithIndex(int NewObjectDepth, int NewLastS
 	// Set object depth of members here...
 	
 	// Set Depth of our Friends...
-	if (friendList.Lock())
+	for (int i = 0; i < friendList.size(); ++ i)
 	{
-		for (int i = 0; i < friendList.GetSize(); ++ i)
+		const SVObjectInfoStruct& rFriend = friendList[i];
+		// Check if Friend is alive...
+		SVObjectClass* pFriend = SVObjectManagerClass::Instance().GetObject(rFriend.UniqueObjectID);
+		if (pFriend)
 		{
-			SVObjectInfoStruct& rFriend = friendList[i];
-			// Check if Friend is alive...
-			SVObjectClass* pFriend = SVObjectManagerClass::Instance().GetObject(rFriend.UniqueObjectID);
-			if (pFriend)
-			{
-				pFriend->SetObjectDepthWithIndex(NewObjectDepth, NewLastSetIndex);
-			}
+			pFriend->SetObjectDepthWithIndex(NewObjectDepth, NewLastSetIndex);
 		}
-		
-		friendList.Unlock();
 	}
 	
 	// SEJ - July 8,1999
@@ -926,22 +882,17 @@ BOOL SVTaskObjectClass::SetImageDepth(long lDepth)
 	// Set object depth of members here...
 	
 	// Set Depth of our Friends...
-	if (friendList.Lock())
+	for (int i = 0; i < friendList.size(); ++ i)
 	{
-		for (int i = 0; i < friendList.GetSize(); ++ i)
+		const SVObjectInfoStruct& rFriend = friendList[i];
+		// Check if Friend is alive...
+		SVObjectClass* pFriend = SVObjectManagerClass::Instance().GetObject(rFriend.UniqueObjectID);
+		if (pFriend)
 		{
-			SVObjectInfoStruct& rFriend = friendList[i];
-			// Check if Friend is alive...
-			SVObjectClass* pFriend = SVObjectManagerClass::Instance().GetObject(rFriend.UniqueObjectID);
-			if (pFriend)
-			{
-				pFriend->SetImageDepth(lDepth);
-			}
+			pFriend->SetImageDepth(lDepth);
 		}
-		
-		friendList.Unlock();
 	}
-	
+
 	// SEJ - July 8,1999
 	for (int i = 0; i < embeddedList.GetSize(); i++)
 	{
@@ -1170,18 +1121,13 @@ void SVTaskObjectClass::SetDisabled()
 	statusColor.SetValue(1, SV_DEFAULT_DISABLED_COLOR);
 	
 	// Set friends to disabled...
-	if (friendList.Lock())
+	for (int i = 0; i < friendList.size(); ++ i)
 	{
-		for (int i = 0; i < friendList.GetSize(); ++ i)
+		const SVObjectInfoStruct& rFriend = friendList[i];
+		if (rFriend.PObject)
 		{
-			SVObjectInfoStruct& rFriend = friendList[i];
-			if (rFriend.PObject)
-			{
-				rFriend.PObject->SetDisabled();
-			}
+			rFriend.PObject->SetDisabled();
 		}
-
-		friendList.Unlock();
 	}
 }
 
@@ -1228,20 +1174,16 @@ DWORD SVTaskObjectClass::GetObjectState() const
 void SVTaskObjectClass::GetInputObjects(SVInputInfoListClass& RInputObjectList)
 {
 	// Add our Friends first
-	if (friendList.Lock())
+	
+	for (int i = 0; i < friendList.size(); ++ i)
 	{
-		for (int i = 0; i < friendList.GetSize(); ++ i)
+		const SVObjectInfoStruct& rFriend = friendList[i];
+		// Check if Friend is alive...
+		SVObjectClass* pFriend = SVObjectManagerClass::Instance().GetObject(rFriend.UniqueObjectID);
+		if (SV_IS_KIND_OF(pFriend, SVTaskObjectClass))
 		{
-			SVObjectInfoStruct& rFriend = friendList[i];
-			// Check if Friend is alive...
-			SVObjectClass* pFriend = SVObjectManagerClass::Instance().GetObject(rFriend.UniqueObjectID);
-			if (SV_IS_KIND_OF(pFriend, SVTaskObjectClass))
-			{
-				((SVTaskObjectClass*)pFriend)->GetInputObjects(RInputObjectList);
-			}
+			((SVTaskObjectClass*)pFriend)->GetInputObjects(RInputObjectList);
 		}
-		
-		friendList.Unlock();
 	}
 	
 	int j( 0 );
@@ -1255,20 +1197,15 @@ void SVTaskObjectClass::GetInputObjects(SVInputInfoListClass& RInputObjectList)
 void SVTaskObjectClass::GetAllInputObjects()
 {
 	// Tell Friends to rebuild their lists
-	if (friendList.Lock())
+	for (int i = 0; i < friendList.size(); ++ i)
 	{
-		for (int i = 0; i < friendList.GetSize(); ++ i)
+		const SVObjectInfoStruct& rFriend = friendList[i];
+		// Check if Friend is alive...
+		SVObjectClass* pFriend = SVObjectManagerClass::Instance().GetObject(rFriend.UniqueObjectID);
+		if (SV_IS_KIND_OF(pFriend, SVTaskObjectClass))
 		{
-			SVObjectInfoStruct& rFriend = friendList[i];
-			// Check if Friend is alive...
-			SVObjectClass* pFriend = SVObjectManagerClass::Instance().GetObject(rFriend.UniqueObjectID);
-			if (SV_IS_KIND_OF(pFriend, SVTaskObjectClass))
-			{
-				((SVTaskObjectClass*)pFriend)->GetAllInputObjects();
-			}
+			((SVTaskObjectClass*)pFriend)->GetAllInputObjects();
 		}
-		
-		friendList.Unlock();
 	}
 }
 
@@ -1286,25 +1223,20 @@ void SVTaskObjectClass::GetObjectScript(CString& RStrScript, CString& RStrAliasT
 	script.ReleaseBuffer(); 
 	
 	// Get script of close friends list members...
-	if (friendList.Lock())
+	for (int i = 0; i < friendList.GetSize(); ++ i)
 	{
-		for (int i = 0; i < friendList.GetSize(); ++ i)
+		SVObjectInfoStruct& rFriend = friendList[i];
+		// Check if Friend is alive...
+		SVObjectClass* pFriend = SVObjectManagerClass::Instance().GetObject(rFriend.UniqueObjectID);
+		if (SV_IS_KIND_OF(pFriend, SVTaskObjectClass))
 		{
-			SVObjectInfoStruct& rFriend = friendList[i];
-			// Check if Friend is alive...
-			SVObjectClass* pFriend = SVObjectManagerClass::Instance().GetObject(rFriend.UniqueObjectID);
-			if (SV_IS_KIND_OF(pFriend, SVTaskObjectClass))
-			{
-				((SVTaskObjectClass*)pFriend)->GetObjectScript(script, RStrAliasTable, Indent);
+			((SVTaskObjectClass*)pFriend)->GetObjectScript(script, RStrAliasTable, Indent);
 				
-				// SEJ - Special Code for Friends Aliases
-				pFriend->MakeUniqueFriendAlias(script);
-			}
+			// SEJ - Special Code for Friends Aliases
+			pFriend->MakeUniqueFriendAlias(script);
 		}
-		
-		friendList.Unlock();
 	}
-	
+
 	SVObjectAppClass::GetObjectScript(script, RStrAliasTable, Indent);
 	
 	// Generate indent...
@@ -1380,27 +1312,23 @@ void SVTaskObjectClass::Persist(SVObjectWriter& rWriter)
 void SVTaskObjectClass::PersistFriends(SVObjectWriter& rWriter)
 {
 	// Get script of close friends list members...
-	if (friendList.Lock())
+	if (friendList.size())
 	{
-		if (friendList.GetSize())
-		{
-			rWriter.StartElement(scFriendsTag);
+		rWriter.StartElement(scFriendsTag);
 
-			for (int i = 0; i < friendList.GetSize(); ++ i)
+		for (int i = 0; i < friendList.size(); ++ i)
+		{
+			const SVObjectInfoStruct& rFriend = friendList[i];
+			// Check if Friend is alive...
+			SVObjectClass* pFriend = SVObjectManagerClass::Instance().GetObject(rFriend.UniqueObjectID);
+			if (SV_IS_KIND_OF(pFriend, SVTaskObjectClass))
 			{
-				SVObjectInfoStruct& rFriend = friendList[i];
-				// Check if Friend is alive...
-				SVObjectClass* pFriend = SVObjectManagerClass::Instance().GetObject(rFriend.UniqueObjectID);
-				if (SV_IS_KIND_OF(pFriend, SVTaskObjectClass))
-				{
-					rWriter.StartElement(pFriend->GetObjectName()); // use internal name for node name
-					((SVTaskObjectClass*)pFriend)->Persist(rWriter);
-					rWriter.EndElement();
-				}
+				rWriter.StartElement(pFriend->GetObjectName()); // use internal name for node name
+				((SVTaskObjectClass*)pFriend)->Persist(rWriter);
+				rWriter.EndElement();
 			}
-			rWriter.EndElement();
 		}
-		friendList.Unlock();
+		rWriter.EndElement();
 	}
 }
 
@@ -1509,22 +1437,18 @@ BOOL SVTaskObjectClass::runFriends(SVRunStatusClass& RRunStatus)
 	BOOL bRetVal = TRUE;
 	
 	// Run your friends
-	//	if( friendList.Lock() )
+	for (int j = 0; j < friendList.size(); ++ j)
 	{
-		for (int j = 0; j < friendList.GetSize(); ++ j)
+		const SVObjectInfoStruct& rFriend = friendList[j];
+		if (SV_IS_KIND_OF(rFriend.PObject, SVTaskObjectClass))
 		{
-			SVObjectInfoStruct& rFriend = friendList[j];
-			if (SV_IS_KIND_OF(rFriend.PObject, SVTaskObjectClass))
-			{
-				SVTaskObjectClass* pTaskObject = (SVTaskObjectClass*) rFriend.PObject;
-				bRetVal = pTaskObject->Run(RRunStatus) && bRetVal;
-			}
-			else
-				bRetVal = FALSE;
+			SVTaskObjectClass* pTaskObject = (SVTaskObjectClass*) rFriend.PObject;
+			bRetVal = pTaskObject->Run(RRunStatus) && bRetVal;
 		}
-		//		friendList.Unlock();
+		else
+			bRetVal = FALSE;
 	}
-	
+
 	return bRetVal;
 }
 
@@ -1571,21 +1495,16 @@ void SVTaskObjectClass::Disconnect()
 	}
 	
 	// Disconnect our Friends
-	if (friendList.Lock())
+	for (int i = 0; i < friendList.size(); ++ i)
 	{
-		for (int i = 0; i < friendList.GetSize(); ++ i)
+		const SVObjectInfoStruct& rFriend = friendList[i];
+		// Check if Friend is alive...
+		SVObjectClass* pFriend = SVObjectManagerClass::Instance().GetObject(rFriend.UniqueObjectID);
+		if (SV_IS_KIND_OF(pFriend, SVTaskObjectClass))
 		{
-			SVObjectInfoStruct& rFriend = friendList[i];
-			// Check if Friend is alive...
-			SVObjectClass* pFriend = SVObjectManagerClass::Instance().GetObject(rFriend.UniqueObjectID);
-			if (SV_IS_KIND_OF(pFriend, SVTaskObjectClass))
-			{
-				// Tell Friends to Disconnect...
-				((SVTaskObjectClass*)pFriend)->Disconnect();
-			}
+			// Tell Friends to Disconnect...
+			((SVTaskObjectClass*)pFriend)->Disconnect();
 		}
-		
-		friendList.Unlock();
 	}
 }
 
@@ -1714,23 +1633,18 @@ BOOL SVTaskObjectClass::CloseObject()
 	retVal &= SVObjectAppClass::CloseObject();
 	
 	// Close our Friends
-	if (friendList.Lock())
+	for (int i = 0; i < friendList.size(); ++ i)
 	{
-		for (int i = 0; i < friendList.GetSize(); ++ i)
+		const SVObjectInfoStruct& rFriend = friendList[i];
+		// Check if Friend is alive...
+		SVObjectClass* pFriend = SVObjectManagerClass::Instance().GetObject(rFriend.UniqueObjectID);
+		if (pFriend)
 		{
-			SVObjectInfoStruct& rFriend = friendList[i];
-			// Check if Friend is alive...
-			SVObjectClass* pFriend = SVObjectManagerClass::Instance().GetObject(rFriend.UniqueObjectID);
-			if (pFriend)
-			{
-				// Close Friend...
-				DwResult = ::SVSendMessage(pFriend, SVM_CLOSE_OBJECT, NULL, NULL);
+			// Close Friend...
+			DwResult = ::SVSendMessage(pFriend, SVM_CLOSE_OBJECT, NULL, NULL);
 				
-				retVal = (DwResult == SVMR_SUCCESS) && retVal;
-			}
+			retVal = (DwResult == SVMR_SUCCESS) && retVal;
 		}
-		
-		friendList.Unlock();
 	}
 	
 	// Close Embeddeds...
@@ -1818,42 +1732,34 @@ DWORD_PTR SVTaskObjectClass::processMessage(DWORD DwMessageID, DWORD_PTR DwMessa
 		// NOTE: Beware to route Create Object Messages here !!!
 		//
 		
-		if (friendList.Lock())
+		DWORD_PTR l_dwTmp = 0;
+		// Notify friends...
+		for (int i = 0; i < friendList.size(); ++ i)
 		{
-			DWORD_PTR l_dwTmp = 0;
-			// Notify friends...
-			for (int i = 0; i < friendList.GetSize(); ++ i)
+			const SVObjectInfoStruct& rfriend = friendList[i];
+			if (rfriend.PObject)
 			{
-				SVObjectInfoStruct& rfriend = friendList[i];
-				if (rfriend.PObject)
-				{
-					// Notify not only friends of friends...
-					DWORD dwMaskID = (DwMessageID & ~SVM_NOTIFY_ONLY_FRIENDS) | SVM_NOTIFY_FRIENDS;
-					l_dwTmp = ::SVSendMessage(rfriend.PObject, dwMaskID, DwMessageValue, DwMessageContext);
-				}
+				// Notify not only friends of friends...
+				DWORD dwMaskID = (DwMessageID & ~SVM_NOTIFY_ONLY_FRIENDS) | SVM_NOTIFY_FRIENDS;
+				l_dwTmp = ::SVSendMessage(rfriend.PObject, dwMaskID, DwMessageValue, DwMessageContext);
+			}
 				
-				// Check if processed and Notify First Responding...
-				if (l_dwTmp != SVMR_NOT_PROCESSED && (DwMessageID & SVM_NOTIFY_FIRST_RESPONDING) == SVM_NOTIFY_FIRST_RESPONDING)
-				{
-					friendList.Unlock();
-					return l_dwTmp;
-				}
-
-				if( l_dwTmp != SVMR_SUCCESS )
-				{
-					DwResult = l_dwTmp;
-				}
-			}
-			
-			// Check if Notify Only Friends...
-			if ((DwMessageID & SVM_NOTIFY_ONLY_FRIENDS) == SVM_NOTIFY_ONLY_FRIENDS)
+			// Check if processed and Notify First Responding...
+			if (l_dwTmp != SVMR_NOT_PROCESSED && (DwMessageID & SVM_NOTIFY_FIRST_RESPONDING) == SVM_NOTIFY_FIRST_RESPONDING)
 			{
-				friendList.Unlock();
-				return DwResult;
+				return l_dwTmp;
 			}
+
+			if( l_dwTmp != SVMR_SUCCESS )
+			{
+				DwResult = l_dwTmp;
+			}
+		}
 			
-			// if( ( DwMessageID & SVM_NOTIFY_ONLY_THIS ) != SVM_NOTIFY_ONLY_THIS )
-			friendList.Unlock();
+		// Check if Notify Only Friends...
+		if ((DwMessageID & SVM_NOTIFY_ONLY_FRIENDS) == SVM_NOTIFY_ONLY_FRIENDS)
+		{
+			return DwResult;
 		}
 	}
 	
@@ -2057,54 +1963,44 @@ DWORD_PTR SVTaskObjectClass::FriendOutputListProcessMessage( DWORD DwMessageID, 
 	// Try to send message to outputObjectList members, if not already processed...
 	if( (DwMessageID & SVM_NOTIFY_FIRST_RESPONDING) == SVM_NOTIFY_FIRST_RESPONDING )
 	{
-		if( friendList.Lock() )
+		for (int i = 0; ! DwResult && i < friendList.size(); ++ i)
 		{
-			for (int i = 0; ! DwResult && i < friendList.GetSize(); ++ i)
+			const SVObjectInfoStruct& rFriend = friendList[ i ];
+
+			// Check if Friend is alive...
+			SVTaskObjectClass* l_pObject( nullptr );
+
+			l_pObject = dynamic_cast< SVTaskObjectClass* >( SVObjectManagerClass::Instance().GetObject( rFriend.UniqueObjectID ) );
+
+			if( nullptr != l_pObject )
 			{
-				SVObjectInfoStruct& rFriend = friendList[ i ];
-
-				// Check if Friend is alive...
-				SVTaskObjectClass* l_pObject( NULL );
-
-				l_pObject = dynamic_cast< SVTaskObjectClass* >( SVObjectManagerClass::Instance().GetObject( rFriend.UniqueObjectID ) );
-
-				if( l_pObject != NULL )
-				{
-					DwResult = l_pObject->OutputListProcessMessage( DwMessageID, DwMessageValue, DwMessageContext);
-				}
-				else
-				{
-					DwResult = NULL;
-				}
+				DwResult = l_pObject->OutputListProcessMessage( DwMessageID, DwMessageValue, DwMessageContext);
 			}
-			
-			friendList.Unlock();
+			else
+			{
+				DwResult = NULL;
+			}
 		}
 	}
 	else
 	{
-		if( friendList.Lock() )
+		for (int i = 0; i < friendList.size(); ++ i)
 		{
-			for (int i = 0; i < friendList.GetSize(); ++ i)
+			const SVObjectInfoStruct& rFriend = friendList[ i ];
+
+			// Check if Friend is alive...
+			SVTaskObjectClass* l_pObject( NULL );
+
+			l_pObject = dynamic_cast< SVTaskObjectClass* >( SVObjectManagerClass::Instance().GetObject( rFriend.UniqueObjectID ) );
+
+			if( l_pObject != NULL )
 			{
-				SVObjectInfoStruct& rFriend = friendList[ i ];
-
-				// Check if Friend is alive...
-				SVTaskObjectClass* l_pObject( NULL );
-
-				l_pObject = dynamic_cast< SVTaskObjectClass* >( SVObjectManagerClass::Instance().GetObject( rFriend.UniqueObjectID ) );
-
-				if( l_pObject != NULL )
-				{
-					DwResult = l_pObject->OutputListProcessMessage( DwMessageID, DwMessageValue, DwMessageContext) | DwResult;
-				}
-				else
-				{
-					DwResult = NULL | DwResult;
-				}
+				DwResult = l_pObject->OutputListProcessMessage( DwMessageID, DwMessageValue, DwMessageContext) | DwResult;
 			}
-			
-			friendList.Unlock();
+			else
+			{
+				DwResult = NULL | DwResult;
+			}
 		}
 	}
 
@@ -2584,9 +2480,9 @@ HRESULT SVTaskObjectClass::CollectOverlays( SVImageClass *p_Image, SVExtentMulti
 		hrRet = onCollectOverlays(p_Image, p_MultiLineArray);
 	}
 
-	for ( int j = 0; j < friendList.GetSize(); j++ )
+	for ( int j = 0; j < friendList.size(); j++ )
 	{
-		SVObjectInfoStruct& l_rFriend = friendList[j];
+		const SVObjectInfoStruct& l_rFriend = friendList[j];
 
 		SVTaskObjectClass *pObject = dynamic_cast< SVTaskObjectClass* >( l_rFriend.PObject );
 		
@@ -2594,7 +2490,7 @@ HRESULT SVTaskObjectClass::CollectOverlays( SVImageClass *p_Image, SVExtentMulti
 		{
 			HRESULT l_Temp = pObject->CollectOverlays(p_Image, p_MultiLineArray);
 
-			if( hrRet == S_OK )
+			if( S_OK == hrRet )
 			{
 				hrRet = l_Temp;
 			}

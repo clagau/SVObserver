@@ -286,46 +286,6 @@ BOOL SVObjectInfoStruct::CheckExistence()
 	return l_bOk;
 }
 
-SVObjectInfoArrayClass::SVObjectInfoArrayClass()
-{
-	m_CriticalSectionPtr = new SVCriticalSection;
-}
-
-SVObjectInfoArrayClass::~SVObjectInfoArrayClass()
-{
-}
-
-BOOL SVObjectInfoArrayClass::Lock( DWORD p_TimeOutMilliseconds ) const
-{
-	BOOL l_Status = true;
-
-	if( m_CriticalSectionPtr.empty() )
-	{
-		m_CriticalSectionPtr = new SVCriticalSection;
-	}
-
-	l_Status = !( m_CriticalSectionPtr.empty() );
-
-	if( l_Status )
-	{
-		l_Status = m_CriticalSectionPtr->Lock( p_TimeOutMilliseconds );
-	}
-
-	return l_Status;
-}
-
-BOOL SVObjectInfoArrayClass::Unlock() const
-{
-	BOOL l_Status = !( m_CriticalSectionPtr.empty() );
-
-	if( l_Status )
-	{
-		l_Status = m_CriticalSectionPtr->Unlock();
-	}
-
-	return l_Status;
-}
-
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************

@@ -122,32 +122,28 @@ This method destroys all friends on the friends list owned by this object.  All 
 */
 void SVObjectClass::DestroyFriends()
 {
-	if( friendList.Lock() )
+	for( int i = 0; i < friendList.size(); ++i )
 	{
-		for( int i = 0; i < friendList.GetSize(); ++ i )
+		const SVObjectInfoStruct& rFriend = friendList[ i ];
+		// Check if Friend is alive...
+		SVObjectClass* pFriend = SVObjectManagerClass::Instance().GetObject( rFriend.UniqueObjectID );
+		if( pFriend )
 		{
-			SVObjectInfoStruct& rFriend = friendList[ i ];
-			// Check if Friend is alive...
-			SVObjectClass* pFriend = SVObjectManagerClass::Instance().GetObject( rFriend.UniqueObjectID );
-			if( pFriend )
+			SVObjectClass* pOwner = pFriend->GetOwner();
+			if( pOwner )
 			{
-				SVObjectClass* pOwner = pFriend->GetOwner();
-				if( pOwner )
-				{
-					// Close, Disconnect and Delete Friend...
-					::SVSendMessage( pOwner, SVM_DESTROY_FRIEND_OBJECT, reinterpret_cast<DWORD_PTR>(pFriend), NULL );
-				}
-				else
-				{
-					// Friend has no owner...
-					pFriend->CloseObject();
-					delete pFriend;
-				}
+				// Close, Disconnect and Delete Friend...
+				::SVSendMessage( pOwner, SVM_DESTROY_FRIEND_OBJECT, reinterpret_cast<DWORD_PTR>(pFriend), NULL );
+			}
+			else
+			{
+				// Friend has no owner...
+				pFriend->CloseObject();
+				delete pFriend;
 			}
 		}
-		friendList.RemoveAll();
-		friendList.Unlock();
 	}
+	friendList.RemoveAll();
 }
 
 /*
@@ -164,23 +160,16 @@ SVObjectClass::SVObjectPtrDeque SVObjectClass::GetPreProcessObjects() const
 {
 	SVObjectPtrDeque l_Objects;
 
-	if( friendList.Lock() )
+	for( int i = 0; i < friendList.size(); i++ )
 	{
-		SVObjectInfoArrayClass::const_iterator l_Iter;
+		const SVObjectInfoStruct& rFriend = friendList[i];
 
-		for( l_Iter = friendList.begin(); l_Iter != friendList.end(); ++l_Iter )
+		// Check if Friend is alive...
+		SVObjectClass* pFriend = SVObjectManagerClass::Instance().GetObject( rFriend.UniqueObjectID );
+		if( pFriend )
 		{
-			const SVObjectInfoStruct& rFriend = *l_Iter;
-
-			// Check if Friend is alive...
-			SVObjectClass* pFriend = SVObjectManagerClass::Instance().GetObject( rFriend.UniqueObjectID );
-			if( pFriend )
-			{
-				l_Objects.push_back( pFriend );
-			}
+			l_Objects.push_back( pFriend );
 		}
-
-		friendList.Unlock();
 	}
 
 	return l_Objects;
@@ -550,17 +539,12 @@ HRESULT SVObjectClass::GetObjectValue( const SVString& p_rValueName, VARIANT& p_
 	{
 		SVSAFEARRAY l_SafeArray;
 
-		if( friendList.Lock() )
+		// for all friends in the list - get GUIDs
+		for( int i = 0;i < friendList.size();i++ )
 		{
-			// for all friends in the list - get GUIDs
-			for( int i = 0;i < friendList.GetSize();i++ )
-			{
-				SVGUID friendGuid = friendList[ i ].UniqueObjectID;
+			SVGUID friendGuid = friendList[ i ].UniqueObjectID;
 
-				l_SafeArray.Add( friendGuid.ToVARIANT() );
-			}
-
-			friendList.Unlock();
+			l_SafeArray.Add( friendGuid.ToVARIANT() );
 		}
 
 		l_TempVariant = l_SafeArray;
@@ -767,87 +751,78 @@ BOOL SVObjectClass::AddFriend( const GUID& RFriendGUID )
 	if( RFriendGUID == SVInvalidGUID )
 		return FALSE;
 
-	if( friendList.Lock() )
+	// Check if friend is already applied...
+	if (friendList.size())
 	{
-		// Check if friend is already applied...
-		for( int i = friendList.GetSize() - 1; i >= 0; -- i )
+		for( int i = static_cast<int>(friendList.size()) - 1; i >= 0; -- i )
 		{
 			if( friendList[ i ].UniqueObjectID == RFriendGUID )
 			{
-				friendList.Unlock();
 				return FALSE;
 			}
 		}
+	}
 
-		SVObjectInfoStruct newFriendInfo;
-		// Check if Friend is alive...
-		SVObjectClass* pNewFriend = SVObjectManagerClass::Instance().GetObject( RFriendGUID );
-		if( pNewFriend )
+	SVObjectInfoStruct newFriendInfo;
+	// Check if Friend is alive...
+	SVObjectClass* pNewFriend = SVObjectManagerClass::Instance().GetObject( RFriendGUID );
+	if( pNewFriend )
+	{
+		// Check if we are the Owner
+		// Note:: Special hack for friend scripting SEJ Aug 28,1999
+		// if we are the owner - it's not from the script
+		SVObjectClass* l_psvOwner = pNewFriend->GetOwner();
+
+		if ( l_psvOwner == this )
 		{
-			// Check if we are the Owner
-			// Note:: Special hack for friend scripting SEJ Aug 28,1999
-			// if we are the owner - it's not from the script
-			SVObjectClass* l_psvOwner = pNewFriend->GetOwner();
-
-			if ( l_psvOwner == this )
-			{
-				newFriendInfo = pNewFriend;
-			}
-			else
-			{
-				if( l_psvOwner != NULL )
-				{
-					SVObjectClass* l_psvNewObject = l_psvOwner->UpdateObject( RFriendGUID, pNewFriend, this );
-
-					ASSERT( l_psvNewObject != NULL );
-
-					newFriendInfo = l_psvNewObject;
-				}
-			}
+			newFriendInfo = pNewFriend;
 		}
 		else
 		{
-			newFriendInfo.UniqueObjectID = RFriendGUID;
+			if( l_psvOwner != NULL )
+			{
+				SVObjectClass* l_psvNewObject = l_psvOwner->UpdateObject( RFriendGUID, pNewFriend, this );
+
+				ASSERT( l_psvNewObject != NULL );
+
+				newFriendInfo = l_psvNewObject;
+			}
 		}
-
-		BOOL bRetVal = ( friendList.Add( newFriendInfo ) >= 0  );
-
-		friendList.Unlock();
-
-		return bRetVal;
 	}
-	return FALSE;
+	else
+	{
+		newFriendInfo.UniqueObjectID = RFriendGUID;
+	}
+
+	BOOL bRetVal = ( friendList.Add( newFriendInfo ) >= 0  );
+	return bRetVal;
 }
 
 /*
 This method is used to remove an object from the friends list via the object's unique object identifier.
 */
-BOOL SVObjectClass::RemoveFriend( const GUID& RFriendGUID )
+BOOL SVObjectClass::RemoveFriend( const GUID& rFriendGUID )
 {
 	// Check GUID...
-	if( RFriendGUID == SVInvalidGUID )
-		return FALSE;
-
-	if( friendList.Lock() )
+	if (SVInvalidGUID != rFriendGUID)
 	{
 		// Check if friend is applied...
-		for( int i = friendList.GetSize() - 1; i >= 0; -- i )
+		if (friendList.size())
 		{
-			if( friendList[ i ].UniqueObjectID == RFriendGUID )
+			for (int i = static_cast<int>(friendList.size()) - 1; i >= 0; --i)
 			{
-				// Remove Friend...
-				friendList.RemoveAt( i );
+				if (friendList[i].UniqueObjectID == rFriendGUID)
+				{
+					// Remove Friend...
+					friendList.RemoveAt(i);
 
-				// Success...
-				friendList.Unlock();
-				return TRUE;
+					// Success...
+					return true;
+				}
 			}
 		}
-
-		// Friend was not applied...
-		friendList.Unlock();
 	}
-	return FALSE;
+	return false;
 }
 
 /*
@@ -1450,59 +1425,36 @@ void SVObjectClass::PutFriendGuidsInObjectScript( CString& RStrScript, CString& 
 	// preallocate 4K
 	script.GetBuffer(4096);  
 	script.ReleaseBuffer(); 
-		
-	if( friendList.Lock() )
+	
+	if( ! friendList.GetSize() )
 	{
-		if( ! friendList.GetSize() )
-		{
-			friendList.Unlock();
-			return;
-		}
+		return;
+	}
 
-		CString nameStrDelimiter = _T( "'" );
+	CString nameStrDelimiter = _T( "'" );
 
-		// Generate indent...
-		CString strIndent = _T( "\n" );
-		if( Indent )
-		{
-			CString tabsStrIndent(_T( '\t' ), Indent);
-			strIndent += tabsStrIndent;
-		}
+	// Generate indent...
+	CString strIndent = _T( "\n" );
+	if( Indent )
+	{
+		CString tabsStrIndent(_T( '\t' ), Indent);
+		strIndent += tabsStrIndent;
+	}
 
-		// Name is delimited by single quotes
-		CString objectTag = nameStrDelimiter + _T( "_object_ID_" ) + GetName();
+	// Name is delimited by single quotes
+	CString objectTag = nameStrDelimiter + _T( "_object_ID_" ) + GetName();
 
-		// Name is delimited by single quotes
-		script += strIndent + objectTag + _T( ".Friend" ) + nameStrDelimiter + _T( " = STRING " );
+	// Name is delimited by single quotes
+	script += strIndent + objectTag + _T( ".Friend" ) + nameStrDelimiter + _T( " = STRING " );
 		
-		if( friendList.GetSize() > 1 )
-		{
-			script += _T( "[ " );
+	if( friendList.GetSize() > 1 )
+	{
+		script += _T( "[ " );
 		
-			// for all friends in the list - get GUIDs
-			for( int i = 0;i < friendList.GetSize();i++ )
-			{
-				GUID friendGuid = friendList[ i ].UniqueObjectID;
-				CString guidStr;
-				//CString guidStr = AfxStringFromCLSID( friendList[ i ].UniqueObjectID );
-			
-				guidStr.Format( _T("\"{%08X-%04X-%04X-%02X%02X-%02X%02X%02X%02X%02X%02X}\""),
-					friendGuid.Data1, friendGuid.Data2, friendGuid.Data3,
-					friendGuid.Data4[0], friendGuid.Data4[1], friendGuid.Data4[2], friendGuid.Data4[3],
-					friendGuid.Data4[4], friendGuid.Data4[5], friendGuid.Data4[6], friendGuid.Data4[7]);
-				
-			
-				if( i )
-					script += _T( ", " );
-
-				script += guidStr;
-			}
-			script += _T( " ]" );
-
-		}
-		else
+		// for all friends in the list - get GUIDs
+		for( int i = 0;i < friendList.GetSize();i++ )
 		{
-			GUID friendGuid = friendList[ 0 ].UniqueObjectID;
+			GUID friendGuid = friendList[ i ].UniqueObjectID;
 			CString guidStr;
 			//CString guidStr = AfxStringFromCLSID( friendList[ i ].UniqueObjectID );
 			
@@ -1510,14 +1462,31 @@ void SVObjectClass::PutFriendGuidsInObjectScript( CString& RStrScript, CString& 
 				friendGuid.Data1, friendGuid.Data2, friendGuid.Data3,
 				friendGuid.Data4[0], friendGuid.Data4[1], friendGuid.Data4[2], friendGuid.Data4[3],
 				friendGuid.Data4[4], friendGuid.Data4[5], friendGuid.Data4[6], friendGuid.Data4[7]);
+				
+			
+			if( i )
+				script += _T( ", " );
 
 			script += guidStr;
 		}
-		// Add termination...
-		script += _T( ";" );
+		script += _T( " ]" );
 
-		friendList.Unlock();
 	}
+	else
+	{
+		GUID friendGuid = friendList[ 0 ].UniqueObjectID;
+		CString guidStr;
+		//CString guidStr = AfxStringFromCLSID( friendList[ i ].UniqueObjectID );
+			
+		guidStr.Format( _T("\"{%08X-%04X-%04X-%02X%02X-%02X%02X%02X%02X%02X%02X}\""),
+			friendGuid.Data1, friendGuid.Data2, friendGuid.Data3,
+			friendGuid.Data4[0], friendGuid.Data4[1], friendGuid.Data4[2], friendGuid.Data4[3],
+			friendGuid.Data4[4], friendGuid.Data4[5], friendGuid.Data4[6], friendGuid.Data4[7]);
+
+		script += guidStr;
+	}
+	// Add termination...
+	script += _T( ";" );
 
 	script.FreeExtra();
 	RStrScript += script;

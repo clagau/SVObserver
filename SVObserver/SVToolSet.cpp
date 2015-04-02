@@ -764,7 +764,7 @@ SVConditionalClass* SVToolSetClass::GetToolSetConditional() const
 {
 	SVConditionalClass* l_pConditional( NULL );
 
-	for( int j = 0; l_pConditional == NULL && j < friendList.GetSize(); j++ )
+	for( int j = 0; l_pConditional == NULL && j < friendList.size(); j++ )
 	{
 		l_pConditional = dynamic_cast<SVConditionalClass *>(friendList[j].PObject);
 	}// end for

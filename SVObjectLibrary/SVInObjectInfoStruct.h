@@ -13,6 +13,7 @@
 #define SVINOBJECTINFOSTRUCT_H
 
 #include <vector>
+#include "SVcontainerLibrary/SVVector.h" 
 #include "SVUtilityLibrary/SVGUID.h"
 #include "SVUtilityLibrary/SVString.h"
 #include "ObjectInterfaces/IInObjectInfoStruct.h"

@@ -12,6 +12,7 @@
 #ifndef SVOBJECTLISTCLASS_H
 #define SVOBJECTLISTCLASS_H
 
+#include "SVContainerLibrary/SVVector.h"
 #include "SVOMFCLibrary/SVTemplate.h"
 #include "SVObjectInfoStruct.h"
 #include "SVObjectScriptUsage.h"

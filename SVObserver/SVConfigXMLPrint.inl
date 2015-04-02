@@ -1310,15 +1310,15 @@ void SVConfigXMLPrint::WriteChildren( Writer writer, SVObjectClass* pObj ) const
 
 void SVConfigXMLPrint::WriteFriends( Writer writer, SVObjectClass* pObj ) const
 {
-	const SVObjectInfoArrayClass&   rFriendList = pObj->GetFriendList();
-	int sz = static_cast< long >( rFriendList.GetSize() );
+	const SVObjectInfoArrayClass& rFriendList = pObj->GetFriendList();
+	int sz = static_cast< long >( rFriendList.size() );
 
 	if (sz > 0)
 	{
 		writer->WriteStartElement(NULL, L"Friends", NULL);
-		for (int nCnt = 0; nCnt < rFriendList.GetSize(); nCnt++)
+		for (int nCnt = 0; nCnt < rFriendList.size(); nCnt++)
 		{
-			SVObjectInfoStruct&   rObjInfo = rFriendList.GetAt(nCnt);
+			const SVObjectInfoStruct& rObjInfo = rFriendList[nCnt];
 			
 			if (rObjInfo.PObject)
 			{
@@ -1331,7 +1331,7 @@ void SVConfigXMLPrint::WriteFriends( Writer writer, SVObjectClass* pObj ) const
 
 void SVConfigXMLPrint::WriteInputOutputList( Writer writer, SVObjectClass* pObj ) const
 {
-	SVTaskObjectClass*      pTaskObj = dynamic_cast <SVTaskObjectClass*> (pObj);
+	SVTaskObjectClass* pTaskObj = dynamic_cast <SVTaskObjectClass*> (pObj);
 
 	SVOutputInfoListClass l_OutputList;
 

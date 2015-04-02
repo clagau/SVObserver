@@ -9,16 +9,16 @@
 //* .Check In Date   : $Date:   22 Apr 2013 16:50:42  $
 //******************************************************************************
 
-#ifndef SVOBJECTINFOSTRUCT_H
-#define SVOBJECTINFOSTRUCT_H
+#pragma once
 
+#pragma region Includes
 #include "ObjectInterfaces/IObjectInfoStruct.h"
 #include "ObjectInterfaces/IObjectClass.h"
-#include "SVContainerLibrary/SVVector.h"
 #include "SVSystemLibrary/SVCriticalSection.h"
 #include "SVUtilityLibrary/SVGUID.h"
 #include "ObjectInterfaces/SVObjectTypeInfoStruct.h"
 #include "SVObjectReference.h"
+#pragma endregion
 
 class SVObjectClass;
 
@@ -54,31 +54,11 @@ struct SVObjectInfoStruct : virtual public SvOi::IObjectInfoStruct
 	virtual SvOi::IObjectClass* getObject() const override { return reinterpret_cast<SvOi::IObjectClass*>(PObject); };
 #pragma endregion virtual method (IObjectInfoStruct)
 
-	SVObjectClass* PObject;                // Where I am
-	SVGUID UniqueObjectID;         // Who I am
-	SVObjectTypeInfoStruct ObjectTypeInfo;         // What I am
+	SVObjectClass* PObject;					// Where I am
+	SVGUID UniqueObjectID;					// Who I am
+	SVObjectTypeInfoStruct ObjectTypeInfo;  // What I am
 	SVObjectNameInfo m_ObjectNameInfo;
-	//bool m_UseIndex; 
-	//long m_ArrayIndex;
-
 };
-
-class SVObjectInfoArrayClass : public SVVector< SVObjectInfoStruct, SVObjectInfoStruct& >
-{
-public:
-	SVObjectInfoArrayClass();
-
-	virtual ~SVObjectInfoArrayClass();
-
-	BOOL Lock( DWORD p_TimeOutMilliseconds = INFINITE ) const;
-	BOOL Unlock() const;
-
-private:
-	mutable SVCriticalSectionPtr m_CriticalSectionPtr;
-
-};
-
-#endif
 
 //******************************************************************************
 //* LOG HISTORY:

@@ -47,6 +47,9 @@
     <ClInclude Include="SVVector.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="SVThreadSafeList.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="SVDeque.inl">

@@ -27,6 +27,7 @@
 #include "SVPublicAttributeEntryStruct.h"
 #include "SVObjectAttributeShim.h"
 #include "SVObjectWriter.h"
+#include "SVObjectInfoArrayClass.h"
 #pragma endregion Includes
 
 #pragma region Declarations

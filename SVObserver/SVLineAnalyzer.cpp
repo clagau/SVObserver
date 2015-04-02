@@ -188,45 +188,40 @@ void SVLineAnalyzerClass::addLineAnalyzerFriend()
 	SVObjectClass* pOwner;
 	if( pOwner = GetOwner() )
 	{
-		if( friendList.Lock() )
+		if( friendList.size() <= 0 )
 		{
-			if( friendList.GetSize() <= 0 )
+			const SVObjectTypeInfoStruct& rOwnerType = pOwner->GetObjectInfo().ObjectTypeInfo;
+			switch( rOwnerType.SubType )
 			{
-				const SVObjectTypeInfoStruct& rOwnerType = pOwner->GetObjectInfo().ObjectTypeInfo;
-				switch( rOwnerType.SubType )
+				case SVToolProfileObjectType:
 				{
-					case SVToolProfileObjectType:
+					SVImageToLineProjectClass* pProject = new SVImageToLineProjectClass;
+					if( pProject )
 					{
-						SVImageToLineProjectClass* pProject = new SVImageToLineProjectClass;
-						if( pProject )
-						{
-							pProject->SetObjectOwner( this );
-							AddFriend( pProject->GetUniqueObjectID() );
+						pProject->SetObjectOwner( this );
+						AddFriend( pProject->GetUniqueObjectID() );
 							
-							// Remove Embedded Extents
-							// for old profile tool
-							if( pOwner->GetClassID() == SVProfileToolClassGuid )
-								removeEmbeddedExtents();
-						}
-						break;
+						// Remove Embedded Extents
+						// for old profile tool
+						if( pOwner->GetClassID() == SVProfileToolClassGuid )
+							removeEmbeddedExtents();
 					}
+					break;
+				}
 
-					default:
+				default:
+				{
+					SVLineROIClass* pROI = new SVLineROIClass;
+					if( pROI )
 					{
-						SVLineROIClass* pROI = new SVLineROIClass;
-						if( pROI )
-						{
-							pROI->SetObjectOwner( this );
-							AddFriend( pROI->GetUniqueObjectID() );
-						}
+						pROI->SetObjectOwner( this );
+						AddFriend( pROI->GetUniqueObjectID() );
 					}
-				};
+				}
+			};
 
-				// Add Default Inputs and Outputs
-				addDefaultInputObjects();
-			}
-
-			friendList.Unlock();
+			// Add Default Inputs and Outputs
+			addDefaultInputObjects();
 		}
 	}
 }
@@ -638,9 +633,9 @@ SVObjectClass* SVLineAnalyzerClass::getImageToLineProject()
 	SVImageToLineProjectClass *pProject = NULL;
 
 	// Get Friend Object ( SVImageToLineProjectClass )
-	for( int i = 0; i < friendList.GetSize(); i++ )
+	for( int i = 0; i < friendList.size(); i++ )
 	{
-		SVObjectInfoStruct& friendObjectInfo = friendList.GetAt( i );
+		const SVObjectInfoStruct& friendObjectInfo = friendList[i];
 		if( friendObjectInfo.PObject )
 		{
 			if( SV_IS_KIND_OF( friendObjectInfo.PObject, SVImageToLineProjectClass ) )
@@ -658,9 +653,9 @@ SVObjectClass* SVLineAnalyzerClass::getLineROI()
 	SVLineROIClass* pLineROI = NULL;
 	
 	// Get Friend Object ( SVLineROIClass )
-	for( int i = 0; i < friendList.GetSize(); i++ )
+	for( int i = 0; i < friendList.size(); i++ )
 	{
-		SVObjectInfoStruct& friendObjectInfo = friendList.GetAt( i );
+		const SVObjectInfoStruct& friendObjectInfo = friendList[i];
 		if( friendObjectInfo.PObject )
 		{
 			if( SV_IS_KIND_OF( friendObjectInfo.PObject, SVLineROIClass )  )

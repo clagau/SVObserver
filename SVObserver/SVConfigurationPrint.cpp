@@ -1160,11 +1160,11 @@ void SVConfigurationPrint::PrintChildren( CDC* pDC, SVObjectClass* pObj, CPoint&
 ////////////////////////////////////////////////////////////////////////////////
 void SVConfigurationPrint::PrintFriends( CDC* pDC, SVObjectClass* pObj, CPoint& ptCurPos, int nIndentLevel )
 {
-	const SVObjectInfoArrayClass&   rFriendList = pObj->GetFriendList();
+	const SVObjectInfoArrayClass& rFriendList = pObj->GetFriendList();
 	
-	for (int nCnt = 0; nCnt < rFriendList.GetSize(); nCnt++)
+	for (int nCnt = 0; nCnt < rFriendList.size(); nCnt++)
 	{
-		SVObjectInfoStruct&   rObjInfo = rFriendList.GetAt(nCnt);
+		const SVObjectInfoStruct& rObjInfo = rFriendList[nCnt];
 		
 		if (rObjInfo.PObject)
 		{

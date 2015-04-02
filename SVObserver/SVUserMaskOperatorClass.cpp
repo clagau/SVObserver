@@ -218,26 +218,15 @@ HRESULT SVUserMaskOperatorClass::GetFillProperties( SVMaskFillPropertiesStruct& 
 
 SVShapeMaskHelperClass* SVUserMaskOperatorClass::GetShapeHelper()
 {
-	// piece of poo object manager
-	/*
-	SVShapeMaskHelperClass* pMaskHelper = dynamic_cast<SVShapeMaskHelperClass*> (TheSVObjectManager.GetObject( m_guidShapeHelper ));
-	*/
-	SVShapeMaskHelperClass* pMaskHelper = NULL;
+	SVShapeMaskHelperClass* pMaskHelper = nullptr;
 
 	// Get Friend Object
-	int s = friendList.GetSize();
+	int s = static_cast<int>(friendList.size());
 	for( int i = 0; i < s; i++ )
 	{
-		SVObjectInfoStruct& friendObjectInfo = friendList.GetAt( i );
+		const SVObjectInfoStruct& friendObjectInfo = friendList[i];
 		if( friendObjectInfo.PObject )
 		{
-			/*
-			if ( friendObjectInfo.UniqueObjectID == m_guidShapeHelper )
-			{
-				pMaskHelper = friendObjectInfo.PObject;
-			}
-			else
-			*/
 			if( SV_IS_KIND_OF( friendObjectInfo.PObject, SVShapeMaskHelperClass ) )
 			{
 				pMaskHelper = dynamic_cast<SVShapeMaskHelperClass*> (friendObjectInfo.PObject);
@@ -248,9 +237,8 @@ SVShapeMaskHelperClass* SVUserMaskOperatorClass::GetShapeHelper()
 	}
 
 	//!! temp workaround for 4.60 Beta 4
-	if ( pMaskHelper == NULL )
+	if ( nullptr == pMaskHelper )
 	{
-		
 		SVShapeMaskHelperClass* pShapeHelper = new SVShapeMaskHelperClass(this);
 		m_guidShapeHelper = pShapeHelper->GetUniqueObjectID();
 
@@ -931,16 +919,12 @@ BOOL SVUserMaskOperatorClass::ConnectAllInputs()
 	addDefaultInputObjects(TRUE, &inputList);
 	
 	// tell friends to connect...
-	if (friendList.Lock())
+	for (int j = 0; j < friendList.size(); ++ j)
 	{
-		for (int j = 0; j < friendList.GetSize(); ++ j)
-		{
-			SVObjectInfoStruct& rFriend = friendList[j];
-			::SVSendMessage(rFriend.UniqueObjectID, SVM_CONNECT_ALL_INPUTS, NULL, NULL);
-		}
-		friendList.Unlock();
+		const SVObjectInfoStruct& rFriend = friendList[j];
+		::SVSendMessage(rFriend.UniqueObjectID, SVM_CONNECT_ALL_INPUTS, NULL, NULL);
 	}
-	
+
 	// find our inputs
 	for (int i = 0; i < inputList.GetSize(); ++ i)
 	{
@@ -967,22 +951,17 @@ BOOL SVUserMaskOperatorClass::ConnectAllInputs()
 					else
 					{
 						// Ask first friends...
-						if (friendList.Lock())
+						for (int j = 0; j < friendList.size(); ++ j)
 						{
-							for (int j = 0; j < friendList.GetSize(); ++ j)
+							const SVObjectInfoStruct& rFriend = friendList[j];
+							pObject = reinterpret_cast<SVObjectClass *>(::SVSendMessage(rFriend.UniqueObjectID, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&info)));
+							if (pObject)
 							{
-								SVObjectInfoStruct& rFriend = friendList[j];
-								pObject = reinterpret_cast<SVObjectClass *>(::SVSendMessage(rFriend.UniqueObjectID, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&info)));
-								if (pObject)
-								{
-									// Connect input ...
-									pInInfo->SetInputObject( pObject->GetUniqueObjectID() );
-									bSuccess = TRUE;
-									break;
-								}
+								// Connect input ...
+								pInInfo->SetInputObject( pObject->GetUniqueObjectID() );
+								bSuccess = TRUE;
+								break;
 							}
-							
-							friendList.Unlock();
 						}
 					}
 					

@@ -168,7 +168,7 @@ BOOL SVToolClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
 		}
 	}
 
-	for( int j = 0; m_pToolConditional == NULL && j < friendList.GetSize(); j++ )
+	for( int j = 0; m_pToolConditional == NULL && j < friendList.size(); j++ )
 	{
 		m_pToolConditional = dynamic_cast<SVConditionalClass *>(friendList[j].PObject);
 	}

@@ -155,6 +155,7 @@
     <ClInclude Include="SVBiUniqueMap.h" />
     <ClInclude Include="SVDeque.h" />
     <ClInclude Include="SVList.h" />
+    <ClInclude Include="SVThreadSafeList.h" />
     <ClInclude Include="SVMap.h" />
     <ClInclude Include="SVRingBuffer.h" />
     <ClInclude Include="SVSet.h" />

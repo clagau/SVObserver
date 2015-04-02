@@ -446,6 +446,7 @@
     <ClInclude Include="SVObjectDoubleArrayClass.h" />
     <ClInclude Include="SVObjectDPointArrayClass.h" />
     <ClInclude Include="SVObjectDWordArrayClass.h" />
+    <ClInclude Include="SVObjectInfoArrayClass.h" />
     <ClInclude Include="SVObjectInfoStruct.h" />
     <ClInclude Include="SVObjectInt64ArrayClass.h" />
     <ClInclude Include="SVObjectLevelCreateStruct.h" />
