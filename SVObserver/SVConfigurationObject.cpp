@@ -5373,26 +5373,34 @@ bool SVConfigurationObject::HasCameraTrigger(SVPPQObject* p_pPPQ) const
 void SVConfigurationObject::updateConfTreeToNewestVersion(SVXMLMaterialsTree &rTree, SVXMLMaterialsTree::SVBranchHandle &rToolset)
 {
 	SVXMLMaterialsTree::SVBranchHandle lutEquationBranch;
-	//check for LUT Equation clip-value
-	if ( SVNavigateTreeClass::FindBranch( rTree, rToolset, SVFindPredicate( rTree, IDS_CLASSNAME_SVLUTEQUATION ), lutEquationBranch ) )
+	
+	//look in all children of the toolset if it had to add information
+	SVTreeType::SVBranchHandle htiSubChild = nullptr;
+	rTree.GetFirstBranch( rToolset, htiSubChild );
+	while ( nullptr != htiSubChild )
 	{
-		SVXMLMaterialsTree::SVBranchHandle lutEquationClipBranch;
-		SVXMLMaterialsTree::SVBranchHandle lutEquationEmbeddedsBranch;
-		if ( SVNavigateTreeClass::FindBranch( rTree, lutEquationBranch, SVFindPredicate( rTree, scEmbeddedsTag ), lutEquationEmbeddedsBranch ) )
+		//check for LUT Equation clip-value
+		if ( SVNavigateTreeClass::FindBranch( rTree, htiSubChild, SVFindPredicate( rTree, IDS_CLASSNAME_SVLUTEQUATION ), lutEquationBranch ) )
 		{
-			//check if clip for LUT equation is existing.
-			if ( !SVNavigateTreeClass::FindBranch( rTree, lutEquationEmbeddedsBranch, SVFindPredicate( rTree, IDS_OBJECTNAME_LUT_EQUATION_CLIP ), lutEquationClipBranch ) )
+			SVXMLMaterialsTree::SVBranchHandle lutEquationClipBranch;
+			SVXMLMaterialsTree::SVBranchHandle lutEquationEmbeddedsBranch;
+			if ( SVNavigateTreeClass::FindBranch( rTree, lutEquationBranch, SVFindPredicate( rTree, scEmbeddedsTag ), lutEquationEmbeddedsBranch ) )
 			{
-				//add clip value to tree, with value FALSE
-				SVConfigurationTreeWriter< SVXMLMaterialsTree > writer(rTree, lutEquationEmbeddedsBranch);
-				SVBoolValueObjectClass isLUTFormulaClipped;
-				isLUTFormulaClipped.SetResetOptions( false, SVResetItemTool );
-				isLUTFormulaClipped.SetObjectEmbedded(SVLUTEquationClipFlagObjectGuid, nullptr, IDS_OBJECTNAME_LUT_EQUATION_CLIP);
-				isLUTFormulaClipped.SetDefaultValue( TRUE, TRUE );
-				isLUTFormulaClipped.SetValue(0, FALSE);
-				isLUTFormulaClipped.Persist(writer);
+				//check if clip for LUT equation is existing.
+				if ( !SVNavigateTreeClass::FindBranch( rTree, lutEquationEmbeddedsBranch, SVFindPredicate( rTree, IDS_OBJECTNAME_LUT_EQUATION_CLIP ), lutEquationClipBranch ) )
+				{
+					//add clip value to tree, with value FALSE
+					SVConfigurationTreeWriter< SVXMLMaterialsTree > writer(rTree, lutEquationEmbeddedsBranch);
+					SVBoolValueObjectClass isLUTFormulaClipped;
+					isLUTFormulaClipped.SetResetOptions( false, SVResetItemTool );
+					isLUTFormulaClipped.SetObjectEmbedded(SVLUTEquationClipFlagObjectGuid, nullptr, IDS_OBJECTNAME_LUT_EQUATION_CLIP);
+					isLUTFormulaClipped.SetDefaultValue( TRUE, TRUE );
+					isLUTFormulaClipped.SetValue(0, FALSE);
+					isLUTFormulaClipped.Persist(writer);
+				}
 			}
 		}
+		rTree.GetNextBranch( rToolset, htiSubChild );
 	}
 }
 
