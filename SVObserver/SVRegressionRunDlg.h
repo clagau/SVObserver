@@ -13,7 +13,7 @@
 #define SVREGRESSIONRUNDLG_H
 
 #pragma region Includes
-#include "SVView.h" // for SVSliderCtrl
+#include "SVMFCControls/SVSliderCtrl.h"
 #include "SVRegressionTestStruct.h"
 #include "SVLibrary/SVListCtrl.h"
 #pragma endregion Includes

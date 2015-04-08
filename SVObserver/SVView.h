@@ -9,14 +9,11 @@
 //* .Check In Date   : $Date:   23 Apr 2013 16:20:28  $
 //******************************************************************************
 
-#ifndef SVVIEW_H
-#define SVVIEW_H
 #pragma once
 
 class SVImageClass;
 class SVImageListClass;
 class SVClassInfoStructListClass;
-
 
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : Class SVToolWindow 
@@ -37,32 +34,6 @@ protected:
 	//}}AFX_VIRTUAL
 
 };
-
-
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : Class SVSliderCtrl 
-////////////////////////////////////////////////////////////////////////////////
-class SVSliderCtrl : public CSliderCtrl
-{
-public:
-	SVSliderCtrl();
-	virtual ~SVSliderCtrl();
-
-public:
-	BOOL isClicked;
-
-protected:
-
-	//{{AFX_MSG(SVSliderCtrl)
-	//}}AFX_MSG
-
-	DECLARE_MESSAGE_MAP()
-
-	//{{AFX_VIRTUAL(SVSliderCtrl)
-	//}}AFX_VIRTUAL
-
-};
-
 
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : Class SVAvailableAnalyzerListComboBoxClass 
@@ -116,8 +87,6 @@ protected:
 // DevStudio inserts additional declarations immediate in front of the preceding line
 ////////////////////////////////////////////////////////////////////////////////
 
-
-#endif	//	SVVIEW_H
 
 //** EOF **
 //******************************************************************************

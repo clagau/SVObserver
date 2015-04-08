@@ -48,36 +48,6 @@ SVToolWindow::~SVToolWindow()
 
 // Moved SVDlgImageClass to SVDlgImage.h and SVDlgImage.cpp, RO_20Mar2000
 
-
-
-
-
-//*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/
-//* Class Name : Class SVSliderCtrl
-//* Note(s)    : // e.g. Base Class
-//*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/
-
-BEGIN_MESSAGE_MAP(SVSliderCtrl, CSliderCtrl)
-	//{{AFX_MSG_MAP(SVSliderCtrl)
-	//}}AFX_MSG_MAP
-END_MESSAGE_MAP()
-
-
-SVSliderCtrl::SVSliderCtrl()
-{
-	isClicked = FALSE;
-}
-
-
-SVSliderCtrl::~SVSliderCtrl()
-{
-}
-
-
-
-
-
-
 //*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/
 //* Class Name : Class SVAvailableAnalyzerListComboBoxClass
 //* Note(s)    : 

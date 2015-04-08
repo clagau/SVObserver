@@ -40,6 +40,7 @@ CSVRegressionRunDlg::CSVRegressionRunDlg(CWnd* pParent /*=NULL*/)
 	,m_iconFrameBack(NULL)
 	,m_timeDelayText( _T( " 0.0" ) ) // Lead with a space for all values less than 10.
 {
+	m_sliderDelayTime.SetInvertVerticalArrowKeys(true);
 	//{{AFX_DATA_INIT(CSVRegressionRunDlg)
 	//}}AFX_DATA_INIT
 }
@@ -207,12 +208,12 @@ BOOL CSVRegressionRunDlg::PreTranslateMessage(MSG* pMsg)
 		case 'O': // fall through...
 		case 'o': // fall through...
 		case VK_NEXT: // PAGE DOWN key
-			GetDlgItem(IDC_BTN_FRAME_UP)->PostMessage(BM_CLICK);
+			GetDlgItem(IDC_BTN_FRAME_BACK)->PostMessage(BM_CLICK);
 			break;
 		case 'I': // fall through...
 		case 'i': // fall through...
 		case VK_PRIOR: // PAGE UP key
-			GetDlgItem(IDC_BTN_FRAME_BACK)->PostMessage(BM_CLICK);
+			GetDlgItem(IDC_BTN_FRAME_UP)->PostMessage(BM_CLICK);
 			break;
 		case 'J': // fall through...
 		case 'j':

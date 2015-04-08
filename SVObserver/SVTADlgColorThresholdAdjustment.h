@@ -21,6 +21,7 @@
 #include "SVView.h"
 
 #include "SVTaskObjectInterfaceClass.h"
+#include "SVMFCControls/SVSliderCtrl.h"
 
 class SVIPDoc;
 class SVColorToolClass;

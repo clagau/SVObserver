@@ -15,11 +15,9 @@
 #include "SVEdge.h"
 #include "SVEditNumbers.h"
 #include "SVValueBaseNormalizerClass.h"
-#include "SVView.h"
-
 #include "SVValueObjectImpl.h"
-
 #include "SVTaskObjectInterfaceClass.h"
+#include "SVMFCControls/SVSliderCtrl.h"
 
 class SVLineAnalyzerClass;
 class SVTaskObjectClass;

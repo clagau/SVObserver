@@ -201,6 +201,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="CLabel.cpp" />
+    <ClCompile Include="SVSliderCtrl.cpp" />
     <ClCompile Include="SVToolBar.cpp">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -229,6 +230,7 @@
   <ItemGroup>
     <ClInclude Include="CLabel.h" />
     <ClInclude Include="StdAfx.h" />
+    <ClInclude Include="SVSliderCtrl.h" />
     <ClInclude Include="SVToolBar.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
