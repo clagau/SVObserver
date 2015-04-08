@@ -7900,6 +7900,24 @@ void SVObserverApp::fileSaveAsSVX( CString StrSaveAsPathName ,bool isRegularSave
 					svFileName.SetPathName( svFileManager.GetConfigurationPathName() );
 				}
 			}
+			else
+			{
+				if (isRegularSave)
+				{
+					CString path = svFileName.GetPathName();
+					int pos = path.ReverseFind(_T('\\'));
+					if (pos != -1)
+					{
+						path.Delete(pos, path.GetLength() - pos);
+						// check if just drive left
+						if (path[path.GetLength()-1] == _T(':'))
+						{
+							path += _T('\\');
+						}
+						svFileName.SetPathName(path);
+					}
+				}
+			}
 		}
 
 		if ( svFileName.SaveFile() )
