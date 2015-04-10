@@ -21,6 +21,8 @@
 #include "SVConfigurationLibrary/SVConfigurationTags.h"
 #include "SVObjectLibrary/SVToolsetScriptTags.h"
 #include "SVInspectionProcess.h"
+#include "SVStatusLibrary/ExceptionManager.h"
+#include "ErrorNumbers.h"
 
 typedef std::set<SVString> SVObjectAttributeFilterSet;
 
@@ -633,12 +635,19 @@ HRESULT SVInspectionTreeParser< SVTreeType >::CreateInspectionObject(GUID& inspe
 		inspectionGuid = StringToGUID(uniqueID);
 
 		// Get Inspection Object
-		SVInspectionProcess* pInspection = NULL;
-		SVObjectManagerClass::Instance().GetObjectByIdentifier(inspectionGuid, reinterpret_cast<SVObjectClass* &>(pInspection));
+		SVObjectClass* pObject = nullptr;
+		SVObjectManagerClass::Instance().GetObjectByIdentifier(inspectionGuid, pObject);
+		SVInspectionProcess* pInspection = dynamic_cast<SVInspectionProcess*>(pObject);
 		if (pInspection)
 		{
 			pInspection->SetNewDisableMethod( sNewDisableMethod == _T("1") );
 			pInspection->SetEnableAuxiliaryExtent( sEnableAuxiliaryExtent == _T("1") );
+		}
+		else
+		{
+			SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
+			e.setMessage( SVMSG_SVO_57_PARSERTREE_INSPECTIONCREATE_ERROR, nullptr, StdExceptionParams, Err_TreeParser_InspectionCreateFailed_2010 );
+			hr = -Err_TreeParser_InspectionCreateFailed_2010;
 		}
 	}
 	return hr;
