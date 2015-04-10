@@ -1597,9 +1597,7 @@ BOOL SVArchiveTool::Validate()	// called once when going online
 	if (m_bDriveError)
 	{	
 		//Display message that the Archive Tool path is full
-		CString sFullName;
 		CString sMessage;
-		sFullName = GetCompleteObjectName();
 		sMessage.Format(" %s - drive is full.", csImagePath.GetString());
 		//GetUniqueObjectID()
 		SVVisionProcessorHelper::Instance().AddToolError(GetUniqueObjectID(),sMessage);

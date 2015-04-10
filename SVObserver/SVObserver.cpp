@@ -1987,6 +1987,9 @@ void SVObserverApp::OnUpdateGoOffline( CCmdUI* PCmdUI )
 void SVObserverApp::OnGoOnline() 
 {
 	AutoSaver::Instance().ExecuteAutoSaveIfAppropriate(true);
+
+	//clear the tool error map. will be filled when the inspections/tools gets validated
+	SVVisionProcessorHelper::Instance().ClearToolErrorMap();
 	
 	long l_lPrevState = 0;
 
