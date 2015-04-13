@@ -762,9 +762,9 @@ SVEnumerateValueObjectClass* SVToolSetClass::GetDrawFlagObject()
 
 SVConditionalClass* SVToolSetClass::GetToolSetConditional() const
 {
-	SVConditionalClass* l_pConditional( NULL );
+	SVConditionalClass* l_pConditional( nullptr );
 
-	for( int j = 0; l_pConditional == NULL && j < friendList.size(); j++ )
+	for( size_t j = 0; nullptr == l_pConditional && j < friendList.size(); j++ )
 	{
 		l_pConditional = dynamic_cast<SVConditionalClass *>(friendList[j].PObject);
 	}// end for

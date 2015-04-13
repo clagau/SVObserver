@@ -1311,12 +1311,12 @@ void SVConfigXMLPrint::WriteChildren( Writer writer, SVObjectClass* pObj ) const
 void SVConfigXMLPrint::WriteFriends( Writer writer, SVObjectClass* pObj ) const
 {
 	const SVObjectInfoArrayClass& rFriendList = pObj->GetFriendList();
-	int sz = static_cast< long >( rFriendList.size() );
+	size_t sz = rFriendList.size();
 
 	if (sz > 0)
 	{
 		writer->WriteStartElement(NULL, L"Friends", NULL);
-		for (int nCnt = 0; nCnt < rFriendList.size(); nCnt++)
+		for (size_t nCnt = 0; nCnt < sz; nCnt++)
 		{
 			const SVObjectInfoStruct& rObjInfo = rFriendList[nCnt];
 			
@@ -1324,7 +1324,7 @@ void SVConfigXMLPrint::WriteFriends( Writer writer, SVObjectClass* pObj ) const
 			{
 				WriteObject(writer, rObjInfo.PObject);
 			}  // end if( rObjInfo )
-		}  // end for( int nCnt = 0; nCnt < rFriendList.GetSize (); nCnt++ )
+		}  // end for( int nCnt = 0; nCnt < sz; nCnt++ )
 		writer->WriteEndElement();
 	}
 }  // end function void SVConfigXMLPrint:::PrintFriends( ... )

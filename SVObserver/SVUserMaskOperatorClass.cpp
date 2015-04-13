@@ -221,8 +221,7 @@ SVShapeMaskHelperClass* SVUserMaskOperatorClass::GetShapeHelper()
 	SVShapeMaskHelperClass* pMaskHelper = nullptr;
 
 	// Get Friend Object
-	int s = static_cast<int>(friendList.size());
-	for( int i = 0; i < s; i++ )
+	for( size_t i = 0; i < friendList.size(); i++ )
 	{
 		const SVObjectInfoStruct& friendObjectInfo = friendList[i];
 		if( friendObjectInfo.PObject )
@@ -919,7 +918,7 @@ BOOL SVUserMaskOperatorClass::ConnectAllInputs()
 	addDefaultInputObjects(TRUE, &inputList);
 	
 	// tell friends to connect...
-	for (int j = 0; j < friendList.size(); ++ j)
+	for (size_t j = 0; j < friendList.size(); ++ j)
 	{
 		const SVObjectInfoStruct& rFriend = friendList[j];
 		::SVSendMessage(rFriend.UniqueObjectID, SVM_CONNECT_ALL_INPUTS, NULL, NULL);
@@ -951,7 +950,7 @@ BOOL SVUserMaskOperatorClass::ConnectAllInputs()
 					else
 					{
 						// Ask first friends...
-						for (int j = 0; j < friendList.size(); ++ j)
+						for (size_t j = 0; j < friendList.size(); ++ j)
 						{
 							const SVObjectInfoStruct& rFriend = friendList[j];
 							pObject = reinterpret_cast<SVObjectClass *>(::SVSendMessage(rFriend.UniqueObjectID, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&info)));

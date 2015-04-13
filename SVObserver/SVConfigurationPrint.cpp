@@ -1162,7 +1162,7 @@ void SVConfigurationPrint::PrintFriends( CDC* pDC, SVObjectClass* pObj, CPoint& 
 {
 	const SVObjectInfoArrayClass& rFriendList = pObj->GetFriendList();
 	
-	for (int nCnt = 0; nCnt < rFriendList.size(); nCnt++)
+	for (size_t nCnt = 0; nCnt < rFriendList.size(); nCnt++)
 	{
 		const SVObjectInfoStruct& rObjInfo = rFriendList[nCnt];
 		
@@ -1170,7 +1170,7 @@ void SVConfigurationPrint::PrintFriends( CDC* pDC, SVObjectClass* pObj, CPoint& 
 		{
 			PrintObject(pDC, rObjInfo.PObject, ptCurPos, nIndentLevel);
 		}  // end if( rObjInfo )
-	}  // end for( int nCnt = 0; nCnt < rFriendList.GetSize (); nCnt++ )
+	}  // end for( size_t nCnt = 0; nCnt < rFriendList.GetSize (); nCnt++ )
 }  // end function void SVConfigurationPrint:::PrintFriends( ... )
 
 ////////////////////////////////////////////////////////////////////////////////

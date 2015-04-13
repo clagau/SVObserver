@@ -122,7 +122,7 @@ This method destroys all friends on the friends list owned by this object.  All 
 */
 void SVObjectClass::DestroyFriends()
 {
-	for( int i = 0; i < friendList.size(); ++i )
+	for( size_t i = 0; i < friendList.size(); ++i )
 	{
 		const SVObjectInfoStruct& rFriend = friendList[ i ];
 		// Check if Friend is alive...
@@ -160,7 +160,7 @@ SVObjectClass::SVObjectPtrDeque SVObjectClass::GetPreProcessObjects() const
 {
 	SVObjectPtrDeque l_Objects;
 
-	for( int i = 0; i < friendList.size(); i++ )
+	for( size_t i = 0; i < friendList.size(); i++ )
 	{
 		const SVObjectInfoStruct& rFriend = friendList[i];
 
@@ -540,7 +540,7 @@ HRESULT SVObjectClass::GetObjectValue( const SVString& p_rValueName, VARIANT& p_
 		SVSAFEARRAY l_SafeArray;
 
 		// for all friends in the list - get GUIDs
-		for( int i = 0;i < friendList.size();i++ )
+		for( size_t i = 0;i < friendList.size();i++ )
 		{
 			SVGUID friendGuid = friendList[ i ].UniqueObjectID;
 
@@ -1452,7 +1452,7 @@ void SVObjectClass::PutFriendGuidsInObjectScript( CString& RStrScript, CString& 
 		script += _T( "[ " );
 		
 		// for all friends in the list - get GUIDs
-		for( int i = 0;i < friendList.GetSize();i++ )
+		for( size_t i = 0;i < friendList.GetSize();i++ )
 		{
 			GUID friendGuid = friendList[ i ].UniqueObjectID;
 			CString guidStr;

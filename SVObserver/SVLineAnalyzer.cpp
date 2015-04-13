@@ -633,7 +633,7 @@ SVObjectClass* SVLineAnalyzerClass::getImageToLineProject()
 	SVImageToLineProjectClass *pProject = NULL;
 
 	// Get Friend Object ( SVImageToLineProjectClass )
-	for( int i = 0; i < friendList.size(); i++ )
+	for( size_t i = 0; i < friendList.size(); i++ )
 	{
 		const SVObjectInfoStruct& friendObjectInfo = friendList[i];
 		if( friendObjectInfo.PObject )
@@ -653,7 +653,7 @@ SVObjectClass* SVLineAnalyzerClass::getLineROI()
 	SVLineROIClass* pLineROI = NULL;
 	
 	// Get Friend Object ( SVLineROIClass )
-	for( int i = 0; i < friendList.size(); i++ )
+	for( size_t i = 0; i < friendList.size(); i++ )
 	{
 		const SVObjectInfoStruct& friendObjectInfo = friendList[i];
 		if( friendObjectInfo.PObject )
