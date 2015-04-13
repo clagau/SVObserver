@@ -3145,7 +3145,7 @@ void SVIPDoc::OnEditAdjustToolPosition()
 		{
 			SVSVIMStateClass::AddState( SV_STATE_EDITING );
 			CString DlgName;
-			DlgName.Format("Adjust Tool Size and Position - %s",l_pTool->GetObjectName());
+			DlgName.Format("Adjust Tool Size and Position - %s",l_pTool->GetName());
 			SVAdjustToolSizePositionDlg dlg(DlgName, dynamic_cast< CWnd* >( this->GetMDIChild() ), l_pTool );
 			dlg.DoModal();
 			SVSVIMStateClass::RemoveState( SV_STATE_EDITING );
