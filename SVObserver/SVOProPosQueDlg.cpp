@@ -18,6 +18,7 @@
 #include "SVOPPQObj.h"
 #include "SVOInspectionObj.h"
 #include "SVOTriggerObj.h"
+#include "SVOResource\ConstGlobalSvOr.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -429,7 +430,7 @@ BOOL CSVOProPosQueDlg::OnInitDialog()
     
     m_pParent = (CSVOConfigAssistantDlg*)GetParent()->GetParent();
 
-	SetWindowContextHelpId(IDD+HELPFILE_SVORESOURCE_OFFSET);
+	SetWindowContextHelpId(IDD+SvOr::HELPFILE_SVORESOURCE_OFFSET);
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 	              // EXCEPTION: OCX Property Pages should return FALSE

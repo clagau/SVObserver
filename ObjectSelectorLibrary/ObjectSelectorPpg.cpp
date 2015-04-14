@@ -123,12 +123,12 @@ void ObjectSelectorPpg::OnSize(UINT nType, int cx, int cy)
 
 void ObjectSelectorPpg::OnHelp()
 {
-	AfxGetApp()->HtmlHelp( m_HelpID + HELPFILE_SVORESOURCE_OFFSET );
+	AfxGetApp()->HtmlHelp( m_HelpID + SvOr::HELPFILE_SVORESOURCE_OFFSET );
 }
 
 BOOL ObjectSelectorPpg::OnHelpInfo(HELPINFO* pHelpInfo)
 {
-	pHelpInfo->iCtrlId = m_HelpID + HELPFILE_SVORESOURCE_OFFSET;
+	pHelpInfo->iCtrlId = m_HelpID + SvOr::HELPFILE_SVORESOURCE_OFFSET;
 	AfxGetApp()->HtmlHelp( pHelpInfo->iCtrlId, HH_HELP_CONTEXT );
 	return TRUE ;
 }

@@ -27,6 +27,7 @@
 #include "SVStatusLibrary/ExceptionManager.h"
 #include "ErrorNumbers.h"
 #include "TextDefinesSvO.h"
+#include "SVOResource/ConstGlobalSvOr.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -386,7 +387,7 @@ BOOL CSVOInspectionSourceDlg::OnInitDialog()
 		m_ctlExportIPDbtn.EnableWindow(FALSE);
 	}
 
-	SetWindowContextHelpId(IDD+HELPFILE_SVORESOURCE_OFFSET);
+	SetWindowContextHelpId(IDD+SvOr::HELPFILE_SVORESOURCE_OFFSET);
 	
 	return TRUE;  // return TRUE unless you set the focus to a control
 				  // EXCEPTION: OCX Property Pages should return FALSE

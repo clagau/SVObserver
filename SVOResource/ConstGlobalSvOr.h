@@ -13,6 +13,7 @@ namespace Seidenader
 	{
 		#pragma region Declarations
 		const int IconSize = 16;
+		const int HELPFILE_SVORESOURCE_OFFSET = 0x20000;
 		#pragma endregion Declarations
 	}
 }

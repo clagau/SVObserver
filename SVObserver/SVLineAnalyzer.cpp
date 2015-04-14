@@ -16,7 +16,6 @@
 #include "SVImageLibrary/SVImageInfoClass.h"
 #include "SVRunControlLibrary/SVRunControlLibrary.h"
 
-#include "SVAngularProfileTool.h"
 #include "SVGageTool.h"
 #include "SVImageClass.h"
 #include "SVImageToLineProject.h"

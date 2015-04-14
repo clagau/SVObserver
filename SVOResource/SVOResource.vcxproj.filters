@@ -99,9 +99,6 @@
     <None Include="res\bmp00001.bmp">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="res\array_toolbar.bmp">
-      <Filter>Resource Files</Filter>
-    </None>
     <None Include="RES\SVKnob.bmp">
       <Filter>Resource Files</Filter>
     </None>
@@ -189,25 +186,10 @@
     <None Include="res\stop.ico">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="res\ico_status_green.ico">
-      <Filter>Resource Files</Filter>
-    </None>
     <None Include="res\ico_status_black.ico">
       <Filter>Resource Files</Filter>
     </None>
     <None Include="res\ico_status_none.ico">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="res\ico_status_gray.ico">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="res\ico_status_red.ico">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="res\ico_status_yellow.ico">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="res\ico_status_blue.ico">
       <Filter>Resource Files</Filter>
     </None>
     <None Include="res\W95MBX03.ICO">

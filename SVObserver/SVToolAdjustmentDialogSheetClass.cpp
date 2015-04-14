@@ -21,12 +21,10 @@
 #include "SVInspectionProcess.h"
 #include "SVPerspectiveWarpDlg.h"
 #include "SVTADlgAcquisitionSourcePage.h"
-#include "SVTADlgBuildReferencePage.h"
 #include "SVTADlgColorToolPage.h"
 #include "SVTADlgFileImageSourcePage.h"
 #include "SVTADlgGeneralPage.h"
 #include "SVTADlgLUTPage.h"
-#include "SVTADlgMultipleAnalyzerPage.h"
 #include "SVTADlgPassFailPage.h"
 #include "SVTADlgPolarTransformPage.h"
 #include "SVTADlgRemoteInputToolPage.h"
@@ -42,7 +40,6 @@
 #include "SVToolAdjustmentDialogImagePageClass.h"
 #include "SVToolAdjustmentDialogLinearSpecialPageClass.h"
 #include "SVToolAdjustmentDialogMaskPageClass.h"
-#include "SVToolAdjustmentDialogSpecialPropertiesPageClass.h"
 #include "SVToolAdjustmentDialogTwoImagePage.h"
 #include "SVToolArchivePage.h"
 #include "SVToolAdjustmentDialogCommentPageClass.h"
@@ -155,13 +152,6 @@ void SVToolAdjustmentDialogSheetClass::addPages()
 			AddPage( new SVToolAdjustmentDialogGeneralPageClass( this ) );
 			break;
 
-		case SVGageToolObjectType:
-			AddPage( new SVToolAdjustmentDialogImagePageClass( this ) );
-			AddPage( new SVToolAdjustmentDialogMultipleAnalyzerPageClass( this ) );
-			AddPage( pConditionalDlg );
-			AddPage( new SVToolAdjustmentDialogGeneralPageClass( this ) );
-			break;
-
 		case SVWindowToolObjectType:
 			AddPage( new SVToolAdjustmentDialogImagePageClass( this ) );
 			AddPage( new SVToolAdjustmentDialogFilterPageClass( m_rTool ) );
@@ -177,16 +167,6 @@ void SVToolAdjustmentDialogSheetClass::addPages()
 			AddPage( new SVToolAdjustmentDialogGeneralPageClass( this ) );
 			break;
 
-		case SVToolProfileObjectType:
-			AddPage( new SVToolAdjustmentDialogImagePageClass( this ) );
-			AddPage( new SVToolAdjustmentDialogFilterPageClass( m_rTool ) );
-			AddPage( new SVToolAdjustmentDialogThresholdPageClass( this ) );
-			AddPage( new SVToolAdjustmentDialogAnalyzerPageClass( this ) );
-			AddPage( new SVToolAdjustmentDialogSpecialPropertiesPageClass( this ) );
-			AddPage( pConditionalDlg );
-			AddPage( new SVToolAdjustmentDialogGeneralPageClass( this ) );
-			break;
-
 		case SVLinearToolObjectType:
 			AddPage( new SVToolAdjustmentDialogImagePageClass( this ) );
 			AddPage( new SVToolAdjustmentDialogFilterPageClass( m_rTool ) );
@@ -194,15 +174,6 @@ void SVToolAdjustmentDialogSheetClass::addPages()
 			AddPage( new SVToolAdjustmentDialogAnalyzerPageClass( this ) );
 			//add the new page.
 			AddPage( new SVToolAdjustmentDialogLinearSpecialPageClass(this) );
-
-			//AddPage( new SVToolAdjustmentDialogSpecialPropertiesPageClass( this ) );
-			AddPage( pConditionalDlg );
-			AddPage( new SVToolAdjustmentDialogGeneralPageClass( this ) );
-			break;
-
-
-		case SVToolBuildReferenceObjectType:
-			AddPage( new SVToolAdjustmentDialogBuildReferencePageClass( this ) );
 			AddPage( pConditionalDlg );
 			AddPage( new SVToolAdjustmentDialogGeneralPageClass( this ) );
 			break;

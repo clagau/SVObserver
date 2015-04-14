@@ -131,33 +131,13 @@ void SVAboutDialogClass::HideSVRText()
 	if( pWnd )
 		pWnd->ShowWindow( SW_HIDE );
 
-	// Hide Address
-	pWnd = GetDlgItem( IDC_ADDRESS );
-	if( pWnd )
-		pWnd->ShowWindow( SW_HIDE );
-
 	// Hide Country
 	pWnd = GetDlgItem( IDC_COUNTRY );
 	if( pWnd )
 		pWnd->ShowWindow( SW_HIDE );
 
-	// Hide Phone
-	pWnd = GetDlgItem( IDC_PHONE );
-	if( pWnd )
-		pWnd->ShowWindow( SW_HIDE );
-
-	// Hide Internet
-	pWnd = GetDlgItem( IDC_EMAIL );
-	if( pWnd )
-		pWnd->ShowWindow( SW_HIDE );
-
-	// Hide Company 2
-	pWnd = GetDlgItem( IDC_COMPANY2 );
-	if( pWnd )
-		pWnd->ShowWindow( SW_HIDE );
-
 	// Hide Address 2
-	pWnd = GetDlgItem( IDC_ADDRESS2 );
+	pWnd = GetDlgItem( IDC_ADDRESS );
 	if( pWnd )
 		pWnd->ShowWindow( SW_HIDE );
 
@@ -167,12 +147,12 @@ void SVAboutDialogClass::HideSVRText()
 		pWnd->ShowWindow( SW_HIDE );
 
 	// Hide Phone 2
-	pWnd = GetDlgItem( IDC_PHONE2 );
+	pWnd = GetDlgItem( IDC_PHONE );
 	if( pWnd )
 		pWnd->ShowWindow( SW_HIDE );
 
 	// Hide Internet 2
-	pWnd = GetDlgItem( IDC_EMAIL2 );
+	pWnd = GetDlgItem( IDC_EMAIL );
 	if( pWnd )
 		pWnd->ShowWindow( SW_HIDE );
 
@@ -193,7 +173,7 @@ void SVAboutDialogClass::SetOEMText( LPCTSTR text )
 
 	if( ( pos = oemText.Find( keyWords[0] ) ) != -1 )
 	{
-		pWnd = GetDlgItem( IDC_COMPANY2 );
+		pWnd = GetDlgItem( IDC_COMPANY );
 		if( pWnd )
 		{
 			pWnd->SetWindowText( oemText.Mid( pos + keyWords[0].GetLength() ) );
@@ -203,7 +183,7 @@ void SVAboutDialogClass::SetOEMText( LPCTSTR text )
 
 	else if( (pos = oemText.Find( keyWords[1] ) ) != -1)
 	{	
-		pWnd = GetDlgItem( IDC_ADDRESS2 );
+		pWnd = GetDlgItem( IDC_ADDRESS );
 		if( pWnd )
 		{
 			pWnd->SetWindowText( oemText.Mid( pos + keyWords[1].GetLength() ) );
@@ -223,7 +203,7 @@ void SVAboutDialogClass::SetOEMText( LPCTSTR text )
 
 	else if( ( pos = oemText.Find( keyWords[3] ) ) != -1 )
 	{	
-		pWnd = GetDlgItem( IDC_PHONE2 );
+		pWnd = GetDlgItem( IDC_PHONE );
 		if( pWnd )
 		{
 			pWnd->SetWindowText( oemText.Mid( pos + keyWords[3].GetLength() ) );
@@ -233,7 +213,7 @@ void SVAboutDialogClass::SetOEMText( LPCTSTR text )
 	
 	else if( ( pos = oemText.Find( keyWords[4] ) ) != -1 )
 	{	
-		pWnd = GetDlgItem( IDC_EMAIL2 );
+		pWnd = GetDlgItem( IDC_EMAIL );
 		if( pWnd )
 		{
 			pWnd->SetWindowText( oemText.Mid( pos + keyWords[4].GetLength() ) );

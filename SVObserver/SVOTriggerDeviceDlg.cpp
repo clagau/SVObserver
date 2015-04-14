@@ -16,6 +16,7 @@
 #include "SVOPropertyPageDlg.h"
 #include "SVOTriggerObj.h"
 #include "SVTriggerSelectionDlg.h"
+#include "SVOResource\ConstGlobalSvOr.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -67,7 +68,7 @@ BOOL CSVOTriggerDeviceDlg::OnInitDialog()
     m_pParent = (CSVOConfigAssistantDlg*)GetParent()->GetParent();
     SetupList();
     
-	SetWindowContextHelpId(IDD+HELPFILE_SVORESOURCE_OFFSET);
+	SetWindowContextHelpId(IDD+SvOr::HELPFILE_SVORESOURCE_OFFSET);
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 	              // EXCEPTION: OCX Property Pages should return FALSE

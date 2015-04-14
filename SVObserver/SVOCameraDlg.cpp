@@ -19,6 +19,7 @@
 #include "SVImageProcessingClass.h"
 #include "SVAcquisitionClass.h"
 #include "SVHardwareManifest.h"
+#include "SVOResource\ConstGlobalSvOr.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -90,7 +91,7 @@ BOOL CSVOCameraDlg::OnInitDialog()
 		m_btnCameraManager.ShowWindow(SW_HIDE);
 	}
 
-	SetWindowContextHelpId(IDD+HELPFILE_SVORESOURCE_OFFSET);
+	SetWindowContextHelpId(IDD+SvOr::HELPFILE_SVORESOURCE_OFFSET);
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 	              // EXCEPTION: OCX Property Pages should return FALSE

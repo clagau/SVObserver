@@ -95,9 +95,6 @@
     <ClCompile Include="SVAutoThresholdEquation.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVAvailableAnalyzerDialog.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVBarCodeAnalyzerClass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -315,15 +312,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVEvaluate.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVEvaluateBeta.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVEvaluateX.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVEvaluateY.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVExternalTool.cpp">
@@ -644,9 +632,6 @@
     <ClCompile Include="SVOAcquisitionDeviceMapClass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVOAppAssistNewInputDlg.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVObjectAppClass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -947,12 +932,6 @@
     <ClCompile Include="SVRemoteOutputObject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVRemoteOutputPropPageList.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVRemoteOutputPropSheet.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVRemoteOutputsView.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -987,9 +966,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVROIFigureEditor.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVRotateReference.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVSaveToolSetImageDialog.cpp">
@@ -1040,9 +1016,6 @@
     <ClCompile Include="SVTADlgAcquisitionSourcePage.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVTADlgBuildReferencePage.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVTADlgColorThresholdAdjustment.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -1068,9 +1041,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVTADlgLUTPage.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVTADlgMultipleAnalyzerPage.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVTADlgPassFailPage.cpp">
@@ -1160,16 +1130,10 @@
     <ClCompile Include="SVToolAdjustmentDialogSheetClass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVToolAdjustmentDialogSpecialPropertiesPageClass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVToolAdjustmentDialogTwoImagePage.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVToolArchivePage.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVToolBuildReference.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVToolExtentClass.cpp">
@@ -1215,9 +1179,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVTriggerProcessingClass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVTwoPointRotateDialog.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVUnaryImageOperatorList.cpp">
@@ -1689,9 +1650,6 @@
     <ClInclude Include="SVAutoThresholdEquation.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVAvailableAnalyzerDialog.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVBarCodeAnalyzerClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -1915,15 +1873,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVEvaluate.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVEvaluateBeta.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVEvaluateX.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVEvaluateY.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVExternalTool.h">
@@ -2274,9 +2223,6 @@
     <ClInclude Include="SVOAcquisitionDeviceMapClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVOAppAssistNewInputDlg.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVObjectAppClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -2589,12 +2535,6 @@
     <ClInclude Include="SVRemoteOutputObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVRemoteOutputPropPageList.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVRemoteOutputPropSheet.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVRemoteOutputsView.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -2635,9 +2575,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVROIFigureEditor.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVRotateReference.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVSaveToolSetImageDialog.h">
@@ -2697,9 +2634,6 @@
     <ClInclude Include="SVTADlgAcquisitionSourcePage.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVTADlgBuildReferencePage.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVTADlgColorThresholdAdjustment.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -2725,9 +2659,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVTADlgLUTPage.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVTADlgMultipleAnalyzerPage.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVTADlgPassFailPage.h">
@@ -2817,16 +2748,10 @@
     <ClInclude Include="SVToolAdjustmentDialogSheetClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVToolAdjustmentDialogSpecialPropertiesPageClass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVToolAdjustmentDialogTwoImagePage.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVToolArchivePage.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVToolBuildReference.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVToolExtentClass.h">
@@ -2875,9 +2800,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVTriggerRelayClass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVTwoPointRotateDialog.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVUnaryImageOperatorList.h">

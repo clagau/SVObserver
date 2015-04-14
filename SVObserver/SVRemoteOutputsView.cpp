@@ -25,8 +25,6 @@
 #include "SVRemoteOutputDataController.h"
 #include "SVRemoteOutputEditDialog.h"
 #include "SVRemoteOutputGroup.h"
-#include "SVRemoteOutputPropPageList.h"
-#include "SVRemoteOutputPropSheet.h"
 #include "SVSVIMStateClass.h"
 #include "ErrorNumbers.h"
 #include "SVStatusLibrary/ExceptionManager.h"

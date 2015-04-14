@@ -300,14 +300,11 @@ BEGIN_MESSAGE_MAP(SVObserverApp, CWinApp)
 	ON_UPDATE_COMMAND_UI(ID_ADD_WINDOWTOOL, OnUpdateAddWindowTool)
 	ON_UPDATE_COMMAND_UI(ID_ADD_CYLINDRICALWARPTOOL, OnUpdateAddCylindricalWarpTool)
 	ON_UPDATE_COMMAND_UI(ID_APP_ABOUT, OnUpdateAppAbout)
-	ON_UPDATE_COMMAND_UI(ID_ADD_GAGETOOL, OnUpdateAddGageTool)
-	ON_UPDATE_COMMAND_UI(ID_ADD_PROFILETOOL, OnUpdateAddProfileTool)
 	ON_UPDATE_COMMAND_UI(ID_ADD_LOADIMAGETOOL, OnUpdateAddLoadImageTool)
 	ON_UPDATE_COMMAND_UI(ID_ADD_IMAGETOOL, OnUpdateAddImageTool)
 	ON_UPDATE_COMMAND_UI(ID_ADD_ARCHIVETOOL,OnUpdateAddArchiveTool)
 	ON_UPDATE_COMMAND_UI(ID_ADD_MATHTOOL, OnUpdateAddMathTool)
 	ON_UPDATE_COMMAND_UI(ID_ADD_STATISTICSTOOL, OnUpdateAddStatisticsTool)
-	ON_UPDATE_COMMAND_UI(ID_ADD_ROTATETOOL, OnUpdateAddRotateTool)
 	ON_UPDATE_COMMAND_UI(ID_ADD_TRANSFORMATIONTOOL, OnUpdateAddTransformationTool)
 	ON_UPDATE_COMMAND_UI(ID_ADD_EXTERNAL_TOOL, OnUpdateAddExternalTool)
 	ON_UPDATE_COMMAND_UI(ID_ADD_POLARUNWRAPTOOL, OnUpdateAddPolarUnwrapTool)
@@ -317,7 +314,6 @@ BEGIN_MESSAGE_MAP(SVObserverApp, CWinApp)
 	ON_UPDATE_COMMAND_UI(ID_ADD_REMOTEINPUTTOOL, OnUpdateAddRemoteInputTool)
 	ON_UPDATE_COMMAND_UI(ID_ADD_PERSPECTIVEWARPTOOL, OnUpdateAddPerspectiveTool)
 	ON_UPDATE_COMMAND_UI(ID_EXTRAS_LOGIN, OnUpdateExtrasLogin)
-	ON_UPDATE_COMMAND_UI(ID_EXTRAS_USERMANAGER, OnUpdateExtrasUserManager)
 	ON_UPDATE_COMMAND_UI(ID_EXTRAS_ENVIRONMENTSETTINGS, OnUpdateExtrasAdditionalEnvironmentSettings)
 	ON_UPDATE_COMMAND_UI(ID_EXTRAS_LOGOUT, OnUpdateExtrasLogout)
 	ON_UPDATE_COMMAND_UI(ID_EXTRAS_UTILITIES_EDIT, OnUpdateExtrasUtilitiesEdit)
@@ -1665,32 +1661,6 @@ void SVObserverApp::OnUpdateAppAbout( CCmdUI* PCmdUI )
 	//PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING ) );
 }
 
-// @WARNING - Addition of a Gage Tool is no longer supported.
-void SVObserverApp::OnUpdateAddGageTool( CCmdUI* pCmdUI ) 
-{
-	bool l_bEnable  = !SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) &&	
-		OkToEdit() &&
-		IsMonochromeImageAvailable() ;
-	if( pCmdUI->m_pSubMenu )
-	{
-		unsigned int l_uiGray = l_bEnable ? 0 : MF_GRAYED;
-		pCmdUI->m_pMenu->EnableMenuItem( pCmdUI->m_nIndex, MF_BYPOSITION | l_uiGray);
-	}
-	else
-	{
-		pCmdUI->Enable( l_bEnable );
-	}
-}
-
-// @WARNING - Addition of a Profile Tool is no longer supported.
-void SVObserverApp::OnUpdateAddProfileTool( CCmdUI* pCmdUI ) 
-{
-	bool l_bEnable  = !SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) &&	
-		OkToEdit() &&
-		IsMonochromeImageAvailable() ;
-	pCmdUI->Enable( l_bEnable );
-}
-
 void SVObserverApp::OnUpdateAddLoadImageTool( CCmdUI* PCmdUI ) 
 {
 	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) &&	
@@ -1794,16 +1764,7 @@ void SVObserverApp::OnUpdateExtrasLogin( CCmdUI* PCmdUI )
 	}
 }
 
-void SVObserverApp::OnUpdateExtrasUserManager( CCmdUI* PCmdUI ) 
-{
-	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION )  );
-}
-
-void SVObserverApp::OnViewToolBuffers() 
-{
-}
-
-void SVObserverApp::OnUpdateViewToolBuffers( CCmdUI* PCmdUI ) 
+void SVObserverApp::OnUpdateViewToolBuffers( CCmdUI* PCmdUI )
 {
 	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING )  );
 	PCmdUI->SetCheck( 0 );
@@ -1835,22 +1796,15 @@ void SVObserverApp::OnUpdateViewToolBuffers( CCmdUI* PCmdUI )
 //	 Date		Author		Comment                                       
 //  :15.10.1998 RO			First Implementation
 ////////////////////////////////////////////////////////////////////////////////
-void SVObserverApp::OnUpdateSetupMode( CCmdUI* PCmdUI ) 
+void SVObserverApp::OnUpdateSetupMode( CCmdUI* PCmdUI )
 {
 	PCmdUI->Enable( SVSVIMStateClass::CheckState( SV_STATE_READY ) &&
 		!SVSVIMStateClass::CheckState( SV_STATE_SECURED | SV_STATE_REGRESSION ) );
 }
 
-void SVObserverApp::OnUpdateAddRotateTool( CCmdUI* PCmdUI ) 
+void SVObserverApp::OnUpdateAddTransformationTool( CCmdUI* PCmdUI )
 {
-	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) &&	
-		OkToEdit() &&
-		IsMonochromeImageAvailable()  );
-}
-
-void SVObserverApp::OnUpdateAddTransformationTool( CCmdUI* PCmdUI ) 
-{
-	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) &&	
+	PCmdUI->Enable( !SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) &&	
 		OkToEdit() &&
 		IsMonochromeImageAvailable() );
 }

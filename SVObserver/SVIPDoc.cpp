@@ -20,7 +20,6 @@
 #include "SVTimerLibrary/SVClock.h"
 #include "SVUtilityLibrary/SVGUID.h"
 
-#include "SVAngularProfileTool.h"
 #include "SVArchiveTool.h"
 #include "SVColorTool.h"
 #include "SVConditional.h"
@@ -46,7 +45,6 @@
 #include "SVTransformationTool.h"
 #include "SVToolAdjustmentDialogSheetClass.h"
 #include "SVToolAcquisition.h"
-#include "SVToolBuildReference.h"
 #include "SVToolSet.h"
 #include "SVToolSetAdjustmentDialogSheet.h"
 #include "SVToolSetTabView.h"

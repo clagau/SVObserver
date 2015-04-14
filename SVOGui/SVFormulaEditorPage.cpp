@@ -19,6 +19,7 @@
 #include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
 #include "SVTreeLibrary/ObjectSelectorItem.h"
 #include "SVFormulaEditorPage.h"
+#include "SVOResource/ConstGlobalSvOr.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -155,11 +156,11 @@ namespace Seidenader
 		{
 			if (m_isConditionalPage)
 			{
-				AfxGetApp()->HtmlHelp( IDD_CONDITIONAL_PAGE + HELPFILE_SVORESOURCE_OFFSET );
+				AfxGetApp()->HtmlHelp( IDD_CONDITIONAL_PAGE + SvOr::HELPFILE_SVORESOURCE_OFFSET );
 			}
 			else
 			{
-				AfxGetApp()->HtmlHelp( IDD_FORMULA_DIALOG + HELPFILE_SVORESOURCE_OFFSET );
+				AfxGetApp()->HtmlHelp( IDD_FORMULA_DIALOG + SvOr::HELPFILE_SVORESOURCE_OFFSET );
 			}
 		}
 
@@ -167,11 +168,11 @@ namespace Seidenader
 		{
 			if (m_isConditionalPage)
 			{
-				pHelpInfo->iCtrlId = IDD_CONDITIONAL_PAGE + HELPFILE_SVORESOURCE_OFFSET;
+				pHelpInfo->iCtrlId = IDD_CONDITIONAL_PAGE + SvOr::HELPFILE_SVORESOURCE_OFFSET;
 			}
 			else
 			{
-				pHelpInfo->iCtrlId = IDD_FORMULA_DIALOG + HELPFILE_SVORESOURCE_OFFSET;
+				pHelpInfo->iCtrlId = IDD_FORMULA_DIALOG + SvOr::HELPFILE_SVORESOURCE_OFFSET;
 			}
 
 			AfxGetApp()->HtmlHelp( pHelpInfo->iCtrlId, HH_HELP_CONTEXT );
@@ -657,13 +658,6 @@ namespace Seidenader
 				break;
 			case ID_FORMULA_UNDO:
 				onUndo();
-				break;
-			case ID_FORMULA_ARRAY_BUTTON:
-				insertIntoRichEdit(" [ ] ");
-				break;
-			case ID_FORMULA_ARRAY_INDEX_BUTTON:
-				insertIntoRichEdit(" [ 1 { -1 } ] ");
-				backspaceRichEdit(10);
 				break;
 			}// end switch (LOWORD(wParam))
 

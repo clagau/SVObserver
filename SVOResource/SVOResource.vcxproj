@@ -286,7 +286,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Readme.SVResource.txt" />
-    <None Include="res\array_toolbar.bmp" />
     <None Include="res\arrow_clockwise.ico" />
     <None Include="RES\arrow_counterclockwise.ico" />
     <None Include="res\arrow_down.ico" />
@@ -314,12 +313,7 @@
     <None Include="res\icon_exist1.ico" />
     <None Include="res\icon_not.ico" />
     <None Include="res\ico_status_black.ico" />
-    <None Include="res\ico_status_blue.ico" />
-    <None Include="res\ico_status_gray.ico" />
-    <None Include="res\ico_status_green.ico" />
     <None Include="res\ico_status_none.ico" />
-    <None Include="res\ico_status_red.ico" />
-    <None Include="res\ico_status_yellow.ico" />
     <None Include="res\input_ic.ico" />
     <None Include="res\ioitem_i.ico" />
     <None Include="res\Korber.bmp" />

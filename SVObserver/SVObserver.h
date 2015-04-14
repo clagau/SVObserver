@@ -9,11 +9,9 @@
 //* .Check In Date   : $Date:   18 Feb 2015 11:06:14  $
 //******************************************************************************
 
-#ifndef SVOBSERVER_H
-#define SVOBSERVER_H
+#pragma once
 
 #pragma region Includes
-#include <deque>
 
 #include "SVMaterialsLibrary/SVMaterialsTree.h"
 #include "SVImageLibrary/SVDigitizerLoadLibraryClass.h"
@@ -21,7 +19,6 @@
 #include "SVOMFCLibrary/SVOINIClass.h"
 #include "SVSecurity/SVSecurityManager.h"
 #include "SVUtilityLibrary/SVGUID.h"
-#include "SVUtilityLibrary/SVString.h"
 #include "SVXMLLibrary/SVXMLMaterialsTree.h"
 
 #include "SVFileNameClass.h"
@@ -33,7 +30,6 @@
 #include "SVPLCManager.h"
 #endif
 #include "SVConfigurationLibrary/SVObserverEnums.h"
-#include "SVStorageResult.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -92,7 +88,6 @@ LPCTSTR const SVEXCLUDECHARS_TOOL_NAME =       (_T("\\/:*\";,.+-$@'[]{}()<>|!%&~
 
 typedef SVXMLMaterialsTree SVTreeType;
 #pragma endregion Declarations
-
 
 class SVObserverApp : public CWinApp
 {
@@ -166,8 +161,6 @@ public:
 	afx_msg void OnUpdateAddWindowTool(CCmdUI* PCmdUI);
 	afx_msg void OnUpdateAppExit(CCmdUI* PCmdUI);
 	afx_msg void OnUpdateAppAbout(CCmdUI* PCmdUI);
-	afx_msg void OnUpdateAddGageTool(CCmdUI* PCmdUI);
-	afx_msg void OnUpdateAddProfileTool(CCmdUI* PCmdUI);
 	afx_msg void OnUpdateAddLoadImageTool(CCmdUI* PCmdUI);
 	afx_msg void OnUpdateAddImageTool(CCmdUI* PCmdUI);
 	afx_msg void OnUpdateAddArchiveTool(CCmdUI* PCmdUI);
@@ -178,10 +171,8 @@ public:
 	afx_msg void OnExtrasLogin();
 	afx_msg void OnUpdateExtrasLogin(CCmdUI* PCmdUI);
 	afx_msg void OnUpdateExtrasUserManager(CCmdUI* PCmdUI);
-	afx_msg void OnViewToolBuffers();
 	afx_msg void OnUpdateViewToolBuffers(CCmdUI* PCmdUI);
 	afx_msg void OnUpdateSetupMode(CCmdUI* PCmdUI);
-	afx_msg void OnUpdateAddRotateTool(CCmdUI* PCmdUI);
 	afx_msg void OnUpdateAddTransformationTool(CCmdUI* PCmdUI);
 	afx_msg void OnGoOffline();
 	afx_msg void OnUpdateGoOffline(CCmdUI* PCmdUI);
@@ -604,9 +595,7 @@ private:
 	unsigned short m_RemoteCommandsPortNumber;
 	unsigned short m_FailStatusStreamPortNumber;
 #pragma endregion Member variables
-
 };
-
 
 extern SVObserverApp TheSVObserverApp;
 
@@ -614,8 +603,6 @@ extern SVObserverApp TheSVObserverApp;
 //{{AFX_INSERT_LOCATION}}
 // DevStudio inserts additional declarations immediate in front of the preceding line
 ////////////////////////////////////////////////////////////////////////////////
-
-#endif
 
 //******************************************************************************
 //* LOG HISTORY:
