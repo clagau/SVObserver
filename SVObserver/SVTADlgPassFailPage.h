@@ -23,8 +23,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 // Other Necessary Include File(s) - Module Link(s)
 ////////////////////////////////////////////////////////////////////////////////
-#include "SVEditNumbers.h"
-
+#include "SVMFCControls\SVEditNumbers.h"
 #include "SVTaskObjectInterfaceClass.h"
 
 class SVRangeClass;
@@ -101,10 +100,10 @@ public:
 protected:
 	//{{AFX_DATA(SVToolAdjustmentDialogPassFailPageClass)
 	enum { IDD = IDD_TA_PASS_FAIL_DIALOG };
-	CEditNumbersFloat	m_warnLowEditCtrl;
-	CEditNumbersFloat	m_warnHighEditCtrl;
-	CEditNumbersFloat	m_failLowEditCtrl;
-	CEditNumbersFloat	m_failHighEditCtrl;
+	SvMc::CEditNumbersFloat	m_warnLowEditCtrl;
+	SvMc::CEditNumbersFloat	m_warnHighEditCtrl;
+	SvMc::CEditNumbersFloat	m_failLowEditCtrl;
+	SvMc::CEditNumbersFloat	m_failHighEditCtrl;
 	double	failHigh;
 	double	failLow;
 	double	warnHigh;

@@ -15,7 +15,7 @@
 #include "ISVPropertyPageDialog.h"
 
 #include "SVOutputInfoListTreeCtrl.h"
-#include "SVEditNumbers.h"
+#include "SVMFCControls\SVEditNumbers.h"
 #include "SVImageListClass.h"
 #include "SVArchiveTool.h"
 #include "SVGlobal.h"
@@ -47,7 +47,7 @@ protected:
 	CStatic	m_wndAvailableArchiveImageMemory;
 	CStatic	m_wndTxtAvailableArchiveImageMemory;
 	CComboBox	m_cbMode;
-	CEditNumbers	m_editMaxImages;
+	SvMc::CEditNumbers	m_editMaxImages;
 	CEdit	m_editImageFilesRoot;
 	SVOutputInfoListTreeCtrlClass m_treeResultsList;
 	SVOutputInfoListTreeCtrlClass m_treeImagesList;

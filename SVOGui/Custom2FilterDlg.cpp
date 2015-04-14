@@ -14,7 +14,7 @@
 #include <limits.h>
 #include "Custom2FilterDlg.h"
 #include "ObjectInterfaces/ISVOApp_Helper.h"
-#include "SVLibrary/SVFileDialog.h"
+#include "SVMFCControls/SVFileDialog.h"
 #include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
@@ -338,7 +338,7 @@ namespace Seidenader
 		{
 			bool FullAccess = isUnrestrictedFileAccess();
 			DWORD dwFlags = OFN_DONTADDTORECENT | OFN_ENABLESIZING | OFN_PATHMUSTEXIST | OFN_NOCHANGEDIR | OFN_HIDEREADONLY;
-			SVFileDialog FileDlg( TRUE, FullAccess, CustomFilterExportFileExt, _T(""), dwFlags, CustomFilterExportFileFilters, this );
+			SvMc::SVFileDialog FileDlg( TRUE, FullAccess, CustomFilterExportFileExt, _T(""), dwFlags, CustomFilterExportFileFilters, this );
 
 			if( FileDlg.DoModal() == IDOK )
 			{
@@ -411,7 +411,7 @@ namespace Seidenader
 
 			bool FullAccess = isUnrestrictedFileAccess();
 			DWORD dwFlags = OFN_DONTADDTORECENT | OFN_ENABLESIZING | OFN_PATHMUSTEXIST | OFN_NOCHANGEDIR | OFN_HIDEREADONLY;
-			SVFileDialog FileDlg(FALSE, FullAccess, CustomFilterExportFileExt, _T(""), dwFlags, CustomFilterExportFileFilters, this );
+			SvMc::SVFileDialog FileDlg(FALSE, FullAccess, CustomFilterExportFileExt, _T(""), dwFlags, CustomFilterExportFileFilters, this );
 			if( FileDlg.DoModal() == IDOK )
 			{
 				try

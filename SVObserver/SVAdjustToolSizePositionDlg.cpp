@@ -30,14 +30,15 @@
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
+
 #pragma endregion Declarations
 
 BEGIN_MESSAGE_MAP(SVAdjustToolSizePositionDlg, CDialog)
 	//{{AFX_MSG_MAP(SVAdjustToolSizePositionDlg)
 	ON_WM_TIMER()
 	ON_BN_CLICKED(IDC_TOP_LEFT_RADIO, OnModeRadio)
-	ON_MESSAGE( WM_SV_NOTIFY_LBUTTONDOWN, OnNotifyLButtonDown )
-	ON_MESSAGE( WM_SV_NOTIFY_LBUTTONUP, OnNotifyLButtonUp )
+	ON_MESSAGE( SvMc::WM_SV_NOTIFY_LBUTTONDOWN, OnNotifyLButtonDown )
+	ON_MESSAGE( SvMc::WM_SV_NOTIFY_LBUTTONUP, OnNotifyLButtonUp )
 	ON_BN_CLICKED(IDC_MOVETOOL_RADIO, OnModeRadio)
 	ON_BN_CLICKED(IDC_ROTATION_RADIO, OnModeRadio)
 	ON_BN_CLICKED(IDC_BOTTOM_RIGHT_RADIO, OnModeRadio)
@@ -152,7 +153,7 @@ BOOL SVAdjustToolSizePositionDlg::OnInitDialog()
 
 LRESULT SVAdjustToolSizePositionDlg::OnNotifyLButtonDown( WPARAM wParam, LPARAM lParam )
 {
-	SVUpDownButton* pButton = reinterpret_cast <SVUpDownButton*> (lParam);
+	SvMc::SVUpDownButton* pButton = reinterpret_cast <SvMc::SVUpDownButton*> (lParam);
 	m_pButton = pButton;
 
 	ButtonAction( m_pButton );
@@ -163,7 +164,7 @@ LRESULT SVAdjustToolSizePositionDlg::OnNotifyLButtonDown( WPARAM wParam, LPARAM 
 
 LRESULT SVAdjustToolSizePositionDlg::OnNotifyLButtonUp( WPARAM wParam, LPARAM lParam )
 {
-	SVUpDownButton* pButton = reinterpret_cast <SVUpDownButton*> (lParam);
+	SvMc::SVUpDownButton* pButton = reinterpret_cast <SvMc::SVUpDownButton*> (lParam);
 	KillTimer( TIMER_PAUSE );
 	KillTimer( TIMER_REPEAT );
 	m_pButton = nullptr;
@@ -275,7 +276,7 @@ void SVAdjustToolSizePositionDlg::OnBnClickedFullROI()
 #pragma endregion Protected Methods
 
 #pragma region Private Methods
-HRESULT SVAdjustToolSizePositionDlg::ButtonAction(SVUpDownButton* pButton)
+HRESULT SVAdjustToolSizePositionDlg::ButtonAction(SvMc::SVUpDownButton* pButton)
 {
 	UpdateData();
 

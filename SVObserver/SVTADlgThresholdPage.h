@@ -24,12 +24,11 @@
 //{{AFX_INCLUDES()
 //}}AFX_INCLUDES
 
-#include "SVEditNumbers.h"
+#include "SVMFCControls\SVEditNumbers.h"
 #include "SVTaskObjectInterfaceClass.h"
 #include "svhistogram.h"
 //TODO: MZA(10.Nov 2014): Move this files to SVOGui project and then remove folder from include and Namespace add-on add PictureDisplay declaration.
 #include "SVOGui/PictureDisplay.h"
-#include "SVMFCControls/SVSliderCtrl.h"
 
 class SVToolAdjustmentDialogSheetClass;
 class SVToolClass;
@@ -134,15 +133,15 @@ protected:
 protected:
 	//{{AFX_DATA(SVToolAdjustmentDialogThresholdPageClass)
 	enum { IDD = IDD_TA_THRESHOLD_DIALOG };
-	CEditNumbers	editLowerThres;
-	CEditNumbers	editUpperThres;
-	CEditNumbersFloat	editAutoThreshold;
+	SvMc::CEditNumbers	editLowerThres;
+	SvMc::CEditNumbers	editUpperThres;
+	SvMc::CEditNumbersFloat	editAutoThreshold;
 	CButton	autoThresholdWhiteRadio;
 	CButton	autoThresholdBlackRadio;
-	SVSliderCtrl	autoThresholdCtrl;
+	CSliderCtrl	autoThresholdCtrl;
 	SvOg::PictureDisplay	dialogImage;
-	SVSliderCtrl	lowerThreshold;
-	SVSliderCtrl	upperThreshold;
+	CSliderCtrl	lowerThreshold;
+	CSliderCtrl	upperThreshold;
 	BOOL	upperThresholdActive;
 	BOOL	thresholdActive;
 	BOOL	lowerThresholdActive;

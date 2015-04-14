@@ -26,15 +26,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="CSVOCRFontTraining.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="CSVOCRGrayFontTrain.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="HLB.CPP">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="ModelessMessageBox.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -284,9 +275,6 @@
     <ClCompile Include="SVDLLToolDefinitionStructs.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVDottedNameTreeCtrl.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVDoubleValueObjectClass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -312,15 +300,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVEdgeMarkerAdjustmentPageClass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVEditableListBox.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVEditHelper.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVEditNumbers.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVEnumerateCombo.cpp">
@@ -530,9 +509,6 @@
     <ClCompile Include="SVIPResultItemDefinition.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVKnobControl.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVLightReferenceDialog.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -629,9 +605,6 @@
     <ClCompile Include="SVMainImageClass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="svmaskeditor.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVMaskShape.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -666,9 +639,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVMultiDocTemplate.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVNumericEdit.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVOAcquisitionDeviceMapClass.cpp">
@@ -711,9 +681,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVOConfigAssistantDlg.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVOConfigNameEdit.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVOCRAnalyzer.cpp">
@@ -771,9 +738,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVOCVMatchDlg.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVOEditorWnd.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVOInspectionList.cpp">
@@ -954,9 +918,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVRemoteFontManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVRemoteInputDialog.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVRemoteInputObject.cpp">
@@ -1244,9 +1205,6 @@
     <ClCompile Include="SVTransformationTool.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVTreeCtrl.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVTriggerClass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -1263,9 +1221,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVUnaryImageOperatorList.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVUpDownButton.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVUpperThresholdEquation.cpp">
@@ -1314,9 +1269,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVWindowTool.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="VisualFx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVCommand.cpp">
@@ -1662,15 +1614,6 @@
     <ClInclude Include="..\AutoBuild\AutoBuild.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CSVOCRFontTraining.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="CSVOCRGrayFontTrain.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="HLB.H">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ISVPropertyPageDialog.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -1932,9 +1875,6 @@
     <ClInclude Include="SVDLLToolLoadLibraryClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVDottedNameTreeCtrl.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVDoubleValueObjectClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -1960,15 +1900,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVEdgeMarkerAdjustmentPageClass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVEditableListBox.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVEditHelper.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVEditNumbers.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVEnumerateCombo.h">
@@ -2208,9 +2139,6 @@
     <ClInclude Include="SVIProgress.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVKnobControl.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVLightReferenceDialog.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -2307,9 +2235,6 @@
     <ClInclude Include="SVMainImageClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="svmaskeditor.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVMaskShape.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -2344,9 +2269,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVMultiDocTemplate.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVNumericEdit.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVOAcquisitionDeviceMapClass.h">
@@ -2392,9 +2314,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVOConfigAssistantDlg.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVOConfigNameEdit.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVOCRAnalyzer.h">
@@ -2452,9 +2371,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVOCVMatchDlg.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVOEditorWnd.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVOInspectionList.h">
@@ -2644,9 +2560,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVRemoteFontManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVRemoteInputDialog.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVRemoteInputObject.h">
@@ -2949,9 +2862,6 @@
     <ClInclude Include="SVTransformationTool.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVTreeCtrl.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVTriggerClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -2971,9 +2881,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVUnaryImageOperatorList.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVUpDownButton.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVUpperThresholdEquation.h">
@@ -3037,9 +2944,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="UseTypeExceptMatch.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="VisualFx.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVCommand.h">

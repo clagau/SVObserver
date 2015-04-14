@@ -12,7 +12,6 @@
 #ifndef SVTADLGREMOTEINPUTTOOLPAGE_H
 #define SVTADLGREMOTEINPUTTOOLPAGE_H
 
-#include "SVDottedNameTreeCtrl.h"
 #include "SVValueObjectImpl.h"
 #include "afxcmn.h"
 #include "afxwin.h"

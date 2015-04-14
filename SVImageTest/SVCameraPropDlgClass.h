@@ -12,7 +12,7 @@
 #ifndef SVCAMERAPROPDLGCLASS_H
 #define SVCAMERAPROPDLGCLASS_H
 
-#include "SVLibrary/SVListCtrl.h"
+#include "SVMFCControls\SVListCtrl.h"
 
 class SVDigitizerLoadLibraryClass;
 
@@ -23,7 +23,7 @@ public:
 
 	//{{AFX_DATA(SVCameraPropDlgClass)
 	enum { IDD = IDD_CAMERA_PROP };
-	SVListCtrl	m_svListCtrl;
+	SvMc::SVListCtrl	m_svListCtrl;
 	//}}AFX_DATA
 
 	SVDigitizerLoadLibraryClass *m_psvDigitizers;

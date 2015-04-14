@@ -20,7 +20,7 @@
 #include "SVShowDependentsDialog.h"
 #include "SVInspectionProcess.h"
 #include "SVIPDoc.h"
-#include "SVLibrary/SVFileDialog.h"
+#include "SVMFCControls/SVFileDialog.h"
 #include "SVLoki/Functor.h"
 
 #ifdef _DEBUG
@@ -239,7 +239,7 @@ void SVExternalToolDlg::OnDelete()
 void SVExternalToolDlg::OnAdd() 
 {
 	bool bFullAccess = TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_UNRESTRICTED_FILE_ACCESS);
-	SVFileDialog cfd(true, bFullAccess, _T("dll"), _T(""),
+	SvMc::SVFileDialog cfd(true, bFullAccess, _T("dll"), _T(""),
 		OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT,
 		_T("Dynamic Link Library(*.dll)|*.dll|All Files (*.*)|*.*||"));
 
@@ -275,7 +275,7 @@ void SVExternalToolDlg::OnBrowse()
 {
 	UpdateData();
 	bool bFullAccess = TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_UNRESTRICTED_FILE_ACCESS);
-	SVFileDialog cfd(true, bFullAccess, _T("dll"), _T(""),
+	SvMc::SVFileDialog cfd(true, bFullAccess, _T("dll"), _T(""),
 		OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT,
 		_T("Dynamic Link Library(*.dll)|*.dll|All Files (*.*)|*.*||"));
 

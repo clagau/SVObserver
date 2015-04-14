@@ -15,7 +15,6 @@
 #pragma region Includes
 #include "SVMFCControls/SVSliderCtrl.h"
 #include "SVRegressionTestStruct.h"
-#include "SVLibrary/SVListCtrl.h"
 #pragma endregion Includes
 
 class CSVRegressionRunDlg : public CDialog
@@ -85,7 +84,7 @@ private:
 	enum { IDD = IDD_DIALOG_REGRESSIONTEST_RUN };
 	CButton	m_btnExit;
 	CButton	m_btnSettings;
-	SVSliderCtrl m_sliderDelayTime;
+	SvMc::SVSliderCtrl m_sliderDelayTime;
 	CListBox	m_lstCameraImages;
 	CButton	m_btnStopExit;
 	CButton	m_btnPlayPause;

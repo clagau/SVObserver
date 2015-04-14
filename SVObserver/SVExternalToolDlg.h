@@ -15,7 +15,7 @@
 #include "SVTaskObject.h"
 #include "ISVCancel.h"
 #include "ISVPropertyPageDialog.h"
-#include "SVOMFCLibrary/SVActiveDisableButton.h"
+#include "SVMFCControls/SVActiveDisableButton.h"
 
 class SVToolAdjustmentDialogSheetClass;
 class SVExternalTool;
@@ -41,7 +41,7 @@ public:
 	CButton	m_btnBrowse;
 	CButton	m_btnAdd;
 	CButton	m_btnTest;
-	SVActiveDisableButton m_btnDetails;
+	SvMc::SVActiveDisableButton m_btnDetails;
 	CListBox m_lbDependentList;
 	CString	m_strDLLPath;
 	CString	m_strStatus;

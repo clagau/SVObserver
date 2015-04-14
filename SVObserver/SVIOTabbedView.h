@@ -11,7 +11,7 @@
 
 #pragma once
 
-#include "VisualFx.h"
+#include "SVMFCControls\VisualFx.h"
 
 // SVIOTabbedView frame
 enum SVTabbedViewSplitterIDEnum

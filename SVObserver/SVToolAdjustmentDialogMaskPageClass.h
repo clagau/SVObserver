@@ -16,11 +16,11 @@
 #include "SVImageListClass.h"
 #include "SVObjectLibrary/SVInputInfoListClass.h"
 #include "SVTaskObjectInterfaceClass.h"
+#include "SVMFCControls/SVMaskEditor.h"
 //TODO: MZA(10.Nov 2014): Move this files to SVOGui project and then remove folder from include and Namespace add-on add PictureDisplay declaration.
 #include "SVOGui/PictureDisplay.h"
 #include "SVView.h"
 
-class CSVMaskEditor;
 class SVToolAdjustmentDialogSheetClass;
 class SVUnaryImageOperatorListClass;
 class SVUserMaskOperatorClass;
@@ -87,7 +87,7 @@ protected:
 	CString	m_sFillColor;
 	//}}AFX_DATA
 
-	CSVMaskEditor*                     m_pMaskEditorCtl;
+	SvMc::CSVMaskEditor*                     m_pMaskEditorCtl;
 
 	SVToolAdjustmentDialogSheetClass*  m_pParentDialog;
 	SVToolClass*                       m_pTool;

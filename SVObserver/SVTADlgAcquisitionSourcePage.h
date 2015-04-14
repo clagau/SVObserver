@@ -12,7 +12,7 @@
 #ifndef SVTADLGACQUISITIONSOURCEPAGE_H
 #define SVTADLGACQUISITIONSOURCEPAGE_H
 
-#include "SVDottedNameTreeCtrl.h"
+#include "SVMFCControls/SVDottedNameTreeCtrl.h"
 
 class SVToolAdjustmentDialogSheetClass;
 class SVToolClass;
@@ -27,7 +27,7 @@ public:
 
 	//{{AFX_DATA(SVToolAdjustmentDialogAcquisitionSourcePageClass)
 	enum { IDD = IDD_TA_ACQUISITION_DIALOG };
-	SVDottedNameTreeCtrlClass	availableDigitizerTreeCtrl;
+	SvMc::SVDottedNameTreeCtrlClass	availableDigitizerTreeCtrl;
 	CString	StrSelectedDigitizer;
 	BOOL	bChannel0;
 	BOOL	bChannel1;

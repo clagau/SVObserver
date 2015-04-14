@@ -12,7 +12,7 @@
 
 #pragma region Includes
 #include "afxcmn.h"
-#include "SVLibrary/SVListCtrl.h"
+#include "SVMFCControls\SVListCtrl.h"
 #include "SVGlobal.h"
 #pragma endregion
 
@@ -50,7 +50,7 @@ private:
 	CEdit* m_pEdit;
 	CRect m_PreviousClient;
 	CRect m_OriginalRec;
-	SVListCtrl m_HeaderListCtrl;
+	SvMc::SVListCtrl m_HeaderListCtrl;
 #pragma endregion
 
 };

@@ -20,9 +20,6 @@
     <ClCompile Include="StringMunge.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVActiveDisableButton.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVBoolValueDeviceParam.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -89,9 +86,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="StringMunge.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVActiveDisableButton.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVBoolValueDeviceParam.h">

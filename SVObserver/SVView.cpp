@@ -22,32 +22,6 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-
-//*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/
-//* Class Name : Class SVToolWindow
-//* Note(s)    : 
-//*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/
-
-BEGIN_MESSAGE_MAP(SVToolWindow, CWnd)
-	//{{AFX_MSG_MAP(SVToolWindow)
-	//}}AFX_MSG_MAP
-END_MESSAGE_MAP()
-
-SVToolWindow::SVToolWindow()
-{
-
-}
-
-SVToolWindow::~SVToolWindow()
-{
-}
-
-
-
-
-
-// Moved SVDlgImageClass to SVDlgImage.h and SVDlgImage.cpp, RO_20Mar2000
-
 //*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/
 //* Class Name : Class SVAvailableAnalyzerListComboBoxClass
 //* Note(s)    : 

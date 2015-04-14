@@ -18,7 +18,7 @@
 
 #include "SVGetObjectDequeByTypeVisitor.h"
 #include "SVGlobal.h"
-#include "SVMaskEditor.h"
+#include "SVMFCControls\SVMaskEditor.h"
 #include "SVMaskShapeEditorDlg.h"
 #include "SVObserver.h"
 #include "SVUserMaskOperatorClass.h"
@@ -368,7 +368,7 @@ void SVToolAdjustmentDialogMaskPageClass::OnEditStaticMaskButton()
 {
 	if( NULL == m_pMaskEditorCtl )
 	{
-		m_pMaskEditorCtl = new CSVMaskEditor;
+		m_pMaskEditorCtl = new SvMc::CSVMaskEditor;
 
 		CRect r(0,0,1,1);
 		BOOL bResult = m_pMaskEditorCtl->Create(

@@ -202,6 +202,24 @@
   <ItemGroup>
     <ClCompile Include="CLabel.cpp" />
     <ClCompile Include="SVSliderCtrl.cpp" />
+    <ClCompile Include="CSVOCRFontTraining.cpp" />
+    <ClCompile Include="CSVOCRGrayFontTrain.cpp" />
+    <ClCompile Include="SVActiveDisableButton.cpp" />
+    <ClCompile Include="SVDlgFolder.cpp" />
+    <ClCompile Include="SVDottedNameTreeCtrl.cpp" />
+    <ClCompile Include="SVEditableListBox.cpp" />
+    <ClCompile Include="SVEditHelper.cpp" />
+    <ClCompile Include="SVEditNumbers.cpp" />
+    <ClCompile Include="SVFileDialog.cpp" />
+    <ClCompile Include="SVHorizListBox.cpp" />
+    <ClCompile Include="SVInPlaceEdit.cpp" />
+    <ClCompile Include="SVKnobControl.cpp" />
+    <ClCompile Include="SVListCtrl.cpp" />
+    <ClCompile Include="SVMaskEditor.cpp" />
+    <ClCompile Include="SVNumericEdit.cpp" />
+    <ClCompile Include="SVOConfigNameEdit.cpp" />
+    <ClCompile Include="SVOEditorWnd.cpp" />
+    <ClCompile Include="SVRemoteInputDialog.cpp" />
     <ClCompile Include="SVToolBar.cpp">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -226,12 +244,36 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="SVTreeCtrl.cpp" />
+    <ClCompile Include="SVUpDownButton.cpp" />
+    <ClCompile Include="VisualFx.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CLabel.h" />
+    <ClInclude Include="CSVOCRFontTraining.h" />
+    <ClInclude Include="CSVOCRGrayFontTrain.h" />
     <ClInclude Include="StdAfx.h" />
     <ClInclude Include="SVSliderCtrl.h" />
+    <ClInclude Include="SVActiveDisableButton.h" />
+    <ClInclude Include="SVDlgFolder.h" />
+    <ClInclude Include="SVDottedNameTreeCtrl.h" />
+    <ClInclude Include="SVEditableListBox.h" />
+    <ClInclude Include="SVEditHelper.h" />
+    <ClInclude Include="SVEditNumbers.h" />
+    <ClInclude Include="SVFileDialog.h" />
+    <ClInclude Include="SVHorizListBox.h" />
+    <ClInclude Include="SVInPlaceEdit.h" />
+    <ClInclude Include="SVKnobControl.h" />
+    <ClInclude Include="SVListCtrl.h" />
+    <ClInclude Include="SVMaskEditor.h" />
+    <ClInclude Include="SVNumericEdit.h" />
+    <ClInclude Include="SVOConfigNameEdit.h" />
+    <ClInclude Include="SVOEditorWnd.h" />
+    <ClInclude Include="SVRemoteInputDialog.h" />
     <ClInclude Include="SVToolBar.h" />
+    <ClInclude Include="SVTreeCtrl.h" />
+    <ClInclude Include="SVUpDownButton.h" />
+    <ClInclude Include="VisualFx.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

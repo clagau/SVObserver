@@ -22,7 +22,7 @@
 #include "SVOTriggerList.h"
 #include "SVOPPQList.h"
 #include "SVConfigurationObject.h"
-#include "SVOConfigNameEdit.h"
+#include "SVMFCControls\SVOConfigNameEdit.h"
 #include "SVConfigurationLibrary/SVObserverEnums.h"
 #include "SVIOBoardCapabilities.h"
 #include "SVIMTypeInfoStruct.h"
@@ -189,7 +189,7 @@ public:
 	enum { IDD = IDD_DLG_CONFIG_ASSISTANT };
 	CButton	m_btnOk;
 	CListBox	m_ctlMsgList;
-	CSVOConfigNameEdit	m_ctlConfigurationName;
+	SvMc::CSVOConfigNameEdit	m_ctlConfigurationName;
 	CEdit	m_ctlCurrentSys;
 	CComboBox	m_ctlAvailableSys;
 	CString	m_sAvailableSystem;

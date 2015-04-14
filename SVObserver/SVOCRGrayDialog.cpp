@@ -13,7 +13,7 @@
 #include "SVOCRGrayDialog.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "SVImageLibrary/SVImageBufferHandleInterface.h"
-#include "CSVOCRGrayFontTrain.h"
+#include "SVMFCControls\CSVOCRGrayFontTrain.h"
 #include "SVIPDoc.h"
 #include "SVTool.h"
 #include "SVUnaryImageOperatorList.h"
@@ -294,7 +294,7 @@ void SVOCRGrayDialogClass::OnFontTraining()
     //
     // Create the Font Training OCX 'connection' via IDispatch OLE interface.
     //
-    CSVOCRGrayFontTrain ocxFontTrain;
+    SvMc::CSVOCRGrayFontTrain ocxFontTrain;
 
     CRect r(0,0,1,1);
 	bResult = ocxFontTrain.Create(

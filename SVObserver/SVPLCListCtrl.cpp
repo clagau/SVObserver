@@ -11,7 +11,7 @@
 
 #include "stdafx.h"
 #include "SVPLCListCtrl.h"
-#include "SVLibrary/SVInPlaceEdit.h"
+#include "SVMFCControls\SVInPlaceEdit.h"
 
 #define IDC_EDITCTRL 0x1234
 
@@ -66,7 +66,7 @@ void SVPLCListCtrl::OnEditItem(int iItem, int iSubItem, CPoint point, UINT nChar
 		
 	dwStyle |= ES_AUTOHSCROLL;
 	rect.DeflateRect(1, 1, 1, 1);
-	CEdit *pEdit = new SVInPlaceEdit(this, rect, dwStyle, IDC_EDITCTRL, iItem, iSubItem, GetItemText(iItem, iSubItem), nChar, FALSE);
+	CEdit *pEdit = new SvMc::SVInPlaceEdit(this, rect, dwStyle, IDC_EDITCTRL, iItem, iSubItem, GetItemText(iItem, iSubItem), nChar, FALSE);
 }	
 	
 //******************************************************************************

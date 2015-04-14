@@ -13,7 +13,6 @@
 #define SVMEASUREANALYZERADJUSTMENT_H
 
 #include "SVEdge.h"
-#include "SVEditNumbers.h"
 #include "SVValueBaseNormalizerClass.h"
 #include "SVView.h"
 

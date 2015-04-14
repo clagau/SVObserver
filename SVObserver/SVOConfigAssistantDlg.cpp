@@ -211,6 +211,7 @@ const CSVOConfigAssistantDlg::SVProductStringMap CSVOConfigAssistantDlg::m_Produ
 
 CSVOConfigAssistantDlg::CSVOConfigAssistantDlg(CWnd* pParent /*=NULL*/)
 	: CDialog(CSVOConfigAssistantDlg::IDD, pParent)
+	, m_ctlConfigurationName(SVEXCLUDECHARS_CONFIG_NAME)
 {
 	//{{AFX_DATA_INIT(CSVOConfigAssistantDlg)
 	m_sAvailableSystem = _T("");

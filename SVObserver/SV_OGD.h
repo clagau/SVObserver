@@ -16,8 +16,7 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
-#include "SVNumericEdit.h"
-
+#include "SVMFCControls\SVNumericEdit.h"
 
 /////////////////////////////////////////////////////////////////////////////
 // SVOCRGeometryDlg dialog
@@ -36,7 +35,7 @@ public:
 	CEdit	m_sensitivityEdit;
 	CComboBox	m_rotationModeCombo;
 	CEdit	m_minWidthEdit;
-	CSVNumericEdit	m_minScaleEdit;
+	SvMc::CSVNumericEdit	m_minScaleEdit;
 	CEdit	m_minHeightEdit;
 	CEdit	m_minAngleEdit;
 	CEdit	m_maxWidthEdit;

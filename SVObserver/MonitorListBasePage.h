@@ -14,7 +14,7 @@
 #pragma region Includes
 #include <utility>
 #include <deque>
-#include "Hlb.h"
+#include "SVMFCControls\SVHorizListBox.h"
 #include "ISVPropertyPageDialog.h"
 #include "NameSelectionTreeCtrl.h"
 #include "SVUtilityLibrary/SVString.h"
@@ -45,7 +45,7 @@ public:
 	NameSelectionTreeCtrl m_Tree;
 	CButton     m_btnRemoveAll;
 	CButton     m_btnRemove;
-	SVHorizListBox   m_lbSelected;
+	SvMc::SVHorizListBox   m_lbSelected;
 	//}}AFX_DATA
 
 #pragma endregion Public

@@ -18,9 +18,6 @@
 
 class SVTaskObjectListClass;
 
-/////////////////////////////////////////////////////////////////////////////
-// SVTaskObjectTreeCtrlClass window
-
 class SVTaskObjectListCtrlClass : public CListCtrl
 {
 	DECLARE_DYNCREATE(SVTaskObjectListCtrlClass)

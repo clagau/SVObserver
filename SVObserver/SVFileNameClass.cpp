@@ -14,7 +14,7 @@
 #include "SVFileNameClass.h"
 #include "SVObserver.h"
 #include "SVMessage/SVMessage.h"
-#include "SVLibrary/SVDlgFolder.h"
+#include "SVMFCControls/SVDlgFolder.h"
 
 //##ModelId=3A4B50DE029F
 SVFileNameClass::SVFileNameClass()
@@ -512,7 +512,7 @@ BOOL SVFileNameClass::SelectPath()
 	{
 		initialDir = GetDefaultPathName();
 	}
-	SVDlgFolder	dlg(bFullAccess, initialDir);
+	SvMc::SVDlgFolder	dlg(bFullAccess, initialDir);
 
 	dlg.InitDlgFolder(_T("Ok"), _T("Select Folder"));
 	if ( dlg.DoModal() == IDOK )
@@ -549,7 +549,7 @@ BOOL SVFileNameClass::SelectFile()
 	    csFileName += GetDefaultFileExtension();
 
 	bool bFullAccess = TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_UNRESTRICTED_FILE_ACCESS);
-	SVFileDialog dlg( true,
+	SvMc::SVFileDialog dlg( true,
 					bFullAccess,  
 	                GetDefaultFileExtension(),
 					csFileName, 
@@ -603,7 +603,7 @@ BOOL SVFileNameClass::SaveFile()
 	csFileName += GetDefaultFileExtension();
 
 	bool bFullAccess = TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_UNRESTRICTED_FILE_ACCESS);
-	SVFileDialog dlg( false, 
+	SvMc::SVFileDialog dlg( false, 
 					 bFullAccess,
 	                 GetDefaultFileExtension(),
 					 csFileName, 

@@ -10,8 +10,7 @@
 //******************************************************************************
 #pragma once
 #include "afxwin.h"
-#include "sveditablelistbox.h"
-
+#include "SVMFCControls\SVEditableListBox.h"
 
 typedef std::vector<CString> CStringVec;
 
@@ -79,7 +78,7 @@ protected:
 	CButton m_AddButton;
 public:
 	afx_msg void OnLbnDblclkUsedList();
-	SVEditableListBox m_UsedList;
+	SvMc::SVEditableListBox m_UsedList;
 	CButton m_RemoveBtn;
 };
 

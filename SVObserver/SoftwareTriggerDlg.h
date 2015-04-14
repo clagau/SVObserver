@@ -12,7 +12,7 @@
 #pragma once
 #include "afxcmn.h"
 #include "afxwin.h"
-#include "SVKnobControl.h"
+#include "SVMFCControls\SVKnobControl.h"
 #include <limits>
 #include <boost/function.hpp>
 #include <boost/bind.hpp>
@@ -96,7 +96,7 @@ public:
 	CTabCtrl m_triggerTabs;
 	CEdit m_intervalEdit;
 
-	SVKnobControl m_knobCtrl;
+	SvMc::SVKnobControl m_knobCtrl;
 	afx_msg void OnTcnSelchangeTriggerTabs(NMHDR *pNMHDR, LRESULT *pResult);
 	afx_msg void OnEnChangeUsecEdit();
 	afx_msg void OnBnClickedOk();

@@ -26,7 +26,7 @@
 //******************************************************************************
 
 //{{AFX_INCLUDES()
-#include "svmaskeditor.h"
+#include "SVMFCControls\svmaskeditor.h"
 //}}AFX_INCLUDES
 
 #include "SVClassInfoStruct.h"

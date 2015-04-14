@@ -15,14 +15,14 @@
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVOInspectionSourceDlg.h"
 #include "SVOConfigAssistantDlg.h"
-#include "SVOEditorWnd.h"
+#include "SVMFCControls\SVOEditorWnd.h"
 #include "SVOPropertyPageDlg.h"
 #include "SVOInspectionObj.h"
 #include "SVOPPQObj.h"
 #include "SVInspectionExporter.h"
 #include "SVInspectionImporter.h"
 #include "SVObserver.h"
-#include "SVLibrary/SVFileDialog.h"
+#include "SVMFCControls/SVFileDialog.h"
 #include "SVGlobal.h"
 #include "SVStatusLibrary/ExceptionManager.h"
 #include "ErrorNumbers.h"
@@ -253,7 +253,7 @@ void CSVOInspectionSourceDlg::OnBtnImportIpd()
 	// prompt for file 
 	DWORD dwFlags = OFN_DONTADDTORECENT | OFN_ENABLESIZING | OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_NOCHANGEDIR;
 	bool bFullAccess = TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_UNRESTRICTED_FILE_ACCESS);
-	SVFileDialog dlg(true, bFullAccess, fileExt, NULL, dwFlags, fileFilters, this);
+	SvMc::SVFileDialog dlg(true, bFullAccess, fileExt, NULL, dwFlags, fileFilters, this);
 	dlg.m_ofn.lpstrTitle = _T("Select File");
 
 	if (dlg.DoModal() == IDOK)
@@ -353,7 +353,7 @@ void CSVOInspectionSourceDlg::OnBtnExportIpd()
 				// prompt for path and file name
 				DWORD dwFlags = OFN_DONTADDTORECENT | OFN_ENABLESIZING | OFN_PATHMUSTEXIST | OFN_NOCHANGEDIR | OFN_HIDEREADONLY;
 				bool bFullAccess = TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_UNRESTRICTED_FILE_ACCESS);
-				SVFileDialog dlg(false, bFullAccess, fileExt, ipName.c_str(), dwFlags, fileFilters, this);
+				SvMc::SVFileDialog dlg(false, bFullAccess, fileExt, ipName.c_str(), dwFlags, fileFilters, this);
 				if (dlg.DoModal() == IDOK)
 				{
 					CString pathName = dlg.GetPathName();
@@ -425,7 +425,7 @@ void CSVOInspectionSourceDlg::OnSelchangeLstIpdList()
 	{
 		m_iEditingSel = iCurSel;
 		m_ctlIPDlist.GetText(iCurSel,sCurrentTxt);
-		CSVOEditorWnd *pEditor = new CSVOEditorWnd(&m_ctlIPDlist);
+		SvMc::CSVOEditorWnd *pEditor = new SvMc::CSVOEditorWnd(&m_ctlIPDlist);
 		pEditor->Edit(iCurSel);
 		pEditor->WaitForDoneEditing();
 		SVDataItemManager::const_iterator l_Iter = m_Items.GetItemData(iCurSel);

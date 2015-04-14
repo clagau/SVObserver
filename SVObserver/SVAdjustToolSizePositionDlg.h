@@ -16,7 +16,7 @@
 #include "SVUtilityLibrary/SVWinHandle.h"
 #include "SVImageLibrary/SVImageExtentClass.h"
 #include "PropertyTree/PropTree.h"
-#include "SVUpDownButton.h"
+#include "SVMFCControls\SVUpDownButton.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -63,7 +63,7 @@ protected:
 
 #pragma region Private Methods
 private:
-	HRESULT ButtonAction(SVUpDownButton* pButton);
+	HRESULT ButtonAction(SvMc::SVUpDownButton* pButton);
 	HRESULT AdjustTool( SVExtentLocationPropertyEnum eAction, int dx, int dy );
 	HRESULT AdjustToolAngle(double dDAngle);
 
@@ -119,10 +119,10 @@ private:
 	// Dialog Data
 	//{{AFX_DATA(SVAdjustToolSizePositionDlg)
 	enum { IDD = IDD_ADJUST_TOOL_SIZE_POSITION_DIALOG };
-	SVUpDownButton	m_btnUp;
-	SVUpDownButton	m_btnRight;
-	SVUpDownButton	m_btnLeft;
-	SVUpDownButton	m_btnDown;
+	SvMc::SVUpDownButton	m_btnUp;
+	SvMc::SVUpDownButton	m_btnRight;
+	SvMc::SVUpDownButton	m_btnLeft;
+	SvMc::SVUpDownButton	m_btnDown;
 	int		m_iMode;
 	//}}AFX_DATA
 
@@ -139,7 +139,7 @@ private:
 	SVWinHandle<HICON> m_icoArrowRight;
 	SVWinHandle<HICON> m_icoArrowClockwise;
 	SVWinHandle<HICON> m_icoArrowCounterclockwise;
-	SVUpDownButton* m_pButton;
+	SvMc::SVUpDownButton* m_pButton;
 	CString m_sTitle;
 #pragma endregion Member variables
 };	// end class SVAdjustToolSizePositionDlg

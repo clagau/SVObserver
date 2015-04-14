@@ -30,8 +30,8 @@
 #include "stdafx.h"
 #include "proptree.h"
 #include "PropTreeItemFile.h"
-#include "SVLibrary/SVDlgFolder.h"
-#include "SVLibrary/SVFileDialog.h"
+#include "SVMFCControls/SVDlgFolder.h"
+#include "SVMFCControls/SVFileDialog.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -303,7 +303,7 @@ bool SVRPropertyItemFile::SVRBrowseForFolder()
 	if (len != 2 && szPath[len] == _T('\\'))
 		szPath.Delete(len);
 
-	SVDlgFolder dlg(m_bFullAccess, szPath);
+	SvMc::SVDlgFolder dlg(m_bFullAccess, szPath);
 	dlg.InitDlgFolder(_T("OK"), _T("Select Folder"));
 
 	INT_PTR rc = dlg.DoModal();
@@ -331,7 +331,7 @@ bool SVRPropertyItemFile::SVROpenFile()
 	bool bReturnValue = false;
 	bool bDirectory   = true;			// assume user of this class has set the initial directory
 
-	SVFileDialog dlg(true, m_bFullAccess, nullptr, nullptr, OFN_HIDEREADONLY | OFN_FILEMUSTEXIST | OFN_NOCHANGEDIR, m_sFilter, this);
+	SvMc::SVFileDialog dlg(true, m_bFullAccess, nullptr, nullptr, OFN_HIDEREADONLY | OFN_FILEMUSTEXIST | OFN_NOCHANGEDIR, m_sFilter, this);
 
 	dlg.m_ofn.lpstrTitle = _T("Select File");
 	TCHAR lpstrDirectory[_MAX_PATH] = _T("");

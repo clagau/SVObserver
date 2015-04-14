@@ -14,7 +14,7 @@
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "SVImageLibrary/SVImageBufferHandleInterface.h"
 #include "SVOCRAnalyzerResult.h"
-#include "CSVOCRFontTraining.h"
+#include "SVMFCControls\CSVOCRFontTraining.h"
 #include "SVIPDoc.h"
 #include "SVTool.h"
 #include "SVUnaryImageOperatorList.h"
@@ -302,7 +302,7 @@ void SVOCRDialogClass::OnFontTraining()
     //
     // Create the Font Training OCX 'connection' via IDispatch OLE interface.
     //
-    CSVOCRFontTraining ocxFontTrain;
+    SvMc::CSVOCRFontTraining ocxFontTrain;
 
     CRect r(0,0,1,1);
     bResult = ocxFontTrain.Create(

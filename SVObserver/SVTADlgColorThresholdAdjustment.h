@@ -18,10 +18,7 @@
 
 #include "SVTADlgColorThresholdBasePage.h"
 #include "SVValueBaseNormalizerClass.h"
-#include "SVView.h"
-
 #include "SVTaskObjectInterfaceClass.h"
-#include "SVMFCControls/SVSliderCtrl.h"
 
 class SVIPDoc;
 class SVColorToolClass;
@@ -47,8 +44,8 @@ public:
 	//{{AFX_DATA(SVTADlgColorThresholdAdjustment)
 	enum { IDD = IDD_TA_COLOR_THRESHOLD_ADJUST_DIALOG };
 	CComboBox	m_cbZoom;
-	SVSliderCtrl	UpperSliderCtrl;
-	SVSliderCtrl	LowerSliderCtrl;
+	CSliderCtrl	UpperSliderCtrl;
+	CSliderCtrl	LowerSliderCtrl;
 	CString	StrUpper;
 	CString	StrLower;
 	BYTE	m_lowerThreshold;

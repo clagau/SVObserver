@@ -10,10 +10,10 @@
 // ******************************************************************************
 
 #pragma once
-#include "svlibrary\svlistctrl.h"
+#include "SVMFCControls\svlistctrl.h"
 
 class SVPLCListCtrl :
-	public SVListCtrl
+	public SvMc::SVListCtrl
 {
 public:
 	void OnEditItem(int iItem, int iSubItem, CPoint point, UINT nChar);

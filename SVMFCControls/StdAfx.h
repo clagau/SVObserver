@@ -43,8 +43,14 @@
 
 #include <afx.h>
 #include <afxwin.h>
+#include <afxdisp.h>        // MFC OLE-Automatisierungsklassen
+#include <afxdlgs.h>
 #include <oleauto.h>
 #include <afxtempl.h>
+#include <math.h>
+
+// Global includes that everyone needs
+#include "SVOResource\resource.h"
 
 #ifndef _AFX_NO_AFXCMN_SUPPORT
 #include <afxcmn.h>			// MFC-Unterstützung für gängige Windows-Steuerelemente

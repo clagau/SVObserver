@@ -10,7 +10,6 @@
 // ******************************************************************************
 
 #include "SVDialog.h"
-#include "SVListCtrl.h"
 #include "SecuredObject.h"
 #include "SVVersionInfo.h"
 

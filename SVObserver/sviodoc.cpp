@@ -22,7 +22,7 @@
 #include "SVConfigurationObject.h"
 #include "SVOutputObjectList.h"
 #include "SVInputObjectList.h"
-#include "SVRemoteInputDialog.h"
+#include "SVMFCControls\SVRemoteInputDialog.h"
 #include "SVUtilities.h"
 #include "SVRemoteInputObject.h"
 #include "SVMessage/SVMessage.h"
@@ -222,7 +222,7 @@ void SVIODoc::OnExtrasTestoutputs()
 
 void SVIODoc::OnExtrasEditRemoteInputs()
 {
-	SVRemoteInputDialog oDlg;
+	SvMc::SVRemoteInputDialog oDlg;
 	SVPPQObject* pPPQ;
 	SVRemoteInputObject* pRemInput;
 	SVInputObjectList* pInputList = nullptr;

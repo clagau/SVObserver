@@ -16,12 +16,12 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
-#include "SVTreeCtrl.h"
+#include "SVMFCControls/SVTreeCtrl.h"
 
 /////////////////////////////////////////////////////////////////////////////
 // SVPQVariableTreeCtrlClass window
 
-class SVPQVariableTreeCtrlClass : public SVTreeCtrlClass
+class SVPQVariableTreeCtrlClass : public SvMc::SVTreeCtrlClass
 {
 	DECLARE_DYNCREATE(SVPQVariableTreeCtrlClass)
 

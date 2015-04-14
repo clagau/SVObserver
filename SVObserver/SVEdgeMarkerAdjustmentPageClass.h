@@ -12,7 +12,7 @@
 #ifndef _SVEDGEMARKERADJUSTMENTPAGECLASS_H
 #define _SVEDGEMARKERADJUSTMENTPAGECLASS_H
 
-#include "SVEditNumbers.h"
+#include "SVMFCControls\SVEditNumbers.h"
 #include "SVValueBaseNormalizerClass.h"
 #include "SVTaskObjectInterfaceClass.h"
 
@@ -77,8 +77,8 @@ public:
 // Dialogfelddaten
 	//{{AFX_DATA(SVEdgeMarkerAdjustmentPageClass)
 	enum { IDD = IDD_GR_EDGE_MARKER_ADJUST_DIALOG };
-	CEditNumbersFloat	m_editPositionOffset;
-	CEditNumbersFloat	m_editSelectThis;
+	SvMc::CEditNumbersFloat	m_editPositionOffset;
+	SvMc::CEditNumbersFloat	m_editSelectThis;
 	CSliderCtrl	UpperSliderCtrl;
 	CSliderCtrl	LowerSliderCtrl;
 	CString	StrLower;

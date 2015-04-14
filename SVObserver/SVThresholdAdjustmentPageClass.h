@@ -13,11 +13,10 @@
 #define _SVTHRESHOLDADJUSTMENTPAGECLASS_H
 
 #include "SVEdge.h"
-#include "SVEditNumbers.h"
 #include "SVValueBaseNormalizerClass.h"
 #include "SVValueObjectImpl.h"
+
 #include "SVTaskObjectInterfaceClass.h"
-#include "SVMFCControls/SVSliderCtrl.h"
 
 class SVLineAnalyzerClass;
 class SVTaskObjectClass;
@@ -47,8 +46,8 @@ public:
 // Dialogfelddaten
 	//{{AFX_DATA(SVThresholdAdjustmentPageClass)
 	enum { IDD = IDD_GR_THRESHOLD_ADJUST_DIALOG };
-	SVSliderCtrl	UpperSliderCtrl;
-	SVSliderCtrl	LowerSliderCtrl;
+	CSliderCtrl	UpperSliderCtrl;
+	CSliderCtrl	LowerSliderCtrl;
 	CString	StrUpper;
 	CString	StrLower;
 	//}}AFX_DATA

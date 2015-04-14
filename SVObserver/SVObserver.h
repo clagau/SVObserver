@@ -89,7 +89,6 @@ LPCTSTR const SVTOOLPARAMETERLIST_MARKER = (_T( "** SVSetToolParameterList MARKE
 
 LPCTSTR const SVEXCLUDECHARS_CONFIG_NAME =     (_T("\\/:*\"<>|;&$@`[]{}()^~!#%"));
 LPCTSTR const SVEXCLUDECHARS_TOOL_NAME =       (_T("\\/:*\";,.+-$@'[]{}()<>|!%&~^\327\367"));
-LPCTSTR const SVEXCLUDECHARS_INSPECTION_NAME = (_T("\\/:*\";,.+-$@'[]{}()<>|"));
 
 typedef SVXMLMaterialsTree SVTreeType;
 #pragma endregion Declarations

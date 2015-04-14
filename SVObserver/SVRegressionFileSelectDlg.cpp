@@ -12,7 +12,7 @@
 #include "stdafx.h"
 #include "svobserver.h"
 #include "SVRegressionFileSelectDlg.h"
-#include "SVLibrary/SVFileDialog.h"
+#include "SVMFCControls/SVFileDialog.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -79,7 +79,7 @@ void CSVRegressionFileSelectDlg::OnBtnRegTestBrowseFiles()
 	CString	csFileExtensionFilterList = _T("BMP's (*.bmp)|*.bmp||");
 	static TCHAR szFilter[] = _T("BMP Files (*.bmp)|*.bmp|Image Files (*.bmp)|*.bmp||");
 	bool bFullAccess = TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_UNRESTRICTED_FILE_ACCESS);
-	SVFileDialog dlg(true, bFullAccess, nullptr, nullptr, 0, szFilter, nullptr);
+	SvMc::SVFileDialog dlg(true, bFullAccess, nullptr, nullptr, 0, szFilter, nullptr);
 	dlg.m_ofn.lpstrTitle = _T("Select File");
 
 	if ( m_sRegTestFiles.IsEmpty() )
