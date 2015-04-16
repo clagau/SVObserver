@@ -1089,6 +1089,15 @@ void SVConfigurationPrint::PrintChildren( CDC* pDC, SVObjectClass* pObj, CPoint&
 							ptCurPos.x  = nIndentLevel * m_shortTabPixels;
 							CPoint ptTemp = ptCurPos;
 							ptCurPos.y += PrintString(pDC, ptTemp, sLabel);
+
+							// print the tool grouping comment - do not do for SIAC
+							if (!m_isPrintToStringBuffer)
+							{
+								sLabel.Format("Tool Comment: %s", it->second.m_comment.c_str());
+								ptCurPos.x  = nIndentLevel * m_shortTabPixels;
+								CPoint ptTemp = ptCurPos;
+								ptCurPos.y += PrintString(pDC, ptTemp, sLabel);
+							}
 						}
 						break;
 
@@ -1099,6 +1108,15 @@ void SVConfigurationPrint::PrintChildren( CDC* pDC, SVObjectClass* pObj, CPoint&
 							ptCurPos.x  = nIndentLevel * m_shortTabPixels;
 							CPoint ptTemp = ptCurPos;
 							ptCurPos.y += PrintString(pDC, ptTemp, sLabel);
+
+							// print the tool grouping comment - do not do for SIAC
+							if (!m_isPrintToStringBuffer)
+							{
+								sLabel.Format("Tool Comment: %s", it->second.m_comment.c_str());
+								ptCurPos.x  = nIndentLevel * m_shortTabPixels;
+								CPoint ptTemp = ptCurPos;
+								ptCurPos.y += PrintString(pDC, ptTemp, sLabel);
+							}
 						}
 						break;
 
