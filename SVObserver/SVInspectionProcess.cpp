@@ -11,47 +11,26 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include <mbstring.h>
-#include <fstream>
-#include <exception>
 #include "SVInspectionProcess.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
-#include "SVImageLibrary/SVExtentMultiLineStruct.h"
 #include "SVImageLibrary/SVImagingDeviceParams.h"
-#include "SVMessage/SVMessage.h"
 #include "SVObjectLibrary/SVObjectLevelCreateStruct.h"
 #include "SVObjectLibrary/SVInspectionLevelCreateStruct.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
-#include "SVObjectLibrary/SVObjectNameInfo.h"
-#include "SVOMFCLibrary/SVTemplate.h"
 #include "SVSystemLibrary/SVAutoLockAndReleaseTemplate.h"
-#include "SVTimerLibrary/SVClock.h"
 #include "SVConfigurationLibrary/SVConfigurationTags.h"
-#include "SVSharedMemoryLibrary/SVSharedConfiguration.h"
 #include "SVObserver.h"
 #include "SVGetObjectDequeByTypeVisitor.h"
-#include "SVGlobal.h"
-#include "SVSystemLibrary/SVCrash.h"
 #include "SVToolSet.h"
 #include "SVPPQObject.h"
 #include "SVTool.h"
-#include "SVAnalyzer.h"
-#include "SVCustomFilters.h"
-#include "SVRankingFilters.h"
 #include "SVImageProcessingClass.h"
-#include "SVToolAcquisition.h"
-#include "SVExternalToolTask.h"
-#include "SVValueObject.h"
-#include "SVConfigurationObject.h"
 #include "SVConditional.h"
 #include "SVSVIMStateClass.h"
-#include "SVAcquisitionClass.h"
 #include "SVCommandStreamManager.h"
-#include "SVOLicenseManager/SVOLicenseManager.h"
-#include "SVSharedMemorySingleton.h"
 #include "ErrorNumbers.h"
 #include "SVStatusLibrary/ExceptionManager.h"
-#include "TextDefinesSvO.h"
+#include "TextDefinesSvO.h" // SVTOOLPARAMETERLIST_MARKER
 #pragma endregion Includes
 
 #define SEJ_ErrorBase 15000
@@ -523,7 +502,7 @@ HRESULT SVInspectionProcess::ProcessTransaction( SVInspectionTransactionStruct p
 	#ifndef _DEBUG
 	catch (...)
 	{
-		hr = SV_FALSE;	//!!! real error code here
+		hr = SV_FALSE;	// @TODO:  Add real error code here!!!
 	}
 	#endif
 
@@ -1348,7 +1327,7 @@ BOOL SVInspectionProcess::AddInputRequest( SVValueObjectReference p_svObjectRef,
 		//add request to inspection process
 		l_bOk = AddInputRequest( l_pInRequest );
 	}
-	catch( ... )
+	catch( ... ) // @WARNING:  bad practice catching ...
 	{
 	}
 
@@ -1357,7 +1336,7 @@ BOOL SVInspectionProcess::AddInputRequest( SVValueObjectReference p_svObjectRef,
 
 BOOL SVInspectionProcess::AddInputRequestMarker()
 {
-	return AddInputRequest( NULL, SVTOOLPARAMETERLIST_MARKER );
+	return AddInputRequest( NULL, SvO::SVTOOLPARAMETERLIST_MARKER );
 }
 
 BOOL SVInspectionProcess::AddInputRequest( SVInputRequestInfoStructPtr p_pInRequest )
@@ -1389,7 +1368,7 @@ BOOL SVInspectionProcess::AddInputRequest( SVInputRequestInfoStructPtr p_pInRequ
 		l_StringValue = p_pInRequest->m_Value;
 	}
 
-	if( l_StringValue == SVTOOLPARAMETERLIST_MARKER )
+	if( l_StringValue == SvO::SVTOOLPARAMETERLIST_MARKER )
 	{
 		::InterlockedIncrement(const_cast<long*>(&m_lInputRequestMarkerCount));
 	}// end if
@@ -1656,12 +1635,12 @@ HRESULT SVInspectionProcess::RebuildInspection()
 		{
 			l_pPPQ->GetVirtualCameras( l_Cameras );
 		}
-		
+
 		bool bColorSourceImage = false;
 		bool bCameraSupportsColor = false;
 		SVVirtualCameraMap::iterator pos = l_Cameras.begin();
 		while( pos != l_Cameras.end() )
-		{                
+		{
 			SVAcquisitionClassPtr pCamDevice = NULL;
 
 			if( pos->second != NULL )
@@ -1674,14 +1653,14 @@ HRESULT SVInspectionProcess::RebuildInspection()
 				bColorSourceImage = true;
 				break;
 			}
-			
+
 			SVDeviceParamCollection params;
 			SVDeviceParamCollection CFParams;
 			pCamDevice->GetDeviceParameters( params );
 			pCamDevice->GetCameraFileParameters( CFParams );
 			const SVCameraFormatsDeviceParam* pParam = params.Parameter( DeviceParamCameraFormats ).DerivedValue( pParam );
 			const SVCameraFormatsDeviceParam* pCFParam = CFParams.Parameter( DeviceParamCameraFormats ).DerivedValue( pCFParam );
-			
+
 			if ( pParam && pCFParam )
 			{
 				SVCameraFormatsDeviceParam::OptionsType::const_iterator iter;
@@ -1690,7 +1669,7 @@ HRESULT SVInspectionProcess::RebuildInspection()
 					if ( iter->second.bColor )
 						bCameraSupportsColor = true;
 				}
-				
+
 				if ( pParam && pParam->options.find(pParam->strValue)->second.bColor )
 				{
 					bColorSourceImage = true;
@@ -1700,7 +1679,7 @@ HRESULT SVInspectionProcess::RebuildInspection()
 
 			++pos;
 		}
-		
+
 		if ( !bColorSourceImage )
 		{
 			if ( ! bCameraSupportsColor )
@@ -1723,7 +1702,7 @@ HRESULT SVInspectionProcess::RebuildInspection()
 		}
 	}
 	////////////////////////
-	
+
 	SVObjectLevelCreateStruct createStruct;
 
 	if( ::SVSendMessage( this, SVM_CREATE_ALL_OBJECTS,reinterpret_cast<DWORD_PTR>(&createStruct), NULL ) != SVMR_SUCCESS )
@@ -1732,7 +1711,7 @@ HRESULT SVInspectionProcess::RebuildInspection()
 	}
 
 	SetDefaultInputs();
-	
+
 	BuildConditionalHistoryListAfterLoad();
 
 	CString strValueObjects;
@@ -1743,7 +1722,7 @@ HRESULT SVInspectionProcess::RebuildInspection()
 	return l_Status;
 }
 
-void SVInspectionProcess::ClearResetCounts( )
+void SVInspectionProcess::ClearResetCounts()
 {
 	if( m_pCurrentToolset != NULL )
 	{
@@ -1763,8 +1742,8 @@ void SVInspectionProcess::ValidateAndInitialize( bool p_Validate, bool p_IsNew )
 {
 	SVSVIMStateClass::AddState( SV_STATE_INTERNAL_RUN );
 
-	// SEJ - Call ToolSet Validate (use to be PrepareForRunning)
-	// so the SVEquationClass can rebuild it's symboltable
+	// SEJ - Call ToolSet Validate (used to be PrepareForRunning)
+	// so the SVEquationClass can rebuild its symbol table
 	if ( p_Validate )
 	{
 		SetResetCounts();
@@ -2527,7 +2506,7 @@ BOOL SVInspectionProcess::ProcessInputRequests( long p_DataIndex, SVResetItemEnu
 			// New delimiter added after each SVSetToolParameterList call
 			// This breaks the list into pieces and we are only processing
 			// 1 piece of the list per inspection iteration
-			if( l_StringValue == SVTOOLPARAMETERLIST_MARKER )
+			if( l_StringValue == SvO::SVTOOLPARAMETERLIST_MARKER )
 			{
 				::InterlockedDecrement(const_cast<long*>(&m_lInputRequestMarkerCount));
 				break;

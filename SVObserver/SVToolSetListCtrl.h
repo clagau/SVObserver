@@ -8,23 +8,28 @@
 //* .Current Version : $Revision:   1.4  $
 //* .Check In Date   : $Date:   19 Dec 2014 04:26:40  $
 //******************************************************************************
+
 #pragma once
 
+#pragma region Includes
 #include "SVUtilityLibrary/SVGUID.h"
-#include "SVToolGrouping.h"
+#pragma endregion Includes
 
+#pragma region Declarations
 class SVToolClass;
 class SVTaskObjectListClass;
-class SVToolSetTabViewClass;
+class ToolSetView;
+#pragma endregion Declarations
 
-class ToolListSelectionInfo
+class ToolListSelectionInfo // @TODO:  Move to its own file.
 {
 public:
-	const int m_listIndex;			// selected index in the ListCtrl
-	const CString m_selection;		// text for current selection
+	const int m_listIndex;			// selected index in the ListCtrl // @WARNING:  bad practice making members public
+	const CString m_selection;		// text for current selection // @WARNING:  bad practice making members public
 
-	ToolListSelectionInfo(int listIndex, const CString& selection) 
-	: m_listIndex(listIndex), m_selection(selection) {}
+	ToolListSelectionInfo(int listIndex, const CString& selection)
+	: m_listIndex(listIndex)
+	, m_selection(selection) {}
 };
 
 class SVToolSetListCtrl : public CListCtrl
@@ -69,8 +74,8 @@ public:
 	bool IsEmptyStringPlaceHolder(const CString& text) const;
 
 protected:
-	SVToolSetTabViewClass* GetView();
-	const SVToolSetTabViewClass* GetView() const;
+	ToolSetView* GetView();
+	const ToolSetView* GetView() const;
 	void CreateImageLists();
 	int InsertStartGroup(int itemNo, const CString& startName, bool bCollapsed);
 	int InsertEndGroup(int itemNo, const CString& endName, bool bCollapsed);

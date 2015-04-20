@@ -43,7 +43,7 @@ struct SVProductInfoStruct;
 class CSVRegressionRunDlg;
 class CSVRegressionFileSelectSheet;
 class SVImageViewClass;
-class SVToolSetTabViewClass;
+class ToolSetView;
 class SVResultViewClass;
 class SVResultsWrapperClass;
 class SVObjectWriter;
@@ -58,7 +58,7 @@ class SVIPDoc : public CDocument
 	friend class SVIPSplitterFrame;
 	friend class SVResultViewClass;
 	friend class SVToolSetListBoxClass;
-	friend class SVToolSetTabViewClass;
+	friend class ToolSetView;
 
 public:
 	enum SVIPViewUpdateHints
@@ -69,11 +69,13 @@ public:
 
 	enum
 	{
-		MinRegressionTime=40,
+		MinRegressionTime = 40,
 	};
-	SVIPDoc();
 
+#pragma region Constructor
+	SVIPDoc();
 	virtual ~SVIPDoc();
+#pragma endregion Constructor
 
 	const GUID& GetInspectionID() const;
 	void SetInspectionID( const SVGUID& p_InspectionID );
@@ -137,14 +139,13 @@ public:
 	int GetSelectedToolIndex(const CString& toolName) const;
 	int GetToolToInsertBefore(const CString& name, int listIndex) const;
 
-	CList< RegressionTestStruct*, RegressionTestStruct* > m_listRegCameras;
-	
-	HANDLE m_hDisplayChangedEvent; // Set if the display settings have been changed since the Doc was opened.
+	CList< RegressionTestStruct*, RegressionTestStruct* > m_listRegCameras; // @WARNING:  bad practice making members public
 
-	BOOL IsNew;
-	BOOL mbInitImagesByName;
+	HANDLE m_hDisplayChangedEvent; // Set if the display settings have been changed since the Doc was opened. // @WARNING:  bad practice making members public
 
-public:
+	BOOL IsNew; // @WARNING:  bad practice making members public
+	BOOL mbInitImagesByName; // @WARNING:  bad practice making members public
+
 	#ifdef _DEBUG
 		virtual void AssertValid() const;
 		virtual void Dump(CDumpContext& dc) const;
@@ -208,10 +209,10 @@ public:
 	afx_msg void OnAllowAdjustLut(CCmdUI* pCmdUI);
 	//}}AFX_MSG
 
-	DECLARE_MESSAGE_MAP()
+	DECLARE_MESSAGE_MAP() // Contains "protected:"
 
 	//{{AFX_VIRTUAL(SVIPDoc)
-	public:
+public:
 	virtual BOOL OnNewDocument();
 	virtual BOOL CanCloseFrame(CFrameWnd* pFrame);
 	virtual void OnCloseDocument();
@@ -221,11 +222,11 @@ public:
 	virtual BOOL OnSaveDocument(LPCTSTR lpszPathName);
 	virtual CFile* GetFile( LPCTSTR lpszFileName, UINT nOpenFlags, CFileException* pError );
 	virtual void SetModifiedFlag(BOOL bModified = TRUE);
-	protected:
+
+protected:
 	virtual BOOL SaveModified();
 	//}}AFX_VIRTUAL
-	
-protected:
+
 	static DWORD WINAPI SVRegressionTestRunThread( LPVOID lpParam );
 
 	struct SVImageViewStatusStruct
@@ -259,21 +260,19 @@ protected:
 	void SetMDIChild( CMDIChildWnd* p_pMDIChildWnd );
 
 	void EditToolSetCondition();
-	
+
 	BOOL AddTool( SVToolClass* PTool );
 	HRESULT DeleteTool(SVTaskObjectClass* pTaskObject);
 
-	bool AddToolGrouping(bool bStartGroup=true);
+	bool AddToolGrouping(bool bStartGroup = true);
 
 	CView* getView() const;
-	SVToolSetTabViewClass* GetToolSetTabView();
+	ToolSetView* GetToolSetView();
 	SVImageViewClass* GetImageView( int p_Index = 0 );
 	SVResultViewClass* GetResultView();
-
 	SVToolSetClass* GetToolSet() const;
 	SVConditionalClass* GetToolSetCondition();
 	SVInspectionProcess* GetInspectionProcess() const;
-
 	SVResultListClass* GetResultList() const;
 
 	void RefreshDocument();
@@ -328,6 +327,7 @@ protected:
 	int m_nWidthToolSetView;
 
 private:
+#pragma region Private Methods
 	void init();
 	void InitMenu();
 	void InitializeDirectX();
@@ -335,6 +335,7 @@ private:
 	void ClearRegressionTestStructures();
 
 	bool LoadViewedVariables(SVTreeType& rTree, SVTreeType::SVBranchHandle htiParent);
+#pragma endregion Private Methods
 
 	RegressionRunModeEnum m_regtestRunMode;
 	RegressionPlayModeEnum m_regtestRunPlayMode;

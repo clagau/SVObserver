@@ -12,8 +12,8 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "MonitorListPropertyDlg.h"
-#include "RemoteMonitorNamedList.h"
-#include "SVObserver.h"
+#include <algorithm> // std::find_if
+#include "TextDefinesSvO.h"  // SVEXCLUDECHARS_TOOL_NAME
 #pragma endregion Includes
 
 enum {IDC_MONITOR_PROPERTY_TREE = 100};
@@ -75,7 +75,7 @@ BOOL MonitorListPropertyDlg::OnInitDialog()
 void MonitorListPropertyDlg::ValidateLabelText(CString& newText) const
 {
 	// The characters we do not want in the label.
-	static const CString csUndesirables = SVEXCLUDECHARS_TOOL_NAME;
+	static const CString csUndesirables = SvO::SVEXCLUDECHARS_TOOL_NAME;
 
 	int nCount = csUndesirables.GetLength();
 	for (int i = 0;i < nCount;i++)

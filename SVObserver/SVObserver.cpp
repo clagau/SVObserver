@@ -6254,7 +6254,7 @@ HRESULT SVObserverApp::DisplayCameraManager(SVIMProductEnum eProductType)
 			else
 			{
 				SV1394CameraManagerDlg dlg;
-				dlg.DoModal();				
+				dlg.DoModal();
 			}
 		}
 	}

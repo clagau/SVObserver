@@ -471,7 +471,6 @@ echo %time%
     <ClCompile Include="SVThreadInfoDlg.cpp" />
     <ClCompile Include="SVThresholdClass.cpp" />
     <ClCompile Include="SVToolGrouping.cpp" />
-    <ClCompile Include="SVToolSetTreeCtrl.cpp" />
     <ClCompile Include="SVTriggerSelectionDlg.cpp" />
     <ClCompile Include="SVUnaryImageOperatorClass.cpp" />
     <ClCompile Include="SVUnaryOperatorClass.cpp" />
@@ -3658,16 +3657,6 @@ echo %time%
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
-    <ClCompile Include="SVToolSetTabView.cpp">
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-    </ClCompile>
     <ClCompile Include="SVTransform.cpp">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -3877,6 +3866,7 @@ echo %time%
       <MultiProcessorCompilation Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</MultiProcessorCompilation>
       <MultiProcessorCompilation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</MultiProcessorCompilation>
     </ClCompile>
+    <ClCompile Include="ToolSetView.cpp" />
     <ClCompile Include="ZoomHelperEx.cpp" />
     <ClCompile Include="ZoomToolBar.cpp" />
   </ItemGroup>
@@ -3998,7 +3988,7 @@ echo %time%
     <ClInclude Include="SVThreadInfoDlg.h" />
     <ClInclude Include="SVThresholdClass.h" />
     <ClInclude Include="SVToolGrouping.h" />
-    <ClInclude Include="SVToolSetTreeCtrl.h" />
+    <ClInclude Include="ToolSetView.h" />
     <ClInclude Include="SVTriggerConstants.h" />
     <ClInclude Include="SVTriggerSelectionDlg.h" />
     <ClInclude Include="SVUnaryImageOperatorClass.h" />
@@ -4420,7 +4410,6 @@ echo %time%
     <ClInclude Include="SVToolSet.h" />
     <ClInclude Include="SVToolSetAdjustmentDialogSheet.h" />
     <ClInclude Include="SVToolSetListCtrl.h" />
-    <ClInclude Include="SVToolSetTabView.h" />
     <ClInclude Include="SVTransform.h" />
     <ClInclude Include="SVTransformationTool.h" />
     <ClInclude Include="SVTriggerClass.h" />

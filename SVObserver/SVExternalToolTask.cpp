@@ -44,7 +44,6 @@ const SVExternalToolTaskData& SVExternalToolTaskData::operator = (const SVExtern
 		m_voDllPath = rhs.m_voDllPath;
 		m_aDllDependencies = rhs.m_aDllDependencies;
 
-
 		m_voToolName = rhs.m_voToolName;
 		m_voToolVersion = rhs.m_voToolVersion;
 
@@ -61,28 +60,24 @@ const SVExternalToolTaskData& SVExternalToolTaskData::operator = (const SVExtern
 
 		if ( m_aInputObjects.size() != rhs.m_aInputObjects.size() )	// if this is only a copy of the original, size will be 0
 		{
-			//ASSERT( m_aInputObjects.size() == 0 );
 			m_aInputObjects.resize( rhs.m_aInputObjects.size() );
 		}
 		std::copy( rhs.m_aInputObjects.begin(), rhs.m_aInputObjects.end(), m_aInputObjects.begin() );
 
 		if ( m_aInputObjectNames.size() != rhs.m_aInputObjectNames.size() )	// if this is only a copy of the original, size will be 0
 		{
-			//ASSERT( m_aInputObjectNames.size() == 0 );
 			m_aInputObjectNames.resize( rhs.m_aInputObjectNames.size() );
 		}
 		std::copy( rhs.m_aInputObjectNames.begin(), rhs.m_aInputObjectNames.end(), m_aInputObjectNames.begin() );
 
 		if ( m_aResultObjects.size() != rhs.m_aResultObjects.size() )	// if this is only a copy of the original, size will be 0
 		{
-			//ASSERT( m_aResultObjects.size() == 0 );
 			m_aResultObjects.resize( rhs.m_aResultObjects.size() );
 		}
 		std::copy( rhs.m_aResultObjects.begin(), rhs.m_aResultObjects.end(), m_aResultObjects.begin() );
 
 		if ( m_aResultObjectNames.size() != rhs.m_aResultObjectNames.size() )	// if this is only a copy of the original, size will be 0
 		{
-			//ASSERT( m_aResultObjectNames.size() == 0 );
 			m_aResultObjectNames.resize( rhs.m_aResultObjectNames.size() );
 		}
 		std::copy( rhs.m_aResultObjectNames.begin(), rhs.m_aResultObjectNames.end(), m_aResultObjectNames.begin() );
@@ -97,20 +92,18 @@ const SVExternalToolTaskData& SVExternalToolTaskData::operator = (const SVExtern
 		m_lNumResultValues = rhs.m_lNumResultValues;
 
 		m_RangeResultData = rhs.m_RangeResultData;
-		
+
 		m_PropTreeState = rhs.m_PropTreeState;
 	}
 
 	return *this;
 }
 
-
 SVExternalToolTask::SVExternalToolTask( SVObjectClass* POwner, int StringResourceID )
 				 :SVTaskObjectListClass(FALSE, POwner, StringResourceID ), ISVCancel() 
 {
-
 	outObjectInfo.ObjectTypeInfo.ObjectType = SVExternalToolTaskObjectType;
-	
+
 	size_t i;
 
 	m_hrInitialized = S_FALSE;
@@ -120,7 +113,7 @@ SVExternalToolTask::SVExternalToolTask( SVObjectClass* POwner, int StringResourc
 	m_SvimIni.SetFile(_T("C:\\SVObserver\\bin\\SVIM.INI"));
 
 	m_bUseImageCopies = m_SvimIni.GetValueInt(_T("External Tool"), _T("UseImageCopy"), TRUE) != FALSE;
-	
+
 	// Initialize input images array.
 	m_Data.m_aInputImageInfo.resize(SVExternalToolTaskData::NUM_INPUT_IMAGES);
 	for ( i=0; i < m_Data.m_aInputImageInfo.size(); i++)
@@ -136,7 +129,6 @@ SVExternalToolTask::SVExternalToolTask( SVObjectClass* POwner, int StringResourc
 		RegisterInputObject( &m_Data.m_aInputImageInfo[i], l_Name );
 	}
 
-
 	RegisterEmbeddedObject( &m_Data.m_voDllPath, SVDllFileNameGuid, IDS_OBJECTNAME_DLL_PATH, false, SVResetItemTool  );
 
 	// Initialize Dll Dependencies 
@@ -148,7 +140,6 @@ SVExternalToolTask::SVExternalToolTask( SVObjectClass* POwner, int StringResourc
 
 	// init Tool Name
 	RegisterEmbeddedObject( &m_Data.m_voToolName, SVDllToolNameGuid, IDS_OBJECTNAME_DLL_TOOL_NAME, false, SVResetItemNone );
-
 
 	// Init Tool Version
 	RegisterEmbeddedObject( &m_Data.m_voToolVersion, SVDllToolVersionGuid, IDS_OBJECTNAME_DLL_TOOL_VERSION, false, SVResetItemNone );
@@ -231,8 +222,6 @@ SVExternalToolTask::SVExternalToolTask( SVObjectClass* POwner, int StringResourc
 	m_Data.m_lNumResultValues = 0;
 
 	SetAllAttributes();
-
-
 }
 
 void SVExternalToolTask::SetAllAttributes()

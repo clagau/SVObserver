@@ -77,10 +77,6 @@ SVBarCodeResultClass::SVBarCodeResultClass (BOOL BCreateDefaultTaskList, SVObjec
 	m_SVRegExpressionObjectInfo.SetInputObjectType( SVRegExpressionObjectGuid, SVStringValueObjectType );
 	m_SVRegExpressionObjectInfo.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_SVRegExpressionObjectInfo, _T( "BarCodeResultString" ) );
-
-	// Register Embedded Objects
-//	RegisterEmbeddedObject( &m_szValue, SVStringResultObjectGuid, IDS_OBJECTNAME_VALUE );
-
 }
 
 SVBarCodeResultClass::~SVBarCodeResultClass()

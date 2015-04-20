@@ -52,7 +52,7 @@
 #define IDI_TRI_STATE_DISABLED          1514
 #define IDI_DOT_ENABLED                 1515
 #define IDI_DOT_DISABLED                1516
-#define IDB_KORBER                      2000
+#define IDB_KOERBER                      2000
 #define IDB_START                       2001
 #define IDB_DOWNARROW                   2004
 #define IDB_UPARROW                     2005
@@ -60,7 +60,7 @@
 #define ID_EDIT_ZOOM                    3000
 #define ID_SLIDER_ZOOM                  3001
 #define IDD_ABOUTBOX                    5000
-#define IDD_TOOLSETTAB_FORMVIEW         5001
+#define IDD_TOOLSET_VIEW            5001
 #define IDD_GR_EDGE_MARKER_ADJUST_DIALOG 5002
 #define IDD_MESSAGE_DIALOG              5003
 #define IDD_TA_TRANSFORM_IMAGE_DIALOG   5004
@@ -1481,7 +1481,6 @@
 #define IDC_TOOLSET_LIST                15187
 #define IDC_CHILDREN_LIST               15188
 #define IDC_TREE_IMAGES                 15189
-#define IDC_TOOLSET_TREE                15190
 #define IDC_OTHER_RAD                   15192
 #define IDC_WHITE_RAD                   15193
 #define IDC_PIXEL_GRP                   15194

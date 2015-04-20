@@ -9,6 +9,7 @@
 //* .Check In Date   : $Date:   23 Oct 2014 17:37:54  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include <iterator>
 #include <boost/assign.hpp>
@@ -38,6 +39,8 @@
 #include "SVInspectionImporter.h"
 #include "SVImportProgress.h"
 #include "SVHardwareManifest.h"
+#include "TextDefinesSvO.h"
+#pragma endregion Includes
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -211,7 +214,7 @@ const CSVOConfigAssistantDlg::SVProductStringMap CSVOConfigAssistantDlg::m_Produ
 
 CSVOConfigAssistantDlg::CSVOConfigAssistantDlg(CWnd* pParent /*=NULL*/)
 	: CDialog(CSVOConfigAssistantDlg::IDD, pParent)
-	, m_ctlConfigurationName(SVEXCLUDECHARS_CONFIG_NAME)
+	, m_ctlConfigurationName(SvO::SVEXCLUDECHARS_CONFIG_NAME)
 {
 	//{{AFX_DATA_INIT(CSVOConfigAssistantDlg)
 	m_sAvailableSystem = _T("");

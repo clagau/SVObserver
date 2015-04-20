@@ -1160,9 +1160,6 @@
     <ClCompile Include="SVToolSetListCtrl.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVToolSetTabView.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVTransform.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -1499,9 +1496,6 @@
     <ClCompile Include="SVToolGrouping.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVToolSetTreeCtrl.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVThreadInfoDlg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -1563,6 +1557,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="AutoSaver.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ToolSetView.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -2778,9 +2775,6 @@
     <ClInclude Include="SVToolSetListCtrl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVToolSetTabView.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVTransform.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -3168,9 +3162,6 @@
     <ClInclude Include="SVToolGrouping.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVToolSetTreeCtrl.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVThreadInfoDlg.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -3235,6 +3226,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="TextDefinesSvO.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ToolSetView.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

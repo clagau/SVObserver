@@ -106,7 +106,6 @@ namespace
 
 	private:
 		SVMatroxBuffer m_buffer;
-
 	};
 }
 namespace helper
@@ -211,188 +210,175 @@ void SVHistogramAnalyzerClass::init()
 	// Set embedded defaults.
 	// Set local defaults.
 	// 
-	
+
 	// Default taskObjectList items:
-	
+
 	while (1)
 	{
 		// Identify our output type
 		outObjectInfo.ObjectTypeInfo.SubType = SVHistogramAnalyzerObjectType;
-		
+
 		// Register Embedded Objects
 		RegisterEmbeddedObject( 
 			&msvHistogramValue, 
 			SVHistogramValueObjectGuid, 
 			IDS_OBJECTNAME_HISTOGRAM,
 			false, SVResetItemNone );
-		
+
 		RegisterEmbeddedObject( 
 			&msvMeanValue,
 			SVHistogramMeanObjectGuid,
 			IDS_OBJECTNAME_HISTOGRAM_MEAN,
 			false, SVResetItemNone );
-		
-		//RegisterEmbeddedObject( 
-		//	&msvVarianceValue,
-		//	SVHistogramVarianceObjectGuid,
-		//	IDS_OBJECTNAME_HISTOGRAM_VARIANCE,
-		//	false, SVResetItemNone );
-		//
+
 		RegisterEmbeddedObject( 
 			&msvStdDevValue,
 			SVHistogramStdDevObjectGuid,
 			IDS_OBJECTNAME_HISTOGRAM_STDDEV,
 			false, SVResetItemNone );
-		
+
 		RegisterEmbeddedObject( 
 			&msvRangeStartValue,
 			SVHistogramRangeStartObjectGuid,
 			IDS_OBJECTNAME_HISTOGRAM_RANGESTART,
 			false, SVResetItemNone );
-		
+
 		RegisterEmbeddedObject( 
 			&msvRangeEndValue,
 			SVHistogramRangeEndObjectGuid,
 			IDS_OBJECTNAME_HISTOGRAM_RANGEEND,
 			false, SVResetItemNone );
-		
+
 		RegisterEmbeddedObject( 
 			&msvMaxPixelValue,
 			SVHistogramMaxPixelObjectGuid,
 			IDS_OBJECTNAME_HISTOGRAM_MAXPIXEL,
 			false, SVResetItemNone );
-		
+
 		RegisterEmbeddedObject( 
 			&msvMinPixelValue,
 			SVHistogramMinPixelObjectGuid,
 			IDS_OBJECTNAME_HISTOGRAM_MINPIXEL,
 			false, SVResetItemNone );
-		
+
 		RegisterEmbeddedObject( 
 			&msvPixelCountValue,
 			SVHistogramPixelCountObjectGuid,
 			IDS_OBJECTNAME_HISTOGRAM_PIXELCOUNT,
 			false, SVResetItemNone );
-		
+
 		RegisterEmbeddedObject( 
 			&msvRangeSizeValue,
 			SVHistogramRangeSizeObjectGuid,
 			IDS_OBJECTNAME_HISTOGRAM_RANGESIZE,
 			false, SVResetItemNone );
-		
+
 		RegisterEmbeddedObject( 
 			&msvScaleValue,
 			SVHistogramScaleObjectGuid,
 			IDS_OBJECTNAME_HISTOGRAM_SCALE,
 			false, SVResetItemNone );
-		
+
 		RegisterEmbeddedObject( 
 			&msvHighPeak,
 			SVHistogramHighPeakObjectGuid,
 			IDS_OBJECTNAME_HISTOGRAM_HIGHPEAK,
 			false, SVResetItemNone );
-		
+
 		RegisterEmbeddedObject( 
 			&msvLowPeak,
 			SVHistogramLowPeakObjectGuid,
 			IDS_OBJECTNAME_HISTOGRAM_LOWPEAK,
 			false, SVResetItemNone );
-		
+
 		RegisterEmbeddedObject( 
 			&msvValley,
 			SVHistogramValleyObjectGuid,
 			IDS_OBJECTNAME_HISTOGRAM_VALLEY,
 			false, SVResetItemNone );
-		
+
 		RegisterEmbeddedObject( 
 			&msvPeakThreshold,
 			SVHistogramPeakThresholdObjectGuid,
 			IDS_OBJECTNAME_HISTOGRAM_PEAKTHRESHOLD,
 			false, SVResetItemNone );
-		
+
 		RegisterEmbeddedObject( 
 			&msvDefaultPeak,
 			SVHistogramDefaultPeakObjectGuid,
 			IDS_OBJECTNAME_HISTOGRAM_DEFAULTPEAK,
 			false, SVResetItemNone );
-		
+
 		RegisterEmbeddedObject( 
 			&msvMinPeakHeight,
 			SVHistogramMinPeakHeightObjectGuid,
 			IDS_OBJECTNAME_HISTOGRAM_MINPEAKHEIGHT,
 			false, SVResetItemNone );
-		
-		//RegisterEmbeddedObject( 
-		//	&msvUseDefaultPeak,
-		//	SVHistogramUseDefaultPeakObjectGuid,
-		//	IDS_OBJECTNAME_HISTOGRAM_USEDEFAULTPEAK,
-		//	false, SVResetItemNone );
-		
+
 		RegisterEmbeddedObject( 
 			&msvAccumulateCounts,
 			SVHistogramAccumulateObjectGuid,
 			IDS_OBJECTNAME_HISTOGRAM_ACCUMULATE,
 			false, SVResetItemNone );
-		
+
 		RegisterEmbeddedObject( 
 			&msvValleyLowerBound,
 			SVHistogramValleyLowerBoundObjectGuid,
 			IDS_OBJECTNAME_HISTOGRAM_VALLEYLOW,
 			false, SVResetItemNone );
-		
+
 		RegisterEmbeddedObject( 
 			&msvValleyUpperBound,
 			SVHistogramValleyUpperBoundObjectGuid,
 			IDS_OBJECTNAME_HISTOGRAM_VALLEYHIGH,
 			false, SVResetItemNone );
-		
+
 		RegisterEmbeddedObject( 
 			&msvValleyDefault,
 			SVHistogramValleyDefaultObjectGuid,
 			IDS_OBJECTNAME_HISTOGRAM_VALLEYDEFAULT,
 			false, SVResetItemNone );
-		
+
 		RegisterEmbeddedObject( 
 			&msvDynamicHeight,
 			SVHistogramDynamicHeightObjectGuid,
 			IDS_OBJECTNAME_HISTOGRAM_DYNAHEIGHT,
 			false, SVResetItemNone );
-		
+
 		RegisterEmbeddedObject( 
 			&msvFixedHeightValue,
 			SVHistogramFixedHeightValueObjectGuid,
 			IDS_OBJECTNAME_HISTOGRAM_FIXEDHEIGHT,
 			false, SVResetItemNone );
-		
+
 		RegisterEmbeddedObject( 
 			&m_histogramImage,
 			SVHistogramImageObjectGuid,
 			IDS_OBJECTNAME_HISTOGRAMIMAGE
 			);
-		
+
 		// Set Embedded defaults
-		msvHistogramValue.SetDefaultValue (0, true);
-		//msvVarianceValue.SetDefaultValue (0.0, true);
-		msvStdDevValue.SetDefaultValue (0.0, true);
-		msvMeanValue.SetDefaultValue (0.0, true);
+		msvHistogramValue.SetDefaultValue(0, true);
+		msvStdDevValue.SetDefaultValue(0.0, true);
+		msvMeanValue.SetDefaultValue(0.0, true);
 		msvFixedHeightValue.SetDefaultValue(10.0, true);
-		
-		msvRangeStartValue.SetDefaultValue (0, true);
-		msvRangeEndValue.SetDefaultValue (255, true);
-		msvMaxPixelValue.SetDefaultValue (0, true);
-		msvMinPixelValue.SetDefaultValue (0, true);
-		msvPixelCountValue.SetDefaultValue (0, true);
-		msvRangeSizeValue.SetDefaultValue (0, true);
-		msvScaleValue.SetDefaultValue (0, true);
-		msvHighPeak.SetDefaultValue (0, true);
-		msvLowPeak.SetDefaultValue (0, true);
-		msvValley.SetDefaultValue (0, true);
-		msvPeakThreshold.SetDefaultValue (10, true);
-		msvDefaultPeak.SetDefaultValue (0, true);
+
+		msvRangeStartValue.SetDefaultValue(0, true);
+		msvRangeEndValue.SetDefaultValue(255, true);
+		msvMaxPixelValue.SetDefaultValue(0, true);
+		msvMinPixelValue.SetDefaultValue(0, true);
+		msvPixelCountValue.SetDefaultValue(0, true);
+		msvRangeSizeValue.SetDefaultValue(0, true);
+		msvScaleValue.SetDefaultValue(0, true);
+		msvHighPeak.SetDefaultValue(0, true);
+		msvLowPeak.SetDefaultValue(0, true);
+		msvValley.SetDefaultValue(0, true);
+		msvPeakThreshold.SetDefaultValue(10, true);
+		msvDefaultPeak.SetDefaultValue(0, true);
 		msvMinPeakHeight.SetDefaultValue(0.5, true);
-		msvValleyLowerBound.SetDefaultValue (0, true);
-		msvValleyUpperBound.SetDefaultValue (255, true);
-		msvValleyDefault.SetDefaultValue (0, true);
+		msvValleyLowerBound.SetDefaultValue(0, true);
+		msvValleyUpperBound.SetDefaultValue(255, true);
+		msvValleyDefault.SetDefaultValue(0, true);
 
 		msvDynamicHeight.SetDefaultValue(false, true);
 		msvAccumulateCounts.SetDefaultValue(false, true);
@@ -423,7 +409,7 @@ void SVHistogramAnalyzerClass::init()
 		catch (const fail_to_create &)
 		{
 			msvError.msvlErrorCd = -Err_NewResult;
-			SV_TRAP_ERROR_BRK (msvError, Err_NewResult);
+			SV_TRAP_ERROR_BRK(msvError, Err_NewResult);
 		}
 		break;
 	}
@@ -450,76 +436,73 @@ void SVHistogramAnalyzerClass::AddResult(const std::pair<GUID, DWORD> & p)
 	}
 
 	Add( pAnalyzerResult );
-	//m_resultGuids[p.first] = pAnalyzerResult->GetUniqueObjectID();
 }
 
-BOOL SVHistogramAnalyzerClass::OnValidate ()
+BOOL SVHistogramAnalyzerClass::OnValidate()
 {
 
-   msvError.ClearLastErrorCd ();   
+   msvError.ClearLastErrorCd();
    msvError.msvlErrorCd = 0x00000000;
 
    while (1)
    {
-      if (!SVImageAnalyzerClass::OnValidate ())
+      if (!SVImageAnalyzerClass::OnValidate())
       {
-//       Error code set inside SVImageAnalyzerClass::OnValidate ()
+//       Error code set inside SVImageAnalyzerClass::OnValidate()
 //		 Next line commented out to remove message box.
-//       SV_TRAP_ERROR_BRK_TSTFIRST (msvError, 1081);
+//       SV_TRAP_ERROR_BRK_TSTFIRST(msvError, 1081);
          break;
       }
 
       if (msvHistResultID.empty())
       {
          msvError.msvlErrorCd = -Err_ResultEmpty;
-         SV_TRAP_ERROR_BRK_TSTFIRST (msvError, Err_ResultEmpty);
+         SV_TRAP_ERROR_BRK_TSTFIRST(msvError, Err_ResultEmpty);
       }
 
       if (msvplHistValues.size() == 0)
       {
          msvError.msvlErrorCd = -Err_ArrayEmpty;
-         SV_TRAP_ERROR_BRK_TSTFIRST (msvError, Err_ArrayEmpty);
+         SV_TRAP_ERROR_BRK_TSTFIRST(msvError, Err_ArrayEmpty);
       }
 
       break;
    }
 
-   if( (msvError.GetLastErrorCd () & SV_ERROR_CONDITION) ||
-	   (msvError.msvlErrorCd       & SV_ERROR_CONDITION) )
+   if( (msvError.GetLastErrorCd() & SV_ERROR_CONDITION) ||
+	   (msvError.msvlErrorCd      & SV_ERROR_CONDITION) )
    {
-       SetInvalid ();
+       SetInvalid();
        return FALSE;
    }
 
-   isObjectValid.SetValue (1, TRUE);
+   isObjectValid.SetValue(1, TRUE);
    return TRUE;
-
 }
 
 SVHistogramAnalyzerClass::~SVHistogramAnalyzerClass()
 {
-   CloseObject ();
+   CloseObject();
 }
-
 
 BOOL SVHistogramAnalyzerClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
 {
     SVImageClass *pSVImage;
-    msvError.ClearLastErrorCd ();
+    msvError.ClearLastErrorCd();
 
     while (1)
     {
         if (! SVImageAnalyzerClass::CreateObject( PCreateStructure ) )
         {
          msvError.msvlErrorCd = -Err_CreateStruct;
-         SV_TRAP_ERROR_BRK (msvError, Err_CreateStruct);
+         SV_TRAP_ERROR_BRK(msvError, Err_CreateStruct);
         }
 
-        pSVImage = getInputImage ();
+        pSVImage = getInputImage();
         if (!pSVImage)
         {
          msvError.msvlErrorCd = -Err_GetInputImage;
-         SV_TRAP_ERROR_BRK (msvError, Err_GetInputImage);
+         SV_TRAP_ERROR_BRK(msvError, Err_GetInputImage);
         }
 
         msvlHistValueArraySize = 1 << (pSVImage->getPixelDepth() & SVBufferSize);
@@ -528,7 +511,7 @@ BOOL SVHistogramAnalyzerClass::CreateObject( SVObjectLevelCreateStruct* PCreateS
         if (msvplHistValues.size() == 0)
         {
          msvError.msvlErrorCd = -Err_ArrayEmpty;
-         SV_TRAP_ERROR_BRK (msvError, Err_ArrayEmpty);
+         SV_TRAP_ERROR_BRK(msvError, Err_ArrayEmpty);
         }
 
         for( int i = 0; i < msvlHistValueArraySize; i++ )
@@ -547,7 +530,7 @@ BOOL SVHistogramAnalyzerClass::CreateObject( SVObjectLevelCreateStruct* PCreateS
 		if (msvHistResultID.empty())
 		{
 			msvError.msvlErrorCd = -Err_ResultEmpty;
-			SV_TRAP_ERROR_BRK (msvError, Err_ResultEmpty);
+			SV_TRAP_ERROR_BRK(msvError, Err_ResultEmpty);
 		}
 
 		msvRangeStartValue.GetValue(m_rangeStart);
@@ -566,13 +549,13 @@ BOOL SVHistogramAnalyzerClass::CreateObject( SVObjectLevelCreateStruct* PCreateS
 		if (S_OK != createHistogramImage())
 		{
 			msvError.msvlErrorCd = -Err_CreateImage;
-			SV_TRAP_ERROR_BRK (msvError, Err_CreateImage);
+			SV_TRAP_ERROR_BRK(msvError, Err_CreateImage);
 		}
 
 		break;
     }
 
-    if (msvError.GetLastErrorCd () & SV_ERROR_CONDITION)
+    if (msvError.GetLastErrorCd() & SV_ERROR_CONDITION)
     {
         isCreated = FALSE;
     }
@@ -614,7 +597,7 @@ void SVHistogramAnalyzerClass::DisconnectImages()
 
 BOOL SVHistogramAnalyzerClass::CloseObject()
 {
-   msvError.ClearLastErrorCd ();
+   msvError.ClearLastErrorCd();
 
    while (1)
    {
@@ -625,18 +608,17 @@ BOOL SVHistogramAnalyzerClass::CloseObject()
 
       l_lIntf.Destroy( msvHistResultID );
 
-      SVImageAnalyzerClass::CloseObject ();
+      SVImageAnalyzerClass::CloseObject();
       break;
    }
 
-   if (msvError.GetLastErrorCd () & SV_ERROR_CONDITION)
+   if (msvError.GetLastErrorCd() & SV_ERROR_CONDITION)
    {
       return FALSE;
    }
 
    return TRUE;
 }
-
 
 SVResultClass* SVHistogramAnalyzerClass::GetResultObject(const GUID & guid)
 {
@@ -649,23 +631,20 @@ SVResultClass* SVHistogramAnalyzerClass::GetResultObject(const GUID & guid)
 	return NULL;
 }
 
-
 BOOL SVHistogramAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 {
 	SVImageClass     *pInputImage;
-	
 
 	SVMatroxImageInterface::SVStatusCode l_Code;
 
 	pInputImage = NULL;
-	msvError.ClearLastErrorCd ();
+	msvError.ClearLastErrorCd();
 	
 	while (1)
 	{
 		///////////////////////////////////////////////////
 		// Clear values to be calculated
 		///////////////////////////////////////////////////
-		//msvVarianceValue.SetValue( RRunStatus.m_lResultDataIndex, 0.0 );
 		msvStdDevValue.SetValue( RRunStatus.m_lResultDataIndex, 0.0 );
 		msvMeanValue.SetValue( RRunStatus.m_lResultDataIndex, 0.0 );
 
@@ -680,24 +659,24 @@ BOOL SVHistogramAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 		{
 			break;
 		}
-		
-		pInputImage = getInputImage ();
-		
+
+		pInputImage = getInputImage();
+
 		if( ! pInputImage )
 		{
-			SetInvalid ();            
+			SetInvalid();
 			msvError.msvlErrorCd = -Err_GetInputImage;
 			SV_TRAP_ERROR_BRK_TSTFIRST(msvError, Err_GetInputImage)
 		}
-		
+
 		SVSmartHandlePointer ImageHandle;
-		
+
 		if( ! pInputImage->GetImageHandle( ImageHandle ) || ImageHandle.empty() )
 		{
 			msvError.msvlErrorCd = -Err_MilGetHandle;
 			SV_TRAP_ERROR_BRK_TSTFIRST(msvError, Err_MilGetHandle)
 		}
-				
+
 		SVMatroxImageInterface l_lImageIntf;
 
 		SVImageBufferHandleImage l_MilHandle;
@@ -716,16 +695,15 @@ BOOL SVHistogramAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 			msvError.msvlErrorCd = l_Code | SV_ERROR_CONDITION;
 			SV_TRAP_ERROR_BRK_TSTFIRST(msvError, Err_MilHistogram)
 		}
-		
+
 		l_Code = l_lImageIntf.GetResult(msvHistResultID,  msvplHistValues );
 
-		
 		if( l_Code != SVMEE_STATUS_OK )
 		{
-				msvError.msvlErrorCd = l_Code | SV_ERROR_CONDITION;
-				SV_TRAP_ERROR_BRK_TSTFIRST(msvError, Err_MilGetHistogram)
+			msvError.msvlErrorCd = l_Code | SV_ERROR_CONDITION;
+			SV_TRAP_ERROR_BRK_TSTFIRST(msvError, Err_MilGetHistogram)
 		}
-		
+
 		m_histogram.SetPixelCounts(msvplHistValues.begin(), msvplHistValues.end());
 		m_histogram.SetScale(m_scale?histogram::logarithmic:histogram::linear);
 		m_histogram.SetPeakDefault(m_default);
@@ -741,10 +719,10 @@ BOOL SVHistogramAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 		msvHistogramValue.SetArraySize(static_cast<int>(msvplHistValues.size()));	
 		if ( S_OK != msvHistogramValue.SetArrayValues( RRunStatus.m_lResultDataIndex,  msvplHistValues) )
 		{
-				msvError.msvlErrorCd = -Err_SetArrayValues;
-				SV_TRAP_ERROR_BRK_TSTFIRST(msvError, Err_SetArrayValues)
+			msvError.msvlErrorCd = -Err_SetArrayValues;
+			SV_TRAP_ERROR_BRK_TSTFIRST(msvError, Err_SetArrayValues)
 		}
-		
+
 		///////////////////////////////////////////////////////////////////
 		// Save range start
 		///////////////////////////////////////////////////////////////////
@@ -753,7 +731,7 @@ BOOL SVHistogramAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 			msvError.msvlErrorCd = -Err_SetStart;
 			SV_TRAP_ERROR_BRK_TSTFIRST(msvError, Err_SetStart);
 		}
-		
+
 		///////////////////////////////////////////////////////////////////
 		// Save range end
 		///////////////////////////////////////////////////////////////////
@@ -872,16 +850,7 @@ BOOL SVHistogramAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 				msvError.msvlErrorCd = -Err_SetMean;
 				SV_TRAP_ERROR_BRK_TSTFIRST(msvError, Err_SetMean);
 			}
-			
-			/////////////////////////////////////////////////////////////////////
-			//// Save Variance
-			/////////////////////////////////////////////////////////////////////
-			//if (S_OK != msvVarianceValue.SetValue( RRunStatus.m_lResultDataIndex, m_histogram.variance() ))
-			//{
-			//	msvError.msvlErrorCd = -Err_SetVariance;
-			//	SV_TRAP_ERROR_BRK_TSTFIRST(msvError, Err_SetVariance);
-			//}
-			//
+
 			///////////////////////////////////////////////////////////////////
 			// Save Standard Deviation
 			///////////////////////////////////////////////////////////////////
@@ -899,7 +868,7 @@ BOOL SVHistogramAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 				msvError.msvlErrorCd = -Err_SetCount;
 				SV_TRAP_ERROR_BRK_TSTFIRST(msvError, Err_SetCount);
 			}
-			
+
 			///////////////////////////////////////////////////////////////////
 			// Save min pixel
 			///////////////////////////////////////////////////////////////////
@@ -944,87 +913,42 @@ BOOL SVHistogramAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 				msvError.msvlErrorCd = -Err_SetValley;
 				SV_TRAP_ERROR_BRK_TSTFIRST(msvError, Err_SetValley);
 			}
-
 		}
+
 		if (S_OK != paintHistogramImage())
 		{
 			msvError.msvlErrorCd = -Err_PaintHistogram;
 			SV_TRAP_ERROR_BRK_TSTFIRST(msvError, Err_PaintHistogram);
 		}
 		break;
-  }
+	}
 	
-  if (msvError.GetLastErrorCd () & SV_ERROR_CONDITION)
-  {
-		SetInvalid ();
+	if (msvError.GetLastErrorCd() & SV_ERROR_CONDITION)
+	{
+		SetInvalid();
 		RRunStatus.SetInvalid();
 		return FALSE;
-  }
-	
-  return TRUE;
-}
+	}
 
-/*
-void SVHistogramAnalyzerClass::setHistogramOptions(SVHistogramAnalyzerSetupClass & dlg) const
-{
-	dlg.m_pAnalyzer = const_cast<SVHistogramAnalyzerClass *>(this);
-	dlg.m_histogram.SetScale(static_cast<histogram::scale>(m_scale));
-	dlg.m_histogram.SetPeakThreshold(m_threshold);
-	dlg.m_histogram.SetPeakDefault(m_default);
-	dlg.m_histogram.SetDisplay(m_accumulate?histogram::accumulated:histogram::normal);
-	dlg.m_histogram.SetMinHeight(m_minHeight);
-	dlg.m_histogram.SetValleyDefault(m_valleyDefault);
-	dlg.m_histogram.SetValleyLow(m_lowValley);
-	dlg.m_histogram.SetValleyHigh(m_highValley);
-	dlg.m_histogram.SetFixedHeight(m_fixedHeight);
-	dlg.m_histogram.SetHeightOption(m_dynamicHeight?histogram::dynamic:histogram::fixed);
-	dlg.m_histogram.Clip(m_rangeStart, m_rangeEnd);
+	return TRUE;
 }
-
-void SVHistogramAnalyzerClass::getHistogramOptions(const SVHistogramAnalyzerSetupClass & dlg)
-{
-	m_rangeStart = dlg.m_histogram.GetLowClip();
-	m_rangeEnd = dlg.m_histogram.GetHighClip();
-	m_scale = dlg.m_histogram.GetScale();
-	m_dynamicHeight = dlg.m_histogram.GetHeightOption() == histogram::dynamic;
-	m_histogram.SetHeightOption(dlg.m_histogram.GetHeightOption());
-	m_histogram.SetScale(m_scale?histogram::logarithmic:histogram::linear);
-	m_default = dlg.m_histogram.GetPeakDefault();
-	m_histogram.SetPeakDefault(m_default);
-	m_threshold = dlg.m_histogram.GetPeakThreshold();
-	m_histogram.SetPeakThreshold(m_threshold);
-	m_minHeight = dlg.m_histogram.GetMinHeight();
-	m_histogram.SetMinHeight(m_minHeight);
-	m_valleyDefault = dlg.m_histogram.GetValleyDefault();
-	m_histogram.SetValleyDefault(m_valleyDefault);
-	m_lowValley = dlg.m_histogram.GetValleyLow();
-	m_histogram.SetValleyLow(m_lowValley);
-	m_highValley = dlg.m_histogram.GetValleyHigh();
-	m_histogram.SetValleyHigh(m_highValley);
-	m_fixedHeight = dlg.m_histogram.GetFixedHeight();
-	m_histogram.SetFixedHeight(m_fixedHeight);
-	m_accumulate = dlg.m_histogram.GetDisplay() == histogram::accumulated;
-	m_histogram.SetDisplay(m_accumulate?histogram::accumulated:histogram::normal);
-	m_histogram.Clip(m_rangeStart, m_rangeEnd);
-}
-*/
 
 bool SVHistogramAnalyzerClass::calcHistogram()
 {
 	SVImageClass     *pInputImage;
 	SVMatroxImageInterface::SVStatusCode l_Code;
 
-	pInputImage = getInputImage ();
+	pInputImage = getInputImage();
 	if (pInputImage)
 	{
 		SVSmartHandlePointer ImageHandle;
-		
+
 		if( ! pInputImage->GetImageHandle( ImageHandle ) || ImageHandle.empty() )
 		{
 			msvError.msvlErrorCd = -Err_MilGetHandle;
 			SV_TRAP_ERROR(msvError, Err_MilGetHandle);
 		}
-				
+
 		SVMatroxImageInterface l_lImageIntf;
 
 		SVImageBufferHandleImage l_MilHandle;
@@ -1043,13 +967,13 @@ bool SVHistogramAnalyzerClass::calcHistogram()
 			msvError.msvlErrorCd = l_Code | SV_ERROR_CONDITION;
 			SV_TRAP_ERROR(msvError, Err_MilHistogram);
 		}
-		
+
 		l_Code = l_lImageIntf.GetResult(msvHistResultID,  msvplHistValues );
-		
+
 		if( l_Code != SVMEE_STATUS_OK )
 		{
-				msvError.msvlErrorCd = l_Code | SV_ERROR_CONDITION;
-				SV_TRAP_ERROR(msvError, Err_MilGetHistogram);
+			msvError.msvlErrorCd = l_Code | SV_ERROR_CONDITION;
+			SV_TRAP_ERROR(msvError, Err_MilGetHistogram);
 		}
 		return true;
 	}
@@ -1081,7 +1005,7 @@ HRESULT SVHistogramAnalyzerClass::createHistogramImage()
 	ImageInfo.SetExtentProperty( SVExtentPropertyHeight, l_dHeight );
 	ImageInfo.SetTranslation( SVExtentTranslationNone );
 
-			// Try to create image object...
+	// Try to create image object...
 	if( m_histogramImage.UpdateImage( SVImageTypeFixed, ImageInfo ) != S_OK )
 	{
 		return Err_SetImageInfo;

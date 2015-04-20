@@ -47,7 +47,7 @@
 #include "SVToolAcquisition.h"
 #include "SVToolSet.h"
 #include "SVToolSetAdjustmentDialogSheet.h"
-#include "SVToolSetTabView.h"
+#include "ToolSetView.h"
 #include "SVResultView.h"
 #include "SVResultsWrapperClass.h"
 #include "SVTool.h"
@@ -93,6 +93,7 @@
 #include "EnvironmentObject.h"
 #include "ToolClipboard.h"
 #include "AutoSaver.h"
+#include "TextDefinesSvO.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -110,21 +111,11 @@ union SVViewUnion
 	CView *pView;
 	SVImageViewScroll *pImageScroll;
 	SVImageViewClass *pImageView;
-	SVToolSetTabViewClass *pToolSetTabView;
+	ToolSetView *pToolSetView;
 	SVResultViewClass *pResultView;
 };
-#pragma endregion Declarations
 
 static const int MaxImageViews = 8;
-static const CString scColorToolMustBeFirstMessage = _T("A Color Tool must ALWAYS be\n the first tool on a color system.");
-
-//*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/
-//* Class Name : Class SVIPDoc
-//*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/
-
-//******************************************************************************
-// Adjustments
-//******************************************************************************
 
 IMPLEMENT_DYNCREATE(SVIPDoc, CDocument)
 
@@ -191,6 +182,7 @@ BEGIN_MESSAGE_MAP(SVIPDoc, CDocument)
 	ON_COMMAND(ID_ADD_STARTTOOLGROUPING, OnAddStartToolGrouping)
 	ON_COMMAND(ID_ADD_ENDTOOLGROUPING, OnAddEndToolGrouping)
 END_MESSAGE_MAP()
+#pragma endregion Declarations
 
 #pragma region Constructor
 SVIPDoc::SVIPDoc()
@@ -199,7 +191,7 @@ SVIPDoc::SVIPDoc()
 , m_RegisteredImages()
 , m_Images()
 , m_AllViewsUpdated( 0 )
-, m_pMDIChildWnd( NULL )
+, m_pMDIChildWnd( nullptr )
 , m_ResultDefinitionsTimestamp( 0 )
 , m_ToolSetListTimestamp( 0 )
 , m_PPQListTimestamp( 0 )
@@ -308,7 +300,7 @@ CMDIChildWnd* SVIPDoc::GetMDIChild()
 {
 	if( m_pMDIChildWnd == NULL )
 	{
-		m_pMDIChildWnd = SVSearchForMDIChildWnd( GetToolSetTabView() );
+		m_pMDIChildWnd = SVSearchForMDIChildWnd( GetToolSetView() );
 	}
 
 	if( m_pMDIChildWnd == NULL )
@@ -452,7 +444,7 @@ BOOL SVIPDoc::AddTool(SVToolClass* pTool)
 {
 	if (nullptr != pTool)
 	{
-		SVToolSetTabViewClass* pView = GetToolSetTabView();
+		ToolSetView* pView = GetToolSetView();
 		if (pView)
 		{
 			SVToolSetClass* pToolSet = GetToolSet();
@@ -470,7 +462,7 @@ BOOL SVIPDoc::AddTool(SVToolClass* pTool)
 					if (pNextTool && SV_IS_KIND_OF(pNextTool, SVColorToolClass) &&
 									!SV_IS_KIND_OF(pTool, SVColorToolClass))
 					{
-						AfxMessageBox(scColorToolMustBeFirstMessage, MB_OK);
+						AfxMessageBox( SvO::ColorToolMustBeFirstMessage, MB_OK );
 						return false;
 					}
 				}
@@ -505,7 +497,7 @@ bool SVIPDoc::AddToolGrouping(bool bStartGroup)
 {
 	bool bRetVal = false;
 
-	SVToolSetTabViewClass* pView = GetToolSetTabView();
+	ToolSetView* pView = GetToolSetView();
 	if (pView )
 	{
 		const ToolListSelectionInfo& rInfo = pView->GetToolListSelectionInfo();
@@ -573,9 +565,9 @@ CView* SVIPDoc::getView() const
 	return retVal;
 }
 
-SVToolSetTabViewClass* SVIPDoc::GetToolSetTabView()
+ToolSetView* SVIPDoc::GetToolSetView()
 {
-	SVToolSetTabViewClass* l_pView( nullptr );
+	ToolSetView* l_pView( nullptr );
 
 	POSITION pos( GetFirstViewPosition() );
 
@@ -585,9 +577,9 @@ SVToolSetTabViewClass* SVIPDoc::GetToolSetTabView()
 	{
 		pIPView = GetNextView( pos );
 
-		if( pIPView != nullptr && pIPView->IsKindOf( RUNTIME_CLASS( SVToolSetTabViewClass ) ) )
+		if( pIPView != nullptr && pIPView->IsKindOf( RUNTIME_CLASS( ToolSetView ) ) )
 		{
-			l_pView = static_cast< SVToolSetTabViewClass* >( pIPView );
+			l_pView = static_cast< ToolSetView* >( pIPView );
 		}
 	}
 
@@ -1168,7 +1160,7 @@ void SVIPDoc::OnUpdateAddEndToolGrouping(CCmdUI* pCmdUI)
 	if (bEnable)
 	{
 		// check insertion position and ensure there is an unmatched start group before.
-		SVToolSetTabViewClass* pView = GetToolSetTabView();
+		ToolSetView* pView = GetToolSetView();
 		if (pView)
 		{
 			bEnable = pView->IsEndToolGroupAllowed();
@@ -1199,7 +1191,7 @@ void SVIPDoc::OnEditDelete()
 	{
 		return;
 	}
-	SVToolSetTabViewClass* pToolSetView = GetToolSetTabView();
+	ToolSetView* pToolSetView = GetToolSetView();
 	SVToolSetClass* pToolSet = GetToolSet();
 	if (pToolSet && pToolSetView && !pToolSetView->IsLabelEditing())
 	{
@@ -1221,7 +1213,7 @@ void SVIPDoc::OnEditDelete()
 					if( pFirstTaskObject && SV_IS_KIND_OF(pFirstTaskObject, SVColorToolClass) &&
 						pNextTool && !SV_IS_KIND_OF(pNextTool, SVColorToolClass))
 					{
-						AfxMessageBox(scColorToolMustBeFirstMessage, MB_OK);
+						AfxMessageBox( SvO::ColorToolMustBeFirstMessage, MB_OK );
 						return;
 					}
 				}
@@ -1251,7 +1243,7 @@ void SVIPDoc::OnEditDelete()
 					}
 
 					pToolSetView->m_toolSetListCtrl.SaveScrollPos();
-					pToolSetView->m_toolSetListCtrl.Rebuild(); // do not remove as the item mist be removed from the list before setting the new selection
+					pToolSetView->m_toolSetListCtrl.Rebuild(); // do not remove as the item must be removed from the list before setting the new selection
 					if (pTaskObject)
 					{
 						m_SelectedToolID = pTaskObject->GetUniqueObjectID();
@@ -1315,7 +1307,7 @@ void SVIPDoc::OnEditCopy()
 
 	if (nullptr != pInspection)
 	{
-		SVToolSetTabViewClass* pToolSetView = GetToolSetTabView();
+		ToolSetView* pToolSetView = GetToolSetView();
 		if (nullptr != pToolSetView && !pToolSetView->IsLabelEditing())
 		{
 			const SVGUID& rGuid = pToolSetView->GetSelectedTool();
@@ -1338,7 +1330,7 @@ void SVIPDoc::OnUpdateEditCopy( CCmdUI* pCmdUI )
 	if( Enabled )
 	{
 		Enabled = FALSE;
-		SVToolSetTabViewClass* pToolSetView = GetToolSetTabView();
+		ToolSetView* pToolSetView = GetToolSetView();
 		SVToolSetClass* pToolSet = GetToolSet();
 		if( nullptr != pToolSet && nullptr != pToolSetView && !pToolSetView->IsLabelEditing())
 		{
@@ -1346,7 +1338,7 @@ void SVIPDoc::OnUpdateEditCopy( CCmdUI* pCmdUI )
 
 			const SVGUID& rGuid = pToolSetView->GetSelectedTool();
 			//Tool list active and valid tool
-			if( !rGuid.empty() && -1 != ToolListInfo.m_listIndex && pToolSetView->IsToolsetListCtrlActive() )
+			if( !rGuid.empty() && -1 != ToolListInfo.m_listIndex )
 			{
 				Enabled = TRUE;
 			}
@@ -1369,7 +1361,7 @@ void SVIPDoc::OnEditPaste()
 	{
 		ToolClipboard Clipboard( *pInspection );
 		SVGUID ToolGuid( GUID_NULL );
-		SVToolSetTabViewClass* pView = GetToolSetTabView();
+		ToolSetView* pView = GetToolSetView();
 
 		const ToolListSelectionInfo& info = pView->GetToolListSelectionInfo();
 		int ToolListIndex = GetToolToInsertBefore(info.m_selection, info.m_listIndex);
@@ -1424,18 +1416,15 @@ void SVIPDoc::OnUpdateEditPaste( CCmdUI* pCmdUI )
 	if( Enabled )
 	{
 		Enabled = FALSE;
-		SVToolSetTabViewClass* pToolSetView = GetToolSetTabView();
+		ToolSetView* pToolSetView = GetToolSetView();
 		SVToolSetClass* pToolSet = GetToolSet();
 		if( nullptr != pToolSet && nullptr != pToolSetView && !pToolSetView->IsLabelEditing() )
 		{
 			const ToolListSelectionInfo& info = pToolSetView->GetToolListSelectionInfo();
 			//Only if tool list active and a selected index is valid
-			if ( -1 != info.m_listIndex &&  pToolSetView->IsToolsetListCtrlActive() )
+			if ( -1 != info.m_listIndex && ToolClipboard::isClipboardDataValid() )
 			{
-				if( ToolClipboard::isClipboardDataValid() )
-				{
-					Enabled = TRUE;
-				}
+				Enabled = TRUE;
 			}
 		}
 	}
@@ -2437,9 +2426,9 @@ void SVIPDoc::SaveViews(SVObjectWriter& rWriter)
 			{
 				View.pImageView->GetParameters( rWriter );
 			}
-			else if (View.pView->IsKindOf(RUNTIME_CLASS(SVToolSetTabViewClass)))
+			else if ( View.pView->IsKindOf( RUNTIME_CLASS( ToolSetView ) ) )
 			{
-				View.pToolSetTabView->GetParameters( rWriter );
+				View.pToolSetView->GetParameters( rWriter );
 			}
 			else if (View.pView->IsKindOf(RUNTIME_CLASS(SVResultViewClass)))
 			{
@@ -2495,16 +2484,16 @@ void SVIPDoc::SaveViewPlacements(SVObjectWriter& rWriter)
 	ZeroMemory(&wndpl,sizeof(WINDOWPLACEMENT));
 	wndpl.length = sizeof(WINDOWPLACEMENT);
 
-	View.pToolSetTabView = (SVToolSetTabViewClass*)getView();
-	if (View.pToolSetTabView && View.pToolSetTabView->GetSafeHwnd())
+	View.pToolSetView = dynamic_cast< ToolSetView* >( getView() );
+	if (View.pToolSetView && View.pToolSetView->GetSafeHwnd())
 	{
-		CSplitterWnd* pWndSplitter = (CSplitterWnd*)View.pToolSetTabView->GetParent();
+		CSplitterWnd* pWndSplitter = dynamic_cast< CSplitterWnd* >( View.pToolSetView->GetParent() );
 		if (pWndSplitter && pWndSplitter->GetSafeHwnd())
 		{
-			CSplitterWnd* pWndSplitter2 = (CSplitterWnd*)pWndSplitter->GetParent();
+			CSplitterWnd* pWndSplitter2 = dynamic_cast< CSplitterWnd* >( pWndSplitter->GetParent() );
 			ASSERT(pWndSplitter2 && pWndSplitter2->GetSafeHwnd());
 
-			SVIPSplitterFrame* pFrame = (SVIPSplitterFrame*)pWndSplitter2->GetParent();
+			SVIPSplitterFrame* pFrame = dynamic_cast< SVIPSplitterFrame* >( pWndSplitter2->GetParent() );
 
 			CRuntimeClass* pClass = pFrame->GetRuntimeClass();
 			CString csClass = pClass->m_lpszClassName;
@@ -2738,19 +2727,19 @@ BOOL SVIPDoc::SetParameters( SVTreeType& rTree, SVTreeType::SVBranchHandle htiPa
 			//
 			// The first view is the Tool Set view.
 			//
-			View.pToolSetTabView = (SVToolSetTabViewClass*) getView();
-			if( View.pToolSetTabView && View.pToolSetTabView->GetSafeHwnd() )
+			View.pToolSetView = dynamic_cast< ToolSetView* >( getView() );
+			if( View.pToolSetView && View.pToolSetView->GetSafeHwnd() )
 			{
-				CSplitterWnd* pWndSplitter = (CSplitterWnd *) View.pToolSetTabView->GetParent();
+				CSplitterWnd* pWndSplitter = dynamic_cast< CSplitterWnd* >( View.pToolSetView->GetParent() );
 				if( pWndSplitter && pWndSplitter->GetSafeHwnd() )
 				{
 					//
 					// This the one we want to retrieve the size and position.
 					//
-					CSplitterWnd* pWndSplitter2 = (CSplitterWnd *) pWndSplitter->GetParent();
+					CSplitterWnd* pWndSplitter2 = dynamic_cast< CSplitterWnd* >( pWndSplitter->GetParent() );
 					ASSERT( pWndSplitter2 && pWndSplitter2->GetSafeHwnd() );
 
-					SVIPSplitterFrame* pFrame = (SVIPSplitterFrame*) pWndSplitter2->GetParent();
+					SVIPSplitterFrame* pFrame = dynamic_cast< SVIPSplitterFrame* >( pWndSplitter2->GetParent() );
 
 					CRuntimeClass* pClass = pFrame->GetRuntimeClass();
 					CString csClass = pClass->m_lpszClassName;
@@ -2762,7 +2751,7 @@ BOOL SVIPDoc::SetParameters( SVTreeType& rTree, SVTreeType::SVBranchHandle htiPa
 					}// end if
 				} // if(pFrame && pFrame->GetSafeHwnd())
 			} // if(pWndSplitter && pWndSplitter->GetSafeHwnd())
-		} // if( View.pToolSetTabView && View.pToolSetTabView->GetSafeHwnd() )
+		} // if( View.pToolSetView && View.pToolSetView->GetSafeHwnd() )
 	}
 
 	if ( bOk )
@@ -2798,6 +2787,9 @@ BOOL SVIPDoc::SetParameters( SVTreeType& rTree, SVTreeType::SVBranchHandle htiPa
 					rTree.GetBranchName( htiItem, Name.GetBSTR() );
 
 					csName = static_cast< LPCTSTR >( Name );
+
+					// The class SVToolSetTabView was changed to ToolSetView when the Tool Set Tree View was removed.
+					csName.Replace( CTAG_SVTOOLSET_TAB_VIEW_CLASS, CTAG_TOOLSET_VIEW );
 
 					bOk = SVNavigateTreeClass::GetItem( rTree, CTAG_VIEW_NUMBER, htiItem, svVariant );
 					if ( bOk ) { lViewNumber = svVariant; }
@@ -2836,9 +2828,9 @@ BOOL SVIPDoc::SetParameters( SVTreeType& rTree, SVTreeType::SVBranchHandle htiPa
 								{
 									bOk = View.pImageView->SetParameters( rTree, htiItem );
 								}
-								else if (View.pView->IsKindOf(RUNTIME_CLASS(SVToolSetTabViewClass)))
+								else if (View.pView->IsKindOf(RUNTIME_CLASS( ToolSetView )))
 								{
-									bOk = View.pToolSetTabView->SetParameters( rTree, htiItem );
+									bOk = View.pToolSetView->SetParameters( rTree, htiItem );
 								}
 								else if (View.pView->IsKindOf(RUNTIME_CLASS(SVResultViewClass)))
 								{
@@ -2903,9 +2895,9 @@ BOOL SVIPDoc::SetParameters( SVTreeType& rTree, SVTreeType::SVBranchHandle htiPa
 								{
 									bOk = View.pImageView->CheckParameters( rTree, htiItem );
 								}
-								else if (View.pView->IsKindOf(RUNTIME_CLASS(SVToolSetTabViewClass)))
+								else if (View.pView->IsKindOf(RUNTIME_CLASS( ToolSetView )))
 								{
-									bOk = View.pToolSetTabView->CheckParameters( rTree, htiItem );
+									bOk = View.pToolSetView->CheckParameters( rTree, htiItem );
 								}
 								else if (View.pView->IsKindOf(RUNTIME_CLASS(SVResultViewClass)))
 								{
@@ -3160,7 +3152,7 @@ void SVIPDoc::OnUpdateEditAdjustToolPosition(CCmdUI* pCmdUI)
 	if( Enabled )
 	{
 		Enabled = FALSE;
-		SVToolSetTabViewClass* pToolSetView = GetToolSetTabView();
+		ToolSetView* pToolSetView = GetToolSetView();
 		SVToolSetClass* pToolSet = GetToolSet();
 		if( nullptr != pToolSet && nullptr != pToolSetView && !pToolSetView->IsLabelEditing())
 		{
@@ -3169,7 +3161,7 @@ void SVIPDoc::OnUpdateEditAdjustToolPosition(CCmdUI* pCmdUI)
 			const SVGUID& rGuid = pToolSetView->GetSelectedTool();
 			SVToolClass* l_pTool = dynamic_cast< SVToolClass* >( SVObjectManagerClass::Instance().GetObject(rGuid));
 			//Tool list active and valid tool
-			if( !rGuid.empty() && -1 != ToolListInfo.m_listIndex && pToolSetView->IsToolsetListCtrlActive() )
+			if( !rGuid.empty() && -1 != ToolListInfo.m_listIndex )
 			{
 				SVToolClass* Tool = dynamic_cast< SVToolClass* >( SVObjectManagerClass::Instance().GetObject(rGuid));
 				if (Tool)

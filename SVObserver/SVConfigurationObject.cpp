@@ -1464,7 +1464,7 @@ HRESULT SVConfigurationObject::LoadConfiguration(SVTreeType& rTree)
 									{
 										SVImageInfoClass svImageInfo;
 
-										psvDevice->LoadFiles( svFileArray );
+										psvDevice->LoadFiles( svFileArray ); // @WARNING:  May crash if svFileArray is empty.
 
 										if( 1 < svLight.Band( 0 ).NumAttributes() )
 										{

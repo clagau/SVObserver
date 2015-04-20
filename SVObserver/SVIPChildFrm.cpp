@@ -9,16 +9,18 @@
 //* .Check In Date   : $Date:   02 Sep 2014 12:15:38  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVIPChildFrm.h"
 #include "SVGlobal.h"
-#include "SVImageViewScroll.h"
 #include "SVIPDoc.h"
 #include "SVResultView.h"
-#include "SVToolSetTabView.h"
+#include "ToolSetView.h"
 #include "SVUserMessage.h"
-#include "SVMainfrm.h"
+#include "SVMainFrm.h"
+#pragma endregion Includes
 
+#pragma region Declarations
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #undef THIS_FILE
@@ -41,7 +43,7 @@ static char THIS_FILE[] = __FILE__;
 //           Result View
 //
 
-IMPLEMENT_DYNCREATE( SVIPSplitterFrame, CMDIChildWnd)
+IMPLEMENT_DYNCREATE( SVIPSplitterFrame, CMDIChildWnd )
 
 BEGIN_MESSAGE_MAP(SVIPSplitterFrame, CMDIChildWnd)
 	//{{AFX_MSG_MAP(SVIPSplitterFrame)
@@ -49,10 +51,11 @@ BEGIN_MESSAGE_MAP(SVIPSplitterFrame, CMDIChildWnd)
 	//}}AFX_MSG_MAP
 	ON_WM_MDIACTIVATE()
 END_MESSAGE_MAP()
+#pragma endregion Declarations
 
 LRESULT SVIPSplitterFrame::OnUpdateAllData(WPARAM wParam, LPARAM lParam)
 {
-	if( m_pIPDoc != NULL )
+	if( m_pIPDoc != nullptr )
 	{
 		m_pIPDoc->UpdateAllData();
 	}
@@ -60,30 +63,31 @@ LRESULT SVIPSplitterFrame::OnUpdateAllData(WPARAM wParam, LPARAM lParam)
 	return S_OK;
 }
 
+#pragma region Constructor
 SVIPSplitterFrame::SVIPSplitterFrame()
-: CMDIChildWnd(), m_pIPDoc( NULL )
+: CMDIChildWnd(), m_pIPDoc( nullptr )
 {
 }
 
 SVIPSplitterFrame::~SVIPSplitterFrame()
 {
 }
+#pragma endregion Constructor
 
 BOOL SVIPSplitterFrame::PreCreateWindow( CREATESTRUCT& cs )
 {
 	cs.cx = SV_DEFAULT_IMAGE_VIEW_WIDTH + 100;
 	cs.cy = SV_DEFAULT_IMAGE_VIEW_HEIGHT + 100;
-	//cs.style |= WS_MAXIMIZE;
 
 	return CMDIChildWnd::PreCreateWindow( cs );
 }
 
 void SVIPSplitterFrame::SetViewSize( CWnd *l_pView, CSize &p_rViewSize )
 {
-	CSplitterWnd *l_pHeightWnd = NULL;
+	CSplitterWnd *l_pHeightWnd = nullptr;
 	int l_iHeightIndex = 0;
 
-	CSplitterWnd *l_pWidthWnd = NULL;
+	CSplitterWnd *l_pWidthWnd = nullptr;
 	int l_iWidthIndex = 0;
 
 	if ( l_pView == m_oWndSplitter1.GetPane( 1, 0 ) ) // ResultView
@@ -91,7 +95,7 @@ void SVIPSplitterFrame::SetViewSize( CWnd *l_pView, CSize &p_rViewSize )
 		l_pHeightWnd = &m_oWndSplitter1;
 		l_iHeightIndex = 1;
 	}
-	else if ( l_pView == m_oWndSplitter2.GetPane( 0, 0 ) ) // ToolSetTabView
+	else if ( l_pView == m_oWndSplitter2.GetPane( 0, 0 ) ) // ToolSetView
 	{
 		l_pHeightWnd = &m_oWndSplitter1;
 		l_iHeightIndex = 0;
@@ -164,14 +168,14 @@ void SVIPSplitterFrame::SetViewSize( CWnd *l_pView, CSize &p_rViewSize )
 		l_iWidthIndex = 2;
 	}
 
-	if ( l_pHeightWnd != NULL )
+	if ( l_pHeightWnd != nullptr )
 	{
 		l_pHeightWnd->SetRowInfo( l_iHeightIndex, p_rViewSize.cy, 10 );
-		
+
 		l_pHeightWnd->RecalcLayout();
 	}
 
-	if ( l_pWidthWnd != NULL )
+	if ( l_pWidthWnd != nullptr )
 	{
 		l_pWidthWnd->SetColumnInfo( l_iWidthIndex, p_rViewSize.cx, 10 );
 
@@ -181,12 +185,12 @@ void SVIPSplitterFrame::SetViewSize( CWnd *l_pView, CSize &p_rViewSize )
 
 BOOL SVIPSplitterFrame::OnCreateClient( LPCREATESTRUCT lpcs, CCreateContext* PContext )
 {
-	if( PContext != NULL )
+	if( PContext != nullptr )
 	{
 		m_pIPDoc = dynamic_cast< SVIPDoc* >( PContext->m_pCurrentDoc );
 	}
 
-	if( m_pIPDoc != NULL )
+	if( m_pIPDoc != nullptr )
 	{
 		m_pIPDoc->SetMDIChild( this );
 	}
@@ -206,7 +210,7 @@ BOOL SVIPSplitterFrame::OnCreateClient( LPCREATESTRUCT lpcs, CCreateContext* PCo
 
 	//
 	// Add the first splitter pane - which is a nested splitter with 2 columns
-	// for the Tool Set Tab View	
+	// for the Tool Set View
 	// Create the nested splitter with 1 row, 2 columns
 	//
 	if( ! m_oWndSplitter2.CreateStatic( &m_oWndSplitter1, 1, 2,
@@ -217,9 +221,9 @@ BOOL SVIPSplitterFrame::OnCreateClient( LPCREATESTRUCT lpcs, CCreateContext* PCo
 	}
 
 	//
-	// Attach the ToolSetTabView to the top left pane
+	// Attach the ToolSetView to the top left pane
 	//
-	if( ! m_oWndSplitter2.CreateView( 0, 0, RUNTIME_CLASS( SVToolSetTabViewClass ),
+	if( ! m_oWndSplitter2.CreateView( 0, 0, RUNTIME_CLASS( ToolSetView ),
 								CSize( SV_DEFAULT_TOOL_SET_VIEW_WIDTH, SV_DEFAULT_TOOL_SET_VIEW_HEIGHT ), 
 								PContext ) )
 	{
@@ -344,12 +348,12 @@ BOOL SVIPSplitterFrame::OnCreateClient( LPCREATESTRUCT lpcs, CCreateContext* PCo
 //
 void SVIPSplitterFrame::GetToolWidthAndResultHeight( int& nWidthToolSetView, int& nHeightResultView )
 {
-    //
+	//
 	// Work on tool set view..
 	//
 	int nWidthMin;
 
-    m_oWndSplitter2.GetColumnInfo( 0, nWidthToolSetView, nWidthMin );
+	m_oWndSplitter2.GetColumnInfo( 0, nWidthToolSetView, nWidthMin );
 
 	//
 	// Work on result view...
@@ -361,14 +365,9 @@ void SVIPSplitterFrame::GetToolWidthAndResultHeight( int& nWidthToolSetView, int
 
 void SVIPSplitterFrame::SetDefaultPaneSizes(RECT &BoundingRect)
 {
-	CRect oRect;
-	long lHeight;
-	long lWidth;
-
-	oRect = BoundingRect;
-
-	lHeight = oRect.Height();
-	lWidth  = oRect.Width();
+	CRect oRect = BoundingRect;
+	long lHeight = oRect.Height();
+	long lWidth = oRect.Width();
 
 	m_oWndSplitter1.SetRowInfo( 0, SV_DEFAULT_TOOL_SET_VIEW_HEIGHT, 10 );
 	m_oWndSplitter1.SetRowInfo( 1, lHeight - SV_DEFAULT_TOOL_SET_VIEW_HEIGHT, 10 );

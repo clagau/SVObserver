@@ -81,11 +81,6 @@ enum SVHardwareErrorEnums
 	SV_GO_ONLINE_FAILURE_ALL             = 0xC03F0000L, // this is all the above combined
 };
 
-LPCTSTR const SVTOOLPARAMETERLIST_MARKER = (_T( "** SVSetToolParameterList MARKER **" ));
-
-LPCTSTR const SVEXCLUDECHARS_CONFIG_NAME =     (_T("\\/:*\"<>|;&$@`[]{}()^~!#%"));
-LPCTSTR const SVEXCLUDECHARS_TOOL_NAME =       (_T("\\/:*\";,.+-$@'[]{}()<>|!%&~^\327\367"));
-
 typedef SVXMLMaterialsTree SVTreeType;
 #pragma endregion Declarations
 
@@ -374,15 +369,11 @@ public:
 	BOOL getShowUpdateFirmwareInMenu() const { return m_ShowUpdateFirmwareInMenu; }
 	void setShowUpdateFirmwareInMenu(BOOL val) { m_ShowUpdateFirmwareInMenu = val; }
 	long getGigePacketSize() const { return m_gigePacketSize; }
-	//void setGigePacketSize(long val) { m_gigePacketSize = val; }
 	long getOfflineCount() const { return m_OfflineCount; }
-	//void setOfflineCount(long val) { m_OfflineCount = val; }
 	SVIPDoc* getCurrentDocument() const { return m_pCurrentDocument; }
 	void setCurrentDocument(SVIPDoc* pIPDoc) { m_pCurrentDocument = pIPDoc; }
 	BOOL getShouldRunLastEnvironmentAutomatically() const { return m_ShouldRunLastEnvironmentAutomatically; }
-	//void setShouldRunLastEnvironmentAutomatically(BOOL val) { m_ShouldRunLastEnvironmentAutomatically = val; }
 	DWORD getCurrentVersion() const { return m_CurrentVersion; }
-	//void setCurrentVersion(DWORD val) { m_CurrentVersion = val; }
 	DWORD getLoadingVersion() const { return m_LoadingVersion; }
 	void setLoadingVersion(DWORD version) { m_LoadingVersion = version; }
 #pragma endregion
@@ -443,7 +434,7 @@ private:
 	BOOL InitATL();
 	void StopRegression();
 	DWORD GetActiveIOTab() const;
-	
+
 	bool AddSecurityNode(HMODULE hMessageDll, long lId, CString sNTGroup, bool bForcePrompt = false);
 	bool AddSecurityNode( HMODULE hMessageDll, long lId );
 

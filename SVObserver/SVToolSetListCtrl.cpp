@@ -9,26 +9,29 @@
 //* .Check In Date   : $Date:   19 Dec 2014 04:26:38  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVToolSetListCtrl.h"
 #include "SVToolGrouping.h"
 #include "SVTool.h"
-#include "SVTaskObjectList.h"
-#include "SVToolSetTabView.h"
+#include "ToolSetView.h"
 #include "SVObserver.h"
 #include "SVIPDoc.h"
 #include "SVSVIMStateClass.h"
+#include "TextDefinesSvO.h"
+#pragma endregion Includes
 
+#pragma region Declarations
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
 
-static const CString EndListDelimiter = _T("-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
-
 IMPLEMENT_DYNCREATE(SVToolSetListCtrl, CListCtrl)
+#pragma endregion Declarations
 
+#pragma region Constructor
 SVToolSetListCtrl::SVToolSetListCtrl()
 : CListCtrl()
 , m_iNone(-1)
@@ -43,6 +46,7 @@ SVToolSetListCtrl::SVToolSetListCtrl()
 SVToolSetListCtrl::~SVToolSetListCtrl()
 {
 }
+#pragma endregion Constructor
 
 void SVToolSetListCtrl::SetSingleSelect()
 {
@@ -78,20 +82,20 @@ void SVToolSetListCtrl::SetTaskObjectList(SVTaskObjectListClass* pTaskObjectList
 	Rebuild();
 }
 
-SVToolSetTabViewClass* SVToolSetListCtrl::GetView()
+ToolSetView* SVToolSetListCtrl::GetView()
 {
-	return dynamic_cast<SVToolSetTabViewClass*>(GetParent());
+	return dynamic_cast< ToolSetView* >( GetParent() );
 }
 
-const SVToolSetTabViewClass* SVToolSetListCtrl::GetView() const
+const ToolSetView* SVToolSetListCtrl::GetView() const
 {
-	return dynamic_cast<SVToolSetTabViewClass*>(GetParent());
+	return dynamic_cast< ToolSetView* >( GetParent() );
 }
 
 static SVToolClass* FindTool(const SVTaskObjectListClass* pToolSet, const CString& name)
 {
 	SVToolClass* pTool;
-	for (int i = 0;i < pToolSet->GetSize();i++)
+	for (int i = 0; i < pToolSet->GetSize(); i++)
 	{
 		pTool = dynamic_cast<SVToolClass *>(pToolSet->GetAt(i));
 		if (pTool && pTool->GetName() == name)
@@ -104,7 +108,8 @@ static SVToolClass* FindTool(const SVTaskObjectListClass* pToolSet, const CStrin
 
 void SVToolSetListCtrl::Rebuild()
 {
-	SVToolSetTabViewClass* pView = GetView();
+	ToolSetView* pView = GetView();
+
 	if (pView)
 	{
 		SVIPDoc* pDoc = pView->GetIPDoc();
@@ -237,7 +242,7 @@ void SVToolSetListCtrl::AddEndDelimiter()
 	item.iImage = m_iNone;
 
 	int index = InsertItem(&item);
-	SetItemText(index, 0, EndListDelimiter);
+	SetItemText(index, 0, SvO::EndListDelimiter);
 }
 
 void SVToolSetListCtrl::InsertEmptyString(int itemNo)
@@ -258,7 +263,7 @@ void SVToolSetListCtrl::InsertEmptyString(int itemNo)
 
 bool SVToolSetListCtrl::IsEndListDelimiter(const CString& text) const
 {
-	return (text == EndListDelimiter);
+	return (text == SvO::EndListDelimiter);
 }
 
 bool SVToolSetListCtrl::IsEmptyStringPlaceHolder(const CString& text) const
@@ -271,7 +276,7 @@ bool SVToolSetListCtrl::IsEmptyStringPlaceHolder(const CString& text) const
 bool SVToolSetListCtrl::IsStartGrouping(int index, bool& bState) const
 {
 	bool bRetVal = false;
-	const SVToolSetTabViewClass* pView = GetView();
+	const ToolSetView* pView = GetView();
 	if (pView)
 	{
 		SVIPDoc* pDoc = pView->GetIPDoc();
@@ -394,7 +399,7 @@ void SVToolSetListCtrl::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 	}
 	if (l_bUpdate)
 	{
-		SVToolSetTabViewClass* l_pParent = static_cast<SVToolSetTabViewClass*>(GetParent());
+		ToolSetView* l_pParent = static_cast< ToolSetView* >( GetParent() );
 		if (l_pParent)
 		{
 			SVIPDoc* pCurrentDocument = dynamic_cast<SVIPDoc*>(l_pParent->GetDocument());
@@ -417,6 +422,7 @@ void SVToolSetListCtrl::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 		}
 	}
 }
+
 // Used to save scroll position before rebuilding list.
 void SVToolSetListCtrl::SaveScrollPos()
 {
@@ -501,7 +507,7 @@ void SVToolSetListCtrl::SetSelectedTool(const SVGUID& rGuid)
 			}
 		}
 	}
-    Invalidate(); // cause WM_PAINT to refresh list control.
+	Invalidate(); // cause WM_PAINT to refresh list control.
 }
 
 ToolListSelectionInfo SVToolSetListCtrl::GetToolListSelectionInfo() const
@@ -549,16 +555,16 @@ void SVToolSetListCtrl::OnWindowPosChanged(WINDOWPOS* lpwndpos)
 
 void SVToolSetListCtrl::OnBeginTrack(NMHDR* pNMHDR, LRESULT* pResult)
 {
-     switch (pNMHDR->code)
-     {
-		 // This is due to a bug in NT where the code is not translated
-		 // to ANSI/UNICODE properly (in NT - UNICODE is always sent)
-		case HDN_BEGINTRACKW:
-		case HDN_BEGINTRACKA:
-		case HDN_DIVIDERDBLCLICKA:
-		case HDN_DIVIDERDBLCLICKW:
+	switch (pNMHDR->code)
+	{
+		// This is due to a bug in NT where the code is not translated
+		// to ANSI/UNICODE properly (in NT - UNICODE is always sent)
+		case HDN_BEGINTRACKW: // fall through...
+		case HDN_BEGINTRACKA: // fall through...
+		case HDN_DIVIDERDBLCLICKA: // fall through...
+		case HDN_DIVIDERDBLCLICKW: // fall through...
 		{
-			*pResult = true;		// disable tracking
+			*pResult = true; // disable tracking
 		}
 		break;
 
@@ -567,7 +573,7 @@ void SVToolSetListCtrl::OnBeginTrack(NMHDR* pNMHDR, LRESULT* pResult)
 			*pResult = 0;
 		}
 		break;
-     } 
+	}
 }
 
 BOOL SVToolSetListCtrl::PreTranslateMessage(MSG* pMsg)
@@ -590,7 +596,7 @@ BOOL SVToolSetListCtrl::PreTranslateMessage(MSG* pMsg)
 			::DispatchMessage(pMsg);
 			return true; // DO NOT process further
 		}
-	}	 
+	}
 	return CListCtrl::PreTranslateMessage(pMsg);
 }
 
@@ -620,7 +626,7 @@ void SVToolSetListCtrl::CollapseItem(int item)
 	GetItem(&lvItem);
 	CString name = GetItemText(item, 0);
 	// Send to View...
-	SVToolSetTabViewClass* pView = dynamic_cast<SVToolSetTabViewClass*>(GetParent());
+	ToolSetView* pView = dynamic_cast< ToolSetView* >( GetParent() );
 	if (pView)
 	{
 		pView->HandleExpandCollapse(name, true);
@@ -637,7 +643,7 @@ void SVToolSetListCtrl::ExpandItem(int item)
 	GetItem(&lvItem);
 	CString name = GetItemText(item, 0);
 	// Send to View...
-	SVToolSetTabViewClass* pView = dynamic_cast<SVToolSetTabViewClass*>(GetParent());
+	ToolSetView* pView = dynamic_cast< ToolSetView* >( GetParent() );
 	if (pView)
 	{
 		pView->HandleExpandCollapse(name, false);

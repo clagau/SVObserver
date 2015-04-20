@@ -2,8 +2,8 @@
 //* COPYRIGHT (c) 2003 by SVResearch, Harrisburg
 //* All Rights Reserved
 //******************************************************************************
-//* .Module Name     : SVToolSetTabView
-//* .File Name       : $Workfile:   SVToolSetTabView.h  $
+//* .Module Name     : ToolSetView
+//* .File Name       : $Workfile:   ToolSetView.h  $
 //* ----------------------------------------------------------------------------
 //* .Current Version : $Revision:   1.8  $
 //* .Check In Date   : $Date:   12 Feb 2015 13:47:08  $
@@ -13,13 +13,12 @@
 
 #pragma region Includes
 #include "SVXMLLibrary/SVXMLMaterialsTree.h"
-#include "SVToolSetTreeCtrl.h"
 #include "SVToolSetListCtrl.h"
 #include "SVOutputInfoListTreeCtrl.h"
 #pragma endregion Includes
 
 #define ID_EDIT_LABEL_ENDS 40000
-#define ID_RUN_ONCE		   40001
+#define ID_RUN_ONCE        40001
 
 #pragma region Declarations
 class SVIPDoc;
@@ -27,31 +26,28 @@ class SVToolClass;
 class SVObjectWriter;
 #pragma endregion Declarations
 
-class SVToolSetTabViewClass : public CFormView
+class ToolSetView : public CFormView
 {
 protected:
-	DECLARE_DYNCREATE(SVToolSetTabViewClass)
+	DECLARE_DYNCREATE(ToolSetView)
 
 public:
-	//{{AFX_DATA(SVToolSetTabViewClass)
-	enum { IDD = IDD_TOOLSETTAB_FORMVIEW };
+	//{{AFX_DATA(ToolSetView)
+	enum { IDD = IDD_TOOLSET_VIEW };
 	SVOutputInfoListTreeCtrlClass m_outputTreeCtrl;
-	SVToolSetTreeCtrl m_toolSetTreeCtrl;
 	SVToolSetListCtrl m_toolSetListCtrl;
-	CTabCtrl m_toolSetTabCtrl;
 	//}}AFX_DATA
 
 	// Generated message map functions
-	//{{AFX_MSG(SVToolSetTabViewClass)
-	afx_msg void OnSelchangeToolsetTab(NMHDR* pNMHDR, LRESULT* pResult);
+	//{{AFX_MSG(ToolSetView)
+	//afx_msg void OnSelchangeToolsetTab(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
-	afx_msg void OnDblclkToolsetList(NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg void OnItemexpandedToolsetTree(NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg void OnBeginlabeleditToolsetList(NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg void OnEndlabeleditToolsetList(NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg void OnClickToolsetList(NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg void OnRightClickToolsetList(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnDblClkToolSetList(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnBeginLabelEditToolSetList(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnEndLabelEditToolSetList(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnClickToolSetList(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnRightClickToolSetList(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnEditLabelEnds();
 	afx_msg void OnSelectComment();
 	afx_msg void OnSelectToolComment();
@@ -69,8 +65,7 @@ public:
 		virtual void Dump(CDumpContext& dc) const;
 	#endif
 
-	//{{AFX_VIRTUAL(SVToolSetTabViewClass)
-public:
+	//{{AFX_VIRTUAL(ToolSetView)
 	virtual void OnInitialUpdate();
 
 protected:
@@ -98,11 +93,14 @@ public:
 	void HandleExpandCollapse(const CString& name, bool bCollapse);
 	bool IsEndToolGroupAllowed() const;
 	CString GetSelectedGroup() const;
-	bool IsToolsetListCtrlActive() const;
+	//bool IsToolsetListCtrlActive() const; // BRW - Without Tool Set Tree View, the List Ctrl is always active.
 
 protected:
-	SVToolSetTabViewClass();           // protected constructor used by dynamic creation
-	virtual ~SVToolSetTabViewClass();
+#pragma region Constructor
+	ToolSetView(); // protected constructor used by dynamic creation
+	virtual ~ToolSetView();
+#pragma endregion Constructor
+
 	void ValidateLabelText(CString& newText);
 
 	void RenameItem(int item, const CString& oldName, const CString& newName);
@@ -116,13 +114,18 @@ protected:
 	int m_labelingIndex;
 	CString m_csLabelSaved;    // To restore label if necessary during editing.
 	CString m_csLabelEdited;
+
+private:
+#pragma region Private Methods
+	bool ShowDuplicateNameMessage(const CString& rName) const;
+#pragma endregion Private Methods
 };
 
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************
 /*
-$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVToolSetTabView.h_v  $
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\ToolSetView.h_v  $
  * 
  *    Rev 1.8   12 Feb 2015 13:47:08   sjones
  * Project:  SVObserver

@@ -48,6 +48,11 @@ namespace Seidenader
 		const TCHAR* const VersionMismatch = _T( "The current SVObserver Version does not match the version coming from the clipboard." );
 		const TCHAR* const ColorToolInsertFailed = _T( "A color tool cannot be inserted into a non-color system." );
 		const TCHAR* const NonColorToolInsertFailed = _T( "A color tool must always be the first tool in a color system." );
+		const TCHAR* const EndListDelimiter = _T( "-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------" );
+		const TCHAR* const ColorToolMustBeFirstMessage = _T( "A Color Tool must ALWAYS be\n the first tool on a color system." );
+		const TCHAR* const SVTOOLPARAMETERLIST_MARKER = _T( "** SVSetToolParameterList MARKER **" );
+		const TCHAR* const SVEXCLUDECHARS_CONFIG_NAME = _T( "\\/:*\"<>|;&$@`[]{}()^~!#%" );
+		const TCHAR* const SVEXCLUDECHARS_TOOL_NAME = _T( "\\/:*\";,.+-$@'[]{}()<>|!%&~^\327\367" );
 	}
 }
 namespace SvO = Seidenader::SVObserver;

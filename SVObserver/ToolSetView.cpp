@@ -2,8 +2,8 @@
 //* COPYRIGHT (c) 2003 by SVResearch, Harrisburg
 //* All Rights Reserved
 //******************************************************************************
-//* .Module Name     : SVToolSetTabView
-//* .File Name       : $Workfile:   SVToolSetTabView.cpp  $
+//* .Module Name     : ToolSetView
+//* .File Name       : $Workfile:   ToolSetView.cpp  $
 //* ----------------------------------------------------------------------------
 //* .Current Version : $Revision:   1.15  $
 //* .Check In Date   : $Date:   12 Feb 2015 15:38:20  $
@@ -12,7 +12,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include <comdef.h>
-#include "SVToolSetTabView.h"
+#include "ToolSetView.h"
 #include "SVObserver.h"
 #include "SVIPDoc.h"
 #include "SVToolSet.h"
@@ -33,8 +33,10 @@
 #include "SVTaskObjectValueInterface.h"
 #include "SVShiftTool.h"
 #include "SVShiftToolUtility.h"
+#include "TextDefinesSvO.h"
 #pragma endregion Includes
 
+#pragma region Declarations
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #undef THIS_FILE
@@ -46,63 +48,66 @@ enum ToolsetViewUpdateHints
 	ExpandCollapseHint = SVIPDoc::RefreshView + 1
 };
 
-IMPLEMENT_DYNCREATE(SVToolSetTabViewClass, CFormView)
+IMPLEMENT_DYNCREATE( ToolSetView, CFormView )
+#pragma endregion Declarations
 
-SVToolSetTabViewClass::SVToolSetTabViewClass()
-: CFormView(SVToolSetTabViewClass::IDD)
+#pragma region Constructor
+ToolSetView::ToolSetView()
+: CFormView(ToolSetView::IDD)
 , m_isLabeling(false)
 , m_labelingIndex(-1)
 {
-	//{{AFX_DATA_INIT(SVToolSetTabViewClass)
+	//{{AFX_DATA_INIT(ToolSetView)
 	//}}AFX_DATA_INIT
 }
 
-SVToolSetTabViewClass::~SVToolSetTabViewClass()
+ToolSetView::~ToolSetView()
 {
 }
+#pragma endregion Constructor
 
-void SVToolSetTabViewClass::SetSelectedTool(const SVGUID& rGuid)
+void ToolSetView::SetSelectedTool(const SVGUID& rGuid)
 {
 	m_toolSetListCtrl.SetSelectedTool(rGuid);
 }
 
-SVGUID SVToolSetTabViewClass::GetSelectedTool() const
+SVGUID ToolSetView::GetSelectedTool() const
 {
 	return m_toolSetListCtrl.GetSelectedTool();
 }
 
-ToolListSelectionInfo SVToolSetTabViewClass::GetToolListSelectionInfo() const
+ToolListSelectionInfo ToolSetView::GetToolListSelectionInfo() const
 {
 	return m_toolSetListCtrl.GetToolListSelectionInfo();
 }
 
-bool SVToolSetTabViewClass::IsLabelEditing() const
+bool ToolSetView::IsLabelEditing() const
 {
 	return m_isLabeling;
 }
 
-void SVToolSetTabViewClass::DoDataExchange(CDataExchange* pDX)
+void ToolSetView::DoDataExchange(CDataExchange* pDX)
 {
 	CFormView::DoDataExchange(pDX);
-	//{{AFX_DATA_MAP(SVToolSetTabViewClass)
+	//{{AFX_DATA_MAP(ToolSetView)
 	DDX_Control(pDX, IDC_OUTPUT_TREE, m_outputTreeCtrl);
-	DDX_Control(pDX, IDC_TOOLSET_TREE, m_toolSetTreeCtrl);
+	//DDX_Control(pDX, IDC_TOOLSET_TREE, m_toolSetTreeCtrl);
 	DDX_Control(pDX, IDC_TOOLSET_LIST, m_toolSetListCtrl);
-	DDX_Control(pDX, IDC_TOOLSET_TAB, m_toolSetTabCtrl);
+	//DDX_Control(pDX, IDC_TOOLSET_TAB, m_toolSetTabCtrl);
 	//}}AFX_DATA_MAP
 }
 
-BEGIN_MESSAGE_MAP(SVToolSetTabViewClass, CFormView)
-	//{{AFX_MSG_MAP(SVToolSetTabViewClass)
-	ON_NOTIFY(TCN_SELCHANGE, IDC_TOOLSET_TAB, OnSelchangeToolsetTab)
+BEGIN_MESSAGE_MAP(ToolSetView, CFormView)
+	//{{AFX_MSG_MAP(ToolSetView)
+	//ON_NOTIFY(TCN_SELCHANGE, IDC_TOOLSET_TAB, OnSelchangeToolsetTab)
 	ON_WM_SIZE()
 	ON_WM_CREATE()
-	ON_NOTIFY(NM_DBLCLK, IDC_TOOLSET_LIST, OnDblclkToolsetList)
-	ON_NOTIFY(TVN_ITEMEXPANDED, IDC_TOOLSET_TREE, OnItemexpandedToolsetTree)
-	ON_NOTIFY(LVN_BEGINLABELEDIT, IDC_TOOLSET_LIST, OnBeginlabeleditToolsetList)
-	ON_NOTIFY(LVN_ENDLABELEDIT, IDC_TOOLSET_LIST, OnEndlabeleditToolsetList)
-	ON_NOTIFY(NM_CLICK, IDC_TOOLSET_LIST, OnClickToolsetList)
-	ON_NOTIFY(NM_RCLICK, IDC_TOOLSET_LIST, OnRightClickToolsetList)
+	ON_NOTIFY(NM_DBLCLK, IDC_TOOLSET_LIST, OnDblClkToolSetList)
+	//ON_NOTIFY(TVN_ITEMEXPANDED, IDC_TOOLSET_TREE, OnItemexpandedToolsetTree)
+	ON_NOTIFY(LVN_BEGINLABELEDIT, IDC_TOOLSET_LIST, OnBeginLabelEditToolSetList)
+	ON_NOTIFY(LVN_ENDLABELEDIT, IDC_TOOLSET_LIST, OnEndLabelEditToolSetList)
+	ON_NOTIFY(NM_CLICK, IDC_TOOLSET_LIST, OnClickToolSetList)
+	ON_NOTIFY(NM_RCLICK, IDC_TOOLSET_LIST, OnRightClickToolSetList)
 	ON_COMMAND(ID_EDIT_LABEL_ENDS, OnEditLabelEnds)
 	ON_COMMAND(ID_SELECTTOOL_TOOLCOMMENT, OnSelectComment)
 	ON_COMMAND(ID_SELECTTOOL_LEARN, OnSelectToolSetReference)
@@ -115,21 +120,21 @@ BEGIN_MESSAGE_MAP(SVToolSetTabViewClass, CFormView)
 END_MESSAGE_MAP()
 
 #ifdef _DEBUG
-void SVToolSetTabViewClass::AssertValid() const
+void ToolSetView::AssertValid() const
 {
 	CFormView::AssertValid();
 }
 
-void SVToolSetTabViewClass::Dump(CDumpContext& dc) const
+void ToolSetView::Dump(CDumpContext& dc) const
 {
 	CFormView::Dump(dc);
 }
 #endif //_DEBUG
 
 /////////////////////////////////////////////////////////////////////////////
-// SVToolSetTabViewClass message handlers
+// ToolSetView message handlers
 
-void SVToolSetTabViewClass::OnSelchangeToolsetTab(NMHDR* pNMHDR, LRESULT* pResult) 
+/*void ToolSetView::OnSelchangeToolsetTab(NMHDR* pNMHDR, LRESULT* pResult) // BRW - No more ToolSetTabCtrl
 {
 	TC_ITEM tabCtrlItem;
 	tabCtrlItem.mask = TCIF_PARAM;
@@ -162,32 +167,32 @@ void SVToolSetTabViewClass::OnSelchangeToolsetTab(NMHDR* pNMHDR, LRESULT* pResul
 		}
 	}
 	*pResult = 0;
-}
+}*/
 
-void SVToolSetTabViewClass::OnSize(UINT nType, int cx, int cy) 
+void ToolSetView::OnSize(UINT nType, int cx, int cy)
 {
 	CFormView::OnSize(nType, cx, cy);
 
 	// Adjust Tab Control
-	if (::IsWindow(m_hWnd) && ::IsWindow(m_toolSetTabCtrl.m_hWnd))
+	if ( ::IsWindow( m_hWnd ) && ::IsWindow( m_toolSetListCtrl.m_hWnd ) )
 	{
-		TC_ITEM tabCtrlItem;
-		tabCtrlItem.mask = TCIF_PARAM;
+		//TC_ITEM tabCtrlItem;
+		//tabCtrlItem.mask = TCIF_PARAM;
 		RECT rect1;
 		RECT rect2;
-		int cur = m_toolSetTabCtrl.GetCurSel();
+		//int cur = m_toolSetTabCtrl.GetCurSel();
 
-		m_toolSetTabCtrl.GetWindowRect(&rect2);
+		m_toolSetListCtrl.GetWindowRect(&rect2);
 		ScreenToClient(&rect2);
 		GetClientRect(&rect1);
-		rect2.right  = rect1.right - rect2.left;
-		rect2.right = max(rect2.right, rect2.left + 1);	// EB 2005 06 21
+		rect2.right = rect1.right - rect2.left;
+		rect2.right = max(rect2.right, rect2.left + 1);
 		rect2.bottom = rect1.bottom - rect2.top;
-		rect2.bottom = max(rect2.bottom, rect2.top + 1);	// EB 2005 06 21
-		m_toolSetTabCtrl.MoveWindow(&rect2, true);
-		m_toolSetTabCtrl.AdjustRect(false, &rect2);
-		rect2.right = max(rect2.right, rect2.left + 1);	// EB 2005 06 21
-		rect2.bottom = max(rect2.bottom, rect2.top + 1);	// EB 2005 06 21
+		rect2.bottom = max(rect2.bottom, rect2.top + 1);
+		m_toolSetListCtrl.MoveWindow(&rect2, true);
+		//m_toolSetListCtrl.AdjustRect(false, &rect2);
+		/*rect2.right = max(rect2.right, rect2.left + 1);
+		rect2.bottom = max(rect2.bottom, rect2.top + 1);
 		for (int i = 0; i < m_toolSetTabCtrl.GetItemCount(); ++i)
 		{
 			if (m_toolSetTabCtrl.GetItem(i, &tabCtrlItem))
@@ -205,58 +210,57 @@ void SVToolSetTabViewClass::OnSize(UINT nType, int cx, int cy)
 					}
 				}
 			}
-		}
+		}*/
 	}
 }
 
-void SVToolSetTabViewClass::OnInitialUpdate()
+void ToolSetView::OnInitialUpdate()
 {
 	CFormView::OnInitialUpdate();
 
 	// Want Pluses and Minuses
-	m_toolSetTreeCtrl.SetHasButtonsStyle();
+	//m_toolSetTreeCtrl.SetHasButtonsStyle();
 
-	// Don't Allow editing of labels in Tree 
-	m_toolSetTreeCtrl.SetNoEditLabelsStyle();
+	// Don't Allow editing of labels in Tree
+	//m_toolSetTreeCtrl.SetNoEditLabelsStyle();
 
-	// Only Single selection for List control 
+	// Only Single selection for List control
 	m_toolSetListCtrl.SetSingleSelect();
 
 	SVIPDoc* pCurrentDocument = GetIPDoc();
 
 	if (nullptr != pCurrentDocument)
 	{
-		TC_ITEM tabCtrlItem;
-		tabCtrlItem.mask = TCIF_TEXT | TCIF_PARAM;
-		int count = 0;
+		//TC_ITEM tabCtrlItem;
+		//tabCtrlItem.mask = TCIF_TEXT | TCIF_PARAM;
+		//int count = 0;
 
-		tabCtrlItem.pszText = _T("Tool Set List");;
-		tabCtrlItem.lParam	= static_cast<DWORD_PTR>(IDC_TOOLSET_LIST);
-		m_toolSetTabCtrl.InsertItem(count++, &tabCtrlItem);
+		//tabCtrlItem.pszText = _T("Tool Set List");;
+		//tabCtrlItem.lParam	= static_cast<DWORD_PTR>(IDC_TOOLSET_LIST);
+		//m_toolSetTabCtrl.InsertItem(count++, &tabCtrlItem);
 
-		tabCtrlItem.pszText = _T("Tool Set Tree");
-		tabCtrlItem.lParam	= static_cast<DWORD_PTR>(IDC_TOOLSET_TREE);
-		m_toolSetTabCtrl.InsertItem(count++, &tabCtrlItem);
+		//tabCtrlItem.pszText = _T("Tool Set Tree");
+		//tabCtrlItem.lParam	= static_cast<DWORD_PTR>(IDC_TOOLSET_TREE);
+		//m_toolSetTabCtrl.InsertItem(count++, &tabCtrlItem);
 
 		// Set initial tab selection...
-		m_toolSetTabCtrl.SetCurSel(0);
+		//m_toolSetTabCtrl.SetCurSel(0);
 
-		m_outputTreeCtrl.ShowWindow(SW_HIDE); 
+		m_outputTreeCtrl.ShowWindow(SW_HIDE);
 
-		m_toolSetTreeCtrl.ShowWindow(SW_HIDE);
+		//m_toolSetTreeCtrl.ShowWindow(SW_HIDE);
 		m_toolSetListCtrl.ShowWindow(SW_SHOW);
 	}
 }
 
-int SVToolSetTabViewClass::OnCreate(LPCREATESTRUCT lpCreateStruct)
+int ToolSetView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
-	if (-1 == CFormView::OnCreate(lpCreateStruct))
-		return -1;
+	if (-1 == CFormView::OnCreate(lpCreateStruct)) { return -1; }
 
 	return 0;
 }
 
-void SVToolSetTabViewClass::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
+void ToolSetView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 {
 	if (!SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST))
 	{
@@ -281,14 +285,11 @@ void SVToolSetTabViewClass::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHin
 					}
 				}
 				m_toolSetListCtrl.SetTaskObjectList(pCurrentDocument->GetToolSet());
-				m_toolSetTreeCtrl.SetTaskObjectList(pCurrentDocument->GetToolSet());
-
 				m_toolSetListCtrl.SetSelectedTool(pCurrentDocument->GetSelectedToolID());
 			}
 			else if (ExpandCollapseHint == lHint)
 			{
 				m_toolSetListCtrl.Rebuild();
-				m_toolSetTreeCtrl.Rebuild();
 			}
 			else
 			{
@@ -303,7 +304,7 @@ void SVToolSetTabViewClass::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHin
 	}
 }
 
-void SVToolSetTabViewClass::OnEditToolName()
+void ToolSetView::OnEditToolName()
 {
 	CWaitCursor l_cwcMouse;
 
@@ -330,26 +331,25 @@ void SVToolSetTabViewClass::OnEditToolName()
 	}
 }
 
-void SVToolSetTabViewClass::OnClickToolsetList(NMHDR* pNMHDR, LRESULT* pResult)
+void ToolSetView::OnClickToolSetList(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	*pResult = 0;
 
 	// Allow Expand/Collapse in run mode
 	// Also clicking on the Start or End Group does a run once if allowed.
-	if (IsToolsetListCtrlActive())
+
+	NMITEMACTIVATE* pActivate = reinterpret_cast<NMITEMACTIVATE *>(pNMHDR);
+	UINT uFlags;
+	int item = m_toolSetListCtrl.HitTest(pActivate->ptAction, &uFlags);
+	if (!(uFlags & LVHT_ONITEMLABEL) && (uFlags & LVHT_ONITEMSTATEICON | LVHT_ONITEMICON))
 	{
-		NMITEMACTIVATE* pActivate = reinterpret_cast<NMITEMACTIVATE *>(pNMHDR);
-		UINT uFlags;
-		int item = m_toolSetListCtrl.HitTest(pActivate->ptAction, &uFlags);
-		if (!(uFlags & LVHT_ONITEMLABEL) && (uFlags & LVHT_ONITEMSTATEICON | LVHT_ONITEMICON))
+		// Toggle Collapse.
+		if (item > -1)
 		{
-			// Toggle Collapse.
-			if (item > -1)
-			{
-				ToggleExpandCollapse(item);
-			}
+			ToggleExpandCollapse(item);
 		}
 	}
+
 	if (SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST) || !TheSVObserverApp.OkToEdit())
 	{
 		return;
@@ -364,14 +364,12 @@ void SVToolSetTabViewClass::OnClickToolsetList(NMHDR* pNMHDR, LRESULT* pResult)
 		// Run the toolset once to update the images/results.
 		// 16 Dec 1999 - frb. (99)
 		// Post a message to do the run once so that the double click still works
-		PostMessage(WM_COMMAND,ID_RUN_ONCE);
+		PostMessage(WM_COMMAND, ID_RUN_ONCE);
 	}
 }
 
-
-void SVToolSetTabViewClass::OnRightClickToolsetList(NMHDR* pNMHDR, LRESULT* pResult)
+void ToolSetView::OnRightClickToolSetList(NMHDR* pNMHDR, LRESULT* pResult)
 {
-	// We need supervisory access to set a tool to be moved & resized after configuration load.
 	if (SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST) || !TheSVObserverApp.OkToEdit())
 	{
 		return;
@@ -461,7 +459,7 @@ void SVToolSetTabViewClass::OnRightClickToolsetList(NMHDR* pNMHDR, LRESULT* pRes
 	*pResult = 0;
 }
 
-void SVToolSetTabViewClass::OnDblclkToolsetList(NMHDR* pNMHDR, LRESULT* pResult)
+void ToolSetView::OnDblClkToolSetList(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	if (SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST) || !TheSVObserverApp.OkToEdit())
 	{
@@ -489,7 +487,7 @@ void SVToolSetTabViewClass::OnDblclkToolsetList(NMHDR* pNMHDR, LRESULT* pResult)
 	*pResult = 0;
 }
 
-void SVToolSetTabViewClass::OnItemexpandedToolsetTree(NMHDR* pNMHDR, LRESULT* pResult)
+/*void ToolSetView::OnItemexpandedToolsetTree(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	LPNMTREEVIEW pNMTreeView = reinterpret_cast<LPNMTREEVIEW>(pNMHDR);
 
@@ -498,16 +496,16 @@ void SVToolSetTabViewClass::OnItemexpandedToolsetTree(NMHDR* pNMHDR, LRESULT* pR
 		m_toolSetTreeCtrl.SetWindowPos(&wndTop, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
 	}
 	*pResult = 0;
-}
+}*/
 
-void SVToolSetTabViewClass::OnBeginlabeleditToolsetList(NMHDR* pNMHDR, LRESULT* pResult) 
+void ToolSetView::OnBeginLabelEditToolSetList(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	LV_DISPINFO* pDispInfo = reinterpret_cast<LV_DISPINFO*>(pNMHDR);
 
 	// Don't allow editing if running.
 	if (SVSVIMStateClass::CheckState(SV_STATE_RUNNING | SV_STATE_TEST) || !TheSVObserverApp.OkToEdit())
 	{
-		*pResult = true;		// Abandon the label editing.
+		*pResult = true; // Abandon the label editing.
 		return;
 	}
 
@@ -516,7 +514,7 @@ void SVToolSetTabViewClass::OnBeginlabeleditToolsetList(NMHDR* pNMHDR, LRESULT* 
 	// Check for the last item which is the string of 'dashes'.
 	if (-1 == m_labelingIndex || !m_toolSetListCtrl.AllowedToEdit())
 	{
-		*pResult = true;         // Abandon the label editing.
+		*pResult = true; // Abandon the label editing.
 		return;
 	}
 
@@ -526,20 +524,20 @@ void SVToolSetTabViewClass::OnBeginlabeleditToolsetList(NMHDR* pNMHDR, LRESULT* 
 	pEdit->GetWindowText(m_csLabelSaved);
 
 	m_isLabeling = true;
-	SetCapture();            // capture mouse events - 28 Oct 1999 - frb.
+	SetCapture(); // capture mouse events - 28 Oct 1999 - frb.
 
 	*pResult = 0;
 }
 
 /////////////////////////////////////////////////////////////////////////////
 // Validate label text and remove unwanted characters.
-void SVToolSetTabViewClass::ValidateLabelText(CString& newText)
+void ToolSetView::ValidateLabelText(CString& newText)
 {
 	// strip leading and trailing spaces
 	newText.Trim();
 
 	// The characters we do not want in the label.
-	static const CString csUndesirables = SVEXCLUDECHARS_TOOL_NAME;
+	static const CString csUndesirables = SvO::SVEXCLUDECHARS_TOOL_NAME;
 
 	int nCount = csUndesirables.GetLength();
 	for (int i = 0;i < nCount;i++)
@@ -566,7 +564,7 @@ void SVToolSetTabViewClass::ValidateLabelText(CString& newText)
 			}
 			else
 			{
-				bDone = true;        // Exit while loop
+				bDone = true; // Exit while loop
 			}
 		}
 	}
@@ -579,7 +577,7 @@ void SVToolSetTabViewClass::ValidateLabelText(CString& newText)
 	}
 }
 
-void SVToolSetTabViewClass::RenameItem(int item, const CString& oldName, const CString& newName)
+void ToolSetView::RenameItem(int item, const CString& oldName, const CString& newName)
 {
 	// check if it's a group or a tool
 	if (m_labelingIndex >= 0 && m_labelingIndex < m_toolSetListCtrl.GetItemCount())
@@ -606,7 +604,7 @@ void SVToolSetTabViewClass::RenameItem(int item, const CString& oldName, const C
 	}
 }
 
-void SVToolSetTabViewClass::OnEditLabelEnds()
+void ToolSetView::OnEditLabelEnds()
 {
 	// Update the text in the list control item.
 	if (m_labelingIndex >= 0 && m_labelingIndex < m_toolSetListCtrl.GetItemCount()) 
@@ -626,14 +624,14 @@ void SVToolSetTabViewClass::OnEditLabelEnds()
 	if (m_isLabeling)
 	{
 		// Cause edit control to 'end' editing.
-		SetFocus();   // Cause edit control to lose 'focus'.
+		SetFocus(); // Cause edit control to lose 'focus'.
 	}
 
 	m_isLabeling = false;
-	::ReleaseCapture();     // release the mouse capture
+	::ReleaseCapture(); // release the mouse capture
 }
 
-bool SVToolSetTabViewClass::EditToolGroupingComment()
+bool ToolSetView::EditToolGroupingComment()
 {
 	bool bRetVal  = false;
 	const ToolListSelectionInfo& info = m_toolSetListCtrl.GetToolListSelectionInfo();
@@ -660,7 +658,7 @@ bool SVToolSetTabViewClass::EditToolGroupingComment()
 	return bRetVal;
 }
 
-void SVToolSetTabViewClass::OnSelectComment()
+void ToolSetView::OnSelectComment()
 {
 	const SVGUID& rGuid = m_toolSetListCtrl.GetSelectedTool();
 	if (rGuid.empty())
@@ -673,7 +671,7 @@ void SVToolSetTabViewClass::OnSelectComment()
 	}
 }
 
-void SVToolSetTabViewClass::OnSelectToolComment()
+void ToolSetView::OnSelectToolComment()
 {
 	SVIPDoc* pCurrentDocument = GetIPDoc();
 	if (nullptr != pCurrentDocument)
@@ -713,7 +711,7 @@ void SVToolSetTabViewClass::OnSelectToolComment()
 	}
 }
 
-void SVToolSetTabViewClass::OnSelectToolSetReference()
+void ToolSetView::OnSelectToolSetReference()
 {
 	const SVGUID& rGuid = m_toolSetListCtrl.GetSelectedTool();
 	SVToolClass* pTool = dynamic_cast<SVToolClass *>(SVObjectManagerClass::Instance().GetObject(rGuid));
@@ -729,7 +727,7 @@ void SVToolSetTabViewClass::OnSelectToolSetReference()
 	}
 }
 
-void SVToolSetTabViewClass::OnSelectToolNormalize()
+void ToolSetView::OnSelectToolNormalize()
 {
 	const SVGUID& rGuid = m_toolSetListCtrl.GetSelectedTool();
 	if (!rGuid.empty())
@@ -747,7 +745,7 @@ void SVToolSetTabViewClass::OnSelectToolNormalize()
 	}
 }
 
-void SVToolSetTabViewClass::OnRunOnce()
+void ToolSetView::OnRunOnce()
 {
 	CWaitCursor l_cwcMouse;
 
@@ -767,7 +765,7 @@ void SVToolSetTabViewClass::OnRunOnce()
 	}
 }
 
-static bool ShowDuplicateNameMessage(const CString& rName)
+bool ToolSetView::ShowDuplicateNameMessage(const CString& rName) const
 {
 	CString msg("A duplicate name was found for the item being renamed\n");
 	msg += rName;
@@ -775,7 +773,7 @@ static bool ShowDuplicateNameMessage(const CString& rName)
 	return (IDRETRY == rc);
 }
 
-void SVToolSetTabViewClass::OnEndlabeleditToolsetList(NMHDR* pNMHDR, LRESULT* pResult)
+void ToolSetView::OnEndLabelEditToolSetList(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	LV_DISPINFO* pDispInfo = reinterpret_cast<LV_DISPINFO*>(pNMHDR);
 
@@ -856,7 +854,7 @@ void SVToolSetTabViewClass::OnEndlabeleditToolsetList(NMHDR* pNMHDR, LRESULT* pR
 	}
 }
 
-void SVToolSetTabViewClass::OnDraw(CDC* pDC)
+void ToolSetView::OnDraw(CDC* pDC)
 {
 	CFormView::OnDraw(pDC);
 
@@ -864,22 +862,22 @@ void SVToolSetTabViewClass::OnDraw(CDC* pDC)
 	TC_ITEM tabCtrlItem;
 	tabCtrlItem.mask = TCIF_PARAM;
 
-	int cur = m_toolSetTabCtrl.GetCurSel();
+	/*int cur = m_toolSetTabCtrl.GetCurSel();
 
 	if (m_toolSetTabCtrl.GetItem(cur, &tabCtrlItem))
 	{
 		if (IDC_TOOLSET_LIST == tabCtrlItem.lParam)
-		{
+		{*/
 			m_toolSetListCtrl.BringWindowToTop();
-		}
+		/*}
 		else if (IDC_TOOLSET_TREE == tabCtrlItem.lParam)
 		{
 			m_toolSetTreeCtrl.BringWindowToTop();
 		}
-	}
+	}*/
 }
 
-void SVToolSetTabViewClass::OnLButtonDown(UINT nFlags, CPoint point)
+void ToolSetView::OnLButtonDown(UINT nFlags, CPoint point)
 {
 	// If we are editing a label, we have the mouse 'captured'.
 	// If a mouse event occurs we need to end the editing.
@@ -891,7 +889,7 @@ void SVToolSetTabViewClass::OnLButtonDown(UINT nFlags, CPoint point)
 	CFormView::OnLButtonDown(nFlags, point);
 }
 
-void SVToolSetTabViewClass::SetViewSize(CSize &Size)
+void ToolSetView::SetViewSize(CSize &Size)
 {
 	CWnd *l_pcWnd = this;
 	SVIPSplitterFrame *l_pSplitterFrame = nullptr;
@@ -913,7 +911,7 @@ void SVToolSetTabViewClass::SetViewSize(CSize &Size)
 	}
 }
 
-BOOL SVToolSetTabViewClass::SetParameters(SVTreeType& rTree, SVTreeType::SVBranchHandle htiParent)
+BOOL ToolSetView::SetParameters(SVTreeType& rTree, SVTreeType::SVBranchHandle htiParent)
 {
 	BOOL bOk = false;
 
@@ -942,7 +940,7 @@ BOOL SVToolSetTabViewClass::SetParameters(SVTreeType& rTree, SVTreeType::SVBranc
 	return bOk;
 }
 
-BOOL SVToolSetTabViewClass::CheckParameters(SVTreeType& rTree, SVTreeType::SVBranchHandle htiParent)
+BOOL ToolSetView::CheckParameters(SVTreeType& rTree, SVTreeType::SVBranchHandle htiParent)
 {
 	BOOL bOk = false;
 	CSize l_Size;
@@ -982,12 +980,12 @@ BOOL SVToolSetTabViewClass::CheckParameters(SVTreeType& rTree, SVTreeType::SVBra
 	return bOk;
 }
 
-SVIPDoc* SVToolSetTabViewClass::GetIPDoc() const
+SVIPDoc* ToolSetView::GetIPDoc() const
 {
 	return dynamic_cast<SVIPDoc*>(GetDocument());
 }
 
-BOOL SVToolSetTabViewClass::GetParameters(SVObjectWriter& rWriter)
+BOOL ToolSetView::GetParameters(SVObjectWriter& rWriter)
 {
 	BOOL bOk = true;
 
@@ -1008,7 +1006,7 @@ BOOL SVToolSetTabViewClass::GetParameters(SVObjectWriter& rWriter)
 	return bOk;
 }
 
-void SVToolSetTabViewClass::OnSetFocus(CWnd* pOldWnd)
+void ToolSetView::OnSetFocus(CWnd* pOldWnd)
 {
 	CFormView::OnSetFocus(pOldWnd);
 
@@ -1026,7 +1024,7 @@ void SVToolSetTabViewClass::OnSetFocus(CWnd* pOldWnd)
 	}
 }
 
-void SVToolSetTabViewClass::HandleExpandCollapse(const CString& name, bool bCollapse)
+void ToolSetView::HandleExpandCollapse(const CString& name, bool bCollapse)
 {
 	SVIPDoc* pDoc = GetIPDoc();
 	if (nullptr != pDoc)
@@ -1041,7 +1039,7 @@ void SVToolSetTabViewClass::HandleExpandCollapse(const CString& name, bool bColl
 	}
 }
 
-void SVToolSetTabViewClass::ToggleExpandCollapse(int item)
+void ToolSetView::ToggleExpandCollapse(int item)
 {
 	SVIPDoc* pDoc = GetIPDoc();
 	if (nullptr != pDoc)
@@ -1062,7 +1060,7 @@ void SVToolSetTabViewClass::ToggleExpandCollapse(int item)
 	}
 }
 
-bool SVToolSetTabViewClass::IsEndToolGroupAllowed() const
+bool ToolSetView::IsEndToolGroupAllowed() const
 {
 	bool bRetVal = false;
 	SVIPDoc* pDoc = GetIPDoc();
@@ -1091,7 +1089,7 @@ bool SVToolSetTabViewClass::IsEndToolGroupAllowed() const
 	return bRetVal;
 }
 
-bool SVToolSetTabViewClass::CheckName(const CString& name) const
+bool ToolSetView::CheckName(const CString& name) const
 {
 	bool bNameOk = true;
 	SVIPDoc* pDoc = GetIPDoc();
@@ -1103,7 +1101,7 @@ bool SVToolSetTabViewClass::CheckName(const CString& name) const
 	return bNameOk;
 }
 
-bool SVToolSetTabViewClass::IsToolsetListCtrlActive() const
+/*bool ToolSetView::IsToolsetListCtrlActive() const
 {
 	bool bRetVal = false;
 	TC_ITEM tabCtrlItem;
@@ -1119,7 +1117,7 @@ bool SVToolSetTabViewClass::IsToolsetListCtrlActive() const
 		}
 	}
 	return bRetVal;
-}
+}*/
 
 //******************************************************************************
 //* LOG HISTORY:

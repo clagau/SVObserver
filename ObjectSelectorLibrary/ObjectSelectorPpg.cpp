@@ -86,8 +86,7 @@ BOOL ObjectSelectorPpg::OnInitDialog()
 	//If single select then change the tristate icons
 	if( m_NodeTree.isSingleSelect() )
 	{
-		int ImageIndex( 0 );
-		ImageIndex = IDI_TRI_STATE_ENABLED - IDI_EMPTY_ENABLED;
+		int ImageIndex( IDI_TRI_STATE_ENABLED - IDI_EMPTY_ENABLED );
 		m_StateImageList.Replace( ImageIndex, AfxGetApp()->LoadIcon( IDI_DOT_ENABLED ) );
 		ImageIndex = IDI_TRI_STATE_DISABLED - IDI_EMPTY_ENABLED;
 		m_StateImageList.Replace( ImageIndex, AfxGetApp()->LoadIcon( IDI_DOT_DISABLED ) );

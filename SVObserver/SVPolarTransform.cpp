@@ -53,14 +53,6 @@ SVPolarTransformClass::SVPolarTransformClass( SVObjectClass* POwner, int StringR
 	inputEndAngleResult.SetObject( GetObjectInfo() );
 	RegisterInputObject( &inputEndAngleResult, _T( "PolarTransformEndAngleResult" ) );
 
-	// Register Embedded Objects
-//	RegisterEmbeddedObject( &performTranslation, SVPerformTranslationObjectGuid, IDS_OBJECTNAME_PERFORM_TRANSLATION );
-
-
-	// Set Embedded defaults
-//	performTranslation.SetDefaultValue( FALSE, TRUE );
-
-
 	// Add Default Inputs and Outputs
 	addDefaultInputObjects();
 }

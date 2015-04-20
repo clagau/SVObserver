@@ -81,7 +81,6 @@ BOOL SVOFileConfigApp::InitInstance()
 	// OLE-Bibliotheken initialisieren
 	if( ! AfxOleInit() )
 	{
-//		AfxMessageBox( IDP_OLE_INIT_FAILED );
 		return FALSE;
 	}
 
