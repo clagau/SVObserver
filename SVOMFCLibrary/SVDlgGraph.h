@@ -9,89 +9,88 @@
 //* .Check In Date   : $Date:   23 Apr 2013 10:15:28  $
 //******************************************************************************
 
-#ifndef SVDLGGRAPH_H
-#define SVDLGGRAPH_H
+#pragma once
 
-#include "SVObjectLibrary/SVObjectByteArrayClass.h"
-#include "SVObjectLibrary/SVObjectCPointArrayClass.h"
-#include "SVObjectLibrary/SVObjectLongArrayClass.h"
-#include "SVObjectLibrary/SVObjectDoubleArrayClass.h"
+#include "SVContainerLibrary\SVObjectArrayClassTemplate.h"
 
-// Use this to define a function which is called,
-// while somebody pushes the left mouse button.
-typedef BOOL ( CALLBACK* SVProcMousePointFunc ) ( POINT, LPVOID );
-
-// Normalize Modes...
-enum SVNormalizeModeEnum
+namespace Seidenader
 {
-	SVNormalize1D,	// Normalize x and y separately
-	SVNormalize2D,	// Normalize x and y together ( square )
-	SVNormalizeXYMinMax,// Normalize on specified X and Y max values
-};
+	namespace SVOMFCLibrary
+	{
+		// Use this to define a function which is called,
+		// while somebody pushes the left mouse button.
+		typedef BOOL ( CALLBACK* SVProcMousePointFunc ) ( POINT, LPVOID );
+
+		// Normalize Modes...
+		enum SVNormalizeModeEnum
+		{
+			SVNormalize1D,	// Normalize x and y separately
+			SVNormalize2D,	// Normalize x and y together ( square )
+			SVNormalizeXYMinMax,// Normalize on specified X and Y max values
+		};
 
 
-class SVDlgGraphClass : public CStatic
-{
-public:
-	SVDlgGraphClass();
+		class SVDlgGraphClass : public CStatic
+		{
+		public:
+			SVDlgGraphClass();
 
-	virtual ~SVDlgGraphClass();
+			virtual ~SVDlgGraphClass();
 
-	BOOL SetColor(COLORREF rgb, BOOL bRedraw=TRUE);
+			BOOL SetColor(COLORREF rgb, BOOL bRedraw=TRUE);
 
-	virtual BOOL SetPoints( const SVObjectByteArrayClass& RByteVec );
-	virtual BOOL SetPoints( const SVObjectLongArrayClass& RLongVec );
-	virtual BOOL SetPoints( const SVObjectDoubleArrayClass& RDoubleVec );
-	virtual BOOL SetPoints( const SVObjectCPointArrayClass& RPointVec );
+			virtual BOOL SetPoints( const SvCl::SVObjectByteArrayClass& RByteVec );
+			virtual BOOL SetPoints( const SvCl::SVObjectLongArrayClass& RLongVec );
+			virtual BOOL SetPoints( const SvCl::SVObjectDoubleArrayClass& RDoubleVec );
+			virtual BOOL SetPoints( const SvCl::SVObjectCPointArrayClass& RPointVec );
 
-	BOOL SetMousePointProcFunc( SVProcMousePointFunc PFunc, LPVOID PUserData );	
-	void SetNormalizeMode( SVNormalizeModeEnum NormalizeMode );
-	void SetXYMinMax(long lXMin, long lYMin, long lXMax, long lYMax);
+			BOOL SetMousePointProcFunc( SVProcMousePointFunc PFunc, LPVOID PUserData );	
+			void SetNormalizeMode( SVNormalizeModeEnum NormalizeMode );
+			void SetXYMinMax(long lXMin, long lYMin, long lXMax, long lYMax);
 
-	BOOL Normalize();
-	void Retransform( CPoint& RPoint );
+			BOOL Normalize();
+			void Retransform( CPoint& RPoint );
 
 
-	//{{AFX_VIRTUAL(SVDlgGraphClass)
-	//}}AFX_VIRTUAL
+			//{{AFX_VIRTUAL(SVDlgGraphClass)
+			//}}AFX_VIRTUAL
 
-protected:
-	//{{AFX_MSG(SVDlgGraphClass)
-	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
-	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
-	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
-	afx_msg void OnPaint();
-	//}}AFX_MSG
+		protected:
+			//{{AFX_MSG(SVDlgGraphClass)
+			afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
+			afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
+			afx_msg void OnMouseMove(UINT nFlags, CPoint point);
+			afx_msg void OnPaint();
+			//}}AFX_MSG
 
-	DECLARE_MESSAGE_MAP()
+			DECLARE_MESSAGE_MAP()
 
-protected:
+		protected:
 
-	SVObjectCPointArrayClass pointVec;
-	SVProcMousePointFunc pProcFunc;
-	LPVOID pUserData;
+			SvCl::SVObjectCPointArrayClass pointVec;
+			SVProcMousePointFunc pProcFunc;
+			LPVOID pUserData;
 
-	double xMult;
-	double yMult;
-	long xDisp;
-	long yDisp;
-	long yClient;
-	long m_lXMin;
-	long m_lYMin;
-	long m_lXMax;
-	long m_lYMax;
+			double xMult;
+			double yMult;
+			long xDisp;
+			long yDisp;
+			long yClient;
+			long m_lXMin;
+			long m_lYMin;
+			long m_lXMax;
+			long m_lYMax;
 
-	COLORREF mrgbGraphColor;
+			COLORREF mrgbGraphColor;
 
-	BOOL bButtonDown;
+			BOOL bButtonDown;
 
-	SVNormalizeModeEnum normalizeMode;
-};
+			SVNormalizeModeEnum normalizeMode;
+		};
+	} //SVOMFCLibrary
+} //Seidenader
 
-//{{AFX_INSERT_LOCATION}}
-// Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif
+namespace SvOml = Seidenader::SVOMFCLibrary;
 
 //******************************************************************************
 //* LOG HISTORY:

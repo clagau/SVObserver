@@ -11,7 +11,7 @@
 
 #include "stdafx.h"
 #include "SVProgressDialog.h"
-#include "SVUserMessage.h"
+#include "ObjectInterfaces/SVUserMessage.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

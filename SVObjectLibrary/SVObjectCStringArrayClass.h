@@ -9,17 +9,16 @@
 //* .Check In Date   : $Date:   22 Apr 2013 16:50:08  $
 //******************************************************************************
 
-#ifndef INC_SVOBJECTCSTRINGARRAYCLASS_3A76FCBF0128_INCLUDED
-#define INC_SVOBJECTCSTRINGARRAYCLASS_3A76FCBF0128_INCLUDED
+#pragma once
 
 #ifdef SV_SHOW_INCLUDES
 	#pragma message( "Including " __FILE__ )
 #endif
 
 #include "SVOMFCLibrary/SVTemplate.h"
-#include "SVObjectArrayClassTemplate.h"
-
-class SVObjectCStringArrayClass : public SVObjectArrayClassTemplate<CString>
+#include "SVContainerLibrary/SVObjectArrayClassTemplate.h"
+//@WARNING [MZA, 21.04.15] Can this class be removed and instead a typedef of SVObjectArrayClassTemplate<CString> be used?
+class SVObjectCStringArrayClass : public SvCl::SVObjectArrayClassTemplate<CString>
 {
 public:
 	SVObjectCStringArrayClass();
@@ -34,8 +33,6 @@ public:
 	virtual void SetAt( int nIndex, CString &strElement );
 	virtual void SetAtGrow( int nIndex, LPCTSTR newElement );
 };
-
-#endif
 
 //******************************************************************************
 //* LOG HISTORY:

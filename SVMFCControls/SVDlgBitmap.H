@@ -9,109 +9,92 @@
 //* .Check In Date   : $Date:   23 Apr 2013 10:14:56  $
 //******************************************************************************
 
-#ifndef SVDLGBITMAP_H
-#define SVDLGBITMAP_H
+#pragma once
 
 #include "SVContainerLibrary/SVVector.h"
 
-struct SVDlgBitmapTextStruct
+namespace Seidenader
 {
-	SVDlgBitmapTextStruct()
+	namespace SVMFCControls
 	{
-		BAbsCoord = TRUE;
-		X = 0.0;
-		Y = 0.0;
-		Color = 0;
-		StrText = _T( "" );
-	};
+		struct SVDlgBitmapTextStruct
+		{
+			SVDlgBitmapTextStruct()
+			{
+				BAbsCoord = TRUE;
+				X = 0.0;
+				Y = 0.0;
+				Color = 0;
+				StrText = _T( "" );
+			};
 
-	BOOL BAbsCoord;
-	double X;
-	double Y;
-	COLORREF Color;
-	CString StrText;
-};
-
-
-
-
-class SVDlgBitmapTextListClass : public SVVector< SVDlgBitmapTextStruct* >
-{
-public:
-	SVDlgBitmapTextListClass() {};
-
-	virtual ~SVDlgBitmapTextListClass() 
-	{ 
-		for( int i = GetSize() - 1; i >= 0; --i )
-			if( GetAt( i ) )
-				delete( GetAt( i ) );
-
-		RemoveAll();
-	}
-};
+			BOOL BAbsCoord;
+			double X;
+			double Y;
+			COLORREF Color;
+			CString StrText;
+		};
 
 
+		class SVDlgBitmapTextListClass : public SVVector< SVDlgBitmapTextStruct* >
+		{
+		public:
+			SVDlgBitmapTextListClass() {};
+
+			virtual ~SVDlgBitmapTextListClass() 
+			{ 
+				for( int i = GetSize() - 1; i >= 0; --i )
+					if( GetAt( i ) )
+						delete( GetAt( i ) );
+
+				RemoveAll();
+			}
+		};
 
 
-class SVDlgBitmapClass : public CStatic
-{
-protected:
-	//{{AFX_MSG(SVDlgBitmapClass)
-	afx_msg void OnPaint();
-	afx_msg void OnPaletteIsChanging(CWnd* pRealizeWnd);
-	//}}AFX_MSG
+		class SVDlgBitmapClass : public CStatic
+		{
+		protected:
+			//{{AFX_MSG(SVDlgBitmapClass)
+			afx_msg void OnPaint();
+			afx_msg void OnPaletteIsChanging(CWnd* pRealizeWnd);
+			//}}AFX_MSG
 
-	DECLARE_MESSAGE_MAP()
+			DECLARE_MESSAGE_MAP()
 
+		public:
+			SVDlgBitmapClass();
+			virtual ~SVDlgBitmapClass();
 
-public:
-	SVDlgBitmapClass();
-	virtual ~SVDlgBitmapClass();
+			BOOL Init( LPCTSTR lpszResourceName );
+			BOOL Init( UINT nIDResource );
 
-	BOOL Init( LPCTSTR lpszResourceName );
-	BOOL Init( UINT nIDResource );
+			CSize GetDimensions();
 
-	CSize GetDimensions();
+			BOOL SetWindowSize( int cx = -1, int cy = -1 );
+			CSize GetWindowSize();
 
-	BOOL SetWindowSize( int cx = -1, int cy = -1 );
-	CSize GetWindowSize();
+			BOOL TextOut( int X, int Y, COLORREF Color, LPCTSTR StrText );
+			BOOL TextOut( double X, double Y, COLORREF Color, LPCTSTR StrText );
 
-	BOOL TextOut( int X, int Y, COLORREF Color, LPCTSTR StrText );
-	BOOL TextOut( double X, double Y, COLORREF Color, LPCTSTR StrText );
+		public:
+			BOOL OEMMode;
 
-public:
-	BOOL OEMMode;
+		protected:
+			HBITMAP InitFromFile();
 
-protected:
-	HBITMAP InitFromFile();
+			//{{AFX_VIRTUAL(SVDlgBitmapClass)
+			//}}AFX_VIRTUAL	
 
-	//{{AFX_VIRTUAL(SVDlgBitmapClass)
-	//}}AFX_VIRTUAL	
+		protected:
+			CBitmap		bitmap;
+			SVDlgBitmapTextListClass textList;
 
-protected:
-	CBitmap		bitmap;
-	SVDlgBitmapTextListClass textList;
+		};
+	} //SVMFCControls
+} //Seidenader
 
-};
-
-
-//{{AFX_INSERT_LOCATION}}
-// Microsoft Developer Studio fügt zusätzliche Deklarationen unmittelbar vor der vorhergehenden Zeile ein.
-
-#endif	// SVDLGBITMAP_H
-
-
-
-
-
-
-
-
-
-
-
-
-
+namespace SvMc = Seidenader::SVMFCControls;
 
 //******************************************************************************
 //* LOG HISTORY:

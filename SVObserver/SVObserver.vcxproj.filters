@@ -254,12 +254,6 @@
     <ClCompile Include="SVDisplayObject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVDlgBitmap.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVDlgGraph.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVDlgImage.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -773,9 +767,6 @@
     <ClCompile Include="SVOProPosQueDlg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVOSelectItemListDlg.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVOTriggerDeviceDlg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -987,9 +978,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVSkeletonFilter.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVSlideBar.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVSoftwareTriggerClass.cpp">
@@ -1221,9 +1209,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVWaterShedFilter.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVWindowBar.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVWindowTool.cpp">
@@ -1485,9 +1470,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="RemoteMonitorListController.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="NameSelectionTreeCtrl.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVMonitorList.cpp">
@@ -1807,12 +1789,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVDisplayObject.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVDlgBitmap.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVDlgGraph.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVDlgImage.h">
@@ -2364,9 +2340,6 @@
     <ClInclude Include="SVOProPosQueDlg.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVOSelectItemListDlg.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVOTriggerDeviceDlg.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -2598,9 +2571,6 @@
     <ClInclude Include="SVSkeletonFilter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVSlideBar.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVSoftwareTriggerClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -2802,9 +2772,6 @@
     <ClInclude Include="SVUpperThresholdEquation.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVUserMessage.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVUtilities.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -2851,9 +2818,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVWaterShedFilter.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVWindowBar.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVWindowTool.h">
@@ -3148,12 +3112,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="RemoteMonitorListController.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="NameSelectionList.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="NameSelectionTreeCtrl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVMonitorList.h">

@@ -301,7 +301,7 @@ HRESULT SVEnumerateValueObjectClass::SetObjectValue( SVObjectAttributeClass* pDa
 	BOOL bOk = FALSE;
 	
 	SVObjectCStringArrayClass svCStringArray;
-	SVObjectLongArrayClass svLongArray;
+	SvCl::SVObjectLongArrayClass svLongArray;
 	bucket_type l_Buckets(BucketsNoAssert());
 
 	if ( bOk = pDataObject->GetAttributeData( "Enumeration", svCStringArray ) )

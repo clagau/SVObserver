@@ -18,53 +18,55 @@ static char THIS_FILE[]=__FILE__;
 #define new DEBUG_NEW
 #endif
 
-//////////////////////////////////////////////////////////////////////
-// Konstruktion/Destruktion
-//////////////////////////////////////////////////////////////////////
-
-SVLockableClass::SVLockableClass()
-: hProtectionMutex( NULL )
+namespace Seidenader
 {
-	hProtectionMutex = CreateMutex( NULL, FALSE, NULL );
-}
-
-SVLockableClass::~SVLockableClass()
-{
-	if( hProtectionMutex != NULL )
+	namespace SVSystemLibrary
 	{
-		CloseHandle( hProtectionMutex );
-	}
-}
+		SVLockableClass::SVLockableClass()
+			: hProtectionMutex( NULL )
+		{
+			hProtectionMutex = CreateMutex( NULL, FALSE, NULL );
+		}
+
+		SVLockableClass::~SVLockableClass()
+		{
+			if( hProtectionMutex != NULL )
+			{
+				CloseHandle( hProtectionMutex );
+			}
+		}
 
 
-BOOL SVLockableClass::Lock( DWORD DWWaitTime /* = INFINITE */ ) const
-{
-	BOOL l_Status = ( hProtectionMutex != NULL );
+		BOOL SVLockableClass::Lock( DWORD DWWaitTime /* = INFINITE */ ) const
+		{
+			BOOL l_Status = ( hProtectionMutex != NULL );
 
-	if( l_Status )
-	{
-		l_Status = ( WaitForSingleObject( hProtectionMutex, DWWaitTime ) == WAIT_OBJECT_0 );
-	}
+			if( l_Status )
+			{
+				l_Status = ( WaitForSingleObject( hProtectionMutex, DWWaitTime ) == WAIT_OBJECT_0 );
+			}
 
-	return l_Status;
-}
+			return l_Status;
+		}
 
-BOOL SVLockableClass::Unlock() const
-{
-	BOOL l_Status = ( hProtectionMutex != NULL );
+		BOOL SVLockableClass::Unlock() const
+		{
+			BOOL l_Status = ( hProtectionMutex != NULL );
 
-	if( l_Status )
-	{
-		l_Status = ReleaseMutex( hProtectionMutex );
-	}
+			if( l_Status )
+			{
+				l_Status = ReleaseMutex( hProtectionMutex );
+			}
 
-	return l_Status;
-}
+			return l_Status;
+		}
 
-HANDLE SVLockableClass::GetLockHandle()
-{
-	return hProtectionMutex;
-}
+		HANDLE SVLockableClass::GetLockHandle()
+		{
+			return hProtectionMutex;
+		}
+	} //SVSystemLibrary
+} //Seidenader
 
 //******************************************************************************
 //* LOG HISTORY:

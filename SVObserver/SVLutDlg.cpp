@@ -26,7 +26,7 @@
 #include <typeinfo.h>
 
 #include "SVAcquisitionClass.h"
-#include "SVUserMessage.h"
+#include "ObjectInterfaces/SVUserMessage.h"
 
 #include "SVObserver.h"	// TEMP HACK for 1394 detection
 #include "SVConfigurationObject.h"	// TEMP HACK for 1394 detection
@@ -249,7 +249,7 @@ BOOL SVLutDlgPage::OnInitDialog()
 		CWnd* pWnd=NULL;
 
 		// Set Normalize Mode of Graph Control...
-		mLUTGraph.SetNormalizeMode( SVNormalizeXYMinMax );
+		mLUTGraph.SetNormalizeMode( SvOml::SVNormalizeXYMinMax );
 		mLUTGraph.SetXYMinMax(0, 0, mLut.Info().BandSize()-1, mlMaxLutValue);
 
 

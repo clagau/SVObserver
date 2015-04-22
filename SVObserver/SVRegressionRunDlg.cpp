@@ -15,7 +15,7 @@
 #include "svobserver.h"
 #include "SVRegressionRunDlg.h"
 #include "SVIPDoc.h"
-#include "SVUserMessage.h"
+#include "ObjectInterfaces\SVUserMessage.h"
 #include "SVInspectionProcess.h"
 #include "SVRegressionFileSelectDlg.h"
 #include "SVRegressionFileSelectSheet.h"

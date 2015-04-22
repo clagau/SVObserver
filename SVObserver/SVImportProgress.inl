@@ -12,7 +12,7 @@
 //#include "stdafx.h"
 //#include "SVImportProgress.h"
 #include "SVUtilityLibrary/SVString.h"
-#include "SVUserMessage.h"
+#include "ObjectInterfaces/SVUserMessage.h"
 
 template<typename Task>
 DWORD WINAPI SVImportProgress<Task>::TaskThread(LPVOID lpHost)

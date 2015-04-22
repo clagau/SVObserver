@@ -14,7 +14,7 @@
 #include "RemoteCommand.h"
 #include "SVFileNameClass.h"
 #include "SVObserver.h"
-#include "SVUserMessage.h"
+#include "ObjectInterfaces/SVUserMessage.h"
 #include "SVSVIMStateClass.h"
 #include "SVGlobal.h"
 #include "SVIMCommand\SVIMCommand.h"

@@ -9,27 +9,32 @@
 //* .Check In Date   : $Date:   22 Apr 2013 16:38:00  $
 //******************************************************************************
 
-#ifndef SVLOCKABLE_H
-#define SVLOCKABLE_H
+#pragma once
 
-class SVLockableClass
+namespace Seidenader
 {
-public:
-	SVLockableClass();
+	namespace SVSystemLibrary
+	{
+		class SVLockableClass
+		{
+		public:
+			SVLockableClass();
 
-	virtual ~SVLockableClass();
+			virtual ~SVLockableClass();
 
-		BOOL Lock( DWORD DWWaitTime = INFINITE ) const;
-		BOOL Unlock() const;
+			BOOL Lock( DWORD DWWaitTime = INFINITE ) const;
+			BOOL Unlock() const;
 
-		HANDLE GetLockHandle();
+			HANDLE GetLockHandle();
 
-protected:
-		HANDLE hProtectionMutex; 
+		protected:
+			HANDLE hProtectionMutex; 
 
-};
+		};
+	} //SVSystemLibrary
+} //Seidenader
 
-#endif
+namespace SvSyl = Seidenader::SVSystemLibrary;
 
 //******************************************************************************
 //* LOG HISTORY:

@@ -15,7 +15,6 @@
 #include <vector>
 #include <utility>
 #include "SVObjectLibrary/SVObjectScriptUsage.h"
-#include "SVObjectLibrary/SVObjectLongArrayClass.h"
 #include "SVValueObjectClassImpl.h"
 #include "SVValueObjectGlobals.h"
 
@@ -79,7 +78,7 @@ protected:
 	virtual HRESULT GetNormalizedValueImpl( const CString& strValue, CString& rstrNormalized ) const;
 
 	// Sorted Table of all defined enumeration values.
-	SVObjectLongArrayClass enumValueTable;
+	SvCl::SVObjectLongArrayClass enumValueTable;
 	// String table of defined enumerations, 1 by 1 to value table
 	SVObjectCStringArrayClass enumStringTable;
 

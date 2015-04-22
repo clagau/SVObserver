@@ -18,7 +18,7 @@
 
 #pragma region Includes
 #include "SVEnumerateCombo.h"
-#include "SVDlgGraph.h"
+#include "SVOMFCLibrary/SVDlgGraph.h"
 #include "SVTaskObjectInterfaceClass.h"
 #include "SVMFCControls/CLabel.h"
 #pragma endregion Includes
@@ -140,7 +140,7 @@ private:
 	enum { IDD = IDD_TA_LUT_DIALOG };
 	CSliderCtrl m_upperSlider;
 	CSliderCtrl m_lowerSlider;
-	SVDlgGraphClass m_LUTGraph;
+	SvOml::SVDlgGraphClass m_LUTGraph;
 	SVEnumerateComboClass m_LUTModeCombo;
 	CString m_strUpperClipValue;
 	CString m_strLowerClipValue;

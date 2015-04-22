@@ -266,16 +266,6 @@
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
-    <ClCompile Include="SVLockableClass.cpp">
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-    </ClCompile>
     <ClCompile Include="SVObjectAttributeClass.cpp">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -431,28 +421,19 @@
     <ClInclude Include="SVInObjectInfoStruct.h" />
     <ClInclude Include="SVInputInfoListClass.h" />
     <ClInclude Include="SVInspectionLevelCreateStruct.h" />
-    <ClInclude Include="SVLockableClass.h" />
-    <ClInclude Include="SVObjectArrayClassTemplate.h" />
     <ClInclude Include="SVObjectAsynchronousCommandTemplate.h" />
     <ClInclude Include="SVObjectAttributeClass.h" />
     <ClInclude Include="SVObjectAttributeShim.h" />
-    <ClInclude Include="SVObjectBoolArrayClass.h" />
     <ClInclude Include="SVObjectBuilder.h" />
-    <ClInclude Include="SVObjectByteArrayClass.h" />
     <ClInclude Include="SVObjectClass.h" />
     <ClInclude Include="SVObjectCommandWrapperTemplate.h" />
-    <ClInclude Include="SVObjectCPointArrayClass.h" />
     <ClInclude Include="SVObjectCStringArrayClass.h" />
-    <ClInclude Include="SVObjectDoubleArrayClass.h" />
     <ClInclude Include="SVObjectDPointArrayClass.h" />
-    <ClInclude Include="SVObjectDWordArrayClass.h" />
     <ClInclude Include="SVObjectInfoArrayClass.h" />
     <ClInclude Include="SVObjectInfoStruct.h" />
-    <ClInclude Include="SVObjectInt64ArrayClass.h" />
     <ClInclude Include="SVObjectLevelCreateStruct.h" />
     <ClInclude Include="SVObjectLibrary.h" />
     <ClInclude Include="SVObjectListClass.h" />
-    <ClInclude Include="SVObjectLongArrayClass.h" />
     <ClInclude Include="SVObjectManagerClass.h" />
     <ClInclude Include="SVObjectNameInfo.h" />
     <ClInclude Include="SVObjectNotifyTemplate.h" />

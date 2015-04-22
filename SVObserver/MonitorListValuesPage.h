@@ -24,7 +24,7 @@ class MonitorListValuesPage : public MonitorListBasePage
 
 #pragma region Public
 public:
-	MonitorListValuesPage(const NameSelectionList& rList, bool bWholeArray, MonitorListSheet* pParentSheet, const CString& szCaption, int id = IDD);
+	MonitorListValuesPage(const SvUl::NameSelectionList& rList, bool bWholeArray, MonitorListSheet* pParentSheet, const CString& szCaption, int id = IDD);
 	virtual ~MonitorListValuesPage();
 
 	// ISVPropertyPageDialog

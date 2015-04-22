@@ -156,6 +156,7 @@
     <ClCompile Include="SVEncodeDecodeUtilities.cpp" />
     <ClCompile Include="SVFile.cpp" />
     <ClCompile Include="SVImageConvertorGDI.cpp" />
+    <ClCompile Include="SVLockableClass.cpp" />
     <ClCompile Include="SVMemoryChecker.cpp" />
     <ClCompile Include="SVSAXContentHandlerImpl.cpp" />
     <ClCompile Include="SVThreadManager.cpp" />
@@ -174,6 +175,7 @@
     <ClInclude Include="SVEventThread.h" />
     <ClInclude Include="SVFile.h" />
     <ClInclude Include="SVImageConvertorGDI.h" />
+    <ClInclude Include="SVLockableClass.h" />
     <ClInclude Include="SVMemoryChecker.h" />
     <ClInclude Include="SVSAXContentHandlerImpl.h" />
     <ClInclude Include="SVSAXErrorHandlerImpl.h" />

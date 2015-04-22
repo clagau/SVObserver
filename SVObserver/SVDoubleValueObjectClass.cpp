@@ -155,7 +155,7 @@ HRESULT SVDoubleValueObjectClass::SetObjectValue( SVObjectAttributeClass* pDataO
 {
 	HRESULT hr = S_FALSE;
 	
-	SVObjectArrayClassTemplate<value_type> svArray;	// for default values
+	SvCl::SVObjectArrayClassTemplate<value_type> svArray;	// for default values
 
 	if ( m_bLegacyVectorObjectCompatibility )
 	{

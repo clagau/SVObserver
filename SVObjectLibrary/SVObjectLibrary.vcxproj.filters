@@ -32,9 +32,6 @@
     <ClCompile Include="SVInspectionLevelCreateStruct.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVLockableClass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVObjectAttributeClass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -115,25 +112,13 @@
     <ClInclude Include="SVInspectionLevelCreateStruct.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVLockableClass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVObjectArrayClassTemplate.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVObjectAttributeClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVObjectAttributeShim.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVObjectBoolArrayClass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVObjectBuilder.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVObjectByteArrayClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVObjectClass.h">
@@ -142,25 +127,13 @@
     <ClInclude Include="SVObjectCommandWrapperTemplate.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVObjectCPointArrayClass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVObjectCStringArrayClass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVObjectDoubleArrayClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVObjectDPointArrayClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVObjectDWordArrayClass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVObjectInfoStruct.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVObjectInt64ArrayClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVObjectLevelCreateStruct.h">
@@ -170,9 +143,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVObjectListClass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVObjectLongArrayClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVObjectManagerClass.h">

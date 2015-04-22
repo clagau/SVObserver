@@ -402,7 +402,7 @@ HRESULT SVValueObjectClassImpl<T>::SetObjectValue(SVObjectAttributeClass* pDataO
 
 	HRESULT hr = S_FALSE;
 	
-	SVObjectArrayClassTemplate<T> svArray;	// for default values
+	SvCl::SVObjectArrayClassTemplate<T> svArray;	// for default values
 	bucket_type l_Buckets(BucketsNoAssert());
 	array_type l_Array;
 

@@ -9,6 +9,12 @@
       <UniqueIdentifier>{56475622-a2f6-4176-9e8c-bb522ffb07f4}</UniqueIdentifier>
       <Extensions>h;hpp;hxx;hm;inl</Extensions>
     </Filter>
+    <Filter Include="Control Header Files">
+      <UniqueIdentifier>{d6b40dc5-3547-4ab2-bf93-ae255dabaf19}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Control Source Files">
+      <UniqueIdentifier>{32d9102d-e542-44fb-9ef3-620e5c3e016a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Regexp.cpp">
@@ -76,6 +82,9 @@
     </ClCompile>
     <ClCompile Include="DisplayMessageBox.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SVDlgGraph.cpp">
+      <Filter>Control Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -165,6 +174,9 @@
     </ClInclude>
     <ClInclude Include="DisplayMessageBox.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVDlgGraph.h">
+      <Filter>Control Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

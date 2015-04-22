@@ -133,62 +133,62 @@ BOOL SVObjectAttributeClassHelper::GetAttributeData(SVObjectAttributeClass* pDat
 	return pDataObject->GetAttributeData(szName, raaData, defaultValue);
 }
 
-BOOL SVObjectAttributeClassHelper::GetAttributeData(SVObjectAttributeClass* pDataObject ,LPCTSTR szName, SVObjectArrayClassTemplate<BOOL>& svData)
+BOOL SVObjectAttributeClassHelper::GetAttributeData(SVObjectAttributeClass* pDataObject ,LPCTSTR szName, SvCl::SVObjectArrayClassTemplate<BOOL>& svData)
 {
 	return pDataObject->GetAttributeData(szName, svData);
 }
 
-BOOL SVObjectAttributeClassHelper::GetAttributeData(SVObjectAttributeClass* pDataObject ,LPCTSTR szName, SVObjectArrayClassTemplate<BYTE>& svData)
+BOOL SVObjectAttributeClassHelper::GetAttributeData(SVObjectAttributeClass* pDataObject ,LPCTSTR szName, SvCl::SVObjectArrayClassTemplate<BYTE>& svData)
 {
 	return pDataObject->GetAttributeData(szName, svData);
 }
 
-BOOL SVObjectAttributeClassHelper::GetAttributeData(SVObjectAttributeClass* pDataObject ,LPCTSTR szName, SVObjectArrayClassTemplate<char>& svData)
+BOOL SVObjectAttributeClassHelper::GetAttributeData(SVObjectAttributeClass* pDataObject ,LPCTSTR szName, SvCl::SVObjectArrayClassTemplate<char>& svData)
 {
 	return pDataObject->GetAttributeData(szName, svData);
 }
 
-BOOL SVObjectAttributeClassHelper::GetAttributeData(SVObjectAttributeClass* pDataObject ,LPCTSTR szName, SVObjectArrayClassTemplate<CString>& svData)
+BOOL SVObjectAttributeClassHelper::GetAttributeData(SVObjectAttributeClass* pDataObject ,LPCTSTR szName, SvCl::SVObjectArrayClassTemplate<CString>& svData)
 {
 	return pDataObject->GetAttributeData(szName, svData);
 }
 
-BOOL SVObjectAttributeClassHelper::GetAttributeData(SVObjectAttributeClass* pDataObject ,LPCTSTR szName, SVObjectArrayClassTemplate<SVString>& svData)
+BOOL SVObjectAttributeClassHelper::GetAttributeData(SVObjectAttributeClass* pDataObject ,LPCTSTR szName, SvCl::SVObjectArrayClassTemplate<SVString>& svData)
 {
 	return pDataObject->GetAttributeData(szName, svData);
 }
 
-BOOL SVObjectAttributeClassHelper::GetAttributeData(SVObjectAttributeClass* pDataObject ,LPCTSTR szName, SVObjectArrayClassTemplate<double>& svData)
+BOOL SVObjectAttributeClassHelper::GetAttributeData(SVObjectAttributeClass* pDataObject ,LPCTSTR szName, SvCl::SVObjectArrayClassTemplate<double>& svData)
 {
 	return pDataObject->GetAttributeData(szName, svData);
 }
 
-BOOL SVObjectAttributeClassHelper::GetAttributeData(SVObjectAttributeClass* pDataObject ,LPCTSTR szName, SVObjectArrayClassTemplate<DWORD>& svData)
+BOOL SVObjectAttributeClassHelper::GetAttributeData(SVObjectAttributeClass* pDataObject ,LPCTSTR szName, SvCl::SVObjectArrayClassTemplate<DWORD>& svData)
 {
 	return pDataObject->GetAttributeData(szName, svData);
 }
 
-BOOL SVObjectAttributeClassHelper::GetAttributeData(SVObjectAttributeClass* pDataObject ,LPCTSTR szName, SVObjectArrayClassTemplate<long>& svData)
+BOOL SVObjectAttributeClassHelper::GetAttributeData(SVObjectAttributeClass* pDataObject ,LPCTSTR szName, SvCl::SVObjectArrayClassTemplate<long>& svData)
 {
 	return pDataObject->GetAttributeData(szName, svData);
 }
 
-BOOL SVObjectAttributeClassHelper::GetAttributeData(SVObjectAttributeClass* pDataObject ,LPCTSTR szName, SVObjectArrayClassTemplate<SVPOINT>& svData)
+BOOL SVObjectAttributeClassHelper::GetAttributeData(SVObjectAttributeClass* pDataObject ,LPCTSTR szName, SvCl::SVObjectArrayClassTemplate<SVPOINT>& svData)
 {
 	return pDataObject->GetAttributeData(szName, svData);
 }
 
-BOOL SVObjectAttributeClassHelper::GetAttributeData(SVObjectAttributeClass* pDataObject ,LPCTSTR szName, SVObjectArrayClassTemplate<SVDPointClass>& svData)
+BOOL SVObjectAttributeClassHelper::GetAttributeData(SVObjectAttributeClass* pDataObject ,LPCTSTR szName, SvCl::SVObjectArrayClassTemplate<SVDPointClass>& svData)
 {
 	return pDataObject->GetAttributeData(szName, svData);
 }
 
-BOOL SVObjectAttributeClassHelper::GetAttributeData(SVObjectAttributeClass* pDataObject ,LPCTSTR szName, SVObjectArrayClassTemplate<_variant_t>& svData)
+BOOL SVObjectAttributeClassHelper::GetAttributeData(SVObjectAttributeClass* pDataObject ,LPCTSTR szName, SvCl::SVObjectArrayClassTemplate<_variant_t>& svData)
 {
 	return pDataObject->GetAttributeData(szName, svData);
 }
 
-BOOL SVObjectAttributeClassHelper::GetAttributeData(SVObjectAttributeClass* pDataObject, LPCTSTR szName, SVObjectArrayClassTemplate<__int64>& svData)
+BOOL SVObjectAttributeClassHelper::GetAttributeData(SVObjectAttributeClass* pDataObject, LPCTSTR szName, SvCl::SVObjectArrayClassTemplate<__int64>& svData)
 {
 	return pDataObject->GetAttributeData(szName, svData);
 }

@@ -16,7 +16,7 @@
 #include "SVIPDoc.h"
 #include "SVResultView.h"
 #include "ToolSetView.h"
-#include "SVUserMessage.h"
+#include "ObjectInterfaces/SVUserMessage.h"
 #include "SVMainFrm.h"
 #pragma endregion Includes
 

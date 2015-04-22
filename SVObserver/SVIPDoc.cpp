@@ -70,7 +70,7 @@
 #include "SVExternalTool.h"
 #include "SVXMLLibrary/SVNavigateTreeClass.h"
 #include "SVMessage/SVMessage.h"
-#include "SVUserMessage.h"
+#include "ObjectInterfaces/SVUserMessage.h"
 #include "SVImageLibrary/SVImagingDeviceParams.h"
 #include "SVObjectLibrary/SVAnalyzerLevelCreateStruct.h"
 #include "SVObjectLibrary/SVInspectionLevelCreateStruct.h"

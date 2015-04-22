@@ -9,71 +9,82 @@
 //* .Check In Date   : $Date:   01 Oct 2013 11:27:02  $
 //******************************************************************************
 
-#ifndef INC_SVOBJECTGENERICARRAYCLASS_3A76FCBB02AF_INCLUDED
-#define INC_SVOBJECTGENERICARRAYCLASS_3A76FCBB02AF_INCLUDED
+#pragma once
 
 #ifdef SV_SHOW_INCLUDES
 	#pragma message( "Including " __FILE__ )
 #endif
 
 #include <comdef.h>
-#include "SVContainerLibrary/SVVector.h"
+#include "SVVector.h"
 
-template <class TYPE>
-class SVObjectArrayClassTemplate : public SVVector<TYPE>
+namespace Seidenader
 {
-public:
-	SVObjectArrayClassTemplate();
-	SVObjectArrayClassTemplate(SVObjectArrayClassTemplate<TYPE>& orig);
-	virtual ~SVObjectArrayClassTemplate();
-
-	// this allows assigning from an array of one type to an array of another type
-	template <typename T>
-	SVObjectArrayClassTemplate<TYPE>& operator = ( const SVObjectArrayClassTemplate<T>& rhs )
+	namespace SVContainerLibrary
 	{
-		SetSize( static_cast< int >( rhs.GetSize() ) );
-		for ( int i=0; i < rhs.GetSize(); i++ )
-			ElementAt(i) = rhs.GetAt(i);
-		return *this;
-	}
+		template <class TYPE>
+		class SVObjectArrayClassTemplate : public SVVector<TYPE>
+		{
+		public:
+			SVObjectArrayClassTemplate();
+			SVObjectArrayClassTemplate(SVObjectArrayClassTemplate<TYPE>& orig);
+			virtual ~SVObjectArrayClassTemplate();
 
-	// native type assignment for faster operation
-	SVObjectArrayClassTemplate<TYPE>& operator = ( const SVObjectArrayClassTemplate<TYPE>& rhs );
-};
+			// this allows assigning from an array of one type to an array of another type
+			template <typename T>
+			SVObjectArrayClassTemplate<TYPE>& operator = ( const SVObjectArrayClassTemplate<T>& rhs )
+			{
+				SetSize( static_cast< int >( rhs.GetSize() ) );
+				for ( int i=0; i < rhs.GetSize(); i++ )
+					ElementAt(i) = rhs.GetAt(i);
+				return *this;
+			}
 
-template <class TYPE>
-SVObjectArrayClassTemplate<TYPE>::SVObjectArrayClassTemplate()
-{
-}
+			// native type assignment for faster operation
+			SVObjectArrayClassTemplate<TYPE>& operator = ( const SVObjectArrayClassTemplate<TYPE>& rhs );
+		};
 
-template <class TYPE>
-SVObjectArrayClassTemplate<TYPE>::SVObjectArrayClassTemplate(SVObjectArrayClassTemplate<TYPE>& orig)
-{
-	(*this) = orig;
-}
+		template <class TYPE>
+		SVObjectArrayClassTemplate<TYPE>::SVObjectArrayClassTemplate()
+		{
+		}
 
-template <class TYPE>
-SVObjectArrayClassTemplate<TYPE>::~SVObjectArrayClassTemplate()
-{
-}
+		template <class TYPE>
+		SVObjectArrayClassTemplate<TYPE>::SVObjectArrayClassTemplate(SVObjectArrayClassTemplate<TYPE>& orig)
+		{
+			(*this) = orig;
+		}
 
-template <class TYPE>
-SVObjectArrayClassTemplate<TYPE>& SVObjectArrayClassTemplate<TYPE>::operator = (const SVObjectArrayClassTemplate<TYPE>& rhs)
-{
-	if ( this != &rhs )
-	{
-		Copy( rhs );
-	}
-	
-	return *this;
-}
+		template <class TYPE>
+		SVObjectArrayClassTemplate<TYPE>::~SVObjectArrayClassTemplate()
+		{
+		}
+
+		template <class TYPE>
+		SVObjectArrayClassTemplate<TYPE>& SVObjectArrayClassTemplate<TYPE>::operator = (const SVObjectArrayClassTemplate<TYPE>& rhs)
+		{
+			if ( this != &rhs )
+			{
+				Copy( rhs );
+			}
+
+			return *this;
+		}
 
 
+		typedef SVObjectArrayClassTemplate<CPoint> SVObjectCPointArrayClass;
+		typedef SVObjectArrayClassTemplate<BOOL> SVObjectBoolArrayClass;
+		typedef SVObjectArrayClassTemplate<BYTE> SVObjectByteArrayClass;
+		typedef SVObjectArrayClassTemplate<long> SVObjectLongArrayClass;
+		typedef SVObjectArrayClassTemplate<double> SVObjectDoubleArrayClass;
+		typedef SVObjectArrayClassTemplate<DWORD> SVObjectDWordArrayClass;
+		typedef SVObjectArrayClassTemplate<__int64> SVObjectInt64ArrayClass;
+		typedef SVObjectArrayClassTemplate< _variant_t > SVObjectVariantArrayClass;
+	} //SVContainerLibrary
+} //Seidenader
 
+namespace SvCl = Seidenader::SVContainerLibrary;
 
-typedef SVObjectArrayClassTemplate< _variant_t > SVObjectVariantArrayClass;
-
-#endif
 
 //******************************************************************************
 //* LOG HISTORY:

@@ -25,7 +25,7 @@
 #include "SVParserProgressDialog.h"
 #include "SVToolSet.h"               // 26 Jan 2000 - frb.
 #include "SVSVIMStateClass.h"
-#include "SVUserMessage.h"
+#include "ObjectInterfaces/SVUserMessage.h"
 #include "SVMessage/SVMessage.h"
 #include "SVInspectionProcess.h"
 #include "SVPPQObject.h"

@@ -2211,8 +2211,8 @@ HRESULT SVImageClass::SetObjectValue( SVObjectAttributeClass* PDataObject )
 	HRESULT hr = S_FALSE;
 	BOOL bOk = FALSE;
 	
-	SVObjectDoubleArrayClass svDoubleArray;
-	SVObjectLongArrayClass svLongArray;
+	SvCl::SVObjectDoubleArrayClass svDoubleArray;
+	SvCl::SVObjectLongArrayClass svLongArray;
 	SVObjectSVPointArrayClass svPointArray;
 
 	if ( ( bOk = PDataObject->GetAttributeData( "ExtentLeft", svDoubleArray	) ) )

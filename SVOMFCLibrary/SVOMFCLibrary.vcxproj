@@ -93,7 +93,7 @@
     </ResourceCompile>
     <Lib>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalDependencies>SVUtilityLibrary.lib</AdditionalDependencies>
+      <AdditionalDependencies>SVUtilityLibrary.lib;SVContainerLibrary.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
     <Bscmake>
@@ -122,7 +122,7 @@
     </ResourceCompile>
     <Lib>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalDependencies>SVUtilityLibrary.lib</AdditionalDependencies>
+      <AdditionalDependencies>SVUtilityLibrary.lib;SVContainerLibrary.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
     <Bscmake>
@@ -155,7 +155,7 @@
     </ResourceCompile>
     <Lib>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalDependencies>SVUtilityLibrary.lib</AdditionalDependencies>
+      <AdditionalDependencies>SVUtilityLibrary.lib;SVContainerLibrary.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
     <Bscmake>
@@ -188,7 +188,7 @@
     </ResourceCompile>
     <Lib>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalDependencies>SVUtilityLibrary.lib</AdditionalDependencies>
+      <AdditionalDependencies>SVUtilityLibrary.lib;SVContainerLibrary.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
     <Bscmake>
@@ -196,6 +196,7 @@
     </Bscmake>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="SVDlgGraph.cpp" />
     <ClCompile Include="SVEditControlWithHelp.cpp" />
     <ClCompile Include="DisplayHelper.cpp" />
     <ClCompile Include="DisplayMessageBox.cpp" />
@@ -305,6 +306,7 @@
     <ClCompile Include="ZoomHelper.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="SVDlgGraph.h" />
     <ClInclude Include="SVEditControlWithHelp.h" />
     <ClInclude Include="DisplayHelper.h" />
     <ClInclude Include="DisplayMessageBox.h" />

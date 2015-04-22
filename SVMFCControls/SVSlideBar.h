@@ -9,78 +9,67 @@
 //* .Check In Date   : $Date:   23 Apr 2013 15:07:54  $
 //******************************************************************************
 
-#if !defined(AFX_SVSLIDEBAR_H__0ED68ACB_42C2_11D3_A881_00106F000C74__INCLUDED_)
-#define AFX_SVSLIDEBAR_H__0ED68ACB_42C2_11D3_A881_00106F000C74__INCLUDED_
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
-// SVSlideBar.h : header file
-//
 
-
+namespace Seidenader
+{
+	namespace SVMFCControls
+	{
 #define SV_SLIDEBAR_WIDTH		5
 #define SV_SLIDEBAR_HEIGHT		5
 
+		class SVSlideBarClass : public CWnd
+		{
+			// Construction
+		public:
+			SVSlideBarClass();
 
-/////////////////////////////////////////////////////////////////////////////
-// SVSlideBarClass window
-
-class SVSlideBarClass : public CWnd
-{
-// Construction
-public:
-	SVSlideBarClass();
-	
-	virtual ~SVSlideBarClass();
+			virtual ~SVSlideBarClass();
 
 
-// Operations
-public:
+			// Operations
+		public:
 
-// Overrides
-	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(SVSlideBarClass)
-	//}}AFX_VIRTUAL
+			// Overrides
+			// ClassWizard generated virtual function overrides
+			//{{AFX_VIRTUAL(SVSlideBarClass)
+			//}}AFX_VIRTUAL
 
-// Implementation
-protected:
-	void invertTracker( const CRect& rect );
+			// Implementation
+		protected:
+			void invertTracker( const CRect& rect );
 
 
 
-	// Generated message map functions
-protected:
-	//{{AFX_MSG(SVSlideBarClass)
-	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
-	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
-	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
-	afx_msg void OnWindowPosChanged(WINDOWPOS FAR* lpwndpos);
-	//}}AFX_MSG
-	DECLARE_MESSAGE_MAP()
+			// Generated message map functions
+		protected:
+			//{{AFX_MSG(SVSlideBarClass)
+			afx_msg void OnMouseMove(UINT nFlags, CPoint point);
+			afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
+			afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
+			afx_msg void OnWindowPosChanged(WINDOWPOS FAR* lpwndpos);
+			//}}AFX_MSG
+			DECLARE_MESSAGE_MAP()
 
-//******************************************************************************
-// Data Element(s):
-//******************************************************************************
-protected:
+			//******************************************************************************
+			// Data Element(s):
+			//******************************************************************************
+		protected:
 
-enum
-{
-	SV_SLIDEBAR_HORZ	= 10,
-	SV_SLIDEBAR_VERT
-};
+			enum
+			{
+				SV_SLIDEBAR_HORZ	= 10,
+				SV_SLIDEBAR_VERT
+			};
 
-	BOOL	bTracking;
-	DWORD	dwSlideBarType;
-	CRect   trackRect;
-};
+			BOOL	bTracking;
+			DWORD	dwSlideBarType;
+			CRect   trackRect;
+		};
+	} //SVMFCControls
+} //Seidenader
 
-/////////////////////////////////////////////////////////////////////////////
-
-//{{AFX_INSERT_LOCATION}}
-// Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_SVSLIDEBAR_H__0ED68ACB_42C2_11D3_A881_00106F000C74__INCLUDED_)
+namespace SvMc = Seidenader::SVMFCControls;
 
 //******************************************************************************
 //* LOG HISTORY:

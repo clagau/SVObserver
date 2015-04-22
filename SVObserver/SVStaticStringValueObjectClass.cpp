@@ -183,7 +183,8 @@ HRESULT  SVStaticStringValueObjectClass::SetObjectValue(SVObjectAttributeClass* 
 	
 	CString  csTemp;
 	
-	SVObjectArrayClassTemplate<CString> svArray;
+	//@WARNING [MZA, 21.04.15] Why do we use here not the class SVObjectCStringArrayClass?
+	SvCl::SVObjectArrayClassTemplate<CString> svArray;
 	bucket_type l_Buckets(BucketsNoAssert());
 	array_type l_Array;
 	

@@ -12,70 +12,78 @@
 #pragma once
 #include <boost/function.hpp>
 #include <map>
-#include "NameSelectionList.h"
+#include "SVUtilityLibrary/NameSelectionList.h"
 
 class CTreeCtrl;
 
-// this callback occurs when the user attempts to select or deselect an item.
-// the first parameter is the current state of the item. 
-// The second parameter is the index of the item in the tree
-// the return value indicates if the object can be selected/deselected.
-typedef boost::function<bool (bool, int) > CanSelectObjectCallbackFn;
-
-class NameSelectionTreeCtrl : public CTreeCtrl
+namespace Seidenader
 {
-	typedef std::map <int, HTREEITEM> MapIndexToHandleType;
-	
-	DECLARE_DYNCREATE(NameSelectionTreeCtrl)
+	namespace SVMFCControls
+	{
+		// this callback occurs when the user attempts to select or deselect an item.
+		// the first parameter is the current state of the item. 
+		// The second parameter is the index of the item in the tree
+		// the return value indicates if the object can be selected/deselected.
+		typedef boost::function<bool (bool, int) > CanSelectObjectCallbackFn;
 
-public:
-	NameSelectionTreeCtrl();
-	virtual ~NameSelectionTreeCtrl();
-	
-	void SetSingleSelect(bool bSingle);
-	void SetAllowWholeArray();
-	void SetCanSelectObjectCallback(CanSelectObjectCallbackFn fn);
-	void AllowNodeItemChecks(bool p_bAllow);
-	void InitTreeCtrl();
-	void Populate(const NameSelectionList& rList);
-	bool SelectItemByIndex(int index);
-	void DeselectAll();
+		class NameSelectionTreeCtrl : public CTreeCtrl
+		{
+			typedef std::map <int, HTREEITEM> MapIndexToHandleType;
 
-protected:
-	void SetBranchChecks(HTREEITEM hItem , bool p_bNewBranchState);
+			DECLARE_DYNCREATE(NameSelectionTreeCtrl)
 
-	bool GetCheckState(HTREEITEM hItem);
-	bool SetCheckState(HTREEITEM hItem, bool bCheck, bool bSelect = true);
-	bool Click(HTREEITEM hItem);
-	void UpdateNodeStateColor(HTREEITEM hItem, long& p_rlFlags);
+		public:
+			NameSelectionTreeCtrl();
+			virtual ~NameSelectionTreeCtrl();
 
-// Attributes
-	CImageList m_StateImageList;
+			void SetSingleSelect(bool bSingle);
+			void SetAllowWholeArray();
+			void SetCanSelectObjectCallback(CanSelectObjectCallbackFn fn);
+			void AllowNodeItemChecks(bool p_bAllow);
+			void InitTreeCtrl();
+			void Populate(const SvUl::NameSelectionList& rList);
+			bool SelectItemByIndex(int index);
+			void DeselectAll();
 
-	HTREEITEM m_hLastChecked;
-	bool m_bSingleSelect;
-	bool m_bAllowWholeArray;
-	bool m_bAllowBranchCheck;
-	MapIndexToHandleType m_mapIndexes;
-	CanSelectObjectCallbackFn m_fnCanSelectObject;
+		protected:
+			void SetBranchChecks(HTREEITEM hItem , bool p_bNewBranchState);
 
-private:
-	HTREEITEM GetItemsRoot(HTREEITEM iItem);
-// Overrides
-	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(NameSelectionTreeCtrl)
-	//}}AFX_VIRTUAL
+			bool GetCheckState(HTREEITEM hItem);
+			bool SetCheckState(HTREEITEM hItem, bool bCheck, bool bSelect = true);
+			bool Click(HTREEITEM hItem);
+			void UpdateNodeStateColor(HTREEITEM hItem, long& p_rlFlags);
 
-// Implementation
+			// Attributes
+			CImageList m_StateImageList;
 
-	// Generated message map functions
-protected:
-	//{{AFX_MSG(NameSelectionTreeCtrl)
-	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
-	//}}AFX_MSG
+			HTREEITEM m_hLastChecked;
+			bool m_bSingleSelect;
+			bool m_bAllowWholeArray;
+			bool m_bAllowBranchCheck;
+			MapIndexToHandleType m_mapIndexes;
+			CanSelectObjectCallbackFn m_fnCanSelectObject;
 
-	DECLARE_MESSAGE_MAP()
-};
+		private:
+			HTREEITEM GetItemsRoot(HTREEITEM iItem);
+			// Overrides
+			// ClassWizard generated virtual function overrides
+			//{{AFX_VIRTUAL(NameSelectionTreeCtrl)
+			//}}AFX_VIRTUAL
+
+			// Implementation
+
+			// Generated message map functions
+		protected:
+			//{{AFX_MSG(NameSelectionTreeCtrl)
+			afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
+			//}}AFX_MSG
+
+			DECLARE_MESSAGE_MAP()
+		};
+	} //SVMFCControls
+} //Seidenader
+
+namespace SvMc = Seidenader::SVMFCControls;
 
 /////////////////////////////////////////////////////////////////////////////
 

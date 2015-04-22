@@ -73,25 +73,25 @@ public:
 	: m_name(name) 
 	{
 	}
-	bool operator()(const NameSelection& selection) const
+	bool operator()(const SvUl::NameSelection& selection) const
 	{
 		return (selection.first == m_name);
 	}
 };
 
-static void SelectItem(NameSelectionList& rList, const SVString& name)
+static void SelectItem(SvUl::NameSelectionList& rList, const SVString& name)
 {
 	// find name (full or partial) ?
-	NameSelectionList::iterator it = std::find_if(rList.begin(), rList.end(), MatchName(name));
+	SvUl::NameSelectionList::iterator it = std::find_if(rList.begin(), rList.end(), MatchName(name));
 	if (it != rList.end())
 	{
 		it->second = true;
 	}
 }
 
-static NameSelectionList BuildSelectionList(const SVString& PPQName, const MonitoredObjectList& rList, AllowedFunc Allowed, bool bAllowWholeArray, bool bImages=false)
+static SvUl::NameSelectionList BuildSelectionList(const SVString& PPQName, const MonitoredObjectList& rList, AllowedFunc Allowed, bool bAllowWholeArray, bool bImages=false)
 {
-	NameSelectionList nameList;
+	SvUl::NameSelectionList nameList;
 
 	SVConfigurationObject* pConfig(NULL);
 	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
@@ -230,11 +230,11 @@ HRESULT MonitorListSheet::CreatePages(bool bImageTab)
 		case PRODUCT_OBJECT_LIST:
 		{
 			//SetDialogName = Product Object List
-			const NameSelectionList& valueSelectionList = BuildSelectionList(m_MonitorList.GetPPQName(), m_MonitorList.GetProductValuesList(), AllowAll, true);
+			const SvUl::NameSelectionList& valueSelectionList = BuildSelectionList(m_MonitorList.GetPPQName(), m_MonitorList.GetProductValuesList(), AllowAll, true);
 			MonitorListValuesPage* pValuesDlg = new MonitorListValuesPage(valueSelectionList, true, this, ValuesTag);
 			AddPage(pValuesDlg);
 
-			const NameSelectionList& imageSelectionList = BuildSelectionList(m_MonitorList.GetPPQName(), m_MonitorList.GetProductImagesList(), AllowAll, false, true);
+			const SvUl::NameSelectionList& imageSelectionList = BuildSelectionList(m_MonitorList.GetPPQName(), m_MonitorList.GetProductImagesList(), AllowAll, false, true);
 			MonitorListImagesPage* pImagesDlg = new MonitorListImagesPage(imageSelectionList, this, ImagesTag);
 			AddPage(pImagesDlg);
 
@@ -244,7 +244,7 @@ HRESULT MonitorListSheet::CreatePages(bool bImageTab)
 		case FAIL_STATUS_LIST:
 		{
 			//SetDialogName = Fail Status List
-			const NameSelectionList& valueSelectionList = BuildSelectionList(m_MonitorList.GetPPQName(), m_MonitorList.GetFailStatusList(), AllowOnly, false);
+			const SvUl::NameSelectionList& valueSelectionList = BuildSelectionList(m_MonitorList.GetPPQName(), m_MonitorList.GetFailStatusList(), AllowOnly, false);
 			MonitorListValuesPage* pValuesDlg = new MonitorListValuesPage(valueSelectionList, false, this, ValuesTag);
 			AddPage(pValuesDlg);
 			break;
@@ -252,7 +252,7 @@ HRESULT MonitorListSheet::CreatePages(bool bImageTab)
 		case REJECT_CONDITION_LIST:
 		{
 			//SetDialogName = Reject Condition List
-			const NameSelectionList& valueSelectionList = BuildSelectionList(m_MonitorList.GetPPQName(), m_MonitorList.GetRejectConditionList(), AllowOnly, false);
+			const SvUl::NameSelectionList& valueSelectionList = BuildSelectionList(m_MonitorList.GetPPQName(), m_MonitorList.GetRejectConditionList(), AllowOnly, false);
 			MonitorListValuesPage* pValuesDlg = new MonitorListValuesPage(valueSelectionList, false, this, ValuesTag);
 			AddPage(pValuesDlg);
 			break;
@@ -261,10 +261,10 @@ HRESULT MonitorListSheet::CreatePages(bool bImageTab)
 	return S_OK;
 }
 
-MonitoredObjectList MonitorListSheet::GetMonitoredObjectList(const NameSelectionList& rList)
+MonitoredObjectList MonitorListSheet::GetMonitoredObjectList(const SvUl::NameSelectionList& rList)
 {
 	MonitoredObjectList monitoredObjectList;
-	for (NameSelectionList::const_iterator it = rList.begin();it != rList.end();++it)
+	for (SvUl::NameSelectionList::const_iterator it = rList.begin();it != rList.end();++it)
 	{
 		if (it->second)
 		{
@@ -387,7 +387,7 @@ void MonitorListSheet::OnOK()
 			{
 				bChanges = bChanges || pCHPage->m_bObjectsChanged;
 
-				const NameSelectionList& rList = pCHPage->GetNameSelectionList();
+				const SvUl::NameSelectionList& rList = pCHPage->GetNameSelectionList();
 				const MonitoredObjectList& selectionList = GetMonitoredObjectList(rList);
 
 				if (pCHPage->IsKindOf(RUNTIME_CLASS(MonitorListValuesPage)))

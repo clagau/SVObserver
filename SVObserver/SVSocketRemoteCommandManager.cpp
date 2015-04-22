@@ -23,7 +23,7 @@
 #include "SVGlobal.h"
 #include "SVRemoteControlConstants.h"
 #include "SVVisionProcessorHelper.h"
-#include "SVUserMessage.h"
+#include "ObjectInterfaces/SVUserMessage.h"
 #include "RemoteMonitorNamedList.h"
 
 #define SV_DATA_TO_CONTENTS

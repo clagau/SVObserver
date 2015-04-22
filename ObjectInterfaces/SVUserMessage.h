@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   12 Dec 2014 13:13:52  $
 //******************************************************************************
 
-#ifndef SVUSERMESSAGE_H
-#define SVUSERMESSAGE_H
+#pragma once
 
 #define WM_REGRESSION_TEST_SET_FILENAMES			WM_APP + 15
 #define WM_REGRESSION_TEST_SET_PLAYPAUSE			WM_APP + 16
@@ -21,17 +20,6 @@
 
 #define SV_IPDOC_UPDATE_ALL_DATA    WM_APP + 32
 #define SV_IPDOC_UPDATE_NEXT_VIEW   WM_APP + 33
-
-
-// Used to Post Messages to DDE Pump...
-//#define SV_DDEPUMP_SEND_TO_DDE						WM_USER + 2
-//#define SV_DDEPUMP_RECEIVE_FROM_DDE					WM_USER + 3
-
-// Used to Load and Run Last Configuration Automatically...
-//#define SV_AUTO_RUN_LAST_CONFIGURATION				WM_USER + 4
-
-// Used to update IO Value, if IO Adjustment Dialog is open...
-//#define SV_UPDATE_IO_VALUE							WM_USER + 5
 
 // Used to start and monitor Object Script parsing
 #define SV_UPDATE_PROGRESS_TEXT						WM_USER + 6
@@ -45,7 +33,6 @@
 // Send to a dialog to let call protected refresh() method.
 #define SV_REFRESH_DIALOG							WM_USER + 11
 
-
 // Send update to MainFrame to set enable/disable menuitems and/or hide additional windows
 #define SV_LOGGED_ON_USER_CHANGED				    WM_USER + 12
 
@@ -55,9 +42,6 @@
 // 	Message to call OnRunMostRecentMRU()
 #define SV_AUTO_RUN_LAST_MRU                        WM_USER + 14
 
-//#define SV_IMAGE_VIEW_CREATE_BUFFER   WM_USER + 21
-//#define SV_IMAGE_VIEW_UPDATE_BUFFER   WM_USER + 22
-//#define SV_IMAGE_VIEW_DESTROY_BUFFER   WM_USER + 23
 #define SV_IOVIEW_HIDE_TAB   WM_USER + 24
 
 #define SV_MDICHILDFRAME_UPDATE_ALL_DATA    WM_USER + 32
@@ -67,11 +51,6 @@
 #define SV_SHUTDOWN WM_USER + 36
 
 #define SV_REGISTER_MONITOR_LIST WM_USER + 37
-
-/**************************************************************************/
-/* INCLUDE CONTROL:
-/**************************************************************************/
-#endif	// SVUSERMESSAGE_H
 
 //******************************************************************************
 //* LOG HISTORY:

@@ -16,7 +16,7 @@
 #include <deque>
 #include "SVMFCControls\SVHorizListBox.h"
 #include "ISVPropertyPageDialog.h"
-#include "NameSelectionTreeCtrl.h"
+#include "SVMFCControls\NameSelectionTreeCtrl.h"
 #include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
@@ -28,13 +28,13 @@ class MonitorListBasePage : public CPropertyPage, public ISVPropertyPageDialog
 
 #pragma region Public
 public:
-	MonitorListBasePage(const NameSelectionList& rList, MonitorListSheet* pParentSheet, const CString& szCaption, int id);
+	MonitorListBasePage(const SvUl::NameSelectionList& rList, MonitorListSheet* pParentSheet, const CString& szCaption, int id);
 	virtual ~MonitorListBasePage();
 
 	// ISVPropertyPageDialog
 	virtual bool QueryAllowExit();
 
-	const NameSelectionList& GetNameSelectionList() const;
+	const SvUl::NameSelectionList& GetNameSelectionList() const;
 
 	// output of OnOK
 	bool m_bObjectsChanged;
@@ -42,7 +42,7 @@ public:
 // Dialog Data
 	//{{AFX_DATA(MonitorListBasePage)
 	enum { IDD = IDD_MONITOR_LIST_PAGE };
-	NameSelectionTreeCtrl m_Tree;
+	SvMc::NameSelectionTreeCtrl m_Tree;
 	CButton     m_btnRemoveAll;
 	CButton     m_btnRemove;
 	SvMc::SVHorizListBox   m_lbSelected;
@@ -79,7 +79,7 @@ protected:
 	CString m_selectedItemText;
 	MonitorListSheet* m_pSheet;
 	//SVString m_ppqName;
-	NameSelectionList m_nameList;
+	SvUl::NameSelectionList m_nameList;
 #pragma endregion Protected
 };
 

@@ -9,7 +9,7 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include "SVUserMessage.h"
+#include "ObjectInterfaces/SVUserMessage.h"
 #include "SVObserver.h" //Arvid: needed only for one call to SVObserverApp::fileSaveAsSVX()
 #include "SVMainFrm.h"
 #include "SVCmnLib\Utilities.h"

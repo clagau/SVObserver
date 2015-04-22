@@ -43,11 +43,14 @@
 
 #include <afx.h>
 #include <afxwin.h>
+#include <afxext.h>         // MFC-Erweiterungen
 #include <afxdisp.h>        // MFC OLE-Automatisierungsklassen
 #include <afxdlgs.h>
 #include <oleauto.h>
 #include <afxtempl.h>
 #include <math.h>
+
+#include <AFXPRIV.H>
 
 // Global includes that everyone needs
 #include "SVOResource\resource.h"

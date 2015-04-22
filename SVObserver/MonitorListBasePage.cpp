@@ -34,7 +34,7 @@ BEGIN_MESSAGE_MAP(MonitorListBasePage, CPropertyPage)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
-MonitorListBasePage::MonitorListBasePage(const NameSelectionList& rList, MonitorListSheet* pParent, const CString& szCaption, int id)
+MonitorListBasePage::MonitorListBasePage(const SvUl::NameSelectionList& rList, MonitorListSheet* pParent, const CString& szCaption, int id)
 : CPropertyPage(id)
 , m_pSheet(pParent)
 , m_nameList(rList)
@@ -56,7 +56,7 @@ bool MonitorListBasePage::QueryAllowExit()
 	return true;
 }
 
-const NameSelectionList& MonitorListBasePage::GetNameSelectionList() const
+const SvUl::NameSelectionList& MonitorListBasePage::GetNameSelectionList() const
 {
 	return m_nameList;
 }
@@ -140,7 +140,7 @@ bool MonitorListBasePage::CanSelectObjectCallback(bool bCurrentState, int index)
 {
 	UpdateData();
 	
-	const NameSelection& nameSelection	= m_nameList[index];
+	const SvUl::NameSelection& nameSelection	= m_nameList[index];
 	const SVString& name = nameSelection.first;
 	m_nameList[index].second = (bCurrentState) ? false : true;
 	if (bCurrentState == false)// want to select

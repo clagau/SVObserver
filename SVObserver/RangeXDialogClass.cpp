@@ -19,7 +19,7 @@
 #include "SVRange.h"
 #include "svresult.h"
 #include "ObjectNameHelper.h"
-#include "NameSelectionList.h"
+#include "SVUtilityLibrary/NameSelectionList.h"
 #include "SVInspectionProcess.h"
 #include "SVToolSet.h"
 #include "ObjectSelectorLibrary/ObjectTreeGenerator.h"

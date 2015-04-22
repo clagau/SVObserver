@@ -12,7 +12,7 @@
 #ifndef SVPPQBAR_H
 #define SVPPQBAR_H
 
-#include "SVWindowBar.h"
+#include "SVMFCControls\SVWindowBar.h"
 
 class SVPPQObject;
 
@@ -64,7 +64,7 @@ protected:
 
 
 
-class SVPPQBarClass : public SVWindowBarClass
+class SVPPQBarClass : public SvMc::SVWindowBarClass
 {
 	DECLARE_DYNCREATE( SVPPQBarClass )
 

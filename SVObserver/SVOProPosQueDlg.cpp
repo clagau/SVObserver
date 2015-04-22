@@ -12,7 +12,7 @@
 #include "stdafx.h"
 #include "SVOProPosQueDlg.h"
 #include "SVOConfigAssistantDlg.h"
-#include "SVOSelectItemListDlg.h"
+#include "SVMFCControls\SVOSelectItemListDlg.h"
 #include "SVOPropertyPageDlg.h"
 #include "SVOCameraObj.h"
 #include "SVOPPQObj.h"
@@ -87,7 +87,7 @@ END_MESSAGE_MAP()
 void CSVOProPosQueDlg::OnBtnAddVc() 
 {
     int iCnt = m_pParent->GetCameraListCount();
-    CSVOSelectItemListDlg *pDlg = new CSVOSelectItemListDlg();
+    SvMc::CSVOSelectItemListDlg *pDlg = new SvMc::CSVOSelectItemListDlg();
     CString sCameraName;
     CSVOCameraObj *pObj;
     CSVOPPQObj *pPPQObj;
@@ -129,7 +129,7 @@ void CSVOProPosQueDlg::OnBtnAddVc()
 void CSVOProPosQueDlg::OnBtnAddVi() 
 {
     int iCnt = m_pParent->GetInspectionListCount();
-    CSVOSelectItemListDlg *pDlg = new CSVOSelectItemListDlg();
+    SvMc::CSVOSelectItemListDlg *pDlg = new SvMc::CSVOSelectItemListDlg();
     CString sInsname;
     CSVOInspectionObj *pObj;
     CSVOPPQObj *pPPQObj;
@@ -184,7 +184,7 @@ void CSVOProPosQueDlg::OnBtnAddVi()
 void CSVOProPosQueDlg::OnBtnAddVt() 
 {
     int iTrigCount = m_pParent->GetTriggerListCount();
-    CSVOSelectItemListDlg *pDlg = new CSVOSelectItemListDlg();
+    SvMc::CSVOSelectItemListDlg *pDlg = new SvMc::CSVOSelectItemListDlg();
     CString sTriggerName;
     CSVOTriggerObj *pObj;
     CSVOPPQObj *pPPQObj;

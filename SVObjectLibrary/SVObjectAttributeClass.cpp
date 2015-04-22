@@ -135,7 +135,7 @@ SVObjectScriptDataObjectTypeEnum SVObjectAttributeClass::GetSVObjectScriptDataOb
 	return eType;
 }// end GetSVObjectScriptDataObjectTypeEnum()
 
-BOOL SVObjectAttributeClass::GetData(SVObjectBoolArrayClass& svData)
+BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectBoolArrayClass& svData)
 {
 	BOOL bOk = FALSE;
 
@@ -195,7 +195,7 @@ BOOL SVObjectAttributeClass::GetData(SVObjectBoolArrayClass& svData)
 }// end GetData(SVObjectBoolArrayClass& svData)
 
 
-BOOL SVObjectAttributeClass::GetData(SVObjectByteArrayClass& svData)
+BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectByteArrayClass& svData)
 {
 	BOOL bOk = FALSE;
 
@@ -263,7 +263,7 @@ BOOL SVObjectAttributeClass::GetData(SVObjectByteArrayClass& svData)
 	return bOk;
 }// end GetData(SVObjectByteArrayClass& svData)
 
-BOOL SVObjectAttributeClass::GetData(SVObjectArrayClassTemplate<char>& svData)
+BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectArrayClassTemplate<char>& svData)
 {
 	BOOL bOk = FALSE;
 
@@ -336,7 +336,7 @@ BOOL SVObjectAttributeClass::GetData(SVObjectArrayClassTemplate<char>& svData)
 	return bOk;
 }// end GetData(SVObjectArrayClassTemplate<char>& svData)
 
-BOOL SVObjectAttributeClass::GetData(SVObjectArrayClassTemplate<CString>& svData)
+BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectArrayClassTemplate<CString>& svData)
 {
 	BOOL bOk = FALSE;
 
@@ -507,7 +507,7 @@ BOOL SVObjectAttributeClass::GetData(SVObjectArrayClassTemplate<CString>& svData
 	return bOk;
 }// end GetData(SVObjectArrayClassTemplate<CString>& svData)
 
-BOOL SVObjectAttributeClass::GetData(SVObjectArrayClassTemplate<SVString>& svData)
+BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectArrayClassTemplate<SVString>& svData)
 {
 	BOOL bOk = FALSE;
 
@@ -680,7 +680,7 @@ BOOL SVObjectAttributeClass::GetData(SVObjectArrayClassTemplate<SVString>& svDat
 }// end GetData(SVObjectArrayClassTemplate<CString>& svData)
 
 
-BOOL SVObjectAttributeClass::GetData(SVObjectDoubleArrayClass& svData)
+BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectDoubleArrayClass& svData)
 {
 	BOOL bOk = FALSE;
 
@@ -785,7 +785,7 @@ BOOL SVObjectAttributeClass::GetData(SVObjectDoubleArrayClass& svData)
 }// end GetData(SVObjectDoubleArrayClass& svData)
 
 
-BOOL SVObjectAttributeClass::GetData(SVObjectDWordArrayClass& svData)
+BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectDWordArrayClass& svData)
 {
 	BOOL bOk = FALSE;
 
@@ -890,7 +890,7 @@ BOOL SVObjectAttributeClass::GetData(SVObjectDWordArrayClass& svData)
 }// end GetData(SVObjectDWordArrayClass& svData)
 
 
-BOOL SVObjectAttributeClass::GetData(SVObjectLongArrayClass& svData)
+BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectLongArrayClass& svData)
 {
 	BOOL bOk = FALSE;
 
@@ -1142,7 +1142,7 @@ BOOL SVObjectAttributeClass::GetData(SVObjectDPointArrayClass& svData)
 	return bOk;
 }// end GetData(SVObjectDPointArrayClass& svData)
 
-BOOL SVObjectAttributeClass::GetData(SVObjectVariantArrayClass& svData)
+BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectVariantArrayClass& svData)
 {
 	BOOL bOk = FALSE;
 
@@ -1286,7 +1286,7 @@ BOOL SVObjectAttributeClass::GetData(SVObjectVariantArrayClass& svData)
 	return bOk;
 }// end GetData(SVObjectVariantArrayClass& svData)
 
-BOOL SVObjectAttributeClass::GetData(SVObjectInt64ArrayClass& svData)
+BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectInt64ArrayClass& svData)
 {
 	BOOL bOk = FALSE;
 
@@ -1359,7 +1359,7 @@ BOOL SVObjectAttributeClass::SetData(int iType, int iSize, void * pvData)
 	{
 		case SV_OBJECT_TYPE_BOOL:
 		{
-			SVObjectBoolArrayClass svArray;
+			SvCl::SVObjectBoolArrayClass svArray;
 
 			BOOL *pArray = (BOOL *)(pvData);
 
@@ -1374,7 +1374,7 @@ BOOL SVObjectAttributeClass::SetData(int iType, int iSize, void * pvData)
 		}
 		case SV_OBJECT_TYPE_BYTE:
 		{
-			SVObjectByteArrayClass svArray;
+			SvCl::SVObjectByteArrayClass svArray;
 
 			BYTE *pArray = (BYTE *)(pvData);
 
@@ -1395,7 +1395,7 @@ BOOL SVObjectAttributeClass::SetData(int iType, int iSize, void * pvData)
 		}
 		case SV_OBJECT_TYPE_DOUBLE:
 		{
-			SVObjectDoubleArrayClass svArray;
+			SvCl::SVObjectDoubleArrayClass svArray;
 
 			double *pArray = (double *)(pvData);
 
@@ -1410,7 +1410,7 @@ BOOL SVObjectAttributeClass::SetData(int iType, int iSize, void * pvData)
 		}
 		case SV_OBJECT_TYPE_DWORD:
 		{
-			SVObjectDWordArrayClass svArray;
+			SvCl::SVObjectDWordArrayClass svArray;
 
 			DWORD *pArray = (DWORD *)(pvData);
 
@@ -1425,7 +1425,7 @@ BOOL SVObjectAttributeClass::SetData(int iType, int iSize, void * pvData)
 		}
 		case SV_OBJECT_TYPE_LONG:
 		{
-			SVObjectLongArrayClass svArray;
+			SvCl::SVObjectLongArrayClass svArray;
 
 			long *pArray = (long *)(pvData);
 
@@ -1470,7 +1470,7 @@ BOOL SVObjectAttributeClass::SetData(int iType, int iSize, void * pvData)
 		}
 		case SV_OBJECT_TYPE_VARIANT:
 		{
-			SVObjectVariantArrayClass svArray;
+			SvCl::SVObjectVariantArrayClass svArray;
 
 			_variant_t* pArray = ( _variant_t* )(pvData);
 
@@ -1485,7 +1485,7 @@ BOOL SVObjectAttributeClass::SetData(int iType, int iSize, void * pvData)
 		}
 		case SV_OBJECT_TYPE_INT64:
 		{
-			SVObjectInt64ArrayClass svArray;
+			SvCl::SVObjectInt64ArrayClass svArray;
 
 			__int64* pArray = (__int64 *)(pvData);
 
@@ -1507,7 +1507,7 @@ BOOL SVObjectAttributeClass::SetData(int iType, int iSize, void * pvData)
 	return bOk;
 }// end SetData(int iType, int iSize, void * pvData)
 
-BOOL SVObjectAttributeClass::SetData(SVObjectInt64ArrayClass& svData)
+BOOL SVObjectAttributeClass::SetData(SvCl::SVObjectInt64ArrayClass& svData)
 {
 	BOOL bOk = SetType( SV_OBJECT_TYPE_INT64 );
 
@@ -1519,7 +1519,7 @@ BOOL SVObjectAttributeClass::SetData(SVObjectInt64ArrayClass& svData)
 	return bOk;
 }
 
-BOOL SVObjectAttributeClass::SetData(SVObjectVariantArrayClass& svData)
+BOOL SVObjectAttributeClass::SetData(SvCl::SVObjectVariantArrayClass& svData)
 {
 	BOOL bOk = SetType( SV_OBJECT_TYPE_VARIANT );
 
@@ -1533,7 +1533,7 @@ BOOL SVObjectAttributeClass::SetData(SVObjectVariantArrayClass& svData)
 
 
 
-BOOL SVObjectAttributeClass::SetData(SVObjectBoolArrayClass& svData)
+BOOL SVObjectAttributeClass::SetData(SvCl::SVObjectBoolArrayClass& svData)
 {
 	BOOL bOk = SetType( SV_OBJECT_TYPE_BOOL );
 
@@ -1546,7 +1546,7 @@ BOOL SVObjectAttributeClass::SetData(SVObjectBoolArrayClass& svData)
 }
 
 
-BOOL SVObjectAttributeClass::SetData(SVObjectByteArrayClass& svData)
+BOOL SVObjectAttributeClass::SetData(SvCl::SVObjectByteArrayClass& svData)
 {
 	BOOL bOk = SetType( SV_OBJECT_TYPE_BYTE );
 
@@ -1572,7 +1572,7 @@ BOOL SVObjectAttributeClass::SetData(SVObjectCStringArrayClass& svData)
 }
 
 
-BOOL SVObjectAttributeClass::SetData(SVObjectDoubleArrayClass& svData)
+BOOL SVObjectAttributeClass::SetData(SvCl::SVObjectDoubleArrayClass& svData)
 {
 	BOOL bOk = SetType( SV_OBJECT_TYPE_DOUBLE );
 
@@ -1585,7 +1585,7 @@ BOOL SVObjectAttributeClass::SetData(SVObjectDoubleArrayClass& svData)
 }
 
 
-BOOL SVObjectAttributeClass::SetData(SVObjectDWordArrayClass& svData)
+BOOL SVObjectAttributeClass::SetData(SvCl::SVObjectDWordArrayClass& svData)
 {
 	BOOL bOk = SetType( SV_OBJECT_TYPE_DWORD );
 
@@ -1598,7 +1598,7 @@ BOOL SVObjectAttributeClass::SetData(SVObjectDWordArrayClass& svData)
 }
 
 
-BOOL SVObjectAttributeClass::SetData(SVObjectLongArrayClass& svData)
+BOOL SVObjectAttributeClass::SetData(SvCl::SVObjectLongArrayClass& svData)
 {
 	BOOL bOk = SetType( SV_OBJECT_TYPE_LONG );
 

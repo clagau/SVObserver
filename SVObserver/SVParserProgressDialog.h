@@ -15,7 +15,7 @@
 #include <map>
 #include "SVContainerLibrary/SVVector.h"
 #include "SVProgressDialog.h"
-#include "SVObjectLibrary/SVLockableClass.h"
+#include "SVSystemLibrary/SVLockableClass.h"
 #include "SVUtilityLibrary\SVSharedPtr.h"
 
 class SVObjectScriptParserClass;
@@ -76,7 +76,7 @@ protected:
 // condition can exist where multiple threads are doing final clean up.
 // This lock variable is used by OnEndProgressDialog () to ensure that only 
 // one thread at a time may use it.
-   SVLockableClass      msvEndDialogLock;
+	SvSyl::SVLockableClass      msvEndDialogLock;
 
 	// Implementation
 protected:

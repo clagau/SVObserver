@@ -11,7 +11,7 @@
 #include "stdafx.h"
 #include "SVObjectScriptParserBase.h"
 #include "SVParserProgressStruct.h"
-#include "SVUserMessage.h"
+#include "ObjectInterfaces/SVUserMessage.h"
 
 SVObjectScriptParserBase::SVObjectScriptParserBase(unsigned long parserHandle, const GUID& OwnerGuid, SVObjectClass* pOwnerObject, CWnd* pWnd)
 : m_parserHandle(parserHandle)

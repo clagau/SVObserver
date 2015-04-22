@@ -9,25 +9,18 @@
 //* .Check In Date   : $Date:   01 Oct 2013 11:27:02  $
 //******************************************************************************
 
-#ifndef _INC_SVOBJECTATTRIBUTECLASS_3A76E8C50119_INCLUDED
-#define _INC_SVOBJECTATTRIBUTECLASS_3A76E8C50119_INCLUDED
+#pragma once
 
 #ifdef SV_SHOW_INCLUDES
 	#pragma message( "Including " __FILE__ )
 #endif
 
 #include <vector>
-#include "SVObjectBoolArrayClass.h"
-#include "SVObjectByteArrayClass.h"
 #include "SVObjectCStringArrayClass.h"
-#include "SVObjectDoubleArrayClass.h"
-#include "SVObjectDWordArrayClass.h"
-#include "SVObjectLongArrayClass.h"
 #include "SVObjectPointArrayClass.h"
 #include "SVObjectScriptEnums.h"
 #include "SVObjectDPointArrayClass.h"
-#include "SVObjectInt64ArrayClass.h"
-#include "SVObjectArrayClassTemplate.h"
+#include "SVContainerLibrary\SVObjectArrayClassTemplate.h"
 
 enum SV_OBJECT_TYPE_ENUM
 {
@@ -65,25 +58,25 @@ public:
 	SVObjectScriptDataObjectTypeEnum GetSVObjectScriptDataObjectTypeEnum();
 
 	//These functions return the configuration object attribute data.
-	BOOL GetData(SVObjectBoolArrayClass& svData);
-	BOOL GetData(SVObjectByteArrayClass& svData);
-	BOOL GetData(SVObjectArrayClassTemplate<char>& svData);	// added to allow templates to use this code more easily
-	BOOL GetData(SVObjectArrayClassTemplate<CString>& svData);	// changed to allow templates to use this code more easily
-	BOOL GetData(SVObjectArrayClassTemplate<SVString>& svData);	// changed to allow templates to use this code more easily
-	BOOL GetData(SVObjectDoubleArrayClass& svData);
-	BOOL GetData(SVObjectDWordArrayClass& svData);
-	BOOL GetData(SVObjectLongArrayClass& svData);
+	BOOL GetData(SvCl::SVObjectBoolArrayClass& svData);
+	BOOL GetData(SvCl::SVObjectByteArrayClass& svData);
+	BOOL GetData(SvCl::SVObjectArrayClassTemplate<char>& svData);	// added to allow templates to use this code more easily
+	BOOL GetData(SvCl::SVObjectArrayClassTemplate<CString>& svData);	// changed to allow templates to use this code more easily
+	BOOL GetData(SvCl::SVObjectArrayClassTemplate<SVString>& svData);	// changed to allow templates to use this code more easily
+	BOOL GetData(SvCl::SVObjectDoubleArrayClass& svData);
+	BOOL GetData(SvCl::SVObjectDWordArrayClass& svData);
+	BOOL GetData(SvCl::SVObjectLongArrayClass& svData);
 	BOOL GetData(SVObjectSVPointArrayClass& svData);
 	BOOL GetData(SVObjectDPointArrayClass& svData);
-	BOOL GetData(SVObjectVariantArrayClass& svData);
-	BOOL GetData(SVObjectInt64ArrayClass& svData);
+	BOOL GetData(SvCl::SVObjectVariantArrayClass& svData);
+	BOOL GetData(SvCl::SVObjectInt64ArrayClass& svData);
 
 	// this function handles old-style configs
 	template <typename T>	
 	BOOL GetAttributeData(LPCTSTR szName, std::vector< std::vector<T> >& raaData, T defaultValue)
 	{// VC6 compiler limitation: code must be here (inside the class definition)
 		BOOL bOk = FALSE;
-		SVObjectArrayClassTemplate<T> svTempArray;
+		SvCl::SVObjectArrayClassTemplate<T> svTempArray;
 		bOk = GetAttributeData( szName, svTempArray );
 		if ( bOk )
 		{
@@ -114,7 +107,7 @@ public:
 	BOOL GetArrayData(LPCTSTR szName, std::vector<T>& raData, T defaultValue)
 	{// VC6 compiler limitation: code must be here (inside the class definition)
 		BOOL bOk = FALSE;
-		SVObjectArrayClassTemplate<T> svTempArray;
+		SvCl::SVObjectArrayClassTemplate<T> svTempArray;
 		bOk = GetAttributeData( szName, svTempArray );
 		if ( bOk )
 		{
@@ -135,7 +128,7 @@ public:
 	}
 
 	template <typename T>
-	BOOL GetAttributeData(LPCTSTR szName, SVObjectArrayClassTemplate<T>& svData)
+	BOOL GetAttributeData(LPCTSTR szName, SvCl::SVObjectArrayClassTemplate<T>& svData)
 	{
 		BOOL bOk = mcsName.Compare( szName ) == 0;
 
@@ -166,16 +159,16 @@ public:
 
 	//This operator sets the internal data of the 
 	//configuration object attribute.
-	BOOL SetData(SVObjectBoolArrayClass& svData);
-	BOOL SetData(SVObjectByteArrayClass& svData);
+	BOOL SetData(SvCl::SVObjectBoolArrayClass& svData);
+	BOOL SetData(SvCl::SVObjectByteArrayClass& svData);
 	BOOL SetData(SVObjectCStringArrayClass& svData);
-	BOOL SetData(SVObjectDoubleArrayClass& svData);
-	BOOL SetData(SVObjectDWordArrayClass& svData);
-	BOOL SetData(SVObjectLongArrayClass& svData);
+	BOOL SetData(SvCl::SVObjectDoubleArrayClass& svData);
+	BOOL SetData(SvCl::SVObjectDWordArrayClass& svData);
+	BOOL SetData(SvCl::SVObjectLongArrayClass& svData);
 	BOOL SetData(SVObjectSVPointArrayClass& svData);
 	BOOL SetData(SVObjectDPointArrayClass& svData);
-	BOOL SetData(SVObjectVariantArrayClass& svData);
-	BOOL SetData(SVObjectInt64ArrayClass& svData);
+	BOOL SetData(SvCl::SVObjectVariantArrayClass& svData);
+	BOOL SetData(SvCl::SVObjectInt64ArrayClass& svData);
 
 	BOOL AddData(BOOL Value);
 	BOOL AddData(BYTE Value);
@@ -197,19 +190,17 @@ private:
 	//configuration object attribute type.
 	int miType;
 
-	SVObjectBoolArrayClass msvBoolArray;
+	SvCl::SVObjectBoolArrayClass msvBoolArray;
 	SVObjectCStringArrayClass msvCStringArray;
-	SVObjectDoubleArrayClass msvDoubleArray;
-	SVObjectDWordArrayClass msvDWordArray;
-	SVObjectLongArrayClass msvLongArray;
+	SvCl::SVObjectDoubleArrayClass msvDoubleArray;
+	SvCl::SVObjectDWordArrayClass msvDWordArray;
+	SvCl::SVObjectLongArrayClass msvLongArray;
 	SVObjectSVPointArrayClass msvPointArray;
-	SVObjectByteArrayClass msvByteArray;
+	SvCl::SVObjectByteArrayClass msvByteArray;
 	SVObjectDPointArrayClass msvDPointArray;
-	SVObjectVariantArrayClass msvVariantArray;
-	SVObjectInt64ArrayClass msvInt64Array;
+	SvCl::SVObjectVariantArrayClass msvVariantArray;
+	SvCl::SVObjectInt64ArrayClass msvInt64Array;
 };
-
-#endif /* _INC_SVOBJECTATTRIBUTECLASS_3A76E8C50119_INCLUDED */
 
 //******************************************************************************
 //* LOG HISTORY:

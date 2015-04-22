@@ -14,7 +14,7 @@
 #define __SVLUTDLG_H__
 
 #include "SVEnumerateCombo.h"
-#include "SVDlgGraph.h"
+#include "SVOMFCLibrary\SVDlgGraph.h"
 #include "SVVirtualCamera.h"
 
 class SVLutDlg : public CPropertySheet
@@ -71,14 +71,14 @@ public:
 	
 public:
 	SVLut                       mLut;
-    SVVirtualCamera*            mpCamera;   // for band information
-	SVObjectLongArrayClass      malBandData;
+	SVVirtualCamera*            mpCamera;   // for band information
+	SvCl::SVObjectLongArrayClass      malBandData;
 
 	//{{AFX_DATA(SVLutDlgPage)
 	enum { IDD = IDD_LUT_DIALOG };
 	CSliderCtrl	mUpperSlider;
 	CSliderCtrl	mLowerSlider;
-	SVDlgGraphClass	mLUTGraph;
+	SvOml::SVDlgGraphClass	mLUTGraph;
 	SVEnumerateComboClass	mLutModeCombo;
 	CString	mstrUpperClipValue;
 	CString	mstrLowerClipValue;

@@ -12,7 +12,7 @@
 #ifndef SVOCVANALYZERESULTCLASS_H
 #define SVOCVANALYZERESULTCLASS_H
 
-#include "SVObjectLibrary/SVLockableClass.h"
+#include "SVSystemLibrary/SVLockableClass.h"
 #include "SVMatroxLibrary/SVMatroxLibrary.h"
 #include "SVOCVBlobRecord.h"
 #include "SVResult.h"
@@ -92,7 +92,7 @@ protected:
 	short    *m_pIndexTable;
 	double   m_dFactor;
 
-	SVLockableClass		lock;
+	SvSyl::SVLockableClass		lock;
 
 	// Input: Image
 	SVInObjectInfoStruct inputImageObjectInfo;

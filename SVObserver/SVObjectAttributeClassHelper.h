@@ -14,7 +14,7 @@
 
 #include <vector>
 #include <comdef.h>
-#include "SVObjectLibrary/SVObjectArrayClassTemplate.h"
+#include "SVContainerLibrary\SVObjectArrayClassTemplate.h"
 #include "SVUtilityLibrary/SVDPointClass.h"
 #include "SVUtilityLibrary/SVPOINT.h"
 class SVObjectAttributeClass;
@@ -22,6 +22,7 @@ class SVObjectAttributeClass;
 class SVObjectAttributeClassHelper
 {
 public:
+	//@WARNING [MZA, 21.04.15] Use a template rather than so many methods
 	static BOOL GetArrayData(SVObjectAttributeClass* pDataObject, LPCTSTR szName, std::vector<BOOL>& raaData, BOOL defaultValue);
 	static BOOL GetArrayData(SVObjectAttributeClass* pDataObject, LPCTSTR szName, std::vector<BYTE>& raaData, BYTE defaultValue);
 	static BOOL GetArrayData(SVObjectAttributeClass* pDataObject, LPCTSTR szName, std::vector<char>& raaData, char defaultValue);
@@ -48,18 +49,18 @@ public:
 	static BOOL GetAttributeData(SVObjectAttributeClass* pDataObject, LPCTSTR szName, std::vector< std::vector<_variant_t> >& raaData, _variant_t defaultValue);
 	static BOOL GetAttributeData(SVObjectAttributeClass* pDataObject, LPCTSTR szName, std::vector< std::vector<__int64> >& raaData, __int64 defaultValue);
 
-	static BOOL GetAttributeData(SVObjectAttributeClass* pDataObject ,LPCTSTR szName, SVObjectArrayClassTemplate<BOOL>& svData);
-	static BOOL GetAttributeData(SVObjectAttributeClass* pDataObject ,LPCTSTR szName, SVObjectArrayClassTemplate<BYTE>& svData);
-	static BOOL GetAttributeData(SVObjectAttributeClass* pDataObject ,LPCTSTR szName, SVObjectArrayClassTemplate<char>& svData);
-	static BOOL GetAttributeData(SVObjectAttributeClass* pDataObject ,LPCTSTR szName, SVObjectArrayClassTemplate<CString>& svData);
-	static BOOL GetAttributeData(SVObjectAttributeClass* pDataObject ,LPCTSTR szName, SVObjectArrayClassTemplate<SVString>& svData);
-	static BOOL GetAttributeData(SVObjectAttributeClass* pDataObject ,LPCTSTR szName, SVObjectArrayClassTemplate<double>& svData);
-	static BOOL GetAttributeData(SVObjectAttributeClass* pDataObject ,LPCTSTR szName, SVObjectArrayClassTemplate<DWORD>& svData);
-	static BOOL GetAttributeData(SVObjectAttributeClass* pDataObject ,LPCTSTR szName, SVObjectArrayClassTemplate<long>& svData);
-	static BOOL GetAttributeData(SVObjectAttributeClass* pDataObject ,LPCTSTR szName, SVObjectArrayClassTemplate<SVPOINT>& svData);
-	static BOOL GetAttributeData(SVObjectAttributeClass* pDataObject ,LPCTSTR szName, SVObjectArrayClassTemplate<SVDPointClass>& svData);
-	static BOOL GetAttributeData(SVObjectAttributeClass* pDataObject ,LPCTSTR szName, SVObjectArrayClassTemplate<_variant_t>& svData);
-	static BOOL GetAttributeData(SVObjectAttributeClass* pDataObject, LPCTSTR szName, SVObjectArrayClassTemplate<__int64>& raaData);
+	static BOOL GetAttributeData(SVObjectAttributeClass* pDataObject ,LPCTSTR szName, SvCl::SVObjectArrayClassTemplate<BOOL>& svData);
+	static BOOL GetAttributeData(SVObjectAttributeClass* pDataObject ,LPCTSTR szName, SvCl::SVObjectArrayClassTemplate<BYTE>& svData);
+	static BOOL GetAttributeData(SVObjectAttributeClass* pDataObject ,LPCTSTR szName, SvCl::SVObjectArrayClassTemplate<char>& svData);
+	static BOOL GetAttributeData(SVObjectAttributeClass* pDataObject ,LPCTSTR szName, SvCl::SVObjectArrayClassTemplate<CString>& svData);
+	static BOOL GetAttributeData(SVObjectAttributeClass* pDataObject ,LPCTSTR szName, SvCl::SVObjectArrayClassTemplate<SVString>& svData);
+	static BOOL GetAttributeData(SVObjectAttributeClass* pDataObject ,LPCTSTR szName, SvCl::SVObjectArrayClassTemplate<double>& svData);
+	static BOOL GetAttributeData(SVObjectAttributeClass* pDataObject ,LPCTSTR szName, SvCl::SVObjectArrayClassTemplate<DWORD>& svData);
+	static BOOL GetAttributeData(SVObjectAttributeClass* pDataObject ,LPCTSTR szName, SvCl::SVObjectArrayClassTemplate<long>& svData);
+	static BOOL GetAttributeData(SVObjectAttributeClass* pDataObject ,LPCTSTR szName, SvCl::SVObjectArrayClassTemplate<SVPOINT>& svData);
+	static BOOL GetAttributeData(SVObjectAttributeClass* pDataObject ,LPCTSTR szName, SvCl::SVObjectArrayClassTemplate<SVDPointClass>& svData);
+	static BOOL GetAttributeData(SVObjectAttributeClass* pDataObject ,LPCTSTR szName, SvCl::SVObjectArrayClassTemplate<_variant_t>& svData);
+	static BOOL GetAttributeData(SVObjectAttributeClass* pDataObject, LPCTSTR szName, SvCl::SVObjectArrayClassTemplate<__int64>& raaData);
 };
 
 #endif

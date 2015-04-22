@@ -69,7 +69,7 @@
 #ifndef _WIN64
 #include "SVImageCompression/SVImageCompressionClass.h"
 #endif
-#include "SVUserMessage.h"
+#include "ObjectInterfaces/SVUserMessage.h"
 #include "SVOMFCLibrary/SVOINIClass.h"
 #include "SVOMFCLibrary/SVOIniLoader.h"
 

@@ -27,7 +27,7 @@ BEGIN_MESSAGE_MAP(MonitorListImagesPage, MonitorListBasePage)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
-MonitorListImagesPage::MonitorListImagesPage(const NameSelectionList& rList, MonitorListSheet* pParent, const CString& szCaption, int id)
+MonitorListImagesPage::MonitorListImagesPage(const SvUl::NameSelectionList& rList, MonitorListSheet* pParent, const CString& szCaption, int id)
 : MonitorListBasePage(rList, pParent, szCaption, id)
 {
 	//{{AFX_DATA_INIT(MonitorListImagesPage)

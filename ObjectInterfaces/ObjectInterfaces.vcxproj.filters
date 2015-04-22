@@ -93,5 +93,8 @@
     <ClInclude Include="IMatroxImageData.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
+    <ClInclude Include="SVUserMessage.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

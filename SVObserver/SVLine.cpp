@@ -13,8 +13,6 @@
 #include "SVLine.h"
 #include "SVImageClass.h"
 #include "SVLineAnalyzer.h"
-#include "SVObjectLibrary/SVObjectDoubleArrayClass.h"
-#include "SVObjectLibrary/SVObjectLongArrayClass.h"
 #include "SVObjectLibrary/SVObjectPointArrayClass.h"
 #include "SVObjectLibrary/SVObjectAttributeClass.h"
 
@@ -450,8 +448,8 @@ HRESULT SVLineClass::SetObjectValue( SVObjectAttributeClass* PDataObject )
 	BOOL bOk = FALSE;
 
 
-	SVObjectDoubleArrayClass svDoubleArray;
-	SVObjectLongArrayClass svLongArray;
+	SvCl::SVObjectDoubleArrayClass svDoubleArray;
+	SvCl::SVObjectLongArrayClass svLongArray;
 	SVObjectSVPointArrayClass svPointArray;
 
 	double l_dValue = 0.0;

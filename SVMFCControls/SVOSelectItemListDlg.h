@@ -8,58 +8,59 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   23 Apr 2013 13:12:28  $
 //******************************************************************************
-#ifndef SVOSELECTITEMLISTDLG_H
-#define SVOSELECTITEMLISTDLG_H
+#pragma once
 
 #include "SVContainerLibrary/SVList.h"
 
-class CSVOSelectItemListDlg : public CDialog
+namespace Seidenader
 {
-// Construction
-public:
-	void AddListBoxItem(CString sItem);
-	CSVOSelectItemListDlg(CWnd* pParent = NULL);   // standard constructor
+	namespace SVMFCControls
+	{
+		class CSVOSelectItemListDlg : public CDialog
+		{
+			// Construction
+		public:
+			void AddListBoxItem(CString sItem);
+			CSVOSelectItemListDlg(CWnd* pParent = NULL);   // standard constructor
 
-    void SetDisplayName(LPCTSTR sDisplayName);
-    int m_iSelectedItemPosition;
-// Dialog Data
-	//{{AFX_DATA(CSVOSelectItemListDlg)
-	enum { IDD = IDD_DLG_AA_SELECT_ITEM_DLG };
-	CListBox	m_ctlSelectItemList;
-	CString	m_sSelectItemListValue;
-	//}}AFX_DATA
+			void SetDisplayName(LPCTSTR sDisplayName);
+			int m_iSelectedItemPosition;
+			// Dialog Data
+			//{{AFX_DATA(CSVOSelectItemListDlg)
+			enum { IDD = IDD_DLG_AA_SELECT_ITEM_DLG };
+			CListBox	m_ctlSelectItemList;
+			CString	m_sSelectItemListValue;
+			//}}AFX_DATA
 
 
-// Overrides
-	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(CSVOSelectItemListDlg)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-	//}}AFX_VIRTUAL
+			// Overrides
+			// ClassWizard generated virtual function overrides
+			//{{AFX_VIRTUAL(CSVOSelectItemListDlg)
+		protected:
+			virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+			//}}AFX_VIRTUAL
 
-// Implementation
-protected:
+			// Implementation
+		protected:
 
-	// Generated message map functions
-	//{{AFX_MSG(CSVOSelectItemListDlg)
-	virtual BOOL OnInitDialog();
-	virtual void OnOK();
-	//}}AFX_MSG
-	DECLARE_MESSAGE_MAP()
+			// Generated message map functions
+			//{{AFX_MSG(CSVOSelectItemListDlg)
+			virtual BOOL OnInitDialog();
+			virtual void OnOK();
+			//}}AFX_MSG
+			DECLARE_MESSAGE_MAP()
 
-private:
-	typedef SVList< CString > SVDisplayList;
+		private:
+			typedef SVList< CString > SVDisplayList;
 
-	SVDisplayList m_DisplayList;
+			SVDisplayList m_DisplayList;
 
-    CString m_sDisplay;
-};
+			CString m_sDisplay;
+		};
+	} //SVMFCControls
+} //Seidenader
 
-//{{AFX_INSERT_LOCATION}}
-// Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif
-
+namespace SvMc = Seidenader::SVMFCControls;
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************

@@ -160,6 +160,7 @@
     <ClInclude Include="ObjectDefines.h" />
     <ClInclude Include="SVImageEnums.h" />
     <ClInclude Include="SVObjectTypeInfoStruct.h" />
+    <ClInclude Include="SVUserMessage.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

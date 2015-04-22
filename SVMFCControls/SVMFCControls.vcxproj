@@ -93,8 +93,7 @@
     </ResourceCompile>
     <Lib>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalDependencies>
-      </AdditionalDependencies>
+      <AdditionalDependencies>SVUtilityLibrary.lib;SVSystemLibrary.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
     <Bscmake>
@@ -123,8 +122,7 @@
     </ResourceCompile>
     <Lib>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalDependencies>
-      </AdditionalDependencies>
+      <AdditionalDependencies>SVUtilityLibrary.lib;SVSystemLibrary.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
     <Bscmake>
@@ -157,8 +155,7 @@
     </ResourceCompile>
     <Lib>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalDependencies>
-      </AdditionalDependencies>
+      <AdditionalDependencies>SVUtilityLibrary.lib;SVSystemLibrary.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
     <Bscmake>
@@ -191,8 +188,7 @@
     </ResourceCompile>
     <Lib>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalDependencies>
-      </AdditionalDependencies>
+      <AdditionalDependencies>SVUtilityLibrary.lib;SVSystemLibrary.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
     <Bscmake>
@@ -201,6 +197,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="CLabel.cpp" />
+    <ClCompile Include="NameSelectionTreeCtrl.cpp" />
+    <ClCompile Include="SVDlgBitmap.cpp" />
+    <ClCompile Include="SVOSelectItemListDlg.cpp" />
+    <ClCompile Include="SVSlideBar.cpp" />
     <ClCompile Include="SVSliderCtrl.cpp" />
     <ClCompile Include="CSVOCRFontTraining.cpp" />
     <ClCompile Include="CSVOCRGrayFontTrain.cpp" />
@@ -246,13 +246,18 @@
     </ClCompile>
     <ClCompile Include="SVTreeCtrl.cpp" />
     <ClCompile Include="SVUpDownButton.cpp" />
+    <ClCompile Include="SVWindowBar.cpp" />
     <ClCompile Include="VisualFx.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CLabel.h" />
     <ClInclude Include="CSVOCRFontTraining.h" />
     <ClInclude Include="CSVOCRGrayFontTrain.h" />
+    <ClInclude Include="NameSelectionTreeCtrl.h" />
     <ClInclude Include="StdAfx.h" />
+    <ClInclude Include="SVDlgBitmap.H" />
+    <ClInclude Include="SVOSelectItemListDlg.h" />
+    <ClInclude Include="SVSlideBar.h" />
     <ClInclude Include="SVSliderCtrl.h" />
     <ClInclude Include="SVActiveDisableButton.h" />
     <ClInclude Include="SVDlgFolder.h" />
@@ -273,6 +278,7 @@
     <ClInclude Include="SVToolBar.h" />
     <ClInclude Include="SVTreeCtrl.h" />
     <ClInclude Include="SVUpDownButton.h" />
+    <ClInclude Include="SVWindowBar.h" />
     <ClInclude Include="VisualFx.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

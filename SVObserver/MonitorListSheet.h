@@ -14,7 +14,7 @@
 #pragma region Includes
 #include "SVPropertySheetCancelImpl.h"
 #include "RemoteMonitorNamedList.h"
-#include "NameSelectionList.h"
+#include "SVUtilityLibrary/NameSelectionList.h"
 #pragma endregion Includes
 
 #pragma region Enum
@@ -66,7 +66,7 @@ protected:
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 
-	MonitoredObjectList GetMonitoredObjectList(const NameSelectionList& rList);
+	MonitoredObjectList GetMonitoredObjectList(const SvUl::NameSelectionList& rList);
 	void SetMonitoredValues(MonitorListType eListType, const MonitoredObjectList& rList);
 	void SetMonitoredImages(MonitorListType eListType, const MonitoredObjectList& rList);
 

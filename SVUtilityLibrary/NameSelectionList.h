@@ -1,4 +1,4 @@
-//******************************************************************************
+﻿//******************************************************************************
 //* COPYRIGHT (c) 2014 by Seidendader Vision, Harrisburg
 //* All Rights Reserved
 //******************************************************************************
@@ -14,12 +14,20 @@
 #pragma region Includes
 #include <utility>
 #include <deque>
-#include "SVUtilityLibrary/SVString.h"
+#include "SVString.h"
 #pragma endregion Includes
 
-// first in the pair is the inspection object (image/value) name, second is a boolean for whether it's selected or not
-typedef std::pair<SVString, bool> NameSelection;
-typedef std::deque<NameSelection> NameSelectionList;
+namespace Seidenader
+{
+	namespace SVUtilityLibrary
+	{
+		// first in the pair is the inspection object (image/value) name, second is a boolean for whether it's selected or not
+		typedef std::pair<SVString, bool> NameSelection;
+		typedef std::deque<NameSelection> NameSelectionList;
+	} //SVUtilityLibrary
+} //Seidenader
+
+namespace SvUl = Seidenader::SVUtilityLibrary;
 
 //******************************************************************************
 //* LOG HISTORY:

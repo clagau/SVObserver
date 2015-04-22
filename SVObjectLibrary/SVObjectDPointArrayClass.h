@@ -9,22 +9,16 @@
 //* .Check In Date   : $Date:   22 Apr 2013 16:50:22  $
 //******************************************************************************
 
-#if defined (_MSC_VER) && (_MSC_VER >= 1000)
 #pragma once
-#endif
-#ifndef _SVOBJECTDPOINTARRAYCLASS_H
-#define _SVOBJECTDPOINTARRAYCLASS_H
 
 #ifdef SV_SHOW_INCLUDES
 	#pragma message( "Including " __FILE__ )
 #endif
 
 #include "SVUtilityLibrary/SVDPointClass.h"
-#include "SVObjectArrayClassTemplate.h"
+#include "SVContainerLibrary\SVObjectArrayClassTemplate.h"
 
-typedef SVObjectArrayClassTemplate<SVDPointClass> SVObjectDPointArrayClass;
-
-#endif /* _SVOBJECTDPOINTARRAYCLASS_H */
+typedef SvCl::SVObjectArrayClassTemplate<SVDPointClass> SVObjectDPointArrayClass;
 
 //******************************************************************************
 //* LOG HISTORY:

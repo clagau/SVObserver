@@ -15,7 +15,7 @@
 // Include(s):
 //******************************************************************************
 
-#include "SVObjectLibrary/SVLockableClass.h"
+#include "SVSystemLibrary/SVLockableClass.h"
 #include "SVLVFastOCR.h"
 #include "SVOCRBlobRecord.h"
 #include "SVOCRParamStruct.h"
@@ -117,7 +117,7 @@ protected:
 	short    *m_pIndexTable;
 	double   m_dFactor;
 
-	SVLockableClass lock;
+	SvSyl::SVLockableClass lock;
 
 	// Input: Image
 	SVInObjectInfoStruct inputImageObjectInfo;

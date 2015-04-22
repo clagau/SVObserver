@@ -12,7 +12,7 @@
 #include "stdafx.h"
 #include "SVObjectScriptParser.h"
 #include "SVParserProgressStruct.h"
-#include "SVUserMessage.h"
+#include "ObjectInterfaces/SVUserMessage.h"
 
 unsigned long SVObjectScriptParserClass::GetParserHandle()
 {

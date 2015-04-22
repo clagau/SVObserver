@@ -185,6 +185,7 @@
     <ClCompile Include="ZipHelper.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="NameSelectionList.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="StringToEnum.h" />
     <ClInclude Include="SVBitmapInfo.h" />

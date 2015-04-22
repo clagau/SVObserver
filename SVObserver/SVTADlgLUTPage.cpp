@@ -18,7 +18,7 @@
 #include "SVLutEquation.h"
 #include "SVTool.h"
 #include "SVToolAdjustmentDialogSheetClass.h"
-#include "SVUserMessage.h"
+#include "ObjectInterfaces/SVUserMessage.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -200,7 +200,7 @@ BOOL SVToolAdjustmentDialogLUTPageClass::OnInitDialog()
 		m_yAxisLabel.SetRotationAngle( 90, true );
 
 		// Set Normalize Mode of Graph Control...
-		m_LUTGraph.SetNormalizeMode( SVNormalize2D );
+		m_LUTGraph.SetNormalizeMode( SvOml::SVNormalize2D );
 
 		// Set Clip Slider Data...
 		m_upperSlider.SetRange( 0, 255 );
@@ -582,7 +582,7 @@ void SVToolAdjustmentDialogLUTPageClass::refreshLUTGraph()
 	if( nullptr != m_pLUTVector )
 	{
 		std::vector<BYTE> byteVector;
-		SVObjectByteArrayClass byteArray;
+		SvCl::SVObjectByteArrayClass byteArray;
 		m_pLUTVector->GetValues( byteVector );
 		int nSize = static_cast<int>(byteVector.size());
 		for( int j = 0; j < nSize; j++ )

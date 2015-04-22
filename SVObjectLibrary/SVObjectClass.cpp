@@ -18,7 +18,6 @@
 #include "SVUtilityLibrary/SVSAFEARRAY.h"
 #include "SVObjectAttributeClass.h"
 #include "SVObjectCStringArrayClass.h"
-#include "SVObjectDWordArrayClass.h"
 #include "SVObjectLevelCreateStruct.h"
 #include "SVObjectManagerClass.h"
 #include "SVObjectLibrary/SVToolsetScriptTags.h"
@@ -675,7 +674,7 @@ HRESULT SVObjectClass::SetObjectValue( SVObjectAttributeClass* PDataObject )
 
 	if( PDataObject )
 	{
-		SVObjectDWordArrayClass svDWordArray;
+		SvCl::SVObjectDWordArrayClass svDWordArray;
 		SVObjectCStringArrayClass svCStringArray;
 
 		if ( ( bOk = PDataObject->GetAttributeData( "DataLinkID", svCStringArray ) ) )

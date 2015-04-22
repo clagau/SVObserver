@@ -45,7 +45,7 @@
 #include "SVTriggerClass.h"
 #include "SVSoftwareTriggerClass.h"
 #include "SVToolSet.h"
-#include "SVUserMessage.h"
+#include "ObjectInterfaces/SVUserMessage.h"
 #include "SVSubscriberProviderInterfaces.h"
 #include "SVAcquisitionInitiator.h"
 #include "SVTriggerProcessingClass.h"

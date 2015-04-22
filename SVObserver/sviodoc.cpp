@@ -32,7 +32,7 @@
 #include "SVConfigurationLibrary/SVConfigurationTags.h"
 #include "SVIOTabbedView.h"
 #include "SVMainFrm.h"
-#include "SVUserMessage.h"
+#include "ObjectInterfaces/SVUserMessage.h"
 #include "SVIOController.h"
 #include "ErrorNumbers.h"
 #include "SVStatusLibrary/ExceptionManager.h"
