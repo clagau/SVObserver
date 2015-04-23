@@ -9,11 +9,13 @@
 #include "SVImageEnums.h"
 #include "IObjectAppClass.h"
 #include "IMatroxImageData.h"
+#include "SVUtilityLibrary\SVSharedPtr.h"
 
 namespace Seidenader
 {
 	namespace ObjectInterfaces
 	{	
+		typedef SVSharedPtr< IMatroxImageData > MatroxImageSmartHandlePointer;
 		//this class is a interface. It should only have pure virtual public method and new member parameter
 		class ISVImage : virtual public IObjectAppClass
 		{
@@ -32,15 +34,15 @@ namespace Seidenader
 
 			//************************************
 			/// Return the data of the image.
-			/// \returns IMatroxImageData*
+			/// \returns MatroxImageSmartHandlePointer
 			//************************************
-			virtual IMatroxImageData* getImageData() = 0;
+			virtual MatroxImageSmartHandlePointer getImageData() = 0;
 
 			//************************************
 			/// Return the data of the parent image.
-			/// \returns IMatroxImageData*
+			/// \returns MatroxImageSmartHandlePointer
 			//************************************
-			virtual IMatroxImageData*  getParentImageData() = 0;
+			virtual MatroxImageSmartHandlePointer getParentImageData() = 0;
 		};
 	}
 }

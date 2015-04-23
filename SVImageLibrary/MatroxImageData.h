@@ -16,7 +16,7 @@
 #pragma region Declarations
 #pragma endregion Declarations
 
-class MatroxImageData : virtual public SvOi::IMatroxImageData
+class MatroxImageData : public SvOi::IMatroxImageData
 /// \brief This class implemented the interface IMatroxImageData.
 {
 #pragma region Constructor

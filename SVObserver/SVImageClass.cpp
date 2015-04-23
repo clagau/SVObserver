@@ -2669,28 +2669,30 @@ SvOi::ISVImage* SVImageClass::GetParentImageInterface() const
 	return GetParentImage();
 }
 
-SvOi::IMatroxImageData* SVImageClass::getImageData()
+SvOi::MatroxImageSmartHandlePointer SVImageClass::getImageData()
 {
 	SVSmartHandlePointer handle;
-	static MatroxImageData data(handle);
+	SvOi::MatroxImageSmartHandlePointer dataSmartPointer;
 	if (GetImageHandle(handle))
 	{
-		data.setImageHandle(handle);
-		return &data;
+		MatroxImageData *data = new MatroxImageData(handle);
+		data->setImageHandle(handle);
+		dataSmartPointer = data;
 	}
-	return nullptr; 
+	return dataSmartPointer;
 }
 
-SvOi::IMatroxImageData*  SVImageClass::getParentImageData()
+SvOi::MatroxImageSmartHandlePointer SVImageClass::getParentImageData()
 {
 	SVSmartHandlePointer handle;
-	static MatroxImageData data(handle);
+	SvOi::MatroxImageSmartHandlePointer dataSmartPointer;
 	if (S_OK == GetParentImageHandle(handle))
 	{
-		data.setImageHandle(handle);
-		return &data;
+		MatroxImageData *data = new MatroxImageData(handle);
+		data->setImageHandle(handle);
+		dataSmartPointer = data;
 	}
-	return nullptr; 
+	return dataSmartPointer;
 }
 #pragma endregion virtual method (ISVImage)
 

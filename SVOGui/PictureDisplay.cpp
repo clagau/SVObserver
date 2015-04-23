@@ -45,7 +45,7 @@ namespace Seidenader
 #pragma region Public Methods
 		void PictureDisplay::setImageFromParent( SvOi::ISVImage* pImage, long tabNumber )
 		{
-			SvOi::IMatroxImageData *data = nullptr;
+			SvOi::MatroxImageSmartHandlePointer data;
 			if( pImage->GetImageType() == SVImageTypePhysical )
 			{
 				data = pImage->GetParentImageInterface()->getImageData();
@@ -59,15 +59,15 @@ namespace Seidenader
 
 		void PictureDisplay::setImage( SvOi::ISVImage* pImage, long tabNumber )
 		{
-			SvOi::IMatroxImageData *data = pImage->getImageData();
+			SvOi::MatroxImageSmartHandlePointer data = pImage->getImageData();
 			setImage( data, tabNumber );
 		}
 
-		void PictureDisplay::setImage( const SvOi::IMatroxImageData *imageData, long tabNumber )
+		void PictureDisplay::setImage( const SvOi::MatroxImageSmartHandlePointer imageData, long tabNumber )
 		{
 			ASSERT( static_cast< long >( m_dibVector.size() ) > tabNumber );
 
-			if( nullptr != imageData && !( imageData->empty() ) )
+			if( !imageData.empty() && !imageData->empty() )
 			{
 				SVBitmapInfo dibInfo = imageData->getBitmapInfo();
 				BYTE* pMilBuffer = static_cast< BYTE* >( imageData->getBufferAddress() );

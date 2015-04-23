@@ -136,8 +136,8 @@ public:
 #pragma region virtual method (ISVImage)
 	virtual SVImageTypeEnum GetImageType() const override;
 	virtual SvOi::ISVImage* GetParentImageInterface() const override;
-	virtual SvOi::IMatroxImageData* getImageData() override;
-	virtual SvOi::IMatroxImageData*  getParentImageData() override;
+	virtual SvOi::MatroxImageSmartHandlePointer getImageData() override;
+	virtual SvOi::MatroxImageSmartHandlePointer getParentImageData() override;
 #pragma region virtual method (ISVImage)
 
 protected:
