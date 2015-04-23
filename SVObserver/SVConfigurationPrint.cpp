@@ -11,6 +11,7 @@
 
 #pragma region Includes
 #include "stdafx.h"
+#include <boost/algorithm/string.hpp>
 #include <boost/algorithm/string/replace.hpp>
 #include "SVConfigurationPrint.h"
 #include "SVConfigurationObject.h"
@@ -1352,34 +1353,49 @@ typedef std::deque<CString> WordWrapLines;
 static WordWrapLines DoWordWrap(LPCTSTR text, int numChars)
 {
 	WordWrapLines lines;
-	CString tmp(text);
-	CString line;
-	int cnt = 0;
-	int len = tmp.GetLength();
-	for (int i = 0 ;i < len;i++)
+	
+	// remove all carriage returns
+	std::string tmp = text;
+	boost::replace_all(tmp, "\r", "");
+
+	// split into multiple lines based on linefeed
+	typedef std::deque<std::string> split_container_type;
+	split_container_type splitContainer;
+	boost::algorithm::split(splitContainer, tmp, boost::algorithm::is_any_of("\n"), boost::algorithm::token_compress_off);
+	// Iterate over the conatiner of lines and do Word Warp
+	std::for_each(splitContainer.begin(), splitContainer.end(), [&numChars, &lines](const std::string& rText)->void 
 	{
-		cnt++;
-		if (tmp[i] == _T('\n'))
+		CString tmp(rText.c_str());
+		CString line;
+
+		int cnt = 0;
+		int len = tmp.GetLength();
+		for (int i = 0 ;i < len;i++)
 		{
-			lines.push_back(_T(" "));
-			cnt = 0;
-			line.Empty();
+			cnt++;
+			if (tmp[i] == _T('\n'))
+			{
+				lines.push_back(_T(" "));
+				cnt = 0;
+				line.Empty();
+			}
+			else if (cnt > numChars)
+			{
+				lines.push_back(line);
+				cnt = 1;
+				line = tmp[i];
+			}
+			else
+			{
+				line += tmp[i];
+			}
 		}
-		else if (cnt > numChars)
+		if (!line.IsEmpty())
 		{
 			lines.push_back(line);
-			cnt = 1;
-			line = tmp[i];
-		}
-		else
-		{
-			line += tmp[i];
 		}
 	}
-	if (!line.IsEmpty())
-	{
-		lines.push_back(line);
-	}
+	); // end of for_each
 	return lines;
 }
 
