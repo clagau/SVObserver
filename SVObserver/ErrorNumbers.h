@@ -26,7 +26,7 @@ static const int Err_SVCommandInspectionExtentUpdater_RunOnce_2006 = Maz_ErrorBa
 static const int Err_SVCommandInspectionExtentUpdater_InvalidParameter_2007 = Maz_ErrorBase + 7;
 //Misc
 static const int Err_ImportInspectionWrongVersion_2008 = Maz_ErrorBase + 8;
-static const int Err_SVCommandInspectionExtentUpdater_LoadOfResourceDllFailed_2009 = Maz_ErrorBase + 9;
+static const int Err_LoadOfResourceDllFailed_2009 = Maz_ErrorBase + 9;
 static const int Err_TreeParser_InspectionCreateFailed_2010 = Maz_ErrorBase + 10;
 
 //Marcus Eichengrün error base
