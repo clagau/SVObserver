@@ -6267,7 +6267,6 @@ HRESULT SVObserverApp::DisplayCameraManager(SVIMProductEnum eProductType)
 	hCursor = ::SetCursor( hCursor );
 
 	ConnectCameras( saCameras );
-	SendCameraParameters( saCameras );
 
 	::SetCursor( hCursor );
 

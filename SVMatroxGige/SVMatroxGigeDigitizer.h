@@ -9,9 +9,9 @@
 //* .Check In Date   : $Date:   08 May 2013 15:22:50  $
 //******************************************************************************
 
-#ifndef SVMATROXGIGEDIGITIZER_H
-#define SVMATROXGIGEDIGITIZER_H
+#pragma once
 
+#pragma region Includes
 #include <deque>
 #include <stack>
 #include <vector>
@@ -30,9 +30,13 @@
 #include "SVMatroxGigeAcqParams.h"
 #include "SVMatroxGigeBufferCreator.h"
 #include "SVMatroxGigeBufferManager.h"
+#pragma endregion Includes
 
+#pragma region Declarations
 class SVAcquisitionBufferInterface;
-class SVConditonVariable
+#pragma endregion Declarations
+
+class SVConditionVariable
 {
 private:
 	volatile long m_value;
@@ -40,7 +44,7 @@ private:
 public:
 	void Increment() { ::InterlockedIncrement(&m_value); }
 	void clear() { ::InterlockedExchange(&m_value, 0); }
-	long get() const { return m_value; } 
+	long get() const { return m_value; }
 };
 
 class SVMatroxGigeDigitizer
@@ -57,9 +61,11 @@ private:
 	SVGigeEventList m_eventList;
 
 public:
+#pragma region Constructor
 	SVMatroxGigeDigitizer(unsigned long deviceNumber=-1, unsigned char systemHandle=0xFF);
 	SVMatroxGigeDigitizer( const SVMatroxGigeDigitizer& p_rValue );
 	virtual ~SVMatroxGigeDigitizer();
+#pragma endregion Constructor
 
 	const SVMatroxGigeDigitizer& operator=( const SVMatroxGigeDigitizer& p_rValue );
 
@@ -95,6 +101,8 @@ public:
 	void SetTriggerCallback(SVCallbackStruct& callback);
 	void ClearTriggerCallback();
 
+#pragma region Member Variables
+public:
 	SVString m_Name;
 	SVString m_FullName;
 
@@ -107,7 +115,7 @@ public:
 	long m_lStartIndex;
 	long m_lLastUsedIndex;
 
-	SVConditonVariable m_frameStack;
+	SVConditionVariable m_frameStack;
 	SVMatroxDigitizerRef m_Digitizer;
 	SVMatroxGigeCameraId m_svCameraId;
 
@@ -116,10 +124,11 @@ public:
 	SVMatroxGigeAcqParams m_params;
 
 	SVAcquisitionBufferInterface* m_pBufferInterface;
-	SVCallbackStruct m_triggerCallback;
-};
 
-#endif
+private:
+	SVCallbackStruct m_triggerCallback;
+#pragma endregion Member Variables
+};
 
 //******************************************************************************
 //* LOG HISTORY:
