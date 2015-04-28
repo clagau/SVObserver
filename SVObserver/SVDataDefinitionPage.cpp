@@ -9,26 +9,23 @@
 //* .Check In Date   : $Date:   01 Oct 2013 13:58:10  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
-#include "svobserver.h"
 #include "SVDataDefinitionPage.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
-#include "SVInspectionProcess.h"
-#include "SVTaskObjectList.h"
 #include "SVToolSet.h"
 #include "SVIPDoc.h"
+#pragma endregion Includes
 
-
+#pragma region Declarations
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
+#pragma endregion Declarations
 
-/////////////////////////////////////////////////////////////////////////////
-// SVDataDefinitionPage dialog
-
-
+#pragma region Constructor
 SVDataDefinitionPage::SVDataDefinitionPage( SVDataDefinitionSheet* pParent, CString p_szCaption)
 	: CPropertyPage( SVDataDefinitionPage::IDD)
 {
@@ -51,6 +48,10 @@ SVDataDefinitionPage::SVDataDefinitionPage( SVDataDefinitionSheet* pParent, CStr
 	//}}AFX_DATA_INIT
 }
 
+SVDataDefinitionPage::~SVDataDefinitionPage()
+{
+}
+#pragma endregion Constructor
 
 void SVDataDefinitionPage::DoDataExchange(CDataExchange* pDX)
 {
@@ -65,27 +66,24 @@ void SVDataDefinitionPage::DoDataExchange(CDataExchange* pDX)
 
 void SVDataDefinitionPage::InitPage( SVInspectionProcess* pInspection )
 {
-
 	m_Tree.InitOutputListTreeCtrl();
+	m_Tree.AllowNodeItemChecks( true );
+	SVToolSetClass* pToolSet = pInspection->GetToolSet();
 
 	if( m_bIsImagesPage )
 	{
 		SVImageListClass l_ImageList;
-		SVToolSetClass* pToolSet = pInspection->GetToolSet();
 		pToolSet->GetImageList( l_ImageList );
-		m_Tree.AllowNodeItemChecks( true );
 		m_Tree.BuildImageListTree( &l_ImageList, SV_DD_IMAGE, SVNotSetObjectType );
 	}
 	else
 	{
-		SVToolSetClass* pToolSet = pInspection->GetToolSet();
 		SVTaskObjectListClass* pTaskObjectList = static_cast <SVTaskObjectListClass*> ( pToolSet );
-		m_Tree.AllowNodeItemChecks( true );
 		m_Tree.BuildOutputList( pTaskObjectList, SV_DD_VALUE, SV_DD_VALUE | SV_VIEWABLE  );
 	}
 }
 
-BOOL SVDataDefinitionPage::OnInitDialog() 
+BOOL SVDataDefinitionPage::OnInitDialog()
 {
 	CPropertyPage::OnInitDialog();
 
@@ -98,15 +96,19 @@ BOOL SVDataDefinitionPage::OnInitDialog()
 	strPrefix += _T(".Tool Set.");
 
 	std::vector<SVObjectReference> vecObjects;
-//	m_pSheet->m_pInspection->GetDataDefinitionValues( vecObjects );
 	std::vector<int> vecIndexes;
 	m_Tree.GetSelectedObjectsInTreeOrder( vecObjects, vecIndexes );
+
 	for ( size_t i = 0; i < vecObjects.size(); ++i )
 	{
 		SVObjectReference refObject = vecObjects.at(i);
-		CString strName = refObject.GetCompleteObjectName();
+		CString strName = refObject.GetCompleteOneBasedObjectName();
+
 		if ( strName.GetLength() > 0 )
+		{
 			strName = strName.Mid( strPrefix.GetLength() );
+		}
+
 		int iIndex = m_lbSelected.AddString( strName );
 		m_lbSelected.SetItemData( iIndex, vecIndexes.at(i) );
 	}
@@ -121,7 +123,7 @@ bool SVDataDefinitionPage::CanSelectObjectCallback( SVObjectReference refObject,
 	CString strPrefix = m_pSheet->m_pInspection->GetName();
 	strPrefix += _T(".Tool Set.");
 
-	CString strName = refObject.GetCompleteObjectName();
+	CString strName = refObject.GetCompleteOneBasedObjectName();
 
 	if ( strName.GetLength() > 0 )
 		strName = strName.Mid( strPrefix.GetLength() );
@@ -155,7 +157,6 @@ bool SVDataDefinitionPage::CanSelectObjectCallback( SVObjectReference refObject,
 	return true;
 }
 
-
 BEGIN_MESSAGE_MAP(SVDataDefinitionPage, CDialog)
 	//{{AFX_MSG_MAP(SVDataDefinitionPage)
 	ON_BN_CLICKED(IDC_BTN_CLEAR, OnBtnClear)
@@ -163,7 +164,7 @@ BEGIN_MESSAGE_MAP(SVDataDefinitionPage, CDialog)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
-void SVDataDefinitionPage::OnBtnClear() 
+void SVDataDefinitionPage::OnBtnClear()
 {
 	std::vector<int> vecIndexes;
 	if ( m_lbSelected.GetCount() > 0 )
@@ -178,7 +179,7 @@ void SVDataDefinitionPage::OnBtnClear()
 	}
 }
 
-void SVDataDefinitionPage::OnBtnClearAll() 
+void SVDataDefinitionPage::OnBtnClearAll()
 {
 	int iItems = m_lbSelected.GetCount();
 	for ( int i = iItems-1; i >= 0; --i )
@@ -194,13 +195,13 @@ void SVDataDefinitionPage::OnOK()
 	m_Tree.GetChangedObjects( vecSelected );
 	if( vecSelected.size() > 0 )
 	{
-		SVIPDoc* l_pIPDoc = NULL;
+		SVIPDoc* l_pIPDoc = nullptr;
 
-		if( m_pSheet->m_pInspection != NULL )
+		if( m_pSheet->m_pInspection != nullptr )
 		{
 			l_pIPDoc = SVObjectManagerClass::Instance().GetIPDoc( m_pSheet->m_pInspection->GetUniqueObjectID() );
 
-			if( l_pIPDoc != NULL )
+			if( l_pIPDoc != nullptr )
 			{
 				l_pIPDoc->SetModifiedFlag();
 			}
@@ -224,7 +225,6 @@ void SVDataDefinitionPage::OnOK()
 					SetBits( l_Ref.ObjectAttributesSetRef(), SV_DD_IMAGE, true );
 				}
 			}
-
 		}
 	}
 	else
@@ -247,7 +247,6 @@ void SVDataDefinitionPage::OnOK()
 		}
 	}
 }
-
 
 //******************************************************************************
 //* LOG HISTORY:

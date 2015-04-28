@@ -9,52 +9,39 @@
 //* .Check In Date   : $Date:   23 Apr 2013 10:04:20  $
 //******************************************************************************
 
-#ifndef SVDATADEFINITIONPAGE_H
-#define SVDATADEFINITIONPAGE_H
-
-#if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
-// SVDataDefinitionPage.h : header file
-//
+
+#pragma region Includes
 #include "SVDataDefinitionSheet.h"
 #include "SVOutputInfoListTreeCtrl.h"
-
-/////////////////////////////////////////////////////////////////////////////
-// SVDataDefinitionPage dialog
+#pragma endregion Includes
 
 class SVDataDefinitionPage : public CPropertyPage
 {
-// Construction
 public:
+#pragma region Constructor
 	SVDataDefinitionPage(SVDataDefinitionSheet* pParent, CString p_szCaption );   // standard constructor
+	virtual ~SVDataDefinitionPage();
+#pragma endregion Constructor
 
 // Dialog Data
 	//{{AFX_DATA(SVDataDefinitionPage)
 	enum { IDD = IDD_DATA_DEF_LIST_PAGE };
-	CListBox	m_lbSelected;
-	SVOutputInfoListTreeCtrlClass	m_Tree;
-	CButton     m_btnClearAll;
-	CButton     m_btnClear;
 	//}}AFX_DATA
 
 	virtual void OnOK();
 
-	SVDataDefinitionSheet* m_pSheet;
 // Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(SVDataDefinitionPage)
-	protected:
+protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 	virtual void InitPage( SVInspectionProcess* pInspection );
 	virtual BOOL OnInitDialog();
 	//}}AFX_VIRTUAL
 
 // Implementation
-protected:
-
 	bool CanSelectObjectCallback( SVObjectReference refObject, bool bCurrentState, int iIndex );
-	bool m_bIsImagesPage;
 
 	// Generated message map functions
 	//{{AFX_MSG(SVDataDefinitionPage)
@@ -62,12 +49,20 @@ protected:
 	afx_msg void OnBtnClearAll();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
+
+#pragma region Member Variables
+private:
+	CListBox m_lbSelected;
+	SVOutputInfoListTreeCtrlClass m_Tree;
+	CButton m_btnClearAll;
+	CButton m_btnClear;
+	SVDataDefinitionSheet* m_pSheet;
+	bool m_bIsImagesPage;
+#pragma endregion Member Variables
 };
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
-#endif // SVDATADEFINITIONPAGE_H
 
 //******************************************************************************
 //* LOG HISTORY:
