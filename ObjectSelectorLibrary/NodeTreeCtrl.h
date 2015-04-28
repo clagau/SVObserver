@@ -76,7 +76,7 @@ namespace Seidenader
 
 			/**********
 			The method is called when tree item selection has changed
-			\param Item <in> reference to the newly selected item
+			\param rItem <in> reference to the newly selected item
 			***********/
 			virtual void changeSelectedItem( const HTREEITEM& rItem ) override;
 
@@ -99,9 +99,9 @@ namespace Seidenader
 
 			/**********
 			The method is called to update the state of a node.
-			\param Item <in> reference to the updating item
+			\param rItem <in> reference to the updating item
 			***********/
-			void UpdateNode( SVTreeLibrary::ObjectSelectorItem &Item );
+			void UpdateNode( SvTrl::ObjectSelectorItem& rItem );
 #pragma endregion Protected Methods
 		};
 	} //namespace ObjectSelectorLibrary

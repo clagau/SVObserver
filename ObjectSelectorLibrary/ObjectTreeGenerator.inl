@@ -20,14 +20,14 @@ inline bool ObjectTreeGenerator::getAllowWholeArrays() const
 	return m_AllowWholeArray;
 }
 
-inline const SVTreeLibrary::ObjectSelectorItems& ObjectTreeGenerator::getResults() const
+inline const SvTrl::ObjectSelectorItems& ObjectTreeGenerator::getResults() const
 {
 	return m_Results;
 }
 
-inline SVTreeLibrary::ObjectSelectorItem ObjectTreeGenerator::getSingleObjectResult() const
+inline SvTrl::ObjectSelectorItem ObjectTreeGenerator::getSingleObjectResult() const
 {
-	SVTreeLibrary::ObjectSelectorItem Result;
+	SvTrl::ObjectSelectorItem Result;
 	//If Single select then it is the first result
 	if( 0 < m_Results.size() )
 	{

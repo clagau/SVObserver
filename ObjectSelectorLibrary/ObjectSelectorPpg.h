@@ -40,7 +40,7 @@ namespace Seidenader
 			// Parameter:  rTitle <in>:  a reference to the page title
 			// Parameter:  SingleSelect <in>:  true for single selection mode (default)
 			//************************************
-			ObjectSelectorPpg( SVTreeLibrary::ObjectTreeItems& rTreeContainer, const SVString& rTitle, bool SingleSelect = true );
+			ObjectSelectorPpg( SvTrl::ObjectTreeItems& rTreeContainer, const SVString& rTitle, bool SingleSelect = true );
 
 			//************************************
 			// Description:  The virtual destructor
@@ -54,7 +54,7 @@ namespace Seidenader
 			// Description:  The method gets the tree container
 			// Returns:  a reference to the tree container
 			//************************************
-			inline SVTreeLibrary::ObjectTreeItems& getTreeContainer() const;
+			inline SvTrl::ObjectTreeItems& getTreeContainer() const;
 
 			//************************************
 			// Description:  The method gets the display text for the current highlighted node.
@@ -100,7 +100,7 @@ namespace Seidenader
 
 		private:
 		#pragma region Member Variables
-			SVTreeLibrary::ObjectTreeItems& m_rTreeContainer; //The tree container reference
+			SvTrl::ObjectTreeItems& m_rTreeContainer; //The tree container reference
 			CDlgItemResizer m_Resizer;						//Object which handles the resizing of all controls
 			NodeTreeCtrl m_NodeTree;						//The node tree control
 			LeafTreeCtrl m_LeafTree;						//The leaf tree control

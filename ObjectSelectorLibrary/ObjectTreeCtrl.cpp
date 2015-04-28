@@ -17,7 +17,6 @@
 
 #pragma region Declarations
 using namespace Seidenader::ObjectSelectorLibrary;
-using namespace Seidenader::SVTreeLibrary;
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -217,7 +216,7 @@ bool ObjectTreeCtrl::setCheckItem( const HTREEITEM& rItem )
 	return Result;
 }
 
-bool ObjectTreeCtrl::setCheckState( const TreeItemSet& rParentItems, IObjectSelectorItem::CheckedStateEnum CheckedState )
+bool ObjectTreeCtrl::setCheckState( const TreeItemSet& rParentItems, SvTrl::IObjectSelectorItem::CheckedStateEnum CheckedState )
 {
 	TreeItemSet::iterator ParentIter = rParentItems.begin();
 
@@ -234,27 +233,27 @@ bool ObjectTreeCtrl::setCheckState( const TreeItemSet& rParentItems, IObjectSele
 			return false;
 		}
 
-		ObjectTreeItems::iterator Iter = getParentPropPage().getTreeContainer().findItem( *pLocation );
+		SvTrl::ObjectTreeItems::iterator Iter = getParentPropPage().getTreeContainer().findItem( *pLocation );
 		if( m_rParent.getTreeContainer().end() != Iter )
 		{
 			//If no defined state then we want to toggle the state
-			if( IObjectSelectorItem::EmptyEnabled == CheckedState )
+			if( SvTrl::IObjectSelectorItem::EmptyEnabled == CheckedState )
 			{
 				switch( Iter->second.getCheckedState() )
 				{
-				case IObjectSelectorItem::UncheckedEnabled:
-					CheckedState =  IObjectSelectorItem::CheckedEnabled;
+				case SvTrl::IObjectSelectorItem::UncheckedEnabled:
+					CheckedState =  SvTrl::IObjectSelectorItem::CheckedEnabled;
 					break;
-				case IObjectSelectorItem::CheckedEnabled:
-				case IObjectSelectorItem::TriStateEnabled: // fall through...
-					CheckedState = IObjectSelectorItem::UncheckedEnabled;
+				case SvTrl::IObjectSelectorItem::CheckedEnabled:
+				case SvTrl::IObjectSelectorItem::TriStateEnabled: // fall through...
+					CheckedState = SvTrl::IObjectSelectorItem::UncheckedEnabled;
 					break;
-				case IObjectSelectorItem::UncheckedDisabled:
-					CheckedState = IObjectSelectorItem::CheckedDisabled;
+				case SvTrl::IObjectSelectorItem::UncheckedDisabled:
+					CheckedState = SvTrl::IObjectSelectorItem::CheckedDisabled;
 					break;
-				case IObjectSelectorItem::CheckedDisabled:
-				case IObjectSelectorItem::TriStateDisabled: // fall through...
-					CheckedState = IObjectSelectorItem::UncheckedDisabled;
+				case SvTrl::IObjectSelectorItem::CheckedDisabled:
+				case SvTrl::IObjectSelectorItem::TriStateDisabled: // fall through...
+					CheckedState = SvTrl::IObjectSelectorItem::UncheckedDisabled;
 					break;
 				default:
 					break;
@@ -280,12 +279,12 @@ bool ObjectTreeCtrl::setCheckState( const TreeItemSet& rParentItems, IObjectSele
 	return true;
 }
 
-void ObjectTreeCtrl::setChildrenState( ObjectTreeItems::iterator& rIter, IObjectSelectorItem::CheckedStateEnum& rCheckedState )
+void ObjectTreeCtrl::setChildrenState( SvTrl::ObjectTreeItems::iterator& rIter, SvTrl::IObjectSelectorItem::CheckedStateEnum& rCheckedState )
 {
-	ObjectTreeItems::iterator ChildIter = rIter.GetChildTree()->begin();
+	SvTrl::ObjectTreeItems::iterator ChildIter = rIter.GetChildTree()->begin();
 	while( rIter.GetChildTree()->end() != ChildIter )
 	{
-		bool TriState = IObjectSelectorItem::TriStateEnabled == rCheckedState || IObjectSelectorItem::TriStateDisabled == rCheckedState;
+		bool TriState = SvTrl::IObjectSelectorItem::TriStateEnabled == rCheckedState || SvTrl::IObjectSelectorItem::TriStateDisabled == rCheckedState;
 		if( !TriState || ChildIter->second.isNode() )
 		{
 			ChildIter->second.setCheckedState( rCheckedState );
@@ -308,12 +307,12 @@ void ObjectTreeCtrl::clearLastCheckedItem( const HTREEITEM& rItem )
 				SVStringSet updateItems = getParentPropPage().getTreeContainer().clearItem (m_CurrentSelection);
 				m_UpdateItems.insert(updateItems.begin(), updateItems.end());
 
-				ObjectTreeItems::iterator Iter = getParentPropPage().getTreeContainer().findItem( *pLocation );
+				SvTrl::ObjectTreeItems::iterator Iter = getParentPropPage().getTreeContainer().findItem( *pLocation );
 
 				if( getParentPropPage().getTreeContainer().end() != Iter )
 				{
 					//If it is unchecked then it will be checked after this method
-					if( IObjectSelectorItem::UncheckedEnabled == Iter->second.getCheckedState() )
+					if( SvTrl::IObjectSelectorItem::UncheckedEnabled == Iter->second.getCheckedState() )
 					{
 						m_CurrentSelection = *pLocation;
 					}

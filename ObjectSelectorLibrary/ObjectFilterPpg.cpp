@@ -11,14 +11,15 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include "GridCtrlLibrary\GridCellCheck.h"
 #include "ObjectFilterPpg.h"
+
+#include "TextDefinesSvOsl.h"
+#include "GridCtrlLibrary\GridCellCheck.h"
+#include "SVOResource\ConstGlobalSvOr.h"
 #pragma endregion Includes
 
 #pragma region Declarations
 using namespace Seidenader::ObjectSelectorLibrary;
-using namespace Seidenader::SVTreeLibrary;
-using namespace Seidenader::GridCtrlLibrary;
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -27,6 +28,13 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 //IMPLEMENT_DYNCREATE(ObjectFilterPpg, CPropertyPage)
+static const int FilterColumnNumber = 4;
+static const int IconNumber = 8;
+static const int IconGrowBy = 4;
+static const int NameColWidthDefault = 150;
+static const int LocationColWidthDefault = 290;
+static const int CheckColWidthDefault = 50;
+static const int TypeColWidthDefault = 72;
 #pragma endregion Declarations
 
 BEGIN_MESSAGE_MAP(ObjectFilterPpg, CPropertyPage)
@@ -44,11 +52,12 @@ BEGIN_MESSAGE_MAP(ObjectFilterPpg, CPropertyPage)
 END_MESSAGE_MAP()
 
 #pragma region Constructor
-ObjectFilterPpg::ObjectFilterPpg( ObjectTreeItems& treeContainer, const SVString& title, bool singleSelect /*= true*/ )
+ObjectFilterPpg::ObjectFilterPpg( SvTrl::ObjectTreeItems& treeContainer, const SVString& title, bool singleSelect /*= true*/ )
 	: CPropertyPage( ObjectFilterPpg::IDD )
 	, m_rTreeContainer( treeContainer )
 	, m_SingleSelect( singleSelect )
-	, m_RowOfCurrentSelection( -1 )
+	, m_CheckedLocation( _T("") )
+	, m_CheckedRow( -1 ) 
 {
 	m_psp.pszTitle = title.c_str();
 	m_psp.dwFlags |= PSP_USETITLE;
@@ -76,20 +85,20 @@ BOOL ObjectFilterPpg::OnInitDialog()
 
 	setResizeControls();
 
-	m_StateImageList.Create( 16, 16, TRUE, 16, 4 ); // BRW - Explain the reasons for these numbers.
+	m_StateImageList.Create( SvOr::IconSize, SvOr::IconSize, ILC_COLOR24 | ILC_MASK, IconNumber, IconGrowBy );
 
 	for(int i = IDI_EMPTY_ENABLED; i <= IDI_TRI_STATE_DISABLED; i++)
 	{
 		m_StateImageList.Add( AfxGetApp()->LoadIcon( i ) );
 	}
 
-	m_checkedControl.AddString( _T( "All" ) ); // BRW - Move these to a string table in SVOResource.
-	m_checkedControl.AddString( _T( "Checked" ) ); // BRW - Move these to a string table in SVOResource.
-	m_checkedControl.AddString( _T( "Unchecked" ) ); // BRW - Move these to a string table in SVOResource.
+	m_checkedControl.AddString( FilterAll );
+	m_checkedControl.AddString( FilterChecked );
+	m_checkedControl.AddString( FilterUnchecked );
 	m_checkedControl.SetCurSel(0);
 
 	std::set<SVString> typeSet;
-	ObjectTreeItems::SVTree_pre_order_iterator Iter = m_rTreeContainer.pre_order_begin();
+	SvTrl::ObjectTreeItems::SVTree_pre_order_iterator Iter = m_rTreeContainer.pre_order_begin();
 	while( m_rTreeContainer.pre_order_end() != Iter )
 	{
 		if( Iter->second.isLeaf() )
@@ -98,14 +107,14 @@ BOOL ObjectFilterPpg::OnInitDialog()
 		}
 		++Iter;
 	}
-	m_TypeControl.AddString( _T( "All" ) ); // BRW - Move these to a string table in SVOResource.
+	m_TypeControl.AddString( FilterAll );
 	for(std::set<SVString>::const_iterator iter=typeSet.cbegin(); iter != typeSet.cend(); ++iter)
 	{
 		m_TypeControl.AddString((*iter).c_str());
 	}
 	m_TypeControl.SetCurSel(0);
-	m_FilterNameControl.setHelpText( _T("Enter Name") ); // BRW - Move these to a string table in SVOResource.
-	m_FilterLocationControl.setHelpText( _T("Enter Location") ); // BRW - Move these to a string table in SVOResource.
+	m_FilterNameControl.setHelpText( FilterEnterNameHelp );
+	m_FilterLocationControl.setHelpText( FilterEnterLocationHelp );
 
 	UpdateData(FALSE);
 
@@ -129,23 +138,26 @@ void ObjectFilterPpg::OnSize(UINT nType, int cx, int cy)
 
 void ObjectFilterPpg::OnGridClick(NMHDR *pNotifyStruct, LRESULT* /*pResult*/)
 {
-	/*SvGCL::*/NM_GRIDVIEW* pItem = (/*SvGCL::*/NM_GRIDVIEW*) pNotifyStruct;
+	SvGcl::NM_GRIDVIEW* pItem = (SvGcl::NM_GRIDVIEW*) pNotifyStruct;
 
-	if (CheckedColumn == pItem->iColumn)
+	if (CheckColumn == pItem->iColumn)
 	{
-		/*SvGCL::*/CGridCellCheck* cell = dynamic_cast</*SvGCL::*/CGridCellCheck*>(m_Grid.GetCell(pItem->iRow, CheckedColumn));
+		SvGcl::CGridCellCheck* cell = dynamic_cast<SvGcl::CGridCellCheck*>(m_Grid.GetCell(pItem->iRow, CheckColumn));
 		if (nullptr != cell)
 		{
-			CString location = m_Grid.GetItemText(pItem->iRow, LocationColumn);
-			bool isChecked = (TRUE == cell->GetCheck());
-			changeCheckState(location, isChecked, pItem->iRow);
+			SVString* pLocation = reinterpret_cast<SVString*> ( m_Grid.GetItemData(pItem->iRow, LocationColumn) );
+			if( nullptr != pLocation )
+			{
+				bool isChecked = (TRUE == cell->GetCheck());
+				changeCheckState( *pLocation, isChecked, pItem->iRow );
+			}
 		}
 	}
 }
 
 void ObjectFilterPpg::OnGridRClick(NMHDR *pNotifyStruct, LRESULT* /*pResult*/)
 {
-	/*SvGCL::*/NM_GRIDVIEW* pItem = (/*SvGCL::*/NM_GRIDVIEW*) pNotifyStruct;
+	SvGcl::NM_GRIDVIEW* pItem = (SvGcl::NM_GRIDVIEW*) pNotifyStruct;
 
 	CPoint p;
 	if (GetCursorPos(&p))
@@ -194,14 +206,17 @@ void ObjectFilterPpg::checkAllItem(bool shouldCheck)
 	//First line is header, start with second line
 	for (int i=1; i < count; i++)
 	{
-		/*SvGCL::*/CGridCellCheck* cell = dynamic_cast</*SvGCL::*/CGridCellCheck*>(m_Grid.GetCell(i, CheckedColumn));
+		SvGcl::CGridCellCheck* cell = dynamic_cast<SvGcl::CGridCellCheck*>(m_Grid.GetCell(i, CheckColumn));
 		if (nullptr != cell)
 		{
-			CString location = m_Grid.GetItemText(i, LocationColumn);
-			bool isChecked = (TRUE == cell->GetCheck());
-			if (isChecked != shouldCheck)
+			SVString* pLocation = reinterpret_cast<SVString*> ( m_Grid.GetItemData(i, LocationColumn) );
+			if( nullptr != pLocation )
 			{
-				changeCheckState(location, shouldCheck, i);
+				bool isChecked = (TRUE == cell->GetCheck());
+				if (isChecked != shouldCheck)
+				{
+					changeCheckState(*pLocation, shouldCheck, i);
+				}
 			}
 		}
 	}
@@ -216,27 +231,27 @@ void ObjectFilterPpg::setResizeControls()
 
 void ObjectFilterPpg::loadGridCtrl()
 {
-	int nameColumnWidth = 150;
-	int locationColumnWidth = 290;
-	int checkedColumnWidth = 50;
-	int typeColumnWidth = 72;
-	if (4 == m_Grid.GetColumnCount())
+	int nameColumnWidth = NameColWidthDefault;
+	int locationColumnWidth = LocationColWidthDefault;
+	int checkColumnWidth = CheckColWidthDefault;
+	int typeColumnWidth = TypeColWidthDefault;
+	if( FilterColumnNumber == m_Grid.GetColumnCount() )
 	{
 		nameColumnWidth = m_Grid.GetColumnWidth(NameColumn);
 		locationColumnWidth = m_Grid.GetColumnWidth(LocationColumn);
-		checkedColumnWidth = m_Grid.GetColumnWidth(CheckedColumn);
+		checkColumnWidth = m_Grid.GetColumnWidth(CheckColumn);
 		typeColumnWidth = m_Grid.GetColumnWidth(TypeColumn);
 	}
 
 	m_Grid.SetRedraw(FALSE);
 	m_Grid.AutoSize(GVS_DATA);
-	m_Grid.SetColumnCount(4);
+	m_Grid.SetColumnCount( FilterColumnNumber );
 	m_Grid.SetFixedRowSelection(TRUE);
 	m_Grid.SetFixedRowCount(1);
 	m_Grid.SetFixedColumnSelection(FALSE);
 	m_Grid.SetColumnWidth(NameColumn, nameColumnWidth);
 	m_Grid.SetColumnWidth(LocationColumn, locationColumnWidth);
-	m_Grid.SetColumnWidth(CheckedColumn, checkedColumnWidth);
+	m_Grid.SetColumnWidth(CheckColumn, checkColumnWidth);
 	m_Grid.SetColumnWidth(TypeColumn, typeColumnWidth);
 
 	//add header
@@ -244,16 +259,16 @@ void ObjectFilterPpg::loadGridCtrl()
 	Item.mask = GVIF_TEXT;
 	Item.row = 0;
 	Item.col = NameColumn;
-	Item.strText = _T("Name"); // BRW - Move these to a string table in SVOResource.
+	Item.strText = FilterColumnName;
 	m_Grid.SetItem(&Item);
 	Item.col = LocationColumn;
-	Item.strText = _T("Location"); // BRW - Move these to a string table in SVOResource.
+	Item.strText = FilterColumnLocation;
 	m_Grid.SetItem(&Item);
-	Item.col = CheckedColumn;
-	Item.strText = _T("Check"); // BRW - Move these to a string table in SVOResource.
+	Item.col = CheckColumn;
+	Item.strText = FilterColumnCheck;
 	m_Grid.SetItem(&Item);
 	Item.col = TypeColumn;
-	Item.strText = _T("Type"); // BRW - Move these to a string table in SVOResource.
+	Item.strText = FilterColumnType;
 	m_Grid.SetItem(&Item);
 
 	//add leaves
@@ -263,15 +278,19 @@ void ObjectFilterPpg::loadGridCtrl()
 	SVString filterLocationUpper(m_FilterLocationControl.getEditText());
 	filterNameUpper.MakeUpper();
 	filterLocationUpper.MakeUpper();
-	ObjectTreeItems::SVTree_pre_order_iterator Iter = m_rTreeContainer.pre_order_begin();
+	SvTrl::ObjectTreeItems::SVTree_pre_order_iterator Iter = m_rTreeContainer.pre_order_begin();
 	while( m_rTreeContainer.pre_order_end() != Iter )
 	{
 		if( Iter->second.isLeaf() )
 		{
+			if (m_SingleSelect && SvTrl::IObjectSelectorItem::CheckedEnabled == Iter->second.getCheckedState() )
+			{
+				m_CheckedLocation = Iter->first;
+			}
 			int checkSelection = m_checkedControl.GetCurSel();
 			int typeSelection = m_TypeControl.GetCurSel();
 			SVString nameUpper(Iter->second.getName());
-			SVString locationUpper(Iter->second.getDisplayLocation());
+			SVString locationUpper(Iter->second.getLocation());
 			nameUpper.MakeUpper();
 			locationUpper.MakeUpper();
 			bool isNameValid = nameUpper.isSubmatch(filterNameUpper);
@@ -280,25 +299,28 @@ void ObjectFilterPpg::loadGridCtrl()
 			m_TypeControl.GetLBText(typeSelection, typeText);
 			if ( (isNameValid && isLocationValid) &&
 				 (0 == checkSelection || 
-					( 1 == checkSelection && IObjectSelectorItem::CheckedEnabled == Iter->second.getCheckedState()) || 
-					( 2 == checkSelection && IObjectSelectorItem::CheckedEnabled != Iter->second.getCheckedState()) ) &&
+					( 1 == checkSelection && SvTrl::IObjectSelectorItem::CheckedEnabled == Iter->second.getCheckedState()) || 
+					( 2 == checkSelection && SvTrl::IObjectSelectorItem::CheckedEnabled != Iter->second.getCheckedState()) ) &&
 				 (0 == typeSelection || Iter->second.getItemTypeName().c_str() == typeText ))
 			{
 				m_Grid.SetRowCount(i + 1);
 				m_Grid.SetItemText(i, NameColumn, Iter->second.getName().c_str());
 				m_Grid.SetItemState(i, NameColumn, m_Grid.GetItemState(i, 0) | GVIS_READONLY);
-				m_Grid.SetItemText(i, LocationColumn, Iter->second.getDisplayLocation().c_str());
+				m_Grid.SetItemText(i, LocationColumn, Iter->second.getLocation().c_str());
 				m_Grid.SetItemState(i, LocationColumn, m_Grid.GetItemState(i, LocationColumn) | GVIS_READONLY);
-				m_Grid.SetCellType(i, CheckedColumn, /*RUNTIME_CLASS_N(SvGCL, CGridCellCheck)*/RUNTIME_CLASS(CGridCellCheck));
-				/*SvGCL::*/CGridCellCheck* cell = dynamic_cast</*SvGCL::*/CGridCellCheck*>(m_Grid.GetCell(i, CheckedColumn));
+				m_Grid.SetItemData(i, LocationColumn, reinterpret_cast<LPARAM> (&Iter->first) );
+				//We need to use the using here because the macro RUNTIME_CLASS cannot handle namespaces
+				using namespace SvGcl;
+				m_Grid.SetCellType(i, CheckColumn, RUNTIME_CLASS( CGridCellCheck ));
+				SvGcl::CGridCellCheck* cell = dynamic_cast<SvGcl::CGridCellCheck*>(m_Grid.GetCell(i, CheckColumn));
 				if (nullptr != cell)
 				{
-					if (IObjectSelectorItem::CheckedEnabled == Iter->second.getCheckedState())
+					if (SvTrl::IObjectSelectorItem::CheckedEnabled == Iter->second.getCheckedState())
 					{
 						cell->SetCheck( TRUE );
 						if (m_SingleSelect)
 						{
-							m_RowOfCurrentSelection = i;
+							m_CheckedRow = i;
 						}
 					}
 					else
@@ -340,42 +362,38 @@ void ObjectFilterPpg::showContextMenu( CPoint point )
 	}
 }
 
-void Seidenader::ObjectSelectorLibrary::ObjectFilterPpg::changeCheckState( const CString &location, bool isChecked, int rowNumber )
+void Seidenader::ObjectSelectorLibrary::ObjectFilterPpg::changeCheckState( const SVString& rLocation, bool isChecked, int rowNumber )
 {
-	ObjectTreeItems::iterator iter = m_rTreeContainer.findItem(location);
+	SvTrl::ObjectTreeItems::iterator iter = m_rTreeContainer.findItem(rLocation);
 	if( m_rTreeContainer.end() != iter )
 	{
 		if (iter->second.isLeaf() && 
-			(iter->second.getCheckedState() == IObjectSelectorItem::CheckedEnabled) != isChecked)
+			(iter->second.getCheckedState() == SvTrl::IObjectSelectorItem::CheckedEnabled) != isChecked)
 		{
 			if (m_SingleSelect)
 			{
 				//remove selection from old leaf
-				if (m_RowOfCurrentSelection >= 0)
+				if ( !m_CheckedLocation.empty() )
 				{
-					//remove selection in tree
-					CString location = m_Grid.GetItemText(m_RowOfCurrentSelection, LocationColumn);
-					m_rTreeContainer.clearItem(location);
+					m_rTreeContainer.clearItem( m_CheckedLocation );
+
 					//remove selection in grid
-					/*SvGCL::*/CGridCellCheck* cellOld = dynamic_cast</*SvGCL::*/CGridCellCheck*>(m_Grid.GetCell(m_RowOfCurrentSelection, CheckedColumn));
+					SvGcl::CGridCellCheck* cellOld = dynamic_cast<SvGcl::CGridCellCheck*>(m_Grid.GetCell(m_CheckedRow, CheckColumn));
 					if (nullptr != cellOld)
 					{
 						cellOld->SetCheck(FALSE);
 					}
+					m_CheckedLocation = _T("");
 				}
 
 				//set currentSelection to new checked leaf
 				if (isChecked)
 				{
-					m_RowOfCurrentSelection = rowNumber;
-				}
-				else
-				{
-					m_RowOfCurrentSelection = -1;
+					m_CheckedLocation = iter->first;
 				}
 			}
 
-			iter->second.setCheckedState(isChecked?IObjectSelectorItem::CheckedEnabled:IObjectSelectorItem::UncheckedEnabled);
+			iter->second.setCheckedState(isChecked?SvTrl::IObjectSelectorItem::CheckedEnabled:SvTrl::IObjectSelectorItem::UncheckedEnabled);
 			m_rTreeContainer.setParentState(iter);
 		}
 	}

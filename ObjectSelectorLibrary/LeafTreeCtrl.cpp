@@ -17,7 +17,6 @@
 
 #pragma region Declarations
 using namespace Seidenader::ObjectSelectorLibrary;
-using namespace Seidenader::SVTreeLibrary;
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -63,11 +62,11 @@ void LeafTreeCtrl::loadTree()
 		return;
 	}
 
-	ObjectTreeItems::iterator Iter = getParentPropPage().getTreeContainer().findItem( m_NodeLocation );
+	SvTrl::ObjectTreeItems::iterator Iter = getParentPropPage().getTreeContainer().findItem( m_NodeLocation );
 
 	if( getParentPropPage().getTreeContainer().end() != Iter )
 	{
-		ObjectTreeItems::iterator IterChild = Iter.GetChildTree()->begin();
+		SvTrl::ObjectTreeItems::iterator IterChild = Iter.GetChildTree()->begin();
 		while( Iter.GetChildTree()->end() != IterChild )
 		{
 			if( IterChild->second.isLeaf() )
@@ -102,11 +101,11 @@ void LeafTreeCtrl::updateTree()
 	if( m_NodeLocation != Location  )
 	{
 		//First reset the tree items
-		ObjectTreeItems::iterator Iter = getParentPropPage().getTreeContainer().findItem( m_NodeLocation );
+		SvTrl::ObjectTreeItems::iterator Iter = getParentPropPage().getTreeContainer().findItem( m_NodeLocation );
 
 		if( getParentPropPage().getTreeContainer().end() != Iter )
 		{
-			ObjectTreeItems::iterator IterChild = Iter.GetChildTree()->begin();
+			SvTrl::ObjectTreeItems::iterator IterChild = Iter.GetChildTree()->begin();
 			while( Iter.GetChildTree()->end() != IterChild )
 			{
 				if( IterChild->second.isLeaf() )
@@ -127,18 +126,18 @@ void LeafTreeCtrl::updateTree()
 		return;
 	}
 
-	ObjectTreeItems::iterator Iter = getParentPropPage().getTreeContainer().findItem( m_NodeLocation );
+	SvTrl::ObjectTreeItems::iterator Iter = getParentPropPage().getTreeContainer().findItem( m_NodeLocation );
 
 	if( getParentPropPage().getTreeContainer().end() != Iter )
 	{
-		ObjectTreeItems::iterator IterChild = Iter.GetChildTree()->begin();
+		SvTrl::ObjectTreeItems::iterator IterChild = Iter.GetChildTree()->begin();
 		while( Iter.GetChildTree()->end() != IterChild )
 		{
 			if( IterChild->second.isLeaf() && (NULL != IterChild->second.getTreeItem()) )
 			{
-				IObjectSelectorItem::CheckedStateEnum CheckedState( IObjectSelectorItem::EmptyEnabled );
+				SvTrl::IObjectSelectorItem::CheckedStateEnum CheckedState( SvTrl::IObjectSelectorItem::EmptyEnabled );
 				//The checked state is saved in the upper nibble of the item state (Filtered with 0xF000) and must be shifted by 12 to get the required value
-				CheckedState = static_cast<IObjectSelectorItem::CheckedStateEnum> (GetItemState(IterChild->second.getTreeItem(), TVIS_STATEIMAGEMASK)>>12);
+				CheckedState = static_cast<SvTrl::IObjectSelectorItem::CheckedStateEnum> (GetItemState(IterChild->second.getTreeItem(), TVIS_STATEIMAGEMASK)>>12);
 				//Check if state has changed
 				if( IterChild->second.getCheckedState() != CheckedState )
 				{
@@ -192,7 +191,7 @@ void LeafTreeCtrl::OnCheckAll()
 
 	getRootItems( Items );
 
-	setCheckState( Items, IObjectSelectorItem::CheckedEnabled );
+	setCheckState( Items, SvTrl::IObjectSelectorItem::CheckedEnabled );
 }
 
 void LeafTreeCtrl::OnUncheckAll()
@@ -201,7 +200,7 @@ void LeafTreeCtrl::OnUncheckAll()
 
 	getRootItems( Items );
 
-	setCheckState( Items, IObjectSelectorItem::UncheckedEnabled );
+	setCheckState( Items, SvTrl::IObjectSelectorItem::UncheckedEnabled );
 }
 #pragma endregion Protected Methods
 

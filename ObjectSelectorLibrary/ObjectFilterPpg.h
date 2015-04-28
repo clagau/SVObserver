@@ -38,7 +38,7 @@ namespace Seidenader
 			// Parameter:  title <in>:  reference to the text for the page title
 			// Parameter:  singleSelect <in>:  true for single selection mode (default).  Multi-select otherwise.
 			//***********
-			ObjectFilterPpg( SVTreeLibrary::ObjectTreeItems& treeContainer, const SVString& title, bool singleSelect = true );
+			ObjectFilterPpg( SvTrl::ObjectTreeItems& treeContainer, const SVString& title, bool singleSelect = true );
 
 			//**********
 			// Descripion:  The virtual destructor
@@ -87,11 +87,11 @@ namespace Seidenader
 
 			/**********
 			The method change the check-state of the tree item. DO NOT change the state in the grid control.
-			\param location <in> location of the item
+			\param rLocation <in> reference to the location
 			\param isChecked <in> new check-state
 			\param rowNumber <in> row-number of this item in the grid control. Only used for SingleSelection, to set the current selection.
 			***********/
-			void changeCheckState( const CString &location, bool isChecked, int rowNumber );
+			void changeCheckState( const SVString& rLocation, bool isChecked, int rowNumber );
 #pragma endregion Protected Methods
 
 		private:
@@ -100,19 +100,20 @@ namespace Seidenader
 			{
 				NameColumn = 0,
 				LocationColumn,
-				CheckedColumn,
+				CheckColumn,
 				TypeColumn
 			} Column_Enum;
 
-			SVTreeLibrary::ObjectTreeItems& m_rTreeContainer; //The tree container reference
+			SvTrl::ObjectTreeItems& m_rTreeContainer; //The tree container reference
 			CDlgItemResizer m_Resizer;						//Object which handles the resizing of all controls
-			Seidenader::GridCtrlLibrary::CGridCtrl m_Grid;
+			SvGcl::CGridCtrl m_Grid;						//The grid control to display the filtered items
 			CImageList m_StateImageList;					//The state image list
 			CImageList m_ImageList;							//The image list
 			bool m_SingleSelect;							//True when the Object Selector is in single selection mode
-			int m_RowOfCurrentSelection;					//The row of current selection (only used for SingleSelection)
-			Seidenader::SVOMFCLibary::SVEditControlWithHelp m_FilterNameControl; //Control to filter objects based on their names
-			Seidenader::SVOMFCLibary::SVEditControlWithHelp m_FilterLocationControl; //Control to filter objects based on their locations
+			SVString m_CheckedLocation;						//The currently checked location (only used for SingleSelection)
+			int m_CheckedRow;								//The currently chacked row (only used for SingleSelection)
+			SvOml::SVEditControlWithHelp m_FilterNameControl; //Control to filter objects based on their names
+			SvOml::SVEditControlWithHelp m_FilterLocationControl; //Control to filter objects based on their locations
 			CComboBox m_checkedControl;						//Control to filter objects based on the states of their checkboxes
 			CComboBox m_TypeControl;						//Control to filter objects based on their types
 		#pragma endregion Member Variables

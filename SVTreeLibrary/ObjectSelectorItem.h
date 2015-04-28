@@ -253,8 +253,10 @@ namespace Seidenader
 		};
 
 		typedef std::deque<ObjectSelectorItem> ObjectSelectorItems;
-	} //namespace SVObserver
+	} //namespace SVTreeLibrary
 } //namespace Seidenader
+
+namespace SvTrl = Seidenader::SVTreeLibrary;
 
 //******************************************************************************
 //* LOG HISTORY:

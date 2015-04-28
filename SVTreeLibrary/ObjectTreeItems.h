@@ -101,7 +101,7 @@ namespace Seidenader
 			\param rIter <in> a reference to the parent iterator
 			\return string set (location names) of changed parent
 			***********/
-			SVStringSet setParentState( const SVTreeLibrary::ObjectTreeItems::iterator& rIter );
+			SVStringSet setParentState( const SvTrl::ObjectTreeItems::iterator& rIter );
 
 			/**********
 			 The method clears (unchecked) a item at the specified location and update also the parents if necessary.
@@ -136,8 +136,10 @@ namespace Seidenader
 			bool m_SingleSelect;
 		#pragma endregion Member Variables
 		};
-	} //namespace SVObserver
+	} //namespace SVTreeLibrary
 } //namespace Seidenader
+
+namespace SvTrl = Seidenader::SVTreeLibrary;
 
 //******************************************************************************
 //* LOG HISTORY:

@@ -17,7 +17,6 @@
 
 #pragma region Declarations
 using namespace Seidenader::ObjectSelectorLibrary;
-using namespace Seidenader::SVTreeLibrary;
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -62,7 +61,7 @@ void NodeTreeCtrl::loadTree()
 	HTREEITEM ParentItem = nullptr;
 	TreeItemSet CurrentItems;
 
-	ObjectTreeItems::SVTree_pre_order_iterator Iter( getParentPropPage().getTreeContainer().pre_order_begin() );
+	SvTrl::ObjectTreeItems::SVTree_pre_order_iterator Iter( getParentPropPage().getTreeContainer().pre_order_begin() );
 
 	while( getParentPropPage().getTreeContainer().pre_order_end() != Iter )
 	{
@@ -92,7 +91,7 @@ void NodeTreeCtrl::loadTree()
 			Iter->second.setTreeItem( Item );
 		}
 		//On initial load check if leaf value selected when in single object selection mode
-		if( isSingleSelect() && Iter->second.isLeaf() && IObjectSelectorItem::CheckedEnabled == Iter->second.getCheckedState() )
+		if( isSingleSelect() && Iter->second.isLeaf() && SvTrl::IObjectSelectorItem::CheckedEnabled == Iter->second.getCheckedState() )
 		{
 			setCurrentSelection( Iter->second.getDisplayLocation() );
 			CurrentItems.insert( ParentItem );
@@ -113,13 +112,13 @@ void NodeTreeCtrl::loadTree()
 void NodeTreeCtrl::updateTree()
 {
 	SVStringSet& rUpdateItems = getUpdateItems();
-	ObjectTreeItems& rTreeItems = getParentPropPage().getTreeContainer();
+	SvTrl::ObjectTreeItems& rTreeItems = getParentPropPage().getTreeContainer();
 
 	SVStringSet::const_iterator IterName = rUpdateItems.begin();
 
 	while( rUpdateItems.end() != IterName )
 	{
-		ObjectTreeItems::iterator Iter( rTreeItems.findItem( *IterName ) );
+		SvTrl::ObjectTreeItems::iterator Iter( rTreeItems.findItem( *IterName ) );
 
 		if( rTreeItems.end() != Iter )
 		{
@@ -133,7 +132,7 @@ void NodeTreeCtrl::updateTree()
 
 void NodeTreeCtrl::UpdateAllNodes()
 {
-	ObjectTreeItems::SVTree_pre_order_iterator i( getParentPropPage().getTreeContainer().pre_order_begin() );
+	SvTrl::ObjectTreeItems::SVTree_pre_order_iterator i( getParentPropPage().getTreeContainer().pre_order_begin() );
 
 	while( getParentPropPage().getTreeContainer().pre_order_end() != i )
 	{
@@ -145,7 +144,7 @@ void NodeTreeCtrl::UpdateAllNodes()
 
 		UpdateNode(i->second);
 
-		if( isSingleSelect() && i->second.isLeaf() && IObjectSelectorItem::CheckedEnabled == i->second.getCheckedState() )
+		if( isSingleSelect() && i->second.isLeaf() && SvTrl::IObjectSelectorItem::CheckedEnabled == i->second.getCheckedState() )
 		{
 			setCurrentSelection( i->second.getDisplayLocation() );
 		}
@@ -235,7 +234,7 @@ void NodeTreeCtrl::OnCheckAll()
 		getRootItems( Items );
 	}
 
-	setCheckState( Items, IObjectSelectorItem::CheckedEnabled );
+	setCheckState( Items, SvTrl::IObjectSelectorItem::CheckedEnabled );
 }
 
 void NodeTreeCtrl::OnUncheckAll()
@@ -254,7 +253,7 @@ void NodeTreeCtrl::OnUncheckAll()
 		getRootItems( Items );
 	}
 
-	setCheckState( Items, IObjectSelectorItem::UncheckedEnabled );
+	setCheckState( Items, SvTrl::IObjectSelectorItem::UncheckedEnabled );
 }
 
 void NodeTreeCtrl::changeSelectedItem( const HTREEITEM& rItem )
@@ -262,7 +261,7 @@ void NodeTreeCtrl::changeSelectedItem( const HTREEITEM& rItem )
 	if( NULL != rItem )
 	{
 		SVString* pLocation = reinterpret_cast<SVString*> ( GetItemData( rItem ) );
-		if( NULL != pLocation )
+		if( nullptr != pLocation )
 		{
 			getParentPropPage().setHighlightedNode( *pLocation );
 			getParentPropPage().updateData( this );
@@ -337,15 +336,15 @@ bool NodeTreeCtrl::ExpandToCheckedItems()
 	getRootItems( Items );
 	expandAll( Items, TVE_COLLAPSE );
 
-	ObjectTreeItems::SVTree_pre_order_iterator Iter( getParentPropPage().getTreeContainer().pre_order_begin() );
+	SvTrl::ObjectTreeItems::SVTree_pre_order_iterator Iter( getParentPropPage().getTreeContainer().pre_order_begin() );
 
 	while( getParentPropPage().getTreeContainer().pre_order_end() != Iter )
 	{
 		if( Iter->second.isNode() )
 		{
-			IObjectSelectorItem::CheckedStateEnum CheckedState = Iter->second.getCheckedState();
-			bool Checked =  IObjectSelectorItem::CheckedEnabled == CheckedState || IObjectSelectorItem::CheckedDisabled == CheckedState;
-			bool Tristate = IObjectSelectorItem::TriStateEnabled == CheckedState || IObjectSelectorItem::TriStateDisabled == CheckedState;
+			SvTrl::IObjectSelectorItem::CheckedStateEnum CheckedState = Iter->second.getCheckedState();
+			bool Checked =  SvTrl::IObjectSelectorItem::CheckedEnabled == CheckedState || SvTrl::IObjectSelectorItem::CheckedDisabled == CheckedState;
+			bool Tristate = SvTrl::IObjectSelectorItem::TriStateEnabled == CheckedState || SvTrl::IObjectSelectorItem::TriStateDisabled == CheckedState;
 			if( Checked || Tristate )
 			{
 				Expand( Iter->second.getTreeItem(), TVE_EXPAND );
@@ -361,15 +360,15 @@ bool NodeTreeCtrl::ExpandToCheckedItems()
 	return Result;
 }
 
-void NodeTreeCtrl::UpdateNode( ObjectSelectorItem &Item )
+void NodeTreeCtrl::UpdateNode( SvTrl::ObjectSelectorItem& rItem )
 {
-	bool isNode = Item.isNode();
-	const HTREEITEM treeItem = Item.getTreeItem();
+	bool isNode = rItem.isNode();
+	const HTREEITEM treeItem = rItem.getTreeItem();
 
 	if( isNode && ( nullptr != treeItem ) )
 	{
-		IObjectSelectorItem::CheckedStateEnum CheckedState = static_cast<IObjectSelectorItem::CheckedStateEnum>(GetItemState(treeItem, TVIS_STATEIMAGEMASK)>>12);
-		IObjectSelectorItem::CheckedStateEnum itemCheckedState = Item.getCheckedState();
+		SvTrl::IObjectSelectorItem::CheckedStateEnum CheckedState = static_cast<SvTrl::IObjectSelectorItem::CheckedStateEnum>(GetItemState(treeItem, TVIS_STATEIMAGEMASK)>>12);
+		SvTrl::IObjectSelectorItem::CheckedStateEnum itemCheckedState = rItem.getCheckedState();
 		//Check if state has changed
 		if( itemCheckedState != CheckedState )
 		{

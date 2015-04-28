@@ -397,7 +397,7 @@ namespace Seidenader
 
 			//Need to replace the inspection name with the PPQ Variables name
 			SVStringArray::iterator Iter( PpqVariables.begin() );
-			Seidenader::SVTreeLibrary::ObjectSelectorItem objectItem;
+			SvTrl::ObjectSelectorItem objectItem;
 			while( Iter != PpqVariables.end() )
 			{
 				IObjectClass *pObject = getObjectByDottedName( *Iter );

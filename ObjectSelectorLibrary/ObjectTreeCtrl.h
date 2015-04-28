@@ -135,14 +135,14 @@ namespace Seidenader
 			\param CheckedState <in> the state to change it to
 			\return True if state has changed
 			***********/
-			bool setCheckState( const TreeItemSet& rParentItems, SVTreeLibrary::IObjectSelectorItem::CheckedStateEnum CheckedState = SVTreeLibrary::IObjectSelectorItem::EmptyEnabled );
+			bool setCheckState( const TreeItemSet& rParentItems, SvTrl::IObjectSelectorItem::CheckedStateEnum CheckedState = SvTrl::IObjectSelectorItem::EmptyEnabled );
 
 			/**********
 			The method sets the state of the children items
 			\param rIter <in> a reference to the parent iterator
 			\param rCheckedState <in> a reference to the checked state
 			***********/
-			void setChildrenState( SVTreeLibrary::ObjectTreeItems::iterator& rIter, SVTreeLibrary::IObjectSelectorItem::CheckedStateEnum& rCheckedState );
+			void setChildrenState( SvTrl::ObjectTreeItems::iterator& rIter, SvTrl::IObjectSelectorItem::CheckedStateEnum& rCheckedState );
 
 			/**********
 			The method clears the last checked item for single select mode

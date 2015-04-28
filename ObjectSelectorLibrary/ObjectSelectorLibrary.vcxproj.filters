@@ -57,6 +57,9 @@
     <ClInclude Include="ObjectFilterPpg.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="TextDefinesSvOsl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="ObjectTreeGenerator.inl">

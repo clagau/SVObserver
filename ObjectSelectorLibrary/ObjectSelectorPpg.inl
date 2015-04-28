@@ -10,7 +10,7 @@
 //******************************************************************************
 
 #pragma region Public Methods
-SVTreeLibrary::ObjectTreeItems& ObjectSelectorPpg::getTreeContainer() const
+SvTrl::ObjectTreeItems& ObjectSelectorPpg::getTreeContainer() const
 {
 	return m_rTreeContainer;
 }

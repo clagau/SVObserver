@@ -105,7 +105,7 @@ namespace Seidenader
 			 The method inserts a list of objects into the tree
 			 \param rTree <in> reference to the object tree list
 			***********/
-			void insertTreeObjects( const SVTreeLibrary::ObjectTreeItems& rTree );
+			void insertTreeObjects( const SvTrl::ObjectTreeItems& rTree );
 
 			/**********
 			 The method inserts an object into the tree list
@@ -123,7 +123,7 @@ namespace Seidenader
 			 The method inserts an object into the tree list
 			 \param rObjectItem <in> reference to a object selector item
 			***********/
-			void insertTreeObject( const SVTreeLibrary::ObjectSelectorItem& rObjectItem );
+			void insertTreeObject( const SvTrl::ObjectSelectorItem& rObjectItem );
 
 			/**********
 			 The method inserts the tool set output object list
@@ -178,13 +178,13 @@ namespace Seidenader
 			// Description:  The method gets the results of the object selection
 			// Returns:  const ObjectSelectorItems& - the reference to the results
 			//************************************
-			inline const SVTreeLibrary::ObjectSelectorItems& getResults() const;
+			inline const SvTrl::ObjectSelectorItems& getResults() const;
 
 			/**********
 			 The method gets the single object selection result
 			 \return The single select object
 			***********/
-			inline SVTreeLibrary::ObjectSelectorItem getSingleObjectResult() const;
+			inline SvTrl::ObjectSelectorItem getSingleObjectResult() const;
 
 			/**********
 			 The method sets the selector type
@@ -197,7 +197,7 @@ namespace Seidenader
 			 \param rObjectRef <in> reference to the object
 			 \param rSelectorItem <in, out> reference to the selector item
 			***********/
-			static void setSelectorItemType( const SVObjectReference& rObjectRef, SVTreeLibrary::ObjectSelectorItem& rSelectorItem );
+			static void setSelectorItemType( const SVObjectReference& rObjectRef, SvTrl::ObjectSelectorItem& rSelectorItem );
 
 			//************************************
 			//!  The method sets the selector item variable type int string etc..
@@ -205,8 +205,8 @@ namespace Seidenader
 			//! \param rSelectorItem [in] selector item value to set
 			//! \returns void
 			//************************************
-			static void setSelectorItemType( const SvOi::IObjectClass* pObject, SVTreeLibrary::ObjectSelectorItem &rSelectorItem );
-			static void setSelectorItemType( const SVObjectClass* pObject, SVTreeLibrary::ObjectSelectorItem &rSelectorItem );
+			static void setSelectorItemType( const SvOi::IObjectClass* pObject, SvTrl::ObjectSelectorItem& rSelectorItem );
+			static void setSelectorItemType( const SVObjectClass* pObject, SvTrl::ObjectSelectorItem& rSelectorItem );
 		#pragma endregion Public Methods
 
 		private:
@@ -245,8 +245,8 @@ namespace Seidenader
 
 		private:
 		#pragma region Member Variables
-			SVTreeLibrary::ObjectTreeItems	m_TreeContainer;//The tree container to store all tree items
-			SVTreeLibrary::ObjectSelectorItems m_Results;	//The checked results
+			SvTrl::ObjectTreeItems	m_TreeContainer;//The tree container to store all tree items
+			SvTrl::ObjectSelectorItems m_Results;	//The checked results
 			TranslateMap m_LocationInputFilters;			//The location input filters
 			TranslateMap m_LocationOutputFilters;			//The location output filters
 			SelectorTypeEnum m_SelectorType;				//The selector type

@@ -218,8 +218,10 @@ namespace Seidenader
 			virtual bool isModified() const = 0;
 		#pragma endregion Public Methods
 		};
-	} //namespace SVObserver
+	} //namespace SVTreeLibrary
 } //namespace Seidenader
+
+namespace SvTrl = Seidenader::SVTreeLibrary;
 
 //******************************************************************************
 //* LOG HISTORY:

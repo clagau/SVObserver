@@ -178,6 +178,7 @@
     <ClInclude Include="ObjectTreeGenerator.h" />
     <ClInclude Include="ResizablePropertySheet.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="TextDefinesSvOsl.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ObjectSelectorPpg.inl" />

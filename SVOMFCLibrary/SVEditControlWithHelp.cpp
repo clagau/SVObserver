@@ -18,7 +18,7 @@
 
 namespace Seidenader
 {
-	namespace SVOMFCLibary
+	namespace SVOMFCLibrary
 	{
 #pragma region Declarations
 		const COLORREF Black        = RGB(   0,   0,   0); //0x00000000;	//        0

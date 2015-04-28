@@ -151,6 +151,8 @@ namespace Seidenader
 	} //namespace GridCtrlLibrary
 } //namespace Seidenader
 
+namespace SvGcl = Seidenader::GridCtrlLibrary;
+
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************

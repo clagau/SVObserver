@@ -19,7 +19,6 @@
 
 #pragma region Declarations
 using namespace Seidenader::ObjectSelectorLibrary;
-using namespace Seidenader::SVTreeLibrary;
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -38,7 +37,7 @@ BEGIN_MESSAGE_MAP(ObjectSelectorPpg, CPropertyPage)
 END_MESSAGE_MAP()
 
 #pragma region Constructor
-ObjectSelectorPpg::ObjectSelectorPpg( ObjectTreeItems& rTreeContainer, const SVString& rTitle, bool SingleSelect )
+ObjectSelectorPpg::ObjectSelectorPpg( SvTrl::ObjectTreeItems& rTreeContainer, const SVString& rTitle, bool SingleSelect )
 	: CPropertyPage( ObjectSelectorPpg::IDD )
 	, m_rTreeContainer( rTreeContainer )
 	, m_NodeTree( *this, SingleSelect )
