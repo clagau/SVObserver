@@ -3433,10 +3433,10 @@ BOOL SVObserverApp::InitInstance()
 	if ( !TheSVOLicenseManager().HasMatroxLicense() )
 	{
 		SvStl::ExceptionMgr1 Exception( SvStl::ExpTypeEnum::LogAndDisplay );
-		Exception.setMessage( SVMSG_SVO_52_NOMATAROX_DONGLE, nullptr, StdExceptionParams, Err_25013_NoMatroxDongle );
+		Exception.setMessage( SVMSG_SVO_52_NOMATROX_DONGLE, nullptr, StdExceptionParams, Err_25013_NoMatroxDongle );
 	}
 
-	if ( TheSVOLicenseManager().HasMatroxLicense() && (!TheSVOLicenseManager().HasMatroxGigELicense()) && IsMatroxGige()  )
+	if ( TheSVOLicenseManager().HasMatroxLicense() && !TheSVOLicenseManager().HasMatroxGigELicense() && IsMatroxGige() )
 	{
 		AfxMessageBox("Matrox GigE License not found");
 	}

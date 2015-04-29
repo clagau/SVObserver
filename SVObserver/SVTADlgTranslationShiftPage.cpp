@@ -9,6 +9,7 @@
 //* .Check In Date   : $Date:   15 May 2014 13:07:16  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVObserver.h"
 #include "SVTADlgTranslationShiftPage.h"
@@ -20,33 +21,30 @@
 #include "SVToolAdjustmentDialogSheetClass.h"
 #include "SVShiftTool.h"
 #include "SVShiftToolUtility.h"
+#include "ErrorNumbers.h"
+#include "SVStatusLibrary/ExceptionManager.h"
+#pragma endregion Includes
 
-// SVTADlgTranslationShiftPage dialog
-
-//IMPLEMENT_DYNAMIC(SVTADlgTranslationShiftPageClass, CPropertyPage)
-
+#pragma region Declarations
 enum {IDC_SHIFT_VALUE_TRUE = 100};
+#pragma endregion Declarations
 
+#pragma region Constructor
 SVTADlgTranslationShiftPageClass::SVTADlgTranslationShiftPageClass(SVToolAdjustmentDialogSheetClass* Parent)
 : CPropertyPage(SVTADlgTranslationShiftPageClass::IDD)
 , StrTranslationXValue(_T(""))
 , StrTranslationYValue(_T(""))
+, pParentDialog( Parent )
+, pTool( nullptr )
+, pEvaluateTranslationY( nullptr )
+, m_lShiftType( 0 )
 {
-	
-	pParentDialog	= Parent;
-	pTool = NULL;
-	pEvaluateTranslationX	= NULL;
-	
-	pEvaluateTranslationY	= NULL;
-	StrTranslationXValue = _T("");
-	StrTranslationYValue = _T("");
-	m_lShiftType = 0;
-
 }
 
 SVTADlgTranslationShiftPageClass::~SVTADlgTranslationShiftPageClass()
 {
 }
+#pragma endregion Constructor
 
 void SVTADlgTranslationShiftPageClass::DoDataExchange(CDataExchange* pDX)
 {
@@ -470,14 +468,15 @@ void SVTADlgTranslationShiftPageClass::FillShiftProperties()
 	}
 	
 	m_Tree.RefreshItems();
-
 }
+
 void SVTADlgTranslationShiftPageClass::OnBnClickedChkEnableSourceImageExtents()
 {
 	refresh();
 	if( m_ctlEnableSourceImageExtents.GetCheck()==0)
 	{
-		MessageBox(_T("The Source Image Extents have been disabled for this Shift Tool.\nThe values for any Blob Analyzer \"Box X Toolset Image\" & \n\"Box Y Toolset Image\" results that use this Shift tool as its \nsource will not be valid and should not be used. The Shift tool \nmay run faster with the Source Image Extents disabled."), NULL, MB_OK);
+		SvStl::ExceptionMgr1 e( SvStl::ExpTypeEnum::LogAndDisplay );
+		e.setMessage( SVMSG_SVO_60_SHIFT_TOOL_SOURCE_IMAGE_EXTENTS_DISABLED, nullptr, StdExceptionParams, Err_17053_Shift_Tool_Source_Image_Extents_Disabled );
 	}
 }
 
@@ -577,4 +576,3 @@ $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVTADlgTra
  * 
  * /////////////////////////////////////////////////////////////////////////////////////
 */
-

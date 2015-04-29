@@ -114,6 +114,7 @@ static const int Err_17049_SVRemoteOutputEditDialog_OnInitDialog_ErrorGettingPPQ
 static const int Err_17050_SVRemoteOutputEditDialog_OnInitDialog_ErrorGettingOutputs = BRW_ErrorBase + 50;
 static const int Err_17051_SVRemoteOutputsView_OnUpdate_ErrorGettingPPQCount = BRW_ErrorBase + 51;
 static const int Err_17052_SVRemoteOutputsView_OnLButtonDblClk_ErrorGettingPPQCount = BRW_ErrorBase + 52;
+static const int Err_17053_Shift_Tool_Source_Image_Extents_Disabled = BRW_ErrorBase + 53;
 
 //Guido Ramseier error base
 static const int Gra_ErrorBase = 25000;
