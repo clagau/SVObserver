@@ -834,7 +834,7 @@ HRESULT SVObjectManagerClass::AttachObserver( const SVString& rSubjectDataName, 
 		{
 			SVGUID l_SubjectID = GetSubjectID( rSubjectDataName, pObserverObject );
 
-			if( !( l_SubjectID.empty() ) )
+			if (!l_SubjectID.empty() && l_SubjectID == rSubjectID)
 			{
 				DetachObserver( rSubjectDataName, l_SubjectID, p_Cookie );
 			}
