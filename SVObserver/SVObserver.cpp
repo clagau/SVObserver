@@ -8041,20 +8041,51 @@ BOOL SVObserverApp::OpenConfigFileFromMostRecentList(int nID)
 	return bResult;
 }
 
+// get the Document Template for the SVIPDoc
+static CMultiDocTemplate* getIPDocTemplate()
+{
+	CWinApp& rApp = TheSVObserverApp;
+	CMultiDocTemplate* pTemplate = nullptr;
+	POSITION pos = rApp.GetFirstDocTemplatePosition();
+	if (pos)
+	{
+		CMultiDocTemplate* pDocTemplate = dynamic_cast<CMultiDocTemplate *>(rApp.GetNextDocTemplate(pos));
+		while (!pTemplate && pDocTemplate)
+		{
+			POSITION posDoc = pDocTemplate->GetFirstDocPosition();
+			if (posDoc)
+			{
+		         CDocument* pDoc = pDocTemplate->GetNextDoc(posDoc);
+				 if (pDoc && pDoc->IsKindOf(RUNTIME_CLASS(SVIPDoc)))
+				 {
+					 pTemplate = pDocTemplate;
+				 }
+			}
+		}
+	}
+	return pTemplate;
+}
+
 void SVObserverApp::EnableTriggerSettings()
 {
 	SVUtilitiesClass util;
-	CWnd *pWindow;
-	CMenu *pMenu;
-	CString szMenuText;
-
-	pWindow = AfxGetMainWnd ();
-	pMenu = pWindow->GetMenu();
-	szMenuText = _T("&View");
-	if (pMenu = util.FindSubMenuByName (pMenu, szMenuText))
+	CWnd* pWindow = AfxGetMainWnd();
+	if (pWindow)
 	{
-		pMenu->AppendMenu(MF_STRING, ID_TRIGGER_SETTINGS, _T("Software Trigger")); 
-		pWindow->DrawMenuBar();
+		CMultiDocTemplate* pDocTemplate = getIPDocTemplate();
+		if (pDocTemplate)
+		{
+			CString szMenuText(_T("&View"));
+			CMenu menu;
+			menu.Attach(pDocTemplate->m_hMenuShared);
+			CMenu* pSubMenu = util.FindSubMenuByName(&menu, szMenuText);
+			if (pSubMenu)
+			{
+				pSubMenu->AppendMenu(MF_STRING, ID_TRIGGER_SETTINGS, _T("Software Trigger")); 
+			}
+			menu.Detach();
+			pWindow->DrawMenuBar();
+		}
 	}
 }
 
@@ -8062,17 +8093,23 @@ void SVObserverApp::DisableTriggerSettings()
 {
 	SVSoftwareTriggerDlg::Instance().ShowWindow(SW_HIDE);
 	SVUtilitiesClass util;
-	CWnd *pWindow;
-	CMenu *pMenu;
-	CString szMenuText;
-
-	pWindow = AfxGetMainWnd ();
-	pMenu = pWindow->GetMenu();
-	szMenuText = _T("&View");
-	if (pMenu = util.FindSubMenuByName (pMenu, szMenuText))
+	CWnd* pWindow = AfxGetMainWnd();
+	if (pWindow)
 	{
-		pMenu->RemoveMenu(ID_TRIGGER_SETTINGS, MF_BYCOMMAND); 
-		pWindow->DrawMenuBar();
+		CMultiDocTemplate* pDocTemplate = getIPDocTemplate();
+		if (pDocTemplate)
+		{
+			CString szMenuText(_T("&View"));
+			CMenu menu;
+			menu.Attach(pDocTemplate->m_hMenuShared);
+			CMenu* pSubMenu = util.FindSubMenuByName(&menu, szMenuText);
+			if (pSubMenu)
+			{
+				pSubMenu->RemoveMenu(ID_TRIGGER_SETTINGS, MF_BYCOMMAND); 
+			}
+			menu.Detach();
+			pWindow->DrawMenuBar();
+		}
 	}
 }
 
