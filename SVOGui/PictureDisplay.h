@@ -91,7 +91,7 @@ namespace Seidenader
 			//! \param tabNumber [in] The tab number of the activeX-control. Default value = 0.
 			//! \returns void
 			//************************************
-			void setImage( const SvOi::MatroxImageSmartHandlePointer imageData, long tabNumber = 0 );
+			void setImage( const SvOi::IMatroxImageData *imageData, long tabNumber = 0 );
 
 			//************************************
 			// Method:    AddTab

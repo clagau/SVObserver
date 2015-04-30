@@ -54,20 +54,20 @@ namespace Seidenader
 			{
 				data = pImage->getParentImageData();
 			}
-			setImage( data, tabNumber );
+			setImage( data.get(), tabNumber );
 		}
 
 		void PictureDisplay::setImage( SvOi::ISVImage* pImage, long tabNumber )
 		{
 			SvOi::MatroxImageSmartHandlePointer data = pImage->getImageData();
-			setImage( data, tabNumber );
+			setImage( data.get(), tabNumber );
 		}
 
-		void PictureDisplay::setImage( const SvOi::MatroxImageSmartHandlePointer imageData, long tabNumber )
+		void PictureDisplay::setImage( const SvOi::IMatroxImageData *imageData, long tabNumber )
 		{
 			ASSERT( static_cast< long >( m_dibVector.size() ) > tabNumber );
 
-			if( !imageData.empty() && !imageData->empty() )
+			if( nullptr != imageData && !( imageData->empty() ) )
 			{
 				SVBitmapInfo dibInfo = imageData->getBitmapInfo();
 				BYTE* pMilBuffer = static_cast< BYTE* >( imageData->getBufferAddress() );
