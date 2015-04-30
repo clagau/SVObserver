@@ -69,12 +69,13 @@ namespace Seidenader
 			virtual void setTaskObject( IObjectClass& pObject ) = 0;
 
 			/**********
-			Validate a string, but does not set it to the task object..
+			Validate a string
 			\param equationString [in] the equation string.
 			\param result [out] return the result of the equation, if the validation is successfully.
+			\param bRestore[in] boolean for determining whether to restore to the previous equation string.
 			\return return the position of the failure. If the validation is successful, the value will be "validateSuccessful".
 			**********/
-			virtual int validateEquation(const SVString &equationString, double& result) const = 0;
+			virtual int validateEquation(const SVString &equationString, double& result, bool bRestore) const = 0;
 			/**********
 			Validate a string and if successful it set the string to the task object..
 			\param equationString [in] the equation string.

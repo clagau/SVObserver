@@ -608,6 +608,7 @@ void SVEquationClass::SetEquationText(const CString& text)
 	if (text.IsEmpty())
 	{
 		symbols.ClearAll();
+		yacc.equationResult = 0.0;
 	}
 }
 

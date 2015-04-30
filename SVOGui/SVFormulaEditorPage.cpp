@@ -688,7 +688,7 @@ namespace Seidenader
 
 			UpdateData( TRUE ); // Update the variables
 			double value = 0;
-			const int result = m_rFormulaController.validateEquation( equationText, value );
+			const int result = m_rFormulaController.validateEquation( equationText, value, true );
 			if( result == IFormulaController::validateSuccessful )
 			{
 				CString tmp;

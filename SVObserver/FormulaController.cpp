@@ -133,12 +133,15 @@ void FormulaController::setTaskObject( SvOi::IObjectClass& rObject )
 	setTaskObjectClass(rTaskObject);
 }
 
-int FormulaController::validateEquation( const SVString &equationString, double& result ) const
+int FormulaController::validateEquation( const SVString &equationString, double& result, bool bRestore ) const
 {
 	int retValue = validateSuccessful;
 	SVString oldString("");
-	//save old string
-	m_pEquation->GetEquationText(oldString);
+	if (bRestore)
+	{
+		//save old string
+		m_pEquation->GetEquationText(oldString);
+	}
 	m_pEquation->SetEquationText(equationString);
 
 	SVEquationTestResult testResult = m_pEquation->Test();
@@ -151,14 +154,17 @@ int FormulaController::validateEquation( const SVString &equationString, double&
 	{  // set return value to position of failed
 		retValue = testResult.iPositionFailed;
 	}
-	//reset old string
-	m_pEquation->SetEquationText(oldString);
+	if (bRestore)
+	{
+		//reset old string
+		m_pEquation->SetEquationText(oldString);
+	}
 	return retValue;
 }
 
 int FormulaController::validateAndSetEquation( const SVString &equationString, double& result )
 {
-	int retValue = validateEquation( equationString, result);
+	int retValue = validateEquation( equationString, result, false);
 
 	if ( validateSuccessful == retValue )
 	{
