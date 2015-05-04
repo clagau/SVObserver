@@ -1525,101 +1525,104 @@ void SVIPDoc::Dump(CDumpContext& dc) const
 
 void SVIPDoc::OnResultsPicker()
 {
-	SVInspectionProcess* l_pInspection( GetInspectionProcess() );
-	SVResultListClass* pResultList( GetResultList() );
-	if( nullptr == l_pInspection || nullptr == pResultList ) { return; }
-
-	SVString InspectionName( l_pInspection->GetName() );
-
-	ObjectTreeGenerator::Instance().setSelectorType( ObjectTreeGenerator::SelectorTypeEnum::TypeMultipleObject);
-	ObjectTreeGenerator::Instance().setAttributeFilters( SV_VIEWABLE );
-
-	CString tmp;
-	tmp.LoadString(IDS_CLASSNAME_ROOTOBJECT);
-	ObjectTreeGenerator::Instance().setLocationFilter( ObjectTreeGenerator::FilterInput, tmp, SVString( _T("") ) );
-
-	SVString EnvName(Seidenader::SVObjectLibrary::FqnEnvironmentMode);
-
-	// The environment variables in the dialog should have the same order as in the menu.
-	SVStringArray ObjectNameList;
-	EnvironmentObject* pEnvironment( nullptr );
-	SVObjectManagerClass::Instance().GetRootChildObject(pEnvironment, SVObjectManagerClass::Environment);
-	if(nullptr != pEnvironment)
+	if( S_OK == TheSVObserverApp.m_svSecurityMgr.SVValidate(SECURITY_POINT_EDIT_MENU_RESULT_PICKER) )
 	{
-		pEnvironment->getEnvironmentObjectNameList(ObjectNameList, EnvName, SV_VIEWABLE);
-		ObjectTreeGenerator::Instance().insertTreeObjects( ObjectNameList);
-	}
+		SVInspectionProcess* l_pInspection( GetInspectionProcess() );
+		SVResultListClass* pResultList( GetResultList() );
+		if( nullptr == l_pInspection || nullptr == pResultList ) { return; }
 
-	SVPPQObject* ppq( l_pInspection->GetPPQ() );
-	SVString PPQName;
-	if(nullptr != ppq)
-	{
-		PPQName = ppq->GetName();
-		ObjectTreeGenerator::Instance().insertTreeObjects( PPQName );
-	}
+		SVString InspectionName( l_pInspection->GetName() );
 
-	ObjectTreeGenerator::Instance().setLocationFilter( ObjectTreeGenerator::FilterInput, InspectionName, SVString( _T("") ) );
-	SVOutputInfoListClass OutputList;
+		ObjectTreeGenerator::Instance().setSelectorType( ObjectTreeGenerator::SelectorTypeEnum::TypeMultipleObject);
+		ObjectTreeGenerator::Instance().setAttributeFilters( SV_VIEWABLE );
 
-	SVToolSetClass* pToolset( GetToolSet() );
-	if(nullptr != pToolset)
-	{
-		pToolset->GetOutputList( OutputList );
-		ObjectTreeGenerator::Instance().insertOutputList( OutputList );
-	}
+		CString tmp;
+		tmp.LoadString(IDS_CLASSNAME_ROOTOBJECT);
+		ObjectTreeGenerator::Instance().setLocationFilter( ObjectTreeGenerator::FilterInput, tmp, SVString( _T("") ) );
 
-	SVStringSet SelectedNames;
+		SVString EnvName(Seidenader::SVObjectLibrary::FqnEnvironmentMode);
 
-	pResultList->m_EnvResults.GetNameSet(SelectedNames);
-	pResultList->m_ToolReferences.GetNameSet(SelectedNames);
-
-	ObjectTreeGenerator::Instance().setCheckItems(SelectedNames);
-
-	CString ResultPicker;
-	ResultPicker.LoadString( IDS_RESULT_PICKER );
-	SVString Title;
-	Title.Format( _T("%s - %s"), ResultPicker, InspectionName.c_str() );
-	SVString mainTabTitle = ResultPicker;
-	CString Filter;
-	Filter.LoadString( IDS_FILTER );
-	SVString filterTabTitle = Filter;
-	INT_PTR Result = ObjectTreeGenerator::Instance().showDialog( Title, mainTabTitle, filterTabTitle );
-
-	if( IDOK == Result )
-	{
-		const std::deque<ObjectSelectorItem>& SelectedItems = ObjectTreeGenerator::Instance().getResults();
-		std::deque<ObjectSelectorItem>::const_iterator it;
-
-		pResultList->m_EnvResults.Clear();
-		pResultList->m_ToolReferences.Clear();
-
-		size_t EnvSize = EnvName.size();
-		size_t PPQSize = PPQName.size();
-
-		for( it = SelectedItems.begin(); it != SelectedItems.end(); it++ )
+		// The environment variables in the dialog should have the same order as in the menu.
+		SVStringArray ObjectNameList;
+		EnvironmentObject* pEnvironment( nullptr );
+		SVObjectManagerClass::Instance().GetRootChildObject(pEnvironment, SVObjectManagerClass::Environment);
+		if(nullptr != pEnvironment)
 		{
-			if(it->isLeaf())
-			{
-				// @WARNING:  It's dangerous to call .Left before checking the length of the string returned by getLocation().
-				if( ( EnvSize > 0 && it->getLocation().Left(EnvSize).Compare(EnvName) == 0 ) || 
-					( PPQSize > 0 && it->getLocation().Left(PPQSize).Compare(PPQName) == 0 ) )
-				{
-					pResultList->m_EnvResults.Insert(it->getLocation());
-				}
-				else
-				{
-					pResultList->m_ToolReferences.Insert(it->getLocation());
-				}
-			}
+			pEnvironment->getEnvironmentObjectNameList(ObjectNameList, EnvName, SV_VIEWABLE);
+			ObjectTreeGenerator::Instance().insertTreeObjects( ObjectNameList);
 		}
 
-		// Set the Document as modified
-		SetModifiedFlag();
-		RebuildResultsList();
-		UpdateWithLastProduct();
-	}
+		SVPPQObject* ppq( l_pInspection->GetPPQ() );
+		SVString PPQName;
+		if(nullptr != ppq)
+		{
+			PPQName = ppq->GetName();
+			ObjectTreeGenerator::Instance().insertTreeObjects( PPQName );
+		}
 
-	UpdateAllViews( nullptr );
+		ObjectTreeGenerator::Instance().setLocationFilter( ObjectTreeGenerator::FilterInput, InspectionName, SVString( _T("") ) );
+		SVOutputInfoListClass OutputList;
+
+		SVToolSetClass* pToolset( GetToolSet() );
+		if(nullptr != pToolset)
+		{
+			pToolset->GetOutputList( OutputList );
+			ObjectTreeGenerator::Instance().insertOutputList( OutputList );
+		}
+
+		SVStringSet SelectedNames;
+
+		pResultList->m_EnvResults.GetNameSet(SelectedNames);
+		pResultList->m_ToolReferences.GetNameSet(SelectedNames);
+
+		ObjectTreeGenerator::Instance().setCheckItems(SelectedNames);
+
+		CString ResultPicker;
+		ResultPicker.LoadString( IDS_RESULT_PICKER );
+		SVString Title;
+		Title.Format( _T("%s - %s"), ResultPicker, InspectionName.c_str() );
+		SVString mainTabTitle = ResultPicker;
+		CString Filter;
+		Filter.LoadString( IDS_FILTER );
+		SVString filterTabTitle = Filter;
+		INT_PTR Result = ObjectTreeGenerator::Instance().showDialog( Title, mainTabTitle, filterTabTitle );
+
+		if( IDOK == Result )
+		{
+			const std::deque<ObjectSelectorItem>& SelectedItems = ObjectTreeGenerator::Instance().getResults();
+			std::deque<ObjectSelectorItem>::const_iterator it;
+
+			pResultList->m_EnvResults.Clear();
+			pResultList->m_ToolReferences.Clear();
+
+			size_t EnvSize = EnvName.size();
+			size_t PPQSize = PPQName.size();
+
+			for( it = SelectedItems.begin(); it != SelectedItems.end(); it++ )
+			{
+				if(it->isLeaf())
+				{
+					// @WARNING:  It's dangerous to call .Left before checking the length of the string returned by getLocation().
+					if( ( EnvSize > 0 && it->getLocation().Left(EnvSize).Compare(EnvName) == 0 ) || 
+						( PPQSize > 0 && it->getLocation().Left(PPQSize).Compare(PPQName) == 0 ) )
+					{
+						pResultList->m_EnvResults.Insert(it->getLocation());
+					}
+					else
+					{
+						pResultList->m_ToolReferences.Insert(it->getLocation());
+					}
+				}
+			}
+
+			// Set the Document as modified
+			SetModifiedFlag();
+			RebuildResultsList();
+			UpdateWithLastProduct();
+		}
+
+		UpdateAllViews( nullptr );
+	}
 }
 
 void SVIPDoc::OnPublishedResultsPicker()

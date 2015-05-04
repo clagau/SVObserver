@@ -2374,8 +2374,11 @@ void SVObserverApp::OnUpdatePublishedImagesPicker(CCmdUI* PCmdUI)
 
 void SVObserverApp::OnUpdateResultsPicker(CCmdUI* PCmdUI) 
 {
-	PCmdUI->Enable( SVSVIMStateClass::CheckState( SV_STATE_READY ) 
-		&& SVSVIMStateClass::CheckState( SV_STATE_EDIT ) );
+	PCmdUI->Enable( ((SVSVIMStateClass::CheckState( SV_STATE_READY ) 
+		&& SVSVIMStateClass::CheckState( SV_STATE_EDIT ))
+		|| SVSVIMStateClass::CheckState(SV_STATE_RUNNING)
+		|| SVSVIMStateClass::CheckState(SV_STATE_REGRESSION)
+		|| SVSVIMStateClass::CheckState(SV_STATE_TEST)));
 }
 
 void SVObserverApp::OnExtrasUtilitiesEdit() 
@@ -7784,14 +7787,17 @@ HRESULT SVObserverApp::InitializeSecurity()
 		AddSecurityNode(hMessageDll, SECURITY_POINT_FILE_MENU_EXIT                  , _T("") );
 		AddSecurityNode(hMessageDll, SECURITY_POINT_UNRESTRICTED_FILE_ACCESS        , _T("") );
 
-		AddSecurityNode(hMessageDll, SECURITY_POINT_VIEW_MENU );     // Second Child From Root
+		AddSecurityNode(hMessageDll, SECURITY_POINT_EDIT_MENU );     // Second Child From Root
+		AddSecurityNode(hMessageDll, SECURITY_POINT_EDIT_MENU_RESULT_PICKER               , _T("") );
+
+		AddSecurityNode(hMessageDll, SECURITY_POINT_VIEW_MENU );     // Third Child From Root
 		AddSecurityNode(hMessageDll, SECURITY_POINT_VIEW_MENU_PPQ_BAR               , _T("") );
 		AddSecurityNode(hMessageDll, SECURITY_POINT_VIEW_MENU_IMAGE_DISPLAY_UPDATE  , _T("") );
 		AddSecurityNode(hMessageDll, SECURITY_POINT_VIEW_MENU_RESULT_DISPLAY_UPDATE , _T("") );
 		AddSecurityNode(hMessageDll, SECURITY_POINT_VIEW_MENU_RESET_COUNTS_CURRENT  , _T("") );
 		AddSecurityNode(hMessageDll, SECURITY_POINT_VIEW_MENU_RESET_COUNTS_ALL      , _T("") );
 
-		AddSecurityNode(hMessageDll, SECURITY_POINT_MODE_MENU );     // Third Child From Root
+		AddSecurityNode(hMessageDll, SECURITY_POINT_MODE_MENU );     // forth Child From Root
 		AddSecurityNode(hMessageDll, SECURITY_POINT_MODE_MENU_RUN,              _T("") );
 		AddSecurityNode(hMessageDll, SECURITY_POINT_MODE_MENU_STOP,             _T("") );
 		AddSecurityNode(hMessageDll, SECURITY_POINT_MODE_MENU_REGRESSION_TEST,  _T("") );
@@ -7799,7 +7805,7 @@ HRESULT SVObserverApp::InitializeSecurity()
 		AddSecurityNode(hMessageDll, SECURITY_POINT_MODE_MENU_EDIT_TOOLSET,     _T("") );
 		AddSecurityNode(hMessageDll, SECURITY_POINT_MODE_MENU_EXIT_RUN_MODE,    _T("") );
 
-		AddSecurityNode(hMessageDll, SECURITY_POINT_EXTRAS_MENU );   // Forth Child From Root
+		AddSecurityNode(hMessageDll, SECURITY_POINT_EXTRAS_MENU );   // fifth Child From Root
 		AddSecurityNode(hMessageDll, SECURITY_POINT_EXTRAS_MENU_ADDITIONAL_ENVIRON, _T("") );
 		AddSecurityNode(hMessageDll, SECURITY_POINT_EXTRAS_MENU_SECURITY_MANAGER,   _T("Administrators"), true);
 		AddSecurityNode(hMessageDll, SECURITY_POINT_EXTRAS_MENU_TEST_OUTPUTS,       _T("") );

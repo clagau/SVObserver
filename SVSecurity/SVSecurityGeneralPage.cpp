@@ -134,6 +134,8 @@ void SVSecurityGeneralPage::OnNoSecurityBtn()
 	m_pAccess->SetNTGroup( SECURITY_POINT_FILE_MENU_RECENT_CONFIGURATIONS,  _T("Everybody") );
 	m_pAccess->SetNTGroup( SECURITY_POINT_FILE_MENU_EXIT,                   _T("Everybody") );
 	m_pAccess->SetNTGroup( SECURITY_POINT_UNRESTRICTED_FILE_ACCESS,         _T("Everybody") );
+	//m_pAccess->SetNTGroup( SECURITY_POINT_EDIT_MENU,                       _T("Everybody") );
+	m_pAccess->SetNTGroup( SECURITY_POINT_EDIT_MENU_RESULT_PICKER,         _T("Everybody") );
 	m_pAccess->SetNTGroup( SECURITY_POINT_VIEW_MENU_PPQ_BAR,                _T("Everybody") );
 	m_pAccess->SetNTGroup( SECURITY_POINT_VIEW_MENU_IMAGE_DISPLAY_UPDATE,   _T("Everybody") );
 	m_pAccess->SetNTGroup( SECURITY_POINT_VIEW_MENU_RESULT_DISPLAY_UPDATE,  _T("Everybody") );
@@ -162,6 +164,9 @@ void SVSecurityGeneralPage::OnNoSecurityBtn()
 	m_pAccess->SetForcedPrompt( SECURITY_POINT_FILE_MENU_RECENT_CONFIGURATIONS, FALSE);
 	m_pAccess->SetForcedPrompt( SECURITY_POINT_FILE_MENU_EXIT,                  FALSE);
 	m_pAccess->SetForcedPrompt( SECURITY_POINT_UNRESTRICTED_FILE_ACCESS,        FALSE);
+
+	m_pAccess->SetForcedPrompt( SECURITY_POINT_EDIT_MENU_RESULT_PICKER,        FALSE);
+
 	m_pAccess->SetForcedPrompt( SECURITY_POINT_VIEW_MENU_PPQ_BAR,               FALSE);
 	m_pAccess->SetForcedPrompt( SECURITY_POINT_VIEW_MENU_IMAGE_DISPLAY_UPDATE,  FALSE);
 	m_pAccess->SetForcedPrompt( SECURITY_POINT_VIEW_MENU_RESULT_DISPLAY_UPDATE, FALSE);
@@ -196,6 +201,9 @@ void SVSecurityGeneralPage::OnTraditionalSecurityBtn()
 	m_pAccess->SetNTGroup( SECURITY_POINT_FILE_MENU_RECENT_CONFIGURATIONS , _T("Supervisor Group,Vision Worker Group,Operator Group") );
 	m_pAccess->SetNTGroup( SECURITY_POINT_FILE_MENU_EXIT                  , _T("Supervisor Group,Vision Worker Group,Operator Group") );
 	m_pAccess->SetNTGroup( SECURITY_POINT_UNRESTRICTED_FILE_ACCESS        , _T("Supervisor Group,Vision Worker Group,Operator Group") );
+
+	m_pAccess->SetNTGroup( SECURITY_POINT_EDIT_MENU_RESULT_PICKER        , _T("Supervisor Group,Vision Worker Group,Operator Group") );
+
 
 	m_pAccess->SetNTGroup( SECURITY_POINT_VIEW_MENU_PPQ_BAR               , _T("Supervisor Group,Vision Worker Group,Operator Group,Move Operator Group") );
 	m_pAccess->SetNTGroup( SECURITY_POINT_VIEW_MENU_IMAGE_DISPLAY_UPDATE  , _T("Supervisor Group,Vision Worker Group") );
