@@ -180,8 +180,9 @@ BOOL CSVOInspectionList::IsInspectionInList(CString sInspectLabel)
 	while( pos != m_InspectionList.end() && !bFound )
 	{
 		CSVOInspectionObj* pObj = m_InspectionList.GetAt(pos);
-
-		if (sInspectLabel == pObj->GetInspectionLabelName())
+		
+		//Check both InspectionLabelName & InspectionName - Can be different if an inspeciton has been renamed.
+		if ( (sInspectLabel == pObj->GetInspectionLabelName()) || (sInspectLabel == pObj->GetInspectionName()))
 		{
 			bFound = TRUE;
 		}
