@@ -36,6 +36,8 @@
 #include "EnvironmentObject.h"
 #include "SVIPChildFrm.h"
 #include "SVOResource/ConstGlobalSvOr.h"
+#include "SVShiftTool.h"
+#include "SVShiftToolUtility.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -542,6 +544,7 @@ BOOL SVImageViewClass::OnCommand( WPARAM p_wParam, LPARAM p_lParam )
 			//------ Warp tool hands back a SVPolarTransformObjectType. Sub type 1792.
 			//------ Window tool, Luminance hands back a SVImageObjectType. Sub type 0.
 			//------ Gage tool (edge counting analyzer) hands back a SVROIObjectType. Sub type 1280.
+			CString DlgName; //used for the Adjust Tool Size and Position dialog
 
 			switch( l_svTypeInfo.ObjectType )
 			{
@@ -551,7 +554,9 @@ BOOL SVImageViewClass::OnCommand( WPARAM p_wParam, LPARAM p_lParam )
 					{
 						case SVImagePolarTransformObjectType: // 1792
 						{
-							SVAdjustToolSizePositionDlg dlg( _T( "Adjust Tool Size / Position" ), this, m_psvObject );
+							DlgName.Format("Adjust Tool Size and Position - %s",l_psvTool->GetName());
+
+							SVAdjustToolSizePositionDlg dlg(DlgName, this, m_psvObject );
 							dlg.DoModal();
 							break;
 						}
@@ -574,12 +579,13 @@ BOOL SVImageViewClass::OnCommand( WPARAM p_wParam, LPARAM p_lParam )
 						{
 							if( SV_IS_KIND_OF( l_psvTool, SVLoadImageToolClass ) )
 							{
-								SVAdjustToolSizePositionDlg dlg( _T( "Adjust Tool Size / Position" ), this, m_psvObject );
+								DlgName.Format("Adjust Tool Size and Position - %s",l_psvTool->GetName());
+								SVAdjustToolSizePositionDlg dlg( DlgName, this, m_psvObject );
 								dlg.DoModal();
 							}
 							else
 							{
-								SVAdjustToolSizePositionDlg dlg( _T( "Adjust Tool Size / Position" ), this, m_psvObject );
+								SVAdjustToolSizePositionDlg dlg( DlgName, this, m_psvObject );
 								dlg.DoModal();
 							}
 
@@ -598,7 +604,8 @@ BOOL SVImageViewClass::OnCommand( WPARAM p_wParam, LPARAM p_lParam )
 				{
 					if( dynamic_cast< SVLineAnalyzerClass* >( m_psvObject ) != NULL )
 					{
-						SVAdjustToolSizePositionDlg dlg( _T( "Adjust Tool Size / Position" ), this, m_psvObject );
+						DlgName.Format("Adjust Tool Size and Position - %s",l_psvTool->GetName());
+						SVAdjustToolSizePositionDlg dlg( DlgName, this, m_psvObject );
 						dlg.DoModal();
 					}
 					else
@@ -614,13 +621,15 @@ BOOL SVImageViewClass::OnCommand( WPARAM p_wParam, LPARAM p_lParam )
 					{
 						case SVToolProfileObjectType:
 						{
-							SVAdjustToolSizePositionDlg dlg( _T( "Adjust Tool Size / Position" ), this, m_psvObject );
+							DlgName.Format("Adjust Tool Size and Position - %s",l_psvTool->GetName());
+							SVAdjustToolSizePositionDlg dlg( DlgName, this, m_psvObject );
 							dlg.DoModal();
 							break;
 						}
 						default:
 						{
-							SVAdjustToolSizePositionDlg dlg( _T( "Adjust Tool Size / Position" ), this, m_psvObject );
+							DlgName.Format("Adjust Tool Size and Position - %s",l_psvTool->GetName());
+							SVAdjustToolSizePositionDlg dlg( DlgName, this, m_psvObject );
 							dlg.DoModal();
 							break;
 						}
@@ -722,6 +731,10 @@ void SVImageViewClass::OnContextMenu( CWnd* p_pWnd, CPoint p_point )
 		CMenu l_menu;
 		CMenu* l_pPopup;
 
+		//Get the current selected tool and check to see if it has extents.  if it does not then remove Adjust Size and Position menu option
+		SVToolClass* CurrentTool = dynamic_cast< SVToolClass* >( SVObjectManagerClass::Instance().GetObject( GetIPDoc()->GetSelectedToolID() ) );
+
+
 		m_mousePoint.x = p_point.x;
 		m_mousePoint.y = p_point.y;
 
@@ -776,6 +789,31 @@ void SVImageViewClass::OnContextMenu( CWnd* p_pWnd, CPoint p_point )
 									}
 								}
 							}
+						}
+					}
+
+					
+					if (nullptr != CurrentTool)
+					{
+						bool RemoveAdjustPos = false;
+
+						//check if tool is a shift tool.  its extents behave differently then other tools
+						SVShiftTool* pShiftTool = dynamic_cast< SVShiftTool* >(CurrentTool);
+						if (nullptr != pShiftTool)
+						{
+							long l_shiftMode;
+							pShiftTool->m_evoShiftMode.GetValue(l_shiftMode);
+							if (l_shiftMode == SV_SHIFT_ENUM::SV_SHIFT_REFERENCE)
+							{
+								RemoveAdjustPos = true;
+							}
+						}
+
+						
+						if ( RemoveAdjustPos )
+						{
+							//remove Adjust Tool Size and Position menu item
+							l_pPopup->DeleteMenu(ID_ADJUST_POSITION, MF_BYCOMMAND);
 						}
 					}
 

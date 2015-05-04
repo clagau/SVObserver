@@ -94,6 +94,8 @@
 #include "ToolClipboard.h"
 #include "AutoSaver.h"
 #include "TextDefinesSvO.h"
+#include "SVShiftTool.h"
+#include "SVShiftToolUtility.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -3168,9 +3170,23 @@ void SVIPDoc::OnUpdateEditAdjustToolPosition(CCmdUI* pCmdUI)
 				{
 					//make sure m_SelectedToolID is updated to the correct tool when a right mouse click selects the tool
 					m_SelectedToolID = rGuid;
-					if (S_OK == Tool->DoesObjectHaveExtents())
+
+					SVShiftTool* pShiftTool = dynamic_cast< SVShiftTool* >(Tool);
+					if (nullptr != pShiftTool)
 					{
-						Enabled = TRUE;
+						long l_shiftMode;
+						pShiftTool->m_evoShiftMode.GetValue(l_shiftMode);
+						if (l_shiftMode == SV_SHIFT_ENUM::SV_SHIFT_REFERENCE)
+						{
+							Enabled = FALSE;
+						}
+					}
+					else
+					{  //check to see if the tool has exttents
+						if (S_OK == Tool->DoesObjectHaveExtents())
+						{
+							Enabled = TRUE;
+						}
 					}
 				}
 			}
