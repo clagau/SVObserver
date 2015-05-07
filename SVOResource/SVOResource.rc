@@ -2055,7 +2055,7 @@ END
 
 IDD_ADJUST_TOOL_SIZE_POSITION_DIALOG DIALOGEX 0, 0, 297, 68
 STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION
-CAPTION "Edit Tool Size and Position"
+CAPTION "Adjust Tool Size and Position"
 FONT 8, "MS Sans Serif", 0, 0, 0x0
 BEGIN
     PUSHBUTTON      "UP",IDC_UP_BUTTON,130,3,45,16,BS_ICON
@@ -3970,7 +3970,7 @@ BEGIN
         END
         MENUITEM "Configure Analyzer",          ID_CONFIG_ANALYZER
         MENUITEM "Show Analyzer Result",        ID_ANALYZER_RESULT
-        MENUITEM "Edit Tool Size and Position",    ID_ADJUST_POSITION
+        MENUITEM "Adjust Tool Size and Position",    ID_ADJUST_POSITION
         MENUITEM "Select Display Image",        ID_SELECT_DISPLAY_IMAGE
     END
 END

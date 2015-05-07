@@ -3183,6 +3183,10 @@ void SVIPDoc::OnUpdateEditAdjustToolPosition(CCmdUI* pCmdUI)
 						{
 							Enabled = FALSE;
 						}
+						else
+						{
+							Enabled = TRUE;
+						}
 					}
 					else
 					{  //check to see if the tool has exttents
