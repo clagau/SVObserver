@@ -34,6 +34,9 @@ echo #define HID_FILE_MRU_FILE4                      0x0001E113 >>%1
 echo #define HID_FILE_MRU_FILE5                      0x0001E114 >>%1
 echo #define HID_FILE_MRU_FILE6                      0x0001E115 >>%1
 echo #define HID_FILE_MRU_FILE7                      0x0001E116 >>%1
+echo #define HID_EDIT_COPY                           0x0001E122 >>%1
+echo #define HID_EDIT_CUT                            0x0001E123 >>%1
+echo #define HID_EDIT_PASTE                          0x0001E125 >>%1
 echo #define HID_APP_EXIT                            0x0001E141 >>%1
 echo #define HID_APP_ABOUT                           0x0001E140 >>%1
 echo #define HID_HELP_FINDER                         0x0001E143 >>%1
