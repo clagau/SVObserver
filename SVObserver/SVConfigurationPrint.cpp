@@ -1362,7 +1362,7 @@ static WordWrapLines DoWordWrap(LPCTSTR text, int numChars)
 	typedef std::deque<std::string> split_container_type;
 	split_container_type splitContainer;
 	boost::algorithm::split(splitContainer, tmp, boost::algorithm::is_any_of("\n"), boost::algorithm::token_compress_off);
-	// Iterate over the conatiner of lines and do Word Warp
+	// Iterate over the container of lines and do Word Wrap
 	std::for_each(splitContainer.begin(), splitContainer.end(), [&numChars, &lines](const std::string& rText)->void 
 	{
 		CString tmp(rText.c_str());

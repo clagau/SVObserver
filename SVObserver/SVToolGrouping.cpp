@@ -13,6 +13,7 @@
 #include "SVConfigurationLibrary/SVConfigurationTags.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVXMLLibrary/SVNavigateTreeClass.h"
+#include "SVGlobal.h"
 
 #pragma endregion Includes
 
@@ -525,14 +526,18 @@ HRESULT SVToolGrouping::SetParameters(SVTreeType& rTree, SVTreeType::SVBranchHan
 
 							if (SVNavigateTreeClass::GetItem(rTree, CTAG_STARTGROUP_COMMENT, htiSubChild, svValue))
 							{
-								startGroupComment = static_cast<LPCTSTR>(static_cast<_bstr_t>(svValue));
+								CString tmp(static_cast<LPCTSTR>(static_cast<_bstr_t>(svValue)));
+								::SVRemoveEscapedSpecialCharacters(tmp, true);
+								startGroupComment = static_cast<LPCTSTR>(tmp);
 							}
 							if (SVNavigateTreeClass::GetItem(rTree, CTAG_ENDGROUP, htiSubChild, svValue))
 							{
 								endGroupName = static_cast<LPCTSTR>(static_cast<_bstr_t>(svValue));
 								if (SVNavigateTreeClass::GetItem(rTree, CTAG_ENDGROUP_COMMENT, htiSubChild, svValue))
 								{
-									endGroupComment = static_cast<LPCTSTR>(static_cast<_bstr_t>(svValue));
+									CString tmp(static_cast<LPCTSTR>(static_cast<_bstr_t>(svValue)));
+									::SVRemoveEscapedSpecialCharacters(tmp, true);
+									endGroupComment = static_cast<LPCTSTR>(tmp);
 								}
 							}
 							groupings.m_list.insert(groupings.m_list.end(), std::make_pair(groupName, ToolGroupData(ToolGroupData::StartOfGroup, groupName, endGroupName, bCollapsed)));
@@ -650,7 +655,9 @@ bool SVToolGrouping::GetParameters(SVObjectWriter& rWriter)
 				_variant_t value(name);
 				rWriter.WriteAttribute(CTAG_STARTGROUP, value);
 
-				_bstr_t comment(it->second.m_comment.c_str());
+				CString tmp(it->second.m_comment.c_str());
+				::SVAddEscapeSpecialCharacters(tmp, true);
+				_bstr_t comment(tmp);
 				_variant_t commentValue(comment);
 				rWriter.WriteAttribute(CTAG_STARTGROUP_COMMENT, commentValue);
 				
@@ -669,7 +676,9 @@ bool SVToolGrouping::GetParameters(SVObjectWriter& rWriter)
 				_variant_t value(name);
 				rWriter.WriteAttribute(CTAG_ENDGROUP, value);
 
-				_bstr_t comment(it->second.m_comment.c_str());
+				CString tmp(it->second.m_comment.c_str());
+				::SVAddEscapeSpecialCharacters(tmp, true);
+				_bstr_t comment(tmp);
 				_variant_t commentValue(comment);
 				rWriter.WriteAttribute(CTAG_ENDGROUP_COMMENT, commentValue);
 
