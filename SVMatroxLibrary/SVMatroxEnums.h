@@ -147,6 +147,7 @@ enum SVMatroxBufferValues
 	SVValueBinary						= 0x00001000L,	// M_BINARY
 	SVValueGrayscale					= 0x00000200L,	// M_GREYSCALE
 	SVValueTranaparent					= 0x01000059L,	// M_TRANSPARENT
+	SVValueMirror							= 0x01000061L, // M_MIRROR
 	SVValueImageToSkeleton				= -1L,			// M_TO_SKELETON
 	SVValueAll							= 0x40000000L,	// M_ALL
 	SVValueAny							= 0x11000000L,  // M_ANY

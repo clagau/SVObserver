@@ -112,7 +112,7 @@ BOOL Custom2Filter::RebuildKernel()
 
 	Value = 0;
 	SVMatroxBufferInterface::ControlNeighborhood( m_milKernel, SVKernelDefault, Value );
-	SVMatroxBufferInterface::ControlNeighborhood( m_milKernel, SVBufOverScan, SVValueTranaparent );
+	SVMatroxBufferInterface::ControlNeighborhood( m_milKernel, SVBufOverScan, SVValueMirror );
 
 	BOOL Flag(FALSE);
 	m_ClippingEnabled.GetValue( Flag );

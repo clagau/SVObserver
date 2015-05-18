@@ -424,7 +424,7 @@ BOOL SVCustomFilterClass::RebuildKernel()
 
 	long l_lValue=0;
 	SVMatroxBufferInterface::ControlNeighborhood( m_milKernel, SVKernelDefault, l_lValue ); 
-	SVMatroxBufferInterface::ControlNeighborhood( m_milKernel, SVBufOverScan, SVValueTranaparent ); 
+	SVMatroxBufferInterface::ControlNeighborhood( m_milKernel, SVBufOverScan, SVValueMirror ); 
 
 	m_bvoClippingOn.GetValue( bValue );
 	if( bValue )
