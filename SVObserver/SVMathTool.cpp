@@ -194,7 +194,7 @@ DWORD_PTR SVMathToolClass::processMessage( DWORD DwMessageID, DWORD_PTR DwMessag
 		}
 	}
 
-	DWORD_PTR l_Status = ( SVTaskObjectListClass::processMessage( DwMessageID, DwMessageValue, DwMessageContext ) | DwResult );
+	DWORD_PTR l_Status = ( SVToolClass::processMessage( DwMessageID, DwMessageValue, DwMessageContext ) | DwResult );
 	return l_Status;
 }
 
