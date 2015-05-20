@@ -40,7 +40,7 @@ namespace Seidenader
 
 			if( !bm )
 			{
-				bm = ( HBITMAP ) ::LoadImage( AfxGetInstanceHandle(), 
+				bm = ( HBITMAP ) ::LoadImage( AfxGetResourceHandle(), 
 					lpszResourceName,
 					IMAGE_BITMAP,
 					0,
@@ -57,7 +57,7 @@ namespace Seidenader
 
 			if( !bm )
 			{
-				bm = (HBITMAP) ::LoadImage( AfxGetInstanceHandle(), 
+				bm = (HBITMAP) ::LoadImage(  AfxGetResourceHandle(), 
 					MAKEINTRESOURCE( nIDResource ),
 					IMAGE_BITMAP,
 					0,
