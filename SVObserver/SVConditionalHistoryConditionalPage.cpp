@@ -75,6 +75,11 @@ BOOL SVConditionalHistoryConditionalPage::OnInitDialog()
 
 void SVConditionalHistoryConditionalPage::InitPage( SVInspectionProcess* pInspection )
 {
+	ASSERT( nullptr != pInspection );
+	if( nullptr == pInspection )
+	{
+		return;
+	}
 	// load values
 	std::vector<SVScalarValue> vecValues, vecImages, vecConditionals;
 	HRESULT hr = pInspection->GetConditionalHistoryList( vecValues, vecImages, vecConditionals );

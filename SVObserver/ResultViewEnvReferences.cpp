@@ -31,7 +31,7 @@ ResultViewEnvReferences::~ResultViewEnvReferences()
 #pragma endregion Constructor
 
 #pragma region Public Methods
-void ResultViewEnvReferences::BuildReferenceVector(SVInspectionProcess* pProcess)
+void ResultViewEnvReferences::BuildReferenceVector(SVInspectionProcess* pInspection)
 {
 	m_ResultViewItemDefList.clear();
 	m_ReferenceVector.clear();
@@ -39,12 +39,16 @@ void ResultViewEnvReferences::BuildReferenceVector(SVInspectionProcess* pProcess
 	SVObjectReferenceVector RefVector;
 	SVObjectManagerClass::Instance().getTreeList( Seidenader::SVObjectLibrary::FqnEnvironmentMode, RefVector, SV_VIEWABLE );
 
-	// Add ppq variables
-	SVPPQObject *ppq = pProcess->GetPPQ();
-	if(ppq)
+	if( nullptr != pInspection )
 	{
-		SVString PPQName = ppq->GetName();
-		SVObjectManagerClass::Instance().getTreeList( PPQName, RefVector, SV_VIEWABLE );
+		SVPPQObject *pPPQ( nullptr );
+		// Add ppq variables
+		pPPQ = pInspection->GetPPQ();
+		if( nullptr != pPPQ )
+		{
+			SVString PPQName = pPPQ->GetName();
+			SVObjectManagerClass::Instance().getTreeList( PPQName, RefVector, SV_VIEWABLE );
+		}
 	}
 
 	for(SVObjectReferenceVector::const_iterator iter = RefVector.begin(); iter != RefVector.end(); ++iter)

@@ -51,6 +51,7 @@ static SVObjectClass* GetTool(const SVString& rName, const SVTaskObjectListClass
 
 inline const std::string SVConfigXMLPrint::Print() const
 {
+	m_cfo = nullptr;
 	SVObjectManagerClass::Instance().GetConfigurationObject( m_cfo );
 	CComPtr<IXmlWriter> writer;
 	HRESULT hr = ::CreateXmlWriter(__uuidof(IXmlWriter), reinterpret_cast<void**>(&writer), 0);
@@ -97,17 +98,17 @@ inline void SVConfigXMLPrint::PrintXMLDoc(Writer writer) const
 
 inline void SVConfigXMLPrint::WriteTriggers(Writer writer) const
 {
-	typedef std::map<std::string, SVTriggerObject *> TriggerMap;
+	typedef std::map<std::string, SVTriggerObject*> TriggerMap;
 	TriggerMap triggers;
 	long sz = 0;
-	m_cfo->GetTriggerCount(sz);
+	if( nullptr != m_cfo ){ m_cfo->GetTriggerCount(sz); }
 	for(long i = 0; i < sz; ++i)
 	{
-		SVTriggerObject * t = NULL;
-		m_cfo->GetTrigger(i, &t);
-		if (t)
+		SVTriggerObject* pTrigger( nullptr );
+		if( nullptr != m_cfo ){ m_cfo->GetTrigger(i, &pTrigger); }
+		if( nullptr != pTrigger )
 		{
-			triggers[t->GetName()] = t;
+			triggers[pTrigger->GetName()] = pTrigger;
 		}
 	}
 
@@ -121,17 +122,19 @@ inline void SVConfigXMLPrint::WriteTriggers(Writer writer) const
 	writer->WriteEndElement();
 }
 
-inline void SVConfigXMLPrint::WriteTrigger(Writer writer, SVTriggerObject * t) const
+inline void SVConfigXMLPrint::WriteTrigger(Writer writer, SVTriggerObject* pTrigger) const
 {
+	ASSERT( nullptr != pTrigger );
+	if(nullptr == pTrigger ){ return; }
 	writer->WriteStartElement(NULL, L"Trigger", NULL);
-	writer->WriteAttributeString(NULL, L"Name", NULL, to_utf16(t->GetName(), cp_dflt).c_str());
+	writer->WriteAttributeString(NULL, L"Name", NULL, to_utf16(pTrigger->GetName(), cp_dflt).c_str());
 	writer->WriteAttributeString(NULL, L"DeviceName", NULL,
-		(t->mpsvDevice)?to_utf16(t->mpsvDevice->GetDeviceName(), cp_dflt).c_str(): L"** Device **");
-	if(t->IsSoftwareTrigger())
+		(pTrigger->mpsvDevice)?to_utf16(pTrigger->mpsvDevice->GetDeviceName(), cp_dflt).c_str(): L"** Device **");
+	if(pTrigger->IsSoftwareTrigger())
 	{
 		writer->WriteAttributeString(NULL, L"Type", NULL, L"Software");
 		std::wostringstream os;
-		os << t->GetSoftwareTriggerPeriod() << L" ms" << std::ends;
+		os << pTrigger->GetSoftwareTriggerPeriod() << L" ms" << std::ends;
 		writer->WriteAttributeString(NULL, L"TimerPeriod", NULL, os.str().c_str());			
 	}
 	else
@@ -143,17 +146,17 @@ inline void SVConfigXMLPrint::WriteTrigger(Writer writer, SVTriggerObject * t) c
 
 inline void SVConfigXMLPrint::WriteCameras(Writer writer) const
 {
-	typedef std::map<std::string, SVVirtualCamera *> CameraMap;
+	typedef std::map<std::string, SVVirtualCamera*> CameraMap;
 	CameraMap cameras;
 	long sz = 0;
-	m_cfo->GetCameraCount(sz);
+	if( nullptr != m_cfo ) { m_cfo->GetCameraCount(sz); }
 	for(long i = 0; i < sz; ++i)
 	{
-		SVVirtualCamera * c = NULL;
-		m_cfo->GetCamera(i, &c);
-		if (c)
+		SVVirtualCamera* pCamera( nullptr );
+		if( nullptr != m_cfo ) { m_cfo->GetCamera( i, &pCamera ); }
+		if( nullptr != pCamera )
 		{
-			cameras[c->GetName()] = c;
+			cameras[pCamera->GetName()] = pCamera;
 		}
 	}
 
@@ -174,34 +177,38 @@ inline const wchar_t * LoadingModeText(long mode)
 	return L"Single File";
 }
 
-inline void SVConfigXMLPrint::WriteCamera(Writer writer, SVVirtualCamera * cam) const
+inline void SVConfigXMLPrint::WriteCamera(Writer writer, SVVirtualCamera* pCamera) const
 {
+	ASSERT( nullptr != pCamera );
+	if(nullptr == pCamera ){ return; }
+
 	writer->WriteStartElement(NULL, L"Camera", NULL);
-	writer->WriteAttributeString(NULL, L"Name", NULL, to_utf16(cam->GetName(), cp_dflt).c_str());
+	writer->WriteAttributeString(NULL, L"Name", NULL, to_utf16(pCamera->GetName(), cp_dflt).c_str());
 	writer->WriteAttributeString(NULL, L"DeviceName", NULL,
-		(cam->mpsvDevice)?to_utf16(cam->mpsvDevice->GetDeviceName(), cp_dflt).c_str(): L"** No Device **");
+		(pCamera->mpsvDevice)?to_utf16(pCamera->mpsvDevice->GetDeviceName(), cp_dflt).c_str(): L"** No Device **");
 	writer->WriteAttributeString(NULL, L"AcquisitionType", NULL,
-		(cam->IsFileAcquisition())?L"File Acquisition":L"Hardware Acquisition");
-	if (cam->IsFileAcquisition())
+		(pCamera->IsFileAcquisition())?L"File Acquisition":L"Hardware Acquisition");
+	if (pCamera->IsFileAcquisition())
 	{
-		WriteFileAcq(writer, cam);
+		WriteFileAcq(writer, pCamera);
 	}
 	else
 	{
-		WriteHardwareAcq(writer, cam);
+		WriteHardwareAcq(writer, pCamera);
 	}
 	writer->WriteEndElement();
 }
 
-inline void SVConfigXMLPrint::WriteHardwareAcq(Writer writer, SVVirtualCamera * cam) const
+inline void SVConfigXMLPrint::WriteHardwareAcq(Writer writer, SVVirtualCamera* pCamera) const
 {
 	writer->WriteStartElement(NULL, L"HardwareAcquisition", NULL);
 	SVFileNameArrayClass* pfnac = NULL;
 	SVLightReference* plrcDummy = NULL;
 	SVLut* plutDummy = NULL;
 	SVDeviceParamCollection* pDeviceParams = NULL;
-	SVAcquisitionClassPtr pAcqDevice = cam->GetAcquisitionDevice();
-	if( !( pAcqDevice.empty() ) && m_cfo->GetAcquisitionDevice( pAcqDevice->GetRootDeviceName(), pfnac, plrcDummy, plutDummy, pDeviceParams ))
+	SVAcquisitionClassPtr pAcqDevice;
+	if( nullptr != pCamera ){ pAcqDevice = pCamera->GetAcquisitionDevice(); }
+	if( !( pAcqDevice.empty() ) && nullptr != m_cfo && m_cfo->GetAcquisitionDevice( pAcqDevice->GetRootDeviceName(), pfnac, plrcDummy, plutDummy, pDeviceParams ))
 	{
 		writer->WriteStartElement(NULL, L"CameraFiles", NULL);
 		writer->WriteString(to_utf16(pfnac->GetFileNameList(), cp_dflt).c_str());
@@ -240,19 +247,22 @@ inline void SVConfigXMLPrint::WriteHardwareAcq(Writer writer, SVVirtualCamera * 
 	writer->WriteEndElement();
 }
 
-inline void SVConfigXMLPrint::WriteFileAcq(Writer writer, SVVirtualCamera * cam) const
+inline void SVConfigXMLPrint::WriteFileAcq(Writer writer, SVVirtualCamera* pCamera) const
 {
+	ASSERT( nullptr != pCamera );
+	if(nullptr == pCamera ){ return; }
+
 	writer->WriteStartElement(NULL, L"FileAcquisition", NULL);
-	writer->WriteAttributeString(NULL, L"LoadingMode", NULL, LoadingModeText(cam->GetFileLoadingMode()));
+	writer->WriteAttributeString(NULL, L"LoadingMode", NULL, LoadingModeText(pCamera->GetFileLoadingMode()));
 	writer->WriteStartElement(NULL, L"Image", NULL);
-	writer->WriteAttributeString(NULL, L"Filename", NULL, to_utf16(cam->GetImageFilename(), cp_dflt).c_str());
-	writer->WriteAttributeString(NULL, L"Directory", NULL, to_utf16(cam->GetImageDirectoryName(), cp_dflt).c_str());
-	writer->WriteAttributeString(NULL, L"SizeMode", NULL, (cam->IsFileImageSizeEditModeFileBased())?L"Use Image Size from File":L"User Editable");
-	if(cam->IsFileImageSizeEditModeFileBased())
+	writer->WriteAttributeString(NULL, L"Filename", NULL, to_utf16(pCamera->GetImageFilename(), cp_dflt).c_str());
+	writer->WriteAttributeString(NULL, L"Directory", NULL, to_utf16(pCamera->GetImageDirectoryName(), cp_dflt).c_str());
+	writer->WriteAttributeString(NULL, L"SizeMode", NULL, (pCamera->IsFileImageSizeEditModeFileBased())?L"Use Image Size from File":L"User Editable");
+	if(pCamera->IsFileImageSizeEditModeFileBased())
 	{
 		wchar_t buff[64];
-		writer->WriteAttributeString(NULL, L"Width", NULL, _itow(cam->GetFileImageWidth(), buff, 10));
-		writer->WriteAttributeString(NULL, L"Height", NULL, _itow(cam->GetFileImageHeight(), buff, 10));
+		writer->WriteAttributeString(NULL, L"Width", NULL, _itow(pCamera->GetFileImageWidth(), buff, 10));
+		writer->WriteAttributeString(NULL, L"Height", NULL, _itow(pCamera->GetFileImageHeight(), buff, 10));
 	}
 	writer->WriteEndElement();
 	writer->WriteEndElement();
@@ -283,7 +293,7 @@ inline const wchar_t * PPQModeText(SVPPQOutputModeEnum mode)
 
 namespace sv_xml
 {
-	inline bool less(SVVirtualCamera * lhs, SVVirtualCamera * rhs)
+	inline bool less(SVVirtualCamera* lhs, SVVirtualCamera* rhs)
 	{
 		return std::string(lhs->GetName()) < std::string(rhs->GetName());
 	}
@@ -291,17 +301,17 @@ namespace sv_xml
 
 inline void SVConfigXMLPrint::WritePPQs(Writer writer) const
 {
-	typedef std::map<std::string, SVPPQObject *> PPQMap;
+	typedef std::map<std::string, SVPPQObject*> PPQMap;
 	PPQMap ppqs;
 	long lPPQ = 0;
 	writer->WriteStartElement(NULL, L"PPQs", NULL);
-	m_cfo->GetPPQCount(lPPQ);
+	if( nullptr != m_cfo ) { m_cfo->GetPPQCount(lPPQ); }
 	for (long l = 0; l < lPPQ; l++)
 	{
-		SVPPQObject *pPPQ = NULL;
+		SVPPQObject* pPPQ( nullptr );
 		
-		m_cfo->GetPPQ(l, &pPPQ);
-		if (pPPQ)
+		if( nullptr != m_cfo ) { m_cfo->GetPPQ(l, &pPPQ); }
+		if ( nullptr != pPPQ)
 		{
 			ppqs[pPPQ->GetName()] = pPPQ;
 		}
@@ -309,7 +319,10 @@ inline void SVConfigXMLPrint::WritePPQs(Writer writer) const
 
 	for (PPQMap::const_iterator it = ppqs.begin(); it != ppqs.end(); ++it)
 	{
-		SVPPQObject *pPPQ = it->second;
+		SVPPQObject* pPPQ = it->second;
+		//If nullptr then do next in list
+		if( nullptr == pPPQ ){ continue; }
+
 		wchar_t buff[64];
 		writer->WriteStartElement(NULL, L"PPQ", NULL);
 		writer->WriteAttributeString(NULL, L"Name", NULL, to_utf16(pPPQ->GetName(), cp_dflt).c_str());
@@ -329,9 +342,9 @@ inline void SVConfigXMLPrint::WritePPQs(Writer writer) const
 		writer->WriteAttributeString(NULL, L"OutputResetDelay", NULL, _itow(lResetDelay, buff, 10));
 		writer->WriteAttributeString(NULL, L"OutputDelayTime", NULL, _itow(lDelayTime, buff, 10));
 		
-		SVTriggerObject*	pTrigger;
+		SVTriggerObject* pTrigger;
 		pPPQ->GetTrigger(pTrigger);
-		if (pTrigger)
+		if ( nullptr != pTrigger )
 		{
 			writer->WriteStartElement(NULL, L"Trigger", NULL);
 			writer->WriteAttributeString(NULL, L"Name", NULL, to_utf16(pTrigger->GetName(), cp_dflt).c_str());
@@ -345,7 +358,7 @@ inline void SVConfigXMLPrint::WritePPQs(Writer writer) const
 	writer->WriteEndElement();
 }
 
-inline void SVConfigXMLPrint::WritePPQCameras(Writer writer, SVPPQObject * pPPQ) const
+inline void SVConfigXMLPrint::WritePPQCameras(Writer writer, SVPPQObject* pPPQ) const
 {
 	std::deque< SVVirtualCamera* > l_Cameras;
 
@@ -358,7 +371,7 @@ inline void SVConfigXMLPrint::WritePPQCameras(Writer writer, SVPPQObject * pPPQ)
 	{
 		SVVirtualCamera* pCamera = ( *l_Iter );
 		
-		if (pCamera)
+		if ( nullptr != pCamera )
 		{
 			writer->WriteStartElement(NULL, L"Camera", NULL);
 			writer->WriteAttributeString(NULL, L"Name", NULL, to_utf16(pCamera->GetName(), cp_dflt).c_str());
@@ -369,18 +382,17 @@ inline void SVConfigXMLPrint::WritePPQCameras(Writer writer, SVPPQObject * pPPQ)
 	}
 }
 
-inline void SVConfigXMLPrint::WritePPQInspections(Writer writer, SVPPQObject * pPPQ) const
+inline void SVConfigXMLPrint::WritePPQInspections(Writer writer, SVPPQObject* pPPQ) const
 {
-	typedef std::map<std::string, SVInspectionProcess *> InspectionMap;
 	InspectionMap inspections;
 	long lSize = 0;
 	pPPQ->GetInspectionCount(lSize);
 	for (int intInspection = 0; intInspection < lSize; intInspection++)
 	{
-		SVInspectionProcess*	pInspection;
+		SVInspectionProcess* pInspection( nullptr );
 		pPPQ->GetInspection(intInspection, pInspection);
 		
-		if (pInspection)
+		if (nullptr != pInspection)
 		{
 			inspections[pInspection->GetName()] = pInspection;
 		}
@@ -396,17 +408,16 @@ inline void SVConfigXMLPrint::WritePPQInspections(Writer writer, SVPPQObject * p
 
 inline void SVConfigXMLPrint::WriteInspections(Writer writer) const
 {
-	typedef std::map<std::string, SVInspectionProcess *> InspectionMap;
 	InspectionMap inspections;
 	long lSize = 0;
 	writer->WriteStartElement(NULL, L"Inspections", NULL);
-	m_cfo->GetInspectionCount(lSize);
+	if( nullptr != m_cfo ) { m_cfo->GetInspectionCount(lSize); }
 	for (long l = 0; l < lSize; l++)
 	{
-		SVInspectionProcess *pInspect = NULL;
+		SVInspectionProcess* pInspect( nullptr );
 		
-		m_cfo->GetInspection(l, &pInspect);
-		if (pInspect)
+		if( nullptr != m_cfo ) { m_cfo->GetInspection(l, &pInspect); }
+		if( nullptr != pInspect)
 		{
 			inspections[pInspect->GetName()] = pInspect;
 		}
@@ -424,19 +435,18 @@ inline void SVConfigXMLPrint::WriteInspections(Writer writer) const
 
 inline void SVConfigXMLPrint::WriteToolSets(Writer writer) const
 {
-	typedef std::map<std::string, SVInspectionProcess *> InspectionMap;
 	InspectionMap inspections;
 	long lSize = 0;
 	writer->WriteStartElement(NULL, L"InspectionProcesses", NULL);
-	m_cfo->GetInspectionCount(lSize);
+	if( nullptr != m_cfo ){ m_cfo->GetInspectionCount(lSize); }
 	for (long l = 0; l < lSize; l++)
 	{
-		SVInspectionProcess *pInspect = NULL;
+		SVInspectionProcess* pInspection( nullptr );
 		
-		m_cfo->GetInspection(l, &pInspect);
-		if (pInspect)
+		if( nullptr != m_cfo ){ m_cfo->GetInspection(l, &pInspection); }
+		if( nullptr != pInspection )
 		{
-			inspections[pInspect->GetName()] = pInspect;
+			inspections[pInspection->GetName()] = pInspection;
 		}
 	}
 
@@ -448,12 +458,15 @@ inline void SVConfigXMLPrint::WriteToolSets(Writer writer) const
 	writer->WriteEndElement();
 }
 
-inline void SVConfigXMLPrint::WriteToolSet(Writer writer, SVInspectionProcess * insp) const
+inline void SVConfigXMLPrint::WriteToolSet(Writer writer, SVInspectionProcess* pInspection) const
 {
+	ASSERT( nullptr != pInspection );
+	if( nullptr == pInspection ){ return;}
+
 	nToolNumber = 0;
 	writer->WriteStartElement(NULL, L"InspectionProcess", NULL);
-	writer->WriteAttributeString(NULL, L"Name", NULL, to_utf16(insp->GetName(), cp_dflt).c_str());
-	WriteObject(writer, insp->GetToolSet());
+	writer->WriteAttributeString(NULL, L"Name", NULL, to_utf16(pInspection->GetName(), cp_dflt).c_str());
+	WriteObject(writer, pInspection->GetToolSet());
 	
 	writer->WriteEndElement();
 }
@@ -475,13 +488,13 @@ inline void SVConfigXMLPrint::WriteResultIO(Writer writer) const
 	long				lSize        = 0;
 	wchar_t buff[64];
 
-	SVConfigurationObject* pConfig = NULL;
+	SVConfigurationObject* pConfig( nullptr );
 	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 	SVObserverApp*         pApp    = dynamic_cast <SVObserverApp*> (AfxGetApp());
 	
 	// Get the number of PPQs
 	long	lPPQSize = 0;
-	if (pConfig->GetPPQCount(lPPQSize) && pApp->GetIODoc())
+	if ( nullptr != pConfig && pConfig->GetPPQCount(lPPQSize) && pApp->GetIODoc())
 	{
 		SVPPQObject				*pPPQ;
 		SVDigitalOutputObject	*pDigOutput;
@@ -564,7 +577,7 @@ inline void SVConfigXMLPrint::WriteModuleIO(Writer writer) const
 	CPoint				ptTemp(0, 0);
 	wchar_t				buff[64];
 	
-	SVConfigurationObject* pConfig = NULL;
+	SVConfigurationObject* pConfig( nullptr );
 	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 	SVObserverApp*         pApp    = dynamic_cast <SVObserverApp*> (AfxGetApp());
 	
@@ -576,7 +589,7 @@ inline void SVConfigXMLPrint::WriteModuleIO(Writer writer) const
 		SVIOEntryHostStructPtrList ppIOEntries;
 		
 		// Get list of available inputs
-		if (pConfig->GetInputObjectList(&pInputList) && pInputList->FillInputs( ppIOEntries ))
+		if ( nullptr != pConfig && pConfig->GetInputObjectList(&pInputList) && pInputList->FillInputs( ppIOEntries ))
 		{
 			lSize = static_cast< long >( ppIOEntries.size() );
 			
@@ -650,10 +663,10 @@ inline void SVConfigXMLPrint::WriteMonitorListSection(Writer writer) const
 	wchar_t				buff[64];
 	int ItemCount = 0;
 
-	SVConfigurationObject* pConfig = NULL;
-	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
+	SVConfigurationObject* pConfig( nullptr );
+	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
-	if (pConfig)
+	if( nullptr != pConfig )
 	{
 		writer->WriteStartElement(NULL, L"RemoteMonitorList", NULL);
 		
@@ -777,7 +790,7 @@ inline void SVConfigXMLPrint::WriteMonitorListSection(Writer writer) const
 inline void SVConfigXMLPrint::WritePPQBar(Writer writer) const
 {
 	writer->WriteStartElement(NULL, L"PPQBar", NULL);
-	SVConfigurationObject* pConfig = NULL;
+	SVConfigurationObject* pConfig( nullptr );
 	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 	
 	CString	sLabel, sValue;
@@ -785,13 +798,14 @@ inline void SVConfigXMLPrint::WritePPQBar(Writer writer) const
 	int     nLastHeight  = 0;
 	wchar_t buff[64];
 	
-	long	lPPQ;
-	pConfig->GetPPQCount(lPPQ);
+	long	lPPQ = 0;
+	//The nullptr check here is enough because then lPPQ would be 0
+	if( nullptr != pConfig){ pConfig->GetPPQCount(lPPQ); }
 	for (int intPPQ = 0; intPPQ < lPPQ; intPPQ++)
 	{
-		SVPPQObject*	pPPQ;
+		SVPPQObject*	pPPQ( nullptr );
 		
-		if (pConfig->GetPPQ(intPPQ, &pPPQ) && pPPQ)
+		if (pConfig->GetPPQ(intPPQ, &pPPQ) && nullptr != pPPQ)
 		{
 			writer->WriteStartElement(NULL, to_utf16(pPPQ->GetName(), cp_dflt).c_str(), NULL);
 			long	lPPQLength = 0;
@@ -809,7 +823,7 @@ inline void SVConfigXMLPrint::WritePPQBar(Writer writer) const
 				{
 					SVVirtualCamera* pCamera = ( *l_Iter );
 					
-					if (pCamera)
+					if ( nullptr != pCamera )
 					{
 						long lPos = -1;
 

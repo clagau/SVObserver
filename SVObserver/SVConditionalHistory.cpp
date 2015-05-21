@@ -72,11 +72,9 @@ SVConditionalHistory::ParseName( const CString& strName )
 	{
 		CString strInspectionName = strName.Left(iPos);
 		
-		SVConfigurationObject* l_pConfig = NULL;
-		SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
-
-		SVInspectionProcess* pInspection = NULL;
-		if ( l_pConfig->GetInspectionObject( strInspectionName, &pInspection ) )
+		SVInspectionProcess* pInspection( nullptr );
+		//GetInspectionObject is only true if the pointer is valid
+		if ( SVConfigurationObject::GetInspection( strInspectionName, pInspection ) )
 		{
 			SVObjectReference object;
 			HRESULT hr = SVObjectManagerClass::Instance().GetObjectByDottedName( static_cast< LPCTSTR >( strName ), object );

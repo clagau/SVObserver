@@ -85,23 +85,23 @@ public:
 	BOOL GetInspectionTimeout( long& rlTimeoutMillisec ) const;
 	const SVString& GetConditionalOutputName() const;
 
-	BOOL AttachTrigger( SVTriggerObject *pTrigger );
-	BOOL AttachCamera( SVVirtualCamera *pCamera, long lPosition, bool p_AllowMinusOne = false );
-	BOOL AttachInspection( SVInspectionProcess *pInspection );
+	BOOL AttachTrigger( SVTriggerObject* pTrigger );
+	BOOL AttachCamera( SVVirtualCamera* pCamera, long lPosition, bool p_AllowMinusOne = false );
+	BOOL AttachInspection( SVInspectionProcess* pInspection );
 
-	BOOL DetachTrigger( SVTriggerObject *pTrigger );
-	BOOL DetachCamera( SVVirtualCamera *pCamera, BOOL bRemoveDepends = FALSE );
-	BOOL DetachInspection( SVInspectionProcess *pInspection );
+	BOOL DetachTrigger( SVTriggerObject* pTrigger );
+	BOOL DetachCamera( SVVirtualCamera* pCamera, BOOL bRemoveDepends = FALSE );
+	BOOL DetachInspection( SVInspectionProcess* pInspection );
 
-	BOOL AddSharedCamera(  SVVirtualCamera *pCamera );
+	BOOL AddSharedCamera(  SVVirtualCamera* pCamera );
 	BOOL GetInspectionCount( long &lSize );
 
 	size_t GetCameraCount() const;
 	HRESULT GetCameraList( std::deque< SVVirtualCamera* >& p_rCameras ) const;
 	HRESULT GetVirtualCameras( SVVirtualCameraMap& p_rCameras ) const;
 
-	BOOL GetTrigger( SVTriggerObject *&ppTrigger );
-	BOOL GetInspection( long lIndex, SVInspectionProcess *&ppInspection );
+	BOOL GetTrigger( SVTriggerObject*& ppTrigger );
+	BOOL GetInspection( long lIndex, SVInspectionProcess*& ppInspection );
 
 	HRESULT GetInspections( std::vector< SVInspectionProcess* >& rvecInspections ) const;
 
@@ -114,8 +114,8 @@ public:
 	bool IsObjectInPPQ( const SVObjectClass& object ) const;
 
 	// PPQ position management functions
-	BOOL SetCameraPPQPosition( long lPosition, SVVirtualCamera *pCamera );
-	BOOL GetCameraPPQPosition( long &lPosition, SVVirtualCamera *pCamera );
+	BOOL SetCameraPPQPosition( long lPosition, SVVirtualCamera* pCamera );
+	BOOL GetCameraPPQPosition( long &lPosition, SVVirtualCamera* pCamera );
 
 	// Runtime Functions
 	HRESULT CanGoOnline();
@@ -147,13 +147,13 @@ public:
 
 	BOOL AddOutput( SVIOEntryHostStructPtr pOutput );
 	BOOL RemoveOutput( SVIOEntryHostStructPtr pOutput );
-	BOOL WriteOutputs( SVProductInfoStruct *pProduct );
+	BOOL WriteOutputs( SVProductInfoStruct* pProduct );
 	BOOL ResetOutputs();
 	BOOL RebuildOutputList();
 	BOOL GetAllOutputs( SVIOEntryHostStructPtrList& p_IOEntries ) const;
 	BOOL AddDefaultOutputs();
 
-	BOOL FinishCamera( void *pCaller, SVODataResponseClass *pResponse );
+	BOOL FinishCamera( void *pCaller, SVODataResponseClass* pResponse );
 	BOOL FinishTrigger( void *pCaller, SVTriggerInfoStruct& p_rTriggerInfo );
 
 	virtual DWORD_PTR processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext );

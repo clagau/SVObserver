@@ -93,22 +93,22 @@ static SvUl::NameSelectionList BuildSelectionList(const SVString& PPQName, const
 {
 	SvUl::NameSelectionList nameList;
 
-	SVConfigurationObject* pConfig(NULL);
+	SVConfigurationObject* pConfig( nullptr );
 	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
-	if (pConfig)
+	if( nullptr != pConfig )
 	{
-		SVPPQObject* pPPQ(NULL);
+		SVPPQObject* pPPQ( nullptr );
 		pConfig->GetPPQByName(PPQName.c_str(), &pPPQ);
-		if (pPPQ)
+		if( nullptr != pPPQ)
 		{
 			// Iterate over the Inspections and get the published data
 			long numInspections(0);
 			pPPQ->GetInspectionCount(numInspections);
 			for (long i = 0;i < numInspections;i++)
 			{
-				SVInspectionProcess* pInspection(NULL);
+				SVInspectionProcess* pInspection( nullptr );
 				pPPQ->GetInspection(i, pInspection);
-				if (pInspection)
+				if (nullptr != pInspection)
 				{
 					if (!bImages)
 					{

@@ -64,7 +64,7 @@ bool SVLutDlg::Create( SVVirtualCameraPtrSet& setCameras, SVLutMap& raLut )
 	{
 		SVVirtualCamera* pCamera = ( *l_Iter );
 
-		if( pCamera != NULL )
+		if( nullptr != pCamera )
 		{
 			SVAcquisitionClassPtr pAcqDevice = pCamera->GetAcquisitionDevice();
 

@@ -28,12 +28,12 @@ ResultViewToolReferences::~ResultViewToolReferences()
 #pragma endregion Constructor
 
 #pragma region Public Methods
-void ResultViewToolReferences::BuildReferenceVector(SVInspectionProcess* pProcess)
+void ResultViewToolReferences::BuildReferenceVector(SVInspectionProcess* pInspection)
 {
 	SVToolSetClass* pToolSet = nullptr;
-	if( pProcess != nullptr )
+	if( nullptr != pInspection )
 	{
-		pToolSet = pProcess->GetToolSet();
+		pToolSet = pInspection->GetToolSet();
 	}
 
 	if(nullptr == pToolSet)

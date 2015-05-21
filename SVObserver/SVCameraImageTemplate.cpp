@@ -399,58 +399,58 @@ HRESULT SVCameraImageTemplate::RebuildCameraImage()
 {
 	HRESULT l_Status = S_OK;
 
-	SVVirtualCamera* l_pCamera = NULL;
-	SVObjectClass* l_pOwner = GetOwner();
+	SVVirtualCamera* pCamera( nullptr );
+	SVObjectClass* pOwner = GetOwner();
 
 	if( !( digitizerObjectID.empty() ) )
 	{
-		l_pCamera = dynamic_cast< SVVirtualCamera* >( SVObjectManagerClass::Instance().GetObject( digitizerObjectID.ToGUID() ) );
+		pCamera = dynamic_cast< SVVirtualCamera* >( SVObjectManagerClass::Instance().GetObject( digitizerObjectID.ToGUID() ) );
 	}
 
-	if( ( l_pCamera == NULL ) || ( l_pOwner != NULL && l_pOwner->GetObjectType() == SVToolSetObjectType ) )
+	if( ( nullptr == pCamera ) || ( nullptr != pOwner && pOwner->GetObjectType() == SVToolSetObjectType ) )
 	{
-		SVInspectionProcess* l_pInspect = GetInspection();
+		SVInspectionProcess* pInspection  = GetInspection();
 
-		if( l_pInspect != NULL )
+		if( nullptr != pInspection )
 		{
-			SVVirtualCamera* l_pTempCamera = l_pInspect->GetFirstCamera();
+			SVVirtualCamera* pTempCamera = pInspection->GetFirstCamera();
 
-			if( l_pTempCamera != NULL )
+			if( nullptr != pTempCamera )
 			{
-				l_pCamera = l_pTempCamera;
+				pCamera = pTempCamera;
 			}
 		}
 	}
 
-	if( l_pCamera != NULL )
+	if( nullptr != pCamera )
 	{
-		if( mpCamera != l_pCamera )
+		if( mpCamera != pCamera )
 		{
 			SVImageObjectClassPtr l_ArrayPtr;
 
-			if( l_pCamera->mpsvDevice != NULL )
+			if( !pCamera->mpsvDevice.empty() )
 			{
-				l_ArrayPtr = l_pCamera->mpsvDevice->GetCircleBuffer();
+				l_ArrayPtr = pCamera->mpsvDevice->GetCircleBuffer();
 			}
 
 			if( !( l_ArrayPtr.empty() ) && ( 0 < l_ArrayPtr->size() ) )
 			{
 				SVImageInfoClass CameraImageInfo;
 
-				l_pCamera->GetImageInfo( &CameraImageInfo );
+				pCamera->GetImageInfo( &CameraImageInfo );
 
 				if( CreateBuffers( CameraImageInfo, l_ArrayPtr ) )
 				{
-					mpCamera = l_pCamera;
+					mpCamera = pCamera;
 					digitizerObjectID = mpCamera->GetUniqueObjectID();
 				}
 			}
 
-			SVInspectionProcess* l_pInspect = GetInspection();
+			SVInspectionProcess* pInspection = GetInspection();
 
-			if( l_pInspect != NULL )
+			if( nullptr != pInspection )
 			{
-				l_pInspect->AddSharedCamera( mpCamera );
+				pInspection->AddSharedCamera( mpCamera );
 			}
 		}
 	}

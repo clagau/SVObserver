@@ -25,6 +25,9 @@ HRESULT CALLBACK SVOTriggerObjectCallbackPtr( void *pvOwner, void *pvCaller, voi
 	SVTriggerObject* pTrigger = reinterpret_cast< SVTriggerObject* >( pvOwner );	
 	SVOResponseClass* pResponse = reinterpret_cast< SVOResponseClass* >( pvResponse );	
 
+	//Only do an assert check so that in release mode no check is made
+	ASSERT( nullptr != pTrigger && nullptr != pResponse );
+
 	pTrigger->FinishProcess( pResponse );
 
 	return hrOk;

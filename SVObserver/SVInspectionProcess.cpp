@@ -1077,13 +1077,13 @@ BOOL SVInspectionProcess::CanProcess( SVProductInfoStruct *pProduct )
 
 			if( l_pImage != NULL )
 			{
-				SVVirtualCamera* l_pCamera = l_pImage->GetCamera();
+				SVVirtualCamera* pCamera = l_pImage->GetCamera();
 
-				if( l_pCamera != NULL )
+				if( nullptr != pCamera )
 				{
 					SVStdMapSVVirtualCameraPtrSVCameraInfoStruct::iterator l_Iter;
 
-					l_Iter = pProduct->m_svCameraInfos.find( l_pCamera );
+					l_Iter = pProduct->m_svCameraInfos.find( pCamera );
 
 					if( l_Iter != pProduct->m_svCameraInfos.end() )
 					{
@@ -1131,13 +1131,13 @@ HRESULT SVInspectionProcess::StartProcess( SVProductInfoStruct *pProduct )
 
 			if( l_pImage != NULL )
 			{
-				SVVirtualCamera* l_pCamera = l_pImage->GetCamera();
+				SVVirtualCamera* pCamera = l_pImage->GetCamera();
 
-				if( l_pCamera != NULL )
+				if( nullptr != pCamera )
 				{
 					SVStdMapSVVirtualCameraPtrSVCameraInfoStruct::iterator l_Iter;
 
-					l_Iter = pProduct->m_svCameraInfos.find( l_pCamera );
+					l_Iter = pProduct->m_svCameraInfos.find( pCamera );
 
 					if( l_Iter != pProduct->m_svCameraInfos.end() )
 					{
@@ -1185,9 +1185,9 @@ BOOL SVInspectionProcess::RebuildInspectionInputList()
 	long lLength;
 	BOOL bFound;
 
-	SVPPQObject* l_pPPQ = GetPPQ();
+	SVPPQObject* pPPQ = GetPPQ();
 
-	if( l_pPPQ == nullptr )
+	if( nullptr == pPPQ )
 	{
 		return false;
 	}
@@ -1195,12 +1195,12 @@ BOOL SVInspectionProcess::RebuildInspectionInputList()
 	// Save old list
 	ppOldPPQInputs = m_PPQInputs;
 	
-	if( !l_pPPQ->GetAvailableInputs( ppIOEntries ) )
+	if( !pPPQ->GetAvailableInputs( ppIOEntries ) )
 		return FALSE;
 
 	lListSize = static_cast<long>(ppIOEntries.size());
 
-	l_pPPQ->GetPPQLength( lLength );
+	pPPQ->GetPPQLength( lLength );
 
 	// Make new list
 	m_PPQInputs.resize( lListSize );
@@ -1594,17 +1594,17 @@ HRESULT SVInspectionProcess::RebuildInspection()
 	long lLength = 2;
 	long l_LastIndex = 1;
 
-	SVPPQObject* l_pPPQ = GetPPQ();
+	SVPPQObject* pPPQ = GetPPQ();
 
-	if( l_pPPQ != NULL )
+	if( nullptr != pPPQ )
 	{
-		l_pPPQ->GetPPQLength( lLength );
+		pPPQ->GetPPQLength( lLength );
 
 		SVProductInfoStruct l_Product = LastProductGet( SV_INSPECTION );
 
 		if( l_Product.empty() )
 		{
-			l_pPPQ->ReserveNextRunOnceProductInfoStruct( l_Product, SV_INSPECTION );
+			pPPQ->ReserveNextRunOnceProductInfoStruct( l_Product, SV_INSPECTION );
 
 			ReserveNextResultImage( &l_Product, SV_INSPECTION, true );
 
@@ -1631,9 +1631,9 @@ HRESULT SVInspectionProcess::RebuildInspection()
 		CString sKey;
 		SVVirtualCameraMap l_Cameras;
 
-		if( l_pPPQ != NULL )
+		if( nullptr != pPPQ )
 		{
-			l_pPPQ->GetVirtualCameras( l_Cameras );
+			pPPQ->GetVirtualCameras( l_Cameras );
 		}
 
 		bool bColorSourceImage = false;
@@ -1773,11 +1773,11 @@ void SVInspectionProcess::SingleRunModeLoop( bool p_Refresh )
 {
 	SVProductInfoStruct l_svProduct;
 
-	SVPPQObject* l_pPPQ = GetPPQ();
+	SVPPQObject* pPPQ = GetPPQ();
 
-	if( l_pPPQ != NULL )
+	if( nullptr != pPPQ )
 	{
-		l_pPPQ->ReserveNextRunOnceProductInfoStruct( l_svProduct, SV_INSPECTION );
+		pPPQ->ReserveNextRunOnceProductInfoStruct( l_svProduct, SV_INSPECTION );
 	}
 
 	LastProductCopySourceImagesTo( &l_svProduct );
@@ -2299,14 +2299,14 @@ const SVGUID& SVInspectionProcess::GetPPQIdentifier() const
 
 SVPPQObject* SVInspectionProcess::GetPPQ() const
 {
-	SVPPQObject* l_pPPQ = NULL;
+	SVPPQObject* pPPQ( nullptr );
 
 	if( !( m_PPQId.empty() ) )
 	{
-		l_pPPQ = dynamic_cast< SVPPQObject* >( SVObjectManagerClass::Instance().GetObject( m_PPQId ) );
+		pPPQ = dynamic_cast< SVPPQObject* >( SVObjectManagerClass::Instance().GetObject( m_PPQId ) );
 	}
 
-	return l_pPPQ; 
+	return pPPQ; 
 }
 
 SvOi::IObjectClass* SVInspectionProcess::GetPPQInterface() const
@@ -2362,15 +2362,15 @@ HRESULT SVInspectionProcess::InitializeRunOnce()
 {
 	HRESULT l_Status = S_OK;
 
-	SVPPQObject* l_pPPQ = GetPPQ();
+	SVPPQObject* pPPQ = GetPPQ();
 
-	if( l_pPPQ != NULL )
+	if( nullptr != pPPQ )
 	{
 		SVProductInfoStruct l_svProduct;
 		SVImageIndexStruct l_svResultImageIndex;
 		SVDataManagerHandle	l_ResultDataDMIndexHandle;
 
-		if( ! l_pPPQ->ReserveNextRunOnceProductInfoStruct( l_svProduct, SV_INSPECTION ) )
+		if( ! pPPQ->ReserveNextRunOnceProductInfoStruct( l_svProduct, SV_INSPECTION ) )
 		{
 			l_Status = E_FAIL;
 		}
@@ -3004,11 +3004,11 @@ BOOL SVInspectionProcess::RemoveCamera( CString sCameraName )
 
 	if( sCameraName == m_ToolSetCameraName )
 	{
-		SVVirtualCamera* l_pCamera = GetFirstPPQCamera();
+		SVVirtualCamera* pCamera = GetFirstPPQCamera();
 
-		if( l_pCamera != NULL )
+		if( nullptr != pCamera )
 		{
-			m_ToolSetCameraName = l_pCamera->GetName();
+			m_ToolSetCameraName = pCamera->GetName();
 		}
 		else
 		{
@@ -3022,9 +3022,9 @@ BOOL SVInspectionProcess::RemoveCamera( CString sCameraName )
 	{
 		if( ( *l_Iter ) != NULL )
 		{
-			SVVirtualCamera* l_pCamera = ( *l_Iter )->GetCamera();
+			SVVirtualCamera* pCamera = ( *l_Iter )->GetCamera();
 
-			if( ( l_pCamera != NULL ) && ( sCameraName == l_pCamera->GetName() ) )
+			if( ( nullptr != pCamera ) && ( sCameraName == pCamera->GetName() ) )
 			{
 				( *l_Iter )->UpdateCameraImage( m_ToolSetCameraName );
 			}
@@ -3551,11 +3551,11 @@ BOOL SVInspectionProcess::IsColorInspectionDocument() const
 
 	SVVirtualCameraMap l_Cameras;
 
-	SVPPQObject* l_pPPQ = GetPPQ();
+	SVPPQObject* pPPQ = GetPPQ();
 
-	if( l_pPPQ != NULL )
+	if( nullptr != pPPQ )
 	{
-		l_pPPQ->GetVirtualCameras( l_Cameras );
+		pPPQ->GetVirtualCameras( l_Cameras );
 	}
 
 	SVVirtualCameraMap::const_iterator pos = l_Cameras.begin();
@@ -3577,42 +3577,42 @@ BOOL SVInspectionProcess::IsColorInspectionDocument() const
 
 SVVirtualCamera* SVInspectionProcess::GetFirstCamera() const
 {
-	SVVirtualCamera* l_pCamera = NULL;
+	SVVirtualCamera* pCamera( nullptr );
 
 	if( !( m_ToolSetCameraName.IsEmpty() ) )
 	{
-		l_pCamera = dynamic_cast< SVVirtualCamera* >( SVObjectManagerClass::Instance().GetObjectCompleteName( m_ToolSetCameraName ) );
+		pCamera = dynamic_cast< SVVirtualCamera* >( SVObjectManagerClass::Instance().GetObjectCompleteName( m_ToolSetCameraName ) );
 	}
 
-	if( l_pCamera == NULL )
+	if( nullptr == pCamera )
 	{
-		l_pCamera = GetFirstPPQCamera();
+		pCamera = GetFirstPPQCamera();
 	}
 
-	return l_pCamera;
+	return pCamera;
 }
 
 SVVirtualCamera* SVInspectionProcess::GetFirstPPQCamera() const
 {
-	SVVirtualCamera* l_pCamera = NULL;
+	SVVirtualCamera* pCamera( nullptr );
 
-	SVPPQObject* l_pPPQ = GetPPQ();
+	SVPPQObject* pPPQ = GetPPQ();
 
-	if( l_pPPQ != NULL )
+	if( nullptr != pPPQ )
 	{
 		SVVirtualCameraMap l_Cameras;
 
-		l_pPPQ->GetVirtualCameras( l_Cameras );
+		pPPQ->GetVirtualCameras( l_Cameras );
 
 		SVVirtualCameraMap::const_iterator l_Iter = l_Cameras.begin();
 
 		if( l_Iter != l_Cameras.end() )
 		{
-			l_pCamera = l_Iter->second;
+			pCamera = l_Iter->second;
 		}
 	}
 
-	return l_pCamera;
+	return pCamera;
 }
 
 HRESULT SVInspectionProcess::GetPPQCameras( SVVirtualCameraPtrSet& p_rCameras ) const
@@ -3621,13 +3621,13 @@ HRESULT SVInspectionProcess::GetPPQCameras( SVVirtualCameraPtrSet& p_rCameras ) 
 
 	p_rCameras.clear();
 
-	SVPPQObject* l_pPPQ = GetPPQ();
+	SVPPQObject* pPPQ = GetPPQ();
 
-	if( l_pPPQ != NULL )
+	if( nullptr != pPPQ )
 	{
 		SVVirtualCameraMap l_Cameras;
 
-		l_pPPQ->GetVirtualCameras( l_Cameras );
+		pPPQ->GetVirtualCameras( l_Cameras );
 
 		SVVirtualCameraMap::const_iterator l_Iter = l_Cameras.begin();
 
@@ -3661,11 +3661,11 @@ HRESULT SVInspectionProcess::GetCameras( SVVirtualCameraPtrSet& p_rCameras ) con
 	{
 		if( ( *l_Iter ) != NULL )
 		{
-			SVVirtualCamera* l_pCamera = ( *l_Iter )->GetCamera();
+			SVVirtualCamera* pCamera = ( *l_Iter )->GetCamera();
 
-			if( l_pCamera != NULL )
+			if( nullptr != pCamera )
 			{
-				p_rCameras.insert( l_pCamera );
+				p_rCameras.insert( pCamera );
 			}
 		}
 
@@ -3685,17 +3685,17 @@ HRESULT SVInspectionProcess::GetCamerasForLut( SVVirtualCameraPtrSet& p_rCameras
 	{
 		if( ( *l_Iter ) != NULL )
 		{
-			SVVirtualCamera* l_pCamera = (*l_Iter)->GetCamera();
+			SVVirtualCamera* pCamera = (*l_Iter)->GetCamera();
 
-			if( l_pCamera != NULL )
+			if( nullptr != pCamera )
 			{
-				if (!l_pCamera->IsFileAcquisition() && l_pCamera->GetAcquisitionDevice() != NULL)
+				if (!pCamera->IsFileAcquisition() && pCamera->GetAcquisitionDevice() != NULL)
 				{
 					SVLut lut;
-					HRESULT hr = l_pCamera->GetLut(lut);
+					HRESULT hr = pCamera->GetLut(lut);
 					if (hr == S_OK && lut.NumBands() > 0)
 					{
-						p_rCameras.insert( l_pCamera );
+						p_rCameras.insert( pCamera );
 					}
 				}
 			}
@@ -3714,17 +3714,17 @@ HRESULT SVInspectionProcess::GetCamerasForLightReference( SVVirtualCameraPtrSet&
 	{
 		if( ( *l_Iter ) != NULL )
 		{
-			SVVirtualCamera* l_pCamera = (*l_Iter)->GetCamera();
+			SVVirtualCamera* pCamera = (*l_Iter)->GetCamera();
 
-			if( l_pCamera != NULL )
+			if( nullptr != pCamera )
 			{
-				if (!l_pCamera->IsFileAcquisition() && l_pCamera->GetAcquisitionDevice() != NULL)
+				if (!pCamera->IsFileAcquisition() && pCamera->GetAcquisitionDevice() != NULL)
 				{
 					SVLightReference lightReference;
-					HRESULT hr = l_pCamera->GetLightReference(lightReference);
+					HRESULT hr = pCamera->GetLightReference(lightReference);
 					if (hr == S_OK && lightReference.NumBands() > 0)
 					{
-						p_rCameras.insert( l_pCamera );
+						p_rCameras.insert( pCamera );
 					}
 				}
 			}
@@ -3733,15 +3733,15 @@ HRESULT SVInspectionProcess::GetCamerasForLightReference( SVVirtualCameraPtrSet&
 	return l_Status;
 }
 
-HRESULT SVInspectionProcess::AddSharedCamera( SVVirtualCamera* p_pCamera )
+HRESULT SVInspectionProcess::AddSharedCamera( SVVirtualCamera* pCamera )
 {
 	HRESULT l_Status = S_OK;
 
-	SVPPQObject* l_pPPQ = GetPPQ();
+	SVPPQObject* pPPQ = GetPPQ();
 
-	if( p_pCamera != NULL && l_pPPQ != NULL )
+	if( nullptr != pCamera && nullptr != pPPQ )
 	{
-		l_pPPQ->AddSharedCamera( p_pCamera );
+		pPPQ->AddSharedCamera( pCamera );
 	}
 	else
 	{
@@ -3763,9 +3763,9 @@ HRESULT SVInspectionProcess::GetMainImages( const CString& p_rCameraName, SVCame
 	{
 		if( ( *l_Iter ) != NULL )
 		{
-			SVVirtualCamera* l_pCamera = ( *l_Iter )->GetCamera();
+			SVVirtualCamera* pCamera = ( *l_Iter )->GetCamera();
 
-			if( ( l_pCamera != NULL ) && ( p_rCameraName == l_pCamera->GetName() ) )
+			if( ( nullptr != pCamera ) && ( p_rCameraName == pCamera->GetName() ) )
 			{
 				p_rMainImages.insert( *l_Iter );
 			}
@@ -3898,13 +3898,13 @@ HRESULT SVInspectionProcess::UpdateMainImagesByProduct( SVProductInfoStruct* p_p
 
 		if( l_pImage != NULL )
 		{
-			SVVirtualCamera* l_pCamera = l_pImage->GetCamera();
+			SVVirtualCamera* pCamera = l_pImage->GetCamera();
 
-			if( l_pCamera != NULL )
+			if( nullptr != pCamera )
 			{
 				SVStdMapSVVirtualCameraPtrSVCameraInfoStruct::iterator l_Iter;
 
-				l_Iter = p_psvProduct->m_svCameraInfos.find( l_pCamera );
+				l_Iter = p_psvProduct->m_svCameraInfos.find( pCamera );
 
 				if( l_Iter != p_psvProduct->m_svCameraInfos.end() )
 				{

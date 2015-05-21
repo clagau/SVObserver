@@ -146,16 +146,16 @@ void SVDiscreteOutputsView::OnUpdate( CView* pSender, LPARAM lHint, CObject* pHi
 		int j;
 		int i;
 		int k;
-		SVPPQObject* pPPQ;
-		SVDigitalOutputObject *pDigOutput;
+		SVPPQObject* pPPQ( nullptr );
+		SVDigitalOutputObject *pDigOutput( nullptr );
 		SVIOEntryHostStructPtrList ppIOEntries;
 		SVIOEntryHostStructPtr pIOEntry;
 
-		SVConfigurationObject* pConfig = NULL;
+		SVConfigurationObject* pConfig( nullptr );
 		SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
 		// Get the number of PPQs
-		if( !pConfig->GetPPQCount( lPPQSize ) )
+		if( nullptr == pConfig || !pConfig->GetPPQCount( lPPQSize ) )
 		{
 			SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
 			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorGettingPPQCount, StdExceptionParams, Err_17010_SVDiscreteOutputsView_OnUpdate_ErrorGettingPPQCount );
@@ -301,9 +301,9 @@ void SVDiscreteOutputsView::OnLButtonDblClk( UINT nFlags, CPoint point )
 {
 	CString strName;
 	SVIOEntryHostStructPtr pIOEntry;
-	SVOutputObjectList *pOutputList;
-	SVDigitalOutputObject *pDigOutput;
-	SVOutputObject *pOutput;
+	SVOutputObjectList *pOutputList( nullptr );
+	SVDigitalOutputObject *pDigOutput ( nullptr );
+	SVOutputObject *pOutput ( nullptr );
 	UINT flags;
 
 	int item = GetListCtrl().HitTest( point, &flags );
@@ -367,22 +367,21 @@ void SVDiscreteOutputsView::OnLButtonDblClk( UINT nFlags, CPoint point )
 						{
 							SVSVIMStateClass::AddState( SV_STATE_MODIFIED );
 
-							SVConfigurationObject* pConfig = NULL;
+							SVConfigurationObject* pConfig( nullptr );
 							SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
 							// Check if they picked a new output
 							if( dlg.m_pIOEntry != pIOEntry )
 							{
-								SVOutputObjectList *pOutputList;
-								SVPPQObject *pPPQ;
-								long lPPQSize;
-								long k;
+								SVOutputObjectList* pOutputList( nullptr );
+								SVPPQObject* pPPQ( nullptr );
+								long k = 0;
 
+								if ( nullptr != pConfig ){ pConfig->GetOutputObjectList( &pOutputList ); }
 								if( !( pIOEntry.empty() ) )
 								{									
 									// Make sure that we first reset the old output
-									pConfig->GetOutputObjectList( &pOutputList );
-									if( pOutputList )
+									if( nullptr != pOutputList )
 									{
 										pOutputList->ResetOutput( pIOEntry );
 									}// end if
@@ -391,10 +390,12 @@ void SVDiscreteOutputsView::OnLButtonDblClk( UINT nFlags, CPoint point )
 									pIOEntry->m_IOId.clear();
 								}// end if
 								
-								pConfig->GetOutputObjectList( &pOutputList );
 								if( dlg.m_pIOEntry.empty() )
 								{
-									pOutputList->DetachOutput( pDigOutput->GetUniqueObjectID() );
+									if( nullptr != pOutputList )
+									{
+										pOutputList->DetachOutput( pDigOutput->GetUniqueObjectID() );
+									}
 									pDigOutput = NULL;
 
 									if( pIOEntry == l_pIOController->GetModuleReady() )
@@ -431,8 +432,9 @@ void SVDiscreteOutputsView::OnLButtonDblClk( UINT nFlags, CPoint point )
 									}// end if
 								}// end else
 
+								long lPPQSize = 0;
 								// Force the PPQs to rebuild
-								pConfig->GetPPQCount( lPPQSize );
+								if ( nullptr != pConfig ){ pConfig->GetPPQCount( lPPQSize ); }
 
 								// Rebuild Outputs
 								for( k = 0; k < lPPQSize; k++ )
@@ -440,7 +442,7 @@ void SVDiscreteOutputsView::OnLButtonDblClk( UINT nFlags, CPoint point )
 									// Get the number of PPQs
 									pConfig->GetPPQ( k, &pPPQ );
 
-									pPPQ->RebuildOutputList();
+									if( nullptr != pPPQ ){ pPPQ->RebuildOutputList(); }
 								}// end for
 														
 							}// end if
@@ -448,8 +450,9 @@ void SVDiscreteOutputsView::OnLButtonDblClk( UINT nFlags, CPoint point )
 							// Force IO board to update if they still have one selected
 							if( !( dlg.m_pIOEntry.empty() ) )
 							{
-								pConfig->GetOutputObjectList( &pOutputList );
-								if( pOutputList )
+								pOutputList = nullptr;
+								if ( nullptr != pConfig ){ pConfig->GetOutputObjectList( &pOutputList ); }
+								if( nullptr != pOutputList )
 								{
 									pOutputList->ResetOutput( dlg.m_pIOEntry );
 								}// end if

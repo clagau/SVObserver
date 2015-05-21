@@ -1979,7 +1979,7 @@ HRESULT CSVOPropertyPageDlg::AdjustCameraImageFormat( LPCTSTR sSelectedFormat, S
 	SVImageInfoClass l_ImageInfo;
 
 	CString sDeviceName = m_pAssistant->BuildDigName( m_pCameraObj );
-	SVConfigurationObject* pConfig = NULL;
+	SVConfigurationObject* pConfig( nullptr );
 	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
 	SVInspectionProcessArray aInspections;
@@ -2017,9 +2017,9 @@ HRESULT CSVOPropertyPageDlg::AdjustCameraImageFormat( LPCTSTR sSelectedFormat, S
 
 		// disconnect buffers attached to dig
 		long lInspectionCount = 0;
-		SVInspectionProcess* pInspection = NULL;
-
-		pConfig->GetInspectionCount( lInspectionCount );
+		SVInspectionProcess* pInspection( nullptr );
+		//If the pointer is nullptr then count is 0		
+		if( nullptr != pConfig ){ pConfig->GetInspectionCount( lInspectionCount ); }
 
 		for ( long lInspection = 0; lInspection < lInspectionCount; lInspection++ )
 		{
@@ -2030,7 +2030,7 @@ HRESULT CSVOPropertyPageDlg::AdjustCameraImageFormat( LPCTSTR sSelectedFormat, S
 				bool bFoundCamera=false;
 				SVPPQObject* pPPQ = pInspection->GetPPQ();
 
-				if( pPPQ != NULL )
+				if( nullptr != pPPQ )
 				{
 					std::deque< SVVirtualCamera* > l_Cameras;
 
@@ -2042,7 +2042,7 @@ HRESULT CSVOPropertyPageDlg::AdjustCameraImageFormat( LPCTSTR sSelectedFormat, S
 					{
 						SVVirtualCamera* pCamera = ( *l_Iter );
 
-						if ( pCamera != NULL && pCamera->mpsvDevice == pDevice )
+						if ( nullptr != pCamera && pCamera->mpsvDevice == pDevice )
 						{
 							bFoundCamera = true;
 						}
@@ -2140,7 +2140,6 @@ HRESULT CSVOPropertyPageDlg::AdjustCameraImageFormat( LPCTSTR sSelectedFormat, S
 	if ( bChangedAcqFormat )
 	{
 		// reconnect buffers
-		SVInspectionProcess* pInspection = NULL;
 		for ( long lInspection = 0; lInspection < aInspections.GetSize(); lInspection++ )
 		{
 			aInspections.GetAt(lInspection)->ConnectToolSetMainImage();

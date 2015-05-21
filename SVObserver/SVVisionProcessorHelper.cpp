@@ -194,11 +194,11 @@ HRESULT SVVisionProcessorHelper::GetConfigurationMode( unsigned long& p_rMode ) 
 {
 	HRESULT l_Status = S_OK;
 
-	SVConfigurationObject* l_pConfig = NULL;
+	SVConfigurationObject* pConfig( nullptr );
 
-	l_Status = SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
+	l_Status = SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
-	if( l_pConfig != NULL )
+	if( nullptr != pConfig )
 	{
 		p_rMode = SVSVIMStateClass::GetMode();
 	}
@@ -226,13 +226,13 @@ HRESULT SVVisionProcessorHelper::SetConfigurationMode( unsigned long p_Mode )
 	{
 		return SVMSG_63_SVIM_IN_WRONG_MODE;
 	}
-	SVConfigurationObject* l_pConfig = NULL;
+	SVConfigurationObject* pConfig( nullptr );
 
-	l_Status = SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
+	l_Status = SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
-	if( l_pConfig != NULL )
+	if( nullptr != pConfig )
 	{
-		l_Status = l_pConfig->SetMode( p_Mode );
+		l_Status = pConfig->SetMode( p_Mode );
 	}
 	else if( l_Status == S_OK )
 	{
@@ -290,10 +290,8 @@ HRESULT SVVisionProcessorHelper::GetDataDefinitionList( const SVString& p_rInspe
 	}
 
 	SVInspectionProcess* pInspection = nullptr;
-	SVConfigurationObject* l_pConfig = nullptr;
-	SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
 
-	if ( (NULL != l_pConfig) && l_pConfig->GetInspectionObject(p_rInspectionName.c_str(), &pInspection) )
+	if ( SVConfigurationObject::GetInspection( p_rInspectionName.c_str(), pInspection ) )
 	{
 		// Get Data Definition list from inspection
 		SVToolSetClass* pToolSet = pInspection->GetToolSet();
@@ -590,13 +588,13 @@ HRESULT SVVisionProcessorHelper::GetInspectionItems( const SVNameSet& p_rNames, 
 {
 	HRESULT l_Status = S_OK;
 
-	SVConfigurationObject* l_pConfig = NULL;
+	SVConfigurationObject* pConfig( nullptr );
 
-	l_Status = SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
+	l_Status = SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
-	if( l_pConfig != NULL )
+	if( nullptr != pConfig )
 	{
-		l_Status = l_pConfig->GetInspectionItems( p_rNames, p_rItems );
+		l_Status = pConfig->GetInspectionItems( p_rNames, p_rItems );
 	}
 	else if( l_Status == S_OK )
 	{
@@ -610,13 +608,13 @@ HRESULT SVVisionProcessorHelper::GetRemoteInputItems( const SVNameSet& p_rNames,
 {
 	HRESULT l_Status = S_OK;
 
-	SVConfigurationObject* l_pConfig = NULL;
+	SVConfigurationObject* pConfig( nullptr ); 
 
-	l_Status = SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
+	l_Status = SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
-	if( l_pConfig != NULL )
+	if( nullptr != pConfig )
 	{
-		l_Status = l_pConfig->GetRemoteInputItems( p_rNames, p_rItems );
+		l_Status = pConfig->GetRemoteInputItems( p_rNames, p_rItems );
 	}
 	else if( l_Status == S_OK )
 	{
@@ -689,13 +687,13 @@ HRESULT SVVisionProcessorHelper::SetInspectionItems( const SVNameStorageMap& p_r
 {
 	HRESULT l_Status = S_OK;
 
-	SVConfigurationObject* l_pConfig = NULL;
+	SVConfigurationObject* pConfig( nullptr );
 
-	l_Status = SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
+	l_Status = SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
-	if( l_pConfig != NULL )
+	if( nullptr != pConfig )
 	{
-		l_Status = l_pConfig->SetInspectionItems( p_rItems, p_rStatus );
+		l_Status = pConfig->SetInspectionItems( p_rItems, p_rStatus );
 	}
 	else if( l_Status == S_OK )
 	{
@@ -709,13 +707,13 @@ HRESULT SVVisionProcessorHelper::SetRemoteInputItems( const SVNameStorageMap& p_
 {
 	HRESULT l_Status = S_OK;
 
-	SVConfigurationObject* l_pConfig = NULL;
+	SVConfigurationObject* pConfig( nullptr );
 
-	l_Status = SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
+	l_Status = SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
-	if( l_pConfig != NULL )
+	if( nullptr != pConfig )
 	{
-		l_Status = l_pConfig->SetRemoteInputItems( p_rItems, p_rStatus );
+		l_Status = pConfig->SetRemoteInputItems( p_rItems, p_rStatus );
 	}
 	else if( l_Status == S_OK )
 	{
@@ -729,13 +727,13 @@ HRESULT SVVisionProcessorHelper::SetCameraItems( const SVNameStorageMap& p_rItem
 {
 	HRESULT l_Status = S_OK;
 
-	SVConfigurationObject* l_pConfig = NULL;
+	SVConfigurationObject* pConfig( nullptr );
 
-	l_Status = SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
+	l_Status = SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
-	if( l_pConfig != NULL )
+	if( nullptr != pConfig )
 	{
-		l_Status = l_pConfig->SetCameraItems( p_rItems, p_rStatus );
+		l_Status = pConfig->SetCameraItems( p_rItems, p_rStatus );
 	}
 	else if( l_Status == S_OK )
 	{
@@ -861,7 +859,7 @@ static void BuildNameSetForMonitoredObjectList( const MonitoredObjectList& rList
 
 HRESULT SVVisionProcessorHelper::QueryProductList( const SVString& rListName, SVNameSet& rNames ) const
 {
-	SVConfigurationObject* pConfig = nullptr;
+	SVConfigurationObject* pConfig( nullptr );
 
 	HRESULT hr = SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 	if ( nullptr != pConfig )

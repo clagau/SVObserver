@@ -45,7 +45,7 @@ class SVSoftwareTriggerClass;
 class SVPPQObject;
 
 struct SVConfigurationAcquisitionDeviceInfoStruct;
-typedef std::vector<SVInspectionProcess *> SVInspectionProcessPtrList;
+typedef std::vector<SVInspectionProcess*> SVInspectionProcessPtrList;
 #pragma endregion Declarations
 
 struct SVFindPredicate
@@ -80,7 +80,7 @@ public:
 	typedef SVMap< CString, SVConfigurationAcquisitionDeviceInfoStruct* > SVAcquisitionDeviceMap;
 
 	SVConfigurationObject( LPCSTR ObjectName );
-	SVConfigurationObject( SVObjectClass *pOwner = NULL, int StringResourceID = IDS_CLASSNAME_SVCONFIGURATIONOBJECT );
+	SVConfigurationObject( SVObjectClass* pOwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVCONFIGURATIONOBJECT );
 	virtual ~SVConfigurationObject();
 
 	virtual HRESULT GetChildObject( SVObjectClass*& p_rpObject, const SVObjectNameInfo& p_rNameInfo, long p_Index = 0 ) const;
@@ -112,11 +112,11 @@ public:
 
 	BOOL DestroyConfiguration();
 
-	BOOL SetInputObjectList( SVInputObjectList *pInputObjectList );
-	BOOL GetInputObjectList( SVInputObjectList **ppInputObjectList ) const;
+	BOOL SetInputObjectList( SVInputObjectList* pInputObjectList );
+	BOOL GetInputObjectList( SVInputObjectList** ppInputObjectList ) const;
 
-	BOOL SetOutputObjectList( SVOutputObjectList *pOutputObjectList );
-	BOOL GetOutputObjectList( SVOutputObjectList **ppOutputObjectList ) const;
+	BOOL SetOutputObjectList( SVOutputObjectList* pOutputObjectList );
+	BOOL GetOutputObjectList( SVOutputObjectList** ppOutputObjectList ) const;
 	HRESULT RebuildOutputObjectList();
 
 	BOOL AddAcquisitionDevice( LPCTSTR szName, SVFileNameArrayClass& rsvFiles,
@@ -142,32 +142,34 @@ public:
 										SVLut*& rpLut,
 										SVDeviceParamCollection*& rpDeviceParams );
 
-	BOOL AddTrigger( SVTriggerObject *pTrigger );
-	BOOL RemoveTrigger( SVTriggerObject *pTrigger );
+	BOOL AddTrigger( SVTriggerObject* pTrigger );
+	BOOL RemoveTrigger( SVTriggerObject* pTrigger );
 	BOOL GetTriggerCount( long &lIndex ) const;
-	BOOL GetTrigger( long lIndex, SVTriggerObject **ppTrigger ) const;
-	BOOL GetChildObjectByName( LPCTSTR tszName, SVTriggerObject **ppTrigger ) const;
+	BOOL GetTrigger( long lIndex, SVTriggerObject** ppTrigger ) const;
+	BOOL GetChildObjectByName( LPCTSTR tszName, SVTriggerObject** ppTrigger ) const;
 
-	BOOL AddPPQ( SVPPQObject *pPPQ );
-	BOOL RemovePPQ( SVPPQObject *pPPQ );
+	BOOL AddPPQ( SVPPQObject* pPPQ );
+	BOOL RemovePPQ( SVPPQObject* pPPQ );
 	BOOL GetPPQCount( long &lIndex ) const;
-	BOOL GetPPQ( long lIndex, SVPPQObject **ppPPQ ) const;
-	BOOL GetChildObjectByName( LPCTSTR tszName, SVPPQObject **ppPPQ ) const;
-	bool GetPPQByName( LPCTSTR name, SVPPQObject **ppPPQ ) const;
+	BOOL GetPPQ( long lIndex, SVPPQObject** ppPPQ ) const;
+	BOOL GetChildObjectByName( LPCTSTR tszName, SVPPQObject** ppPPQ ) const;
+	bool GetPPQByName( LPCTSTR name, SVPPQObject** ppPPQ ) const;
 
-	BOOL AddCamera( SVVirtualCamera *pCamera );
-	BOOL RemoveCamera( SVVirtualCamera *pCamera );
+	BOOL AddCamera( SVVirtualCamera* pCamera );
+	BOOL RemoveCamera( SVVirtualCamera* pCamera );
 	BOOL GetCameraCount( long &lIndex ) const;
-	BOOL GetCamera( long lIndex, SVVirtualCamera **ppCamera ) const;
-	BOOL GetChildObjectByName( LPCTSTR tszName, SVVirtualCamera **ppCamera ) const;
+	BOOL GetCamera( long lIndex, SVVirtualCamera** ppCamera ) const;
+	BOOL GetChildObjectByName( LPCTSTR tszName, SVVirtualCamera** ppCamera ) const;
 
-	BOOL AddInspection( SVInspectionProcess *pInspection );
-	BOOL RemoveInspection( SVInspectionProcess *pInspection );
+	BOOL AddInspection( SVInspectionProcess* pInspection );
+	BOOL RemoveInspection( SVInspectionProcess* pInspection );
 	BOOL GetInspectionCount( long &lIndex ) const;
-	BOOL GetInspection( long lIndex, SVInspectionProcess **ppInspection ) const;
+	BOOL GetInspection( long lIndex, SVInspectionProcess** ppInspection ) const;
 	BOOL GetInspections( std::vector<SVInspectionProcess*>& rvecInspections ) const;
-	BOOL GetChildObjectByName( LPCTSTR tszName, SVInspectionProcess **ppInspection ) const;
-	BOOL GetInspectionObject( LPCTSTR tszFullyQualifiedNameOfChild, SVInspectionProcess **ppInspection ) const;
+	BOOL GetChildObjectByName( LPCTSTR tszName, SVInspectionProcess** ppInspection ) const;
+	BOOL GetInspectionObject( LPCTSTR tszFullyQualifiedNameOfChild, SVInspectionProcess** ppInspection ) const;
+
+	static bool GetInspection( LPCTSTR InspectionName, SVInspectionProcess*& prInspection );
 
 	HRESULT AttachAcqToTriggers();
 	HRESULT ValidateOutputList();
@@ -260,7 +262,7 @@ public:
 	static void updateConfTreeToNewestVersion(SVXMLMaterialsTree &rTree, SVXMLMaterialsTree::SVBranchHandle &rToolset);
 
 protected:
-	BOOL FinishIPDoc( SVInspectionProcess* pIP );
+	BOOL FinishIPDoc( SVInspectionProcess* pInspection );
 
 	SVIOController* m_pIOController;
 

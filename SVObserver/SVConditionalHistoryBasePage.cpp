@@ -87,26 +87,30 @@ BOOL SVConditionalHistoryBasePage::OnInitDialog()
 
 	m_Tree.SetCanSelectObjectCallback( SVObjectTreeCanSelectObjectCallbackFn(this, &SVConditionalHistoryBasePage::CanSelectObjectCallback) );
 
-	SVConfigurationObject* l_pConfig = NULL;
-	SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
+	SVConfigurationObject* pConfig( nullptr );
+	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
 	// load inspection list
+	ASSERT( nullptr != pConfig );
 	SVInspectionProcessPtrList vecInspections;
-	l_pConfig->GetInspections( vecInspections );
-	int iCurInspection = CB_ERR;
-	for ( i=0; i < vecInspections.size(); ++i )
+	if( nullptr != pConfig )
 	{
-		SVInspectionProcess* pInspection = vecInspections[i];
-		CString strName = pInspection->GetName();
-		int iIndex = m_cbInspection.AddString(strName);
-		m_cbInspection.SetItemDataPtr( iIndex, pInspection );
-		if ( pInspection == m_pSheet->m_pInspection )
-			iCurInspection = iIndex;
-	}
+		pConfig->GetInspections( vecInspections );
+		int iCurInspection = CB_ERR;
+		for ( i=0; i < vecInspections.size(); ++i )
+		{
+			SVInspectionProcess* pInspection = vecInspections[i];
+			CString strName = pInspection->GetName();
+			int iIndex = m_cbInspection.AddString(strName);
+			m_cbInspection.SetItemDataPtr( iIndex, pInspection );
+			if ( pInspection == m_pSheet->m_pInspection )
+				iCurInspection = iIndex;
+		}
 
-	// select current inspection
-	if ( iCurInspection != CB_ERR )
-		m_cbInspection.SetCurSel( iCurInspection );
+		// select current inspection
+		if ( iCurInspection != CB_ERR )
+			m_cbInspection.SetCurSel( iCurInspection );
+	}
 
 	// initialize page with current inspection data
 	InitPage( m_pSheet->m_pInspection );

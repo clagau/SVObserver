@@ -515,7 +515,7 @@ HRESULT SVInspectionInfoStruct::GetNextAvailableIndexes( SVDataManagerLockTypeEn
 }
 
 SVCameraInfoStruct::SVCameraInfoStruct()
-:	pCamera( NULL ),
+:	pCamera( nullptr ),
 	m_SourceImageDMIndexHandle(),
 	m_StartFrameTimeStamp( 0 ),
 	m_EndFrameTimeStamp( 0 ),
@@ -524,7 +524,7 @@ SVCameraInfoStruct::SVCameraInfoStruct()
 }
 
 SVCameraInfoStruct::SVCameraInfoStruct( const SVCameraInfoStruct &p_rsvData )
-:	pCamera( NULL ),
+:	pCamera( nullptr ),
 	m_SourceImageDMIndexHandle(),
 	m_StartFrameTimeStamp( 0 ),
 	m_EndFrameTimeStamp( 0 ),
@@ -599,7 +599,7 @@ HRESULT SVCameraInfoStruct::Assign( SVClock::SVTimeStamp p_StartFrameTS, SVClock
 
 void SVCameraInfoStruct::Reset()
 {
-	pCamera = NULL;
+	pCamera = nullptr;
 	m_StartFrameTimeStamp = 0;
 	m_EndFrameTimeStamp = 0;
 	// *** // ***
@@ -639,7 +639,7 @@ HRESULT SVCameraInfoStruct::GetNextAvailableIndexes( SVDataManagerLockTypeEnum p
 {
 	HRESULT l_Status = S_OK;
 
-	if( pCamera != NULL )
+	if( nullptr != pCamera )
 	{
 		pCamera->ReserveNextImageHandleIndex( m_SourceImageDMIndexHandle, p_LockType );
 	}

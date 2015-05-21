@@ -220,7 +220,7 @@ public:
 	HRESULT GetCamerasForLut( SVVirtualCameraPtrSet& p_rCameras ) const;
 	HRESULT GetCamerasForLightReference( SVVirtualCameraPtrSet& p_rCameras ) const;
 
-	HRESULT AddSharedCamera( SVVirtualCamera* p_pCamera );
+	HRESULT AddSharedCamera( SVVirtualCamera* pCamera );
 
 	HRESULT GetMainImages( const CString& p_rCameraName, SVCameraImagePtrSet& p_rMainImages ) const;
 

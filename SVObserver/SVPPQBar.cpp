@@ -127,7 +127,7 @@ void SVPPQBarClass::OnSelChangePQTab( NMHDR* pNMHDR, LRESULT* pResult )
 				PPQWindow.BringWindowToTop();
 			}// end if
 
-			PPQWindow.BuildButtons( (SVPPQObject*) tabCtrlItem.lParam );
+			PPQWindow.BuildButtons( reinterpret_cast<SVPPQObject*> (tabCtrlItem.lParam) );
 
 		}// end if
 	
@@ -144,23 +144,26 @@ BOOL SVPPQBarClass::BuildButtons()
 
 	pqTabCtrl.DeleteAllItems();
 
-	SVPPQObject *pPPQ;
-	SVPPQObject *pPPQ1;
-	long lCount;
-	long lPPQ;
+	SVPPQObject* pPPQ( nullptr );
+	SVPPQObject* pPPQ1( nullptr );
+	long lCount = 0;
+	long lPPQ = 0;
 
-	SVConfigurationObject* pConfig = NULL;
+	SVConfigurationObject* pConfig( nullptr );
 	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
-	pConfig->GetPPQCount( lCount );
+	//If the pointer is a nullptr then the count will be 0
+	if( nullptr != pConfig){ pConfig->GetPPQCount( lCount ); }
 	for( lPPQ = 0; lPPQ < lCount; lPPQ++ )
 	{
 		pConfig->GetPPQ( lPPQ, &pPPQ );
 
 		if( lPPQ == 0 )
+		{
 			pPPQ1 = pPPQ;
+		}
 
-		if( pPPQ )
+		if( nullptr != pPPQ )
 		{
 			TC_ITEM tabCtrlItem;
 			CString l_Name = pPPQ->GetCompleteObjectName();
@@ -333,8 +336,10 @@ BOOL SVPPQWindowClass::BuildButtons( SVPPQObject* pSelectedPPQ )
 
 	m_pPPQ = pSelectedPPQ;
 
-	if( !m_pPPQ )
+	if( nullptr == m_pPPQ )
+	{
 		return FALSE;
+	}
 	
 	int dimension = SV_PPQ_BUTTON_WIDTH;
 	if( ::IsWindow( m_hWnd ) )
@@ -396,14 +401,17 @@ BOOL SVPPQWindowClass::BuildButtons( SVPPQObject* pSelectedPPQ )
 		{
 			SVVirtualCamera* pCamera = ( *l_Iter );
 
-			m_pPPQ->GetCameraPPQPosition( lPosition, pCamera );
-
-			if( lPosition >= 0 && lPosition < buttonList.GetSize() && buttonList.GetAt( lPosition ) )
+			if( nullptr != pCamera )
 			{
-				CString strCaption;
-				strCaption.Format( "*%d*", lPosition + 1 );
-				buttonList.GetAt( lPosition )->SetWindowText( strCaption );
-			}// end if
+				m_pPPQ->GetCameraPPQPosition( lPosition, pCamera );
+
+				if( lPosition >= 0 && lPosition < buttonList.GetSize() && buttonList.GetAt( lPosition ) )
+				{
+					CString strCaption;
+					strCaption.Format( "*%d*", lPosition + 1 );
+					buttonList.GetAt( lPosition )->SetWindowText( strCaption );
+				}// end if
+			}
 
 			++l_Iter;
 		}// end for
@@ -478,13 +486,13 @@ BOOL SVPPQWindowClass::OnCmdMsg( UINT nID, int nCode, void* pExtra, AFX_CMDHANDL
 
             if ( dlg.DoModal() == IDOK )
             {
-				SVConfigurationObject* l_pConfig = NULL;
+				SVConfigurationObject* pConfig( nullptr );
 
-				SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
+				SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
-				if( l_pConfig != NULL )
+				if( nullptr != pConfig )
 				{
-					l_pConfig->RebuildInputOutputLists();
+					pConfig->RebuildInputOutputLists();
 				}
 
 				TheSVObserverApp.RefreshAllIPDocuments();

@@ -66,14 +66,14 @@ const long g_lPPQExtraBufferSize = 50;
 
 HRESULT CALLBACK SVFinishTriggerCallback( void *pOwner, void *pCaller, void *pTriggerInfo )
 {
-	SVPPQObject* l_pPPQ = reinterpret_cast< SVPPQObject* >( pOwner );
-	SVTriggerInfoStruct* l_pInfo = reinterpret_cast< SVTriggerInfoStruct* >( pTriggerInfo );
+	SVPPQObject* pPPQ = reinterpret_cast< SVPPQObject* >( pOwner );
+	SVTriggerInfoStruct* pInfo = reinterpret_cast< SVTriggerInfoStruct* >( pTriggerInfo );
 
-	BOOL bRet = ( l_pPPQ != NULL && l_pInfo != NULL );
+	BOOL bRet = ( nullptr != pPPQ && nullptr != pInfo );
 
 	if( bRet )
 	{
-		bRet = l_pPPQ->FinishTrigger( pCaller, *l_pInfo );
+		bRet = pPPQ->FinishTrigger( pCaller, *pInfo );
 	}
 
 	if( bRet )
@@ -88,9 +88,11 @@ HRESULT CALLBACK SVFinishTriggerCallback( void *pOwner, void *pCaller, void *pTr
 
 HRESULT CALLBACK SVFinishCameraCallback( void *pOwner, void *pCaller, void *pResponse)
 {
-	BOOL bRet;
+	BOOL bRet(false);
 
-	bRet = ( reinterpret_cast< SVPPQObject* >( pOwner ) )->FinishCamera( pCaller, reinterpret_cast< SVODataResponseClass* >( pResponse ) );
+	SVPPQObject* pPPQ = reinterpret_cast< SVPPQObject* > (pOwner);
+
+	if( nullptr != pPPQ ){ bRet = pPPQ->FinishCamera( pCaller, reinterpret_cast< SVODataResponseClass* >( pResponse ) ); }
 
 	if( bRet )
 	{
@@ -545,12 +547,12 @@ BOOL SVPPQObject::Create()
 	m_voDataValid.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
 	m_voOutputState.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
 
+#ifndef _WIN64
 	// This is the temporary PPQ_? to PLC_? connection
-	SVConfigurationObject* pConfig = NULL;
+	SVConfigurationObject* pConfig( nullptr );
 	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
-#ifndef _WIN64
-	if( pConfig != NULL )
+	if( nullptr != pConfig )
 	{
 		m_strPLCId = pConfig->AssociatePPQToPLC( GetName() );
 	}
@@ -747,9 +749,9 @@ BOOL SVPPQObject::DetachAll()
 
 	while( l_Iter != l_Cameras.end() )
 	{
-		SVVirtualCamera* l_psvCamera = ( *l_Iter );
+		SVVirtualCamera* pCamera = ( *l_Iter );
 
-		DetachCamera( l_psvCamera );
+		DetachCamera( pCamera );
 
 		++l_Iter;
 	}
@@ -870,9 +872,9 @@ BOOL SVPPQObject::GetInspectionTimeout( long& rlTimeoutMillisec ) const
 	return TRUE;
 }
 
-BOOL SVPPQObject::AttachTrigger( SVTriggerObject *pTrigger )
+BOOL SVPPQObject::AttachTrigger( SVTriggerObject* pTrigger )
 {
-	if( !pTrigger ) { return FALSE; }
+	if( nullptr == pTrigger ) { return FALSE; }
 
 	m_pTrigger = pTrigger;
 	if( !m_pTrigger->RegisterFinishProcess( this, SVFinishTriggerCallback ) ) { return FALSE; }
@@ -880,11 +882,11 @@ BOOL SVPPQObject::AttachTrigger( SVTriggerObject *pTrigger )
 	return TRUE;
 }
 
-BOOL SVPPQObject::AttachCamera( SVVirtualCamera *pCamera, long lPosition, bool p_AllowMinusOne )
+BOOL SVPPQObject::AttachCamera( SVVirtualCamera* pCamera, long lPosition, bool p_AllowMinusOne )
 {
 	BOOL l_bOk = TRUE;
 
-	if( !pCamera ) { return FALSE; }
+	if( nullptr == pCamera ) { return FALSE; }
 
 	if( !p_AllowMinusOne && lPosition < 0 ) { lPosition = 0; }
 
@@ -911,9 +913,9 @@ BOOL SVPPQObject::AttachCamera( SVVirtualCamera *pCamera, long lPosition, bool p
 	return l_bOk;
 }
 
-BOOL SVPPQObject::AttachInspection( SVInspectionProcess *pInspection )
+BOOL SVPPQObject::AttachInspection( SVInspectionProcess* pInspection )
 {
-	if( !pInspection ) { return FALSE; }
+	if( nullptr == pInspection ) { return FALSE; }
 
 	m_arInspections.Add( pInspection );
 
@@ -922,23 +924,23 @@ BOOL SVPPQObject::AttachInspection( SVInspectionProcess *pInspection )
 	return TRUE;
 }
 
-BOOL SVPPQObject::DetachTrigger( SVTriggerObject *pTrigger )
+BOOL SVPPQObject::DetachTrigger( SVTriggerObject* pTrigger )
 {
-	BOOL bOk = m_pTrigger != NULL && m_pTrigger == pTrigger;
+	BOOL bOk = nullptr != m_pTrigger && m_pTrigger == pTrigger;
 
 	if ( bOk )
 	{	
 		bOk = m_pTrigger->UnregisterFinishProcess( this );
 
-		m_pTrigger = NULL;
+		m_pTrigger = nullptr;
 	}
 
 	return bOk;
 }// end DetachTrigger
 
-BOOL SVPPQObject::DetachCamera( SVVirtualCamera *pCamera, BOOL bRemoveDepends/*=FALSE*/)
+BOOL SVPPQObject::DetachCamera( SVVirtualCamera* pCamera, BOOL bRemoveDepends/*=FALSE*/)
 {
-	if( !pCamera ) { return FALSE; }
+	if( nullptr == pCamera ) { return FALSE; }
 
 	BOOL l_Status = true;
 
@@ -954,14 +956,14 @@ BOOL SVPPQObject::DetachCamera( SVVirtualCamera *pCamera, BOOL bRemoveDepends/*=
 	//check inspections and remove camera from them also...
 	if ( bRemoveDepends )
 	{
-		SVInspectionProcess *pInspection;
+		SVInspectionProcess* pInspection( nullptr );
 		int iCnt;
 		int iInsSize = m_arInspections.GetSize();
 
 		for ( iCnt = 0; iCnt < iInsSize; iCnt++ )
 		{
 			pInspection = m_arInspections.GetAt(iCnt);
-			pInspection->RemoveCamera(pCamera->GetName());
+			if( nullptr != pInspection ){ pInspection->RemoveCamera(pCamera->GetName()); }
 		}
 	}
 
@@ -970,9 +972,9 @@ BOOL SVPPQObject::DetachCamera( SVVirtualCamera *pCamera, BOOL bRemoveDepends/*=
 	return l_Status;
 }// end DetachCamera
 
-BOOL SVPPQObject::DetachInspection( SVInspectionProcess *pInspection )
+BOOL SVPPQObject::DetachInspection( SVInspectionProcess* pInspection )
 {
-	if( !pInspection ) { return FALSE; }
+	if( nullptr == pInspection ) { return FALSE; }
 
 	int i;
 	int iSize;
@@ -1002,9 +1004,9 @@ BOOL SVPPQObject::DetachInspection( SVInspectionProcess *pInspection )
 	return TRUE;
 }// end DetachInspection
 
-BOOL SVPPQObject::AddSharedCamera( SVVirtualCamera *pCamera )
+BOOL SVPPQObject::AddSharedCamera( SVVirtualCamera* pCamera )
 {
-	BOOL l_Status = ( pCamera != NULL );
+	BOOL l_Status = ( nullptr != pCamera );
 
 	if( l_Status )
 	{
@@ -1081,14 +1083,14 @@ HRESULT SVPPQObject::GetVirtualCameras( SVVirtualCameraMap& p_rCameras ) const
 	return l_Status;
 }
 
-BOOL SVPPQObject::GetTrigger( SVTriggerObject *&ppTrigger )
+BOOL SVPPQObject::GetTrigger( SVTriggerObject*& ppTrigger )
 {
 	ppTrigger = m_pTrigger;
 
 	return TRUE;
 }// end GetTrigger
 
-BOOL SVPPQObject::GetInspection( long lIndex, SVInspectionProcess *&ppInspection )
+BOOL SVPPQObject::GetInspection( long lIndex, SVInspectionProcess*& ppInspection )
 {
 	if( lIndex < 0 || lIndex >= m_arInspections.GetSize() ) { return FALSE; }
 
@@ -1097,9 +1099,12 @@ BOOL SVPPQObject::GetInspection( long lIndex, SVInspectionProcess *&ppInspection
 	return TRUE;
 }// end GetInspection
 
-BOOL SVPPQObject::SetCameraPPQPosition( long lPosition, SVVirtualCamera *pCamera )
+BOOL SVPPQObject::SetCameraPPQPosition( long lPosition, SVVirtualCamera* pCamera )
 {
 	BOOL l_Status = true;
+
+	//Only do an assert check so that in release mode no check is made
+	ASSERT( nullptr != pCamera );
 
 	if( m_bCreated && -1 <= lPosition && lPosition < static_cast< long >( m_ppPPQPositions.size() ) - 1 )
 	{
@@ -1113,9 +1118,12 @@ BOOL SVPPQObject::SetCameraPPQPosition( long lPosition, SVVirtualCamera *pCamera
 	return l_Status;
 }// end SetCameraPPQPosition
 
-BOOL SVPPQObject::GetCameraPPQPosition( long &lPosition, SVVirtualCamera *pCamera )
+BOOL SVPPQObject::GetCameraPPQPosition( long &lPosition, SVVirtualCamera* pCamera )
 {
 	BOOL bFound;
+
+	//Only do an assert check so that in release mode no check is made
+	ASSERT( nullptr != pCamera );
 
 	lPosition = -1;
 
@@ -1188,7 +1196,7 @@ void SVPPQObject::AssignCameraToAcquisitionTrigger()
 		for (SVCameraInfoMap::iterator it = m_Cameras.begin(); it != m_Cameras.end(); ++it)
 		{
 			SVVirtualCamera* pCamera = it->first;
-			if (pCamera)
+			if ( nullptr != pCamera )
 			{
 				SVAcquisitionClassPtr acquisitionPtr = pCamera->GetAcquisitionDevice();
 				if (!acquisitionPtr.empty() && acquisitionPtr->DigNumber() == iDigNum)
@@ -2103,12 +2111,13 @@ BOOL SVPPQObject::AddDefaultInputs()
 		AddToAvailableInputs(IO_DIGITAL_INPUT, strName );
 	}// end for
 
-	SVConfigurationObject* pConfig = NULL;
+	SVConfigurationObject* pConfig( nullptr );
 	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
-	SVInputObjectList* pInputObjectList=NULL;
-	pConfig->GetInputObjectList(&pInputObjectList);
+	SVInputObjectList* pInputObjectList( nullptr );
+	if( nullptr != pConfig ){ pConfig->GetInputObjectList( &pInputObjectList ); }
 	long lCount=0;
-	pInputObjectList->GetRemoteInputCount(lCount);
+	//If pointer is a nullptr then count is 0
+	if( nullptr != pInputObjectList ){ pInputObjectList->GetRemoteInputCount(lCount); }
 
 	// Create all the default Remote Inputs
 	for( l = 0; l < static_cast<unsigned long>(lCount); l++ )
@@ -2348,12 +2357,12 @@ BOOL SVPPQObject::WriteOutputs( SVProductInfoStruct *pProduct )
 		{
 			bRet = m_pOutputList->WriteOutputs( m_UsedOutputs, lDataIndex, l_ACK, l_NAK );
 		
-			SVConfigurationObject* pConfig = NULL;
+			SVConfigurationObject* pConfig( nullptr );
 			SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
 #ifndef _WIN64
 			// Do not call the PLC write Outputs if it is empty.
-			if( 0 < pConfig->GetPLCCount() )
+			if( nullptr != pConfig && 0 < pConfig->GetPLCCount() )
 			{
 				// PLC Outputs......
 				HRESULT l_hr = pConfig->WriteOutputs( GetPLCName(), pProduct );
@@ -3522,7 +3531,7 @@ BOOL SVPPQObject::FinishCamera( void *pCaller, SVODataResponseClass *pResponse )
 	{
 		SVVirtualCamera* pCamera = reinterpret_cast< SVVirtualCamera* >( pCaller );
 
-		if( m_CameraResponseQueue.AddTail( SVCameraQueueElement( pCamera, *pResponse ) ) )
+		if( nullptr != pCamera && m_CameraResponseQueue.AddTail( SVCameraQueueElement( pCamera, *pResponse ) ) )
 		{
 			m_AsyncProcedure.Signal( NULL );
 		}
@@ -3798,32 +3807,32 @@ void SVPPQObject::DumpDMInfo( LPCTSTR p_szName ) const
 
 void CALLBACK SVPPQObject::OutputTimerCallback( UINT uTimerID, UINT uRsvd, DWORD_PTR dwUser, DWORD_PTR dwRsvd1, DWORD_PTR dwRsvd2 )
 {
-	SVPPQObject* l_pPPQ = reinterpret_cast< SVPPQObject* >( dwUser );
+	SVPPQObject* pPPQ = reinterpret_cast< SVPPQObject* >( dwUser );
 
-	if( l_pPPQ != NULL )
+	if( nullptr != pPPQ )
 	{
-		if( l_pPPQ->m_AsyncProcedure.IsActive() )
+		if( pPPQ->m_AsyncProcedure.IsActive() )
 		{
-			l_pPPQ->NotifyProcessTimerOutputs();
+			pPPQ->NotifyProcessTimerOutputs();
 		}
 	}
 }
 
-HRESULT SVPPQObject::MarkProductInspectionsMissingAcquisiton( SVProductInfoStruct& p_rProduct, SVVirtualCamera* p_pCamera )
+HRESULT SVPPQObject::MarkProductInspectionsMissingAcquisiton( SVProductInfoStruct& p_rProduct, SVVirtualCamera* pCamera )
 {
 	HRESULT l_Status = S_OK;
 
-	if( p_pCamera != NULL )
+	if( nullptr != pCamera )
 	{
 		int iSize = m_arInspections.GetSize();
 
 		for( int i = 0; i < iSize; i++ )
 		{
-			SVInspectionProcess* l_pInspect = m_arInspections[ i ];
+			SVInspectionProcess* pInspection = m_arInspections[ i ];
 
-			if( l_pInspect != NULL && l_pInspect->IsCameraInInspection( p_pCamera->GetName() ) )
+			if( nullptr != pInspection && pInspection->IsCameraInInspection( pCamera->GetName() ) )
 			{
-				SVInspectionInfoStruct l_InspectInfo = p_rProduct.m_svInspectionInfos[ l_pInspect->GetUniqueObjectID() ];
+				SVInspectionInfoStruct l_InspectInfo = p_rProduct.m_svInspectionInfos[ pInspection->GetUniqueObjectID() ];
 
 				l_InspectInfo.oInspectedState = PRODUCT_NOT_INSPECTED;
 				l_InspectInfo.m_CanProcess = false;
@@ -3836,7 +3845,7 @@ HRESULT SVPPQObject::MarkProductInspectionsMissingAcquisiton( SVProductInfoStruc
 				p_rProduct.m_ProductState += _T( "|MC=" );
 				p_rProduct.m_ProductState += m_arInspections[ i ]->GetName();
 				p_rProduct.m_ProductState += _T( "-" );
-				p_rProduct.m_ProductState += p_pCamera->GetName();
+				p_rProduct.m_ProductState += pCamera->GetName();
 
 				m_oInspectionQueue.AddTail( l_Info );
 			}
@@ -4655,7 +4664,7 @@ HRESULT SVPPQObject::SetMonitorList(const ActiveMonitorList& rActiveList)
 		for (SVPPQInspectionProcessVector::iterator it = m_arInspections.begin(); it != m_arInspections.end(); ++it)
 		{
 			SVInspectionProcess* pInspection = (*it);
-			if (pInspection)
+			if( nullptr != pInspection )
 			{
 				const SVString& inspectionName = pInspection->GetName();
 				Bounds valBounds = std::equal_range(valList.begin(), valList.end(), inspectionName, CompareInspectionName);
@@ -4679,7 +4688,7 @@ HRESULT SVPPQObject::SetMonitorList(const ActiveMonitorList& rActiveList)
 		for (SVPPQInspectionProcessVector::iterator it = m_arInspections.begin(); it != m_arInspections.end(); ++it)
 		{
 			SVInspectionProcess* pInspection = (*it);
-			if (pInspection)
+			if( nullptr != pInspection )
 			{
 				pInspection->UpdateSharedMemoryFilters(SVMonitorList());
 			}
@@ -4742,20 +4751,20 @@ SVPPQObject::SVTriggerQueueElement::~SVTriggerQueueElement()
 
 #pragma region SVCameraQueueElement Constructor
 SVPPQObject::SVCameraQueueElement::SVCameraQueueElement()
-: m_pCamera( NULL )
+: m_pCamera( nullptr )
 , m_Data()
 {
 }
 
-SVPPQObject::SVCameraQueueElement::SVCameraQueueElement( const SVCameraQueueElement& p_rObject )
-: m_pCamera( p_rObject.m_pCamera )
-, m_Data( p_rObject.m_Data )
+SVPPQObject::SVCameraQueueElement::SVCameraQueueElement( const SVCameraQueueElement& rObject )
+: m_pCamera( rObject.m_pCamera )
+, m_Data( rObject.m_Data )
 {
 }
 
-SVPPQObject::SVCameraQueueElement::SVCameraQueueElement( SVVirtualCamera* p_pCamera, const SVODataResponseClass& p_rData )
-: m_pCamera( p_pCamera )
-, m_Data( p_rData )
+SVPPQObject::SVCameraQueueElement::SVCameraQueueElement( SVVirtualCamera* pCamera, const SVODataResponseClass& rData )
+: m_pCamera( pCamera )
+, m_Data( rData )
 {
 }
 

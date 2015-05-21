@@ -185,9 +185,9 @@ HRESULT SVToolExtentClass::UpdateImageWithExtent( unsigned long p_ulIndex, SVToo
 				{
 					l_Status = GetImageExtent( l_Extent );
 
-					SVInspectionProcess* l_pInspection = m_psvToolImage->GetInspection();
+					SVInspectionProcess* pInspection = m_psvToolImage->GetInspection();
 
-					if ( l_pInspection != NULL && l_pInspection->IsResetStateSet( SVResetAutoMoveAndResize ) )
+					if ( nullptr != pInspection && pInspection->IsResetStateSet( SVResetAutoMoveAndResize ) )
 					{
 						if( l_Extent != m_psvToolImage->GetImageExtents() )
 						{

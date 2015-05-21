@@ -28,10 +28,13 @@ HRESULT CALLBACK SVVirtualCamera::SVImageCallback( void *pvOwner, void *pvCaller
 {
 	HRESULT hrOk = S_OK;
 
-	SVVirtualCamera* l_pCamera = reinterpret_cast< SVVirtualCamera* >( pvCaller );
-	SVODataResponseClass* l_pResponse = reinterpret_cast< SVODataResponseClass* >( pvResponse );
+	SVVirtualCamera* pCamera = reinterpret_cast< SVVirtualCamera* >( pvCaller );
+	SVODataResponseClass* pResponse = reinterpret_cast< SVODataResponseClass* >( pvResponse );
 
-	l_pCamera->FinishProcess( l_pResponse );
+	//Only do an assert check so that in release mode no check is made
+	ASSERT( nullptr != pCamera && nullptr != pResponse );
+
+	pCamera->FinishProcess( pResponse );
 
 	return hrOk;
 }

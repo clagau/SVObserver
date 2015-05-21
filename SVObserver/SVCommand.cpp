@@ -1873,7 +1873,7 @@ struct SVGetImageListImageInfo
 	SVGUID m_ImageId;
 	SVInspectionProcess* m_pInspection;
 
-	SVGetImageListImageInfo() : m_ImageName(), m_ImageId(), m_pInspection( NULL ) {}
+	SVGetImageListImageInfo() : m_ImageName(), m_ImageId(), m_pInspection( nullptr ) {}
 
 	SVGetImageListImageInfo( const _bstr_t& p_rImageName, const SVGUID& p_rImageId, SVInspectionProcess* p_pInspection )
 		: m_ImageName( p_rImageName ), m_ImageId( p_rImageId ), m_pInspection( p_pInspection ) {}
@@ -1891,10 +1891,10 @@ STDMETHODIMP CSVCommand::SVGetImageList(SAFEARRAY* psaNames, long lCompression, 
 
 	try
 	{
-		SVConfigurationObject* l_pConfig = NULL;
-		SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
+		SVConfigurationObject* pConfig( nullptr );
+		SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
-		if( l_pConfig == NULL || !l_pConfig->IsConfigurationLoaded() )
+		if( nullptr == pConfig || !pConfig->IsConfigurationLoaded() )
 		{
 			throw SVMSG_CONFIGURATION_NOT_LOADED;
 		}
@@ -1953,7 +1953,7 @@ STDMETHODIMP CSVCommand::SVGetImageList(SAFEARRAY* psaNames, long lCompression, 
 		//go through list of names and make sure they are all valid
 		// 1) Inspection exists
 		// 2) Requested data item exists
-		SVInspectionProcess* pInspection = NULL;
+		SVInspectionProcess* pInspection( nullptr );
 		HRESULT hrOK = S_OK;
 
 		for ( long i = 0; i < lNumberOfElements && SUCCEEDED( hrOK ); i++ )
@@ -1962,7 +1962,7 @@ STDMETHODIMP CSVCommand::SVGetImageList(SAFEARRAY* psaNames, long lCompression, 
 			SafeArrayGetElementNoCopy( psaNames, &i, &bstrName );
 			SVString l_Name = bstrName;
 
-			if (l_pConfig->GetInspectionObject(l_Name.c_str(), &pInspection) && (pInspection != NULL))
+			if( nullptr != pConfig && pConfig->GetInspectionObject(l_Name.c_str(), &pInspection) && nullptr != pInspection )
 			{
 				SVImageClass* pImage=NULL;
 				SVObjectManagerClass::Instance().GetObjectByDottedName( l_Name, pImage );
@@ -2204,7 +2204,7 @@ STDMETHODIMP CSVCommand::SVRegisterStream(SAFEARRAY* psaName, VARIANT vtInterfac
 	CString sName;
 	CString sInspectionName;
 	BOOL bSamePPQ = TRUE;
-	SVInspectionProcess *pInspection;
+	SVInspectionProcess* pInspection( nullptr );
 	BOOL bRet = TRUE;
 	BOOL bNotAllItemsFound=FALSE;
 	CStringList cslItemsNotFound;
@@ -2281,8 +2281,8 @@ STDMETHODIMP CSVCommand::SVRegisterStream(SAFEARRAY* psaName, VARIANT vtInterfac
 			POSITION posIns;
 			int iInsDel = 0;
 
-			SVConfigurationObject* l_pConfig = nullptr;
-			SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
+			SVConfigurationObject* pConfig( nullptr );
+			SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
 			for ( int i = 0; ( (i < iInspectionCnt) && (bSamePPQ) ); i++ )
 			{
@@ -2293,7 +2293,7 @@ STDMETHODIMP CSVCommand::SVRegisterStream(SAFEARRAY* psaName, VARIANT vtInterfac
 				{
 					sTmpInsName = m_cslInspectionNames.GetAt(posIns);
 
-					if ( l_pConfig->GetInspectionObject(sTmpInsName,&pInspection) )
+					if ( nullptr != pConfig && pConfig->GetInspectionObject(sTmpInsName,&pInspection) && nullptr != pInspection )
 					{
 						if ( l_PPQId.empty() )
 						{
@@ -2345,7 +2345,7 @@ STDMETHODIMP CSVCommand::SVRegisterStream(SAFEARRAY* psaName, VARIANT vtInterfac
 
 				pstData = new StreamDataStruct;
 
-				if (l_pConfig->GetInspectionObject(sTmp,&pInspection) )
+				if ( nullptr != pConfig && pConfig->GetInspectionObject(sTmp,&pInspection) )
 				{
 					if ( sInspectionName == pInspection->GetName() )
 					{
@@ -2407,8 +2407,9 @@ STDMETHODIMP CSVCommand::SVRegisterStream(SAFEARRAY* psaName, VARIANT vtInterfac
 				if ( pos != NULL )
 				{
 					CString sTmpIns = m_cslInspectionNames.GetAt(pos);
-					l_pConfig->GetInspectionObject(sTmpIns,&pInspection);
-					if ( sTmpIns == pInspection->GetName() )
+					pInspection = nullptr;
+					if( nullptr != pConfig){ pConfig->GetInspectionObject(sTmpIns,&pInspection); }
+					if (nullptr != pInspection && sTmpIns == pInspection->GetName() )
 					{
 						SVCommandStreamManager::Instance().EnableInspectionCallback( pInspection->GetUniqueObjectID() );
 
@@ -2891,8 +2892,8 @@ STDMETHODIMP CSVCommand::SVGetProductDataList(long lProcessCount, SAFEARRAY* psa
 
 	// VERIFY THE LIST OF NAMES
 
-	SVConfigurationObject* l_pConfig = nullptr;
-	SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
+	SVConfigurationObject* pConfig( nullptr );
+	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
 	long lNumberOfElements = psaNames->rgsabound[0].cElements;
 
@@ -2916,7 +2917,7 @@ STDMETHODIMP CSVCommand::SVGetProductDataList(long lProcessCount, SAFEARRAY* psa
 		SafeArrayPutElement(*ppsaStatus, &lIndex, &lDefaultStatus);
 	}
 
-	if ( nullptr == l_pConfig || !l_pConfig->IsConfigurationLoaded() )
+	if ( nullptr == pConfig || !pConfig->IsConfigurationLoaded() )
 	{
 		hr = SVMSG_CONFIGURATION_NOT_LOADED;
 		return hr;
@@ -2931,9 +2932,9 @@ STDMETHODIMP CSVCommand::SVGetProductDataList(long lProcessCount, SAFEARRAY* psa
 
 	for ( long i = 0; i < lNumberOfElements && SUCCEEDED( hrOK ); i++ )
 	{
-		SVInspectionProcess* pInspection = nullptr;
-
-		if (l_pConfig->GetInspectionObject(saValueNames[i], &pInspection))
+		SVInspectionProcess* pInspection( nullptr );
+		//GetInspectionObject is only true if the pointer is valid
+		if ( (nullptr != pConfig) && pConfig->GetInspectionObject(saValueNames[i], &pInspection))
 		{
 			aInspections.Add(pInspection);	// add inspection object to list
 
@@ -2989,7 +2990,7 @@ STDMETHODIMP CSVCommand::SVGetProductDataList(long lProcessCount, SAFEARRAY* psa
 
 	SVPPQObject* pPPQ = dynamic_cast< SVPPQObject* >( SVObjectManagerClass::Instance().GetObject( l_PPQId ) );
 
-	if( pPPQ->GetProduct( l_ProductInfo, lProcessCount ) == S_OK )
+	if( nullptr != pPPQ && S_OK == pPPQ->GetProduct( l_ProductInfo, lProcessCount ) )
 	{
 		// Product is still valid; 
 		// Build the array containing the result data
@@ -3159,10 +3160,10 @@ STDMETHODIMP CSVCommand::SVGetProductImageList(long lProcessCount, SAFEARRAY* ps
 			hrTemp = SafeArrayPutElement(*ppsaOverlays, &lIndex, bstr);
 		}
 
-		SVConfigurationObject* l_pConfig = NULL;
-		SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
+		SVConfigurationObject* pConfig( nullptr );
+		SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
-		if ( l_pConfig == NULL || !l_pConfig->IsConfigurationLoaded() )
+		if ( nullptr == pConfig || !pConfig->IsConfigurationLoaded() )
 		{
 			throw SVMSG_CONFIGURATION_NOT_LOADED;
 		}
@@ -3190,7 +3191,7 @@ STDMETHODIMP CSVCommand::SVGetProductImageList(long lProcessCount, SAFEARRAY* ps
 		// 1) Inspection exists
 		// 2) Requested data item exists
 		// 3) all data items are on the same PPQ
-		SVInspectionProcess* pInspection = NULL;
+		SVInspectionProcess* pInspection( nullptr );
 		HRESULT hrOK = S_OK;
 		SVGUID l_PPQId;
 
@@ -3200,7 +3201,7 @@ STDMETHODIMP CSVCommand::SVGetProductImageList(long lProcessCount, SAFEARRAY* ps
 			SafeArrayGetElementNoCopy( psaNames, &l, &bstrName );
 			CString strName( bstrName );
 
-			if (l_pConfig->GetInspectionObject(strName, &pInspection))
+			if (nullptr != pConfig && pConfig->GetInspectionObject(strName, &pInspection))
 			{
 				aInspections.Add( pInspection );
 				SVImageClass* pImage=NULL;
@@ -3280,7 +3281,7 @@ STDMETHODIMP CSVCommand::SVGetProductImageList(long lProcessCount, SAFEARRAY* ps
 
 		SVPPQObject* pPPQ = dynamic_cast< SVPPQObject* >( SVObjectManagerClass::Instance().GetObject( l_PPQId ) );
 
-		if ( pPPQ != NULL )
+		if ( nullptr != pPPQ )
 		{
 			if( pPPQ->GetProduct( l_ProductInfo, lProcessCount ) == S_OK )
 			{
@@ -3389,12 +3390,12 @@ STDMETHODIMP CSVCommand::SVSetLUT(BSTR bstrCameraName, SAFEARRAY* paulLUTTable)
 	HRESULT hr = S_OK;
 
 	CString sCameraName( bstrCameraName );
-	SVVirtualCamera* pCamera = NULL;
+	SVVirtualCamera* pCamera( nullptr );
 
-	SVConfigurationObject* l_pConfig = NULL;
-	SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
+	SVConfigurationObject* pConfig( nullptr );
+	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
-	if (l_pConfig->GetChildObjectByName(sCameraName, &pCamera))
+	if ( nullptr != pConfig && pConfig->GetChildObjectByName(sCameraName, &pCamera) && nullptr != pCamera )
 	{
 		VARTYPE vt = VT_EMPTY;
 		::SafeArrayGetVartype(paulLUTTable, &vt);
@@ -3435,12 +3436,12 @@ STDMETHODIMP CSVCommand::SVGetLUT(BSTR bstrCameraName, SAFEARRAY** ppaulLUTTable
 	HRESULT hr = S_OK;
 
 	CString sCameraName( bstrCameraName );
-	SVVirtualCamera* pCamera = NULL;
+	SVVirtualCamera* pCamera( nullptr );
 
-	SVConfigurationObject* l_pConfig = NULL;
-	SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
+	SVConfigurationObject* pConfig( nullptr );
+	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
-	if (l_pConfig->GetChildObjectByName(sCameraName, &pCamera))
+	if( nullptr != pConfig && pConfig->GetChildObjectByName(sCameraName, &pCamera) && nullptr != pCamera )
 	{
 		SVLut lut;
 
@@ -3816,7 +3817,7 @@ HRESULT CSVCommand::SVGetDataList(SAFEARRAY* psaNames, SAFEARRAY** ppsaValues, S
 	ASSERT( *ppsaProcCounts != NULL );// must provide allocated SafeArray(LONG)
 	ASSERT( (*ppsaProcCounts)->rgsabound[0].cElements == Size );
 
-	SVConfigurationObject* pConfig = NULL;
+	SVConfigurationObject* pConfig( nullptr );
 	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
 	for ( long l = 0; l < Size; l++ )
@@ -3826,7 +3827,7 @@ HRESULT CSVCommand::SVGetDataList(SAFEARRAY* psaNames, SAFEARRAY** ppsaValues, S
 		BSTR bstrName = NULL;
 		long ProcessCount = -1;
 		SVObjectReference ObjectRef;
-		SVInspectionProcess *pInspection = nullptr;
+		SVInspectionProcess* pInspection( nullptr );
 
 		Status = S_OK;
 
@@ -3834,16 +3835,16 @@ HRESULT CSVCommand::SVGetDataList(SAFEARRAY* psaNames, SAFEARRAY** ppsaValues, S
 		SafeArrayGetElementNoCopy(psaNames,&l,&bstrName);
 		Name = bstrName;
 		ProcessCount = -1;
-		if( NULL != pConfig )
+		if( nullptr != pConfig )
 		{
 			pConfig->GetInspectionObject(Name,&pInspection);
 		}
 
 		SVObjectManagerClass::Instance().GetObjectByDottedName( static_cast< LPCTSTR >( Name ), ObjectRef );
 
-		if ( NULL != ObjectRef.Object() || nullptr != pInspection )
+		if ( nullptr != ObjectRef.Object() || nullptr != pInspection )
 		{
-			//If inspection  is nullptr then object is of type BasicValueObject
+			//If inspection is nullptr then object is of type BasicValueObject
 			if( nullptr == pInspection )
 			{
 				BasicValueObject* pValueObject = dynamic_cast< BasicValueObject* >( ObjectRef.Object() );
@@ -3977,35 +3978,23 @@ STDMETHODIMP CSVCommand::SVRunOnce(BSTR bstrName)
 	USES_CONVERSION;
 
 	HRESULT              hrResult = S_FALSE;	
-	SVInspectionProcess* pInspection = NULL;
+	SVInspectionProcess* pInspection( nullptr );
 
-	do
+	if( !SVSVIMStateClass::CheckState( SV_STATE_RUNNING ) )
 	{
-		if( !SVSVIMStateClass::CheckState( SV_STATE_RUNNING ) )
+		if( SVConfigurationObject::GetInspection( W2T(bstrName), pInspection) )
 		{
-
-			SVConfigurationObject* l_pConfig = NULL;
-			SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
-
-			l_pConfig->GetInspectionObject(W2T(bstrName), &pInspection);
-			if (pInspection == NULL)
-			{
-				break;
-			}
-
 			SVCommandInspectionRunOncePtr l_CommandPtr = new SVCommandInspectionRunOnce( pInspection->GetUniqueObjectID() );
 			SVObjectSynchronousCommandTemplate< SVCommandInspectionRunOncePtr > l_Command( pInspection->GetUniqueObjectID(), l_CommandPtr );
 
 			hrResult = l_Command.Execute( 120000 );
-		}// end if
-		else
-		{
-			//return an error.  not able to do runonce.
-			hrResult = SVMSG_44_RUNONCE_ONLINE;
-			break;
-		}// end else
-	}
-	while (0);
+		}
+	}// end if
+	else
+	{
+		//return an error.  not able to do runonce.
+		hrResult = SVMSG_44_RUNONCE_ONLINE;
+	}// end else
 
 	return hrResult;
 }
@@ -4015,8 +4004,8 @@ STDMETHODIMP CSVCommand::SVSetSourceImage(BSTR bstrName, BSTR bstrImage)
 	USES_CONVERSION;
 
 	HRESULT                  hrResult = S_OK;
-	SVInspectionProcess*     pInspection = NULL;
-	SVCameraImageTemplate*   pMainImage = NULL;
+	SVInspectionProcess*     pInspection( nullptr );
+	SVCameraImageTemplate*   pMainImage( nullptr );
 
 	if ( SVSVIMStateClass::CheckState( SV_STATE_REGRESSION | SV_STATE_TEST | SV_STATE_RUNNING ) )
 	{
@@ -4024,32 +4013,25 @@ STDMETHODIMP CSVCommand::SVSetSourceImage(BSTR bstrName, BSTR bstrImage)
 		return hrResult;
 	}
 
-	do
+	if( SVConfigurationObject::GetInspection( W2T(bstrName), pInspection) )
 	{
-		SVConfigurationObject* l_pConfig = NULL;
-		SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
-
-		l_pConfig->GetInspectionObject(W2T(bstrName), &pInspection);
-		if (pInspection == NULL)
-		{
-			// Inspection not found
-			hrResult = SVMSG_ONE_OR_MORE_INSPECTIONS_DO_NOT_EXIST;
-			break;
-		}
-
 		pMainImage = pInspection->GetToolSetMainImage();
-		if( pMainImage == NULL )
+		if( nullptr != pMainImage )
+		{
+			if( pInspection->AddInputImageRequest( pMainImage, bstrImage ) != S_OK )
+			{
+				hrResult = SVMSG_INVALID_IMAGE_SOURCE;
+			}
+		}
+		else
 		{
 			hrResult = S_FALSE;
-			break;
-		}
-
-		if( pInspection->AddInputImageRequest( pMainImage, bstrImage ) != S_OK )
-		{
-			hrResult = SVMSG_INVALID_IMAGE_SOURCE;
 		}
 	}
-	while (0);
+	else
+	{
+		hrResult = SVMSG_ONE_OR_MORE_INSPECTIONS_DO_NOT_EXIST;
+	}
 
 	return hrResult;
 }
@@ -4060,8 +4042,8 @@ STDMETHODIMP CSVCommand::SVSetInputs(SAFEARRAY* psaNames, SAFEARRAY* psaValues, 
 
 	HRESULT                hr = S_OK;
 	HRESULT                hrStatus = S_OK;
-	SVInspectionProcess*   pInspection = NULL;
-	SVValueObjectClass*    pValueObject = NULL;
+	SVInspectionProcess*   pInspection( nullptr );
+	SVValueObjectClass*    pValueObject( nullptr );
 	SVValueObjectReference ref;
 	BSTR                   bstrName;
 	BSTR                   bstrValue;
@@ -4080,8 +4062,8 @@ STDMETHODIMP CSVCommand::SVSetInputs(SAFEARRAY* psaNames, SAFEARRAY* psaValues, 
 			break;
 		}// end if
 
-		SVConfigurationObject* l_pConfig = NULL;
-		SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
+		SVConfigurationObject* pConfig( nullptr );
+		SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
 		for (long l = 0; l < lNumberOfElements1; l++)
 		{
@@ -4097,7 +4079,8 @@ STDMETHODIMP CSVCommand::SVSetInputs(SAFEARRAY* psaNames, SAFEARRAY* psaValues, 
 
 			sTmpVal = bstrValue;
 
-			if ( l_pConfig->GetInspectionObject(sTmpName,&pInspection) )
+			//GetInspectionObject is only true if the pointer is valid
+			if ( nullptr != pConfig && pConfig->GetInspectionObject(sTmpName,&pInspection) )
 			{
 				//got the inspection.
 				SVObjectManagerClass::Instance().GetObjectByDottedName( static_cast< LPCTSTR >( sTmpName ), ref );
@@ -4179,8 +4162,8 @@ HRESULT CSVCommand::SVSetImageList(SAFEARRAY *psaNames, SAFEARRAY *psaImages, SA
 
 	HRESULT hr = S_OK;
 	HRESULT hrStatus = S_OK;
-	SVInspectionProcess *pInspection = NULL;
-	SVImageClass *l_pImageObject = NULL;
+	SVInspectionProcess* pInspection( nullptr );
+	SVImageClass* l_pImageObject( nullptr );
 	BSTR bstrName = NULL;
 	BSTR bstrImage = NULL;
 	CString sTmpName;
@@ -4197,8 +4180,8 @@ HRESULT CSVCommand::SVSetImageList(SAFEARRAY *psaNames, SAFEARRAY *psaImages, SA
 			break;
 		}// end if
 
-		SVConfigurationObject* l_pConfig = NULL;
-		SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
+		SVConfigurationObject* pConfig( nullptr );
+		SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
 		for ( long l = 0; l < lNumberOfElements1; l++ )
 		{
@@ -4213,7 +4196,8 @@ HRESULT CSVCommand::SVSetImageList(SAFEARRAY *psaNames, SAFEARRAY *psaImages, SA
 			hrStatus = SafeArrayGetElementNoCopy(psaImages, &l, &bstrImage);
 			if ( FAILED( hrStatus ) ) { break; }
 
-			if ( l_pConfig->GetInspectionObject(sTmpName,&pInspection) )
+			//GetInspectionObject is only true if the pointer is valid
+			if ( nullptr != pConfig &&  pConfig->GetInspectionObject(sTmpName,&pInspection)  && nullptr != pInspection )
 			{
 				SVObjectClass *l_pObject = NULL;
 				//got the inspection.
@@ -4516,10 +4500,10 @@ HRESULT CSVCommand::SVLockImage(long p_lProcessCount, long p_lIndex, BSTR p_bsNa
 {
 	HRESULT hr = S_OK;
 
-	SVConfigurationObject* l_pConfig = NULL;
-	SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
+	SVConfigurationObject* pConfig( nullptr );
+	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
-	if ( l_pConfig == NULL || !l_pConfig->IsConfigurationLoaded() )
+	if ( nullptr == pConfig || !pConfig->IsConfigurationLoaded() )
 	{
 		hr = SVMSG_CONFIGURATION_NOT_LOADED;
 		return hr;
@@ -4548,7 +4532,8 @@ HRESULT CSVCommand::SVLockImage(long p_lProcessCount, long p_lIndex, BSTR p_bsNa
 
 	SVInspectionProcess* pInspection = nullptr;
 
-	if (l_pConfig->GetInspectionObject(CString(p_bsName), &pInspection))
+	//GetInspectionObject is only true if the pointer is valid
+	if ( nullptr != pConfig && pConfig->GetInspectionObject(CString(p_bsName), &pInspection) )
 	{
 		if (pInspection->GetChildObjectByName(CString(p_bsName), (SVObjectClass**) &pImage))
 		{
@@ -4672,10 +4657,10 @@ HRESULT CSVCommand::SVGetLockedImage(long p_lIndex, long p_lCompression, BSTR* p
 			}
 		}
 #endif
-		SVConfigurationObject* l_pConfig = nullptr;
-		SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
+		SVConfigurationObject* pConfig( nullptr );
+		SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
-		if ( nullptr == l_pConfig || !l_pConfig->IsConfigurationLoaded() )
+		if ( nullptr == pConfig || !pConfig->IsConfigurationLoaded() )
 		{
 			hr = SVMSG_CONFIGURATION_NOT_LOADED;
 			break;
@@ -4759,40 +4744,33 @@ HRESULT CSVCommand::SVUnlockAllImages()
 STDMETHODIMP CSVCommand::SVGetRemoteInputCount(long *lCount)
 {
 	SVException svException;
-	SVInputObjectList *pInputObjectList;
-	HRESULT hrResult;
-	BOOL bSuccess;
+	SVInputObjectList *pInputObjectList( nullptr );
+	HRESULT hrResult = S_OK;
+	BOOL bSuccess = FALSE;
 
-	do
+	try
 	{
-		hrResult = S_OK;
-		bSuccess = FALSE;
+		SVConfigurationObject* pConfig( nullptr );
+		SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
-		try
+		if( nullptr != pConfig && pConfig->GetInputObjectList( &pInputObjectList ) )
 		{
-			SVConfigurationObject* l_pConfig = nullptr;
-			SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
-
-			l_pConfig->GetInputObjectList( &pInputObjectList );
-
-			if( !pInputObjectList->GetRemoteInputCount( *lCount ) )
+			if( nullptr != pInputObjectList && pInputObjectList->GetRemoteInputCount( *lCount ) )
 			{
-				bSuccess = FALSE;
-			}// end if
+				bSuccess = TRUE;
+			}
+		}
+	}
+	catch (...)
+	{
+		bSuccess = FALSE;
+	}
 
-			bSuccess = TRUE;
-		}
-		catch (...)
-		{
-			bSuccess = FALSE;
-		}
-
-		if( !bSuccess )
-		{
-			SETEXCEPTION0 (svException, SVMSG_CMDCOMSRV_ERROR);
-			hrResult = S_FALSE;
-		}
-	} while (0);
+	if( !bSuccess )
+	{
+		SETEXCEPTION0 (svException, SVMSG_CMDCOMSRV_ERROR);
+		hrResult = S_FALSE;
+	}
 
 	return hrResult;
 }// end SVGetRemoteInputCount
@@ -4800,41 +4778,33 @@ STDMETHODIMP CSVCommand::SVGetRemoteInputCount(long *lCount)
 STDMETHODIMP CSVCommand::SVSetRemoteInput(long lIndex, VARIANT vtValue)
 {
 	SVException svException;
-	SVInputObjectList *pInputObjectList;
-	HRESULT hrResult;
-	BOOL bSuccess;
+	SVInputObjectList *pInputObjectList( nullptr );
+	HRESULT hrResult = S_OK;
+	BOOL bSuccess = FALSE;
 
-	do
+	try
 	{
-		hrResult = S_OK;
-		bSuccess = FALSE;
+		SVConfigurationObject* pConfig( nullptr );
+		SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
-		try
+		if( (nullptr != pConfig) && pConfig->GetInputObjectList( &pInputObjectList ))
 		{
-			SVConfigurationObject* l_pConfig = nullptr;
-			SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
-
-			l_pConfig->GetInputObjectList( &pInputObjectList );
-
-			if( !pInputObjectList->SetRemoteInput( lIndex, vtValue ) )
+			if( nullptr != pInputObjectList && pInputObjectList->SetRemoteInput( lIndex, vtValue ) )
 			{
-				bSuccess = FALSE;
-			}// end if
-
-			bSuccess = TRUE;
+				bSuccess = TRUE;
+			}
 		}
-		catch (...)
-		{
-			bSuccess = FALSE;
-		}
+	}
+	catch (...)
+	{
+		bSuccess = FALSE;
+	}
 
-		if( !bSuccess )
-		{
-			SETEXCEPTION0 (svException, SVMSG_CMDCOMSRV_ERROR);
-			hrResult = SVMSG_CMDCOMSRV_ERROR;
-		}
-
-	} while (0);
+	if( !bSuccess )
+	{
+		SETEXCEPTION0 (svException, SVMSG_CMDCOMSRV_ERROR);
+		hrResult = SVMSG_CMDCOMSRV_ERROR;
+	}
 
 	return hrResult;
 }// end SVSetRemoteInput
@@ -6520,13 +6490,12 @@ namespace local
 
 STDMETHODIMP CSVCommand::SVSetConditionalHistoryProperties(BSTR bstrInspectionName, SAFEARRAY*  psaNames,  SAFEARRAY*  psaValues,  SAFEARRAY** ppsaStatus)
 {
-	HRESULT hr = S_OK;
-	SVInspectionProcess* pInspection = NULL;
-	CString strInspection(bstrInspectionName);
-	SVConfigurationObject* l_pConfig = NULL;
-	SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
+	USES_CONVERSION;
 
-	if ( l_pConfig->GetInspectionObject(strInspection, &pInspection) )
+	HRESULT hr = S_OK;
+	SVInspectionProcess* pInspection( nullptr );
+
+	if ( SVConfigurationObject::GetInspection( W2T(bstrInspectionName), pInspection ) )
 	{
 		SVScalarValueVectorType vecProperties;
 		hr = local::SafeArrayToScalarValueVector( psaNames, psaValues, vecProperties );
@@ -6550,13 +6519,12 @@ STDMETHODIMP CSVCommand::SVSetConditionalHistoryProperties(BSTR bstrInspectionNa
 
 STDMETHODIMP CSVCommand::SVGetConditionalHistoryProperties(BSTR bstrInspectionName, SAFEARRAY** ppsaNames, SAFEARRAY** ppsaValues, SAFEARRAY** ppsaStatus)
 {
-	HRESULT hr = S_OK;
-	SVInspectionProcess* pInspection = NULL;
-	CString strInspection(bstrInspectionName);
-	SVConfigurationObject* l_pConfig = NULL;
-	SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
+	USES_CONVERSION;
 
-	if ( l_pConfig->GetInspectionObject(strInspection, &pInspection) )
+	HRESULT hr = S_OK;
+	SVInspectionProcess* pInspection( nullptr );
+
+	if ( SVConfigurationObject::GetInspection( W2T(bstrInspectionName), pInspection ) )
 	{
 		SVScalarValueVectorType vecProperties;
 
@@ -6576,13 +6544,12 @@ STDMETHODIMP CSVCommand::SVGetConditionalHistoryProperties(BSTR bstrInspectionNa
 
 STDMETHODIMP CSVCommand::SVSetConditionalHistoryList(BSTR bstrInspectionName, SAFEARRAY*  psaValueNames,  SAFEARRAY*  psaImageNames,  SAFEARRAY*  psaConditionalNames,  SAFEARRAY** ppsaValueStatus, SAFEARRAY** ppsaImageStatus, SAFEARRAY** ppsaConditionalStatus)
 {
-	HRESULT hr = S_OK;
-	SVInspectionProcess* pInspection = NULL;
-	CString strInspection(bstrInspectionName);
-	SVConfigurationObject* l_pConfig = NULL;
-	SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
+	USES_CONVERSION;
 
-	if ( l_pConfig->GetInspectionObject(strInspection, &pInspection) )
+	HRESULT hr = S_OK;
+	SVInspectionProcess* pInspection( nullptr );
+
+	if ( SVConfigurationObject::GetInspection( W2T(bstrInspectionName), pInspection ) )
 	{
 		SVScalarValueVectorType vecValues, vecImages, vecConditionals;
 
@@ -6638,13 +6605,12 @@ STDMETHODIMP CSVCommand::SVSetConditionalHistoryList(BSTR bstrInspectionName, SA
 
 STDMETHODIMP CSVCommand::SVGetConditionalHistoryList( BSTR bstrInspectionName, SAFEARRAY** ppsaValueNames, SAFEARRAY** ppsaImageNames, SAFEARRAY** ppsaConditionalNames, SAFEARRAY** ppsaValueStatus, SAFEARRAY** ppsaImageStatus, SAFEARRAY** ppsaConditionalStatus )
 {
-	HRESULT hr = S_OK;
-	SVInspectionProcess* pInspection = NULL;
-	CString strInspection(bstrInspectionName);
-	SVConfigurationObject* l_pConfig = NULL;
-	SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
+	USES_CONVERSION;
 
-	if ( l_pConfig->GetInspectionObject(strInspection, &pInspection) )
+	HRESULT hr = S_OK;
+	SVInspectionProcess* pInspection( nullptr );
+
+	if ( SVConfigurationObject::GetInspection( W2T(bstrInspectionName), pInspection ) )
 	{
 		SVScalarValueVectorType vecValues, vecImages, vecConditionals;
 
@@ -6672,13 +6638,12 @@ STDMETHODIMP CSVCommand::SVGetConditionalHistoryAndClear(
 	SAFEARRAY** ppsaImageStatus, SAFEARRAY** ppsaValueStatus, SAFEARRAY** ppsaConditionalStatus,
 	SAFEARRAY** ppsaProcessCount )
 {
-	HRESULT hr = S_OK;
-	SVInspectionProcess* pInspection = NULL;
-	CString strInspection(bstrInspectionName);
-	SVConfigurationObject* l_pConfig = NULL;
-	SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
+	USES_CONVERSION;
 
-	if ( l_pConfig->GetInspectionObject(strInspection, &pInspection) )
+	HRESULT hr = S_OK;
+	SVInspectionProcess* pInspection( nullptr );
+
+	if ( SVConfigurationObject::GetInspection( W2T(bstrInspectionName), pInspection ) )
 	{
 		// check online status
 		bool bOnline = SVSVIMStateClass::CheckState( SV_STATE_RUNNING );
@@ -6730,13 +6695,12 @@ STDMETHODIMP CSVCommand::SVGetMostRecentConditionalHistory(
 	SAFEARRAY** ppsaImageStatus, SAFEARRAY** ppsaValueStatus, SAFEARRAY** ppsaConditionalStatus,
 	long* plProcessCount )
 {
-	HRESULT hr = S_OK;
-	SVInspectionProcess* pInspection = NULL;
-	CString strInspection(bstrInspectionName);
-	SVConfigurationObject* l_pConfig = NULL;
-	SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
+	USES_CONVERSION;
 
-	if ( l_pConfig->GetInspectionObject(strInspection, &pInspection) )
+	HRESULT hr = S_OK;
+	SVInspectionProcess* pInspection( nullptr );
+
+	if ( SVConfigurationObject::GetInspection( W2T(bstrInspectionName), pInspection ) )
 	{
 		// check online status
 		bool bOnline = SVSVIMStateClass::CheckState( SV_STATE_RUNNING );
@@ -6776,22 +6740,21 @@ STDMETHODIMP CSVCommand::SVGetMostRecentConditionalHistory(
 }
 
 // Stub for SVGetTransferValueDefinitionList
-STDMETHODIMP CSVCommand::SVGetTransferValueDefinitionList(BSTR p_bstrInspectionName, 
+STDMETHODIMP CSVCommand::SVGetTransferValueDefinitionList(BSTR bstrInspectionName, 
 	long* p_plVersion,
 	VARIANT* p_pvData )
 {
+	USES_CONVERSION;
+
 	if( p_pvData == NULL )
 	{
 		return S_FALSE;
 	}
 
 	HRESULT hr = S_OK;
-	SVInspectionProcess* pInspection = NULL;
-	CString strInspection(p_bstrInspectionName);
-	SVConfigurationObject* l_pConfig = NULL;
-	SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
+	SVInspectionProcess* pInspection( nullptr );
 
-	if ( l_pConfig->GetInspectionObject(strInspection, &pInspection) )
+	if ( SVConfigurationObject::GetInspection( W2T(bstrInspectionName), pInspection ) )
 	{
 		// Get Data Definition list from inspection
 		SVToolSetClass* pToolSet = pInspection->GetToolSet();
@@ -6954,22 +6917,21 @@ STDMETHODIMP CSVCommand::SVGetTransferValueDefinitionList(BSTR p_bstrInspectionN
 }
 
 // Stub for SVGetTransferImageDefinitionList
-STDMETHODIMP CSVCommand::SVGetTransferImageDefinitionList(BSTR p_bstrInspectionName, 
+STDMETHODIMP CSVCommand::SVGetTransferImageDefinitionList(BSTR bstrInspectionName, 
 	long* p_plVersion,
 	VARIANT* p_pvData)
 {
+	USES_CONVERSION;
+
 	if( p_pvData == NULL )
 	{
 		return SVMSG_INVALID_VARIANT_PARAMETER;
 	}
 
 	HRESULT hr = S_OK;
-	SVInspectionProcess* pInspection = NULL;
-	CString strInspection(p_bstrInspectionName);
-	SVConfigurationObject* l_pConfig = NULL;
-	SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
+	SVInspectionProcess* pInspection( nullptr );
 
-	if ( l_pConfig->GetInspectionObject(strInspection, &pInspection) )
+	if ( SVConfigurationObject::GetInspection( W2T(bstrInspectionName), pInspection ) )
 	{
 		// Get Image list from the tool set.
 		SVImageListClass l_ImageList;

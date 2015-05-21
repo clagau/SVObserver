@@ -71,21 +71,23 @@ namespace sv_xml
 		const std::string Print() const;
 
 	private:
+		typedef std::map<std::string, SVInspectionProcess*> InspectionMap;
+
 		void PrintXMLDoc(Writer  writer) const;
 		void WriteTriggers(Writer  writer) const;
-		void WriteTrigger(Writer  writer, SVTriggerObject * t) const;
+		void WriteTrigger(Writer  writer, SVTriggerObject* pTrigger) const;
 		void WriteCameras(Writer  writer) const;
-		void WriteCamera(Writer  writer, SVVirtualCamera * cam) const;
-		void WriteHardwareAcq(Writer  writer, SVVirtualCamera * cam) const;
-		void WriteFileAcq(Writer  writer, SVVirtualCamera * cam) const;
+		void WriteCamera(Writer  writer, SVVirtualCamera* pCamera) const;
+		void WriteHardwareAcq(Writer  writer, SVVirtualCamera* pCamera) const;
+		void WriteFileAcq(Writer  writer, SVVirtualCamera* pCamera) const;
 		void WritePPQs(Writer  writer) const;
-		void WritePPQCameras(Writer  writer, SVPPQObject * pPPQ) const;
-		void WritePPQInspections(Writer  writer, SVPPQObject * pPPQ) const;
+		void WritePPQCameras(Writer  writer, SVPPQObject* pPPQ) const;
+		void WritePPQInspections(Writer  writer, SVPPQObject* pPPQ) const;
 		void WriteInspections(Writer  writer) const;
 		void WriteToolSets(Writer writer) const;
-		void WriteToolSet(Writer writer, SVInspectionProcess * insp) const;
-		void WriteTool(Writer writer, SVToolClass * ts) const;
-		void WriteArchiveTool(Writer writer, SVArchiveTool * ar) const;
+		void WriteToolSet(Writer writer, SVInspectionProcess* pInspection) const;
+		void WriteTool(Writer writer, SVToolClass* pTool) const;
+		void WriteArchiveTool(Writer writer, SVArchiveTool* pArchiveTool) const;
 		void WriteModuleIO(Writer writer) const;
 		void WriteResultIO(Writer writer) const;
 		void WriteIOSection(Writer writer) const;
@@ -102,7 +104,7 @@ namespace sv_xml
 		void WriteValueObject(Writer writer, const std::wstring  tag, const std::wstring  lpszName, const std::wstring  lpszValue) const;
 		void WriteIOEntryObject(Writer writer, SVIOEntryHostStructPtr IOEntry) const;
 
-		mutable SVConfigurationObject * m_cfo;
+		mutable SVConfigurationObject* m_cfo;
 		mutable int nToolNumber;
 	};
 

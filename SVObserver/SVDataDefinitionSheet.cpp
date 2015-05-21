@@ -47,7 +47,7 @@ SVDataDefinitionSheet::SVDataDefinitionSheet(LPCTSTR pszCaption, SVInspectionPro
 SVDataDefinitionSheet::~SVDataDefinitionSheet()
 {
 	DestroyPages();
-	m_pInspection = NULL;
+	m_pInspection = nullptr;
 }
 
 

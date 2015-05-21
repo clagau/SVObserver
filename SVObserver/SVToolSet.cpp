@@ -1372,13 +1372,13 @@ HRESULT SVToolSetClass::ResetCounts()
 
 	try
 	{
-		SVInspectionProcess* pIP = GetInspection();
+		SVInspectionProcess* pInspection = GetInspection();
 
 		//add request to inspection process
-		if( pIP->AddInputRequest( &m_bvoResetCounts, _T( "true" ) ) )
+		if( nullptr != pInspection && pInspection->AddInputRequest( &m_bvoResetCounts, _T( "true" ) ) )
 		{
 			//add request to inspection process
-			if( ! pIP->AddInputRequestMarker() )
+			if( ! pInspection->AddInputRequestMarker() )
 			{
 				l_hrOk = S_FALSE;
 			}

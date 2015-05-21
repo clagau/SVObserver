@@ -282,7 +282,11 @@ int SVExternalToolInputSelectPage::SelectObject( CString& rObjectName, SVRProper
 
 	if( nullptr == pToolSet ) { return 0; }
 
-	SVString InspectionName( pToolSet->GetInspection()->GetName() );
+	SVString InspectionName;
+	if( nullptr != pToolSet->GetInspection() )
+	{
+		InspectionName = pToolSet->GetInspection()->GetName();
+	}
 
 	ObjectTreeGenerator::Instance().setSelectorType( ObjectTreeGenerator::SelectorTypeEnum::TypeSingleObject );
 	ObjectTreeGenerator::Instance().setAttributeFilters( SV_ARCHIVABLE );
@@ -293,8 +297,9 @@ int SVExternalToolInputSelectPage::SelectObject( CString& rObjectName, SVRProper
 	ObjectTreeGenerator::Instance().insertTreeObjects( Seidenader::SVObjectLibrary::FqnEnvironmentMode );
 	if (nullptr != m_pTool)
 	{
-		SVPPQObject *ppq = m_pTool->GetInspection()->GetPPQ();
-		SVString PPQName = ppq->GetName();
+		SVPPQObject* pPPQ = m_pTool->GetInspection()->GetPPQ();
+		SVString PPQName;
+		if( nullptr != pPPQ ){ PPQName = pPPQ->GetName(); }
 		ObjectTreeGenerator::Instance().insertTreeObjects( PPQName );
 	}
 

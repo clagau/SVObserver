@@ -183,16 +183,16 @@ void SVExternalToolImageSelectPage::Refresh()
 	SVToolClass* pTool = m_pParentDialog->m_pTool;
 	if( nullptr != m_pParentDialog && nullptr != pTool )
 	{
-		SVInspectionProcess* l_pInspection = pTool->GetInspection();
+		SVInspectionProcess* pInspection( pTool->GetInspection() );
 
-		if( l_pInspection != nullptr )
+		if( nullptr != pInspection )
 		{
-			SVCommandInspectionRunOncePtr l_CommandPtr = new SVCommandInspectionRunOnce( l_pInspection->GetUniqueObjectID(), pTool->GetUniqueObjectID() );
-			SVObjectSynchronousCommandTemplate< SVCommandInspectionRunOncePtr > l_Command( l_pInspection->GetUniqueObjectID(), l_CommandPtr );
+			SVCommandInspectionRunOncePtr l_CommandPtr = new SVCommandInspectionRunOnce( pInspection->GetUniqueObjectID(), pTool->GetUniqueObjectID() );
+			SVObjectSynchronousCommandTemplate< SVCommandInspectionRunOncePtr > l_Command( pInspection->GetUniqueObjectID(), l_CommandPtr );
 
 			l_Command.Execute( 120000 ); // Allow the command 2 minutes to execute.
 			m_ImageDisplay.Refresh();
-			SVIPDoc* l_pIPDoc = SVObjectManagerClass::Instance().GetIPDoc( l_pInspection->GetUniqueObjectID() );
+			SVIPDoc* l_pIPDoc = SVObjectManagerClass::Instance().GetIPDoc( pInspection->GetUniqueObjectID() );
 
 			if( l_pIPDoc != nullptr )
 			{

@@ -638,7 +638,7 @@ HRESULT SVInspectionTreeParser< SVTreeType >::CreateInspectionObject(GUID& inspe
 		SVObjectClass* pObject = nullptr;
 		SVObjectManagerClass::Instance().GetObjectByIdentifier(inspectionGuid, pObject);
 		SVInspectionProcess* pInspection = dynamic_cast<SVInspectionProcess*>(pObject);
-		if (pInspection)
+		if ( nullptr != pInspection )
 		{
 			pInspection->SetNewDisableMethod( sNewDisableMethod == _T("1") );
 			pInspection->SetEnableAuxiliaryExtent( sEnableAuxiliaryExtent == _T("1") );

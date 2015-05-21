@@ -128,11 +128,14 @@ void SVToolSetAdjustmentDialogSheetClass::OnOK()
 	if( m_formulaPage.validateAndSetEquation() )
 	{
 		ASSERT( m_pToolSet );
-		if( m_pToolSet )
+		if( nullptr != m_pToolSet )
 		{
 			// Rebuild the Links
 			SVInspectionProcess* pInspection = m_pToolSet->GetInspection();
-			pInspection->SetDefaultInputs();
+			if( nullptr != pInspection )
+			{ 
+				pInspection->SetDefaultInputs(); 
+			}
 
 			EndDialog( IDOK );
 		}

@@ -54,11 +54,11 @@ HRESULT SVCommandInspectionCollectImageData::Execute()
 	HRESULT l_Status = S_OK;
 
 	SVObjectClass* l_pObject = SVObjectManagerClass::Instance().GetObject( GetInspectionId() );
-	SVInspectionProcess* l_pInspection = dynamic_cast< SVInspectionProcess* >( l_pObject );
+	SVInspectionProcess* pInspection = dynamic_cast< SVInspectionProcess* >( l_pObject );
 
-	if( l_pInspection != NULL )
+	if( nullptr != pInspection )
 	{
-		SVProductInfoStruct l_Product = l_pInspection->LastProductGet( SV_DISPLAY );
+		SVProductInfoStruct l_Product = pInspection->LastProductGet( SV_DISPLAY );
 
 		SVInspectionInfoStruct& l_rIPInfo = l_Product.m_svInspectionInfos[ GetInspectionId() ];
 		SVStdMapSVVirtualCameraPtrSVCameraInfoStruct& l_rCameraInfos = l_Product.m_svCameraInfos;
@@ -84,7 +84,7 @@ HRESULT SVCommandInspectionCollectImageData::Execute()
 
 		m_Product.m_TriggerCount = l_Product.ProcessCount();
 
-		UpdateResults( l_pInspection, m_Product.m_ResultData );
+		UpdateResults( pInspection, m_Product.m_ResultData );
 
 		m_Product.m_ResultData.m_ToolSetEndTime = l_rIPInfo.m_ToolSetEndTime;
 		m_Product.m_ResultData.m_ToolSetAvgTime = l_rIPInfo.m_ToolSetAvgTime;
@@ -168,14 +168,14 @@ const SVIPProductStruct& SVCommandInspectionCollectImageData::GetProduct() const
 	return m_Product;
 }
 
-HRESULT SVCommandInspectionCollectImageData::UpdateResults( SVInspectionProcess* p_pInspection, SVIPResultData& p_rResultData )
+HRESULT SVCommandInspectionCollectImageData::UpdateResults( SVInspectionProcess* pInspection, SVIPResultData& p_rResultData )
 {
 	HRESULT hRet = S_OK;
 	SVResultListClass* pResultList(nullptr);
 
-	if( p_pInspection != nullptr )
+	if( nullptr != pInspection )
 	{
-		pResultList = p_pInspection->GetResultList();
+		pResultList = pInspection->GetResultList();
 
 		bool bOK = pResultList->m_PPQInputReferences.SetResultData(p_rResultData, false); // BRW - TODO:  Change SetResultData to return HRESULT, not bool.
 

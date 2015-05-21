@@ -394,11 +394,11 @@ BOOL SVRangeClass::renameToolSetSymbol(SVObjectClass* pObject, LPCTSTR orgName)
 	CString newPrefix;
 	CString oldPrefix;
 
-	if( SVInspectionProcess* l_pInspection = dynamic_cast< SVInspectionProcess* >( pObject ) )
+	if( SVInspectionProcess* pInspection = dynamic_cast< SVInspectionProcess* >( pObject ) )
 	{
-		newPrefix = l_pInspection->GetCompleteObjectNameToObjectType( NULL, SVInspectionObjectType ) + _T( "." );
+		newPrefix = pInspection->GetCompleteObjectNameToObjectType( NULL, SVInspectionObjectType ) + _T( "." );
 		oldPrefix = newPrefix;
-		oldPrefix.Replace( l_pInspection->GetName(), orgName );
+		oldPrefix.Replace( pInspection->GetName(), orgName );
 	}// end if
 	else
 	{

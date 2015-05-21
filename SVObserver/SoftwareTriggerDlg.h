@@ -29,26 +29,26 @@ namespace sv
 	};
 }
 
-typedef boost::function<void (SVTriggerObject *)> DirtyHandler;
+typedef boost::function<void (SVTriggerObject*)> DirtyHandler;
 
 class SVTriggerProxy
 {
 public:
-	SVTriggerProxy(SVTriggerObject * t): trig(t), m_paused(false), m_period(200)
+	SVTriggerProxy(SVTriggerObject* t): m_pTrigger(t), m_paused(false), m_period(200)
 	{
 	}
-	int GetSoftwareTriggerPeriod() { if( !m_paused){m_period = trig->GetSoftwareTriggerPeriod();} return m_period; }
-	CString GetName() const { return trig->GetName(); }
-	void SetSoftwareTriggerPeriod(long period, bool setTimer = false) { m_period = period; if (!m_paused) trig->SetSoftwareTriggerPeriod(period, setTimer); }
-	SVTriggerObject * GetTrigger() { return trig; }
-	void Pause() { m_paused = true; m_period = GetSoftwareTriggerPeriod(); trig->SetSoftwareTriggerPeriod(INT_MAX, true); }
-	void Continue() { if (m_paused) { m_paused = false; trig->SetSoftwareTriggerPeriod(m_period, true); } }
+	int GetSoftwareTriggerPeriod() { if( !m_paused){m_period = m_pTrigger->GetSoftwareTriggerPeriod();} return m_period; }
+	CString GetName() const { return m_pTrigger->GetName(); }
+	void SetSoftwareTriggerPeriod(long period, bool setTimer = false) { m_period = period; if (!m_paused) m_pTrigger->SetSoftwareTriggerPeriod(period, setTimer); }
+	SVTriggerObject* GetTrigger() { return m_pTrigger; }
+	void Pause() { m_paused = true; m_period = GetSoftwareTriggerPeriod(); m_pTrigger->SetSoftwareTriggerPeriod(INT_MAX, true); }
+	void Continue() { if (m_paused) { m_paused = false; m_pTrigger->SetSoftwareTriggerPeriod(m_period, true); } }
 	CString ButtonText() const { return m_paused?_T("Continue"):_T("Pause"); }
 	bool Toggle() { if (m_paused) Continue(); else Pause(); return m_paused; }
 	bool Paused() const { return m_paused;  }
 
 private:
-	SVTriggerObject * trig;
+	SVTriggerObject* m_pTrigger;
 	long m_period;
 	bool m_paused;
 };
@@ -108,7 +108,7 @@ public:
 	afx_msg void OnBnClickedPausebutton();
 	
 	void ClearTriggers();
-	bool AddTrigger(SVTriggerObject * trigger);
+	bool AddTrigger(SVTriggerObject* pTrigger);
 	bool HasTriggers() const { return m_triggerTabs.GetItemCount() > 0; }
 	int SelectTrigger();
 

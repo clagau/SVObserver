@@ -58,7 +58,7 @@ public:
 
 protected:
 	SVButtonList buttonList;
-	SVPPQObject *m_pPPQ;
+	SVPPQObject* m_pPPQ;
 
 };
 

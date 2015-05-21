@@ -1508,11 +1508,11 @@ HRESULT SVMainFrame::ParseToolsetScripts( SVTreeType& p_rTree )
 				}
 			}
 
-			if( S_OK == l_Status )
-			{
-				SVConfigurationObject* pConfig = nullptr;
-				SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
+			SVConfigurationObject* pConfig( nullptr );
+			SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
+			if( S_OK == l_Status && nullptr != pConfig )
+			{
 				unsigned long parserHandle = SVObjectScriptParserClass::GetParserHandle();
 
 				unsigned long ulVersion = pConfig->GetFileVersion();

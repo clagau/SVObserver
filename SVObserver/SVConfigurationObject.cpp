@@ -177,11 +177,11 @@ HRESULT SVConfigurationObject::RebuildOutputObjectList()
 
 	for( long l = 0; l < lSize; l++ )
 	{
-		SVPPQObject* pPPQ = NULL;
+		SVPPQObject* pPPQ( nullptr );
 
 		GetPPQ( l, &pPPQ );
 
-		if( pPPQ )
+		if( nullptr != pPPQ )
 		{
 			pPPQ->RebuildOutputList();
 		}
@@ -190,21 +190,28 @@ HRESULT SVConfigurationObject::RebuildOutputObjectList()
 	return l_Status;
 }
 
-BOOL SVConfigurationObject::AddTrigger( SVTriggerObject *pTrigger )
+BOOL SVConfigurationObject::AddTrigger( SVTriggerObject* pTrigger )
 {
-	m_arTriggerArray.Add( pTrigger );
-	return TRUE;
+	bool Result(false);
+
+	if( nullptr != pTrigger )
+	{
+		m_arTriggerArray.Add( pTrigger );
+		Result = true;
+	}
+	return Result;
 }// end AddTrigger
 
-BOOL SVConfigurationObject::RemoveTrigger( SVTriggerObject *pTrigger )
+BOOL SVConfigurationObject::RemoveTrigger( SVTriggerObject* pTrigger )
 {
-	int i;
+	if( nullptr != pTrigger ) { return FALSE;}
+
 	int iSize;
 
 	iSize = m_arTriggerArray.GetSize();
-	for( i = 0; i < iSize; i++ )
+	for(int i = 0; i < iSize; i++ )
 	{
-		if(  pTrigger == m_arTriggerArray.GetAt( i ) )
+		if( pTrigger == m_arTriggerArray.GetAt( i ) )
 		{
 			m_arTriggerArray.RemoveAt( i );
 			break;
@@ -223,6 +230,9 @@ BOOL SVConfigurationObject::GetChildObjectByName( LPCTSTR tszName, SVTriggerObje
 {
 	bool bReturn = false;
 
+	//Only do an assert check so that in release mode no check is made
+	ASSERT( nullptr != ppTrigger );
+
 	long lCount;
 	GetTriggerCount( lCount );
 
@@ -230,11 +240,11 @@ BOOL SVConfigurationObject::GetChildObjectByName( LPCTSTR tszName, SVTriggerObje
 
 	for( long l = 0; l < lCount; l++ )
 	{ 
-		SVTriggerObject* pObject;
-		GetTrigger( l, &pObject );
-		if( sName == pObject->GetCompleteObjectName() )
+		SVTriggerObject* pTrigger( nullptr );
+		GetTrigger( l, &pTrigger );
+		if( nullptr != pTrigger && sName == pTrigger->GetCompleteObjectName() )
 		{
-			*ppTrigger = pObject;
+			*ppTrigger = pTrigger;
 			bReturn = true;
 			break;
 		}
@@ -243,9 +253,16 @@ BOOL SVConfigurationObject::GetChildObjectByName( LPCTSTR tszName, SVTriggerObje
 	return bReturn;
 }
 
-BOOL SVConfigurationObject::GetTrigger( long lIndex, SVTriggerObject **ppTrigger ) const
+BOOL SVConfigurationObject::GetTrigger( long lIndex, SVTriggerObject** ppTrigger ) const
 {
+	//Only do an assert check so that in release mode no check is made
+	ASSERT( nullptr != ppTrigger );
+
 	*ppTrigger = m_arTriggerArray.GetAt( lIndex );
+
+	ASSERT( nullptr != *ppTrigger );
+
+	//@WARNING [gra][7.20][21.05.2014] returning true without checking is misleading it seems the pointer is valid
 	return TRUE;
 }// end GetTrigger
 
@@ -433,15 +450,23 @@ void SVConfigurationObject::GetAcquisitionDeviceNextAssoc( SVAcquisitionDeviceMa
 	}
 }
 
-BOOL SVConfigurationObject::AddPPQ( SVPPQObject *pPPQ )
+BOOL SVConfigurationObject::AddPPQ( SVPPQObject* pPPQ )
 {
-	m_arPPQArray.Add( pPPQ );
-	return TRUE;
+	bool Result( false );
+
+	if( nullptr != pPPQ )
+	{
+		m_arPPQArray.Add( pPPQ );
+		Result = true;
+	}
+
+	return Result;
 }// end AddPPQ
 
-BOOL SVConfigurationObject::RemovePPQ( SVPPQObject *pPPQ )
+BOOL SVConfigurationObject::RemovePPQ( SVPPQObject* pPPQ )
 {
-	int i;
+	if( nullptr != pPPQ ) { return FALSE;}
+
 	int iSize;
 
 	// BRW - PLC has been deprecated.
@@ -450,7 +475,7 @@ BOOL SVConfigurationObject::RemovePPQ( SVPPQObject *pPPQ )
 #endif
 
 	iSize = m_arPPQArray.GetSize();
-	for( i = 0; i < iSize; i++ )
+	for( int i = 0; i < iSize; i++ )
 	{
 		if(  pPPQ == m_arPPQArray.GetAt( i ) )
 		{
@@ -471,6 +496,9 @@ BOOL SVConfigurationObject::GetChildObjectByName( LPCTSTR tszName, SVPPQObject**
 {
 	bool bReturn = false;
 
+	//Only do an assert check so that in release mode no check is made
+	ASSERT( nullptr != ppPPQ );
+
 	long lCount;
 	GetPPQCount( lCount );
 
@@ -478,11 +506,11 @@ BOOL SVConfigurationObject::GetChildObjectByName( LPCTSTR tszName, SVPPQObject**
 
 	for( long l = 0; l < lCount; l++ )
 	{ 
-		SVPPQObject* pObject;
-		GetPPQ( l, &pObject );
-		if( sName == pObject->GetCompleteObjectName() )
+		SVPPQObject* pPPQ( nullptr );
+		GetPPQ( l, &pPPQ );
+		if( nullptr != pPPQ && sName == pPPQ->GetCompleteObjectName() )
 		{
-			*ppPPQ = pObject;
+			*ppPPQ = pPPQ;
 			bReturn = true;
 			break;
 		}
@@ -491,46 +519,63 @@ BOOL SVConfigurationObject::GetChildObjectByName( LPCTSTR tszName, SVPPQObject**
 	return bReturn;
 }
 
-BOOL SVConfigurationObject::GetPPQ( long lIndex, SVPPQObject **ppPPQ ) const
+BOOL SVConfigurationObject::GetPPQ( long lIndex, SVPPQObject** ppPPQ ) const
 {
+	//Only do an assert check so that in release mode no check is made
+	ASSERT( nullptr != ppPPQ );
+	
 	*ppPPQ = m_arPPQArray.GetAt( lIndex );
+
+	ASSERT( nullptr != *ppPPQ );
+
+	//@WARNING [gra][7.20][21.05.2014] returning true without checking is misleading it seems the pointer is valid
 	return TRUE;
 }// end GetPPQ
 
-bool SVConfigurationObject::GetPPQByName( LPCTSTR name, SVPPQObject **ppPPQ ) const
+bool SVConfigurationObject::GetPPQByName( LPCTSTR name, SVPPQObject** ppPPQ ) const
 {
-	bool bRetVal = false;
+	bool bReturn = false;
+
+	//Only do an assert check so that in release mode no check is made
+	ASSERT( nullptr != ppPPQ );
 
 	int iSize = m_arPPQArray.GetSize();
-	for (int i = 0;i < iSize && !bRetVal;i++)
+	for (int i = 0;i < iSize && !bReturn;i++)
 	{
 		SVPPQObject* pPPQ = m_arPPQArray.GetAt(i);
-		if (pPPQ)
+		if ( nullptr != pPPQ)
 		{
 			SVString ppqName = pPPQ->GetName();
 			if (ppqName == name)
 			{
 				*ppPPQ = pPPQ;
-				bRetVal = true;
+				bReturn = true;
 			}
 		}
 	}
-	return bRetVal;
+	return bReturn;
 }
 
-BOOL SVConfigurationObject::AddCamera( SVVirtualCamera *pCamera )
+BOOL SVConfigurationObject::AddCamera( SVVirtualCamera* pCamera )
 {
-	m_arCameraArray.Add( pCamera );
-	return TRUE;
+	bool Result( false );
+
+	if( nullptr != pCamera )
+	{
+		m_arCameraArray.Add( pCamera );
+		Result = true;
+	}
+	return Result;
 }// end AddCamera
 
-BOOL SVConfigurationObject::RemoveCamera( SVVirtualCamera *pCamera )
+BOOL SVConfigurationObject::RemoveCamera( SVVirtualCamera* pCamera )
 {
-	int i;
+	if( nullptr == pCamera ) { return FALSE;}
+
 	int iSize;
 
 	iSize = m_arCameraArray.GetSize();
-	for( i = 0; i < iSize; i++ )
+	for( int i = 0; i < iSize; i++ )
 	{
 		if(  pCamera == m_arCameraArray.GetAt( i ) )
 		{
@@ -551,6 +596,9 @@ BOOL SVConfigurationObject::GetChildObjectByName( LPCTSTR tszName, SVVirtualCame
 {
 	bool bReturn = false;
 
+	//Only do an assert check so that in release mode no check is made
+	ASSERT( nullptr != ppCamera );
+
 	long lCount;
 	GetCameraCount( lCount );
 
@@ -558,11 +606,11 @@ BOOL SVConfigurationObject::GetChildObjectByName( LPCTSTR tszName, SVVirtualCame
 
 	for( long l = 0; l < lCount; l++ )
 	{ 
-		SVVirtualCamera* pObject;
-		GetCamera( l, &pObject );
-		if( sName == pObject->GetCompleteObjectName() )
+		SVVirtualCamera* pCamera( nullptr );
+		GetCamera( l, &pCamera );
+		if( nullptr != pCamera && sName == pCamera->GetCompleteObjectName() )
 		{
-			*ppCamera= pObject;
+			*ppCamera= pCamera;
 			bReturn = true;
 			break;
 		}
@@ -573,18 +621,34 @@ BOOL SVConfigurationObject::GetChildObjectByName( LPCTSTR tszName, SVVirtualCame
 
 BOOL SVConfigurationObject::GetCamera( long lIndex, SVVirtualCamera **ppCamera ) const
 {
+	//Only do an assert check so that in release mode no check is made
+	ASSERT( nullptr != ppCamera );
+
 	*ppCamera = m_arCameraArray.GetAt( lIndex );
+
+	ASSERT( nullptr != *ppCamera );
+
+	//@WARNING [gra][7.20][21.05.2014] returning true without checking is misleading it seems the pointer is valid
 	return TRUE;
 }// end GetCamera
 
-BOOL SVConfigurationObject::AddInspection( SVInspectionProcess *pInspection )
+BOOL SVConfigurationObject::AddInspection( SVInspectionProcess* pInspection )
 {
-	m_arInspectionArray.Add( pInspection );
-	return TRUE;
+	bool Result( false );
+
+	if( nullptr != pInspection )
+	{
+		m_arInspectionArray.Add( pInspection );
+		Result = true;
+	}
+
+	return Result;
 }// end AddInspection
 
-BOOL SVConfigurationObject::RemoveInspection( SVInspectionProcess *pInspection )
+BOOL SVConfigurationObject::RemoveInspection( SVInspectionProcess* pInspection )
 {
+	if( nullptr == pInspection ) { return FALSE;}
+
 	int i;
 	int iSize;
 
@@ -606,7 +670,7 @@ BOOL SVConfigurationObject::GetInspectionCount( long &lIndex ) const
 	return TRUE;
 }// end GetInspectionCount
 
-BOOL SVConfigurationObject::GetInspectionObject( LPCTSTR tszName, SVInspectionProcess **ppInspection ) const
+BOOL SVConfigurationObject::GetInspectionObject( LPCTSTR tszName, SVInspectionProcess** ppInspection ) const
 {
 	BOOL bResult = FALSE;
 
@@ -628,6 +692,9 @@ BOOL SVConfigurationObject::GetChildObjectByName( LPCTSTR tszName, SVInspectionP
 {
 	BOOL bReturn = FALSE;
 
+	//Only do an assert check so that in release mode no check is made
+	ASSERT( nullptr != ppInspection );
+
 	long lCount;
 	GetInspectionCount( lCount );
 
@@ -635,26 +702,33 @@ BOOL SVConfigurationObject::GetChildObjectByName( LPCTSTR tszName, SVInspectionP
 
 	for( long l = 0; l < lCount; l++ )
 	{ 
-		SVInspectionProcess* pObject;
-		GetInspection( l, &pObject);
-		if( sName == pObject->GetCompleteObjectName() )
+		SVInspectionProcess* pInspection( nullptr );
+		GetInspection( l, &pInspection);
+		if( nullptr != pInspection && sName == pInspection->GetCompleteObjectName() )
 		{
-			*ppInspection = pObject;
+			*ppInspection = pInspection;
 			bReturn = TRUE;
 			break;
 		}
 	}
 	if (!bReturn)
 	{
-		*ppInspection = NULL;
+		*ppInspection = nullptr;
 	}
 
 	return bReturn;
 }
 
-BOOL SVConfigurationObject::GetInspection( long lIndex, SVInspectionProcess **ppInspection ) const
+BOOL SVConfigurationObject::GetInspection( long lIndex, SVInspectionProcess** ppInspection ) const
 {
+	//Only do an assert check so that in release mode no check is made
+	ASSERT( nullptr != ppInspection );
+
 	*ppInspection = m_arInspectionArray.GetAt( lIndex );
+
+	ASSERT( nullptr != ppInspection );
+
+	//@WARNING [gra][7.20][21.05.2014] returning true without checking is misleading it seems the pointer is valid
 	return TRUE;
 }// end GetInspection
 
@@ -669,6 +743,9 @@ BOOL SVConfigurationObject::GetInspections( SVInspectionProcessPtrList& rvecInsp
 HRESULT SVConfigurationObject::AddImportedRemoteInput(SVPPQObject* pPPQ, const SVString& name, long ppqPosition, long index, const _variant_t& p_Value)
 {
 	HRESULT hr = S_OK;
+
+	//Only do an assert check so that in release mode no check is made
+	ASSERT( nullptr != pPPQ );
 
 	SVIOEntryHostStructPtr pIOEntry = pPPQ->GetInput(name);
 	if (pIOEntry.empty())
@@ -702,6 +779,9 @@ HRESULT SVConfigurationObject::AddImportedDigitalInput(SVPPQObject* pPPQ, const 
 {
 	HRESULT hr = S_OK;
 
+	//Only do an assert check so that in release mode no check is made
+	ASSERT( nullptr != pPPQ );
+
 	SVIOEntryHostStructPtr pIOEntry = pPPQ->GetInput(name);
 	if (pIOEntry.empty())
 	{
@@ -725,6 +805,9 @@ HRESULT SVConfigurationObject::AddImportedDigitalInput(SVPPQObject* pPPQ, const 
 HRESULT SVConfigurationObject::AddRemoteInput(SVPPQObject* pPPQ, const SVString& name, long ppqPosition, long index, const _variant_t& p_Value)
 {
 	HRESULT hr = S_OK;
+
+	//Only do an assert check so that in release mode no check is made
+	ASSERT( nullptr != pPPQ );
 
 	SVRemoteInputObject* pRemoteInput = NULL;
 
@@ -764,6 +847,9 @@ HRESULT SVConfigurationObject::AddDigitalInput(SVPPQObject* pPPQ, const SVString
 {
 	HRESULT hr = S_OK;
 
+	//Only do an assert check so that in release mode no check is made
+	ASSERT( nullptr != pPPQ );
+
 	SVDigitalInputObject* pDigitalInput = NULL;
 
 	m_pInputObjectList->GetInputFlyweight( name.c_str(), pDigitalInput );
@@ -795,6 +881,9 @@ HRESULT SVConfigurationObject::AddDigitalInput(SVPPQObject* pPPQ, const SVString
 HRESULT SVConfigurationObject::AddCameraDataInput(SVPPQObject* pPPQ, SVIOEntryHostStructPtr pIOEntry )
 {
 	HRESULT hr = S_OK;
+
+	//Only do an assert check so that in release mode no check is made
+	ASSERT( nullptr != pPPQ );
 
 	SVCameraDataInputObject* pInput = NULL;
 	SVString name = pIOEntry->m_pValueObject->GetName();
@@ -1751,11 +1840,11 @@ HRESULT SVConfigurationObject::LoadConfiguration(SVTreeType& rTree)
 
 				CString csItemName = static_cast< LPCTSTR >( ItemName );
 
-				SVInspectionProcess *pInspect = NULL;
+				SVInspectionProcess* pInspection( nullptr );
 
-				SVObjectManagerClass::Instance().ConstructObject( SVInspectionProcessGuid, pInspect );
+				SVObjectManagerClass::Instance().ConstructObject( SVInspectionProcessGuid, pInspection );
 
-				bOk = pInspect != NULL;
+				bOk = nullptr != pInspection;
 				if ( bOk )
 				{
 					_variant_t svValue;
@@ -1764,9 +1853,9 @@ HRESULT SVConfigurationObject::LoadConfiguration(SVTreeType& rTree)
 					CString csNewDisableMethod;
 					CString csEnableAuxiliaryExtent;
 
-					pInspect->SetName( csItemName );
+					pInspection->SetName( csItemName );
 
-					pInspect->SetDeviceName( csItemName );
+					pInspection->SetDeviceName( csItemName );
 
 					SVTreeType::SVBranchHandle htiSVIPDoc = NULL;
 					SVTreeType::SVBranchHandle htiSVInspectionProcess = NULL;
@@ -1821,11 +1910,11 @@ HRESULT SVConfigurationObject::LoadConfiguration(SVTreeType& rTree)
 						{
 							SVGUID ObjectID( svVariant );
 
-							SVObjectManagerClass::Instance().CloseUniqueObjectID( pInspect );
+							SVObjectManagerClass::Instance().CloseUniqueObjectID( pInspection );
 
-							pInspect->outObjectInfo.UniqueObjectID = ObjectID;
+							pInspection->outObjectInfo.UniqueObjectID = ObjectID;
 
-							SVObjectManagerClass::Instance().OpenUniqueObjectID( pInspect );
+							SVObjectManagerClass::Instance().OpenUniqueObjectID( pInspection );
 						}
 					}
 
@@ -1835,13 +1924,13 @@ HRESULT SVConfigurationObject::LoadConfiguration(SVTreeType& rTree)
 
 						svFileName.SetFullFileName( csIPName );
 
-						pInspect->SetToolsetImage( csToolsetName );
+						pInspection->SetToolsetImage( csToolsetName );
 
-						bOk = pInspect->CreateInspection( svFileName.GetFileNameOnly() );
+						bOk = pInspection->CreateInspection( svFileName.GetFileNameOnly() );
 						if ( bOk )
 						{
-							pInspect->SetNewDisableMethod( csNewDisableMethod == _T( "1" ) );
-							pInspect->SetEnableAuxiliaryExtent( csEnableAuxiliaryExtent == _T("1") );
+							pInspection->SetNewDisableMethod( csNewDisableMethod == _T( "1" ) );
+							pInspection->SetEnableAuxiliaryExtent( csEnableAuxiliaryExtent == _T("1") );
 
 							SVTreeType::SVBranchHandle htiDataChild = NULL;
 					
@@ -1859,7 +1948,7 @@ HRESULT SVConfigurationObject::LoadConfiguration(SVTreeType& rTree)
 
 									CString strName = static_cast< LPCTSTR >( Name );
 
-									pInspect->m_arViewedInputNames.Add( strName );
+									pInspection->m_arViewedInputNames.Add( strName );
 
 									rTree.GetNextBranch( htiDataChild, htiViewed );
 								}// end while
@@ -1870,11 +1959,11 @@ HRESULT SVConfigurationObject::LoadConfiguration(SVTreeType& rTree)
 
 					if ( bOk )
 					{
-						bOk = AddInspection( pInspect );
+						bOk = AddInspection( pInspection );
 					}
 
 					rTree.GetNextBranch( htiChild, htiSubChild );
-				}// end if pInspect != NULL
+				}// end if pInspection != NULL
 			}// end while ( bOk && htiSubChild != NULL )
 		}// end if ( SVNavigateTreeClass::GetItem( rTree, CTAG_INSPECTION, NULL, &htiChild ) )
 
@@ -1894,10 +1983,10 @@ HRESULT SVConfigurationObject::LoadConfiguration(SVTreeType& rTree)
 
 				CString csItemName = static_cast< LPCTSTR >( ItemName );
 
-				SVPPQObject *pPPQ = new SVPPQObject;
+				SVPPQObject* pPPQ = new SVPPQObject;
 				pPPQ->SetName( csItemName );
 
-				bOk = pPPQ != NULL;
+				bOk = nullptr != pPPQ;
 				if ( bOk )
 				{
 					SVTreeType::SVBranchHandle htiDeviceChild;
@@ -2041,8 +2130,9 @@ HRESULT SVConfigurationObject::LoadConfiguration(SVTreeType& rTree)
 
 							for ( long l = 0; bOk && l < lCount; l++ )
 							{
-								SVTriggerObject *pTrigger = NULL;
+								SVTriggerObject *pTrigger( nullptr );
 
+								//Returns true when pointer valid
 								bOk = GetTrigger( l, &pTrigger );
 								if ( bOk )
 								{
@@ -2088,7 +2178,7 @@ HRESULT SVConfigurationObject::LoadConfiguration(SVTreeType& rTree)
 
 							for ( long l = 0; bOk && l < lCount; l++ )
 							{
-								SVVirtualCamera *pCamera = NULL;
+								SVVirtualCamera* pCamera( nullptr );
 
 								bOk = GetCamera( l, &pCamera );
 								if ( bOk )
@@ -2128,16 +2218,16 @@ HRESULT SVConfigurationObject::LoadConfiguration(SVTreeType& rTree)
 
 							for ( long l = 0; bOk && l < lCount; l++ )
 							{
-								SVInspectionProcess *pInspect = NULL;
+								SVInspectionProcess* pInspection( nullptr );
 
-								bOk = GetInspection( l, &pInspect );
+								bOk = GetInspection( l, &pInspection );
 								if ( bOk )
 								{
-									CString csDeviceName = pInspect->GetDeviceName();
+									CString csDeviceName = pInspection->GetDeviceName();
 
 									if ( csDeviceName == csDataName )
 									{
-										bOk = pPPQ->AttachInspection( pInspect );
+										bOk = pPPQ->AttachInspection( pInspection );
 
 										break;
 									}// end if
@@ -2686,7 +2776,7 @@ HRESULT SVConfigurationObject::ObserverUpdate( const SVRenameObject& p_rData )
 
 	if( l_pObject != NULL )
 	{
-		SVPPQObject *pPPQ;
+		SVPPQObject* pPPQ( nullptr );
 		SVOutputObjectList *pOutputs;
 		long lCount;
 		long lPPQ;
@@ -2709,7 +2799,7 @@ HRESULT SVConfigurationObject::ObserverUpdate( const SVRenameObject& p_rData )
 		{
 			GetPPQ( lPPQ, &pPPQ );
 
-			if( pPPQ )
+			if( nullptr != pPPQ )
 			{
 				::SVSendMessage( pPPQ, SVM_OBJECT_RENAMED,
 					reinterpret_cast<DWORD_PTR>( l_pObject ),
@@ -2758,11 +2848,11 @@ HRESULT SVConfigurationObject::GetChildObject( SVObjectClass*& rpObject, const S
 
 			for( l_InspectIter = m_arInspectionArray.begin(); rpObject == NULL && l_InspectIter != m_arInspectionArray.end(); ++l_InspectIter )
 			{
-				SVInspectionProcess* l_pInspect = ( *l_InspectIter );
+				SVInspectionProcess* pInspection = ( *l_InspectIter );
 
-				if( l_pInspect != NULL )
+				if( nullptr != pInspection )
 				{
-					l_Status = l_pInspect->GetChildObject( rpObject, rNameInfo, Index );
+					l_Status = pInspection->GetChildObject( rpObject, rNameInfo, Index );
 				}
 			}
 		}
@@ -2775,11 +2865,11 @@ HRESULT SVConfigurationObject::GetChildObject( SVObjectClass*& rpObject, const S
 
 				for( l_PPQIter = m_arPPQArray.begin(); rpObject == NULL && l_PPQIter != m_arPPQArray.end(); ++l_PPQIter )
 				{
-					SVPPQObject* l_pPPQ = ( *l_PPQIter );
+					SVPPQObject* pPPQ = ( *l_PPQIter );
 
-					if( l_pPPQ != NULL )
+					if( nullptr != pPPQ )
 					{
-						l_Status = l_pPPQ->GetChildObject( rpObject, rNameInfo, Index );
+						l_Status = pPPQ->GetChildObject( rpObject, rNameInfo, Index );
 					}
 				}
 			}
@@ -2789,11 +2879,11 @@ HRESULT SVConfigurationObject::GetChildObject( SVObjectClass*& rpObject, const S
 
 				for( l_CameraIter = m_arCameraArray.begin(); rpObject == NULL && l_CameraIter != m_arCameraArray.end(); ++l_CameraIter )
 				{
-					SVVirtualCamera* l_pCamera = ( *l_CameraIter );
+					SVVirtualCamera* pCamera = ( *l_CameraIter );
 
-					if( l_pCamera != NULL )
+					if( nullptr != pCamera )
 					{
-						l_Status = l_pCamera->GetChildObject( rpObject, rNameInfo, Index );
+						l_Status = pCamera->GetChildObject( rpObject, rNameInfo, Index );
 					}
 				}
 			}
@@ -2803,11 +2893,11 @@ HRESULT SVConfigurationObject::GetChildObject( SVObjectClass*& rpObject, const S
 
 				for( l_TriggerIter = m_arTriggerArray.begin(); rpObject == NULL && l_TriggerIter != m_arTriggerArray.end(); ++l_TriggerIter )
 				{
-					SVTriggerObject* l_pTrigger = ( *l_TriggerIter );
+					SVTriggerObject* pTrigger = ( *l_TriggerIter );
 
-					if( l_pTrigger != NULL )
+					if( nullptr != pTrigger )
 					{
-						l_Status = l_pTrigger->GetChildObject( rpObject, rNameInfo, Index );
+						l_Status = pTrigger->GetChildObject( rpObject, rNameInfo, Index );
 					}
 				}
 			}
@@ -3260,11 +3350,11 @@ BOOL SVConfigurationObject::SaveCamera(SVTreeType& rTree)
 
 		for ( long l = 0; l < lCount; l++ )
 		{
-			SVVirtualCamera *pCamera = NULL;
+			SVVirtualCamera* pCamera( nullptr );
 
 			GetCamera( l, &pCamera );
 
-			if ( pCamera != NULL )
+			if ( nullptr != pCamera )
 			{
 				SVTreeType::SVBranchHandle hCamera = NULL;
 
@@ -3340,11 +3430,11 @@ BOOL SVConfigurationObject::SaveTrigger(SVTreeType& rTree)
 
 		for ( long l = 0; l < lCount; l++ )
 		{
-			SVTriggerObject *pTrigger = NULL;
+			SVTriggerObject *pTrigger( nullptr );
 
 			GetTrigger( l, &pTrigger );
 
-			if ( pTrigger != NULL )
+			if ( nullptr != pTrigger )
 			{
 				SVTreeType::SVBranchHandle hTrigger = NULL;
 
@@ -3389,11 +3479,11 @@ BOOL SVConfigurationObject::SaveInspection(SVTreeType& rTree)
 
 		for ( long l = 0; l < lCount; l++ )
 		{
-			SVInspectionProcess *pInspection = NULL;
+			SVInspectionProcess* pInspection( nullptr );
 
 			GetInspection( l, &pInspection );
 
-			if ( pInspection != NULL )
+			if ( nullptr != pInspection )
 			{
 				SVTreeType::SVBranchHandle hInspection = NULL;
 
@@ -3445,7 +3535,7 @@ BOOL SVConfigurationObject::SavePPQ(SVTreeType& rTree)
 	if ( hBranch != NULL )
 	{
 		SVString strName;
-		SVPPQObject *pPPQ;
+		SVPPQObject* pPPQ( nullptr );
 		long lPPQCount;
 		long lInspectCount;
 		long lPPQ;
@@ -3456,7 +3546,7 @@ BOOL SVConfigurationObject::SavePPQ(SVTreeType& rTree)
 		for( lPPQ = 0; lPPQ < lPPQCount; lPPQ++ )
 		{
 			bOk = this->GetPPQ( lPPQ, &pPPQ );
-			bOk &= ( pPPQ != NULL );
+			bOk &= ( nullptr != pPPQ );
 
 			if ( bOk )
 			{
@@ -3555,10 +3645,10 @@ BOOL SVConfigurationObject::SavePPQ(SVTreeType& rTree)
 					svValue.Clear();
 				}// end if
 
-				SVTriggerObject *pTrigger = NULL;
+				SVTriggerObject *pTrigger( nullptr );
 				pPPQ->GetTrigger( pTrigger );
 
-				if( pTrigger )
+				if( nullptr != pTrigger )
 				{
 					bOk = SVNavigateTreeClass::SetBranch( rTree, htiSubChild, CTAG_TRIGGER, &htiDeviceChild );
 
@@ -3604,7 +3694,7 @@ BOOL SVConfigurationObject::SavePPQ(SVTreeType& rTree)
 					}
 				}
 
-				SVInspectionProcess *pInspect = NULL;
+				SVInspectionProcess *pInspection( nullptr );
 				pPPQ->GetInspectionCount( lInspectCount );
 
 				if( lInspectCount )
@@ -3614,14 +3704,11 @@ BOOL SVConfigurationObject::SavePPQ(SVTreeType& rTree)
 
 				for( lInspect = 0; bOk && lInspect < lInspectCount; lInspect++ )
 				{
-					pPPQ->GetInspection( lInspect, pInspect );
-					if( pInspect )
+					pPPQ->GetInspection( lInspect, pInspection );
+					if( nullptr != pInspection )
 					{
-						if( bOk )
-						{
-							strName = pInspect->GetName();
-							bOk = SVNavigateTreeClass::SetBranch( rTree, htiDeviceChild, strName.c_str() );
-						}// end if
+						strName = pInspection->GetName();
+						bOk = SVNavigateTreeClass::SetBranch( rTree, htiDeviceChild, strName.c_str() );
 					}// end if
 				}// end for( lInspect = 0; bOk && lInspect < lInspectCount; lInspect++ )
 
@@ -3853,30 +3940,32 @@ HRESULT SVConfigurationObject::SaveDeviceParamSpecial( SVTreeType& rTree, SVTree
 	return hr;
 }
 
-BOOL SVConfigurationObject::FinishIPDoc( SVInspectionProcess* pIP )
+BOOL SVConfigurationObject::FinishIPDoc( SVInspectionProcess* pInspection )
 {
 	BOOL bOk = FALSE;
 
-	if ( pIP != NULL )
+	if ( nullptr != pInspection )
 	{
-		SVPPQObject *pPPQ;
+		SVPPQObject* pPPQ( pInspection->GetPPQ() );
 
-		pPPQ = pIP->GetPPQ();
+		if( nullptr != pPPQ )
+		{
+			GetInputObjectList( &pPPQ->m_pInputList );
+			pPPQ->RebuildInputList(HasCameraTrigger(pPPQ));
 
-		GetInputObjectList( &pPPQ->m_pInputList );
-		pPPQ->RebuildInputList(HasCameraTrigger(pPPQ));
+			GetOutputObjectList( &pPPQ->m_pOutputList );
+			pPPQ->RebuildOutputList();
 
-		GetOutputObjectList( &pPPQ->m_pOutputList );
-		pPPQ->RebuildOutputList();
+			pInspection->RebuildInspectionInputList();
 
-		pIP->RebuildInspectionInputList();
+			pInspection->RebuildInspection();
 
-		pIP->RebuildInspection();
+			// Init Document
+			pInspection->ValidateAndInitialize( true, false );
 
-		// Init Document
-		pIP->ValidateAndInitialize( true, false );
+			bOk = TRUE;
+		}
 
-		bOk = TRUE;
 	}
 
 	return bOk;
@@ -3912,11 +4001,11 @@ BOOL SVConfigurationObject::RebuildInputOutputLists()
 
 	for ( l = 0; l < lSize; l++ )
 	{
-		SVInspectionProcess *pInspect = m_arInspectionArray[l];
+		SVInspectionProcess* pInspection = m_arInspectionArray[l];
 
-		if ( pInspect != NULL )
+		if ( nullptr != pInspection )
 		{
-			bOk = FinishIPDoc( pInspect ) && bOk;
+			bOk = FinishIPDoc( pInspection ) && bOk;
 		}
 	}
 
@@ -3989,6 +4078,12 @@ unsigned long SVConfigurationObject::GetSVXFileVersion(SVTreeType& rTree)
 
 void SVConfigurationObject::SetupSoftwareTrigger(SVSoftwareTriggerClass* pTriggerDevice, int iDigNum, long triggerPeriod, SVPPQObject* pPPQ)
 {
+	ASSERT( nullptr != pTriggerDevice && nullptr != pPPQ);
+	if( nullptr == pTriggerDevice || nullptr == pPPQ )
+	{
+		return;
+	}
+
 	unsigned long triggerHandle;
 	pTriggerDevice->m_pDLLTrigger->GetHandle(&triggerHandle, iDigNum);
 	VARIANT l_vValue;
@@ -4012,7 +4107,7 @@ void SVConfigurationObject::SetupSoftwareTrigger(SVSoftwareTriggerClass* pTrigge
 		for (SVVirtualCameraPtrList ::iterator l_Iter = l_Cameras.begin(); l_Iter != l_Cameras.end(); ++l_Iter)
 		{
 			SVVirtualCamera* pCamera = ( *l_Iter );
-			if (pCamera)
+			if ( nullptr != pCamera )
 			{
 				// remove Trigger Relay, as we are using the Software Trigger
 				pCamera->UnregisterTriggerRelay();
@@ -4035,6 +4130,12 @@ void SVConfigurationObject::SetupSoftwareTrigger(SVSoftwareTriggerClass* pTrigge
 
 void SVConfigurationObject::SetupCameraTrigger(SVCameraTriggerClass* pTriggerDevice, int iDigNum, SVPPQObject* pPPQ, bool bSoftwareTrigger, long triggerPeriod)
 {
+	ASSERT( nullptr != pTriggerDevice && nullptr != pPPQ);
+	if( nullptr == pTriggerDevice || nullptr == pPPQ )
+	{
+		return;
+	}
+
 	if (bSoftwareTrigger)
 	{
 		CString sDeviceName = SVHardwareManifest::BuildSoftwareTriggerDeviceName(iDigNum).ToString();
@@ -4059,8 +4160,8 @@ void SVConfigurationObject::SetupCameraTrigger(SVCameraTriggerClass* pTriggerDev
 			{
 				for (long i = 0;i < l_Count;i++)
 				{
-					SVVirtualCamera* pCamera(NULL);
-					if (GetCamera(i, &pCamera) && pCamera)
+					SVVirtualCamera* pCamera( nullptr );
+					if (GetCamera(i, &pCamera) && nullptr != pCamera)
 					{
 						if (!pCamera->mpsvDevice.empty())
 						{
@@ -4105,7 +4206,8 @@ HRESULT SVConfigurationObject::AttachAcqToTriggers()
 	BOOL bOk = true;
 	for ( long l = 0; bOk && l < lCount; l++ )
 	{
-		SVTriggerObject *pTrigger = NULL;
+		SVTriggerObject *pTrigger( nullptr );
+		//Returns true if pointer valid
 		bOk = GetTrigger( l, &pTrigger );
 		if ( bOk )
 		{
@@ -4113,10 +4215,10 @@ HRESULT SVConfigurationObject::AttachAcqToTriggers()
 			{
 				int iDigNum = pTrigger->mpsvDevice->miChannelNumber;
 				SVCameraTriggerClass* pTriggerDevice = dynamic_cast<SVCameraTriggerClass*>(pTrigger->mpsvDevice);
-				if( pTriggerDevice != NULL )
+				if( nullptr != pTriggerDevice )
 				{
 					SVPPQObject* pPPQ = reinterpret_cast<SVPPQObject*>(pTrigger->m_pOwner);
-					SetupCameraTrigger(pTriggerDevice, iDigNum, pPPQ, pTrigger->IsSoftwareTrigger(), pTrigger->GetSoftwareTriggerPeriod());
+					if( nullptr != pPPQ){ SetupCameraTrigger(pTriggerDevice, iDigNum, pPPQ, pTrigger->IsSoftwareTrigger(), pTrigger->GetSoftwareTriggerPeriod()); }
 				}
 			}
 			else if (pTrigger->IsSoftwareTrigger())
@@ -4124,10 +4226,10 @@ HRESULT SVConfigurationObject::AttachAcqToTriggers()
 				int iDigNum = pTrigger->mpsvDevice->miChannelNumber;
 				SVSoftwareTriggerClass* pTriggerDevice = dynamic_cast<SVSoftwareTriggerClass *>(pTrigger->mpsvDevice);
 
-				if( pTriggerDevice != NULL && pTriggerDevice->m_pDLLTrigger != NULL )
+				if( nullptr != pTriggerDevice && nullptr != pTriggerDevice->m_pDLLTrigger )
 				{
 					SVPPQObject* pPPQ = reinterpret_cast<SVPPQObject*>(pTrigger->m_pOwner);
-					SetupSoftwareTrigger(pTriggerDevice, iDigNum, pTrigger->GetSoftwareTriggerPeriod(), pPPQ);
+					if( nullptr != pPPQ){  SetupSoftwareTrigger(pTriggerDevice, iDigNum, pTrigger->GetSoftwareTriggerPeriod(), pPPQ); }
 				}
 			}
 			else
@@ -4136,7 +4238,7 @@ HRESULT SVConfigurationObject::AttachAcqToTriggers()
 				// Get all cameras for this trigger
 				// Get The PPQ for this Trigger Object
 				SVPPQObject* pPPQ = reinterpret_cast<SVPPQObject*>(pTrigger->m_pOwner);
-				if( pPPQ != NULL && pTrigger->mpsvDevice != NULL && pTrigger->mpsvDevice->m_pDLLTrigger != NULL )
+				if( nullptr != pPPQ && nullptr != pTrigger->mpsvDevice && nullptr != pTrigger->mpsvDevice->m_pDLLTrigger )
 				{
 					// Get The cameras Attached to this PPQ
 					SVVirtualCameraPtrList l_Cameras;
@@ -4146,7 +4248,7 @@ HRESULT SVConfigurationObject::AttachAcqToTriggers()
 					for (SVVirtualCameraPtrList::iterator l_Iter = l_Cameras.begin(); l_Iter != l_Cameras.end();++l_Iter )
 					{
 						SVVirtualCamera* pCamera = ( *l_Iter );
-						if (pCamera)
+						if ( nullptr != pCamera )
 						{
 							if (pCamera->IsFileAcquisition())
 							{
@@ -4675,15 +4777,15 @@ HRESULT SVConfigurationObject::GetInspectionItems( const SVNameSet& p_rNames, SV
 
 				if( nullptr != ref.Object() )
 				{
-					SVInspectionProcess* l_pInsection = nullptr;
+					SVInspectionProcess* pInspection = nullptr;
 
-					GetInspectionObject( l_Info.GetObjectArrayName( 1 ).c_str(), &l_pInsection );
+					GetInspectionObject( l_Info.GetObjectArrayName( 1 ).c_str(), &pInspection );
 
-					if( nullptr != l_pInsection )
+					if( nullptr != pInspection )
 					{
-						l_Inspections[ l_pInsection->GetName() ] = l_pInsection;
+						l_Inspections[ pInspection->GetName() ] = pInspection;
 						SVCommandInspectionGetItems::SVFullNameObjectPair newPair(*l_Iter, ref);
-						l_InspectionItems[ l_pInsection->GetName() ].insert(newPair);
+						l_InspectionItems[ pInspection->GetName() ].insert(newPair);
 					}
 					else
 					{
@@ -4963,13 +5065,13 @@ HRESULT SVConfigurationObject::SetInspectionItems( const SVNameStorageMap& p_rIt
 
 					if( l_AddParameter )
 					{
-						SVInspectionProcess* l_pInsection = nullptr;
+						SVInspectionProcess* pInspection( nullptr );
 
-						GetInspectionObject( l_Info.GetObjectArrayName( 1 ).c_str(), &l_pInsection );
+						GetInspectionObject( l_Info.GetObjectArrayName( 1 ).c_str(), &pInspection );
 
-						if( l_pInsection != nullptr )
+						if( nullptr != pInspection )
 						{
-							l_Inspections[ l_pInsection->GetName() ] = l_pInsection;
+							l_Inspections[ pInspection->GetName() ] = pInspection;
 
 							if( l_Iter->second.m_StorageType == SVVisionProcessor::SVStorageImageFileName )
 							{
@@ -4977,7 +5079,7 @@ HRESULT SVConfigurationObject::SetInspectionItems( const SVNameStorageMap& p_rIt
 
 								if( l_pImage != nullptr )
 								{
-									p_rStatus[ l_Iter->first ] = l_pInsection->AddInputImageFileNameRequest( l_pImage, l_Iter->second.m_Variant );
+									p_rStatus[ l_Iter->first ] = pInspection->AddInputImageFileNameRequest( l_pImage, l_Iter->second.m_Variant );
 								}
 								else
 								{
@@ -4991,9 +5093,9 @@ HRESULT SVConfigurationObject::SetInspectionItems( const SVNameStorageMap& p_rIt
 							}
 							else if( l_Iter->second.m_StorageType == SVVisionProcessor::SVStorageValue )
 							{
-								if( l_pInsection->AddInputRequest( ref, l_Iter->second.m_Variant ) )
+								if( pInspection->AddInputRequest( ref, l_Iter->second.m_Variant ) )
 								{
-									l_ValueInspections[ l_pInsection->GetName() ] = l_pInsection;
+									l_ValueInspections[ pInspection->GetName() ] = pInspection;
 
 									p_rStatus[ l_Iter->first ] = S_OK;
 								}
@@ -5051,11 +5153,11 @@ HRESULT SVConfigurationObject::SetInspectionItems( const SVNameStorageMap& p_rIt
 
 		for( SVInspectionMap::iterator l_ValueInspectionIter = l_ValueInspections.begin(); l_ValueInspectionIter != l_ValueInspections.end(); ++l_ValueInspectionIter )
 		{
-			SVInspectionProcess* l_pInsection = l_ValueInspectionIter->second;
+			SVInspectionProcess* pInspection = l_ValueInspectionIter->second;
 
-			if( l_pInsection != nullptr )
+			if( nullptr != pInspection )
 			{
-				l_pInsection->AddInputRequestMarker();
+				pInspection->AddInputRequestMarker();
 			}
 		}
 
@@ -5063,12 +5165,12 @@ HRESULT SVConfigurationObject::SetInspectionItems( const SVNameStorageMap& p_rIt
 		{
 			for( SVInspectionMap::iterator l_InspectionIter = l_Inspections.begin(); l_InspectionIter != l_Inspections.end(); ++l_InspectionIter )
 			{
-				SVInspectionProcess* l_pInsection = l_InspectionIter->second;
+				SVInspectionProcess* pInspection = l_InspectionIter->second;
 
-				if( l_pInsection != nullptr )
+				if( nullptr != pInspection )
 				{
-					SVCommandInspectionRunOncePtr l_CommandPtr = new SVCommandInspectionRunOnce( l_pInsection->GetUniqueObjectID() );
-					SVObjectSynchronousCommandTemplate< SVCommandInspectionRunOncePtr > l_Command( l_pInsection->GetUniqueObjectID(), l_CommandPtr );
+					SVCommandInspectionRunOncePtr l_CommandPtr = new SVCommandInspectionRunOnce( pInspection->GetUniqueObjectID() );
+					SVObjectSynchronousCommandTemplate< SVCommandInspectionRunOncePtr > l_Command( pInspection->GetUniqueObjectID(), l_CommandPtr );
 
 					l_Command.Execute( 120000 );
 				}
@@ -5158,16 +5260,16 @@ HRESULT SVConfigurationObject::SetRemoteInputItems( const SVNameStorageMap& p_rI
 
 					for( SVInspectionSet::iterator l_InspectionIter = l_RemoteInspections.begin(); l_InspectionIter != l_RemoteInspections.end(); ++l_InspectionIter )
 					{
-						SVInspectionProcess* l_pInsection = *l_InspectionIter;
+						SVInspectionProcess* pInspection = *l_InspectionIter;
 
-						if( l_pInsection != NULL )
+						if( pInspection != NULL )
 						{
-							l_Inspections[ l_pInsection->GetName() ] = l_pInsection;
+							l_Inspections[ pInspection->GetName() ] = pInspection;
 
 							SVString l_Name;
 							SVObjectReference ref;
 
-							l_Name += l_pInsection->GetName();
+							l_Name += pInspection->GetName();
 							l_Name += ".";
 							l_Name += l_Info.GetObjectName( 1 );
 
@@ -5175,9 +5277,9 @@ HRESULT SVConfigurationObject::SetRemoteInputItems( const SVNameStorageMap& p_rI
 
 							if( ref.Object() != NULL )
 							{
-								if( l_pInsection->AddInputRequest( ref, l_Iter->second.m_Variant ) )
+								if( pInspection->AddInputRequest( ref, l_Iter->second.m_Variant ) )
 								{
-									l_ValueInspections[ l_pInsection->GetName() ] = l_pInsection;
+									l_ValueInspections[ pInspection->GetName() ] = pInspection;
 								}
 							}
 						}
@@ -5187,22 +5289,22 @@ HRESULT SVConfigurationObject::SetRemoteInputItems( const SVNameStorageMap& p_rI
 
 			for( SVInspectionMap::iterator l_ValueInspectionIter = l_ValueInspections.begin(); l_ValueInspectionIter != l_ValueInspections.end(); ++l_ValueInspectionIter )
 			{
-				SVInspectionProcess* l_pInsection = l_ValueInspectionIter->second;
+				SVInspectionProcess* pInspection = l_ValueInspectionIter->second;
 
-				if( l_pInsection != NULL )
+				if( nullptr != pInspection )
 				{
-					l_pInsection->AddInputRequestMarker();
+					pInspection->AddInputRequestMarker();
 				}
 			}
 
 			for( SVInspectionMap::iterator l_InspectionIter = l_Inspections.begin(); l_InspectionIter != l_Inspections.end(); ++l_InspectionIter )
 			{
-				SVInspectionProcess* l_pInsection = l_InspectionIter->second;
+				SVInspectionProcess* pInspection = l_InspectionIter->second;
 
-				if( l_pInsection != NULL )
+				if( nullptr != pInspection )
 				{
-					SVCommandInspectionRunOncePtr l_CommandPtr = new SVCommandInspectionRunOnce( l_pInsection->GetUniqueObjectID() );
-					SVObjectSynchronousCommandTemplate< SVCommandInspectionRunOncePtr > l_Command( l_pInsection->GetUniqueObjectID(), l_CommandPtr );
+					SVCommandInspectionRunOncePtr l_CommandPtr = new SVCommandInspectionRunOnce( pInspection->GetUniqueObjectID() );
+					SVObjectSynchronousCommandTemplate< SVCommandInspectionRunOncePtr > l_Command( pInspection->GetUniqueObjectID(), l_CommandPtr );
 
 					l_Command.Execute( 120000 );
 				}
@@ -5319,7 +5421,7 @@ void SVConfigurationObject::GetRemoteInputInspections( const SVString& p_rRemote
 		HRESULT l_LoopStatus = S_OK;
 		SVInspectionProcess* l_pInspection = *l_Iter;
 
-		if( l_pInspection != NULL )
+		if( nullptr != l_pInspection )
 		{
 			SVString l_Name;
 			SVObjectReference ref;
@@ -5341,7 +5443,7 @@ void SVConfigurationObject::GetRemoteInputInspections( const SVString& p_rRemote
 	}
 }
 
-bool SVConfigurationObject::HasCameraTrigger(SVPPQObject* p_pPPQ) const
+bool SVConfigurationObject::HasCameraTrigger(SVPPQObject* pCameraPPQ) const
 {
 	bool bRetVal = false;
 	long lCount = 0;
@@ -5349,7 +5451,8 @@ bool SVConfigurationObject::HasCameraTrigger(SVPPQObject* p_pPPQ) const
 
 	for ( long i = 0; !bRetVal && i < lCount; i++ )
 	{
-		SVTriggerObject *pTrigger = NULL;
+		SVTriggerObject *pTrigger( nullptr );
+		//Returns true when pointer valid
 		BOOL bOk = GetTrigger( i, &pTrigger );
 		if ( bOk )
 		{
@@ -5359,7 +5462,7 @@ bool SVConfigurationObject::HasCameraTrigger(SVPPQObject* p_pPPQ) const
 				if( pTriggerDevice != NULL )
 				{
 					SVPPQObject* pPPQ = reinterpret_cast<SVPPQObject*>(pTrigger->m_pOwner);
-					if (p_pPPQ == pPPQ)
+					if (pCameraPPQ == pPPQ)
 					{
 						bRetVal = true;
 					}
@@ -5613,6 +5716,25 @@ HRESULT SVConfigurationObject::LoadMonitoredObjectList( SVTreeType& rTree, SVTre
 	}
 	return retValue;
 }
+
+/*static*/ bool SVConfigurationObject::GetInspection( LPCTSTR InspectionName, SVInspectionProcess*& prInspection )
+{
+	bool Result( false );
+
+	SVConfigurationObject* pConfig( nullptr );
+	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
+
+	if ( nullptr != pConfig )
+	{
+		if( pConfig->GetInspectionObject(InspectionName, &prInspection) )
+		{
+			Result = true;
+		}
+	}
+	
+	return Result;
+}
+
 
 //******************************************************************************
 //* LOG HISTORY:

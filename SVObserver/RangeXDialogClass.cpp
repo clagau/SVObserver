@@ -284,10 +284,10 @@ bool RangeXDialogClass::ShowObjectSelector(CString& name)
 	SVString PPQName = FqnPPQVariables; 
 	
 	InspectionName = pInspectionProcess->GetName();
-	SVPPQObject *ppq = pInspectionProcess->GetPPQ();
-	if(ppq)
+	SVPPQObject* pPPQ = pInspectionProcess->GetPPQ();
+	if( nullptr != pPPQ )
 	{
-		PPQName = ppq->GetName();
+		PPQName = pPPQ->GetName();
 	}
 	
 

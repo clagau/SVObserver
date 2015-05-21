@@ -1581,8 +1581,6 @@ void SVConfigurationPrint::PrintMonitorListItem(CDC* pDC, CPoint& ptCurPos, int 
 void SVConfigurationPrint::OnVirtualPrint(BOOL bRealPrintInput /* = FALSE */) 
 {
 	SVObserverApp*         pApp    = dynamic_cast <SVObserverApp*> (AfxGetApp());
-	SVConfigurationObject* pConfig = NULL;
-	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
     m_isRealPrint = bRealPrintInput;
 	
@@ -1881,7 +1879,7 @@ void SVConfigurationPrint::OnEndPrinting()
 
 void SVConfigurationPrint::PrintCameraSummary(CDC* pDC, CPoint& ptCurPos, int nIndentLevel)
 {
-	SVConfigurationObject* pConfig = NULL;
+	SVConfigurationObject* pConfig( nullptr );
 	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
 	CString	sLabel, sValue;
@@ -1896,13 +1894,14 @@ void SVConfigurationPrint::PrintCameraSummary(CDC* pDC, CPoint& ptCurPos, int nI
 	ptCurPos.y += PrintString(pDC, ptTemp, _T("\nCamera"));
 	pDC->SelectObject(&m_fontText);
 	
-	pConfig->GetCameraCount(lSize);
+	//The nullptr check here is enough because then lSize would be 0
+	if( nullptr != pConfig){ pConfig->GetCameraCount(lSize); }
 	for (long l = 0; l < lSize; l++)
 	{
-		SVVirtualCamera* pCamera = NULL;
+		SVVirtualCamera* pCamera( nullptr );
 		
 		pConfig->GetCamera(l, &pCamera);
-		if (pCamera)
+		if( nullptr != pCamera)
 		{
 			SVFileNameArrayClass* pfnac = NULL;
 			SVLightReference* plrcDummy = NULL;
@@ -2017,7 +2016,7 @@ void SVConfigurationPrint::PrintCameraSummary(CDC* pDC, CPoint& ptCurPos, int nI
 
 void SVConfigurationPrint::PrintTriggerSummary(CDC* pDC, CPoint& ptCurPos, int nIndentLevel)
 {
-	SVConfigurationObject* pConfig = NULL;
+	SVConfigurationObject* pConfig( nullptr );
 	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
 	CString	sLabel, sValue;
@@ -2032,13 +2031,14 @@ void SVConfigurationPrint::PrintTriggerSummary(CDC* pDC, CPoint& ptCurPos, int n
 	ptCurPos.y += PrintString(pDC, ptTemp, _T("\nTrigger"));
 	pDC->SelectObject(&m_fontText);
 	
-	pConfig->GetTriggerCount(lSize);
+	//The nullptr check here is enough because then lSize would be 0
+	if( nullptr != pConfig) { pConfig->GetTriggerCount(lSize); }
 	for (long l = 0; l < lSize; l++)
 	{
-		SVTriggerObject *pTrigger = NULL;
+		SVTriggerObject* pTrigger( nullptr );
 		
 		pConfig->GetTrigger(l, &pTrigger);
-		if (pTrigger)
+		if(nullptr != pTrigger)
 		{
 			ptCurPos.x   = (nIndentLevel + 1) * m_shortTabPixels;
 			if ( pTrigger->mpsvDevice )
@@ -2076,7 +2076,7 @@ void SVConfigurationPrint::PrintInspectionSummary(CDC* pDC, CPoint& ptCurPos, in
 	int      nLastHeight    = 0;
 	long		lSize = 0;
 	CPoint	ptTemp(0, 0);
-	SVConfigurationObject* pConfig = NULL;
+	SVConfigurationObject* pConfig( nullptr );
 	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 	
 	pDC->SelectObject(&m_fontSection);
@@ -2085,13 +2085,14 @@ void SVConfigurationPrint::PrintInspectionSummary(CDC* pDC, CPoint& ptCurPos, in
 	ptCurPos.y += PrintString(pDC, ptTemp, _T("\nInspection"));
 	pDC->SelectObject(&m_fontText);
 	
-	pConfig->GetInspectionCount(lSize);
+	//The nullptr check here is enough because then lSize would be 0
+	if( nullptr != pConfig) { pConfig->GetInspectionCount(lSize); }
 	for (long l = 0; l < lSize; l++)
 	{
-		SVInspectionProcess *pInspect = NULL;
+		SVInspectionProcess* pInspect( nullptr );
 		
 		pConfig->GetInspection(l, &pInspect);
-		if (pInspect)
+		if( nullptr != pInspect )
 		{
 			ptCurPos.x   = (nIndentLevel + 1) * m_shortTabPixels;
 			ptTemp       = ptCurPos;
@@ -2111,7 +2112,7 @@ void SVConfigurationPrint::PrintPPQSummary(CDC* pDC, CPoint& ptCurPos, int nInde
 	long	lPPQ = 0, lSize = 0;
 	CPoint	ptTemp(0, 0);
 	
-	SVConfigurationObject* pConfig = NULL;
+	SVConfigurationObject* pConfig( nullptr );
 	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 	
 	pDC->SelectObject(&m_fontSection);
@@ -2120,14 +2121,15 @@ void SVConfigurationPrint::PrintPPQSummary(CDC* pDC, CPoint& ptCurPos, int nInde
 	ptCurPos.y += PrintString(pDC, ptTemp, _T("\nPPQ"));
 	pDC->SelectObject(&m_fontText);
 	
-	pConfig->GetPPQCount(lPPQ);
+	//The nullptr check here is enough because then lSize would be 0
+	if( nullptr != pConfig) { pConfig->GetPPQCount(lPPQ); }
 	++nIndentLevel;
 	for (long l = 0; l < lPPQ; l++)
 	{
-		SVPPQObject *pPPQ = NULL;
+		SVPPQObject* pPPQ( nullptr);
 		
 		pConfig->GetPPQ(l, &pPPQ);
-		if (pPPQ)
+		if( nullptr != pPPQ )
 		{
 			ptCurPos.x   = nIndentLevel * m_shortTabPixels;
 			ptTemp       = ptCurPos;
@@ -2186,11 +2188,13 @@ void SVConfigurationPrint::PrintPPQSummary(CDC* pDC, CPoint& ptCurPos, int nInde
 			ptTemp      = ptCurPos;
 			ptCurPos.y += PrintString(pDC, ptTemp, _T("Trigger:"));
 			
-			SVTriggerObject*	pTrigger;
+			SVTriggerObject* pTrigger( nullptr );
 			pPPQ->GetTrigger(pTrigger);
+			sValue.Empty();
+			if(nullptr != pTrigger ) { sValue = pTrigger->GetName();}
 			ptCurPos.x  = (nIndentLevel + 2) * m_shortTabPixels;
 			ptTemp      = ptCurPos;
-			ptCurPos.y += PrintString(pDC, ptTemp, pTrigger->GetName());
+			ptCurPos.y += PrintString(pDC, ptTemp, sValue);
 			
 			ptCurPos.x  = (nIndentLevel + 1) * m_shortTabPixels;
 			ptTemp      = ptCurPos;
@@ -2206,7 +2210,7 @@ void SVConfigurationPrint::PrintPPQSummary(CDC* pDC, CPoint& ptCurPos, int nInde
 			{
 				SVVirtualCamera* pCamera = ( *l_Iter );
 				
-				if (pCamera)
+				if ( nullptr != pCamera )
 				{
 					ptCurPos.x  = (nIndentLevel + 2) * m_shortTabPixels;
 					ptTemp      = ptCurPos;
@@ -2226,7 +2230,7 @@ void SVConfigurationPrint::PrintPPQSummary(CDC* pDC, CPoint& ptCurPos, int nInde
 				SVInspectionProcess*	pInspection;
 				pPPQ->GetInspection(intInspection, pInspection);
 				
-				if (pInspection)
+				if ( nullptr != pInspection )
 				{
 					ptCurPos.x  = (nIndentLevel + 2) * m_shortTabPixels;
 					ptTemp      = ptCurPos;
@@ -2239,7 +2243,7 @@ void SVConfigurationPrint::PrintPPQSummary(CDC* pDC, CPoint& ptCurPos, int nInde
 
 void SVConfigurationPrint::PrintPPQBarSection(CDC* pDC, CPoint& ptCurPos, int nIndentLevel)
 {
-	SVConfigurationObject* pConfig = NULL;
+	SVConfigurationObject* pConfig( nullptr );
 	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
 	CString sLabel, sValue;
@@ -2253,11 +2257,12 @@ void SVConfigurationPrint::PrintPPQBarSection(CDC* pDC, CPoint& ptCurPos, int nI
 	ptCurPos.y += PrintString(pDC, ptTemp, _T("\nPPQ Bar Section"));
 	pDC->SelectObject(&m_fontText);
 
-	long lPPQ;
-	pConfig->GetPPQCount(lPPQ);
+	long lPPQ = 0;
+	//The nullptr check here is enough because then lPPQ would be 0
+	if( nullptr != pConfig) { pConfig->GetPPQCount(lPPQ); }
 	for (int intPPQ = 0; intPPQ < lPPQ; intPPQ++)
 	{
-		SVPPQObject* pPPQ;
+		SVPPQObject* pPPQ( nullptr );
 
 		if ( !pConfig->GetPPQ( intPPQ, &pPPQ ) )
 		{
@@ -2266,7 +2271,7 @@ void SVConfigurationPrint::PrintPPQBarSection(CDC* pDC, CPoint& ptCurPos, int nI
 			DebugBreak();
 		}
 
-		if ( !pPPQ ) { continue; }
+		if ( nullptr == pPPQ ) { continue; }
 
 		ptCurPos.x  = ++nIndentLevel * m_shortTabPixels;
 		ptTemp      = ptCurPos;
@@ -2287,7 +2292,7 @@ void SVConfigurationPrint::PrintPPQBarSection(CDC* pDC, CPoint& ptCurPos, int nI
 			{
 				SVVirtualCamera* pCamera = ( *l_Iter );
 				
-				if (pCamera)
+				if ( nullptr != pCamera )
 				{
 					long lPos = -1;
 
@@ -2360,7 +2365,7 @@ void SVConfigurationPrint::PrintPPQBarSection(CDC* pDC, CPoint& ptCurPos, int nI
 
 void SVConfigurationPrint::PrintInspectionToolSet(CDC* pDC, CPoint& ptCurPos, int nIndentLevel)
 {
-	SVConfigurationObject* pConfig = NULL;
+	SVConfigurationObject* pConfig( nullptr );
 	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 	SVObserverApp*         pApp    = dynamic_cast <SVObserverApp*> (AfxGetApp());
 
@@ -2370,43 +2375,47 @@ void SVConfigurationPrint::PrintInspectionToolSet(CDC* pDC, CPoint& ptCurPos, in
 	long     lSize = 0;
 	CPoint   ptTemp(0, 0);
 	
-	SVInspectionProcess*    pInspection = NULL;
-	SVToolSetClass*         pToolset = NULL;
+	SVInspectionProcess*    pInspection( nullptr );
+	SVToolSetClass*         pToolset( nullptr );
 	
 	// Print all IPDocs
-	pConfig->GetInspectionCount(lSize);
+	//The nullptr check here is enough because then lSize would be 0
+	if( nullptr != pConfig) { pConfig->GetInspectionCount(lSize); }
 	for (int nIPDNumber = 0; nIPDNumber < lSize; ++nIPDNumber)
 	{
 		pConfig->GetInspection(nIPDNumber, &pInspection);
-		sLabel = pInspection->GetName();
-		SVToolSetClass* pToolSet = pInspection->GetToolSet();
-		pDC->SelectObject(&m_fontSection);
-		
-		m_toolNumber = 0;
-		
-		// Print IPDoc number
-		sLabel.Format(_T("\nInspection Process %d"), nIPDNumber + 1);
-		ptCurPos.x  = nIndentLevel * m_shortTabPixels;
-		ptTemp      = ptCurPos;
-		ptCurPos.y += PrintString(pDC, ptTemp, sLabel);
-		pDC->SelectObject(&m_fontText);
-		
-		PrintValueObject(pDC, ptCurPos, _T("Title:"), pInspection->GetName());
-		
-		// Print number of IPD tools
-		if (pToolSet)
-			sValue.Format("%d", pToolSet->GetSize());
-		else
-			sValue = pApp->GetStringResource(IDS_NOT_AVAILABLE_STRING);
-		
-		ptCurPos.x   = nIndentLevel * m_shortTabPixels;
-		PrintValueObject(pDC, ptCurPos, _T("Number of Tools:"), sValue);
-		
-		// Print all tools
-		if (pToolSet)
+		if( nullptr != pInspection )
 		{
-			PrintObject(pDC, pToolSet, ptCurPos, nIndentLevel);
-		}  // end if( pToolSet )
+			sLabel = pInspection->GetName();
+			SVToolSetClass* pToolSet = pInspection->GetToolSet();
+			pDC->SelectObject(&m_fontSection);
+		
+			m_toolNumber = 0;
+		
+			// Print IPDoc number
+			sLabel.Format(_T("\nInspection Process %d"), nIPDNumber + 1);
+			ptCurPos.x  = nIndentLevel * m_shortTabPixels;
+			ptTemp      = ptCurPos;
+			ptCurPos.y += PrintString(pDC, ptTemp, sLabel);
+			pDC->SelectObject(&m_fontText);
+		
+			PrintValueObject(pDC, ptCurPos, _T("Title:"), pInspection->GetName());
+		
+			// Print number of IPD tools
+			if ( nullptr != pToolSet )
+				sValue.Format("%d", pToolSet->GetSize());
+			else
+				sValue = pApp->GetStringResource(IDS_NOT_AVAILABLE_STRING);
+		
+			ptCurPos.x   = nIndentLevel * m_shortTabPixels;
+			PrintValueObject(pDC, ptCurPos, _T("Number of Tools:"), sValue);
+		
+			// Print all tools
+			if( nullptr != pToolSet)
+			{
+				PrintObject(pDC, pToolSet, ptCurPos, nIndentLevel);
+			}  // end if( pToolSet )
+		}
 	}  // for( int j = 0; j < pApp->pActivatedSystemList->GetAt( i )->GetBoardIPDocNumber();
 }
 
@@ -2439,7 +2448,7 @@ void SVConfigurationPrint::PrintModuleIO(CDC* pDC, CPoint& ptCurPos, int nIndent
 	long	lSize = 0;
 	CPoint	ptTemp(0, 0);
 
-	SVConfigurationObject* pConfig = NULL;
+	SVConfigurationObject* pConfig( nullptr );
 	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 	SVObserverApp* pApp = dynamic_cast<SVObserverApp*>(AfxGetApp());
 
@@ -2451,7 +2460,7 @@ void SVConfigurationPrint::PrintModuleIO(CDC* pDC, CPoint& ptCurPos, int nIndent
 		SVIOEntryHostStructPtrList ppIOEntries;
 
 		// Get list of available inputs
-		if (!pConfig->GetInputObjectList(&pInputList))
+		if ( nullptr == pConfig && !pConfig->GetInputObjectList(&pInputList))
 		{
 			SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
 			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorGettingInputObjectList, StdExceptionParams, Err_17001_SVConfigurationPrint_PrintModuleIO_ErrorGettingInputObjectList );
@@ -2565,13 +2574,13 @@ void SVConfigurationPrint::PrintResultIO(CDC* pDC, CPoint& ptCurPos, int nIndent
 	long	lSize        = 0;
 	CPoint	ptTemp(0, 0);
 
-	SVConfigurationObject* pConfig = nullptr;
+	SVConfigurationObject* pConfig( nullptr );
 	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 	SVObserverApp* pApp = dynamic_cast<SVObserverApp*>(AfxGetApp());
 
 	// Get the number of PPQs
 	long lPPQSize = 0;
-	if (!pConfig->GetPPQCount(lPPQSize))
+	if ( nullptr == pConfig || !pConfig->GetPPQCount(lPPQSize))
 	{
 		SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
 		e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorGettingPPQCount, StdExceptionParams, Err_17003_SVConfigurationPrint_PrintResultIO_ErrorGettingPPQCount );
@@ -2581,8 +2590,8 @@ void SVConfigurationPrint::PrintResultIO(CDC* pDC, CPoint& ptCurPos, int nIndent
 	// Print IODoc contents
 	if (pApp->GetIODoc())
 	{
-		SVPPQObject* pPPQ;
-		SVDigitalOutputObject* pDigOutput;
+		SVPPQObject* pPPQ( nullptr );
+		SVDigitalOutputObject* pDigOutput( nullptr );
 		SVIOEntryHostStructPtrList ppIOEntries;
 
 		// Print Result Output title...
@@ -2657,9 +2666,10 @@ void SVConfigurationPrint::PrintResultIO(CDC* pDC, CPoint& ptCurPos, int nIndent
 void SVConfigurationPrint::PrintMonitorListSection(CDC* pDC, CPoint& ptCurPos, int nIndentLevel)
 {
 	CString				label, value;
-	SVConfigurationObject* pConfig = NULL;
+	SVConfigurationObject* pConfig( nullptr );
 	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
-	if (pConfig)
+
+	if( nullptr != pConfig )
 	{
 		ptCurPos.x = nIndentLevel * m_shortTabPixels;
 

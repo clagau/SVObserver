@@ -18,7 +18,7 @@
 // SoftwareTriggerDlg dialog
 namespace
 {
-	void dummy(SVTriggerObject *) {}
+	void dummy(SVTriggerObject*) {}
 }
 
 IMPLEMENT_DYNAMIC(SVSoftwareTriggerDlg, CDialog)
@@ -290,15 +290,18 @@ void SVSoftwareTriggerDlg::ClearTriggers()
 	m_triggerTabs.DeleteAllItems();
 }
 
-bool SVSoftwareTriggerDlg::AddTrigger(SVTriggerObject * trigger)
+bool SVSoftwareTriggerDlg::AddTrigger(SVTriggerObject* pTrigger)
 {
+	ASSERT( nullptr != pTrigger );
+	if( nullptr == pTrigger ){ return false; }
+
 	int l_count = m_triggerTabs.GetItemCount();
 	return m_triggerTabs.InsertItem(
 		TCIF_TEXT|TCIF_PARAM, 
 		l_count, 
-		trigger->GetName(), 
+		pTrigger->GetName(), 
 		0, 
-		reinterpret_cast<LPARAM>(new SVTriggerProxy(trigger))) > -1;
+		reinterpret_cast<LPARAM>(new SVTriggerProxy(pTrigger))) > -1;
 }
 
 SVSoftwareTriggerDlg & SVSoftwareTriggerDlg::Instance()

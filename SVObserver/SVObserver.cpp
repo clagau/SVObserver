@@ -517,22 +517,22 @@ void SVObserverApp::OnFileNewConfig()
 	}
 	// Logic to remove unused IO Tabs PLC and Remote inputs.
 	// PLC Inputs
-	SVConfigurationObject* l_pConfig = NULL;
-	SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
+	SVConfigurationObject* pConfig( nullptr );
+	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
-	if( l_pConfig )
+	if( nullptr != pConfig )
 	{
 #ifndef _WIN64
-		if( l_pConfig->GetPLCCount() == 0 )
+		if( pConfig->GetPLCCount() == 0 )
 		{
 			HideIOTab( SVIOPLCOutputsViewID );
 		}
 #endif
-		if( l_pConfig->GetRemoteOutputGroupCount() == 0)
+		if( pConfig->GetRemoteOutputGroupCount() == 0)
 		{
 			HideIOTab( SVRemoteOutputsViewID );
 		}
-		l_pConfig->ClearRemoteMonitorList();
+		pConfig->ClearRemoteMonitorList();
 	}
 	else
 	{
@@ -1290,12 +1290,12 @@ void SVObserverApp::OnStop()
 
 	SetThreadPriority( THREAD_PRIORITY_NORMAL );
 
-	SVConfigurationObject* l_pConfig = NULL;
-	SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
+	SVConfigurationObject* pConfig( nullptr );
+	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
-	if( l_pConfig != NULL )
+	if( nullptr != pConfig )
 	{
-		l_pConfig->SetModuleReady( false );
+		pConfig->SetModuleReady( false );
 	}
 
 	// Signal Module Stop...
@@ -1306,15 +1306,15 @@ void SVObserverApp::OnStop()
 
 	SVDigitizerProcessingClass::Instance().RestoreLastCameraImage();
 
-	SVPPQObject *pPPQ = NULL;
+	SVPPQObject* pPPQ( nullptr );
 	long l;
 	long lSize;
 
-	l_pConfig->GetPPQCount( lSize );
+	pConfig->GetPPQCount( lSize );
 	for( l = 0; l < lSize; l++ )
 	{
-		l_pConfig->GetPPQ( l, &pPPQ );
-		pPPQ->GoOffline();
+		pConfig->GetPPQ( l, &pPPQ );
+		if( nullptr != pPPQ){ pPPQ->GoOffline(); }
 	}
 	// Stop the FailStatus Stream PPQ Listeners
 	SVFailStatusStreamManager::Instance().RemovePPQObservers();
@@ -1329,16 +1329,16 @@ void SVObserverApp::OnStop()
 
 		if ( SVSVIMStateClass::CheckState( SV_STATE_RAID_FAILURE ) )
 		{
-			l_pConfig->SetRaidErrorBit( true );
+			pConfig->SetRaidErrorBit( true );
 		}
 		else
 		{
-			l_pConfig->SetRaidErrorBit( false );
+			pConfig->SetRaidErrorBit( false );
 		}
 	}
 	else
 	{
-		l_pConfig->SetRaidErrorBit( true );
+		pConfig->SetRaidErrorBit( true );
 	}
 
 	CString l_strTrigCnts;
@@ -1390,17 +1390,17 @@ void SVObserverApp::OnUpdateEditRemoteInputs( CCmdUI* PCmdUI )
 {
 	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION ) &&
 		OkToEdit() );
-	SVInputObjectList* l_pInputs = nullptr;
-	SVConfigurationObject* l_pConfig = nullptr;
-	SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
+	SVInputObjectList* l_pInputs( nullptr );
+	SVConfigurationObject* pConfig( nullptr );
+	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
-	if( l_pConfig != nullptr )
+	if( nullptr != pConfig )
 	{
-		l_pConfig->GetInputObjectList( &l_pInputs );
+		pConfig->GetInputObjectList( &l_pInputs );
 	}
 
 	bool l_bRemoteInputsExits = false;
-	if( l_pInputs != nullptr )
+	if( nullptr != l_pInputs )
 	{
 		long lSize = 0;
 		l_pInputs->GetRemoteInputCount( lSize );
@@ -1422,7 +1422,7 @@ void SVObserverApp::OnUpdateEditRemoteInputs( CCmdUI* PCmdUI )
 
 	// Get Menu handle
 	HMENU hmen = GetMenu( GetMainWnd()->m_hWnd );
-	if( l_pConfig )
+	if( nullptr != pConfig )
 	{
 		// The IO menu is limited to 100 Published results menu items.
 		// There is no limit to the number of inspections that can be created 
@@ -1430,7 +1430,7 @@ void SVObserverApp::OnUpdateEditRemoteInputs( CCmdUI* PCmdUI )
 		// If there are more than 100, then the user will have to go to the inspection to edit published results
 		// If more are to be supported, then these resources for the ID_EDIT_PUBLISHEDRESULTS_LIMIT will need changed. 
 		SVInspectionProcessPtrList l_Inspections; // Get Inspections
-		l_pConfig->GetInspections( l_Inspections );
+		pConfig->GetInspections( l_Inspections );
 		RemoveMenu(hmen, "&Edit\\Published Results" ); // start empty.
 		for( UINT i = 0; i < static_cast< UINT >( l_Inspections.size() ) && i < (ID_EDIT_PUBLISHEDRESULTS_LIMIT - ID_EDIT_PUBLISHEDRESULTS_BASE + 1); i++ )
 		{
@@ -1448,10 +1448,10 @@ void SVObserverApp::OnUpdateEditEditPLCOutputs( CCmdUI* pCmdUI )
 	pCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) &&	
 		SVSVIMStateClass::CheckState( SV_STATE_EDIT ) );
 
-	SVConfigurationObject* l_pConfig = NULL;
-	SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
+	SVConfigurationObject* pConfig( nullptr );
+	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
-	if( l_pConfig != NULL && l_pConfig->GetPLCCount() == 0 )
+	if( nullptr != pConfig && pConfig->GetPLCCount() == 0 )
 	{
 		pCmdUI->SetText( "Add PLC" );
 	}
@@ -1467,10 +1467,10 @@ void SVObserverApp::OnUpdateEditAddRemoteOutputs(CCmdUI *pCmdUI)
 	pCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) &&	
 		SVSVIMStateClass::CheckState( SV_STATE_EDIT ) );
 
-	SVConfigurationObject* l_pConfig = NULL;
-	SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
+	SVConfigurationObject* pConfig( nullptr );
+	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
-	if( l_pConfig != NULL && l_pConfig->GetRemoteOutputGroupCount() == 0 )
+	if( nullptr != pConfig && pConfig->GetRemoteOutputGroupCount() == 0 )
 	{
 		pCmdUI->SetText( "Add Remote Output" );
 	}
@@ -1482,12 +1482,12 @@ void SVObserverApp::OnUpdateEditAddRemoteOutputs(CCmdUI *pCmdUI)
 
 void SVObserverApp::OnEditMonitorList()
 {
-	SVConfigurationObject* l_pConfig = NULL;
-	SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
+	SVConfigurationObject* pConfig( nullptr );
+	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
-	if( l_pConfig != NULL )
+	if( nullptr != pConfig )
 	{
-		if (l_pConfig->SetupRemoteMonitorList())
+		if (pConfig->SetupRemoteMonitorList())
 		{
 			SVSVIMStateClass::AddState(SV_STATE_MODIFIED);
 			SVIODoc* pIODoc = GetIODoc();
@@ -1504,10 +1504,10 @@ void SVObserverApp::OnUpdateEditAddMonitorList(CCmdUI *pCmdUI)
 	pCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) &&	
 		SVSVIMStateClass::CheckState( SV_STATE_EDIT ) );
 	
-	SVConfigurationObject* pConfig = NULL;
+	SVConfigurationObject* pConfig( nullptr );
 	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
-	if (0 < pConfig->GetRemoteMonitorList().size())
+	if ( nullptr != pConfig && 0 < pConfig->GetRemoteMonitorList().size())
 	{
 		pCmdUI->SetText( _T("Edit Monitor List") );
 	}
@@ -2801,7 +2801,7 @@ void SVObserverApp::OnTriggerSettings()
 {
 	SVSoftwareTriggerDlg::Instance().ShowWindow(SW_SHOW);
 	// set dirty handler to the insert method of m_dirty_triggers set
-	SVSoftwareTriggerDlg::Instance().SetDirtyHandler(boost::bind(&std::set<SVTriggerObject *>::insert, &m_dirty_triggers, _1));
+	SVSoftwareTriggerDlg::Instance().SetDirtyHandler(boost::bind(&std::set<SVTriggerObject*>::insert, &m_dirty_triggers, _1));
 }
 
 void SVObserverApp::OnUpdateTriggerSettings(CCmdUI *pCmdUI)
@@ -2872,13 +2872,13 @@ void SVObserverApp::OnUpdateExtrasSecuritySetup(CCmdUI* pCmdUI)
 #ifndef _WIN64
 void SVObserverApp::OnEditPLCOutputs()
 {
-	SVConfigurationObject* l_pConfig = NULL;
-	SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
+	SVConfigurationObject* pConfig( nullptr );
+	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
-	if( l_pConfig != NULL )
+	if( nullptr != pConfig )
 	{
-		l_pConfig->SetupPLC();
-		if( l_pConfig->GetPLCCount() == 0)
+		pConfig->SetupPLC();
+		if( pConfig->GetPLCCount() == 0)
 		{
 			HidePLCTab();
 		}
@@ -2888,12 +2888,12 @@ void SVObserverApp::OnEditPLCOutputs()
 
 void SVObserverApp::OnEditRemoteOutputs()
 {
-	SVConfigurationObject* l_pConfig = NULL;
-	SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
+	SVConfigurationObject* pConfig( nullptr );
+	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
-	if( l_pConfig != NULL )
+	if( nullptr != pConfig )
 	{
-		l_pConfig->SetupRemoteOutput();
+		pConfig->SetupRemoteOutput();
 	}
 }
 
@@ -2905,12 +2905,12 @@ void SVObserverApp::OnEditPublishedResults( UINT nID )
 	UINT uiInspection = nID - ID_EDIT_PUBLISHEDRESULTS_BASE;
 	// Get list of inspections
 	// edit published results
-	SVConfigurationObject* l_pConfig = NULL;
-	SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
-	if( l_pConfig )
+	SVConfigurationObject* pConfig( nullptr );
+	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
+	if( nullptr != pConfig )
 	{
 		SVInspectionProcessPtrList l_Inspections;
-		l_pConfig->GetInspections( l_Inspections );
+		pConfig->GetInspections( l_Inspections );
 		if( uiInspection < l_Inspections.size())
 		{
 			SVIPDoc* pDoc =  SVObjectManagerClass::Instance().GetIPDoc( l_Inspections[uiInspection]->GetUniqueObjectID() );
@@ -3671,12 +3671,12 @@ HRESULT SVObserverApp::OpenSVXFile(LPCTSTR PathName)
 
 				l_StartLoading = SVClock::GetTimeStamp();
 
-				SVConfigurationObject* l_pConfig = NULL;
-				SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
+				SVConfigurationObject* pConfig( nullptr );
+				SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
-				if( l_pConfig != NULL )
+				if( nullptr != pConfig )
 				{
-					hr = l_pConfig->LoadConfiguration( m_XMLTree );
+					hr = pConfig->LoadConfiguration( m_XMLTree );
 				}
 
 				if (hr & 0xc0000000)
@@ -3686,23 +3686,23 @@ HRESULT SVObserverApp::OpenSVXFile(LPCTSTR PathName)
 
 				GetMainFrame()->ParseToolsetScripts( m_XMLTree );
 
-				if (nullptr != l_pConfig)
+				if (nullptr != pConfig)
 				{
-					hr = l_pConfig->LoadRemoteMonitorList(m_XMLTree);
+					hr = pConfig->LoadRemoteMonitorList(m_XMLTree);
 					if (hr & SV_ERROR_CONDITION)
 					{
 						break;
 					}
 				}
 
-				if( l_pConfig != NULL )
+				if( nullptr != pConfig )
 				{
-					l_pConfig->RebuildInputOutputLists();
+					pConfig->RebuildInputOutputLists();
 
 					// Removes any invalid entries in the output list.
-					if( l_pConfig->IsConfigurationLoaded() )
+					if( pConfig->IsConfigurationLoaded() )
 					{
-						if( l_pConfig->ValidateOutputList() == SV_FATAL_SVOBSERVER_2006_DUPLICATE_DISCRETE_OUTPUT )
+						if( pConfig->ValidateOutputList() == SV_FATAL_SVOBSERVER_2006_DUPLICATE_DISCRETE_OUTPUT )
 						{
 							::AfxMessageBox( "Invalid Discrete Outputs: Remove all Discrete Outputs and re-add them.", MB_ICONEXCLAMATION );
 						}
@@ -3714,10 +3714,10 @@ HRESULT SVObserverApp::OpenSVXFile(LPCTSTR PathName)
 				GetMainFrame()->OnConfigurationFinishedInitializing();
 
 #ifndef _WIN64
-				if( l_pConfig != NULL )
+				if( nullptr != pConfig )
 				{
 					// Initialize the PLC...
-					m_PLCManager.Startup( l_pConfig );
+					m_PLCManager.Startup( pConfig );
 				}
 #endif
 
@@ -3812,23 +3812,23 @@ HRESULT SVObserverApp::OpenSVXFile(LPCTSTR PathName)
 
 	// Logic to remove unused IO Tabs PLC and Remote inputs.
 	// PLC Inputs
-	SVConfigurationObject* l_pConfig = NULL;
-	SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
+	SVConfigurationObject* pConfig( nullptr );
+	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
-	if( l_pConfig != NULL )
+	if( nullptr != pConfig )
 	{
 #ifndef _WIN64
-		if( l_pConfig->GetPLCCount() == 0 )
+		if( pConfig->GetPLCCount() == 0 )
 		{
 			HideIOTab( SVIOPLCOutputsViewID );
 		}
 #endif
-		if( l_pConfig->GetRemoteOutputGroupCount() == 0)
+		if( pConfig->GetRemoteOutputGroupCount() == 0)
 		{
 			HideIOTab( SVRemoteOutputsViewID );
 		}
 
-		const RemoteMonitorList& rList = l_pConfig->GetRemoteMonitorList();
+		const RemoteMonitorList& rList = pConfig->GetRemoteMonitorList();
 		if (!rList.size())
 		{
 			HideRemoteMonitorListTab();
@@ -4238,13 +4238,13 @@ HRESULT SVObserverApp::DestroyConfig( BOOL AskForSavingOrClosing /* = TRUE */,
 				wait.Restore();
 #endif
 
-				SVConfigurationObject* l_pConfig = NULL;
-				SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
+				SVConfigurationObject* pConfig( nullptr );
+				SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
-				if( l_pConfig != NULL )
+				if( nullptr != pConfig )
 				{
-					l_pConfig->ClearRemoteMonitorList();
-					bOk = l_pConfig->DestroyConfiguration();
+					pConfig->ClearRemoteMonitorList();
+					bOk = pConfig->DestroyConfiguration();
 				}
 
 				wait.Restore();
@@ -4278,13 +4278,13 @@ HRESULT SVObserverApp::DestroyConfig( BOOL AskForSavingOrClosing /* = TRUE */,
 		// First remove all ActiveX server things associated with this config
 		CSVCommand::ResetStreamingDataAndLockedImages();
 
-		SVConfigurationObject* l_pConfig = NULL;
-		SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
+		SVConfigurationObject* pConfig( nullptr );
+		SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
-		if( l_pConfig != NULL )
+		if( nullptr != pConfig )
 		{
-			l_pConfig->ClearRemoteMonitorList();
-			bOk = l_pConfig->DestroyConfiguration();
+			pConfig->ClearRemoteMonitorList();
+			bOk = pConfig->DestroyConfiguration();
 		}
 
 		(( SVMainFrame* )m_pMainWnd)->SetStatusInfoText(_T(""));
@@ -4320,12 +4320,12 @@ SVIODoc* SVObserverApp::GetIODoc() const
 {
 	SVIODoc* l_pIODoc( NULL );
 
-	SVConfigurationObject* l_pConfig = NULL;
-	SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
+	SVConfigurationObject* pConfig( nullptr );
+	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
-	if( l_pConfig != NULL && !( l_pConfig->GetIOControllerID().empty() ) )
+	if( nullptr != pConfig && !( pConfig->GetIOControllerID().empty() ) )
 	{
-		l_pIODoc = SVObjectManagerClass::Instance().GetIODoc( l_pConfig->GetIOControllerID() );
+		l_pIODoc = SVObjectManagerClass::Instance().GetIODoc( pConfig->GetIOControllerID() );
 	}
 
 	return l_pIODoc;
@@ -4551,11 +4551,13 @@ BOOL SVObserverApp::CheckSVIMType() const
 {
 	BOOL l_bOk = FALSE;
 
-	SVConfigurationObject* l_pConfig = NULL;
-	SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
+	SVConfigurationObject* pConfig( nullptr );
+	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
 	SVIMProductEnum l_eSVIMType = GetSVIMType();
-	SVIMProductEnum l_eProductType = l_pConfig->GetProductType();
+	//If configuration object pointer is nullptr then set the enum to invalid
+	SVIMProductEnum l_eProductType = SVIM_PRODUCT_INVALID_TYPE;
+	if( nullptr != pConfig ){ l_eProductType = pConfig->GetProductType(); }
 
 	l_bOk = l_eSVIMType == l_eProductType;
 
@@ -4931,31 +4933,36 @@ SVOINIClass& SVObserverApp::INI()
 
 void SVObserverApp::ResetAllCounts()
 {
-	SVInspectionProcess *pIP;
-	long l;
-	long lSize;
+	SVInspectionProcess* pInspection( nullptr );
+	long l = 0;
+	long lSize = 0;
 
-	SVConfigurationObject* l_pConfig = NULL;
-	SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
+	SVConfigurationObject* pConfig( nullptr );
+	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
-	l_pConfig->GetInspectionCount( lSize );
+	//If the pointer is a nullptr then lSize is 0
+	if( nullptr != pConfig){ pConfig->GetInspectionCount( lSize ); }
 	for( l = 0; l < lSize; l++ )
 	{
-		l_pConfig->GetInspection( l, &pIP );
+		pConfig->GetInspection( l, &pInspection );
 
-		pIP->GetToolSet()->ResetCounts();
+		if( nullptr != pInspection){ pInspection->GetToolSet()->ResetCounts(); }
 	}// end for
 
 	if( !SVSVIMStateClass::CheckState( SV_STATE_RUNNING ) )
 	{
 		for( l = 0; l < lSize; l++ )
 		{
-			l_pConfig->GetInspection( l, &pIP );
+			pConfig->GetInspection( l, &pInspection );
 
-			SVCommandInspectionRunOncePtr l_CommandPtr = new SVCommandInspectionRunOnce( pIP->GetUniqueObjectID() );
-			SVObjectSynchronousCommandTemplate< SVCommandInspectionRunOncePtr > l_Command( pIP->GetUniqueObjectID(), l_CommandPtr );
+			if( nullptr != pInspection )
+			{
+				SVCommandInspectionRunOncePtr l_CommandPtr = new SVCommandInspectionRunOnce( pInspection->GetUniqueObjectID() );
+				SVObjectSynchronousCommandTemplate< SVCommandInspectionRunOncePtr > l_Command( pInspection->GetUniqueObjectID(), l_CommandPtr );
 
-			l_Command.Execute( 120000 );
+				l_Command.Execute( 120000 );
+			}
+
 		}
 	}
 }
@@ -5406,12 +5413,12 @@ HRESULT SVObserverApp::RenameObject( const SVString& p_rOldName, const SVString&
 			l_Status = E_FAIL;
 		}
 
-		SVConfigurationObject* l_pConfig = NULL;
-		SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
+		SVConfigurationObject* pConfig( nullptr );
+		SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
-		if( l_pConfig != NULL )
+		if( nullptr != pConfig )
 		{
-			SVObjectManagerClass::Instance().UpdateObserver( l_pConfig->GetUniqueObjectID(), l_RenameObject );
+			SVObjectManagerClass::Instance().UpdateObserver( pConfig->GetUniqueObjectID(), l_RenameObject );
 		}
 		else
 		{
@@ -5435,12 +5442,12 @@ HRESULT SVObserverApp::RebuildOutputList()
 {
 	HRESULT l_Status = S_OK;
 
-	SVConfigurationObject* l_pConfig = NULL;
-	SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
+	SVConfigurationObject* pConfig( nullptr );
+	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
-	if( l_pConfig != NULL )
+	if( nullptr != pConfig )
 	{
-		l_pConfig->RebuildOutputObjectList();
+		pConfig->RebuildOutputObjectList();
 
 		SVIODoc* pIODoc = GetIODoc();
 		if (pIODoc)
@@ -5830,14 +5837,14 @@ BOOL SVObserverApp::ShowConfigurationAssistant( int Page /*= 3*/,
 
 	cDlg.SetCurrentSystem( eSVIMType );
 
-	SVConfigurationObject* l_pConfig = NULL;
-	SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
+	SVConfigurationObject* pConfig( nullptr );
+	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
-	if( l_pConfig != NULL )
+	if( nullptr != pConfig )
 	{
-		if( l_pConfig->GetProductType() != SVIM_PRODUCT_TYPE_UNKNOWN )
+		if( pConfig->GetProductType() != SVIM_PRODUCT_TYPE_UNKNOWN )
 		{
-			cDlg.SetConfigurationSystem( l_pConfig->GetProductType() );
+			cDlg.SetConfigurationSystem( pConfig->GetProductType() );
 		}
 		else
 		{
@@ -5896,10 +5903,10 @@ BOOL SVObserverApp::ShowConfigurationAssistant( int Page /*= 3*/,
 		{
 			SVSVIMStateClass::AddState( SV_STATE_MODIFIED );
 		}
-		if ( l_pConfig )
+		if ( nullptr != pConfig )
 		{
-			l_pConfig->ClearRemoteOutputUnUsedData();
-			l_pConfig->ValidateRemoteMonitorList();
+			pConfig->ClearRemoteOutputUnUsedData();
+			pConfig->ValidateRemoteMonitorList();
 			SVIODoc* pIODoc = GetIODoc();
 			if (pIODoc)
 			{
@@ -5939,7 +5946,7 @@ BOOL SVObserverApp::ShowConfigurationAssistant( int Page /*= 3*/,
 			SVIOConfigurationInterfaceClass::Instance().GetDigitalInputCount( ulCount );
 
 			// Create all the default inputs
-			l_pConfig->GetInputObjectList( &pInputObjectList );
+			pConfig->GetInputObjectList( &pInputObjectList );
 
 			for( l = 0; l < ulCount; l++ )
 			{
@@ -5956,17 +5963,17 @@ BOOL SVObserverApp::ShowConfigurationAssistant( int Page /*= 3*/,
 			}// end for
 
 			// Make all the PPQs build their default digital inputs
-			l_pConfig->GetPPQCount( lPPQCount );
+			pConfig->GetPPQCount( lPPQCount );
 			for( lPPQ = 0; lPPQ < lPPQCount; lPPQ++ )
 			{
-				l_pConfig->GetPPQ( lPPQ, &pPPQ );
+				pConfig->GetPPQ( lPPQ, &pPPQ );
 
-				pPPQ->RebuildInputList(l_pConfig->HasCameraTrigger(pPPQ));
+				pPPQ->RebuildInputList(pConfig->HasCameraTrigger(pPPQ));
 				pPPQ->RebuildOutputList();
 			}// end for
 
 			// Create all the default outputs
-			l_pConfig->GetOutputObjectList( &pOutputObjectList );
+			pConfig->GetOutputObjectList( &pOutputObjectList );
 
 			pOutputObjectList->GetOutputFlyweight( "Module Ready", pOutput );
 
@@ -5975,7 +5982,7 @@ BOOL SVObserverApp::ShowConfigurationAssistant( int Page /*= 3*/,
 			{
 				pOutput->SetChannel( 15 );
 
-				l_pConfig->GetModuleReady()->m_IOId = pOutput->GetUniqueObjectID();
+				pConfig->GetModuleReady()->m_IOId = pOutput->GetUniqueObjectID();
 
 				SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputIsInverted (15, pOutput->IsInverted ());
 				SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputIsForced (15, pOutput->IsForced ());
@@ -5983,9 +5990,9 @@ BOOL SVObserverApp::ShowConfigurationAssistant( int Page /*= 3*/,
 			}
 		}
 
-		if ( l_pConfig != NULL )
+		if ( nullptr != pConfig )
 		{
-			bOk = l_pConfig->RebuildInputOutputLists();
+			bOk = pConfig->RebuildInputOutputLists();
 
 			ConstructMissingDocuments();
 
@@ -6018,7 +6025,7 @@ BOOL SVObserverApp::ShowConfigurationAssistant( int Page /*= 3*/,
 			//
 			AfxGetMainWnd()->PostMessage( SV_SET_TOOL_SELECTED_IN_TOOL_VIEW, (WPARAM) TRUE );
 
-			bOk = l_pConfig->Activate() && bOk;
+			bOk = pConfig->Activate() && bOk;
 		}
 
 		if( bFileNewConfiguration )
@@ -6033,7 +6040,7 @@ BOOL SVObserverApp::ShowConfigurationAssistant( int Page /*= 3*/,
 		GetMainFrame()->BuildPPQButtons();
 
 		// Validate Output List TB
-		if( l_pConfig->ValidateOutputList() == SV_FATAL_SVOBSERVER_2006_DUPLICATE_DISCRETE_OUTPUT )
+		if( pConfig->ValidateOutputList() == SV_FATAL_SVOBSERVER_2006_DUPLICATE_DISCRETE_OUTPUT )
 		{
 			::AfxMessageBox( "Invalid Discrete Outputs: Remove all Discrete Outputs and re-add them.", MB_ICONEXCLAMATION );
 		}
@@ -6283,19 +6290,20 @@ HRESULT SVObserverApp::DisconnectToolsetBuffers()
 	// before we close Acq devices, we need to tell all toolsets to Close
 	// this closes the connection between toolset images and the MIL acq image.
 
-	SVConfigurationObject* l_pConfig = NULL;
-	SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
+	SVConfigurationObject* pConfig( nullptr );
+	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
 	long lInspectionCount = 0;
-	SVInspectionProcess* pInspection = NULL;
-	l_pConfig->GetInspectionCount( lInspectionCount );
+	SVInspectionProcess* pInspection( nullptr );
+	//If the pointer is a nullptr then the count will be 0
+	if( nullptr != pConfig ){ pConfig->GetInspectionCount( lInspectionCount ); }
 
 	for ( long lInspection = 0; lInspection < lInspectionCount; lInspection++ )
 	{
-		l_pConfig->GetInspection( lInspection, &pInspection );
-		if ( pInspection != NULL )
+		pConfig->GetInspection( lInspection, &pInspection );
+		if ( nullptr != pInspection )
 		{
-			if ( pInspection->GetToolSet() != NULL )
+			if ( nullptr != pInspection->GetToolSet() )
 			{
 				pInspection->DisconnectToolSetMainImage();
 			}
@@ -6312,19 +6320,20 @@ HRESULT SVObserverApp::ConnectToolsetBuffers()
 	// before we close Acq devices, we need to tell all toolsets to Close
 	// reopen the connection between toolset images and the MIL acq image here.
 
-	SVConfigurationObject* l_pConfig = NULL;
-	SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
+	SVConfigurationObject* pConfig( nullptr );
+	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
 	long lInspectionCount = 0;
-	SVInspectionProcess* pInspection = NULL;
-	l_pConfig->GetInspectionCount( lInspectionCount );
+	SVInspectionProcess* pInspection( nullptr );
+	//If the pointer is a nullptr then the count will be 0
+	if( nullptr != pConfig ){ pConfig->GetInspectionCount( lInspectionCount ); }
 
 	for ( long lInspection = 0; lInspection < lInspectionCount; lInspection++ )
 	{
-		l_pConfig->GetInspection( lInspection, &pInspection );
-		if ( pInspection != NULL )
+		pConfig->GetInspection( lInspection, &pInspection );
+		if ( nullptr != pInspection )
 		{
-			if ( pInspection->GetToolSet() != NULL )
+			if ( nullptr != pInspection->GetToolSet() )
 			{
 				pInspection->ConnectToolSetMainImage();
 			}
@@ -6375,8 +6384,8 @@ HRESULT SVObserverApp::ConnectCameras( const CStringArray& rCamerasToConnect )
 HRESULT SVObserverApp::SendCameraParameters( const CStringArray& rCameras )
 {
 	HRESULT hr = S_OK;
-	SVConfigurationObject* l_pConfig = NULL;
-	SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
+	SVConfigurationObject* pConfig( nullptr );
+	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
 	for ( int i=0; i < rCameras.GetSize(); i++ )
 	{
@@ -6387,8 +6396,9 @@ HRESULT SVObserverApp::SendCameraParameters( const CStringArray& rCameras )
 		SVLightReference* pDummyLight = NULL;
 		SVLut* pDummyLut = NULL;
 
-		if ( SVImageProcessingClass::Instance().GetAcquisitionDevice( rCameras.GetAt(i), pDevice ) == S_OK
-			&& l_pConfig->GetAcquisitionDevice(rCameras.GetAt(i), pDummyFiles, pDummyLight, pDummyLut, pDeviceParams ) )
+		if ( SVImageProcessingClass::Instance().GetAcquisitionDevice( rCameras.GetAt(i), pDevice ) == S_OK &&
+			 nullptr != pConfig &&
+			pConfig->GetAcquisitionDevice(rCameras.GetAt(i), pDummyFiles, pDummyLight, pDummyLut, pDeviceParams ) )
 		{
 			// Check for the camera file and camera to match.
 			if( hr == S_OK )
@@ -6529,28 +6539,34 @@ void SVObserverApp::SetTestMode(bool p_bNoSecurity )
 
 			if( m_pMainWnd )
 			{
-				SVPPQObject *pPPQ = NULL;
+				SVPPQObject* pPPQ( nullptr );
 				long l;
-				long lSize;
+				long lSize = 0;
 				HRESULT hrReady = S_OK;
 
-				SVConfigurationObject* l_pConfig = NULL;
-				SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
+				SVConfigurationObject* pConfig( nullptr );
+				SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
 				SVSoftwareTriggerDlg & l_trgrDlg = SVSoftwareTriggerDlg::Instance();
 				l_trgrDlg.ShowWindow(SW_HIDE);
 				l_trgrDlg.ClearTriggers();
-				l_pConfig->GetPPQCount( lSize );
+				//If the pointer is a nullptr the lSize is 0
+				if( nullptr != pConfig ){ pConfig->GetPPQCount( lSize ); }
 				HRESULT l_hrOk = S_OK;
 				for( l = 0; l_hrOk == S_OK && l < lSize; l++ )
 				{
-					l_pConfig->GetPPQ( l, &pPPQ );
-					l_hrOk = pPPQ->CanGoOnline();
-					SVTriggerObject * l_trigger = NULL;
-					pPPQ->GetTrigger(l_trigger);
-					if (l_trigger->IsSoftwareTrigger())
+					pConfig->GetPPQ( l, &pPPQ );
+					if( nullptr == pPPQ )
 					{
-						l_trgrDlg.AddTrigger(l_trigger);
+						l_hrOk = S_FALSE;
+						break;
+					}
+					l_hrOk = pPPQ->CanGoOnline();
+					SVTriggerObject* pTrigger( nullptr );
+					pPPQ->GetTrigger( pTrigger );
+					if ( nullptr != pTrigger && pTrigger->IsSoftwareTrigger())
+					{
+						l_trgrDlg.AddTrigger(pTrigger);
 					}
 				}// end for
 
@@ -6558,12 +6574,16 @@ void SVObserverApp::SetTestMode(bool p_bNoSecurity )
 				{
 					l_trgrDlg.SelectTrigger();
 				}
-
-				l_pConfig->GetPPQCount( lSize );
+				lSize = 0;
+				//If the pointer is a nullptr the lSize is 0
+				if( nullptr != pConfig ){ pConfig->GetPPQCount( lSize ); }
 				for( l = 0; hrReady == S_OK && l < lSize; l++ )
 				{
-					l_pConfig->GetPPQ( l, &pPPQ );
-					hrReady = pPPQ->CanGoOnline();
+					pConfig->GetPPQ( l, &pPPQ );
+					if( nullptr != pPPQ )
+					{
+						hrReady = pPPQ->CanGoOnline();
+					}
 				}// end for
 
 				if( hrReady != S_OK )
@@ -6573,16 +6593,22 @@ void SVObserverApp::SetTestMode(bool p_bNoSecurity )
 
 				for( l = 0; hrReady == S_OK && l < lSize; l++ )
 				{
-					l_pConfig->GetPPQ( l, &pPPQ );
-					hrReady = pPPQ->GoOnline();
+					pConfig->GetPPQ( l, &pPPQ );
+					if( nullptr != pPPQ )
+					{
+						hrReady = pPPQ->GoOnline();
+					}
 				}// end for
 
 				if( hrReady != S_OK )
 				{
 					for( l = 0; l < lSize; l++ )
 					{
-						l_pConfig->GetPPQ( l, &pPPQ );
-						pPPQ->GoOffline();
+						pConfig->GetPPQ( l, &pPPQ );
+						if( nullptr != pPPQ )
+						{
+							pPPQ->GoOffline();
+						}
 					}// end for
 
 					SetAllIPDocumentsOffline();
@@ -6597,7 +6623,7 @@ void SVObserverApp::SetTestMode(bool p_bNoSecurity )
 				SVSVIMStateClass::AddState( SV_STATE_TEST );
 				SVSVIMStateClass::RemoveState( SV_STATE_EDIT );
 
-				l_pConfig->SetModuleReady( true );
+				if( nullptr != pConfig){ pConfig->SetModuleReady( true ); }
 
 				SVObjectManagerClass::Instance().SetState( SVObjectManagerClass::ReadOnly );
 
@@ -6618,23 +6644,25 @@ HRESULT SVObserverApp::GetTriggersAndCounts( CString& p_strTrigCnts ) const
 {
 	HRESULT l_hr = S_FALSE;
 	long l_lCount = 0;
-	SVConfigurationObject* l_pConfig = NULL;
-	SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
+	SVConfigurationObject* pConfig( nullptr );
+	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
-	if( l_pConfig != NULL && l_pConfig->GetPPQCount(l_lCount))
+	if( nullptr != pConfig && pConfig->GetPPQCount(l_lCount))
 	{
 		for( int l_lPPQ = 0 ; l_lPPQ < l_lCount; l_lPPQ++)
 		{
-			SVPPQObject* l_pPPQ = NULL;
-			if( l_pConfig->GetPPQ(l_lPPQ, &l_pPPQ ) )
+			SVPPQObject* pPPQ( nullptr );
+			//Returns true when pointer valid
+			if( pConfig->GetPPQ(l_lPPQ, &pPPQ ) )
 			{
 				CString l_strTmp;
-				SVTriggerObject* l_pTrigger=NULL;
-				if( l_pPPQ->GetTrigger( l_pTrigger ))
+				SVTriggerObject* pTrigger( nullptr );
+				//If returns true has valid pointer
+				if( pPPQ->GetTrigger( pTrigger ))
 				{
 					l_hr = S_OK;
-					l_pTrigger->m_lTriggerCount;
-					l_strTmp.Format( "\n%s count-%d", l_pTrigger->GetName(), l_pTrigger->m_lTriggerCount );
+					pTrigger->m_lTriggerCount;
+					l_strTmp.Format( "\n%s count-%d", pTrigger->GetName(), pTrigger->m_lTriggerCount );
 					p_strTrigCnts += l_strTmp;
 				}
 			}
@@ -6946,17 +6974,17 @@ void SVObserverApp::UpdateRemoteInputTabs()
 {
 	// Remote Inputs
 	bool l_bHideIOTab = true;
-	SVConfigurationObject* l_pConfig = NULL;
-	SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
+	SVConfigurationObject* pConfig( nullptr );
+	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
-	if( l_pConfig != NULL )
+	if( nullptr != pConfig )
 	{
-		SVInputObjectList* l_pList=NULL;
-		l_pConfig->GetInputObjectList( &l_pList );
-		if( l_pList != NULL )
+		SVInputObjectList* pList( nullptr );
+		pConfig->GetInputObjectList( &pList );
+		if( nullptr != pList )
 		{
 			long lSize;
-			l_pList->GetRemoteInputCount( lSize );
+			pList->GetRemoteInputCount( lSize );
 			if( lSize > 0 )
 			{
 				l_bHideIOTab = false;
@@ -7058,10 +7086,12 @@ HRESULT SVObserverApp::Start()
 
 	l_StartLoading = SVClock::GetTimeStamp();
 
-	SVConfigurationObject* l_pConfig = NULL;
-	SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
+	SVConfigurationObject* pConfig( nullptr );
+	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
+	ASSERT( nullptr != pConfig );
+
 #ifndef _WIN64
-	if( l_pConfig->GetPLCCount() > 0 )
+	if( nullptr != pConfig && pConfig->GetPLCCount() > 0 )
 	{
 		if( m_PLCManager.TestConnections() == false )
 		{
@@ -7070,9 +7100,9 @@ HRESULT SVObserverApp::Start()
 	}
 #endif
 
-	if ( m_pMainWnd )
+	if ( m_pMainWnd && nullptr != pConfig)
 	{
-		SVPPQObject *pPPQ = NULL;
+		SVPPQObject* pPPQ( nullptr );
 		long l;
 		long lSize;
 		CStringArray saCameras;
@@ -7088,22 +7118,24 @@ HRESULT SVObserverApp::Start()
 		l_trgrDlg.ClearTriggers();
 
 		PPQMonitorList ppqMonitorList;
-		l_pConfig->BuildPPQMonitorList(ppqMonitorList);
+		pConfig->BuildPPQMonitorList(ppqMonitorList);
 
-		l_pConfig->GetPPQCount( lSize );
+		pConfig->GetPPQCount( lSize );
 		for( l = 0; l_hrOk == S_OK && l < lSize; l++ )
 		{
-			l_pConfig->GetPPQ( l, &pPPQ );
-
-			pPPQ->SetMonitorList(ppqMonitorList[pPPQ->GetName()]);
-
-			l_hrOk = pPPQ->CanGoOnline();
-
-			SVTriggerObject * l_trigger = NULL;
-			pPPQ->GetTrigger(l_trigger);
-			if (l_trigger->IsSoftwareTrigger())
+			//Returns true when pointer valid
+			if( pConfig->GetPPQ( l, &pPPQ ) )
 			{
-				l_trgrDlg.AddTrigger(l_trigger);
+				pPPQ->SetMonitorList(ppqMonitorList[pPPQ->GetName()]);
+
+				l_hrOk = pPPQ->CanGoOnline();
+
+				SVTriggerObject* pTrigger( nullptr );
+				pPPQ->GetTrigger(pTrigger);
+				if ( nullptr != pTrigger && pTrigger->IsSoftwareTrigger())
+				{
+					l_trgrDlg.AddTrigger( pTrigger );
+				}
 			}
 		}// end for
 		if (l_trgrDlg.HasTriggers())
@@ -7123,16 +7155,22 @@ HRESULT SVObserverApp::Start()
 		{
 			for( l = 0; l_hrOk == S_OK && l < lSize; l++ )
 			{
-				l_pConfig->GetPPQ( l, &pPPQ );
-				l_hrOk = pPPQ->GoOnline();
+				pConfig->GetPPQ( l, &pPPQ );
+				if( nullptr != pPPQ )
+				{
+					l_hrOk = pPPQ->GoOnline();
+				}
 			}// end for
 
 			if( l_hrOk != S_OK )
 			{
 				for( l = 0; l < lSize; l++ )
 				{
-					l_pConfig->GetPPQ( l, &pPPQ );
-					pPPQ->GoOffline();
+					pConfig->GetPPQ( l, &pPPQ );
+					if( nullptr != pPPQ )
+					{
+						pPPQ->GoOffline();
+					}
 				}// end for
 
 				SVSVIMStateClass::RemoveState( SV_STATE_START_PENDING );
@@ -7164,14 +7202,14 @@ HRESULT SVObserverApp::Start()
 
 				if ( SVSVIMStateClass::CheckState( SV_STATE_RAID_FAILURE ) )
 				{
-					if( l_pConfig->SetRaidErrorBit( true ) != S_OK )
+					if( pConfig->SetRaidErrorBit( true ) != S_OK )
 					{
 						return S_FALSE;
 					}
 				}
 				else
 				{
-					if( l_pConfig->SetRaidErrorBit( false ) != S_OK )
+					if( pConfig->SetRaidErrorBit( false ) != S_OK )
 					{
 						return S_FALSE;
 					}
@@ -7179,13 +7217,13 @@ HRESULT SVObserverApp::Start()
 			}
 			else
 			{
-				if( l_pConfig->SetRaidErrorBit( true ) != S_OK )
+				if( pConfig->SetRaidErrorBit( true ) != S_OK )
 				{
 					return S_FALSE;
 				}
 			}
 
-			if( l_pConfig->SetModuleReady( true ) != S_OK )
+			if( pConfig->SetModuleReady( true ) != S_OK )
 			{
 				RunAllIPDocuments();
 
@@ -7724,10 +7762,10 @@ HRESULT SVObserverApp::ConnectCameraBuffers( const CStringArray& rCamerasToConne
 {
 	HRESULT hr = S_OK;
 
-	SVConfigurationObject* l_pConfig = NULL;
-	SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
+	SVConfigurationObject* pConfig( nullptr );
+	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
-	if( l_pConfig != NULL )
+	if( nullptr != pConfig )
 	{
 		for ( int i=0; i < rCamerasToConnect.GetSize(); i++)
 		{
@@ -7744,7 +7782,7 @@ HRESULT SVObserverApp::ConnectCameraBuffers( const CStringArray& rCamerasToConne
 					SVLut* pLut;
 					SVDeviceParamCollection* pParams;
 
-					if ( l_pConfig->GetAcquisitionDevice( sDigName, pFiles, pLR, pLut, pParams ) )
+					if ( pConfig->GetAcquisitionDevice( sDigName, pFiles, pLR, pLut, pParams ) )
 					{
 						SVImageInfoClass svImageInfo;
 						pAcqDevice->GetImageInfo(&svImageInfo);
@@ -7915,13 +7953,13 @@ void SVObserverApp::fileSaveAsSVX( CString StrSaveAsPathName ,bool isRegularSave
 		BSTR bStr = NULL;
 		unsigned long ulVer = 0;
 
-		SVConfigurationObject* l_pConfig = NULL;
-		SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
+		SVConfigurationObject* pConfig( nullptr );
+		SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
-		if( l_pConfig != nullptr )
+		if( nullptr != pConfig )
 		{
-			l_pConfig->ValidateRemoteMonitorList(); // sanity check
-			l_pConfig->SaveConfiguration( m_XMLTree );
+			pConfig->ValidateRemoteMonitorList(); // sanity check
+			pConfig->SaveConfiguration( m_XMLTree );
 		}
 
 		SaveDocuments( m_XMLTree );
@@ -8163,12 +8201,12 @@ HRESULT SVObserverApp::SaveDocuments( SVTreeType& p_rTree )
 
 										#ifndef USE_OBJECT_SCRIPT
 											SVObjectClass* l_pObject = SVObjectManagerClass::Instance().GetObject( pTmpDoc->GetInspectionID() );
-											SVInspectionProcess* l_pInspection = dynamic_cast< SVInspectionProcess* >( l_pObject );
+											SVInspectionProcess* pInspection = dynamic_cast< SVInspectionProcess* >( l_pObject );
 
-											if( l_pInspection != NULL )
+											if( nullptr != pInspection )
 											{
 												// SEJ 101 New Logic
-												l_pInspection->Persist(writer);
+												pInspection->Persist(writer);
 											}
 										#endif
 
@@ -8212,12 +8250,12 @@ HRESULT SVObserverApp::ConstructDocuments( SVTreeType& p_rTree )
 		}
 		else
 		{
-			SVConfigurationObject* l_pConfig = NULL;
-			SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
+			SVConfigurationObject* pConfig( nullptr );
+			SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
-			if( l_pConfig != NULL )
+			if( nullptr != pConfig )
 			{
-				pIOController = l_pConfig->GetIOController();
+				pIOController = pConfig->GetIOController();
 
 				l_Status = S_OK;
 			}
@@ -8260,7 +8298,7 @@ HRESULT SVObserverApp::ConstructDocuments( SVTreeType& p_rTree )
 
 		while( l_Status == S_OK && htiSubChild != NULL )
 		{
-			SVInspectionProcess* pInspect( NULL );
+			SVInspectionProcess* pInspection( nullptr );
 			SVTreeType::SVBranchHandle htiSVIPDoc = NULL;
 			SVTreeType::SVBranchHandle htiSVInspectionProcess = NULL;
 
@@ -8284,9 +8322,9 @@ HRESULT SVObserverApp::ConstructDocuments( SVTreeType& p_rTree )
 				{
 					SVGUID docObjectID = svVariant;
 
-					pInspect = dynamic_cast< SVInspectionProcess* >( SVObjectManagerClass::Instance().GetObject( docObjectID ) );
+					pInspection = dynamic_cast< SVInspectionProcess* >( SVObjectManagerClass::Instance().GetObject( docObjectID ) );
 
-					if( pInspect == NULL )
+					if( nullptr == pInspection )
 					{
 						l_Status = E_FAIL;
 					}
@@ -8303,13 +8341,15 @@ HRESULT SVObserverApp::ConstructDocuments( SVTreeType& p_rTree )
 
 			if( l_Status == S_OK )
 			{
-				SVIPDoc* l_pIPDoc( TheSVObserverApp.NewSVIPDoc( pInspect->GetName(), *pInspect ) );
+				SVIPDoc* pIPDoc( nullptr );
+				//If Inspection pointer is nullptr then pIPDoc will also be nullptr
+				if( nullptr != pInspection ){ pIPDoc = TheSVObserverApp.NewSVIPDoc( pInspection->GetName(), *pInspection ) ; }
 
-				if( l_pIPDoc != NULL )
+				if( nullptr != pIPDoc )
 				{
-					l_pIPDoc->IsNew = false;
+					pIPDoc->IsNew = false;
 
-					if( ! l_pIPDoc->SetParameters( p_rTree, htiSVIPDoc ) )
+					if( ! pIPDoc->SetParameters( p_rTree, htiSVIPDoc ) )
 					{
 						l_Status = E_FAIL;
 					}
@@ -8317,7 +8357,7 @@ HRESULT SVObserverApp::ConstructDocuments( SVTreeType& p_rTree )
 					if( l_Status == S_OK )
 					{
 						// Init Document
-						if( ! l_pIPDoc->InitAfterSystemIsDocked() )
+						if( ! pIPDoc->InitAfterSystemIsDocked() )
 						{
 							l_Status = E_FAIL;
 						}
@@ -8351,12 +8391,12 @@ HRESULT SVObserverApp::ConstructMissingDocuments()
 {
 	HRESULT l_Status( S_OK );
 
-	SVConfigurationObject* l_pConfig = NULL;
-	SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
+	SVConfigurationObject* pConfig( nullptr );
+	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
-	if( l_pConfig != NULL )
+	if( nullptr != pConfig )
 	{
-		SVIOController* l_pIOController = l_pConfig->GetIOController();
+		SVIOController* l_pIOController = pConfig->GetIOController();
 
 		if( l_pIOController != NULL )
 		{
@@ -8381,19 +8421,19 @@ HRESULT SVObserverApp::ConstructMissingDocuments()
 
 		SVInspectionProcessPtrList l_Inspections;
 
-		l_pConfig->GetInspections( l_Inspections );
+		pConfig->GetInspections( l_Inspections );
 
 		SVInspectionProcessPtrList::iterator l_Iter( l_Inspections.begin() );
 
 		while( l_Status == S_OK && l_Iter != l_Inspections.end() )
 		{
-			SVInspectionProcess* l_pInspection( *l_Iter );
+			SVInspectionProcess* pInspection( *l_Iter );
 
-			if( l_pInspection != NULL )
+			if( nullptr != pInspection )
 			{
-				if( SVObjectManagerClass::Instance().GetIPDoc( l_pInspection->GetUniqueObjectID() ) == NULL )
+				if( SVObjectManagerClass::Instance().GetIPDoc( pInspection->GetUniqueObjectID() ) == NULL )
 				{
-					SVIPDoc* l_pIPDoc( TheSVObserverApp.NewSVIPDoc( l_pInspection->GetName(), *l_pInspection ) );
+					SVIPDoc* l_pIPDoc( TheSVObserverApp.NewSVIPDoc( pInspection->GetName(), *pInspection ) );
 
 					if( l_pIPDoc != NULL )
 					{

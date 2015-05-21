@@ -130,7 +130,7 @@ struct SVPPQInfoStruct
 
 	HRESULT GetNextAvailableIndexes( SVDataManagerLockTypeEnum p_LockType );
 
-	SVPPQObject *pPPQ;
+	SVPPQObject* pPPQ;
 
 	SVDataManagerHandle m_ResultDataDMIndexHandle;
 	SVDataManagerHandle m_ResultImagePublishedDMIndexHandle;
@@ -152,7 +152,7 @@ struct SVTriggerInfoStruct
 	void Init();
 
 	BOOL bValid;
-	SVTriggerObject *pTrigger;
+	SVTriggerObject* pTrigger;
 	long lTriggerCount;
 	bool m_ToggleState;
 	SVClock::SVTimeStamp m_BeginProcess;

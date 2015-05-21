@@ -706,9 +706,12 @@ HRESULT SVRemoteOutputDataController::GetRemoteOutputGroups( std::vector<CString
 }
 
 // This function fills a list with the PPQ names that are associated with Groups that are setup.
-HRESULT SVRemoteOutputDataController::GetPPQs( std::vector<CString>& p_astrPPQs, SVConfigurationObject* p_pConfig )
+HRESULT SVRemoteOutputDataController::GetPPQs( std::vector<CString>& p_astrPPQs, SVConfigurationObject* pConfig )
 {
 	HRESULT l_hr = S_OK;
+
+	//Only ASSERT not to change runtime
+	ASSERT( nullptr != pConfig );
 
 	p_astrPPQs.clear();
 
@@ -716,17 +719,17 @@ HRESULT SVRemoteOutputDataController::GetPPQs( std::vector<CString>& p_astrPPQs,
 	for( l_it = m_RemoteGroupParameters.begin() ; l_it != m_RemoteGroupParameters.end() ; ++l_it )
 	{
 		long l_lPPQCount;
-		p_pConfig->GetPPQCount( l_lPPQCount );
+		pConfig->GetPPQCount( l_lPPQCount );
 		CString l_strRemoteOutputID = l_it->first;
 		for( int i = 0 ; i < l_lPPQCount ; i++ )
 		{
-			SVPPQObject* l_pPPQ = NULL;
-			p_pConfig->GetPPQ(i, &l_pPPQ );
-			if( l_pPPQ )
+			SVPPQObject* pPPQ( nullptr );
+			pConfig->GetPPQ(i, &pPPQ );
+			if( nullptr != pPPQ )
 			{
-				if( l_pPPQ->GetName() == l_it->second->GetPPQName() )
+				if( pPPQ->GetName() == l_it->second->GetPPQName() )
 				{
-					p_astrPPQs.push_back( l_pPPQ->GetName() );
+					p_astrPPQs.push_back( pPPQ->GetName() );
 					break;
 				}
 			}
@@ -794,9 +797,9 @@ size_t SVRemoteOutputDataController::GetRemoteOutputGroupCount()
 HRESULT SVRemoteOutputDataController::ClearUnUsedData( )
 {
 	long l_lCount = 0;
-	SVConfigurationObject* pConfig = nullptr;
+	SVConfigurationObject* pConfig( nullptr );
 	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
-	if (pConfig)
+	if( nullptr != pConfig )
 	{
 		pConfig->GetPPQCount(l_lCount);
 		typedef std::pair<SVString, SVGUID> PPQInfo;
@@ -804,11 +807,11 @@ HRESULT SVRemoteOutputDataController::ClearUnUsedData( )
 		PPQInfoList l_PPQInfos;
 		for( long l_lIndex = 0 ; l_lIndex < l_lCount ; l_lIndex++ )
 		{
-			SVPPQObject* l_pPPQ = nullptr;
-			pConfig->GetPPQ(l_lIndex, &l_pPPQ );
-			if( nullptr != l_pPPQ )
+			SVPPQObject* pPPQ( nullptr );
+			pConfig->GetPPQ(l_lIndex, &pPPQ );
+			if( nullptr != pPPQ )
 			{
-				l_PPQInfos.push_back( std::make_pair(l_pPPQ->GetName(), l_pPPQ->GetUniqueObjectID()) );
+				l_PPQInfos.push_back( std::make_pair(pPPQ->GetName(), pPPQ->GetUniqueObjectID()) );
 			}
 		}
 	
@@ -846,16 +849,22 @@ HRESULT SVRemoteOutputDataController::ClearUnUsedData( )
 }
 
 // Adds the trigger count if the parameter map is empty
-HRESULT SVRemoteOutputDataController::AddDefaultOutputs(CString p_strRemoteGroupID, SVPPQObject* p_pPPQ )
+HRESULT SVRemoteOutputDataController::AddDefaultOutputs(CString p_strRemoteGroupID, SVPPQObject* pPPQ )
 {
 	HRESULT l_hr = S_FALSE;
+	ASSERT( nullptr != pPPQ );
+	if( nullptr == pPPQ)
+	{
+		return l_hr;
+	}
+
 	if( !p_strRemoteGroupID.IsEmpty() )
 	{
 		if( m_RemoteGroupParameters.find( p_strRemoteGroupID ) == m_RemoteGroupParameters.end() )
 		{
 			SVRemoteOutputObject* l_pNewOutput = NULL;
 			
-			AddItem( p_strRemoteGroupID, l_pNewOutput, p_pPPQ->m_voTriggerCount.GetUniqueObjectID(), p_pPPQ->GetName() );
+			AddItem( p_strRemoteGroupID, l_pNewOutput, pPPQ->m_voTriggerCount.GetUniqueObjectID(), pPPQ->GetName() );
 		}
 		l_hr = S_OK;
 	}
@@ -916,9 +925,12 @@ HRESULT SVRemoteOutputDataController::ValidateInputs()
 	return S_OK;
 }
 
-void SVRemoteOutputDataController::SetupRemoteOutput(SVConfigurationObject* p_pConfig)
+void SVRemoteOutputDataController::SetupRemoteOutput(SVConfigurationObject* pConfig)
 {
 	HRESULT l_hr = S_OK;
+
+	//Only ASSERT not to change runtime
+	ASSERT( nullptr != pConfig );
 
 	SVGroupDefVect l_OriginalList;
 	std::vector<CString> l_GroupOutputNames;
@@ -935,7 +947,7 @@ void SVRemoteOutputDataController::SetupRemoteOutput(SVConfigurationObject* p_pC
 
 	if( l_hr == S_OK )
 	{
-		SetupRemoteOutputGroup(p_pConfig, l_OriginalList );
+		SetupRemoteOutputGroup(pConfig, l_OriginalList );
 
 		if( l_hr == S_OK )
 		{
@@ -955,20 +967,27 @@ void SVRemoteOutputDataController::SetupRemoteOutput(SVConfigurationObject* p_pC
 	}
 }
 
-void SVRemoteOutputDataController::SetupRemoteOutputGroup(SVConfigurationObject* p_pConfig, SVGroupDefVect& p_rOriginalList )
+void SVRemoteOutputDataController::SetupRemoteOutputGroup(SVConfigurationObject* pConfig, SVGroupDefVect& p_rOriginalList )
 {
+	//If pConfig is nullptr then no need to go further
+	ASSERT( nullptr != pConfig );
+	if( nullptr == pConfig )
+	{
+		return;
+	}
+
 	// these containers hold the list of ppq names that will be used for plcs.
 	CStringVec l_AvailablePPQs;
 	// Initialize PPQ - PLCs by selecting from dialog.
 	long l_lPPQSize;
-	p_pConfig->GetPPQCount( l_lPPQSize );
+	pConfig->GetPPQCount( l_lPPQSize );
 	for( long l = 0 ; l < l_lPPQSize ; l++ )
 	{
-		SVPPQObject* l_pPPQ = NULL;
-		BOOL l_bTmp = p_pConfig->GetPPQ(l, &l_pPPQ );
+		SVPPQObject* pPPQ( nullptr );
+		BOOL l_bTmp = pConfig->GetPPQ(l, &pPPQ );
 		if( l_bTmp )
 		{
-			l_AvailablePPQs.push_back( l_pPPQ->GetName() );
+			l_AvailablePPQs.push_back( pPPQ->GetName() );
 		}
 	}
 	// Setup PPQs to have Renmote Output Groups
@@ -1001,11 +1020,11 @@ void SVRemoteOutputDataController::SetupRemoteOutputGroup(SVConfigurationObject*
 			{
 				if( l_dlg.m_SetupGroup[j].m_strName == l_astrNewItems[i] )
 				{
-					SVPPQObject* l_pPPQ = NULL;
-					BOOL l_bTmp = p_pConfig->GetChildObjectByName(l_dlg.m_SetupGroup[j].m_strPPQ, &l_pPPQ );
+					SVPPQObject* pPPQ( nullptr );
+					BOOL l_bTmp = pConfig->GetChildObjectByName(l_dlg.m_SetupGroup[j].m_strPPQ, &pPPQ );
 					if( l_bTmp )
 					{
-						AddDefaultOutputs(l_astrNewItems[i], l_pPPQ );
+						AddDefaultOutputs(l_astrNewItems[i], pPPQ );
 					}
 				}
 			}

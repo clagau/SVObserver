@@ -48,7 +48,7 @@ protected:
 	HRESULT UpdateResultsWithValueData( const SVString& p_rItemName, const SVValueObjectReference& p_rValueRef, unsigned long p_TriggerCount );
 
 private:
-	const SVInspectionProcess *m_Inspection;
+	const SVInspectionProcess* m_Inspection;
 	SVNameObjectSet m_ItemNames;
 	SVNameStorageResultMap m_ResultItems;
 

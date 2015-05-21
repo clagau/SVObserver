@@ -202,10 +202,10 @@ HRESULT RangeClassHelper::CheckInternalData(CString &csmsg) const
 	CString InspectionName ;
 	if(m_pRange )
 	{
-		SVInspectionProcess* pInspectionProc =  m_pRange->GetInspection();
-		if(pInspectionProc)
+		SVInspectionProcess* pInspection =  m_pRange->GetInspection();
+		if( nullptr != pInspection )
 		{
-			InspectionName = pInspectionProc->GetName();
+			InspectionName = pInspection->GetName();
 		}
 	}
 	InspectionName += _T(".");

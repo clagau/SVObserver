@@ -75,6 +75,8 @@ bool SVLightReferenceDialogPropertySheetClass::CreatePages( SVVirtualCameraPtrSe
 	for( i = 0; l_Iter != setCameras.end(); ++i, ++l_Iter )
 	{
 		SVVirtualCamera* pCamera = ( *l_Iter );
+		//If pointer is nullptr then do next camera
+		if( nullptr == pCamera ){ continue; }
 		SVAcquisitionClassPtr pDevice = pCamera->GetAcquisitionDevice();
 		SVLightReference* pLR = apLRA.GetAt(i);
 		int iNumBands=pLR->NumBands();

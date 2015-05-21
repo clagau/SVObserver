@@ -1047,7 +1047,7 @@ HRESULT SVPatternAnalyzerClass::ResetObject()
 		SVInspectionProcess* pInspection = GetInspection();
 
 		// Insures that the Pattern will be reloaded when going online.
-		if ( pInspection != NULL && pInspection->IsResetStateSet( SVResetStateLoadFiles ) )
+		if ( nullptr != pInspection && pInspection->IsResetStateSet( SVResetStateLoadFiles ) )
 		{
 			ResetImageFile();
 		}

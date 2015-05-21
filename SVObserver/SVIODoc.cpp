@@ -223,12 +223,12 @@ void SVIODoc::OnExtrasTestoutputs()
 void SVIODoc::OnExtrasEditRemoteInputs()
 {
 	SvMc::SVRemoteInputDialog oDlg;
-	SVPPQObject* pPPQ;
-	SVRemoteInputObject* pRemInput;
-	SVInputObjectList* pInputList = nullptr;
+	SVPPQObject* pPPQ( nullptr );
+	SVRemoteInputObject* pRemInput ( nullptr );
+	SVInputObjectList* pInputList( nullptr );
 	SVIOEntryHostStructPtrList ppIOEntries;
 	SVIOEntryHostStructPtr pIOEntry;
-	SVValueObjectClass* pObject;
+	SVValueObjectClass* pObject( nullptr );
 	CString strName;
 	long lSize;
 	long lCount;
@@ -240,8 +240,12 @@ void SVIODoc::OnExtrasEditRemoteInputs()
 	SVConfigurationObject* pConfig = nullptr;
 	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
-	pConfig->GetPPQCount( lPPQSize );
-	pConfig->GetInputObjectList( &pInputList );
+	ASSERT( nullptr != pConfig );
+	if( nullptr != pConfig )
+	{
+		pConfig->GetPPQCount( lPPQSize );
+		pConfig->GetInputObjectList( &pInputList );
+	}
 	if( pInputList )
 	{
 		if( !pInputList->FillInputs( ppIOEntries ) )
@@ -280,7 +284,7 @@ void SVIODoc::OnExtrasEditRemoteInputs()
 						for( k = 0; k< lPPQSize; k++ )
 						{
 							pConfig->GetPPQ( k, &pPPQ );
-							if( pPPQ )
+							if( nullptr != pPPQ )
 							{
 								pIOEntry = new SVIOEntryHostStruct;
 								pObject = new SVVariantValueObjectClass;
@@ -338,7 +342,7 @@ void SVIODoc::OnExtrasEditRemoteInputs()
 							for( k = 0; k < lPPQSize; k++ )
 							{
 								pConfig->GetPPQ( k, &pPPQ );
-								if( pPPQ ) { pPPQ->RemoveInput( pIOEntry ); }
+								if( nullptr != pPPQ ) { pPPQ->RemoveInput( pIOEntry ); }
 							}// end for
 
 							pIOEntry.clear();

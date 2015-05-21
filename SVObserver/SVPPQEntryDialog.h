@@ -225,7 +225,7 @@ protected:
 // Data Element(s):
 //******************************************************************************
 public:
-	SVPPQObject *m_pPPQ;
+	SVPPQObject* m_pPPQ;
 	long		m_lCurrentPosition;
 	BOOL		m_bIsTaken;
 

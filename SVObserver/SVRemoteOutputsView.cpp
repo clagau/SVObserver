@@ -154,7 +154,7 @@ void SVRemoteOutputsView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 		int l_PPQNum = 0;
 	
 		// Get the number of PPQs
-		if( !pConfig->GetPPQCount( lPPQSize ) )
+		if( nullptr == pConfig || !pConfig->GetPPQCount( lPPQSize ) )
 		{
 			SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
 			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorGettingPPQCount, StdExceptionParams, Err_17051_SVRemoteOutputsView_OnUpdate_ErrorGettingPPQCount );
@@ -279,7 +279,7 @@ void SVRemoteOutputsView::OnLButtonDblClk(UINT nFlags, CPoint point)
 		long lPPQSize = 0;
 
 		// Get the number of PPQs
-		if( !pConfig->GetPPQCount( lPPQSize ) )
+		if( nullptr == pConfig || !pConfig->GetPPQCount( lPPQSize ) )
 		{
 			SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
 			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorGettingPPQCount, StdExceptionParams, Err_17052_SVRemoteOutputsView_OnLButtonDblClk_ErrorGettingPPQCount );
@@ -490,7 +490,7 @@ void SVRemoteOutputsView::OnRemoteOutputProperties()
 		SVConfigurationObject* pConfig = NULL;
 		SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
-		pConfig->SetupRemoteOutput();
+		if( nullptr != pConfig){ pConfig->SetupRemoteOutput(); }
 	}
 }
 
@@ -569,12 +569,12 @@ void SVRemoteOutputsView::OnRemoteOutputDelete()
 		POSITION l_Pos = GetListCtrl().GetFirstSelectedItemPosition();
 		if( l_Pos != NULL )
 		{
-			SVConfigurationObject* pConfig = NULL;
+			SVConfigurationObject* pConfig( nullptr );
 			SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
 			int l_item = GetListCtrl().GetNextSelectedItem( l_Pos );
 			SVRemoteOutputObject* pRemoteOutput = dynamic_cast<SVRemoteOutputObject*>( reinterpret_cast<SVObjectClass*>(GetListCtrl().GetItemData( l_item )));
-			if( pRemoteOutput )
+			if( nullptr != pRemoteOutput && nullptr != pConfig )
 			{
 				// The user clicked on an output
 				CString l_strRemoteGroup = pRemoteOutput->GetGroupID().c_str();// GetInputValueObjectName();
@@ -651,34 +651,41 @@ bool SVRemoteOutputsView::AddOutput(int p_iWhere)
 
 	if( RemoteOutputGroupNameAtItem( l_strGroup, p_iWhere ) == S_OK)
 	{
-		SVConfigurationObject* pConfig = NULL;
+		SVConfigurationObject* pConfig( nullptr );
 		SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
-		SVRemoteOutputGroup* GroupParameters = pConfig->GetRemoteOutputGroup(l_strGroup);
+		SVRemoteOutputGroup* pGroupParameters( nullptr );
+		if( nullptr != pConfig ){ pConfig->GetRemoteOutputGroup(l_strGroup); }
 
-		SVPPQObject* pPPQ=NULL;
-		SVString l_PPQName = GroupParameters->GetPPQName();
-		if( !l_PPQName.empty() )
+		SVPPQObject* pPPQ( nullptr );
+		SVString PPQName;
+		//If pointer is nullptr then PPQName stays empty
+		if( nullptr != pGroupParameters){ PPQName = pGroupParameters->GetPPQName(); }
+		if( !PPQName.empty() )
 		{
-			pConfig->GetChildObjectByName( l_PPQName.c_str(), &pPPQ );
-			dlg.m_InputObjectGUID = pPPQ->m_voTriggerCount.GetUniqueObjectID();
-			dlg.m_strGroupName = l_strGroup;
+			pConfig->GetChildObjectByName( PPQName.c_str(), &pPPQ );
+			ASSERT( nullptr != pPPQ );
+			if( nullptr != pPPQ )
+			{ 
+				dlg.m_InputObjectGUID = pPPQ->m_voTriggerCount.GetUniqueObjectID();
+				dlg.m_strGroupName = l_strGroup;
 
-			if( dlg.DoModal() == IDOK )
-			{
-				SVRemoteOutputObject* l_pNewOutput = NULL;
-				pConfig->AddRemoteOutputItem(l_strGroup, 
-					l_pNewOutput, 
-					dlg.m_InputObjectGUID,
-					GroupParameters->GetPPQName().c_str());
-				OnUpdate( NULL, NULL, NULL );
-				l_bRet = true;
-			}
-			if( p_iWhere >= GetListCtrl().GetItemCount() )
-			{
-				p_iWhere--;
-				if( p_iWhere < 0 )
-					p_iWhere = 0;
+				if( dlg.DoModal() == IDOK )
+				{
+					SVRemoteOutputObject* l_pNewOutput = NULL;
+					pConfig->AddRemoteOutputItem(l_strGroup, 
+						l_pNewOutput, 
+						dlg.m_InputObjectGUID,
+						PPQName.c_str());
+					OnUpdate( NULL, NULL, NULL );
+					l_bRet = true;
+				}
+				if( p_iWhere >= GetListCtrl().GetItemCount() )
+				{
+					p_iWhere--;
+					if( p_iWhere < 0 )
+						p_iWhere = 0;
+				}
 			}
 		}
 	}
@@ -696,7 +703,7 @@ bool SVRemoteOutputsView::EditOutput(int p_iWhere)
 	pRemoteOutput = dynamic_cast<SVRemoteOutputObject*>( reinterpret_cast<SVObjectClass*>(GetListCtrl().GetItemData( p_iWhere )));
 	if( pRemoteOutput )
 	{
-		SVConfigurationObject* pConfig = NULL;
+		SVConfigurationObject* pConfig( nullptr );
 		SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
 		// The User clicked on the Item
@@ -705,7 +712,7 @@ bool SVRemoteOutputsView::EditOutput(int p_iWhere)
 		pRemoteOutput->GetInputValueObjectGUID( dlg.m_InputObjectGUID ); 
 
 		// if this is the first (Trigger Count) item in the list then gray out the object.
-		if( pConfig->GetFirstRemoteOutputObject( dlg.m_strGroupName ) == pRemoteOutput )
+		if(nullptr != pConfig && pConfig->GetFirstRemoteOutputObject( dlg.m_strGroupName ) == pRemoteOutput )
 		{
 			return l_bRet;
 		}

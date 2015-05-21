@@ -180,15 +180,15 @@ BOOL SVToolAdjustmentDialogAcquisitionSourcePageClass::OnInitDialog()
 		pMainImage = reinterpret_cast<SVCameraImageTemplate*>(::SVSendMessage( pTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&info) ));
 		if( pMainImage )
 		{
-			SVInspectionProcess* pIP = dynamic_cast< SVInspectionProcess* >( pTool->GetAncestor( SVInspectionObjectType ) );
+			SVInspectionProcess* pInspection = dynamic_cast< SVInspectionProcess* >( pTool->GetAncestor( SVInspectionObjectType ) );
 
-			if( pIP != NULL )
+			if( nullptr != pInspection )
 			{
 				availableDigitizerTreeCtrl.ModifyStyle( 0, TVS_HASBUTTONS | TVS_HASLINES | TVS_LINESATROOT );
 
 				SVVirtualCameraPtrSet l_CameraList;
 
-				pIP->GetPPQCameras( l_CameraList );
+				pInspection->GetPPQCameras( l_CameraList );
 
 				SVVirtualCameraPtrSet::iterator l_Iter = l_CameraList.begin();
 
@@ -228,7 +228,7 @@ void SVToolAdjustmentDialogAcquisitionSourcePageClass::OnSelectButton()
 	// &&&
 	// Get current selected object in tree...
 	SVVirtualCamera* pCamera = reinterpret_cast<SVVirtualCamera*>(availableDigitizerTreeCtrl.GetSelectedItemValue());
-	if( pTool && pMainImage )
+	if( nullptr != pTool && nullptr != pMainImage && nullptr != pCamera )
 	{
 		// Set new digitizer of main image...
 		pMainImage->UpdateCameraImage( pCamera->GetUniqueObjectID() );

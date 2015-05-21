@@ -1388,17 +1388,21 @@ void SVEquationClass::addOldPPQDigitizerVariableToList( SVInputInfoListClass &ar
 
 		if( bFound )
 		{
-			long lSize;
+			long lSize = 0;
 			// Right now an inspection can have only one PPQ
-			pPPQ->GetInspectionCount( lSize );
-			SVObjectClass* pObject = nullptr;
-			SVInspectionProcess* pInspect = nullptr;
+			//If pointer is null then size will be 0
+			if( nullptr != pPPQ){ pPPQ->GetInspectionCount( lSize ); }
+			SVObjectClass* pObject( nullptr );
+			SVInspectionProcess* pInspection( nullptr );
 			for( long l = 0; l < lSize; l++ )
 			{
-				pPPQ->GetInspection( l, pInspect );
-				pObject = reinterpret_cast<SVObjectClass *>(::SVSendMessage( pInspect->GetToolSet(), 
-					( SVM_GET_OBJECT_BY_NAME | SVM_PARENT_TO_CHILD | SVM_NOTIFY_FRIENDS ) & ~SVM_NOTIFY_ONLY_THIS, 
-					reinterpret_cast<DWORD_PTR>( static_cast<LPCSTR>( strTempName )), NULL ) );
+				pPPQ->GetInspection( l, pInspection );
+				if( nullptr != pInspection )
+				{
+					pObject = reinterpret_cast<SVObjectClass *>(::SVSendMessage( pInspection->GetToolSet(), 
+						( SVM_GET_OBJECT_BY_NAME | SVM_PARENT_TO_CHILD | SVM_NOTIFY_FRIENDS ) & ~SVM_NOTIFY_ONLY_THIS, 
+						reinterpret_cast<DWORD_PTR>( static_cast<LPCSTR>( strTempName )), NULL ) );
+				}
 
 				if( pObject != NULL )
 					break;
@@ -1425,8 +1429,12 @@ void SVEquationClass::addOldPPQDigitizerVariableToList( SVInputInfoListClass &ar
 void SVEquationClass::addPPQVariableToList( SVInputInfoListClass &arInputAvailList )
 {
 	SVIOEntryStruct pIOEntry;
-	SVInspectionProcess *pInspection = GetInspection();
-	for( size_t i = 0; pInspection && i < pInspection->m_PPQInputs.size(); i++ )
+	SVInspectionProcess* pInspection = GetInspection();
+
+	size_t Size = 0;
+	//If pointer is nullptr then Size 0
+	if( nullptr != pInspection ){ Size = pInspection->m_PPQInputs.size(); }
+	for( size_t i = 0; pInspection && i < Size ; i++ )
 	{
 		pIOEntry = pInspection->m_PPQInputs[i];
 
@@ -1444,11 +1452,16 @@ void SVEquationClass::addPPQVariableToList( SVInputInfoListClass &arInputAvailLi
 void SVEquationClass::addPPQ_XParameterToList( SVInputInfoListClass &arInputAvailList )
 {
 	//add PPQ_X parameter to the equation selection list
-	SVPPQObject *ppq = GetInspection()->GetPPQ();
-	if ( nullptr != ppq )
+	SVInspectionProcess* pInspection( GetInspection() );
+	SVPPQObject* pPPQ( nullptr );
+	if( nullptr != pInspection )
+	{
+		pPPQ = 	pInspection->GetPPQ();
+	}
+	if ( nullptr != pPPQ )
 	{
 		SVObjectPtrDeque objectList;
-		ppq->fillChildObjectList(objectList, SV_SELECTABLE_FOR_EQUATION);
+		pPPQ->fillChildObjectList(objectList, SV_SELECTABLE_FOR_EQUATION);
 		for(SVObjectPtrDeque::const_iterator iter = objectList.begin(); iter != objectList.end(); ++iter) 
 		{
 			SVInObjectInfoStruct *pInInfoStruct = new SVInObjectInfoStruct;

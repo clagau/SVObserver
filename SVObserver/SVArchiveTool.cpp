@@ -657,7 +657,6 @@ void SVArchiveRecordsArray::ConvertStringToGuids( SVArchiveTool * pToolArchive,
 		//
 		if ((objectGuid != SVInvalidGUID) && csGuid.GetLength())
 		{
-			SVInspectionProcess* pInspection = m_pArchiveTool->GetInspection();
 			SVArchiveRecord* pArchiveRecord = new SVArchiveRecord;
 			SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObject( objectGuid );
 			pArchiveRecord->InitArchiveRecord( pToolArchive, SVObjectReference( pObject ) );
@@ -2085,7 +2084,6 @@ void SVArchiveTool::RebuildResultsArchiveList()
 
 void SVArchiveTool::AddImageToArray( SVImageClass* PImage )
 {
-	SVInspectionProcess* pInspection = GetInspection();
 	SVArchiveRecord* pImageRecord = new SVArchiveRecord;
 	pImageRecord->InitArchiveRecord(this, SVObjectReference( PImage ) );
 	pImageRecord->ConnectInputObject();

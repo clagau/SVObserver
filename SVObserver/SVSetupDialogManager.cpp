@@ -278,18 +278,17 @@ HRESULT SVSetupDialogManager::SVBarCodeAnalyzerClassSetupDialog( const SVGUID& p
 
 	SVBarCodeAnalyzerClass* l_pAnalyzer = dynamic_cast< SVBarCodeAnalyzerClass* >( SVObjectManagerClass::Instance().GetObject( p_rObjectId ) );
 	
-	if( l_pAnalyzer != NULL )
+	SVInspectionProcess* pInspection( nullptr );
+	
+	if( nullptr != l_pAnalyzer && nullptr != (pInspection = l_pAnalyzer->GetInspection()) )
 	{
-		SVIPDoc* l_pIPDoc = NULL;
+		SVIPDoc* pIPDoc( nullptr );
 
-		if( l_pAnalyzer->GetInspection() != NULL )
+		pIPDoc = SVObjectManagerClass::Instance().GetIPDoc( pInspection->GetUniqueObjectID() );
+
+		if( nullptr != pIPDoc )
 		{
-			l_pIPDoc = SVObjectManagerClass::Instance().GetIPDoc( l_pAnalyzer->GetInspection()->GetUniqueObjectID() );
-
-			if( l_pIPDoc != NULL )
-			{
-				l_pIPDoc->SetModifiedFlag();
-			}
+			pIPDoc->SetModifiedFlag();
 		}
 
 		SVBarCodeProperties dlgProp;
@@ -366,49 +365,48 @@ HRESULT SVSetupDialogManager::SVBarCodeAnalyzerClassSetupDialog( const SVGUID& p
 			try
 			{
 				SVToolClass *l_psvTool = l_pAnalyzer->GetTool();
-				SVInspectionProcess* l_pInspection = l_pAnalyzer->GetInspection();
 
-				l_pInspection->AddInputRequest( &l_pAnalyzer->msv_lBarCodeType, dlgProp.m_dlgBarCodeGeneral.GetBarCodeType() );
-				l_pInspection->AddInputRequest( &l_pAnalyzer->msv_dSpeed, dlgProp.m_dlgBarCodeGeneral.GetBarCodeSearchSpeed() );
-				l_pInspection->AddInputRequest( &l_pAnalyzer->msv_dOrientation, dlgProp.m_dlgBarCodeGeneral.GetOrientation() );
-				l_pInspection->AddInputRequest( &l_pAnalyzer->msv_dSkewNegative, dlgProp.m_dlgBarCodeGeneral.GetSkewNegative() );
-				l_pInspection->AddInputRequest( &l_pAnalyzer->msv_dSkewPositive, dlgProp.m_dlgBarCodeGeneral.GetSkewPositive() );
-				l_pInspection->AddInputRequest( &l_pAnalyzer->msv_dThreshold, dlgProp.m_dlgBarCodeGeneral.GetThreshold() );
-				l_pInspection->AddInputRequest( &l_pAnalyzer->msv_dForegroundColor, dlgProp.m_dlgBarCodeGeneral.GetForegroundColor() );
-				l_pInspection->AddInputRequest( &l_pAnalyzer->msv_dStringSize, dlgProp.m_dlgBarCodeGeneral.GetBarCodeStringSize() );
-				l_pInspection->AddInputRequest( &l_pAnalyzer->m_bWarnOnFailedRead, dlgProp.m_dlgBarCodeGeneral.GetWarnedOnFail() );
-				l_pInspection->AddInputRequest( &l_pAnalyzer->msv_dEncoding, dlgProp.m_dlgBarCodeAttributes.GetEncoding() );
-				l_pInspection->AddInputRequest( &l_pAnalyzer->msv_dErrorCorrection, dlgProp.m_dlgBarCodeAttributes.GetErrorCorrection() );
-				l_pInspection->AddInputRequest( &( pResult->msv_bUseSingleMatchString ), bUseSingle );
-				l_pInspection->AddInputRequest( &l_pAnalyzer->msv_szRegExpressionValue, static_cast< LPCTSTR >( csRegExp ) );
-				l_pInspection->AddInputRequest( &l_pAnalyzer->msv_bSaveStringInFile, bSaveInFile );
-				l_pInspection->AddInputRequest( &l_pAnalyzer->msv_szStringFileName, static_cast< LPCTSTR >( csSingleFile ) );
-				l_pInspection->AddInputRequest( &( pResult->msv_bUseMatchStringFile ), bUseMultiple );
-				l_pInspection->AddInputRequest( &( pResult->msv_szMatchStringFileName ), static_cast< LPCTSTR >( csMultiFile ) );
-				l_pInspection->AddInputRequest( &l_pAnalyzer->msv_dCellNumberX, dlgProp.m_dlgBarCodeDataMatrix.GetCellX() );
-				l_pInspection->AddInputRequest( &l_pAnalyzer->msv_dCellNumberY, dlgProp.m_dlgBarCodeDataMatrix.GetCellY() );
-				l_pInspection->AddInputRequest( &l_pAnalyzer->msv_dCellMinSize, dlgProp.m_dlgBarCodeDataMatrix.GetMinCellSize() );
-				l_pInspection->AddInputRequest( &l_pAnalyzer->msv_dCellMaxSize, dlgProp.m_dlgBarCodeDataMatrix.GetMaxCellSize() );
-				l_pInspection->AddInputRequest( &l_pAnalyzer->msv_lBarcodeTimeout, dlgProp.m_dlgBarCodeGeneral.GetTimeout() );
+				pInspection->AddInputRequest( &l_pAnalyzer->msv_lBarCodeType, dlgProp.m_dlgBarCodeGeneral.GetBarCodeType() );
+				pInspection->AddInputRequest( &l_pAnalyzer->msv_dSpeed, dlgProp.m_dlgBarCodeGeneral.GetBarCodeSearchSpeed() );
+				pInspection->AddInputRequest( &l_pAnalyzer->msv_dOrientation, dlgProp.m_dlgBarCodeGeneral.GetOrientation() );
+				pInspection->AddInputRequest( &l_pAnalyzer->msv_dSkewNegative, dlgProp.m_dlgBarCodeGeneral.GetSkewNegative() );
+				pInspection->AddInputRequest( &l_pAnalyzer->msv_dSkewPositive, dlgProp.m_dlgBarCodeGeneral.GetSkewPositive() );
+				pInspection->AddInputRequest( &l_pAnalyzer->msv_dThreshold, dlgProp.m_dlgBarCodeGeneral.GetThreshold() );
+				pInspection->AddInputRequest( &l_pAnalyzer->msv_dForegroundColor, dlgProp.m_dlgBarCodeGeneral.GetForegroundColor() );
+				pInspection->AddInputRequest( &l_pAnalyzer->msv_dStringSize, dlgProp.m_dlgBarCodeGeneral.GetBarCodeStringSize() );
+				pInspection->AddInputRequest( &l_pAnalyzer->m_bWarnOnFailedRead, dlgProp.m_dlgBarCodeGeneral.GetWarnedOnFail() );
+				pInspection->AddInputRequest( &l_pAnalyzer->msv_dEncoding, dlgProp.m_dlgBarCodeAttributes.GetEncoding() );
+				pInspection->AddInputRequest( &l_pAnalyzer->msv_dErrorCorrection, dlgProp.m_dlgBarCodeAttributes.GetErrorCorrection() );
+				pInspection->AddInputRequest( &( pResult->msv_bUseSingleMatchString ), bUseSingle );
+				pInspection->AddInputRequest( &l_pAnalyzer->msv_szRegExpressionValue, static_cast< LPCTSTR >( csRegExp ) );
+				pInspection->AddInputRequest( &l_pAnalyzer->msv_bSaveStringInFile, bSaveInFile );
+				pInspection->AddInputRequest( &l_pAnalyzer->msv_szStringFileName, static_cast< LPCTSTR >( csSingleFile ) );
+				pInspection->AddInputRequest( &( pResult->msv_bUseMatchStringFile ), bUseMultiple );
+				pInspection->AddInputRequest( &( pResult->msv_szMatchStringFileName ), static_cast< LPCTSTR >( csMultiFile ) );
+				pInspection->AddInputRequest( &l_pAnalyzer->msv_dCellNumberX, dlgProp.m_dlgBarCodeDataMatrix.GetCellX() );
+				pInspection->AddInputRequest( &l_pAnalyzer->msv_dCellNumberY, dlgProp.m_dlgBarCodeDataMatrix.GetCellY() );
+				pInspection->AddInputRequest( &l_pAnalyzer->msv_dCellMinSize, dlgProp.m_dlgBarCodeDataMatrix.GetMinCellSize() );
+				pInspection->AddInputRequest( &l_pAnalyzer->msv_dCellMaxSize, dlgProp.m_dlgBarCodeDataMatrix.GetMaxCellSize() );
+				pInspection->AddInputRequest( &l_pAnalyzer->msv_lBarcodeTimeout, dlgProp.m_dlgBarCodeGeneral.GetTimeout() );
 
 				// To support special DMCs May 2008.
-				l_pInspection->AddInputRequest( &l_pAnalyzer->msv_eStringFormat, dlgProp.m_dlgBarCodeGeneral.GetBarcodeStringFormat( ) );
-				l_pInspection->AddInputRequest( &l_pAnalyzer->msv_lThresholdType, dlgProp.m_dlgBarCodeGeneral.GetBarcodeThresholdType( ) );
+				pInspection->AddInputRequest( &l_pAnalyzer->msv_eStringFormat, dlgProp.m_dlgBarCodeGeneral.GetBarcodeStringFormat( ) );
+				pInspection->AddInputRequest( &l_pAnalyzer->msv_lThresholdType, dlgProp.m_dlgBarCodeGeneral.GetBarcodeThresholdType( ) );
 
 				//for support for the Uneven grid step for DMCs
-				l_pInspection->AddInputRequest( &l_pAnalyzer->msv_bUnEvenGrid, dlgProp.m_dlgBarCodeGeneral.GetUnEvenGrid( ) );
+				pInspection->AddInputRequest( &l_pAnalyzer->msv_bUnEvenGrid, dlgProp.m_dlgBarCodeGeneral.GetUnEvenGrid( ) );
 
-				l_pInspection->AddInputRequestMarker();
+				pInspection->AddInputRequestMarker();
 
 				SVGUID l_ToolId;
 
-				if( l_psvTool != NULL )
+				if( nullptr != l_psvTool )
 				{
 					l_ToolId = l_psvTool->GetUniqueObjectID();
 				}
 
-				SVCommandInspectionRunOncePtr l_CommandPtr = new SVCommandInspectionRunOnce( l_pInspection->GetUniqueObjectID(), l_ToolId );
-				SVObjectSynchronousCommandTemplate< SVCommandInspectionRunOncePtr > l_Command( l_pInspection->GetUniqueObjectID(), l_CommandPtr );
+				SVCommandInspectionRunOncePtr l_CommandPtr = new SVCommandInspectionRunOnce( pInspection->GetUniqueObjectID(), l_ToolId );
+				SVObjectSynchronousCommandTemplate< SVCommandInspectionRunOncePtr > l_Command( pInspection->GetUniqueObjectID(), l_CommandPtr );
 
 				l_Status = l_Command.Execute( 120000 );
 			}
@@ -497,42 +495,29 @@ HRESULT SVSetupDialogManager::SVColorToolClassSetupDialog( const SVGUID& p_rObje
 		// Create the Train Color Property Sheet
 		SVTADlgColorThresholdSheet dlg( l_pTool, strTitle );
 			
-		if( pInspection != NULL )
+		if( nullptr != pInspection )
 		{
 			SVColorThresholdClass* pThreshold = ( SVColorThresholdClass * )l_pTool->GetAt(0);
 			pThreshold->bShowHistogram = TRUE;
 			
-			if( dlg.DoModal() == IDOK )
-			{
-				SVIPDoc* l_pIPDoc = NULL;
+			SVIPDoc* pIPDoc( nullptr );
+			pIPDoc = SVObjectManagerClass::Instance().GetIPDoc( pInspection->GetUniqueObjectID() );
+			ASSERT( nullptr != pIPDoc );
 
-				if( pInspection != NULL )
+			if( nullptr != pIPDoc )
+			{
+				if( dlg.DoModal() == IDOK )
 				{
-					l_pIPDoc = SVObjectManagerClass::Instance().GetIPDoc( pInspection->GetUniqueObjectID() );
-
-					if( l_pIPDoc != NULL )
-					{
-						l_pIPDoc->SetModifiedFlag();
-					}
+					pIPDoc->SetModifiedFlag();
 				}
-			}
-			else
-			{
-				l_Status = S_FALSE;
-			}
+				else
+				{
+					l_Status = S_FALSE;
+				}
 			
-			pThreshold->bShowHistogram = FALSE;
+				pThreshold->bShowHistogram = FALSE;
 
-			SVIPDoc* l_pIPDoc = NULL;
-
-			if( pInspection != NULL )
-			{
-				l_pIPDoc = SVObjectManagerClass::Instance().GetIPDoc( pInspection->GetUniqueObjectID() );
-
-				if( l_pIPDoc != NULL )
-				{
-					l_pIPDoc->UpdateAllViews( NULL );
-				}
+				pIPDoc->UpdateAllViews( NULL );
 			}
 		}
 		else
@@ -813,19 +798,18 @@ HRESULT SVSetupDialogManager::SVLinearAnalyzerClassSetupDialog( const SVGUID& p_
 
 	SVLinearAnalyzerClass* l_pAnalyzer = dynamic_cast< SVLinearAnalyzerClass* >( SVObjectManagerClass::Instance().GetObject( p_rObjectId ) );
 	
-	if( l_pAnalyzer != NULL )
+	SVInspectionProcess* pInspection( nullptr );
+
+	if( nullptr != l_pAnalyzer && nullptr != (pInspection = l_pAnalyzer->GetInspection()) )
 	{
 		CString strTitle;
 		strTitle.LoadString( IDS_ADJUSTMENT_STRING );
 		// Get Complete Name up to the tool level...
 		strTitle = l_pAnalyzer->GetCompleteObjectNameToObjectType( NULL, SVToolObjectType ) + _T( " " ) + strTitle;
 
-		SVIPDoc* pIPDoc = NULL;
+		SVIPDoc* pIPDoc( nullptr);
 
-		if( l_pAnalyzer->GetInspection() != NULL )
-		{
-			pIPDoc = SVObjectManagerClass::Instance().GetIPDoc( l_pAnalyzer->GetInspection()->GetUniqueObjectID() );
-		}
+		pIPDoc = SVObjectManagerClass::Instance().GetIPDoc( pInspection->GetUniqueObjectID() );
 
 		SVLinearEdgeProcessingClass *l_psvEdgeA = l_pAnalyzer->GetEdgeA();
 		SVLinearEdgeProcessingClass *l_psvEdgeB = l_pAnalyzer->GetEdgeB();
@@ -847,7 +831,7 @@ HRESULT SVSetupDialogManager::SVLinearAnalyzerClassSetupDialog( const SVGUID& p_
 			pPageB = new SVProfileEdgeMarkerAdjustmentPageClass( IDS_EDGE_B );
 		}
 
-		if( pIPDoc != NULL && ( pPageA != NULL || pPageB != NULL ) )
+		if( nullptr != pIPDoc && ( pPageA != NULL || pPageB != NULL ) )
 		{
 			if( pPageA != NULL && l_psvEdgeA != NULL )
 			{
@@ -967,7 +951,6 @@ HRESULT SVSetupDialogManager::SVLinearAnalyzerClassSetupDialog( const SVGUID& p_
 
 				l_pAnalyzer->GetInspection()->AddInputRequestMarker();
 
-				SVInspectionProcess* l_pInspection = l_pAnalyzer->GetInspection();
 				SVToolClass* pTool = l_pAnalyzer->GetTool();
 
 				SVGUID l_ToolId;
@@ -977,8 +960,8 @@ HRESULT SVSetupDialogManager::SVLinearAnalyzerClassSetupDialog( const SVGUID& p_
 					l_ToolId = pTool->GetUniqueObjectID();
 				}
 
-				SVCommandInspectionRunOncePtr l_CommandPtr = new SVCommandInspectionRunOnce( l_pInspection->GetUniqueObjectID(), l_ToolId );
-				SVObjectSynchronousCommandTemplate< SVCommandInspectionRunOncePtr > l_Command( l_pInspection->GetUniqueObjectID(), l_CommandPtr );
+				SVCommandInspectionRunOncePtr l_CommandPtr = new SVCommandInspectionRunOnce( pInspection->GetUniqueObjectID(), l_ToolId );
+				SVObjectSynchronousCommandTemplate< SVCommandInspectionRunOncePtr > l_Command( pInspection->GetUniqueObjectID(), l_CommandPtr );
 
 				l_Status = l_Command.Execute( 120000 );
 			}
@@ -1654,7 +1637,7 @@ HRESULT SVSetupDialogManager::SVOCRAnalyzerClassSetupDialog( const SVGUID& p_rOb
 		SVToolClass * pTool = l_pAnalyzer->GetTool();
 		SVInspectionProcess* pInspection = l_pAnalyzer->GetInspection();
 
-		if ( pOCRResult != NULL && pTool != NULL && pInspection != NULL )
+		if( nullptr != pOCRResult && nullptr != pTool && nullptr != pInspection )
 		{
 			SVOCRDialogClass dlg;
 
@@ -1741,7 +1724,7 @@ HRESULT SVSetupDialogManager::SVOCRGrayAnalyzerClassSetupDialog( const SVGUID& p
 		SVToolClass * pTool = l_pAnalyzer->GetTool();
 		SVInspectionProcess* pInspection = l_pAnalyzer->GetInspection();
 
-		if ( pOCRResult != NULL && pTool != NULL && pInspection != NULL )
+		if( nullptr != pOCRResult && nullptr != pTool && nullptr != pInspection )
 		{
 			SVOCRGrayDialogClass dlg;
 
@@ -1825,7 +1808,7 @@ HRESULT SVSetupDialogManager::SVOCVAnalyzerClassSetupDialog( const SVGUID& p_rOb
 		SVToolClass * pTool = l_pAnalyzer->GetTool();
 		SVInspectionProcess* pInspection = l_pAnalyzer->GetInspection();
 		
-		if( pOCVResult != NULL && pTool != NULL && pInspection != NULL )
+		if( nullptr != pOCVResult && nullptr != pTool && nullptr != pInspection )
 		{
 			SVOCVDialogClass dlg;
 
@@ -1935,7 +1918,9 @@ HRESULT SVSetupDialogManager::SVPatternAnalyzerClassSetupDialog( const SVGUID& p
 
 	SVPatternAnalyzerClass* l_pAnalyzer = dynamic_cast< SVPatternAnalyzerClass* >( SVObjectManagerClass::Instance().GetObject( p_rObjectId ) );
 	
-	if( l_pAnalyzer != NULL )
+	SVInspectionProcess* pInspection( nullptr );
+
+	if( nullptr != l_pAnalyzer && nullptr != (pInspection = l_pAnalyzer->GetInspection()) )
 	{
 		double dParam;
 		long lParam;
@@ -2030,48 +2015,46 @@ HRESULT SVSetupDialogManager::SVPatternAnalyzerClassSetupDialog( const SVGUID& p
 
 			try
 			{
-				SVInspectionProcess* pInspectionProcess = l_pAnalyzer->GetInspection();
-
 				// Do Model Page
-				pInspectionProcess->AddInputRequest( &( l_pAnalyzer->msv_szModelImageFile ), static_cast< LPCTSTR >( ModelPage.m_strModelName ) );
-				pInspectionProcess->AddInputRequest( &( l_pAnalyzer->msv_bpatCircularOverscan ), ModelPage.m_bCircularOverscan );
+				pInspection->AddInputRequest( &( l_pAnalyzer->msv_szModelImageFile ), static_cast< LPCTSTR >( ModelPage.m_strModelName ) );
+				pInspection->AddInputRequest( &( l_pAnalyzer->msv_bpatCircularOverscan ), ModelPage.m_bCircularOverscan );
 
 				// Do General Page
-				pInspectionProcess->AddInputRequest( &( l_pAnalyzer->msv_lpatMaxOccurances ), GeneralPage.m_nOccurances );
-				pInspectionProcess->AddInputRequest( &( l_pAnalyzer->msv_dpatAcceptanceThreshold ), GeneralPage.m_lAcceptance );
-				pInspectionProcess->AddInputRequest( &( l_pAnalyzer->msv_dpatCertaintyThreshold ), GeneralPage.m_lCertainty );
-				pInspectionProcess->AddInputRequest( &( l_pAnalyzer->msv_lpatAccuracy ), lSpeedFactor[GeneralPage.m_nPosAccuracyIndex + 1] );
-				pInspectionProcess->AddInputRequest( &( l_pAnalyzer->msv_lpatSpeed ), lSpeedFactor[GeneralPage.m_nSpeedIndex] );
-				pInspectionProcess->AddInputRequest( &( l_pAnalyzer->msv_bpatSearchAngleMode ), GeneralPage.m_bAngleSearch );
+				pInspection->AddInputRequest( &( l_pAnalyzer->msv_lpatMaxOccurances ), GeneralPage.m_nOccurances );
+				pInspection->AddInputRequest( &( l_pAnalyzer->msv_dpatAcceptanceThreshold ), GeneralPage.m_lAcceptance );
+				pInspection->AddInputRequest( &( l_pAnalyzer->msv_dpatCertaintyThreshold ), GeneralPage.m_lCertainty );
+				pInspection->AddInputRequest( &( l_pAnalyzer->msv_lpatAccuracy ), lSpeedFactor[GeneralPage.m_nPosAccuracyIndex + 1] );
+				pInspection->AddInputRequest( &( l_pAnalyzer->msv_lpatSpeed ), lSpeedFactor[GeneralPage.m_nSpeedIndex] );
+				pInspection->AddInputRequest( &( l_pAnalyzer->msv_bpatSearchAngleMode ), GeneralPage.m_bAngleSearch );
 
 				// Do Advanced Page
-				pInspectionProcess->AddInputRequest( &( l_pAnalyzer->msv_lpatFastFind ), AdvancedPage.m_lFastFind );
-				pInspectionProcess->AddInputRequest( &( l_pAnalyzer->msv_lpatAdditionalCandidates), AdvancedPage.m_lAdditionalCandidates );
-				pInspectionProcess->AddInputRequest( &( l_pAnalyzer->msv_dpatCandidateSpacingXMin), AdvancedPage.m_dCandidateSpacingXMin );
-				pInspectionProcess->AddInputRequest( &( l_pAnalyzer->msv_dpatCandidateSpacingYMin), AdvancedPage.m_dCandidateSpacingYMin );
-				pInspectionProcess->AddInputRequest( &( l_pAnalyzer->msv_dpatPreliminaryAcceptanceThreshold), AdvancedPage.m_dPreliminaryAcceptanceThreshold );
-				pInspectionProcess->AddInputRequest( &( l_pAnalyzer->msv_lpatModelStep), AdvancedPage.m_lModelStep );
-				pInspectionProcess->AddInputRequest( &( l_pAnalyzer->msv_lpatBeginningResolutionLevel), AdvancedPage.m_lBeginningResolutionLevel );
-				pInspectionProcess->AddInputRequest( &( l_pAnalyzer->msv_lpatFinalResolutionLevel), AdvancedPage.m_lFinalResolutionLevel );
+				pInspection->AddInputRequest( &( l_pAnalyzer->msv_lpatFastFind ), AdvancedPage.m_lFastFind );
+				pInspection->AddInputRequest( &( l_pAnalyzer->msv_lpatAdditionalCandidates), AdvancedPage.m_lAdditionalCandidates );
+				pInspection->AddInputRequest( &( l_pAnalyzer->msv_dpatCandidateSpacingXMin), AdvancedPage.m_dCandidateSpacingXMin );
+				pInspection->AddInputRequest( &( l_pAnalyzer->msv_dpatCandidateSpacingYMin), AdvancedPage.m_dCandidateSpacingYMin );
+				pInspection->AddInputRequest( &( l_pAnalyzer->msv_dpatPreliminaryAcceptanceThreshold), AdvancedPage.m_dPreliminaryAcceptanceThreshold );
+				pInspection->AddInputRequest( &( l_pAnalyzer->msv_lpatModelStep), AdvancedPage.m_lModelStep );
+				pInspection->AddInputRequest( &( l_pAnalyzer->msv_lpatBeginningResolutionLevel), AdvancedPage.m_lBeginningResolutionLevel );
+				pInspection->AddInputRequest( &( l_pAnalyzer->msv_lpatFinalResolutionLevel), AdvancedPage.m_lFinalResolutionLevel );
 				
 				if (GeneralPage.m_bAngleSearch)
 				{
-					pInspectionProcess->AddInputRequest( &( l_pAnalyzer->msv_dpatSearchAngle ), GeneralPage.m_dSearchAngle);
-					pInspectionProcess->AddInputRequest( &( l_pAnalyzer->msv_dpatAngleDeltaNeg ), GeneralPage.m_dAngleDeltaNegative);
-					pInspectionProcess->AddInputRequest( &( l_pAnalyzer->msv_dpatAngleDeltaPos ), GeneralPage.m_dAngleDeltaPositive);
-					pInspectionProcess->AddInputRequest( &( l_pAnalyzer->msv_dpatAngleTolerance ), GeneralPage.m_dAngleTolerance );
+					pInspection->AddInputRequest( &( l_pAnalyzer->msv_dpatSearchAngle ), GeneralPage.m_dSearchAngle);
+					pInspection->AddInputRequest( &( l_pAnalyzer->msv_dpatAngleDeltaNeg ), GeneralPage.m_dAngleDeltaNegative);
+					pInspection->AddInputRequest( &( l_pAnalyzer->msv_dpatAngleDeltaPos ), GeneralPage.m_dAngleDeltaPositive);
+					pInspection->AddInputRequest( &( l_pAnalyzer->msv_dpatAngleTolerance ), GeneralPage.m_dAngleTolerance );
 					if(l_pAnalyzer->m_bAngleAccuracy)
 					{
-						pInspectionProcess->AddInputRequest( &( l_pAnalyzer->msv_dpatAngleAccuracy ), GeneralPage.m_dAngularAccuracy);
+						pInspection->AddInputRequest( &( l_pAnalyzer->msv_dpatAngleAccuracy ), GeneralPage.m_dAngularAccuracy);
 					}
 					else
 					{
-						pInspectionProcess->AddInputRequest( &( l_pAnalyzer->msv_dpatAngleAccuracy ), SVValueDisable );
+						pInspection->AddInputRequest( &( l_pAnalyzer->msv_dpatAngleAccuracy ), SVValueDisable );
 					}
-					pInspectionProcess->AddInputRequest( &( l_pAnalyzer->msv_dpatAngleInterpolation ), GeneralPage.m_dInterpolationMode );
+					pInspection->AddInputRequest( &( l_pAnalyzer->msv_dpatAngleInterpolation ), GeneralPage.m_dInterpolationMode );
 				}
 
-				pInspectionProcess->AddInputRequestMarker();
+				pInspection->AddInputRequestMarker();
 
 				SVToolClass* pTool = l_pAnalyzer->GetTool();
 
@@ -2082,8 +2065,8 @@ HRESULT SVSetupDialogManager::SVPatternAnalyzerClassSetupDialog( const SVGUID& p
 					l_ToolId = pTool->GetUniqueObjectID();
 				}
 
-				SVCommandInspectionRunOncePtr l_CommandPtr = new SVCommandInspectionRunOnce( pInspectionProcess->GetUniqueObjectID(), l_ToolId );
-				SVObjectSynchronousCommandTemplate< SVCommandInspectionRunOncePtr > l_Command( pInspectionProcess->GetUniqueObjectID(), l_CommandPtr );
+				SVCommandInspectionRunOncePtr l_CommandPtr = new SVCommandInspectionRunOnce( pInspection->GetUniqueObjectID(), l_ToolId );
+				SVObjectSynchronousCommandTemplate< SVCommandInspectionRunOncePtr > l_Command( pInspection->GetUniqueObjectID(), l_CommandPtr );
 
 				l_Status = l_Command.Execute( 120000 );
 			}

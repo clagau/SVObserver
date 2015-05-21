@@ -135,11 +135,11 @@ void SVDiscreteInputsView::OnUpdate( CView* pSender, LPARAM lHint, CObject* pHin
 		SVIOEntryHostStructPtrList ppIOEntries;
 		SVIOEntryHostStructPtr pIOEntry;
 
-		SVConfigurationObject* pConfig = NULL;
+		SVConfigurationObject* pConfig( nullptr );
 		SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
 		// Get list of available inputs
-		if( !pConfig->GetInputObjectList( &pInputList ) )
+		if( nullptr == pConfig || !pConfig->GetInputObjectList( &pInputList ) )
 		{
 			SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
 			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorGettingInputObjectList, StdExceptionParams, Err_17006_SVDiscreteInputsView_OnUpdate_ErrorGettingInputObjectList );
@@ -231,11 +231,11 @@ void SVDiscreteInputsView::OnLButtonDblClk( UINT nFlags, CPoint point )
 			( flags & ( LVHT_ONITEMSTATEICON | LVHT_ONITEMICON | LVHT_ONITEMLABEL ) ) )
 		{
 			SVIOAdjustDialogClass dlg;
-			SVConfigurationObject* pConfig = NULL;
+			SVConfigurationObject* pConfig( nullptr );
 			SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
 			// Get list of available inputs
-			if( !pConfig->GetInputObjectList( &pInputList ) )
+			if( nullptr == pConfig || !pConfig->GetInputObjectList( &pInputList ) )
 			{
 				SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
 				e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorGettingInputObjectList, StdExceptionParams, Err_17008_SVDiscreteInputsView_OnUpdate_ErrorGettingInputObjectList );

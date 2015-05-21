@@ -1541,9 +1541,17 @@ HRESULT SVPLCDataController::GetPLCs( std::vector<CString>& p_astrPLCIds )
 }
 
 // This function fills a list with the PPQ names that are associated with plcs that are setup.
-HRESULT SVPLCDataController::GetPPQs( std::vector<CString>& p_astrPLCIds, SVConfigurationObject* p_pConfig )
+HRESULT SVPLCDataController::GetPPQs( std::vector<CString>& p_astrPLCIds, SVConfigurationObject* pConfig )
 {
 	HRESULT l_hr = S_OK;
+
+	//Without valid config pointer don't need to go further
+	ASSERT( nullptr != pConfig );
+	if( nullptr == pConfig )
+	{
+		l_hr = S_FALSE;
+		return l_hr;
+	}
 
 	p_astrPLCIds.clear();
 
@@ -1551,17 +1559,17 @@ HRESULT SVPLCDataController::GetPPQs( std::vector<CString>& p_astrPLCIds, SVConf
 	for( l_it = m_PLCParameters.begin() ; l_it != m_PLCParameters.end() ; ++l_it )
 	{
 		long l_lPPQCount;
-		p_pConfig->GetPPQCount( l_lPPQCount );
+		pConfig->GetPPQCount( l_lPPQCount );
 		CString l_strPLCID = l_it->first;
 		for( int i = 0 ; i < l_lPPQCount ; i++ )
 		{
-			SVPPQObject* l_pPPQ = NULL;
-			p_pConfig->GetPPQ(i, &l_pPPQ );
-			if( l_pPPQ )
+			SVPPQObject* pPPQ( nullptr );
+			pConfig->GetPPQ(i, &pPPQ );
+			if( nullptr != pPPQ )
 			{
-				if( l_pPPQ->GetPLCName() == l_strPLCID )
+				if( pPPQ->GetPLCName() == l_strPLCID )
 				{
-					p_astrPLCIds.push_back( l_pPPQ->GetName() );
+					p_astrPLCIds.push_back( pPPQ->GetName() );
 					break;
 				}
 			}
@@ -1731,19 +1739,20 @@ bool SVPLCDataController::GetNextValidElement( long& p_lNewElement, SVPLCOutputO
 // After a ppq is deleted this function cleans up data from the map.
 HRESULT SVPLCDataController::ClearUnUsedData( )
 {
-	long l_lCount;
-	SVConfigurationObject* pConfig = NULL;
+	long l_lCount = 0;
+	SVConfigurationObject* pConfig( nullptr );
 	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
-
-	pConfig->GetPPQCount( l_lCount );
+	//If the pointer is a nullptr then the count is 0
+	if( nullptr != pConfig ) {pConfig->GetPPQCount( l_lCount ); }
+	
 	std::vector<CString > l_strPLCs;
 	for( long l_lIndex = 0 ; l_lIndex < l_lCount ; l_lIndex++ )
 	{
-		SVPPQObject* l_pPPQ = NULL;
-		pConfig->GetPPQ(l_lIndex, &l_pPPQ );
-		if( l_pPPQ != NULL )
+		SVPPQObject* pPPQ( nullptr );
+		pConfig->GetPPQ(l_lIndex, &pPPQ );
+		if( nullptr != pPPQ )
 		{
-			l_strPLCs.push_back( l_pPPQ->GetPLCName() );
+			l_strPLCs.push_back( pPPQ->GetPLCName() );
 		}
 	}
 
@@ -1795,13 +1804,13 @@ HRESULT SVPLCDataController::GetInfoFromAddress( long& p_rlFileNum, long& p_rlEl
 }
 
 // Adds the trigger count if the plc parameter map is empty
-HRESULT SVPLCDataController::AddDefaultOutputs(SVPPQObject* p_pPPQ )
+HRESULT SVPLCDataController::AddDefaultOutputs(SVPPQObject* pPPQ )
 {
 	HRESULT l_hr = S_FALSE;
-	if( p_pPPQ )
+	if( nullptr != pPPQ )
 	{
 		SVPLCOutputObject* l_pNewOutput = NULL;
-		CString l_strPLCName = p_pPPQ->GetPLCName();
+		CString l_strPLCName = pPPQ->GetPLCName();
 		if( m_PLCParameters.find( l_strPLCName ) == m_PLCParameters.end() )
 		{
 			CString l_strAddress;
@@ -1814,7 +1823,7 @@ HRESULT SVPLCDataController::AddDefaultOutputs(SVPPQObject* p_pPPQ )
 			{
 				l_lSize = 1;
 			}
-			AddItem( l_strPLCName, l_pNewOutput, 0, l_lSize , p_pPPQ->m_voTriggerCount.GetUniqueObjectID(), 0, false );
+			AddItem( l_strPLCName, l_pNewOutput, 0, l_lSize , pPPQ->m_voTriggerCount.GetUniqueObjectID(), 0, false );
 			// Add default block address
 			// Get Default plc address from plc dll.
 			SVPLCControlPar l_Pars = GetControlPar( l_strPLCName );
@@ -1990,23 +1999,29 @@ long SVPLCDataController::CalcNewElementSize( const CString& l_strPLCID, SVObjec
 }
 
 
-void SVPLCDataController::SetupPLC(SVConfigurationObject* p_pConfig)
+void SVPLCDataController::SetupPLC(SVConfigurationObject* pConfig)
 {
 	HRESULT l_hr = S_OK;
 
+	//Without valid config pointer don't need to go further
+	ASSERT( nullptr != pConfig );
+	if( nullptr == pConfig )
+	{
+		return;
+	}
 	// Add PLC Wizzard
 	// Setup Connection
 	char szConnection[257];
 	SVPLCManager& l_rPLCManager = TheSVObserverApp.m_PLCManager;
 
 	CStringVec l_OriginalList;
-	GetPPQs( l_OriginalList, p_pConfig );
+	GetPPQs( l_OriginalList, pConfig );
 
 	if( !l_rPLCManager.IsOpen() )
 	{
 		CString l_strTmp;
 		l_hr = l_rPLCManager.OpenPLC(TheSVObserverApp.GetPLCDLL());	// Default PLC...
-		l_rPLCManager.Startup( p_pConfig );
+		l_rPLCManager.Startup( pConfig );
 	}
 
 	if( l_hr == S_OK )
@@ -2081,7 +2096,7 @@ void SVPLCDataController::SetupPLC(SVConfigurationObject* p_pConfig)
 
 				if( l_hr == S_OK )
 				{
-					SetupPLCPPQs( p_pConfig, l_OriginalList );
+					SetupPLCPPQs( pConfig, l_OriginalList );
 
 					if( l_bPLCParametersChanged )
 					{
@@ -2090,7 +2105,7 @@ void SVPLCDataController::SetupPLC(SVConfigurationObject* p_pConfig)
 					}
 				}
 
-				l_hr = l_rPLCManager.Startup( p_pConfig );
+				l_hr = l_rPLCManager.Startup( pConfig );
 
 				if( l_hr == S_OK )
 				{
@@ -2112,20 +2127,26 @@ void SVPLCDataController::SetupPLC(SVConfigurationObject* p_pConfig)
 	}
 }
 
-void SVPLCDataController::SetupPLCPPQs(SVConfigurationObject* p_pConfig, CStringVec& p_rOriginalList )
+void SVPLCDataController::SetupPLCPPQs(SVConfigurationObject* pConfig, CStringVec& p_rOriginalList )
 {
+	//Without valid config pointer don't need to go further
+	ASSERT( nullptr != pConfig );
+	if( nullptr == pConfig )
+	{
+		return;
+	}
 	// these containers hold the list of ppq names that will be used for plcs.
 	CStringVec l_AvailablePPQs;
 	// Initialize PPQ - PLCs by selecting from dialog.
 	long l_lPPQSize;
-	p_pConfig->GetPPQCount( l_lPPQSize );
+	pConfig->GetPPQCount( l_lPPQSize );
 	for( long l = 0 ; l < l_lPPQSize ; l++ )
 	{
-		SVPPQObject* l_pPPQ = NULL;
-		BOOL l_bTmp = p_pConfig->GetPPQ(l, &l_pPPQ );
+		SVPPQObject* pPPQ( nullptr );
+		BOOL l_bTmp = pConfig->GetPPQ(l, &pPPQ );
 		if( l_bTmp )
 		{
-			l_AvailablePPQs.push_back( l_pPPQ->GetName() );
+			l_AvailablePPQs.push_back( pPPQ->GetName() );
 		}
 	}
 	// Setup PPQs to have PLCs
@@ -2148,13 +2169,13 @@ void SVPLCDataController::SetupPLCPPQs(SVConfigurationObject* p_pConfig, CString
 		{
 			for( long l = 0 ; l < l_lPPQSize ; l++ )
 			{
-				SVPPQObject* l_pPPQ = NULL;
-				BOOL l_bTmp = p_pConfig->GetPPQ(l, &l_pPPQ );
+				SVPPQObject* pPPQ( nullptr );
+				BOOL l_bTmp = pConfig->GetPPQ(l, &pPPQ );
 				if( l_bTmp )
 				{
-					if( l_pPPQ->GetName() == l_astrNewItems[i] )
+					if( pPPQ->GetName() == l_astrNewItems[i] )
 					{
-						AddDefaultOutputs( l_pPPQ );
+						AddDefaultOutputs( pPPQ );
 					}
 				}
 			}
@@ -2165,13 +2186,13 @@ void SVPLCDataController::SetupPLCPPQs(SVConfigurationObject* p_pConfig, CString
 		{
 			for( long l = 0 ; l < l_lPPQSize ; l++ )
 			{
-				SVPPQObject* l_pPPQ = NULL;
-				BOOL l_bTmp = p_pConfig->GetPPQ(l, &l_pPPQ );
+				SVPPQObject* pPPQ( nullptr );
+				BOOL l_bTmp = pConfig->GetPPQ(l, &pPPQ );
 				if( l_bTmp )
 				{
-					if( l_pPPQ->GetName() == l_astrRemovedItems[i] )
+					if( pPPQ->GetName() == l_astrRemovedItems[i] )
 					{
-						DeletePLC( l_pPPQ->GetPLCName() );
+						DeletePLC( pPPQ->GetPLCName() );
 					}
 				}
 			}

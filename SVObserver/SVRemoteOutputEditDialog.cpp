@@ -55,7 +55,7 @@ END_MESSAGE_MAP()
 BOOL SVRemoteOutputEditDialog::OnInitDialog()
 {
 	CDialog::OnInitDialog();
-	SVPPQObject* pPPQ;
+	SVPPQObject* pPPQ( nullptr );
 	SVIOEntryHostStructPtrList ppIOEntries;
 	long lPPQSize = 0;
 	int iCurrentSel = 0;
@@ -66,10 +66,10 @@ BOOL SVRemoteOutputEditDialog::OnInitDialog()
 		m_strValueObjectSourceName = l_pObject->GetCompleteObjectName();
 	}
 
-	SVConfigurationObject* pConfig = NULL;
+	SVConfigurationObject* pConfig( nullptr );
 	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
-	if( !pConfig->GetPPQCount( lPPQSize ) )
+	if( nullptr == pConfig || !pConfig->GetPPQCount( lPPQSize ) )
 	{
 		SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
 		e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorGettingPPQCount, StdExceptionParams, Err_17048_SVRemoteOutputEditDialog_OnInitDialog_ErrorGettingPPQCount );

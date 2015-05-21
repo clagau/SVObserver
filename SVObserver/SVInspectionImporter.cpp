@@ -299,7 +299,7 @@ HRESULT LoadInspectionXml(const SVString& filename, const SVString& zipFilename,
 							SVObjectClass* pObject = nullptr;
 							SVObjectManagerClass::Instance().GetObjectByIdentifier(inspectionInfo.m_inspectionGuid, pObject);
 							SVInspectionProcess* pInspection = dynamic_cast<SVInspectionProcess*>(pObject);
-							if (pInspection)
+							if ( nullptr != pInspection )
 							{
 								pInspection->SetToolsetImage(cameraName.c_str());
 								pInspection->CreateInspection(inspectionName.c_str());

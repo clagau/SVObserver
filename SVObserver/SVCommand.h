@@ -36,7 +36,6 @@ enum SVIMCOMMANDSRV_VERSION
 struct StreamDataStruct
 {
     SVValueObjectClass *pValueObject;
-    //SVInspectionProcess *pInspectProcess;
 	SVGUID m_InspectionID;
     CString strValueName;
 	long arrayIndex;

@@ -68,11 +68,11 @@ static void WritePPQInputs(SVObjectXMLWriter& rWriter, SVObjectClass* pObject)
 {
 	rWriter.StartElement(CTAG_PPQ);
 
-	SVInspectionProcess* pInspection = dynamic_cast<SVInspectionProcess *>(pObject);
-	if (pInspection)
+	SVInspectionProcess* pInspection = dynamic_cast<SVInspectionProcess*> (pObject);
+	if ( nullptr != pInspection )
 	{
 		SVPPQObject* pPPQ = pInspection->GetPPQ();
-		if (pPPQ)
+		if ( nullptr != pPPQ )
 		{
 			pPPQ->PersistInputs(rWriter);
 		}

@@ -185,19 +185,23 @@ void SVToolAdjustmentDialogAnalyzerPageClass::OnButtonDetails()
 
 		if( m_pTool != NULL )
 		{
-			SVInspectionProcess* l_pInspection = m_pTool->GetInspection();
-
-			SVGUID l_ToolId;
-
-			if( m_pTool != NULL )
+			SVInspectionProcess* pInspection( m_pTool->GetInspection() );
+			ASSERT( nullptr != pInspection );
+			
+			if(nullptr != pInspection )
 			{
-				l_ToolId = m_pTool->GetUniqueObjectID();
+				SVGUID l_ToolId;
+
+				if( m_pTool != NULL )
+				{
+					l_ToolId = m_pTool->GetUniqueObjectID();
+				}
+
+				SVCommandInspectionRunOncePtr l_CommandPtr = new SVCommandInspectionRunOnce( pInspection->GetUniqueObjectID(), l_ToolId );
+				SVObjectSynchronousCommandTemplate< SVCommandInspectionRunOncePtr > l_Command( pInspection->GetUniqueObjectID(), l_CommandPtr );
+
+				l_Command.Execute( 120000 );
 			}
-
-			SVCommandInspectionRunOncePtr l_CommandPtr = new SVCommandInspectionRunOnce( l_pInspection->GetUniqueObjectID(), l_ToolId );
-			SVObjectSynchronousCommandTemplate< SVCommandInspectionRunOncePtr > l_Command( l_pInspection->GetUniqueObjectID(), l_CommandPtr );
-
-			l_Command.Execute( 120000 );
 		}
 	}
 	else
@@ -279,19 +283,23 @@ void SVToolAdjustmentDialogAnalyzerPageClass::OnSelchangeCurrentAnalyzer()
 
 	if( m_pTool != NULL )
 	{
-		SVInspectionProcess* l_pInspection = m_pTool->GetInspection();
+		SVInspectionProcess* pInspection( m_pTool->GetInspection() );
+		ASSERT(nullptr != pInspection);
 
-		SVGUID l_ToolId;
-
-		if( m_pTool != NULL )
+		if(nullptr != pInspection )
 		{
-			l_ToolId = m_pTool->GetUniqueObjectID();
+			SVGUID l_ToolId;
+
+			if( m_pTool != NULL )
+			{
+				l_ToolId = m_pTool->GetUniqueObjectID();
+			}
+
+			SVCommandInspectionRunOncePtr l_CommandPtr = new SVCommandInspectionRunOnce( pInspection->GetUniqueObjectID(), l_ToolId );
+			SVObjectSynchronousCommandTemplate< SVCommandInspectionRunOncePtr > l_Command( pInspection->GetUniqueObjectID(), l_CommandPtr );
+
+			l_Command.Execute( 120000 );
 		}
-
-		SVCommandInspectionRunOncePtr l_CommandPtr = new SVCommandInspectionRunOnce( l_pInspection->GetUniqueObjectID(), l_ToolId );
-		SVObjectSynchronousCommandTemplate< SVCommandInspectionRunOncePtr > l_Command( l_pInspection->GetUniqueObjectID(), l_CommandPtr );
-
-		l_Command.Execute( 120000 );
 	}
 
 	// Update the Buttons

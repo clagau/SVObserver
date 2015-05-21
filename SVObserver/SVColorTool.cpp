@@ -260,7 +260,7 @@ SVImageClass* SVColorToolClass::GetRGBImage()
 	// Ask the Document for this directly...
 
 	SVInspectionProcess* pInspection = GetInspection();
-	if( pInspection )
+	if( nullptr != pInspection )
 	{
 		pImage = pInspection->GetRGBMainImage();
 	}
@@ -275,7 +275,7 @@ SVImageClass* SVColorToolClass::GetHSIImage()
 	// Ask the Document for this directly...
 
 	SVInspectionProcess* pInspection = GetInspection();
-	if( pInspection )
+	if( nullptr != pInspection )
 	{
 		pImage = pInspection->GetHSIMainImage();
 	}

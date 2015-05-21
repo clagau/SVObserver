@@ -97,16 +97,16 @@ HRESULT SVPLCManager::GetStateFunction( DWORD* p_pdwState )
 	return l_hr;
 }
 
-HRESULT SVPLCManager::Startup( SVConfigurationObject* p_pConfig )
+HRESULT SVPLCManager::Startup( SVConfigurationObject* pConfig )
 {
 	HRESULT l_hr = S_FALSE;
 
 	std::vector<CString>::iterator l_it;
-	if( p_pConfig != NULL && p_pConfig->GetPLCCount() > 0 )
+	if( nullptr != pConfig && pConfig->GetPLCCount() > 0 )
 	{
 		// Get a set of plc names.
 		m_PLCIDs.clear(); // Clear internal list of valid plc ids
-		l_hr = p_pConfig->GetPLCs( m_PLCIDs );
+		l_hr = pConfig->GetPLCs( m_PLCIDs );
 		for( l_it = m_PLCIDs.begin(); l_it != m_PLCIDs.end() ; ++l_it )
 		{
 			CString l_strPLCName = (*l_it);
@@ -114,9 +114,9 @@ HRESULT SVPLCManager::Startup( SVConfigurationObject* p_pConfig )
 			HRESULT l_tmpHr = OpenPLC( TheSVObserverApp.GetPLCDLL() );
 			if( l_tmpHr == S_OK )
 			{
-				l_tmpHr = ConstructPLC( l_strPLCName, p_pConfig->GetConnectString() );
+				l_tmpHr = ConstructPLC( l_strPLCName, pConfig->GetConnectString() );
 
-				long l_lQueueSize = p_pConfig->GetQueueSize( l_strPLCName ) ;
+				long l_lQueueSize = pConfig->GetQueueSize( l_strPLCName ) ;
 				_variant_t l_vTmp( l_lQueueSize );
 				SetParameterValue( l_strPLCName, 0, l_vTmp );	// Queue Size..
 
@@ -136,7 +136,7 @@ HRESULT SVPLCManager::Startup( SVConfigurationObject* p_pConfig )
 			CString l_strValue;
 			// Get the data from the storage and put it in the dll
 			// HeartBeat Address
-			l_hr = p_pConfig->GetHeartBeatAddress( l_strValue );
+			l_hr = pConfig->GetHeartBeatAddress( l_strValue );
 			if( l_hr == S_OK )
 			{
 				_bstr_t l_bstValue( l_strValue );
@@ -146,7 +146,7 @@ HRESULT SVPLCManager::Startup( SVConfigurationObject* p_pConfig )
 			}
 			// HeartBeat Time.
 			long l_lTime;
-			l_hr = p_pConfig->GetHeartBeatTime( l_lTime );
+			l_hr = pConfig->GetHeartBeatTime( l_lTime );
 			if( l_hr == S_OK )
 			{
 				l_vValue.lVal = l_lTime;

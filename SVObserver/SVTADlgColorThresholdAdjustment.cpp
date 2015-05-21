@@ -339,16 +339,16 @@ void SVTADlgColorThresholdAdjustment::setScrollPos( CSliderCtrl* pSliderCtrl, in
 
 void SVTADlgColorThresholdAdjustment::updateGraphDisplay()
 {
-	if( mpTool )
+	if( nullptr != mpTool )
 	{
-		SVInspectionProcess* l_pInspection = mpTool->GetInspection();
+		SVInspectionProcess* pInspection = mpTool->GetInspection();
 
 		::SVSendMessage( mpTool, SVM_RESET_ALL_OBJECTS, NULL, NULL );
 
-		if( mpTool != NULL && l_pInspection != NULL)
+		if( nullptr != pInspection )
 		{
-			SVCommandInspectionRunOncePtr l_CommandPtr = new SVCommandInspectionRunOnce( l_pInspection->GetUniqueObjectID() );
-			SVObjectSynchronousCommandTemplate< SVCommandInspectionRunOncePtr > l_Command( l_pInspection->GetUniqueObjectID(), l_CommandPtr );
+			SVCommandInspectionRunOncePtr l_CommandPtr = new SVCommandInspectionRunOnce( pInspection->GetUniqueObjectID() );
+			SVObjectSynchronousCommandTemplate< SVCommandInspectionRunOncePtr > l_Command( pInspection->GetUniqueObjectID(), l_CommandPtr );
 
 			l_Command.Execute( 120000 );
 		}

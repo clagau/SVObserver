@@ -545,7 +545,7 @@ BOOL SVUserMaskOperatorClass::Refresh()
 {
 	SVInspectionProcess* pInspection = GetInspection();
 
-	if( pInspection != NULL )
+	if( nullptr != pInspection )
 	{
 		DWORD dwMaskType;
 		m_Data.dwvoMaskType.GetValue( dwMaskType );

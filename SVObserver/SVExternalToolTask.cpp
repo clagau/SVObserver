@@ -825,8 +825,8 @@ BOOL SVExternalToolTask::OnValidate()
 {
 	BOOL bRetVal = FALSE;
 
-	if(    GetInspection() != NULL
-		&& GetTool() != NULL
+	if(    nullptr != GetInspection()
+		&& nullptr != GetTool()
 		&& m_hrInitialized == S_OK )
 	{
 		bRetVal = SVTaskObjectListClass::OnValidate();
@@ -2066,7 +2066,9 @@ HRESULT SVExternalToolTask::ConnectInputs()
 	for (int i = 0 ; i < m_Data.m_lNumInputValues ; i++)
 	{
 		CString strObjectName ; 
-		CString strCompleteObjectName = GetInspection()->GetCompleteObjectName();
+		CString strCompleteObjectName;
+		//If pointer is a nullptr then name is empty
+		if( nullptr != pInspection ) { strCompleteObjectName = pInspection->GetCompleteObjectName(); }
 		m_Data.m_aInputObjects[i].GetValue(strObjectName);
 
 		CString toolSetText;

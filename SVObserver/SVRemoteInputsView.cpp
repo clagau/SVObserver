@@ -113,11 +113,11 @@ void SVRemoteInputsView::OnUpdate( CView* pSender, LPARAM lHint, CObject* pHint 
 		SVIOEntryHostStructPtrList ppIOEntries;
 		SVIOEntryHostStructPtr pIOEntry;
 
-		SVConfigurationObject* pConfig = nullptr;
+		SVConfigurationObject* pConfig( nullptr );
 		SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
 		// Get list of available inputs
-		if( !pConfig->GetInputObjectList( &pInputList ) )
+		if( nullptr == pConfig || !pConfig->GetInputObjectList( &pInputList ) )
 		{
 			SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
 			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorGettingInputObjectList, StdExceptionParams, Err_17044_SVRemoteInputsView_OnUpdate_ErrorGettingInputObjectList );
@@ -202,14 +202,14 @@ void SVRemoteInputsView::OnLButtonDblClk( UINT nFlags, CPoint point )
 		TheSVObserverApp.OkToEdit() &&
 	     pIODoc )
 	{
-		SVConfigurationObject* pConfig = NULL;
+		SVConfigurationObject* pConfig( nullptr );
 		SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
 		if( item >= 0 && item < GetListCtrl().GetItemCount() &&
 			( flags & ( LVHT_ONITEMSTATEICON | LVHT_ONITEMICON | LVHT_ONITEMLABEL ) ) )
 		{
 			// Get list of available inputs
-			if( !pConfig->GetInputObjectList( &pInputList ) )
+			if( nullptr == pConfig || !pConfig->GetInputObjectList( &pInputList ) )
 			{
 				SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
 				e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorGettingInputObjectList, StdExceptionParams, Err_17046_SVRemoteInputsView_OnLButtonDblClk_ErrorGettingInputObjectList );

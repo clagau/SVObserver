@@ -74,7 +74,7 @@ BOOL SVPPQEntryDialogCameraPageClass::OnInitDialog()
 	CPropertyPage::OnInitDialog();
 	ASSERT( m_pSheet );
 
-	SVVirtualCamera *pCamera;
+	SVVirtualCamera *pCamera( nullptr );
 	long lPosition;
 	int index;
 
@@ -88,23 +88,26 @@ BOOL SVPPQEntryDialogCameraPageClass::OnInitDialog()
 	{
 		pCamera = ( *l_Iter );
 
-		m_pSheet->m_pPPQ->GetCameraPPQPosition( lPosition, pCamera );
-
-		// Fill selected box...
-		if( m_pSheet->m_lCurrentPosition == lPosition )			
+		if( nullptr != pCamera )
 		{
-			index = selectedList.AddString( pCamera->GetCompleteObjectName() );
-			selectedList.SetItemData( index , reinterpret_cast<DWORD_PTR>(pCamera) );			
-		}// end if
+			m_pSheet->m_pPPQ->GetCameraPPQPosition( lPosition, pCamera );
 
-		// Fill available box...
-		if( -1 == lPosition )			
-		{
-			index = availableList.AddString( pCamera->GetCompleteObjectName() );
-			availableList.SetItemData( index , reinterpret_cast<DWORD_PTR>(pCamera) );			
-		}// end if
+			// Fill selected box...
+			if( m_pSheet->m_lCurrentPosition == lPosition )			
+			{
+				index = selectedList.AddString( pCamera->GetCompleteObjectName() );
+				selectedList.SetItemData( index , reinterpret_cast<DWORD_PTR>(pCamera) );			
+			}// end if
 
-		GetDlgItem(IDC_ADD_BUTTON)->EnableWindow(m_pSheet->OkToAdd());
+			// Fill available box...
+			if( -1 == lPosition )			
+			{
+				index = availableList.AddString( pCamera->GetCompleteObjectName() );
+				availableList.SetItemData( index , reinterpret_cast<DWORD_PTR>(pCamera) );			
+			}// end if
+
+			GetDlgItem(IDC_ADD_BUTTON)->EnableWindow(m_pSheet->OkToAdd());
+		}
 		++l_Iter;
 	}// end for
 
@@ -128,7 +131,7 @@ void SVPPQEntryDialogCameraPageClass::OnAddButton()
 		SVVirtualCamera* pCamera = (SVVirtualCamera*) availableList.GetItemData( index );
 		availableList.DeleteString( index );
 
-		if( pCamera )
+		if( nullptr != pCamera )
 		{
 			index = selectedList.AddString( pCamera->GetName() );
 			selectedList.SetItemData( index, reinterpret_cast<DWORD_PTR>(pCamera) );
@@ -150,7 +153,7 @@ void SVPPQEntryDialogCameraPageClass::OnRemoveButton()
 		SVVirtualCamera* pCamera = (SVVirtualCamera*) selectedList.GetItemData( index );
 		selectedList.DeleteString( index );
 
-		if( pCamera )
+		if( nullptr != pCamera )
 		{
 			index = availableList.AddString( pCamera->GetName() );
 			availableList.SetItemData( index, reinterpret_cast<DWORD_PTR>(pCamera) );
@@ -166,7 +169,7 @@ void SVPPQEntryDialogCameraPageClass::OnOK()
 	UpdateData( TRUE );
 	ASSERT( m_pSheet );
 
-	SVVirtualCamera* pCamera;
+	SVVirtualCamera* pCamera( nullptr );
 	
 	m_bIsTaken = ( selectedList.GetCount() > 0 );
 
@@ -174,8 +177,8 @@ void SVPPQEntryDialogCameraPageClass::OnOK()
 	int k = selectedList.GetCount() - 1;
 	for( ; k >= 0; -- k )
 	{
-		pCamera = (SVVirtualCamera*) selectedList.GetItemData( k );
-		if( pCamera )
+		pCamera = reinterpret_cast<SVVirtualCamera*> (selectedList.GetItemData( k ));
+		if( nullptr != pCamera )
 		{
 			m_pSheet->m_pPPQ->SetCameraPPQPosition( m_pSheet->m_lCurrentPosition, pCamera );
 			selectedList.DeleteString( k );

@@ -69,7 +69,7 @@ HRESULT SVObjectAppClass::ConnectObject(SVObjectLevelCreateStruct* PCreateStruct
 	return l_Status;	
 }
 
-SVInspectionProcess *SVObjectAppClass::GetInspection() const
+SVInspectionProcess* SVObjectAppClass::GetInspection() const
 {
 	return m_psvInspection;
 }
@@ -162,15 +162,15 @@ void SVObjectAppClass::UpdateConnections( SVObjectLevelCreateStruct* PCreateStru
 		}
 	}
 	
-	m_psvInspection = dynamic_cast<SVInspectionProcess *>(this);
+	m_psvInspection = dynamic_cast<SVInspectionProcess*> (this);
 
-	if( m_psvInspection == NULL )
+	if( nullptr == m_psvInspection )
 	{
 		SVInspectionLevelCreateStruct *l_psvTemp = dynamic_cast<SVInspectionLevelCreateStruct *>(PCreateStruct);
 
-		if( l_psvTemp != NULL )
+		if( nullptr != l_psvTemp )
 		{
-			m_psvInspection = dynamic_cast<SVInspectionProcess *>(l_psvTemp->InspectionObjectInfo.PObject);
+			m_psvInspection = dynamic_cast<SVInspectionProcess*> (l_psvTemp->InspectionObjectInfo.PObject);
 		}
 	}
 }
@@ -191,11 +191,11 @@ DWORD_PTR SVObjectAppClass::CreateChildObject( SVObjectClass* pChildObject, DWOR
 	if( IsCreated() && SV_IS_KIND_OF( pChildObject, SVObjectClass ) )
 	{
 		long l_LastIndex = 1;
-		SVInspectionProcess* l_pInspect = GetInspection();
+		SVInspectionProcess* pInspection = GetInspection();
 
-		if( nullptr != l_pInspect )
+		if( nullptr != pInspection )
 		{
-			SVProductInfoStruct l_Product = l_pInspect->LastProductGet( SV_INSPECTION );
+			SVProductInfoStruct l_Product = pInspection->LastProductGet( SV_INSPECTION );
 
 			if( !( l_Product.empty() ) )
 			{

@@ -55,9 +55,9 @@ HRESULT SVTaskObjectValueInterface::AddInputRequest( SVValueObjectReference p_sv
 
 	try
 	{
-		SVInspectionProcess *l_psvIP = m_psvTaskObject->GetInspection();
+		SVInspectionProcess* pInspection = m_psvTaskObject->GetInspection();
 
-		if( l_psvIP->AddInputRequest( p_svObjectRef, p_szValue ) )
+		if( pInspection->AddInputRequest( p_svObjectRef, p_szValue ) )
 		{
 			l_hrOk = S_OK;
 		}
@@ -76,9 +76,9 @@ HRESULT SVTaskObjectValueInterface::AddInputRequest( SVValueObjectReference p_sv
 
 	try
 	{
-		SVInspectionProcess *l_psvIP = m_psvTaskObject->GetInspection();
+		SVInspectionProcess* pInspection = m_psvTaskObject->GetInspection();
 
-		if( l_psvIP->AddInputRequest( p_svObjectRef, p_dValue ) )
+		if( pInspection->AddInputRequest( p_svObjectRef, p_dValue ) )
 		{
 			l_hrOk = S_OK;
 		}
@@ -131,9 +131,9 @@ HRESULT SVTaskObjectValueInterface::AddInputRequestMarker()
 
 	try
 	{
-		SVInspectionProcess *l_psvIP = m_psvTaskObject->GetInspection();
+		SVInspectionProcess* pInspection = m_psvTaskObject->GetInspection();
 
-		if( l_psvIP->AddInputRequestMarker() )
+		if( pInspection->AddInputRequestMarker() )
 		{
 			l_hrOk = S_OK;
 		}
@@ -152,7 +152,12 @@ HRESULT SVTaskObjectValueInterface::RunOnce( SVToolClass *p_psvTool )
 
 	try
 	{
-		SVInspectionProcess* l_pInspection = m_psvTaskObject->GetInspection();
+		SVInspectionProcess* pInspection = m_psvTaskObject->GetInspection();
+		SVGUID InspectionId(SVInvalidGUID);
+		if(nullptr != pInspection )
+		{
+			InspectionId = pInspection->GetUniqueObjectID();
+		}
 
 		SVGUID l_ToolId;
 
@@ -161,8 +166,8 @@ HRESULT SVTaskObjectValueInterface::RunOnce( SVToolClass *p_psvTool )
 			l_ToolId = p_psvTool->GetUniqueObjectID();
 		}
 
-		SVCommandInspectionRunOncePtr l_CommandPtr = new SVCommandInspectionRunOnce( l_pInspection->GetUniqueObjectID(), l_ToolId );
-		SVObjectSynchronousCommandTemplate< SVCommandInspectionRunOncePtr > l_Command( l_pInspection->GetUniqueObjectID(), l_CommandPtr );
+		SVCommandInspectionRunOncePtr l_CommandPtr = new SVCommandInspectionRunOnce( InspectionId, l_ToolId );
+		SVObjectSynchronousCommandTemplate< SVCommandInspectionRunOncePtr > l_Command( InspectionId, l_CommandPtr );
 
 		l_hrOk = l_Command.Execute( 120000 );
 	}

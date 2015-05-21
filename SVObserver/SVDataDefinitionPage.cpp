@@ -66,6 +66,12 @@ void SVDataDefinitionPage::DoDataExchange(CDataExchange* pDX)
 
 void SVDataDefinitionPage::InitPage( SVInspectionProcess* pInspection )
 {
+	ASSERT( nullptr != pInspection );
+	if( nullptr == pInspection )
+	{
+		return;
+	}
+
 	m_Tree.InitOutputListTreeCtrl();
 	m_Tree.AllowNodeItemChecks( true );
 	SVToolSetClass* pToolSet = pInspection->GetToolSet();

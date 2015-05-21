@@ -139,13 +139,13 @@ HRESULT SVRemoteInputTool::ProcessNotifyData( SVObjectCommandDataJsonPtr& p_rDat
 		}
 		else if( l_Command == _T( "QueryDataItems" ) )
 		{
-			SVInspectionProcess* l_pInspection = GetInspection();
+			SVInspectionProcess* pInspection = GetInspection();
 
-			if( l_pInspection != NULL )
+			if( nullptr != pInspection )
 			{
 				SVCommandTemplatePtr l_CommandPtr = new SVCommandQueueElement( GetUniqueObjectID(), p_rDataPtr );
 
-				l_Status = SVObjectManagerClass::Instance().SubmitCommand( *l_pInspection, l_CommandPtr );
+				l_Status = SVObjectManagerClass::Instance().SubmitCommand( *pInspection, l_CommandPtr );
 
 				if( l_Status != S_OK )
 				{

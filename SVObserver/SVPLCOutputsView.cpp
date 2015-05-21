@@ -151,13 +151,13 @@ void SVPLCOutputsView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 		int iCurrentPPQ = 0;
 		int l_PPQNum = 0;
 
-		SVPPQObject* pPPQ;
+		SVPPQObject* pPPQ( nullptr );
 
-		SVConfigurationObject* pConfig = NULL;
+		SVConfigurationObject* pConfig( nullptr );
 		SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
 		// Get the number of PPQs
-		if( !pConfig->GetPPQCount( lPPQSize ) )
+		if( nullptr == pConfig || !pConfig->GetPPQCount( lPPQSize ) )
 		{
 			SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
 			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorGettingPPQCount, StdExceptionParams, Err_17037_SVPLCOutputsView_OnUpdate_ErrorGettingPPQCount );
@@ -315,7 +315,7 @@ void SVPLCOutputsView::OnLButtonDblClk(UINT nFlags, CPoint point)
 		long lPPQSize=0;
 
 		// Get the number of PPQs
-		if( !pConfig->GetPPQCount( lPPQSize ) )
+		if( nullptr == pConfig || !pConfig->GetPPQCount( lPPQSize ) )
 		{
 			SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
 			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorGettingPPQCount, StdExceptionParams, Err_17040_SVPLCOutputsView_OnLButtonDblClk_ErrorGettingPPQCount );
@@ -337,10 +337,10 @@ void SVPLCOutputsView::OnLButtonDblClk(UINT nFlags, CPoint point)
 		{	// The user clicked on the PPQ which means a new object.
 
 			// Edit PLC Properties.
-			SVPPQObject* l_pPPQ = dynamic_cast<SVPPQObject*>( reinterpret_cast<SVObjectClass*>(GetListCtrl().GetItemData( l_item )));
-			if( l_pPPQ )
+			SVPPQObject* pPPQ = dynamic_cast<SVPPQObject*>( reinterpret_cast<SVObjectClass*>(GetListCtrl().GetItemData( l_item )));
+			if( nullptr != pPPQ )
 			{
-				m_strCurrentPLCId = l_pPPQ->GetPLCName();
+				m_strCurrentPLCId = pPPQ->GetPLCName();
 				OnPlcProperties();
 			}
 		}
@@ -421,7 +421,7 @@ BOOL SVPLCOutputsView::PreTranslateMessage(MSG* pMsg)
 				{
 					// Expand
 					SVPPQObject* pPPQ = dynamic_cast<SVPPQObject*>( reinterpret_cast<SVObjectClass*>(l_pdwItemData));
-					if( pPPQ && pConfig->GetPLCData() != NULL )
+					if( nullptr != pPPQ && nullptr != pConfig && nullptr != pConfig->GetPLCData() )
 					{
 						SVPLCDataController& l_PLCData = *( pConfig->GetPLCData() );
 						l_PLCData.SetCollapse(pPPQ->GetPLCName(),false );
@@ -442,7 +442,7 @@ BOOL SVPLCOutputsView::PreTranslateMessage(MSG* pMsg)
 				{
 					// Collapse
 					SVPPQObject* pPPQ = dynamic_cast<SVPPQObject*>( reinterpret_cast<SVObjectClass*>(l_pdwItemData));
-					if( pPPQ && pConfig->GetPLCData() != NULL )
+					if( nullptr != pPPQ && nullptr != pConfig && nullptr != pConfig->GetPLCData() )
 					{
 						SVPLCDataController& l_PLCData = *( pConfig->GetPLCData() );
 						l_PLCData.SetCollapse(pPPQ->GetPLCName(),true );
@@ -478,10 +478,10 @@ HRESULT SVPLCOutputsView::PLCNameAtItem( CString& p_rstrPPQName, int p_iItem )
 		// Get the PPQ for this list position
 		DWORD_PTR pdwItemData;
 		pdwItemData = GetListCtrl().GetItemData( i );
-		SVPPQObject* l_pPPQ = dynamic_cast<SVPPQObject*>(reinterpret_cast<SVObjectClass*>(pdwItemData));
-		if( l_pPPQ != NULL )
+		SVPPQObject* pPPQ = dynamic_cast<SVPPQObject*>(reinterpret_cast<SVObjectClass*>(pdwItemData));
+		if( nullptr != pPPQ )
 		{
-			p_rstrPPQName = l_pPPQ->GetPLCName( );
+			p_rstrPPQName = pPPQ->GetPLCName( );
 			l_hr = S_OK;
 			break;
 		}
@@ -523,8 +523,14 @@ void SVPLCOutputsView::OnPlcProperties()
 		SVPLCPropSheet l_dlg(_T("PLC Wizzard"), this);
 		l_dlg.AddPages();
 
-		SVConfigurationObject* pConfig = NULL;
+		SVConfigurationObject* pConfig( nullptr );
 		SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
+		//Without valid config pointer don't need to go further
+		ASSERT( nullptr != pConfig );
+		if( nullptr == pConfig )
+		{
+			return;
+		}
 
 		HRESULT l_hr = pConfig->GetPLCControlData( l_dlg.m_ControlMaterials, m_strCurrentPLCId );
 
@@ -564,7 +570,7 @@ void SVPLCOutputsView::OnContextMenu(CWnd* /*pWnd*/, CPoint point )
 	{
 		SVPPQObject* pPPQ=dynamic_cast<SVPPQObject*>(reinterpret_cast<SVObjectClass*>(GetListCtrl().GetItemData( m_CurrentItem )));
 
-		if( pPPQ )
+		if( nullptr != pPPQ )
 		{
 			// Context Menu...Add and Properties
 			CMenu* pPopup = m_ContextMenuProp.GetSubMenu(0);
@@ -620,11 +626,11 @@ void SVPLCOutputsView::OnPlcDelete()
 {
 	if( TheSVObserverApp.OkToEdit() )
 	{
-		SVConfigurationObject* pConfig = NULL;
+		SVConfigurationObject* pConfig( nullptr );
 		SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
 		POSITION l_Pos = GetListCtrl().GetFirstSelectedItemPosition();
-		if( l_Pos != NULL && pConfig->GetPLCData() != NULL )
+		if( l_Pos != NULL && nullptr != pConfig && nullptr != pConfig->GetPLCData() )
 		{
 			int l_item = GetListCtrl().GetNextSelectedItem( l_Pos );
 			SVPLCOutputObject* pPLCOutput = dynamic_cast<SVPLCOutputObject*>( reinterpret_cast<SVObjectClass*>(GetListCtrl().GetItemData( l_item )));
@@ -663,7 +669,7 @@ void SVPLCOutputsView::OnPlcDelete()
 				// The user clicked on a PLC
 				// Check which plc to delete.
 				SVPPQObject* pPPQ = dynamic_cast<SVPPQObject*>( reinterpret_cast<SVObjectClass*>(GetListCtrl().GetItemData( l_item )));;
-				if( pPPQ )
+				if( nullptr != pPPQ )
 				{
 					CString l_strPlc = pPPQ->GetName(); 
 					CString l_strMsg;
@@ -704,10 +710,10 @@ bool SVPLCOutputsView::AddOutput(int p_iWhere)
 {
 	bool l_bRet = false;
 	CString l_strPLCName;
-	SVConfigurationObject* pConfig = NULL;
+	SVConfigurationObject* pConfig( nullptr );
 	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
-	if( PLCNameAtItem( l_strPLCName, p_iWhere ) == S_OK && pConfig->GetPLCData() != NULL )
+	if( PLCNameAtItem( l_strPLCName, p_iWhere ) == S_OK && nullptr != pConfig && nullptr != pConfig->GetPLCData() )
 	{
 		// New Entry...
 		SVPLCDataController& l_PLCData = *( pConfig->GetPLCData() );
@@ -716,7 +722,7 @@ bool SVPLCOutputsView::AddOutput(int p_iWhere)
 		dlg.m_strPLCId = l_strPLCName;
 
 		SVPPQObject* pPPQ=dynamic_cast<SVPPQObject*>(reinterpret_cast<SVObjectClass*>(GetListCtrl().GetItemData( p_iWhere )));
-		if( pPPQ )
+		if( nullptr != pPPQ )
 		{
 			dlg.m_InputObjectGUID = pPPQ->m_voTriggerCount.GetUniqueObjectID();
 			dlg.m_bNewObject = true;
@@ -772,10 +778,10 @@ bool SVPLCOutputsView::EditOutput(int p_iWhere)
 {
 	bool l_bRet = false;
 
-	SVConfigurationObject* pConfig = NULL;
+	SVConfigurationObject* pConfig( nullptr );
 	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
-	if( pConfig->GetPLCData() != NULL )
+	if( nullptr != pConfig && nullptr != pConfig->GetPLCData() )
 	{
 		SVPLCDataController& l_PLCData = *( pConfig->GetPLCData() );
 
@@ -842,12 +848,12 @@ void SVPLCOutputsView::OnLButtonDown(UINT nFlags, CPoint point)
 		// Toggle Collapse.
 		if( l_item > -1 )
 		{
-			SVConfigurationObject* pConfig = NULL;
+			SVConfigurationObject* pConfig( nullptr );
 			SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
 			DWORD_PTR l_pdwItemData = GetListCtrl().GetItemData( l_item );
 			SVPPQObject* pPPQ = dynamic_cast<SVPPQObject*>( reinterpret_cast<SVObjectClass*>(l_pdwItemData));
-			if( pPPQ && pConfig->GetPLCData() != NULL )
+			if( nullptr != pPPQ && nullptr != pConfig && nullptr != pConfig->GetPLCData() )
 			{
 				SVPLCDataController& l_PLCData = *( pConfig->GetPLCData() );
 				bool l_bCollapse = l_PLCData.GetCollapse( pPPQ->GetPLCName());
@@ -872,19 +878,19 @@ void SVPLCOutputsView::OnAddTransferBlock()
 {
 	CStringVec l_OriginalList;
 
-	SVConfigurationObject* l_pConfig = NULL;
-	SVObjectManagerClass::Instance().GetConfigurationObject( l_pConfig );
+	SVConfigurationObject* pConfig( nullptr );
+	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
-	if( l_pConfig != NULL )
+	if( nullptr != pConfig )
 	{
-		l_pConfig->GetPLCData()->GetPPQs( l_OriginalList, l_pConfig );
-		l_pConfig->GetPLCData()->SetupPLCPPQs(l_pConfig, l_OriginalList );
+		pConfig->GetPLCData()->GetPPQs( l_OriginalList, pConfig );
+		pConfig->GetPLCData()->SetupPLCPPQs(pConfig, l_OriginalList );
 
-		TheSVObserverApp.m_PLCManager.Startup( l_pConfig );
+		TheSVObserverApp.m_PLCManager.Startup( pConfig );
 		OnUpdate( NULL, NULL, NULL );
 
 		TheSVObserverApp.GetIODoc()->SetModifiedFlag();
-		if( l_pConfig->GetPLCCount() > 0 )
+		if( pConfig->GetPLCCount() > 0 )
 		{
 			TheSVObserverApp.ShowIOTab( SVIOPLCOutputsViewID );
 				// Set Active IO Tabbed view to the PLC Outputs Tab

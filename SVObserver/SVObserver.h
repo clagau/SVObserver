@@ -514,7 +514,7 @@ private:
 
 	CString m_csShowUpdateFirmware;
 	BOOL m_ShowUpdateFirmwareInMenu;
-	std::set<SVTriggerObject *> m_dirty_triggers;
+	std::set<SVTriggerObject*> m_dirty_triggers;
 
 	// The Standard Configuration Execution Directory
 	// PN -> Path Name

@@ -122,7 +122,7 @@ BOOL SVIOAdjustDialogClass::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
-	SVPPQObject* pPPQ;
+	SVPPQObject* pPPQ( nullptr );
 	SVIOEntryHostStructPtrList ppIOEntries;
 	SVIOEntryHostStructPtr pIOEntry;
 	long lPPQSize;
@@ -170,7 +170,7 @@ BOOL SVIOAdjustDialogClass::OnInitDialog()
 		SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
 		// Get the number of PPQs
-		if( !pConfig->GetPPQCount( lPPQSize ) )
+		if( nullptr == pConfig || !pConfig->GetPPQCount( lPPQSize ) )
 		{
 			SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
 			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorGettingPPQCount, StdExceptionParams, Err_17029_SVIOAdjustDialogClass_OnInitDialog_ErrorGettingPPQCount );

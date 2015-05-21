@@ -41,14 +41,14 @@ HRESULT SVCommandInspectionRunOnce::Execute()
 	HRESULT l_Status = S_OK;
 
 	SVObjectClass* l_pObject = SVObjectManagerClass::Instance().GetObject( m_InspectionId );
-	SVInspectionProcess* l_pInspection = dynamic_cast< SVInspectionProcess* >( l_pObject );
+	SVInspectionProcess* pInspection = dynamic_cast< SVInspectionProcess* >( l_pObject );
 
-	if( l_pInspection != NULL )
+	if( nullptr != pInspection )
 	{
 		l_pObject = SVObjectManagerClass::Instance().GetObject( m_ToolId );
 		SVToolClass* l_pTool = dynamic_cast< SVToolClass* >( l_pObject );
 
-		l_Status = l_pInspection->RunOnce( l_pTool ) ? S_OK : S_FALSE;
+		l_Status = pInspection->RunOnce( l_pTool ) ? S_OK : S_FALSE;
 	}
 	else
 	{

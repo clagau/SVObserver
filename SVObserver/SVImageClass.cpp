@@ -2331,8 +2331,8 @@ SVImageIndexStruct SVImageClass::GetSourceImageIndex( SVProductInfoStruct* pProd
 	if ( ObjectAttributesSet() & SV_PUBLISH_RESULT_IMAGE )
 	{
 		SVInspectionProcess* pInspection = GetInspection();
-		ASSERT( pInspection );
-		if ( pInspection )
+		ASSERT( nullptr != pInspection );
+		if ( nullptr != pInspection )
 		{
 			SVDataManagerHandle& l_rHandle = pProduct->oPPQInfo.m_ResultImagePublishedDMIndexHandle;
 

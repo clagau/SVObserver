@@ -111,11 +111,13 @@ BOOL SVIOController::RebuildOutputList()
 	SVOutputObjectList	*pOutputList;
 	SVOutputObjectArray ppNewOutputs;
 
-	SVConfigurationObject* pConfig = NULL;
+	SVConfigurationObject* pConfig( nullptr );
 	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
-	if( !pConfig->GetOutputObjectList( &pOutputList ) )
+	if( nullptr == pConfig || !pConfig->GetOutputObjectList( &pOutputList ) )
+	{
 		return FALSE;
+	}
 
 	//Start of check to see if there is a raid failure
 	if( TheSVObserverApp.IsProductTypeRAID() )
@@ -347,16 +349,16 @@ HRESULT SVIOController::SetModuleReady( bool p_Value )
 	// Don't set Module Ready if it isn't in the output list
 	if( !( m_pModuleReady->m_IOId.empty() ) )
 	{
-		SVOutputObjectList *pOutputList;
+		SVOutputObjectList *pOutputList( nullptr );
 
 		m_pModuleReady->m_pValueObject->SetValue( 1, p_Value );
 
-		SVConfigurationObject* pConfig = NULL;
+		SVConfigurationObject* pConfig( nullptr );
 		SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
-		pConfig->GetOutputObjectList( &pOutputList );
+		if( nullptr != pConfig ){ pConfig->GetOutputObjectList( &pOutputList ); }
 
-		if( !pOutputList->WriteOutput( m_pModuleReady, 1, true, false ) )
+		if( nullptr == pOutputList || !pOutputList->WriteOutput( m_pModuleReady, 1, true, false ) )
 		{
 			l_Status = S_FALSE; // JMS ERROR - Cannot write to module ready output.
 		}
@@ -372,16 +374,16 @@ HRESULT SVIOController::SetRaidErrorBit( bool p_Value )
 	// Don't set Module Ready if it isn't in the output list
 	if( !( m_pRaidErrorBit->m_IOId.empty() ) )
 	{
-		SVOutputObjectList *pOutputList;
+		SVOutputObjectList *pOutputList( nullptr );
 
 		m_pRaidErrorBit->m_pValueObject->SetValue( 1, p_Value );
 
-		SVConfigurationObject* pConfig = NULL;
+		SVConfigurationObject* pConfig( nullptr );
 		SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
-		pConfig->GetOutputObjectList( &pOutputList );
+		if( nullptr != pConfig ){ pConfig->GetOutputObjectList( &pOutputList ); }
 
-		if( !pOutputList->WriteOutput( m_pRaidErrorBit, 1, true, false ) )
+		if( nullptr == pOutputList || !pOutputList->WriteOutput( m_pRaidErrorBit, 1, true, false ) )
 		{
 			l_Status = S_FALSE; // JMS ERROR - Cannot write to module ready output.
 		}
@@ -416,9 +418,9 @@ size_t SVIOController::GetPLCCount() const
 	return m_PLCData.GetPLCCount();
 }
 
-void SVIOController::SetupPLC(SVConfigurationObject* p_pConfig )
+void SVIOController::SetupPLC(SVConfigurationObject* pConfig )
 {
-	m_PLCData.SetupPLC( p_pConfig );
+	m_PLCData.SetupPLC( pConfig );
 }
 
 HRESULT SVIOController::GetPLCs( std::vector<CString>& p_astrPLCIds )
@@ -491,14 +493,14 @@ size_t SVIOController::GetRemoteOutputGroupCount() const
 	return l_Count;
 }
 
-void SVIOController::SetupRemoteOutput( SVConfigurationObject* p_pConfig )
+void SVIOController::SetupRemoteOutput( SVConfigurationObject* pConfig )
 {
 	if( m_pRemoteOutputController == NULL)
 		m_pRemoteOutputController = new SVRemoteOutputDataController;
 
 	if( m_pRemoteOutputController != NULL )
 	{
-		m_pRemoteOutputController->SetupRemoteOutput( p_pConfig );
+		m_pRemoteOutputController->SetupRemoteOutput( pConfig );
 	}
 }
 

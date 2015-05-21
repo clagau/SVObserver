@@ -40,29 +40,31 @@ PPQNameListNames RemoteMonitorListController::GetPPQMonitorLists(SVConfiguration
 {
 	PPQNameListNames list;
 
-	long lPPQCount;
-	pConfig->GetPPQCount(lPPQCount);
-
-	// get list of PPQs
-	for (int i = 0;i < lPPQCount; i++)
+	long lPPQCount = 0;
+	if( nullptr != pConfig)
 	{
-		SVPPQObject* pPPQ = NULL;
-		pConfig->GetPPQ(i, &pPPQ);
-		if (pPPQ)
+		pConfig->GetPPQCount(lPPQCount);
+		// get list of PPQs
+		for (int i = 0;i < lPPQCount; i++)
 		{
-			list.insert(std::make_pair(pPPQ->GetName(), NameDepthPairList()));
+			SVPPQObject* pPPQ( nullptr );
+			pConfig->GetPPQ(i, &pPPQ);
+			if ( nullptr != pPPQ )
+			{
+				list.insert(std::make_pair(pPPQ->GetName(), NameDepthPairList()));
+			}
 		}
-	}
-	// build collection of listnames and reject depth keyed by ppq name
-	for (RemoteMonitorList::const_iterator it = m_list.begin();it != m_list.end(); ++it)
-	{
-		const RemoteMonitorNamedList& namedList = it->second;
-		const SVString& ppqName = namedList.GetPPQName();
-		NameDepthPair nameDepthPair(namedList.GetName(), namedList.GetRejectDepthQueue());
-		NameDepthPairList& nameDepthList = list[ppqName];
-		if (std::find(nameDepthList.begin(), nameDepthList.end(), nameDepthPair) == nameDepthList.end())
+		// build collection of listnames and reject depth keyed by ppq name
+		for (RemoteMonitorList::const_iterator it = m_list.begin();it != m_list.end(); ++it)
 		{
-			nameDepthList.push_back(nameDepthPair);
+			const RemoteMonitorNamedList& namedList = it->second;
+			const SVString& ppqName = namedList.GetPPQName();
+			NameDepthPair nameDepthPair(namedList.GetName(), namedList.GetRejectDepthQueue());
+			NameDepthPairList& nameDepthList = list[ppqName];
+			if (std::find(nameDepthList.begin(), nameDepthList.end(), nameDepthPair) == nameDepthList.end())
+			{
+				nameDepthList.push_back(nameDepthPair);
+			}
 		}
 	}
 	return list;

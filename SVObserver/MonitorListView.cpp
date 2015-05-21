@@ -514,10 +514,10 @@ BOOL MonitorListView::PreCreateWindow(CREATESTRUCT& cs)
 void MonitorListView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 {
 	SVIODoc* pIODoc = GetDocument();
-	SVConfigurationObject* pConfig = NULL;
+	SVConfigurationObject* pConfig(nullptr);
 	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
-	if (pIODoc && ::IsWindow(m_hWnd) && pConfig)
+	if( nullptr != pIODoc && ::IsWindow(m_hWnd) && nullptr != pConfig )
 	{
 		pConfig->ValidateRemoteMonitorList(); // prune the list if necessary 
 
@@ -671,9 +671,9 @@ bool MonitorListView::RemoveMonitoredItem(int item)
 	rCtrl.GetItem(&lvItem);
 	MonitorListViewNodeType nodeType = static_cast<MonitorListViewNodeType>(lvItem.lParam);
 
-	SVConfigurationObject* pConfig = NULL;
+	SVConfigurationObject* pConfig( nullptr );
 	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
-	if (pConfig)
+	if( nullptr != pConfig )
 	{
 		const SVString& name = GetListName(rCtrl, item);
 		RemoteMonitorList list = pConfig->GetRemoteMonitorList();
@@ -865,9 +865,9 @@ bool MonitorListView::EditMonitoredItem(int item)
 	rCtrl.GetItem(&lvItem);
 	MonitorListViewNodeType nodeType = static_cast<MonitorListViewNodeType>(lvItem.lParam);
 
-	SVConfigurationObject* pConfig = NULL;
+	SVConfigurationObject* pConfig( nullptr );
 	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
-	if (pConfig)
+	if( nullptr != pConfig )
 	{
 		const SVString& listName = GetListName(rCtrl, item);
 		RemoteMonitorList rList = pConfig->GetRemoteMonitorList();
@@ -997,10 +997,10 @@ void MonitorListView::OnShowProperties()
 	{
 		SVSVIMStateClass::AddState(SV_STATE_EDITING);
 
-		SVConfigurationObject* pConfig = NULL;
-		SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
+		SVConfigurationObject* pConfig( nullptr );
+		SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
-		if (pConfig->SetupRemoteMonitorList())
+		if ( (nullptr != pConfig) && pConfig->SetupRemoteMonitorList() )
 		{
 			SVSVIMStateClass::AddState(SV_STATE_MODIFIED);
 			SVIODoc* pIODoc = GetDocument();
@@ -1104,10 +1104,10 @@ void MonitorListView::OnAddRemoveList()
 	{
 		bool bRet = true;
 		SVSVIMStateClass::AddState(SV_STATE_EDITING);
-		SVConfigurationObject* pConfig = NULL;
-		SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
+		SVConfigurationObject* pConfig( nullptr );
+		SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
-		if (pConfig)
+		if( nullptr != pConfig )
 		{
 			bRet = pConfig->SetupRemoteMonitorList();
 			if (bRet)
@@ -1136,9 +1136,9 @@ void MonitorListView::OnEditListProperties()
 		{
 			int item = rCtrl.GetNextSelectedItem(Pos);
 
-			SVConfigurationObject* pConfig = NULL;
-			SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
-			if (pConfig)
+			SVConfigurationObject* pConfig( nullptr );
+			SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
+			if( nullptr != pConfig )
 			{
 				const SVString& listName = GetListName(rCtrl, item);
 				RemoteMonitorList rList = pConfig->GetRemoteMonitorList();

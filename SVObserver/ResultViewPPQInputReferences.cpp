@@ -33,19 +33,23 @@ void ResultViewPPQInputReferences::BuildReferenceVector(SVInspectionProcess* pIn
 	// Insert all PPQ input items that are picked for viewing
 	m_ReferenceVector.clear();
 	m_ResultViewItemDefList.clear();
-	for( size_t l = 0; pInspection && l < pInspection->m_PPQInputs.size(); ++l )
+	size_t PpqInputSize = 0;
+	if( nullptr != pInspection )
 	{
-		SVIOEntryStruct pIOEntry = pInspection->m_PPQInputs[l];
-		SVObjectClass * object  = pIOEntry.m_IOEntryPtr->m_pValueObject;
-		if( nullptr != object && object->ObjectAttributesSet() & SV_VIEWABLE )
+		PpqInputSize = pInspection->m_PPQInputs.size();
+		for( size_t l = 0; pInspection && l < PpqInputSize; ++l )
 		{
-			SVObjectReference ref(object);
-			ResultViewItemDef item(ref);
-			m_ReferenceVector.push_back(ref);
-			m_ResultViewItemDefList.push_back(item);
+			SVIOEntryStruct pIOEntry = pInspection->m_PPQInputs[l];
+			SVObjectClass * object  = pIOEntry.m_IOEntryPtr->m_pValueObject;
+			if( nullptr != object && object->ObjectAttributesSet() & SV_VIEWABLE )
+			{
+				SVObjectReference ref(object);
+				ResultViewItemDef item(ref);
+				m_ReferenceVector.push_back(ref);
+				m_ResultViewItemDefList.push_back(item);
+			}
 		}
 	}
-
 	m_LastUpdateTimeStamp = SVClock::GetTimeStamp();
 }
 #pragma endregion Public Methods

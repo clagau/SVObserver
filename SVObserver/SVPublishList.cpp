@@ -70,15 +70,15 @@ void SVPublishListClass::Refresh(SVTaskObjectClass * pRootObject)
 
 	l_OutputList.GetSetAttributesList( SV_PUBLISHABLE, &newList );
 
-	SVPPQObject* pPPQ;
-	SVOutputObjectList* pOutputList;
+	SVPPQObject* pPPQ( nullptr );
+	SVOutputObjectList* pOutputList ( nullptr );
 	SVIOEntryHostStructPtrList ppPPQEntries;
 	SVIOEntryHostStructPtr pIOEntry;
 	BOOL bOk;
-	long lPPQSize;
-	long lPPQ;
+	long lPPQSize = 0;
+	long lPPQ = 0;
 
-	SVConfigurationObject* pConfig = NULL;
+	SVConfigurationObject* pConfig( nullptr );
 	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
 	// check for removed items
@@ -121,29 +121,26 @@ void SVPublishListClass::Refresh(SVTaskObjectClass * pRootObject)
 			// remove from the list
 			RemoveAt(i);
 
-			// Get OutputList to remove unpublished items
-			pConfig->GetOutputObjectList( &pOutputList );
-
-			SVOutputObjectArray l_Outputs;
-
 			// Now remove it from all of the PPQs
 			pPPQ = m_pInspection->GetPPQ();
 
-			pPPQ->GetAllOutputs( ppPPQEntries );
-
-			lPPQSize = static_cast<long>(ppPPQEntries.size());
-
-			for( lPPQ = 0, found = false; lPPQ < lPPQSize; lPPQ++ )
+			if( nullptr != pPPQ )
 			{
-				pIOEntry = ppPPQEntries[lPPQ];
-				if( 0 == strcmp( pIOEntry->m_pValueObject->GetCompleteObjectName(), 
-								 pPublishedOutObjectInfo->PObject->GetCompleteObjectName() ) )
-				{
-					pPPQ->RemoveOutput( pIOEntry );
-					found = true;
-				}// end if
-			}// end for
+				pPPQ->GetAllOutputs( ppPPQEntries );
 
+				lPPQSize = static_cast<long>(ppPPQEntries.size());
+
+				for( lPPQ = 0, found = false; lPPQ < lPPQSize; lPPQ++ )
+				{
+					pIOEntry = ppPPQEntries[lPPQ];
+					if( 0 == strcmp( pIOEntry->m_pValueObject->GetCompleteObjectName(), 
+									 pPublishedOutObjectInfo->PObject->GetCompleteObjectName() ) )
+					{
+						pPPQ->RemoveOutput( pIOEntry );
+						found = true;
+					}// end if
+				}// end for
+			}
 			if( !found )
 			{
 				SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
@@ -187,12 +184,12 @@ void SVPublishListClass::Refresh(SVTaskObjectClass * pRootObject)
 				SVValueObjectClass* pValueObject = dynamic_cast< SVValueObjectClass* >( SVObjectManagerClass::Instance().GetObject( pOutObjectInfo->UniqueObjectID ) );
 				if( pValueObject )
 				{
-					SVDigitalOutputObject* l_pDigital = NULL;
+					SVDigitalOutputObject* pDigital( nullptr );
 					CString strName = pValueObject->GetCompleteObjectName();
 
-					pConfig->GetOutputObjectList( &pOutputList );
+					if( nullptr != pConfig ){ pConfig->GetOutputObjectList( &pOutputList ); }
 
-					pOutputList->GetOutput( strName, l_pDigital );
+					if( nullptr != pOutputList ){ pOutputList->GetOutput( strName, pDigital ); }
 
 					// Add Outputs to the PPQ
 					SVIOEntryHostStructPtr pIOEntry;
@@ -217,14 +214,14 @@ void SVPublishListClass::Refresh(SVTaskObjectClass * pRootObject)
 						pIOEntry->m_pValueParent	= pValueParent;
 						pIOEntry->m_ObjectType		= IO_DIGITAL_OUTPUT;
 						pIOEntry->m_PPQIndex		= -1;
-						pIOEntry->m_Enabled			= ( l_pDigital != nullptr );
+						pIOEntry->m_Enabled			= ( nullptr != pDigital );
 
 						if( pIOEntry->m_Enabled )
 						{
-							pIOEntry->m_IOId = l_pDigital->GetUniqueObjectID();
+							pIOEntry->m_IOId = pDigital->GetUniqueObjectID();
 						}
 
-						pPPQ->AddOutput( pIOEntry );
+						if( nullptr != pPPQ ){ pPPQ->AddOutput( pIOEntry ); }
 					}
 					else
 					{
@@ -238,7 +235,7 @@ void SVPublishListClass::Refresh(SVTaskObjectClass * pRootObject)
 
 						pIOEntry->m_IOId = pValueObject->GetUniqueObjectID();
 
-						pPPQ->AddOutput( pIOEntry );
+						if( nullptr != pPPQ ){ pPPQ->AddOutput( pIOEntry ); }
 					}
 				}// end if
 
@@ -256,16 +253,12 @@ void SVPublishListClass::Release(SVTaskObjectClass * pRootObject)
 	// Note:: both Lists must be from the same root object
 	// which at this point is SVToolSetClass
 
-	SVPPQObject *pPPQ;
-	SVOutputObjectList *pOutputList;
+	SVPPQObject* pPPQ( nullptr );
 	SVIOEntryHostStructPtrList ppPPQEntries;
 	SVIOEntryHostStructPtr pIOEntry;
 	bool found;
 	long lPPQSize;
 	long lPPQ;
-
-	SVConfigurationObject* pConfig = NULL;
-	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
 	// check for removed items
 	for( long i = GetSize() - 1; i >= 0; i-- )
@@ -286,17 +279,10 @@ void SVPublishListClass::Release(SVTaskObjectClass * pRootObject)
 		// remove from the list
 		RemoveAt(i);
 
-		// Get OutputList to remove unpublished items
-		pConfig->GetOutputObjectList( &pOutputList );
-		if (pOutputList)
-        {
-			SVOutputObjectArray l_Outputs;
-        }
-
 		// Now remove it from all of the PPQs
         ASSERT( m_pInspection );
 		pPPQ = m_pInspection->GetPPQ();
-		if (pPPQ)
+		if ( nullptr != pPPQ )
 		{
 			pPPQ->GetAllOutputs( ppPPQEntries );
 
@@ -321,15 +307,11 @@ void SVPublishListClass::Release(SVTaskObjectClass * pRootObject)
 
 BOOL SVPublishListClass::RemovePublishedEntry( const SVGUID& RGuid )
 {
-	SVPPQObject *pPPQ;
-	SVOutputObjectList *pOutputList;
+	SVPPQObject* pPPQ( nullptr );
 	SVIOEntryHostStructPtrList ppPPQEntries;
 	SVIOEntryHostStructPtr pIOEntry;
-	long lPPQSize;
-	long lPPQ;
-
-	SVConfigurationObject* pConfig = NULL;
-	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
+	long lPPQSize = 0;
+	long lPPQ = 0;
 
 	for( int i = GetSize() - 1; i >= 0; i-- )
 	{
@@ -340,17 +322,14 @@ BOOL SVPublishListClass::RemovePublishedEntry( const SVGUID& RGuid )
 			RemoveAt(i);
 			bool found = false;
 
-			// Get OutputList to remove unpublished items
-			pConfig->GetOutputObjectList( &pOutputList );
-
-			SVOutputObjectArray l_Outputs;
-
 			// Now remove it from all of the PPQs
 			pPPQ = m_pInspection->GetPPQ();
 
-			pPPQ->GetAllOutputs( ppPPQEntries );
-
-			lPPQSize = static_cast<long>(ppPPQEntries.size());
+			if( nullptr != pPPQ )
+			{
+				pPPQ->GetAllOutputs( ppPPQEntries );
+				lPPQSize = static_cast<long>(ppPPQEntries.size());
+			}
 
 			for( lPPQ = 0, found = false; lPPQ < lPPQSize; lPPQ++ )
 			{
