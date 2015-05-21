@@ -39,11 +39,16 @@ std::string SVVersionInfo::GetVersion()
 			std::stringstream buf;
 			buf << HIWORD(pFileInfo->dwFileVersionMS) << "." << std::setfill( '0' ) << std::setw( 2 ) << LOWORD(pFileInfo->dwFileVersionMS);
 
-			auto betaNumber=HIWORD(pFileInfo->dwFileVersionLS);
-			if( betaNumber > 0 && betaNumber < 255)
+			auto alphaOrBetaNumber=HIWORD(pFileInfo->dwFileVersionLS);
+			if( alphaOrBetaNumber > 0 && alphaOrBetaNumber < 255)
 			{
-				buf << " Beta " << std::setfill( '0' ) << std::setw( 3 ) << betaNumber;
+				buf << " Beta " << std::setfill( '0' ) << std::setw( 3 ) << alphaOrBetaNumber;
 			}
+			else
+				if( alphaOrBetaNumber >1000)
+				{
+					buf << " Alpha " <<  std::setfill( '0' ) << std::setw( 3 ) << alphaOrBetaNumber;
+				}
 
 			if( LOWORD(pFileInfo->dwFileVersionLS) > 0 )
 			{
@@ -183,11 +188,18 @@ std::string SVVersionInfo::GetShortTitleVersion()
 			buf << ".";
 			buf << std::setfill('0') << std::setw(2) << LOWORD(pFileInfo->dwFileVersionMS);
 
-			auto betaNumber=HIWORD(pFileInfo->dwFileVersionLS);
-			if( betaNumber > 0 && betaNumber < 255)
+			auto alphaOrBetaNumber=HIWORD(pFileInfo->dwFileVersionLS);
+			//Arvid this signifies a beta if nonzero and below 255 and an alpha if above 1001
+
+			if( alphaOrBetaNumber > 0 && alphaOrBetaNumber < 255)
 			{
-				buf << "b" << betaNumber;
+				buf << "b" << alphaOrBetaNumber;
 			}
+			else
+				if( alphaOrBetaNumber >1000)
+				{
+					buf << "ALPHA" << alphaOrBetaNumber;
+				}
 
 			if( LOWORD(pFileInfo->dwFileVersionLS) > 0 )
 			{
