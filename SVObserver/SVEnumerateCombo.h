@@ -51,6 +51,8 @@ public:
 public:
 	BOOL SetEnumTypes( LPCTSTR szEnumList );
 
+	int SetCurSelItemData( DWORD_PTR dwItemData );
+	DWORD_PTR  GetCurSelItemData();
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(SVEnumerateComboClass)
 	//}}AFX_VIRTUAL

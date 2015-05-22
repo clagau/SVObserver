@@ -338,6 +338,7 @@ BOOL SVImageObjectClass::GetImageHandle( SVSmartHandlePointer& p_rValuePtr ) con
 
 HRESULT SVImageObjectClass::LoadImageFullSize( LPCTSTR p_szFileName, SVImageExtentClass& p_rNewExtent  )
 {
+	ASSERT(m_CurrentDMIndexHandle.GetIndex() >= 0);
 	HRESULT l_hrOk = LoadImage( p_szFileName, m_CurrentDMIndexHandle, true );
 
 	p_rNewExtent = GetImageInfo().GetExtents();
@@ -418,6 +419,50 @@ HRESULT SVImageObjectClass::LoadImage( LPCTSTR p_szFileName, SVDataManagerHandle
 	}
 
 	return l_hrOk;
+}
+
+HRESULT SVImageObjectClass::GetImageExtentFromFile( LPCTSTR pFileName, SVImageExtentClass& rExtent  )
+{
+	HRESULT hrOk = E_FAIL;
+	SVMatroxImageInterface::SVStatusCode Code = E_FAIL; 
+	long Width(0), Height(0);
+
+	if( 0 < strlen( pFileName ) )
+	{
+		SVFileNameClass	svfncImageFile(pFileName);
+		SVMatroxFileTypeEnum fileformatID = SVFileUnknown;
+		CString strExtension = svfncImageFile.GetExtension();
+
+		if( strExtension.CompareNoCase(_T( ".mim" )) == 0 )
+			fileformatID = SVFileMIL;
+
+		if( strExtension.CompareNoCase(_T( ".tif" )) == 0 )
+			fileformatID = SVFileTiff;
+
+		if( strExtension.CompareNoCase(_T( ".bmp" )) == 0 )
+			fileformatID = SVFileBitmap;
+
+		if( fileformatID != -1 && ::SVFileExists( pFileName ) )
+		{
+
+			SVMatroxString strFile(pFileName);
+
+			Code =  SVMatroxBufferInterface::GetImageSize(strFile,Width,Height);
+		}
+
+	}
+
+	if(Code == SVMEE_STATUS_OK)
+	{
+		rExtent.SetExtentProperty( SVExtentPropertyEnum::SVExtentPropertyWidth, Width);
+		rExtent.SetExtentProperty( SVExtentPropertyEnum::SVExtentPropertyHeight, Height);
+		rExtent.SetExtentProperty( SVExtentPropertyEnum::SVExtentPropertyPositionPointX, 0 );
+		rExtent.SetExtentProperty( SVExtentPropertyEnum::SVExtentPropertyPositionPointY, 0 );
+		rExtent.SetTranslation(SVExtentTranslationNone);
+		rExtent.UpdateData();
+		hrOk = S_OK;
+	}
+	return hrOk;	
 }
 
 HRESULT SVImageObjectClass::CopyToHandle( SVSmartHandlePointer &p_rHandle )

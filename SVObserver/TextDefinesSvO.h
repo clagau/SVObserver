@@ -53,6 +53,10 @@ namespace Seidenader
 		const TCHAR* const SVTOOLPARAMETERLIST_MARKER = _T( "** SVSetToolParameterList MARKER **" );
 		const TCHAR* const SVEXCLUDECHARS_CONFIG_NAME = _T( "\\/:*\"<>|;&$@`[]{}()^~!#%" );
 		const TCHAR* const SVEXCLUDECHARS_TOOL_NAME = _T( "\\/:*\";,.+-$@'[]{}()<>|!%&~^\327\367" );
+		const TCHAR* const SizeAdjustTextNone = _T( "Manual" );
+		const TCHAR* const SizeAdjustTextFormula = _T( "Formula" );
+		const TCHAR* const SizeAdjustTextFullSize = _T( "Auto fit" );
+
 	}
 }
 namespace SvO = Seidenader::SVObserver;

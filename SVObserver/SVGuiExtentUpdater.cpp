@@ -16,16 +16,18 @@
 #include "SVCommandInspectionExtentUpdater.h"
 #include "ErrorNumbers.h"
 
-HRESULT SVGuiExtentUpdater::SetImageExtent(SVTaskObjectClass* p_pTaskObject, const SVImageExtentClass& p_rExtents)
+HRESULT SVGuiExtentUpdater::SetImageExtent(SVTaskObjectClass* pTaskObject, const SVImageExtentClass& rExtents, bool ForwardSize )
 {
+	CWaitCursor wait;
+
 	HRESULT status = Err_SetImageExtent_InvalidParameter_2001;
-	
-	if ( nullptr != p_pTaskObject )
+	if ( nullptr != pTaskObject )
 	{
-		SVInspectionProcess* pInspection = p_pTaskObject->GetInspection();
+		SVInspectionProcess* pInspection = pTaskObject->GetInspection();
 		if ( nullptr != pInspection )
 		{
-			SVCommandInspectionSetImageExtentPtr commandPtr = new SVCommandInspectionExtentUpdater( pInspection->GetUniqueObjectID(), p_pTaskObject->GetUniqueObjectID(), ExtentUpdaterMode_SetImageExtent, p_rExtents );
+			SVCommandInspectionSetImageExtentPtr commandPtr = new SVCommandInspectionExtentUpdater( pInspection->GetUniqueObjectID(), pTaskObject->GetUniqueObjectID(), ExtentUpdaterMode_SetImageExtent, &rExtents );
+			commandPtr->SetResetInspection(ForwardSize);
 			SVObjectSynchronousCommandTemplate< SVCommandInspectionSetImageExtentPtr > command( pInspection->GetUniqueObjectID(), commandPtr );
 			status = command.Execute( TIMEOUT_FOR_SYNCHRONOUS_EXECUTE_IN_MS );
 		}
@@ -34,16 +36,18 @@ HRESULT SVGuiExtentUpdater::SetImageExtent(SVTaskObjectClass* p_pTaskObject, con
 	return status;
 }
 
-HRESULT SVGuiExtentUpdater::SetImageExtentToParent(SVTaskObjectClass* p_pTaskObject)
+HRESULT SVGuiExtentUpdater::SetImageExtentToParent(SVTaskObjectClass* pTaskObject,bool ForwardSize)
 {
+	CWaitCursor wait;
 	HRESULT status = Err_SetImageExtentToParent_InvalidParameter_2002;
 
-	if ( nullptr != p_pTaskObject )
+	if ( nullptr != pTaskObject )
 	{
-		SVInspectionProcess* pInspection = p_pTaskObject->GetInspection();
+		SVInspectionProcess* pInspection = pTaskObject->GetInspection();
 		if ( nullptr != pInspection )
 		{
-			SVCommandInspectionSetImageExtentPtr commandPtr = new SVCommandInspectionExtentUpdater( pInspection->GetUniqueObjectID(), p_pTaskObject->GetUniqueObjectID(), ExtentUpdaterMode_SetImageExtentToParent);
+			SVCommandInspectionSetImageExtentPtr commandPtr = new SVCommandInspectionExtentUpdater( pInspection->GetUniqueObjectID(), pTaskObject->GetUniqueObjectID(), ExtentUpdaterMode_SetImageExtentToParent);
+			commandPtr->SetResetInspection(ForwardSize);
 			SVObjectSynchronousCommandTemplate< SVCommandInspectionSetImageExtentPtr > command( pInspection->GetUniqueObjectID(), commandPtr );
 			status = command.Execute( TIMEOUT_FOR_SYNCHRONOUS_EXECUTE_IN_MS );
 		}
@@ -53,16 +57,18 @@ HRESULT SVGuiExtentUpdater::SetImageExtentToParent(SVTaskObjectClass* p_pTaskObj
 }
 
 
-HRESULT SVGuiExtentUpdater::SetImageExtentToFit(SVTaskObjectClass* p_pTaskObject, const SVImageExtentClass& p_rExtents)
+HRESULT SVGuiExtentUpdater::SetImageExtentToFit(SVTaskObjectClass* pTaskObject, const SVImageExtentClass& rExtents ,bool ForwardSize )
 {
+	CWaitCursor wait;
 	HRESULT status = Err_SetImageExtentToFit_InvalidParameter_2003;
 
-	if ( nullptr != p_pTaskObject )
+	if ( nullptr != pTaskObject )
 	{
-		SVInspectionProcess* pInspection = p_pTaskObject->GetInspection();
+		SVInspectionProcess* pInspection = pTaskObject->GetInspection();
 		if ( nullptr != pInspection )
 		{
-			SVCommandInspectionSetImageExtentPtr commandPtr = new SVCommandInspectionExtentUpdater( pInspection->GetUniqueObjectID(), p_pTaskObject->GetUniqueObjectID(), ExtentUpdaterMode_SetImageExtentToFit, p_rExtents );
+			SVCommandInspectionSetImageExtentPtr commandPtr = new SVCommandInspectionExtentUpdater( pInspection->GetUniqueObjectID(), pTaskObject->GetUniqueObjectID(), ExtentUpdaterMode_SetImageExtentToFit, &rExtents );
+			commandPtr->SetResetInspection(ForwardSize);
 			SVObjectSynchronousCommandTemplate< SVCommandInspectionSetImageExtentPtr > command( pInspection->GetUniqueObjectID(), commandPtr );
 			status = command.Execute( TIMEOUT_FOR_SYNCHRONOUS_EXECUTE_IN_MS );
 		}
@@ -70,6 +76,30 @@ HRESULT SVGuiExtentUpdater::SetImageExtentToFit(SVTaskObjectClass* p_pTaskObject
 
 	return status;
 }
+
+
+HRESULT SVGuiExtentUpdater::ForwardSizeAndPosition(SVTaskObjectClass* pTaskObject)
+{
+	CWaitCursor wait;
+	HRESULT status = Err_SetImageExtentToParent_InvalidParameter_2002;
+
+	if ( nullptr != pTaskObject )
+	{
+		SVInspectionProcess* pInspection = pTaskObject->GetInspection();
+		if ( nullptr != pInspection )
+		{
+			SVCommandInspectionSetImageExtentPtr commandPtr = new SVCommandInspectionExtentUpdater( pInspection->GetUniqueObjectID(), pTaskObject->GetUniqueObjectID(), ExtentUpdaterMode_ForwardExtent);
+			commandPtr->SetResetInspection(true);
+			SVObjectSynchronousCommandTemplate< SVCommandInspectionSetImageExtentPtr > command( pInspection->GetUniqueObjectID(), commandPtr );
+			status = command.Execute( TIMEOUT_FOR_SYNCHRONOUS_EXECUTE_IN_MS );
+		}
+	}
+
+	return status;
+}
+
+
+
 
 //******************************************************************************
 //* LOG HISTORY:

@@ -984,7 +984,7 @@ HRESULT SVToolClass::UpdateOffsetDataToImage( SVExtentOffsetStruct& p_rsvOffsetD
 {
 	return m_svToolExtent.UpdateOffsetDataToImage( p_rsvOffsetData, p_svToolImage );
 }
-
+ 
 HRESULT SVToolClass::UpdateImageWithExtent( unsigned long p_Index )
 {
 	HRESULT l_Status = S_OK;
@@ -1012,6 +1012,12 @@ BOOL SVToolClass::IsOkToEdit()
 {
 	return TRUE;
 }
+
+bool SVToolClass::IsAutoSizeDisabled()
+{
+	return FALSE;
+}
+
 
 
 BOOL SVToolClass::SetDefaultFormulas()
@@ -1111,6 +1117,15 @@ HRESULT SVToolClass::GetPropertyInfo( SVExtentPropertyEnum p_eProperty, SVExtent
 {
 	return m_svToolExtent.GetExtentPropertyInfo( p_eProperty, p_rInfo );
 }
+
+
+
+HRESULT SVToolClass::SetExtentPropertyInfo( SVExtentPropertyEnum p_eProperty, const SVExtentPropertyInfoStruct& p_rInfo )
+{
+	return m_svToolExtent.SetExtentPropertyInfo( p_eProperty, p_rInfo);
+}
+
+
 
 HRESULT SVToolClass::UpdateOverlayIDs( SVExtentMultiLineStruct& p_rMultiLine )
 {

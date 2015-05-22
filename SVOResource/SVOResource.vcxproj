@@ -297,6 +297,8 @@
     <None Include="res\bmp00001.bmp" />
     <None Include="res\checked_disabled.ico" />
     <None Include="res\checked_enabled.ico" />
+    <None Include="res\dot_disabled.ico" />
+    <None Include="res\dot_enabled.ico" />
     <None Include="RES\downarrow.bmp" />
     <None Include="res\empty_disabled.ico" />
     <None Include="res\empty_enabled.ico" />

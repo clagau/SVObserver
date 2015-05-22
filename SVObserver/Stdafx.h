@@ -9,9 +9,7 @@
 //* .Check In Date   : $Date:   19 Dec 2014 14:02:00  $
 //******************************************************************************
 
-#ifndef STDAFX_H
-#define STDAFX_H
-
+#pragma once 
 // Modify the following defines if you have to target a platform prior to the ones specified below.
 // Refer to MSDN for the latest info on corresponding values for different platforms.
 #ifndef WINVER				// Allow use of features specific to Windows XP or later.
@@ -98,7 +96,6 @@
 #include "SVOResource\resource.h"
 #include "SVClsIds.h"
 
-#endif
 
 //******************************************************************************
 //* LOG HISTORY:

@@ -2531,6 +2531,26 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::ClearBuffer( SVMa
 
 }
 
+SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::GetImageSize(const SVMatroxString& rFileName, long &rWidth, long &rHeight)
+{
+	MIL_INT  M_Width(0), M_Height(0);
+	SVStatusCode  Code = SVMEE_STATUS_OK;
+	if(M_INVALID ==   MbufDiskInquire(const_cast<MIL_TEXT_CHAR*>(rFileName.c_str()), M_SIZE_X,  &M_Width))
+	{
+		Code = M_INVALID; 
+	}
+	if (M_INVALID == MbufDiskInquire(const_cast<MIL_TEXT_CHAR*>(rFileName.c_str()), M_SIZE_Y,  &M_Height))
+	{
+		Code = M_INVALID; 
+	}
+	if(Code == SVMEE_STATUS_OK)
+	{
+		rWidth = static_cast<long>(M_Width);
+		rHeight = static_cast<long>(M_Height);
+	}
+	return (Code);
+
+}
 
 /**
 @SVOperationName Import

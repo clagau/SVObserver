@@ -230,12 +230,15 @@ public:
 	HRESULT UpdateSharedMemoryLastInspectedImages( const SVMonitorItemList& p_rImageList );
 	virtual void Persist(SVObjectWriter& rWriter);
 
+	long GetResultDataIndex() const;
+
 	SVIOEntryStructVector m_PPQInputs;
 
 	bool m_bForceOffsetUpdate; // Force Global Extent data to update
 
 	CStringArray m_arViewedInputNames;
 
+	 
 protected:
 	typedef std::map< SVString, SVGUID > SVFilterElementMap;
 

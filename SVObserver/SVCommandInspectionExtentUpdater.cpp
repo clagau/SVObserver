@@ -25,18 +25,22 @@ static char THIS_FILE[] = __FILE__;
 
 #pragma region Constructor
 SVCommandInspectionExtentUpdater::SVCommandInspectionExtentUpdater()
-: m_InspectionId(), m_ToolId(), m_mode(ExtentUpdaterMode_Undefined)
+: m_InspectionId(), m_ToolId(), m_mode(ExtentUpdaterMode_Undefined), m_bResetInspection(false)
 {
 }
 
 SVCommandInspectionExtentUpdater::SVCommandInspectionExtentUpdater(const SVCommandInspectionExtentUpdater& rObject)
-: m_InspectionId( rObject.m_InspectionId ), m_ToolId( rObject.m_ToolId ), m_ImageExtent( rObject.m_ImageExtent ), m_mode( rObject.m_mode )
+: m_InspectionId( rObject.m_InspectionId ), m_ToolId( rObject.m_ToolId ), m_ImageExtent( rObject.m_ImageExtent ), m_mode( rObject.m_mode ),m_bResetInspection(false)
 {
 }
 
-SVCommandInspectionExtentUpdater::SVCommandInspectionExtentUpdater(const SVGUID& rInspectionId, const SVGUID& rToolId, SVCommandExtentUpdaterModeEnum mode, const SVImageExtentClass& rImageExtent)
-: m_InspectionId( rInspectionId ), m_ToolId( rToolId ), m_ImageExtent(rImageExtent), m_mode( mode )
+SVCommandInspectionExtentUpdater::SVCommandInspectionExtentUpdater(const SVGUID& rInspectionId, const SVGUID& rToolId, SVCommandExtentUpdaterModeEnum mode, const SVImageExtentClass* pImageExtent)
+: m_InspectionId( rInspectionId ), m_ToolId( rToolId ), m_mode( mode ),m_bResetInspection(false)
 {
+	if(nullptr != pImageExtent )
+	{
+		m_ImageExtent = *(pImageExtent);
+	}
 }
 
 SVCommandInspectionExtentUpdater::~SVCommandInspectionExtentUpdater()
@@ -62,17 +66,22 @@ HRESULT SVCommandInspectionExtentUpdater::Execute()
 
 		svProduct.GetResultDataIndex( dMIndexHandle );
 
+		int index = dMIndexHandle.GetIndex();
 		switch (m_mode)
 		{
 		case ExtentUpdaterMode_SetImageExtent:
-			retVal = pTool->SetImageExtent(dMIndexHandle.GetIndex(), m_ImageExtent);
+			retVal = pTool->SetImageExtent(index, m_ImageExtent);
 			break;
 		case ExtentUpdaterMode_SetImageExtentToParent:
-			retVal = pTool->SetImageExtentToParent(dMIndexHandle.GetIndex());
+			retVal = pTool->SetImageExtentToParent(index);
 			break;
 		case ExtentUpdaterMode_SetImageExtentToFit:
-			retVal = pTool->SetImageExtentToFit(dMIndexHandle.GetIndex(), m_ImageExtent);
+			retVal = pTool->SetImageExtentToFit(index, m_ImageExtent);
 			break;
+		case ExtentUpdaterMode_ForwardExtent:
+			retVal = S_OK;
+			break;
+		
 		default:
 			retVal = Err_SVCommandInspectionExtentUpdater_InvalidMode_2004;
 			break;
@@ -81,18 +90,40 @@ HRESULT SVCommandInspectionExtentUpdater::Execute()
 		if (retVal == S_OK)
 		{
 			pInspection->m_bForceOffsetUpdate = true;
-			pInspection->AddResetState( SVResetAutoMoveAndResize );
+			if(!m_bResetInspection)
+			{
+				/// correct tool size when it does not fit to the parent image 
+				pInspection->AddResetState( SVResetAutoMoveAndResize );
+			}
+			
 
-			if (::SVSendMessage(pTool, SVM_RESET_ALL_OBJECTS, NULL, NULL) != SVMR_SUCCESS)
+			SVObjectClass* pResetObject(nullptr);
+			SVToolClass* pToolRun(nullptr); 
+			if(m_bResetInspection)
+			{
+				pResetObject =  dynamic_cast<SVObjectClass*>  (pInspection);
+			}
+			else
+			{
+				pToolRun = pTool;
+				pResetObject =  dynamic_cast<SVObjectClass*>  (pTool);
+			}
+			
+
+			if ( nullptr == pResetObject || ::SVSendMessage(pResetObject, SVM_RESET_ALL_OBJECTS, NULL, NULL) != SVMR_SUCCESS)
 			{
 				retVal = Err_SVCommandInspectionExtentUpdater_ResetAllObjects_2005;
 			}
 			else
 			{
-				retVal = pInspection->RunOnce( pTool ) ? S_OK : Err_SVCommandInspectionExtentUpdater_RunOnce_2006;
+				retVal = pInspection->RunOnce( pToolRun ) ? S_OK : Err_SVCommandInspectionExtentUpdater_RunOnce_2006;
 			}
 
-			pInspection->RemoveResetState( SVResetAutoMoveAndResize );
+			if(!m_bResetInspection)
+			{
+				pInspection->RemoveResetState( SVResetAutoMoveAndResize );
+			}
+			
 		}
 	}
 	else
@@ -120,15 +151,23 @@ void SVCommandInspectionExtentUpdater::clear()
 	m_ToolId.clear();
 	m_ImageExtent = SVImageExtentClass();
 	m_mode = ExtentUpdaterMode_Undefined;
+	m_bResetInspection  = false;
 }
 
-HRESULT SVCommandInspectionExtentUpdater::SetCommandData(const SVGUID& p_rInspectionId, const SVGUID& p_rToolId, SVCommandExtentUpdaterModeEnum mode, const SVImageExtentClass& rImageExtent)
+HRESULT SVCommandInspectionExtentUpdater::SetCommandData(const SVGUID& p_rInspectionId, const SVGUID& p_rToolId, SVCommandExtentUpdaterModeEnum mode, const SVImageExtentClass& rImageExtent, bool forward)
 {
 	m_InspectionId = p_rInspectionId;
 	m_ToolId = p_rToolId;
 	m_ImageExtent = rImageExtent;
 	m_mode = mode;
+	m_bResetInspection  = forward;
 
 	return S_OK;
 }
+
+void SVCommandInspectionExtentUpdater::SetResetInspection(bool forward)
+{
+	m_bResetInspection = forward;
+}
+
 #pragma endregion Public Methods

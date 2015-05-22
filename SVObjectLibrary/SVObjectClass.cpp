@@ -797,6 +797,33 @@ BOOL SVObjectClass::AddFriend( const GUID& RFriendGUID )
 	return bRetVal;
 }
 
+
+
+
+SVObjectClass*  SVObjectClass::GetFriend( const SVObjectTypeInfoStruct& rObjectType ) const 
+{
+	// Check if friend is already applied...
+	for(int i =0; i <  friendList.size(); i++ )
+	{
+		const SVObjectTypeInfoStruct* pInfoStruct =  &(friendList[ i ].ObjectTypeInfo); 
+		if( pInfoStruct->ObjectType   == rObjectType.ObjectType && 
+			pInfoStruct->SubType   == rObjectType.SubType
+			)
+		{
+			if(pInfoStruct->EmbeddedID  ==  SVInvalidGUID || pInfoStruct->EmbeddedID  ==  rObjectType.EmbeddedID )
+			{
+				return 	friendList[ i ].PObject;
+
+			}
+
+		}
+	}
+	return nullptr;
+}
+
+
+
+
 /*
 This method is used to remove an object from the friends list via the object's unique object identifier.
 */
@@ -1074,7 +1101,7 @@ DWORD_PTR SVObjectClass::processMessage( DWORD DwMessageID, DWORD_PTR DwMessageV
 	DWORD dwPureMessageID = DwMessageID & SVM_PURE_MESSAGE;
 	switch( dwPureMessageID )
 	{
-		case SVMSGID_CREATE_ALL_OBJECTS:
+	case SVMSGID_CREATE_ALL_OBJECTS:
 		{
 			if( !IsCreated() && !CreateObject( reinterpret_cast<SVObjectLevelCreateStruct*>(DwMessageValue) ) )
 			{
@@ -1086,7 +1113,7 @@ DWORD_PTR SVObjectClass::processMessage( DWORD DwMessageID, DWORD_PTR DwMessageV
 			return SVMR_SUCCESS;
 		}
 
-		case SVMSGID_CONNECT_ALL_OBJECTS:
+	case SVMSGID_CONNECT_ALL_OBJECTS:
 		{
 			if( ConnectObject( reinterpret_cast<SVObjectLevelCreateStruct*>(DwMessageValue) ) != S_OK )
 			{
@@ -1098,7 +1125,7 @@ DWORD_PTR SVObjectClass::processMessage( DWORD DwMessageID, DWORD_PTR DwMessageV
 			return SVMR_SUCCESS;
 		}
 
-		case SVMSGID_GETFIRST_OBJECT:
+	case SVMSGID_GETFIRST_OBJECT:
 		{
 			// ...use third message parameter ( DwMessageContext ) to specify the objectTypeInfo!
 			//( SVObjectTypeInfoStruct->objectType => SVObjectTypeEnum )
@@ -1121,12 +1148,12 @@ DWORD_PTR SVObjectClass::processMessage( DWORD DwMessageID, DWORD_PTR DwMessageV
 				if( ( pObjectTypeInfo->EmbeddedID == SVInvalidGUID         || pObjectTypeInfo->EmbeddedID == GetEmbeddedID() ) &&
 					( pObjectTypeInfo->ObjectType == SVNotSetObjectType    || pObjectTypeInfo->ObjectType == GetObjectType() ) &&
 					( pObjectTypeInfo->SubType    == SVNotSetSubObjectType || pObjectTypeInfo->SubType    == GetObjectSubType() )
-				  )
+					)
 				{
 					if( pObjectTypeInfo->EmbeddedID != SVInvalidGUID         ||
 						pObjectTypeInfo->ObjectType != SVNotSetObjectType    ||
 						pObjectTypeInfo->SubType    != SVNotSetSubObjectType
-					  )
+						)
 					{
 						// But object must be specified!
 						return reinterpret_cast<DWORD_PTR> (static_cast<SVObjectClass*> (this));
@@ -1136,7 +1163,7 @@ DWORD_PTR SVObjectClass::processMessage( DWORD DwMessageID, DWORD_PTR DwMessageV
 			break;
 		}
 
-		case SVMSGID_OVERWRITE_OBJECT:
+	case SVMSGID_OVERWRITE_OBJECT:
 		{
 			// ...use second message parameter ( DwMessageValue ) as objectID ( GUID* )
 			// ...use third message parameter ( DwMessageContext ) as embeddedID ( GUID* ) 
@@ -1158,7 +1185,7 @@ DWORD_PTR SVObjectClass::processMessage( DWORD DwMessageID, DWORD_PTR DwMessageV
 			return static_cast<DWORD_PTR>(NULL); //SVMR_NOT_PROCESSED;
 		}
 
-		case SVMSGID_CONNECT_OBJECT_INPUT:
+	case SVMSGID_CONNECT_OBJECT_INPUT:
 		{
 			// ...use second message parameter ( DwMessageValue ) as pointer to InObjectInfo ( SVInObjectInfoStruct* )
 			// ...returns SVMR_SUCCESS, SVMR_NO_SUCCESS or SVMR_NOT_PROCESSED
@@ -1170,8 +1197,8 @@ DWORD_PTR SVObjectClass::processMessage( DWORD DwMessageID, DWORD_PTR DwMessageV
 
 			return SVMR_NO_SUCCESS;
 		}
-		
-		case SVMSGID_DISCONNECT_OBJECT_INPUT:
+
+	case SVMSGID_DISCONNECT_OBJECT_INPUT:
 		{
 			// ...use second message parameter ( DwMessageValue ) as pointer to InObjectInfo ( SVInObjectInfoStruct* )
 			// ...returns SVMR_SUCCESS, SVMR_NO_SUCCESS or SVMR_NOT_PROCESSED
@@ -1183,7 +1210,7 @@ DWORD_PTR SVObjectClass::processMessage( DWORD DwMessageID, DWORD_PTR DwMessageV
 		}
 
 
-		case SVMSGID_CLOSE_OBJECT:
+	case SVMSGID_CLOSE_OBJECT:
 		{
 			if( CloseObject() )
 				return SVMR_SUCCESS;
@@ -1191,18 +1218,18 @@ DWORD_PTR SVObjectClass::processMessage( DWORD DwMessageID, DWORD_PTR DwMessageV
 			return SVMR_NO_SUCCESS;
 		}
 
-		case SVMSGID_SET_OBJECT_VALUE:
+	case SVMSGID_SET_OBJECT_VALUE:
 		{
 			// try to set our trivial member
 			SVObjectAttributeClass* dataObject = reinterpret_cast<SVObjectAttributeClass*>(DwMessageContext);
-			
+
 			if( SetObjectValue( dataObject ) == S_OK )
 				return SVMR_SUCCESS;
 
 			return SVMR_NO_SUCCESS;
 		}
 
-		case SVMSGID_GET_OBJECT_BY_NAME:
+	case SVMSGID_GET_OBJECT_BY_NAME:
 		{
 			CString strName = (LPCSTR)DwMessageValue;
 
@@ -1271,11 +1298,11 @@ void SVObjectClass::GetObjectScript( CString& RStrScript, CString& RStrAliasTabl
 	// preallocate 4K
 	script.GetBuffer(4096);  
 	script.ReleaseBuffer(); 
-	
+
 	// preallocate 1K
 	aliasTable.GetBuffer(1024);  
 	aliasTable.ReleaseBuffer();  
-	
+
 	// Alias Name is delimited by single quotes - SEJ july 23,1999
 	aliasTable = CString( _T( "\n" ) ) + _T( "alias " ) + nameStrDelimiter + GetObjectName() + nameStrDelimiter + _T( " = " ) + _T( "class$" ) + GetClassID().ToString().c_str() + _T( ";" );
 
@@ -1321,7 +1348,7 @@ void SVObjectClass::PutAttributesInObjectScript( CString& RStrScript, CString& R
 	// preallocate 4K
 	script.GetBuffer(4096);  
 	script.ReleaseBuffer(); 
-	
+
 	// Generate indent...
 	CString strIndent = _T( "\n" );
 	if( Indent )
@@ -1351,7 +1378,7 @@ void SVObjectClass::PutAttributesInObjectScript( CString& RStrScript, CString& R
 		}
 		script += _T( " ];" );
 	}
-	
+
 	script.FreeExtra();
 
 	RStrScript += script;
@@ -1369,7 +1396,7 @@ void SVObjectClass::PutPQDataLinkInfoInObjectScript( CString& RStrScript, CStrin
 	// preallocate 4K
 	script.GetBuffer(4096);  
 	script.ReleaseBuffer(); 
-	
+
 	// Generate indent...
 	CString strIndent = _T( "\n" );
 	if( Indent )
@@ -1390,22 +1417,22 @@ void SVObjectClass::PutPQDataLinkInfoInObjectScript( CString& RStrScript, CStrin
 	CString strDataLinkID;
 
 	strDataLinkID.Format( _T("\"{%08X-%04X-%04X-%02X%02X-%02X%02X%02X%02X%02X%02X}\""),
-						  dataLinkID.Data1, 
-						  dataLinkID.Data2, 
-						  dataLinkID.Data3,
-						  dataLinkID.Data4[0], 
-						  dataLinkID.Data4[1], 
-						  dataLinkID.Data4[2], 
-						  dataLinkID.Data4[3],
-						  dataLinkID.Data4[4], 
-						  dataLinkID.Data4[5], 
-						  dataLinkID.Data4[6], 
-						  dataLinkID.Data4[7]
-						);
+		dataLinkID.Data1, 
+		dataLinkID.Data2, 
+		dataLinkID.Data3,
+		dataLinkID.Data4[0], 
+		dataLinkID.Data4[1], 
+		dataLinkID.Data4[2], 
+		dataLinkID.Data4[3],
+		dataLinkID.Data4[4], 
+		dataLinkID.Data4[5], 
+		dataLinkID.Data4[6], 
+		dataLinkID.Data4[7]
+	);
 
 
 	script += strDataLinkID + _T( " ]" );
-	
+
 	// Add termination...
 	script += _T( ";" );
 
@@ -1424,7 +1451,7 @@ void SVObjectClass::PutFriendGuidsInObjectScript( CString& RStrScript, CString& 
 	// preallocate 4K
 	script.GetBuffer(4096);  
 	script.ReleaseBuffer(); 
-	
+
 	if( ! friendList.GetSize() )
 	{
 		return;
@@ -1445,24 +1472,24 @@ void SVObjectClass::PutFriendGuidsInObjectScript( CString& RStrScript, CString& 
 
 	// Name is delimited by single quotes
 	script += strIndent + objectTag + _T( ".Friend" ) + nameStrDelimiter + _T( " = STRING " );
-		
+
 	if( friendList.GetSize() > 1 )
 	{
 		script += _T( "[ " );
-		
+
 		// for all friends in the list - get GUIDs
 		for( size_t i = 0;i < friendList.GetSize();i++ )
 		{
 			GUID friendGuid = friendList[ i ].UniqueObjectID;
 			CString guidStr;
 			//CString guidStr = AfxStringFromCLSID( friendList[ i ].UniqueObjectID );
-			
+
 			guidStr.Format( _T("\"{%08X-%04X-%04X-%02X%02X-%02X%02X%02X%02X%02X%02X}\""),
 				friendGuid.Data1, friendGuid.Data2, friendGuid.Data3,
 				friendGuid.Data4[0], friendGuid.Data4[1], friendGuid.Data4[2], friendGuid.Data4[3],
 				friendGuid.Data4[4], friendGuid.Data4[5], friendGuid.Data4[6], friendGuid.Data4[7]);
-				
-			
+
+
 			if( i )
 				script += _T( ", " );
 
@@ -1476,7 +1503,7 @@ void SVObjectClass::PutFriendGuidsInObjectScript( CString& RStrScript, CString& 
 		GUID friendGuid = friendList[ 0 ].UniqueObjectID;
 		CString guidStr;
 		//CString guidStr = AfxStringFromCLSID( friendList[ i ].UniqueObjectID );
-			
+
 		guidStr.Format( _T("\"{%08X-%04X-%04X-%02X%02X-%02X%02X%02X%02X%02X%02X}\""),
 			friendGuid.Data1, friendGuid.Data2, friendGuid.Data3,
 			friendGuid.Data4[0], friendGuid.Data4[1], friendGuid.Data4[2], friendGuid.Data4[3],
@@ -1501,7 +1528,7 @@ void SVObjectClass::MakeUniqueFriendAlias( CString& RStrScript )
 	// Original Alias
 	CString originalAlias = _T( "_object_ID_" );
 	originalAlias += GetName();
-	
+
 	// New Alias
 	CString newAlias = _T( "_object_ID_" );
 	newAlias += GetOwner()->GetName();
@@ -1549,7 +1576,7 @@ void SVObjectClass::PersistAttributes( SVObjectWriter& rWriter )
 
 	rWriter.StartElement(scAttributesSetTag);
 	SVVariantList list;
-	
+
 	for ( unsigned int i = 0; i < m_auObjectAttributesSet.size(); i++ )
 	{
 		value.ulVal = m_auObjectAttributesSet.at(i);
@@ -1584,8 +1611,8 @@ BOOL SVObjectClass::GetChildObjectByName( LPCTSTR tszChildName, SVObjectClass** 
 		if ( sChildName.Left(sName.GetLength()) == sName )
 		{
 			*ppObject = reinterpret_cast<SVObjectClass*>( ::SVSendMessage( this, 
-					( SVM_GET_OBJECT_BY_NAME | SVM_PARENT_TO_CHILD ) & ~SVM_NOTIFY_ONLY_THIS, 
-					reinterpret_cast<DWORD_PTR>(tszChildName), NULL ) );
+				( SVM_GET_OBJECT_BY_NAME | SVM_PARENT_TO_CHILD ) & ~SVM_NOTIFY_ONLY_THIS, 
+				reinterpret_cast<DWORD_PTR>(tszChildName), NULL ) );
 			bReturn = ( *ppObject != NULL );
 		}
 	}
@@ -1619,7 +1646,7 @@ HRESULT SVObjectClass::GetChildObject( SVObjectClass*& p_rpObject, const SVObjec
 
 	return l_Status;
 }
-	
+
 /*
 This method returns whether this object contains an array of data or not.
 */
@@ -1709,1264 +1736,1264 @@ void SVObjectClass::SetDefaultObjectAttributesSet(UINT uAttributes)
 //******************************************************************************
 /*
 $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObjectLibrary\SVObjectClass.cpp_v  $
- * 
- *    Rev 1.10   08 Jan 2015 05:41:38   mEichengruen
- * Project:  SVObserver
- * Change Request (SCR) nbr:  980
- * SCR Title:  Add Non-Inspection Objects to the Result View
- * Checked in by:  mEichengruen;  Marcus Eichengruen
- * Change Description:  
- *   fix parametername to avoid compile error
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.9   07 Jan 2015 16:03:08   bwalter
- * Project:  SVObserver
- * Change Request (SCR) nbr:  980
- * SCR Title:  Add Non-Inspection Objects to the Result View
- * Checked in by:  mEichengruen;  Marcus Eichengruen
- * Change Description:  
- *   Changed method GetCompleteObjectNameToObjectType to avoid returning a name starting with ".".
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.8   20 Nov 2014 04:39:28   mziegler
- * Project:  SVObserver
- * Change Request (SCR) nbr:  918
- * SCR Title:  Implement Method RegisterMonitorList for RemoteControl (SVO-369)
- * Checked in by:  mZiegler;  Marc Ziegler
- * Change Description:  
- *   change method GetAncestor to const and rearrange the code without changing the behavoiur.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.7   27 Jun 2014 08:05:06   mziegler
- * Project:  SVObserver
- * Change Request (SCR) nbr:  885
- * SCR Title:  Replace image display in TA-dialogs with activeX SVPictureDisplay
- * Checked in by:  mZiegler;  Marc Ziegler
- * Change Description:  
- *   remove GetObjectDepth and GetObjectIcon
- * made methods const: GetObjectColor, GetObjectState, GetCompleteObjectName2, GetCompleteObjectNameLength, GetOwnerInfo, GetObjectInfo and GetFriendList
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.6   15 May 2014 15:30:26   sjones
- * Project:  SVObserver
- * Change Request (SCR) nbr:  852
- * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
- * Checked in by:  tBair;  Tom Bair
- * Change Description:  
- *   Revised comment due to SVSendMessage using DWORD_PTR
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.5   15 May 2014 09:42:26   sjones
- * Project:  SVObserver
- * Change Request (SCR) nbr:  852
- * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
- * Checked in by:  tBair;  Tom Bair
- * Change Description:  
- *   Revised SVSendMessage to use DWORD_PTR instead of DWORD or LONG_PTR.
- * Revised processMessage to use DWORD_PTR instead of DWORD or LONG_PTR.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.4   17 Mar 2014 14:14:10   bwalter
- * Project:  SVObserver
- * Change Request (SCR) nbr:  869
- * SCR Title:  Add PPQ and Environment Variables to Object Manager and Update Pickers
- * Checked in by:  bWalter;  Ben Walter
- * Change Description:  
- *   Added Includes and Declarations regions.
- *   Removed THIS_FILE.
- *   Added RefreshObject method.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.3   05 Feb 2014 09:20:42   tbair
- * Project:  SVObserver
- * Change Request (SCR) nbr:  852
- * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
- * Checked in by:  tBair;  Tom Bair
- * Change Description:  
- *   Process Message to use LONG_PTR instead of DWORD
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.2   01 Feb 2014 10:09:14   tbair
- * Project:  SVObserver
- * Change Request (SCR) nbr:  852
- * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
- * Checked in by:  tBair;  Tom Bair
- * Change Description:  
- *   Changed sendmessage to use LONG_PTR instead of DWORD.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.1   01 Oct 2013 11:27:02   tbair
- * Project:  SVObserver
- * Change Request (SCR) nbr:  852
- * SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
- * Checked in by:  tBair;  Tom Bair
- * Change Description:  
- *   Add x64 platform.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.0   22 Apr 2013 16:46:52   bWalter
- * Project:  SVObserver
- * Change Request (SCR) nbr:  814
- * SCR Title:  Upgrade SVObserver to Compile Using Visual Studio 2010
- * Checked in by:  bWalter;  Ben Walter
- * Change Description:  
- *   Initial check in to SVObserver_src.  (Merged with svo_src label SVO 6.10 Beta 008.)
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.31   10 Jan 2013 14:58:56   jspila
- * Project:  SVObserver
- * Change Request (SCR) nbr:  805, 801
- * SCR Title:  Fix Value Object Indexing Problem when Shortening PPQ
- * Checked in by:  Joe;  Joe Spila
- * Change Description:  
- *   Merged 6.01 branch code into main development code base.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.30   07 Dec 2012 10:33:28   ryoho
- * Project:  SVObserver
- * Change Request (SCR) nbr:  801
- * SCR Title:  Add new Shift Tool to SVObserver
- * Checked in by:  rYoho;  Rob Yoho
- * Change Description:  
- *   New method for GetObjectValue
- * new method for SetObjectValue
- * 
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.29   04 Sep 2012 13:24:08   jspila
- * Project:  SVObserver
- * Change Request (SCR) nbr:  602
- * SCR Title:  Revise the Toolset Parsing and Object Creation Methodology
- * Checked in by:  Joe;  Joe Spila
- * Change Description:  
- *   Added new parsing and saving functionality to object framework.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.28.1.1   08 Jan 2013 11:41:02   jspila
- * Project:  SVObserver
- * Change Request (SCR) nbr:  805
- * SCR Title:  Fix Value Object Indexing Problem when Shortening PPQ
- * Checked in by:  Joe;  Joe Spila
- * Change Description:  
- *   Added new virtual method to Object Class to fix adjusting Object Depth of Value Object and Last Set Index.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.28.1.0   05 Dec 2012 11:48:06   ryoho
- * Project:  SVObserver
- * Change Request (SCR) nbr:  801
- * SCR Title:  Add new Shift Tool to SVObserver
- * Checked in by:  rYoho;  Rob Yoho
- * Change Description:  
- *   Added include for SVUtilityLibrary/SVSAFEARRAY.h
- * New method for GetObjectValue
- * new method for SetObjectValue
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.28   27 Jul 2012 08:00:00   jspila
- * Project:  SVObserver
- * Change Request (SCR) nbr:  769
- * SCR Title:  Fix Problems and Crashes with Inspection Document Display Updates
- * Checked in by:  Joe;  Joe Spila
- * Change Description:  
- *   Updated the visitor fucntionality to make it more flexable without having to add new elements to the framework.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.27   25 Jul 2012 15:38:24   jspila
- * Project:  SVObserver
- * Change Request (SCR) nbr:  769
- * SCR Title:  Fix Problems and Crashes with Inspection Document Display Updates
- * Checked in by:  Joe;  Joe Spila
- * Change Description:  
- *   Updated object class to not allow setting owner object to itself.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.26   18 Jul 2012 13:14:26   jspila
- * Project:  SVObserver
- * Change Request (SCR) nbr:  769
- * SCR Title:  Fix Problems and Crashes with Inspection Document Display Updates
- * Checked in by:  Joe;  Joe Spila
- * Change Description:  
- *   Removed obsolete methods assiciated with overlay drawling.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.25   12 Jul 2012 14:03:44   jspila
- * Project:  SVObserver
- * Change Request (SCR) nbr:  769
- * SCR Title:  Fix Problems and Crashes with Inspection Document Display Updates
- * Checked in by:  Joe;  Joe Spila
- * Change Description:  
- *   Updated source code to add in an additional string identifier for the input and fixed clear functionality assoicated with input structure.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.24   02 Jul 2012 16:02:26   jspila
- * Project:  SVObserver
- * Change Request (SCR) nbr:  769
- * SCR Title:  Fix Problems and Crashes with Inspection Document Display Updates
- * Checked in by:  Joe;  Joe Spila
- * Change Description:  
- *   Updated source code to promote new display functionality.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.23   18 Jun 2012 17:13:22   jspila
- * Project:  SVObserver
- * Change Request (SCR) nbr:  744
- * SCR Title:  Add Shared Memory and Socket Functionality for Run Page Web Server
- * Checked in by:  Joe;  Joe Spila
- * Change Description:  
- *   Protected Object Information structure attributes.  This change will add accessor methods to get and set attributes.
- * Converted GUID to SVGUID.   This allows the use of standard operators for comparison and methods for conversion.
- * 
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.22   30 Jan 2012 10:33:56   jspila
- * Project:  SVObserver
- * Change Request (SCR) nbr:  748
- * SCR Title:  Add Remote Output Steams to SVObserver
- * Checked in by:  jSpila;  Joseph Spila
- * Change Description:  
- *   Updated object manager to reduce unnecessary methods.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.21   01 Mar 2011 10:05:12   jspila
- * Project:  SVObserver
- * Change Request (SCR) nbr:  712
- * SCR Title:  Fix issues with black images when using command interface (SIAC)
- * Checked in by:  Joe;  Joe Spila
- * Change Description:  
- *   Updated walking objects functionality to use a recursive method and added a check for circular object walking.  This could cause an infinite execution loop.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.20   25 Feb 2011 11:59:36   jspila
- * Project:  SVObserver
- * Change Request (SCR) nbr:  712
- * SCR Title:  Fix issues with black images when using command interface (SIAC)
- * Checked in by:  Joe;  Joe Spila
- * Change Description:  
- *   Updated classes needed to consolidate SVImageClass and SVImageObjectClass updating calls to one method name.  Fixed updating problems with child buffers.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.19   07 Dec 2010 15:51:50   jspila
- * Project:  SVObserver
- * Change Request (SCR) nbr:  707
- * SCR Title:  Change Inspection Display Functionality to Force Display of Last Inspected
- * Checked in by:  Joe;  Joe Spila
- * Change Description:  
- *   Updated source code to include changes in notification functionality using the Observer Design Pattern.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.18   28 Oct 2010 13:35:54   jspila
- * Project:  SVObserver
- * Change Request (SCR) nbr:  704
- * SCR Title:  Upgrade SVObserver Version for 5.33 Release
- * Checked in by:  Joe;  Joe Spila
- * Change Description:  
- *   Updated source code to remove duplicate definition of HRESULT.  The SVHRESULT definition will be removed in place of the Microsoft defined HRESULT.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.17   29 Jun 2010 13:58:20   jspila
- * Project:  SVObserver
- * Change Request (SCR) nbr:  693
- * SCR Title:  Fix Performance Issue with Inspection Process
- * Checked in by:  Joe;  Joe Spila
- * Change Description:  
- *   Updated source to change object validity test.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.16   01 Jun 2010 08:29:46   jspila
- * Project:  SVObserver
- * Change Request (SCR) nbr:  693
- * SCR Title:  Fix Performance Issue with Inspection Process
- * Checked in by:  Joe;  Joe Spila
- * Change Description:  
- *   Updated source code to remove duplicate definitions and redundunt containers.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.15   15 Feb 2010 10:38:02   jspila
- * Project:  SVObserver
- * Change Request (SCR) nbr:  682
- * SCR Title:  Upgrade SVObserver version for 5.31 release
- * Checked in by:  Joe;  Joe Spila
- * Change Description:  
- *   Updated old and added missing source code comments to existing code.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.14   15 Dec 2009 12:55:06   jspila
- * Project:  SVObserver
- * Change Request (SCR) nbr:  677
- * SCR Title:  Fix problem in camera notify thread
- * Checked in by:  Joe;  Joe Spila
- * Change Description:  
- *   Updated include information and comments.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.13   03 Sep 2009 09:11:20   jspila
- * Project:  SVObserver
- * Change Request (SCR) nbr:  665
- * SCR Title:  Fix unrecoverable failure when processing acquisitions at high speed
- * Checked in by:  Joe;  Joe Spila
- * Change Description:  
- *   Fixed issues with moved header includes.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.12   30 Jul 2009 08:35:30   jspila
- * Project:  SVObserver
- * Change Request (SCR) nbr:  665
- * SCR Title:  Fix unrecoverable failure when processing acquisitions at high speed
- * Checked in by:  Joe;  Joe Spila
- * Change Description:  
- *   Merged branced changes into current code branch with appropriate updates.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.11   20 Jun 2007 13:27:52   Joe
- * Project:  SVObserver
- * Change Request (SCR) nbr:  598
- * SCR Title:  Upgrade SVObserver to compile using vc++ in VS2005
- * Checked in by:  jSpila;  Joseph Spila
- * Change Description:  
- *   These changes include modification based on fixing compiler-based and project-based differences between VC6 and VC8.  These changes mainly include casting issues, but some include type conversion and assignment of new compiler controlling defines.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.10   21 Sep 2005 07:35:48   Joe
- * Project:  SVObserver
- * Change Request (SCR) nbr:  500
- * SCR Title:  Reduce delay when adjusting tool parameters with a large toolset
- * Checked in by:  Joe;  Joe Spila
- * Change Description:  
- *   Updated objects to handle invalid items on the input and output lists.  Methods now verify object validity before use.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.9   14 Sep 2005 15:40:40   ebeyeler
- * Project:  SVObserver
- * Change Request (SCR) nbr:  464
- * SCR Title:  Add array indexing for value objects
- * Checked in by:  eBeyeler;  Eric Beyeler
- * Change Description:  
- *   updated to handle attributes for "entire array" and first element correctly
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.8   01 Sep 2005 15:50:00   Joe
- * Project:  SVObserver
- * Change Request (SCR) nbr:  510
- * SCR Title:  Add source image extents to all image using tools
- * Checked in by:  tBair;  Tom Bair
- * Change Description:  
- *   Added check to prevent infinite recursion on owner calls.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.7   01 Aug 2005 10:17:24   ebeyeler
- * Project:  SVObserver
- * Change Request (SCR) nbr:  464
- * SCR Title:  Add array indexing for value objects
- * Checked in by:  eBeyeler;  Eric Beyeler
- * Change Description:  
- *   removed GetObjectDataTable
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.6   29 Jul 2005 07:54:42   ebeyeler
- * Project:  SVObserver
- * Change Request (SCR) nbr:  464
- * SCR Title:  Add array indexing for value objects
- * Checked in by:  eBeyeler;  Eric Beyeler
- * Change Description:  
- *   consolidated common constructor code in init()
- * set m_uDefaultObjectAttributesSet in init() which is called from all constructors
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.5   28 Jul 2005 15:26:36   ebeyeler
- * Project:  SVObserver
- * Change Request (SCR) nbr:  464
- * SCR Title:  Add array indexing for value objects
- * Checked in by:  eBeyeler;  Eric Beyeler
- * Change Description:  
- *   added m_uDefaultObjectAttributesSet and SetDefaultObjectAttributesSet
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.4   14 Jul 2005 11:45:06   ebeyeler
- * Project:  SVObserver
- * Change Request (SCR) nbr:  464
- * SCR Title:  Add array indexing for value objects
- * Checked in by:  eBeyeler;  Eric Beyeler
- * Change Description:  
- *   inlined functions
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.3   20 Jun 2005 15:11:06   ebeyeler
- * Project:  SVObserver
- * Change Request (SCR) nbr:  464
- * SCR Title:  Add array indexing for value objects
- * Checked in by:  eBeyeler;  Eric Beyeler
- * Change Description:  
- *   BOOL --> SVHRESULT on SetObjectValue
- * added array functionality
- * const-corrected
- * added accessors to object attributes
- * 
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.2   07 Mar 2005 11:44:30   Joe
- * Project:  SVObserver
- * Change Request (SCR) nbr:  262
- * SCR Title:  Improve performance when loading a configuration in SVObserver
- * Checked in by:  Joe;  Joe Spila
- * Change Description:  
- *   Added pragma to remove waring message and added functionality to check for existance in object manager.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.1   17 Feb 2005 11:12:52   Joe
- * Project:  SVObserver
- * Change Request (SCR) nbr:  456
- * SCR Title:  Update Image and Tool Objects to use the new Extent Classes
- * Checked in by:  Joe;  Joe Spila
- * Change Description:  
- *   Removed methods that used old extents and Draw Context Object.
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
- * 
- *    Rev 1.0   15 Feb 2005 14:54:34   ryoho
- * Project:  SVObserver
- * Change Request (SCR) nbr:  440
- * SCR Title:  Create Internal Tool Object to Managing Tool Extents and Result Extents
- * Checked in by:  rYoho;  Rob Yoho
- * Change Description:  
- *   First version of file for SVObjectLibrary
- * 
- * /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 3.36   12 Jul 2004 13:05:18   ebeyeler
-   Project:  SVObserver
-   Change Request (SCR) nbr:  406
-   SCR Title:  Implement External Tool
-   Checked in by:  eBeyeler;  Eric Beyeler
-   Change Description:  
-     fixed merge error
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 3.35   12 Jul 2004 13:04:12   ebeyeler
-   Project:  SVObserver
-   Change Request (SCR) nbr:  406
-   SCR Title:  Implement External Tool
-   Checked in by:  eBeyeler;  Eric Beyeler
-   Change Description:  
-     implemented SV_HIDDEN
-   fixed SV_GET_KIND_OF
-   added copy constructor / operator = to SVInObjectInfoStruct
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 3.34   12 Jul 2004 13:01:40   ebeyeler
-   Project:  SVObserver
-   Change Request (SCR) nbr:  428
-   SCR Title:  Improve Load Configuration time
-   Checked in by:  eBeyeler;  Eric Beyeler
-   Change Description:  
-     implemented GetCompleteObjectName optimization
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 3.33   04 Dec 2003 12:59:10   ryoho
-   Project:  SVObserver
-   Change Request (SCR) nbr:  397
-   SCR Title:  Blob Analyzer - Allow Max number of blobs to be set.
-   Checked in by:  rYoho;  Rob Yoho
-   Change Description:  
-     changed SVInObjectInfoStruct to have a const copy constructor
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 3.32   22 Apr 2003 11:35:54   rschock
-   Project:  SVObserver
-   Change Request (SCR) nbr:  346
-   SCR Title:  Update SVObserver to Version 4.21 Release
-   Checked in by:  Joe;  Joe Spila
-   Change Description:  
-     Redid the #include defines and standardized the Tracker log headers and removed warning from release mode builds.
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 3.31   25 Feb 2003 15:50:50   joe
-   Project:  SVObserver
-   Change Request (SCR) nbr:  301
-   SCR Title:  Implement Result Image Circle Buffer
-   Checked in by:  rYoho;  Rob Yoho
-   Change Description:  
-     Updated GetAncestor method to verify that pointer is not NULL.
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 3.30   30 Jan 2003 15:08:24   joe
-   Project:  SVObserver
-   Change Request (SCR) nbr:  301
-   SCR Title:  Implement Result Image Circle Buffer
-   Checked in by:  Joe;  Joe Spila
-   Change Description:  
-     Added SetImageDepth and GetImageDepth methods to class.  Updated constructor to initialize mlImageDepth attribute.
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 3.29   10 Jan 2003 17:49:50   rschock
-   Project:  SVObserver
-   Change Request (SCR) nbr:  305
-   SCR Title:  Implement the ability to perform RunOnce from a SIAC client
-   Checked in by:  rSchock;  Rosco Schock
-   Change Description:  
-     forgot the = sign for the const UINT message defines
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 3.28   10 Jan 2003 15:45:56   rschock
-   Project:  SVObserver
-   Change Request (SCR) nbr:  305
-   SCR Title:  Implement the ability to perform RunOnce from a SIAC client
-   Checked in by:  rSchock;  Rosco Schock
-   Change Description:  
-     Added new function VerifyImageForOverlay to determine which object has overlays on which image.
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 3.27   17 Dec 2002 15:20:22   ebeyeler
-   Project:  SVObserver
-   Change Request (SCR) nbr:  299
-   SCR Title:  SIAC needs to be able to request Source Images
-   Checked in by:  eBeyeler;  Eric Beyeler
-   Change Description:  
-     BOOL GetChildObjectByName( LPCTSTR tszName, SVObjectClass** ppObject );
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 3.26   09 Dec 2002 19:43:14   Joe
-   Project:  SVObserver
-   Change Request (SCR) nbr:  295
-   SCR Title:  Remove Result Data from Configuration Printout
-   Checked in by:  Joe;  Joe Spila
-   Change Description:  
-     CreateObject method was modified to properly update the isCreated flag and to set the printability of the internal value objects.
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 3.25   20 Nov 2002 09:10:44   ryoho
-   Project:  SVObserver
-   Change Request (SCR) nbr:  226, 272
-   SCR Title:  Monochrome SVIM configuration compatibility between ViperQUAD and ViperDUAL
-   Checked in by:  rYoho;  Rob Yoho
-   Change Description:  
-     Changed TheClassRegister -> TheSVClassRegister
-   Changed TheObjectManager -> TheSVObjectManager
-   Added TheSVDataManager
-   Removed references to PPQ
-   removed references to SVObjectInfoStruct
-   processMessage
-   Added support for SVMSGID_GET_OBJECT_BY_NAME
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 3.24   19 Apr 2001 14:47:22   Steve
-   Project:  SVObserver
-   Change Request (SCR) nbr:  196
-   SCR Title:  Restructure Scripted Load/Save Procedures Functional Requirement
-   Checked in by:  Steve;  Stephen E. Steffan
-   Change Description:  
-     Changes due to addition of the SVFileNameObjectClass and new GUID for the class.
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 3.23   06 Sep 2000 16:31:40   Joe
-   Project:  SVObserver
-   Change Request (SCR) nbr:  179
-   SCR Title:  Create Color SVObserver
-   Checked in by:  Joe;  Joe Spila
-   Change Description:  
-     Updated files to include color SVIM changes.
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 3.22   11 May 2000 08:56:02   sjones
-   Project:  SVObserver
-   Change Request (SCR) nbr:  139
-   SCR Title:  Math Tool Invalid State
-   Checked in by:  sJones;  Steve Jones
-   Change Description:  
-     Revised SVM_CREATE_ALL_CLOSED_OBJECTS to
-   also route this message to friend objects.
-   
-   Added IsDescendantOfType method.
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 3.21   07 May 2000 23:29:56   Jim
-   Project:  SVObserver
-   Change Request (SCR) nbr:  137
-   SCR Title:  Remove the need to explicitly reference specific version numbers.
-   Checked in by:  JimAdmin;  James A. Brown
-   Change Description:  
-     Changed the Serialization () functions so that versioning does not need to be explicitly addressed unless a change actually affects file compatabillity.
-   
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 3.20   26 Apr 2000 16:13:16   sjones
-   Project:  SVObserver
-   Change Request (SCR) nbr:  129
-   SCR Title:  Angular Profile Tool
-   Checked in by:  sJones;  Steve Jones
-   Change Description:  
-     Added GetImageInputContextGuid method.
-   Added new message 
-   SVM_SET_SHADOWED_ABSEXTENT.
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 3.19   19 Apr 2000 16:32:18   Jim
-   Project:  SVObserver
-   Change Request (SCR) nbr:  128
-   SCR Title:  Suport for 3.11 versioning
-   Checked in by:  JimAdmin;  James A. Brown
-   Change Description:  
-     SVObjectInfoStruct::Serialize () and 
-   SVObjectClass::Serialize () were both changed to support program version number 3.11 beta 1.
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 3.18   11 Apr 2000 17:45:54   Jim
-   Project:  SVObserver
-   Change Request (SCR) nbr:  121
-   SCR Title:  Support for 3.06 versioning
-   Checked in by:  JimAdmin;  James A. Brown
-   Change Description:  
-     Changed SVObjectInfoStruct::Serialize () and
-   SVObjectClass::Serialize () to support program version number 3.06.
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 3.17   23 Mar 2000 14:03:12   sjones
-   Project:  SVObserver
-   Change Request (SCR) nbr:  117
-   SCR Title:  Bug Fixes for Integration of conditional Toolset/Tool Drawing.
-   Checked in by:  sJones;  Steve Jones
-   Change Description:  
-     Introduced new SetDisabled() member function.
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 3.16   14 Mar 2000 14:42:56   sjones
-   Project:  SVObserver
-   Change Request (SCR) nbr:  101
-   SCR Title:  Versioning 3.10
-   Checked in by:  sJones;  Steve Jones
-   Change Description:  
-     Revised version number to 3.10 release (0x00030AFF)
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 3.15   09 Mar 2000 08:52:28   sjones
-   Project:  SVObserver
-   Change Request (SCR) nbr:  101
-   SCR Title:  Versioning 3.10
-   Checked in by:  sJones;  Steve Jones
-   Change Description:  
-     Revised Version number from 3.10 Beta 3 to 3.10 Beta 4
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 3.14   07 Mar 2000 14:07:42   sjones
-   Project:  SVObserver
-   Change Request (SCR) nbr:  101
-   SCR Title:  Versioning 3.10
-   Checked in by:  sJones;  Steve Jones
-   Change Description:  
-     Changed Version number to 3.1 Beta 3.
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 3.13   25 Feb 2000 16:07:08   sjones
-   Project:  SVObserver
-   Change Request (SCR) nbr:  105
-   SCR Title:  Handling of Tool Figures in Absolute, Relative, and Transformed Views
-   Checked in by:  sJones;  Steve Jones
-   Change Description:  
-     Added new method GetTransform.
-   Added new message SVM_GET_CONTEXT_EXTENT.
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 3.12   21 Feb 2000 14:51:50   sjones
-   Project:  SVObserver
-   Change Request (SCR) nbr:  105
-   SCR Title:  Handling of Tool Figures in Absolute, Relative, and Transformed Views
-   Checked in by:  sJones;  Steve Jones
-   Change Description:  
-     Added checkDrawAllowed method.
-   Added comments for Move/Size messages to detail what is passed.
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 3.11   Feb 21 2000 10:45:08   Nick
-   Project:  SVObserver
-   Change Request (SCR) nbr:  109
-   SCR Title:  Freeze on Reject for v3.1
-   Checked in by:  Nick;  F Roland "Nick" Bjorklund
-   Change Description:  
-     Versioning to v3.10 Beta 2.
-   Add new Macro for Type Safe Casting.
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 3.10   16 Feb 2000 17:00:48   mike
-   Project:  SVObserver
-   Change Request (SCR) nbr:  105
-   SCR Title:  Handling of Tool Figures in Absolute, Relative, and Transformed Views
-   Checked in by:  sJones;  Steve Jones
-   Change Description:  
-     Modified Draw functions to use the DrawContext structure
-   and removed unused methods.
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 3.9   07 Feb 2000 20:44:36   robert
-   Project:  SVObserver
-   Change Request (SCR) nbr:  93
-   SCR Title:  Integrate Multiple Camera Image Input per IPD
-   Checked in by:  Robert;  Robert Massinger
-   Change Description:  
-     Added new Object function GetObjectIcon() which can be overwritten and be used as generic 'get icon func' for any kind of list or tree icon.
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 3.8   04 Feb 2000 13:31:36   sjones
-   Project:  SVObserver
-   Change Request (SCR) nbr:  101
-   SCR Title:  Versioning 3.10
-   Checked in by:  sJones;  Steve Jones
-   Change Description:  
-     Changed version to 3.10
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 3.7   Feb 03 2000 16:33:20   Nick
-   Project:  SVObserver
-   Change Request (SCR) nbr:  102
-   SCR Title:  Versioning v3.05
-   Checked in by:  Nick;  F Roland "Nick" Bjorklund
-   Change Description:  
-     Changed version from v3.04 to v3.05.  Corrected multiple inheritance order in System.h.
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 3.6   Jan 19 2000 15:18:50   Nick
-   Project:  SVObserver
-   Change Request (SCR) nbr:  88
-   SCR Title:  Version 3.04 versioning changes.
-   Checked in by:  Nick;  F Roland "Nick" Bjorklund
-   Change Description:  
-     Changes required to change v3.04 Beta 1 to v3.04 Released.
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 3.5   Jan 14 2000 15:15:04   Nick
-   Project:  SVObserver
-   Change Request (SCR) nbr:  85
-   SCR Title:  Version 3.04 Beta 1 versioning changes.
-   Checked in by:  Nick;  F Roland "Nick" Bjorklund
-   Change Description:  
-     Changes required for v3.03 to v3.04 Beta 1.
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 3.4   Jan 04 2000 08:58:24   Nick
-   Project:  SVObserver
-   Change Request (SCR) nbr:  81
-   SCR Title:  Version 3.03 versioning changes
-   Checked in by:  Nick;  F Roland "Nick" Bjorklund
-   Change Description:  
-     Changes required to convert v3.02 to v3.03.
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 3.3   Dec 02 1999 08:36:36   Nick
-   Project:  SVObserver
-   Change Request (SCR) nbr:  72
-   SCR Title:  Version 3.02 versioning changes.
-   Checked in by:  Nick;  F Roland "Nick" Bjorklund
-   Change Description:  
-     Change v3.01 to v3.02.
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 3.2   Dec 02 1999 08:32:34   Nick
-   Project:  SVObserver
-   Change Request (SCR) nbr:  57
-   SCR Title:  Version 3.00 Beta 18 Versioning
-   Checked in by:  Nick;  F Roland "Nick" Bjorklund
-   Change Description:  
-     Changed v3.01 to v3.02.
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 3.1   Nov 30 1999 15:48:14   Nick
-   Project:  SVObserver
-   Change Request (SCR) nbr:  67
-   SCR Title:  Version 3.01 versioning changes.
-   Checked in by:  Nick;  F Roland "Nick" Bjorklund
-   Change Description:  
-     Changes for v3.00 to v3.01 versioning.
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 3.0   23 Nov 1999 13:18:38   mike
-   Project:  SVObserver
-   Change Request (SCR) nbr:  61
-   SCR Title:  Update PVCS versioning to version 3.0.
-   Checked in by:  Mike;  Mike McCarl
-   Change Description:  
-     
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 1.46   Nov 18 1999 09:05:46   Nick
-   Project:  SVObserver
-   Change Request (SCR) nbr:  59
-   SCR Title:  Version 3.00 Release Versioning
-   Checked in by:  Nick;  F Roland "Nick" Bjorklund
-   Change Description:  
-     v3.00 Release versioning changes.
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 1.45   Nov 10 1999 12:21:02   Nick
-   Project:  SVObserver
-   Change Request (SCR) nbr:  57
-   SCR Title:  Version 3.00 Beta 18 Versioning
-   Checked in by:  Nick;  F Roland "Nick" Bjorklund
-   Change Description:  
-     Changes v3.00 Beta 17 to v3.00 Beta 18.
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 1.44   Nov 05 1999 11:18:34   Nick
-   Project:  SVObserver
-   Change Request (SCR) nbr:  56
-   SCR Title:  Version 3.00 Beta 17 Versioning
-   Checked in by:  Nick;  F Roland "Nick" Bjorklund
-   Change Description:  
-     v3.00 Beta 16 to v3.00 Beta 17.
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 1.43   Nov 02 1999 09:09:18   Nick
-   Project:  SVObserver
-   Change Request (SCR) nbr:  55
-   SCR Title:  Version 3.00 Beta 16 Versioning
-   Checked in by:  Nick;  F Roland "Nick" Bjorklund
-   Change Description:  
-     Changes v3.00 Beta 15 to v3.00 Beta 16.
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 1.42   Nov 02 1999 08:59:08   Nick
-   Project:  SVObserver
-   Change Request (SCR) nbr:  55
-   SCR Title:  Version 3.00 Beta 16 Versioning
-   Checked in by:  Nick;  F Roland "Nick" Bjorklund
-   Change Description:  
-     Changes required for v3.00 Beta 15 to v3.00 Beta 16 change.
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 1.41   Nov 01 1999 16:57:34   Nick
-   Project:  SVObserver
-   Change Request (SCR) nbr:  54
-   SCR Title:  Version 3.00 Beta 15 Versioning.
-   Checked in by:  Nick;  F Roland "Nick" Bjorklund
-   Change Description:  
-     v3.00 Beta 14 to v3.00 Beta 15
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 1.40   Oct 29 1999 17:58:50   steve
-   Added function GetFriendList () to allow the Print File function to get a list of all "friends" for the PrintObject () function in SVObserverApp
-   
-      Rev 1.39   28 Oct 1999 08:42:24   sjones
-   Project:  SVObserver
-   Change Request (SCR) nbr:  9
-   SCR Title:  Integr. a common object interface to handle and to identify obj. in-/outputs
-   Checked in by:  sJones;  Steve Jones
-   Change Description:  
-     Revised GetObjectScript to address performance issues.
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 1.37   Oct 22 1999 09:02:02   Nick
-   Project:  SVObserver
-   Change Request (SCR) nbr:  51
-   SCR Title:  Version 3.00 Beta 13 Versioning
-   Checked in by:  Nick;  F Roland "Nick" Bjorklund
-   Change Description:  
-     v3.00 Beta 12 to v3.00 Beta 13.
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 1.36   Oct 20 1999 16:06:40   Nick
-   Project:  SVObserver
-   Change Request (SCR) nbr:  50
-   SCR Title:  Version 3.00 Beta 12 Versioning
-   Checked in by:  Nick;  F Roland "Nick" Bjorklund
-   Change Description:  
-     Changed version from v3.00 Beta 11 to v3.00 Beta 12.
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 1.35   Oct 18 1999 12:50:06   Nick
-   Project:  SVObserver
-   Change Request (SCR) nbr:  47
-   SCR Title:  Version 3.00 Beta 11 Versioning
-   Checked in by:  Nick;  F Roland "Nick" Bjorklund
-   Change Description:  
-     Changes for v3.00 Beta 10 to v3.00 Beta 11.
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 1.34   Oct 18 1999 11:53:20   Nick
-   Project:  SVObserver
-   Change Request (SCR) nbr:  35
-   SCR Title:  PPQ mode to wait for input data
-   Checked in by:  Nick;  F Roland "Nick" Bjorklund
-   Change Description:  
-     RO - Bug fix - Added DataLinkID scripting.
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 1.33   14 Oct 1999 17:00:12   sjones
-   Project:  SVObserver
-   Change Request (SCR) nbr:  9
-   SCR Title:  Integr. a common object interface to handle and to identify obj. in-/outputs
-   Checked in by:  sJones;  Steve Jones
-   Change Description:  
-     Added HasDependents method to SVOutputInfoListClass.
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 1.32   Oct 13 1999 15:37:12   Nick
-   Project:  SVObserver
-   Change Request (SCR) nbr:  46
-   SCR Title:  Version 3.00 Beta 10 Versioning
-   Checked in by:  Nick;  F Roland "Nick" Bjorklund
-   Change Description:  
-     Version v3.00 Beta 9 to v3.00 Beta 10 changes.
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 1.31   Oct 13 1999 15:14:24   Nick
-   Project:  SVObserver
-   Change Request (SCR) nbr:  21
-   SCR Title:  Port Gage Tool code from program version 2.42.
-   Checked in by:  Nick;  F Roland "Nick" Bjorklund
-   Change Description:  
-     Roberts bug fixes for Beta 10.
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 1.30   Oct 12 1999 08:16:50   Nick
-   Project:  SVObserver
-   Change Request (SCR) nbr:  44
-   SCR Title:  Version 3.00 Beta 9 Versioning
-   Checked in by:  Nick;  F Roland "Nick" Bjorklund
-   Change Description:  
-     Changes required to change v3.00 Beta 8 to v3.00 Beta 9.
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 1.29   Oct 08 1999 10:54:52   Nick
-   Project:  SVObserver
-   Change Request (SCR) nbr:  43
-   SCR Title:  Version 3.00 Beta 7 Versioning
-   Checked in by:  Nick;  F Roland "Nick" Bjorklund
-   Change Description:  
-     Versioning changes to Beta 8.
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 1.28   Oct 04 1999 11:32:12   Nick
-   Project:  SVObserver
-   Change Request (SCR) nbr:  43
-   SCR Title:  Version 3.00 Beta 7 Versioning
-   Checked in by:  Nick;  F Roland "Nick" Bjorklund
-   Change Description:  
-     V3.00 Beta 7 versioning.
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 1.27   Oct 04 1999 09:36:20   Nick
-   Project:  SVObserver
-   Change Request (SCR) nbr:  33
-   SCR Title:  Port Profile Tool from v2.42
-   Checked in by:  Nick;  F Roland "Nick" Bjorklund
-   Change Description:  
-     Completed FriendList locks.
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 1.26   Sep 29 1999 14:21:00   Nick
-   Project:  SVObserver
-   Change Request (SCR) nbr:  41
-   SCR Title:  Version 3.00 Beta 5 Versioning.
-   Checked in by:  Nick;  F Roland "Nick" Bjorklund
-   Change Description:  
-     v3.00 Beta 5
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 1.25   Sep 27 1999 19:04:40   Nick
-   Project:  SVObserver
-   Change Request (SCR) nbr:  38
-   SCR Title:  Version 3.00 Beta 4 Versioning
-   Checked in by:  Nick;  F Roland "Nick" Bjorklund
-   Change Description:  
-     Version from 0x00030003 to 0x00030004.
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 1.24   23 Sep 1999 16:25:44   sjones
-   Project:  SVObserver
-   Change Request (SCR) nbr:  9
-   SCR Title:  Integr. a common object interface to handle and to identify obj. in-/outputs
-   Checked in by:  sJones;  Steve Jones
-   Change Description:  
-     Added message SVM_DESTROY_FRIEND_OBJECT.
-   Revised DestroyFriends to send 
-   SVM_DESTROY_FRIEND_OBJECT instead of
-   SVM_DESTROY_CHILD_OBJECTS
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 1.23   Sep 23 1999 13:53:52   Nick
-   Project:  SVObserver
-   Change Request (SCR) nbr:  37
-   SCR Title:  Version 3.00 Beta 3 Versioning
-   Checked in by:  Nick;  F Roland "Nick" Bjorklund
-   Change Description:  
-     New version specific changes to Serialize methods.
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 1.22   22 Sep 1999 18:35:50   sjones
-   Project:  SVObserver
-   Change Request (SCR) nbr:  9
-   SCR Title:  Integr. a common object interface to handle and to identify obj. in-/outputs
-   Checked in by:  sJones;  Steve Jones
-   Change Description:  
-     Revised to fix restoration of friends from script
-   (Added method to adjust friend aliases)
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 1.21   Sep 21 1999 09:29:18   Nick
-   Project:  SVObserver
-   Change Request (SCR) nbr:  36
-   SCR Title:  Version 3.00 Beta 2 Versioning
-   Checked in by:  Nick;  F Roland "Nick" Bjorklund
-   Change Description:  
-     Added 0x00030002 (v3.00 Beta 2) case statement  to all serialization methods.
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 1.20   Sep 20 1999 15:36:46   Nick
-   Project:  SVObserver
-   Change Request (SCR) nbr:  35
-   SCR Title:  PPQ mode to wait for input data
-   Checked in by:  Nick;  F Roland "Nick" Bjorklund
-   Change Description:  
-     Introduced new broadcast message router.
-   Added new messages: Create_All_Closed_Objects.
-        Notify_About_Creation.
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 1.19   Sep 16 1999 12:38:00   Nick
-   Project:  SVObserver
-   Change Request (SCR) nbr:  34
-   SCR Title:  Add Build Reference Tool
-   Checked in by:  Nick;  F Roland "Nick" Bjorklund
-   Change Description:  
-     Added Product Key Struct and other from SVPPQ.h.
-   Added GetAncestor(ObjectType) and IsDescendantOf( PAncestorObject)
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 1.18   10 Sep 1999 19:35:02   sjones
-   Project:  SVObserver
-   Change Request (SCR) nbr:  9
-   SCR Title:  Integr. a common object interface to handle and to identify obj. in-/outputs
-   Checked in by:  sJones;  Steve Jones
-   Change Description:  
-     Fixed bug in PutAttributesInObjectScript and
-   PutFriendGuidsInObjectScript. 
-   (changed GetObjectName() to GetName, to support
-   objects named different than the class name)
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 1.17   04 Sep 1999 17:24:34   sjones
-   Project:  SVObserver
-   Change Request (SCR) nbr:  9
-   SCR Title:  Integr. a common object interface to handle and to identify obj. in-/outputs
-   Checked in by:  sJones;  Steve Jones
-   Change Description:  
-     Revised to save and restore uObjectAttributesAllowed and
-   uObjectAttributesSet via ObjectScript.
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 1.16   02 Sep 1999 08:44:44   sjones
-   Project:  SVObserver
-   Change Request (SCR) nbr:  9
-   SCR Title:  Integr. a common object interface to handle and to identify obj. in-/outputs
-   Checked in by:  sJones;  Steve Jones
-   Change Description:  
-     Add Message Qualifiers to better control routing of messages.
-   Add new messsages for drawing/figures.
-   Fixed Bug in CloseObject (Friends recurrsion)
-   Add published attribute and defaults on construction of SVObjectClass..
-   Added GetObjectColor and GetObjectState
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 1.15   01 Sep 1999 11:47:54   sjones
-   Project:  SVObserver
-   Change Request (SCR) nbr:  9
-   SCR Title:  Integr. a common object interface to handle and to identify obj. in-/outputs
-   Checked in by:  sJones;  Steve Jones
-   Change Description:  
-     Revised versioning to 3.0 Beta 1
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 1.14   Aug 31 1999 09:34:52   Nick
-   Project:  SVObserver
-   Change Request (SCR) nbr:  27
-   SCR Title:  Results Picker
-   Checked in by:  Nick;  F Roland "Nick" Bjorklund
-   Change Description:  
-     Fixed bug in GetAllowedAttributes() method.
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 1.13   30 Aug 1999 19:31:44   robert
-   Project:  SVObserver
-   Change Request (SCR) nbr:  21
-   SCR Title:  Port Gage Tool code from program version 2.42.
-   Checked in by:  Robert;  Robert Massinger
-   Change Description:  
-     Introduced Input Interface Handling.
-   ( GETFIRST - Message Handler )
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 1.12   30 Aug 1999 19:15:30   sjones
-   Project:  SVObserver
-   Change Request (SCR) nbr:  9
-   SCR Title:  Integr. a common object interface to handle and to identify obj. in-/outputs
-   Checked in by:  sJones;  Steve Jones
-   Change Description:  
-     Revised SV_IS_KIND_OF not to call SV_VALIDATE_OBJECT.
-   Revised SVM_CREATE_ALL_OBJECTS to route to Children only.
-   Added Scripting support for Freinds Architecure.
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 1.11   27 Aug 1999 12:58:48   robert
-   Project:  SVObserver
-   Change Request (SCR) nbr:  21
-   SCR Title:  Port Gage Tool code from program version 2.42.
-   Checked in by:  Robert Massinger
-   Change Description:  
-     Added SetupDialog() Function to SVObjectClass and Message.
-   This gives every derived class the possibility to support his own Setup Dialog.
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 1.10   27 Aug 1999 09:06:26   sjones
-   Project:  SVObserver
-   Change Request (SCR) nbr:  9
-   SCR Title:  Integr. a common object interface to handle and to identify obj. in-/outputs
-   Checked in by:  Steve Jones
-   Change Description:  
-     Add capability to script freind links.
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 1.9   Aug 25 1999 22:50:12   sjones
-   Project:  SVObserver
-   Change Request (SCR) nbr:  1
-   SCR Title:  Integrate a common validity check for all tool base class inputs and outputs.
-   Checked in by:  Steve Jones
-   Change Description:  
-     Revised Validate method to be OnValidate method.
-    ( OnValidate - local scope validation).
-   Added Validate method (Routes to all owned objects)
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 1.8   Aug 25 1999 16:43:32   Nick
-   Project:  SVObserver
-   Change Request (SCR) nbr:  27
-   SCR Title:  Results Picker
-   Checked in by:  F Roland "Nick" Bjorklund
-   Change Description:  
-     
-   
-   /////////////////////////////////////////////////////////////////////////////////////
-   
-      Rev 1.7   25 Aug 1999 11:36:14   robert
-   Project:  SVObserver
-   Change Request (SCR) nbr:  21
-   SCR Title:  Port Gage Tool code from program version 2.42.
-   Checked in by:  Robert Massinger
-   Change Description:  
-     Added SVObjectInfoArrayClass.
-   Added Friend Mechanism.
-   
-   /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.10   08 Jan 2015 05:41:38   mEichengruen
+* Project:  SVObserver
+* Change Request (SCR) nbr:  980
+* SCR Title:  Add Non-Inspection Objects to the Result View
+* Checked in by:  mEichengruen;  Marcus Eichengruen
+* Change Description:  
+*   fix parametername to avoid compile error
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.9   07 Jan 2015 16:03:08   bwalter
+* Project:  SVObserver
+* Change Request (SCR) nbr:  980
+* SCR Title:  Add Non-Inspection Objects to the Result View
+* Checked in by:  mEichengruen;  Marcus Eichengruen
+* Change Description:  
+*   Changed method GetCompleteObjectNameToObjectType to avoid returning a name starting with ".".
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.8   20 Nov 2014 04:39:28   mziegler
+* Project:  SVObserver
+* Change Request (SCR) nbr:  918
+* SCR Title:  Implement Method RegisterMonitorList for RemoteControl (SVO-369)
+* Checked in by:  mZiegler;  Marc Ziegler
+* Change Description:  
+*   change method GetAncestor to const and rearrange the code without changing the behavoiur.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.7   27 Jun 2014 08:05:06   mziegler
+* Project:  SVObserver
+* Change Request (SCR) nbr:  885
+* SCR Title:  Replace image display in TA-dialogs with activeX SVPictureDisplay
+* Checked in by:  mZiegler;  Marc Ziegler
+* Change Description:  
+*   remove GetObjectDepth and GetObjectIcon
+* made methods const: GetObjectColor, GetObjectState, GetCompleteObjectName2, GetCompleteObjectNameLength, GetOwnerInfo, GetObjectInfo and GetFriendList
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.6   15 May 2014 15:30:26   sjones
+* Project:  SVObserver
+* Change Request (SCR) nbr:  852
+* SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+* Checked in by:  tBair;  Tom Bair
+* Change Description:  
+*   Revised comment due to SVSendMessage using DWORD_PTR
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.5   15 May 2014 09:42:26   sjones
+* Project:  SVObserver
+* Change Request (SCR) nbr:  852
+* SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+* Checked in by:  tBair;  Tom Bair
+* Change Description:  
+*   Revised SVSendMessage to use DWORD_PTR instead of DWORD or LONG_PTR.
+* Revised processMessage to use DWORD_PTR instead of DWORD or LONG_PTR.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.4   17 Mar 2014 14:14:10   bwalter
+* Project:  SVObserver
+* Change Request (SCR) nbr:  869
+* SCR Title:  Add PPQ and Environment Variables to Object Manager and Update Pickers
+* Checked in by:  bWalter;  Ben Walter
+* Change Description:  
+*   Added Includes and Declarations regions.
+*   Removed THIS_FILE.
+*   Added RefreshObject method.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.3   05 Feb 2014 09:20:42   tbair
+* Project:  SVObserver
+* Change Request (SCR) nbr:  852
+* SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+* Checked in by:  tBair;  Tom Bair
+* Change Description:  
+*   Process Message to use LONG_PTR instead of DWORD
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.2   01 Feb 2014 10:09:14   tbair
+* Project:  SVObserver
+* Change Request (SCR) nbr:  852
+* SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+* Checked in by:  tBair;  Tom Bair
+* Change Description:  
+*   Changed sendmessage to use LONG_PTR instead of DWORD.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.1   01 Oct 2013 11:27:02   tbair
+* Project:  SVObserver
+* Change Request (SCR) nbr:  852
+* SCR Title:  Add Multiple Platform Support to SVObserver's Visual Studio Solution
+* Checked in by:  tBair;  Tom Bair
+* Change Description:  
+*   Add x64 platform.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.0   22 Apr 2013 16:46:52   bWalter
+* Project:  SVObserver
+* Change Request (SCR) nbr:  814
+* SCR Title:  Upgrade SVObserver to Compile Using Visual Studio 2010
+* Checked in by:  bWalter;  Ben Walter
+* Change Description:  
+*   Initial check in to SVObserver_src.  (Merged with svo_src label SVO 6.10 Beta 008.)
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.31   10 Jan 2013 14:58:56   jspila
+* Project:  SVObserver
+* Change Request (SCR) nbr:  805, 801
+* SCR Title:  Fix Value Object Indexing Problem when Shortening PPQ
+* Checked in by:  Joe;  Joe Spila
+* Change Description:  
+*   Merged 6.01 branch code into main development code base.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.30   07 Dec 2012 10:33:28   ryoho
+* Project:  SVObserver
+* Change Request (SCR) nbr:  801
+* SCR Title:  Add new Shift Tool to SVObserver
+* Checked in by:  rYoho;  Rob Yoho
+* Change Description:  
+*   New method for GetObjectValue
+* new method for SetObjectValue
+* 
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.29   04 Sep 2012 13:24:08   jspila
+* Project:  SVObserver
+* Change Request (SCR) nbr:  602
+* SCR Title:  Revise the Toolset Parsing and Object Creation Methodology
+* Checked in by:  Joe;  Joe Spila
+* Change Description:  
+*   Added new parsing and saving functionality to object framework.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.28.1.1   08 Jan 2013 11:41:02   jspila
+* Project:  SVObserver
+* Change Request (SCR) nbr:  805
+* SCR Title:  Fix Value Object Indexing Problem when Shortening PPQ
+* Checked in by:  Joe;  Joe Spila
+* Change Description:  
+*   Added new virtual method to Object Class to fix adjusting Object Depth of Value Object and Last Set Index.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.28.1.0   05 Dec 2012 11:48:06   ryoho
+* Project:  SVObserver
+* Change Request (SCR) nbr:  801
+* SCR Title:  Add new Shift Tool to SVObserver
+* Checked in by:  rYoho;  Rob Yoho
+* Change Description:  
+*   Added include for SVUtilityLibrary/SVSAFEARRAY.h
+* New method for GetObjectValue
+* new method for SetObjectValue
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.28   27 Jul 2012 08:00:00   jspila
+* Project:  SVObserver
+* Change Request (SCR) nbr:  769
+* SCR Title:  Fix Problems and Crashes with Inspection Document Display Updates
+* Checked in by:  Joe;  Joe Spila
+* Change Description:  
+*   Updated the visitor fucntionality to make it more flexable without having to add new elements to the framework.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.27   25 Jul 2012 15:38:24   jspila
+* Project:  SVObserver
+* Change Request (SCR) nbr:  769
+* SCR Title:  Fix Problems and Crashes with Inspection Document Display Updates
+* Checked in by:  Joe;  Joe Spila
+* Change Description:  
+*   Updated object class to not allow setting owner object to itself.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.26   18 Jul 2012 13:14:26   jspila
+* Project:  SVObserver
+* Change Request (SCR) nbr:  769
+* SCR Title:  Fix Problems and Crashes with Inspection Document Display Updates
+* Checked in by:  Joe;  Joe Spila
+* Change Description:  
+*   Removed obsolete methods assiciated with overlay drawling.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.25   12 Jul 2012 14:03:44   jspila
+* Project:  SVObserver
+* Change Request (SCR) nbr:  769
+* SCR Title:  Fix Problems and Crashes with Inspection Document Display Updates
+* Checked in by:  Joe;  Joe Spila
+* Change Description:  
+*   Updated source code to add in an additional string identifier for the input and fixed clear functionality assoicated with input structure.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.24   02 Jul 2012 16:02:26   jspila
+* Project:  SVObserver
+* Change Request (SCR) nbr:  769
+* SCR Title:  Fix Problems and Crashes with Inspection Document Display Updates
+* Checked in by:  Joe;  Joe Spila
+* Change Description:  
+*   Updated source code to promote new display functionality.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.23   18 Jun 2012 17:13:22   jspila
+* Project:  SVObserver
+* Change Request (SCR) nbr:  744
+* SCR Title:  Add Shared Memory and Socket Functionality for Run Page Web Server
+* Checked in by:  Joe;  Joe Spila
+* Change Description:  
+*   Protected Object Information structure attributes.  This change will add accessor methods to get and set attributes.
+* Converted GUID to SVGUID.   This allows the use of standard operators for comparison and methods for conversion.
+* 
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.22   30 Jan 2012 10:33:56   jspila
+* Project:  SVObserver
+* Change Request (SCR) nbr:  748
+* SCR Title:  Add Remote Output Steams to SVObserver
+* Checked in by:  jSpila;  Joseph Spila
+* Change Description:  
+*   Updated object manager to reduce unnecessary methods.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.21   01 Mar 2011 10:05:12   jspila
+* Project:  SVObserver
+* Change Request (SCR) nbr:  712
+* SCR Title:  Fix issues with black images when using command interface (SIAC)
+* Checked in by:  Joe;  Joe Spila
+* Change Description:  
+*   Updated walking objects functionality to use a recursive method and added a check for circular object walking.  This could cause an infinite execution loop.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.20   25 Feb 2011 11:59:36   jspila
+* Project:  SVObserver
+* Change Request (SCR) nbr:  712
+* SCR Title:  Fix issues with black images when using command interface (SIAC)
+* Checked in by:  Joe;  Joe Spila
+* Change Description:  
+*   Updated classes needed to consolidate SVImageClass and SVImageObjectClass updating calls to one method name.  Fixed updating problems with child buffers.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.19   07 Dec 2010 15:51:50   jspila
+* Project:  SVObserver
+* Change Request (SCR) nbr:  707
+* SCR Title:  Change Inspection Display Functionality to Force Display of Last Inspected
+* Checked in by:  Joe;  Joe Spila
+* Change Description:  
+*   Updated source code to include changes in notification functionality using the Observer Design Pattern.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.18   28 Oct 2010 13:35:54   jspila
+* Project:  SVObserver
+* Change Request (SCR) nbr:  704
+* SCR Title:  Upgrade SVObserver Version for 5.33 Release
+* Checked in by:  Joe;  Joe Spila
+* Change Description:  
+*   Updated source code to remove duplicate definition of HRESULT.  The SVHRESULT definition will be removed in place of the Microsoft defined HRESULT.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.17   29 Jun 2010 13:58:20   jspila
+* Project:  SVObserver
+* Change Request (SCR) nbr:  693
+* SCR Title:  Fix Performance Issue with Inspection Process
+* Checked in by:  Joe;  Joe Spila
+* Change Description:  
+*   Updated source to change object validity test.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.16   01 Jun 2010 08:29:46   jspila
+* Project:  SVObserver
+* Change Request (SCR) nbr:  693
+* SCR Title:  Fix Performance Issue with Inspection Process
+* Checked in by:  Joe;  Joe Spila
+* Change Description:  
+*   Updated source code to remove duplicate definitions and redundunt containers.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.15   15 Feb 2010 10:38:02   jspila
+* Project:  SVObserver
+* Change Request (SCR) nbr:  682
+* SCR Title:  Upgrade SVObserver version for 5.31 release
+* Checked in by:  Joe;  Joe Spila
+* Change Description:  
+*   Updated old and added missing source code comments to existing code.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.14   15 Dec 2009 12:55:06   jspila
+* Project:  SVObserver
+* Change Request (SCR) nbr:  677
+* SCR Title:  Fix problem in camera notify thread
+* Checked in by:  Joe;  Joe Spila
+* Change Description:  
+*   Updated include information and comments.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.13   03 Sep 2009 09:11:20   jspila
+* Project:  SVObserver
+* Change Request (SCR) nbr:  665
+* SCR Title:  Fix unrecoverable failure when processing acquisitions at high speed
+* Checked in by:  Joe;  Joe Spila
+* Change Description:  
+*   Fixed issues with moved header includes.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.12   30 Jul 2009 08:35:30   jspila
+* Project:  SVObserver
+* Change Request (SCR) nbr:  665
+* SCR Title:  Fix unrecoverable failure when processing acquisitions at high speed
+* Checked in by:  Joe;  Joe Spila
+* Change Description:  
+*   Merged branced changes into current code branch with appropriate updates.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.11   20 Jun 2007 13:27:52   Joe
+* Project:  SVObserver
+* Change Request (SCR) nbr:  598
+* SCR Title:  Upgrade SVObserver to compile using vc++ in VS2005
+* Checked in by:  jSpila;  Joseph Spila
+* Change Description:  
+*   These changes include modification based on fixing compiler-based and project-based differences between VC6 and VC8.  These changes mainly include casting issues, but some include type conversion and assignment of new compiler controlling defines.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.10   21 Sep 2005 07:35:48   Joe
+* Project:  SVObserver
+* Change Request (SCR) nbr:  500
+* SCR Title:  Reduce delay when adjusting tool parameters with a large toolset
+* Checked in by:  Joe;  Joe Spila
+* Change Description:  
+*   Updated objects to handle invalid items on the input and output lists.  Methods now verify object validity before use.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.9   14 Sep 2005 15:40:40   ebeyeler
+* Project:  SVObserver
+* Change Request (SCR) nbr:  464
+* SCR Title:  Add array indexing for value objects
+* Checked in by:  eBeyeler;  Eric Beyeler
+* Change Description:  
+*   updated to handle attributes for "entire array" and first element correctly
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.8   01 Sep 2005 15:50:00   Joe
+* Project:  SVObserver
+* Change Request (SCR) nbr:  510
+* SCR Title:  Add source image extents to all image using tools
+* Checked in by:  tBair;  Tom Bair
+* Change Description:  
+*   Added check to prevent infinite recursion on owner calls.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.7   01 Aug 2005 10:17:24   ebeyeler
+* Project:  SVObserver
+* Change Request (SCR) nbr:  464
+* SCR Title:  Add array indexing for value objects
+* Checked in by:  eBeyeler;  Eric Beyeler
+* Change Description:  
+*   removed GetObjectDataTable
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.6   29 Jul 2005 07:54:42   ebeyeler
+* Project:  SVObserver
+* Change Request (SCR) nbr:  464
+* SCR Title:  Add array indexing for value objects
+* Checked in by:  eBeyeler;  Eric Beyeler
+* Change Description:  
+*   consolidated common constructor code in init()
+* set m_uDefaultObjectAttributesSet in init() which is called from all constructors
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.5   28 Jul 2005 15:26:36   ebeyeler
+* Project:  SVObserver
+* Change Request (SCR) nbr:  464
+* SCR Title:  Add array indexing for value objects
+* Checked in by:  eBeyeler;  Eric Beyeler
+* Change Description:  
+*   added m_uDefaultObjectAttributesSet and SetDefaultObjectAttributesSet
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.4   14 Jul 2005 11:45:06   ebeyeler
+* Project:  SVObserver
+* Change Request (SCR) nbr:  464
+* SCR Title:  Add array indexing for value objects
+* Checked in by:  eBeyeler;  Eric Beyeler
+* Change Description:  
+*   inlined functions
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.3   20 Jun 2005 15:11:06   ebeyeler
+* Project:  SVObserver
+* Change Request (SCR) nbr:  464
+* SCR Title:  Add array indexing for value objects
+* Checked in by:  eBeyeler;  Eric Beyeler
+* Change Description:  
+*   BOOL --> SVHRESULT on SetObjectValue
+* added array functionality
+* const-corrected
+* added accessors to object attributes
+* 
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.2   07 Mar 2005 11:44:30   Joe
+* Project:  SVObserver
+* Change Request (SCR) nbr:  262
+* SCR Title:  Improve performance when loading a configuration in SVObserver
+* Checked in by:  Joe;  Joe Spila
+* Change Description:  
+*   Added pragma to remove waring message and added functionality to check for existance in object manager.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.1   17 Feb 2005 11:12:52   Joe
+* Project:  SVObserver
+* Change Request (SCR) nbr:  456
+* SCR Title:  Update Image and Tool Objects to use the new Extent Classes
+* Checked in by:  Joe;  Joe Spila
+* Change Description:  
+*   Removed methods that used old extents and Draw Context Object.
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+* 
+*    Rev 1.0   15 Feb 2005 14:54:34   ryoho
+* Project:  SVObserver
+* Change Request (SCR) nbr:  440
+* SCR Title:  Create Internal Tool Object to Managing Tool Extents and Result Extents
+* Checked in by:  rYoho;  Rob Yoho
+* Change Description:  
+*   First version of file for SVObjectLibrary
+* 
+* /////////////////////////////////////////////////////////////////////////////////////
+
+Rev 3.36   12 Jul 2004 13:05:18   ebeyeler
+Project:  SVObserver
+Change Request (SCR) nbr:  406
+SCR Title:  Implement External Tool
+Checked in by:  eBeyeler;  Eric Beyeler
+Change Description:  
+fixed merge error
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+Rev 3.35   12 Jul 2004 13:04:12   ebeyeler
+Project:  SVObserver
+Change Request (SCR) nbr:  406
+SCR Title:  Implement External Tool
+Checked in by:  eBeyeler;  Eric Beyeler
+Change Description:  
+implemented SV_HIDDEN
+fixed SV_GET_KIND_OF
+added copy constructor / operator = to SVInObjectInfoStruct
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+Rev 3.34   12 Jul 2004 13:01:40   ebeyeler
+Project:  SVObserver
+Change Request (SCR) nbr:  428
+SCR Title:  Improve Load Configuration time
+Checked in by:  eBeyeler;  Eric Beyeler
+Change Description:  
+implemented GetCompleteObjectName optimization
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+Rev 3.33   04 Dec 2003 12:59:10   ryoho
+Project:  SVObserver
+Change Request (SCR) nbr:  397
+SCR Title:  Blob Analyzer - Allow Max number of blobs to be set.
+Checked in by:  rYoho;  Rob Yoho
+Change Description:  
+changed SVInObjectInfoStruct to have a const copy constructor
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+Rev 3.32   22 Apr 2003 11:35:54   rschock
+Project:  SVObserver
+Change Request (SCR) nbr:  346
+SCR Title:  Update SVObserver to Version 4.21 Release
+Checked in by:  Joe;  Joe Spila
+Change Description:  
+Redid the #include defines and standardized the Tracker log headers and removed warning from release mode builds.
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+Rev 3.31   25 Feb 2003 15:50:50   joe
+Project:  SVObserver
+Change Request (SCR) nbr:  301
+SCR Title:  Implement Result Image Circle Buffer
+Checked in by:  rYoho;  Rob Yoho
+Change Description:  
+Updated GetAncestor method to verify that pointer is not NULL.
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+Rev 3.30   30 Jan 2003 15:08:24   joe
+Project:  SVObserver
+Change Request (SCR) nbr:  301
+SCR Title:  Implement Result Image Circle Buffer
+Checked in by:  Joe;  Joe Spila
+Change Description:  
+Added SetImageDepth and GetImageDepth methods to class.  Updated constructor to initialize mlImageDepth attribute.
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+Rev 3.29   10 Jan 2003 17:49:50   rschock
+Project:  SVObserver
+Change Request (SCR) nbr:  305
+SCR Title:  Implement the ability to perform RunOnce from a SIAC client
+Checked in by:  rSchock;  Rosco Schock
+Change Description:  
+forgot the = sign for the const UINT message defines
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+Rev 3.28   10 Jan 2003 15:45:56   rschock
+Project:  SVObserver
+Change Request (SCR) nbr:  305
+SCR Title:  Implement the ability to perform RunOnce from a SIAC client
+Checked in by:  rSchock;  Rosco Schock
+Change Description:  
+Added new function VerifyImageForOverlay to determine which object has overlays on which image.
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+Rev 3.27   17 Dec 2002 15:20:22   ebeyeler
+Project:  SVObserver
+Change Request (SCR) nbr:  299
+SCR Title:  SIAC needs to be able to request Source Images
+Checked in by:  eBeyeler;  Eric Beyeler
+Change Description:  
+BOOL GetChildObjectByName( LPCTSTR tszName, SVObjectClass** ppObject );
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+Rev 3.26   09 Dec 2002 19:43:14   Joe
+Project:  SVObserver
+Change Request (SCR) nbr:  295
+SCR Title:  Remove Result Data from Configuration Printout
+Checked in by:  Joe;  Joe Spila
+Change Description:  
+CreateObject method was modified to properly update the isCreated flag and to set the printability of the internal value objects.
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+Rev 3.25   20 Nov 2002 09:10:44   ryoho
+Project:  SVObserver
+Change Request (SCR) nbr:  226, 272
+SCR Title:  Monochrome SVIM configuration compatibility between ViperQUAD and ViperDUAL
+Checked in by:  rYoho;  Rob Yoho
+Change Description:  
+Changed TheClassRegister -> TheSVClassRegister
+Changed TheObjectManager -> TheSVObjectManager
+Added TheSVDataManager
+Removed references to PPQ
+removed references to SVObjectInfoStruct
+processMessage
+Added support for SVMSGID_GET_OBJECT_BY_NAME
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+Rev 3.24   19 Apr 2001 14:47:22   Steve
+Project:  SVObserver
+Change Request (SCR) nbr:  196
+SCR Title:  Restructure Scripted Load/Save Procedures Functional Requirement
+Checked in by:  Steve;  Stephen E. Steffan
+Change Description:  
+Changes due to addition of the SVFileNameObjectClass and new GUID for the class.
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+Rev 3.23   06 Sep 2000 16:31:40   Joe
+Project:  SVObserver
+Change Request (SCR) nbr:  179
+SCR Title:  Create Color SVObserver
+Checked in by:  Joe;  Joe Spila
+Change Description:  
+Updated files to include color SVIM changes.
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+Rev 3.22   11 May 2000 08:56:02   sjones
+Project:  SVObserver
+Change Request (SCR) nbr:  139
+SCR Title:  Math Tool Invalid State
+Checked in by:  sJones;  Steve Jones
+Change Description:  
+Revised SVM_CREATE_ALL_CLOSED_OBJECTS to
+also route this message to friend objects.
+
+Added IsDescendantOfType method.
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+Rev 3.21   07 May 2000 23:29:56   Jim
+Project:  SVObserver
+Change Request (SCR) nbr:  137
+SCR Title:  Remove the need to explicitly reference specific version numbers.
+Checked in by:  JimAdmin;  James A. Brown
+Change Description:  
+Changed the Serialization () functions so that versioning does not need to be explicitly addressed unless a change actually affects file compatabillity.
+
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+Rev 3.20   26 Apr 2000 16:13:16   sjones
+Project:  SVObserver
+Change Request (SCR) nbr:  129
+SCR Title:  Angular Profile Tool
+Checked in by:  sJones;  Steve Jones
+Change Description:  
+Added GetImageInputContextGuid method.
+Added new message 
+SVM_SET_SHADOWED_ABSEXTENT.
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+Rev 3.19   19 Apr 2000 16:32:18   Jim
+Project:  SVObserver
+Change Request (SCR) nbr:  128
+SCR Title:  Suport for 3.11 versioning
+Checked in by:  JimAdmin;  James A. Brown
+Change Description:  
+SVObjectInfoStruct::Serialize () and 
+SVObjectClass::Serialize () were both changed to support program version number 3.11 beta 1.
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+Rev 3.18   11 Apr 2000 17:45:54   Jim
+Project:  SVObserver
+Change Request (SCR) nbr:  121
+SCR Title:  Support for 3.06 versioning
+Checked in by:  JimAdmin;  James A. Brown
+Change Description:  
+Changed SVObjectInfoStruct::Serialize () and
+SVObjectClass::Serialize () to support program version number 3.06.
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+Rev 3.17   23 Mar 2000 14:03:12   sjones
+Project:  SVObserver
+Change Request (SCR) nbr:  117
+SCR Title:  Bug Fixes for Integration of conditional Toolset/Tool Drawing.
+Checked in by:  sJones;  Steve Jones
+Change Description:  
+Introduced new SetDisabled() member function.
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+Rev 3.16   14 Mar 2000 14:42:56   sjones
+Project:  SVObserver
+Change Request (SCR) nbr:  101
+SCR Title:  Versioning 3.10
+Checked in by:  sJones;  Steve Jones
+Change Description:  
+Revised version number to 3.10 release (0x00030AFF)
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+Rev 3.15   09 Mar 2000 08:52:28   sjones
+Project:  SVObserver
+Change Request (SCR) nbr:  101
+SCR Title:  Versioning 3.10
+Checked in by:  sJones;  Steve Jones
+Change Description:  
+Revised Version number from 3.10 Beta 3 to 3.10 Beta 4
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+Rev 3.14   07 Mar 2000 14:07:42   sjones
+Project:  SVObserver
+Change Request (SCR) nbr:  101
+SCR Title:  Versioning 3.10
+Checked in by:  sJones;  Steve Jones
+Change Description:  
+Changed Version number to 3.1 Beta 3.
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+Rev 3.13   25 Feb 2000 16:07:08   sjones
+Project:  SVObserver
+Change Request (SCR) nbr:  105
+SCR Title:  Handling of Tool Figures in Absolute, Relative, and Transformed Views
+Checked in by:  sJones;  Steve Jones
+Change Description:  
+Added new method GetTransform.
+Added new message SVM_GET_CONTEXT_EXTENT.
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+Rev 3.12   21 Feb 2000 14:51:50   sjones
+Project:  SVObserver
+Change Request (SCR) nbr:  105
+SCR Title:  Handling of Tool Figures in Absolute, Relative, and Transformed Views
+Checked in by:  sJones;  Steve Jones
+Change Description:  
+Added checkDrawAllowed method.
+Added comments for Move/Size messages to detail what is passed.
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+Rev 3.11   Feb 21 2000 10:45:08   Nick
+Project:  SVObserver
+Change Request (SCR) nbr:  109
+SCR Title:  Freeze on Reject for v3.1
+Checked in by:  Nick;  F Roland "Nick" Bjorklund
+Change Description:  
+Versioning to v3.10 Beta 2.
+Add new Macro for Type Safe Casting.
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+Rev 3.10   16 Feb 2000 17:00:48   mike
+Project:  SVObserver
+Change Request (SCR) nbr:  105
+SCR Title:  Handling of Tool Figures in Absolute, Relative, and Transformed Views
+Checked in by:  sJones;  Steve Jones
+Change Description:  
+Modified Draw functions to use the DrawContext structure
+and removed unused methods.
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+Rev 3.9   07 Feb 2000 20:44:36   robert
+Project:  SVObserver
+Change Request (SCR) nbr:  93
+SCR Title:  Integrate Multiple Camera Image Input per IPD
+Checked in by:  Robert;  Robert Massinger
+Change Description:  
+Added new Object function GetObjectIcon() which can be overwritten and be used as generic 'get icon func' for any kind of list or tree icon.
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+Rev 3.8   04 Feb 2000 13:31:36   sjones
+Project:  SVObserver
+Change Request (SCR) nbr:  101
+SCR Title:  Versioning 3.10
+Checked in by:  sJones;  Steve Jones
+Change Description:  
+Changed version to 3.10
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+Rev 3.7   Feb 03 2000 16:33:20   Nick
+Project:  SVObserver
+Change Request (SCR) nbr:  102
+SCR Title:  Versioning v3.05
+Checked in by:  Nick;  F Roland "Nick" Bjorklund
+Change Description:  
+Changed version from v3.04 to v3.05.  Corrected multiple inheritance order in System.h.
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+Rev 3.6   Jan 19 2000 15:18:50   Nick
+Project:  SVObserver
+Change Request (SCR) nbr:  88
+SCR Title:  Version 3.04 versioning changes.
+Checked in by:  Nick;  F Roland "Nick" Bjorklund
+Change Description:  
+Changes required to change v3.04 Beta 1 to v3.04 Released.
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+Rev 3.5   Jan 14 2000 15:15:04   Nick
+Project:  SVObserver
+Change Request (SCR) nbr:  85
+SCR Title:  Version 3.04 Beta 1 versioning changes.
+Checked in by:  Nick;  F Roland "Nick" Bjorklund
+Change Description:  
+Changes required for v3.03 to v3.04 Beta 1.
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+Rev 3.4   Jan 04 2000 08:58:24   Nick
+Project:  SVObserver
+Change Request (SCR) nbr:  81
+SCR Title:  Version 3.03 versioning changes
+Checked in by:  Nick;  F Roland "Nick" Bjorklund
+Change Description:  
+Changes required to convert v3.02 to v3.03.
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+Rev 3.3   Dec 02 1999 08:36:36   Nick
+Project:  SVObserver
+Change Request (SCR) nbr:  72
+SCR Title:  Version 3.02 versioning changes.
+Checked in by:  Nick;  F Roland "Nick" Bjorklund
+Change Description:  
+Change v3.01 to v3.02.
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+Rev 3.2   Dec 02 1999 08:32:34   Nick
+Project:  SVObserver
+Change Request (SCR) nbr:  57
+SCR Title:  Version 3.00 Beta 18 Versioning
+Checked in by:  Nick;  F Roland "Nick" Bjorklund
+Change Description:  
+Changed v3.01 to v3.02.
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+Rev 3.1   Nov 30 1999 15:48:14   Nick
+Project:  SVObserver
+Change Request (SCR) nbr:  67
+SCR Title:  Version 3.01 versioning changes.
+Checked in by:  Nick;  F Roland "Nick" Bjorklund
+Change Description:  
+Changes for v3.00 to v3.01 versioning.
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+Rev 3.0   23 Nov 1999 13:18:38   mike
+Project:  SVObserver
+Change Request (SCR) nbr:  61
+SCR Title:  Update PVCS versioning to version 3.0.
+Checked in by:  Mike;  Mike McCarl
+Change Description:  
+
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+Rev 1.46   Nov 18 1999 09:05:46   Nick
+Project:  SVObserver
+Change Request (SCR) nbr:  59
+SCR Title:  Version 3.00 Release Versioning
+Checked in by:  Nick;  F Roland "Nick" Bjorklund
+Change Description:  
+v3.00 Release versioning changes.
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+Rev 1.45   Nov 10 1999 12:21:02   Nick
+Project:  SVObserver
+Change Request (SCR) nbr:  57
+SCR Title:  Version 3.00 Beta 18 Versioning
+Checked in by:  Nick;  F Roland "Nick" Bjorklund
+Change Description:  
+Changes v3.00 Beta 17 to v3.00 Beta 18.
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+Rev 1.44   Nov 05 1999 11:18:34   Nick
+Project:  SVObserver
+Change Request (SCR) nbr:  56
+SCR Title:  Version 3.00 Beta 17 Versioning
+Checked in by:  Nick;  F Roland "Nick" Bjorklund
+Change Description:  
+v3.00 Beta 16 to v3.00 Beta 17.
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+Rev 1.43   Nov 02 1999 09:09:18   Nick
+Project:  SVObserver
+Change Request (SCR) nbr:  55
+SCR Title:  Version 3.00 Beta 16 Versioning
+Checked in by:  Nick;  F Roland "Nick" Bjorklund
+Change Description:  
+Changes v3.00 Beta 15 to v3.00 Beta 16.
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+Rev 1.42   Nov 02 1999 08:59:08   Nick
+Project:  SVObserver
+Change Request (SCR) nbr:  55
+SCR Title:  Version 3.00 Beta 16 Versioning
+Checked in by:  Nick;  F Roland "Nick" Bjorklund
+Change Description:  
+Changes required for v3.00 Beta 15 to v3.00 Beta 16 change.
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+Rev 1.41   Nov 01 1999 16:57:34   Nick
+Project:  SVObserver
+Change Request (SCR) nbr:  54
+SCR Title:  Version 3.00 Beta 15 Versioning.
+Checked in by:  Nick;  F Roland "Nick" Bjorklund
+Change Description:  
+v3.00 Beta 14 to v3.00 Beta 15
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+Rev 1.40   Oct 29 1999 17:58:50   steve
+Added function GetFriendList () to allow the Print File function to get a list of all "friends" for the PrintObject () function in SVObserverApp
+
+Rev 1.39   28 Oct 1999 08:42:24   sjones
+Project:  SVObserver
+Change Request (SCR) nbr:  9
+SCR Title:  Integr. a common object interface to handle and to identify obj. in-/outputs
+Checked in by:  sJones;  Steve Jones
+Change Description:  
+Revised GetObjectScript to address performance issues.
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+Rev 1.37   Oct 22 1999 09:02:02   Nick
+Project:  SVObserver
+Change Request (SCR) nbr:  51
+SCR Title:  Version 3.00 Beta 13 Versioning
+Checked in by:  Nick;  F Roland "Nick" Bjorklund
+Change Description:  
+v3.00 Beta 12 to v3.00 Beta 13.
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+Rev 1.36   Oct 20 1999 16:06:40   Nick
+Project:  SVObserver
+Change Request (SCR) nbr:  50
+SCR Title:  Version 3.00 Beta 12 Versioning
+Checked in by:  Nick;  F Roland "Nick" Bjorklund
+Change Description:  
+Changed version from v3.00 Beta 11 to v3.00 Beta 12.
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+Rev 1.35   Oct 18 1999 12:50:06   Nick
+Project:  SVObserver
+Change Request (SCR) nbr:  47
+SCR Title:  Version 3.00 Beta 11 Versioning
+Checked in by:  Nick;  F Roland "Nick" Bjorklund
+Change Description:  
+Changes for v3.00 Beta 10 to v3.00 Beta 11.
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+Rev 1.34   Oct 18 1999 11:53:20   Nick
+Project:  SVObserver
+Change Request (SCR) nbr:  35
+SCR Title:  PPQ mode to wait for input data
+Checked in by:  Nick;  F Roland "Nick" Bjorklund
+Change Description:  
+RO - Bug fix - Added DataLinkID scripting.
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+Rev 1.33   14 Oct 1999 17:00:12   sjones
+Project:  SVObserver
+Change Request (SCR) nbr:  9
+SCR Title:  Integr. a common object interface to handle and to identify obj. in-/outputs
+Checked in by:  sJones;  Steve Jones
+Change Description:  
+Added HasDependents method to SVOutputInfoListClass.
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+Rev 1.32   Oct 13 1999 15:37:12   Nick
+Project:  SVObserver
+Change Request (SCR) nbr:  46
+SCR Title:  Version 3.00 Beta 10 Versioning
+Checked in by:  Nick;  F Roland "Nick" Bjorklund
+Change Description:  
+Version v3.00 Beta 9 to v3.00 Beta 10 changes.
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+Rev 1.31   Oct 13 1999 15:14:24   Nick
+Project:  SVObserver
+Change Request (SCR) nbr:  21
+SCR Title:  Port Gage Tool code from program version 2.42.
+Checked in by:  Nick;  F Roland "Nick" Bjorklund
+Change Description:  
+Roberts bug fixes for Beta 10.
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+Rev 1.30   Oct 12 1999 08:16:50   Nick
+Project:  SVObserver
+Change Request (SCR) nbr:  44
+SCR Title:  Version 3.00 Beta 9 Versioning
+Checked in by:  Nick;  F Roland "Nick" Bjorklund
+Change Description:  
+Changes required to change v3.00 Beta 8 to v3.00 Beta 9.
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+Rev 1.29   Oct 08 1999 10:54:52   Nick
+Project:  SVObserver
+Change Request (SCR) nbr:  43
+SCR Title:  Version 3.00 Beta 7 Versioning
+Checked in by:  Nick;  F Roland "Nick" Bjorklund
+Change Description:  
+Versioning changes to Beta 8.
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+Rev 1.28   Oct 04 1999 11:32:12   Nick
+Project:  SVObserver
+Change Request (SCR) nbr:  43
+SCR Title:  Version 3.00 Beta 7 Versioning
+Checked in by:  Nick;  F Roland "Nick" Bjorklund
+Change Description:  
+V3.00 Beta 7 versioning.
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+Rev 1.27   Oct 04 1999 09:36:20   Nick
+Project:  SVObserver
+Change Request (SCR) nbr:  33
+SCR Title:  Port Profile Tool from v2.42
+Checked in by:  Nick;  F Roland "Nick" Bjorklund
+Change Description:  
+Completed FriendList locks.
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+Rev 1.26   Sep 29 1999 14:21:00   Nick
+Project:  SVObserver
+Change Request (SCR) nbr:  41
+SCR Title:  Version 3.00 Beta 5 Versioning.
+Checked in by:  Nick;  F Roland "Nick" Bjorklund
+Change Description:  
+v3.00 Beta 5
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+Rev 1.25   Sep 27 1999 19:04:40   Nick
+Project:  SVObserver
+Change Request (SCR) nbr:  38
+SCR Title:  Version 3.00 Beta 4 Versioning
+Checked in by:  Nick;  F Roland "Nick" Bjorklund
+Change Description:  
+Version from 0x00030003 to 0x00030004.
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+Rev 1.24   23 Sep 1999 16:25:44   sjones
+Project:  SVObserver
+Change Request (SCR) nbr:  9
+SCR Title:  Integr. a common object interface to handle and to identify obj. in-/outputs
+Checked in by:  sJones;  Steve Jones
+Change Description:  
+Added message SVM_DESTROY_FRIEND_OBJECT.
+Revised DestroyFriends to send 
+SVM_DESTROY_FRIEND_OBJECT instead of
+SVM_DESTROY_CHILD_OBJECTS
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+Rev 1.23   Sep 23 1999 13:53:52   Nick
+Project:  SVObserver
+Change Request (SCR) nbr:  37
+SCR Title:  Version 3.00 Beta 3 Versioning
+Checked in by:  Nick;  F Roland "Nick" Bjorklund
+Change Description:  
+New version specific changes to Serialize methods.
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+Rev 1.22   22 Sep 1999 18:35:50   sjones
+Project:  SVObserver
+Change Request (SCR) nbr:  9
+SCR Title:  Integr. a common object interface to handle and to identify obj. in-/outputs
+Checked in by:  sJones;  Steve Jones
+Change Description:  
+Revised to fix restoration of friends from script
+(Added method to adjust friend aliases)
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+Rev 1.21   Sep 21 1999 09:29:18   Nick
+Project:  SVObserver
+Change Request (SCR) nbr:  36
+SCR Title:  Version 3.00 Beta 2 Versioning
+Checked in by:  Nick;  F Roland "Nick" Bjorklund
+Change Description:  
+Added 0x00030002 (v3.00 Beta 2) case statement  to all serialization methods.
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+Rev 1.20   Sep 20 1999 15:36:46   Nick
+Project:  SVObserver
+Change Request (SCR) nbr:  35
+SCR Title:  PPQ mode to wait for input data
+Checked in by:  Nick;  F Roland "Nick" Bjorklund
+Change Description:  
+Introduced new broadcast message router.
+Added new messages: Create_All_Closed_Objects.
+Notify_About_Creation.
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+Rev 1.19   Sep 16 1999 12:38:00   Nick
+Project:  SVObserver
+Change Request (SCR) nbr:  34
+SCR Title:  Add Build Reference Tool
+Checked in by:  Nick;  F Roland "Nick" Bjorklund
+Change Description:  
+Added Product Key Struct and other from SVPPQ.h.
+Added GetAncestor(ObjectType) and IsDescendantOf( PAncestorObject)
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+Rev 1.18   10 Sep 1999 19:35:02   sjones
+Project:  SVObserver
+Change Request (SCR) nbr:  9
+SCR Title:  Integr. a common object interface to handle and to identify obj. in-/outputs
+Checked in by:  sJones;  Steve Jones
+Change Description:  
+Fixed bug in PutAttributesInObjectScript and
+PutFriendGuidsInObjectScript. 
+(changed GetObjectName() to GetName, to support
+objects named different than the class name)
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+Rev 1.17   04 Sep 1999 17:24:34   sjones
+Project:  SVObserver
+Change Request (SCR) nbr:  9
+SCR Title:  Integr. a common object interface to handle and to identify obj. in-/outputs
+Checked in by:  sJones;  Steve Jones
+Change Description:  
+Revised to save and restore uObjectAttributesAllowed and
+uObjectAttributesSet via ObjectScript.
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+Rev 1.16   02 Sep 1999 08:44:44   sjones
+Project:  SVObserver
+Change Request (SCR) nbr:  9
+SCR Title:  Integr. a common object interface to handle and to identify obj. in-/outputs
+Checked in by:  sJones;  Steve Jones
+Change Description:  
+Add Message Qualifiers to better control routing of messages.
+Add new messsages for drawing/figures.
+Fixed Bug in CloseObject (Friends recurrsion)
+Add published attribute and defaults on construction of SVObjectClass..
+Added GetObjectColor and GetObjectState
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+Rev 1.15   01 Sep 1999 11:47:54   sjones
+Project:  SVObserver
+Change Request (SCR) nbr:  9
+SCR Title:  Integr. a common object interface to handle and to identify obj. in-/outputs
+Checked in by:  sJones;  Steve Jones
+Change Description:  
+Revised versioning to 3.0 Beta 1
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+Rev 1.14   Aug 31 1999 09:34:52   Nick
+Project:  SVObserver
+Change Request (SCR) nbr:  27
+SCR Title:  Results Picker
+Checked in by:  Nick;  F Roland "Nick" Bjorklund
+Change Description:  
+Fixed bug in GetAllowedAttributes() method.
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+Rev 1.13   30 Aug 1999 19:31:44   robert
+Project:  SVObserver
+Change Request (SCR) nbr:  21
+SCR Title:  Port Gage Tool code from program version 2.42.
+Checked in by:  Robert;  Robert Massinger
+Change Description:  
+Introduced Input Interface Handling.
+( GETFIRST - Message Handler )
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+Rev 1.12   30 Aug 1999 19:15:30   sjones
+Project:  SVObserver
+Change Request (SCR) nbr:  9
+SCR Title:  Integr. a common object interface to handle and to identify obj. in-/outputs
+Checked in by:  sJones;  Steve Jones
+Change Description:  
+Revised SV_IS_KIND_OF not to call SV_VALIDATE_OBJECT.
+Revised SVM_CREATE_ALL_OBJECTS to route to Children only.
+Added Scripting support for Freinds Architecure.
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+Rev 1.11   27 Aug 1999 12:58:48   robert
+Project:  SVObserver
+Change Request (SCR) nbr:  21
+SCR Title:  Port Gage Tool code from program version 2.42.
+Checked in by:  Robert Massinger
+Change Description:  
+Added SetupDialog() Function to SVObjectClass and Message.
+This gives every derived class the possibility to support his own Setup Dialog.
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+Rev 1.10   27 Aug 1999 09:06:26   sjones
+Project:  SVObserver
+Change Request (SCR) nbr:  9
+SCR Title:  Integr. a common object interface to handle and to identify obj. in-/outputs
+Checked in by:  Steve Jones
+Change Description:  
+Add capability to script freind links.
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+Rev 1.9   Aug 25 1999 22:50:12   sjones
+Project:  SVObserver
+Change Request (SCR) nbr:  1
+SCR Title:  Integrate a common validity check for all tool base class inputs and outputs.
+Checked in by:  Steve Jones
+Change Description:  
+Revised Validate method to be OnValidate method.
+( OnValidate - local scope validation).
+Added Validate method (Routes to all owned objects)
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+Rev 1.8   Aug 25 1999 16:43:32   Nick
+Project:  SVObserver
+Change Request (SCR) nbr:  27
+SCR Title:  Results Picker
+Checked in by:  F Roland "Nick" Bjorklund
+Change Description:  
+
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+Rev 1.7   25 Aug 1999 11:36:14   robert
+Project:  SVObserver
+Change Request (SCR) nbr:  21
+SCR Title:  Port Gage Tool code from program version 2.42.
+Checked in by:  Robert Massinger
+Change Description:  
+Added SVObjectInfoArrayClass.
+Added Friend Mechanism.
+
+/////////////////////////////////////////////////////////////////////////////////////
 */

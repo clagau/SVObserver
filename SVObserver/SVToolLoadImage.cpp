@@ -17,6 +17,7 @@
 #include "SVImageProcessingClass.h"
 #include "SVInspectionProcess.h"
 #include "SVToolSet.h"
+#include "ToolSizeAdjustTask.h"
 
 //******************************************************************************
 //* DEFINITIONS OF MODULE-LOCAL VARIABLES:
@@ -81,7 +82,7 @@ void SVLoadImageToolClass::init()
 
 	// Set Translation
 	m_svToolExtent.SetTranslation(SVExtentTranslationFigureShift);
-
+	ToolSizeAdjustTask::AddToFriendlist(this, true,true,false);
 	// Set default inputs and outputs
 	addDefaultInputObjects();
 }
@@ -124,6 +125,12 @@ BOOL SVLoadImageToolClass::CreateObject( SVObjectLevelCreateStruct* PCreateStruc
 	m_fileImage.ObjectAttributesAllowedRef() |= SV_REMOTELY_SETABLE | SV_SETABLE_ONLINE;
 	m_currentPathName.ObjectAttributesAllowedRef() |= SV_PRINTABLE;
 	m_continuousReload.ObjectAttributesAllowedRef() |= SV_PRINTABLE;
+
+	if(bOk)
+	{
+		bOk  = (S_OK == ToolSizeAdjustTask::EnsureInFriendList(this,true,true,false)); 
+	}
+
 
 	isCreated = bOk;
 
@@ -291,6 +298,23 @@ HRESULT SVLoadImageToolClass::SetImageExtent( unsigned long p_ulIndex, SVImageEx
 
 	return l_hrOk;
 }
+
+
+HRESULT SVLoadImageToolClass::GetParentExtent( SVImageExtentClass& rParentExtent ) const
+{
+	HRESULT hr = S_OK;
+	CString strImagePathName;
+	if( hr == S_OK )
+	{
+		hr = m_currentPathName.GetValue( strImagePathName );
+	}
+	if( hr == S_OK )
+	{
+		hr = SVImageObjectClass::GetImageExtentFromFile(strImagePathName,rParentExtent);
+	}
+	return hr;
+}
+
 
 HRESULT SVLoadImageToolClass::SetImageExtentToParent(unsigned long p_ulIndex )
 {

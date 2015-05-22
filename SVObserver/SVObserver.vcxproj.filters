@@ -1544,6 +1544,27 @@
     <ClCompile Include="ToolSetView.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ToolSizeAdjustTask.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SVToolAdjustmentDialogSizePage.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="EQAdjustSizeWith.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="EQAdjustSizePositionX.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="EQAdjustSizePositionY.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="EQAdjustSizeHeight.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="EQAdjustSize.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Midl Include="SVObserver.odl">
@@ -3187,6 +3208,27 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ToolSetView.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ToolSizeAdjustTask.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVToolAdjustmentDialogSizePage.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="EQAdjustSizeWith.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="EQAdjustSizePositionX.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="EQAdjustSizePositionY.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="EQAdjustSizeHeight.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="EQAdjustSize.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

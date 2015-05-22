@@ -19,6 +19,7 @@
 #include "SVLUTOperator.h"
 #include "SVThresholdClass.h"
 #include "SVUserMaskOperatorClass.h"
+#include "ToolSizeAdjustTask.h"
 
 //******************************************************************************
 //* DEFINITIONS OF MODULE-LOCAL VARIABLES:
@@ -138,6 +139,8 @@ void SVImageToolClass::init()
 		::SVSendMessage( pOperatorList, SVM_CONNECT_ALL_INPUTS, NULL, NULL );
 	}
 
+	ToolSizeAdjustTask::AddToFriendlist(this, true,true,false);
+
 	// Add Default Inputs and Outputs
 	addDefaultInputObjects();
 }
@@ -181,6 +184,12 @@ BOOL SVImageToolClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure
 
 	bOk &= UpdateTranslation() == S_OK;
 
+	
+	if(bOk)
+	{
+		bOk  = (S_OK == ToolSizeAdjustTask::EnsureInFriendList(this,true,true,false)); 
+	}
+	
 	isCreated = bOk;
 
 	return bOk;

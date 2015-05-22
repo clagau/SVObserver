@@ -18,7 +18,9 @@ enum SVCommandExtentUpdaterModeEnum
 	ExtentUpdaterMode_Undefined,
 	ExtentUpdaterMode_SetImageExtent,
 	ExtentUpdaterMode_SetImageExtentToParent,
-	ExtentUpdaterMode_SetImageExtentToFit
+	ExtentUpdaterMode_SetImageExtentToFit,
+	ExtentUpdaterMode_ForwardExtent
+
 };
 #pragma endregion Declarations
 
@@ -29,7 +31,8 @@ class SVCommandInspectionExtentUpdater
 public:
 	SVCommandInspectionExtentUpdater();
 	SVCommandInspectionExtentUpdater(const SVCommandInspectionExtentUpdater& rObject);
-	SVCommandInspectionExtentUpdater(const SVGUID& rInspectionId, const SVGUID& rToolId, SVCommandExtentUpdaterModeEnum mode, const SVImageExtentClass& rImageExtent = SVImageExtentClass());
+	/// a pointer to SVImageExtentClass is used to avoid unecessaries copies in case of default arguments 
+	SVCommandInspectionExtentUpdater(const SVGUID& rInspectionId, const SVGUID& rToolId, SVCommandExtentUpdaterModeEnum mode, const SVImageExtentClass* pImageExtent = nullptr );
 
 	virtual ~SVCommandInspectionExtentUpdater();
 #pragma endregion Constructor
@@ -62,7 +65,17 @@ public:
 	//! \param rImageExtent [in] Image extent parameter, can be empty if not used in this mode (e.g. ExtentUpdater_SetImageExtentToParent)
 	//! \returns HRESULT
 	//************************************
-	HRESULT SetCommandData(const SVGUID& rInspectionId, const SVGUID& rToolId, SVCommandExtentUpdaterModeEnum mode, const SVImageExtentClass& rImageExtent = SVImageExtentClass());
+	HRESULT SetCommandData(const SVGUID& rInspectionId, const SVGUID& rToolId, SVCommandExtentUpdaterModeEnum mode, const SVImageExtentClass& rImageExtent = SVImageExtentClass(), bool forward = false );
+
+
+	//************************************
+	//! when m_bResetInspection is true after setting the extent the inspection is reseted otherwise only the tool 
+	//! \param  [in] ResetInspection
+	//! \returns void
+	//************************************
+	void SetResetInspection(bool);
+
+
 #pragma endregion Public Methods
 
 #pragma region Member Variables
@@ -71,6 +84,8 @@ private:
 	SVGUID m_ToolId;
 	SVImageExtentClass m_ImageExtent;
 	SVCommandExtentUpdaterModeEnum m_mode;
+	/// when true after setting the extent the inspection is reseted otherwise only the tool 
+	bool m_bResetInspection;
 #pragma endregion Member Variables
 };
 

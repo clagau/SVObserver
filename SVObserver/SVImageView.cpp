@@ -38,6 +38,7 @@
 #include "SVOResource/ConstGlobalSvOr.h"
 #include "SVShiftTool.h"
 #include "SVShiftToolUtility.h"
+#include "SVGuiExtentUpdater.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -1185,13 +1186,13 @@ void SVImageViewClass::OnMouseMove( UINT nFlags, CPoint point )
 		GetClientRect( l_rect );
 		GetWindowRect( l_screenRect );
 
-		TRACE( "CLIENT -- RECT L=%d-T=%d-R=%d-B=%d -- POINT X=%d-Y=%d\n",
-			l_rect.left, l_rect.top, l_rect.right, l_rect.bottom,
-			l_clientPoint.x, l_clientPoint.y );
+		/*TRACE( "CLIENT -- RECT L=%d-T=%d-R=%d-B=%d -- POINT X=%d-Y=%d\n",
+		l_rect.left, l_rect.top, l_rect.right, l_rect.bottom,
+		l_clientPoint.x, l_clientPoint.y );
 
 		TRACE( "SCREEN -- RECT L=%d-T=%d-R=%d-B=%d -- POINT X=%d-Y=%d\n",
-			l_screenRect.left, l_screenRect.top, l_screenRect.right, l_screenRect.bottom,
-			l_screenPoint.x, l_screenPoint.y );
+		l_screenRect.left, l_screenRect.top, l_screenRect.right, l_screenRect.bottom,
+		l_screenPoint.x, l_screenPoint.y );*/
 
 		// Get Color of Mouse Point ( inside of View )
 		HDC hDC = ::GetDC( m_hWnd );

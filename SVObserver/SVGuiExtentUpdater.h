@@ -17,9 +17,16 @@
 class SVGuiExtentUpdater
 {
 public:
-	static HRESULT SetImageExtent(SVTaskObjectClass* p_pTaskObject, const SVImageExtentClass& p_rExtents);
-	static HRESULT SetImageExtentToParent(SVTaskObjectClass* p_pTaskObject);
-	static HRESULT SetImageExtentToFit(SVTaskObjectClass* p_pTaskObject, const SVImageExtentClass& p_rExtents);
+	static HRESULT SetImageExtent(SVTaskObjectClass* pTaskObject, const SVImageExtentClass& rExtents, bool ForwardSize = false);
+	static HRESULT SetImageExtentToParent(SVTaskObjectClass* pTaskObject, bool ForwardSize = false);
+	static HRESULT SetImageExtentToFit(SVTaskObjectClass* pTaskObject, const SVImageExtentClass& rExtents, bool ForwardSize = false);
+	
+	//************************************
+	//! Update the size of the Image in pTool and all Images wich are dependent from this Image
+	//! \param p_pTaskObject [in,out]
+	//! \returns HRESULT
+	//************************************
+	static HRESULT ForwardSizeAndPosition(SVTaskObjectClass* p_pTaskObject);
 
 private:
 	static const int TIMEOUT_FOR_SYNCHRONOUS_EXECUTE_IN_MS = 120000;

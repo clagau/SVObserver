@@ -3292,7 +3292,8 @@ BOOL SVObserverApp::InitInstance()
 	SVMainFrame* pMainFrame = new SVMainFrame;
 	if( ! pMainFrame ) { return FALSE; }
 
-	if ( !pMainFrame->LoadFrame( IDR_MAINFRAME ) ) { return FALSE; }
+	if ( !pMainFrame->LoadFrame( IDR_MAINFRAME ) ) 
+	{ return FALSE; }
 	m_pMainWnd = pMainFrame;
 
 	// Load Utilities Menu

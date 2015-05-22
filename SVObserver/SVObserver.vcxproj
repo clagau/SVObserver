@@ -330,6 +330,11 @@ echo %time%
       <MultiProcessorCompilation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</MultiProcessorCompilation>
     </ClCompile>
     <ClCompile Include="EnvironmentObject.cpp" />
+    <ClCompile Include="EQAdjustSize.cpp" />
+    <ClCompile Include="EQAdjustSizeHeight.cpp" />
+    <ClCompile Include="EQAdjustSizePositionX.cpp" />
+    <ClCompile Include="EQAdjustSizePositionY.cpp" />
+    <ClCompile Include="EQAdjustSizeWith.cpp" />
     <ClCompile Include="FormulaController.cpp" />
     <ClCompile Include="ModelessMessageBox.cpp">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -469,6 +474,7 @@ echo %time%
     <ClCompile Include="SVStorageResult.cpp" />
     <ClCompile Include="SVThreadInfoDlg.cpp" />
     <ClCompile Include="SVThresholdClass.cpp" />
+    <ClCompile Include="SVToolAdjustmentDialogSizePage.cpp" />
     <ClCompile Include="SVToolGrouping.cpp" />
     <ClCompile Include="SVTriggerSelectionDlg.cpp" />
     <ClCompile Include="SVUnaryImageOperatorClass.cpp" />
@@ -3816,6 +3822,7 @@ echo %time%
       <MultiProcessorCompilation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</MultiProcessorCompilation>
     </ClCompile>
     <ClCompile Include="ToolSetView.cpp" />
+    <ClCompile Include="ToolSizeAdjustTask.cpp" />
     <ClCompile Include="ZoomHelperEx.cpp" />
     <ClCompile Include="ZoomToolBar.cpp" />
   </ItemGroup>
@@ -3851,6 +3858,11 @@ echo %time%
     <ClInclude Include="ConditionalController.h" />
     <ClInclude Include="Custom2Filter.h" />
     <ClInclude Include="EnvironmentObject.h" />
+    <ClInclude Include="EQAdjustSize.h" />
+    <ClInclude Include="EQAdjustSizeHeight.h" />
+    <ClInclude Include="EQAdjustSizePositionX.h" />
+    <ClInclude Include="EQAdjustSizePositionY.h" />
+    <ClInclude Include="EQAdjustSizeWith.h" />
     <ClInclude Include="ErrorNumbers.h" />
     <ClInclude Include="FormulaController.h" />
     <ClInclude Include="ISVCancel.h" />
@@ -3934,6 +3946,7 @@ echo %time%
     <ClInclude Include="SVStorageResult.h" />
     <ClInclude Include="SVThreadInfoDlg.h" />
     <ClInclude Include="SVThresholdClass.h" />
+    <ClInclude Include="SVToolAdjustmentDialogSizePage.h" />
     <ClInclude Include="SVToolGrouping.h" />
     <ClInclude Include="ToolSetView.h" />
     <ClInclude Include="SVTriggerConstants.h" />
@@ -4381,6 +4394,7 @@ echo %time%
     <ClInclude Include="SVWindowTool.h" />
     <ClInclude Include="TextDefinesSvO.h" />
     <ClInclude Include="ToolClipboard.h" />
+    <ClInclude Include="ToolSizeAdjustTask.h" />
     <ClInclude Include="UseTypeExceptMatch.h" />
     <ClInclude Include="ZoomHelperEx.h" />
     <ClInclude Include="ZoomToolBar.h" />

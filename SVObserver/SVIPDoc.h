@@ -118,6 +118,7 @@ public:
 	HRESULT UpdateWithLastProduct();
 	BOOL RunOnce( SVToolClass* p_pTool = NULL );
 
+	
 	//Regression Test Methods
 	void SetRegressionTestRunMode( RegressionRunModeEnum newMode );
 	void SetRegressionTestPlayMode( RegressionPlayModeEnum newPlayMode );
@@ -159,6 +160,7 @@ public:
 	afx_msg void OnAddWindowTool();
 	afx_msg void OnAddCylindricalWarpTool();
 	afx_msg void OnEditTool();
+	afx_msg void OnEditToolTab1();
 	afx_msg void OnEditCopy();
 	afx_msg void OnUpdateEditCopy( CCmdUI* PCmdUI );
 	afx_msg void OnEditPaste();
@@ -213,6 +215,12 @@ public:
 
 	//{{AFX_VIRTUAL(SVIPDoc)
 public:
+	//************************************
+	//! Open the toolAdjustmentDialog for selected Tool
+	//! \param tab [in] selected tab
+	//! \returns void
+	//************************************
+	void OpenToolAdjustmentDialog(int tab); 
 	virtual BOOL OnNewDocument();
 	virtual BOOL CanCloseFrame(CFrameWnd* pFrame);
 	virtual void OnCloseDocument();

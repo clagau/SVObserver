@@ -160,6 +160,14 @@ public:
 	static SVStatusCode Import(SVMatroxBuffer& p_rBuf, const SVMatroxString& p_rFileName, SVMatroxFileTypeEnum p_eFileType, bool p_bRestore= false );
 	static SVStatusCode Export(const SVMatroxBuffer& p_rBuf, const SVMatroxString& p_rFileName, SVMatroxFileTypeEnum p_eFileType );
 
+	//************************************
+	//! Get  the Dimension  from the Imagefile 
+	//! \param rFileName [in]
+	//! \param Width [out]
+	//! \param Height [out]
+	//! \returns SVMatroxBufferInterface::SVStatusCode  SVMEE_STATUS_OK if no error ocurrs 
+	//************************************
+	static SVStatusCode GetImageSize(const SVMatroxString& rFileName, long &rWidth, long &rHeight);
 protected:
 	static SVStatusCode CopyBuffer( SVMatroxBuffer& p_rTo, SVMatroxIdentifier p_From );
 	static SVStatusCode CopyBuffer( SVMatroxIdentifier p_To, const SVMatroxBuffer& p_rFrom );
@@ -170,7 +178,7 @@ private:
 	static __int64 Convert2MatroxType( SVMatroxBufferAttributeEnum p_eType ) ;
 	static long Convert2MatroxType   ( SVMatroxBufferTypeEnum p_eType ) ;
 	static long Convert2MatroxType   ( SVMatroxBufferInfoEnum p_eType ) ;
-
+	
 };
 
 #endif // SV_MATROX_BUFFER_INTERFACE_H

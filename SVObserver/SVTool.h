@@ -194,6 +194,12 @@ public:
 
 	virtual BOOL isFreeMoveable();
 
+
+	//************************************
+	//! return true if autosizing on reset is  disabled in the tool 
+	//! \returns bool
+	//************************************
+	virtual bool IsAutoSizeDisabled();
 	virtual BOOL IsOkToEdit();
 	virtual BOOL SetDefaultFormulas();
 	
@@ -223,6 +229,7 @@ public:
 
 	virtual SVToolPropertyEntryStruct* GetSpecialPropertyList( int& RCount );
 	virtual HRESULT GetPropertyInfo( SVExtentPropertyEnum p_eProperty, SVExtentPropertyInfoStruct& p_rInfo ) const;
+	HRESULT SetExtentPropertyInfo( SVExtentPropertyEnum p_eProperty, const SVExtentPropertyInfoStruct& p_rInfo );
 
 	virtual BOOL Validate();
 	virtual BOOL OnValidate();
@@ -249,7 +256,7 @@ public:
 	virtual HRESULT GetInputImageNames( SVStringValueObjectClass*& p_pSourceNames );
 
 	virtual HRESULT UpdateImageWithExtent( unsigned long p_Index );
-	HRESULT GetParentExtent( SVImageExtentClass& p_rParent ) const;
+	virtual HRESULT GetParentExtent( SVImageExtentClass& p_rParent ) const;
 
 	//
 	// Flag to indicate this tool is selected for SVIM operator move.
@@ -342,6 +349,7 @@ protected:
 
 private:
 	void init();
+	
 };
 
 #endif

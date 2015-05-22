@@ -34,7 +34,7 @@ public:
 
 #pragma region Protected Methods
 protected:
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(SVAdjustToolSizePositionDlg)
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
@@ -56,6 +56,10 @@ protected:
 	afx_msg void OnOK();
 	afx_msg void OnCancel();
 	afx_msg void OnBnClickedFullROI();
+	afx_msg void OnBnClickedPropagate();
+	afx_msg void OnBnClickedEditTool();
+	
+
 	//}}AFX_MSG
 
 	DECLARE_MESSAGE_MAP()
@@ -90,6 +94,7 @@ private:
 	//************************************
 	void FillTreeFromExtents( SVRPropertyItem* pRoot, bool shouldCreate );
 
+
 	bool IsFullSize();
 
 	//************************************
@@ -98,6 +103,13 @@ private:
 	// Returns:   void
 	//************************************
 	void createIcons();
+
+	//************************************
+	//! return true if full size button should be enabled 
+	//! \returns bool
+	//************************************	
+	bool IsFullSizeAllowed();
+
 #pragma endregion Private Methods
 
 #pragma region Member variables

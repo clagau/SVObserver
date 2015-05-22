@@ -71,6 +71,13 @@ public:
 	HRESULT CopyToBSTR( BSTR &p_rbstrData );
 	HRESULT CopyFromBSTR( BSTR p_Image );
 
+	//************************************
+	//! Get the Extension for the Image
+	//! \param pFileName [in]
+	//! \param rExtent [out]
+	//! \returns HRESULT S_OK if no error occurs
+	//************************************
+	static HRESULT GetImageExtentFromFile( LPCTSTR pFileName, SVImageExtentClass& rExtent );
 protected:
 	struct SVImageObjectElement
 	{
@@ -139,7 +146,7 @@ private:
 
 	// Do not implement
 	const SVImageObjectClass& operator=( const SVImageObjectClass& p_rObject );
-
+	
 };
 
 typedef SVSharedPtr< SVImageObjectClass > SVImageObjectClassPtr;

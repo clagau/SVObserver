@@ -46,7 +46,12 @@
 #include "SVTADlgTranslationShiftPage.h"
 #include "FormulaController.h"
 #include "ConditionalController.h"
+#include "SVToolAdjustmentDialogSizePage.h"
+#include "SVStatusLibrary\ExceptionManager.h"
+#include "ErrorNumbers.h"
 #pragma endregion Includes
+
+
 
 #pragma region Declarations
 #ifdef _DEBUG
@@ -54,8 +59,6 @@
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
-
-using namespace SvOg;
 #pragma endregion Declarations
 
 IMPLEMENT_DYNAMIC(SVToolAdjustmentDialogSheetClass, CPropertySheet)
@@ -67,6 +70,8 @@ BEGIN_MESSAGE_MAP(SVToolAdjustmentDialogSheetClass, CPropertySheet)
 	ON_WM_SYSCOMMAND()
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
+
+
 
 SVToolAdjustmentDialogSheetClass::SVToolAdjustmentDialogSheetClass( SVIPDoc* p_pIPDoc, SVToolClass& rTool, UINT nIDCaption, CWnd* pParentWnd, UINT iSelectPage )
 	:CPropertySheet(nIDCaption, pParentWnd, iSelectPage)
@@ -112,7 +117,7 @@ SVToolAdjustmentDialogSheetClass::~SVToolAdjustmentDialogSheetClass()
 
 void SVToolAdjustmentDialogSheetClass::addPages()
 {
-	SVFormulaEditorPageClass* pConditionalDlg = new SVFormulaEditorPageClass( m_conditionalController, true, IDS_CONDITIONAL_STRING, IDS_TOOL_STRING );
+	SvOg::SVFormulaEditorPageClass* pConditionalDlg = new SvOg::SVFormulaEditorPageClass( m_conditionalController, true, IDS_CONDITIONAL_STRING, IDS_TOOL_STRING );
 
 	// Get LUT Operator...RO_22Mar2000
 	BOOL bHasLUT = FALSE;
@@ -123,6 +128,16 @@ void SVToolAdjustmentDialogSheetClass::addPages()
 	{
 		bHasLUT = TRUE;
 	}
+
+	bool bHasSize = false;
+	SVObjectTypeInfoStruct ToolSizeAdjustTaskInfo;
+	ToolSizeAdjustTaskInfo.ObjectType = SVToolSizeAdjustTaskType;
+
+	if( ::SVSendMessage( &m_rTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&ToolSizeAdjustTaskInfo) ) )
+	{
+		bHasSize = true;
+	}
+
 
 	const SVObjectTypeInfoStruct& rToolType = m_rTool.GetObjectInfo().ObjectTypeInfo;
 	switch( rToolType.SubType )
@@ -140,10 +155,14 @@ void SVToolAdjustmentDialogSheetClass::addPages()
 
 		case SVToolImageObjectType:	// Image Tool
 			AddPage( new SVToolAdjustmentDialogTwoImagePageClass( this ) );
+			if(bHasSize)
+			{
+				AddPage(new SVToolAdjustmentDialogSizePage(this));
+			}
 			if( bHasLUT )
 			{
 				// New image tool has also this pages...RO_22Mar2000
-				AddPage( new SVToolAdjustmentDialogFilterPageClass( m_rTool ) );
+				AddPage( new SvOg::SVToolAdjustmentDialogFilterPageClass( m_rTool ) );
 				AddPage( new SVToolAdjustmentDialogThresholdPageClass( this ) );
 				AddPage( new SVToolAdjustmentDialogMaskPageClass( this ) );
 				AddPage( new SVToolAdjustmentDialogLUTPageClass( this ) );
@@ -154,7 +173,11 @@ void SVToolAdjustmentDialogSheetClass::addPages()
 
 		case SVWindowToolObjectType:
 			AddPage( new SVToolAdjustmentDialogImagePageClass( this ) );
-			AddPage( new SVToolAdjustmentDialogFilterPageClass( m_rTool ) );
+			if(bHasSize)
+			{
+				AddPage(new SVToolAdjustmentDialogSizePage(this));
+			}
+			AddPage( new SvOg::SVToolAdjustmentDialogFilterPageClass( m_rTool ) );
 			AddPage( new SVToolAdjustmentDialogThresholdPageClass( this ) );
 			AddPage( new SVToolAdjustmentDialogMaskPageClass( this ) );
 			if( bHasLUT )
@@ -169,7 +192,11 @@ void SVToolAdjustmentDialogSheetClass::addPages()
 
 		case SVLinearToolObjectType:
 			AddPage( new SVToolAdjustmentDialogImagePageClass( this ) );
-			AddPage( new SVToolAdjustmentDialogFilterPageClass( m_rTool ) );
+			if(bHasSize)
+			{
+				AddPage(new SVToolAdjustmentDialogSizePage(this));
+			}
+			AddPage( new SvOg::SVToolAdjustmentDialogFilterPageClass( m_rTool ) );
 			AddPage( new SVToolAdjustmentDialogThresholdPageClass( this ) );
 			AddPage( new SVToolAdjustmentDialogAnalyzerPageClass( this ) );
 			//add the new page.
@@ -180,6 +207,10 @@ void SVToolAdjustmentDialogSheetClass::addPages()
 
 		case SVToolLoadImageObjectType:
 			AddPage( new SVToolAdjustmentDialogFileImageSourcePageClass( this ) );
+			if(bHasSize)
+			{
+				AddPage(new SVToolAdjustmentDialogSizePage(this));
+			}
 			AddPage( pConditionalDlg );
 			AddPage( new SVToolAdjustmentDialogGeneralPageClass( this ) );
 			break;
@@ -193,7 +224,7 @@ void SVToolAdjustmentDialogSheetClass::addPages()
 		case SVMathToolObjectType:
 			//Set task object here, because it should only be set if it is used
 			m_formulaController.setTaskObject( m_rTool );
-			AddPage( new SVFormulaEditorPageClass( m_formulaController, false ) );
+			AddPage( new SvOg::SVFormulaEditorPageClass( m_formulaController, false ) );
 			AddPage( new SVToolAdjustmentDialogPassFailPageClass( &m_rTool ) );
 			AddPage( pConditionalDlg );
 			AddPage( new SVToolAdjustmentDialogGeneralPageClass( this ) );
@@ -206,7 +237,12 @@ void SVToolAdjustmentDialogSheetClass::addPages()
 			break;
 
 		case SVShiftToolObjectType:
+			
 			AddPage( new SVToolAdjustmentDialogTransformImagePageClass( this ) );
+			if(bHasSize)
+			{
+				AddPage(new SVToolAdjustmentDialogSizePage(this));
+			}			
 			AddPage( new SVTADlgTranslationShiftPageClass( this ) );
 			AddPage( pConditionalDlg );
 			AddPage( new SVToolAdjustmentDialogGeneralPageClass( this ) );
@@ -269,7 +305,7 @@ void SVToolAdjustmentDialogSheetClass::addPages()
 
 		AddPage( new SVToolAdjustmentDialogCommentPageClass(this));
 	}
-
+	
 	BOOL SVToolAdjustmentDialogSheetClass::OnInitDialog() 
 	{
 		BOOL bResult = CPropertySheet::OnInitDialog();
@@ -292,6 +328,8 @@ void SVToolAdjustmentDialogSheetClass::addPages()
 		l_Temp += _T(" - ");
 		l_Temp += m_rTool.GetName();
 
+
+		
 		SetWindowText( l_Temp );
 		return bResult;
 	}
@@ -321,7 +359,7 @@ void SVToolAdjustmentDialogSheetClass::addPages()
 			CPropertyPage* pPage = GetPage(i);
 			if( pPage && pPage->GetSafeHwnd() ) 
 			{
-				if( SVFormulaEditorPageClass* l_pFormulaEditor = dynamic_cast <SVFormulaEditorPageClass*> ( pPage ) )
+				if( SvOg::SVFormulaEditorPageClass* l_pFormulaEditor = dynamic_cast <SvOg::SVFormulaEditorPageClass*> ( pPage ) )
 				{
 					if( !l_pFormulaEditor->validateAndSetEquation() )
 					{
@@ -349,18 +387,24 @@ void SVToolAdjustmentDialogSheetClass::addPages()
 			}
 		}
 
-		// Reset the tool
-		DWORD_PTR l_dwRet = ::SVSendMessage( GetTool(), SVM_RESET_ALL_OBJECTS, NULL, NULL );
-		if( l_dwRet != SVMR_SUCCESS)
+		SVImageExtentClass oldImageExtend;
+		m_rTool.GetImageExtent(oldImageExtend);
+		DWORD_PTR dwRet =  ::SVSendMessage( GetTool(), SVM_RESET_ALL_OBJECTS, NULL, NULL );
+		
+		
+		if( dwRet != SVMR_SUCCESS)
 		{
 			return;
 		}
 
+		
 		SVIPDoc* l_psvDocument = SVObjectManagerClass::Instance().GetIPDoc( m_rTool.GetInspection()->GetUniqueObjectID() );;
-
 		l_psvDocument->SetModifiedFlag();
-
-		l_psvDocument->RunOnce();
+		if( dwRet == SVMR_SUCCESS)
+		{
+			l_psvDocument->RunOnce();
+		}
+		
 		
 		EndDialog( IDOK );
 	}

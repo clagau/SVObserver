@@ -24,6 +24,8 @@
 #include "SVSVIMStateClass.h"
 #include "SVOResource/ConstGlobalSvOr.h"
 #include "SVLinearToolClass.h"
+#include "SVExtentPropertiesInfoStruct.h"
+#include "SVMainFrm.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -43,6 +45,8 @@ BEGIN_MESSAGE_MAP(SVAdjustToolSizePositionDlg, CDialog)
 	ON_BN_CLICKED(IDC_ROTATION_RADIO, OnModeRadio)
 	ON_BN_CLICKED(IDC_BOTTOM_RIGHT_RADIO, OnModeRadio)
 	ON_BN_CLICKED(IDC_FULL_ROI_BTN, OnBnClickedFullROI)
+	ON_BN_CLICKED(IDC_BUT_PROPAGATE, OnBnClickedPropagate)
+	ON_BN_CLICKED(IDC_BUT_EDIT_TOOL, OnBnClickedEditTool)
 	ON_NOTIFY(PTN_ITEMCHANGED, IDC_RESULT_LIST, OnItemChanged)
 	ON_BN_CLICKED(IDOK, OnOK)
 	ON_BN_CLICKED(IDCANCEL, OnCancel)
@@ -120,7 +124,7 @@ BOOL SVAdjustToolSizePositionDlg::OnInitDialog()
 	}
 
 	GetDlgItem(IDC_FULL_ROI_BTN)->ShowWindow( l_bShow ? SW_SHOW : SW_HIDE );
-	GetDlgItem(IDC_FULL_ROI_BTN)->EnableWindow( !IsFullSize() );
+	GetDlgItem(IDC_FULL_ROI_BTN)->EnableWindow( !IsFullSize() && IsFullSizeAllowed());
 
 	SVExtentPropertyListType list;
 	m_pToolTask->GetFilteredImageExtentPropertyList( list );
@@ -238,7 +242,7 @@ void SVAdjustToolSizePositionDlg::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* p
 			pItem->SetItemValue( sValue );
 			pItem->OnRefresh();
 
-			HRESULT hr = SVGuiExtentUpdater::SetImageExtent(m_pToolTask, m_svExtents);
+			HRESULT hr = SVGuiExtentUpdater::SetImageExtent(m_pToolTask, m_svExtents,false);
 			m_pToolTask->GetImageExtent( m_svExtents );
 			FillTreeFromExtents();
 		}
@@ -257,13 +261,13 @@ void SVAdjustToolSizePositionDlg::OnOK()
 
 void SVAdjustToolSizePositionDlg::OnCancel() 
 {
-	SVGuiExtentUpdater::SetImageExtent(m_pToolTask, m_svOriginalExtents);
+	SVGuiExtentUpdater::SetImageExtent(m_pToolTask, m_svOriginalExtents,false);
 	CDialog::OnCancel();
 }
 
 void SVAdjustToolSizePositionDlg::OnBnClickedFullROI()
 {
-	HRESULT hr = SVGuiExtentUpdater::SetImageExtentToParent(m_pToolTask );
+	HRESULT hr = SVGuiExtentUpdater::SetImageExtentToParent(m_pToolTask,false );
 
 	if( hr == S_OK )
 	{
@@ -272,6 +276,21 @@ void SVAdjustToolSizePositionDlg::OnBnClickedFullROI()
 		FillTreeFromExtents();
 		m_Tree.Invalidate();
 	}
+}
+void SVAdjustToolSizePositionDlg::OnBnClickedPropagate()
+{
+	HRESULT hr = SVGuiExtentUpdater::ForwardSizeAndPosition(m_pToolTask);
+}
+
+void SVAdjustToolSizePositionDlg::OnBnClickedEditTool()
+{
+	SVMainFrame* pFrame = dynamic_cast<SVMainFrame*>( AfxGetMainWnd() );
+	if(nullptr != pFrame)
+	{
+		pFrame->PostMessage(WM_COMMAND, ID_EDIT_EDITTOOLTAB1, 0 );
+	}
+	
+	OnOK();
 }
 #pragma endregion Protected Methods
 
@@ -342,8 +361,9 @@ HRESULT SVAdjustToolSizePositionDlg::AdjustTool( SVExtentLocationPropertyEnum eA
 
 	if ( hr == S_OK )
 	{
-		hr = SVGuiExtentUpdater::SetImageExtent(m_pToolTask, l_pExtents);
+		hr = SVGuiExtentUpdater::SetImageExtent(m_pToolTask, l_pExtents, false);
 	}
+
 	return hr;
 }
 
@@ -368,7 +388,7 @@ HRESULT SVAdjustToolSizePositionDlg::AdjustToolAngle(double dDAngle)
 		hr = l_Extents.SetExtentProperty( SVExtentPropertyRotationAngle, dCurrentAngle );
 		if ( hr == S_OK )
 		{
-			hr = SVGuiExtentUpdater::SetImageExtent(m_pToolTask, l_Extents);
+			hr = SVGuiExtentUpdater::SetImageExtent(m_pToolTask, l_Extents,false);
 			m_svExtents = l_Extents;
 		}
 	}
@@ -400,7 +420,7 @@ void SVAdjustToolSizePositionDlg::FillTreeFromExtents()
 	SVRPropertyItem* pRoot = m_Tree.GetRootItem();
 	FillTreeFromExtents(pRoot, false);
 
-	GetDlgItem(IDC_FULL_ROI_BTN)->EnableWindow( !IsFullSize() );
+	GetDlgItem(IDC_FULL_ROI_BTN)->EnableWindow( !IsFullSize() && IsFullSizeAllowed());
 }
 
 void SVAdjustToolSizePositionDlg::FillTreeFromExtents( SVRPropertyItem* pRoot, bool shouldCreate )
@@ -418,6 +438,8 @@ void SVAdjustToolSizePositionDlg::FillTreeFromExtents( SVRPropertyItem* pRoot, b
 		{
 			continue;
 		}
+
+
 
 		SVRPropertyItemEdit* pEdit = nullptr;
 		if (shouldCreate)
@@ -455,10 +477,63 @@ void SVAdjustToolSizePositionDlg::FillTreeFromExtents( SVRPropertyItem* pRoot, b
 			{
 				sValue = AsString(dValue);
 			}
+			
+			bool bReadonly(false);
+			SVExtentPropertyInfoStruct info;
+			SVToolClass *pTool = dynamic_cast<SVToolClass*> (m_pToolTask) ;
+			if(nullptr != pTool &&  (S_OK == pTool->GetPropertyInfo(iter->first, info) ))
+			{
+				if(!pTool->IsAutoSizeDisabled())
+				{
+					bReadonly =  info.bSetByReset; 
+				}
+				bReadonly = bReadonly ||    info.bFormula;
+			
+			}
+			
+			if(bReadonly)
+			{
+				pEdit->SetForeColor(::GetSysColor(COLOR_INACTIVECAPTION));
+				pEdit->ReadOnly(true);
+			}
 			pEdit->SetItemValue( sValue );
 			pEdit->OnRefresh();
 		}
 	}//end for( iter = map.begin(); iter != map.end(); iter++ )
+}
+
+
+bool SVAdjustToolSizePositionDlg::IsFullSizeAllowed()
+{
+	SVToolClass *pTool = dynamic_cast<SVToolClass*> (m_pToolTask) ;
+	bool bAllowFullsize(true);
+	if(!pTool )
+	{
+		bAllowFullsize = false;
+	}
+	if( bAllowFullsize && pTool->IsAutoSizeDisabled())
+	{	
+		bAllowFullsize = false;
+	}
+
+
+	SVExtentPropertyInfoStruct info;
+	array<SVExtentPropertyEnum, 4> PropArray = { SVExtentPropertyWidth, SVExtentPropertyHeight,SVExtentPropertyPositionPointX, SVExtentPropertyPositionPointY  };
+	for_each(PropArray.begin(),PropArray.end(),[&](SVExtentPropertyEnum p)
+	{
+		if (bAllowFullsize && S_OK == pTool->GetPropertyInfo(p, info) )
+		{
+			if(info.bSetByReset)
+			{
+				bAllowFullsize = false;
+			}
+		}
+
+	} 
+	);
+
+
+	return bAllowFullsize;
 }
 
 bool SVAdjustToolSizePositionDlg::IsFullSize()

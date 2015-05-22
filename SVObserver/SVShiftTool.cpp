@@ -16,6 +16,7 @@
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "SVMatroxLibrary/SVMatroxLibrary.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
+#include "ToolSizeAdjustTask.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -68,6 +69,12 @@ BOOL SVShiftTool::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
 
 	SetAttributeData();
 
+	if(l_Status)
+	{
+		l_Status  = (S_OK == ToolSizeAdjustTask::EnsureInFriendList(this,false,true,true)); 
+	}
+
+	
 	return l_Status;
 }
 
@@ -393,6 +400,7 @@ SVImageClass* SVShiftTool::GetImageInput() const
 	return l_pImage;
 }
 
+
 SVDoubleValueObjectClass* SVShiftTool::GetTranslationXInput() const
 {
 	SVDoubleValueObjectClass* l_pValue = NULL;
@@ -434,6 +442,12 @@ void SVShiftTool::LocalInitialize()
 
 		AddFriend( l_pObject->GetUniqueObjectID() );
 	}
+
+	ToolSizeAdjustTask::AddToFriendlist(this, false,true,true);
+	
+
+
+
 
 	SVObjectManagerClass::Instance().ConstructObject( SVEvaluateTranslationYClassGuid, l_pObject );
 

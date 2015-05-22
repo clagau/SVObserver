@@ -186,9 +186,17 @@ HRESULT SVObjectBuilder::CreateFriendObject(const GUID& classID, const GUID& uni
 		{
 			SVObjectClass* pOwnerObject = NULL;
 			SVObjectManagerClass::Instance().GetObjectByIdentifier(ownerUniqueID, pOwnerObject);
-			pOwnerObject->AddFriend(uniqueID);
-
-			::SVSendMessage(pOwnerObject, SVM_CREATE_CHILD_OBJECT, reinterpret_cast<DWORD_PTR>(pObject), NULL);
+			if(nullptr != pOwnerObject)
+			{
+				pOwnerObject->AddFriend(uniqueID);
+				::SVSendMessage(pOwnerObject, SVM_CREATE_CHILD_OBJECT, reinterpret_cast<DWORD_PTR>(pObject), NULL);
+			}
+			else
+			{
+				hr = S_FALSE;
+				ASSERT(FALSE);
+			}
+			
 		}
 	}
 	return hr;
@@ -205,11 +213,21 @@ HRESULT SVObjectBuilder::CreateEmbeddedObject(const GUID& embeddedID, const GUID
 
 		// Send to Owner of Embedded Object, Try to overwrite object...
 		SVObjectClass* pObject = NULL;
-		if (pObject = (SVObjectClass *)::SVSendMessage(pOwnerObject, SVM_OVERWRITE_OBJECT, reinterpret_cast<DWORD_PTR>(&uniqueID), reinterpret_cast<DWORD_PTR>(&embeddedID)))
+		
+		if(nullptr != pOwnerObject)
 		{
-			pObject->SetName(objectName.c_str());
+
+			if (pObject = (SVObjectClass *)::SVSendMessage(pOwnerObject, SVM_OVERWRITE_OBJECT, reinterpret_cast<DWORD_PTR>(&uniqueID), reinterpret_cast<DWORD_PTR>(&embeddedID)))
+			{
+				pObject->SetName(objectName.c_str());
+			}
 		}
-	}
+		else
+		{
+			hr = S_FALSE;
+			ASSERT(FALSE);
+		}
+}
 	return hr;
 }
 

@@ -91,6 +91,30 @@ BOOL SVEnumerateComboClass::SetEnumTypes( LPCTSTR szEnumList )
 	return bRetVal;
 }
 
+int  SVEnumerateComboClass::SetCurSelItemData( DWORD_PTR ItemData )
+{
+	for(int i =0 ; i < GetCount(); i++)
+	{
+		if(GetItemData(i)== ItemData)
+		{
+			SetCurSel(i);
+			return i;
+		}
+	}
+	return -1;
+}
+
+DWORD_PTR  SVEnumerateComboClass::GetCurSelItemData()
+{
+	int sel = GetCurSel();
+	if(sel >0 && sel <= GetCount())
+	{
+		return GetItemData(sel);
+	}
+	return -1;
+}
+
+
 BEGIN_MESSAGE_MAP(SVEnumerateComboClass, CComboBox)
 	//{{AFX_MSG_MAP(SVEnumerateComboClass)
 		// NOTE - the ClassWizard will add and remove mapping macros here.

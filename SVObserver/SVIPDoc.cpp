@@ -130,6 +130,7 @@ BEGIN_MESSAGE_MAP(SVIPDoc, CDocument)
 	ON_COMMAND(ID_ADD_WINDOWTOOL, OnAddWindowTool)
 	ON_COMMAND(ID_ADD_CYLINDRICALWARPTOOL, OnAddCylindricalWarpTool)
 	ON_COMMAND(ID_EDIT_EDITTOOL, OnEditTool)
+	ON_COMMAND(ID_EDIT_EDITTOOLTAB1, OnEditToolTab1)
 	ON_COMMAND(ID_EDIT_COPY, OnEditCopy)
 	ON_UPDATE_COMMAND_UI(ID_EDIT_COPY, OnUpdateEditCopy)
 	ON_COMMAND(ID_EDIT_PASTE, OnEditPaste)
@@ -1440,6 +1441,16 @@ void SVIPDoc::OnUpdateEditPaste( CCmdUI* pCmdUI )
 
 void SVIPDoc::OnEditTool()
 {
+	return OpenToolAdjustmentDialog(0);
+}
+
+void SVIPDoc::OnEditToolTab1()
+{
+	return OpenToolAdjustmentDialog(1);
+}
+
+void SVIPDoc::OpenToolAdjustmentDialog(int tab)
+{
 	// Check current user access...
 	if( TheSVObserverApp.OkToEdit() )
 	{
@@ -1465,7 +1476,7 @@ void SVIPDoc::OnEditTool()
 			// to check if anyone is using the output image
 			if( l_pTool->IsOkToEdit() )
 			{
-				SVToolAdjustmentDialogSheetClass toolAdjustmentDialog( this, *l_pTool, "Tool Adjustment" );
+				SVToolAdjustmentDialogSheetClass toolAdjustmentDialog( this, *l_pTool, "Tool Adjustment",nullptr,tab );
 				INT_PTR dlgResult = toolAdjustmentDialog.DoModal();
 				if ( IDOK == dlgResult )
 				{
@@ -4246,6 +4257,8 @@ int SVIPDoc::GetToolToInsertBefore(const CString& name, int listIndex) const
 	}
 	return toolListIndex;
 }
+
+
 
 //******************************************************************************
 //* LOG HISTORY:

@@ -2095,6 +2095,7 @@ DWORD_PTR SVInspectionProcess::processMessage(DWORD DwMessageID, DWORD_PTR DwMes
 				{
 					DwResult = SVMR_SUCCESS;
 				}
+				
 				break;
 			}
 		}
@@ -4844,6 +4845,11 @@ SVResultListClass* SVInspectionProcess::GetResultList() const
 		retVal = pToolSet->GetResultList();
 	}
 	return retVal;
+}
+
+long  SVInspectionProcess::GetResultDataIndex() const
+{
+	return m_runStatus.m_lResultDataIndex; 
 }
 
 //******************************************************************************

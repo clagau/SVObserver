@@ -37,6 +37,13 @@ public:
 	virtual BOOL OnValidate();        // 23 Nov 1999 - frb.
 
 	virtual HRESULT SetImageExtentToParent( unsigned long p_ulIndex );
+	//************************************
+	//! Get the ImageExtents from the Image file 
+	//! \param rExtent [out]
+	//! \returns HRESULT S_OK if no error occurs
+	//************************************
+	HRESULT GetParentExtent( SVImageExtentClass& rExtent) const;
+	
 
 protected:
 	void init();

@@ -781,6 +781,7 @@ SVEquationTestResult SVEquationClass::Test( BOOL DisplayErrorMessage )
 	isDataValid = TRUE;
 	errStr.Empty();
 
+
 	if( HasCondition() && IsEnabled() )
 	{
 		// *** // ***
@@ -1309,6 +1310,8 @@ HRESULT SVEquationClass::ResetObject()
 {
 	HRESULT l_hrOk = SVTaskObjectClass::ResetObject();
 
+	
+	
 	// call Test()...( Rebuilds symbol table !!! )
 	if( HasCondition() && IsEnabled() )
 	{

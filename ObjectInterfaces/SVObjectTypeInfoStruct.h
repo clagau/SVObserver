@@ -86,6 +86,7 @@
 
 			SVResultObjectType						= 0x00100000,
 			SVRangeObjectType						= 0x00200000,
+			SVToolSizeAdjustTaskType				= 0x00300000,
 		};
 
 		// place all sub types here
@@ -168,6 +169,12 @@
 			SVAutoThresholdEquationObjectType			= 0x00000404,
 			SVLUTEquationObjectType						= 0x00000405,	// RO_17Mar2000
 
+			//Equation Subtypes for VAriableSize 	
+			EQSizeWidthType								= 0x00000406,
+			EQSizeHeightType							 = 0x00000407,
+			EQSizePositionXType							= 0x00000408,
+			EQSizePositionYType							 = 0x00000409,
+
 			// Math Container Subtypes:
 			SVEvaluateXObjectType						= 0x00000480,
 			SVEvaluateYObjectType						= 0x00000481,
@@ -184,7 +191,7 @@
 			SVEvaluateEndRadiusObjectType				= 0x0000048c,	// RO_27Feb2000
 			SVEvaluateStartAngleObjectType				= 0x0000048d,	// RO_27Feb2000
 			SVEvaluateEndAngleObjectType				= 0x0000048e,	// RO_27Feb2000
-
+			
 			// ROI Subtypes:
 			SVLineROIObjectType							= 0x00000500,
 			SVImageROIObjectType						= 0x00000501,

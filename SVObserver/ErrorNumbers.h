@@ -58,6 +58,22 @@ static const int Err_16023 = Mec_ErrorBase + 23;
 static const int Err_16024 = Mec_ErrorBase + 24;
 static const int Err_16025 = Mec_ErrorBase + 25;
 static const int Err_16026 = Mec_ErrorBase + 26;
+////Errornumbers for Adjust ToolsSize 
+static const int FirstErrorAdjustTool  = Mec_ErrorBase + 27;
+static const int Err_16027_InvalidOwner = Mec_ErrorBase + 27;
+static const int Err_16028_InvalidMode = Mec_ErrorBase + 28;
+static const int Err_16029_InvalidSelection = Mec_ErrorBase + 29;
+static const int Err_16030_InvalidValuePointer = Mec_ErrorBase + 30;
+static const int Err_16031_InvalidSize = Mec_ErrorBase + 31;
+static const int Err_16032_InvalidSize = Mec_ErrorBase + 32;
+static const int Err_16033_SetExtensionFailed = Mec_ErrorBase + 33;
+static const int Err_16034_InvalidMode = Mec_ErrorBase + 34;
+static const int Err_16035_InvalidMode = Mec_ErrorBase + 35;
+static const int Err_16036_InvalidMode = Mec_ErrorBase + 36;
+static const int Err_16037_InvalidSelection = Mec_ErrorBase + 37;
+
+static const int LastErrorAdjustTool  = Mec_ErrorBase + 37;
+
 
 // Ben Walter
 static const int BRW_ErrorBase = 17000;

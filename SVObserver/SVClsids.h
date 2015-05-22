@@ -1252,6 +1252,22 @@ extern /*const*/ GUID SVToolCommentTypeObjectGuid;
 extern /*const*/ GUID SVCameraTriggerTimestampGuid;
 extern /*const*/ GUID SVCameraTriggerLineInStateGuid;
 extern /*const*/ GUID SVStringHeaderGuid;
+// GUIDs for ToolSizeAdjustTask ...
+extern /*const*/ GUID ToolSizeAdjustTaskGuid;
+extern  /*const*/ GUID  ToolSizeAdjustSizeWidthModeGuid;		
+extern  /*const*/ GUID  ToolSizeAdjustSizeHeightModeGuid;
+extern  /*const*/ GUID  ToolSizeAdjustSizePositionXModeGuid;
+extern  /*const*/ GUID  ToolSizeAdjustSizePositionYModeGuid;
+extern /*const*/ GUID EQAdjustSizeWidthGuid;						
+extern	/*const*/ GUID  EQAdjustSizeWidthResultGuid;	
+extern	/*const*/ GUID  EQAdjustSizeHeightGuid;					
+extern	/*const*/ GUID EQAdjustSizeHeightResultGuid;	
+extern	/*const*/ GUID EQAdjustSizePositionXGuid;						
+extern	/*const*/ GUID EQAdjustSizePositionXResultGuid;	
+extern/*const*/ GUID EQAdjustSizePositionYGuid;						
+extern	/*const*/ GUID EQAdjustSizePositionYResultGuid;	
+extern	/*const*/ GUID EQAdjustSizeGuid;
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // Insert new GUIDs immediately before the previous line.

@@ -21,6 +21,7 @@
 #include "SVLinearImageOperatorList.h"
 #include "SVThresholdClass.h"
 #include "SVUserMaskOperatorClass.h"
+#include "ToolSizeAdjustTask.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -77,6 +78,14 @@ BOOL SVLinearToolClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructur
 
 	extentLeft.ObjectAttributesAllowedRef() &= ~SV_REMOTELY_SETABLE & ~SV_SETABLE_ONLINE;
 	extentTop.ObjectAttributesAllowedRef() &= ~SV_REMOTELY_SETABLE & ~SV_SETABLE_ONLINE;
+
+
+	if(bOk)
+	{
+		bOk  = (S_OK == ToolSizeAdjustTask::EnsureInFriendList(this,true,true,true)); 
+	}
+
+
 
 	isCreated = bOk;
 
@@ -226,6 +235,13 @@ BOOL SVLinearToolClass::GetRotation()
 	return bVal;
 }
 
+
+bool SVLinearToolClass::IsAutoSizeDisabled()
+{
+	return (GetRotation() == TRUE);
+}
+
+
 BOOL SVLinearToolClass::IsToolRotated()
 {
 	BOOL bRet = FALSE;
@@ -365,6 +381,8 @@ void SVLinearToolClass::init()
 		// Add the UnaruyImageOperatorList to the Tool's List
 		Add( pOperatorList );
 	}
+	ToolSizeAdjustTask::AddToFriendlist(this, true,true,true);
+
 	addDefaultInputObjects();
 }
 #pragma endregion Private Methods

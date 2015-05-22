@@ -9,19 +9,19 @@
 //* .Check In Date   : $Date:   23 Apr 2013 10:30:12  $
 //******************************************************************************
 
-#ifndef SVEXTENTPROPERTIESINFOSTRUCT_H_
-#define SVEXTENTPROPERTIESINFOSTRUCT_H_
+
 #pragma once
 
 struct SVExtentPropertyInfoStruct
 {
 	bool bFormula;
 	bool bHidden;
+	bool bSetByReset; //< property will be set in ToolSizeAdjustTask::ResetObject()
 
-	SVExtentPropertyInfoStruct() : bFormula(false), bHidden(false) {}
+	SVExtentPropertyInfoStruct() : bFormula(false), bHidden(false), bSetByReset(false) {}
 };
 
-#endif	//#ifndef SVEXTENTPROPERTIESINFOSTRUCT_H_
+
 
 //******************************************************************************
 //* LOG HISTORY:

@@ -134,6 +134,12 @@ public:
 	BOOL AddFriend( const GUID& RFriendGUID );
 	BOOL RemoveFriend( const GUID& RFriendGUID );
 	void DestroyFriends();
+	//************************************
+	//! this function returns a pointer to the friendobject which fit the ObjectType, if any. Otherwise it returns nullptr. 
+	//! \param rObjectType [in]
+	//! \returns SVObjectClass*
+	//************************************
+	SVObjectClass* GetFriend( const SVObjectTypeInfoStruct& rObjectType ) const; 
 	SVPublicAttributeEntryStruct* GetPublicAttribute();
 
 	//************************************

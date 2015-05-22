@@ -44,6 +44,11 @@ public:
 	CString GetProfileOrientation();
 	BOOL GetRotation();
 
+	//************************************
+	//! return true if autosizing is disabled because rotation is turned on 
+	//! \returns bool
+	//************************************
+	bool IsAutoSizeDisabled();
 	BOOL IsToolRotated();
 
 	virtual HRESULT GetInputImageNames( SVStringValueObjectClass*& p_pSourceNames );
