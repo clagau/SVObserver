@@ -498,55 +498,54 @@ void SVObserverApp::OnAppAbout()
 ////////////////////////////////////////////////////////////////////////////////
 void SVObserverApp::OnFileNewConfig() 
 {
-	if( m_svSecurityMgr.SVValidate( SECURITY_POINT_FILE_MENU_NEW ) == S_OK )
+	SVSVIMStateClass::AddState( SV_STATE_CREATING );
+	if( S_OK == m_svSecurityMgr.SVValidate( SECURITY_POINT_FILE_MENU_NEW ) )
 	{
-		if ( ! (ShowConfigurationAssistant( 0, TRUE )) )
+		if ( (ShowConfigurationAssistant( 0, TRUE )) ) // if not cancelled
 		{
-			//canceled did not want to close existing configuration
-			return;
-		}
-	}
+			if( OkToEdit() || !m_svSecurityMgr.SVIsSecured( SECURITY_POINT_MODE_MENU_EDIT_TOOLSET ) )
+			{
+				SetModeEdit( true );
+			}
+			else
+			{
+				SetModeEdit( false );
+			}
+			// Logic to remove unused IO Tabs PLC and Remote inputs.
+			// PLC Inputs
+			SVConfigurationObject* pConfig( nullptr );
+			SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
-	if( OkToEdit() || !m_svSecurityMgr.SVIsSecured( SECURITY_POINT_MODE_MENU_EDIT_TOOLSET ) )
-	{
-		SetModeEdit( true );
-	}
-	else
-	{
-		SetModeEdit( false );
-	}
-	// Logic to remove unused IO Tabs PLC and Remote inputs.
-	// PLC Inputs
-	SVConfigurationObject* pConfig( nullptr );
-	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
-
-	if( nullptr != pConfig )
-	{
+			if( nullptr != pConfig )
+			{
 #ifndef _WIN64
-		if( pConfig->GetPLCCount() == 0 )
-		{
-			HideIOTab( SVIOPLCOutputsViewID );
-		}
+				if( pConfig->GetPLCCount() == 0 )
+				{
+					HideIOTab( SVIOPLCOutputsViewID );
+				}
 #endif
-		if( pConfig->GetRemoteOutputGroupCount() == 0)
-		{
-			HideIOTab( SVRemoteOutputsViewID );
-		}
-		pConfig->ClearRemoteMonitorList();
-	}
-	else
-	{
+				if( pConfig->GetRemoteOutputGroupCount() == 0)
+				{
+					HideIOTab( SVRemoteOutputsViewID );
+				}
+				pConfig->ClearRemoteMonitorList();
+			}
+			else
+			{
 #ifndef _WIN64
-		HideIOTab( SVIOPLCOutputsViewID );
+				HideIOTab( SVIOPLCOutputsViewID );
 #endif
-		HideIOTab( SVRemoteOutputsViewID );
+				HideIOTab( SVRemoteOutputsViewID );
+			}
+
+			// Never any Remotely Monitored Items on a New Configuration...
+			HideRemoteMonitorListTab();
+
+			// Update Remote Inputs Tab
+			UpdateRemoteInputTabs();
+		}
 	}
-
-	// Never any Remotely Monitored Items on a New Configuration...
-	HideRemoteMonitorListTab();
-
-	// Update Remote Inputs Tab
-	UpdateRemoteInputTabs();
+	SVSVIMStateClass::RemoveState( SV_STATE_CREATING );
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -634,8 +633,9 @@ void SVObserverApp::OnFileSaveConfig()
 void SVObserverApp::OnFileOpenSVC() 
 {
 	ValidateMRUList();
+	
+	SVSVIMStateClass::AddState( SV_STATE_EDITING ); /// do this before calling validate for security as it may display a logon dialog!
 	// Proof user rights...
-
 	if ( m_svSecurityMgr.SVValidate( SECURITY_POINT_FILE_MENU_SELECT_CONFIGURATION) == S_OK )
 	{
 		SVFileNameClass svFileName;
@@ -683,6 +683,7 @@ void SVObserverApp::OnFileOpenSVC()
 	// Update Remote Inputs Tab
 	UpdateRemoteInputTabs();
 
+	SVSVIMStateClass::RemoveState( SV_STATE_EDITING );
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -836,6 +837,7 @@ void SVObserverApp::OnEnvironmentSettings()
 {
 	bool l_bShowDDETabs = false;
 
+	SVSVIMStateClass::AddState(SV_STATE_EDITING); /// do this before calling validate for security as it may display a logon dialog!
 	if( m_svSecurityMgr.SVValidate( SECURITY_POINT_EXTRAS_MENU_ADDITIONAL_ENVIRON ) == S_OK )
 	{
 		SVEnvironmentSettingsDialogClass cfdDlg;
@@ -885,6 +887,7 @@ void SVObserverApp::OnEnvironmentSettings()
 			}
 		}
 	}
+	SVSVIMStateClass::RemoveState(SV_STATE_EDITING);
 }
 
 void SVObserverApp::OnUpdateThreadAffinitySetup(CCmdUI* PCmdUI)
@@ -896,8 +899,10 @@ void SVObserverApp::OnUpdateThreadAffinitySetup(CCmdUI* PCmdUI)
 
 void SVObserverApp::OnThreadAffinitySetup()
 {
+	SVSVIMStateClass::AddState(SV_STATE_EDITING);
 	SVThreadInfoDlg dlg;
 	dlg.DoModal();
+	SVSVIMStateClass::RemoveState(SV_STATE_EDITING);
 }
 
 void SVObserverApp::OnUpdateModeRun( CCmdUI* PCmdUI ) 
@@ -2387,7 +2392,7 @@ void SVObserverApp::OnExtrasUtilitiesEdit()
 	CWnd* pWindow;
 	CMenu* pMenu;
 	CString szMenuText;
-
+	SVSVIMStateClass::AddState(SV_STATE_EDITING); /// do this before calling validate for security as it may display a logon dialog!
 	if( m_svSecurityMgr.SVValidate( SECURITY_POINT_EXTRAS_MENU_UTILITIES_SETUP ) == S_OK )
 	{
 		pWindow = AfxGetMainWnd();
@@ -2404,6 +2409,7 @@ void SVObserverApp::OnExtrasUtilitiesEdit()
 	{
 		AfxMessageBox( _T( "Authorization Failed.\n\nUtility Modification requires 'User Manager' privilege." ), MB_OK );
 	}
+	SVSVIMStateClass::RemoveState(SV_STATE_EDITING);
 }
 
 void SVObserverApp::OnUpdateAddPolarUnwrapTool(CCmdUI* PCmdUI) 
@@ -2702,6 +2708,7 @@ void SVObserverApp::OnUpdateAddExternalTool(CCmdUI* PCmdUI)
 
 void SVObserverApp::OnExtrasSecuritySetup() 
 {
+	SVSVIMStateClass::AddState(SV_STATE_EDITING); /// do this before calling validate for security as it may display a logon dialog!
 	if( m_svSecurityMgr.SVValidate( SECURITY_POINT_EXTRAS_MENU_SECURITY_MANAGER ) == S_OK)
 	{
 		m_svSecurityMgr.SVSetupDialog();
@@ -2740,6 +2747,7 @@ void SVObserverApp::OnExtrasSecuritySetup()
 			StopRegression();
 		}
 	}
+	SVSVIMStateClass::RemoveState(SV_STATE_EDITING);
 }
 
 void SVObserverApp::OnModeEdit() 
@@ -7877,6 +7885,7 @@ void SVObserverApp::fileSaveAsSVX( CString StrSaveAsPathName ,bool isRegularSave
 
 	BOOL bOk=TRUE;
 
+	SVSVIMStateClass::AddState( SV_STATE_SAVING );
 	ResetAllIPDocModifyFlag(FALSE);
 	//
 	// Is the input parameter for save as path empty?
@@ -7936,7 +7945,9 @@ void SVObserverApp::fileSaveAsSVX( CString StrSaveAsPathName ,bool isRegularSave
 		}
 		else
 		{
-			return;
+			SVSVIMStateClass::RemoveState( SV_STATE_SAVING ); // remove the state set at the start of this method
+			/// Why is the return here? Shouldn't bOk be set to false instead ?
+			return; // what no error?
 		}
 	}// end if ( StrSaveAsPathName.IsEmpty() )
 	else
@@ -8015,16 +8026,13 @@ void SVObserverApp::fileSaveAsSVX( CString StrSaveAsPathName ,bool isRegularSave
 		}
 
 		( (CMDIFrameWnd*) AfxGetMainWnd() )->OnUpdateFrameTitle(TRUE);
-
 		// Success...
-
-
-		return;
 	}// end if ( !CString( m_ConfigFileName.GetExtension() ).CompareNoCase( ".svx" ) )
 	else
 	{
 		AfxMessageBox( IDS_USER_INFORMATION_WRONG_PATHNAME_ENTERED );
 	}
+	SVSVIMStateClass::RemoveState( SV_STATE_SAVING );
 }
 
 /////////////////////////////////////////////////////////////////////////////

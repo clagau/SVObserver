@@ -1454,8 +1454,6 @@ void SVIPDoc::OpenToolAdjustmentDialog(int tab)
 	// Check current user access...
 	if( TheSVObserverApp.OkToEdit() )
 	{
-		SVSVIMStateClass::AddState( SV_STATE_EDITING );
-
 		SVToolClass* l_pTool = dynamic_cast< SVToolClass* >( SVObjectManagerClass::Instance().GetObject( m_SelectedToolID ) );
 		if( l_pTool != NULL )
 		{
@@ -1463,12 +1461,16 @@ void SVIPDoc::OpenToolAdjustmentDialog(int tab)
 
 			if ( (rToolType.SubType == SVGageToolObjectType) || (rToolType.SubType == SVToolProfileObjectType) )
 			{
+				SVSVIMStateClass::AddState( SV_STATE_EDITING );
 				AfxMessageBox("This tool is now obsolete.  Please replace with a Linear Tool.");
+				SVSVIMStateClass::RemoveState( SV_STATE_EDITING );
 				return;
 			}
 			if (rToolType.SubType == SVToolBuildReferenceObjectType)
 			{
+				SVSVIMStateClass::AddState( SV_STATE_EDITING );
 				AfxMessageBox("This tool is now obsolete. Please replace with either a Shift Tool or Transformation Tool");
+				SVSVIMStateClass::RemoveState( SV_STATE_EDITING );
 				return;
 			}
 			// Check if can Edit this Tool
@@ -1476,6 +1478,7 @@ void SVIPDoc::OpenToolAdjustmentDialog(int tab)
 			// to check if anyone is using the output image
 			if( l_pTool->IsOkToEdit() )
 			{
+				SVSVIMStateClass::AddState( SV_STATE_EDITING );
 				SVToolAdjustmentDialogSheetClass toolAdjustmentDialog( this, *l_pTool, "Tool Adjustment",nullptr,tab );
 				INT_PTR dlgResult = toolAdjustmentDialog.DoModal();
 				if ( IDOK == dlgResult )
@@ -1490,10 +1493,9 @@ void SVIPDoc::OpenToolAdjustmentDialog(int tab)
 					}
 				}
 				l_pTool->ResetObject();
+				SVSVIMStateClass::RemoveState( SV_STATE_EDITING );
 			}
 		}
-
-		SVSVIMStateClass::RemoveState( SV_STATE_EDITING );
 		UpdateAllViews( NULL, RefreshView );
 	}
 }
@@ -1514,12 +1516,13 @@ void SVIPDoc::OnEditToolSetCondition()
 
 void SVIPDoc::OnFileSaveImage()
 {
-
+	SVSVIMStateClass::AddState( SV_STATE_EDITING ); /// do this before calling validate for security as it may display a logon dialog!
 	if(TheSVObserverApp.m_svSecurityMgr.SVValidate( SECURITY_POINT_FILE_MENU_SAVE_IMAGE ) == S_OK )
 	{
 		SVSaveToolSetImageDialogClass dlg( GetToolSet() );
 		dlg.DoModal();
 	}
+	SVSVIMStateClass::RemoveState( SV_STATE_EDITING );
 }
 
 //******************************************************************************
@@ -1540,63 +1543,128 @@ void SVIPDoc::Dump(CDumpContext& dc) const
 
 void SVIPDoc::OnResultsPicker()
 {
+	SVSVIMStateClass::AddState( SV_STATE_EDITING ); /// do this before calling validate for security as it may display a logon dialog!
 	if( S_OK == TheSVObserverApp.m_svSecurityMgr.SVValidate(SECURITY_POINT_EDIT_MENU_RESULT_PICKER) )
 	{
 		SVInspectionProcess* pInspection( GetInspectionProcess() );
 		SVResultListClass* pResultList( GetResultList() );
-		if( nullptr == pInspection || nullptr == pResultList ) { return; }
+		if( nullptr != pInspection && nullptr != pResultList ) 
+		{
+			SVString InspectionName( pInspection->GetName() );
 
+			ObjectTreeGenerator::Instance().setSelectorType( ObjectTreeGenerator::SelectorTypeEnum::TypeMultipleObject);
+			ObjectTreeGenerator::Instance().setAttributeFilters( SV_VIEWABLE );
+
+			CString tmp;
+			tmp.LoadString(IDS_CLASSNAME_ROOTOBJECT);
+			ObjectTreeGenerator::Instance().setLocationFilter( ObjectTreeGenerator::FilterInput, tmp, SVString( _T("") ) );
+
+			SVString EnvName(Seidenader::SVObjectLibrary::FqnEnvironmentMode);
+
+			// The environment variables in the dialog should have the same order as in the menu.
+			SVStringArray ObjectNameList;
+			EnvironmentObject* pEnvironment( nullptr );
+			SVObjectManagerClass::Instance().GetRootChildObject(pEnvironment, SVObjectManagerClass::Environment);
+			if(nullptr != pEnvironment)
+			{
+				pEnvironment->getEnvironmentObjectNameList(ObjectNameList, EnvName, SV_VIEWABLE);
+				ObjectTreeGenerator::Instance().insertTreeObjects( ObjectNameList);
+			}
+
+			SVPPQObject* pPPQ( pInspection->GetPPQ() );
+			SVString PPQName;
+			if( nullptr != pPPQ )
+			{
+				PPQName = pPPQ->GetName();
+				ObjectTreeGenerator::Instance().insertTreeObjects( PPQName );
+			}
+
+			ObjectTreeGenerator::Instance().setLocationFilter( ObjectTreeGenerator::FilterInput, InspectionName, SVString( _T("") ) );
+			SVOutputInfoListClass OutputList;
+
+			SVToolSetClass* pToolset( GetToolSet() );
+			if(nullptr != pToolset)
+			{
+				pToolset->GetOutputList( OutputList );
+				ObjectTreeGenerator::Instance().insertOutputList( OutputList );
+			}
+
+			SVStringSet SelectedNames;
+
+			pResultList->m_EnvResults.GetNameSet(SelectedNames);
+			pResultList->m_ToolReferences.GetNameSet(SelectedNames);
+
+			ObjectTreeGenerator::Instance().setCheckItems(SelectedNames);
+
+			CString ResultPicker;
+			ResultPicker.LoadString( IDS_RESULT_PICKER );
+			SVString Title;
+			Title.Format( _T("%s - %s"), ResultPicker, InspectionName.c_str() );
+			SVString mainTabTitle = ResultPicker;
+			CString Filter;
+			Filter.LoadString( IDS_FILTER );
+			SVString filterTabTitle = Filter;
+			INT_PTR Result = ObjectTreeGenerator::Instance().showDialog( Title, mainTabTitle, filterTabTitle );
+
+			if( IDOK == Result )
+			{
+				const std::deque<ObjectSelectorItem>& SelectedItems = ObjectTreeGenerator::Instance().getResults();
+				std::deque<ObjectSelectorItem>::const_iterator it;
+
+				pResultList->m_EnvResults.Clear();
+				pResultList->m_ToolReferences.Clear();
+
+				size_t EnvSize = EnvName.size();
+				size_t PPQSize = PPQName.size();
+
+				for( it = SelectedItems.begin(); it != SelectedItems.end(); it++ )
+				{
+					if(it->isLeaf())
+					{
+						// @WARNING:  It's dangerous to call .Left before checking the length of the string returned by getLocation().
+						if( ( EnvSize > 0 && it->getLocation().Left(EnvSize).Compare(EnvName) == 0 ) || 
+							( PPQSize > 0 && it->getLocation().Left(PPQSize).Compare(PPQName) == 0 ) )
+						{
+							pResultList->m_EnvResults.Insert(it->getLocation());
+						}
+						else
+						{
+							pResultList->m_ToolReferences.Insert(it->getLocation());
+						}
+					}
+				}
+				// Set the Document as modified
+				SetModifiedFlag();
+				RebuildResultsList();
+				UpdateWithLastProduct();
+			}
+			UpdateAllViews( nullptr );
+		}
+	}
+	SVSVIMStateClass::RemoveState(SV_STATE_EDITING);
+}
+
+void SVIPDoc::OnPublishedResultsPicker()
+{
+	SVInspectionProcess* pInspection( GetInspectionProcess() );
+	if( nullptr != pInspection ) 
+	{ 
+		SVSVIMStateClass::AddState(SV_STATE_EDITING);
 		SVString InspectionName( pInspection->GetName() );
 
-		ObjectTreeGenerator::Instance().setSelectorType( ObjectTreeGenerator::SelectorTypeEnum::TypeMultipleObject);
-		ObjectTreeGenerator::Instance().setAttributeFilters( SV_VIEWABLE );
-
-		CString tmp;
-		tmp.LoadString(IDS_CLASSNAME_ROOTOBJECT);
-		ObjectTreeGenerator::Instance().setLocationFilter( ObjectTreeGenerator::FilterInput, tmp, SVString( _T("") ) );
-
-		SVString EnvName(Seidenader::SVObjectLibrary::FqnEnvironmentMode);
-
-		// The environment variables in the dialog should have the same order as in the menu.
-		SVStringArray ObjectNameList;
-		EnvironmentObject* pEnvironment( nullptr );
-		SVObjectManagerClass::Instance().GetRootChildObject(pEnvironment, SVObjectManagerClass::Environment);
-		if(nullptr != pEnvironment)
-		{
-			pEnvironment->getEnvironmentObjectNameList(ObjectNameList, EnvName, SV_VIEWABLE);
-			ObjectTreeGenerator::Instance().insertTreeObjects( ObjectNameList);
-		}
-
-		SVPPQObject* pPPQ( pInspection->GetPPQ() );
-		SVString PPQName;
-		if( nullptr != pPPQ )
-		{
-			PPQName = pPPQ->GetName();
-			ObjectTreeGenerator::Instance().insertTreeObjects( PPQName );
-		}
-
+		ObjectTreeGenerator::Instance().setSelectorType( ObjectTreeGenerator::SelectorTypeEnum::TypeSetAttributes );
+		ObjectTreeGenerator::Instance().setAttributeFilters( SV_PUBLISHABLE );
 		ObjectTreeGenerator::Instance().setLocationFilter( ObjectTreeGenerator::FilterInput, InspectionName, SVString( _T("") ) );
+
 		SVOutputInfoListClass OutputList;
+		GetToolSet()->GetOutputList( OutputList );
+		ObjectTreeGenerator::Instance().insertOutputList( OutputList );
 
-		SVToolSetClass* pToolset( GetToolSet() );
-		if(nullptr != pToolset)
-		{
-			pToolset->GetOutputList( OutputList );
-			ObjectTreeGenerator::Instance().insertOutputList( OutputList );
-		}
-
-		SVStringSet SelectedNames;
-
-		pResultList->m_EnvResults.GetNameSet(SelectedNames);
-		pResultList->m_ToolReferences.GetNameSet(SelectedNames);
-
-		ObjectTreeGenerator::Instance().setCheckItems(SelectedNames);
-
-		CString ResultPicker;
-		ResultPicker.LoadString( IDS_RESULT_PICKER );
+		CString PublishableResults;
+		PublishableResults.LoadString( IDS_PUBLISHABLE_RESULTS );
 		SVString Title;
-		Title.Format( _T("%s - %s"), ResultPicker, InspectionName.c_str() );
-		SVString mainTabTitle = ResultPicker;
+		Title.Format( _T("%s - %s"), PublishableResults, InspectionName.c_str() );
+		SVString mainTabTitle = PublishableResults;
 		CString Filter;
 		Filter.LoadString( IDS_FILTER );
 		SVString filterTabTitle = Filter;
@@ -1604,158 +1672,101 @@ void SVIPDoc::OnResultsPicker()
 
 		if( IDOK == Result )
 		{
-			const std::deque<ObjectSelectorItem>& SelectedItems = ObjectTreeGenerator::Instance().getResults();
-			std::deque<ObjectSelectorItem>::const_iterator it;
-
-			pResultList->m_EnvResults.Clear();
-			pResultList->m_ToolReferences.Clear();
-
-			size_t EnvSize = EnvName.size();
-			size_t PPQSize = PPQName.size();
-
-			for( it = SelectedItems.begin(); it != SelectedItems.end(); it++ )
-			{
-				if(it->isLeaf())
-				{
-					// @WARNING:  It's dangerous to call .Left before checking the length of the string returned by getLocation().
-					if( ( EnvSize > 0 && it->getLocation().Left(EnvSize).Compare(EnvName) == 0 ) || 
-						( PPQSize > 0 && it->getLocation().Left(PPQSize).Compare(PPQName) == 0 ) )
-					{
-						pResultList->m_EnvResults.Insert(it->getLocation());
-					}
-					else
-					{
-						pResultList->m_ToolReferences.Insert(it->getLocation());
-					}
-				}
-			}
+			pInspection->GetPublishList().Refresh( GetToolSet() );
 
 			// Set the Document as modified
 			SetModifiedFlag();
-			RebuildResultsList();
-			UpdateWithLastProduct();
-		}
 
-		UpdateAllViews( nullptr );
-	}
-}
+			long lSize;
+			long l;
+			SVPPQObject* pPPQ( nullptr );
 
-void SVIPDoc::OnPublishedResultsPicker()
-{
-	SVInspectionProcess* pInspection( GetInspectionProcess() );
-	if( nullptr == pInspection ) { return; }
-
-	SVString InspectionName( pInspection->GetName() );
-
-	ObjectTreeGenerator::Instance().setSelectorType( ObjectTreeGenerator::SelectorTypeEnum::TypeSetAttributes );
-	ObjectTreeGenerator::Instance().setAttributeFilters( SV_PUBLISHABLE );
-	ObjectTreeGenerator::Instance().setLocationFilter( ObjectTreeGenerator::FilterInput, InspectionName, SVString( _T("") ) );
-
-	SVOutputInfoListClass OutputList;
-	GetToolSet()->GetOutputList( OutputList );
-	ObjectTreeGenerator::Instance().insertOutputList( OutputList );
-
-	CString PublishableResults;
-	PublishableResults.LoadString( IDS_PUBLISHABLE_RESULTS );
-	SVString Title;
-	Title.Format( _T("%s - %s"), PublishableResults, InspectionName.c_str() );
-	SVString mainTabTitle = PublishableResults;
-	CString Filter;
-	Filter.LoadString( IDS_FILTER );
-	SVString filterTabTitle = Filter;
-	INT_PTR Result = ObjectTreeGenerator::Instance().showDialog( Title, mainTabTitle, filterTabTitle );
-
-	if( IDOK == Result )
-	{
-		pInspection->GetPublishList().Refresh( GetToolSet() );
-
-		// Set the Document as modified
-		SetModifiedFlag();
-
-		long lSize;
-		long l;
-		SVPPQObject* pPPQ( nullptr );
-
-		SVConfigurationObject* pConfig = nullptr;
-		SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
-		if ( nullptr != pConfig )
-		{
-			pConfig->ValidateRemoteMonitorList();
-
-			// Force the PPQs to rebuild
-			pConfig->GetPPQCount( lSize );
-
-			for( l = 0; l < lSize; l++ )
+			SVConfigurationObject* pConfig = nullptr;
+			SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
+			if ( nullptr != pConfig )
 			{
-				pConfig->GetPPQ( l, &pPPQ );
-				if( nullptr != pPPQ )
+				pConfig->ValidateRemoteMonitorList();
+
+				// Force the PPQs to rebuild
+				pConfig->GetPPQCount( lSize );
+
+				for( l = 0; l < lSize; l++ )
 				{
-					pPPQ->RebuildOutputList();
-				}// end if
-			}
-		}// end for
-		TheSVObserverApp.GetIODoc()->UpdateAllViews( nullptr );
+					pConfig->GetPPQ( l, &pPPQ );
+					if( nullptr != pPPQ )
+					{
+						pPPQ->RebuildOutputList();
+					}// end if
+				}
+			}// end for
+			TheSVObserverApp.GetIODoc()->UpdateAllViews( nullptr );
+		}
+		SVSVIMStateClass::RemoveState(SV_STATE_EDITING);
 	}
 }
 
 void SVIPDoc::OnPublishedResultImagesPicker()
 {
 	SVInspectionProcess* pInspection( GetInspectionProcess() );
-
-	if( nullptr == pInspection ) { return; }
-
-	SVDlgImagePicker dlg;
-
-	CString publishedResultString;
-
-	dlg.m_uAttributesDesired = SV_PUBLISH_RESULT_IMAGE;
-	dlg.m_pToolSet = GetToolSet();
-
-	publishedResultString.LoadString ( IDS_PUBLISHABLE_RESULT_IMAGES );
-	CString inspectionName = pInspection->GetName();
-	CString title;
-	title.Format( _T("%s - %s"), publishedResultString, inspectionName );
-	dlg.SetCaptionTitle(title);
-
-	INT_PTR dlgResult = dlg.DoModal();
-	if( dlgResult == IDOK )
+	if( nullptr != pInspection ) 
 	{
-		std::set<SVObjectReference> setChanged;
-		dlg.m_treeImageList.GetChangedObjects( setChanged );
+		SVSVIMStateClass::AddState(SV_STATE_EDITING);
+		SVDlgImagePicker dlg;
+		CString publishedResultString;
 
-		SetModifiedFlag();
+		dlg.m_uAttributesDesired = SV_PUBLISH_RESULT_IMAGE;
+		dlg.m_pToolSet = GetToolSet();
 
-		// reset all images that have changed...
-		std::set<SVObjectReference>::iterator iter;
-		for ( iter = setChanged.begin(); iter != setChanged.end(); ++iter )
+		publishedResultString.LoadString ( IDS_PUBLISHABLE_RESULT_IMAGES );
+		CString inspectionName = pInspection->GetName();
+		CString title;
+		title.Format( _T("%s - %s"), publishedResultString, inspectionName );
+		dlg.SetCaptionTitle(title);
+
+		INT_PTR dlgResult = dlg.DoModal();
+		if( dlgResult == IDOK )
 		{
-			SVObjectReference object = *iter;
-			SVSendMessage ( object.Object(), SVM_RESET_ALL_OBJECTS, NULL, NULL );
-		}
-		SVConfigurationObject* pConfig( nullptr );
-		SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
-		if( nullptr != pConfig )
-		{
-			pConfig->ValidateRemoteMonitorList();
-			TheSVObserverApp.GetIODoc()->UpdateAllViews( NULL );
-		}
-	}// end if
+			std::set<SVObjectReference> setChanged;
+			dlg.m_treeImageList.GetChangedObjects( setChanged );
+
+			SetModifiedFlag();
+
+			// reset all images that have changed...
+			std::set<SVObjectReference>::iterator iter;
+			for ( iter = setChanged.begin(); iter != setChanged.end(); ++iter )
+			{
+				SVObjectReference object = *iter;
+				SVSendMessage ( object.Object(), SVM_RESET_ALL_OBJECTS, NULL, NULL );
+			}
+
+			SVConfigurationObject* pConfig( nullptr );
+			SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
+			if( nullptr != pConfig )
+			{
+				pConfig->ValidateRemoteMonitorList();
+				TheSVObserverApp.GetIODoc()->UpdateAllViews( NULL );
+			}
+		}// end if
+		SVSVIMStateClass::RemoveState(SV_STATE_EDITING);
+	}
 }
 
 void SVIPDoc::OnConditionalHistory()
 {
 	SVInspectionProcess* pInspection( GetInspectionProcess() );
+	if( nullptr != pInspection ) 
+	{
+		SVSVIMStateClass::AddState(SV_STATE_EDITING);
+		CString strTitle = _T("Conditional History - ");
+		strTitle += pInspection->GetName();
+		SVConditionalHistorySheet sheet(strTitle, pInspection );
 
-	if( nullptr == pInspection ) { return; }
+		//remove apply button
+		sheet.m_psh.dwFlags |= PSH_NOAPPLYNOW;
 
-	CString strTitle = _T("Conditional History - ");
-	strTitle += pInspection->GetName();
-	SVConditionalHistorySheet sheet(strTitle, pInspection );
-
-	//remove apply button
-	sheet.m_psh.dwFlags |= PSH_NOAPPLYNOW;
-
-	sheet.DoModal();
+		sheet.DoModal();
+		SVSVIMStateClass::RemoveState(SV_STATE_EDITING);
+	}
 }
 
 void SVIPDoc::OnUpdateConditionalHistory( CCmdUI* pCmdUI )
@@ -1768,87 +1779,88 @@ void SVIPDoc::OnUpdateConditionalHistory( CCmdUI* pCmdUI )
 ////////////////////////////////////////////////////////////////////////////////
 void SVIPDoc::OnSelectPPQVariable()
 {
-	SVPQVariableSelectionDialog dlg;
-
 	SVInspectionProcess* pInspection( GetInspectionProcess() );
-
-	if( nullptr == pInspection ) { return; }
-
-	CString ViewPPQDataCaption;
-	ViewPPQDataCaption.LoadString( IDS_SELECT_DATA_FOR_VIEWING );
-
-	CString inspectionName = pInspection->GetName();
-	CString title;
-	title.Format(_T("%s - %s"),  ViewPPQDataCaption, inspectionName);
-	dlg.SetCaptionTitle(title);
-
-	for( size_t z = 0; z < pInspection->m_PPQInputs.size(); ++z )
+	if( nullptr != pInspection ) 
 	{
-		if( pInspection->m_PPQInputs[z].m_IOEntryPtr->m_Enabled )
+		SVSVIMStateClass::AddState(SV_STATE_EDITING);
+		SVPQVariableSelectionDialog dlg;
+		CString ViewPPQDataCaption;
+		ViewPPQDataCaption.LoadString( IDS_SELECT_DATA_FOR_VIEWING );
+
+		CString inspectionName = pInspection->GetName();
+		CString title;
+		title.Format(_T("%s - %s"),  ViewPPQDataCaption, inspectionName);
+		dlg.SetCaptionTitle(title);
+
+		for( size_t z = 0; z < pInspection->m_PPQInputs.size(); ++z )
 		{
-			dlg.m_ppPPQInputs.push_back( pInspection->m_PPQInputs[ z ].m_IOEntryPtr );
+			if( pInspection->m_PPQInputs[z].m_IOEntryPtr->m_Enabled )
+			{
+				dlg.m_ppPPQInputs.push_back( pInspection->m_PPQInputs[ z ].m_IOEntryPtr );
+			}
 		}
+
+		std::sort( dlg.m_ppPPQInputs.begin(), dlg.m_ppPPQInputs.end(), &SVIOEntryHostStruct::PtrGreater );
+
+		INT_PTR dlgResult = dlg.DoModal();
+		if( dlgResult == IDOK )
+		{
+			size_t l;
+			size_t k;
+			size_t lSize;
+			BOOL bFound;
+			CString strName;
+
+			// Store a list of the viewed PPQ inputs in the SVIPDoc
+			// Make sure to add new and remove old ones
+			for( k = 0; k < pInspection->m_PPQInputs.size(); k++ )
+			{
+				strName = pInspection->m_PPQInputs[k].m_IOEntryPtr->m_pValueObject->GetCompleteObjectName();
+
+				if( pInspection->m_PPQInputs[k].m_IOEntryPtr->m_pValueObject->ObjectAttributesSet() & SV_VIEWABLE )
+				{
+					bFound = FALSE;
+					lSize = pInspection->m_arViewedInputNames.GetSize();
+					for( l = 0; l < lSize; l++ )
+					{
+						if( pInspection->m_arViewedInputNames[l] == strName )
+						{
+							bFound = TRUE;
+							break;
+						}// end if
+					}// end for
+
+					if( !bFound ) { pInspection->m_arViewedInputNames.Add( strName ); }
+				}// end if
+				else
+				{
+					lSize = pInspection->m_arViewedInputNames.GetSize();
+					for( l = 0; l < lSize; l++ )
+					{
+						if( pInspection->m_arViewedInputNames[l] == strName )
+						{
+							pInspection->m_arViewedInputNames.RemoveAt( l );
+							break;
+						}// end if
+					}// end for
+				}// end else
+			}// end for
+
+			// Set the Document as modified
+			SetModifiedFlag();
+
+			SVResultListClass* pResultList = pInspection->GetResultList();
+			if(pResultList)
+			{
+				pResultList->m_PPQInputReferences.BuildReferenceVector(pInspection);
+			}
+
+			pInspection->LastProductNotify();
+
+			m_PPQListTimestamp = SVClock::GetTimeStamp();
+		}// end if
+		SVSVIMStateClass::RemoveState(SV_STATE_EDITING);
 	}
-
-	std::sort( dlg.m_ppPPQInputs.begin(), dlg.m_ppPPQInputs.end(), &SVIOEntryHostStruct::PtrGreater );
-
-	INT_PTR dlgResult = dlg.DoModal();
-	if( dlgResult == IDOK )
-	{
-		size_t l;
-		size_t k;
-		size_t lSize;
-		BOOL bFound;
-		CString strName;
-
-		// Store a list of the viewed PPQ inputs in the SVIPDoc
-		// Make sure to add new and remove old ones
-		for( k = 0; k < pInspection->m_PPQInputs.size(); k++ )
-		{
-			strName = pInspection->m_PPQInputs[k].m_IOEntryPtr->m_pValueObject->GetCompleteObjectName();
-
-			if( pInspection->m_PPQInputs[k].m_IOEntryPtr->m_pValueObject->ObjectAttributesSet() & SV_VIEWABLE )
-			{
-				bFound = FALSE;
-				lSize = pInspection->m_arViewedInputNames.GetSize();
-				for( l = 0; l < lSize; l++ )
-				{
-					if( pInspection->m_arViewedInputNames[l] == strName )
-					{
-						bFound = TRUE;
-						break;
-					}// end if
-				}// end for
-
-				if( !bFound ) { pInspection->m_arViewedInputNames.Add( strName ); }
-			}// end if
-			else
-			{
-				lSize = pInspection->m_arViewedInputNames.GetSize();
-				for( l = 0; l < lSize; l++ )
-				{
-					if( pInspection->m_arViewedInputNames[l] == strName )
-					{
-						pInspection->m_arViewedInputNames.RemoveAt( l );
-						break;
-					}// end if
-				}// end for
-			}// end else
-		}// end for
-
-		// Set the Document as modified
-		SetModifiedFlag();
-
-		SVResultListClass* pResultList = pInspection->GetResultList();
-		if(pResultList)
-		{
-			pResultList->m_PPQInputReferences.BuildReferenceVector(pInspection);
-		}
-
-		pInspection->LastProductNotify();
-
-		m_PPQListTimestamp = SVClock::GetTimeStamp();
-	}// end if
 }// end OnSelectPPQVariable
 
 void SVIPDoc::EditToolSetCondition()
@@ -1950,15 +1962,17 @@ HRESULT SVIPDoc::IsToolSetListUpdated() const
 
 BOOL SVIPDoc::checkOkToDelete( SVTaskObjectClass* pTaskObject )
 {
-	BOOL bRetVal = TRUE;
+	BOOL bRetVal = true;
 
+	SVSVIMStateClass::AddState(SV_STATE_EDITING);
 	// show dependents dialog
 	SVShowDependentsDialog dlg;
 	dlg.PTaskObject = pTaskObject;
 
 	INT_PTR dlgResult = dlg.DoModal();
-	if( dlgResult == IDCANCEL ) { bRetVal = FALSE; }
+	if( IDCANCEL == dlgResult ) { bRetVal = false; }
 
+	SVSVIMStateClass::RemoveState(SV_STATE_EDITING);
 	return bRetVal;
 }
 
@@ -3665,6 +3679,7 @@ void SVIPDoc::OnEditDataDefinitionLists()
 
 	if( nullptr != pInspection )
 	{
+		SVSVIMStateClass::AddState(SV_STATE_EDITING);
 		CString strTitle = _T("Data Definition Lists - ");
 		strTitle += pInspection->GetName();
 		SVDataDefinitionSheet sheet(strTitle, pInspection );
@@ -3673,6 +3688,7 @@ void SVIPDoc::OnEditDataDefinitionLists()
 		sheet.m_psh.dwFlags |= PSH_NOAPPLYNOW;
 
 		sheet.DoModal();
+		SVSVIMStateClass::RemoveState(SV_STATE_EDITING);
 	}
 }
 

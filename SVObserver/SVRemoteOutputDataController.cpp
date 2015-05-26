@@ -976,6 +976,7 @@ void SVRemoteOutputDataController::SetupRemoteOutputGroup(SVConfigurationObject*
 		return;
 	}
 
+	SVSVIMStateClass::AddState(SV_STATE_EDITING);
 	// these containers hold the list of ppq names that will be used for plcs.
 	CStringVec l_AvailablePPQs;
 	// Initialize PPQ - PLCs by selecting from dialog.
@@ -1039,6 +1040,7 @@ void SVRemoteOutputDataController::SetupRemoteOutputGroup(SVConfigurationObject*
 			SVSVIMStateClass::AddState( SV_STATE_MODIFIED );
 		}
 	}
+	SVSVIMStateClass::RemoveState(SV_STATE_EDITING);
 }
 
 bool SVRemoteOutputDataController::RenameGroup( CString oldName, CString newName )

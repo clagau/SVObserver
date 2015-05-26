@@ -474,6 +474,8 @@ BOOL SVPPQWindowClass::OnCmdMsg( UINT nID, int nCode, void* pExtra, AFX_CMDHANDL
 	{
 		if ( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) )
 		{
+			SVSVIMStateClass::AddState( SV_STATE_EDITING );
+
 			int pos = nID - 50;
 	
 			CString strCaption = _T( "PPQ Entry Dialog" );
@@ -521,6 +523,7 @@ BOOL SVPPQWindowClass::OnCmdMsg( UINT nID, int nCode, void* pExtra, AFX_CMDHANDL
 				    }
 			    }// end if( buttonList.GetSize() > pos && buttonList.GetAt( pos ) )
             }// end if (iResult == IDOK)
+			SVSVIMStateClass::RemoveState( SV_STATE_EDITING );
 		}
 		else
 		{
@@ -531,7 +534,6 @@ BOOL SVPPQWindowClass::OnCmdMsg( UINT nID, int nCode, void* pExtra, AFX_CMDHANDL
 			MessageBeep( 0xffffffff );
 		}
 	}
-
 	return CWnd::OnCmdMsg(nID, nCode, pExtra, pHandlerInfo);
 }// end OnCmdMsg
 

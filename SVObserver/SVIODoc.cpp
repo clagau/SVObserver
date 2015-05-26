@@ -209,15 +209,15 @@ BOOL SVIODoc::CanCloseFrame(CFrameWnd* pFrame)
 
 void SVIODoc::OnExtrasTestoutputs()
 {
+	SVSVIMStateClass::AddState( SV_STATE_EDITING );
 	if( TheSVObserverApp.m_svSecurityMgr.SVValidate(SECURITY_POINT_EXTRAS_MENU_TEST_OUTPUTS)  == S_OK )
 	{
 		if ( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) )
 		{
-			SVSVIMStateClass::AddState( SV_STATE_EDITING );
 			SVIOConfigurationInterfaceClass::Instance().TestDigitalOutputs();
-			SVSVIMStateClass::RemoveState( SV_STATE_EDITING );
 		}
 	}
+	SVSVIMStateClass::RemoveState( SV_STATE_EDITING );
 }
 
 void SVIODoc::OnExtrasEditRemoteInputs()

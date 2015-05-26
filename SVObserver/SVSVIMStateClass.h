@@ -79,11 +79,20 @@ public:
 
 private:
 	//************************************
+	// Method: CheckModeNotify
+	// Description: Determine if the mode has changed and fire the notification.
+	// param: svModeEnum  - the current mode
+	// Returns: void
+	//************************************
+	static void CheckModeNotify(svModeEnum mode);
+
+	//************************************
 	// Method:    setEnvironmentParameters
 	// Description:  Set all Environment.Mode parameter.
+	// param: svModeEnum - the current mode
 	// Returns:   void
 	//************************************
-	static void setEnvironmentParameters();
+	static void setEnvironmentParameters(svModeEnum mode);
 
 	//This constructor does nothing.
 	SVSVIMStateClass();

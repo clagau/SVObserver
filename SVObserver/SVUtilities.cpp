@@ -167,10 +167,7 @@ void SVUtilitiesClass::RunUtility(SVSecurityManager* pAccess, UINT uiUtilityId)
                   utilInfo.szCommand);
       ::MessageBox (HWND_DESKTOP, msg, "Failure", MB_OK);
     }
-
   }
-
-  return;
 }
 
 BOOL SVUtilitiesClass::SetupUtilities(CMenu *pMenu)
@@ -184,7 +181,6 @@ BOOL SVUtilitiesClass::SetupUtilities(CMenu *pMenu)
   {	
 	UpdateIni();
   }
-
   return LoadMenu (pMenu);
 }
 

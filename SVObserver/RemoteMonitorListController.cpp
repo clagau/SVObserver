@@ -84,6 +84,7 @@ bool RemoteMonitorListController::IsEmpty() const
 bool RemoteMonitorListController::Setup(SVConfigurationObject* pConfig)
 {
 	bool bRetVal = false;
+	SVSVIMStateClass::AddState(SV_STATE_EDITING);
 	const PPQNameListNames& rPPQList = GetPPQMonitorLists(pConfig);
 	MonitorListAddRemoveDlg dlg(m_list, rPPQList);
 	INT_PTR rc = dlg.DoModal();
@@ -92,6 +93,7 @@ bool RemoteMonitorListController::Setup(SVConfigurationObject* pConfig)
 		bRetVal = true;
 		SetRemoteMonitorList(dlg.GetRemoteMonitorList()); // Update the list
 	}
+	SVSVIMStateClass::RemoveState(SV_STATE_EDITING);
 	return bRetVal;
 }
 

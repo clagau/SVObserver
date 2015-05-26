@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   20 Nov 2014 05:04:28  $
 //******************************************************************************
 
-#ifndef SVREMOTECONTROLCONSTANTS_H
-#define SVREMOTECONTROLCONSTANTS_H
+#pragma once
 
 namespace SVRC
 {
@@ -148,9 +147,26 @@ namespace SVRC
 		const std::string type = "Type";
 		const std::string add_info = "AdditionalInfo";
 	}
-}
 
-#endif
+	namespace stream
+	{
+		const std::string streamName = "StreamName";
+		const std::string startStream = "StartStream";
+		const std::string stopStream = "StopStream";
+		const std::string queryStreamNames = "QueryStreamNames";
+		const std::string queryDataItems = "QueryDataItems";
+	}
+
+	namespace notification
+	{
+		const std::string notification = "Notification";
+		const std::string lastmodified = "LastModified";
+		const std::string currentmode = "CurrentMode";
+		const std::string dataitems = "DataItems";
+		const std::string timestamp = "TimeStamp";
+		const std::string mode = "Mode";
+	}
+}
 
 //******************************************************************************
 //* LOG HISTORY:

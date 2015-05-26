@@ -43,8 +43,9 @@ bool SVSVIMStateClass::AddState( DWORD dwState )
 		SVVisionProcessorHelper::Instance().SetLastModifiedTime();
 		AutoSaver::Instance().SetAutoSaveRequired(true);
 	}
-
-	setEnvironmentParameters();
+	svModeEnum mode = GetMode();
+	CheckModeNotify(mode);
+	setEnvironmentParameters(mode);
 	return true;
 }
 
@@ -56,7 +57,9 @@ bool SVSVIMStateClass::RemoveState( DWORD dwState )
 	//::InterlockedExchange( &m_SVIMState, dwTempState );
 
 	::_InterlockedAnd( &m_SVIMState, ~dwState );
-	setEnvironmentParameters();
+	svModeEnum mode = GetMode();
+	CheckModeNotify(mode);
+	setEnvironmentParameters(mode);
 
 	return true;
 }
@@ -72,7 +75,20 @@ svModeEnum SVSVIMStateClass::GetMode()
 {
 	svModeEnum retVal = SVIM_MODE_UNKNOWN;
 
-	if( SVSVIMStateClass::CheckState( SV_STATE_EDIT ) )
+	// Pending conditions...
+	if( SVSVIMStateClass::CheckState( SV_STATE_START_PENDING |
+		SV_STATE_STARTING |
+		SV_STATE_STOP_PENDING |
+		SV_STATE_STOPING |
+		SV_STATE_CREATING |
+		SV_STATE_LOADING |
+		SV_STATE_SAVING |
+		SV_STATE_CLOSING |
+		SV_STATE_EDITING ) )
+	{
+		retVal = SVIM_MODE_CHANGING;
+	}
+	else if( SVSVIMStateClass::CheckState( SV_STATE_EDIT ) )
 	{
 		retVal = SVIM_MODE_EDIT;
 	}
@@ -88,14 +104,6 @@ svModeEnum SVSVIMStateClass::GetMode()
 	{
 		retVal = SVIM_MODE_TEST;
 	}
-	// Pending conditions...
-	else if( SVSVIMStateClass::CheckState( SV_STATE_START_PENDING ) ||
-		SVSVIMStateClass::CheckState( SV_STATE_STARTING ) ||
-		SVSVIMStateClass::CheckState( SV_STATE_STOP_PENDING ) ||
-		SVSVIMStateClass::CheckState( SV_STATE_STOPING ) )
-	{
-		retVal = SVIM_MODE_CHANGING;
-	}
 	else if( SVSVIMStateClass::CheckState( SV_STATE_READY ) &&
 		!SVSVIMStateClass::CheckState( SV_STATE_EDIT ) )
 	{
@@ -109,16 +117,26 @@ svModeEnum SVSVIMStateClass::GetMode()
 	return retVal;
 }
 
-void SVSVIMStateClass::setEnvironmentParameters()
+void SVSVIMStateClass::CheckModeNotify(svModeEnum mode)
 {
-	long modeValue = static_cast<long>(GetMode());
+	static svModeEnum currentMode = SVIM_MODE_UNKNOWN;
+	if (mode != currentMode)
+	{
+		currentMode = mode;
+		SVVisionProcessorHelper::Instance().FireModeChanged(mode);
+	}
+}
+
+void SVSVIMStateClass::setEnvironmentParameters(svModeEnum mode)
+{
+	long modeValue = static_cast<long>(mode);
 
 	EnvironmentObject::setEnvironmentValue( ::EnvironmentModeValue, modeValue );
-	EnvironmentObject::setEnvironmentValue( ::EnvironmentModeIsRun, static_cast< BOOL >( SVIM_MODE_ONLINE == modeValue ) );
-	EnvironmentObject::setEnvironmentValue( ::EnvironmentModeIsStop, static_cast< BOOL >( SVIM_MODE_OFFLINE == modeValue ) );
-	EnvironmentObject::setEnvironmentValue( ::EnvironmentModeIsRegressionTest, static_cast< BOOL >( SVIM_MODE_REGRESSION == modeValue ) );
-	EnvironmentObject::setEnvironmentValue( ::EnvironmentModeIsTest, static_cast< BOOL >( SVIM_MODE_TEST == modeValue ) );
-	EnvironmentObject::setEnvironmentValue( ::EnvironmentModeIsEdit, static_cast< BOOL >( SVIM_MODE_EDIT == modeValue ) );
+	EnvironmentObject::setEnvironmentValue( ::EnvironmentModeIsRun, static_cast< BOOL >( SVIM_MODE_ONLINE == mode ) );
+	EnvironmentObject::setEnvironmentValue( ::EnvironmentModeIsStop, static_cast< BOOL >( SVIM_MODE_OFFLINE == mode ) );
+	EnvironmentObject::setEnvironmentValue( ::EnvironmentModeIsRegressionTest, static_cast< BOOL >( SVIM_MODE_REGRESSION == mode ) );
+	EnvironmentObject::setEnvironmentValue( ::EnvironmentModeIsTest, static_cast< BOOL >( SVIM_MODE_TEST == mode ) );
+	EnvironmentObject::setEnvironmentValue( ::EnvironmentModeIsEdit, static_cast< BOOL >( SVIM_MODE_EDIT == mode ) );
 }
 
 //******************************************************************************

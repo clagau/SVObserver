@@ -31,6 +31,7 @@
 #pragma endregion Includes
 
 #pragma region Declarations
+enum svModeEnum;
 //This enum is the same as the client interface of the SVRC
 enum SVDataDefinitionListType
 {
@@ -81,6 +82,7 @@ public:
 	HRESULT SetItems( const SVNameStorageMap& p_rItems, SVNameStatusMap& rStatusOfItems );
 
 	HRESULT SetLastModifiedTime();
+	HRESULT FireModeChanged(svModeEnum mode);
 
 	HRESULT QueryProductList( const SVString& rListName, SVNameSet& rNames ) const;
 	HRESULT QueryRejectCondList( const SVString& rListName, SVNameSet& rNames ) const;
@@ -149,12 +151,15 @@ protected:
 	void ThreadProcess( bool& p_WaitForEvents );
 
 	void ProcessLastModified( bool& p_WaitForEvents );
+	void NotifyModeChanged( bool& p_WaitForEvents );
 
 	SVGetItemsFunctorMap m_GetItemsFunctors;
 	SVSetItemsFunctorMap m_SetItemsFunctors;
 
 	__time32_t m_PrevModifiedTime;
 	__time32_t m_LastModifiedTime;
+	svModeEnum m_prevMode;
+	svModeEnum m_lastMode;
 
 	SVAsyncProcedure< SVAPCSignalHandler, SVThreadProcessHandler > m_AsyncProcedure;
 
