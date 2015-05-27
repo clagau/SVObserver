@@ -1657,6 +1657,7 @@ BOOL SVArchiveTool::OnValidate()	// called each onRun
 					//
 					// Make sure we have at least 100 Meg bytes space on the drive.
 					//
+					//For systems wtih 16GB of memory the amount of memory will be 300Meg
 					if ( bOk )
 					{
 						bOk = ((__int64)100000000) < lFreeBytesAvailableToCaller.QuadPart;

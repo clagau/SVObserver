@@ -10,7 +10,7 @@
 //******************************************************************************
 
 template <typename OWNERTYPE>
-inline HRESULT SVMemoryManager<OWNERTYPE>::CreatePool( const SVString& strPoolName, long lPoolSizeKBytes )
+inline HRESULT SVMemoryManager<OWNERTYPE>::CreatePool( const SVString& strPoolName, __int64 lPoolSizeKBytes )
 {
 	HRESULT hr = S_FALSE;
 
@@ -26,7 +26,7 @@ inline HRESULT SVMemoryManager<OWNERTYPE>::CreatePool( const SVString& strPoolNa
 }
 
 template <typename OWNERTYPE>
-inline HRESULT SVMemoryManager<OWNERTYPE>::ReservePoolMemory( const SVString& strPoolName, OWNERTYPE owner, long lSizeInBytes )
+inline HRESULT SVMemoryManager<OWNERTYPE>::ReservePoolMemory( const SVString& strPoolName, OWNERTYPE owner, __int64 lSizeInBytes )
 {
 	HRESULT hr = S_FALSE;
 
@@ -71,17 +71,17 @@ inline HRESULT SVMemoryManager<OWNERTYPE>::ReleasePoolMemory( const SVString& st
 }
 
 template <typename OWNERTYPE>
-bool SVMemoryManager<OWNERTYPE>::CanReservePoolMemory( const SVString& strPoolName, long lReserveSizeInBytes )
+bool SVMemoryManager<OWNERTYPE>::CanReservePoolMemory( const SVString& strPoolName, __int64 lReserveSizeInBytes )
 {
-	long lFreeBytes = FreeBytes( strPoolName );
+	__int64 lFreeBytes = FreeBytes( strPoolName );
 	return lFreeBytes - lReserveSizeInBytes > 0;
 }
 
 
 template <typename OWNERTYPE>
-inline long SVMemoryManager<OWNERTYPE>::FreeBytes( const SVString& strPoolName )
+inline __int64 SVMemoryManager<OWNERTYPE>::FreeBytes( const SVString& strPoolName )
 {
-	long lSize = 0;
+	__int64 lSize = 0;
 
 	SVMemoryPoolMap::iterator iter = m_mapPools.find( strPoolName );
 	if ( iter != m_mapPools.end() )// make sure it exists
@@ -94,9 +94,9 @@ inline long SVMemoryManager<OWNERTYPE>::FreeBytes( const SVString& strPoolName )
 }
 
 template <typename OWNERTYPE>
-inline long SVMemoryManager<OWNERTYPE>::SizeOfPoolBytes( const SVString& strPoolName )
+inline __int64 SVMemoryManager<OWNERTYPE>::SizeOfPoolBytes( const SVString& strPoolName )
 {
-	long lSize = 0;
+	__int64 lSize = 0;
 
 	SVMemoryPoolMap::iterator iter = m_mapPools.find( strPoolName );
 	if ( iter != m_mapPools.end() )// make sure it exists

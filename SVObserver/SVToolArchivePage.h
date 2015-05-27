@@ -9,9 +9,9 @@
 //* .Check In Date   : $Date:   28 Aug 2014 07:25:48  $
 //******************************************************************************
 
-#ifndef __SVTOOLARCHIVEPAGE_INCLUDED__
-#define __SVTOOLARCHIVEPAGE_INCLUDED__
+#pragma once
 
+#pragma region Includes
 #include "ISVPropertyPageDialog.h"
 
 #include "SVOutputInfoListTreeCtrl.h"
@@ -19,28 +19,63 @@
 #include "SVImageListClass.h"
 #include "SVArchiveTool.h"
 #include "SVGlobal.h"
+#pragma endregion Includes
 
 
 class SVToolAdjustmentDialogSheetClass;
 
 class SVToolAdjustmentArchivePage : public CPropertyPage, public ISVPropertyPageDialog
 {
+#pragma region Constructor
 public:
 // Standard constructor
 	SVToolAdjustmentArchivePage( SVToolAdjustmentDialogSheetClass* Parent );
 // Standard destructor
 	~SVToolAdjustmentArchivePage();
+#pragma endregion Constructor
+
+#pragma region Public Methods
 	void BuildImageList();
 
 	// ISVPropertyPageDialog
-	bool QueryAllowExit();
+	bool QueryAllowExit();	
+#pragma endregion Public Methods
 
+#pragma region Public Members
+public:
+	SVToolAdjustmentDialogSheetClass* m_pParentDialog;
+#pragma endregion Public Members
+	
+#pragma region Protected Methods
 protected:
 	//{{AFX_VIRTUAL(SVToolAdjustmentArchivePage)
 	protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV-Unterstützung
 	//}}AFX_VIRTUAL
 
+	//{{AFX_MSG(SVToolAdjustmentArchivePage)
+	virtual BOOL OnInitDialog();
+	afx_msg void OnBrowse();
+	afx_msg void OnBrowse2();
+	afx_msg void OnSelchangeModeCombo();
+	afx_msg void OnChangeEditMaxImages();
+	afx_msg void OnBnClickedHeaderCheck();
+	afx_msg void OnBnClickedHeaderBtn();
+	//}}AFX_MSG
+	DECLARE_MESSAGE_MAP()
+
+	bool GetSelectedHeaderNamePairs( StringPairVect& HeaderPairs );
+	bool StoreHeaderValuesToTool( StringPairVect& HeaderPairs );
+
+	bool CanSelectObjectCallback( SVObjectReference refObject, bool bCurrentState, int );
+	void OnClickResultsTreeCtrl( int Par1 );
+	void UpdateHeaderBtn();
+
+	__int64 CalculateToolMemoryUsage();
+	__int64 CalculateFreeMem();
+#pragma endregion Protected Methods
+
+#pragma region Protected Members
 protected:
 	//{{AFX_DATA(SVToolAdjustmentArchivePage)
 	enum { IDD = IDD_TA_ARCHIVE_PAGE };
@@ -59,55 +94,27 @@ protected:
 	CString	m_strAvailableArchiveImageMemory;
 	//}}AFX_DATA
 
-public:
-	SVToolAdjustmentDialogSheetClass* m_pParentDialog;
-
-protected:
 	SVArchiveTool* m_pTool;
 	SVImageListClass m_imageListAll;
-
 	SVArchiveMethodEnum m_eSelectedArchiveMethod;
-
 	long m_lImagesToArchive;
-	long m_lTotalArchiveImageMemoryAvailable;
-	long m_lInitialArchiveImageMemoryUsage;
-	long m_lInitialArchiveImageMemoryUsageExcludingThisTool;
-	long m_lInitialToolImageMemoryUsage;
-	long m_lToolImageMemoryUsage;
+	__int64 m_lTotalArchiveImageMemoryAvailable;
+	__int64 m_lInitialArchiveImageMemoryUsage;
+	__int64 m_lInitialArchiveImageMemoryUsageExcludingThisTool;
+	__int64 m_lInitialToolImageMemoryUsage;
+	__int64 m_lToolImageMemoryUsage;
 
 	typedef std::map <SVImageClass*, long> MapSelectedImageType;
 	MapSelectedImageType m_mapSelectedImageMemUsage;
 	MapSelectedImageType m_mapInitialSelectedImageMemUsage;
+#pragma endregion Protected Members
 
-	long CalculateToolMemoryUsage();
-	long CalculateFreeMem();
-
-	// Generated message map functions
-protected:
-	//{{AFX_MSG(SVToolAdjustmentArchivePage)
-	virtual BOOL OnInitDialog();
-	afx_msg void OnBrowse();
-	afx_msg void OnBrowse2();
-	afx_msg void OnSelchangeModeCombo();
-	afx_msg void OnChangeEditMaxImages();
-	afx_msg void OnBnClickedHeaderCheck();
-	afx_msg void OnBnClickedHeaderBtn();
-	//}}AFX_MSG
-	DECLARE_MESSAGE_MAP()
-
-	bool GetSelectedHeaderNamePairs( StringPairVect& HeaderPairs );
-	bool StoreHeaderValuesToTool( StringPairVect& HeaderPairs );
-
-	bool CanSelectObjectCallback( SVObjectReference refObject, bool bCurrentState, int );
-	void OnClickResultsTreeCtrl( int Par1 );
-	void UpdateHeaderBtn();
+#pragma region Private Members
 private:
 	CString m_sMaxImageNumber;
 	bool m_bInit;
-
+#pragma endregion Private Members
 };
-
-#endif //__SVTOOLARCHIVEPAGE_INCLUDED__
 
 //******************************************************************************
 //* LOG HISTORY:

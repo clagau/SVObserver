@@ -129,6 +129,12 @@ using namespace Seidenader::SVSystemLibrary;
 
 #define ID_TRIGGER_SETTINGS 21017
 
+static const int UseLargerArchiveMemoryPool = 16000;
+static const int AsyncDefault4GB = 50;
+static const int AsyncDefault16GB = 200;
+static const int GoOfflineDefault4GB = 300;
+static const int GoOfflineDefault16GB = 2000;
+
 LPCTSTR const FRAME_GRABBER_VIPER_DIGITAL                 = (_T("03"));
 
 extern bool g_bUseCorrectListRecursion;
@@ -3329,12 +3335,37 @@ BOOL SVObserverApp::InitInstance()
 	// Close Start Window
 	sWin.DestroyWindow();
 
-	// allocate pools in the memory manager
-	int iGoOfflineBufferSize = INI().GetValueInt( _T("Settings"), _T("ArchiveToolGoOfflineBufferSize"), 300 );
-	int iAsyncBufferSize = INI().GetValueInt( _T("Settings"), _T("ArchiveToolAsyncBufferSize"), 50 );
-	TheSVMemoryManager().CreatePool(ARCHIVE_TOOL_MEMORY_POOL_GO_OFFLINE_NAME, iGoOfflineBufferSize * 1024);
-	TheSVMemoryManager().CreatePool(ARCHIVE_TOOL_MEMORY_POOL_ONLINE_ASYNC_NAME, iAsyncBufferSize * 1024);
+	//Get Amount of System Memory
+	MEMORYSTATUSEX statex;
+	statex.dwLength = sizeof (statex);
+	GlobalMemoryStatusEx (&statex);
+	DWORDLONG AmountOfRam = (statex.ullTotalPhys/1024)/1024;
 
+	int iGoOfflineBufferSize = 0;
+	int iAsyncBufferSize = 0;
+	// allocate pools in the memory manager
+
+	//Log amount of physical memory - may help in debugging issues in the future.
+	CString MessageText;
+	MessageText.Format(SvO::AmountOfSystemMemoryText,AmountOfRam);
+	SvStl::ExceptionMgr1 Exception( SvStl::ExpTypeEnum::LogOnly );
+	Exception.setMessage(SVMSG_SVO_54_EMPTY,MessageText,StdExceptionParams,Memory_Log_45001);
+
+	//if amount of physical memory is around 16 GigE allocate the larger memory pools.
+	if (AmountOfRam >= UseLargerArchiveMemoryPool)
+	{
+		iGoOfflineBufferSize = INI().GetValueInt( _T("Settings"), _T("ArchiveToolGoOfflineBufferSize"), GoOfflineDefault16GB );
+		iAsyncBufferSize = INI().GetValueInt( _T("Settings"), _T("ArchiveToolAsyncBufferSize"), AsyncDefault16GB);
+		TheSVMemoryManager().CreatePool(ARCHIVE_TOOL_MEMORY_POOL_GO_OFFLINE_NAME, iGoOfflineBufferSize * 1024);
+		TheSVMemoryManager().CreatePool(ARCHIVE_TOOL_MEMORY_POOL_ONLINE_ASYNC_NAME, iAsyncBufferSize * 1024);
+	}
+	else
+	{
+		iGoOfflineBufferSize = INI().GetValueInt( _T("Settings"), _T("ArchiveToolGoOfflineBufferSize"), GoOfflineDefault4GB );
+		iAsyncBufferSize = INI().GetValueInt( _T("Settings"), _T("ArchiveToolAsyncBufferSize"), AsyncDefault4GB );
+		TheSVMemoryManager().CreatePool(ARCHIVE_TOOL_MEMORY_POOL_GO_OFFLINE_NAME, iGoOfflineBufferSize * 1024);
+		TheSVMemoryManager().CreatePool(ARCHIVE_TOOL_MEMORY_POOL_ONLINE_ASYNC_NAME, iAsyncBufferSize * 1024);
+	}
 	// Das Hauptfenster ist initialisiert und kann jetzt angezeigt und aktualisiert werden.
 #ifdef _DEBUG
 	//pMainFrame->ShowWindow(SW_SHOWNORMAL);           // 29 Mar 1999 - frb.

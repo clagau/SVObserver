@@ -69,10 +69,6 @@ SVToolAdjustmentArchivePage::~SVToolAdjustmentArchivePage()
 {
 }
 
-/////////////////////////////////////////////////////////////////////////////
-//
-//
-//
 void SVToolAdjustmentArchivePage::DoDataExchange(CDataExchange* pDX)
 {
 	CPropertyPage::DoDataExchange(pDX);
@@ -94,10 +90,6 @@ void SVToolAdjustmentArchivePage::DoDataExchange(CDataExchange* pDX)
 }
 
 
-/////////////////////////////////////////////////////////////////////////////
-//
-//
-//
 BOOL SVToolAdjustmentArchivePage::OnInitDialog() 
 {
 	CWaitCursor wait;                 // 23 Nov 1999 - frb.
@@ -145,7 +137,7 @@ BOOL SVToolAdjustmentArchivePage::OnInitDialog()
 	//store the MaxImageNumber
 	m_sMaxImageNumber = s;
 
-	long lMemUsed = TheSVMemoryManager().ReservedBytes( ARCHIVE_TOOL_MEMORY_POOL_GO_OFFLINE_NAME );
+	__int64 lMemUsed = TheSVMemoryManager().ReservedBytes( ARCHIVE_TOOL_MEMORY_POOL_GO_OFFLINE_NAME );
  	m_lToolImageMemoryUsage = 0;
 	m_lTotalArchiveImageMemoryAvailable = TheSVMemoryManager().SizeOfPoolBytes( ARCHIVE_TOOL_MEMORY_POOL_GO_OFFLINE_NAME );
 	m_lInitialArchiveImageMemoryUsage = lMemUsed;
@@ -173,8 +165,7 @@ BOOL SVToolAdjustmentArchivePage::OnInitDialog()
 	
 	m_pTool->GetFileArchive( csArchiveFileName );
 	m_editArchiveFileName.SetWindowText(csArchiveFileName);
-
-	
+		
 	CString		csImageFolder; 
 	
 	m_pTool->GetImageArchivePath( csImageFolder );
@@ -303,7 +294,6 @@ void SVToolAdjustmentArchivePage::BuildImageList()
 	{
 		m_lInitialArchiveImageMemoryUsageExcludingThisTool -= m_lToolImageMemoryUsage;
 	}
-
 	return;
 }
 
@@ -327,7 +317,7 @@ bool SVToolAdjustmentArchivePage::QueryAllowExit()
 		if (iSize > 0 )
 		{
 			//if memory usage < 0 do not all them to exit
-			long FreeMemory = CalculateFreeMem();
+			__int64 FreeMemory = CalculateFreeMem();
 			if (FreeMemory < 0)
 			{
 				AfxMessageBox("Not enough Available Archive Image Memory. Please deselect some\nimages, decrease \"Max Images\" or change \"When to archive\" mode.");
@@ -342,20 +332,9 @@ bool SVToolAdjustmentArchivePage::QueryAllowExit()
 	m_editArchiveFileName.GetWindowText( csArchiveFileName );
 
 	//check for valid drive for text archive
-	
 	CString szDrive;
 
 	SVCheckPathDir( csArchiveFileName, TRUE );
-	/*
-	bOk = access( csImagePath, 0 ) == 0;
-
-	if ( !bOk )
-	{
-		SVFileNameManagerClass svFileManager;
-
-		bOk = svFileManager.CreatePath( csImagePath );
-	}
-	*/
 
 	if(!m_pTool->ValidateDrive(csArchiveFileName,szDrive) || csArchiveFileName.IsEmpty())
 	{
@@ -364,8 +343,7 @@ bool SVToolAdjustmentArchivePage::QueryAllowExit()
 		AfxMessageBox (temp);
 		return false; 
 	}
-
-
+	
 	//update the image path
 	CString csImageFolder;
 	m_editImageFilesRoot.GetWindowText( csImageFolder );
@@ -380,7 +358,6 @@ bool SVToolAdjustmentArchivePage::QueryAllowExit()
 		AfxMessageBox (temp);
 		return false; 
 	}
-
 
 	//
 	// Check for possible duplicate path to results archive in any other
@@ -404,7 +381,6 @@ bool SVToolAdjustmentArchivePage::QueryAllowExit()
 	m_pTool->m_dwAppendArchiveFile.SetValue( 1, m_checkAppendArchive );
 	m_pTool->m_dwArchiveStopAtMaxImages.SetValue( 1, m_checkStopAtMaxImages );
 
-
 	int iCurSel = m_cbMode.GetCurSel();
 	m_eSelectedArchiveMethod = static_cast <SVArchiveMethodEnum> (m_cbMode.GetItemData(iCurSel));
 	m_pTool->m_evoArchiveMethod.SetValue( 1, static_cast <DWORD> (m_eSelectedArchiveMethod) );
@@ -415,7 +391,6 @@ bool SVToolAdjustmentArchivePage::QueryAllowExit()
 	m_lImagesToArchive = dwTemp;
 	if(dwTemp > 100L)
 	{
-		//dwTemp = 100L;
 		CString s;
 		s.Format(	_T("WARNING: You have selected %ld for the Max Images count"),
 							dwTemp);
@@ -470,12 +445,6 @@ bool SVToolAdjustmentArchivePage::QueryAllowExit()
 	return true;   // Everything is OK
 }
 
-
-/////////////////////////////////////////////////////////////////////////////
-//
-//
-//
-//
 void SVToolAdjustmentArchivePage::OnBrowse() 
 {
 	SVFileNameClass	svfncArchiveFileName;
@@ -492,14 +461,9 @@ void SVToolAdjustmentArchivePage::OnBrowse()
 	}
 }
 
-/////////////////////////////////////////////////////////////////////////////
-//
-//
-//
 void SVToolAdjustmentArchivePage::OnBrowse2() 
 {
 	SVFileNameClass	svfncImageFolder;
-
 	//
 	// Set the default folder to start with.
 	//
@@ -525,7 +489,6 @@ void SVToolAdjustmentArchivePage::OnBrowse2()
 			}
 		}
     }
-
 	m_editImageFilesRoot.SetWindowText (csInitialPath);
 }
 
@@ -540,8 +503,7 @@ bool SVToolAdjustmentArchivePage::CanSelectObjectCallback( SVObjectReference ref
 	//Get amount of memory needed for the selected image.
 	long MemoryForSelectedImage = SVArchiveTool::CalculateImageMemory( pImage );
 	MemoryForSelectedImage *= m_lImagesToArchive;
-
-
+	
 	if (bCurrentState == false)// want to select
 	{	
 		bool bAddItem = true;
@@ -549,12 +511,10 @@ bool SVToolAdjustmentArchivePage::CanSelectObjectCallback( SVObjectReference ref
 		//only check for memory if in mode SVArchiveGoOffline
 		if (SVArchiveGoOffline == m_eSelectedArchiveMethod)
 		{
-			long CurrentToolFreeMem = CalculateFreeMem();
-
+			__int64 CurrentToolFreeMem = CalculateFreeMem();
 			//lDelta is the total amount of memory that will need to be allocated.  Only gets commited once the tool's reset object gets called.
-			long lDelta = MemoryForSelectedImage - m_lInitialToolImageMemoryUsage + m_lToolImageMemoryUsage;
-			
-			long Difference = CurrentToolFreeMem - MemoryForSelectedImage;
+			__int64 lDelta = MemoryForSelectedImage - m_lInitialToolImageMemoryUsage + m_lToolImageMemoryUsage;			
+			__int64 Difference = CurrentToolFreeMem - MemoryForSelectedImage;
 
 			bool bCanReserve = false;
 			if (Difference >= 0)
@@ -595,7 +555,7 @@ bool SVToolAdjustmentArchivePage::CanSelectObjectCallback( SVObjectReference ref
 		//Calculate Free Mem if in SVArchiveGoOffline mode
 		if (SVArchiveGoOffline == m_eSelectedArchiveMethod)
 		{
-			long FreeMem = CalculateFreeMem();
+			__int64 FreeMem = CalculateFreeMem();
 
 			if (FreeMem < 0)
 			{
@@ -603,7 +563,6 @@ bool SVToolAdjustmentArchivePage::CanSelectObjectCallback( SVObjectReference ref
 			}
 		}
 	}
-
 	return bOk;
 }
 
@@ -649,7 +608,7 @@ void SVToolAdjustmentArchivePage::OnSelchangeModeCombo()
 				}
 			}
 			//check to make sure they did not go over the available memory
-			long FreeMem = CalculateFreeMem();
+			__int64 FreeMem = CalculateFreeMem();
 			if (FreeMem < 0)
 			{
 				AfxMessageBox("There is not enough Available Archive Image Memory for your selection in Change Mode.\nAvailable Archive Image Memory is the result of the selected images and the Max Images number.");
@@ -672,7 +631,7 @@ void SVToolAdjustmentArchivePage::OnChangeEditMaxImages()
 			//check to make sure we don't go over the amount of free memory
 			if (SVArchiveGoOffline == m_eSelectedArchiveMethod)
 			{
-				long llFreeMem = CalculateFreeMem();
+				__int64 llFreeMem = CalculateFreeMem();
 				if (llFreeMem >= 0)
 				{
 					m_sMaxImageNumber = strNumImages;
@@ -702,9 +661,9 @@ void SVToolAdjustmentArchivePage::OnChangeEditMaxImages()
 	}
 }
 
-long SVToolAdjustmentArchivePage::CalculateToolMemoryUsage()
+__int64 SVToolAdjustmentArchivePage::CalculateToolMemoryUsage()
 {
-	long ToolImageMemoryUsage = 0;
+	__int64 ToolImageMemoryUsage = 0;
 
 	MapSelectedImageType::const_iterator iter;
 	for (iter = m_mapSelectedImageMemUsage.begin(); iter != m_mapSelectedImageMemUsage.end(); ++iter)
@@ -716,10 +675,10 @@ long SVToolAdjustmentArchivePage::CalculateToolMemoryUsage()
 	return ToolImageMemoryUsage;
 }
 
-long SVToolAdjustmentArchivePage::CalculateFreeMem()
+__int64 SVToolAdjustmentArchivePage::CalculateFreeMem()
 {
 	m_lToolImageMemoryUsage = CalculateToolMemoryUsage();
-	long FreeMem = -1;
+	__int64 FreeMem = -1;
 
 	if (m_lToolImageMemoryUsage >=0)
 	{
@@ -734,9 +693,9 @@ long SVToolAdjustmentArchivePage::CalculateFreeMem()
 }
 bool SVToolAdjustmentArchivePage::GetSelectedHeaderNamePairs( StringPairVect& HeaderPairs)
 {
+	bool bRet = false;
 	if( m_pTool )
 	{
-
 		// Inputs:
 		// Collect and build string pair vector from header Guid and Header Label from the archive tool.
 		// but only add if Guids match the selected object Guids
@@ -771,11 +730,9 @@ bool SVToolAdjustmentArchivePage::GetSelectedHeaderNamePairs( StringPairVect& He
 			SelectedHeaderPairs.push_back(NewPair);
 		}
 
-
 		// copy labels to the selected List...
 		for( StringPairVect::iterator it = SelectedHeaderPairs.begin() ; it != SelectedHeaderPairs.end(); ++it)
 		{
-
 			bool bFound = false;
 			StringPairVect::const_iterator it2 = HeaderPairs.begin();
 			for( ; it2 != HeaderPairs.end() ; ++it2)
@@ -795,13 +752,14 @@ bool SVToolAdjustmentArchivePage::GetSelectedHeaderNamePairs( StringPairVect& He
 		}
 
 		HeaderPairs = SelectedHeaderPairs;
-		return true;
+		bRet = true;
 	}
-	return false;
+	return bRet;
 }
 
 bool SVToolAdjustmentArchivePage::StoreHeaderValuesToTool(StringPairVect& HeaderPairs)
 {
+	bool bRet = false;
 	if( m_pTool )
 	{
 		std::vector<CString> l_HeaderLabelNames;
@@ -815,9 +773,9 @@ bool SVToolAdjustmentArchivePage::StoreHeaderValuesToTool(StringPairVect& Header
 		m_pTool->m_HeaderObjectGUIDs.SetArraySize( static_cast<int>(HeaderPairs.size()) );
 		m_pTool->m_HeaderLabelNames.SetArrayValues(0, l_HeaderLabelNames.begin(), l_HeaderLabelNames.end());
 		m_pTool->m_HeaderObjectGUIDs.SetArrayValues(0, l_HeaderObjectGUIDs.begin(), l_HeaderObjectGUIDs.end());
-		return true;
+		bRet = true;
 	}
-	return false;
+	return bRet;
 }
 
 void SVToolAdjustmentArchivePage::OnBnClickedHeaderBtn()

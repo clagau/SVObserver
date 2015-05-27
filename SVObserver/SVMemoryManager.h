@@ -27,14 +27,14 @@ template <typename OWNERTYPE>
 class SVMemoryManager
 {
 public:
-	HRESULT CreatePool( const SVString& strPoolName, long lPoolSizeKBytes );
-	HRESULT ReservePoolMemory( const SVString& strPoolName, OWNERTYPE owner, long lSizeInBytes );
-	bool    CanReservePoolMemory( const SVString& strPoolName, long lSizeInBytes );
+	HRESULT CreatePool( const SVString& strPoolName, __int64 lPoolSizeKBytes );
+	HRESULT ReservePoolMemory( const SVString& strPoolName, OWNERTYPE owner, __int64 lSizeInBytes );
+	bool    CanReservePoolMemory( const SVString& strPoolName, __int64 lSizeInBytes );
 	HRESULT ReleasePoolMemory( const SVString& strPoolName, OWNERTYPE owner );
 	HRESULT ReleasePoolMemory( const SVString& strPoolName, OWNERTYPE owner, long lSizeInBytes );
-	long FreeBytes( const SVString& strPoolName );
-	long SizeOfPoolBytes( const SVString& strPoolName );
-	long ReservedBytes( const SVString& strPoolName ){ return SizeOfPoolBytes(strPoolName) - FreeBytes(strPoolName);}
+	__int64 FreeBytes( const SVString& strPoolName );
+	__int64 SizeOfPoolBytes( const SVString& strPoolName );
+	__int64 ReservedBytes( const SVString& strPoolName ){ return SizeOfPoolBytes(strPoolName) - FreeBytes(strPoolName);}
 
 private:
 
@@ -52,13 +52,13 @@ private:
 		// MSVC6 produces linker errors 
 		//////////////////////////////////////////////////////////////
 
-		HRESULT Create( long lPoolSizeKBytes )
+		HRESULT Create( __int64 lPoolSizeKBytes )
 		{
 			m_lPoolSize = lPoolSizeKBytes * 1024;
 			return S_OK;
 		}
 		
-		HRESULT ReservePoolMemory( OWNERTYPE owner, long lSizeInBytes )
+		HRESULT ReservePoolMemory( OWNERTYPE owner, __int64 lSizeInBytes )
 		{
 			HRESULT hr = SVMSG_SVO_32_ARCHIVE_TOOL_OUT_OF_MEMORY;
 
@@ -74,7 +74,7 @@ private:
 				SVSingleLock lock( m_critsec );
 				iter = m_mapEntries.insert( SVMemoryPoolEntryPair(owner, SVMemoryPoolEntry()) ).first;
 			}
-			::InterlockedExchangeAdd( const_cast <LPLONG> (&m_lUsed), lSizeInBytes );
+			__int64 value = ::InterlockedExchangeAdd64( const_cast <PLONGLONG> (&m_lUsed), lSizeInBytes );
 			iter->second.lSize += lSizeInBytes;
 
 			return hr;
@@ -89,7 +89,7 @@ private:
 			SVMemoryPoolEntryMap::iterator iter = m_mapEntries.find(owner);
 			if ( iter != m_mapEntries.end() )
 			{
-				::InterlockedExchangeAdd( const_cast <LPLONG> (&m_lUsed), -iter->second.lSize );
+				__int64 value = ::InterlockedExchangeAdd64( const_cast <PLONGLONG> (&m_lUsed), -iter->second.lSize );
 				TRACE(_T("SVMemoryPool::ReleasePoolMemory %08X - %d\n"), owner, iter->second.lSize);
 				SVSingleLock lock( m_critsec );
 				m_mapEntries.erase( m_mapEntries.find(owner) );
@@ -114,7 +114,7 @@ private:
 					TRACE(_T("SVMemoryPool::ReleasePoolMemory %08X - %d >= %d\n"), owner, lSizeInBytes, iter->second.lSize);
 				}
 
-				::InterlockedExchangeAdd( const_cast <LPLONG> (&m_lUsed), -lSizeInBytes );
+				__int64 value = ::InterlockedExchangeAdd64( const_cast <PLONGLONG> (&m_lUsed), -lSizeInBytes );
 				iter->second.lSize -= lSizeInBytes;
 				TRACE(_T("SVMemoryPool::ReleasePoolMemory %08X - %d, remaining = %d\n"), owner, lSizeInBytes, iter->second.lSize);
 				if ( iter->second.lSize <= 0 )	// check less than for safety
@@ -131,12 +131,12 @@ private:
 			return hr;
 		}
 
-		long FreeBytes( )
+		__int64 FreeBytes( )
 		{
 			return m_lPoolSize - m_lUsed;
 		}
 
-		long SizeOfPoolBytes()
+		__int64 SizeOfPoolBytes()
 		{
 			return m_lPoolSize;
 		}
@@ -146,15 +146,15 @@ private:
 		struct SVMemoryPoolEntry
 		{
 			//OWNERTYPE owner;
-			long   lSize;
+			__int64   lSize;
 			SVMemoryPoolEntry() : lSize(0) {}
 		};// end class SVMemoryPoolEntry
 		typedef std::pair <OWNERTYPE, SVMemoryPoolEntry> SVMemoryPoolEntryPair;
 		typedef std::map <OWNERTYPE, SVMemoryPoolEntry> SVMemoryPoolEntryMap;
 
 		SVMemoryPoolEntryMap m_mapEntries;
-		volatile long m_lPoolSize;
-		volatile long m_lUsed;
+		volatile __int64 m_lPoolSize;
+		volatile __int64 m_lUsed;
 		SVContainableCriticalSection m_critsec;
 		//CCriticalSection m_critsec;
 
