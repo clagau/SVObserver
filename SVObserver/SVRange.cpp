@@ -305,6 +305,7 @@ BOOL SVRangeClass::onRun(SVRunStatusClass& RRunStatus)
 			bool isFailed = ( InputValue < failLow || InputValue > failHigh );
 			bool isWarned = ( !isFailed && ( InputValue < warnLow || InputValue > warnHigh ) );
 
+
 			if( isFailed )
 			{
 				RRunStatus.SetFailed();

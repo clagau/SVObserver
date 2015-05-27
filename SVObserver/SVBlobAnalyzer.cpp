@@ -1178,6 +1178,18 @@ BOOL SVBlobAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 
 		// do the following even if no blobs have been found.
 
+		//if number of blobs to process = 0,  make sure the feature do not have values from previous runs.
+		if (0 == m_lNumberOfBlobsToProcess)
+		{
+			for (SVBlobFeatureEnum eFeature = SV_AREA; eFeature < SV_TOPOF_LIST; eFeature = (SVBlobFeatureEnum)(eFeature + 1))
+			{	
+				if (msvszFeaturesEnabled[ eFeature ] == _T('1'))
+				{
+					msvValue[ eFeature ].SetValue( RRunStatus.m_lResultDataIndex, 0.0 );
+				}
+			}
+		}
+
 		register SVBlobFeatureEnum eFeature;
 
 		//

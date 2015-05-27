@@ -231,6 +231,11 @@ BOOL SVResultClass::Run( SVRunStatusClass& RRunStatus )
 		// no results to process.
 		// if there are no results outside the range, we want the ResultObject
 		// to pass.
+
+		//make sure the statusColor is set correctly
+		DWORD dwColor = RRunStatus.GetStatusColor();
+		statusColor.SetValue(RRunStatus.m_lResultDataIndex, dwColor);
+
 		passed.SetValue( RRunStatus.m_lResultDataIndex, true );
 		failed.SetValue( RRunStatus.m_lResultDataIndex, false );
 		warned.SetValue( RRunStatus.m_lResultDataIndex, false );
@@ -241,6 +246,9 @@ BOOL SVResultClass::Run( SVRunStatusClass& RRunStatus )
 		// valid results to process.
 		if( SVTaskObjectListClass::Run(RRunStatus) )
 		{
+			//make sure statusColor is set correctly
+			DWORD dwColor = RRunStatus.GetStatusColor();
+			statusColor.SetValue(RRunStatus.m_lResultDataIndex, dwColor);
 
 			// set our state according to the runStatus
 			passed.SetValue( RRunStatus.m_lResultDataIndex, RRunStatus.IsPassed() );
