@@ -23,18 +23,39 @@ static char THIS_FILE[] = __FILE__;
 
 
 
-SV_IMPLEMENT_CLASS( EQAdjustSize, EQAdjustSizeGuid );
 
 
-EQAdjustSize::EQAdjustSize( SVObjectClass* POwner, int StringResourceID )
+
+EQAdjustSize::EQAdjustSize( long subType, GUID resultGuid,  SVObjectClass* POwner, int StringResourceID )
 	:SVEquationClass( POwner, StringResourceID )
+
 {
-	// Set Embedded defaults
-	enabled.SetDefaultValue( FALSE, TRUE );
+	m_ResultGuid = resultGuid;
+	m_SubType = subType;
+	Init();
 }
 
-EQAdjustSize::~EQAdjustSize()
+
+
+GUID& EQAdjustSize::GetResultGuid()
 {
+		return m_ResultGuid;
+
+}
+
+void EQAdjustSize::Init()
+{
+	enabled.SetDefaultValue( FALSE, TRUE );
+	m_bUseOverlays = false;
+	// Identify our output type
+	outObjectInfo.ObjectTypeInfo.ObjectType = SVEquationObjectType;
+	outObjectInfo.ObjectTypeInfo.SubType = m_SubType;
+	RegisterEmbeddedObject( &m_result, m_ResultGuid, IDS_OBJECTNAME_RESULT, false, SVResetItemNone );
+	// Set Embedded defaults
+	static const double DefaultValue = 100.0;
+	m_result.SetDefaultValue( DefaultValue, TRUE );
+	// Set default inputs and outputs
+	addDefaultInputObjects();
 }
 
 

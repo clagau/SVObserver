@@ -20,8 +20,5 @@ class EQAdjustSizePositionX : public EQAdjustSize
 	SV_DECLARE_CLASS( EQAdjustSizePositionX);
 public:
 	EQAdjustSizePositionX( SVObjectClass* POwner = NULL, int StringResourceID = IDS_CLASSNAME_EQ_ADJUSTSIZE_POSITION_X );
-	virtual ~EQAdjustSizePositionX();
-protected:
-	 void init() ;
-
+	
 };

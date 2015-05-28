@@ -600,6 +600,22 @@ void SVShiftTool::SetAttributeData()
 		}
 	}
 }
+
+
+BOOL SVShiftTool::IsValid()
+{
+	BOOL bValid = TRUE;
+
+	ToolSizeAdjustTask* pToolSizeAdjustTask = nullptr;
+	pToolSizeAdjustTask = ToolSizeAdjustTask::GetToolSizeAdjustTask(this);
+	if(nullptr != pToolSizeAdjustTask)
+	{
+			bValid = pToolSizeAdjustTask->OnValidate();
+	}
+
+	return SVToolClass::IsValid() & bValid ;
+}
+
 #pragma endregion Private Methods
 
 //******************************************************************************

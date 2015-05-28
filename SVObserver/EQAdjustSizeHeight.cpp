@@ -25,30 +25,9 @@ SV_IMPLEMENT_CLASS( EQAdjustSizeHeight, EQAdjustSizeHeightGuid );
 
 
 EQAdjustSizeHeight::EQAdjustSizeHeight( SVObjectClass* POwner, int StringResourceID )
-	:EQAdjustSize( POwner, StringResourceID )
-{
-	init();
-}
-
-EQAdjustSizeHeight::~EQAdjustSizeHeight()
+	:EQAdjustSize( EQSizeHeightType , EQAdjustSizeHeightResultGuid ,POwner, StringResourceID )
 {
 }
 
-void EQAdjustSizeHeight::init()
-{
-	m_bUseOverlays = false;
 
-	// Identify our output type
-	outObjectInfo.ObjectTypeInfo.ObjectType = SVEquationObjectType;
-	outObjectInfo.ObjectTypeInfo.SubType = EQSizeHeightType;
-
-
-	RegisterEmbeddedObject( &m_result, EQAdjustSizeHeightResultGuid, IDS_OBJECTNAME_RESULT, false, SVResetItemNone );
-
-	// Set Embedded defaults
-	m_result.SetDefaultValue( 100.0, TRUE );
-
-	// Set default inputs and outputs
-	addDefaultInputObjects();
-}
 

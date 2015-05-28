@@ -20,6 +20,7 @@
 #include "SVSVIMStateClass.h"
 #include "SVStatusLibrary\ExceptionManager.h"
 #include "TextDefinesSvO.h"
+#include "EQAdjustSize.h"
 namespace SvStl = Seidenader::SVStatusLibrary;
 
 #pragma endregion Includes
@@ -68,16 +69,16 @@ SV_IMPLEMENT_CLASS( ToolSizeAdjustTask, ToolSizeAdjustTaskGuid )
 
 	//Add Evaluation Objects 
 	BOOL ok(FALSE);
-	ok = AddEvaluationObject(&m_InObjectInfoDResult[TSWidth], EQAdjustSizeWidthGuid,EQAdjustSizeWidthResultGuid, _T( "ToolSizeAdjustWidth"));
+	ok = AddEvaluationObject(&m_InObjectInfoDResult[TSWidth], EQAdjustSizeWidthGuid, _T( "ToolSizeAdjustWidth"));
 	ASSERT(ok);
-	ok = AddEvaluationObject(&m_InObjectInfoDResult[TSHeight], EQAdjustSizeHeightGuid,EQAdjustSizeHeightResultGuid , _T( "ToolSizeAdjustHeight"));
-	ASSERT(ok);
-
-	ok = AddEvaluationObject(&m_InObjectInfoDResult[TSPositionX], EQAdjustSizePositionXGuid,EQAdjustSizePositionXResultGuid, _T( "ToolSizeAdjustPositionX"));
-	ASSERT(ok);
-	ok = AddEvaluationObject(&m_InObjectInfoDResult[TSPositionY], EQAdjustSizePositionYGuid, EQAdjustSizePositionYResultGuid , _T( "ToolSizeAdjustPositionY"));
+	ok = AddEvaluationObject(&m_InObjectInfoDResult[TSHeight], EQAdjustSizeHeightGuid , _T( "ToolSizeAdjustHeight"));
 	ASSERT(ok);
 
+	ok = AddEvaluationObject(&m_InObjectInfoDResult[TSPositionX], EQAdjustSizePositionXGuid, _T( "ToolSizeAdjustPositionX"));
+	ASSERT(ok);
+	ok = AddEvaluationObject(&m_InObjectInfoDResult[TSPositionY], EQAdjustSizePositionYGuid,  _T( "ToolSizeAdjustPositionY"));
+	ASSERT(ok);
+	m_Status = S_OK;
 
 	addDefaultInputObjects();
 }
@@ -89,7 +90,7 @@ ToolSizeAdjustTask::~ToolSizeAdjustTask()
 }
 
 
-BOOL ToolSizeAdjustTask::AddEvaluationObject(SVInObjectInfoStruct* pInfo, GUID const &GuidClass, GUID const &GuidResult, LPCTSTR Name)
+BOOL ToolSizeAdjustTask::AddEvaluationObject(SVInObjectInfoStruct* pInfo, GUID const &GuidClass,  LPCTSTR Name)
 {
 	SVObjectClass* pObject(nullptr);
 	SVObjectManagerClass::Instance().ConstructObject( GuidClass, pObject );
@@ -102,7 +103,14 @@ BOOL ToolSizeAdjustTask::AddEvaluationObject(SVInObjectInfoStruct* pInfo, GUID c
 	{
 		return FALSE;
 	}
-	pInfo->SetInputObjectType( GuidResult, SVDoubleValueObjectType );
+	EQAdjustSize* pAdjustSize  = dynamic_cast<EQAdjustSize*> (pObject);
+	if( nullptr == pAdjustSize)
+	{
+		return FALSE;
+	}
+
+
+	pInfo->SetInputObjectType( pAdjustSize->GetResultGuid(), SVDoubleValueObjectType );
 	pInfo->SetObject( GetObjectInfo() );
 	return RegisterInputObject( pInfo, Name );
 
@@ -126,6 +134,18 @@ BOOL  ToolSizeAdjustTask::Run( SVRunStatusClass& RRunStatus )
 
 
 
+BOOL ToolSizeAdjustTask::OnValidate() 
+{
+	
+	BOOL ret = (S_OK ==  m_Status);
+	ret = ret && SVTaskObjectClass::OnValidate();
+
+	if(FALSE == ret)
+	{
+		SetInvalid();
+	}
+	return ret;
+}
 
 int ToolSizeAdjustTask::GetIndex()
 {
@@ -232,6 +252,7 @@ HRESULT ToolSizeAdjustTask::ResetObject()
 	{
 		return S_OK;
 	}
+	m_Status = S_OK;
 
 	SVToolClass* pTool(nullptr);
 	HRESULT hresult = SVTaskObjectClass::ResetObject();
@@ -389,6 +410,7 @@ HRESULT ToolSizeAdjustTask::ResetObject()
 		hresult =SetExtendPropertyAutoReset();
 	}
 
+	m_Status = hresult ; 
 	return hresult;
 }
 
@@ -396,22 +418,6 @@ HRESULT ToolSizeAdjustTask::ResetObject()
 
 
 
-BOOL ToolSizeAdjustTask::OnValidate() 
-{
-	//// function is not called 
-	ASSERT(FALSE);
-	long ModeWidth(TSNone), ModeHeight(TSNone), ModeX(TSNone), ModeY(TSNone);
-
-	HRESULT hresult =  GetModes(ModeWidth, ModeHeight, ModeX, ModeY);
-	BOOL Status = (hresult == S_OK); 
-	Status = Status && SVTaskObjectClass::OnValidate();
-
-	if( !Status )
-	{
-		SetInvalid();
-	}
-	return Status;
-}
 
 
 
@@ -419,7 +425,7 @@ DWORD_PTR	ToolSizeAdjustTask::processMessage( DWORD DwMessageID, DWORD_PTR DwMes
 {
 
 	DWORD_PTR DwResult = SVTaskObjectClass::processMessage( DwMessageID, DwMessageValue, DwMessageContext );
-
+	
 	// Try to process message by yourself...
 	DWORD dwPureMessageID = DwMessageID & SVM_PURE_MESSAGE;
 	switch (dwPureMessageID)
@@ -430,7 +436,10 @@ DWORD_PTR	ToolSizeAdjustTask::processMessage( DWORD DwMessageID, DWORD_PTR DwMes
 			if( ResetStatus != S_OK )
 			{
 				SetInvalid();
-
+				if(GetTool())
+				{
+					GetTool()->SetInvalid();
+				}
 				BOOL SilentReset = static_cast<BOOL> (DwMessageValue);
 				CString ErrorMsg(_T("Error in Reset"));
 				if(GetTool()->GetName())
@@ -646,6 +655,7 @@ ToolSizeAdjustTask*  ToolSizeAdjustTask::AddToFriendlist(SVToolClass *pTool, boo
 	return pToolSizeAdjustTask;
 }
 
+
 HRESULT ToolSizeAdjustTask::EnsureInFriendList(SVToolClass *pTool, bool AllowFullsize , bool AllowAdjustSize , bool AllowAdjustPosition )
 {
 	HRESULT hres(E_FAIL);
@@ -654,12 +664,9 @@ HRESULT ToolSizeAdjustTask::EnsureInFriendList(SVToolClass *pTool, bool AllowFul
 		ASSERT(FALSE);
 		return hres;
 	}
-	SVObjectTypeInfoStruct ToolSizeAdjustTaskInfo;
-	ToolSizeAdjustTaskInfo.ObjectType = SVToolSizeAdjustTaskType;
-	ToolSizeAdjustTaskInfo.SubType = 0;
-	ToolSizeAdjustTask* pToolSizeAdjustTask = nullptr;
-	pToolSizeAdjustTask = dynamic_cast<ToolSizeAdjustTask*>(pTool->GetFriend( ToolSizeAdjustTaskInfo));
-
+	ToolSizeAdjustTask* pToolSizeAdjustTask = nullptr; 
+	pToolSizeAdjustTask  = GetToolSizeAdjustTask(pTool);
+	
 	if(nullptr == pToolSizeAdjustTask)
 	{
 		pToolSizeAdjustTask = AddToFriendlist(pTool, AllowFullsize , AllowAdjustSize , AllowAdjustPosition );
@@ -669,12 +676,23 @@ HRESULT ToolSizeAdjustTask::EnsureInFriendList(SVToolClass *pTool, bool AllowFul
 			::SVSendMessage(pTool, SVM_CREATE_CHILD_OBJECT, reinterpret_cast<DWORD_PTR>(pToolSizeAdjustTask), NULL);
 		}
 	}
-
 	if(nullptr != pToolSizeAdjustTask)
 	{
 		hres = pToolSizeAdjustTask->SetExtendPropertyAutoReset();
 	}
-
 	return hres;
 }
 
+
+ToolSizeAdjustTask* ToolSizeAdjustTask::GetToolSizeAdjustTask(SVObjectClass *pObject)
+{
+	ToolSizeAdjustTask* pToolSizeAdjustTask = nullptr;
+	if(nullptr != pObject)
+	{
+		SVObjectTypeInfoStruct ToolSizeAdjustTaskInfo;
+		ToolSizeAdjustTaskInfo.ObjectType = SVToolSizeAdjustTaskType;
+		ToolSizeAdjustTaskInfo.SubType = 0;
+		pToolSizeAdjustTask = dynamic_cast<ToolSizeAdjustTask*>(pObject->GetFriend( ToolSizeAdjustTaskInfo));
+	}
+	return pToolSizeAdjustTask;
+}

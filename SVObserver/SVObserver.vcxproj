@@ -334,7 +334,7 @@ echo %time%
     <ClCompile Include="EQAdjustSizeHeight.cpp" />
     <ClCompile Include="EQAdjustSizePositionX.cpp" />
     <ClCompile Include="EQAdjustSizePositionY.cpp" />
-    <ClCompile Include="EQAdjustSizeWith.cpp" />
+    <ClCompile Include="EQAdjustSizeWidth.cpp" />
     <ClCompile Include="FormulaController.cpp" />
     <ClCompile Include="ModelessMessageBox.cpp">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -3862,7 +3862,7 @@ echo %time%
     <ClInclude Include="EQAdjustSizeHeight.h" />
     <ClInclude Include="EQAdjustSizePositionX.h" />
     <ClInclude Include="EQAdjustSizePositionY.h" />
-    <ClInclude Include="EQAdjustSizeWith.h" />
+    <ClInclude Include="EQAdjustSizeWidth.h" />
     <ClInclude Include="ErrorNumbers.h" />
     <ClInclude Include="FormulaController.h" />
     <ClInclude Include="ISVCancel.h" />

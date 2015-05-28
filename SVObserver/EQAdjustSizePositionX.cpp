@@ -25,47 +25,11 @@ static char THIS_FILE[] = __FILE__;
 
 SV_IMPLEMENT_CLASS( EQAdjustSizePositionX, EQAdjustSizePositionXGuid );
 
-
 EQAdjustSizePositionX::EQAdjustSizePositionX( SVObjectClass* POwner, int StringResourceID )
-	:EQAdjustSize( POwner, StringResourceID )
+	:EQAdjustSize(EQSizePositionXType,EQAdjustSizePositionXResultGuid , POwner, StringResourceID )
 {
-	init();
-}
-
-EQAdjustSizePositionX::~EQAdjustSizePositionX()
-{
-}
-
-void EQAdjustSizePositionX::init()
-{
-	m_bUseOverlays = false;
-
-	// Identify our output type
-	outObjectInfo.ObjectTypeInfo.ObjectType = SVEquationObjectType;
-	outObjectInfo.ObjectTypeInfo.SubType = EQSizePositionXType;
-
 	
-	RegisterEmbeddedObject( &m_result, EQAdjustSizePositionXResultGuid, IDS_OBJECTNAME_RESULT, false, SVResetItemNone );
-	
-	// Set Embedded defaults
-	m_result.SetDefaultValue( 100.0, TRUE );
-
-	// Set default inputs and outputs
-	addDefaultInputObjects();
 }
 
 
-
-
-
-
-
-
-
-//******************************************************************************
-/// LOG HISTORY:
-//******************************************************************************
-/*
-$Log:    $
-*/
 

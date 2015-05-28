@@ -42,10 +42,18 @@ public:
 	static HRESULT EnsureInFriendList(SVToolClass *pTool, bool AllowFullsize = true, bool AllowAdjustSize = true, bool AllowAdjustPosition = true);
 	
 	
+
 	//************************************
-	//! // Non Routing Version of Validate
-	//	validates only Local Scope	
-	// this function is not called 
+	//! Search and return the first ToolSizeAdjustTask”bject in friendlist of pTool
+	//! \param pTool [in]
+	//! \returns ToolSizeAdjustTask*
+	//************************************
+	static ToolSizeAdjustTask* GetToolSizeAdjustTask(SVObjectClass *pObject);
+	
+	//************************************
+	//! Non routing version  
+	//!	return false if last ResetObject did fail 
+	//! 
 	//************************************
 	virtual BOOL OnValidate() override;
 	
@@ -55,6 +63,7 @@ public:
 	//************************************
 	virtual HRESULT ResetObject() override;
 
+	
 
 	//************************************
 	//! DoNothing in onRun
@@ -115,11 +124,10 @@ protected:
 	//! Add SVEquationObject to the Friendlist 
 	//! \param pInfo [in,out] inObjectinfostruct 
 	//! \param GuidClass [in] Guid of the SVEquationObject  
-	//! \param GuidResult [in] GUID of the Resultvalue 
 	//! \param Name [in] InputObjectname
 	//! \returns BOOL TRUE if sucessfull 
 	//************************************
-	BOOL AddEvaluationObject(SVInObjectInfoStruct* pInfo, GUID const &GuidClass, GUID const &GuidResult, LPCTSTR Name);
+	BOOL AddEvaluationObject(SVInObjectInfoStruct* pInfo, GUID const &GuidClass, LPCTSTR Name);
 	
 	//************************************
 	//! DoNothing in Run
@@ -159,6 +167,8 @@ protected:
 	bool m_AllowAdjustSize;
 	bool m_AllowAdjustPosition;
 
+	
+	HRESULT m_Status; //< the status of last ResetObject()
 	
 	
 	friend class SVToolAdjustmentDialogSizePage;

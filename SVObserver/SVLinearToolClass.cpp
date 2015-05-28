@@ -385,6 +385,21 @@ void SVLinearToolClass::init()
 
 	addDefaultInputObjects();
 }
+
+BOOL SVLinearToolClass::IsValid()
+{
+	BOOL bValid = TRUE;
+
+	ToolSizeAdjustTask* pToolSizeAdjustTask = nullptr;
+	pToolSizeAdjustTask = ToolSizeAdjustTask::GetToolSizeAdjustTask(this);
+	if(nullptr != pToolSizeAdjustTask)
+	{
+			bValid =  pToolSizeAdjustTask->OnValidate();
+	}
+
+	return SVToolClass::IsValid() & bValid ;
+}
+
 #pragma endregion Private Methods
 
 // ******************************************************************************

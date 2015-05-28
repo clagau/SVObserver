@@ -18,7 +18,7 @@ class SVEvaluate;
 class EQAdjustSizeHeight;
 class EQAdjustSizePositionX;
 class	EQAdjustSizePositionY;
-class 	EQAdjustSizeWith;
+class 	EQAdjustSizeWidth;
 class EQAdjustSize;
 class SVToolAdjustmentDialogSheetClass;
 

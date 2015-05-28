@@ -26,6 +26,7 @@
 #include "SVLinearToolClass.h"
 #include "SVExtentPropertiesInfoStruct.h"
 #include "SVMainFrm.h"
+#include "ToolSizeAdjustTask.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -111,6 +112,9 @@ BOOL SVAdjustToolSizePositionDlg::OnInitDialog()
 
 	createIcons();
 	bool l_bShow = ( nullptr != dynamic_cast< AllowResizeToParent* >( m_pToolTask ) );
+
+	bool bShowEditTool =  (nullptr !=	ToolSizeAdjustTask::GetToolSizeAdjustTask(m_pToolTask));
+	GetDlgItem(IDC_BUT_EDIT_TOOL)->ShowWindow( bShowEditTool? SW_SHOW : SW_HIDE );
 
 	// If it's a Linear Tool, hide the "Full Image" button if rotation is enabled.
 	SVLinearToolClass* lt = dynamic_cast< SVLinearToolClass* >( m_pToolTask );

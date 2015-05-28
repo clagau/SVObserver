@@ -1266,7 +1266,7 @@ extern	/*const*/ GUID EQAdjustSizePositionXGuid;
 extern	/*const*/ GUID EQAdjustSizePositionXResultGuid;	
 extern/*const*/ GUID EQAdjustSizePositionYGuid;						
 extern	/*const*/ GUID EQAdjustSizePositionYResultGuid;	
-extern	/*const*/ GUID EQAdjustSizeGuid;
+
 
 
 ////////////////////////////////////////////////////////////////////////////////

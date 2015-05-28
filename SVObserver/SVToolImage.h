@@ -39,6 +39,8 @@ public:
 
 	virtual HRESULT SetImageExtentToParent( unsigned long p_ulIndex );
 
+	virtual BOOL IsValid() override;
+
 protected:
 	virtual BOOL onRun( SVRunStatusClass& RRunStatus );
 

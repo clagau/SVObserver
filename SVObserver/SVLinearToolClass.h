@@ -52,6 +52,9 @@ public:
 	BOOL IsToolRotated();
 
 	virtual HRESULT GetInputImageNames( SVStringValueObjectClass*& p_pSourceNames );
+
+	virtual BOOL IsValid() override;
+
 #pragma endregion Public Methods
 
 	//Embedded Object : Profile Orientation

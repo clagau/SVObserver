@@ -13,14 +13,11 @@
 
 //! \brief Equation class for Formula for Windows Width for ToolsSize Adjust
 
-class EQAdjustSizeWith : public EQAdjustSize
+class EQAdjustSizeWidth : public EQAdjustSize
 {
 
-	SV_DECLARE_CLASS( EQAdjustSizeWith);
+	SV_DECLARE_CLASS( EQAdjustSizeWidth);
 public:
-	EQAdjustSizeWith( SVObjectClass* POwner = NULL, int StringResourceID = IDS_CLASSNAME_EQ_ADJUSTSIZE_WIDTH );
-	virtual ~EQAdjustSizeWith();
-protected:
-	 void init() ;
+	EQAdjustSizeWidth( SVObjectClass* POwner = NULL, int StringResourceID = IDS_CLASSNAME_EQ_ADJUSTSIZE_WIDTH );
 	
-};
+}	;

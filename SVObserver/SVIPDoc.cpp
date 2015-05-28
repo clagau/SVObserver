@@ -1441,12 +1441,15 @@ void SVIPDoc::OnUpdateEditPaste( CCmdUI* pCmdUI )
 
 void SVIPDoc::OnEditTool()
 {
-	return OpenToolAdjustmentDialog(0);
+	static const int ImageTab = 0;
+	return OpenToolAdjustmentDialog(ImageTab);
 }
 
 void SVIPDoc::OnEditToolTab1()
 {
-	return OpenToolAdjustmentDialog(1);
+	
+	static const int SizeTab = 1;
+	return OpenToolAdjustmentDialog(SizeTab);
 }
 
 void SVIPDoc::OpenToolAdjustmentDialog(int tab)

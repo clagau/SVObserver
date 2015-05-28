@@ -24,7 +24,7 @@ public:
 
 	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure );
 	virtual HRESULT ResetObject();
-	virtual BOOL IsValid();
+	virtual BOOL IsValid() override;
 
 	virtual BOOL SetDefaultFormulas();
 

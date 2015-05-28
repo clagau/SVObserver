@@ -15,19 +15,24 @@
 class EQAdjustSize : public SVEquationClass
 {
 
-	SV_DECLARE_CLASS( EQAdjustSize);
+	
 public:
-	EQAdjustSize( SVObjectClass* POwner = NULL , int StringResourceID = 0 );
-	virtual ~EQAdjustSize();
+	EQAdjustSize( long subType, GUID resultGuid,  SVObjectClass* POwner = NULL , int StringResourceID = 0 );
 
 	virtual BOOL OnValidate()    override;
 	virtual HRESULT ResetObject() override ;
+	GUID& GetResultGuid();
+
 
 protected:
+	void Init();
 	virtual BOOL CreateObject(SVObjectLevelCreateStruct *PCreateStruct) override ;
 	virtual BOOL onRun( SVRunStatusClass& RRunStatus ) override ;
 	
 protected:
-	SVDoubleValueObjectClass m_result;			// resultant value
+	SVDoubleValueObjectClass m_result;// resultant value
+	GUID m_ResultGuid;
+	long m_SubType;
+	long m_Type;
 };
 

@@ -54,6 +54,7 @@ public:
 	virtual HRESULT IsInputImage( SVImageClass *p_psvImage );
 	virtual SVTaskObjectClass* GetObjectAtPoint( const SVExtentPointStruct &p_rPoint );
 	virtual HRESULT DoesObjectHaveExtents() const;
+	virtual BOOL IsValid() override;
 #pragma endregion Public Methods
 
 protected:

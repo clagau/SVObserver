@@ -44,6 +44,7 @@ public:
 	//************************************
 	HRESULT GetParentExtent( SVImageExtentClass& rExtent) const;
 	
+	virtual BOOL IsValid() override;
 
 protected:
 	void init();

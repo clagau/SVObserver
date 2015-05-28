@@ -266,6 +266,15 @@ BOOL SVWindowToolClass::IsValid()
 		SVTaskObjectClass* pTask = *it;
 		l_bValid &= pTask->OnValidate();
 	}
+
+
+	ToolSizeAdjustTask* pToolSizeAdjustTask = nullptr;
+	pToolSizeAdjustTask = ToolSizeAdjustTask::GetToolSizeAdjustTask(this);
+	if(pToolSizeAdjustTask)
+	{
+		l_bValid = l_bValid &&  pToolSizeAdjustTask->OnValidate();
+	}
+	
 	return SVToolClass::IsValid() & l_bValid ;
 }
 

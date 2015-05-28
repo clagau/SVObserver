@@ -338,6 +338,19 @@ HRESULT SVLoadImageToolClass::SetImageExtentToParent(unsigned long p_ulIndex )
 	}
 	return l_hrOk;
 }
+BOOL SVLoadImageToolClass::IsValid()
+{
+	BOOL bValid = TRUE;
+
+	ToolSizeAdjustTask* pToolSizeAdjustTask = nullptr;
+	pToolSizeAdjustTask = ToolSizeAdjustTask::GetToolSizeAdjustTask(this);
+	if(nullptr != pToolSizeAdjustTask)
+	{
+			bValid =  pToolSizeAdjustTask->OnValidate();
+	}
+
+	return SVToolClass::IsValid() & bValid ;
+}
 
 //******************************************************************************
 //* LOG HISTORY:
