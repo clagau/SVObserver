@@ -14,14 +14,14 @@
 
 #include "SVTaskObject.h"
 #include "ISVCancel.h"
-#include "ISVPropertyPageDialog.h"
+#include "SVOGui\ISVPropertyPageDialog.h"
 #include "SVMFCControls/SVActiveDisableButton.h"
 
 class SVToolAdjustmentDialogSheetClass;
 class SVExternalTool;
 class SVExternalToolTask;
 
-class SVExternalToolDlg : public CPropertyPage, public ISVPropertyPageDialog
+class SVExternalToolDlg : public CPropertyPage, public SvOg::ISVPropertyPageDialog
 {
 public:
 	SVExternalToolDlg(SVToolAdjustmentDialogSheetClass* pSheet);   // standard constructor

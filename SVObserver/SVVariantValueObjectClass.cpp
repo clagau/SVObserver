@@ -14,6 +14,7 @@
 #include "SVObjectLibrary\SVToolsetScriptTags.h"
 #include "SVObjectLibrary/SVObjectAttributeClass.h"
 #include "SVGlobal.h"
+#include "SVObjectLibrary/GlobalConst.h"
 
 namespace	// only for this file
 {
@@ -344,7 +345,7 @@ HRESULT SVVariantValueObjectClass::SetValueAt( int iBucket, int iIndex, CString 
 	return base::SetValueAt( iBucket, iIndex, _variant_t(strValue) );
 }
 
-long SVVariantValueObjectClass::GetDefaultType( )
+VARTYPE SVVariantValueObjectClass::GetDefaultType( ) const
 {
 	return DefaultValue().vt;
 }
@@ -752,7 +753,7 @@ CString SVVariantValueObjectClass::ToString(const VARIANT& rvt, bool bScript )
 			else
 			{
 				VARTYPE l_OldType = vt.vt;
-				HRESULT hr = ::VariantChangeTypeEx(&vt, &vt, 0x0409, VARIANT_ALPHABOOL, VT_BSTR);	// use United States locale
+				HRESULT hr = ::VariantChangeTypeEx(&vt, &vt, SvOl::LCID_USA, VARIANT_ALPHABOOL, VT_BSTR);	// use United States locale
 				if ( hr == S_OK )
 				{
 					if( bScript)

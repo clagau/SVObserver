@@ -214,6 +214,7 @@ public:
 	afx_msg void OnUpdateExtrasUtilitiesEdit(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateAddLinearTool(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateAddRemoteInputTool(CCmdUI* pCmdUI);
+	afx_msg void OnUpdateAddRingBufferTool(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateAddCylindricalWarpTool( CCmdUI* PCmdUI );
 	afx_msg void OnUpdateAddPerspectiveTool(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateExtrasSecuritySetup(CCmdUI* pCmdUI);

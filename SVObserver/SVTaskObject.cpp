@@ -318,6 +318,15 @@ HRESULT SVTaskObjectClass::RunOnce(IObjectClass* pTool)
 	}
 	return m_taskObjectValueInterface.RunOnce(pToolClass);
 }
+
+SvOi::IOutputInfoListClassSmartPointer SVTaskObjectClass::GetOutputList( ) const
+{
+	SVOutputInfoListClass *outputlist = new SVOutputInfoListClass();
+	SvOi::IOutputInfoListClassSmartPointer retVal = static_cast<SvOi::IOutputInfoListClass*>(outputlist);
+	GetOutputList(*outputlist);
+	return retVal;
+}
+
 #pragma endregion virtual method (ITaskObject)
 
 ////////////////////////////////////////////////////////////////////////////////

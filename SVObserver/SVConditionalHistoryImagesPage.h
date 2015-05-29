@@ -12,7 +12,6 @@
 #pragma once
 
 #pragma region Includes
-#include "ISVPropertyPageDialog.h"
 #include "SVOutputInfoListTreeCtrl.h"
 #include "SVConditionalHistoryBasePage.h"
 #pragma endregion Includes

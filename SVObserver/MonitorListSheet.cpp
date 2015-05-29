@@ -16,7 +16,7 @@
 #include <boost/function.hpp>
 #include <boost/assign/list_of.hpp>
 #include "MonitorListSheet.h"
-#include "ISVPropertyPageDialog.h"
+#include "SVOGui\ISVPropertyPageDialog.h"
 #include "MonitorListValuesPage.h"
 #include "MonitorListImagesPage.h"
 #include "SVConfigurationObject.h"
@@ -360,7 +360,7 @@ void MonitorListSheet::OnOK()
 	// can we exit?
 	for( i = 0; i < iNumPages; i++ )
 	{
-		if ( ISVPropertyPageDialog* pIDlg = dynamic_cast <ISVPropertyPageDialog*> ( GetPage(i) ) )
+		if ( SvOg::ISVPropertyPageDialog* pIDlg = dynamic_cast <SvOg::ISVPropertyPageDialog*> ( GetPage(i) ) )
 		{
 			if ( pIDlg->QueryAllowExit() == false )	// exit not allowed
 			{

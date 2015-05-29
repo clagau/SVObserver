@@ -9,17 +9,17 @@
 //* .Check In Date   : $Date:   23 Apr 2013 09:13:46  $
 //******************************************************************************
 
-#ifndef ISVPROPERTYPAGEDIALOG_H
-#define ISVPROPERTYPAGEDIALOG_H
 #pragma once
 
-class ISVPropertyPageDialog
-{
-public:
-	virtual bool QueryAllowExit() = 0;
-};
+namespace Seidenader {	namespace SVOGui	{
+	class ISVPropertyPageDialog
+	{
+	public:
+		virtual bool QueryAllowExit() = 0;
+	};
+}}  //namespace Seidenader::SVOGui
 
-#endif	//#ifndef ISVPROPERTYPAGEDIALOG_H
+namespace SvOg = Seidenader::SVOGui;
 
 //******************************************************************************
 //* LOG HISTORY:

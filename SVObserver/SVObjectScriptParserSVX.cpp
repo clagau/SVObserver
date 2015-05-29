@@ -19,6 +19,7 @@
 #include "ObjectInterfaces/SVUserMessage.h"
 #include "SVBarCodeAnalyzerClass.h"
 #include "SVOMFCLibrary/SVFunctionProfiler.h"
+#include "SVObjectLibrary/GlobalConst.h"
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -1329,7 +1330,7 @@ BOOL SVObjectScriptParserSVXClass::ExtractValue( SVObjectAttributeClass& dataObj
 				strValue = rExpressionStack.GetAt( riIndex );
 				_variant_t vStringValue;
 				vStringValue.SetString( strValue );
-				HRESULT hr = ::VariantChangeTypeEx(&v, &vStringValue, 0x0409, VARIANT_ALPHABOOL, l_VarType);		// use United States locale
+				HRESULT hr = ::VariantChangeTypeEx(&v, &vStringValue, SvOl::LCID_USA, VARIANT_ALPHABOOL, l_VarType);		// use United States locale
 				ASSERT( hr == S_OK );
 			}
 

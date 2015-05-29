@@ -20,6 +20,7 @@
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVInspectionProcess.h"
 #include "ErrorNumbers.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 #pragma region Constructor
@@ -106,37 +107,6 @@ HRESULT RangeClassHelper::GetAllInspectionData()
 	return hr;
 }
 
-bool RangeClassHelper::Convert2Number(double &Value, LPCTSTR str) const
-{
-	// @TODO:  Better to use SVString here instead of CString.  (Apply this principle throughout the class.)
-	CString number = str;
-	int point = 0;
-	number.Trim();
-	number.TrimLeft( _T("+-."));
-
-	int len = number.GetLength();
-	if(len == 0) { return false; }
-
-	for(int i = 0; i < len ; i++)
-	{
-		TCHAR tchar = number.GetAt(i);
-		if( tchar == _T('.'))
-		{
-			if(++point > 1)
-			{
-				return false;
-			}
-		}
-		else if( !_istdigit( tchar ) )
-		{
-			return false;
-		}
-	}
-
-	Value = _ttof(str);
-	return true;
-}
-
 HRESULT RangeClassHelper::SetInternalData(ERange er, LPCTSTR lp, CString &Errorsmsg)
 {
 	HRESULT hr = S_OK;
@@ -154,7 +124,8 @@ HRESULT RangeClassHelper::SetInternalData(ERange er, LPCTSTR lp, CString &Errors
 		return -Err_16022;
 	}
 
-	bool isNumber = Convert2Number( val, lp );
+	SVString text = lp;
+	bool isNumber = text.Convert2Number<double>(val, true);
 	if( isNumber )
 	{
 		csText = _T("");

@@ -259,8 +259,10 @@ namespace Seidenader
 		#pragma region Inline
 		#include "ObjectTreeGenerator.inl"
 		#pragma endregion Inline
-	} //namespace SVObserver
+	} //namespace ObjectSelectorLibrary
 } //namespace Seidenader
+
+namespace SvOsl = Seidenader::ObjectSelectorLibrary;
 
 //******************************************************************************
 //* LOG HISTORY:

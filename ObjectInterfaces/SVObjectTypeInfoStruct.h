@@ -129,6 +129,8 @@
 			SVLinearToolObjectType						= 0x00000026,
 			SVRemoteInputToolObjectType					= 0x00000027,
 			SVShiftToolObjectType						= 0x00000028,
+			SVResizeToolObjectType						= 0x00000029,
+			SVRingBufferToolObjectType					= 0x0000002a,
 
 			// Analyzer Subtypes:	
 			SVPixelAnalyzerObjectType				    = 0x00000100,

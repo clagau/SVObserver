@@ -17,7 +17,7 @@
 #include "ObjectInterfaces\IOutputInfoListClass.h"
 #include "SVOutObjectInfoStruct.h"
 
-class SVOutputInfoListClass : virtual public SvOi::IOutputInfoListClass
+class SVOutputInfoListClass : public SvOi::IOutputInfoListClass
 {
 public:
 	typedef SVOutObjectInfoStructPtrArray::value_type value_type;

@@ -173,6 +173,15 @@ public:
 	void Format( const SVElementType* lpszFormat, ... );
 	void Format( const wchar_t* lpszFormat, ... );
 
+	//************************************
+	/// Check if string can convert to a number and return this if possible.
+	/// \param Value [out] The converted number.
+	/// \param failIfLeftoverChars [in] If value == true, it retrun also false if after convert unused character left (expect of spaces), If value == false, it return only false if convert failed.
+	/// \returns bool Return if convert was succeeded.
+	//************************************
+	template<typename T>
+	bool Convert2Number(T& Value, bool failIfLeftoverChars = false);
+
 	static std::locale & current_locale()
 	{
 		static std::locale loc("");
@@ -197,6 +206,9 @@ bool operator!=( LPCTSTR psz1, const SVString& str2 );
 typedef std::vector< SVString > SVStringArray;
 typedef std::set< SVString > SVStringSet;
 typedef std::map< SVString, SVString > TranslateMap;
+
+template bool SVString::Convert2Number(double&, bool);
+template bool SVString::Convert2Number(long&, bool);
 
 //******************************************************************************
 //* LOG HISTORY:

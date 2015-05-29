@@ -336,6 +336,7 @@ echo %time%
     <ClCompile Include="EQAdjustSizePositionY.cpp" />
     <ClCompile Include="EQAdjustSizeWidth.cpp" />
     <ClCompile Include="FormulaController.cpp" />
+    <ClCompile Include="LinkedValue.cpp" />
     <ClCompile Include="ModelessMessageBox.cpp">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -386,6 +387,7 @@ echo %time%
       <MultiProcessorCompilation Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</MultiProcessorCompilation>
       <MultiProcessorCompilation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</MultiProcessorCompilation>
     </ClCompile>
+    <ClCompile Include="RingBufferTool.cpp" />
     <ClCompile Include="RootObject.cpp" />
     <ClCompile Include="MonitorListAddRemoveDlg.cpp" />
     <ClCompile Include="MonitorListPropertyDlg.cpp" />
@@ -3866,7 +3868,7 @@ echo %time%
     <ClInclude Include="ErrorNumbers.h" />
     <ClInclude Include="FormulaController.h" />
     <ClInclude Include="ISVCancel.h" />
-    <ClInclude Include="ISVPropertyPageDialog.h" />
+    <ClInclude Include="LinkedValue.h" />
     <ClInclude Include="ModelessMessageBox.h" />
     <ClInclude Include="MonitorListBasePage.h" />
     <ClInclude Include="MonitorListImagesPage.h" />
@@ -3887,6 +3889,7 @@ echo %time%
     <ClInclude Include="ResultViewPPQInputReferences.h" />
     <ClInclude Include="ResultViewReferences.h" />
     <ClInclude Include="ResultViewToolReferences.h" />
+    <ClInclude Include="RingBufferTool.h" />
     <ClInclude Include="RootObject.h" />
     <ClInclude Include="SoftwareTriggerDlg.h" />
     <ClInclude Include="FramedSplitterWnd.h" />

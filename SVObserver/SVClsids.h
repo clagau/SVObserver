@@ -472,6 +472,15 @@ extern /*const*/ GUID SVResultClassGuid;
 // GUID for the SVRangeClass
 extern /*const*/ GUID SVRangeClassGuid;
 
+///////////////////////////////////////////////////
+// GUIDs for the RingBuffer-Tool
+///////////////////////////////////////////////////
+extern /*const*/ GUID RingBufferToolGuid;
+extern /*const*/ GUID RingBuffer_DepthGuid;
+extern /*const*/ GUID RingBuffer_Index1Guid;
+extern /*const*/ GUID RingBuffer_Index2Guid;
+extern /*const*/ GUID RingBuffer_FlagOfOutputImagesGuid;
+
 // GUIDs for the Embedded Objects in the SVRangeClass
 extern /*const*/ GUID SVRangeClassFailHighObjectGuid;
 extern /*const*/ GUID SVRangeClassFailLowObjectGuid;

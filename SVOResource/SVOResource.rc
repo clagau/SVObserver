@@ -102,7 +102,7 @@ IDB_KNOB_FACE           BITMAP                  "RES\\SVKnob.bmp"
 IDB_KNOB_MASK           BITMAP                  "RES\\SVKnob_mask.bmp"
 IDB_SVDOT_FACE          BITMAP                  "RES\\SVKnobDot.bmp"
 IDB_SVDOT_MASK          BITMAP                  "RES\\SVKnobDot_mask.bmp"
-IDB_KOERBER              BITMAP                  "res\\Korber.bmp"
+IDB_KOERBER             BITMAP                  "res\\Korber.bmp"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -388,6 +388,22 @@ BEGIN
     PUSHBUTTON      "Set Feature &Properties",IDC_BUTTON_SET_FEATURE_PROPERTIES,257,100,55,24,BS_MULTILINE,WS_EX_CLIENTEDGE | WS_EX_STATICEDGE
     COMBOBOX        IDC_BLOB_COLOR,47,201,48,43,CBS_DROPDOWNLIST | CBS_SORT | WS_VSCROLL | WS_TABSTOP
     LTEXT           "Blob Color",IDC_STATIC,7,204,33,8
+END
+
+IDD_TA_RING_PARAMETER_DIALOG DIALOGEX 0, 0, 453, 242
+STYLE DS_SETFONT | WS_CHILD | WS_DISABLED | WS_CAPTION
+CAPTION "Parameter"
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    CONTROL         "Ring Depth:",IDC_STATIC,"Static",SS_LEFTNOWORDWRAP | SS_CENTERIMAGE | WS_GROUP,7,7,50,13
+    EDITTEXT        IDC_EDIT_RING_DEPTH,73,7,105,13,ES_AUTOHSCROLL | ES_WANTRETURN,WS_EX_CLIENTEDGE | WS_EX_STATICEDGE
+    PUSHBUTTON      "",IDC_BUTTON_RING_DEPTH,182,7,11,12,BS_BITMAP
+    CONTROL         "Image index 1:",IDC_STATIC,"Static",SS_LEFTNOWORDWRAP | SS_CENTERIMAGE | WS_GROUP,7,58,50,13
+    EDITTEXT        IDC_EDIT_IMAGE_INDEX1,73,58,105,13,ES_AUTOHSCROLL | ES_WANTRETURN,WS_EX_CLIENTEDGE | WS_EX_STATICEDGE
+    PUSHBUTTON      "",IDC_BUTTON_IMAGE_INDEX1,182,58,11,12,BS_BITMAP
+    CONTROL         "Image index 2:",IDC_STATIC,"Static",SS_LEFTNOWORDWRAP | SS_CENTERIMAGE | WS_GROUP,7,78,50,13
+    EDITTEXT        IDC_EDIT_IMAGE_INDEX2,73,78,105,13,ES_AUTOHSCROLL | ES_WANTRETURN,WS_EX_CLIENTEDGE | WS_EX_STATICEDGE
+    PUSHBUTTON      "",IDC_BUTTON_IMAGE_INDEX2,182,78,11,12,BS_BITMAP
 END
 
 IDD_TA_IMAGE_DIALOG DIALOGEX 0, 0, 453, 222
@@ -2730,7 +2746,6 @@ BEGIN
     LTEXT           "",IDC_MESSAGE_DETAILS,17,77,260,94,NOT WS_VISIBLE
 END
 
-
 /////////////////////////////////////////////////////////////////////////////
 //
 // DESIGNINFO
@@ -2816,6 +2831,14 @@ BEGIN
         RIGHTMARGIN, 317
         TOPMARGIN, 7
         BOTTOMMARGIN, 251
+    END
+
+    IDD_TA_RING_PARAMETER_DIALOG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 446
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 235
     END
 
     IDD_TA_IMAGE_DIALOG, DIALOG
@@ -3765,7 +3788,7 @@ BEGIN
             MENUITEM "&Customize Utilities",        ID_EXTRAS_UTILITIES_EDIT,MFT_STRING,MFS_ENABLED
             MENUITEM MFT_SEPARATOR
         END
-        MENUITEM "AutoSave",             ID_EXTRAS_ENABLEAUTOSAVE,MFT_STRING,MFS_ENABLED
+        MENUITEM "AutoSave",                    ID_EXTRAS_ENABLEAUTOSAVE,MFT_STRING,MFS_ENABLED
     END
     POPUP "&Help",                          65535,MFT_STRING | MFT_RIGHTJUSTIFY,MFS_ENABLED
     BEGIN
@@ -3887,7 +3910,7 @@ BEGIN
         MENUITEM MFT_SEPARATOR
         MENUITEM "Edit Tool Set &Condition",    ID_EDIT_EDITTOOLSETCONDITION,MFT_STRING,MFS_ENABLED
         MENUITEM "Edit T&ool",                  ID_EDIT_EDITTOOL,MFT_STRING,MFS_ENABLED
-        MENUITEM "Adjust Tool Size and Position\tCtrl+A",  ID_EDIT_ADJUSTTOOLPOSITION,MFT_STRING,MFS_ENABLED
+        MENUITEM "Adjust Tool Size and Position\tCtrl+A", ID_EDIT_ADJUSTTOOLPOSITION,MFT_STRING,MFS_ENABLED
         MENUITEM MFT_SEPARATOR
         MENUITEM "Adjust &Light Reference",     ID_EDIT_ADJUSTLIGHTREFERENCE,MFT_STRING,MFS_ENABLED
         MENUITEM "Adjust L&UT",                 ID_EDIT_ADJUSTLUT,MFT_STRING,MFS_ENABLED
@@ -3919,6 +3942,7 @@ BEGIN
         MENUITEM "&External Tool\tCtrl+Alt+E",  ID_ADD_EXTERNAL_TOOL,MFT_STRING,MFS_ENABLED
         MENUITEM "Li&near Tool\tCtrl+Alt+N",    ID_ADD_LINEARTOOL,MFT_STRING,MFS_ENABLED
         MENUITEM "Remote Input Tool\tCtrl+Alt+R", ID_ADD_REMOTEINPUTTOOL,MFT_STRING,MFS_ENABLED
+        MENUITEM "Ring &Buffer Tool\tCtrl+Alt+B", ID_ADD_RINGBUFFERTOOL,MFT_STRING,MFS_ENABLED
         MENUITEM MFT_SEPARATOR
         POPUP "Warp Tools",                     65535,MFT_STRING,MFS_ENABLED
         BEGIN
@@ -4088,7 +4112,7 @@ BEGIN
         MENUITEM SEPARATOR
         MENUITEM "Copy Tool",                   ID_EDIT_COPY
         MENUITEM "Paste Tool",                  ID_EDIT_PASTE
-        MENUITEM "Adjust Tool Size and Position",        ID_EDIT_ADJUSTTOOLPOSITION
+        MENUITEM "Adjust Tool Size and Position", ID_EDIT_ADJUSTTOOLPOSITION
     END
 END
 
@@ -4191,7 +4215,6 @@ BEGIN
     END
 END
 
-
 /////////////////////////////////////////////////////////////////////////////
 //
 // Accelerator
@@ -4202,6 +4225,7 @@ BEGIN
     "0",            ID_VIEW_RESETCOUNTSALLIPS, VIRTKEY, CONTROL, NOINVERT
     "A",            ID_EDIT_ADJUSTTOOLPOSITION, VIRTKEY, CONTROL, NOINVERT
     "A",            ID_ADD_ARCHIVETOOL,     VIRTKEY, CONTROL, ALT, NOINVERT
+    "B",            ID_ADD_RINGBUFFERTOOL,  VIRTKEY, CONTROL, ALT, NOINVERT
     "C",            ID_ADD_COLORTOOL,       VIRTKEY, CONTROL, ALT, NOINVERT
     "C",            ID_EDIT_COPY,           VIRTKEY, CONTROL, NOINVERT
     "D",            ID_MODE_EDIT,           VIRTKEY, CONTROL, NOINVERT
@@ -4504,7 +4528,6 @@ BEGIN
 0x6857, 0x7469, 0x0065, 
     0
 END
-
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -5930,6 +5953,11 @@ BEGIN
     IDS_OBJECTNAME_FAIL_HIGH_INDIRECT "Fail High Indirect"
     IDS_OBJECTNAME_WARN_HIGH_INDIRECT "Warn High Indirect"
     IDS_CLASSNAME_TOOLSIZEADJUSTTASK "ToolSizeAdjustTask"
+    IDS_CLASSNAME_RINGBUFFER_TOOL "Ring Buffer Tool"
+    IDS_OBJECTNAME_RINGBUFFER_DEPTH "Buffer depth"
+    IDS_OBJECTNAME_RINGBUFFER_INDEX1 "Image Index 1"
+    IDS_OBJECTNAME_RINGBUFFER_INDEX2 "Image Index 2"
+    IDS_OBJECTNAME_RINGBUFFER_FLAG "Flag of output images"
 END
 
 STRINGTABLE
@@ -6315,8 +6343,6 @@ END
 
 #endif    // Englisch (USA) resources
 /////////////////////////////////////////////////////////////////////////////
-
-
 
 #ifndef APSTUDIO_INVOKED
 /////////////////////////////////////////////////////////////////////////////

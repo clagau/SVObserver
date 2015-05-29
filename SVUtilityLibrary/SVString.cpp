@@ -14,6 +14,7 @@
 #include <algorithm>
 #include <functional>
 #include <locale>
+#include <sstream>
 
 /////////////////////////////////////////////////////////////////////////////
 // String formatting
@@ -726,6 +727,20 @@ void SVString::Format( const wchar_t* lpszFormat, ...)
 			
 		va_end(argList);
 	}
+}
+
+template<typename T>
+bool SVString::Convert2Number(T& Value, bool failIfLeftoverChars)
+{
+	SVString text = *this;
+	text.Trim();
+	std::istringstream stream(text.c_str());
+	char c;
+	if (!(stream >> Value) || (failIfLeftoverChars && stream.get(c)))
+	{
+		return false;
+	}
+	return true;
 }
 
 int SVString::Compare(const SVString & p_str) const

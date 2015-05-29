@@ -96,6 +96,7 @@
 #include "TextDefinesSvO.h"
 #include "SVShiftTool.h"
 #include "SVShiftToolUtility.h"
+#include "RingBufferTool.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -178,6 +179,7 @@ BEGIN_MESSAGE_MAP(SVIPDoc, CDocument)
 	ON_UPDATE_COMMAND_UI_RANGE( ID_VIEW_TOOLSETDRAW_POP_BASE + 1, ID_VIEW_TOOLSETDRAW_POP_MAX, OnUpdateViewToolSetDrawSubMenus )
 	ON_UPDATE_COMMAND_UI(ID_EDIT_DATA_DEFINITION_LISTS, &SVIPDoc::OnUpdateEditDataDefinitionLists)
 	ON_COMMAND(ID_ADD_REMOTEINPUTTOOL, OnAddRemoteInputTool)
+	ON_COMMAND(ID_ADD_RINGBUFFERTOOL, OnAddRingBufferTool)
 	ON_UPDATE_COMMAND_UI(ID_EDIT_ADJUSTLIGHTREFERENCE, OnAllowAdjustLightReference)
 	ON_UPDATE_COMMAND_UI(ID_EDIT_ADJUSTLUT, OnAllowAdjustLut)
 	ON_UPDATE_COMMAND_UI(ID_ADD_STARTTOOLGROUPING, OnUpdateAddStartToolGrouping)
@@ -1125,6 +1127,15 @@ void SVIPDoc::OnAddTransformationTool()
 void SVIPDoc::OnAddRemoteInputTool()
 {
 	SVToolClass* pTool = new SVRemoteInputTool;
+
+	if( AddTool( pTool ) ) { return; }
+
+	if( pTool ) { delete( pTool ); }
+}
+
+void SVIPDoc::OnAddRingBufferTool()
+{
+	SVToolClass* pTool = new RingBufferTool;
 
 	if( AddTool( pTool ) ) { return; }
 

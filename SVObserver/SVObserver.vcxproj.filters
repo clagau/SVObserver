@@ -1565,6 +1565,12 @@
     <ClCompile Include="EQAdjustSizeWidth.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="RingBufferTool.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="LinkedValue.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Midl Include="SVObserver.odl">
@@ -1573,9 +1579,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\AutoBuild\AutoBuild.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ISVPropertyPageDialog.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ModelessMessageBox.h">
@@ -3229,6 +3232,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="EQAdjustSizeWidth.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RingBufferTool.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LinkedValue.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

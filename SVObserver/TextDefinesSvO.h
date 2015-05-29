@@ -57,7 +57,9 @@ namespace Seidenader
 		const TCHAR* const AmountOfSystemMemoryText = _T("Amount of physical memory = %d");
 		const TCHAR* const SizeAdjustTextFormula = _T( "Formula" );
 		const TCHAR* const SizeAdjustTextFullSize = _T( "Auto fit" );
-
+		const TCHAR* const RingBuffer_Depth_Invalid_Value = _T( "RingBuffer Depth has to be between %d and %d, current %d" );
+		const TCHAR* const RingBuffer_ImageIndex1Connector = _T( "RingBufferImageIndex1Connector" );
+		const TCHAR* const RingBuffer_ImageIndex2Connector = _T( "RingBufferImageIndex2Connector" );
 	}
 }
 namespace SvO = Seidenader::SVObserver;

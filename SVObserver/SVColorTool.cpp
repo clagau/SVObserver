@@ -168,7 +168,7 @@ HRESULT SVColorToolClass::ResetObject()
 
 HRESULT SVColorToolClass::DoesObjectHaveExtents() const
 {
-	return SV_SUCCESS_SVOBSERVER_2000_HAS_EXTENTS;
+	return SV_SUCCESS_SVOBSERVER_2000_DOESNOTHAVE_EXTENTS;
 }
 
 HRESULT SVColorToolClass::UpdateImageWithExtent( unsigned long p_Index )

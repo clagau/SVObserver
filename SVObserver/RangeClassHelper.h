@@ -35,14 +35,6 @@ public:
 
 #pragma region Public Methods
 	//************************************
-	// Description: get the double value from string
-	// Parameter:  Value <out>:  value
-	// Parameter:  str <in>:  the string to be checked
-	// Returns:  bool:  true if string is a valid number
-	//************************************
-	bool Convert2Number(double& Value, LPCTSTR str) const;
-
-	//************************************
 	// Description:  implements interface of SVTaskObjectInterfaceClass Set internal value to m_pRange
 	// Returns:  HRESULT:  S_OK if successful
 	//************************************

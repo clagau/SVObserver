@@ -12,7 +12,6 @@
 #pragma once
 
 #pragma region Includes
-#include "ISVPropertyPageDialog.h"
 #include "MonitorListBasePage.h"
 #pragma endregion Includes
 

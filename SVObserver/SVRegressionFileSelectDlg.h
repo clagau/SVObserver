@@ -20,7 +20,6 @@
 
 #include "SVRegressionTestStruct.h"
 #include "SVRegressionFileSelectSheet.h"
-#include "ISVPropertyPageDialog.h"
 
 /////////////////////////////////////////////////////////////////////////////
 // CSVRegressionFileSelectDlg dialog

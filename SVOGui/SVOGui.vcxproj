@@ -226,10 +226,12 @@
     <ClCompile Include="SVThinningFilterDlg.cpp" />
     <ClCompile Include="SVToolAdjustmentDialogFilterPageClass.cpp" />
     <ClCompile Include="SVWaterShedFilterDlg.cpp" />
+    <ClCompile Include="TADialogRingBufferParameterPage.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CDSVPictureDisplay.h" />
     <ClInclude Include="Custom2FilterDlg.h" />
+    <ClInclude Include="ISVPropertyPageDialog.h" />
     <ClInclude Include="PictureDisplay.h" />
     <ClInclude Include="StdAfx.h" />
     <ClInclude Include="SVAvailableFilterListComboBoxClass.h" />
@@ -241,6 +243,8 @@
     <ClInclude Include="SVThinningFilterDlg.h" />
     <ClInclude Include="SVToolAdjustmentDialogFilterPageClass.h" />
     <ClInclude Include="SVWaterShedFilterDlg.h" />
+    <ClInclude Include="TADialogRingBufferParameterPage.h" />
+    <ClInclude Include="TextDefinesSvOg.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

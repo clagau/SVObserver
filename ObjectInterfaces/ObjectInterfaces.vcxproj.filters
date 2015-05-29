@@ -96,5 +96,8 @@
     <ClInclude Include="SVUserMessage.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="IRingBufferTool.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

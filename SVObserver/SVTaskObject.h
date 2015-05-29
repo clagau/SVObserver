@@ -103,6 +103,7 @@ public:
 	virtual BOOL RegisterEmbeddedObject( SVLineClass* p_psvEmbeddedObject, const GUID& p_rguidEmbeddedID, int p_iStringResourceID );
 	virtual BOOL RegisterEmbeddedObject( SVValueObjectClass* p_psvEmbeddedObject, const GUID& p_rguidEmbeddedID, int p_iStringResourceID, bool p_bResetAlways, SVResetItemEnum p_eRequiredReset );
 	virtual BOOL RegisterEmbeddedObject( SVValueObjectClass* p_psvEmbeddedObject, const GUID& p_rguidEmbeddedID, int p_iStringResourceID, bool p_bResetAlways, SVResetItemEnum p_eRequiredReset, LPCTSTR p_pszTypeName );
+	virtual BOOL RegisterInputObject( SVInObjectInfoStruct* PInObjectInfo, const SVString& p_rInputName );
 
 	HRESULT GetOutputListFiltered(std::vector<SVValueObjectReference>& rvecObjects, UINT uiAttributes = SV_NO_ATTRIBUTES, bool bAND = true ); /* true means AND, false means OR */
 
@@ -115,6 +116,7 @@ public:
 #pragma region virtual method (ITaskObject)
 	virtual HRESULT AddInputRequestMarker() override;
 	virtual HRESULT RunOnce(IObjectClass* pTool = nullptr) override;
+	virtual SvOi::IOutputInfoListClassSmartPointer GetOutputList( ) const override;
 #pragma endregion virtual method (ITaskObject)
 
 protected:
@@ -182,7 +184,6 @@ protected:
 	virtual SVObjectPtrDeque GetPreProcessObjects() const;
 	virtual SVObjectPtrDeque GetPostProcessObjects() const;
 
-	virtual BOOL RegisterInputObject( SVInObjectInfoStruct* PInObjectInfo, const SVString& p_rInputName );
 	virtual void addDefaultInputObjects( BOOL BCallBaseClass = FALSE, SVInputInfoListClass* PInputListToFill = NULL );
 
 	virtual void hideEmbeddedObject( SVObjectClass& RObjectToHide );

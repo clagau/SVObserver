@@ -1,3 +1,5 @@
+#pragma once
+
 //{{NO_DEPENDENCIES}}
 // Microsoft Visual C++ generated include file.
 // Used by SVOResource.rc
@@ -50,7 +52,7 @@
 #define IDI_TRI_STATE_DISABLED          1514
 #define IDI_DOT_ENABLED                 1515
 #define IDI_DOT_DISABLED                1516
-#define IDB_KOERBER                      2000
+#define IDB_KOERBER                     2000
 #define IDB_START                       2001
 #define IDB_DOWNARROW                   2004
 #define IDB_UPARROW                     2005
@@ -58,7 +60,7 @@
 #define ID_EDIT_ZOOM                    3000
 #define ID_SLIDER_ZOOM                  3001
 #define IDD_ABOUTBOX                    5000
-#define IDD_TOOLSET_VIEW            5001
+#define IDD_TOOLSET_VIEW                5001
 #define IDD_GR_EDGE_MARKER_ADJUST_DIALOG 5002
 #define IDD_MESSAGE_DIALOG              5003
 #define IDD_TA_TRANSFORM_IMAGE_DIALOG   5004
@@ -66,6 +68,7 @@
 #define IDD_TA_ANALYZER_DIALOG          5006
 #define IDD_TA_FILTER_DIALOG            5007
 #define IDD_BA_FEATURE_DIALOG           5008
+#define IDD_TA_RING_PARAMETER_DIALOG    5009
 #define IDD_TA_IMAGE_DIALOG             5010
 #define IDD_START                       5012
 #define IDD_LIGHTREFERENCE_PAGE         5014
@@ -1016,6 +1019,7 @@
 #define IDS_OBJECTNAME_FAIL_LOW_INDIRECT 11114
 #define IDS_OBJECTNAME_FAIL_HIGH_INDIRECT 11115
 #define IDS_OBJECTNAME_WARN_HIGH_INDIRECT 11116
+#define IDS_CLASSNAME_RINGBUFFER_TOOL  11117
 #define IDD_AUTOSAVE_IN_PROGRESS        11118
 #define IDS_CLASSNAME_TOOLSIZEADJUSTTASK 11119
 #define IDS_OBJECTNAME_TOOLSIZEADJUSTSIZEWIDTH 11120
@@ -1027,7 +1031,10 @@
 #define IDS_CLASSNAME_EQ_ADJUSTSIZE_POSITION_Y 11127
 #define IDS_OBJECTNAME_TOOLSIZEADJUSTPOSITIONX 11128
 #define IDS_OBJECTNAME_TOOLSIZEADJUSTPOSITIONY 11129
-
+#define IDS_OBJECTNAME_RINGBUFFER_DEPTH 11130
+#define IDS_OBJECTNAME_RINGBUFFER_INDEX1 11131
+#define IDS_OBJECTNAME_RINGBUFFER_INDEX2 11132
+#define IDS_OBJECTNAME_RINGBUFFER_FLAG  11133
 #define IDS_OBJECTNAME_INPUT_01         14001
 #define IDS_OBJECTNAME_INPUT_02         14002
 #define IDS_OBJECTNAME_INPUT_03         14003
@@ -1370,7 +1377,7 @@
 #define IDC_COMBO2                      15024
 #define IDC_BARCODE_CELLX_EDIT          15025
 #define IDC_BUTTON1                     15026
-#define IDC_SECONDPEAK_RANGE            15027 // Duplicate ID
+#define IDC_SECONDPEAK_RANGE            15027
 #define IDC_AUTOTHRESHOLD_SLIDER        15028
 #define IDC_VALLEY_RANGE                15028
 #define IDC_OPERATOR_COMBO              15029
@@ -2216,6 +2223,12 @@
 #define IDC_COMBO_TA_SIZE_MODE_POSITIONY 16089
 #define IDC_BUT_PROPAGATE               16090
 #define IDC_BUT_EDIT_TOOL               16091
+#define IDC_EDIT_RING_DEPTH             16092
+#define IDC_BUTTON_RING_DEPTH           16093
+#define IDC_EDIT_IMAGE_INDEX1           16094
+#define IDC_BUTTON_IMAGE_INDEX1         16095
+#define IDC_EDIT_IMAGE_INDEX2           16096
+#define IDC_BUTTON_IMAGE_INDEX2         16097
 #define ID_TEST                         20000
 #define ID_BROWSE_BUTTON                20001
 #define ID_PLUSBUTTON                   20002
@@ -2347,6 +2360,7 @@
 #define ID_ADD_TRANSFER_BLOCK           20202
 #define ID_ADD_REMOTEINPUTTOOL          20204
 #define ID_EDIT_ADD_REMOTE_OUTPUTS      20205
+#define ID_ADD_RINGBUFFERTOOL           20206
 #define ID_SELECTTOOL_TOOLCOMMENT       20215
 #define ID_ADD_SHIFTTOOL                20217
 #define ID_SELECTTOOL_LEARN             20218
@@ -2414,9 +2428,9 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_3D_CONTROLS                     1
-#define _APS_NEXT_RESOURCE_VALUE        11130
+#define _APS_NEXT_RESOURCE_VALUE        11134
 #define _APS_NEXT_COMMAND_VALUE         20348
-#define _APS_NEXT_CONTROL_VALUE         16092
+#define _APS_NEXT_CONTROL_VALUE         16098
 #define _APS_NEXT_SYMED_VALUE           3002
 #endif
 #endif

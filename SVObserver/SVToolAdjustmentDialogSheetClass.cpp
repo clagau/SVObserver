@@ -14,7 +14,7 @@
 #include "SVToolAdjustmentDialogSheetClass.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVOGui/SVFormulaEditorPage.h"
-#include "ISVPropertyPageDialog.h"
+#include "SVOGui\ISVPropertyPageDialog.h"
 #include "SVCylindricalWarpDlg.h"
 #include "SVExternalToolDlg.h"
 #include "SVIPDoc.h"
@@ -37,6 +37,7 @@
 #include "SVTool.h"
 #include "SVToolAdjustmentDialogAnalyzerPageClass.h"
 #include "SVOGui/SVToolAdjustmentDialogFilterPageClass.h"
+#include "SVOGui/TADialogRingBufferParameterPage.h"
 #include "SVToolAdjustmentDialogImagePageClass.h"
 #include "SVToolAdjustmentDialogLinearSpecialPageClass.h"
 #include "SVToolAdjustmentDialogMaskPageClass.h"
@@ -50,8 +51,6 @@
 #include "SVStatusLibrary\ExceptionManager.h"
 #include "ErrorNumbers.h"
 #pragma endregion Includes
-
-
 
 #pragma region Declarations
 #ifdef _DEBUG
@@ -70,8 +69,6 @@ BEGIN_MESSAGE_MAP(SVToolAdjustmentDialogSheetClass, CPropertySheet)
 	ON_WM_SYSCOMMAND()
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
-
-
 
 SVToolAdjustmentDialogSheetClass::SVToolAdjustmentDialogSheetClass( SVIPDoc* p_pIPDoc, SVToolClass& rTool, UINT nIDCaption, CWnd* pParentWnd, UINT iSelectPage )
 	:CPropertySheet(nIDCaption, pParentWnd, iSelectPage)
@@ -296,6 +293,12 @@ void SVToolAdjustmentDialogSheetClass::addPages()
 			AddPage( new SVToolAdjustmentDialogGeneralPageClass( this ) );
 			break;
 
+		case SVRingBufferToolObjectType:
+			AddPage( new SVToolAdjustmentDialogImagePageClass( this ) );
+			AddPage( new SvOg::TADialogRingBufferParameterPage( dynamic_cast<SvOi::IRingBufferTool&>(m_rTool) ) );
+			AddPage( pConditionalDlg );
+			break;
+
 		default:
 			AfxMessageBox( IDS_CRITICAL_NO_TOOL_ADJUSTMENT_DIALOG );
 			delete pConditionalDlg;
@@ -328,8 +331,6 @@ void SVToolAdjustmentDialogSheetClass::addPages()
 		l_Temp += _T(" - ");
 		l_Temp += m_rTool.GetName();
 
-
-		
 		SetWindowText( l_Temp );
 		return bResult;
 	}
@@ -372,7 +373,7 @@ void SVToolAdjustmentDialogSheetClass::addPages()
 				}
 				else
 				{
-					if ( ISVPropertyPageDialog* pIDlg = dynamic_cast <ISVPropertyPageDialog*> ( pPage ) )
+					if ( SvOg::ISVPropertyPageDialog* pIDlg = dynamic_cast <SvOg::ISVPropertyPageDialog*> ( pPage ) )
 					{
 						if ( pIDlg->QueryAllowExit() == false )	// exit not allowed
 						{
@@ -397,14 +398,12 @@ void SVToolAdjustmentDialogSheetClass::addPages()
 			return;
 		}
 
-		
 		SVIPDoc* l_psvDocument = SVObjectManagerClass::Instance().GetIPDoc( m_rTool.GetInspection()->GetUniqueObjectID() );;
 		l_psvDocument->SetModifiedFlag();
 		if( dwRet == SVMR_SUCCESS)
 		{
 			l_psvDocument->RunOnce();
 		}
-		
 		
 		EndDialog( IDOK );
 	}

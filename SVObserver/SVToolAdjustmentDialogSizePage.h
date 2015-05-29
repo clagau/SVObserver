@@ -10,7 +10,7 @@
 #include "afxwin.h"
 #include "SVEnumerateCombo.h"
 #include "SVTaskObjectInterfaceClass.h"
-#include "ISVPropertyPageDialog.h"
+#include "SVOGui\ISVPropertyPageDialog.h"
 #include "ToolSizeAdjustTask.h"
 #pragma endregion Includes
 
@@ -26,7 +26,7 @@ class SVToolAdjustmentDialogSheetClass;
 
 //! \brief Property Page: Position and Size for The ToolAdjustmen Dialog
 //!  has pointer to ToolSizeAdjustTask
-class SVToolAdjustmentDialogSizePage : public CPropertyPage , public SVTaskObjectInterfaceClass ,public ISVPropertyPageDialog
+class SVToolAdjustmentDialogSizePage : public CPropertyPage , public SVTaskObjectInterfaceClass ,public SvOg::ISVPropertyPageDialog
 {
 	DECLARE_DYNAMIC(SVToolAdjustmentDialogSizePage)
 

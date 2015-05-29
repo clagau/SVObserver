@@ -39,7 +39,7 @@ public:
 	HRESULT SetValueKeepType( int iBucket, int iIndex, LPCTSTR value );
 	HRESULT SetDefaultValue( const VARIANT& rValue, bool bResetAll );
 	HRESULT GetDefaultValue( _variant_t& rValue );
-	long GetDefaultType();
+	VARTYPE GetDefaultType() const;
 
 	IMPLEMENT_VALUE_OBJECT_GET_SET_NO_T()
 

@@ -17,7 +17,6 @@
 
 #include "SVInspectionProcess.h"
 #include "SVPPQObject.h"
-#include "ISVPropertyPageDialog.h"
 #include "SVDataDefinitionPage.h"
 #include "SVIPDoc.h"
 

@@ -12,7 +12,7 @@
 #pragma once
 
 #pragma region Includes
-#include "ISVPropertyPageDialog.h"
+#include "SVOGui\ISVPropertyPageDialog.h"
 
 #include "SVOutputInfoListTreeCtrl.h"
 #include "SVMFCControls\SVEditNumbers.h"
@@ -24,7 +24,7 @@
 
 class SVToolAdjustmentDialogSheetClass;
 
-class SVToolAdjustmentArchivePage : public CPropertyPage, public ISVPropertyPageDialog
+class SVToolAdjustmentArchivePage : public CPropertyPage, public SvOg::ISVPropertyPageDialog
 {
 #pragma region Constructor
 public:
@@ -38,7 +38,7 @@ public:
 	void BuildImageList();
 
 	// ISVPropertyPageDialog
-	bool QueryAllowExit();	
+	bool QueryAllowExit();
 #pragma endregion Public Methods
 
 #pragma region Public Members

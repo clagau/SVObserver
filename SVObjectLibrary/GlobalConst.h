@@ -25,9 +25,12 @@ namespace Seidenader
 		const TCHAR			FqnRemoteInputs[]				= _T( "RemoteInputs" );
 		const TCHAR			FqnCameras[]					= _T( "Cameras" );
 		const TCHAR			FqnEnvironmentMode[]			= _T( "Environment.Mode" );
+		static const LCID LCID_USA = 0x0409;
 		#pragma endregion Declarations
 	}
 }
+
+namespace SvOl = Seidenader::SVObjectLibrary;
 
 //******************************************************************************
 //* LOG HISTORY:

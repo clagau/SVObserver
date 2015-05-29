@@ -15,7 +15,7 @@
 #include "SVInspectionProcess.h"
 #include "svobserver.h"
 #include "SVPPQObject.h"
-#include "ISVPropertyPageDialog.h"
+#include "SVOGui\ISVPropertyPageDialog.h"
 #include "SVConditionalHistoryValuesPage.h"
 #include "SVConditionalHistoryImagesPage.h"
 #include "SVConditionalHistoryConditionalPage.h"
@@ -117,7 +117,7 @@ void SVConditionalHistorySheet::OnOK()
 	// can we exit?
 	for( i = 0; i < iNumPages; i++ )
 	{
-		if ( ISVPropertyPageDialog* pIDlg = dynamic_cast <ISVPropertyPageDialog*> ( GetPage(i) ) )
+		if ( SvOg::ISVPropertyPageDialog* pIDlg = dynamic_cast <SvOg::ISVPropertyPageDialog*> ( GetPage(i) ) )
 		{
 			if ( pIDlg->QueryAllowExit() == false )	// exit not allowed
 			{

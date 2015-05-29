@@ -318,6 +318,7 @@ BEGIN_MESSAGE_MAP(SVObserverApp, CWinApp)
 	ON_UPDATE_COMMAND_UI(ID_ADD_COLORTOOL, OnUpdateAddColorTool)
 	ON_UPDATE_COMMAND_UI(ID_ADD_LINEARTOOL, OnUpdateAddLinearTool)
 	ON_UPDATE_COMMAND_UI(ID_ADD_REMOTEINPUTTOOL, OnUpdateAddRemoteInputTool)
+	ON_UPDATE_COMMAND_UI(ID_ADD_RINGBUFFERTOOL, OnUpdateAddRingBufferTool)
 	ON_UPDATE_COMMAND_UI(ID_ADD_PERSPECTIVEWARPTOOL, OnUpdateAddPerspectiveTool)
 	ON_UPDATE_COMMAND_UI(ID_EXTRAS_LOGIN, OnUpdateExtrasLogin)
 	ON_UPDATE_COMMAND_UI(ID_EXTRAS_ENVIRONMENTSETTINGS, OnUpdateExtrasAdditionalEnvironmentSettings)
@@ -2848,6 +2849,13 @@ void SVObserverApp::OnUpdateAddLinearTool( CCmdUI* PCmdUI )
 }
 
 void SVObserverApp::OnUpdateAddRemoteInputTool( CCmdUI* PCmdUI ) 
+{
+	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) &&	
+		IsMonochromeImageAvailable() &&
+		OkToEdit());
+}
+
+void SVObserverApp::OnUpdateAddRingBufferTool( CCmdUI* PCmdUI ) 
 {
 	PCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) &&	
 		IsMonochromeImageAvailable() &&

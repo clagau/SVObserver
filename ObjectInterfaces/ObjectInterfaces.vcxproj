@@ -146,6 +146,7 @@
     <ClInclude Include="IObjectInfoStruct.h" />
     <ClInclude Include="IObjectManager.h" />
     <ClInclude Include="IOutputInfoListClass.h" />
+    <ClInclude Include="IRingBufferTool.h" />
     <ClInclude Include="ISVFilter.h" />
     <ClInclude Include="IFormulaController.h" />
     <ClInclude Include="IRankingFilter.h" />

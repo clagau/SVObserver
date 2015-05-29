@@ -12,7 +12,7 @@
 #pragma once
 
 #pragma region Includes
-#include "ISVPropertyPageDialog.h"
+#include "SVOGui\ISVPropertyPageDialog.h"
 #include "SVOutputInfoListTreeCtrl.h"
 #pragma endregion Includes
 
@@ -21,7 +21,7 @@ class SVConditionalHistorySheet;
 class SVInspectionProcess;
 #pragma endregion Declarations
 
-class SVConditionalHistoryBasePage : public CPropertyPage, public ISVPropertyPageDialog
+class SVConditionalHistoryBasePage : public CPropertyPage, public SvOg::ISVPropertyPageDialog
 {
 public:
 #pragma region Constructor

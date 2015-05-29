@@ -320,7 +320,7 @@ SVImageClass* SVCylindricalWarpToolClass::GetInputImage()
 
 HRESULT SVCylindricalWarpToolClass::DoesObjectHaveExtents() const
 {
-	return SV_SUCCESS_SVOBSERVER_2000_HAS_EXTENTS;
+	return SV_SUCCESS_SVOBSERVER_2000_DOESNOTHAVE_EXTENTS;
 }
 
 BOOL SVCylindricalWarpToolClass::onRun( SVRunStatusClass& p_rRunStatus )

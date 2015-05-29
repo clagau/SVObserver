@@ -28,6 +28,16 @@ static const int Err_SVCommandInspectionExtentUpdater_InvalidParameter_2007 = Ma
 static const int Err_ImportInspectionWrongVersion_2008 = Maz_ErrorBase + 8;
 static const int Err_LoadOfResourceDllFailed_2009 = Maz_ErrorBase + 9;
 static const int Err_TreeParser_InspectionCreateFailed_2010 = Maz_ErrorBase + 10;
+//RingBuffer
+static const int Err_RingBuffer_OnValidFailed_2011 = Maz_ErrorBase + 11;
+static const int Err_RingBuffer_NoInputImage_2012 = Maz_ErrorBase + 12;
+static const int Err_RingBuffer_DepthValueInvalid_2013 = Maz_ErrorBase + 13;
+static const int Err_LinkedValueConnectInput_NoInspection_2014 = Maz_ErrorBase + 14;
+static const int Err_LinkedValueConnectInput_ConnectFailed_2015 = Maz_ErrorBase + 15;
+static const int Err_LinkedValueConnectInput_InvalidValue_2016 = Maz_ErrorBase + 16;
+static const int Err_LinkedValueConnectInput_ResetFailed_2017 = Maz_ErrorBase + 17;
+static const int Err_RingBuffer_InvalidRingDepth_2018 = Maz_ErrorBase + 18;
+static const int Err_RingBuffer_InvalidImageIndex_2019 = Maz_ErrorBase + 19;
 
 //Marcus Eichengrün error base
 static const int Mec_ErrorBase = 16000;

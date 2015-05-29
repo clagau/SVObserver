@@ -15,14 +15,14 @@
 #include <utility>
 #include <deque>
 #include "SVMFCControls\SVHorizListBox.h"
-#include "ISVPropertyPageDialog.h"
+#include "SVOGui\ISVPropertyPageDialog.h"
 #include "SVMFCControls\NameSelectionTreeCtrl.h"
 #include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 class MonitorListSheet;
 
-class MonitorListBasePage : public CPropertyPage, public ISVPropertyPageDialog
+class MonitorListBasePage : public CPropertyPage, public SvOg::ISVPropertyPageDialog
 {
 	DECLARE_DYNAMIC(MonitorListBasePage)
 

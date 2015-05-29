@@ -7,11 +7,15 @@
 
 #pragma once
 #include "IObjectAppClass.h"
+#include "IOutputInfoListClass.h"
+#include "SVUtilityLibrary\SVSharedPtr.h"
 
 namespace Seidenader
 {
 	namespace ObjectInterfaces
 	{	
+		typedef SVSharedPtr< IOutputInfoListClass > IOutputInfoListClassSmartPointer;
+
 		//this class is a interface. It should only have pure virtual public method and new member parameter
 		class ITaskObject : virtual public IObjectAppClass
 		{
@@ -26,6 +30,12 @@ namespace Seidenader
 				/param pTool <in> Tool object which should run. If empty it use the whole inspection.
 			***********/
 			virtual HRESULT RunOnce(IObjectClass* pTool = nullptr) = 0;
+
+			//************************************
+			/// Return the output list of this task object.
+			/// \returns Seidenader::ObjectInterfaces::IOutputInfoListClassSmartPointer
+			//************************************
+			virtual IOutputInfoListClassSmartPointer GetOutputList( ) const = 0;
 		};
 	}
 }

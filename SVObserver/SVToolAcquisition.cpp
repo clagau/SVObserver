@@ -117,7 +117,7 @@ BOOL SVAcquisitionToolClass::OnValidate()
 
 HRESULT SVAcquisitionToolClass::DoesObjectHaveExtents() const
 {
-	return SV_SUCCESS_SVOBSERVER_2000_HAS_EXTENTS;
+	return SV_SUCCESS_SVOBSERVER_2000_DOESNOTHAVE_EXTENTS;
 }
 
 BOOL SVAcquisitionToolClass::onRun( SVRunStatusClass& RRunStatus )

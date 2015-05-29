@@ -1,0 +1,99 @@
+//*****************************************************************************
+/// \copyright (c) 2015 by Seidenader Maschinenbau GmbH
+/// All Rights Reserved 
+/// \Author	Marc Ziegler
+//*****************************************************************************
+/// Property page for the tool adjustment sheet for parameter in the RingBuffer-tool.
+//*****************************************************************************
+#pragma once
+
+#pragma region Includes
+#include "ObjectInterfaces\IRingBufferTool.h"
+#include "ISVPropertyPageDialog.h"
+#include "PictureDisplay.h"
+#pragma endregion Includes
+
+namespace Seidenader
+{
+	namespace SVOGui
+	{
+		class TADialogRingBufferParameterPage : public CPropertyPage, public ISVPropertyPageDialog
+		{
+#pragma region Declarations
+		protected:
+			//{{AFX_DATA(SVToolAdjustmentDialogFilterPageClass)
+			enum { IDD = IDD_TA_RING_PARAMETER_DIALOG };
+			//}}AFX_DATA
+#pragma endregion Declarations
+
+#pragma region Constructor
+		public:
+			// Standard constructor
+			TADialogRingBufferParameterPage( SvOi::IRingBufferTool& rTool );
+
+			// Standard destructor
+			virtual ~TADialogRingBufferParameterPage();
+#pragma endregion Constructor
+
+#pragma region Public Methods
+		public:
+			virtual bool QueryAllowExit() override; //from ISVPropertyPageDialog
+#pragma endregion Public Methods
+
+#pragma region Protected Methods
+			DECLARE_MESSAGE_MAP()
+
+			//{{AFX_VIRTUAL(SVToolAdjustmentDialogFilterPageClass)
+		protected:
+			virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV-Unterstützung
+			//}}AFX_VIRTUAL
+		protected:
+			//{{AFX_MSG(SVToolAdjustmentDialogFilterPageClass)
+			virtual BOOL OnInitDialog();
+			virtual BOOL OnKillActive( );
+			//afx_msg void OnButtonBufferDepth();
+			afx_msg void OnButtonImageIndex1();
+			afx_msg void OnButtonImageIndex2();
+			//}}AFX_MSG
+
+			//************************************
+			/// Create a object selector for a image index value and save the result to this field.
+			/// \param index [in] The number of the image index.
+			/// \param titleStringID [in] string ID for the object selector title.
+			//************************************
+			void ObjectSelectorForIndex(int index, int titleStringID);
+
+			//************************************
+			/// Show the object selector and return the selection. 
+			/// \param name [in,out] In: Defined which item should selected at begin. 
+			///                     Out: If selector closed with OK-button, the selection will returned.
+			/// \param Title [in] The title of the object selector.
+			/// \returns bool True if selector was closed by OK-button.
+			//************************************
+			bool ShowObjectSelector(CString& name, const CString& Title);
+#pragma endregion Protected Methods
+
+#pragma region Private Methods
+		private:
+			HRESULT SetPageData();
+			HRESULT SetInspectionData();
+			HRESULT SetRingDepth();
+			HRESULT SetImageIndex(int indexNumber);
+#pragma endregion Private Methods
+
+#pragma region Member Variables
+		private:
+			SvOi::IRingBufferTool& m_rTool;
+
+			CEdit m_EditRingDepth;
+			CEdit m_EditImageIndex[2];
+			CButton m_ButtonRingDepth;
+			CButton m_ButtonImageIndex1;
+			CButton m_ButtonImageIndex2;
+			CBitmap m_downArrowBitmap;
+#pragma endregion Member Variables
+		};
+	}
+}
+
+namespace SvOg = Seidenader::SVOGui;
