@@ -17,6 +17,7 @@
 #include "SVMatroxLibrary/SVMatroxLibrary.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "ToolSizeAdjustTask.h"
+#include <boost/math/special_functions/round.hpp>
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -209,8 +210,8 @@ BOOL SVShiftTool::onRun( SVRunStatusClass& p_rRunStatus )
 				BOOL l_PerformTranslation = false;
 				long l_LearnedTranslationX = 0;
 				long l_LearnedTranslationY = 0;
-				double l_InputTranslationX = 0.0;
-				double l_InputTranslationY = 0.0;
+				double fInputTranslationX = 0.0;
+				double fInputTranslationY = 0.0;
 
 				if ( (l_Status ) && ( (l_Mode == SV_SHIFT_ENUM::SV_SHIFT_REFERENCE) || (l_Mode == SV_SHIFT_ENUM::SV_SHIFT_ABSOLUTE) ) )
 				{
@@ -220,21 +221,24 @@ BOOL SVShiftTool::onRun( SVRunStatusClass& p_rRunStatus )
 					l_Status = l_Status && ( m_LearnedTranslationX.GetValue( l_LearnedTranslationX ) == S_OK );
 					l_Status = l_Status && ( m_LearnedTranslationY.GetValue( l_LearnedTranslationY ) == S_OK );
 
-					l_Status = l_Status && ( l_pTranslationXInput != NULL && l_pTranslationXInput->GetValue( l_InputTranslationX ) == S_OK );
-					l_Status = l_Status && ( l_pTranslationYInput != NULL && l_pTranslationYInput->GetValue( l_InputTranslationY ) == S_OK );
+					l_Status = l_Status && ( l_pTranslationXInput != NULL && l_pTranslationXInput->GetValue( fInputTranslationX ) == S_OK );
+					l_Status = l_Status && ( l_pTranslationYInput != NULL && l_pTranslationYInput->GetValue( fInputTranslationY ) == S_OK );
 				}
 
 				if ( (l_Status ) && ( (l_Mode == SV_SHIFT_ENUM::SV_SHIFT_REFERENCE) || (l_Mode == SV_SHIFT_ENUM::SV_SHIFT_ABSOLUTE) ) )
 				{
+					long nInputTranslationX = boost::math::lround(fInputTranslationX);
+					long nInputTranslationY = boost::math::lround(fInputTranslationY);
+
 					if ( l_Mode == SV_SHIFT_ENUM::SV_SHIFT_REFERENCE )
 					{
-						long l_DisplacementX = static_cast< long >( (l_InputTranslationX + 0.5) - l_LearnedTranslationX );
-						long l_DisplacementY = static_cast< long >( (l_InputTranslationY + 0.5) - l_LearnedTranslationY );
+						long l_DisplacementX = nInputTranslationX - l_LearnedTranslationX;
+						long l_DisplacementY = nInputTranslationY - l_LearnedTranslationY;
 						long l_NewLeft = static_cast< long >( l_Left ) + l_DisplacementX;
 						long l_NewTop = static_cast< long >( l_Top ) + l_DisplacementY;
 
-						m_TranslationX.SetValue( p_rRunStatus.m_lResultDataIndex, (l_InputTranslationX + 0.5) );
-						m_TranslationY.SetValue( p_rRunStatus.m_lResultDataIndex, (l_InputTranslationY + 0.5) );
+						m_TranslationX.SetValue( p_rRunStatus.m_lResultDataIndex, nInputTranslationX );
+						m_TranslationY.SetValue( p_rRunStatus.m_lResultDataIndex, nInputTranslationY );
 						m_DisplacementX.SetValue( p_rRunStatus.m_lResultDataIndex, l_DisplacementX );
 						m_DisplacementY.SetValue( p_rRunStatus.m_lResultDataIndex, l_DisplacementY );	
 						m_LeftResult.SetValue( p_rRunStatus.m_lResultDataIndex, l_NewLeft );
@@ -245,15 +249,15 @@ BOOL SVShiftTool::onRun( SVRunStatusClass& p_rRunStatus )
 						m_LearnedTranslationX.SetValue( p_rRunStatus.m_lResultDataIndex,0.0);
 						m_LearnedTranslationY.SetValue( p_rRunStatus.m_lResultDataIndex,0.0);
 
-						m_TranslationX.SetValue( p_rRunStatus.m_lResultDataIndex, (l_InputTranslationX + 0.5) );
-						m_TranslationY.SetValue( p_rRunStatus.m_lResultDataIndex, (l_InputTranslationY + 0.5) );
-						m_DisplacementX.SetValue( p_rRunStatus.m_lResultDataIndex, (l_InputTranslationX + 0.5));
-						m_DisplacementY.SetValue( p_rRunStatus.m_lResultDataIndex, (l_InputTranslationY + 0.5) );
+						m_TranslationX.SetValue( p_rRunStatus.m_lResultDataIndex, nInputTranslationX );
+						m_TranslationY.SetValue( p_rRunStatus.m_lResultDataIndex, nInputTranslationY );
+						m_DisplacementX.SetValue( p_rRunStatus.m_lResultDataIndex, nInputTranslationX);
+						m_DisplacementY.SetValue( p_rRunStatus.m_lResultDataIndex, nInputTranslationY );
 						extentLeft.SetValue(p_rRunStatus.m_lResultDataIndex, 0.0);
 						extentTop.SetValue(p_rRunStatus.m_lResultDataIndex, 0.0);
 
-						m_LeftResult.SetValue( p_rRunStatus.m_lResultDataIndex, (l_InputTranslationX + 0.5)  );
-						m_TopResult.SetValue( p_rRunStatus.m_lResultDataIndex, (l_InputTranslationY + 0.5) );
+						m_LeftResult.SetValue( p_rRunStatus.m_lResultDataIndex, nInputTranslationX  );
+						m_TopResult.SetValue( p_rRunStatus.m_lResultDataIndex, nInputTranslationY );
 					}
 				}
 				else
