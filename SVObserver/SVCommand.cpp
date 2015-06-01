@@ -2533,7 +2533,6 @@ VOID CALLBACK SVStreamingDataAPCProc( DWORD_PTR dwParam )
 
 HRESULT CSVCommand::StreamingDataCallback( const SVInspectionCompleteInfoStruct& p_rData )
 {
-	SVInspectionProcess* pInspect = dynamic_cast< SVInspectionProcess* >( SVObjectManagerClass::Instance().GetObject( p_rData.m_InspectionID ) );
 	ProductDataStruct *pProductData;
 	PacketDataStruct oPacketData;
 	StreamDataStruct *pStreamData;
@@ -3003,8 +3002,6 @@ STDMETHODIMP CSVCommand::SVGetProductDataList(long lProcessCount, SAFEARRAY* psa
 
 			if ( ref.Object() != NULL )
 			{
-				SVInspectionProcess* pInspection = aInspections[i];
-
 				SVDataManagerHandle	l_BucketHandle;
 
 				l_ProductInfo.GetResultDataIndex( l_BucketHandle );

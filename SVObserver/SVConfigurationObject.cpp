@@ -204,7 +204,7 @@ BOOL SVConfigurationObject::AddTrigger( SVTriggerObject* pTrigger )
 
 BOOL SVConfigurationObject::RemoveTrigger( SVTriggerObject* pTrigger )
 {
-	if( nullptr != pTrigger ) { return FALSE;}
+	if( nullptr == pTrigger ) { return FALSE; }
 
 	int iSize;
 
@@ -465,7 +465,7 @@ BOOL SVConfigurationObject::AddPPQ( SVPPQObject* pPPQ )
 
 BOOL SVConfigurationObject::RemovePPQ( SVPPQObject* pPPQ )
 {
-	if( nullptr != pPPQ ) { return FALSE;}
+	if( nullptr == pPPQ ) { return FALSE; }
 
 	int iSize;
 
@@ -570,7 +570,7 @@ BOOL SVConfigurationObject::AddCamera( SVVirtualCamera* pCamera )
 
 BOOL SVConfigurationObject::RemoveCamera( SVVirtualCamera* pCamera )
 {
-	if( nullptr == pCamera ) { return FALSE;}
+	if( nullptr == pCamera ) { return FALSE; }
 
 	int iSize;
 
@@ -647,7 +647,7 @@ BOOL SVConfigurationObject::AddInspection( SVInspectionProcess* pInspection )
 
 BOOL SVConfigurationObject::RemoveInspection( SVInspectionProcess* pInspection )
 {
-	if( nullptr == pInspection ) { return FALSE;}
+	if( nullptr == pInspection ) { return FALSE; }
 
 	int i;
 	int iSize;
