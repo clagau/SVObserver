@@ -45,6 +45,7 @@ enum ConfigItemTypeEnum
     ITEM_PPQ_ATTACH_INS     = 11,
     ITEM_PPQ_PROP_SRC_IMG   = 12,
 	ITEM_ACTION_REFRESH     = 13,
+    ITEM_ACCTION_SAVE       = 14
 };
 
 enum ConfigTypeEnum

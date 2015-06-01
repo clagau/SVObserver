@@ -3689,6 +3689,12 @@ BOOL CSVOConfigAssistantDlg::ItemChanged(int iItemDlg, CString sLabelName, int i
 					break;
 				}
 
+				case ITEM_ACCTION_SAVE:
+				{
+					SendAcquisitionDataToConfiguration();
+					break;
+				}
+
 				default:
 				{
 					break;

@@ -146,6 +146,7 @@ void CSVOCameraDlg::OnBtnAdvanced()
 		{
 			m_pParent->ItemChanged(CAMERA_DLG,pObj->GetCameraDisplayName(),ITEM_ACTION_PROP);
 		}
+		m_pParent->ItemChanged(CAMERA_DLG,pObj->GetCameraDisplayName(),ITEM_ACCTION_SAVE);
     }	
 }
 
