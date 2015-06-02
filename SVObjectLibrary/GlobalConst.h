@@ -25,7 +25,7 @@ namespace Seidenader
 		const TCHAR			FqnRemoteInputs[]				= _T( "RemoteInputs" );
 		const TCHAR			FqnCameras[]					= _T( "Cameras" );
 		const TCHAR			FqnEnvironmentMode[]			= _T( "Environment.Mode" );
-		static const LCID LCID_USA = 0x0409;
+		static const LCID LCID_USA = MAKELCID(MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), SORT_DEFAULT);
 		#pragma endregion Declarations
 	}
 }
