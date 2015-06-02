@@ -115,7 +115,6 @@ public:
 	HRESULT GetImageInfo(const SVImageDefinitionStruct* pDefinitionStruct, SVImageInfoClass& rInfo);
 	HRESULT GetImageDefinitionStruct( SVImageDefinitionStruct& rImageDef, const SVImageInfoClass& rInfo);
 
-	HRESULT SetInput( const CString& rstrInputName, const CString& strValue, int iBucket);
 	void SetAllAttributes();
 	virtual HRESULT ResetObject();
 	enum FindEnum
