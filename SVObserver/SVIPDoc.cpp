@@ -572,43 +572,31 @@ CView* SVIPDoc::getView() const
 
 ToolSetView* SVIPDoc::GetToolSetView()
 {
-	ToolSetView* l_pView( nullptr );
-
+	ToolSetView* pView( nullptr );
 	POSITION pos( GetFirstViewPosition() );
 
-	CView* pIPView( nullptr );
-
-	while( nullptr == l_pView && pos != NULL )
+	while( nullptr == pView && nullptr != pos )
 	{
-		pIPView = GetNextView( pos );
-
-		if( pIPView != nullptr && pIPView->IsKindOf( RUNTIME_CLASS( ToolSetView ) ) )
-		{
-			l_pView = static_cast< ToolSetView* >( pIPView );
-		}
+		pView = dynamic_cast< ToolSetView* >( GetNextView( pos ) );
 	}
 
-	return l_pView;
+	return pView;
 }
 
 SVImageViewClass* SVIPDoc::GetImageView( int p_Index )
 {
-	SVImageViewClass* l_pView( nullptr );
-
+	SVImageViewClass* pReturnView( nullptr );
 	POSITION pos( GetFirstViewPosition() );
-
 	long l_Count( 0 );
-	CView* pIPView( nullptr );
 
-	while( nullptr == l_pView && pos != nullptr )
+	while( nullptr == pReturnView && nullptr != pos )
 	{
-		pIPView = GetNextView( pos );
-
-		if( pIPView != nullptr && pIPView->IsKindOf( RUNTIME_CLASS( SVImageViewClass ) ) )
+		SVImageViewClass* pIPView = dynamic_cast<SVImageViewClass*>(GetNextView( pos ));
+		if( nullptr != pIPView  )
 		{
 			if( l_Count == p_Index )
 			{
-				l_pView = static_cast< SVImageViewClass* >( pIPView );
+				pReturnView = pIPView;
 			}
 			else
 			{
@@ -617,40 +605,26 @@ SVImageViewClass* SVIPDoc::GetImageView( int p_Index )
 		}
 	}
 
-	return l_pView;
+	return pReturnView;
 }
 
 SVResultViewClass* SVIPDoc::GetResultView()
 {
-	SVResultViewClass* l_pView( nullptr );
-
+	SVResultViewClass* pView( nullptr );
 	POSITION pos( GetFirstViewPosition() );
 
-	CView* pIPView( nullptr );
-
-	while( nullptr == l_pView && pos != nullptr )
+	while( nullptr == pView && nullptr != pos )
 	{
-		pIPView = GetNextView( pos );
-
-		if( pIPView != nullptr && pIPView->IsKindOf( RUNTIME_CLASS( SVResultViewClass ) ) )
-		{
-			l_pView = static_cast< SVResultViewClass* >( pIPView );
-		}
+		pView = dynamic_cast<SVResultViewClass*>(GetNextView( pos ));
 	}
 
-	return l_pView;
+	return pView;
 }
 
 SVInspectionProcess* SVIPDoc::GetInspectionProcess() const
 {
-	SVInspectionProcess* pInspection( nullptr );
-
 	SVObjectClass* l_pObject = SVObjectManagerClass::Instance().GetObject( m_InspectionID );
-
-	if( l_pObject != nullptr )
-	{
-		pInspection = dynamic_cast< SVInspectionProcess* >( l_pObject );
-	}
+	SVInspectionProcess* pInspection( dynamic_cast< SVInspectionProcess* >( l_pObject ) );
 
 	return pInspection;
 }
