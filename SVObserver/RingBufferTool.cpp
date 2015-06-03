@@ -131,7 +131,7 @@ HRESULT RingBufferTool::ResetObject()
 
 BOOL RingBufferTool::OnValidate()
 {
-	bool bValid = true;
+	bool bValid = (nullptr != getInputImage());
 
 	long ringBufferDepth = 0;
 	m_BufferDepth.GetValue(ringBufferDepth);
@@ -420,18 +420,21 @@ void RingBufferTool::SetToolROIExtentToFullInputImage ()
 {
 	SVImageClass* inputImage = getInputImage ();
 
-	SVImageExtentClass inputImageExtents = inputImage->GetImageExtents ();
+	if (nullptr != inputImage)
+	{
+		SVImageExtentClass inputImageExtents = inputImage->GetImageExtents ();
 
-	double inputHeight = 0.0;
-	inputImageExtents.GetExtentProperty (SVExtentPropertyHeight, inputHeight);
-	double inputWidth = 0.0;
-	inputImageExtents.GetExtentProperty (SVExtentPropertyWidth, inputWidth);
+		double inputHeight = 0.0;
+		inputImageExtents.GetExtentProperty (SVExtentPropertyHeight, inputHeight);
+		double inputWidth = 0.0;
+		inputImageExtents.GetExtentProperty (SVExtentPropertyWidth, inputWidth);
 
-	long scratchpadIndex = 1;
-	m_svToolExtent.SetExtentValue (SVExtentPropertyHeight, scratchpadIndex, inputHeight);
-	m_svToolExtent.SetExtentValue (SVExtentPropertyWidth, scratchpadIndex, inputWidth);
-	m_svToolExtent.SetExtentValue (SVExtentPropertyPositionPointX , scratchpadIndex, 0);
-	m_svToolExtent.SetExtentValue (SVExtentPropertyPositionPointY , scratchpadIndex, 0);
+		long scratchpadIndex = 1;
+		m_svToolExtent.SetExtentValue (SVExtentPropertyHeight, scratchpadIndex, inputHeight);
+		m_svToolExtent.SetExtentValue (SVExtentPropertyWidth, scratchpadIndex, inputWidth);
+		m_svToolExtent.SetExtentValue (SVExtentPropertyPositionPointX , scratchpadIndex, 0);
+		m_svToolExtent.SetExtentValue (SVExtentPropertyPositionPointY , scratchpadIndex, 0);
+	}
 }
 
 DWORD_PTR RingBufferTool::processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext )
