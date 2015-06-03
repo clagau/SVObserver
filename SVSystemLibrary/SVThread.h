@@ -31,6 +31,10 @@ private:
 	unsigned long m_ulThreadID;
 	std::string m_tag;
 	SVThreadSignalHandler m_threadHandler;
+	// This const defines how long the destroy should wait at most to complete the shutdown
+	// of the thread, before it will kill it.
+	// The old value was 5 s, but this was for some cases to short, so we have increased it to 10 s.
+	static const int m_timeoutShutdownThread = 10000; 
 
 	static DWORD WINAPI ThreadProc( LPVOID lpParam );
 

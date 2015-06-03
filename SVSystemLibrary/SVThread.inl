@@ -209,7 +209,7 @@ void SVThread< SVThreadSignalHandler >::Destroy()
 		{
 			::SetEvent( m_hShutdown );
 
-			if( ::WaitForSingleObject( m_hThreadComplete, 5000 ) != WAIT_OBJECT_0 )
+			if( ::WaitForSingleObject( m_hThreadComplete, m_timeoutShutdownThread ) != WAIT_OBJECT_0 )
 			{
 				DWORD l_ErrorCode = GetLastError();
 
