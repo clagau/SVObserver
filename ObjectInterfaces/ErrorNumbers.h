@@ -1,0 +1,292 @@
+//******************************************************************************
+//* COPYRIGHT (c) 2014 by Seidenader
+//* All Rights Reserved
+//******************************************************************************
+//* .Module Name     : ErrorNumbers
+//* .File Name       : $Workfile:   ErrorNumbers.h  $
+//* .Description     : This is the central location to define error numbers
+//*                    for the SVObserver project.
+//* ----------------------------------------------------------------------------
+//* .Current Version : $Revision:   1.6  $
+//* .Check In Date   : $Date:   23 Feb 2015 03:37:16  $
+//******************************************************************************
+
+#pragma once
+
+namespace Seidenader { namespace ObjectInterfaces
+{
+	//Marc Ziegler error base
+	static const int Maz_ErrorBase = 10000;
+	//SVGuiExtentUpdater
+	static const int Err_10001_SetImageExtent_InvalidParameter = Maz_ErrorBase + 1;
+	static const int Err_10002_SetImageExtentToParent_InvalidParameter = Maz_ErrorBase + 2;
+	static const int Err_10003_SetImageExtentToFit_InvalidParameter = Maz_ErrorBase + 3;
+	//SVCommandInspectionExtentUpdater
+	static const int Err_10004_SVCommandInspectionExtentUpdater_InvalidMode = Maz_ErrorBase + 4;
+	static const int Err_10005_SVCommandInspectionExtentUpdater_ResetAllObjects = Maz_ErrorBase + 5;
+	static const int Err_10006_SVCommandInspectionExtentUpdater_RunOnce = Maz_ErrorBase + 6;
+	static const int Err_10007_SVCommandInspectionExtentUpdater_InvalidParameter = Maz_ErrorBase + 7;
+	//Misc
+	static const int Err_10008_ImportInspectionWrongVersion = Maz_ErrorBase + 8;
+	static const int Err_10009_LoadOfResourceDllFailed = Maz_ErrorBase + 9;
+	static const int Err_10010_TreeParser_InspectionCreateFailed = Maz_ErrorBase + 10;
+	//RingBuffer
+	static const int Err_10011_RingBuffer_OnValidFailed = Maz_ErrorBase + 11;
+	static const int Err_10012_RingBuffer_NoInputImage = Maz_ErrorBase + 12;
+	static const int Err_10013_RingBuffer_DepthValueInvalid = Maz_ErrorBase + 13;
+	static const int Err_10014_LinkedValueConnectInput_NoInspection = Maz_ErrorBase + 14;
+	static const int Err_10015_LinkedValueConnectInput_ConnectFailed = Maz_ErrorBase + 15;
+	static const int Err_10016_LinkedValueConnectInput_InvalidValue = Maz_ErrorBase + 16;
+	static const int Err_10017_LinkedValueConnectInput_ResetFailed = Maz_ErrorBase + 17;
+	static const int Err_10018_RingBuffer_InvalidRingDepth = Maz_ErrorBase + 18;
+	static const int Err_10019_RingBuffer_InvalidImageIndex = Maz_ErrorBase + 19;
+
+	//Steve Jones error base
+	static const int Sej_ErrorBase = 15000;
+	static const int Err_15000 = Sej_ErrorBase + 0;
+	static const int Err_15001 = Sej_ErrorBase + 1;
+	static const int Err_15002 = Sej_ErrorBase + 2;
+	static const int Err_15003 = Sej_ErrorBase + 3;
+	static const int Err_15004 = Sej_ErrorBase + 4;
+	static const int Err_15005 = Sej_ErrorBase + 5;
+	static const int Err_15006 = Sej_ErrorBase + 6;
+	static const int Err_15007 = Sej_ErrorBase + 7;
+	static const int Err_15008 = Sej_ErrorBase + 8;
+	static const int Err_15009 = Sej_ErrorBase + 9;
+	static const int Err_15010 = Sej_ErrorBase + 10;
+	static const int Err_15011 = Sej_ErrorBase + 11;
+	static const int Err_15012 = Sej_ErrorBase + 12;
+	static const int Err_15013 = Sej_ErrorBase + 13;
+	static const int Err_15014 = Sej_ErrorBase + 14;
+	static const int Err_15015 = Sej_ErrorBase + 15;
+	static const int Err_15016 = Sej_ErrorBase + 16;
+	static const int Err_15017 = Sej_ErrorBase + 17;
+	static const int Err_15018 = Sej_ErrorBase + 18;
+	static const int Err_15019 = Sej_ErrorBase + 19;
+	static const int Err_15020 = Sej_ErrorBase + 20;
+	static const int Err_15021 = Sej_ErrorBase + 21;
+	static const int Err_15022 = Sej_ErrorBase + 22;
+	static const int Err_15023 = Sej_ErrorBase + 23;
+	static const int Err_15024 = Sej_ErrorBase + 24;
+	static const int Err_15025 = Sej_ErrorBase + 25;
+	static const int Err_15026 = Sej_ErrorBase + 26;
+	static const int Err_15027 = Sej_ErrorBase + 27;
+	static const int Err_15028 = Sej_ErrorBase + 28;
+	static const int Err_15029 = Sej_ErrorBase + 29;
+	static const int Err_15030 = Sej_ErrorBase + 30;
+	static const int Err_15031 = Sej_ErrorBase + 31;
+	static const int Err_15032 = Sej_ErrorBase + 32;
+	static const int Err_15033 = Sej_ErrorBase + 33;
+	static const int Err_15034 = Sej_ErrorBase + 34;
+	static const int Err_15035 = Sej_ErrorBase + 35;
+	static const int Err_15036 = Sej_ErrorBase + 36;
+	static const int Err_15037 = Sej_ErrorBase + 37;
+
+
+	//Marcus Eichengrün error base
+	static const int Mec_ErrorBase = 16000;
+	//RangeHelper
+	static const int Err_16001 = Mec_ErrorBase + 1;
+	static const int Err_16002 = Mec_ErrorBase + 2;
+	static const int Err_16003 = Mec_ErrorBase + 3;
+	static const int Err_16004 = Mec_ErrorBase + 4;
+	static const int Err_16005 = Mec_ErrorBase + 5;
+	static const int Err_16006 = Mec_ErrorBase + 6;
+	static const int Err_16007 = Mec_ErrorBase + 7;
+	static const int Err_16008 = Mec_ErrorBase + 8;
+	static const int Err_16009 = Mec_ErrorBase + 9;
+	static const int Err_16010 = Mec_ErrorBase + 10;
+	static const int Err_16011 = Mec_ErrorBase + 11;
+	static const int Err_16012 = Mec_ErrorBase + 12;
+	static const int Err_16013 = Mec_ErrorBase + 13;
+	static const int Err_16014 = Mec_ErrorBase + 14;
+	static const int Err_16015 = Mec_ErrorBase + 15;
+	static const int Err_16016 = Mec_ErrorBase + 16;
+	static const int Err_16017 = Mec_ErrorBase + 17;
+	static const int Err_16018 = Mec_ErrorBase + 18;
+	static const int Err_16019 = Mec_ErrorBase + 19;
+	static const int Err_16020 = Mec_ErrorBase + 20;
+	static const int Err_16021 = Mec_ErrorBase + 21;
+	static const int Err_16022 = Mec_ErrorBase + 22;
+	static const int Err_16023 = Mec_ErrorBase + 23;
+	static const int Err_16024 = Mec_ErrorBase + 24;
+	static const int Err_16025 = Mec_ErrorBase + 25;
+	static const int Err_16026 = Mec_ErrorBase + 26;
+	////Errornumbers for Adjust ToolsSize 
+	static const int FirstErrorAdjustTool  = Mec_ErrorBase + 27;
+	static const int Err_16027_InvalidOwner = Mec_ErrorBase + 27;
+	static const int Err_16028_InvalidMode = Mec_ErrorBase + 28;
+	static const int Err_16029_InvalidSelection = Mec_ErrorBase + 29;
+	static const int Err_16030_InvalidValuePointer = Mec_ErrorBase + 30;
+	static const int Err_16031_InvalidSize = Mec_ErrorBase + 31;
+	static const int Err_16032_InvalidSize = Mec_ErrorBase + 32;
+	static const int Err_16033_SetExtensionFailed = Mec_ErrorBase + 33;
+	static const int Err_16034_InvalidMode = Mec_ErrorBase + 34;
+	static const int Err_16035_InvalidMode = Mec_ErrorBase + 35;
+	static const int Err_16036_InvalidMode = Mec_ErrorBase + 36;
+	static const int Err_16037_InvalidSelection = Mec_ErrorBase + 37;
+
+	static const int LastErrorAdjustTool  = Mec_ErrorBase + 37;
+
+
+	// Ben Walter
+	static const int BRW_ErrorBase = 17000;
+	static const int Err_17000_ErrorGettingPPQ = BRW_ErrorBase;
+	static const int Err_17001_ErrorGettingInputObjectList = BRW_ErrorBase + 1;
+	static const int Err_17002_ErrorFillingInputs = BRW_ErrorBase + 2;
+	static const int Err_17003_ErrorGettingPPQCount = BRW_ErrorBase + 3;
+	static const int Err_17004_ErrorGettingPPQ = BRW_ErrorBase + 4;
+	static const int Err_17005_ErrorGettingOutputs = BRW_ErrorBase + 5;
+	static const int Err_17006_ErrorGettingInputObjectList = BRW_ErrorBase + 6;
+	static const int Err_17007_ErrorFillingInputs = BRW_ErrorBase + 7;
+	static const int Err_17008_ErrorGettingInputObjectList = BRW_ErrorBase + 8;
+	static const int Err_17009_ErrorFillingInputs = BRW_ErrorBase + 9;
+	static const int Err_17010_ErrorGettingPPQCount = BRW_ErrorBase + 10;
+	static const int Err_17011_ErrorGettingPPQ = BRW_ErrorBase + 11;
+	static const int Err_17012_ErrorGettingOutputs = BRW_ErrorBase + 12;
+	static const int Err_17013_ErrorLockingInputRequests = BRW_ErrorBase + 13;
+	static const int Err_17014_ErrorUnlockingInputRequests = BRW_ErrorBase + 14;
+	static const int Err_17015_ErrorUnlockingInputRequests = BRW_ErrorBase + 15;
+	static const int Err_17016_ErrorLockingInputImageRequests = BRW_ErrorBase + 16;
+	static const int Err_17017_ErrorUnlockingInputImageRequests = BRW_ErrorBase + 17;
+	static const int Err_17018_ErrorUnlockingInputImageRequests = BRW_ErrorBase + 18;
+	static const int Err_17019_ErrorLockingInputRequests = BRW_ErrorBase + 19;
+	static const int Err_17020_ErrorRemovingAllInputRequests = BRW_ErrorBase + 20;
+	static const int Err_17021_ErrorUnlockingInputRequests = BRW_ErrorBase + 21;
+	static const int Err_17022_ErrorLockingInputImageRequests = BRW_ErrorBase + 22;
+	static const int Err_17023_ErrorRemovingAllInputImageRequests = BRW_ErrorBase + 23;
+	static const int Err_17024_ErrorUnlockingInputImageRequests = BRW_ErrorBase + 24;
+	static const int Err_17025_ErrorLockingInputRequests = BRW_ErrorBase + 25;
+	static const int Err_17026_ErrorUnlockingInputRequests = BRW_ErrorBase + 26;
+	static const int Err_17027_ErrorGettingTimeStamp = BRW_ErrorBase + 27;
+	static const int Err_17028_ErrorGettingTimeStamp = BRW_ErrorBase + 28;
+	static const int Err_17029_ErrorGettingPPQCount = BRW_ErrorBase + 29;
+	static const int Err_17030_ErrorGettingPPQ = BRW_ErrorBase + 30;
+	static const int Err_17031_ErrorGettingOutputs = BRW_ErrorBase + 31;
+	static const int Err_17032_ErrorFillingInputs = BRW_ErrorBase + 32;
+	static const int Err_17033_ErrorDetachingInput = BRW_ErrorBase + 33;
+	static const int Err_17034_ErrorGettingPPQCount = BRW_ErrorBase + 34;
+	static const int Err_17035_ErrorGettingPPQ = BRW_ErrorBase + 35;
+	static const int Err_17036_ErrorGettingOutputs = BRW_ErrorBase + 36;
+	static const int Err_17037_ErrorGettingPPQCount = BRW_ErrorBase + 37;
+	static const int Err_17038_ErrorGettingPPQ = BRW_ErrorBase + 38;
+	static const int Err_17039_ErrorGettingPLCData = BRW_ErrorBase + 39;
+	static const int Err_17040_ErrorGettingPPQCount = BRW_ErrorBase + 40;
+	static const int Err_17041_ErrorGettingInputs = BRW_ErrorBase + 41;
+	static const int Err_17042_ErrorGettingInputs = BRW_ErrorBase + 42;
+	static const int Err_17043_ErrorFindingPPQEntries = BRW_ErrorBase + 43;
+	static const int Err_17044_ErrorGettingInputObjectList = BRW_ErrorBase + 44;
+	static const int Err_17045_ErrorFillingInputs = BRW_ErrorBase + 45;
+	static const int Err_17046_ErrorGettingInputObjectList = BRW_ErrorBase + 46;
+	static const int Err_17047_ErrorFillingInputs = BRW_ErrorBase + 47;
+	static const int Err_17048_ErrorGettingPPQCount = BRW_ErrorBase + 48;
+	static const int Err_17049_ErrorGettingPPQ = BRW_ErrorBase + 49;
+	static const int Err_17050_ErrorGettingOutputs = BRW_ErrorBase + 50;
+	static const int Err_17051_ErrorGettingPPQCount = BRW_ErrorBase + 51;
+	static const int Err_17052_ErrorGettingPPQCount = BRW_ErrorBase + 52;
+	static const int Err_17053_Shift_Tool_Source_Image_Extents_Disabled = BRW_ErrorBase + 53;
+
+	//Guido Ramseier error base
+	static const int Gra_ErrorBase = 25000;
+	static const int Err_25000_SetClipboardData = Gra_ErrorBase + 0;
+	static const int Err_25001_ClipboardMemory = Gra_ErrorBase + 1;
+	static const int Err_25002_ToolInvalid = Gra_ErrorBase + 2;
+	static const int Err_25003_GetClipboardData = Gra_ErrorBase + 3;
+	static const int Err_25004_ClipboardDataConversion = Gra_ErrorBase + 4;
+	static const int Err_25005_VersionMismatch = Gra_ErrorBase + 5;
+	static const int Err_25006_ColorToolInsert = Gra_ErrorBase + 6;
+	static const int Err_25007_NonColorToolInsert = Gra_ErrorBase + 7;
+	static const int Err_25008_ClipboardDataConversion = Gra_ErrorBase + 8;
+	static const int Err_25009_ClipboardDataConversion = Gra_ErrorBase + 9;
+	static const int Err_25010_ClipboardDataConversion = Gra_ErrorBase + 10;
+	static const int Err_25011_ClipboardDataConversion = Gra_ErrorBase + 11;
+	static const int Err_25012_StatTool_Test = Gra_ErrorBase + 12;
+	static const int Err_25013_NoMatroxDongle = Gra_ErrorBase + 13;
+
+	//Robert Yoho error base
+	static const int Rpy_ErrorBase = 45000;
+	static const int Err_45000 = Rpy_ErrorBase + 0;
+	static const int Memory_Log_45001 = Rpy_ErrorBase + 1;
+
+} /* namespace ObjectInterfaces */ } /* namespace Seidenader */
+
+namespace SvOi = Seidenader::ObjectInterfaces;
+
+//******************************************************************************
+//* LOG HISTORY:
+//******************************************************************************
+/*
+$Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\ErrorNumbers.h_v  $
+ * 
+ *    Rev 1.6   23 Feb 2015 03:37:16   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  984
+ * SCR Title:  Exception Display Class with Exception Manager Template SVO-524
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Matrox error number description type int
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.5   18 Feb 2015 02:47:42   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  984
+ * SCR Title:  Exception Display Class with Exception Manager Template SVO-524
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Added no Matrox Dongle exception error
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.4   12 Feb 2015 02:57:36   mziegler
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  983
+ * SCR Title:  Linear Tool - Crash while continuous resizing tool SVO-392
+ * Checked in by:  mZiegler;  Marc Ziegler
+ * Change Description:  
+ *   add error numbers from MZA
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.3   15 Jan 2015 08:23:34   mEichengruen
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  979
+ * SCR Title:  Provide additional options to input the feature range for the blob analyzer.
+ * Checked in by:  mEichengruen;  Marcus Eichengruen
+ * Change Description:  
+ *   Add new Errornumbers
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.2   14 Jan 2015 16:40:08   bwalter
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  979
+ * SCR Title:  Provide additional options to input the feature range for the blob analyzer.
+ * Checked in by:  mEichengruen;  Marcus Eichengruen
+ * Change Description:  
+ *   Changed type to int to avoid "unsigned" compiler warnings.
+ *   Added new Mec error numbers to make return values unique.
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.1   13 Jan 2015 10:34:12   gramseier
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  978
+ * SCR Title:  Copy and Paste a Tool within an Inspection or Between Different Inspections
+ * Checked in by:  gRamseier;  Guido Ramseier
+ * Change Description:  
+ *   Combined unique error numbers
+ * changed from define to static const
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ * 
+ *    Rev 1.0   19 Dec 2014 13:53:40   mEichengruen
+ * Project:  SVObserver
+ * Change Request (SCR) nbr:  979
+ * SCR Title:  Provide additional options to input the feature range for the blob analyzer.
+ * Checked in by:  mEichengruen;  Marcus Eichengruen
+ * Change Description:  
+ *   Initial Check In for SCR 979 Indirect Range Objects 
+ * 
+ * /////////////////////////////////////////////////////////////////////////////////////
+ */

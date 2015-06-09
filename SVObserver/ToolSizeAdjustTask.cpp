@@ -8,7 +8,6 @@
 /// the friendlist of this class holds the Svevaluationobjects 
 //******************************************************************************
 
-
 #pragma region Includes
 #include "stdafx.h"
 #include "ToolSizeAdjustTask.h"
@@ -16,7 +15,7 @@
 #include "SVTool.h"
 #include "SVObjectLibrary\SVObjectManagerClass.h"
 #include "SVInspectionProcess.h" 
-#include "ErrorNumbers.h"
+#include "ObjectInterfaces\ErrorNumbers.h"
 #include "SVSVIMStateClass.h"
 #include "SVStatusLibrary\ExceptionManager.h"
 #include "TextDefinesSvO.h"
@@ -183,11 +182,11 @@ HRESULT ToolSizeAdjustTask::GetModes(long &rModeWidth,long &rModeHeight,long &rM
 		{
 			if( ( rModeWidth != TSFullSize)  ||   (rModeHeight != TSFullSize)  ||  (rModePosX != TSFullSize)  ||  (rModePosY != TSFullSize))
 			{
-				hresult = Err_16028_InvalidMode;
+				hresult = SvOi::Err_16028_InvalidMode;
 			}
 			if(m_AllowFullSize == false)
 			{
-				hresult = 	Err_16034_InvalidMode;
+				hresult = 	SvOi::Err_16034_InvalidMode;
 			}
 		}
 	}
@@ -195,11 +194,11 @@ HRESULT ToolSizeAdjustTask::GetModes(long &rModeWidth,long &rModeHeight,long &rM
 	{
 		if( ((rModeWidth == TSFormula) ||  (rModeHeight == TSFormula) ) && false == m_AllowAdjustSize)
 		{
-			hresult = 	Err_16035_InvalidMode;
+			hresult = 	SvOi::Err_16035_InvalidMode;
 		}
 		if( ((rModePosX == TSFormula) ||  (rModePosY == TSFormula) ) && false== m_AllowAdjustPosition)
 		{
-			hresult = 	Err_16036_InvalidMode;
+			hresult = 	SvOi::Err_16036_InvalidMode;
 		}
 
 	}
@@ -210,7 +209,7 @@ HRESULT ToolSizeAdjustTask::GetModes(long &rModeWidth,long &rModeHeight,long &rM
 
 HRESULT ToolSizeAdjustTask::GetResultValue( TSValues val, long &value) const
 {
-	HRESULT hresult = Err_16030_InvalidValuePointer;
+	HRESULT hresult = SvOi::Err_16030_InvalidValuePointer;
 	SVDoubleValueObjectClass* pValueObject =GetDResultObjects(val);
 	if(nullptr !=  pValueObject)
 	{
@@ -223,17 +222,17 @@ HRESULT ToolSizeAdjustTask::GetResultValue( TSValues val, long &value) const
 		{
 			if(value  < 1 )
 			{
-				hresult = Err_16031_InvalidSize;
+				hresult = SvOi::Err_16031_InvalidSize;
 			}
 		}
 
 		if (value < 0)
 		{
-			hresult = Err_16032_InvalidSize;
+			hresult = SvOi::Err_16032_InvalidSize;
 		}
 		else if (value > 100000)
 		{
-			hresult = Err_16032_InvalidSize;
+			hresult = SvOi::Err_16032_InvalidSize;
 		}	
 	}
 	return hresult;
@@ -262,7 +261,7 @@ HRESULT ToolSizeAdjustTask::ResetObject()
 	}
 	if ( pTool == nullptr)
 	{
-		hresult = Err_16027_InvalidOwner;
+		hresult = SvOi::Err_16027_InvalidOwner;
 	}
 	long ModeWidth(TSNone), ModeHeight(TSNone), ModeX(TSNone), ModeY(TSNone);
 	bool bDone = false;
@@ -402,7 +401,7 @@ HRESULT ToolSizeAdjustTask::ResetObject()
 
 	if(hresult == S_FALSE || hresult == E_FAIL)
 	{	
-		hresult = Err_16033_SetExtensionFailed;
+		hresult = SvOi::Err_16033_SetExtensionFailed;
 	}
 
 	if((S_OK  == hresult) )
@@ -480,7 +479,7 @@ HRESULT ToolSizeAdjustTask::GetExtentValues( TSValues val, long &value) const
 	if(nullptr == pTool  )
 	{
 		ASSERT( FALSE);
-		hresult = Err_16027_InvalidOwner;
+		hresult = SvOi::Err_16027_InvalidOwner;
 	}
 
 	SVImageExtentClass ImageExtent;
@@ -508,7 +507,7 @@ HRESULT ToolSizeAdjustTask::GetExtentValues( TSValues val, long &value) const
 			hresult = ImageExtent.GetExtentProperty( SVExtentPropertyHeight,value );
 			break;
 		default :
-			hresult = Err_16037_InvalidSelection;
+			hresult = SvOi::Err_16037_InvalidSelection;
 
 		}
 
@@ -525,7 +524,7 @@ HRESULT ToolSizeAdjustTask::GetParentExtentOutputValues( TSValues val, long &val
 	if(nullptr == pTool  )
 	{
 		ASSERT( FALSE);
-		hresult = Err_16027_InvalidOwner;
+		hresult = SvOi::Err_16027_InvalidOwner;
 	}
 
 	SVImageExtentClass ParentImageExtent;
@@ -552,7 +551,7 @@ HRESULT ToolSizeAdjustTask::GetParentExtentOutputValues( TSValues val, long &val
 			hresult = ParentImageExtent.GetExtentProperty( SVExtentPropertyOutputHeight,value );
 			break;
 		default :
-			hresult = Err_16037_InvalidSelection;
+			hresult = SvOi::Err_16037_InvalidSelection;
 
 		}
 
@@ -572,7 +571,7 @@ HRESULT ToolSizeAdjustTask::SetExtendPropertyAutoReset()
 	if(nullptr == pTool  )
 	{
 		ASSERT( FALSE);
-		hresult = Err_16027_InvalidOwner;
+		hresult = SvOi::Err_16027_InvalidOwner;
 	}
 
 

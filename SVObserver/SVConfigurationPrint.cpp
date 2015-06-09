@@ -59,7 +59,7 @@
 #include "RemoteMonitorList.h"
 #include "RemoteMonitorListHelper.h"
 #include "SVSystemLibrary/SVThreadManager.h"
-#include "ErrorNumbers.h"
+#include "ObjectInterfaces\ErrorNumbers.h"
 #include "SVStatusLibrary/ExceptionManager.h"
 #include "TextDefinesSvO.h"
 #pragma endregion Includes
@@ -2267,7 +2267,7 @@ void SVConfigurationPrint::PrintPPQBarSection(CDC* pDC, CPoint& ptCurPos, int nI
 		if ( !pConfig->GetPPQ( intPPQ, &pPPQ ) )
 		{
 			SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
-			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorGettingPPQ, StdExceptionParams, Err_17000_SVConfigurationPrint_PrintPPQBarSection_ErrorGettingPPQ );
+			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorGettingPPQ, StdExceptionParams, SvOi::Err_17000_ErrorGettingPPQ );
 			DebugBreak();
 		}
 
@@ -2463,14 +2463,14 @@ void SVConfigurationPrint::PrintModuleIO(CDC* pDC, CPoint& ptCurPos, int nIndent
 		if ( nullptr == pConfig && !pConfig->GetInputObjectList(&pInputList))
 		{
 			SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
-			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorGettingInputObjectList, StdExceptionParams, Err_17001_SVConfigurationPrint_PrintModuleIO_ErrorGettingInputObjectList );
+			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorGettingInputObjectList, StdExceptionParams, SvOi::Err_17001_ErrorGettingInputObjectList );
 			DebugBreak();
 		}
 
 		if (!pInputList->FillInputs( ppIOEntries ))
 		{
 			SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
-			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorFillingInputs, StdExceptionParams, Err_17002_SVConfigurationPrint_PrintModuleIO_ErrorFillingInputs );
+			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorFillingInputs, StdExceptionParams, SvOi::Err_17002_ErrorFillingInputs );
 			DebugBreak();
 		}
 
@@ -2583,7 +2583,7 @@ void SVConfigurationPrint::PrintResultIO(CDC* pDC, CPoint& ptCurPos, int nIndent
 	if ( nullptr == pConfig || !pConfig->GetPPQCount(lPPQSize))
 	{
 		SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
-		e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorGettingPPQCount, StdExceptionParams, Err_17003_SVConfigurationPrint_PrintResultIO_ErrorGettingPPQCount );
+		e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorGettingPPQCount, StdExceptionParams, SvOi::Err_17003_ErrorGettingPPQCount );
 		DebugBreak();
 	}
 
@@ -2626,7 +2626,7 @@ void SVConfigurationPrint::PrintResultIO(CDC* pDC, CPoint& ptCurPos, int nIndent
 				if ( !pConfig->GetPPQ( j, &pPPQ ) )
 				{
 					SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
-					e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorGettingPPQ, StdExceptionParams, Err_17004_SVConfigurationPrint_PrintResultIO_ErrorGettingPPQ );
+					e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorGettingPPQ, StdExceptionParams, SvOi::Err_17004_ErrorGettingPPQ );
 					DebugBreak();
 				}
 
@@ -2635,7 +2635,7 @@ void SVConfigurationPrint::PrintResultIO(CDC* pDC, CPoint& ptCurPos, int nIndent
 				if ( !pPPQ->GetAllOutputs( ppIOEntries ) )
 				{
 					SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
-					e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorGettingOutputs, StdExceptionParams, Err_17005_SVConfigurationPrint_PrintResultIO_ErrorGettingOutputs );
+					e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorGettingOutputs, StdExceptionParams, SvOi::Err_17005_ErrorGettingOutputs );
 					DebugBreak();
 				}
 

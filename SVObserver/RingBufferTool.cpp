@@ -12,7 +12,7 @@
 #include "SVStatusLibrary\SVStatusCodes.h"
 #include "SVMatroxImageProcessingClass.h"
 #include "SVImageLibrary\SVImageBufferHandleImage.h"
-#include "ErrorNumbers.h"
+#include "ObjectInterfaces\ErrorNumbers.h"
 #include "SVStatusLibrary\ExceptionManager.h"
 #include "TextDefinesSvO.h"
 #pragma endregion Includes
@@ -118,12 +118,12 @@ HRESULT RingBufferTool::ResetObject()
 		}
 		else
 		{
-			status = Err_RingBuffer_NoInputImage_2012;
+			status = SvOi::Err_10012_RingBuffer_NoInputImage;
 		}
 	}
 	else
 	{
-		status = Err_RingBuffer_OnValidFailed_2011;
+		status = SvOi::Err_10011_RingBuffer_OnValidFailed;
 	}
 
 	return status;
@@ -141,7 +141,7 @@ BOOL RingBufferTool::OnValidate()
 		SvStl::ExceptionMgr1 Exception( SvStl::ExpTypeEnum::LogOnly );
 		CString strText;
 		strText.Format(SvO::RingBuffer_Depth_Invalid_Value, m_minRingBufferDepth, m_maxRingBufferDepth, ringBufferDepth);
-		Exception.setMessage( SVMSG_SVO_61_RINGBUFFER_ONVALIDATE_ERROR, strText, StdExceptionParams, Err_RingBuffer_DepthValueInvalid_2013 );
+		Exception.setMessage( SVMSG_SVO_61_RINGBUFFER_ONVALIDATE_ERROR, strText, StdExceptionParams, SvOi::Err_10013_RingBuffer_DepthValueInvalid );
 	}
 	for (int i=0; i< m_numberOfOutputImages; ++i)
 	{
@@ -189,7 +189,7 @@ HRESULT RingBufferTool::setRingDepth(SVString value)
 	}
 	else
 	{
-		retValue = Err_RingBuffer_InvalidRingDepth_2018;
+		retValue = SvOi::Err_10018_RingBuffer_InvalidRingDepth;
 	}
 	return retValue;
 }
@@ -216,7 +216,7 @@ HRESULT RingBufferTool::setImageIndex(int indexNumber, SVString valueString)
 	}
 	else
 	{
-		retValue = Err_RingBuffer_InvalidImageIndex_2019;
+		retValue = SvOi::Err_10019_RingBuffer_InvalidImageIndex;
 	}
 
 	return retValue;

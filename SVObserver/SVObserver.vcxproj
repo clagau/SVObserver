@@ -3865,7 +3865,6 @@ echo %time%
     <ClInclude Include="EQAdjustSizePositionX.h" />
     <ClInclude Include="EQAdjustSizePositionY.h" />
     <ClInclude Include="EQAdjustSizeWidth.h" />
-    <ClInclude Include="ErrorNumbers.h" />
     <ClInclude Include="FormulaController.h" />
     <ClInclude Include="ISVCancel.h" />
     <ClInclude Include="LinkedValue.h" />

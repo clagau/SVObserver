@@ -9,6 +9,7 @@
 //* .Check In Date   : $Date:   17 Jul 2014 20:04:58  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #ifndef _WIN64
 #include "SVObserver.h"
@@ -18,9 +19,10 @@
 #include "SVInspectionProcess.h"
 #include "SVToolSet.h"
 #include "SVPLCValidateReasons.h"
-#include "ErrorNumbers.h"
+#include "ObjectInterfaces\ErrorNumbers.h"
 #include "SVStatusLibrary/ExceptionManager.h"
 #include "TextDefinesSvO.h"
+#pragma endregion Includes
 
 IMPLEMENT_DYNAMIC(SVPLCOutputEditDialog, CDialog)
 
@@ -92,7 +94,7 @@ BOOL SVPLCOutputEditDialog::OnInitDialog()
 	if( nullptr == pConfig || !pConfig->GetPPQCount( lPPQSize ) )
 	{
 		SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
-		e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorGettingPPQCount, StdExceptionParams, Err_17034_SVPLCOutputEditDialog_OnInitDialog_ErrorGettingPPQCount );
+		e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorGettingPPQCount, StdExceptionParams, SvOi::Err_17034_ErrorGettingPPQCount );
 		DebugBreak();
 	}
 
@@ -103,7 +105,7 @@ BOOL SVPLCOutputEditDialog::OnInitDialog()
 		if( !pConfig->GetPPQ( k, &pPPQ ) )
 		{
 			SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
-			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorGettingPPQ, StdExceptionParams, Err_17035_SVPLCOutputEditDialog_OnInitDialog_ErrorGettingPPQ );
+			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorGettingPPQ, StdExceptionParams, SvOi::Err_17035_ErrorGettingPPQ );
 			DebugBreak();
 		}
 
@@ -115,7 +117,7 @@ BOOL SVPLCOutputEditDialog::OnInitDialog()
 			if( !pPPQ->GetAllOutputs( ppIOEntries ) )
 			{
 				SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
-				e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorGettingOutputs, StdExceptionParams, Err_17036_SVPLCOutputEditDialog_OnInitDialog_ErrorGettingOutputs );
+				e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorGettingOutputs, StdExceptionParams, SvOi::Err_17036_ErrorGettingOutputs );
 				DebugBreak();
 			}
 

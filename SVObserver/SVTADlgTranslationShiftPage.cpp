@@ -21,7 +21,7 @@
 #include "SVToolAdjustmentDialogSheetClass.h"
 #include "SVShiftTool.h"
 #include "SVShiftToolUtility.h"
-#include "ErrorNumbers.h"
+#include "ObjectInterfaces\ErrorNumbers.h"
 #include "SVStatusLibrary/ExceptionManager.h"
 #pragma endregion Includes
 
@@ -476,7 +476,7 @@ void SVTADlgTranslationShiftPageClass::OnBnClickedChkEnableSourceImageExtents()
 	if( m_ctlEnableSourceImageExtents.GetCheck()==0)
 	{
 		SvStl::ExceptionMgr1 e( SvStl::ExpTypeEnum::LogAndDisplay );
-		e.setMessage( SVMSG_SVO_60_SHIFT_TOOL_SOURCE_IMAGE_EXTENTS_DISABLED, nullptr, StdExceptionParams, Err_17053_Shift_Tool_Source_Image_Extents_Disabled );
+		e.setMessage( SVMSG_SVO_60_SHIFT_TOOL_SOURCE_IMAGE_EXTENTS_DISABLED, nullptr, StdExceptionParams, SvOi::Err_17053_Shift_Tool_Source_Image_Extents_Disabled );
 	}
 }
 

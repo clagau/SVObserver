@@ -120,7 +120,7 @@
 #include "SVSharedMemorySingleton.h"
 #include "SVSystemLibrary\LoadDll.h"
 #include "SVStatusLibrary\ExceptionManager.h"
-#include "ErrorNumbers.h"
+#include "ObjectInterfaces\ErrorNumbers.h"
 #include "TextDefinesSvO.h"
 #pragma endregion Includes
 
@@ -2132,7 +2132,7 @@ void SVObserverApp::OnGoOnline()
 				INT_PTR Res(0);
 				SvStl::ExceptionMgr1 Exception(SvStl::ExpTypeEnum::LogAndDisplay);
 
-				Res = Exception.setMessage(SVMSG_SVO_54_EMPTY,l_csMessage,StdExceptionParams, Err_45000, 0, MB_OK);
+				Res = Exception.setMessage(SVMSG_SVO_54_EMPTY,l_csMessage,StdExceptionParams, SvOi::Err_45000, 0, MB_OK);
 				SVSVIMStateClass::AddState( l_lPrevState );
 			}
 		}
@@ -3024,9 +3024,9 @@ BOOL SVObserverApp::InitInstance()
 	{
 		//Because our exception handler (message box) needs the resources, we have to use here the standard message box.
 		SvStl::ExceptionMgr1 Exception( SvStl::ExpTypeEnum::LogOnly );
-		Exception.setMessage( SVMSG_SVO_53_RESOURCE_DLL_LOADING_FAILED, nullptr, StdExceptionParams, Err_LoadOfResourceDllFailed_2009 );
+		Exception.setMessage( SVMSG_SVO_53_RESOURCE_DLL_LOADING_FAILED, nullptr, StdExceptionParams, SvOi::Err_10009_LoadOfResourceDllFailed );
 		MessageBox(nullptr, SvO::LoadingResourceDllFailed, nullptr, MB_OK | MB_ICONSTOP );
-		exit(-Err_LoadOfResourceDllFailed_2009);
+		exit(-SvOi::Err_10009_LoadOfResourceDllFailed);
 	}
 
 	//Set the resource instance to the resource dll
@@ -3357,7 +3357,7 @@ BOOL SVObserverApp::InitInstance()
 	CString MessageText;
 	MessageText.Format(SvO::AmountOfSystemMemoryText,AmountOfRam);
 	SvStl::ExceptionMgr1 Exception( SvStl::ExpTypeEnum::LogOnly );
-	Exception.setMessage(SVMSG_SVO_54_EMPTY,MessageText,StdExceptionParams,Memory_Log_45001);
+	Exception.setMessage(SVMSG_SVO_54_EMPTY,MessageText,StdExceptionParams, SvOi::Memory_Log_45001);
 
 	//if amount of physical memory is around 16 GigE allocate the larger memory pools.
 	if (AmountOfRam >= UseLargerArchiveMemoryPool)
@@ -3484,7 +3484,7 @@ BOOL SVObserverApp::InitInstance()
 	if ( !TheSVOLicenseManager().HasMatroxLicense() )
 	{
 		SvStl::ExceptionMgr1 Exception( SvStl::ExpTypeEnum::LogAndDisplay );
-		Exception.setMessage( SVMSG_SVO_52_NOMATROX_DONGLE, nullptr, StdExceptionParams, Err_25013_NoMatroxDongle );
+		Exception.setMessage( SVMSG_SVO_52_NOMATROX_DONGLE, nullptr, StdExceptionParams, SvOi::Err_25013_NoMatroxDongle );
 	}
 
 	if ( TheSVOLicenseManager().HasMatroxLicense() && !TheSVOLicenseManager().HasMatroxGigELicense() && IsMatroxGige() )

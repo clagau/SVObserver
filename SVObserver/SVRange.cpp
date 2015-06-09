@@ -17,7 +17,7 @@
 #include "SVTool.h"
 #include "SVInspectionProcess.h"
 #include "RangeClassHelper.h"
-#include "ErrorNumbers.h"
+#include "ObjectInterfaces\ErrorNumbers.h"
 #pragma endregion Includes
 
 struct SVRangeClassCancelData : public SVCancelData	// this does not need to be visible to anyone but this file.
@@ -176,12 +176,12 @@ HRESULT SVRangeClass::InitReferencesAndInputs()
 			CString dottedName = InspectionName + csValueIndirect;
 			if(!SetReference(dottedName,m_ValueObjectReferences[i] ))
 			{
-				hResult = -Err_16025; //invalid Reference;
+				hResult = -SvOi::Err_16025; //invalid Reference;
 			}
 			//check if we have an valid but disabled input
 			else if( FALSE == (m_ValueObjectReferences[i].ObjectAttributesAllowed()& SV_VIEWABLE) )
 			{
-				hResult = -Err_16026; //Reference not allowed
+				hResult = -SvOi::Err_16026; //Reference not allowed
 			}
 			else
 			{
@@ -346,7 +346,7 @@ DWORD_PTR SVRangeClass::processMessage( DWORD DwMessageID, DWORD_PTR DwMessageVa
 			if( ResetStatus != S_OK )
 			{
 				BOOL SilentReset = static_cast<BOOL> (DwMessageValue);
-				if(!SilentReset && (ResetStatus == -Err_16025 || ResetStatus == -Err_16026))
+				if(!SilentReset && (ResetStatus == -SvOi::Err_16025 || ResetStatus == -SvOi::Err_16026))
 				{
 					CString ErrorMsg;
 					ErrorMsg = GetCompleteObjectNameToObjectType( NULL, SVInspectionObjectType );

@@ -9,6 +9,7 @@
 //* .Check In Date   : $Date:   23 Apr 2013 09:27:40  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVAnalyzerLuminance.h"
 
@@ -20,15 +21,8 @@
 #include "SVImageClass.h"
 #include "SVImageProcessingClass.h"
 #include "SVResultLong.h"
-
-///////////////////////////////////////////////////////////
-// SEJ Error Codes used by this program
-///////////////////////////////////////////////////////////
-#define SEJ_ErrorBase 15000
-#define Err_15009 (SEJ_ErrorBase+9)
-#define Err_15010 (SEJ_ErrorBase+10)
-#define Err_15011 (SEJ_ErrorBase+11)
-#define Err_15012 (SEJ_ErrorBase+12)
+#include "ObjectInterfaces\ErrorNumbers.h"
+#pragma endregion Includes
 
 SV_IMPLEMENT_CLASS( SVLuminanceAnalyzerClass, SVLuminanceAnalyzerClassGuid );
 
@@ -379,8 +373,8 @@ BOOL SVLuminanceAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 		
 		if ( S_OK != msvCalcStdDevValue.GetValue( calcStdDev ))
 		{
-			msvError.msvlErrorCd = -Err_15009;
-			SV_TRAP_ERROR_BRK_TSTFIRST(msvError, Err_15009)
+			msvError.msvlErrorCd = -SvOi::Err_15009;
+			SV_TRAP_ERROR_BRK_TSTFIRST(msvError, SvOi::Err_15009)
 		}
 		
 		if (calcStdDev)
@@ -414,8 +408,8 @@ BOOL SVLuminanceAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 				///////////////////////////////////////////////////////////////////
 				if (S_OK != msvVarianceValue.SetValue( RRunStatus.m_lResultDataIndex, value ))
 				{
-					msvError.msvlErrorCd = -Err_15010;
-					SV_TRAP_ERROR_BRK_TSTFIRST(msvError, Err_15010);
+					msvError.msvlErrorCd = -SvOi::Err_15010;
+					SV_TRAP_ERROR_BRK_TSTFIRST(msvError, SvOi::Err_15010);
 				}
 				
 				///////////////////////////////////////////////////////////////////
@@ -426,8 +420,8 @@ BOOL SVLuminanceAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 				{
 					if (value < 0)
 					{
-						msvError.msvlErrorCd = -Err_15011;
-						SV_TRAP_ERROR_BRK_TSTFIRST(msvError, Err_15011);
+						msvError.msvlErrorCd = -SvOi::Err_15011;
+						SV_TRAP_ERROR_BRK_TSTFIRST(msvError, SvOi::Err_15011);
 					}
 					else
 						value = fabs( sqrt( value ) );
@@ -437,7 +431,7 @@ BOOL SVLuminanceAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 				///////////////////////////////////////////////////////////////////
 				if (S_OK != msvStdDevValue.SetValue( RRunStatus.m_lResultDataIndex, value ))
 				{
-					msvError.msvlErrorCd = -Err_15012;
+					msvError.msvlErrorCd = -SvOi::Err_15012;
 					SV_TRAP_ERROR_BRK_TSTFIRST(msvError, 1075);
 				}
 			}

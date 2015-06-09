@@ -12,7 +12,7 @@
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVInspectionProcess.h"
 #include "SVTool.h"
-#include "ErrorNumbers.h"
+#include "ObjectInterfaces\ErrorNumbers.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -83,7 +83,7 @@ HRESULT SVCommandInspectionExtentUpdater::Execute()
 			break;
 		
 		default:
-			retVal = Err_SVCommandInspectionExtentUpdater_InvalidMode_2004;
+			retVal = SvOi::Err_10004_SVCommandInspectionExtentUpdater_InvalidMode;
 			break;
 		}
 
@@ -112,11 +112,11 @@ HRESULT SVCommandInspectionExtentUpdater::Execute()
 
 			if ( nullptr == pResetObject || ::SVSendMessage(pResetObject, SVM_RESET_ALL_OBJECTS, NULL, NULL) != SVMR_SUCCESS)
 			{
-				retVal = Err_SVCommandInspectionExtentUpdater_ResetAllObjects_2005;
+				retVal = SvOi::Err_10005_SVCommandInspectionExtentUpdater_ResetAllObjects;
 			}
 			else
 			{
-				retVal = pInspection->RunOnce( pToolRun ) ? S_OK : Err_SVCommandInspectionExtentUpdater_RunOnce_2006;
+				retVal = pInspection->RunOnce( pToolRun ) ? S_OK : SvOi::Err_10006_SVCommandInspectionExtentUpdater_RunOnce;
 			}
 
 			if(!m_bResetInspection)
@@ -128,7 +128,7 @@ HRESULT SVCommandInspectionExtentUpdater::Execute()
 	}
 	else
 	{
-		retVal = Err_SVCommandInspectionExtentUpdater_InvalidParameter_2007;
+		retVal = SvOi::Err_10007_SVCommandInspectionExtentUpdater_InvalidParameter;
 	}
 
 	return retVal;

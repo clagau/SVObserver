@@ -9,6 +9,7 @@
 //* .Check In Date   : $Date:   28 Jan 2015 11:09:06  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVStatTool.h"
 
@@ -19,25 +20,14 @@
 #include "SVInspectionProcess.h"
 #include "SVResultDouble.h"
 #include "SVToolSet.h"
-#include "ErrorNumbers.h"
+#include "ObjectInterfaces\ErrorNumbers.h"
+#pragma endregion Includes
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
-
-///////////////////////////////////////////////////////////
-// Error Codes used by this program
-///////////////////////////////////////////////////////////
-enum
-{
-	ErrorBase = 15000,
-	Err_15001 = (ErrorBase+1),
-	Err_15002 = (ErrorBase+2),
-	Err_15003 = (ErrorBase+3),
-	Err_15004 = (ErrorBase+4),
-};
 
 SV_IMPLEMENT_CLASS( SVStatisticsToolClass, SVStatisticsToolClassGuid );
 
@@ -222,7 +212,7 @@ HRESULT SVStatisticsToolClass::ResetObject()
 		{
 			if( HasVariable() && !Test() )
 			{
-				Result = -Err_25012_StatTool_Test;
+				Result = -SvOi::Err_25012_StatTool_Test;
 			}
 			else
 			{
@@ -318,8 +308,8 @@ DWORD SVStatisticsToolClass::AllocateResult (SVStatisticsFeatureEnum aFeatureInd
 		
 		if(!pResult)
 		{
-			msvError.msvlErrorCd = -Err_15001;
-			SV_TRAP_ERROR_BRK (msvError, Err_15001);
+			msvError.msvlErrorCd = -SvOi::Err_15001;
+			SV_TRAP_ERROR_BRK (msvError, SvOi::Err_15001);
 		}
 		
 		Add( pResult );
@@ -337,8 +327,8 @@ DWORD SVStatisticsToolClass::AllocateResult (SVStatisticsFeatureEnum aFeatureInd
 		
 		if (!pValue)
 		{
-			msvError.msvlErrorCd = -Err_15002;
-			SV_TRAP_ERROR_BRK (msvError, Err_15002);
+			msvError.msvlErrorCd = -SvOi::Err_15002;
+			SV_TRAP_ERROR_BRK (msvError, SvOi::Err_15002);
 		}
 		
 		// Make it non visible for any selection
@@ -384,8 +374,8 @@ DWORD SVStatisticsToolClass::FreeResult (SVStatisticsFeatureEnum aFeatureIndex)
 		
 		if (!pResult)
 		{
-			msvError.msvlErrorCd = -Err_15003;
-			SV_TRAP_ERROR_BRK (msvError, Err_15003);
+			msvError.msvlErrorCd = -SvOi::Err_15003;
+			SV_TRAP_ERROR_BRK (msvError, SvOi::Err_15003);
 		}
 		
 		

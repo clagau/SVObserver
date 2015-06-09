@@ -19,7 +19,7 @@
 #include "SVObjectLibrary/SVObjectScriptUsage.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVInspectionProcess.h"
-#include "ErrorNumbers.h"
+#include "ObjectInterfaces\ErrorNumbers.h"
 #include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
@@ -121,7 +121,7 @@ HRESULT RangeClassHelper::SetInternalData(ERange er, LPCTSTR lp, CString &Errors
 		//IDS_IS_MISSING            "ERROR:\n%1 is missing."
 		AfxFormatString1(Errorsmsg, IDS_IS_MISSING, ERange2String(er).GetString());
 
-		return -Err_16022;
+		return -SvOi::Err_16022;
 	}
 
 	SVString text = lp;
@@ -137,7 +137,7 @@ HRESULT RangeClassHelper::SetInternalData(ERange er, LPCTSTR lp, CString &Errors
 			csValues.Format(_T(" %i and %i"), static_cast< int >( s_RangeMin ), static_cast< int >( s_RangeMax ));
 			Errorsmsg += csValues;
 
-			return -Err_16023;
+			return -SvOi::Err_16023;
 		}
 	}
 
@@ -160,7 +160,7 @@ HRESULT RangeClassHelper::SetInternalData(ERange er, LPCTSTR lp, CString &Errors
 		m_WarnLowIndirect = csText;
 		break;
 	default:
-		hr = -Err_16024;
+		hr = -SvOi::Err_16024;
 		break;
 	}
 
@@ -191,41 +191,41 @@ HRESULT RangeClassHelper::CheckInternalData(CString &csmsg) const
 	{
 		//IDS_IS_LESS_THAN			"ERROR:\n%1\nis less than\n%2"
 		AfxFormatString2( csmsg, IDS_IS_LESS_THAN, csFailHigh.GetString(), csWarnHigh.GetString() );
-		return -Err_16012;
+		return -SvOi::Err_16012;
 	}
 
 	if( m_FailHighIndirect.IsEmpty() && m_WarnLowIndirect.IsEmpty() && m_FailHigh < m_WarnLow )
 	{
 		//IDS_IS_LESS_THAN			"ERROR:\n%1\nis less than\n%2"
 		AfxFormatString2( csmsg, IDS_IS_LESS_THAN, csFailHigh.GetString(), csWarnLow.GetString() );
-		return -Err_16013;
+		return -SvOi::Err_16013;
 	}
 
 	if( m_FailHighIndirect.IsEmpty() && m_FailLowIndirect.IsEmpty() && m_FailHigh < m_FailLow )
 	{
 		//IDS_IS_LESS_THAN			"ERROR:\n%1\nis less than\n%2"
 		AfxFormatString2( csmsg, IDS_IS_LESS_THAN, csFailHigh.GetString(), csFailLow.GetString() );
-		return -Err_16014;
+		return -SvOi::Err_16014;
 	}
 
 	if( m_WarnHighIndirect.IsEmpty() && m_WarnLowIndirect.IsEmpty() && m_WarnHigh < m_WarnLow )
 	{
 		//IDS_IS_LESS_THAN			"ERROR:\n%1\nis less than\n%2"
 		AfxFormatString2( csmsg, IDS_IS_LESS_THAN, csWarnHigh.GetString(), csWarnLow.GetString() );
-		return -Err_16015;
+		return -SvOi::Err_16015;
 	}
 
 	if( m_WarnHighIndirect.IsEmpty() && m_FailLowIndirect.IsEmpty() && m_WarnHigh < m_FailLow )
 	{
 		//IDS_IS_LESS_THAN			"ERROR:\n%1\nis less than\n%2"
 		AfxFormatString2( csmsg, IDS_IS_LESS_THAN, csWarnHigh.GetString(), csFailLow.GetString() );
-		return -Err_16016;
+		return -SvOi::Err_16016;
 	}
 
 	if( m_WarnLowIndirect.IsEmpty() && m_FailLowIndirect.IsEmpty() && m_WarnLow < m_FailLow )
 	{
 		AfxFormatString2( csmsg, IDS_IS_LESS_THAN, csWarnLow.GetString(), csFailLow.GetString() );
-		return -Err_16017;
+		return -SvOi::Err_16017;
 	}
 
 	if( !m_FailHighIndirect.IsEmpty() )
@@ -247,7 +247,7 @@ HRESULT RangeClassHelper::CheckInternalData(CString &csmsg) const
 		{
 			//IDS_ISANINVALID_REFERENCE  "ERROR:\n%1: %2\nis an invalid reference."
 			AfxFormatString2( csmsg, IDS_ISANINVALID_REFERENCE, csFailHigh.GetString(), m_FailHighIndirect.GetString() );
-			return -Err_16018;
+			return -SvOi::Err_16018;
 		}
 	}
 
@@ -270,7 +270,7 @@ HRESULT RangeClassHelper::CheckInternalData(CString &csmsg) const
 		{
 			//IDS_ISANINVALID_REFERENCE  "ERROR:\n%1: %2\nis an invalid reference."
 			AfxFormatString2( csmsg, IDS_ISANINVALID_REFERENCE, csWarnHigh.GetString(), m_WarnHighIndirect.GetString() );
-			return -Err_16019;
+			return -SvOi::Err_16019;
 		}
 	}
 
@@ -293,7 +293,7 @@ HRESULT RangeClassHelper::CheckInternalData(CString &csmsg) const
 		{
 			//IDS_ISANINVALID_REFERENCE  "ERROR:\n%1: %2\nis an invalid reference."
 			AfxFormatString2( csmsg, IDS_ISANINVALID_REFERENCE, csWarnLow.GetString(), m_WarnLowIndirect.GetString() );
-			return -Err_16020;
+			return -SvOi::Err_16020;
 		}
 	}
 
@@ -315,7 +315,7 @@ HRESULT RangeClassHelper::CheckInternalData(CString &csmsg) const
 		if(isInvalidReference)
 		{
 			AfxFormatString2( csmsg, IDS_ISANINVALID_REFERENCE, csFailLow.GetString(), m_FailLowIndirect.GetString() );
-			return -Err_16021;
+			return -SvOi::Err_16021;
 		}
 	}
 
@@ -324,14 +324,14 @@ HRESULT RangeClassHelper::CheckInternalData(CString &csmsg) const
 
 HRESULT RangeClassHelper::SetInspectionData()
 {
-	HRESULT hr = -Err_16011;
+	HRESULT hr = -SvOi::Err_16011;
 	if( m_pRange )
 	{
 		hr = AddInputRequest( &( m_pRange->FailHigh ), m_FailHigh );
 
 		if( hr != S_OK )
 		{
-			hr = -Err_16001;
+			hr = -SvOi::Err_16001;
 		}
 		else
 		{
@@ -340,7 +340,7 @@ HRESULT RangeClassHelper::SetInspectionData()
 
 		if(hr != S_OK)
 		{
-			hr = -Err_16002;
+			hr = -SvOi::Err_16002;
 		}
 		else
 		{
@@ -349,7 +349,7 @@ HRESULT RangeClassHelper::SetInspectionData()
 
 		if( hr != S_OK )
 		{
-			hr = -Err_16003;
+			hr = -SvOi::Err_16003;
 		}
 		else
 		{
@@ -358,7 +358,7 @@ HRESULT RangeClassHelper::SetInspectionData()
 
 		if( hr != S_OK )
 		{
-			hr = -Err_16004;
+			hr = -SvOi::Err_16004;
 		}
 		else
 		{
@@ -367,7 +367,7 @@ HRESULT RangeClassHelper::SetInspectionData()
 
 		if( hr != S_OK )
 		{
-			hr = -Err_16005;
+			hr = -SvOi::Err_16005;
 		}
 		else
 		{
@@ -376,7 +376,7 @@ HRESULT RangeClassHelper::SetInspectionData()
 
 		if( hr != S_OK )
 		{
-			hr = -Err_16006;
+			hr = -SvOi::Err_16006;
 		}
 		else
 		{
@@ -385,7 +385,7 @@ HRESULT RangeClassHelper::SetInspectionData()
 
 		if( hr != S_OK )
 		{
-			hr = -Err_16007;
+			hr = -SvOi::Err_16007;
 		}
 		else
 		{
@@ -394,7 +394,7 @@ HRESULT RangeClassHelper::SetInspectionData()
 
 		if( hr != S_OK )
 		{
-			hr = -Err_16008;
+			hr = -SvOi::Err_16008;
 		}
 		else
 		{
@@ -403,7 +403,7 @@ HRESULT RangeClassHelper::SetInspectionData()
 
 		if( hr != S_OK )
 		{
-			hr = -Err_16009;
+			hr = -SvOi::Err_16009;
 		}
 		else
 		{
@@ -412,7 +412,7 @@ HRESULT RangeClassHelper::SetInspectionData()
 
 		if( hr != S_OK )
 		{
-			hr = -Err_16010;
+			hr = -SvOi::Err_16010;
 		}
 	}
 

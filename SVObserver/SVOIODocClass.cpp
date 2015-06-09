@@ -9,11 +9,14 @@
 //* .Check In Date   : $Date:   03 Sep 2014 15:59:32  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVObserver.h"
 #include "SVOIODocClass.h"
 #include "SVFileNameManagerClass.h"
 #include "SVStatusLibrary/SVException.h"
+#include "ObjectInterfaces\ErrorNumbers.h"
+#pragma endregion Includes
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -22,9 +25,6 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 IMPLEMENT_DYNCREATE(SVOIODocClass, COleServerDoc)
-
-#define SEJ_ErrorBase 15000
-#define Err_15034 (SEJ_ErrorBase+34)
 
 SVOIODocClass::SVOIODocClass()
 : COleServerDoc()
@@ -80,7 +80,7 @@ void SVOIODocClass::Serialize(CArchive& ar)
 	SVException l_Exception;
 	CString l_Message;
 	l_Message.Format(_T("This was previously used for .sec files."));
-	SETEXCEPTION5(l_Exception, E_NOTIMPL, Err_15034, l_Message);
+	SETEXCEPTION5(l_Exception, E_NOTIMPL, SvOi::Err_15034, l_Message);
 	l_Exception.LogException(l_Message);
 }
 

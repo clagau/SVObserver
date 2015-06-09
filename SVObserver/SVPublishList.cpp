@@ -21,7 +21,7 @@
 #include "SVInspectionProcess.h"
 #include "SVConfigurationObject.h"
 #include "SVPPQObject.h"
-#include "ErrorNumbers.h"
+#include "ObjectInterfaces\ErrorNumbers.h"
 #include "SVStatusLibrary/ExceptionManager.h"
 #include "TextDefinesSvO.h"
 #pragma endregion Includes
@@ -144,7 +144,7 @@ void SVPublishListClass::Refresh(SVTaskObjectClass * pRootObject)
 			if( !found )
 			{
 				SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
-				e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorFindingPPQEntries, StdExceptionParams, Err_17043_SVPublishListClass_Refresh_ErrorFindingPPQEntries );
+				e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorFindingPPQEntries, StdExceptionParams, SvOi::Err_17043_ErrorFindingPPQEntries );
 				DebugBreak();
 			}
 		}// end if

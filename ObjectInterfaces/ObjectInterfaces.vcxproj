@@ -138,6 +138,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="ErrorNumbers.h" />
     <ClInclude Include="ICustom2Filter.h" />
     <ClInclude Include="ICustomFilter.h" />
     <ClInclude Include="IEnvironmentObject.h" />

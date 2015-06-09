@@ -20,6 +20,7 @@
 #include "SVInspectionProcess.h"
 #include "SVSetupDialogManager.h"
 #include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
+#include "ObjectInterfaces\ErrorNumbers.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -29,18 +30,6 @@ using namespace Seidenader::ObjectSelectorLibrary;
 #define new DEBUG_NEW
 #endif
 #pragma endregion Declarations
-
-///////////////////////////////////////////////////////////
-// Error Codes used by this program
-///////////////////////////////////////////////////////////
-enum
-{
-	ErrorBase = 15000,
-	Err_15005 = (ErrorBase+5),
-	Err_15006 = (ErrorBase+6),
-	Err_15007 = (ErrorBase+7),
-	Err_15008 = (ErrorBase+8),
-};
 
 BEGIN_MESSAGE_MAP(SVToolAdjustmentDialogStatisticsPageClass, CPropertyPage)
 	//{{AFX_MSG_MAP(SVToolAdjustmentDialogStatisticsPageClass)
@@ -181,14 +170,14 @@ void SVToolAdjustmentDialogStatisticsPageClass::initListBox(CListBox* pListBox, 
                 
                 if (lReturned == LB_ERR || lReturned == LB_ERRSPACE)
                 {
-                    lError = -Err_15005;
+                    lError = -SvOi::Err_15005;
                     break;
                 }
 
     			lReturned = pListBox->SetItemData( lReturned, static_cast<DWORD_PTR>(i) );
                 if (lReturned == LB_ERR)
                 {
-                    lError = -Err_15006;
+                    lError = -SvOi::Err_15006;
                     break;
                 }
                 lEmpty = FALSE;
@@ -272,14 +261,14 @@ void SVToolAdjustmentDialogStatisticsPageClass::OnSetRange()
 
 			if (!pResult)
 			{
-				err.msvlErrorCd = -Err_15007;
-				SV_TRAP_ERROR_BRK (err, Err_15007);
+				err.msvlErrorCd = -SvOi::Err_15007;
+				SV_TRAP_ERROR_BRK (err, SvOi::Err_15007);
 			}
 
 			if (SVSetupDialogManager::Instance().SetupDialog( pResult->GetClassID(), pResult->GetUniqueObjectID(), this ) != S_OK)
 			{
-				err.msvlErrorCd = -Err_15008;
-				SV_TRAP_ERROR_BRK (err, Err_15008);
+				err.msvlErrorCd = -SvOi::Err_15008;
+				SV_TRAP_ERROR_BRK (err, SvOi::Err_15008);
 			}
 		}
         break;

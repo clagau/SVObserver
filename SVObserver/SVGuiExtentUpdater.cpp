@@ -8,19 +8,22 @@
 //* .Current Version : $Revision:   1.2  $
 //* .Check In Date   : $Date:   12 Feb 2015 03:00:46  $
 //******************************************************************************
+
+#pragma region Includes
 #include "stdafx.h"
 #include "SVGuiExtentUpdater.h"
 #include "SVInspectionProcess.h"
 #include "SVTool.h"
 #include "SVObjectLibrary/SVObjectSynchronousCommandTemplate.h"
 #include "SVCommandInspectionExtentUpdater.h"
-#include "ErrorNumbers.h"
+#include "ObjectInterfaces\ErrorNumbers.h"
+#pragma endregion Includes
 
 HRESULT SVGuiExtentUpdater::SetImageExtent(SVTaskObjectClass* pTaskObject, const SVImageExtentClass& rExtents, bool ForwardSize )
 {
 	CWaitCursor wait;
 
-	HRESULT status = Err_SetImageExtent_InvalidParameter_2001;
+	HRESULT status = SvOi::Err_10001_SetImageExtent_InvalidParameter;
 	if ( nullptr != pTaskObject )
 	{
 		SVInspectionProcess* pInspection = pTaskObject->GetInspection();
@@ -39,7 +42,7 @@ HRESULT SVGuiExtentUpdater::SetImageExtent(SVTaskObjectClass* pTaskObject, const
 HRESULT SVGuiExtentUpdater::SetImageExtentToParent(SVTaskObjectClass* pTaskObject,bool ForwardSize)
 {
 	CWaitCursor wait;
-	HRESULT status = Err_SetImageExtentToParent_InvalidParameter_2002;
+	HRESULT status = SvOi::Err_10002_SetImageExtentToParent_InvalidParameter;
 
 	if ( nullptr != pTaskObject )
 	{
@@ -60,7 +63,7 @@ HRESULT SVGuiExtentUpdater::SetImageExtentToParent(SVTaskObjectClass* pTaskObjec
 HRESULT SVGuiExtentUpdater::SetImageExtentToFit(SVTaskObjectClass* pTaskObject, const SVImageExtentClass& rExtents ,bool ForwardSize )
 {
 	CWaitCursor wait;
-	HRESULT status = Err_SetImageExtentToFit_InvalidParameter_2003;
+	HRESULT status = SvOi::Err_10003_SetImageExtentToFit_InvalidParameter;
 
 	if ( nullptr != pTaskObject )
 	{
@@ -81,7 +84,7 @@ HRESULT SVGuiExtentUpdater::SetImageExtentToFit(SVTaskObjectClass* pTaskObject, 
 HRESULT SVGuiExtentUpdater::ForwardSizeAndPosition(SVTaskObjectClass* pTaskObject)
 {
 	CWaitCursor wait;
-	HRESULT status = Err_SetImageExtentToParent_InvalidParameter_2002;
+	HRESULT status = SvOi::Err_10002_SetImageExtentToParent_InvalidParameter;
 
 	if ( nullptr != pTaskObject )
 	{

@@ -20,7 +20,7 @@
 #include "SVDigitalInputObject1.h"
 #include "SVInfoStructs.h"
 #include "SVPPQObject.h"
-#include "ErrorNumbers.h"
+#include "ObjectInterfaces\ErrorNumbers.h"
 #include "SVStatusLibrary/ExceptionManager.h"
 #include "TextDefinesSvO.h"
 #pragma endregion Includes
@@ -104,7 +104,7 @@ BOOL SVPPQEntryDialogDigInPageClass::OnInitDialog()
 	if( !m_pSheet->m_pPPQ->GetAllInputs( ppIOEntries ) )
 	{
 		SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
-		e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorGettingInputs, StdExceptionParams, Err_17041_SVPPQEntryDialogDigInPageClass_OnInitDialog_ErrorGettingInputs );
+		e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorGettingInputs, StdExceptionParams, SvOi::Err_17041_ErrorGettingInputs );
 		DebugBreak();
 	}
 

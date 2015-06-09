@@ -14,7 +14,7 @@
 #include "BasicValueObject.h"
 #include "SVInspectionProcess.h"
 #include "SVObjectLibrary\SVObjectManagerClass.h"
-#include "ErrorNumbers.h"
+#include "ObjectInterfaces\ErrorNumbers.h"
 #include "SVObjectLibrary\GlobalConst.h"
 #pragma endregion Includes
 
@@ -202,7 +202,7 @@ HRESULT LinkedValue::ConnectInput()
 {
 	if (nullptr == m_pInspection)
 	{
-		return Err_LinkedValueConnectInput_NoInspection_2014;
+		return SvOi::Err_10014_LinkedValueConnectInput_NoInspection;
 	}
 
 	HRESULT hr = S_OK;
@@ -241,7 +241,7 @@ HRESULT LinkedValue::ConnectInput()
 			ASSERT( bSuccess );
 			if( !bSuccess )
 			{
-				hr = Err_LinkedValueConnectInput_ConnectFailed_2015;
+				hr = SvOi::Err_10015_LinkedValueConnectInput_ConnectFailed;
 			}
 		}
 	}
@@ -259,13 +259,13 @@ HRESULT LinkedValue::ConnectInput()
 			}
 			else
 			{
-				hr = Err_LinkedValueConnectInput_InvalidValue_2016;
+				hr = SvOi::Err_10016_LinkedValueConnectInput_InvalidValue;
 			}
 		}
 
 		if( ::SVSendMessage( &m_variantObject, SVM_RESET_ALL_OBJECTS, NULL, NULL ) != SVMR_SUCCESS	)
 		{
-			hr = Err_LinkedValueConnectInput_ResetFailed_2017;
+			hr = SvOi::Err_10017_LinkedValueConnectInput_ResetFailed;
 		}
 	}
 

@@ -20,7 +20,7 @@
 #include "SVPPQObject.h"
 #include "SVConfigurationObject.h"
 #include "SVHardwareManifest.h"
-#include "ErrorNumbers.h"
+#include "ObjectInterfaces\ErrorNumbers.h"
 #include "SVStatusLibrary/ExceptionManager.h"
 #include "TextDefinesSvO.h"
 #pragma endregion Includes
@@ -173,7 +173,7 @@ BOOL SVIOAdjustDialogClass::OnInitDialog()
 		if( nullptr == pConfig || !pConfig->GetPPQCount( lPPQSize ) )
 		{
 			SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
-			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorGettingPPQCount, StdExceptionParams, Err_17029_SVIOAdjustDialogClass_OnInitDialog_ErrorGettingPPQCount );
+			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorGettingPPQCount, StdExceptionParams, SvOi::Err_17029_ErrorGettingPPQCount );
 			DebugBreak();
 		}
 
@@ -208,7 +208,7 @@ BOOL SVIOAdjustDialogClass::OnInitDialog()
 			if( !pConfig->GetPPQ( k, &pPPQ ) )
 			{
 				SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
-				e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorGettingPPQ, StdExceptionParams, Err_17030_SVIOAdjustDialogClass_OnInitDialog_ErrorGettingPPQ );
+				e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorGettingPPQ, StdExceptionParams, SvOi::Err_17030_ErrorGettingPPQ );
 				DebugBreak();
 			}
 
@@ -216,7 +216,7 @@ BOOL SVIOAdjustDialogClass::OnInitDialog()
 			if( !pPPQ->GetAllOutputs( ppIOEntries ) )
 			{
 				SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
-				e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorGettingOutputs, StdExceptionParams, Err_17031_SVIOAdjustDialogClass_OnInitDialog_ErrorGettingOutputs );
+				e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorGettingOutputs, StdExceptionParams, SvOi::Err_17031_ErrorGettingOutputs );
 				DebugBreak();
 			}
 

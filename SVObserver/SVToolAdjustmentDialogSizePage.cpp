@@ -14,7 +14,7 @@
 #include "SVToolAdjustmentDialogSheetClass.h"
 #include "SVFormulaEditorSheet.h"
 #include "EQAdjustSizePositionX.h"
-#include "ErrorNumbers.h"
+#include "ObjectInterfaces\ErrorNumbers.h"
 #include "EQAdjustSize.h"
 #pragma endregion Includes
 
@@ -179,7 +179,7 @@ HRESULT SVToolAdjustmentDialogSizePage::SetInspectionData()
 			}
 			else
 			{
-				hresult = Err_16029_InvalidSelection;
+				hresult = SvOi::Err_16029_InvalidSelection;
 			}
 			if( S_OK  !=  hresult)
 			{

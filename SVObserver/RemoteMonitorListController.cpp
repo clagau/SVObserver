@@ -28,11 +28,8 @@
 #include "SVToolSet.h"
 #include "SVSVIMStateClass.h"
 #include "SVFailStatusStreamManager.h"
-
+#include "ObjectInterfaces\ErrorNumbers.h"
 #pragma endregion Includes
-
-#define SEJ_ErrorBase 15000
-#define Err_15020 (SEJ_ErrorBase+20)
 
 extern SVObserverApp TheSVObserverApp;
 
@@ -256,7 +253,7 @@ static void WriteMonitorListToSharedMemory(const std::string& name, const std::s
 		SVException l_Exception;
 		CString l_Message;
 		l_Message.Format(_T("WriteMonitorListToSharedMemory - No Shared memory"));
-		SETEXCEPTION5(l_Exception, SVMSG_SVO_44_SHARED_MEMORY, Err_15020, l_Message);
+		SETEXCEPTION5(l_Exception, SVMSG_SVO_44_SHARED_MEMORY, SvOi::Err_15020, l_Message);
 		l_Exception.LogException(l_Message);
 	}
 }

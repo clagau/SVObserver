@@ -9,9 +9,9 @@
 //* .Check In Date   : $Date:   19 Dec 2014 04:10:42  $
 //******************************************************************************
 
-#ifndef INCL_SVINSPECTIONTREEPARSER_INL
-#define INCL_SVINSPECTIONTREEPARSER_INL
+#pragma once
 
+#pragma region Includes
 #include <boost/config.hpp>
 #include <boost/assign.hpp>
 #include "SVInspectionTreeParser.h"
@@ -22,7 +22,8 @@
 #include "SVObjectLibrary/SVToolsetScriptTags.h"
 #include "SVInspectionProcess.h"
 #include "SVStatusLibrary/ExceptionManager.h"
-#include "ErrorNumbers.h"
+#include "ObjectInterfaces\ErrorNumbers.h"
+#pragma endregion Includes
 
 typedef std::set<SVString> SVObjectAttributeFilterSet;
 
@@ -646,15 +647,12 @@ HRESULT SVInspectionTreeParser< SVTreeType >::CreateInspectionObject(GUID& inspe
 		else
 		{
 			SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
-			e.setMessage( SVMSG_SVO_57_PARSERTREE_INSPECTIONCREATE_ERROR, nullptr, StdExceptionParams, Err_TreeParser_InspectionCreateFailed_2010 );
-			hr = -Err_TreeParser_InspectionCreateFailed_2010;
+			e.setMessage( SVMSG_SVO_57_PARSERTREE_INSPECTIONCREATE_ERROR, nullptr, StdExceptionParams, SvOi::Err_10010_TreeParser_InspectionCreateFailed );
+			hr = -SvOi::Err_10010_TreeParser_InspectionCreateFailed;
 		}
 	}
 	return hr;
 }
-
-
-#endif
 
 //******************************************************************************
 //* LOG HISTORY:

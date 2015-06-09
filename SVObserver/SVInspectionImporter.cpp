@@ -8,6 +8,8 @@
 //* .Current Version : $Revision:   1.3  $
 //* .Check In Date   : $Date:   19 Dec 2014 04:06:24  $
 //******************************************************************************
+
+#pragma region Includes
 #include "stdafx.h"
 #include <map>
 #include <boost/config.hpp>
@@ -30,18 +32,8 @@
 #include "SVInspectionProcess.h"
 #include "SVXMLLibrary/SVXML2TreeConverter.h"
 #include "SVConfigurationObject.h"
-
-///////////////////////////////////////////////////////////
-// SEJ Error Codes used by this program
-///////////////////////////////////////////////////////////
-#define SEJ_ErrorBase 15000
-#define Err_15013 (SEJ_ErrorBase+13)
-#define Err_15014 (SEJ_ErrorBase+14)
-#define Err_15015 (SEJ_ErrorBase+15)
-#define Err_15016 (SEJ_ErrorBase+16)
-#define Err_15017 (SEJ_ErrorBase+17)
-#define Err_15018 (SEJ_ErrorBase+18)
-#define Err_15019 (SEJ_ErrorBase+19)
+#include "ObjectInterfaces\ErrorNumbers.h"
+#pragma endregion Includes
 
 static LPCTSTR scRunDirectory = _T("C:\\Run");
 static LPCTSTR scImportNewExt = _T(".new.xml");
@@ -90,7 +82,7 @@ static bool isExportFile(const SVString& filename)
 
 static int LaunchTransform(const char* inFilename, const char* outFilename, const char* inspectionName)
 {
-	DWORD exitCode = -Err_15018;
+	DWORD exitCode = -SvOi::Err_15018;
 
 	std::string parameters;
 	parameters = _T("/in=");
@@ -328,23 +320,23 @@ HRESULT LoadInspectionXml(const SVString& filename, const SVString& zipFilename,
 								}
 								else
 								{
-									hr = -Err_15013;
+									hr = -SvOi::Err_15013;
 								}
 							}
 							else
 							{
-								hr = -Err_15019;
+								hr = -SvOi::Err_15019;
 							}
 						}
 					}
 					else
 					{
-						hr = -Err_15014;
+						hr = -SvOi::Err_15014;
 					}
 				}
 				else
 				{
-					hr = -Err_15015;
+					hr = -SvOi::Err_15015;
 				}
 
 			}
@@ -430,7 +422,7 @@ HRESULT SVInspectionImporter::Import(const SVString& filename, const SVString& i
 	}
 	else
 	{
-		hr = -Err_15017;
+		hr = -SvOi::Err_15017;
 	}
 
 	// Deal with single zip file..

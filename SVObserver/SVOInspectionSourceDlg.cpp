@@ -9,6 +9,7 @@
 //* .Check In Date   : $Date:   18 Sep 2014 13:40:04  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include <boost/config.hpp>
 #include <boost/bind.hpp>
@@ -25,9 +26,10 @@
 #include "SVMFCControls/SVFileDialog.h"
 #include "SVGlobal.h"
 #include "SVStatusLibrary/ExceptionManager.h"
-#include "ErrorNumbers.h"
+#include "ObjectInterfaces\ErrorNumbers.h"
 #include "TextDefinesSvO.h"
 #include "SVOResource/ConstGlobalSvOr.h"
+#pragma endregion Includes
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -315,7 +317,7 @@ void CSVOInspectionSourceDlg::OnBtnImportIpd()
 					::SVGetVersionString( strFile, l_VersionNumber );
 					strText.Format(SvO::c_textImportInspectionError, strFile, strApp);
 					SvStl::ExceptionMgr1 Exception( SvStl::ExpTypeEnum::LogAndDisplay );
-					Exception.setMessage( SVMSG_SVO_56_INSPECTION_IMPORT_ERROR, strText, StdExceptionParams, Err_ImportInspectionWrongVersion_2008 );
+					Exception.setMessage( SVMSG_SVO_56_INSPECTION_IMPORT_ERROR, strText, StdExceptionParams, SvOi::Err_10008_ImportInspectionWrongVersion );
 
 					OnBtnDeleteVi();
 				}

@@ -3177,9 +3177,6 @@
     <ClInclude Include="ToolClipboard.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ErrorNumbers.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ResultViewEnvReferences.h">
       <Filter>Header Files</Filter>
     </ClInclude>

@@ -24,7 +24,7 @@
 #include "SVOutputObjectList.h"
 #include "SVMessage/SVMessage.h"
 #include "SVIOController.h"
-#include "ErrorNumbers.h"
+#include "ObjectInterfaces\ErrorNumbers.h"
 #include "SVStatusLibrary/ExceptionManager.h"
 #include "TextDefinesSvO.h"
 #pragma endregion Includes
@@ -158,7 +158,7 @@ void SVDiscreteOutputsView::OnUpdate( CView* pSender, LPARAM lHint, CObject* pHi
 		if( nullptr == pConfig || !pConfig->GetPPQCount( lPPQSize ) )
 		{
 			SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
-			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorGettingPPQCount, StdExceptionParams, Err_17010_SVDiscreteOutputsView_OnUpdate_ErrorGettingPPQCount );
+			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorGettingPPQCount, StdExceptionParams, SvOi::Err_17010_ErrorGettingPPQCount );
 			DebugBreak();
 		}
 
@@ -242,7 +242,7 @@ void SVDiscreteOutputsView::OnUpdate( CView* pSender, LPARAM lHint, CObject* pHi
 				if( !pConfig->GetPPQ( k, &pPPQ ) )
 				{
 					SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
-					e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorGettingPPQ, StdExceptionParams, Err_17011_SVDiscreteOutputsView_OnUpdate_ErrorGettingPPQ );
+					e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorGettingPPQ, StdExceptionParams, SvOi::Err_17011_ErrorGettingPPQ );
 					DebugBreak();
 				}
 
@@ -250,7 +250,7 @@ void SVDiscreteOutputsView::OnUpdate( CView* pSender, LPARAM lHint, CObject* pHi
 				if( !pPPQ->GetAllOutputs( ppIOEntries ) )
 				{
 					SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
-					e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorGettingOutputs, StdExceptionParams, Err_17012_SVDiscreteOutputsView_OnUpdate_ErrorGettingOutputs );
+					e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorGettingOutputs, StdExceptionParams, SvOi::Err_17012_ErrorGettingOutputs );
 					DebugBreak();
 				}
 
