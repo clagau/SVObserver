@@ -1895,13 +1895,11 @@ void SVConfigurationPrint::PrintCameraSummary(CDC* pDC, CPoint& ptCurPos, int nI
 	pDC->SelectObject(&m_fontText);
 	
 	//The nullptr check here is enough because then lSize would be 0
-	if( nullptr != pConfig){ pConfig->GetCameraCount(lSize); }
+	if( nullptr != pConfig){ lSize = pConfig->GetCameraCount(); }
 	for (long l = 0; l < lSize; l++)
 	{
-		SVVirtualCamera* pCamera( nullptr );
-		
-		pConfig->GetCamera(l, &pCamera);
-		if( nullptr != pCamera)
+		SVVirtualCamera* pCamera = pConfig->GetCamera(l);
+		if( nullptr != pCamera )
 		{
 			SVFileNameArrayClass* pfnac = NULL;
 			SVLightReference* plrcDummy = NULL;
@@ -2032,13 +2030,11 @@ void SVConfigurationPrint::PrintTriggerSummary(CDC* pDC, CPoint& ptCurPos, int n
 	pDC->SelectObject(&m_fontText);
 	
 	//The nullptr check here is enough because then lSize would be 0
-	if( nullptr != pConfig) { pConfig->GetTriggerCount(lSize); }
+	if( nullptr != pConfig) { lSize = pConfig->GetTriggerCount(); }
 	for (long l = 0; l < lSize; l++)
 	{
-		SVTriggerObject* pTrigger( nullptr );
-		
-		pConfig->GetTrigger(l, &pTrigger);
-		if(nullptr != pTrigger)
+		SVTriggerObject* pTrigger = pConfig->GetTrigger(l);
+		if( nullptr != pTrigger )
 		{
 			ptCurPos.x   = (nIndentLevel + 1) * m_shortTabPixels;
 			if ( pTrigger->mpsvDevice )
@@ -2086,12 +2082,10 @@ void SVConfigurationPrint::PrintInspectionSummary(CDC* pDC, CPoint& ptCurPos, in
 	pDC->SelectObject(&m_fontText);
 	
 	//The nullptr check here is enough because then lSize would be 0
-	if( nullptr != pConfig) { pConfig->GetInspectionCount(lSize); }
+	if( nullptr != pConfig) { lSize = pConfig->GetInspectionCount(); }
 	for (long l = 0; l < lSize; l++)
 	{
-		SVInspectionProcess* pInspect( nullptr );
-		
-		pConfig->GetInspection(l, &pInspect);
+		SVInspectionProcess* pInspect = pConfig->GetInspection(l);
 		if( nullptr != pInspect )
 		{
 			ptCurPos.x   = (nIndentLevel + 1) * m_shortTabPixels;
@@ -2122,13 +2116,11 @@ void SVConfigurationPrint::PrintPPQSummary(CDC* pDC, CPoint& ptCurPos, int nInde
 	pDC->SelectObject(&m_fontText);
 	
 	//The nullptr check here is enough because then lSize would be 0
-	if( nullptr != pConfig) { pConfig->GetPPQCount(lPPQ); }
+	if( nullptr != pConfig) { lPPQ = pConfig->GetPPQCount(); }
 	++nIndentLevel;
 	for (long l = 0; l < lPPQ; l++)
 	{
-		SVPPQObject* pPPQ( nullptr);
-		
-		pConfig->GetPPQ(l, &pPPQ);
+		SVPPQObject* pPPQ = pConfig->GetPPQ(l);
 		if( nullptr != pPPQ )
 		{
 			ptCurPos.x   = nIndentLevel * m_shortTabPixels;
@@ -2259,19 +2251,18 @@ void SVConfigurationPrint::PrintPPQBarSection(CDC* pDC, CPoint& ptCurPos, int nI
 
 	long lPPQ = 0;
 	//The nullptr check here is enough because then lPPQ would be 0
-	if( nullptr != pConfig) { pConfig->GetPPQCount(lPPQ); }
+	if( nullptr != pConfig) { lPPQ = pConfig->GetPPQCount(); }
 	for (int intPPQ = 0; intPPQ < lPPQ; intPPQ++)
 	{
-		SVPPQObject* pPPQ( nullptr );
+		SVPPQObject* pPPQ = pConfig->GetPPQ( intPPQ );
 
-		if ( !pConfig->GetPPQ( intPPQ, &pPPQ ) )
+		if ( nullptr == pPPQ )
 		{
 			SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
 			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorGettingPPQ, StdExceptionParams, SvOi::Err_17000_ErrorGettingPPQ );
 			DebugBreak();
+			continue;
 		}
-
-		if ( nullptr == pPPQ ) { continue; }
 
 		ptCurPos.x  = ++nIndentLevel * m_shortTabPixels;
 		ptTemp      = ptCurPos;
@@ -2380,10 +2371,10 @@ void SVConfigurationPrint::PrintInspectionToolSet(CDC* pDC, CPoint& ptCurPos, in
 	
 	// Print all IPDocs
 	//The nullptr check here is enough because then lSize would be 0
-	if( nullptr != pConfig) { pConfig->GetInspectionCount(lSize); }
+	if( nullptr != pConfig) { lSize = pConfig->GetInspectionCount(); }
 	for (int nIPDNumber = 0; nIPDNumber < lSize; ++nIPDNumber)
 	{
-		pConfig->GetInspection(nIPDNumber, &pInspection);
+		pInspection = pConfig->GetInspection(nIPDNumber);
 		if( nullptr != pInspection )
 		{
 			sLabel = pInspection->GetName();
@@ -2455,19 +2446,19 @@ void SVConfigurationPrint::PrintModuleIO(CDC* pDC, CPoint& ptCurPos, int nIndent
 	// Print IODoc contents
 	if (pApp->GetIODoc())
 	{
-		SVInputObjectList* pInputList;
+		SVInputObjectList* pInputList = nullptr;
 		SVDigitalInputObject* pDigInput;
 		SVIOEntryHostStructPtrList ppIOEntries;
 
 		// Get list of available inputs
-		if ( nullptr == pConfig && !pConfig->GetInputObjectList(&pInputList))
+		if ( nullptr != pConfig ) { pInputList = pConfig->GetInputObjectList(); }
+		if ( nullptr == pInputList )
 		{
 			SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
 			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorGettingInputObjectList, StdExceptionParams, SvOi::Err_17001_ErrorGettingInputObjectList );
 			DebugBreak();
 		}
-
-		if (!pInputList->FillInputs( ppIOEntries ))
+		else if (!pInputList->FillInputs( ppIOEntries ))
 		{
 			SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
 			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorFillingInputs, StdExceptionParams, SvOi::Err_17002_ErrorFillingInputs );
@@ -2580,7 +2571,11 @@ void SVConfigurationPrint::PrintResultIO(CDC* pDC, CPoint& ptCurPos, int nIndent
 
 	// Get the number of PPQs
 	long lPPQSize = 0;
-	if ( nullptr == pConfig || !pConfig->GetPPQCount(lPPQSize))
+	if ( nullptr != pConfig )
+	{
+		lPPQSize = pConfig->GetPPQCount();
+	}
+	else
 	{
 		SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
 		e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorGettingPPQCount, StdExceptionParams, SvOi::Err_17003_ErrorGettingPPQCount );
@@ -2623,7 +2618,8 @@ void SVConfigurationPrint::PrintResultIO(CDC* pDC, CPoint& ptCurPos, int nIndent
 
 			for (int j = 0; j < lPPQSize; j++)
 			{
-				if ( !pConfig->GetPPQ( j, &pPPQ ) )
+				pPPQ = pConfig->GetPPQ( j );
+				if ( nullptr == pPPQ )
 				{
 					SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
 					e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorGettingPPQ, StdExceptionParams, SvOi::Err_17004_ErrorGettingPPQ );

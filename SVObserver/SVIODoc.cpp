@@ -230,9 +230,7 @@ void SVIODoc::OnExtrasEditRemoteInputs()
 	SVIOEntryHostStructPtr pIOEntry;
 	SVValueObjectClass* pObject( nullptr );
 	CString strName;
-	long lSize;
 	long lCount;
-	long lPPQSize;
 	int i;
 	int j;
 	int k;
@@ -243,10 +241,9 @@ void SVIODoc::OnExtrasEditRemoteInputs()
 	ASSERT( nullptr != pConfig );
 	if( nullptr != pConfig )
 	{
-		pConfig->GetPPQCount( lPPQSize );
-		pConfig->GetInputObjectList( &pInputList );
+		pInputList = pConfig->GetInputObjectList( );
 	}
-	if( pInputList )
+	if( nullptr != pInputList )
 	{
 		if( !pInputList->FillInputs( ppIOEntries ) )
 		{
@@ -254,8 +251,8 @@ void SVIODoc::OnExtrasEditRemoteInputs()
 			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorFillingInputs, StdExceptionParams, SvOi::Err_17032_ErrorFillingInputs );
 			DebugBreak();
 		}
-
-		lSize = static_cast<long>(ppIOEntries.size());
+		long lPPQSize = pConfig->GetPPQCount( );
+		long lSize = static_cast<long>(ppIOEntries.size());
 
 		pInputList->GetRemoteInputCount( lCount );
 
@@ -283,7 +280,7 @@ void SVIODoc::OnExtrasEditRemoteInputs()
 
 						for( k = 0; k< lPPQSize; k++ )
 						{
-							pConfig->GetPPQ( k, &pPPQ );
+							pPPQ = pConfig->GetPPQ( k );
 							if( nullptr != pPPQ )
 							{
 								pIOEntry = new SVIOEntryHostStruct;
@@ -341,7 +338,7 @@ void SVIODoc::OnExtrasEditRemoteInputs()
 
 							for( k = 0; k < lPPQSize; k++ )
 							{
-								pConfig->GetPPQ( k, &pPPQ );
+								pPPQ = pConfig->GetPPQ( k );
 								if( nullptr != pPPQ ) { pPPQ->RemoveInput( pIOEntry ); }
 							}// end for
 

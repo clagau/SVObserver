@@ -144,10 +144,9 @@ BOOL SVConfigurationObject::SetInputObjectList( SVInputObjectList *pInputObjectL
 	return TRUE;
 }// end SetInputObjectList
 
-BOOL SVConfigurationObject::GetInputObjectList( SVInputObjectList **ppInputObjectList ) const
+SVInputObjectList* SVConfigurationObject::GetInputObjectList( ) const
 {
-	*ppInputObjectList = m_pInputObjectList;
-	return TRUE;
+	return m_pInputObjectList;
 }// end GetInputObjectList
 
 BOOL SVConfigurationObject::SetOutputObjectList( SVOutputObjectList *pOutputObjectList )
@@ -161,10 +160,9 @@ BOOL SVConfigurationObject::SetOutputObjectList( SVOutputObjectList *pOutputObje
 	return TRUE;
 }// end SetOutputObjectList
 
-BOOL SVConfigurationObject::GetOutputObjectList( SVOutputObjectList **ppOutputObjectList ) const
+SVOutputObjectList* SVConfigurationObject::GetOutputObjectList( ) const
 {
-	*ppOutputObjectList = m_pOutputObjectList;
-	return TRUE;
+	return m_pOutputObjectList;
 }// end GetOutputObjectList
 
 HRESULT SVConfigurationObject::RebuildOutputObjectList()
@@ -172,14 +170,11 @@ HRESULT SVConfigurationObject::RebuildOutputObjectList()
 	HRESULT l_Status = S_OK;
 
 	// Force the PPQs to rebuild
-	long lSize = 0;
-	GetPPQCount( lSize );
+	long lSize = GetPPQCount( );
 
 	for( long l = 0; l < lSize; l++ )
 	{
-		SVPPQObject* pPPQ( nullptr );
-
-		GetPPQ( l, &pPPQ );
+		SVPPQObject* pPPQ = GetPPQ( l );
 
 		if( nullptr != pPPQ )
 		{
@@ -220,10 +215,9 @@ BOOL SVConfigurationObject::RemoveTrigger( SVTriggerObject* pTrigger )
 	return TRUE;
 }// end RemoveTrigger
 
-BOOL SVConfigurationObject::GetTriggerCount( long &lIndex ) const
+long SVConfigurationObject::GetTriggerCount( ) const
 {
-	lIndex = m_arTriggerArray.GetSize();
-	return TRUE;
+	return m_arTriggerArray.GetSize();
 }// end GetTriggerCount
 
 BOOL SVConfigurationObject::GetChildObjectByName( LPCTSTR tszName, SVTriggerObject** ppTrigger ) const
@@ -233,15 +227,13 @@ BOOL SVConfigurationObject::GetChildObjectByName( LPCTSTR tszName, SVTriggerObje
 	//Only do an assert check so that in release mode no check is made
 	ASSERT( nullptr != ppTrigger );
 
-	long lCount;
-	GetTriggerCount( lCount );
+	long lCount = GetTriggerCount( );
 
 	CString sName = tszName;
 
 	for( long l = 0; l < lCount; l++ )
 	{ 
-		SVTriggerObject* pTrigger( nullptr );
-		GetTrigger( l, &pTrigger );
+		SVTriggerObject* pTrigger = GetTrigger( l );
 		if( nullptr != pTrigger && sName == pTrigger->GetCompleteObjectName() )
 		{
 			*ppTrigger = pTrigger;
@@ -253,17 +245,18 @@ BOOL SVConfigurationObject::GetChildObjectByName( LPCTSTR tszName, SVTriggerObje
 	return bReturn;
 }
 
-BOOL SVConfigurationObject::GetTrigger( long lIndex, SVTriggerObject** ppTrigger ) const
+SVTriggerObject* SVConfigurationObject::GetTrigger( long lIndex ) const
 {
-	//Only do an assert check so that in release mode no check is made
-	ASSERT( nullptr != ppTrigger );
+	SVTriggerObject* retValue = nullptr;
 
-	*ppTrigger = m_arTriggerArray.GetAt( lIndex );
+	ASSERT( 0 <= lIndex && m_arTriggerArray.size() > lIndex );
 
-	ASSERT( nullptr != *ppTrigger );
+	if (0 <= lIndex && m_arTriggerArray.size() > lIndex)
+	{
+		retValue = m_arTriggerArray.GetAt( lIndex );
+	}
 
-	//@WARNING [gra][7.20][21.05.2014] returning true without checking is misleading it seems the pointer is valid
-	return TRUE;
+	return retValue;
 }// end GetTrigger
 
 BOOL SVConfigurationObject::AddAcquisitionDevice( LPCTSTR szName, 
@@ -486,10 +479,9 @@ BOOL SVConfigurationObject::RemovePPQ( SVPPQObject* pPPQ )
 	return TRUE;
 }// end RemovePPQ
 
-BOOL SVConfigurationObject::GetPPQCount( long &lIndex ) const
+long SVConfigurationObject::GetPPQCount( ) const
 {
-	lIndex = m_arPPQArray.GetSize();
-	return TRUE;
+	return m_arPPQArray.GetSize();
 }// end GetPPQCount
 
 BOOL SVConfigurationObject::GetChildObjectByName( LPCTSTR tszName, SVPPQObject** ppPPQ ) const
@@ -499,15 +491,13 @@ BOOL SVConfigurationObject::GetChildObjectByName( LPCTSTR tszName, SVPPQObject**
 	//Only do an assert check so that in release mode no check is made
 	ASSERT( nullptr != ppPPQ );
 
-	long lCount;
-	GetPPQCount( lCount );
+	long lCount = GetPPQCount();
 
 	CString sName = tszName;
 
 	for( long l = 0; l < lCount; l++ )
 	{ 
-		SVPPQObject* pPPQ( nullptr );
-		GetPPQ( l, &pPPQ );
+		SVPPQObject* pPPQ = GetPPQ( l );
 		if( nullptr != pPPQ && sName == pPPQ->GetCompleteObjectName() )
 		{
 			*ppPPQ = pPPQ;
@@ -519,17 +509,17 @@ BOOL SVConfigurationObject::GetChildObjectByName( LPCTSTR tszName, SVPPQObject**
 	return bReturn;
 }
 
-BOOL SVConfigurationObject::GetPPQ( long lIndex, SVPPQObject** ppPPQ ) const
+SVPPQObject* SVConfigurationObject::GetPPQ( long lIndex ) const
 {
-	//Only do an assert check so that in release mode no check is made
-	ASSERT( nullptr != ppPPQ );
-	
-	*ppPPQ = m_arPPQArray.GetAt( lIndex );
+	SVPPQObject* retValue = nullptr;
+	ASSERT( 0 <= lIndex && m_arPPQArray.size() > lIndex );
 
-	ASSERT( nullptr != *ppPPQ );
+	if (0 <= lIndex && m_arPPQArray.size() > lIndex)
+	{
+		retValue = m_arPPQArray.GetAt( lIndex );
+	}
 
-	//@WARNING [gra][7.20][21.05.2014] returning true without checking is misleading it seems the pointer is valid
-	return TRUE;
+	return retValue;
 }// end GetPPQ
 
 bool SVConfigurationObject::GetPPQByName( LPCTSTR name, SVPPQObject** ppPPQ ) const
@@ -586,10 +576,9 @@ BOOL SVConfigurationObject::RemoveCamera( SVVirtualCamera* pCamera )
 	return TRUE;
 }// end RemoveCamera
 
-BOOL SVConfigurationObject::GetCameraCount( long &lIndex ) const
+long SVConfigurationObject::GetCameraCount( ) const
 {
-	lIndex = m_arCameraArray.GetSize();
-	return TRUE;
+	return m_arCameraArray.GetSize();
 }// end GetCameraCount
 
 BOOL SVConfigurationObject::GetChildObjectByName( LPCTSTR tszName, SVVirtualCamera** ppCamera ) const
@@ -599,15 +588,12 @@ BOOL SVConfigurationObject::GetChildObjectByName( LPCTSTR tszName, SVVirtualCame
 	//Only do an assert check so that in release mode no check is made
 	ASSERT( nullptr != ppCamera );
 
-	long lCount;
-	GetCameraCount( lCount );
-
+	long lCount = GetCameraCount( );
 	CString sName = tszName;
 
 	for( long l = 0; l < lCount; l++ )
 	{ 
-		SVVirtualCamera* pCamera( nullptr );
-		GetCamera( l, &pCamera );
+		SVVirtualCamera* pCamera = GetCamera( l );
 		if( nullptr != pCamera && sName == pCamera->GetCompleteObjectName() )
 		{
 			*ppCamera= pCamera;
@@ -619,17 +605,18 @@ BOOL SVConfigurationObject::GetChildObjectByName( LPCTSTR tszName, SVVirtualCame
 	return bReturn;
 }
 
-BOOL SVConfigurationObject::GetCamera( long lIndex, SVVirtualCamera **ppCamera ) const
+SVVirtualCamera* SVConfigurationObject::GetCamera( long lIndex ) const
 {
-	//Only do an assert check so that in release mode no check is made
-	ASSERT( nullptr != ppCamera );
+	SVVirtualCamera* retValue = nullptr;
 
-	*ppCamera = m_arCameraArray.GetAt( lIndex );
+	ASSERT( 0 <= lIndex && m_arCameraArray.size() > lIndex );
 
-	ASSERT( nullptr != *ppCamera );
+	if (0 <= lIndex && m_arCameraArray.size() > lIndex)
+	{
+		retValue = m_arCameraArray.GetAt( lIndex );
+	}
 
-	//@WARNING [gra][7.20][21.05.2014] returning true without checking is misleading it seems the pointer is valid
-	return TRUE;
+	return retValue;
 }// end GetCamera
 
 BOOL SVConfigurationObject::AddInspection( SVInspectionProcess* pInspection )
@@ -664,10 +651,9 @@ BOOL SVConfigurationObject::RemoveInspection( SVInspectionProcess* pInspection )
 	return TRUE;
 }// end RemoveInspection
 
-BOOL SVConfigurationObject::GetInspectionCount( long &lIndex ) const
+long SVConfigurationObject::GetInspectionCount( ) const
 {
-	lIndex = m_arInspectionArray.GetSize();
-	return TRUE;
+	return m_arInspectionArray.GetSize();
 }// end GetInspectionCount
 
 BOOL SVConfigurationObject::GetInspectionObject( LPCTSTR tszName, SVInspectionProcess** ppInspection ) const
@@ -695,15 +681,12 @@ BOOL SVConfigurationObject::GetChildObjectByName( LPCTSTR tszName, SVInspectionP
 	//Only do an assert check so that in release mode no check is made
 	ASSERT( nullptr != ppInspection );
 
-	long lCount;
-	GetInspectionCount( lCount );
-
+	long lCount = GetInspectionCount( );
 	CString sName = tszName;
 
 	for( long l = 0; l < lCount; l++ )
 	{ 
-		SVInspectionProcess* pInspection( nullptr );
-		GetInspection( l, &pInspection);
+		SVInspectionProcess* pInspection = GetInspection( l );
 		if( nullptr != pInspection && sName == pInspection->GetCompleteObjectName() )
 		{
 			*ppInspection = pInspection;
@@ -719,17 +702,17 @@ BOOL SVConfigurationObject::GetChildObjectByName( LPCTSTR tszName, SVInspectionP
 	return bReturn;
 }
 
-BOOL SVConfigurationObject::GetInspection( long lIndex, SVInspectionProcess** ppInspection ) const
+SVInspectionProcess* SVConfigurationObject::GetInspection( long lIndex ) const
 {
-	//Only do an assert check so that in release mode no check is made
-	ASSERT( nullptr != ppInspection );
+	SVInspectionProcess* retValue = nullptr;
+	ASSERT( 0 <= lIndex && m_arInspectionArray.size() > lIndex );
 
-	*ppInspection = m_arInspectionArray.GetAt( lIndex );
+	if (0 <= lIndex && m_arInspectionArray.size() > lIndex)
+	{
+		retValue = m_arInspectionArray.GetAt( lIndex );
+	}
 
-	ASSERT( nullptr != ppInspection );
-
-	//@WARNING [gra][7.20][21.05.2014] returning true without checking is misleading it seems the pointer is valid
-	return TRUE;
+	return retValue;
 }// end GetInspection
 
 BOOL SVConfigurationObject::GetInspections( SVInspectionProcessPtrList& rvecInspections ) const
@@ -2001,8 +1984,8 @@ HRESULT SVConfigurationObject::LoadConfiguration(SVTreeType& rTree)
 					long lInspectionTimeout = 0;
 
 					// Set the IO lists
-					GetInputObjectList( &pPPQ->m_pInputList );
-					GetOutputObjectList( &pPPQ->m_pOutputList );
+					pPPQ->m_pInputList = GetInputObjectList( );
+					pPPQ->m_pOutputList = GetOutputObjectList( );
 
 					// Update source to remove SVOVariant
 					// Load the Unique Reference ID for the PPQ
@@ -2118,9 +2101,7 @@ HRESULT SVConfigurationObject::LoadConfiguration(SVTreeType& rTree)
 
 						while ( bOk && htiDataChild != NULL )
 						{
-							lCount = 0;
-
-							GetTriggerCount( lCount );
+							lCount = GetTriggerCount( );
 
 							_bstr_t DataName;
 
@@ -2130,10 +2111,10 @@ HRESULT SVConfigurationObject::LoadConfiguration(SVTreeType& rTree)
 
 							for ( long l = 0; bOk && l < lCount; l++ )
 							{
-								SVTriggerObject *pTrigger( nullptr );
+								SVTriggerObject *pTrigger = GetTrigger( l );
 
 								//Returns true when pointer valid
-								bOk = GetTrigger( l, &pTrigger );
+								bOk = (nullptr != pTrigger);
 								if ( bOk )
 								{
 									CString csDeviceName = pTrigger->GetName();
@@ -2159,9 +2140,7 @@ HRESULT SVConfigurationObject::LoadConfiguration(SVTreeType& rTree)
 
 						while ( bOk && htiDataChild != NULL )
 						{
-							lCount = 0;
-
-							GetCameraCount( lCount );
+							lCount = GetCameraCount( );
 
 							_bstr_t DataName;
 
@@ -2178,9 +2157,9 @@ HRESULT SVConfigurationObject::LoadConfiguration(SVTreeType& rTree)
 
 							for ( long l = 0; bOk && l < lCount; l++ )
 							{
-								SVVirtualCamera* pCamera( nullptr );
+								SVVirtualCamera* pCamera =GetCamera( l );
 
-								bOk = GetCamera( l, &pCamera );
+								bOk = (nullptr != pCamera);
 								if ( bOk )
 								{
 									CString csDeviceName = pCamera->GetName();
@@ -2206,10 +2185,7 @@ HRESULT SVConfigurationObject::LoadConfiguration(SVTreeType& rTree)
 
 						while ( bOk && htiDataChild != NULL )
 						{
-							lCount = 0;
-
-							GetInspectionCount( lCount );
-
+							lCount = GetInspectionCount( );
 							_bstr_t DataName;
 
 							rTree.GetBranchName( htiDataChild, DataName.GetBSTR() );
@@ -2218,9 +2194,9 @@ HRESULT SVConfigurationObject::LoadConfiguration(SVTreeType& rTree)
 
 							for ( long l = 0; bOk && l < lCount; l++ )
 							{
-								SVInspectionProcess* pInspection( nullptr );
+								SVInspectionProcess* pInspection = GetInspection( l );
 
-								bOk = GetInspection( l, &pInspection );
+								bOk = (nullptr != pInspection);
 								if ( bOk )
 								{
 									CString csDeviceName = pInspection->GetDeviceName();
@@ -2442,8 +2418,7 @@ HRESULT SVConfigurationObject::ValidateOutputList( )
 	SVOutputObjectList::StringVect l_aInspNames;
 	SVOutputObjectList::StringVect l_aPPQNames;
 
-	long l_iInspections;
-	GetInspectionCount( l_iInspections );
+	long l_iInspections = GetInspectionCount( );
 
 	for( int i = 0 ; i < l_iInspections ; i++ )
 	{
@@ -2777,13 +2752,10 @@ HRESULT SVConfigurationObject::ObserverUpdate( const SVRenameObject& p_rData )
 	if( l_pObject != NULL )
 	{
 		SVPPQObject* pPPQ( nullptr );
-		SVOutputObjectList *pOutputs;
-		long lCount;
+		SVOutputObjectList *pOutputs = GetOutputObjectList();
 		long lPPQ;
 
-		GetOutputObjectList( &pOutputs );
-
-		if( pOutputs )
+		if( nullptr != pOutputs )
 		{
 			::SVSendMessage( pOutputs, SVM_OBJECT_RENAMED,
 				reinterpret_cast<DWORD_PTR>( l_pObject ),
@@ -2794,10 +2766,10 @@ HRESULT SVConfigurationObject::ObserverUpdate( const SVRenameObject& p_rData )
 			l_Status = E_FAIL;
 		}
 
-		GetPPQCount( lCount );
+		long lCount = GetPPQCount();
 		for( lPPQ = 0; lPPQ < lCount; lPPQ++ )
 		{
-			GetPPQ( lPPQ, &pPPQ );
+			pPPQ = GetPPQ( lPPQ );
 
 			if( nullptr != pPPQ )
 			{
@@ -3344,15 +3316,11 @@ BOOL SVConfigurationObject::SaveCamera(SVTreeType& rTree)
 
 	if ( hBranch != NULL )
 	{
-		long lCount = 0;
-
-		GetCameraCount( lCount );
+		long lCount = GetCameraCount( );
 
 		for ( long l = 0; l < lCount; l++ )
 		{
-			SVVirtualCamera* pCamera( nullptr );
-
-			GetCamera( l, &pCamera );
+			SVVirtualCamera* pCamera = GetCamera( l );
 
 			if ( nullptr != pCamera )
 			{
@@ -3424,15 +3392,11 @@ BOOL SVConfigurationObject::SaveTrigger(SVTreeType& rTree)
 
 	if ( hBranch != NULL )
 	{
-		long lCount = 0;
-
-		GetTriggerCount( lCount );
+		long lCount = GetTriggerCount( );
 
 		for ( long l = 0; l < lCount; l++ )
 		{
-			SVTriggerObject *pTrigger( nullptr );
-
-			GetTrigger( l, &pTrigger );
+			SVTriggerObject *pTrigger = GetTrigger( l );
 
 			if ( nullptr != pTrigger )
 			{
@@ -3473,15 +3437,11 @@ BOOL SVConfigurationObject::SaveInspection(SVTreeType& rTree)
 
 	if ( hBranch != NULL )
 	{
-		long lCount = 0;
-
-		GetInspectionCount( lCount );
+		long lCount = GetInspectionCount( );
 
 		for ( long l = 0; l < lCount; l++ )
 		{
-			SVInspectionProcess* pInspection( nullptr );
-
-			GetInspection( l, &pInspection );
+			SVInspectionProcess* pInspection = GetInspection( l );
 
 			if ( nullptr != pInspection )
 			{
@@ -3536,16 +3496,14 @@ BOOL SVConfigurationObject::SavePPQ(SVTreeType& rTree)
 	{
 		SVString strName;
 		SVPPQObject* pPPQ( nullptr );
-		long lPPQCount;
+		long lPPQCount = GetPPQCount();
 		long lInspectCount;
 		long lPPQ;
 		long lInspect;
 
-		GetPPQCount( lPPQCount );
-
 		for( lPPQ = 0; lPPQ < lPPQCount; lPPQ++ )
 		{
-			bOk = this->GetPPQ( lPPQ, &pPPQ );
+			pPPQ = this->GetPPQ( lPPQ );
 			bOk &= ( nullptr != pPPQ );
 
 			if ( bOk )
@@ -3950,10 +3908,10 @@ BOOL SVConfigurationObject::FinishIPDoc( SVInspectionProcess* pInspection )
 
 		if( nullptr != pPPQ )
 		{
-			GetInputObjectList( &pPPQ->m_pInputList );
+			pPPQ->m_pInputList = GetInputObjectList( );
 			pPPQ->RebuildInputList(HasCameraTrigger(pPPQ));
 
-			GetOutputObjectList( &pPPQ->m_pOutputList );
+			pPPQ->m_pOutputList = GetOutputObjectList( );
 			pPPQ->RebuildOutputList();
 
 			pInspection->RebuildInspectionInputList();
@@ -4155,21 +4113,18 @@ void SVConfigurationObject::SetupCameraTrigger(SVCameraTriggerClass* pTriggerDev
 		if (pTriggerDevice)
 		{
 			// reassign trigger handle to match camera digitizer handle
-			long l_Count = 0; 
-			if (GetCameraCount( l_Count ))
+			long l_Count = GetCameraCount(); 
+			for (long i = 0;i < l_Count;i++)
 			{
-				for (long i = 0;i < l_Count;i++)
+				SVVirtualCamera* pCamera = GetCamera(i);
+				if ( nullptr != pCamera)
 				{
-					SVVirtualCamera* pCamera( nullptr );
-					if (GetCamera(i, &pCamera) && nullptr != pCamera)
+					if (!pCamera->mpsvDevice.empty())
 					{
-						if (!pCamera->mpsvDevice.empty())
+						if (iDigNum == pCamera->mpsvDevice->DigNumber())
 						{
-							if (iDigNum == pCamera->mpsvDevice->DigNumber())
-							{
-								pTriggerDevice->m_ulHandle = pCamera->mpsvDevice->m_hDigitizer;
-								break;
-							}
+							pTriggerDevice->m_ulHandle = pCamera->mpsvDevice->m_hDigitizer;
+							break;
 						}
 					}
 				}
@@ -4200,15 +4155,13 @@ HRESULT SVConfigurationObject::AttachAcqToTriggers()
 	// Iterate thru Trigger List and Connect Acquistion Initiator for Software Triggers
 	// the channel number for the trigger object must be set at this point, it represents the Digitizer Number
 	// Set the Software Timer Trigger period as well here
-	long lCount = 0;
-	GetTriggerCount( lCount );
+	long lCount = GetTriggerCount( );
 
 	BOOL bOk = true;
 	for ( long l = 0; bOk && l < lCount; l++ )
 	{
-		SVTriggerObject *pTrigger( nullptr );
-		//Returns true if pointer valid
-		bOk = GetTrigger( l, &pTrigger );
+		SVTriggerObject *pTrigger = GetTrigger( l );
+		bOk = ( nullptr != pTrigger );
 		if ( bOk )
 		{
 			if (pTrigger->IsAcquisitionTrigger())
@@ -5446,15 +5399,12 @@ void SVConfigurationObject::GetRemoteInputInspections( const SVString& p_rRemote
 bool SVConfigurationObject::HasCameraTrigger(SVPPQObject* pCameraPPQ) const
 {
 	bool bRetVal = false;
-	long lCount = 0;
-	GetTriggerCount( lCount );
+	long lCount = GetTriggerCount( );
 
 	for ( long i = 0; !bRetVal && i < lCount; i++ )
 	{
-		SVTriggerObject *pTrigger( nullptr );
-		//Returns true when pointer valid
-		BOOL bOk = GetTrigger( i, &pTrigger );
-		if ( bOk )
+		SVTriggerObject *pTrigger = GetTrigger( i );
+		if ( nullptr != pTrigger )
 		{
 			if (pTrigger->IsAcquisitionTrigger())
 			{

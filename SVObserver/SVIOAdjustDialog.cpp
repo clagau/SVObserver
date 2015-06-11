@@ -170,12 +170,14 @@ BOOL SVIOAdjustDialogClass::OnInitDialog()
 		SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
 		// Get the number of PPQs
-		if( nullptr == pConfig || !pConfig->GetPPQCount( lPPQSize ) )
+		if( nullptr == pConfig )
 		{
 			SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
 			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorGettingPPQCount, StdExceptionParams, SvOi::Err_17029_ErrorGettingPPQCount );
 			DebugBreak();
 		}
+
+		lPPQSize = pConfig->GetPPQCount( );
 
 		// Check Module Ready first
 		if( m_pIODoc )
@@ -204,16 +206,16 @@ BOOL SVIOAdjustDialogClass::OnInitDialog()
 
 		for( k = 0; k < lPPQSize; k++ )
 		{
-			// Get the number of PPQs
-			if( !pConfig->GetPPQ( k, &pPPQ ) )
+			pPPQ = pConfig->GetPPQ( k );
+			ppIOEntries.clear();
+			if( nullptr == pPPQ )
 			{
 				SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
 				e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorGettingPPQ, StdExceptionParams, SvOi::Err_17030_ErrorGettingPPQ );
 				DebugBreak();
 			}
-
 			// Get list of available outputs
-			if( !pPPQ->GetAllOutputs( ppIOEntries ) )
+			else if( !pPPQ->GetAllOutputs( ppIOEntries ) )
 			{
 				SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
 				e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorGettingOutputs, StdExceptionParams, SvOi::Err_17031_ErrorGettingOutputs );

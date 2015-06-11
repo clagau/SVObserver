@@ -37,15 +37,13 @@ PPQNameListNames RemoteMonitorListController::GetPPQMonitorLists(SVConfiguration
 {
 	PPQNameListNames list;
 
-	long lPPQCount = 0;
 	if( nullptr != pConfig)
 	{
-		pConfig->GetPPQCount(lPPQCount);
+		long lPPQCount = pConfig->GetPPQCount();
 		// get list of PPQs
 		for (int i = 0;i < lPPQCount; i++)
 		{
-			SVPPQObject* pPPQ( nullptr );
-			pConfig->GetPPQ(i, &pPPQ);
+			SVPPQObject* pPPQ = pConfig->GetPPQ(i);
 			if ( nullptr != pPPQ )
 			{
 				list.insert(std::make_pair(pPPQ->GetName(), NameDepthPairList()));

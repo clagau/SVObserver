@@ -4741,7 +4741,6 @@ HRESULT CSVCommand::SVUnlockAllImages()
 STDMETHODIMP CSVCommand::SVGetRemoteInputCount(long *lCount)
 {
 	SVException svException;
-	SVInputObjectList *pInputObjectList( nullptr );
 	HRESULT hrResult = S_OK;
 	BOOL bSuccess = FALSE;
 
@@ -4750,8 +4749,9 @@ STDMETHODIMP CSVCommand::SVGetRemoteInputCount(long *lCount)
 		SVConfigurationObject* pConfig( nullptr );
 		SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
-		if( nullptr != pConfig && pConfig->GetInputObjectList( &pInputObjectList ) )
+		if( nullptr != pConfig )
 		{
+			SVInputObjectList* pInputObjectList = pConfig->GetInputObjectList();
 			if( nullptr != pInputObjectList && pInputObjectList->GetRemoteInputCount( *lCount ) )
 			{
 				bSuccess = TRUE;
@@ -4775,7 +4775,6 @@ STDMETHODIMP CSVCommand::SVGetRemoteInputCount(long *lCount)
 STDMETHODIMP CSVCommand::SVSetRemoteInput(long lIndex, VARIANT vtValue)
 {
 	SVException svException;
-	SVInputObjectList *pInputObjectList( nullptr );
 	HRESULT hrResult = S_OK;
 	BOOL bSuccess = FALSE;
 
@@ -4784,8 +4783,9 @@ STDMETHODIMP CSVCommand::SVSetRemoteInput(long lIndex, VARIANT vtValue)
 		SVConfigurationObject* pConfig( nullptr );
 		SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
-		if( (nullptr != pConfig) && pConfig->GetInputObjectList( &pInputObjectList ))
+		if( nullptr != pConfig )
 		{
+			SVInputObjectList* pInputObjectList = pConfig->GetInputObjectList( );
 			if( nullptr != pInputObjectList && pInputObjectList->SetRemoteInput( lIndex, vtValue ) )
 			{
 				bSuccess = TRUE;

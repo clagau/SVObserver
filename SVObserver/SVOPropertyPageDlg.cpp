@@ -2019,13 +2019,14 @@ HRESULT CSVOPropertyPageDlg::AdjustCameraImageFormat( LPCTSTR sSelectedFormat, S
 		long lInspectionCount = 0;
 		SVInspectionProcess* pInspection( nullptr );
 		//If the pointer is nullptr then count is 0		
-		if( nullptr != pConfig ){ pConfig->GetInspectionCount( lInspectionCount ); }
+		if( nullptr != pConfig ){ lInspectionCount = pConfig->GetInspectionCount( ); }
+
 
 		for ( long lInspection = 0; lInspection < lInspectionCount; lInspection++ )
 		{
 			bool bHasCamera = false;
-			pConfig->GetInspection( lInspection, &pInspection );
-			if ( pInspection != NULL )
+			pInspection = pConfig->GetInspection( lInspection );
+			if ( nullptr != pInspection )
 			{
 				bool bFoundCamera=false;
 				SVPPQObject* pPPQ = pInspection->GetPPQ();

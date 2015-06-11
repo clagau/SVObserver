@@ -113,10 +113,10 @@ public:
 	BOOL DestroyConfiguration();
 
 	BOOL SetInputObjectList( SVInputObjectList* pInputObjectList );
-	BOOL GetInputObjectList( SVInputObjectList** ppInputObjectList ) const;
+	SVInputObjectList* GetInputObjectList( ) const;
 
 	BOOL SetOutputObjectList( SVOutputObjectList* pOutputObjectList );
-	BOOL GetOutputObjectList( SVOutputObjectList** ppOutputObjectList ) const;
+	SVOutputObjectList* GetOutputObjectList( ) const;
 	HRESULT RebuildOutputObjectList();
 
 	BOOL AddAcquisitionDevice( LPCTSTR szName, SVFileNameArrayClass& rsvFiles,
@@ -144,27 +144,27 @@ public:
 
 	BOOL AddTrigger( SVTriggerObject* pTrigger );
 	BOOL RemoveTrigger( SVTriggerObject* pTrigger );
-	BOOL GetTriggerCount( long &lIndex ) const;
-	BOOL GetTrigger( long lIndex, SVTriggerObject** ppTrigger ) const;
+	long GetTriggerCount( ) const;
+	SVTriggerObject* GetTrigger( long lIndex ) const;
 	BOOL GetChildObjectByName( LPCTSTR tszName, SVTriggerObject** ppTrigger ) const;
 
 	BOOL AddPPQ( SVPPQObject* pPPQ );
 	BOOL RemovePPQ( SVPPQObject* pPPQ );
-	BOOL GetPPQCount( long &lIndex ) const;
-	BOOL GetPPQ( long lIndex, SVPPQObject** ppPPQ ) const;
+	long GetPPQCount() const;
+	SVPPQObject* GetPPQ( long lIndex ) const;
 	BOOL GetChildObjectByName( LPCTSTR tszName, SVPPQObject** ppPPQ ) const;
 	bool GetPPQByName( LPCTSTR name, SVPPQObject** ppPPQ ) const;
 
 	BOOL AddCamera( SVVirtualCamera* pCamera );
 	BOOL RemoveCamera( SVVirtualCamera* pCamera );
-	BOOL GetCameraCount( long &lIndex ) const;
-	BOOL GetCamera( long lIndex, SVVirtualCamera** ppCamera ) const;
+	long GetCameraCount( ) const;
+	SVVirtualCamera* GetCamera( long lIndex ) const;
 	BOOL GetChildObjectByName( LPCTSTR tszName, SVVirtualCamera** ppCamera ) const;
 
 	BOOL AddInspection( SVInspectionProcess* pInspection );
 	BOOL RemoveInspection( SVInspectionProcess* pInspection );
-	BOOL GetInspectionCount( long &lIndex ) const;
-	BOOL GetInspection( long lIndex, SVInspectionProcess** ppInspection ) const;
+	long GetInspectionCount( ) const;
+	SVInspectionProcess* GetInspection( long lIndex ) const;
 	BOOL GetInspections( std::vector<SVInspectionProcess*>& rvecInspections ) const;
 	BOOL GetChildObjectByName( LPCTSTR tszName, SVInspectionProcess** ppInspection ) const;
 	BOOL GetInspectionObject( LPCTSTR tszFullyQualifiedNameOfChild, SVInspectionProcess** ppInspection ) const;

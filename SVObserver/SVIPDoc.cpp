@@ -1664,9 +1664,6 @@ void SVIPDoc::OnPublishedResultsPicker()
 
 			// Set the Document as modified
 			SetModifiedFlag();
-
-			long lSize;
-			long l;
 			SVPPQObject* pPPQ( nullptr );
 
 			SVConfigurationObject* pConfig = nullptr;
@@ -1676,11 +1673,11 @@ void SVIPDoc::OnPublishedResultsPicker()
 				pConfig->ValidateRemoteMonitorList();
 
 				// Force the PPQs to rebuild
-				pConfig->GetPPQCount( lSize );
+				long lSize = pConfig->GetPPQCount( );
 
-				for( l = 0; l < lSize; l++ )
+				for( long l = 0; l < lSize; l++ )
 				{
-					pConfig->GetPPQ( l, &pPPQ );
+					pPPQ = pConfig->GetPPQ( l );
 					if( nullptr != pPPQ )
 					{
 						pPPQ->RebuildOutputList();

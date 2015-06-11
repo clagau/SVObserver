@@ -2018,12 +2018,11 @@ BOOL CSVOConfigAssistantDlg::SendPPQDataToConfiguration(SVPPQObjectArray& aPPQsT
 
 	long lCfgPPQCnt = 0;
 	//Count will be 0 if pointer nullptr
-	if( nullptr != pConfig){ pConfig->GetPPQCount(lCfgPPQCnt); } //should be zero on new cfg...
+	if( nullptr != pConfig){ lCfgPPQCnt = pConfig->GetPPQCount(); } //should be zero on new cfg...
 	//loop thru to see if the PPQ's still exist.  if not delete them...
 	for (int iPPQ = lCfgPPQCnt -1; -1 < iPPQ; iPPQ--)
 	{
-		SVPPQObject* pPPQ( nullptr );
-		bRet = pConfig->GetPPQ(iPPQ,&pPPQ) && bRet;
+		SVPPQObject* pPPQ = pConfig->GetPPQ(iPPQ);
 		if ( nullptr != pPPQ )
 		{
 			if (!IsPPQInList(pPPQ->GetName()))
@@ -2109,6 +2108,10 @@ BOOL CSVOConfigAssistantDlg::SendPPQDataToConfiguration(SVPPQObjectArray& aPPQsT
 				pPPQ->RebuildOutputList();
 			}
 		}// if ppq != null
+		else
+		{
+			bRet = FALSE;
+		}
 	} // for ppq
 	return bRet;
 }
@@ -2431,15 +2434,13 @@ BOOL CSVOConfigAssistantDlg::SendCameraDataToConfiguration()
 		return bRet;
 	}
 
-	long lCfgCamCnt = 0;
 	SVVirtualCamera* pCamera( nullptr );
-
-	pConfig->GetCameraCount(lCfgCamCnt);
+	long lCfgCamCnt = pConfig->GetCameraCount();
 
 	//check to see if camera still exist...
 	for (long l = lCfgCamCnt -1; -1 < l; l--)
 	{
-		bRet = pConfig->GetCamera(l, &pCamera) && bRet;
+		pCamera = pConfig->GetCamera(l);
 		if ( nullptr != pCamera )
 		{
 			if (!IsCameraInList(pCamera->GetName())) 
@@ -2449,7 +2450,11 @@ BOOL CSVOConfigAssistantDlg::SendCameraDataToConfiguration()
 				delete pCamera;
 			}
 			pCamera = NULL;
-		} 
+		}
+		else
+		{
+			bRet = FALSE;
+		}
 	}
 	//go thru and add camera's
 	int iCamCnt = m_CameraList.GetCameraListCount();
@@ -2464,13 +2469,12 @@ BOOL CSVOConfigAssistantDlg::SendCameraDataToConfiguration()
 			CSVOCameraObj* pCamObj = GetCameraObject(i);
 			sKey = pCamObj->GetCameraDisplayName();
 			sDevice = BuildDigName(pCamObj);
-			pConfig->GetCameraCount(lCfgCamCnt);
+			lCfgCamCnt = pConfig->GetCameraCount();
 
 			for ( long l = lCfgCamCnt - 1; -1 < l; l-- )
 			{
-				bRet = pConfig->GetCamera(l,&pCamera) && bRet;
-				
-				if (pCamera != NULL)
+				pCamera = pConfig->GetCamera(l);
+				if ( nullptr != pCamera )
 				{
 					if (sKey.Compare(pCamera->GetName() ) == 0)
 					{
@@ -2478,6 +2482,10 @@ BOOL CSVOConfigAssistantDlg::SendCameraDataToConfiguration()
 						break;
 					}
 					pCamera = NULL;
+				}
+				else
+				{
+					bRet = FALSE;
 				}
 			}
 
@@ -2529,14 +2537,14 @@ BOOL CSVOConfigAssistantDlg::SendTriggerDataToConfiguration()
 		return bRet;
 	}
 
-	long lCfgTrgCnt = 0;
-	pConfig->GetTriggerCount(lCfgTrgCnt);
+	long lCfgTrgCnt = pConfig->GetTriggerCount();
 
 	// Check for Triggers removed
 	SVTriggerObject* pTrigger( nullptr );
 	for ( long lT = lCfgTrgCnt - 1; -1 < lT; lT-- )
 	{
-		bRet = pConfig->GetTrigger(lT, &pTrigger) && bRet;
+		pTrigger = pConfig->GetTrigger(lT);
+		bRet = (nullptr != pTrigger) && bRet;
 		if ( nullptr != pTrigger && !IsTriggerInList(pTrigger->GetName()) )
 		{
 			pConfig->RemoveTrigger(pTrigger);
@@ -2560,12 +2568,12 @@ BOOL CSVOConfigAssistantDlg::SendTriggerDataToConfiguration()
 			sDeviceName = BuildTrgDig(pTrigObj);
 
 			pTrigger = nullptr;
-			pConfig->GetTriggerCount(lCfgTrgCnt);
+			lCfgTrgCnt = pConfig->GetTriggerCount();
 
 			// Remove Triggers that have changed
 			for ( long l = lCfgTrgCnt - 1; -1 < l; l-- )
 			{
-				bRet = pConfig->GetTrigger( l,&pTrigger ) && bRet;
+				pTrigger = pConfig->GetTrigger(l);
 				if ( nullptr != pTrigger )
 				{
 					if ( sKey.Compare(pTrigger->GetName() ) == 0 )
@@ -2574,6 +2582,10 @@ BOOL CSVOConfigAssistantDlg::SendTriggerDataToConfiguration()
 						break;
 					}
 					pTrigger = nullptr;
+				}
+				else
+				{
+					bRet = FALSE;
 				}
 			}
 
@@ -2686,18 +2698,16 @@ BOOL CSVOConfigAssistantDlg::SendInspectionDataToConfiguration()
 		return bRet;
 	}
 
-	long lCfgInsCnt = 0;
 	SVInspectionProcess* pInspection( nullptr );
-
-	pConfig->GetInspectionCount(lCfgInsCnt);
+	long lCfgInsCnt = pConfig->GetInspectionCount();
 
 	for (long l1 = lCfgInsCnt -1; -1 < l1; l1--)
 	{
-		BOOL bDeleteInspect = FALSE;
-		bRet = pConfig->GetInspection(l1,&pInspection) && bRet;
+		SVInspectionProcess* pInspection = pConfig->GetInspection(l1);
 		if ( nullptr != pInspection )
 		{
 			CSVOInspectionObj *pInsTmp = GetInspectionObjectByName( pInspection->GetName());
+			BOOL bDeleteInspect = FALSE;
 
 			if ( nullptr != pInsTmp )
 			{
@@ -2716,6 +2726,10 @@ BOOL CSVOConfigAssistantDlg::SendInspectionDataToConfiguration()
 				delete pInspection;	// also destroys IPDoc
 			}
 			pInspection = nullptr;
+		}
+		else
+		{
+			bRet = FALSE;
 		}
 	}
 
@@ -2738,11 +2752,11 @@ BOOL CSVOConfigAssistantDlg::SendInspectionDataToConfiguration()
 			sNewDisableMethod = pInsObj->GetNewDisableMethod();
 			lEnableAuxiliaryExtent = pInsObj->GetEnableAuxiliaryExtent();
 
-			pConfig->GetInspectionCount(lCfgInsCnt);
+			lCfgInsCnt = pConfig->GetInspectionCount();
 
 			for ( long l = lCfgInsCnt -1; -1 < l; l-- )
 			{
-				bRet = pConfig->GetInspection(l,&pInspection) && bRet;
+				pInspection = pConfig->GetInspection(l);
 				if (nullptr != pInspection)
 				{
 					if ( sKey.Compare(pInspection->GetName()) == 0 )
@@ -2755,6 +2769,10 @@ BOOL CSVOConfigAssistantDlg::SendInspectionDataToConfiguration()
 						break;
 					}
 					pInspection = nullptr;
+				}
+				else
+				{
+					bRet = FALSE;
 				}
 			}
 
@@ -2871,8 +2889,7 @@ BOOL CSVOConfigAssistantDlg::SendPPQAttachmentsToConfiguration(SVPPQObjectArray&
 	}
 	aPPQsToDelete.RemoveAll();
 
-	long lCPPQCnt = 0;
-	pConfig->GetPPQCount(lCPPQCnt);
+	long lCPPQCnt = pConfig->GetPPQCount();
 
 	int iPPQCnt = m_PPQList.GetPPQListCount();
 	if ( iPPQCnt > 0) 
@@ -2888,7 +2905,7 @@ BOOL CSVOConfigAssistantDlg::SendPPQAttachmentsToConfiguration(SVPPQObjectArray&
 
 			for ( long l = lCPPQCnt -1; -1 < l; l-- )
 			{
-				bRet = pConfig->GetPPQ(l,&pPPQ) && bRet;
+				pPPQ = pConfig->GetPPQ(l);
 				
 				if ( nullptr != pPPQ )
 				{
@@ -2898,6 +2915,10 @@ BOOL CSVOConfigAssistantDlg::SendPPQAttachmentsToConfiguration(SVPPQObjectArray&
 					}
 					
 					pPPQ = nullptr;
+				}
+				else
+				{
+					bRet = FALSE;
 				}
 			}
 
@@ -2969,14 +2990,11 @@ BOOL CSVOConfigAssistantDlg::SendPPQAttachmentsToConfiguration(SVPPQObjectArray&
 							++l_Iter;
 						}
 
-						long lCfgAttachedCam = 0;
-
-						pConfig->GetCameraCount(lCfgAttachedCam);
+						long lCfgAttachedCam = pConfig->GetCameraCount();
 
 						for ( l = lCfgAttachedCam -1; -1 < l; l-- )
 						{
-							SVVirtualCamera* pCamera( nullptr );
-							bRet = pConfig->GetCamera(l, &pCamera) && bRet;
+							SVVirtualCamera* pCamera = pConfig->GetCamera(l);
 							if ( nullptr != pCamera )
 							{
 								if ( sPPQCameraName.Compare(pCamera->GetName()) == 0 )
@@ -2985,6 +3003,10 @@ BOOL CSVOConfigAssistantDlg::SendPPQAttachmentsToConfiguration(SVPPQObjectArray&
 									break;
 								}
 								pCamera = NULL;
+							}
+							else
+							{
+								bRet = FALSE;
 							}
 						}
 					}
@@ -2997,10 +3019,10 @@ BOOL CSVOConfigAssistantDlg::SendPPQAttachmentsToConfiguration(SVPPQObjectArray&
 				if ( !sPPQTrigger.IsEmpty() )
 				{
 					SVTriggerObject* pTrigger( nullptr );
-					pConfig->GetTriggerCount(lSize);
+					lSize = pConfig->GetTriggerCount();
 					for (long l = lSize -1; -1 < l; l--)
 					{
-						bRet = pConfig->GetTrigger(l, &pTrigger) && bRet;
+						pTrigger = pConfig->GetTrigger(l);
 						if ( nullptr != pTrigger )
 						{
 							if ( sPPQTrigger.Compare(pTrigger->GetName()) == 0 )
@@ -3009,7 +3031,11 @@ BOOL CSVOConfigAssistantDlg::SendPPQAttachmentsToConfiguration(SVPPQObjectArray&
 								break;
 							}
 
-							pTrigger = NULL;
+							pTrigger = nullptr;
+						}
+						else
+						{
+							bRet = FALSE;
 						}
 					}
 				}
@@ -3047,12 +3073,12 @@ BOOL CSVOConfigAssistantDlg::SendPPQAttachmentsToConfiguration(SVPPQObjectArray&
 
 						if ( !bFound )
 						{
-							pConfig->GetInspectionCount(lInsCnt);
+							lInsCnt = pConfig->GetInspectionCount();
 
 							for ( long l = lInsCnt -1; -1 < l; l-- )
 							{
-								bRet = pConfig->GetInspection(l,&pInspection) && bRet;
-								if ( nullptr != pInspection)
+								pInspection = pConfig->GetInspection(l);
+								if ( nullptr != pInspection )
 								{
 									if ( sPpqInsStr.Compare(pInspection->GetName()) == 0 )
 									{
@@ -3061,6 +3087,10 @@ BOOL CSVOConfigAssistantDlg::SendPPQAttachmentsToConfiguration(SVPPQObjectArray&
 										break;
 									}
 									pInspection = nullptr;
+								}
+								else
+								{
+									bRet = FALSE;
 								}
 							}
 						}
@@ -3087,8 +3117,8 @@ BOOL CSVOConfigAssistantDlg::SendPPQAttachmentsToConfiguration(SVPPQObjectArray&
 				if (bNew)
 				{
 					bRet = pPPQ->Create() && bRet;
-					pConfig->GetInputObjectList( &pPPQ->m_pInputList );
-					pConfig->GetOutputObjectList( &pPPQ->m_pOutputList );
+					pPPQ->m_pInputList = pConfig->GetInputObjectList( );
+					pPPQ->m_pOutputList = pConfig->GetOutputObjectList( );
 					bRet = pConfig->AddPPQ(pPPQ) && bRet;
 				}
 				else
@@ -3109,8 +3139,6 @@ BOOL CSVOConfigAssistantDlg::SendDataToConfiguration()
 {
 	BOOL bRet = TRUE;
 
-	SVInputObjectList	*pInputObjectList;
-	SVOutputObjectList	*pOutputObjectList;
 	SVConfigurationObject* pConfig( nullptr );
 	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
@@ -3151,16 +3179,16 @@ BOOL CSVOConfigAssistantDlg::SendDataToConfiguration()
 		Attach PPQs to new objects
 */
 
-	pConfig->GetInputObjectList(&pInputObjectList);
-	pConfig->GetOutputObjectList(&pOutputObjectList);
-
-	if( !pInputObjectList )
+	SVInputObjectList* pInputObjectList = pConfig->GetInputObjectList();
+	if( nullptr == pInputObjectList )
 	{
 		pInputObjectList = new SVInputObjectList;
 		pInputObjectList->SetName( _T( "Input Object List" ) );
 		bRet &= pInputObjectList != NULL && pInputObjectList->Create() && bRet;
 	}
-	if( !pOutputObjectList )
+
+	SVOutputObjectList* pOutputObjectList = pConfig->GetOutputObjectList();
+	if( nullptr == pOutputObjectList )
 	{
 		pOutputObjectList = new SVOutputObjectList;
 		pOutputObjectList->SetName( _T( "Output Object List" ) );
@@ -3204,14 +3232,12 @@ BOOL CSVOConfigAssistantDlg::SendDataToConfiguration()
 //	{
 		// go through each inspection, if HasInspectionNameChanged
 		// send messages to all objects...
-		long lInsCfgCnt;
-		SVInspectionProcess* pInspection( nullptr );
-		CSVOInspectionObj* pTmpObj( nullptr );
-		pConfig->GetInspectionCount(lInsCfgCnt);
+		long lInsCfgCnt = pConfig->GetInspectionCount();
 
 		for (long lI = lInsCfgCnt -1; -1 < lI; lI--)
 		{
-			pConfig->GetInspection(lI,&pInspection);
+			SVInspectionProcess* pInspection = pConfig->GetInspection(lI);
+			CSVOInspectionObj* pTmpObj( nullptr );
 			//If pInspection is nullptr then pTmpObj will also be nullptr
 			if( nullptr != pInspection ){ pTmpObj = GetInspectionObjectByName(pInspection->GetName()); }
 
@@ -3223,23 +3249,19 @@ BOOL CSVOConfigAssistantDlg::SendDataToConfiguration()
 						reinterpret_cast<DWORD_PTR>( static_cast<SVObjectClass*>(pInspection) ), 
 						reinterpret_cast<DWORD_PTR>( static_cast<LPCTSTR>(pTmpObj->GetOrginalInspectionName())) );
 					SVPPQObject* pPPQ( nullptr );
-					SVOutputObjectList *pOutputObjList;
-					long lCount;
-					long lPPQcount;
+					SVOutputObjectList* pOutputObjList = pConfig->GetOutputObjectList();
 
-					pConfig->GetOutputObjectList(&pOutputObjList);
-
-					if (pOutputObjList)
+					if (nullptr != pOutputObjList)
 					{
 						::SVSendMessage( pOutputObjList, SVM_OBJECT_RENAMED,
 							reinterpret_cast<DWORD_PTR>(static_cast <SVObjectClass*> (pInspection)),
 							reinterpret_cast<DWORD_PTR>(static_cast<LPCTSTR>( pTmpObj->GetOrginalInspectionName())) );
 					}
 
-					pConfig->GetPPQCount(lCount);
-					for (lPPQcount = 0; lPPQcount < lCount; lPPQcount++)
+					long lCount = pConfig->GetPPQCount();
+					for (long lPPQcount = 0; lPPQcount < lCount; lPPQcount++)
 					{
-						pConfig->GetPPQ(lPPQcount,&pPPQ);
+						pPPQ = pConfig->GetPPQ(lPPQcount);
 						if (nullptr != pPPQ)
 						{
 							::SVSendMessage( pPPQ, SVM_OBJECT_RENAMED,
@@ -3306,10 +3328,10 @@ BOOL CSVOConfigAssistantDlg::GetConfigurationForExisting()
 
 	m_lConfigurationType = pConfig->GetProductType();
 	//load camera information
-	pConfig->GetCameraCount(lCfgCameraCnt);
+	lCfgCameraCnt = pConfig->GetCameraCount();
 	for (long lCam = lCfgCameraCnt -1; -1 < lCam; lCam--)
 	{
-		bRet = pConfig->GetCamera(lCam,&pcfgCamera) && bRet;
+		pcfgCamera = pConfig->GetCamera(lCam);
 		if ( nullptr != pcfgCamera )
 		{
 			sCameraName = pcfgCamera->GetName();
@@ -3364,14 +3386,19 @@ BOOL CSVOConfigAssistantDlg::GetConfigurationForExisting()
 				pCamObj->SetFileImageSize(pcfgCamera->GetFileImageSize());
 			}
 		}
+		else
+		{
+			bRet = FALSE;
+		}
 	}
 	//end of load camera section
 
 	//load trigger section...
-	pConfig->GetTriggerCount(lCfgTriggerCnt);
+	lCfgTriggerCnt = pConfig->GetTriggerCount();
 	for (long lTrg = lCfgTriggerCnt -1; -1 < lTrg; lTrg--)
 	{
-		bRet = pConfig->GetTrigger(lTrg,&pcfgTrigger) && bRet;
+		pcfgTrigger = pConfig->GetTrigger(lTrg);
+		bRet = (nullptr != pcfgTrigger) && bRet;
 		if ( nullptr != pcfgTrigger && pcfgTrigger->mpsvDevice != NULL )
 		{
 			sTriggerName = pcfgTrigger->GetName();
@@ -3403,10 +3430,10 @@ BOOL CSVOConfigAssistantDlg::GetConfigurationForExisting()
 	
 	//load inspection section...
 	CString sDisable;
-	pConfig->GetInspectionCount(lCfgInspectCnt);
+	lCfgInspectCnt = pConfig->GetInspectionCount();
 	for (long lIns = lCfgInspectCnt -1; -1 < lIns; lIns--)
 	{
-		bRet = pConfig->GetInspection(lIns,&pcfgInspection) && bRet;
+		pcfgInspection = pConfig->GetInspection(lIns);
 		if ( nullptr != pcfgInspection )
 		{
 			sInspectLabel = pcfgInspection->GetName();  // label name
@@ -3446,15 +3473,19 @@ BOOL CSVOConfigAssistantDlg::GetConfigurationForExisting()
 			}
 			m_InspectList.SetEnableAuxiliaryExtent( sInspectLabel, l_lEnable );
 		}
+		else
+		{
+			bRet = FALSE;
+		}
 	}
 	//end of inspection section...
 	
 	//load PPQ section...
-	pConfig->GetPPQCount(lCfgPPQCnt);
+	lCfgPPQCnt = pConfig->GetPPQCount();
 
 	for (long lPpq = lCfgPPQCnt -1; -1 < lPpq; lPpq--)
 	{
-		bRet = pConfig->GetPPQ(lPpq,&pcfgPPQ) && bRet;
+		pcfgPPQ = pConfig->GetPPQ(lPpq);
 		if ( nullptr != pcfgPPQ )
 		{
 			sPPQName = pcfgPPQ->GetName();
@@ -3555,6 +3586,10 @@ BOOL CSVOConfigAssistantDlg::GetConfigurationForExisting()
 				pPpqObj->SetAvailableInputsForConditionalOutput(availableInputs);
 			}
 		}//end if pcfgPPQ != NULL
+		else
+		{
+			bRet = FALSE;
+		}
 	}
 	//end of load PPQ section...
 	m_Page1.SetupList();
@@ -4832,13 +4867,13 @@ HRESULT CSVOConfigAssistantDlg::ConnectToolsetBuffers()
 	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
 	long lInspectionCount = 0;
-	SVInspectionProcess* pInspection( nullptr );
+
 	//If pointer nullptr then count is 0
-	if( nullptr != pConfig ) {pConfig->GetInspectionCount( lInspectionCount ); }
+	if( nullptr != pConfig ) { lInspectionCount = pConfig->GetInspectionCount( ); }
 
 	for ( long lInspection = 0; lInspection < lInspectionCount; lInspection++ )
 	{
-		pConfig->GetInspection( lInspection, &pInspection );
+		SVInspectionProcess* pInspection = pConfig->GetInspection( lInspection );
 		if ( nullptr != pInspection )
 		{
 			if ( nullptr != pInspection->GetToolSet() )

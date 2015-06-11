@@ -108,7 +108,7 @@ void SVRemoteInputsView::OnUpdate( CView* pSender, LPARAM lHint, CObject* pHint 
 		CString strItem;
 		long lSize;
 		int j;
-		SVInputObjectList* pInputList;
+		SVInputObjectList* pInputList = nullptr;
 		SVRemoteInputObject* pRemInput;
 		SVIOEntryHostStructPtrList ppIOEntries;
 		SVIOEntryHostStructPtr pIOEntry;
@@ -117,15 +117,14 @@ void SVRemoteInputsView::OnUpdate( CView* pSender, LPARAM lHint, CObject* pHint 
 		SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
 		// Get list of available inputs
-		if( nullptr == pConfig || !pConfig->GetInputObjectList( &pInputList ) )
+		if( nullptr != pConfig ) { pInputList = pConfig->GetInputObjectList(); }
+		if( nullptr == pInputList )
 		{
 			SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
 			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorGettingInputObjectList, StdExceptionParams, SvOi::Err_17044_ErrorGettingInputObjectList );
 			DebugBreak();
+			return;
 		}
-
-		// Check if the list is up yet
-		if( nullptr == pInputList ) { return; }
 
 		if( !pInputList->FillInputs( ppIOEntries ) )
 		{
@@ -189,7 +188,6 @@ void SVRemoteInputsView::OnUpdate( CView* pSender, LPARAM lHint, CObject* pHint 
 
 void SVRemoteInputsView::OnLButtonDblClk( UINT nFlags, CPoint point )
 {
-	SVInputObjectList *pInputList;
 	SVIOEntryHostStructPtrList ppIOEntries;
 	SVIOEntryHostStructPtr pIOEntry;
 	UINT flags;
@@ -209,7 +207,9 @@ void SVRemoteInputsView::OnLButtonDblClk( UINT nFlags, CPoint point )
 			( flags & ( LVHT_ONITEMSTATEICON | LVHT_ONITEMICON | LVHT_ONITEMLABEL ) ) )
 		{
 			// Get list of available inputs
-			if( nullptr == pConfig || !pConfig->GetInputObjectList( &pInputList ) )
+			SVInputObjectList* pInputList = nullptr;
+			if( nullptr != pConfig ) { pInputList = pConfig->GetInputObjectList( ); }
+			if( nullptr == pInputList )
 			{
 				SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
 				e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorGettingInputObjectList, StdExceptionParams, SvOi::Err_17046_ErrorGettingInputObjectList );

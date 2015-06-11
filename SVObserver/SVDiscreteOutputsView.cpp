@@ -142,7 +142,6 @@ void SVDiscreteOutputsView::OnUpdate( CView* pSender, LPARAM lHint, CObject* pHi
 
 		CString strItem;
 		long lSize;
-		long lPPQSize;
 		int j;
 		int i;
 		int k;
@@ -155,7 +154,12 @@ void SVDiscreteOutputsView::OnUpdate( CView* pSender, LPARAM lHint, CObject* pHi
 		SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
 		// Get the number of PPQs
-		if( nullptr == pConfig || !pConfig->GetPPQCount( lPPQSize ) )
+		long lPPQSize = 0;
+		if( nullptr != pConfig )
+		{
+			lPPQSize = pConfig->GetPPQCount( );
+		}
+		else
 		{
 			SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
 			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorGettingPPQCount, StdExceptionParams, SvOi::Err_17010_ErrorGettingPPQCount );
@@ -238,8 +242,8 @@ void SVDiscreteOutputsView::OnUpdate( CView* pSender, LPARAM lHint, CObject* pHi
 
 			for( k = 0; k < lPPQSize; k++ )
 			{
-				// Get the number of PPQs
-				if( !pConfig->GetPPQ( k, &pPPQ ) )
+				pPPQ = pConfig->GetPPQ( k );
+				if( nullptr == pPPQ )
 				{
 					SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
 					e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorGettingPPQ, StdExceptionParams, SvOi::Err_17011_ErrorGettingPPQ );
@@ -377,7 +381,7 @@ void SVDiscreteOutputsView::OnLButtonDblClk( UINT nFlags, CPoint point )
 								SVPPQObject* pPPQ( nullptr );
 								long k = 0;
 
-								if ( nullptr != pConfig ){ pConfig->GetOutputObjectList( &pOutputList ); }
+								if ( nullptr != pConfig ){ pOutputList = pConfig->GetOutputObjectList( ); }
 								if( !( pIOEntry.empty() ) )
 								{									
 									// Make sure that we first reset the old output
@@ -434,13 +438,12 @@ void SVDiscreteOutputsView::OnLButtonDblClk( UINT nFlags, CPoint point )
 
 								long lPPQSize = 0;
 								// Force the PPQs to rebuild
-								if ( nullptr != pConfig ){ pConfig->GetPPQCount( lPPQSize ); }
+								if ( nullptr != pConfig ){ lPPQSize = pConfig->GetPPQCount( ); }
 
 								// Rebuild Outputs
 								for( k = 0; k < lPPQSize; k++ )
 								{
-									// Get the number of PPQs
-									pConfig->GetPPQ( k, &pPPQ );
+									pPPQ = pConfig->GetPPQ( k );
 
 									if( nullptr != pPPQ ){ pPPQ->RebuildOutputList(); }
 								}// end for
@@ -451,7 +454,7 @@ void SVDiscreteOutputsView::OnLButtonDblClk( UINT nFlags, CPoint point )
 							if( !( dlg.m_pIOEntry.empty() ) )
 							{
 								pOutputList = nullptr;
-								if ( nullptr != pConfig ){ pConfig->GetOutputObjectList( &pOutputList ); }
+								if ( nullptr != pConfig ){ pOutputList = pConfig->GetOutputObjectList( ); }
 								if( nullptr != pOutputList )
 								{
 									pOutputList->ResetOutput( dlg.m_pIOEntry );

@@ -147,7 +147,7 @@ void SVPLCOutputsView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 
 		CString strItem;
 		long lSize;
-		long lPPQSize;
+		long lPPQSize = 0;
 		int j = 0;
 		int k = 1;
 		int iCurrentPPQ = 0;
@@ -159,11 +159,15 @@ void SVPLCOutputsView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 		SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
 		// Get the number of PPQs
-		if( nullptr == pConfig || !pConfig->GetPPQCount( lPPQSize ) )
+		if( nullptr == pConfig )
 		{
 			SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
 			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorGettingPPQCount, StdExceptionParams, SvOi::Err_17037_ErrorGettingPPQCount );
 			DebugBreak();
+		}
+		else
+		{
+			lPPQSize = pConfig->GetPPQCount( );
 		}
 
 		// Check if any PPQs are here yet
@@ -177,7 +181,8 @@ void SVPLCOutputsView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 		for( int iPPQLoop = 0; iPPQLoop < lPPQSize; iPPQLoop++ )
 		{
 			// Get the PPQ
-			if( !pConfig->GetPPQ( iPPQLoop, &pPPQ ) )
+			pPPQ = pConfig->GetPPQ( iPPQLoop );
+			if( nullptr == pPPQ )
 			{
 				SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
 				e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorGettingPPQ, StdExceptionParams, SvOi::Err_17038_ErrorGettingPPQ );
@@ -305,25 +310,11 @@ void SVPLCOutputsView::OnLButtonDblClk(UINT nFlags, CPoint point)
 	CString strAddress;
 	SVPLCOutputObject* pPLCOutput = nullptr;
 	UINT flags;
-
-	SVConfigurationObject* pConfig = nullptr;
-	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
-
 	int l_item = GetListCtrl().HitTest( point, &flags );
 
 	if ( l_item >= 0 && ((flags & LVHT_ONITEMLABEL) == LVHT_ONITEMLABEL) && ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) &&
 		 TheSVObserverApp.OkToEdit() )
 	{
-		long lPPQSize=0;
-
-		// Get the number of PPQs
-		if( nullptr == pConfig || !pConfig->GetPPQCount( lPPQSize ) )
-		{
-			SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
-			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorGettingPPQCount, StdExceptionParams, SvOi::Err_17040_ErrorGettingPPQCount );
-			DebugBreak();
-		}
-
 		SVSVIMStateClass::AddState( SV_STATE_EDITING );
 
 		pPLCOutput = dynamic_cast<SVPLCOutputObject*>( reinterpret_cast<SVObjectClass*>(GetListCtrl().GetItemData( l_item )));

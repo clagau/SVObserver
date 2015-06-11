@@ -153,10 +153,10 @@ BOOL SVPPQBarClass::BuildButtons()
 	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
 	//If the pointer is a nullptr then the count will be 0
-	if( nullptr != pConfig){ pConfig->GetPPQCount( lCount ); }
+	if( nullptr != pConfig){ lCount = pConfig->GetPPQCount( ); }
 	for( lPPQ = 0; lPPQ < lCount; lPPQ++ )
 	{
-		pConfig->GetPPQ( lPPQ, &pPPQ );
+		pPPQ = pConfig->GetPPQ( lPPQ );
 
 		if( lPPQ == 0 )
 		{

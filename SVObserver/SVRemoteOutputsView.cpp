@@ -147,18 +147,22 @@ void SVRemoteOutputsView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 		GetListCtrl().DeleteAllItems();
 		
 		CString strItem;
-		long lPPQSize;
+		long lPPQSize = 0;
 		int j = 0;
 		int k = 1;
 		int iCurrentPPQ = 0;
 		int l_PPQNum = 0;
 	
 		// Get the number of PPQs
-		if( nullptr == pConfig || !pConfig->GetPPQCount( lPPQSize ) )
+		if( nullptr == pConfig  )
 		{
 			SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
 			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorGettingPPQCount, StdExceptionParams, SvOi::Err_17051_ErrorGettingPPQCount );
 			DebugBreak();
+		}
+		else
+		{
+			lPPQSize = pConfig->GetPPQCount( );
 		}
 
 		// Check if any PPQs are here yet
@@ -272,20 +276,6 @@ void SVRemoteOutputsView::OnLButtonDblClk(UINT nFlags, CPoint point)
 	if ( l_item >= 0 && ((flags & LVHT_ONITEMLABEL) == LVHT_ONITEMLABEL) && ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) &&
 		 TheSVObserverApp.OkToEdit() )
 	{
-
-		SVConfigurationObject* pConfig = nullptr;
-		SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
-
-		long lPPQSize = 0;
-
-		// Get the number of PPQs
-		if( nullptr == pConfig || !pConfig->GetPPQCount( lPPQSize ) )
-		{
-			SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
-			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorGettingPPQCount, StdExceptionParams, SvOi::Err_17052_ErrorGettingPPQCount );
-			DebugBreak();
-		}
-
 		SVSVIMStateClass::AddState( SV_STATE_EDITING );
 
 		pRemoteOutput = dynamic_cast<SVRemoteOutputObject*>( reinterpret_cast<SVObjectClass*>(GetListCtrl().GetItemData( l_item )));

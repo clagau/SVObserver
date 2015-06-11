@@ -187,7 +187,7 @@ void SVPublishListClass::Refresh(SVTaskObjectClass * pRootObject)
 					SVDigitalOutputObject* pDigital( nullptr );
 					CString strName = pValueObject->GetCompleteObjectName();
 
-					if( nullptr != pConfig ){ pConfig->GetOutputObjectList( &pOutputList ); }
+					if( nullptr != pConfig ){ pOutputList = pConfig->GetOutputObjectList( ); }
 
 					if( nullptr != pOutputList ){ pOutputList->GetOutput( strName, pDigital ); }
 

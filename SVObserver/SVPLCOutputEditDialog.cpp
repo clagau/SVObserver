@@ -67,7 +67,6 @@ END_MESSAGE_MAP()
 BOOL SVPLCOutputEditDialog::OnInitDialog()
 {
 	CDialog::OnInitDialog();
-	SVPPQObject* pPPQ( nullptr );
 	SVIOEntryHostStructPtrList ppIOEntries;
 	long lPPQSize=0;
 	int iCurrentSel = 0;
@@ -91,7 +90,11 @@ BOOL SVPLCOutputEditDialog::OnInitDialog()
 	SVConfigurationObject* pConfig( nullptr );
 	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
-	if( nullptr == pConfig || !pConfig->GetPPQCount( lPPQSize ) )
+	if( nullptr != pConfig )
+	{
+		lPPQSize = pConfig->GetPPQCount( );
+	}
+	else
 	{
 		SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
 		e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorGettingPPQCount, StdExceptionParams, SvOi::Err_17034_ErrorGettingPPQCount );
@@ -102,7 +105,8 @@ BOOL SVPLCOutputEditDialog::OnInitDialog()
 	{
 		CString l_strPLCName;
 		// Get the number of PPQs
-		if( !pConfig->GetPPQ( k, &pPPQ ) )
+		SVPPQObject* pPPQ = pConfig->GetPPQ( k );
+		if( nullptr == pPPQ )
 		{
 			SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
 			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorGettingPPQ, StdExceptionParams, SvOi::Err_17035_ErrorGettingPPQ );

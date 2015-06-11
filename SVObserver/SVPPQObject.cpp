@@ -2104,7 +2104,7 @@ BOOL SVPPQObject::AddDefaultInputs()
 	SVConfigurationObject* pConfig( nullptr );
 	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 	SVInputObjectList* pInputObjectList( nullptr );
-	if( nullptr != pConfig ){ pConfig->GetInputObjectList( &pInputObjectList ); }
+	if( nullptr != pConfig ){ pInputObjectList = pConfig->GetInputObjectList( ); }
 	long lCount=0;
 	//If pointer is a nullptr then count is 0
 	if( nullptr != pInputObjectList ){ pInputObjectList->GetRemoteInputCount(lCount); }

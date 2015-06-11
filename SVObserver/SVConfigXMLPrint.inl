@@ -101,11 +101,11 @@ inline void SVConfigXMLPrint::WriteTriggers(Writer writer) const
 	typedef std::map<std::string, SVTriggerObject*> TriggerMap;
 	TriggerMap triggers;
 	long sz = 0;
-	if( nullptr != m_cfo ){ m_cfo->GetTriggerCount(sz); }
+	if( nullptr != m_cfo ){ sz = m_cfo->GetTriggerCount(); }
 	for(long i = 0; i < sz; ++i)
 	{
 		SVTriggerObject* pTrigger( nullptr );
-		if( nullptr != m_cfo ){ m_cfo->GetTrigger(i, &pTrigger); }
+		if( nullptr != m_cfo ){ pTrigger = m_cfo->GetTrigger(i); }
 		if( nullptr != pTrigger )
 		{
 			triggers[pTrigger->GetName()] = pTrigger;
@@ -149,11 +149,11 @@ inline void SVConfigXMLPrint::WriteCameras(Writer writer) const
 	typedef std::map<std::string, SVVirtualCamera*> CameraMap;
 	CameraMap cameras;
 	long sz = 0;
-	if( nullptr != m_cfo ) { m_cfo->GetCameraCount(sz); }
+	if( nullptr != m_cfo ) { sz = m_cfo->GetCameraCount(); }
 	for(long i = 0; i < sz; ++i)
 	{
 		SVVirtualCamera* pCamera( nullptr );
-		if( nullptr != m_cfo ) { m_cfo->GetCamera( i, &pCamera ); }
+		if( nullptr != m_cfo ) { pCamera = m_cfo->GetCamera( i ); }
 		if( nullptr != pCamera )
 		{
 			cameras[pCamera->GetName()] = pCamera;
@@ -305,12 +305,12 @@ inline void SVConfigXMLPrint::WritePPQs(Writer writer) const
 	PPQMap ppqs;
 	long lPPQ = 0;
 	writer->WriteStartElement(NULL, L"PPQs", NULL);
-	if( nullptr != m_cfo ) { m_cfo->GetPPQCount(lPPQ); }
+	if( nullptr != m_cfo ) { lPPQ = m_cfo->GetPPQCount(); }
 	for (long l = 0; l < lPPQ; l++)
 	{
 		SVPPQObject* pPPQ( nullptr );
 		
-		if( nullptr != m_cfo ) { m_cfo->GetPPQ(l, &pPPQ); }
+		if( nullptr != m_cfo ) { pPPQ = m_cfo->GetPPQ(l); }
 		if ( nullptr != pPPQ)
 		{
 			ppqs[pPPQ->GetName()] = pPPQ;
@@ -411,12 +411,12 @@ inline void SVConfigXMLPrint::WriteInspections(Writer writer) const
 	InspectionMap inspections;
 	long lSize = 0;
 	writer->WriteStartElement(NULL, L"Inspections", NULL);
-	if( nullptr != m_cfo ) { m_cfo->GetInspectionCount(lSize); }
+	if( nullptr != m_cfo ) { lSize = m_cfo->GetInspectionCount(); }
 	for (long l = 0; l < lSize; l++)
 	{
 		SVInspectionProcess* pInspect( nullptr );
 		
-		if( nullptr != m_cfo ) { m_cfo->GetInspection(l, &pInspect); }
+		if( nullptr != m_cfo ) { pInspect = m_cfo->GetInspection(l); }
 		if( nullptr != pInspect)
 		{
 			inspections[pInspect->GetName()] = pInspect;
@@ -438,12 +438,12 @@ inline void SVConfigXMLPrint::WriteToolSets(Writer writer) const
 	InspectionMap inspections;
 	long lSize = 0;
 	writer->WriteStartElement(NULL, L"InspectionProcesses", NULL);
-	if( nullptr != m_cfo ){ m_cfo->GetInspectionCount(lSize); }
+	if( nullptr != m_cfo ){ lSize = m_cfo->GetInspectionCount(); }
 	for (long l = 0; l < lSize; l++)
 	{
 		SVInspectionProcess* pInspection( nullptr );
 		
-		if( nullptr != m_cfo ){ m_cfo->GetInspection(l, &pInspection); }
+		if( nullptr != m_cfo ){ pInspection = m_cfo->GetInspection(l); }
 		if( nullptr != pInspection )
 		{
 			inspections[pInspection->GetName()] = pInspection;
@@ -490,15 +490,14 @@ inline void SVConfigXMLPrint::WriteResultIO(Writer writer) const
 
 	SVConfigurationObject* pConfig( nullptr );
 	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
-	SVObserverApp*         pApp    = dynamic_cast <SVObserverApp*> (AfxGetApp());
+	SVObserverApp* pApp = dynamic_cast <SVObserverApp*> (AfxGetApp());
 	
-	// Get the number of PPQs
-	long	lPPQSize = 0;
-	if ( nullptr != pConfig && pConfig->GetPPQCount(lPPQSize) && pApp->GetIODoc())
+	if ( nullptr != pConfig && nullptr != pApp && pApp->GetIODoc())
 	{
 		SVPPQObject				*pPPQ;
 		SVDigitalOutputObject	*pDigOutput;
 		SVIOEntryHostStructPtrList ppIOEntries;
+		long lPPQSize = pConfig->GetPPQCount();
 		
 		// Print Result Output title...
 		DWORD dwMaxOutput = 0;
@@ -530,7 +529,8 @@ inline void SVConfigXMLPrint::WriteResultIO(Writer writer) const
 			
 			for (int j = 0; j < lPPQSize; j++)
 			{
-				if (pConfig->GetPPQ(j, &pPPQ))
+				pPPQ = pConfig->GetPPQ(j);
+				if ( nullptr != pPPQ )
 				{
 					// Get list of available outputs
 					long	lIOEntries = 0;
@@ -584,12 +584,13 @@ inline void SVConfigXMLPrint::WriteModuleIO(Writer writer) const
 	// Print IODoc contents
 	if (pApp->GetIODoc())
 	{
-		SVInputObjectList		*pInputList;
+		SVInputObjectList* pInputList = nullptr;
 		SVDigitalInputObject	*pDigInput;
 		SVIOEntryHostStructPtrList ppIOEntries;
 		
 		// Get list of available inputs
-		if ( nullptr != pConfig && pConfig->GetInputObjectList(&pInputList) && pInputList->FillInputs( ppIOEntries ))
+		if ( nullptr != pConfig ) { pInputList = pConfig->GetInputObjectList(); }
+		if ( nullptr != pInputList && pInputList->FillInputs( ppIOEntries ) )
 		{
 			lSize = static_cast< long >( ppIOEntries.size() );
 			
@@ -800,12 +801,12 @@ inline void SVConfigXMLPrint::WritePPQBar(Writer writer) const
 	
 	long	lPPQ = 0;
 	//The nullptr check here is enough because then lPPQ would be 0
-	if( nullptr != pConfig){ pConfig->GetPPQCount(lPPQ); }
+	if( nullptr != pConfig){ lPPQ = pConfig->GetPPQCount(); }
 	for (int intPPQ = 0; intPPQ < lPPQ; intPPQ++)
 	{
-		SVPPQObject*	pPPQ( nullptr );
+		SVPPQObject* pPPQ = pConfig->GetPPQ(intPPQ);
 		
-		if (pConfig->GetPPQ(intPPQ, &pPPQ) && nullptr != pPPQ)
+		if (nullptr != pPPQ)
 		{
 			writer->WriteStartElement(NULL, to_utf16(pPPQ->GetName(), cp_dflt).c_str(), NULL);
 			long	lPPQLength = 0;

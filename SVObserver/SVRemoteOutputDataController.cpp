@@ -718,13 +718,11 @@ HRESULT SVRemoteOutputDataController::GetPPQs( std::vector<CString>& p_astrPPQs,
 	SVRemoteOutputGroupMap::iterator l_it;
 	for( l_it = m_RemoteGroupParameters.begin() ; l_it != m_RemoteGroupParameters.end() ; ++l_it )
 	{
-		long l_lPPQCount;
-		pConfig->GetPPQCount( l_lPPQCount );
+		long l_lPPQCount = pConfig->GetPPQCount( );
 		CString l_strRemoteOutputID = l_it->first;
 		for( int i = 0 ; i < l_lPPQCount ; i++ )
 		{
-			SVPPQObject* pPPQ( nullptr );
-			pConfig->GetPPQ(i, &pPPQ );
+			SVPPQObject* pPPQ = pConfig->GetPPQ(i);
 			if( nullptr != pPPQ )
 			{
 				if( pPPQ->GetName() == l_it->second->GetPPQName() )
@@ -796,19 +794,17 @@ size_t SVRemoteOutputDataController::GetRemoteOutputGroupCount()
 // After a ppq is deleted this function cleans up data from the map.
 HRESULT SVRemoteOutputDataController::ClearUnUsedData( )
 {
-	long l_lCount = 0;
 	SVConfigurationObject* pConfig( nullptr );
 	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 	if( nullptr != pConfig )
 	{
-		pConfig->GetPPQCount(l_lCount);
+		long l_lCount = pConfig->GetPPQCount();
 		typedef std::pair<SVString, SVGUID> PPQInfo;
 		typedef std::deque<PPQInfo> PPQInfoList;
 		PPQInfoList l_PPQInfos;
 		for( long l_lIndex = 0 ; l_lIndex < l_lCount ; l_lIndex++ )
 		{
-			SVPPQObject* pPPQ( nullptr );
-			pConfig->GetPPQ(l_lIndex, &pPPQ );
+			SVPPQObject* pPPQ = pConfig->GetPPQ(l_lIndex);
 			if( nullptr != pPPQ )
 			{
 				l_PPQInfos.push_back( std::make_pair(pPPQ->GetName(), pPPQ->GetUniqueObjectID()) );
@@ -980,13 +976,11 @@ void SVRemoteOutputDataController::SetupRemoteOutputGroup(SVConfigurationObject*
 	// these containers hold the list of ppq names that will be used for plcs.
 	CStringVec l_AvailablePPQs;
 	// Initialize PPQ - PLCs by selecting from dialog.
-	long l_lPPQSize;
-	pConfig->GetPPQCount( l_lPPQSize );
+	long l_lPPQSize = pConfig->GetPPQCount( );
 	for( long l = 0 ; l < l_lPPQSize ; l++ )
 	{
-		SVPPQObject* pPPQ( nullptr );
-		BOOL l_bTmp = pConfig->GetPPQ(l, &pPPQ );
-		if( l_bTmp )
+		SVPPQObject* pPPQ = pConfig->GetPPQ(l);
+		if( nullptr != pPPQ )
 		{
 			l_AvailablePPQs.push_back( pPPQ->GetName() );
 		}

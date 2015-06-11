@@ -108,13 +108,12 @@ void SVIOController::LocalDestroy()
 
 BOOL SVIOController::RebuildOutputList()
 {
-	SVOutputObjectList	*pOutputList;
 	SVOutputObjectArray ppNewOutputs;
 
 	SVConfigurationObject* pConfig( nullptr );
 	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
-	if( nullptr == pConfig || !pConfig->GetOutputObjectList( &pOutputList ) )
+	if( nullptr == pConfig || nullptr == pConfig->GetOutputObjectList( ) )
 	{
 		return FALSE;
 	}
@@ -356,7 +355,7 @@ HRESULT SVIOController::SetModuleReady( bool p_Value )
 		SVConfigurationObject* pConfig( nullptr );
 		SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
-		if( nullptr != pConfig ){ pConfig->GetOutputObjectList( &pOutputList ); }
+		if( nullptr != pConfig ){ pOutputList = pConfig->GetOutputObjectList( ); }
 
 		if( nullptr == pOutputList || !pOutputList->WriteOutput( m_pModuleReady, 1, true, false ) )
 		{
@@ -381,7 +380,7 @@ HRESULT SVIOController::SetRaidErrorBit( bool p_Value )
 		SVConfigurationObject* pConfig( nullptr );
 		SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
-		if( nullptr != pConfig ){ pConfig->GetOutputObjectList( &pOutputList ); }
+		if( nullptr != pConfig ){ pOutputList = pConfig->GetOutputObjectList( ); }
 
 		if( nullptr == pOutputList || !pOutputList->WriteOutput( m_pRaidErrorBit, 1, true, false ) )
 		{
