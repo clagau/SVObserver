@@ -16,6 +16,7 @@
 #include "EQAdjustSizePositionX.h"
 #include "ObjectInterfaces\ErrorNumbers.h"
 #include "EQAdjustSize.h"
+#include "SVStatusLibrary\ExceptionManager.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -148,10 +149,12 @@ HRESULT SVToolAdjustmentDialogSizePage::SetInspectionData()
 {
 	HRESULT hresult = S_OK;
 
-	if( nullptr !=  m_pToolSizeAdjustTask)
+	if( nullptr !=  m_pToolSizeAdjustTask && nullptr !=  m_pTool)
 	{
 		UpdateData( TRUE ); // get data from dialog
 		
+		EAutoSize AutoSizeEnable = m_pTool->GetAutoSizeEnabled();
+
 		for( int vType  = ToolSizeAdjustTask::TSPositionX ; vType < ToolSizeAdjustTask::TSValuesCount ; ++vType)
 		{
 			int sel = m_ComboBox[vType].GetCurSel();
@@ -159,10 +162,22 @@ HRESULT SVToolAdjustmentDialogSizePage::SetInspectionData()
 			{
 				long Value = ( long ) m_ComboBox[vType].GetItemData( sel );
 				
-				if(m_pTool && m_pTool->IsAutoSizeDisabled())
+				
+				
+				if((vType == ToolSizeAdjustTask::TSPositionX || vType == ToolSizeAdjustTask::TSPositionY) )
 				{
-					Value = ToolSizeAdjustTask::TSNone; 
+					if((AutoSizeEnable & EnablePosition) == 0)
+					{
+						Value = ToolSizeAdjustTask::TSNone;
+					}
+
 				}
+				else if((AutoSizeEnable & EnableSize) == 0)
+				{
+					Value = ToolSizeAdjustTask::TSNone;
+				}
+
+				
 				
 				hresult = AddInputRequest( &(m_pToolSizeAdjustTask->m_InputModes[vType]), Value );
 				if(S_OK == hresult) 
@@ -217,18 +232,14 @@ void SVToolAdjustmentDialogSizePage::Refresh( bool bSave /*= true*/ )
 			SetInspectionData();
 		}
 		
-		bool Disabled(false);
-		if(m_pTool && m_pTool->IsAutoSizeDisabled())
-		{
-			Disabled = true; 
-		}
-
+		EAutoSize AutoSizeEnable = m_pTool->GetAutoSizeEnabled();
+		
 
 		///Hide not allowed Controls
 		int show = (m_pToolSizeAdjustTask->m_AllowAdjustSize == false)?  SW_HIDE :SW_SHOW;
 		
 		bool bEnable = (m_pToolSizeAdjustTask->m_AllowAdjustSize == false)?  false :true;
-		bEnable = Disabled? false :  bEnable;
+		bEnable = (AutoSizeEnable & EnableSize) == EnableSize  ?  bEnable : false;
 		m_ComboBox[ToolSizeAdjustTask::TSWidth].ShowWindow(show);
 		m_EditCtrl[ToolSizeAdjustTask::TSWidth].ShowWindow(show);
 		m_ComboBox[ToolSizeAdjustTask::TSHeight].ShowWindow(show);
@@ -240,7 +251,7 @@ void SVToolAdjustmentDialogSizePage::Refresh( bool bSave /*= true*/ )
 
 		show = (m_pToolSizeAdjustTask->m_AllowAdjustPosition== false)?  SW_HIDE :SW_SHOW;
 		bEnable = (m_pToolSizeAdjustTask->m_AllowAdjustPosition == false)?  false :true;
-		bEnable = Disabled? false :  bEnable;
+		bEnable = (AutoSizeEnable & EnablePosition) ==  EnablePosition ?  bEnable : false;
 
 		m_ComboBox[ToolSizeAdjustTask::TSPositionX].ShowWindow(show);
 		m_EditCtrl[ToolSizeAdjustTask::TSPositionX].ShowWindow(show);
@@ -252,8 +263,6 @@ void SVToolAdjustmentDialogSizePage::Refresh( bool bSave /*= true*/ )
 
 
 
-
-
 		// refresh  combo settings...
 		for( int vType  = ToolSizeAdjustTask::TSPositionX ; vType <  ToolSizeAdjustTask::TSValuesCount; ++vType)
 		{
@@ -262,10 +271,19 @@ void SVToolAdjustmentDialogSizePage::Refresh( bool bSave /*= true*/ )
 			if(m_pToolSizeAdjustTask->m_InputModes[vType].GetValue( SelMode ) == S_OK )
 			{
 				
-				if(Disabled)
+				if((vType == ToolSizeAdjustTask::TSPositionX || vType == ToolSizeAdjustTask::TSPositionY) )
+				{
+					if((AutoSizeEnable & EnablePosition) ==0)
+					{
+						SelMode = ToolSizeAdjustTask::TSNone;
+					}
+					
+				}
+				else if((AutoSizeEnable & EnableSize) == 0)
 				{
 					SelMode = ToolSizeAdjustTask::TSNone;
-				}
+				} 
+
 				
 				//m_ComboBox[vType].SetCurSel(Sel);
 				m_ComboBox[vType].SetCurSelItemData(SelMode);
@@ -451,8 +469,8 @@ bool SVToolAdjustmentDialogSizePage::QueryAllowExit()
 					pEQ->GetEquationText(csEqText);
 					if(csEqText.IsEmpty())
 					{
-						///TODO_MEC_SVO170
-						AfxMessageBox("Empty Formulas are not allowed for Sizing or Positioning");
+						SvStl::ExceptionMgr1 Exception(SvStl::ExpTypeEnum::LogAndDisplay);
+						Exception.setMessage( SVMSG_SVO_64_EMPTY_FORMULAS_ARE_NOT_ALLOWED, nullptr, StdExceptionParams, SvOi::Err_16038_EmptyFormula );
 						return false;
 					}
 				}

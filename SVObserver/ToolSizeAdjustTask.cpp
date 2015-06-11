@@ -255,6 +255,7 @@ HRESULT ToolSizeAdjustTask::ResetObject()
 
 	SVToolClass* pTool(nullptr);
 	HRESULT hresult = SVTaskObjectClass::ResetObject();
+	EAutoSize  	 AutoSizeEnable(EnableNone);
 	if(S_OK  == hresult)
 	{
 		pTool = GetTool();
@@ -262,14 +263,21 @@ HRESULT ToolSizeAdjustTask::ResetObject()
 	if ( pTool == nullptr)
 	{
 		hresult = SvOi::Err_16027_InvalidOwner;
+		
 	}
+	else
+	{
+		AutoSizeEnable = pTool->GetAutoSizeEnabled();
+	}
+
+
 	long ModeWidth(TSNone), ModeHeight(TSNone), ModeX(TSNone), ModeY(TSNone);
 	bool bDone = false;
 
 
 	if(S_OK  == hresult)
 	{
-		bDone =  pTool->IsAutoSizeDisabled();
+		bDone =  (AutoSizeEnable == 0) ;
 	}
 	if(false == bDone  && S_OK  == hresult)
 	{
@@ -328,7 +336,8 @@ HRESULT ToolSizeAdjustTask::ResetObject()
 
 
 		bool bSetImageExtend(false);
-		if(( S_OK  == hresult) && (ModeWidth == TSFullSize) )
+		
+		if(( S_OK  == hresult) && (ModeWidth == TSFullSize) &&  (AutoSizeEnable == EnableSizeAndPosition))
 		{
 
 			/////Set To Full size (Image Extent = parent Extent)
@@ -339,7 +348,7 @@ HRESULT ToolSizeAdjustTask::ResetObject()
 			bDone = true;
 		}
 
-		if((S_OK  == hresult) && (false==bDone) &&  (ModeWidth == TSFormula) )
+		if((S_OK  == hresult) && (false==bDone) &&  (ModeWidth == TSFormula) &&  ((AutoSizeEnable & EnableSize)== EnableSize ))
 		{
 
 
@@ -353,7 +362,7 @@ HRESULT ToolSizeAdjustTask::ResetObject()
 				bSetImageExtend = true;
 			}
 		}
-		if((S_OK  == hresult) && (false==bDone) &&  (ModeHeight == TSFormula) )
+		if((S_OK  == hresult) && (false==bDone) &&  (ModeHeight == TSFormula) &&  ((AutoSizeEnable & EnableSize)== EnableSize))
 		{
 			long   NewHeight(0) ;
 			hresult = GetResultValue(TSHeight, NewHeight);
@@ -370,7 +379,7 @@ HRESULT ToolSizeAdjustTask::ResetObject()
 				bSetImageExtend = true;
 			}
 		}
-		if((S_OK  == hresult) && (false==bDone) &&  (ModeX == TSFormula) )
+		if((S_OK  == hresult) && (false==bDone) &&  (ModeX == TSFormula) &&  ((AutoSizeEnable & EnablePosition) == EnablePosition ))
 		{
 			long  PosX ;
 			hresult =  GetResultValue(TSPositionX,PosX);
@@ -381,7 +390,7 @@ HRESULT ToolSizeAdjustTask::ResetObject()
 				bSetImageExtend = true;
 			}
 		}
-		if((S_OK  == hresult) && (false==bDone) &&  (ModeY == TSFormula) )
+		if((S_OK  == hresult) && (false==bDone) &&  (ModeY == TSFormula) &&  ((AutoSizeEnable & EnablePosition) == EnablePosition)   )
 		{
 			long  PosY ;
 			hresult =  GetResultValue(TSPositionY,PosY);
@@ -424,7 +433,7 @@ DWORD_PTR	ToolSizeAdjustTask::processMessage( DWORD DwMessageID, DWORD_PTR DwMes
 {
 
 	DWORD_PTR DwResult = SVTaskObjectClass::processMessage( DwMessageID, DwMessageValue, DwMessageContext );
-	
+
 	// Try to process message by yourself...
 	DWORD dwPureMessageID = DwMessageID & SVM_PURE_MESSAGE;
 	switch (dwPureMessageID)
@@ -443,7 +452,7 @@ DWORD_PTR	ToolSizeAdjustTask::processMessage( DWORD DwMessageID, DWORD_PTR DwMes
 				CString ErrorMsg(_T("Error in Reset"));
 				if(GetTool()->GetName())
 				{
-					ErrorMsg.Format(_T("The new Extend of the Tool %s is not valid"), GetTool()->GetName());
+					ErrorMsg.Format(_T("The new extents for the %s are not valid"), GetTool()->GetName());
 				}
 				SvStl::ExpTypeEnum mode = SilentReset ? SvStl::ExpTypeEnum::LogOnly :  SvStl::ExpTypeEnum::LogAndDisplay;
 				SvStl::ExceptionMgr1 Exception(mode);
@@ -557,7 +566,7 @@ HRESULT ToolSizeAdjustTask::GetParentExtentOutputValues( TSValues val, long &val
 
 
 	}
-	
+
 	return hresult;
 }
 

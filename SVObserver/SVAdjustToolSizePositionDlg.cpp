@@ -27,6 +27,9 @@
 #include "SVExtentPropertiesInfoStruct.h"
 #include "SVMainFrm.h"
 #include "ToolSizeAdjustTask.h"
+#include <array>
+#include  <functional>
+
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -487,14 +490,15 @@ void SVAdjustToolSizePositionDlg::FillTreeFromExtents( SVRPropertyItem* pRoot, b
 			SVToolClass *pTool = dynamic_cast<SVToolClass*> (m_pToolTask) ;
 			if(nullptr != pTool &&  (S_OK == pTool->GetPropertyInfo(iter->first, info) ))
 			{
-				if(!pTool->IsAutoSizeDisabled())
+				
+				if( pTool->GetAutoSizeEnabled() !=  EnableNone)
 				{
 					bReadonly =  info.bSetByReset; 
 				}
 				bReadonly = bReadonly ||    info.bFormula;
-			
+
 			}
-			
+
 			if(bReadonly)
 			{
 				pEdit->SetForeColor(::GetSysColor(COLOR_INACTIVECAPTION));
@@ -515,7 +519,7 @@ bool SVAdjustToolSizePositionDlg::IsFullSizeAllowed()
 	{
 		bAllowFullsize = false;
 	}
-	if( bAllowFullsize && pTool->IsAutoSizeDisabled())
+	if( bAllowFullsize && pTool->GetAutoSizeEnabled() == EnableNone)
 	{	
 		bAllowFullsize = false;
 	}
@@ -523,7 +527,7 @@ bool SVAdjustToolSizePositionDlg::IsFullSizeAllowed()
 
 	SVExtentPropertyInfoStruct info;
 	array<SVExtentPropertyEnum, 4> PropArray = { SVExtentPropertyWidth, SVExtentPropertyHeight,SVExtentPropertyPositionPointX, SVExtentPropertyPositionPointY  };
-	for_each(PropArray.begin(),PropArray.end(),[&](SVExtentPropertyEnum p)
+	std::for_each(PropArray.begin(),PropArray.end(),[&](SVExtentPropertyEnum p)
 	{
 		if (bAllowFullsize && S_OK == pTool->GetPropertyInfo(p, info) )
 		{

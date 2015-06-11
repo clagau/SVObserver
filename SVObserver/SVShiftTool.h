@@ -55,6 +55,11 @@ public:
 	virtual SVTaskObjectClass* GetObjectAtPoint( const SVExtentPointStruct &p_rPoint );
 	virtual HRESULT DoesObjectHaveExtents() const;
 	virtual BOOL IsValid() override;
+	//************************************
+	//! return Flag with enabled Autosize
+	//! \returns  EnableSize  | EnablePosition
+	//************************************
+	virtual EAutoSize GetAutoSizeEnabled() override;
 #pragma endregion Public Methods
 
 protected:

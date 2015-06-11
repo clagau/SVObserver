@@ -620,6 +620,21 @@ BOOL SVShiftTool::IsValid()
 	return SVToolClass::IsValid() & bValid ;
 }
 
+EAutoSize SVShiftTool::GetAutoSizeEnabled()
+{
+	long shiftMode;
+	m_evoShiftMode.GetValue(shiftMode);
+	if (shiftMode == SV_SHIFT_ENUM::SV_SHIFT_ABSOLUTE)
+	{
+		return EnableSize ;
+	}
+	else
+	{
+		return (EnableSizeAndPosition);
+	}
+}
+
+
 #pragma endregion Private Methods
 
 //******************************************************************************

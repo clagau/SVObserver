@@ -1013,9 +1013,9 @@ BOOL SVToolClass::IsOkToEdit()
 	return TRUE;
 }
 
-bool SVToolClass::IsAutoSizeDisabled()
+EAutoSize SVToolClass::GetAutoSizeEnabled()
 {
-	return FALSE;
+	return (EnableSizeAndPosition);
 }
 
 

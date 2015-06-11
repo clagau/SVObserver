@@ -236,9 +236,17 @@ BOOL SVLinearToolClass::GetRotation()
 }
 
 
-bool SVLinearToolClass::IsAutoSizeDisabled()
+EAutoSize SVLinearToolClass::GetAutoSizeEnabled()
 {
-	return (GetRotation() == TRUE);
+	if (GetRotation() == TRUE)
+	{
+		return EnableNone;
+	}
+	else
+	{
+		return EnableSizeAndPosition;
+	}
+
 }
 
 

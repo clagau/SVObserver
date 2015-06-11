@@ -45,10 +45,10 @@ public:
 	BOOL GetRotation();
 
 	//************************************
-	//! return true if autosizing is disabled because rotation is turned on 
-	//! \returns bool
+	//! return Flag with enabled Autosize
+	//! \returns  EnableSize  | EnablePosition
 	//************************************
-	bool IsAutoSizeDisabled();
+	virtual EAutoSize GetAutoSizeEnabled() override;
 	BOOL IsToolRotated();
 
 	virtual HRESULT GetInputImageNames( SVStringValueObjectClass*& p_pSourceNames );

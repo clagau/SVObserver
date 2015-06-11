@@ -162,6 +162,15 @@ struct SVToolMoveStruct
 
 };// end SVToolMoveStruct
 
+
+enum EAutoSize 
+{
+	EnableNone = 0x0, 
+	EnableSize = 0x1, 
+	EnablePosition = 0x2, 
+	EnableSizeAndPosition = 0x3
+};
+
 class SVToolClass : public SVTaskObjectListClass
 {
 	SV_DECLARE_CLASS( SVToolClass );
@@ -196,10 +205,11 @@ public:
 
 
 	//************************************
-	//! return true if autosizing on reset is  disabled in the tool 
-	//! \returns bool
+	//! return Flag with enabled Autosize
+	//! \returns  EnableSize  | EnablePosition
 	//************************************
-	virtual bool IsAutoSizeDisabled();
+	virtual EAutoSize GetAutoSizeEnabled();
+	
 	virtual BOOL IsOkToEdit();
 	virtual BOOL SetDefaultFormulas();
 	

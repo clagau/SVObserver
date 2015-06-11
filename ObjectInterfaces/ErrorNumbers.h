@@ -125,9 +125,9 @@ namespace Seidenader { namespace ObjectInterfaces
 	static const int Err_16035_InvalidMode = Mec_ErrorBase + 35;
 	static const int Err_16036_InvalidMode = Mec_ErrorBase + 36;
 	static const int Err_16037_InvalidSelection = Mec_ErrorBase + 37;
-
-	static const int LastErrorAdjustTool  = Mec_ErrorBase + 37;
-
+	static const int Err_16038_EmptyFormula = Mec_ErrorBase + 38;
+	static const int LastErrorAdjustTool  = Mec_ErrorBase + 38;
+	
 
 	// Ben Walter
 	static const int BRW_ErrorBase = 17000;
