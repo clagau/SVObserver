@@ -234,7 +234,7 @@ void SVToolAdjustmentDialogSheetClass::addPages()
 
 		case SVShiftToolObjectType:
 			
-			AddPage( new SVToolAdjustmentDialogTransformImagePageClass( this ) );
+			AddPage( new SVToolAdjustmentDialogImagePageClass( this ) );
 			if(bHasSize)
 			{
 				AddPage(new SVToolAdjustmentDialogSizePage(this));
