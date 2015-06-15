@@ -364,7 +364,8 @@ public:
 	HRESULT CheckDrive(const CString& p_strDrive) const;
 	//Arvid 150202: made this public because it is needed by AutoSaver
 	//Arvid 150206: added parameter resetModifiedState so the main Modify flag is not changed when called during auto save
-	void fileSaveAsSVX( CString StrSaveAsPathName = _T( "" ) ,bool isRegularSave=true );
+	//Arvid 150610: isRegularSave is currently false only for AutoSaves
+	void fileSaveAsSVX( CString StrSaveAsPathName = _T( "" ) ,bool isAutoSave=false );
 
 #pragma region Encapsulation Methods
 	BOOL getShowUpdateFirmwareInMenu() const { return m_ShowUpdateFirmwareInMenu; }

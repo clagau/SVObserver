@@ -7915,7 +7915,7 @@ HRESULT SVObserverApp::InitializeSecurity()
 	return S_OK;
 }
 
-void SVObserverApp::fileSaveAsSVX( CString StrSaveAsPathName ,bool isRegularSave) 
+void SVObserverApp::fileSaveAsSVX( CString StrSaveAsPathName, bool isAutoSave) 
 {
 	SVFileNameManagerClass svFileManager;
 	CWaitCursor wait;
@@ -7928,20 +7928,20 @@ void SVObserverApp::fileSaveAsSVX( CString StrSaveAsPathName ,bool isRegularSave
 	//
 	// Is the input parameter for save as path empty?
 	//
-	if ( StrSaveAsPathName.IsEmpty() )
+	if ( !isAutoSave && StrSaveAsPathName.IsEmpty() )
 	{
 		SVFileNameClass svFileName = m_ConfigFileName;
 
 		svFileName.SetFileType( SV_SVX_CONFIGURATION_FILE_TYPE );
 
 		if ( CString( getConfigPathName() ).IsEmpty() ||
-			CString( getConfigPathName() ).CompareNoCase( "C:\\RUN" ) == 0 )
+			CString( getConfigPathName() ).CompareNoCase( Seidenader::SVObserver::RunFolder ) == 0 )
 		{
 			svFileName.SetPathName( AfxGetApp()->GetProfileString( _T( "Settings" ), 
 				_T( "ConfigurationFilePath" ), 
-				_T( "C:\\RUN" ) ) );
+				_T( Seidenader::SVObserver::RunFolder ) ) );
 
-			if ( CString( svFileName.GetPathName() ).CompareNoCase( "C:\\RUN" ) == 0 )
+			if ( CString( svFileName.GetPathName() ).CompareNoCase( Seidenader::SVObserver::RunFolder ) == 0 )
 			{
 				if ( ! CString( svFileManager.GetConfigurationPathName() ).IsEmpty() )
 				{
@@ -7950,7 +7950,7 @@ void SVObserverApp::fileSaveAsSVX( CString StrSaveAsPathName ,bool isRegularSave
 			}
 			else
 			{
-				if (isRegularSave)
+				if (!isAutoSave)
 				{
 					CString path = svFileName.GetPathName();
 					int pos = path.ReverseFind(_T('\\'));
@@ -7970,7 +7970,7 @@ void SVObserverApp::fileSaveAsSVX( CString StrSaveAsPathName ,bool isRegularSave
 
 		if ( svFileName.SaveFile() )
 		{
-			if(isRegularSave) //Arvid in non-regular save the configuration name must not be changed
+			if(!isAutoSave) //Arvid in an autosave the configuration name must not be changed
 			{
 				bOk = setConfigFullFileName( svFileName.GetFullFileName(), RENAME );
 				if ( bOk )
@@ -7987,10 +7987,10 @@ void SVObserverApp::fileSaveAsSVX( CString StrSaveAsPathName ,bool isRegularSave
 			/// Why is the return here? Shouldn't bOk be set to false instead ?
 			return; // what no error?
 		}
-	}// end if ( StrSaveAsPathName.IsEmpty() )
+	}// end if ( !isAutoSave && StrSaveAsPathName.IsEmpty() )
 	else
 	{
-		if(isRegularSave) //Arvid in non-regular save the full name of the configuration must not be changed: so store it
+		if(!isAutoSave) //Arvid in an AutoSave the full name of the configuration must not be changed!
 		{
 			bOk = setConfigFullFileName( StrSaveAsPathName, FALSE );
 		}
@@ -8012,19 +8012,14 @@ void SVObserverApp::fileSaveAsSVX( CString StrSaveAsPathName ,bool isRegularSave
 			pConfig->SaveConfiguration( m_XMLTree );
 		}
 
-		SaveDocuments( m_XMLTree );
+		SaveDocuments( m_XMLTree ); //Arvid required DLLs seem to be copied here
 
 		csFileName = m_ConfigFileName.GetFullFileName();
 
-		if(isRegularSave)
-		{
-			bStr = csFileName.AllocSysString();
-		}
-		else
-		{
-			bStr = StrSaveAsPathName.AllocSysString();
-		}
-		hr = SVOCMSaveConfiguration( m_CurrentVersion, ulVer, bStr, m_XMLTree );
+		bStr = csFileName.AllocSysString();
+
+		hr = SVOCMSaveConfiguration( m_CurrentVersion, ulVer, bStr, m_XMLTree ); 		//Arvid here the Configuration seems to be saved to the Run directory (C:\Run)
+
 		if (hr & 0xc0000000)
 		{
 			CString	csErrorMessage;
@@ -8034,37 +8029,42 @@ void SVObserverApp::fileSaveAsSVX( CString StrSaveAsPathName ,bool isRegularSave
 
 		SysFreeString( bStr );
 
-		svFileManager.SaveItem( &m_ConfigFileName );
-		svFileManager.SaveItems();
-		svFileManager.RemoveUnusedFiles();
-
-		if(isRegularSave)
+		if (isAutoSave) 
 		{
-			SVSVIMStateClass::RemoveState( SV_STATE_MODIFIED );
-		}
-
-		SVNavigateTreeClass::DeleteAllItems( m_XMLTree );
-
-		if ( bOk )
-		{
-			if ( CString( svFileManager.GetConfigurationPathName() ).IsEmpty() )
-			{
-				AddToRecentFileList( getConfigFullFileName() );
-			}
-			else
-			{
-				if(isRegularSave) //Arvid in a non-regular save (e.g. an autosave) the configuration name must not be added to the LRU list
-				{
-					AddToRecentFileList( CString( svFileManager.GetConfigurationPathName() ) + 
-						"\\" + getConfigFileName() );
-				}
-			}
+			//Arvid in an autosave some of the of the steps necessary in a normal configuration 
+			// save are skipped:
+			// e.g., the configuration name must not be added to the LRU list
 			
-			AutoSaver::Instance().ResetAutoSaveInformation(); //Arvid: save was successful: update autosave timestamp
+			AutoSaver::Instance().CopyDirectoryToTempDirectory(Seidenader::SVObserver::RunFolder + CString("\\"));
+			AutoSaver::Instance().ResetAutoSaveInformation(); //Arvid: update autosave timestamp
 		}
+		else 
+		{
+			svFileManager.SaveItem( &m_ConfigFileName );//Arvid: here the configuration seems to be copied from the Run directory (C:\Run)
+			svFileManager.SaveItems();					//Arvid: here other files required for the configuration seem to be copied from the Run directory (C:\Run)
+			svFileManager.RemoveUnusedFiles();
 
-		( (CMDIFrameWnd*) AfxGetMainWnd() )->OnUpdateFrameTitle(TRUE);
-		// Success...
+			SVSVIMStateClass::RemoveState( SV_STATE_MODIFIED );
+
+			SVNavigateTreeClass::DeleteAllItems( m_XMLTree );
+
+			if ( bOk )
+			{
+				if ( CString( svFileManager.GetConfigurationPathName() ).IsEmpty() )
+				{
+					AddToRecentFileList( getConfigFullFileName() );
+				}
+				else
+				{
+						AddToRecentFileList( CString( svFileManager.GetConfigurationPathName() ) + 
+							"\\" + getConfigFileName() );
+				}
+				AutoSaver::Instance().ResetAutoSaveInformation(); //Arvid: configuration successfully saved: update autosave timestamp
+			}
+
+			( (CMDIFrameWnd*) AfxGetMainWnd() )->OnUpdateFrameTitle(TRUE);
+			// Success...
+		}
 	}// end if ( !CString( m_ConfigFileName.GetExtension() ).CompareNoCase( ".svx" ) )
 	else
 	{

@@ -30,7 +30,8 @@ static char THIS_FILE[] = __FILE__;
 #pragma region Constructor
 
 AutoSaver::AutoSaver():m_lastAutoSaveTimestamp(0), m_AutoSaveEnabled(true), m_AutoSaveRequired(false), 
-	m_AutoSaveDeltaTime_s(ms_defaultDeltaTimeInMinutes*ms_secondsPerMinute)
+	m_AutoSaveDeltaTime_s(ms_defaultDeltaTimeInMinutes*ms_secondsPerMinute),
+	m_SVObserverDirectoryPath(_T("D:\\SVObserver")),m_defaultAutoSavePath(_T("D:\\SVObserver\\Autosave"))
 {
 	ResetAutoSaveInformation();
 }
@@ -71,25 +72,21 @@ void AutoSaver::ExecuteAutoSaveIfAppropriate(bool always)
 	autosavePopupDialog.RedrawWindow(); //Arvid: do this after ShowWindow(), otherwise no effect!
 
 	//Arvid: ensure that the autosave directory exists.
-	//Arvid: svObserverDirectoryPath should better not be hardcoded - but I could find no instance from which it could be obtained
-
-	CString svObserverDirectoryPath = "D:\\SVObserver";
-	CString autosaveDirectoryPath = "D:\\SVObserver\\Autosave";
+	//Arvid: m_SVObserverDirectoryPath should better not be hardcoded - but I could find no instance from which it could be obtained
 
 	//Arvid: create the AutoSave directory step by step
-	CreateDirectory(svObserverDirectoryPath, NULL); //Arvid: this will fail if the directory already exists, but so what?
-	CreateDirectory(autosaveDirectoryPath, NULL); //Arvid: this will fail if the directory already exists, but so what?
-	moveContainedDirectory(autosaveDirectoryPath, "Temp2", "Temp3");
-	moveContainedDirectory(autosaveDirectoryPath, "Temp1MostRecent", "Temp2");
+	CreateDirectory(m_SVObserverDirectoryPath, NULL); //Arvid: this will fail if the directory already exists, but so what?
+	CreateDirectory(m_defaultAutoSavePath, NULL); //Arvid: this will fail if the directory already exists, but so what?
+	//Arvid: now move the temporary directories around (if they exist already)
+	moveContainedDirectory(m_defaultAutoSavePath, _T("Temp2"), _T("Temp3"));
+	moveContainedDirectory(m_defaultAutoSavePath, _T("Temp1MostRecent"), _T("Temp2"));
 
-	CreateDirectory(autosaveDirectoryPath+"\\Temp", NULL);
+	CreateDirectory(GetTempFolderRelPath(), NULL);
 
-	//Arvid: save the current configuration
-	CString path=autosaveDirectoryPath + "\\Temp\\Autosave.svx";
-	bool isRegular = false;
-	TheSVObserverApp.fileSaveAsSVX(path, isRegular);
+	//Arvid: save the current configuration in the AutoSave Directory
+	TheSVObserverApp.fileSaveAsSVX(_T(""), true);
 
-	moveContainedDirectory(autosaveDirectoryPath, "Temp", "Temp1MostRecent");
+	moveContainedDirectory(m_defaultAutoSavePath, _T("Temp"), _T("Temp1MostRecent"));
 
 	autosavePopupDialog.DestroyWindow();
 }
@@ -100,6 +97,10 @@ void AutoSaver::ResetAutoSaveInformation()
 	SetAutoSaveRequired(false);
 }
 
+void AutoSaver::CopyDirectoryToTempDirectory(const CString &rSourceDir) const 
+{
+	CopyDir(rSourceDir, GetTempDirectoryPath());
+}
 
 #pragma endregion Public Methods
 

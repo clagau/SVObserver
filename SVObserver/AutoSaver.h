@@ -50,6 +50,18 @@ public:
 	//************************************
 	void ResetAutoSaveInformation();
 
+	/// Used for copying the contents of sourceDir to the Autosave temp directory path.
+	/// Since this path (in keeping with the somewhat unfortunate specification for SVO-168)
+	/// does not always exist care must be exercised in using this function
+	/// \param rSourceDir [in] the path of the directory the contents of which are to be copied
+	void CopyDirectoryToTempDirectory(const CString &rSourceDir) const ;
+
+	/// returns the full autosave temp directory path. (cf. comment to CopyDirectoryToTempDirectory())
+	CString GetTempDirectoryPath() const {return m_defaultAutoSavePath+GetTempFolderRelPath()+_T("\\");}
+
+	/// returns path of the autosave temp directory path relative to the main autosave directory
+	CString GetTempFolderRelPath() const {return _T("\\Temp");}
+
 	bool IsAutoSaveRequired(){return m_AutoSaveRequired;}
 	void SetAutoSaveRequired(bool required){m_AutoSaveRequired=required;}
 
@@ -75,6 +87,10 @@ private:
 	time_t  m_lastAutoSaveTimestamp; ///< when was the latest automatic configuration backup done?
 	bool m_AutoSaveEnabled; ///< is automatic saving of configurations enabled?
 	bool m_AutoSaveRequired ; ///< should an autosave be performed at the next appropriate time?
+
+	const CString m_SVObserverDirectoryPath; ///< the SVObserver directory (not the main one but the one on drive D:)
+	const CString m_defaultAutoSavePath; ///< the SVObserver autosave directory
+
 
 #pragma endregion Member Variables
 };
