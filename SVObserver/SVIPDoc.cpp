@@ -3188,14 +3188,20 @@ void SVIPDoc::OnUpdateEditAdjustToolPosition(CCmdUI* pCmdUI)
 					//make sure m_SelectedToolID is updated to the correct tool when a right mouse click selects the tool
 					m_SelectedToolID = rGuid;
 
-					SVShiftTool* pShiftTool = dynamic_cast< SVShiftTool* >(Tool);
+					//check to see if the tool has exttents
+					if (S_OK == Tool->DoesObjectHaveExtents())
+					{
+						Enabled = TRUE;
+					}
+
+					/*SVShiftTool* pShiftTool = dynamic_cast< SVShiftTool* >(Tool);
 					if (nullptr != pShiftTool)
 					{
 						long l_shiftMode;
 						pShiftTool->m_evoShiftMode.GetValue(l_shiftMode);
 						if (l_shiftMode == SV_SHIFT_ENUM::SV_SHIFT_REFERENCE)
 						{
-							Enabled = FALSE;
+							Enabled = TRUE;
 						}
 						else
 						{
@@ -3209,6 +3215,7 @@ void SVIPDoc::OnUpdateEditAdjustToolPosition(CCmdUI* pCmdUI)
 							Enabled = TRUE;
 						}
 					}
+					*/
 				}
 			}
 		}

@@ -735,7 +735,6 @@ void SVImageViewClass::OnContextMenu( CWnd* p_pWnd, CPoint p_point )
 		//Get the current selected tool and check to see if it has extents.  if it does not then remove Adjust Size and Position menu option
 		SVToolClass* CurrentTool = dynamic_cast< SVToolClass* >( SVObjectManagerClass::Instance().GetObject( GetIPDoc()->GetSelectedToolID() ) );
 
-
 		m_mousePoint.x = p_point.x;
 		m_mousePoint.y = p_point.y;
 
@@ -790,31 +789,6 @@ void SVImageViewClass::OnContextMenu( CWnd* p_pWnd, CPoint p_point )
 									}
 								}
 							}
-						}
-					}
-
-					
-					if (nullptr != CurrentTool)
-					{
-						bool RemoveAdjustPos = false;
-
-						//check if tool is a shift tool.  its extents behave differently then other tools
-						SVShiftTool* pShiftTool = dynamic_cast< SVShiftTool* >(CurrentTool);
-						if (nullptr != pShiftTool)
-						{
-							long l_shiftMode;
-							pShiftTool->m_evoShiftMode.GetValue(l_shiftMode);
-							if (l_shiftMode == SV_SHIFT_ENUM::SV_SHIFT_REFERENCE)
-							{
-								RemoveAdjustPos = true;
-							}
-						}
-
-						
-						if ( RemoveAdjustPos )
-						{
-							//remove Adjust Tool Size and Position menu item
-							l_pPopup->DeleteMenu(ID_ADJUST_POSITION, MF_BYCOMMAND);
 						}
 					}
 

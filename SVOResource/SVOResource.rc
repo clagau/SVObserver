@@ -4133,6 +4133,7 @@ BEGIN
         MENUITEM SEPARATOR
         MENUITEM "Set Reference",               ID_SELECTTOOL_LEARN
         MENUITEM "Normalize",                   ID_SELECTTOOL_NORMALIZE
+        MENUITEM "Adjust Tool Size and Position", ID_EDIT_ADJUSTTOOLPOSITION
     END
 END
 
