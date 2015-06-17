@@ -16,7 +16,6 @@
 #endif
 
 #include <vector>
-#include "SVObjectCStringArrayClass.h"
 #include "SVObjectPointArrayClass.h"
 #include "SVObjectScriptEnums.h"
 #include "SVObjectDPointArrayClass.h"
@@ -61,7 +60,7 @@ public:
 	BOOL GetData(SvCl::SVObjectBoolArrayClass& svData);
 	BOOL GetData(SvCl::SVObjectByteArrayClass& svData);
 	BOOL GetData(SvCl::SVObjectArrayClassTemplate<char>& svData);	// added to allow templates to use this code more easily
-	BOOL GetData(SvCl::SVObjectArrayClassTemplate<CString>& svData);	// changed to allow templates to use this code more easily
+	BOOL GetData(SvCl::SVObjectCStringArrayClass& svData);	// changed to allow templates to use this code more easily
 	BOOL GetData(SvCl::SVObjectArrayClassTemplate<SVString>& svData);	// changed to allow templates to use this code more easily
 	BOOL GetData(SvCl::SVObjectDoubleArrayClass& svData);
 	BOOL GetData(SvCl::SVObjectDWordArrayClass& svData);
@@ -153,23 +152,6 @@ public:
 	//configuration object attribute.
 	BOOL SetType(SVObjectScriptDataObjectTypeEnum eType);
 
-	//This operator sets the internal data of the 
-	//configuration object attribute.
-	BOOL SetData(int iType, int iSize, void * pvData);
-
-	//This operator sets the internal data of the 
-	//configuration object attribute.
-	BOOL SetData(SvCl::SVObjectBoolArrayClass& svData);
-	BOOL SetData(SvCl::SVObjectByteArrayClass& svData);
-	BOOL SetData(SVObjectCStringArrayClass& svData);
-	BOOL SetData(SvCl::SVObjectDoubleArrayClass& svData);
-	BOOL SetData(SvCl::SVObjectDWordArrayClass& svData);
-	BOOL SetData(SvCl::SVObjectLongArrayClass& svData);
-	BOOL SetData(SVObjectSVPointArrayClass& svData);
-	BOOL SetData(SVObjectDPointArrayClass& svData);
-	BOOL SetData(SvCl::SVObjectVariantArrayClass& svData);
-	BOOL SetData(SvCl::SVObjectInt64ArrayClass& svData);
-
 	BOOL AddData(BOOL Value);
 	BOOL AddData(BYTE Value);
 	BOOL AddData(LPCTSTR Value);
@@ -191,7 +173,7 @@ private:
 	int miType;
 
 	SvCl::SVObjectBoolArrayClass msvBoolArray;
-	SVObjectCStringArrayClass msvCStringArray;
+	SvCl::SVObjectCStringArrayClass msvCStringArray;
 	SvCl::SVObjectDoubleArrayClass msvDoubleArray;
 	SvCl::SVObjectDWordArrayClass msvDWordArray;
 	SvCl::SVObjectLongArrayClass msvLongArray;

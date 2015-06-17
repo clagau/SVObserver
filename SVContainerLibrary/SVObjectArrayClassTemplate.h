@@ -80,6 +80,7 @@ namespace Seidenader
 		typedef SVObjectArrayClassTemplate<DWORD> SVObjectDWordArrayClass;
 		typedef SVObjectArrayClassTemplate<__int64> SVObjectInt64ArrayClass;
 		typedef SVObjectArrayClassTemplate< _variant_t > SVObjectVariantArrayClass;
+		typedef SVObjectArrayClassTemplate<CString> SVObjectCStringArrayClass;
 	} //SVContainerLibrary
 } //Seidenader
 

@@ -629,9 +629,6 @@
     <ClCompile Include="SVObjectAppClass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVObjectAttributeClassHelper.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVObjectCommandDataJson.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

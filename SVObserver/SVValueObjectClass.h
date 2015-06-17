@@ -14,7 +14,6 @@
 
 #include <set>
 #include "SVMessage/SVMessage.h"
-#include "SVObjectLibrary/SVObjectCStringArrayClass.h"
 #include "SVObjectLibrary/SVObjectScriptUsage.h"
 #include "SVUtilityLibrary/SVDPointClass.h"
 #include "SVArrayValueHolder.h"

@@ -738,7 +738,7 @@ HRESULT SVEquationClass::SetObjectValue( SVObjectAttributeClass* PDataObject )
 	HRESULT hr = S_FALSE;
 	BOOL bOk = FALSE;
 
-	SVObjectCStringArrayClass svCStringArray;
+	SvCl::SVObjectCStringArrayClass svCStringArray;
 
 	if ( ( bOk = PDataObject->GetAttributeData( "EquationBuffer", svCStringArray ) ) )
 	{

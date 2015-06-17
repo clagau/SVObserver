@@ -231,7 +231,7 @@ HRESULT SVCameraImageTemplate::SetObjectValue( SVObjectAttributeClass* PDataObje
 	HRESULT hr = S_FALSE;
 	BOOL bOk = FALSE;
 
-	SVObjectCStringArrayClass svCStringArray;
+	SvCl::SVObjectCStringArrayClass svCStringArray;
 
 	if ( ( bOk = PDataObject->GetAttributeData( "DigitizerID", svCStringArray ) ) )
 	{

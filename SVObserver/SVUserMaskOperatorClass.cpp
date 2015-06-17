@@ -861,7 +861,7 @@ HRESULT SVUserMaskOperatorClass::SetObjectValue( SVObjectAttributeClass* PDataOb
 	HRESULT hr = S_FALSE;
 	BOOL bOk = FALSE;
 	
-	SVObjectCStringArrayClass svCStringArray;
+	SvCl::SVObjectCStringArrayClass svCStringArray;
 	SvCl::SVObjectLongArrayClass svLongArray;
 
 	if ( ( bOk = PDataObject->GetAttributeData( "MaskOperator", svLongArray ) ) )

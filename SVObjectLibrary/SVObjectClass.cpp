@@ -17,7 +17,6 @@
 #include "SVSystemLibrary/SVAutoLockAndReleaseTemplate.h"
 #include "SVUtilityLibrary/SVSAFEARRAY.h"
 #include "SVObjectAttributeClass.h"
-#include "SVObjectCStringArrayClass.h"
 #include "SVObjectLevelCreateStruct.h"
 #include "SVObjectManagerClass.h"
 #include "SVObjectLibrary/SVToolsetScriptTags.h"
@@ -675,7 +674,7 @@ HRESULT SVObjectClass::SetObjectValue( SVObjectAttributeClass* PDataObject )
 	if( PDataObject )
 	{
 		SvCl::SVObjectDWordArrayClass svDWordArray;
-		SVObjectCStringArrayClass svCStringArray;
+		SvCl::SVObjectCStringArrayClass svCStringArray;
 
 		if ( ( bOk = PDataObject->GetAttributeData( "DataLinkID", svCStringArray ) ) )
 		{

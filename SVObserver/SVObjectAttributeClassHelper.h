@@ -13,54 +13,29 @@
 #define SVOBJECTATTRIBUTECLASSHELPER_H_
 
 #include <vector>
-#include <comdef.h>
 #include "SVContainerLibrary\SVObjectArrayClassTemplate.h"
-#include "SVUtilityLibrary/SVDPointClass.h"
-#include "SVUtilityLibrary/SVPOINT.h"
-class SVObjectAttributeClass;
+#include "SVObjectLibrary/SVObjectAttributeClass.h"
 
 class SVObjectAttributeClassHelper
 {
 public:
-	//@WARNING [MZA, 21.04.15] Use a template rather than so many methods
-	static BOOL GetArrayData(SVObjectAttributeClass* pDataObject, LPCTSTR szName, std::vector<BOOL>& raaData, BOOL defaultValue);
-	static BOOL GetArrayData(SVObjectAttributeClass* pDataObject, LPCTSTR szName, std::vector<BYTE>& raaData, BYTE defaultValue);
-	static BOOL GetArrayData(SVObjectAttributeClass* pDataObject, LPCTSTR szName, std::vector<char>& raaData, char defaultValue);
-	static BOOL GetArrayData(SVObjectAttributeClass* pDataObject, LPCTSTR szName, std::vector<CString>& raaData, CString defaultValue);
-	static BOOL GetArrayData(SVObjectAttributeClass* pDataObject, LPCTSTR szName, std::vector<SVString>& raaData, SVString defaultValue);
-	static BOOL GetArrayData(SVObjectAttributeClass* pDataObject, LPCTSTR szName, std::vector<double>& raaData, double defaultValue);
-	static BOOL GetArrayData(SVObjectAttributeClass* pDataObject, LPCTSTR szName, std::vector<DWORD>& raaData, DWORD defaultValue);
-	static BOOL GetArrayData(SVObjectAttributeClass* pDataObject, LPCTSTR szName, std::vector<long>& raaData, long defaultValue);
-	static BOOL GetArrayData(SVObjectAttributeClass* pDataObject, LPCTSTR szName, std::vector<SVPOINT>& raaData, SVPOINT defaultValue);
-	static BOOL GetArrayData(SVObjectAttributeClass* pDataObject, LPCTSTR szName, std::vector<SVDPointClass>& raaData, SVDPointClass defaultValue);
-	static BOOL GetArrayData(SVObjectAttributeClass* pDataObject, LPCTSTR szName, std::vector<_variant_t>& raaData, _variant_t defaultValue);
-	static BOOL GetArrayData(SVObjectAttributeClass* pDataObject, LPCTSTR szName, std::vector<__int64>& raaData, __int64 defaultValue);
+	template <typename T>
+	static BOOL GetArrayData(SVObjectAttributeClass* pDataObject, LPCTSTR szName, std::vector<T>& raData, T defaultValue)
+	{
+		return pDataObject->GetArrayData(szName, raData, defaultValue);
+	}
 
-	static BOOL GetAttributeData(SVObjectAttributeClass* pDataObject, LPCTSTR szName, std::vector< std::vector<BOOL> >& raaData, BOOL defaultValue);
-	static BOOL GetAttributeData(SVObjectAttributeClass* pDataObject, LPCTSTR szName, std::vector< std::vector<BYTE> >& raaData, BYTE defaultValue);
-	static BOOL GetAttributeData(SVObjectAttributeClass* pDataObject, LPCTSTR szName, std::vector< std::vector<char> >& raaData, char defaultValue);
-	static BOOL GetAttributeData(SVObjectAttributeClass* pDataObject, LPCTSTR szName, std::vector< std::vector<CString> >& raaData, CString defaultValue);
-	static BOOL GetAttributeData(SVObjectAttributeClass* pDataObject, LPCTSTR szName, std::vector< std::vector<SVString> >& raaData, SVString defaultValue);
-	static BOOL GetAttributeData(SVObjectAttributeClass* pDataObject, LPCTSTR szName, std::vector< std::vector<double> >& raaData, double defaultValue);
-	static BOOL GetAttributeData(SVObjectAttributeClass* pDataObject, LPCTSTR szName, std::vector< std::vector<DWORD> >& raaData, DWORD defaultValue);
-	static BOOL GetAttributeData(SVObjectAttributeClass* pDataObject, LPCTSTR szName, std::vector< std::vector<long> >& raaData, long defaultValue);
-	static BOOL GetAttributeData(SVObjectAttributeClass* pDataObject, LPCTSTR szName, std::vector< std::vector<SVPOINT> >& raaData, SVPOINT defaultValue);
-	static BOOL GetAttributeData(SVObjectAttributeClass* pDataObject, LPCTSTR szName, std::vector< std::vector<SVDPointClass> >& raaData, SVDPointClass defaultValue);
-	static BOOL GetAttributeData(SVObjectAttributeClass* pDataObject, LPCTSTR szName, std::vector< std::vector<_variant_t> >& raaData, _variant_t defaultValue);
-	static BOOL GetAttributeData(SVObjectAttributeClass* pDataObject, LPCTSTR szName, std::vector< std::vector<__int64> >& raaData, __int64 defaultValue);
+	template <typename T>
+	static BOOL GetAttributeData(SVObjectAttributeClass* pDataObject, LPCTSTR szName, std::vector< std::vector<T> >& raaData, T defaultValue)
+	{
+		return pDataObject->GetAttributeData(szName, raaData, defaultValue);
+	}
 
-	static BOOL GetAttributeData(SVObjectAttributeClass* pDataObject ,LPCTSTR szName, SvCl::SVObjectArrayClassTemplate<BOOL>& svData);
-	static BOOL GetAttributeData(SVObjectAttributeClass* pDataObject ,LPCTSTR szName, SvCl::SVObjectArrayClassTemplate<BYTE>& svData);
-	static BOOL GetAttributeData(SVObjectAttributeClass* pDataObject ,LPCTSTR szName, SvCl::SVObjectArrayClassTemplate<char>& svData);
-	static BOOL GetAttributeData(SVObjectAttributeClass* pDataObject ,LPCTSTR szName, SvCl::SVObjectArrayClassTemplate<CString>& svData);
-	static BOOL GetAttributeData(SVObjectAttributeClass* pDataObject ,LPCTSTR szName, SvCl::SVObjectArrayClassTemplate<SVString>& svData);
-	static BOOL GetAttributeData(SVObjectAttributeClass* pDataObject ,LPCTSTR szName, SvCl::SVObjectArrayClassTemplate<double>& svData);
-	static BOOL GetAttributeData(SVObjectAttributeClass* pDataObject ,LPCTSTR szName, SvCl::SVObjectArrayClassTemplate<DWORD>& svData);
-	static BOOL GetAttributeData(SVObjectAttributeClass* pDataObject ,LPCTSTR szName, SvCl::SVObjectArrayClassTemplate<long>& svData);
-	static BOOL GetAttributeData(SVObjectAttributeClass* pDataObject ,LPCTSTR szName, SvCl::SVObjectArrayClassTemplate<SVPOINT>& svData);
-	static BOOL GetAttributeData(SVObjectAttributeClass* pDataObject ,LPCTSTR szName, SvCl::SVObjectArrayClassTemplate<SVDPointClass>& svData);
-	static BOOL GetAttributeData(SVObjectAttributeClass* pDataObject ,LPCTSTR szName, SvCl::SVObjectArrayClassTemplate<_variant_t>& svData);
-	static BOOL GetAttributeData(SVObjectAttributeClass* pDataObject, LPCTSTR szName, SvCl::SVObjectArrayClassTemplate<__int64>& raaData);
+	template <typename T>
+	static BOOL GetAttributeData(SVObjectAttributeClass* pDataObject ,LPCTSTR szName, SvCl::SVObjectArrayClassTemplate<T>& svData)
+	{
+		return pDataObject->GetAttributeData(szName, svData);
+	}
 };
 
 #endif

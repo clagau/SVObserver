@@ -300,7 +300,7 @@ HRESULT SVEnumerateValueObjectClass::SetObjectValue( SVObjectAttributeClass* pDa
 	HRESULT hr = S_FALSE;
 	BOOL bOk = FALSE;
 	
-	SVObjectCStringArrayClass svCStringArray;
+	SvCl::SVObjectCStringArrayClass svCStringArray;
 	SvCl::SVObjectLongArrayClass svLongArray;
 	bucket_type l_Buckets(BucketsNoAssert());
 
@@ -486,15 +486,15 @@ BOOL SVEnumerateValueObjectClass::SetEnumTypes( LPCTSTR szEnumList )
 				{
 					int i = 0;
 					// Get position in tables ( sorted by value )
-					for(; i < enumValueTable.GetSize(); ++i )
+					for(; i < m_enumValueTable.GetSize(); ++i )
 					{
-						long lValue = enumValueTable[ i ];
+						long lValue = m_enumValueTable[ i ];
 						if( lValue > enumValue )
 							break;
 					}
 					// Insert enumeration at found position...
-					enumStringTable.InsertAt( i, strEnum );
-					enumValueTable.InsertAt( i, enumValue );
+					m_enumStringTable.InsertAt( i, strEnum );
+					m_enumValueTable.InsertAt( i, enumValue );
 
 					// Prepare next enumeration value...
 					++enumValue;
@@ -520,8 +520,8 @@ BOOL SVEnumerateValueObjectClass::SetEnumTypes( const SVEnumerateVector& rVec )
 	{
 		CString sFirst = rVec[i].first;
 		long lSecond = rVec[i].second;
-		enumStringTable.Add( sFirst );
-		enumValueTable.Add( lSecond );
+		m_enumStringTable.Add( sFirst );
+		m_enumValueTable.Add( lSecond );
 	}
 	return TRUE;
 }
@@ -530,9 +530,9 @@ BOOL SVEnumerateValueObjectClass::GetEnumTypes( SVEnumerateVector& rVec ) const
 {
 	rVec.clear();
 
-	for ( int i=0; i < enumStringTable.GetSize(); i++ )
+	for ( int i=0; i < m_enumStringTable.GetSize(); i++ )
 	{
-		rVec.push_back( SVEnumeratePair( enumStringTable.GetAt(i), enumValueTable.GetAt(i) ) );
+		rVec.push_back( SVEnumeratePair( m_enumStringTable.GetAt(i), m_enumValueTable.GetAt(i) ) );
 	}
 	return TRUE;
 }
@@ -564,12 +564,12 @@ BOOL SVEnumerateValueObjectClass::GetEnumerator( LPCTSTR szEnumerator, long& lVa
 	if( szEnumerator )
 	{
 		// Check if enumerator is defined...
-		for( int i = 0; i < enumStringTable.GetSize(); ++ i )
+		for( int i = 0; i < m_enumStringTable.GetSize(); ++ i )
 		{
-			if( enumStringTable.GetAt( i ).CompareNoCase( szEnumerator ) == 0 )
+			if( m_enumStringTable.GetAt( i ).CompareNoCase( szEnumerator ) == 0 )
 			{
 				// Found it...
-				lValue = enumValueTable[ i ];
+				lValue = m_enumValueTable[ i ];
 				bRetVal = TRUE;
 			}
 		}
@@ -579,9 +579,9 @@ BOOL SVEnumerateValueObjectClass::GetEnumerator( LPCTSTR szEnumerator, long& lVa
 			long lEnumeratorValue = -98765432;
 			if ( ToNumber( szEnumerator, lEnumeratorValue ) )
 			{
-				for( int i = 0; i < enumValueTable.GetSize(); ++i )
+				for( int i = 0; i < m_enumValueTable.GetSize(); ++i )
 				{
-					if ( enumValueTable.GetAt( i ) == lEnumeratorValue )
+					if ( m_enumValueTable.GetAt( i ) == lEnumeratorValue )
 					{
 						// Found it...
 						lValue = lEnumeratorValue;
@@ -644,13 +644,13 @@ BOOL SVEnumerateValueObjectClass::GetEnumeratorName( long lValue, CString& rEnum
 {
 	BOOL bRetVal = FALSE;
 	// Check if enumerator is defined...
-	for( int i = 0; i < enumValueTable.GetSize(); ++ i )
+	for( int i = 0; i < m_enumValueTable.GetSize(); ++ i )
 	{
-		long lEnumVal = enumValueTable[ i ];
+		long lEnumVal = m_enumValueTable[ i ];
 		if( lEnumVal == lValue )
 		{
 			// Found it...
-			rEnumerator = enumStringTable.GetAt( i );
+			rEnumerator = m_enumStringTable.GetAt( i );
 			bRetVal = TRUE;
 		}
 
@@ -677,9 +677,9 @@ BOOL SVEnumerateValueObjectClass::GetEnumTypes( CString& rStrEnumList ) const
 	BOOL bRetVal = TRUE;
 	// Get Enumeration types...
 	CString tmp;
-	for( int i = 0; i < enumStringTable.GetSize(); ++ i )
+	for( int i = 0; i < m_enumStringTable.GetSize(); ++ i )
 	{
-		long lEnumValue = enumValueTable[ i ];
+		long lEnumValue = m_enumValueTable[ i ];
 		tmp.Format( "=%d", lEnumValue );
 
 		if( i )
@@ -688,7 +688,7 @@ BOOL SVEnumerateValueObjectClass::GetEnumTypes( CString& rStrEnumList ) const
 			rStrEnumList += _T( "," );
 		}
 
-		rStrEnumList += enumStringTable.GetAt( i ) + tmp;
+		rStrEnumList += m_enumStringTable.GetAt( i ) + tmp;
 	}
 	return bRetVal;
 }
@@ -709,7 +709,7 @@ BOOL SVEnumerateValueObjectClass::GetEnumTypes( CString& rStrEnumList ) const
 int SVEnumerateValueObjectClass::GetFirstEnumTypePos() const
 {
 	int iRetVal = -1;
-	if( enumStringTable.GetSize() > 0 )
+	if( m_enumStringTable.GetSize() > 0 )
 	{
 		iRetVal = 0;
 	}
@@ -734,10 +734,10 @@ int SVEnumerateValueObjectClass::GetFirstEnumTypePos() const
 BOOL SVEnumerateValueObjectClass::GetNextEnumType( int& RIterator, CString& RStrEnum, long& REnumValue ) const
 {
 	BOOL bRetVal = FALSE;
-	if( RIterator >= 0 && RIterator < enumStringTable.GetSize() )
+	if( RIterator >= 0 && RIterator < m_enumStringTable.GetSize() )
 	{
-		RStrEnum	= enumStringTable.GetAt( RIterator );
-		REnumValue	= enumValueTable.GetAt( RIterator );
+		RStrEnum	= m_enumStringTable.GetAt( RIterator );
+		REnumValue	= m_enumValueTable.GetAt( RIterator );
 
 		// Prepare next iterator...
 		++RIterator;

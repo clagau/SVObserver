@@ -77,14 +77,16 @@ protected:
 	virtual HRESULT CompareWithCurrentValueImpl( const CString& rstrCompare ) const;
 	virtual HRESULT GetNormalizedValueImpl( const CString& strValue, CString& rstrNormalized ) const;
 
-	// Sorted Table of all defined enumeration values.
-	SvCl::SVObjectLongArrayClass enumValueTable;
-	// String table of defined enumerations, 1 by 1 to value table
-	SVObjectCStringArrayClass enumStringTable;
-
 private:
 	void LocalInitialize();
-
+	
+#pragma region Member Variables
+private:
+	// Sorted Table of all defined enumeration values.
+	SvCl::SVObjectLongArrayClass m_enumValueTable;
+	// String table of defined enumerations, 1 by 1 to value table
+	SvCl::SVObjectCStringArrayClass m_enumStringTable;
+#pragma endregion Member Variables
 };
 
 #endif
