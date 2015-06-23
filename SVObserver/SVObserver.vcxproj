@@ -318,6 +318,7 @@ echo %time%
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="ArchiveToolHelper.cpp" />
     <ClCompile Include="AutoSaver.cpp" />
     <ClCompile Include="ConditionalController.cpp" />
     <ClCompile Include="BasicValueObject.cpp" />
@@ -3844,6 +3845,7 @@ echo %time%
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\AutoBuild\AutoBuild.h" />
+    <ClInclude Include="ArchiveToolHelper.h" />
     <ClInclude Include="AutoSaver.h" />
     <ClInclude Include="BasicValueObject.h" />
     <ClInclude Include="BasicValueObjects.h" />

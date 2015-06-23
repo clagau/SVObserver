@@ -9,6 +9,7 @@
 //* .Check In Date   : $Date:   10 Sep 2014 09:36:40  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include <numeric>
 #include "SVToolArchivePage.h"
@@ -24,6 +25,9 @@
 #include "SVToolAdjustmentDialogSheetClass.h"
 #include "SVToolSet.h"
 #include "SVArchiveHeaderEditDlg.h"
+#include "ArchiveToolHelper.h"
+#include "TextDefinesSvO.h"
+#pragma endregion Includes
 
 BEGIN_MESSAGE_MAP(SVToolAdjustmentArchivePage, CPropertyPage)
 	//{{AFX_MSG_MAP(SVToolAdjustmentArchivePage)
@@ -165,7 +169,7 @@ BOOL SVToolAdjustmentArchivePage::OnInitDialog()
 	
 	m_pTool->GetFileArchive( csArchiveFileName );
 	m_editArchiveFileName.SetWindowText(csArchiveFileName);
-		
+
 	CString		csImageFolder; 
 	
 	m_pTool->GetImageArchivePath( csImageFolder );
@@ -334,8 +338,30 @@ bool SVToolAdjustmentArchivePage::QueryAllowExit()
 	//check for valid drive for text archive
 	CString szDrive;
 
-	SVCheckPathDir( csArchiveFileName, TRUE );
+	CString sTmpArchiveFileName;
+	ArchiveToolHelper athArchivePathAndName;
+	athArchivePathAndName.Init(csArchiveFileName);
 
+	if (athArchivePathAndName.isUsingKeywords())
+	{
+		if (athArchivePathAndName.isTokensValid())
+		{
+			sTmpArchiveFileName = athArchivePathAndName.TranslatePath(csArchiveFileName).c_str();
+			SVCheckPathDir( sTmpArchiveFileName, TRUE );
+		}
+		else
+		{
+			//don't allow to exit with invalid path
+			AfxMessageBox(SvO::InvalidFileName);
+			return false;
+		}
+	}
+	else
+	{
+		//not using Keywords 
+		SVCheckPathDir( csArchiveFileName, TRUE );
+	}
+	
 	if(!m_pTool->ValidateDrive(csArchiveFileName,szDrive) || csArchiveFileName.IsEmpty())
 	{
 		CString temp;
@@ -348,7 +374,29 @@ bool SVToolAdjustmentArchivePage::QueryAllowExit()
 	CString csImageFolder;
 	m_editImageFilesRoot.GetWindowText( csImageFolder );
 
-	SVCheckPathDir( csImageFolder, TRUE );
+	CString sTmpArchiveImagePath = csImageFolder;
+	ArchiveToolHelper athImagePath;
+	athImagePath.Init(csImageFolder);
+
+	if (athImagePath.isUsingKeywords())
+	{
+		if (athImagePath.isTokensValid())
+		{
+			sTmpArchiveImagePath = athImagePath.TranslatePath(csImageFolder).c_str();
+			SVCheckPathDir( sTmpArchiveImagePath, TRUE );
+		}
+		else
+		{
+			//don't allow to exit with invalid path
+			AfxMessageBox(SvO::InvalidImagePath);
+			return false;
+		}
+	}
+	else
+	{
+		//not using Keywords 
+		SVCheckPathDir( csImageFolder, TRUE );
+	}
 
 	//check for valid drive for image archive
 	if(!m_pTool->ValidateDrive(csImageFolder,szDrive ) || csImageFolder.IsEmpty())
@@ -453,6 +501,31 @@ void SVToolAdjustmentArchivePage::OnBrowse()
 	CString sArchiveFullNameAndPath;
 	m_editArchiveFileName.GetWindowText( sArchiveFullNameAndPath );
 
+	ArchiveToolHelper athArchivePathAndName;
+	athArchivePathAndName.Init(sArchiveFullNameAndPath); 
+
+	bool bUsingKeywords = athArchivePathAndName.isUsingKeywords();
+	if (bUsingKeywords)
+	{
+		if (athArchivePathAndName.isTokensValid())
+		{
+			sArchiveFullNameAndPath = athArchivePathAndName.TranslatePath(sArchiveFullNameAndPath).c_str();
+		}
+		else
+		{
+			//don't allow to exit with invalid path
+			AfxMessageBox(SvO::InvalidFileName);
+			return;
+		}
+	}
+	CString sFileName;
+	CString sPath;
+	int iEndOfPath = sArchiveFullNameAndPath.ReverseFind('\\');
+	sFileName = sArchiveFullNameAndPath.Right((sArchiveFullNameAndPath.GetLength() - iEndOfPath));
+	sPath = sArchiveFullNameAndPath.Left(iEndOfPath);
+
+	SVCheckPathDir( sArchiveFullNameAndPath, TRUE );
+
 	svfncArchiveFileName.SetFileType(SV_DEFAULT_FILE_TYPE);
 	svfncArchiveFileName.SetDefaultFullFileName(sArchiveFullNameAndPath);
 	if (svfncArchiveFileName.SelectFile())
@@ -473,6 +546,23 @@ void SVToolAdjustmentArchivePage::OnBrowse2()
 	if (!csInitialPath.IsEmpty())
 		svfncImageFolder.SetPathName(csInitialPath);
 
+	ArchiveToolHelper athImagePath;
+	athImagePath.Init(csInitialPath); 
+
+	bool bUsingKeywords = athImagePath.isUsingKeywords();
+	if (bUsingKeywords)
+	{
+		if (athImagePath.isTokensValid())
+		{
+			csInitialPath = athImagePath.TranslatePath(csInitialPath).c_str();
+		}
+		else
+		{
+			//don't allow to exit with invalid path
+			AfxMessageBox(SvO::InvalidImagePath);
+			return;
+		}
+	}
     //
     // Select the folder to copy to..
     //

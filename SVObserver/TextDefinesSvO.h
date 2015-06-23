@@ -60,6 +60,8 @@ namespace Seidenader
 		const TCHAR* const RingBuffer_Depth_Invalid_Value = _T( "RingBuffer Depth has to be between %d and %d, current %d" );
 		const TCHAR* const RingBuffer_ImageIndex1Connector = _T( "RingBufferImageIndex1Connector" );
 		const TCHAR* const RingBuffer_ImageIndex2Connector = _T( "RingBufferImageIndex2Connector" );
+		const TCHAR* const InvalidFileName = _T("Invalid Keywords in Archive Filename/Path.");
+		const TCHAR* const InvalidImagePath = _T("Invalid Keywords in Archive Image Path.");
 	}
 }
 namespace SvO = Seidenader::SVObserver;

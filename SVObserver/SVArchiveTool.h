@@ -12,12 +12,15 @@
 #ifndef SVTOOLARCHIVE_H
 #define SVTOOLARCHIVE_H
 
+#pragma region Includes
 #include <deque>
 #include <vector>
 
 #include "SVMatroxLibrary\SVMatroxBuffer.h"
 #include "SVTool.h"
 #include "SVImageObjectClass.h"
+#include "ArchiveToolHelper.h"
+#pragma endregion Includes
 
 extern const CString ARCHIVE_TOOL_MEMORY_POOL_ONLINE_ASYNC_NAME;
 extern const CString ARCHIVE_TOOL_MEMORY_POOL_GO_OFFLINE_NAME;
@@ -227,7 +230,15 @@ public:
 	//--Previously the OnValidate would only run through the initial time or every 10th time
 	//--This method guarantees that the OnValidate will run. 
 	HRESULT ValidateArchiveTool();
-public:
+	
+	//--IsImagePathUsingKeywords - Called from SVArchiveRecord::BuildArchiveImageFilePath
+	//--when archiving images it needs to know if the images has keywords in it
+	bool isImagePathUsingKeywords();
+
+	//--GetTranslatedImagePath -Called from SVArchiveRecord::BuildArchiveImageFilePath
+	//--to get the already translated path.
+	void getTranslatedImagePath(CString &ImagePath);
+
 	//
 	// The arrays for results and images to archive.
 	//
@@ -243,7 +254,6 @@ public:
 	SVStringValueObjectClass    m_stringArchiveResultGuids_OBSOLETE;
 	SVStringValueObjectClass    m_svoArchiveImageNames;
 	SVStringValueObjectClass    m_svoArchiveResultNames;
-
 
 	SVDWordValueObjectClass     m_dwAppendArchiveFile;
 	SVDWordValueObjectClass     m_dwArchiveStopAtMaxImages;
@@ -270,7 +280,6 @@ protected:
 	//
 	// Data elements.
 	//
-protected:
 	HRESULT WriteBuffers();
     CFile m_fileArchive;       // The file for archived results.
 	UINT m_uiValidateCount;
@@ -290,7 +299,6 @@ private:
 	BOOL CreateTextArchiveFile();
 	void UpdateImagePointerInImageArray( SVArchiveRecord* pImageRecord	);
 
-private:
 	SVStringValueObjectClass	m_stringImageFileRootPath;
 	SVStringValueObjectClass	m_stringFileArchivePath;
 
@@ -298,8 +306,9 @@ private:
 	//--will be true if the hard drive has less than 100 MG of free space
 	//--if images are selected for archive.
 	bool m_bDriveError;
+	CString m_ImageTranslatedPath;
+	bool m_ArchiveImagePathUsingKW;
 };
-
 #endif
 
 //******************************************************************************

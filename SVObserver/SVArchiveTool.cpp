@@ -137,7 +137,7 @@ HRESULT SVArchiveRecord::BuildArchiveImageFilePath(CString& rcsPath)
 				break;
 			}
 
-			m_lCountImages = 1;        // reset to over write existin image file.
+			m_lCountImages = 1;        // reset to overwrite existing image file.
 		}
 		
 		//
@@ -153,10 +153,17 @@ HRESULT SVArchiveRecord::BuildArchiveImageFilePath(CString& rcsPath)
 		
 		SVFileNameClass svFileName;
 
-		if (!m_pArchiveTool->GetImageArchivePath (csPathRoot))
+		if(m_pArchiveTool->isImagePathUsingKeywords())
 		{
-			hr = -1903;
-			break;
+			m_pArchiveTool->getTranslatedImagePath(csPathRoot);
+		}
+		else
+		{
+			if (!m_pArchiveTool->GetImageArchivePath (csPathRoot))
+			{
+				hr = -1903;
+				break;
+			}
 		}
 
 		svFileName.SetPathName( csPathRoot );
@@ -764,7 +771,7 @@ BOOL SVArchiveRecordsArray::WriteArchiveImageFiles( )
 // Make sure the results objects to archive are valid.  
 // 'Connect as input' the good ones and remove bad ones.
 //
-// Return the final count of results objects to arhive.
+// Return the final count of results objects to archive.
 //
 int SVArchiveRecordsArray::ValidateResultsObjects()
 {
@@ -811,7 +818,7 @@ int SVArchiveRecordsArray::ValidateResultsObjects()
 	}
 	
 	//
-	// return the count of objects to arhive.
+	// return the count of objects to archive.
 	//
 	return static_cast< int >( m_vecRecords.size() );
 }
@@ -1194,11 +1201,14 @@ SVArchiveTool::SVArchiveTool( BOOL BCreateDefaultTaskList,
               : SVToolClass(BCreateDefaultTaskList, POwner, StringResourceID)
 {
 	initializeArchiveTool();
-	m_bDriveError = false;
 }
 
 void SVArchiveTool::initializeArchiveTool()
 {
+	m_ArchiveImagePathUsingKW = false;
+	m_bDriveError = false;
+	m_ImageTranslatedPath = "";
+
 	m_arrayResultsInfoObjectsToArchive.SetArchiveTool( this );
 	m_arrayImagesInfoObjectsToArchive.SetArchiveTool( this );
 
@@ -1455,6 +1465,7 @@ BOOL SVArchiveTool::SetObjectDepthWithIndex( int NewObjectDepth, int NewLastSetI
 //
 BOOL SVArchiveTool::CreateTextArchiveFile()
 {
+	bool bValidFile = true;
 	//
 	// CFile object.
 	//
@@ -1464,6 +1475,21 @@ BOOL SVArchiveTool::CreateTextArchiveFile()
 	if (csFileArchivePath.GetLength() == 0)
 	{
 		return FALSE;
+	}
+
+	ArchiveToolHelper athHelperFile;
+	athHelperFile.Init(csFileArchivePath);
+
+	if (athHelperFile.isUsingKeywords())
+	{
+		if(athHelperFile.isTokensValid())
+		{
+			csFileArchivePath = athHelperFile.TranslatePath(csFileArchivePath).c_str();
+		}
+		else
+		{
+			bValidFile = false;
+		}
 	}
 	
 	//
@@ -1580,6 +1606,15 @@ BOOL SVArchiveTool::Validate()	// called once when going online
 
 	GetImageArchivePath( csImagePath );
 
+	ArchiveToolHelper athHelperImage;
+	athHelperImage.Init(csImagePath);
+	if (athHelperImage.isUsingKeywords() && athHelperImage.isTokensValid())
+	{
+		csImagePath = athHelperImage.TranslatePath(csImagePath).c_str();
+		m_ImageTranslatedPath = csImagePath;
+		m_ArchiveImagePathUsingKW = true;
+	}
+
 	bOk = ! csImagePath.IsEmpty();
 	if ( bOk )
 	{
@@ -1623,54 +1658,61 @@ BOOL SVArchiveTool::OnValidate()	// called each onRun
 			if((m_uiValidateCount % 10 == 0) || (m_uiValidateCount == 0))
 			{
 				CString csImagePath;
-				GetImageArchivePath( csImagePath );
+				
+				if(m_ArchiveImagePathUsingKW)
 				{
+					csImagePath = m_ImageTranslatedPath;
+				}
+				else
+				{
+					GetImageArchivePath( csImagePath );
+				}
 
-					//
-					// Check the available space for storing image archive files.
-					//
+				//
+				// Check the available space for storing image archive files.
+				//
 				
-					ULARGE_INTEGER lFreeBytesAvailableToCaller;
-					ULARGE_INTEGER lTotalNumberOfBytes;
-					ULARGE_INTEGER lTotalNumberOfFreeBytes;
+				ULARGE_INTEGER lFreeBytesAvailableToCaller;
+				ULARGE_INTEGER lTotalNumberOfBytes;
+				ULARGE_INTEGER lTotalNumberOfFreeBytes;
 				
-					bOk = ::GetDiskFreeSpaceEx( (LPCTSTR)csImagePath,         // pointer to the directory name
-												&lFreeBytesAvailableToCaller, // receives the number of bytes on
-																			  // disk available to the caller
-												&lTotalNumberOfBytes,         // receives the number of bytes on disk
-												&lTotalNumberOfFreeBytes );   // receives the free bytes on disk
+				bOk = ::GetDiskFreeSpaceEx( (LPCTSTR)csImagePath,         // pointer to the directory name
+											&lFreeBytesAvailableToCaller, // receives the number of bytes on
+																			// disk available to the caller
+											&lTotalNumberOfBytes,         // receives the number of bytes on disk
+											&lTotalNumberOfFreeBytes );   // receives the free bytes on disk
 				
-					if(!bOk)  
-					{
-						msvError.msvlErrorCd = (DWORD)(-(long)(GetLastError()));
+				if(!bOk)  
+				{
+					msvError.msvlErrorCd = (DWORD)(-(long)(GetLastError()));
 
-						if ( msvError.msvlErrorCd == -3 )
-						{ //should not ever get here since the path is validated above
-							CString temp;
-							temp.Format ("Path/File not found:  %s", csImagePath);
-							AfxMessageBox (temp);
+					if ( msvError.msvlErrorCd == -3 )
+					{ //should not ever get here since the path is validated above
+						CString temp;
+						temp.Format ("Path/File not found:  %s", csImagePath);
+						AfxMessageBox (temp);
 
-							bOk = FALSE;
-						}
-					}
-				
-					//
-					// Make sure we have at least 100 Meg bytes space on the drive.
-					//
-					//For systems wtih 16GB of memory the amount of memory will be 300Meg
-					if ( bOk )
-					{
-						bOk = ((__int64)100000000) < lFreeBytesAvailableToCaller.QuadPart;
-						if (!bOk)
-						{
-							m_bDriveError = true;
-						}
-						else
-						{
-							m_bDriveError = false;
-						}
+						bOk = FALSE;
 					}
 				}
+				
+				//
+				// Make sure we have at least 100 Meg bytes space on the drive.
+				//
+				//For systems wtih 16GB of memory the amount of memory will be 300Meg
+				if ( bOk )
+				{
+					bOk = ((__int64)100000000) < lFreeBytesAvailableToCaller.QuadPart;
+					if (!bOk)
+					{
+						m_bDriveError = true;
+					}
+					else
+					{
+						m_bDriveError = false;
+					}
+				}
+
 			}
 		}
 		else
@@ -1791,8 +1833,7 @@ DWORD_PTR SVArchiveTool::processMessage( DWORD dwMessageID,
 		{
 			break;
 		}
-	}
-	
+	}	
 	return( SVToolClass::processMessage( dwMessageID, dwMessageValue, dwMessageContext ) | dwResult );
 }
 
@@ -1805,6 +1846,14 @@ HRESULT SVArchiveTool::initializeOnRun()
 	m_eArchiveMethod = static_cast<SVArchiveMethodEnum>( dwMethod );
 
 	GetImageArchivePath( csTemp );
+	ArchiveToolHelper athHelperImage;
+	athHelperImage.Init(csTemp);
+	
+	if (athHelperImage.isUsingKeywords() && athHelperImage.isTokensValid())
+	{
+		csTemp = athHelperImage.TranslatePath(csTemp).c_str();
+	}
+	
 
 	if ( ! csTemp.IsEmpty() )
 	{
@@ -2400,6 +2449,16 @@ HRESULT SVArchiveTool::ValidateArchiveTool()
 	}
 	
 	return hRet;
+}
+
+bool SVArchiveTool::isImagePathUsingKeywords()
+{
+	return m_ArchiveImagePathUsingKW;
+}
+
+void SVArchiveTool::getTranslatedImagePath(CString &ImagePath)
+{
+	ImagePath = m_ImageTranslatedPath;
 }
 
 //******************************************************************************
