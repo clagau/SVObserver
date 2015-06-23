@@ -61,33 +61,18 @@ SVString FormulaController::getEquationText() const
 
 SVStringArray FormulaController::getPPQVariableNames() const
 {
-	std::vector<SVString> retVals;
+	
 	if ( nullptr != m_pInspection )
 	{
-		SVIOEntryHostStructPtrList PPQVariables;
-		for( size_t i = 0; i < m_pInspection->m_PPQInputs.size(); i++ )
-		{	
-			SVIOEntryHostStructPtr ioEntryPtr = m_pInspection->m_PPQInputs[i].m_IOEntryPtr;
-					
-			//check if input is enable for this inspection
-			if( ioEntryPtr->m_Enabled )
-			{
-				PPQVariables.push_back( ioEntryPtr );
-			}
-		}// end for
-
-		std::sort( PPQVariables.begin(), PPQVariables.end(), &SVIOEntryHostStruct::PtrGreater );
-
-		SVIOEntryHostStructPtrList::iterator Iter( PPQVariables.begin() );
-		while( Iter != PPQVariables.end() )
-		{
-			SVString Name = Iter->get()->m_pValueObject->GetCompleteObjectName();
-			retVals.push_back( Name );
-
-			++Iter;
-		}
+		return m_pInspection->getPPQVariableNames();
 	}
-	return retVals;
+	else
+	{
+				std::vector<SVString> retVals;
+				return retVals;
+	}
+	
+	
 }
 
 SvOi::IInspectionProcess* FormulaController::getInspectionProcess() const

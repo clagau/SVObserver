@@ -190,6 +190,9 @@ public:
 	//************************************
 	void fillChildObjectList(SVObjectPtrDeque& objectList, UINT AttributesAllowedFilter = 0) const;
 
+
+	virtual DWORD GetObjectColor() const override;
+
 protected:
 	typedef SVVector< SVInspectionProcess* > SVPPQInspectionProcessVector;
 

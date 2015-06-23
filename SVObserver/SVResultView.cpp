@@ -123,7 +123,7 @@ void SVResultViewClass::OnUpdate( CView* pSender, LPARAM lHint, CObject* pHint )
 		l_pIPDoc->GetResultData( m_ResultData );
 
 		bool bRedrawDefinitions = false;
-		if( l_pIPDoc->IsResultDefinitionsUpdated() == S_OK )
+		if( l_pIPDoc->IsResultDefinitionsOutdated() )
 		{
 			listCtrl.DeleteAllItems();
 			l_pIPDoc->GetResultDefinitions( m_ResultDefinitions );

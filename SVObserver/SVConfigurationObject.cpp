@@ -3451,8 +3451,8 @@ BOOL SVConfigurationObject::SaveInspection(SVTreeType& rTree)
 				if ( hInspection != NULL )
 				{
 					SVTreeType::SVBranchHandle htiViewed = NULL;
-					long l;
-					long lSize;
+					//long l;
+					//long lSize;
 					_variant_t svVariant;
 
 					svVariant.SetString( pInspection->GetName() );
@@ -3471,6 +3471,7 @@ BOOL SVConfigurationObject::SaveInspection(SVTreeType& rTree)
 					SVNavigateTreeClass::AddItem( rTree, hInspection, CTAG_INSPECTION_ENABLE_AUXILIARY_EXTENT , svVariant );
 					svVariant.Clear();
 #endif
+					/* Now Digital Inputs are saved with ResultViewReferences
 					SVNavigateTreeClass::SetBranch( rTree, hInspection, CTAG_VIEWED_INPUTS, &htiViewed );
 
 					svVariant.SetString( _T("") );
@@ -3479,6 +3480,7 @@ BOOL SVConfigurationObject::SaveInspection(SVTreeType& rTree)
 					{							
 						SVNavigateTreeClass::AddBranch( rTree, htiViewed, pInspection->m_arViewedInputNames[l] );
 					}// end for
+					*/
 				}
 			}
 		}

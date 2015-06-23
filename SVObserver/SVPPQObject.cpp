@@ -41,6 +41,7 @@
 #include "SVRemoteInputObject.h"
 #include "SVPPQConstants.h"
 #include "ObjectInterfaces\ErrorNumbers.h"
+#include "SVRunControlLibrary\SVRunControlLibrary.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -5092,6 +5093,11 @@ SVPPQObject::SVSharedMemoryFilters::SVSharedMemoryFilters()
 void SVPPQObject::SVSharedMemoryFilters::clear()
 {
 	m_RejectConditionValues.clear();
+}
+
+DWORD SVPPQObject::GetObjectColor() const
+{
+	return SV_DEFAULT_WHITE_COLOR;
 }
 
 //******************************************************************************

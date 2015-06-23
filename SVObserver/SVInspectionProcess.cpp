@@ -31,6 +31,7 @@
 #include "ObjectInterfaces\ErrorNumbers.h"
 #include "SVStatusLibrary/ExceptionManager.h"
 #include "TextDefinesSvO.h"
+#include "SVRunControlLibrary/SVRunControlLibrary.h"
 #pragma endregion Includes
 
 
@@ -770,7 +771,9 @@ BOOL SVInspectionProcess::DestroyInspection()
 	SVResultListClass* pResultlist = GetResultList();
 	if(pResultlist)
 	{
-		pResultlist->m_PPQInputReferences.BuildReferenceVector(this);
+		
+		pResultlist->RebuildReferenceVector(this);
+
 	}
 
 	return TRUE;
@@ -1303,11 +1306,11 @@ BOOL SVInspectionProcess::RebuildInspectionInputList()
 	SVResultListClass* pResultlist = GetResultList();
 	if(pResultlist)
 	{
-		pResultlist->m_PPQInputReferences.BuildReferenceVector(this);
+		
+			pResultlist->RebuildReferenceVector(this);
 	}
 
 	BuildValueObjectMap();
-
 	return TRUE;
 }
 
@@ -4846,6 +4849,88 @@ long  SVInspectionProcess::GetResultDataIndex() const
 {
 	return m_runStatus.m_lResultDataIndex; 
 }
+
+
+
+bool SVInspectionProcess::IsEnabledPPQVariable(SVValueObjectClass* pValueObject)
+{
+
+	for( size_t i = 0; i < m_PPQInputs.size(); i++ )
+	{	
+		SVIOEntryHostStructPtr ioEntryPtr = m_PPQInputs[i].m_IOEntryPtr;
+		if( ioEntryPtr->m_Enabled )
+		{
+			if(ioEntryPtr->m_pValueObject == pValueObject)
+			{
+				return true;
+			}
+		}
+	}// end for
+
+return false;
+
+}
+
+
+bool SVInspectionProcess::IsDisabledPPQVariable(SVValueObjectClass* pValueObject)
+{
+
+	for( size_t i = 0; i < m_PPQInputs.size(); i++ )
+	{	
+		SVIOEntryHostStructPtr ioEntryPtr = m_PPQInputs[i].m_IOEntryPtr;
+		
+		if( ioEntryPtr->m_Enabled == false )
+		{
+			if(ioEntryPtr->m_pValueObject == pValueObject)
+			{
+				return true;
+			}
+		}
+	}// end for
+
+	return false;
+
+}
+
+
+
+
+
+SVStringArray SVInspectionProcess::getPPQVariableNames() const
+{
+	std::vector<SVString> retVals;
+
+	SVIOEntryHostStructPtrList PPQVariables;
+	for( size_t i = 0; i < m_PPQInputs.size(); i++ )
+	{	
+		SVIOEntryHostStructPtr ioEntryPtr = m_PPQInputs[i].m_IOEntryPtr;
+
+		//check if input is enable for this inspection
+		if( ioEntryPtr->m_Enabled )
+		{
+			PPQVariables.push_back( ioEntryPtr );
+		}
+	}// end for
+
+	std::sort( PPQVariables.begin(), PPQVariables.end(), &SVIOEntryHostStruct::PtrGreater );
+
+	SVIOEntryHostStructPtrList::iterator Iter( PPQVariables.begin() );
+	while( Iter != PPQVariables.end() )
+	{
+		SVString Name = Iter->get()->m_pValueObject->GetCompleteObjectName();
+		retVals.push_back( Name );
+
+		++Iter;
+	}
+
+	return retVals;
+}
+
+DWORD SVInspectionProcess::GetObjectColor() const
+{
+	return SV_DEFAULT_WHITE_COLOR;
+}
+
 
 //******************************************************************************
 //* LOG HISTORY:

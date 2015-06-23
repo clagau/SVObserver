@@ -190,7 +190,7 @@ public:
 	afx_msg void OnUpdateAddPolarUnwrapTool(CCmdUI* PCmdUI);
 	afx_msg void OnUpdateAddAcquisitionTool(CCmdUI* PCmdUI);
 	afx_msg void OnUpdateResumeFreeze(CCmdUI* PCmdUI);
-	afx_msg void OnUpdateSelectPPQVariable(CCmdUI* pCmdUI);
+	//afx_msg void OnUpdateSelectPPQVariable(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateAddColorTool(CCmdUI* PCmdUI);
 	afx_msg void OnUpdateRegressionTest(CCmdUI* pCmdUI);
     afx_msg void OnEditMonitorList();

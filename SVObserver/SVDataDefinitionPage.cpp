@@ -15,6 +15,7 @@
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVToolSet.h"
 #include "SVIPDoc.h"
+#include "SVInspectionProcess.h"
 #pragma endregion Includes
 
 #pragma region Declarations

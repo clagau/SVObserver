@@ -23,7 +23,13 @@
 struct SVIPResultData;
 class SVIPResultItemDefinition;
 class SVResultsWrapperClass;
+class SVInspectionProcess;
+class SVValueObjectClass;
 #pragma endregion Declarations
+
+
+
+ 
 
 /**
 	Class contains a list of GUIDS of and references to variables which are selected to be shown in the result view.
@@ -35,9 +41,10 @@ public:
 	typedef std::deque< SVIPResultItemDefinition > SVResultDefinitionDeque;
 
 	//************************************
-	// Description:  Default constructor for the ResultViewReferences class.
+	//! constructor for the ResultViewReferences class.
+	//! \param tagname [in] default tagname for entrie in cfg file 
 	//************************************
-	ResultViewReferences();
+	ResultViewReferences(LPCTSTR tagname);
 
 	//************************************
 	// Description:  Destructor for the ResultViewReferences class.
@@ -57,35 +64,39 @@ public:
 	// Description:  Load GUIDs and references from the configuration file.
 	// Parameter:  rTree:  
 	// Parameter:  htiParent:  
-	// Returns:  bool:  
+	// Parameter:  tagname tagname in cfgfile 
+	// Returns:  bool: return true if the tagnane was found in the cfg file   
 	//************************************
-	virtual bool Load( SVXMLMaterialsTree& rTree, SVXMLMaterialsTree::SVBranchHandle htiParent );
+	virtual bool Load( SVXMLMaterialsTree& rTree, SVXMLMaterialsTree::SVBranchHandle htiParent, LPCTSTR tagname = nullptr );
 
+	
 	//************************************
-	// Description:  Rebuild the reference vector from the list of GUIDs.
+	//! Description:  Rebuild the reference vector from the list of GUIDs.
+	//! \param pInspection [in] if not null the References will be checked if the are  a Disabled PPQVariables
+	//! \returns void
 	//************************************
-	virtual void RebuildReferenceVector();
+	virtual void RebuildReferenceVector(SVInspectionProcess* pInspection = nullptr);
 
 	//************************************
 	// Description:  Build SVResultDefinitionDeque from the reference vector.  (Defines the list of viewed variables.)
 	// Parameter:  rDefinitions <out>:  object containing data from the class's variables.
-	// Returns:  bool:  
+	// Returns:  S_OK if no error occurs   
 	//************************************
-	virtual bool SetResultDefinitions( SVResultDefinitionDeque& rDefinitions ) const; // BRW - How can a Set method be const?  Should it be called GetResultDefinitions?
+	virtual HRESULT GetResultDefinitions( SVResultDefinitionDeque& rDefinitions ) const; 
 
 	//************************************
 	// Description:  Build SVIPResultData from the reference vector.  (Get the values of the variables.)
 	// Parameter:  rResultData <out>:  object containing data from the class's variables.
 	// Parameter:  getColor <in>:  true (default) if the color for the item in the result view should be fetched.
-	// Returns:  bool:  
+	// Returns: S_OK if no error occurs   
 	//************************************
-	virtual bool SetResultData( SVIPResultData& rResultData, bool getColor = true ) const; // BRW - This method should be changed to return HRESULT (as setPPQInputResultData did), not bool.  How can a Set method be const?  Should it be called GetResultData?
+	virtual HRESULT GetResultData( SVIPResultData& rResultData) const; 
 
 	//************************************
 	// Description:  Build SVResultsWrapperClass from reference vector.  (Get values of variables for remote interface.)
-	// Parameter:  pSVRWC:  
-	// Parameter:  lptitle:  
-	// Returns:  int:  
+	// Parameter:  [out] pSVRWC:  
+	// Parameter:  [in] lptitle:  
+	// Returns:  int:  number of entries which are added to pSVRWC
 	//************************************
 	int AddResults( SVResultsWrapperClass* pSVRWC, LPCTSTR lptitle );
 
@@ -97,14 +108,14 @@ public:
 	//************************************
 	// Description:  Add complete Name of variables to the stringset.
 	// Parameter:  stringSet:  
-	// Returns:  int:  
+	// Returns:  int:  number of entries in the set
 	//************************************
 	int GetNameSet( SVStringSet& stringSet ) const;
 
 	//************************************
-	// Description:  
-	// Parameter:  dottedName:  
-	// Returns:  bool:  
+	// Description:  Insert a new entry 
+	// Parameter:  dottedName of new Variable   
+	// Returns:  true if sucessfull  
 	//************************************
 	bool Insert( const SVString& dottedName );
 
@@ -121,6 +132,22 @@ public:
 	/// \return boolean true=viewable, false=not viewable
 	//************************************
 	virtual bool IsViewable(const SVObjectReference& objectRef) const;
+
+	//************************************
+	//! To read deprecated Configuration gets all variable from tooloutputlist with  with attribute IsView
+	//! \param pInspection [in]
+	//! \returns void
+	//************************************
+	void InsertFromOutputList(SVInspectionProcess* pInspection);
+	
+	
+	//************************************
+	//!To read deprecated Configuration gets all variable from m_PPQInputs with attribute IsView
+	//! \param pInspection [in]
+	//! \returns void
+	//************************************
+	void InsertFromPPQInputs(SVInspectionProcess* pInspection);
+
 #pragma endregion Public Methods
 
 protected:
@@ -135,7 +162,7 @@ protected:
 #pragma endregion Protected Methods
 
 #pragma region Member Variables
-	CString m_BranchName; // Branch name in the config file
+	CString m_TagName; // Branch name in the config file
 	std::vector<SVObjectReference> m_ReferenceVector;
 	std::list<ResultViewItemDef> m_ResultViewItemDefList;
 	SVClock::SVTimeStamp m_LastUpdateTimeStamp; // Most recent time when m_ReferenceVector changed.

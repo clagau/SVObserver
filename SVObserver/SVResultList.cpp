@@ -19,6 +19,10 @@
 #include "SVGetObjectDequeByTypeVisitor.h"
 #include "SVResult.h"
 #include "SVInspectionProcess.h"
+#include "SVConfigurationLibrary/SVConfigurationTags.h"
+#include "SVToolSet.h"
+#include "SVXMLLibrary/SVNavigateTreeClass.h"
+
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -30,24 +34,21 @@ static char THIS_FILE[] = __FILE__;
 #pragma endregion Declarations
 
 #pragma region Constructor
-SVResultListClass::SVResultListClass()
+SVResultListClass::SVResultListClass():
+m_ResultViewReferences(CTAG_VIEWEDRESULTS)
 {
 }
 
 SVResultListClass::~SVResultListClass()
 {
 	Destroy();
-
 	m_results.RemoveAll();
-
 }
 #pragma endregion Constructor
 
 void SVResultListClass::Destroy()
 {
-	m_EnvResults.Clear();
-	m_ToolReferences.Clear();
-	m_PPQInputReferences.Clear();
+	m_ResultViewReferences.Clear();
 }
 
 void SVResultListClass::SetToolSet(SVToolSetClass* pToolSet)
@@ -76,11 +77,85 @@ void SVResultListClass::Refresh(SVTaskObjectClass* pRootObject)
 
 		m_results.Add( pResult );
 	}
-
-	m_ToolReferences.RebuildReferenceVector();
-
-	m_EnvResults.RebuildReferenceVector();
+	
+	m_ResultViewReferences.RebuildReferenceVector(m_pToolSet->GetInspection());
 }
+
+SVClock::SVTimeStamp SVResultListClass::getUpdateTimeStamp()
+{
+	return m_ResultViewReferences.getUpdateTimeStamp();
+}
+
+void SVResultListClass::Save(SVObjectWriter& rWriter)
+{
+	m_ResultViewReferences.Save(rWriter);
+}
+
+bool SVResultListClass::LoadViewedVariables(SVTreeType& rTree, SVTreeType::SVBranchHandle htiParent)
+{
+	m_ResultViewReferences.Clear();
+	SVInspectionProcess* pInspec(nullptr);
+	if(m_pToolSet)
+	{
+		pInspec = m_pToolSet->GetInspection();
+	}
+	
+	bool SevenOneCfg(false);
+	bool SevenTwoCfg(false);
+
+	SVTreeType::SVBranchHandle htiChild = nullptr;
+
+
+	if (SVNavigateTreeClass::GetItemBranch(rTree, CTAG_VIEWEDVARIABLES, htiParent, htiChild))
+	{
+
+		SevenTwoCfg = m_ResultViewReferences.Load( rTree, htiChild );
+		if(SevenTwoCfg == false)
+		{
+			///older configurations may have a ViewedEnvVariables entry! 
+			m_ResultViewReferences.Load( rTree, htiChild, CTAG_VIEWEDENVARIABLES);
+			SevenOneCfg = m_ResultViewReferences.Load( rTree, htiChild, CTAG_VIEWEDTOOLVARIABLES);
+		}
+
+		
+	}
+	
+	if(!SevenTwoCfg )
+	{
+		m_ResultViewReferences.InsertFromPPQInputs(pInspec);
+	}
+
+
+	if(!SevenTwoCfg && !SevenOneCfg )
+	{
+		///older configurations may have no  ViewedToolVariables entry!
+		m_ResultViewReferences.InsertFromOutputList(pInspec);
+	}
+
+	return true;
+}
+
+void SVResultListClass::RebuildReferenceVector(SVInspectionProcess* pInspection )
+{
+	return m_ResultViewReferences.RebuildReferenceVector(pInspection);
+}
+
+HRESULT  SVResultListClass::GetResultData( SVIPResultData& p_rResultData) const
+{
+	return m_ResultViewReferences.GetResultData( p_rResultData);
+}
+
+int SVResultListClass::AddResults(  SVResultsWrapperClass* pSVRWC, LPCTSTR lptitle )
+{
+	return m_ResultViewReferences.AddResults(pSVRWC,lptitle);
+}
+
+HRESULT SVResultListClass::GetResultDefinitions( ResultViewReferences::SVResultDefinitionDeque& rDefinitions )  const
+{
+	return m_ResultViewReferences.GetResultDefinitions(rDefinitions);
+}
+
+
 
 SVProductInspectedState SVResultListClass::GetInspectionState()
 {
@@ -101,6 +176,21 @@ SVProductInspectedState SVResultListClass::GetInspectionState()
 		return( PRODUCT_INSPECTION_WARNING );
 
 	return( PRODUCT_INSPECTION_PASSED );
+}
+
+void SVResultListClass::Clear()
+{
+	m_ResultViewReferences.Clear();
+}
+
+void SVResultListClass::GetNameSet(SVStringSet& SelectedNamesRaw)
+{
+	m_ResultViewReferences.GetNameSet(SelectedNamesRaw);
+}
+
+bool SVResultListClass::Insert(const SVString& param1)
+{
+	return m_ResultViewReferences.Insert(param1);
 }
 
 //******************************************************************************
@@ -233,4 +323,7 @@ $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVResultLi
    
    
    /////////////////////////////////////////////////////////////////////////////////////
-*/
+   void SVResultListClass::Save(SVObjectWriter& rWriter)
+   {
+   }
+   */

@@ -290,7 +290,6 @@ BEGIN_MESSAGE_MAP(SVObserverApp, CWinApp)
 	ON_UPDATE_COMMAND_UI(ID_RESULTS_PICKER, OnUpdateResultsPicker)
 	ON_UPDATE_COMMAND_UI(ID_PUBLISHED_RESULTS_PICKER, OnUpdatePublishedResultsPicker)
 	ON_UPDATE_COMMAND_UI(ID_PUBLISHED_RESULT_IMAGES_PICKER, OnUpdatePublishedImagesPicker)
-	ON_UPDATE_COMMAND_UI(ID_SELECT_PPQVARIABLE, OnUpdateSelectPPQVariable)
 	ON_UPDATE_COMMAND_UI(ID_EDIT_EDITREMOTEINPUTS, OnUpdateEditRemoteInputs)
 	ON_UPDATE_COMMAND_UI(ID_EXTRAS_THREAD_AFFINITY, OnUpdateThreadAffinitySetup)
 	ON_UPDATE_COMMAND_UI(ID_EXTRAS_LIGHTREFERENCE, OnUpdateExtrasLightReference)
@@ -2433,12 +2432,6 @@ void SVObserverApp::OnUpdateAddAcquisitionTool( CCmdUI* PCmdUI )
 void SVObserverApp::OnUpdateResumeFreeze( CCmdUI* PCmdUI )  
 {
 	PCmdUI->Enable( TRUE );
-}
-
-void SVObserverApp::OnUpdateSelectPPQVariable(CCmdUI* PCmdUI) 
-{
-	PCmdUI->Enable( SVSVIMStateClass::CheckState( SV_STATE_READY )
-		&& SVSVIMStateClass::CheckState( SV_STATE_EDIT ) );
 }
 
 void SVObserverApp::OnUpdateAddColorTool( CCmdUI* PCmdUI ) 

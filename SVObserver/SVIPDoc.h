@@ -183,7 +183,6 @@ public:
 	afx_msg void OnUpdateViewToolSetDraw(CCmdUI* pCmdUI);
 	afx_msg void OnAddPolarUnwrapTool();
 	afx_msg void OnUpdateFileExit(CCmdUI* pCmdUI);
-	afx_msg void OnSelectPPQVariable();
 	afx_msg void OnAddColorTool();
 	afx_msg void OnAddExternalTool();
 	afx_msg void OnAddLinearTool();
@@ -309,7 +308,11 @@ protected:
 	HRESULT UpdateExtentsToFit( SVTaskObjectClass* p_pTask, const SVImageExtentClass& p_rExtents );
 	SVImageClass* GetImageByName( CString& p_imageName ) const;
 
-	HRESULT IsResultDefinitionsUpdated() const;
+	//************************************
+	//! return true if the last  values from GetResultDefinitions are not longer valid. 
+	//! \returns bool
+	//************************************
+	bool  IsResultDefinitionsOutdated() const;
 	HRESULT GetResultDefinitions( SVResultDefinitionDeque& p_rDefinitions ) const;
 	HRESULT GetResultData( SVIPResultData& p_rResultData ) const;
 

@@ -21,11 +21,14 @@
 #include "SVIPResultItemDefinition.h"
 #include "SVResultsWrapperClass.h"
 #include "SVValueObjectReference.h"
+#include "SVToolSet.h"
+#include "SVInspectionProcess.h"
 #pragma endregion Includes
 
 #pragma region Constructor
-ResultViewReferences::ResultViewReferences()
-: m_LastUpdateTimeStamp(0)
+ResultViewReferences::ResultViewReferences(LPCTSTR tagname)
+	: m_LastUpdateTimeStamp(0),
+	  m_TagName(tagname)
 {
 }
 
@@ -46,23 +49,22 @@ bool ResultViewReferences::IsViewable(const SVObjectReference& objectRef) const
 	return (objectRef.ObjectAttributesAllowed() & SV_VIEWABLE);
 }
 
-bool ResultViewReferences::Load( SVXMLMaterialsTree& rTree, SVXMLMaterialsTree::SVBranchHandle htiParent )
+bool ResultViewReferences::Load( SVXMLMaterialsTree& rTree, SVXMLMaterialsTree::SVBranchHandle htiParent, LPCTSTR TagName )
 {
-	m_ReferenceVector.clear();
-	m_ResultViewItemDefList.clear();
 
+	CString csTagName =  TagName == nullptr?  m_TagName: TagName;
 	SVXMLMaterialsTree::SVBranchHandle htiVariables = nullptr;
-	bool bOK = SVNavigateTreeClass::GetItemBranch(rTree, m_BranchName, htiParent, htiVariables);
+	bool bOK = SVNavigateTreeClass::GetItemBranch(rTree, csTagName, htiParent, htiVariables);
 
 	if (bOK)
 	{
 		SVXMLMaterialsTree::SVLeafHandle htiVariable;
-		bOK = (S_OK == rTree.GetFirstLeaf(htiVariables, htiVariable));
+		bool bContinue = (S_OK == rTree.GetFirstLeaf(htiVariables, htiVariable));
 
-		while (bOK)
+		while (bContinue)
 		{
-			bOK = bOK && LoadResultViewItemDef(rTree, htiVariable);
-			bOK = bOK && (S_OK == rTree.GetNextLeaf(htiVariables, htiVariable));
+			bContinue = LoadResultViewItemDef(rTree, htiVariable);
+			bContinue = bContinue && (S_OK == rTree.GetNextLeaf(htiVariables, htiVariable));
 		}
 	}
 	m_LastUpdateTimeStamp = SVClock::GetTimeStamp();
@@ -96,7 +98,7 @@ bool ResultViewReferences::LoadResultViewItemDef( SVXMLMaterialsTree& rTree, SVX
 				{
 					objRef.SetArrayIndex(--index);
 				}
-				
+
 			}
 			if (IsViewable(objRef))
 			{
@@ -135,7 +137,7 @@ bool ResultViewReferences::Insert( const SVString &dottedName )
 
 bool ResultViewReferences::Save(SVObjectWriter& rWriter)
 {
-	rWriter.StartElement(m_BranchName);
+	rWriter.StartElement(m_TagName);
 	std::vector<SVObjectReference>::const_iterator it = m_ReferenceVector.begin();
 	for( ; it != m_ReferenceVector.end(); ++it )
 	{
@@ -174,23 +176,33 @@ void ResultViewReferences::Clear()
 	m_LastUpdateTimeStamp = SVClock::GetTimeStamp();
 }
 
-void ResultViewReferences::RebuildReferenceVector()
+
+void ResultViewReferences::RebuildReferenceVector( SVInspectionProcess* pIProcess)
 {
 	m_ReferenceVector.clear();
 	std::list<ResultViewItemDef>::iterator it = m_ResultViewItemDefList.begin();
 	while( it != m_ResultViewItemDefList.end() )
 	{
+		bool bInsert(false);
 		SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObject( it->getGuid() );
+		if( pObject != nullptr)
+		{
+			bInsert = true;
+			if(pIProcess  != nullptr  && pIProcess->IsDisabledPPQVariable(dynamic_cast<SVValueObjectClass*>(pObject)) == true )
+			{
+				bInsert = false;
+			}
 
-		if( pObject != nullptr )
+		}
+		if( bInsert )
 		{
 			SVObjectReference ObjectRef(pObject);
-
 			if( it->hasIndex() )
 			{
 				ObjectRef.SetArrayIndex(it->getIndexValue());
 			}
 			m_ReferenceVector.push_back(ObjectRef);
+
 			it++;
 		}
 		else
@@ -202,102 +214,96 @@ void ResultViewReferences::RebuildReferenceVector()
 	m_LastUpdateTimeStamp = SVClock::GetTimeStamp();
 }
 
-bool ResultViewReferences::SetResultData( SVIPResultData& p_rResultData, bool getColor /*= true*/ ) const
+HRESULT  ResultViewReferences::GetResultData( SVIPResultData& p_rResultData) const
 {
 	std::vector<SVObjectReference>::const_iterator it = m_ReferenceVector.begin();
 	for( ; it != m_ReferenceVector.end(); ++it)
 	{
-		if( nullptr != it->Object() )
-		{
-			SVIPResultItemDefinition itemDef;
+		if( nullptr == it->Object() )
+			continue;
 
-			if( it->IsIndexPresent() )
+		SVIPResultItemDefinition itemDef;
+
+		if( it->IsIndexPresent() )
+		{
+			if( it->IsEntireArray() )
 			{
-				if( it->IsEntireArray() )
-				{
-					itemDef = SVIPResultItemDefinition( it->Guid(), SVString() );
-				}
-				else
-				{
-					///TODO_MEC_SVO_475_CHECK this optimization
-					//l_Def = SVIPResultItemDefinition( ref.Guid(), _variant_t( ref.ArrayIndex(true) ) );
-					itemDef = SVIPResultItemDefinition( it->Guid(), it->GetIndex() );
-				}
+				itemDef = SVIPResultItemDefinition( it->Guid(), SVString() );
 			}
 			else
 			{
-				itemDef = SVIPResultItemDefinition( it->Guid() );
+				///TODO_MEC_SVO_475_CHECK this optimization
+				//l_Def = SVIPResultItemDefinition( ref.Guid(), _variant_t( ref.ArrayIndex(true) ) );
+				itemDef = SVIPResultItemDefinition( it->Guid(), it->GetIndex() );
 			}
-
-			unsigned long Color = SV_DEFAULT_WHITE_COLOR;
-
-			if (getColor)
-			{
-				Color = it->Object()->GetObjectColor();
-				if( it->Object()->GetOwner() )
-				{
-					Color = it->Object()->GetOwner()->GetObjectColor();
-				}
-			}
-
-			CString csValue;
-			SVValueObjectReference voref(*it);  // try to assign to value object
-			if( voref.Object() )                // if successful
-			{
-				if( voref->GetObjectType() == SVStringValueObjectType)
-				{
-					CString l_strQuotes;
-					CString l_strValue;
-					voref.GetValue( l_strValue );
-					// Wrap string in Quotes...
-					l_strQuotes.Format(_T("\042%s\042"),l_strValue);
-					csValue = l_strQuotes;
-				}
-				else
-				{
-					HRESULT hr = voref.GetValue( csValue );
-					if ( hr == SVMSG_SVO_34_OBJECT_INDEX_OUT_OF_RANGE )
-					{
-						csValue = _T("< ") + csValue + _T(" >");
-					}
-					else if ( hr != S_OK )
-					{
-						csValue = _T( "<Not Valid>" );
-					}
-				}
-			}
-			else if( SV_IS_KIND_OF( it->Object(), BasicValueObject ) )
-			{
-				BasicValueObject* bvo = dynamic_cast<BasicValueObject*>(it->Object());
-				if(bvo)
-				{
-					Color = SV_DEFAULT_WHITE_COLOR;
-					if (getColor)
-					{
-						Color = bvo->GetObjectColor();
-					}
-
-					SVString value;
-					HRESULT hr = bvo->getValue(value);
-
-					if ( hr != S_OK )
-					{
-						csValue = _T( "<Not Valid>" );
-					}
-					else
-					{
-						csValue = value.c_str();
-					}
-				}
-			}
-			p_rResultData.m_ResultData[ itemDef ] = SVIPResultItemData( static_cast< LPCTSTR >( csValue ), Color );
 		}
+		else
+		{
+			itemDef = SVIPResultItemDefinition( it->Guid() );
+		}
+
+		unsigned long Color = SV_DEFAULT_WHITE_COLOR;
+
+		if( it->Object()->GetOwner() )
+		{
+			Color = it->Object()->GetOwner()->GetObjectColor();
+		}
+
+
+		CString csValue;
+		BasicValueObject* bvo(nullptr); 
+		SVValueObjectReference voref(*it);  // try to assign to value object
+		if( voref.Object() )                // if successful
+		{
+			if( voref->GetObjectType() == SVStringValueObjectType)
+			{
+				CString l_strQuotes;
+				CString l_strValue;
+				voref.GetValue( l_strValue );
+				// Wrap string in Quotes...
+				l_strQuotes.Format(_T("\042%s\042"),l_strValue);
+				csValue = l_strQuotes;
+			}
+			else
+			{
+				HRESULT hr = voref.GetValue( csValue );
+				if ( hr == SVMSG_SVO_34_OBJECT_INDEX_OUT_OF_RANGE )
+				{
+					csValue = _T("< ") + csValue + _T(" >");
+				}
+				else if ( hr != S_OK )
+				{
+					csValue = _T( "<Not Valid>" );
+				}
+			}
+		}
+		else  if(nullptr != (bvo = dynamic_cast<BasicValueObject*>(it->Object()))) //if( SV_IS_KIND_OF( it->Object(), BasicValueObject ) )
+		{
+
+			Color = SV_DEFAULT_WHITE_COLOR;
+
+
+			SVString value;
+			HRESULT hr = bvo->getValue(value);
+
+			if ( hr != S_OK )
+			{
+				csValue = _T( "<Not Valid>" );
+			}
+			else
+			{
+				csValue = value.c_str();
+			}
+
+		}
+		p_rResultData.m_ResultData[ itemDef ] = SVIPResultItemData( static_cast< LPCTSTR >( csValue ), Color );
+
 	}
 
-	return true;
+	return S_OK;
 }
 
-bool ResultViewReferences::SetResultDefinitions( SVResultDefinitionDeque &rDefinitions ) const
+HRESULT  ResultViewReferences::GetResultDefinitions( SVResultDefinitionDeque &rDefinitions ) const
 {
 	for( size_t i = 0; i < m_ReferenceVector.size(); ++i )
 	{
@@ -326,7 +332,7 @@ bool ResultViewReferences::SetResultDefinitions( SVResultDefinitionDeque &rDefin
 		}
 	}
 
-	return true;
+	return S_OK;
 }
 
 int ResultViewReferences::AddResults(  SVResultsWrapperClass* pSVRWC, LPCTSTR lptitle )
@@ -389,6 +395,71 @@ int ResultViewReferences::AddResults(  SVResultsWrapperClass* pSVRWC, LPCTSTR lp
 
 	return iNumberOfItems;
 }// end AddResults
+
+
+
+void ResultViewReferences::InsertFromOutputList(SVInspectionProcess* pInspection)
+{
+	SVToolSetClass* pToolSet = nullptr;
+	if( nullptr != pInspection )
+	{
+		pToolSet = pInspection->GetToolSet();
+	}
+
+	if(nullptr == pToolSet)
+	{
+		ASSERT(FALSE);
+		return;
+	}
+
+
+
+	SVObjectReferenceVector RefVector;
+
+	// Find all outputs marked as selected for viewing
+	SVOutputInfoListClass OutputList;
+	pToolSet->GetOutputList( OutputList );
+	OutputList.GetSetAttributesList( SV_VIEWABLE, RefVector );
+
+	for(SVObjectReferenceVector::const_iterator iter = RefVector.begin(); iter != RefVector.end(); ++iter)
+	{
+		if( nullptr != iter->Object() && iter->ObjectAttributesSet() & SV_VIEWABLE )
+		{
+			m_ReferenceVector.push_back(*iter);
+			ResultViewItemDef item(*iter);
+			m_ResultViewItemDefList.push_back(item);
+		}
+	}
+
+	m_LastUpdateTimeStamp = SVClock::GetTimeStamp();
+}
+
+
+void ResultViewReferences::InsertFromPPQInputs(SVInspectionProcess* pInspection)
+{
+	// Insert all PPQ input items that are picked for viewing
+	
+	size_t PpqInputSize = 0;
+	if( nullptr != pInspection )
+	{
+		PpqInputSize = pInspection->m_PPQInputs.size();
+		for( size_t l = 0; pInspection && l < PpqInputSize; ++l )
+		{
+			SVIOEntryStruct pIOEntry = pInspection->m_PPQInputs[l];
+			SVObjectClass * object  = pIOEntry.m_IOEntryPtr->m_pValueObject;
+			if( nullptr != object && object->ObjectAttributesSet() & SV_VIEWABLE )
+			{
+				SVObjectReference ref(object);
+				ResultViewItemDef item(ref);
+				m_ReferenceVector.push_back(ref);
+				m_ResultViewItemDefList.push_back(item);
+			}
+		}
+	}
+	m_LastUpdateTimeStamp = SVClock::GetTimeStamp();
+}
+
+
 
 //******************************************************************************
 //* LOG HISTORY:

@@ -41,7 +41,7 @@
 #include "SVObjectScriptParser.h"
 #include "SVObserver.h"
 #include "SVPolarTransformationTool.h"
-#include "SVPQVariableSelectionDialog.h"
+//#include "SVPQVariableSelectionDialog.h"
 #include "SVTransformationTool.h"
 #include "SVToolAdjustmentDialogSheetClass.h"
 #include "SVToolAcquisition.h"
@@ -157,7 +157,7 @@ BEGIN_MESSAGE_MAP(SVIPDoc, CDocument)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_TOOLSETDRAW_POP_BASE, OnUpdateViewToolSetDraw)
 	ON_COMMAND(ID_ADD_POLARUNWRAPTOOL, OnAddPolarUnwrapTool)
 	ON_UPDATE_COMMAND_UI(ID_APP_EXIT, OnUpdateFileExit)
-	ON_COMMAND(ID_SELECT_PPQVARIABLE, OnSelectPPQVariable)
+	//ON_COMMAND(ID_SELECT_PPQVARIABLE, OnSelectPPQVariable)
 	ON_COMMAND(ID_ADD_COLORTOOL, OnAddColorTool)
 	ON_COMMAND(ID_ADD_EXTERNAL_TOOL, OnAddExternalTool)
 	ON_COMMAND(ID_ADD_LINEARTOOL, OnAddLinearTool)
@@ -1543,9 +1543,9 @@ void SVIPDoc::OnResultsPicker()
 			ObjectTreeGenerator::Instance().setSelectorType( ObjectTreeGenerator::SelectorTypeEnum::TypeMultipleObject);
 			ObjectTreeGenerator::Instance().setAttributeFilters( SV_VIEWABLE );
 
-			CString tmp;
-			tmp.LoadString(IDS_CLASSNAME_ROOTOBJECT);
-			ObjectTreeGenerator::Instance().setLocationFilter( ObjectTreeGenerator::FilterInput, tmp, SVString( _T("") ) );
+			CString csRootName;
+			csRootName.LoadString(IDS_CLASSNAME_ROOTOBJECT);
+			ObjectTreeGenerator::Instance().setLocationFilter( ObjectTreeGenerator::FilterInput, csRootName, SVString( _T("") ) );
 
 			SVString EnvName(Seidenader::SVObjectLibrary::FqnEnvironmentMode);
 
@@ -1559,6 +1559,7 @@ void SVIPDoc::OnResultsPicker()
 				ObjectTreeGenerator::Instance().insertTreeObjects( ObjectNameList);
 			}
 
+			
 			SVPPQObject* pPPQ( pInspection->GetPPQ() );
 			SVString PPQName;
 			if( nullptr != pPPQ )
@@ -1566,10 +1567,21 @@ void SVIPDoc::OnResultsPicker()
 				PPQName = pPPQ->GetName();
 				ObjectTreeGenerator::Instance().insertTreeObjects( PPQName );
 			}
-
+			
+			SVStringArray PpqVariables = pInspection->getPPQVariableNames();
+			
+			//Need to replace the inspection name with the PPQ Variables name
+			SVStringArray::iterator Iter( PpqVariables.begin() );
+			while( Iter != PpqVariables.end() )
+			{
+				Iter->replace( InspectionName.c_str(), SvOl::FqnPPQVariables );
+				Iter++;
+			}
+			ObjectTreeGenerator::Instance().insertTreeObjects( PpqVariables);
+			
 			ObjectTreeGenerator::Instance().setLocationFilter( ObjectTreeGenerator::FilterInput, InspectionName, SVString( _T("") ) );
+			
 			SVOutputInfoListClass OutputList;
-
 			SVToolSetClass* pToolset( GetToolSet() );
 			if(nullptr != pToolset)
 			{
@@ -1577,11 +1589,30 @@ void SVIPDoc::OnResultsPicker()
 				ObjectTreeGenerator::Instance().insertOutputList( OutputList );
 			}
 
+
+			
+			SVString From(InspectionName);
+			From.append(_T(".DIO"));
+			SVString TO(SvOl::FqnPPQVariables);
+			TO.append(_T(".DIO"));
+			
+
+			
+			SVStringSet SelectedNamesRaw;
+			pResultList->GetNameSet(SelectedNamesRaw);
+			//Need to replace  the PPQ Variables name with  the inspection name
+			SVStringSet::iterator SetIt( SelectedNamesRaw.begin() );
 			SVStringSet SelectedNames;
+			while( SetIt != SelectedNamesRaw.end() )
+			{
+				SVString St(*SetIt);
+				St.replace( From.c_str(), TO.c_str() );
+				SelectedNames.insert(St);
+				SetIt++;
+			}
 
-			pResultList->m_EnvResults.GetNameSet(SelectedNames);
-			pResultList->m_ToolReferences.GetNameSet(SelectedNames);
 
+			
 			ObjectTreeGenerator::Instance().setCheckItems(SelectedNames);
 
 			CString ResultPicker;
@@ -1598,26 +1629,23 @@ void SVIPDoc::OnResultsPicker()
 			{
 				const std::deque<ObjectSelectorItem>& SelectedItems = ObjectTreeGenerator::Instance().getResults();
 				std::deque<ObjectSelectorItem>::const_iterator it;
+				pResultList->Clear();
 
-				pResultList->m_EnvResults.Clear();
-				pResultList->m_ToolReferences.Clear();
-
-				size_t EnvSize = EnvName.size();
-				size_t PPQSize = PPQName.size();
 
 				for( it = SelectedItems.begin(); it != SelectedItems.end(); it++ )
 				{
 					if(it->isLeaf())
 					{
-						// @WARNING:  It's dangerous to call .Left before checking the length of the string returned by getLocation().
-						if( ( EnvSize > 0 && it->getLocation().Left(EnvSize).Compare(EnvName) == 0 ) || 
-							( PPQSize > 0 && it->getLocation().Left(PPQSize).Compare(PPQName) == 0 ) )
+						if(string::npos  != it->getLocation().find(SvOl::FqnPPQVariables))
 						{
-							pResultList->m_EnvResults.Insert(it->getLocation());
+							
+							SVString string = it->getLocation();
+							string.replace(SvOl::FqnPPQVariables,InspectionName.c_str());
+							pResultList->Insert(string);	; 
 						}
 						else
 						{
-							pResultList->m_ToolReferences.Insert(it->getLocation());
+							pResultList->Insert(it->getLocation());	
 						}
 					}
 				}
@@ -1759,94 +1787,6 @@ void SVIPDoc::OnUpdateConditionalHistory( CCmdUI* pCmdUI )
 	pCmdUI->Enable( SVSVIMStateClass::CheckState( SV_STATE_READY ) && SVSVIMStateClass::CheckState( SV_STATE_EDIT ) );
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// OnSelectPPQVariable - Display PPQ Variable Selection dialog
-////////////////////////////////////////////////////////////////////////////////
-void SVIPDoc::OnSelectPPQVariable()
-{
-	SVInspectionProcess* pInspection( GetInspectionProcess() );
-	if( nullptr != pInspection ) 
-	{
-		SVSVIMStateClass::AddState(SV_STATE_EDITING);
-		SVPQVariableSelectionDialog dlg;
-		CString ViewPPQDataCaption;
-		ViewPPQDataCaption.LoadString( IDS_SELECT_DATA_FOR_VIEWING );
-
-		CString inspectionName = pInspection->GetName();
-		CString title;
-		title.Format(_T("%s - %s"),  ViewPPQDataCaption, inspectionName);
-		dlg.SetCaptionTitle(title);
-
-		for( size_t z = 0; z < pInspection->m_PPQInputs.size(); ++z )
-		{
-			if( pInspection->m_PPQInputs[z].m_IOEntryPtr->m_Enabled )
-			{
-				dlg.m_ppPPQInputs.push_back( pInspection->m_PPQInputs[ z ].m_IOEntryPtr );
-			}
-		}
-
-		std::sort( dlg.m_ppPPQInputs.begin(), dlg.m_ppPPQInputs.end(), &SVIOEntryHostStruct::PtrGreater );
-
-		INT_PTR dlgResult = dlg.DoModal();
-		if( dlgResult == IDOK )
-		{
-			size_t l;
-			size_t k;
-			size_t lSize;
-			BOOL bFound;
-			CString strName;
-
-			// Store a list of the viewed PPQ inputs in the SVIPDoc
-			// Make sure to add new and remove old ones
-			for( k = 0; k < pInspection->m_PPQInputs.size(); k++ )
-			{
-				strName = pInspection->m_PPQInputs[k].m_IOEntryPtr->m_pValueObject->GetCompleteObjectName();
-
-				if( pInspection->m_PPQInputs[k].m_IOEntryPtr->m_pValueObject->ObjectAttributesSet() & SV_VIEWABLE )
-				{
-					bFound = FALSE;
-					lSize = pInspection->m_arViewedInputNames.GetSize();
-					for( l = 0; l < lSize; l++ )
-					{
-						if( pInspection->m_arViewedInputNames[l] == strName )
-						{
-							bFound = TRUE;
-							break;
-						}// end if
-					}// end for
-
-					if( !bFound ) { pInspection->m_arViewedInputNames.Add( strName ); }
-				}// end if
-				else
-				{
-					lSize = pInspection->m_arViewedInputNames.GetSize();
-					for( l = 0; l < lSize; l++ )
-					{
-						if( pInspection->m_arViewedInputNames[l] == strName )
-						{
-							pInspection->m_arViewedInputNames.RemoveAt( l );
-							break;
-						}// end if
-					}// end for
-				}// end else
-			}// end for
-
-			// Set the Document as modified
-			SetModifiedFlag();
-
-			SVResultListClass* pResultList = pInspection->GetResultList();
-			if(pResultList)
-			{
-				pResultList->m_PPQInputReferences.BuildReferenceVector(pInspection);
-			}
-
-			pInspection->LastProductNotify();
-
-			m_PPQListTimestamp = SVClock::GetTimeStamp();
-		}// end if
-		SVSVIMStateClass::RemoveState(SV_STATE_EDITING);
-	}
-}// end OnSelectPPQVariable
 
 void SVIPDoc::EditToolSetCondition()
 {
@@ -1864,54 +1804,43 @@ void SVIPDoc::RebuildResultsList()
 {
 	SVResultListClass* pResultList = GetResultList();
 
-	if( pResultList ) { pResultList->Refresh( GetToolSet() ); }
+	if( pResultList ) 
+	{ 
+		pResultList->Refresh( GetToolSet() ); 
+	}
 }
 
-HRESULT SVIPDoc::IsResultDefinitionsUpdated() const
+bool  SVIPDoc::IsResultDefinitionsOutdated() const
 {
-	HRESULT l_Status = S_OK;
 	SVResultListClass* pResultList = GetResultList();
+	bool res = true;
+	
+	if( nullptr !=  pResultList  && pResultList->getUpdateTimeStamp() < m_ResultDefinitionsTimestamp )
+	{
+		res  = false;
+	}
 
-	if( pResultList )
-	{
-		if( pResultList->m_PPQInputReferences.getUpdateTimeStamp() < m_ResultDefinitionsTimestamp 
-			&& pResultList->m_ToolReferences.getUpdateTimeStamp() < m_ResultDefinitionsTimestamp 
-			&& pResultList->m_EnvResults.getUpdateTimeStamp() < m_ResultDefinitionsTimestamp )
-		{
-			l_Status = S_FALSE;
-		}
-	}
-	else
-	{
-		l_Status = E_FAIL;
-	}
-	return l_Status;
+	return res ;
 }
 
 HRESULT SVIPDoc::GetResultDefinitions( SVResultDefinitionDeque& p_rDefinitions ) const
 {
-	HRESULT l_Status = S_OK;
-	bool bOK = false;
+	HRESULT hres = E_FAIL;
 	p_rDefinitions.clear();
 	SVResultListClass* pResultList = GetResultList();
-	if(pResultList)
+	if(nullptr != pResultList)
 	{
-		bOK = pResultList->m_EnvResults.SetResultDefinitions(p_rDefinitions);
-
-		if(bOK)
-		{
-			bOK = pResultList->m_ToolReferences.SetResultDefinitions(p_rDefinitions);
-
-			if(bOK)
-			{
-				bOK = pResultList->m_PPQInputReferences.SetResultDefinitions(p_rDefinitions);
-			}
-		}
+		
+		hres = pResultList->GetResultDefinitions(p_rDefinitions);
+		
 	}
 
-	if( l_Status == S_OK ) { m_ResultDefinitionsTimestamp = SVClock::GetTimeStamp(); }
+	if( hres == S_OK )
+	{ 
+		m_ResultDefinitionsTimestamp = SVClock::GetTimeStamp(); 
+	}
 
-	return l_Status;
+	return hres;
 }
 
 HRESULT SVIPDoc::GetResultData( SVIPResultData& p_rResultData ) const
@@ -2381,11 +2310,12 @@ void SVIPDoc::SaveViewedVariables(SVObjectWriter& rWriter)
 {
 	SVResultListClass* pResultList = GetResultList();
 
+	
 	rWriter.StartElement(CTAG_VIEWEDVARIABLES);
 	if(pResultList)
 	{
-		pResultList->m_EnvResults.Save(rWriter);
-		pResultList->m_ToolReferences.Save(rWriter);
+		pResultList->Save(rWriter);
+		//pResultList->m_PPQInputReferences.Save(rWriter);
 	}
 	rWriter.EndElement();
 }
@@ -2393,27 +2323,12 @@ void SVIPDoc::SaveViewedVariables(SVObjectWriter& rWriter)
 bool SVIPDoc::LoadViewedVariables(SVTreeType& rTree, SVTreeType::SVBranchHandle htiParent)
 {
 	SVResultListClass* pResultList = GetResultList();
-	bool bOK = (nullptr != pResultList);
-
-	bool toolVariablesLoaded = false;
-
-	SVTreeType::SVBranchHandle htiChild = nullptr;
-	if (bOK && SVNavigateTreeClass::GetItemBranch(rTree, CTAG_VIEWEDVARIABLES, htiParent, htiChild))
+	if(nullptr == pResultList)
 	{
-		pResultList->m_EnvResults.Load( rTree, htiChild );
-
-		if(!pResultList->m_ToolReferences.Load( rTree, htiChild ))
-		{
-			toolVariablesLoaded = true;
-		}
+		return false;
 	}
+	return  pResultList->LoadViewedVariables(rTree, htiParent);
 
-	if(bOK && !toolVariablesLoaded)
-	{
-		pResultList->m_ToolReferences.BuildReferenceVector(GetInspectionProcess());
-	}
-
-	return bOK;
 }
 
 void SVIPDoc::SaveViews(SVObjectWriter& rWriter)
@@ -3005,29 +2920,12 @@ HRESULT SVIPDoc::GetResults( SVResultsWrapperClass* p_pResults )
 	SVResultListClass* pResultList = GetResultList();
 	if( nullptr != pResultList)
 	{
-		item += pResultList->m_ToolReferences.AddResults( p_pResults, GetTitle() );
-		///TODO_MEC_SVO_475 add environment ///MEC_SVO_475 ?????????
-		//pResultList->m_EnvResults.addResults( pResultList, p_pResults );
-		//pResultList->m_PPQInputReferences.addResults( pResultList, p_pResults );
+		item += pResultList->AddResults( p_pResults, GetTitle() );
+		
 		Status = S_OK;
 	}
 
-	// Get the ToolSet
-	//SVToolSetClass* pToolSet = GetToolSet();
-	//if( pToolSet )
-	//{
-	//	int itemNo = 0;
-	//	// Get the OutputList
-	//	SVResultListClass* pResultList = pToolSet->GetResultList();
-	//	if( pResultList )
-	//	{
-	//		itemNo = GetResultView()->addResults( pResultList, p_pResults );
-	//	}
-	//	else
-	//	{
-	//		l_Status = E_FAIL;
-	//	}
-	//}
+	
 
 	return Status;
 }

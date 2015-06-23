@@ -232,6 +232,32 @@ public:
 
 	long GetResultDataIndex() const;
 
+	//************************************
+	//! Get names of all active ppqVarable for the used inspection.
+	/// fuction was moved from class FormulaController 
+	//! \returns vector of names
+	//************************************
+	SVStringArray getPPQVariableNames() const;
+	
+	//************************************
+	//! Check if the pValueObject is a active ppqVarable for the used inspection.
+	//! \param pValueObject [in]
+	//! \returns 
+	//************************************
+	bool IsEnabledPPQVariable(SVValueObjectClass* pValueObject);
+	
+	
+	//************************************
+	//! Check if the pValueObject is an inactive ppqVarable for the used inspection.
+	//! \param pValueObject [in]
+	//! \returns 
+	//************************************
+	bool IsDisabledPPQVariable(SVValueObjectClass* pValueObject);
+
+	
+	
+	virtual DWORD GetObjectColor() const;
+
 	SVIOEntryStructVector m_PPQInputs;
 
 	bool m_bForceOffsetUpdate; // Force Global Extent data to update
@@ -556,6 +582,8 @@ inline HRESULT SVInspectionProcess::SetObjectArrayValues(SVValueObjectReference 
 		return TYPE_E_TYPEMISMATCH;
 	}
 }
+
+
 
 //******************************************************************************
 //* LOG HISTORY:

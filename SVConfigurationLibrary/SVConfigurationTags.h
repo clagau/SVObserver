@@ -191,6 +191,7 @@ LPCTSTR const CTAG_THREAD_MGR_ENABLE              = _T("Thread Mgr Enable");
 LPCTSTR const CTAG_VIEWEDVARIABLES                = _T("ViewedVariables");
 LPCTSTR const CTAG_VIEWEDENVARIABLES              = _T("ViewedEnvVariables");
 LPCTSTR const CTAG_VIEWEDTOOLVARIABLES            = _T("ViewedToolVariables");
+LPCTSTR const CTAG_VIEWEDRESULTS				= _T("ViewedResults");
 LPCTSTR const CTAG_VIEWEDPPQINPUTS                = _T("ViewedPPQInputs");
 LPCTSTR const CTAG_COMPLETENAME                   = _T("CompleteName"); 
 

@@ -170,29 +170,21 @@ const SVIPProductStruct& SVCommandInspectionCollectImageData::GetProduct() const
 
 HRESULT SVCommandInspectionCollectImageData::UpdateResults( SVInspectionProcess* pInspection, SVIPResultData& p_rResultData )
 {
-	HRESULT hRet = S_OK;
+	HRESULT hRet = E_FAIL;
 	SVResultListClass* pResultList(nullptr);
 
 	if( nullptr != pInspection )
 	{
 		pResultList = pInspection->GetResultList();
-
-		bool bOK = pResultList->m_PPQInputReferences.SetResultData(p_rResultData, false); // BRW - TODO:  Change SetResultData to return HRESULT, not bool.
-
-		if ( bOK )
-		{
-			bOK = pResultList->m_ToolReferences.SetResultData(p_rResultData, true); // BRW - TODO:  Change SetResultData to return HRESULT, not bool.
-
-			if (bOK)
-			{
-				bOK = pResultList->m_EnvResults.SetResultData(p_rResultData, false); // BRW - TODO:  Change SetResultData to return HRESULT, not bool.
-			} // BRW - TODO:  Add an else here and return a unique error code.  Without and else here, this method will return S_OK when SetResultData returns false.
-		} // BRW - TODO:  Add an else here and return a unique error code.  Without and else here, this method will return S_OK when SetResultData returns false.
 	}
-	else
+
+
+	if (nullptr != pResultList)
 	{
-		hRet = E_FAIL; // BRW - TODO:  Should return a unique error code instead of E_FAIL.
-	}
+		
+		hRet = pResultList->GetResultData(p_rResultData);
+	} 
+
 
 	return hRet;
 }

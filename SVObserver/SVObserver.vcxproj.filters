@@ -848,9 +848,6 @@
     <ClCompile Include="SVPPQShiftRegister.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVPQVariableSelectionDialog.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVPQVariableTreeCtrl.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -1505,19 +1502,10 @@
     <ClCompile Include="RangeXDialogClass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ResultViewEnvReferences.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="ResultViewItemDef.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ResultViewPPQInputReferences.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="ResultViewReferences.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ResultViewToolReferences.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Custom2Filter_ImportExport.cpp">
@@ -3177,19 +3165,10 @@
     <ClInclude Include="ToolClipboard.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ResultViewEnvReferences.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ResultViewItemDef.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ResultViewPPQInputReferences.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ResultViewReferences.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ResultViewToolReferences.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVCommandInspectionExtentUpdater.h">
