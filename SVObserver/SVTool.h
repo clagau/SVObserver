@@ -235,8 +235,6 @@ public:
 
 	virtual HRESULT ResetObject();
 
-	BYTE GetType();
-
 	virtual SVToolPropertyEntryStruct* GetSpecialPropertyList( int& RCount );
 	virtual HRESULT GetPropertyInfo( SVExtentPropertyEnum p_eProperty, SVExtentPropertyInfoStruct& p_rInfo ) const;
 	HRESULT SetExtentPropertyInfo( SVExtentPropertyEnum p_eProperty, const SVExtentPropertyInfoStruct& p_rInfo );
@@ -304,9 +302,6 @@ protected:
 	SVClassInfoStructListClass		availableAnalyzerList;
 	SVClassInfoStructListClass		availableFilterList;
 
-	// Obsolete, will disappear, use ObjectType instead!!!
-	BYTE							toolType;		
-	
 	SVToolPropertyEntryStruct*		pPropertyArray;
 	int								propertyCount;
 

@@ -28,8 +28,6 @@ SVColorToolClass::SVColorToolClass( BOOL BCreateDefaultTaskList, SVObjectClass* 
 
 void SVColorToolClass::init()
 {
-	toolType		= 'C';
-
  	// Set up your type...
 	outObjectInfo.ObjectTypeInfo.ObjectType = SVToolObjectType;
 	outObjectInfo.ObjectTypeInfo.SubType    = SVColorToolObjectType;

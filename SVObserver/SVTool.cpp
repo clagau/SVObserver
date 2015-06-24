@@ -127,8 +127,6 @@ void SVToolClass::init()
 	m_svAuxilliaryDrawType.SetDefaultValue( "", TRUE );
 
 	pCurrentToolSet					= NULL;
-
-	toolType						= 0;
 	pPropertyArray					= NULL;
 	propertyCount					= 0;
 
@@ -309,11 +307,6 @@ HRESULT SVToolClass::GetDrawInfo( SVExtentMultiLineStruct& p_rMultiLine )
 	p_rMultiLine.m_Warned = ( bWarned != FALSE );
 
 	return l_Status;
-}
-
-BYTE SVToolClass::GetType()
-{
-	return toolType;
 }
 
 SVToolPropertyEntryStruct* SVToolClass::GetSpecialPropertyList( int& RCount )

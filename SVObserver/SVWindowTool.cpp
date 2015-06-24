@@ -34,8 +34,6 @@ SVWindowToolClass::SVWindowToolClass( BOOL BCreateDefaultTaskList, SVObjectClass
 
 void SVWindowToolClass::init()
 {
-	toolType		= 'W';
-
 	// Register Embedded Object
 	RegisterEmbeddedObject( &m_svSourceImageNames, SVSourceImageNamesGuid, IDS_OBJECTNAME_SOURCE_IMAGE_NAMES, false, SVResetItemTool );
 
