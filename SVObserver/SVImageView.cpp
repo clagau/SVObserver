@@ -1926,6 +1926,9 @@ BOOL SVImageViewClass::GetObjectAtPoint( POINT p_point )
 		{
 			m_svLocation = l_svExtents.GetLocationPropertyAt( p_point );
 		}
+	
+		//check if move or sizing is allowed  
+		m_svLocation = l_psvTool->FilterAllowedLocation(m_svLocation);
 	}
 
 	l_bOk = m_psvObject != NULL;

@@ -266,6 +266,15 @@ public:
 	virtual HRESULT UpdateImageWithExtent( unsigned long p_Index );
 	virtual HRESULT GetParentExtent( SVImageExtentClass& p_rParent ) const;
 
+	
+	//************************************
+	//!  Return SVExtentLocationPropertyUnknown if the input location 
+	//! is not allowed for the tool 
+	//! \param Location [in]
+	//! \returns Location or SVExtentLocationPropertyUnknown
+	//************************************
+	virtual SVExtentLocationPropertyEnum FilterAllowedLocation(const SVExtentLocationPropertyEnum Location) const;
+	
 	//
 	// Flag to indicate this tool is selected for SVIM operator move.
 	// 26 Jan 2000 - frb.
@@ -355,6 +364,7 @@ protected:
 private:
 	void init();
 	
+
 };
 
 #endif
