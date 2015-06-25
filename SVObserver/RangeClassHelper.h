@@ -29,11 +29,17 @@ class RangeClassHelper : public SVTaskObjectInterfaceClass
 {
 #pragma region Constructor
 public:
-	RangeClassHelper(SVRangeClass* PRange);
+	RangeClassHelper(SVRangeClass* PRange = nullptr);
 	virtual ~RangeClassHelper();
 #pragma endregion Constructor
 
 #pragma region Public Methods
+	//************************************
+	/// Set the range object to this class.
+	/// \param PRange [in] Range Object.
+	//************************************
+	void setRangeObject(SVRangeClass* PRange);
+
 	//************************************
 	// Description:  implements interface of SVTaskObjectInterfaceClass Set internal value to m_pRange
 	// Returns:  HRESULT:  S_OK if successful
@@ -64,10 +70,9 @@ public:
 	// Description:  Set the data
 	// Parameter:  er <in>:  which range variable to set
 	// Parameter:  lp <in>:  string what to set
-	// Parameter:  errorMsg <out>:  text description of any error that occurs.
-	// Returns:  HRESULT  S_OK if successfully
+	// Returns:  void, but throw an Exception from type ExceptionMgr1 if set failed
 	//************************************
-	 HRESULT SetInternalData(ERange er, LPCTSTR lp, CString& errorMsg);
+	 void SetInternalData(ERange er, LPCTSTR lp);
 
 	//************************************
 	// Description:  set m_pRange as TaskObject
@@ -97,8 +102,39 @@ public:
 	bool RenameIndirectValues(LPCTSTR oldPefix, LPCTSTR newPrefix);
 
 	//************************************
+	/// \returns SVString the Fail High value as string. 
+	/// If it is a indirect value it return the name of the linked value.
+	//************************************
+	SVString GetFailHighString();
+		
+	//************************************
+	/// \returns SVString the Warn High value as string. 
+	/// If it is a indirect value it return the name of the linked value.
+	//************************************
+	SVString GetWarnHighString();
+
+	//************************************
+	/// \returns SVString the Fail Low value as string. 
+	/// If it is a indirect value it return the name of the linked value.
+	//************************************
+	SVString GetFailLowString();
+
+	//************************************
+	/// \returns SVString the Warn Low value as string. 
+	/// If it is a indirect value it return the name of the linked value.
+	//************************************
+	SVString GetWarnLowString();
+
+	//************************************
+	/// Fill the Object selector with filter and object, 
+	/// so that the caller can open the selector with showDialog.
+	/// \returns bool true if fill was succeeded.
+	//************************************
+	bool FillObjectSelector();
+
+	//************************************
 	// Description:  Translate enum to string
-	// Returns:  Cstring:  name of the range variable
+	// Returns:  CString:  name of the range variable
 	//************************************
 	static CString ERange2String(ERange range);
 
@@ -121,6 +157,16 @@ public:
 	static bool IsAllowedToSet(const SVObjectClass& ref, const CString& value, bool bOnline, HRESULT& hres);
 #pragma endregion Public Methods
 
+#pragma region Private Methods
+	//************************************
+	/// If indirect value is not empty it will return this, else it will return the direct value
+	/// \param indirectString [in] The indirect string
+	/// \param directValue [in,out] The direct value
+	/// \returns SVString the value as string.
+	//************************************
+	SVString GetValueString(const CString& indirectString, double directValue);
+#pragma endregion Private Methods
+
 #pragma region Member variables
 private:
 	SVRangeClass* m_pRange;
@@ -133,8 +179,6 @@ private:
 	CString m_WarnLowIndirect;
 	CString m_FailLowIndirect;
 #pragma endregion Member variables
-
-	friend class RangeXDialogClass;
 };
 
 //******************************************************************************

@@ -21,6 +21,15 @@
 #include "SVInspectionProcess.h"
 #include "ObjectInterfaces\ErrorNumbers.h"
 #include "SVUtilityLibrary/SVString.h"
+#include "SVTaskObjectList.h"
+#include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
+#include "SVObjectLibrary/GlobalConst.h"
+#include "SVToolSet.h"
+#include "SVTool.h"
+#include "SVPPQObject.h"
+#include "ObjectNameHelper.h"
+#include "SVStatusLibrary/ExceptionManager.h"
+#include "TextDefinesSvO.h"
 #pragma endregion Includes
 
 #pragma region Constructor
@@ -39,6 +48,11 @@ RangeClassHelper::~RangeClassHelper()
 #pragma endregion Constructor
 
 #pragma region Public Methods
+void RangeClassHelper::setRangeObject(SVRangeClass* PRange)
+{
+	m_pRange = PRange;
+}
+
 void RangeClassHelper::SetRangeTaskObject()
 {
 	SetTaskObject(m_pRange);
@@ -107,9 +121,8 @@ HRESULT RangeClassHelper::GetAllInspectionData()
 	return hr;
 }
 
-HRESULT RangeClassHelper::SetInternalData(ERange er, LPCTSTR lp, CString &Errorsmsg)
+void RangeClassHelper::SetInternalData(ERange er, LPCTSTR lp)
 {
-	HRESULT hr = S_OK;
 	CString csText = lp;
 	double val = 0.0;
 	const double s_RangeMax = 17000000;
@@ -118,10 +131,11 @@ HRESULT RangeClassHelper::SetInternalData(ERange er, LPCTSTR lp, CString &Errors
 
 	if( textLength == 0)
 	{
-		//IDS_IS_MISSING            "ERROR:\n%1 is missing."
-		AfxFormatString1(Errorsmsg, IDS_IS_MISSING, ERange2String(er).GetString());
-
-		return -SvOi::Err_16022;
+		CString strText;
+		strText.Format(SvO::RangeValue_EmptyString, ERange2String(er).GetString());
+		SvStl::ExceptionMgr1 Exception( SvStl::ExpTypeNone );
+		Exception.setMessage( SVMSG_SVO_68_RANGE_VALUE_SET_FAILED, strText, StdExceptionParams, SvOi::Err_16022, MB_OK | MB_ICONERROR );
+		Exception.Throw();
 	}
 
 	SVString text = lp;
@@ -131,13 +145,11 @@ HRESULT RangeClassHelper::SetInternalData(ERange er, LPCTSTR lp, CString &Errors
 		csText = _T("");
 		if(val > s_RangeMax || val < s_RangeMin )
 		{
-			//IDS_MUST_BETWEEN           "ERROR:\n%1 must between "
-			AfxFormatString1(Errorsmsg, IDS_MUST_BETWEEN, ERange2String(er).GetString());
-			CString csValues;
-			csValues.Format(_T(" %i and %i"), static_cast< int >( s_RangeMin ), static_cast< int >( s_RangeMax ));
-			Errorsmsg += csValues;
-
-			return -SvOi::Err_16023;
+			CString strText;
+			strText.Format(SvO::RangeValue_WrongRange, ERange2String(er).GetString(), static_cast< int >( s_RangeMin ), static_cast< int >( s_RangeMax ) );
+			SvStl::ExceptionMgr1 Exception( SvStl::ExpTypeNone );
+			Exception.setMessage( SVMSG_SVO_68_RANGE_VALUE_SET_FAILED, strText, StdExceptionParams, SvOi::Err_16023, MB_OK | MB_ICONERROR );
+			Exception.Throw();
 		}
 	}
 
@@ -160,11 +172,11 @@ HRESULT RangeClassHelper::SetInternalData(ERange er, LPCTSTR lp, CString &Errors
 		m_WarnLowIndirect = csText;
 		break;
 	default:
-		hr = -SvOi::Err_16024;
+		SvStl::ExceptionMgr1 Exception( SvStl::ExpTypeNone );
+		Exception.setMessage( SVMSG_SVO_68_RANGE_VALUE_SET_FAILED, SvO::ErrorUnknownEnum, StdExceptionParams, SvOi::Err_16024, MB_OK | MB_ICONERROR );
+		Exception.Throw();
 		break;
 	}
-
-	return hr;
 }
 
 // @TODO:  Better to use SVString here instead of CString.
@@ -558,7 +570,97 @@ bool RangeClassHelper::RenameIndirectValues(LPCTSTR oldPefix, LPCTSTR newPrefix)
 
 	return result;
 }
+
+SVString RangeClassHelper::GetFailHighString()
+{
+	return GetValueString(m_FailHighIndirect, m_FailHigh);
+}
+
+SVString RangeClassHelper::GetWarnHighString()
+{
+	return GetValueString(m_WarnHighIndirect, m_WarnHigh);
+}
+
+SVString RangeClassHelper::GetFailLowString()
+{
+	return GetValueString(m_FailLowIndirect, m_FailLow);
+}
+
+SVString RangeClassHelper::GetWarnLowString()
+{
+	return GetValueString(m_WarnLowIndirect, m_WarnLow);
+}
+
+bool RangeClassHelper::FillObjectSelector()
+{
+	if (nullptr == m_pRange)
+	{
+		return false;
+	}
+
+	SVInspectionProcess* pInspectionProcess = m_pRange->GetInspection();
+	if(nullptr == pInspectionProcess)
+	{
+		return false; // @TODO:  Better to return a unique error code.
+	}
+
+	SVTaskObjectListClass* pTaskObjectList = dynamic_cast<SVTaskObjectListClass*>(pInspectionProcess->GetToolSet());
+	if(nullptr == pTaskObjectList)
+	{
+		return false; // @TODO:  Better to return a unique error code.
+	}
+
+	SVToolClass* pTool = m_pRange->GetTool();
+	CString csToolCompleteName;
+	if(pTool)
+	{
+		csToolCompleteName = pTool->GetCompleteObjectName();
+		csToolCompleteName += _T(".");
+	}
+
+	SVStringArray nameArray;
+	typedef std::insert_iterator<SVStringArray> Inserter;
+	SVString InspectionName;
+	SVString PPQName = SvOl::FqnPPQVariables; 
+
+	InspectionName = pInspectionProcess->GetName();
+	SVPPQObject* pPPQ = pInspectionProcess->GetPPQ();
+	if( nullptr != pPPQ )
+	{
+		PPQName = pPPQ->GetName();
+	}
+
+	SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, InspectionName, SVString( _T("") ) );
+	SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterOutput, InspectionName, SVString( _T("") ) );
+
+	SVString InspectionNameDot = InspectionName + SVString( _T("."));
+	SVString PPQNameDot = PPQName + SVString( _T("."));
+
+	SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterOutput, PPQName, SVString( _T("")  ));
+	SvOsl::ObjectTreeGenerator::Instance().setSelectorType( SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeSingleObject );
+
+	// Insert Tool Set Objects
+	ObjectNameHelper::BuildObjectNameList(pTaskObjectList, Inserter(nameArray, nameArray.begin()), csToolCompleteName);
+	SvOsl::ObjectTreeGenerator::Instance().insertTreeObjects( nameArray );
+	return true;
+}
 #pragma endregion Public Methods
+
+#pragma region Private Methods
+SVString RangeClassHelper::GetValueString(const CString& indirectString, double directValue)
+{
+	if(indirectString.GetLength() > 0)
+	{
+		return indirectString;
+	}
+	else
+	{
+		SVString csText;
+		csText.Format(_T("%lf"), directValue );
+		return csText;
+	}
+}
+#pragma endregion Private Methods
 
 //******************************************************************************
 //* LOG HISTORY:

@@ -62,6 +62,9 @@ namespace Seidenader
 		const TCHAR* const RingBuffer_ImageIndex2Connector = _T( "RingBufferImageIndex2Connector" );
 		const TCHAR* const InvalidFileName = _T("Invalid Keywords in Archive Filename/Path.");
 		const TCHAR* const InvalidImagePath = _T("Invalid Keywords in Archive Image Path.");
+		const TCHAR* const ErrorUnknownEnum = _T( "Unknown enum" );
+		const TCHAR* const RangeValue_EmptyString = _T( "Empty String in %s." );
+		const TCHAR* const RangeValue_WrongRange = _T( "%s must between %d and %d." );
 	}
 }
 namespace SvO = Seidenader::SVObserver;

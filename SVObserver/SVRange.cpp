@@ -589,15 +589,6 @@ const SVDoubleValueObjectClass& SVRangeClass::getUpdatedFailHigh( int bucket )
 
 	return FailHigh;
 }
-
-void SVRangeClass::HideIndirectValueObjects()
-{
-	for (int i = 0; i < ER_COUNT; i++)
-	{
-		m_ValueIndirect[i].ObjectAttributesAllowedRef() = SV_EMBEDABLE | SV_HIDDEN; // remove all other attributes except these 2
-	}
-}
-
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************

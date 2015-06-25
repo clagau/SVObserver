@@ -1357,8 +1357,6 @@
 #define IDS_WARN_LOW                    14572
 #define IDS_IS_LESS_THAN                14573
 #define IDS_ISANINVALID_REFERENCE       14574
-#define IDS_MUST_BETWEEN                14575
-#define IDS_IS_MISSING                  14576
 #define IDC_LEARN_BUTTON                15001
 #define IDC_RANGE                       15003
 #define IDC_PQ_TAB                      15010

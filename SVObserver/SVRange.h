@@ -126,12 +126,6 @@ public:
 	//************************************
 	const SVDoubleValueObjectClass& getUpdatedFailHigh( int bucket );
 
-	//************************************
-	/// Removes attributes from m_ValueIndirect[] so they are hidden 
-	/// (NOT viewable, publishable, selectable, remotely setable, printable, archivable)
-	//************************************
-	void HideIndirectValueObjects();
-
 protected:
 	virtual void init();
 	BOOL getInputValue( double& RVal );

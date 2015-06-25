@@ -8,120 +8,102 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   24 Apr 2013 11:16:30  $
 //******************************************************************************
+#pragma once
 
-//******************************************************************************
-//* INCLUDE CONTROL:
-//******************************************************************************
-
-#ifndef SVTADLGPASSFAILPAGE_H
-#define SVTADLGPASSFAILPAGE_H
-
-//******************************************************************************
-//* INCLUDE(S):
-//******************************************************************************
-
-////////////////////////////////////////////////////////////////////////////////
-// Other Necessary Include File(s) - Module Link(s)
-////////////////////////////////////////////////////////////////////////////////
+#pragma region Includes
 #include "SVMFCControls\SVEditNumbers.h"
-#include "SVTaskObjectInterfaceClass.h"
+#include "RangeClassHelper.h"
+#pragma endregion Includes
 
-class SVRangeClass;
+#pragma region Declarations
 class SVToolClass;
-////////////////////////////////////////////////////////////////////////////////
-// Includes which are necessary to declare or define types, constants and macros
-////////////////////////////////////////////////////////////////////////////////
+#pragma endregion Declarations
 
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : Dialog Class SVToolAdjustmentDialogPassFailPageClass 
-// -----------------------------------------------------------------------------
-// .Description : e.g. This dialog class ...
-//              :
-//              :
-// -----------------------------------------------------------------------------
-// .Export
-//	 Public Method				Description
-//  :
-//  :
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :dd.mm.yyyy				First Implementation
-//	:
-////////////////////////////////////////////////////////////////////////////////
-class SVToolAdjustmentDialogPassFailPageClass : public CPropertyPage, public SVTaskObjectInterfaceClass
+class SVToolAdjustmentDialogPassFailPageClass : public CPropertyPage
 {
-
-//******************************************************************************
-// Class Wizard Generated Message Map Entries:
-//******************************************************************************
-	// Generated message map functions
-protected:
-	//{{AFX_MSG(SVToolAdjustmentDialogPassFailPageClass)
-	virtual BOOL OnInitDialog();
-	//}}AFX_MSG
-
-	DECLARE_MESSAGE_MAP()
-
-//******************************************************************************
-// Constructor(s):
-//******************************************************************************
+#pragma region Constructor
 public:
-// Standard constructor
+	// Standard constructor
 	SVToolAdjustmentDialogPassFailPageClass( SVToolClass* PTool );
 	SVToolAdjustmentDialogPassFailPageClass();
-
-	virtual HRESULT SetInspectionData();
-
-	void OnOK();
-	void UpdateRangeValues();
-
-//******************************************************************************
-// Destructor(s):
-//******************************************************************************
-public:
-// Standard destructor
+	// Standard destructor
 	~SVToolAdjustmentDialogPassFailPageClass();
+#pragma endregion Constructor
 
-	virtual BOOL OnSetActive();
-	virtual BOOL OnKillActive();
+#pragma region Public Methods
+#pragma endregion Public Methods
 
-//******************************************************************************
-// Class Wizard Generated Virtual Function(s):
-//******************************************************************************
+#pragma region Protected Methods
+protected:
+	DECLARE_MESSAGE_MAP()
+
 	//{{AFX_VIRTUAL(SVToolAdjustmentDialogPassFailPageClass)
-	protected:
+protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV-Unterstützung
+	virtual BOOL OnInitDialog() override;
+	virtual BOOL OnSetActive() override;
+	virtual BOOL OnKillActive() override;
+	virtual void OnOK() override;
 	//}}AFX_VIRTUAL
 
-//******************************************************************************
-// Class Wizard Generated Dialog Data:
-//******************************************************************************
+	//{{AFX_MSG(SVToolAdjustmentDialogPassFailPageClass)
+	afx_msg void OnBnClickedFailHighIndirect();
+	afx_msg void OnBnClickedWarnlHighIndirect();
+	afx_msg void OnBnClickedWarnLowIndirect();
+	afx_msg void OnBnClickedFailedLowIndirect();
+	//{{AFX_MSG
+#pragma region Protected Methods
+
+#pragma region Privated Methods
+	void UpdateRangeValues();
+
+	//************************************
+	// Description:  Set the values from RangeHelper to the Dialog
+	//************************************
+	void SetDlgData();
+
+	//************************************
+	// Description:  Get the values from the Dialog and set them to the RangeHelper
+	// Returns:  bool:  
+	//************************************
+	bool GetDlgData();
+
+	//************************************
+	/// Open an object selector and set the chosen value to the control.
+	/// \param control [in] The control of the value
+	/// \param fieldEnum [in] Enum of the value
+	//************************************
+	void setValuePerObjectSelector( CEdit& control, ERange fieldEnum);
+
+	//************************************
+	/// Show an object selector and return the name of the selection.
+	/// \param name [in,out] Name of the object.
+	/// \param fieldEnum [in] Enum of the value
+	/// \returns bool true if a new object would selected.
+	//************************************
+	bool ShowObjectSelector(CString& name, ERange fieldEnum );
+#pragma region Privated Methods
+
+#pragma region Member Variables
 protected:
 	//{{AFX_DATA(SVToolAdjustmentDialogPassFailPageClass)
 	enum { IDD = IDD_TA_PASS_FAIL_DIALOG };
-	SvMc::CEditNumbersFloat	m_warnLowEditCtrl;
-	SvMc::CEditNumbersFloat	m_warnHighEditCtrl;
-	SvMc::CEditNumbersFloat	m_failLowEditCtrl;
-	SvMc::CEditNumbersFloat	m_failHighEditCtrl;
-	double	failHigh;
-	double	failLow;
-	double	warnHigh;
-	double	warnLow;
+	CEdit m_EditFailHigh;
+	CEdit m_EditWarnHigh;
+	CEdit m_EditWarnLow;
+	CEdit m_EditFailLow;
+	CButton m_ButtonFailHigh;
+	CButton m_ButtonWarnHigh;
+	CButton m_ButtonWarnLow;
+	CButton m_ButtonFailLow;
+	CBitmap m_downArrowBitmap;
 	//}}AFX_DATA
 
-//******************************************************************************
-// Data Element(s):
-//******************************************************************************
-protected:
-	SVRangeClass* pRange;
+private:
+	RangeClassHelper m_RangeHelper;
+#pragma endregion Member Variables
 };
 
-//{{AFX_INSERT_LOCATION}}
-// DevStudio inserts additional declarations immediate in front of the preceding line
-////////////////////////////////////////////////////////////////////////////////
-
-#endif	//	SVTADLGPASSFAILPAGE_H
 
 //******************************************************************************
 //* LOG HISTORY:

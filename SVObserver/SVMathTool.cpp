@@ -15,7 +15,6 @@
 #include "SVMathEquation.h"
 #include "SVResultDouble.h"
 #include "SVInspectionProcess.h"
-#include "SVRange.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -162,40 +161,6 @@ BOOL SVMathToolClass::OnValidate()
 	}
 	SetInvalid();
 	return FALSE;
-}
-
-void SVMathToolClass::HideRangeIndirectValueObjects()
-{
-	// override the attributes for the range indirect value objects
-	SVResultClass* pResult = dynamic_cast<SVResultClass*>(GetAt(0));
-	if (pResult)
-	{
-		SVRangeClass* pRange = pResult->GetResultRange();
-		if (pRange)
-		{
-			pRange->HideIndirectValueObjects();
-		}
-	}
-}
-
-DWORD_PTR SVMathToolClass::processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext )
-{
-	DWORD_PTR DwResult = NULL;
-
-	// Try to process message by yourself...
-	DWORD dwPureMessageID = DwMessageID & SVM_PURE_MESSAGE;
-	switch( dwPureMessageID )
-	{
-		case SVMSGID_CREATE_ALL_OBJECTS:
-		{
-			DwResult = SVToolClass::processMessage( DwMessageID, DwMessageValue, DwMessageContext );
-			HideRangeIndirectValueObjects();
-			return DwResult;
-		}
-	}
-
-	DWORD_PTR l_Status = ( SVToolClass::processMessage( DwMessageID, DwMessageValue, DwMessageContext ) | DwResult );
-	return l_Status;
 }
 
 //******************************************************************************
