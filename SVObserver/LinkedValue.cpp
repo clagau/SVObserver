@@ -51,16 +51,17 @@ void LinkedValue::init(SVInspectionProcess *pInspection, bool isInvalidStringSet
 
 void LinkedValue::RegisterObjects(SVTaskObjectClass &taskObject, const SVString& inputConnectionName, const GUID& rguidEmbeddedID, int iStringResourceID, bool bResetAlways, SVResetItemEnum eRequiredReset)
 {
-	m_inputConnectionInfo.SetObject( taskObject.GetObjectInfo() );
-	taskObject.RegisterInputObject( &m_inputConnectionInfo, inputConnectionName );
 	taskObject.RegisterEmbeddedObject( &m_variantObject, rguidEmbeddedID, iStringResourceID, bResetAlways, eRequiredReset );
+	m_inputConnectionInfo.SetObject( taskObject.GetObjectInfo() );
+	m_inputConnectionInfo.SetInputObject(nullptr);	
 }
 
 void LinkedValue::setDefaultValue(const VARIANT value, bool isResetAll)
 {
 	if (isResetAll)
 	{
-		m_inputConnectionInfo.SetInputObject(nullptr);
+		//try to disconnect the last connected object, but no check if it work, because if it is not anymore connected it is also fine.
+		DisconnectInput();
 	}
 	m_variantObject.SetDefaultValue(value, isResetAll);
 }
@@ -126,9 +127,9 @@ HRESULT LinkedValue::SetInputValue(const SVString& valueString)
 
 	if ( nullptr != pOldObject )
 	{	// disconnect existing connection
-		bool bSuccess = (::SVSendMessage( pOldObject, SVM_DISCONNECT_OBJECT_INPUT, reinterpret_cast<DWORD_PTR>(&m_inputConnectionInfo), NULL ) == SVMR_SUCCESS);
-		ASSERT( bSuccess );
-		m_inputConnectionInfo.SetInputObject( NULL );
+		DWORD_PTR messageReturn = DisconnectInput();
+		ASSERT( SVMR_SUCCESS == messageReturn );
+		//return value will not changed if disconnect failed, because if old objected is not connected anymore, the new value will tried to be set however.
 	}
 
 	if ( nullptr != pObject )
@@ -136,9 +137,8 @@ HRESULT LinkedValue::SetInputValue(const SVString& valueString)
 		retVal = m_variantObject.SetValue(iBucket, valueString.c_str());
 		if (S_OK == retVal)
 		{
-			m_inputConnectionInfo.SetInputObject( pObject );
-			bool bSuccess = (::SVSendMessage( m_inputConnectionInfo.GetInputObjectInfo().PObject, SVM_CONNECT_OBJECT_INPUT, reinterpret_cast<DWORD_PTR>(&m_inputConnectionInfo), NULL ) == SVMR_SUCCESS);
-			ASSERT( bSuccess );
+			DWORD_PTR messageReturn = ConnectInput(pObject);
+			ASSERT( SVMR_SUCCESS == messageReturn );
 		}
 	}
 	else
@@ -175,9 +175,22 @@ void LinkedValue::RenameToolSetSymbol(const SVObjectClass* pObject, const SVStri
 	}
 }
 
+void LinkedValue::DisconnectObject(SVObjectClass* pObject)
+{
+	if ( m_inputConnectionInfo.GetInputObjectInfo().PObject == pObject )
+	{
+		DisconnectInput();
+	}
+}
+
+void LinkedValue::UpdateTaskInfo(const SVObjectInfoStruct& rTaskInfoStruct)
+{
+	m_inputConnectionInfo.SetObject(rTaskInfoStruct);
+}
+
 HRESULT LinkedValue::ResetObject()
 {
-	HRESULT retVal = ConnectInput();
+	HRESULT retVal = UpdateConnection();
 	m_isValid = (retVal == S_OK);
 	return retVal;
 }
@@ -198,7 +211,7 @@ void LinkedValue::SetAttributes(unsigned int bits, bool isOn)
 #pragma endregion Protected Methods
 
 #pragma region Private Methods
-HRESULT LinkedValue::ConnectInput()
+HRESULT LinkedValue::UpdateConnection()
 {
 	if (nullptr == m_pInspection)
 	{
@@ -234,12 +247,13 @@ HRESULT LinkedValue::ConnectInput()
 	//
 	if ( nullptr != pObject )	// input is another VO
 	{
-		m_inputConnectionInfo.SetInputObject( pObject );
-		if ( !m_inputConnectionInfo.IsConnected() )
+		//disconnect old object and connect new object if old and new different.
+		if ( m_inputConnectionInfo.GetInputObjectInfo().PObject != pObject )
 		{
-			DWORD_PTR bSuccess = ::SVSendMessage( m_inputConnectionInfo.GetInputObjectInfo().PObject, SVM_CONNECT_OBJECT_INPUT, reinterpret_cast<DWORD_PTR>(&m_inputConnectionInfo), NULL );
-			ASSERT( bSuccess );
-			if( !bSuccess )
+			DisconnectInput();
+			DWORD_PTR messageReturn = ConnectInput(pObject);
+			ASSERT( SVMR_SUCCESS == messageReturn );
+			if( SVMR_SUCCESS != messageReturn )
 			{
 				hr = SvOi::Err_10015_LinkedValueConnectInput_ConnectFailed;
 			}
@@ -247,6 +261,8 @@ HRESULT LinkedValue::ConnectInput()
 	}
 	else	// plain data
 	{
+		DisconnectInput();
+
 		_variant_t value;
 		m_variantObject.GetValue( value );
 		if ( m_variantObject.GetDefaultType() != value.vt)
@@ -263,12 +279,28 @@ HRESULT LinkedValue::ConnectInput()
 			}
 		}
 
-		if( ::SVSendMessage( &m_variantObject, SVM_RESET_ALL_OBJECTS, NULL, NULL ) != SVMR_SUCCESS	)
+		if( SVMR_SUCCESS != ::SVSendMessage( &m_variantObject, SVM_RESET_ALL_OBJECTS, NULL, NULL ) )
 		{
 			hr = SvOi::Err_10017_LinkedValueConnectInput_ResetFailed;
 		}
 	}
 
 	return hr;
+}
+
+DWORD_PTR LinkedValue::DisconnectInput()
+{
+	DWORD_PTR retVal = ::SVSendMessage(	m_inputConnectionInfo.GetInputObjectInfo().UniqueObjectID, 
+		SVM_DISCONNECT_OBJECT_INPUT, 
+		reinterpret_cast<DWORD_PTR>(&m_inputConnectionInfo), 
+		NULL );
+	m_inputConnectionInfo.SetInputObject( nullptr );
+	return retVal;
+}
+
+DWORD_PTR LinkedValue::ConnectInput(SVObjectClass* pObject)
+{
+	m_inputConnectionInfo.SetInputObject( pObject );
+	return ::SVSendMessage( pObject, SVM_CONNECT_OBJECT_INPUT, reinterpret_cast<DWORD_PTR>(&m_inputConnectionInfo), NULL );
 }
 #pragma endregion Private Methods

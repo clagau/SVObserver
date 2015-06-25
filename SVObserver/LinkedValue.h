@@ -95,6 +95,19 @@ public:
 	void RenameToolSetSymbol(const SVObjectClass* pObject, const SVString& originalName);
 
 	//************************************
+	/// Disconnect the object if it is connected to this value.
+	/// \param pObject [in] Pointer to the object to disconnect.
+	//************************************
+	void DisconnectObject(SVObjectClass* pObject);
+
+	//************************************
+	/// Update the object info for the connection.
+	/// Should be called if the task info struct has been changed (e.g. changed GUID)
+	/// \param rTaskInfoStruct [in] Reference to the task info struct.
+	//************************************
+	void UpdateTaskInfo(const SVObjectInfoStruct& rTaskInfoStruct);
+
+	//************************************
 	/// Reset the object and check the linked objects.
 	/// \returns HRESULT
 	//************************************
@@ -122,10 +135,23 @@ protected:
 #pragma region Private Methods
 private:
 	//************************************
-	/// Connect the input value to this object.
+	/// Update the input connection, dependent of the variant value.
 	/// \returns HRESULT
 	//************************************
-	HRESULT ConnectInput();
+	HRESULT UpdateConnection();
+
+	//************************************
+	/// Disconnected the input connection and set it to nullptr.
+	/// \returns DWORD_PTR
+	//************************************
+	DWORD_PTR DisconnectInput();
+
+	//************************************
+	/// Connect the input connection with a new object
+	/// \param pObject [in] New object
+	/// \returns DWORD_PTR
+	//************************************
+	DWORD_PTR ConnectInput(SVObjectClass* pObject);
 
 #pragma endregion Private Methods
 

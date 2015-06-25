@@ -40,6 +40,8 @@ public:
 	virtual HRESULT ResetObject() override;
 	virtual BOOL OnValidate() override;
 
+	virtual void ResetPrivateInputInterface() override;
+
 	SVImageClass* getInputImage();
 	SVImageClass* getOutputImage(int index); 
 

@@ -151,6 +151,17 @@ BOOL RingBufferTool::OnValidate()
 	return SVToolClass::OnValidate() && bValid ;
 }
 
+void RingBufferTool::ResetPrivateInputInterface()
+{
+	const SVObjectInfoStruct& objectInfo = GetObjectInfo();
+	for (int i=0; i < m_numberOfOutputImages; i++)
+	{
+		m_ImageIndexManagers[i].UpdateTaskInfo(objectInfo);
+	}	
+
+	SVToolClass::ResetPrivateInputInterface();
+}
+
 SVImageClass* RingBufferTool::getInputImage()
 {
 	if( m_InputImageObjectInfo.IsConnected() && 
@@ -454,6 +465,18 @@ DWORD_PTR RingBufferTool::processMessage( DWORD DwMessageID, DWORD_PTR DwMessage
 			for (int i=0; i < m_numberOfOutputImages; i++)
 			{
 				m_ImageIndexManagers[i].RenameToolSetSymbol(pObject, tstrOriginalName);
+			}
+			dwResult = SVMR_SUCCESS;
+			break;
+		}
+	case SVMSGID_DISCONNECT_OBJECT_INPUT:
+		{
+			SVInObjectInfoStruct* pInInfo = reinterpret_cast <SVInObjectInfoStruct*> (DwMessageValue);
+			SVObjectClass* pObject = pInInfo->GetInputObjectInfo().PObject;
+
+			for (int i=0; i < m_numberOfOutputImages; i++)
+			{
+				m_ImageIndexManagers[i].DisconnectObject(pObject);
 			}
 			dwResult = SVMR_SUCCESS;
 			break;
