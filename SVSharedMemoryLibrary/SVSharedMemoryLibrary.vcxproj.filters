@@ -4,9 +4,6 @@
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVShared.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVSharedConfiguration.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

@@ -43,6 +43,7 @@
 #include "stdafx.h"
 #include "GridCtrl.h"
 
+bool getRidOfLNK4221d = true; //avoids linker warning
 #ifndef GRIDCONTROL_NO_DRAGDROP
 #include "GridDropTarget.h"
 #pragma endregion Includes

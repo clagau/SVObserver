@@ -50,6 +50,7 @@
 #include "stdafx.h"
 #include "gridctrl.h"
 
+bool getRidOfLNK4221e = true; //avoids linker warning
 #ifndef GRIDCONTROL_NO_TITLETIPS
 
 #include "TitleTip.h"

@@ -249,9 +249,9 @@ SVTriggerObject* SVConfigurationObject::GetTrigger( long lIndex ) const
 {
 	SVTriggerObject* retValue = nullptr;
 
-	ASSERT( 0 <= lIndex && m_arTriggerArray.size() > lIndex );
+	ASSERT( 0 <= lIndex && static_cast<long>(m_arTriggerArray.size()) > lIndex );
 
-	if (0 <= lIndex && m_arTriggerArray.size() > lIndex)
+	if (0 <= lIndex && static_cast<long>(m_arTriggerArray.size()) > lIndex)
 	{
 		retValue = m_arTriggerArray.GetAt( lIndex );
 	}
@@ -512,9 +512,9 @@ BOOL SVConfigurationObject::GetChildObjectByName( LPCTSTR tszName, SVPPQObject**
 SVPPQObject* SVConfigurationObject::GetPPQ( long lIndex ) const
 {
 	SVPPQObject* retValue = nullptr;
-	ASSERT( 0 <= lIndex && m_arPPQArray.size() > lIndex );
+	ASSERT( 0 <= lIndex && static_cast<long>(m_arPPQArray.size()) > lIndex );
 
-	if (0 <= lIndex && m_arPPQArray.size() > lIndex)
+	if (0 <= lIndex && static_cast<long>(m_arPPQArray.size()) > lIndex)
 	{
 		retValue = m_arPPQArray.GetAt( lIndex );
 	}
@@ -609,9 +609,9 @@ SVVirtualCamera* SVConfigurationObject::GetCamera( long lIndex ) const
 {
 	SVVirtualCamera* retValue = nullptr;
 
-	ASSERT( 0 <= lIndex && m_arCameraArray.size() > lIndex );
+	ASSERT( 0 <= lIndex && static_cast<long>(m_arCameraArray.size()) > lIndex );
 
-	if (0 <= lIndex && m_arCameraArray.size() > lIndex)
+	if (0 <= lIndex && static_cast<long>(m_arCameraArray.size()) > lIndex)
 	{
 		retValue = m_arCameraArray.GetAt( lIndex );
 	}
@@ -705,9 +705,9 @@ BOOL SVConfigurationObject::GetChildObjectByName( LPCTSTR tszName, SVInspectionP
 SVInspectionProcess* SVConfigurationObject::GetInspection( long lIndex ) const
 {
 	SVInspectionProcess* retValue = nullptr;
-	ASSERT( 0 <= lIndex && m_arInspectionArray.size() > lIndex );
+	ASSERT( 0 <= lIndex && static_cast<long>(m_arInspectionArray.size()) > lIndex );
 
-	if (0 <= lIndex && m_arInspectionArray.size() > lIndex)
+	if (0 <= lIndex && static_cast<long>(m_arInspectionArray.size()) > lIndex)
 	{
 		retValue = m_arInspectionArray.GetAt( lIndex );
 	}

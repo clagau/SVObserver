@@ -117,7 +117,7 @@ INT_PTR ExceptionManager<EM_Data, EM_Display, EM_Log>::setMessage( long ErrorCod
 template <typename EM_Data, typename EM_Display, typename EM_Log>
 void ExceptionManager<EM_Data, EM_Display, EM_Log>::Log()
 {
-	if( ExpTypeEnum::LogOnly == m_Type || ExpTypeEnum::LogAndDisplay == m_Type )
+	if( LogOnly == m_Type || LogAndDisplay == m_Type )
 	{
 		m_Log.LogException();
 	}
@@ -128,7 +128,7 @@ INT_PTR ExceptionManager<EM_Data, EM_Display, EM_Log>::Display( const UINT MsgBo
 {
 	INT_PTR Result( IDCANCEL );
 
-	if( ExpTypeEnum::LogAndDisplay == m_Type )
+	if( LogAndDisplay == m_Type )
 	{
 		SVString Msg;
 		SVString MsgDetails;

@@ -288,7 +288,7 @@ BOOL RingBufferTool::onRun( SVRunStatusClass& RRunStatus )
 		//copy input image to ring buffer
 		SVImageBufferHandleImage milHandleTo;
 		SVImageBufferHandleImage milHandleFrom;
-		if( m_ringBuffer.size() > m_nextBufferPos && !( m_ringBuffer[m_nextBufferPos].empty() ) )
+		if( static_cast<int>(m_ringBuffer.size()) > m_nextBufferPos && !( m_ringBuffer[m_nextBufferPos].empty() ) )
 		{
 			m_ringBuffer[m_nextBufferPos]->GetData( milHandleTo );
 		}
@@ -405,7 +405,7 @@ int RingBufferTool::SetOutputImage( int outputIndex, int imageIndex, int maxInde
 	{
 		SVImageBufferHandleImage handleToIndex;
 		SVImageBufferHandleImage handleToOutputImage;
-		if( m_ringBuffer.size() > pos && !( m_ringBuffer[pos].empty() ) )
+		if( static_cast<int>(m_ringBuffer.size()) > pos && !( m_ringBuffer[pos].empty() ) )
 		{
 			m_ringBuffer[pos]->GetData( handleToIndex );
 		}

@@ -802,7 +802,7 @@ BOOL SVObjectClass::AddFriend( const GUID& RFriendGUID )
 SVObjectClass*  SVObjectClass::GetFriend( const SVObjectTypeInfoStruct& rObjectType ) const 
 {
 	// Check if friend is already applied...
-	for(int i =0; i <  friendList.size(); i++ )
+	for(int i =0; i < static_cast<int>(friendList.size()); i++ ) 
 	{
 		const SVObjectTypeInfoStruct* pInfoStruct =  &(friendList[ i ].ObjectTypeInfo); 
 		if( pInfoStruct->ObjectType   == rObjectType.ObjectType && 

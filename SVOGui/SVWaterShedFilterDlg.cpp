@@ -151,7 +151,7 @@ namespace Seidenader
 		GetDlgItem( IDC_VARIATION_EDIT )->EnableWindow( m_iVariationType == 2 );
 
 		std::vector<SVString> availableImages = m_rFilterClass.getAvailableMarkerImageNames();
-		for (int i=0; i<availableImages.size(); ++i)
+		for (int i=0; i<static_cast<int>(availableImages.size()); ++i)
 		{
 			m_SVSourceImageCombo.AddString(availableImages[i].c_str());
 		}

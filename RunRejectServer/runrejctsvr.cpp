@@ -117,9 +117,9 @@ DWORD WINAPI servimg(LPVOID)
 							is.seekg(0, std::ios::end);
 							std::streamsize sz = is.tellg();
 							is.seekg(0, std::ios::beg);
-							std::vector<u_char> vec(sz);
+							std::vector<u_char> vec(static_cast<unsigned int>(sz));
 							is.read(reinterpret_cast<char *>(&vec[0]), sz);
-							client.Write(&vec[0], sz, true);
+							client.Write(&vec[0], static_cast<size_t>(sz), true);
 						}
 						catch(std::exception & ex)
 						{
@@ -532,7 +532,7 @@ Json::Value DispatchCommand<TcpApi>(const JsonCmd & cmd, const MonitorMapCopy & 
 				PPQReader reader;
 				reader.Open(ppqName);
 				FailStatusMap fsMap = reader.GetFailStatus(mit->second.failStats);
-				if (fsMap.size() > mit->second.m_rejectDepth)
+				if (static_cast<int>(fsMap.size()) > mit->second.m_rejectDepth)
 				{
 					size_t sz = fsMap.size();
 					FailStatusMap::iterator it = fsMap.begin();

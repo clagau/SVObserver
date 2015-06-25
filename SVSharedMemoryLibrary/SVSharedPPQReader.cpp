@@ -247,7 +247,7 @@ namespace SeidenaderVision
 	{
 		FailStatusMap ret;
 		const SVSharedPPQReader & reader = *this;
-		for (long idx = 0; idx < rsh->data.size(); ++idx) // read all rejects and fill in FailStatusMap
+		for (long idx = 0; idx < static_cast<long>(rsh->data.size()); ++idx) // read all rejects and fill in FailStatusMap
 		{
 			const SVSharedProduct & prod = rsh->data[idx];
 			reader.lock(prod);

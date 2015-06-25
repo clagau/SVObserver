@@ -152,7 +152,6 @@
     <ClCompile Include="SVMonitorListStore.cpp" />
     <ClCompile Include="SVMonitorListWriter.cpp" />
     <ClCompile Include="SVShareControlHandler.cpp" />
-    <ClCompile Include="SVShared.cpp" />
     <ClCompile Include="SVSharedConfiguration.cpp" />
     <ClCompile Include="SVSharedData.cpp" />
     <ClCompile Include="SVSharedImage.cpp" />

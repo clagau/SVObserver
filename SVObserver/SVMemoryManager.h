@@ -54,7 +54,7 @@ private:
 
 		HRESULT Create( __int64 lPoolSizeKBytes )
 		{
-			m_lPoolSize = lPoolSizeKBytes * 1024;
+			m_lPoolSize = static_cast<long>(lPoolSizeKBytes * 1024);//AB
 			return S_OK;
 		}
 		
@@ -75,7 +75,7 @@ private:
 				iter = m_mapEntries.insert( SVMemoryPoolEntryPair(owner, SVMemoryPoolEntry()) ).first;
 			}
 #ifndef _WIN64
-			::InterlockedExchangeAdd( const_cast <LPLONG> (&m_lUsed), lSizeInBytes );
+			::InterlockedExchangeAdd( const_cast <LPLONG> (&m_lUsed), static_cast<long>(lSizeInBytes) );
 #else
 			__int64 value = ::InterlockedExchangeAdd64( const_cast <PLONGLONG> (&m_lUsed), lSizeInBytes );
 #endif
@@ -94,7 +94,7 @@ private:
 			if ( iter != m_mapEntries.end() )
 			{
 #ifndef _WIN64
-			::InterlockedExchangeAdd(  const_cast <LPLONG> (&m_lUsed), -iter->second.lSize );
+			::InterlockedExchangeAdd(  const_cast <LPLONG> (&m_lUsed), static_cast<long>(-iter->second.lSize) ); 
 #else
 			__int64 value = ::InterlockedExchangeAdd64( const_cast <PLONGLONG> (&m_lUsed), -iter->second.lSize );
 #endif
