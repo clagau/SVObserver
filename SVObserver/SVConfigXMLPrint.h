@@ -103,6 +103,7 @@ namespace sv_xml
 		void WriteOCRGrayScaleParameters(Writer writer, const std::string & strParameters) const;
 		void WriteValueObject(Writer writer, const std::wstring  tag, const std::wstring  lpszName, const std::wstring  lpszValue) const;
 		void WriteIOEntryObject(Writer writer, SVIOEntryHostStructPtr IOEntry) const;
+		void WriteGlobalConstants(Writer writer) const;
 
 		mutable SVConfigurationObject* m_cfo;
 		mutable int nToolNumber;

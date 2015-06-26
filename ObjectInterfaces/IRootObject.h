@@ -2,7 +2,7 @@
 /// COPYRIGHT (c) 2015 by Seidenader Maschinenbau GmbH
 /// All Rights Reserved
 //******************************************************************************
-/// IEnvironmentObject is the interface to get/set the environment objects
+/// IRootObject is the interface to get/set the Root children objects
 /// By now there are only function to call intern static methods.
 //******************************************************************************
 
@@ -17,12 +17,12 @@ namespace Seidenader
 	namespace ObjectInterfaces
 	{	
 		//************************************
-		/// Get the Environment object list from a path and specified filter.
+		/// Get the Root child object list from a path and specified filter.
 		/// \param rObjectNameList [out] The returned object name list.
-		/// \param rPath [in] Path of the environment which are wanted. Default = "", this means all objects.
+		/// \param Path [in] Path of the root child desired. Default = "", this means all objects.
 		/// \param AttributesAllowedFilter [in] Filter of the environment which are wanted. Default = 0, this means all objects.
 		//************************************
-		void getEnvironmentObjectNameList(SVStringArray& rObjectNameList, const SVString& rPath = _T(""), UINT AttributesAllowedFilter = 0);
+		void getRootChildNameList( SVStringArray& rObjectNameList, LPCTSTR Path = _T(""), UINT AttributesAllowedFilter = 0 );
 	}
 }
 

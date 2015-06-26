@@ -33,6 +33,8 @@
 #include "SVXMLLibrary/SVXML2TreeConverter.h"
 #include "SVConfigurationObject.h"
 #include "ObjectInterfaces\ErrorNumbers.h"
+#include "SVGlobal.h"
+#include "RootObject.h"
 #pragma endregion Includes
 
 static LPCTSTR scRunDirectory = _T("C:\\Run");
@@ -222,9 +224,117 @@ static bool ImportPPQInputs(SVTreeType& rTree, Insertor insertor)
 	return bOk;
 }
 
+template<typename SVTreeType>
+static bool importGlobalConstants( SVTreeType& rTree, SvOi::GlobalConstantDataSet& rImportedGlobals )
+{
+	bool Result( true );
+
+	SVTreeType::SVBranchHandle hItem;
+	if (SVNavigateTreeClass::GetItemBranch( rTree, CTAG_GLOBAL_CONSTANTS, NULL, hItem ))
+	{
+		SVTreeType::SVBranchHandle hItemChild( NULL );
+
+		rTree.GetFirstBranch( hItem, hItemChild );
+
+		while( Result && NULL != hItemChild )
+		{
+			SvOi::GlobalConstantData GlobalData;
+			_variant_t Value;
+			_bstr_t Name;
+
+			rTree.GetBranchName( hItemChild, Name.GetBSTR() );
+			GlobalData.m_DottedName = Name;
+
+			Result = SVNavigateTreeClass::GetItem( rTree, CTAG_VALUE, hItemChild, Value );
+			if( Result )
+			{
+				GlobalData.m_Value = Value;
+			}
+			Value.Clear();
+			Result = SVNavigateTreeClass::GetItem( rTree, scAttributesAllowedTag, hItemChild, Value );
+			if( Result )
+			{
+				GlobalData.m_AttributesAllowed = Value;
+			}
+			Value.Clear();
+			Result = SVNavigateTreeClass::GetItem( rTree, CTAG_DESCRIPTION, hItemChild, Value );
+			if( Result )
+			{
+				CString Description;
+				Description = Value.bstrVal;
+				//This is needed to insert any CR LF in the description which were replaced while saving
+				::SVRemoveEscapedSpecialCharacters( Description, true );
+				GlobalData.m_Description = Description;
+			}
+			rImportedGlobals.insert( GlobalData );
+			
+			rTree.GetNextBranch( hItem, hItemChild );
+		}
+	}
+
+	return Result;
+}
+
+static void checkGlobalConstants( const SvOi::GlobalConstantDataSet& rImportedGlobals, SvOi::GlobalConflictPairVector& rGlobalConflicts )
+{
+	SvOi::GlobalConstantDataSet CurrentGlobals;
+
+	BasicValueObjects::ValueVector GlobalObjects;
+
+	RootObject::getRootChildObjectList( GlobalObjects, SvOl::FqnGlobal, 0 );
+	BasicValueObjects::ValueVector::const_iterator Iter( GlobalObjects.begin() );
+	while( GlobalObjects.end() != Iter && !Iter->empty() )
+	{
+		SvOi::GlobalConstantData GlobalData;
+		//Important here we intensionally do not fill the m_Guid value
+		GlobalData.m_DottedName = (*Iter)->GetCompleteObjectName();
+		(*Iter)->getValue( GlobalData.m_Value );
+		GlobalData.m_Description = (*Iter)->getDescription();
+		GlobalData.m_AttributesAllowed = (*Iter)->ObjectAttributesAllowedRef();
+		CurrentGlobals.insert( GlobalData );
+
+		++Iter;
+	}
+
+	SvOi::GlobalConstantDataSet GlobalDiffs;
+
+	std::set_difference( rImportedGlobals.begin(), rImportedGlobals.end(), CurrentGlobals.begin(), CurrentGlobals.end(), std::inserter( GlobalDiffs, GlobalDiffs.begin() ) );
+
+	SvOi::GlobalConstantDataSet::const_iterator DiffIter( GlobalDiffs.cbegin() );
+	while( GlobalDiffs.cend() != DiffIter  )
+	{
+		BasicValueObjectPtr pGlobalConstant;
+		pGlobalConstant = RootObject::getRootChildObjectValue( DiffIter->m_DottedName.c_str() );
+
+		//If the Global Constant exists then conflict otherwise we can create it
+		if( pGlobalConstant.empty() )
+		{
+			pGlobalConstant = RootObject::setRootChildValue( DiffIter->m_DottedName.c_str(), DiffIter->m_Value );
+			if( !pGlobalConstant.empty() )
+			{
+				pGlobalConstant->setDescription( DiffIter->m_Description.c_str() );
+				pGlobalConstant->ObjectAttributesAllowedRef() = DiffIter->m_AttributesAllowed;
+			}
+		}
+		else
+		{
+			SvOi::GlobalConstantData GlobalData;
+
+			GlobalData.m_Guid = pGlobalConstant->GetUniqueObjectID();
+			GlobalData.m_DottedName = pGlobalConstant->GetCompleteObjectName();
+			pGlobalConstant->getValue( GlobalData.m_Value );
+			//Default is that the current Global Constant is selected
+			GlobalData.m_Selected = true;
+			rGlobalConflicts.push_back( std::make_pair( GlobalData,  *DiffIter ) );
+		}
+
+		++DiffIter;
+	}
+}
+
 typedef std::insert_iterator<SVImportedInputList> InputListInsertor;
 
-HRESULT LoadInspectionXml(const SVString& filename, const SVString& zipFilename, const SVString& inspectionName, const SVString& cameraName, SVImportedInspectionInfo& inspectionInfo, SVIProgress& rProgress, int& currentOp, int numOperations)
+HRESULT LoadInspectionXml(const SVString& filename, const SVString& zipFilename, const SVString& inspectionName, const SVString& cameraName, SVImportedInspectionInfo& inspectionInfo, SvOi::GlobalConflictPairVector& rGlobalConflicts, SVIProgress& rProgress, int& currentOp, int numOperations)
 {
 	_bstr_t bstrRevisionHistory;
 	_bstr_t bstrChangedNode;
@@ -233,6 +343,7 @@ HRESULT LoadInspectionXml(const SVString& filename, const SVString& zipFilename,
 	SVMaterialsTree l_LocalTree;
 	SVXMLMaterialsTree tree( l_LocalTree );
 	SVXMLClass xml;
+	SvOi::GlobalConstantDataSet ImportedGlobals;
 
 	HRESULT hr = xml.Initialize(0,	0);
 	if (S_OK == hr)
@@ -261,6 +372,12 @@ HRESULT LoadInspectionXml(const SVString& filename, const SVString& zipFilename,
 
 				InputListInsertor insertor(inspectionInfo.m_inputList, inspectionInfo.m_inputList.begin());
 				ImportPPQInputs(tree, insertor);
+
+				msg = _T("Importing Global Constants...");
+				rProgress.UpdateText(msg.c_str());
+				rProgress.UpdateProgress(++currentOp, numOperations);
+
+				importGlobalConstants( tree, ImportedGlobals );
 
 				msg = _T("Creating Inspection object...");
 				rProgress.UpdateText(msg.c_str());
@@ -345,6 +462,8 @@ HRESULT LoadInspectionXml(const SVString& filename, const SVString& zipFilename,
 
 	if( S_OK == hr )
 	{
+		checkGlobalConstants( ImportedGlobals, rGlobalConflicts);
+
 		SVXMLMaterialsTree::SVBranchHandle l_Root;
 		SVXMLMaterialsTree::SVBranchHandle l_IPDocItem;
 		SVXMLMaterialsTree toTree( inspectionInfo.m_materialsTree );
@@ -369,7 +488,7 @@ HRESULT LoadInspectionXml(const SVString& filename, const SVString& zipFilename,
 	return hr;
 }
 
-HRESULT SVInspectionImporter::Import(const SVString& filename, const SVString& inspectionName, const SVString& cameraName, SVImportedInspectionInfo& inspectionInfo, SVIProgress& rProgress)
+HRESULT SVInspectionImporter::Import(const SVString& filename, const SVString& inspectionName, const SVString& cameraName, SVImportedInspectionInfo& inspectionInfo, SvOi::GlobalConflictPairVector& rGlobalConflicts, SVIProgress& rProgress)
 {
 	HRESULT hr = S_OK;
 	::CoInitialize(NULL);
@@ -412,7 +531,7 @@ HRESULT SVInspectionImporter::Import(const SVString& filename, const SVString& i
 	if (rc == 0)
 	{
 		rProgress.UpdateProgress(++currentOp, numOperations);
-		hr = LoadInspectionXml(outFilename, zipFilename, inspectionName, cameraName, inspectionInfo, rProgress, currentOp, numOperations);
+		hr = LoadInspectionXml(outFilename, zipFilename, inspectionName, cameraName, inspectionInfo, rGlobalConflicts, rProgress, currentOp, numOperations);
 		//
 		::DeleteFile(outFilename.c_str());
 

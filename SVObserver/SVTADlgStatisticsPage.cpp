@@ -24,7 +24,6 @@
 #pragma endregion Includes
 
 #pragma region Declarations
-using namespace Seidenader::ObjectSelectorLibrary;
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -284,13 +283,13 @@ void SVToolAdjustmentDialogStatisticsPageClass::OnPublishButton()
 	SVInspectionProcess* pInspection = m_pTool->GetInspection();
 	if( nullptr == pInspection ) { return; }
 
-	ObjectTreeGenerator::Instance().setSelectorType( ObjectTreeGenerator::SelectorTypeEnum::TypeSetAttributes );
-	ObjectTreeGenerator::Instance().setAttributeFilters( SV_PUBLISHABLE );
-	ObjectTreeGenerator::Instance().setLocationFilter( ObjectTreeGenerator::FilterInput, pInspection->GetToolSet()->GetCompleteObjectName(), SVString( _T("") ) );
+	SvOsl::ObjectTreeGenerator::Instance().setSelectorType( SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeSetAttributes );
+	SvOsl::ObjectTreeGenerator::Instance().setAttributeFilters( SV_PUBLISHABLE );
+	SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, pInspection->GetToolSet()->GetCompleteObjectName(), SVString( _T("") ) );
 
 	SVOutputInfoListClass OutputList;
 	m_pTool->GetOutputList( OutputList );
-	ObjectTreeGenerator::Instance().insertOutputList( OutputList );
+	SvOsl::ObjectTreeGenerator::Instance().insertOutputList( OutputList );
 
 	CString PublishableResults;
 	PublishableResults.LoadString( IDS_PUBLISHABLE_RESULTS );
@@ -301,7 +300,7 @@ void SVToolAdjustmentDialogStatisticsPageClass::OnPublishButton()
 	CString Filter;
 	Filter.LoadString( IDS_FILTER );
 	SVString filterTabTitle = Filter;
-	INT_PTR Result = ObjectTreeGenerator::Instance().showDialog( Title, mainTabTitle, filterTabTitle, this );
+	INT_PTR Result = SvOsl::ObjectTreeGenerator::Instance().showDialog( Title, mainTabTitle, filterTabTitle, this );
 
 	if( IDOK == Result )
 	{
@@ -328,15 +327,15 @@ void SVToolAdjustmentDialogStatisticsPageClass::OnBtnObjectPicker()
 
 	SVString InspectionName( pInspection->GetName() );
 
-	ObjectTreeGenerator::SelectorTypeEnum SelectorType;
-	SelectorType = static_cast<ObjectTreeGenerator::SelectorTypeEnum>(ObjectTreeGenerator::SelectorTypeEnum::TypeSetAttributes | ObjectTreeGenerator::SelectorTypeEnum::TypeSingleObject);
-	ObjectTreeGenerator::Instance().setSelectorType( SelectorType );
-	ObjectTreeGenerator::Instance().setAttributeFilters( SV_SELECTABLE_FOR_STATISTICS );
-	ObjectTreeGenerator::Instance().setLocationFilter( ObjectTreeGenerator::FilterInput, InspectionName, SVString( _T("") ) );
+	SvOsl::ObjectTreeGenerator::SelectorTypeEnum SelectorType;
+	SelectorType = static_cast<SvOsl::ObjectTreeGenerator::SelectorTypeEnum>(SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeSetAttributes | SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeSingleObject);
+	SvOsl::ObjectTreeGenerator::Instance().setSelectorType( SelectorType );
+	SvOsl::ObjectTreeGenerator::Instance().setAttributeFilters( SV_SELECTABLE_FOR_STATISTICS );
+	SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, InspectionName, SVString( _T("") ) );
 
 	SVOutputInfoListClass OutputList;
 	m_pToolSet->GetOutputList( OutputList );
-	ObjectTreeGenerator::Instance().insertOutputList( OutputList );
+	SvOsl::ObjectTreeGenerator::Instance().insertOutputList( OutputList );
 
 	CString ToolsetOutput;
 	ToolsetOutput.LoadString( IDS_SELECT_TOOLSET_OUTPUT );
@@ -346,13 +345,13 @@ void SVToolAdjustmentDialogStatisticsPageClass::OnBtnObjectPicker()
 	CString Filter;
 	Filter.LoadString( IDS_FILTER );
 	SVString filterTabTitle = Filter;
-	INT_PTR Result = ObjectTreeGenerator::Instance().showDialog( Title, mainTabTitle, filterTabTitle, this );
+	INT_PTR Result = SvOsl::ObjectTreeGenerator::Instance().showDialog( Title, mainTabTitle, filterTabTitle, this );
 
 	if( IDOK == Result )
 	{
-		m_strVariableToMonitor = ObjectTreeGenerator::Instance().getSingleObjectResult().getDisplayLocation().c_str();
+		m_strVariableToMonitor = SvOsl::ObjectTreeGenerator::Instance().getSingleObjectResult().getDisplayLocation().c_str();
 
-		SVGUID ResultObjectGuid( ObjectTreeGenerator::Instance().getSingleObjectResult().getItemKey() );
+		SVGUID ResultObjectGuid( SvOsl::ObjectTreeGenerator::Instance().getSingleObjectResult().getItemKey() );
 		SVObjectClass* pResultObject = nullptr;
 		SVObjectManagerClass::Instance().GetObjectByIdentifier( ResultObjectGuid,  pResultObject);
 		if( nullptr != pResultObject )

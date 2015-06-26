@@ -82,19 +82,32 @@ public:
 	HRESULT GetData(int iSymbolIndex, std::vector<double>& values, long lBufferIndex );		// Get the Data Value
 
 	void ClearAll();
-	void SetAvailableLists( SVInputInfoListClass* PAvailInputSymbols, SVOutputInfoListClass* PAvailToolSetSymbols );
+	void SetAvailableLists( SVOutputInfoListClass* PAvailInputSymbols, SVOutputInfoListClass* PAvailToolSetSymbols );
 	
 protected:
 	int findInputSymbol( LPCTSTR name );					// Find Input Symbol
 	int findToolSetSymbol( LPCTSTR name );				// Find ToolSet Symbol
 
-	int addInputSymbol( LPCTSTR name, int index );		// Add Input Symbol
-	int addToolSetSymbol( LPCTSTR name, int index, SVObjectClass* pRequestor );	// Add ToolSet Symbol
+	//************************************
+	//! This adds a non-toolset symbol into the list of used symbols
+	//! \param name <in> the symbol name
+	//! \param index <in> the corresponding index out of the whole list of non-toolset symbols
+	//! \returns the index of the used symbols list
+	//************************************
+	int addInputSymbol( LPCTSTR name, int index, SVObjectClass* pRequestor );
+
+	//************************************
+	//! This adds a toolset symbol into the list of used symbols
+	//! \param name <in> the symbol name
+	//! \param index <in> the corresponding index out of the whole list of toolset symbols
+	//! \returns the index of the used symbols list
+	//************************************
+	int addToolSetSymbol( LPCTSTR name, int index, SVObjectClass* pRequestor );
 
 protected:
 	SVInputInfoListClass m_toolsetSymbolTable;		// The symbol table for the ToolSet Variables in the equation
 	SVOutputInfoListClass* m_pAvailToolSetSymbols;	// List of Available ToolSet symbols
-	SVInputInfoListClass* m_pAvailInputSymbols;			// List of Available Input symbols
+	SVOutputInfoListClass* m_pAvailInputSymbols;			// List of Available Input symbols
 };
 
 /**
@@ -244,28 +257,34 @@ private:
 	//************************************
 	// Method:    addOldPPQDigitizerVariableToList
 	// Description:  Add the old PPQ-digitizer-variable to the list. Will maybe obsolete later on.
-	// Parameter: SVInputInfoListClass & arInputAvailList
+	// Parameter: SVOutputInfoListClass &rOutputInfoList
 	// Returns:   void
 	//************************************
-	void addOldPPQDigitizerVariableToList(SVInputInfoListClass &arInputAvailList);
+	void addOldPPQDigitizerVariableToList( SVOutputInfoListClass &rOutputInfoList ) const;
 
 	//************************************
 	// Method:    addPPQVariableToList
 	// Description:  Add the PPQ-variable to the list.
-	// Parameter: SVInputInfoListClass & arInputAvailList
+	// Parameter: SVOutputInfoListClass &rOutputInfoList
 	// Returns:   void
 	//************************************
-	void addPPQVariableToList( SVInputInfoListClass &arInputAvailList );
+	void addPPQVariableToList( SVOutputInfoListClass &rOutputInfoList ) const;
 
 	//************************************
 	// Method:    addPPQ_XParameterToList
 	// Description:  Add the PPQ_X-parameter to the list (e.g. PPQ_1.Length).
-	// Parameter: SVInputInfoListClass & arInputAvailList
+	// Parameter: SVOutputInfoListClass &rOutputInfoList
 	// Returns:   void
 	//************************************
-	void addPPQ_XParameterToList( SVInputInfoListClass &arInputAvailList );
+	void addPPQ_XParameterToList( SVOutputInfoListClass &rOutputInfoList ) const;
 
-	void addEnvironmentModeParameterToList( SVInputInfoListClass &arInputAvailList );
+	//************************************
+	// Method:    addRootChildrenToList
+	// Description:  Add the root children to the list
+	// Parameter: SVOutputInfoListClass &rOutputInfoList
+	// Returns:   void
+	//************************************
+	void addRootChildrenToList( SVOutputInfoListClass &rOutputInfoList ) const;
 
 protected:
 	SVEquationLexClass lex;					// scanner class

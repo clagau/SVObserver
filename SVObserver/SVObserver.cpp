@@ -114,7 +114,6 @@
 #include "SVInspectionProcess.h"
 #include "SVPPQObject.h"
 #include "RootObject.h"
-#include "EnvironmentObject.h"
 #include "SVMonitorList.h"
 #include "SVThreadInfoDlg.h"
 #include "SVSharedMemorySingleton.h"
@@ -2126,7 +2125,7 @@ void SVObserverApp::OnGoOnline()
 						"unknown error when the system was going online." );
 				}
 				INT_PTR Res(0);
-				SvStl::ExceptionMgr1 Exception(SvStl::ExpTypeEnum::LogAndDisplay);
+				SvStl::ExceptionMgr1 Exception(SvStl::LogAndDisplay);
 
 				Res = Exception.setMessage(SVMSG_SVO_54_EMPTY,l_csMessage,StdExceptionParams, SvOi::Err_45000, 0, MB_OK);
 				SVSVIMStateClass::AddState( l_lPrevState );
@@ -3013,7 +3012,7 @@ BOOL SVObserverApp::InitInstance()
 	if (S_OK != retValue || nullptr == ResourceInstance)
 	{
 		//Because our exception handler (message box) needs the resources, we have to use here the standard message box.
-		SvStl::ExceptionMgr1 Exception( SvStl::ExpTypeEnum::LogOnly );
+		SvStl::ExceptionMgr1 Exception( SvStl::LogOnly );
 		Exception.setMessage( SVMSG_SVO_53_RESOURCE_DLL_LOADING_FAILED, nullptr, StdExceptionParams, SvOi::Err_10009_LoadOfResourceDllFailed );
 		MessageBox(nullptr, SvO::LoadingResourceDllFailed, nullptr, MB_OK | MB_ICONSTOP );
 		exit(-SvOi::Err_10009_LoadOfResourceDllFailed);
@@ -3346,7 +3345,7 @@ BOOL SVObserverApp::InitInstance()
 	//Log amount of physical memory - may help in debugging issues in the future.
 	CString MessageText;
 	MessageText.Format(SvO::AmountOfSystemMemoryText,AmountOfRam);
-	SvStl::ExceptionMgr1 Exception( SvStl::ExpTypeEnum::LogOnly );
+	SvStl::ExceptionMgr1 Exception( SvStl::LogOnly );
 	Exception.setMessage(SVMSG_SVO_54_EMPTY,MessageText,StdExceptionParams, SvOi::Memory_Log_45001);
 
 	//if amount of physical memory is around 16 GigE allocate the larger memory pools.
@@ -3473,7 +3472,7 @@ BOOL SVObserverApp::InitInstance()
 
 	if ( !TheSVOLicenseManager().HasMatroxLicense() )
 	{
-		SvStl::ExceptionMgr1 Exception( SvStl::ExpTypeEnum::LogAndDisplay );
+		SvStl::ExceptionMgr1 Exception( SvStl::LogAndDisplay );
 		Exception.setMessage( SVMSG_SVO_52_NOMATROX_DONGLE, nullptr, StdExceptionParams, SvOi::Err_25013_NoMatroxDongle );
 	}
 
@@ -3712,6 +3711,19 @@ HRESULT SVObserverApp::OpenSVXFile(LPCTSTR PathName)
 				SVConfigurationObject* pConfig( nullptr );
 				SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
+				//If no configuration then it needs to be created
+				if( nullptr == pConfig )
+				{
+					RootObject *pRoot = nullptr;
+
+					SVObjectManagerClass::Instance().GetRootChildObject( pRoot, SvOl::FqnRoot );
+					if(nullptr != pRoot)
+					{
+						pRoot->createConfigurationObject();
+						SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
+					}
+				}
+
 				if( nullptr != pConfig )
 				{
 					hr = pConfig->LoadConfiguration( m_XMLTree );
@@ -3727,6 +3739,15 @@ HRESULT SVObserverApp::OpenSVXFile(LPCTSTR PathName)
 				if (nullptr != pConfig)
 				{
 					hr = pConfig->LoadRemoteMonitorList(m_XMLTree);
+					if (hr & SV_ERROR_CONDITION)
+					{
+						break;
+					}
+				}
+
+				if (nullptr != pConfig)
+				{
+					hr = pConfig->LoadGlobalConstants(m_XMLTree);
 					if (hr & SV_ERROR_CONDITION)
 					{
 						break;
@@ -4014,7 +4035,7 @@ SVString SVObserverApp::getModelNumber() const
 {
 	SVString ModelNumber;
 
-	EnvironmentObject::getEnvironmentValue( ::EnvironmentModelNumber, ModelNumber );
+	RootObject::getRootChildValue( ::EnvironmentModelNumber, ModelNumber );
 
 	return ModelNumber;
 }
@@ -4023,7 +4044,7 @@ SVString SVObserverApp::getSerialNumber() const
 {
 	SVString SerialNumber;
 
-	EnvironmentObject::getEnvironmentValue( ::EnvironmentSerialNumber, SerialNumber );
+	RootObject::getRootChildValue( ::EnvironmentSerialNumber, SerialNumber );
 
 	return SerialNumber;
 }
@@ -4032,7 +4053,7 @@ SVString SVObserverApp::getWinKey() const
 {
 	SVString WinKey;
 
-	EnvironmentObject::getEnvironmentValue( ::EnvironmentWinKey, WinKey );
+	RootObject::getRootChildValue( ::EnvironmentWinKey, WinKey );
 
 	return WinKey;
 }
@@ -5844,7 +5865,7 @@ BOOL SVObserverApp::ShowConfigurationAssistant( int Page /*= 3*/,
 		{
 			RootObject *pRoot = nullptr;
 
-			SVObjectManagerClass::Instance().GetRootChildObject(pRoot, SVObjectManagerClass::Root);
+			SVObjectManagerClass::Instance().GetRootChildObject( pRoot, SvOl::FqnRoot );
 			if(nullptr != pRoot)
 			{
 				pRoot->createConfigurationObject();
@@ -7347,9 +7368,9 @@ HRESULT SVObserverApp::INILoad()
 		// copy settings from the SVOIniLoader class for now
 		g_bUseCorrectListRecursion = l_iniLoader.m_bUseCorrectListRecursion;
 
-		EnvironmentObject::setEnvironmentValue( ::EnvironmentModelNumber, l_iniLoader.m_csModelNumber );
-		EnvironmentObject::setEnvironmentValue( ::EnvironmentSerialNumber , l_iniLoader.m_csSerialNumber );
-		EnvironmentObject::setEnvironmentValue( ::EnvironmentWinKey, l_iniLoader.m_csWinKey );
+		RootObject::setRootChildValue( ::EnvironmentModelNumber, l_iniLoader.m_csModelNumber );
+		RootObject::setRootChildValue( ::EnvironmentSerialNumber , l_iniLoader.m_csSerialNumber );
+		RootObject::setRootChildValue( ::EnvironmentWinKey, l_iniLoader.m_csWinKey );
 
 		m_csProductName = l_iniLoader.m_csProductName;
 

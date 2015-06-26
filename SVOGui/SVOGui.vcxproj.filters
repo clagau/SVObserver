@@ -50,7 +50,13 @@
     <ClCompile Include="Custom2FilterDlg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="GlobalConstantDlg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="TADialogRingBufferParameterPage.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GlobalConstantConflictDlg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -101,6 +107,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="TextDefinesSvOg.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GlobalConstantDlg.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TextDefinesSvOg.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GlobalConstantConflictDlg.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

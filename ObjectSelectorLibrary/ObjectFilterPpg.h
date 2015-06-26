@@ -121,6 +121,8 @@ namespace Seidenader
 	} //namespace ObjectSelectorLibrary
 } //namespace Seidenader
 
+namespace SvOsl = Seidenader::ObjectSelectorLibrary;
+
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************

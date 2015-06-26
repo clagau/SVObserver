@@ -138,16 +138,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="DataStructures.h" />
     <ClInclude Include="ErrorNumbers.h" />
     <ClInclude Include="ICustom2Filter.h" />
     <ClInclude Include="ICustomFilter.h" />
-    <ClInclude Include="IEnvironmentObject.h" />
     <ClInclude Include="IInObjectInfoStruct.h" />
     <ClInclude Include="IMatroxImageData.h" />
     <ClInclude Include="IObjectInfoStruct.h" />
     <ClInclude Include="IObjectManager.h" />
     <ClInclude Include="IOutputInfoListClass.h" />
     <ClInclude Include="IRingBufferTool.h" />
+    <ClInclude Include="IRootObject.h" />
     <ClInclude Include="ISVFilter.h" />
     <ClInclude Include="IFormulaController.h" />
     <ClInclude Include="IRankingFilter.h" />
@@ -167,6 +168,9 @@
     <ClInclude Include="SVImageEnums.h" />
     <ClInclude Include="SVObjectTypeInfoStruct.h" />
     <ClInclude Include="SVUserMessage.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="DataStructures.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

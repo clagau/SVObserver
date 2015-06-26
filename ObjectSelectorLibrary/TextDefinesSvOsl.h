@@ -23,4 +23,5 @@ namespace Seidenader
 		const TCHAR* const FilterColumnType = _T("Type");
 	}
 }
+
 namespace SvOsl = Seidenader::ObjectSelectorLibrary;

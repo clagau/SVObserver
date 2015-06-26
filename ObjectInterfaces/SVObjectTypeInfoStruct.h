@@ -59,6 +59,10 @@
 			SVIOControllerType                      = 0x00000057,
 			SVRemoteOutputGroupType                 = 0x00000058,
 			SVLinearEdgeProcessingObjectType        = 0x00000060,
+			SVBasicValueObjectType			        = 0x00000061,
+			SVEnvironmentObjectType			        = 0x00000062,
+			SVCameraObjectType				        = 0x00000063,
+			SVGlobalConstantObjectType		        = 0x00000064,
 
 			SVDWordValueObjectType					= 0x00000100,
 			SVLongValueObjectType					= 0x00000101,

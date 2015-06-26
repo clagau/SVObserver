@@ -22,28 +22,41 @@ static char THIS_FILE[] = __FILE__;
 
 #define SV_NUMBER_DEPENDENTS_COLUMNS 2
 
-/////////////////////////////////////////////////////////////////////////////
-// SVShowDependentsDialog dialog
 
-
-SVShowDependentsDialog::SVShowDependentsDialog(CWnd* pParent /*=NULL*/)
+SVShowDependentsDialog::SVShowDependentsDialog( const SVObjectPairVector& rList, LPCTSTR DisplayText, bool InspectionName /*= false*/, CWnd* pParent /*=NULL*/ )
 	: CDialog(SVShowDependentsDialog::IDD, pParent)
+	, m_rDependencyList( rList )
+	, m_DisplayText( DisplayText )
+	,m_ShowInspectionName( InspectionName )
 {
-	//{{AFX_DATA_INIT(SVShowDependentsDialog)
-		// NOTE: the ClassWizard will add member initialization here
-	//}}AFX_DATA_INIT
-	PTaskObject = NULL;
-	StrMessageID = IDS_DELETE_CHECK_DEPENDENCIES;
-	OnlyImageDependencies = FALSE;
-	NumberOfDependents = 0;
-	m_bUseFilter = false;
 }
 
+/*static*/ INT_PTR SVShowDependentsDialog::StandardDialog( SVTaskObjectClass* pTaskObject, bool OnlyImages )
+{
+	INT_PTR Result( IDOK );
+
+	if( nullptr != pTaskObject )
+	{
+		CString DisplayText;
+		CString Name( pTaskObject->GetName() );
+		DisplayText.Format( IDS_DELETE_CHECK_DEPENDENCIES, Name, Name, Name, Name);
+	
+		SVObjectPairVector DependencyList;
+
+		pTaskObject->GetDependentsList( DependencyList, OnlyImages );
+
+		SVShowDependentsDialog Dlg( DependencyList, DisplayText );
+
+		Result = Dlg.DoModal();
+	}
+
+	return Result;
+}
 
 void SVShowDependentsDialog::addColumnHeadings()
 {
 	CString columnName;
-		
+
 	// load the Column names
 	for( int i = 0; i < SV_NUMBER_DEPENDENTS_COLUMNS; i++ )
 	{
@@ -53,36 +66,30 @@ void SVShowDependentsDialog::addColumnHeadings()
 	}
 }
 
-bool SVShowDependentsDialog::addItems()
+void SVShowDependentsDialog::addItems()
 {
-	SVObjectPairVector list;
-	if ( m_bUseFilter )
-	{
-		PTaskObject->GetDependentsList( m_FilterList, list );
-	}
-	else
-	{
-		PTaskObject->GetDependentsList( list, OnlyImageDependencies ? true : false );
-	}
-
-	SVObjectPairVector::iterator iter;
+	SVObjectPairVector::const_iterator iter;
+	SVObjectTypeEnum ObjectType( SVToolObjectType );
 	int iIndex = 0;
-	for ( iter = list.begin(); iter != list.end(); ++iter )
+
+	if( m_ShowInspectionName )
+	{
+		ObjectType = SVInspectionProcessType;
+	}
+	for ( iter = m_rDependencyList.begin(); iter != m_rDependencyList.end(); ++iter )
 	{
 		CString sName;
 
 		// Insert Who is using
-		sName = iter->first->GetCompleteObjectNameToObjectType( NULL, SVToolObjectType );
+		sName = iter->first->GetCompleteObjectNameToObjectType( NULL, ObjectType );
 		listCtrl.InsertItem( iIndex, sName );
 
 		// Insert Where/What object is being used
-		sName = iter->second->GetCompleteObjectNameToObjectType( NULL, SVToolObjectType );
+		sName = iter->second->GetCompleteObjectNameToObjectType( NULL, ObjectType );
 		listCtrl.SetItemText( iIndex, 1, sName );
 
 		iIndex++;
 	}
-	
-	return (list.size() != 0);
 }
 
 void SVShowDependentsDialog::setColumnWidths()
@@ -117,6 +124,12 @@ END_MESSAGE_MAP()
 
 BOOL SVShowDependentsDialog::OnInitDialog() 
 {
+	if( 0 == m_rDependencyList.size() )
+	{
+		EndDialog(IDOK);
+		return false;
+	}
+
 	CDialog::OnInitDialog();
 	
 	// Build ListCtrl Headers
@@ -125,34 +138,14 @@ BOOL SVShowDependentsDialog::OnInitDialog()
 	// Set the widths
 	setColumnWidths();
 
-	// Populate ListCtrl
-	NumberOfDependents = addItems();
-	if( !NumberOfDependents )
-	{
-		EndDialog(IDOK);
-		return FALSE;
-	}
+	addItems();
 
-	// Format Message
-	CString text,tmp;
-	CString messageStr;
-	CString objectName = PTaskObject->GetName();
-	
-	messageStr.LoadString( StrMessageID );
-	tmp.Format(messageStr, objectName, objectName, objectName, objectName );
-	text = tmp;
-
-	GetDlgItem( IDC_WARNING_TEXT )->SetWindowText( text );
+	GetDlgItem( IDC_WARNING_TEXT )->SetWindowText( m_DisplayText.c_str() );
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 	              // EXCEPTION: OCX Property Pages should return FALSE
 }
 
-void SVShowDependentsDialog::SetFilterList( const SVObjectVector& rList )
-{
-	m_bUseFilter = true;
-	m_FilterList = rList;
-}
 
 //******************************************************************************
 //* LOG HISTORY:

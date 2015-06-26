@@ -202,6 +202,10 @@ namespace Seidenader { namespace ObjectInterfaces
 	static const int Err_25011_ClipboardDataConversion = Gra_ErrorBase + 11;
 	static const int Err_25012_StatTool_Test = Gra_ErrorBase + 12;
 	static const int Err_25013_NoMatroxDongle = Gra_ErrorBase + 13;
+	static const int Err_25014_GlobalConstantNumber = Gra_ErrorBase + 14;
+	static const int Err_25015_GlobalNameAlreadyUsed = Gra_ErrorBase + 15;
+	static const int Err_25016_GlobalNameInvalid = Gra_ErrorBase + 16;
+	static const int Err_25017_RootChildCreate = Gra_ErrorBase + 17;
 
 	//Robert Yoho error base
 	static const int Rpy_ErrorBase = 45000;

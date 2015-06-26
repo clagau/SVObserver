@@ -138,7 +138,7 @@ BOOL RingBufferTool::OnValidate()
 	if (ringBufferDepth < m_minRingBufferDepth || ringBufferDepth > m_maxRingBufferDepth)
 	{
 		bValid = false;
-		SvStl::ExceptionMgr1 Exception( SvStl::ExpTypeEnum::LogOnly );
+		SvStl::ExceptionMgr1 Exception( SvStl::LogOnly );
 		CString strText;
 		strText.Format(SvO::RingBuffer_Depth_Invalid_Value, m_minRingBufferDepth, m_maxRingBufferDepth, ringBufferDepth);
 		Exception.setMessage( SVMSG_SVO_61_RINGBUFFER_ONVALIDATE_ERROR, strText, StdExceptionParams, SvOi::Err_10013_RingBuffer_DepthValueInvalid );

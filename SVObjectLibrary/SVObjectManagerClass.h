@@ -47,13 +47,6 @@ public:
 		ReadWrite = 2,
 	};
 
-	enum RootChildObjectEnum
-	{
-		Root,
-		Environment,
-		Configuration,
-	};
-	typedef std::map< RootChildObjectEnum, SVGUID > RootEnumChildMap;
 	typedef std::map< SVString, SVGUID > RootNameChildMap;
 
 	typedef std::set< SVGUID > GuidSet;
@@ -66,11 +59,10 @@ public:
 	SVObjectManagerStateEnum GetState() const;
 	HRESULT SetState( SVObjectManagerStateEnum p_State );
 
-	const SVGUID GetChildRootObjectID(const RootChildObjectEnum RootChild) const;
-	const SVGUID GetChildRootObjectID(const SVString& RootName) const;
+	const SVGUID GetChildRootObjectID( const SVString& rRootChild ) const;
 
 	template< typename SVObjectTypeName >
-	HRESULT GetRootChildObject( SVObjectTypeName*& rpObject, RootChildObjectEnum RootChild );
+	HRESULT GetRootChildObject( SVObjectTypeName*& rpObject, const SVString& rRootChild );
 
 	//For backward compatibility
 	template< typename SVObjectTypeName >
@@ -78,7 +70,7 @@ public:
 
 	HRESULT ConstructRootObject( const SVGUID& rClassID );
 	HRESULT DestroyRootObject();
-	void setRootChildID(const RootChildObjectEnum RootChild, const SVGUID& rUniqueID);
+	void setRootChildID(const SVString& rRootChild, const SVGUID& rUniqueID);
 	void Translation(SVString& Name);
 
 	HRESULT ConstructObject( const SVGUID& rClassID, GUID& rObjectID );
@@ -284,7 +276,6 @@ protected:
 	SVUniqueObjectEntryMap	m_UniqueObjectEntries;
 	SVIPDocMap				m_IPDocs;
 	SVIODocMap				m_IODocs;
-	RootEnumChildMap		m_RootEnumChildren;
 	RootNameChildMap		m_RootNameChildren;
 	TranslateMap			m_TranslationMap;
 

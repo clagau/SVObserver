@@ -27,6 +27,7 @@
 #include "SVIOBoardCapabilities.h"
 #include "SVIMTypeInfoStruct.h"
 #include "SVImportedInspectionInfo.h" 
+#include "ObjectInterfaces\DataStructures.h"
 
 // Moved SVIM_FULL_BOARD, etc. to SVObserverEnums.h
 
@@ -202,6 +203,7 @@ public:
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CSVOConfigAssistantDlg)
 	protected:
+
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 	//}}AFX_VIRTUAL
 
@@ -233,6 +235,7 @@ private:
 	void RemoveFileAcquisitionMessages(CSVOCameraObj* pCam);
 
 	HRESULT ConnectToolsetBuffers();
+	void resolveGlobalConflicts( SvOi::GlobalConflictPairVector& rGlobalConflicts );
 
 	static CString GetNameFromProductID( SVIMProductEnum p_ID );
 	static SVIMProductEnum GetProductIDFromName( const CString& p_Name );

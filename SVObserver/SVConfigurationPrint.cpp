@@ -62,6 +62,7 @@
 #include "ObjectInterfaces\ErrorNumbers.h"
 #include "SVStatusLibrary/ExceptionManager.h"
 #include "TextDefinesSvO.h"
+#include "RootObject.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -2429,6 +2430,7 @@ void SVConfigurationPrint::PrintIOSection(CDC* pDC, CPoint& ptCurPos, int nInden
 	PrintModuleIO(pDC, ptCurPos, nIndentLevel);
 	PrintResultIO(pDC, ptCurPos, nIndentLevel);
 	PrintMonitorListSection(pDC, ptCurPos, nIndentLevel);
+	PrintGlobalConstants( pDC, ptCurPos, nIndentLevel );
 }
 
 void SVConfigurationPrint::PrintModuleIO(CDC* pDC, CPoint& ptCurPos, int nIndentLevel)
@@ -2756,6 +2758,40 @@ void SVConfigurationPrint::PrintMonitorListSection(CDC* pDC, CPoint& ptCurPos, i
 			}
 			iterMonitorList++;
 		}
+	}
+}
+
+void SVConfigurationPrint::PrintGlobalConstants( CDC* pDC, CPoint& ptCurPos, int nIndentLevel )
+{
+	CString	Label;
+	CString Value;
+	int Index (0);
+
+	BasicValueObjects::ValueVector GlobalConstantObjects;
+	RootObject::getRootChildObjectList( GlobalConstantObjects, SvOl::FqnGlobal );
+
+	Label = _T( "Global Constants" );
+	Value.Format( _T("%d"),  GlobalConstantObjects.size() );
+	PrintValueObject(pDC, ptCurPos, Label, Value );
+	BasicValueObjects::ValueVector::const_iterator Iter( GlobalConstantObjects.cbegin() );
+	while ( GlobalConstantObjects.cend() != Iter )
+	{
+		const BasicValueObjectPtr& pGlobalConstant = *Iter;
+
+		if( !pGlobalConstant.empty() )
+		{
+			Label.Format( _T("Global Constant %d"), ++Index );
+			Value = pGlobalConstant->GetCompleteObjectName();
+			PrintValueObject(pDC, ptCurPos, Label, Value );
+
+			SVString Temp;
+			Label.Format( ("Value") );
+			pGlobalConstant->getValue( Temp );
+			Value = Temp.c_str();
+			PrintValueObject(pDC, ptCurPos, Label, Value );
+		}
+
+		++Iter;
 	}
 }
 

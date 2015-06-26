@@ -23,7 +23,7 @@
 #include "SVToolSet.h"
 #include "SVObjectLibrary\SVToolsetScriptTags.h"
 #include "SVObjectLibrary\GlobalConst.h"
-#include "EnvironmentObject.h"
+#include "RootObject.h"
 
 SVEquationSymbolTableClass::SVEquationSymbolTableClass()
 {
@@ -66,7 +66,7 @@ void SVEquationSymbolTableClass::ClearAll()
 /////////////////////////////////////////////////////////////////
 // Set pointers to Available Lists
 /////////////////////////////////////////////////////////////////
-void SVEquationSymbolTableClass::SetAvailableLists(SVInputInfoListClass* PAvailInputSymbols, SVOutputInfoListClass* PAvailToolSetSymbols )
+void SVEquationSymbolTableClass::SetAvailableLists(SVOutputInfoListClass* PAvailInputSymbols, SVOutputInfoListClass* PAvailToolSetSymbols )
 {
 	m_pAvailInputSymbols = PAvailInputSymbols;
 	m_pAvailToolSetSymbols = PAvailToolSetSymbols;
@@ -119,7 +119,7 @@ int SVEquationSymbolTableClass::AddSymbol( LPCTSTR name, SVObjectClass* pRequest
 
 	if( index != -1 ) // found in Input Available List
 	{
-		index = addInputSymbol( nameStr, index );
+		index = addInputSymbol( nameStr, index, pRequestor );
 	}
 	else
 	{
@@ -137,27 +137,37 @@ int SVEquationSymbolTableClass::AddSymbol( LPCTSTR name, SVObjectClass* pRequest
 /////////////////////////////////////////////////////////////////
 // Add a Input Symbol
 /////////////////////////////////////////////////////////////////
-int SVEquationSymbolTableClass::addInputSymbol( LPCTSTR name, int index )
+int SVEquationSymbolTableClass::addInputSymbol( LPCTSTR name, int index, SVObjectClass* pRequestor )
 {
 	SVEquationSymbolStruct* pSymbolStruct;
 	int symbolIndex = -1;
 
 	if( m_pAvailInputSymbols )
 	{
-		SVInObjectInfoStruct* pObjInfo = m_pAvailInputSymbols->GetAt( index );
+		SVOutObjectInfoStruct* pObjInfo = m_pAvailInputSymbols->GetAt( index );
 		if( pObjInfo )
 		{
-			pSymbolStruct = new SVEquationSymbolStruct();
-			pSymbolStruct->Type = SV_INPUT_SYMBOL_TYPE;
-			pSymbolStruct->Name = name;
-			pSymbolStruct->IsValid = TRUE;
-			pSymbolStruct->InObjectInfo.SetInputObject( pObjInfo->GetInputObjectInfo().PObject );
-
 			// Add to combined symbol table if not already there
 			symbolIndex = FindSymbol( name );
-
 			if( symbolIndex == -1 )
+			{
+				pSymbolStruct = new SVEquationSymbolStruct();
+				pSymbolStruct->Type = SV_INPUT_SYMBOL_TYPE;
+				pSymbolStruct->Name = name;
+				pSymbolStruct->IsValid = TRUE;
+				// Set who wants to use the variable
+				pSymbolStruct->InObjectInfo.SetObject( pRequestor->GetObjectInfo() );
+
+				// Set the variable to be used
+				pSymbolStruct->InObjectInfo.SetInputObjectType( pObjInfo->ObjectTypeInfo );
+				pSymbolStruct->InObjectInfo.SetInputObject( pObjInfo->UniqueObjectID );
+
+				// Try to Connect at this point
+				DWORD_PTR rc = ::SVSendMessage(pObjInfo->UniqueObjectID, SVM_CONNECT_OBJECT_INPUT, reinterpret_cast<DWORD_PTR>(&pSymbolStruct->InObjectInfo), NULL);
+
 				symbolIndex = Add( pSymbolStruct );
+				m_toolsetSymbolTable.Add( &pSymbolStruct->InObjectInfo );
+			}
 
 		}// end if
 
@@ -221,25 +231,16 @@ int SVEquationSymbolTableClass::addToolSetSymbol( LPCTSTR name, int index, SVObj
 int SVEquationSymbolTableClass::findInputSymbol( LPCTSTR name )
 {
 	int index = -1;
-	SVInObjectInfoStruct *pObjInfo;
 
 	if( m_pAvailInputSymbols )
 	{
 		// Find DataLinkInfo in Available List by name
 		for( int i = m_pAvailInputSymbols->GetSize() - 1; i >= 0; i-- )
 		{
-			pObjInfo = m_pAvailInputSymbols->GetAt( i );
-
-			//search for short name (used by PPQVariable)
-			SVString temp = pObjInfo->GetOneBasedInputObjectShortName();
-			if( temp == name )
-			{
-				index = i;
-				break;
-			}
+			SVOutObjectInfoStruct *pObjInfo = m_pAvailInputSymbols->GetAt( i );
 
 			//search for name in the complete object name
-			temp = pObjInfo->GetInputObjectInfo().GetObjectReference().GetCompleteObjectName();
+			SVString temp = pObjInfo->PObject->GetCompleteObjectName();
 			size_t position = temp.find( name );
 			if( SVString::npos != position && position + strlen(name) >= temp.size() )
 			{
@@ -785,11 +786,11 @@ SVEquationTestResult SVEquationClass::Test( BOOL DisplayErrorMessage )
 	if( HasCondition() && IsEnabled() )
 	{
 		// *** // ***
-		SVInputInfoListClass arInputAvailList;
-		addPPQVariableToList(arInputAvailList);
+		SVOutputInfoListClass arInputAvailList;
+		addPPQVariableToList( arInputAvailList );
 		addOldPPQDigitizerVariableToList( arInputAvailList );
-		addPPQ_XParameterToList(arInputAvailList);
-		addEnvironmentModeParameterToList(arInputAvailList);
+		addPPQ_XParameterToList( arInputAvailList );
+		addRootChildrenToList( arInputAvailList );
 
 		// Get Available ToolSet Variables
 		// Get Known ToolSet Outputs ( selectable for equation )
@@ -877,14 +878,6 @@ SVEquationTestResult SVEquationClass::Test( BOOL DisplayErrorMessage )
 		// Clear the pointers to the Available Lists
 		symbols.SetAvailableLists( NULL, NULL );
 
-		// Free the memory for the input variables list
-		long lSize = arInputAvailList.GetSize();
-		for( long l = 0; l < lSize; l++ )
-		{
-			delete arInputAvailList[l];
-		}// end for
-		arInputAvailList.RemoveAll();
-		
 		isObjectValid.SetValue( 1, ret.bPassed );
 	}
 	// return true if no equation or disabled
@@ -1325,7 +1318,7 @@ HRESULT SVEquationClass::ResetObject()
 	return l_hrOk;
 }
 
-void SVEquationClass::addOldPPQDigitizerVariableToList( SVInputInfoListClass &arInputAvailList )
+void SVEquationClass::addOldPPQDigitizerVariableToList( SVOutputInfoListClass &rOutputInfoList ) const
 {
 	SVPPQObject* pPPQ = GetInspection()->GetPPQ();
 
@@ -1411,17 +1404,12 @@ void SVEquationClass::addOldPPQDigitizerVariableToList( SVInputInfoListClass &ar
 					break;
 			}// end for
 
-			SVInObjectInfoStruct* pInInfoStruct = new SVInObjectInfoStruct;
-			if( nullptr == pObject )
+			//Would it make sense to add an Info object when the object does not exist
+			if( nullptr != pObject )
 			{
-				pInInfoStruct->SetInputObject( static_cast< LPCTSTR >( strName ) );
-			}
-			else
-			{
-				pInInfoStruct->SetInputObject( pObject );
+				rOutputInfoList.Add( &(pObject->GetObjectOutputInfo()) );
 			}
 
-			arInputAvailList.Add( pInInfoStruct );
 			continue;
 		}// end if
 
@@ -1429,7 +1417,7 @@ void SVEquationClass::addOldPPQDigitizerVariableToList( SVInputInfoListClass &ar
 	}// end while
 }
 
-void SVEquationClass::addPPQVariableToList( SVInputInfoListClass &arInputAvailList )
+void SVEquationClass::addPPQVariableToList(  SVOutputInfoListClass &rOutputInfoList ) const
 {
 	SVIOEntryStruct pIOEntry;
 	SVInspectionProcess* pInspection = GetInspection();
@@ -1441,18 +1429,17 @@ void SVEquationClass::addPPQVariableToList( SVInputInfoListClass &arInputAvailLi
 	{
 		pIOEntry = pInspection->m_PPQInputs[i];
 
-		if( !pIOEntry.m_IOEntryPtr->m_Enabled )
+		if( pIOEntry.m_IOEntryPtr.empty() || !pIOEntry.m_IOEntryPtr->m_Enabled )
 			continue;
 
-		SVInObjectInfoStruct *pInInfoStruct = new SVInObjectInfoStruct;
-
-		pInInfoStruct->SetInputObject( pIOEntry.m_IOEntryPtr->m_pValueObject );
-
-		arInputAvailList.Add( pInInfoStruct );
+		if( nullptr !=  pIOEntry.m_IOEntryPtr->m_pValueObject)
+		{
+			rOutputInfoList.Add( &(pIOEntry.m_IOEntryPtr->m_pValueObject->GetObjectOutputInfo()) );
+		}
 	}// end for
 }
 
-void SVEquationClass::addPPQ_XParameterToList( SVInputInfoListClass &arInputAvailList )
+void SVEquationClass::addPPQ_XParameterToList(  SVOutputInfoListClass &rOutputInfoList ) const
 {
 	//add PPQ_X parameter to the equation selection list
 	SVInspectionProcess* pInspection( GetInspection() );
@@ -1467,25 +1454,21 @@ void SVEquationClass::addPPQ_XParameterToList( SVInputInfoListClass &arInputAvai
 		pPPQ->fillChildObjectList(objectList, SV_SELECTABLE_FOR_EQUATION);
 		for(SVObjectPtrDeque::const_iterator iter = objectList.begin(); iter != objectList.end(); ++iter) 
 		{
-			SVInObjectInfoStruct *pInInfoStruct = new SVInObjectInfoStruct;
-			pInInfoStruct->SetInputObject( *iter );
-			arInputAvailList.Add( pInInfoStruct );
+			rOutputInfoList.Add( &((*iter)->GetObjectOutputInfo()) );
 		}
 	}
 }
 
-void SVEquationClass::addEnvironmentModeParameterToList( SVInputInfoListClass &arInputAvailList )
+void SVEquationClass::addRootChildrenToList( SVOutputInfoListClass &rOutputInfoList ) const
 {
-	BasicValueObjects::ValueList list;
-	EnvironmentObject::fillEnvironmentObjectList( list, Seidenader::SVObjectLibrary::FqnEnvironmentMode, SV_SELECTABLE_FOR_EQUATION );
-	for(BasicValueObjects::ValueList::const_iterator iter = list.begin(); iter != list.end(); ++iter) 
+	BasicValueObjects::ValueVector list;
+
+	RootObject::getRootChildObjectList( list,  _T(""), SV_SELECTABLE_FOR_EQUATION );
+	for(BasicValueObjects::ValueVector::const_iterator iter = list.begin(); iter != list.end(); ++iter) 
 	{
-		SVInObjectInfoStruct *pInInfoStruct = new SVInObjectInfoStruct;
-		pInInfoStruct->SetInputObject( *iter );
-		arInputAvailList.Add( pInInfoStruct );
+		rOutputInfoList.Add( &((*iter)->GetObjectOutputInfo()) );
 	}
 }
-
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************

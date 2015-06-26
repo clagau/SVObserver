@@ -456,15 +456,26 @@ LRESULT SVExternalToolDlg::OnUpdateStatus(WPARAM, LPARAM)
 
 bool SVExternalToolDlg::ShowDependentsDlg()
 {
-	SVObjectVector list;
-	m_pTask->FindInvalidatedObjects( list, m_pCancelData, SVExternalToolTask::FIND_ALL_OBJECTS );
-	
-	SVShowDependentsDialog dlg;
-	dlg.StrMessageID = IDS_CHANGE_DLL_EXTERNAL_TOOL;
-	dlg.PTaskObject = m_pTask;
-	dlg.SetFilterList( list );
+	bool Result( true );
 
-	return ( dlg.DoModal() == IDOK );
+	if( nullptr != m_pTask )
+	{
+		SVObjectVector list;
+		m_pTask->FindInvalidatedObjects( list, m_pCancelData, SVExternalToolTask::FIND_ALL_OBJECTS );
+
+		CString DisplayText;
+		CString Name( m_pTask->GetName() );
+		DisplayText.Format( IDS_CHANGE_DLL_EXTERNAL_TOOL, Name, Name, Name, Name);
+
+		SVObjectPairVector DependencyList;
+
+		m_pTask->GetDependentsList( list, DependencyList );
+
+		SVShowDependentsDialog Dlg( DependencyList, DisplayText );
+
+		Result = ( IDOK == Dlg.DoModal() );
+	}
+	return Result;
 }
 
 bool SVExternalToolDlg::QueryAllowExit()

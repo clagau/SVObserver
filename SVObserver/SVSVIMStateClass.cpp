@@ -13,7 +13,7 @@
 #include <intrin.h>
 #include "SVSVIMStateClass.h"
 #include "SVVisionProcessorHelper.h"
-#include "EnvironmentObject.h"
+#include "RootObject.h"
 #include "AutoSaver.h"
 
 #pragma intrinsic(_InterlockedAnd)
@@ -131,12 +131,12 @@ void SVSVIMStateClass::setEnvironmentParameters(svModeEnum mode)
 {
 	long modeValue = static_cast<long>(mode);
 
-	EnvironmentObject::setEnvironmentValue( ::EnvironmentModeValue, modeValue );
-	EnvironmentObject::setEnvironmentValue( ::EnvironmentModeIsRun, static_cast< BOOL >( SVIM_MODE_ONLINE == mode ) );
-	EnvironmentObject::setEnvironmentValue( ::EnvironmentModeIsStop, static_cast< BOOL >( SVIM_MODE_OFFLINE == mode ) );
-	EnvironmentObject::setEnvironmentValue( ::EnvironmentModeIsRegressionTest, static_cast< BOOL >( SVIM_MODE_REGRESSION == mode ) );
-	EnvironmentObject::setEnvironmentValue( ::EnvironmentModeIsTest, static_cast< BOOL >( SVIM_MODE_TEST == mode ) );
-	EnvironmentObject::setEnvironmentValue( ::EnvironmentModeIsEdit, static_cast< BOOL >( SVIM_MODE_EDIT == mode ) );
+	RootObject::setRootChildValue( ::EnvironmentModeValue, modeValue );
+	RootObject::setRootChildValue( ::EnvironmentModeIsRun, ( SVIM_MODE_ONLINE == mode ) );
+	RootObject::setRootChildValue( ::EnvironmentModeIsStop, ( SVIM_MODE_OFFLINE == mode ) );
+	RootObject::setRootChildValue( ::EnvironmentModeIsRegressionTest, ( SVIM_MODE_REGRESSION == mode ) );
+	RootObject::setRootChildValue( ::EnvironmentModeIsTest, ( SVIM_MODE_TEST == mode ) );
+	RootObject::setRootChildValue( ::EnvironmentModeIsEdit, ( SVIM_MODE_EDIT == mode ) );
 }
 
 //******************************************************************************

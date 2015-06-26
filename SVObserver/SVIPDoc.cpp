@@ -90,7 +90,7 @@
 #include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
 #include "SVObjectLibrary/GlobalConst.h"
 #include "SVTreeLibrary/ObjectSelectorItem.h"
-#include "EnvironmentObject.h"
+#include "RootObject.h"
 #include "ToolClipboard.h"
 #include "AutoSaver.h"
 #include "TextDefinesSvO.h"
@@ -100,8 +100,6 @@
 #pragma endregion Includes
 
 #pragma region Declarations
-using namespace Seidenader::ObjectSelectorLibrary;
-using namespace Seidenader::SVTreeLibrary;
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -1540,32 +1538,26 @@ void SVIPDoc::OnResultsPicker()
 		{
 			SVString InspectionName( pInspection->GetName() );
 
-			ObjectTreeGenerator::Instance().setSelectorType( ObjectTreeGenerator::SelectorTypeEnum::TypeMultipleObject);
-			ObjectTreeGenerator::Instance().setAttributeFilters( SV_VIEWABLE );
+			SvOsl::ObjectTreeGenerator::Instance().setSelectorType( SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeMultipleObject);
+			SvOsl::ObjectTreeGenerator::Instance().setAttributeFilters( SV_VIEWABLE );
 
 			CString csRootName;
 			csRootName.LoadString(IDS_CLASSNAME_ROOTOBJECT);
-			ObjectTreeGenerator::Instance().setLocationFilter( ObjectTreeGenerator::FilterInput, csRootName, SVString( _T("") ) );
+			SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, csRootName, SVString( _T("") ) );
 
-			SVString EnvName(Seidenader::SVObjectLibrary::FqnEnvironmentMode);
+			SVString EnvName( SvOl::FqnEnvironmentMode );
 
-			// The environment variables in the dialog should have the same order as in the menu.
 			SVStringArray ObjectNameList;
-			EnvironmentObject* pEnvironment( nullptr );
-			SVObjectManagerClass::Instance().GetRootChildObject(pEnvironment, SVObjectManagerClass::Environment);
-			if(nullptr != pEnvironment)
-			{
-				pEnvironment->getEnvironmentObjectNameList(ObjectNameList, EnvName, SV_VIEWABLE);
-				ObjectTreeGenerator::Instance().insertTreeObjects( ObjectNameList);
-			}
+			RootObject::getRootChildNameList( ObjectNameList, _T(""), SV_VIEWABLE );
+			SvOsl::ObjectTreeGenerator::Instance().insertTreeObjects( ObjectNameList );
+			ObjectNameList.clear();
 
-			
 			SVPPQObject* pPPQ( pInspection->GetPPQ() );
 			SVString PPQName;
 			if( nullptr != pPPQ )
 			{
 				PPQName = pPPQ->GetName();
-				ObjectTreeGenerator::Instance().insertTreeObjects( PPQName );
+				SvOsl::ObjectTreeGenerator::Instance().insertTreeObjects( PPQName );
 			}
 			
 			SVStringArray PpqVariables = pInspection->getPPQVariableNames();
@@ -1577,26 +1569,22 @@ void SVIPDoc::OnResultsPicker()
 				Iter->replace( InspectionName.c_str(), SvOl::FqnPPQVariables );
 				Iter++;
 			}
-			ObjectTreeGenerator::Instance().insertTreeObjects( PpqVariables);
+			SvOsl::ObjectTreeGenerator::Instance().insertTreeObjects( PpqVariables);
 			
-			ObjectTreeGenerator::Instance().setLocationFilter( ObjectTreeGenerator::FilterInput, InspectionName, SVString( _T("") ) );
+			SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, InspectionName, SVString( _T("") ) );
 			
 			SVOutputInfoListClass OutputList;
 			SVToolSetClass* pToolset( GetToolSet() );
 			if(nullptr != pToolset)
 			{
 				pToolset->GetOutputList( OutputList );
-				ObjectTreeGenerator::Instance().insertOutputList( OutputList );
+				SvOsl::ObjectTreeGenerator::Instance().insertOutputList( OutputList );
 			}
-
-
 			
 			SVString From(InspectionName);
 			From.append(_T(".DIO"));
 			SVString TO(SvOl::FqnPPQVariables);
 			TO.append(_T(".DIO"));
-			
-
 			
 			SVStringSet SelectedNamesRaw;
 			pResultList->GetNameSet(SelectedNamesRaw);
@@ -1610,10 +1598,7 @@ void SVIPDoc::OnResultsPicker()
 				SelectedNames.insert(St);
 				SetIt++;
 			}
-
-
-			
-			ObjectTreeGenerator::Instance().setCheckItems(SelectedNames);
+			SvOsl::ObjectTreeGenerator::Instance().setCheckItems(SelectedNames);
 
 			CString ResultPicker;
 			ResultPicker.LoadString( IDS_RESULT_PICKER );
@@ -1623,16 +1608,15 @@ void SVIPDoc::OnResultsPicker()
 			CString Filter;
 			Filter.LoadString( IDS_FILTER );
 			SVString filterTabTitle = Filter;
-			INT_PTR Result = ObjectTreeGenerator::Instance().showDialog( Title, mainTabTitle, filterTabTitle );
+			INT_PTR Result = SvOsl::ObjectTreeGenerator::Instance().showDialog( Title, mainTabTitle, filterTabTitle );
 
 			if( IDOK == Result )
 			{
-				const std::deque<ObjectSelectorItem>& SelectedItems = ObjectTreeGenerator::Instance().getResults();
-				std::deque<ObjectSelectorItem>::const_iterator it;
+				const std::deque<SvTrl::ObjectSelectorItem>& SelectedItems = SvOsl::ObjectTreeGenerator::Instance().getResults();
+				std::deque<SvTrl::ObjectSelectorItem>::const_iterator it;
 				pResultList->Clear();
 
-
-				for( it = SelectedItems.begin(); it != SelectedItems.end(); it++ )
+				for( it = SelectedItems.begin(); it != SelectedItems.end(); ++it )
 				{
 					if(it->isLeaf())
 					{
@@ -1657,6 +1641,7 @@ void SVIPDoc::OnResultsPicker()
 			UpdateAllViews( nullptr );
 		}
 	}
+
 	SVSVIMStateClass::RemoveState(SV_STATE_EDITING);
 }
 
@@ -1668,13 +1653,13 @@ void SVIPDoc::OnPublishedResultsPicker()
 		SVSVIMStateClass::AddState(SV_STATE_EDITING);
 		SVString InspectionName( pInspection->GetName() );
 
-		ObjectTreeGenerator::Instance().setSelectorType( ObjectTreeGenerator::SelectorTypeEnum::TypeSetAttributes );
-		ObjectTreeGenerator::Instance().setAttributeFilters( SV_PUBLISHABLE );
-		ObjectTreeGenerator::Instance().setLocationFilter( ObjectTreeGenerator::FilterInput, InspectionName, SVString( _T("") ) );
+		SvOsl::ObjectTreeGenerator::Instance().setSelectorType( SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeSetAttributes );
+		SvOsl::ObjectTreeGenerator::Instance().setAttributeFilters( SV_PUBLISHABLE );
+		SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, InspectionName, SVString( _T("") ) );
 
 		SVOutputInfoListClass OutputList;
 		GetToolSet()->GetOutputList( OutputList );
-		ObjectTreeGenerator::Instance().insertOutputList( OutputList );
+		SvOsl::ObjectTreeGenerator::Instance().insertOutputList( OutputList );
 
 		CString PublishableResults;
 		PublishableResults.LoadString( IDS_PUBLISHABLE_RESULTS );
@@ -1684,7 +1669,7 @@ void SVIPDoc::OnPublishedResultsPicker()
 		CString Filter;
 		Filter.LoadString( IDS_FILTER );
 		SVString filterTabTitle = Filter;
-		INT_PTR Result = ObjectTreeGenerator::Instance().showDialog( Title, mainTabTitle, filterTabTitle );
+		INT_PTR Result = SvOsl::ObjectTreeGenerator::Instance().showDialog( Title, mainTabTitle, filterTabTitle );
 
 		if( IDOK == Result )
 		{
@@ -1701,7 +1686,7 @@ void SVIPDoc::OnPublishedResultsPicker()
 				pConfig->ValidateRemoteMonitorList();
 
 				// Force the PPQs to rebuild
-				long lSize = pConfig->GetPPQCount( );
+					long lSize = pConfig->GetPPQCount( );
 
 				for( long l = 0; l < lSize; l++ )
 				{
@@ -1880,10 +1865,9 @@ BOOL SVIPDoc::checkOkToDelete( SVTaskObjectClass* pTaskObject )
 
 	SVSVIMStateClass::AddState(SV_STATE_EDITING);
 	// show dependents dialog
-	SVShowDependentsDialog dlg;
-	dlg.PTaskObject = pTaskObject;
 
-	INT_PTR dlgResult = dlg.DoModal();
+	INT_PTR dlgResult = SVShowDependentsDialog::StandardDialog( pTaskObject );
+
 	if( IDCANCEL == dlgResult ) { bRetVal = false; }
 
 	SVSVIMStateClass::RemoveState(SV_STATE_EDITING);

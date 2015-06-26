@@ -45,6 +45,13 @@ This class is the base class to all configuration level objects.  These objects 
 class SVObjectClass : virtual public SvOi::IObjectClass
 {
 	SV_DECLARE_CLASS( SVObjectClass );
+	
+	enum RefreshObjectType
+	{
+		None,
+		PreRefresh,
+		PostRefresh,
+	};
 
 public:
 	typedef std::deque< SVObjectClass* > SVObjectPtrDeque;
@@ -117,7 +124,7 @@ public:
 
 	virtual HRESULT ResetObjectInputs();
 
-	virtual HRESULT RefreshObject();
+	virtual HRESULT RefreshObject( const SVObjectClass* const pSender, RefreshObjectType Type );
 
 	BOOL ConnectObjectInput( SVInObjectInfoStruct* PObjectInInfo );
 	BOOL DisconnectObjectInput( SVInObjectInfoStruct* PObjectInInfo );
@@ -247,18 +254,11 @@ private:
 	CString strObjectName;
 };
 
-/*
-This specialization of the standard set template creates a container object to hold pointers to SVObjectClass objects.
-*/
+#pragma region Declarations
+typedef std::vector<SVObjectClass*> SVObjectVector;
 typedef std::set<SVObjectClass*> SVStdSetSVObjectClassPtr;
-/*
-This specialization of the standard vector template creates a container object to hold pointers to SVObjectClass objects.
-*/
-typedef std::vector<SVObjectClass*> SVStdVectorSVObjectClassPtr;
-/*
-This specialization of the SVArrayClass template creates a container object to hold pointers to SVObjectClass objects.
-*/
 typedef SVVector< SVObjectClass* > SVObjectClassPtrArray;
+#pragma region Declarations
 
 #include "SVObjectClass.inl"
 

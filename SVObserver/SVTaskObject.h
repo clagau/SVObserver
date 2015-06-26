@@ -30,9 +30,6 @@
 class SVLineClass;
 class SVIPDoc;
 
-typedef std::vector<SVObjectClass*> SVObjectVector;
-typedef SVVector< SVObjectClass* > SVObjectClassArray;
-
 class SVTaskObjectClass : virtual public SvOi::ITaskObject, public SVObjectAppClass  
 {
 	SV_DECLARE_CLASS( SVTaskObjectClass )
@@ -106,6 +103,8 @@ public:
 	virtual BOOL RegisterInputObject( SVInObjectInfoStruct* PInObjectInfo, const SVString& p_rInputName );
 
 	HRESULT GetOutputListFiltered(std::vector<SVValueObjectReference>& rvecObjects, UINT uiAttributes = SV_NO_ATTRIBUTES, bool bAND = true ); /* true means AND, false means OR */
+
+	HRESULT GetNonToolsetOutputList( SVOutputInfoListClass& p_rOutputInfoList ) const;
 
 	virtual HRESULT IsAuxInputImage( const SVInObjectInfoStruct* p_psvInfo ); 
 

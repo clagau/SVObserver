@@ -52,6 +52,7 @@
 #define IDI_TRI_STATE_DISABLED          1514
 #define IDI_DOT_ENABLED                 1515
 #define IDI_DOT_DISABLED                1516
+#define IDI_GLOBAL_CONSTANT             1517
 #define IDB_KOERBER                     2000
 #define IDB_START                       2001
 #define IDB_DOWNARROW                   2004
@@ -60,7 +61,7 @@
 #define ID_EDIT_ZOOM                    3000
 #define ID_SLIDER_ZOOM                  3001
 #define IDD_ABOUTBOX                    5000
-#define IDD_TOOLSET_VIEW                5001
+#define IDD_TOOLSET_VIEW            5001
 #define IDD_GR_EDGE_MARKER_ADJUST_DIALOG 5002
 #define IDD_MESSAGE_DIALOG              5003
 #define IDD_TA_TRANSFORM_IMAGE_DIALOG   5004
@@ -153,6 +154,8 @@
 #define IDD_CUSTOM2_FILTER              5122
 #define IDD_OBJECT_SELECTOR_FILTER      5123
 #define IDD_DISPLAY_MSG_BOX             5124
+#define IDD_GLOBAL_CONSTANT             5125
+#define IDD_GLOBAL_CONSTANT_CONFLICT    5126
 #define IDS_OF_STRING                   10000
 #define IDS_PAGE_STRING                 10001
 #define IDS_RESULT_STRING               10002
@@ -1006,7 +1009,6 @@
 #define IDD_DLG_PROP_MON_LIST           11101
 #define IDD_MONITOR_LIST_PAGE           11102
 #define IDS_CLASSNAME_ROOTOBJECT        11103
-#define IDS_CLASSNAME_ENVIRONMENTOBJECT 11104
 #define IDR_MONITOR_LIST_ADD_REMOVE     11105
 #define IDR_MONITOR_SUB_LIST            11106
 #define IDR_MONITOR_LIST_ITEM           11107
@@ -1035,6 +1037,7 @@
 #define IDS_OBJECTNAME_RINGBUFFER_INDEX1 11131
 #define IDS_OBJECTNAME_RINGBUFFER_INDEX2 11132
 #define IDS_OBJECTNAME_RINGBUFFER_FLAG  11133
+#define IDR_GLOBAL_CONSTANT_CONTEXT_MENU 11134
 #define IDS_OBJECTNAME_INPUT_01         14001
 #define IDS_OBJECTNAME_INPUT_02         14002
 #define IDS_OBJECTNAME_INPUT_03         14003
@@ -2227,6 +2230,11 @@
 #define IDC_BUTTON_IMAGE_INDEX1         16095
 #define IDC_EDIT_IMAGE_INDEX2           16096
 #define IDC_BUTTON_IMAGE_INDEX2         16097
+#define IDC_GLOBAL_NAME                 16098
+#define IDC_GLOBAL_TYPE                 16099
+#define IDC_GLOBAL_VALUE                16100
+#define IDC_GLOBAL_DESCRIPTION          16101
+#define IDC_GLOBAL_CONFLICT_GRID        16102
 #define ID_TEST                         20000
 #define ID_BROWSE_BUTTON                20001
 #define ID_PLUSBUTTON                   20002
@@ -2370,6 +2378,9 @@
 #define ID_FORMULA_TEST                 20324
 #define ID_EDIT_ADD_MONITORLIST         20325
 #define ID_VIEW_RESULT_DISPLAY_UPDATE   20326
+#define ID_EDIT_GLOBAL_CONSTANT_ADD     20327
+#define ID_EDIT_GLOBAL_CONSTANT_EDIT    20328
+#define ID_EDIT_GLOBAL_CONSTANT_DELETE  20329
 #define ID_MONITORLIST_EDIT_PROPERTIES  20331
 #define ID_MONITORLIST_ADD_REMOVE_LIST  20332
 #define ID_MONITORLIST_ADD_EDIT_ITEMS   20333
@@ -2426,9 +2437,9 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_3D_CONTROLS                     1
-#define _APS_NEXT_RESOURCE_VALUE        11134
+#define _APS_NEXT_RESOURCE_VALUE        11135
 #define _APS_NEXT_COMMAND_VALUE         20348
-#define _APS_NEXT_CONTROL_VALUE         16098
+#define _APS_NEXT_CONTROL_VALUE         16103
 #define _APS_NEXT_SYMED_VALUE           3002
 #endif
 #endif

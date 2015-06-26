@@ -31,6 +31,7 @@ public:
 	afx_msg void OnExtrasTestoutputs();
 	afx_msg void OnExtrasEditRemoteInputs();
 	afx_msg void OnEditEditplcoutputs();
+	afx_msg void OnEditGlobalConstantAdd();
 	afx_msg void OnUpdateFileExit(CCmdUI* pCmdUI);
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
@@ -55,6 +56,8 @@ public:
 	void InitIO();
 
 	void CloseDocument();
+
+	void updateGlobalConstantsView() const;
 
 #ifdef _DEBUG
 	virtual void AssertValid() const;

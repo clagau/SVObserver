@@ -23,7 +23,11 @@
 #pragma endregion Includes
 
 #pragma region Declarations
-using namespace Seidenader::ObjectSelectorLibrary;
+#ifdef _DEBUG
+#define new DEBUG_NEW
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
+#endif
 #pragma endregion Declarations
 
 IMPLEMENT_DYNAMIC(RangeXDialogClass, CDialog)
@@ -179,7 +183,7 @@ bool RangeXDialogClass::ShowObjectSelector(CString& name)
 	{
 		SVStringSet nameSet;
 		nameSet.insert(name);
-		ObjectTreeGenerator::Instance().setCheckItems(nameSet);
+		SvOsl::ObjectTreeGenerator::Instance().setCheckItems(nameSet);
 	}
 
 	CString Title = m_RangeClassHelper.GetOwnerName();
@@ -191,11 +195,11 @@ bool RangeXDialogClass::ShowObjectSelector(CString& name)
 	CString FilterTab;
 	FilterTab.LoadString( IDS_FILTER );
 
-	INT_PTR Result = ObjectTreeGenerator::Instance().showDialog( Title, mainTabTitle, FilterTab, this );
+	INT_PTR Result = SvOsl::ObjectTreeGenerator::Instance().showDialog( Title, mainTabTitle, FilterTab, this );
 
 	if( IDOK == Result )
 	{
-		name = ObjectTreeGenerator::Instance().getSingleObjectResult().getLocation().c_str(); // @TODO:  Should we check the return values of getSingleObjectResult and getLocation?
+		name = SvOsl::ObjectTreeGenerator::Instance().getSingleObjectResult().getLocation().c_str(); // @TODO:  Should we check the return values of getSingleObjectResult and getLocation?
 		return true;
 	}
 

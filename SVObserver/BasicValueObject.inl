@@ -10,9 +10,61 @@
 //******************************************************************************
 
 #pragma region Public Methods
+template <typename ELEMENT_TYPE>
+HRESULT BasicValueObject::setValue(const ELEMENT_TYPE Value )
+{
+	HRESULT Result = S_FALSE;
+
+	_variant_t VariantValue;
+	VariantValue = Value;
+	Result = setValue( VariantValue );
+
+	RefreshOwner( SVObjectClass::PostRefresh );
+	return Result;
+}
+
+//There are also specializations of this method
+template <typename ELEMENT_TYPE>
+HRESULT BasicValueObject::getValue( ELEMENT_TYPE& rValue ) const
+{
+	HRESULT Result = S_OK;
+
+	RefreshOwner( SVObjectClass::PreRefresh );
+
+	rValue = 0;
+	switch(m_Value.vt)
+	{
+	case VT_BOOL:
+	case VT_INT:
+	case VT_I4:
+	case VT_I8:
+	case VT_R4:
+	case VT_R8:
+		rValue = static_cast<ELEMENT_TYPE> (m_Value);
+		break;
+
+	case VT_BSTR:
+	default:
+		Result = S_FALSE;
+		break;
+	}
+	return Result;
+}
+
+
 inline bool BasicValueObject::isNode() const
 {
 	return m_Node;
+}
+
+inline void BasicValueObject::setDescription( LPCTSTR Description )
+{
+	m_Description = Description;
+}
+
+inline LPCTSTR BasicValueObject::getDescription()
+{
+	return m_Description.c_str();
 }
 #pragma endregion Public Methods
 

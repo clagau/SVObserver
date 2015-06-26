@@ -38,7 +38,7 @@
 #include "SVObjectScriptParserSVX.h"	// new speedy
 #include "SVInspectionTreeParser.h"		// new Inspection XML (NOT object script)
 #include "RemoteCommand.h"
-#include "EnvironmentObject.h"
+#include "RootObject.h"
 #include "SVImageViewScroll.h"
 #include "SVImageView.h"
 #include "SVOLicenseManager/SVOLicenseManager.h"
@@ -1939,9 +1939,9 @@ void SVMainFrame::OnViewImageDisplayUpdate()
 	{
 		SVSVIMStateClass::AddState( SV_STATE_MODIFIED );
 
-		BOOL ImageUpdate = FALSE;
-		EnvironmentObject::getEnvironmentValue( ::EnvironmentImageUpdate, ImageUpdate );
-		EnvironmentObject::setEnvironmentValue( ::EnvironmentImageUpdate, !ImageUpdate );
+		bool ImageUpdate = false;
+		RootObject::getRootChildValue( ::EnvironmentImageUpdate, ImageUpdate );
+		RootObject::setRootChildValue( ::EnvironmentImageUpdate, !ImageUpdate );
 	}
 }
 
@@ -1950,8 +1950,8 @@ void SVMainFrame::OnUpdateViewImageDisplayUpdate( CCmdUI* pCmdUI )
 	BOOL bEnable = TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable( SECURITY_POINT_VIEW_MENU_IMAGE_DISPLAY_UPDATE );
 	bEnable &= !SVSVIMStateClass::CheckState( SV_STATE_REGRESSION );
 	pCmdUI->Enable( bEnable);
-	BOOL ImageUpdate;
-	EnvironmentObject::getEnvironmentValue( ::EnvironmentImageUpdate, ImageUpdate );
+	bool ImageUpdate( false );
+	RootObject::getRootChildValue( ::EnvironmentImageUpdate, ImageUpdate );
 	pCmdUI->SetCheck( ImageUpdate );
 
 	bool bEnableZoom = false;
@@ -1986,9 +1986,9 @@ void SVMainFrame::OnViewResultDisplayUpdate()
 	{
 		SVSVIMStateClass::AddState( SV_STATE_MODIFIED );
 
-		BOOL ResultOnline = FALSE;
-		EnvironmentObject::getEnvironmentValue( ::EnvironmentResultUpdate, ResultOnline );
-		EnvironmentObject::setEnvironmentValue( ::EnvironmentResultUpdate, !ResultOnline );
+		bool ResultOnline = false;
+		RootObject::getRootChildValue( ::EnvironmentResultUpdate, ResultOnline );
+		RootObject::setRootChildValue( ::EnvironmentResultUpdate, !ResultOnline );
 	}
 }
 
@@ -1998,8 +1998,8 @@ void SVMainFrame::OnUpdateViewResultDisplayUpdate( CCmdUI* pCmdUI )
 	bEnable &= !SVSVIMStateClass::CheckState( SV_STATE_REGRESSION );
 	pCmdUI->Enable( bEnable);
 
-	BOOL ResultOnline;
-	EnvironmentObject::getEnvironmentValue( ::EnvironmentResultUpdate, ResultOnline );
+	bool ResultOnline( false );
+	RootObject::getRootChildValue( ::EnvironmentResultUpdate, ResultOnline );
 	pCmdUI->SetCheck( ResultOnline );
 }
 

@@ -95,6 +95,12 @@ protected:
 	void PrintMonitorListSection(CDC* pDC, CPoint& ptCurPos, int nIndentLevel);
 	void PrintPPQBarSection(CDC* pDC, CPoint& ptCurPos, int nIndentLevel);
 	void PrintInspectionToolSet(CDC* pDC, CPoint& ptCurPos, int nIndentLevel);
+
+	//************************************
+	//! Method to print the Global Constants
+	//! \param pDC [in] pointer to the printer device context
+	//************************************
+	void PrintGlobalConstants( CDC* pDC, CPoint& rCurPos, int nIndentLevel ) ;
 #pragma endregion Protected Methods
 
 	// Generated message map functions

@@ -197,7 +197,7 @@ HRESULT SVObjectClass::ResetObjectInputs()
 	return l_hrOk;
 }
 
-HRESULT SVObjectClass::RefreshObject()
+HRESULT SVObjectClass::RefreshObject( const SVObjectClass* const pSender, RefreshObjectType Type )
 {
 	HRESULT Result = S_OK;
 

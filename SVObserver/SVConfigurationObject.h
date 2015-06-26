@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   20 Nov 2014 05:01:58  $
 //******************************************************************************
 
-#ifndef INC_SVCONFIGURATIONOBJECT_INCLUDED
-#define INC_SVCONFIGURATIONOBJECT_INCLUDED
+#pragma once
 
 #pragma region Includes
 #include "SVContainerLibrary/SVMap.h"
@@ -251,6 +250,13 @@ public:
 	//************************************
 	HRESULT LoadRemoteMonitorList( SVTreeType& rTree );
 
+	//************************************
+	//! The method loads the Global Constant list
+	//! \param rTree <in> a reference to the XML-tree which it will be loaded from
+	//! \returns S_OK, if loading successful
+	//************************************
+	HRESULT LoadGlobalConstants( SVTreeType& rTree );
+
 	bool HasCameraTrigger(SVPPQObject* p_pPPQ) const;
 
 	//************************************
@@ -280,6 +286,7 @@ private:
 	BOOL SaveTrigger(SVTreeType &rTree);
 	BOOL SaveInspection(SVTreeType &rTree);
 	BOOL SavePPQ(SVTreeType &rTree);
+	
 	//************************************
 	// Method:    SaveMonitorList
 	// Description: Add the current monitor lists to the tree.
@@ -287,6 +294,7 @@ private:
 	// Returns:   bool
 	//************************************
 	bool SaveRemoteMonitorList( SVTreeType& rTree ) const;
+
 	//************************************
 	// Method:    SaveMonitoredObjectList
 	// Description: Add the current sub monitor lists to the tree
@@ -297,6 +305,13 @@ private:
 	// Returns:   bool
 	//************************************
 	bool SaveMonitoredObjectList( SVTreeType& rTree, SVTreeType::SVBranchHandle hBranch, const SVString& listName, const MonitoredObjectList& subList ) const;
+
+	//************************************
+	//! The method saves the Global Constant list
+	//! \param rTree <in> a reference to the XML-tree which it will be saved to
+	//! \returns true on success
+	//************************************
+	bool SaveGlobalConstants( SVTreeType& rTree ) const;
 
 	HRESULT SaveAcquisitionDeviceFilename( SVTreeType& rTree, SVTreeType::SVBranchHandle htiDig, SVFileNameArrayClass* pFiles );
 	HRESULT LoadAcquisitionDeviceFilename( SVTreeType& rTree, SVTreeType::SVBranchHandle htiDig, SVFileNameArrayClass& svFileArray );
@@ -339,7 +354,7 @@ private:
 	SVAcquisitionDeviceMap mAcquisitionDeviceMap;
 };
 
-#endif
+typedef SVSharedPtr< SVConfigurationObject > SVConfigurationObjectPtr;
 
 //******************************************************************************
 //* LOG HISTORY:

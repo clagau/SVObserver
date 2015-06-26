@@ -22,7 +22,6 @@
 #pragma endregion Includes
 
 #pragma region Declarations
-using namespace Seidenader::ObjectSelectorLibrary;
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -264,13 +263,13 @@ void SVChildrenSetupDialogClass::OnPublishButton()
 {
 	if( nullptr == m_pParentObject || nullptr == m_pParentOwner ) { return; }
 
-	ObjectTreeGenerator::Instance().setSelectorType( ObjectTreeGenerator::SelectorTypeEnum::TypeSetAttributes );
-	ObjectTreeGenerator::Instance().setAttributeFilters( SV_PUBLISHABLE );
-	ObjectTreeGenerator::Instance().setLocationFilter( ObjectTreeGenerator::FilterInput, m_pParentOwner->GetCompleteObjectName(), SVString( _T("") ) );
+	SvOsl::ObjectTreeGenerator::Instance().setSelectorType( SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeSetAttributes );
+	SvOsl::ObjectTreeGenerator::Instance().setAttributeFilters( SV_PUBLISHABLE );
+	SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, m_pParentOwner->GetCompleteObjectName(), SVString( _T("") ) );
 
 	SVOutputInfoListClass OutputList;
 	m_pParentObject->GetOutputList( OutputList );
-	ObjectTreeGenerator::Instance().insertOutputList( OutputList );
+	SvOsl::ObjectTreeGenerator::Instance().insertOutputList( OutputList );
 
 	CString PublishableResults;
 	PublishableResults.LoadString( IDS_PUBLISHABLE_RESULTS );
@@ -281,7 +280,7 @@ void SVChildrenSetupDialogClass::OnPublishButton()
 	CString Filter;
 	Filter.LoadString( IDS_FILTER );
 	SVString filterTabTitle = Filter;
-	INT_PTR Result = ObjectTreeGenerator::Instance().showDialog( Title, mainTabTitle, filterTabTitle, this );
+	INT_PTR Result = SvOsl::ObjectTreeGenerator::Instance().showDialog( Title, mainTabTitle, filterTabTitle, this );
 
 	if( IDOK == Result )
 	{
@@ -352,10 +351,7 @@ BOOL SVChildrenSetupDialogClass::checkOkToDelete( SVTaskObjectClass* pTaskObject
 	BOOL bRetVal = TRUE;
 
 	// show dependents dialog
-	SVShowDependentsDialog dlg;
-	dlg.PTaskObject = pTaskObject;
-
-	INT_PTR rc = dlg.DoModal();
+	INT_PTR rc = SVShowDependentsDialog::StandardDialog( pTaskObject );
 
 	if( IDCANCEL == rc ) { bRetVal = FALSE; }
 

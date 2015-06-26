@@ -12,7 +12,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "ObjectInterfaces/IInspectionProcess.h"
-#include "ObjectInterfaces/IEnvironmentObject.h"
+#include "ObjectInterfaces/IRootObject.h"
 #include "ObjectInterfaces/IObjectManager.h"
 #include "ObjectInterfaces/ObjectDefines.h"
 #include "SVObjectLibrary/GlobalConst.h"
@@ -23,7 +23,6 @@
 #pragma endregion Includes
 
 #pragma region Declarations
-using namespace Seidenader::SVObjectLibrary;
 using namespace Seidenader::ObjectSelectorLibrary;
 using namespace SvOi;
 
@@ -385,12 +384,13 @@ namespace Seidenader
 			ObjectTreeGenerator::Instance().setAttributeFilters( SV_SELECTABLE_FOR_EQUATION );
 			ObjectTreeGenerator::Instance().setLocationFilter( ObjectTreeGenerator::FilterInput, InspectionName, SVString( _T("") ) );
 			ObjectTreeGenerator::Instance().setLocationFilter( ObjectTreeGenerator::FilterInput, tmp, SVString( _T("") ) );
-			ObjectTreeGenerator::Instance().setLocationFilter( ObjectTreeGenerator::FilterOutput, FqnPPQVariables, SVString( _T("") ) );
+			ObjectTreeGenerator::Instance().setLocationFilter( ObjectTreeGenerator::FilterOutput, SvOl::FqnPPQVariables, SVString( _T("") ) );
 			ObjectTreeGenerator::Instance().setAllowWholeArrays( true );
 
 			SVStringArray objectNameList;
-			SvOi::getEnvironmentObjectNameList(objectNameList, Seidenader::SVObjectLibrary::FqnEnvironmentMode, SV_VIEWABLE );
+			SvOi::getRootChildNameList( objectNameList, _T(""), SV_SELECTABLE_FOR_EQUATION );
 			ObjectTreeGenerator::Instance().insertTreeObjects( objectNameList );
+
 			ObjectTreeGenerator::Instance().insertTreeObjects( PPQName );
 
 			SVStringArray PpqVariables = m_rFormulaController.getPPQVariableNames();
@@ -405,7 +405,7 @@ namespace Seidenader
 				{
 					ObjectTreeGenerator::setSelectorItemType(pObject, objectItem);
 				}
-				Iter->replace( InspectionName.c_str(), FqnPPQVariables );
+				Iter->replace( InspectionName.c_str(), SvOl::FqnPPQVariables );
 				objectItem.setLocation(*Iter);
 				ObjectTreeGenerator::Instance().insertTreeObject(objectItem);
 				Iter++;

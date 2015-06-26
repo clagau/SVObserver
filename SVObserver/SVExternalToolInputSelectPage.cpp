@@ -29,7 +29,6 @@
 #pragma endregion Includes
 
 #pragma region Declarations
-using namespace Seidenader::ObjectSelectorLibrary;
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -288,24 +287,24 @@ int SVExternalToolInputSelectPage::SelectObject( CString& rObjectName, SVRProper
 		InspectionName = pToolSet->GetInspection()->GetName();
 	}
 
-	ObjectTreeGenerator::Instance().setSelectorType( ObjectTreeGenerator::SelectorTypeEnum::TypeSingleObject );
-	ObjectTreeGenerator::Instance().setAttributeFilters( SV_ARCHIVABLE );
+	SvOsl::ObjectTreeGenerator::Instance().setSelectorType( SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeSingleObject );
+	SvOsl::ObjectTreeGenerator::Instance().setAttributeFilters( SV_ARCHIVABLE );
 	CString tmp;
 	tmp.LoadString(IDS_CLASSNAME_ROOTOBJECT);
-	ObjectTreeGenerator::Instance().setLocationFilter( ObjectTreeGenerator::FilterInput, tmp, SVString( _T("") ) );
-	ObjectTreeGenerator::Instance().setLocationFilter( ObjectTreeGenerator::FilterInput, InspectionName, SVString( _T("") ) );
-	ObjectTreeGenerator::Instance().insertTreeObjects( Seidenader::SVObjectLibrary::FqnEnvironmentMode );
+	SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, tmp, SVString( _T("") ) );
+	SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, InspectionName, SVString( _T("") ) );
+	SvOsl::ObjectTreeGenerator::Instance().insertTreeObjects( SvOl::FqnEnvironmentMode );
 	if (nullptr != m_pTool)
 	{
 		SVPPQObject* pPPQ = m_pTool->GetInspection()->GetPPQ();
 		SVString PPQName;
 		if( nullptr != pPPQ ){ PPQName = pPPQ->GetName(); }
-		ObjectTreeGenerator::Instance().insertTreeObjects( PPQName );
+		SvOsl::ObjectTreeGenerator::Instance().insertTreeObjects( PPQName );
 	}
 
 	SVOutputInfoListClass OutputList;
 	pToolSet->GetOutputList( OutputList );
-	ObjectTreeGenerator::Instance().insertOutputList( OutputList );
+	SvOsl::ObjectTreeGenerator::Instance().insertOutputList( OutputList );
 
 	SVStringSet Items;
 
@@ -316,7 +315,7 @@ int SVExternalToolInputSelectPage::SelectObject( CString& rObjectName, SVRProper
 	if( !ItemName.empty() )
 	{
 		Items.insert( ItemName );
-		ObjectTreeGenerator::Instance().setCheckItems( Items );
+		SvOsl::ObjectTreeGenerator::Instance().setCheckItems( Items );
 	}
 
 	CString ToolsetOutput;
@@ -327,11 +326,11 @@ int SVExternalToolInputSelectPage::SelectObject( CString& rObjectName, SVRProper
 	CString Filter;
 	Filter.LoadString( IDS_FILTER );
 	SVString filterTabTitle = Filter;
-	INT_PTR Result = ObjectTreeGenerator::Instance().showDialog( Title, mainTabTitle, filterTabTitle, this );
+	INT_PTR Result = SvOsl::ObjectTreeGenerator::Instance().showDialog( Title, mainTabTitle, filterTabTitle, this );
 
 	if( IDOK == Result )
 	{
-		ObjectName = ObjectTreeGenerator::Instance().getSingleObjectResult().getDisplayLocation().c_str();
+		ObjectName = SvOsl::ObjectTreeGenerator::Instance().getSingleObjectResult().getDisplayLocation().c_str();
 	}
 
 	rObjectName = ObjectName;

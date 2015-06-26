@@ -1,0 +1,225 @@
+//*****************************************************************************
+/// \copyright (c) 2015,2015 by Seidenader Maschinenbau GmbH
+/// All Rights Reserved 
+//*****************************************************************************
+/// This is the dialog to edit or add a Global Constant value 
+//*****************************************************************************
+
+#pragma region Includes
+#include "stdafx.h"
+#include <comutil.h>
+#include "GlobalConstantDlg.h"
+#include "TextDefinesSvOg.h"
+#include "SVUtilityLibrary\SVString.h"
+#include "SVObjectLibrary\SVObjectNameInfo.h"
+#include "SVObjectLibrary\GlobalConst.h"
+#include "SVMessage\SVMessage.h"
+#include "SVStatusLibrary\ExceptionManager.h"
+#include "ObjectInterfaces\ErrorNumbers.h"
+#pragma endregion Includes
+
+#pragma region Declarations
+#ifdef _DEBUG
+#define new DEBUG_NEW
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
+#endif
+#pragma endregion Declarations
+
+
+namespace Seidenader { namespace SVOGui
+{
+
+	IMPLEMENT_DYNAMIC(GlobalConstantDlg, CDialog)
+
+	BEGIN_MESSAGE_MAP(GlobalConstantDlg, CDialog)
+	END_MESSAGE_MAP()
+
+	#pragma region Constructor
+	GlobalConstantDlg::GlobalConstantDlg( SvOi::GlobalConstantData& rData, CWnd* pParent /*nullptr*/ )
+		: CDialog(GlobalConstantDlg::IDD, pParent)
+	,	m_rData( rData )
+	,	m_Branch( CString(SvOl::FqnGlobal) + _T(".") )
+	{
+
+	}
+
+	GlobalConstantDlg::~GlobalConstantDlg()
+	{
+	}
+	#pragma endregion Constructor
+
+	#pragma region Public Methods
+	void GlobalConstantDlg::setExistingNames( const SVStringArray& rNames )
+	{
+		m_ExistingNames.clear();
+
+		m_ExistingNames = rNames;
+	}
+	#pragma endregion Public Methods
+
+	#pragma region Private Methods
+	void GlobalConstantDlg::DoDataExchange(CDataExchange* pDX)
+	{
+		CDialog::DoDataExchange(pDX);
+		DDX_Text(pDX, IDC_GLOBAL_NAME, m_Name);
+		SVString Name( m_Branch );
+		Name += m_Name.GetString();
+
+		DDV_GlobalName( pDX, Name );
+		DDX_Control(pDX, IDC_GLOBAL_TYPE, m_Type);
+		DDX_Text(pDX, IDC_GLOBAL_VALUE, m_Value);
+		int CurrentSelection = m_Type.GetCurSel();
+		if( DataTypeMax >  CurrentSelection )
+		{
+			DataTypeEnum CurrentType( static_cast<DataTypeEnum> (CurrentSelection) );
+			DDV_GlobalConstantValue( pDX, CurrentType );
+		}
+		DDX_Text(pDX, IDC_GLOBAL_DESCRIPTION, m_Descrition);
+	}
+
+	BOOL GlobalConstantDlg::OnInitDialog()
+	{
+		CDialog::OnInitDialog();
+
+		for(int i=0; i < DataTypeMax; i++ )
+		{
+			m_Type.AddString( GlobalConstantTypes[i] );
+		}
+
+		//Set default type as Number
+		if( NumberType < m_Type.GetCount() )
+		{
+			m_Type.SetCurSel( NumberType );
+		}
+
+		if( !m_rData.m_DottedName.empty() )
+		{
+			SVObjectNameInfo ParseName;
+
+			ParseName.ParseObjectName( m_rData.m_DottedName );
+			m_Name = ParseName.m_NameArray[ParseName.m_NameArray.size() - 1].c_str();
+			ParseName.RemoveBottomName();
+			m_Branch = ParseName.GetObjectArrayName().c_str();
+			m_Branch += _T(".");
+		}
+
+		switch( m_rData.m_Value.vt )
+		{
+		case VT_R8:
+			{
+				m_Value.Format( _T("%.06f"), m_rData.m_Value.dblVal );
+				if( NumberType < m_Type.GetCount() )
+				{
+					m_Type.SetCurSel( NumberType );
+				}
+			}
+			break;
+		case VT_BSTR:
+			{
+				m_Value = m_rData.m_Value;
+				if( TextType < m_Type.GetCount() )
+				{
+					m_Type.SetCurSel( TextType );
+				}
+			}
+			break;
+		default:
+			break;
+		}
+		//If it already existed then do not allow to change the type
+		if( SV_GUID_NULL != m_rData.m_Guid )
+		{
+			m_Type.EnableWindow( FALSE );
+		}
+		m_Descrition = m_rData.m_Description.c_str();
+
+		UpdateData(FALSE);
+		return TRUE;
+	}
+
+	void GlobalConstantDlg::OnOK()
+	{
+		if( UpdateData( true ) )
+		{
+			m_rData.m_DottedName = m_Branch;
+			m_rData.m_DottedName += m_Name.GetString();
+			//Determine which Global Constant type Number or Text
+			if( NumberType == m_Type.GetCurSel() )
+			{
+				m_rData.m_Value = atof( m_Value );
+			}
+			else if( TextType == m_Type.GetCurSel() )
+			{
+				m_rData.m_Value = m_Value;
+			}
+			m_rData.m_Description = m_Descrition.GetString();
+			CDialog::OnOK();
+		}
+	}
+
+	void GlobalConstantDlg::DDV_GlobalConstantValue( CDataExchange* pDX, DataTypeEnum Type  )
+	{
+		SVString NewValue( m_Value );
+		if( !NewValue.empty() )
+		{
+			switch( Type )
+			{
+			case NumberType:
+				{
+					if( !NewValue.matchesRegularExpression( RegExp_AllRealNumbers ) )
+					{
+						SvStl::ExceptionMgr1 Exception( SvStl::LogAndDisplay );
+						Exception.setMessage( SVMSG_SVO_65_ENTERED_VALUE_INVALID, m_Value, StdExceptionParams, SvOi::Err_25014_GlobalConstantNumber );
+						pDX->Fail();
+					}
+				}
+				break;
+			case TextType:
+				break;
+			default:
+				break;
+			}
+		}
+	}
+
+	void GlobalConstantDlg::DDV_GlobalName( CDataExchange* pDX, const SVString& rName )
+	{
+		if( m_rData.m_DottedName.empty() || rName != m_rData.m_DottedName )
+		{
+			SVStringArray::const_iterator Iter( m_ExistingNames.cbegin() );
+			bool Failed( false );
+			//Checks to see if the name of the Global Constant already exists
+			while( m_ExistingNames.cend() != Iter )
+			{
+				if( rName == *Iter )
+				{
+					SvStl::ExceptionMgr1 Exception( SvStl::LogAndDisplay );
+					Exception.setMessage( SVMSG_SVO_66_GLOBAL_NAME_INVALID, rName.c_str(), StdExceptionParams, SvOi::Err_25015_GlobalNameAlreadyUsed );
+					Failed = true;
+					break;
+				}
+				++Iter;
+			}
+
+			SVString NewName( rName );
+			NewName.replace( m_Branch.GetString(), _T("") );
+
+			if( !Failed && !NewName.empty() )
+			{
+				if( !NewName.matchesRegularExpression( RegExp_Name ) )
+				{
+					SvStl::ExceptionMgr1 Exception( SvStl::LogAndDisplay );
+					Exception.setMessage( SVMSG_SVO_65_ENTERED_VALUE_INVALID, NewName.c_str(), StdExceptionParams, SvOi::Err_25016_GlobalNameInvalid );
+					Failed = true;
+				}
+			}
+			if( Failed )
+			{
+				pDX->Fail();
+			}
+		}
+	}
+
+	#pragma endregion Private Methods
+} /* namespace SVOGui */ } /* namespace Seidenader */

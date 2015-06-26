@@ -30,7 +30,7 @@
 #include "SVSVIMStateClass.h"
 #include "SVXMLLibrary/SVNavigateTreeClass.h"
 #include "SVConfigurationLibrary/SVConfigurationTags.h"
-#include "SVIOTabbedView.h"
+#include "GlobalConstantView.h"
 #include "SVMainFrm.h"
 #include "ObjectInterfaces/SVUserMessage.h"
 #include "SVIOController.h"
@@ -79,9 +79,11 @@ IMPLEMENT_DYNCREATE( SVIODoc, CDocument );
 
 BEGIN_MESSAGE_MAP(SVIODoc, CDocument)
 	//{{AFX_MSG_MAP(SVIODoc)
-	ON_COMMAND(ID_EXTRAS_TESTOUTPUTS, OnExtrasTestoutputs)
-	ON_COMMAND(ID_EDIT_EDITREMOTEINPUTS, OnExtrasEditRemoteInputs)
-	ON_UPDATE_COMMAND_UI(ID_APP_EXIT, OnUpdateFileExit)
+	ON_COMMAND(ID_EXTRAS_TESTOUTPUTS, &SVIODoc::OnExtrasTestoutputs)
+	ON_COMMAND(ID_EDIT_EDITREMOTEINPUTS, &SVIODoc::OnExtrasEditRemoteInputs)
+	ON_COMMAND(ID_EDIT_GLOBAL_CONSTANT_ADD, &SVIODoc::OnEditGlobalConstantAdd)
+	ON_UPDATE_COMMAND_UI(ID_EDIT_GLOBAL_CONSTANT_ADD,  &GlobalConstantView::OnUpdateAddItem) //Note that this calls the Global View method directly
+	ON_UPDATE_COMMAND_UI(ID_APP_EXIT, &SVIODoc::OnUpdateFileExit)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
@@ -137,6 +139,22 @@ void SVIODoc::OnCloseDocument()
 void SVIODoc::CloseDocument()
 {
 	OnFileClose();
+}
+
+void SVIODoc::updateGlobalConstantsView() const
+{
+	POSITION Pos( GetFirstViewPosition() );
+
+	while( nullptr != Pos )
+	{
+		GlobalConstantView* pView = dynamic_cast<GlobalConstantView*> (GetNextView( Pos ));
+		if( nullptr != pView )
+		{
+			pView->updateView();
+			break;
+		}
+	}
+
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -370,6 +388,21 @@ void SVIODoc::OnExtrasEditRemoteInputs()
 		}
 	}// end if
 }// end OnExtrasEditRemoteInputs
+
+void SVIODoc::OnEditGlobalConstantAdd()
+{
+	POSITION Pos( GetFirstViewPosition() );
+
+	while( nullptr != Pos )
+	{
+		GlobalConstantView* pView = dynamic_cast<GlobalConstantView*> (GetNextView( Pos ));
+		if( nullptr != pView )
+		{
+			pView->OnAddItem();
+			break;
+		}
+	}
+}
 
 void SVIODoc::InitMenu()
 {

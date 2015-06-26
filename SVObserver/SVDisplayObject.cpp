@@ -24,7 +24,7 @@
 #include "SVInspectionProcess.h"
 #include "SVIPDoc.h"
 #include "SVObserver.h"
-#include "EnvironmentObject.h"
+#include "RootObject.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -429,11 +429,11 @@ HRESULT SVDisplayObject::ProcessNotifyIPDoc( bool& p_rProcessed )
 HRESULT SVDisplayObject::FinishInspection( const SVInspectionCompleteInfoStruct& p_rProduct )
 {	
 	HRESULT l_Status = S_OK;
-	BOOL ImageUpdate = TRUE;
-	BOOL ResultUpdate = TRUE;
+	bool ImageUpdate = true;
+	bool ResultUpdate = true;
 
-	EnvironmentObject::getEnvironmentValue( ::EnvironmentImageUpdate, ImageUpdate );
-	EnvironmentObject::getEnvironmentValue( ::EnvironmentResultUpdate, ResultUpdate );
+	RootObject::getRootChildValue( ::EnvironmentImageUpdate, ImageUpdate );
+	RootObject::getRootChildValue( ::EnvironmentResultUpdate, ResultUpdate );
 
 	if( ImageUpdate || ResultUpdate  || !SVSVIMStateClass::CheckState( SV_STATE_RUNNING ))
 	{

@@ -14,6 +14,7 @@
 #include "SVResultDouble.h"
 #include "RemoteMonitorList.h"
 #include "RemoteMonitorListHelper.h"
+#include "RootObject.h"
 
 std::pair<GUID **, size_t> NonPrintGuids();
 
@@ -477,6 +478,7 @@ inline void SVConfigXMLPrint::WriteIOSection(Writer writer) const
 	WriteModuleIO(writer);
 	WriteResultIO(writer);
 	WriteMonitorListSection(writer);
+	WriteGlobalConstants(writer);
 	writer->WriteEndElement();
 }
 
@@ -1509,6 +1511,40 @@ void SVConfigXMLPrint::WriteIOEntryObject(Writer writer, SVIOEntryHostStructPtr 
 			break;
 	}
 }
+
+inline void SVConfigXMLPrint::WriteGlobalConstants(Writer writer) const
+{
+	SVString Value;
+	int Index (0);
+
+	BasicValueObjects::ValueVector GlobalConstantObjects;
+	RootObject::getRootChildObjectList( GlobalConstantObjects, SvOl::FqnGlobal );
+
+	writer->WriteStartElement(NULL, L"GlobalConstants", NULL);
+
+	BasicValueObjects::ValueVector::const_iterator Iter( GlobalConstantObjects.cbegin() );
+	while ( GlobalConstantObjects.cend() != Iter )
+	{
+		const BasicValueObjectPtr& pGlobalConstant = *Iter;
+
+		if( !pGlobalConstant.empty() )
+		{
+			Value.Format( L"GlobalConstant%d", ++Index );
+			writer->WriteStartElement(NULL, to_utf16( Value.c_str(), cp_dflt).c_str(), NULL);
+			//write Global Constant Name
+			Value = pGlobalConstant->GetCompleteObjectName();
+			writer->WriteAttributeString(NULL, L"Name", NULL, to_utf16( Value.c_str(), cp_dflt).c_str() );
+			//write Global Constant Value
+			pGlobalConstant->getValue( Value );
+			writer->WriteAttributeString(NULL, L"Value", NULL, to_utf16( Value.c_str(), cp_dflt).c_str() );
+			writer->WriteEndElement();//GlobalConstantx
+		}
+		++Iter;
+	}
+
+	writer->WriteEndElement();//GlobalConstants
+}
+
 
 //////////////////////////////////////////////////////////////////
 // Visitor helper

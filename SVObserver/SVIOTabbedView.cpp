@@ -20,6 +20,7 @@
 #include "SVRemoteInputsView.h"
 #include "SVRemoteOutputsView.h"
 #include "MonitorListView.h"
+#include "GlobalConstantView.h"
 
 // SVIOTabbedView
 
@@ -50,6 +51,7 @@ BOOL SVIOTabbedView::OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext* pContex
 #endif
 	TVisualObject *pRemoteOutputsView = new TVisualObject( SVRemoteOutputsViewID, _T("Remote Outputs"), pContext, RUNTIME_CLASS( SVRemoteOutputsView ) );
 	TVisualObject *pRemoteMonitorListView = new TVisualObject( SVRemoteMonitorListViewID, _T("Monitor List"), pContext, RUNTIME_CLASS( MonitorListView ) );
+	TVisualObject *pGlobalConstantView = new TVisualObject( SVGlobalConstantViewID, _T("Global Constants"), pContext, RUNTIME_CLASS( GlobalConstantView ) );
 
 	m_Framework.Add( pIOTab );
 	m_Framework.Add( pIOTab, pInputsView );
@@ -61,6 +63,7 @@ BOOL SVIOTabbedView::OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext* pContex
 #endif
 	m_Framework.Add( pIOTab, pRemoteOutputsView );
 	m_Framework.Add( pIOTab, pRemoteMonitorListView );
+	m_Framework.Add( pIOTab, pGlobalConstantView );
 
 	BOOL l_bRet = m_Framework.Create(this);
 

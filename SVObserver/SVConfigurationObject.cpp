@@ -62,14 +62,13 @@
 #include "SVObjectLibrary/GlobalConst.h"
 #include "RemoteMonitorNamedList.h"
 #include "RemoteMonitorListHelper.h"
-#include "EnvironmentObject.h"
+#include "RootObject.h"
 #include "SVSystemLibrary/SVThreadManager.h"
 #include "RangeClassHelper.h"
 #include "SVObjectLibrary/SVToolsetScriptTags.h"
 #pragma endregion Includes
 
 #pragma region Declarations
-using namespace Seidenader::SVObjectLibrary;
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -925,8 +924,7 @@ HRESULT SVConfigurationObject::LoadConfiguration(SVTreeType& rTree)
 
 			//This is the deprecated tag and has changed to CTAG_IMAGE_UPDATE and CTAG_RESULT_UPDATE
 			//Needs to be read for older configurations and becomes the standard default
-			BOOL Value = TRUE;
-			BasicValueObject* pValueObject = nullptr;
+			bool Value = true;
 			if (SVNavigateTreeClass::GetItem( rTree, CTAG_ONLINE_DISPLAY, htiChild, svValue) )
 			{
 				Value = svValue;
@@ -936,23 +934,13 @@ HRESULT SVConfigurationObject::LoadConfiguration(SVTreeType& rTree)
 			{
 				Value = svValue;
 			}
-			//Need to set the attributes to settable remotely and online for the Image Update object
-			pValueObject = EnvironmentObject::setEnvironmentValue( ::EnvironmentImageUpdate, Value );
-			if( nullptr != pValueObject)
-			{
-				pValueObject->ObjectAttributesAllowedRef() |= SV_REMOTELY_SETABLE | SV_SETABLE_ONLINE;
-			}
+			RootObject::setRootChildValue( ::EnvironmentImageUpdate, Value );
 
 			if (SVNavigateTreeClass::GetItem( rTree, CTAG_RESULT_DISPLAY_UPDATE, htiChild, svValue) )
 			{
 				Value = svValue;
 			}
-			//Need to set the attributes to settable remotely and online for the Result Update object
-			pValueObject = EnvironmentObject::setEnvironmentValue( ::EnvironmentResultUpdate, Value );
-			if( nullptr != pValueObject)
-			{
-				pValueObject->ObjectAttributesAllowedRef() |= SV_REMOTELY_SETABLE | SV_SETABLE_ONLINE;
-			}
+			RootObject::setRootChildValue( ::EnvironmentResultUpdate, Value );
 
 			// Thread Affinity Setup
 			SVTreeType::SVBranchHandle htiThreadSetup = NULL;
@@ -2734,6 +2722,9 @@ BOOL SVConfigurationObject::DestroyConfiguration()
 		m_pIOController = NULL;
 	}
 
+	//Delete all Global Constants
+	RootObject::resetRootChildValue( SvOl::FqnGlobal );
+
 	SetProductType( SVIM_PRODUCT_TYPE_UNKNOWN );
 
 	SVDigitizerProcessingClass::Instance().ClearDevices();
@@ -2913,13 +2904,13 @@ BOOL SVConfigurationObject::SaveEnvironment(SVTreeType& rTree)
 
 		if ( bOk )
 		{
-			EnvironmentObject::getEnvironmentValue( ::EnvironmentImageUpdate, svValue );
+			RootObject::getRootChildValue( ::EnvironmentImageUpdate, svValue );
 			bOk = SVNavigateTreeClass::AddItem( rTree, hEnvBranch, CTAG_IMAGE_DISPLAY_UPDATE, svValue );
 		}
 
 		if ( bOk )
 		{
-			EnvironmentObject::getEnvironmentValue( ::EnvironmentResultUpdate, svValue );
+			RootObject::getRootChildValue( ::EnvironmentResultUpdate, svValue );
 			bOk = SVNavigateTreeClass::AddItem( rTree, hEnvBranch, CTAG_RESULT_DISPLAY_UPDATE, svValue );
 		}
 
@@ -3479,8 +3470,9 @@ BOOL SVConfigurationObject::SaveInspection(SVTreeType& rTree)
 					for( l = 0; l < lSize; l++ )
 					{							
 						SVNavigateTreeClass::AddBranch( rTree, htiViewed, pInspection->m_arViewedInputNames[l] );
-					}// end for
-					*/
+					}// end for*/
+
+					//@INFO [gra][7.20][03.06.2015] Note the inspection tree and values is saved in the method SVObserverApp::SaveDocuments which is called after this
 				}
 			}
 		}
@@ -3754,6 +3746,46 @@ bool SVConfigurationObject::SaveMonitoredObjectList( SVTreeType& rTree, SVTreeTy
 	return bOk;
 }
 
+bool SVConfigurationObject::SaveGlobalConstants( SVTreeType& rTree ) const
+{
+	SVTreeType::SVBranchHandle hBranch = nullptr;
+	bool bOk = SVNavigateTreeClass::SetBranch( rTree, nullptr, CTAG_GLOBAL_CONSTANTS, &hBranch );
+
+	if ( NULL != hBranch )
+	{
+		BasicValueObjects::ValueVector GlobalConstantObjects;
+		RootObject::getRootChildObjectList( GlobalConstantObjects, SvOl::FqnGlobal, 0 );
+		BasicValueObjects::ValueVector::const_iterator Iter( GlobalConstantObjects.cbegin() );
+		while ( bOk && GlobalConstantObjects.cend() != Iter  && !Iter->empty() )
+		{
+			SVTreeType::SVBranchHandle hChild( nullptr );
+			SVString Name( (*Iter)->GetCompleteObjectName() );
+			bOk = SVNavigateTreeClass::SetBranch( rTree, hBranch, Name.c_str(), &hChild );
+			if( bOk && NULL != hChild )
+			{
+				_variant_t Value;
+				(*Iter)->getValue( Value );
+				bOk = SVNavigateTreeClass::AddItem( rTree, hChild, CTAG_VALUE, Value ) && bOk;
+				Value.Clear();
+
+				Value = (*Iter)->ObjectAttributesAllowedRef();
+				Value.ChangeType(VT_UI4);
+				bOk = SVNavigateTreeClass::AddItem( rTree, hChild, scAttributesAllowedTag, Value ) && bOk;
+				Value.Clear();
+
+				CString Description( (*Iter)->getDescription() );
+				//This is needed to remove any CR LF in the description
+				::SVAddEscapeSpecialCharacters( Description, true );
+				Value.SetString( Description );
+				bOk = SVNavigateTreeClass::AddItem( rTree, hChild, CTAG_DESCRIPTION, Value ) && bOk;
+				Value.Clear();
+			}
+			++Iter;
+		}
+	}
+	return bOk;
+}
+
 BOOL SVConfigurationObject::SaveConfiguration(SVTreeType& rTree)
 {
 	BOOL bOk = SaveEnvironment(rTree);
@@ -3764,6 +3796,7 @@ BOOL SVConfigurationObject::SaveConfiguration(SVTreeType& rTree)
 	bOk = SaveInspection(rTree) && bOk;
 	bOk = SavePPQ(rTree) && bOk;
 	bOk = SaveRemoteMonitorList(rTree) && bOk;
+	bOk = SaveGlobalConstants( rTree ) && bOk;
 
 	return bOk;
 }
@@ -4725,7 +4758,7 @@ HRESULT SVConfigurationObject::GetInspectionItems( const SVNameSet& p_rNames, SV
 
 			SVObjectNameInfo::ParseObjectName( l_Info, *l_Iter );
 
-			if( FqnInspections == l_Info.m_NameArray[ 0 ] )
+			if( SvOl::FqnInspections == l_Info.m_NameArray[ 0 ] )
 			{
 				SVObjectReference ref;
 				SVObjectManagerClass::Instance().GetObjectByDottedName( l_Info.GetObjectArrayName( 0 ), ref );
@@ -4883,7 +4916,7 @@ HRESULT SVConfigurationObject::GetRemoteInputItems( const SVNameSet& p_rNames, S
 
 			SVObjectNameInfo::ParseObjectName( l_Info, *l_Iter );
 
-			if( FqnRemoteInputs == l_Info.m_NameArray[ 0 ] )
+			if( SvOl::FqnRemoteInputs == l_Info.m_NameArray[ 0 ] )
 			{
 				SVRemoteInputObject* l_pInput = NULL;
 
@@ -4959,7 +4992,7 @@ HRESULT SVConfigurationObject::SetInspectionItems( const SVNameStorageMap& p_rIt
 
 			SVObjectNameInfo::ParseObjectName( l_Info, l_Iter->first );
 
-			if( l_Info.m_NameArray.size() >0 &&  FqnInspections == l_Info.m_NameArray[ 0 ] )
+			if( l_Info.m_NameArray.size() >0 &&  SvOl::FqnInspections == l_Info.m_NameArray[ 0 ] )
 			{
 				SVObjectReference ref;
 				SVObjectManagerClass::Instance().GetObjectByDottedName( l_Info.GetObjectArrayName( 0 ), ref );
@@ -5158,7 +5191,7 @@ HRESULT SVConfigurationObject::SetRemoteInputItems( const SVNameStorageMap& p_rI
 
 			SVObjectNameInfo::ParseObjectName( l_Info, l_Iter->first );
 
-			if( FqnRemoteInputs == l_Info.m_NameArray[ 0 ] )
+			if( SvOl::FqnRemoteInputs == l_Info.m_NameArray[ 0 ] )
 			{
 				SVRemoteInputObject* l_pInput = NULL;
 
@@ -5293,7 +5326,7 @@ HRESULT SVConfigurationObject::SetCameraItems( const SVNameStorageMap& rItems, S
 
 			SVObjectNameInfo::ParseObjectName( Info, Iter->first );
 
-			if( FqnCameras == Info.m_NameArray[ 0 ] )
+			if( SvOl::FqnCameras == Info.m_NameArray[ 0 ] )
 			{
 				BasicValueObject* pValueObject = NULL;
 
@@ -5667,6 +5700,67 @@ HRESULT SVConfigurationObject::LoadMonitoredObjectList( SVTreeType& rTree, SVTre
 		retValue = SVMSG_SVO_48_LOAD_CONFIGURATION_MONITOR_LIST;
 	}
 	return retValue;
+}
+
+HRESULT SVConfigurationObject::LoadGlobalConstants( SVTreeType& rTree )
+{
+	HRESULT Result = S_OK;
+	SVTreeType::SVBranchHandle hBranch( nullptr );
+	if ( SVNavigateTreeClass::GetItemBranch( rTree, CTAG_GLOBAL_CONSTANTS, nullptr, hBranch ) )
+	{
+		SVTreeType::SVBranchHandle hChild( nullptr );
+		rTree.GetFirstBranch( hBranch, hChild );
+		while ( S_OK == Result && nullptr != hChild )
+		{
+			_bstr_t GlobalConstantName;
+			Result = rTree.GetBranchName( hChild, GlobalConstantName.GetBSTR() );
+
+			_variant_t Value;
+			CString Description;
+			if ( S_OK == Result )
+			{
+				if ( SVNavigateTreeClass::GetItem( rTree, CTAG_DESCRIPTION, hChild, Value ) )
+				{
+					Description = Value.bstrVal;
+					//This is needed to insert any CR LF in the description which were replaced while saving
+					::SVRemoveEscapedSpecialCharacters( Description, true );
+				}
+				else
+				{
+					Result = SVMSG_SVO_63_LOAD_GLOBAL_CONSTANTS;
+				}
+				Value.Clear();
+				if ( !SVNavigateTreeClass::GetItem( rTree, scAttributesAllowedTag, hChild, Value ) )
+				{
+					Result = SVMSG_SVO_63_LOAD_GLOBAL_CONSTANTS;
+				}
+				UINT AttributesAllowed = Value;
+
+				Value.Clear();
+				if ( !SVNavigateTreeClass::GetItem( rTree, CTAG_VALUE, hChild, Value ) )
+				{
+					Result = SVMSG_SVO_63_LOAD_GLOBAL_CONSTANTS;
+				}
+
+				if( S_OK == Result )
+				{
+					BasicValueObjectPtr pValue( nullptr );
+					pValue = RootObject::setRootChildValue( GlobalConstantName, Value );
+					if( pValue.empty() )
+					{
+						Result = SVMSG_SVO_63_LOAD_GLOBAL_CONSTANTS;
+					}
+					else
+					{
+						pValue->setDescription( Description );
+						pValue->ObjectAttributesAllowedRef() = AttributesAllowed;
+					}
+				}
+			}
+			rTree.GetNextBranch( hBranch, hChild );
+		}
+	}
+	return Result;
 }
 
 /*static*/ bool SVConfigurationObject::GetInspection( LPCTSTR InspectionName, SVInspectionProcess*& prInspection )

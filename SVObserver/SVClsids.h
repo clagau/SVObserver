@@ -90,9 +90,6 @@ extern /*const*/ GUID SVConfigurationObjectGuid;
 // GUID for the RootObject
 extern /*const*/ GUID RootObjectGuid;
 
-// GUID for the EnvironmentObjectGuid
-extern /*const*/ GUID EnvironmentObjectGuid;
-
 // GUID for the SVIOController
 extern /*const*/ GUID SVIOControllerGuid;
 

@@ -94,11 +94,15 @@ long SVVirtualCamera::GetImageDepth() const
 	return l_Depth;
 }
 
-HRESULT SVVirtualCamera::RefreshObject()
+HRESULT SVVirtualCamera::RefreshObject( const SVObjectClass* const pSender, RefreshObjectType Type )
 {
 	HRESULT Result = S_OK;
 	
-	Result = UpdateCameraParameters();
+	//The camera parameters only need to be refreshed when type is PreRefresh
+	if( PreRefresh == Type )
+	{
+		Result = UpdateCameraParameters();
+	}
 	
 	return Result;
 }
@@ -150,13 +154,11 @@ HRESULT SVVirtualCamera::GetChildObject( SVObjectClass*& rpObject, const SVObjec
 	{
 		if( 0 < rNameInfo.m_NameArray.size() && rNameInfo.m_NameArray[ Index ] == GetName() )
 		{
-			BasicValueObject* pBasicValueObject=nullptr;
+			BasicValueObjectPtr pBasicValueObject = m_CameraValues.getValueObject( rNameInfo.GetObjectArrayName( Index + 1 ).c_str() );
 
-			pBasicValueObject = m_CameraValues.getValueObject( rNameInfo.GetObjectArrayName( Index + 1 ).c_str() );
-
-			if( nullptr != pBasicValueObject )
+			if( !pBasicValueObject.empty() )
 			{
-				rpObject = dynamic_cast<SVObjectClass*> (pBasicValueObject);
+				rpObject = dynamic_cast<SVObjectClass*> (pBasicValueObject.get());
 			}
 		}
 	}
@@ -703,7 +705,7 @@ HRESULT SVVirtualCamera::UpdateCameraParameters()
 			variant_t SerialNumberValue;
 			pDeviceParam->GetValue(SerialNumberValue.GetVARIANT());
 			pDeviceParam = nullptr;
-			m_CameraValues.setValueObject( ::CameraSerialNumber, SerialNumberValue, this );
+			m_CameraValues.setValueObject( ::CameraSerialNumber, SerialNumberValue, this, SVCameraObjectType );
 		}
 		pDeviceParam = CameraParameters.GetParameter( DeviceParamGain );
 		Status = UpdateCameraLongParameter( ::CameraGain, dynamic_cast< SVLongValueDeviceParam* >( pDeviceParam ) );
@@ -722,8 +724,8 @@ HRESULT SVVirtualCamera::UpdateCameraLongParameter( LPCTSTR Name, const SVLongVa
 	{
 		variant_t Value;
 		Value = pLongValueDeviceParam->GetScaledValue();
-		BasicValueObject* pValueObject = m_CameraValues.setValueObject( Name, Value, this );
-		if( nullptr != pValueObject)
+		BasicValueObjectPtr pValueObject = m_CameraValues.setValueObject( Name, Value, this, SVCameraObjectType );
+		if( !pValueObject.empty() )
 		{
 			pValueObject->ObjectAttributesAllowedRef() |= SV_REMOTELY_SETABLE | SV_SETABLE_ONLINE;
 			Status = S_OK;
@@ -748,10 +750,10 @@ HRESULT SVVirtualCamera::UpdateDeviceParameters(SVDeviceParamCollection& rCamera
 		SVDeviceParamCollection	ChangedCameraParameters;
 		SVDeviceParam* pDeviceParam = nullptr;
 		pDeviceParam = rCameraParameters.GetParameter( DeviceParamGain );
-		BasicValueObject* pValueObject;
+		BasicValueObjectPtr pValueObject;
 		pValueObject = m_CameraValues.getValueObject( ::CameraGain );
 
-		if(nullptr != pValueObject)
+		if( !pValueObject.empty() )
 		{
 			Status = pValueObject->updateDeviceParameter( pDeviceParam );
 			ChangedCameraParameters.SetParameter(pDeviceParam);
@@ -765,7 +767,7 @@ HRESULT SVVirtualCamera::UpdateDeviceParameters(SVDeviceParamCollection& rCamera
 		{
 			pDeviceParam = rCameraParameters.GetParameter( DeviceParamShutter );
 			pValueObject = m_CameraValues.getValueObject( ::CameraShutter );
-			if(nullptr != pValueObject)
+			if( !pValueObject.empty() )
 			{
 				Status = pValueObject->updateDeviceParameter( pDeviceParam );
 				ChangedCameraParameters.SetParameter(pDeviceParam);

@@ -16,6 +16,7 @@
 #include "SVObserverTemplate.h"
 #include "SVObjectClass.h"
 #include "SVObjectNotifyTemplate.h"
+#include "GlobalConst.h"
 
 template< typename SVObjectTypeName >
 HRESULT SVObjectManagerClass::ConstructObject( const SVGUID& p_rClassID, SVObjectTypeName*& p_rpObject )
@@ -68,11 +69,11 @@ HRESULT SVObjectManagerClass::GetObjectByDottedName( const SVString& p_rFullName
 }
 
 template< typename SVObjectTypeName >
-HRESULT SVObjectManagerClass::GetRootChildObject( SVObjectTypeName*& rpObject, RootChildObjectEnum RootChild )
+HRESULT SVObjectManagerClass::GetRootChildObject( SVObjectTypeName*& rpObject, const SVString& rRootChild )
 {
 	HRESULT l_Status = S_OK;
 
-	SVObjectClass* l_pObject = GetObject( m_RootEnumChildren[RootChild] );
+	SVObjectClass* l_pObject = GetObject( m_RootNameChildren[rRootChild] );
 
 	if( l_pObject != NULL )
 	{
@@ -89,7 +90,7 @@ HRESULT SVObjectManagerClass::GetRootChildObject( SVObjectTypeName*& rpObject, R
 template< typename SVObjectTypeName >
 HRESULT SVObjectManagerClass::GetConfigurationObject( SVObjectTypeName*& rpObject )
 {
-	return GetRootChildObject(rpObject, Configuration);
+	return GetRootChildObject(rpObject, SvOl::FqnConfiguration );
 }
 
 template< typename SVNotifyData >
@@ -129,7 +130,7 @@ HRESULT SVObjectManagerClass::VisitElements( ObjectVisitor& p_rVisitor, const SV
 	if (l_StartingObjectID == GUID_NULL)
 	{
 		//Set to configuration as this used to be the start.
-		l_StartingObjectID = GetChildRootObjectID(Configuration);
+		l_StartingObjectID = GetChildRootObjectID( SvOl::FqnConfiguration );
 	}
 	SVObjectClass* l_pObject = GetObject( l_StartingObjectID );
 

@@ -454,7 +454,7 @@ DWORD_PTR	ToolSizeAdjustTask::processMessage( DWORD DwMessageID, DWORD_PTR DwMes
 				{
 					ErrorMsg.Format(_T("The new extents for the %s are not valid"), GetTool()->GetName());
 				}
-				SvStl::ExpTypeEnum mode = SilentReset ? SvStl::ExpTypeEnum::LogOnly :  SvStl::ExpTypeEnum::LogAndDisplay;
+				SvStl::ExpTypeEnum mode = SilentReset ? SvStl::LogOnly :  SvStl::LogAndDisplay;
 				SvStl::ExceptionMgr1 Exception(mode);
 				Exception.setMessage( SVMSG_SVO_58_TOOLADJUST_RESET_ERROR, ErrorMsg.GetString(), StdExceptionParams, ResetStatus, 0, MB_OK );
 				DwResult = SVMR_NO_SUCCESS | DwResult;

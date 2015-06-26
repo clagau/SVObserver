@@ -352,7 +352,7 @@ void SVPPQObject::init()
 	m_voDataValid.ObjectAttributesAllowedRef()		= SV_EMBEDABLE | SV_PRINTABLE;
 	m_voOutputState.ObjectAttributesAllowedRef()	= SV_EMBEDABLE | SV_PRINTABLE;
 
-	m_PpqValues.setValueObject( PpqLength, StandardPpqLength, this );
+	BasicValueObjectPtr pPpqLength =  m_PpqValues.setValueObject( PpqLength, StandardPpqLength, this );
 	SVObjectManagerClass::Instance().IncrementShortPPQIndicator();
 
 	//fill up the child object list
@@ -366,7 +366,7 @@ void SVPPQObject::init()
 	m_childObjects.push_back(&m_voDataValid);
 	m_childObjects.push_back(&m_voOutputState);
 	m_childObjects.push_back(&m_voTriggerCount);
-	m_childObjects.push_back(m_PpqValues.getValueObject(PpqLength));
+	m_childObjects.push_back(pPpqLength.get());
 
 	//copy full child object list to the temporary list for the method fillChildObjectList,
 	//because this is the same as filter = 0 (default)
@@ -843,8 +843,8 @@ BOOL SVPPQObject::GetPPQLength( long &lPPQLength ) const
 long SVPPQObject::GetPPQLength() const
 {
 	long length = 0;
-	BasicValueObject* pValue  = m_PpqValues.getValueObject(PpqLength);
-	if( nullptr != pValue )
+	BasicValueObjectPtr pValue  = m_PpqValues.getValueObject(PpqLength);
+	if( !pValue.empty() )
 	{
 		pValue->getValue(length);
 	}

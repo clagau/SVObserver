@@ -22,7 +22,6 @@
 #pragma endregion Includes
 
 #pragma region Declarations
-using namespace Seidenader::ObjectSelectorLibrary;
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -107,13 +106,13 @@ void SVTADlgRemoteInputToolPage::OnBnClickedSelectInputButton()
 
 	SVString InspectionName( pToolSet->GetInspection()->GetName() );
 
-	ObjectTreeGenerator::Instance().setSelectorType( ObjectTreeGenerator::SelectorTypeEnum::TypeSingleObject );
-	ObjectTreeGenerator::Instance().setAttributeFilters( SV_ARCHIVABLE );
-	ObjectTreeGenerator::Instance().setLocationFilter( ObjectTreeGenerator::FilterInput, InspectionName, SVString( _T("") ) );
+	SvOsl::ObjectTreeGenerator::Instance().setSelectorType( SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeSingleObject );
+	SvOsl::ObjectTreeGenerator::Instance().setAttributeFilters( SV_ARCHIVABLE );
+	SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, InspectionName, SVString( _T("") ) );
 
 	SVOutputInfoListClass OutputList;
 	pToolSet->GetOutputList( OutputList );
-	ObjectTreeGenerator::Instance().insertOutputList( OutputList );
+	SvOsl::ObjectTreeGenerator::Instance().insertOutputList( OutputList );
 
 	if( nullptr !=  m_pTool->GetInputObject() )
 	{
@@ -121,9 +120,9 @@ void SVTADlgRemoteInputToolPage::OnBnClickedSelectInputButton()
 
 		SVObjectReference ObjectRef( m_pTool->GetInputObject() );
 		SVString Location( ObjectRef.GetCompleteOneBasedObjectName() );
-		ObjectTreeGenerator::Instance().convertObjectArrayName( ObjectRef, Location );
+		SvOsl::ObjectTreeGenerator::Instance().convertObjectArrayName( ObjectRef, Location );
 		Items.insert( Location );
-		ObjectTreeGenerator::Instance().setCheckItems( Items );
+		SvOsl::ObjectTreeGenerator::Instance().setCheckItems( Items );
 	}
 
 	CString ToolsetOutput;
@@ -135,13 +134,13 @@ void SVTADlgRemoteInputToolPage::OnBnClickedSelectInputButton()
 	Filter.LoadString( IDS_FILTER );
 	SVString filterTabTitle = Filter;
 
-	INT_PTR Result = ObjectTreeGenerator::Instance().showDialog( Title, mainTabTitle, filterTabTitle, this );
+	INT_PTR Result = SvOsl::ObjectTreeGenerator::Instance().showDialog( Title, mainTabTitle, filterTabTitle, this );
 
 	if( IDOK == Result )
 	{
-		m_InputName = ObjectTreeGenerator::Instance().getSingleObjectResult().getLocation().c_str();
+		m_InputName = SvOsl::ObjectTreeGenerator::Instance().getSingleObjectResult().getLocation().c_str();
 
-		SVGUID ObjectGuid(ObjectTreeGenerator::Instance().getSingleObjectResult().getItemKey());
+		SVGUID ObjectGuid(SvOsl::ObjectTreeGenerator::Instance().getSingleObjectResult().getItemKey());
 		m_pTool->SetInputObject( ObjectGuid );
 	}
 

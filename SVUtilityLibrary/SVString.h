@@ -19,6 +19,7 @@
 #include <set>
 #pragma endregion Includes
 
+
 /**
 @SVObjectName String
 
@@ -122,6 +123,13 @@ public:
 	// Returns:  bool:  true if searchString is found
 	//************************************
 	bool isSubmatch( SVString searchString, size_t offsetSource = 0, size_t offsetSearch = 0 );
+
+	//************************************
+	//! Method to check if the string matches a regular expression
+	//! \param RegularExpression [in] the regular expression to check with
+	//! \returns true if the internal string matches the regular expression
+	//************************************
+	bool matchesRegularExpression( LPCTSTR RegularExpression ) const;
 
 	void clear();
 

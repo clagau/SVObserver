@@ -19,8 +19,6 @@
 #include "ObjectInterfaces\ICustom2Filter.h"
 #pragma endregion Includes
 
-namespace SvGcl = Seidenader::GridCtrlLibrary;
-
 namespace Seidenader
 {
 	namespace SVOGui

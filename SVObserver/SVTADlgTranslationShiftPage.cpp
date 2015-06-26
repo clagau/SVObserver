@@ -475,7 +475,7 @@ void SVTADlgTranslationShiftPageClass::OnBnClickedChkEnableSourceImageExtents()
 	refresh();
 	if( m_ctlEnableSourceImageExtents.GetCheck()==0)
 	{
-		SvStl::ExceptionMgr1 e( SvStl::ExpTypeEnum::LogAndDisplay );
+		SvStl::ExceptionMgr1 e( SvStl::LogAndDisplay );
 		e.setMessage( SVMSG_SVO_60_SHIFT_TOOL_SOURCE_IMAGE_EXTENTS_DISABLED, nullptr, StdExceptionParams, SvOi::Err_17053_Shift_Tool_Source_Image_Extents_Disabled );
 	}
 }

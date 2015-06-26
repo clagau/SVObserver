@@ -11,12 +11,12 @@
 
 #pragma region Public Methods
 template <typename ELEMENT_TYPE>
-HRESULT BasicValueObjects::getValue( LPCSTR Name, ELEMENT_TYPE& rValue ) const
+HRESULT BasicValueObjects::getValue( LPCTSTR DottedName, ELEMENT_TYPE& rValue ) const
 {
 	HRESULT Result = S_FALSE;
 
-	BasicValueObject* pValue = getValueObject( Name );
-	if(nullptr != pValue)
+	BasicValueObjectPtr pValue = getValueObject( DottedName );
+	if( !pValue.empty() )
 	{
 		Result = pValue->getValue( rValue );
 	}
@@ -25,60 +25,89 @@ HRESULT BasicValueObjects::getValue( LPCSTR Name, ELEMENT_TYPE& rValue ) const
 }
 
 template <typename ELEMENT_TYPE>
-BasicValueObject* BasicValueObjects::setValueObject( LPCSTR Name, const ELEMENT_TYPE Value, SVObjectClass* pOwner )
+BasicValueObjectPtr BasicValueObjects::setValueObject( LPCTSTR DottedName, const ELEMENT_TYPE Value, SVObjectClass* pOwner, SVObjectTypeEnum ObjectType )
 {
-	BasicValueObject* pValue = nullptr;
-
-	pValue = getValueObject( Name );
-	if(nullptr == pValue)
+	vt_const_iterator Iter = findValueObject( DottedName );
+	if( m_Tree.end() == Iter )
 	{
-		SVObjectNameInfo NameInfo;
-		SVObjectClass* pParent = pOwner;
-
-		HRESULT Result = SVObjectNameInfo::ParseObjectName( NameInfo, Name );
-
-		if( S_OK == Result )
-		{
-			for( size_t i=0; i < NameInfo.m_NameArray.size(); i++ )
-			{
-				pValue = getValueObject( NameInfo.m_NameArray[i].c_str() );
-				if( nullptr == pValue )
-				{
-					//Check if last name entry
-					if( NameInfo.m_NameArray.size() == i + 1 )
-					{
-						pValue = new BasicValueObject( NameInfo.m_NameArray[i].c_str(), pParent );
-						pValue->setValue(Value);
-					}
-					else
-					{
-						//Generate node and node becomes the new parent object
-						pValue = new BasicValueObject( NameInfo.m_NameArray[i].c_str(), pParent, true );
-						pParent = dynamic_cast<SVObjectClass*> (pValue);
-					}
-					m_Values.push_back( pValue );
-				}
-				else if( pValue->isNode() )
-				{
-					pParent = dynamic_cast<SVObjectClass*> ( pValue );
-				}
-			}
-		}
+		Iter = createValueObject( DottedName, Value, pOwner, ObjectType );
 	}
 	else
 	{
-		pValue->setValue( Value );
+		(*Iter)->setValue( Value );
 	}
 
-	return pValue;
+	return *Iter;
 }
 
-inline const BasicValueObjects::ValueList& BasicValueObjects::getValueList() const
+inline const BasicValueObjects::ValueTree& BasicValueObjects::getTree() const
 {
-	return m_Values;
+	return m_Tree;
 }
-
 #pragma endregion Public Methods
+
+#pragma region Private Methods
+template <typename ELEMENT_TYPE>
+BasicValueObjects::vt_const_iterator BasicValueObjects::createValueObject( LPCTSTR DottedName, const ELEMENT_TYPE Value, SVObjectClass* pOwner, SVObjectTypeEnum ObjectType )
+{
+	vt_const_iterator Iter( m_Tree.end() );
+	vt_iterator IterParent( m_Tree.end() );
+	vt_iterator IterStart( m_Tree.begin() );
+	vt_iterator IterEnd( m_Tree.end() );
+	SVObjectNameInfo ParsedName;
+	SVObjectClass* pParent = pOwner;
+
+	if( S_OK == ParsedName.ParseObjectName( DottedName ) )
+	{
+		for( size_t i=0; i < ParsedName.m_NameArray.size(); i++ )
+		{
+			SVString Name( ParsedName.m_NameArray[i] );
+
+			Iter = findChildObject( IterStart, IterEnd, Name.c_str() );
+			if( IterEnd == Iter )
+			{
+				//If default object type then check parent
+				if( nullptr != pParent && SVBasicValueObjectType == ObjectType )
+				{
+					ObjectType = pParent->GetObjectInfo().ObjectTypeInfo.ObjectType;
+				}
+				BasicValueObjectPtr pValue(nullptr);
+				bool Node( false );
+				//Check if last name entry
+				if( ParsedName.m_NameArray.size() != i + 1 )
+				{
+					//Generate node and node becomes the new parent object
+					Node = true;
+				}
+				pValue = new BasicValueObject( Name.c_str(), pParent, Node, ObjectType );
+				pValue->setValue(Value);
+
+				if( m_Tree.end() != IterParent )
+				{
+					Iter = IterParent.node()->insert( pValue );
+					IterStart = IterParent.node()->begin();
+				}
+				else
+				{
+					Iter = m_Tree.insert( pValue );
+					IterStart = m_Tree.begin();
+				}
+			}
+			if( (*Iter)->isNode() )
+			{
+				IterParent = IterStart;
+				std::advance ( IterParent, std::distance<vt_const_iterator>( IterStart, Iter ) );
+				IterStart = IterParent.node()->begin();
+				IterEnd = IterParent.node()->end();
+
+				pParent = dynamic_cast<SVObjectClass*> ( (*Iter).get() );
+			}
+		}
+	}
+
+	return Iter;
+}
+#pragma endregion Private Methods
 
 //******************************************************************************
 //* LOG HISTORY:

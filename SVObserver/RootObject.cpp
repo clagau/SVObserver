@@ -13,8 +13,14 @@
 #include "stdafx.h"
 #include "RootObject.h"
 
+#include "SVObserver.h"
+#include "SVIODoc.h"
 #include "SVObjectLibrary\SVObjectManagerClass.h"
 #include "SVObjectLibrary\SVObjectLibrary.h"
+#include "SVObjectLibrary\GlobalConst.h"
+#include "SVMessage\SVMessage.h"
+#include "SVStatusLibrary\ExceptionManager.h"
+#include "ObjectInterfaces\ErrorNumbers.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -30,70 +36,235 @@ SV_IMPLEMENT_CLASS( RootObject, RootObjectGuid );
 #pragma region Constructor
 RootObject::RootObject( LPCSTR ObjectName )
 : SVObjectClass( ObjectName )
-, m_EnvironmentObject()
 , m_pConfigurationObject(nullptr)
-
 {
-	//The Root object should have an empty name
-	SetName(_T(""));
-	createEnvironmentObject();
-	createConfigurationObject();
+	Initialize();
 }
 
 RootObject::RootObject( SVObjectClass* POwner, int StringResourceID )
 : SVObjectClass( POwner, StringResourceID )
-, m_EnvironmentObject()
 , m_pConfigurationObject(nullptr)
 {
-	//The Root object should have an empty name
-	SetName(_T(""));
-	createEnvironmentObject();
-	createConfigurationObject();
+	Initialize();
 }
 
 RootObject::~RootObject()
 {
-	destroyConfigurationObject();
 }
 #pragma endregion Constructor
 
 #pragma region Public Methods
-HRESULT RootObject::GetChildObject( SVObjectClass*& p_rpObject, const SVObjectNameInfo& p_rNameInfo, long p_Index ) const
+HRESULT RootObject::GetChildObject( SVObjectClass*& rpObject, const SVObjectNameInfo& rNameInfo, long Index ) const
 {
 	HRESULT l_Status = S_OK;
+
+	l_Status =  m_RootChildren.GetChildObject( rpObject, rNameInfo, Index );
 
 	return l_Status;
 }
 
-BOOL RootObject::createConfigurationObject()
+HRESULT RootObject::RefreshObject( const SVObjectClass* const pSender, RefreshObjectType Type )
 {
-	destroyConfigurationObject();
-	m_pConfigurationObject = new SVConfigurationObject;
-	SVObjectManagerClass::Instance().setRootChildID(SVObjectManagerClass::Configuration, m_pConfigurationObject->GetUniqueObjectID());
-	m_pConfigurationObject->SetObjectOwner(this);
+	HRESULT Result = S_OK;
 
-	return TRUE;
+	if( PostRefresh == Type )
+	{
+		//When its of type Global Constant we need to update the IO view
+		if( SVGlobalConstantObjectType == pSender->GetObjectInfo().ObjectTypeInfo.ObjectType )
+		{
+			SVIODoc* pIODoc = TheSVObserverApp.GetIODoc();
+			if(nullptr != pIODoc )
+			{
+				pIODoc->updateGlobalConstantsView();
+			}
+		}
+	}
+
+	return Result;
+}
+
+bool RootObject::createConfigurationObject()
+{
+	m_pConfigurationObject.clear();
+	m_pConfigurationObject = new SVConfigurationObject;
+	m_pConfigurationObject->SetObjectOwner(this);
+	SVObjectManagerClass::Instance().setRootChildID( SvOl::FqnConfiguration, m_pConfigurationObject->GetUniqueObjectID() );
+
+	BasicValueObjectPtr pValueObject( nullptr );
+	//Default update views is true
+	bool Update( true );
+	pValueObject = m_RootChildren.setValue( ::EnvironmentImageUpdate, Update );
+	if( !pValueObject.empty() )
+	{
+		//Need to set the attributes to settable remotely and online for the Image Update object but should not appear in rest of GUI
+		pValueObject->ObjectAttributesAllowedRef() |= SV_REMOTELY_SETABLE | SV_SETABLE_ONLINE;
+		pValueObject->ObjectAttributesAllowedRef() &= ~SV_VIEWABLE & ~SV_SELECTABLE_FOR_EQUATION;
+	}
+
+	pValueObject = m_RootChildren.setValue( ::EnvironmentResultUpdate, Update );
+	if( !pValueObject.empty() )
+	{
+		//Need to set the attributes to settable remotely and online for the Result Update object but should not appear in rest of GUI
+		pValueObject->ObjectAttributesAllowedRef() |= SV_REMOTELY_SETABLE | SV_SETABLE_ONLINE;
+		pValueObject->ObjectAttributesAllowedRef() &= ~SV_VIEWABLE & ~SV_SELECTABLE_FOR_EQUATION;
+	}
+
+	return true;
+}
+
+/*static*/ BasicValueObjectPtr RootObject::getRootChildObjectValue( LPCSTR DottedName )
+{
+	RootObject* pRoot( nullptr );
+	BasicValueObjectPtr pValue( nullptr );
+
+	SVObjectManagerClass::Instance().GetRootChildObject( pRoot, SvOl::FqnRoot );
+
+	if(nullptr != pRoot)
+	{
+		pValue = pRoot->getRootChildren().getValueObject( DottedName );
+	}
+
+	return pValue;
+}
+
+/*static*/ void RootObject::getRootChildObjectList( BasicValueObjects::ValueVector& rObjectList, LPCTSTR Path, UINT AttributesAllowedFilter )
+{
+	RootObject* pRoot( nullptr );
+
+	SVObjectManagerClass::Instance().GetRootChildObject( pRoot, SvOl::FqnRoot );
+
+	if(nullptr != pRoot)
+	{
+		pRoot->getRootChildren().getObjectList( rObjectList, Path, AttributesAllowedFilter );
+	}
+}
+
+/*static*/ void RootObject::getRootChildNameList( SVStringArray& rObjectNameList, LPCTSTR Path, UINT AttributesAllowedFilter )
+{
+	BasicValueObjects::ValueVector ObjectList;
+
+	getRootChildObjectList( ObjectList, Path, AttributesAllowedFilter );
+	for( BasicValueObjects::ValueVector::const_iterator Iter = ObjectList.cbegin(); Iter != ObjectList.cend(); ++Iter )
+	{
+		rObjectNameList.push_back( (*Iter)->GetCompleteObjectName() );
+	}
+}
+
+/*static*/ HRESULT RootObject::deleteRootChildValue( LPCSTR DottedName )
+{
+	HRESULT Result( S_FALSE );
+	RootObject* pRoot( nullptr );
+
+	SVObjectManagerClass::Instance().GetRootChildObject( pRoot, SvOl::FqnRoot );
+
+	if(nullptr != pRoot)
+	{
+		Result = pRoot->getRootChildren().deleteValue( DottedName );
+	}
+
+	return Result;
+}
+
+/*static*/ HRESULT RootObject::resetRootChildValue( LPCSTR Name )
+{
+	HRESULT Result( S_FALSE );
+	RootObject* pRoot( nullptr );
+
+	SVObjectManagerClass::Instance().GetRootChildObject( pRoot, SvOl::FqnRoot );
+
+	if(nullptr != pRoot)
+	{
+		SVObjectClass *pRootChild( nullptr );
+		SVObjectManagerClass::Instance().GetRootChildObject( pRootChild, Name );
+		if( nullptr != pRootChild )
+		{
+			SVObjectTypeEnum ObjectType = pRootChild->GetObjectInfo().ObjectTypeInfo.ObjectType;
+			Result = pRoot->m_RootChildren.deleteValue( Name );
+			if( S_OK == Result )
+			{
+				Result = pRoot->createRootChild( Name, ObjectType );
+			}
+		}
+	}
+
+	return Result;
 }
 #pragma endregion Public Methods
 
 #pragma region Private Methods
-BOOL RootObject::createEnvironmentObject()
+bool RootObject::Initialize()
 {
-	SVObjectManagerClass::Instance().setRootChildID(SVObjectManagerClass::Environment, m_EnvironmentObject.GetUniqueObjectID());
-	m_EnvironmentObject.SetObjectOwner(this);
-	return TRUE;
+	bool Result(true);
+
+	//The Root object should have an empty name
+	SetName(_T(""));
+
+	Result = createRootChildren();
+
+	return Result;
 }
 
-BOOL RootObject::destroyConfigurationObject()
+bool RootObject::createRootChildren()
 {
-	if(nullptr != m_pConfigurationObject)
+	bool Result( false );
+
+	Result = createRootChild( SvOl::FqnEnvironment, SVEnvironmentObjectType );
+	if( Result )
 	{
-		delete m_pConfigurationObject;
-		m_pConfigurationObject = nullptr;
+		//When Environment created then create the following variables to set their attributes
+		BasicValueObjectPtr pValueObject( nullptr );
+		pValueObject = m_RootChildren.setValue( ::EnvironmentModelNumber, _T("") );
+		if( !pValueObject.empty() )
+		{
+			pValueObject->ObjectAttributesAllowedRef() &=~SV_VIEWABLE & ~SV_SELECTABLE_FOR_EQUATION;
+		}
+		pValueObject = m_RootChildren.setValue( ::EnvironmentSerialNumber , _T("") );
+		if( !pValueObject.empty() )
+		{
+			pValueObject->ObjectAttributesAllowedRef() &=~SV_VIEWABLE & ~SV_SELECTABLE_FOR_EQUATION;
+		}
+		pValueObject = m_RootChildren.setValue( ::EnvironmentWinKey, _T("") );
+		if( !pValueObject.empty() )
+		{
+			pValueObject->ObjectAttributesAllowedRef() &=~SV_VIEWABLE & ~SV_SELECTABLE_FOR_EQUATION;
+		}
+
+		Result = createRootChild( SvOl::FqnGlobal, SVGlobalConstantObjectType );
 	}
-	return TRUE;
+
+	return Result;
+}
+bool RootObject::createRootChild( LPCTSTR ChildName, SVObjectTypeEnum ObjectType ) 
+{
+	bool Result( false );
+	_variant_t Node;
+
+	//Setting the variant to VT_EMPTY will cause the value to be a node
+	Node.Clear();
+	BasicValueObjectPtr pRootChild( nullptr);
+	pRootChild = m_RootChildren.setValue( ChildName, Node, this, ObjectType );
+	if( !pRootChild.empty() )
+	{
+		SVObjectManagerClass::Instance().setRootChildID( pRootChild->GetName(), pRootChild->GetUniqueObjectID() );
+		Result = true;
+	}
+	else
+	{
+		SvStl::ExceptionMgr1 Exception( SvStl::LogAndDisplay );
+		Exception.setMessage( SVMSG_SVO_67_MAIN_BRANCH_NOT_CREATED, ChildName, StdExceptionParams, SvOi::Err_25017_RootChildCreate );
+	}
+	
+	return Result;
 }
 #pragma endregion Private Methods
+
+#pragma region IRootObject-function
+void SvOi::getRootChildNameList( SVStringArray& rObjectNameList, LPCTSTR Path, UINT AttributesAllowedFilter )
+{
+	//To have the function available without knowing the class RootObject
+	RootObject::getRootChildNameList( rObjectNameList, Path, AttributesAllowedFilter );
+}
+#pragma endregion IRootObject-function
 
 //******************************************************************************
 //* LOG HISTORY:

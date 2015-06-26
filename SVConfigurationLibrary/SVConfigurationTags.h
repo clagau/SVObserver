@@ -107,6 +107,7 @@ LPCTSTR const CTAG_VERSION_NUMBER                 = (_T("VersionNumber"));
 LPCTSTR const CTAGF_INPUT_X                       = (_T("Input_%d")); // CTAGF indicates formatting is required.
 LPCTSTR const CTAG_ITEM_NAME                      = (_T("ItemName"));
 LPCTSTR const CTAG_IO_TYPE                        = (_T("IO_Type"));
+LPCTSTR const CTAG_DESCRIPTION		              = _T("Description");
 //CTAG_ONLINE_DISPLAY kept for backward compatibility
 LPCTSTR const CTAG_ONLINE_DISPLAY                 = (_T("Online_Display"));
 LPCTSTR const CTAG_IMAGE_DISPLAY_UPDATE           = (_T("Image_Display_Update"));
@@ -194,6 +195,8 @@ LPCTSTR const CTAG_VIEWEDTOOLVARIABLES            = _T("ViewedToolVariables");
 LPCTSTR const CTAG_VIEWEDRESULTS				= _T("ViewedResults");
 LPCTSTR const CTAG_VIEWEDPPQINPUTS                = _T("ViewedPPQInputs");
 LPCTSTR const CTAG_COMPLETENAME                   = _T("CompleteName"); 
+
+LPCTSTR const CTAG_GLOBAL_CONSTANTS               = _T("GlobalConstants");
 
 /// These are tool copy / paste tags
 const TCHAR* const ToolCopyTag = _T( "Tool-Copy" );

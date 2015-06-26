@@ -15,6 +15,7 @@
 #include "SVUtilityLibrary/SVString.h"
 #include "SVIProgress.h"
 #include "SVImportedInspectionInfo.h"
+#include "ObjectInterfaces\DataStructures.h"
 
 class SVInspectionImporter
 {
@@ -23,7 +24,7 @@ private:
 	~SVInspectionImporter();
 
 public:
-	static HRESULT Import(const SVString& filename, const SVString& inspectionName, const SVString& cameraName, SVImportedInspectionInfo& inspectionInfo, SVIProgress& rProgress);
+	static HRESULT Import(const SVString& filename, const SVString& inspectionName, const SVString& cameraName, SVImportedInspectionInfo& inspectionInfo, SvOi::GlobalConflictPairVector& rGlobalConflicts, SVIProgress& rProgress);
 	static HRESULT GetProperties(const SVString& filename, long& rNewDisbaleMethod, long& rEnableAuxExtents, unsigned long& rVersionNumber);
 };
 
@@ -33,6 +34,7 @@ struct SVInspectionImportHelper
 	SVString inspectionName;
 	SVString cameraName;
 	SVImportedInspectionInfo info;
+	SvOi::GlobalConflictPairVector GlobalConflicts;
 
 	SVInspectionImportHelper(const SVString& p_filename, const SVString& p_inspectionName, const SVString& p_cameraName)
 	: filename(p_filename)
@@ -43,7 +45,7 @@ struct SVInspectionImportHelper
 
 	HRESULT Import(SVIProgress& rProgress)
 	{
-		return SVInspectionImporter::Import(filename, inspectionName, cameraName, info, rProgress);
+		return SVInspectionImporter::Import(filename, inspectionName, cameraName, info, GlobalConflicts,rProgress);
 	}
 };
 

@@ -23,6 +23,7 @@ enum SVTabbedViewSplitterIDEnum
 	SVIOPLCOutputsViewID = 6,
 	SVRemoteOutputsViewID = 8,
 	SVRemoteMonitorListViewID = 9,
+	SVGlobalConstantViewID = 10,
 };
 
 class SVIOTabbedView : public CMDIChildWnd

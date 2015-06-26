@@ -28,14 +28,13 @@ class SVShowDependentsDialog : public CDialog
 {
 // Construction
 public:
-	SVShowDependentsDialog(CWnd* pParent = NULL);   // standard constructor
+	SVShowDependentsDialog( const SVObjectPairVector& rList, LPCTSTR DisplayText, bool InspectionName = false, CWnd* pParent = NULL );
 
 // Dialog Data
 	//{{AFX_DATA(SVShowDependentsDialog)
 	enum { IDD = IDD_SHOW_DEPENDENTS_DIALOG };
 	CListCtrl	listCtrl;
 	//}}AFX_DATA
-
 
 // Overrides
 	// ClassWizard generated virtual function overrides
@@ -45,22 +44,13 @@ public:
 	//}}AFX_VIRTUAL
 
 public:
-	SVTaskObjectClass* PTaskObject;		// which object
-	UINT StrMessageID;					// id of message to show
-	BOOL OnlyImageDependencies;			// only images
-	int NumberOfDependents;
-	
-	void SetFilterList( const SVObjectVector& rList );
-
-protected:
-	SVObjectVector m_FilterList;	// used when providing a custom list of objects
-	bool m_bUseFilter;
+	static INT_PTR StandardDialog( SVTaskObjectClass* pTaskObject, bool OnlyImages=false );
 
 // Implementation
 protected:
 
 	void addColumnHeadings();
-	bool addItems();
+	void addItems();
 	void setColumnWidths();
 
 	// Generated message map functions
@@ -69,6 +59,10 @@ protected:
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 
+private:
+	const SVObjectPairVector&  m_rDependencyList;
+	SVString m_DisplayText;
+	bool m_ShowInspectionName;
 };
 
 //{{AFX_INSERT_LOCATION}}

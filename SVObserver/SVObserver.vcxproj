@@ -330,13 +330,13 @@ echo %time%
       <MultiProcessorCompilation Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</MultiProcessorCompilation>
       <MultiProcessorCompilation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</MultiProcessorCompilation>
     </ClCompile>
-    <ClCompile Include="EnvironmentObject.cpp" />
     <ClCompile Include="EQAdjustSize.cpp" />
     <ClCompile Include="EQAdjustSizeHeight.cpp" />
     <ClCompile Include="EQAdjustSizePositionX.cpp" />
     <ClCompile Include="EQAdjustSizePositionY.cpp" />
     <ClCompile Include="EQAdjustSizeWidth.cpp" />
     <ClCompile Include="FormulaController.cpp" />
+    <ClCompile Include="GlobalConstantView.cpp" />
     <ClCompile Include="LinkedValue.cpp" />
     <ClCompile Include="ModelessMessageBox.cpp">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -371,6 +371,7 @@ echo %time%
       <MultiProcessorCompilation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</MultiProcessorCompilation>
     </ClCompile>
     <ClCompile Include="RingBufferTool.cpp" />
+    <ClCompile Include="RootChildren.cpp" />
     <ClCompile Include="RootObject.cpp" />
     <ClCompile Include="MonitorListAddRemoveDlg.cpp" />
     <ClCompile Include="MonitorListPropertyDlg.cpp" />
@@ -3820,13 +3821,13 @@ echo %time%
     <ClInclude Include="BasicValueObjects.h" />
     <ClInclude Include="ConditionalController.h" />
     <ClInclude Include="Custom2Filter.h" />
-    <ClInclude Include="EnvironmentObject.h" />
     <ClInclude Include="EQAdjustSize.h" />
     <ClInclude Include="EQAdjustSizeHeight.h" />
     <ClInclude Include="EQAdjustSizePositionX.h" />
     <ClInclude Include="EQAdjustSizePositionY.h" />
     <ClInclude Include="EQAdjustSizeWidth.h" />
     <ClInclude Include="FormulaController.h" />
+    <ClInclude Include="GlobalConstantView.h" />
     <ClInclude Include="ISVCancel.h" />
     <ClInclude Include="LinkedValue.h" />
     <ClInclude Include="ModelessMessageBox.h" />
@@ -3847,6 +3848,7 @@ echo %time%
     <ClInclude Include="ResultViewItemDef.h" />
     <ClInclude Include="ResultViewReferences.h" />
     <ClInclude Include="RingBufferTool.h" />
+    <ClInclude Include="RootChildren.h" />
     <ClInclude Include="RootObject.h" />
     <ClInclude Include="SoftwareTriggerDlg.h" />
     <ClInclude Include="FramedSplitterWnd.h" />
@@ -4221,7 +4223,6 @@ echo %time%
     <ClInclude Include="SVPPQEnums.h" />
     <ClInclude Include="SVPPQObject.h" />
     <ClInclude Include="SVPPQShiftRegister.h" />
-    <ClInclude Include="SVPQVariableSelectionDialog.h" />
     <ClInclude Include="SVPQVariableTreeCtrl.h" />
     <ClInclude Include="SVProfileEdgeMarkerAdjustmentPage.h" />
     <ClInclude Include="SVProgressDialog.h" />
@@ -4363,8 +4364,9 @@ echo %time%
     <None Include="BasicValueObject.inl" />
     <None Include="BasicValueObjects.inl" />
     <None Include="Custom2Filter.inl" />
-    <None Include="EnvironmentObject.inl" />
     <None Include="ObjectNameHelper.inl" />
+    <None Include="RootChildren.inl" />
+    <None Include="RootObject.inl" />
     <None Include="SVConfigurationTreeWriter.inl" />
     <None Include="SVConfigXMLPrint.inl" />
     <None Include="SVDLLToolLoadLibraryClass.inl" />

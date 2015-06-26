@@ -22,7 +22,7 @@
 #include "SVXMLLibrary/SVNavigateTreeClass.h"
 #include "SVConfigurationLibrary/SVConfigurationTags.h"
 #include "SVIPChildFrm.h"
-#include "EnvironmentObject.h"
+#include "RootObject.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -105,8 +105,8 @@ void SVResultViewClass::OnUpdate( CView* pSender, LPARAM lHint, CObject* pHint )
 {
 	SVIPDoc* l_pIPDoc = GetIPDoc();
 
-	BOOL Update = TRUE;
-	EnvironmentObject::getEnvironmentValue( ::EnvironmentResultUpdate, Update );
+	bool Update = true;
+	RootObject::getRootChildValue( ::EnvironmentResultUpdate, Update );
 	Update = Update || !SVSVIMStateClass::CheckState( SV_STATE_RUNNING );
 
 	if( !Update )

@@ -11,7 +11,6 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include "GlobalConst.h"
 #include "SVObjectManagerClass.h"
 #include "ObjectInterfaces/IObjectManager.h"
 
@@ -85,27 +84,18 @@ HRESULT SVObjectManagerClass::SetState( SVObjectManagerStateEnum p_State )
 	return S_OK;
 }
 
-const SVGUID SVObjectManagerClass::GetChildRootObjectID(const RootChildObjectEnum RootChild) const
-{
-	SVGUID ObjectID;
-	if(m_RootEnumChildren.find(RootChild) != m_RootEnumChildren.end())
-	{
-		ObjectID = m_RootEnumChildren.at(RootChild);
-	}
-	return ObjectID;
-}
-
 const SVGUID SVObjectManagerClass::GetChildRootObjectID(const SVString& rRootName) const
 {
 	SVGUID ObjectID;
-	if(m_RootNameChildren.find(rRootName) != m_RootNameChildren.end())
+
+	if( m_RootNameChildren.end() != m_RootNameChildren.find(rRootName)  )
 	{
 		ObjectID = m_RootNameChildren.at(rRootName);
 	}
 	//If the root node is not found then return the configuration for backward compatibility
-	else if(m_RootEnumChildren.find(Configuration) != m_RootEnumChildren.end())
+	else if( m_RootNameChildren.end() != m_RootNameChildren.find( FqnConfiguration ) )
 	{
-		ObjectID = m_RootEnumChildren.at(Configuration);
+		ObjectID = m_RootNameChildren.at( FqnConfiguration );
 	}
 	return ObjectID;
 }
@@ -114,25 +104,21 @@ HRESULT SVObjectManagerClass::ConstructRootObject( const SVGUID& rClassID )
 {
 	HRESULT Status = S_OK;
 
-	if(m_RootEnumChildren.find(Root) == m_RootEnumChildren.end())
-	{
-		SVGUID RootGuid;
-		m_RootEnumChildren[Root] = RootGuid;
-	}
-	
-	if( !( m_RootEnumChildren[Root].empty() ) )
+	if( m_RootNameChildren.end() != m_RootNameChildren.find( FqnRoot ) && !( m_RootNameChildren[FqnRoot].empty() ) )
 	{
 		DestroyRootObject();
 	}
 	
-	Status = ConstructObject( rClassID, m_RootEnumChildren[Root] );
+	SVGUID ObjectID;
+
+	Status = ConstructObject( rClassID, ObjectID);
 	if(S_OK == Status)
 	{
 		SVObjectClass* pRootObject;
-		GetObjectByIdentifier(m_RootEnumChildren[Root], pRootObject);
+		GetObjectByIdentifier(ObjectID, pRootObject);
 		if(NULL != pRootObject)
 		{
-			m_RootNameChildren[pRootObject->GetName()] = m_RootEnumChildren[Root];
+			m_RootNameChildren[FqnRoot] = ObjectID;
 		}
 	}
 	
@@ -143,7 +129,7 @@ HRESULT SVObjectManagerClass::DestroyRootObject()
 {
 	HRESULT l_Status = S_OK;
 
-	SVGUID RootID = GetChildRootObjectID(Root);
+	SVGUID RootID = GetChildRootObjectID(FqnRoot);
 	if( !( RootID.empty() ) )
 	{
 		SVObjectClass* l_pObject = GetObject( RootID );
@@ -157,14 +143,13 @@ HRESULT SVObjectManagerClass::DestroyRootObject()
 	return l_Status;
 }
 
-void SVObjectManagerClass::setRootChildID(const RootChildObjectEnum RootChild, const SVGUID& rUniqueID)
+void SVObjectManagerClass::setRootChildID(const SVString& rRootChild, const SVGUID& rUniqueID)
 {
-	m_RootEnumChildren[RootChild] = rUniqueID;
-	SVObjectClass* pRootObject;
-	GetObjectByIdentifier(m_RootEnumChildren[RootChild], pRootObject);
-	if(NULL != pRootObject)
+	SVObjectClass* pRootObject(nullptr);
+	GetObjectByIdentifier( rUniqueID, pRootObject);
+	if( nullptr != pRootObject)
 	{
-		m_RootNameChildren[pRootObject->GetName()] = rUniqueID;
+		m_RootNameChildren[rRootChild] = rUniqueID;
 	}
 }
 
@@ -375,47 +360,50 @@ HRESULT SVObjectManagerClass::GetObjectByDottedName( const SVString& rFullName, 
 	{
 		SVString Name = rFullName;
 		Instance().Translation(Name);
-		SVObjectClass* pChildRootObject = NULL;
+		SVObjectClass* pChildRootObject( nullptr );
 		SVObjectNameInfo NameInfo;
 
 		NameInfo.ParseObjectName( Name );
 
-		SVGUID ChildRootID = GetChildRootObjectID(NameInfo.m_NameArray[ 0 ]);
+		SVGUID ChildRootID = GetChildRootObjectID( NameInfo.m_NameArray[ 0 ] );
+		SVGUID ConfigID = GetChildRootObjectID( FqnConfiguration );
 		Result = GetObjectByIdentifier( ChildRootID, pChildRootObject );
 
-		if( pChildRootObject != NULL )
+		if( nullptr != pChildRootObject )
 		{
-			if( m_RootEnumChildren.find(Configuration) != m_RootEnumChildren.end()) 
+			//Check if it is configuration object as it needs to be stripped of the FqnConfiguration name
+			if( ChildRootID == ConfigID )
 			{
-				//Check if it is configuration object as it may not have the root child name
-				if(ChildRootID == m_RootEnumChildren.at(Configuration))
+				if(0 == Name.find( pChildRootObject->GetName() ) )
 				{
-					if(0 != Name.find(pChildRootObject->GetName()))
-					{
-						//Add the configuration name as it is missing
-						Name = pChildRootObject->GetName();
-						Name.append(_T("."));
-						Name.append(NameInfo.GetObjectArrayName(0).c_str());
-						NameInfo.clear();
-						NameInfo.ParseObjectName(Name);
-					}
+					NameInfo.RemoveTopName();
 				}
 			}
-			SVObjectClass* pObject = NULL;
+			SVObjectClass* pObject( nullptr );
 			//Only child root object
-			if( 1 == NameInfo.m_NameArray.size() )
+			if( 1 == NameInfo.m_NameArray.size() && m_RootNameChildren.end() != m_RootNameChildren.find( NameInfo.m_NameArray[0] ) )
 			{
 				pObject = pChildRootObject;
 			}
 			else
 			{
-				//Remove top name as this was only needed to get the child Root object
-				NameInfo.RemoveTopName();
-
-				Result = pChildRootObject->GetChildObject( pObject, NameInfo );
+				SVObjectClass* pParent( nullptr );
+				if( ChildRootID == ConfigID )
+				{
+					pParent = pChildRootObject;
+				}
+				else
+				{
+					SVGUID RootObjetctID = GetChildRootObjectID( FqnRoot );
+					Result = GetObjectByIdentifier( RootObjetctID, pParent );
+				}
+				if( nullptr != pParent )
+				{
+					Result = pParent->GetChildObject( pObject, NameInfo );
+				}
 			}
 
-			if( pObject != NULL )
+			if( nullptr != pObject )
 			{
 				rReference = SVObjectReference( pObject, NameInfo );
 			}
@@ -596,7 +584,7 @@ SVObjectClass* SVObjectManagerClass::GetObjectCompleteName( LPCTSTR tszName )
 	if( l_Status )
 	{
 		SVObjectClass* l_pConfig;
-		GetRootChildObject( l_pConfig, Configuration);
+		GetRootChildObject( l_pConfig, FqnConfiguration );
 
 		if( l_pConfig != NULL )
 		{

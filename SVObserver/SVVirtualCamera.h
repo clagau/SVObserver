@@ -57,7 +57,13 @@ public:
 
 	virtual long GetImageDepth() const;
 
-	virtual HRESULT RefreshObject();
+	//************************************
+	//! This method is used to synchronize parameters mirrored in the object manager
+	//! \param pSender <in> pointer from the object which sent the notification
+	//! \param Type <in> the refresh type pre or post
+	//! \param S_OK on success
+	//************************************
+	virtual HRESULT RefreshObject( const SVObjectClass* const pSender, RefreshObjectType Type );
 
 	BOOL Create( LPCTSTR p_szDeviceName );
 	BOOL Destroy();

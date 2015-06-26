@@ -15,6 +15,7 @@
 #include <functional>
 #include <locale>
 #include <sstream>
+#include <regex>
 
 /////////////////////////////////////////////////////////////////////////////
 // String formatting
@@ -900,6 +901,15 @@ bool SVString::isSubmatch(SVString searchString, size_t offsetSource, size_t off
 		}
 	}
 	return retVal;
+}
+
+bool SVString::matchesRegularExpression( LPCTSTR RegularExpression ) const
+{
+	bool Result( false );
+
+	Result = std::regex_match( m_String.cbegin(), m_String.cend(), std::regex( RegularExpression ) );
+
+	return Result;
 }
 
 SVString operator+( LPCTSTR psz1, const SVString& str2 )

@@ -33,7 +33,7 @@
 #include "SVSetupDialogManager.h"
 #include "SVToolLoadImage.h"
 #include "SVMainFrm.h"
-#include "EnvironmentObject.h"
+#include "RootObject.h"
 #include "SVIPChildFrm.h"
 #include "SVOResource/ConstGlobalSvOr.h"
 #include "SVShiftTool.h"
@@ -975,8 +975,8 @@ void SVImageViewClass::OnUpdate( CView* p_pSender, LPARAM p_lHint, CObject* p_pH
 {
 	//TRACE( _T( "SVImageView::OnUpdate %s\n" ), m_imageName );
 
-	BOOL Update = TRUE;
-	EnvironmentObject::getEnvironmentValue( ::EnvironmentImageUpdate, Update );
+	bool Update = TRUE;
+	RootObject::getRootChildValue( ::EnvironmentImageUpdate, Update );
 	Update = Update || !SVSVIMStateClass::CheckState( SV_STATE_RUNNING );
 
 	if( Update )

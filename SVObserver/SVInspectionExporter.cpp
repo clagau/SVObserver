@@ -24,11 +24,15 @@
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVObjectLibrary/SVObjectClass.h"
 #include "SVConfigurationLibrary/SVConfigurationTags.h"
+#include "SVObjectLibrary/SVToolsetScriptTags.h"
 #include "SVUtilityLibrary/ZipHelper.h"
 #include "SVInspectionProcess.h"
 #include "SVPPQObject.h"
 #include "SVFileNameManagerClass.h"
 #include "SVIPDoc.h"
+#include "RootObject.h"
+#include "SVToolSet.h"
+#include "SVGlobal.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -75,6 +79,65 @@ static void WritePPQInputs(SVObjectXMLWriter& rWriter, SVObjectClass* pObject)
 		if ( nullptr != pPPQ )
 		{
 			pPPQ->PersistInputs(rWriter);
+		}
+	}
+	rWriter.EndElement();
+}
+
+static void WriteGlobalConstants(SVObjectXMLWriter& rWriter, SVObjectClass* pObject)
+{
+	rWriter.StartElement(CTAG_GLOBAL_CONSTANTS);
+
+	SVInspectionProcess* pInspection = dynamic_cast<SVInspectionProcess*> (pObject);
+	if ( nullptr != pInspection && nullptr != pInspection->GetToolSet() )
+	{
+		BasicValueObjects::ValueVector GlobalConstantObjects;
+		SVObjectVector ObjectCheckList;
+
+		RootObject::getRootChildObjectList( GlobalConstantObjects, SvOl::FqnGlobal, 0 );
+		BasicValueObjects::ValueVector::const_iterator Iter( GlobalConstantObjects.cbegin() );
+		//Need to convert list to SVObjectVector
+		while ( GlobalConstantObjects.cend() != Iter  && !Iter->empty() )
+		{
+			SVObjectClass* pGlobalConstantObject = dynamic_cast<SVObjectClass*> ( (*Iter).get() );
+			if( nullptr != pGlobalConstantObject )
+			{
+				ObjectCheckList.push_back( pGlobalConstantObject );
+			}
+			++Iter;
+		}
+
+		//Only Global variables which the inspection is dependent on should be included
+		SVObjectPairVector DependencyList;
+		BasicValueObject* pGlobalConstant( nullptr );
+		_variant_t Value;
+		pInspection->GetToolSet()->GetDependentsList( ObjectCheckList, DependencyList );
+		SVObjectPairVector::const_iterator PairIter( DependencyList.cbegin() );
+
+		while( DependencyList.cend() != PairIter )
+		{
+			pGlobalConstant = dynamic_cast<BasicValueObject*> (PairIter->second);
+			if( nullptr != pGlobalConstant )
+			{
+				rWriter.StartElement( pGlobalConstant->GetCompleteObjectName() );
+
+				Value.Clear();
+				pGlobalConstant->getValue( Value );
+				rWriter.WriteAttribute( CTAG_VALUE, Value );
+				Value.Clear();
+				Value = pGlobalConstant->ObjectAttributesAllowedRef();
+				Value.ChangeType(VT_UI4);
+				rWriter.WriteAttribute( scAttributesAllowedTag, Value );
+				Value.Clear();
+				CString Description( pGlobalConstant->getDescription() );
+				//This is needed to remove any CR LF in the description
+				::SVAddEscapeSpecialCharacters( Description, true );
+				Value.SetString( Description );
+				rWriter.WriteAttribute( CTAG_DESCRIPTION, Value );
+
+				rWriter.EndElement();
+			}
+			++PairIter;
 		}
 	}
 	rWriter.EndElement();
@@ -228,6 +291,8 @@ HRESULT SVInspectionExporter::Export(const SVString& filename, const SVString& i
 				WriteVersion(writer, p_version);
 				
 				WritePPQInputs(writer, pObject);
+
+				WriteGlobalConstants(writer, pObject);
 
 				WriteDependentFileList(writer, dstDependencyZipFile);
 

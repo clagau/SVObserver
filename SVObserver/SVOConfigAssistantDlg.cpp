@@ -40,6 +40,7 @@
 #include "SVImportProgress.h"
 #include "SVHardwareManifest.h"
 #include "TextDefinesSvO.h"
+#include "SVOGui\GlobalConstantConflictDlg.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -2814,6 +2815,7 @@ BOOL CSVOConfigAssistantDlg::SendInspectionDataToConfiguration()
 								lEnableAuxiliaryExtent = pInspection->GetEnableAuxiliaryExtent();
 							}
 						}
+						resolveGlobalConflicts( importer.GlobalConflicts );
 					}
 					else
 					{
@@ -5060,6 +5062,34 @@ bool CSVOConfigAssistantDlg::IsFileAcquisition(int iDig) const
 	CDialog::OnCancel();
 }
 
+void CSVOConfigAssistantDlg::resolveGlobalConflicts( SvOi::GlobalConflictPairVector& rGlobalConflicts )
+{
+	if( 0 < rGlobalConflicts.size() )
+	{
+		SvOg::GlobalConstantConflictDlg ConflictDlg( rGlobalConflicts, AfxGetMainWnd() );
+		if( IDOK == ConflictDlg.DoModal() )
+		{
+			SvOi::GlobalConflictPairVector::const_iterator Iter( rGlobalConflicts.cbegin() );
+
+			while( rGlobalConflicts.cend() != Iter )
+			{
+				if( Iter->second.m_Selected )
+				{
+					BasicValueObject* pGlobalObject(nullptr);
+
+					pGlobalObject = dynamic_cast<BasicValueObject*> ( SVObjectManagerClass::Instance().GetObject(  Iter->first.m_Guid ) );
+					if( nullptr != pGlobalObject )
+					{
+						pGlobalObject->setValue( Iter->second.m_Value );
+						pGlobalObject->setDescription( Iter->second.m_Description.c_str() );
+						pGlobalObject->ObjectAttributesAllowedRef() = Iter->second.m_AttributesAllowed;
+					}
+				}
+				++Iter;
+			}
+		}
+	}
+}
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************

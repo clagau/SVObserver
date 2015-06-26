@@ -102,7 +102,7 @@ IDB_KNOB_FACE           BITMAP                  "RES\\SVKnob.bmp"
 IDB_KNOB_MASK           BITMAP                  "RES\\SVKnob_mask.bmp"
 IDB_SVDOT_FACE          BITMAP                  "RES\\SVKnobDot.bmp"
 IDB_SVDOT_MASK          BITMAP                  "RES\\SVKnobDot_mask.bmp"
-IDB_KOERBER             BITMAP                  "res\\Korber.bmp"
+IDB_KOERBER              BITMAP                  "res\\Korber.bmp"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -154,6 +154,7 @@ IDI_CHECKED_DISABLED    ICON                    "res\\checked_disabled.ico"
 IDI_TRI_STATE_DISABLED  ICON                    "res\\tri_state_disabled.ico"
 IDI_DOT_ENABLED         ICON                    "res\\dot_enabled.ico"
 IDI_DOT_DISABLED        ICON                    "res\\dot_disabled.ico"
+IDI_GLOBAL_CONSTANT     ICON                    "res\\global_constant.ico"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -2750,6 +2751,32 @@ BEGIN
     LTEXT           "",IDC_MESSAGE_DETAILS,17,77,260,94,NOT WS_VISIBLE
 END
 
+IDD_GLOBAL_CONSTANT DIALOGEX 0, 0, 240, 150
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Global Constant"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    LTEXT           "Name:",IDC_STATIC,17,11,56,8
+    EDITTEXT        IDC_GLOBAL_NAME,81,8,152,14,ES_AUTOHSCROLL
+    LTEXT           "Type:",IDC_STATIC,17,31,56,8
+    COMBOBOX        IDC_GLOBAL_TYPE,81,29,152,73,CBS_DROPDOWNLIST | CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Value:",IDC_STATIC,17,51,56,8
+    EDITTEXT        IDC_GLOBAL_VALUE,81,48,152,14,ES_AUTOHSCROLL
+    LTEXT           "Description:",IDC_STATIC,17,71,56,8
+    EDITTEXT        IDC_GLOBAL_DESCRIPTION,81,68,152,55,ES_MULTILINE | ES_AUTOHSCROLL
+    DEFPUSHBUTTON   "OK",IDOK,120,129,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,183,129,50,14
+END
+
+IDD_GLOBAL_CONSTANT_CONFLICT DIALOGEX 0, 0, 500, 250
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Global Constants Conflict"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "Conflict Table",IDC_GLOBAL_CONFLICT_GRID,"MfcGridCtrl",WS_TABSTOP,7,7,486,202
+    DEFPUSHBUTTON   "OK",IDOK,443,229,50,14
+    LTEXT           "Please select which Global Constant value should be used:\r\n1. The current value from the loaded configuration or\r\n2.The value being imported from the inspection",IDC_STATIC,7,213,330,30
+END
 /////////////////////////////////////////////////////////////////////////////
 //
 // DESIGNINFO
@@ -3622,6 +3649,22 @@ BEGIN
     BEGIN
         BOTTOMMARGIN, 196
     END
+
+    IDD_GLOBAL_CONSTANT, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 233
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 143
+    END
+
+    IDD_GLOBAL_CONSTANT_CONFLICT, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 393
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 243
+    END
 END
 #endif    // APSTUDIO_INVOKED
 
@@ -3789,7 +3832,7 @@ BEGIN
             MENUITEM "&Customize Utilities",        ID_EXTRAS_UTILITIES_EDIT,MFT_STRING,MFS_ENABLED
             MENUITEM MFT_SEPARATOR
         END
-        MENUITEM "Enable Auto Save",            ID_EXTRAS_ENABLEAUTOSAVE,MFT_STRING,MFS_ENABLED
+        MENUITEM "Enable Auto Save",                    ID_EXTRAS_ENABLEAUTOSAVE,MFT_STRING,MFS_ENABLED
     END
     POPUP "&Help",                          65535,MFT_STRING | MFT_RIGHTJUSTIFY,MFS_ENABLED
     BEGIN
@@ -3828,6 +3871,12 @@ BEGIN
 #endif
         MENUITEM "Add Remote Outputs",          ID_EDIT_ADD_REMOTE_OUTPUTS,MFT_STRING,MFS_ENABLED
         MENUITEM "Add Monitor List",            ID_EDIT_ADD_MONITORLIST,MFT_STRING,MFS_ENABLED
+        POPUP "&Global Constant",           65535,MFT_STRING,MFS_ENABLED
+		BEGIN
+    		MENUITEM "&Add",                        ID_EDIT_GLOBAL_CONSTANT_ADD,MFT_STRING,MFS_ENABLED
+			MENUITEM "&Edit",                       ID_EDIT_GLOBAL_CONSTANT_EDIT,MFT_STRING,MFS_ENABLED
+			MENUITEM "&Remove",                     ID_EDIT_GLOBAL_CONSTANT_DELETE,MFT_STRING,MFS_ENABLED
+		END
     END
     POPUP "&View",                          65535,MFT_STRING,MFS_ENABLED
     BEGIN
@@ -3864,12 +3913,12 @@ BEGIN
         MENUITEM MFT_SEPARATOR
         MENUITEM "Test Outputs",                ID_EXTRAS_TESTOUTPUTS,MFT_STRING,MFS_ENABLED
         MENUITEM MFT_SEPARATOR
-        POPUP "&Utilities",                     65535,MFT_STRING,MFS_ENABLED
+        POPUP "&Utilities",                 65535,MFT_STRING,MFS_ENABLED
         BEGIN
-            MENUITEM "&Customize Utilities",        ID_EXTRAS_UTILITIES_EDIT,MFT_STRING,MFS_ENABLED
+            MENUITEM "&Customize Utilities",    ID_EXTRAS_UTILITIES_EDIT,MFT_STRING,MFS_ENABLED
             MENUITEM MFT_SEPARATOR
         END
-        MENUITEM "Enable Auto Save",            ID_EXTRAS_ENABLEAUTOSAVE,MFT_STRING,MFS_ENABLED
+        MENUITEM "Enable Auto Save",                    ID_EXTRAS_ENABLEAUTOSAVE,MFT_STRING,MFS_ENABLED
     END
     POPUP "&Help",                          65535,MFT_STRING | MFT_RIGHTJUSTIFY,MFS_ENABLED
     BEGIN
@@ -3911,7 +3960,7 @@ BEGIN
         MENUITEM MFT_SEPARATOR
         MENUITEM "Edit Tool Set &Condition",    ID_EDIT_EDITTOOLSETCONDITION,MFT_STRING,MFS_ENABLED
         MENUITEM "Edit T&ool",                  ID_EDIT_EDITTOOL,MFT_STRING,MFS_ENABLED
-        MENUITEM "Adjust Tool Size and Position\tCtrl+A", ID_EDIT_ADJUSTTOOLPOSITION,MFT_STRING,MFS_ENABLED
+        MENUITEM "Adjust Tool Size and Position\tCtrl+A",  ID_EDIT_ADJUSTTOOLPOSITION,MFT_STRING,MFS_ENABLED
         MENUITEM MFT_SEPARATOR
         MENUITEM "Adjust &Light Reference",     ID_EDIT_ADJUSTLIGHTREFERENCE,MFT_STRING,MFS_ENABLED
         MENUITEM "Adjust L&UT",                 ID_EDIT_ADJUSTLUT,MFT_STRING,MFS_ENABLED
@@ -4002,7 +4051,7 @@ BEGIN
             MENUITEM "&Customize Utilities",        ID_EXTRAS_UTILITIES_EDIT,MFT_STRING,MFS_ENABLED
             MENUITEM MFT_SEPARATOR
         END
-        MENUITEM "Enable Auto Save",            ID_EXTRAS_ENABLEAUTOSAVE,MFT_STRING,MFS_ENABLED
+        MENUITEM "Enable Auto Save",             ID_EXTRAS_ENABLEAUTOSAVE,MFT_STRING,MFS_ENABLED
     END
     POPUP "&Help",                          65535,MFT_STRING | MFT_RIGHTJUSTIFY,MFS_ENABLED
     BEGIN
@@ -4031,7 +4080,7 @@ BEGIN
         END
         MENUITEM "Configure Analyzer",          ID_CONFIG_ANALYZER
         MENUITEM "Show Analyzer Result",        ID_ANALYZER_RESULT
-        MENUITEM "Adjust Tool Size and Position", ID_ADJUST_POSITION
+        MENUITEM "Adjust Tool Size and Position",    ID_ADJUST_POSITION
         MENUITEM "Select Display Image",        ID_SELECT_DISPLAY_IMAGE
     END
 END
@@ -4112,7 +4161,7 @@ BEGIN
         MENUITEM SEPARATOR
         MENUITEM "Copy Tool",                   ID_EDIT_COPY
         MENUITEM "Paste Tool",                  ID_EDIT_PASTE
-        MENUITEM "Adjust Tool Size and Position", ID_EDIT_ADJUSTTOOLPOSITION
+        MENUITEM "Adjust Tool Size and Position",        ID_EDIT_ADJUSTTOOLPOSITION
     END
 END
 
@@ -4216,6 +4265,15 @@ BEGIN
     END
 END
 
+IDR_GLOBAL_CONSTANT_CONTEXT_MENU MENU
+BEGIN
+    POPUP "Global Consants"
+    BEGIN
+        MENUITEM "Add Constant",                 ID_EDIT_GLOBAL_CONSTANT_ADD
+        MENUITEM "Edit Constant",                ID_EDIT_GLOBAL_CONSTANT_EDIT
+        MENUITEM "Remove Constant",	             ID_EDIT_GLOBAL_CONSTANT_DELETE
+    END
+END
 /////////////////////////////////////////////////////////////////////////////
 //
 // Accelerator
@@ -5944,7 +6002,6 @@ END
 
 STRINGTABLE
 BEGIN
-    IDS_CLASSNAME_ENVIRONMENTOBJECT "Environment"
     IDS_CLASSNAME_CUSTOM2FILTER "Custom2 Filter"
     IDS_OBJECTNAME_CUSTOMFILTER_KERNELCELL "Kernel Cell"
     IDS_OBJECTNAME_WARN_LOW_INDIRECT "Warn Low Indirect"

@@ -1439,7 +1439,7 @@
     <ClCompile Include="BasicValueObjects.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="EnvironmentObject.cpp">
+    <ClCompile Include="RootChildren.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="RemoteCommand.cpp">
@@ -1557,6 +1557,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ArchiveToolHelper.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GlobalConstantView.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -2442,9 +2445,6 @@
     <ClInclude Include="SVPPQShiftRegister.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVPQVariableSelectionDialog.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVPQVariableTreeCtrl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -3099,7 +3099,7 @@
     <ClInclude Include="BasicValueObjects.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="EnvironmentObject.h">
+    <ClInclude Include="RootChildren.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="RootObject.h">
@@ -3217,6 +3217,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ArchiveToolHelper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GlobalConstantView.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -3359,13 +3362,16 @@
     <None Include="BasicValueObject.inl">
       <Filter>Header Files</Filter>
     </None>
-    <None Include="EnvironmentObject.inl">
+    <None Include="RootChildren.inl">
       <Filter>Header Files</Filter>
     </None>
     <None Include="ObjectNameHelper.inl">
       <Filter>Header Files</Filter>
     </None>
     <None Include="Custom2Filter.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="RootObject.inl">
       <Filter>Header Files</Filter>
     </None>
   </ItemGroup>

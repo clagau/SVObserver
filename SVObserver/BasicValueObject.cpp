@@ -29,11 +29,12 @@ static char THIS_FILE[] = __FILE__;
 #pragma endregion Declarations
 
 #pragma region Constructor
-BasicValueObject::BasicValueObject( LPCSTR ObjectName,  SVObjectClass* pOwner, bool Node )
+BasicValueObject::BasicValueObject( LPCSTR ObjectName,  SVObjectClass* pOwner, bool Node, SVObjectTypeEnum ObjectType )
 : SVObjectClass(ObjectName)
 	, m_Created(false)
 	, m_Node(Node)
 {
+	outObjectInfo.ObjectTypeInfo.ObjectType =  ObjectType;
 	Create( pOwner );
 }
 
@@ -57,74 +58,52 @@ bool BasicValueObject::operator==(const BasicValueObject& rRhs) const
 
 HRESULT BasicValueObject::setValue(const _variant_t& rValue )
 {
-	HRESULT	Status = S_OK;
+	HRESULT	Result = S_OK;
 	_variant_t	TempValue( rValue );
 
 	//SVRC sends data as array
-	if( TempValue.vt & VT_ARRAY )
+	if( VT_ARRAY == (TempValue.vt & VT_ARRAY) )
 	{
-		Status = ConvertArrayToVariant( TempValue );
+		Result = ConvertArrayToVariant( TempValue );
 	}
 
-	if ( S_OK == Status )
+	//If variant is of type VT_EMPTY then this is only a node
+	if( VT_EMPTY == rValue.vt )
 	{
-		Lock();
-		m_Value = TempValue;
-		Unlock();
+		m_Node = true;
 	}
-	return Status;
+	else
+	{
+		if ( S_OK == Result )
+		{
+			Lock();
+			m_Value = TempValue;
+			Unlock();
+		}
+	}
+
+	RefreshOwner( SVObjectClass::PostRefresh );
+	return Result;
 }
 
 HRESULT BasicValueObject::setValue(const LPCTSTR Value )
 {
+	HRESULT Result( S_FALSE );
+
 	_variant_t VariantValue;
 	VariantValue.vt = VT_BSTR;
 	_bstr_t Temp;
 	Temp = Value;
 	VariantValue.bstrVal = Temp.Detach();
-	setValue(VariantValue);
-	return S_OK;
-}
+	Result = setValue(VariantValue);
 
-HRESULT BasicValueObject::setValue(const BOOL Value )
-{
-	_variant_t VariantValue;
-	VariantValue.vt = VT_BOOL;
-	VariantValue.boolVal = Value;
-	setValue(VariantValue);
-	return S_OK;
-}
-
-HRESULT BasicValueObject::setValue(const long Value )
-{
-	_variant_t VariantValue;
-	VariantValue.vt = VT_I4;
-	VariantValue.lVal = Value;
-	setValue(VariantValue);
-	return S_OK;
-}
-
-HRESULT BasicValueObject::setValue(const __int64 Value )
-{
-	_variant_t VariantValue;
-	VariantValue.vt = VT_I8;
-	VariantValue.llVal = Value;
-	setValue(VariantValue);
-	return S_OK;
-}
-
-HRESULT BasicValueObject::setValue(const double Value )
-{
-	_variant_t VariantValue;
-	VariantValue.vt = VT_R8;
-	VariantValue.dblVal = Value;
-	setValue(VariantValue);
-	return S_OK;
+	RefreshOwner( SVObjectClass::PostRefresh );
+	return Result;
 }
 
 HRESULT BasicValueObject::getValue( _variant_t& rValue ) const
 {
-	RefreshOwner();
+	RefreshOwner( SVObjectClass::PreRefresh );
 
 	rValue.Clear();
 	rValue = m_Value;
@@ -135,7 +114,7 @@ HRESULT BasicValueObject::getValue( SVString& rValue ) const
 {
 	HRESULT	Result = S_OK;
 
-	RefreshOwner();
+	RefreshOwner( SVObjectClass::PreRefresh );
 
 	rValue.clear();
 	switch(m_Value.vt)
@@ -150,6 +129,12 @@ HRESULT BasicValueObject::getValue( SVString& rValue ) const
 			rValue =  m_Value.boolVal ? _T( "True") : _T( "False" );
 		}
 		break;
+	//The old BOOL converts to VT_IINT so this is also of type boolean
+	case VT_INT:
+		{
+			rValue =  m_Value.intVal == 1 ? _T( "True") : _T( "False" );
+		}
+		break;
 	case VT_I4:
 		{
 			rValue.Format( _T("%d"), m_Value.lVal );
@@ -161,6 +146,11 @@ HRESULT BasicValueObject::getValue( SVString& rValue ) const
 		}
 		break;
 	case VT_R4:
+		{
+			rValue.Format( _T("%f"), m_Value.fltVal );
+		}
+		break;
+	case VT_R8:
 		{
 			rValue.Format( _T("%f"), m_Value.dblVal );
 		}
@@ -179,21 +169,19 @@ HRESULT BasicValueObject::getValue( BOOL& rValue ) const
 {
 	HRESULT Result = S_OK;
 
-	RefreshOwner();
+	RefreshOwner( SVObjectClass::PreRefresh );
 
 	switch(m_Value.vt)
 	{
-	case VT_I4:
-		rValue = static_cast<BOOL>(m_Value.lVal);
-		break;
-	case VT_I8:
-		rValue = static_cast<BOOL>(m_Value.llVal);
-		break;
 	case VT_BOOL:
-		rValue = static_cast<BOOL>(m_Value.boolVal);
+	case VT_INT:
+	case VT_I4:
+	case VT_I8:
+		rValue = static_cast<BOOL> (m_Value);
 		break;
-	case VT_R4: // fall through...
-	case VT_BSTR: // fall through...
+	case VT_R4:
+	case VT_R8:
+	case VT_BSTR:
 	default:
 		Result = S_FALSE;
 		break;
@@ -202,90 +190,15 @@ HRESULT BasicValueObject::getValue( BOOL& rValue ) const
 	return Result;
 }
 
-HRESULT BasicValueObject::getValue( long& rValue ) const
+HRESULT BasicValueObject::getValue( bool& rValue ) const
 {
 	HRESULT Result = S_OK;
 
-	RefreshOwner();
+	BOOL Value(false);
+	//Use the BOOL version and then convert to type bool
+	Result = getValue( Value );
+	rValue = Value ? true : false;
 
-	rValue = 0;
-	switch(m_Value.vt)
-	{
-	case VT_I4:
-		rValue = static_cast<long>(m_Value.lVal);
-		break;
-	case VT_I8:
-		rValue = static_cast<long>(m_Value.llVal);
-		break;
-	case VT_BOOL:
-		rValue = static_cast<long>(m_Value.boolVal);
-		break;
-	case VT_R4: 
-		rValue = static_cast<long>(m_Value.dblVal);
-		break;
-	case VT_BSTR: // fall through...
-	default:
-		Result = S_FALSE;
-		break;
-	}
-	return Result;
-}
-
-HRESULT BasicValueObject::getValue( __int64& rValue ) const
-{
-	HRESULT Result = S_OK;
-
-	RefreshOwner();
-
-	rValue = 0;
-	switch(m_Value.vt)
-	{
-	case VT_I4:
-		rValue = static_cast<__int64>(m_Value.lVal);
-		break;
-	case VT_I8:
-		rValue = static_cast<__int64>(m_Value.llVal);
-		break;
-	case VT_BOOL:
-		rValue = static_cast<__int64>(m_Value.boolVal);
-		break;
-	case VT_R4: 
-		rValue = static_cast<__int64>(m_Value.dblVal);
-		break;
-	case VT_BSTR: // fall through...
-	default:
-		Result = S_FALSE;
-		break;
-	}
-	return Result;
-}
-
-HRESULT BasicValueObject::getValue( double& rValue ) const
-{
-	HRESULT Result = S_OK;
-
-	RefreshOwner();
-
-	rValue = 0.0;
-	switch(m_Value.vt)
-	{
-	case VT_I4:
-		rValue = static_cast<double>(m_Value.lVal);
-		break;
-	case VT_I8:
-		rValue = static_cast<double>(m_Value.llVal);
-		break;
-	case VT_BOOL:
-		rValue = static_cast<double>(m_Value.boolVal);
-		break;
-	case VT_R4: 
-		rValue = static_cast<double>(m_Value.dblVal);
-		break;
-	case VT_BSTR: // fall through...
-	default:
-		Result = S_FALSE;
-		break;
-	}
 	return Result;
 }
 
@@ -300,6 +213,7 @@ SVString BasicValueObject::getTypeName() const
 		}
 		break;
 	case VT_BOOL:
+	case VT_INT:		//BOOL implicit conversion to VT_INT
 		{
 			retString = "Bool";
 		}
@@ -314,7 +228,7 @@ SVString BasicValueObject::getTypeName() const
 			retString = "Integer64";
 		}
 		break;
-	case VT_R4:  // fall through...
+	case VT_R4:
 	case VT_R8:
 		{
 			retString = "Decimal";
@@ -467,17 +381,31 @@ BOOL BasicValueObject::Unlock()
 	return TRUE;
 }
 
-BOOL BasicValueObject::RefreshOwner() const
+HRESULT BasicValueObject::RefreshObject( const SVObjectClass* const pSender, RefreshObjectType Type )
 {
-	BOOL Result = FALSE;
+	HRESULT Result( S_FALSE );
 	
-	SVObjectClass* pObject = SVObjectClass::GetOwner();
+	SVObjectClass* pOwner = GetOwner();
 
-	if(( NULL != pObject ) && ( S_OK == pObject->RefreshObject() ) )
+	if( nullptr != pOwner )
 	{
-		Result = TRUE;
+		Result = pOwner->RefreshObject( pSender, Type );
 	}
 
+	return Result;
+}
+
+bool BasicValueObject::RefreshOwner( RefreshObjectType Type ) const
+{
+	bool Result( false );
+
+	SVObjectClass* pOwner = GetOwner();
+
+	if( nullptr != pOwner )
+	{
+		Result = S_OK == pOwner->RefreshObject( this, Type ) ? true : false;
+	}
+	
 	return Result;
 }
 

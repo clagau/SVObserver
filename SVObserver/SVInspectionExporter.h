@@ -9,10 +9,11 @@
 //* .Check In Date   : $Date:   23 Apr 2013 11:01:58  $
 //******************************************************************************
 
-#ifndef INCL_SVINSPECTIONEXPORTER_H
-#define INCL_SVINSPECTIONEXPORTER_H
+#pragma once
 
+#pragma region Includes
 #include "SVUtilityLibrary/SVString.h"
+#pragma endregion Includes
 
 class SVInspectionExporter
 {
@@ -23,8 +24,6 @@ private:
 public:
 	static HRESULT Export(const SVString& filename, const SVString& inspectionName, unsigned long p_version, bool bColor);
 };
-
-#endif
 
 //******************************************************************************
 //* LOG HISTORY:

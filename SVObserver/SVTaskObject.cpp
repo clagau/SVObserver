@@ -27,6 +27,7 @@
 #include "SVTool.h"
 #include "SVToolSet.h"
 #include "SVObjectLibrary\SVToolsetScriptTags.h"
+#include "RootObject.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -194,6 +195,21 @@ HRESULT SVTaskObjectClass::GetOutputListFiltered(std::vector<SVValueObjectRefere
 		}
 	}
 	return S_OK;
+}
+
+HRESULT SVTaskObjectClass::GetNonToolsetOutputList( SVOutputInfoListClass& rOutputInfoList ) const
+{
+	HRESULT Result( S_OK );
+
+	BasicValueObjects::ValueVector list;
+
+	RootObject::getRootChildObjectList( list, _T(""), 0 );
+	for(BasicValueObjects::ValueVector::const_iterator iter = list.begin(); iter != list.end(); ++iter) 
+	{
+		rOutputInfoList.Add( &((*iter)->GetObjectOutputInfo()) );
+	}
+
+	return Result;
 }
 
 HRESULT SVTaskObjectClass::IsAuxInputImage( const SVInObjectInfoStruct* p_psvInfo )
@@ -2091,13 +2107,14 @@ HRESULT SVTaskObjectClass::GetDependentsList( SVObjectPairVector& rListOfDepende
 // Get the dependents list for a specified list of objects (owned by this object)
 HRESULT SVTaskObjectClass::GetDependentsList( const SVObjectVector& rListOfObjects, SVObjectPairVector& rListOfDependents )
 {
-	ASSERT( rListOfDependents.size() == 0 );	// should be clear before calling
 	int itemNo = 0;
 
 	// Check for Dependents
 	SVOutputInfoListClass l_OutputInfoList;
 	
 	GetOutputList( l_OutputInfoList );
+
+	GetNonToolsetOutputList( l_OutputInfoList );
 
 	if( l_OutputInfoList.HasDependents() )
 	{
