@@ -8046,11 +8046,13 @@ void SVObserverApp::fileSaveAsSVX( CString StrSaveAsPathName, bool isAutoSave)
 		if (isAutoSave) 
 		{
 			//Arvid in an autosave some of the of the steps necessary in a normal configuration 
-			// save are skipped:
-			// e.g., the configuration name must not be added to the LRU list
+			// save are skipped, 
+			// e.g. the configuration name must not be added to the LRU list
 			
 			AutoSaver::Instance().CopyDirectoryToTempDirectory(Seidenader::SVObserver::RunFolder + CString("\\"));
 			AutoSaver::Instance().ResetAutoSaveInformation(); //Arvid: update autosave timestamp
+
+			SVNavigateTreeClass::DeleteAllItems( m_XMLTree ); //Arvid 150625: this appears to be necessary for AutoSave as well
 		}
 		else 
 		{
@@ -8059,7 +8061,6 @@ void SVObserverApp::fileSaveAsSVX( CString StrSaveAsPathName, bool isAutoSave)
 			svFileManager.RemoveUnusedFiles();
 
 			SVSVIMStateClass::RemoveState( SV_STATE_MODIFIED );
-
 			SVNavigateTreeClass::DeleteAllItems( m_XMLTree );
 
 			if ( bOk )
