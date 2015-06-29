@@ -439,6 +439,14 @@ HRESULT BasicValueObject::ConvertArrayToVariant( _variant_t& rValue ) const
 				{
 					rValue.boolVal = FALSE;
 				}
+				else if( 0 == StringValue.Compare( _T("0") ) )
+				{
+					rValue.boolVal = FALSE;
+				}
+				else if( 0 == StringValue.Compare( _T("1") ) )
+				{
+					rValue.boolVal = TRUE;
+				}
 				else
 				{
 					Status = E_INVALIDARG;
