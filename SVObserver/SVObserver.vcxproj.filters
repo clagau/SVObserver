@@ -1562,6 +1562,15 @@
     <ClCompile Include="GlobalConstantView.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="SVArchiveImageThreadClass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SVArchiveRecord.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SVArchiveRecordsArray.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Midl Include="SVObserver.odl">
@@ -3220,6 +3229,18 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="GlobalConstantView.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVArchiveImageThreadClass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVArchiveRecord.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVArchiveRecordsArray.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ArchiveMethodEnum.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

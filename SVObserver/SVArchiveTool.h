@@ -9,8 +9,7 @@
 //* .Check In Date   : $Date:   15 May 2014 10:09:10  $
 //******************************************************************************
 
-#ifndef SVTOOLARCHIVE_H
-#define SVTOOLARCHIVE_H
+#pragma once
 
 #pragma region Includes
 #include <deque>
@@ -19,174 +18,19 @@
 #include "SVMatroxLibrary\SVMatroxBuffer.h"
 #include "SVTool.h"
 #include "SVImageObjectClass.h"
+
+#include "ArchiveMethodEnum.h"
 #include "ArchiveToolHelper.h"
+#include "SVArchiveRecord.h"
+#include "SVArchiveRecordsArray.h"
+
 #pragma endregion Includes
 
 extern const CString ARCHIVE_TOOL_MEMORY_POOL_ONLINE_ASYNC_NAME;
 extern const CString ARCHIVE_TOOL_MEMORY_POOL_GO_OFFLINE_NAME;
 
-class SVArchiveTool;
 class SVImageListClass;
-
-enum SVArchiveMethodEnum
-{
-	SVArchiveInvalidMethod = 0,
-	SVArchiveSynchronous   = 1,
-	SVArchiveAsynchronous  = 2,
-	SVArchiveGoOffline     = 3,
-};
-
-class SVArchiveRecord
-{
-public:
-	SVArchiveRecord();
-
-	virtual ~SVArchiveRecord();
-	
-	void InitArchiveRecord
-		(
-			SVArchiveTool*    pToolArchive,
-			SVObjectReference refObject    // a reference to an object required
-		);
-
-	HRESULT	BuildArchiveImageFilePath(CString& rcsPath);  // For images only
-	void BuildFileName();                 // For images only
-	void ConnectInputObject();
-	void DisconnectInputObject();
-
-	HRESULT AllocateBuffers( long lBufferSize );
-	HRESULT QueueImage( SVMatroxBuffer& buf, CString strFileName );
-	HRESULT WriteImageQueue();
-	HRESULT WriteImage( );
-	static HRESULT WriteImage( SVMatroxBuffer& buf, CString sFileName );
-
-	void Init( SVArchiveTool* pArchiveTool );
-
-	SVImageClass* GetImage();
-
-	long                    GetImageMemorySize() { return m_lImageSize; }
-	CString                 GetImageObjectName() { return m_csImageObjectName; }
-	SVObjectReference&      GetObjectReference() { return m_svObjectReference; }
-
-private:
-	typedef std::pair< CString, SVDataManagerHandle > SVFileNameIndexHandlePair;
-	typedef std::deque< SVFileNameIndexHandlePair > SVFileNameIndexHandleDeque;
-
-	SVObjectReference   m_svObjectReference;
-	CString             m_csImageObjectName;           // images only
-	CString             m_csFileNameImage;             // images only
-	long                m_lCountImages;                // images only
-	SVImageObjectClassPtr  m_ImageBufferPtr;                 // images only
-	SVImageInfoClass    m_ImageInfo;                   // images only
-	long                m_lLastIndex;
-	long                m_lMaxIndex;
-	SVFileNameIndexHandleDeque m_aFileNames;
-	long                m_lImageSize;
-	long                m_lDMBuffer;
-
-
-	//Attributes
-	SVArchiveMethodEnum m_eArchiveMethod;
-	SVArchiveTool*      m_pArchiveTool;
-
-	SVDataManagerHandle m_LastIndexHandle;
-	SVSmartIndexArrayHandlePtr m_pImageCircleBuffer;
-
-	friend class SVArchiveRecordsArray;
-};
-
-class SVArchiveRecordsArray
-{
-public:
-	SVArchiveRecordsArray();
-	~SVArchiveRecordsArray();
-
-	void SetArchiveTool( SVArchiveTool* pTool );
-
-	void ClearArray();
-  void ResetImageCounts();
-
-	void ConvertStringToGuids( SVArchiveTool* pToolArchive, LPCTSTR pszStrValue );	// FOR BACKWARD COMPATIBILITY
-	HRESULT InitializeObjects(SVArchiveTool* pToolArchive, SVStringValueObjectClass& svoObjects );	// use array capability of string vo
-
-	std::vector<CString> RemoveDisconnectedObject(const SVObjectInfoStruct& p_rInfoObject);
-	void ValidateImageObjects();
-
-	HRESULT AllocateBuffers( long lBufferSize );
-
-	BOOL WriteArchiveImageFiles( );
-	HRESULT WriteImageQueue();
-
-	int ValidateResultsObjects();
-	CString BuildResultsArchiveString();
-	void DisconnectAllResultObjects();
-
-	int GetSize();
-	SVArchiveRecord* GetAt(int i);
-	int Add( SVArchiveRecord* pRecord );
-
-protected:
-	SVArchiveTool* m_pArchiveTool;
-	typedef std::vector <SVArchiveRecord*> RecordsType;
-	RecordsType m_vecRecords;
-};	// end class SVArchiveRecordsArray
-
-
-
-
-class SVArchiveImageThreadClass
-{
-public:
-	struct BufferInfo
-	{
-		// passed into the thread class
-		SVMatroxBuffer id;
-		CString strFilename;
-		long lBufferSize;
-		SVImageInfoClass info;
-		SVArchiveRecord* pRecord;
-
-		// maintained by the thread class
-		SVClock::SVTimeStamp m_Timestamp;
-		SVImageObjectClassPtr pImageObject;
-
-		BufferInfo() : lBufferSize(0), m_Timestamp(0), pRecord(NULL), pImageObject(NULL) {}
-		BufferInfo( const BufferInfo& rhs )
-			: id(rhs.id), strFilename(rhs.strFilename), lBufferSize(rhs.lBufferSize), m_Timestamp(rhs.m_Timestamp), info(rhs.info), pImageObject(rhs.pImageObject), pRecord(rhs.pRecord) {}
-		BufferInfo( SVMatroxBuffer p_id, CString p_strFilename, long p_lBufferSize, SVImageInfoClass p_info, SVArchiveRecord* p_pRecord )
-			: id(p_id), strFilename(p_strFilename), lBufferSize(p_lBufferSize), info(p_info), pRecord(p_pRecord) {}
-		const BufferInfo& operator = ( const BufferInfo& rhs )
-			{ if ( this != &rhs ) {id = rhs.id; strFilename = rhs.strFilename; lBufferSize = rhs.lBufferSize; m_Timestamp = rhs.m_Timestamp; info = rhs.info; pImageObject = rhs.pImageObject; pRecord = rhs.pRecord; } return *this; }
-	};
-
-	SVArchiveImageThreadClass();
-	virtual ~SVArchiveImageThreadClass();
-
-	HRESULT GoOnline();
-	HRESULT GoOffline();
-	HRESULT QueueImage( BufferInfo info );
-
-private:
-
-	static DWORD WINAPI    ThreadEntry( LPVOID lpParam );
-	DWORD ThreadFunction( );
-	HRESULT PopAndWrite();
-
-	HANDLE            m_hThread;
-	DWORD             m_dwThreadId;
-	CCriticalSection  m_mtxQueue;	// not needed if queue is done in APC
-	volatile bool     m_bRunThread;
-
-	typedef std::deque<BufferInfo> QueueType;
-	QueueType m_Queue;
-	volatile HANDLE    m_hExitEvent;
-
-	typedef std::pair<SVArchiveImageThreadClass*, BufferInfo> APCDataType;
-
-};
-
-typedef TBasicSingletonHolder< SVArchiveImageThreadClass > SVArchiveImageThreadClassSingleton;
-inline SVArchiveImageThreadClass& TheSVArchiveImageThreadClass() {return SVArchiveImageThreadClassSingleton::Instance();}
+class SVArchiveRecord;
 
 class SVArchiveTool : public SVToolClass
 {
@@ -309,7 +153,7 @@ private:
 	CString m_ImageTranslatedPath;
 	bool m_ArchiveImagePathUsingKW;
 };
-#endif
+
 
 //******************************************************************************
 //* LOG HISTORY:

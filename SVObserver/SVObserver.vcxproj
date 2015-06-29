@@ -409,6 +409,9 @@ echo %time%
     </ClCompile>
     <ClCompile Include="SV1394CameraStruct.cpp" />
     <ClCompile Include="SVArchiveHeaderEditDlg.cpp" />
+    <ClCompile Include="SVArchiveImageThreadClass.cpp" />
+    <ClCompile Include="SVArchiveRecord.cpp" />
+    <ClCompile Include="SVArchiveRecordsArray.cpp" />
     <ClCompile Include="SVBinaryOperatorClass.cpp" />
     <ClCompile Include="SVCameraDataInputObject.cpp" />
     <ClCompile Include="SVCameraTriggerClass.cpp" />
@@ -3815,6 +3818,7 @@ echo %time%
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\AutoBuild\AutoBuild.h" />
+    <ClInclude Include="ArchiveMethodEnum.h" />
     <ClInclude Include="ArchiveToolHelper.h" />
     <ClInclude Include="AutoSaver.h" />
     <ClInclude Include="BasicValueObject.h" />
@@ -3857,6 +3861,9 @@ echo %time%
     <ClInclude Include="SV1394CameraManagerDlg.h" />
     <ClInclude Include="SV1394CameraStruct.h" />
     <ClInclude Include="SVArchiveHeaderEditDlg.h" />
+    <ClInclude Include="SVArchiveImageThreadClass.h" />
+    <ClInclude Include="SVArchiveRecord.h" />
+    <ClInclude Include="SVArchiveRecordsArray.h" />
     <ClInclude Include="SVBinaryOperatorClass.h" />
     <ClInclude Include="SVCameraDataInputObject.h" />
     <ClInclude Include="SVCameraTriggerClass.h" />

@@ -43,6 +43,8 @@
 #include "SVOCRParamStruct.h"
 #include "SVOCRGrayParamStruct.h"
 #include "SVArchiveTool.h"
+#include "SVArchiveRecord.h"
+#include "SVArchiveRecordsArray.h"
 #include "SVStatTool.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVAcquisitionClass.h"
