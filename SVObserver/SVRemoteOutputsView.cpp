@@ -645,7 +645,7 @@ bool SVRemoteOutputsView::AddOutput(int p_iWhere)
 		SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
 		SVRemoteOutputGroup* pGroupParameters( nullptr );
-		if( nullptr != pConfig ){ pConfig->GetRemoteOutputGroup(l_strGroup); }
+		if( nullptr != pConfig ){ pGroupParameters = pConfig->GetRemoteOutputGroup(l_strGroup); }
 
 		SVPPQObject* pPPQ( nullptr );
 		SVString PPQName;
