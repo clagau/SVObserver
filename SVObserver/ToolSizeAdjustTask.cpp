@@ -406,7 +406,13 @@ HRESULT ToolSizeAdjustTask::ResetObject()
 		{
 			hresult =pTool->SetImageExtent(GetIndex(),ImageExtent);
 		}
-	}
+	
+		if(S_OK  == hresult)
+		{
+			pTool->UpdateBottomAndRight(); 
+		}
+
+}
 
 	if(hresult == S_FALSE || hresult == E_FAIL)
 	{	

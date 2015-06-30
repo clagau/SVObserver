@@ -895,31 +895,11 @@ HRESULT SVToolClass::ResetObject()
 		processedCount.SetDefaultValue( 0, TRUE );
 	}
 
+	
+	///UpdateBottomAndRight is called again when imageExtents are changed by ToolsizeAdjust
 	if ( l_hrOk == S_OK )
 	{
-		SVImageExtentClass l_svExtents;
-
-		if ( GetImageExtent( l_svExtents ) == S_OK )
-		{
-			SVExtentFigureStruct l_svFigure;
-
-			if ( l_svExtents.GetFigure( l_svFigure ) == S_OK )
-			{
-				if( extentRight.ObjectAttributesAllowed() != SV_NO_ATTRIBUTES )
-				{
-					long l_lValue = static_cast<long>(l_svFigure.m_svBottomRight.m_dPositionX);
-
-					extentRight.SetValue( 1, l_lValue );
-				}
-				
-				if( extentBottom.ObjectAttributesAllowed() != SV_NO_ATTRIBUTES )
-				{
-					long l_lValue = static_cast<long>(l_svFigure.m_svBottomRight.m_dPositionY);
-
-					extentBottom.SetValue( 1, l_lValue );
-				}
-			}
-		}
+		UpdateBottomAndRight();
 	}
 
 	// Auxilliary Extents
@@ -956,6 +936,33 @@ HRESULT SVToolClass::ResetObject()
 	EnableAuxilliaryExtents( l_dValue > 0 );
 
 	return l_hrOk;
+}
+
+void SVToolClass::UpdateBottomAndRight()
+{
+	SVImageExtentClass l_svExtents;
+
+	if ( GetImageExtent( l_svExtents ) == S_OK )
+	{
+		SVExtentFigureStruct l_svFigure;
+
+		if ( l_svExtents.GetFigure( l_svFigure ) == S_OK )
+		{
+			if( extentRight.ObjectAttributesAllowed() != SV_NO_ATTRIBUTES )
+			{
+				long l_lValue = static_cast<long>(l_svFigure.m_svBottomRight.m_dPositionX);
+
+				extentRight.SetValue( 1, l_lValue );
+			}
+
+			if( extentBottom.ObjectAttributesAllowed() != SV_NO_ATTRIBUTES )
+			{
+				long l_lValue = static_cast<long>(l_svFigure.m_svBottomRight.m_dPositionY);
+
+				extentBottom.SetValue( 1, l_lValue );
+			}
+		}
+	}
 }
 
 const SVImageClass* SVToolClass::GetToolImage() const

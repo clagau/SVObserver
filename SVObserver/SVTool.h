@@ -275,6 +275,14 @@ public:
 	//************************************
 	virtual SVExtentLocationPropertyEnum FilterAllowedLocation(const SVExtentLocationPropertyEnum Location) const;
 	
+
+
+	//************************************
+	//! Calculates bottom and Right 
+	//! \returns void
+	//************************************
+	void UpdateBottomAndRight();
+
 	//
 	// Flag to indicate this tool is selected for SVIM operator move.
 	// 26 Jan 2000 - frb.
