@@ -27,7 +27,6 @@ struct SVCommandInspectionGetItems
 	typedef std::pair<SVString, SVObjectReference> SVFullNameObjectPair;
 	typedef std::set< SVFullNameObjectPair > SVNameObjectSet;
 
-	SVCommandInspectionGetItems();
 	SVCommandInspectionGetItems(const SVInspectionProcess& p_rInspection, const SVNameObjectSet& p_rItemNames);
 
 	virtual ~SVCommandInspectionGetItems();
@@ -35,12 +34,8 @@ struct SVCommandInspectionGetItems
 	HRESULT Execute();
 
 	bool empty() const;
-	void clear();
 
 	const SVNameObjectSet& GetItemNames() const;
-
-	HRESULT SetCommandData(const SVInspectionProcess& p_rInspection, const SVNameObjectSet& p_rItemNames);
-
 	const SVNameStorageResultMap& GetResultItems() const;
 
 protected:

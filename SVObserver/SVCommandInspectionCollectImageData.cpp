@@ -23,13 +23,6 @@
 #pragma endregion Includes
 
 #pragma region Constructor
-SVCommandInspectionCollectImageData::SVCommandInspectionCollectImageData()
-: m_InspectionId()
-, m_ImageIds()
-, m_Product()
-{
-}
-
 SVCommandInspectionCollectImageData::SVCommandInspectionCollectImageData(const SVCommandInspectionCollectImageData& p_rObject)
 : m_InspectionId( p_rObject.m_InspectionId )
 , m_ImageIds( p_rObject.m_ImageIds )
@@ -134,13 +127,6 @@ bool SVCommandInspectionCollectImageData::empty() const
 	return l_Status;
 }
 
-void SVCommandInspectionCollectImageData::clear()
-{
-	m_InspectionId.clear();
-	m_ImageIds.clear();
-	m_Product.clear();
-}
-
 const SVGUID& SVCommandInspectionCollectImageData::GetInspectionId() const
 {
 	return m_InspectionId;
@@ -149,18 +135,6 @@ const SVGUID& SVCommandInspectionCollectImageData::GetInspectionId() const
 const SVCommandInspectionCollectImageData::SVImageIdSet& SVCommandInspectionCollectImageData::GetImageIds() const
 {
 	return m_ImageIds;
-}
-
-HRESULT SVCommandInspectionCollectImageData::SetCommandData(const SVGUID& p_rInspectionId, const SVImageIdSet& p_rImageIds)
-{
-	HRESULT l_Status = S_OK;
-
-	m_InspectionId = p_rInspectionId;
-	m_ImageIds = p_rImageIds;
-
-	m_Product.clear();
-
-	return l_Status;
 }
 
 const SVIPProductStruct& SVCommandInspectionCollectImageData::GetProduct() const

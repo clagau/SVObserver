@@ -24,11 +24,6 @@ static char THIS_FILE[] = __FILE__;
 #pragma endregion Declarations
 
 #pragma region Constructor
-SVCommandInspectionExtentUpdater::SVCommandInspectionExtentUpdater()
-: m_InspectionId(), m_ToolId(), m_mode(ExtentUpdaterMode_Undefined), m_bResetInspection(false)
-{
-}
-
 SVCommandInspectionExtentUpdater::SVCommandInspectionExtentUpdater(const SVCommandInspectionExtentUpdater& rObject)
 : m_InspectionId( rObject.m_InspectionId ), m_ToolId( rObject.m_ToolId ), m_ImageExtent( rObject.m_ImageExtent ), m_mode( rObject.m_mode ),m_bResetInspection(false)
 {
@@ -143,26 +138,6 @@ bool SVCommandInspectionExtentUpdater::empty() const
 	bRet = bRet && ( m_mode == ExtentUpdaterMode_Undefined );
 
 	return bRet;
-}
-
-void SVCommandInspectionExtentUpdater::clear()
-{
-	m_InspectionId.clear();
-	m_ToolId.clear();
-	m_ImageExtent = SVImageExtentClass();
-	m_mode = ExtentUpdaterMode_Undefined;
-	m_bResetInspection  = false;
-}
-
-HRESULT SVCommandInspectionExtentUpdater::SetCommandData(const SVGUID& p_rInspectionId, const SVGUID& p_rToolId, SVCommandExtentUpdaterModeEnum mode, const SVImageExtentClass& rImageExtent, bool forward)
-{
-	m_InspectionId = p_rInspectionId;
-	m_ToolId = p_rToolId;
-	m_ImageExtent = rImageExtent;
-	m_mode = mode;
-	m_bResetInspection  = forward;
-
-	return S_OK;
 }
 
 void SVCommandInspectionExtentUpdater::SetResetInspection(bool forward)

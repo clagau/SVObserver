@@ -18,7 +18,6 @@
 class SVCommandInspectionRunOnce
 {
 public:
-	SVCommandInspectionRunOnce();
 	SVCommandInspectionRunOnce(const SVCommandInspectionRunOnce& p_rObject);
 	SVCommandInspectionRunOnce(const SVGUID& p_rInspectionId, const SVGUID& p_rToolId = SVGUID());
 
@@ -27,12 +26,9 @@ public:
 	HRESULT Execute();
 
 	bool empty() const;
-	void clear();
 
 	const SVGUID& GetInspectionId() const;
 	const SVGUID& GetToolId() const;
-
-	HRESULT SetCommandData(const SVGUID& p_rInspectionId, const SVGUID& p_rToolId = SVGUID());
 
 private:
 	SVGUID m_InspectionId;

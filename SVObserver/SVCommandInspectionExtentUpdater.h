@@ -29,7 +29,6 @@ class SVCommandInspectionExtentUpdater
 {
 	#pragma region Constructor
 public:
-	SVCommandInspectionExtentUpdater();
 	SVCommandInspectionExtentUpdater(const SVCommandInspectionExtentUpdater& rObject);
 	/// a pointer to SVImageExtentClass is used to avoid unecessaries copies in case of default arguments 
 	SVCommandInspectionExtentUpdater(const SVGUID& rInspectionId, const SVGUID& rToolId, SVCommandExtentUpdaterModeEnum mode, const SVImageExtentClass* pImageExtent = nullptr );
@@ -50,23 +49,6 @@ public:
 	//! \returns bool
 	//************************************
 	bool empty() const;
-
-	//************************************
-	//! Reset member parameter of this class.
-	//! \returns void
-	//************************************
-	void clear();
-
-	//************************************
-	//! PLEASE ENTER A DESCRIPTION
-	//! \param rInspectionId [in] GUID of the inspection.
-	//! \param rToolId [in] GUID of the tool.
-	//! \param mode [in] Mode in which the Execute should run.
-	//! \param rImageExtent [in] Image extent parameter, can be empty if not used in this mode (e.g. ExtentUpdater_SetImageExtentToParent)
-	//! \returns HRESULT
-	//************************************
-	HRESULT SetCommandData(const SVGUID& rInspectionId, const SVGUID& rToolId, SVCommandExtentUpdaterModeEnum mode, const SVImageExtentClass& rImageExtent = SVImageExtentClass(), bool forward = false );
-
 
 	//************************************
 	//! when m_bResetInspection is true after setting the extent the inspection is reseted otherwise only the tool 

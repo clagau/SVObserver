@@ -26,7 +26,6 @@ struct SVCommandInspectionCollectImageData
 	typedef std::set< SVGUID > SVImageIdSet;
 
 #pragma region Constructor
-	SVCommandInspectionCollectImageData();
 	SVCommandInspectionCollectImageData(const SVCommandInspectionCollectImageData& p_rObject);
 	SVCommandInspectionCollectImageData(const SVGUID& p_rInspectionId, const SVImageIdSet& p_rImageIds);
 
@@ -36,12 +35,9 @@ struct SVCommandInspectionCollectImageData
 	HRESULT Execute();
 
 	bool empty() const;
-	void clear();
 
 	const SVGUID& GetInspectionId() const;
 	const SVImageIdSet& GetImageIds() const;
-
-	HRESULT SetCommandData(const SVGUID& p_rInspectionId, const SVImageIdSet& p_rImageIds);
 
 	const SVIPProductStruct& GetProduct() const;
 

@@ -17,11 +17,6 @@
 #include "SVInspectionProcess.h"
 #include "SVTool.h"
 
-SVCommandInspectionRunOnce::SVCommandInspectionRunOnce()
-: m_InspectionId(), m_ToolId()
-{
-}
-
 SVCommandInspectionRunOnce::SVCommandInspectionRunOnce(const SVCommandInspectionRunOnce& p_rObject)
 : m_InspectionId( p_rObject.m_InspectionId ), m_ToolId( p_rObject.m_ToolId )
 {
@@ -68,12 +63,6 @@ bool SVCommandInspectionRunOnce::empty() const
 	return l_Status;
 }
 
-void SVCommandInspectionRunOnce::clear()
-{
-	m_InspectionId.clear();
-	m_ToolId.clear();
-}
-
 const SVGUID& SVCommandInspectionRunOnce::GetInspectionId() const
 {
 	return m_InspectionId;
@@ -82,16 +71,6 @@ const SVGUID& SVCommandInspectionRunOnce::GetInspectionId() const
 const SVGUID& SVCommandInspectionRunOnce::GetToolId() const
 {
 	return m_ToolId;
-}
-
-HRESULT SVCommandInspectionRunOnce::SetCommandData(const SVGUID& p_rInspectionId, const SVGUID& p_rToolId)
-{
-	HRESULT l_Status = S_OK;
-
-	m_InspectionId = p_rInspectionId;
-	m_ToolId = p_rToolId;
-
-	return l_Status;
 }
 
 //******************************************************************************

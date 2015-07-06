@@ -29,11 +29,6 @@
 #pragma endregion Declarations
 
 #pragma region Constructor
-SVCommandInspectionGetItems::SVCommandInspectionGetItems()
-: m_Inspection(nullptr), m_ItemNames(), m_ResultItems()
-{
-}
-
 SVCommandInspectionGetItems::SVCommandInspectionGetItems(const SVInspectionProcess& p_rInspection, const SVNameObjectSet& p_rItemNames)
 : m_Inspection( &p_rInspection ), m_ItemNames( p_rItemNames ), m_ResultItems()
 {
@@ -100,28 +95,9 @@ bool SVCommandInspectionGetItems::empty() const
 	return l_Status;
 }
 
-void SVCommandInspectionGetItems::clear()
-{
-	m_Inspection = nullptr;
-	m_ItemNames.clear();
-	m_ResultItems.clear();
-}
-
 const SVCommandInspectionGetItems::SVNameObjectSet& SVCommandInspectionGetItems::GetItemNames() const
 {
 	return m_ItemNames;
-}
-
-HRESULT SVCommandInspectionGetItems::SetCommandData(const SVInspectionProcess& p_rInspection, const SVNameObjectSet& p_rItemNames)
-{
-	HRESULT l_Status = S_OK;
-
-	m_Inspection = &p_rInspection;
-	m_ItemNames = p_rItemNames;
-
-	m_ResultItems.clear();
-
-	return l_Status;
 }
 
 const SVNameStorageResultMap& SVCommandInspectionGetItems::GetResultItems() const
