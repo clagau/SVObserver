@@ -183,9 +183,7 @@ HRESULT SVVariantValueObjectClass::SetObjectValue(SVObjectAttributeClass* pDataO
 {
 	HRESULT hr = S_FALSE;
 	BOOL bOk = FALSE;
-	
-	
-	SvCl::SVObjectArrayClassTemplate<_variant_t> svArray;
+	SvCl::SVObjectVariantArrayClass svArray;
 	bucket_type l_Buckets(BucketsNoAssert());
 	array_type l_Array;
 	
