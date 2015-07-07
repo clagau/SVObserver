@@ -10,6 +10,7 @@
 #include "EQAdjustSize.h"
 #include "SVTaskObject.h"
 #include "SVEquationLibrary\SVEquationLex.h"
+#include "SVRunControlLibrary\SVRunControlLibrary.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -41,6 +42,11 @@ GUID& EQAdjustSize::GetResultGuid()
 {
 		return m_ResultGuid;
 
+}
+
+DWORD EQAdjustSize::GetObjectColor() const
+{
+	return SV_DEFAULT_WHITE_COLOR;
 }
 
 void EQAdjustSize::Init()

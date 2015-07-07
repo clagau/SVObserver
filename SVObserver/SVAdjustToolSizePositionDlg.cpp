@@ -316,33 +316,51 @@ HRESULT SVAdjustToolSizePositionDlg::ButtonAction(SvMc::SVUpDownButton* pButton)
 	int dy = 0;
 	SVExtentLocationPropertyEnum eAction = SVExtentLocationPropertyUnknown;
 
+	SVExtentDirectionsEnum Direction = SVExtentDirectionBoth; 
 	if ( pButton == &m_btnUp )
 	{
 		eAction = aActions[ BTN_UP_DOWN ][ m_iMode ];
 		dy = -1;
+		Direction = SVExtentDirectionVertical;
 	}
 	else if ( pButton == &m_btnDown )
 	{
 		eAction = aActions[ BTN_UP_DOWN ][ m_iMode ];
 		dy = 1;
+		Direction = SVExtentDirectionVertical;
 	}
 	else if ( pButton == &m_btnLeft )
 	{
 		eAction = aActions[ BTN_LEFT_RIGHT ][ m_iMode ];
 		dx = -1;
+		Direction = SVExtentDirectionHorizontal;
 	}
 	else if ( pButton == &m_btnRight )
 	{
 		eAction = aActions[ BTN_LEFT_RIGHT ][ m_iMode ];
 		dx = 1;
+		Direction = SVExtentDirectionHorizontal;
 	}
 
+	
+	bool bAllowedAction(true);
+	SVToolClass *pToolClass(nullptr);
+	
+	pToolClass = dynamic_cast<SVToolClass* >(m_pToolTask);
+	
+
+	if(nullptr != pToolClass)
+	{
+		bAllowedAction = pToolClass->IsAllowedLocation(eAction,Direction );
+	}
+	
+	
 	HRESULT hr = S_OK;
-	if ( eAction == SVExtentLocationPropertyRotate )
+	if ( bAllowedAction && eAction == SVExtentLocationPropertyRotate )
 	{
 		hr = AdjustToolAngle( dx );
 	}
-	else
+	else if (bAllowedAction)
 	{
 		hr = AdjustTool( eAction, dx, dy );
 	}

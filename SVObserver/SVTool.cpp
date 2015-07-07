@@ -1304,7 +1304,8 @@ DWORD_PTR SVToolClass::createAllObjectsFromChild( SVObjectClass* pChildObject )
 	return SVSendMessage( pChildObject, SVM_CREATE_ALL_OBJECTS, reinterpret_cast<DWORD_PTR>(&createStruct), NULL );
 }
 
-SVExtentLocationPropertyEnum SVToolClass::FilterAllowedLocation(const SVExtentLocationPropertyEnum Location) const 
+
+bool SVToolClass::IsAllowedLocation(const SVExtentLocationPropertyEnum Location , SVExtentDirectionsEnum Direction ) const 
 {
 	SVExtentPropertyInfoStruct info;
 	m_svToolExtent.GetExtentPropertyInfo(SVExtentPropertyHeight,info );
@@ -1319,71 +1320,82 @@ SVExtentLocationPropertyEnum SVToolClass::FilterAllowedLocation(const SVExtentLo
 	m_svToolExtent.GetExtentPropertyInfo(SVExtentPropertyPositionPointY,info );
 	bool bAllowMoveY = !(info.bFormula || info.bSetByReset);
 
-	SVExtentLocationPropertyEnum ret = Location;
+	bool ret(true);
+
 	switch(Location)
 	{
 
 	case  SVExtentLocationPropertyTopLeft:
 		if( !bAllowMoveX || !bAllowMoveY  || !bAllowHeight || !bAllowWidth )
 		{
-			ret = SVExtentLocationPropertyUnknown;
+			ret = false;
 		}
 		break;
 
 	case  SVExtentLocationPropertyTopRight:
 		if(  !bAllowMoveY  || !bAllowHeight || !bAllowWidth )
 		{
-			ret = SVExtentLocationPropertyUnknown;
+			ret = false;
 		}
 		break;
 	case  SVExtentLocationPropertyBottomRight:
 		if(  !bAllowHeight || !bAllowWidth )
 		{
-			ret = SVExtentLocationPropertyUnknown;
+			ret = false;
 		}
 		break;
 
 	case  SVExtentLocationPropertyBottomLeft:
 		if( !bAllowMoveX ||  !bAllowHeight || !bAllowWidth )
 		{
-			ret = SVExtentLocationPropertyUnknown;
+			ret = false;
 		}
 		break;
 
 	case  SVExtentLocationPropertyLeft:
 		if( !bAllowMoveX ||  !bAllowWidth )
 		{
-			ret = SVExtentLocationPropertyUnknown;
+			ret = false;
 		}
 		break;
 
 	case  SVExtentLocationPropertyRight:
 		if( !bAllowWidth )
 		{
-			ret = SVExtentLocationPropertyUnknown;
+			ret = false;
 		}
 		break;	
 
 	case  SVExtentLocationPropertyTop:
 		if(  !bAllowMoveY  || !bAllowHeight  )
 		{
-			ret = SVExtentLocationPropertyUnknown;
+			ret = false;;
 		}
 		break;
 
 	case  SVExtentLocationPropertyBottom:
 		if( !bAllowHeight )
 		{
-			ret = SVExtentLocationPropertyUnknown;
+			ret = false;;
 		}
 		break;
-
-
-	case		SVExtentLocationPropertyCenter:
-		if( !bAllowMoveX || !bAllowMoveY  )
+	case	SVExtentLocationPropertyCenter:
+		
+		if( Direction == SVExtentDirectionBoth &&( !bAllowMoveX || !bAllowMoveY ) )
 		{
-			ret = SVExtentLocationPropertyUnknown;
+			ret = false;
 		}
+		else if (Direction == SVExtentDirectionHorizontal && !bAllowMoveX )
+		{
+			ret = false;;
+
+		}
+		else   if (Direction == SVExtentDirectionVertical && !bAllowMoveY)
+		{
+
+			ret = false;;
+		}
+
 		break;
 
 	}

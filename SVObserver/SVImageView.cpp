@@ -1872,7 +1872,7 @@ HICON SVImageViewClass::GetObjectCursor( SVExtentLocationPropertyEnum p_svLocati
 			break;
 		}
 	}
-	if( l_cursorId == IDC_ARROW )
+	if( l_cursorId == IDC_ARROW && p_svLocation != SVExtentLocationPropertyDisabled)
 	{
 		m_mouseIsOverTool = FALSE;
 	}
@@ -1927,8 +1927,13 @@ BOOL SVImageViewClass::GetObjectAtPoint( POINT p_point )
 			m_svLocation = l_svExtents.GetLocationPropertyAt( p_point );
 		}
 	
-		//check if move or sizing is allowed  
-		m_svLocation = l_psvTool->FilterAllowedLocation(m_svLocation);
+		////check if move or sizing is allowed  
+		if(false == l_psvTool->IsAllowedLocation(m_svLocation))
+		{
+				m_svLocation = SVExtentLocationPropertyDisabled;
+		}
+		
+		
 	}
 
 	l_bOk = m_psvObject != NULL;

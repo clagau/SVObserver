@@ -154,6 +154,7 @@ enum SVExtentLocationPropertyEnum
 	SVExtentLocationPropertyBottom      = 8,
 	SVExtentLocationPropertyCenter      = 9,
 	SVExtentLocationPropertyRotate      = 10,
+	SVExtentLocationPropertyDisabled =  11,
 	SVExtentLocationPropertySize,
 };
 
@@ -196,6 +197,12 @@ enum SVExtentTranslationEnum
 	SVExtentTranslationVerticalPerspective = 121,
 };
 
+enum SVExtentDirectionsEnum
+{
+	SVExtentDirectionBoth         = 0,
+	SVExtentDirectionHorizontal            = 1,
+	SVExtentDirectionVertical           = 2
+};
 #endif // _SVTOOLEXTENTENUMS_H
 
 //******************************************************************************

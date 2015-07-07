@@ -20,9 +20,9 @@
 #include "SVStatusLibrary\ExceptionManager.h"
 #include "TextDefinesSvO.h"
 #include "EQAdjustSize.h"
-namespace SvStl = Seidenader::SVStatusLibrary;
-
+#include "SVRunControlLibrary\SVRunControlLibrary.h"
 #pragma endregion Includes
+
 
 #pragma region Declarations
 #ifdef _DEBUG
@@ -30,6 +30,7 @@ namespace SvStl = Seidenader::SVStatusLibrary;
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
+
 #pragma endregion Declarations
 
 
@@ -589,8 +590,6 @@ HRESULT ToolSizeAdjustTask::SetExtendPropertyAutoReset()
 		hresult = SvOi::Err_16027_InvalidOwner;
 	}
 
-
-
 	long ModeWidth(TSNone), ModeHeight(TSNone), ModeX(TSNone), ModeY(TSNone);
 	bool bWidthSetByReset(true),bHeightSetByReset(true),bPosXSetByReset(true),bPosYSetByReset(true); 
 
@@ -709,4 +708,10 @@ ToolSizeAdjustTask* ToolSizeAdjustTask::GetToolSizeAdjustTask(SVObjectClass *pOb
 		pToolSizeAdjustTask = dynamic_cast<ToolSizeAdjustTask*>(pObject->GetFriend( ToolSizeAdjustTaskInfo));
 	}
 	return pToolSizeAdjustTask;
+}
+
+
+DWORD ToolSizeAdjustTask::GetObjectColor() const
+{
+	return SV_DEFAULT_WHITE_COLOR;
 }

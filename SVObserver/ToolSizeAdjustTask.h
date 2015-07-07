@@ -112,6 +112,13 @@ public:
 	//************************************
 	HRESULT SetExtendPropertyAutoReset();
 
+
+	//************************************
+	//! return white color
+	//! \returns DWORD
+	//************************************
+	virtual DWORD ToolSizeAdjustTask::GetObjectColor() const override; 
+
 protected:
 	
 	//************************************

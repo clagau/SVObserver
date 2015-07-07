@@ -268,12 +268,13 @@ public:
 
 	
 	//************************************
-	//!  Return SVExtentLocationPropertyUnknown if the input location 
+	//!  Return false  if the input location 
 	//! is not allowed for the tool 
 	//! \param Location [in]
-	//! \returns Location or SVExtentLocationPropertyUnknown
+	//! \param Direction 
+	//! \returns bool
 	//************************************
-	virtual SVExtentLocationPropertyEnum FilterAllowedLocation(const SVExtentLocationPropertyEnum Location) const;
+	virtual bool IsAllowedLocation(const SVExtentLocationPropertyEnum Location, SVExtentDirectionsEnum Direction  = SVExtentDirectionBoth ) const;
 	
 
 

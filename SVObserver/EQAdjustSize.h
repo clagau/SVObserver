@@ -23,7 +23,12 @@ public:
 	virtual HRESULT ResetObject() override ;
 	GUID& GetResultGuid();
 
-
+	//************************************
+	//! return white color
+	//! \returns DWORD
+	//************************************
+	DWORD  GetObjectColor() const override;
+	
 protected:
 	void Init();
 	virtual BOOL CreateObject(SVObjectLevelCreateStruct *PCreateStruct) override ;
