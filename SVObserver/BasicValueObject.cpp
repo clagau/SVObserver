@@ -59,6 +59,7 @@ bool BasicValueObject::operator==(const BasicValueObject& rRhs) const
 HRESULT BasicValueObject::setValue(const _variant_t& rValue )
 {
 	HRESULT	Result = S_OK;
+
 	_variant_t	TempValue( rValue );
 
 	//SVRC sends data as array
@@ -76,9 +77,22 @@ HRESULT BasicValueObject::setValue(const _variant_t& rValue )
 	{
 		if ( S_OK == Result )
 		{
-			Lock();
-			m_Value = TempValue;
-			Unlock();
+			//If it is VT_BSTR then we need to copy the text otherwise we get just a pointer to the string
+			if( TempValue.vt == VT_BSTR )
+			{
+				SVString Temp( TempValue );
+				Lock();
+				m_Value.Clear();
+				m_Value.vt = VT_BSTR;
+				m_Value.bstrVal = Temp.ToBSTR().copy();
+				Unlock();
+			}
+			else
+			{
+				Lock();
+				m_Value = TempValue;
+				Unlock();
+			}
 		}
 	}
 
@@ -90,12 +104,13 @@ HRESULT BasicValueObject::setValue(const LPCTSTR Value )
 {
 	HRESULT Result( S_FALSE );
 
-	_variant_t VariantValue;
-	VariantValue.vt = VT_BSTR;
 	_bstr_t Temp;
 	Temp = Value;
-	VariantValue.bstrVal = Temp.Detach();
-	Result = setValue(VariantValue);
+	Lock();
+	m_Value.Clear();
+	m_Value.vt = VT_BSTR;
+	m_Value.bstrVal = Temp.Detach();
+	Unlock();
 
 	RefreshOwner( SVObjectClass::PostRefresh );
 	return Result;

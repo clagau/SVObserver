@@ -39,8 +39,9 @@
 			SVImageObjectType						= 0x00000011,
 			SVDataBufferClassObjectType				= 0x00000012,
 
-			SVTriggerProcessingObjectType = 0x00000013,
-			SVDigitizerProcessingObjectType = 0x00000014,
+			SVTriggerProcessingObjectType			= 0x00000013,
+			SVDigitizerProcessingObjectType			= 0x00000014,
+			SVRootObjectType						= 0x00000015,
 
 			SVExternalToolTaskObjectType            = 0x00000020,
 

@@ -198,20 +198,7 @@ HRESULT SVVisionProcessorHelper::GetConfigurationMode( unsigned long& p_rMode ) 
 {
 	HRESULT l_Status = S_OK;
 
-	SVConfigurationObject* pConfig( nullptr );
-
-	l_Status = SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
-
-	if( nullptr != pConfig )
-	{
-		p_rMode = SVSVIMStateClass::GetMode();
-	}
-	else if( l_Status == S_OK )
-	{
-		p_rMode = SVIM_MODE_UNKNOWN;
-
-		l_Status = E_UNEXPECTED;
-	}
+	p_rMode = SVSVIMStateClass::GetMode();
 
 	return l_Status;
 }
@@ -230,18 +217,21 @@ HRESULT SVVisionProcessorHelper::SetConfigurationMode( unsigned long p_Mode )
 	{
 		return SVMSG_63_SVIM_IN_WRONG_MODE;
 	}
+
 	SVConfigurationObject* pConfig( nullptr );
 
 	l_Status = SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
+	//@WARNING [gra][7.20][02.07.2015] This should be removed as the configuration object is not needed but needs testing
 	if( nullptr != pConfig )
 	{
-		l_Status = pConfig->SetMode( p_Mode );
+		l_Status = TheSVObserverApp.SetMode( p_Mode );
 	}
 	else if( l_Status == S_OK )
 	{
 		l_Status = E_UNEXPECTED;
 	}
+
 
 	return l_Status;
 }

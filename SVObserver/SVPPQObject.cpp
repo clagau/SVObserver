@@ -3590,6 +3590,7 @@ DWORD_PTR SVPPQObject::processMessage( DWORD DwMessageID, DWORD_PTR DwMessageVal
 	DWORD dwPureMessageID = DwMessageID & SVM_PURE_MESSAGE;
 	switch( dwPureMessageID )
 	{
+		//@WARNING [gra][7.20][06.07.2015] This seems to not do anything can be removed
 		// handle renaming of toolset variables with regards to outputs
 		case SVMSGID_OBJECT_RENAMED:
 		{

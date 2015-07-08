@@ -463,11 +463,11 @@ DWORD_PTR RingBufferTool::processMessage( DWORD DwMessageID, DWORD_PTR DwMessage
 	case SVMSGID_OBJECT_RENAMED:
 		{
 			SVObjectClass* pObject = reinterpret_cast <SVObjectClass*> (DwMessageValue); // Object with new name
-			LPCTSTR tstrOriginalName = ( LPCTSTR ) DwMessageContext;
+			LPCTSTR OriginalName = reinterpret_cast<LPCTSTR> (DwMessageContext);
 
 			for (int i=0; i < m_numberOfOutputImages; i++)
 			{
-				m_ImageIndexManagers[i].RenameToolSetSymbol(pObject, tstrOriginalName);
+				m_ImageIndexManagers[i].renameToolSetSymbol( pObject, OriginalName );
 			}
 			dwResult = SVMR_SUCCESS;
 			break;

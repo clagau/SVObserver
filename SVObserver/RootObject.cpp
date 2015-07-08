@@ -196,10 +196,17 @@ bool RootObject::Initialize()
 {
 	bool Result(true);
 
+	outObjectInfo.ObjectTypeInfo.ObjectType =  SVRootObjectType;
+
 	//The Root object should have an empty name
 	SetName(_T(""));
 
-	Result = createRootChildren();
+	//@WARNING [gra][7.20][02.07.2015] This should be removed that the Configuration Object is only created when needed
+	Result = createConfigurationObject();
+	if( Result )
+	{
+		Result = createRootChildren();
+	}
 
 	return Result;
 }

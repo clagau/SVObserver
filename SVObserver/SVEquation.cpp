@@ -9,6 +9,7 @@
 //* .Check In Date   : $Date:   19 Dec 2014 03:59:32  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include <float.h>
 #include "SVEquation.h"
@@ -24,6 +25,16 @@
 #include "SVObjectLibrary\SVToolsetScriptTags.h"
 #include "SVObjectLibrary\GlobalConst.h"
 #include "RootObject.h"
+#pragma endregion Includes
+
+#pragma region Declarations
+#ifdef _DEBUG
+#define new DEBUG_NEW
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
+#endif
+#pragma endregion Declarations
+
 
 SVEquationSymbolTableClass::SVEquationSymbolTableClass()
 {
@@ -997,38 +1008,42 @@ BOOL SVEquationClass::DisconnectToolSetSymbol( SVInObjectInfoStruct* pInObjectIn
 	return FALSE;
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// 
-////////////////////////////////////////////////////////////////////////////////
-BOOL SVEquationClass::renameToolSetSymbol(SVObjectClass* pObject, LPCTSTR orgName)
+BOOL SVEquationClass::renameToolSetSymbol( const SVObjectClass* pObject, LPCTSTR orginalName )
 {
-	CString newPrefix;
-	CString oldPrefix;
+	bool Result( false );
 
-	if( SVInspectionProcess* l_pInspection = dynamic_cast< SVInspectionProcess* >( pObject ) )
+	if( nullptr != pObject )
 	{
-		newPrefix = _T( "." ) + l_pInspection->GetCompleteObjectNameToObjectType( NULL, SVInspectionObjectType ) + _T( "." );
+		SVString newPrefix;
+		SVString oldPrefix;
+
+		if( const SVInspectionProcess* pInspection = dynamic_cast<const SVInspectionProcess*> (pObject) )
+		{
+			newPrefix = _T( "." ) + pInspection->GetCompleteObjectNameToObjectType( NULL, SVInspectionObjectType ) + _T( "." );
+		}// end if
+		else if( const BasicValueObject* pBasicValueObject = dynamic_cast<const BasicValueObject*> (pObject) )
+		{
+			newPrefix = _T( "\"" ) + pBasicValueObject->GetCompleteObjectNameToObjectType( NULL, SVRootObjectType ) + _T( "\"" );
+		}
+		else
+		{
+			newPrefix = _T( "\"" ) + pObject->GetCompleteObjectNameToObjectType( NULL, SVToolSetObjectType ) + _T( "." );
+		}// end else
 		oldPrefix = newPrefix;
-		oldPrefix.Replace( l_pInspection->GetName(), orgName );
-	}// end if
-	else
-	{
-		newPrefix = _T( "\"" ) + pObject->GetCompleteObjectNameToObjectType( NULL, SVToolSetObjectType ) + _T( "." );
-		oldPrefix = newPrefix;
-		oldPrefix.Replace( pObject->GetName(), orgName );
-	}// end else
+		oldPrefix.replace( pObject->GetName(), orginalName );
 
-	CString equationBuff;
-	GetEquationText( equationBuff );
+		CString equationBuff;
+		GetEquationText( equationBuff );
 
-	// Replace all occurences
-	if( equationBuff.Replace( oldPrefix, newPrefix ) )
-	{
-		SetEquationText( equationBuff );
+		// Replace all occurences
+		if( equationBuff.Replace( oldPrefix.c_str(), newPrefix.c_str() ) )
+		{
+			SetEquationText( equationBuff );
 
-		return TRUE;
+			Result = true;
+		}
 	}
-	return FALSE;
+	return Result;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

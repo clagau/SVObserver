@@ -17,14 +17,7 @@ namespace Seidenader { namespace SVOGui
 	class GlobalConstantConflictDlg : public CDialog
 	{
 	#pragma region Declarations
-	public:
-		enum DataTypeEnum
-		{
-			NumberType,
-			TextType,
-			DataTypeMax
-		};
-
+	private:
 		enum { IDD = IDD_GLOBAL_CONSTANT_CONFLICT };
 
 		DECLARE_DYNAMIC(GlobalConstantConflictDlg)

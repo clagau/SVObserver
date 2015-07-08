@@ -199,7 +199,7 @@ bool RangeXDialogClass::ShowObjectSelector(CString& name)
 
 	if( IDOK == Result )
 	{
-		name = SvOsl::ObjectTreeGenerator::Instance().getSingleObjectResult().getLocation().c_str(); // @TODO:  Should we check the return values of getSingleObjectResult and getLocation?
+		name = SvOsl::ObjectTreeGenerator::Instance().getSingleObjectResult().getLocation().c_str();
 		return true;
 	}
 

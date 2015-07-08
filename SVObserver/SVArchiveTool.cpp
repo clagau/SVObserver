@@ -9,6 +9,7 @@
 //* .Check In Date   : $Date:   17 Dec 2014 11:29:20  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include <io.h>
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
@@ -28,14 +29,19 @@
 #include "SVToolSet.h"
 #include "SVArchiveHeaderEditDlg.h"
 #include "SVVisionProcessorHelper.h"
+#include "BasicValueObject.h"
+#pragma endregion Includes
 
+#pragma region Declarations
 #ifdef _DEBUG
+#define new DEBUG_NEW
 #undef THIS_FILE
-static char BASED_CODE THIS_FILE[] = __FILE__;
+static char THIS_FILE[] = __FILE__;
 #endif
 
 const CString ARCHIVE_TOOL_MEMORY_POOL_ONLINE_ASYNC_NAME = _T("ArchiveToolOnlineAsync");
 const CString ARCHIVE_TOOL_MEMORY_POOL_GO_OFFLINE_NAME = _T("ArchiveToolGoOffline");
+#pragma endregion Declarations
 
 
 SV_IMPLEMENT_CLASS(SVArchiveTool, SVArchiveToolClassGuid);
@@ -1245,40 +1251,47 @@ long SVArchiveTool::CalculateImageMemory( std::vector<SVImageClass*> p_apImages 
 }
 
 
-BOOL SVArchiveTool::renameToolSetSymbol(SVObjectClass* pObject, LPCTSTR orgName)
+BOOL SVArchiveTool::renameToolSetSymbol( const SVObjectClass* pObject, LPCTSTR originalName )
 {
-	CString newPrefix;
-	CString oldPrefix;
-
-	if( SVInspectionProcess* l_pInspection = dynamic_cast< SVInspectionProcess* >( pObject ) )
+	bool Result( false );
+	
+	if( nullptr != pObject )
 	{
-		newPrefix = l_pInspection->GetCompleteObjectNameToObjectType( NULL, SVInspectionObjectType ) + _T( "." );
+		SVString newPrefix;
+		SVString oldPrefix;
+
+		if( const SVInspectionProcess* l_pInspection = dynamic_cast<const SVInspectionProcess*> (pObject) )
+		{
+			newPrefix = l_pInspection->GetCompleteObjectNameToObjectType( NULL, SVInspectionObjectType ) + _T( "." );
+		}// end if
+		else if( const BasicValueObject* pBasicValueObject = dynamic_cast<const BasicValueObject*> (pObject) )
+		{
+			newPrefix = pBasicValueObject->GetCompleteObjectNameToObjectType( NULL, SVRootObjectType );
+		}
+		else
+		{
+			newPrefix = pObject->GetCompleteObjectNameToObjectType( NULL, SVToolSetObjectType ) + _T( "." );
+		}// end else
 		oldPrefix = newPrefix;
-		oldPrefix.Replace( l_pInspection->GetName(), orgName );
-	}// end if
-	else
-	{
-		newPrefix = _T( "\"" ) + pObject->GetCompleteObjectNameToObjectType( NULL, SVToolSetObjectType ) + _T( "." );
-		oldPrefix = newPrefix;
-		oldPrefix.Replace( pObject->GetName(), orgName );
-	}// end else
+		oldPrefix.replace( pObject->GetName(), originalName );
 
+		int iSize = m_svoArchiveResultNames.GetResultSize();
+		int iLastSet = m_svoArchiveResultNames.GetLastSetIndex();
 
-	int iSize = m_svoArchiveResultNames.GetResultSize();
-	int iLastSet = m_svoArchiveResultNames.GetLastSetIndex();
-
-	bool bReplaced = false;
-	for (int i = 0; i < iSize; i++ )
-	{
-		CString sName;
-		m_svoArchiveResultNames.GetValue(iLastSet,i,sName);
-		if ( sName.Replace(oldPrefix,newPrefix) > 0 )
-			bReplaced = true;
-		m_svoArchiveResultNames.SetValue(iLastSet,i,sName);
-		m_svoArchiveResultNames.GetValue(iLastSet,i,sName);
+		for (int i = 0; i < iSize; i++ )
+		{
+			CString sName;
+			m_svoArchiveResultNames.GetValue(iLastSet,i,sName);
+			if ( sName.Replace( oldPrefix.c_str(), newPrefix.c_str() ) > 0 )
+			{
+				Result = true;
+			}
+			m_svoArchiveResultNames.SetValue(iLastSet,i,sName);
+			m_svoArchiveResultNames.GetValue(iLastSet,i,sName);
+		}
 	}
 
-	return bReplaced;
+	return Result;
 }
 
 HRESULT SVArchiveTool::ValidateArchiveTool()

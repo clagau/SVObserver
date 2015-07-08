@@ -245,7 +245,7 @@ protected:
 
 	BOOL buildDynamicInputList();
 
-	virtual BOOL renameToolSetSymbol(SVObjectClass* pObject, LPCTSTR orgName);
+	virtual BOOL renameToolSetSymbol( const SVObjectClass* pObject, LPCTSTR originalName );
 
 	virtual BOOL onRun( SVRunStatusClass& RRunStatus );
 

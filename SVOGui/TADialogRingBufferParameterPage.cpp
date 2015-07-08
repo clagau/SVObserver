@@ -15,6 +15,7 @@
 #include "ObjectInterfaces/ObjectDefines.h"
 #include "ObjectInterfaces/IInspectionProcess.h"
 #include "ObjectInterfaces/IToolSet.h"
+#include "ObjectInterfaces/IRootObject.h"
 #include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
 #include "SVStatusLibrary/ExceptionManager.h"
 #include "SVMessage/SVMessage.h"
@@ -176,6 +177,10 @@ namespace Seidenader
 			SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterOutput, InspectionName, SVString( _T("") ) );
 			SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterOutput, PPQName, SVString( _T("")  ));
 			SvOsl::ObjectTreeGenerator::Instance().setSelectorType( SvOsl::ObjectTreeGenerator::TypeSingleObject );
+
+			SVStringArray objectNameList;
+			SvOi::getRootChildNameList( objectNameList, _T(""), SV_SELECTABLE_FOR_EQUATION );
+			SvOsl::ObjectTreeGenerator::Instance().insertTreeObjects( objectNameList );
 
 			SvOi::IOutputInfoListClassSmartPointer outputList = pToolSet->GetOutputList();
 			SvOsl::ObjectTreeGenerator::Instance().insertOutputList( *(outputList.get()) );

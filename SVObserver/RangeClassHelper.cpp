@@ -30,6 +30,7 @@
 #include "ObjectNameHelper.h"
 #include "SVStatusLibrary/ExceptionManager.h"
 #include "TextDefinesSvO.h"
+#include "RootObject.h"
 #pragma endregion Includes
 
 #pragma region Constructor
@@ -182,8 +183,8 @@ void RangeClassHelper::SetInternalData(ERange er, LPCTSTR lp)
 // @TODO:  Better to use SVString here instead of CString.
 HRESULT RangeClassHelper::CheckInternalData(CString &csmsg) const
 {
-	CString InspectionName ;
-	if(m_pRange )
+	CString InspectionName;
+	if( nullptr != m_pRange)
 	{
 		SVInspectionProcess* pInspection =  m_pRange->GetInspection();
 		if( nullptr != pInspection )
@@ -242,20 +243,7 @@ HRESULT RangeClassHelper::CheckInternalData(CString &csmsg) const
 
 	if( !m_FailHighIndirect.IsEmpty() )
 	{
-		SVValueObjectReference objRef;
-		CString dottedName = InspectionName + m_FailHighIndirect;
-		bool isInvalidReference = false;
-
-		if( false == SVRangeClass::SetReference(dottedName, objRef) )
-		{
-			isInvalidReference = true;
-		}
-		else if( FALSE == (objRef.ObjectAttributesAllowed()& SV_VIEWABLE) )
-		{
-			isInvalidReference = true;
-		}
-
-		if(isInvalidReference)
+		if( !isValidReference( InspectionName, m_FailHighIndirect ) )
 		{
 			//IDS_ISANINVALID_REFERENCE  "ERROR:\n%1: %2\nis an invalid reference."
 			AfxFormatString2( csmsg, IDS_ISANINVALID_REFERENCE, csFailHigh.GetString(), m_FailHighIndirect.GetString() );
@@ -265,20 +253,7 @@ HRESULT RangeClassHelper::CheckInternalData(CString &csmsg) const
 
 	if( !m_WarnHighIndirect.IsEmpty() )
 	{
-		SVValueObjectReference objRef;
-		CString dottedName = InspectionName + m_WarnHighIndirect;
-		bool isInvalidReference = false;
-
-		if( false == SVRangeClass::SetReference(dottedName, objRef) )
-		{
-			isInvalidReference = true;
-		}
-		else if( FALSE == (objRef.ObjectAttributesAllowed()& SV_VIEWABLE) )
-		{
-			isInvalidReference = true;
-		}
-
-		if(isInvalidReference)
+		if( !isValidReference( InspectionName, m_WarnHighIndirect ) )
 		{
 			//IDS_ISANINVALID_REFERENCE  "ERROR:\n%1: %2\nis an invalid reference."
 			AfxFormatString2( csmsg, IDS_ISANINVALID_REFERENCE, csWarnHigh.GetString(), m_WarnHighIndirect.GetString() );
@@ -288,22 +263,8 @@ HRESULT RangeClassHelper::CheckInternalData(CString &csmsg) const
 
 	if( !m_WarnLowIndirect.IsEmpty() )
 	{
-		SVValueObjectReference objRef;
-		CString dottedName = InspectionName + m_WarnLowIndirect;
-		bool isInvalidReference = false;
-
-		if( false == SVRangeClass::SetReference(dottedName, objRef) )
+		if( !isValidReference( InspectionName, m_WarnLowIndirect ) )
 		{
-			isInvalidReference = true; 
-		}
-		else if( FALSE == (objRef.ObjectAttributesAllowed()& SV_VIEWABLE) )
-		{
-			isInvalidReference = true;
-		}
-
-		if(isInvalidReference)
-		{
-			//IDS_ISANINVALID_REFERENCE  "ERROR:\n%1: %2\nis an invalid reference."
 			AfxFormatString2( csmsg, IDS_ISANINVALID_REFERENCE, csWarnLow.GetString(), m_WarnLowIndirect.GetString() );
 			return -SvOi::Err_16020;
 		}
@@ -311,20 +272,7 @@ HRESULT RangeClassHelper::CheckInternalData(CString &csmsg) const
 
 	if(!m_FailLowIndirect.IsEmpty())
 	{
-		SVValueObjectReference objRef;
-		CString dottedName = InspectionName + m_FailLowIndirect;
-		bool isInvalidReference = false;
-
-		if( false == SVRangeClass::SetReference(dottedName, objRef) )
-		{
-			isInvalidReference = true;
-		}
-		else if( FALSE == (objRef.ObjectAttributesAllowed()& SV_VIEWABLE) )
-		{
-			isInvalidReference = true;
-		}
-
-		if(isInvalidReference)
+		if( !isValidReference( InspectionName, m_FailLowIndirect ) )
 		{
 			AfxFormatString2( csmsg, IDS_ISANINVALID_REFERENCE, csFailLow.GetString(), m_FailLowIndirect.GetString() );
 			return -SvOi::Err_16021;
@@ -630,14 +578,16 @@ bool RangeClassHelper::FillObjectSelector()
 		PPQName = pPPQ->GetName();
 	}
 
+	SvOsl::ObjectTreeGenerator::Instance().setAttributeFilters( SV_SELECTABLE_FOR_EQUATION );
 	SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, InspectionName, SVString( _T("") ) );
 	SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterOutput, InspectionName, SVString( _T("") ) );
 
-	SVString InspectionNameDot = InspectionName + SVString( _T("."));
-	SVString PPQNameDot = PPQName + SVString( _T("."));
-
 	SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterOutput, PPQName, SVString( _T("")  ));
 	SvOsl::ObjectTreeGenerator::Instance().setSelectorType( SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeSingleObject );
+
+	SVStringArray objectNameList;
+	SvOi::getRootChildNameList( objectNameList, _T(""), SV_SELECTABLE_FOR_EQUATION );
+	SvOsl::ObjectTreeGenerator::Instance().insertTreeObjects( objectNameList );
 
 	// Insert Tool Set Objects
 	ObjectNameHelper::BuildObjectNameList(pTaskObjectList, Inserter(nameArray, nameArray.begin()), csToolCompleteName);
@@ -659,6 +609,36 @@ SVString RangeClassHelper::GetValueString(const CString& indirectString, double 
 		csText.Format(_T("%lf"), directValue );
 		return csText;
 	}
+}
+
+bool RangeClassHelper::isValidReference( const CString& rInspectionName, const CString& rIndirectString ) const
+{
+	bool Result( true );
+
+	SVValueObjectReference objRef;
+	CString dottedName;
+	CString ToolSetName;
+	ToolSetName.LoadString( IDS_CLASSNAME_SVTOOLSET );
+	//If the tool set name is at the start then add the inspection name at the beginning
+	if( 0 == rIndirectString.Find( ToolSetName ))
+	{
+		dottedName = rInspectionName + rIndirectString;
+	}
+	else
+	{
+		dottedName = rIndirectString;
+	}
+
+	if( !SVRangeClass::SetReference(dottedName, objRef) )
+	{
+		Result = false;
+	}
+	else if( 0 == ( objRef.ObjectAttributesAllowed() & SV_SELECTABLE_FOR_EQUATION ) )
+	{
+		Result = false;
+	}
+
+	return Result;
 }
 #pragma endregion Private Methods
 

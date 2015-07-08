@@ -493,12 +493,7 @@ void SVStatisticsToolClass::SetVariableSelected( CString p_strName )
 	{
 		// Get the Object
 		SVObjectReference refObject;
-#ifdef _DEBUG
-		SVValueObjectReference refValueObject;
-		HRESULT hrGet = SVObjectManagerClass::Instance().GetObjectByDottedName( static_cast< LPCTSTR >( p_strName ), refValueObject );
-		refObject = refValueObject;
-#endif
-		refObject = SVObjectManagerClass::Instance().GetObjectReference( p_strName );
+		HRESULT hrGet = SVObjectManagerClass::Instance().GetObjectByDottedName( static_cast< LPCTSTR >( p_strName ), refObject );
 		if( refObject.Object() )
 		{
 			// Connect to the input

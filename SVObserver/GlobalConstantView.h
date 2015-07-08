@@ -9,6 +9,7 @@
  
 #pragma region Includes
 #include "SVUtilityLibrary/SVString.h"
+#include "ObjectInterfaces\DataStructures.h"
 #include "BasicValueObject.h"
 #pragma endregion Includes
  
@@ -16,8 +17,19 @@ class SVIODoc;
  
 class GlobalConstantView : public CListView
 {
+#pragma region Declarations
+private:
+	enum HeaderColumns
+	{
+		GlobalConstantCol,
+		TypeCol,
+		ValueCol,
+		DescriptionCol
+	};
+
 	DECLARE_DYNCREATE(GlobalConstantView)
 	DECLARE_MESSAGE_MAP()
+#pragma endregion Declarations
 
 #pragma region Constructor
 private:
@@ -67,14 +79,14 @@ private:
 	//! \param Item <in> the index of the item to edit if -1 it will add an item
 	//! \returns true when successfully edited
 	//************************************
-	bool EditItem( int Item );
+	bool editItem( int Item );
 
 	//************************************
 	//! The method is called to delete an item
 	//! \param Item <in> the index of the item to delete
 	//! \returns true when successfully deleted
 	//************************************
-	bool DeleteItem( int Item );
+	bool deleteItem( int Item );
 
 	//************************************
 	//! The method is called to insert an item to the list
@@ -82,8 +94,20 @@ private:
 	//! \param Pos <in> is the position where to insert the new item
 	//! \returns true when successfully deleted
 	//************************************
-	int InsertItem( const BasicValueObjectPtr& rpObject, int Pos );
+	int insertItem( const BasicValueObjectPtr& rpObject, int Pos );
 
+	//************************************
+	//! The method inserts a new Global Constant
+	//! \param rGlobalData <in> reference to the global data structure to insert
+	//************************************
+	void insertGlobalConstant( const SvOi::GlobalConstantData& rGlobalData ) const;
+
+	//************************************
+	//! The method edits an existing Global Constant
+	//! \param rGlobalData <in> reference to the global data structure to edit
+	//************************************
+	void editGlobalConstant( const SvOi::GlobalConstantData& rGlobalData ) const;
+ 
 	//************************************
 	//! This method retrieves the corresponding IO document
 	//! \returns a pointer to the document
@@ -94,7 +118,7 @@ private:
 	//! The method is called to update all the inspection documents
 	//! \param RunOnce <in> when true a runonce is called
 	//************************************
-	void UpdateAllIPDocs( bool RunOnce ) const;
+	void updateAllIPDocs( bool RunOnce ) const;
 
 	//************************************
 	//! The method is called to determine which item is selected

@@ -2809,6 +2809,7 @@ HRESULT SVConfigurationObject::GetChildObject( SVObjectClass*& rpObject, const S
 		{
 			SVInspectionProcessVector::const_iterator l_InspectIter;
 
+			//@WARNING [gra][7.20][07.07.2015] This is very dangerous when a name starting with just "Tool Set." it will find the first matching name in all inspections
 			for( l_InspectIter = m_arInspectionArray.begin(); rpObject == NULL && l_InspectIter != m_arInspectionArray.end(); ++l_InspectIter )
 			{
 				SVInspectionProcess* pInspection = ( *l_InspectIter );
@@ -4727,13 +4728,6 @@ HRESULT SVConfigurationObject::RemoteOutputValidateInputs()
 bool SVConfigurationObject::RenameOutputListInspectionNames(CString& OldInspectionName, CString& NewInspectionName)
 {	
 	return m_pOutputObjectList->RenameInspection( OldInspectionName, NewInspectionName);
-}
-
-HRESULT SVConfigurationObject::SetMode( unsigned long p_Mode )
-{
-	HRESULT l_Status = static_cast< HRESULT >( SendMessage( AfxGetApp()->m_pMainWnd->m_hWnd, SV_SET_MODE, 0, ( LPARAM )p_Mode ) );
-
-	return l_Status;
 }
 
 HRESULT SVConfigurationObject::GetInspectionItems( const SVNameSet& p_rNames, SVNameStorageResultMap& p_rItems ) const

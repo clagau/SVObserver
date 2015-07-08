@@ -21,12 +21,32 @@ namespace Seidenader { namespace ObjectInterfaces
 	bool GlobalConstantData::operator<( const GlobalConstantData& Rhs ) const
 	{
 		bool Result( false );
-
-		if( Rhs != *this )
+		SVString LhsValue;
+		SVString RhsValue;
+		switch( m_Value.vt )
 		{
-			//Need some constant value so use the address as these should not change during a compare
-			Result = this < &Rhs;
+		case VT_R8:
+			LhsValue.Format(_T("%.06f"), m_Value.dblVal );
+			break;
+		case VT_BSTR:
+			LhsValue = m_Value;
+			break;
+		default:
+			break;
 		}
+		switch( Rhs.m_Value.vt )
+		{
+		case VT_R8:
+			RhsValue.Format(_T("%.06f"), Rhs.m_Value.dblVal );
+			break;
+		case VT_BSTR:
+			RhsValue = Rhs.m_Value;
+			break;
+		default:
+			break;
+		}
+		Result = std::tie(m_Guid, m_DottedName, m_Value.vt, LhsValue, m_AttributesAllowed, m_Description, m_Selected) < 
+				 std::tie(Rhs.m_Guid, Rhs.m_DottedName, Rhs.m_Value.vt, RhsValue, Rhs.m_AttributesAllowed, Rhs.m_Description, Rhs.m_Selected);
 		return Result;
 	}
 

@@ -72,13 +72,13 @@ _variant_t LinkedValue::GetValue() const
 	value.Clear();
 
 	SVObjectClass *pObject = m_inputConnectionInfo.GetInputObjectInfo().PObject;
-	if( SV_IS_KIND_OF( pObject, SVValueObjectClass ) )
+	if(  SVValueObjectClass* pValueObject = dynamic_cast<SVValueObjectClass*> (pObject) )
 	{
-		(static_cast <SVValueObjectClass*> (pObject) )->GetValue( value );
+		pValueObject->GetValue( value );
 	}
-	else if( SV_IS_KIND_OF( pObject, BasicValueObject ) )
+	else if( BasicValueObject* pBasicValueObject = dynamic_cast<BasicValueObject*> (pObject) )
 	{
-		static_cast <BasicValueObject*> (pObject)->getValue( value );
+		pBasicValueObject->getValue( value );
 	}
 	else
 	{
@@ -120,10 +120,24 @@ HRESULT LinkedValue::SetInputValue(const SVString& valueString)
 {
 	HRESULT retVal = S_OK;
 	int iBucket = 1;
+	CString ToolSetName;
+	SVString ObjectName;
+
+	ToolSetName.LoadString( IDS_CLASSNAME_SVTOOLSET );
+	//If the tool set name is at the start then add the inspection name at the beginning
+	if( 0 == valueString.find( ToolSetName ) && nullptr != m_pInspection )
+	{
+		ObjectName = m_pInspection->GetName();
+		ObjectName += _T(".") + valueString;
+	}
+	else
+	{
+		ObjectName = valueString;
+	}
 
 	SVObjectClass* pOldObject = m_inputConnectionInfo.GetInputObjectInfo().PObject;
 	SVObjectClass* pObject = nullptr;
-	SVObjectManagerClass::Instance().GetObjectByDottedName( valueString, pObject );
+	SVObjectManagerClass::Instance().GetObjectByDottedName( ObjectName, pObject );
 
 	if ( nullptr != pOldObject )
 	{	// disconnect existing connection
@@ -156,20 +170,32 @@ HRESULT LinkedValue::convertStringToValue(const SVString& valueString, _variant_
 	return ::VariantChangeType( &vtNew, &vtItem, VARIANT_ALPHABOOL, m_variantObject.GetDefaultType() );
 }
 
-void LinkedValue::RenameToolSetSymbol(const SVObjectClass* pObject, const SVString& originalName)
+void LinkedValue::renameToolSetSymbol(const SVObjectClass* pObject, LPCTSTR originalName)
 {
 	if ( nullptr != pObject && nullptr != m_inputConnectionInfo.GetInputObjectInfo().PObject )
 	{
-		SVString sNewPrefix = pObject->GetCompleteObjectNameToObjectType( NULL, SVToolSetObjectType ) + _T( "." );
-		SVString sOldPrefix = sNewPrefix;
-		sOldPrefix.replace( pObject->GetName(), originalName.c_str() );
+		SVString newPrefix;
+		SVString oldPrefix;
+		//In this case the inspection name is not part of the saved name
+		if( const BasicValueObject* pBasicValueObject = dynamic_cast<const BasicValueObject*> (pObject) )
+		{
+			newPrefix = pBasicValueObject->GetCompleteObjectNameToObjectType( NULL, SVRootObjectType );
+		}
+		else
+		{
+			newPrefix = pObject->GetCompleteObjectNameToObjectType( NULL, SVToolSetObjectType ) + _T( "." );
+		}// end else
+		oldPrefix = newPrefix;
+		oldPrefix.replace( pObject->GetName(), originalName );
 
+		SVObjectClass* pInputObject = m_inputConnectionInfo.GetInputObjectInfo().PObject;
 		// input objects
-		if ( pObject == m_inputConnectionInfo.GetInputObjectInfo().PObject->GetAncestor(pObject->GetObjectInfo().ObjectTypeInfo.ObjectType) )
+		if ( pObject == pInputObject ||
+			 (pObject == pInputObject->GetAncestor(pObject->GetObjectInfo().ObjectTypeInfo.ObjectType)) )
 		{
 			CString sValue;
 			m_variantObject.GetValue(sValue);
-			sValue.Replace( sOldPrefix.c_str(), sNewPrefix.c_str() );
+			sValue.Replace( oldPrefix.c_str(), newPrefix.c_str() );
 			m_variantObject.SetValue(1, sValue);
 		}
 	}

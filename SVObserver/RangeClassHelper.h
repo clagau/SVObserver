@@ -165,6 +165,14 @@ public:
 	/// \returns SVString the value as string.
 	//************************************
 	SVString GetValueString(const CString& indirectString, double directValue);
+
+	//************************************
+	/// Checks the indirect reference string if it is valid
+	/// \param rInspectionName [in] reference to the inspection name
+	/// \param rIndirectString [in] reference top the indirect string
+	/// \returns true if valid
+	//************************************
+	bool isValidReference( const CString& rInspectionName, const CString& rIndirectString ) const;
 #pragma endregion Private Methods
 
 #pragma region Member variables

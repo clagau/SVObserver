@@ -94,8 +94,6 @@ public:
 
 	HRESULT LoadConfiguration(SVTreeType& rTree);
 
-	HRESULT SetMode( unsigned long p_Mode );
-
 	HRESULT GetInspectionItems( const SVNameSet& p_rNames, SVNameStorageResultMap& p_rItems ) const;
 	HRESULT GetRemoteInputItems( const SVNameSet& p_rNames, SVNameStorageResultMap& p_rItems ) const;
 

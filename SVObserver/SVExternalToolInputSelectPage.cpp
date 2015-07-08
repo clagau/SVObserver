@@ -22,10 +22,11 @@
 #include "SVExternalTool.h"
 #include "SVExternalToolTask.h"
 #include "SVInspectionProcess.h"
-#include "../SVObjectLibrary/SVObjectManagerClass.h"
-#include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
+#include "SVObjectLibrary\SVObjectManagerClass.h"
+#include "ObjectSelectorLibrary\ObjectTreeGenerator.h"
 #include "SVPPQObject.h"
-#include "SVObjectLibrary/GlobalConst.h"
+#include "SVObjectLibrary\GlobalConst.h"
+#include "RootObject.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -289,11 +290,14 @@ int SVExternalToolInputSelectPage::SelectObject( CString& rObjectName, SVRProper
 
 	SvOsl::ObjectTreeGenerator::Instance().setSelectorType( SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeSingleObject );
 	SvOsl::ObjectTreeGenerator::Instance().setAttributeFilters( SV_ARCHIVABLE );
-	CString tmp;
-	tmp.LoadString(IDS_CLASSNAME_ROOTOBJECT);
-	SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, tmp, SVString( _T("") ) );
+
 	SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, InspectionName, SVString( _T("") ) );
-	SvOsl::ObjectTreeGenerator::Instance().insertTreeObjects( SvOl::FqnEnvironmentMode );
+
+	SVStringArray ObjectNameList;
+	RootObject::getRootChildNameList( ObjectNameList, _T(""), SV_ARCHIVABLE );
+	SvOsl::ObjectTreeGenerator::Instance().insertTreeObjects( ObjectNameList );
+	ObjectNameList.clear();
+
 	if (nullptr != m_pTool)
 	{
 		SVPPQObject* pPPQ = m_pTool->GetInspection()->GetPPQ();

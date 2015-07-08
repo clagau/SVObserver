@@ -65,6 +65,8 @@ namespace Seidenader
 		const TCHAR* const ErrorUnknownEnum = _T( "Unknown enum" );
 		const TCHAR* const RangeValue_EmptyString = _T( "Empty String in %s." );
 		const TCHAR* const RangeValue_WrongRange = _T( "%s must between %d and %d." );
+		const TCHAR* const GlobalViewHeader[] = {_T("Global Constants"), _T("Type"), _T("Value"), _T("Description")};
+		const TCHAR* const Invalid = _T("Invalid");
 	}
 }
 namespace SvO = Seidenader::SVObserver;

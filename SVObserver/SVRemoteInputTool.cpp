@@ -224,14 +224,28 @@ BOOL SVRemoteInputTool::onRun( SVRunStatusClass& RRunStatus )
 
 	if( l_Status )
 	{
-		SVValueObjectClass* l_pValueObject = dynamic_cast< SVValueObjectClass* >( m_InputObjectInfo.GetInputObjectInfo().PObject );
 
-		l_Status = ( l_pValueObject != NULL );
-
-		if( l_Status )
+		SVValueObjectClass* pValueObject = dynamic_cast<SVValueObjectClass*> (m_InputObjectInfo.GetInputObjectInfo().PObject);
+		if( nullptr != pValueObject )
 		{
-			l_Status = ( l_pValueObject->GetValue( l_MatchString ) == S_OK );
+			if( l_Status )
+			{
+				l_Status = ( pValueObject->GetValue( l_MatchString ) == S_OK );
+			}
 		}
+
+		BasicValueObject* pBasicValueObject = dynamic_cast<BasicValueObject*> (m_InputObjectInfo.GetInputObjectInfo().PObject);
+		if( nullptr != pBasicValueObject )
+		{
+			if( l_Status )
+			{
+				SVString Value;
+				l_Status = ( pBasicValueObject->getValue( Value ) == S_OK );
+				l_MatchString = Value.c_str();
+			}
+		}
+
+		l_Status = ( nullptr != pValueObject || nullptr != pBasicValueObject );
 	}
 
 	if( l_Status )

@@ -1545,8 +1545,6 @@ void SVIPDoc::OnResultsPicker()
 			csRootName.LoadString(IDS_CLASSNAME_ROOTOBJECT);
 			SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, csRootName, SVString( _T("") ) );
 
-			SVString EnvName( SvOl::FqnEnvironmentMode );
-
 			SVStringArray ObjectNameList;
 			RootObject::getRootChildNameList( ObjectNameList, _T(""), SV_VIEWABLE );
 			SvOsl::ObjectTreeGenerator::Instance().insertTreeObjects( ObjectNameList );

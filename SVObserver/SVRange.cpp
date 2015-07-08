@@ -18,7 +18,15 @@
 #include "SVInspectionProcess.h"
 #include "RangeClassHelper.h"
 #include "ObjectInterfaces\ErrorNumbers.h"
+#include "BasicValueObject.h"
 #pragma endregion Includes
+
+#pragma region Declarations
+#ifdef _DEBUG
+#define new DEBUG_NEW
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
+#endif
 
 struct SVRangeClassCancelData : public SVCancelData	// this does not need to be visible to anyone but this file.
 {
@@ -33,6 +41,10 @@ enum defaults
 	lowDef = 0, // Warn/Fail Low Default
 	highDef = 99999 // Warn/Fail High Default
 };
+
+const TCHAR* const ToolSetName = _T( "Tool Set" );
+
+#pragma endregion Declarations
 
 //*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/
 //* Class Name : SVRangeClass
@@ -111,13 +123,13 @@ BOOL SVRangeClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
 	return isCreated;
 }
 
-bool SVRangeClass::SetReference(LPCTSTR Name, SVValueObjectReference &ValueObjectReference)
+bool SVRangeClass::SetReference(LPCTSTR Name, SVObjectReference &ObjectReference)
 {
 	bool ret = false;
 
 	if(nullptr != Name)
 	{
-		HRESULT hr = SVObjectManagerClass::Instance().GetObjectByDottedName( Name, ValueObjectReference );
+		HRESULT hr = SVObjectManagerClass::Instance().GetObjectByDottedName( Name, ObjectReference );
 		if(hr == S_OK)
 		{
 			ret = true;
@@ -173,13 +185,22 @@ HRESULT SVRangeClass::InitReferencesAndInputs()
 		m_ValueIndirect[i].GetValue(csValueIndirect);
 		if(!csValueIndirect.IsEmpty())
 		{
-			CString dottedName = InspectionName + csValueIndirect;
+			CString dottedName;
+			//If the tool set name is at the start then add the inspection name at the beginning
+			if( 0 == csValueIndirect.Find(ToolSetName) )
+			{
+				dottedName = InspectionName + csValueIndirect;
+			}
+			else
+			{
+				dottedName = csValueIndirect;
+			}
 			if(!SetReference(dottedName,m_ValueObjectReferences[i] ))
 			{
 				hResult = -SvOi::Err_16025; //invalid Reference;
 			}
 			//check if we have an valid but disabled input
-			else if( FALSE == (m_ValueObjectReferences[i].ObjectAttributesAllowed()& SV_VIEWABLE) )
+			else if( FALSE == (m_ValueObjectReferences[i].ObjectAttributesAllowed() & SV_SELECTABLE_FOR_EQUATION ) )
 			{
 				hResult = -SvOi::Err_16026; //Reference not allowed
 			}
@@ -255,8 +276,17 @@ BOOL SVRangeClass::onRun(SVRunStatusClass& RRunStatus)
 			if( nullptr != m_ValueObjectReferences[ER_FailLow].Object() )
 			{
 				if(!HasIndirectValue(ER_FailLow))
+				{
 					throw(1);
-				m_ValueObjectReferences[ER_FailLow]->GetValue(failLow);
+				}
+				if( SVValueObjectClass* pValueObject = dynamic_cast<SVValueObjectClass*> (m_ValueObjectReferences[ER_FailLow].Object()) )
+				{
+					pValueObject->GetValue( failLow );
+				}
+				else if( BasicValueObject* pBasicValueObject = dynamic_cast<BasicValueObject*> (m_ValueObjectReferences[ER_FailLow].Object()) )
+				{
+					pBasicValueObject->getValue( failLow );
+				}
 				FailLow.SetValue( RRunStatus.m_lResultDataIndex, failLow );
 			}
 			else
@@ -267,8 +297,17 @@ BOOL SVRangeClass::onRun(SVRunStatusClass& RRunStatus)
 			if( nullptr != m_ValueObjectReferences[ER_FailHigh].Object() )
 			{
 				if(!HasIndirectValue(ER_FailHigh))
+				{
 					throw(1);
-				m_ValueObjectReferences[ER_FailHigh].GetValue(failHigh);
+				}
+				if( SVValueObjectClass* pValueObject = dynamic_cast<SVValueObjectClass*> (m_ValueObjectReferences[ER_FailHigh].Object()) )
+				{
+					pValueObject->GetValue( failHigh );
+				}
+				else if( BasicValueObject* pBasicValueObject = dynamic_cast<BasicValueObject*> (m_ValueObjectReferences[ER_FailHigh].Object()) )
+				{
+					pBasicValueObject->getValue( failHigh );
+				}
 				FailHigh.SetValue( RRunStatus.m_lResultDataIndex,failHigh );
 			}
 			else
@@ -279,8 +318,17 @@ BOOL SVRangeClass::onRun(SVRunStatusClass& RRunStatus)
 			if( nullptr !=m_ValueObjectReferences[ER_WarnLow].Object() )
 			{
 				if(!HasIndirectValue(ER_WarnLow))
+				{
 					throw(1);
-				m_ValueObjectReferences[ER_WarnLow].GetValue(warnLow);
+				}
+				if( SVValueObjectClass* pValueObject = dynamic_cast<SVValueObjectClass*> (m_ValueObjectReferences[ER_WarnLow].Object()) )
+				{
+					pValueObject->GetValue( warnLow );
+				}
+				else if( BasicValueObject* pBasicValueObject = dynamic_cast<BasicValueObject*> (m_ValueObjectReferences[ER_WarnLow].Object()) )
+				{
+					pBasicValueObject->getValue( warnLow );
+				}
 				WarnLow.SetValue( RRunStatus.m_lResultDataIndex,warnLow );
 			}
 			else
@@ -294,7 +342,14 @@ BOOL SVRangeClass::onRun(SVRunStatusClass& RRunStatus)
 				{
 					throw(1);
 				}
-				m_ValueObjectReferences[ER_WarnHigh]->GetValue(warnHigh);
+				if( SVValueObjectClass* pValueObject = dynamic_cast<SVValueObjectClass*> (m_ValueObjectReferences[ER_WarnHigh].Object()) )
+				{
+					pValueObject->GetValue( warnHigh );
+				}
+				else if( BasicValueObject* pBasicValueObject = dynamic_cast<BasicValueObject*> (m_ValueObjectReferences[ER_WarnHigh].Object()) )
+				{
+					pBasicValueObject->getValue( warnHigh );
+				}
 				WarnHigh.SetValue( RRunStatus.m_lResultDataIndex, warnHigh );
 			}
 			else
@@ -390,32 +445,36 @@ DWORD_PTR SVRangeClass::processMessage( DWORD DwMessageID, DWORD_PTR DwMessageVa
 ////////////////////////////////////////////////////////////////////////////////
 // 
 ////////////////////////////////////////////////////////////////////////////////
-BOOL SVRangeClass::renameToolSetSymbol(SVObjectClass* pObject, LPCTSTR orgName)
+BOOL SVRangeClass::renameToolSetSymbol(const SVObjectClass* pObject, LPCTSTR originalName)
 {
-	CString newPrefix;
-	CString oldPrefix;
+	bool Result( false );
 
-	if( SVInspectionProcess* pInspection = dynamic_cast< SVInspectionProcess* >( pObject ) )
+	if( nullptr != pObject )
 	{
-		newPrefix = pInspection->GetCompleteObjectNameToObjectType( NULL, SVInspectionObjectType ) + _T( "." );
+		SVString newPrefix;
+		SVString oldPrefix;
+		//In this case the inspection name is not part of the saved name so do not rename inspection names
+		if( const BasicValueObject* pBasicValueObject = dynamic_cast<const BasicValueObject*> (pObject) )
+		{
+			newPrefix = pBasicValueObject->GetCompleteObjectNameToObjectType( NULL, SVRootObjectType );
+		}
+		else
+		{
+			newPrefix = pObject->GetCompleteObjectNameToObjectType( NULL, SVToolSetObjectType ) + _T( "." );
+		}// end else
 		oldPrefix = newPrefix;
-		oldPrefix.Replace( pInspection->GetName(), orgName );
-	}// end if
-	else
-	{
-		newPrefix = pObject->GetCompleteObjectNameToObjectType( NULL, SVToolSetObjectType ) + _T( "." );
-		oldPrefix = newPrefix;
-		oldPrefix.Replace( pObject->GetName(), orgName );
-	}// end else
+		oldPrefix.replace( pObject->GetName(), originalName );
 
-	RangeClassHelper rangeHelper(this);
-	rangeHelper.SetRangeTaskObject();
-	rangeHelper.GetAllInspectionData();
-	if(rangeHelper.RenameIndirectValues(oldPrefix,newPrefix ))
-	{
-		rangeHelper.SetInspectionData();
+		RangeClassHelper rangeHelper(this);
+		rangeHelper.SetRangeTaskObject();
+		rangeHelper.GetAllInspectionData();
+		if(rangeHelper.RenameIndirectValues( oldPrefix.c_str(), newPrefix.c_str() ))
+		{
+			rangeHelper.SetInspectionData();
+			Result = true;
+		}
 	}
-	return TRUE;
+	return Result;
 }
 
 // ISVCancel interface
@@ -566,11 +625,16 @@ void SVRangeClass::InvalidateRange()
 
 const SVDoubleValueObjectClass& SVRangeClass::getUpdatedFailLow( int bucket )
 {
-	if( nullptr != m_ValueObjectReferences[ER_FailLow].Object() )
+	double value;
+	
+	if( SVValueObjectClass* pValueObject = dynamic_cast<SVValueObjectClass*> (m_ValueObjectReferences[ER_FailLow].Object()) )
 	{
-		double value;
-
-		m_ValueObjectReferences[ER_FailLow]->GetValue(value);
+		pValueObject->GetValue( value );
+		FailLow.SetValue( bucket, value );
+	}
+	else if( BasicValueObject* pBasicValueObject = dynamic_cast<BasicValueObject*> (m_ValueObjectReferences[ER_FailLow].Object()) )
+	{
+		pBasicValueObject->getValue( value );
 		FailLow.SetValue( bucket, value );
 	}
 
@@ -579,11 +643,16 @@ const SVDoubleValueObjectClass& SVRangeClass::getUpdatedFailLow( int bucket )
 
 const SVDoubleValueObjectClass& SVRangeClass::getUpdatedFailHigh( int bucket )
 {
-	if( nullptr != m_ValueObjectReferences[ER_FailHigh].Object() )
-	{
-		double value;
+	double value;
 
-		m_ValueObjectReferences[ER_FailHigh]->GetValue(value);
+	if( SVValueObjectClass* pValueObject = dynamic_cast<SVValueObjectClass*> (m_ValueObjectReferences[ER_FailHigh].Object()) )
+	{
+		pValueObject->GetValue( value );
+		FailLow.SetValue( bucket, value );
+	}
+	else if( BasicValueObject* pBasicValueObject = dynamic_cast<BasicValueObject*> (m_ValueObjectReferences[ER_FailHigh].Object()) )
+	{
+		pBasicValueObject->getValue( value );
 		FailHigh.SetValue( bucket, value );
 	}
 

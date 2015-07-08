@@ -33,6 +33,12 @@
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
+
+static const int GlobalConstantWidth = 125;
+static const int TypeWidth = 50;
+static const int ValueWidth = 300;
+static const int DescriptionWidth = 500;
+
 #pragma endregion Declarations
 
 IMPLEMENT_DYNCREATE(GlobalConstantView, CListView)
@@ -73,7 +79,7 @@ void GlobalConstantView::updateView()
 
 void GlobalConstantView::OnAddItem()
 {
-	if( EditItem( -1 ) )
+	if( editItem( -1 ) )
 	{
 		SVIODoc* pIODoc = GetDocument();
 		if( nullptr != pIODoc )
@@ -132,7 +138,7 @@ void GlobalConstantView::OnUpdate( CView* pSender, LPARAM lHint, CObject* pHint 
 		while( m_DataList.cend() != IterSorted )
 		{
 			Pos++;
-			InsertItem( IterSorted->second, Pos );
+			insertItem( IterSorted->second, Pos );
 			++IterSorted;
 		}
 		
@@ -156,7 +162,7 @@ void GlobalConstantView::Dump(CDumpContext& dc) const
 }
 #endif
 
-bool GlobalConstantView::EditItem( int Item )
+bool GlobalConstantView::editItem( int Item )
 {
 	bool Result( false );
 
@@ -198,37 +204,11 @@ bool GlobalConstantView::EditItem( int Item )
 		//New or editing Global value ?
 		if( SV_GUID_NULL == GlobalData.m_Guid )
 		{
-			BasicValueObjectPtr pGlobalObject;
-
-			pGlobalObject = RootObject::setRootChildValue( GlobalData.m_DottedName.c_str(),  GlobalData.m_Value );
-			if( !pGlobalObject.empty() )
-			{
-				pGlobalObject->setDescription( GlobalData.m_Description.c_str() );
-				//All Global constants can be remotely settable
-				pGlobalObject->ObjectAttributesAllowedRef() |= SV_REMOTELY_SETABLE;
-				//If the Global Constant is of type text then not selectable for equations so remove the attribute
-				if( VT_BSTR == GlobalData.m_Value.vt )
-				{
-					pGlobalObject->ObjectAttributesAllowedRef() &= ~SV_SELECTABLE_FOR_EQUATION;
-				}
-			}
+			insertGlobalConstant( GlobalData );
 		}
 		else
 		{
-			BasicValueObject* pGlobalObject(nullptr);
-
-			pGlobalObject = dynamic_cast<BasicValueObject*> ( SVObjectManagerClass::Instance().GetObject( GlobalData.m_Guid ) );
-			if( nullptr != pGlobalObject )
-			{
-				if( GlobalData.m_DottedName != SVString( pGlobalObject->GetCompleteObjectName() ) )
-				{
-					SVObjectNameInfo ParseName;
-					ParseName.ParseObjectName( GlobalData.m_DottedName );
-					pGlobalObject->SetName( ParseName.m_NameArray[ParseName.m_NameArray.size() - 1].c_str() );
-				}
-				pGlobalObject->setValue( GlobalData.m_Value );
-				pGlobalObject->setDescription( GlobalData.m_Description.c_str() );
-			}
+			editGlobalConstant( GlobalData );
 		}
 		updateView();
 	}
@@ -237,7 +217,7 @@ bool GlobalConstantView::EditItem( int Item )
 	return Result;
 }
 
-bool GlobalConstantView::DeleteItem( int Item )
+bool GlobalConstantView::deleteItem( int Item )
 {
 	bool Result( false );
 
@@ -263,7 +243,7 @@ bool GlobalConstantView::DeleteItem( int Item )
 						SVSVIMStateClass::AddState( SV_STATE_MODIFIED );
 						Result = true;
 						updateView();
-						UpdateAllIPDocs( true );
+						updateAllIPDocs( true );
 					}
 				}
 			}
@@ -274,16 +254,7 @@ bool GlobalConstantView::DeleteItem( int Item )
 	return Result;
 }
 
-SVIODoc* GlobalConstantView::GetDocument()
-{
-	if( nullptr == m_pDocument )
-	{
-		m_pDocument = dynamic_cast<SVIODoc *> (CListView::GetDocument());
-	}
-	return m_pDocument;
-}
-
-int GlobalConstantView::InsertItem(const BasicValueObjectPtr& rpObject, int Pos )
+int GlobalConstantView::insertItem(const BasicValueObjectPtr& rpObject, int Pos )
 {
 	LVITEM lvItem;
 	_variant_t Value;
@@ -301,43 +272,103 @@ int GlobalConstantView::InsertItem(const BasicValueObjectPtr& rpObject, int Pos 
 	lvItem.iSubItem = 0;
 	lvItem.lParam =  reinterpret_cast<LPARAM> (rpObject.get());
 	InsertPos =  m_rCtrl.InsertItem( &lvItem );
-	m_rCtrl.SetItemText( InsertPos, 0, rpObject->GetName() );
+	m_rCtrl.SetItemText( InsertPos, GlobalConstantCol, rpObject->GetName() );
 
 	rpObject->getValue( Value );
 	switch( Value.vt )
 	{
 	case VT_R8:
 		{
-			Type = SvOg::GlobalConstantTypes[0];
+			Type = SvOg::GlobalConstantTypes[SvOi::GlobalConstantData::NumberType];
 			ValueText.Format( _T("%.06f"), Value.dblVal );
 		}
 		break;
 	case VT_BSTR:
 		{
-			Type = SvOg::GlobalConstantTypes[1];
+			Type = SvOg::GlobalConstantTypes[SvOi::GlobalConstantData::TextType];
 			ValueText = Value;
 		}
 		break;
 	default:
 		{
-			Type = _T("Invalid");
+			Type = SvO::Invalid;
 			ValueText.clear();
 		}
 		break;
 	}
 
-	m_rCtrl.SetItemText( InsertPos, 1, Type.c_str() );
-	m_rCtrl.SetItemText( InsertPos, 2, ValueText.c_str() );
+	m_rCtrl.SetItemText( InsertPos, TypeCol, Type.c_str() );
+	m_rCtrl.SetItemText( InsertPos, ValueCol, ValueText.c_str() );
 
 	//Replace any new line with semicolon to display in one line
 	SVString Description( rpObject->getDescription() );
 	Description.replace( _T("\r\n"), _T("; ") );
-	m_rCtrl.SetItemText( InsertPos, 3, Description.c_str() );
+	m_rCtrl.SetItemText( InsertPos, DescriptionCol, Description.c_str() );
 
 	return InsertPos;
 }
 
-void GlobalConstantView::UpdateAllIPDocs( bool RunOnce ) const
+void GlobalConstantView::insertGlobalConstant( const SvOi::GlobalConstantData& rGlobalData ) const
+{
+	BasicValueObjectPtr pGlobalObject;
+
+	pGlobalObject = RootObject::setRootChildValue( rGlobalData.m_DottedName.c_str(),  rGlobalData.m_Value );
+	if( !pGlobalObject.empty() )
+	{
+		pGlobalObject->setDescription( rGlobalData.m_Description.c_str() );
+		//All Global constants can be remotely settable
+		pGlobalObject->ObjectAttributesAllowedRef() |= SV_REMOTELY_SETABLE;
+		//If the Global Constant is of type text then not selectable for equations so remove the attribute
+		if( VT_BSTR == rGlobalData.m_Value.vt )
+		{
+			pGlobalObject->ObjectAttributesAllowedRef() &= ~SV_SELECTABLE_FOR_EQUATION;
+		}
+	}
+}
+
+void GlobalConstantView::editGlobalConstant( const SvOi::GlobalConstantData& rGlobalData ) const
+{
+	BasicValueObject* pGlobalObject(nullptr);
+
+	pGlobalObject = dynamic_cast<BasicValueObject*> ( SVObjectManagerClass::Instance().GetObject( rGlobalData.m_Guid ) );
+	if( nullptr != pGlobalObject )
+	{
+		if( rGlobalData.m_DottedName != SVString( pGlobalObject->GetCompleteObjectName() ) )
+		{
+			SVObjectNameInfo ParseName;
+			SVString OldName( pGlobalObject->GetName() );
+			ParseName.ParseObjectName( rGlobalData.m_DottedName );
+			pGlobalObject->SetName( ParseName.m_NameArray[ParseName.m_NameArray.size() - 1].c_str() );
+			SVConfigurationObject* pConfig( nullptr );
+			SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
+			if( nullptr != pConfig )
+			{
+				SVInspectionProcessPtrList Inspections;
+				pConfig->GetInspections( Inspections );
+				SVInspectionProcessPtrList::iterator Iter( Inspections.begin() );
+				for( ; Inspections.end() != Iter; ++Iter )
+				{
+					::SVSendMessage( *Iter, SVM_OBJECT_RENAMED,
+						reinterpret_cast <DWORD_PTR> ( static_cast <SVObjectClass*> (pGlobalObject) ),
+						reinterpret_cast<DWORD_PTR>( static_cast<LPCTSTR>( OldName.c_str() )) );
+				}
+			}
+		}
+		pGlobalObject->setValue( rGlobalData.m_Value );
+		pGlobalObject->setDescription( rGlobalData.m_Description.c_str() );
+	}
+}
+
+SVIODoc* GlobalConstantView::GetDocument()
+{
+	if( nullptr == m_pDocument )
+	{
+		m_pDocument = dynamic_cast<SVIODoc *> (CListView::GetDocument());
+	}
+	return m_pDocument;
+}
+
+void GlobalConstantView::updateAllIPDocs( bool RunOnce ) const
 {
 	SVConfigurationObject* pConfig( nullptr );
 	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
@@ -505,15 +536,15 @@ int GlobalConstantView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_rCtrl.SetImageList( &m_ImageList, LVSIL_SMALL );
 
 	// insert columns
-	m_rCtrl.InsertColumn( 0, _T("Global Constants"), LVCFMT_LEFT, -1, -1 );
-	m_rCtrl.InsertColumn( 1, _T("Type"), LVCFMT_LEFT, -1, -1 );
-	m_rCtrl.InsertColumn( 2, _T("Value"), LVCFMT_LEFT, -1, -1 );
-	m_rCtrl.InsertColumn( 3, _T("Description"), LVCFMT_LEFT, -1, -1 );
+	m_rCtrl.InsertColumn( GlobalConstantCol, SvO::GlobalViewHeader[GlobalConstantCol], LVCFMT_LEFT, -1, -1 );
+	m_rCtrl.InsertColumn( TypeCol, SvO::GlobalViewHeader[TypeCol], LVCFMT_LEFT, -1, -1 );
+	m_rCtrl.InsertColumn( ValueCol, SvO::GlobalViewHeader[ValueCol], LVCFMT_LEFT, -1, -1 );
+	m_rCtrl.InsertColumn( DescriptionCol, SvO::GlobalViewHeader[DescriptionCol], LVCFMT_LEFT, -1, -1 );
 
-	m_rCtrl.SetColumnWidth( 0, 125 );
-	m_rCtrl.SetColumnWidth( 1, 50 );
-	m_rCtrl.SetColumnWidth( 2, 300 );
-	m_rCtrl.SetColumnWidth( 3, 500 );
+	m_rCtrl.SetColumnWidth( GlobalConstantCol, GlobalConstantWidth );
+	m_rCtrl.SetColumnWidth( TypeCol, TypeWidth );
+	m_rCtrl.SetColumnWidth( ValueCol, ValueWidth );
+	m_rCtrl.SetColumnWidth( DescriptionCol, DescriptionWidth );
 
 	return 0;
 }
@@ -527,7 +558,7 @@ void GlobalConstantView::OnLButtonDblClk(UINT nFlags, CPoint point)
 	{
 		if (TheSVObserverApp.OkToEdit())
 		{
-			if (EditItem(item))
+			if( editItem(item) )
 			{
 				SVIODoc* pIODoc = GetDocument();
 				if (pIODoc)
@@ -560,7 +591,7 @@ void GlobalConstantView::OnEditItem()
 	int Item = getSelectedItem();
 	if( -1 != Item )
 	{
-		if ( EditItem( Item ) )
+		if( editItem( Item ) )
 		{
 			SVIODoc* pIODoc = GetDocument();
 			if( nullptr != pIODoc )
@@ -587,7 +618,7 @@ void GlobalConstantView::OnDeleteItem()
 	int Item = getSelectedItem();
 	if( -1 != Item )
 	{
-		if ( DeleteItem( Item ) )
+		if ( deleteItem( Item ) )
 		{
 			SVIODoc* pIODoc = GetDocument();
 			if( nullptr != pIODoc )

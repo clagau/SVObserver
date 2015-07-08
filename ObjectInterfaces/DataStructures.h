@@ -9,6 +9,7 @@
 #pragma region Includes
 #include <set>
 #include <vector>
+#include <tuple> 
 #include "SVUtilityLibrary\SVString.h"
 #include "SVUtilityLibrary\SVGUID.h"
 #pragma endregion Includes
@@ -18,6 +19,17 @@ namespace Seidenader { namespace ObjectInterfaces
 {
 	struct GlobalConstantData
 	{
+	#pragma region Declarations
+	public:
+		enum DataTypeEnum
+		{
+			NumberType,
+			TextType,
+			DataTypeMax
+		};
+
+	#pragma endregion Declarations
+	
 	#pragma region Constructor
 	public:
 		inline GlobalConstantData();

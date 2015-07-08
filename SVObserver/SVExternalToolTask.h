@@ -150,7 +150,7 @@ protected:
 	SVResultClass* GetResultRangeObject(int iIndex);
 	std::vector<SVResultClass*> GetResultRangeObjects();
 
-	BOOL RenameToolSetSymbol(SVObjectClass* pObject, LPCTSTR tstrOriginalName);
+	BOOL renameToolSetSymbol(const SVObjectClass* pObject, LPCTSTR OriginalName);
 
 	HRESULT AllocateResult (int iIndex);
 

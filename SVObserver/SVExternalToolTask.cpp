@@ -9,6 +9,7 @@
 //* .Check In Date   : $Date:   30 Sep 2014 15:41:32  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVExternalToolTask.h"
 
@@ -26,6 +27,16 @@
 #include "SVTool.h"
 #include "SVToolSet.h"
 #include "SVValueObject.h"
+#include "BasicValueObject.h"
+#pragma endregion Includes
+
+#pragma region Declarations
+#ifdef _DEBUG
+#define new DEBUG_NEW
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
+#endif
+#pragma endregion Declarations
 
 SV_IMPLEMENT_CLASS( SVExternalToolTask, SVExternalToolTaskGuid )
 
@@ -303,9 +314,9 @@ DWORD_PTR SVExternalToolTask::processMessage( DWORD DwMessageID, DWORD_PTR DwMes
 	case SVMSGID_OBJECT_RENAMED:
 		{
 			SVObjectClass* pObject = reinterpret_cast <SVObjectClass*> (DwMessageValue); // Object with new name
-			LPCTSTR tstrOriginalName = ( LPCTSTR ) DwMessageContext;
+			LPCTSTR OriginalName = reinterpret_cast<LPCTSTR> (DwMessageContext);
 
-			if( RenameToolSetSymbol(pObject, tstrOriginalName ) )
+			if( renameToolSetSymbol( pObject, OriginalName ) )
 				dwResult = SVMR_SUCCESS;
 			break;
 		}
@@ -1378,15 +1389,13 @@ HRESULT SVExternalToolTask::InspectionInputsToVariantArray()
 		SVInObjectInfoStruct& rInfo = m_Data.m_aInputObjectInfo[i];
 		_variant_t vtTemp;
 		SVObjectClass *pObject = rInfo.GetInputObjectInfo().PObject;
-		if( SV_IS_KIND_OF( pObject, SVValueObjectClass ) )
+		if( SVValueObjectClass* pValueObject = dynamic_cast<SVValueObjectClass*> (pObject) )
 		{
-			SVValueObjectClass* pValueObject = static_cast < SVValueObjectClass* >(pObject);
 			pValueObject->GetValue( vtTemp );
 		}
-		else if( SV_IS_KIND_OF( pObject, BasicValueObject ) )
+		else if( BasicValueObject* pBasicValueObject = dynamic_cast<BasicValueObject*> (pObject) )
 		{
-			BasicValueObject* pValueObject = static_cast < BasicValueObject* >(pObject);
-			pValueObject->getValue( vtTemp );
+			pBasicValueObject->getValue( vtTemp );
 		}
 		else
 		{
@@ -1691,40 +1700,48 @@ std::vector<SVResultClass*> SVExternalToolTask::GetResultRangeObjects()
 	return aObjects;
 }
 
-BOOL SVExternalToolTask::RenameToolSetSymbol(SVObjectClass* pObject, LPCTSTR tstrOriginalName)
+BOOL SVExternalToolTask::renameToolSetSymbol(const SVObjectClass* pObject, LPCTSTR originalName )
 {
-	CString sNewPrefix;
-	CString sOldPrefix;
+	if( nullptr != pObject )
+	{
+		SVString newPrefix;
+		SVString oldPrefix;
 
-	if( SVInspectionProcess* l_pInspection = dynamic_cast< SVInspectionProcess* >( pObject ) )
-	{
-		sNewPrefix = _T( "." ) + l_pInspection->GetCompleteObjectNameToObjectType( NULL, SVInspectionObjectType ) + _T( "." );
-		sOldPrefix = sNewPrefix;
-		sOldPrefix.Replace( l_pInspection->GetName(), tstrOriginalName );
-	}// end if
-	else
-	{
-		sNewPrefix = _T( "." ) + pObject->GetCompleteObjectNameToObjectType( NULL, SVToolSetObjectType ) + _T( "." );
-		sOldPrefix = sNewPrefix;
-		sOldPrefix.Replace( pObject->GetName(), tstrOriginalName );
-	}// end else
-
-	// loop through all inputs & rename
-	// input objects
-	long i;
-	for ( i=0; i < m_Data.m_lNumInputValues; i++)
-	{
-		SVInObjectInfoStruct& rInfo = m_Data.m_aInputObjectInfo[i];
-		if ( rInfo.GetInputObjectInfo().PObject &&
-			(pObject == rInfo.GetInputObjectInfo().PObject->GetAncestor(pObject->GetObjectInfo().ObjectTypeInfo.ObjectType)) )
+		if( const SVInspectionProcess* pInspection = dynamic_cast<const SVInspectionProcess*> (pObject) )
 		{
-			CString sValue;
-			m_Data.m_aInputObjects[i].GetValue(sValue);
-			sValue.Replace( sOldPrefix, sNewPrefix );
-			m_Data.m_aInputObjects[i].SetValue(1, sValue);
+			newPrefix = pInspection->GetCompleteObjectNameToObjectType( NULL, SVInspectionObjectType ) + _T( "." );
+		}// end if
+		else if( const BasicValueObject* pBasicValueObject = dynamic_cast<const BasicValueObject*> (pObject) )
+		{
+			newPrefix = pBasicValueObject->GetCompleteObjectNameToObjectType( NULL, SVRootObjectType );
+		}
+		else
+		{
+			newPrefix = pObject->GetCompleteObjectNameToObjectType( NULL, SVToolSetObjectType ) + _T( "." );
+		}// end else
+		oldPrefix = newPrefix;
+		oldPrefix.replace( pObject->GetName(), originalName );
+
+		// loop through all inputs & rename
+		// input objects
+		for( long i=0; i < m_Data.m_lNumInputValues; i++ )
+		{
+			SVInObjectInfoStruct& rInfo = m_Data.m_aInputObjectInfo[i];
+			SVObjectClass* pInputObject = rInfo.GetInputObjectInfo().PObject;
+			if( nullptr != pInputObject )
+			{
+				//Either it is the object itself changing name or the toolset
+				if ( pObject == pInputObject ||
+					(pObject == pInputObject->GetAncestor(pObject->GetObjectInfo().ObjectTypeInfo.ObjectType)) )
+				{
+					CString sValue;
+					m_Data.m_aInputObjects[i].GetValue(sValue);
+					sValue.Replace( oldPrefix.c_str(), newPrefix.c_str() );
+					m_Data.m_aInputObjects[i].SetValue(1, sValue);
+				}
+			}
 		}
 	}
-
 	return TRUE;
 }
 

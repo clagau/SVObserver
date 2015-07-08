@@ -19,13 +19,6 @@ namespace Seidenader { namespace SVOGui
 	{
 	#pragma region Declarations
 	public:
-		enum DataTypeEnum
-		{
-			NumberType,
-			TextType,
-			DataTypeMax
-		};
-
 		enum { IDD = IDD_GLOBAL_CONSTANT };
 
 		DECLARE_DYNAMIC(GlobalConstantDlg)
@@ -61,7 +54,7 @@ namespace Seidenader { namespace SVOGui
 		virtual BOOL OnInitDialog();
 		virtual void OnOK();
 
-		void DDV_GlobalConstantValue( CDataExchange* pDX, DataTypeEnum Type );
+		void DDV_GlobalConstantValue( CDataExchange* pDX, SvOi::GlobalConstantData::DataTypeEnum Type );
 		void DDV_GlobalName( CDataExchange* pDX, const SVString& rName );
 	#pragma region Private Methods
 

@@ -92,7 +92,7 @@ public:
 	/// \param pObject [in] The changed object.
 	/// \param originalName [in] The old original name of this object
 	//************************************
-	void RenameToolSetSymbol(const SVObjectClass* pObject, const SVString& originalName);
+	void renameToolSetSymbol(const SVObjectClass* pObject, LPCTSTR originalName);
 
 	//************************************
 	/// Disconnect the object if it is connected to this value.

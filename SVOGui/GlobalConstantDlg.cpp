@@ -70,9 +70,9 @@ namespace Seidenader { namespace SVOGui
 		DDX_Control(pDX, IDC_GLOBAL_TYPE, m_Type);
 		DDX_Text(pDX, IDC_GLOBAL_VALUE, m_Value);
 		int CurrentSelection = m_Type.GetCurSel();
-		if( DataTypeMax >  CurrentSelection )
+		if( -1 != CurrentSelection && SvOi::GlobalConstantData::DataTypeMax >  CurrentSelection )
 		{
-			DataTypeEnum CurrentType( static_cast<DataTypeEnum> (CurrentSelection) );
+			SvOi::GlobalConstantData::DataTypeEnum CurrentType( static_cast<SvOi::GlobalConstantData::DataTypeEnum> (CurrentSelection) );
 			DDV_GlobalConstantValue( pDX, CurrentType );
 		}
 		DDX_Text(pDX, IDC_GLOBAL_DESCRIPTION, m_Descrition);
@@ -82,15 +82,15 @@ namespace Seidenader { namespace SVOGui
 	{
 		CDialog::OnInitDialog();
 
-		for(int i=0; i < DataTypeMax; i++ )
+		for(int i=0; i < SvOi::GlobalConstantData::DataTypeMax; i++ )
 		{
 			m_Type.AddString( GlobalConstantTypes[i] );
 		}
 
 		//Set default type as Number
-		if( NumberType < m_Type.GetCount() )
+		if( SvOi::GlobalConstantData::NumberType < m_Type.GetCount() )
 		{
-			m_Type.SetCurSel( NumberType );
+			m_Type.SetCurSel( SvOi::GlobalConstantData::NumberType );
 		}
 
 		if( !m_rData.m_DottedName.empty() )
@@ -109,18 +109,18 @@ namespace Seidenader { namespace SVOGui
 		case VT_R8:
 			{
 				m_Value.Format( _T("%.06f"), m_rData.m_Value.dblVal );
-				if( NumberType < m_Type.GetCount() )
+				if( SvOi::GlobalConstantData::NumberType < m_Type.GetCount() )
 				{
-					m_Type.SetCurSel( NumberType );
+					m_Type.SetCurSel( SvOi::GlobalConstantData::NumberType );
 				}
 			}
 			break;
 		case VT_BSTR:
 			{
 				m_Value = m_rData.m_Value;
-				if( TextType < m_Type.GetCount() )
+				if( SvOi::GlobalConstantData::TextType < m_Type.GetCount() )
 				{
-					m_Type.SetCurSel( TextType );
+					m_Type.SetCurSel( SvOi::GlobalConstantData::TextType );
 				}
 			}
 			break;
@@ -145,11 +145,11 @@ namespace Seidenader { namespace SVOGui
 			m_rData.m_DottedName = m_Branch;
 			m_rData.m_DottedName += m_Name.GetString();
 			//Determine which Global Constant type Number or Text
-			if( NumberType == m_Type.GetCurSel() )
+			if( SvOi::GlobalConstantData::NumberType == m_Type.GetCurSel() )
 			{
 				m_rData.m_Value = atof( m_Value );
 			}
-			else if( TextType == m_Type.GetCurSel() )
+			else if( SvOi::GlobalConstantData::TextType == m_Type.GetCurSel() )
 			{
 				m_rData.m_Value = m_Value;
 			}
@@ -158,14 +158,14 @@ namespace Seidenader { namespace SVOGui
 		}
 	}
 
-	void GlobalConstantDlg::DDV_GlobalConstantValue( CDataExchange* pDX, DataTypeEnum Type  )
+	void GlobalConstantDlg::DDV_GlobalConstantValue( CDataExchange* pDX, SvOi::GlobalConstantData::DataTypeEnum Type  )
 	{
 		SVString NewValue( m_Value );
 		if( !NewValue.empty() )
 		{
 			switch( Type )
 			{
-			case NumberType:
+			case SvOi::GlobalConstantData::NumberType:
 				{
 					if( !NewValue.matchesRegularExpression( RegExp_AllRealNumbers ) )
 					{
@@ -175,7 +175,7 @@ namespace Seidenader { namespace SVOGui
 					}
 				}
 				break;
-			case TextType:
+			case SvOi::GlobalConstantData::TextType:
 				break;
 			default:
 				break;
@@ -185,7 +185,7 @@ namespace Seidenader { namespace SVOGui
 
 	void GlobalConstantDlg::DDV_GlobalName( CDataExchange* pDX, const SVString& rName )
 	{
-		if( m_rData.m_DottedName.empty() || rName != m_rData.m_DottedName )
+		if( pDX->m_bSaveAndValidate && rName != m_rData.m_DottedName )
 		{
 			SVStringArray::const_iterator Iter( m_ExistingNames.cbegin() );
 			bool Failed( false );
@@ -205,7 +205,7 @@ namespace Seidenader { namespace SVOGui
 			SVString NewName( rName );
 			NewName.replace( m_Branch.GetString(), _T("") );
 
-			if( !Failed && !NewName.empty() )
+			if( !Failed )
 			{
 				if( !NewName.matchesRegularExpression( RegExp_Name ) )
 				{

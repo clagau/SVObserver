@@ -61,10 +61,10 @@ public:
 	//************************************
 	// Description:  Calculate Reference
 	// Parameter: IN LPCTSTR dottedName
-	// Parameter: OUT SVValueObjectReference & ValueObjectReference
+	// Parameter: OUT SVObjectReference & ValueObjectReference
 	// Returns:  bool:  true if valid reference
 	//************************************
-	static bool SetReference(LPCTSTR dottedName, SVValueObjectReference &ValueObjectReference);
+	static bool SetReference(LPCTSTR dottedName, SVObjectReference &ObjectReference);
 
 	//************************************
 	// Description:  Connect all references as inputs.
@@ -135,10 +135,10 @@ protected:
 	//************************************
 	//! function is called when an object was renamed
 	//! \param pObject [in] object name 
-	//! \param orgName [in] previous name 
+	//! \param originalName [in] previous name 
 	//! \returns BOOL
 	//************************************
-	virtual BOOL renameToolSetSymbol(SVObjectClass* pObject, LPCTSTR orgName);
+	virtual BOOL renameToolSetSymbol(const SVObjectClass* pObject, LPCTSTR originalName);
 
 public: // Bad
 	SVDoubleValueObjectClass FailLow;
@@ -149,7 +149,7 @@ public: // Bad
 protected:
 	SVStringValueObjectClass m_ValueIndirect[ER_COUNT];
 	bool m_IsConnectedInput[ER_COUNT];
-	SVValueObjectReference m_ValueObjectReferences[ER_COUNT];
+	SVObjectReference m_ValueObjectReferences[ER_COUNT];
 	bool m_isValidRange;
 	SVInObjectInfoStruct m_inputObjectInfo;
 };
