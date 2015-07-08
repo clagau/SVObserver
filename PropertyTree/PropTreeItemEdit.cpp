@@ -309,6 +309,11 @@ void SVRPropertyItemEdit::OnActivate()
 
 }
 
+void SVRPropertyItemEdit::OnLossFocus()
+{
+	OnKillFocus(nullptr);
+}
+
 BOOL SVRPropertyItemEdit::CreateEdit(DWORD dwStyle)
 {
 	BOOL bRet = Create(dwStyle, m_rc, m_pProp->GetCtrlParent(), GetCtrlID());

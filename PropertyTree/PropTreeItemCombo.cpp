@@ -169,21 +169,21 @@ void SVRPropertyItemCombo::StoreItemData()
 
 void SVRPropertyItemCombo::OnActivate()
 {
-	int iButtonWidth = 0;
-	if ( m_bEnableButton )
-	{
-		CDC* pDC = m_btnDots.GetDC();
-		CSize size = pDC->GetTextExtent(m_strButtonText);
-		iButtonWidth = size.cx + g_buttonSpace;
-	}	
-	// activate the combo box
-	SetWindowPos(NULL, m_rc.left, m_rc.top, m_rc.Width()-iButtonWidth, m_rc.Height() + m_nDropHeight, SWP_NOZORDER | SWP_SHOWWINDOW);
+		int iButtonWidth = 0;
+		if ( m_bEnableButton )
+		{
+			CDC* pDC = m_btnDots.GetDC();
+			CSize size = pDC->GetTextExtent(m_strButtonText);
+			iButtonWidth = size.cx + g_buttonSpace;
+		}	
+		// activate the combo box
+		SetWindowPos(NULL, m_rc.left, m_rc.top, m_rc.Width()-iButtonWidth, m_rc.Height() + m_nDropHeight, SWP_NOZORDER | SWP_SHOWWINDOW);
 
-	DisplayButton();
+		DisplayButton();
 
-	SetFocus();
+		SetFocus();
 
-	if ( !m_bShowButton )
+if ( !m_bShowButton )
 	{
 		/*
 		if (GetCount())
@@ -192,6 +192,10 @@ void SVRPropertyItemCombo::OnActivate()
 	}
 }
 
+void SVRPropertyItemCombo::OnLossFocus()
+{
+	OnKillFocus(nullptr);
+}
 
 BOOL SVRPropertyItemCombo::CreateComboBox(DWORD dwStyle)
 {

@@ -189,6 +189,10 @@ public:
 	// Called to activate the item
 	virtual void OnActivate();
 
+	// Called to tell the control that is will loss the focus and no new focus will be set. 
+	//(Will be set a new focus, OnKillFocus will be fired automatically.)
+	virtual void OnLossFocus();
+
 	//
 	// Usually only SVRPropTree should call these
 	//

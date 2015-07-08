@@ -54,24 +54,28 @@ public:
 	virtual void DrawAttribute(CDC* pDC, const RECT& rc);
 
 	// Retrieve the item's attribute value
-	virtual bool GetItemValue( long& l_Value );
-	virtual bool GetItemValue( UINT& p_Value );
-    virtual bool GetItemValue(VARIANT& vtVal);
+	virtual bool GetItemValue( long& l_Value ) override;
+	virtual bool GetItemValue( UINT& p_Value ) override;
+	virtual bool GetItemValue(VARIANT& vtVal) override;
 
 	// Set the item's attribute value
 	virtual bool SetItemValue(const LPARAM lparam);
 
 	// Called when attribute area has changed size
-	virtual void OnMove();
+	virtual void OnMove() override;
 
 	// Called when the item needs to refresh its data
-	virtual void OnRefresh();
+	virtual void OnRefresh() override;
 
 	// Called when the item needs to commit its changes
-	virtual void OnCommit();
+	virtual void OnCommit() override;
 
 	// Called to activate the item
-	virtual void OnActivate();
+	virtual void OnActivate() override;
+
+	// Called to tell the control that is will loss the focus and no new focus will be set. 
+	//(Will be set a new focus, OnKillFocus will be fired automatically.)
+	virtual void OnLossFocus() override;
 
 	// Create your combo box with your specified styles
 	BOOL CreateComboBox(DWORD dwStyle = WS_CHILD|WS_VSCROLL|WS_TABSTOP|CBS_SORT|CBS_DROPDOWNLIST);

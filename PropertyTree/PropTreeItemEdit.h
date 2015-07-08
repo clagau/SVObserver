@@ -96,18 +96,22 @@ public:
 	virtual bool SetItemValuePtr(CString& strVal);
 
 	// @cmember Called when attribute area has changed size.
-	virtual void OnMove();
+	virtual void OnMove() override;
 
 	// @cmember Called when the item needs to refresh its data.
-	virtual void OnRefresh();
+	virtual void OnRefresh() override;
 
 	// @cmember Called when the item needs to commit its changes.
-	virtual void OnCommit();
+	virtual void OnCommit() override;
 	
-	virtual void OnUndoCommit();
+	virtual void OnUndoCommit() override;
 
 	// @cmember Called to activate the item.
-	virtual void OnActivate();
+	virtual void OnActivate() override;
+	
+	// Called to tell the control that is will loss the focus and no new focus will be set. 
+	//(Will be set a new focus, OnKillFocus will be fired automatically.)
+	virtual void OnLossFocus() override;
 
 	void SetButtonText( const CString& sText );
 

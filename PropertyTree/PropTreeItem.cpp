@@ -424,6 +424,10 @@ void SVRPropertyItem::OnActivate()
 	// no attributes, do nothing
 }
 
+void SVRPropertyItem::OnLossFocus()
+{
+	// no attributes, do nothing
+}
 
 void SVRPropertyItem::SetPropOwner(SVRPropTree* pProp)
 {
