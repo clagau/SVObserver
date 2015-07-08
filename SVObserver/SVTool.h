@@ -353,6 +353,8 @@ protected:
 	SVDoubleValueObjectClass extentBottom;
 	SVDoubleValueObjectClass extentWidth;
 	SVDoubleValueObjectClass extentHeight;
+	SVDoubleValueObjectClass extentWidthScaleFactor;
+	SVDoubleValueObjectClass extentHeightScaleFactor;
 
 	//***** New source image extent value objects
 	SVBoolValueObjectClass m_svUpdateAuxilliaryExtents;

@@ -26,6 +26,11 @@
 #pragma endregion Includes
 
 #pragma region Declarations
+// SVTADlgTranslationShiftPage dialog
+
+// Put in by the wizard but not needed.
+//IMPLEMENT_DYNAMIC(SVTADlgTranslationShiftPageClass, CPropertyPage)
+
 enum {IDC_SHIFT_VALUE_TRUE = 100};
 #pragma endregion Declarations
 
@@ -80,6 +85,9 @@ BOOL SVTADlgTranslationShiftPageClass::OnInitDialog()
 	
 	if (pParentDialog && (pTool = pParentDialog->GetTool()))
 	{
+		// This sets the base class 
+		//   SVTaskObjectValueInterface::m_psvTaskObject (Tool).  This is 
+		//   necessary for performing a RunOnce later.
 		SetTaskObject( pTool );
 
 		SVObjectTypeInfoStruct evaluateObjectInfo;

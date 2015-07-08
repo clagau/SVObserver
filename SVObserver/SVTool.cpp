@@ -63,6 +63,22 @@ void SVToolClass::init()
 	RegisterEmbeddedObject( &extentBottom, SVExtentRelativeBottomPositionObjectGuid, IDS_OBJECTNAME_EXTENT_BOTTOM, false, SVResetItemNone, _T("Extent Y") );
 	RegisterEmbeddedObject( &extentWidth, SVExtentWidthObjectGuid, IDS_OBJECTNAME_EXTENT_WIDTH, false, SVResetItemTool, _T("Extent Width") );
 	RegisterEmbeddedObject( &extentHeight, SVExtentHeightObjectGuid, IDS_OBJECTNAME_EXTENT_HEIGHT, false, SVResetItemTool, _T("Extent Height") );
+	RegisterEmbeddedObject( &extentHeightScaleFactor, 
+							SVExtentHeightScaleFactorObjectGuid, 
+							IDS_OBJECTNAME_EXTENT_HEIGHTSF, 
+							false, 
+							SVResetItemTool,
+							_T("Extent Height Scale Factor") );
+
+	RegisterEmbeddedObject( &extentWidthScaleFactor, 
+							SVExtentWidthScaleFactorObjectGuid, 
+							IDS_OBJECTNAME_EXTENT_WIDTHSF, 
+
+							// the only place that this is ever set to true is for the color HSI 
+							// conversion value (Color Tool) and it is probably not necessary there.
+							false,   
+							SVResetItemTool,
+							_T("Extent Width Scale Factor") );
 
 	RegisterEmbeddedObject( &ToolSelectedForOperatorMove, SVToolSelectedForOperatorMoveObjectGuid, IDS_OBJECTNAME_TOOL_SELECTED_FOR_OPERATOR_MOVE, false, SVResetItemNone);
 
@@ -78,13 +94,15 @@ void SVToolClass::init()
 	RegisterEmbeddedObject( &m_svToolComment, SVToolCommentTypeObjectGuid, IDS_OBJECTNAME_TOOL_COMMENT, false, SVResetItemNone );
 	
 	m_svToolExtent.SetTool( this );
-	m_svToolExtent.SetImageType( SVImageTypeLogical );
+	m_svToolExtent.SetImageType( SVImageTypeLogicalAndPhysical );
 	m_svToolExtent.SetTranslation( SVExtentTranslationShift );
 	m_svToolExtent.SetAlwaysUpdate( false );
 	m_svToolExtent.SetExtentObject( SVExtentPropertyPositionPointX, &extentLeft );
 	m_svToolExtent.SetExtentObject( SVExtentPropertyPositionPointY, &extentTop );
 	m_svToolExtent.SetExtentObject( SVExtentPropertyWidth, &extentWidth );
 	m_svToolExtent.SetExtentObject( SVExtentPropertyHeight, &extentHeight );
+	m_svToolExtent.SetExtentObject( SVExtentPropertyWidthScaleFactor, &extentWidthScaleFactor );
+	m_svToolExtent.SetExtentObject( SVExtentPropertyHeightScaleFactor, &extentHeightScaleFactor );
 
 	//
 	// Set Embedded defaults
@@ -112,8 +130,10 @@ void SVToolClass::init()
 	extentBottom.SetDefaultValue( SV_DEFAULT_WINDOWTOOL_TOP + SV_DEFAULT_WINDOWTOOL_HEIGHT, TRUE );
 	extentWidth.SetDefaultValue( SV_DEFAULT_WINDOWTOOL_WIDTH, TRUE );
 	extentHeight.SetDefaultValue( SV_DEFAULT_WINDOWTOOL_HEIGHT, TRUE );
+	extentWidthScaleFactor.SetDefaultValue( SV_DEFAULT_WINDOWTOOL_WIDTHSCALEFACTOR, TRUE );
+	extentHeightScaleFactor.SetDefaultValue( SV_DEFAULT_WINDOWTOOL_HEIGHTSCALEFACTOR, TRUE );
 
-	ToolSelectedForOperatorMove.SetDefaultValue( 0, FALSE );
+//	ToolSelectedForOperatorMove.SetDefaultValue( 0, FALSE );
 
 	drawToolFlag.SetEnumTypes( IDS_TOOLDRAW_ENUMOBJECT_LIST );
 	drawToolFlag.SetDefaultValue( ( const long ) 0, TRUE ); // 0 Should be show tool 'Always'
@@ -196,7 +216,7 @@ BOOL SVToolClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
 	// Auxilliary Tool Source Extent
 	m_svUpdateAuxilliaryExtents.ObjectAttributesAllowedRef() |= SV_PRINTABLE | SV_SETABLE_ONLINE | SV_REMOTELY_SETABLE ;
 	
-	ToolSelectedForOperatorMove.ObjectAttributesAllowedRef() = SV_NO_ATTRIBUTES; //Clear Attributes ... No longer used.
+//	ToolSelectedForOperatorMove.ObjectAttributesAllowedRef() = SV_NO_ATTRIBUTES; //Clear Attributes ... No longer used.
 	drawToolFlag.ObjectAttributesAllowedRef() |= SV_PRINTABLE;
 
 	// Tool Comment Atributes...
@@ -1032,7 +1052,7 @@ SVImageTypeEnum SVToolClass::GetImageType()
 
 HRESULT SVToolClass::GetImageExtent( SVImageExtentClass &p_rsvImageExtent )
 {
-	HRESULT l_hrOk = S_FALSE;
+	HRESULT l_hrOk = S_OK;
 
 	l_hrOk = m_svToolExtent.GetImageExtent( p_rsvImageExtent );
 

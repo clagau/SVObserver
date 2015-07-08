@@ -1020,7 +1020,7 @@ BOOL SVBlobAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 		}
 
 		// Sri 04-12-00
-		// Check whether we want to exclude the blobs, which has atleast one of its features 
+		// Check whether we want to exclude the blobs, which has at least one of its features 
 		// out of Range
 		BOOL	bExclude;
 		msvbExcludeFailed.GetValue(bExclude);

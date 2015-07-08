@@ -293,31 +293,47 @@ BOOL SVImageToolClass::onRun( SVRunStatusClass& RRunStatus )
 HRESULT SVImageToolClass::UpdateTranslation()
 {
 	//get operator type
-	long l_lValue = 0;
+	long	l_lValue =		0;
+	bool	extentChanged = false;
 
-	HRESULT l_hrOK = S_FALSE;
+	HRESULT l_hrOK =		S_FALSE;
+
+	SVImageExtentClass toolImageExtents;
 
 	if( outputOperator.GetValue(l_lValue) == S_OK )
 	{
 		//change translation type on extents to match operator if:
 		//			Height Double, Flip Horizontal of Flip Vertical
-
+		GetImageExtent	(toolImageExtents);
+		double	heightScaleFactor = 1.0;
+		
 		if ( l_lValue == SV_IMGOP_DOUBLE_HEIGHT )
 		{
-			l_hrOK = m_svToolExtent.SetTranslation(SVExtentTranslationDoubleHeight);
+			l_hrOK = toolImageExtents.SetTranslation (SVExtentTranslationDoubleHeight);
+			heightScaleFactor = 2.0;
+			toolImageExtents.SetExtentProperty (SVExtentPropertyHeightScaleFactor, heightScaleFactor);
+			extentChanged = true;
 		}
 		else if ( l_lValue == SV_IMGOP_FLIP_VERTICAL )
 		{
-			l_hrOK = m_svToolExtent.SetTranslation(SVExtentTranslationFlipVertical);
+			l_hrOK = toolImageExtents.SetTranslation(SVExtentTranslationFlipVertical);
+			extentChanged = true;
 		}
 		else if ( l_lValue == SV_IMGOP_FLIP_HORIZONTAL )
 		{
-			l_hrOK = m_svToolExtent.SetTranslation(SVExtentTranslationFlipHorizontal);
+			l_hrOK = toolImageExtents.SetTranslation(SVExtentTranslationFlipHorizontal);
+			extentChanged = true;
 		}
 		else
 		{
-			l_hrOK = m_svToolExtent.SetTranslation(SVExtentTranslationFigureShift);
+			l_hrOK = toolImageExtents.SetTranslation(SVExtentTranslationFigureShift);
+			extentChanged = true;
 		}
+	} // if( outputOperator.GetValue(l_lValue) == S_OK )
+
+	if ((true == extentChanged) && (S_OK == l_hrOK))
+	{
+		SetImageExtent(1, toolImageExtents);
 	}
 
 	return l_hrOK;

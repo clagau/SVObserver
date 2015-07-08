@@ -10,7 +10,7 @@
 //******************************************************************************
 
 #pragma region Includes
-#include "stdafx.h"
+#include "stdafx.h"		// SVClids.h
 #include <comdef.h>
 #include <algorithm>
 #include "SVIPDoc.h"
@@ -20,12 +20,9 @@
 #include "SVTimerLibrary/SVClock.h"
 #include "SVUtilityLibrary/SVGUID.h"
 
-#include "SVArchiveTool.h"
-#include "SVColorTool.h"
 #include "SVConditional.h"
 #include "SVDlgImagePicker.h"
 #include "SVFileNameManagerClass.h"
-#include "SVGageTool.h"
 #include "SVGlobal.h"
 #include "SVImageArchive.h"
 #include "SVImageViewScroll.h"
@@ -35,31 +32,21 @@
 #include "SVLightReferenceDialog.h"
 #include "SVLutDlg.h"
 #include "SVMainFrm.h"
-#include "SVMathTool.h"
 #include "SVObjectLibrary/SVObjectXMLWriter.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVObjectScriptParser.h"
 #include "SVObserver.h"
-#include "SVPolarTransformationTool.h"
 //#include "SVPQVariableSelectionDialog.h"
-#include "SVTransformationTool.h"
 #include "SVToolAdjustmentDialogSheetClass.h"
-#include "SVToolAcquisition.h"
 #include "SVToolSet.h"
 #include "SVToolSetAdjustmentDialogSheet.h"
 #include "ToolSetView.h"
 #include "SVResultView.h"
 #include "SVResultsWrapperClass.h"
 #include "SVTool.h"
-#include "SVToolLoadImage.h"
-#include "SVToolImage.h"
 #include "SVSaveToolSetImageDialog.h"
 #include "SVShowDependentsDialog.h"
-#include "SVStatTool.h"
 #include "SVUtilities.h"
-#include "SVWindowTool.h"
-#include "SVCylindricalWarpTool.h"
-#include "SVPerspectiveTool.h"
 #include "SVInspectionProcess.h"
 #include "SVPPQObject.h"
 #include "SVConfigurationLibrary/SVConfigurationTags.h"
@@ -67,7 +54,6 @@
 #include "SVAcquisitionClass.h"
 #include "SVConfigurationObject.h"
 #include "SVIODoc.h"
-#include "SVExternalTool.h"
 #include "SVXMLLibrary/SVNavigateTreeClass.h"
 #include "SVMessage/SVMessage.h"
 #include "ObjectInterfaces/SVUserMessage.h"
@@ -82,11 +68,28 @@
 #include "SVHBitmapUtilitiesLibrary\SVHBitmapUtilities.h"
 #include "SVStatusLibrary/SVException.h"
 #include "SVDirectX.h"
-#include "SVRemoteInputTool.h"
 #include "SVCommandInspectionCollectImageData.h"
 #include "SVCommandInspectionRunOnce.h"
 #include "SVGuiExtentUpdater.h"
+//#include "SVAngularProfileTool.h"
+#include "SVArchiveTool.h"
+#include "SVColorTool.h"
+//#include "SVGageTool.h"
+#include "SVMathTool.h"
+#include "SVPolarTransformationTool.h"
+#include "SVTransformationTool.h"
+#include "SVToolAcquisition.h"
+//#include "SVToolBuildReference.h"
+#include "SVToolLoadImage.h"
+#include "SVToolImage.h"
+#include "SVWindowTool.h"
+#include "SVCylindricalWarpTool.h"
+#include "SVPerspectiveTool.h"
+#include "SVStatTool.h"
+#include "SVExternalTool.h"
+#include "SVRemoteInputTool.h"
 #include "SVShiftTool.h"
+#include "ResizeTool.h"
 #include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
 #include "SVObjectLibrary/GlobalConst.h"
 #include "SVTreeLibrary/ObjectSelectorItem.h"
@@ -177,6 +180,7 @@ BEGIN_MESSAGE_MAP(SVIPDoc, CDocument)
 	ON_UPDATE_COMMAND_UI_RANGE( ID_VIEW_TOOLSETDRAW_POP_BASE + 1, ID_VIEW_TOOLSETDRAW_POP_MAX, OnUpdateViewToolSetDrawSubMenus )
 	ON_UPDATE_COMMAND_UI(ID_EDIT_DATA_DEFINITION_LISTS, &SVIPDoc::OnUpdateEditDataDefinitionLists)
 	ON_COMMAND(ID_ADD_REMOTEINPUTTOOL, OnAddRemoteInputTool)
+	ON_COMMAND(ID_ADD_RESIZETOOL, &SVIPDoc::OnAddResizetool)
 	ON_COMMAND(ID_ADD_RINGBUFFERTOOL, OnAddRingBufferTool)
 	ON_UPDATE_COMMAND_UI(ID_EDIT_ADJUSTLIGHTREFERENCE, OnAllowAdjustLightReference)
 	ON_UPDATE_COMMAND_UI(ID_EDIT_ADJUSTLUT, OnAllowAdjustLut)
@@ -1099,6 +1103,15 @@ void SVIPDoc::OnAddTransformationTool()
 void SVIPDoc::OnAddRemoteInputTool()
 {
 	SVToolClass* pTool = new SVRemoteInputTool;
+
+	if( AddTool( pTool ) ) { return; }
+
+	if( pTool ) { delete( pTool ); }
+}
+
+void SVIPDoc::OnAddResizetool()
+{
+	SVToolClass* pTool = new ResizeTool ( TRUE );
 
 	if( AddTool( pTool ) ) { return; }
 
@@ -3590,26 +3603,36 @@ HRESULT SVIPDoc::RebuildImages()
 
 		if( l_RegisteredIter != m_RegisteredImages.end() )
 		{
+			// If image from m_Images map is in m_RegisteredImages map (GUID)
+
 			SVImageViewPtrImageViewStatusMap::iterator l_ViewIter = l_Iter->second.m_ImageViews.begin();
 
+			// While a view is found for the m_Images image 
 			while( l_ViewIter != l_Iter->second.m_ImageViews.end() )
 			{
+				// try to find the a view in the m_RegisteredImages map for the
+				// associated image that matched the m_Images based image.
 				SVImageViewPtrSet::iterator l_RegisteredViewIter = l_RegisteredIter->second.find( l_ViewIter->first );
 
 				if( l_RegisteredViewIter != l_RegisteredIter->second.end() )
 				{
+					// If the view was found in the m_RegisteredImage, then 
+					// move to the next m_Images view.
 					++l_ViewIter;
 				}
 				else
 				{
+					// else remove the m_Images view.
 					l_ViewIter = l_Iter->second.m_ImageViews.erase( l_ViewIter );
 				}
 			}
 
-			++l_Iter;
+			++l_Iter;  // m_Images iterator
 		}
 		else
 		{
+			// If image from m_Images map is not in m_RegisteredImages map 
+			// then delete from m_Images map.
 			l_Iter = m_Images.erase( l_Iter );
 		}
 	}
@@ -7697,4 +7720,4 @@ $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVIPDoc.cp
    
    
    /////////////////////////////////////////////////////////////////////////////////////
-*/
+   */

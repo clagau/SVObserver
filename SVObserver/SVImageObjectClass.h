@@ -133,6 +133,9 @@ protected:
 	SVDataManagerHandle	m_CurrentDMIndexHandle;
 
 	SVImageInfoClass m_ImageInfo;
+
+//- m_ParentImagePtr - If this is not NULL, then the image object must be a 
+//- Matrox child buffer.
 	SVImageObjectParentPtr m_ParentImagePtr;
 
 	SVImageHandleMap m_MasterImageHandles;

@@ -402,6 +402,8 @@ HRESULT SVImageObjectClass::LoadImage( LPCTSTR p_szFileName, SVDataManagerHandle
 						m_ImageInfo.SetExtentProperty( SVExtentPropertyEnum::SVExtentPropertyHeight, l_lHeight);
 						m_ImageInfo.SetExtentProperty( SVExtentPropertyEnum::SVExtentPropertyPositionPointX, 0 );
 						m_ImageInfo.SetExtentProperty( SVExtentPropertyEnum::SVExtentPropertyPositionPointY, 0 );
+						m_ImageInfo.SetExtentProperty( SVExtentPropertyEnum::SVExtentPropertyHeightScaleFactor, 1.0 );
+						m_ImageInfo.SetExtentProperty( SVExtentPropertyEnum::SVExtentPropertyWidthScaleFactor, 1.0 );
 						ResetObject();
 					}
 

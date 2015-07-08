@@ -47,10 +47,10 @@ public:
 
 	virtual HRESULT Initialize();
 
-	virtual SVExtentTranslationEnum GetTranslation();
+	virtual SVExtentTranslationEnum GetTranslation() const;
 	virtual HRESULT SetTranslation( SVExtentTranslationEnum p_eTranslation );
 
-	virtual const SVExtentDimensionsClass &GetDimensions() const;
+	virtual const SVExtentDimensionsClass& GetDimensions() const;
 	virtual HRESULT SetDimensions( SVExtentDimensionsClass p_svDimensions );
 
 	virtual const SVExtentPositionClass &GetPosition() const;
@@ -82,6 +82,15 @@ public:
 
 	virtual HRESULT GetRectangle( RECT &p_roRect ) const;
 	virtual HRESULT GetOutputRectangle( RECT &p_roRect ) const;
+	/// @Hack
+	/// It does not make sense that a logical buffer is not a 1:1 
+	/// pixel correlation to its parent physical buffer.  For this 
+	/// reason the translation type will be ignored when retrieving
+	/// the logical rectangle.  
+	/// The usage that this is specifically excluded for is for 
+	/// creating a logical ROI buffer, which should not reflect the 
+	/// output buffer translation.
+	virtual HRESULT GetLogicalRectangle( RECT &p_roRect ) const;
 
 	virtual HRESULT TranslateToOutputSpace( SVExtentPointStruct p_svValue, SVExtentPointStruct &p_rsvResult );
 
@@ -118,6 +127,7 @@ protected:
 	virtual HRESULT BuildFigure();
 
 private:
+	HRESULT TranslateToLocalSpace(const SVExtentPointStruct& rValue, SVExtentPointStruct& rResult);
 	// Input Attributes
 	SVExtentTranslationEnum m_eTranslation;
 	SVExtentPositionClass m_svPosition;

@@ -425,9 +425,6 @@
     <ClCompile Include="SVImageProcessingClass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVImageROI.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVImageToLineProject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -1526,6 +1523,9 @@
     <ClCompile Include="AutoSaver.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ResizeTool.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="ToolSetView.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -1554,6 +1554,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="LinkedValue.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SVTADlgTranslationResizePage.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ArchiveToolHelper.cpp">
@@ -1996,9 +1999,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVImageProcessingClass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVImageROI.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVImageToLineProject.h">
@@ -3223,6 +3223,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="LinkedValue.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ResizeTool.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVTADlgTranslationResizePage.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ArchiveToolHelper.h">

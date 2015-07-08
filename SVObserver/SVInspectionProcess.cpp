@@ -4052,7 +4052,10 @@ BOOL SVInspectionProcess::Run( SVRunStatusClass& RRunStatus )
 	return retVal;
 }
 
-BOOL SVInspectionProcess::RunInspection( long lResultDataIndex, SVImageIndexStruct svResultImageIndex, SVProductInfoStruct *pProduct, bool p_UpdateCounts )
+BOOL SVInspectionProcess::RunInspection( long lResultDataIndex, 
+										 SVImageIndexStruct svResultImageIndex, 
+										 SVProductInfoStruct *pProduct, 
+										 bool p_UpdateCounts )
 {
 	BOOL l_bOk = FALSE;
 	BOOL l_bInputRequest = FALSE;

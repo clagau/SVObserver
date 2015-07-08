@@ -34,13 +34,32 @@ SVWindowToolClass::SVWindowToolClass( BOOL BCreateDefaultTaskList, SVObjectClass
 
 void SVWindowToolClass::init()
 {
-	// Register Embedded Object
-	RegisterEmbeddedObject( &m_svSourceImageNames, SVSourceImageNamesGuid, IDS_OBJECTNAME_SOURCE_IMAGE_NAMES, false, SVResetItemTool );
+	BuildEmbeddedObjectList ();
 
-	// Set up your type...
+	BuildAvailableAnalyzerList (); 
+
+	AddUnaryImageOperatorListAsChild ();
+
+	// Set up your type... in this case this will reference that this tool is a 
+	// Window Tool.
 	outObjectInfo.ObjectTypeInfo.ObjectType = SVToolObjectType;
 	outObjectInfo.ObjectTypeInfo.SubType    = SVWindowToolObjectType;
+}
 
+void SVWindowToolClass::BuildEmbeddedObjectList ()
+{
+	// Register Embedded Object
+	RegisterEmbeddedObject( &m_svSourceImageNames, 
+							SVSourceImageNamesGuid, 
+							IDS_OBJECTNAME_SOURCE_IMAGE_NAMES, 
+							false, 
+							SVResetItemTool );
+
+}
+
+
+void SVWindowToolClass::BuildAvailableAnalyzerList ()
+{
 	// Default taskObjectList items:
 
 	// Populate the available analyzer list
@@ -119,7 +138,10 @@ void SVWindowToolClass::init()
 		analyzerClassInfo.ClassName.LoadString( IDS_CLASSNAME_SVOCVANALYZER );
 		availableChildren.Add(analyzerClassInfo);
 	}
+}
 
+void SVWindowToolClass::AddUnaryImageOperatorListAsChild ()
+{
 	// Build an operator list...
 	// ...use Standard image operator list, because we need an output image! RO_20Mar2000
 	SVUnaryImageOperatorListClass* pOperatorList = new SVStdImageOperatorListClass;
@@ -139,7 +161,6 @@ void SVWindowToolClass::init()
 		// Add the UnaryImageOperatorList to the Tool's List
 		Add( pOperatorList );
 	}
-
 	
 	ToolSizeAdjustTask::AddToFriendlist(this,true,true,true);
 	

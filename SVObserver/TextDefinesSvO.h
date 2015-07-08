@@ -67,6 +67,19 @@ namespace Seidenader
 		const TCHAR* const RangeValue_WrongRange = _T( "%s must between %d and %d." );
 		const TCHAR* const GlobalViewHeader[] = {_T("Global Constants"), _T("Type"), _T("Value"), _T("Description")};
 		const TCHAR* const Invalid = _T("Invalid");
+		const TCHAR* const Auto = _T("Auto");
+		const TCHAR* const Average = _T("Average"); 
+		const TCHAR* const Bicubic =_T("Bicubic");
+		const TCHAR* const Bilinear = _T("Bilinear");
+		const TCHAR* const NearestNeighbor = _T("Nearest Neighbor");
+
+		const TCHAR* const Enabled = _T("Enabled");
+		const TCHAR* const Disabled = _T("Disabled");
+
+		const TCHAR* const Fast = _T("Fast");
+		const TCHAR* const Precise = _T("Precise");
+
+		const TCHAR* const ResizeImage = _T("ResizeImage");
 	}
 }
 namespace SvO = Seidenader::SVObserver;

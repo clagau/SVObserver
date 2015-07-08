@@ -46,6 +46,9 @@ enum SVExtentPropertyEnum
 	SVExtentPropertyOldTranslationOffsetY   = 0x00020000,
 	SVExtentPropertyOldTranslationOffset    = 0x00030000,
 
+	SVExtentPropertyHeightScaleFactor		= 0x00040000, ///< Used by Resize Tool
+	SVExtentPropertyWidthScaleFactor		= 0x00080000, ///< Used by Resize Tool
+
 	SVExtentPropertyStartAngle              = 0x01000000,
 	SVExtentPropertyEndAngle                = 0x02000000,
 	SVExtentPropertyInnerRadius             = 0x04000000,
@@ -71,7 +74,9 @@ enum SVExtentPropertyEnum
 	                                | SVExtentPropertyStartAngle
 	                                | SVExtentPropertyEndAngle
 	                                | SVExtentPropertyInnerRadius
-	                                | SVExtentPropertyOuterRadius,
+	                                | SVExtentPropertyOuterRadius
+									| SVExtentPropertyHeightScaleFactor
+									| SVExtentPropertyWidthScaleFactor,
 
 	SVExtentPropertyDimentionsOutput = SVExtentPropertyOutputWidth
 	                                 | SVExtentPropertyOutputHeight,
@@ -79,6 +84,9 @@ enum SVExtentPropertyEnum
 	SVExtentPropertyRectangle = SVExtentPropertyWidth
 	                          | SVExtentPropertyHeight
 	                          | SVExtentPropertyDimentionsOutput,
+
+	SVExtentPropertyScaleFactor = SVExtentPropertyWidthScaleFactor
+								| SVExtentPropertyHeightScaleFactor,
 
 	SVExtentPropertyPoint = SVExtentPropertyRectangle,
 
@@ -88,10 +96,10 @@ enum SVExtentPropertyEnum
 	                    | SVExtentPropertyEndAngle
 	                    | SVExtentPropertyInnerRadius
 	                    | SVExtentPropertyOuterRadius
-                      | SVExtentPropertyDimentionsOutput,
+						| SVExtentPropertyDimentionsOutput,
 
 	SVExtentPropertyOldPositionsAll = SVExtentPropertyOldRotationAngle
-	                                | SVExtentPropertyOldPositionPointX
+	                                  | SVExtentPropertyOldPositionPointX
 		                              | SVExtentPropertyOldPositionPointY
 		                              | SVExtentPropertyOldPositionPoint
 		                              | SVExtentPropertyOldAbsPositionPointX
@@ -186,7 +194,17 @@ enum SVExtentTranslationEnum
 	SVExtentTranslationPolarUnwrap     = 60,
 	SVExtentTranslationBuildReference  = 70,
 	SVExtentTranslationLine            = 80,
+
+	/// SVExtentTranslationResize - Does a position, height, and width, 
+	///  translation that uses the scale factor values.
+	///  Uses include the Resize Tool.
+	SVExtentTranslationResize		   = 89,
+
+	/// SVExtentDoubleHeight - Does a position, and height translation 
+	///  that uses the height scale factor value.
+	///  Uses include the Image Tool, Double Height operation.
 	SVExtentTranslationDoubleHeight    = 90,
+
 	SVExtentTranslationFlipVertical	   = 91,
 	SVExtentTranslationFlipHorizontal  = 92,
 	SVExtentTranslationFigureShift	   = 93,

@@ -975,6 +975,15 @@ BOOL SVTaskObjectClass::RegisterEmbeddedObject(SVLineClass* p_psvEmbeddedObject,
 	return l_bOk;
 }
 
+// bool p_bResetAlways - input 
+//    true - means that the object will initiate a reset whenever the value is 
+//        set. Even if set to the same value.
+//    false - means that the object will only initiate a reset if its value 
+//        changes.
+//
+// The only place that this is ever set to true is for the color HSI 
+// conversion value (Color Tool) and it is probably not necessary there.
+//
 BOOL SVTaskObjectClass::RegisterEmbeddedObject( SVValueObjectClass* p_psvEmbeddedObject, const GUID& p_rguidEmbeddedID, int p_iStringResourceID, bool p_bResetAlways, SVResetItemEnum p_eRequiredReset )
 {
 	BOOL l_bOk = p_psvEmbeddedObject->SetResetOptions( p_bResetAlways, p_eRequiredReset ) == S_OK;
@@ -1007,8 +1016,7 @@ BOOL SVTaskObjectClass::RegisterEmbeddedObject( SVValueObjectClass* p_psvEmbedde
 	return l_bOk;
 }
 
-// Set embedded object info.
-// Use this only for real embedded objects.
+
 BOOL SVTaskObjectClass::RegisterEmbeddedObjectAsClass(SVObjectClass* PEmbeddedObject, const GUID& REmbeddedID, int NewStringResourceID)
 {
 	ASSERT(PEmbeddedObject);

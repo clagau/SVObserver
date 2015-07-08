@@ -53,6 +53,9 @@
     <ClInclude Include="SVObjectArrayClassTemplate.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="SVBimapDeclarations.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="SVDeque.inl">

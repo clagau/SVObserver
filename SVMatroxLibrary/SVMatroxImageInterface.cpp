@@ -15,11 +15,30 @@
 
 #include "SVCommandLibrary/SVCommandDataHolder.h"
 #include "SVCommandLibrary/SVCommandDataValue.h"
+#include "SVMessage/SVMessage.h"
 
 #include "SVMatroxBufferInterface.h"
 #include "SVMatroxCommandDataImage.h"
 #include "SVMatroxImagingLibrary.h"  // has MIL includes
 #include "SVMatroxResourceMonitor.h"
+#include <boost/config.hpp>
+#include <boost/assign/list_of.hpp>
+
+
+SVInterpolationModeOptions::SVInterpolationModeOptionsEnumMap SVInterpolationModeOptions::m_Convertor = boost::assign::map_list_of<>
+	(SVInterpolationModeOptions::InterpolationModeAuto, M_INTERPOLATE)
+	(SVInterpolationModeOptions::InterpolationModeBilinear, M_BILINEAR)
+	(SVInterpolationModeOptions::InterpolationModeBicubic, M_BICUBIC)
+	(SVInterpolationModeOptions::InterpolationModeAverage, M_AVERAGE)
+	(SVInterpolationModeOptions::InterpolationModeNearestNeighbor, M_NEAREST_NEIGHBOR);
+
+SVOverscanOptions::SVOverscanOptionsEnumMap SVOverscanOptions::m_Convertor = boost::assign::map_list_of<>
+	(SVOverscanOptions::OverscanEnable, M_OVERSCAN_ENABLE)
+	(SVOverscanOptions::OverscanDisable, M_OVERSCAN_DISABLE);
+
+SVPerformanceOptions::SVPerformanceOptionsEnumMap SVPerformanceOptions::m_Convertor = boost::assign::map_list_of<>
+	(SVPerformanceOptions::PerformanceFast, M_FAST)
+	(SVPerformanceOptions::PerformancePresice, M_REGULAR);
 
 /**
 @SVOperationName Default Constructor
@@ -2112,40 +2131,123 @@ SVMatroxImageInterface::SVStatusCode SVMatroxImageInterface::Watershed( const SV
 @SVOperationDescription This function performs a scaling transformation on the specified source buffer.
 
 */
-SVMatroxImageInterface::SVStatusCode SVMatroxImageInterface::Resize( const SVMatroxBuffer& p_rDest,
-																	const SVMatroxBuffer& p_rSource,
-																	double p_dScaleFactorX,
-																	double p_dScaleFactorY,
-																	SVImageOperationTypeEnum p_lInterpolationMode )
+SVMatroxImageInterface::SVStatusCode SVMatroxImageInterface::Resize( const SVMatroxBuffer&		p_rDest,
+																	 const SVMatroxBuffer&		p_rSource,
+																	 const double				p_dScaleFactorX,
+																	 const double				p_dScaleFactorY,
+																	 const SVInterpolationModeOptions::SVInterpolationModeOptionsEnum interpolationMode,
+																	 const SVOverscanOptions::SVOverscanOptionsEnum	overscan,
+																	 const SVPerformanceOptions::SVPerformanceOptionsEnum	performance)
 {
 	SVStatusCode l_Code( SVMEE_STATUS_OK );
+
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
-
 	{
-		if( !p_rSource.empty() && !p_rDest.empty() )
+		while (true)
 		{
-			long l_lMatroxFlags = Convert2MatroxType( p_lInterpolationMode );
-			if( l_lMatroxFlags != 0 )
+			if (p_rSource.empty())
 			{
-				MimResize(p_rSource.GetIdentifier(), 
-					p_rDest.GetIdentifier(),
-					p_dScaleFactorX,
-					p_dScaleFactorY,
-					l_lMatroxFlags);
-				l_Code = SVMatroxApplicationInterface::GetLastStatus();
+				l_Code = SVMSG_SVO_5042_COULDNOTGETSOURCEIMAGE;
+				break;
 			}
-			else
+
+			if (p_rDest.empty())
 			{
-				l_Code = SVMEE_INVALID_PARAMETER;
+				l_Code = SVMSG_SVO_5043_COULDNOTGETDESTINATIONIMAGE;
+				break;
 			}
-		}
-		else
-		{
-			l_Code = SVMEE_INVALID_HANDLE;
-		}
+
+			long matroxInterpolationMode	= 0;
+			long matroxOverscan				= 0;
+			long matroxPerformance			= 0;
+
+			switch (interpolationMode)
+			{
+			case	SVInterpolationModeOptions::InterpolationModeAuto:	
+			case	SVInterpolationModeOptions::InterpolationModeBilinear:	
+			case	SVInterpolationModeOptions::InterpolationModeBicubic:	
+			// Average will only work with values less than 1.  Auto will 
+			// already use Average for values less than 1.
+			case	SVInterpolationModeOptions::InterpolationModeNearestNeighbor:
+				 {
+					// valid parameter
+					 l_Code = SVInterpolationModeOptions::m_Convertor.ConvertBitSetToMatroxType(interpolationMode, matroxInterpolationMode);
+
+					break;
+				 }
+			default:
+				{
+					// invalid parameter
+				    l_Code = SVMSG_SVO_5044_INVALIDINTERPOLATIONMODE;
+					break;
+				}
+
+			}
+
+			if (SVMEE_STATUS_OK != l_Code)
+			{
+				break;
+			}
+
+			switch (overscan)
+			{
+			case	SVOverscanOptions::OverscanEnable:	
+			case	SVOverscanOptions::OverscanDisable:
+				{
+					// valid parameter
+					l_Code = SVOverscanOptions::m_Convertor.ConvertBitSetToMatroxType(overscan, matroxOverscan);
+					break;
+				}
+			default:
+				{
+					// invalid parameter
+					l_Code = SVMSG_SVO_5045_INVALIDOVERSCAN;
+					break;
+				}
+
+			} 
+
+			if (SVMEE_STATUS_OK != l_Code)
+			{
+				break;
+			}
+
+			switch (performance)
+			{
+			case	SVPerformanceOptions::PerformanceFast:	
+			case	SVPerformanceOptions::PerformancePresice:
+				{
+					// valid parameter
+					l_Code = SVPerformanceOptions::m_Convertor.ConvertBitSetToMatroxType(performance, matroxPerformance);
+					break;
+				}
+			default:
+				{
+					// invalid parameter
+					l_Code = SVMSG_SVO_5046_INVALIDPERFORMANCE;
+					break;
+				}
+			}
+
+			if (SVMEE_STATUS_OK != l_Code)
+			{
+				break;
+			}
+
+			MimResize(	p_rSource.GetIdentifier(), 
+						p_rDest.GetIdentifier(),
+						p_dScaleFactorX,
+						p_dScaleFactorY,
+						matroxInterpolationMode | matroxOverscan | matroxPerformance);
+
+			l_Code = SVMatroxApplicationInterface::GetLastStatus();
+
+			break;
+		} // while (true)
 	}
+
 #ifdef USE_TRY_BLOCKS
 	catch(...)
 	{

@@ -1,0 +1,852 @@
+//*****************************************************************************
+/// \copyright COPYRIGHT (c) 2015,2015 by Seidenader Maschinenbau GmbH
+/// All Rights Reserved 
+/// \Author	Jim Brown
+//*****************************************************************************
+
+#pragma region Includes
+#include "stdafx.h"
+#include <afxctl.h>
+#include <afxdialogex.h>
+#include <limits>
+#include "SVOResource\resource.h"
+#include "SVMessage\SVMessage.h"
+#include "SVStatusLibrary\ExceptionManager.h"
+#include "SVImageLibrary\SVImageBufferHandleImage.h"
+#include "PropertyTree\PROPTREE.H"
+#include "SVTADlgTranslationResizePage.h"
+#include "SVToolAdjustmentDialogSheetClass.h"
+#include "SVGuiExtentUpdater.h"
+#include "ResizeTool.h"
+#pragma endregion Includes
+
+#pragma region Properry Tree Items Enum
+enum {	IDC_INPUTLISTTREE = 99,
+		IDC_INPUTLISTTREE_ROOT,
+		IDC_INPUTLISTTREE_SCALEFACTOR,
+		IDC_INPUTLISTTREE_HEIGHTSCALEFACTOR,
+		IDC_INPUTLISTTREE_WIDTHSCALEFACTOR,
+		IDC_INPUTLISTTREE_INPUTIMAGE,
+		IDC_INPUTLISTTREE_ROIHEIGHT,
+		IDC_INPUTLISTTREE_ROIWIDTH,
+		IDC_INPUTLISTTREE_OUTPUTIMAGE,
+		IDC_INPUTLISTTREE_OUTPUTHEIGHT,
+		IDC_INPUTLISTTREE_OUTPUTWIDTH,
+		IDC_INPUTLISTTREE_OTHER,
+		IDC_INPUTLISTTREE_INTERPOLATIONMODE,
+		IDC_INPUTLISTTREE_OVERSCAN,
+		IDC_INPUTLISTTREE_PERFORMANCE
+};
+#pragma endregion Properry Tree Items Enum
+
+SVTADlgTranslationResizePage::SVTADlgTranslationResizePage(SVToolAdjustmentDialogSheetClass* Parent, int id)
+: CPropertyPage(id)
+, m_Tool(nullptr)
+, m_ParentDialog(Parent)
+, m_HeightScaleFactor(1.0)
+, m_WidthScaleFactor(1.0)
+, m_SourceHeight(0)
+, m_SourceWidth(0)
+, m_OutputHeight(0)
+, m_OutputWidth(0)
+, m_SourceTabHandle(0)
+, m_ROITabHandle(0)
+, m_OutputTabHandle(0)
+{
+}
+
+SVTADlgTranslationResizePage::~SVTADlgTranslationResizePage()
+{
+}
+
+void SVTADlgTranslationResizePage::DoDataExchange(CDataExchange* pDX)
+{
+	CPropertyPage::DoDataExchange(pDX);
+
+	//{{AFX_DATA_MAP(SVTADlgTranslationResizePage)
+	DDX_Control(pDX, IDC_DIALOGIMAGE, m_DialogImage);
+	//}}AFX_DATA_MAP
+}
+
+/////////////////////////////////////////////////////////////////////////////
+// SVTADlgTranslationResizePage message handlers
+
+BOOL SVTADlgTranslationResizePage::OnInitDialog() 
+{
+	CPropertyPage::OnInitDialog();
+
+	HRESULT hr = S_OK;
+
+	if (nullptr == m_ParentDialog)
+	{
+		//	This should not be able to happen.  I'm not using an ASSERT 
+		//	because nobody cares about a couple milliseconds in the GUI.
+		hr = SVMSG_SVO_5001_NULLPARENT;
+	}
+	else
+	{
+		m_Tool = static_cast <ResizeTool*> (m_ParentDialog->GetTool ());
+
+		if (nullptr == m_Tool)
+		{
+			hr = SVMSG_SVO_5008_NULLTOOL;
+		}
+		else
+		{
+			// This sets the base class 
+			//   SVTaskObjectValueInterface::m_psvTaskObject (Tool).  This is 
+			//   necessary for performing a RunOnce later.
+			SetTaskObject( m_Tool );
+
+			hr = SetupResizePropertyTree();
+			if (S_OK == hr )
+			{
+				hr = SetupResizeImageControl();
+			}
+		}
+	}
+
+	if (S_OK != hr)
+	{
+		SvStl::ExceptionMgr1 Exception( SvStl::ExpTypeEnum::LogAndDisplay );
+		Exception.setMessage( hr, nullptr, StdExceptionParams, 5015);
+	}
+
+	UpdateData(FALSE); // dialog being initialized.
+
+	return TRUE;  // return TRUE unless you set the focus to a control
+	// EXCEPTION: OCX Property Pages should return FALSE
+}
+
+BOOL SVTADlgTranslationResizePage::OnSetActive()
+{
+	UpdateImages();
+	return CPropertyPage::OnSetActive();
+}
+
+HRESULT SVTADlgTranslationResizePage::AddScaleFactors(SVRPropertyItem* pRoot)
+{
+	HRESULT hr = S_OK;
+	SVRPropertyItem* pGroupItem = m_Tree.InsertItem(new SVRPropertyItem(), pRoot);
+	if (nullptr == pGroupItem)
+	{
+		hr = SVMSG_SVO_5003_COULDNOTINSERTGROUPITEM;
+	}
+	else
+	{
+		pGroupItem->SetCtrlID (IDC_INPUTLISTTREE_SCALEFACTOR);
+		pGroupItem->SetCanShrink(false);
+		pGroupItem->SetLabelText(_T("Scale Factor"));
+		pGroupItem->SetInfoText(_T(""));
+		pGroupItem->Expand();
+		pGroupItem->SetBold(true);
+		pGroupItem->SetBackColor(::GetSysColor(COLOR_INACTIVECAPTION));
+		pGroupItem->SetForeColor(::GetSysColor(COLOR_HIGHLIGHTTEXT));
+		pGroupItem->SetCanHighlight(false);
+
+		SVRPropertyItemEdit* pEdit = static_cast <SVRPropertyItemEdit*> (m_Tree.InsertItem(new SVRPropertyItemEdit(), pGroupItem));
+		if (nullptr == pEdit)
+		{
+			hr = SVMSG_SVO_5006_COULDNOTINSERTHEIGHT;
+		}
+		else
+		{
+			pEdit->SetCtrlID( IDC_INPUTLISTTREE_HEIGHTSCALEFACTOR );
+			pEdit->SetLabelText( _T("Height"));
+			pEdit->SetInfoText( _T("Height scale factor modifies the height of the image. < 1 will reduce.  > 1 will expand."));
+
+			pEdit = static_cast <SVRPropertyItemEdit*> (m_Tree.InsertItem(new SVRPropertyItemEdit(), pGroupItem));
+			if (!pEdit)
+			{
+				hr = SVMSG_SVO_5009_COULDNOTINSERTWIDTH;
+			}
+			else
+			{
+				pEdit->SetCtrlID( IDC_INPUTLISTTREE_WIDTHSCALEFACTOR );
+				pEdit->SetLabelText( _T("Width"));
+				pEdit->SetInfoText( _T("Width scale factor modifies the width of the image. < 1 will reduce.  > 1 will expand."));
+			}
+		}
+	}
+	return hr;
+}
+
+HRESULT SVTADlgTranslationResizePage::AddInputImageInfo(SVRPropertyItem* pRoot)
+{
+	HRESULT hr = S_OK;
+	SVRPropertyItem* pGroupItem = m_Tree.InsertItem(new SVRPropertyItem(), pRoot);
+	if (nullptr == pGroupItem)
+	{
+		hr = SVMSG_SVO_5010_COULDNOTINSERTINPUTIMAGEGROUP;
+	}
+	else
+	{
+		pGroupItem->SetCtrlID (IDC_INPUTLISTTREE_INPUTIMAGE);
+		pGroupItem->SetCanShrink(false);
+		pGroupItem->SetLabelText(_T("Input Image ROI Size"));
+		pGroupItem->SetInfoText(_T(""));
+		pGroupItem->Expand();
+		pGroupItem->SetBold(true);
+		pGroupItem->SetBackColor(::GetSysColor(COLOR_INACTIVECAPTION));
+		pGroupItem->SetForeColor(::GetSysColor(COLOR_HIGHLIGHTTEXT));
+		pGroupItem->SetCanHighlight(false);
+
+		SVRPropertyItemStatic* staticItem = static_cast <SVRPropertyItemStatic*> (m_Tree.InsertItem(new SVRPropertyItemStatic(), pGroupItem));
+		if (nullptr == staticItem)
+		{
+			hr = SVMSG_SVO_5011_COULDNOTINSERTHEIGHT;
+		}
+		else
+		{
+			staticItem->SetCtrlID( IDC_INPUTLISTTREE_ROIHEIGHT );
+			staticItem->SetLabelText(_T("Height"));
+			staticItem->SetInfoText(_T("Height of input ROI (read only)"));
+		
+			staticItem = static_cast <SVRPropertyItemStatic*> (m_Tree.InsertItem(new SVRPropertyItemStatic(), pGroupItem));
+			if (nullptr == staticItem)
+			{
+				hr = SVMSG_SVO_5012_COULDNOTINSERTWIDTH;
+			}
+			else
+			{
+				staticItem->SetCtrlID( IDC_INPUTLISTTREE_ROIWIDTH );
+				staticItem->SetLabelText( _T("Width"));
+				staticItem->SetInfoText( _T("Width of input ROI (read only)"));
+			}
+		}
+	}
+	return hr;
+}
+
+HRESULT SVTADlgTranslationResizePage::AddOutputImageInfo(SVRPropertyItem* pRoot)
+{
+	HRESULT hr = S_OK;
+	SVRPropertyItem* pGroupItem = m_Tree.InsertItem(new SVRPropertyItem(), pRoot);
+	if (nullptr == pGroupItem)
+	{
+		hr = SVMSG_SVO_5013_COULDNOTINSERTOUTPUTIMAGEGROUP;
+	}
+	else
+	{
+		pGroupItem->SetCtrlID (IDC_INPUTLISTTREE_OUTPUTIMAGE);
+		pGroupItem->SetCanShrink(false);
+		pGroupItem->SetLabelText(_T("Output Image Size"));
+		pGroupItem->SetInfoText(_T(""));
+		pGroupItem->Expand();
+		pGroupItem->SetBold(true);
+		pGroupItem->SetBackColor(::GetSysColor(COLOR_INACTIVECAPTION));
+		pGroupItem->SetForeColor(::GetSysColor(COLOR_HIGHLIGHTTEXT));
+		pGroupItem->SetCanHighlight(false);
+
+		SVRPropertyItemStatic* staticItem = static_cast <SVRPropertyItemStatic*> (m_Tree.InsertItem(new SVRPropertyItemStatic(), pGroupItem));
+		if (nullptr == staticItem)
+		{
+			hr = SVMSG_SVO_5014_COULDNOTINSERTHEIGHT;
+		}
+		else
+		{
+			staticItem->SetCtrlID(IDC_INPUTLISTTREE_OUTPUTHEIGHT);
+			staticItem->SetLabelText( _T("Height"));
+			staticItem->SetInfoText( _T("Ouput Image height after the Height Scale Factor is applied. (read only)"));
+			staticItem->SetItemValue( _T("300") );
+
+			staticItem = static_cast <SVRPropertyItemStatic*> (m_Tree.InsertItem(new SVRPropertyItemStatic(), pGroupItem));
+			if (nullptr == staticItem)
+			{
+				hr = SVMSG_SVO_5015_COULDNOTINSERTWIDTH;
+			}
+			else
+			{
+				staticItem->SetCtrlID(IDC_INPUTLISTTREE_OUTPUTWIDTH);
+				staticItem->SetLabelText( _T("Width"));
+				staticItem->SetInfoText( _T("Ouput Image width after the Width Scale Factor is applied. (read only)"));
+				staticItem->SetItemValue( _T("400") );
+			}
+		}
+	}
+	return hr;
+}
+
+HRESULT SVTADlgTranslationResizePage::AddInterpolationMode(SVRPropertyItem* pGroupItem)
+{
+	HRESULT hr = S_OK;
+	SVRPropertyItemCombo* comboItem = static_cast <SVRPropertyItemCombo*> (m_Tree.InsertItem(new SVRPropertyItemCombo(), pGroupItem));
+	if (nullptr == comboItem)
+	{
+		hr = SVMSG_SVO_5035_COULDNOTINSERTINTERPOLATIONMODEITEM;
+	}
+	else
+	{
+		comboItem->SetCtrlID( IDC_INPUTLISTTREE_INTERPOLATIONMODE );
+		comboItem->SetLabelText( _T("Interpolation Mode"));
+		comboItem->SetInfoText( _T("Pulldown menu options: Auto (enlarge is Bilinear, reduce is Average), Bicubic, Bilinear, Nearest neighbor."));
+
+		comboItem->CreateComboBox();
+
+		SVEnumerateValueObjectClass* interpolationMode = m_Tool->getInterpolationMode ();
+		CString	enumeratorName;
+
+		interpolationMode->GetEnumeratorName(SVInterpolationModeOptions::InterpolationModeAuto, enumeratorName);
+		long insertedIndex = comboItem->AddString(enumeratorName);
+		comboItem->SetItemData(insertedIndex, SVInterpolationModeOptions::InterpolationModeAuto);
+
+		// Average will only work with values less than 1.  
+		// Auto will already use Average for values less than 1.
+		interpolationMode->GetEnumeratorName(SVInterpolationModeOptions::InterpolationModeBicubic, enumeratorName);
+		insertedIndex = comboItem->AddString(enumeratorName);
+		comboItem->SetItemData(insertedIndex, SVInterpolationModeOptions::InterpolationModeBicubic);
+
+		interpolationMode->GetEnumeratorName(SVInterpolationModeOptions::InterpolationModeBilinear, enumeratorName);
+		insertedIndex = comboItem->AddString(enumeratorName);
+		comboItem->SetItemData(insertedIndex, SVInterpolationModeOptions::InterpolationModeBilinear);
+
+		interpolationMode->GetEnumeratorName(SVInterpolationModeOptions::InterpolationModeNearestNeighbor, enumeratorName);
+		insertedIndex = comboItem->AddString(enumeratorName);
+		comboItem->SetItemData(insertedIndex, SVInterpolationModeOptions::InterpolationModeNearestNeighbor);
+
+		comboItem->SetItemValue(SVInterpolationModeOptions::InterpolationModeAuto); // Currently selected value.
+	}
+	return hr;
+}
+
+HRESULT SVTADlgTranslationResizePage::AddOverScan(SVRPropertyItem* pGroupItem)
+{
+	HRESULT hr = S_OK;
+	SVRPropertyItemCombo* comboItem = static_cast <SVRPropertyItemCombo*> (m_Tree.InsertItem(new SVRPropertyItemCombo(), pGroupItem));
+	if (nullptr == comboItem)
+	{
+		hr = SVMSG_SVO_5036_COULDNOTINSERTOVERSCANITEM;
+	}
+	else
+	{
+		comboItem->SetCtrlID( IDC_INPUTLISTTREE_OVERSCAN );
+		comboItem->SetLabelText( _T("Overscan"));
+		comboItem->SetInfoText( _T("Pulldown menu options: Enabled - use pixels from outside ROI for interpolation (if available), Disabled."));
+
+		comboItem->CreateComboBox();
+
+		SVEnumerateValueObjectClass* overscan = m_Tool->getOverscan ();
+		CString	enumeratorName;
+
+		overscan->GetEnumeratorName(SVOverscanOptions::OverscanEnable, enumeratorName);
+		long insertedIndex = comboItem->AddString(enumeratorName);
+		comboItem->SetItemData (insertedIndex, SVOverscanOptions::OverscanEnable);
+
+		overscan->GetEnumeratorName(SVOverscanOptions::OverscanDisable, enumeratorName);
+		insertedIndex = comboItem->AddString(enumeratorName);
+		comboItem->SetItemData (insertedIndex, SVOverscanOptions::OverscanDisable);
+
+		comboItem->SetItemValue (SVOverscanOptions::OverscanEnable); // Currently selected value.
+	}
+	return hr;
+}
+
+HRESULT SVTADlgTranslationResizePage::AddPerformance(SVRPropertyItem* pGroupItem)
+{
+	HRESULT hr = S_OK;
+	SVRPropertyItemCombo* comboItem = static_cast <SVRPropertyItemCombo*> (m_Tree.InsertItem(new SVRPropertyItemCombo(), pGroupItem));
+	if (nullptr == comboItem)
+	{
+		hr = SVMSG_SVO_5037_COULDNOTINSERTPERFORMANCEITEM;
+	}
+	else
+	{
+		comboItem->SetCtrlID( IDC_INPUTLISTTREE_PERFORMANCE	);
+		comboItem->SetLabelText( _T("Performance"));
+		comboItem->SetInfoText( _T("Pulldown menu options: Fast, Precise."));
+
+		comboItem->CreateComboBox();
+
+		SVEnumerateValueObjectClass* performance = m_Tool->getPerformance ();
+		CString	enumeratorName;
+
+		performance->GetEnumeratorName(SVPerformanceOptions::PerformanceFast, enumeratorName);
+		long insertedIndex = comboItem->AddString(enumeratorName);
+		comboItem->SetItemData (insertedIndex, SVPerformanceOptions::PerformanceFast);
+
+		performance->GetEnumeratorName(SVPerformanceOptions::PerformancePresice, enumeratorName);
+		insertedIndex = comboItem->AddString(enumeratorName);
+		comboItem->SetItemData (insertedIndex, SVPerformanceOptions::PerformancePresice);
+
+		comboItem->SetItemValue (SVPerformanceOptions::PerformancePresice); // Currently selected value.
+	}
+	return hr;
+}
+
+HRESULT SVTADlgTranslationResizePage::AddOtherInfo(SVRPropertyItem* pRoot)
+{
+	HRESULT hr = S_OK;
+	// Add Other group
+	SVRPropertyItem* pGroupItem = m_Tree.InsertItem(new SVRPropertyItem(), pRoot);
+	if (nullptr == pGroupItem)
+	{
+		hr = SVMSG_SVO_5038_COULDNOTINSERTOTHERITEM;
+	}
+	else
+	{
+		pGroupItem->SetCtrlID (IDC_INPUTLISTTREE_OTHER);
+		pGroupItem->SetCanShrink(false);//(true); // Comboboxes in expand/shrink groups do not work correctly when collapsing
+		pGroupItem->SetLabelText(_T("Other"));
+		pGroupItem->SetInfoText(_T(""));
+		pGroupItem->Expand(); // so all the children are visible
+		pGroupItem->SetBold(true);
+		pGroupItem->SetBackColor(::GetSysColor(COLOR_INACTIVECAPTION));
+		pGroupItem->SetForeColor(::GetSysColor(COLOR_HIGHLIGHTTEXT));
+		pGroupItem->SetCanHighlight(false);
+
+		hr = AddInterpolationMode(pGroupItem);
+		if (S_OK == hr)
+		{
+			hr = AddOverScan(pGroupItem);
+		
+			if (S_OK == hr)
+			{
+				hr = AddPerformance(pGroupItem);
+			}
+		}
+	}
+	return hr;
+}
+
+HRESULT SVTADlgTranslationResizePage::SetupResizePropertyTree ()
+{
+	HRESULT	hr = S_OK;
+
+	DWORD dwStyle;
+	CRect rc;
+
+	// PTS_NOTIFY - SVRPropTree will send notification messages to the parent window
+	dwStyle = WS_CHILD|WS_VISIBLE|PTS_NOTIFY;
+
+	// Init the control's size to cover the entire client area
+	// Use dummy control for editor placement of Tree/list control.
+	CWnd*	dummyControl = GetDlgItem(IDC_PROPERTY_TREE);
+	if (nullptr == dummyControl)
+	{
+		hr = SVMSG_SVO_5002_NULLPROPERTYTREE_AREA;
+	}
+	else
+	{
+		dummyControl->GetWindowRect(rc);
+		ScreenToClient(rc);
+
+		// Create SVRPropTree control
+		if (FALSE == m_Tree.Create(dwStyle, rc, this, IDC_INPUTLISTTREE))
+		{
+			hr = SVMSG_SVO_5004_COULDNOTCREATE;
+		}
+	}
+
+	if (S_OK == hr)
+	{
+		m_Tree.SetColumn(150);
+
+		SVRPropertyItem* pRoot = m_Tree.InsertItem(new SVRPropertyItem());
+		if (nullptr == pRoot)
+		{
+			hr = SVMSG_SVO_5005_COULDNOTCREATE;
+		}
+		else
+		{
+			pRoot->SetCanShrink(false);
+			pRoot->SetLabelText(_T(""));
+			pRoot->SetInfoText(_T(""));
+			pRoot->SetCtrlID (IDC_INPUTLISTTREE_ROOT);
+
+			hr = AddScaleFactors(pRoot);
+		}
+		if (S_OK == hr)
+		{
+			hr = AddInputImageInfo(pRoot);
+		
+			if (S_OK == hr)
+			{
+				hr = AddOutputImageInfo(pRoot);
+			
+				if (S_OK == hr)
+				{
+					hr = AddOtherInfo(pRoot);
+				}
+			}
+		}
+		if (S_OK == hr)
+		{
+			hr = UpdatePropertyTreeData ();
+		
+			if (S_OK == hr)
+			{
+				if (nullptr == m_ParentDialog)
+				{
+					//			This should not be able to happen.  I'm not using an ASSERT 
+					//			because nobody cares about a couple milliseconds in the GUI.
+					hr = SVMSG_SVO_5007_NULLPARENT;
+				}
+				else
+				{
+					pRoot->Expand( true );	// needed for redrawing
+				}
+			}
+		}
+	}
+	return hr;
+}
+
+void SVTADlgTranslationResizePage::UpdateScaleFactors(double newWidthScaleFactor, double newHeightScaleFactor)
+{
+	SVRPropertyItemEdit* editItem = static_cast <SVRPropertyItemEdit*> (m_Tree.FindItem(IDC_INPUTLISTTREE_HEIGHTSCALEFACTOR));
+
+	double oldHeightScaleFactor = 0.0;
+	editItem->GetItemValue(oldHeightScaleFactor);
+	if (newHeightScaleFactor != oldHeightScaleFactor) // reduces flicker.
+	{
+		editItem->SetItemValue( newHeightScaleFactor );
+		m_HeightScaleFactor = newHeightScaleFactor;
+	}
+
+	editItem = static_cast <SVRPropertyItemEdit*> (m_Tree.FindItem(IDC_INPUTLISTTREE_WIDTHSCALEFACTOR));
+	double oldWidthScaleFactor = 0.0;
+	editItem->GetItemValue(oldWidthScaleFactor);
+	if (newWidthScaleFactor != oldWidthScaleFactor) // reduces flicker.
+	{
+		editItem->SetItemValue( newWidthScaleFactor ); 
+		m_WidthScaleFactor = newWidthScaleFactor;
+	}
+}
+
+void SVTADlgTranslationResizePage::UpdateInputImageInfo(long newInputROIWidth, long newInputROIHeight)
+{
+	SVRPropertyItemStatic* staticItem = static_cast <SVRPropertyItemStatic*> (m_Tree.FindItem(IDC_INPUTLISTTREE_ROIHEIGHT));
+	
+	CString	stringValue;
+	staticItem->GetItemValue(stringValue);
+	long oldInputROIHeight = atol (stringValue);
+	if (newInputROIHeight != oldInputROIHeight)
+	{
+		stringValue.Format ("%d", newInputROIHeight);
+		staticItem->SetItemValue( stringValue );
+	}
+
+	staticItem = static_cast <SVRPropertyItemStatic*> (m_Tree.FindItem(IDC_INPUTLISTTREE_ROIWIDTH));
+
+	staticItem->GetItemValue(stringValue);
+	long oldInputROIWidth = atol (stringValue);
+	if (newInputROIWidth != oldInputROIWidth)
+	{
+		stringValue.Format ("%d", newInputROIWidth);
+		staticItem->SetItemValue( stringValue );
+	}
+}
+
+void SVTADlgTranslationResizePage::UpdateOutputImageInfo(long newOutputWidth, long newOutputHeight)
+{
+	SVRPropertyItemStatic* staticItem = static_cast <SVRPropertyItemStatic*> (m_Tree.FindItem(IDC_INPUTLISTTREE_OUTPUTHEIGHT));
+
+	CString	stringValue;
+	staticItem->GetItemValue(stringValue);
+	long oldOutputHeight = atol (stringValue);
+	if (newOutputHeight != oldOutputHeight)
+	{
+		stringValue.Format ("%d", newOutputHeight);
+		staticItem->SetItemValue( stringValue );
+	}
+
+	staticItem = static_cast <SVRPropertyItemStatic*> (m_Tree.FindItem(IDC_INPUTLISTTREE_OUTPUTWIDTH));
+
+	staticItem->GetItemValue(stringValue);
+	long oldOutputWidth = atol (stringValue);
+	if (newOutputWidth != oldOutputWidth)
+	{
+		stringValue.Format ("%d", newOutputWidth);
+		staticItem->SetItemValue( stringValue );
+	}
+}
+
+void SVTADlgTranslationResizePage::UpdateOtherInfo()
+{
+	SVRPropertyItemCombo* comboItem = static_cast <SVRPropertyItemCombo*> (m_Tree.FindItem(IDC_INPUTLISTTREE_INTERPOLATIONMODE));
+	SVEnumerateValueObjectClass* interpolationMode = m_Tool->getInterpolationMode ();
+	long oldInterpolationValue;
+	long newInterpolationValue;
+	interpolationMode->GetValue (newInterpolationValue);
+	comboItem->GetItemValue(oldInterpolationValue);
+	if (newInterpolationValue != oldInterpolationValue)
+	{
+		comboItem->SetItemValue( newInterpolationValue );
+	}
+
+	comboItem = static_cast <SVRPropertyItemCombo*> (m_Tree.FindItem(IDC_INPUTLISTTREE_OVERSCAN));
+	SVEnumerateValueObjectClass* overscan = m_Tool->getOverscan ();
+	long oldOverscanValue;
+	long newOverscanValue;
+	overscan->GetValue (newOverscanValue);
+	comboItem->GetItemValue(oldOverscanValue);
+	if (newOverscanValue != oldOverscanValue)
+	{
+		comboItem->SetItemValue( newOverscanValue );
+	}
+
+	comboItem = static_cast <SVRPropertyItemCombo*> (m_Tree.FindItem(IDC_INPUTLISTTREE_PERFORMANCE));
+	SVEnumerateValueObjectClass* performance = m_Tool->getPerformance ();
+	long oldPerformanceValue;
+	long newPerformanceValue;
+	performance->GetValue (newPerformanceValue);
+	comboItem->GetItemValue(oldPerformanceValue);
+	if (newPerformanceValue != oldPerformanceValue)
+	{
+		comboItem->SetItemValue( newPerformanceValue );
+	}
+}
+
+HRESULT SVTADlgTranslationResizePage::UpdatePropertyTreeData ()
+{
+	SVImageExtentClass toolImageExtents;
+	HRESULT hr = m_Tool->GetImageExtent(toolImageExtents);
+	if (S_OK == hr)
+	{
+		double newHeightScaleFactor = 0.0;
+		toolImageExtents.GetExtentProperty(SVExtentPropertyHeightScaleFactor, newHeightScaleFactor);
+		double newWidthScaleFactor = 0.0;
+		toolImageExtents.GetExtentProperty(SVExtentPropertyWidthScaleFactor, newWidthScaleFactor);
+		UpdateScaleFactors(newWidthScaleFactor, newHeightScaleFactor);
+
+		long newInputROIWidth(0);
+		long newInputROIHeight(0);
+		toolImageExtents.GetExtentProperty(SVExtentPropertyWidth, newInputROIWidth);
+		toolImageExtents.GetExtentProperty(SVExtentPropertyHeight, newInputROIHeight);
+		UpdateInputImageInfo(newInputROIWidth, newInputROIHeight);
+
+		long newOutputWidth(0);
+		long newOutputHeight(0);
+		toolImageExtents.GetExtentProperty(SVExtentPropertyOutputWidth, newOutputWidth);
+		toolImageExtents.GetExtentProperty(SVExtentPropertyOutputHeight , newOutputHeight);
+		UpdateOutputImageInfo(newOutputWidth, newOutputHeight);
+
+		UpdateOtherInfo();
+	}
+	return hr;
+}
+
+HRESULT SVTADlgTranslationResizePage::SetInspectionData()
+{
+	bool extentChanged = false;
+	bool embeddedChanged = false;
+
+	SVImageExtentClass toolImageExtents;
+	HRESULT hr = m_Tool->GetImageExtent(toolImageExtents);
+	if (S_OK == hr)
+	{
+		SVRPropertyItemEdit* editItem = static_cast <SVRPropertyItemEdit*> (m_Tree.FindItem(IDC_INPUTLISTTREE_HEIGHTSCALEFACTOR));
+
+		double oldHeightScaleFactor = 0.0;
+		double newHeightScaleFactor = 0.0;
+		SVDoubleValueObjectClass	newHeightScaleFactorVO;
+		toolImageExtents.GetExtentProperty (SVExtentPropertyHeightScaleFactor, oldHeightScaleFactor);
+		editItem->GetItemValue(newHeightScaleFactor);
+		if (newHeightScaleFactor != oldHeightScaleFactor) // reduces flicker.
+		{
+			toolImageExtents.SetExtentProperty (SVExtentPropertyHeightScaleFactor, newHeightScaleFactor);
+			extentChanged = true;
+		}
+
+		editItem = static_cast <SVRPropertyItemEdit*> (m_Tree.FindItem(IDC_INPUTLISTTREE_WIDTHSCALEFACTOR));
+		double oldWidthScaleFactor = 0.0;
+		double newWidthScaleFactor = 0.0;
+		toolImageExtents.GetExtentProperty (SVExtentPropertyWidthScaleFactor, oldWidthScaleFactor);
+		editItem->GetItemValue(newWidthScaleFactor);
+		if (newWidthScaleFactor != oldWidthScaleFactor) // reduces flicker.
+		{
+			toolImageExtents.SetExtentProperty (SVExtentPropertyWidthScaleFactor, newWidthScaleFactor);
+			extentChanged = true;
+		}
+
+		SVRPropertyItemCombo* comboItem = static_cast <SVRPropertyItemCombo*> (m_Tree.FindItem(IDC_INPUTLISTTREE_INTERPOLATIONMODE));
+		SVEnumerateValueObjectClass* interpolationMode = m_Tool->getInterpolationMode ();
+		long oldInterpolationValue;
+		long newInterpolationValue;
+		interpolationMode->GetValue (oldInterpolationValue);
+		comboItem->GetItemValue(newInterpolationValue);
+		if (newInterpolationValue != oldInterpolationValue)
+		{
+			SVValueObjectClass*	interpolationModeVO = m_Tool->getInterpolationMode();
+			AddInputRequest(interpolationModeVO, newInterpolationValue);
+			embeddedChanged = true;
+		}
+
+		comboItem = static_cast <SVRPropertyItemCombo*> (m_Tree.FindItem(IDC_INPUTLISTTREE_OVERSCAN));
+		SVEnumerateValueObjectClass* overscan = m_Tool->getOverscan ();
+		long oldOverscanValue;
+		long newOverscanValue;
+		overscan->GetValue (oldOverscanValue);
+		comboItem->GetItemValue(newOverscanValue);
+		if (newOverscanValue != oldOverscanValue)
+		{
+			SVValueObjectClass*	overscanVO = m_Tool->getOverscan();
+			AddInputRequest(overscanVO, newOverscanValue);
+			embeddedChanged = true;
+		}
+
+		comboItem = static_cast <SVRPropertyItemCombo*> (m_Tree.FindItem(IDC_INPUTLISTTREE_PERFORMANCE));
+		SVEnumerateValueObjectClass* performance = m_Tool->getPerformance ();
+		long oldPerformanceValue;
+		long newPerformanceValue;
+		performance->GetValue (oldPerformanceValue);
+		comboItem->GetItemValue(newPerformanceValue);
+		if (newPerformanceValue != oldPerformanceValue)
+		{
+			SVValueObjectClass*	performanceVO = m_Tool->getPerformance();
+			AddInputRequest(performanceVO, newPerformanceValue);
+			embeddedChanged = true;
+		}
+
+		if (true == extentChanged)
+		{
+			HRESULT hr = SVGuiExtentUpdater::SetImageExtent(m_Tool, toolImageExtents);
+		}
+
+		if (true == embeddedChanged)
+		{
+			HRESULT hr = AddInputRequestMarker();
+		}
+
+		if ((true == extentChanged) || (true == embeddedChanged))
+		{
+			RunOnce(m_Tool);
+			hr = UpdateImages();
+		}
+	}
+	return hr;
+}
+
+HRESULT SVTADlgTranslationResizePage::SetupResizeImageControl()
+{
+	HRESULT	hr = S_OK;
+
+	if (S_OK != m_DialogImage.AddTab(_T("Source ROI"), &m_ROITabHandle))
+	{
+		hr = SVMSG_SVO_5016_COULDNOTADDTAB;
+	}
+	else
+	{
+		if (S_OK != m_DialogImage.AddTab(_T("Result"), &m_OutputTabHandle))
+		{
+			hr = SVMSG_SVO_5017_COULDNOTADDTAB;
+		}
+		else
+		{
+			hr = UpdateImages();
+		}
+	}
+	return hr;
+}
+
+HRESULT SVTADlgTranslationResizePage::UpdateImages()
+{
+	HRESULT hr = S_OK;
+
+	SVSmartHandlePointer inputImageHandle;
+
+	SVImageClass* inputImage = m_Tool->getInputImage();
+	if (nullptr == inputImage)
+	{
+		// if (nullptr == inputImage) should not need checked here.
+		// is already checked in SetupTempROIImage().  If this error is
+		// occurring but that one did not, then something bad happened 
+		// between there and here.
+		hr = SVMSG_SVO_5039_COULDNOTGETINPUTIMAGE;
+	}
+	else
+	{
+		SVImageClass* logicalROIImage = m_Tool->getLogicalROIImage();
+		if (nullptr == logicalROIImage)
+		{
+			// if (nullptr == logicalROIImage) should not need checked here.
+			// is already checked in SetupTempROIImage().  If this error is
+			// occurring but that one did not, then something bad happened 
+			// between there and here.
+			hr = SVMSG_SVO_5040_COULDNOTGETROIIMAGE;
+		}
+		else
+		{
+			SVImageClass* outputImage = m_Tool->getOutputImage();
+			if (!outputImage)
+			{
+				hr = SVMSG_SVO_5041_COULDNOTGETOUTPUTIMAGE;
+			}
+			else
+			{
+				m_DialogImage.setImage(logicalROIImage, m_ROITabHandle);
+				m_DialogImage.setImage(outputImage, m_OutputTabHandle);
+
+				m_DialogImage.Refresh();
+			}
+		}
+	}
+	return hr;
+}
+
+static bool ValidScalefactor(const CString& strValue)
+{
+	bool bRetVal = true;
+	double val = atof(strValue);
+	if (val < std::numeric_limits<double>::epsilon())
+	{
+		bRetVal = false;
+	}
+	return bRetVal;
+}
+
+void SVTADlgTranslationResizePage::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResult)
+{
+	LPNMPROPTREE pNMPropTree = reinterpret_cast< LPNMPROPTREE >(pNotifyStruct);
+	*plResult = FALSE;
+	HRESULT hr = S_OK;
+	bool bValid = true;
+
+	if (pNMPropTree->pItem)
+	{
+		SVRPropertyItem* pItem = pNMPropTree->pItem;
+
+		if (IDC_INPUTLISTTREE_WIDTHSCALEFACTOR == pItem->GetCtrlID())
+		{
+			CString value;
+			m_Tree.FindItem(IDC_INPUTLISTTREE_WIDTHSCALEFACTOR)->GetItemValue(value);
+			value.Trim();
+			
+			bValid = ValidScalefactor(value);
+			if (!bValid)
+			{ 
+				CString strVal;
+				strVal.Format("%0.2lf", m_WidthScaleFactor);
+				m_Tree.FindItem(IDC_INPUTLISTTREE_WIDTHSCALEFACTOR)->SetItemValue(strVal);
+			}
+		}
+		if (IDC_INPUTLISTTREE_HEIGHTSCALEFACTOR == pItem->GetCtrlID())
+		{
+			CString value;
+			m_Tree.FindItem(IDC_INPUTLISTTREE_HEIGHTSCALEFACTOR)->GetItemValue(value);
+			value.Trim();
+			
+			bValid = ValidScalefactor(value);
+			if (!bValid)
+			{ 
+				CString strVal;
+				strVal.Format("%0.2lf", m_HeightScaleFactor);
+				m_Tree.FindItem(IDC_INPUTLISTTREE_HEIGHTSCALEFACTOR)->SetItemValue(strVal);
+			}
+		}
+	}
+	if (bValid)
+	{
+		hr = SetInspectionData();
+		if (SUCCEEDED(hr))
+		{
+			hr = UpdatePropertyTreeData();
+		}
+	}
+}
+
+#pragma region Message Map
+BEGIN_MESSAGE_MAP(SVTADlgTranslationResizePage, CPropertyPage)
+	ON_NOTIFY(PTN_ITEMCHANGED, IDC_INPUTLISTTREE, OnItemChanged)
+END_MESSAGE_MAP()
+#pragma endregion Message Map

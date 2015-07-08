@@ -266,7 +266,7 @@ HRESULT SVImageExtentClass::Initialize()
 	return l_hrOk;
 }
 
-SVExtentTranslationEnum SVImageExtentClass::GetTranslation()
+SVExtentTranslationEnum SVImageExtentClass::GetTranslation() const
 {
 	return m_eTranslation;
 }
@@ -291,6 +291,7 @@ HRESULT SVImageExtentClass::SetTranslation( SVExtentTranslationEnum p_eTranslati
 		case SVExtentTranslationLine:
 		case SVExtentTranslationLinear:
 		case SVExtentTranslationDoubleHeight:
+		case SVExtentTranslationResize:
 		case SVExtentTranslationCylindricalWarpH:
 		case SVExtentTranslationCylindricalWarpV:
 		case SVExtentTranslationVerticalPerspective:
@@ -334,29 +335,29 @@ HRESULT SVImageExtentClass::SetDimensions( SVExtentDimensionsClass p_svDimension
 		case SVExtentTranslationProfileShift:
 		case SVExtentTranslationTransformShift:
 		case SVExtentTranslationTransformRotate:
-		case SVExtentTranslationPolarUnwrap:
 		case SVExtentTranslationBuildReference:
 		case SVExtentTranslationLine:
 		case SVExtentTranslationLinear:
 		case SVExtentTranslationDoubleHeight:
+		case SVExtentTranslationResize:
 		case SVExtentTranslationFlipVertical:
 		case SVExtentTranslationFlipHorizontal:
 		case SVExtentTranslationFigureShift:
 		{
 			m_svDimensions = p_svDimensions;
-
-			// SPECIAL CASE
-			if ( m_eTranslation == SVExtentTranslationPolarUnwrap )
-			{
-				double dEndAngle = 0.0;
-				if ( GetExtentProperty( SVExtentPropertyEndAngle, dEndAngle ) == S_OK )
-				{
-					l_hrOk = SetExtentProperty( SVExtentPropertyEndAngle, dEndAngle );
-				}
-			}
-
 			l_hrOk = ClearOutputData();
+			break;
+		}
+		case SVExtentTranslationPolarUnwrap:
+		{
+			m_svDimensions = p_svDimensions;
 
+			double dEndAngle = 0.0;
+			if ( S_OK == GetExtentProperty( SVExtentPropertyEndAngle, dEndAngle ))
+			{
+				l_hrOk = SetExtentProperty( SVExtentPropertyEndAngle, dEndAngle );
+			}
+			l_hrOk = ClearOutputData();
 			break;
 		}
 	}
@@ -383,35 +384,34 @@ HRESULT SVImageExtentClass::SetPosition( SVExtentPositionClass p_svPosition )
 		case SVExtentTranslationProfileShift:
 		case SVExtentTranslationTransformShift:
 		case SVExtentTranslationTransformRotate:
-		case SVExtentTranslationPolarUnwrap:
 		case SVExtentTranslationBuildReference:
 		case SVExtentTranslationLine:
 		case SVExtentTranslationLinear:
 		case SVExtentTranslationDoubleHeight:
+		case SVExtentTranslationResize:
 		case SVExtentTranslationFlipVertical:
 		case SVExtentTranslationFlipHorizontal:
 		case SVExtentTranslationFigureShift:
 		{
-			l_hrOk = S_OK;
 			m_svPosition = p_svPosition;
-
-			// SPECIAL CASE
-			if ( m_eTranslation == SVExtentTranslationPolarUnwrap )
+			l_hrOk = ClearOutputData();
+			break;
+		}
+		case SVExtentTranslationPolarUnwrap:
+		{
+			m_svPosition = p_svPosition;
+			double dRotationAngle = 0.0;
+			if ( S_OK  == GetExtentProperty( SVExtentPropertyRotationAngle, dRotationAngle ))
 			{
-				double dRotationAngle = 0.0;
-				if ( GetExtentProperty( SVExtentPropertyRotationAngle, dRotationAngle ) == S_OK )
-				{
-					l_hrOk = SetExtentProperty( SVExtentPropertyRotationAngle, dRotationAngle );
-				}
+				l_hrOk = SetExtentProperty( SVExtentPropertyRotationAngle, dRotationAngle );
 			}
-
-			if ( l_hrOk == S_OK )
+			if ( S_OK == l_hrOk )
+			{
 				l_hrOk = ClearOutputData();
-
+			}
 			break;
 		}
 	}
-
 	return l_hrOk;
 }
 
@@ -675,6 +675,7 @@ SVExtentLocationPropertyEnum SVImageExtentClass::GetLocationPropertyAt( SVExtent
 
 	switch( m_eTranslation )
 	{
+		case SVExtentTranslationResize:
 		case SVExtentTranslationDoubleHeight:
 		case SVExtentTranslationFlipHorizontal:
 		case SVExtentTranslationFlipVertical:
@@ -1069,6 +1070,28 @@ SVExtentLocationPropertyEnum SVImageExtentClass::GetLocationPropertyAt( SVExtent
 	return l_eLocation;
 }
 
+// Translate the point to be relative (local space) 
+HRESULT SVImageExtentClass::TranslateToLocalSpace(const SVExtentPointStruct& rValue, SVExtentPointStruct& rResult)
+{
+	SVExtentPointStruct svPosition;
+	HRESULT hr = m_svPosition.GetExtentProperty(SVExtentPropertyPositionPoint, svPosition);
+
+	if (S_OK == hr)
+	{
+		rResult.m_dPositionX = rValue.m_dPositionX - svPosition.m_dPositionX;
+		rResult.m_dPositionY = rValue.m_dPositionY - svPosition.m_dPositionY;
+		
+		// optional...
+		SVExtentPointStruct svDisplacement;
+		if (S_OK == m_svPosition.GetExtentProperty(SVExtentPropertyTranslationOffset, svDisplacement))
+		{
+			rResult.m_dPositionX -= svDisplacement.m_dPositionX;
+			rResult.m_dPositionY -= svDisplacement.m_dPositionY;
+		}
+	}
+	return hr;
+}
+
 HRESULT SVImageExtentClass::Update( SVExtentLocationPropertyEnum p_eLocation, SVExtentPointStruct p_svStart, SVExtentPointStruct p_svEnd )
 {
 	HRESULT l_hrOk = S_FALSE;
@@ -1099,6 +1122,39 @@ HRESULT SVImageExtentClass::Update( SVExtentLocationPropertyEnum p_eLocation, SV
 		bool l_bValid = false;
 		switch( m_eTranslation )
 		{
+			case SVExtentTranslationResize:
+			{
+				//@WARNING [Jim][8 July 2015] No identification of error cases.
+				// GetExtentProperty () only l_bValid is identified, which is 
+				// not very helpful. Currently none of these cases give much 
+				// help with error identification.
+				l_bValid = (S_OK == TranslateToLocalSpace(p_svStart, l_svOutputStart)) &&
+								(S_OK == TranslateToLocalSpace(p_svEnd, l_svOutputEnd)) &&
+								(S_OK == GetRectangle(l_oRect));
+				if (l_bValid)
+				{
+					if (p_eLocation == SVExtentLocationPropertyBottomLeft)
+					{
+						l_svOutputEnd.m_dPositionY = p_svEnd.m_dPositionY;
+					}
+					else if (p_eLocation == SVExtentLocationPropertyTopRight)
+					{
+						l_svOutputEnd.m_dPositionX = p_svEnd.m_dPositionX;
+					}
+					else if (p_eLocation != SVExtentLocationPropertyTop &&
+						p_eLocation != SVExtentLocationPropertyLeft &&
+						p_eLocation != SVExtentLocationPropertyTopLeft)
+					{	
+						l_svOutputStart = p_svStart;
+						l_svOutputEnd = p_svEnd;
+					}
+				}
+				break;
+			}
+			// Note: These cases do not work correctly (cannot drag the left or top using the mouse in the gui), 
+			// a possible solution might be to use the same logic as the case above (SVExtentTranslationResize)
+			// however for these cases the position (not on the GUI) is always fixed to 0,0, so that might not 
+			// work. 
 			case SVExtentTranslationDoubleHeight:
 			case SVExtentTranslationFlipHorizontal:
 			case SVExtentTranslationFlipVertical:
@@ -1378,6 +1434,7 @@ HRESULT SVImageExtentClass::UpdateFromOutputSpace( SVExtentLocationPropertyEnum 
 		case SVExtentTranslationFlippedRotate:
 		case SVExtentTranslationBuildReference:
 		case SVExtentTranslationDoubleHeight:
+		case SVExtentTranslationResize:
 		case SVExtentTranslationFlipHorizontal:
 		case SVExtentTranslationFlipVertical:
 		case SVExtentTranslationFigureShift:
@@ -1609,6 +1666,32 @@ HRESULT SVImageExtentClass::GetRectangle( RECT &p_roRect ) const
 		l_hrOk = GetExtentProperty( SVExtentPropertyHeight, l_oRect.bottom );
 
 		l_oRect.bottom += l_oRect.top;
+	}
+
+	if ( l_hrOk == S_OK )
+	{
+		p_roRect = l_oRect;
+	}
+
+	return l_hrOk;
+}
+
+HRESULT SVImageExtentClass::GetLogicalRectangle( RECT &p_roRect ) const
+{
+	HRESULT l_hrOk = S_FALSE;
+
+	RECT l_oRect;
+
+	l_oRect.top = 0;
+	l_oRect.left = 0;
+	l_oRect.right = 0;
+	l_oRect.bottom = 0;
+
+	l_hrOk = GetExtentProperty( SVExtentPropertyWidth, l_oRect.right );
+
+	if ( l_hrOk == S_OK )
+	{
+		l_hrOk = GetExtentProperty( SVExtentPropertyHeight, l_oRect.bottom );
 	}
 
 	if ( l_hrOk == S_OK )
@@ -2096,6 +2179,37 @@ HRESULT SVImageExtentClass::TranslateToOutputSpace( SVExtentPointStruct p_svValu
 			
 				break;
 			}
+
+			case SVExtentTranslationResize:
+			{
+				SVExtentPointStruct l_svPosition;
+				double heightScaleFactor = 1.0;
+				double widthScaleFactor = 1.0;
+
+				//@WARNING [Jim][8 July 2015]  No identification of error cases.  
+				// GetExtentProperty () only returns S_FALSE, which is not 
+				// very helpful. Currently none of these cases give much help
+				// with error identification.
+				l_hrOk = m_svPosition.GetExtentProperty( SVExtentPropertyPositionPoint, l_svPosition );
+				if (l_hrOk == S_OK)
+				{
+					l_hrOk = m_svDimensions.GetExtentProperty( SVExtentPropertyHeightScaleFactor, heightScaleFactor );
+				}
+
+				if (l_hrOk == S_OK)
+				{
+					l_hrOk = m_svDimensions.GetExtentProperty( SVExtentPropertyWidthScaleFactor, widthScaleFactor );
+				}
+
+				if ( l_hrOk == S_OK )
+				{
+					p_rsvResult.m_dPositionX = (p_svValue.m_dPositionX - l_svPosition.m_dPositionX) * widthScaleFactor;
+					p_rsvResult.m_dPositionY = (p_svValue.m_dPositionY - l_svPosition.m_dPositionY) * heightScaleFactor;
+				}
+
+				break;
+			}
+
 			case SVExtentTranslationFlipVertical:
 			{
 				SVExtentPointStruct l_svPosition;
@@ -2157,7 +2271,6 @@ HRESULT SVImageExtentClass::TranslateFromOutputSpace( SVExtentPointStruct p_svVa
 		switch( m_eTranslation )
 		{
 			case SVExtentTranslationNone:
-			//case SVExtentTranslationFigureShift:
 			{
 				p_rsvResult = p_svValue;
 
@@ -2650,19 +2763,50 @@ HRESULT SVImageExtentClass::TranslateFromOutputSpace( SVExtentPointStruct p_svVa
 				break;
 			}
 			case SVExtentTranslationDoubleHeight:
-			{
-				SVExtentPointStruct l_svPosition;
-
-				l_hrOk = m_svPosition.GetExtentProperty( SVExtentPropertyPositionPoint, l_svPosition );
-
-				if ( l_hrOk == S_OK )
 				{
-					p_rsvResult.m_dPositionX = p_svValue.m_dPositionX;
-					p_rsvResult.m_dPositionY = p_svValue.m_dPositionY / 2.0;
-				}
+					SVExtentPointStruct l_svPosition;
 
-				break;
-			}
+					l_hrOk = m_svPosition.GetExtentProperty( SVExtentPropertyPositionPoint, l_svPosition );
+
+					if ( l_hrOk == S_OK )
+					{
+						p_rsvResult.m_dPositionX = p_svValue.m_dPositionX;
+						p_rsvResult.m_dPositionY = p_svValue.m_dPositionY / 2.0;
+					}
+
+					break;
+				}
+			case SVExtentTranslationResize:
+				{
+					//@WARNING [Jim][8 July 2015] No identification of error cases.  
+					// GetExtentProperty () only returns S_FALSE, which is not 
+					// very helpful. Currently none of these cases give much help
+					// with error identification.
+
+					SVExtentPointStruct l_svPosition;
+
+					double heightScaleFactor = 1.0;
+					double widthScaleFactor = 1.0;
+
+					l_hrOk = m_svPosition.GetExtentProperty(SVExtentPropertyPositionPoint, l_svPosition);
+					if (S_OK == l_hrOk)
+					{
+						l_hrOk = m_svDimensions.GetExtentProperty(SVExtentPropertyHeightScaleFactor, heightScaleFactor);
+					}
+
+					if (S_OK == l_hrOk)
+					{
+						l_hrOk = m_svDimensions.GetExtentProperty(SVExtentPropertyWidthScaleFactor, widthScaleFactor);
+					}
+
+					if (S_OK == l_hrOk)
+					{
+						// Unscale and make relative to the Parent (input) image
+						p_rsvResult.m_dPositionX = (p_svValue.m_dPositionX / widthScaleFactor) + l_svPosition.m_dPositionX;
+						p_rsvResult.m_dPositionY = (p_svValue.m_dPositionY / heightScaleFactor) + l_svPosition.m_dPositionY;
+					}
+					break;
+				}
 		}// end switch( m_eTranslation )
 	}
 
@@ -2695,6 +2839,7 @@ HRESULT SVImageExtentClass::TranslateFromOutputSpace( SVExtentFigureStruct p_svV
 		case SVExtentTranslationLine:
 		case SVExtentTranslationLinear:
 		case SVExtentTranslationDoubleHeight:
+		case SVExtentTranslationResize:
 		case SVExtentTranslationVerticalPerspective:
 		case SVExtentTranslationHorizontalPerspective:
 		case SVExtentTranslationFlipVertical:
@@ -3036,6 +3181,7 @@ HRESULT SVImageExtentClass::TranslateFromOutputSpace( SVExtentLineStruct p_svVal
 		case SVExtentTranslationLine:
 		case SVExtentTranslationLinear:
 		case SVExtentTranslationDoubleHeight:
+		case SVExtentTranslationResize:
 		case SVExtentTranslationFlipVertical:
 		case SVExtentTranslationFlipHorizontal:
 		case SVExtentTranslationFigureShift:
@@ -3176,6 +3322,7 @@ HRESULT SVImageExtentClass::TranslateFromOutputSpace( SVExtentMultiLineStruct p_
 		case SVExtentTranslationLine:
 		case SVExtentTranslationLinear:
 		case SVExtentTranslationDoubleHeight:
+		case SVExtentTranslationResize:
 		case SVExtentTranslationFlipVertical:
 		case SVExtentTranslationFlipHorizontal:
 		case SVExtentTranslationFigureShift:
@@ -3231,6 +3378,7 @@ HRESULT SVImageExtentClass::TranslateLineFromOutputSpace( SVExtentPointStruct p_
 			case SVExtentTranslationProfileShift:
 			case SVExtentTranslationTransformShift:
 			case SVExtentTranslationDoubleHeight:
+			case SVExtentTranslationResize:
 			case SVExtentTranslationCylindricalWarpH:
 			case SVExtentTranslationCylindricalWarpV:
 			case SVExtentTranslationVerticalPerspective:
@@ -3647,6 +3795,7 @@ HRESULT SVImageExtentClass::UpdateSourceOffset( SVExtentOffsetStruct& p_rsvOffse
 		case SVExtentTranslationFigureShift:
 		case SVExtentTranslationPolarUnwrap:
 		case SVExtentTranslationDoubleHeight:
+		case SVExtentTranslationResize:
 		case SVExtentTranslationFlipVertical:
 		case SVExtentTranslationFlipHorizontal:
 		{
@@ -4259,29 +4408,50 @@ HRESULT SVImageExtentClass::BuildOutputDimensions()
 			}// end case SVExtentTranslationLine:
 
 			case SVExtentTranslationDoubleHeight:
+			case SVExtentTranslationResize:
 			{
+				//@WARNING [Jim][8 July 2015] No identification of error cases.  
+				// GetExtentProperty () only returns S_FALSE, which is not 
+				// very helpful. Currently none of these cases give much help
+				// with error identification.
+
 				double l_dValue = 0.0;
+				double inputHeight = 0.0;
+				double inputWidth = 0.0;
+				double heightScaleFactor = 1.0;
+				double widthScaleFactor = 1.0;
 
 				l_hrOk = m_svDimensions.DisableExtentProperty( SVExtentPropertyPie );
 
 				if ( l_hrOk == S_OK )
 				{
-					l_hrOk = m_svDimensions.GetExtentProperty( SVExtentPropertyWidth, l_dValue );				
+					l_hrOk = m_svDimensions.GetExtentProperty( SVExtentPropertyWidth, inputWidth );				
 				}
 
 				if ( l_hrOk == S_OK )
 				{
+					l_hrOk = m_svDimensions.GetExtentProperty( SVExtentPropertyWidthScaleFactor, widthScaleFactor );				
+				}
+
+				if ( l_hrOk == S_OK )
+				{
+					l_dValue = inputWidth * widthScaleFactor;
 					l_hrOk = m_svDimensions.SetExtentProperty( SVExtentPropertyOutputWidth, l_dValue );				
 				}
 
 				if ( l_hrOk == S_OK )
 				{
-					l_hrOk = m_svDimensions.GetExtentProperty( SVExtentPropertyHeight, l_dValue );				
+					l_hrOk = m_svDimensions.GetExtentProperty( SVExtentPropertyHeight, inputHeight );				
 				}
 
 				if ( l_hrOk == S_OK )
 				{
-					l_dValue *= 2;
+					l_hrOk = m_svDimensions.GetExtentProperty( SVExtentPropertyHeightScaleFactor, heightScaleFactor );				
+				}
+
+				if ( l_hrOk == S_OK )
+				{
+					l_dValue = inputHeight * heightScaleFactor;
 
 					l_hrOk = m_svDimensions.SetExtentProperty( SVExtentPropertyOutputHeight, l_dValue );				
 				}
@@ -4690,6 +4860,7 @@ HRESULT SVImageExtentClass::BuildFigure()
 				break;
 			}
 			case SVExtentTranslationDoubleHeight:
+			case SVExtentTranslationResize:
 			case SVExtentTranslationFlipHorizontal:
 			case SVExtentTranslationFlipVertical:
 			case SVExtentTranslationFigureShift:
@@ -5076,6 +5247,23 @@ HRESULT SVImageExtentClass::GetTitlePoint(SVExtentPointStruct &p_svTitlePoint) c
 
 	switch( m_eTranslation )
 	{
+		// Place the Title above the top of the ROI rectangle
+		case SVExtentTranslationResize:
+		{
+			//@WARNING [Jim][8 July 2015] No identification of error cases.  
+			// GetExtentProperty () only returns S_FALSE, which is not 
+			// very helpful. Currently none of these cases give much help
+			// with error identification.
+			l_hrOk = m_svPosition.GetExtentProperty(SVExtentPropertyPositionPoint, svPositionPoint);
+
+			if (S_OK == l_hrOk )
+			{
+				p_svTitlePoint.m_dPositionY = (svPositionPoint.m_dPositionY - 10);
+				p_svTitlePoint.m_dPositionX = (svPositionPoint.m_dPositionX + 5);
+			}
+			break;
+		}
+		// These cases place the Title below the top of the ROI rectangle
 		case SVExtentTranslationDoubleHeight:
 		case SVExtentTranslationFlipHorizontal:
 		case SVExtentTranslationFlipVertical:
@@ -5088,7 +5276,6 @@ HRESULT SVImageExtentClass::GetTitlePoint(SVExtentPointStruct &p_svTitlePoint) c
 				p_svTitlePoint.m_dPositionY = (svPositionPoint.m_dPositionY + 5 );
 				p_svTitlePoint.m_dPositionX = svPositionPoint.m_dPositionX + 5;
 			}
-
 			break;
 		}
 
@@ -5116,6 +5303,7 @@ HRESULT SVImageExtentClass::GetTitlePoint(SVExtentPointStruct &p_svTitlePoint) c
 
 			break;
 		}
+		// These cases place the Title above the top of the ROI rectangle
 		case SVExtentTranslationShift:
 		case SVExtentTranslationRotate:
 		case SVExtentTranslationFlippedRotate:

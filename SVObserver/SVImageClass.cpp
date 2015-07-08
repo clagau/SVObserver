@@ -178,6 +178,10 @@ void SVImageClass::init()
 	m_ImageInfo.SetExtentProperty( SVExtentPropertyPositionPointY, SV_DEFAULT_WINDOWTOOL_TOP );
 	m_ImageInfo.SetExtentProperty( SVExtentPropertyWidth, SV_DEFAULT_WINDOWTOOL_WIDTH );
 	m_ImageInfo.SetExtentProperty( SVExtentPropertyHeight, SV_DEFAULT_WINDOWTOOL_HEIGHT );
+	m_ImageInfo.SetExtentProperty(	SVExtentPropertyWidthScaleFactor, 
+									SV_DEFAULT_WINDOWTOOL_WIDTHSCALEFACTOR );
+	m_ImageInfo.SetExtentProperty(	SVExtentPropertyHeightScaleFactor, 
+									SV_DEFAULT_WINDOWTOOL_HEIGHTSCALEFACTOR );
 }
 
 /*
@@ -558,45 +562,55 @@ HRESULT SVImageClass::ResetObject()
 
 HRESULT SVImageClass::RebuildStorage( bool p_ExcludePositionCheck )
 {
-	HRESULT l_Status = UpdateFromParentInformation();
+	HRESULT hr = UpdateFromParentInformation();
 
 	if( m_LastReset <= m_LastUpdate )
 	{
 		HRESULT l_Temp = SVObjectAppClass::ResetObject();
 
-		if( l_Status == S_OK )
+		if( S_OK == hr )
 		{
-			l_Status = l_Temp;
+			hr = l_Temp;
 		}
 
+		// One of the use cases for RebuildStorage() is, when a Tool is added 
+		// (for all embedded images).  If the embedded image is a Logical 
+		// Image, then the Parent wont be assigned yet.  The assignment 
+		// happens in OnCreate of the Tool.  Therefore the following 
+		// UpdatePosition() will return an E_FAIL.
 		l_Temp = UpdatePosition();
 
-		if( l_Status == S_OK )
+		if( S_OK == hr )
 		{
-			l_Status = l_Temp;
+			hr = l_Temp;
 		}
 
-		l_Temp = UpdateBufferArrays( p_ExcludePositionCheck );
-
-		if( l_Status == S_OK )
+		// if update position failed, we should not be updating buffer 
+		// arrays.
+		if (S_OK == l_Temp)
 		{
-			l_Status = l_Temp;
+			l_Temp = UpdateBufferArrays( p_ExcludePositionCheck );
+		}
+
+		if( S_OK == hr )
+		{
+			hr = l_Temp;
 		}
 
 		l_Temp = UpdateChildren();
 
-		if( l_Status == S_OK )
+		if( S_OK == hr )
 		{
-			l_Status = l_Temp;
+			hr = l_Temp;
 		}
-	}
+	} 
 
-	if( l_Status == S_OK )
+	if( S_OK == hr )
 	{
 		m_LastReset = SVClock::GetTimeStamp();
 	}
 
-	return l_Status;
+	return hr;
 }
 
 SVImageExtentClass SVImageClass::GetImageExtents()
@@ -679,7 +693,8 @@ HRESULT SVImageClass::UpdateFromToolInformation()
 	SVGUID l_ToolID;
 	SVImageExtentClass l_ToolExtent = m_ImageInfo.GetExtents();
 
-	if( ( m_ImageType != SVImageTypeRGBMain ) && ( GetTool() != NULL ) )
+	// When initialized from CreateObject(), tool is NULL.
+ 	if( ( m_ImageType != SVImageTypeRGBMain ) && ( GetTool() != NULL ) )
 	{
 		SVImageExtentClass l_TempExtent;
 
@@ -690,9 +705,30 @@ HRESULT SVImageClass::UpdateFromToolInformation()
 			( m_ImageType != SVImageTypeVirtual ) && 
 			( GetTool()->GetImageExtent( l_TempExtent ) == S_OK ) )
 		{
+
+
 			RECT l_Rect;
 
-			if( l_TempExtent.GetOutputRectangle( l_Rect ) == S_OK )
+			if ((m_ImageType == SVImageTypeLogicalAndPhysical)|| 
+				(m_ImageType == SVImageTypeLogical))
+			{
+				// @Hack
+				// It does not make sense that a logical buffer is not a 1:1 
+				// pixel correlation to its parent phisical buffer.  For this 
+				// reason the translation type will be ignored when retrieving
+				// the logical rectangle.  
+				// The usage that this is specifically excluded for is for 
+				// creating a logical ROI buffer, which should not reflect the 
+				// output buffer translation.
+				l_TempExtent.SetTranslation (SVExtentTranslationShift);
+				l_Status = l_TempExtent.GetLogicalRectangle (l_Rect);
+			}
+			else
+			{
+				l_Status = l_TempExtent.GetOutputRectangle( l_Rect );
+			}
+
+			if( S_OK == l_Status )
 			{
 				if(	0 < ( l_Rect.bottom - l_Rect.top + 1 ) && 0 < ( l_Rect.right - l_Rect.left + 1 ) )
 				{
@@ -701,7 +737,9 @@ HRESULT SVImageClass::UpdateFromToolInformation()
 			}
 		}
 
-		if( m_ImageType != SVImageTypeFixed && m_ImageType != SVImageTypeIndependent && m_ImageType != SVImageTypeDependent )
+		if( m_ImageType != SVImageTypeFixed && 
+			m_ImageType != SVImageTypeIndependent && 
+			m_ImageType != SVImageTypeDependent)
 		{
 			GetTool()->SetToolImage( this );
 		}
@@ -748,7 +786,9 @@ HRESULT SVImageClass::IsValidChild( const GUID& p_rChildID, SVImageInfoClass p_s
 {
 	HRESULT l_hrOk = S_OK;
 
-	if( m_ImageType == SVImageTypeDependent || m_ImageType == SVImageTypeVirtual )
+	if( m_ImageType == SVImageTypeDependent || 
+		m_ImageType == SVImageTypeVirtual ||
+		m_ImageType == SVImageTypeLogical)
 	{
 		SVImageClass* l_pParentImage = GetParentImage();
 
@@ -804,7 +844,9 @@ HRESULT SVImageClass::UpdateChild( const GUID& p_rChildID, SVImageInfoClass p_sv
 
 	if ( Lock() )
 	{
-		if( m_ImageType == SVImageTypeDependent || m_ImageType == SVImageTypeVirtual )
+		if( m_ImageType == SVImageTypeDependent || 
+			m_ImageType == SVImageTypeVirtual ||
+			m_ImageType == SVImageTypeLogical)
 		{
 			SVImageClass* l_pParentImage = GetParentImage();
 
@@ -923,7 +965,9 @@ HRESULT SVImageClass::GetChildImageInfo( const GUID& p_rChildID, SVImageInfoClas
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if( m_ImageType == SVImageTypeDependent || m_ImageType == SVImageTypeVirtual )
+	if( m_ImageType == SVImageTypeDependent || 
+		m_ImageType == SVImageTypeVirtual ||
+		m_ImageType == SVImageTypeLogical)
 	{
 		SVImageClass* l_pParentImage = GetParentImage();
 
@@ -962,7 +1006,9 @@ HRESULT SVImageClass::GetChildImageHandle( const GUID& p_rChildID, SVSmartHandle
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if( m_ImageType == SVImageTypeDependent || m_ImageType == SVImageTypeVirtual )
+	if( m_ImageType == SVImageTypeDependent || 
+		m_ImageType == SVImageTypeVirtual ||
+		m_ImageType == SVImageTypeLogical)
 	{
 		SVImageClass* l_pParentImage = GetParentImage();
 
@@ -1028,7 +1074,9 @@ HRESULT SVImageClass::GetChildImageHandle( const GUID& p_rChildID, SVImageIndexS
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if( m_ImageType == SVImageTypeDependent || m_ImageType == SVImageTypeVirtual )
+	if( m_ImageType == SVImageTypeDependent || 
+		m_ImageType == SVImageTypeVirtual ||
+		m_ImageType == SVImageTypeLogical)
 	{
 		SVImageClass* l_pParentImage = GetParentImage();
 
@@ -1176,7 +1224,9 @@ BOOL SVImageClass::GetImageHandleIndex( SVImageIndexStruct& rsvIndex ) const
 {
 	BOOL bOk = FALSE;
 		
-	if( m_ImageType == SVImageTypeDependent || m_ImageType == SVImageTypeVirtual )
+	if( m_ImageType == SVImageTypeDependent || 
+		m_ImageType == SVImageTypeVirtual ||
+		m_ImageType == SVImageTypeLogical)
 	{
 		SVImageClass* l_pParentImage = GetParentImage();
 
@@ -1218,7 +1268,9 @@ BOOL SVImageClass::SetImageHandleIndex( SVImageIndexStruct svIndex )
 {
 	BOOL bOk = FALSE;
 		
-	if( m_ImageType == SVImageTypeDependent || m_ImageType == SVImageTypeVirtual )
+	if( m_ImageType == SVImageTypeDependent || 
+		m_ImageType == SVImageTypeVirtual ||
+		m_ImageType == SVImageTypeLogical)
 	{
 		bOk = GetParentImage() != NULL && GetParentImage() != this;
 	}
@@ -1259,7 +1311,9 @@ BOOL SVImageClass::CopyImageTo( SVImageIndexStruct svIndex )
 {
 	BOOL bOk = FALSE;
 		
-	if( m_ImageType == SVImageTypeDependent || m_ImageType == SVImageTypeVirtual )
+	if( m_ImageType == SVImageTypeDependent || 
+		m_ImageType == SVImageTypeVirtual ||
+		m_ImageType == SVImageTypeLogical)
 	{
 		SVImageClass* l_pParentImage = GetParentImage();
 
@@ -1305,7 +1359,9 @@ BOOL SVImageClass::GetImageHandle( SVSmartHandlePointer& p_rHandlePtr )
 {
 	BOOL bOk = FALSE;
 		
-	if( m_ImageType == SVImageTypeDependent || m_ImageType == SVImageTypeVirtual )
+	if( m_ImageType == SVImageTypeDependent || 
+		m_ImageType == SVImageTypeVirtual ||
+		m_ImageType == SVImageTypeLogical)
 	{
 		bOk = ( GetParentImageHandle( p_rHandlePtr ) == S_OK );
 	}
@@ -1326,7 +1382,9 @@ BOOL SVImageClass::GetImageHandle( SVImageIndexStruct svIndex, SVSmartHandlePoin
 {
 	BOOL bOk = FALSE;
 		
-	if( m_ImageType == SVImageTypeDependent || m_ImageType == SVImageTypeVirtual )
+	if( m_ImageType == SVImageTypeDependent || 
+		m_ImageType == SVImageTypeVirtual ||
+		m_ImageType == SVImageTypeLogical)
 	{
 		bOk = ( GetParentImageHandle( svIndex, rHandle ) == S_OK );
 	}
@@ -2009,7 +2067,9 @@ SVImageObjectClassPtr SVImageClass::GetBufferArrayPtr() const
 {
 	SVImageObjectClassPtr l_ArrayPtr;
 
-	if( m_ImageType == SVImageTypeDependent || m_ImageType == SVImageTypeVirtual )
+	if( m_ImageType == SVImageTypeDependent || 
+		m_ImageType == SVImageTypeVirtual ||
+		m_ImageType == SVImageTypeLogical)
 	{
 		SVImageClass* l_pParentImage = GetParentImage();
 
@@ -2217,6 +2277,11 @@ HRESULT SVImageClass::SetObjectValue( SVObjectAttributeClass* PDataObject )
 
 	if ( ( bOk = PDataObject->GetAttributeData( "ExtentLeft", svDoubleArray	) ) )
 	{
+
+//@HACK ?? JAB 26.03.15 - Not sure why these properties are being 
+// 		itteratively set to each array element. It looks to me like the 
+//		final value will alway be svDoubleArray [GetSize() - 1].  Don't have 
+//		time to look into now.  Many identicle cases in this method.
 		for ( int i = 0; i < svDoubleArray.GetSize(); i++ )
 		{
 			m_ImageInfo.SetExtentProperty( SVExtentPropertyOldPositionPointX, svDoubleArray[i] );
@@ -2279,6 +2344,22 @@ HRESULT SVImageClass::SetObjectValue( SVObjectAttributeClass* PDataObject )
 		for ( int i = 0; i < svPointArray.GetSize(); i++ )
 		{
 			m_ImageInfo.SetExtentProperty( SVExtentPropertyOldRotationPoint, SVExtentPointStruct(svPointArray[i]) );
+		}
+	}
+	else if ( ( bOk = PDataObject->GetAttributeData( "HeightScaleFactor", svDoubleArray	) ) )
+	{
+		long	size = svDoubleArray.GetSize ();
+		if (size > 0)
+		{
+			m_ImageInfo.SetExtentProperty( SVExtentPropertyHeightScaleFactor, svDoubleArray [size-1] );
+		}
+	}
+	else if ( ( bOk = PDataObject->GetAttributeData( "WidthScaleFactor", svDoubleArray	) ) )
+	{
+		long	size = svDoubleArray.GetSize ();
+		if (size > 0)
+		{
+			m_ImageInfo.SetExtentProperty( SVExtentPropertyWidthScaleFactor, svDoubleArray [size-1] );
 		}
 	}
 	else if ( ( bOk = PDataObject->GetAttributeData( "PixelDepth", svLongArray	) ) )
@@ -2354,7 +2435,10 @@ HRESULT SVImageClass::UpdatePosition()
 	
 	m_ParentImageInfo.second = dynamic_cast< SVImageClass* >( SVObjectManagerClass::Instance().GetObject( m_ParentImageInfo.first ) );
 
-	if( m_ImageType == SVImageTypeDependent || m_ImageType == SVImageTypeLogical || m_ImageType == SVImageTypeVirtual )
+	if( m_ImageType == SVImageTypeDependent || 
+		m_ImageType == SVImageTypeLogicalAndPhysical || 
+		m_ImageType == SVImageTypeLogical ||
+		m_ImageType == SVImageTypeVirtual )
 	{
 		if( m_ParentImageInfo.second != NULL )
 		{
@@ -2458,6 +2542,7 @@ HRESULT SVImageClass::UpdateChildBuffers( SVImageObjectClassPtr p_psvChildBuffer
 			l_Size = l_BufferPtr->size();
 		}
 
+		// resize references the depth of the pool.
 		p_psvChildBuffers->resize( static_cast<unsigned long>(l_Size) );
 		p_psvChildBuffers->SetParentImageObject( l_BufferPtr );
 		p_psvChildBuffers->SetImageInfo( p_rImageInfo );
@@ -2476,8 +2561,25 @@ HRESULT SVImageClass::UpdateChildBuffers( SVImageObjectClassPtr p_psvChildBuffer
 HRESULT SVImageClass::UpdateBufferArrays( bool p_ExcludePositionCheck )
 {
 	HRESULT l_Status = S_OK;
-	
-	if( m_ImageType == SVImageTypeUnknown || m_ImageType == SVImageTypeDependent || m_ImageType == SVImageTypeVirtual || m_ImageType == SVImageTypeMain )
+
+	if ((SVImageTypeLogicalAndPhysical == m_ImageType ||
+		 SVImageTypeLogical == m_ImageType) &&
+		m_ParentImageInfo.second == nullptr)
+	{
+		// If the image type is logical, there MUST be a parent before 
+		// attempting to set up image buffers.
+		return l_Status;
+	}
+
+	bool	clear = false;
+	SVGUID	parentGuid;
+	parentGuid = m_ImageInfo.GetOwnerImageID ();
+	if( m_ImageType == SVImageTypeUnknown || 
+		m_ImageType == SVImageTypeDependent || 
+		m_ImageType == SVImageTypeVirtual || 
+		m_ImageType == SVImageTypeMain  ||
+		m_ImageType == SVImageTypeLogical)
+		
 	{
 		m_BufferArrayPtr.clear();
 	}
@@ -2500,8 +2602,10 @@ HRESULT SVImageClass::UpdateBufferArrays( bool p_ExcludePositionCheck )
 			bool l_Reset = false;
 			bool l_Update = false;
 
+			SVImageObjectClass::SVImageObjectParentPtr parent = m_BufferArrayPtr->GetParentImageObject();
+
 			l_Reset = l_Reset || ( l_Size != m_BufferArrayPtr->size() );
-			l_Reset = l_Reset || !( m_BufferArrayPtr->GetParentImageObject().empty() );
+			l_Reset = l_Reset || !( parent.empty() );
 
 			if( p_ExcludePositionCheck )
 			{
@@ -2673,12 +2777,34 @@ SvOi::MatroxImageSmartHandlePointer SVImageClass::getImageData()
 {
 	SVSmartHandlePointer handle;
 	SvOi::MatroxImageSmartHandlePointer dataSmartPointer;
-	if (GetImageHandle(handle))
+
+
+	if ((SVImageTypeLogical == m_ImageType) ||
+		(SVImageTypeDependent == m_ImageType) ||
+		(SVImageTypeVirtual == m_ImageType))
 	{
-		MatroxImageData *data = new MatroxImageData(handle);
-		data->setImageHandle(handle);
-		dataSmartPointer = data;
+		// For SVO Child buffers, the image data is actually allocated as 
+		// the Parent Image Child, and not as part of the SVImageObjectClass.
+		// getImageData should redirect.  
+
+		SVSmartHandlePointer childHandle;
+		if (S_OK == GetParentImageHandle(childHandle))
+		{
+			dataSmartPointer = new MatroxImageData(childHandle);
+		}
 	}
+	else
+	{
+		// For all other buffer types, images are retrieved from 
+		// SVImageObjectClass.
+
+
+		if (GetImageHandle(handle))
+		{
+			dataSmartPointer = new MatroxImageData(handle);
+		}
+	}
+
 	return dataSmartPointer;
 }
 
@@ -2713,7 +2839,7 @@ BOOL SVImageClass::OnValidate()
 
 				break;
 			}
-			case SVImageTypeLogical:
+			case SVImageTypeLogicalAndPhysical:
 			{
 				SVImageObjectClassPtr l_BufferPtr = GetBufferArrayPtr();
 
@@ -2727,6 +2853,7 @@ BOOL SVImageClass::OnValidate()
 
 				break;
 			}
+			case SVImageTypeLogical:
 			case SVImageTypeVirtual:
 			case SVImageTypeDependent:
 			{

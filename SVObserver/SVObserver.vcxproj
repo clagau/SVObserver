@@ -358,6 +358,7 @@ echo %time%
     <ClCompile Include="RemoteMonitorListController.cpp" />
     <ClCompile Include="RemoteMonitorListHelper.cpp" />
     <ClCompile Include="RemoteMonitorNamedList.cpp" />
+    <ClCompile Include="ResizeTool.cpp" />
     <ClCompile Include="ResultViewItemDef.cpp">
       <MultiProcessorCompilation Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</MultiProcessorCompilation>
       <MultiProcessorCompilation Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</MultiProcessorCompilation>
@@ -461,6 +462,7 @@ echo %time%
     <ClCompile Include="SVStaticStringValueObjectClass.cpp" />
     <ClCompile Include="SVStorage.cpp" />
     <ClCompile Include="SVStorageResult.cpp" />
+    <ClCompile Include="SVTADlgTranslationResizePage.cpp" />
     <ClCompile Include="SVThreadInfoDlg.cpp" />
     <ClCompile Include="SVThresholdClass.cpp" />
     <ClCompile Include="SVToolAdjustmentDialogSizePage.cpp" />
@@ -1491,16 +1493,6 @@ echo %time%
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <ClCompile Include="SVImageProcessingClass.cpp">
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-    </ClCompile>
-    <ClCompile Include="SVImageROI.cpp">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -3849,6 +3841,7 @@ echo %time%
     <ClInclude Include="RemoteMonitorListController.h" />
     <ClInclude Include="RemoteMonitorListHelper.h" />
     <ClInclude Include="RemoteMonitorNamedList.h" />
+    <ClInclude Include="ResizeTool.h" />
     <ClInclude Include="ResultViewItemDef.h" />
     <ClInclude Include="ResultViewReferences.h" />
     <ClInclude Include="RingBufferTool.h" />
@@ -3913,6 +3906,7 @@ echo %time%
     <ClInclude Include="SVStaticValueObjectClassImpl.h" />
     <ClInclude Include="SVStorage.h" />
     <ClInclude Include="SVStorageResult.h" />
+    <ClInclude Include="SVTADlgTranslationResizePage.h" />
     <ClInclude Include="SVThreadInfoDlg.h" />
     <ClInclude Include="SVThresholdClass.h" />
     <ClInclude Include="SVToolAdjustmentDialogSizePage.h" />
@@ -4063,7 +4057,6 @@ echo %time%
     <ClInclude Include="SVImageObjectClass.h" />
     <ClInclude Include="SVImagePolarTransform.h" />
     <ClInclude Include="SVImageProcessingClass.h" />
-    <ClInclude Include="SVImageROI.h" />
     <ClInclude Include="SVImageToLineProject.h" />
     <ClInclude Include="SVImageTransform.h" />
     <ClInclude Include="SVImageView.h" />

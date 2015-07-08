@@ -132,6 +132,16 @@ HRESULT SVImageInfoClass::Initialize()
 		l_hrOk = S_FALSE;
 	}
 
+	if ( m_svExtents.SetExtentProperty( SVExtentPropertyWidthScaleFactor,  1.0) != S_OK )
+	{
+		l_hrOk = S_FALSE;
+	}
+
+	if ( m_svExtents.SetExtentProperty( SVExtentPropertyHeightScaleFactor,  1.0) != S_OK )
+	{
+		l_hrOk = S_FALSE;
+	}
+
 	if ( m_svExtents.SetExtentProperty( SVExtentPropertyRotationAngle, 0.0 ) != S_OK )
 	{
 		l_hrOk = S_FALSE;

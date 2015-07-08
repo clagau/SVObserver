@@ -361,7 +361,7 @@ void SVStdImageOperatorListClass::init()
 	RegisterEmbeddedObject( &outputImageObject, SVOutputImageObjectGuid, IDS_OBJECTNAME_IMAGE1 );
 
 	// Set Embedded defaults
-	outputImageObject.InitializeImage( SVImageTypeLogical );
+	outputImageObject.InitializeImage( SVImageTypeLogicalAndPhysical );
 
 	// Set default inputs and outputs
 	addDefaultInputObjects();
@@ -575,7 +575,7 @@ BOOL SVStdImageOperatorListClass::Run( SVRunStatusClass& RRunStatus )
 					if( ChildRunStatus.IsCriticalFailure() )
 						RRunStatus.SetCriticalFailure();
 				}
-			}
+			} // for( int i = 0; i < GetSize(); i++ )
 			
 			// 'no operator was running' check...
 			// RO_22Mar2000
@@ -583,7 +583,7 @@ BOOL SVStdImageOperatorListClass::Run( SVRunStatusClass& RRunStatus )
 			if( bRetVal )
 			{
 				bRetVal = copyBuffer(sourceImage, output);
-			}
+			} // if( bFirstFlag ) 
 		}
 	}
 	

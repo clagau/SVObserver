@@ -1,0 +1,100 @@
+//*****************************************************************************
+/// \copyright COPYRIGHT (c) 2015,2015 by Seidenader Maschinenbau GmbH
+/// All Rights Reserved 
+/// \Author	Jim Brown
+//*****************************************************************************
+
+/// Classes and functions to ....
+//******************************************************************************
+
+#pragma once
+
+#pragma region Includes
+#include "SVTaskObjectInterfaceClass.h"
+#include "PropertyTree/PROPTREE.H"
+#include "SVOGui/PictureDisplay.h"
+#pragma endregion Includes
+
+class ResizeTool;
+class SVToolAdjustmentDialogSheetClass;
+class SVRPropertyItem;
+class SVImageExtentClass;
+
+class SVTADlgTranslationResizePage : public CPropertyPage, public SVTaskObjectInterfaceClass
+{
+public:
+	SVTADlgTranslationResizePage( SVToolAdjustmentDialogSheetClass* Parent, int id = IDD );
+	virtual ~SVTADlgTranslationResizePage();
+
+	virtual HRESULT SetInspectionData() override;
+
+protected:
+	HRESULT AddScaleFactors(SVRPropertyItem* pRoot);
+	HRESULT AddInputImageInfo(SVRPropertyItem* pRoot);
+	HRESULT AddOutputImageInfo(SVRPropertyItem* pRoot);
+	HRESULT AddOtherInfo(SVRPropertyItem* pRoot);
+	HRESULT AddInterpolationMode(SVRPropertyItem* pGroupItem);
+	HRESULT AddOverScan(SVRPropertyItem* pGroupItem);
+	HRESULT AddPerformance(SVRPropertyItem* pGroupItem);
+	HRESULT SetupResizePropertyTree();
+	HRESULT SetupResizeImageControl();
+// Note:
+//	UpdateImages () ------------------------------------------------------------
+//  OnInitDialog () must be called first in order to initialize members.
+	HRESULT UpdateImages();
+
+// Note:
+//	UpdatePropertyTreeData () ------------------------------------------------------------
+//  OnInitDialog () must be called first in order to initialize members.
+	HRESULT UpdatePropertyTreeData();
+
+	void UpdateScaleFactors(double widthScaleFactor, double heightScaleFactor);
+	void UpdateInputImageInfo(long width, long height);
+	void UpdateOutputImageInfo(long width, long height);
+	void UpdateOtherInfo();
+
+	SVToolAdjustmentDialogSheetClass* m_ParentDialog;
+
+//	The Tool can not be destroyed while the Tool Adjustment Dialog exists.
+	ResizeTool*	m_Tool;
+
+	double m_HeightScaleFactor;
+	double m_WidthScaleFactor;
+	long m_SourceHeight;
+	long m_SourceWidth;
+	long m_OutputHeight;
+	long m_OutputWidth;
+
+	long m_SourceTabHandle;
+	long m_ROITabHandle;
+	long m_OutputTabHandle;
+
+	SVRPropTree	m_Tree;
+
+	//{{AFX_DATA(SVTADlgTranslationResizePage)
+	enum { IDD = IDD_TA_RESIZE_DIALOG };
+	SvOg::PictureDisplay m_DialogImage;
+	//}}AFX_DATA
+
+	// Overrides
+#pragma region AFX Virtual Methods
+	// ClassWizard generate virtual function overrides
+	//{{AFX_VIRTUAL(SVTADlgTranslationResizePage)
+	virtual BOOL OnInitDialog() override;
+	virtual BOOL OnSetActive() override;
+	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
+	//}}AFX_VIRTUAL
+#pragma endregion AFX Virtual Methods
+
+#pragma region AFX MSG
+	// Generated message map functions
+	//{{AFX_MSG(SVTADlgTranslationResizePage)
+	afx_msg void OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResult);
+	//}}AFX_MSG
+	DECLARE_MESSAGE_MAP()
+#pragma endregion AFX MSG
+};
+
+//{{AFX_INSERT_LOCATION}}
+// Microsoft Visual C++ will insert additional declarations immediately before the previous line.
+

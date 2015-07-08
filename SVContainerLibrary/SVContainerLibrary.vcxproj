@@ -152,6 +152,7 @@
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="SVBidirectionalMap.h" />
+    <ClInclude Include="SVBimapDeclarations.h" />
     <ClInclude Include="SVBiUniqueMap.h" />
     <ClInclude Include="SVDeque.h" />
     <ClInclude Include="SVList.h" />

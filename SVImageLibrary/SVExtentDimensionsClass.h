@@ -37,6 +37,7 @@ public:
 	bool operator!=( const SVExtentDimensionsClass &p_rsvValue ) const;
 
 private:
+//	currently enabled properties
 	unsigned long m_ulProperties;
 
 	double m_dWidth;
@@ -45,6 +46,16 @@ private:
 	double m_dEndAngle;
 	double m_dInnerRadius;
 	double m_dOuterRadius;
+
+	/// m_dWidthScaleFactor - indicates the scale factor to be used size the 
+	///  output buffer width from the input image ROI width. Keep in mind that the
+	///  input image context is the input to the current task object.
+	double m_dWidthScaleFactor;
+
+	/// m_dHeightScaleFactor - indicates the scale factor to be used size the 
+	///  output buffer height from the input image ROI height. Keep in mind that the
+	///  input image context is the input to the current task object.
+	double m_dHeightScaleFactor;
 
 	long m_lOutputWidth;
 	long m_lOutputHeight;

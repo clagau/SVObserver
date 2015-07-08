@@ -29,7 +29,7 @@ public:
 		SVToolExtent               = 1,
 		SVTransformationToolExtent = 2,
 		SVColorToolExtent          = 3,
-		SVRebuidOnResizeToolExtent = 4,
+		SVRebuildOnResizeToolExtent = 4,
 	};
 
 	SVToolExtentClass();
@@ -74,7 +74,14 @@ public:
 	virtual HRESULT GetExtentPropertyInfo( SVExtentPropertyEnum p_eProperty, SVExtentPropertyInfoStruct& p_rInfo ) const;
 	virtual HRESULT SetExtentPropertyInfo( SVExtentPropertyEnum p_eProperty, const SVExtentPropertyInfoStruct& p_rInfo );
 
+	
+//- GetImageExtent -----------------------------------------------------------
+//- There appears to be little direct connection between the SVToolExtentClass
+//- and the SVImageExtentClass.  This function appears to attempt to translate  
+//- between the two.  Translating and copying from the SVToolExtentClass based 
+//- structure into the SVImageExtentClass based structure. -------------------
 	virtual HRESULT GetImageExtent( SVImageExtentClass &p_rsvImageExtent )const ;
+
 	virtual HRESULT GetImageExtent( unsigned long p_ulIndex, SVImageExtentClass &p_rsvImageExtent ) const;
 	virtual HRESULT SetImageExtent( unsigned long p_ulIndex, SVImageExtentClass p_svImageExtent );
 	virtual HRESULT GetFilteredImageExtentPropertyList( SVExtentPropertyListType& p_rPropertyList );
@@ -122,6 +129,7 @@ private:
 
 	SVImageClass* m_psvToolImage;
 
+	// This value does not appear to get used.
 	SVImageTypeEnum m_eImageType;
 
 	SVExtentTranslationEnum m_eTranslation;

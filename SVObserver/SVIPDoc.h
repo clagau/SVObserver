@@ -209,6 +209,7 @@ public:
 	afx_msg void OnAddRingBufferTool();
 	afx_msg void OnAllowAdjustLightReference(CCmdUI* pCmdUI);
 	afx_msg void OnAllowAdjustLut(CCmdUI* pCmdUI);
+	afx_msg void OnAddResizetool();
 	//}}AFX_MSG
 
 	DECLARE_MESSAGE_MAP() // Contains "protected:"

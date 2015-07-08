@@ -61,6 +61,10 @@ public:
 	virtual HRESULT InitializeImage( const GUID& p_rParentID );
 	virtual HRESULT InitializeImage( const GUID& p_rParentID, const SVImageInfoClass& p_rImageInfo );
 
+	//@WARNING [Jim][8 July 2015] - Look into and evaluate this behavior.
+	//-  This UpdateImage function calls RebuildStorage() which calls 
+	//-  UpdateFromParentInformation() which overwrites the extents I just 
+	//-  sent in anyhow????
 	virtual HRESULT UpdateImage( const SVImageExtentClass& p_rExtent, bool p_ExcludePositionCheck = false );
 	virtual HRESULT UpdateImage( const SVImageInfoClass& p_rImageInfo );
 	virtual HRESULT UpdateImage( const GUID& p_rParentID );
@@ -145,6 +149,8 @@ protected:
 
 	virtual BOOL DestroyImage();
 
+	//- UpdateFromParentInformation () ---------------------------------------
+	//- This function will update the Tool Image to itself.
 	virtual HRESULT UpdateFromParentInformation();
 	virtual HRESULT UpdateFromToolInformation();
 

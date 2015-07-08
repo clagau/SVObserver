@@ -27,7 +27,6 @@ public:
 	virtual ~SVTaskObjectInterfaceClass();
 
 	virtual HRESULT SetInspectionData() = 0;
-
 };
 
 #endif

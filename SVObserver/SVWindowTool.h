@@ -38,7 +38,13 @@ public:
 protected:
 	virtual BOOL onRun( SVRunStatusClass& RRunStatus );
 
+//	base class should be called from derived class.
 	virtual void init();
+
+private:
+	void BuildEmbeddedObjectList ();
+	void BuildAvailableAnalyzerList ();
+	void AddUnaryImageOperatorListAsChild ();
 
 public:
 	HRESULT GetInputImageNames( SVStringValueObjectClass*& p_pSourceNames );

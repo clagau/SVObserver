@@ -1,5 +1,3 @@
-#pragma once
-
 //{{NO_DEPENDENCIES}}
 // Microsoft Visual C++ generated include file.
 // Used by SVOResource.rc
@@ -9,6 +7,9 @@
 #define IDS_IMAGE_SOURCE_STRING         103
 #define IDS_CONDITIONAL_STRING          104
 #define IDS_OBJECTNAME_LUT_EQUATION_CLIP 105
+#define IDS_OBJECTNAME_RESIZE_INTERPOLATIONMODE 106
+#define IDS_OBJECTNAME_RESIZE_OVERSCAN  107
+#define IDS_OBJECTNAME_RESIZE_PERFORMANCE 108
 #define IDD_MASK_SHAPE_EDITOR           250
 #define IDC_IMAGE_STATIC                251
 #define IDC_COORDINATES_STATIC          254
@@ -71,6 +72,7 @@
 #define IDD_BA_FEATURE_DIALOG           5008
 #define IDD_TA_RING_PARAMETER_DIALOG    5009
 #define IDD_TA_IMAGE_DIALOG             5010
+#define IDD_TA_RESIZE_DIALOG            5011
 #define IDD_START                       5012
 #define IDD_LIGHTREFERENCE_PAGE         5014
 #define IDD_PPQENTRY_CAMERA_PAGE        5015
@@ -144,10 +146,8 @@
 #define IDD_CHOOSEGRAYCOLOR             5114
 #define IDD_GIGE_CAMERA_MANAGER_DLG     5115
 #define IDD_GIGE_CAMERA_ROI_DLG         5116
-//The following dummy ID is required to identify the Conditional page for the help context.
 #define IDD_CONDITIONAL_PAGE            5117
 #define IDD_OBJECT_SELECTOR_PPG         5118
-//The following dummy IDs are required to identify the Object Selector for the help
 #define IDD_RESULTS_PICKER              5119
 #define IDD_PUBLISHED_RESULTS           5120
 #define IDD_OUTPUT_SELECTOR             5121
@@ -1088,6 +1088,7 @@
 #define IDS_OBJECTNAME_INPUT_48         14048
 #define IDS_OBJECTNAME_INPUT_49         14049
 #define IDS_OBJECTNAME_INPUT_50         14050
+#define IDS_OBJECTNAME_RESIZETOOL       14051
 #define IDS_OBJECTNAME_INPUT_01_NAME    14101
 #define IDS_OBJECTNAME_INPUT_02_NAME    14102
 #define IDS_OBJECTNAME_INPUT_03_NAME    14103
@@ -1138,6 +1139,8 @@
 #define IDS_OBJECTNAME_INPUT_48_NAME    14148
 #define IDS_OBJECTNAME_INPUT_49_NAME    14149
 #define IDS_OBJECTNAME_INPUT_50_NAME    14150
+#define IDS_OBJECTNAME_EXTENT_WIDTHSF   14151
+#define IDS_OBJECTNAME_EXTENT_HEIGHTSF  14152
 #define IDS_OBJECTNAME_RESULT_01        14201
 #define IDS_OBJECTNAME_RESULT_02        14202
 #define IDS_OBJECTNAME_RESULT_03        14203
@@ -2398,6 +2401,8 @@
 #define ID_EXTRAS_THREAD_AFFINITY       20345
 #define ID_EXTRAS_ENABLEAUTOSAVE        20346
 #define  ID_EDIT_EDITTOOLTAB1			20347	
+#define ID_ADD_RESIZETOOL               20348
+#define ID_RESIZETOOL_CTRL              20349
 #define ID_VIEW_TOOLSETDRAW             32999
 #define ID_VIEW_TOOLSETDRAW_POP_BASE    33000
 #define ID_VIEW_TOOLSETDRAW_POP_MAX     33049
@@ -2438,7 +2443,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_3D_CONTROLS                     1
 #define _APS_NEXT_RESOURCE_VALUE        11135
-#define _APS_NEXT_COMMAND_VALUE         20348
+#define _APS_NEXT_COMMAND_VALUE         20350
 #define _APS_NEXT_CONTROL_VALUE         16103
 #define _APS_NEXT_SYMED_VALUE           3002
 #endif

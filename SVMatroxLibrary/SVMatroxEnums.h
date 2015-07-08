@@ -12,7 +12,7 @@
 #ifndef SV_MATROX_ENUMS_H
 #define SV_MATROX_ENUMS_H
 
-#include "SVMatroxErrorEnum.h"
+#include "SVMatroxEnumConvertor.h" //SVMatroxEnumConvertor 
 
 /**
 @SVObjectName Matrox Buffer Type Enum
@@ -769,6 +769,56 @@ enum SVPatternResultEnum
 @SVObjectOperations None
 
 */
+
+//	Uses include Resize function
+class SVInterpolationModeOptions
+{
+public:
+	enum SVInterpolationModeOptionsEnum
+	{
+		InterpolationModeAuto					= 0x00000004L,  // M_INTERPOLATE
+		InterpolationModeBilinear				= 0x00000008L,	// M_BILINEAR 
+		InterpolationModeBicubic				= 0x00000010L,	// M_BICUBIC
+		InterpolationModeAverage				= 0x00000020L,	// M_AVERAGE
+		InterpolationModeNearestNeighbor		= 0x00000040L	// M_NEAREST_NEIGHBOR 
+	};
+
+	typedef SVMatroxEnumConvertor<SVInterpolationModeOptionsEnum, long> SVInterpolationModeOptionsEnumMap;
+	static SVInterpolationModeOptionsEnumMap m_Convertor;
+};
+
+
+//	Uses include Resize function
+class SVOverscanOptions
+{
+public:
+	enum SVOverscanOptionsEnum
+	{
+		OverscanEnable						= 0x00008000L, // M_OVERSCAN_ENABLE
+		OverscanDisable						= 0x00080000L  // M_OVERSCAN_DISABLE
+	};
+
+	typedef SVMatroxEnumConvertor<SVOverscanOptionsEnum, long> SVOverscanOptionsEnumMap;
+	static SVOverscanOptionsEnumMap m_Convertor;
+};
+
+
+//	Uses include Resize function
+class SVPerformanceOptions
+{
+public:
+	enum SVPerformanceOptionsEnum
+	{
+		PerformanceFast						= 0x00002000L, // M_FAST
+		PerformancePresice					= 0x00020000L  // M_REGULAR
+	};
+
+
+	typedef SVMatroxEnumConvertor<SVPerformanceOptionsEnum, long> SVPerformanceOptionsEnumMap;
+	static SVPerformanceOptionsEnumMap m_Convertor;
+};
+
+
 enum SVImageOperationTypeEnum
 {
 
@@ -821,9 +871,9 @@ enum SVImageOperationTypeEnum
 	SVRectToPolar				= 0x00000001L,		// M_RECTANGULAR_TO_POLAR
 
 	// Image Interpolation
-	SVNearestNeighbor			= 0x00000040L,	// M_NEAREST_NEIGHBOR 
 	SVBilinear					= 0x00000008L,	// M_BILINEAR 
 	SVBiCubic					= 0x00000010L,	// M_BICUBIC
+	SVNearestNeighbor			= 0x00000040L,	// M_NEAREST_NEIGHBOR 
 	SVImageDefault				= 0x10000000L,	// M_DEFAULT
 
 	// Image Result

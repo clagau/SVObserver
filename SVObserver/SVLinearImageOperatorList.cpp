@@ -51,7 +51,7 @@ BOOL SVLinearImageOperatorListClass::CreateObject( SVObjectLevelCreateStruct* PC
 		  ( getUseRotationAngle()->GetValue( m_bUseRotation ) == S_OK ) &&
 			! m_bUseRotation )
 	{
-		outputImageObject.InitializeImage( SVImageTypeLogical );
+		outputImageObject.InitializeImage( SVImageTypeLogicalAndPhysical );
 	}
 	else
 	{
@@ -85,7 +85,7 @@ HRESULT SVLinearImageOperatorListClass::ResetObject()
 		  ( getUseRotationAngle()->GetValue( m_bUseRotation ) == S_OK ) &&
 			! m_bUseRotation )
 	{
-		outputImageObject.InitializeImage( SVImageTypeLogical );
+		outputImageObject.InitializeImage( SVImageTypeLogicalAndPhysical );
 	}
 	else
 	{

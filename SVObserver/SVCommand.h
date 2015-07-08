@@ -480,7 +480,7 @@ public:
 	STDMETHOD(SVGetImageList)(SAFEARRAY* psaImageNames, long lCompression, SAFEARRAY** ppsaImages, SAFEARRAY** ppsaOverlays, SAFEARRAY** ppsaStatus, SAFEARRAY** ppsaProcCounts);
 
 	//Runs the specified Inspection Process (IP). The correct Inputs and Source
-	// Images must already contain the corrrect values for this inspection.
+	// Images must already contain the correct values for this inspection.
 	//
 	//Parameters:
 	//

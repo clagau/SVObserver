@@ -45,6 +45,7 @@
 #include "SVToolArchivePage.h"
 #include "SVToolAdjustmentDialogCommentPageClass.h"
 #include "SVTADlgTranslationShiftPage.h"
+#include "SVTADlgTranslationResizePage.h"
 #include "FormulaController.h"
 #include "ConditionalController.h"
 #include "SVToolAdjustmentDialogSizePage.h"
@@ -244,6 +245,17 @@ void SVToolAdjustmentDialogSheetClass::addPages()
 			AddPage( new SVToolAdjustmentDialogGeneralPageClass( this ) );
 			break;
 
+		case SVResizeToolObjectType:
+			AddPage( new SVToolAdjustmentDialogImagePageClass( this ) );
+			if(bHasSize)
+			{
+				AddPage(new SVToolAdjustmentDialogSizePage(this));
+			}
+			AddPage( new SVTADlgTranslationResizePage( this ) );
+			AddPage( pConditionalDlg );
+			AddPage( new SVToolAdjustmentDialogGeneralPageClass( this ) );
+			break;
+
 		case SVTransformationToolObjectType:
 			AddPage( new SVToolAdjustmentDialogTransformImagePageClass( this ) );
 			AddPage( new SVToolAdjustmentDialogTranslationPageClass( this ) );
@@ -401,7 +413,7 @@ void SVToolAdjustmentDialogSheetClass::addPages()
 		l_psvDocument->SetModifiedFlag();
 		if( dwRet == SVMR_SUCCESS)
 		{
-			l_psvDocument->RunOnce();
+		l_psvDocument->RunOnce();
 		}
 		
 		EndDialog( IDOK );

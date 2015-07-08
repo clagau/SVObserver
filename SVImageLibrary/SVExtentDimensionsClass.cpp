@@ -63,9 +63,19 @@ const SVExtentDimensionsClass &SVExtentDimensionsClass::operator=( const SVExten
 			SetExtentProperty( SVExtentPropertyOuterRadius, p_rsvValue.m_dOuterRadius );
 		}
 
+		if ( ( p_rsvValue.m_ulProperties & SVExtentPropertyHeightScaleFactor ) != 0 )
+		{
+			SetExtentProperty( SVExtentPropertyHeightScaleFactor, p_rsvValue.m_dHeightScaleFactor );
+		}
+
 		if ( ( p_rsvValue.m_ulProperties & SVExtentPropertyOutputHeight ) != 0 )
 		{
 			SetExtentProperty( SVExtentPropertyOutputHeight, p_rsvValue.m_lOutputHeight );
+		}
+
+		if ( ( p_rsvValue.m_ulProperties & SVExtentPropertyWidthScaleFactor ) != 0 )
+		{
+			SetExtentProperty( SVExtentPropertyWidthScaleFactor, p_rsvValue.m_dWidthScaleFactor );
 		}
 
 		if ( ( p_rsvValue.m_ulProperties & SVExtentPropertyOutputWidth ) != 0 )
@@ -194,6 +204,20 @@ HRESULT SVExtentDimensionsClass::DisableExtentProperty( SVExtentPropertyEnum p_e
 			}
 		}
 
+		if ( ( p_eProperty & SVExtentPropertyHeightScaleFactor ) != 0 )
+		{
+			m_ulProperties &= ~SVExtentPropertyHeightScaleFactor;
+
+			l_hrOk = S_OK;
+		}
+
+		if ( ( p_eProperty & SVExtentPropertyWidthScaleFactor ) != 0 )
+		{
+			m_ulProperties &= ~SVExtentPropertyWidthScaleFactor;
+
+			l_hrOk = S_OK;
+		}
+
 		if ( ( p_eProperty & ~SVExtentPropertyPie ) == 0 )
 		{
 			if ( ( p_eProperty & SVExtentPropertyStartAngle ) != 0 )
@@ -283,6 +307,24 @@ HRESULT SVExtentDimensionsClass::GetExtentProperty( SVExtentPropertyEnum p_eProp
 				
 				break;
 			}
+
+			case SVExtentPropertyWidthScaleFactor:
+			{
+				p_rdValue = m_dWidthScaleFactor;
+
+				l_hrOk = S_OK;
+
+				break;
+			}
+			case SVExtentPropertyHeightScaleFactor:
+			{
+				p_rdValue = m_dHeightScaleFactor;
+
+				l_hrOk = S_OK;
+
+				break;
+			}
+			
 			case SVExtentPropertyStartAngle:
 			{
 				p_rdValue = m_dStartAngle;
@@ -384,7 +426,7 @@ HRESULT SVExtentDimensionsClass::SetExtentProperty( SVExtentPropertyEnum p_eProp
 
 				l_hrOk = S_OK;
 			}
-		}
+		} //if ( ( p_eProperty & ~SVExtentPropertyLine ) == 0 )
 
 		if ( ( p_eProperty & ~SVExtentPropertyRectangle ) == 0 )
 		{
@@ -423,6 +465,24 @@ HRESULT SVExtentDimensionsClass::SetExtentProperty( SVExtentPropertyEnum p_eProp
 
 				l_hrOk = S_OK;
 			}
+		}
+
+		if ( ( p_eProperty & SVExtentPropertyWidthScaleFactor ) != 0 )
+		{
+			m_dWidthScaleFactor = p_dValue;
+
+			m_ulProperties |= SVExtentPropertyWidthScaleFactor;
+
+			l_hrOk = S_OK;
+		}
+
+		if ( ( p_eProperty & SVExtentPropertyHeightScaleFactor ) != 0 )
+		{
+			m_dHeightScaleFactor = p_dValue;
+
+			m_ulProperties |= SVExtentPropertyHeightScaleFactor;
+
+			l_hrOk = S_OK;
 		}
 
 		if ( ( p_eProperty & ~SVExtentPropertyPie ) == 0 )
@@ -522,9 +582,19 @@ bool SVExtentDimensionsClass::operator==( const SVExtentDimensionsClass &p_rsvVa
 			l_bOk = l_bOk && m_dOuterRadius == p_rsvValue.m_dOuterRadius;
 		}
 
+		if ( ( m_ulProperties & SVExtentPropertyHeightScaleFactor ) != 0 )
+		{
+			l_bOk = l_bOk && m_dHeightScaleFactor == p_rsvValue.m_dHeightScaleFactor;
+		}
+
 		if ( ( m_ulProperties & SVExtentPropertyOutputHeight ) != 0 )
 		{
 			l_bOk = l_bOk && m_lOutputHeight == p_rsvValue.m_lOutputHeight;
+		}
+
+		if ( ( m_ulProperties & SVExtentPropertyWidthScaleFactor ) != 0 )
+		{
+			l_bOk = l_bOk && m_dWidthScaleFactor == p_rsvValue.m_dWidthScaleFactor;
 		}
 
 		if ( ( m_ulProperties & SVExtentPropertyOutputWidth ) != 0 )

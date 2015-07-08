@@ -706,10 +706,12 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::Create( SVMatroxB
 
 			if( l_Code == SVMEE_STATUS_OK )
 			{
-				MIL_ID l_NewBuf;
+				MIL_ID childBufID(M_NULL);
+				MIL_ID parentBufID = p_CreateChildStruct.m_ParentBufId.GetIdentifier();
+
 				if( p_CreateChildStruct.m_lParentBandCount > 1 )
 				{
-					l_NewBuf = MbufChildColor2d(p_CreateChildStruct.m_ParentBufId.GetIdentifier(),
+					childBufID = MbufChildColor2d(parentBufID,
 						p_CreateChildStruct.m_lBand,
 						p_CreateChildStruct.m_lOffX,
 						p_CreateChildStruct.m_lOffY,
@@ -719,7 +721,7 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::Create( SVMatroxB
 				}
 				else
 				{
-					l_NewBuf = MbufChild2d(p_CreateChildStruct.m_ParentBufId.GetIdentifier(),
+					childBufID = MbufChild2d(parentBufID,
 						p_CreateChildStruct.m_lOffX,
 						p_CreateChildStruct.m_lOffY,
 						p_CreateChildStruct.m_lSizeX,
@@ -731,7 +733,7 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::Create( SVMatroxB
 
 				if( l_Code == SVMEE_STATUS_OK )
 				{
-					p_rNewBuffer.m_BufferPtr = new SVMatroxImageChildBuffer( p_CreateChildStruct.m_ParentBufId.m_BufferPtr, l_NewBuf, "SVMatroxBufferInterface::Create-CreateChildBuffer" );
+					p_rNewBuffer.m_BufferPtr = new SVMatroxImageChildBuffer( p_CreateChildStruct.m_ParentBufId.m_BufferPtr, childBufID, "SVMatroxBufferInterface::Create-CreateChildBuffer" );
 				}
 			}
 		}

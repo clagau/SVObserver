@@ -1090,6 +1090,9 @@ extern /*const*/ GUID SVExtentRelativeRightPositionObjectGuid;
 extern /*const*/ GUID SVExtentRelativeBottomPositionObjectGuid;
 extern /*const*/ GUID SVExtentWidthObjectGuid;
 extern /*const*/ GUID SVExtentHeightObjectGuid;
+extern /*const*/ GUID SVExtentWidthObjectGuid;
+extern /*const*/ GUID SVExtentHeightScaleFactorObjectGuid;
+extern /*const*/ GUID SVExtentWidthScaleFactorObjectGuid;
 
 // GUIDs for Exposed Source Image Extents (primarily Images/Tools)
 extern /*const*/ GUID SVUpdateAuxilliaryExtentsObjectGuid;
@@ -1216,6 +1219,15 @@ extern /*const*/ GUID SVEdgeBUpperThresholdValueGuid;
 extern /*const*/ GUID SVDrawCriteriaObjectGuid;
 extern /*const*/ GUID SVResetInspectionCountsGuid;
 extern /*const*/ GUID SVTriggerCountGuid;
+
+///////////////////////////////////////////////////
+// GUIDs for the ResizeTool
+///////////////////////////////////////////////////
+extern /*const*/ GUID SVResizeToolGuid;
+extern /*const*/ GUID SVResizeInterpolationModeGuid;
+extern /*const*/ GUID SVResizeOverscanGuid;
+extern /*const*/ GUID SVResizePerformanceGuid;
+extern /*const*/ GUID SVLogicalROIImageGuid;
 
 extern /*const*/ GUID aSVVariantInputObjectGuid[];
 extern /*const*/ GUID aSVVariantInputObjectNameGuid[];

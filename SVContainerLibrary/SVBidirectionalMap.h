@@ -15,10 +15,7 @@
 #include <boost/multi_index_container.hpp>
 #include <boost/multi_index/member.hpp>
 #include <boost/multi_index/ordered_index.hpp>
-
-// tags for accessing both sides of a bidirectional map
-struct from{};
-struct to{};
+#include "SVBimapDeclarations.h"
 
 // The class template bidirectional_map wraps the specification
 // of a bidirectional map based on multi_index_container.

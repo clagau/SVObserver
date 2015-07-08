@@ -1161,11 +1161,11 @@ void SVImageViewClass::OnMouseMove( UINT nFlags, CPoint point )
 		GetWindowRect( l_screenRect );
 
 		/*TRACE( "CLIENT -- RECT L=%d-T=%d-R=%d-B=%d -- POINT X=%d-Y=%d\n",
-		l_rect.left, l_rect.top, l_rect.right, l_rect.bottom,
-		l_clientPoint.x, l_clientPoint.y );
+			l_rect.left, l_rect.top, l_rect.right, l_rect.bottom,
+			l_clientPoint.x, l_clientPoint.y );
 
 		TRACE( "SCREEN -- RECT L=%d-T=%d-R=%d-B=%d -- POINT X=%d-Y=%d\n",
-		l_screenRect.left, l_screenRect.top, l_screenRect.right, l_screenRect.bottom,
+			l_screenRect.left, l_screenRect.top, l_screenRect.right, l_screenRect.bottom,
 		l_screenPoint.x, l_screenPoint.y );*/
 
 		// Get Color of Mouse Point ( inside of View )
@@ -1189,51 +1189,59 @@ void SVImageViewClass::OnMouseMove( UINT nFlags, CPoint point )
 
 		SVIPDoc* l_pIPDoc = GetIPDoc();
 
-		if( l_pIPDoc != NULL && m_isPicked && GetToolExtents( l_svExtents ) == S_OK )
+		if (m_isPicked)
 		{
-			CPoint l_startPoint = m_lastMouseMovePoint;
-
-			SVImageExtentClass l_svTempExtents = l_svExtents;
-
-			TransformFromViewSpace( l_startPoint );
-
-			l_hCursor = GetObjectCursor( m_svMousePickLocation, l_point );
-
-			if( ( m_svMousePickLocation == SVExtentLocationPropertyRotate ||
-				m_svMousePickLocation == l_svExtents.GetLocationPropertyAt( l_startPoint ) ) &&
-				l_svTempExtents.Update( m_svMousePickLocation, l_startPoint, l_point ) == S_OK )
+			if( l_pIPDoc != NULL && m_isPicked && GetToolExtents( l_svExtents ) == S_OK )
 			{
-				bool l_bUpdate = false;
+				CPoint l_startPoint = m_lastMouseMovePoint;
 
-				l_bUpdate = l_pIPDoc->UpdateExtents( m_psvObject, l_svTempExtents ) == S_OK;
+				SVImageExtentClass l_svTempExtents = l_svExtents;
 
-				if( l_bUpdate || l_rect.PtInRect( l_clientPoint ) )
+				TransformFromViewSpace( l_startPoint );
+
+				l_hCursor = GetObjectCursor( m_svMousePickLocation, l_point );
+
+				if( ( m_svMousePickLocation == SVExtentLocationPropertyRotate ||
+					m_svMousePickLocation == l_svExtents.GetLocationPropertyAt( l_startPoint ) ) &&
+					l_svTempExtents.Update( m_svMousePickLocation, l_startPoint, l_point ) == S_OK )
 				{
-					l_bUpdate = l_bUpdate || l_pIPDoc->UpdateExtentsToFit( m_psvObject, l_svTempExtents ) == S_OK;
+					bool l_bUpdate = false;
+
+					l_bUpdate = l_pIPDoc->UpdateExtents( m_psvObject, l_svTempExtents ) == S_OK;
+
+					if( l_bUpdate || l_rect.PtInRect( l_clientPoint ) )
+					{
+						l_bUpdate = l_bUpdate || l_pIPDoc->UpdateExtentsToFit( m_psvObject, l_svTempExtents ) == S_OK;
+					}
+
+					if( l_bUpdate )
+					{
+						long l_left = 0;
+						long l_top = 0;
+						long l_width = 0;
+						long l_height = 0;
+
+						l_svExtents.GetExtentProperty( SVExtentPropertyPositionPointX, l_left );
+						l_svExtents.GetExtentProperty( SVExtentPropertyPositionPointY, l_top );
+						l_svExtents.GetExtentProperty( SVExtentPropertyWidth, l_width );
+						l_svExtents.GetExtentProperty( SVExtentPropertyHeight, l_height );
+
+						// Status Text: Mouse Pos and Tool Extent
+						l_text.Format( " Col: %d, Row: %d    X: %d, Y: %d    cX: %d, cY: %d ", 
+							l_point.x, l_point.y, l_left, l_top, l_width, l_height );
+					}
 				}
-
-				if( l_bUpdate )
-				{
-					long l_left = 0;
-					long l_top = 0;
-					long l_width = 0;
-					long l_height = 0;
-
-					l_svExtents.GetExtentProperty( SVExtentPropertyPositionPointX, l_left );
-					l_svExtents.GetExtentProperty( SVExtentPropertyPositionPointY, l_top );
-					l_svExtents.GetExtentProperty( SVExtentPropertyWidth, l_width );
-					l_svExtents.GetExtentProperty( SVExtentPropertyHeight, l_height );
-
-					// Status Text: Mouse Pos and Tool Extent
-					l_text.Format( " Col: %d, Row: %d    X: %d, Y: %d    cX: %d, cY: %d ", 
-						l_point.x, l_point.y, l_left, l_top, l_width, l_height );
-				}
+			}
+			else
+			{
+				l_hCursor = GetObjectCursor( l_point );
 			}
 		}
 		else
 		{
 			l_hCursor = GetObjectCursor( l_point );
 		}
+
 		//If no icon returned then use standard arrow
 		if(NULL == l_hCursor)
 		{

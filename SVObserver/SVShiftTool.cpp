@@ -387,7 +387,7 @@ HRESULT SVShiftTool::UpdateImageWithExtent( unsigned long p_Index )
 {
 	HRESULT l_Status = S_OK;
 
-	l_Status = m_svToolExtent.UpdateImageWithExtent( p_Index, SVToolExtentClass::SVRebuidOnResizeToolExtent );
+	l_Status = m_svToolExtent.UpdateImageWithExtent( p_Index, SVToolExtentClass::SVRebuildOnResizeToolExtent );
 
 	return l_Status;
 }

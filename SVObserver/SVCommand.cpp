@@ -1879,6 +1879,8 @@ struct SVGetImageListImageInfo
 		: m_ImageName( p_rImageName ), m_ImageId( p_rImageId ), m_pInspection( p_pInspection ) {}
 };
 
+
+// Currently used only through external DCOM connection.
 STDMETHODIMP CSVCommand::SVGetImageList(SAFEARRAY* psaNames, long lCompression, SAFEARRAY** ppsaImages, SAFEARRAY** ppsaOverlays, SAFEARRAY** ppsaStatus, SAFEARRAY** ppsaProcCounts)
 {
 	HRESULT hrResult = S_OK;
@@ -2195,6 +2197,7 @@ STDMETHODIMP CSVCommand::SVGetImageList(SAFEARRAY* psaNames, long lCompression, 
 
 	return hrResult;
 }
+
 
 STDMETHODIMP CSVCommand::SVRegisterStream(SAFEARRAY* psaName, VARIANT vtInterface, SAFEARRAY** ppsaStatus)
 {
@@ -3547,7 +3550,8 @@ HRESULT CSVCommand::ImageToBSTR(SVImageInfoClass&  rImageInfo,
 			l_Code = SVMatroxBufferInterface::CopyBuffer(l_ChildMilBuffer.GetBuffer(), l_MilBuffer.GetBuffer(), l_lBandLink );
 		} 
 
-		if (l_lType == SVImageTypeLogical)
+		if ((l_lType == SVImageTypeLogicalAndPhysical) ||
+			(l_lType == SVImageTypeLogical))
 		{
 			bDestroyHandle = TRUE;
 
@@ -3841,7 +3845,7 @@ HRESULT CSVCommand::SVGetDataList(SAFEARRAY* psaNames, SAFEARRAY** ppsaValues, S
 
 		if ( nullptr != ObjectRef.Object() || nullptr != pInspection )
 		{
-			//If inspection is nullptr then object is of type BasicValueObject
+			//If inspection  is nullptr then object is of type BasicValueObject
 			if( nullptr == pInspection )
 			{
 				BasicValueObject* pValueObject = dynamic_cast< BasicValueObject* >( ObjectRef.Object() );
@@ -3977,21 +3981,21 @@ STDMETHODIMP CSVCommand::SVRunOnce(BSTR bstrName)
 	HRESULT              hrResult = S_FALSE;	
 	SVInspectionProcess* pInspection( nullptr );
 
-	if( !SVSVIMStateClass::CheckState( SV_STATE_RUNNING ) )
-	{
-		if( SVConfigurationObject::GetInspection( W2T(bstrName), pInspection) )
+		if( !SVSVIMStateClass::CheckState( SV_STATE_RUNNING ) )
 		{
+		if( SVConfigurationObject::GetInspection( W2T(bstrName), pInspection) )
+			{
 			SVCommandInspectionRunOncePtr l_CommandPtr = new SVCommandInspectionRunOnce( pInspection->GetUniqueObjectID() );
 			SVObjectSynchronousCommandTemplate< SVCommandInspectionRunOncePtr > l_Command( pInspection->GetUniqueObjectID(), l_CommandPtr );
 
 			hrResult = l_Command.Execute( 120000 );
 		}
-	}// end if
-	else
-	{
-		//return an error.  not able to do runonce.
-		hrResult = SVMSG_44_RUNONCE_ONLINE;
-	}// end else
+		}// end if
+		else
+		{
+			//return an error.  not able to do runonce.
+			hrResult = SVMSG_44_RUNONCE_ONLINE;
+		}// end else
 
 	return hrResult;
 }
@@ -4018,7 +4022,7 @@ STDMETHODIMP CSVCommand::SVSetSourceImage(BSTR bstrName, BSTR bstrImage)
 			if( pInspection->AddInputImageRequest( pMainImage, bstrImage ) != S_OK )
 			{
 				hrResult = SVMSG_INVALID_IMAGE_SOURCE;
-			}
+		}
 		}
 		else
 		{
@@ -4026,9 +4030,9 @@ STDMETHODIMP CSVCommand::SVSetSourceImage(BSTR bstrName, BSTR bstrImage)
 		}
 	}
 	else
-	{
+		{
 		hrResult = SVMSG_ONE_OR_MORE_INSPECTIONS_DO_NOT_EXIST;
-	}
+		}
 
 	return hrResult;
 }
@@ -4744,30 +4748,30 @@ STDMETHODIMP CSVCommand::SVGetRemoteInputCount(long *lCount)
 	HRESULT hrResult = S_OK;
 	BOOL bSuccess = FALSE;
 
-	try
-	{
+		try
+		{
 		SVConfigurationObject* pConfig( nullptr );
 		SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
 		if( nullptr != pConfig )
-		{
+			{
 			SVInputObjectList* pInputObjectList = pConfig->GetInputObjectList();
 			if( nullptr != pInputObjectList && pInputObjectList->GetRemoteInputCount( *lCount ) )
 			{
-				bSuccess = TRUE;
-			}
+			bSuccess = TRUE;
+		}
 		}
 	}
-	catch (...)
-	{
-		bSuccess = FALSE;
-	}
+		catch (...)
+		{
+			bSuccess = FALSE;
+		}
 
-	if( !bSuccess )
-	{
-		SETEXCEPTION0 (svException, SVMSG_CMDCOMSRV_ERROR);
-		hrResult = S_FALSE;
-	}
+		if( !bSuccess )
+		{
+			SETEXCEPTION0 (svException, SVMSG_CMDCOMSRV_ERROR);
+			hrResult = S_FALSE;
+		}
 
 	return hrResult;
 }// end SVGetRemoteInputCount
@@ -4778,30 +4782,30 @@ STDMETHODIMP CSVCommand::SVSetRemoteInput(long lIndex, VARIANT vtValue)
 	HRESULT hrResult = S_OK;
 	BOOL bSuccess = FALSE;
 
-	try
-	{
+		try
+		{
 		SVConfigurationObject* pConfig( nullptr );
 		SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
 		if( nullptr != pConfig )
-		{
+			{
 			SVInputObjectList* pInputObjectList = pConfig->GetInputObjectList( );
 			if( nullptr != pInputObjectList && pInputObjectList->SetRemoteInput( lIndex, vtValue ) )
 			{
-				bSuccess = TRUE;
-			}
+			bSuccess = TRUE;
+		}
 		}
 	}
-	catch (...)
-	{
-		bSuccess = FALSE;
-	}
+		catch (...)
+		{
+			bSuccess = FALSE;
+		}
 
-	if( !bSuccess )
-	{
-		SETEXCEPTION0 (svException, SVMSG_CMDCOMSRV_ERROR);
-		hrResult = SVMSG_CMDCOMSRV_ERROR;
-	}
+		if( !bSuccess )
+		{
+			SETEXCEPTION0 (svException, SVMSG_CMDCOMSRV_ERROR);
+			hrResult = SVMSG_CMDCOMSRV_ERROR;
+		}
 
 	return hrResult;
 }// end SVSetRemoteInput

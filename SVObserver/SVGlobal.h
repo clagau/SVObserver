@@ -113,67 +113,11 @@ enum SVGetPathInfo
 //******************************************************************************
 
 #define SV_PPQ_SUPPORT             // PPQ Support
-//#define SV_IO_TEST_SUPPORT       // IO Test Support
 #define SV_NO_MIL_ERROR_MESSAGES   // MIL Error Message Support
-//#define SV_DEV_STATE             // Programming State
-
-#define SV_DEFAULT_REFERENCETOOL_LEFT      10L
-#define SV_DEFAULT_REFERENCETOOL_TOP       10L
-#define SV_DEFAULT_REFERENCETOOL_WIDTH    100L
-#define SV_DEFAULT_REFERENCETOOL_HEIGHT   100L
-#define SV_DEFAULT_REFERENCETOOL_CONTRAST 20.0
-
-//******************************************************************************
-//* MACRO(S):
-//******************************************************************************
-#define SV_SERIALIZE_GUID_AND_INIT( XGUID, XARCHIVE )	\
-		{	\
-			if( ( XARCHIVE ).IsStoring() ) \
-			{ \
-				( XARCHIVE ) << ( XGUID ).Data1 << ( XGUID ).Data2 << ( XGUID ).Data3 \
-							 << ( XGUID ).Data4[0] << ( XGUID ).Data4[1] << ( XGUID ).Data4[2] << ( XGUID ).Data4[3] \
-							 << ( XGUID ).Data4[4] << ( XGUID ).Data4[5] << ( XGUID ).Data4[6] << ( XGUID ).Data4[7]; \
-			} \
-			else \
-			{ \
-				SVObjectManagerClass::Instance().CloseUniqueObjectID( this ); \
-				\
-				( XARCHIVE ) >> ( XGUID ).Data1 >> ( XGUID ).Data2 >> ( XGUID ).Data3 \
-							 >> ( XGUID ).Data4[0] >> ( XGUID ).Data4[1] >> ( XGUID ).Data4[2] >> ( XGUID ).Data4[3] \
-							 >> ( XGUID ).Data4[4] >> ( XGUID ).Data4[5] >> ( XGUID).Data4[6] >> ( XGUID ).Data4[7]; \
-				\
-				SVObjectManagerClass::Instance().OpenUniqueObjectID( this ); \
-			} \
-		}
-
-
-#define SV_SERIALIZE_GUID( XGUID, XARCHIVE )	\
- 		{	\
-			if( ( XARCHIVE ).IsStoring() ) \
-			{ \
-				( XARCHIVE ) << ( XGUID ).Data1 << ( XGUID ).Data2 << ( XGUID ).Data3 \
-							 << ( XGUID ).Data4[0] << ( XGUID ).Data4[1] << ( XGUID ).Data4[2] << ( XGUID ).Data4[3] \
-							 << ( XGUID ).Data4[4] << ( XGUID ).Data4[5] << ( XGUID ).Data4[6] << ( XGUID ).Data4[7]; \
-			} \
-			else \
-			{ \
-				( XARCHIVE ) >> ( XGUID ).Data1 >> ( XGUID ).Data2 >> ( XGUID ).Data3 \
-							 >> ( XGUID ).Data4[0] >> ( XGUID ).Data4[1] >> ( XGUID ).Data4[2] >> ( XGUID ).Data4[3] \
-							 >> ( XGUID ).Data4[4] >> ( XGUID ).Data4[5] >> ( XGUID).Data4[6] >> ( XGUID ).Data4[7]; \
-			} \
-		}
 
 ////////////////////////////////////////////////////////////////////////////////
 // Global Helpers:
 ////////////////////////////////////////////////////////////////////////////////
-
-#define SV_TOLERANCE( IV, SV, OT, UT)				( ( IV ) >= ( SV ) + ( UT ) && ( IV ) <= ( SV ) + ( OT ) )
-
-#define SV_IS_PQ_READY( X )							( ( ( X ) != NULL ) ? ( X )->IsStarted() : FALSE )
-
-#define SV_POINT_TO_DWORD( P )						( ( ( ( DWORD ) ( P ).y ) << 16 ) | ( ( DWORD ) ( P ).x ) )
-
-#define SV_VALIDATE_READ_WRITE_OBJECT( P, Type, BReadWrite )	( ( ( P ) != NULL ) && AfxIsValidAddress( ( P ), sizeof( Type ), ( BReadWrite ) ) )
 
 #define SV_GET_BIT_NUMBER( X )						( sizeof( X ) * 8 )
 
@@ -297,8 +241,8 @@ const CString SV_TSTR_NEWLINE               ( _T( "\n" ) );
 const CString SV_TSTR_TAB                   ( _T( "\t" ) );
 
 // May be obsolete...
-#define SVR_MUNICH
-#define SVR_HARRISBURG
+// #define SVR_MUNICH
+// #define SVR_HARRISBURG
 
 const long SV_DEFAULT_TOOL_UPPER_TRESH              = 255L;
 const long SV_DEFAULT_TOOL_LOWER_TRESH              = 40L;
@@ -327,6 +271,8 @@ const long SV_DEFAULT_WINDOWTOOL_LEFT   =  10L;
 const long SV_DEFAULT_WINDOWTOOL_TOP    =  10L;
 const long SV_DEFAULT_WINDOWTOOL_WIDTH  = 100L;
 const long SV_DEFAULT_WINDOWTOOL_HEIGHT = 100L;
+const double SV_DEFAULT_WINDOWTOOL_WIDTHSCALEFACTOR  = 1.0;
+const double SV_DEFAULT_WINDOWTOOL_HEIGHTSCALEFACTOR = 1.0;
 
 const long SV_DEFAULT_POLARTRANSFORM_CENTER_X     = 200L;
 const long SV_DEFAULT_POLARTRANSFORM_CENTER_Y     =  50L;
@@ -334,16 +280,6 @@ const long SV_DEFAULT_POLARTRANSFORM_START_RADIUS = 200L;
 const long SV_DEFAULT_POLARTRANSFORM_END_RADIUS   = 100L;
 const long SV_DEFAULT_POLARTRANSFORM_START_ANGLE  = 210L;
 const long SV_DEFAULT_POLARTRANSFORM_END_ANGLE    = 330L;
-
-const long SV_DEFAULT_GAGETOOL_LEFT          =  10L;
-const long SV_DEFAULT_GAGETOOL_TOP           =  10L;
-const long SV_DEFAULT_GAGETOOL_WIDTH         = 150L;
-const long SV_DEFAULT_GAGETOOL_HEIGHT        =  50L;
-
-const long SV_DEFAULT_PROFILETOOL_LEFT       =  10L;
-const long SV_DEFAULT_PROFILETOOL_TOP        =  10L;
-const long SV_DEFAULT_PROFILETOOL_WIDTH      = 150L;
-const long SV_DEFAULT_PROFILETOOL_HEIGHT     = 100L;
 
 // Acquisition Overlapping
 const long SV_DEFAULT_MAX_OVERLAPPING           = 10;

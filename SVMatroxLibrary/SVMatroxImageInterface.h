@@ -115,8 +115,14 @@ public:
 	// This function replaces MimWatershed
 	static SVStatusCode Watershed( const SVMatroxBuffer& p_rDest, const SVMatroxBuffer& p_rSource, const SVMatroxBuffer& p_rMarker, long p_lMinVariation, SVImageWaterShedEnum p_lControlFlag);
 	// This function replaces MimResize
-	static SVStatusCode Resize( const SVMatroxBuffer& p_rDest, const SVMatroxBuffer& p_rSource, double p_dScaleFactorX, double p_dScaleFactorY, SVImageOperationTypeEnum p_lInterpolationMode );
-
+	static SVStatusCode Resize( const SVMatroxBuffer& p_rDest, 
+								const SVMatroxBuffer& p_rSource, 
+								const double p_dScaleFactorX, 
+								const double p_dScaleFactorY, 
+								const SVInterpolationModeOptions::SVInterpolationModeOptionsEnum interpolationMode,
+								const SVOverscanOptions::SVOverscanOptionsEnum overscan,
+								const SVPerformanceOptions::SVPerformanceOptionsEnum performance);
+		
 private:
 	static long Convert2MatroxType( SVImageOperationTypeEnum p_eDisp) ;
 	static long Convert2MatroxType( SVImageWaterShedEnum p_eType) ;

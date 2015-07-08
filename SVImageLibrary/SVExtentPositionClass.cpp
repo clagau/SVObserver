@@ -759,7 +759,8 @@ HRESULT SVExtentPositionClass::SetExtentProperty( SVExtentPropertyEnum p_eProper
 
 			l_hrOk = S_OK;
 		}
-	}
+	} // if ( ( p_eProperty & ~SVExtentPropertyPositionsAll ) == 0 )
+
 
 	return l_hrOk;
 }
