@@ -1586,6 +1586,12 @@ void SVIPDoc::OnResultsPicker()
 			SVString TO(SvOl::FqnPPQVariables);
 			TO.append(_T(".DIO"));
 			
+			SVString From2(InspectionName);
+			From2.append(_T(".Remote Input"));
+			SVString TO2(SvOl::FqnPPQVariables);
+			TO2.append(_T(".Remote Input"));
+
+
 			SVStringSet SelectedNamesRaw;
 			pResultList->GetNameSet(SelectedNamesRaw);
 			//Need to replace  the PPQ Variables name with  the inspection name
@@ -1595,6 +1601,8 @@ void SVIPDoc::OnResultsPicker()
 			{
 				SVString St(*SetIt);
 				St.replace( From.c_str(), TO.c_str() );
+				St.replace( From2.c_str(), TO2.c_str() );
+
 				SelectedNames.insert(St);
 				SetIt++;
 			}
