@@ -13,6 +13,7 @@
 #include <boost/config.hpp>
 #include <boost/assign.hpp>
 #include <fstream>
+#include <io.h>
 #include "SVSocketRemoteCommandManager.h"
 #include "SVTimerLibrary\SVClock.h"
 #include "JsonLib/include/json.h"
@@ -1306,6 +1307,14 @@ HRESULT SVRemoteCommandFunctions::PutConfig( const std::string& p_rJsonCommand, 
 HRESULT SVRemoteCommandFunctions::PutDeviceFile( const std::string& p_rJsonCommand, std::string& p_rJsonResults )
 {
 	HRESULT l_Status = S_OK;
+	
+	enum AccessMode
+	{
+		Exists = 0, // Existence only
+		WriteOnly = 2, // Write-only
+		ReadOnly = 4, // Read-only
+		ReadWrite = 6 //Read and write
+	};
 
 	Json::Reader l_Reader;
 	Json::Value l_JsonCmdValues;
@@ -1377,9 +1386,15 @@ HRESULT SVRemoteCommandFunctions::PutDeviceFile( const std::string& p_rJsonComma
 
 				if( !( l_SourceFileName.empty() ) )
 				{
-					if( !::MoveFile( l_SourceFileName.c_str(), l_DestinationPath.c_str() ) )
+					DWORD flags = MOVEFILE_REPLACE_EXISTING | MOVEFILE_WRITE_THROUGH | MOVEFILE_COPY_ALLOWED;
+					if( !::MoveFileEx( l_SourceFileName.c_str(), l_DestinationPath.c_str(), flags ) )
 					{
 						l_Status = E_UNEXPECTED;
+						// check if read only
+						if (::PathFileExists(l_DestinationPath.c_str()) && 0 == _access(l_DestinationPath.c_str(), ReadOnly))
+						{
+							l_Status = E_ACCESSDENIED;
+						}
 					}
 				}
 				else if( l_Status == S_OK )
