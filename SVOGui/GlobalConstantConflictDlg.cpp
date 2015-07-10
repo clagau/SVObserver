@@ -142,7 +142,7 @@ namespace Seidenader { namespace SVOGui
 		case VT_R8:
 			{
 				rText.Format( _T("%.06f"), rValue.dblVal );
-				rType = GlobalConstantTypes[ SvOi::GlobalConstantData::NumberType ];
+				rType = GlobalConstantTypes[ SvOi::GlobalConstantData::DecimalType ];
 			}
 			break;
 		case VT_BSTR:

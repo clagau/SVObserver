@@ -53,6 +53,8 @@ BEGIN_MESSAGE_MAP(GlobalConstantView, CListView)
 	ON_UPDATE_COMMAND_UI(ID_EDIT_GLOBAL_CONSTANT_EDIT,  &GlobalConstantView::OnUpdateEditItem)
 	ON_COMMAND(ID_EDIT_GLOBAL_CONSTANT_DELETE, &GlobalConstantView::OnDeleteItem)
 	ON_UPDATE_COMMAND_UI(ID_EDIT_GLOBAL_CONSTANT_DELETE,  &GlobalConstantView::OnUpdateDeleteItem)
+	ON_COMMAND(ID_GLOBAL_CONSTANT_DEPENDENCIES, &GlobalConstantView::OnShowDependencies)
+	ON_UPDATE_COMMAND_UI(ID_GLOBAL_CONSTANT_DEPENDENCIES,  &GlobalConstantView::OnUpdateShowDependencies)
 END_MESSAGE_MAP()
 
 
@@ -236,7 +238,7 @@ bool GlobalConstantView::deleteItem( int Item )
 
 			if( nullptr != pObject )
 			{
-				if( checkAllDependencies( pObject ) )
+				if( checkAllDependencies( pObject, true ) )
 				{
 					if( S_OK ==  RootObject::deleteRootChildValue( pObject->GetCompleteObjectName() ) )
 					{
@@ -279,7 +281,7 @@ int GlobalConstantView::insertItem(const BasicValueObjectPtr& rpObject, int Pos 
 	{
 	case VT_R8:
 		{
-			Type = SvOg::GlobalConstantTypes[SvOi::GlobalConstantData::NumberType];
+			Type = SvOg::GlobalConstantTypes[SvOi::GlobalConstantData::DecimalType];
 			ValueText.Format( _T("%.06f"), Value.dblVal );
 		}
 		break;
@@ -408,7 +410,7 @@ int GlobalConstantView::getSelectedItem() const
 	return Result;
 }
 
-bool GlobalConstantView::checkAllDependencies( BasicValueObject* pObject ) const
+bool GlobalConstantView::checkAllDependencies( BasicValueObject* pObject, bool ConfirmDelete ) const
 {
 	bool Result( true );
 
@@ -459,7 +461,13 @@ bool GlobalConstantView::checkAllDependencies( BasicValueObject* pObject ) const
 			++Iter;
 		}
 		
-		SVShowDependentsDialog DependentsDialog( DependencyList, DisplayText, true );
+		SVShowDependentsDialog::DialogType Type( SVShowDependentsDialog::ShowWithIP_Name );
+		if( ConfirmDelete )
+		{
+			Type =  SVShowDependentsDialog::DeleteConfirmWithIP_Name;
+		}
+
+		SVShowDependentsDialog DependentsDialog( DependencyList, DisplayText, Type );
 
 		if( IDCANCEL == DependentsDialog.DoModal() )
 		{
@@ -634,6 +642,40 @@ void GlobalConstantView::OnUpdateDeleteItem( CCmdUI* pCmdUI )
 	bool Enabled ( TheSVObserverApp.OkToEdit() );
 
 	if( Enabled && -1 == getSelectedItem() )
+	{
+		Enabled = false;
+	}
+	pCmdUI->Enable( Enabled );
+}
+
+void GlobalConstantView::OnShowDependencies()
+{
+	int Item = getSelectedItem();
+	if( -1 != Item )
+	{
+		LVITEM lvItem;
+		lvItem.mask = LVIF_PARAM;
+		lvItem.iItem = Item;
+		lvItem.iSubItem = 0;
+
+		if( m_rCtrl.GetItem( &lvItem ) )
+		{
+			BasicValueObject* pObject(nullptr);
+
+			pObject = reinterpret_cast<BasicValueObject*> ( lvItem.lParam );
+			if( nullptr != pObject )
+			{
+				checkAllDependencies( pObject, false );
+			}
+		}
+	}
+}
+
+void GlobalConstantView::OnUpdateShowDependencies( CCmdUI* pCmdUI )
+{
+	bool Enabled ( true );
+
+	if( -1 == getSelectedItem() )
 	{
 		Enabled = false;
 	}

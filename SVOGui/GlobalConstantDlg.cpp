@@ -87,10 +87,10 @@ namespace Seidenader { namespace SVOGui
 			m_Type.AddString( GlobalConstantTypes[i] );
 		}
 
-		//Set default type as Number
-		if( SvOi::GlobalConstantData::NumberType < m_Type.GetCount() )
+		//Set default type as Decimal
+		if( SvOi::GlobalConstantData::DecimalType < m_Type.GetCount() )
 		{
-			m_Type.SetCurSel( SvOi::GlobalConstantData::NumberType );
+			m_Type.SetCurSel( SvOi::GlobalConstantData::DecimalType );
 		}
 
 		if( !m_rData.m_DottedName.empty() )
@@ -109,9 +109,9 @@ namespace Seidenader { namespace SVOGui
 		case VT_R8:
 			{
 				m_Value.Format( _T("%.06f"), m_rData.m_Value.dblVal );
-				if( SvOi::GlobalConstantData::NumberType < m_Type.GetCount() )
+				if( SvOi::GlobalConstantData::DecimalType < m_Type.GetCount() )
 				{
-					m_Type.SetCurSel( SvOi::GlobalConstantData::NumberType );
+					m_Type.SetCurSel( SvOi::GlobalConstantData::DecimalType );
 				}
 			}
 			break;
@@ -145,7 +145,7 @@ namespace Seidenader { namespace SVOGui
 			m_rData.m_DottedName = m_Branch;
 			m_rData.m_DottedName += m_Name.GetString();
 			//Determine which Global Constant type Number or Text
-			if( SvOi::GlobalConstantData::NumberType == m_Type.GetCurSel() )
+			if( SvOi::GlobalConstantData::DecimalType == m_Type.GetCurSel() )
 			{
 				m_rData.m_Value = atof( m_Value );
 			}
@@ -165,7 +165,7 @@ namespace Seidenader { namespace SVOGui
 		{
 			switch( Type )
 			{
-			case SvOi::GlobalConstantData::NumberType:
+			case SvOi::GlobalConstantData::DecimalType:
 				{
 					if( !NewValue.matchesRegularExpression( RegExp_AllRealNumbers ) )
 					{

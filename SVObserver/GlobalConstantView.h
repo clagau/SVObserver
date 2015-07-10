@@ -129,9 +129,10 @@ private:
 	//************************************
 	//! The method is called to check the dependencies of all IPs
 	//! \param pObject <in> pointer to the object to check for dependencies
+	//! \param ConfirmDelete <in> true when checking to delete an item
 	//! \returns true if object can be deleted
 	//************************************
-	bool checkAllDependencies( BasicValueObject* pObject ) const;
+	bool checkAllDependencies( BasicValueObject* pObject, bool ConfirmDelete ) const;
 
 	virtual BOOL PreTranslateMessage( MSG* pMsg );
 	afx_msg int OnCreate( LPCREATESTRUCT lpCreateStruct );
@@ -141,6 +142,8 @@ private:
 	afx_msg void OnUpdateEditItem(CCmdUI* pCmdUI);
 	afx_msg void OnDeleteItem();
 	afx_msg void OnUpdateDeleteItem(CCmdUI* pCmdUI);
+	afx_msg void OnShowDependencies();
+	afx_msg void OnUpdateShowDependencies(CCmdUI* pCmdUI);
 
 #pragma endregion Private
 

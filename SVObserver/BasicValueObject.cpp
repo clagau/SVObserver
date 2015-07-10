@@ -13,6 +13,7 @@
 #include "stdafx.h"
 #include "BasicValueObject.h"
 
+#include "TextDefinesSvO.h"
 #include "SVObjectLibrary\SVObjectLevelCreateStruct.h"
 #include "SVUtilityLibrary\SVSAFEARRAY.h"
 #include "SVOMFCLibrary\SVBoolValueDeviceParam.h"
@@ -219,34 +220,34 @@ HRESULT BasicValueObject::getValue( bool& rValue ) const
 
 SVString BasicValueObject::getTypeName() const
 {
-	SVString retString = _T("");
+	SVString retString = SvO::Invalid;
 	switch(m_Value.vt)
 	{
 	case VT_BSTR:
 		{
-			retString = "Text";
+			retString = _T("Text");
 		}
 		break;
 	case VT_BOOL:
 	case VT_INT:		//BOOL implicit conversion to VT_INT
 		{
-			retString = "Bool";
+			retString = _T("Bool");
 		}
 		break;
 	case VT_I4:
 		{
-			retString = "Integer32";
+			retString = _T("Integer32");
 		}
 		break;
 	case VT_I8:
 		{
-			retString = "Integer64";
+			retString = _T("Integer64");
 		}
 		break;
 	case VT_R4:
 	case VT_R8:
 		{
-			retString = "Decimal";
+			retString = _T("Decimal");
 		}
 		break;
 	default:

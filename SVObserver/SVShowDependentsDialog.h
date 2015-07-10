@@ -21,16 +21,25 @@
 #include "SVTaskObject.h"
 class SVTaskObjectClass;
 
-/////////////////////////////////////////////////////////////////////////////
-// SVShowDependentsDialog dialog
-
 class SVShowDependentsDialog : public CDialog
 {
-// Construction
+#pragma region Declarations
 public:
-	SVShowDependentsDialog( const SVObjectPairVector& rList, LPCTSTR DisplayText, bool InspectionName = false, CWnd* pParent = NULL );
+	enum DialogType
+	{
+		DeleteConfirm,
+		DeleteConfirmWithIP_Name,
+		Show,
+		ShowWithIP_Name,
+	};
+#pragma endregion Declarations
 
-// Dialog Data
+#pragma region Constructor
+public:
+	SVShowDependentsDialog( const SVObjectPairVector& rList, LPCTSTR DisplayText, DialogType Type = DeleteConfirm, CWnd* pParent = NULL );
+
+#pragma endregion Constructor
+	// Dialog Data
 	//{{AFX_DATA(SVShowDependentsDialog)
 	enum { IDD = IDD_SHOW_DEPENDENTS_DIALOG };
 	CListCtrl	listCtrl;
@@ -62,7 +71,7 @@ protected:
 private:
 	const SVObjectPairVector&  m_rDependencyList;
 	SVString m_DisplayText;
-	bool m_ShowInspectionName;
+	DialogType m_DialogType;
 };
 
 //{{AFX_INSERT_LOCATION}}

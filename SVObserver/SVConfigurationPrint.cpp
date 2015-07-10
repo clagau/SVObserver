@@ -2782,13 +2782,21 @@ void SVConfigurationPrint::PrintGlobalConstants( CDC* pDC, CPoint& ptCurPos, int
 
 		if( !pGlobalConstant.empty() )
 		{
+			//Print Global Constant name
 			Label.Format( _T("Global Constant %d"), ++Index );
 			Value = pGlobalConstant->GetCompleteObjectName();
 			PrintValueObject(pDC, ptCurPos, Label, Value );
 
+			//Print Global Constant value
 			SVString Temp;
-			Label.Format( ("Value") );
+			Label =  _T("Value");
 			pGlobalConstant->getValue( Temp );
+			Value = Temp.c_str();
+			PrintValueObject(pDC, ptCurPos, Label, Value );
+
+			//Print Global Constant type
+			Label = _T("Type");
+			Temp = pGlobalConstant->getTypeName();
 			Value = Temp.c_str();
 			PrintValueObject(pDC, ptCurPos, Label, Value );
 		}

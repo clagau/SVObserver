@@ -3894,6 +3894,8 @@ BEGIN
     		MENUITEM "&Add",                        ID_EDIT_GLOBAL_CONSTANT_ADD,MFT_STRING,MFS_ENABLED
 			MENUITEM "&Edit",                       ID_EDIT_GLOBAL_CONSTANT_EDIT,MFT_STRING,MFS_ENABLED
 			MENUITEM "&Remove",                     ID_EDIT_GLOBAL_CONSTANT_DELETE,MFT_STRING,MFS_ENABLED
+			MENUITEM MFT_SEPARATOR
+			MENUITEM "Show &Dependencies",          ID_GLOBAL_CONSTANT_DEPENDENCIES,MFT_STRING,MFS_ENABLED
 		END
     END
     POPUP "&View",                          65535,MFT_STRING,MFS_ENABLED
@@ -4291,6 +4293,8 @@ BEGIN
         MENUITEM "Add Constant",                 ID_EDIT_GLOBAL_CONSTANT_ADD
         MENUITEM "Edit Constant",                ID_EDIT_GLOBAL_CONSTANT_EDIT
         MENUITEM "Remove Constant",	             ID_EDIT_GLOBAL_CONSTANT_DELETE
+        MENUITEM SEPARATOR
+        MENUITEM "Show Dependencies",	         ID_GLOBAL_CONSTANT_DEPENDENCIES
     END
 END
 /////////////////////////////////////////////////////////////////////////////

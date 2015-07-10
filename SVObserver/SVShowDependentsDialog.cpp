@@ -23,11 +23,11 @@ static char THIS_FILE[] = __FILE__;
 #define SV_NUMBER_DEPENDENTS_COLUMNS 2
 
 
-SVShowDependentsDialog::SVShowDependentsDialog( const SVObjectPairVector& rList, LPCTSTR DisplayText, bool InspectionName /*= false*/, CWnd* pParent /*=NULL*/ )
+SVShowDependentsDialog::SVShowDependentsDialog( const SVObjectPairVector& rList, LPCTSTR DisplayText, DialogType Type /*= DeleteConfirm*/, CWnd* pParent /*=NULL*/ )
 	: CDialog(SVShowDependentsDialog::IDD, pParent)
 	, m_rDependencyList( rList )
 	, m_DisplayText( DisplayText )
-	,m_ShowInspectionName( InspectionName )
+	,m_DialogType( Type )
 {
 }
 
@@ -72,7 +72,7 @@ void SVShowDependentsDialog::addItems()
 	SVObjectTypeEnum ObjectType( SVToolObjectType );
 	int iIndex = 0;
 
-	if( m_ShowInspectionName )
+	if( DeleteConfirmWithIP_Name == m_DialogType || ShowWithIP_Name == m_DialogType )
 	{
 		ObjectType = SVInspectionProcessType;
 	}
@@ -124,14 +124,36 @@ END_MESSAGE_MAP()
 
 BOOL SVShowDependentsDialog::OnInitDialog() 
 {
-	if( 0 == m_rDependencyList.size() )
-	{
-		EndDialog(IDOK);
-		return false;
-	}
-
 	CDialog::OnInitDialog();
 	
+	CWnd* pControl(nullptr);
+	if( DeleteConfirm == m_DialogType || DeleteConfirmWithIP_Name == m_DialogType)
+	{
+		if( 0 == m_rDependencyList.size() )
+		{
+			EndDialog(IDOK);
+			return false;
+		}
+		pControl = GetDlgItem( IDC_WARNING_TEXT );
+		if( nullptr != pControl )
+		{
+			pControl->SetWindowText( m_DisplayText.c_str() );
+		}
+	}
+	else
+	{
+		pControl = GetDlgItem( IDC_WARNING_TEXT );
+		if( nullptr != pControl )
+		{
+			pControl->ShowWindow( SW_HIDE );
+		}
+		pControl = GetDlgItem( IDCANCEL );
+		if( nullptr != pControl )
+		{
+			pControl->ShowWindow( SW_HIDE );
+		}
+	}
+
 	// Build ListCtrl Headers
 	addColumnHeadings();
 
@@ -139,8 +161,6 @@ BOOL SVShowDependentsDialog::OnInitDialog()
 	setColumnWidths();
 
 	addItems();
-
-	GetDlgItem( IDC_WARNING_TEXT )->SetWindowText( m_DisplayText.c_str() );
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 	              // EXCEPTION: OCX Property Pages should return FALSE

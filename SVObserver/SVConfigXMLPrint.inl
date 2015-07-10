@@ -1537,6 +1537,9 @@ inline void SVConfigXMLPrint::WriteGlobalConstants(Writer writer) const
 			//write Global Constant Value
 			pGlobalConstant->getValue( Value );
 			writer->WriteAttributeString(NULL, L"Value", NULL, to_utf16( Value.c_str(), cp_dflt).c_str() );
+			//write Global Constant type
+			Value = pGlobalConstant->getTypeName();
+			writer->WriteAttributeString(NULL, L"Type", NULL, to_utf16( Value.c_str(), cp_dflt).c_str() );
 			writer->WriteEndElement();//GlobalConstantx
 		}
 		++Iter;

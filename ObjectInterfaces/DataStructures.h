@@ -23,7 +23,7 @@ namespace Seidenader { namespace ObjectInterfaces
 	public:
 		enum DataTypeEnum
 		{
-			NumberType,
+			DecimalType,
 			TextType,
 			DataTypeMax
 		};
