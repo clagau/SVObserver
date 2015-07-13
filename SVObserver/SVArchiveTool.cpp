@@ -328,14 +328,14 @@ BOOL SVArchiveTool::CreateTextArchiveFile()
 		return FALSE;
 	}
 
-	ArchiveToolHelper athHelperFile;
-	athHelperFile.Init(csFileArchivePath);
+	ArchiveToolHelper athFile;
+	athFile.Init(csFileArchivePath);
 
-	if (athHelperFile.isUsingKeywords())
+	if (athFile.isUsingKeywords())
 	{
-		if(athHelperFile.isTokensValid())
+		if(athFile.isTokensValid())
 		{
-			csFileArchivePath = athHelperFile.TranslatePath(csFileArchivePath).c_str();
+			csFileArchivePath = athFile.TranslatePath(csFileArchivePath).c_str();
 		}
 		else
 		{
@@ -457,11 +457,11 @@ BOOL SVArchiveTool::Validate()	// called once when going online
 
 	GetImageArchivePath( csImagePath );
 
-	ArchiveToolHelper athHelperImage;
-	athHelperImage.Init(csImagePath);
-	if (athHelperImage.isUsingKeywords() && athHelperImage.isTokensValid())
+	ArchiveToolHelper athImage;
+	athImage.Init(csImagePath);
+	if (athImage.isUsingKeywords() && athImage.isTokensValid())
 	{
-		csImagePath = athHelperImage.TranslatePath(csImagePath).c_str();
+		csImagePath = athImage.TranslatePath(csImagePath).c_str();
 		m_ImageTranslatedPath = csImagePath;
 		m_ArchiveImagePathUsingKW = true;
 	}
@@ -509,14 +509,34 @@ BOOL SVArchiveTool::OnValidate()	// called each onRun
 			if((m_uiValidateCount % 10 == 0) || (m_uiValidateCount == 0))
 			{
 				CString csImagePath;
-				
-				if(m_ArchiveImagePathUsingKW)
+				GetImageArchivePath( csImagePath );
+
+				if ( !SVSVIMStateClass::CheckState(SV_STATE_RUNNING) )
 				{
-					csImagePath = m_ImageTranslatedPath;
+					ArchiveToolHelper athImage;
+					athImage.Init(csImagePath);
+
+					if (athImage.isUsingKeywords() && athImage.isTokensValid())
+					{
+						csImagePath = athImage.TranslatePath(csImagePath).c_str();
+						m_ImageTranslatedPath = csImagePath;
+						m_ArchiveImagePathUsingKW = true;
+
+						//since it is using keywords verify that the path exists
+						if ( _access( csImagePath, 0 ) != 0 )
+						{
+							//create the new path
+							SVFileNameManagerClass svFileManager;
+							svFileManager.CreatePath( csImagePath );
+						}
+					}
 				}
 				else
 				{
-					GetImageArchivePath( csImagePath );
+					if (m_ArchiveImagePathUsingKW)
+					{
+						csImagePath = m_ImageTranslatedPath;
+					}
 				}
 
 				//
@@ -697,12 +717,12 @@ HRESULT SVArchiveTool::initializeOnRun()
 	m_eArchiveMethod = static_cast<SVArchiveMethodEnum>( dwMethod );
 
 	GetImageArchivePath( csTemp );
-	ArchiveToolHelper athHelperImage;
-	athHelperImage.Init(csTemp);
+	ArchiveToolHelper athImage;
+	athImage.Init(csTemp);
 	
-	if (athHelperImage.isUsingKeywords() && athHelperImage.isTokensValid())
+	if (athImage.isUsingKeywords() && athImage.isTokensValid())
 	{
-		csTemp = athHelperImage.TranslatePath(csTemp).c_str();
+		csTemp = athImage.TranslatePath(csTemp).c_str();
 	}
 	
 

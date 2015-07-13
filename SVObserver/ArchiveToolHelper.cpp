@@ -55,11 +55,11 @@ SVString ArchiveToolHelper::TranslatePath(const SVString& sPath)
 	SVString sYear;
 	sYear.Format("%04d", stime.wYear);
 	SVString sHour;
-	sHour.Format("%2d", stime.wHour);
+	sHour.Format("%02d", stime.wHour);
 	SVString sMin;
-	sMin.Format("%2d", stime.wMinute);
+	sMin.Format("%02d", stime.wMinute);
 	SVString sSec;
-	sSec.Format("%2d", stime.wSecond);
+	sSec.Format("%02d", stime.wSecond);
 	
 	//replace all Keywords
 	sReturnPath = sReturnPath.replace(KW_DAY.c_str(),sDay.c_str());
