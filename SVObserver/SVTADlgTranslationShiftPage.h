@@ -46,6 +46,7 @@ public:
 // Dialog Data
 	enum { IDD = IDD_TA_TRANSLATION_SHIFT_DIALOG };
 
+	virtual BOOL OnSetActive() override; 
 protected:
 	virtual BOOL OnInitDialog();
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support

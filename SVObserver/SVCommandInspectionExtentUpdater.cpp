@@ -61,6 +61,7 @@ HRESULT SVCommandInspectionExtentUpdater::Execute()
 
 		svProduct.GetResultDataIndex( dMIndexHandle );
 
+		bool ResetModeAuto = !m_bResetInspection ; 
 		int index = dMIndexHandle.GetIndex();
 		switch (m_mode)
 		{
@@ -74,6 +75,7 @@ HRESULT SVCommandInspectionExtentUpdater::Execute()
 			retVal = pTool->SetImageExtentToFit(index, m_ImageExtent);
 			break;
 		case ExtentUpdaterMode_ForwardExtent:
+			ResetModeAuto = false;
 			retVal = S_OK;
 			break;
 		
@@ -85,7 +87,7 @@ HRESULT SVCommandInspectionExtentUpdater::Execute()
 		if (retVal == S_OK)
 		{
 			pInspection->m_bForceOffsetUpdate = true;
-			if(!m_bResetInspection)
+			if(ResetModeAuto)
 			{
 				/// correct tool size when it does not fit to the parent image 
 				pInspection->AddResetState( SVResetAutoMoveAndResize );
@@ -114,7 +116,7 @@ HRESULT SVCommandInspectionExtentUpdater::Execute()
 				retVal = pInspection->RunOnce( pToolRun ) ? S_OK : SvOi::Err_10006_SVCommandInspectionExtentUpdater_RunOnce;
 			}
 
-			if(!m_bResetInspection)
+			if(ResetModeAuto)
 			{
 				pInspection->RemoveResetState( SVResetAutoMoveAndResize );
 			}

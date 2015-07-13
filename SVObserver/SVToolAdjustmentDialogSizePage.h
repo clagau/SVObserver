@@ -39,6 +39,7 @@ public:
 	// ISVPropertyPageDialog
 	virtual bool QueryAllowExit();
 	virtual BOOL OnSetActive();
+	virtual BOOL OnKillActive()override;  
 
 	afx_msg void OnCbnSelchangeComboPositionX();
 	afx_msg void OnCbnSelchangeComboPositionY();

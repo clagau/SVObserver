@@ -17,6 +17,7 @@
 #include "ObjectInterfaces\ErrorNumbers.h"
 #include "EQAdjustSize.h"
 #include "SVStatusLibrary\ExceptionManager.h"
+#include "SVGuiExtentUpdater.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -484,4 +485,21 @@ BOOL SVToolAdjustmentDialogSizePage::OnSetActive()
 {
 	Refresh(false);
 	return CPropertyPage::OnSetActive();
+}
+
+
+BOOL SVToolAdjustmentDialogSizePage::OnKillActive() 
+{
+	
+	HRESULT hr = E_FAIL;
+	if (QueryAllowExit() == false)
+	{
+		return 0;
+	}
+	if(nullptr != m_pTool)
+	{
+		hr  = SVGuiExtentUpdater::ForwardSizeAndPosition(m_pTool, false);
+	}
+	
+	return CPropertyPage::OnKillActive();
 }

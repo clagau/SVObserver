@@ -81,7 +81,7 @@ HRESULT SVGuiExtentUpdater::SetImageExtentToFit(SVTaskObjectClass* pTaskObject, 
 }
 
 
-HRESULT SVGuiExtentUpdater::ForwardSizeAndPosition(SVTaskObjectClass* pTaskObject)
+HRESULT SVGuiExtentUpdater::ForwardSizeAndPosition(SVTaskObjectClass* pTaskObject,bool ForwardSize )
 {
 	CWaitCursor wait;
 	HRESULT status = SvOi::Err_10002_SetImageExtentToParent_InvalidParameter;
@@ -92,7 +92,7 @@ HRESULT SVGuiExtentUpdater::ForwardSizeAndPosition(SVTaskObjectClass* pTaskObjec
 		if ( nullptr != pInspection )
 		{
 			SVCommandInspectionSetImageExtentPtr commandPtr = new SVCommandInspectionExtentUpdater( pInspection->GetUniqueObjectID(), pTaskObject->GetUniqueObjectID(), ExtentUpdaterMode_ForwardExtent);
-			commandPtr->SetResetInspection(true);
+			commandPtr->SetResetInspection(ForwardSize);
 			SVObjectSynchronousCommandTemplate< SVCommandInspectionSetImageExtentPtr > command( pInspection->GetUniqueObjectID(), commandPtr );
 			status = command.Execute( TIMEOUT_FOR_SYNCHRONOUS_EXECUTE_IN_MS );
 		}

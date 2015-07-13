@@ -22,11 +22,13 @@ public:
 	static HRESULT SetImageExtentToFit(SVTaskObjectClass* pTaskObject, const SVImageExtentClass& rExtents, bool ForwardSize = false);
 	
 	//************************************
-	//! Update the size of the Image in pTool and all Images wich are dependent from this Image
-	//! \param p_pTaskObject [in,out]
+	//! Update the size of the Image in pTool 
+	//! and if forward size is true 	all Images wich are dependent from this Image
+	//! \param p_pTaskObject [in]
+	//! \param ForwardSize [in]
 	//! \returns HRESULT
 	//************************************
-	static HRESULT ForwardSizeAndPosition(SVTaskObjectClass* p_pTaskObject);
+	static HRESULT ForwardSizeAndPosition(SVTaskObjectClass* p_pTaskObject, bool ForwardSize  ) ;
 
 private:
 	static const int TIMEOUT_FOR_SYNCHRONOUS_EXECUTE_IN_MS = 120000;

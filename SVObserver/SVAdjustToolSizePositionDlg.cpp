@@ -286,7 +286,7 @@ void SVAdjustToolSizePositionDlg::OnBnClickedFullROI()
 }
 void SVAdjustToolSizePositionDlg::OnBnClickedPropagate()
 {
-	HRESULT hr = SVGuiExtentUpdater::ForwardSizeAndPosition(m_pToolTask);
+	HRESULT hr = SVGuiExtentUpdater::ForwardSizeAndPosition(m_pToolTask, true);
 }
 
 void SVAdjustToolSizePositionDlg::OnBnClickedEditTool()

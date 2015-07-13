@@ -120,6 +120,7 @@ BOOL SVTADlgTranslationResizePage::OnInitDialog()
 
 BOOL SVTADlgTranslationResizePage::OnSetActive()
 {
+	UpdatePropertyTreeData();
 	UpdateImages();
 	return CPropertyPage::OnSetActive();
 }
@@ -844,6 +845,7 @@ void SVTADlgTranslationResizePage::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* 
 		}
 	}
 }
+
 
 #pragma region Message Map
 BEGIN_MESSAGE_MAP(SVTADlgTranslationResizePage, CPropertyPage)
