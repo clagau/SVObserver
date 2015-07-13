@@ -727,89 +727,86 @@ BOOL SVImageViewClass::OnCommand( WPARAM p_wParam, LPARAM p_lParam )
 ////////////////////////////////////////////////////////////////////////////////
 void SVImageViewClass::OnContextMenu( CWnd* p_pWnd, CPoint p_point )
 {
-	if( !SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) )
+	CMenu l_menu;
+	CMenu* l_pPopup;
+
+	//Get the current selected tool and check to see if it has extents.  if it does not then remove Adjust Size and Position menu option
+	SVToolClass* CurrentTool = dynamic_cast< SVToolClass* >( SVObjectManagerClass::Instance().GetObject( GetIPDoc()->GetSelectedToolID() ) );
+
+	m_mousePoint.x = p_point.x;
+	m_mousePoint.y = p_point.y;
+
+	// Map mouse point to client
+	ScreenToClient( &m_mousePoint );
+
+	if( l_menu.LoadMenu( IDR_IMAGE_ADJUST ) )
 	{
-		CMenu l_menu;
-		CMenu* l_pPopup;
-
-		//Get the current selected tool and check to see if it has extents.  if it does not then remove Adjust Size and Position menu option
-		SVToolClass* CurrentTool = dynamic_cast< SVToolClass* >( SVObjectManagerClass::Instance().GetObject( GetIPDoc()->GetSelectedToolID() ) );
-
-		m_mousePoint.x = p_point.x;
-		m_mousePoint.y = p_point.y;
-
-		// Map mouse point to client
-		ScreenToClient( &m_mousePoint );
-
-		if( l_menu.LoadMenu( IDR_IMAGE_ADJUST ) )
+		if( l_pPopup = l_menu.GetSubMenu( 0 ) )
 		{
-			if( l_pPopup = l_menu.GetSubMenu( 0 ) )
+			if(!IsZoomAllowed())
 			{
-				if(!IsZoomAllowed())
-				{
-					l_pPopup->DeleteMenu( 0, MF_BYPOSITION );  // delete Zoom
-				}
+				l_pPopup->DeleteMenu( 0, MF_BYPOSITION );  // delete Zoom
+			}
 
-				if( !m_mouseIsOverTool )
-				{
-					l_pPopup->DeleteMenu( ID_CONFIG_ANALYZER, MF_BYCOMMAND );
-					l_pPopup->DeleteMenu( ID_ADJUST_POSITION, MF_BYCOMMAND );
-					l_pPopup->DeleteMenu( ID_ANALYZER_RESULT, MF_BYCOMMAND );
-				}
-				else
-				{
-					BOOL l_resultFound = FALSE;
-					SVAnalyzerClass* l_psvAnalyzer = NULL;
-					SVIPDoc *l_psvIPDoc = GetIPDoc();
+			if( !m_mouseIsOverTool )
+			{
+				l_pPopup->DeleteMenu( ID_CONFIG_ANALYZER, MF_BYCOMMAND );
+				l_pPopup->DeleteMenu( ID_ADJUST_POSITION, MF_BYCOMMAND );
+				l_pPopup->DeleteMenu( ID_ANALYZER_RESULT, MF_BYCOMMAND );
+			}
+			else
+			{
+				BOOL l_resultFound = FALSE;
+				SVAnalyzerClass* l_psvAnalyzer = NULL;
+				SVIPDoc *l_psvIPDoc = GetIPDoc();
 
-					if( nullptr != l_psvIPDoc )
+				if( nullptr != l_psvIPDoc )
+				{
+					SVToolClass* l_psvTool = dynamic_cast< SVToolClass* >( SVObjectManagerClass::Instance().GetObject( l_psvIPDoc->GetSelectedToolID() ) );
+					if( l_psvTool )
 					{
-						SVToolClass* l_psvTool = dynamic_cast< SVToolClass* >( SVObjectManagerClass::Instance().GetObject( l_psvIPDoc->GetSelectedToolID() ) );
-						if( l_psvTool )
+						CPoint l_point;
+						l_point.x = m_mousePoint.x;
+						l_point.y = m_mousePoint.y;
+
+						TransformFromViewSpace( l_point );
+
+						if( GetObjectAtPoint( l_point ) )
 						{
-							CPoint l_point;
-							l_point.x = m_mousePoint.x;
-							l_point.y = m_mousePoint.y;
+							l_psvAnalyzer = dynamic_cast<SVAnalyzerClass *>( m_psvObject );
 
-							TransformFromViewSpace( l_point );
-
-							if( GetObjectAtPoint( l_point ) )
+							if( nullptr == l_psvAnalyzer )
 							{
-								l_psvAnalyzer = dynamic_cast<SVAnalyzerClass *>( m_psvObject );
+								SVObjectTypeInfoStruct l_svInfo;
+								l_svInfo.ObjectType = SVAnalyzerObjectType;
 
-								if( nullptr == l_psvAnalyzer )
+								l_psvAnalyzer = reinterpret_cast<SVAnalyzerClass*>(SVSendMessage( l_psvTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&l_svInfo)) );
+								if( l_psvAnalyzer )
 								{
-									SVObjectTypeInfoStruct l_svInfo;
-									l_svInfo.ObjectType = SVAnalyzerObjectType;
-
-									l_psvAnalyzer = reinterpret_cast<SVAnalyzerClass*>(SVSendMessage( l_psvTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&l_svInfo)) );
-									if( l_psvAnalyzer )
-									{
-										l_resultFound = l_psvAnalyzer->IsPtOverResult( l_point );
-									}
+									l_resultFound = l_psvAnalyzer->IsPtOverResult( l_point );
 								}
 							}
 						}
 					}
-
-					if( !l_resultFound )
-					{
-						l_pPopup->DeleteMenu( ID_ANALYZER_RESULT, MF_BYCOMMAND );
-					}
-
-					if( !l_psvAnalyzer )
-					{
-						l_pPopup->DeleteMenu( ID_CONFIG_ANALYZER, MF_BYCOMMAND );
-					}
-
-					if( !( TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable( SECURITY_POINT_MODE_MENU_EDIT_TOOLSET ) ) )
-					{
-						l_pPopup->DeleteMenu( ID_CONFIG_ANALYZER, MF_BYCOMMAND );
-					}
 				}
 
-				l_pPopup->TrackPopupMenu( TPM_LEFTALIGN | TPM_RIGHTBUTTON, p_point.x, p_point.y, this );
+				if( !l_resultFound )
+				{
+					l_pPopup->DeleteMenu( ID_ANALYZER_RESULT, MF_BYCOMMAND );
+				}
+
+				if( !l_psvAnalyzer )
+				{
+					l_pPopup->DeleteMenu( ID_CONFIG_ANALYZER, MF_BYCOMMAND );
+				}
+
+				if( !( TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable( SECURITY_POINT_MODE_MENU_EDIT_TOOLSET ) ) )
+				{
+					l_pPopup->DeleteMenu( ID_CONFIG_ANALYZER, MF_BYCOMMAND );
+				}
 			}
+
+			l_pPopup->TrackPopupMenu( TPM_LEFTALIGN | TPM_RIGHTBUTTON, p_point.x, p_point.y, this );
 		}
 	}
 }
@@ -2327,7 +2324,7 @@ void SVImageViewClass::OnZoomPlus()
 
 bool SVImageViewClass::IsZoomAllowed() const
 {
-	bool allowed  =  !ImageIsEmpty()  && !SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST );
+	bool allowed  =  !ImageIsEmpty();
 	return allowed;
 }
 
