@@ -728,7 +728,10 @@ BOOL SVImageViewClass::OnCommand( WPARAM p_wParam, LPARAM p_lParam )
 void SVImageViewClass::OnContextMenu( CWnd* p_pWnd, CPoint p_point )
 {
 	CMenu l_menu;
-	CMenu* l_pPopup;
+	CMenu* l_pPopup( nullptr );
+	bool RunOrTestMode( false );
+
+	RunOrTestMode = SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST );
 
 	//Get the current selected tool and check to see if it has extents.  if it does not then remove Adjust Size and Position menu option
 	SVToolClass* CurrentTool = dynamic_cast< SVToolClass* >( SVObjectManagerClass::Instance().GetObject( GetIPDoc()->GetSelectedToolID() ) );
@@ -748,7 +751,7 @@ void SVImageViewClass::OnContextMenu( CWnd* p_pWnd, CPoint p_point )
 				l_pPopup->DeleteMenu( 0, MF_BYPOSITION );  // delete Zoom
 			}
 
-			if( !m_mouseIsOverTool )
+			if( !m_mouseIsOverTool || RunOrTestMode )
 			{
 				l_pPopup->DeleteMenu( ID_CONFIG_ANALYZER, MF_BYCOMMAND );
 				l_pPopup->DeleteMenu( ID_ADJUST_POSITION, MF_BYCOMMAND );
@@ -790,17 +793,17 @@ void SVImageViewClass::OnContextMenu( CWnd* p_pWnd, CPoint p_point )
 					}
 				}
 
-				if( !l_resultFound )
+				if( !l_resultFound || RunOrTestMode )
 				{
 					l_pPopup->DeleteMenu( ID_ANALYZER_RESULT, MF_BYCOMMAND );
 				}
 
-				if( !l_psvAnalyzer )
+				if( !l_psvAnalyzer || RunOrTestMode )
 				{
 					l_pPopup->DeleteMenu( ID_CONFIG_ANALYZER, MF_BYCOMMAND );
 				}
 
-				if( !( TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable( SECURITY_POINT_MODE_MENU_EDIT_TOOLSET ) ) )
+				if( !TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable( SECURITY_POINT_MODE_MENU_EDIT_TOOLSET ) || RunOrTestMode )
 				{
 					l_pPopup->DeleteMenu( ID_CONFIG_ANALYZER, MF_BYCOMMAND );
 				}
