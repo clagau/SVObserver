@@ -207,12 +207,14 @@ bool GlobalConstantView::editItem( int Item )
 		if( SV_GUID_NULL == GlobalData.m_Guid )
 		{
 			insertGlobalConstant( GlobalData );
+			updateView();
 		}
 		else
 		{
 			editGlobalConstant( GlobalData );
+			updateView();
+			updateAllIPDocs( false );
 		}
-		updateView();
 	}
 	SVSVIMStateClass::RemoveState( SV_STATE_EDITING );
 
