@@ -12,7 +12,7 @@
 #define SVMATROXSYSTEMREF_H
 
 #include "SVUtilityLibrary/SVSharedPtr.h"
-#include "SVMatroxLibrary/SVMatroxSystem.h"
+#include "SVMatroxSystem.h"
 
 typedef SVSharedPtr<SVMatroxSystem> SVMatroxSystemRef;
 

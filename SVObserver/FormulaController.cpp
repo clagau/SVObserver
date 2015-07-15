@@ -16,7 +16,7 @@
 #include "Stdafx.h"
 #include "FormulaController.h"
 #include "SVInspectionProcess.h"
-#include "..\SVObjectLibrary\SVObjectClass.h"
+#include "SVObjectLibrary\SVObjectClass.h"
 #include "SVTool.h"
 #include "SVToolSet.h"
 #pragma endregion

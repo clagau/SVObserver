@@ -111,7 +111,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <TargetMachine>MachineX86</TargetMachine>
-      <AdditionalDependencies>SVImageLibrary.lib;SVMaterialsLibrary.lib;SVTriggerLibrary.lib;SVMatroxDigitizerLibrary.lib;SVGigeCameraParametersLibrary.lib;SVOLibrary.lib;SVMatroxLibrary.lib;SVOMFCLibrary.lib;SVStatusLibrary.lib</AdditionalDependencies>
+      <AdditionalDependencies>SVDataManagerLibrary.lib;SVGigeCameraParametersLibrary.lib;SVImageLibrary.lib;SVMaterialsLibrary.lib;SVMatroxDigitizerLibrary.lib;SVMatroxLibrary.lib;SVOLibrary.lib;SVOMFCLibrary.lib;SVStatusLibrary.lib;SVSystemLibrary.lib;SVTimerLibrary.lib;SVTriggerLibrary.lib;SVUtilityLibrary.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(OutDir);$(ProgramFiles)\Matrox Imaging\mil\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <Bscmake>
@@ -152,7 +152,7 @@
       <ModuleDefinitionFile>.\SVMatroxGige.def</ModuleDefinitionFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
-      <AdditionalDependencies>SVImageLibrary.lib;SVMaterialsLibrary.lib;SVTriggerLibrary.lib;SVMatroxDigitizerLibrary.lib;SVGigeCameraParametersLibrary.lib;SVOLibrary.lib;SVMatroxLibrary.lib;SVOMFCLibrary.lib;SVStatusLibrary.lib</AdditionalDependencies>
+      <AdditionalDependencies>SVDataManagerLibrary.lib;SVGigeCameraParametersLibrary.lib;SVImageLibrary.lib;SVMaterialsLibrary.lib;SVMatroxDigitizerLibrary.lib;SVMatroxLibrary.lib;SVOLibrary.lib;SVOMFCLibrary.lib;SVStatusLibrary.lib;SVSystemLibrary.lib;SVTimerLibrary.lib;SVTriggerLibrary.lib;SVUtilityLibrary.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(OutDir);C:\Program Files\Matrox Imaging\mil\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <Bscmake>
@@ -205,7 +205,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <LinkTimeCodeGeneration>Default</LinkTimeCodeGeneration>
-      <AdditionalDependencies>SVImageLibrary.lib;SVMaterialsLibrary.lib;SVTriggerLibrary.lib;SVMatroxDigitizerLibrary.lib;SVGigeCameraParametersLibrary.lib;SVOLibrary.lib;SVMatroxLibrary.lib;SVOMFCLibrary.lib;SVStatusLibrary.lib</AdditionalDependencies>
+      <AdditionalDependencies>SVDataManagerLibrary.lib;SVGigeCameraParametersLibrary.lib;SVImageLibrary.lib;SVMaterialsLibrary.lib;SVMatroxDigitizerLibrary.lib;SVMatroxLibrary.lib;SVOLibrary.lib;SVOMFCLibrary.lib;SVStatusLibrary.lib;SVSystemLibrary.lib;SVTimerLibrary.lib;SVTriggerLibrary.lib;SVUtilityLibrary.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(OutDir);$(ProgramFiles)\Matrox Imaging\mil\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <Bscmake>
@@ -256,7 +256,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <LinkTimeCodeGeneration>Default</LinkTimeCodeGeneration>
-      <AdditionalDependencies>SVImageLibrary.lib;SVMaterialsLibrary.lib;SVTriggerLibrary.lib;SVMatroxDigitizerLibrary.lib;SVGigeCameraParametersLibrary.lib;SVOLibrary.lib;SVMatroxLibrary.lib;SVOMFCLibrary.lib;SVStatusLibrary.lib</AdditionalDependencies>
+      <AdditionalDependencies>SVDataManagerLibrary.lib;SVGigeCameraParametersLibrary.lib;SVImageLibrary.lib;SVMaterialsLibrary.lib;SVMatroxDigitizerLibrary.lib;SVMatroxLibrary.lib;SVOLibrary.lib;SVOMFCLibrary.lib;SVStatusLibrary.lib;SVSystemLibrary.lib;SVTimerLibrary.lib;SVTriggerLibrary.lib;SVUtilityLibrary.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(OutDir);C:\Program Files\Matrox Imaging\mil\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <Bscmake>

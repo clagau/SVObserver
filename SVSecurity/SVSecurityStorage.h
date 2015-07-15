@@ -17,7 +17,7 @@
 #include "SVMaterialsLibrary/SVMaterialsTree.h"
 #include "SVMaterialsLibrary/SVMaterialsTreeAdapter.h"
 
-#include "SVSecurity/SVAccessPointNode.h"
+#include "SVAccessPointNode.h"
 
 class SVSecurityStorage
 {

@@ -5,8 +5,8 @@
 /// This class provide the interface to get the image data of a matrox image.
 //******************************************************************************
 #pragma once
-#include "..\SVUtilityLibrary\SVBitmapInfo.h"
-#include "..\SVMatroxLibrary\SVMatroxBuffer.h"
+#include "SVUtilityLibrary\SVBitmapInfo.h"
+#include "SVMatroxLibrary\SVMatroxBuffer.h"
 
 namespace Seidenader
 {

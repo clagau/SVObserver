@@ -15,7 +15,7 @@
 #include <deque>
 #include "SVContainerLibrary/SVMap.h"
 
-#include "SVMaterialsLibrary/SVMaterialData.h"
+#include "SVMaterialData.h"
 
 #include "SVUtilityLibrary/SVString.h"
 #include "SVUtilityLibrary/SVSharedPtr.h"

@@ -12,7 +12,7 @@
 #ifndef SVEQUATIONYACC_H
 #define SVEQUATIONYACC_H
 
-#include "SVEquationLibrary/SVEquationGlobals.h"
+#include "SVEquationGlobals.h"
 
 class SVEquationBase;
 

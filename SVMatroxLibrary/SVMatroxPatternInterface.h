@@ -16,12 +16,12 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
-#include "SVMatroxLibrary/SVMatroxEnums.h"
-#include "SVMatroxLibrary/SVMatroxStatusInformation.h"
-#include "SVMatroxLibrary/SVMatroxBuffer.h"
-#include "SVMatroxLibrary/SVMatroxPatResult.h"
-#include "SVMatroxLibrary/SVMatroxPatternModel.h"
-#include "SVMatroxLibrary/SVMatroxApplicationInterface.h"
+#include "SVMatroxEnums.h"
+#include "SVMatroxStatusInformation.h"
+#include "SVMatroxBuffer.h"
+#include "SVMatroxPatResult.h"
+#include "SVMatroxPatternModel.h"
+#include "SVMatroxApplicationInterface.h"
 
 
 /**

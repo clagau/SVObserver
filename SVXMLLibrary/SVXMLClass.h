@@ -616,7 +616,7 @@ protected:
 	SVXMLEncryptionClass* m_opEncryption;
 };
 
-#include "SVXMLLibrary/SVXMLClass.inl"
+#include "SVXMLClass.inl"
 
 #endif // #ifndef SVXML2_H
 

@@ -12,8 +12,8 @@
 #ifndef SVMATROXSYSTEMENUMS_H
 #define SVMATROXSYSTEMENUMS_H
 
-#include "SVMatroxLibrary/SVMatroxTypedefs.h"
-#include "SVMatroxLibrary/SVMatroxEnumConvertor.h"
+#include "SVMatroxTypedefs.h"
+#include "SVMatroxEnumConvertor.h"
 
 /**
 @SVObjectName Matrox System Control Enum

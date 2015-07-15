@@ -13,7 +13,7 @@
 
 #include <boost/config.hpp>
 #include <boost/function.hpp>
-#include "SVTriggerLibrary/SVTriggerHandler.h"
+#include "SVTriggerHandler.h"
 #include "SVSystemLibrary/SVThread.h"
 
 class SVInternalTrigger

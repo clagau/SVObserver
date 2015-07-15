@@ -97,7 +97,7 @@ protected:
 
 };
 
-#include "SVContainerLibrary/SVMap.inl"
+#include "SVMap.inl"
 
 #endif // #ifndef SVMAP_H
 

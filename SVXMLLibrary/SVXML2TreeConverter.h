@@ -12,7 +12,7 @@
 #ifndef INCL_SVXML2TREECONVERTER_H
 #define INCL_SVXML2TREECONVERTER_H
 
-#include "SVXMLLibrary/SVXMLClass.h"
+#include "SVXMLClass.h"
 #include "SVMaterialsLibrary/SVMaterialsTree.h"
 
 class SVXML2TreeConverter

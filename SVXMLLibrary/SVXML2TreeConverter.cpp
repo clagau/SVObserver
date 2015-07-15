@@ -13,9 +13,9 @@
 #include <boost/assign/list_of.hpp>
 #include <comdef.h>
 #include "SVXML2TreeConverter.h"
-#include "SVXMLLibrary/SVVariantCustomTypes.h"
-#include "SVXMLLibrary/SVVariantConverter.h"
-#include "SVXMLLibrary/SVXMLSafeArrayConverter.h"
+#include "SVVariantCustomTypes.h"
+#include "SVVariantConverter.h"
+#include "SVXMLSafeArrayConverter.h"
 #include "SVNavigateTreeClass.h"
 
 typedef std::map<_bstr_t, long> SVVariantTypeNameTable;

@@ -11,7 +11,7 @@
 #ifndef INCL_SVXMLSAFEARRAYCONVERTER_H
 #define INCL_SVXMLSAFEARRAYCONVERTER_H
 
-#include "SVXMLLibrary/SVXMLClass.h"
+#include "SVXMLClass.h"
 
 class SVXMLSafeArrayConverter
 {

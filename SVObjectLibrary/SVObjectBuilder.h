@@ -14,7 +14,7 @@
 #include "SVUtilityLibrary/SVVariantList.h"
 #include "SVUtilityLibrary/SVGuidList.h"
 #include "SVUtilityLibrary/SVString.h"
-#include "SVObjectLibrary/SVObjectScriptEnums.h"
+#include "SVObjectScriptEnums.h"
 
 class SVObjectBuilder
 {

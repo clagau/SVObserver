@@ -20,7 +20,6 @@
 	#error include 'stdafx.h' before including this file for PCH
 #endif
 
-//#include "..\ResourceDll\resource.h"		// main symbols
 
 /////////////////////////////////////////////////////////////////////////////
 // CSVTCPIPApp

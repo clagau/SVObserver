@@ -117,7 +117,7 @@ protected:
 
 };
 
-#include "SVContainerLibrary/SVVector.inl"
+#include "SVVector.inl"
 
 #endif // #ifndef SVVECTOR_H
 

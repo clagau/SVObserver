@@ -15,7 +15,7 @@
 #include <boost/config.hpp> // put this first to suppress some VC++ warnings
 #include <boost/tr1/memory.hpp>
 #include <memory>
-#include "SVUtilityLibrary/SVNullDeleter.h"
+#include "SVNullDeleter.h"
 
 ///////////////////////////////////////////////////////////////////////
 // A Ref counted Pointer class

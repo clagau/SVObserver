@@ -16,7 +16,7 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
-#include "SVMatroxLibrary/SVMatroxEnums.h"
+#include "SVMatroxEnums.h"
 
 /**
 @SVObjectName Matrox Buffer Create External Structure

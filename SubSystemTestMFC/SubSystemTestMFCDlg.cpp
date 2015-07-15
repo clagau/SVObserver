@@ -12,8 +12,8 @@
 #include "stdafx.h"
 #include "SubSystemTestMFC.h"
 #include "SubSystemTestMFCDlg.h"
-#include "..\SVIOLibrary\SVIOConfigurationInterfaceClass.h"
-#include "..\SVImageLibrary\SVDigitizerLoadLibraryClass.h"
+#include "SVIOLibrary\SVIOConfigurationInterfaceClass.h"
+#include "SVImageLibrary\SVDigitizerLoadLibraryClass.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

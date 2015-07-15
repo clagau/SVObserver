@@ -12,7 +12,7 @@
 #define SVMATROXDIGITIZERREF_H
 
 #include "SVUtilityLibrary/SVSharedPtr.h"
-#include "SVMatroxDigitizerLibrary/SVMatroxDigitizer.h"
+#include "SVMatroxDigitizer.h"
 
 typedef SVSharedPtr<SVMatroxDigitizer> SVMatroxDigitizerRef;
 

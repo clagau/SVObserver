@@ -108,7 +108,7 @@
       <Culture>0x0409</Culture>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>SVTriggerLibrary.lib;SVMaterialsLibrary.lib;SVUtilityLibrary.lib;SVStatusLibrary.lib;SVImageLibrary.lib;SVOMFCLibrary.lib;FCTLMAIN.lib;FCTLEnable.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>FCTLEnable.lib;FCTLMAIN.lib;SVDataManagerLibrary.lib;SVImageLibrary.lib;SVMaterialsLibrary.lib;SVOMFCLibrary.lib;SVStatusLibrary.lib;SVSystemLibrary.lib;SVTimerLibrary.lib;SVTriggerLibrary.lib;SVUtilityLibrary.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>$(OutDir);..\Intek;$(ProgramFiles)\FirePackage2v32\FireStack\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ModuleDefinitionFile>.\SVIntek.def</ModuleDefinitionFile>
@@ -159,7 +159,7 @@
       <Culture>0x0409</Culture>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>SVTriggerLibrary.lib;SVMaterialsLibrary.lib;SVUtilityLibrary.lib;SVStatusLibrary.lib;SVImageLibrary.lib;SVOMFCLibrary.lib;FCTLMAIN.lib;FCTLEnable.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>FCTLEnable.lib;FCTLMAIN.lib;SVDataManagerLibrary.lib;SVImageLibrary.lib;SVMaterialsLibrary.lib;SVOMFCLibrary.lib;SVStatusLibrary.lib;SVSystemLibrary.lib;SVTimerLibrary.lib;SVTriggerLibrary.lib;SVUtilityLibrary.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>$(OutDir);..\Intek;C:\Program Files\intek\FirePackage64 2v35\FireCtrl\Lib;C:\Program Files\intek\FirePackage64 2v35\FireStack\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ModuleDefinitionFile>.\SVIntek.def</ModuleDefinitionFile>
@@ -207,7 +207,7 @@
       <Culture>0x0409</Culture>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>SVTriggerLibrary.lib;SVMaterialsLibrary.lib;SVUtilityLibrary.lib;SVStatusLibrary.lib;SVImageLibrary.lib;SVOMFCLibrary.lib;FCTLMAIN.lib;FCTLEnable.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>FCTLEnable.lib;FCTLMAIN.lib;SVDataManagerLibrary.lib;SVImageLibrary.lib;SVMaterialsLibrary.lib;SVOMFCLibrary.lib;SVStatusLibrary.lib;SVSystemLibrary.lib;SVTimerLibrary.lib;SVTriggerLibrary.lib;SVUtilityLibrary.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>$(OutDir);..\Intek;$(ProgramFiles)\FirePackage2v32\FireStack\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ModuleDefinitionFile>.\SVIntek.def</ModuleDefinitionFile>
@@ -251,7 +251,7 @@
       <Culture>0x0409</Culture>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>SVTriggerLibrary.lib;SVMaterialsLibrary.lib;SVUtilityLibrary.lib;SVStatusLibrary.lib;SVImageLibrary.lib;SVOMFCLibrary.lib;FCTLMAIN.lib;FCTLEnable.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>FCTLEnable.lib;FCTLMAIN.lib;SVDataManagerLibrary.lib;SVImageLibrary.lib;SVMaterialsLibrary.lib;SVOMFCLibrary.lib;SVStatusLibrary.lib;SVSystemLibrary.lib;SVTimerLibrary.lib;SVTriggerLibrary.lib;SVUtilityLibrary.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>$(OutDir);..\Intek;C:\Program Files\intek\FirePackage64 2v35\FireCtrl\Lib;C:\Program Files\intek\FirePackage64 2v35\FireStack\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ModuleDefinitionFile>.\SVIntek.def</ModuleDefinitionFile>

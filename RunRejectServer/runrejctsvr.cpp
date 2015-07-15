@@ -23,7 +23,7 @@
 #include "SVSocketLibrary.h"
 #include "SVServerSocket.h"
 #include "SVRemoteControlConstants.h"
-#include "..\JsonLib\include\json.h"
+#include "JsonLib\include\json.h"
 #include "SVSharedPPQReader.h"
 #include "SVMonitorListReader.h"
 #include "SVShareControlHandler.h"

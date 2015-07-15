@@ -87,7 +87,7 @@ protected:
 
 };
 
-#include "SVContainerLibrary/SVSet.inl"
+#include "SVSet.inl"
 
 #endif
 

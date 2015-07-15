@@ -16,8 +16,8 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
-#include "SVMatroxLibrary/SVMatroxTypedefs.h"
-#include "SVMatroxLibrary/SVMatroxBuffer.h"
+#include "SVMatroxTypedefs.h"
+#include "SVMatroxBuffer.h"
 
 
 /**

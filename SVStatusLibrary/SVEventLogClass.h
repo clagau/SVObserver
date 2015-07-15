@@ -12,7 +12,7 @@
 #ifndef _SVEVENTLOGCLASS_H
 #define _SVEVENTLOGCLASS_H
 
-#include "SVStatusLibrary/SVEventRecordStruct.h"
+#include "SVEventRecordStruct.h"
 #include "SVUtilityLibrary/SVString.h"
 
 class SVEventLogClass  

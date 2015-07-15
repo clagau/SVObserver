@@ -11,7 +11,7 @@
 #ifndef INCL_SVIMAGECOPYUTILITY_H
 #define INCL_SVIMAGECOPYUTILITY_H
 
-#include "SVUtilityLibrary/SVBitmapInfo.h"
+#include "SVBitmapInfo.h"
 
 class SVImageCopyUtility
 {

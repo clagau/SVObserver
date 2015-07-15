@@ -185,6 +185,11 @@
       <AdditionalDependencies>SVOMFCLibrary.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalOptions>/NODEFAULTLIB:nafxcw.lib %(AdditionalOptions)</AdditionalOptions>
     </Link>
+    <CustomBuildStep>
+      <Command>echo "regsvr32 "$(TargetPath)""</Command>
+      <Message>Registering ActiveX Control...</Message>
+      <Outputs>$(OutDir)regsvr32.trg;%(Outputs)</Outputs>
+    </CustomBuildStep>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Midl>
@@ -219,6 +224,11 @@
       <AdditionalDependencies>SVOMFCLibrary.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalOptions>/NODEFAULTLIB:nafxcw.lib %(AdditionalOptions)</AdditionalOptions>
     </Link>
+    <CustomBuildStep>
+      <Command>echo "regsvr32 "$(TargetPath)""</Command>
+      <Message>Registering ActiveX Control...</Message>
+      <Outputs>$(OutDir)regsvr32.trg;%(Outputs)</Outputs>
+    </CustomBuildStep>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="ArrowObject.cpp" />

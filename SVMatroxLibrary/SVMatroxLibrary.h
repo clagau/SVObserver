@@ -12,16 +12,16 @@
 #ifndef SV_MATROX_LIBRARY_H
 #define SV_MATROX_LIBRARY_H
 
-#include "SVMatroxLibrary/SVMatroxApplicationInterface.h"
-#include "SVMatroxLibrary/SVMatroxBarCodeInterface.h"
-#include "SVMatroxLibrary/SVMatroxBlobInterface.h"
-#include "SVMatroxLibrary/SVMatroxBufferInterface.h"
-#include "SVMatroxLibrary/SVMatroxDisplayInterface.h"
-#include "SVMatroxLibrary/SVMatroxEnums.h"
-#include "SVMatroxLibrary/SVMatroxGraphicsInterface.h"
-#include "SVMatroxLibrary/SVMatroxImageInterface.h"
-#include "SVMatroxLibrary/SVMatroxOcrInterface.h"
-#include "SVMatroxLibrary/SVMatroxPatternInterface.h"
+#include "SVMatroxApplicationInterface.h"
+#include "SVMatroxBarCodeInterface.h"
+#include "SVMatroxBlobInterface.h"
+#include "SVMatroxBufferInterface.h"
+#include "SVMatroxDisplayInterface.h"
+#include "SVMatroxEnums.h"
+#include "SVMatroxGraphicsInterface.h"
+#include "SVMatroxImageInterface.h"
+#include "SVMatroxOcrInterface.h"
+#include "SVMatroxPatternInterface.h"
 
 long SVMatroxCheckAndLog( SVMatroxApplicationInterface::SVStatusCode p_svCode, TCHAR* p_szFile, long p_lLine );
 

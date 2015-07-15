@@ -96,7 +96,7 @@
       <SubSystem>Windows</SubSystem>
       <TargetMachine>MachineX86</TargetMachine>
       <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>SVFileSystemLibrary.lib;SVTriggerLibrary.lib;SVHBitmapUtilitiesLibrary.lib;SVMaterialsLibrary.lib;SVOMFCLibrary.lib;SVUtilityLibrary.lib;SVImageLibrary.lib;SVStatusLibrary.lib</AdditionalDependencies>
+      <AdditionalDependencies>SVDataManagerLibrary.lib;SVFileSystemLibrary.lib;SVHBitmapUtilitiesLibrary.lib;SVImageLibrary.lib;SVMaterialsLibrary.lib;SVOMFCLibrary.lib;SVStatusLibrary.lib;SVSystemLibrary.lib;SVTimerLibrary.lib;SVTriggerLibrary.lib;SVUtilityLibrary.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -117,7 +117,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>SVFileSystemLibrary.lib;SVTriggerLibrary.lib;SVHBitmapUtilitiesLibrary.lib;SVMaterialsLibrary.lib;SVOMFCLibrary.lib;SVUtilityLibrary.lib;SVImageLibrary.lib;SVStatusLibrary.lib</AdditionalDependencies>
+      <AdditionalDependencies>SVDataManagerLibrary.lib;SVFileSystemLibrary.lib;SVHBitmapUtilitiesLibrary.lib;SVImageLibrary.lib;SVMaterialsLibrary.lib;SVOMFCLibrary.lib;SVStatusLibrary.lib;SVSystemLibrary.lib;SVTimerLibrary.lib;SVTriggerLibrary.lib;SVUtilityLibrary.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -146,7 +146,7 @@
       <TargetMachine>MachineX86</TargetMachine>
       <LinkTimeCodeGeneration>Default</LinkTimeCodeGeneration>
       <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>SVFileSystemLibrary.lib;SVTriggerLibrary.lib;SVHBitmapUtilitiesLibrary.lib;SVMaterialsLibrary.lib;SVOMFCLibrary.lib;SVUtilityLibrary.lib;SVImageLibrary.lib;SVStatusLibrary.lib</AdditionalDependencies>
+      <AdditionalDependencies>SVDataManagerLibrary.lib;SVFileSystemLibrary.lib;SVHBitmapUtilitiesLibrary.lib;SVImageLibrary.lib;SVMaterialsLibrary.lib;SVOMFCLibrary.lib;SVStatusLibrary.lib;SVSystemLibrary.lib;SVTimerLibrary.lib;SVTriggerLibrary.lib;SVUtilityLibrary.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -174,7 +174,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <LinkTimeCodeGeneration>Default</LinkTimeCodeGeneration>
       <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>SVFileSystemLibrary.lib;SVTriggerLibrary.lib;SVHBitmapUtilitiesLibrary.lib;SVMaterialsLibrary.lib;SVOMFCLibrary.lib;SVUtilityLibrary.lib;SVImageLibrary.lib;SVStatusLibrary.lib</AdditionalDependencies>
+      <AdditionalDependencies>SVDataManagerLibrary.lib;SVFileSystemLibrary.lib;SVHBitmapUtilitiesLibrary.lib;SVImageLibrary.lib;SVMaterialsLibrary.lib;SVOMFCLibrary.lib;SVStatusLibrary.lib;SVSystemLibrary.lib;SVTimerLibrary.lib;SVTriggerLibrary.lib;SVUtilityLibrary.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>

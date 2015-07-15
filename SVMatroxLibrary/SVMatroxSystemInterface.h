@@ -12,9 +12,9 @@
 #ifndef SVMATROXSYSTEMINTERFACE_H
 #define SVMATROXSYSTEMINTERFACE_H
 
-#include "SVMatroxLibrary/SVMatroxStatusInformation.h"
-#include "SVMatroxLibrary/SVMatroxSystem.h"
-#include "SVMatroxLibrary/SVMatroxSystemEnums.h"
+#include "SVMatroxStatusInformation.h"
+#include "SVMatroxSystem.h"
+#include "SVMatroxSystemEnums.h"
 
 class SVMatroxSystemInterface
 {

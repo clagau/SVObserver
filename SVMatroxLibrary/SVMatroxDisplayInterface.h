@@ -16,13 +16,13 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
-#include "SVMatroxLibrary/SVMatroxEnums.h"
-#include "SVMatroxLibrary/SVMatroxBufferCreateStruct.h"
+#include "SVMatroxEnums.h"
+#include "SVMatroxBufferCreateStruct.h"
 
-#include "SVMatroxLibrary/SVMatroxBuffer.h"
-#include "SVMatroxLibrary/SVMatroxDisplay.h"
-#include "SVMatroxLibrary/SVMatroxDisplayBuffer.h"
-#include "SVMatroxLibrary/SVMatroxApplicationInterface.h"
+#include "SVMatroxBuffer.h"
+#include "SVMatroxDisplay.h"
+#include "SVMatroxDisplayBuffer.h"
+#include "SVMatroxApplicationInterface.h"
 #include "SVMatroxBufferInterface.h"
 
 

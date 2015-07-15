@@ -87,7 +87,7 @@ protected:
 
 };
 
-#include "SVXMLLibrary/SVXMLTree.inl"
+#include "SVXMLTree.inl"
 
 #endif // #ifndef SVTREE_H
 

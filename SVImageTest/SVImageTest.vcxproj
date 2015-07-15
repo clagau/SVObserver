@@ -119,7 +119,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <LinkTimeCodeGeneration>Default</LinkTimeCodeGeneration>
       <AdditionalLibraryDirectories>$(OutDir);$(ProgramFiles)\Matrox Imaging\mil\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>SVMaterialsLibrary.lib;SVMatroxLibrary.lib;SVImageLibrary.lib;SVMFCControls.lib;SVOMFCLibrary.lib;SVGigeCameraFileLibrary.lib;SV1394CameraFileLibrary.lib;PropTree.lib;SVDataManagerLibrary.lib;SVUtilityLibrary.lib;SVStatusLibrary.lib</AdditionalDependencies>
+      <AdditionalDependencies>PropTree.lib;SV1394CameraFileLibrary.lib;SVDataManagerLibrary.lib;SVGigeCameraFileLibrary.lib;SVImageLibrary.lib;SVMaterialsLibrary.lib;SVMatroxLibrary.lib;SVMFCControls.lib;SVOMFCLibrary.lib;SVStatusLibrary.lib;SVSystemLibrary.lib;SVTimerLibrary.lib;SVUtilityLibrary.lib</AdditionalDependencies>
     </Link>
     <Bscmake>
       <SuppressStartupBanner>true</SuppressStartupBanner>
@@ -167,7 +167,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <LinkTimeCodeGeneration>Default</LinkTimeCodeGeneration>
       <AdditionalLibraryDirectories>$(OutDir);C:\Program Files\Matrox Imaging\mil\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>SVMaterialsLibrary.lib;SVMatroxLibrary.lib;SVImageLibrary.lib;SVMFCControls.lib;SVOMFCLibrary.lib;SVGigeCameraFileLibrary.lib;SV1394CameraFileLibrary.lib;PropTree.lib;SVDataManagerLibrary.lib;SVUtilityLibrary.lib;SVStatusLibrary.lib</AdditionalDependencies>
+      <AdditionalDependencies>PropTree.lib;SV1394CameraFileLibrary.lib;SVDataManagerLibrary.lib;SVGigeCameraFileLibrary.lib;SVImageLibrary.lib;SVMaterialsLibrary.lib;SVMatroxLibrary.lib;SVMFCControls.lib;SVOMFCLibrary.lib;SVStatusLibrary.lib;SVSystemLibrary.lib;SVTimerLibrary.lib;SVUtilityLibrary.lib</AdditionalDependencies>
     </Link>
     <Bscmake>
       <SuppressStartupBanner>true</SuppressStartupBanner>
@@ -208,7 +208,7 @@
       <SubSystem>Windows</SubSystem>
       <TargetMachine>MachineX86</TargetMachine>
       <AdditionalLibraryDirectories>$(OutDir);$(ProgramFiles)\Matrox Imaging\mil\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>SVMaterialsLibrary.lib;SVMatroxLibrary.lib;SVImageLibrary.lib;SVMFCControls.lib;SVOMFCLibrary.lib;SVGigeCameraFileLibrary.lib;SV1394CameraFileLibrary.lib;PropTree.lib;SVDataManagerLibrary.lib;SVUtilityLibrary.lib;SVStatusLibrary.lib</AdditionalDependencies>
+      <AdditionalDependencies>PropTree.lib;SV1394CameraFileLibrary.lib;SVDataManagerLibrary.lib;SVGigeCameraFileLibrary.lib;SVImageLibrary.lib;SVMaterialsLibrary.lib;SVMatroxLibrary.lib;SVMFCControls.lib;SVOMFCLibrary.lib;SVStatusLibrary.lib;SVSystemLibrary.lib;SVTimerLibrary.lib;SVUtilityLibrary.lib</AdditionalDependencies>
     </Link>
     <Bscmake>
       <SuppressStartupBanner>true</SuppressStartupBanner>
@@ -247,7 +247,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <AdditionalLibraryDirectories>$(OutDir);C:\Program Files\Matrox Imaging\mil\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>SVMaterialsLibrary.lib;SVMatroxLibrary.lib;SVImageLibrary.lib;SVMFCControls.lib;SVOMFCLibrary.lib;SVGigeCameraFileLibrary.lib;SV1394CameraFileLibrary.lib;PropTree.lib;SVDataManagerLibrary.lib;SVUtilityLibrary.lib;SVStatusLibrary.lib</AdditionalDependencies>
+      <AdditionalDependencies>PropTree.lib;SV1394CameraFileLibrary.lib;SVDataManagerLibrary.lib;SVGigeCameraFileLibrary.lib;SVImageLibrary.lib;SVMaterialsLibrary.lib;SVMatroxLibrary.lib;SVMFCControls.lib;SVOMFCLibrary.lib;SVStatusLibrary.lib;SVSystemLibrary.lib;SVTimerLibrary.lib;SVUtilityLibrary.lib</AdditionalDependencies>
     </Link>
     <Bscmake>
       <SuppressStartupBanner>true</SuppressStartupBanner>

@@ -12,7 +12,7 @@
 #define SVMATROXSYSTEM_H
 
 #include <boost/utility.hpp>
-#include "SVMatroxLibrary/SVMatroxTypedefs.h"
+#include "SVMatroxTypedefs.h"
 
 class SVMatroxSystemInterface;
 class SVMatroxBufferInterface;

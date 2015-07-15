@@ -24,11 +24,11 @@ typedef SVGetNextGUID SVGetNextObjectID;
 */
 
 // Begin - To use SVUniqueObjectID as SVObjectID use the following section
-#include "SVUtilityLibrary/SVUniqueObjectID.h"
+#include "SVUniqueObjectID.h"
 // End - To use SVUniqueObjectID as SVObjectID use the following section
 
 // common includes
-#include "SVUtilityLibrary/SVUniqueIdGenerator.h"
+#include "SVUniqueIdGenerator.h"
 
 /**
 @SVObjectName Identifier Generator

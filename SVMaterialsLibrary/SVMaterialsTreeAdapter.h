@@ -12,7 +12,7 @@
 #ifndef SVMATERIALSTREEADAPTER_H
 #define SVMATERIALSTREEADAPTER_H
 
-#include "SVMaterialsLibrary/SVMaterials.h"
+#include "SVMaterials.h"
 
 #include "SVTreeLibrary/SVTreeAdapter.h"
 

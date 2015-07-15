@@ -12,8 +12,8 @@
 #ifndef SVMATERIALSTREE_H
 #define SVMATERIALSTREE_H
 
-#include "SVMaterialsLibrary/SVMaterials.h"
-#include "SVMaterialsLibrary/SVMaterialsTreeAdapter.h"
+#include "SVMaterials.h"
+#include "SVMaterialsTreeAdapter.h"
 
 #include "SVTreeLibrary/SVTree.h"
 

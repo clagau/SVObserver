@@ -15,8 +15,8 @@
 
 #pragma region Includes
 #include "ObjectSelectorItem.h"
-#include "SVTreeLibrary\SVTree.h"
-#include "SVTreeLibrary\SVTreeAdapter.h"
+#include "SVTree.h"
+#include "SVTreeAdapter.h"
 #include "SVUtilityLibrary\SVString.h"
 #pragma endregion Includes
 

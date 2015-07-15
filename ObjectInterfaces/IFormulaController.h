@@ -8,7 +8,7 @@
 #pragma once
 
 #pragma region Includes
-#include "..\SVUtilityLibrary\SVString.h"
+#include "SVUtilityLibrary\SVString.h"
 #include "IObjectClass.h"
 #include "IInspectionProcess.h"
 #include "IOutputInfoListClass.h"

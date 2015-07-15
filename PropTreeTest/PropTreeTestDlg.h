@@ -12,7 +12,7 @@
 #ifndef PROPTREETESTDLG_H
 #define PROPTREETESTDLG_H
 
-#include "../PropertyTree/PROPTREE.H" // for SVRPropTree
+#include "PropertyTree/PROPTREE.H" // for SVRPropTree
 
 // CPropTreeTestDlg dialog
 class CPropTreeTestDlg : public CDialogEx

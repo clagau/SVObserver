@@ -13,11 +13,11 @@
 #include "SVSystemLibrary/SVSAXContentHandlerImpl.h"
 #include "SVUtilityLibrary/SVString.h"
 #include "SVMatroxDigitizerLibrary/SVMatroxDigitizerFeatureEnums.h"
-#include "SVGigeCameraParametersLibrary/SVGigeEnums.h"
-#include "SVGigeCameraParametersLibrary/SVGigeDeviceParameterStruct.h"
-#include "SVGigeCameraParametersLibrary/SVGigeFeatureStringEnumList.h"
-#include "SVGigeCameraParametersLibrary/SVGigeFeature.h"
-#include "SVGigeCameraParametersLibrary/SVGigeParameterAccessor.h"
+#include "SVGigeEnums.h"
+#include "SVGigeDeviceParameterStruct.h"
+#include "SVGigeFeatureStringEnumList.h"
+#include "SVGigeFeature.h"
+#include "SVGigeParameterAccessor.h"
 
 // class to handle SAX parsing for GigeDeviceParameter database
 class SVGigeCameraDBContent : public SVSAXContentHandlerImpl  

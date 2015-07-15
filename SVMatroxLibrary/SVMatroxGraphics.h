@@ -12,7 +12,7 @@
 #ifndef SVMATROXGRAPHICS_H
 #define SVMATROXGRAPHICS_H
 
-#include "SVMatroxLibrary/SVMatroxTypedefs.h"
+#include "SVMatroxTypedefs.h"
 
 class SVMatroxGraphicsInterface;
 

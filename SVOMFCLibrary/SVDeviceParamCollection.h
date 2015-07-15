@@ -18,8 +18,8 @@
 #include <vector>
 
 #include "SVLibrary/SVVisitor.h"
-#include "SVOMFCLibrary/SVTemplate.h"
-#include "SVOMFCLibrary/SVDeviceParam.h"
+#include "SVTemplate.h"
+#include "SVDeviceParam.h"
 #include "SVUtilityLibrary/SVString.h"
 
 typedef std::map <SVDeviceParamEnum, SVDeviceParamWrapper> SVDeviceParamMap;

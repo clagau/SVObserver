@@ -115,7 +115,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <TargetMachine>MachineX86</TargetMachine>
-      <AdditionalDependencies>SVOLibrary.lib;SVUtilityLibrary.lib;SVImageLibrary.lib;SVOMFCLibrary.lib;SVStatusLibrary.lib;SVTimerLibrary.lib</AdditionalDependencies>
+      <AdditionalDependencies>SVDataManagerLibrary.lib;SVImageLibrary.lib;SVOLibrary.lib;SVOMFCLibrary.lib;SVStatusLibrary.lib;SVSystemLibrary.lib;SVTimerLibrary.lib;SVUtilityLibrary.lib</AdditionalDependencies>
     </Link>
     <Bscmake>
       <SuppressStartupBanner>true</SuppressStartupBanner>
@@ -155,7 +155,7 @@
       <ModuleDefinitionFile>.\SVCI.def</ModuleDefinitionFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
-      <AdditionalDependencies>SVOLibrary.lib;SVUtilityLibrary.lib;SVImageLibrary.lib;SVOMFCLibrary.lib;SVStatusLibrary.lib;SVTimerLibrary.lib</AdditionalDependencies>
+      <AdditionalDependencies>SVDataManagerLibrary.lib;SVImageLibrary.lib;SVOLibrary.lib;SVOMFCLibrary.lib;SVStatusLibrary.lib;SVSystemLibrary.lib;SVTimerLibrary.lib;SVUtilityLibrary.lib</AdditionalDependencies>
     </Link>
     <Bscmake>
       <SuppressStartupBanner>true</SuppressStartupBanner>
@@ -207,7 +207,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <LinkTimeCodeGeneration>Default</LinkTimeCodeGeneration>
-      <AdditionalDependencies>SVOLibrary.lib;SVUtilityLibrary.lib;SVImageLibrary.lib;SVOMFCLibrary.lib;SVStatusLibrary.lib;SVTimerLibrary.lib</AdditionalDependencies>
+      <AdditionalDependencies>SVDataManagerLibrary.lib;SVImageLibrary.lib;SVOLibrary.lib;SVOMFCLibrary.lib;SVStatusLibrary.lib;SVSystemLibrary.lib;SVTimerLibrary.lib;SVUtilityLibrary.lib</AdditionalDependencies>
     </Link>
     <Bscmake>
       <SuppressStartupBanner>true</SuppressStartupBanner>
@@ -257,7 +257,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <LinkTimeCodeGeneration>Default</LinkTimeCodeGeneration>
-      <AdditionalDependencies>SVOLibrary.lib;SVUtilityLibrary.lib;SVImageLibrary.lib;SVOMFCLibrary.lib;SVStatusLibrary.lib;SVTimerLibrary.lib</AdditionalDependencies>
+      <AdditionalDependencies>SVDataManagerLibrary.lib;SVImageLibrary.lib;SVOLibrary.lib;SVOMFCLibrary.lib;SVStatusLibrary.lib;SVSystemLibrary.lib;SVTimerLibrary.lib;SVUtilityLibrary.lib</AdditionalDependencies>
     </Link>
     <Bscmake>
       <SuppressStartupBanner>true</SuppressStartupBanner>

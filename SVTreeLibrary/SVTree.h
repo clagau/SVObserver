@@ -42,7 +42,7 @@ private:
 	void copy( const SVTree& p_rTree );
 };
 
-#include "SVTreeLibrary/SVTree.inl"
+#include "SVTree.inl"
 
 #endif
 

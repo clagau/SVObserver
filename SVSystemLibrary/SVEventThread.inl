@@ -12,7 +12,7 @@
 #include <tchar.h>
 #include "SVStatusLibrary/SVException.h"
 #include "SVMessage/SVMessage.h"
-#include "SVSystemLibrary\SVThreadManager.h"
+#include "SVThreadManager.h"
 
 template<typename SVEventThreadSignalHandler>
 SVEventThread<SVEventThreadSignalHandler>::SVEventThread()

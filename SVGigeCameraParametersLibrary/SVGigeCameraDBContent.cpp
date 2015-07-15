@@ -17,9 +17,9 @@
 #include <map>
 #include <AtlBase.h>
 #include <AtlConv.h>
-#include "SVGigeCameraParametersLibrary/SVGigeDeviceParameterStruct.h"
-#include "SVGigeCameraParametersLibrary/SVGigeEmptyGetter.h"
-#include "SVGigeCameraParametersLibrary/SVGigeEmptySetter.h"
+#include "SVGigeDeviceParameterStruct.h"
+#include "SVGigeEmptyGetter.h"
+#include "SVGigeEmptySetter.h"
 #include "SVUtilityLibrary/SVSharedPtr.h"
 #include "SVUtilityLibrary/StringToEnum.h"
 #include "SVGigeCameraDBContent.h"

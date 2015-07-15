@@ -107,7 +107,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <TargetMachine>MachineX86</TargetMachine>
-      <AdditionalDependencies>SVDataManagerLibrary.lib;SVTimerLibrary.lib;SVLibrary.lib;SVUtilityLibrary.lib;SVStatusLibrary.lib;SVSystemLibrary.lib</AdditionalDependencies>
+      <AdditionalDependencies>SVDataManagerLibrary.lib;SVLibrary.lib;SVUtilityLibrary.lib;SVStatusLibrary.lib;SVSystemLibrary.lib;SVTimerLibrary.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <Bscmake>
@@ -144,7 +144,7 @@
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
-      <AdditionalDependencies>SVDataManagerLibrary.lib;SVTimerLibrary.lib;SVLibrary.lib;SVUtilityLibrary.lib;SVStatusLibrary.lib;SVSystemLibrary.lib</AdditionalDependencies>
+      <AdditionalDependencies>SVDataManagerLibrary.lib;SVLibrary.lib;SVUtilityLibrary.lib;SVStatusLibrary.lib;SVSystemLibrary.lib;SVTimerLibrary.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <Bscmake>
@@ -192,7 +192,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <LinkTimeCodeGeneration>Default</LinkTimeCodeGeneration>
-      <AdditionalDependencies>SVDataManagerLibrary.lib;SVTimerLibrary.lib;SVLibrary.lib;SVUtilityLibrary.lib;SVStatusLibrary.lib;SVSystemLibrary.lib</AdditionalDependencies>
+      <AdditionalDependencies>SVDataManagerLibrary.lib;SVLibrary.lib;SVUtilityLibrary.lib;SVStatusLibrary.lib;SVSystemLibrary.lib;SVTimerLibrary.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <Bscmake>
@@ -238,7 +238,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <LinkTimeCodeGeneration>Default</LinkTimeCodeGeneration>
-      <AdditionalDependencies>SVDataManagerLibrary.lib;SVTimerLibrary.lib;SVLibrary.lib;SVUtilityLibrary.lib;SVStatusLibrary.lib;SVSystemLibrary.lib</AdditionalDependencies>
+      <AdditionalDependencies>SVDataManagerLibrary.lib;SVLibrary.lib;SVUtilityLibrary.lib;SVStatusLibrary.lib;SVSystemLibrary.lib;SVTimerLibrary.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <Bscmake>

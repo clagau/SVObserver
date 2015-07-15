@@ -85,7 +85,7 @@ protected:
 
 };
 
-#include "SVContainerLibrary/SVDeque.inl"
+#include "SVDeque.inl"
 
 #endif
 

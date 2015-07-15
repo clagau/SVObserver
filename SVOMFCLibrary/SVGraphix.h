@@ -12,7 +12,7 @@
 #ifndef SVGRAPHIX_H
 #define SVGRAPHIX_H
 
-#include "SVOMFCLibrary/SVTemplate.h"
+#include "SVTemplate.h"
 
 enum SVGraphixOverlayModeEnum
 {

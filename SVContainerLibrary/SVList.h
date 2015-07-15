@@ -130,7 +130,7 @@ protected:
 
 };
 
-#include "SVContainerLibrary/SVList.inl"
+#include "SVList.inl"
 
 #endif
 

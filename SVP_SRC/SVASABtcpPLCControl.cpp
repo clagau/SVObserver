@@ -13,9 +13,9 @@
 #include "objbase.h"
 
 #include "SVASABtcpPLCControl.h"
-#include "..\plcEnglish\resource.h"
-#include "../SVStatusLibrary/SVException.h"
-#include "..\svmessage\svmessage.h"
+#include "PLCEnglish\Resource.h"
+#include "SVStatusLibrary/SVException.h"
+#include "SVMessage\SVMessage.h"
 
 
 #ifdef _DEBUG

@@ -13,7 +13,7 @@
 #define SVIOPLCLOADLIBRARYCLASS_H
 
 
-#include "..\SVP_SRC\SVPLCInterfaceClass.h"
+#include "SVP_SRC\SVPLCInterfaceClass.h"
 
 
 class SVIOPLCLoadLibraryClass

@@ -19,7 +19,7 @@
 #include "SVObjectAttributeClass.h"
 #include "SVObjectLevelCreateStruct.h"
 #include "SVObjectManagerClass.h"
-#include "SVObjectLibrary/SVToolsetScriptTags.h"
+#include "SVToolsetScriptTags.h"
 #pragma endregion Includes
 
 #pragma region Declarations

@@ -14,7 +14,7 @@
 
 #include <comdef.h>
 
-#include "SVUtilityLibrary/SVString.h"
+#include "SVString.h"
 
 /**
 @SVObjectName Point

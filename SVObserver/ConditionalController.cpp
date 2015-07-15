@@ -16,8 +16,8 @@
 #include "Stdafx.h"
 #include "ConditionalController.h"
 #include "SVInspectionProcess.h"
-#include "..\SVObjectLibrary\SVObjectManagerClass.h"
-#include "..\SVObjectLibrary\SVObjectClass.h"
+#include "SVObjectLibrary\SVObjectManagerClass.h"
+#include "SVObjectLibrary\SVObjectClass.h"
 #include "SVTool.h"
 #include "SVToolSet.h"
 #pragma endregion

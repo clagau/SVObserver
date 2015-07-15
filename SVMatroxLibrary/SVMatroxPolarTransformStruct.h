@@ -18,8 +18,8 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
-#include "SVMatroxLibrary/SVMatroxBuffer.h"
-#include "SVMatroxLibrary/SVMatroxEnums.h"
+#include "SVMatroxBuffer.h"
+#include "SVMatroxEnums.h"
 
 /**
 @SVObjectName Matrox Polar Transform Struct
