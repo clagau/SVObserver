@@ -13,6 +13,7 @@
 #include "Stdafx.h"
 #include <boost/bind.hpp>
 #include "SVFailStatusStreamManager.h"
+#include "SVRemoteControlConstants.h"
 #include "JsonLib/include/json.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVUtilityLibrary/SVSharedPtr.h"
@@ -23,11 +24,6 @@
 
 #pragma region Constants
 static const std::string scSVPPQObjectTag = "SVPPQObject";
-static const std::string scStreamNameTag = "StreamName";
-static const std::string scStartStreamTag = "StartStream";
-static const std::string scCommandTag = "Command";
-static const std::string scResponseTag = "Response";
-static const std::string scStatusTag = "Status";
 #pragma endregion
 
 SVFailStatusStreamManager& SVFailStatusStreamManager::Instance()
@@ -68,6 +64,35 @@ void SVFailStatusStreamManager::Shutdown()
 HRESULT SVFailStatusStreamManager::ManageFailStatus(const RemoteMonitorList& rList)
 {
 	HRESULT hr = S_OK;
+
+	// Remove items from stream if removed from MonitorList
+	for (FailStatusListCollection::iterator it = m_streams.begin();it != m_streams.end();++it)
+	{
+		FailStatusLists& list = it->second;
+		for (FailStatusLists::iterator listIt = list.begin();listIt != list.end();)
+		{
+			RemoteMonitorList::const_iterator rListIt = rList.find(listIt->first);
+			if (rListIt == rList.end())
+			{
+				listIt = list.erase(listIt);
+			}
+			else
+			{
+				// check if PPQID changed for the list name...
+				const SVString& ppqName = rListIt->second.GetPPQName();
+				SVGUID ppqID;
+				SVObjectManagerClass::Instance().GetObjectByDottedName(ppqName, ppqID);
+				if (ppqID != it->first)
+				{
+					listIt = list.erase(listIt);
+				}
+				else
+				{
+					++listIt;
+				}
+			}
+		}
+	}
 
 	for (RemoteMonitorList::const_iterator it = rList.begin();it != rList.end();++it)
 	{
@@ -191,53 +216,52 @@ HRESULT SVFailStatusStreamManager::ObserverUpdate(const SVProductInfoStruct& rDa
 }
 
 // Process Start/Stop Command
-HRESULT SVFailStatusStreamManager::ProcessJsonCommand(const std::string& p_rJsonCommand, std::string& p_rJsonResults)
+HRESULT SVFailStatusStreamManager::ProcessJsonCommand(const std::string& rJsonCommand, std::string& rJsonResults)
 {
-	HRESULT l_Status = E_FAIL;
+	HRESULT hr = E_INVALIDARG;
 
-	Json::Reader l_Reader;
-	Json::Value l_JsonValues;
-	SVString l_StreamName;
-	SVString l_CmdName;
+	Json::Reader Reader;
+	Json::Value JsonValues;
+	SVString StreamName;
+	SVString CmdName;
 
-	if (l_Reader.parse(p_rJsonCommand, l_JsonValues, false))
+	if (Reader.parse(rJsonCommand, JsonValues, false))
 	{
-		if (l_JsonValues.isObject())
+		if (JsonValues.isObject())
 		{
-			Json::Value l_JsonCommand = l_JsonValues[scStreamNameTag.c_str()];
-
-			if (l_JsonCommand.isString())
+			Json::Value JsonCommand = JsonValues[SVRC::stream::streamName];
+			if (JsonCommand.isString())
 			{
-				l_StreamName = l_JsonCommand.asString();
-				l_JsonCommand = l_JsonValues[scCommandTag.c_str()];
-				if (l_JsonCommand.isString())
+				StreamName = JsonCommand.asString();
+				JsonCommand = JsonValues[SVRC::stream::command];
+				if (JsonCommand.isString())
 				{
-					l_CmdName = l_JsonCommand.asString(); 
-					bool bStart = l_CmdName == scStartStreamTag.c_str();
-					l_Status = ProcessStartStopCommand(l_StreamName.ToString(), bStart);
+					CmdName = JsonCommand.asString(); 
+					bool bStart = CmdName == SVRC::stream::startStream.c_str();
+					hr = ProcessStartStopCommand(StreamName, bStart);
 				}
 			}
 		}
 	}
 	//Build Response
-	Json::FastWriter l_Writer;
+	Json::FastWriter Writer;
 	Json::Value value(Json::objectValue);
 
-	value[scResponseTag.c_str()] = l_CmdName.c_str();
-	value[scStreamNameTag.c_str()] = l_StreamName.c_str();
-	value[scStatusTag.c_str()] = l_Status;
+	value[SVRC::stream::response] = CmdName.c_str();
+	value[SVRC::stream::streamName] = StreamName.c_str();
+	value[SVRC::stream::status] = hr;
 
-	p_rJsonResults = l_Writer.write(value).c_str();
-	return l_Status;
+	rJsonResults = Writer.write(value).c_str();
+	return hr;
 }
 
-HRESULT SVFailStatusStreamManager::ProcessStartStopCommand(const SVString& name, bool bStart)
+HRESULT SVFailStatusStreamManager::ProcessStartStopCommand(const SVString& rName, bool bStart)
 {
 	HRESULT hr = E_INVALIDARG;
-	
+
 	for (FailStatusListCollection::iterator it = m_streams.begin();it != m_streams.end() && S_OK != hr;++it)
 	{
-		FailStatusLists::iterator listIt = it->second.find(name);
+		FailStatusLists::iterator listIt = it->second.find(rName);
 		if (listIt != it->second.end())
 		{
 			listIt->second.bStarted = bStart;

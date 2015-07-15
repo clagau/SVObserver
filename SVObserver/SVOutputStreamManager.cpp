@@ -12,11 +12,15 @@
 #include "StdAfx.h"
 #include <boost/bind.hpp>
 #include "SVOutputStreamManager.h"
-
+#include "SVRemoteControlConstants.h"
 #include "JsonLib/include/json.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 
 #include "SVObjectCommandDataJson.h"
+
+#pragma region Constants
+static const std::string scRemoteOutputGroupTag = "SVRemoteOutputGroup";
+#pragma endregion
 
 SVOutputStreamManager& SVOutputStreamManager::Instance()
 {
@@ -30,7 +34,7 @@ SVOutputStreamManager::~SVOutputStreamManager()
 	Shutdown();
 }
 
-void SVOutputStreamManager::Startup(unsigned short p_PortNumber)
+void SVOutputStreamManager::Startup(unsigned short PortNumber)
 {
 	m_SocketNotifyPtr = new SVOutputSocketObserver( boost::bind( &SVJsonCommandServer::WriteJson, &m_SocketServer, _1 ) );
 
@@ -46,19 +50,19 @@ void SVOutputStreamManager::Startup(unsigned short p_PortNumber)
 			{
 				if( m_OutputSocketCookie != 0 )
 				{
-					SVObjectManagerClass::Instance().DetachObserver( "SVRemoteOutputGroup", m_OutputStream.second, m_OutputSocketCookie );
+					SVObjectManagerClass::Instance().DetachObserver( scRemoteOutputGroupTag.c_str(), m_OutputStream.second, m_OutputSocketCookie );
 					SVObjectManagerClass::Instance().EraseObserver( m_OutputSocketCookie );
 
 					m_OutputSocketCookie = 0;
 				}
 
-				SVObjectManagerClass::Instance().AttachObserver( "SVRemoteOutputGroup", m_OutputStream.second, l_NewCookie );
+				SVObjectManagerClass::Instance().AttachObserver( scRemoteOutputGroupTag.c_str(), m_OutputStream.second, l_NewCookie );
 			}
 
 			m_OutputSocketCookie = l_NewCookie;
 		}
 
-		m_SocketServer.ListenForClients( p_PortNumber, boost::bind( &SVOutputStreamManager::ProcessJsonCommand, this, _1, _2 ) );
+		m_SocketServer.ListenForClients( PortNumber, boost::bind( &SVOutputStreamManager::ProcessJsonCommand, this, _1, _2 ) );
 	}
 }
 
@@ -70,7 +74,7 @@ void SVOutputStreamManager::Shutdown()
 	{
 		if( !( m_OutputStream.second.empty() ) )
 		{
-			SVObjectManagerClass::Instance().DetachObserver( "SVRemoteOutputGroup", m_OutputStream.second, m_OutputSocketCookie );
+			SVObjectManagerClass::Instance().DetachObserver( scRemoteOutputGroupTag.c_str(), m_OutputStream.second, m_OutputSocketCookie );
 		}
 
 		SVObjectManagerClass::Instance().EraseObserver( m_OutputSocketCookie );
@@ -82,111 +86,118 @@ void SVOutputStreamManager::Shutdown()
 	m_SocketNotifyPtr.clear();
 }
 
-HRESULT SVOutputStreamManager::InsertOutputController( const SVGUID& p_rObjectId )
+HRESULT SVOutputStreamManager::InsertOutputController( const SVGUID& rObjectId )
 {
-	HRESULT l_Status = S_OK;
+	HRESULT hr = S_OK;
 
-	m_OutputControllerId = p_rObjectId;
+	m_OutputControllerId = rObjectId;
 
-	return l_Status;
+	return hr;
 }
 
 HRESULT SVOutputStreamManager::EraseOutputController()
 {
-	HRESULT l_Status = S_OK;
+	HRESULT hr = S_OK;
 
 	m_OutputControllerId.clear();
 
-	return l_Status;
+	return hr;
 }
 
-HRESULT SVOutputStreamManager::InsertOutputStream( const std::string& p_rName, const SVGUID& p_rObjectId )
+HRESULT SVOutputStreamManager::InsertOutputStream( const std::string& rName, const SVGUID& rObjectId )
 {
-	HRESULT l_Status = S_OK;
+	HRESULT hr = S_OK;
 
 	EraseOutputStream();
 
-	if( !( p_rObjectId.empty() ) && ( p_rObjectId != m_OutputStream.second ) )
+	if( !( rObjectId.empty() ) && ( rObjectId != m_OutputStream.second ) )
 	{
-		if( m_OutputSocketCookie != 0 )
+		if( 0 != m_OutputSocketCookie )
 		{
-			l_Status = SVObjectManagerClass::Instance().AttachObserver( "SVRemoteOutputGroup", p_rObjectId, m_OutputSocketCookie );
+			hr = SVObjectManagerClass::Instance().AttachObserver( scRemoteOutputGroupTag.c_str(), rObjectId, m_OutputSocketCookie );
 		}
 
-		if( l_Status == S_OK )
+		if( S_OK == hr )
 		{
-			m_OutputStream.first = p_rName;
-			m_OutputStream.second = p_rObjectId;
+			m_OutputStream.first = rName;
+			m_OutputStream.second = rObjectId;
 		}
 	}
 	else
 	{
-		l_Status = E_FAIL;
+		hr = E_FAIL;
 	}
-
-	return l_Status;
+	return hr;
 }
 
 HRESULT SVOutputStreamManager::EraseOutputStream()
 {
-	HRESULT l_Status = S_OK;
+	HRESULT hr = S_OK;
 
 	if( !( m_OutputStream.second.empty() ) )
 	{
-		if( m_OutputSocketCookie != 0 )
+		if( 0 != m_OutputSocketCookie )
 		{
-			SVObjectManagerClass::Instance().DetachObserver( "SVRemoteOutputGroup", m_OutputStream.second, m_OutputSocketCookie );
+			SVObjectManagerClass::Instance().DetachObserver( scRemoteOutputGroupTag.c_str(), m_OutputStream.second, m_OutputSocketCookie );
 		}
 
 		m_OutputStream.first.clear();
 		m_OutputStream.second.clear();
 	}
 
-	return l_Status;
+	return hr;
 }
 
-HRESULT SVOutputStreamManager::ProcessJsonCommand( const std::string& p_rJsonCommand, std::string& p_rJsonResults )
+HRESULT SVOutputStreamManager::ProcessJsonCommand( const std::string& rJsonCommand, std::string& rJsonResults )
 {
-	HRESULT l_Status = S_OK;
+	HRESULT hr = E_INVALIDARG;
 
-	Json::Reader l_Reader;
-	Json::Value l_JsonValues;
-	SVString l_StreamName;
+	Json::Reader Reader;
+	Json::Value JsonValues;
+	std::string StreamName;
+	std::string CmdName;
 
-	if( l_Reader.parse( p_rJsonCommand, l_JsonValues, false ) )
+	if (Reader.parse(rJsonCommand, JsonValues, false))
 	{
-		if( l_JsonValues.isObject() )
+		if (JsonValues.isObject())
 		{
-			Json::Value l_JsonCommand = l_JsonValues[ _T( "StreamName" ) ];
+			Json::Value JsonCommand = JsonValues[SVRC::stream::streamName];
 
-			if( l_JsonCommand.isString() )
+			if (JsonCommand.isString())
 			{
-				l_StreamName = l_JsonCommand.asString();
+				StreamName = JsonCommand.asString();
+				JsonCommand = JsonValues[SVRC::stream::command];
+				if (JsonCommand.isString())
+				{
+					CmdName = JsonCommand.asString(); 
+					
+					if( StreamName.empty() )
+					{
+						hr = ProcessStreamManagerJsonCommand( rJsonCommand, rJsonResults );
+					}
+					else
+					{
+						hr = SendCommandToOutputStream( CmdName, StreamName, rJsonCommand, rJsonResults );
+					}
+				}
 			}
 		}
-		else
-		{
-			l_Status = E_FAIL;
-		}
-	}
-	else
-	{
-		l_Status = E_FAIL;
 	}
 
-	if( l_Status == S_OK )
+	// always send a response...
+	if (S_OK != hr)
 	{
-		if( l_StreamName.empty() )
-		{
-			l_Status = ProcessStreamManagerJsonCommand( p_rJsonCommand, p_rJsonResults );
-		}
-		else
-		{
-			l_Status = SendCommandToOutputStream( l_StreamName.ToString(), p_rJsonCommand, p_rJsonResults );
-		}
-	}
+		//Build Response
+		Json::FastWriter l_Writer;
+		Json::Value value(Json::objectValue);
 
-	return l_Status;
+		value[SVRC::stream::response] = CmdName.c_str();
+		value[SVRC::stream::streamName] = StreamName.c_str();
+		value[SVRC::stream::status] = hr;
+
+		rJsonResults = l_Writer.write(value).c_str();
+	}
+	return hr;
 }
 
 SVOutputStreamManager::SVOutputStreamManager()
@@ -198,123 +209,95 @@ SVOutputStreamManager::SVOutputStreamManager()
 {
 }
 
-HRESULT SVOutputStreamManager::Rename( LPCTSTR p_OldName, LPCTSTR p_NewName)
+HRESULT SVOutputStreamManager::Rename( LPCTSTR OldName, LPCTSTR NewName)
 {
 	HRESULT l_hr = S_OK;
-	l_hr = p_OldName == m_OutputStream.first ? S_OK : S_FALSE;
+	l_hr = OldName == m_OutputStream.first ? S_OK : S_FALSE;
 	if( l_hr == S_OK )
 	{
-		m_OutputStream.first = p_NewName ;
+		m_OutputStream.first = NewName ;
 	}
 	return l_hr;
 }
 
-
-HRESULT SVOutputStreamManager::SendCommandToOutputStream( const std::string& p_rName, const std::string& p_rJsonCommand, std::string& p_rJsonResults )
+enum CommandTimeouts
 {
-	HRESULT l_Status = S_OK;
+	SIXTY_SECONDS = 60000
+};
 
-	if( !( p_rName.empty() ) && ( p_rName == m_OutputStream.first ) )
+HRESULT SVOutputStreamManager::SendCommandToOutputStream( const std::string& rCmdName, const std::string& rName, const std::string& rJsonCommand, std::string& rJsonResults )
+{
+	HRESULT hr = E_INVALIDARG;
+
+	if( !( rName.empty() ) && ( rName == m_OutputStream.first ) )
 	{
-		SVObjectCommandDataJsonPtr l_CommandDataPtr = new SVObjectCommandDataJson();
+		SVObjectCommandDataJsonPtr CommandDataPtr = new SVObjectCommandDataJson();
 
-		if( !( l_CommandDataPtr.empty() ) )
+		if( !( CommandDataPtr.empty() ) )
 		{
-			l_Status = l_CommandDataPtr->SetJsonCommand( p_rJsonCommand );
+			hr = CommandDataPtr->SetJsonCommand( rJsonCommand );
 
-			if( l_Status == S_OK )
+			if( S_OK == hr )
 			{
-				l_Status = SVObjectManagerClass::Instance().Notify( m_OutputStream.second, l_CommandDataPtr );
+				hr = SVObjectManagerClass::Instance().Notify( m_OutputStream.second, CommandDataPtr );
 			}
 
-			if( l_Status == S_OK )
+			if( S_OK == hr )
 			{
-				l_Status = l_CommandDataPtr->WaitForRequest( 60000 );
+				hr = CommandDataPtr->WaitForRequest( SIXTY_SECONDS );
 
-				if( l_Status == S_OK )
+				if( S_OK == hr )
 				{
-					p_rJsonResults = l_CommandDataPtr->m_JsonResults;
+					rJsonResults = CommandDataPtr->m_JsonResults;
 				}
 			}
 		}
-		else
-		{
-			l_Status = E_FAIL;
-		}
 	}
-	else
-	{
-		l_Status = S_FALSE;
-	}
-
-	return l_Status;
+	return hr;
 }
 
-HRESULT SVOutputStreamManager::ProcessStreamManagerJsonCommand( const std::string& p_rJsonCommand, std::string& p_rJsonResults )
+HRESULT SVOutputStreamManager::ProcessStreamManagerJsonCommand( const std::string& rJsonCommand, std::string& rJsonResults )
 {
-	HRESULT l_Status = S_OK;
+	HRESULT hr = E_INVALIDARG;
 
-	if( 0 < p_rJsonCommand.length() )
+	if( 0 < rJsonCommand.length() )
 	{
-		Json::Reader l_Reader;
-		Json::Value l_JsonValues;
-		SVString l_Command;
+		Json::Reader Reader;
+		Json::Value JsonValues;
+		SVString Command;
 
-		if( l_Reader.parse( p_rJsonCommand, l_JsonValues, false ) )
+		if( Reader.parse( rJsonCommand, JsonValues, false ) )
 		{
-			if( l_JsonValues.isObject() )
+			if( JsonValues.isObject() )
 			{
-				Json::Value l_JsonCommand = l_JsonValues[ _T( "Command" ) ];
+				Json::Value JsonCommand = JsonValues[ SVRC::stream::command ];
 
-				if( l_JsonCommand.isString() )
+				if( JsonCommand.isString() )
 				{
-					l_Command = l_JsonCommand.asString();
+					Command = JsonCommand.asString();
+					if( Command == SVRC::iobroker::queryStreamNames.c_str() )
+					{
+						Json::FastWriter Writer;
+						Json::Value Object(Json::objectValue);
+						Json::Value Array(Json::arrayValue);
+
+						if( !( m_OutputStream.first.empty() ) )
+						{
+							Array.append( m_OutputStream.first.c_str() );
+						}
+
+						Object[ SVRC::stream::streamName ] = Array;
+						Object[ SVRC::stream::response ] = Command.c_str();
+						Object[ SVRC::stream::status ] = hr;
+
+						rJsonResults = Writer.write( Object ).c_str();
+						hr = S_OK;
+					}
 				}
-				else
-				{
-					l_Status = E_FAIL;
-				}
-			}
-			else
-			{
-				l_Status = E_FAIL;
-			}
-		}
-		else
-		{
-			l_Status = E_FAIL;
-		}
-
-		if( l_Status == S_OK )
-		{
-			if( l_Command == _T( "QueryStreamNames" ) )
-			{
-				Json::FastWriter l_Writer;
-				Json::Value l_Object(Json::objectValue);
-				Json::Value l_Array(Json::arrayValue);
-
-				if( !( m_OutputStream.first.empty() ) )
-				{
-					l_Array.append( m_OutputStream.first.c_str() );
-				}
-
-				l_Object[ _T( "StreamNames" ) ] = l_Array;
-				l_Object[ _T( "Response" ) ] = l_Command.c_str();
-
-				p_rJsonResults = l_Writer.write( l_Object ).c_str();
-			}
-			else
-			{
-				l_Status = E_FAIL;
 			}
 		}
 	}
-	else
-	{
-		l_Status = E_FAIL;
-	}
-
-	return l_Status;
+	return hr;
 }
 
 //******************************************************************************

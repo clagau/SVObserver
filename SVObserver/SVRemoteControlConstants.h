@@ -153,8 +153,19 @@ namespace SVRC
 		const std::string streamName = "StreamName";
 		const std::string startStream = "StartStream";
 		const std::string stopStream = "StopStream";
+		const std::string command = "Command";
+		const std::string response = "Response";
+		const std::string status = "Status";
+		const std::string notification = "Notification";
+		const std::string dataItems = "DataItems";
+		const std::string outputDataItems = "OutputDataItems";
+	}
+
+	namespace iobroker
+	{
 		const std::string queryStreamNames = "QueryStreamNames";
 		const std::string queryDataItems = "QueryDataItems";
+		const std::string triggerCount = "TriggerCount"; // obsolete, only here for backwards compatibility
 	}
 
 	namespace notification

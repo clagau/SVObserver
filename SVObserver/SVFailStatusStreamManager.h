@@ -20,6 +20,7 @@
 #include "SVObjectLibrary/SVObserverTemplate.h"
 #include "SVJsonCommandServerLibrary/SVJsonCommandServer.h"
 #include "SVUtilityLibrary/SVGUID.h"
+#include "SVUtilityLibrary/SVString.h"
 #include "RemoteMonitorList.h"
 #include "SVValueObjectReference.h"
 #include "SVFailStatusStream.h"
@@ -62,7 +63,7 @@ public:
 	/// \param rData [in] - The current ProductInfo struct
 	/// \return HRESULT - S_OK for success
 	//**********************************************
-	virtual HRESULT ObserverUpdate(const SVProductInfoStruct& rData);
+	virtual HRESULT ObserverUpdate(const SVProductInfoStruct& rData) override;
 	#pragma endregion
 
 private:

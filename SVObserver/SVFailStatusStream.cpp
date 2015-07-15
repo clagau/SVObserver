@@ -12,7 +12,7 @@
 #include "stdafx.h"
 #include <comdef.h>
 #include "SVFailStatusStream.h"
-
+#include "SVRemoteControlConstants.h"
 #include "JsonLib/include/json.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVSystemLibrary/SVAutoLockAndReleaseTemplate.h"
@@ -153,24 +153,26 @@ HRESULT SVFailStatusStream::BuildJsonStream(const SVProductInfoStruct& rData, SV
 							}
 						}
 
-						elementObject[_T("Name")] = static_cast<LPCTSTR>(pValue->GetCompleteObjectName());
-						elementObject[_T("Array")] = arrayObject;
-						elementObject[_T("ProcessCount")] = triggerCount;
-						elementObject[_T("Status")] = tempStatus;
+						elementObject[SVRC::vo::name] = static_cast<LPCTSTR>(pValue->GetCompleteObjectName());
+						elementObject[SVRC::vo::array] = arrayObject;
+						elementObject[SVRC::vo::count] = triggerCount;
+						elementObject[SVRC::vo::status] = tempStatus;
 
 						l_Array.append(elementObject);
 					}
 				}
 			}
 		}
+		else
 		{
-			hr = E_FAIL;
+			hr = E_FAIL; // couldn't acquire lock...
 		}
 	}
 
-	l_Object[_T("Notification")] = _T("OutputDataItems");
-	l_Object[_T("StreamName")] = GetName();
-	l_Object[_T("DataItems")] = l_Array;
+	l_Object[SVRC::stream::notification] = SVRC::stream::outputDataItems;
+	l_Object[SVRC::stream::streamName] = GetName();
+	l_Object[SVRC::stream::dataItems] = l_Array;
+	l_Object[SVRC::stream::status] = hr;
 
 	const std::string& JsonResults = l_Writer.write(l_Object).c_str();
 	if (!JsonResults.empty())

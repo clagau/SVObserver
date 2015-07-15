@@ -12,7 +12,7 @@
 #include "stdafx.h"
 #include <comdef.h>
 #include "SVRemoteOutputGroup.h"
-
+#include "SVRemoteControlConstants.h"
 #include "JsonLib/include/json.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVConfigurationLibrary/SVConfigurationTags.h"
@@ -24,8 +24,10 @@
 #include "SVOutputStreamManager.h"
 #include "SVRemoteOutputObject.h"
 
-SV_IMPLEMENT_CLASS( SVRemoteOutputGroup, SVRemoteOutputGroupGUID );
+static const std::string scRemoteOutputGroupTag = "SVRemoteOutputGroup";
+static const std::string scPPQObjectTag = "SVPPQObject";
 
+SV_IMPLEMENT_CLASS( SVRemoteOutputGroup, SVRemoteOutputGroupGUID );
 
 SVRemoteOutputGroup::SVRemoteOutputGroup( LPCSTR ObjectName )
 : SVObjectClass( ObjectName )
@@ -61,7 +63,7 @@ HRESULT SVRemoteOutputGroup::ProcessNotifyData( SVObjectCommandDataJsonPtr& p_rD
 	{
 		if( l_JsonValues.isObject() )
 		{
-			Json::Value l_JsonCommand = l_JsonValues[ _T( "Command" ) ];
+			Json::Value l_JsonCommand = l_JsonValues[ SVRC::stream::command ];
 
 			if( l_JsonCommand.isString() )
 			{
@@ -82,33 +84,35 @@ HRESULT SVRemoteOutputGroup::ProcessNotifyData( SVObjectCommandDataJsonPtr& p_rD
 		l_Status = E_FAIL;
 	}
 
-	if( l_Status == S_OK )
+	if( S_OK == l_Status )
 	{
-		if( l_Command == _T( "StartStream" ) )
+		if( l_Command == SVRC::stream::startStream.c_str() )
 		{
 			::InterlockedExchange( &m_StreamDataItems, 1 );
 
 			Json::FastWriter l_Writer;
 			Json::Value l_Object(Json::objectValue);
 
-			l_Object[ _T( "Response" ) ] = _T( "StartStream" );
-			l_Object[ _T( "StreamName" ) ] = GetName();
+			l_Object[ SVRC::stream::response ] = SVRC::stream::startStream;
+			l_Object[ SVRC::stream::streamName ] = GetName();
+			l_Object[ SVRC::stream::status ] = S_OK;
 
 			p_rDataPtr->m_JsonResults = l_Writer.write( l_Object ).c_str();
 		}
-		else if( l_Command == _T( "StopStream" ) )
+		else if( l_Command == SVRC::stream::stopStream.c_str() )
 		{
 			::InterlockedExchange( &m_StreamDataItems, 0 );
 
 			Json::FastWriter l_Writer;
 			Json::Value l_Object(Json::objectValue);
 
-			l_Object[ _T( "Response" ) ] = _T( "StopStream" );
-			l_Object[ _T( "StreamName" ) ] = GetName();
+			l_Object[ SVRC::stream::response ] = SVRC::stream::stopStream;
+			l_Object[ SVRC::stream::streamName ] = GetName();
+			l_Object[ SVRC::stream::status ] = S_OK;
 
 			p_rDataPtr->m_JsonResults = l_Writer.write( l_Object ).c_str();
 		}
-		else if( l_Command == _T( "QueryDataItems" ) )
+		else if( l_Command == SVRC::iobroker::queryDataItems.c_str() )
 		{
 			Json::FastWriter l_Writer;
 			Json::Value l_Object(Json::objectValue);
@@ -134,9 +138,9 @@ HRESULT SVRemoteOutputGroup::ProcessNotifyData( SVObjectCommandDataJsonPtr& p_rD
 				}
 			}
 
-			l_Object[ _T( "Response" ) ] = _T( "QueryDataItems" );
-			l_Object[ _T( "StreamName" ) ] = GetName();
-			l_Object[ _T( "DataItems" ) ] = l_Array;
+			l_Object[ SVRC::stream::response ] = SVRC::iobroker::queryDataItems;
+			l_Object[ SVRC::stream::streamName ] = GetName();
+			l_Object[ SVRC::stream::dataItems ] = l_Array;
 
 			p_rDataPtr->m_JsonResults = l_Writer.write( l_Object ).c_str();
 		}
@@ -155,7 +159,7 @@ HRESULT SVRemoteOutputGroup::ObserverUpdate( const SVProductInfoStruct& p_rData 
 {
 	HRESULT l_Status = S_OK;
 
-	if( m_StreamDataItems == 1 )
+	if( 1 == m_StreamDataItems )
 	{
 		std::string l_JsonResults;
 		Json::FastWriter l_Writer;
@@ -175,11 +179,11 @@ HRESULT SVRemoteOutputGroup::ObserverUpdate( const SVProductInfoStruct& p_rData 
 				{
 					SVRemoteOutputObject* l_pOutput = *( l_it );
 
-					if( l_pOutput != NULL )
+					if( nullptr != l_pOutput )
 					{
 						SVValueObjectClass* l_pValue = l_pOutput->GetValueObject();
 
-						if( l_pValue != NULL )
+						if( nullptr != l_pValue )
 						{
 							Json::Value l_ElementObject(Json::objectValue);
 							Json::Value l_ArrayObject(Json::arrayValue);
@@ -190,7 +194,7 @@ HRESULT SVRemoteOutputGroup::ObserverUpdate( const SVProductInfoStruct& p_rData 
 
 							l_pValue->GetValues( l_Index, l_VariantVector );
 
-							for( size_t i = 0; ( l_TempStatus == S_OK ) && ( i < l_VariantVector.size() ); ++i )
+							for( size_t i = 0; ( S_OK == l_TempStatus ) && ( i < l_VariantVector.size() ); ++i )
 							{
 								switch( l_VariantVector[ i ].vt )
 								{
@@ -244,10 +248,10 @@ HRESULT SVRemoteOutputGroup::ObserverUpdate( const SVProductInfoStruct& p_rData 
 								}
 							}
 
-							l_ElementObject[ _T( "Name" ) ] = static_cast< LPCTSTR >( l_pValue->GetCompleteObjectName() );
-							l_ElementObject[ _T( "Array" ) ] = l_ArrayObject;
-							l_ElementObject[ _T( "TriggerCount" ) ] = l_TriggerCount;
-							l_ElementObject[ _T( "Status" ) ] = l_TempStatus;
+							l_ElementObject[ SVRC::vo::name ] = static_cast< LPCTSTR >( l_pValue->GetCompleteObjectName() );
+							l_ElementObject[ SVRC::vo::array ] = l_ArrayObject;
+							l_ElementObject[ SVRC::vo::count ] = l_TriggerCount;
+							l_ElementObject[ SVRC::vo::status ] = l_TempStatus;
 
 							l_Array.append( l_ElementObject );
 						}
@@ -256,13 +260,13 @@ HRESULT SVRemoteOutputGroup::ObserverUpdate( const SVProductInfoStruct& p_rData 
 			}
 		}
 
-		l_Object[ _T( "Notification" ) ] = _T( "OutputDataItems" );
-		l_Object[ _T( "StreamName" ) ] = GetName();
-		l_Object[ _T( "DataItems" ) ] = l_Array;
+		l_Object[ SVRC::stream::notification ] = SVRC::stream::outputDataItems;
+		l_Object[ SVRC::stream::streamName ] = GetName();
+		l_Object[ SVRC::stream::dataItems ] = l_Array;
 
 		l_JsonResults = l_Writer.write( l_Object ).c_str();
 
-		l_Status = SVObjectManagerClass::Instance().UpdateObservers( "SVRemoteOutputGroup", GetUniqueObjectID(), l_JsonResults );
+		l_Status = SVObjectManagerClass::Instance().UpdateObservers( scRemoteOutputGroupTag.c_str(), GetUniqueObjectID(), l_JsonResults );
 	}
 
 	return l_Status;
@@ -280,14 +284,10 @@ BOOL SVRemoteOutputGroup::Clear()
 		{
 			delete (*l_it);
 		}
-
 		m_RemoteOutputs.clear();
 	}
-
 	return TRUE;
 }
-
-
 
 BOOL SVRemoteOutputGroup::Create()
 {
@@ -299,7 +299,6 @@ BOOL SVRemoteOutputGroup::Create()
 
 	return m_bCreated;
 }// end Create
-
 
 BOOL SVRemoteOutputGroup::Destroy()
 {
@@ -316,11 +315,10 @@ BOOL SVRemoteOutputGroup::AttachStreamManager()
 {
 	SVOutputStreamManager::Instance().EraseOutputStream();
 
-	bool m_bAttached = SVOutputStreamManager::Instance().InsertOutputStream( GetGroupName().c_str(), GetUniqueObjectID() ) == S_OK;
+	bool m_bAttached = S_OK == SVOutputStreamManager::Instance().InsertOutputStream( GetGroupName().c_str(), GetUniqueObjectID() ) ;
 
 	return m_bAttached;
 }
-
 
 // Parameters >> Tree ( Save )
 BOOL SVRemoteOutputGroup::GetParameters( SVTreeType& p_rTree, SVTreeType::SVBranchHandle htiParent ) const
@@ -336,7 +334,7 @@ BOOL SVRemoteOutputGroup::GetParameters( SVTreeType& p_rTree, SVTreeType::SVBran
 	{
 		SVObjectClass* l_pSubject = SVObjectManagerClass::Instance().GetObject( l_SubjectID );
 
-		if( l_pSubject != NULL )
+		if( nullptr != l_pSubject )
 		{
 			l_SubjectName = l_pSubject->GetName();
 		}
@@ -349,7 +347,6 @@ BOOL SVRemoteOutputGroup::GetParameters( SVTreeType& p_rTree, SVTreeType::SVBran
 	SVNavigateTreeClass::AddItem( p_rTree, htiParent, CTAG_UNIQUE_REFERENCE_ID, svVariant );
 	svVariant.Clear();
 
-
 	// PPQ GUID...
 	svVariant = m_PPQObjectId.ToVARIANT();
 	SVNavigateTreeClass::AddItem( p_rTree, htiParent, CTAG_REMOTE_GROUP_PPQ, svVariant );
@@ -358,7 +355,7 @@ BOOL SVRemoteOutputGroup::GetParameters( SVTreeType& p_rTree, SVTreeType::SVBran
 	// Remote Outputs 
 	for( size_t i = 0 ; i < m_RemoteOutputs.size(); i++ )
 	{
-		SVTreeType::SVBranchHandle htiRemoteEntry = NULL;
+		SVTreeType::SVBranchHandle htiRemoteEntry = nullptr;
 		CString l_strBranch;
 		l_strBranch.Format( "%s_%d",CTAG_REMOTE_OUTPUT_ENTRY, i + 1 );
 
@@ -367,7 +364,6 @@ BOOL SVRemoteOutputGroup::GetParameters( SVTreeType& p_rTree, SVTreeType::SVBran
 			m_RemoteOutputs[i]->GetParameters( p_rTree, htiRemoteEntry );
 		}
 	}
-
 	return bOk;
 }
 
@@ -416,9 +412,9 @@ HRESULT SVRemoteOutputGroup::Update( SVMaterialsTreeAdapter& p_rMaterialsTree )
 
 	// Remote Output List
 	HRESULT l_hrTmp = S_OK;
-	SVRemoteOutputObject* l_TmpOutput = NULL;
+	SVRemoteOutputObject* l_TmpOutput = nullptr;
 	long l_lEntryNum = 0;
-	while( l_hrTmp == S_OK )
+	while( S_OK == l_hrTmp )
 	{
 		SVString l_strEntry;
 		l_strEntry.Format( "%s_%d", CTAG_REMOTE_OUTPUT_ENTRY, ++l_lEntryNum );
@@ -428,13 +424,13 @@ HRESULT SVRemoteOutputGroup::Update( SVMaterialsTreeAdapter& p_rMaterialsTree )
 		{
 			// A new tree branch....
 			SVMaterialsTreeAdapter::SVTreeContainer* l_pTreeContainer = l_it.GetChildTree( );
-			if( l_pTreeContainer != NULL )
+			if( nullptr != l_pTreeContainer )
 			{
 				SVMaterialsTreeAdapter l_rmtaBranch( *l_pTreeContainer );
 
 				l_TmpOutput = new SVRemoteOutputObject;
 				l_hrTmp = l_TmpOutput->Update( l_rmtaBranch );
-				if( l_hrTmp == S_OK )
+				if( S_OK == l_hrTmp )
 				{
 					m_RemoteOutputs.push_back( l_TmpOutput );
 				}
@@ -453,7 +449,6 @@ HRESULT SVRemoteOutputGroup::Update( SVMaterialsTreeAdapter& p_rMaterialsTree )
 
 	return l_hr;
 }
-
 
 // Sets parameters from Tree Control ( Restore )
 BOOL SVRemoteOutputGroup::SetParameters( SVTreeType& p_rTree, SVTreeType::SVBranchHandle htiParent )
@@ -494,11 +489,11 @@ BOOL SVRemoteOutputGroup::SetParameters( SVTreeType& p_rTree, SVTreeType::SVBran
 	if ( bOk )
 	{
 		BOOL l_bTmp = TRUE;
-		SVRemoteOutputObject* l_TmpOutput = NULL;
+		SVRemoteOutputObject* l_TmpOutput = nullptr;
 		long l_lEntryNum = 0;
 		while( l_bTmp )
 		{
-			SVTreeType::SVBranchHandle htiBranch=NULL;
+			SVTreeType::SVBranchHandle htiBranch = nullptr;
 			CString l_strEntry;
 			l_strEntry.Format( "%s_%d", CTAG_REMOTE_OUTPUT_ENTRY, ++l_lEntryNum );
 			l_bTmp = SVNavigateTreeClass::GetItemBranch( p_rTree, l_strEntry, htiParent, htiBranch );
@@ -519,10 +514,8 @@ BOOL SVRemoteOutputGroup::SetParameters( SVTreeType& p_rTree, SVTreeType::SVBran
 			}
 		}
 	}
-
 	return bOk;
 }
-
 
 // Remote Identifier and new output object will be managed by SVRemoteOutputGroup
 HRESULT SVRemoteOutputGroup::AddOutput( SVRemoteOutputObject* p_pOutputEntry )
@@ -538,8 +531,6 @@ HRESULT SVRemoteOutputGroup::AddOutput( SVRemoteOutputObject* p_pOutputEntry )
 
 	return l_hr;
 }
-
-
 
 HRESULT SVRemoteOutputGroup::Delete( SVRemoteOutputObject* pRemoteOutput )
 {
@@ -559,10 +550,8 @@ HRESULT SVRemoteOutputGroup::Delete( SVRemoteOutputObject* pRemoteOutput )
 			delete pRemoteOutput;
 		}
 	}
-
 	return l_hr;
 }
-
 
 size_t SVRemoteOutputGroup::RemoteOutputListSize()
 {
@@ -585,8 +574,6 @@ HRESULT SVRemoteOutputGroup::GetItem( long l_lIndex, SVRemoteOutputObject*& p_rI
 
 	return l_hr;	
 }
-
-
 
 class EntrySortLess
 {
@@ -622,7 +609,6 @@ public:
 
 HRESULT SVRemoteOutputGroup::SortRemoteOutputList()
 {
-
 	std::sort( m_RemoteOutputs.begin(), m_RemoteOutputs.end(), EntrySortLess());
 
 	return S_OK;
@@ -634,10 +620,7 @@ SVRemoteOutputObject* SVRemoteOutputGroup::GetItem( long l_lIndex )
 	{
 		return m_RemoteOutputs[l_lIndex];
 	}
-	else
-	{
-		return NULL;
-	}
+	return nullptr;
 }
 
 SVRemoteOutputObject* SVRemoteOutputGroup::GetLastObject( )
@@ -646,23 +629,17 @@ SVRemoteOutputObject* SVRemoteOutputGroup::GetLastObject( )
 	{
 		return *m_RemoteOutputs.rbegin();
 	}
-	else
-	{
-		return NULL;
-	}
+	return nullptr;
 }
+
 SVRemoteOutputObject* SVRemoteOutputGroup::GetFirstObject( )
 {
 	if( m_RemoteOutputs.size() > 0 )
 	{
 		return *m_RemoteOutputs.begin();
 	}
-	else
-	{
-		return NULL;
-	}
+	return nullptr;
 }
-
 
 // This class creates the materials tree.
 HRESULT SVRemoteOutputGroup::GetData( SVMaterials& p_rMaterials )
@@ -696,14 +673,13 @@ HRESULT SVRemoteOutputGroup::Find( SVRemoteOutputObject* p_pObject, long& p_rlIn
 	return l_hr;
 }
 
-
 SVString SVRemoteOutputGroup::GetGroupName()
 {
 	SVString l_strName = GetPPQName();
 
 	SVRemoteOutputObject* pFirst = GetFirstObject();
 
-	if( pFirst != NULL )
+	if( nullptr != pFirst )
 		l_strName = pFirst->GetGroupID();
 
 	return l_strName;
@@ -719,13 +695,13 @@ SVString SVRemoteOutputGroup::GetPPQName() const
 	SVString l_SubjectName;
 	SVGUID l_SubjectID;
 	
-	SVObjectManagerClass::Instance().GetObserverSubject( "SVPPQObject", GetUniqueObjectID(), l_SubjectID );
+	SVObjectManagerClass::Instance().GetObserverSubject( scPPQObjectTag.c_str(), GetUniqueObjectID(), l_SubjectID );
 
 	if( !( l_SubjectID.empty() ) )
 	{
 		SVObjectClass* l_pSubject = SVObjectManagerClass::Instance().GetObject( l_SubjectID );
 
-		if( l_pSubject != NULL )
+		if( nullptr != l_pSubject )
 		{
 			l_SubjectName = l_pSubject->GetCompleteObjectName();
 		}
@@ -734,10 +710,10 @@ SVString SVRemoteOutputGroup::GetPPQName() const
 	{
 		SVObjectClass* l_pSubject = SVObjectManagerClass::Instance().GetObject( m_PPQObjectId );
 
-		if( l_pSubject != NULL )
+		if( nullptr != l_pSubject  )
 		{
 			l_SubjectName = l_pSubject->GetCompleteObjectName();
-			HRESULT l_hr = SVObjectManagerClass::Instance().AttachObserver( "SVPPQObject", m_PPQObjectId, GetUniqueObjectID() );
+			HRESULT l_hr = SVObjectManagerClass::Instance().AttachObserver( scPPQObjectTag.c_str(), m_PPQObjectId, GetUniqueObjectID() );
 		}
 	}
 
@@ -748,35 +724,32 @@ HRESULT SVRemoteOutputGroup::SetPPQName( const SVString& p_rPPQ )
 {
 	SVObjectClass* l_pObject = SVObjectManagerClass::Instance().GetObjectCompleteName( p_rPPQ.ToString() );
 
-	if( l_pObject != NULL )
+	if( nullptr != l_pObject )
 	{
 		HRESULT l_hr;
 		SVGUID l_tmpGUID;
 		m_PPQObjectId = l_pObject->GetUniqueObjectID();
-		l_hr = SVObjectManagerClass::Instance().GetObserverSubject( "SVPPQObject", GetUniqueObjectID(), l_tmpGUID );
+		l_hr = SVObjectManagerClass::Instance().GetObserverSubject( scPPQObjectTag.c_str(), GetUniqueObjectID(), l_tmpGUID );
 
-		if( l_tmpGUID == GUID_NULL )
+		if( GUID_NULL == l_tmpGUID )
 		{
 			// Attach Observer No previous attachment...
-			SVObjectManagerClass::Instance().AttachObserver( "SVPPQObject", m_PPQObjectId, GetUniqueObjectID() );
+			SVObjectManagerClass::Instance().AttachObserver( scPPQObjectTag.c_str(), m_PPQObjectId, GetUniqueObjectID() );
 		}
 		else
 		{
 			if( l_tmpGUID != m_PPQObjectId )
 			{
 				// Detach Observer then attach new...
-				l_hr = SVObjectManagerClass::Instance().DetachObserver( "SVPPQObject", l_tmpGUID, GetUniqueObjectID() );
-				l_hr = SVObjectManagerClass::Instance().AttachObserver( "SVPPQObject", m_PPQObjectId, GetUniqueObjectID() );
+				l_hr = SVObjectManagerClass::Instance().DetachObserver( scPPQObjectTag.c_str(), l_tmpGUID, GetUniqueObjectID() );
+				l_hr = SVObjectManagerClass::Instance().AttachObserver( scPPQObjectTag.c_str(), m_PPQObjectId, GetUniqueObjectID() );
 			}
 			else
 			{
 				// leave alone it is already attached..
 			}
 		}
-
 	}
-
-
 	return S_OK;
 }
 

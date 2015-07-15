@@ -28,14 +28,14 @@ public:
 
 	virtual ~SVOutputStreamManager();
 
-	HRESULT InsertOutputController( const SVGUID& p_rObjectId );
+	HRESULT InsertOutputController( const SVGUID& rObjectId );
 	HRESULT EraseOutputController();
 
-	HRESULT InsertOutputStream( const std::string& p_rName, const SVGUID& p_rObjectId );
+	HRESULT InsertOutputStream( const std::string& rName, const SVGUID& rObjectId );
 	HRESULT EraseOutputStream();
 
-	HRESULT ProcessJsonCommand( const std::string& p_rJsonCommand, std::string& p_rJsonResults );
-	HRESULT Rename( LPCTSTR p_OldName, LPCTSTR p_NewName);
+	HRESULT ProcessJsonCommand( const std::string& rJsonCommand, std::string& rJsonResults );
+	HRESULT Rename( LPCTSTR OldName, LPCTSTR NewName);
 
 protected:
 	typedef std::pair< std::string, SVGUID > SVOutputStreamPair;
@@ -46,40 +46,36 @@ protected:
 	{
 	public:
 		typedef boost::function< HRESULT ( const std::string& ) > SVObserverFunction;
+		SVOutputSocketObserver( SVObserverFunction Function ) : m_Function( Function ) {}
 
-		SVOutputSocketObserver( SVObserverFunction p_Function ) : m_Function( p_Function ) {}
-
-		virtual HRESULT ObserverUpdate( const std::string& p_rData )
+		virtual HRESULT ObserverUpdate( const std::string& rData ) override
 		{
 			HRESULT l_Status = S_OK;
 
 			if( !( m_Function.empty() ) )
 			{
-				l_Status = m_Function( p_rData );
+				l_Status = m_Function( rData );
 			}
 			else
 			{
 				l_Status = E_FAIL;
 			}
-
 			return l_Status;
 		}
 
 	private:
 		SVOutputSocketObserver() : m_Function() {}
-
 		SVObserverFunction m_Function;
-
 	};
 
 	SVOutputStreamManager();
 
-	void Startup(unsigned short p_PortNumber);
+	void Startup(unsigned short PortNumber);
 	void Shutdown();
 
-	HRESULT SendCommandToOutputStream( const std::string& p_rName, const std::string& p_rJsonCommand, std::string& p_rJsonResults );
+	HRESULT SendCommandToOutputStream( const std::string& rCmdName, const std::string& rName, const std::string& rJsonCommand, std::string& rJsonResults );
 
-	HRESULT ProcessStreamManagerJsonCommand( const std::string& p_rJsonCommand, std::string& p_rJsonResults );
+	HRESULT ProcessStreamManagerJsonCommand( const std::string& rJsonCommand, std::string& rJsonResults );
 
 	SVJsonCommandServer m_SocketServer;
 	DWORD m_OutputSocketCookie;
