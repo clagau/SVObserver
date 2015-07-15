@@ -22,14 +22,18 @@ ResizeTool::ResizeTool( BOOL bCreateDefaultTaskList, SVObjectClass* pOwner, int 
 
 void ResizeTool::LocalInitialize()
 {
+	//  Start of initialize class members.
 	InitializeInterpolationModeMember();
 	InitializeOverscanMember();
 	InitializePerformanceMember();
+	//  End of initialize class members.
 
 	BuildInputObjectList();
 
 	// The output image is referenced in the embedded list.
 	m_OutputImage.InitializeImage(SVImageTypePhysical);
+	// This logical ROI image is also referenced in the embedded list, but 
+	//  will be hidden from most exposure (within ResizeTool::Create).
 	m_LogicalROIImage.InitializeImage(SVImageTypeLogical);
 	
 	BuildEmbeddedObjectList();
@@ -133,13 +137,35 @@ void ResizeTool::BuildEmbeddedObjectList()
 							IDS_OBJECTNAME_IMAGE2 );
 }
 
+
 ResizeTool::~ResizeTool(void)
 {
+	CloseObject();
 }
+
+
+BOOL ResizeTool::CloseObject()
+{
+	BOOL bRetVal = TRUE;
+
+	if ( isCreated )
+	{
+		isCreated = FALSE;
+
+		bRetVal = m_LogicalROIImage.CloseObject();
+
+		bRetVal = m_OutputImage.CloseObject() && bRetVal;
+
+		bRetVal = SVToolClass::CloseObject() && bRetVal;
+	}
+
+	return bRetVal;
+}
+
 
 BOOL ResizeTool::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
 {
-	BOOL bOk = SVToolClass::CreateObject( pCreateStructure ); //  TRUE/FALSE
+	BOOL bOk = SVToolClass::CreateObject( pCreateStructure ); 
 
 	SVImageClass* inputImage = getInputImage();
 	bOk &= (nullptr != inputImage);
@@ -284,9 +310,32 @@ HRESULT ResizeTool::GetInputImageNames( SVStringValueObjectClass*& p_pSourceName
 	return S_OK;
 }
 
+
 HRESULT ResizeTool::ResetObject()
 {
-	HRESULT	hr  = m_LogicalROIImage.InitializeImage( getInputImage() );
+	HRESULT	hr  = S_OK;
+	
+	SVImageClass*	inputImage = getInputImage();
+
+	if (nullptr == inputImage)
+	{
+		hr = SVMSG_SVO_5047_GETINPUTIMAGEFAILED;
+	}
+		
+	if (SUCCEEDED(hr))		
+	{
+		// required within ResetObject in order to correctly reallocate
+		// buffers when source image is changed within GUI.
+		hr = m_LogicalROIImage.InitializeImage( inputImage );
+	}
+
+	if (SUCCEEDED(hr))
+	{
+		// required within ResetObject in order to correctly reallocate
+		// buffers when source image is changed within GUI.
+		hr = m_OutputImage.InitializeImage( inputImage );
+	}
+		
 	if (SUCCEEDED(hr))
 	{
 		hr = SVToolClass::ResetObject();

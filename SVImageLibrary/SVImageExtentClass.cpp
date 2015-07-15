@@ -1070,7 +1070,7 @@ SVExtentLocationPropertyEnum SVImageExtentClass::GetLocationPropertyAt( SVExtent
 	return l_eLocation;
 }
 
-// Translate the point to be relative (local space) 
+// Translate the point to be relative (local space).  Usually this relates to the ROI of the parent image.
 HRESULT SVImageExtentClass::TranslateToLocalSpace(const SVExtentPointStruct& rValue, SVExtentPointStruct& rResult)
 {
 	SVExtentPointStruct svPosition;
@@ -1128,9 +1128,15 @@ HRESULT SVImageExtentClass::Update( SVExtentLocationPropertyEnum p_eLocation, SV
 				// GetExtentProperty () only l_bValid is identified, which is 
 				// not very helpful. Currently none of these cases give much 
 				// help with error identification.
+				
+				// Get mouse start position relative to input image ROI.
 				l_bValid = (S_OK == TranslateToLocalSpace(p_svStart, l_svOutputStart)) &&
+				// Get mouse end/current position relative to input image ROI.
 								(S_OK == TranslateToLocalSpace(p_svEnd, l_svOutputEnd)) &&
+				// Get ROI rectangle.								
 								(S_OK == GetRectangle(l_oRect));
+								
+								
 				if (l_bValid)
 				{
 					if (p_eLocation == SVExtentLocationPropertyBottomLeft)
@@ -2166,20 +2172,6 @@ HRESULT SVImageExtentClass::TranslateToOutputSpace( SVExtentPointStruct p_svValu
 			}
 
 			case SVExtentTranslationDoubleHeight:
-			{
-				SVExtentPointStruct l_svPosition;
-
-				l_hrOk = m_svPosition.GetExtentProperty( SVExtentPropertyPositionPoint, l_svPosition );
-
-				if ( l_hrOk == S_OK )
-				{
-					p_rsvResult.m_dPositionX = p_svValue.m_dPositionX - l_svPosition.m_dPositionX;
-					p_rsvResult.m_dPositionY = (p_svValue.m_dPositionY - l_svPosition.m_dPositionY) * 2;
-				}
-			
-				break;
-			}
-
 			case SVExtentTranslationResize:
 			{
 				SVExtentPointStruct l_svPosition;
@@ -2763,19 +2755,6 @@ HRESULT SVImageExtentClass::TranslateFromOutputSpace( SVExtentPointStruct p_svVa
 				break;
 			}
 			case SVExtentTranslationDoubleHeight:
-				{
-					SVExtentPointStruct l_svPosition;
-
-					l_hrOk = m_svPosition.GetExtentProperty( SVExtentPropertyPositionPoint, l_svPosition );
-
-					if ( l_hrOk == S_OK )
-					{
-						p_rsvResult.m_dPositionX = p_svValue.m_dPositionX;
-						p_rsvResult.m_dPositionY = p_svValue.m_dPositionY / 2.0;
-					}
-
-					break;
-				}
 			case SVExtentTranslationResize:
 				{
 					//@WARNING [Jim][8 July 2015] No identification of error cases.  

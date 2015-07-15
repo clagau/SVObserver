@@ -80,16 +80,19 @@ public:
 	virtual HRESULT Update( SVExtentLocationPropertyEnum p_eLocation, SVExtentPointStruct p_svStart, SVExtentPointStruct p_svEnd );
 	virtual HRESULT UpdateFromOutputSpace( SVExtentLocationPropertyEnum p_eLocation, long p_lX, long p_lY );
 
+	/// GetRectangle  
+	///  Retrieves the rect values for the input/parent image that is 
+	///  referenced by the current Extents.
 	virtual HRESULT GetRectangle( RECT &p_roRect ) const;
+
+	/// GetOutputRectangle  
+	///  Retrieves the rect values for the output image that is referenced by 
+	///  the current Extents.  The translation value is used in determining 
+	///  these dimensions.
 	virtual HRESULT GetOutputRectangle( RECT &p_roRect ) const;
-	/// @Hack
-	/// It does not make sense that a logical buffer is not a 1:1 
-	/// pixel correlation to its parent physical buffer.  For this 
-	/// reason the translation type will be ignored when retrieving
-	/// the logical rectangle.  
-	/// The usage that this is specifically excluded for is for 
-	/// creating a logical ROI buffer, which should not reflect the 
-	/// output buffer translation.
+	
+	/// GetLogicalRectangle  
+	///  Retrieves the rect values based on the ROI of the current extents.
 	virtual HRESULT GetLogicalRectangle( RECT &p_roRect ) const;
 
 	virtual HRESULT TranslateToOutputSpace( SVExtentPointStruct p_svValue, SVExtentPointStruct &p_rsvResult );
@@ -127,6 +130,9 @@ protected:
 	virtual HRESULT BuildFigure();
 
 private:
+	/// TranslateToLocalSpace
+	///	 Translate the point to be relative (local space).  Usually this relates 
+	///  to the ROI of the parent image.
 	HRESULT TranslateToLocalSpace(const SVExtentPointStruct& rValue, SVExtentPointStruct& rResult);
 	// Input Attributes
 	SVExtentTranslationEnum m_eTranslation;

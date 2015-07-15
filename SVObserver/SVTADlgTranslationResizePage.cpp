@@ -148,24 +148,23 @@ HRESULT SVTADlgTranslationResizePage::AddScaleFactors(SVRPropertyItem* pRoot)
 		SVRPropertyItemEdit* pEdit = static_cast <SVRPropertyItemEdit*> (m_Tree.InsertItem(new SVRPropertyItemEdit(), pGroupItem));
 		if (nullptr == pEdit)
 		{
-			hr = SVMSG_SVO_5006_COULDNOTINSERTHEIGHT;
+			hr = SVMSG_SVO_5009_COULDNOTINSERTWIDTH;
 		}
 		else
 		{
-			pEdit->SetCtrlID( IDC_INPUTLISTTREE_HEIGHTSCALEFACTOR );
-			pEdit->SetLabelText( _T("Height"));
-			pEdit->SetInfoText( _T("Height scale factor modifies the height of the image. < 1 will reduce.  > 1 will expand."));
-
+			pEdit->SetCtrlID( IDC_INPUTLISTTREE_WIDTHSCALEFACTOR );
+			pEdit->SetLabelText( _T("Width"));
+			pEdit->SetInfoText( _T("Width scale factor modifies the width of the image. < 1 will reduce.  > 1 will expand."));
 			pEdit = static_cast <SVRPropertyItemEdit*> (m_Tree.InsertItem(new SVRPropertyItemEdit(), pGroupItem));
 			if (!pEdit)
 			{
-				hr = SVMSG_SVO_5009_COULDNOTINSERTWIDTH;
+				hr = SVMSG_SVO_5006_COULDNOTINSERTHEIGHT;
 			}
 			else
 			{
-				pEdit->SetCtrlID( IDC_INPUTLISTTREE_WIDTHSCALEFACTOR );
-				pEdit->SetLabelText( _T("Width"));
-				pEdit->SetInfoText( _T("Width scale factor modifies the width of the image. < 1 will reduce.  > 1 will expand."));
+				pEdit->SetCtrlID( IDC_INPUTLISTTREE_HEIGHTSCALEFACTOR );
+				pEdit->SetLabelText( _T("Height"));
+				pEdit->SetInfoText( _T("Height scale factor modifies the height of the image. < 1 will reduce.  > 1 will expand."));
 			}
 		}
 	}
@@ -195,24 +194,23 @@ HRESULT SVTADlgTranslationResizePage::AddInputImageInfo(SVRPropertyItem* pRoot)
 		SVRPropertyItemStatic* staticItem = static_cast <SVRPropertyItemStatic*> (m_Tree.InsertItem(new SVRPropertyItemStatic(), pGroupItem));
 		if (nullptr == staticItem)
 		{
-			hr = SVMSG_SVO_5011_COULDNOTINSERTHEIGHT;
+			hr = SVMSG_SVO_5012_COULDNOTINSERTWIDTH;
 		}
 		else
 		{
-			staticItem->SetCtrlID( IDC_INPUTLISTTREE_ROIHEIGHT );
-			staticItem->SetLabelText(_T("Height"));
-			staticItem->SetInfoText(_T("Height of input ROI (read only)"));
-		
+			staticItem->SetCtrlID( IDC_INPUTLISTTREE_ROIWIDTH );
+			staticItem->SetLabelText( _T("Width"));
+			staticItem->SetInfoText( _T("Width of input ROI (read only)"));
 			staticItem = static_cast <SVRPropertyItemStatic*> (m_Tree.InsertItem(new SVRPropertyItemStatic(), pGroupItem));
 			if (nullptr == staticItem)
 			{
-				hr = SVMSG_SVO_5012_COULDNOTINSERTWIDTH;
+				hr = SVMSG_SVO_5011_COULDNOTINSERTHEIGHT;
 			}
 			else
 			{
-				staticItem->SetCtrlID( IDC_INPUTLISTTREE_ROIWIDTH );
-				staticItem->SetLabelText( _T("Width"));
-				staticItem->SetInfoText( _T("Width of input ROI (read only)"));
+				staticItem->SetCtrlID( IDC_INPUTLISTTREE_ROIHEIGHT );
+				staticItem->SetLabelText(_T("Height"));
+				staticItem->SetInfoText(_T("Height of input ROI (read only)"));
 			}
 		}
 	}
@@ -242,26 +240,26 @@ HRESULT SVTADlgTranslationResizePage::AddOutputImageInfo(SVRPropertyItem* pRoot)
 		SVRPropertyItemStatic* staticItem = static_cast <SVRPropertyItemStatic*> (m_Tree.InsertItem(new SVRPropertyItemStatic(), pGroupItem));
 		if (nullptr == staticItem)
 		{
-			hr = SVMSG_SVO_5014_COULDNOTINSERTHEIGHT;
+			hr = SVMSG_SVO_5015_COULDNOTINSERTWIDTH;
 		}
 		else
 		{
-			staticItem->SetCtrlID(IDC_INPUTLISTTREE_OUTPUTHEIGHT);
-			staticItem->SetLabelText( _T("Height"));
-			staticItem->SetInfoText( _T("Ouput Image height after the Height Scale Factor is applied. (read only)"));
-			staticItem->SetItemValue( _T("300") );
+			staticItem->SetCtrlID(IDC_INPUTLISTTREE_OUTPUTWIDTH);
+			staticItem->SetLabelText( _T("Width"));
+			staticItem->SetInfoText( _T("Ouput Image width after the Width Scale Factor is applied. (read only)"));
+			staticItem->SetItemValue( _T("400") );
 
 			staticItem = static_cast <SVRPropertyItemStatic*> (m_Tree.InsertItem(new SVRPropertyItemStatic(), pGroupItem));
 			if (nullptr == staticItem)
 			{
-				hr = SVMSG_SVO_5015_COULDNOTINSERTWIDTH;
+				hr = SVMSG_SVO_5014_COULDNOTINSERTHEIGHT;
 			}
 			else
 			{
-				staticItem->SetCtrlID(IDC_INPUTLISTTREE_OUTPUTWIDTH);
-				staticItem->SetLabelText( _T("Width"));
-				staticItem->SetInfoText( _T("Ouput Image width after the Width Scale Factor is applied. (read only)"));
-				staticItem->SetItemValue( _T("400") );
+				staticItem->SetCtrlID(IDC_INPUTLISTTREE_OUTPUTHEIGHT);
+				staticItem->SetLabelText( _T("Height"));
+				staticItem->SetInfoText( _T("Ouput Image height after the Height Scale Factor is applied. (read only)"));
+				staticItem->SetItemValue( _T("300") );
 			}
 		}
 	}

@@ -46,7 +46,8 @@ enum SVExtentPropertyEnum
 	SVExtentPropertyOldTranslationOffsetY   = 0x00020000,
 	SVExtentPropertyOldTranslationOffset    = 0x00030000,
 
-	SVExtentPropertyHeightScaleFactor		= 0x00040000, ///< Used by Resize Tool
+	SVExtentPropertyHeightScaleFactor		= 0x00040000, ///< Used by Resize Tool and the Image Tool Height Doubling operation
+	
 	SVExtentPropertyWidthScaleFactor		= 0x00080000, ///< Used by Resize Tool
 
 	SVExtentPropertyStartAngle              = 0x01000000,

@@ -25,15 +25,28 @@ public:
 
 	virtual ~ResizeTool(void);
 
+	virtual BOOL CloseObject() override;
 	virtual BOOL CreateObject(SVObjectLevelCreateStruct* pCreateStructure) override;
 
 	virtual HRESULT SetImageExtentToParent(unsigned long ulIndex) override;
 	virtual HRESULT SetImageExtent( unsigned long p_ulIndex, SVImageExtentClass p_svImageExtent ) override;
 	
+	/// GetObjectAtPoint
+	///  Tests to see if the passed in point (usually from a mouse location)
+	///  is contained within itself (the ROI).  If so it returns itself (this),
+	///  otherwise returns a nullptr.
 	virtual SVTaskObjectClass *GetObjectAtPoint(const SVExtentPointStruct &rsvPoint) override;
 	virtual HRESULT DoesObjectHaveExtents() const override;
-
+	
+	/// GetInputImageNames
+	///  Retrieves source image name from m_svSourceImageName.
 	virtual HRESULT GetInputImageNames(SVStringValueObjectClass*& pSourceNames) override;
+
+	/// CollectInputImageNames
+	///  Sets the Tools m_svSourceImageName to the name retrieved from the 
+	///  Source Image object itself.
+	///
+	///  Set String value object for Source Image Names
 	virtual HRESULT CollectInputImageNames(SVRunStatusClass& RRunStatus) override;
 
 	virtual HRESULT ResetObject() override;
