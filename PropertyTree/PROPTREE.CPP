@@ -453,7 +453,7 @@ void SVRPropTree::Delete(SVRPropertyItem* pItem)
 	if (pItem != &m_Root)
 	{
 		if (pItem==GetFocusedItem())
-			SetFocusedItem(NULL);
+			SetFocusedItem(nullptr);
 		delete pItem;
 	}
 }
@@ -464,7 +464,7 @@ void SVRPropTree::SetFocusedItem(SVRPropertyItem* pItem)
 	// If new focus item != nullptr, it will activated and for the old one automatically the OnKill will be fired.
 	// But if the new focus item == nullptr, the focus-parameter will be set to nullptr and no new focus will be set,
 	// and the old item do not unrecognized this. In this case it has to be called a method to tell them item, that he loss the focus. 
-	if (nullptr == pItem && m_pFocus != nullptr)
+	if (nullptr == pItem && m_pFocus != nullptr && IsWindow(m_hWnd))
 	{
 		m_pFocus->OnLossFocus();
 	}
