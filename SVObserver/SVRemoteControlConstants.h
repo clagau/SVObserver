@@ -165,6 +165,7 @@ namespace SVRC
 	{
 		const std::string queryStreamNames = "QueryStreamNames";
 		const std::string queryDataItems = "QueryDataItems";
+		const std::string streamNames = "StreamNames";
 		const std::string triggerCount = "TriggerCount"; // obsolete, only here for backwards compatibility
 	}
 

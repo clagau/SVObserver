@@ -161,24 +161,26 @@ HRESULT SVOutputStreamManager::ProcessJsonCommand( const std::string& rJsonComma
 	{
 		if (JsonValues.isObject())
 		{
-			Json::Value JsonCommand = JsonValues[SVRC::stream::streamName];
-
-			if (JsonCommand.isString())
+			// Stream name is optional for QueryListNames (JSON tag = QueryStreamNames)
+			// Stream name is required for QueryListItems (JSON tag = QueryDataItems) and for Start/Stop(JSON tags = StartStream/StopStream)
+			const Json::Value& streamNameValue = JsonValues[SVRC::stream::streamName];
+			if (streamNameValue.isString())
 			{
-				StreamName = JsonCommand.asString();
-				JsonCommand = JsonValues[SVRC::stream::command];
-				if (JsonCommand.isString())
-				{
-					CmdName = JsonCommand.asString(); 
+				StreamName = streamNameValue.asString();
+			}
+			// Comamnd Name is required
+			const Json::Value& cmdValue = JsonValues[SVRC::stream::command];
+			if (cmdValue.isString())
+			{
+				CmdName = cmdValue.asString(); 
 					
-					if( StreamName.empty() )
-					{
-						hr = ProcessStreamManagerJsonCommand( rJsonCommand, rJsonResults );
-					}
-					else
-					{
-						hr = SendCommandToOutputStream( CmdName, StreamName, rJsonCommand, rJsonResults );
-					}
+				if( StreamName.empty() )
+				{
+					hr = ProcessStreamManagerJsonCommand( rJsonCommand, rJsonResults );
+				}
+				else
+				{
+					hr = SendCommandToOutputStream( CmdName, StreamName, rJsonCommand, rJsonResults );
 				}
 			}
 		}
@@ -277,21 +279,23 @@ HRESULT SVOutputStreamManager::ProcessStreamManagerJsonCommand( const std::strin
 					Command = JsonCommand.asString();
 					if( Command == SVRC::iobroker::queryStreamNames.c_str() )
 					{
+						hr = S_OK;
 						Json::FastWriter Writer;
 						Json::Value Object(Json::objectValue);
 						Json::Value Array(Json::arrayValue);
 
+						// @TODO - this will need to change when there can be more than one
 						if( !( m_OutputStream.first.empty() ) )
 						{
 							Array.append( m_OutputStream.first.c_str() );
 						}
 
-						Object[ SVRC::stream::streamName ] = Array;
+						Object[ SVRC::iobroker::streamNames ] = Array;
 						Object[ SVRC::stream::response ] = Command.c_str();
 						Object[ SVRC::stream::status ] = hr;
 
 						rJsonResults = Writer.write( Object ).c_str();
-						hr = S_OK;
+						
 					}
 				}
 			}
