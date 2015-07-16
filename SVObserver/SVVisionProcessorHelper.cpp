@@ -29,8 +29,9 @@
 #include "SVSVIMStateClass.h"
 #include "BasicValueObject.h"
 #include "RemoteMonitorListHelper.h"
-#include "SVObjectLibrary/GlobalConst.h"
-#include "SVObjectLibrary/SVObjectLibrary.h"
+#include "SVObjectLibrary\GlobalConst.h"
+#include "SVObjectLibrary\SVObjectLibrary.h"
+#include "ObjectInterfaces\SVUserMessage.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -225,7 +226,8 @@ HRESULT SVVisionProcessorHelper::SetConfigurationMode( unsigned long p_Mode )
 	//@WARNING [gra][7.20][02.07.2015] This should be removed as the configuration object is not needed but needs testing
 	if( nullptr != pConfig )
 	{
-		l_Status = TheSVObserverApp.SetMode( p_Mode );
+		//Note this needs to be done using SendMessage due to this being a worker thread
+		l_Status = static_cast< HRESULT >( SendMessage( AfxGetApp()->m_pMainWnd->m_hWnd, SV_SET_MODE, 0, ( LPARAM )p_Mode ) );
 	}
 	else if( l_Status == S_OK )
 	{
