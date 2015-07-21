@@ -12,6 +12,7 @@
 
 #pragma region Includes
 #include "SVMFCControls\SVEditNumbers.h"
+#include "SVOGui\ISVPropertyPageDialog.h"
 #include "RangeClassHelper.h"
 #pragma endregion Includes
 
@@ -19,7 +20,7 @@
 class SVToolClass;
 #pragma endregion Declarations
 
-class SVToolAdjustmentDialogPassFailPageClass : public CPropertyPage
+class SVToolAdjustmentDialogPassFailPageClass : public CPropertyPage ,public SvOg::ISVPropertyPageDialog
 {
 #pragma region Constructor
 public:
@@ -31,6 +32,9 @@ public:
 #pragma endregion Constructor
 
 #pragma region Public Methods
+public:
+	// ISVPropertyPageDialog
+	virtual bool QueryAllowExit() override;
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
@@ -43,7 +47,6 @@ protected:
 	virtual BOOL OnInitDialog() override;
 	virtual BOOL OnSetActive() override;
 	virtual BOOL OnKillActive() override;
-	virtual void OnOK() override;
 	//}}AFX_VIRTUAL
 
 	//{{AFX_MSG(SVToolAdjustmentDialogPassFailPageClass)
@@ -55,7 +58,7 @@ protected:
 #pragma region Protected Methods
 
 #pragma region Privated Methods
-	void UpdateRangeValues();
+	bool UpdateRangeValues();
 
 	//************************************
 	// Description:  Set the values from RangeHelper to the Dialog

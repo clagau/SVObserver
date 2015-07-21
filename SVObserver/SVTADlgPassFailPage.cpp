@@ -62,6 +62,12 @@ SVToolAdjustmentDialogPassFailPageClass::~SVToolAdjustmentDialogPassFailPageClas
 #pragma endregion Constructor
 
 #pragma region Public Methods
+bool SVToolAdjustmentDialogPassFailPageClass::QueryAllowExit()
+{
+	UpdateData(TRUE);
+
+	return UpdateRangeValues();
+}
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
@@ -116,16 +122,16 @@ BOOL SVToolAdjustmentDialogPassFailPageClass::OnKillActive()
 {
 	UpdateData(TRUE);
 
-	UpdateRangeValues();
+	bool bOk = UpdateRangeValues();
 	
-	return CPropertyPage::OnKillActive();
-}
-
-void SVToolAdjustmentDialogPassFailPageClass::OnOK() 
-{
-	UpdateData(TRUE);
-
-	UpdateRangeValues();
+	if (bOk)
+	{
+		return CPropertyPage::OnKillActive();
+	}
+	else
+	{
+		return false;
+	}
 }
 
 void SVToolAdjustmentDialogPassFailPageClass::OnBnClickedFailHighIndirect()
@@ -150,10 +156,26 @@ void SVToolAdjustmentDialogPassFailPageClass::OnBnClickedFailedLowIndirect()
 #pragma endregion Protected Methods
 
 #pragma region Privated Methods
-void SVToolAdjustmentDialogPassFailPageClass::UpdateRangeValues()
+bool SVToolAdjustmentDialogPassFailPageClass::UpdateRangeValues()
 {
-	GetDlgData();
-	m_RangeHelper.SetInspectionData();
+	CString errorMsg;
+	bool bOK = GetDlgData();
+
+	if(bOK)
+	{
+		HRESULT hres = m_RangeHelper.CheckInternalData(errorMsg);
+		if( S_OK != hres)
+		{
+			bOK = false;
+			AfxMessageBox(errorMsg, MB_OK | MB_ICONERROR);
+		}
+	}
+
+	if (bOK)
+	{
+		m_RangeHelper.SetInspectionData();
+	}
+	return bOK;
 }
 
 void SVToolAdjustmentDialogPassFailPageClass::SetDlgData()
