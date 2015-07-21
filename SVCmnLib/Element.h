@@ -99,13 +99,13 @@ class SchemaElement
 
 //##ModelId=3A9E4BDB0198
 class Attribute : public SchemaElement
-	{
+{
 	public:
 	//##ModelId=3A9E4BDB01A3
-	Attribute();
+		Attribute(){};
 	//##ModelId=3A9E4BDB01A2
-	virtual ~Attribute();
-	};
+		virtual ~Attribute(){};
+};
 
 //##ModelId=3A9E4BDB012A
 class Element : public SchemaElement

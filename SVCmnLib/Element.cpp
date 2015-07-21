@@ -57,18 +57,6 @@ SchemaElement::~SchemaElement()
 		if(x>0)free(m_lpszName);
 		m_lpszName = NULL;
 	}
-/*	if(m_var.vt == VT_BSTR)
-		{
-		UINT uLen = SysStringLen(m_var.bstrVal);
-		if(uLen)
-			{
-			SysFreeString(m_var.bstrVal);
-			}
-		}
-	else if(m_var.vt == (VT_ARRAY | VT_UI1))
-		{
-		SafeArrayDestroy(m_var.parray);
-		}//*/
 	VariantClear(&m_var);
 }
 
@@ -122,7 +110,7 @@ LPTSTR SchemaElement::GetType()
 	LPTSTR szType;
 
 	switch(m_var.vt)
-		{
+	{
 		case VT_BSTR:
 			{
 			szType = _T("string");
@@ -181,7 +169,7 @@ LPTSTR SchemaElement::GetType()
 		default:
 			szType = _T("");
 			break;
-		}
+	}
 	return szType;
 }
 
@@ -198,46 +186,45 @@ void SchemaElement::SetType(CString szType)
 	
 	// determine the type
 	if((szType == _T("enumeration")) || (szType == _T("string")) )// || szType.IsEmpty())
-		{
+	{
 		m_var.vt = VT_BSTR;
-//		V_BSTR(&m_var) = ::SysAllocString(_T("T"));
 		V_BSTR(&m_var) = ::SysAllocStringByteLen(NULL,0);
-		}
+	}
 	else if(szType.IsEmpty())
-		{
+	{
 		m_var.vt = VT_NULL;
-		}
+	}
 	else if (szType == _T("i4"))
-		{
+	{
 		m_var.vt = VT_I4;
-		}
+	}
 	else if (szType == _T("boolean"))
-		{
+	{
 		m_var.vt = VT_BOOL;
 		m_var.boolVal = -1;
-		}
+	}
 	else if (szType == _T("i2"))
-		{
+	{
 		m_var.vt = VT_I2;
-		}
+	}
 	else if (szType == _T("i1"))
-		{
+	{
 		m_var.vt = VT_I1;
-		}
+	}
 	else if (szType == _T("ui4"))
-		{
+	{
 		m_var.vt = VT_UI4;
-		}
+	}
 	else if (szType == _T("ui2"))
-		{
+	{
 		m_var.vt = VT_UI2;
-		}
+	}
 	else if (szType == _T("ui1"))
-		{
+	{
 		m_var.vt = VT_UI1;
-		}
+	}
 	else if (szType == _T("bin.base64"))
-		{
+	{
 		m_var.vt = (VT_ARRAY | VT_UI1);
 		
 		//init to one element
@@ -250,11 +237,11 @@ void SchemaElement::SetType(CString szType)
 
 		//Create an OLE SAFEARRAY
 		m_var.parray = SafeArrayCreate(VT_UI1,1,rgsabound);
-		}
+	}
 	else
-		{
+	{
 		m_var.vt = VT_NULL;
-		}
+	}
 }
 
 BOOL SchemaElement::SetData(BSTR * Data)
@@ -264,18 +251,18 @@ BOOL SchemaElement::SetData(BSTR * Data)
 	pPtr--;
 
 	if(m_var.vt == VT_BSTR)
-		{
+	{
 		if(m_var.bstrVal != NULL)
-			{
+		{
 			::SysFreeString(m_var.bstrVal);
-			}
+		}
 		//copy the BSTR
 		V_BSTR(&m_var) = ::SysAllocStringByteLen((LPCSTR)(*Data),(UINT)(*pPtr));
-		}
+	}
 	else
-		{ //error
+	{ //error
 		fRetVal = FALSE;
-		}
+	}
 	return fRetVal;
 }
 
@@ -286,17 +273,17 @@ BOOL SchemaElement::SetData(LPCTSTR Data)
 	BOOL fRetVal = TRUE;
 
 	if(m_var.vt == VT_BSTR)
-		{
+	{
 		if(m_var.bstrVal != NULL)
-			{
+		{
 			::SysFreeString(m_var.bstrVal);
-			}
+		}
 		V_BSTR(&m_var) = ::SysAllocString(T2W((LPTSTR)Data));
-		}
+	}
 	else
-		{ //error
+	{ //error
 		fRetVal = FALSE;
-		}
+	}
 	return fRetVal;
 }
 
@@ -495,22 +482,22 @@ BOOL SchemaElement::GetData(BYTE **ppBuf, unsigned long * pcBufLen)
 //////////////////////////////////////////////////////////////////////
 
 
-Element::Element()
+Element::Element() :
+ m_pParent( nullptr )
+ ,ppElements( nullptr )
+ ,ppAttributes( nullptr )
 {
-	m_pParent = NULL;
-	ppElements = NULL;
-	ppAttributes = NULL;
 }
 
 
 //copy constructor
 Element::Element(Element& source)
 	:SchemaElement(source)
+	,m_pParent( nullptr )
+	,ppElements( nullptr )
+	,ppAttributes( nullptr )
 {
 	//only make a copy of the data!
-	m_pParent = NULL;
-	ppElements = NULL;
-	ppAttributes = NULL;
 }
 
 
@@ -534,24 +521,24 @@ void Element::DeleteContent()
 {
 	SchemaElement::DeleteContent();
 	//delete the attributes first
-	if(ppAttributes!= NULL)
-		{
+	if( nullptr != ppAttributes )
+	{
 		for(int x=0; x<HasChildAttributes(); x++)
-			{
+		{
 			delete ppAttributes[x];
-			}
-		free( ppAttributes);
 		}
+		free( ppAttributes);
+	}
 
 	//next delete the elements, but walk the children first
-	if(ppElements!= NULL)
-		{
+	if( nullptr != ppElements )
+	{
 		for(int x=0; x<HasChildElements(); x++)
-			{
+		{
 			delete ppElements[x];
-			}
-		free( ppElements);
 		}
+		free( ppElements);
+	}
 	m_pParent = NULL;
 	ppElements = NULL;
 	ppAttributes = NULL;
@@ -561,36 +548,36 @@ void Element::DeleteContent()
 Element::~Element()
 {
 	//delete the attributes first
-	if(ppAttributes!= NULL)
-		{
+	if( nullptr != ppAttributes )
+	{
 		for(int x=0; x<HasChildAttributes(); x++)
-			{
+		{
 			delete ppAttributes[x];
-			}
-		free( ppAttributes);
 		}
+		free( ppAttributes);
+	}
 
 	//next delete the elements, but walk the children first
-	if(ppElements!= NULL)
-		{
+	if( nullptr != ppElements )
+	{
 		for(int x=0; x<HasChildElements(); x++)
-			{
+		{
 			delete ppElements[x];
-			}
-		free( ppElements);
 		}
+		free( ppElements);
+	}
 }
 
 Element * Element::FindRootElement()
 {
-	if(m_pParent == NULL)
-		{
+	if( nullptr == m_pParent )
+	{
 		return this;
-		}
+	}
 	else
-		{
+	{
 		return m_pParent->FindRootElement();
-		}
+	}
 }
 
 void Element::AddChildAttribute(Attribute* pChild)
@@ -600,13 +587,13 @@ void Element::AddChildAttribute(Attribute* pChild)
 
 	pChild->SetAsAttribute();
 
-	//Arvid 2015-02-26 Added oldPpAttributes to avoid Cppcheck realloc warning
-	Attribute** oldPpAttributes=ppAttributes;
+	//Arvid 2015-02-26 Added ppOldAttributes to avoid Cppcheck realloc warning
+	Attribute** ppOldAttributes=ppAttributes;
 	ppAttributes = (Attribute**)realloc(ppAttributes, sizeof(Attribute *) * size);
 	
-	if(ppAttributes==nullptr)
+	if( nullptr == ppAttributes )
 	{
-		ppAttributes=oldPpAttributes;
+		ppAttributes=ppOldAttributes;
 	}
 
 	ppAttributes[size - 2] = pChild;
@@ -621,14 +608,14 @@ void Element::AddChildElement(Element* pChild)
 	pChild->SetParent(this);
 	pChild->SetAsElement();
 
-	//Arvid 2015-02-26 Added oldPpElements to avoid Cppcheck realloc warning
-	Element** oldPpElements=ppElements;
+	//Arvid 2015-02-26 Added ppOldElements to avoid Cppcheck realloc warning
+	Element** ppOldElements=ppElements;
 
 	ppElements = (Element**)realloc(ppElements, sizeof(Element *) * size);
 
-	if(ppElements==nullptr)
+	if( nullptr == ppElements )
 	{
-		ppElements=oldPpElements;
+		ppElements = ppOldElements;
 	}
 
 	ppElements[size - 2] = pChild;
@@ -637,90 +624,115 @@ void Element::AddChildElement(Element* pChild)
 
 int Element::FindChildElements(LPTSTR pName, Element *** pppElmnts, BOOL blSubs /* = FALSE */)
 {
-//	Element ** lppElements = *pppElmnts;
 	//init if NULL
 	// this is a NULL TERMINATED LIST (ARRAY) OF Element pointers
 	//is this redundant ?
-	if(*pppElmnts == NULL)
-		{
+	if( nullptr == *pppElmnts )
+	{
 		*pppElmnts = (Element**)malloc(sizeof(Element *));
-		(*pppElmnts)[0] = NULL;
-		}
+		(*pppElmnts)[0] = nullptr;
+	}
 
 	//walk this list of child elements searching for the elements with the 
 	//passed in name
 	for(int x=0; x<HasChildElements(); x++)
-		{
+	{
 		if(!_tcsicmp(ppElements[x]->GetName(),pName))
-			{
+		{
 			int size = 0;
 			//determine size,  this is a NULL TERMINATED ARRAY OF POINTERS
-			if((*pppElmnts)[0] == NULL)size = 0;
+			if( nullptr == (*pppElmnts)[0] )
+			{
+				size = 0;
+			}
 			else
-				{
+			{
 				Element** pPtr =  (*pppElmnts);
-				while(*pPtr != NULL){size++;pPtr++;}
+				while( nullptr != *pPtr)
+				{
+					size++;
+					pPtr++;
 				}
+			}
 			size++;
 
-			//Arvid 2015-02-26 Added oldPpElements to avoid Cppcheck realloc warning
-			Element** oldPpElements=*pppElmnts;
+			//Arvid 2015-02-26 Added ppOldElements to avoid Cppcheck realloc warning
+			Element** ppOldElements=*pppElmnts;
 
-			*pppElmnts = (Element**)realloc(*pppElmnts, sizeof(Element *) * size);
+			*pppElmnts = (Element**)realloc(*pppElmnts, sizeof(Element *) * (size + 1) );
 
-			if(*pppElmnts==nullptr)
+			if( nullptr == *pppElmnts )
 			{
-				*pppElmnts=oldPpElements;
+				*pppElmnts=ppOldElements;
 			}
 
 			(*pppElmnts)[size -1] = ppElements[x];
-			(*pppElmnts)[size] = NULL;
+			(*pppElmnts)[size] = nullptr;
 			
-			}
-		if(blSubs)ppElements[x]->FindChildElements(pName,pppElmnts,blSubs);
 		}
+		if(blSubs) ppElements[x]->FindChildElements(pName,pppElmnts,blSubs);
+	}
 	//return the size
 	int size = 0;
 	//determine size,  this is a NULL TERMINATED ARRAY OF POINTERS
-	if((*pppElmnts)[0] == NULL)return 0;
+	if( nullptr == (*pppElmnts)[0] )
+	{
+		return 0;
+	}
 	else
-		{
+	{
 		Element** pPtr =  (*pppElmnts);
-		while(*pPtr != NULL){size++;pPtr++;}
+		while( nullptr != *pPtr )
+		{
+			size++;
+			pPtr++;
 		}
+	}
 	return size;
 }
 
 
-Element * Element::GetChildElement(LPTSTR pName)
+Element* Element::GetChildElement(LPTSTR pName)
 {
 	//walk this list of child elements searching for the element with the 
 	//passed in name
 	for(int x=0; x<HasChildElements(); x++)
+	{
+		if(!_tcsicmp(ppElements[x]->GetName(),pName))
 		{
-		if(!_tcsicmp(ppElements[x]->GetName(),pName))return ppElements[x];
+			return ppElements[x];
 		}
-	return NULL;
+	}
+	return nullptr;
 }
 
-Attribute * Element::GetChildAttribute(LPTSTR pName)
+Attribute* Element::GetChildAttribute(LPTSTR pName)
 {
 	//walk this list of child attributes searching for the attributes with the 
 	//passed in name
 	for(int x=0; x<HasChildAttributes(); x++)
+	{
+		if(!_tcsicmp(ppAttributes[x]->GetName(),pName))
 		{
-		if(!_tcsicmp(ppAttributes[x]->GetName(),pName))return ppAttributes[x];
+			return ppAttributes[x];
 		}
-	return NULL;
+	}
+	return nullptr;
 }
 
 int Element::HasChildAttributes()
 {
 	int size = 0;
 	//determine size,  this is a NULL TERMINATED ARRAY OF POINTERS
-	if(ppAttributes == NULL)return 0;
-	Attribute** pPtr =  ppAttributes;
-	while(*pPtr != NULL){size++;pPtr++;}
+	if( nullptr != ppAttributes )
+	{
+		Attribute** pPtr =  ppAttributes;
+		while( nullptr != *pPtr )
+		{
+			size++;
+			pPtr++;
+		}
+	}
 	return size;
 }
 
@@ -728,60 +740,44 @@ int Element::HasChildElements()
 {
 	int size = 0;
 	//determine size,  this is a NULL TERMINATED ARRAY OF POINTERS
-	if(ppElements == NULL)return 0;
-	Element** pPtr =  ppElements;
-	while(*pPtr != NULL){size++;pPtr++;}
+	if( nullptr != ppElements )
+	{
+		Element** pPtr =  ppElements;
+		while( nullptr != *pPtr)
+		{
+			size++;
+			pPtr++;
+		}
+	}
 	return size;
 }
 
-
-
-// implementation of the Attribute class.
-//
-//////////////////////////////////////////////////////////////////////
-
-//////////////////////////////////////////////////////////////////////
-// Construction/Destruction
-//////////////////////////////////////////////////////////////////////
-
-Attribute::Attribute()
+void Element::DeleteChildElement(Element* pElement)
 {
-}
-
-Attribute::~Attribute()
-{
-}
-
-
-
-
-void Element::DeleteChildElement(Element * pElement)
-{
-	Element * pTemp = NULL;
+	Element* pTemp( nullptr );
 	int size = HasChildElements();
 	for(int index = 0; index < size; index++)
-		{
+	{
 		if(ppElements[index] == pElement)
-			{
+		{
 			for(int x = index; x<size; x++)
-				{
+			{
 				ppElements[index] = ppElements[index+1];
-				}
+			}
 			//reallocate
 
-			Element** oldPpElements=ppElements;
+			Element** ppOldElements=ppElements;
 
 			ppElements = (Element**)realloc(ppElements, sizeof(Element *) * size);
 
-			if(ppElements==nullptr)
+			if( nullptr == ppElements )
 			{
-				ppElements=oldPpElements;
+				ppElements = ppOldElements;
 			}
-
 
 			delete pElement;
-			}
 		}
+	}
 }
 
 // ******************************************************************************
