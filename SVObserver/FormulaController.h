@@ -45,7 +45,7 @@ public:
 	/// Validate an equationstring
 	/// \param equationString [in] the equation string.
 	/// \param result [out] return the result of the equation, if the validation is successfully.
-	/// \param bRestore[in] boolean for determining whether to restore to the previous equation string.
+	/// \param bRestore[in] boolean for determining whether to restore to the previous equation string. if the string is invalid the previous equation string is restored in every case 
 	/// \return return the position of the failure. If the validation is successful, the value will be "validateSuccessful".
 	//**********
 	virtual int validateEquation(const SVString &equationString, double& result, bool bRestore) const override;
