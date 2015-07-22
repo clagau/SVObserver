@@ -486,7 +486,7 @@ DWORD_PTR RingBufferTool::processMessage( DWORD DwMessageID, DWORD_PTR DwMessage
 		}
 	}
 
-	dwResult = SVToolClass::processMessage( DwMessageID, DwMessageValue, DwMessageContext );
+	dwResult = SVToolClass::processMessage( DwMessageID, DwMessageValue, DwMessageContext ) | dwResult;
 	return dwResult;
 }
 #pragma endregion Private Methods

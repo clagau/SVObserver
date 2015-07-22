@@ -696,7 +696,9 @@ DWORD_PTR SVArchiveTool::processMessage( DWORD dwMessageID,
 			LPCTSTR orgName = ( LPCTSTR )dwMessageContext;
 
 			if( renameToolSetSymbol(pObject, orgName ) )
-				return SVMR_SUCCESS;
+			{
+				dwResult = SVMR_SUCCESS;
+			}
 		}
 		break;
 		

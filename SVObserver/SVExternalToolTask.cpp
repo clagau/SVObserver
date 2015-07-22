@@ -317,7 +317,9 @@ DWORD_PTR SVExternalToolTask::processMessage( DWORD DwMessageID, DWORD_PTR DwMes
 			LPCTSTR OriginalName = reinterpret_cast<LPCTSTR> (DwMessageContext);
 
 			if( renameToolSetSymbol( pObject, OriginalName ) )
+			{
 				dwResult = SVMR_SUCCESS;
+			}
 			break;
 		}
 
@@ -376,7 +378,7 @@ DWORD_PTR SVExternalToolTask::processMessage( DWORD DwMessageID, DWORD_PTR DwMes
 
 	}
 
-	dwResult = SVTaskObjectListClass::processMessage( DwMessageID, DwMessageValue, DwMessageContext );
+	dwResult = SVTaskObjectListClass::processMessage( DwMessageID, DwMessageValue, DwMessageContext ) | dwResult;
 	return dwResult;
 }
 
