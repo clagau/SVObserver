@@ -73,6 +73,8 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
+static const LPCTSTR ToolGroupCommentLabel = _T("Tool Comment:");
+
 static const int LEFT_MARGIN = 50;
 
 static GUID* pguidNonPrintArray[] = 
@@ -1097,10 +1099,8 @@ void SVConfigurationPrint::PrintChildren( CDC* pDC, SVObjectClass* pObj, CPoint&
 							// print the tool grouping comment - do not do for SIAC
 							if (!m_isPrintToStringBuffer)
 							{
-								sLabel.Format("Tool Comment: %s", it->second.m_comment.c_str());
-								ptCurPos.x  = nIndentLevel * m_shortTabPixels;
-								CPoint ptTemp = ptCurPos;
-								ptCurPos.y += PrintString(pDC, ptTemp, sLabel);
+								ptCurPos.x = (nIndentLevel + 1) * m_shortTabPixels;
+								PrintValueObject(pDC, ptCurPos, ToolGroupCommentLabel, it->second.m_comment.c_str());
 							}
 						}
 						break;
@@ -1116,10 +1116,8 @@ void SVConfigurationPrint::PrintChildren( CDC* pDC, SVObjectClass* pObj, CPoint&
 							// print the tool grouping comment - do not do for SIAC
 							if (!m_isPrintToStringBuffer)
 							{
-								sLabel.Format("Tool Comment: %s", it->second.m_comment.c_str());
-								ptCurPos.x  = nIndentLevel * m_shortTabPixels;
-								CPoint ptTemp = ptCurPos;
-								ptCurPos.y += PrintString(pDC, ptTemp, sLabel);
+								ptCurPos.x = (nIndentLevel + 1) * m_shortTabPixels;
+								PrintValueObject(pDC, ptCurPos, ToolGroupCommentLabel, it->second.m_comment.c_str());
 							}
 						}
 						break;
