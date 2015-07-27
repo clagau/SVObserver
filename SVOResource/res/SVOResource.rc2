@@ -34,7 +34,7 @@ BEGIN
             VALUE "FileDescription", "SVObserver Vision Application"
             VALUE "FileVersion", STRFILEVER
             VALUE "InternalName", "SVObserver"
-            VALUE "LegalCopyright", "Copyright (C) 1997, 1998, 1999"
+            VALUE "LegalCopyright", "Seidenader Maschinenbau GmbH"
             VALUE "LegalTrademarks", "SVObserver"
             VALUE "OriginalFilename", "SVObserver.EXE"
             VALUE "ProductName", "SVObserver Application"
