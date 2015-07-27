@@ -54,7 +54,7 @@ private:
 
 		HRESULT Create( __int64 lPoolSizeKBytes )
 		{
-			m_lPoolSize = static_cast<long>(lPoolSizeKBytes * 1024);//AB
+			m_lPoolSize = lPoolSizeKBytes * 1024;
 			return S_OK;
 		}
 		
