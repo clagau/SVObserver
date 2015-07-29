@@ -1215,16 +1215,14 @@ DWORD_PTR SVTaskObjectListClass::processMessage(DWORD DwMessageID, DWORD_PTR DwM
 			// ...returns SVMR_SUCCESS, SVMR_NO_SUCCESS
 			const GUID taskObjectID = * ((GUID*) DwMessageValue);
 			SVTaskObjectClass* pTaskObject = reinterpret_cast<SVTaskObjectClass*>(DwMessageContext);
-			if (pTaskObject && SV_IS_KIND_OF(pTaskObject, SVTaskObjectClass))
+			if (nullptr != pTaskObject)
 			{
 				// NOTE:	Only dynamically generated objects could be replaced, 
 				//			embedded objects must be overwritten using SVM_OVERWRITE_OBJECT!!!
 
 				// SEJ (July 15 1999) - Remove All Dynamic Children (they will be constructed anew)
-				if (SV_IS_KIND_OF(pTaskObject, SVTaskObjectListClass))
+				if (SVTaskObjectListClass* pTaskObjectList = dynamic_cast<SVTaskObjectListClass*>(pTaskObject))
 				{
-					SVTaskObjectListClass* pTaskObjectList = reinterpret_cast<SVTaskObjectListClass*>(DwMessageContext);
-
 					// Kill the Friends
 					pTaskObjectList->DestroyFriends();
 

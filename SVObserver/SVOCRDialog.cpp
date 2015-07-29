@@ -269,17 +269,17 @@ void SVOCRDialogClass::OnFontTraining()
 	info.ObjectType = SVImageObjectType;
 	pObject = reinterpret_cast<SVObjectClass*>(::SVSendMessage( 
 		pObject, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>( &info )));
-	if( ! SV_IS_KIND_OF( pObject, SVImageClass ) )
+
+	SVImageClass* pImage = dynamic_cast<SVImageClass*>(pObject);
+	if( nullptr == pImage )
     {
        AfxMessageBox( _T( "ERROR: Font Training Setup: No Image specified" ));
        return;
     }
 
-	SVImageClass* pImage = ( SVImageClass* ) pObject;
-
   SVSmartHandlePointer ImageHandle;
 
-  if ( pImage && pImage->GetImageHandle( ImageHandle ) && !( ImageHandle.empty() ) )
+  if ( pImage->GetImageHandle( ImageHandle ) && !( ImageHandle.empty() ) )
   {
 		SVImageBufferHandleImage l_MilHandle;
 		ImageHandle->GetData( l_MilHandle );

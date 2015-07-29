@@ -104,8 +104,6 @@ protected:
 	// Normalizer for Lower threshold
 	SVValueBaseNormalizerClass LowerNormalizer;
 	SVValueBaseNormalizerClass Normalizer;
-
-	SVTaskObjectClass *pAnalyzerOwner;
 	SVLineClass *pLine;
 
 	// Generierte Nachrichtenzuordnungsfunktionen

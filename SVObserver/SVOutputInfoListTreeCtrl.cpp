@@ -135,7 +135,7 @@ void SVOutputInfoListTreeCtrlClass::BuildOutputList
 	//
 	// Get the Outputs list
 	//
-	if(!SV_IS_KIND_OF( pTaskObjectList, SVTaskObjectListClass ))
+	if( nullptr == pTaskObjectList )
 	{
 		ASSERT(0);
 		return;

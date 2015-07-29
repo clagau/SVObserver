@@ -1448,13 +1448,13 @@ _variant_t SVExternalToolTask::GetInputValue(int iIndex)
 	{
 		SVInObjectInfoStruct& rInfo = m_Data.m_aInputObjectInfo[iIndex];
 		SVObjectClass *pObject = rInfo.GetInputObjectInfo().PObject;
-		if( SV_IS_KIND_OF( pObject, SVValueObjectClass ) )
+		if(  SVValueObjectClass* pValueObject = dynamic_cast<SVValueObjectClass*> (pObject) )
 		{
-			(static_cast <SVValueObjectClass*> (pObject) )->GetValue( value );
+			pValueObject->GetValue( value );
 		}
-		else if( SV_IS_KIND_OF( pObject, BasicValueObject ) )
+		else if( BasicValueObject* pBasicValueObject = dynamic_cast<BasicValueObject*> (pObject) )
 		{
-			static_cast <BasicValueObject*> (pObject)->getValue( value );
+			pBasicValueObject->getValue( value );
 		}
 		else
 		{

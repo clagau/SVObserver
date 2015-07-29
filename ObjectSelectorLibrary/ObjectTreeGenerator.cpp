@@ -375,15 +375,14 @@ void ObjectTreeGenerator::setSelectorItemType( const SvOi::IObjectClass* pObject
 
 void ObjectTreeGenerator::setSelectorItemType( const SVObjectClass* pObject, SvTrl::ObjectSelectorItem &rSelectorItem )
 {
-	if ( SV_IS_KIND_OF( pObject, const SVValueObjectClass ) )
+	if ( const SVValueObjectClass* pValueObject = dynamic_cast<const SVValueObjectClass*>(pObject) )
 	{
 		CString typeName = _T("");
-		(static_cast<const SVValueObjectClass*>(pObject))->GetTypeName(typeName);
+		pValueObject->GetTypeName(typeName);
 		rSelectorItem.setItemTypeName(typeName);
 	}
-	else if( SV_IS_KIND_OF( pObject, const BasicValueObject ) )
+	else if( const BasicValueObject* pBasicObject = dynamic_cast<const BasicValueObject*>(pObject) )
 	{
-		const BasicValueObject *pBasicObject = static_cast<const BasicValueObject*>(pObject);
 		rSelectorItem.setItemTypeName(pBasicObject->getTypeName());
 	}
 	else

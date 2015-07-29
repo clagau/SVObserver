@@ -4552,7 +4552,7 @@ HRESULT CSVCommand::SVLockImage(long p_lProcessCount, long p_lIndex, BSTR p_bsNa
 					{
 						l_svImageIndex = pMainImage->GetSourceImageIndex( &l_ProductInfo );
 						l_DMImageIndexHandle.Assign( l_svImageIndex.m_CameraDMIndexHandle, SV_DCOM );
-					}// end if (SV_IS_KIND_OF(pImage, SVMainImageClass))
+					}
 					else if ( pImage->ObjectAttributesSet() & SV_PUBLISH_RESULT_IMAGE )
 					{
 						l_svImageIndex = pImage->GetSourceImageIndex( &l_ProductInfo );

@@ -109,11 +109,6 @@ BOOL SVProfileEdgeMarkerAdjustmentPageClass::OnInitDialog()
 	if( ! PCurrentAnalyzer )
 		GetParent()->SendMessage( WM_CLOSE );
 
-	if( SV_IS_KIND_OF( PCurrentAnalyzer->GetOwner(), SVTaskObjectClass ) )
-	{
-		pAnalyzerOwner = ( SVTaskObjectClass* ) PCurrentAnalyzer->GetOwner();
-	}
-
 	SVLinearAnalyzerClass *l_psvLinear = dynamic_cast<SVLinearAnalyzerClass *>(PCurrentAnalyzer);
 
 	if( nullptr == l_psvLinear )

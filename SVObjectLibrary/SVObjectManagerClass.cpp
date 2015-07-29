@@ -439,7 +439,7 @@ BOOL SVObjectManagerClass::CreateUniqueObjectID( SVObjectClass* PObject )
 		SVAutoLockAndReleaseTemplate< SVCriticalSection > l_AutoLock;
 
 		l_Status = l_Status && l_AutoLock.Assign( &m_Lock );
-		l_Status = l_Status && SV_IS_KIND_OF( PObject, SVObjectClass );
+		l_Status = l_Status && nullptr != PObject;
 
 		if( l_Status )
 		{
@@ -474,7 +474,7 @@ BOOL SVObjectManagerClass::OpenUniqueObjectID( SVObjectClass* PObject )
 		SVAutoLockAndReleaseTemplate< SVCriticalSection > l_AutoLock;
 
 		l_Status = l_Status && l_AutoLock.Assign( &m_Lock );
-		l_Status = l_Status && SV_IS_KIND_OF( PObject, SVObjectClass );
+		l_Status = l_Status && PObject != nullptr;
 
 		if( l_Status )
 		{
@@ -511,7 +511,7 @@ BOOL SVObjectManagerClass::CloseUniqueObjectID( SVObjectClass* PObject )
 		SVAutoLockAndReleaseTemplate< SVCriticalSection > l_AutoLock;
 
 		l_Status = l_Status && l_AutoLock.Assign( &m_Lock );
-		l_Status = l_Status && SV_IS_KIND_OF( PObject, SVObjectClass );
+		l_Status = l_Status && nullptr != PObject;
 
 		if( l_Status )
 		{

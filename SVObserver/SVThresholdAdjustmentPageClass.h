@@ -111,7 +111,7 @@ public:
 	SVValueBaseNormalizerClass	Normalizer;
 protected:
 
-	SVTaskObjectClass*  pAnalyzerOwner;
+	SVTaskObjectClass*  m_pAnalyzerOwner;
 };
 
 //{{AFX_INSERT_LOCATION}}

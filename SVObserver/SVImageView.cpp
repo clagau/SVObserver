@@ -603,7 +603,7 @@ BOOL SVImageViewClass::OnCommand( WPARAM p_wParam, LPARAM p_lParam )
 
 				case SVAnalyzerObjectType:
 				{
-					if( dynamic_cast< SVLineAnalyzerClass* >( m_psvObject ) != NULL )
+					if( SV_IS_KIND_OF( m_psvObject, SVLineAnalyzerClass ) )
 					{
 						DlgName.Format("Adjust Tool Size and Position - %s",l_psvTool->GetName());
 						SVAdjustToolSizePositionDlg dlg( DlgName, this, m_psvObject );

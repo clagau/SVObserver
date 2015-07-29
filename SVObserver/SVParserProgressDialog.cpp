@@ -136,15 +136,10 @@ BOOL SVParserProgressDialog::AddParser( unsigned long parserHandle, SVObjectScri
 		if( pParser->GetOwnerObject() )
 			text = pParser->GetOwnerObject()->GetName();
 
-		if( SV_IS_KIND_OF( pParser->GetOwnerObject(), SVInspectionProcess ) )
+		if( SVInspectionProcess* pInspection = dynamic_cast< SVInspectionProcess* >( pParser->GetOwnerObject() ) )
 		{
 			// Get the Document Name...
-			SVInspectionProcess* pInspection = dynamic_cast< SVInspectionProcess* >( pParser->GetOwnerObject() );
-
-			if( nullptr != pInspection )
-			{
-				text = pInspection->GetName();
-			}
+			text = pInspection->GetName();
 		}
 
 		// Add to Total Size

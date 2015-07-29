@@ -17,7 +17,7 @@
 //	{	
 		// Use the RTTI 
 #define SV_IS_KIND_OF( XP, XCLASSNAME )	\
-	( ( XP != NULL ) && ( dynamic_cast< XCLASSNAME* >( XP ) != NULL ) )
+	( nullptr != dynamic_cast< XCLASSNAME* >( XP ) )
 
 enum SVMessageFlags
 {

@@ -795,17 +795,12 @@ DWORD_PTR SVToolClass::processMessage( DWORD DwMessageID, DWORD_PTR DwMessageVal
 		{
 			// ...use second message parameter ( DwMessageValue ) as SVObjectClass* of the child object
 			SVObjectClass* pChildObject = reinterpret_cast<SVObjectClass*>(DwMessageValue);
-			if( SV_IS_KIND_OF( pChildObject, SVObjectClass ) )
-			{
-				createStruct.OwnerObjectInfo        = this;
-				createStruct.ToolObjectInfo			= this;
-				createStruct.InspectionObjectInfo	= GetInspection();
 
-				DWORD_PTR l_Return = SVSendMessage( pChildObject, SVM_CONNECT_ALL_OBJECTS, reinterpret_cast<DWORD_PTR>(&createStruct), NULL );
+			createStruct.OwnerObjectInfo        = this;
+			createStruct.ToolObjectInfo			= this;
+			createStruct.InspectionObjectInfo	= GetInspection();
 
-				return l_Return;
-			}
-			return SVMR_NOT_PROCESSED;
+			return SVSendMessage( pChildObject, SVM_CONNECT_ALL_OBJECTS, reinterpret_cast<DWORD_PTR>(&createStruct), NULL );
 		}
 	}
 

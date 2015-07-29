@@ -493,7 +493,7 @@ BOOL SVOutputObjectList::WriteOutput( SVIOEntryHostStructPtr pIOEntry, long lDat
 
 BOOL SVOutputObjectList::WriteOutputValue( SVIOEntryHostStructPtr pIOEntry, const _variant_t& p_rValue )
 {
-	SVOutputObject* pOutput = NULL;
+	SVOutputObject* pOutput = nullptr;
 
 	if( Lock() )
 	{
@@ -508,17 +508,9 @@ BOOL SVOutputObjectList::WriteOutputValue( SVIOEntryHostStructPtr pIOEntry, cons
 			}
 		}
 
-		if( pOutput != NULL )
+		if( SV_IS_KIND_OF( pOutput, SVDigitalOutputObject ) || SV_IS_KIND_OF( pOutput, SVRemoteOutputObject ) )
 		{
-			if( SV_IS_KIND_OF( pOutput, SVDigitalOutputObject ) )
-			{
-				pOutput->Write( p_rValue );
-			}// end if
-			else if( SV_IS_KIND_OF( pOutput, SVRemoteOutputObject ) )
-			{
-				pOutput->Write( p_rValue );
-			}// end else if
-
+			pOutput->Write( p_rValue );
 		}// end if
 
 		Unlock();

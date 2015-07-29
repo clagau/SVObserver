@@ -496,7 +496,7 @@ void SVToolSetListCtrl::SetSelectedTool(const SVGUID& rGuid)
 			{
 				SVTaskObjectClass* pObject = reinterpret_cast<SVTaskObjectClass*>(item.lParam);
 
-				if (!rGuid.empty() && SV_IS_KIND_OF(pObject, SVTaskObjectClass) && rGuid == pObject->GetUniqueObjectID())
+				if (!rGuid.empty() && nullptr != pObject && rGuid == pObject->GetUniqueObjectID())
 				{
 					SetItemState(i, LVIS_SELECTED, LVIS_SELECTED);
 				}

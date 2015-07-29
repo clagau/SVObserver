@@ -29,7 +29,6 @@ IMPLEMENT_DYNCREATE( SVEdgeMarkerAdjustmentPageClass, CPropertyPage )
 SVEdgeMarkerAdjustmentPageClass::SVEdgeMarkerAdjustmentPageClass( UINT nIDCaption /* = 0 */ , int id /* = IDD */) 
 : CPropertyPage( id, nIDCaption )
 , PCurrentAnalyzer( nullptr )
-, pAnalyzerOwner( nullptr )
 , pLine( nullptr )
 , m_pvoEdgeDirection( nullptr )
 , m_pvoEdgePolarisation( nullptr )
@@ -593,11 +592,6 @@ BOOL SVEdgeMarkerAdjustmentPageClass::OnInitDialog()
 
 	if( ! PCurrentAnalyzer )
 		GetParent()->SendMessage( WM_CLOSE );
-
-	if( SV_IS_KIND_OF( PCurrentAnalyzer->GetOwner(), SVTaskObjectClass ) )
-	{
-		pAnalyzerOwner = ( SVTaskObjectClass* ) PCurrentAnalyzer->GetOwner();
-	}
 
 	if( PCurrentAnalyzer )
 	{

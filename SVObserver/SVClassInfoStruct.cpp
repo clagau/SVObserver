@@ -84,10 +84,9 @@ SVObjectClass* SVClassInfoStruct::Construct()
 	{
 		pObject->SetName( ClassName );
 
-		if( SV_IS_KIND_OF( pObject, SVTaskObjectClass ) )
+		if( SVTaskObjectClass* pTaskObject = dynamic_cast<SVTaskObjectClass*>(pObject) )
 		{
 			// Get Input Interface...
-			SVTaskObjectClass* pTaskObject = ( SVTaskObjectClass* ) pObject;
 			SVInputInfoListClass inputInterface;
 			pTaskObject->GetPrivateInputList( inputInterface );
 

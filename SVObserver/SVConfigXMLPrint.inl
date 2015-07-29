@@ -1084,11 +1084,12 @@ inline void SVConfigXMLPrint::WriteObject( Writer writer, SVObjectClass* pObj ) 
 	
 	BOOL	bWriteToolExtents = FALSE;		// Sri 2/17/00
 	
-    // If object is a value object, get embedded ID.
-    if (SV_IS_KIND_OF(pObj, SVValueObjectClass))
-    {
-        guidObjID = pObj->GetEmbeddedID();
-    }  // end if( SV_IS_KIND_OF( pObj, SVValueObjectClass ) )
+	SVValueObjectClass* pValueObject = dynamic_cast<SVValueObjectClass*> (pObj);
+	// If object is a value object, get embedded ID.
+	if (nullptr != pValueObject)
+	{
+		guidObjID = pValueObject->GetEmbeddedID();
+	}
 	
 	std::pair<GUID**, size_t> nPrs = NonPrintGuids();
     // Check for non-printing object type.
@@ -1108,10 +1109,10 @@ inline void SVConfigXMLPrint::WriteObject( Writer writer, SVObjectClass* pObj ) 
 	}	
 	
 	// If object is a value object, print name and value.
-	if ( SVValueObjectClass* pValueObject = dynamic_cast<SVValueObjectClass*> (pObj) )
+	if ( nullptr != pValueObject )
 	{
 		WriteValueObject(writer, pValueObject);
-	}  // end if( SV_IS_KIND_OF( pObj, SVValueObjectClass ) )
+	}
 	else
 	{
 		do
@@ -1123,14 +1124,15 @@ inline void SVConfigXMLPrint::WriteObject( Writer writer, SVObjectClass* pObj ) 
 			writer->WriteStartElement(NULL, to_utf16(pObj->GetClassName(), cp_dflt).c_str(), NULL);
 			std::wstring objName = to_utf16(pObj->GetName(), cp_dflt);
 			writer->WriteAttributeString(NULL, L"Name", NULL, objName.c_str());
-			if ( SVToolClass* pTool = dynamic_cast<SVToolClass*> (pObj) )
+			SVToolClass* pTool = dynamic_cast<SVToolClass*> (pObj);
+			if ( nullptr != pTool )
 			{
 				// Increment even if disabled, to maintain count.  Starts with zero, so for first
 				//    tool, will increment to 1.
 				nToolNumber++;
 				bWriteToolExtents = TRUE;		// Sri 2/17/00
 				writer->WriteAttributeString(NULL, L"ToolNumber", NULL, _itow(nToolNumber, buff, 10));
-			}  // end if( SV_IS_KIND_OF( pObj, SVToolClass ) )
+			}
 			
 			// If the object type is different from the name, print the type.
 			if (strName != strType && !strType.IsEmpty())
@@ -1139,31 +1141,30 @@ inline void SVConfigXMLPrint::WriteObject( Writer writer, SVObjectClass* pObj ) 
 			}
 			
 			// Print the tool length, width, extends, etc here.
-			if (bWriteToolExtents && (SV_IS_KIND_OF(pObj, SVToolClass)))
+			if (bWriteToolExtents && nullptr != pTool)
 			{
 				bWriteToolExtents = FALSE;
-				WriteTool(writer, dynamic_cast<SVToolClass*> (pObj));
-			} // End, if(bPrintToolExtents && ( SV_IS_KIND_OF( pObj, SVToolClass )))
+				WriteTool(writer, pTool);
+			} 
 			
-			if ( SVArchiveTool* pTool = dynamic_cast <SVArchiveTool*> (pObj) )
+			if ( SVArchiveTool* pArchiveTool = dynamic_cast <SVArchiveTool*> (pObj) )
 			{
-				WriteArchiveTool(writer, pTool);
-			}// end if ( SVArchiveTool* pTool = dynamic_cast <SVArchiveTool*> (pObj) )
+				WriteArchiveTool(writer, pArchiveTool);
+			}
 			
-			if ( SVStatisticsToolClass* pTool = dynamic_cast<SVStatisticsToolClass*> (pObj) )
+			if ( SVStatisticsToolClass* pStatisticsTool = dynamic_cast<SVStatisticsToolClass*> (pObj) )
 			{
-				SVObjectReference refObject = pTool->GetVariableSelected();
+				SVObjectReference refObject = pStatisticsTool->GetVariableSelected();
 				if (refObject.Object())
 				{
 					writer->WriteStartElement(NULL,  L"Variable", NULL);
 					writer->WriteAttributeString(NULL, L"Name", NULL, utf16(refObject.GetName()).c_str());
 					writer->WriteEndElement();
 				}
-			}  // end if( SV_IS_KIND_OF( pObj, SVStatisticsToolClass ) )
+			}
 			
-			if (SV_IS_KIND_OF(pObj, SVUserMaskOperatorClass))
+			if (SVUserMaskOperatorClass* maskObj = dynamic_cast <SVUserMaskOperatorClass*>( pObj ))
 			{
-				SVUserMaskOperatorClass* maskObj = dynamic_cast <SVUserMaskOperatorClass*>( pObj );
 				if ( NULL != maskObj )
 				{
 					SVImageClass* pImage = maskObj->getMaskInputImage();
@@ -1174,26 +1175,22 @@ inline void SVConfigXMLPrint::WriteObject( Writer writer, SVObjectClass* pObj ) 
 				}
 			}
 
-			if (SV_IS_KIND_OF(pObj,SVDoubleResultClass))
+			if (SVDoubleResultClass* pBlobResult = dynamic_cast<SVDoubleResultClass*>(pObj))
 			{
-				SVDoubleResultClass* pBlobResult = dynamic_cast<SVDoubleResultClass*>(pObj);
-				if (pBlobResult)
-				{
-					if (SV_IS_KIND_OF(pBlobResult->GetOwner(),SVBlobAnalyzerClass))
-					{  
-						sLabel = pApp->GetStringResource(IDS_BLOB_FEATURE_DEFAULT_VALUE) + _T(":");
-						SVDoubleValueObjectClass* pDoubleValueObj = pBlobResult->getInputDouble();
-						if ( pDoubleValueObj )
-						{
-							double dVal;
-							HRESULT hr = pDoubleValueObj->GetDefaultValue(dVal);
-							sValue.Format(_T("%lf"),dVal);
-							//ptCurPos.x   = (nIndentLevel + 1) * m_shortTabPixels;
-							//PrintValueObject(pDC, ptCurPos, utf16(sLabel), utf16(sValue));
-		
-							WriteValueObject(writer, L"Property", utf16(sLabel), utf16(sValue));
+				if (SV_IS_KIND_OF(pBlobResult->GetOwner(),SVBlobAnalyzerClass))
+				{  
+					sLabel = pApp->GetStringResource(IDS_BLOB_FEATURE_DEFAULT_VALUE) + _T(":");
+					SVDoubleValueObjectClass* pDoubleValueObj = pBlobResult->getInputDouble();
+					if ( pDoubleValueObj )
+					{
+						double dVal;
+						HRESULT hr = pDoubleValueObj->GetDefaultValue(dVal);
+						sValue.Format(_T("%lf"),dVal);
+						//ptCurPos.x   = (nIndentLevel + 1) * m_shortTabPixels;
+						//PrintValueObject(pDC, ptCurPos, utf16(sLabel), utf16(sValue));
 
-						}
+						WriteValueObject(writer, L"Property", utf16(sLabel), utf16(sValue));
+
 					}
 				}
 			}
@@ -1221,7 +1218,8 @@ inline void SVConfigXMLPrint::WriteObject( Writer writer, SVObjectClass* pObj ) 
 					WriteValueObject(writer, L"Property", utf16(sLabel), utf16(sValue));
 				} // End, if(pLineClass)
 				
-			} // End if(SV_IS_KIND_OF( pObj, SVLineAnalyzerClass))
+			}
+
 			if (SV_IS_KIND_OF(pObj, SVTaskObjectClass))
 			{
 				if ( SVEquationClass* pEquation = dynamic_cast <SVEquationClass*> (pObj) )
@@ -1232,15 +1230,16 @@ inline void SVConfigXMLPrint::WriteObject( Writer writer, SVObjectClass* pObj ) 
 					if (sLabel.IsEmpty())
 						sLabel = _T("EquationText");
 					WriteValueObject(writer, L"Equation", utf16(sLabel), utf16(sValue));
-				}  // end if( SV_IS_KIND_OF( pObj, SVEquationClass ) )
+				}
 				WriteInputOutputList(writer, pObj);
-			}  // end if( SV_IS_KIND_OF( pObj, SVTaskObjectClass )
+			} 
+
 			WriteFriends(writer, pObj);
 			WriteChildren(writer, pObj);
 			writer->WriteComment(objName.c_str());
 			writer->WriteEndElement();
 		} while (false);// end do
-	}// End if( SV_IS_KIND_OF( pObj, SVValueObjectClass ) ) else
+	}// End if else pObj kind of SVValueObjectClass
 
 	//writer->WriteEndElement();
 }  // end function void SVConfigXMLPrint:::PrintDetails( ... )
@@ -1322,7 +1321,7 @@ void SVConfigXMLPrint::WriteChildren( Writer writer, SVObjectClass* pObj ) const
 			WriteAllChildren(writer, pTaskObj);
 		}
 		writer->WriteEndElement();
-	}  // end if( SV_IS_KIND_OF( pObj, SVTaskObjectListClass ) )
+	} 
 }  // end function void SVConfigXMLPrint:::PrintChildren( ... )
 
 void SVConfigXMLPrint::WriteFriends( Writer writer, SVObjectClass* pObj ) const

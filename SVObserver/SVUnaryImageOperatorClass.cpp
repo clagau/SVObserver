@@ -34,7 +34,7 @@ void SVUnaryImageOperatorClass::init()
 //	RegisterEmbeddedObject( &outputImageObject, SVOutputImageObjectGuid, IDS_OBJECTNAME_IMAGE1 );
 
 	// Set Embedded defaults
-	m_pCurrentUIOPL = NULL;
+	m_pCurrentUIOPL = nullptr;
 
 	// Set default inputs and outputs
 	addDefaultInputObjects();
@@ -48,11 +48,8 @@ BOOL SVUnaryImageOperatorClass::CreateObject( SVObjectLevelCreateStruct* PCreate
 	if( SVUnaryOperatorClass::CreateObject( PCreateStructure ) )
 	{
 		// Owner can only be : SVUnaryImageOperatorListClass !!!
-		if( SV_IS_KIND_OF( GetOwner(), SVUnaryImageOperatorListClass ) )
+		if( m_pCurrentUIOPL = dynamic_cast<SVUnaryImageOperatorListClass*>(GetOwner()) )
 		{
-			// get the output image from the UnaryOperatorList
-			m_pCurrentUIOPL = ( SVUnaryImageOperatorListClass* ) GetOwner();
-
 			bOk = TRUE;
 		}
 	}
@@ -122,9 +119,8 @@ BOOL SVUnaryImageOperatorClass::onRun( BOOL First, SVSmartHandlePointer RInputIm
 ////////////////////////////////////////////////////////////////////////////////
 SVImageClass* SVUnaryImageOperatorClass::getReferenceImage()
 {
-	if( SV_IS_KIND_OF( m_pCurrentUIOPL, SVStdImageOperatorListClass ) )
+	if( SVStdImageOperatorListClass* pOpL = dynamic_cast<SVStdImageOperatorListClass*>(m_pCurrentUIOPL) )
 	{
-		SVStdImageOperatorListClass* pOpL = ( SVStdImageOperatorListClass* ) m_pCurrentUIOPL;
 		// Output image is reference...
 		return pOpL->getOutputImage();
 	}

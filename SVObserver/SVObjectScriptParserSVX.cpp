@@ -795,12 +795,12 @@ BOOL SVObjectScriptParserSVXClass::EvaluateOperandExpression( int OperandType, c
 			if( bExpressionNext )
 			{
 				// ...using owner info...
-				SVObjectClass* pObject = NULL;
+				SVObjectClass* pObject = nullptr;
 				if( rOwnerInfo.UniqueObjectID != SVInvalidGUID )
 				{
 					pObject = reinterpret_cast<SVObjectClass*>(::SVSendMessage( rOwnerInfo.UniqueObjectID, SVM_GET_OBJECT_BY_NAME, reinterpret_cast<DWORD_PTR>( static_cast<LPCTSTR>( rExpressionStack.GetAt( riIndex ))), NULL ));
 				}
-				if( SV_IS_KIND_OF( pObject, SVObjectClass ) )
+				if( nullptr != pObject )
 				{
 					rOperand.CleanUp();
 				

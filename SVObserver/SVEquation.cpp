@@ -317,13 +317,13 @@ HRESULT SVEquationSymbolTableClass::GetData( int iSymbolIndex, double& value, lo
 		{
 			// Get the Data
 			SVObjectClass *object = pSymbolStruct->InObjectInfo.GetInputObjectInfo().PObject;
-			if( SV_IS_KIND_OF( object, SVValueObjectClass ) )
+			if( SVValueObjectClass* pValueObject = dynamic_cast<SVValueObjectClass*> (object) )
 			{
-				return ( static_cast <SVValueObjectClass*>(object) )->GetValue( value );
+				return pValueObject->GetValue( value );
 			}
-			else if( SV_IS_KIND_OF( object, BasicValueObject ) )
+			else if( BasicValueObject* pBasicValueObject = dynamic_cast<BasicValueObject*> (object) )
 			{
-				return static_cast <BasicValueObject*>(object)->getValue( value );
+				return pBasicValueObject->getValue( value );
 			}
 			else
 				return S_FALSE;
@@ -350,9 +350,8 @@ HRESULT SVEquationSymbolTableClass::GetData( int iSymbolIndex, int iIndex, doubl
 		if( pSymbolStruct->Type == SV_INPUT_SYMBOL_TYPE )
 		{
 			// Get the Data
-			if( SV_IS_KIND_OF( pSymbolStruct->InObjectInfo.GetInputObjectInfo().PObject, SVValueObjectClass ) )
+			if( SVValueObjectClass* pValueObject = dynamic_cast<SVValueObjectClass*> (pSymbolStruct->InObjectInfo.GetInputObjectInfo().PObject) )
 			{
-				SVValueObjectClass* pValueObject = static_cast<SVValueObjectClass*>(pSymbolStruct->InObjectInfo.GetInputObjectInfo().PObject);
 				return pValueObject->GetValue( pValueObject->GetLastSetIndex(), iIndex, value );
 			}
 			else
@@ -380,9 +379,8 @@ HRESULT SVEquationSymbolTableClass::GetData(int iSymbolIndex, std::vector<double
 		if( pSymbolStruct->Type == SV_INPUT_SYMBOL_TYPE )
 		{
 			// Get the Data
-			if( SV_IS_KIND_OF( pSymbolStruct->InObjectInfo.GetInputObjectInfo().PObject, SVValueObjectClass ) )
+			if( SVValueObjectClass* pValueObject = dynamic_cast<SVValueObjectClass*> (pSymbolStruct->InObjectInfo.GetInputObjectInfo().PObject) )
 			{
-				SVValueObjectClass* pValueObject = static_cast<SVValueObjectClass*>(pSymbolStruct->InObjectInfo.GetInputObjectInfo().PObject);
 				return pValueObject->GetValues( pValueObject->GetLastSetIndex(), values );
 			}
 			else

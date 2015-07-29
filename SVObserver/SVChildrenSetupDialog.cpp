@@ -153,8 +153,8 @@ void SVChildrenSetupDialogClass::OnAddButton()
 
 				SVClassInfoStruct& rChildrenInfo = m_pAvailableChildrenList->ElementAt( listIndex );
 				// Construct Children...
-				SVTaskObjectClass* pObject = static_cast< SVTaskObjectClass* >( rChildrenInfo.Construct() );
-				if( SV_IS_KIND_OF( pObject, SVTaskObjectClass ) )
+				SVTaskObjectClass* pObject = dynamic_cast< SVTaskObjectClass* >( rChildrenInfo.Construct() );
+				if( nullptr != pObject )
 				{
 					// Add children to parent...
 					m_pParentObject->Add( pObject );
@@ -184,10 +184,6 @@ void SVChildrenSetupDialogClass::OnAddButton()
 						continue;
 					}
 				}
-				else
-				{
-					if( pObject != nullptr ) { delete pObject; }
-				}
 			}
 		}
 
@@ -206,7 +202,8 @@ void SVChildrenSetupDialogClass::OnRemoveButton()
 		while( ( item = m_ChildrenListCtrl.GetNextItem( item, LVNI_ALL | LVNI_SELECTED ) ) >= 0 )
 		{
 			pTaskObject = reinterpret_cast< SVTaskObjectClass* >( m_ChildrenListCtrl.GetItemData( item ) );
-			if( SV_IS_KIND_OF( pTaskObject, SVTaskObjectClass ) )
+			//reinterpret_cast is dangerous, but a kind of or dynamic_cast afterwards do not help for more safety.
+			if (nullptr != pTaskObject)
 			{
 				int rc = checkOkToDelete( pTaskObject );
 
@@ -248,7 +245,7 @@ void SVChildrenSetupDialogClass::OnSetupButton()
 		while( ( item = m_ChildrenListCtrl.GetNextItem( item, LVNI_ALL | LVNI_SELECTED ) ) >= 0 )
 		{
 			SVObjectClass* pObject = reinterpret_cast< SVObjectClass* >( m_ChildrenListCtrl.GetItemData( item ) );
-			if( SV_IS_KIND_OF( pObject, SVObjectClass ) )
+			if( nullptr != pObject )
 			{
 				SVSetupDialogManager::Instance().SetupDialog( pObject->GetClassID(), pObject->GetUniqueObjectID(), this );
 			}

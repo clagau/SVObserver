@@ -1861,8 +1861,11 @@ DWORD_PTR SVInspectionProcess::processMessage(DWORD DwMessageID, DWORD_PTR DwMes
 				// and returns the result of this message.
 				// ...use second message parameter ( DwMessageValue ) as SVObjectClass* of the child object
 				// ...returns SVMR_SUCCESS, SVMR_NO_SUCCESS or SVMR_NOT_PROCESSED
-				SVObjectClass* pChildObject = ( SVObjectClass* ) DwMessageValue;
-				if( SV_IS_KIND_OF( pChildObject, SVObjectClass ) )
+				SVObjectClass* pChildObject = reinterpret_cast<SVObjectClass*>(DwMessageValue);
+				//@warning [MZA, 21.07.15] The DWORD_PTR DwMessageValue has to be converted via reinterpret_cast to SVObjectClass*. This is dangerous.
+				//After the reinterpret_cast to SVOjectClass*, to use a kind_of or dynamic_cast does not help for more safety, because it will not check anything.
+				//We should cleanup this and replace processMessage with other methods (see SVO-806)
+				if (nullptr != pChildObject)
 				{
 					long l_LastIndex = 1;
 					SVProductInfoStruct l_Product = LastProductGet( SV_INSPECTION );
@@ -1920,20 +1923,14 @@ DWORD_PTR SVInspectionProcess::processMessage(DWORD DwMessageID, DWORD_PTR DwMes
 				// and returns the result of this message.
 				// ...use second message parameter ( DwMessageValue ) as SVObjectClass* of the child object
 				// ...returns SVMR_SUCCESS, SVMR_NO_SUCCESS or SVMR_NOT_PROCESSED
-				SVObjectClass* pChildObject = ( SVObjectClass* ) DwMessageValue;
-				if( SV_IS_KIND_OF( pChildObject, SVObjectClass ) )
-				{
-					createStruct.OwnerObjectInfo = this;
-					createStruct.InspectionObjectInfo = this;
+				SVObjectClass* pChildObject = reinterpret_cast<SVObjectClass*>(DwMessageValue);
+				//@warning [MZA, 21.07.15] The DWORD_PTR DwMessageValue has to be converted via reinterpret_cast to SVObjectClass*. This is dangerous.
+				//After the reinterpret_cast to SVOjectClass*, to use a kind_of or dynamic_cast does not help for more safety, because it will not check anything.
+				//We should cleanup this and replace processMessage with other methods (see SVO-806)
+				createStruct.OwnerObjectInfo = this;
+				createStruct.InspectionObjectInfo = this;
 
-					DWORD_PTR l_Return = SVSendMessage( pChildObject, SVM_CONNECT_ALL_OBJECTS, reinterpret_cast<DWORD_PTR>(&createStruct), NULL );
-
-					return l_Return;
-				}
-				else // Not a Valid Object
-				{
-					return SVMR_NO_SUCCESS;
-				}
+				return SVSendMessage( pChildObject, SVM_CONNECT_ALL_OBJECTS, reinterpret_cast<DWORD_PTR>(&createStruct), NULL );
 			}
 			break;
 
@@ -1943,8 +1940,8 @@ DWORD_PTR SVInspectionProcess::processMessage(DWORD DwMessageID, DWORD_PTR DwMes
 				// ...use third message parameter ( DwMessageContext ) as SVObjectClass*
 				// ...returns SVMR_SUCCESS, SVMR_NO_SUCCESS
 				const GUID ObjectID = *( ( GUID* )DwMessageValue);
-				SVObjectClass* pMessageObject = (SVObjectClass*) DwMessageContext;
-				if( pMessageObject && SV_IS_KIND_OF( pMessageObject, SVObjectClass ) )
+				SVObjectClass* pMessageObject = reinterpret_cast<SVObjectClass*>(DwMessageContext);
+				if( nullptr != pMessageObject )
 				{
 					// Kill the Friends
 					// SVObjectClass can have Friends

@@ -98,9 +98,9 @@ void SVFormulaEditorSheetClass::OnOK()
 		CPropertyPage* pPage = GetPage(i);
 		if( pPage && pPage->GetSafeHwnd() ) 
 		{
-			if( SV_IS_KIND_OF( pPage, SVFormulaEditorPageClass ) )
+			if( SVFormulaEditorPageClass* pFormularPage = dynamic_cast<SVFormulaEditorPageClass*>( pPage ) )
 			{
-				if( !( ( SVFormulaEditorPageClass* )pPage)->validateAndSetEquation() )
+				if( !pFormularPage->validateAndSetEquation() )
 				{
 					// Equation must be valid or disabled
 					CString tmp;

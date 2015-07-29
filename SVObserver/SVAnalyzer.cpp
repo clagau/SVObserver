@@ -160,19 +160,16 @@ DWORD_PTR SVAnalyzerClass::processMessage( DWORD DwMessageID, DWORD_PTR DwMessag
 		case SVMSGID_CONNECT_CHILD_OBJECT:
 		{
 			// ...use second message parameter ( DwMessageValue ) as SVObjectClass* of the child object
-			SVObjectClass* pChildObject = ( SVObjectClass* ) DwMessageValue;
-			if( SV_IS_KIND_OF( pChildObject, SVObjectClass ) )
-			{
-				createStruct.OwnerObjectInfo        = this;
-				createStruct.AnalyzerObjectInfo		= this;
-				createStruct.ToolObjectInfo			= GetTool();
-				createStruct.InspectionObjectInfo	= GetInspection();
-				
-				DWORD_PTR l_Return = SVSendMessage( pChildObject, SVM_CONNECT_ALL_OBJECTS, reinterpret_cast<DWORD_PTR>(&createStruct), NULL );
+			SVObjectClass* pChildObject = reinterpret_cast<SVObjectClass*>(DwMessageValue);
+			//@warning [MZA, 21.07.15] The DWORD_PTR DwMessageValue has to be converted via reinterpret_cast to SVObjectClass*. This is dangerous.
+			//After the reinterpret_cast to SVOjectClass*, to use a kind_of or dynamic_cast does not help for more safety, because it will not check anything.
+			//We should cleanup this and replace processMessage with other methods (see SVO-806)
+			createStruct.OwnerObjectInfo        = this;
+			createStruct.AnalyzerObjectInfo		= this;
+			createStruct.ToolObjectInfo			= GetTool();
+			createStruct.InspectionObjectInfo	= GetInspection();
 
-				return l_Return;
-			}
-			return SVMR_NOT_PROCESSED;
+			return SVSendMessage( pChildObject, SVM_CONNECT_ALL_OBJECTS, reinterpret_cast<DWORD_PTR>(&createStruct), NULL );
 		}
 
 		case SVMSGID_DISCONNECT_IMAGE_OBJECT:

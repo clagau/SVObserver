@@ -224,14 +224,10 @@ SVShapeMaskHelperClass* SVUserMaskOperatorClass::GetShapeHelper()
 	for( size_t i = 0; i < friendList.size(); i++ )
 	{
 		const SVObjectInfoStruct& friendObjectInfo = friendList[i];
-		if( friendObjectInfo.PObject )
+		if( pMaskHelper = dynamic_cast<SVShapeMaskHelperClass*> (friendObjectInfo.PObject) )
 		{
-			if( SV_IS_KIND_OF( friendObjectInfo.PObject, SVShapeMaskHelperClass ) )
-			{
-				pMaskHelper = dynamic_cast<SVShapeMaskHelperClass*> (friendObjectInfo.PObject);
-				m_guidShapeHelper = pMaskHelper->GetUniqueObjectID();
-				break;
-			}
+			m_guidShapeHelper = pMaskHelper->GetUniqueObjectID();
+			break;
 		}
 	}
 

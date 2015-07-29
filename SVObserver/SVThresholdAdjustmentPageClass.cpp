@@ -45,7 +45,7 @@ HRESULT SVThresholdAdjustmentPageClass::SetInspectionData()
 {
 	HRESULT l_hrOk = S_OK;
 
-	if( m_pvoUpperThreshold && m_pvoLowerThreshold && pAnalyzerOwner )
+	if( m_pvoUpperThreshold && m_pvoLowerThreshold && m_pAnalyzerOwner )
 	{
 		UpdateData( TRUE ); // get data of dialog	
 	
@@ -72,7 +72,7 @@ HRESULT SVThresholdAdjustmentPageClass::SetInspectionData()
 
 		if( l_hrOk == S_OK )
 		{
-			l_hrOk = RunOnce( pAnalyzerOwner->GetTool() );
+			l_hrOk = RunOnce( m_pAnalyzerOwner->GetTool() );
 		}
 
 		UpdateData( FALSE );
@@ -115,11 +115,9 @@ BOOL SVThresholdAdjustmentPageClass::OnInitDialog()
 {
 	CPropertyPage::OnInitDialog();
 
-	if( SV_IS_KIND_OF( PCurrentAnalyzer->GetOwner(), SVTaskObjectClass ) )
+	if( nullptr != PCurrentAnalyzer && (m_pAnalyzerOwner = dynamic_cast<SVTaskObjectClass*>( PCurrentAnalyzer->GetOwner() )) )
 	{
-		pAnalyzerOwner = ( SVTaskObjectClass* ) PCurrentAnalyzer->GetOwner();
-
-		SetTaskObject( pAnalyzerOwner );
+		SetTaskObject( m_pAnalyzerOwner );
 	}
 
 	double dUpper;

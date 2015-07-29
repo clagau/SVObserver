@@ -307,7 +307,6 @@ void SVDiscreteOutputsView::OnLButtonDblClk( UINT nFlags, CPoint point )
 	SVIOEntryHostStructPtr pIOEntry;
 	SVOutputObjectList *pOutputList( nullptr );
 	SVDigitalOutputObject *pDigOutput ( nullptr );
-	SVOutputObject *pOutput ( nullptr );
 	UINT flags;
 
 	int item = GetListCtrl().HitTest( point, &flags );
@@ -336,160 +335,157 @@ void SVDiscreteOutputsView::OnLButtonDblClk( UINT nFlags, CPoint point )
 			}
 
 			if( !( pIOEntry.empty() ) )
-				pOutput = dynamic_cast< SVOutputObject* >( SVObjectManagerClass::Instance().GetObject( pIOEntry->m_IOId ) );
+			{
+				pDigOutput = dynamic_cast< SVDigitalOutputObject* >( SVObjectManagerClass::Instance().GetObject( pIOEntry->m_IOId ) );
+			}
 			else
 			{
 				strName = _T( "" );
 
 				pDigOutput = new SVDigitalOutputObject;
-				
+
 				pDigOutput->SetChannel( item );
 				pDigOutput->SetName( strName );
 				pDigOutput->Force( FALSE, FALSE );
 				pDigOutput->Invert( TRUE );
 
-				pOutput = pDigOutput;
 			}// end else
 
-			if( SV_IS_KIND_OF( pOutput, SVDigitalOutputObject ) )
+			if( nullptr != pDigOutput )
 			{
-				pDigOutput = (SVDigitalOutputObject*) pOutput;
-				if( pDigOutput )
+				dlg.StrIOName = _T( "Result " ) + GetListCtrl().GetItemText( item, 0 );
+				dlg.StrIOName += _T( ", " ) + GetListCtrl().GetItemText( item, 1 );
+				dlg.StrIOValue.Format( "%d", pDigOutput->GetValue() ? 1 : 0 );
+				dlg.m_pIOEntry   = pIOEntry;
+				dlg.m_pDigOutput = pDigOutput;
+				dlg.m_bInputMode = FALSE;
+				dlg.m_pIODoc	 = GetDocument();
+
+				SVSVIMStateClass::AddState( SV_STATE_EDITING );
+				switch( dlg.DoModal() )
 				{
-					dlg.StrIOName = _T( "Result " ) + GetListCtrl().GetItemText( item, 0 );
-					dlg.StrIOName += _T( ", " ) + GetListCtrl().GetItemText( item, 1 );
-					dlg.StrIOValue.Format( "%d", pDigOutput->GetValue() ? 1 : 0 );
-					dlg.m_pIOEntry   = pIOEntry;
-					dlg.m_pDigOutput = pDigOutput;
-					dlg.m_bInputMode = FALSE;
-					dlg.m_pIODoc	 = GetDocument();
-					
-					SVSVIMStateClass::AddState( SV_STATE_EDITING );
-					switch( dlg.DoModal() )
+				case IDOK:
 					{
-						case IDOK:
+						SVSVIMStateClass::AddState( SV_STATE_MODIFIED );
+
+						SVConfigurationObject* pConfig( nullptr );
+						SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
+
+						// Check if they picked a new output
+						if( dlg.m_pIOEntry != pIOEntry )
 						{
-							SVSVIMStateClass::AddState( SV_STATE_MODIFIED );
+							SVOutputObjectList* pOutputList( nullptr );
+							SVPPQObject* pPPQ( nullptr );
+							long k = 0;
 
-							SVConfigurationObject* pConfig( nullptr );
-							SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
-
-							// Check if they picked a new output
-							if( dlg.m_pIOEntry != pIOEntry )
-							{
-								SVOutputObjectList* pOutputList( nullptr );
-								SVPPQObject* pPPQ( nullptr );
-								long k = 0;
-
-								if ( nullptr != pConfig ){ pOutputList = pConfig->GetOutputObjectList( ); }
-								if( !( pIOEntry.empty() ) )
-								{									
-									// Make sure that we first reset the old output
-									if( nullptr != pOutputList )
-									{
-										pOutputList->ResetOutput( pIOEntry );
-									}// end if
-
-									pIOEntry->m_Enabled = FALSE;
-									pIOEntry->m_IOId.clear();
-								}// end if
-								
-								if( dlg.m_pIOEntry.empty() )
-								{
-									if( nullptr != pOutputList )
-									{
-										pOutputList->DetachOutput( pDigOutput->GetUniqueObjectID() );
-									}
-									pDigOutput = NULL;
-
-									if( pIOEntry == l_pIOController->GetModuleReady() )
-									{
-										pIOEntry->m_ObjectType = IO_INVALID_OBJECT;
-										pIOEntry->m_IOId.clear();
-									}// end if
-									if( pIOEntry == l_pIOController->GetRaidErrorBit())
-									{
-										pIOEntry->m_ObjectType = IO_INVALID_OBJECT;
-										pIOEntry->m_IOId.clear();
-									}// end if
-
-								}// end if
-								else
-								{
-									dlg.m_pIOEntry->m_Enabled = TRUE;
-									dlg.m_pDigOutput->SetName( dlg.m_pIOEntry->m_pValueObject->GetCompleteObjectName() );
-									if( pIOEntry.empty() )
-									{
-										pOutputList->AttachOutput( pDigOutput );
-									}// end if
-
-									if( dlg.m_pIOEntry == l_pIOController->GetModuleReady() )
-									{
-										dlg.m_pIOEntry->m_ObjectType = IO_DIGITAL_OUTPUT;
-										dlg.m_pIOEntry->m_IOId = dlg.m_pDigOutput->GetUniqueObjectID();
-									}// end if
-
-									if( dlg.m_pIOEntry == l_pIOController->GetRaidErrorBit() )
-									{
-										dlg.m_pIOEntry->m_ObjectType = IO_DIGITAL_OUTPUT;
-										dlg.m_pIOEntry->m_IOId	= dlg.m_pDigOutput->GetUniqueObjectID();
-									}// end if
-								}// end else
-
-								long lPPQSize = 0;
-								// Force the PPQs to rebuild
-								if ( nullptr != pConfig ){ lPPQSize = pConfig->GetPPQCount( ); }
-
-								// Rebuild Outputs
-								for( k = 0; k < lPPQSize; k++ )
-								{
-									pPPQ = pConfig->GetPPQ( k );
-
-									if( nullptr != pPPQ ){ pPPQ->RebuildOutputList(); }
-								}// end for
-														
-							}// end if
-
-							// Force IO board to update if they still have one selected
-							if( !( dlg.m_pIOEntry.empty() ) )
-							{
-								pOutputList = nullptr;
-								if ( nullptr != pConfig ){ pOutputList = pConfig->GetOutputObjectList( ); }
+							if ( nullptr != pConfig ){ pOutputList = pConfig->GetOutputObjectList( ); }
+							if( !( pIOEntry.empty() ) )
+							{									
+								// Make sure that we first reset the old output
 								if( nullptr != pOutputList )
 								{
-									pOutputList->ResetOutput( dlg.m_pIOEntry );
+									pOutputList->ResetOutput( pIOEntry );
 								}// end if
+
+								pIOEntry->m_Enabled = FALSE;
+								pIOEntry->m_IOId.clear();
 							}// end if
-							break;
-						}
 
-						case IDCANCEL:
-						default:
-							break;
-					}// end switch
+							if( dlg.m_pIOEntry.empty() )
+							{
+								if( nullptr != pOutputList )
+								{
+									pOutputList->DetachOutput( pDigOutput->GetUniqueObjectID() );
+								}
+								pDigOutput = NULL;
 
-					SVSVIMStateClass::RemoveState( SV_STATE_EDITING );
-					OnUpdate( NULL, NULL, NULL );
-				}
-				else
+								if( pIOEntry == l_pIOController->GetModuleReady() )
+								{
+									pIOEntry->m_ObjectType = IO_INVALID_OBJECT;
+									pIOEntry->m_IOId.clear();
+								}// end if
+								if( pIOEntry == l_pIOController->GetRaidErrorBit())
+								{
+									pIOEntry->m_ObjectType = IO_INVALID_OBJECT;
+									pIOEntry->m_IOId.clear();
+								}// end if
+
+							}// end if
+							else
+							{
+								dlg.m_pIOEntry->m_Enabled = TRUE;
+								dlg.m_pDigOutput->SetName( dlg.m_pIOEntry->m_pValueObject->GetCompleteObjectName() );
+								if( pIOEntry.empty() )
+								{
+									pOutputList->AttachOutput( pDigOutput );
+								}// end if
+
+								if( dlg.m_pIOEntry == l_pIOController->GetModuleReady() )
+								{
+									dlg.m_pIOEntry->m_ObjectType = IO_DIGITAL_OUTPUT;
+									dlg.m_pIOEntry->m_IOId = dlg.m_pDigOutput->GetUniqueObjectID();
+								}// end if
+
+								if( dlg.m_pIOEntry == l_pIOController->GetRaidErrorBit() )
+								{
+									dlg.m_pIOEntry->m_ObjectType = IO_DIGITAL_OUTPUT;
+									dlg.m_pIOEntry->m_IOId	= dlg.m_pDigOutput->GetUniqueObjectID();
+								}// end if
+							}// end else
+
+							long lPPQSize = 0;
+							// Force the PPQs to rebuild
+							if ( nullptr != pConfig ){ lPPQSize = pConfig->GetPPQCount( ); }
+
+							// Rebuild Outputs
+							for( k = 0; k < lPPQSize; k++ )
+							{
+								pPPQ = pConfig->GetPPQ( k );
+
+								if( nullptr != pPPQ ){ pPPQ->RebuildOutputList(); }
+							}// end for
+
+						}// end if
+
+						// Force IO board to update if they still have one selected
+						if( !( dlg.m_pIOEntry.empty() ) )
+						{
+							pOutputList = nullptr;
+							if ( nullptr != pConfig ){ pOutputList = pConfig->GetOutputObjectList( ); }
+							if( nullptr != pOutputList )
+							{
+								pOutputList->ResetOutput( dlg.m_pIOEntry );
+							}// end if
+						}// end if
+						break;
+					}
+
+				case IDCANCEL:
+				default:
+					break;
+				}// end switch
+
+				SVSVIMStateClass::RemoveState( SV_STATE_EDITING );
+				OnUpdate( NULL, NULL, NULL );
+			}
+			else
+			{
+				dlg.StrIOName	= _T( "" );
+				dlg.StrIOValue.Format( "%d", 0 );
+
+				switch( dlg.DoModal() )
 				{
-					dlg.StrIOName	= _T( "" );
-					dlg.StrIOValue.Format( "%d", 0 );
-					
-					switch( dlg.DoModal() )
-					{
-					case IDOK:
-						SVSVIMStateClass::AddState( SV_STATE_MODIFIED );
-						break;
-						
-					case IDCANCEL:
-					default:
-						break;
-					}// end switch
-				
-					OnUpdate( NULL, NULL, NULL );
-				}// end else
-			}// end else if
+				case IDOK:
+					SVSVIMStateClass::AddState( SV_STATE_MODIFIED );
+					break;
+
+				case IDCANCEL:
+				default:
+					break;
+				}// end switch
+
+				OnUpdate( NULL, NULL, NULL );
+			}// end else
 		}// end if
 	}// end if
 }// end OnLButtonDblClk

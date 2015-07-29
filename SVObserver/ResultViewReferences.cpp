@@ -277,7 +277,7 @@ HRESULT  ResultViewReferences::GetResultData( SVIPResultData& p_rResultData) con
 				}
 			}
 		}
-		else  if(nullptr != (bvo = dynamic_cast<BasicValueObject*>(it->Object()))) //if( SV_IS_KIND_OF( it->Object(), BasicValueObject ) )
+		else  if(nullptr != (bvo = dynamic_cast<BasicValueObject*>(it->Object()))) 
 		{
 
 			Color = SV_DEFAULT_WHITE_COLOR;

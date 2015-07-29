@@ -629,19 +629,15 @@ void SVLineAnalyzerClass::removeEmbeddedExtents()
 
 SVObjectClass* SVLineAnalyzerClass::getImageToLineProject()
 {
-	SVImageToLineProjectClass *pProject = NULL;
+	SVImageToLineProjectClass *pProject = nullptr;
 
 	// Get Friend Object ( SVImageToLineProjectClass )
 	for( size_t i = 0; i < friendList.size(); i++ )
 	{
 		const SVObjectInfoStruct& friendObjectInfo = friendList[i];
-		if( friendObjectInfo.PObject )
+		if( pProject = dynamic_cast<SVImageToLineProjectClass*>(friendObjectInfo.PObject) )
 		{
-			if( SV_IS_KIND_OF( friendObjectInfo.PObject, SVImageToLineProjectClass ) )
-			{
-				pProject = ( SVImageToLineProjectClass * )friendObjectInfo.PObject;
-				break;
-			}
+			break;
 		}
 	}
 	return pProject;
@@ -655,13 +651,9 @@ SVObjectClass* SVLineAnalyzerClass::getLineROI()
 	for( size_t i = 0; i < friendList.size(); i++ )
 	{
 		const SVObjectInfoStruct& friendObjectInfo = friendList[i];
-		if( friendObjectInfo.PObject )
+		if( pLineROI = dynamic_cast<SVLineROIClass*>(friendObjectInfo.PObject) )
 		{
-			if( SV_IS_KIND_OF( friendObjectInfo.PObject, SVLineROIClass )  )
-			{
-				pLineROI = ( SVLineROIClass * )friendObjectInfo.PObject;
-				break;
-			}
+			break;
 		}
 	}
 	return pLineROI;

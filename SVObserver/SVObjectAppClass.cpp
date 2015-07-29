@@ -114,22 +114,16 @@ DWORD_PTR SVObjectAppClass::processMessage( DWORD DwMessageID, DWORD_PTR DwMessa
 		case SVMSGID_CONNECT_CHILD_OBJECT:
 		{
 			// ...use second message parameter ( DwMessageValue ) as SVObjectClass* of the child object
-			SVObjectClass* pChildObject = ( SVObjectClass* ) DwMessageValue;
-			if( SV_IS_KIND_OF( pChildObject, SVObjectClass ) )
-			{
-				SVAnalyzerLevelCreateStruct createStruct;
+			SVObjectClass* pChildObject = reinterpret_cast<SVObjectClass*>(DwMessageValue);
 
-				createStruct.OwnerObjectInfo = this;
-				createStruct.AnalyzerObjectInfo = GetAnalyzer();
-				createStruct.ToolObjectInfo	= GetTool();
-				createStruct.InspectionObjectInfo	= GetInspection();
-				
-				DWORD_PTR l_Return = SVSendMessage( pChildObject, SVM_CONNECT_ALL_OBJECTS, reinterpret_cast<DWORD_PTR>(&createStruct), NULL );
+			SVAnalyzerLevelCreateStruct createStruct;
 
-				return l_Return;
-			}
+			createStruct.OwnerObjectInfo = this;
+			createStruct.AnalyzerObjectInfo = GetAnalyzer();
+			createStruct.ToolObjectInfo	= GetTool();
+			createStruct.InspectionObjectInfo	= GetInspection();
 
-			return SVMR_NOT_PROCESSED;
+			return SVSendMessage( pChildObject, SVM_CONNECT_ALL_OBJECTS, reinterpret_cast<DWORD_PTR>(&createStruct), NULL );
 		}
 	}
 
@@ -188,7 +182,7 @@ DWORD_PTR SVObjectAppClass::createAllObjectsFromChild( SVObjectClass* pChildObje
 
 DWORD_PTR SVObjectAppClass::CreateChildObject( SVObjectClass* pChildObject, DWORD context )
 {
-	if( IsCreated() && SV_IS_KIND_OF( pChildObject, SVObjectClass ) )
+	if( IsCreated() && nullptr != pChildObject )
 	{
 		long l_LastIndex = 1;
 		SVInspectionProcess* pInspection = GetInspection();

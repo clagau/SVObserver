@@ -1213,9 +1213,9 @@ void SVTaskObjectClass::GetInputObjects(SVInputInfoListClass& RInputObjectList)
 		const SVObjectInfoStruct& rFriend = friendList[i];
 		// Check if Friend is alive...
 		SVObjectClass* pFriend = SVObjectManagerClass::Instance().GetObject(rFriend.UniqueObjectID);
-		if (SV_IS_KIND_OF(pFriend, SVTaskObjectClass))
+		if (SVTaskObjectClass* pTaskObjectFriend = dynamic_cast<SVTaskObjectClass*>(pFriend))
 		{
-			((SVTaskObjectClass*)pFriend)->GetInputObjects(RInputObjectList);
+			pTaskObjectFriend->GetInputObjects(RInputObjectList);
 		}
 	}
 	
@@ -1235,9 +1235,9 @@ void SVTaskObjectClass::GetAllInputObjects()
 		const SVObjectInfoStruct& rFriend = friendList[i];
 		// Check if Friend is alive...
 		SVObjectClass* pFriend = SVObjectManagerClass::Instance().GetObject(rFriend.UniqueObjectID);
-		if (SV_IS_KIND_OF(pFriend, SVTaskObjectClass))
+		if (SVTaskObjectClass* pTaskObjectFriend = dynamic_cast<SVTaskObjectClass*>(pFriend))
 		{
-			((SVTaskObjectClass*)pFriend)->GetAllInputObjects();
+			pTaskObjectFriend->GetAllInputObjects();
 		}
 	}
 }
@@ -1261,9 +1261,9 @@ void SVTaskObjectClass::GetObjectScript(CString& RStrScript, CString& RStrAliasT
 		SVObjectInfoStruct& rFriend = friendList[i];
 		// Check if Friend is alive...
 		SVObjectClass* pFriend = SVObjectManagerClass::Instance().GetObject(rFriend.UniqueObjectID);
-		if (SV_IS_KIND_OF(pFriend, SVTaskObjectClass))
+		if (SVTaskObjectClass* pTaskObjectFriend = dynamic_cast<SVTaskObjectClass*>(pFriend))
 		{
-			((SVTaskObjectClass*)pFriend)->GetObjectScript(script, RStrAliasTable, Indent);
+			pTaskObjectFriend->GetObjectScript(script, RStrAliasTable, Indent);
 				
 			// SEJ - Special Code for Friends Aliases
 			pFriend->MakeUniqueFriendAlias(script);
@@ -1354,10 +1354,10 @@ void SVTaskObjectClass::PersistFriends(SVObjectWriter& rWriter)
 			const SVObjectInfoStruct& rFriend = friendList[i];
 			// Check if Friend is alive...
 			SVObjectClass* pFriend = SVObjectManagerClass::Instance().GetObject(rFriend.UniqueObjectID);
-			if (SV_IS_KIND_OF(pFriend, SVTaskObjectClass))
+			if (SVTaskObjectClass* pTaskObjectFriend = dynamic_cast<SVTaskObjectClass*>(pFriend))
 			{
-				rWriter.StartElement(pFriend->GetObjectName()); // use internal name for node name
-				((SVTaskObjectClass*)pFriend)->Persist(rWriter);
+				rWriter.StartElement(pTaskObjectFriend->GetObjectName()); // use internal name for node name
+				pTaskObjectFriend->Persist(rWriter);
 				rWriter.EndElement();
 			}
 		}
@@ -1473,9 +1473,8 @@ BOOL SVTaskObjectClass::runFriends(SVRunStatusClass& RRunStatus)
 	for (size_t j = 0; j < friendList.size(); ++ j)
 	{
 		const SVObjectInfoStruct& rFriend = friendList[j];
-		if (SV_IS_KIND_OF(rFriend.PObject, SVTaskObjectClass))
+		if (SVTaskObjectClass* pTaskObject = dynamic_cast<SVTaskObjectClass*>(rFriend.PObject))
 		{
-			SVTaskObjectClass* pTaskObject = (SVTaskObjectClass*) rFriend.PObject;
 			bRetVal = pTaskObject->Run(RRunStatus) && bRetVal;
 		}
 		else
@@ -1533,10 +1532,10 @@ void SVTaskObjectClass::Disconnect()
 		const SVObjectInfoStruct& rFriend = friendList[i];
 		// Check if Friend is alive...
 		SVObjectClass* pFriend = SVObjectManagerClass::Instance().GetObject(rFriend.UniqueObjectID);
-		if (SV_IS_KIND_OF(pFriend, SVTaskObjectClass))
+		if (SVTaskObjectClass* pTaskObjectFriend = dynamic_cast<SVTaskObjectClass*>(pFriend))
 		{
 			// Tell Friends to Disconnect...
-			((SVTaskObjectClass*)pFriend)->Disconnect();
+			pTaskObjectFriend->Disconnect();
 		}
 	}
 }
@@ -1588,7 +1587,7 @@ BOOL SVTaskObjectClass::DisconnectInput(SVInObjectInfoStruct* pInObjectInfo)
 void SVTaskObjectClass::AddEmbeddedObject(SVObjectClass* PObject)
 {
 	//	ASSERT( embeddedID == SVInvalidGUID );
-	ASSERT(SV_IS_KIND_OF(PObject, SVObjectClass));
+	ASSERT(nullptr != PObject);
 	
 	// Add to Owner's List of Embedded Objects - SEJ July 7,1999
 	embeddedList.Add(PObject);
@@ -1928,7 +1927,7 @@ DWORD_PTR SVTaskObjectClass::processMessage(DWORD DwMessageID, DWORD_PTR DwMessa
 			case SVMSGID_GET_INPUT_INTERFACE:
 				{
 					SVInputInfoListClass* pInputList = reinterpret_cast<SVInputInfoListClass*>(DwMessageValue);
-					if (SV_IS_KIND_OF(pInputList, SVInputInfoListClass))
+					if (nullptr != pInputList)
 					{
 						// Local input list...
 						SVInputInfoListClass localInputList;

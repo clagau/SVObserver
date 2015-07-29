@@ -719,11 +719,12 @@ void SVConfigurationPrint::PrintDetails( CDC* pDC, SVObjectClass* pObj, CPoint& 
 	
 	BOOL	bPrintToolExtents = FALSE;		// Sri 2/17/00
 	
-    // If object is a value object, get embedded ID.
-    if (SV_IS_KIND_OF(pObj, SVValueObjectClass))
-    {
-        guidObjID = pObj->GetEmbeddedID();
-    }  // end if( SV_IS_KIND_OF( pObj, SVValueObjectClass ) )
+	SVValueObjectClass* pValueObject = dynamic_cast<SVValueObjectClass*> (pObj);
+	// If object is a value object, get embedded ID.
+	if (nullptr != pValueObject)
+	{
+		guidObjID = pObj->GetEmbeddedID();
+	}
 	
     // Check for non-printing object type.
     for (int nIndex = 0; nIndex < m_NPArraySize; nIndex++)
@@ -742,7 +743,7 @@ void SVConfigurationPrint::PrintDetails( CDC* pDC, SVObjectClass* pObj, CPoint& 
 	}
 	
 	// If object is a value object, print name and value.
-	if ( SVValueObjectClass* pValueObject = dynamic_cast<SVValueObjectClass*> (pObj) )
+	if ( nullptr != pValueObject )
 	{
 		if ( pObj->ObjectAttributesAllowed() & SV_PRINTABLE )
 		{
@@ -792,7 +793,7 @@ void SVConfigurationPrint::PrintDetails( CDC* pDC, SVObjectClass* pObj, CPoint& 
 				PrintValueObject(pDC, ptCurPos, sLabel, sValue);
 			}  // end else
 		}   // end if ( pObj->uObjectAttributesAllowed & SV_PRINTABLE )
-	}  // end if( SV_IS_KIND_OF( pObj, SVValueObjectClass ) )
+	}  // end if( nullptr != pValueObject )
 	else
 	{
 		do
@@ -801,7 +802,8 @@ void SVConfigurationPrint::PrintDetails( CDC* pDC, SVObjectClass* pObj, CPoint& 
 				if ( !( pObj->ObjectAttributesAllowed() & SV_PRINTABLE) )	// EB 20050818 - hack this instead of doing it right
 					break;
 
-			if ( SVToolClass* pTool = dynamic_cast<SVToolClass*> (pObj) )
+			SVToolClass* pTool = dynamic_cast<SVToolClass*> (pObj);
+			if ( nullptr != pTool )
 			{
 				// Increment even if disabled, to maintain count.  Starts with zero, so for first
 				//    tool, will increment to 1.
@@ -815,7 +817,7 @@ void SVConfigurationPrint::PrintDetails( CDC* pDC, SVObjectClass* pObj, CPoint& 
 				ptCurPos.x  = ++nIndentLevel * m_shortTabPixels;
 				
 				bPrintToolExtents = TRUE;		// Sri 2/17/00
-			}  // end if( SV_IS_KIND_OF( pObj, SVToolClass ) )
+			}
 			
 			ptCurPos.x   = nIndentLevel * m_shortTabPixels;
 			PrintValueObject(pDC, ptCurPos, _T("Name:"), strName);
@@ -827,14 +829,13 @@ void SVConfigurationPrint::PrintDetails( CDC* pDC, SVObjectClass* pObj, CPoint& 
 			}
 			
 			// Print the tool length, width, extends, etc here.
-			if (bPrintToolExtents && (SV_IS_KIND_OF(pObj, SVToolClass)))
+			if (bPrintToolExtents && nullptr != pTool)
 			{
 				bPrintToolExtents = FALSE;
 				
 				SVInputInfoListClass    toolInputList;
 				SVImageClass*           pCurrentSourceImage = NULL;
 				SVInObjectInfoStruct*   pImageInputInfo = NULL;
-				SVToolClass*            pTool = dynamic_cast <SVToolClass*> (pObj);
 				
 				SVInObjectInfoStruct* l_psvImageInfo = NULL;
 				SVInObjectInfoStruct* l_psvLastImageInfo = NULL;
@@ -894,9 +895,9 @@ void SVConfigurationPrint::PrintDetails( CDC* pDC, SVObjectClass* pObj, CPoint& 
 						PrintValueObject(pDC, ptCurPos, sLabel, sValue);
 					}
 				} // End, if( pImageInfo )
-			} // End, if(bPrintToolExtents && ( SV_IS_KIND_OF( pObj, SVToolClass )))
+			} // End, if(bPrintToolExtents && ( nullptr != pTool ))
 			
-			if ( SVArchiveTool* pTool = dynamic_cast <SVArchiveTool*> (pObj) )
+			if ( SVArchiveTool* pArchiveTool = dynamic_cast <SVArchiveTool*> (pObj) )
 			{
 				int i, s;
 				SVArchiveRecord* pRecord;
@@ -904,10 +905,10 @@ void SVConfigurationPrint::PrintDetails( CDC* pDC, SVObjectClass* pObj, CPoint& 
 				ptTemp      = ptCurPos;
 				ptCurPos.y += PrintString(pDC, ptTemp, _T("Results"));
 				ptCurPos.x  = ++nIndentLevel * m_shortTabPixels;
-				s = pTool->m_arrayResultsInfoObjectsToArchive.GetSize();
+				s = pArchiveTool->m_arrayResultsInfoObjectsToArchive.GetSize();
 				for (i = 0; i < s; i++)
 				{
-					pRecord = pTool->m_arrayResultsInfoObjectsToArchive.GetAt(i);
+					pRecord = pArchiveTool->m_arrayResultsInfoObjectsToArchive.GetAt(i);
 					if (pRecord->GetObjectReference().Object() != NULL)
 					{
 						ptCurPos.x   = nIndentLevel * m_shortTabPixels;
@@ -922,10 +923,10 @@ void SVConfigurationPrint::PrintDetails( CDC* pDC, SVObjectClass* pObj, CPoint& 
 				ptCurPos.y += PrintString(pDC, ptTemp, _T("Images"));
 				
 				ptCurPos.x  = ++nIndentLevel * m_shortTabPixels;
-				s = pTool->m_arrayImagesInfoObjectsToArchive.GetSize();
+				s = pArchiveTool->m_arrayImagesInfoObjectsToArchive.GetSize();
 				for (i = 0; i < s; i++)
 				{
-					pRecord = pTool->m_arrayImagesInfoObjectsToArchive.GetAt(i);
+					pRecord = pArchiveTool->m_arrayImagesInfoObjectsToArchive.GetAt(i);
 					ptCurPos.x   = nIndentLevel * m_shortTabPixels;
 					CString sFormat;
 					sFormat.Format(_T("Image %d:"), i + 1);
@@ -934,52 +935,44 @@ void SVConfigurationPrint::PrintDetails( CDC* pDC, SVObjectClass* pObj, CPoint& 
 				
 				nIndentLevel -= 2;
 				ptCurPos.x   = nIndentLevel * m_shortTabPixels;
-			}// end if ( SVArchiveTool* pTool = dynamic_cast <SVArchiveTool*> (pObj) )
+			}// end if ( SVArchiveTool* pArchiveTool = dynamic_cast <SVArchiveTool*> (pObj) )
 			
-			if ( SVStatisticsToolClass* pTool = dynamic_cast<SVStatisticsToolClass*> (pObj) )
+			if ( SVStatisticsToolClass* pStatisticsTool = dynamic_cast<SVStatisticsToolClass*> (pObj) )
 			{
-				SVObjectReference refObject = pTool->GetVariableSelected();
+				SVObjectReference refObject = pStatisticsTool->GetVariableSelected();
 				if (refObject.Object())
 				{
 					CString sName = refObject.GetName();
 					ptCurPos.x   = nIndentLevel * m_shortTabPixels;
 					PrintValueObject(pDC, ptCurPos, _T("Variable"), sName);
 				}
-			}  // end if( SV_IS_KIND_OF( pObj, SVStatisticsToolClass ) )
+			}  
 
-			if (SV_IS_KIND_OF(pObj, SVUserMaskOperatorClass))
+			if (SVUserMaskOperatorClass* maskObj = dynamic_cast <SVUserMaskOperatorClass*>( pObj ))
 			{
-				SVUserMaskOperatorClass* maskObj = dynamic_cast <SVUserMaskOperatorClass*>( pObj );
-				if ( NULL != maskObj )
+				SVImageClass* pImage = maskObj->getMaskInputImage();
+				if (nullptr != pImage)
 				{
-					SVImageClass* pImage = maskObj->getMaskInputImage();
-					if (nullptr != pImage)
-					{
-						sLabel = pApp->GetStringResource(IDS_IMAGE_SOURCE_STRING) + _T(":");
-						sValue.Format(_T("%s"), pImage->GetCompleteObjectName());
-						ptCurPos.x   = (nIndentLevel + 1) * m_shortTabPixels;
-						PrintValueObject(pDC, ptCurPos, sLabel, sValue);
-					}
+					sLabel = pApp->GetStringResource(IDS_IMAGE_SOURCE_STRING) + _T(":");
+					sValue.Format(_T("%s"), pImage->GetCompleteObjectName());
+					ptCurPos.x   = (nIndentLevel + 1) * m_shortTabPixels;
+					PrintValueObject(pDC, ptCurPos, sLabel, sValue);
 				}
 			}
 
-			if (SV_IS_KIND_OF(pObj,SVDoubleResultClass))
+			if (SVDoubleResultClass* pBlobResult = dynamic_cast<SVDoubleResultClass*>(pObj))
 			{
-				SVDoubleResultClass* pBlobResult = dynamic_cast<SVDoubleResultClass*>(pObj);
-				if (pBlobResult)
-				{
-					if (SV_IS_KIND_OF(pBlobResult->GetOwner(),SVBlobAnalyzerClass))
-					{  
-						sLabel = pApp->GetStringResource(IDS_BLOB_FEATURE_DEFAULT_VALUE) + _T(":");
-						SVDoubleValueObjectClass* pDoubleValueObj = pBlobResult->getInputDouble();
-						if ( pDoubleValueObj )
-						{
-							double dVal;
-							HRESULT hr = pDoubleValueObj->GetDefaultValue(dVal);
-							sValue.Format(_T("%lf"),dVal);
-							ptCurPos.x   = (nIndentLevel + 1) * m_shortTabPixels;
-							PrintValueObject(pDC, ptCurPos, sLabel, sValue);
-						}
+				if (SV_IS_KIND_OF(pBlobResult->GetOwner(),SVBlobAnalyzerClass))
+				{  
+					sLabel = pApp->GetStringResource(IDS_BLOB_FEATURE_DEFAULT_VALUE) + _T(":");
+					SVDoubleValueObjectClass* pDoubleValueObj = pBlobResult->getInputDouble();
+					if ( pDoubleValueObj )
+					{
+						double dVal;
+						HRESULT hr = pDoubleValueObj->GetDefaultValue(dVal);
+						sValue.Format(_T("%lf"),dVal);
+						ptCurPos.x   = (nIndentLevel + 1) * m_shortTabPixels;
+						PrintValueObject(pDC, ptCurPos, sLabel, sValue);
 					}
 				}
 			}
@@ -1010,7 +1003,7 @@ void SVConfigurationPrint::PrintDetails( CDC* pDC, SVObjectClass* pObj, CPoint& 
 				
 			} // End if(SV_IS_KIND_OF( pObj, SVLineAnalyzerClass))
 		} while (false);// end do
-	}// End if( SV_IS_KIND_OF( pObj, SVValueObjectClass ) ) else
+	}// End if( nullptr != pValueObject ) else
 
 	if ( SVEquationClass* pEquation = dynamic_cast <SVEquationClass*> (pObj) )
 	{
@@ -1021,12 +1014,12 @@ void SVConfigurationPrint::PrintDetails( CDC* pDC, SVObjectClass* pObj, CPoint& 
 			sLabel = _T("Equation Text");
 		ptCurPos.x  = nIndentLevel * m_shortTabPixels;
 		PrintValueObject(pDC, ptCurPos, sLabel, sValue);
-	}  // end if( SV_IS_KIND_OF( pObj, SVEquationClass ) )
+	}
 	
 	if (SV_IS_KIND_OF(pObj, SVTaskObjectClass))
 	{
 		PrintInputOutputList(pDC, pObj, ptCurPos, nIndentLevel);
-	}  // end if( SV_IS_KIND_OF( pObj, SVTaskObjectClass )
+	}
 }  // end function void SVConfigurationPrint:::PrintDetails( ... )
 
 void SVConfigurationPrint::PrintAllChildren(CDC* pDC, SVTaskObjectListClass* pTaskObj,  CPoint& ptCurPos, int nIndentLevel)
@@ -1143,7 +1136,7 @@ void SVConfigurationPrint::PrintChildren( CDC* pDC, SVObjectClass* pObj, CPoint&
 		{
 			PrintAllChildren(pDC, pTaskObj,  ptCurPos, nIndentLevel);
 		}
-	}  // end if( SV_IS_KIND_OF( pObj, SVTaskObjectListClass ) )
+	}
 }  // end function void SVConfigurationPrint:::PrintChildren( ... )
 
 ////////////////////////////////////////////////////////////////////////////////
