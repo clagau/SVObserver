@@ -20,6 +20,18 @@ SVFilterClass::SVFilterClass( SVObjectClass* POwner, int StringResourceID )
 	init();
 }
 
+BOOL SVFilterClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
+{
+	BOOL bOk = SVUnaryImageOperatorClass::CreateObject( pCreateStructure );
+
+	//hide valid, status and color for the result picker.
+	isObjectValid.ObjectAttributesAllowedRef() |= SV_HIDDEN;
+	statusTag.ObjectAttributesAllowedRef() |= SV_HIDDEN;
+	statusColor.ObjectAttributesAllowedRef() |= SV_HIDDEN;
+
+	return bOk;
+}
+
 void SVFilterClass::init()
 {
 	// Identify our output type

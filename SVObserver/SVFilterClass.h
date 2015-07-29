@@ -22,6 +22,13 @@ class SVFilterClass : virtual public SvOi::ISVFilter
 public:
 	SVFilterClass( SVObjectClass* POwner = NULL, int StringResourceID = IDS_CLASSNAME_SVFILTER );
 
+	//************************************
+	// Description: Creates the object
+	// Parameter: pCreateStructure <in> The create structure
+	// Return: True on success
+	//************************************
+	virtual BOOL CreateObject( SVObjectLevelCreateStruct* pCreateStructure ) override;
+
 #pragma region virtual methods (IFilter)
 	virtual bool shouldResetInspection() const override { return false; };
 #pragma endregion virtual methods (IFilter)
