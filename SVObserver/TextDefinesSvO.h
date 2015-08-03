@@ -80,6 +80,33 @@ namespace Seidenader
 		const TCHAR* const Precise = _T("Precise");
 
 		const TCHAR* const ResizeImage = _T("ResizeImage");
+
+		const TCHAR* const AP_NotEnoughMemoryPleaseDeselectImage = 
+			_T("Not enough Archive Image Memory for the images selected. Please deselect some images.");
+		const TCHAR* const AP_NotEnoughHandlesPleaseDeselectImage = 
+			_T("Not enough Archive Image Memory for the images selected. Please deselect some images.");
+		const TCHAR* const AP_NotEnoughMemoryInChangeMode = 
+			_T("There is not enough Available Archive Image Memory for your selection in Change Mode.\nAvailable Archive Image Memory is the result of the selected images and the Max Images number.");
+		const TCHAR* const AP_NotEnoughHandlesInChangeMode = 
+			_T("There are not enough Available Archive Image Memory Handles for your selection in Change Mode.\nAvailable Archive Image Memory Handles are the result of the selected images and the Max Images number.");
+	
+		const TCHAR* const AP_NotEnoughMemoryPleaseDeselect = 
+			_T("Not enough Available Archive Image Memory. Please deselect some\nimages, decrease \"Max Images\" or change \"When to archive\" mode.");
+		const TCHAR* const AP_NotEnoughHandlesPleaseDeselect = 
+			_T("Not enough Available Archive Image Memory Handles. Please deselect some\nimages, decrease \"Max Images\" or change \"When to archive\" mode.");
+
+		const TCHAR* const AP_NotEnoughMemoryToSelect_S = 
+			_T("Not enough Archive Image Memory to select %s");
+		const TCHAR* const AP_NotEnoughMemoryHandlesToSelect_S = 
+			_T("Not enough Archive Image Memory Handles to select %s");
+
+		const TCHAR* const AP_NotEnoughMemoryForSImages = 
+			_T("There is not enough Available Archive Image Memory for %s images in Change Mode. Available\nArchive Image Memory is the result of the selected images and the Max Images number.\nThe selection will be reset.");
+		const TCHAR* const AP_NotEnoughHandlesForSImages = 
+			_T("There are not enough Available Archive Image Memory Handles for %s images in Change Mode. Available\nArchive Image Memory Handles are the result of the selected images and the Max Images number.\nThe selection will be reset.");
+
+
+
 	}
 }
 namespace SvO = Seidenader::SVObserver;

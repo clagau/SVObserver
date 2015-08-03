@@ -112,7 +112,7 @@ HRESULT SVArchiveImageThreadClass::QueueImage( BufferInfo p_BufferInfo )
 		}// end if ( iter != m_Queue.end() )	// found filename
 		else
 		{
-			HRESULT hrAllocate = TheSVMemoryManager().ReservePoolMemory(ARCHIVE_TOOL_MEMORY_POOL_ONLINE_ASYNC_NAME, this, p_BufferInfo.lBufferSize );
+			HRESULT hrAllocate = TheSVMemoryManager().ReservePoolMemory(ARCHIVE_TOOL_MEMORY_POOL_ONLINE_ASYNC_NAME, this, p_BufferInfo.lBufferSize,0 );
 			if ( hrAllocate == S_OK )	// if enough memory in queue
 			{
 				lock.Unlock();	// do the least possible amount of work with this locked
@@ -271,7 +271,7 @@ HRESULT SVArchiveImageThreadClass::PopAndWrite()
 		{
 			BufferInfo info = m_Queue.front();
 			m_Queue.pop_front();
-			HRESULT hrAllocate = TheSVMemoryManager().ReleasePoolMemory(ARCHIVE_TOOL_MEMORY_POOL_ONLINE_ASYNC_NAME, this, info.lBufferSize );
+			HRESULT hrAllocate = TheSVMemoryManager().ReleasePoolMemory(ARCHIVE_TOOL_MEMORY_POOL_ONLINE_ASYNC_NAME, this, info.lBufferSize,0 );
 			lock.Unlock();
 			SVArchiveRecord::WriteImage( info.id, info.strFilename );
 
