@@ -78,8 +78,23 @@ public:
 
 	HRESULT GetDataDefinitionList( const SVString& p_rInspectionName, const SVDataDefinitionListType& p_rListType, SVDataDefinitionStructArray& p_rDataDefinitionArray) const;
 
-	HRESULT GetItems( const SVNameSet& p_rNames, SVNameStorageResultMap& p_rItems ) const;
-	HRESULT SetItems( const SVNameStorageMap& p_rItems, SVNameStatusMap& rStatusOfItems );
+	//************************************
+	//! Get Items value for the Item in NameSet to the SVNameStorageResultMap 
+	//! \param p_rNames [in]
+	//! \param p_rItems [out]
+	//! \param IsOneBased [in] if One based is true the index for arrays are taken as one based otherwise as zero based  
+	//! \returns HRESULT
+	//************************************
+	HRESULT GetItems( const SVNameSet& p_rNames, SVNameStorageResultMap& p_rItems , bool IsOneBased) const;
+	
+	//************************************
+	//! Set the item values in SVnameStorage map Result are in SVNameStatusMap 
+	//! \param p_rItems [in]
+	//! \param rStatusOfItems [out]
+	//! \param IsOneBased [in] if One based is true the index for arrays are taken as one based otherwise as zero based  
+	//! \returns HRESULT
+	//************************************
+	HRESULT SetItems( const SVNameStorageMap& p_rItems, SVNameStatusMap& rStatusOfItems,  bool IsOneBased );
 
 	HRESULT SetLastModifiedTime();
 	HRESULT FireModeChanged(svModeEnum mode);

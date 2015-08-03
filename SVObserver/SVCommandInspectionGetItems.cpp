@@ -184,6 +184,7 @@ HRESULT SVCommandInspectionGetItems::UpdateResultsWithValueData( const SVString&
 
 	if ( !p_rValueRef.IsEntireArray() )
 	{
+		///if this is an Array this is Zerro based!!!!
 		l_GetStatus = p_rValueRef.GetValue( l_Storage.m_Variant.GetVARIANT() );
 
 		if( l_GetStatus == S_OK )

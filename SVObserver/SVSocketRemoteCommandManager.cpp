@@ -834,7 +834,8 @@ HRESULT SVRemoteCommandFunctions::GetItems( const std::string& p_rJsonCommand, s
 
 	if( !( l_Names.empty() ) )
 	{
-		l_Status = SVVisionProcessorHelper::Instance().GetItems( l_Names, l_Items );
+		bool OneBased(true);
+		l_Status = SVVisionProcessorHelper::Instance().GetItems( l_Names, l_Items, OneBased );
 
 		Json::Value l_ValueArray(Json::arrayValue);
 		Json::Value l_ImageArray(Json::arrayValue);
@@ -1619,7 +1620,8 @@ HRESULT SVRemoteCommandFunctions::SetItems( const std::string& p_rJsonCommand, s
 	{
 		if( !( l_Items.empty() ) )
 		{
-			l_Status = SVVisionProcessorHelper::Instance().SetItems( l_Items, l_ResultStatus );
+			bool OneBased(true);
+			l_Status = SVVisionProcessorHelper::Instance().SetItems( l_Items, l_ResultStatus,OneBased );
 		}
 		else
 		{

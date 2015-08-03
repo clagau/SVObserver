@@ -36,6 +36,7 @@ public:
 		return (static_cast<SVValueObjectClass*>(m_pObject))->SetValueAtConvert(iBucket, ::atol( m_NameInfo.m_Index.c_str() ), value);
 	}
 
+	//ZeroBased Index 
 	template <typename T>
 	__forceinline HRESULT GetValue(T& rValue) const
 	{
@@ -43,6 +44,7 @@ public:
 		return (static_cast<SVValueObjectClass*>(m_pObject))->GetValueAt((static_cast<SVValueObjectClass*>(m_pObject))->m_iLastSetIndex, ::atol( m_NameInfo.m_Index.c_str() ), rValue);
 	}
 
+	//OneBased Index  
 	template <typename T>
 	__forceinline HRESULT GetValue(int iBucket, T& rValue) const
 	{

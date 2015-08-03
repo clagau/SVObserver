@@ -41,6 +41,16 @@ struct SVObjectNameInfo
 	void RemoveBottomName();
 	long GetIndexValue() const;
 
+	//************************************
+	//! Adds delta to the Index 
+	//! \param p_rNameInfo [in,out]
+	//! \param p_rObjectName [in]
+	//! \param delta [in]
+	//! \param newName [out] Name with new Index 
+	//! \returns int new IndexNumber if Index is available else -1 
+	//************************************
+	static  int IncrementIndex(SVObjectNameInfo& p_rNameInfo, const SVString& p_rObjectName, int delta, SVString& newName  );
+
 	SVNameDeque m_NameArray;
 
 	bool m_IndexPresent;

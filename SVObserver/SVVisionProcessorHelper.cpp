@@ -359,20 +359,33 @@ HRESULT SVVisionProcessorHelper::GetDataDefinitionList( const SVString& p_rInspe
 	return l_Status;
 }
 
-HRESULT SVVisionProcessorHelper::GetItems( const SVNameSet& p_rNames, SVNameStorageResultMap& p_rItems ) const
+HRESULT SVVisionProcessorHelper::GetItems( const SVNameSet& p_rNames, SVNameStorageResultMap& p_rItems , bool isOneBased ) const
 {
 	typedef std::map< SVString, SVNameSet > SVNameSetMap;
 
 	HRESULT l_Status = S_OK;
 
 	SVNameSetMap l_NameSets;
+	std::map<SVString,SVString> Internal_DisplayNameMap;
 
 	for( SVNameSet::const_iterator l_Iter = p_rNames.begin(); l_Iter != p_rNames.end(); ++l_Iter )
 	{
 		SVObjectNameInfo l_Info;
+		
+		
+		const SVString* pInputName = &(*l_Iter);
+		SVString InputName;
+		
+		HRESULT l_LoopStatus = SVObjectNameInfo::ParseObjectName( l_Info, *pInputName );
 
-		HRESULT l_LoopStatus = SVObjectNameInfo::ParseObjectName( l_Info, *l_Iter );
-
+		if(isOneBased && l_Info.m_IndexPresent)
+		{
+			int Increment = -1;
+			SVObjectNameInfo::IncrementIndex(l_Info, *pInputName, Increment , InputName  );
+			pInputName =  &(InputName);
+			Internal_DisplayNameMap[InputName] =   *l_Iter;
+		}
+		
 		if( l_LoopStatus == S_OK )
 		{
 			if( 0 < l_Info.m_NameArray.size() )
@@ -382,11 +395,11 @@ HRESULT SVVisionProcessorHelper::GetItems( const SVNameSet& p_rNames, SVNameStor
 				//If name is found in list then use it otherwise use the standard method
 				if( l_FunctorIter != m_GetItemsFunctors.end() )
 				{
-					l_NameSets[ l_FunctorIter->first ].insert( *l_Iter );
+					l_NameSets[ l_FunctorIter->first ].insert( *pInputName );
 				}
 				else
 				{
-					l_NameSets[ StandardItems ].insert( *l_Iter );
+					l_NameSets[ StandardItems ].insert( *pInputName );
 				}
 			}
 			else
@@ -416,12 +429,34 @@ HRESULT SVVisionProcessorHelper::GetItems( const SVNameSet& p_rNames, SVNameStor
 
 		if( l_FunctorIter != m_GetItemsFunctors.end() )
 		{
+			
 			SVNameStorageResultMap l_Items;
 
 			HRESULT l_LoopStatus = l_FunctorIter->second( l_NameIterator->second, l_Items );
+			if(Internal_DisplayNameMap.size() == 0 )
+			{
+				p_rItems.insert( l_Items.begin(), l_Items.end() );
+			}			
+			else
+			{	
+				SVNameStorageResultMap::iterator NameStorageResultMapIt = l_Items.begin();
+				for(;NameStorageResultMapIt != l_Items.end();++NameStorageResultMapIt)
+				{
+					std::map<SVString,SVString>::iterator foundIterator  =  Internal_DisplayNameMap.find(NameStorageResultMapIt->first);
+					SVString DisplayName; 
 
-			p_rItems.insert( l_Items.begin(), l_Items.end() );
+					if( foundIterator != Internal_DisplayNameMap.end())
+					{
+						DisplayName = foundIterator->second;
+						p_rItems.insert( pair< SVString, SVStorageResult >(DisplayName, NameStorageResultMapIt->second ));
+					}
+					else
+					{
+						p_rItems.insert( pair< SVString, SVStorageResult >(NameStorageResultMapIt->first, NameStorageResultMapIt->second ));
+					}	
 
+				}
+			}
 			if( l_Status == S_OK )
 			{
 				l_Status = l_LoopStatus;
@@ -441,7 +476,7 @@ HRESULT SVVisionProcessorHelper::GetItems( const SVNameSet& p_rNames, SVNameStor
 	return l_Status;
 }
 
-HRESULT SVVisionProcessorHelper::SetItems( const SVNameStorageMap& p_rItems, SVNameStatusMap& rStatusOfItems )
+HRESULT SVVisionProcessorHelper::SetItems( const SVNameStorageMap& p_rItems, SVNameStatusMap& rStatusOfItems, bool isOneBased )
 {
 	typedef std::map< SVString, SVNameStorageMap > SVStringNameStorageMap;
 
@@ -449,11 +484,25 @@ HRESULT SVVisionProcessorHelper::SetItems( const SVNameStorageMap& p_rItems, SVN
 
 	SVStringNameStorageMap l_NameStorageItems;
 
+	std::map<SVString,SVString> Internal_DisplayNameMap;
+
+
 	for( SVNameStorageMap::const_iterator l_Iter = p_rItems.begin(); l_Iter != p_rItems.end(); ++l_Iter )
 	{
 		SVObjectNameInfo l_Info;
 
 		HRESULT l_LoopStatus = SVObjectNameInfo::ParseObjectName( l_Info, l_Iter->first );
+
+		const SVString* pInputName = &( l_Iter->first);
+		SVString InputName;
+		if(isOneBased && l_Info.m_IndexPresent)
+		{
+			int Increment = -1;
+			SVObjectNameInfo::IncrementIndex(l_Info, *pInputName, Increment , InputName  );
+			pInputName =  &(InputName);
+			Internal_DisplayNameMap[InputName] =   l_Iter->first;
+			
+		}
 
 		if( l_LoopStatus == S_OK )
 		{
@@ -463,11 +512,13 @@ HRESULT SVVisionProcessorHelper::SetItems( const SVNameStorageMap& p_rItems, SVN
 
 				if( l_FunctorIter != m_SetItemsFunctors.end() )
 				{
-					l_NameStorageItems[ l_FunctorIter->first ].insert( *l_Iter );
+					//l_NameStorageItems[ l_FunctorIter->first ].insert( *l_Iter );
+					l_NameStorageItems[ l_FunctorIter->first ].insert(  pair<SVString, SVStorage>(*pInputName,l_Iter->second)  );
 				}
 				else
 				{
-					l_NameStorageItems[ StandardItems ].insert( *l_Iter );
+					//l_NameStorageItems[ StandardItems ].insert( *l_Iter );
+					l_NameStorageItems[ StandardItems ].insert(  pair<SVString, SVStorage>(*pInputName,l_Iter->second)  );;
 				}
 			}
 			else
@@ -498,11 +549,26 @@ HRESULT SVVisionProcessorHelper::SetItems( const SVNameStorageMap& p_rItems, SVN
 		if( l_FunctorIter != m_SetItemsFunctors.end() )
 		{
 			SVNameStatusMap l_StatusItems;
-
 			HRESULT l_LoopStatus = l_FunctorIter->second( l_NameIterator->second, l_StatusItems );
+	
+			SVNameStatusMap::iterator StatusItemIt =  l_StatusItems.begin();
+			for(; StatusItemIt != l_StatusItems.end(); ++StatusItemIt)
+			{
+				std::map<SVString,SVString>::iterator foundIterator  =  Internal_DisplayNameMap.find(StatusItemIt->first);
+				SVString DisplayName; 
 
-			rStatusOfItems.insert( l_StatusItems.begin(), l_StatusItems.end() );
+				if( foundIterator != Internal_DisplayNameMap.end())
+				{
+					DisplayName = foundIterator->second;
+					rStatusOfItems.insert(std::pair< SVString, HRESULT >(DisplayName, StatusItemIt->second) );
 
+				}
+				else
+				{
+					rStatusOfItems.insert(std::pair< SVString, HRESULT >(StatusItemIt->first, StatusItemIt->second) );
+				}	
+			
+			}
 			if( l_Status == S_OK )
 			{
 				l_Status = l_LoopStatus;

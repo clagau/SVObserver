@@ -20,6 +20,27 @@ static void StripSpaces(std::string& rStr)
 	boost::algorithm::trim(rStr);
 }
 
+
+int  SVObjectNameInfo::IncrementIndex(SVObjectNameInfo& rNameInfo, const SVString& rObjectName, int delta, SVString& rNewObjectName  )
+{
+
+	long Index(-1);
+	rNewObjectName = rObjectName;
+	if(rNameInfo.m_IndexPresent)
+	{
+		Index = ::atol( rNameInfo.m_Index.c_str() ); 
+		SVString From;
+		From.Format("[%i]",Index);
+		Index += delta;
+		SVString To;
+		To.Format("[%i]",Index);
+		rNewObjectName.replace(From.c_str(),To.c_str());
+		rNameInfo.m_Index.Format("%i",Index );
+	}
+
+	return Index;
+}
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // indexes are one-based and specified with []
 // {} inside index block defines default value

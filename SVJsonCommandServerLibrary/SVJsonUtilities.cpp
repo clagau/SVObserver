@@ -108,7 +108,8 @@ HRESULT SVJsonUtilities::ConvertVariantToJsonValue( const _variant_t& p_rVariant
 			{
 				_variant_t l_Value;
 				Json::Value l_JsonValue;
-				SVSAFEARRAY::size_type l_Index = i + l_Bounds[ i ].lLbound;
+				//@mec  fix for SVO775
+				SVSAFEARRAY::size_type l_Index = i + l_Bounds[ 0 ].lLbound;
 
 				HRESULT l_TempStatus = l_SafeArray.GetElement( l_Index, l_Value );
 
