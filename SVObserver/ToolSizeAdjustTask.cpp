@@ -691,6 +691,9 @@ HRESULT ToolSizeAdjustTask::EnsureInFriendList(SVToolClass *pTool, bool AllowFul
 	}
 	if(nullptr != pToolSizeAdjustTask)
 	{
+		pToolSizeAdjustTask->m_AllowAdjustPosition = AllowAdjustPosition;
+		pToolSizeAdjustTask->m_AllowAdjustSize = AllowAdjustSize;
+		pToolSizeAdjustTask->m_AllowFullSize = AllowFullsize;
 		hres = pToolSizeAdjustTask->SetExtendPropertyAutoReset();
 	}
 	return hres;
