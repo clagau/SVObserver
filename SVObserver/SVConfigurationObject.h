@@ -36,7 +36,6 @@ class SVDeviceParamCollection;
 class SVDeviceParam;
 class SVIOController;
 class SVNavigateTreeClass;
-class SVPLCDataController;
 class SVRemoteOutputGroup;
 class SVRemoteOutputObject;
 class SVCameraTriggerClass;
@@ -187,20 +186,7 @@ public:
 
 	SVIOController* GetIOController() const;
 	SVGUID GetIOControllerID() const;
-#ifndef _WIN64
-	SVPLCDataController* GetPLCData() const;
-	size_t GetPLCCount() const;
-	void SetupPLC();
-	HRESULT GetPLCs( std::vector<CString>& p_astrPLCIds ) const;
-	LPCSTR GetConnectString() const;
-	long GetQueueSize( const CString& p_strPLC ) const;
-	HRESULT GetHeartBeatAddress( CString& p_strHeartBeatAddress ) const;
-	HRESULT GetHeartBeatTime( long& p_lTime ) const;
-	HRESULT GetPLCControlData( SVMaterials& p_rMaterials, const CString& p_strPLC ) const;
-	HRESULT SetPLCControlData( SVMaterials& p_rMaterials, const CString& p_strPLC );
-	CString AssociatePPQToPLC( const CString& p_strPPQ );
-	HRESULT WriteOutputs( const CString& p_strPLCName, SVProductInfoStruct *pProduct);
-#endif
+
 	SVGUID GetRemoteOutputController() const;
 	size_t GetRemoteOutputGroupCount() const;
 	void SetupRemoteOutput();

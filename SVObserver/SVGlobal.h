@@ -653,43 +653,6 @@ int SVCompareNoCase( LPCTSTR TStrString1, LPCTSTR TStrString2 );
 
 
 ////////////////////////////////////////////////////////////////////////////////
-// .Title       : SVGetPLCBaseAddress
-// -----------------------------------------------------------------------------
-// .Description : Separates and returns PLC Address in RPLCBase, if successfully
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :19.07.1999 RO			First Implementation
-////////////////////////////////////////////////////////////////////////////////
-BOOL SVGetPLCBaseAddress( CString& RPLCBase, const CString& RItem );
-
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : SVGetPLCOffset
-// -----------------------------------------------------------------------------
-// .Description : Returns Offset of PLC Address, if successfully;
-//				: Otherwise -1 !
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :19.07.1999 RO			First Implementation
-////////////////////////////////////////////////////////////////////////////////
-int SVGetPLCOffset( LPCTSTR TStrPLCAddress );
-
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : SVComparePLCAddresses
-// -----------------------------------------------------------------------------
-// .Description : Compares two PLC Addresses without regarding the case.
-//				: If a Address1 pointer is NULL, he is lesser. 
-//				: If both Address pointer are NULL, 0 is returned!
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :19.07.1999 RO			First Implementation
-////////////////////////////////////////////////////////////////////////////////
-int SVComparePLCAddresses( LPCTSTR TStrAddress1, LPCTSTR TStrAddress2 );
-
-
-////////////////////////////////////////////////////////////////////////////////
 // .Title       : SVEscapeDoubleQuotes
 // -----------------------------------------------------------------------------
 // .Description : Places escape character before double quotes in a CString

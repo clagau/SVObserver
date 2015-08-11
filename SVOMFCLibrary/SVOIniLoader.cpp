@@ -150,7 +150,6 @@ HRESULT SVOIniLoader::LoadHardwareIni(LPCTSTR hardwareIniFile, LPCTSTR modelOpti
 	m_csDigitalBoardName = _T( "Unknown board" );
 	m_csRAIDBoardName = _T( "Unknown board" );
 	
-	m_csPLCDLL = _T("plc_interface.dll");
 	m_csIOBoardOption = _T("10");
 
 	m_Opto22InputInvert = _T( "N" );
@@ -308,11 +307,6 @@ HRESULT SVOIniLoader::LoadHardwareIni(LPCTSTR hardwareIniFile, LPCTSTR modelOpti
 			}
 		}
 
-		l_svINI.GetValue( m_csPLCDLL, "PlcDLL", "plc_interface.dll", &l_bstrValue, hardwareIniFile );
-		if( ::SysStringLen( l_bstrValue ) > 0 )
-		{
-			m_csPLCDLL = l_bstrValue ;
-		}
 	}
 
 	l_svINI.GetValue( "Options", modelOptions, "", &l_bstrValue, hardwareIniFile );

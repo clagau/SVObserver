@@ -87,11 +87,6 @@ SVIOController::~SVIOController()
 
 void SVIOController::LocalDestroy()
 {
-#ifndef _WIN64
-	// Destroy PLC
-	m_PLCData.Destroy();
-	TheSVObserverApp.m_PLCManager.ClosePLC();
-#endif
 
 	if( m_pRemoteOutputController != NULL )
 	{
@@ -166,10 +161,7 @@ BOOL SVIOController::SetParameters( SVTreeType& rTree, SVTreeType::SVBranchHandl
 
 			m_pRemoteOutputController = NULL;
 		}
-#ifndef _WIN64
-		// Set PLC Data
-		bOk &= m_PLCData.SetParameters( rTree, htiIODoc );
-#endif
+
 		m_pRemoteOutputController = new SVRemoteOutputDataController;
 
 		bOk &= ( m_pRemoteOutputController != NULL );
@@ -194,10 +186,7 @@ BOOL SVIOController::GetParameters( SVTreeType& rTree, SVTreeType::SVBranchHandl
 
 	svVariant = SVGUID( outObjectInfo.UniqueObjectID ).ToVARIANT();
 	SVNavigateTreeClass::AddItem( rTree, htiParent, CTAG_UNIQUE_REFERENCE_ID, svVariant );
-#ifndef _WIN64
-	// PLC Data....
-	bOk &= m_PLCData.GetParameters( rTree, htiParent );
-#endif
+
 	if( m_pRemoteOutputController != NULL )
 	{
 		// Remote Outputs
@@ -406,67 +395,6 @@ SVIODoc* SVIOController::GetIODoc() const
 	return SVObjectManagerClass::Instance().GetIODoc( GetUniqueObjectID() );
 }
 
-#ifndef _WIN64
-SVPLCDataController* SVIOController::GetPLCData()
-{
-	return &m_PLCData;
-}
-
-size_t SVIOController::GetPLCCount() const
-{
-	return m_PLCData.GetPLCCount();
-}
-
-void SVIOController::SetupPLC(SVConfigurationObject* pConfig )
-{
-	m_PLCData.SetupPLC( pConfig );
-}
-
-HRESULT SVIOController::GetPLCs( std::vector<CString>& p_astrPLCIds )
-{
-	return m_PLCData.GetPLCs( p_astrPLCIds );
-}
-
-LPCSTR SVIOController::GetConnectString()
-{
-	return m_PLCData.GetConnectString();
-}
-
-long SVIOController::GetQueueSize( const CString& p_strPLC )
-{
-	return m_PLCData.GetQueueSize( p_strPLC );
-}
-
-HRESULT SVIOController::GetHeartBeatAddress( CString& p_strHeartBeatAddress )
-{
-	return m_PLCData.GetHeartBeatAddress( p_strHeartBeatAddress );
-}
-
-HRESULT SVIOController::GetHeartBeatTime( long& p_lTime )
-{
-	return m_PLCData.GetHeartBeatTime( p_lTime );
-}
-
-HRESULT SVIOController::GetPLCControlData( SVMaterials& p_rMaterials, const CString& p_strPLC )
-{
-	return m_PLCData.GetPLCControlData( p_rMaterials, p_strPLC );
-}
-
-HRESULT SVIOController::SetPLCControlData( SVMaterials& p_rMaterials, const CString& p_strPLC )
-{
-	return m_PLCData.SetPLCControlData( p_rMaterials, p_strPLC );
-}
-
-CString SVIOController::AssociatePPQToPLC( const CString& p_strPPQ )
-{
-	return m_PLCData.AssociatePPQToPLC( p_strPPQ );
-}
-
-HRESULT SVIOController::WriteOutputs( const CString& p_strPLCName, SVProductInfoStruct *pProduct)
-{
-	return m_PLCData.WriteOutputs( p_strPLCName, pProduct );
-}
-#endif
 
 SVGUID SVIOController::GetRemoteOutputController() const
 {

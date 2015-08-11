@@ -43,7 +43,6 @@ public:
 	CMenu m_ContextMenuProp;
 	CMenu m_ContextMenuItem;
 	CMenu m_ContextMenuItemNoDelete;
-	CString m_strCurrentPLCId;
 	int m_CurrentItem;
 
 #ifdef _DEBUG

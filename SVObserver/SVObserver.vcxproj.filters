@@ -1259,39 +1259,6 @@
     <ClCompile Include="SVIntekDCamDriverProxy.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVPLCAddRemoveDlg.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVPLCControlPar.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVPLCDataController.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVPLCListCtrl.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVPLCManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVPLCOutput.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVPLCOutputEditDialog.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVPLCOutputsView.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVPLCPropPageList.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVPLCPropPageStart.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVPLCPropSheet.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVImportedInspectionInfo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -2907,39 +2874,6 @@
     <ClInclude Include="SVIntekDCamDriverProxy.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVPLCAddRemoveDlg.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVPLCControlPar.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVPLCDataController.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVPLCListCtrl.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVPLCManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVPLCOutput.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVPLCOutputEditDialog.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVPLCOutputsView.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVPLCPropPageList.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVPLCPropPageStart.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVPLCPropSheet.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVIPDocInfoImporter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -3082,9 +3016,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="RemoteCommand.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVPLCValidateReasons.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVPPQConstants.h">

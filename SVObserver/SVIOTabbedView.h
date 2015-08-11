@@ -20,7 +20,6 @@ enum SVTabbedViewSplitterIDEnum
 	SVIODiscreteInputsViewID = 2,
 	SVIORemoteInputsViewID = 3,
 	SVIODiscreteOutputsViewID = 5,
-	SVIOPLCOutputsViewID = 6,
 	SVRemoteOutputsViewID = 8,
 	SVRemoteMonitorListViewID = 9,
 	SVGlobalConstantViewID = 10,

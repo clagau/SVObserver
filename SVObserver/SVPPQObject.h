@@ -167,11 +167,6 @@ public:
 	SVInputObjectList*    m_pInputList;
 	SVOutputObjectList*   m_pOutputList;
 
-	// PLC Connection String
-	HRESULT SetPLCName( CString p_rstrName );
-	HRESULT GetPLCName( CString& p_rstrName ) const;
-	const CString& GetPLCName() const;
-
 	SVDWordValueObjectClass m_voOutputState;
 	SVLongValueObjectClass m_voTriggerCount;
 
@@ -377,9 +372,6 @@ protected:
 
 	// Pointers to the Master Lists
 	SVCameraInfoMap m_Cameras;
-
-	// PLC string Identifier - example : PLC_1
-	CString	m_strPLCId;
 
 private:
 	void AssignCameraToAcquisitionTrigger();

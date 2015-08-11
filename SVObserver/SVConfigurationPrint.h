@@ -35,7 +35,8 @@ class SVTaskObjectListClass;
 class SVDiscreteInputsView;
 class SVDiscreteOutputsView;
 class SVDeviceParamConfigPrintHelper;
-#pragma endregion Declarations
+#pragma endregion Declarations
+
 
 class SVConfigurationPrint : public CCmdTarget
 {

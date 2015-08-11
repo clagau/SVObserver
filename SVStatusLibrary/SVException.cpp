@@ -19,21 +19,21 @@
 #define SVACCESSSOURCE _T("SVAccess")
 
 static const UINT CategoryNr = 31;
-static const UINT CategoryBase = FAC_SVPLC;
+static const UINT CategoryBase = FAC_UNUSED01;
 static const TCHAR CategoryUnknown[] = _T("Unknown");
 static const TCHAR CategoryNone[] = _T("None");
 static const TCHAR CategorySystem[] = _T("System");
 static const TCHAR CategoryApplication[] = _T("Application");
-static const TCHAR TaskCategory[][CategoryNr]= { _T("SVPLC"), _T("SVBatchReport"), _T("SVFocusNT"), _T("SVFocusDB"), _T("SVFocusDBManager"),
+static const TCHAR TaskCategory[][CategoryNr]= { _T("Unused01"), _T("SVBatchReport"), _T("SVFocusNT"), _T("SVFocusDB"), _T("SVFocusDBManager"),
 								_T("SVIMCommand"), _T("SVIPC"), _T("SVLanguageManager"), _T("SVLibrary"), _T("SVPipes"), 
-								_T("SVPLCCommand"), _T("SVTCPIP"), _T("SVObserver"), _T("SVSecurity"), _T("SVPLCRSLinx"),
+								_T("Unused02"), _T("SVTCPIP"), _T("SVObserver"), _T("SVSecurity"), _T("Unused03"),
 								_T("SVMachineMessage"), _T("SVCmdComServer"), _T("SVCmdComClient"), _T("SVDataManager"),
 								_T("SVAccess"), _T("SVIntek"), _T("SVImageCompression"), _T("SVEquation"), _T("SVFileAcquisition"),
 								_T("SVMatroxGige"), _T("SVTVicLpt"), _T("SVOLibrary"), _T("SVSystemLibrary"), _T("SVMatroxLibrary"),
 								_T("SVCI"), _T("SVXMLLibrary") };
 				
 /*
-This parameterized constructer is used to fill this class with all of the appropriate data to be maintained for later use.
+This parameterized constructor is used to fill this class with all of the appropriate data to be maintained for later use.
 */				
 SVException::SVException(long ErrorCode, TCHAR* szCompileDate, TCHAR* szCompileTime, LPCTSTR sErrorText, 
 						 TCHAR* szSourceFile, long SourceLine, TCHAR* szSourceDateTime, DWORD dwProgramCode, 

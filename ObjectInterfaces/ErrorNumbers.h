@@ -170,7 +170,6 @@ namespace Seidenader { namespace ObjectInterfaces
 	static const int Err_17036_ErrorGettingOutputs = BRW_ErrorBase + 36;
 	static const int Err_17037_ErrorGettingPPQCount = BRW_ErrorBase + 37;
 	static const int Err_17038_ErrorGettingPPQ = BRW_ErrorBase + 38;
-	static const int Err_17039_ErrorGettingPLCData = BRW_ErrorBase + 39;
 	static const int Err_17040_ErrorGettingPPQCount = BRW_ErrorBase + 40;
 	static const int Err_17041_ErrorGettingInputs = BRW_ErrorBase + 41;
 	static const int Err_17042_ErrorGettingInputs = BRW_ErrorBase + 42;

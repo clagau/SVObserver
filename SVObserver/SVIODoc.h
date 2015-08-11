@@ -30,7 +30,6 @@ public:
 	//{{AFX_MSG(SVIODoc)
 	afx_msg void OnExtrasTestoutputs();
 	afx_msg void OnExtrasEditRemoteInputs();
-	afx_msg void OnEditEditplcoutputs();
 	afx_msg void OnEditGlobalConstantAdd();
 	afx_msg void OnUpdateFileExit(CCmdUI* pCmdUI);
 	//}}AFX_MSG

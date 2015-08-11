@@ -538,16 +538,6 @@ BOOL SVPPQObject::Create()
 	m_voDataValid.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
 	m_voOutputState.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
 
-#ifndef _WIN64
-	// This is the temporary PPQ_? to PLC_? connection
-	SVConfigurationObject* pConfig( nullptr );
-	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
-
-	if( nullptr != pConfig )
-	{
-		m_strPLCId = pConfig->AssociatePPQToPLC( GetName() );
-	}
-#endif
 
 	m_TriggerToggle = false;
 	m_OutputToggle = false;
@@ -2351,14 +2341,7 @@ BOOL SVPPQObject::WriteOutputs( SVProductInfoStruct *pProduct )
 			SVConfigurationObject* pConfig( nullptr );
 			SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
-#ifndef _WIN64
-			// Do not call the PLC write Outputs if it is empty.
-			if( nullptr != pConfig && 0 < pConfig->GetPLCCount() )
-			{
-				// PLC Outputs......
-				HRESULT l_hr = pConfig->WriteOutputs( GetPLCName(), pProduct );
-			}
-#endif
+
 			if( !m_pDataValid.empty() )
 			{
 				bool l_bValue=false;
@@ -3550,9 +3533,7 @@ BOOL SVPPQObject::FinishTrigger( void *pCaller, SVTriggerInfoStruct& p_rTriggerI
 			case SVPPQTimeDelayMode :
 			case SVPPQTimeDelayAndDataCompleteMode :
 			{
-				// We need to reset the outputs in some modes so that the PLC can see the change after the delay
 				ResetOutputs();
-
 				break;
 			}
 		}
@@ -4490,25 +4471,6 @@ HRESULT SVPPQObject::GetProduct( SVProductInfoStruct& p_rProduct, long lProcessC
 
 	return l_Status;
 }
-
-#ifndef _WIN64
-HRESULT SVPPQObject::SetPLCName( CString p_rstrName )
-{
-	m_strPLCId = p_rstrName;
-	return S_OK;
-}
-
-HRESULT SVPPQObject::GetPLCName( CString& p_rstrName ) const
-{
-	p_rstrName = m_strPLCId;
-	return S_OK;
-}
-
-const CString& SVPPQObject::GetPLCName() const
-{
-	return m_strPLCId;
-}
-#endif
 
 void SVPPQObject::PersistInputs(SVObjectWriter& rWriter)
 {

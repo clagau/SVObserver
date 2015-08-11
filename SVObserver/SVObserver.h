@@ -26,9 +26,7 @@
 #include "SVOIntelRAIDStatusClass.h"
 #include "SVUtilityIniClass.h"
 #include "SVIOTabbedView.h"
-#ifndef _WIN64
-#include "SVPLCManager.h"
-#endif
+
 #include "SVConfigurationLibrary/SVObserverEnums.h"
 #pragma endregion Includes
 
@@ -77,8 +75,7 @@ enum SVHardwareErrorEnums
 	SV_GO_ONLINE_FAILURE_INSPECTION      = 0xC0040000L,
 	SV_GO_ONLINE_FAILURE_ACQUISITION     = 0xC0080000L,
 	SV_GO_ONLINE_FAILURE_TRIGGER         = 0xC0100000L,
-	SV_GO_ONLINE_FAILURE_PLC			 = 0xC0200000L,
-	SV_GO_ONLINE_FAILURE_ALL             = 0xC03F0000L, // this is all the above combined
+	SV_GO_ONLINE_FAILURE_ALL             = 0xC01F0000L, // this is all the above combined
 };
 
 typedef SVXMLMaterialsTree SVTreeType;
@@ -132,9 +129,6 @@ public:
 	afx_msg void OnUpdateEditEditTool(CCmdUI* PCmdUI);
 	afx_msg void OnUpdateEditEditToolSetCondition(CCmdUI* PCmdUI);
 	afx_msg void OnUpdateEditRemoteInputs(CCmdUI* PCmdUI);
-#ifndef _WIN64
-	afx_msg void OnUpdateEditEditPLCOutputs(CCmdUI *pCmdUI);
-#endif
 	afx_msg void OnUpdateEditAddRemoteOutputs(CCmdUI *pCmdUI);
 	afx_msg void OnUpdateExtrasLightReference(CCmdUI* PCmdUI);
 	afx_msg void OnUpdateFilePrintPreview(CCmdUI* PCmdUI);
@@ -219,9 +213,6 @@ public:
 	afx_msg void OnUpdateAddCylindricalWarpTool( CCmdUI* PCmdUI );
 	afx_msg void OnUpdateAddPerspectiveTool(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateExtrasSecuritySetup(CCmdUI* pCmdUI);
-#ifndef _WIN64
-	afx_msg void OnEditPLCOutputs();
-#endif
 	afx_msg void OnEditRemoteOutputs();
 	afx_msg void OnEditPublishedResults( UINT nID );
 	afx_msg void OnRCClose();
@@ -284,9 +275,7 @@ public:
 
 	BOOL CheckSVIMType() const;
 	SVIMProductEnum GetSVIMType() const;
-#ifndef _WIN64
-	CString GetPLCDLL() const;
-#endif
+
 	bool IsProductTypeRAID() const;
 	void ValidateMRUList();
 
@@ -353,9 +342,6 @@ public:
 	void ResetAllIPDocModifyFlag(BOOL bModified);
 
 	bool SetActiveIOTabView( SVTabbedViewSplitterIDEnum p_eTabbedID );
-#ifndef _WIN64
-	void HidePLCTab();
-#endif
 	void HideRemoteOutputTab();
 	void HideRemoteMonitorListTab();
 	void HideIOTab( DWORD p_dwID );
@@ -466,9 +452,7 @@ public:
 	SVXMLMaterialsTree m_XMLTree;
 	SVXMLMaterialsTree::SVBranchHandle m_Inspection;
 
-#ifndef _WIN64
-	SVPLCManager m_PLCManager;
-#endif
+
 #pragma endregion Public Member variables
 
 #pragma region Member variables
@@ -562,9 +546,7 @@ private:
 	CString m_csDigitalDLL;
 	CString m_csDigitalOption;			// TRB - Added to have a parameter to send to Rabbit Board.
 
-#ifndef _WIN64
-	CString m_csPLCDLL;
-#endif
+
 	CString m_csReloadTriggerDLL;
 	CString m_csReloadAcquisitionDLL;
 	CString m_csReloadDigitalDLL;

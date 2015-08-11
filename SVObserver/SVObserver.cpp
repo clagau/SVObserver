@@ -88,9 +88,7 @@
 #include "SV1394CameraFileLibrary/SVDCamFactoryRegistrar.h"
 
 #include "SVIOController.h"
-#ifndef _WIN64
-#include "SVPLCOutputsView.h"
-#endif
+
 #include "SVDirectX.h"
 #include "SVHardwareManifest.h"
 #include "SVTriggerProcessingClass.h"
@@ -335,10 +333,6 @@ BEGIN_MESSAGE_MAP(SVObserverApp, CWinApp)
 	ON_COMMAND( SV_AUTO_RUN_LAST_MRU, OnRunMostRecentMRU )
 	ON_COMMAND(ID_RC_CLOSE, OnRCClose)
 
-#ifndef _WIN64
-	ON_COMMAND(ID_EDIT_EDITPLCOUTPUTS, &SVObserverApp::OnEditPLCOutputs)
-	ON_UPDATE_COMMAND_UI(ID_EDIT_EDITPLCOUTPUTS, &SVObserverApp::OnUpdateEditEditPLCOutputs)
-#endif
 	ON_COMMAND(ID_EDIT_ADD_REMOTE_OUTPUTS, &SVObserverApp::OnEditRemoteOutputs)
 	ON_UPDATE_COMMAND_UI(ID_EDIT_ADD_REMOTE_OUTPUTS, &SVObserverApp::OnUpdateEditAddRemoteOutputs)
 	ON_COMMAND_RANGE(ID_EDIT_PUBLISHEDRESULTS_BASE, ID_EDIT_PUBLISHEDRESULTS_LIMIT, &SVObserverApp::OnEditPublishedResults)
@@ -518,19 +512,13 @@ void SVObserverApp::OnFileNewConfig()
 			{
 				SetModeEdit( false );
 			}
-			// Logic to remove unused IO Tabs PLC and Remote inputs.
-			// PLC Inputs
+			// Logic to remove unused remote inputs.
 			SVConfigurationObject* pConfig( nullptr );
 			SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
 			if( nullptr != pConfig )
 			{
-#ifndef _WIN64
-				if( pConfig->GetPLCCount() == 0 )
-				{
-					HideIOTab( SVIOPLCOutputsViewID );
-				}
-#endif
+
 				if( pConfig->GetRemoteOutputGroupCount() == 0)
 				{
 					HideIOTab( SVRemoteOutputsViewID );
@@ -539,9 +527,6 @@ void SVObserverApp::OnFileNewConfig()
 			}
 			else
 			{
-#ifndef _WIN64
-				HideIOTab( SVIOPLCOutputsViewID );
-#endif
 				HideIOTab( SVRemoteOutputsViewID );
 			}
 
@@ -1451,26 +1436,6 @@ void SVObserverApp::OnUpdateEditRemoteInputs( CCmdUI* PCmdUI )
 	}
 }
 
-#ifndef _WIN64
-void SVObserverApp::OnUpdateEditEditPLCOutputs( CCmdUI* pCmdUI )
-{
-	pCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) &&	
-		SVSVIMStateClass::CheckState( SV_STATE_EDIT ) );
-
-	SVConfigurationObject* pConfig( nullptr );
-	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
-
-	if( nullptr != pConfig && pConfig->GetPLCCount() == 0 )
-	{
-		pCmdUI->SetText( "Add PLC" );
-	}
-	else
-	{
-		pCmdUI->SetText( "Edit PLC" );
-	}
-}
-#endif
-
 void SVObserverApp::OnUpdateEditAddRemoteOutputs(CCmdUI *pCmdUI)
 {
 	pCmdUI->Enable( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) &&	
@@ -2114,12 +2079,6 @@ void SVObserverApp::OnGoOnline()
 				{
 					l_csMessage =  _T( "Configuration cannot enter Run.  There is an "
 						"unknown error with a Trigger when the system was going online." );
-				}
-				else if ( ( l_hrStatus & SV_GO_ONLINE_FAILURE_PLC ) == 
-					SV_GO_ONLINE_FAILURE_PLC )
-				{
-					l_csMessage =  _T( "Configuration cannot enter Run.  There is an "
-						"unknown error with a PLC." );
 				}
 				else
 				{
@@ -2889,22 +2848,6 @@ void SVObserverApp::OnUpdateExtrasSecuritySetup(CCmdUI* pCmdUI)
 	pCmdUI->Enable( !SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_REGRESSION | SV_STATE_TEST ) );
 }
 
-#ifndef _WIN64
-void SVObserverApp::OnEditPLCOutputs()
-{
-	SVConfigurationObject* pConfig( nullptr );
-	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
-
-	if( nullptr != pConfig )
-	{
-		pConfig->SetupPLC();
-		if( pConfig->GetPLCCount() == 0)
-		{
-			HidePLCTab();
-		}
-	}
-}
-#endif
 
 void SVObserverApp::OnEditRemoteOutputs()
 {
@@ -3781,14 +3724,6 @@ HRESULT SVObserverApp::OpenSVXFile(LPCTSTR PathName)
 
 				GetMainFrame()->OnConfigurationFinishedInitializing();
 
-#ifndef _WIN64
-				if( nullptr != pConfig )
-				{
-					// Initialize the PLC...
-					m_PLCManager.Startup( pConfig );
-				}
-#endif
-
 				l_FinishLoad = SVClock::GetTimeStamp();
 				long l_lTime = static_cast<long>(l_FinishLoad - l_StartLoading);
 
@@ -3878,19 +3813,13 @@ HRESULT SVObserverApp::OpenSVXFile(LPCTSTR PathName)
 		hr = bOk ? S_OK : S_FALSE;
 	}
 
-	// Logic to remove unused IO Tabs PLC and Remote inputs.
-	// PLC Inputs
+	// Logic to remove unused IO Tabs Remote inputs.
 	SVConfigurationObject* pConfig( nullptr );
 	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
 	if( nullptr != pConfig )
 	{
-#ifndef _WIN64
-		if( pConfig->GetPLCCount() == 0 )
-		{
-			HideIOTab( SVIOPLCOutputsViewID );
-		}
-#endif
+
 		if( pConfig->GetRemoteOutputGroupCount() == 0)
 		{
 			HideIOTab( SVRemoteOutputsViewID );
@@ -3904,7 +3833,6 @@ HRESULT SVObserverApp::OpenSVXFile(LPCTSTR PathName)
 	}
 	else
 	{
-		HideIOTab( SVIOPLCOutputsViewID );
 		HideIOTab( SVRemoteOutputsViewID );
 	}
 
@@ -4300,11 +4228,6 @@ HRESULT SVObserverApp::DestroyConfig( BOOL AskForSavingOrClosing /* = TRUE */,
 
 				wait.Restore();
 
-#ifndef _WIN64
-				// PLC stop and close.
-				m_PLCManager.Shutdown();
-				wait.Restore();
-#endif
 
 				SVConfigurationObject* pConfig( nullptr );
 				SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
@@ -4963,13 +4886,6 @@ SVIMProductEnum SVObserverApp::GetSVIMType() const
 
 	return eType;
 }
-
-#ifndef _WIN64
-CString SVObserverApp::GetPLCDLL() const
-{
-	return m_csPLCDLL;
-}
-#endif
 
 bool SVObserverApp::IsProductTypeRAID() const
 {
@@ -6943,30 +6859,12 @@ bool SVObserverApp::SetActiveIOTabView( SVTabbedViewSplitterIDEnum p_eTabbedID )
 		{
 			TVisualObject* l_VisObj = pIOView->m_Framework.Get(p_eTabbedID);
 			pIOView->m_Framework.SetActiveTab( l_VisObj );
-#ifndef _WIN64
-			SVPLCOutputsView* l_pPLCView =  dynamic_cast<SVPLCOutputsView*>(pIOView->GetWindow( GW_HWNDFIRST ));
-			if( l_pPLCView )
-			{
-				OnUpdateAllIOViews(); // OnUpdate( NULL, NULL, NULL );
-			}
-#endif
+
 			l_bRet = true;
 		}
 	}// end if( PIODoc
 	return l_bRet;
 }
-
-#ifndef _WIN64
-// This function Sets the active Tab to inputs view and 
-// Hides the PLC tab
-void SVObserverApp::HidePLCTab()
-{
-	SVMainFrame* pWndMain = ( SVMainFrame* )GetMainWnd();
-	SetActiveIOTabView( SVIODiscreteInputsViewID );
-
-	pWndMain->PostMessage( SV_IOVIEW_HIDE_TAB, SVIOPLCOutputsViewID );
-}
-#endif
 
 void SVObserverApp::HideRemoteOutputTab()
 {
@@ -7027,13 +6925,7 @@ void SVObserverApp::ShowIOTab( DWORD p_dwID )
 				if( l_VisObj )
 				{
 					l_VisObj->ShowTab( true );
-#ifndef _WIN64
-					SVPLCOutputsView* l_pPLCView =  dynamic_cast<SVPLCOutputsView*>(l_VisObj->GetWnd());
-					if( l_pPLCView )
-					{
-						OnUpdateAllIOViews(); // OnUpdate( NULL, NULL, NULL );
-					}
-#endif
+
 				}
 				break;
 			}
@@ -7161,15 +7053,6 @@ HRESULT SVObserverApp::Start()
 	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 	ASSERT( nullptr != pConfig );
 
-#ifndef _WIN64
-	if( nullptr != pConfig && pConfig->GetPLCCount() > 0 )
-	{
-		if( m_PLCManager.TestConnections() == false )
-		{
-			return SV_GO_ONLINE_FAILURE_PLC;
-		}
-	}
-#endif
 
 	if ( m_pMainWnd && nullptr != pConfig)
 	{
@@ -7396,9 +7279,7 @@ HRESULT SVObserverApp::INILoad()
 		m_csTriggerDLL = l_iniLoader.m_csTriggerDLL;
 		m_csSoftwareTriggerDLL = l_iniLoader.m_csSoftwareTriggerDLL;
 		m_csAcquisitionTriggerDLL = l_iniLoader.m_csAcquisitionTriggerDLL;
-#ifndef _WIN64
-		m_csPLCDLL = l_iniLoader.m_csPLCDLL;
-#endif
+
 		m_csReloadDigitalDLL = l_iniLoader.m_csReloadDigitalDLL;
 		m_csReloadAcquisitionDLL = l_iniLoader.m_csReloadAcquisitionDLL;
 		m_csReloadTriggerDLL = l_iniLoader.m_csReloadTriggerDLL;
@@ -8635,10 +8516,6 @@ void SVObserverApp::OnStopAll()
 	}
 }// end OnStopAll
 
-// BRW - PLC has been deprecated.
-/*BEGIN_OBJECT_MAP(ObjectMap)
-OBJECT_ENTRY(CLSID_SVCommand, CSVCommand)
-END_OBJECT_MAP()*/
 
 BOOL SVObserverApp::InitATL()
 {
@@ -9244,7 +9121,7 @@ $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVObserver
  * Checked in by:  mZiegler;  Marc Ziegler
  * Change Description:  
  *   Added regions.
- * Removed unused includes for SVIOChildFrm.h, SVObjectClass.h, SVAcquisitionClass.h, SVConfigurationTags.h, SVLut.h, SVMessage.h, and SVPLCAddRemoveDlg.h.
+ * Removed unused includes for SVIOChildFrm.h, SVObjectClass.h, SVAcquisitionClass.h, SVConfigurationTags.h, SVLut.h, SVMessage.h, and Unused01AddRemoveDlg.h.
  * Added includes for SVDeviceParam.h, RemoteCommand.h, SVIOBoardCapabilities.h, SVInspectionProcess.h, and SVPPQObject.h.
  * Deleted unused enums.
  * Moved the Global functions to RemoteCommand.cpp

@@ -18,7 +18,6 @@ namespace Seidenader
 		const TCHAR* const ErrorGettingInputObjectList = _T( "Error getting input object list." );
 		const TCHAR* const ErrorGettingInputs = _T( "Error getting inputs." );
 		const TCHAR* const ErrorGettingOutputs = _T( "Error getting outputs." );
-		const TCHAR* const ErrorGettingPLCData = _T( "Error getting PLC data." );
 		const TCHAR* const ErrorGettingPPQ = _T( "Error getting PPQ." );
 		const TCHAR* const ErrorGettingPPQCount = _T( "Error getting PPQ count." );
 		const TCHAR* const ErrorGettingTimeStamp = _T( "Error getting time stamp." );

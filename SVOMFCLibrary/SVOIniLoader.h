@@ -54,7 +54,7 @@ public:
 	CString m_csFirmwareArguments;
 
 	CString m_csShowUpdateFirmware;
-	CString m_csPLCDLL;
+
 	CString m_csIOBoardOption;
 	
 	long m_gigePacketSize;

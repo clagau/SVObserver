@@ -461,11 +461,6 @@ BOOL SVConfigurationObject::RemovePPQ( SVPPQObject* pPPQ )
 
 	int iSize;
 
-	// BRW - PLC has been deprecated.
-#ifndef _WIN64
-	TheSVObserverApp.m_PLCManager.DestroyPLC( pPPQ->GetPLCName());
-#endif
-
 	iSize = m_arPPQArray.GetSize();
 	for( int i = 0; i < iSize; i++ )
 	{
@@ -2054,9 +2049,9 @@ HRESULT SVConfigurationObject::LoadConfiguration(SVTreeType& rTree)
 						}
 					}
 					// Update source to remove SVOVariant
-					// PPQ State Variable ....... SCR 615 PLC .........
+					// PPQ State Variable
 					// Load the Unique Reference ID for the PPQ
-					BOOL bTmp = SVNavigateTreeClass::GetItem( rTree, CTAG_PLC_STATE_UNIQUEID, htiSubChild, svValue );
+					BOOL bTmp = SVNavigateTreeClass::GetItem( rTree, CTAG_PPQ_STATE_UNIQUEID, htiSubChild, svValue );
 
 					if( bTmp )
 					{
@@ -2300,19 +2295,6 @@ HRESULT SVConfigurationObject::LoadConfiguration(SVTreeType& rTree)
 						}// end while ( bOk && htiDataChild != NULL )
 					}// end if SVNavigateTreeClass::GetItem( rTree, CTAG_INPUT, htiSubChild, &htiDeviceChild )
 
-					// BRW - PLC has been deprecated.
-#ifndef _WIN64
-					BOOL l_bTmp = SVNavigateTreeClass::GetItem( rTree, CTAG_PLC_ID, htiSubChild, svValue );
-					if( l_bTmp )
-					{
-						CString csName = svValue;
-
-						if(csName.GetLength() > 0 )
-						{
-							pPPQ->SetPLCName( csName );
-						}
-					}
-#endif
 					if ( bOk )
 					{
 						bOk = pPPQ->Create();
@@ -3589,12 +3571,12 @@ BOOL SVConfigurationObject::SavePPQ(SVTreeType& rTree)
 					svValue.Clear();
 				}
 
-				// Save State Objects unique ID.................PLC SCR615...........
+				// Save State Objects unique ID
 				if( bOk )
 				{
 					SVGUID ObjectGuid = pPPQ->m_voOutputState.GetUniqueObjectID();
 					svValue = ObjectGuid.ToVARIANT();
-					bOk = SVNavigateTreeClass::AddItem( rTree, htiSubChild, CTAG_PLC_STATE_UNIQUEID, svValue );
+					bOk = SVNavigateTreeClass::AddItem( rTree, htiSubChild, CTAG_PPQ_STATE_UNIQUEID, svValue );
 					svValue.Clear();
 				}// end if
 
@@ -3668,18 +3650,7 @@ BOOL SVConfigurationObject::SavePPQ(SVTreeType& rTree)
 				// SEJ - 102
 				SVConfigurationTreeWriter< SVTreeType > writer(rTree, htiSubChild);
 				pPPQ->PersistInputs(writer);
-				// BRW - PLC has been deprecated.
-#ifndef _WIN64
-				if( bOk )
-				{
-					_variant_t svVariant;
-					CString csPLCId;
-					pPPQ->GetPLCName( csPLCId );
-					svVariant.SetString( csPLCId );
-					SVNavigateTreeClass::AddItem( rTree, htiSubChild, CTAG_PLC_ID, svVariant );
-					svVariant.Clear();
-				}//*/
-#endif
+
 			}// end if bOk = this->GetPPQ( lPPQ, &pPPQ );
 		}// end for( lPPQ = 0; lPPQ < lPPQCount; lPPQ++ )
 	}// end if ( hBranch != NULL )  // CTAG_PPQ
@@ -4377,171 +4348,7 @@ SVGUID SVConfigurationObject::GetIOControllerID() const
 	return l_ObjectId;
 }
 
-#ifndef _WIN64
-SVPLCDataController* SVConfigurationObject::GetPLCData() const
-{
-	SVPLCDataController* l_pObject = NULL;
 
-	if( m_pIOController != NULL )
-	{
-		l_pObject = m_pIOController->GetPLCData();
-	}
-
-	return l_pObject;
-}
-
-size_t SVConfigurationObject::GetPLCCount() const
-{
-	size_t l_Count = 0;
-
-	if( m_pIOController != NULL )
-	{
-		l_Count = m_pIOController->GetPLCCount();
-	}
-
-	return l_Count;
-}
-
-void SVConfigurationObject::SetupPLC()
-{
-	if( m_pIOController != NULL )
-	{
-		m_pIOController->SetupPLC( this );
-	}
-}
-
-HRESULT SVConfigurationObject::GetPLCs( std::vector<CString>& p_astrPLCIds ) const
-{
-	HRESULT l_Status = S_OK;
-
-	if( m_pIOController != NULL )
-	{
-		l_Status = m_pIOController->GetPLCs( p_astrPLCIds );
-	}
-	else
-	{
-		l_Status = E_FAIL;
-	}
-
-	return l_Status;
-}
-
-LPCSTR SVConfigurationObject::GetConnectString() const
-{
-	LPCSTR l_String = NULL;
-
-	if( m_pIOController != NULL )
-	{
-		l_String = m_pIOController->GetConnectString();
-	}
-
-	return l_String;
-}
-
-long SVConfigurationObject::GetQueueSize( const CString& p_strPLC ) const
-{
-	long l_Size = 0;
-
-	if( m_pIOController != NULL )
-	{
-		l_Size = m_pIOController->GetQueueSize( p_strPLC );
-	}
-
-	return l_Size;
-}
-
-HRESULT SVConfigurationObject::GetHeartBeatAddress( CString& p_strHeartBeatAddress ) const
-{
-	HRESULT l_Status = S_OK;
-
-	if( m_pIOController != NULL )
-	{
-		l_Status = m_pIOController->GetHeartBeatAddress( p_strHeartBeatAddress );
-	}
-	else
-	{
-		l_Status = E_FAIL;
-	}
-
-	return l_Status;
-}
-
-HRESULT SVConfigurationObject::GetHeartBeatTime( long& p_lTime ) const
-{
-	HRESULT l_Status = S_OK;
-
-	if( m_pIOController != NULL )
-	{
-		l_Status = m_pIOController->GetHeartBeatTime( p_lTime );
-	}
-	else
-	{
-		l_Status = E_FAIL;
-	}
-
-	return l_Status;
-}
-
-HRESULT SVConfigurationObject::GetPLCControlData( SVMaterials& p_rMaterials, const CString& p_strPLC ) const
-{
-	HRESULT l_Status = S_OK;
-
-	if( m_pIOController != NULL )
-	{
-		l_Status = m_pIOController->GetPLCControlData( p_rMaterials, p_strPLC );
-	}
-	else
-	{
-		l_Status = E_FAIL;
-	}
-
-	return l_Status;
-}
-
-HRESULT SVConfigurationObject::SetPLCControlData( SVMaterials& p_rMaterials, const CString& p_strPLC )
-{
-	HRESULT l_Status = S_OK;
-
-	if( m_pIOController != NULL )
-	{
-		l_Status = m_pIOController->SetPLCControlData( p_rMaterials, p_strPLC );
-	}
-	else
-	{
-		l_Status = E_FAIL;
-	}
-
-	return l_Status;
-}
-
-CString SVConfigurationObject::AssociatePPQToPLC( const CString& p_strPPQ )
-{
-	CString l_String = 0;
-
-	if( m_pIOController != NULL )
-	{
-		l_String = m_pIOController->AssociatePPQToPLC( p_strPPQ );
-	}
-
-	return l_String;
-}
-
-HRESULT SVConfigurationObject::WriteOutputs( const CString& p_strPLCName, SVProductInfoStruct *pProduct)
-{
-	HRESULT l_Status = S_OK;
-
-	if( m_pIOController != NULL )
-	{
-		l_Status = m_pIOController->WriteOutputs( p_strPLCName, pProduct );
-	}
-	else
-	{
-		l_Status = E_FAIL;
-	}
-
-	return l_Status;
-}
-#endif
 
 SVGUID SVConfigurationObject::GetRemoteOutputController() const
 {

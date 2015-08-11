@@ -51,11 +51,11 @@ SVRemoteOutputsView::~SVRemoteOutputsView()
 BEGIN_MESSAGE_MAP(SVRemoteOutputsView, CListView)
 	ON_WM_CREATE()
 	ON_WM_LBUTTONDBLCLK()
-	ON_COMMAND(ID_PLC_PROPERTIES, &SVRemoteOutputsView::OnRemoteOutputProperties)
+	ON_COMMAND(ID_REMOTE_OUTPUT_PROPERTIES, &SVRemoteOutputsView::OnRemoteOutputProperties)
 	ON_WM_CONTEXTMENU()
-	ON_COMMAND(ID_PLC_ADD, &SVRemoteOutputsView::OnRemoteOutputAdd)
-	ON_COMMAND(ID_PLC_DELETE, &SVRemoteOutputsView::OnRemoteOutputDelete)
-	ON_COMMAND(ID_PLC_EDIT, &SVRemoteOutputsView::OnRemoteOutputEdit)
+	ON_COMMAND(ID_REMOTE_OUTPUT_ADD, &SVRemoteOutputsView::OnRemoteOutputAdd)
+	ON_COMMAND(ID_REMOTE_OUTPUT_DELETE, &SVRemoteOutputsView::OnRemoteOutputDelete)
+	ON_COMMAND(ID_REMOTE_OUTPUT_EDIT, &SVRemoteOutputsView::OnRemoteOutputEdit)
 	ON_WM_LBUTTONDOWN()
 END_MESSAGE_MAP()
 
@@ -97,7 +97,7 @@ int SVRemoteOutputsView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	StateImageList.Create( 16, 16, TRUE, 2, 2 );
 	StateImageList.Add( AfxGetApp()->LoadIcon( IDI_PPQ_ICON ) );
-	StateImageList.Add( AfxGetApp()->LoadIcon( IDI_PLC_OUTPUT_ICON ) );
+	StateImageList.Add( AfxGetApp()->LoadIcon( IDI_REMOTE_OUTPUT_ICON ) );
 
 
 	lc.SetImageList( &StateImageList, LVSIL_STATE );

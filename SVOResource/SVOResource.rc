@@ -140,7 +140,7 @@ IDI_STATUS_NONE         ICON                    "res\\ico_status_none.ico"
 IDI_ICON_WARNING        ICON                    "res\\W95MBX03.ICO"
 IDI_ICON_EXIST1         ICON                    "res\\icon_exist1.ico"
 IDI_PPQ_ICON            ICON                    "res\\ico00001.ico"
-IDI_PLC_OUTPUT_ICON     ICON                    "res\\ico00002.ico"
+IDI_REMOTE_OUTPUT_ICON  ICON                    "res\\ico00002.ico"
 IDI_EXPAND              ICON                    "res\\ico00003.ico"
 IDI_COLLAPSE            ICON                    "res\\icon2.ico"
 IDI_ARROW_ROTATE        ICON                    "res\\arrow_rotate.ico"
@@ -2344,59 +2344,6 @@ BEGIN
     PUSHBUTTON      "Remove All",IDC_BTN_CLEAR_ALL,307,172,50,14
 END
 
-IDD_PLC_OUTPUT_EDIT DIALOGEX 0, 0, 304, 90
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "PLC Output"
-FONT 8, "MS Shell Dlg", 400, 0, 0x1
-BEGIN
-    LTEXT           "Output Name",IDC_STATIC,17,15,45,8,0,WS_EX_RIGHT
-    COMBOBOX        IDC_VALUE_OBJECT_NAME_COMBO,68,14,227,170,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
-    LTEXT           "PLC Element",IDC_STATIC,22,33,40,8,0,WS_EX_RIGHT
-    EDITTEXT        IDC_PLC_ELEMENT_EDIT,68,32,66,12,ES_AUTOHSCROLL
-    LTEXT           "Size",IDC_STATIC,49,50,13,8,0,WS_EX_RIGHT
-    EDITTEXT        IDC_SIZE_EDIT,68,49,66,12,ES_AUTOHSCROLL
-    GROUPBOX        "Bits ",IDC_STATIC,145,28,74,42
-    CONTROL         "Use Bits",IDC_USE_BIT_SIZE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,154,38,48,10,WS_EX_RIGHT
-    LTEXT           "Bit Number",IDC_STATIC,156,51,35,8,0,WS_EX_RIGHT
-    EDITTEXT        IDC_BIT_EDIT,193,49,17,12,ES_AUTOHSCROLL
-    PUSHBUTTON      "OK",IDOK,7,68,50,14
-    PUSHBUTTON      "Cancel",IDCANCEL,247,68,50,14
-END
-
-IDD_PLC_PROP_DLG DIALOGEX 0, 0, 132, 57
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Edit Transfer Definition"
-FONT 8, "MS Shell Dlg", 400, 0, 0x1
-BEGIN
-    EDITTEXT        IDC_BLOCK_SIZE_EDIT,67,7,58,12,ES_AUTOHSCROLL
-    EDITTEXT        IDC_QUEUE_SIZE_EDIT,67,25,58,12,ES_AUTOHSCROLL
-    LTEXT           "Number of Blocks",IDC_STATIC,9,8,55,8
-    LTEXT           "Queue Size",IDC_STATIC,26,27,37,8
-END
-
-IDD_PLC_PROP_LIST_DLG DIALOGEX 0, 0, 172, 138
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Starting Addresses"
-FONT 8, "MS Shell Dlg", 400, 0, 0x1
-BEGIN
-    CONTROL         "",IDC_LIST1,"SysListView32",LVS_REPORT | LVS_SHOWSELALWAYS | LVS_EDITLABELS | LVS_ALIGNLEFT | WS_BORDER | WS_TABSTOP,7,7,158,124
-END
-
-IDD_ADD_REMOVE_PLC_DLG DIALOGEX 0, 0, 274, 95
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Add / Remove Transfer Definition"
-FONT 8, "MS Shell Dlg", 400, 0, 0x1
-BEGIN
-    DEFPUSHBUTTON   "OK",IDOK,217,74,50,14
-    PUSHBUTTON      "Cancel",IDCANCEL,7,74,50,14
-    LISTBOX         IDC_AVAILABLE_LIST,7,15,107,56,LBS_SORT | LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
-    LISTBOX         IDC_USED_LIST,160,15,107,56,LBS_SORT | LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
-    PUSHBUTTON      "Add >>",IDC_ADD_BTN,115,25,44,14
-    PUSHBUTTON      " Remove <<",IDC_REMOVE_BTN,115,48,44,14
-    LTEXT           "Available",IDC_STATIC,11,7,65,8,SS_CENTERIMAGE
-    LTEXT           "In Use",IDC_STATIC,163,7,22,8
-END
-
 IDD_HISTOGRAM_ANALYZER_SETUP DIALOGEX 0, 0, 442, 255
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION
 CAPTION "Histogram Analyzer Setup"
@@ -3480,38 +3427,6 @@ BEGIN
         BOTTOMMARGIN, 192
     END
 
-    IDD_PLC_OUTPUT_EDIT, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 297
-        TOPMARGIN, 6
-        BOTTOMMARGIN, 82
-    END
-
-    IDD_PLC_PROP_DLG, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 125
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 50
-    END
-
-    IDD_PLC_PROP_LIST_DLG, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 165
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 131
-    END
-
-    IDD_ADD_REMOVE_PLC_DLG, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 267
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 88
-    END
-
     IDD_HISTOGRAM_ANALYZER_SETUP, DIALOG
     BEGIN
         LEFTMARGIN, 7
@@ -3884,10 +3799,8 @@ BEGIN
         MENUITEM "&Edit Configuration\tCtrl+E", ID_EDIT_EDITENVIRONMENT,MFT_STRING,MFS_ENABLED
         MENUITEM MFT_SEPARATOR
         MENUITEM "Edit &Remote Inputs",         ID_EDIT_EDITREMOTEINPUTS,MFT_STRING,MFS_ENABLED
-#ifdef USE_PLC
-        MENUITEM "Add PLC",                     ID_EDIT_EDITPLCOUTPUTS,MFT_STRING,MFS_ENABLED
-#endif
-        MENUITEM "Add Remote Outputs",          ID_EDIT_ADD_REMOTE_OUTPUTS,MFT_STRING,MFS_ENABLED
+
+		MENUITEM "Add Remote Outputs",          ID_EDIT_ADD_REMOTE_OUTPUTS,MFT_STRING,MFS_ENABLED
         MENUITEM "Add Monitor List",            ID_EDIT_ADD_MONITORLIST,MFT_STRING,MFS_ENABLED
         POPUP "&Global Constant",           65535,MFT_STRING,MFS_ENABLED
 		BEGIN
@@ -4116,43 +4029,13 @@ BEGIN
     MENUITEM "File",                        65535
 END
 
-IDR_PLC_CONTEXT_MENU_PROP MENU
-BEGIN
-    POPUP "PLC"
-    BEGIN
-        MENUITEM "Add PLC Output",              ID_PLC_ADD
-        MENUITEM "Add / Remove Transfer Definition", ID_ADD_TRANSFER_BLOCK
-        MENUITEM "Edit Transfer Definition",    ID_PLC_PROPERTIES
-        MENUITEM "Delete Transfer Definition",  ID_PLC_DELETE
-    END
-END
-
-IDR_PLC_CONTEXT_MENU_ITEM MENU
-BEGIN
-    POPUP "PLC"
-    BEGIN
-        MENUITEM "Add PLC Output",              ID_PLC_ADD
-        MENUITEM "Edit PLC Output",             ID_PLC_EDIT
-        MENUITEM "Delete PLC Output",           ID_PLC_DELETE
-    END
-END
-
-IDR_PLC_CONTEXT_MENU_ITEM_NO_DELETE MENU
-BEGIN
-    POPUP "PLC"
-    BEGIN
-        MENUITEM "Add PLC Output",              ID_PLC_ADDENTRY
-        MENUITEM "Edit PLC Output",             ID_PLC_EDITENTRY
-    END
-END
-
 IDR_REMOTE_OUTPUT_CONTEXT_MENU_ITEM MENU
 BEGIN
     POPUP "Remote Output"
     BEGIN
-        MENUITEM "Add Output",                  ID_PLC_ADD
-        MENUITEM "Edit Output",                 ID_PLC_EDIT
-        MENUITEM "Delete Output",               ID_PLC_DELETE
+        MENUITEM "Add Output",                  ID_REMOTE_OUTPUT_ADD
+        MENUITEM "Edit Output",                 ID_REMOTE_OUTPUT_EDIT
+        MENUITEM "Delete Output",               ID_REMOTE_OUTPUT_DELETE
     END
 END
 
@@ -4160,7 +4043,7 @@ IDR_REMOTE_OUTPUT_CONTEXT_MENU_ITEM_NO_DELETE MENU
 BEGIN
     POPUP "Remote Output"
     BEGIN
-        MENUITEM "Add Output",                  ID_PLC_ADD
+        MENUITEM "Add Output",                  ID_REMOTE_OUTPUT_ADD
     END
 END
 
@@ -4168,9 +4051,9 @@ IDR_REMOTE_OUTPUT_CONTEXT_MENU_PROP MENU
 BEGIN
     POPUP "Remote Output Group"
     BEGIN
-        MENUITEM "Add Output",                  ID_PLC_ADD
-        MENUITEM "Add/Remove Groups",           ID_PLC_PROPERTIES
-        MENUITEM "Delete Group",                ID_PLC_DELETE
+        MENUITEM "Add Output",                  ID_REMOTE_OUTPUT_ADD
+        MENUITEM "Add/Remove Groups",           ID_REMOTE_OUTPUT_PROPERTIES
+        MENUITEM "Delete Group",                ID_REMOTE_OUTPUT_DELETE
     END
 END
 

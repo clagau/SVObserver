@@ -15,10 +15,7 @@
 #include "SVObjectLibrary/SVObjectClass.h"
 #include "SVObjectLibrary/SVObserverTemplate.h"
 #include "SVSharedMemoryLibrary/SVProductFilterEnum.h"
-#ifndef _WIN64
-#include "SVP_SRC/SVPLCInterfaceClass.h"
-#include "SVPLCDataController.h"
-#endif
+
 #include "SVXMLLibrary/SVXMLMaterialsTree.h"
 
 #include "SVInfoStructs.h"
@@ -66,21 +63,6 @@ public:
 
 	SVIODoc* GetIODoc() const;
 
-#ifndef _WIN64
-	SVPLCDataController* GetPLCData();
-	size_t GetPLCCount() const;
-	void SetupPLC(SVConfigurationObject* p_pConfig );
-	HRESULT GetPLCs( std::vector<CString>& p_astrPLCIds );
-	LPCSTR GetConnectString();
-	long GetQueueSize( const CString& p_strPLC );
-	HRESULT GetHeartBeatAddress( CString& p_strHeartBeatAddress );
-	HRESULT GetHeartBeatTime( long& p_lTime );
-	HRESULT GetPLCControlData( SVMaterials& p_rMaterials, const CString& p_strPLC );
-	HRESULT SetPLCControlData( SVMaterials& p_rMaterials, const CString& p_strPLC );
-	CString AssociatePPQToPLC( const CString& p_strPPQ );
-	HRESULT WriteOutputs( const CString& p_strPLCName, SVProductInfoStruct *pProduct);
-#endif
-
 	SVGUID GetRemoteOutputController() const;
 	size_t GetRemoteOutputGroupCount() const;
 	void SetupRemoteOutput( SVConfigurationObject* p_pConfig );
@@ -118,9 +100,7 @@ public:
 protected:
 	SVIOEntryHostStructPtr m_pModuleReady;
 	SVIOEntryHostStructPtr m_pRaidErrorBit;
-#ifndef _WIN64
-	SVPLCDataController m_PLCData;
-#endif
+
 	SVRemoteOutputDataController* m_pRemoteOutputController;
 	RemoteMonitorListController m_RemoteMonitorListController;
 

@@ -123,11 +123,11 @@ HRESULT SVRemoteOutputDataController::ProcessNotifyData( SVObjectCommandDataJson
 	return l_Status;
 }
 
-// Destroy iterates through the PLC control parameter map and destroys all instances of the PLC.
+// Destroy iterates through the remote group parameters map and destroys all remote group parameters 
 // Then it clears the map.
 void SVRemoteOutputDataController::Destroy()
 {
-	// Destroys PLC Control Parameters.
+	// Destroys Remote Group Parameters.
 	SVRemoteOutputGroupMap::iterator l_it;
 	for( l_it = m_RemoteGroupParameters.begin() ; l_it != m_RemoteGroupParameters.end() ; ++l_it )
 	{
@@ -136,7 +136,7 @@ void SVRemoteOutputDataController::Destroy()
 	m_RemoteGroupParameters.clear();
 }
 
-// AddItem creates a new RemoteOutputObject and adds it to the PLC SVRemoteOutputGroup
+// AddItem creates a new RemoteOutputObject and adds it to the remote group parameters
 HRESULT SVRemoteOutputDataController::AddItem( const CString& p_strRemoteGroupId, SVRemoteOutputObject*& p_pNewOutput, GUID p_InputObjectID, const CString p_strPPQ )
 {
 	HRESULT l_hr = E_FAIL;
@@ -196,7 +196,7 @@ SVRemoteOutputGroup* SVRemoteOutputDataController::GetControlPar( const CString&
 	return l_pPars;
 }
 
-// Gets the data associated with a plc into a SVMaterials.
+// Gets the data associated with a Remote Group Id into a SVMaterials.
 HRESULT SVRemoteOutputDataController::GetRemoteOutputControlData( SVMaterials& p_rMaterials, const CString& p_strGroupID )
 {
 	HRESULT l_hr = S_FALSE;
@@ -204,13 +204,13 @@ HRESULT SVRemoteOutputDataController::GetRemoteOutputControlData( SVMaterials& p
 	return l_hr;
 }
 
-// Sets the PLCControlPar with a SVmaterials data.
+// Sets the RemoteOutputGroupPar with a SVmaterials data.
 HRESULT SVRemoteOutputDataController::SetRemoteOutputControlData( SVMaterials& p_rMaterials, const CString& p_strRemoteGroup )
 {
 	return m_RemoteGroupParameters[p_strRemoteGroup]->SetData( p_rMaterials );
 }
 
-// Get the PLCControlPar associated with the PLCID.
+// Get the RemoteOutputGroupPar associated with the Remote Group Id.
 HRESULT SVRemoteOutputDataController::GetControlPar( const CString& p_strRemoteGroup, SVRemoteOutputGroup*& p_pControl )
 {
 	HRESULT l_hr = S_FALSE;
@@ -222,16 +222,16 @@ HRESULT SVRemoteOutputDataController::GetControlPar( const CString& p_strRemoteG
 	return l_hr;
 }
 
-// Set the Control Parameters Map with the SVRemoteOutputGroup at the supplied plcID.
-HRESULT SVRemoteOutputDataController::SetControlPar( const CString& p_strRemoteGroup, SVRemoteOutputGroup* p_PLCControl )
+// Set the Control Parameters Map with the SVRemoteOutputGroup at the supplied Remote Group Id
+HRESULT SVRemoteOutputDataController::SetControlPar( const CString& p_strRemoteGroup, SVRemoteOutputGroup* p_RemoteOutputGroup )
 {
 	HRESULT l_hr = S_FALSE;
-	m_RemoteGroupParameters[p_strRemoteGroup] = p_PLCControl;
+	m_RemoteGroupParameters[p_strRemoteGroup] = p_RemoteOutputGroup;
 	l_hr = S_OK;
 	return l_hr;
 }
 
-// Get the element Count from the SVRemoteOutputGroup for the given PLCID
+// Get the element Count from the SVRemoteOutputGroup for the given Remote Group Id
 size_t SVRemoteOutputDataController::GetItemCount( const CString& p_strRemoteGroup )
 {
 	size_t l_lSize = 0;
@@ -242,7 +242,7 @@ size_t SVRemoteOutputDataController::GetItemCount( const CString& p_strRemoteGro
 	return l_lSize;
 }
 
-// Get a RemoteOutputObject based on index from the given PLCId.
+// Get a RemoteOutputObject based on index from the given Remote Group Id
 HRESULT SVRemoteOutputDataController::GetItem( const CString& p_strRemoteGroupId, long l_lIndex, SVRemoteOutputObject*& p_rItem )
 {
 	HRESULT l_hr = -3130;
@@ -259,7 +259,7 @@ BOOL SVRemoteOutputDataController::GetParameters( SVTreeType& p_rTree, SVTreeTyp
 	BOOL bOk = FALSE;
 	_variant_t svVariant;
 
-	ClearUnUsedData();	// clears unused plc data
+	ClearUnUsedData();	// clears unused remote data
 
 	SVTreeType::SVBranchHandle htiIORemoteGroup = NULL;
 	if( m_RemoteGroupParameters.size() > 0 )
@@ -504,9 +504,6 @@ HRESULT SVRemoteOutputDataController::WriteOutputs( const CString& p_strRemoteGr
 
 	if( pProduct && (m_RemoteGroupParameters.find(p_strRemoteGroupID) != m_RemoteGroupParameters.end()) )
 	{
-		// BRW - PLC has been deprecated.
-		//long l_lMaxDTSize = TheSVObserverApp.m_PLCManager.GetMaxDTSize();
-
 		// BRW - l_pAddressStrings and l_pStringValues were never used again.
 		/*std::vector<LPCTSTR> l_pAddressStrings;			// place to collect Address pointers
 		std::vector<LPCTSTR> l_pStringValues;
@@ -750,13 +747,13 @@ HRESULT SVRemoteOutputDataController::GetGroupNames( std::vector<CString>& p_ast
 }
 
 
-// This function is used to tell if the PLC Outputs screen should be hidden
+// This function is used to tell if the Remote Outputs screen should be hidden
 bool SVRemoteOutputDataController::IsEmpty()
 {
 	return m_RemoteGroupParameters.empty() ;
 }
 
-// This function delets a PLC output and removes it from the plc control parameters class.
+// This function deletes a remote output and removes it from the Remote Group control parameters class.
 HRESULT SVRemoteOutputDataController::DeleteRemoteOutputEntry( const CString& p_strRemoteGroupId, SVRemoteOutputObject* p_pOutputObject )
 {
 	HRESULT l_hr;
@@ -867,7 +864,7 @@ HRESULT SVRemoteOutputDataController::AddDefaultOutputs(CString p_strRemoteGroup
 	return l_hr;
 }
 
-// Get List index returns the index for a specific PLC Output.
+// Get List index returns the index for a specific Remote Group Output.
 HRESULT SVRemoteOutputDataController::GetListIndex( SVRemoteOutputObject* p_pOutput, const CString& p_strRemoteOutputGroupName, long& p_rlIndex )
 {
 	HRESULT l_hr = S_FALSE;
@@ -955,7 +952,7 @@ void SVRemoteOutputDataController::SetupRemoteOutput(SVConfigurationObject* pCon
 			else
 			{
 				TheSVObserverApp.ShowIOTab( SVRemoteOutputsViewID );
-				// Set Active IO Tabbed view to the PLC Outputs Tab
+				// Set Active IO Tabbed view to the Remote Outputs Tab
 				TheSVObserverApp.SetActiveIOTabView( SVRemoteOutputsViewID );
 			}
 			TheSVObserverApp.OnUpdateAllIOViews();
@@ -973,9 +970,9 @@ void SVRemoteOutputDataController::SetupRemoteOutputGroup(SVConfigurationObject*
 	}
 
 	SVSVIMStateClass::AddState(SV_STATE_EDITING);
-	// these containers hold the list of ppq names that will be used for plcs.
+	// these containers hold the list of ppq names that will be used for Remote Groups.
 	CStringVec l_AvailablePPQs;
-	// Initialize PPQ - PLCs by selecting from dialog.
+	// Initialize PPQ - Remote Groups by selecting from dialog.
 	long l_lPPQSize = pConfig->GetPPQCount( );
 	for( long l = 0 ; l < l_lPPQSize ; l++ )
 	{
@@ -985,8 +982,7 @@ void SVRemoteOutputDataController::SetupRemoteOutputGroup(SVConfigurationObject*
 			l_AvailablePPQs.push_back( pPPQ->GetName() );
 		}
 	}
-	// Setup PPQs to have Renmote Output Groups
-	CStringVec l_astrCurrentPLCs;
+
 
 	SVRemoteOutputGroupAddRemoveDlg l_dlg;
 	l_dlg.m_astrAvailablePPQs = l_AvailablePPQs;

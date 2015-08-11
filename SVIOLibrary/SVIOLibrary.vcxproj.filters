@@ -23,9 +23,6 @@
     <ClCompile Include="SVIODigitalStruct.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVIOPLCLoadLibraryClass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="StdAfx.h">
@@ -50,9 +47,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVIOTriggerLoadLibraryClass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVIOPLCLoadLibraryClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

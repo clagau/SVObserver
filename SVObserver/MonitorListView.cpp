@@ -101,7 +101,7 @@ static int AddMonitoredItems(CListCtrl& rCtrl, const MonitoredObjectList& items,
 	// Insert ProductItemsList Tag
 	lvItem.mask = LVIF_IMAGE | LVIF_STATE | LVIF_INDENT | LVIF_PARAM;
 	lvItem.iIndent = indent;
-	lvItem.state = INDEXTOSTATEIMAGEMASK(2); // IDI_PLC_OUTPUT_ICON
+	lvItem.state = INDEXTOSTATEIMAGEMASK(2); // IDI_REMOTE_OUTPUT_ICON
 	lvItem.stateMask = LVIS_STATEIMAGEMASK;
 	lvItem.iImage = 0; // IDI_IOITEM_ICON
 	lvItem.iItem = insertPos + pos;
@@ -280,7 +280,6 @@ MonitorListView::~MonitorListView()
 BEGIN_MESSAGE_MAP(MonitorListView, CListView)
 	ON_WM_CREATE()
 	ON_WM_LBUTTONDBLCLK()
-	ON_COMMAND(ID_PLC_PROPERTIES, &MonitorListView::OnShowProperties)
 	ON_WM_CONTEXTMENU()
 	ON_COMMAND(ID_MONITORLIST_ADD_REMOVE_LIST, &MonitorListView::OnAddRemoveList)
 	ON_COMMAND(ID_MONITORLIST_EDIT_PROPERTIES, &MonitorListView::OnEditListProperties)
@@ -483,7 +482,7 @@ int MonitorListView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	StateImageList.Create(16, 16, true, 2, 2);
 	StateImageList.Add(pApp->LoadIcon(IDI_PPQ_ICON));			// 0
-	StateImageList.Add(pApp->LoadIcon(IDI_PLC_OUTPUT_ICON));	// 1
+	StateImageList.Add(pApp->LoadIcon(IDI_REMOTE_OUTPUT_ICON));	// 1
 
 	lc.SetImageList(&StateImageList, LVSIL_STATE);
 	lc.SetImageList(&ImageList, LVSIL_NORMAL);
@@ -991,27 +990,6 @@ void MonitorListView::AddItem()
 	}
 }
 
-void MonitorListView::OnShowProperties()
-{
-	if (TheSVObserverApp.OkToEdit())
-	{
-		SVSVIMStateClass::AddState(SV_STATE_EDITING);
-
-		SVConfigurationObject* pConfig( nullptr );
-		SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
-
-		if ( (nullptr != pConfig) && pConfig->SetupRemoteMonitorList() )
-		{
-			SVSVIMStateClass::AddState(SV_STATE_MODIFIED);
-			SVIODoc* pIODoc = GetDocument();
-			if (pIODoc)
-			{
-				pIODoc->SetModifiedFlag();
-			}
-		}
-		SVSVIMStateClass::RemoveState(SV_STATE_EDITING);
-	}
-}
 
 void MonitorListView::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 {

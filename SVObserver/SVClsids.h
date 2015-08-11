@@ -1249,9 +1249,6 @@ extern /*const*/ GUID SVShowAllEdgeBOverlaysGuid;
 // Source Image Names GUID
 extern /*const*/ GUID SVSourceImageNamesGuid ;
 
-// PLC Support GUIDs 
-extern /*const*/ GUID SVPLCOutputObjectGUID ;
-extern /*const*/ GUID SVPLCDataControllerGUID ;
 
 extern /*const*/ GUID SVBCRawDataGuid;
 extern /*const*/ GUID SVBCStringFormatGuid;

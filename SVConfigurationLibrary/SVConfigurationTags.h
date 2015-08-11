@@ -141,24 +141,7 @@ LPCTSTR const CTAG_FILEACQUISITION_FILE_IMAGE_HEIGHT	= _T("ImageHeight");
 LPCTSTR const CTAG_MAX_VALUE                      = _T("MaxValue");
 
 LPCTSTR const CTAG_IODOC                          = _T("IODoc");
-LPCTSTR const CTAG_PLC_PARAMETERS                 = _T("PlcParameters");
-LPCTSTR const CTAG_PLC_CONNECTION_STRING          = _T("PlcConnection");
-LPCTSTR const CTAG_PLC_ENTRY                      = _T("PlcEntry");
-LPCTSTR const CTAG_PLC_ADDRESS                    = _T("PlcAddress");
-LPCTSTR const CTAG_PLC_INPUT_OBJECT_GUID          = _T("PlcObjectId");
-LPCTSTR const CTAG_PLC_ID                         = _T("PlcNameId");
-LPCTSTR const CTAG_PLC_ELEMENT_SIZE               = _T("PlcElementSize");
-LPCTSTR const CTAG_PLC_CONVERT_DATA               = _T("PlcConvertData");
-LPCTSTR const CTAG_PLC_DATA_TYPE                  = _T("PlcDataType");
-LPCTSTR const CTAG_PLC_CHANNEL_PAR                = _T("PlcChannelParameter");
-LPCTSTR const CTAG_PLC_BLOCK_SIZE                 = _T("PlcBlockSize");
-LPCTSTR const CTAG_PLC_QUEUE_SIZE                 = _T("PlcQueueSize");
-LPCTSTR const CTAG_PLC_HEARTBEAT_ADDR             = _T("PlcHeartBeatAddr");
-LPCTSTR const CTAG_PLC_HEARTBEAT_TIME             = _T("PlcHeartBeatTime");
-LPCTSTR const CTAG_PLC_STATE_UNIQUEID             = _T("PlcStateUniqueID");
-LPCTSTR const CTAG_PLC_BLOCK_START                = _T("PlcBlockStart");
-LPCTSTR const CTAG_PLC_BIT                        = _T("PlcBit");
-LPCTSTR const CTAG_PLC_SIZE_BITS                  = _T("PlcSizeIsBits");
+LPCTSTR const CTAG_PPQ_STATE_UNIQUEID             = _T("PpqStateUniqueID");
 
 LPCTSTR const CTAG_REMOTE_OUTPUT_PARAMETERS       = _T("RemoteOutputParameters");
 LPCTSTR const CTAG_REMOTE_OUTPUT_INPUT_OBJECT_GUID = _T("RemoteOutputObjectId");

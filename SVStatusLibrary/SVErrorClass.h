@@ -65,11 +65,6 @@
 /* case is being defined at this time.                               */
 #define EVENT_DURATION            16
 
-/* STOP_PLC ---------------------------------------------------------*/
-/* This value has been carried over from SVFocus.  No specific       */
-/* implementation of this case is being defined at this time.        */
-#define STOP_PLC                  32
-
 /* PASSWORD ---------------------------------------------------------*/
 /* To use this value, DISPLAY must be set. Like ACKNOWLEDGE, the     */
 /* operator will be required to acknowledge the error message,       */
@@ -129,7 +124,6 @@
 #define AB_DHPLUS                  6
 #define DOS                        7
 #define CVIM2_RSP                  8
-#define PLC_STATUS                 9
 #define WIN32_API                 10
 #define SVFocus                   11
 /* End of FACILITY VALUES. ------------------------------------------*/
@@ -140,7 +134,7 @@
 /*- SV_TRAP_ERROR is meant to simplify calls to TrapError () so that  */
 /*- the programmer does not need to enter the __FILE__ and __LINE__   */
 /*- parameters.  The operator does, however, need to enter the local  */
-/*- instatiation of the Error_Class.                                  */
+/*- instantiation of the Error_Class.                                  */
 #define SV_TRAP_ERROR(err, pC) err.TrapError(pC , __FILE__, __LINE__)
 
 /*- SV_TRAP_ERROR_BRK must be used within a loop of some sort and     */

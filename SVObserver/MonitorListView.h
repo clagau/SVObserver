@@ -103,7 +103,6 @@ public:
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnLButtonDblClk(UINT nFlags, CPoint point);
-	afx_msg void OnShowProperties();
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
 	void AddItem();
 	afx_msg void OnDeleteItem();

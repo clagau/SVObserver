@@ -2720,17 +2720,6 @@ echo %time%
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
-    <ClCompile Include="SVPLCAddRemoveDlg.cpp" />
-    <ClCompile Include="SVPLCControlPar.cpp" />
-    <ClCompile Include="SVPLCDataController.cpp" />
-    <ClCompile Include="SVPLCListCtrl.cpp" />
-    <ClCompile Include="SVPLCManager.cpp" />
-    <ClCompile Include="SVPLCOutput.cpp" />
-    <ClCompile Include="SVPLCOutputEditDialog.cpp" />
-    <ClCompile Include="SVPLCOutputsView.cpp" />
-    <ClCompile Include="SVPLCPropPageList.cpp" />
-    <ClCompile Include="SVPLCPropPageStart.cpp" />
-    <ClCompile Include="SVPLCPropSheet.cpp" />
     <ClCompile Include="SVPointValueObjectClass.cpp" />
     <ClCompile Include="SVPolarTransform.cpp">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -3893,7 +3882,6 @@ echo %time%
     <ClInclude Include="SVMonitorList.h" />
     <ClInclude Include="MonitorListView.h" />
     <ClInclude Include="SVOpeningFilterClass.h" />
-    <ClInclude Include="SVPLCValidateReasons.h" />
     <ClInclude Include="SVPPQConstants.h" />
     <ClInclude Include="SVRemoteControlConstants.h" />
     <ClInclude Include="SVShapeMaskHelperClass.h" />
@@ -4202,17 +4190,6 @@ echo %time%
     <ClInclude Include="SVPerspectiveWarpDlg.h" />
     <ClInclude Include="SVPixelAnalyzer.h" />
     <ClInclude Include="SVPixelAnalyzerSetup.h" />
-    <ClInclude Include="SVPLCAddRemoveDlg.h" />
-    <ClInclude Include="SVPLCControlPar.h" />
-    <ClInclude Include="SVPLCDataController.h" />
-    <ClInclude Include="SVPLCListCtrl.h" />
-    <ClInclude Include="SVPLCManager.h" />
-    <ClInclude Include="SVPLCOutput.h" />
-    <ClInclude Include="SVPLCOutputEditDialog.h" />
-    <ClInclude Include="SVPLCOutputsView.h" />
-    <ClInclude Include="SVPLCPropPageList.h" />
-    <ClInclude Include="SVPLCPropPageStart.h" />
-    <ClInclude Include="SVPLCPropSheet.h" />
     <ClInclude Include="SVPointValueObjectClass.h" />
     <ClInclude Include="SVPolarTransform.h" />
     <ClInclude Include="SVPolarTransformationTool.h" />
