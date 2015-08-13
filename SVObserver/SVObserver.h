@@ -406,9 +406,6 @@ protected:
     BOOL OpenConfigFileFromMostRecentList(int nID);
 	void EnableTriggerSettings();
 	void DisableTriggerSettings();
-	void SaveIPDoc(SVObjectWriter& rWriter, SVIPDoc* pDoc);
-
-	HRESULT SaveDocuments( SVTreeType& p_rTree );
 
 	HRESULT ConstructDocuments( SVTreeType& p_rTree );
 

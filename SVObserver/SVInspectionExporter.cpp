@@ -287,7 +287,7 @@ HRESULT SVInspectionExporter::Export(const SVString& filename, const SVString& i
 				SVString rootNodeName(_T("Inspection_Export"));
 				writer.WriteRootElement(rootNodeName);
 				writer.WriteSchema();
-				WriteBaseNode(writer);
+				writer.WriteStartOfBase();
 				WriteVersion(writer, p_version);
 				
 				WritePPQInputs(writer, pObject);

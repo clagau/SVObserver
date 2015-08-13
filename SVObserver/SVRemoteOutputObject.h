@@ -17,6 +17,7 @@
 #include "SVValueObject.h"
 #include "SVMaterialsLibrary/SVMaterialsTree.h"
 #include "SVXMLLibrary/SVXMLMaterialsTree.h"
+#include "SVObjectLibrary/SVObjectXMLWriter.h"
 
 class SVRemoteOutputObject : public SVObjectClass
 {
@@ -37,7 +38,7 @@ public:
 
 	typedef SVXMLMaterialsTree SVTreeType;
 
-	BOOL GetParameters( SVTreeType& rTree, SVTreeType::SVBranchHandle htiParent ) const;
+	bool GetParameters( SVObjectXMLWriter& rWriter ) const;
 
 	HRESULT GetMaterials( SVMaterialsTreeAdapter& p_rMaterials, SVMaterialsTreeAdapter::SVTreeContainer* p_pParent );
 	HRESULT Update( SVMaterialsTreeAdapter& p_rMaterials );

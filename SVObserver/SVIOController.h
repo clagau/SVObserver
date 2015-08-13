@@ -53,7 +53,7 @@ public:
 
 	BOOL SetParameters( SVTreeType& rTree, SVTreeType::SVBranchHandle htiParent );
 
-	BOOL GetParameters( SVTreeType& rTree, SVTreeType::SVBranchHandle htiParent );
+	bool GetParameters( SVObjectXMLWriter& rWriter ) const;
 
 	HRESULT SetModuleReady( bool p_Value );
 	HRESULT SetRaidErrorBit( bool p_Value );

@@ -914,7 +914,6 @@ HRESULT SVXMLClass::GetRevisionNodeByIndex (long p_lIndex, SVXML::IXMLDOMElement
 
 	SVXML::IXMLDOMElementPtr l_oRevHistoryBaseNodePtr;
 	SVXML::IXMLDOMElementPtr l_oRevNodePtr;
-	SVXML::IXMLDOMElementPtr l_oPrevRevNodePtr;
 
 	while (1)
 	{
@@ -960,24 +959,24 @@ HRESULT SVXMLClass::GetRevisionNodeByIndex (long p_lIndex, SVXML::IXMLDOMElement
 		{
 			if (l_lCount == 0)
 			{
-				l_oRevNodePtr = l_oRevHistoryBaseNodePtr->GetfirstChild ();
+				l_oRevNodePtr = GetFirstElementChild(l_oRevHistoryBaseNodePtr);
 			}
 			else
 			{
-				l_oRevNodePtr = l_oPrevRevNodePtr->GetnextSibling ();
+				l_oRevNodePtr = GetNextElementSibling(l_oRevNodePtr);
 			}
 
-			if (l_oRevNodePtr == NULL)
+			if (nullptr == l_oRevNodePtr)
 			{
 				hr = -1917;
 				break;
 			}
 
 			l_bstrTagName = l_oRevNodePtr->GettagName ();
-		
+
 			if (wcscmp (l_bstrTagName, g_wcsRevision) == 0)
 			{
-//-			They are equal.
+//-				They are equal.
 				l_lIndex = l_lIndex + 1;
 				if (l_lIndex == p_lIndex)
 				{
@@ -986,7 +985,6 @@ HRESULT SVXMLClass::GetRevisionNodeByIndex (long p_lIndex, SVXML::IXMLDOMElement
 			}
 
 			l_lCount = l_lCount + 1;
-			l_oPrevRevNodePtr = l_oRevNodePtr;
 		} // while (l_lCount < l_lNbrOfChildren)
 
 		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
@@ -2038,23 +2036,19 @@ HRESULT SVXMLClass::GetBaseElement (SVXML::IXMLDOMElementPtr& arBaseElementPtr)
 	return hr;
 }
 
-HRESULT SVXMLClass::GetElementNbrOfChildren (SVXML::IXMLDOMElementPtr aDOMElementPtr, long* alpNbrOfChildren)
+HRESULT SVXMLClass::GetElementNbrOfChildren (const SVXML::IXMLDOMElementPtr aDOMElementPtr, long* alpNbrOfChildren) const
 {
-	HRESULT hr = S_OK;
+	return svmopDOM->GetElementNbrOfChildren (aDOMElementPtr, alpNbrOfChildren);
+}
 
-	while (1)
-	{
-		hr = svmopDOM->GetElementNbrOfChildren (aDOMElementPtr,
-			    										    alpNbrOfChildren);
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
-		{
-			break;
-		}
+SVXML::IXMLDOMElementPtr SVXMLClass::GetFirstElementChild(const SVXML::IXMLDOMElementPtr aDOMElementPtr) const
+{
+	return svmopDOM->GetFirstElementChild(aDOMElementPtr);
+}
 
-		break;
-	} // while (1)
-
-	return hr;
+SVXML::IXMLDOMElementPtr SVXMLClass::GetNextElementSibling(const SVXML::IXMLDOMElementPtr aDOMElementPtr) const
+{
+	return svmopDOM->GetNextElementSibling(aDOMElementPtr);
 }
 
 HRESULT SVXMLClass::CreateElement (BSTR p_bstrElementName, SVXML::IXMLDOMElementPtr& p_orDOMElementPtr)

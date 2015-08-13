@@ -44,6 +44,18 @@ public:
 
 	void WriteRootElement(const SVString& rName);
 	void WriteSchema();
+
+	//************************************
+	/// Write the start of the node base
+	//************************************
+	void WriteStartOfBase();
+
+	//************************************
+	/// Write the revision history node.
+	/// \param formatVersionValue [in] The version number.
+	/// \param revisionValue [in] The revision value.
+	//************************************
+	void WriteRevisionHistory(const _variant_t formatVersionValue, const _variant_t revisionValue);
 };
 
 #endif

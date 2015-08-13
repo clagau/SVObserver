@@ -1011,7 +1011,7 @@ BOOL SVPPQObject::AddSharedCamera( SVVirtualCamera* pCamera )
 	return l_Status;
 }
 
-BOOL SVPPQObject::GetInspectionCount( long &lSize )
+BOOL SVPPQObject::GetInspectionCount( long &lSize ) const
 {
 	lSize = m_arInspections.GetSize();
 
@@ -1071,7 +1071,7 @@ BOOL SVPPQObject::GetTrigger( SVTriggerObject*& ppTrigger )
 	return TRUE;
 }// end GetTrigger
 
-BOOL SVPPQObject::GetInspection( long lIndex, SVInspectionProcess*& ppInspection )
+BOOL SVPPQObject::GetInspection( long lIndex, SVInspectionProcess*& ppInspection ) const
 {
 	if( lIndex < 0 || lIndex >= m_arInspections.GetSize() ) { return FALSE; }
 
@@ -1099,7 +1099,7 @@ BOOL SVPPQObject::SetCameraPPQPosition( long lPosition, SVVirtualCamera* pCamera
 	return l_Status;
 }// end SetCameraPPQPosition
 
-BOOL SVPPQObject::GetCameraPPQPosition( long &lPosition, SVVirtualCamera* pCamera )
+BOOL SVPPQObject::GetCameraPPQPosition( long &lPosition, SVVirtualCamera* pCamera ) const
 {
 	BOOL bFound;
 
@@ -1114,9 +1114,7 @@ BOOL SVPPQObject::GetCameraPPQPosition( long &lPosition, SVVirtualCamera* pCamer
 	}// end if
 
 	// Try to find to the Camera they sent it
-	SVCameraInfoMap::iterator l_svIter;
-
-	l_svIter = m_Cameras.find( pCamera );
+	SVCameraInfoMap::const_iterator l_svIter = m_Cameras.find( pCamera );
 
 	bFound = l_svIter != m_Cameras.end();
 

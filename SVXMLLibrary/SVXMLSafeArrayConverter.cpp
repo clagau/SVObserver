@@ -72,7 +72,7 @@ HRESULT SVXMLSafeArrayConverter::CopyDOMChildNodesToSafeArrayNodes(SVXMLClass& r
 	VARIANT vDOMElementData;
 	::VariantClear(&vDOMElementData);
 
-	SVXML::IXMLDOMElementPtr oDOMChildElementPtr = aDOMParentElementPtr->GetfirstChild();
+	SVXML::IXMLDOMElementPtr oDOMChildElementPtr = rXml.GetFirstElementChild(aDOMParentElementPtr);
 
 	if (oDOMChildElementPtr == NULL)
 	{
@@ -142,9 +142,7 @@ HRESULT SVXMLSafeArrayConverter::CopyDOMChildNodesToSafeArrayNodes(SVXMLClass& r
 		{
 			alpIndicesArray[alDimension] = alpIndicesArray [alDimension] + 1;
 
-			SVXML::IXMLDOMElementPtr oDOMNextElementPtr = oDOMChildElementPtr->GetnextSibling();
-
-			oDOMChildElementPtr = oDOMNextElementPtr;
+			oDOMChildElementPtr = rXml.GetNextElementSibling(oDOMChildElementPtr);
 		}
 	}
 //-We specifically do not want to call VariantClear (vDOMElementData); on 
@@ -201,7 +199,7 @@ HRESULT SVXMLSafeArrayConverter::GetSafeArrayData(SVXMLClass& rXml, SVXML::IXMLD
 			break;
 		}
 
-		SVXML::IXMLDOMElementPtr oDOMChildElementPtr = oDOMElementPtr->GetfirstChild();
+		SVXML::IXMLDOMElementPtr oDOMChildElementPtr = rXml.GetFirstElementChild(oDOMElementPtr);
 		if (oDOMChildElementPtr == NULL)
 		{
 			hr = -1792;

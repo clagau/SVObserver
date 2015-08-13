@@ -178,19 +178,19 @@ BOOL SVIOController::SetParameters( SVTreeType& rTree, SVTreeType::SVBranchHandl
 
 // Sets up tree - Gets Data from SVIODoc
 // Creates Tree items branches so data will be ready to save...
-BOOL SVIOController::GetParameters( SVTreeType& rTree, SVTreeType::SVBranchHandle htiParent )
+bool SVIOController::GetParameters( SVObjectXMLWriter& rWriter ) const
 {
-	BOOL bOk = true;
+	bool bOk = true;
 
 	_variant_t svVariant;
 
 	svVariant = SVGUID( outObjectInfo.UniqueObjectID ).ToVARIANT();
-	SVNavigateTreeClass::AddItem( rTree, htiParent, CTAG_UNIQUE_REFERENCE_ID, svVariant );
+	rWriter.WriteAttribute( CTAG_UNIQUE_REFERENCE_ID, svVariant );
 
 	if( m_pRemoteOutputController != NULL )
 	{
 		// Remote Outputs
-		bOk &= m_pRemoteOutputController->GetParameters( rTree, htiParent );
+		bOk &= m_pRemoteOutputController->GetParameters( rWriter );
 	}
 
 	return bOk;

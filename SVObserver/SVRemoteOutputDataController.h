@@ -47,7 +47,7 @@ public:
 
 	typedef SVXMLMaterialsTree SVTreeType;
 
-	BOOL GetParameters( SVTreeType& p_rTree, SVTreeType::SVBranchHandle p_htiParent );
+	bool GetParameters( SVObjectXMLWriter& rWriter );
 
 	BOOL SetParameters( SVTreeType& p_rTree, SVTreeType::SVBranchHandle p_htiParent );
 

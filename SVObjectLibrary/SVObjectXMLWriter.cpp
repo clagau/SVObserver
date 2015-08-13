@@ -15,6 +15,8 @@
 #include <boost/foreach.hpp>
 #include <boost/assign/list_of.hpp>
 #include "SVUtilityLibrary/SVStringConversions.h"
+#include "SVXMLLibrary/SVXMLLibraryGlobals.h"
+#include "SVUtilityLibrary/SVSafeArray.h"
 
 #define Stringtize(s) (#s)
 
@@ -162,19 +164,37 @@ SVObjectXMLWriter::~SVObjectXMLWriter()
 
 void SVObjectXMLWriter::WriteAttribute(const SVString& rName, const variant_t& value)
 {
-	const std::string& varTypeStr = VariantTypeToString(value.vt);
-	const std::string& valueStr = VariantToString(value);
-
-	if (!varTypeStr.empty())
+	if (0 == (VT_ARRAY & value.vt))
 	{
-		xml::element data(scDataTag.c_str(), *m_pWriter);
-		data.attr(scNameTag.c_str(), rName.c_str());
-		data.attr(scTypeTag.c_str(), varTypeStr.c_str());
-		data.contents(valueStr.c_str());
+		const std::string& varTypeStr = VariantTypeToString(value.vt);
+		const std::string& valueStr = VariantToString(value);
+
+		if (!varTypeStr.empty())
+		{
+			xml::element data(scDataTag.c_str(), *m_pWriter);
+			data.attr(scNameTag.c_str(), rName.c_str());
+			data.attr(scTypeTag.c_str(), varTypeStr.c_str());
+			data.contents(valueStr.c_str());
+		}
+		else
+		{
+			// throw an exception
+		}
 	}
 	else
 	{
-		// throw an exception
+		StartElement(rName);
+		ElementAttribute("Type", "VT_ARRAY");
+		SVSAFEARRAY arrayValue = value;
+		for (int i=0; i < arrayValue.size(); ++i)
+		{
+			SVString attName;
+			attName.Format("DataIndex_%d", i+1);
+			_variant_t lVal;
+			arrayValue.GetElement( i, lVal );
+			WriteAttribute(attName, lVal);
+		}		
+		EndElement();
 	}
 }
 
@@ -401,6 +421,34 @@ void SVObjectXMLWriter::WriteSchema()
 	pNode.reset();
  
 	pSchemaNode.reset();
+}
+
+void SVObjectXMLWriter::WriteStartOfBase()
+{
+	//<NODE xmlns="x-schema:#SVR00001" Name="Base" Type="SV_BASENODE">
+	_variant_t xmlnsValue;
+	_variant_t value;
+	xmlnsValue.SetString("x-schema:#SVR00001");
+	value.SetString("SV_BASENODE");
+	StartElement("Base");
+	ElementAttribute("xmlns", xmlnsValue);
+	ElementAttribute("Type", value);
+}
+
+void SVObjectXMLWriter::WriteRevisionHistory(const _variant_t formatVersionValue, const _variant_t revisionValue)
+{
+	SVString revisionHistoryString(g_csRevisionHistory);
+	XMLElementPtr pRevisionHistoryNode = Element(revisionHistoryString, *m_pWriter);
+	Attribute("xmlns", "x-schema:#SVR00001", pRevisionHistoryNode);
+
+	SVString revisionString(g_wcsRevision);
+	XMLElementPtr pRevisionNode = Element(revisionString, *m_pWriter);
+	Attribute(g_wcsFormat, "SVObserver", pRevisionNode);
+	Attribute(g_wcsFormatVersion, formatVersionValue, pRevisionNode);
+	Attribute(g_wcsRevisionAtt, revisionValue, pRevisionNode);
+	pRevisionNode.reset();
+
+	pRevisionHistoryNode.reset();
 }
 
 //******************************************************************************

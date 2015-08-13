@@ -55,30 +55,27 @@ SVString SVRemoteOutputObject::GetGroupID( ) const
 
 
 // Parameters >> Tree
-BOOL SVRemoteOutputObject::GetParameters( SVTreeType& rTree, SVTreeType::SVBranchHandle htiParent ) const
+bool SVRemoteOutputObject::GetParameters( SVObjectXMLWriter& rWriter ) const
 {
-	BOOL bOk = FALSE;
-
 	_variant_t svVariant;
 
 	svVariant = SVGUID( outObjectInfo.UniqueObjectID ).ToVARIANT();
-	SVNavigateTreeClass::AddItem( rTree, htiParent, CTAG_UNIQUE_REFERENCE_ID, svVariant );
+	rWriter.WriteAttribute( CTAG_UNIQUE_REFERENCE_ID, svVariant );
 	svVariant.Clear();
 
 	svVariant = SVGUID( m_InputObjectId ).ToVARIANT();
-	SVNavigateTreeClass::AddItem( rTree, htiParent, CTAG_REMOTE_OUTPUT_INPUT_OBJECT_GUID, svVariant );
+	rWriter.WriteAttribute( CTAG_REMOTE_OUTPUT_INPUT_OBJECT_GUID, svVariant );
 	svVariant.Clear();
 
 	svVariant = m_strGroupID.ToVARIANT();
-	SVNavigateTreeClass::AddItem( rTree, htiParent, CTAG_REMOTE_GROUP_ID, svVariant );
+	rWriter.WriteAttribute( CTAG_REMOTE_GROUP_ID, svVariant );
 	svVariant.Clear();
 
 	svVariant = m_strObjectName.ToVARIANT();
-	SVNavigateTreeClass::AddItem( rTree, htiParent, CTAG_REMOTE_OUTPUT_NAME, svVariant );
+	rWriter.WriteAttribute( CTAG_REMOTE_OUTPUT_NAME, svVariant );
 	svVariant.Clear();
 
-	bOk = TRUE;
-	return bOk;
+	return true;
 }
 
 HRESULT SVRemoteOutputObject::GetMaterials( SVMaterialsTreeAdapter& p_rMaterials, SVMaterialsTreeAdapter::SVTreeContainer* p_pParent )

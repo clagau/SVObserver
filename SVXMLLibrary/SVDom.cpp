@@ -1522,7 +1522,7 @@ HRESULT SVDOMClass::GetDOMNodeElementName (SVXML::IXMLDOMElementPtr	aDOMElementP
 	return hr;
 }
 
-HRESULT SVDOMClass::GetElementNbrOfChildren (SVXML::IXMLDOMElementPtr aDOMElementPtr, long* alpNbrOfChildren)
+HRESULT SVDOMClass::GetElementNbrOfChildren (const SVXML::IXMLDOMElementPtr aDOMElementPtr, long* alpNbrOfChildren) const
 {
 	HRESULT hr = 0;
 
@@ -1544,9 +1544,47 @@ HRESULT SVDOMClass::GetElementNbrOfChildren (SVXML::IXMLDOMElementPtr aDOMElemen
 	}
 	else
 	{
-		*alpNbrOfChildren = oNodeListPtr->Getlength ();
+		*alpNbrOfChildren = 0;
+		int count = oNodeListPtr->Getlength ();
+		SVXML::IXMLDOMElementPtr oElementPtr = nullptr;
+		for (int i=0; i<count; ++i)
+		{
+			 oElementPtr = oNodeListPtr->Getitem(i);
+			 if (nullptr != oElementPtr)
+			 {
+				 (*alpNbrOfChildren)++;
+			 }
+		}
 	}
 	return hr;
+}
+
+SVXML::IXMLDOMElementPtr SVDOMClass::GetFirstElementChild(const SVXML::IXMLDOMElementPtr aDOMElementPtr) const
+{
+	SVXML::IXMLDOMNodePtr nodePtr = aDOMElementPtr->GetfirstChild();
+	SVXML::IXMLDOMElementPtr returnPtr = nodePtr;
+
+	while (nullptr == returnPtr && nullptr != nodePtr)
+	{
+		nodePtr = nodePtr->GetnextSibling();
+		returnPtr = nodePtr;
+	}
+
+	return returnPtr;
+}
+
+SVXML::IXMLDOMElementPtr SVDOMClass::GetNextElementSibling(const SVXML::IXMLDOMElementPtr aDOMElementPtr) const
+{
+	SVXML::IXMLDOMNodePtr nodePtr = aDOMElementPtr->GetnextSibling();
+	SVXML::IXMLDOMElementPtr returnPtr = nodePtr;
+
+	while (nullptr == returnPtr && nullptr != nodePtr)
+	{
+		nodePtr = nodePtr->GetnextSibling();
+		returnPtr = nodePtr;
+	}
+
+	return returnPtr;
 }
 
 HRESULT SVDOMClass::GetEncryptionInterface (SVXMLEncryptionClass** p_oppEncryptionInterface)

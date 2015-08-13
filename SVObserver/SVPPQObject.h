@@ -94,14 +94,14 @@ public:
 	BOOL DetachInspection( SVInspectionProcess* pInspection );
 
 	BOOL AddSharedCamera(  SVVirtualCamera* pCamera );
-	BOOL GetInspectionCount( long &lSize );
+	BOOL GetInspectionCount( long &lSize ) const;
 
 	size_t GetCameraCount() const;
 	HRESULT GetCameraList( std::deque< SVVirtualCamera* >& p_rCameras ) const;
 	HRESULT GetVirtualCameras( SVVirtualCameraMap& p_rCameras ) const;
 
 	BOOL GetTrigger( SVTriggerObject*& ppTrigger );
-	BOOL GetInspection( long lIndex, SVInspectionProcess*& ppInspection );
+	BOOL GetInspection( long lIndex, SVInspectionProcess*& ppInspection ) const;
 
 	HRESULT GetInspections( std::vector< SVInspectionProcess* >& rvecInspections ) const;
 
@@ -115,7 +115,7 @@ public:
 
 	// PPQ position management functions
 	BOOL SetCameraPPQPosition( long lPosition, SVVirtualCamera* pCamera );
-	BOOL GetCameraPPQPosition( long &lPosition, SVVirtualCamera* pCamera );
+	BOOL GetCameraPPQPosition( long &lPosition, SVVirtualCamera* pCamera ) const;
 
 	// Runtime Functions
 	HRESULT CanGoOnline();

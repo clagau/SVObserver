@@ -321,7 +321,7 @@ BOOL SVRemoteOutputGroup::AttachStreamManager()
 }
 
 // Parameters >> Tree ( Save )
-BOOL SVRemoteOutputGroup::GetParameters( SVTreeType& p_rTree, SVTreeType::SVBranchHandle htiParent ) const
+BOOL SVRemoteOutputGroup::GetParameters( SVObjectXMLWriter& rWriter ) const
 {
 	BOOL bOk = TRUE;
 
@@ -344,25 +344,22 @@ BOOL SVRemoteOutputGroup::GetParameters( SVTreeType& p_rTree, SVTreeType::SVBran
 
 	// Unique Id
 	svVariant = SVGUID( outObjectInfo.UniqueObjectID ).ToVARIANT();
-	SVNavigateTreeClass::AddItem( p_rTree, htiParent, CTAG_UNIQUE_REFERENCE_ID, svVariant );
+	rWriter.WriteAttribute( CTAG_UNIQUE_REFERENCE_ID, svVariant );
 	svVariant.Clear();
 
 	// PPQ GUID...
 	svVariant = m_PPQObjectId.ToVARIANT();
-	SVNavigateTreeClass::AddItem( p_rTree, htiParent, CTAG_REMOTE_GROUP_PPQ, svVariant );
+	rWriter.WriteAttribute( CTAG_REMOTE_GROUP_PPQ, svVariant );
 	svVariant.Clear();
 
 	// Remote Outputs 
 	for( size_t i = 0 ; i < m_RemoteOutputs.size(); i++ )
 	{
-		SVTreeType::SVBranchHandle htiRemoteEntry = nullptr;
 		CString l_strBranch;
 		l_strBranch.Format( "%s_%d",CTAG_REMOTE_OUTPUT_ENTRY, i + 1 );
-
-		if ( SVNavigateTreeClass::SetBranch( p_rTree, htiParent, l_strBranch, &htiRemoteEntry ) )
-		{
-			m_RemoteOutputs[i]->GetParameters( p_rTree, htiRemoteEntry );
-		}
+		rWriter.StartElement( l_strBranch );
+		m_RemoteOutputs[i]->GetParameters( rWriter );
+		rWriter.EndElement();
 	}
 	return bOk;
 }

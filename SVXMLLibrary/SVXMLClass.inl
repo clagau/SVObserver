@@ -575,7 +575,7 @@ HRESULT SVXMLClass::CreateTreeChildNodeFromDOMNode( SVXML::IXMLDOMElementPtr aDO
 							l_Status = rTree.CreateBranch( alTreeParentNodeHandle, bstrDOMElementName, &l_Branch );
 						}
 
-						oDOMChildElementPtr = aDOMElementPtr->GetfirstChild ();
+						oDOMChildElementPtr = GetFirstElementChild(aDOMElementPtr);
 
 						while( SV_SUCCEEDED( l_Status ) && oDOMChildElementPtr != NULL )
 						{
@@ -583,11 +583,7 @@ HRESULT SVXMLClass::CreateTreeChildNodeFromDOMNode( SVXML::IXMLDOMElementPtr aDO
 
 							if( SV_SUCCEEDED( l_Status ) )
 							{
-								SVXML::IXMLDOMElementPtr oDOMNextChildElementPtr;
-
-								oDOMNextChildElementPtr = oDOMChildElementPtr->GetnextSibling ();
-
-								oDOMChildElementPtr = oDOMNextChildElementPtr;
+								oDOMChildElementPtr = GetNextElementSibling(oDOMChildElementPtr);
 							}
 						} // while (oDOMChildElementPtr != NULL)
 					}

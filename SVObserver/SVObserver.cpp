@@ -120,6 +120,7 @@
 #include "ObjectInterfaces\ErrorNumbers.h"
 #include "TextDefinesSvO.h"
 #include "SVToolArchivePage.h"
+#include "SVObjectLibrary\SVObjectXMLWriter.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -7823,7 +7824,6 @@ void SVObserverApp::fileSaveAsSVX( CString StrSaveAsPathName, bool isAutoSave)
 {
 	SVFileNameManagerClass svFileManager;
 	CWaitCursor wait;
-	long hr;
 
 	BOOL bOk=TRUE;
 
@@ -7902,36 +7902,22 @@ void SVObserverApp::fileSaveAsSVX( CString StrSaveAsPathName, bool isAutoSave)
 
 	if ( bOk && !CString( m_ConfigFileName.GetExtension() ).CompareNoCase( ".svx" ) )
 	{
-		CString csFileName;
-
-		BSTR bStr = NULL;
-		unsigned long ulVer = 0;
-
 		SVConfigurationObject* pConfig( nullptr );
 		SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
+		CString csFileName = m_ConfigFileName.GetFullFileName();
 
 		if( nullptr != pConfig )
 		{
 			pConfig->ValidateRemoteMonitorList(); // sanity check
-			pConfig->SaveConfiguration( m_XMLTree );
+			std::ofstream os;
+			os.open( csFileName );
+			if (os.is_open())
+			{
+				SVObjectXMLWriter writer(os);
+				pConfig->SaveConfiguration( writer );
+				os.close();
+			}
 		}
-
-		SaveDocuments( m_XMLTree ); //Arvid required DLLs seem to be copied here
-
-		csFileName = m_ConfigFileName.GetFullFileName();
-
-		bStr = csFileName.AllocSysString();
-
-		hr = SVOCMSaveConfiguration( m_CurrentVersion, ulVer, bStr, m_XMLTree ); 		//Arvid here the Configuration seems to be saved to the Run directory (C:\Run)
-
-		if (hr & 0xc0000000)
-		{
-			CString	csErrorMessage;
-			csErrorMessage.Format ("Error: Could not save configuration. Error Nbr: %d", hr);
-			AfxMessageBox (csErrorMessage);
-		}
-
-		SysFreeString( bStr );
 
 		if (isAutoSave) 
 		{
@@ -8107,79 +8093,6 @@ void SVObserverApp::DisableTriggerSettings()
 			pWindow->DrawMenuBar();
 		}
 	}
-}
-
-void SVObserverApp::SaveIPDoc(SVObjectWriter& rWriter, SVIPDoc* pDoc)
-{
-	rWriter.StartElement(CTAG_SVIPDOC);
-	pDoc->GetParameters(rWriter);
-	rWriter.EndElement();
-}
-
-HRESULT SVObserverApp::SaveDocuments( SVTreeType& p_rTree )
-{
-	HRESULT l_Status( S_OK );
-
-	SVTreeType::SVBranchHandle htiChild = NULL;
-
-	if( SVNavigateTreeClass::GetItemBranch( p_rTree, CTAG_INSPECTION, NULL, htiChild ) )
-	{
-		POSITION pos = GetFirstDocTemplatePosition();
-		if( pos )
-		{
-			do
-			{
-				CDocTemplate* pDocTemplate = GetNextDocTemplate( pos );
-				if( pDocTemplate )
-				{
-					POSITION posDoc = pDocTemplate->GetFirstDocPosition();
-					if ( posDoc )
-					{
-						do
-						{
-							CDocument* newDoc = pDocTemplate->GetNextDoc(posDoc);
-							if ( newDoc )
-							{
-								SVIPDoc* pTmpDoc = dynamic_cast <SVIPDoc*> (newDoc);
-
-								if( pTmpDoc != NULL )
-								{
-									SVTreeType::SVBranchHandle hInspection = NULL;
-
-									SVNavigateTreeClass::GetItemBranch( p_rTree, pTmpDoc->GetTitle(), htiChild, hInspection );
-									if ( hInspection != NULL )
-									{
-										SVConfigurationTreeWriter<SVTreeType> writer(p_rTree, hInspection);
-
-										#ifndef USE_OBJECT_SCRIPT
-											SVObjectClass* l_pObject = SVObjectManagerClass::Instance().GetObject( pTmpDoc->GetInspectionID() );
-											SVInspectionProcess* pInspection = dynamic_cast< SVInspectionProcess* >( l_pObject );
-
-											if( nullptr != pInspection )
-											{
-												// SEJ 101 New Logic
-												pInspection->Persist(writer);
-											}
-										#endif
-
-										SaveIPDoc(writer, pTmpDoc);
-									}
-								}
-							}
-						}
-						while( posDoc );
-					}
-				}
-			}
-			while( pos );
-		}
-	}
-	else
-	{
-		l_Status = E_FAIL;
-	}
-
-	return l_Status;
 }
 
 HRESULT SVObserverApp::ConstructDocuments( SVTreeType& p_rTree )

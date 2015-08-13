@@ -21,6 +21,7 @@
 #include "SVInfoStructs.h"
 #include "SVObjectCommandDataJson.h"
 #include "SVRemoteOutputObject.h"
+#include "SVObjectLibrary/SVObjectXMLWriter.h"
 
 class SVRemoteOutputGroup : 
 	public SVObjectClass,
@@ -49,7 +50,7 @@ public:
 
 	BOOL SetParameters( SVTreeType& rTree, SVTreeType::SVBranchHandle htiParent );
 
-	BOOL GetParameters( SVTreeType& rTree, SVTreeType::SVBranchHandle htiParent ) const;
+	BOOL GetParameters( SVObjectXMLWriter& rWriter ) const;
 
 	HRESULT GetMaterials( SVMaterialsTreeAdapter& p_rMaterialsTree, SVMaterialsTreeAdapter::SVTreeContainer* p_pParent );
 	HRESULT Update( SVMaterialsTreeAdapter& p_rMaterialsTree );

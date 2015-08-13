@@ -254,46 +254,37 @@ HRESULT SVRemoteOutputDataController::GetItem( const CString& p_strRemoteGroupId
 }
 
 // Parameters >> Tree ( Save )
-BOOL SVRemoteOutputDataController::GetParameters( SVTreeType& p_rTree, SVTreeType::SVBranchHandle p_htiParent )
+bool SVRemoteOutputDataController::GetParameters( SVObjectXMLWriter& rWriter )
 {
-	BOOL bOk = FALSE;
 	_variant_t svVariant;
 
 	ClearUnUsedData();	// clears unused remote data
 
-	SVTreeType::SVBranchHandle htiIORemoteGroup = NULL;
 	if( m_RemoteGroupParameters.size() > 0 )
 	{
-		if ( SVNavigateTreeClass::SetBranch( p_rTree, p_htiParent, CTAG_REMOTE_OUTPUT_PARAMETERS, &htiIORemoteGroup ) )
+		rWriter.StartElement( CTAG_REMOTE_OUTPUT_PARAMETERS );
+		
+		svVariant = SVGUID( outObjectInfo.UniqueObjectID ).ToVARIANT();
+		rWriter.WriteAttribute(  CTAG_UNIQUE_REFERENCE_ID, svVariant );
+
+		// Remote Output Parameters
+		SVRemoteOutputGroupMap::iterator l_it;
+
+		long lIndex = 0;
+		for( l_it = m_RemoteGroupParameters.begin(); l_it != m_RemoteGroupParameters.end() ; ++l_it )
 		{
-			svVariant = SVGUID( outObjectInfo.UniqueObjectID ).ToVARIANT();
-			SVNavigateTreeClass::AddItem( p_rTree, htiIORemoteGroup, CTAG_UNIQUE_REFERENCE_ID, svVariant );
+			CString l_strBranch;
 
-			// Remote Output Parameters
-			SVRemoteOutputGroupMap::iterator l_it;
-
-			long lIndex = 0;
-			for( l_it = m_RemoteGroupParameters.begin(); l_it != m_RemoteGroupParameters.end() ; ++l_it )
-			{
-				SVTreeType::SVBranchHandle htiRemoteOutputEntry = NULL;
-				CString l_strBranch;
-
-				lIndex++;
-				l_strBranch.Format( "%s_%d",CTAG_REMOTE_GROUP_ID, lIndex );
-				if ( SVNavigateTreeClass::SetBranch( p_rTree, htiIORemoteGroup, l_strBranch, &htiRemoteOutputEntry ) )
-				{
-					l_it->second->GetParameters( p_rTree, htiRemoteOutputEntry );
-				}
-			}
-
-			bOk = TRUE;
+			lIndex++;
+			l_strBranch.Format( "%s_%d",CTAG_REMOTE_GROUP_ID, lIndex );
+			rWriter.StartElement( l_strBranch );
+			l_it->second->GetParameters( rWriter );
+			rWriter.EndElement();
 		}
+		rWriter.EndElement();
 	}
-	else
-	{
-		bOk = TRUE;
-	}
-	return bOk;
+
+	return true;
 }
 
 // Tree >> Parameters ( Restore from archive )

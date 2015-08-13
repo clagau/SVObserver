@@ -30,6 +30,7 @@
 #include "SVStorageResult.h"
 #include "RemoteMonitorList.h"
 #pragma endregion Includes
+#include "SVObjectLibrary/SVObjectXMLWriter.h"
 
 #pragma region Declarations
 class SVDeviceParamCollection;
@@ -89,7 +90,7 @@ public:
 
 	unsigned long GetSVXFileVersion(SVTreeType& rTree);
 
-	BOOL SaveConfiguration(SVTreeType& rTree);
+	BOOL SaveConfiguration(SVObjectXMLWriter& rWriter) const;
 
 	HRESULT LoadConfiguration(SVTreeType& rTree);
 
@@ -131,12 +132,12 @@ public:
 							   SVDeviceParamCollection*& rpDeviceParams ) const;
 	SVAcquisitionDeviceMap::iterator GetAcquisitionDeviceStartPosition() const;
 	SVAcquisitionDeviceMap::iterator GetAcquisitionDeviceEndPosition();
-	void GetAcquisitionDeviceNextAssoc( SVAcquisitionDeviceMap::iterator& rNextPosition, CString& rKey );
+	void GetAcquisitionDeviceNextAssoc( SVAcquisitionDeviceMap::iterator& rNextPosition, CString& rKey ) const;
 	void GetAcquisitionDeviceNextAssoc( SVAcquisitionDeviceMap::iterator& rNextPosition, CString& rKey, 
 	                                    SVFileNameArrayClass*& pFiles,
                                         SVLightReference*& pLight,
 										SVLut*& rpLut,
-										SVDeviceParamCollection*& rpDeviceParams );
+										SVDeviceParamCollection*& rpDeviceParams ) const;
 
 	BOOL AddTrigger( SVTriggerObject* pTrigger );
 	BOOL RemoveTrigger( SVTriggerObject* pTrigger );
@@ -186,6 +187,7 @@ public:
 
 	SVIOController* GetIOController() const;
 	SVGUID GetIOControllerID() const;
+
 
 	SVGUID GetRemoteOutputController() const;
 	size_t GetRemoteOutputGroupCount() const;
@@ -263,50 +265,49 @@ private:
 	typedef SVVector< SVInspectionProcess* > SVInspectionProcessVector;
 	typedef std::set< SVInspectionProcess* > SVInspectionSet;
 
-	BOOL SaveEnvironment(SVTreeType &rTree);
-	BOOL SaveIO(SVTreeType &rTree);
-	BOOL SaveAcquisitionDevice(SVTreeType &rTree);
-	BOOL SaveCamera(SVTreeType &rTree);
-	BOOL SaveTrigger(SVTreeType &rTree);
-	BOOL SaveInspection(SVTreeType &rTree);
-	BOOL SavePPQ(SVTreeType &rTree);
-	
-	//************************************
-	// Method:    SaveMonitorList
-	// Description: Add the current monitor lists to the tree.
-	// Parameter: SVTreeType & rTree XML-tree which will be saved.
-	// Returns:   bool
-	//************************************
-	bool SaveRemoteMonitorList( SVTreeType& rTree ) const;
+	void SaveEnvironment(SVObjectXMLWriter& rWriter) const;
+	void SaveIO(SVObjectXMLWriter& rWriter) const;
+	void SaveAcquisitionDevice(SVObjectXMLWriter& rWriter) const;
+	void SaveAcquistionConfiguration(SVObjectXMLWriter& rWriter, const SVLightReference& rLight, const SVLut& rLut, const SVDeviceParamCollection& rDeviceParams) const;
+	void SaveCamera(SVObjectXMLWriter& rWriter) const;
+	void SaveTrigger(SVObjectXMLWriter& rWriter) const;
+	void SaveInspection(SVObjectXMLWriter& rWriter) const;
+	void SavePPQ(SVObjectXMLWriter& rWriter) const;
+	void SavePPQ_Attributes( SVObjectXMLWriter &rWriter, const SVPPQObject& rPPQ ) const;
+	void SavePPQ_Cameras( SVObjectXMLWriter &rWriter, const SVPPQObject& rPPQ ) const;
+	void SavePPQ_Inspections( SVObjectXMLWriter &rWriter, const SVPPQObject& rPPQ ) const;
 
 	//************************************
-	// Method:    SaveMonitoredObjectList
-	// Description: Add the current sub monitor lists to the tree
-	// Parameter: SVTreeType & rTree XML-tree which will be saved.
-	// Parameter: SVTreeType::SVBranchHandle hBranch Branch of the tree where the sub list should added.
-	// Parameter: const SVString& listName Name of the sublist.
-	// Parameter: const MonitoredObjectList & subList The sublist which should saved.
-	// Returns:   bool
+	//! Add the current monitor lists to the xml-file.
+	//! \param rWriter reference to the xml-writer.
+	//! \returns true on success
 	//************************************
-	bool SaveMonitoredObjectList( SVTreeType& rTree, SVTreeType::SVBranchHandle hBranch, const SVString& listName, const MonitoredObjectList& subList ) const;
+	bool SaveRemoteMonitorList( SVObjectXMLWriter &rWriter ) const;
+
+	//************************************
+	//! Add the current sub monitor lists to the tree
+	//! \param rWriter reference to the xml-writer.
+	//! \param listName Name of the sublist.
+	//! \param subList The sublist which should saved.
+	//! \returns true on success
+	//************************************
+	bool SaveMonitoredObjectList( SVObjectXMLWriter &rWriter, const SVString& listName, const MonitoredObjectList& subList ) const;
 
 	//************************************
 	//! The method saves the Global Constant list
-	//! \param rTree <in> a reference to the XML-tree which it will be saved to
-	//! \returns true on success
+	//! \param rWriter <in> a reference to the xml-writer
 	//************************************
-	bool SaveGlobalConstants( SVTreeType& rTree ) const;
+	void SaveGlobalConstants( SVObjectXMLWriter &rWriter ) const;
 
-	HRESULT SaveAcquisitionDeviceFilename( SVTreeType& rTree, SVTreeType::SVBranchHandle htiDig, SVFileNameArrayClass* pFiles );
 	HRESULT LoadAcquisitionDeviceFilename( SVTreeType& rTree, SVTreeType::SVBranchHandle htiDig, SVFileNameArrayClass& svFileArray );
 
-	HRESULT SaveFileAcquisitionConfiguration( SVTreeType& rTree, SVTreeType::SVBranchHandle htiBoard, SVTreeType::SVBranchHandle htiDig, const SVDeviceParamCollection* pDeviceParams );
+	void SaveFileAcquisitionConfiguration( SVObjectXMLWriter& rWriter, const SVDeviceParamCollection& rDeviceParams ) const;
 	HRESULT LoadFileAcquisitionConfiguration( SVTreeType& rTree, SVTreeType::SVBranchHandle htiBoardChild, long& lNumAcqDig );
 
-	HRESULT SaveDeviceParameters( SVTreeType& rTree, SVTreeType::SVBranchHandle htiDig, const SVDeviceParamCollection* pDeviceParams );
+	void SaveDeviceParameters( SVObjectXMLWriter& rWriter, const SVDeviceParamCollection& rDeviceParams ) const;
 	HRESULT LoadDeviceParameters( SVTreeType& rTree, SVTreeType::SVBranchHandle htiDataChild, SVDeviceParamCollection& svDeviceParams );
 
-	HRESULT SaveDeviceParamSpecial( SVTreeType& rTree, SVTreeType::SVBranchHandle htiParent, const SVDeviceParam* pParam );
+	void SaveDeviceParamSpecial( SVObjectXMLWriter& rWriter, const SVDeviceParam* pParam ) const;
 	HRESULT LoadDeviceParamSpecial( SVTreeType& rTree, SVTreeType::SVBranchHandle htiParent, SVDeviceParam* pParam );
 
 	void ConvertLightReferenceEnum(DWORD &dwType);

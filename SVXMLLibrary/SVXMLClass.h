@@ -349,7 +349,18 @@ public:
 //  This function will create the BSTR.
 	HRESULT GetElementName (SVXML::IXMLDOMElementPtr aDOMElementPtr, BSTR* abstrpDOMElementName);
 
-	HRESULT GetElementNbrOfChildren (SVXML::IXMLDOMElementPtr aDOMElementPtr, long* alpNbrOfChildren);
+	HRESULT GetElementNbrOfChildren (const SVXML::IXMLDOMElementPtr aDOMElementPtr, long* alpNbrOfChildren) const;
+	
+	//************************************
+	/// \param aDOMElementPtr [in] the parent node pointer
+	/// \returns Return the first child node pointer of the type element and if no element found nullptr.
+	//************************************
+	SVXML::IXMLDOMElementPtr GetFirstElementChild(const SVXML::IXMLDOMElementPtr aDOMElementPtr) const;
+	//************************************
+	/// \param aDOMElementPtr [in] the sibling node pointer
+	/// \returns Return the next sibling node pointer of the type element and if no element found nullptr.
+	//************************************
+	SVXML::IXMLDOMElementPtr GetNextElementSibling(const SVXML::IXMLDOMElementPtr aDOMElementPtr) const;
 
 // CreateDOMData () ---------------------------------------------------------
 // This function was moved from protected to public in order to satisfy the 

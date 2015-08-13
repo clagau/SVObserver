@@ -44,26 +44,19 @@ public:
 	HRESULT GetNameSpace (WCHAR* awcsNameSpace, long alBufferSize);
 
 // GetElementNbrOfChildren () -----------------------------------------------
-// For now, I am simply commenting on discovered behavior.  This function 
-// uses Get_childNodes () to retrieve the child node list, and then returns 
-// the number of items (children) in the list.  
-//
-// A possible problem might occur because this value is used to make 
-//	decisions in the program regarding child elements where the program might 
-// try to use Get_firstChild () and Get_nextSibling () (the element 
-// functions, not the elements child lists functions).  Apparently the 
-//	functions exposed at the parent element level filter the actual list.
-//
-// The result of which is that the GetElementNbrOfChildren () function might 
-// indicate elements present, when the Get_firstChild () at the element level
-// returns a NULL.  An example of this is when Text is included in the 
-//	element.  Currently white space text is ignored and does not have this 
-// affect, but if Text "123" is inserted in and element before the desired 
-//	child element, the GetElementNbrOfChildren () will show 2 children 
-// (assuming that there is only 1 prior to adding the text), but the 
-// elements Get_firstChild () function will return a NULL.  It can not get
-// passed the text child entry.
-	HRESULT	GetElementNbrOfChildren (SVXML::IXMLDOMElementPtr aDOMElementPtr, long* alpNbrOfChildren);
+// This method return really only the numbers of elements. To get the element children use GetFirstElementChild or GetNextElementSibling.
+// ATTENTIONS: If you use GetfirstChild or GetnextSibling, you can get more children, because you can also get nodes of the type other types like TEXT.
+	HRESULT	GetElementNbrOfChildren (const SVXML::IXMLDOMElementPtr aDOMElementPtr, long* alpNbrOfChildren) const;
+	//************************************
+	/// \param aDOMElementPtr [in] the parent node pointer
+	/// \returns Return the first child node pointer of the type element and if no element found nullptr.
+	//************************************
+	SVXML::IXMLDOMElementPtr GetFirstElementChild(const SVXML::IXMLDOMElementPtr aDOMElementPtr) const;
+	//************************************
+	/// \param aDOMElementPtr [in] the sibling node pointer
+	/// \returns Return the next sibling node pointer of the type element and if no element found nullptr.
+	//************************************
+	SVXML::IXMLDOMElementPtr GetNextElementSibling(const SVXML::IXMLDOMElementPtr aDOMElementPtr) const;
 
 	HRESULT	SetQueryNameSpace (BSTR	abstrQueryNameSpace);
 	HRESULT ClearNameSpace ();

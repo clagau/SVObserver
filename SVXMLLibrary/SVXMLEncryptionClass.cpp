@@ -1040,7 +1040,7 @@ HRESULT SVXMLEncryptionClass::LoadEncryption ()
 			if (l_lCounter == 0)
 			{
 //-			First time through.
-				l_oChildPtr = l_oEncryptionBaseNodePtr->GetfirstChild ();
+				l_oChildPtr = m_opParentDOM->GetFirstElementChild(l_oEncryptionBaseNodePtr);
 				if (l_oChildPtr == NULL)
 				{
 					hr = -1926;
@@ -1049,7 +1049,7 @@ HRESULT SVXMLEncryptionClass::LoadEncryption ()
 			}
 			else
 			{
-				l_oChildPtr = l_oOldPtr->GetnextSibling ();
+				l_oChildPtr = m_opParentDOM->GetNextElementSibling(l_oOldPtr);
 				if (l_oChildPtr == NULL)
 				{
 					hr = -1927;
