@@ -1569,9 +1569,8 @@ void SVObjectClass::PersistAttributes( SVObjectWriter& rWriter )
 	// Get the Data Values (Member Info, Values)
 
 	// Add object attributes as trivial members
-	_variant_t value(m_uObjectAttributesAllowed); 
+	_variant_t value; 
 	value.ChangeType(VT_UI4);
-	rWriter.WriteAttribute( scAttributesAllowedTag, value );
 
 	rWriter.StartElement(scAttributesSetTag);
 	SVVariantList list;

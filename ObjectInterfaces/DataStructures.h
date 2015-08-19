@@ -47,7 +47,6 @@ namespace Seidenader { namespace ObjectInterfaces
 		SVGUID		m_Guid;						//The object unique ID or GUID_NULL
 		SVString	m_DottedName;				//The dotted name of the constant
 		_variant_t	m_Value;					//The value of the constant
-		UINT		m_AttributesAllowed;		//The attributes for the object
 		SVString	m_Description;				//The description of the constant
 		bool		m_Selected;					//To determine if this has been selected
 	#pragma endregion Member variables

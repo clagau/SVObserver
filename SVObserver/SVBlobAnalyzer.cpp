@@ -833,6 +833,10 @@ BOOL SVBlobAnalyzerClass::CreateObject(SVObjectLevelCreateStruct* PCreateStructu
 		{
 			msvValue[i].ObjectAttributesAllowedRef() &= ~SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES;
 		}
+		else	// Jira SVO-611
+		{
+			msvValue[i].ObjectAttributesAllowedRef() |= SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES;
+		}
 
 		if ( msvValue[i].ObjectAttributesAllowed() != SV_NO_ATTRIBUTES )
 		{

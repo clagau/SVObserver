@@ -133,7 +133,6 @@ HRESULT SVInspectionTreeParser< SVTreeType >::Process(typename SVTreeType::SVBra
 		_variant_t objectName;
 		_variant_t classID;
 		_variant_t uniqueID;
-		_variant_t attributesAllowed;
 		
 		SVNavigateTreeClass::GetItem(m_rTree, scObjectNameTag, hItem, objectName);
 		m_count++;
@@ -147,8 +146,6 @@ HRESULT SVInspectionTreeParser< SVTreeType >::Process(typename SVTreeType::SVBra
 		}
 		m_count++;
 		
-		SVNavigateTreeClass::GetItem(m_rTree, scAttributesAllowedTag, hItem, attributesAllowed);
-		m_count++;
 	
 		GUID objectID( GUID_NULL );
 		if( m_ReplaceUniqueID )
@@ -170,7 +167,7 @@ HRESULT SVInspectionTreeParser< SVTreeType >::Process(typename SVTreeType::SVBra
 			UpdateProgress(m_count, m_totalSize);
 
 			// this will be different for embeddeds, it will use the owning object ID and the embedded object ID
-			hr = ProcessAttributes(objectID, objectID, attributesAllowed, hItem);
+			hr = ProcessAttributes(objectID, objectID, hItem);
 		
 			UpdateProgress(m_count, m_totalSize);
 
@@ -281,7 +278,6 @@ HRESULT SVInspectionTreeParser< SVTreeType >::ProcessFriend(typename SVTreeType:
 	GetItemValue(scObjectNameTag, hItem, objectName);
 	GetItemValue(scClassIDTag, hItem, classID);
 	GetItemValue(scUniqueReferenceIDTag, hItem, uniqueID);
-	GetItemValue(scAttributesAllowedTag, hItem, attributesAllowed);
 
 	UpdateProgress(m_count, m_totalSize);
 
@@ -291,11 +287,11 @@ HRESULT SVInspectionTreeParser< SVTreeType >::ProcessFriend(typename SVTreeType:
 	if (hr == S_OK)
 	{
 		// this will be different for embeddeds, it will use the owning object ID and the embedded object ID
-		hr = ProcessAttributes(objectID, objectID, attributesAllowed, hItem);
-	}
-	if (hr == S_OK)
-	{
-		hr = ProcessChildren(hItem, objectID);
+		hr = ProcessAttributes(objectID, objectID, hItem);
+		if( hr == S_OK )
+		{
+			hr = ProcessChildren(hItem, objectID);
+		}
 	}
 	m_count++;
 	UpdateProgress(m_count, m_totalSize);
@@ -338,7 +334,6 @@ HRESULT SVInspectionTreeParser< SVTreeType >::ProcessEmbedded(typename SVTreeTyp
 	GetItemValue(scObjectNameTag, hItem, objectName);
 	GetItemValue(scEmbeddedIDTag, hItem, embeddedID);
 	GetItemValue(scUniqueReferenceIDTag, hItem, uniqueID);
-	GetItemValue(scAttributesAllowedTag, hItem, attributesAllowed);
 
 	UpdateProgress(m_count, m_totalSize);
 
@@ -349,7 +344,7 @@ HRESULT SVInspectionTreeParser< SVTreeType >::ProcessEmbedded(typename SVTreeTyp
 		SVObjectScriptDataObjectTypeEnum dataType;
 		if (SVObjectBuilder::GetObjectDataType(ownerID, objectID, dataType) == S_OK)
 		{
-			hr = ProcessAttributes(ownerID, objectID, attributesAllowed, hItem);
+			hr = ProcessAttributes(ownerID, objectID, hItem);
 		
 			if (hr == S_OK)
 			{
@@ -518,7 +513,7 @@ HRESULT SVInspectionTreeParser< SVTreeType >::ProcessLeafObjectValues(typename S
 }
 
 template< typename SVTreeType >
-HRESULT SVInspectionTreeParser< SVTreeType >::ProcessAttributes(const GUID& ownerID, const GUID& objectID, const _variant_t& attributesAllowed, typename SVTreeType::SVBranchHandle hItem)
+HRESULT SVInspectionTreeParser< SVTreeType >::ProcessAttributes(const GUID& ownerID, const GUID& objectID, typename SVTreeType::SVBranchHandle hItem)
 {
 	HRESULT hr = S_OK;
 
@@ -526,11 +521,6 @@ HRESULT SVInspectionTreeParser< SVTreeType >::ProcessAttributes(const GUID& owne
 	bool bVal = GetValues(hItem, scAttributesSetTag, attributes);
 	if (bVal)
 	{			
-		// process Attributes Allowed
-		hr = SVObjectBuilder::SetObjectValue(objectID, objectID, scAttributesAllowedTag, attributesAllowed, SV_DWORD_Type);
-	}
-	if (hr == S_OK)
-	{
 		// process Attributes Set
 		hr = SVObjectBuilder::SetObjectValue(ownerID, objectID, scAttributesSetTag, attributes, SV_DWORD_Type);
 	}

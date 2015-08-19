@@ -10,8 +10,7 @@ namespace Seidenader { namespace ObjectInterfaces
 {
 	#pragma region Constructor
 	GlobalConstantData::GlobalConstantData():
-		m_AttributesAllowed(0)
-		,m_Guid( SV_GUID_NULL )
+		m_Guid( SV_GUID_NULL )
 		,m_Selected( false )
 	{
 	}
@@ -45,8 +44,8 @@ namespace Seidenader { namespace ObjectInterfaces
 		default:
 			break;
 		}
-		Result = std::tie(m_Guid, m_DottedName, m_Value.vt, LhsValue, m_AttributesAllowed, m_Description, m_Selected) < 
-				 std::tie(Rhs.m_Guid, Rhs.m_DottedName, Rhs.m_Value.vt, RhsValue, Rhs.m_AttributesAllowed, Rhs.m_Description, Rhs.m_Selected);
+		Result = std::tie(m_Guid, m_DottedName, m_Value.vt, LhsValue, m_Description, m_Selected) < 
+				 std::tie(Rhs.m_Guid, Rhs.m_DottedName, Rhs.m_Value.vt, RhsValue, Rhs.m_Description, Rhs.m_Selected);
 		return Result;
 	}
 
@@ -55,7 +54,6 @@ namespace Seidenader { namespace ObjectInterfaces
 		m_Guid = Rhs.m_Guid;
 		m_DottedName = Rhs.m_DottedName;
 		m_Value = Rhs.m_Value;
-		m_AttributesAllowed = Rhs.m_AttributesAllowed;
 		m_Description = Rhs.m_Description;
 		m_Selected = Rhs.m_Selected;
 		return *this;
@@ -68,7 +66,6 @@ namespace Seidenader { namespace ObjectInterfaces
 		if( m_Guid == Rhs.m_Guid &&
 			m_DottedName == Rhs.m_DottedName &&
 			m_Value == Rhs.m_Value &&
-			m_AttributesAllowed == Rhs.m_AttributesAllowed &&
 			m_Description == Rhs.m_Description &&
 			m_Selected == Rhs.m_Selected )
 		{

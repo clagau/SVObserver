@@ -56,7 +56,7 @@ private:
 
 	HRESULT ProcessInputs(typename SVTreeType::SVBranchHandle hItem, const GUID& ownerID);
 	
-	HRESULT ProcessAttributes(const GUID& ownerID, const GUID& objectID, const _variant_t& attributesAllowed, typename SVTreeType::SVBranchHandle hItem);
+	HRESULT ProcessAttributes(const GUID& ownerID, const GUID& objectID, typename SVTreeType::SVBranchHandle hItem);
 
 	bool GetItemValue(const SVString& tag, typename SVTreeType::SVBranchHandle hItem, _variant_t& value);
 	bool GetValues(typename SVTreeType::SVBranchHandle hItem, const SVString& tag, SVVariantList& values);

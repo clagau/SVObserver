@@ -3592,10 +3592,6 @@ void SVConfigurationObject::SaveGlobalConstants( SVObjectXMLWriter &rWriter ) co
 		rWriter.WriteAttribute( CTAG_VALUE, Value );
 		Value.Clear();
 
-		Value = (*Iter)->ObjectAttributesAllowedRef();
-		Value.ChangeType(VT_UI4);
-		rWriter.WriteAttribute( scAttributesAllowedTag, Value );
-		Value.Clear();
 
 		CString Description( (*Iter)->getDescription() );
 		//This is needed to remove any CR LF in the description
@@ -5377,12 +5373,6 @@ HRESULT SVConfigurationObject::LoadGlobalConstants( SVTreeType& rTree )
 				{
 					Result = SVMSG_SVO_63_LOAD_GLOBAL_CONSTANTS;
 				}
-				Value.Clear();
-				if ( !SVNavigateTreeClass::GetItem( rTree, scAttributesAllowedTag, hChild, Value ) )
-				{
-					Result = SVMSG_SVO_63_LOAD_GLOBAL_CONSTANTS;
-				}
-				UINT AttributesAllowed = Value;
 
 				Value.Clear();
 				if ( !SVNavigateTreeClass::GetItem( rTree, CTAG_VALUE, hChild, Value ) )
@@ -5401,7 +5391,11 @@ HRESULT SVConfigurationObject::LoadGlobalConstants( SVTreeType& rTree )
 					else
 					{
 						pValue->setDescription( Description );
-						pValue->ObjectAttributesAllowedRef() = AttributesAllowed;
+						// If type string then remove Selectable for Equation flag.
+						if( VT_BSTR == Value.vt )
+						{
+							pValue->ObjectAttributesAllowedRef() &= ~SV_SELECTABLE_FOR_EQUATION;
+						}
 					}
 				}
 			}

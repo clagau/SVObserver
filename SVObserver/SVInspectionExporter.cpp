@@ -125,10 +125,6 @@ static void WriteGlobalConstants(SVObjectXMLWriter& rWriter, SVObjectClass* pObj
 				pGlobalConstant->getValue( Value );
 				rWriter.WriteAttribute( CTAG_VALUE, Value );
 				Value.Clear();
-				Value = pGlobalConstant->ObjectAttributesAllowedRef();
-				Value.ChangeType(VT_UI4);
-				rWriter.WriteAttribute( scAttributesAllowedTag, Value );
-				Value.Clear();
 				CString Description( pGlobalConstant->getDescription() );
 				//This is needed to remove any CR LF in the description
 				::SVAddEscapeSpecialCharacters( Description, true );

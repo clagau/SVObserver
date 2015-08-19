@@ -5082,7 +5082,11 @@ void CSVOConfigAssistantDlg::resolveGlobalConflicts( SvOi::GlobalConflictPairVec
 					{
 						pGlobalObject->setValue( Iter->second.m_Value );
 						pGlobalObject->setDescription( Iter->second.m_Description.c_str() );
-						pGlobalObject->ObjectAttributesAllowedRef() = Iter->second.m_AttributesAllowed;
+						pGlobalObject->ObjectAttributesAllowedRef() = SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES;
+						if( Iter->second.m_Value.vt == VT_BSTR )
+						{
+							pGlobalObject->ObjectAttributesAllowedRef() &= ~SV_SELECTABLE_FOR_EQUATION;
+						}
 					}
 				}
 				++Iter;

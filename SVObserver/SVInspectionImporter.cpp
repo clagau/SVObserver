@@ -251,12 +251,6 @@ static bool importGlobalConstants( SVTreeType& rTree, SvOi::GlobalConstantDataSe
 				GlobalData.m_Value = Value;
 			}
 			Value.Clear();
-			Result = SVNavigateTreeClass::GetItem( rTree, scAttributesAllowedTag, hItemChild, Value );
-			if( Result )
-			{
-				GlobalData.m_AttributesAllowed = Value;
-			}
-			Value.Clear();
 			Result = SVNavigateTreeClass::GetItem( rTree, CTAG_DESCRIPTION, hItemChild, Value );
 			if( Result )
 			{
@@ -290,7 +284,6 @@ static void checkGlobalConstants( const SvOi::GlobalConstantDataSet& rImportedGl
 		GlobalData.m_DottedName = (*Iter)->GetCompleteObjectName();
 		(*Iter)->getValue( GlobalData.m_Value );
 		GlobalData.m_Description = (*Iter)->getDescription();
-		GlobalData.m_AttributesAllowed = (*Iter)->ObjectAttributesAllowedRef();
 		CurrentGlobals.insert( GlobalData );
 
 		++Iter;
@@ -313,7 +306,10 @@ static void checkGlobalConstants( const SvOi::GlobalConstantDataSet& rImportedGl
 			if( !pGlobalConstant.empty() )
 			{
 				pGlobalConstant->setDescription( DiffIter->m_Description.c_str() );
-				pGlobalConstant->ObjectAttributesAllowedRef() = DiffIter->m_AttributesAllowed;
+				if( DiffIter->m_Value.vt == VT_BSTR)
+				{
+					pGlobalConstant->ObjectAttributesAllowedRef() &= ~SV_SELECTABLE_FOR_EQUATION;
+				}
 			}
 		}
 		else
