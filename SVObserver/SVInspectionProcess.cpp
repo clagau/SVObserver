@@ -2090,7 +2090,8 @@ DWORD_PTR SVInspectionProcess::processMessage(DWORD DwMessageID, DWORD_PTR DwMes
 				{
 					DwResult = SVMR_SUCCESS;
 				}
-				
+				///SVO725 avoid sending message SVM_RESET_ALL_OBJECTS twice.
+				return DwResult;
 				break;
 			}
 		}
