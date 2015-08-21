@@ -34,7 +34,7 @@ public:
 	virtual HRESULT IsInputImage( SVImageClass *p_psvImage );
 
 	virtual SVTaskObjectClass *GetObjectAtPoint( const SVExtentPointStruct &p_rsvPoint );
-	virtual HRESULT DoesObjectHaveExtents() const;
+	virtual bool DoesObjectHaveExtents() const override;
 
 	SVObjectClass* getImageToLineProject();
 	SVLineClass* getOutputLine();

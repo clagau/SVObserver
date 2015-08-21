@@ -20,16 +20,14 @@
 #include <boost/scoped_array.hpp>
 #include <boost/any.hpp>
 #include <atlenc.h>
-#include "SVSocketLibrary.h"
-#include "SVServerSocket.h"
+#include "SVSocketLibrary\SVSocketLibrary.h"
+#include "SVSocketLibrary\SVServerSocket.h"
 #include "SVRemoteControlConstants.h"
 #include "JsonLib\include\json.h"
-#include "SVSharedPPQReader.h"
-#include "SVMonitorListReader.h"
-#include "SVShareControlHandler.h"
-#include "SVSharedConfiguration.h"
-
-#pragma comment (lib, "version.lib")
+#include "SVSharedMemoryLibrary\SVSharedPPQReader.h"
+#include "SVSharedMemoryLibrary\SVMonitorListReader.h"
+#include "SVSharedMemoryLibrary\SVShareControlHandler.h"
+#include "SVSharedMemoryLibrary\SVSharedConfiguration.h"
 
 bool g_bQuit = false;
 

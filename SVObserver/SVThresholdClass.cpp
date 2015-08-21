@@ -9,6 +9,7 @@
 //* .Check In Date   : $Date:   08 Oct 2014 07:26:54  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVThresholdClass.h"
 #include "SVGlobal.h"
@@ -19,6 +20,8 @@
 #include "SVDataBuffer.h"
 #include "SVImageProcessingClass.h"
 #include "SVTool.h"
+#include "SVStatusLibrary\MessageManager.h"
+#pragma endregion Includes
 
 #define SV_OC_ERROR 0xc0000000   //SV Operator Class Error.
 
@@ -444,7 +447,6 @@ BOOL SVThresholdClass::onRun( BOOL First,
 	// Signal threshold operator was not running...
 	if (l_Code & SV_OC_ERROR)
 	{
-		SVException l_svLog;
 		CString		l_csMessage;
 
 		assert (0);
@@ -452,8 +454,9 @@ BOOL SVThresholdClass::onRun( BOOL First,
 		RRunStatus.SetInvalid();
 
 		l_csMessage.Format ("Error in SVThresholdClass::onRun");
-		SETEXCEPTION1( l_svLog, l_Code, l_csMessage);
-		l_svLog.LogException();
+		
+		SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+		Exception.setMessage( static_cast<DWORD> (l_Code), l_csMessage, StdMessageParams );
 
 		RRunStatus.SetCriticalFailure();
 

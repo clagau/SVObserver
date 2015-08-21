@@ -14,8 +14,8 @@
 #include "SVOFileConfig.h"
 #include "SVOIPDocClass.h"
 #include "SVOFileConfigDlg.h"
-#include "SVStatusLibrary/SVException.h"
 #include "ObjectInterfaces\ErrorNumbers.h"
+#include "SVStatusLibrary\MessageManager.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -68,11 +68,8 @@ void SVOIPDocClass::Dump(CDumpContext& dc) const
 
 void SVOIPDocClass::Serialize(CArchive& ar)
 {
-	SVException l_Exception;
-	CString l_Message;
-	l_Message.Format(_T("This was previously used for .sec files."));
-	SETEXCEPTION5(l_Exception, E_NOTIMPL, SvOi::Err_15037, l_Message);
-	l_Exception.LogException(l_Message);
+	SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+	Exception.setMessage( E_NOTIMPL, ErrorUsedPreviouslyForSec, StdMessageParams, SvOi::Err_15037 );
 }
 
 /////////////////////////////////////////////////////////////////////////////

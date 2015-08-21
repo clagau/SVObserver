@@ -355,9 +355,9 @@ SVTaskObjectClass *SVAngularProfileToolClass::GetObjectAtPoint( const SVExtentPo
 	return l_psvObject;
 }
 
-HRESULT SVAngularProfileToolClass::DoesObjectHaveExtents() const
+bool SVAngularProfileToolClass::DoesObjectHaveExtents() const
 {
-	return S_OK;
+	return true;
 }
 
 DWORD_PTR SVAngularProfileToolClass::processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext )

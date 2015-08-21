@@ -56,10 +56,10 @@ public:
 	//##ModelId=38E8FF8B0063
 	void SV_EXPORTDLL SetupConnection();
 	//##ModelId=38E8FF8B005F
-	virtual BOOL OnWriteBlockComplete(SVException *psvException, char *pBuffer, int cbBuffer);
+	virtual BOOL OnWriteBlockComplete(SvStl::MessageHandler *psvException, char *pBuffer, int cbBuffer);
 
 	//##ModelId=38E8FF8B0050
-	virtual BOOL OnReadBlockComplete(SVException *psvException, char *pBuffer, int cbBuffer);
+	virtual BOOL OnReadBlockComplete(SvStl::MessageHandler *psvException, char *pBuffer, int cbBuffer);
 
 	//Called when a receive data thread completes.  The 
 	//application should call GetLastSVIMError () to 

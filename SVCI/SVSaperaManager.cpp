@@ -11,9 +11,8 @@
 
 #include "stdafx.h"
 #include "SVSaperaManager.h"
-
-#include "SVStatusLibrary/SVException.h"
-#include "SVStatusLibrary/SVStatusCodes.h"
+#include "SVMessage\SVMessage.h"
+#include "SVStatusLibrary\MessageManager.h"
 
 SVSaperaManager& SVSaperaManager::Instance()
 {
@@ -115,13 +114,12 @@ HRESULT SVSaperaManager::GetErrorNumber( CORSTATUS p_hErrorCode, const SVString&
 		unsigned int l_uiInfo = CORSTATUS_INFO( p_hErrorCode );
 		unsigned int l_uiStatus = CORSTATUS_ID( p_hErrorCode );
 
-		SVException l_Exception;
 		CString l_Message;
 		l_Message.Format( _T( "%s-CorStatus=0x%x-Module=0x%x-Level=0x%x-Info=0x%x-Status=0x%x" ),
 			p_rContext.c_str(), p_hErrorCode, l_uiModule, l_uiLevel, l_uiInfo, l_uiStatus );
 
-		SETEXCEPTION1( l_Exception, SVMSG_SVCI_UNKNOWN_INFORMATIONAL, l_Message );
-		l_Exception.LogException( l_Message );
+		SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+		Exception.setMessage( SVMSG_SVCI_UNKNOWN_INFORMATIONAL, l_Message, StdMessageParams );
 
 		l_hrOk = S_FALSE;
 	}

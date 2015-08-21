@@ -12,7 +12,7 @@
 #include "stdafx.h"
 #include "SVPipesConnectionDlg.h"
 #include "SVStatusLibrary/SVRegistry.h"
-#include "SVStatusLibrary/SVException.h"
+#include "SVStatusLibrary\MessageManager.h"
 #include "SVLibrary/SVLibrary.h"
 #include "SVMessage/SVMessage.h"
 
@@ -80,10 +80,11 @@ void SVPipesConnectionDlg::OnOK()
 	}
 	else
 	{
+		//Not done with MessageMgr1 otherwise SVPipes.dll would need to load SVOResource.dll
+		SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+		Exception.setMessage( SVMSG_PIPES_REQUIRED_DATA_MISSING, nullptr, StdMessageParams );
 		SVString szMsg;
-		SVException svException;
-		SETEXCEPTION0 (svException, SVMSG_PIPES_REQUIRED_DATA_MISSING);
-		svException.Format( szMsg );
+		Exception.getMessageHandler().Format( szMsg );
 		MessageBox (szMsg.ToString());
 	}
 }

@@ -98,9 +98,6 @@
     <ClCompile Include="SVMatroxImageRotateStruct.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVMatroxLibrary.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVMatroxOcr.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

@@ -26,6 +26,9 @@
 #include "SVVisionProcessorHelper.h"
 #include "ObjectInterfaces/SVUserMessage.h"
 #include "RemoteMonitorNamedList.h"
+#include "ObjectInterfaces\ErrorNumbers.h"
+#include "SVStatusLibrary\MessageManager.h"
+#include "TextDefinesSvO.h"
 
 #define SV_DATA_TO_CONTENTS
 //#define SV_OUTPUT_JSON
@@ -747,10 +750,10 @@ HRESULT SVRemoteCommandFunctions::GetConfig( const std::string& p_rJsonCommand, 
 		{
 			l_Status = SVVisionProcessorHelper::Instance().SaveConfiguration( l_TempFileName );
 		}
-		catch (SVException& e)
+		catch ( const SvStl::MessageHandler& rSvE )
 		{
-			l_Status = e.GetErrorCode();
-			errText = e.what().c_str();
+			l_Status = static_cast<HRESULT> (rSvE.getMessage().m_MessageCode);
+			errText = rSvE.what();
 		}
 	}
 	else if (S_OK == l_Status)
@@ -787,11 +790,12 @@ HRESULT SVRemoteCommandFunctions::GetConfig( const std::string& p_rJsonCommand, 
 	else
 	{
 		// Log Exception (in case no one else did...)
-		SVException e;
-		SETEXCEPTION4(e, l_Status, -20202);
+		SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+		Exception.setMessage( l_Status, NULL, StdMessageParams, SvOi::Err_25018_Json_GetConfig );
+		
 		if (errText.empty())
 		{
-			errText = e.what().c_str();
+			errText = Exception.getMessageHandler().what();
 		}
 		BuildErrorResponse(p_rJsonCommand, p_rJsonResults, l_Status, errText);
 	}
@@ -1268,10 +1272,10 @@ HRESULT SVRemoteCommandFunctions::PutConfig( const std::string& p_rJsonCommand, 
 		{
 			l_Status = SVVisionProcessorHelper::Instance().LoadConfiguration( l_SourceFileName );
 		}
-		catch (SVException& e)
+		catch (const SvStl::MessageHandler& rSvE)
 		{
-			l_Status = e.GetErrorCode();
-			errText = e.what().c_str();
+			l_Status = static_cast<HRESULT> (rSvE.getMessage().m_MessageCode);
+			errText = rSvE.what();
 		}
 		::remove(l_SourceFileName.c_str());
 	}
@@ -1290,11 +1294,12 @@ HRESULT SVRemoteCommandFunctions::PutConfig( const std::string& p_rJsonCommand, 
 	else
 	{
 		// Log Exception (in case no one else did...)
-		SVException e;
-		SETEXCEPTION4(e, l_Status, -10101);
+		SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+		Exception.setMessage( l_Status, NULL, StdMessageParams, SvOi::Err_25019_Json_PutConfig );
+
 		if (errText.empty())
 		{
-			errText = e.what().c_str();
+			errText = Exception.getMessageHandler().what();
 		}
 		if (!FAILED(l_Status))
 		{

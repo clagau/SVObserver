@@ -8,9 +8,7 @@
 // * .Current Version : $Revision:   1.0  $
 // * .Check In Date   : $Date:   22 Apr 2013 15:21:46  $
 // ******************************************************************************
-
-#ifndef SV_MATROX_LIBRARY_H
-#define SV_MATROX_LIBRARY_H
+#pragma once
 
 #include "SVMatroxApplicationInterface.h"
 #include "SVMatroxBarCodeInterface.h"
@@ -22,10 +20,6 @@
 #include "SVMatroxImageInterface.h"
 #include "SVMatroxOcrInterface.h"
 #include "SVMatroxPatternInterface.h"
-
-long SVMatroxCheckAndLog( SVMatroxApplicationInterface::SVStatusCode p_svCode, TCHAR* p_szFile, long p_lLine );
-
-#endif // #ifndef SV_MATROX_LIBRARY_H
 
 
 // ******************************************************************************

@@ -51,10 +51,10 @@
     <ClCompile Include="SVMetrics.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVProfiler.cpp">
+    <ClCompile Include="ZipHelper.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ZipHelper.cpp">
+    <ClCompile Include="LoadDll.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -137,13 +137,13 @@
     <ClInclude Include="SVMetrics.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVProfiler.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ZipHelper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="NameSelectionList.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LoadDll.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

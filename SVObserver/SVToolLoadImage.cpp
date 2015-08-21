@@ -274,9 +274,9 @@ SVTaskObjectClass *SVLoadImageToolClass::GetObjectAtPoint( const SVExtentPointSt
 	return l_psvObject;
 }
 
-HRESULT SVLoadImageToolClass::DoesObjectHaveExtents() const
+bool SVLoadImageToolClass::DoesObjectHaveExtents() const
 {
-	return S_OK;
+	return true;
 }
 
 HRESULT SVLoadImageToolClass::SetImageExtent( unsigned long p_ulIndex, SVImageExtentClass p_svImageExtent )

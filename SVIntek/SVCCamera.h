@@ -12,7 +12,7 @@
 #ifndef _SVCCAMERA_H
 #define _SVCCAMERA_H
 
-#include "camera.h"
+#include "Intek\camera.h"
 
 #endif // _SVCCAMERA_H
 

@@ -9,19 +9,21 @@
 //* .Check In Date   : $Date:   15 May 2014 11:07:30  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVImageProcessingClass.h"
 #include "SVMessage/SVMessage.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "SVImageLibrary/SVImageBufferHandleInterface.h"
 #include "SVRunControlLibrary/SVRunControlLibrary.h"
-#include "SVStatusLibrary/SVException.h"
 #include "SVGlobal.h"
 #include "SVImageClass.h"
 #include "SVOCVAnalyzer.h"
 #include "SVOCVAnalyzerResult.h"
 #include "SVTool.h"
 #include "SVOLicenseManager/SVOLicenseManager.h"
+#include "SVStatusLibrary\MessageManager.h"
+#pragma endregion Includes
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -1155,9 +1157,8 @@ BOOL SVOCVAnalyzeResultClass::onRun( SVRunStatusClass& RRunStatus )
 						RRunStatus.SetFailed();
 					}
 
-					SVException e;
-					SETEXCEPTION5( e, SVMSG_SVO_30_EXCEPTION_IN_MIL, iProgramCode, strFunctionName );
-					e.LogException( strFunctionName );
+					SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+					Exception.setMessage( SVMSG_SVO_30_EXCEPTION_IN_MIL, strFunctionName, StdMessageParams, iProgramCode );
 
 					l_lLength = 0;
 				}// end catch
@@ -1377,16 +1378,16 @@ BOOL SVOCVAnalyzeResultClass::onRun( SVRunStatusClass& RRunStatus )
 //	if( !bOk )
 	if (l_Code & SV_ARC_ERROR)
 	{
-		SVException l_svLog;
 		CString		l_csMessage;
 
 		assert (0);
 		SetInvalid();
 		RRunStatus.SetInvalid();
 
-		l_csMessage.Format ("Error in SVThresholdClass::onRun");
-		SETEXCEPTION1( l_svLog, l_Code, l_csMessage);
-		l_svLog.LogException();
+		l_csMessage.Format ("Error in SVOCVAnalyzeResultClass::onRun");
+
+		SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+		Exception.setMessage( static_cast<DWORD> (l_Code), l_csMessage, StdMessageParams );
 
 		bOk = false;
 	}

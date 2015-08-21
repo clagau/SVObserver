@@ -13,10 +13,10 @@
 #include "stdafx.h"
 #include <comdef.h>
 #include "SVIODoc.h"
-#include "SVIOLibrary/SVIOConfigurationInterfaceClass.h"
-#include "SVUtilityLibrary/SVGUID.h"
+#include "SVIOLibrary\SVIOConfigurationInterfaceClass.h"
+#include "SVUtilityLibrary\SVGUID.h"
 #include "SVObserver.h"
-#include "SVObjectLibrary/SVObjectManagerClass.h"
+#include "SVObjectLibrary\SVObjectManagerClass.h"
 #include "SVInfoStructs.h"
 #include "SVValueObject.h"
 #include "SVConfigurationObject.h"
@@ -25,17 +25,17 @@
 #include "SVMFCControls\SVRemoteInputDialog.h"
 #include "SVUtilities.h"
 #include "SVRemoteInputObject.h"
-#include "SVMessage/SVMessage.h"
+#include "SVMessage\SVMessage.h"
 #include "SVFileNameManagerClass.h"
 #include "SVSVIMStateClass.h"
-#include "SVXMLLibrary/SVNavigateTreeClass.h"
-#include "SVConfigurationLibrary/SVConfigurationTags.h"
+#include "SVXMLLibrary\SVNavigateTreeClass.h"
+#include "SVConfigurationLibrary\SVConfigurationTags.h"
 #include "GlobalConstantView.h"
 #include "SVMainFrm.h"
-#include "ObjectInterfaces/SVUserMessage.h"
+#include "ObjectInterfaces\SVUserMessage.h"
 #include "SVIOController.h"
 #include "ObjectInterfaces\ErrorNumbers.h"
-#include "SVStatusLibrary/ExceptionManager.h"
+#include "SVStatusLibrary\MessageManager.h"
 #include "TextDefinesSvO.h"
 #pragma endregion Includes
 
@@ -265,8 +265,8 @@ void SVIODoc::OnExtrasEditRemoteInputs()
 	{
 		if( !pInputList->FillInputs( ppIOEntries ) )
 		{
-			SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
-			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorFillingInputs, StdExceptionParams, SvOi::Err_17032_ErrorFillingInputs );
+			SvStl::MessageMgrNoDisplay e( SvStl::LogOnly );
+			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorFillingInputs, StdMessageParams, SvOi::Err_17032_ErrorFillingInputs );
 			DebugBreak();
 		}
 		long lPPQSize = pConfig->GetPPQCount( );
@@ -349,8 +349,8 @@ void SVIODoc::OnExtrasEditRemoteInputs()
 
 							if( pInputList->DetachInput( pRemInput->GetUniqueObjectID() ) != S_OK )
 							{
-								SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
-								e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorDetachingInput, StdExceptionParams, SvOi::Err_17033_ErrorDetachingInput );
+								SvStl::MessageMgrNoDisplay e( SvStl::LogOnly );
+								e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorDetachingInput, StdMessageParams, SvOi::Err_17033_ErrorDetachingInput );
 								DebugBreak();
 							}
 

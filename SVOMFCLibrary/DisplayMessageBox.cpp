@@ -12,8 +12,8 @@
 //******************************************************************************
 #pragma region Includes
 #include "stdafx.h"
+#include "SVOResource\resource.h"
 #include "DisplayMessageBox.h"
-#include "SVSystemLibrary\LoadDll.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -63,11 +63,11 @@ DisplayMessageBox::DisplayMessageBox( CWnd* pParent /*nullptr*/ )
 
 }
 
-DisplayMessageBox::DisplayMessageBox( CWnd* pParent,  CString& rMessage, CString& rMessageDetails, UINT Type )
+DisplayMessageBox::DisplayMessageBox( CWnd* pParent,  LPCTSTR Message, LPCTSTR MessageDetails, UINT Type )
 	: CDialog(DisplayMessageBox::IDD, pParent)
 	, m_Icon( nullptr )
-	, m_Message( rMessage )
-	, m_MessageDetails( rMessageDetails )
+	, m_Message( Message )
+	, m_MessageDetails( MessageDetails )
 	, m_ShowDetails( true )
 	, m_Type( Type )
 {
@@ -80,12 +80,21 @@ DisplayMessageBox::~DisplayMessageBox()
 #pragma endregion Constructor
 
 #pragma region Public Methods
-INT_PTR DisplayMessageBox::showDialog( CWnd* pParent, CString& rMessage, CString& rMessageDetails, UINT Type )
+INT_PTR DisplayMessageBox::showDialog( HWND hParent, LPCTSTR Message, LPCTSTR MessageDetails, UINT Type )
 {
 	INT_PTR Result( IDCANCEL );
 
-	DisplayMessageBox ErrorMsgBox(nullptr, rMessage, rMessageDetails, Type );
-
+	CWnd* pParent( nullptr );
+	if( NULL == hParent )
+	{
+		pParent = AfxGetMainWnd();
+	}
+	else
+	{
+		pParent = CWnd::FromHandle( hParent );
+	}
+	
+	DisplayMessageBox ErrorMsgBox( pParent, Message, MessageDetails, Type );
 	Result = ErrorMsgBox.DoModal();
 
 	return Result;

@@ -46,7 +46,7 @@ public:
 		WarpTypeVertical = 2,
 	};
 
-	virtual HRESULT DoesObjectHaveExtents() const;
+	virtual bool DoesObjectHaveExtents() const override;
 
 protected:
 	virtual BOOL onRun( SVRunStatusClass &p_rRunStatus );

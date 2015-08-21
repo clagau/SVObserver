@@ -27,6 +27,7 @@
 #include "SVGlobal.h"
 #include "SVImageObjectClass.h"
 #include "SVImageProcessingClass.h"
+#include "SVStatusLibrary\MessageManager.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -722,13 +723,12 @@ HRESULT SVAcquisitionClass::GetNextIndex( SVDataManagerHandle &rDMHandle, SVData
 
 	if( hrOk != S_OK )
 	{
-		SVException l_Log;
 		SVString l_Message;
 
 		l_Message.Format( _T( "SVAcquisitionClass::GetNextIndex-Name=%s" ), GetDeviceName() );
 
-		SETEXCEPTION1( l_Log, hrOk, l_Message.ToString() );
-		l_Log.LogException( l_Message.ToString() );
+		SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+		Exception.setMessage( static_cast<DWORD> (hrOk), l_Message.ToString(), StdMessageParams );
 	}
 	
 	return hrOk;

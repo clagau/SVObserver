@@ -74,25 +74,25 @@ HRESULT SVOCMArchive::CreateTreeFromConfigurationFile (unsigned long  ulSVOVersi
 
 			hr = l_XMLTreeBuilder.Initialize();
 
-			if( SV_SUCCEEDED( hr ) )
+			if( SUCCEEDED( hr ) )
 			{
 				hr = l_XMLTreeBuilder.PreserveWhitespace( true );
 			}
 
-			if( SV_SUCCEEDED( hr ) )
+			if( SUCCEEDED( hr ) )
 			{
 				//hr = l_XMLTreeBuilder.CopyXMLFileToTree( l_XMLTree, ulSVOVersion, bstrFilename, &bstrRevisionHistory, &bstrChangedNode );
 
 				hr = l_XMLTreeBuilder.CopyXMLFileToDOM( bstrFilename, &bstrRevisionHistory );
 
-				if( SV_SUCCEEDED( hr ) )
+				if( SUCCEEDED( hr ) )
 				{
 					hr = SVXML2TreeConverter::CopyToTree( l_XMLTreeBuilder, l_XMLTree, L"Base", false );
 				}
 			}
 
 			/*
-			if( !SV_SUCCEEDED( hr ) )
+			if( !SUCCEEDED( hr ) )
 			{
 				cstrMessage.Format("WARNING: Configuration has been changed.  \
 													 The last changed node is (other nodes may also have been changed) - %s. \
@@ -129,12 +129,12 @@ HRESULT SVOCMArchive::CreateConfigurationFileFromTree(unsigned long ulSVOVersion
 		1, 						// use program version/data revision info
 		0);						// do not use encryption
 
-	if( SV_SUCCEEDED( hr ) )
+	if( SUCCEEDED( hr ) )
 	{
 		hr = l_XMLTreeBuilder.PreserveWhitespace( true );
 	}
 
-	if( SV_SUCCEEDED( hr ) )
+	if( SUCCEEDED( hr ) )
 	{
 		SVBStr bstrFilename;
 		SVBStr bstrFormatName;
@@ -143,7 +143,7 @@ HRESULT SVOCMArchive::CreateConfigurationFileFromTree(unsigned long ulSVOVersion
 
 		hr = bstrFormatName.CopyFromWChar (L"SVObserver");
 
-		if( SV_SUCCEEDED( hr ) )
+		if( SUCCEEDED( hr ) )
 		{
 			hr = l_XMLTreeBuilder.CopyTreeToXMLFile( l_XMLTree, ulSVOVersion, bstrFormatName, bstrRevisionHistory, bstrFilename );
 		}

@@ -212,9 +212,9 @@ SVTaskObjectClass* SVLinearToolClass::GetObjectAtPoint( const SVExtentPointStruc
 	return l_psvObject;
 }
 
-HRESULT SVLinearToolClass::DoesObjectHaveExtents() const
+bool SVLinearToolClass::DoesObjectHaveExtents() const
 {
-	return S_OK;
+	return true;
 }
 
 CString SVLinearToolClass::GetProfileOrientation()

@@ -9,14 +9,24 @@
 // * .Check In Date   : $Date:   10 Nov 2014 16:51:36  $
 // ******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVPackedFile.h"
-#include "SVMessage/SVMessage.h"
+#include "SVMessage\SVMessage.h"
+#include "SVStatusLibrary\MessageManager.h"
+#pragma endregion Includes
+
+#pragma region Declarations
+#ifdef _DEBUG
+#define new DEBUG_NEW
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
+#endif
 
 BOOL SVPackedFile::PackFiles( const CString& szFile, const CString& szPackedFile )
 {
 	CFileException FileException;
-	SVException svException;
+	SvStl::MessageMgrNoDisplay Exception( SvStl::DataOnly );
 	TCHAR szMessage[80], szDrive[_MAX_DRIVE], szDir[_MAX_DIR], szFName[_MAX_FNAME], szExt[_MAX_EXT];
 	HANDLE hFindFile;
 	WIN32_FIND_DATAW FindData;
@@ -31,8 +41,8 @@ BOOL SVPackedFile::PackFiles( const CString& szFile, const CString& szPackedFile
 	if (!(PackedFile.Open (szPackedFile, CFile::shareDenyNone | CFile::modeCreate | CFile::modeWrite | CFile::typeBinary, &FileException)))
 	{
 		FileException.GetErrorMessage (szMessage, sizeof (szMessage));
-		svException.SetException (SVMSG_LIB_PACKFILE_IO_ERROR, _T(__DATE__), _T(__TIME__), CString (szMessage), _T(__FILE__), __LINE__, _T(__TIMESTAMP__));
-		throw svException;
+		Exception.setMessage( SVMSG_LIB_PACKFILE_IO_ERROR, szMessage, StdMessageParams );
+		Exception.Throw();
 	}
 
 	try
@@ -42,9 +52,9 @@ BOOL SVPackedFile::PackFiles( const CString& szFile, const CString& szPackedFile
 	catch (CFileException e)
 	{
 		e.GetErrorMessage (szMessage, sizeof (szMessage));
-		svException.SetException (SVMSG_LIB_PACKFILE_IO_ERROR, _T(__DATE__), _T(__TIME__), CString (szMessage), _T(__FILE__), __LINE__, _T(__TIMESTAMP__));
 		PackedFile.Close();
-		throw svException;
+		Exception.setMessage( SVMSG_LIB_PACKFILE_IO_ERROR, szMessage, StdMessageParams );
+		Exception.Throw();
 	}
 
 	_tsplitpath (szFile, szDrive, szDir, szFName, szExt);
@@ -81,10 +91,10 @@ BOOL SVPackedFile::PackFiles( const CString& szFile, const CString& szPackedFile
 				{
 					pe->GetErrorMessage (szMessage, sizeof (szMessage));
 					pe->Delete();
-					svException.SetException (SVMSG_LIB_PACKFILE_IO_ERROR, _T(__DATE__), _T(__TIME__), CString (szMessage), _T(__FILE__), __LINE__, _T(__TIMESTAMP__));
 					PackedFile.Close();
 					FindClose (hFindFile);
-					throw svException;
+					Exception.setMessage( SVMSG_LIB_PACKFILE_IO_ERROR, szMessage, StdMessageParams );
+					Exception.Throw();
 				}
 
 				if (SourceFile.Open (szSourceFile, CFile::shareDenyNone | CFile::modeRead | CFile::typeBinary, &FileException))
@@ -100,21 +110,21 @@ BOOL SVPackedFile::PackFiles( const CString& szFile, const CString& szPackedFile
 					{
 						pe->GetErrorMessage (szMessage, sizeof (szMessage));
 						pe->Delete();
-						svException.SetException (SVMSG_LIB_PACKFILE_IO_ERROR, _T(__DATE__), _T(__TIME__), CString (szMessage), _T(__FILE__), __LINE__, _T(__TIMESTAMP__));
 						PackedFile.Close();
 						SourceFile.Close();
 						FindClose (hFindFile);
-						throw svException;
+						Exception.setMessage( SVMSG_LIB_PACKFILE_IO_ERROR, szMessage, StdMessageParams );
+						Exception.Throw();
 					}
 					SourceFile.Close();
 					NumFiles++;
 				}
 				else
 				{
-					svException.SetException (SVMSG_LIB_PACKFILE_IO_ERROR, _T(__DATE__), _T(__TIME__), CString (_T("")), _T(__FILE__), __LINE__, _T(__TIMESTAMP__));
 					PackedFile.Close();
 					FindClose (hFindFile);
-					throw svException;
+					Exception.setMessage( SVMSG_LIB_PACKFILE_IO_ERROR, nullptr, StdMessageParams );
+					Exception.Throw();
 				}
 			}
 		}
@@ -134,7 +144,7 @@ BOOL SVPackedFile::UnPackFiles( const CString& szPackedFile, const CString& szUn
 	DWORD dwPackedFileVersion;
 	TCHAR szMessage[80];
 	CString szPath;
-	SVException svException;
+	SvStl::MessageMgrNoDisplay Exception( SvStl::DataOnly );
 	UINT CountRead, PathLen, BytesRead;
 	BYTE Buffer[_MAX_PATH * sizeof (TCHAR)];
 	TCHAR szDrive[_MAX_DRIVE], szDir[_MAX_DIR], szFName[_MAX_FNAME], szExt[_MAX_EXT];
@@ -195,8 +205,8 @@ BOOL SVPackedFile::UnPackFiles( const CString& szPackedFile, const CString& szUn
 							{
 								FileException.GetErrorMessage (szMessage, sizeof (szMessage));
 								PackedFile.Close();
-								svException.SetException (SVMSG_LIB_PACKFILE_IO_ERROR, _T(__DATE__), _T(__TIME__), CString (szMessage), _T(__FILE__), __LINE__, _T(__TIMESTAMP__));
-								throw svException;
+								Exception.setMessage( SVMSG_LIB_PACKFILE_IO_ERROR, szMessage, StdMessageParams );
+								Exception.Throw();
 							}
 						}
 						PackedFile.Close();
@@ -214,13 +224,13 @@ BOOL SVPackedFile::UnPackFiles( const CString& szPackedFile, const CString& szUn
 		{
 			pe->GetErrorMessage (szMessage, sizeof (szMessage));
 			pe->Delete();
-			svException.SetException (SVMSG_LIB_PACKFILE_IO_ERROR, _T(__DATE__), _T(__TIME__), CString (szMessage), _T(__FILE__), __LINE__, _T(__TIMESTAMP__));
 			if (SourceFile.m_hFile != CFile::hFileNull)
 			{
 				SourceFile.Close();
 			}
 			PackedFile.Close();
-			throw svException;
+			Exception.setMessage( SVMSG_LIB_PACKFILE_IO_ERROR, szMessage, StdMessageParams );
+			Exception.Throw();
 		}
 		PackedFile.Close();
 	}

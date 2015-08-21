@@ -12,9 +12,6 @@
 #include "stdafx.h"
 #include "SVProfiler.h"
 
-// This does not use the guideline namespace format because it is legacy code from the SVObserverWeb project.
-using namespace SeidenaderVision;
-
 #pragma region Declarations
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -23,39 +20,42 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-#pragma region Constructor
-SVProfiler::SVProfiler()
-: m_startTime(0)
-, m_endTime(0)
+namespace Seidenader { namespace SVTimerLibrary
 {
-}
+#pragma region Constructor
+	SVProfiler::SVProfiler()
+	: m_startTime(0)
+	, m_endTime(0)
+	{
+	}
 #pragma endregion Constructor
 
 #pragma region Public Methods
-void SVProfiler::Start()
-{
-	m_startTime = SVClock::GetTimeStamp();
-}
+	void SVProfiler::Start()
+	{
+		m_startTime = SVClock::GetTimeStamp();
+	}
 
-void SVProfiler::End()
-{
-	m_endTime = SVClock::GetTimeStamp();
-}
+	void SVProfiler::End()
+	{
+		m_endTime = SVClock::GetTimeStamp();
+	}
 
-// in Milliseconds
-double SVProfiler::ElapsedMilliSeconds()
-{
-	double iElapsed = SVClock::ConvertTo(SVClock::Milliseconds, (m_endTime - m_startTime));
-	return iElapsed;
-}
+	// in Milliseconds
+	double SVProfiler::ElapsedMilliSeconds()
+	{
+		double iElapsed = SVClock::ConvertTo(SVClock::Milliseconds, (m_endTime - m_startTime));
+		return iElapsed;
+	}
 
-// in Microseconds
-double SVProfiler::ElapsedMicroSeconds()
-{
-	double iElapsed = SVClock::ConvertTo(SVClock::Microseconds, (m_endTime - m_startTime));
-	return iElapsed;
-}
+	// in Microseconds
+	double SVProfiler::ElapsedMicroSeconds()
+	{
+		double iElapsed = SVClock::ConvertTo(SVClock::Microseconds, (m_endTime - m_startTime));
+		return iElapsed;
+	}
 #pragma endregion Public Methods
+} /* namespace SVStatusLibrary */ } /* namespace Seidenader */
 
 //******************************************************************************
 //* LOG HISTORY:

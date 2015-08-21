@@ -15,7 +15,6 @@
 #pragma warning (push)
 #pragma warning (disable : 4290)
 
-#include "SVStatusLibrary/SVErrorException.h"
 #include "SVOMFCLibrary/SVCallbackStruct.h"
 #include "SVDLLToolDefinitionStructs.h"
 #include "SVLoki/functor.h"
@@ -79,7 +78,7 @@ public:
 	SVDLLToolLoadLibraryClass();
 	~SVDLLToolLoadLibraryClass();
 
-	HRESULT Open( LPCTSTR p_szLibrary, SVDllLoadLibraryCallback fnNotifyProgress = SVDllLoadLibraryCallbackDefault() ) throw (SVErrorException);
+	HRESULT Open( LPCTSTR p_szLibrary, SVDllLoadLibraryCallback fnNotifyProgress = SVDllLoadLibraryCallbackDefault() );
 	HRESULT Close();
 	bool IsOpen();
 

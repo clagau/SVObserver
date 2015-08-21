@@ -14,10 +14,12 @@
 #include "SVXMLClass.h"
 #include "SVLibrary/SVBStr.h"
 
-#include "SVXMLLibraryGlobals.h"	// SVXMLLibraryGlobals
-#include "SVXMLEncryptionClass.h"	// SVXMLEncryptionClass
-#include "SVXMLSVRSchemaClass.h"	// SVXMLSVRSchemaClass
+#include "SVXMLLibraryGlobals.h"
+#include "SVXMLEncryptionClass.h"
+#include "SVXMLSVRSchemaClass.h"
 #include "SVXMLSafeArrayConverter.h"
+#include "SVMessage\SVMessage.h"
+#include "SVUtilityLibrary\SVUtilityGlobals.h"
 
 SVXMLClass::SVXMLClass()
 : svmlUseRevisionHistoryInfo(0)
@@ -93,19 +95,19 @@ HRESULT	SVXMLClass::Initialize (long p_lUseCheckSums, long p_lUseRevisionHistory
 		}
 
 		hr = svmopDOM->Initialize (p_lUseEncryption);
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
 
 		hr = svmopDOM->GetEncryptionInterface (&m_opEncryption);
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
 
 		hr = m_opEncryption->InitializeXMLInterface (this);
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
@@ -121,7 +123,7 @@ HRESULT	SVXMLClass::Initialize (long p_lUseCheckSums, long p_lUseRevisionHistory
 		break;
 	}
 
-	if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+	if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 	{
 //-	There was error, initialization is incomplete.
 	}
@@ -146,7 +148,7 @@ HRESULT SVXMLClass::CopyDOMToXMLFile (BSTR abstrFileName)
 
 		hr = svmopDOM->CopyDOMToXMLFile (abstrFileName);
 
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
@@ -169,25 +171,25 @@ HRESULT SVXMLClass::CopyXMLFileToDOM (BSTR	abstrFileName, BSTR* abstrpRevisionHi
 
 		hr = svmopDOM->CopyXMLFileToDOM (abstrFileName);
 
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
 
 		hr = LoadRevisionHistory ();
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
 
 		hr = GetRevisionHistory (abstrpRevisionHistory);
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
 
 		hr = LoadEncryption ();
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
@@ -230,7 +232,7 @@ HRESULT SVXMLClass::CreateDOMNode (SVXML::IXMLDOMElementPtr& arDOMNewElementPtr,
 	{
 //-	Type cast is to convert from const.
 		hr = bstrElementTagName.CopyFromWChar ((WCHAR*) g_wcsNode); 
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
@@ -238,14 +240,14 @@ HRESULT SVXMLClass::CreateDOMNode (SVXML::IXMLDOMElementPtr& arDOMNewElementPtr,
 		vElementData.vt = (unsigned short) alType;
 
 		hr = svmopDOM->CreateDOMNodeElement (bstrElementTagName, abstrElementName, &vElementData, oNewElementPtr);
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
 		break;
 	}
 
-	if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+	if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 	{
 	}
 	else
@@ -264,20 +266,20 @@ HRESULT SVXMLClass::CreateDOMData (SVXML::IXMLDOMElementPtr& arDOMNewElementPtr,
 	while (1)
 	{
 		hr = bstrElementTagName.CopyFromWChar (g_wcsData);
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
 
 		hr = svmopDOM->CreateDOMNodeElement (bstrElementTagName, abstrElementName, avpElementData, oNewElementPtr);
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
 		break;
 	} // while (1)
 
-	if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+	if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 	{
 	}
 	else
@@ -296,13 +298,13 @@ HRESULT SVXMLClass::CreateDOMChildData (SVXML::IXMLDOMNodePtr aDOMParentNodePtr,
 	while (1)
 	{
 		hr = bstrElementTagName.CopyFromWChar (g_wcsData);
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
 
 		hr = svmopDOM->CreateDOMNodeChildElement (aDOMParentNodePtr, bstrElementTagName, abstrElementName, avpElementData, tempChildDataPtr);
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
@@ -356,7 +358,7 @@ HRESULT SVXMLClass::SetRevisionHistory (BSTR abstrRevisionHistory)
 
 //-	Load XML bstr into temp DOM. 
 		hr = oSourceDOM.CopyXMLTextToDOM (abstrRevisionHistory);
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 //		if (oTempDOM.svmDOMPtr->load (abstrRevisionHistory) != TRUE)
 		{
 			hr = -1625;
@@ -374,7 +376,7 @@ HRESULT SVXMLClass::SetRevisionHistory (BSTR abstrRevisionHistory)
 
 		hr = oSourceDOM.GetRootNode (oSourceRootElementPtr);
 
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
@@ -395,7 +397,7 @@ HRESULT SVXMLClass::SetRevisionHistory (BSTR abstrRevisionHistory)
 
 		hr = CreateElement (bstrRevisionHistoryBranchName, 
 			  					  oDestinationElementPtr);
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
@@ -426,7 +428,7 @@ HRESULT SVXMLClass::SetRevisionHistory (BSTR abstrRevisionHistory)
 			}
 		} while (1); // relies on nodePtr == NULL to leave the loop
 
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
@@ -435,13 +437,13 @@ HRESULT SVXMLClass::SetRevisionHistory (BSTR abstrRevisionHistory)
 //-	delete it.  If a revision history does not exist off the root, then 
 //-	this function should return a 1.		
 		hr = DeleteRevisionHistory ();
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
 
 		hr = GetRootNode (oDestinationRootElementPtr);
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
@@ -453,7 +455,7 @@ HRESULT SVXMLClass::SetRevisionHistory (BSTR abstrRevisionHistory)
 		}
 
 		hr = AppendChildToDOMNode (oDestinationRootElementPtr, oDestinationElementPtr);
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
@@ -500,7 +502,7 @@ HRESULT SVXMLClass::AddToRevisionHistory (long	alSVOCurrentVersion, BSTR abstrFo
 
 //		hr = svmopDOM->GetRootNode (oRootElementPtr);
 		hr = GetRevisionHistoryBaseNode (oRevHistoryBaseElementPtr);
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
@@ -508,14 +510,14 @@ HRESULT SVXMLClass::AddToRevisionHistory (long	alSVOCurrentVersion, BSTR abstrFo
 		if (oRevHistoryBaseElementPtr == NULL)
 		{
 			hr = AddRevisionHistoryBaseNode ();
-			if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+			if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 			{
 				break;
 			}
 
 //			hr = svmopDOM->GetRootNode (oRootElementPtr);
 			hr = GetRevisionHistoryBaseNode (oRevHistoryBaseElementPtr);
-			if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+			if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 			{
 				break;
 			}
@@ -530,7 +532,7 @@ HRESULT SVXMLClass::AddToRevisionHistory (long	alSVOCurrentVersion, BSTR abstrFo
 		bstrElementTagName = g_wcsRevision;
 
 		hr = CreateElement (bstrElementTagName, oNewRevElementPtr);
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
@@ -565,7 +567,7 @@ HRESULT SVXMLClass::AddToRevisionHistory (long	alSVOCurrentVersion, BSTR abstrFo
 		}
 
 		hr = oDOMNodeListPtr->reset ();
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			hr = -1669;
 			break;
@@ -650,7 +652,7 @@ HRESULT SVXMLClass::LoadEncryption ()
 		m_opEncryption->LoadEncryption ();
 
 		hr = m_opEncryption->GetIsEncrypted (&m_lIsEncrypted);
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
@@ -697,7 +699,7 @@ HRESULT SVXMLClass::LoadRevisionHistory ()
 		}
 
 		hr = GetRevisionHistoryBaseNode (oRevHistoryBaseNodePtr);
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
@@ -723,7 +725,7 @@ HRESULT SVXMLClass::LoadRevisionHistory ()
 
 //-   This is intended to get the revision entry specified by the index value (base 1).
 		hr = GetRevisionNodeByIndex (1, l_oRevNodePtr);
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
@@ -801,7 +803,7 @@ HRESULT SVXMLClass::AddRevisionHistoryBaseNode ()
 	while (1)
 	{
 		hr = GetRootNode (oRootElementPtr);
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
@@ -815,13 +817,13 @@ HRESULT SVXMLClass::AddRevisionHistoryBaseNode ()
 		bstrRevisionHistoryBaseName = g_csRevisionHistory;
 
 		hr = CreateElement (bstrRevisionHistoryBaseName, oNewRevHistBaseElementPtr);
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
 
 		hr = AppendChildToDOMNode (oRootElementPtr, oNewRevHistBaseElementPtr);
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
@@ -843,7 +845,7 @@ HRESULT SVXMLClass::GetRevisionHistoryBaseNode (SVXML::IXMLDOMElementPtr& arRevH
 	while (1)
 	{
 		hr = GetRootNode (oRootElementPtr);
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
@@ -855,7 +857,7 @@ HRESULT SVXMLClass::GetRevisionHistoryBaseNode (SVXML::IXMLDOMElementPtr& arRevH
 		}
 
 		hr = GetNameSpace (wcsNameSpace, sizeof (wcsNameSpace));
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
@@ -864,7 +866,7 @@ HRESULT SVXMLClass::GetRevisionHistoryBaseNode (SVXML::IXMLDOMElementPtr& arRevH
 		bstrQueryNameSpace = (BSTR)((_bstr_t) g_csXMLNS + ":SVR1=\"x-schema:#" + (_bstr_t) g_csSVR00001SchemaName + "\"");
 
 		hr = SetQueryNameSpace (bstrQueryNameSpace);
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
@@ -924,7 +926,7 @@ HRESULT SVXMLClass::GetRevisionNodeByIndex (long p_lIndex, SVXML::IXMLDOMElement
 		}
 
 		hr = GetRevisionHistoryBaseNode (l_oRevHistoryBaseNodePtr);
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
@@ -944,7 +946,7 @@ HRESULT SVXMLClass::GetRevisionNodeByIndex (long p_lIndex, SVXML::IXMLDOMElement
 
 		hr = svmopDOM->GetElementNbrOfChildren (l_oRevHistoryBaseNodePtr, 
 			                                     &l_lNbrOfChildren);
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
@@ -987,7 +989,7 @@ HRESULT SVXMLClass::GetRevisionNodeByIndex (long p_lIndex, SVXML::IXMLDOMElement
 			l_lCount = l_lCount + 1;
 		} // while (l_lCount < l_lNbrOfChildren)
 
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
@@ -1016,7 +1018,7 @@ HRESULT SVXMLClass::DeleteRevisionHistory ()
 	while (1)
 	{
 		hr = GetRevisionHistoryBaseNode (oRevHistoryBaseElementPtr);
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
@@ -1029,7 +1031,7 @@ HRESULT SVXMLClass::DeleteRevisionHistory ()
 		}
 
 		hr = GetRootNode (oRootElementPtr);
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
@@ -1058,7 +1060,7 @@ HRESULT SVXMLClass::GetEncryptionBaseNode (SVXML::IXMLDOMElementPtr& p_orEncrypt
 	while (1)
 	{
 		hr = m_opEncryption->GetEncryptionBaseNode (p_orEncryptionBaseNodePtr);
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
@@ -1127,7 +1129,7 @@ HRESULT SVXMLClass::CalculateNodeCheckSums (SVXML::IXMLDOMNodePtr	aDOMNodePtr, u
 		bstrNodeName = aDOMNodePtr->GetnodeName ();
 
 		hr = CalculateStringCheckSum (bstrNodeName, &ulTempCheckSum);
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
@@ -1147,7 +1149,7 @@ HRESULT SVXMLClass::CalculateNodeCheckSums (SVXML::IXMLDOMNodePtr	aDOMNodePtr, u
 		else
 		{
 			hr = CalculateStringCheckSum (ccvNodeValue.bstrVal, &ulTempCheckSum);
-			if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+			if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 			{
 				break;
 			}
@@ -1181,7 +1183,7 @@ HRESULT SVXMLClass::CalculateNodeCheckSums (SVXML::IXMLDOMNodePtr	aDOMNodePtr, u
 			bstrAttributeName = oAttributePtr->GetnodeName ();
 
 			hr = CalculateStringCheckSum (bstrAttributeName, &ulTempCheckSum);
-			if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+			if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 			{
 				break;
 			}
@@ -1213,7 +1215,7 @@ HRESULT SVXMLClass::CalculateNodeCheckSums (SVXML::IXMLDOMNodePtr	aDOMNodePtr, u
 			}
 
 			hr = CalculateStringCheckSum (ccvAttributeValue.bstrVal, &ulTempCheckSum);
-			if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+			if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 			{
 				break;
 			}
@@ -1227,7 +1229,7 @@ HRESULT SVXMLClass::CalculateNodeCheckSums (SVXML::IXMLDOMNodePtr	aDOMNodePtr, u
 			break;
 		}
 		
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
@@ -1249,7 +1251,7 @@ HRESULT SVXMLClass::CalculateNodeCheckSums (SVXML::IXMLDOMNodePtr	aDOMNodePtr, u
 			{
 //				hr = CreateNodeCheckSums (oNodePtr, &ulTempCheckSum);
 				hr = CalculateNodeCheckSums (oNodePtr, &ulTempCheckSum, alMode, bstrpChangedNode);
-				if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+				if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 				{
 					break;
 				}
@@ -1265,7 +1267,7 @@ HRESULT SVXMLClass::CalculateNodeCheckSums (SVXML::IXMLDOMNodePtr	aDOMNodePtr, u
 			oNodePtr = oNodePtr->GetnextSibling ();
 		}// while (oNodePtr != NULL)
 
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
@@ -1274,7 +1276,7 @@ HRESULT SVXMLClass::CalculateNodeCheckSums (SVXML::IXMLDOMNodePtr	aDOMNodePtr, u
 		{
 			hr = UpdateCheckSumValue (aDOMNodePtr,
 											  ulRawCheckSum);
-			if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+			if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 			{
 				break;
 			}
@@ -1285,7 +1287,7 @@ HRESULT SVXMLClass::CalculateNodeCheckSums (SVXML::IXMLDOMNodePtr	aDOMNodePtr, u
 			hr = CompareCheckSumValue (aDOMNodePtr,
 												ulRawCheckSum,
 												bstrpChangedNode);
-			if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+			if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 			{
 				break;
 			}
@@ -1300,7 +1302,7 @@ HRESULT SVXMLClass::CalculateNodeCheckSums (SVXML::IXMLDOMNodePtr	aDOMNodePtr, u
 		break;
 	} // while (1)
 
-	if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+	if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 	{
 	}
 	else
@@ -1335,7 +1337,7 @@ HRESULT SVXMLClass::CalculateStringCheckSum (BSTR abstrSource, unsigned long* au
 		break;
 	}// while (1)
 
-	if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+	if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 	{
 		aulpCheckSum = 0;
 	}
@@ -1373,7 +1375,7 @@ HRESULT SVXMLClass::UpdateCheckSumValue (SVXML::IXMLDOMNodePtr aDOMNodePtr, unsi
 		ccvElementValue.ulVal = aulCheckSum;
 
 		hr = GetNameSpace (wcsNameSpace, sizeof (wcsNameSpace));
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
@@ -1385,7 +1387,7 @@ HRESULT SVXMLClass::UpdateCheckSumValue (SVXML::IXMLDOMNodePtr aDOMNodePtr, unsi
 											 "\"");
 
 		hr = SetQueryNameSpace (bstrQueryNameSpace);
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
@@ -1417,7 +1419,7 @@ HRESULT SVXMLClass::UpdateCheckSumValue (SVXML::IXMLDOMNodePtr aDOMNodePtr, unsi
 											 &ccvElementValue,
 											 oCheckSumElementPtr);
 												
-			if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+			if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 			{
 				break;
 			}
@@ -1433,7 +1435,7 @@ HRESULT SVXMLClass::UpdateCheckSumValue (SVXML::IXMLDOMNodePtr aDOMNodePtr, unsi
 			bstrAttributeName = g_csValue;
 
 			hr = oCheckSumElementPtr->setAttribute (bstrAttributeName, ccvElementValue);
-			if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+			if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 			{
 				hr = -1679;
 				break;
@@ -1477,7 +1479,7 @@ HRESULT	SVXMLClass::CompareCheckSumValue (SVXML::IXMLDOMNodePtr	aDOMNodePtr, uns
 		ccvElementValue.ulVal = aulCheckSum;
 
 		hr = GetNameSpace (wcsNameSpace, sizeof (wcsNameSpace));
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
@@ -1489,7 +1491,7 @@ HRESULT	SVXMLClass::CompareCheckSumValue (SVXML::IXMLDOMNodePtr	aDOMNodePtr, uns
 											 "\"");
 
 		hr = SetQueryNameSpace (bstrQueryNameSpace);
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
@@ -1524,7 +1526,7 @@ HRESULT	SVXMLClass::CompareCheckSumValue (SVXML::IXMLDOMNodePtr	aDOMNodePtr, uns
 			bstrAttributeName = g_csValue;
 
 			hr = oCheckSumElementPtr->setAttribute (bstrAttributeName, ccvElementValue);
-			if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+			if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 			{
 				hr = -1679;
 				break;
@@ -1538,7 +1540,7 @@ HRESULT	SVXMLClass::CompareCheckSumValue (SVXML::IXMLDOMNodePtr	aDOMNodePtr, uns
 	if (hr != 0)
 	{
 		hr = GetNamePath (aDOMNodePtr, abstrpChangedNode);
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 //-	  Error within GetNamePath ()
 
@@ -1570,7 +1572,7 @@ HRESULT SVXMLClass::SetSVRSchema ()
 	while (1)
 	{
 		hr = oSVRSchema.SetSVRSchema (svmopDOM);
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
@@ -1594,7 +1596,7 @@ HRESULT SVXMLClass::ConfigureAllElementsOffRootToValidateAgainstSchema ()
 	while (1)
 	{
 		hr = GetRootNode (oDOMRootPtr);
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
@@ -1633,7 +1635,7 @@ HRESULT SVXMLClass::ConfigureAllElementsOffRootToValidateAgainstSchema ()
 //-			Add schema validation.
 
 				hr = ConfigureBranchToValidateAgainstSchema (oElementPtr);
-				if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+				if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 				{
 					break;
 				}
@@ -1665,7 +1667,7 @@ HRESULT SVXMLClass::ConfigureBranchToValidateAgainstSchema (SVXML::IXMLDOMElemen
 		ccvAttributeValue = (BSTR) ((_bstr_t) "x-schema:#" + (_bstr_t) g_csSVR00001SchemaName);
 
 		hr = arElementPtr->setAttribute (bstrAttributeName, ccvAttributeValue);
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			hr = -1723;
 			break;
@@ -1687,13 +1689,13 @@ HRESULT SVXMLClass::Clear ()
 		m_lCurrentRevision = 0;
 
 		hr = svmopDOM->Clear ();
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
 
 		hr = SetSVRSchema ();
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
@@ -1731,7 +1733,7 @@ HRESULT SVXMLClass::IsElementNode (SVXML::IXMLDOMElementPtr	aDOMElementPtr, BSTR
 		}
 
 		hr = IsElementNode (bstrHack);
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			hr = -1808;
 			break;
@@ -1748,7 +1750,7 @@ HRESULT SVXMLClass::IsElementNode (SVXML::IXMLDOMElementPtr	aDOMElementPtr, BSTR
 		break;
 	}
 
-	if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+	if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 	{
 	}
 	else
@@ -1802,7 +1804,7 @@ HRESULT SVXMLClass::IsElementData (SVXML::IXMLDOMElementPtr	aDOMElementPtr, BSTR
 		}
 
 		hr = IsElementData (bstrHack);
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			hr = -1810;
 			break;
@@ -1818,7 +1820,7 @@ HRESULT SVXMLClass::IsElementData (SVXML::IXMLDOMElementPtr	aDOMElementPtr, BSTR
 		break;
 	}
 
-	if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+	if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 	{
 	}
 	else
@@ -1873,7 +1875,7 @@ HRESULT SVXMLClass::GetElementName (SVXML::IXMLDOMElementPtr aDOMElementPtr, BST
 	while (1)
 	{
 		hr = svmopDOM->GetDOMNodeElementName (aDOMElementPtr, abstrpDOMElementName);
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
@@ -1894,7 +1896,7 @@ HRESULT SVXMLClass::IsElementFromParent (SVXML::IXMLDOMElementPtr aDOMElementPtr
 		bstrFromParent = g_wcsFromParent;
 
 		hr = GetElementName (aDOMElementPtr, &bstrElementName);
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
@@ -1929,7 +1931,7 @@ HRESULT SVXMLClass::IsElementSafeArray (SVXML::IXMLDOMElementPtr aDOMElementPtr)
 	while (1)
 	{
 		hr = GetElementData( aDOMElementPtr, &vElementData );
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
@@ -1964,7 +1966,7 @@ HRESULT SVXMLClass::GetBaseElement (SVXML::IXMLDOMElementPtr& arBaseElementPtr)
 	while (1)
 	{
 		hr = GetRootNode (oRootElementPtr);
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
@@ -1976,7 +1978,7 @@ HRESULT SVXMLClass::GetBaseElement (SVXML::IXMLDOMElementPtr& arBaseElementPtr)
 		}
 
 		hr = GetNameSpace (wcsNameSpace, sizeof (wcsNameSpace));
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
@@ -1984,7 +1986,7 @@ HRESULT SVXMLClass::GetBaseElement (SVXML::IXMLDOMElementPtr& arBaseElementPtr)
 //-	xmlns:SVR1="x-schema:#SVR00001"
 		bstrQueryNameSpace = (BSTR)((_bstr_t) g_csXMLNS + ":SVR1=\"x-schema:#" + (_bstr_t) g_csSVR00001SchemaName + "\"");
 		hr = SetQueryNameSpace (bstrQueryNameSpace);
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
@@ -1992,13 +1994,13 @@ HRESULT SVXMLClass::GetBaseElement (SVXML::IXMLDOMElementPtr& arBaseElementPtr)
 		if (m_lIsEncrypted == TRUE)
 		{
 			hr = bstrTempNodeType.CopyFromWChar (g_wcsBaseNode);
-			if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+			if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 			{
 				break;
 			}
 
 			hr = m_opEncryption->EncryptString(2, bstrTempNodeType, &bstrNodeType);
-			if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+			if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 			{
 				break;
 			}
@@ -2006,7 +2008,7 @@ HRESULT SVXMLClass::GetBaseElement (SVXML::IXMLDOMElementPtr& arBaseElementPtr)
 		else // m_lIsEncrypted == FALSE
 		{
 			hr = bstrNodeType.CopyFromWChar (g_wcsBaseNode);
-			if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+			if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 			{
 				break;
 			}
@@ -2058,7 +2060,7 @@ HRESULT SVXMLClass::CreateElement (BSTR p_bstrElementName, SVXML::IXMLDOMElement
 	while (1)
 	{
 		hr = svmopDOM->CreateElement (p_bstrElementName, p_orDOMElementPtr);
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
@@ -2074,7 +2076,7 @@ HRESULT SVXMLClass::GetRootNode (SVXML::IXMLDOMElementPtr& p_orDOMRootPtr)
 	while (1)
 	{
 		hr = svmopDOM->GetRootNode (p_orDOMRootPtr);
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
@@ -2090,7 +2092,7 @@ HRESULT SVXMLClass::AppendChildToDOMNode (SVXML::IXMLDOMNodePtr p_oParentNodePtr
 	while (1)
 	{
 		hr = svmopDOM->AppendChildToDOMNode (p_oParentNodePtr, p_oChildNodePtr);
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
@@ -2106,7 +2108,7 @@ HRESULT SVXMLClass::AppendCarriageReturnToDOMNode (SVXML::IXMLDOMNodePtr p_oPare
 	while (1)
 	{
 		hr = svmopDOM->AppendCarriageReturnToDOMNode (p_oParentNodePtr);
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
@@ -2122,7 +2124,7 @@ HRESULT SVXMLClass::GetNameSpace (WCHAR* p_wcsNameSpace, long p_lBufferSize)
 	while (1)
 	{
 		hr = svmopDOM->GetNameSpace (p_wcsNameSpace, p_lBufferSize);
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
@@ -2138,7 +2140,7 @@ HRESULT SVXMLClass::SetQueryNameSpace (BSTR	p_bstrQueryNameSpace)
 	while (1)
 	{
 		hr = svmopDOM->SetQueryNameSpace (p_bstrQueryNameSpace);
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}

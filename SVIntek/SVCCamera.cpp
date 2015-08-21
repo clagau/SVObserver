@@ -11,7 +11,7 @@
 
 #include "StdAfx.h"
 #include "SVCCamera.h"
-#include "camera.cpp"
+#include "Intek\camera.cpp"
 
 // ******************************************************************************
 // * LOG HISTORY:

@@ -68,7 +68,7 @@ SVAdjustToolSizePositionDlg::SVAdjustToolSizePositionDlg(LPCTSTR pCaption, CWnd*
 
 	if ( m_pToolTask )
 	{
-		if ( S_OK == m_pToolTask->DoesObjectHaveExtents() )
+		if ( m_pToolTask->DoesObjectHaveExtents() )
 		{
 			m_pToolTask->GetImageExtent(m_svExtents);
 		}

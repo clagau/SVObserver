@@ -14,10 +14,10 @@
 
 #include <boost/config.hpp>
 #include <boost/function.hpp>
-#include "SVCommandLibrary/SVCommandAttributesTemplate.h"
-#include "SVCommandLibrary/SVCommandTemplate.h"
-#include "SVCommandLibrary/SVCommandDataHolder.h"
-#include "SVCommandLibrary/SVCommandResultsTemplate.h"
+#include "SVCommandAttributesTemplate.h"
+#include "SVCommandTemplate.h"
+#include "SVCommandDataHolder.h"
+#include "SVCommandResultsTemplate.h"
 
 typedef boost::function< HRESULT ( const SVCommandDataHolder&, SVCommandDataHolder& ) > SVCommandExecuteFunctor;
 

@@ -18,7 +18,7 @@
 #include <camera.h>
 #include <fctlmain.h>
 #include <string.h>
-#include <FCTLEnable.h> // SVR - deviation from Standard Intek FireBus API (for licensing)
+#include <Intek\FCTLEnable.h> // SVR - deviation from Standard Intek FireBus API (for licensing)
 
 #define MAKEUINT32(hi,lo)       (((UINT32)(hi)<<16)|(lo))
 

@@ -33,7 +33,7 @@ public:
 
 	virtual HRESULT ResetObject();
 
-	virtual HRESULT DoesObjectHaveExtents() const;
+	virtual bool DoesObjectHaveExtents() const override;
 	virtual HRESULT GetImageExtent( SVImageExtentClass &p_rsvImageExtent );
 	virtual HRESULT SetImageExtent( unsigned long p_ulIndex, SVImageExtentClass p_svImageExtent );
 	virtual HRESULT SetImageExtentToFit( unsigned long p_ulIndex, SVImageExtentClass p_svImageExtent );

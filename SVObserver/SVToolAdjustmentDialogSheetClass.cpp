@@ -12,8 +12,8 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVToolAdjustmentDialogSheetClass.h"
-#include "SVObjectLibrary/SVObjectManagerClass.h"
-#include "SVOGui/SVFormulaEditorPage.h"
+#include "SVObjectLibrary\SVObjectManagerClass.h"
+#include "SVOGui\SVFormulaEditorPage.h"
 #include "SVOGui\ISVPropertyPageDialog.h"
 #include "SVCylindricalWarpDlg.h"
 #include "SVExternalToolDlg.h"
@@ -36,8 +36,8 @@
 #include "SVTADlgTranslationPage.h"
 #include "SVTool.h"
 #include "SVToolAdjustmentDialogAnalyzerPageClass.h"
-#include "SVOGui/SVToolAdjustmentDialogFilterPageClass.h"
-#include "SVOGui/TADialogRingBufferParameterPage.h"
+#include "SVOGui\SVToolAdjustmentDialogFilterPageClass.h"
+#include "SVOGui\TADialogRingBufferParameterPage.h"
 #include "SVToolAdjustmentDialogImagePageClass.h"
 #include "SVToolAdjustmentDialogLinearSpecialPageClass.h"
 #include "SVToolAdjustmentDialogMaskPageClass.h"
@@ -49,7 +49,7 @@
 #include "FormulaController.h"
 #include "ConditionalController.h"
 #include "SVToolAdjustmentDialogSizePage.h"
-#include "SVStatusLibrary\ExceptionManager.h"
+#include "SVStatusLibrary\MessageManager.h"
 #pragma endregion Includes
 
 #pragma region Declarations

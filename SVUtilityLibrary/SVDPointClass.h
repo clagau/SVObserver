@@ -12,7 +12,7 @@
 #ifndef _SVDPOINTCLASS_H
 #define _SVDPOINTCLASS_H
 
-#include "SVUtilityLibrary/SVString.h"
+#include "SVString.h"
 
 /**
 @SVObjectName Double Point

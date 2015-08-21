@@ -150,12 +150,14 @@
     </ClCompile>
     <ClCompile Include="SVClock.cpp" />
     <ClCompile Include="SVMMTimer.cpp" />
+    <ClCompile Include="SVProfiler.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="SVClock.h" />
     <ClInclude Include="SVMMTimer.h" />
     <ClInclude Include="SVMMTimerEventHandler.h" />
+    <ClInclude Include="SVProfiler.h" />
     <ClInclude Include="SVTimerCallback.h" />
     <ClInclude Include="SVTimerCallbackImpl.h" />
   </ItemGroup>

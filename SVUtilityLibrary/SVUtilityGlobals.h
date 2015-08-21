@@ -23,6 +23,9 @@ typedef std::vector< unsigned char > SVByteVector;
 
 extern const GUID SV_GUID_NULL;
 
+#define SV_SEVERITY( p_Status ) \
+	( ( ( ( unsigned long ) p_Status ) >> 30 ) & 0x00000003 )
+
 inline bool operator < ( const GUID& guid1, const GUID& guid2 )
 {
 	RPC_STATUS l_Status;

@@ -17,7 +17,6 @@
 
 #include "SVContainerLibrary/SVVector.h"
 #include "SVHBitmapUtilitiesLibrary/SVHBitmapUtilities.h"
-#include "SVStatusLibrary/SVErrorException.h"
 #include "SVTaskObject.h"
 #include "SVImageClass.h"
 #include "SVValueObject.h"
@@ -97,7 +96,7 @@ public:
 	virtual BOOL ConnectAllInputs();
 
 	
-	HRESULT Initialize(SVDllLoadLibraryCallback fnNotify = SVDllLoadLibraryCallbackDefault() ) throw (SVErrorException);
+	HRESULT Initialize(SVDllLoadLibraryCallback fnNotify = SVDllLoadLibraryCallbackDefault() );
 	virtual HRESULT DisconnectInputsOutputs(SVObjectVector& rListOfObjects);
 	virtual HRESULT HideInputsOutputs(SVObjectVector& rListOfObjects);
 

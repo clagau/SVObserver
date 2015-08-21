@@ -33,7 +33,7 @@ BOOL CALLBACK SVIMServerIOCompleteProc (void *pVoidConnection, int nErrorCode, v
 	USES_CONVERSION;
 
 	szErrorMsg.Format (_T("SVIMServerIOCompleteProc: Operation = %d"), Operation);
-	pServer->GetLastSVIMError()->SetException (nErrorCode, _T(__DATE__), _T(__TIME__), szErrorMsg, _T(__FILE__), __LINE__, _T(__TIMESTAMP__));
+	pServer->GetLastSVIMError()->setMessage (nErrorCode, szErrorMsg, StdMessageParams);
 	TRACE (_T("SVIMServerIOCompleteProc: Operation = %04.4x, ErrorCode = %08.8x\n"), Operation, nErrorCode);
 
 	switch (Operation)
@@ -44,7 +44,7 @@ BOOL CALLBACK SVIMServerIOCompleteProc (void *pVoidConnection, int nErrorCode, v
 				if (!pConnection->Read (pServer->GetReadDataBuffer(), SVIOBUFFSIZE))
 				{
 					szErrorMsg.Format (_T("Read Failed"));
-					pServer->GetLastSVIMError()->SetException (SVMSG_PIPES_READ_FAILED, _T(__DATE__), _T(__TIME__), szErrorMsg, _T(__FILE__), __LINE__, _T(__TIMESTAMP__));
+					pServer->GetLastSVIMError()->setMessage (SVMSG_PIPES_READ_FAILED, szErrorMsg, StdMessageParams);
 					pServer->OnSVIMError (pServer->GetLastSVIMError());
 					pConnection->Close();
 				}
@@ -85,7 +85,7 @@ BOOL CALLBACK SVIMServerIOCompleteProc (void *pVoidConnection, int nErrorCode, v
 								if (!pConnection->Read (pServer->GetReadDataBuffer(), SVIOBUFFSIZE))
 								{
 									szErrorMsg.Format (_T("Read Failed"));
-									pServer->GetLastSVIMError()->SetException (SVMSG_PIPES_READ_FAILED, _T(__DATE__), _T(__TIME__), szErrorMsg, _T(__FILE__), __LINE__, _T(__TIMESTAMP__));
+									pServer->GetLastSVIMError()->setMessage (SVMSG_PIPES_READ_FAILED, szErrorMsg, StdMessageParams);
 									pServer->OnSVIMError (pServer->GetLastSVIMError());
 									pConnection->Close();
 								}
@@ -197,7 +197,7 @@ BOOL CALLBACK SVIMServerIOCompleteProc (void *pVoidConnection, int nErrorCode, v
 					if (!pConnection->Write (pServer->GetWriteDataBuffer(), static_cast<int>(strlen (pServer->GetWriteDataBuffer()) + 1)))
 					{
 						szErrorMsg.Format (_T("Write Failed"));
-						pServer->GetLastSVIMError()->SetException (SVMSG_PIPES_WRITE_FAILED, _T(__DATE__), _T(__TIME__), szErrorMsg, _T(__FILE__), __LINE__, _T(__TIMESTAMP__));
+						pServer->GetLastSVIMError()->setMessage (SVMSG_PIPES_WRITE_FAILED, szErrorMsg, StdMessageParams);
 						pServer->OnSVIMError (pServer->GetLastSVIMError());
 						pConnection->Close();
 					}
@@ -239,7 +239,7 @@ BOOL CALLBACK SVIMServerIOCompleteProc (void *pVoidConnection, int nErrorCode, v
 						if (!pConnection->Read (pServer->GetReadDataBuffer(), SVIOBUFFSIZE))
 						{
 							szErrorMsg.Format (_T("Read Failed"));
-							pServer->GetLastSVIMError()->SetException (SVMSG_PIPES_READ_FAILED, _T(__DATE__), _T(__TIME__), szErrorMsg, _T(__FILE__), __LINE__, _T(__TIMESTAMP__));
+							pServer->GetLastSVIMError()->setMessage (SVMSG_PIPES_READ_FAILED, szErrorMsg, StdMessageParams);
 							pServer->OnSVIMError (pServer->GetLastSVIMError());
 							pConnection->Close();
 						}
@@ -265,7 +265,7 @@ BOOL CALLBACK SVIMServerIOCompleteProc (void *pVoidConnection, int nErrorCode, v
 			if (!pConnection->Open (szConnection, SVPipeConnection::Server, SVIMServerIOCompleteProc, pUserData))
 			{
 				szErrorMsg.Format (_T("Open Failed"));
-				pServer->GetLastSVIMError()->SetException (SVMSG_PIPES_OPEN_FAILED, _T(__DATE__), _T(__TIME__), szErrorMsg, _T(__FILE__), __LINE__, _T(__TIMESTAMP__));
+				pServer->GetLastSVIMError()->setMessage (SVMSG_PIPES_OPEN_FAILED, szErrorMsg, StdMessageParams);
 				pServer->OnSVIMError (pServer->GetLastSVIMError());
 			}
 			break;
@@ -286,14 +286,14 @@ SVIMCommandServer::SVIMCommandServer(CString & szConnection)
 	if ( mpConnection == NULL )
 	{
 		szErrorMsg.Format (_T("Open of %s Failed"), mszConnection);
-		mSVIMLastException.SetException (SVMSG_PIPES_OPEN_FAILED, _T(__DATE__), _T(__TIME__), szErrorMsg, _T(__FILE__), __LINE__, _T(__TIMESTAMP__));
+		mSVIMLastException.setMessage (SVMSG_PIPES_OPEN_FAILED, szErrorMsg, StdMessageParams);
 		mbStarted = FALSE;
 	}
 
 	if (!mpConnection->Open (mszConnection, SVPipeConnection::Server, SVIMServerIOCompleteProc, this))
 	{
 		szErrorMsg.Format (_T("Open of %s Failed"), mszConnection);
-		mSVIMLastException.SetException (SVMSG_PIPES_OPEN_FAILED, _T(__DATE__), _T(__TIME__), szErrorMsg, _T(__FILE__), __LINE__, _T(__TIMESTAMP__));
+		mSVIMLastException.setMessage (SVMSG_PIPES_OPEN_FAILED, szErrorMsg, StdMessageParams);
 		mbStarted = FALSE;
 	}
 }
@@ -369,7 +369,7 @@ CEvent * SVIMCommandServer::GetCommandCompleteEvent()
 }
 
 //##ModelId=38BE5D1E0000
-BOOL SVIMCommandServer::OnSVIMError(SVException* pSVException)
+BOOL SVIMCommandServer::OnSVIMError(SvStl::MessageHandler* pSVException)
 {
 #ifdef DEBUG
 	SVString szMsg;
@@ -378,12 +378,12 @@ BOOL SVIMCommandServer::OnSVIMError(SVException* pSVException)
 	AfxMessageBox (szMsg.ToString(), IDOK, 0);
 #endif
 
-	pSVException->LogException();
+	pSVException->logMessage();
 	return FALSE;
 }
 
 //##ModelId=38BE951D03C8
-SVException* SVIMCommandServer::GetLastSVIMError()
+SvStl::MessageHandler* SVIMCommandServer::GetLastSVIMError()
 {
 	return &mSVIMLastException;
 }
@@ -420,13 +420,13 @@ BOOL SVIMCommandServer::GetConnectionName(CString &szConnection)
 }
 
 //##ModelId=38D78F590280
-BOOL SVIMCommandServer::OnWriteBlockComplete(SVException *psvException, char *pBuffer, int cbBuffer)
+BOOL SVIMCommandServer::OnWriteBlockComplete(SvStl::MessageHandler *psvException, char *pBuffer, int cbBuffer)
 {
 	return FALSE;
 }
 
 //##ModelId=38D78F830290
-BOOL SVIMCommandServer::OnReadBlockComplete(SVException *psvException, char *pBuffer, int cbBuffer)
+BOOL SVIMCommandServer::OnReadBlockComplete(SvStl::MessageHandler *psvException, char *pBuffer, int cbBuffer)
 {
 	return FALSE;
 }

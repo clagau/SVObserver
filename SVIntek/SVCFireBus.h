@@ -12,7 +12,7 @@
 #ifndef _SVCFIREBUS_H
 #define _SVCFIREBUS_H
 
-#include "firebus.h"
+#include "Intek\firebus.h"
 
 #endif // _SVCFIREBUS_H
 

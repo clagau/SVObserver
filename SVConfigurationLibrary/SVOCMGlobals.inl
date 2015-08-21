@@ -11,7 +11,6 @@
 
 #pragma once
 
-#include "SVStatusLibrary/SVStatusCodes.h"
 #include "SVOCMArchive.h"
 
 template< typename SVTreeType >
@@ -25,7 +24,7 @@ HRESULT SVOCMLoadConfiguration(unsigned long ulSVOVersion,
 	hrOk = SVOCMArchive::GetSVOSavedVersionNumberFromConfigurationFile( 
 		bstrFileName, &ulSVOConfigVersion );
 
-	if( SV_SUCCEEDED( hrOk ) )
+	if( SUCCEEDED( hrOk ) )
 	{
 		hrOk = SVOCMArchive::CreateTreeFromConfigurationFile( 
 			ulSVOVersion, ulSVOConfigVersion, bstrFileName, p_rTree );

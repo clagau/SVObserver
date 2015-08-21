@@ -109,9 +109,9 @@ SVTaskObjectClass *SVTransformationToolClass::GetObjectAtPoint( const SVExtentPo
 	return NULL;
 }
 
-HRESULT SVTransformationToolClass::DoesObjectHaveExtents() const
+bool SVTransformationToolClass::DoesObjectHaveExtents() const
 {
-	return S_OK;
+	return true;
 }
 
 HRESULT SVTransformationToolClass::IsInputImage( SVImageClass *p_psvImage )

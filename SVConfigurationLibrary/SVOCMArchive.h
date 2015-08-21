@@ -12,7 +12,6 @@
 #pragma once
 
 #include <comdef.h>
-#include "SVStatusLibrary/SVException.h"
 #include "SVMessage/SVMessage.h"
 
 class SVOCMArchive
@@ -91,47 +90,6 @@ protected:
 	static HRESULT FindVersion440__RevisionHistory (char*				p_czpSourceString, 
 		unsigned long*	p_ulpConfigurationVersion);
 
-	// EB 2002 08 08 : add exception handling
-#define CONFIG_MGR_USE_ERROR_HANDLING
-
-#ifndef CONFIG_MGR_USE_ERROR_HANDLING
-#define HandleErrorCondition(h) ()
-#else
-	// do some tricky macro expansion to automagically get the source file, line, and timestamps
-	//#define HandleErrorCondition(h,s) (HECSourceInformation((h),CString((s)),__,__,__,__,__))
-	//#define HECSourceInformation(h,s,f,l,ts,d,t) (implHandleErrorCondition(h,s,f##FILE__,l##LINE__,t##TIMESTAMP__,d##DATE__,ts##TIME__))
-
-	// I guess it doesn't have to be quite so tricky... the __FILE__ etc. are substituted AFTER regular macro expansion
-#define HandleErrorCondition(e, h) HandleErrorConditionWarning(e, h)    // default severity
-#define HandleErrorConditionInfo(e, h) (implHandleErrorCondition(1, (e), (h),__FILE__,__LINE__,__TIMESTAMP__,__DATE__,__TIME__))
-#define HandleErrorConditionWarning(e, h) (implHandleErrorCondition(2, (e), (h),__FILE__,__LINE__,__TIMESTAMP__,__DATE__,__TIME__))
-#define HandleErrorConditionSevere(e, h) (implHandleErrorCondition(3, (e), (h),__FILE__,__LINE__,__TIMESTAMP__,__DATE__,__TIME__))
-
-	inline static void implHandleErrorCondition (  BYTE bySeverity, long lErr, HRESULT hr, 
-		TCHAR* tszSourceFile,
-		int iSourceLine,
-		TCHAR* tszSourceModificationTimestamp,
-		TCHAR* tszSourceCompileDate,
-		TCHAR* tszSourceCompileTime)
-	{
-		if (hr != S_OK)
-		{
-			if (bySeverity == 2)    // if (bySeverity >= minloglevel && bySeverity < 3)
-			{
-				// we don't want to throw, just create an exception object and use it's reporting facilities
-				SVException e(lErr, tszSourceCompileDate, tszSourceCompileTime, _T(""), tszSourceFile, iSourceLine, tszSourceModificationTimestamp, SVMSG_SVO_15_LOAD_CONFIG_WARNING, hr);
-
-				e.LogException();
-			}
-			else if (bySeverity == 3)
-			{
-				// go directly to jail, do not pass go, do not collect $200.
-				// (stop processing and jump to the catch block)
-				throw SVException(lErr, tszSourceCompileDate, tszSourceCompileTime, _T(""), tszSourceFile, iSourceLine, tszSourceModificationTimestamp, SVMSG_SVO_16_LOAD_CONFIG_ERROR, hr);
-			}
-		}
-	}
-#endif
 };
 
 #include "SVOCMArchive.inl"

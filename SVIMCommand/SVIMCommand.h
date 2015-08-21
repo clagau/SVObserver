@@ -9,10 +9,11 @@
 // * .Check In Date   : $Date:   22 Apr 2013 11:26:48  $
 // ******************************************************************************
 
-#ifndef INC_SVIMCOMMAND_38BAE0BD00DA_INCLUDED
-#define INC_SVIMCOMMAND_38BAE0BD00DA_INCLUDED
+#pragma once
 
-#include "SVStatusLibrary/SVException.h"
+#pragma region Includes
+#include "SVStatusLibrary\MessageHandler.h"
+#pragma endregion Includes
 
 #define SVIOBUFFSIZE 4096
 
@@ -39,7 +40,7 @@
 #define SVIM_STOPPING					0x0200
 #define SVIM_RAID_FAILURE			0x0400
 
-typedef void (CALLBACK * SVCOMMANDCOMPLETEPROC)(CString &szFileName, SVException *pException, void *pUserData);
+typedef void (CALLBACK * SVCOMMANDCOMPLETEPROC)(CString &szFileName, SvStl::MessageHandler *pException, void *pUserData);
 
 class SVIMCommand 
 {
@@ -59,8 +60,6 @@ private:
 	CArray< char*, char* > mszCommandList;
 
 };
-
-#endif
 
 // ******************************************************************************
 // * LOG HISTORY:

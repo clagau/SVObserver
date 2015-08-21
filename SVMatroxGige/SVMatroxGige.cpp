@@ -20,7 +20,7 @@
 #include "SVTriggerLibrary/SVTriggerActivatorFunc.h"
 #include "SVTriggerLibrary/SVTriggerCallbackFunc.h"
 #include "SVTriggerLibrary/SVTriggerEnums.h"
-#include "SVStatusLibrary/SVException.h"
+#include "SVStatusLibrary\MessageManager.h"
 #include "SVMessage/SVMessage.h"
 #include "SVGigeCameraParametersLibrary/SVGigeEnums.h"
 #include "SVMatroxGigeApp.h"
@@ -1515,10 +1515,8 @@ SVMatroxIdentifier SVMatroxGige::CameraPresentCallback( SVMatroxIdentifier HookT
 				CString l_csbuf;
 				l_csbuf.Format("CameraPresentCallback - Connect - Device %d", deviceNumber);
 
-				SVException l_svLog;
-
-				SETEXCEPTION1( l_svLog, SVMSG_SVMATROXGIGE_NO_ERROR, l_csbuf );
-				l_svLog.LogException( l_csbuf );
+				SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+				Exception.setMessage( SVMSG_SVMATROXGIGE_NO_ERROR, l_csbuf, StdMessageParams );
 
 				g_svTheApp.m_svSystem.HandleConnect(system, static_cast<unsigned char>(deviceNumber));
 			}
@@ -1528,10 +1526,8 @@ SVMatroxIdentifier SVMatroxGige::CameraPresentCallback( SVMatroxIdentifier HookT
 				CString l_csbuf;
 				l_csbuf.Format("CameraPresentCallback - Disconnect - Device %d", deviceNumber);
 
-				SVException l_svLog;
-
-				SETEXCEPTION1( l_svLog, SVMSG_SVMATROXGIGE_NO_ERROR, l_csbuf );
-				l_svLog.LogException( l_csbuf );
+				SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+				Exception.setMessage( SVMSG_SVMATROXGIGE_NO_ERROR, l_csbuf, StdMessageParams );
 
 				g_svTheApp.m_svSystem.HandleDisconnect(system, deviceNumber);
 			}
@@ -1584,10 +1580,8 @@ void SVMatroxGige::HandleConnect(SVMatroxGigeSystem& p_rSystem, long deviceNumbe
 										CString l_csbuf;
 										l_csbuf.Format("HandleConnect - StartDigitizer Error - Device %d", deviceNumber);
 
-										SVException l_svLog;
-
-										SETEXCEPTION1( l_svLog, SVMSG_MATROX_GIGE_RECONNECT_ERROR, l_csbuf );
-										l_svLog.LogException( l_csbuf );
+										SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+										Exception.setMessage( SVMSG_MATROX_GIGE_RECONNECT_ERROR, l_csbuf, StdMessageParams );
 									}
 								}
 								else
@@ -1596,10 +1590,8 @@ void SVMatroxGige::HandleConnect(SVMatroxGigeSystem& p_rSystem, long deviceNumbe
 									CString l_csbuf;
 									l_csbuf.Format("HandleConnect - Reload Camera Parameters Error (%d) - Device %d", hr, deviceNumber);
 
-									SVException l_svLog;
-
-									SETEXCEPTION1( l_svLog, SVMSG_MATROX_GIGE_RECONNECT_ERROR, l_csbuf );
-									l_svLog.LogException( l_csbuf );
+									SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+									Exception.setMessage( SVMSG_MATROX_GIGE_RECONNECT_ERROR, l_csbuf, StdMessageParams );
 								}
 							}
 							else
@@ -1608,10 +1600,8 @@ void SVMatroxGige::HandleConnect(SVMatroxGigeSystem& p_rSystem, long deviceNumbe
 								CString l_csbuf;
 								l_csbuf.Format("HandleConnect - CreateAcquisitionBuffers Error (%d) - Device %d", hr, deviceNumber);
 
-								SVException l_svLog;
-
-								SETEXCEPTION1( l_svLog, SVMSG_MATROX_GIGE_RECONNECT_ERROR, l_csbuf );
-								l_svLog.LogException( l_csbuf );
+								SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+								Exception.setMessage( SVMSG_MATROX_GIGE_RECONNECT_ERROR, l_csbuf, StdMessageParams );
 							}
 						}
 						else
@@ -1620,10 +1610,8 @@ void SVMatroxGige::HandleConnect(SVMatroxGigeSystem& p_rSystem, long deviceNumbe
 							CString l_csbuf;
 							l_csbuf.Format("HandleConnect - ReadCameraFormat Error (%d) - Device %d", hr, deviceNumber);
 
-							SVException l_svLog;
-
-							SETEXCEPTION1( l_svLog, SVMSG_MATROX_GIGE_RECONNECT_ERROR, l_csbuf );
-							l_svLog.LogException( l_csbuf );
+							SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+							Exception.setMessage( SVMSG_MATROX_GIGE_RECONNECT_ERROR, l_csbuf, StdMessageParams );
 						}
 					}
 				}
@@ -1633,10 +1621,8 @@ void SVMatroxGige::HandleConnect(SVMatroxGigeSystem& p_rSystem, long deviceNumbe
 					CString l_csbuf;
 					l_csbuf.Format("HandleConnect - AllocDigitizer Error (%d) - Device %d", hr, deviceNumber);
 
-					SVException l_svLog;
-
-					SETEXCEPTION1( l_svLog, SVMSG_MATROX_GIGE_RECONNECT_ERROR, l_csbuf );
-					l_svLog.LogException( l_csbuf );
+					SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+					Exception.setMessage( SVMSG_MATROX_GIGE_RECONNECT_ERROR, l_csbuf, StdMessageParams );
 				}
 			}
 		}
@@ -1646,10 +1632,8 @@ void SVMatroxGige::HandleConnect(SVMatroxGigeSystem& p_rSystem, long deviceNumbe
 			CString l_csbuf;
 			l_csbuf.Format("HandleConnect - GetDigitizer Error (%d) - Device %d", hr, deviceNumber);
 
-			SVException l_svLog;
-
-			SETEXCEPTION1( l_svLog, SVMSG_MATROX_GIGE_RECONNECT_ERROR, l_csbuf );
-			l_svLog.LogException( l_csbuf );
+			SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+			Exception.setMessage( SVMSG_MATROX_GIGE_RECONNECT_ERROR, l_csbuf, StdMessageParams );
 		}
 	}
 	else
@@ -1658,10 +1642,8 @@ void SVMatroxGige::HandleConnect(SVMatroxGigeSystem& p_rSystem, long deviceNumbe
 		CString l_csbuf;
 		l_csbuf.Format("HandleConnect - FindCamera Error (%d) - Device %d", hr, deviceNumber);
 
-		SVException l_svLog;
-
-		SETEXCEPTION1( l_svLog, SVMSG_MATROX_GIGE_RECONNECT_ERROR, l_csbuf );
-		l_svLog.LogException( l_csbuf );
+		SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+		Exception.setMessage( SVMSG_MATROX_GIGE_RECONNECT_ERROR, l_csbuf, StdMessageParams );
 	}
 }
 
@@ -1693,10 +1675,8 @@ void SVMatroxGige::HandleDisconnect(SVMatroxGigeSystem& p_rSystem, long deviceNu
 			CString l_csbuf;
 			l_csbuf.Format("HandleDisconnect - GetDigitizer Error (%d) - Device %d", hr, deviceNumber);
 
-			SVException l_svLog;
-
-			SETEXCEPTION1( l_svLog, SVMSG_MATROX_GIGE_DISCONNECT_ERROR, l_csbuf );
-			l_svLog.LogException( l_csbuf );
+			SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+			Exception.setMessage( SVMSG_MATROX_GIGE_DISCONNECT_ERROR, l_csbuf, StdMessageParams );
 		}
 	}
 	else
@@ -1705,10 +1685,8 @@ void SVMatroxGige::HandleDisconnect(SVMatroxGigeSystem& p_rSystem, long deviceNu
 		CString l_csbuf;
 		l_csbuf.Format("HandleDisconnect - FindCamera Error (%d) - Device %d", hr, deviceNumber);
 
-		SVException l_svLog;
-
-		SETEXCEPTION1( l_svLog, SVMSG_MATROX_GIGE_DISCONNECT_ERROR, l_csbuf );
-		l_svLog.LogException( l_csbuf );
+		SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+		Exception.setMessage( SVMSG_MATROX_GIGE_DISCONNECT_ERROR, l_csbuf, StdMessageParams );
 	}
 }
 

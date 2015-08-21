@@ -11,29 +11,29 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include <boost/algorithm/string.hpp>
-#include <boost/algorithm/string/replace.hpp>
+#include <boost\algorithm\string.hpp>
+#include <boost\algorithm\string\replace.hpp>
 #include "SVConfigurationPrint.h"
 #include "SVConfigurationObject.h"
 
-#include "SVIOLibrary/SVIOConfigurationInterfaceClass.h"
-#include "SVOMFCLibrary/SVDeviceParams.h"
-#include "SVOMFCLibrary/SVBoolValueDeviceParam.h"
-#include "SVOMFCLibrary/SVi64ValueDeviceParam.h"
-#include "SVOMFCLibrary/SVLongValueDeviceParam.h"
-#include "SVOMFCLibrary/SVParamListDeviceParam.h"
-#include "SVOMFCLibrary/SVStringValueDeviceParam.h"
-#include "SVOMFCLibrary/SVCustomDeviceParam.h"
-#include "SVOMFCLibrary/SVFileAcquisitionLoadingModeEnum.h"
-#include "SVImageLibrary/SVImagingDeviceParams.h"
-#include "SVObjectLibrary/SVObjectClass.h"
+#include "SVIOLibrary\SVIOConfigurationInterfaceClass.h"
+#include "SVOMFCLibrary\SVDeviceParams.h"
+#include "SVOMFCLibrary\SVBoolValueDeviceParam.h"
+#include "SVOMFCLibrary\SVi64ValueDeviceParam.h"
+#include "SVOMFCLibrary\SVLongValueDeviceParam.h"
+#include "SVOMFCLibrary\SVParamListDeviceParam.h"
+#include "SVOMFCLibrary\SVStringValueDeviceParam.h"
+#include "SVOMFCLibrary\SVCustomDeviceParam.h"
+#include "SVOMFCLibrary\SVFileAcquisitionLoadingModeEnum.h"
+#include "SVImageLibrary\SVImagingDeviceParams.h"
+#include "SVObjectLibrary\SVObjectClass.h"
 
 #include "SVValueObject.h"
 #include "SVEdge.h"
 #include "SVEquation.h"
 #include "SVImageClass.h"
-#include "SVLine.h"	// Sri 2/21/00
-#include "SVLineAnalyzer.h"	// Sri 2/21/00
+#include "SVLine.h"
+#include "SVLineAnalyzer.h"
 #include "SVObserver.h"
 #include "SVTool.h"
 #include "SVToolSet.h"
@@ -46,10 +46,10 @@
 #include "SVArchiveRecord.h"
 #include "SVArchiveRecordsArray.h"
 #include "SVStatTool.h"
-#include "SVObjectLibrary/SVObjectManagerClass.h"
+#include "SVObjectLibrary\SVObjectManagerClass.h"
 #include "SVAcquisitionClass.h"
 #include "SVFileNameArrayClass.h"
-#include "SVImageLibrary/SVLightReference.h"
+#include "SVImageLibrary\SVLightReference.h"
 #include "SVIODoc.h"
 #include "SVTriggerClass.h"
 #include "SVIPDoc.h"
@@ -60,9 +60,9 @@
 #include "SVResultDouble.h"
 #include "RemoteMonitorList.h"
 #include "RemoteMonitorListHelper.h"
-#include "SVSystemLibrary/SVThreadManager.h"
+#include "SVSystemLibrary\SVThreadManager.h"
 #include "ObjectInterfaces\ErrorNumbers.h"
-#include "SVStatusLibrary/ExceptionManager.h"
+#include "SVStatusLibrary\MessageManager.h"
 #include "TextDefinesSvO.h"
 #include "RootObject.h"
 #pragma endregion Includes
@@ -2252,8 +2252,8 @@ void SVConfigurationPrint::PrintPPQBarSection(CDC* pDC, CPoint& ptCurPos, int nI
 
 		if ( nullptr == pPPQ )
 		{
-			SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
-			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorGettingPPQ, StdExceptionParams, SvOi::Err_17000_ErrorGettingPPQ );
+			SvStl::MessageMgrNoDisplay e( SvStl::LogOnly );
+			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorGettingPPQ, StdMessageParams, SvOi::Err_17000_ErrorGettingPPQ );
 			DebugBreak();
 			continue;
 		}
@@ -2449,14 +2449,14 @@ void SVConfigurationPrint::PrintModuleIO(CDC* pDC, CPoint& ptCurPos, int nIndent
 		if ( nullptr != pConfig ) { pInputList = pConfig->GetInputObjectList(); }
 		if ( nullptr == pInputList )
 		{
-			SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
-			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorGettingInputObjectList, StdExceptionParams, SvOi::Err_17001_ErrorGettingInputObjectList );
+			SvStl::MessageMgrNoDisplay e( SvStl::LogOnly );
+			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorGettingInputObjectList, StdMessageParams, SvOi::Err_17001_ErrorGettingInputObjectList );
 			DebugBreak();
 		}
 		else if (!pInputList->FillInputs( ppIOEntries ))
 		{
-			SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
-			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorFillingInputs, StdExceptionParams, SvOi::Err_17002_ErrorFillingInputs );
+			SvStl::MessageMgrNoDisplay e( SvStl::LogOnly );
+			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorFillingInputs, StdMessageParams, SvOi::Err_17002_ErrorFillingInputs );
 			DebugBreak();
 		}
 
@@ -2572,8 +2572,8 @@ void SVConfigurationPrint::PrintResultIO(CDC* pDC, CPoint& ptCurPos, int nIndent
 	}
 	else
 	{
-		SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
-		e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorGettingPPQCount, StdExceptionParams, SvOi::Err_17003_ErrorGettingPPQCount );
+		SvStl::MessageMgrNoDisplay e( SvStl::LogOnly );
+		e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorGettingPPQCount, StdMessageParams, SvOi::Err_17003_ErrorGettingPPQCount );
 		DebugBreak();
 	}
 
@@ -2616,8 +2616,8 @@ void SVConfigurationPrint::PrintResultIO(CDC* pDC, CPoint& ptCurPos, int nIndent
 				pPPQ = pConfig->GetPPQ( j );
 				if ( nullptr == pPPQ )
 				{
-					SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
-					e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorGettingPPQ, StdExceptionParams, SvOi::Err_17004_ErrorGettingPPQ );
+					SvStl::MessageMgrNoDisplay e( SvStl::LogOnly );
+					e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorGettingPPQ, StdMessageParams, SvOi::Err_17004_ErrorGettingPPQ );
 					DebugBreak();
 				}
 
@@ -2625,8 +2625,8 @@ void SVConfigurationPrint::PrintResultIO(CDC* pDC, CPoint& ptCurPos, int nIndent
 				long lIOEntries = 0;
 				if ( !pPPQ->GetAllOutputs( ppIOEntries ) )
 				{
-					SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
-					e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorGettingOutputs, StdExceptionParams, SvOi::Err_17005_ErrorGettingOutputs );
+					SvStl::MessageMgrNoDisplay e( SvStl::LogOnly );
+					e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorGettingOutputs, StdMessageParams, SvOi::Err_17005_ErrorGettingOutputs );
 					DebugBreak();
 				}
 

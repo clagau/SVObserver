@@ -9,8 +9,9 @@
 //* .Check In Date   : $Date:   01 Dec 2014 13:59:04  $
 //******************************************************************************
 
-#include "SVStatusLibrary/SVException.h"
-#include "SVStatusLibrary/SVStatusCodes.h"
+#include "SVStatusLibrary\MessageManager.h"
+#include "ObjectInterfaces\ErrorNumbers.h"
+#include "SVMessage\SVMessage.h"
 
 template<typename SVAPCSignalHandler, typename SVThreadSignalHandler>
 SVAsyncProcedure<SVAPCSignalHandler, SVThreadSignalHandler>::SVAsyncProcedure()
@@ -36,51 +37,46 @@ HRESULT SVAsyncProcedure<SVAPCSignalHandler, SVThreadSignalHandler>::Create(cons
 template<typename SVAPCSignalHandler, typename SVThreadSignalHandler>
 HRESULT SVAsyncProcedure<SVAPCSignalHandler, SVThreadSignalHandler>::Signal(void* pData)
 {
-	SVException l_svLog;
+	SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
 
-	HRESULT l_Status = S_OK;
+	HRESULT Result = S_OK;
 
 	if( ! m_thread.IsActive() )
 	{
-		l_svLog.SetException(SV_FATAL_SVSYSTEMLIBRARY_0002, _T(__DATE__), _T(__TIME__), m_tag.c_str(), _T(__FILE__), _T(__LINE__), _T(__TIMESTAMP__), 671, 0 );
-		l_svLog.LogException();
+		Exception.setMessage( SVMSG_THREAD_CREATION_ERROR, m_tag.c_str(), StdMessageParams, SvOi::Err_25037_AsyncProcedure );
 
-		l_Status = m_thread.Restart();
+		Result = m_thread.Restart();
 	}
 
-	if( l_Status == S_OK )
+	if( Result == S_OK )
 	{
 		if( ::QueueUserAPC( m_apcHandler, m_thread.GetThreadHandle(), ( ULONG_PTR )pData ) == 0 )
 		{
-			l_svLog.SetException(SV_FATAL_SVSYSTEMLIBRARY_0001, _T(__DATE__), _T(__TIME__), m_tag.c_str(), _T(__FILE__), _T(__LINE__), _T(__TIMESTAMP__), 672, 0 );
-			l_svLog.LogException();
+			Exception.setMessage( SVMSG_QUEUE_USER_APC_ERROR, m_tag.c_str(), StdMessageParams, SvOi::Err_25038_AsyncProcedure );
 
-			l_Status = m_thread.Restart();
+			Result = m_thread.Restart();
 
-			if( l_Status == S_OK )
+			if( Result == S_OK )
 			{
 				if( ::QueueUserAPC( m_apcHandler, m_thread.GetThreadHandle(), ( ULONG_PTR )pData ) == 0 )
 				{
-					l_Status = SV_FATAL_SVSYSTEMLIBRARY_0001;
+					Result = SVMSG_QUEUE_USER_APC_ERROR;
 
-					l_svLog.SetException(l_Status, _T(__DATE__), _T(__TIME__), m_tag.c_str(), _T(__FILE__), _T(__LINE__), _T(__TIMESTAMP__), 674, 0 );
-					l_svLog.LogException();
+					Exception.setMessage( static_cast<DWORD> (Result), m_tag.c_str(), StdMessageParams, SvOi::Err_25039_AsyncProcedure );
 				}
 			}
 			else
 			{
-				l_svLog.SetException(l_Status, _T(__DATE__), _T(__TIME__), m_tag.c_str(), _T(__FILE__), _T(__LINE__), _T(__TIMESTAMP__), 675, 0 );
-				l_svLog.LogException();
+				Exception.setMessage( static_cast<DWORD> (Result), m_tag.c_str(), StdMessageParams, SvOi::Err_25040_AsyncProcedure );
 			}
 		}
 	}
 	else
 	{
-		l_svLog.SetException(l_Status, _T(__DATE__), _T(__TIME__), m_tag.c_str(), _T(__FILE__), _T(__LINE__), _T(__TIMESTAMP__), 675, 0 );
-		l_svLog.LogException();
+		Exception.setMessage( static_cast<DWORD> (Result), m_tag.c_str(), StdMessageParams, SvOi::Err_25041_AsyncProcedure );
 	}
 
-	return l_Status;
+	return Result;
 }
 
 template<typename SVAPCSignalHandler, typename SVThreadSignalHandler>

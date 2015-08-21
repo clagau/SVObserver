@@ -12,7 +12,7 @@
 #include "StdAfx.h"
 #include "SVCFireBus.h"
 #include "SVIntekBoardStruct.h"
-#include "firebus.cpp"
+#include "Intek\firebus.cpp"
 
 // ******************************************************************************
 // * LOG HISTORY:

@@ -16,8 +16,8 @@
 #include "SVIntek.h"
 #include "SVConvert.h"
 #include "SVCFireBus.h"
-#include "SVStatusLibrary/SVException.h"
-#include "FCTLEnable.h"
+#include "SVStatusLibrary\MessageManager.h"
+#include "Intek\FCTLEnable.h"
 #include "SVMessage/SVMessage.h"
 #include "SVImageLibrary/SVAcquisitionBufferInterface.h"
 #include "SVOMFCLibrary/SVCallbackStruct.h"
@@ -49,10 +49,8 @@ void SVCFireBusCallback( FBCBINFO *p_pInfo )
 					((SVIntekBoardStruct*)(p_pInfo->pContext))->m_csFireStackName);
 				TRACE( "%s\n", l_csbuf );
 
-				SVException l_svLog;
-
-				SETEXCEPTION1( l_svLog, SVMSG_SVINTEK_NO_ERROR, l_csbuf );
-				l_svLog.LogException( l_csbuf );
+				SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+				Exception.setMessage( SVMSG_SVINTEK_NO_ERROR, l_csbuf, StdMessageParams );
 
 				break;
 			}
@@ -128,10 +126,8 @@ void SVCFireBusCallback( FBCBINFO *p_pInfo )
 				TRACE( "%s\n", l_csbuf );
 				// Log Message
 
-				SVException l_svLog;
-
-				SETEXCEPTION1( l_svLog, SVMSG_SVINTEK_NO_ERROR, l_csbuf );
-				l_svLog.LogException( l_csbuf );
+				SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+				Exception.setMessage( SVMSG_SVINTEK_NO_ERROR, l_csbuf, StdMessageParams );
 
 				break;
 			}
@@ -142,10 +138,8 @@ void SVCFireBusCallback( FBCBINFO *p_pInfo )
 				TRACE( "%s\n", l_csbuf );
 				// Log Message
 
-				SVException l_svLog;
-
-				SETEXCEPTION1( l_svLog, SVMSG_SVINTEK_NO_ERROR, l_csbuf );
-				l_svLog.LogException( l_csbuf );
+				SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+				Exception.setMessage( SVMSG_SVINTEK_NO_ERROR, l_csbuf, StdMessageParams );
 
 				break;
 			}
@@ -160,10 +154,8 @@ void SVCFireBusCallback( FBCBINFO *p_pInfo )
 				((SVIntekBoardStruct*)(p_pInfo->pContext))->m_bFirstBusResetComplete = false;
 				((SVIntekBoardStruct*)(p_pInfo->pContext))->m_bFirstBusResetStarted = true;
 
-				SVException l_svLog;
-
-				SETEXCEPTION1( l_svLog, SVMSG_SVINTEK_NO_ERROR, l_csbuf );
-				l_svLog.LogException( l_csbuf );
+				SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+				Exception.setMessage( SVMSG_SVINTEK_NO_ERROR, l_csbuf, StdMessageParams );
 
 				break;
 			}
@@ -178,10 +170,8 @@ void SVCFireBusCallback( FBCBINFO *p_pInfo )
 				((SVIntekBoardStruct*)(p_pInfo->pContext))->m_bFirstBusResetComplete = true;
 				((SVIntekBoardStruct*)(p_pInfo->pContext))->m_bFirstBusResetStarted = false;
 
-				SVException l_svLog;
-
-				SETEXCEPTION1( l_svLog, SVMSG_SVINTEK_NO_ERROR, l_csbuf );
-				l_svLog.LogException( l_csbuf );
+				SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+				Exception.setMessage( SVMSG_SVINTEK_NO_ERROR, l_csbuf, StdMessageParams );
 
 				break;
 			}
@@ -193,10 +183,8 @@ void SVCFireBusCallback( FBCBINFO *p_pInfo )
 				TRACE( "%s\n", l_csbuf );
 				// Log Message
 
-				SVException l_svLog;
-
-				SETEXCEPTION1( l_svLog, SVMSG_SVINTEK_NO_ERROR, l_csbuf );
-				l_svLog.LogException( l_csbuf );
+				SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+				Exception.setMessage( SVMSG_SVINTEK_NO_ERROR, l_csbuf, StdMessageParams );
 
 				break;
 			}
@@ -403,7 +391,7 @@ HRESULT SVIntekFireStackClass::Create()
 	if ( ::InterlockedIncrement( &m_lRefCount ) == 1 )
 	{
 		CString l_csbuf;
-		SVException l_svLog;
+		SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
 
 		FBSYSINFO l_fbSysInfo;
 
@@ -434,8 +422,7 @@ HRESULT SVIntekFireStackClass::Create()
 				l_csbuf.Format( "SVIntekFireStackClass::Create - Wait for Bus Reset Start" );
 				// Log Message
 
-				SETEXCEPTION1( l_svLog, SVMSG_SVINTEK_NO_ERROR, l_csbuf );
-				l_svLog.LogException( l_csbuf );
+				Exception.setMessage( SVMSG_SVINTEK_NO_ERROR, l_csbuf, StdMessageParams );
 
 				for( int k = 0; k < 1000; k++ )
 				{
@@ -447,10 +434,8 @@ HRESULT SVIntekFireStackClass::Create()
 						{
 							l_csbuf.Format("SVIntekFireStackClass::Create - Wait for Bus Reset Start - Board %s",
 								l_psvBoard->m_csFireStackName );
-							// Log Message
 
-							SETEXCEPTION1( l_svLog, SVMSG_SVINTEK_NO_ERROR, l_csbuf );
-							l_svLog.LogException( l_csbuf );
+							Exception.setMessage( SVMSG_SVINTEK_NO_ERROR, l_csbuf, StdMessageParams );
 						}
 					}
 					else
@@ -459,10 +444,8 @@ HRESULT SVIntekFireStackClass::Create()
 						{
 							l_csbuf.Format("SVIntekFireStackClass::Create - Bus Reset Started - Board %s",
 								l_psvBoard->m_csFireStackName );
-							// Log Message
 
-							SETEXCEPTION1( l_svLog, SVMSG_SVINTEK_NO_ERROR, l_csbuf );
-							l_svLog.LogException( l_csbuf );
+							Exception.setMessage( SVMSG_SVINTEK_NO_ERROR, l_csbuf, StdMessageParams );
 
 							break;
 						}
@@ -473,10 +456,8 @@ HRESULT SVIntekFireStackClass::Create()
 
 				l_csbuf.Format("SVIntekFireStackClass::Create - Wait for Bus Reset End - Board %s",
 					l_psvBoard->m_csFireStackName );
-				// Log Message
 
-				SETEXCEPTION1( l_svLog, SVMSG_SVINTEK_NO_ERROR, l_csbuf );
-				l_svLog.LogException( l_csbuf );
+				Exception.setMessage( SVMSG_SVINTEK_NO_ERROR, l_csbuf, StdMessageParams );
 
 				if ( l_psvBoard != NULL && l_psvBoard->m_bFirstBusResetStarted )
 				{
@@ -486,10 +467,8 @@ HRESULT SVIntekFireStackClass::Create()
 						{
 							l_csbuf.Format("SVIntekFireStackClass::Create - Bus Reset Endded - Board %s",
 								l_psvBoard->m_csFireStackName );
-							// Log Message
 
-							SETEXCEPTION1( l_svLog, SVMSG_SVINTEK_NO_ERROR, l_csbuf );
-							l_svLog.LogException( l_csbuf );
+							Exception.setMessage( SVMSG_SVINTEK_NO_ERROR, l_csbuf, StdMessageParams );
 
 							break;
 						}
@@ -550,11 +529,10 @@ HRESULT SVIntekFireStackClass::Open()
 	if ( l_hrOk == S_OK )
 	{
 		CString l_csbuf;
-		SVException l_svLog;
 
 		l_csbuf.Format("Card Count %d", l_fbSysInfo.CardCount );
-		SETEXCEPTION1( l_svLog, SVMSG_SVINTEK_NO_ERROR, l_csbuf );
-		l_svLog.LogException( l_csbuf );
+		SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+		Exception.setMessage( SVMSG_SVINTEK_NO_ERROR, l_csbuf, StdMessageParams );
 
 		for ( unsigned long i = 0; l_hrOk == S_OK && i < l_fbSysInfo.CardCount; i++ )
 		{
@@ -615,7 +593,7 @@ HRESULT SVIntekFireStackClass::ThreadOpen()
 	HRESULT l_hrOk = S_OK;
 
 	CString l_csbuf;
-	SVException l_svLog;
+	SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
 
 	for ( unsigned long i = 0; l_hrOk == S_OK && i < static_cast<unsigned long>(m_caBoards.GetSize()); i++ )
 	{
@@ -632,17 +610,13 @@ HRESULT SVIntekFireStackClass::ThreadOpen()
 
 			l_csbuf.Format("SVIntekFireStackClass::Open - Thread Created - Board %s",
 				l_psvBoard->m_csFireStackName );
-			// Log Message
 
-			SETEXCEPTION1( l_svLog, SVMSG_SVINTEK_NO_ERROR, l_csbuf );
-			l_svLog.LogException( l_csbuf );
+			Exception.setMessage( SVMSG_SVINTEK_NO_ERROR, l_csbuf, StdMessageParams );
 
 			l_csbuf.Format("SVIntekFireStackClass::Open - Wait for Bus Reset Start - Board %s",
 				l_psvBoard->m_csFireStackName );
-			// Log Message
 
-			SETEXCEPTION1( l_svLog, SVMSG_SVINTEK_NO_ERROR, l_csbuf );
-			l_svLog.LogException( l_csbuf );
+			Exception.setMessage( SVMSG_SVINTEK_NO_ERROR, l_csbuf, StdMessageParams );
 
 			for( int k = 0; k < 100000; k++ )
 			{
@@ -650,11 +624,8 @@ HRESULT SVIntekFireStackClass::ThreadOpen()
 				{
 					l_csbuf.Format("SVIntekFireStackClass::Open - Bus Reset Started - Board %s",
 						l_psvBoard->m_csFireStackName );
-					// Log Message
 
-					SETEXCEPTION1( l_svLog, SVMSG_SVINTEK_NO_ERROR, l_csbuf );
-					l_svLog.LogException( l_csbuf );
-
+					Exception.setMessage( SVMSG_SVINTEK_NO_ERROR, l_csbuf, StdMessageParams );
 					break;
 				}
 
@@ -663,10 +634,8 @@ HRESULT SVIntekFireStackClass::ThreadOpen()
 
 			l_csbuf.Format("SVIntekFireStackClass::Open - Wait for Bus Reset End - Board %s",
 				l_psvBoard->m_csFireStackName );
-			// Log Message
 
-			SETEXCEPTION1( l_svLog, SVMSG_SVINTEK_NO_ERROR, l_csbuf );
-			l_svLog.LogException( l_csbuf );
+			Exception.setMessage( SVMSG_SVINTEK_NO_ERROR, l_csbuf, StdMessageParams );
 
 			if ( l_psvBoard->m_bFirstBusResetStarted )
 			{
@@ -676,11 +645,8 @@ HRESULT SVIntekFireStackClass::ThreadOpen()
 					{
 						l_csbuf.Format("SVIntekFireStackClass::Open - Bus Reset Endded - Board %s",
 							l_psvBoard->m_csFireStackName );
-						// Log Message
 
-						SETEXCEPTION1( l_svLog, SVMSG_SVINTEK_NO_ERROR, l_csbuf );
-						l_svLog.LogException( l_csbuf );
-
+						Exception.setMessage( SVMSG_SVINTEK_NO_ERROR, l_csbuf, StdMessageParams );
 						break;
 					}
 
@@ -1048,12 +1014,12 @@ HRESULT SVIntekFireStackClass::CameraCreate( SVIntekBoardStruct *p_pBoard, CCame
 	}
 
 	CString l_csbuf;
-	SVException l_svLog;
 
 	l_csbuf.Format("Create Camera = %s - S/N = 0x%08X%08X - HRESULT = 0x%08X", 
 								 l_csCameraName, l_svCameraId.m_ul040Ch,l_svCameraId.m_ul0410h, l_hrOk );
-	SETEXCEPTION1( l_svLog, SVMSG_SVINTEK_NO_ERROR, l_csbuf );
-	l_svLog.LogException( l_csbuf );
+	
+	SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+	Exception.setMessage( SVMSG_SVINTEK_NO_ERROR, l_csbuf, StdMessageParams );
 
 	return l_hrOk;
 }
@@ -1114,11 +1080,11 @@ HRESULT SVIntekFireStackClass::CameraDestroy( CCamera *p_pCamera )
 	}
 
 	CString l_csbuf;
-	SVException l_svLog;
 
 	l_csbuf.Format("Destroy Camera = %s - HRESULT = 0x%08X", l_csCameraName, l_hrOk );
-	SETEXCEPTION1( l_svLog, SVMSG_SVINTEK_NO_ERROR, l_csbuf );
-	l_svLog.LogException( l_csbuf );
+
+	SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+	Exception.setMessage( SVMSG_SVINTEK_NO_ERROR, l_csbuf, StdMessageParams );
 
 	return l_hrOk;
 }

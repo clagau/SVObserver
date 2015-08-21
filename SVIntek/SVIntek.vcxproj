@@ -88,7 +88,7 @@
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
-      <AdditionalIncludeDirectories>..;..\Intek;$(ProgramFiles)\FirePackage2v32\FireStack\Lib;$(ProgramFiles)\FirePackage2V32\FireStack\Classes;$(ProgramFiles)\FirePackage2V32\FireStack\Classes\Win32;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..;$(ProgramFiles)\FirePackage2v32\FireStack\Lib;$(ProgramFiles)\FirePackage2V32\FireStack\Classes;$(ProgramFiles)\FirePackage2V32\FireStack\Classes\Win32;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>NDEBUG;WIN32;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
@@ -139,7 +139,7 @@
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
-      <AdditionalIncludeDirectories>..;..\Intek;C:\Program Files\intek\FirePackage64 2v35\FireStack\Lib;C:\Program Files\intek\FirePackage64 2v35\FireStack\Classes;C:\Program Files\intek\FirePackage64 2v35\FireStack\Classes\Win64;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..;C:\Program Files\intek\FirePackage64 2v35\FireStack\Lib;C:\Program Files\intek\FirePackage64 2v35\FireStack\Classes;C:\Program Files\intek\FirePackage64 2v35\FireStack\Classes\Win64;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>NDEBUG;WIN32;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
@@ -189,7 +189,7 @@
     </Midl>
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..;..\Intek;$(ProgramFiles)\FirePackage2v32\FireStack\Lib;$(ProgramFiles)\FirePackage2V32\FireStack\Classes;$(ProgramFiles)\FirePackage2V32\FireStack\Classes\Win32;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..;$(ProgramFiles)\FirePackage2v32\FireStack\Lib;$(ProgramFiles)\FirePackage2V32\FireStack\Classes;$(ProgramFiles)\FirePackage2V32\FireStack\Classes\Win32;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -233,7 +233,7 @@
     </Midl>
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..;..\Intek;C:\Program Files\intek\FirePackage64 2v35\FireStack\Lib;C:\Program Files\intek\FirePackage64 2v35\FireStack\Classes;C:\Program Files\intek\FirePackage64 2v35\FireStack\Classes\Win64;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..;C:\Program Files\intek\FirePackage64 2v35\FireStack\Lib;C:\Program Files\intek\FirePackage64 2v35\FireStack\Classes;C:\Program Files\intek\FirePackage64 2v35\FireStack\Classes\Win64;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>

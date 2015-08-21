@@ -31,10 +31,6 @@ public:
 
 	virtual ~SVXMLTree();
 
-	HRESULT	IncrementRefCount();
-
-	HRESULT	DecrementRefCount();
-
 	virtual HRESULT	Clear();
 
 	virtual size_t GetCount() const = 0;

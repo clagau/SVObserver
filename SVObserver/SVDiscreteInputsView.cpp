@@ -14,8 +14,8 @@
 #include <boost/config.hpp>
 #include <boost/bind.hpp>
 #include "SVDiscreteInputsView.h"
-#include "SVIOLibrary/SVIOConfigurationInterfaceClass.h"
-#include "SVObjectLibrary/SVObjectManagerClass.h"
+#include "SVIOLibrary\SVIOConfigurationInterfaceClass.h"
+#include "SVObjectLibrary\SVObjectManagerClass.h"
 #include "SVObserver.h"
 #include "SVIODoc.h"
 #include "SVIOAdjustDialog.h"
@@ -24,9 +24,9 @@
 #include "SVInfoStructs.h"
 #include "SVConfigurationObject.h"
 #include "SVSVIMStateClass.h"
-#include "SVMessage/SVMessage.h"
+#include "SVMessage\SVMessage.h"
 #include "ObjectInterfaces\ErrorNumbers.h"
-#include "SVStatusLibrary/ExceptionManager.h"
+#include "SVStatusLibrary\MessageManager.h"
 #include "TextDefinesSvO.h"
 #pragma endregion Includes
 
@@ -142,16 +142,16 @@ void SVDiscreteInputsView::OnUpdate( CView* pSender, LPARAM lHint, CObject* pHin
 		if ( nullptr != pConfig ) { pInputList = pConfig->GetInputObjectList(); }
 		if ( nullptr == pInputList )
 		{
-			SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
-			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorGettingInputObjectList, StdExceptionParams, SvOi::Err_17006_ErrorGettingInputObjectList );
+			SvStl::MessageMgrNoDisplay e( SvStl::LogOnly );
+			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorGettingInputObjectList, StdMessageParams, SvOi::Err_17006_ErrorGettingInputObjectList );
 			DebugBreak();
 			return; 
 		}
 
 		if( !pInputList->FillInputs( ppIOEntries ) )
 		{
-			SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
-			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorFillingInputs, StdExceptionParams, SvOi::Err_17007_ErrorFillingInputs );
+			SvStl::MessageMgrNoDisplay e( SvStl::LogOnly );
+			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorFillingInputs, StdMessageParams, SvOi::Err_17007_ErrorFillingInputs );
 			DebugBreak();
 		}
 
@@ -237,15 +237,15 @@ void SVDiscreteInputsView::OnLButtonDblClk( UINT nFlags, CPoint point )
 			if ( nullptr != pConfig ) { pInputList = pConfig->GetInputObjectList(); }
 			if ( nullptr == pInputList )
 			{
-				SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
-				e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorGettingInputObjectList, StdExceptionParams, SvOi::Err_17008_ErrorGettingInputObjectList );
+				SvStl::MessageMgrNoDisplay e( SvStl::LogOnly );
+				e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorGettingInputObjectList, StdMessageParams, SvOi::Err_17008_ErrorGettingInputObjectList );
 				DebugBreak();
 			}
 
 			if( !pInputList->FillInputs( ppIOEntries ) )
 			{
-				SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
-				e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorFillingInputs, StdExceptionParams, SvOi::Err_17009_ErrorFillingInputs );
+				SvStl::MessageMgrNoDisplay e( SvStl::LogOnly );
+				e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorFillingInputs, StdMessageParams, SvOi::Err_17009_ErrorFillingInputs );
 				DebugBreak();
 			}
 

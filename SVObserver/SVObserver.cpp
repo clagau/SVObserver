@@ -14,14 +14,15 @@
 #include <iostream>
 #include "SVObserver.h"
 
-#include "SVIOLibrary/SVIOConfigurationInterfaceClass.h"
-#include "SVLibrary/SVPackedFile.h"
-#include "SVObjectLibrary/SVObjectSynchronousCommandTemplate.h"
-#include "SVOMFCLibrary/SVDeviceParam.h"
-#include "SVOMFCLibrary/SVDeviceParams.h"
-#include "SVOMFCLibrary/SVLongValueDeviceParam.h"
-#include "SVTimerLibrary/SVClock.h"
-#include "SVUtilityLibrary/SVGUID.h"
+#include "SVIOLibrary\SVIOConfigurationInterfaceClass.h"
+#include "SVLibrary\SVPackedFile.h"
+#include "SVObjectLibrary\SVObjectSynchronousCommandTemplate.h"
+#include "SVOMFCLibrary\SVDeviceParam.h"
+#include "SVOMFCLibrary\SVDeviceParams.h"
+#include "SVOMFCLibrary\SVLongValueDeviceParam.h"
+#include "SVTimerLibrary\SVClock.h"
+#include "SVUtilityLibrary\SVGUID.h"
+#include "SVMessage\SVMessage.h"
 #include "SVObserver_i.h"
 #include "SVCommand.h"
 #include "SVAboutDialogClass.h"
@@ -37,7 +38,7 @@
 #include "SVStartWindow.h"
 #include "SVSVIMStateClass.h"
 #include "SVUtilities.h"
-#include "SVSystemLibrary/SVCrash.h"
+#include "SVSystemLibrary\SVCrash.h"
 #include "SVLVFastOCR.h"
 #include "SVIPDoc.h"
 #include "SVIODoc.h"
@@ -57,35 +58,35 @@
 #include "SVDigitalInputObject1.h"
 #include "SVDigitalOutputObject1.h"
 
-#include "SVConfigurationLibrary/SVOCMGlobals.h"
+#include "SVConfigurationLibrary\SVOCMGlobals.h"
 #include "SVImageProcessingClass.h"
 
 #include "SVOConfigAssistantDlg.h"
 
-#include "SVXMLLibrary/SVNavigateTreeClass.h"
+#include "SVXMLLibrary\SVNavigateTreeClass.h"
 
 #include "SVConfigurationObject.h"
 // BRW - SVImageCompression has been removed for x64.
 #ifndef _WIN64
-#include "SVImageCompression/SVImageCompressionClass.h"
+#include "SVImageCompression\SVImageCompressionClass.h"
 #endif
-#include "ObjectInterfaces/SVUserMessage.h"
-#include "SVOMFCLibrary/SVOINIClass.h"
-#include "SVOMFCLibrary/SVOIniLoader.h"
+#include "ObjectInterfaces\SVUserMessage.h"
+#include "SVOMFCLibrary\SVOINIClass.h"
+#include "SVOMFCLibrary\SVOIniLoader.h"
 
 #include "SV1394CameraManagerDlg.h"
 #include "SVGigeCameraManagerDlg.h"
-#include "SVObjectLibrary/SVObjectManagerClass.h"
+#include "SVObjectLibrary\SVObjectManagerClass.h"
 #include "SVMemoryManager.h"
 #include "SVArchiveTool.h"
 #include "SVArchiveWritingDlg.h"
-#include "SVLibrary/SVWinUtility.h"
-#include "SVIOLibrary/SVIOParameterEnum.h"
+#include "SVLibrary\SVWinUtility.h"
+#include "SVIOLibrary\SVIOParameterEnum.h"
 #include "SoftwareTriggerDlg.h"
 
 #include "SVGlobal.h"
 
-#include "SV1394CameraFileLibrary/SVDCamFactoryRegistrar.h"
+#include "SV1394CameraFileLibrary\SVDCamFactoryRegistrar.h"
 
 #include "SVIOController.h"
 
@@ -93,16 +94,16 @@
 #include "SVHardwareManifest.h"
 #include "SVTriggerProcessingClass.h"
 #include "SVDigitizerProcessingClass.h"
-#include "SVSocketLibrary/SVSocketLibrary.h"
+#include "SVSocketLibrary\SVSocketLibrary.h"
 #include "SVInputStreamManager.h"
 #include "SVOutputStreamManager.h"
 #include "SVCommandStreamManager.h"
 #include "SVFailStatusStreamManager.h"
 #include "SVGetObjectDequeByTypeVisitor.h"
-#include "SVSystemLibrary/SVVersionInfo.h"
+#include "SVSystemLibrary\SVVersionInfo.h"
 #include "SVCommandInspectionRunOnce.h"
 #include "SVConfigurationTreeWriter.h"
-#include "SVOLicenseManager/SVOLicenseManager.h"
+#include "SVOLicenseManager\SVOLicenseManager.h"
 #include "SVSocketRemoteCommandManager.h"
 #include "SVImportedInspectionInfo.h"
 #include "SVIPDocInfoImporter.h"
@@ -115,8 +116,8 @@
 #include "SVMonitorList.h"
 #include "SVThreadInfoDlg.h"
 #include "SVSharedMemorySingleton.h"
-#include "SVSystemLibrary\LoadDll.h"
-#include "SVStatusLibrary\ExceptionManager.h"
+#include "SVUtilityLibrary\LoadDll.h"
+#include "SVStatusLibrary\MessageManagerResource.h"
 #include "ObjectInterfaces\ErrorNumbers.h"
 #include "TextDefinesSvO.h"
 #include "SVToolArchivePage.h"
@@ -124,8 +125,6 @@
 #pragma endregion Includes
 
 #pragma region Declarations
-using namespace Seidenader::SVSystemLibrary;
-
 #define ID_TRIGGER_SETTINGS 21017
 
 static const int UseLargerArchiveMemoryPool = 16000;
@@ -1340,9 +1339,8 @@ void SVObserverApp::OnStop()
 	GetTriggersAndCounts( l_strTrigCnts );
 
 	//add message to event viewer - gone off-line
-	SVException svE;
-	SETEXCEPTION1(svE,SVMSG_SVO_28_SVOBSERVER_GO_OFFLINE, l_strTrigCnts);
-	svE.LogException(l_strTrigCnts);
+	SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+	Exception.setMessage( SVMSG_SVO_28_SVOBSERVER_GO_OFFLINE, l_strTrigCnts, StdMessageParams );
 
 	SVSVIMStateClass::AddState( SV_STATE_READY );
 	SVSVIMStateClass::RemoveState( SV_STATE_UNAVAILABLE | SV_STATE_STOPING );
@@ -2087,9 +2085,9 @@ void SVObserverApp::OnGoOnline()
 						"unknown error when the system was going online." );
 				}
 				INT_PTR Res(0);
-				SvStl::ExceptionMgr1 Exception(SvStl::LogAndDisplay);
+				SvStl::MessageMgrStdDisplay Exception(SvStl::LogAndDisplay);
 
-				Res = Exception.setMessage(SVMSG_SVO_54_EMPTY,l_csMessage,StdExceptionParams, SvOi::Err_45000, 0, MB_OK);
+				Res = Exception.setMessage(SVMSG_SVO_54_EMPTY,l_csMessage,StdMessageParams, SvOi::Err_45000, 0, MB_OK);
 				SVSVIMStateClass::AddState( l_lPrevState );
 			}
 		}
@@ -2961,12 +2959,12 @@ BOOL SVObserverApp::InitInstance()
 
 	HINSTANCE ResourceInstance( NULL );
 	//Load resource dll explicitly
-	HRESULT retValue = LoadDll::Instance().getDll( SVOResourceDll, ResourceInstance );
+	HRESULT retValue = SvUl::LoadDll::Instance().getDll( SvUl::SVOResourceDll, ResourceInstance );
 	if (S_OK != retValue || nullptr == ResourceInstance)
 	{
 		//Because our exception handler (message box) needs the resources, we have to use here the standard message box.
-		SvStl::ExceptionMgr1 Exception( SvStl::LogOnly );
-		Exception.setMessage( SVMSG_SVO_53_RESOURCE_DLL_LOADING_FAILED, nullptr, StdExceptionParams, SvOi::Err_10009_LoadOfResourceDllFailed );
+		SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+		Exception.setMessage( SVMSG_SVO_53_RESOURCE_DLL_LOADING_FAILED, nullptr, StdMessageParams, SvOi::Err_10009_LoadOfResourceDllFailed );
 		MessageBox(nullptr, SvO::LoadingResourceDllFailed, nullptr, MB_OK | MB_ICONSTOP );
 		exit(-SvOi::Err_10009_LoadOfResourceDllFailed);
 	}
@@ -3298,8 +3296,8 @@ BOOL SVObserverApp::InitInstance()
 	//Log amount of physical memory - may help in debugging issues in the future.
 	CString MessageText;
 	MessageText.Format(SvO::AmountOfSystemMemoryText,AmountOfRam);
-	SvStl::ExceptionMgr1 Exception( SvStl::LogOnly );
-	Exception.setMessage(SVMSG_SVO_54_EMPTY,MessageText,StdExceptionParams, SvOi::Memory_Log_45001);
+	SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+	Exception.setMessage(SVMSG_SVO_54_EMPTY,MessageText,StdMessageParams, SvOi::Memory_Log_45001);
 
 	//if amount of physical memory is around 16 GigE allocate the larger memory pools.
 	if (AmountOfRam >= UseLargerArchiveMemoryPool)
@@ -3367,9 +3365,7 @@ BOOL SVObserverApp::InitInstance()
 	{
 		l_strTmp += SeidenaderVision::SVVersionInfo::GetTitleVersion().c_str();
 	}
-	SVException svE;
-	SETEXCEPTION1( svE, SVMSG_SVO_25_SVOBSERVER_STARTED, l_strTmp );
-	svE.LogException( l_strTmp );
+	Exception.setMessage( SVMSG_SVO_25_SVOBSERVER_STARTED, l_strTmp, StdMessageParams );
 
 	SVDirectX::Instance().Initialize();
 
@@ -3425,8 +3421,8 @@ BOOL SVObserverApp::InitInstance()
 
 	if ( !TheSVOLicenseManager().HasMatroxLicense() )
 	{
-		SvStl::ExceptionMgr1 Exception( SvStl::LogAndDisplay );
-		Exception.setMessage( SVMSG_SVO_52_NOMATROX_DONGLE, nullptr, StdExceptionParams, SvOi::Err_25013_NoMatroxDongle );
+		SvStl::MessageMgrStdDisplay Exception( SvStl::LogAndDisplay );
+		Exception.setMessage( SVMSG_SVO_52_NOMATROX_DONGLE, nullptr, StdMessageParams, SvOi::Err_25013_NoMatroxDongle );
 	}
 
 	if ( TheSVOLicenseManager().HasMatroxLicense() && !TheSVOLicenseManager().HasMatroxGigELicense() && IsMatroxGige() )
@@ -3543,9 +3539,8 @@ int SVObserverApp::ExitInstance()
 	SVMatroxApplicationInterface::Shutdown();
 
 	//add message to event viewer - SVObserver stopped
-	SVException svE;
-	SETEXCEPTION0(svE,SVMSG_SVO_26_SVOBSERVER_STOPPED);
-	svE.LogException();
+	SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+	Exception.setMessage( SVMSG_SVO_26_SVOBSERVER_STOPPED, nullptr, StdMessageParams );
 	CloseHandle( m_hEvent );
 	DisableCrashFilter();
 
@@ -3559,6 +3554,29 @@ int SVObserverApp::ExitInstance()
 	return CWinApp::ExitInstance();
 }
 
+int SVObserverApp::Run()
+{
+	int Result( 0 );
+
+	try
+	{
+		Result = CWinApp::Run();
+	}
+	catch( const SvStl::MessageHandler& rExp )
+	{
+		//This is the topmost catch for MessageHandler exceptions
+		SvStl::MessageMgrStdDisplay Exception( SvStl::LogAndDisplay );
+		//Set the error code to unhandled exception but use the rest of the data from the original exception
+		SVString OrgMessageCode;
+		SvStl::MessageData Msg( rExp.getMessage() );
+		OrgMessageCode.Format( _T("0x%08X"), Msg.m_MessageCode );
+		Msg.m_AdditionalText = OrgMessageCode;
+		Msg.m_MessageCode = SVMSG_SVO_72_UNHANDLED_EXCEPTION;
+		Result = Msg.m_MessageCode;
+		Exception.setMessage( Msg );
+	}
+	return Result;
+}
 #pragma endregion AFX_Virtual methods
 
 #pragma region virtual
@@ -3714,9 +3732,10 @@ HRESULT SVObserverApp::OpenSVXFile(LPCTSTR PathName)
 					// Removes any invalid entries in the output list.
 					if( pConfig->IsConfigurationLoaded() )
 					{
-						if( pConfig->ValidateOutputList() == SV_FATAL_SVOBSERVER_2006_DUPLICATE_DISCRETE_OUTPUT )
+						if( SVMSG_SVO_70_DUPLICATE_DISCRETE_OUTPUT == pConfig->ValidateOutputList() )
 						{
-							::AfxMessageBox( "Invalid Discrete Outputs: Remove all Discrete Outputs and re-add them.", MB_ICONEXCLAMATION );
+							SvStl::MessageMgrStdDisplay Exception( SvStl::LogAndDisplay );
+							Exception.setMessage( SVMSG_SVO_70_DUPLICATE_DISCRETE_OUTPUT, nullptr, StdMessageParams );
 						}
 					}
 				}
@@ -3728,11 +3747,11 @@ HRESULT SVObserverApp::OpenSVXFile(LPCTSTR PathName)
 				l_FinishLoad = SVClock::GetTimeStamp();
 				long l_lTime = static_cast<long>(l_FinishLoad - l_StartLoading);
 
-				SVException svE;
 				CString sExcTxt; //(PathName);
 				sExcTxt.Format( "%s\nload time %d ms", PathName, l_lTime );
-				SETEXCEPTION1(svE,SVMSG_SVO_29_SVOBSERVER_CONFIG_LOADED,sExcTxt);
-				svE.LogException(sExcTxt);
+
+				SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+				Exception.setMessage( SVMSG_SVO_29_SVOBSERVER_CONFIG_LOADED, sExcTxt, StdMessageParams );
 
 				break;
 			} // while (1)
@@ -6029,9 +6048,10 @@ BOOL SVObserverApp::ShowConfigurationAssistant( int Page /*= 3*/,
 		GetMainFrame()->BuildPPQButtons();
 
 		// Validate Output List TB
-		if( pConfig->ValidateOutputList() == SV_FATAL_SVOBSERVER_2006_DUPLICATE_DISCRETE_OUTPUT )
+		if( SVMSG_SVO_70_DUPLICATE_DISCRETE_OUTPUT == pConfig->ValidateOutputList() )
 		{
-			::AfxMessageBox( "Invalid Discrete Outputs: Remove all Discrete Outputs and re-add them.", MB_ICONEXCLAMATION );
+			SvStl::MessageMgrStdDisplay Exception( SvStl::LogAndDisplay );
+			Exception.setMessage( SVMSG_SVO_70_DUPLICATE_DISCRETE_OUTPUT, nullptr, StdMessageParams );
 		}
 	}// end if DoModal == IDOK
 
@@ -6974,11 +6994,9 @@ HRESULT SVObserverApp::CheckDrive(const CString& p_strDrive) const
 		l_strDrive.MakeUpper();
 		l_strDrive = l_strDrive.Left(1);
 		l_strTmp.Format(_T("%s - Drive does not exist"), l_strDrive);
-		SVException svE;
-		SETEXCEPTION1(svE,SVMSG_SVO_47_EXCEPTION_SYSTEM_SETUP,l_strTmp);
-		svE.LogException(l_strTmp);
 
-		AfxMessageBox(l_strTmp);
+		SvStl::MessageMgrStdDisplay Exception( SvStl::LogAndDisplay );
+		Exception.setMessage( SVMSG_SVO_47_EXCEPTION_SYSTEM_SETUP, l_strTmp, StdMessageParams );
 	}
 	TCHAR szVolumeName[100];
 	TCHAR szFileSystemName[32];
@@ -7004,9 +7022,10 @@ HRESULT SVObserverApp::CheckDrive(const CString& p_strDrive) const
 			l_strDrive.MakeUpper();
 			l_strDrive = l_strDrive.Left(1);
 			l_strTmp.Format(_T("%s - Drive is not NTFS"), l_strDrive);
-			SVException svE;
-			SETEXCEPTION1(svE,SVMSG_SVO_47_EXCEPTION_SYSTEM_SETUP,l_strTmp);
-			svE.LogException(l_strTmp);
+
+			SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+			Exception.setMessage( SVMSG_SVO_47_EXCEPTION_SYSTEM_SETUP, l_strTmp, StdMessageParams );
+		
 #ifndef _DEBUG
 			AfxMessageBox( l_strTmp );
 #else
@@ -7196,10 +7215,9 @@ HRESULT SVObserverApp::Start()
 			l_strTrigCnts += l_strTime;
 
 			//add go-online message to the event viewer.
-			SVException svE;
-			SETEXCEPTION1(svE,SVMSG_SVO_27_SVOBSERVER_GO_ONLINE, l_strTrigCnts );
-			svE.LogException(l_strTrigCnts);
-
+			SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+			Exception.setMessage( SVMSG_SVO_27_SVOBSERVER_GO_ONLINE, l_strTrigCnts, StdMessageParams );
+			
 			SVSVIMStateClass::RemoveState( SV_STATE_UNAVAILABLE | SV_STATE_STARTING );
 			
 			if (l_trgrDlg.HasTriggers())
@@ -18418,4 +18436,4 @@ $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVObserver
  *   Changed include directive for SVCommRC.h.
  * 
  * /////////////////////////////////////////////////////////////////////////////////////
-*/
+ */

@@ -51,10 +51,13 @@
     <ClCompile Include="SVEventRecordStruct.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVException.cpp">
+    <ClCompile Include="SVRegistry.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVRegistry.cpp">
+    <ClCompile Include="MessageHandler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MessageData.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -65,33 +68,33 @@
     <ClInclude Include="SVErrorClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVErrorException.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVEventLogClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVEventRecordStruct.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVException.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVRegistry.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVStatusCodes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVStatusLibrary.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ExceptionManager.h">
+    <ClInclude Include="MessageManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MessageManagerResource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MessageHandler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MessageData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="ExceptionManager.inl">
+    <None Include="MessageManager.inl">
       <Filter>Header Files</Filter>
     </None>
   </ItemGroup>

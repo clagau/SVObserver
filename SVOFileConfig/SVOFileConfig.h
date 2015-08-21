@@ -19,6 +19,9 @@
 #include "resource.h"		// main symbols
 #include "SVXMLLibrary/SVXMLCTreeCtrl.h"
 
+//Note this declaration is also in SVObserver\TextDevinesSvo.h
+const TCHAR* const ErrorUsedPreviouslyForSec = _T("This was previously used for .sec files.");
+
 class SVOFileConfigDlg;
 
 class SVOFileConfigApp : public CWinApp

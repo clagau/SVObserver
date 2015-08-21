@@ -15,7 +15,7 @@
 #include "SVFileAcquisitionDeviceParamEnum.h"
 #include "SVImageLibrary/SVAcquisitionBufferInterface.h"
 #include "SVImageLibrary/SVImageBufferInterface.h"
-#include "SVStatusLibrary/SVException.h"
+#include "SVStatusLibrary\MessageManager.h"
 #include "SVMessage/SVMessage.h"
 #include "SVOMFCLibrary/SVCallbackStruct.h"
 #include "SVHBitmapUtilitiesLibrary/SVImageFormatEnum.h"
@@ -624,9 +624,8 @@ HRESULT SVFileAcquisitionDevice::CameraProcessEndFrame( unsigned long p_ulIndex 
 						CString l_csBuf;
 						l_csBuf.Format(_T("E: FileAcquisition::CopyImage - Error in Format"));
 
-						SVException l_svLog;
-						SETEXCEPTION1( l_svLog, SVMSG_IMAGE_FORMAT_ERROR, l_csBuf );
-						l_svLog.LogException( l_csBuf );
+						SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+						Exception.setMessage( SVMSG_IMAGE_FORMAT_ERROR, l_csBuf, StdMessageParams );
 					}
 				}
 				else

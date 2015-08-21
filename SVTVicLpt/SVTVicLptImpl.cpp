@@ -17,7 +17,7 @@
 #include <string>
 #include "SVTVicLptImpl.h"
 #include "SVIOLibrary\SVIOParameterEnum.h"
-#include "SVStatusLibrary\SVException.h"
+#include "SVStatusLibrary\MessageManager.h"
 #include "SVTimerLibrary\SVClock.h"
 #include "SVMessage\SVMessage.h"
 
@@ -473,9 +473,8 @@ HRESULT SVTVicLptImpl::SVReadWriteLpt( unsigned long& p_plValue, long p_lControl
 		unsigned short l_nPrevControl = GetControlPort();
 		if( (l_nPrevControl & 0xf) != 0 )
 		{
-			SVException e;
-			SETEXCEPTION1(e, SVMSG_INVALID_LINE_STATE , _T("Select Line In wrong State") );
-			e.LogException( );
+			SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+			Exception.setMessage( SVMSG_INVALID_LINE_STATE, _T("Select Line In wrong State"), StdMessageParams );
 		}
 		// Get Value of control port interrupt Bit 
 		unsigned short l_nVal = SVControlEnableInterrupt ;

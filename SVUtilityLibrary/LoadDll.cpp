@@ -16,70 +16,73 @@
 #pragma endregion Includes
 
 #pragma region Declarations
-using namespace Seidenader::SVSystemLibrary;
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
 #pragma endregion Declarations
 
+namespace Seidenader { namespace SVUtilityLibrary
+{
 #pragma region Constructor
-LoadDll::LoadDll()
-{
-}
+	LoadDll::LoadDll()
+	{
+	}
 
-LoadDll::~LoadDll()
-{
-	freeDlls();
-}
+	LoadDll::~LoadDll()
+	{
+		freeDlls();
+	}
 #pragma endregion Constructor
 
 #pragma region Public Methods
-LoadDll& LoadDll::Instance()
-{
-	static LoadDll Object;
-
-	return Object;
-}
-
-HRESULT LoadDll::getDll( const SVString& DllName, HINSTANCE& Instance )
-{
-	HRESULT Result = S_OK;
-	Instance = NULL;
-	Instance = m_DllsLoaded[DllName];
-	if( NULL == Instance )
+	LoadDll& LoadDll::Instance()
 	{
-		Instance = ::LoadLibrary( DllName.c_str() );
-		if( NULL != Instance )
-		{
-			m_DllsLoaded[DllName] = Instance;
-		}
-		else
-		{
-			Result = S_FALSE;
-		}
+		static LoadDll Object;
+
+		return Object;
 	}
-	
-	return Result;
-}
 
-void LoadDll::freeDlls()
-{
-	DllMap::const_iterator Iter( m_DllsLoaded.begin() );
-
-	while( m_DllsLoaded.end() != Iter )
+	HRESULT LoadDll::getDll( const SVString& DllName, HINSTANCE& Instance )
 	{
-		if( ::FreeLibrary( Iter->second ) )
+		HRESULT Result = S_OK;
+		Instance = nullptr;
+		Instance = m_DllsLoaded[DllName];
+		if( NULL == Instance )
 		{
-			//We are not setting the instance handle to NULL because the list is anyway being cleared after the loop
-			//This Sleep(0) was added after the FreeLibrary to fix a bug where the system ran out of resources.
+			Instance = ::LoadLibrary( DllName.c_str() );
 			Sleep(0);
+			if( nullptr != Instance )
+			{
+				m_DllsLoaded[DllName] = Instance;
+			}
+			else
+			{
+				Result = S_FALSE;
+			}
 		}
-		Iter++;
+	
+		return Result;
 	}
-	m_DllsLoaded.clear();
-}
+
+	void LoadDll::freeDlls()
+	{
+		DllMap::const_iterator Iter( m_DllsLoaded.begin() );
+
+		while( m_DllsLoaded.end() != Iter )
+		{
+			if( ::FreeLibrary( Iter->second ) )
+			{
+				//We are not setting the instance handle to NULL because the list is anyway being cleared after the loop
+				//This Sleep(0) was added after the FreeLibrary to fix a bug where the system ran out of resources.
+				Sleep(0);
+			}
+			Iter++;
+		}
+		m_DllsLoaded.clear();
+	}
 #pragma endregion Public Methods
+} /* namespace SVUtilityLibrary */ } /* namespace Seidenader */
 
 //******************************************************************************
 //* LOG HISTORY:

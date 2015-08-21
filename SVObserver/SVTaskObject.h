@@ -51,7 +51,7 @@ public:
 	virtual HRESULT IsInputImage( SVImageClass *p_psvImage );
 
 	virtual SVTaskObjectClass *GetObjectAtPoint( const SVExtentPointStruct &p_rsvPoint );
-	virtual HRESULT DoesObjectHaveExtents() const;
+	virtual bool DoesObjectHaveExtents() const;
 	virtual HRESULT GetImageExtent( SVImageExtentClass &p_rsvImageExtent );
 	virtual HRESULT SetImageExtent( unsigned long p_ulIndex, SVImageExtentClass p_svImageExtent );
 	virtual HRESULT SetImageExtentToParent( unsigned long p_ulIndex );

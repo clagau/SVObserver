@@ -35,10 +35,10 @@ public:
 	virtual BOOL IsStarted();
 
 	//Called whenever a write to the client completes.
-	virtual BOOL OnWriteBlockComplete(SVException *psvException, char *pBuffer, int cbBuffer);
+	virtual BOOL OnWriteBlockComplete(SvStl::MessageHandler *psvException, char *pBuffer, int cbBuffer);
 
 	//Called when a data block has been read from the client.
-	virtual BOOL OnReadBlockComplete(SVException *psvException, char *pBuffer, int cbBuffer);
+	virtual BOOL OnReadBlockComplete(SvStl::MessageHandler *psvException, char *pBuffer, int cbBuffer);
 
 	virtual BOOL OnSVIMData(char * pBuffer, UINT NumBytes);
 
@@ -60,7 +60,7 @@ public:
 
 	//Returns a pointer to an SVException object that 
 	//describes the last error that occured.
-	SVException* GetLastSVIMError();
+	SvStl::MessageHandler* GetLastSVIMError();
 
 	//Called when a communication error occurs.
 	//
@@ -73,7 +73,7 @@ public:
 	//re-connection, FALSE to terminate the connection.  If 
 	//FALSE is returned, the application must call Open() to 
 	//re-establish communications.
-	virtual BOOL OnSVIMError(SVException* pSVException);
+	virtual BOOL OnSVIMError(SvStl::MessageHandler* pSVException);
 
 	//Transmit the current operating state to the requesting 
 	//application.
@@ -128,7 +128,7 @@ private:
 	BOOL mbStarted;
 
 	//Contains the last error information that occured.
-	SVException mSVIMLastException;
+	SvStl::MessageHandler mSVIMLastException;
 
 };
 

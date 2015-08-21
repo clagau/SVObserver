@@ -8,6 +8,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVObserver.h"
+#include "SVMessage\SVMessage.h"
 #include "ObjectInterfaces\ISVOApp_Helper.h"
 #pragma endregion Includes
 

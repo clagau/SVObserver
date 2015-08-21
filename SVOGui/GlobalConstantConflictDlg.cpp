@@ -23,7 +23,7 @@ static char THIS_FILE[] = __FILE__;
 
 namespace Seidenader { namespace SVOGui
 {
-#pragma endregion Declarations
+#pragma region Declarations
 	static const int HeaderSize = 1;
 	static const int DataSets = 2;
 	static const int GridColumnNumber = 4;

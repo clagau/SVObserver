@@ -11,7 +11,6 @@
 
 #include "stdafx.h"
 #include "SVToolAcquisition.h"
-#include "SVStatusLibrary/SVStatusCodes.h"
 
 //******************************************************************************
 //* DEFINITIONS OF MODULE-LOCAL VARIABLES:
@@ -115,9 +114,9 @@ BOOL SVAcquisitionToolClass::OnValidate()
 	return bRetVal;	
 }
 
-HRESULT SVAcquisitionToolClass::DoesObjectHaveExtents() const
+bool SVAcquisitionToolClass::DoesObjectHaveExtents() const
 {
-	return SV_SUCCESS_SVOBSERVER_2000_DOESNOTHAVE_EXTENTS;
+	return false;
 }
 
 BOOL SVAcquisitionToolClass::onRun( SVRunStatusClass& RRunStatus )

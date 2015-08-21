@@ -133,9 +133,9 @@ SVTaskObjectClass *SVPolarTransformationToolClass::GetObjectAtPoint( const SVExt
 	return l_psvObject;
 }
 
-HRESULT SVPolarTransformationToolClass::DoesObjectHaveExtents() const
+bool SVPolarTransformationToolClass::DoesObjectHaveExtents() const
 {
-	return S_OK;
+	return true;
 }
 
 // Sets the formulas of the evaluation inputs to the standard

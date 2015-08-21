@@ -23,7 +23,7 @@
 #include "SVTimerLibrary\SVClock.h"
 
 #ifndef INITIALIZE_IO_SUBSYSTEM
-#include "SVStatusLibrary\SVException.h"
+#include "SVStatusLibrary\MessageManager.h"
 #include "SVMessage\SVMessage.h"
 #endif
 
@@ -1483,9 +1483,8 @@ HRESULT SVLptIOImpl::SVReadWriteLpt(unsigned long& rlValue, long prevControl, lo
 			if (0 != (nPrevControl & 0xf))
 			{
 #ifndef INITIALIZE_IO_SUBSYSTEM
-				SVException e;
-				SETEXCEPTION1(e, SVMSG_INVALID_LINE_STATE, _T("Select Line In wrong State"));
-				e.LogException();
+				SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+				Exception.setMessage( SVMSG_INVALID_LINE_STATE, _T("Select Line In wrong State"), StdMessageParams );
 #endif
 			}
 			// Get Value of control port interrupt Bit 

@@ -17,7 +17,6 @@
 #include "SVMessage/SVMessage.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVSVIMStateClass.h"
-#include "SVStatusLibrary/SVException.h"
 #include "SVTimerLibrary/SVClock.h"
 
 #include "SVSystemLibrary/SVCrash.h"

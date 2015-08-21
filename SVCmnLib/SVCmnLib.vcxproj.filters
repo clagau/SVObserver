@@ -43,9 +43,6 @@
     <ClInclude Include="StdAfx.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVCmnLib.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVStateClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>

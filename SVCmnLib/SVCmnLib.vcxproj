@@ -286,7 +286,6 @@
   <ItemGroup>
     <ClInclude Include="Element.h" />
     <ClInclude Include="StdAfx.h" />
-    <ClInclude Include="SVCmnLib.h" />
     <ClInclude Include="SVStateClass.h" />
     <ClInclude Include="SVStateLockableClass.h" />
     <ClInclude Include="SVXml.h" />

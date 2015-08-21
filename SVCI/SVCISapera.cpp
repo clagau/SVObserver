@@ -16,8 +16,6 @@
 #include "SVImageLibrary/SVAcquisitionBufferInterface.h"
 #include "SVOLibrary/SVQueueObject.h"
 #include "SVUtilityLibrary/SVUtilityGlobals.h"
-#include "SVStatusLibrary/SVException.h"
-#include "SVStatusLibrary/SVStatusCodes.h"
 
 #include "SVCICallbackStruct.h"
 #include "SVCIServerStruct.h"

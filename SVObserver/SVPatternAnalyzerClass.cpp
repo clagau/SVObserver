@@ -15,7 +15,7 @@
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "SVMessage/SVMessage.h"
 #include "SVRunControlLibrary/SVRunControlLibrary.h"
-#include "SVStatusLibrary/SVException.h"
+#include "SVStatusLibrary\MessageManager.h"
 #include "SVGlobal.h"
 #include "SVImageClass.h"
 #include "SVImageProcessingClass.h"
@@ -711,9 +711,8 @@ BOOL SVPatternAnalyzerClass::SetSearchParameters ()
 	}
 	catch( ... )
 	{
-		SVException svException; //just for test
-		SETEXCEPTION0 (svException, SVMSG_SVF_UNHANDLED_EXCEPTION); 
-		svException.LogException();
+		SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+		Exception.setMessage( SVMSG_SVF_UNHANDLED_EXCEPTION, nullptr, StdMessageParams );
 		l_bOk = FALSE;
 	}
 	return l_bOk;
@@ -1001,9 +1000,8 @@ BOOL SVPatternAnalyzerClass::onRun (SVRunStatusClass &RRunStatus)
 	}
 	catch( ... )
 	{
-		SVException svException; //just for test
-		SETEXCEPTION0 (svException, SVMSG_SVF_UNHANDLED_EXCEPTION); 
-		svException.LogException();
+		SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+		Exception.setMessage( SVMSG_SVF_UNHANDLED_EXCEPTION, nullptr, StdMessageParams );
 		
 		ResetResultValues();
 		SetInvalid();

@@ -12,13 +12,13 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVInspectionProcess.h"
-#include "SVImageLibrary/SVImageBufferHandleImage.h"
-#include "SVImageLibrary/SVImagingDeviceParams.h"
-#include "SVObjectLibrary/SVObjectLevelCreateStruct.h"
-#include "SVObjectLibrary/SVInspectionLevelCreateStruct.h"
-#include "SVObjectLibrary/SVObjectManagerClass.h"
-#include "SVSystemLibrary/SVAutoLockAndReleaseTemplate.h"
-#include "SVConfigurationLibrary/SVConfigurationTags.h"
+#include "SVImageLibrary\SVImageBufferHandleImage.h"
+#include "SVImageLibrary\SVImagingDeviceParams.h"
+#include "SVObjectLibrary\SVObjectLevelCreateStruct.h"
+#include "SVObjectLibrary\SVInspectionLevelCreateStruct.h"
+#include "SVObjectLibrary\SVObjectManagerClass.h"
+#include "SVSystemLibrary\SVAutoLockAndReleaseTemplate.h"
+#include "SVConfigurationLibrary\SVConfigurationTags.h"
 #include "SVObserver.h"
 #include "SVGetObjectDequeByTypeVisitor.h"
 #include "SVToolSet.h"
@@ -29,9 +29,12 @@
 #include "SVSVIMStateClass.h"
 #include "SVCommandStreamManager.h"
 #include "ObjectInterfaces\ErrorNumbers.h"
-#include "SVStatusLibrary/ExceptionManager.h"
+#include "SVStatusLibrary\MessageManager.h"
 #include "TextDefinesSvO.h"
-#include "SVRunControlLibrary/SVRunControlLibrary.h"
+#include "SVRunControlLibrary\SVRunControlLibrary.h"
+#ifdef COLLECT_SHAREDMEMORY_STATS
+#include "SVTimerLibrary\SVProfiler.h"
+#endif
 #pragma endregion Includes
 
 
@@ -67,13 +70,12 @@ HRESULT SVInspectionProcess::ProcessInspection( bool& p_rProcessed, SVProductInf
 
 		if( !l_Process )
 		{
-			SVException l_Log;
 			SVString l_Message;
 
 			l_Message.Format( _T( "Inspection Thread-Name=%s-Error in getting Result Image Index" ), GetName() );
 
-			SETEXCEPTION1( l_Log, hr, l_Message.ToString() );
-			l_Log.LogException( l_Message.ToString() );
+			SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+			Exception.setMessage( static_cast<DWORD> (hr), l_Message.ToString(), StdMessageParams );
 		}
 
 		if( l_Process )
@@ -242,13 +244,8 @@ HRESULT SVInspectionProcess::ProcessMonitorLists(bool& p_rProcessed)
 		}
 		if (bNotFound)
 		{
-			// Event Log...
-			SVException l_Exception;
-			CString l_Message;
-			l_Message.Format(_T("Not All Data List items found\n"));
-
-			SETEXCEPTION5(l_Exception, SVMSG_SVO_45_SHARED_MEMORY_SETUP_LISTS, SvOi::Err_15021, l_Message);
-			l_Exception.LogException(l_Message);
+			SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+			Exception.setMessage( SVMSG_SVO_45_SHARED_MEMORY_SETUP_LISTS, SvO::ErrorNotAllDataItemsFound, StdMessageParams, SvOi::Err_15021 );
 		}
 		bNotFound = false;
 
@@ -271,13 +268,8 @@ HRESULT SVInspectionProcess::ProcessMonitorLists(bool& p_rProcessed)
 		}
 		if (bNotFound)
 		{
-			//Event Log...
-			SVException l_Exception;
-			CString l_Message;
-			l_Message.Format(_T("Not All Image List items found\n"));
-
-			SETEXCEPTION5(l_Exception, SVMSG_SVO_45_SHARED_MEMORY_SETUP_LISTS, SvOi::Err_15022, l_Message);
-			l_Exception.LogException( l_Message );
+			SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+			Exception.setMessage( SVMSG_SVO_45_SHARED_MEMORY_SETUP_LISTS, SvO::ErrorNotAllImageItemsFound, StdMessageParams, SvOi::Err_15022 );
 		}
 		::InterlockedIncrement( &m_NotifyWithLastInspected );
 
@@ -332,9 +324,9 @@ HRESULT SVInspectionProcess::ProcessNotifyWithLastInspected(bool& p_rProcessed, 
 				if (l_Product.ProcessCount() > 0 && sharedSlotIndex >= 0)
 				{
 #ifdef COLLECT_SHAREDMEMORY_STATS
-					SeidenaderVision::SVProfiler totalProfiler;
-					SeidenaderVision::SVProfiler rejectProfiler;
-					SeidenaderVision::SVProfiler commitProfiler;
+					SvTl::SVProfiler totalProfiler;
+					SvTl::SVProfiler rejectProfiler;
+					SvTl::SVProfiler commitProfiler;
 					totalProfiler.Start();
 #endif
 					SeidenaderVision::SVSharedInspectionWriter& rWriter = SVSharedMemorySingleton::Instance().GetInspectionWriter(GetPPQIdentifier(), GetUniqueObjectID());
@@ -348,21 +340,19 @@ HRESULT SVInspectionProcess::ProcessNotifyWithLastInspected(bool& p_rProcessed, 
 			}
 			catch (const std::exception& e)
 			{
-				SVException l_Exception;
-				CString l_Message;
-				l_Message.Format(_T("ProcessNotifyWithLastInspected - %s"), e.what());
+				SVString Message;
+				Message.Format( SvO::ErrorProcessNotifyLastInspected, e.what() );
 
-				SETEXCEPTION5(l_Exception, SVMSG_SVO_44_SHARED_MEMORY, SvOi::Err_15023, l_Message);
-				l_Exception.LogException(l_Message);
+				SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+				Exception.setMessage( SVMSG_SVO_44_SHARED_MEMORY, Message.c_str(), StdMessageParams, SvOi::Err_15023 );
 			}
 			catch (...)
 			{
-				SVException l_Exception;
-				CString l_Message;
-				l_Message.Format(_T("ProcessNotifyWithLastInspected - Unknown"));
+				SVString Message;
+				Message.Format( SvO::ErrorProcessNotifyLastInspected, SvO::Unknown );
 
-				SETEXCEPTION5(l_Exception, SVMSG_SVO_44_SHARED_MEMORY, SvOi::Err_15024, l_Message);
-				l_Exception.LogException(l_Message);
+				SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+				Exception.setMessage( SVMSG_SVO_44_SHARED_MEMORY, Message.c_str(), StdMessageParams, SvOi::Err_15024 );
 			}
 		}
 		SVInspectionCompleteInfoStruct l_Data(GetUniqueObjectID(), l_Product);
@@ -1141,7 +1131,7 @@ HRESULT SVInspectionProcess::StartProcess( SVProductInfoStruct *pProduct )
 					{
 						if( l_Iter->second.GetIndex() < 0 )
 						{
-							hr = SV_FATAL_SVOBSERVER_2002_INVALID_SOURCE_INDEX;
+							hr = SVMSG_SVO_71_INVALID_SOURCE_IMAGE_INDEX;
 						}
 					}
 				}
@@ -1341,8 +1331,8 @@ BOOL SVInspectionProcess::AddInputRequest( SVInputRequestInfoStructPtr p_pInRequ
 {
 	if( !m_InputRequests.Lock() )
 	{
-		SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
-		e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorLockingInputRequests, StdExceptionParams, SvOi::Err_17013_ErrorLockingInputRequests );
+		SvStl::MessageMgrNoDisplay e( SvStl::LogOnly );
+		e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorLockingInputRequests, StdMessageParams, SvOi::Err_17013_ErrorLockingInputRequests );
 		DebugBreak();
 	}
 
@@ -1350,8 +1340,8 @@ BOOL SVInspectionProcess::AddInputRequest( SVInputRequestInfoStructPtr p_pInRequ
 	{
 		if( !m_InputRequests.Unlock() )
 		{
-			SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
-			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorUnlockingInputRequests, StdExceptionParams, SvOi::Err_17014_ErrorUnlockingInputRequests );
+			SvStl::MessageMgrNoDisplay e( SvStl::LogOnly );
+			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorUnlockingInputRequests, StdMessageParams, SvOi::Err_17014_ErrorUnlockingInputRequests );
 			DebugBreak();
 		}
 
@@ -1373,8 +1363,8 @@ BOOL SVInspectionProcess::AddInputRequest( SVInputRequestInfoStructPtr p_pInRequ
 
 	if( !m_InputRequests.Unlock() )
 	{
-		SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
-		e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorUnlockingInputRequests, StdExceptionParams, SvOi::Err_17015_ErrorUnlockingInputRequests );
+		SvStl::MessageMgrNoDisplay e( SvStl::LogOnly );
+		e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorUnlockingInputRequests, StdMessageParams, SvOi::Err_17015_ErrorUnlockingInputRequests );
 		DebugBreak();
 	}
 
@@ -1490,8 +1480,8 @@ HRESULT SVInspectionProcess::AddInputImageRequest( SVInputImageRequestInfoStruct
 {
 	if( !m_InputImageRequests.Lock() )
 	{
-		SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
-		e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorLockingInputImageRequests, StdExceptionParams, SvOi::Err_17016_ErrorLockingInputImageRequests );
+		SvStl::MessageMgrNoDisplay e( SvStl::LogOnly );
+		e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorLockingInputImageRequests, StdMessageParams, SvOi::Err_17016_ErrorLockingInputImageRequests );
 		DebugBreak();
 	}
 
@@ -1499,8 +1489,8 @@ HRESULT SVInspectionProcess::AddInputImageRequest( SVInputImageRequestInfoStruct
 	{
 		if( !m_InputImageRequests.Unlock() )
 		{
-			SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
-			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorUnlockingInputImageRequests, StdExceptionParams, SvOi::Err_17017_ErrorUnlockingInputImageRequests );
+			SvStl::MessageMgrNoDisplay e( SvStl::LogOnly );
+			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorUnlockingInputImageRequests, StdMessageParams, SvOi::Err_17017_ErrorUnlockingInputImageRequests );
 			DebugBreak();
 		}
 
@@ -1509,8 +1499,8 @@ HRESULT SVInspectionProcess::AddInputImageRequest( SVInputImageRequestInfoStruct
 
 	if( !m_InputImageRequests.Unlock() )
 	{
-		SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
-		e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorUnlockingInputImageRequests, StdExceptionParams, SvOi::Err_17018_ErrorUnlockingInputImageRequests );
+		SvStl::MessageMgrNoDisplay e( SvStl::LogOnly );
+		e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorUnlockingInputImageRequests, StdMessageParams, SvOi::Err_17018_ErrorUnlockingInputImageRequests );
 		DebugBreak();
 	}
 
@@ -1521,43 +1511,43 @@ BOOL SVInspectionProcess::RemoveAllInputRequests()
 {
 	if( !m_InputRequests.Lock() )
 	{
-		SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
-		e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorLockingInputRequests, StdExceptionParams, SvOi::Err_17019_ErrorLockingInputRequests );
+		SvStl::MessageMgrNoDisplay e( SvStl::LogOnly );
+		e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorLockingInputRequests, StdMessageParams, SvOi::Err_17019_ErrorLockingInputRequests );
 		DebugBreak();
 	}
 
 	if( !m_InputRequests.RemoveAll() )
 	{
-		SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
-		e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorRemovingAllInputRequests, StdExceptionParams, SvOi::Err_17020_ErrorRemovingAllInputRequests );
+		SvStl::MessageMgrNoDisplay e( SvStl::LogOnly );
+		e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorRemovingAllInputRequests, StdMessageParams, SvOi::Err_17020_ErrorRemovingAllInputRequests );
 		DebugBreak();
 	}
 
 	if( !m_InputRequests.Unlock() )
 	{
-		SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
-		e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorUnlockingInputRequests, StdExceptionParams, SvOi::Err_17021_ErrorUnlockingInputRequests );
+		SvStl::MessageMgrNoDisplay e( SvStl::LogOnly );
+		e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorUnlockingInputRequests, StdMessageParams, SvOi::Err_17021_ErrorUnlockingInputRequests );
 		DebugBreak();
 	}
 
 	if( !m_InputImageRequests.Lock() )
 	{
-		SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
-		e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorLockingInputImageRequests, StdExceptionParams, SvOi::Err_17022_ErrorLockingInputImageRequests );
+		SvStl::MessageMgrNoDisplay e( SvStl::LogOnly );
+		e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorLockingInputImageRequests, StdMessageParams, SvOi::Err_17022_ErrorLockingInputImageRequests );
 		DebugBreak();
 	}
 
 	if( !m_InputImageRequests.RemoveAll() )
 	{
-		SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
-		e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorRemovingAllInputImageRequests, StdExceptionParams, SvOi::Err_17023_ErrorRemovingAllInputImageRequests );
+		SvStl::MessageMgrNoDisplay e( SvStl::LogOnly );
+		e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorRemovingAllInputImageRequests, StdMessageParams, SvOi::Err_17023_ErrorRemovingAllInputImageRequests );
 		DebugBreak();
 	}
 
 	if( !m_InputImageRequests.Unlock() )
 	{
-		SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
-		e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorUnlockingInputImageRequests, StdExceptionParams, SvOi::Err_17024_ErrorUnlockingInputImageRequests );
+		SvStl::MessageMgrNoDisplay e( SvStl::LogOnly );
+		e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorUnlockingInputImageRequests, StdMessageParams, SvOi::Err_17024_ErrorUnlockingInputImageRequests );
 		DebugBreak();
 	}
 
@@ -2438,8 +2428,8 @@ BOOL SVInspectionProcess::ProcessInputRequests( long p_DataIndex, SVResetItemEnu
 	// Process all input requests
 	if( !m_InputRequests.Lock() )
 	{
-		SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
-		e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorLockingInputRequests, StdExceptionParams, SvOi::Err_17025_ErrorLockingInputRequests );
+		SvStl::MessageMgrNoDisplay e( SvStl::LogOnly );
+		e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorLockingInputRequests, StdMessageParams, SvOi::Err_17025_ErrorLockingInputRequests );
 		DebugBreak();
 	}
 	
@@ -2790,8 +2780,8 @@ BOOL SVInspectionProcess::ProcessInputRequests( long p_DataIndex, SVResetItemEnu
 
 	if( !m_InputRequests.Unlock() )
 	{
-		SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
-		e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorUnlockingInputRequests, StdExceptionParams, SvOi::Err_17026_ErrorUnlockingInputRequests );
+		SvStl::MessageMgrNoDisplay e( SvStl::LogOnly );
+		e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorUnlockingInputRequests, StdMessageParams, SvOi::Err_17026_ErrorUnlockingInputRequests );
 		DebugBreak();
 	}
 
@@ -3883,9 +3873,9 @@ void SVInspectionProcess::SetInvalid()
 		GetToolSet()->SetInvalid();
 }
 
-HRESULT SVInspectionProcess::UpdateMainImagesByProduct( SVProductInfoStruct* p_psvProduct )
+int SVInspectionProcess::UpdateMainImagesByProduct( SVProductInfoStruct* p_psvProduct )
 {
-	HRESULT l_hrOk = S_OK;
+	int Result( 0 );
 
 	SVCameraImagePtrSet::iterator l_ImageIter = m_CameraImages.begin();
 
@@ -3907,7 +3897,7 @@ HRESULT SVInspectionProcess::UpdateMainImagesByProduct( SVProductInfoStruct* p_p
 				{
 					if( l_Iter->second.GetIndex() < 0 )
 					{
-						l_hrOk = SV_FATAL_SVOBSERVER_2002_INVALID_SOURCE_INDEX;
+						Result = SvOi::Err_25043_InvalidSourceIndex;
 					}
 
 					SVImageIndexStruct l_svIndex;
@@ -3916,30 +3906,30 @@ HRESULT SVInspectionProcess::UpdateMainImagesByProduct( SVProductInfoStruct* p_p
 
 					if( !( l_pImage->SetImageHandleIndex( l_svIndex ) ) )
 					{
-						l_hrOk = SV_FATAL_SVOBSERVER_2001_SET_IMAGE_HANDLE_INDEX;
+						Result = SvOi::Err_25042_SetImageHandleIndex;
 					}
 				}
 				else
 				{
 					l_pImage->ResetImageIndex();
 
-					l_hrOk = SV_FATAL_SVOBSERVER_2003_CAMERA_NOT_FOUND;
+					Result = SvOi::Err_25044_CameraNotFound;
 				}
 			}
 			else
 			{
-				l_hrOk = SV_FATAL_SVOBSERVER_2004_INVALID_CAMERA;
+				Result = SvOi::Err_25045_InvalidCamera;
 			}
 		}
 		else
 		{
-			l_hrOk = SV_FATAL_SVOBSERVER_2005_INVALID_IMAGE;
+			Result = SvOi::Err_25046_InvalidImage;
 		}
 
 		++l_ImageIter;
 	}
 
-	return l_hrOk;
+	return Result;
 }
 
 BOOL SVInspectionProcess::OnValidate()
@@ -4035,9 +4025,8 @@ BOOL SVInspectionProcess::Run( SVRunStatusClass& RRunStatus )
 			RRunStatus.SetInspectionStarted(false);
 			if( m_runStatus.GetState() == SVRunStatusClass::SV_INVALID )
 			{
-				SVException l_svLog;
-				SETEXCEPTION0( l_svLog, SVMSG_SVO_37_INVALID_RUN_STATUS );
-				l_svLog.LogException();
+				SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+				Exception.setMessage( SVMSG_SVO_37_INVALID_RUN_STATUS, nullptr, StdMessageParams );
 			}
 		}
 	}
@@ -4060,7 +4049,7 @@ BOOL SVInspectionProcess::RunInspection( long lResultDataIndex,
 	BOOL l_bImageRequest = FALSE;
 	BOOL l_bUpdateMainImage = FALSE;
 	BOOL l_bRestMainImage = FALSE;
-	SVException l_svLog;
+	SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
 
 	// Get the info struct for this inspection
 	SVInspectionInfoStruct& l_rIPInfo = pProduct->m_svInspectionInfos[ GetUniqueObjectID() ];
@@ -4076,8 +4065,7 @@ BOOL SVInspectionProcess::RunInspection( long lResultDataIndex,
 		// Process all input requests
 		if( !ProcessInputRequests( lResultDataIndex, m_bForceOffsetUpdate ) )
 		{
-			SETEXCEPTION0( l_svLog, SVMSG_SVO_38_INPUT_REQUEST_FAILED );
-			l_svLog.LogException();
+			Exception.setMessage( SVMSG_SVO_38_INPUT_REQUEST_FAILED, nullptr, StdMessageParams );
 
 			l_bInputRequest = TRUE;
 			m_runStatus.SetInvalid();  //sets run.status.valid = false, and since no bits are set = SV_INVALID
@@ -4085,22 +4073,17 @@ BOOL SVInspectionProcess::RunInspection( long lResultDataIndex,
 
 		if( !ProcessInputImageRequests( pProduct ) )
 		{
-			SETEXCEPTION0( l_svLog, SVMSG_SVO_39_IMAGE_REQUEST_FAILED );
-			l_svLog.LogException();
+			Exception.setMessage( SVMSG_SVO_39_IMAGE_REQUEST_FAILED, nullptr, StdMessageParams );
 
 			l_bImageRequest = TRUE;
 			m_runStatus.SetInvalid(); //sets run.status.valid = false, and since no bits are set = SV_INVALID
 		}
 
-		HRESULT l_MainImageStatus = UpdateMainImagesByProduct( pProduct );
+		int MainImageStatus = UpdateMainImagesByProduct( pProduct );
 
-		if( l_MainImageStatus != S_OK )
+		if( 0 != MainImageStatus )
 		{
-			SETEXCEPTION0( l_svLog, l_MainImageStatus );
-			l_svLog.LogException();
-
-			SETEXCEPTION0( l_svLog, SVMSG_SVO_40_INFO_UPDATE_MAINIMAGE_FAILED );
-			l_svLog.LogException();
+			Exception.setMessage( SVMSG_SVO_40_INFO_UPDATE_MAINIMAGE_FAILED, nullptr, StdMessageParams, MainImageStatus );
 
 			l_bUpdateMainImage = TRUE;
 			m_runStatus.SetInvalid(); //sets run.status.valid = false, and since no bits are set = SV_INVALID
@@ -4137,8 +4120,8 @@ BOOL SVInspectionProcess::RunInspection( long lResultDataIndex,
 	l_rIPInfo.m_BeginToolset = SVClock::GetTimeStamp();
 	if (!l_rIPInfo.m_BeginToolset)
 	{
-		SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
-		e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorGettingTimeStamp, StdExceptionParams, SvOi::Err_17027_ErrorGettingTimeStamp );
+		SvStl::MessageMgrNoDisplay e( SvStl::LogOnly );
+		e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorGettingTimeStamp, StdMessageParams, SvOi::Err_17027_ErrorGettingTimeStamp );
 		DebugBreak();
 	}
 
@@ -4156,8 +4139,8 @@ BOOL SVInspectionProcess::RunInspection( long lResultDataIndex,
 	l_rIPInfo.m_EndToolset = SVClock::GetTimeStamp();
 	if (!l_rIPInfo.m_EndToolset)
 	{
-		SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
-		e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorGettingTimeStamp, StdExceptionParams, SvOi::Err_17028_ErrorGettingTimeStamp );
+		SvStl::MessageMgrNoDisplay e( SvStl::LogOnly );
+		e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorGettingTimeStamp, StdMessageParams, SvOi::Err_17028_ErrorGettingTimeStamp );
 		DebugBreak();
 	}
 

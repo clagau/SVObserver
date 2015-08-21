@@ -164,9 +164,9 @@ SVTaskObjectClass* SVShiftTool::GetObjectAtPoint( const SVExtentPointStruct &p_r
 	return l_pObject;
 }
 
-HRESULT SVShiftTool::DoesObjectHaveExtents() const
+bool SVShiftTool::DoesObjectHaveExtents() const
 {
-	return S_OK;
+	return true;
 }
 #pragma endregion Public Methods
 

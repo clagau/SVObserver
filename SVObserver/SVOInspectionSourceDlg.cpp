@@ -11,9 +11,9 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include <boost/config.hpp>
-#include <boost/bind.hpp>
-#include "SVObjectLibrary/SVObjectManagerClass.h"
+#include <boost\config.hpp>
+#include <boost\bind.hpp>
+#include "SVObjectLibrary\SVObjectManagerClass.h"
 #include "SVOInspectionSourceDlg.h"
 #include "SVOConfigAssistantDlg.h"
 #include "SVMFCControls\SVOEditorWnd.h"
@@ -25,10 +25,10 @@
 #include "SVObserver.h"
 #include "SVMFCControls/SVFileDialog.h"
 #include "SVGlobal.h"
-#include "SVStatusLibrary/ExceptionManager.h"
+#include "SVStatusLibrary\MessageManagerResource.h"
 #include "ObjectInterfaces\ErrorNumbers.h"
 #include "TextDefinesSvO.h"
-#include "SVOResource/ConstGlobalSvOr.h"
+#include "SVOResource\ConstGlobalSvOr.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -316,8 +316,8 @@ void CSVOInspectionSourceDlg::OnBtnImportIpd()
 					::SVGetVersionString( strApp, TheSVObserverApp.getCurrentVersion() );
 					::SVGetVersionString( strFile, l_VersionNumber );
 					strText.Format(SvO::c_textImportInspectionError, strFile, strApp);
-					SvStl::ExceptionMgr1 Exception( SvStl::LogAndDisplay );
-					Exception.setMessage( SVMSG_SVO_56_INSPECTION_IMPORT_ERROR, strText, StdExceptionParams, SvOi::Err_10008_ImportInspectionWrongVersion );
+					SvStl::MessageMgrStdDisplay Exception( SvStl::LogAndDisplay );
+					Exception.setMessage( SVMSG_SVO_56_INSPECTION_IMPORT_ERROR, strText, StdMessageParams, SvOi::Err_10008_ImportInspectionWrongVersion );
 
 					OnBtnDeleteVi();
 				}
@@ -518,7 +518,7 @@ $Log:   N:\PVCSarch65\ProjectFiles\archives\SVObserver_SRC\SVObserver\SVOInspect
  * SCR Title:  Fix Security for File and Folder Selection Dialog for 64 Bit
  * Checked in by:  sJones;  Steve Jones
  * Change Description:  
- *   Revised to use SVLibrary/SVFileDialog
+ *   Revised to use SVLibrary\SVFileDialog
  * 
  * /////////////////////////////////////////////////////////////////////////////////////
  * 

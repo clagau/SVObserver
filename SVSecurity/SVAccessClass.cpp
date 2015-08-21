@@ -17,8 +17,8 @@
 #include <io.h>
 #include <FCNTL.H>
 
-#include "SVMessage/SVMessage.h"
-#include "SVStatusLibrary/SVException.h"
+#include "SVMessage\SVMessage.h"
+#include "SVStatusLibrary\MessageManager.h"
 
 #include "resource.h"
 #include "SVAccessPointNode.h"
@@ -147,7 +147,6 @@ HRESULT SVAccessClass::PasswordDialog(CString& strUser, CString& strPassword, LP
 	//dlg.m_strUser = strUser;  // Jim does not want to default the User name
 	if( dlg.DoModal() == IDOK )
 	{
-		SVException svE;
 		if( IsMasterPassword( dlg.m_strUser, dlg.m_strPassword ) )
 		{
 			strPassword = dlg.m_strPassword;
@@ -172,10 +171,9 @@ HRESULT SVAccessClass::PasswordDialog(CString& strUser, CString& strPassword, LP
 				dlg.m_strUser.CompareNoCase( _T("SVFocusNT")) == 0 || 
 				dlg.m_strUser.CompareNoCase( _T("SVAdmin")) == 0) 
 			{
-				CString sExcTxt( dlg.m_strUser );
-				SETSECURITYEXCEPTION(svE, SVMSG_SVS_ACCESS_DENIED, (LPTSTR)(LPCTSTR)sExcTxt, (LPTSTR)strAttempt, _T(""));
+				SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+				Exception.setMessage( SVMSG_SVS_ACCESS_DENIED, strAttempt, StdMessageParams, 0, 0, dlg.m_strUser );
 
-				svE.LogException(sExcTxt);
 				dlg.m_strUser.Empty();
 				dlg.m_strPassword.Empty();
 				hr = SVMSG_SVS_ACCESS_DENIED;
@@ -187,10 +185,9 @@ HRESULT SVAccessClass::PasswordDialog(CString& strUser, CString& strPassword, LP
 		}
 		else
 		{
-			CString sExcTxt( dlg.m_strUser );
-			SETSECURITYEXCEPTION(svE, SVMSG_SVS_ACCESS_DENIED, (LPTSTR)(LPCTSTR)sExcTxt, (LPTSTR)strAttempt, _T(""));
+			SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+			Exception.setMessage( SVMSG_SVS_ACCESS_DENIED, strAttempt, StdMessageParams, 0, 0, dlg.m_strUser );
 
-			svE.LogException(sExcTxt);
 			hr = SVMSG_SVS_ACCESS_DENIED;
 		}
 		strUser = dlg.m_strUser;
@@ -431,22 +428,16 @@ HRESULT SVAccessClass::Validate(  long lId1 )
 
 					// Event viewer
 					// Application Log Gained Access...Category - SVAccess
-					SVException svE;
+					SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+					Exception.setMessage( SVMSG_SVS_ACCESS_GRANTED1, strName1, StdMessageParams, 0, 0, strTmpUser );
 
-					SETSECURITYEXCEPTION(svE, SVMSG_SVS_ACCESS_GRANTED1, (LPTSTR)(LPCTSTR)strTmpUser, (LPTSTR)(LPCTSTR)strName1 , _T(""));
-					svE.LogException( strName1 );
-
-					SETSECURITYEXCEPTION(svE, lId1, (LPTSTR)(LPCTSTR)strTmpUser, _T("Gained Access"), _T(""));
-					svE.LogException( strName1 );
-
+					Exception.setMessage( lId1, _T("Gained Access"), StdMessageParams, 0, 0, strTmpUser );
 					break;
 				}
 				if( l_bUserValidated )
 				{
-					SVException svE;
-
-					SETSECURITYEXCEPTION(svE, SVMSG_SVS_ACCESS_DENIED, (LPTSTR)(LPCTSTR)strTmpUser, (LPTSTR)(LPCTSTR)strName1, _T(""));
-					svE.LogException( strName1 );
+					SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+					Exception.setMessage( SVMSG_SVS_ACCESS_DENIED, strName1, StdMessageParams, 0, 0, strTmpUser );
 
 					l_strStatus = _T("User Does Not Have Rights to This Function");
 				}
@@ -457,9 +448,8 @@ HRESULT SVAccessClass::Validate(  long lId1 )
 	}
 	else
 	{
-		SVException svE;
-		SETSECURITYEXCEPTION(svE, lId1, _T("Security Disabled"), _T("Gained Access"), _T(""));
-		svE.LogException(strName1);
+		SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+		Exception.setMessage( lId1, _T("Gained Access"), StdMessageParams, 0, 0, _T("Security Disabled") );
 		hr = S_OK;
 	}
 	
@@ -630,15 +620,10 @@ HRESULT SVAccessClass::Validate(  long lId1, long lId2)
 					hr = S_OK;
 					l_bTryLogOn = false;
 
-					// Event viewer
-					// Application Log Gained Access...Category - SVAccess
-					SVException svE;
+					SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+					Exception.setMessage( lId1, _T("Gained Access"), StdMessageParams, 0, 0, strTmpUser );
 
-					SETSECURITYEXCEPTION(svE, lId1, (LPTSTR)(LPCTSTR)strTmpUser, _T("Gained Access"), _T(""));
-					svE.LogException(strName1);
-
-					SETSECURITYEXCEPTION(svE, lId2, (LPTSTR)(LPCTSTR)strTmpUser, _T("Gained Access"), _T(""));
-					svE.LogException(strName2);
+					Exception.setMessage( lId2, _T("Gained Access"), StdMessageParams, 0, 0, strTmpUser );
 
 					break;
 				}
@@ -646,10 +631,8 @@ HRESULT SVAccessClass::Validate(  long lId1, long lId2)
 				{
 					if( l_lState != l_lLastState )
 					{
-						SVException svE;
-
-						SETSECURITYEXCEPTION(svE, SVMSG_SVS_ACCESS_DENIED, (LPTSTR)(LPCTSTR)strTmpUser, (LPTSTR)(LPCTSTR)strName1, _T(""));
-						svE.LogException( strName1 );
+						SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+						Exception.setMessage( SVMSG_SVS_ACCESS_DENIED, strName1, StdMessageParams, 0, 0, strTmpUser );
 					}
 
 				}
@@ -659,9 +642,8 @@ HRESULT SVAccessClass::Validate(  long lId1, long lId2)
 	}
 	else
 	{
-		SVException svE;
-		SETSECURITYEXCEPTION(svE, lId1, _T("Security Disabled"), _T("Gained Access"), _T(""));
-		svE.LogException(strName1);
+		SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+		Exception.setMessage( lId1, _T("Gained Access"), StdMessageParams, 0, 0, _T("Security Disabled") );
 		hr = S_OK;
 	}
 	
@@ -773,11 +755,8 @@ HRESULT SVAccessClass::SetUseLogon(bool bUse)
 // Logout clears the current user and password.
 HRESULT SVAccessClass::Logout()
 {
-	SVException svE;
-	SETSECURITYEXCEPTION(svE, SVMSG_SVS_ACCESS_LOGGED_OUT, (LPTSTR)(LPCTSTR)m_svStorage.GetCurrentUser(), _T("") , _T(""));
-
-	CString strTmp = _T("Log out");
-	svE.LogException( strTmp ); 
+	SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+	Exception.setMessage( SVMSG_SVS_ACCESS_LOGGED_OUT, _T(""), StdMessageParams, 0, 0, m_svStorage.GetCurrentUser() );
 
 	m_svStorage.ClearUser();
 	m_svStorage.ClearPW();
@@ -803,9 +782,8 @@ HRESULT SVAccessClass::Logon()
 
 	if( hr == S_OK )
 	{
-		SVException svE;
-		SETSECURITYEXCEPTION(svE, SVMSG_SVS_ACCESS_GRANTED1, (LPTSTR)(LPCTSTR)strTmpUser, _T("Login"), _T(""));
-		svE.LogException( strTmpUser );
+		SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+		Exception.setMessage( SVMSG_SVS_ACCESS_GRANTED1, _T("Login"), StdMessageParams, 0, 0, strTmpUser );
 
 		m_svStorage.SetUser( strTmpUser );
 		m_svStorage.SetPW( strTmpPW );

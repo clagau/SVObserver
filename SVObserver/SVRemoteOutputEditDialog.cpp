@@ -15,11 +15,11 @@
 #include "SVObserver.h"
 #include "SVConfigurationObject.h"
 #include "SVRemoteOutputDataController.h"
-#include "SVObjectLibrary/SVObjectManagerClass.h"
+#include "SVObjectLibrary\SVObjectManagerClass.h"
 #include "SVInspectionProcess.h"
 #include "SVToolSet.h"
 #include "ObjectInterfaces\ErrorNumbers.h"
-#include "SVStatusLibrary/ExceptionManager.h"
+#include "SVStatusLibrary\MessageManager.h"
 #include "TextDefinesSvO.h"
 #pragma endregion Includes
 
@@ -71,8 +71,8 @@ BOOL SVRemoteOutputEditDialog::OnInitDialog()
 
 	if( nullptr == pConfig )
 	{
-		SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
-		e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorGettingPPQCount, StdExceptionParams, SvOi::Err_17048_ErrorGettingPPQCount );
+		SvStl::MessageMgrNoDisplay e( SvStl::LogOnly );
+		e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorGettingPPQCount, StdMessageParams, SvOi::Err_17048_ErrorGettingPPQCount );
 		DebugBreak();
 	}
 
@@ -84,8 +84,8 @@ BOOL SVRemoteOutputEditDialog::OnInitDialog()
 		pPPQ = pConfig->GetPPQ( k );
 		if( nullptr == pPPQ )
 		{
-			SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
-			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorGettingPPQ, StdExceptionParams, SvOi::Err_17049_ErrorGettingPPQ );
+			SvStl::MessageMgrNoDisplay e( SvStl::LogOnly );
+			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorGettingPPQ, StdMessageParams, SvOi::Err_17049_ErrorGettingPPQ );
 			DebugBreak();
 		}
 
@@ -96,8 +96,8 @@ BOOL SVRemoteOutputEditDialog::OnInitDialog()
 			// Get list of available outputs
 			if( !pPPQ->GetAllOutputs( ppIOEntries ) )
 			{
-				SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
-				e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorGettingOutputs, StdExceptionParams, SvOi::Err_17050_ErrorGettingOutputs );
+				SvStl::MessageMgrNoDisplay e( SvStl::LogOnly );
+				e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorGettingOutputs, StdMessageParams, SvOi::Err_17050_ErrorGettingOutputs );
 				DebugBreak();
 			}
 

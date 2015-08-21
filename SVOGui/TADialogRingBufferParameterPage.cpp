@@ -17,7 +17,7 @@
 #include "ObjectInterfaces/IToolSet.h"
 #include "ObjectInterfaces/IRootObject.h"
 #include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
-#include "SVStatusLibrary/ExceptionManager.h"
+#include "SVStatusLibrary/MessageManagerResource.h"
 #include "SVMessage/SVMessage.h"
 #include "TextDefinesSvOg.h"
 
@@ -250,10 +250,10 @@ namespace Seidenader
 			if(S_OK != hResult)
 			{
 				m_EditRingDepth.SetFocus();
-				SvStl::ExceptionMgr1 Exception( SvStl::LogAndDisplay );
+				SvStl::MessageMgrStdDisplay Exception( SvStl::LogAndDisplay );
 				CString strText;
 				strText.Format(RingBuffer_Depth_Invalid_ValueString, SvOi::IRingBufferTool::m_minRingBufferDepth, SvOi::IRingBufferTool::m_maxRingBufferDepth, csText);
-				Exception.setMessage( SVMSG_SVO_62_RINGBUFFER_INVALID_VALUE, strText, StdExceptionParams, hResult, MB_OK | MB_ICONERROR );
+				Exception.setMessage( SVMSG_SVO_62_RINGBUFFER_INVALID_VALUE, strText, StdMessageParams, hResult, MB_OK | MB_ICONERROR );
 			}
 			return hResult;
 		}
@@ -266,10 +266,10 @@ namespace Seidenader
 			if(S_OK != hResult)
 			{
 				m_EditImageIndex[indexNumber].SetFocus();
-				SvStl::ExceptionMgr1 Exception( SvStl::LogAndDisplay );
+				SvStl::MessageMgrStdDisplay Exception( SvStl::LogAndDisplay );
 				CString strText;
 				strText.Format(RingBuffer_ImageIndex_Invalid_ValueString, indexNumber+1);
-				Exception.setMessage( SVMSG_SVO_62_RINGBUFFER_INVALID_VALUE, strText, StdExceptionParams, hResult, MB_OK | MB_ICONERROR );
+				Exception.setMessage( SVMSG_SVO_62_RINGBUFFER_INVALID_VALUE, strText, StdMessageParams, hResult, MB_OK | MB_ICONERROR );
 			}
 			return hResult;
 		}

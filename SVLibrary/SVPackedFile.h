@@ -8,19 +8,12 @@
 // * .Current Version : $Revision:   1.1  $
 // * .Check In Date   : $Date:   03 Feb 2014 16:37:30  $
 // ******************************************************************************
-
-#ifndef INC_SVPACKEDFILE_38E35C6502FD_INCLUDED
-#define INC_SVPACKEDFILE_38E35C6502FD_INCLUDED
-
-#include "SVStatusLibrary/SVException.h"
+#pragma once
 
 #define SV_PACKEDFILE_VERSION 1
 
 class SVPackedFile 
 {
-private:
-	CString m_configFilePath;
-
 public:
 	const CString& getConfigFilePath() const;
 	//Adds the file(s) specified by szFile to the packed file 
@@ -36,12 +29,9 @@ public:
 
 	virtual ~SVPackedFile();
 
-protected:
-	SVException msvException;
-
+private:
+	CString m_configFilePath;
 };
-
-#endif
 
 // ******************************************************************************
 // * LOG HISTORY:

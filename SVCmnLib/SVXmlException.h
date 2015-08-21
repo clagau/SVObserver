@@ -9,19 +9,19 @@
 //* .Check In Date   : $Date:   18 Apr 2013 18:10:12  $
 //******************************************************************************
 
-#ifndef SVXMLEXCEPTION_H
-#define SVXMLEXCEPTION_H
+#pragma once
 
-#include "SVStatusLibrary/SVException.h"
+#pragma region Includes
+#include "SVStatusLibrary\MessageHandler.h"
 #include "SVXml.h"
+#pragma endregion Includes
 
 class SVXmlException : public SVXml  
 {
 public:
 	SVXmlException();
 	virtual ~SVXmlException();
-	BOOL operator=( SVException& rhs);
-	SVException * CreateSVExceptionObject(BSTR * bstrDoc);
+	BOOL operator=( SvStl::MessageHandler& rhs);
 	BOOL GetXmlDoc(BSTR * bstrDoc);
 
 protected:
@@ -37,7 +37,6 @@ protected:
 	BOOL SetSourceDateTime(BSTR * Data);
 	BOOL SetCompileDate(BSTR * Data);
 	BOOL SetCompileTime(BSTR * Data);
-	SVException m_SvException;
 	BOOL GetProgramCode(ULONG * Data);
 	BOOL GetErrorCode(ULONG * Data);
 	BOOL GetOsErrorCode(ULONG * Data);
@@ -50,8 +49,6 @@ protected:
 	BOOL GetCompileTime(BSTR * Data);
 
 };
-
-#endif
 
 // ******************************************************************************
 // * LOG HISTORY:

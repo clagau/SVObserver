@@ -11,8 +11,7 @@
 
 #include "stdafx.h"
 #include "ManagedIndexArray.h"
-#include "SVStatusLibrary/SVException.h"
-#include "SVStatusLibrary/SVStatusCodes.h"
+#include "SVMessage\SVMessage.h"
 #include "SVSystemLibrary/SVAutoLockAndReleaseTemplate.h"
 
 SVManagedIndex::SVManagedIndex()
@@ -327,7 +326,7 @@ HRESULT SVManagedIndex::ReleaseReference( SVDataManagerLockTypeEnum p_eType )
 	{
 		svmlTransactionId = 0;
 
-		if( SV_SUCCEEDED( l_Status ) )
+		if( SUCCEEDED( l_Status ) )
 		{
 			l_Status = SVDM_1507FINALINDEXRELEASE_INFORMATION;
 		}

@@ -11,13 +11,13 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVTADlgPassFailPage.h"
-#include "SVObjectLibrary/SVObjectClass.h"
+#include "SVObjectLibrary\SVObjectClass.h"
 #include "SVRange.h"
 #include "SVResult.h"
 #include "SVTool.h"
-#include "SVStatusLibrary/SVException.h"
-#include "SVStatusLibrary/ExceptionManager.h"
-#include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
+#include "SVStatusLibrary\MessageHandler.h"
+#include "SVStatusLibrary\MessageManagerResource.h"
+#include "ObjectSelectorLibrary\ObjectTreeGenerator.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -203,11 +203,11 @@ bool SVToolAdjustmentDialogPassFailPageClass::GetDlgData()
 		m_RangeHelper.SetInternalData(ER_WarnLow, csText);
 		res = true;
 	}
-	catch (SVException e)
+	catch ( const SvStl::MessageHandler& rSvE )
 	{
 		//Now that we have caught the exception we would like to display it
-		SvStl::ExceptionMgr1 CaughtException(SvStl::ExpTypeEnum::LogAndDisplay );
-		CaughtException.setMessage( e );
+		SvStl::MessageMgrStdDisplay Exception( SvStl::LogAndDisplay );
+		Exception.setMessage( rSvE.getMessage() );
 	}
 
 	return res;

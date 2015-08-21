@@ -13,8 +13,9 @@
 #include "SVMatroxApplicationInterface.h"
 #include "SVMatroxEnums.h"
 #include "SVMatroxImagingLibrary.h"
-#include "SVStatusLibrary\SVException.h"
 #include "SVMessage\SVMessage.h"
+#include "ObjectInterfaces\ErrorNumbers.h"
+#include "SVStatusLibrary\MessageManager.h"
 
 #include <assert.h>
 
@@ -114,18 +115,21 @@ void SVMatroxApplicationInterface::Log( SVMatroxStatusInformation &p_rStatusInfo
 {
 	if( p_rStatusInfo.m_StatusCode != 0 )
 	{
-		SVException e;
-
+		DWORD OsError = static_cast<DWORD> ( p_rStatusInfo.m_StatusCode );
+		DWORD MessageCode( 0 );
+		DWORD ProgramCode( 0 );
 		if( SUCCEEDED( p_rStatusInfo.m_StatusCode ) ) 
 		{
-			e.SetException( SVMSG_SVMATROXLIBRARY_NO_ERROR, -15408, static_cast< DWORD >( p_rStatusInfo.m_StatusCode ) );
+			MessageCode = SVMSG_SVMATROXLIBRARY_NO_ERROR;
+			ProgramCode = SvOi::Err_25020_MatroxLibraryNone;
 		}
 		else
 		{
-			e.SetException( SVMSG_SVMATROXLIBRARY_UNKNOWN_FATAL_ERROR, -15408, static_cast< DWORD >( p_rStatusInfo.m_StatusCode ) );
+			MessageCode = SVMSG_SVMATROXLIBRARY_UNKNOWN_FATAL_ERROR;
+			ProgramCode = SvOi::Err_25021_MatroxLibraryFatal;
 		}
-
-		e.LogException( p_rStatusInfo.GetCompleteString().c_str() );
+		SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+		Exception.setMessage( MessageCode, p_rStatusInfo.GetCompleteString().c_str(), StdMessageParams, ProgramCode,  OsError);
 	}
 }
 

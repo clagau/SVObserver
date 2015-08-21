@@ -14,6 +14,7 @@
 #include "SVLibrary/SVPackedFile.h"
 #include "SVMessage/SVMessage.h"
 #include "SVCmnLib/utilities.h"
+#include "SVStatusLibrary\MessageHandler.h"
 
 SV_EXPORTDLL SVIMServer::SVIMServer() : SVIMCommandServer (CString (_T("SVObserver")))
 {
@@ -242,14 +243,14 @@ void SVIMServer::OnSVIMSendComplete(CString& szSendFileName)
 {
 }
 
-BOOL SVIMServer::OnWriteBlockComplete(SVException *psvException, char *pBuffer, int cbBuffer)
+BOOL SVIMServer::OnWriteBlockComplete(SvStl::MessageHandler *psvException, char *pBuffer, int cbBuffer)
 {
 	SVIMCommand Command;
 	char *pTemp;
 	int size, count, cmdlen;
 	CString szErrorMsg;
 
-	if (psvException->GetErrorCode () == SVMSG_PIPES_NO_ERROR)
+	if ( SVMSG_PIPES_NO_ERROR == psvException->getMessage().m_MessageCode )
 	{
 		if (mpFile)
 		{
@@ -263,7 +264,7 @@ BOOL SVIMServer::OnWriteBlockComplete(SVException *psvException, char *pBuffer, 
 				if (!mpConnection->Write (pBuffer, count + cmdlen))
 				{
 					szErrorMsg.Format (_T("Write Failed"));
-					psvException->SetException (SVMSG_PIPES_WRITE_FAILED, _T(__DATE__), _T(__TIME__), szErrorMsg, _T(__FILE__), __LINE__, _T(__TIMESTAMP__));
+					psvException->setMessage (SVMSG_PIPES_WRITE_FAILED, szErrorMsg, StdMessageParams);
 				}
 				else
 				{
@@ -273,7 +274,7 @@ BOOL SVIMServer::OnWriteBlockComplete(SVException *psvException, char *pBuffer, 
 		}
 	}
 
-	if (psvException->GetErrorCode () != SVMSG_PIPES_NO_ERROR)
+	if ( SVMSG_PIPES_NO_ERROR != psvException->getMessage().m_MessageCode )
 	{
 		OnSVIMError (psvException);
 	}
@@ -288,7 +289,7 @@ BOOL SVIMServer::OnWriteBlockComplete(SVException *psvException, char *pBuffer, 
 	return FALSE;
 }
 
-BOOL SVIMServer::OnReadBlockComplete(SVException *psvException, char *pBuffer, int cbBuffer)
+BOOL SVIMServer::OnReadBlockComplete(SvStl::MessageHandler *psvException, char *pBuffer, int cbBuffer)
 {
 	return FALSE;
 }

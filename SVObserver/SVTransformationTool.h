@@ -26,7 +26,7 @@ public:
 	virtual HRESULT ResetObject();
 
 	virtual SVTaskObjectClass *GetObjectAtPoint( const SVExtentPointStruct &p_rsvPoint );
-	virtual HRESULT DoesObjectHaveExtents() const;
+	virtual bool DoesObjectHaveExtents() const override;
 
 	virtual HRESULT IsInputImage( SVImageClass *p_psvImage );
 

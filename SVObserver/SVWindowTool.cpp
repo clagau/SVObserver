@@ -255,9 +255,9 @@ SVTaskObjectClass *SVWindowToolClass::GetObjectAtPoint( const SVExtentPointStruc
 	return l_psvObject;
 }
 
-HRESULT SVWindowToolClass::DoesObjectHaveExtents() const
+bool SVWindowToolClass::DoesObjectHaveExtents() const
 {
-	return S_OK;
+	return true;
 }
 
 HRESULT SVWindowToolClass::GetInputImageNames( SVStringValueObjectClass*& p_pSourceNames )

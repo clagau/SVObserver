@@ -13,7 +13,7 @@
 #include "SVLineLinearMeasurementAnalyzer.h"
 #include "SVImageToLineProject.h"
 #include "SVInspectionProcess.h"
-#include "SVStatusLibrary/SVException.h"
+#include "SVStatusLibrary\MessageManager.h"
 #include "SVMessage/SVMessage.h"
 #include "SVLine.h"
 #include "SVImageLibrary/SVImageInfoClass.h"
@@ -520,9 +520,8 @@ BOOL SVLinearMeasurementLineAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 	}
 	catch( ... )
 	{
-		SVException svException; //just for test
-		SETEXCEPTION0 (svException, SVMSG_SVF_UNHANDLED_EXCEPTION); 
-		svException.LogException();
+		SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+		Exception.setMessage( SVMSG_SVF_UNHANDLED_EXCEPTION, nullptr, StdMessageParams );
 
 		SetInvalid();
 		RRunStatus.SetInvalid();

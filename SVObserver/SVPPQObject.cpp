@@ -41,6 +41,8 @@
 #include "SVRemoteInputObject.h"
 #include "SVPPQConstants.h"
 #include "ObjectInterfaces\ErrorNumbers.h"
+#include "SVStatusLibrary\MessageManager.h"
+#include "TextDefinesSvO.h"
 #include "SVRunControlLibrary\SVRunControlLibrary.h"
 #pragma endregion Includes
 
@@ -1300,13 +1302,11 @@ HRESULT SVPPQObject::CanGoOnline()
 		l_hrOk = SVSharedMemorySingleton::Instance().InsertPPQSharedMemory(GetName(), GetUniqueObjectID(), sharedInspectionWriterCreationInfo);
 		if (S_OK != l_hrOk)
 		{
-			// Log Exception
-			SVException l_Exception;
-			CString l_Message;
-			l_Message.Format(_T("CanGoOnline %s - Not enough Disk Space Available"), GetName());
-			// Need to show a more specific error here
-			SETEXCEPTION5(l_Exception, SVMSG_SVO_46_SHARED_MEMORY_DISK_SPACE, SvOi::Err_15025, l_Message);
-			l_Exception.LogException( l_Message );
+			SVString Message;
+			Message.Format( SvO::ErrorNotEnoughDiskSpace, GetName() );
+
+			SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+			Exception.setMessage( SVMSG_SVO_46_SHARED_MEMORY_DISK_SPACE, Message.c_str(), StdMessageParams, SvOi::Err_15025 );
 		}
 		else
 		{
@@ -2734,11 +2734,8 @@ SVProductInfoStruct* SVPPQObject::IndexPPQ( SVTriggerInfoStruct& p_rTriggerInfo 
 		// Recycle the exiting SVProductInfoStruct
 		if( !RecycleProductInfo( l_pLastProduct ) )
 		{
-			SVException svE;
-			CString l_sErrorStr;
-			l_sErrorStr.Format("SVPPQObject::IndexPPQ-cannot release Input Buffer Index");
-			SETEXCEPTION1(svE,-6506,l_sErrorStr);
-			svE.LogException(l_sErrorStr);
+			SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+			Exception.setMessage( SVMSG_SVO_69_PPQ_INDEX_NOT_RELEASED, nullptr, StdMessageParams );
 		}
 	}
 
@@ -3970,21 +3967,19 @@ HRESULT SVPPQObject::ProcessTrigger( bool& p_rProcessed )
 							}
 							catch (const std::exception& e)
 							{
-								SVException l_Exception;
-								CString l_Message;
-								l_Message.Format(_T("ProcessTrigger - %s"), e.what());
+								SVString Message;
+								Message.Format( SvO::ProcessTrigger, e.what() );
 
-								SETEXCEPTION5(l_Exception, SVMSG_SVO_44_SHARED_MEMORY, SvOi::Err_15026, l_Message);
-								l_Exception.LogException(l_Message);
+								SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+								Exception.setMessage( SVMSG_SVO_44_SHARED_MEMORY, Message.c_str(), StdMessageParams, SvOi::Err_15026 );
 							}
 							catch (...)
 							{
-								SVException l_Exception;
-								CString l_Message;
-								l_Message.Format(_T("ProcessTrigger - Unknown"));
+								SVString Message;
+								Message.Format( SvO::ProcessTrigger, SvO::Unknown );
 
-								SETEXCEPTION5(l_Exception, SVMSG_SVO_44_SHARED_MEMORY, SvOi::Err_15027, l_Message);
-								l_Exception.LogException(l_Message);
+								SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+								Exception.setMessage( SVMSG_SVO_44_SHARED_MEMORY, Message.c_str(), StdMessageParams, SvOi::Err_15027 );
 							}
 						}
 					}
@@ -4890,13 +4885,8 @@ void SVPPQObject::SetRejectConditionList(const SVMonitorItemList& rRejectCondLis
 	}
 	if (bNotFound)
 	{
-		// Event Log...
-		SVException l_Exception;
-		CString message;
-		message.Format(_T("Not All Reject Condition List items found\n"));
-
-		SETEXCEPTION5(l_Exception, SVMSG_SVO_45_SHARED_MEMORY_SETUP_LISTS, SvOi::Err_15028, message);
-		l_Exception.LogException(message);
+		SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+		Exception.setMessage( SVMSG_SVO_45_SHARED_MEMORY_SETUP_LISTS, SvO::ErrorNotAllRejectConditionItemsFound, StdMessageParams, SvOi::Err_15028 );
 	}
 }
 
@@ -4917,21 +4907,19 @@ void SVPPQObject::ReleaseSharedMemory(const SVProductInfoStruct& rProduct)
 		}
 		catch (const std::exception& e)
 		{
-			SVException l_Exception;
-			CString l_Message;
-			l_Message.Format(_T("ReleaseProductSharedMemory - %s"), e.what());
+			SVString Message;
+			Message.Format( SvO::ReleaseProduct, e.what() );
 
-			SETEXCEPTION5(l_Exception, SVMSG_SVO_44_SHARED_MEMORY, SvOi::Err_15029, l_Message);
-			l_Exception.LogException(l_Message);
+			SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+			Exception.setMessage( SVMSG_SVO_44_SHARED_MEMORY, Message.c_str(), StdMessageParams, SvOi::Err_15029 );
 		}
 		catch (...)
 		{
-			SVException l_Exception;
-			CString l_Message;
-			l_Message.Format(_T("ReleaseProductSharedMemory - Unknown"));
+			SVString Message;
+			Message.Format( SvO::ReleaseProduct, SvO::Unknown );
 
-			SETEXCEPTION5(l_Exception, SVMSG_SVO_44_SHARED_MEMORY, SvOi::Err_15030, l_Message);
-			l_Exception.LogException(l_Message);
+			SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+			Exception.setMessage( SVMSG_SVO_44_SHARED_MEMORY, Message.c_str(), StdMessageParams, SvOi::Err_15030 );
 		}
 	}
 }
@@ -4967,13 +4955,8 @@ void SVPPQObject::CommitSharedMemory(const SVProductInfoStruct& rProduct)
 				HRESULT hr = rWriter.CopyLastInspectedToReject(rSharedProduct);
 				if (S_OK != hr)
 				{
-					// log an exception
-					SVException l_Exception;
-					CString message;
-					message.Format(_T("CopyLastInspectedToReject failed\n"));
-
-					SETEXCEPTION5(l_Exception, SVMSG_SVO_50_SHARED_MEMORY_COPY_LASTINSPECTED_TO_REJECT, SvOi::Err_15031, message);
-					l_Exception.LogException(message);
+					SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+					Exception.setMessage( SVMSG_SVO_50_SHARED_MEMORY_COPY_LASTINSPECTED_TO_REJECT, SvO::ErrorCopyLastInspectedToReject, StdMessageParams, SvOi::Err_15031 );
 				}
 			}
 			// Mark Product Share as ready for reading
@@ -4981,21 +4964,19 @@ void SVPPQObject::CommitSharedMemory(const SVProductInfoStruct& rProduct)
 		}
 		catch (const std::exception& e)
 		{
-			SVException l_Exception;
-			CString l_Message;
-			l_Message.Format(_T("CommitSharedMemory - %s"), e.what());
+			SVString Message;
+			Message.Format( SvO::CommitSharedMemory, e.what() );
 
-			SETEXCEPTION5(l_Exception, SVMSG_SVO_44_SHARED_MEMORY, SvOi::Err_15032, l_Message);
-			l_Exception.LogException(l_Message);
+			SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+			Exception.setMessage( SVMSG_SVO_44_SHARED_MEMORY, Message.c_str(), StdMessageParams, SvOi::Err_15032 );
 		}
 		catch (...)
 		{
-			SVException l_Exception;
-			CString l_Message;
-			l_Message.Format(_T("CommitSharedMemory - Unknown"));
+			SVString Message;
+			Message.Format( SvO::CommitSharedMemory, SvO::Unknown );
 
-			SETEXCEPTION5(l_Exception, SVMSG_SVO_44_SHARED_MEMORY, SvOi::Err_15033, l_Message);
-			l_Exception.LogException(l_Message);
+			SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+			Exception.setMessage( SVMSG_SVO_44_SHARED_MEMORY, Message.c_str(), StdMessageParams, SvOi::Err_15033 );
 		}
 	}
 }

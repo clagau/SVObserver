@@ -20,6 +20,7 @@
 #include "SVPPQObject.h"
 #include "SVInputObjectList.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
+#include "SVMessage\SVMessage.h"
 
 SVOutputObjectList::SVOutputObjectList( LPCSTR ObjectName )
 : SVObjectClass( ObjectName ), m_bCreated( false )
@@ -772,7 +773,7 @@ HRESULT SVOutputObjectList::RemoveUnusedOutputs( const StringVect& p_aStrInspNam
 
 		if( l_DescreteOutputProblem )
 		{
-			l_Status = SV_FATAL_SVOBSERVER_2006_DUPLICATE_DISCRETE_OUTPUT;
+			l_Status = SVMSG_SVO_70_DUPLICATE_DISCRETE_OUTPUT;
 		}
 
 		Unlock();

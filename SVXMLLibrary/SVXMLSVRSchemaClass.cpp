@@ -11,10 +11,9 @@
 
 #include "stdafx.h"
 #include "SVXMLSVRSchemaClass.h"
-
-#include "SVStatusLibrary/SVStatusCodes.h"
-
 #include "SVXMLLibraryGlobals.h"
+#include "SVMessage\SVMessage.h"
+#include "SVUtilityLibrary\SVUtilityGlobals.h"
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -52,110 +51,110 @@ HRESULT SVXMLSVRSchemaClass::SetSVRSchema (SVDOMClass*	p_opDOM)
 
 
 		hr = m_bstrAttributeDefinitionName.CopyFromWChar (L"AttributeType");
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
 
 		hr = m_bstrAttributeNameTitle.CopyFromWChar (L"name");
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
 
 		hr = m_bstrAttributeDefinitionStringType.CopyFromWChar (L"string");
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
 
 		hr = m_bstrAttributeType1Title.CopyFromWChar (L"dt:type");
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
 
 		hr = m_bstrElementDefinitionName.CopyFromWChar (L"ElementType");
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
 
 		hr = m_bstrElementDefinitionMixedContent.CopyFromWChar (L"mixed");
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
 
 		hr = m_bstrElementNameTitle.CopyFromWChar (L"name");
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
 
 		hr = m_bstrElementContentTitle.CopyFromWChar (L"content");
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
 
 		hr = m_bstrElementDefinitionClosedModel.CopyFromWChar(L"closed");
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
 
 		hr = m_bstrElementModelTitle.CopyFromWChar (L"model");
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
 
 		hr = m_bstrAttributeElementName.CopyFromWChar (L"attribute");
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
 		hr = m_bstrAttributeType2Title.CopyFromWChar (L"type");
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
 
 		hr = m_bstrAttributeDefinitionYesRequired.CopyFromWChar (L"yes");
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
 
 		hr = m_bstrAttributeDefinitionNoRequired.CopyFromWChar (L"no");
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
 
 
 		hr = m_bstrAttributeRequiredTitle.CopyFromWChar (L"required");
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
 
 
 		hr = m_bstrElementElementName.CopyFromWChar (L"element");
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
 
 		hr = m_bstrElementMinOccursTitle.CopyFromWChar (L"minOccurs");
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
 
 		hr = m_bstrElementMaxOccursTitle.CopyFromWChar (L"maxOccurs");
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
@@ -169,7 +168,7 @@ HRESULT SVXMLSVRSchemaClass::SetSVRSchema (SVDOMClass*	p_opDOM)
 //-            xmlns:dt="urn:schemas-microsoft-com:datatypes">
 //-	Creates m_oSchemaBaseElementPtr.
 		hr = SetSVRSchemaHeader ();
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
@@ -178,7 +177,7 @@ HRESULT SVXMLSVRSchemaClass::SetSVRSchema (SVDOMClass*	p_opDOM)
 //-	  <AttributeType name="Name" dt:type="string"/>
 //-	Appends to m_oSchemaBaseElementPtr.
 		hr = SetSVRSchemaNameAttribute ();
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
@@ -187,7 +186,7 @@ HRESULT SVXMLSVRSchemaClass::SetSVRSchema (SVDOMClass*	p_opDOM)
 //-	  <AttributeType name="Value" dt:type="string"/>
 //-	Appends to oSchemaBaseElementPtr.
 		hr = SetSVRSchemaValueAttribute ();
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
@@ -196,7 +195,7 @@ HRESULT SVXMLSVRSchemaClass::SetSVRSchema (SVDOMClass*	p_opDOM)
 //-	  <AttributeType name="Type" dt:type="string"/>
 //-	Appends to oSchemaBaseElementPtr.
 		hr = SetSVRSchemaTypeAttribute ();
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
@@ -204,7 +203,7 @@ HRESULT SVXMLSVRSchemaClass::SetSVRSchema (SVDOMClass*	p_opDOM)
 //-	Set up DATA element.
 //-	  <ElementType name="DATA" content="mixed" model="closed">
 		hr = SetSVRSchemaDATAElement ();
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
@@ -213,7 +212,7 @@ HRESULT SVXMLSVRSchemaClass::SetSVRSchema (SVDOMClass*	p_opDOM)
 //-	Set up NODE element.
 //-	  <ElementType name="NODE" content="mixed" model="closed">
 		hr = SetSVRSchemaNODEElement ();
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
@@ -224,7 +223,7 @@ HRESULT SVXMLSVRSchemaClass::SetSVRSchema (SVDOMClass*	p_opDOM)
 //-	Set up Format attribute for Revision elements.
 //-	  <AttributeType name="Format" dt:type="string"/>
 		hr = SetSVRSchemaFormatAttribute ();
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
@@ -233,7 +232,7 @@ HRESULT SVXMLSVRSchemaClass::SetSVRSchema (SVDOMClass*	p_opDOM)
 //-	Set up FormatVersion attribute for Revision elements.
 //-	  <AttributeType name="FormatVersion" dt:type="string"/>
 		hr = SetSVRSchemaFormatVersionAttribute ();
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
@@ -241,7 +240,7 @@ HRESULT SVXMLSVRSchemaClass::SetSVRSchema (SVDOMClass*	p_opDOM)
 //-	Set up Revision attribute for Revision elements.
 //-	  <AttributeType name="Revision" dt:type="string"/>
 		hr = SetSVRSchemaRevisionAttribute ();
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
@@ -249,7 +248,7 @@ HRESULT SVXMLSVRSchemaClass::SetSVRSchema (SVDOMClass*	p_opDOM)
 //-	Set up Revision element.
 //-	  <ElementType name="Revision" content="mixed" model="closed">
 		hr = SetSVRSchemaRevisionElement ();
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
@@ -257,7 +256,7 @@ HRESULT SVXMLSVRSchemaClass::SetSVRSchema (SVDOMClass*	p_opDOM)
 //-	Set up RevisionHistory element.
 //-	  <ElementType name="RevisionHistory" content="mixed" model="closed">
 		hr = SetSVRSchemaRevisionHistoryElement ();
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
@@ -266,7 +265,7 @@ HRESULT SVXMLSVRSchemaClass::SetSVRSchema (SVDOMClass*	p_opDOM)
 //-	Set up IsActive attribute.
 //-     <AttributeType name="IsActive" dt_type="string"/>
 		hr = SetSVRSchemaIsActiveAttribute ();
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
@@ -277,7 +276,7 @@ HRESULT SVXMLSVRSchemaClass::SetSVRSchema (SVDOMClass*	p_opDOM)
 //-       <element type="DATA" minOccurs="0" maxOccurs="1"/>
 //-     </ElementType>
 		hr = SetSVRSchemaEncryptionElement ();
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
@@ -287,7 +286,7 @@ HRESULT SVXMLSVRSchemaClass::SetSVRSchema (SVDOMClass*	p_opDOM)
 //===========================================================================
 //-	Attach to Root element.
 		hr = m_opDOM->GetRootNode (oDOMRootPtr);
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
@@ -300,7 +299,7 @@ HRESULT SVXMLSVRSchemaClass::SetSVRSchema (SVDOMClass*	p_opDOM)
 		}
 
 		hr = m_opDOM->ClearNameSpace ();
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
@@ -336,20 +335,20 @@ HRESULT SVXMLSVRSchemaClass::SetSVRSchemaHeader ()
 //-            xmlns:dt="urn:schemas-microsoft-com:datatypes">
 
 		hr = bstrNameSpace.CopyFromWChar (L"urn:schemas-microsoft-com:xml-data");
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
 
 		hr = m_opDOM->SetNameSpace (bstrNameSpace);
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
 
 		hr = m_opDOM->CreateElement (bstrSchemaDefinitionBranchName, 
 			       						  m_oSchemaBaseElementPtr);
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
@@ -360,7 +359,7 @@ HRESULT SVXMLSVRSchemaClass::SetSVRSchemaHeader ()
 		ccvAttributeValue.Clear ();
 
 		hr = bstrAttributeTitle.CopyFromWChar(L"xmlns:dt");
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
@@ -938,7 +937,7 @@ HRESULT SVXMLSVRSchemaClass::SetSVRSchemaRevisionElement ()
 	{
 
 		hr = bstrElementDefinitionClosedModel.CopyFromWChar (L"closed");
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}

@@ -415,7 +415,7 @@ void ToolSetView::OnRightClickToolSetList(NMHDR* pNMHDR, LRESULT* pResult)
 						l_bMenuLoaded = l_menu.LoadMenu(IDR_TOOL_LIST_CONTEXT_MENU);
 					}
 					//if the selected tool does not have an ROI remove the Adjust Tool Position menu item
-					if (S_OK != pSelectedTool->DoesObjectHaveExtents())
+					if ( !pSelectedTool->DoesObjectHaveExtents() )
 					{
 						bRemoveAdjustToolPos = true;
 					}

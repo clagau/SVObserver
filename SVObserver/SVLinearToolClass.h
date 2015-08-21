@@ -39,7 +39,7 @@ public:
 
 	virtual HRESULT SetImageExtentToParent( unsigned long p_ulIndex );
 	virtual SVTaskObjectClass *GetObjectAtPoint( const SVExtentPointStruct &p_rsvPoint );
-	virtual HRESULT DoesObjectHaveExtents() const;
+	virtual bool DoesObjectHaveExtents() const override;
 
 	CString GetProfileOrientation();
 	BOOL GetRotation();

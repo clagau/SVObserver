@@ -12,7 +12,6 @@
 #include "stdafx.h"
 #include "SVHBitmapUtilitiesLibrary/SVImageFormatEnum.h"
 #include "SVColorTool.h"
-#include "SVStatusLibrary/SVStatusCodes.h"
 #include "SVInspectionProcess.h"
 #include "SVColorThreshold.h"
 #include "SVGlobal.h"
@@ -164,9 +163,9 @@ HRESULT SVColorToolClass::ResetObject()
 	return l_hrOk;
 }
 
-HRESULT SVColorToolClass::DoesObjectHaveExtents() const
+bool SVColorToolClass::DoesObjectHaveExtents() const
 {
-	return SV_SUCCESS_SVOBSERVER_2000_DOESNOTHAVE_EXTENTS;
+	return false;
 }
 
 HRESULT SVColorToolClass::UpdateImageWithExtent( unsigned long p_Index )

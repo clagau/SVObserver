@@ -203,9 +203,9 @@ BOOL SVProfileToolClass::CloseObject()
 	return bRetVal;
 }
 
-HRESULT SVProfileToolClass::DoesObjectHaveExtents() const
+bool SVProfileToolClass::DoesObjectHaveExtents() const
 {
-	return S_OK;
+	return true;
 }
 
 HRESULT SVProfileToolClass::ResetObject()

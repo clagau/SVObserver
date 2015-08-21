@@ -29,6 +29,8 @@
 #include "SVSVIMStateClass.h"
 #include "SVFailStatusStreamManager.h"
 #include "ObjectInterfaces\ErrorNumbers.h"
+#include "SVStatusLibrary\MessageManager.h"
+#include "TextDefinesSvO.h"
 #pragma endregion Includes
 
 extern SVObserverApp TheSVObserverApp;
@@ -247,12 +249,8 @@ static void WriteMonitorListToSharedMemory(const std::string& name, const std::s
 	}
 	else
 	{
-		// log exception
-		SVException l_Exception;
-		CString l_Message;
-		l_Message.Format(_T("WriteMonitorListToSharedMemory - No Shared memory"));
-		SETEXCEPTION5(l_Exception, SVMSG_SVO_44_SHARED_MEMORY, SvOi::Err_15020, l_Message);
-		l_Exception.LogException(l_Message);
+		SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+		Exception.setMessage( SVMSG_SVO_44_SHARED_MEMORY, SvO::ErrorWriteMonitorListNoSharedMemory, StdMessageParams, SvOi::Err_15020 );
 	}
 }
 

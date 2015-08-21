@@ -12,7 +12,7 @@
 #if !defined __XML_MACROS
 #define __XML_MACROS
 
-#define CHECKHR(x){hr = x; m_ExceptionSet = FALSE;m_SVException.ResetException();if (FAILED(hr)){m_ExceptionSet = TRUE;SETEXCEPTION0(m_SVException, 0x00)goto CleanUp;}}
+#define CHECKHR(x){hr = x; m_ExceptionSet = FALSE;m_SVException.clearMessage();if (FAILED(hr)){m_ExceptionSet = TRUE;goto CleanUp;}}
 #define SAFERELEASE(p) {if (p) {(p)->Release(); p = NULL;}}
 #define RETURN return (hr == S_OK) ? TRUE : FALSE
 #define CHECKXMLDOC	 if(m_pDoc == NULL)return FALSE

@@ -16,8 +16,6 @@
 
 #include "SVJsonCommandManager.h"
 
-#include "SVStatusLibrary/SVStatusCodes.h"
-
 template< typename SVCommandProcessor >
 SVJsonCommandManager< SVCommandProcessor >::SVJsonCommandManager()
 : m_SocketServer(), m_ProcessingAsyncCommand( 0 ), m_JsonCommandDataPtr(), m_AsyncProcedure()

@@ -33,7 +33,7 @@ public:
 #pragma region Public Methods
 	virtual BOOL	CreateObject( SVObjectLevelCreateStruct* PCreateStructure ) override;
 
-	virtual HRESULT DoesObjectHaveExtents() const override;
+	virtual bool DoesObjectHaveExtents() const override;
 
 	virtual HRESULT GetInputImageNames( SVStringValueObjectClass*& p_pSourceNames ) override;
 

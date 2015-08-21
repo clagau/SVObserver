@@ -15,7 +15,7 @@
 #include "SVMessage/SVMessage.h"
 #include "SVXMLLibrary/SVXMLClass.h"
 #include "SVXMLLibrary/SVXMLMaterialsTree.h"
-
+#include "SVUtilityLibrary/SVUtilityGlobals.h"
 #include "SVSecurity.h"
 
 #ifdef _DEBUG
@@ -135,7 +135,7 @@ USES_CONVERSION;
 	while (1)
 	{
 		hr = GetMaterialsTree( l_Tree );
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
@@ -143,7 +143,7 @@ USES_CONVERSION;
 		hr = svX.Initialize(0,  // do not use checksums
 							0,  // do not use program version/data revision info
 							1); // use encryption
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
@@ -163,7 +163,7 @@ USES_CONVERSION;
 		}
 
 		hr = svX.CopyTreeToXMLFile(l_XMLTree, 1, l_bstrFormat, NULL, l_bstrFileName);
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}

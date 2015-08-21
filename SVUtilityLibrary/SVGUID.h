@@ -14,8 +14,8 @@
 
 #include <comdef.h>
 
-#include "SVUtilityLibrary/SVString.h"
-#include "SVUtilityLibrary/SVUtilityGlobals.h"
+#include "SVString.h"
+#include "SVUtilityGlobals.h"
 
 extern const GUID  SVInvalidGUID;
 

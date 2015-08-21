@@ -11,12 +11,12 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include <boost/config.hpp>
-#include <boost/bind.hpp>
+#include <boost\config.hpp>
+#include <boost\bind.hpp>
 #include "SVRemoteOutputsView.h"
 
-#include "SVObjectLibrary/SVObjectManagerClass.h"
-#include "SVConfigurationLibrary/SVConfigurationTags.h"
+#include "SVObjectLibrary\SVObjectManagerClass.h"
+#include "SVConfigurationLibrary\SVConfigurationTags.h"
 
 #include "SVConfigurationObject.h"
 #include "SVIODoc.h"
@@ -27,7 +27,7 @@
 #include "SVRemoteOutputGroup.h"
 #include "SVSVIMStateClass.h"
 #include "ObjectInterfaces\ErrorNumbers.h"
-#include "SVStatusLibrary/ExceptionManager.h"
+#include "SVStatusLibrary\MessageManager.h"
 #include "TextDefinesSvO.h"
 #pragma endregion Includes
 
@@ -156,8 +156,8 @@ void SVRemoteOutputsView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 		// Get the number of PPQs
 		if( nullptr == pConfig  )
 		{
-			SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
-			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorGettingPPQCount, StdExceptionParams, SvOi::Err_17051_ErrorGettingPPQCount );
+			SvStl::MessageMgrNoDisplay e( SvStl::LogOnly );
+			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorGettingPPQCount, StdMessageParams, SvOi::Err_17051_ErrorGettingPPQCount );
 			DebugBreak();
 		}
 		else

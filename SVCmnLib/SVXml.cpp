@@ -68,28 +68,10 @@ USES_CONVERSION;
 	errorObj->get_line(&lLine);
 	szError.Format(_T("%s, Error Code:%X, On line %d position %d"),szBstr,lErrorCode,lLinePos,lLine);
 
-	BSTR bstrCompileDate = NULL;
-	BSTR bstrCompileTime = NULL;
-	BSTR bstrSourceFile = NULL;
-	BSTR bstrSourceDateTime = NULL;
-	long SourceLine = NULL;
-
-	m_SVException.GetCompileDate(&bstrCompileDate);
-	m_SVException.GetCompileTime(&bstrCompileTime);
-	m_SVException.GetSourceFile(&bstrSourceFile);
-	SourceLine = m_SVException.GetSourceLine();
-	m_SVException.GetSourceDateTime(&bstrSourceDateTime);
-
-	m_SVException.SetException(0, W2T(bstrCompileDate), W2T(bstrCompileTime), 
-								(LPVOID)szError.GetBuffer(szError.GetLength()),
-								szError.GetLength(), 
-								W2T(bstrSourceFile), SourceLine, W2T(bstrSourceDateTime) , 0,0);
-
-	//free the strings
-	if(bstrCompileDate)::SysFreeString(bstrCompileDate);
-	if(bstrCompileTime)::SysFreeString(bstrCompileTime);
-	if(bstrSourceFile)::SysFreeString(bstrSourceFile);
-	if(bstrSourceDateTime)::SysFreeString(bstrSourceDateTime);
+	SvStl::MessageData Msg( m_SVException.getMessage() );
+	Msg.m_MessageCode = 0;
+	Msg.m_AdditionalText = szError;
+	m_SVException.setMessage( Msg );
 }
 
 
@@ -1691,7 +1673,7 @@ int SVXml::GetAttributeListLength()
 
 DWORD SVXml::GetParserErrorCode()
 {
-	return m_SVException.GetErrorCode();
+	return m_SVException.getMessage().m_MessageCode;
 }
 
 // ******************************************************************************

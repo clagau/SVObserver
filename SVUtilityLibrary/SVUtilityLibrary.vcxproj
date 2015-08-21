@@ -142,6 +142,7 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="LoadDll.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -154,7 +155,6 @@
     <ClCompile Include="SVGUID.cpp" />
     <ClCompile Include="SVMetrics.cpp" />
     <ClCompile Include="SVPoint.cpp" />
-    <ClCompile Include="SVProfiler.cpp" />
     <ClCompile Include="SVSafeArray.cpp" />
     <ClCompile Include="SVString.cpp" />
     <ClCompile Include="SVUtilityGlobals.cpp" />
@@ -185,6 +185,7 @@
     <ClCompile Include="ZipHelper.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="LoadDll.h" />
     <ClInclude Include="NameSelectionList.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="StringToEnum.h" />
@@ -200,7 +201,6 @@
     <ClInclude Include="SVNullDeleter.h" />
     <ClInclude Include="SVObjectID.h" />
     <ClInclude Include="SVPoint.h" />
-    <ClInclude Include="SVProfiler.h" />
     <ClInclude Include="SVSafeArray.h" />
     <ClInclude Include="SVSharedPtr.h" />
     <ClInclude Include="SVString.h" />

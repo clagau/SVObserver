@@ -11,7 +11,6 @@
 
 #include "stdafx.h"
 #include "SVGageTool.h"
-#include "SVStatusLibrary/SVStatusCodes.h"
 #include "SVLineROI.h"
 #include "SVLineAnalyzer.h"
 #include "SVInspectionProcess.h"
@@ -195,9 +194,9 @@ BOOL SVGageToolClass::OnValidate()
 	return FALSE;
 }
 
-HRESULT SVGageToolClass::DoesObjectHaveExtents() const
+bool SVGageToolClass::DoesObjectHaveExtents() const
 {
-	return SV_SUCCESS_SVOBSERVER_2000_DOESNOTHAVE_EXTENTS;
+	return false;
 }
 
 BOOL SVGageToolClass::SetObjectDepth( int NewObjectDepth )

@@ -18,6 +18,7 @@
 #include "SVXMLSVRSchemaClass.h"	// SVXMLSVRSchemaClass
 #include "SVVariantCustomTypes.h"
 #include "SVXMLSafeArrayConverter.h"
+#include "SVUtilityLibrary\SVUtilityGlobals.h"
 
 template<typename SVT_TREE>
 HRESULT SVXMLClass::CopyTreeToXMLFile (SVT_TREE& rTree, long alSVOCurrentVersion, BSTR abstrFormat, BSTR abstrRevisionHistory, BSTR abstrFileName)
@@ -35,7 +36,7 @@ HRESULT SVXMLClass::CopyTreeToXMLFile (SVT_TREE& rTree, long alSVOCurrentVersion
 		}
 
 		hr = CopyTreeToDOM(rTree, alSVOCurrentVersion, abstrFormat, abstrRevisionHistory);
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
@@ -43,21 +44,21 @@ HRESULT SVXMLClass::CopyTreeToXMLFile (SVT_TREE& rTree, long alSVOCurrentVersion
    	if (svmlUseCheckSums)
 		{
 			hr = GetRootNode (oDOMRootPtr);
-			if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+			if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 			{
 				break;
 			}
 
 			hr = CalculateNodeCheckSums (oDOMRootPtr, &ulCheckSum, g_lXMLCheckSumCreate, NULL);
 
-			if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+			if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 			{
 				break;
 			}
 		}
 
 		hr = CopyDOMToXMLFile (abstrFileName);
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
@@ -78,7 +79,7 @@ HRESULT SVXMLClass::CopyXMLFileToTree (SVT_TREE& rTree, long alSVOCurrentVersion
 	while (1)
 	{
 		hr = CopyXMLFileToDOM (abstrFilename, abstrpRevisionHistory);
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
@@ -86,7 +87,7 @@ HRESULT SVXMLClass::CopyXMLFileToTree (SVT_TREE& rTree, long alSVOCurrentVersion
 	   	if (svmlUseCheckSums)
 		{
 			hr = GetRootNode (oDOMRootPtr);
-			if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+			if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 			{
 				break;
 			}
@@ -104,14 +105,14 @@ HRESULT SVXMLClass::CopyXMLFileToTree (SVT_TREE& rTree, long alSVOCurrentVersion
 				// BRW - hr is not set to 1, it's 4. ???
 			}
 			else
-			if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+			if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 			{
 				break;
 			}
 		}
 
    		hr = CopyDOMToTree (rTree, alSVOCurrentVersion);
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
@@ -144,7 +145,7 @@ HRESULT SVXMLClass::CopyTreeToDOM (SVT_TREE& rTree, long alSVOCurrentVersion, BS
 
 //-   This clear will do DOM clear (which sets header) and set the schema.
 		hr = Clear ();
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
@@ -158,13 +159,13 @@ HRESULT SVXMLClass::CopyTreeToDOM (SVT_TREE& rTree, long alSVOCurrentVersion, BS
 		if (svmlUseRevisionHistoryInfo)
 		{
 			hr = SetRevisionHistory (abstrRevisionHistory);
-			if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+			if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 			{
 				break;
 			}
 
 			hr = AddToRevisionHistory (alSVOCurrentVersion, abstrFormat);
-			if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+			if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 			{
 				break;
 			}
@@ -173,7 +174,7 @@ HRESULT SVXMLClass::CopyTreeToDOM (SVT_TREE& rTree, long alSVOCurrentVersion, BS
 		if (m_lUseEncryption)
 		{
 			hr = m_opEncryption->SetEncryption ();
-			if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+			if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 			{
 				break;
 			}
@@ -188,27 +189,27 @@ HRESULT SVXMLClass::CopyTreeToDOM (SVT_TREE& rTree, long alSVOCurrentVersion, BS
 //-		This is just to emphisize that this value in these two classes must
 //-		be the same (shadowed data).
 			hr = m_opEncryption->GetIsEncrypted (&m_lIsEncrypted);
-			if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+			if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 			{
 				break;
 			}
 
 //-		Here is where we set the encryption method to 1.
 			hr = m_opEncryption->SetEncryptionMethod (1);
-			if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+			if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 			{
 				break;
 			}
 		}
 
 		hr = rTree.GetRoot( l_TreeRootHandle );
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
 
 		hr = GetRootNode( oDOMRootPtr );
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
@@ -221,19 +222,19 @@ HRESULT SVXMLClass::CopyTreeToDOM (SVT_TREE& rTree, long alSVOCurrentVersion, BS
 		}
 
  		hr = CopyTreeNodeToDOMNode( rTree, l_TreeRootHandle, oDOMDestinationBranchPtr );
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
 
 		hr = AppendChildToDOMNode( oDOMRootPtr, oDOMDestinationBranchPtr );
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
 
 		hr = svmopDOM->ClearNameSpace ();
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
@@ -265,13 +266,13 @@ HRESULT SVXMLClass::CopyDOMToTree (SVT_TREE& rTree, long alSVOAppVersionFromConf
 		}
 
 		hr = rTree.Clear();
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
 
 		hr = GetBaseElement( oDOMBasePtr );
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
@@ -283,7 +284,7 @@ HRESULT SVXMLClass::CopyDOMToTree (SVT_TREE& rTree, long alSVOAppVersionFromConf
 		}
 
 		hr = rTree.GetRoot( l_TreeRootHandle );
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
@@ -291,7 +292,7 @@ HRESULT SVXMLClass::CopyDOMToTree (SVT_TREE& rTree, long alSVOAppVersionFromConf
 //-	The second parameter would normally be the parent, but it is assumed 
 //-	that the root node does not have a parent.
 		hr = CreateTreeChildNodeFromDOMNode( oDOMBasePtr, rTree, l_TreeRootHandle );
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
@@ -322,7 +323,7 @@ HRESULT	SVXMLClass::CopyTreeNodeToDOMNode( SVT_TREE& rTree, const typename SVT_T
 		{
 			l_Status = rTree.IsRoot( alTreeNodeHandle );
 
-			if( SV_SUCCEEDED( l_Status ) )
+			if( SUCCEEDED( l_Status ) )
 			{
 				if( l_Status == S_OK )
 				{
@@ -345,7 +346,7 @@ HRESULT	SVXMLClass::CopyTreeNodeToDOMNode( SVT_TREE& rTree, const typename SVT_T
 	{
 		l_Status = rTree.DoesBranchHaveLeaves( alTreeNodeHandle );
 
-		if( SV_SUCCEEDED( l_Status ) )
+		if( SUCCEEDED( l_Status ) )
 		{
 			if( l_Status == S_OK )
 			{
@@ -375,7 +376,7 @@ HRESULT	SVXMLClass::CopyTreeNodeToDOMNode( SVT_TREE& rTree, const typename SVT_T
 					}
 				}
 
-				if( SV_SUCCEEDED( l_Status ) )
+				if( SUCCEEDED( l_Status ) )
 				{
 					l_Status = S_OK;
 				}
@@ -391,7 +392,7 @@ HRESULT	SVXMLClass::CopyTreeNodeToDOMNode( SVT_TREE& rTree, const typename SVT_T
 	{
 		l_Status = rTree.DoesBranchHaveBranches( alTreeNodeHandle );
 
-		if( SV_SUCCEEDED( l_Status ) )
+		if( SUCCEEDED( l_Status ) )
 		{
 			if( l_Status == S_OK )
 			{
@@ -422,7 +423,7 @@ HRESULT	SVXMLClass::CopyTreeNodeToDOMNode( SVT_TREE& rTree, const typename SVT_T
 					}
 				}
 
-				if( SV_SUCCEEDED( l_Status ) )
+				if( SUCCEEDED( l_Status ) )
 				{
 					l_Status = S_OK;
 				}
@@ -458,13 +459,13 @@ HRESULT SVXMLClass::CopyTreeDataToDOMData (SVT_TREE& rTree, const typename SVT_T
 	while (1)
 	{
 		hr = rTree.GetLeafName( alNodeHandle, bstrTreeNodeName );
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
 
 		hr = rTree.GetLeafData( alNodeHandle, vTreeNodeData );
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
@@ -483,7 +484,7 @@ HRESULT SVXMLClass::CopyTreeDataToDOMData (SVT_TREE& rTree, const typename SVT_T
 			hr = CreateDOMData( oDOMDataPtr, bstrTreeNodeName, &vTreeNodeData );
 		}
 
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
@@ -493,7 +494,7 @@ HRESULT SVXMLClass::CopyTreeDataToDOMData (SVT_TREE& rTree, const typename SVT_T
 	SysFreeString( bstrTreeNodeName );
 	VariantClear( &vTreeNodeData );
 
-	if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+	if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 	{
 	}
 	else
@@ -531,7 +532,7 @@ HRESULT SVXMLClass::CreateTreeChildNodeFromDOMNode( SVXML::IXMLDOMElementPtr aDO
 		//-   the items being manipulated can be seen.
 		l_Status = GetElementName( aDOMElementPtr, &bstrDOMElementName );
 
-		if( SV_SUCCEEDED( l_Status ) )
+		if( SUCCEEDED( l_Status ) )
 		{
 			//-   For NODE elements with type (no data), vDOMElementData will return with
 			//-	the type set and the value set to zero (0). 
@@ -539,16 +540,16 @@ HRESULT SVXMLClass::CreateTreeChildNodeFromDOMNode( SVXML::IXMLDOMElementPtr aDO
 			//-	set to VT_NULL, and the value set to zero (0).
 			l_Status = GetElementData( aDOMElementPtr, &vDOMElementData );
 
-			assert( SV_SUCCEEDED( l_Status ) );
+			assert( SUCCEEDED( l_Status ) );
 		}
 
-		if( SV_SUCCEEDED( l_Status ) )
+		if( SUCCEEDED( l_Status ) )
 		{
 			BSTR bstrDOMElementTag( NULL );
 
 			l_Status = IsElementData( aDOMElementPtr, &bstrDOMElementTag );
 
-			if( SV_SUCCEEDED( l_Status ) )
+			if( SUCCEEDED( l_Status ) )
 			{
 				if( l_Status == S_OK )
 				{
@@ -577,11 +578,11 @@ HRESULT SVXMLClass::CreateTreeChildNodeFromDOMNode( SVXML::IXMLDOMElementPtr aDO
 
 						oDOMChildElementPtr = GetFirstElementChild(aDOMElementPtr);
 
-						while( SV_SUCCEEDED( l_Status ) && oDOMChildElementPtr != NULL )
+						while( SUCCEEDED( l_Status ) && oDOMChildElementPtr != NULL )
 						{
 							l_Status = CreateTreeChildNodeFromDOMNode( oDOMChildElementPtr, rTree, l_Branch );
 
-							if( SV_SUCCEEDED( l_Status ) )
+							if( SUCCEEDED( l_Status ) )
 							{
 								oDOMChildElementPtr = GetNextElementSibling(oDOMChildElementPtr);
 							}

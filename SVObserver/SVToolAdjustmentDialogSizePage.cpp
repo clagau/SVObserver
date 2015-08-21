@@ -16,7 +16,7 @@
 #include "EQAdjustSizePositionX.h"
 #include "ObjectInterfaces\ErrorNumbers.h"
 #include "EQAdjustSize.h"
-#include "SVStatusLibrary\ExceptionManager.h"
+#include "SVStatusLibrary\MessageManagerResource.h"
 #include "SVGuiExtentUpdater.h"
 #pragma endregion Includes
 
@@ -470,8 +470,8 @@ bool SVToolAdjustmentDialogSizePage::QueryAllowExit()
 					pEQ->GetEquationText(csEqText);
 					if(csEqText.IsEmpty())
 					{
-						SvStl::ExceptionMgr1 Exception(SvStl::ExpTypeEnum::LogAndDisplay);
-						Exception.setMessage( SVMSG_SVO_64_EMPTY_FORMULAS_ARE_NOT_ALLOWED, nullptr, StdExceptionParams, SvOi::Err_16038_EmptyFormula );
+						SvStl::MessageMgrStdDisplay Exception( SvStl::LogAndDisplay );
+						Exception.setMessage( SVMSG_SVO_64_EMPTY_FORMULAS_ARE_NOT_ALLOWED, nullptr, StdMessageParams, SvOi::Err_16038_EmptyFormula );
 						return false;
 					}
 				}

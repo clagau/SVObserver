@@ -238,7 +238,7 @@ bool SVNavigateTreeClass::Copy( SVToTreeType &rToTree, typename SVToTreeType::SV
 		}
 	}
 
-	ok = SV_SUCCEEDED( status );
+	ok = SUCCEEDED( status );
 
 	if( ok )
 	{
@@ -269,7 +269,7 @@ bool SVNavigateTreeClass::Copy( SVToTreeType &rToTree, typename SVToTreeType::SV
 			}
 		}
 
-		ok = SV_SUCCEEDED( status );
+		ok = SUCCEEDED( status );
 	}
 
 	return ok;

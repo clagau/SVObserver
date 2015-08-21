@@ -122,7 +122,7 @@ HRESULT SVXMLMaterialsTree::GetFirstBranch( const SVBranchHandle& p_rParent, SVB
 
 	l_Status = DoesBranchHaveBranches( l_Parent );
 
-	if( SV_SUCCEEDED( l_Status ) )
+	if( SUCCEEDED( l_Status ) )
 	{
 		if( l_Status == S_OK )
 		{

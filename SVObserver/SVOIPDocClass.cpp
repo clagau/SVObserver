@@ -9,11 +9,15 @@
 //* .Check In Date   : $Date:   03 Sep 2014 16:01:04  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVObserver.h"
 #include "SVOIPDocClass.h"
 #include "SVFileNameManagerClass.h"
-#include "SVStatusLibrary/SVException.h"
+#include "SVStatusLibrary\MessageManager.h"
+#include "ObjectInterfaces\ErrorNumbers.h"
+#include "TextDefinesSvO.h"
+#pragma endregion Includes
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -22,9 +26,6 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 IMPLEMENT_DYNCREATE(SVOIPDocClass, COleServerDoc)
-
-#define SEJ_ErrorBase 15000
-#define Err_15035 (SEJ_ErrorBase+35)
 
 SVOIPDocClass::SVOIPDocClass()
 : COleServerDoc()
@@ -77,11 +78,8 @@ void SVOIPDocClass::Dump(CDumpContext& dc) const
 
 void SVOIPDocClass::Serialize(CArchive& ar)
 {
-	SVException l_Exception;
-	CString l_Message;
-	l_Message.Format(_T("This was previously used for .sec files."));
-	SETEXCEPTION5(l_Exception, E_NOTIMPL, Err_15035, l_Message);
-	l_Exception.LogException(l_Message);
+	SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+	Exception.setMessage( E_NOTIMPL, SvO::ErrorUsedPreviouslyForSec, StdMessageParams, SvOi::Err_15035 );
 }
 
 /////////////////////////////////////////////////////////////////////////////

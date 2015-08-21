@@ -40,7 +40,7 @@ namespace Seidenader { namespace SVOGui
 		void LoadGlobalData();
 		void setGridGlobalData(const SvOi::GlobalConstantData& rGlobalData, int RowIndex, int& rColumnIndex );
 		void convertValueToString( const _variant_t& rValue, SVString& rText,  SVString& rType );
-	#pragma region Protected Methods
+	#pragma endregion Protected Methods
 
 	#pragma region Member variables
 	private:

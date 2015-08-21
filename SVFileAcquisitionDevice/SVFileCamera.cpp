@@ -15,7 +15,7 @@
 #include "SVHBitmapUtilitiesLibrary/SVImageFileLoader.h"
 #include "SVHBitmapUtilitiesLibrary/SVImageFormatEnum.h"
 #include "SVFileSystemLibrary/SVFileSystemScanner.h"
-#include "SVStatusLibrary/SVException.h"
+#include "SVStatusLibrary\MessageManager.h"
 #include "SVMessage/SVMessage.h"
 
 SVFileCamera::SVFileCamera()
@@ -369,9 +369,8 @@ void SVFileCamera::OnAPCEvent( ULONG_PTR data )
 		{
 			l_csBuf.Format(_T("E: FileAcquisition::Unable to Load Image File %s"), filename.ToString());
 		}
-		SVException l_svLog;
-		SETEXCEPTION1( l_svLog, SVMSG_IMAGE_LOAD_ERROR, l_csBuf );
-		l_svLog.LogException( l_csBuf );
+		SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+		Exception.setMessage( SVMSG_IMAGE_LOAD_ERROR, l_csBuf, StdMessageParams );
 	}
 }
 

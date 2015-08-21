@@ -206,7 +206,7 @@ public:
 
 	BOOL IsColorInspectionDocument() const;
 
-	HRESULT UpdateMainImagesByProduct( SVProductInfoStruct* p_psvProduct );
+	int UpdateMainImagesByProduct( SVProductInfoStruct* p_psvProduct );
 
 	LPCTSTR GetToolsetImage();
 	void SetToolsetImage( CString sToolsetImage );

@@ -14,7 +14,8 @@
 
 #include "SVMessage/SVMessage.h"
 
-#include "SVException.h"
+#include "MessageHandler.h"
+#include "MessageManager.h"
 
 #define SV_HKEY_CLASSES_ROOT _T("HKEY_CLASSES_ROOT")
 #define SV_HKEY_CURRENT_USER _T("HKEY_CURRENT_USER")
@@ -44,7 +45,7 @@ void SVRegistryClass::InitRegistry(LPCTSTR p_szKey)
 	SVString szTemp;
 	HKEY hBaseKey = HKEY_LOCAL_MACHINE;
 	LONG lResult;
-	SVException svException;
+	SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
 	TCHAR szFname[_MAX_FNAME], szPath[_MAX_PATH];
 
 	mszKey = p_szKey;
@@ -141,20 +142,20 @@ void SVRegistryClass::InitRegistry(LPCTSTR p_szKey)
 				&mhKey,
 				&dwDisposition ) )
 			{
-				SETEXCEPTION1( svException, SVMSG_LIB_REGISTRY_KEY_CREATE_FAILED, szFullKey.ToString() );
 				mhKey = static_cast< HKEY >( NULL );
-				throw svException;
+				Exception.setMessage( SVMSG_LIB_REGISTRY_KEY_CREATE_FAILED, szFullKey.ToString(), StdMessageParams );
+				Exception.Throw();
 			}
 
 			mbCreatedNewKey = TRUE;
 		}
 		else
 		{
-			SETEXCEPTION1 (svException, SVMSG_LIB_REGISTRY_KEY_OPEN_FAILED, szFullKey.ToString());
 			mhKey = (HKEY) NULL;
-			throw svException;
+			Exception.setMessage( SVMSG_LIB_REGISTRY_KEY_OPEN_FAILED, szFullKey.ToString(), StdMessageParams );
+			Exception.Throw();
 		}
-  }
+	}
 }
 
 SVRegistryClass::SVRegistryClass(LPCTSTR szKey)
@@ -237,9 +238,9 @@ BOOL SVRegistryClass::SetRegistryValue( LPCTSTR szValueName, LPCTSTR szValue )
 	}
 	else
 	{
-		SVException svException;
-		SETEXCEPTION1 (svException, SVMSG_LIB_SET_REGISTRY_VALUE_FAILED, szValueName);
-		throw svException;
+		SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+		Exception.setMessage( SVMSG_LIB_SET_REGISTRY_VALUE_FAILED, szValueName, StdMessageParams );
+		Exception.Throw();
   }
 
 	return FALSE;
@@ -293,9 +294,9 @@ BOOL SVRegistryClass::SetRegistryValue( LPCTSTR szValueName, DWORD dwValue )
 	}
 	else
 	{
-		SVException svException;
-		SETEXCEPTION1 (svException, SVMSG_LIB_SET_REGISTRY_VALUE_FAILED, szValueName);
-		throw svException;
+		SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+		Exception.setMessage( SVMSG_LIB_SET_REGISTRY_VALUE_FAILED, szValueName, StdMessageParams );
+		Exception.Throw();
 	}
 	return FALSE;
 }
@@ -348,9 +349,9 @@ BOOL SVRegistryClass::SetRegistryValue( LPCTSTR szValueName, SVByteArray& baValu
 	}
 	else
 	{
-		SVException svException;
-		SETEXCEPTION1( svException, SVMSG_LIB_SET_REGISTRY_VALUE_FAILED, szValueName );
-		throw svException;
+		SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+		Exception.setMessage( SVMSG_LIB_SET_REGISTRY_VALUE_FAILED, szValueName, StdMessageParams );
+		Exception.Throw();
 	}
 
 	return FALSE;
@@ -373,9 +374,9 @@ BOOL SVRegistryClass::SetRegistryValue( LPCTSTR szValueName, SVByteArray& baValu
 	}
 	else
 	{
-		SVException svException;
-		SETEXCEPTION1 (svException, SVMSG_LIB_SET_REGISTRY_VALUE_FAILED, szValueName);
-		throw svException;
+		SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+		Exception.setMessage( SVMSG_LIB_SET_REGISTRY_VALUE_FAILED, szValueName, StdMessageParams );
+		Exception.Throw();
 	}
 	return FALSE;
 }
@@ -569,16 +570,14 @@ BOOL SVRegistryClass::Import(LPCTSTR szFileName)
 		}
 		else
 		{
-			SVException svException;
-			SETEXCEPTION2 (svException, SVMSG_LIB_REGISTRY_INVALID_IMPORT_FILE, (void *) szFileName, static_cast< UINT >( _tcslen( szFileName ) * sizeof( TCHAR ) ) );
-			svException.LogException ();
+			SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+			Exception.setMessage( SVMSG_LIB_REGISTRY_INVALID_IMPORT_FILE, szFileName, StdMessageParams );
 		}
 	}
 	else
 	{
-		SVException svException;
-		SETEXCEPTION2 (svException, SVMSG_LIB_REGISTRY_IMPORT_FAILED, (void *) szFileName, static_cast< UINT >( _tcslen( szFileName ) * sizeof( TCHAR ) ) );
-		svException.LogException ();
+		SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+		Exception.setMessage( SVMSG_LIB_REGISTRY_IMPORT_FAILED, szFileName, StdMessageParams );
 	}
 
 	return rc;
@@ -591,7 +590,6 @@ BOOL SVRegistryClass::ImportKeys(FILE * pFile)
 	SVByteArray baValue;
 	DWORD dwType;
 	int iResult;
-	SVException svException;
 
 	for (iResult = GetImportString (pFile, szName, baValue, &dwType);
 			 (iResult != SV_ISEOF) && (iResult != SV_ISERROR);
@@ -614,7 +612,10 @@ BOOL SVRegistryClass::ImportKeys(FILE * pFile)
 				break;
 
 			case SV_ISGARBAGE :
-				SETEXCEPTION0( svException, SVMSG_LIB_REGISTRY_IMPORT_EXPECTED_KEY );
+				{
+					SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+					Exception.setMessage( SVMSG_LIB_REGISTRY_IMPORT_EXPECTED_KEY, nullptr, StdMessageParams );
+				}
 				break;
 
 			default :
@@ -628,7 +629,6 @@ BOOL SVRegistryClass::ImportKeys(FILE * pFile)
 int SVRegistryClass::GetImportString(FILE * pFile, SVString & szName, SVByteArray & baValue, DWORD * pdwType)
 {
 	TCHAR tBuffer;
-	SVException svException;
 	int i;
 
 	// skip white space characters
@@ -641,8 +641,8 @@ int SVRegistryClass::GetImportString(FILE * pFile, SVString & szName, SVByteArra
 
 	if (ferror (pFile))
 	{
-		SETEXCEPTION0 (svException, SVMSG_LIB_REGISTRY_IMPORT_FILE_IO_ERROR);
-		svException.LogException();
+		SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+		Exception.setMessage( SVMSG_LIB_REGISTRY_IMPORT_FILE_IO_ERROR, nullptr, StdMessageParams );
 		return SV_ISERROR;
 	}
 
@@ -656,8 +656,8 @@ int SVRegistryClass::GetImportString(FILE * pFile, SVString & szName, SVByteArra
 
 			if (ferror (pFile))
 			{
-				SETEXCEPTION0 (svException, SVMSG_LIB_REGISTRY_IMPORT_FILE_IO_ERROR);
-				svException.LogException();
+				SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+				Exception.setMessage( SVMSG_LIB_REGISTRY_IMPORT_FILE_IO_ERROR, nullptr, StdMessageParams );
 				return SV_ISERROR;
 			}
 
@@ -813,9 +813,8 @@ BOOL SVRegistryClass::Export(LPCTSTR szFileName)
 	}
 	else
 	{
-		SVException svException;
-		SETEXCEPTION2 (svException, SVMSG_LIB_REGISTRY_EXPORT_FAILED, (void *) szFileName, static_cast< UINT >( _tcslen( szFileName ) * sizeof( TCHAR ) ) );
-		svException.LogException ();
+		SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+		Exception.setMessage( SVMSG_LIB_REGISTRY_EXPORT_FAILED, szFileName, StdMessageParams );
 	}
 
 	return rc;
@@ -856,18 +855,17 @@ BOOL SVRegistryClass::ExportKeys(FILE * pFile)
 					rc &= reg.ExportKeys (pFile);
 					szKey.clear();
 				}
-				catch (SVException e)
+				catch ( SvStl::MessageHandler& rSvE )
 				{
 					rc = FALSE;
-					e.LogException();
+					rSvE.logMessage();
 				}
 			}
 			else
 			{
 				rc = FALSE;
-				SVException svException;
-				SETEXCEPTION1 (svException, SVMSG_LIB_REGISTRY_KEY_EXPORT_FAILED, szKey.ToString());
-				svException.LogException ();
+				SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+				Exception.setMessage( SVMSG_LIB_REGISTRY_KEY_EXPORT_FAILED, szKey.ToString(), StdMessageParams );
 			}
 		}
 	}
@@ -1016,9 +1014,8 @@ BOOL SVRegistryClass::ExportValues(FILE * pFile)
 			else
 			{
 				rc = FALSE;
-				SVException svException;
-				SETEXCEPTION1 (svException, SVMSG_LIB_REGISTRY_VALUE_EXPORT_FAILED, mszKey.ToString());
-				svException.LogException ();
+				SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+				Exception.setMessage( SVMSG_LIB_REGISTRY_VALUE_EXPORT_FAILED, mszKey.ToString(), StdMessageParams );
 			}
 		}
 		delete [] pData;

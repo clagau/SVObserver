@@ -9,11 +9,10 @@
 #include "StdAfx.h"
 #include "RingBufferTool.h"
 #include "SVAnalyzer.h"
-#include "SVStatusLibrary\SVStatusCodes.h"
 #include "SVMatroxImageProcessingClass.h"
 #include "SVImageLibrary\SVImageBufferHandleImage.h"
 #include "ObjectInterfaces\ErrorNumbers.h"
-#include "SVStatusLibrary\ExceptionManager.h"
+#include "SVStatusLibrary\MessageManager.h"
 #include "TextDefinesSvO.h"
 #pragma endregion Includes
 
@@ -67,9 +66,9 @@ BOOL RingBufferTool::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
 	return bOk;
 }
 
-HRESULT RingBufferTool::DoesObjectHaveExtents() const
+bool RingBufferTool::DoesObjectHaveExtents() const
 {
-	return SV_SUCCESS_SVOBSERVER_2000_DOESNOTHAVE_EXTENTS;
+	return false;
 }
 
 HRESULT RingBufferTool::GetInputImageNames( SVStringValueObjectClass*& p_pSourceNames )
@@ -140,10 +139,10 @@ BOOL RingBufferTool::OnValidate()
 	if (ringBufferDepth < m_minRingBufferDepth || ringBufferDepth > m_maxRingBufferDepth)
 	{
 		bValid = false;
-		SvStl::ExceptionMgr1 Exception( SvStl::LogOnly );
+		SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
 		CString strText;
 		strText.Format(SvO::RingBuffer_Depth_Invalid_Value, m_minRingBufferDepth, m_maxRingBufferDepth, ringBufferDepth);
-		Exception.setMessage( SVMSG_SVO_61_RINGBUFFER_ONVALIDATE_ERROR, strText, StdExceptionParams, SvOi::Err_10013_RingBuffer_DepthValueInvalid );
+		Exception.setMessage( SVMSG_SVO_61_RINGBUFFER_ONVALIDATE_ERROR, strText, StdMessageParams, SvOi::Err_10013_RingBuffer_DepthValueInvalid );
 	}
 	for (int i=0; i< m_numberOfOutputImages; ++i)
 	{

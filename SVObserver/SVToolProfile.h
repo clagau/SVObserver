@@ -29,7 +29,7 @@ public:
 
 	virtual HRESULT ResetObject();
 
-	virtual HRESULT DoesObjectHaveExtents() const;
+	virtual bool DoesObjectHaveExtents() const override;
 
 	// Embedded Object...
 	SVDoubleValueObjectClass	projectAngle;

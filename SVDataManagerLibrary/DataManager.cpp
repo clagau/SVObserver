@@ -12,7 +12,7 @@
 #include "stdafx.h"
 #include "DataManager.h"
 #include "SVMessage/SVMessage.h"
-#include "SVStatusLibrary/SVException.h"
+#include "SVStatusLibrary\MessageManager.h"
 #include "SVTimerLibrary/SVClock.h"
 #include "SVUtilityLibrary/SVString.h"
 #include "SVDataManagerHandle.h"
@@ -299,11 +299,10 @@ HRESULT SVDataManager::GetNextAvailableBufferIndex( long alIndexArrayHandle,
 					lErr = SVDM_1502NO_INDEXESAVAILABLE_ERROR;
 				}
 
-				SVException l_Log;
 				SVString l_Message = pManagedIndexArray->GetReferenceCounts();
 
-				SETEXCEPTION1( l_Log, SVDM_1502NO_INDEXESAVAILABLE_ERROR, l_Message.ToString() );
-				l_Log.LogException( l_Message.ToString() );
+				SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+				Exception.setMessage( SVDM_1502NO_INDEXESAVAILABLE_ERROR, l_Message.ToString(), StdMessageParams );
 
 				break;
 			}

@@ -234,92 +234,37 @@ BOOL SVXmlException::GetXmlDoc(BSTR * bstrDoc)
 }
 
 
-BOOL SVXmlException::operator=( SVException& rhs)
+BOOL SVXmlException::operator=( SvStl::MessageHandler& rhs)
 {
-	BSTR bstrErrorData,bstrSourceFile,bstrSourceDateTime,bstrCompileDate,bstrCompileTime;
-
 	if(!InitXml())
-		{
+	{
 		return FALSE;
-		}
+	}
+	const SvStl::MessageData& rMsg( rhs.getMessage() );
+
 	//set the program code
-	if(!SetProgramCode(rhs.GetProgramCode()))return FALSE;
+	if(!SetProgramCode( rMsg.m_ProgramCode ))return FALSE;
 	//set the error code
-	if(!SetErrorCode(rhs.GetErrorCode()))return FALSE;
+	if(!SetErrorCode( rMsg.m_MessageCode ))return FALSE;
 	//set the OS error code
-	if(!SetOsErrorCode(rhs.GetOSErrorCode()))return FALSE;
+	if(!SetOsErrorCode( rMsg.m_OSErrorCode ))return FALSE;
 	//set the error data
-	rhs.GetErrorData(&bstrErrorData);
-	if(!SetErrorData(&bstrErrorData))return FALSE;
+	if(!SetErrorData( rMsg.m_AdditionalText.ToBSTR().GetAddress() ))return FALSE;
 	//set the source file 
-	rhs.GetSourceFile(&bstrSourceFile);
-	if(!SetSourceFile(&bstrSourceFile))return FALSE;
+	if(!SetSourceFile( rMsg.m_SourceFile.ToBSTR().GetAddress() ))return FALSE;
 	//set the source line
-	if(!SetSourceLine(rhs.GetSourceLine()))return FALSE;
+	if(!SetSourceLine( rMsg.m_SourceLine ))return FALSE;
 	//set the source date & time
-	rhs.GetSourceDateTime(&bstrSourceDateTime);
-	if(!SetSourceDateTime(&bstrSourceDateTime))return FALSE;
+	if(!SetSourceDateTime( rMsg.m_SourceDateTime.ToBSTR().GetAddress() ))return FALSE;
 	//set the compile date
-	rhs.GetCompileDate(&bstrCompileDate);
-	if(!SetCompileDate(&bstrCompileDate))return FALSE;
+	if(!SetCompileDate( rMsg.m_CompileDate.ToBSTR().GetAddress() ))return FALSE;
 	//set the compile time
-	rhs.GetCompileTime(&bstrCompileTime);
-	if(!SetCompileTime(&bstrCompileTime))return FALSE;
+	if(!SetCompileTime( rMsg.m_CompileTime.ToBSTR().GetAddress() ))return FALSE;
 	//set logged flag
-	if(!SetLogged(rhs.GetLoggedStatus()))return FALSE;
+	if(!SetLogged( rMsg.m_Logged ) )return FALSE;
 
 	return TRUE;
 }
-
-
-#pragma warning ( disable : 4102 )	// unreferenced lable warning (CleanUp)
-SVException * SVXmlException::CreateSVExceptionObject(BSTR * bstrDoc)
-{
-USES_CONVERSION;
-	ULONG ErrorCode = 0;
-	BSTR bstrCompileDate;
-	BSTR bstrCompileTime;
-	BSTR bstrErrorData;
-	UINT cbErrorData;
-	BSTR bstrSourceFile;
-	BSTR bstrSourceDateTime;
-	long SourceLine;
-	ULONG ProgramCode;
-	ULONG OsErrorCode;
-	ULONG * pPtr = NULL;
-
-	m_SvException.ResetException();
-
-	if(!InitXml())
-		{
-		return NULL;
-		}
-
-	if(!CreateTreeObjFromXmlDoc(bstrDoc))return NULL;
-	
-	if(!GetErrorCode(&ErrorCode))return NULL;
-	if(!GetCompileDate(&bstrCompileDate))return NULL;
-	if(!GetCompileTime(&bstrCompileTime))return NULL;
-	if(!GetErrorData(&bstrErrorData))return NULL;
-	if(!GetSourceFile(&bstrSourceFile))return NULL;
-	if(!GetSourceLine(&SourceLine))return NULL;
-	if(!GetSourceDateTime(&bstrSourceDateTime))return NULL;
-	if(!GetProgramCode(&ProgramCode))return NULL;
-	if(!GetOsErrorCode(&OsErrorCode))return NULL;
-
-	pPtr = (ULONG*)bstrErrorData;
-	pPtr--;
-	cbErrorData = (UINT)*pPtr;
-
-	m_SvException.SetException(ErrorCode,  W2T(bstrCompileDate),  W2T(bstrCompileTime), (LPVOID)bstrErrorData, cbErrorData, 
-							    W2T(bstrSourceFile), SourceLine,  W2T(bstrSourceDateTime) , ProgramCode,OsErrorCode);
-
-CleanUp:
-	return &m_SvException;
-}
-
-
-
 
 BOOL  SVXmlException::GetProgramCode(ULONG * Data)
 {

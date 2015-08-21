@@ -170,6 +170,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="SVMessage.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="$(IntDir)SVMessage.rc" />
@@ -183,7 +184,7 @@ mc -uUv -h "$(IntDir)\" -r "$(IntDir)\" %(Filename).mc
 Call CopyIfDifferent.bat "$(IntDir)%(Filename).h" %(Filename).h
 </Command>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)French.bin;$(IntDir)German.bin;$(IntDir)Italian.bin;$(IntDir)Portuguese.bin;$(IntDir)Spanish.bin;$(IntDir)UKEnglish.bin;$(IntDir)USEnglish.bin;$(IntDir)%(Filename).h;$(IntDir)%(Filename).rc;%(Outputs)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)USEnglish.bin;$(IntDir)%(Filename).h;$(IntDir)%(Filename).rc;%(Outputs)</Outputs>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">echo del "$(IntDir)*.bin"
 del "$(IntDir)*.bin"
 echo mc -uUv -h "$(IntDir)\" -r "$(IntDir)\" %(Filename).mc
@@ -191,7 +192,7 @@ mc -uUv -h "$(IntDir)\" -r "$(IntDir)\" %(Filename).mc
 Call CopyIfDifferent.bat "$(IntDir)%(Filename).h" %(Filename).h
 </Command>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)French.bin;$(IntDir)German.bin;$(IntDir)Italian.bin;$(IntDir)Portuguese.bin;$(IntDir)Spanish.bin;$(IntDir)UKEnglish.bin;$(IntDir)USEnglish.bin;$(IntDir)%(Filename).h;$(IntDir)%(Filename).rc;%(Outputs)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)USEnglish.bin;$(IntDir)%(Filename).h;$(IntDir)%(Filename).rc;%(Outputs)</Outputs>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">echo del "$(IntDir)*.bin"
 del "$(IntDir)*.bin"
 echo mc -uUv -h "$(IntDir)\" -r "$(IntDir)\" %(Filename).mc
@@ -199,7 +200,7 @@ mc -uUv -h "$(IntDir)\" -r "$(IntDir)\" %(Filename).mc
 Call CopyIfDifferent.bat "$(IntDir)%(Filename).h" %(Filename).h
 </Command>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)French.bin;$(IntDir)German.bin;$(IntDir)Italian.bin;$(IntDir)Portuguese.bin;$(IntDir)Spanish.bin;$(IntDir)UKEnglish.bin;$(IntDir)USEnglish.bin;$(IntDir)%(Filename).h;$(IntDir)%(Filename).rc;%(Outputs)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$USEnglish.bin;$(IntDir)%(Filename).h;$(IntDir)%(Filename).rc;%(Outputs)</Outputs>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">echo del "$(IntDir)*.bin"
 del "$(IntDir)*.bin"
 echo mc -uUv -h "$(IntDir)\" -r "$(IntDir)\" %(Filename).mc
@@ -207,7 +208,7 @@ mc -uUv -h "$(IntDir)\" -r "$(IntDir)\" %(Filename).mc
 Call CopyIfDifferent.bat "$(IntDir)%(Filename).h" %(Filename).h
 </Command>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)French.bin;$(IntDir)German.bin;$(IntDir)Italian.bin;$(IntDir)Portuguese.bin;$(IntDir)Spanish.bin;$(IntDir)UKEnglish.bin;$(IntDir)USEnglish.bin;$(IntDir)%(Filename).h;$(IntDir)%(Filename).rc;%(Outputs)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$((IntDir)USEnglish.bin;$(IntDir)%(Filename).h;$(IntDir)%(Filename).rc;%(Outputs)</Outputs>
     </CustomBuild>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

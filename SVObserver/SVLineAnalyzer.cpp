@@ -659,9 +659,9 @@ SVObjectClass* SVLineAnalyzerClass::getLineROI()
 	return pLineROI;
 }
 
-HRESULT SVLineAnalyzerClass::DoesObjectHaveExtents() const
+bool SVLineAnalyzerClass::DoesObjectHaveExtents() const
 {
-	return S_OK;
+	return true;
 }
 
 HRESULT SVLineAnalyzerClass::GetImageExtent( SVImageExtentClass &p_rsvImageExtent )

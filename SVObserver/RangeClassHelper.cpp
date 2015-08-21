@@ -13,22 +13,23 @@
 #include "stdafx.h"
 #include "SVRange.h"
 #include "RangeClassHelper.h"
-#include "SVIOLibrary/SVIOConfigurationInterfaceClass.h"
-#include "SVObjectLibrary/SVObjectAsynchronousCommandTemplate.h"
-#include "SVObjectLibrary/SVObjectSynchronousCommandTemplate.h"
-#include "SVObjectLibrary/SVObjectScriptUsage.h"
-#include "SVObjectLibrary/SVObjectManagerClass.h"
+#include "SVIOLibrary\SVIOConfigurationInterfaceClass.h"
+#include "SVObjectLibrary\SVObjectAsynchronousCommandTemplate.h"
+#include "SVObjectLibrary\SVObjectSynchronousCommandTemplate.h"
+#include "SVObjectLibrary\SVObjectScriptUsage.h"
+#include "SVObjectLibrary\SVObjectManagerClass.h"
 #include "SVInspectionProcess.h"
 #include "ObjectInterfaces\ErrorNumbers.h"
-#include "SVUtilityLibrary/SVString.h"
+#include "SVUtilityLibrary\SVString.h"
 #include "SVTaskObjectList.h"
-#include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
-#include "SVObjectLibrary/GlobalConst.h"
+#include "ObjectSelectorLibrary\ObjectTreeGenerator.h"
+#include "SVObjectLibrary\GlobalConst.h"
 #include "SVToolSet.h"
 #include "SVTool.h"
 #include "SVPPQObject.h"
 #include "ObjectNameHelper.h"
-#include "SVStatusLibrary/ExceptionManager.h"
+#include "SVStatusLibrary\MessageManager.h"
+#include "SVStatusLibrary\MessageManagerResource.h"
 #include "TextDefinesSvO.h"
 #include "RootObject.h"
 #pragma endregion Includes
@@ -134,8 +135,8 @@ void RangeClassHelper::SetInternalData(ERange er, LPCTSTR lp)
 	{
 		CString strText;
 		strText.Format(SvO::RangeValue_EmptyString, ERange2String(er).GetString());
-		SvStl::ExceptionMgr1 Exception( SvStl::ExpTypeNone );
-		Exception.setMessage( SVMSG_SVO_68_RANGE_VALUE_SET_FAILED, strText, StdExceptionParams, SvOi::Err_16022, MB_OK | MB_ICONERROR );
+		SvStl::MessageMgrNoDisplay Exception( SvStl::DataOnly );
+		Exception.setMessage( SVMSG_SVO_68_RANGE_VALUE_SET_FAILED, strText, StdMessageParams, SvOi::Err_16022, MB_OK | MB_ICONERROR );
 		Exception.Throw();
 	}
 
@@ -148,8 +149,8 @@ void RangeClassHelper::SetInternalData(ERange er, LPCTSTR lp)
 		{
 			CString strText;
 			strText.Format(SvO::RangeValue_WrongRange, ERange2String(er).GetString(), static_cast< int >( s_RangeMin ), static_cast< int >( s_RangeMax ) );
-			SvStl::ExceptionMgr1 Exception( SvStl::ExpTypeNone );
-			Exception.setMessage( SVMSG_SVO_68_RANGE_VALUE_SET_FAILED, strText, StdExceptionParams, SvOi::Err_16023, MB_OK | MB_ICONERROR );
+			SvStl::MessageMgrNoDisplay Exception( SvStl::DataOnly );
+			Exception.setMessage( SVMSG_SVO_68_RANGE_VALUE_SET_FAILED, strText, StdMessageParams, SvOi::Err_16023, MB_OK | MB_ICONERROR );
 			Exception.Throw();
 		}
 	}
@@ -173,8 +174,8 @@ void RangeClassHelper::SetInternalData(ERange er, LPCTSTR lp)
 		m_WarnLowIndirect = csText;
 		break;
 	default:
-		SvStl::ExceptionMgr1 Exception( SvStl::ExpTypeNone );
-		Exception.setMessage( SVMSG_SVO_68_RANGE_VALUE_SET_FAILED, SvO::ErrorUnknownEnum, StdExceptionParams, SvOi::Err_16024, MB_OK | MB_ICONERROR );
+		SvStl::MessageMgrNoDisplay Exception( SvStl::DataOnly );
+		Exception.setMessage( SVMSG_SVO_68_RANGE_VALUE_SET_FAILED, SvO::ErrorUnknownEnum, StdMessageParams, SvOi::Err_16024, MB_OK | MB_ICONERROR );
 		Exception.Throw();
 		break;
 	}

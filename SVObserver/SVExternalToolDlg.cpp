@@ -12,7 +12,7 @@
 #include "stdafx.h"
 #include "svobserver.h"
 #include "SVExternalToolDlg.h"
-#include "SVObjectLibrary/SVObjectManagerClass.h"
+#include "SVObjectLibrary\SVObjectManagerClass.h"
 #include "SVToolAdjustmentDialogSheetClass.h"
 #include "SVExternalTool.h"
 #include "SVExternalToolTask.h"
@@ -20,8 +20,9 @@
 #include "SVShowDependentsDialog.h"
 #include "SVInspectionProcess.h"
 #include "SVIPDoc.h"
-#include "SVMFCControls/SVFileDialog.h"
-#include "SVLoki/Functor.h"
+#include "SVMFCControls\SVFileDialog.h"
+#include "SVLoki\Functor.h"
+#include "SVStatusLibrary\MessageHandler.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -178,9 +179,9 @@ void SVExternalToolDlg::OnOK()
 				hr = S_FALSE;
 			}
 		}
-		catch (SVErrorException& e)
+		catch ( const SvStl::MessageHandler& e)
 		{
-			hr = e.info().hr;
+			hr = static_cast<HRESULT> (e.getMessage().m_MessageCode);
 		}
 
 		CleanUpOldToolInfo();
@@ -401,22 +402,22 @@ void SVExternalToolDlg::InitializeDll()
 
 		m_btnDetails.EnableWindow();
 	}
-	catch (SVErrorException& e)
+	catch ( const SvStl::MessageHandler& e)
 	{
 		// display all sub-errors in box
 		UpdateData(TRUE);
 		m_strStatus +=  _T("DLL did not pass.") + CRLF;
 
-		if ( !e.info().sErrorMessage.empty() )
+		if ( !e.getMessage().m_AdditionalText.empty() )
 		{
-			m_strStatus += e.info().sErrorMessage.ToString();
+			m_strStatus += e.getMessage().m_AdditionalText.c_str();
 			m_strStatus += CRLF;
 		}
-
-		SVErrorException::SubinfoType::const_iterator iter;
-		for (iter = e.subinfo().begin(); iter != e.subinfo().end(); ++iter)
+		const SvStl::Messages& AdditionalMessages( e.getAdditionalMessages() );
+		SvStl::Messages::const_iterator iter;
+		for (iter = AdditionalMessages.begin(); iter != AdditionalMessages.end(); ++iter)
 		{
-			m_strStatus += iter->sErrorMessage.ToString();
+			m_strStatus += iter->m_AdditionalText.ToString();
 			m_strStatus += CRLF;
 		}
 		UpdateData(FALSE);

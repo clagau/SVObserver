@@ -150,9 +150,7 @@
     <ClCompile Include="ec200249.cpp" />
     <ClCompile Include="ec250299.cpp" />
     <ClCompile Include="ec300349.cpp" />
-    <None Include="ExceptionManager.inl">
-      <FileType>CppCode</FileType>
-    </None>
+    <ClCompile Include="MessageData.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -162,20 +160,23 @@
     <ClCompile Include="SVErrorClass.cpp" />
     <ClCompile Include="SVEventLogClass.cpp" />
     <ClCompile Include="SVEventRecordStruct.cpp" />
-    <ClCompile Include="SVException.cpp" />
+    <ClCompile Include="MessageHandler.cpp" />
     <ClCompile Include="SVRegistry.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ExceptionManager.h" />
+    <ClInclude Include="MessageManager.h" />
+    <ClInclude Include="MessageManagerResource.h" />
+    <ClInclude Include="MessageData.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="SVErrorClass.h" />
-    <ClInclude Include="SVErrorException.h" />
     <ClInclude Include="SVEventLogClass.h" />
     <ClInclude Include="SVEventRecordStruct.h" />
-    <ClInclude Include="SVException.h" />
+    <ClInclude Include="MessageHandler.h" />
     <ClInclude Include="SVRegistry.h" />
-    <ClInclude Include="SVStatusCodes.h" />
     <ClInclude Include="SVStatusLibrary.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="MessageManager.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

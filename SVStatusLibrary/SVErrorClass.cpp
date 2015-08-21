@@ -12,8 +12,8 @@
 #include "stdafx.h"
 #include "SVErrorClass.h"
 #include "SVMessage/SVMessage.h"
-#include "SVException.h"
-#include "SVStatusCodes.h"
+#include "MessageHandler.h"
+#include "SVUtilityLibrary\SVUtilityGlobals.h"
 
 SVErrorClass::SVErrorClass ()
 {
@@ -210,11 +210,10 @@ unsigned long SVErrorClass::TrapError (unsigned long programCd,
 			  msvlLastErrorCd ,
 			  programCd  );
 		  // log to event log.
-			SVException svE;
-			svE.SetException (SVMSG_SVO_35_LEGACY_ERROR_TRAP, _T(__DATE__), _T(__TIME__), 
-				lx_displayString.ToString(), const_cast<TCHAR *>(fileName), 
-				lineNbr, _T(__TIMESTAMP__), programCd );
-			svE.LogException();
+			SvStl::MessageHandler svE;
+			svE.setMessage (SVMSG_SVO_35_LEGACY_ERROR_TRAP, lx_displayString.ToString(), 
+				_T(__DATE__), _T(__TIME__), fileName, lineNbr, _T(__TIMESTAMP__), programCd );
+			svE.logMessage();
 		//*******************************************************
 /*------- End of ACKNOWLEDGE PASSWORD. -------------------------------------*/
       }
@@ -265,13 +264,13 @@ unsigned long SVErrorClass::LogError ()
 
         switch( SV_SEVERITY( msvlLastErrorCd ) )
         {
-        case SV_LEVEL_FATAL:
+        case SEV_FATAL:
             lx_logRecord.NTDef.EventType = EVENTLOG_ERROR_TYPE;
             break;
-        case SV_LEVEL_WARNING:
+        case SEV_WARNING:
             lx_logRecord.NTDef.EventType = EVENTLOG_WARNING_TYPE;
             break;
-        case SV_LEVEL_INFORMATIONAL:
+        case SEV_INFORMATIONAL:
             lx_logRecord.NTDef.EventType = EVENTLOG_INFORMATION_TYPE;
             break;
         }

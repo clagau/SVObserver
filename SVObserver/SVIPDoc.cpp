@@ -66,7 +66,6 @@
 #include "SVDataDefinitionSheet.h"
 #include "SVRegressionRunDlg.h"
 #include "SVHBitmapUtilitiesLibrary\SVHBitmapUtilities.h"
-#include "SVStatusLibrary/SVException.h"
 #include "SVDirectX.h"
 #include "SVCommandInspectionCollectImageData.h"
 #include "SVCommandInspectionRunOnce.h"
@@ -3089,34 +3088,11 @@ void SVIPDoc::OnUpdateEditAdjustToolPosition(CCmdUI* pCmdUI)
 					//make sure m_SelectedToolID is updated to the correct tool when a right mouse click selects the tool
 					m_SelectedToolID = rGuid;
 
-					//check to see if the tool has exttents
-					if (S_OK == Tool->DoesObjectHaveExtents())
+					//check to see if the tool has extents
+					if ( Tool->DoesObjectHaveExtents() )
 					{
 						Enabled = TRUE;
 					}
-
-					/*SVShiftTool* pShiftTool = dynamic_cast< SVShiftTool* >(Tool);
-					if (nullptr != pShiftTool)
-					{
-						long l_shiftMode;
-						pShiftTool->m_evoShiftMode.GetValue(l_shiftMode);
-						if (l_shiftMode == SV_SHIFT_ENUM::SV_SHIFT_REFERENCE)
-						{
-							Enabled = TRUE;
-						}
-						else
-						{
-							Enabled = TRUE;
-						}
-					}
-					else
-					{  //check to see if the tool has exttents
-						if (S_OK == Tool->DoesObjectHaveExtents())
-						{
-							Enabled = TRUE;
-						}
-					}
-					*/
 				}
 			}
 		}

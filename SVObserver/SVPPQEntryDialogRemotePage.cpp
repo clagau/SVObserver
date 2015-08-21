@@ -14,14 +14,14 @@
 #include <boost/config.hpp>
 #include <boost/bind.hpp>
 #include "SVPPQEntryDialogRemotePage.h"
-#include "SVObjectLibrary/SVObjectManagerClass.h"
+#include "SVObjectLibrary\SVObjectManagerClass.h"
 #include "SVPPQEntryDialog.h"
 #include "SVSVIMStateClass.h"
 #include "SVRemoteInputObject.h"
 #include "SVInfoStructs.h"
 #include "SVPPQObject.h"
 #include "ObjectInterfaces\ErrorNumbers.h"
-#include "SVStatusLibrary/ExceptionManager.h"
+#include "SVStatusLibrary\MessageManager.h"
 #include "TextDefinesSvO.h"
 #pragma endregion Includes
 
@@ -103,8 +103,8 @@ BOOL SVPPQEntryDialogRemotePageClass::OnInitDialog()
 	// Get list of available inputs
 	if( !m_pSheet->m_pPPQ->GetAllInputs( ppIOEntries ) )
 	{
-		SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
-		e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorGettingInputs, StdExceptionParams, SvOi::Err_17042_ErrorGettingInputs );
+		SvStl::MessageMgrNoDisplay e( SvStl::LogOnly );
+		e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorGettingInputs, StdMessageParams, SvOi::Err_17042_ErrorGettingInputs );
 		DebugBreak();
 	}
 

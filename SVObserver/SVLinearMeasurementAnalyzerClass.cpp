@@ -13,7 +13,6 @@
 #include "SVLinearMeasurementAnalyzerClass.h"
 #include "SVMeasureAnalyzerAdjustment.h"
 #include "SVProfileEdgeMarkerAdjustmentPage.h"
-#include "SVStatusLibrary/SVException.h"
 #include "SVMessage/SVMessage.h"
 #include "SVImageLibrary/SVImageInfoClass.h"
 #include "SVGlobal.h"

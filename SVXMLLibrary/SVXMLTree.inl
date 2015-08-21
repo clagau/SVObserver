@@ -9,7 +9,6 @@
 //* .Check In Date   : $Date:   25 Apr 2013 19:58:00  $
 //******************************************************************************
 
-#include "SVStatusLibrary/SVStatusCodes.h"
 
 template<typename SVT_TREE, typename SVT_BRANCH_HANDLE, typename SVT_LEAF_HANDLE>
 SVXMLTree< SVT_TREE, SVT_BRANCH_HANDLE, SVT_LEAF_HANDLE >::SVXMLTree()
@@ -20,30 +19,6 @@ SVXMLTree< SVT_TREE, SVT_BRANCH_HANDLE, SVT_LEAF_HANDLE >::SVXMLTree()
 template<typename SVT_TREE, typename SVT_BRANCH_HANDLE, typename SVT_LEAF_HANDLE>
 SVXMLTree< SVT_TREE, SVT_BRANCH_HANDLE, SVT_LEAF_HANDLE >::~SVXMLTree()
 {
-}
-
-// IncrementRefCount () - to be called by SVXMLClass::Attach ().
-template<typename SVT_TREE, typename SVT_BRANCH_HANDLE, typename SVT_LEAF_HANDLE>
-HRESULT	SVXMLTree< SVT_TREE, SVT_BRANCH_HANDLE, SVT_LEAF_HANDLE >::IncrementRefCount ()
-{
-	++svmlRefCount;
-
-	return S_OK;
-}
-
-// DecrementRefCount () - to be called by SVXMLClass::Detach ().
-template<typename SVT_TREE, typename SVT_BRANCH_HANDLE,typename SVT_LEAF_HANDLE>
-HRESULT	SVXMLTree< SVT_TREE, SVT_BRANCH_HANDLE, SVT_LEAF_HANDLE >::DecrementRefCount ()
-{
-	HRESULT	l_Status( S_OK );
-
-	--svmlRefCount;
-
-	if( svmlRefCount < 0 )
-	{
-		l_Status = SV_10000_XML_LIB_INVALID_REF_COUNT;
-	}
-	return l_Status;
 }
 
 // Clear () -----------------------------------------------------------------

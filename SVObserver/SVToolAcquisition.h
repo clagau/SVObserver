@@ -31,7 +31,7 @@ public:
 
 	virtual BOOL OnValidate();
 
-	virtual HRESULT DoesObjectHaveExtents() const;
+	virtual bool DoesObjectHaveExtents() const override;
 
 	SVCameraImageTemplate* GetMainImageClass();
 

@@ -10,6 +10,7 @@
 //******************************************************************************
 
 #include "stdafx.h"
+#include <comdef.h>
 #include "SVXMLCTreeCtrl.h"
 
 SVXMLCTreeCtrl::SVXMLCTreeCtrl( CTreeCtrl& p_rTree )

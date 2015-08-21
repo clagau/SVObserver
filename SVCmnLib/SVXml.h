@@ -9,12 +9,13 @@
 //* .Check In Date   : $Date:   30 Sep 2013 14:24:32  $
 //******************************************************************************
 
-#ifndef SVXML_H
-#define SVXML_H
+#pragma once
 
-#include "SVStatusLibrary/SVException.h"
+#pragma region Includes
+#include "SVStatusLibrary\MessageHandler.h"
 #include "xmlmacros.h"
 #include "element.h"
+#pragma endregion Includes
 
 #import <msxml6.dll> named_guids
 
@@ -35,10 +36,10 @@ public:
 	MSXML2::IXMLDOMNodePtr GetChildElement(MSXML2::IXMLDOMNode * pNode, TCHAR * pName);
 	virtual BOOL GetXmlDoc(BSTR * bstrDoc);
 	BOOL PutXmlCmdDocInBuf(BYTE ** ppBuf, unsigned long * cBufLen);
-	SVException& GetParserError(){return m_SVException;};
+	SvStl::MessageHandler& GetParserError(){return m_SVException;};
 
 protected:
-	SVException m_SVException;
+	SvStl::MessageHandler m_SVException;
 	BOOL m_ExceptionSet;
 	void Reset();
 	BOOL GetXmlElementValues(Element * pElement);
@@ -91,8 +92,6 @@ void GetXmlParserError(MSXML2::IXMLDOMParseError *errorObj);
 private:
 	BOOL m_blComInit;
 };
-
-#endif
 
 // ******************************************************************************
 // * LOG HISTORY:

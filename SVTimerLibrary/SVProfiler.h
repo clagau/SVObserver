@@ -12,11 +12,10 @@
 #pragma once
 
 #pragma region Includes
-#include "SVTimerLibrary/SVClock.h"
+#include "SVClock.h"
 #pragma endregion Includes
 
-// This does not use the guideline namespace format because it is legacy code from the SVObserverWeb project.
-namespace SeidenaderVision
+namespace Seidenader { namespace SVTimerLibrary
 {
 	class SVProfiler
 	{
@@ -38,7 +37,9 @@ namespace SeidenaderVision
 		SVClock::SVTimeStamp m_endTime;
 #pragma endregion Member Variables
 	};
-}
+} /* namespace SVStatusLibrary */ } /* namespace Seidenader */
+
+namespace SvTl = Seidenader::SVTimerLibrary;
 
 //******************************************************************************
 //* LOG HISTORY:

@@ -12,17 +12,6 @@
 #ifndef SVOBJECTID_H
 #define SVOBJECTID_H
 
-/*
-// Begin - To use GUID as SVObjectID use the following section
-#include "SVUtilityLibrary/SVGUID.h"
-#include "SVUtilityLibrary/SVUtilityGlobals.h"
-
-typedef SVGUID SVObjectID;
-typedef SVGUID SVInvalidObject;
-typedef SVGetNextGUID SVGetNextObjectID;
-// End - To use GUID as SVObjectID use the following section
-*/
-
 // Begin - To use SVUniqueObjectID as SVObjectID use the following section
 #include "SVUniqueObjectID.h"
 // End - To use SVUniqueObjectID as SVObjectID use the following section

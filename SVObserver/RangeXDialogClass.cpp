@@ -18,8 +18,9 @@
 #include "afxdialogex.h"
 #include "SVRange.h"
 #include "svresult.h"
-#include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
-#include "SVStatusLibrary/ExceptionManager.h"
+#include "ObjectSelectorLibrary\ObjectTreeGenerator.h"
+#include "SVStatusLibrary\MessageManagerResource.h"
+#include "SVStatusLibrary\MessageHandler.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -160,11 +161,11 @@ bool RangeXDialogClass::GetDlgData()
 		m_RangeClassHelper.SetInternalData(ER_WarnLow, csText);
 		res = true;
 	}
-	catch (SVException e)
+	catch ( const SvStl::MessageHandler& rSvE )
 	{
 		//Now that we have caught the exception we would like to display it
-		SvStl::ExceptionMgr1 CaughtException(SvStl::ExpTypeEnum::LogAndDisplay );
-		CaughtException.setMessage( e );
+		SvStl::MessageMgrStdDisplay Exception( SvStl::LogAndDisplay );
+		Exception.setMessage( rSvE.getMessage() );
 	}
 
 	return res;

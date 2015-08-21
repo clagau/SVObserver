@@ -416,9 +416,9 @@ SVTaskObjectClass *SVTaskObjectClass::GetObjectAtPoint( const SVExtentPointStruc
 	return l_psvObject;
 }
 
-HRESULT SVTaskObjectClass::DoesObjectHaveExtents() const
+bool SVTaskObjectClass::DoesObjectHaveExtents() const
 {
-	return E_FAIL;
+	return false;
 }
 
 HRESULT SVTaskObjectClass::GetImageExtent( SVImageExtentClass &p_rsvImageExtent )

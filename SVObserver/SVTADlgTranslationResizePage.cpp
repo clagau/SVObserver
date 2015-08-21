@@ -11,7 +11,7 @@
 #include <limits>
 #include "SVOResource\resource.h"
 #include "SVMessage\SVMessage.h"
-#include "SVStatusLibrary\ExceptionManager.h"
+#include "SVStatusLibrary\MessageManagerResource.h"
 #include "SVImageLibrary\SVImageBufferHandleImage.h"
 #include "PropertyTree\PROPTREE.H"
 #include "SVTADlgTranslationResizePage.h"
@@ -108,8 +108,8 @@ BOOL SVTADlgTranslationResizePage::OnInitDialog()
 
 	if (S_OK != hr)
 	{
-		SvStl::ExceptionMgr1 Exception( SvStl::ExpTypeEnum::LogAndDisplay );
-		Exception.setMessage( hr, nullptr, StdExceptionParams, 5015);
+		SvStl::MessageMgrStdDisplay Exception(  SvStl::LogAndDisplay );
+		Exception.setMessage( hr, nullptr, StdMessageParams, 5015);
 	}
 
 	UpdateData(FALSE); // dialog being initialized.

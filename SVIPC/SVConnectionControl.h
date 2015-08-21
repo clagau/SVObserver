@@ -12,7 +12,6 @@
 #ifndef _INC_SVCONNECTIONCLASS_3879E54B01F4_INCLUDED
 #define _INC_SVCONNECTIONCLASS_3879E54B01F4_INCLUDED
 
-#include "SVStatusLibrary/SVException.h"
 #include "SVStatusLibrary/SVRegistry.h"
 #include "SVPipes/SVPipeConnection.h"
 #include "SVTCPIP/SVTCPIPConnection.h"

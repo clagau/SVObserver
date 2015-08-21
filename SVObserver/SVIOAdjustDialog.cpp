@@ -13,7 +13,7 @@
 #include "stdafx.h"
 #include "SVIODoc.h"
 #include "SVIOAdjustDialog.h"
-#include "SVObjectLibrary/SVObjectManagerClass.h"
+#include "SVObjectLibrary\SVObjectManagerClass.h"
 #include "SVSVIMStateClass.h"
 #include "SVDigitalInputObject1.h"
 #include "SVDigitalOutputObject1.h"
@@ -21,7 +21,7 @@
 #include "SVConfigurationObject.h"
 #include "SVHardwareManifest.h"
 #include "ObjectInterfaces\ErrorNumbers.h"
-#include "SVStatusLibrary/ExceptionManager.h"
+#include "SVStatusLibrary\MessageManager.h"
 #include "TextDefinesSvO.h"
 #pragma endregion Includes
 
@@ -172,8 +172,8 @@ BOOL SVIOAdjustDialogClass::OnInitDialog()
 		// Get the number of PPQs
 		if( nullptr == pConfig )
 		{
-			SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
-			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorGettingPPQCount, StdExceptionParams, SvOi::Err_17029_ErrorGettingPPQCount );
+			SvStl::MessageMgrNoDisplay e( SvStl::LogOnly );
+			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorGettingPPQCount, StdMessageParams, SvOi::Err_17029_ErrorGettingPPQCount );
 			DebugBreak();
 		}
 
@@ -210,15 +210,15 @@ BOOL SVIOAdjustDialogClass::OnInitDialog()
 			ppIOEntries.clear();
 			if( nullptr == pPPQ )
 			{
-				SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
-				e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorGettingPPQ, StdExceptionParams, SvOi::Err_17030_ErrorGettingPPQ );
+				SvStl::MessageMgrNoDisplay e( SvStl::LogOnly );
+				e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorGettingPPQ, StdMessageParams, SvOi::Err_17030_ErrorGettingPPQ );
 				DebugBreak();
 			}
 			// Get list of available outputs
 			else if( !pPPQ->GetAllOutputs( ppIOEntries ) )
 			{
-				SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
-				e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorGettingOutputs, StdExceptionParams, SvOi::Err_17031_ErrorGettingOutputs );
+				SvStl::MessageMgrNoDisplay e( SvStl::LogOnly );
+				e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvO::ErrorGettingOutputs, StdMessageParams, SvOi::Err_17031_ErrorGettingOutputs );
 				DebugBreak();
 			}
 

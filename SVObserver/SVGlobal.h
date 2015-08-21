@@ -13,7 +13,6 @@
 
 #include <map>
 #include "SVMatroxLibrary/SVMatroxLibrary.h"
-#include "SVStatusLibrary/SVException.h"
 #include "SVMessage/SVMessage.h"
 
 typedef std::pair<CString, CString> StrStrPair;

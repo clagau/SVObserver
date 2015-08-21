@@ -36,7 +36,7 @@ public:
 	///  is contained within itself (the ROI).  If so it returns itself (this),
 	///  otherwise returns a nullptr.
 	virtual SVTaskObjectClass *GetObjectAtPoint(const SVExtentPointStruct &rsvPoint) override;
-	virtual HRESULT DoesObjectHaveExtents() const override;
+	virtual bool DoesObjectHaveExtents() const override;
 	
 	/// GetInputImageNames
 	///  Retrieves source image name from m_svSourceImageName.

@@ -229,6 +229,7 @@ public:
 	virtual CDocument* OpenDocumentFile(LPCTSTR FileName);
 	virtual void Serialize(CArchive& ar);
 	virtual int ExitInstance();
+	virtual int Run();
 	//}}AFX_VIRTUAL
 #pragma endregion AFX_VIRTUAL Methods
 

@@ -15,7 +15,6 @@
 
 #include "SVObjectLibrary\SVObjectManagerClass.h"
 #include "SVTreeLibrary\ObjectSelectorItem.h"
-#include "SVSystemLibrary\LoadDll.h"
 #include "ResizablePropertySheet.h"
 #include "ObjectSelectorPpg.h"
 #include "ObjectFilterPpg.h"

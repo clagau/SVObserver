@@ -13,10 +13,11 @@
 #include "stdafx.h"
 #include "SVExternalToolTask.h"
 
-#include "SVImageLibrary/SVImageBufferHandleImage.h"
-#include "SVObjectLibrary/SVAnalyzerLevelCreateStruct.h"
-#include "SVObjectLibrary/SVObjectManagerClass.h"
-#include "SVOMFCLibrary/SVOINIClass.h"
+#include "SVImageLibrary\SVImageBufferHandleImage.h"
+#include "SVObjectLibrary\SVAnalyzerLevelCreateStruct.h"
+#include "SVObjectLibrary\SVObjectManagerClass.h"
+#include "SVOMFCLibrary\SVOINIClass.h"
+#include "SVStatusLibrary\MessageHandler.h"
 
 #include "SVExternalTool.h"
 #include "SVGetObjectDequeByTypeVisitor.h"
@@ -396,9 +397,9 @@ BOOL SVExternalToolTask::CreateObject( SVObjectLevelCreateStruct* PCreateStructu
 			{
 				hr = Initialize();
 			}
-			catch (SVErrorException& e)
+			catch ( const SvStl::MessageHandler& e)
 			{
-				hr = e.info().hr;
+				hr = static_cast<HRESULT> (e.getMessage().m_MessageCode);
 			}
 
 			l_bOk = TRUE;
@@ -410,7 +411,7 @@ BOOL SVExternalToolTask::CreateObject( SVObjectLevelCreateStruct* PCreateStructu
 	return l_bOk;
 }
 
-HRESULT SVExternalToolTask::Initialize(	SVDllLoadLibraryCallback fnNotify )// throw (SVErrorException)
+HRESULT SVExternalToolTask::Initialize(	SVDllLoadLibraryCallback fnNotify )
 {
 
 	HRESULT hr = S_FALSE;
@@ -444,9 +445,9 @@ HRESULT SVExternalToolTask::Initialize(	SVDllLoadLibraryCallback fnNotify )// th
 	{
 		hr = m_dll.Open(strDllPath, fnNotify);
 	}
-	catch (SVErrorException& e)
+	catch( const SvStl::MessageHandler& e )
 	{
-		m_hrInitialized = e.info().hr;
+		m_hrInitialized = static_cast<HRESULT> (e.getMessage().m_MessageCode);
 		throw;
 	}
 
@@ -1820,9 +1821,9 @@ HRESULT SVExternalToolTask::ResetObject()
 	{
 		hr = Initialize( SVDllLoadLibraryCallbackDefault() );
 	}
-	catch (SVErrorException& e)
+	catch ( const SvStl::MessageHandler& e)
 	{
-		hr = e.info().hr;
+		hr = static_cast<HRESULT> (e.getMessage().m_MessageCode);
 	}
 
 	return hr;

@@ -273,9 +273,9 @@ SVTaskObjectClass* SVPerspectiveToolClass::GetObjectAtPoint( const SVExtentPoint
 	return l_psvObject;
 }
 
-HRESULT SVPerspectiveToolClass::DoesObjectHaveExtents() const
+bool SVPerspectiveToolClass::DoesObjectHaveExtents() const
 {
-	return S_OK;
+	return true;
 }
 
 HRESULT SVPerspectiveToolClass::IsInputImage( SVImageClass *p_psvImage )

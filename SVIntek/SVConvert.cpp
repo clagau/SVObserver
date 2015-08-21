@@ -11,7 +11,7 @@
 
 #include "StdAfx.h"
 #include "SVConvert.h"
-#include "convert.c"
+#include "Intek\convert.c"
 
 // ******************************************************************************
 // * LOG HISTORY:

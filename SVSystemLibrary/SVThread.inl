@@ -10,8 +10,9 @@
 //******************************************************************************
 
 #include <tchar.h>
-#include "SVStatusLibrary/SVException.h"
-#include "SVMessage/SVMessage.h"
+#include "SVStatusLibrary\MessageManager.h"
+#include "ObjectInterfaces\ErrorNumbers.h"
+#include "SVMessage\SVMessage.h"
 #include "SVThreadManager.h"
 
 template<typename SVThreadSignalHandler>
@@ -32,7 +33,7 @@ SVThread<SVThreadSignalHandler>::~SVThread()
 template<typename SVThreadSignalHandler>
 DWORD WINAPI SVThread<SVThreadSignalHandler>::ThreadProc( LPVOID lpParam )
 {
-	HRESULT hrOk = S_OK;
+	HRESULT Result = S_OK;
 
 	if( lpParam )
 	{
@@ -92,20 +93,19 @@ DWORD WINAPI SVThread<SVThreadSignalHandler>::ThreadProc( LPVOID lpParam )
 	{
 		DWORD errorCode = GetLastError();
 
-		hrOk = SVMSG_THREAD_EXIT_ERROR;
+		Result = SVMSG_THREAD_EXIT_ERROR;
 
-		SVException l_svLog;
-		l_svLog.SetException(hrOk, _T(__DATE__), _T(__TIME__), _T( "Unknown Thread" ), _T(__FILE__), _T(__LINE__), _T(__TIMESTAMP__), 670, errorCode );
-		l_svLog.LogException();
+		SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+		Exception.setMessage( static_cast<DWORD> (Result), _T( "Unknown Thread" ), StdMessageParams, SvOi::Err_25030_Thread, errorCode );
 	}
 
-	return hrOk;
+	return Result;
 }
 
 template<typename SVThreadSignalHandler>
 HRESULT SVThread<SVThreadSignalHandler>::Create(const SVThreadSignalHandler& threadHandler, LPCTSTR tag, SVThreadAttribute eAttribute )
 {
-	HRESULT l_Status = S_OK;
+	HRESULT Result = S_OK;
 
 	m_tag = tag;
 	m_threadHandler = threadHandler;
@@ -115,13 +115,12 @@ HRESULT SVThread<SVThreadSignalHandler>::Create(const SVThreadSignalHandler& thr
 		m_hShutdown = ::CreateEvent( NULL, TRUE, FALSE, NULL );
 		if (m_hShutdown == NULL)
 		{
-			l_Status = SVMSG_THREAD_CREATION_ERROR;
+			Result = SVMSG_THREAD_CREATION_ERROR;
 
 			DWORD errorCode = GetLastError();
 
-			SVException l_svLog;
-			l_svLog.SetException(l_Status, _T(__DATE__), _T(__TIME__), m_tag.c_str(), _T(__FILE__), _T(__LINE__), _T(__TIMESTAMP__), 667, errorCode);
-			l_svLog.LogException();
+			SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+			Exception.setMessage( static_cast<DWORD> (Result), m_tag.c_str(), StdMessageParams, SvOi::Err_25031_Thread, errorCode );
 		}
 	}
 
@@ -130,13 +129,12 @@ HRESULT SVThread<SVThreadSignalHandler>::Create(const SVThreadSignalHandler& thr
 		m_hThreadComplete = ::CreateEvent( NULL, TRUE, TRUE, NULL );
 		if( m_hThreadComplete == NULL )
 		{
-			l_Status = SVMSG_THREAD_CREATION_ERROR;
+			Result = SVMSG_THREAD_CREATION_ERROR;
 
-			DWORD l_ErrorCode = GetLastError();
+			DWORD errorCode = GetLastError();
 
-			SVException l_svLog;
-			l_svLog.SetException( l_Status, _T( __DATE__ ), _T( __TIME__ ), m_tag.c_str(), _T( __FILE__ ), _T( __LINE__ ), _T( __TIMESTAMP__ ), 669, l_ErrorCode );
-			l_svLog.LogException();
+			SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+			Exception.setMessage( static_cast<DWORD> (Result), m_tag.c_str(), StdMessageParams, SvOi::Err_25032_Thread, errorCode );
 		}
 	}
 
@@ -146,19 +144,18 @@ HRESULT SVThread<SVThreadSignalHandler>::Create(const SVThreadSignalHandler& thr
 
 		if (m_hThread == NULL)
 		{
-			l_Status = SVMSG_THREAD_CREATION_ERROR;
+			Result = SVMSG_THREAD_CREATION_ERROR;
 
 			DWORD errorCode = GetLastError();
 
-			SVException l_svLog;
-			l_svLog.SetException(l_Status, _T(__DATE__), _T(__TIME__), m_tag.c_str(), _T(__FILE__), _T(__LINE__), _T(__TIMESTAMP__), 668, errorCode);
-			l_svLog.LogException();
+			SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+			Exception.setMessage( static_cast<DWORD> (Result), m_tag.c_str(), StdMessageParams, SvOi::Err_25033_Thread, errorCode );
 		}
 		else
 		{
 			SVThreadManager::Instance().Add(m_hThread, tag, eAttribute); // keep track of thread.
 
-			if( l_Status == S_OK )
+			if( Result == S_OK )
 			{
 				unsigned long l_WaitStatus = ::WaitForSingleObject( m_hThreadComplete, 0 );
 
@@ -171,19 +168,18 @@ HRESULT SVThread<SVThreadSignalHandler>::Create(const SVThreadSignalHandler& thr
 
 				if( l_WaitStatus != WAIT_TIMEOUT )
 				{
-					l_Status = SVMSG_THREAD_CREATION_ERROR;
+					Result = SVMSG_THREAD_CREATION_ERROR;
 
-					DWORD l_ErrorCode = GetLastError();
+					DWORD errorCode = GetLastError();
 
-					SVException l_svLog;
-					l_svLog.SetException( l_Status, _T( __DATE__ ), _T( __TIME__ ), m_tag.c_str(), _T( __FILE__ ), _T( __LINE__ ), _T( __TIMESTAMP__ ), 669, l_ErrorCode );
-					l_svLog.LogException();
+					SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+					Exception.setMessage( static_cast<DWORD> (Result), m_tag.c_str(), StdMessageParams, SvOi::Err_25034_Thread, errorCode );
 				}
 			}
 		}
 	}
 
-	return l_Status;
+	return Result;
 }
 
 template<typename SVThreadSignalHandler>
@@ -211,11 +207,10 @@ void SVThread< SVThreadSignalHandler >::Destroy()
 
 			if( ::WaitForSingleObject( m_hThreadComplete, m_timeoutShutdownThread ) != WAIT_OBJECT_0 )
 			{
-				DWORD l_ErrorCode = GetLastError();
+				DWORD errorCode = GetLastError();
 
-				SVException l_svLog;
-				l_svLog.SetException( SVMSG_THREAD_EXIT_ERROR, _T( __DATE__ ), _T( __TIME__ ), m_tag.c_str(), _T( __FILE__ ), _T( __LINE__ ), _T( __TIMESTAMP__ ), 669, l_ErrorCode );
-				l_svLog.LogException();
+				SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+				Exception.setMessage( SVMSG_THREAD_EXIT_ERROR, m_tag.c_str(), StdMessageParams, SvOi::Err_25035_Thread, errorCode );
 
 				::TerminateThread( m_hThread, E_FAIL );
 
@@ -228,11 +223,10 @@ void SVThread< SVThreadSignalHandler >::Destroy()
 		{
 			if( ::WaitForSingleObject( m_hThread, 0 ) == WAIT_TIMEOUT )
 			{
-				DWORD l_ErrorCode = GetLastError();
+				DWORD errorCode = GetLastError();
 
-				SVException l_svLog;
-				l_svLog.SetException( SVMSG_THREAD_EXIT_ERROR, _T( __DATE__ ), _T( __TIME__ ), m_tag.c_str(), _T( __FILE__ ), _T( __LINE__ ), _T( __TIMESTAMP__ ), 669, l_ErrorCode );
-				l_svLog.LogException();
+				SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+				Exception.setMessage( SVMSG_THREAD_EXIT_ERROR, m_tag.c_str(), StdMessageParams, SvOi::Err_25036_Thread, errorCode );
 
 				::TerminateThread( m_hThread, E_FAIL );
 			}

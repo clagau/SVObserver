@@ -12,7 +12,7 @@
 #ifndef _SVCONVERT_H
 #define _SVCONVERT_H
 
-#include "convert.h"
+#include "Intek\convert.h"
 
 #endif // _SVCONVERT_H
 

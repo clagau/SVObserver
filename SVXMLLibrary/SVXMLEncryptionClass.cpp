@@ -11,8 +11,8 @@
 
 #include "stdafx.h"
 #include "SVXMLEncryptionClass.h"
-
-#include "SVStatusLibrary/SVStatusCodes.h"
+#include "SVMessage\SVMessage.h"
+#include "SVUtilityLibrary\SVUtilityGlobals.h"
 
 #include "SVDOM.h"		// SVDOMClass
 #include "SVXMLBase.h"	// g_csSchema; g_wcsEncryption
@@ -182,7 +182,7 @@ HRESULT SVXMLEncryptionClass::Init ()
 		{
 			TRACE ("Counter = %d\n", l_lCounter);
 			hr = Test ();
-			if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+			if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 			{
 				ASSERT (0);
 				break;
@@ -252,7 +252,7 @@ HRESULT SVXMLEncryptionClass::Test ()
 
 
 		hr = l_bstrSourceString.CopyFromWChar (L"breath");
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
@@ -261,7 +261,7 @@ HRESULT SVXMLEncryptionClass::Test ()
 								  l_bstrSourceString, 
 								  &l_bstrEncryptedString);
 
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			ASSERT (0);
 			break;
@@ -278,7 +278,7 @@ HRESULT SVXMLEncryptionClass::Test ()
 
 
 		hr = l_bstrSourceString.CopyFromWChar (L"dragon1");
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
@@ -287,7 +287,7 @@ HRESULT SVXMLEncryptionClass::Test ()
 								  l_bstrSourceString, 
 								  &l_bstrEncryptedString);
 
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			ASSERT (0);
 			break;
@@ -304,7 +304,7 @@ HRESULT SVXMLEncryptionClass::Test ()
 
 
 		hr = l_bstrSourceString.CopyFromWChar (L"12²Money");
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
@@ -313,7 +313,7 @@ HRESULT SVXMLEncryptionClass::Test ()
 								  l_bstrSourceString, 
 								  &l_bstrEncryptedString);
 
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			ASSERT (0);
 			break;
@@ -329,7 +329,7 @@ HRESULT SVXMLEncryptionClass::Test ()
 		}
 
 		hr = l_bstrSourceString.CopyFromWChar (L"Türkey1A2");
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
@@ -338,7 +338,7 @@ HRESULT SVXMLEncryptionClass::Test ()
 								  l_bstrSourceString, 
 								  &l_bstrEncryptedString);
 
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			ASSERT (0);
 			break;
@@ -354,7 +354,7 @@ HRESULT SVXMLEncryptionClass::Test ()
 		}
 
 		hr = l_bstrSourceString.CopyFromWChar (L"Once upon a time I wrote a string.  The purpose of the string was to test the program.  This test must encrypt and decrypt this string.  What happens if the string contains a tab? /t Hopefully all still goes well.  The End.");
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
@@ -363,7 +363,7 @@ HRESULT SVXMLEncryptionClass::Test ()
 								  l_bstrSourceString, 
 								  &l_bstrEncryptedString);
 
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			ASSERT (0);
 			break;
@@ -385,7 +385,7 @@ HRESULT SVXMLEncryptionClass::Test ()
 
 		hr = CreateNameSeed (&l_ulSeedValue);
 //		hr = CreateRandomLong (&l_lSeedValue);
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
@@ -394,7 +394,7 @@ HRESULT SVXMLEncryptionClass::Test ()
 
 //-   6 characters
 		hr = l_bstrSourceString.CopyFromWChar (L"breath");
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
@@ -403,7 +403,7 @@ HRESULT SVXMLEncryptionClass::Test ()
 								  l_bstrSourceString, 
 								  &l_bstrEncryptedString);
 
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			ASSERT (0);
 			break;
@@ -421,14 +421,14 @@ HRESULT SVXMLEncryptionClass::Test ()
 
 //-   7 characters, ending in a digit.
 		hr = l_bstrSourceString.CopyFromWChar (L"dragon1");
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
 
 		hr = CreateNameSeed (&l_ulSeedValue);
 //		hr = CreateRandomLong (&l_lSeedValue);
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
@@ -439,7 +439,7 @@ HRESULT SVXMLEncryptionClass::Test ()
 								  l_bstrSourceString, 
 								  &l_bstrEncryptedString);
 
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			ASSERT (0);
 			break;
@@ -456,7 +456,7 @@ HRESULT SVXMLEncryptionClass::Test ()
 
 		hr = CreateNameSeed (&l_ulSeedValue);
 //		hr = CreateRandomLong (&l_lSeedValue);
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
@@ -464,7 +464,7 @@ HRESULT SVXMLEncryptionClass::Test ()
 		m_ulNameSeed = l_ulSeedValue;
 
 		hr = l_bstrSourceString.CopyFromWChar (L"12²Money");
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
@@ -473,7 +473,7 @@ HRESULT SVXMLEncryptionClass::Test ()
 								  l_bstrSourceString, 
 								  &l_bstrEncryptedString);
 
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			ASSERT (0);
 			break;
@@ -490,7 +490,7 @@ HRESULT SVXMLEncryptionClass::Test ()
 
 		hr = CreateNameSeed (&l_ulSeedValue);
 //		hr = CreateRandomLong (&l_lSeedValue);
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
@@ -498,7 +498,7 @@ HRESULT SVXMLEncryptionClass::Test ()
 		m_ulNameSeed = l_ulSeedValue;
 
 		hr = l_bstrSourceString.CopyFromWChar (L"Türkey1A2");
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
@@ -507,7 +507,7 @@ HRESULT SVXMLEncryptionClass::Test ()
 								  l_bstrSourceString, 
 								  &l_bstrEncryptedString);
 
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			ASSERT (0);
 			break;
@@ -524,7 +524,7 @@ HRESULT SVXMLEncryptionClass::Test ()
 
 		hr = CreateNameSeed (&l_ulSeedValue);
 //		hr = CreateRandomLong (&l_lSeedValue);
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
@@ -532,7 +532,7 @@ HRESULT SVXMLEncryptionClass::Test ()
 		m_ulNameSeed = l_ulSeedValue;
 
 		hr = l_bstrSourceString.CopyFromWChar (L"Once upon a time I wrote a string.  The purpose of the string was to test the program.  This test must encrypt and decrypt this string.  What happens if the string contains a tab? /t Hopefully all still goes well.  The End.");
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
@@ -541,7 +541,7 @@ HRESULT SVXMLEncryptionClass::Test ()
 								  l_bstrSourceString, 
 								  &l_bstrEncryptedString);
 
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			ASSERT (0);
 			break;
@@ -559,14 +559,14 @@ HRESULT SVXMLEncryptionClass::Test ()
 
 
 		hr = l_bstrSourceString.CopyFromWChar (g_wcsBaseNode);
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
 
 		hr = CreateNameSeed (&l_ulSeedValue);
 //		hr = CreateRandomLong (&l_lSeedValue);
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
@@ -576,7 +576,7 @@ HRESULT SVXMLEncryptionClass::Test ()
 								  l_bstrSourceString, 
 								  &l_bstrEncryptedString);
 
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			ASSERT (0);
 			break;
@@ -596,14 +596,14 @@ HRESULT SVXMLEncryptionClass::Test ()
 
 
 		hr = l_bstrSourceString.CopyFromWChar (L"breath");
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
 
 		hr = EncryptNameAttribute (l_bstrSourceString, 
 											&l_bstrEncryptedString);
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			ASSERT (0);
 			break;
@@ -620,14 +620,14 @@ HRESULT SVXMLEncryptionClass::Test ()
 
 
 		hr = l_bstrSourceString.CopyFromWChar (L"dragon1");
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
 
 		hr = EncryptNameAttribute (l_bstrSourceString, 
 											&l_bstrEncryptedString);
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			ASSERT (0);
 			break;
@@ -644,14 +644,14 @@ HRESULT SVXMLEncryptionClass::Test ()
 
 
 		hr = l_bstrSourceString.CopyFromWChar (L"12²Money");
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
 
 		hr = EncryptNameAttribute (l_bstrSourceString, 
 											&l_bstrEncryptedString);
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			ASSERT (0);
 			break;
@@ -667,14 +667,14 @@ HRESULT SVXMLEncryptionClass::Test ()
 		}
 
 		hr = l_bstrSourceString.CopyFromWChar (L"Türkey1A2");
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
 
 		hr = EncryptNameAttribute (l_bstrSourceString, 
 											&l_bstrEncryptedString);
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			ASSERT (0);
 			break;
@@ -690,7 +690,7 @@ HRESULT SVXMLEncryptionClass::Test ()
 		}
 
 		hr = l_bstrSourceString.CopyFromWChar (L"Once upon a time I wrote a string.  The purpose of the string was to test the program.  This test must encrypt and decrypt this string.  What happens if the string contains a tab? /t Hopefully all still goes well.  The End.");
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
@@ -698,7 +698,7 @@ HRESULT SVXMLEncryptionClass::Test ()
 
 		hr = EncryptNameAttribute (l_bstrSourceString, 
 											&l_bstrEncryptedString);
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			ASSERT (0);
 			break;
@@ -826,7 +826,7 @@ HRESULT SVXMLEncryptionClass::SetEncryption ()
 		}
 
 		hr = GetEncryptionBaseNode (l_oEncryptionElementPtr);
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
@@ -851,21 +851,21 @@ HRESULT SVXMLEncryptionClass::SetEncryption ()
 //-	Add Encryption branch base node.
 //-	  <Encryption xmlns="x-schema:#SVR00001" IsActive="TRUE">
 		hr = l_bstrEncryptionBranchName.CopyFromWChar( g_wcsEncryption );
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
 
 		hr = m_opParentXML->CreateElement (l_bstrEncryptionBranchName, 
 							       				  l_oEncryptionElementPtr);
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
 
 
 		hr = l_bstrAttributeName.CopyFromWChar (g_wcsIsActive);
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
@@ -876,7 +876,7 @@ HRESULT SVXMLEncryptionClass::SetEncryption ()
 		l_ccvAttributeValue.Clear ();
 
 		hr = m_opParentXML->GetRootNode (l_oRootElementPtr);
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
@@ -892,14 +892,14 @@ HRESULT SVXMLEncryptionClass::SetEncryption ()
 //-
 
 		hr = l_bstrNameSeedName.CopyFromWChar (g_wcsNameSeed);
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
 
 		hr = CreateNameSeed (&l_ulSeedValue);
 //		hr = CreateRandomLong (&l_lSeedValue);
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
@@ -910,32 +910,32 @@ HRESULT SVXMLEncryptionClass::SetEncryption ()
 //-   -1 will show that we are in encryption setup, where all attributes 
 //-	should be encoded using Method 1.
 		hr = SetEncryptionMethod (-1);
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
 
 		hr = m_opParentXML->CreateDOMData (l_oDOMDataPtr, l_bstrNameSeedName, &l_vElementValue);
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
 
 		hr = SetEncryptionMethod (0);
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
 
 		hr = m_opParentXML->AppendChildToDOMNode (l_oEncryptionElementPtr, l_oDOMDataPtr);
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
 
 
 		hr = m_opParentXML->AppendChildToDOMNode (l_oRootElementPtr, l_oEncryptionElementPtr);
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
@@ -998,7 +998,7 @@ HRESULT SVXMLEncryptionClass::LoadEncryption ()
 
 
 		hr = GetEncryptionBaseNode (l_oEncryptionBaseNodePtr);
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
@@ -1073,7 +1073,7 @@ HRESULT SVXMLEncryptionClass::LoadEncryption ()
 			}
 			
 			hr = DecryptString (l_vName.bstrVal, &l_bstrDecryptedName);
-			if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+			if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 			{
 				break;
 			}
@@ -1094,7 +1094,7 @@ HRESULT SVXMLEncryptionClass::LoadEncryption ()
 
 				l_bstrValue = l_oChildPtr->Gettext ();
 				hr = DecryptString (l_bstrValue, &l_bstrDecryptedNameSeed);
-				if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+				if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 				{
 					break;
 				}
@@ -1113,7 +1113,7 @@ HRESULT SVXMLEncryptionClass::LoadEncryption ()
 			l_oOldPtr = l_oChildPtr;
 		} // for (l_lCounter = 0; ....
 
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
@@ -1172,7 +1172,7 @@ HRESULT SVXMLEncryptionClass::GetEncryptionBaseNode (
 
 
 		hr = m_opParentXML->GetRootNode (l_oRootElementPtr);
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
@@ -1184,7 +1184,7 @@ HRESULT SVXMLEncryptionClass::GetEncryptionBaseNode (
 		}
 
 		hr = m_opParentXML->GetNameSpace (l_wcsNameSpace, sizeof (l_wcsNameSpace));
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
@@ -1193,7 +1193,7 @@ HRESULT SVXMLEncryptionClass::GetEncryptionBaseNode (
 		l_bstrQueryNameSpace = (BSTR)((_bstr_t) g_csXMLNS + ":SVR1=\"x-schema:#" + (_bstr_t) g_csSVR00001SchemaName + "\"");
 
 		hr = m_opParentXML->SetQueryNameSpace (l_bstrQueryNameSpace);
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
@@ -1330,7 +1330,7 @@ HRESULT SVXMLEncryptionClass::EncryptNameAttribute (BSTR		p_bstrSourceString,
 	while (1)
 	{
 		hr = p_bstrpEncryptedString->Clear ();
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
@@ -1472,7 +1472,7 @@ HRESULT SVXMLEncryptionClass::DecryptNameAttribute (BSTR		p_bstrEncryptedString,
 	while (1)
 	{
 		hr = p_bstrpDecryptedString->Clear ();
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
@@ -1480,7 +1480,7 @@ HRESULT SVXMLEncryptionClass::DecryptNameAttribute (BSTR		p_bstrEncryptedString,
 		if (p_bstrEncryptedString == NULL)
 		{
 			hr = p_bstrpDecryptedString->SetNULL ();
-			if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+			if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 			{
 				break;
 			}
@@ -1494,7 +1494,7 @@ HRESULT SVXMLEncryptionClass::DecryptNameAttribute (BSTR		p_bstrEncryptedString,
 		if (l_lEncryptedStringLength == 0) 
 		{
 			hr = p_bstrpDecryptedString->CopyFromWChar (L"");
-			if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+			if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 			{
 				break;
 			}
@@ -1556,7 +1556,7 @@ HRESULT SVXMLEncryptionClass::DecryptNameAttribute (BSTR		p_bstrEncryptedString,
 				l_lNewStringLength = static_cast< long >( wcslen( *p_bstrpDecryptedString ) );
 
 				hr = p_bstrpDecryptedString->SetLength (l_lNewStringLength);
-				if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+				if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 				{
 					break;
 				}
@@ -1666,7 +1666,7 @@ if (g_lTempDevelopment < 10)
 
 
 		hr = p_bstrpEncryptedString->Clear ();
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
@@ -1674,7 +1674,7 @@ if (g_lTempDevelopment < 10)
 		if (p_bstrSourceString == NULL)
 		{
 			hr = p_bstrpEncryptedString->SetNULL ();
-			if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+			if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 			{
 				break;
 			}
@@ -1687,7 +1687,7 @@ if (g_lTempDevelopment < 10)
 		if (l_lSourceStringLength == 0)
 		{
 			hr = p_bstrpEncryptedString->CopyFromWChar (L"");
-			if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+			if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 			{
 				break;
 			}
@@ -1696,7 +1696,7 @@ if (g_lTempDevelopment < 10)
 		}
 
 		hr = p_bstrpEncryptedString->PreAllocate (l_lSourceStringLength * 4);
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
@@ -1709,13 +1709,13 @@ if (g_lTempDevelopment < 10)
 				hr = JumpTracking1Initialization (l_lSourceStringLength, 
 					                               &l_lpTrackJumping, 
 															 &l_lMaxTrackingLength);
-				if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+				if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 				{
 					break;
 				}
 
 				hr = CreateRandomLong (&l_ulEmbeddedSeed);
-				if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+				if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 				{
 					break;
 				}
@@ -1726,7 +1726,7 @@ if (g_lTempDevelopment < 10)
 				hr = CalculateEncryptionChecksum (p_bstrSourceString, 
 															 0x0000000f,
 															 (unsigned long*) &l_lChecksumSeed);
-				if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+				if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 				{
 					break;
 				}
@@ -1743,7 +1743,7 @@ if (g_lTempDevelopment < 10)
 //				hr = JumpTracking1Initialization (l_lSourceStringLength, 
 //					                               &l_lpTrackJumping, 
 //															 &l_lMaxTrackingLength);
-//				if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+//				if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 //				{
 //					break;
 //				}
@@ -1751,7 +1751,7 @@ if (g_lTempDevelopment < 10)
 				hr = CalculateEncryptionChecksum (p_bstrSourceString, 
 															 0x00ffffff,
 															 &l_ulEmbeddedSeed);
-				if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+				if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 				{
 					break;
 				}
@@ -1805,7 +1805,7 @@ if (g_lTempDevelopment < 10)
 													l_lpTrackJumping,
 													&l_lFirstTrackingUnused,
 													&l_oNewValueUnion);
-					if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+					if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 					{
 						break;
 					}
@@ -1822,7 +1822,7 @@ if (g_lTempDevelopment < 10)
 													&l_lCurrentSourceIndex,
 													&l_lCurrentDestinationIndex,
 					       						&l_oNewValueUnion);
-					if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+					if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 					{
 						break;
 					}
@@ -1836,7 +1836,7 @@ if (g_lTempDevelopment < 10)
 				}
 			}
 
-			if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+			if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 			{
 				break;
 			}
@@ -1892,7 +1892,7 @@ if (l_lTempDevelopment)
 
 
 		hr = FindChecksumParity (p_bstrpEncryptedString, l_lChecksumSeed, &l_ulChecksumParity);
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
@@ -1921,7 +1921,7 @@ if (l_lTempDevelopment)
 														 0x0000000f,
 			                                  (unsigned long*) &l_lChecksumTest);
 
-			if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+			if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 			{
 				break;
 			}
@@ -1987,7 +1987,7 @@ HRESULT SVXMLEncryptionClass::Method1Encryption (
 		*p_lpCurrentDestinationIndex = *p_lpNextDestinationIndex;
 
 		hr = CreateRandomLong (&l_ulTempRand1);
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
@@ -2036,13 +2036,13 @@ HRESULT SVXMLEncryptionClass::Method1Encryption (
 		if (l_lUseFiller == TRUE)
 		{
 			hr = CreateRandomLong (&l_ulTempRand1);
-			if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+			if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 			{
 				break;
 			}
 
 			hr = CreateRandomLong (&l_ulTempRand2);
-			if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+			if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 			{
 				break;
 			}
@@ -2052,7 +2052,7 @@ HRESULT SVXMLEncryptionClass::Method1Encryption (
 
 //-		50% change bits 42&45 being cleared or set.  Both must be same.
 			hr = SetFiller (TRUE, 2, p_opNewValueUnion);
-			if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+			if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 			{
 				break;
 			}
@@ -2060,7 +2060,7 @@ HRESULT SVXMLEncryptionClass::Method1Encryption (
 		else // filler not used.
 		{
 			hr = SetFiller (FALSE, 3, p_opNewValueUnion);
-			if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+			if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 			{
 				break;
 			}
@@ -2075,7 +2075,7 @@ if (g_lTempDevelopment < 10)
 
 
 			hr = SetPadding (p_lSourceStringLength, *p_lpCurrentSourceIndex, &l_ulTempSourceValue);
-			if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+			if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 			{
 				break;
 			}
@@ -2116,7 +2116,7 @@ if (g_lTempDevelopment < 10)
 					                 (p_ulEmbeddedSeed & 0x55555555));
 			
 			hr = CreateRandomLong (&l_ulTempRand1);
-			if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+			if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 			{
 				break;
 			}
@@ -2133,7 +2133,7 @@ if (g_lTempDevelopment < 10)
 			if ((l_ulTempRand1 % 100) <= 6)
 			{
 				hr = SetCharSeed (TRUE, p_opNewValueUnion);
-				if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+				if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 				{
 					break;
 				}
@@ -2155,7 +2155,7 @@ if (g_lTempDevelopment < 10)
 			else
 			{
 				hr = SetCharSeed (FALSE, p_opNewValueUnion);
-				if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+				if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 				{
 					break;
 				}
@@ -2172,7 +2172,7 @@ if (g_lTempDevelopment < 10)
 		hr = SetMethod (1, p_opNewValueUnion);
 //		p_opNewValueUnion->wcharValue [2] = (p_opNewValueUnion->wcharValue [2] & 0xff87) | 
 //			                               0x0008;	// Encryption method 1.
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
@@ -2192,7 +2192,7 @@ if (g_lTempDevelopment < 10)
 		}
 
 		hr = CreateRandomLong (&l_ulTempRand1);
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
@@ -2262,7 +2262,7 @@ if (g_lTempDevelopment < 10)
 		}
 
 		hr = SetRelativeJump (l_lRelativeJump, p_opNewValueUnion);
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
@@ -2316,13 +2316,13 @@ HRESULT SVXMLEncryptionClass::Method2Encryption (
 		hr = SetFiller (FALSE, -1, p_opNewValueUnion);  // -1 means that the 
 																		// format will not be
 																		// random.
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
 
 		hr = SetMethod (2, p_opNewValueUnion);
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
@@ -2330,7 +2330,7 @@ HRESULT SVXMLEncryptionClass::Method2Encryption (
 		l_ulTempSourceValue = *((unsigned long *) p_cpSourceChars);
 
 		hr = SetPadding (p_lSourceStringLength, *p_lpCurrentSourceIndex, &l_ulTempSourceValue);
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
@@ -2367,7 +2367,7 @@ if (g_lTempDevelopment < 10)
 		if ((l_ulTempResultValue % 2) == 0)
 		{
 			hr = SetCharSeed (TRUE, p_opNewValueUnion);
-			if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+			if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 			{
 				break;
 			}
@@ -2375,7 +2375,7 @@ if (g_lTempDevelopment < 10)
 		else
 		{
 			hr = SetCharSeed (FALSE, p_opNewValueUnion);
-			if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+			if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 			{
 				break;
 			}
@@ -2387,7 +2387,7 @@ if (g_lTempDevelopment < 10)
 //-   Relative Jump bits are set, but is not used.
 		l_lRelativeJump = p_lChecksumSeed % 8;
 		hr = SetRelativeJump (l_lRelativeJump, p_opNewValueUnion);
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
@@ -2443,7 +2443,7 @@ HRESULT SVXMLEncryptionClass::DecryptString (BSTR	   p_bstrEncryptedString,
 	while (1)
 	{
 		hr = p_bstrpDecryptedString->Clear ();
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
@@ -2451,7 +2451,7 @@ HRESULT SVXMLEncryptionClass::DecryptString (BSTR	   p_bstrEncryptedString,
 		if (p_bstrEncryptedString == NULL)
 		{
 			hr = p_bstrpDecryptedString->SetNULL ();
-			if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+			if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 			{
 				break;
 			}
@@ -2465,7 +2465,7 @@ HRESULT SVXMLEncryptionClass::DecryptString (BSTR	   p_bstrEncryptedString,
 		if (l_lEncryptedLength == -5) 
 		{
 			hr = p_bstrpDecryptedString->CopyFromWChar (L"");
-			if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+			if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 			{
 				break;
 			}
@@ -2474,7 +2474,7 @@ HRESULT SVXMLEncryptionClass::DecryptString (BSTR	   p_bstrEncryptedString,
 		}
 
 		hr = p_bstrpDecryptedString->PreAllocate (l_lEncryptedLength);
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
@@ -2484,7 +2484,7 @@ HRESULT SVXMLEncryptionClass::DecryptString (BSTR	   p_bstrEncryptedString,
 		hr = CalculateEncryptionChecksum (p_bstrEncryptedString, 
 			                               0x0000000f,
 			                               &l_ulChecksumSeed);
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
@@ -2627,7 +2627,7 @@ HRESULT SVXMLEncryptionClass::DecryptString (BSTR	   p_bstrEncryptedString,
 				}
 
 
-				if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+				if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 				{
 					break;
 				}
@@ -2844,7 +2844,7 @@ HRESULT SVXMLEncryptionClass::CalculateEncryptionChecksum (BSTR				p_bstrString,
 		break;
 	}// while (1)
 
-	if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+	if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 	{
 		*p_ulpCheckSum = 0;
 	}
@@ -2883,7 +2883,7 @@ HRESULT SVXMLEncryptionClass::FindChecksumParity (SVBStr*			p_bstrEncryptedStrin
 		hr = CalculateEncryptionChecksum (*p_bstrEncryptedString, 
 													 0x0000000f,
 													 &l_ulEncryptionChecksum);
-		if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+		if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 		{
 			break;
 		}
@@ -2975,7 +2975,7 @@ HRESULT SVXMLEncryptionClass::SetFiller (long				p_lValue,
 			l_lMod = p_lOption;
 
 			hr = CreateRandomLong (&l_ulRand);
-			if( SV_SEVERITY( hr ) != SV_LEVEL_SUCCESS )
+			if( SEV_SUCCESS != SV_SEVERITY( hr ) )
 			{
 				break;
 			}

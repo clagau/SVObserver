@@ -15,13 +15,13 @@
 #include <boost/config.hpp>
 #include <boost/assign.hpp>
 #include "SVInspectionTreeParser.h"
-#include "SVXMLLibrary/SVNavigateTreeClass.h"
-#include "SVObjectLibrary/SVObjectBuilder.h"
-#include "SVObjectLibrary/SVObjectManagerClass.h"
-#include "SVConfigurationLibrary/SVConfigurationTags.h"
-#include "SVObjectLibrary/SVToolsetScriptTags.h"
+#include "SVXMLLibrary\SVNavigateTreeClass.h"
+#include "SVObjectLibrary\SVObjectBuilder.h"
+#include "SVObjectLibrary\SVObjectManagerClass.h"
+#include "SVConfigurationLibrary\SVConfigurationTags.h"
+#include "SVObjectLibrary\SVToolsetScriptTags.h"
 #include "SVInspectionProcess.h"
-#include "SVStatusLibrary/ExceptionManager.h"
+#include "SVStatusLibrary\MessageManager.h"
 #include "ObjectInterfaces\ErrorNumbers.h"
 #pragma endregion Includes
 
@@ -636,8 +636,8 @@ HRESULT SVInspectionTreeParser< SVTreeType >::CreateInspectionObject(GUID& inspe
 		}
 		else
 		{
-			SvStl::ExceptionMgr1 e; // The default constructor sets the type to LogOnly.
-			e.setMessage( SVMSG_SVO_57_PARSERTREE_INSPECTIONCREATE_ERROR, nullptr, StdExceptionParams, SvOi::Err_10010_TreeParser_InspectionCreateFailed );
+			SvStl::MessageMgrNoDisplay e( SvStl::LogOnly );
+			e.setMessage( SVMSG_SVO_57_PARSERTREE_INSPECTIONCREATE_ERROR, nullptr, StdMessageParams, SvOi::Err_10010_TreeParser_InspectionCreateFailed );
 			hr = -SvOi::Err_10010_TreeParser_InspectionCreateFailed;
 		}
 	}

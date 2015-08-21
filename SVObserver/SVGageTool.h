@@ -40,7 +40,7 @@ public:
 	virtual BOOL CloseObject();
 	virtual BOOL OnValidate();
 
-	virtual HRESULT DoesObjectHaveExtents() const;
+	virtual bool DoesObjectHaveExtents() const override;
 
 	virtual BOOL SetObjectDepth( int NewObjectDepth );
 	virtual BOOL SetObjectDepthWithIndex( int NewObjectDepth, int NewLastSetIndex );

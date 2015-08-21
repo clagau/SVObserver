@@ -299,9 +299,9 @@ HRESULT ResizeTool::CollectInputImageNames(SVRunStatusClass& RRunStatus)
 	return hr;
 }
 
-HRESULT ResizeTool::DoesObjectHaveExtents() const
+bool ResizeTool::DoesObjectHaveExtents() const
 {
-	return S_OK;
+	return true;
 }
 
 HRESULT ResizeTool::GetInputImageNames( SVStringValueObjectClass*& p_pSourceNames )
