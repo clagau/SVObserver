@@ -423,8 +423,9 @@ HRESULT SVStdImageOperatorListClass::ResetObject()
 	if (pImage)
 	{
 		SVImageInfoClass imageInfo = pImage->GetImageInfo();
-		SVMatroxImageProcessingClass::Instance().CreateImageMilBuffer(imageInfo, m_milTmpImageObjectInfo1);
-		SVMatroxImageProcessingClass::Instance().CreateImageMilBuffer(imageInfo, m_milTmpImageObjectInfo2);
+		imageInfo.setDibBufferFlag(false);
+		SVMatroxImageProcessingClass::Instance().CreateImageBuffer(imageInfo, m_milTmpImageObjectInfo1);
+		SVMatroxImageProcessingClass::Instance().CreateImageBuffer(imageInfo, m_milTmpImageObjectInfo2);
 	}
 
 	return l_hrOk;

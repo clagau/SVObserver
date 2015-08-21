@@ -28,14 +28,14 @@ public:
 
 	virtual ~SVMatroxImageProcessingClass();
 
-	HRESULT CreateImageBuffer( const SVImageInfoClass& rInfo, SVSmartHandlePointer& rHandle );
 	//************************************
-	//! Create a image mil buffer
+	//! Create a image buffer
 	//! \param rInfo [in] information data for the new image
 	//! \param rHandle [out] handle to the new image
 	//! \returns HRESULT
 	//************************************
-	HRESULT CreateImageMilBuffer( const SVImageInfoClass& rInfo, SVSmartHandlePointer& rHandle );
+	HRESULT CreateImageBuffer( const SVImageInfoClass& rInfo, SVSmartHandlePointer& rHandle );
+
 	HRESULT CreateImageBuffer( const SVSmartHandlePointer& rFromHandle, SVImageOperationTypeEnum p_lConversionType, SVSmartHandlePointer& rToHandle );
 
 	HRESULT CreateImageChildBuffer( const SVImageInfoClass& rParentInfo, SVSmartHandlePointer rParentHandle,

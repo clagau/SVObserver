@@ -307,6 +307,7 @@ HRESULT SVArchiveRecord::AllocateBuffers( long lBufferSize )
 	if ( pImage )
 	{
 		SVImageInfoClass info = pImage->GetImageInfo();
+		info.setDibBufferFlag(false);
 		m_ImageInfo = info;
 
 		BSTR bstrName;

@@ -108,10 +108,12 @@ HRESULT RingBufferTool::ResetObject()
 				m_ringBuffer.resize(ringBufferDepth);
 				m_isBufferFull = false;
 				m_nextBufferPos = 0;
+				
+				imageInfo.setDibBufferFlag(false);
 				for (int i=0; i<ringBufferDepth; i++)
 				{
 					SVSmartHandlePointer imageHandle;
-					SVMatroxImageProcessingClass::Instance().CreateImageMilBuffer(imageInfo, imageHandle);
+					SVMatroxImageProcessingClass::Instance().CreateImageBuffer(imageInfo, imageHandle);
 					m_ringBuffer[i] = imageHandle;
 				}
 			}

@@ -53,6 +53,7 @@ const SVImageInfoClass &SVImageInfoClass::operator=( const SVImageInfoClass &p_r
 		m_OwnerObjectID = p_rsvValue.m_OwnerObjectID;
 		m_svExtents = p_rsvValue.m_svExtents;
 		m_svProperties = p_rsvValue.m_svProperties;
+		m_isDibBuffer = p_rsvValue.m_isDibBuffer;
 
 		m_svExtents.UpdateData();
 	}
@@ -102,6 +103,7 @@ const SVImageInfoClass &SVImageInfoClass::operator=( const BITMAPINFOHEADER& p_r
 HRESULT SVImageInfoClass::Initialize()
 {
 	HRESULT l_hrOk = S_OK;
+	m_isDibBuffer = true;
 
 	m_OwnerImageID.clear();
 

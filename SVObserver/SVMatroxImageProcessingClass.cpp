@@ -75,42 +75,18 @@ HRESULT SVMatroxImageProcessingClass::CreateImageBuffer( const SVImageInfoClass&
 			}
 		default:
 			{
-				format = SVBufAttImageProcDib;
+				if (!rInfo.getDibBufferFlag())
+				{
+					format = SVBufAttImageProc;
+				}
+				else
+				{
+					format = SVBufAttImageProcDib;
+				}
 			}
 		}
 
 		hrOk = CreateImageBuffer(l_iPixelDepth, l_iBandNumber, l_lWidth, l_lHeight, format, rHandle);
-	}
-
-	if ( S_OK != hrOk && !bDisplayedErrorMessage )
-	{
-		ASSERT(FALSE);
-		AfxMessageBox( "Failed to create an image buffer!", MB_ICONEXCLAMATION );
-	}
-
-	return hrOk;
-}
-
-HRESULT SVMatroxImageProcessingClass::CreateImageMilBuffer( const SVImageInfoClass& rInfo, SVSmartHandlePointer& rHandle )
-{
-	HRESULT hrOk = S_OK;
-
-	bool bDisplayedErrorMessage = false;
-
-	SVImageFormatEnum format;
-	int bandNumber = 0;
-	int bandLink = 0;
-	int pixelDepth = 0;
-	long width = 0;
-	long height = 0;
-
-	rHandle.clear();
-
-	hrOk = GetOutputImageCreateData( rInfo, format, pixelDepth, bandNumber, bandLink, width, height );
-
-	if (S_OK == hrOk)
-	{
-		hrOk = CreateImageBuffer(pixelDepth, bandNumber, width, height, SVBufAttImageProc, rHandle);
 	}
 
 	if ( S_OK != hrOk && !bDisplayedErrorMessage )

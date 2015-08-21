@@ -83,13 +83,16 @@ public:
 	BITMAPINFOHEADER GetBitmapInfoHeader() const;
 	operator BITMAPINFOHEADER () const;
 
+	void setDibBufferFlag(bool isDibBuffer) { m_isDibBuffer = isDibBuffer; };
+	bool getDibBufferFlag() const { return m_isDibBuffer; };
+
 private:
 	SVGUID m_OwnerImageID;
 	SVGUID m_OwnerObjectID;
 
 	SVImageExtentClass m_svExtents;
 	SVImagePropertiesClass m_svProperties;
-
+	bool m_isDibBuffer;
 };
 
 #include "SVImageInfoClass.inl"

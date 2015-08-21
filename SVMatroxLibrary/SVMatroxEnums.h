@@ -106,7 +106,7 @@ enum SVMatroxBufferAttributeEnum
 
 
 	// Mono8
-	SVBuffAttImageProcPackedOffBoardDibPaged = SVBufAttImage | SVBufAttProc | SVBufAttPacked | SVBufAttOffBoard | SVBufAttDib | SVBufAttPaged | SVBufAttNoFlip,
+	//SVBuffAttImageProcPackedOffBoardDibPaged = SVBufAttImage | SVBufAttProc | SVBufAttPacked | SVBufAttOffBoard | SVBufAttDib | SVBufAttPaged | SVBufAttNoFlip,
 	// RGB565
 	SVBuffAttImageProcPackedOffBoardDibPagedRgb16 = SVBufAttImage | SVBufAttProc | SVBufAttPacked | SVBufAttOffBoard | SVBufAttDib | SVBufAttPaged | SVBufAttRgb16 | SVBufAttNoFlip,
 	// RGB888
