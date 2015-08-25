@@ -1056,15 +1056,13 @@ void SVProductInfoStruct::SetProductComplete()
 {
 	if( 0 < m_ProductActive )
 	{
-		// Set ObjectManager product active to 0, then set local 
-		// SVProductInfoStruct product active to 0.
 		SVObjectManagerClass::Instance().AdjustProductIndicator( -m_ProductActive );
 
 		::InterlockedExchange( &m_ProductActive, 0 );
 	}
 
 	SVGUIDSVInspectionInfoStructMap::iterator l_svInspectionIter = m_svInspectionInfos.begin();
-	
+
 	while( l_svInspectionIter != m_svInspectionInfos.end() )
 	{
 		l_svInspectionIter->second.m_CanProcess = false;

@@ -140,8 +140,6 @@ HRESULT SVPPQObject::ProcessDelayOutputs( bool& p_rProcessed )
 
 		if( l_pProduct != NULL )
 		{
-			// if time delay has not expired yet, then put back on the 
-			// m_oOutputsDelayQueue.  Then why did we remove it to begin with?
 			if( l_CurrentTime < l_pProduct->oOutputsInfo.m_EndOutputDelay )
 			{
 				m_NextOutputDelayTimestamp = l_pProduct->oOutputsInfo.m_EndOutputDelay;
@@ -1755,15 +1753,6 @@ BOOL SVPPQObject::GoOffline()
 		SVSharedMemorySingleton::Instance().ErasePPQSharedMemory(GetUniqueObjectID());
 	}
 
-/*	//make sure all queues are cleard
-	m_oTriggerQueue.clear();
-	m_oCamerasQueue.clear();
-	m_oOutputsDelayQueue.clear();
-	m_CameraResponseQueue.clear();
-	m_PendingCameraResponses.clear();
-	m_oNotifyInspectionsSet.clear();
-	m_ProcessInspectionsSet.clear();
-*/
 	return TRUE;
 }// end GoOffline
 
@@ -1815,10 +1804,6 @@ BOOL SVPPQObject::RemoveInput( SVIOEntryHostStructPtr pInput )
 	return l_Status;
 }
 
-// AssignInputs () ----------------------------------------------------------
-// This is only ever called from SVPPQObject::InitializeProduct ().
-// InitializeProduct () is only ever called from ProcessTrigger ().
-
 BOOL SVPPQObject::AssignInputs( const SVVariantBoolVector& p_rInputValues )
 {
 	for( size_t i = 0; i < m_UsedInputs.size(); i++ )
@@ -1846,11 +1831,6 @@ BOOL SVPPQObject::AssignInputs( const SVVariantBoolVector& p_rInputValues )
 					l_pIOEntry.m_EntryValid = true;
 				}
 
-				// @Warning - I believe this is redundent.  AssignInputs () 
-				// is only processed through ProcessTrigger (), where it is 
-				// also inserted.  Should not cause a problem because it is an
-				// std::set, but only needs done in one place and that should
-				// be within ProcessTrigger ().
 				m_oNotifyInspectionsSet.insert( l_pProduct->ProcessCount() );
 			}
 		}
@@ -2407,7 +2387,7 @@ BOOL SVPPQObject::WriteOutputs( SVProductInfoStruct *pProduct )
 BOOL SVPPQObject::ResetOutputs()
 {
 	BOOL l_bRet = FALSE;
-
+	// TRACE( "%s - PPQ Reset Outputs \n", GetName() );
 	if( !( m_pDataValid.empty() ) )
 	{
 		m_pDataValid->m_Enabled = TRUE;
@@ -2822,12 +2802,9 @@ BOOL SVPPQObject::InitializeProduct( SVProductInfoStruct* p_pNewProduct, const S
 	return TRUE;
 }// end IndexPPQ
 
-
-// p_Offset represents PPQ position of product.
 HRESULT SVPPQObject::NotifyInspections( long p_Offset )
 {
-	HRESULT l_Status = S_OK; 
-	long triggerCount = -1;
+	HRESULT l_Status = S_OK;
 
 	// ************************************************************************
 	// Now we need to check if any inspections were waiting on inputs read after
@@ -2838,8 +2815,6 @@ HRESULT SVPPQObject::NotifyInspections( long p_Offset )
 	{
 		SVProductInfoStruct* pTempProduct = m_ppPPQPositions.GetProductAt( p_Offset );
 
-		triggerCount = pTempProduct->oTriggerInfo.lTriggerCount;
-
 		// See if the Inspection Processes can inspect this product
 		int iSize = m_arInspections.GetSize();
 
@@ -2848,17 +2823,9 @@ HRESULT SVPPQObject::NotifyInspections( long p_Offset )
 		for( int i = 0; i < iSize; i++ )
 		{
 			SVInspectionInfoStruct& l_rInfo = pTempProduct->m_svInspectionInfos[ m_arInspections[ i ]->GetUniqueObjectID() ];
-			bool tmpIsProductActive =	pTempProduct->IsProductActive();
 
-			// if product has not been previously determined that it "can 
-			// process".  That would generally mean that it's been here 
-			// before, and should not be able to happen.
-			if( !( l_rInfo.m_CanProcess ) && !( l_rInfo.m_InProcess ) && tmpIsProductActive)
+			if( !( l_rInfo.m_CanProcess ) && !( l_rInfo.m_InProcess ) && pTempProduct->IsProductActive() )
 			{
-				// Tests if we have all required inputs.  Includes assigned 
-				// discrete inputs and camera images.
-				// If images or inputs are missing, CanProcess will return 
-				// FALSE(0).  m_CanProcess will also equal FALSE.
 				l_rInfo.m_CanProcess = ( m_arInspections[ i ]->CanProcess( pTempProduct ) != FALSE );
 
 				if( l_rInfo.m_CanProcess )
@@ -2877,15 +2844,8 @@ HRESULT SVPPQObject::NotifyInspections( long p_Offset )
 						m_PPQTracking.IncrementCount( l_Title, p_Offset );
 #endif
 					}
-				} //	if( l_rInfo.m_CanProcess )
-				else
-				{
-					// If it can not process, this still does not change the 
-					// l_Status, so the returned status will still be S_OK
-					// which indicates NOT "Processed".
-					l_Status = S_FALSE; // 1
 				}
-			} // if( !( l_rInfo.m_CanProcess ) && !( l_rInfo.m_InProcess ) && pTempProduct->IsProductActive() )
+			}
 		}
 	}
 	else
@@ -2993,6 +2953,8 @@ BOOL SVPPQObject::StartOutputs( SVProductInfoStruct* p_pProduct )
 
 	if( p_pProduct )
 	{
+		// TRACE( "%s - 0x%08X - Output Processing \n", GetName(), pProduct );
+
 		p_pProduct->oOutputsInfo.m_BeginProcess = SVClock::GetTimeStamp();
 		p_pProduct->oOutputsInfo.lOutputDelay = m_lOutputDelay;
 		p_pProduct->oOutputsInfo.lResetDelay  = m_lResetDelay;
@@ -3074,6 +3036,8 @@ bool SVPPQObject::AddResultsToPPQ( long p_PPQIndex )
 		}// end for
 
 		lIndex = pProduct->oPPQInfo.m_ResultDataDMIndexHandle.GetIndex();
+
+		//TRACE( "%s - AddResultsToPPQ - Product=%d\n", GetName(), pProduct->ProcessCount() );
 
 		// Set the value objects depending on the inspection state result
 		if( PRODUCT_INSPECTION_NOT_RUN & oState )
@@ -3200,11 +3164,7 @@ bool SVPPQObject::SetInspectionComplete( long p_PPQIndex )
 
 	if( bValid )
 	{
-		// Currently only used for Remote Outputs and Fail Status Stream.
-		// returns E_FAIL when there are no listeners/observers.  Not having 
-		// Remote Outputs or Fail Status is not an error in this case.
 		SVObjectManagerClass::Instance().UpdateObservers( "SVPPQObject", GetUniqueObjectID(), *pProduct );
-
 	}
 
 	if( bValid )
@@ -3212,7 +3172,6 @@ bool SVPPQObject::SetInspectionComplete( long p_PPQIndex )
 		bValid = AddResultsToPPQ( p_PPQIndex );
 	}
 
-	//Only place that could set bDataComplete to true
 	pProduct->bDataComplete = bValid;
 
 	if( pProduct->bDataComplete )
@@ -3357,42 +3316,37 @@ HRESULT SVPPQObject::ProcessCameraResponse( const SVCameraQueueElement& p_rEleme
 	if( ( p_rElement.m_pCamera != NULL ) && ( 0 <= p_rElement.m_Data.mDMHandle.GetIndex() ) )
 	{
 		SVClock::SVTimeStamp l_StartTick = 0;
-		size_t l_CameraPositionOnPPQ = -1;
+		size_t l_PPQIndex = -1;
 		size_t l_ProductIndex = -1;
 		SVProductInfoStruct* l_pProduct = NULL;
 		SVCameraInfoMap::iterator l_svIter;
-		long	ppqSize = static_cast<long> (m_ppPPQPositions.size());
 
 		l_svIter = m_Cameras.find( p_rElement.m_pCamera );
 					
 		if( l_svIter != m_Cameras.end() )
 		{
-			l_CameraPositionOnPPQ = l_svIter->second.m_CameraPPQIndex;
+			l_PPQIndex = l_svIter->second.m_CameraPPQIndex;
 		}
 
 		p_rElement.m_Data.GetStartTick( l_StartTick );
 
-		if( l_CameraPositionOnPPQ < ppqSize )
+		if( l_PPQIndex < m_ppPPQPositions.size() )
 		{
-			long l_Position = -1; // gets initialized to ppq size (default) by 
-			                      // GetProductIndex (). 
+			long l_Position = static_cast<long>(m_ppPPQPositions.size());
 
-			// Attempts for find the trigger (which may not have happened 
-			// yet) that correlates to this image, based on image time stamp.
 			GetProductIndex( l_Position, l_StartTick );
 
-			// If trigger has not occurred yet, l_Position will equal 0.
-			if( 0 <= l_Position && l_Position < ppqSize )
+			if( 0 <= l_Position && l_Position < static_cast< long >( m_ppPPQPositions.size() ) )
 			{
-				size_t l_Index = l_Position + l_CameraPositionOnPPQ;
+				size_t l_Index = l_Position + l_PPQIndex;
 
-				if( l_Index < ppqSize )
+				if( l_Index < m_ppPPQPositions.size() )
 				{
 					l_ProductIndex = l_Index;
 					l_pProduct = m_ppPPQPositions.GetProductAt( l_Index );
 				}
 			}
-			else if( l_Position < 0 ) // l_Position can never be less than 0??
+			else if( l_Position < 0 )
 			{
 				m_PendingCameraResponses[ p_rElement.m_pCamera ] = p_rElement;
 
@@ -3406,7 +3360,7 @@ HRESULT SVPPQObject::ProcessCameraResponse( const SVCameraQueueElement& p_rEleme
 				m_PPQTracking.IncrementCount( l_Title );
 #endif
 			}
-			else// if l_Position > than PPQ size.
+			else
 			{
 				l_Status = E_FAIL;
 			}
@@ -3424,23 +3378,12 @@ HRESULT SVPPQObject::ProcessCameraResponse( const SVCameraQueueElement& p_rEleme
 			
 			if( l_svIter1 != l_pProduct->m_svCameraInfos.end() )
 			{
-				SVClock::SVTimeStamp	priorCameraSF = l_svIter1->second.m_StartFrameTimeStamp;
-				SVClock::SVTimeStamp	priorCameraEF = l_svIter1->second.m_EndFrameTimeStamp;
-				long					triggerCount = l_pProduct->oTriggerInfo.lTriggerCount;
-				long					productComplete = l_pProduct->bDataComplete;
-
-				// Attempting to make sure we don't have the previous trigger 
-				// count where the image has already been assigned (and 
-				// possibly inspected).  This scenario occurs when the Camera
-				// Response Queue notification arrives before the Trigger 
-				// Queue notification.
-				if (( priorCameraSF == 0 ) && (1 != productComplete))
+				if( l_svIter1->second.m_StartFrameTimeStamp == 0 )
 				{
 					SVClock::SVTimeStamp iEF=0;
-					SVClock::SVTimeStamp iSF=0;
 
 					p_rElement.m_Data.GetEndTick( iEF );
-	
+
 					if( p_rElement.m_Data.IsComplete() )
 					{
 						l_svIter1->second.Assign( l_StartTick, iEF, p_rElement.m_Data.mDMHandle, SV_PPQ );
@@ -3512,28 +3455,8 @@ HRESULT SVPPQObject::ProcessCameraResponse( const SVCameraQueueElement& p_rEleme
 					{
 						l_Status = E_FAIL;
 					}
-				} // if (( priorCameraSF == 0 ) && (1 != productComplete))
-				else
-				{
-
-					// trying to use the wrong Trigger Count.  
-					// Trigger even for this camera image has not 
-					// occurred yet.
-					m_PendingCameraResponses[ p_rElement.m_pCamera ] = p_rElement;
-
-					SVObjectManagerClass::Instance().IncrementPendingImageIndicator();
-
-					SVString l_Title = _T( "Pending " );
-
-					l_Title += p_rElement.m_pCamera->GetName();
-
-	#ifdef EnableTracking
-					m_PPQTracking.IncrementCount( l_Title );
-	#endif
-
-
 				}
-			} // if( l_svIter1 != l_pProduct->m_svCameraInfos.end() )
+			}
 			else
 			{
 				l_Status = E_FAIL;
@@ -3911,14 +3834,8 @@ void CALLBACK SVPPQObject::APCThreadProcess( DWORD_PTR dwParam )
 void SVPPQObject::ThreadProcess( bool& p_WaitForEvents )
 {
 	bool l_Processed = false;
-	unsigned long	processed = 0;
-	
-	// will only execute if 0 < m_oTriggerQueue.size().
-	// will then pop trigger queue.
-	// pushes onto notify inspection queue.
+
 	ProcessTrigger( l_Processed );
-
-
 
 	if( ! l_Processed )
 	{
@@ -3932,28 +3849,21 @@ void SVPPQObject::ThreadProcess( bool& p_WaitForEvents )
 
 	if( ! l_Processed )
 	{
-		// Inserts items onto the m_oCamerasQueue.
 		ProcessCameraResponses( l_Processed );
 	}
 
 	if( ! l_Processed )
 	{
-		// will only execute if 0 == m_oTriggerQueue.size().
-		// pushes onto notify inspection queue.
-		// The only function that can place items onto the m_oCameraQueue is
-		// ProcessCameraResponses.
 		ProcessCameraInputs( l_Processed );
 	}
 
 	if( ! l_Processed )
 	{
-		// will only execute if 0 == m_oTriggerQueue.size().
 		ProcessNotifyInspections( l_Processed );
 	}
 
 	if( ! l_Processed )
 	{
-		// will only execute if 0 == m_oTriggerQueue.size().
 		ProcessInspections( l_Processed );
 	}
 
@@ -4014,7 +3924,7 @@ HRESULT SVPPQObject::NotifyProcessTimerOutputs()
 
 HRESULT SVPPQObject::ProcessTrigger( bool& p_rProcessed )
 {
-	HRESULT		l_Status = S_OK;
+	HRESULT l_Status = S_OK;
 
 	p_rProcessed = ( 0 < m_oTriggerQueue.size() );
 
@@ -4071,20 +3981,16 @@ HRESULT SVPPQObject::ProcessTrigger( bool& p_rProcessed )
 								SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
 								Exception.setMessage( SVMSG_SVO_44_SHARED_MEMORY, Message.c_str(), StdMessageParams, SvOi::Err_15027 );
 							}
-						} // if (HasActiveMonitorList())
+						}
 					}
 				}
-			} // if( m_bOnline )
-		} // if( m_oTriggerQueue.PopHead( l_TriggerInfo ) == S_OK )
+			}
+		}
 		else
 		{
 			l_Status = E_FAIL;
 		}
-	} // if( p_rProcessed )
-	/*else
-	{
-		// there are no triggers on the trigger queue. not processed.
-	}*/
+	}
 
 	return l_Status;
 }
@@ -4093,77 +3999,35 @@ HRESULT SVPPQObject::ProcessNotifyInspections( bool& p_rProcessed )
 {
 	HRESULT l_Status = S_OK;
 
-	size_t	triggerQueueSize = m_oTriggerQueue.size();
+	p_rProcessed = ( 0 < m_oTriggerQueue.size() );
 
-	p_rProcessed = ( 0 <  triggerQueueSize );
-
-	if( ! p_rProcessed ) // if there are no triggers remaining on the queue.
+	if( ! p_rProcessed )
 	{
-
-		// Currently, 
-		// SVPPQOjbect::AssignInputs () - called from ProcessTrigger (),
-		// SVPPQOjbect::ProcessTrigger (), and
-		// SVPPQOjbect::ProcessCameraInputs ()
-		// can add items to m_oNotifyInspectionSet.
 		p_rProcessed = ( 0 < m_oNotifyInspectionsSet.size() );
 
-		if( p_rProcessed ) // if there is a request to notify.
+		if( p_rProcessed )
 		{
-			// offset is from the beginning of the PPQ.  
 			long l_Offset = -1;
-			p_rProcessed = false;
 
 			SVProcessCountSet::iterator l_Iter( m_oNotifyInspectionsSet.begin() );
 
-			// if the offset is outside the range of the PPQ, then execute 
-			// this while statement.  The offset is initialliy forced outside 
-			// the range inorder to force the first execution.  
-			do 
+			while( l_Iter != m_oNotifyInspectionsSet.end() && ( l_Offset < 0 || static_cast< long >( m_ppPPQPositions.size() ) <= l_Offset ) )
 			{
 				long l_ProcessCount = *l_Iter;
 
 				m_ppPPQPositions.GetIndexByTriggerCount( l_Offset, l_ProcessCount );
 
-				p_rProcessed = ( 0 <= l_Offset && l_Offset < static_cast< long >( m_ppPPQPositions.size() ) );
+				l_Iter = m_oNotifyInspectionsSet.erase( l_Iter );
+			}
 
-				if (true == p_rProcessed) // if offset for element is within PPQ.
-				{
-					l_Status = NotifyInspections( l_Offset );
+			p_rProcessed = ( 0 <= l_Offset && l_Offset < static_cast< long >( m_ppPPQPositions.size() ) );
 
-					if (S_OK == l_Status)
-					{
-						// event has been placed on the inspection queue and
-						// should be removed from the NotifyInspectionQueue.
-						// Processed is already set to true.
-						l_Iter = m_oNotifyInspectionsSet.erase( l_Iter );
-					}
-					else
-					if (S_FALSE == l_Status)
-					{
-						// this means that inspection was not notified 
-						// because inputs or image were not ready.  
-						// proceed to next inspection.
-						l_Iter++;
-						p_rProcessed = false;
-						l_Status = S_OK;
-					}
-				}
-				else // of offset for element is outside PPQ (fell off/dead).
-				{
-					// product is dead and process should be killed here 
-					// so as to now waste inspection time.
-					// processed is already false.
-					l_Iter = m_oNotifyInspectionsSet.erase( l_Iter );
-				}
-
-			} while ((true != p_rProcessed) && 
-					 (l_Iter != m_oNotifyInspectionsSet.end ()) &&
-					 SUCCEEDED (l_Status));
-
-
-		} // if there is an item on the notify inspection queue.
-
-	} // if there are no triggers on trigger event queue.
+			if( p_rProcessed )
+			{
+				l_Status = NotifyInspections( l_Offset );
+			}
+		}
+	}
 
 	return l_Status;
 }
@@ -4185,6 +4049,7 @@ HRESULT SVPPQObject::ProcessInspections( bool& p_rProcessed )
 			while( l_Iter != m_ProcessInspectionsSet.end() )
 			{
 				StartInspection( *l_Iter );
+
 				m_ProcessInspectionsSet.erase( l_Iter++ );
 			}
 		}
@@ -4278,21 +4143,18 @@ HRESULT SVPPQObject::ProcessResetOutputs( bool& p_rProcessed )
 HRESULT SVPPQObject::ProcessCameraResponses( bool& p_rProcessed )
 {
 	HRESULT l_Status = S_OK;
-	size_t	triggerQueueSize = 0;
-	size_t	pendingCameraQueueSize = m_PendingCameraResponses.size();
-	p_rProcessed = false;
 
-	if( 0 < pendingCameraQueueSize)
+	if( 0 < m_PendingCameraResponses.size() )
 	{
 		SVCameraInfoMap::const_iterator l_CameraIter = m_Cameras.begin();
 
 		while( l_Status == S_OK && l_CameraIter != m_Cameras.end() && ! p_rProcessed )
 		{
 			SVCameraQueueElement l_Data;
-			triggerQueueSize = m_oTriggerQueue.size();
 
-			// stop processing camera responses if there is an element on the trigger queue.
-			if ( 0 >= triggerQueueSize )
+			p_rProcessed = ( 0 < m_oTriggerQueue.size() );
+
+			if( ! p_rProcessed )
 			{
 				SVPendingCameraResponseMap::iterator l_PendingIter = m_PendingCameraResponses.find( l_CameraIter->first );
 
@@ -4304,22 +4166,21 @@ HRESULT SVPPQObject::ProcessCameraResponses( bool& p_rProcessed )
 
 					SVObjectManagerClass::Instance().DecrementPendingImageIndicator();
 
-					p_rProcessed = ( ProcessCameraResponse( l_Data ) == S_OK );
+					ProcessCameraResponse( l_Data );
 				}
 			}
 
 			++l_CameraIter;
 		}
-	} // if( 0 < m_PendingCameraResponses.size() )
+	}
 
 	while( l_Status == S_OK && 0 < m_CameraResponseQueue.GetCount() && ! p_rProcessed )
 	{
 		SVCameraQueueElement l_Data;
 
-		triggerQueueSize = m_oTriggerQueue.size();
 		p_rProcessed = ( 0 < m_oTriggerQueue.size() );
 
-		if( 0 >= triggerQueueSize )
+		if( ! p_rProcessed )
 		{
 			if( m_CameraResponseQueue.RemoveHead( &l_Data ) )
 			{
@@ -4340,18 +4201,12 @@ HRESULT SVPPQObject::ProcessCameraResponses( bool& p_rProcessed )
 HRESULT SVPPQObject::ProcessCameraInputs( bool& p_rProcessed )
 {
 	HRESULT l_Status = S_OK;
-	long	cameraCount = -1;
-	long	triggerCount = -1;
-	long	tmpProcessCount = -1;
 
-	p_rProcessed = false; // p_rProcessed = ( 0 < m_oTriggerQueue.size() );
+	p_rProcessed = ( 0 < m_oTriggerQueue.size() );
 
-	// if trigger queue size <= 0
 	if( ! p_rProcessed )
 	{
-
-		cameraCount = m_oCamerasQueue.GetCount();
-		p_rProcessed = ( 0 <  cameraCount);
+		p_rProcessed = ( 0 < m_oCamerasQueue.GetCount() );
 
 		if( p_rProcessed )
 		{
@@ -4369,12 +4224,12 @@ HRESULT SVPPQObject::ProcessCameraInputs( bool& p_rProcessed )
 					if( 0 <= l_PPQIndex && l_PPQIndex < static_cast< long >( m_ppPPQPositions.size() ) )
 					{
 						l_pProduct = m_ppPPQPositions.GetProductAt( l_PPQIndex );
-						triggerCount = l_pProduct->oTriggerInfo.lTriggerCount;
 					}
 				}
 				else
 				{
 					l_Status = E_FAIL;
+
 					break;
 				}
 			}
@@ -4397,11 +4252,9 @@ HRESULT SVPPQObject::ProcessCameraInputs( bool& p_rProcessed )
 					}
 				}
 
-				// Doesn't necessarilly have the correct Trigger Count yet.
-				tmpProcessCount = l_pProduct->ProcessCount ();
-				m_oNotifyInspectionsSet.insert( tmpProcessCount );
-			} // if( p_rProcessed )
-		} // if( p_rProcessed ) - if camera queue > 0
+				m_oNotifyInspectionsSet.insert( l_pProduct->ProcessCount() );
+			}
+		}
 	}
 
 	return l_Status;
