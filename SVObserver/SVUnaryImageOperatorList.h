@@ -113,6 +113,17 @@ public:
 	virtual BOOL OnValidate();
 
 protected:
+	//************************************
+	//! Copy a image from one buffer to another buffer
+	//! \param input [in] Input buffer
+	//! \param output [in,out] Output buffer, has to be allocated and the same size as input.
+	//! \returns bool If copy was successfully.
+	//************************************
+	static bool copyBuffer( const SVSmartHandlePointer input, SVSmartHandlePointer output );
+
+	virtual DWORD_PTR processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext ) override;
+
+protected:
 	SVInObjectInfoStruct		inputImageObjectInfo;
 	SVSmartHandlePointer		m_milTmpImageObjectInfo1;
 	SVSmartHandlePointer		m_milTmpImageObjectInfo2;
@@ -159,32 +170,22 @@ public:
 	SVStdImageOperatorListClass( BOOL BCreateDefaultTaskList = FALSE, SVObjectClass* POwner = NULL , int StringResourceID = IDS_CLASSNAME_SVSTDIMAGEOPERATORLIST );
 	virtual ~SVStdImageOperatorListClass();
 
-	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure );
-	virtual BOOL CloseObject();
+	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure ) override;
+	virtual BOOL CloseObject() override;
 
-	virtual HRESULT ResetObject();
+	virtual HRESULT ResetObject() override;
 
-	virtual BOOL Run( SVRunStatusClass& RRunStatus );
+	virtual BOOL Run( SVRunStatusClass& RRunStatus ) override;
 
-	virtual BOOL OnValidate();
+	virtual BOOL OnValidate() override;
 
 protected:
-	virtual DWORD_PTR processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext );
-
 	SVImageClass *getOutputImage();
 
 	SVImageClass outputImageObject;	// Embedded
 
 private:
 	void init();
-
-	//************************************
-	//! Copy a image from one buffer to another buffer
-	//! \param input [in] Input buffer
-	//! \param output [in,out] Output buffer, has to be allocated and the same size as input.
-	//! \returns bool If copy was successfully.
-	//************************************
-	bool copyBuffer( const SVSmartHandlePointer input, SVSmartHandlePointer output );
 
 public:
 	HRESULT CollectInputImageNames( SVRunStatusClass& RRunStatus );
@@ -246,8 +247,9 @@ public:
 // Operation(s) Of Process:
 //******************************************************************************
 public:
-	virtual BOOL OnValidate();
-	virtual BOOL Run( SVRunStatusClass& RRunStatus );
+	virtual BOOL OnValidate() override;
+	virtual HRESULT ResetObject() override;
+	virtual BOOL Run( SVRunStatusClass& RRunStatus ) override;
 
 //******************************************************************************
 // Data Element(s):

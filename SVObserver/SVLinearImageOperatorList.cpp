@@ -185,7 +185,23 @@ BOOL SVLinearImageOperatorListClass::Run( SVRunStatusClass& RRunStatus )
 				l_Rotate.m_dDstCenX = l_oOutPoint.x;
 				l_Rotate.m_dDstCenY = l_oOutPoint.y;
 				l_Rotate.m_eInterpolation = SVNearestNeighOverScanClear;
-				l_Code = SVMatroxImageInterface::Rotate( l_OutMilHandle.GetBuffer(), l_Rotate );
+
+				//set tmp variable
+				SVSmartHandlePointer sourceImage = m_milTmpImageObjectInfo1;
+				SVSmartHandlePointer destinationImage = m_milTmpImageObjectInfo2;
+				bRetVal = bRetVal && !( sourceImage->empty() );
+				bRetVal = bRetVal && !( destinationImage->empty() );
+				SVImageBufferHandleImage sourceMilHandle;
+				if ( bRetVal )
+				{
+					sourceImage->GetData( sourceMilHandle );
+					bRetVal = bRetVal && !( sourceMilHandle.empty() );
+				}
+
+				if( bRetVal )
+				{	//use as destination image the tmp sourceImage because this is not set yet and have to be set for use for the operator runs.
+					l_Code = SVMatroxImageInterface::Rotate( sourceMilHandle.GetBuffer(), l_Rotate );
+				}
 
 
 				// Run children...
@@ -194,9 +210,15 @@ BOOL SVLinearImageOperatorListClass::Run( SVRunStatusClass& RRunStatus )
 					ChildRunStatus.ClearAll();
 					
 					SVUnaryImageOperatorClass*  pOperator = dynamic_cast<SVUnaryImageOperatorClass *>(GetAt( i ));
-					if( pOperator )
+					if( nullptr != pOperator )
 					{
-						pOperator->Run( FALSE, output, output, ChildRunStatus );
+						if ( pOperator->Run( true, sourceImage, destinationImage, ChildRunStatus ) )
+						{
+							//switch image buffer for next run
+							SVSmartHandlePointer tmpImage = sourceImage;
+							sourceImage = destinationImage;
+							destinationImage = tmpImage;
+						}
 					}
 					else
 						bRetVal = FALSE;
@@ -224,6 +246,10 @@ BOOL SVLinearImageOperatorListClass::Run( SVRunStatusClass& RRunStatus )
 				// 'no operator was running' check...
 				// RO_22Mar2000
 				
+				if( bRetVal )
+				{	//copy last image to the output
+					bRetVal = copyBuffer(sourceImage, output);
+				}  
 			}
 		}
 	}
