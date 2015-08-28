@@ -344,13 +344,13 @@ namespace Seidenader { namespace SVStatusLibrary
 			rMessage.Format( ErrorLoadingDll, m_Message.m_MessageCode);
 
 			MsgDetails.Format( DefaultEventFormat,
-										m_Message.m_SourceFile,
+										m_Message.m_SourceFile.c_str(),
 										m_Message.m_SourceLine,
-										m_Message.m_SourceDateTime,
+										m_Message.m_SourceDateTime.c_str(),
 										m_Message.m_ProgramCode,
 										m_Message.m_OSErrorCode,
-										m_Message.m_CompileDate,
-										m_Message.m_CompileTime);
+										m_Message.m_CompileDate.c_str(),
+										m_Message.m_CompileTime.c_str() );
 		}
 		Result += MsgDetails;
 
