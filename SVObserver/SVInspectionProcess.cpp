@@ -1037,9 +1037,8 @@ BOOL SVInspectionProcess::CanProcess( SVProductInfoStruct *pProduct )
 
 	if( pProduct )
 	{
-		long	ppqInputSize = m_PPQInputs.size();
+		size_t ppqInputSize = m_PPQInputs.size();
 		// See if we have discrete inputs.
-
 
 		for( size_t iList = 0; bReady && iList < ppqInputSize; iList++ )
 		{
