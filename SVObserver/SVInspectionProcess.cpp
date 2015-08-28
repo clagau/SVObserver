@@ -1037,12 +1037,17 @@ BOOL SVInspectionProcess::CanProcess( SVProductInfoStruct *pProduct )
 
 	if( pProduct )
 	{
-		for( size_t iList = 0; bReady && iList < m_PPQInputs.size(); iList++ )
+		long	ppqInputSize = m_PPQInputs.size();
+		// See if we have discrete inputs.
+
+
+		for( size_t iList = 0; bReady && iList < ppqInputSize; iList++ )
 		{
 			pListEntry = m_PPQInputs[iList];
 			if( pListEntry.m_IOEntryPtr->m_Enabled )
 			{
 				iInSize = static_cast<int>(pProduct->oPPQInfo.m_InputData.size());
+
 				for( iIn = 0; bReady && iIn < iInSize; iIn++ )
 				{
 					pInEntry = pProduct->oPPQInfo.m_InputData[iIn];
@@ -1051,12 +1056,14 @@ BOOL SVInspectionProcess::CanProcess( SVProductInfoStruct *pProduct )
 						bReady &= pInEntry.m_EntryValid;
 						break;
 					}// end if
+
 				}// end for
 
 			}// end if
 
 		}// end for
 
+		// See if we have Camera images.
 		SVCameraImagePtrSet::iterator l_ImageIter = m_CameraImages.begin();
 
 		while( bReady && l_ImageIter != m_CameraImages.end() )
@@ -1082,7 +1089,7 @@ BOOL SVInspectionProcess::CanProcess( SVProductInfoStruct *pProduct )
 
 			++l_ImageIter;
 		}
-	}
+	} // if( pProduct )
 	else
 		bReady = false;
 
