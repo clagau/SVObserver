@@ -12,6 +12,7 @@
 #include "TextDefinesSvO.h"
 #pragma endregion Includes
 
+
 SV_IMPLEMENT_CLASS( ResizeTool, SVResizeToolGuid );
 
 ResizeTool::ResizeTool( BOOL bCreateDefaultTaskList, SVObjectClass* pOwner, int stringResourceID )
@@ -167,6 +168,24 @@ BOOL ResizeTool::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
 {
 	BOOL bOk = SVToolClass::CreateObject( pCreateStructure ); 
 
+	// Override base class hiding of Scale Factors.  These values will be 
+	// exposed for the Resize Tool.
+	extentWidthScaleFactor.ObjectAttributesAllowedRef() = 
+		(SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES | 
+		 SV_REMOTELY_SETABLE | 
+		 SV_EXTENT_OBJECT | 
+		 SV_SETABLE_ONLINE) & 
+		~SV_EMBEDABLE;				// Since this value object is already 
+									// exposed as an extent, we do not want 
+									// it to be embeddable.
+	extentHeightScaleFactor.ObjectAttributesAllowedRef() = 
+		(SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES | 
+		SV_REMOTELY_SETABLE | 
+		SV_EXTENT_OBJECT | 
+		SV_SETABLE_ONLINE) & 
+		~SV_EMBEDABLE;				// Since this value object is already 
+									// exposed as an extent, we do not want 
+									// it to be embeddable.
 	SVImageClass* inputImage = getInputImage();
 	bOk &= (nullptr != inputImage);
 
@@ -327,6 +346,15 @@ HRESULT ResizeTool::ResetObject()
 		// required within ResetObject in order to correctly reallocate
 		// buffers when source image is changed within GUI.
 		hr = m_LogicalROIImage.InitializeImage( inputImage );
+		//@WARNING [Jim] Several functions within InitializeImage can return 
+		// S_FALSE.  This is not helpful in attempting to debug the error,
+		// and does not adhere to HRESULT standards by setting the fail bit.
+		// At some point, all S_FALSE return codes should be 
+		// removed.  
+		if (S_FALSE == hr)
+		{
+			hr = SVMSG_SVO_5048_INITIALIZEROIIMAGEFAILED;
+		}
 	}
 
 	if (SUCCEEDED(hr))
@@ -334,15 +362,24 @@ HRESULT ResizeTool::ResetObject()
 		// required within ResetObject in order to correctly reallocate
 		// buffers when source image is changed within GUI.
 		hr = m_OutputImage.InitializeImage( inputImage );
+		if (S_FALSE == hr)
+		{
+			hr = SVMSG_SVO_5049_INITIALIZEOUTPUTIMAGEFAILED;
+		}
 	}
 		
 	if (SUCCEEDED(hr))
 	{
 		hr = SVToolClass::ResetObject();
+		if (S_FALSE == hr)
+		{
+			hr = SVMSG_SVO_5050_BASECLASSFAILED;
+		}
 	}
 
 	return hr;
 }
+
 
 BOOL ResizeTool::IsValid()
 {
@@ -353,6 +390,7 @@ BOOL ResizeTool::IsValid()
 	{
 		bValid = pToolSizeAdjustTask->OnValidate();
 	}
+
 	for (SVTaskObjectPtrVector::iterator it = m_aTaskObjects.begin(); it != m_aTaskObjects.end(); ++it)
 	{
 		SVTaskObjectClass* pTask = *it;
@@ -360,6 +398,7 @@ BOOL ResizeTool::IsValid()
 	}
 	return SVToolClass::IsValid() && bValid;
 }
+
 
 BOOL ResizeTool::onRun( SVRunStatusClass& RRunStatus )
 {

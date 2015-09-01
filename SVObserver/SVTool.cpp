@@ -212,14 +212,18 @@ BOOL SVToolClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
 	extentBottom.ObjectAttributesAllowedRef() |= SV_PRINTABLE;
 	extentWidth.ObjectAttributesAllowedRef() |= SV_PRINTABLE | SV_REMOTELY_SETABLE | SV_EXTENT_OBJECT | SV_SETABLE_ONLINE;
 	extentHeight.ObjectAttributesAllowedRef() |= SV_PRINTABLE | SV_REMOTELY_SETABLE | SV_EXTENT_OBJECT | SV_SETABLE_ONLINE;
+	
+	// Defaults for the Scale Factors should be hidden (but NOT removed at this time, so 
+	// don't use hideEmbeddedObject() here).
+	extentWidthScaleFactor.ObjectAttributesAllowedRef() &=(~SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES);
+	extentHeightScaleFactor.ObjectAttributesAllowedRef() &=(~SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES);
 
-	// Auxilliary Tool Source Extent
+	// Auxiliary Tool Source Extent
 	m_svUpdateAuxilliaryExtents.ObjectAttributesAllowedRef() |= SV_PRINTABLE | SV_SETABLE_ONLINE | SV_REMOTELY_SETABLE ;
 	
-//	ToolSelectedForOperatorMove.ObjectAttributesAllowedRef() = SV_NO_ATTRIBUTES; //Clear Attributes ... No longer used.
 	drawToolFlag.ObjectAttributesAllowedRef() |= SV_PRINTABLE;
 
-	// Tool Comment Atributes...
+	// Tool Comment attributes...
 	m_svToolComment.ObjectAttributesAllowedRef() |= SV_PRINTABLE ;
 	m_svToolComment.ObjectAttributesAllowedRef() &= ~SV_VIEWABLE ;	// We do not want this to show up in the results picker.
 
@@ -669,6 +673,10 @@ BOOL SVToolClass::onRun( SVRunStatusClass& RRunStatus )
 			bRetVal = ( extentWidth.CopyLastSetValue( RRunStatus.m_lResultDataIndex ) == S_OK ) && bRetVal;
 		if( (extentHeight.ObjectAttributesAllowed() & SV_NO_ATTRIBUTES) != SV_NO_ATTRIBUTES )
 			bRetVal = ( extentHeight.CopyLastSetValue( RRunStatus.m_lResultDataIndex ) == S_OK ) && bRetVal;
+		if( (extentWidthScaleFactor.ObjectAttributesAllowed() & SV_NO_ATTRIBUTES) != SV_NO_ATTRIBUTES )
+			bRetVal = ( extentWidthScaleFactor.CopyLastSetValue( RRunStatus.m_lResultDataIndex ) == S_OK ) && bRetVal;
+		if( (extentHeightScaleFactor.ObjectAttributesAllowed() & SV_NO_ATTRIBUTES) != SV_NO_ATTRIBUTES )
+			bRetVal = ( extentHeightScaleFactor.CopyLastSetValue( RRunStatus.m_lResultDataIndex ) == S_OK ) && bRetVal;
 
 		// Friends were running, validation was successfully
 		// Check conditional execution
@@ -1076,10 +1084,12 @@ void SVToolClass::removeEmbeddedExtents( bool p_DisconnectExtents )
 {
 	if( p_DisconnectExtents )
 	{
-		m_svToolExtent.SetExtentObject( SVExtentPropertyPositionPointX, NULL );
-		m_svToolExtent.SetExtentObject( SVExtentPropertyPositionPointY, NULL );
-		m_svToolExtent.SetExtentObject( SVExtentPropertyWidth, NULL );
-		m_svToolExtent.SetExtentObject( SVExtentPropertyHeight, NULL );
+		m_svToolExtent.SetExtentObject( SVExtentPropertyPositionPointX, nullptr );
+		m_svToolExtent.SetExtentObject( SVExtentPropertyPositionPointY, nullptr );
+		m_svToolExtent.SetExtentObject( SVExtentPropertyWidth, nullptr );
+		m_svToolExtent.SetExtentObject( SVExtentPropertyHeight, nullptr );
+		m_svToolExtent.SetExtentObject( SVExtentPropertyWidthScaleFactor, nullptr );
+		m_svToolExtent.SetExtentObject( SVExtentPropertyHeightScaleFactor, nullptr );
 	}
 
 	hideEmbeddedObject( extentLeft );	 // Make it Un-Selectable for anything
@@ -1099,6 +1109,12 @@ void SVToolClass::removeEmbeddedExtents( bool p_DisconnectExtents )
 
 	hideEmbeddedObject( extentHeight );
 	RemoveEmbeddedObject( &extentHeight );
+
+	hideEmbeddedObject( extentWidthScaleFactor );
+	RemoveEmbeddedObject( &extentWidthScaleFactor );
+
+	hideEmbeddedObject( extentHeightScaleFactor );
+	RemoveEmbeddedObject( &extentHeightScaleFactor );
 }
 
 
