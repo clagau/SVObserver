@@ -13,7 +13,7 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include <sstream>
+#include <fstream>
 #include "ToolClipboard.h"
 #include "SVObjectLibrary\SVObjectXMLWriter.h"
 #include "SVXMLLibrary\SVNavigateTreeClass.h"

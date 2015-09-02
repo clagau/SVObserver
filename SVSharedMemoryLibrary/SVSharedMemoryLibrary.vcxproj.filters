@@ -90,9 +90,6 @@
     <ClInclude Include="SVSharedValue.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVTempDirHelper.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVSharedMonitorList.h">
       <Filter>Header Files</Filter>
     </ClInclude>

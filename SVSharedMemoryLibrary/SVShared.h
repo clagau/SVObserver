@@ -23,9 +23,10 @@
 #include <limits>
 
 //#define BOOST_USE_WINDOWS_H // does not work correctly // for boost 1_56_0
-//#define BOOST_INTERPROCESS_SHARED_DIR_PATH "V:/boost_interprocess" // for boost 1_56_0
+#define BOOST_INTERPROCESS_SHARED_DIR_PATH "V:/boost_interprocess"
 #define BOOST_DATE_TIME_NO_LIB
-#include "SVTempDirHelper.h"
+
+#include <boost/interprocess/detail/shared_dir_helpers.hpp>
 #include <boost/interprocess/file_mapping.hpp>
 #include <boost/interprocess/mapped_region.hpp>
 #include <boost/interprocess/managed_shared_memory.hpp>

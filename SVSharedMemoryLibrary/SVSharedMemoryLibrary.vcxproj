@@ -192,7 +192,6 @@
     <ClInclude Include="SVSharedProductStore.h" />
     <ClInclude Include="SVSharedRejectCache.h" />
     <ClInclude Include="SVSharedValue.h" />
-    <ClInclude Include="SVTempDirHelper.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -206,7 +206,7 @@ void SVSharedConfiguration::EnsureShareDirectoryExists()
 bool SVSharedConfiguration::ControlFileExits()
 {
 	std::string fname;
-	boost::interprocess::ipcdetail::get_tmp_base_dir(fname);
+	boost::interprocess::ipcdetail::get_shared_dir_root(fname);
 	fname += "\\" + GetControlShareName();
 	return PathFileExistsA(fname.c_str()) ? true : false;
 }
