@@ -256,11 +256,16 @@ HRESULT SVValueObjectClassImpl<T>::GetValueAt( int iBucket, int iIndex, T& rValu
 	}
 	else if ( hr == SVMSG_SVO_34_OBJECT_INDEX_OUT_OF_RANGE )
 	{
+		// inside the allocated array size but bucket does
+		// not contain a value for the current run so use
+		// the default value.
 		rValue = DefaultValue();
 		isObjectValid = TRUE;
 	}
 	else	// BAD INDEX
 	{
+		// the selected index is not in the allocated array 
+		// size. ie (-1, 1001).  use the default value.		 
 		rValue = DefaultValue();
 		isObjectValid = FALSE;
 	}

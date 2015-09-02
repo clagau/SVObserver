@@ -1182,18 +1182,7 @@ BOOL SVBlobAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 
 		// do the following even if no blobs have been found.
 
-		//if number of blobs to process = 0,  make sure the feature do not have values from previous runs.
-		if (0 == m_lNumberOfBlobsToProcess)
-		{
-			for (SVBlobFeatureEnum eFeature = SV_AREA; eFeature < SV_TOPOF_LIST; eFeature = (SVBlobFeatureEnum)(eFeature + 1))
-			{	
-				if (msvszFeaturesEnabled[ eFeature ] == _T('1'))
-				{
-					msvValue[ eFeature ].SetValue( RRunStatus.m_lResultDataIndex, 0.0 );
-				}
-			}
-		}
-
+	
 		register SVBlobFeatureEnum eFeature;
 
 		//
@@ -1346,21 +1335,12 @@ BOOL SVBlobAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 			if (msvszFeaturesEnabled [eFeature] == _T('1'))
 			{
 				if (m_lNumberOfBlobsToProcess > 0)
+				// EB 2005 01 28
+				// add array capability to blob results
+				for ( int iBlob = 0; iBlob < m_lNumberOfBlobsToProcess; iBlob++ )
 				{
-					// EB 2005 01 28
-					// add array capability to blob results
-					for ( int iBlob = 0; iBlob < m_lNumberOfBlobsToProcess; iBlob++ )
-					{
-						msvValue[eFeature].SetValue( RRunStatus.m_lResultDataIndex, iBlob, m_vec2dBlobResults[eFeature][ msvlSortMap[iBlob] ] );
-					}
-				}
-				else
-				{
-					//Arvid set array size to 1 even if no blobs are present so as not to cause errors in math tools in "old style" configurations
-					//Arvid this will in practice, however, undo the changes of SVO-322
-					msvValue[ eFeature ].SetResultSize( RRunStatus.m_lResultDataIndex, 1 ); 
-					msvValue[ eFeature ].SetValue( RRunStatus.m_lResultDataIndex, 0.0 );
-				}
+					msvValue[eFeature].SetValue( RRunStatus.m_lResultDataIndex, iBlob, m_vec2dBlobResults[eFeature][ msvlSortMap[iBlob] ] );
+				}	
 			}
 		}
 

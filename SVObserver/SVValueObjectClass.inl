@@ -20,7 +20,7 @@ inline HRESULT SVValueObjectClass::ValidateIndexes(int iBucket, int iArrayIndex)
 	{
 		if ( iArrayIndex >= 0 && iArrayIndex < m_iArraySize )
 		{
-			if ( m_iArraySize == 1 || iArrayIndex < m_aiResultSize[iBucket] )
+			if ( iArrayIndex < m_aiResultSize[iBucket] )
 				return S_OK;
 			else	// ARRAY INDEX OUT OF BOUNDS (out of result range)
 			{
