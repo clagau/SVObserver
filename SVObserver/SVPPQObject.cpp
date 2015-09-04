@@ -1498,7 +1498,10 @@ HRESULT SVPPQObject::GoOnline()
 		return S_FALSE;
 	}
 
-	if( SVPPQNextTriggerMode != m_oOutputMode || m_lOutputDelay > 0 )
+	//The timer should start when not "Next Trigger Mode" or when reset delay is not 0
+	bool StartTimer( SVPPQNextTriggerMode != m_oOutputMode );
+	StartTimer |= 0 < m_lResetDelay;
+	if( StartTimer )
 	{
 		m_uOutputTimer = ::timeSetEvent( 1, 0, SVPPQObject::OutputTimerCallback, reinterpret_cast<DWORD_PTR>(this),
 			TIME_PERIODIC | TIME_CALLBACK_FUNCTION );
