@@ -99,6 +99,11 @@
 #include "SVShiftTool.h"
 #include "SVShiftToolUtility.h"
 #include "RingBufferTool.h"
+#include "GlobalSelector.h"
+#include "PPQNameSelector.h"
+#include "PPQVariablesSelector.h"
+#include "ToolSetItemSelector.h"
+#include "PublishSelector.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -1453,21 +1458,21 @@ void SVIPDoc::OpenToolAdjustmentDialog(int tab)
 	if( TheSVObserverApp.OkToEdit() )
 	{
 		SVToolClass* l_pTool = dynamic_cast< SVToolClass* >( SVObjectManagerClass::Instance().GetObject( m_SelectedToolID ) );
-		if( l_pTool != NULL )
+		if( nullptr != l_pTool )
 		{
 			const SVObjectTypeInfoStruct& rToolType = l_pTool->GetObjectInfo().ObjectTypeInfo;
 
 			if ( (rToolType.SubType == SVGageToolObjectType) || (rToolType.SubType == SVToolProfileObjectType) )
 			{
 				SVSVIMStateClass::AddState( SV_STATE_EDITING );
-				AfxMessageBox("This tool is now obsolete.  Please replace with a Linear Tool.");
+				AfxMessageBox(_T("This tool is now obsolete.  Please replace with a Linear Tool."));
 				SVSVIMStateClass::RemoveState( SV_STATE_EDITING );
 				return;
 			}
 			if (rToolType.SubType == SVToolBuildReferenceObjectType)
 			{
 				SVSVIMStateClass::AddState( SV_STATE_EDITING );
-				AfxMessageBox("This tool is now obsolete. Please replace with either a Shift Tool or Transformation Tool");
+				AfxMessageBox(_T("This tool is now obsolete. Please replace with either a Shift Tool or Transformation Tool"));
 				SVSVIMStateClass::RemoveState( SV_STATE_EDITING );
 				return;
 			}
@@ -1477,7 +1482,7 @@ void SVIPDoc::OpenToolAdjustmentDialog(int tab)
 			if( l_pTool->IsOkToEdit() )
 			{
 				SVSVIMStateClass::AddState( SV_STATE_EDITING );
-				SVToolAdjustmentDialogSheetClass toolAdjustmentDialog( this, *l_pTool, "Tool Adjustment",nullptr,tab );
+				SVToolAdjustmentDialogSheetClass toolAdjustmentDialog( this, GetInspectionID(), m_SelectedToolID, _T("Tool Adjustment"), nullptr, tab );
 				INT_PTR dlgResult = toolAdjustmentDialog.DoModal();
 				if ( IDOK == dlgResult )
 				{
@@ -1557,65 +1562,24 @@ void SVIPDoc::OnResultsPicker()
 			csRootName.LoadString(IDS_CLASSNAME_ROOTOBJECT);
 			SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, csRootName, SVString( _T("") ) );
 
-			SVStringArray ObjectNameList;
-			RootObject::getRootChildNameList( ObjectNameList, _T(""), SV_VIEWABLE );
-			SvOsl::ObjectTreeGenerator::Instance().insertTreeObjects( ObjectNameList );
-			ObjectNameList.clear();
-
-			SVPPQObject* pPPQ( pInspection->GetPPQ() );
-			SVString PPQName;
-			if( nullptr != pPPQ )
-			{
-				PPQName = pPPQ->GetName();
-				SvOsl::ObjectTreeGenerator::Instance().insertTreeObjects( PPQName );
-			}
+			SvOsl::ObjectTreeGenerator::Instance().BuildSelectableItems<GlobalSelector, PPQNameSelector, PPQVariablesSelector, ToolSetItemSelector<>>(GetInspectionID(), GetInspectionID());
 			
-			SVStringArray PpqVariables = pInspection->getPPQVariableNames();
-			
-			//Need to replace the inspection name with the PPQ Variables name
-			SVStringArray::iterator Iter( PpqVariables.begin() );
-			while( Iter != PpqVariables.end() )
-			{
-				Iter->replace( InspectionName.c_str(), SvOl::FqnPPQVariables );
-				Iter++;
-			}
-			SvOsl::ObjectTreeGenerator::Instance().insertTreeObjects( PpqVariables);
-			
-			SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, InspectionName, SVString( _T("") ) );
-			
-			SVOutputInfoListClass OutputList;
-			SVToolSetClass* pToolset( GetToolSet() );
-			if(nullptr != pToolset)
-			{
-				pToolset->GetOutputList( OutputList );
-				SvOsl::ObjectTreeGenerator::Instance().insertOutputList( OutputList );
-			}
-			
-			SVString From(InspectionName);
-			From.append(_T(".DIO"));
-			SVString TO(SvOl::FqnPPQVariables);
-			TO.append(_T(".DIO"));
-			
-			SVString From2(InspectionName);
-			From2.append(_T(".Remote Input"));
-			SVString TO2(SvOl::FqnPPQVariables);
-			TO2.append(_T(".Remote Input"));
-
-
+			SVStringSet SelectedNames;
 			SVStringSet SelectedNamesRaw;
 			pResultList->GetNameSet(SelectedNamesRaw);
 			//Need to replace  the PPQ Variables name with  the inspection name
-			SVStringSet::iterator SetIt( SelectedNamesRaw.begin() );
-			SVStringSet SelectedNames;
-			while( SetIt != SelectedNamesRaw.end() )
+			typedef std::insert_iterator<SVStringSet> Insertor;
+			std::transform(SelectedNamesRaw.begin(), SelectedNamesRaw.end(), Insertor(SelectedNames, SelectedNames.end()), [&InspectionName](const SVString& name)->SVString
 			{
-				SVString St(*SetIt);
-				St.replace( From.c_str(), TO.c_str() );
-				St.replace( From2.c_str(), TO2.c_str() );
+				SVString St(name);
+				// check to .DIO or .Remote Input
+				if (St.find_first_of(".DIO") != SVString::npos || St.find_first_of(".Remote Input") != SVString::npos)
+				{
+					St.replace( InspectionName.c_str(), SvOl::FqnPPQVariables );
+				}
+				return St;
+			});
 
-				SelectedNames.insert(St);
-				SetIt++;
-			}
 			SvOsl::ObjectTreeGenerator::Instance().setCheckItems(SelectedNames);
 
 			CString ResultPicker;
@@ -1640,10 +1604,9 @@ void SVIPDoc::OnResultsPicker()
 					{
 						if(string::npos  != it->getLocation().find(SvOl::FqnPPQVariables))
 						{
-							
 							SVString string = it->getLocation();
 							string.replace(SvOl::FqnPPQVariables,InspectionName.c_str());
-							pResultList->Insert(string);	; 
+							pResultList->Insert(string);
 						}
 						else
 						{
@@ -1675,9 +1638,7 @@ void SVIPDoc::OnPublishedResultsPicker()
 		SvOsl::ObjectTreeGenerator::Instance().setAttributeFilters( SV_PUBLISHABLE );
 		SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, InspectionName, SVString( _T("") ) );
 
-		SVOutputInfoListClass OutputList;
-		GetToolSet()->GetOutputList( OutputList );
-		SvOsl::ObjectTreeGenerator::Instance().insertOutputList( OutputList );
+		PublishSelector(GetInspectionID(), GetInspectionID());
 
 		CString PublishableResults;
 		PublishableResults.LoadString( IDS_PUBLISHABLE_RESULTS );
@@ -1795,7 +1756,7 @@ void SVIPDoc::EditToolSetCondition()
 {
 	SVConditionalClass* pCondition = GetToolSetCondition();
 	ASSERT( pCondition );
-	SVToolSetAdjustmentDialogSheetClass dlg( *pCondition, GetToolSet()->GetName() );
+	SVToolSetAdjustmentDialogSheetClass dlg( GetInspectionID(), GetToolSet()->GetUniqueObjectID(), *pCondition, GetToolSet()->GetName() );
 
 	dlg.m_psh.dwFlags |= PSH_NOAPPLYNOW;
 

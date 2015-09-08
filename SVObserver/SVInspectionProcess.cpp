@@ -11,6 +11,7 @@
 
 #pragma region Includes
 #include "stdafx.h"
+#include <algorithm>
 #include "SVInspectionProcess.h"
 #include "SVImageLibrary\SVImageBufferHandleImage.h"
 #include "SVImageLibrary\SVImagingDeviceParams.h"
@@ -19,6 +20,7 @@
 #include "SVObjectLibrary\SVObjectManagerClass.h"
 #include "SVSystemLibrary\SVAutoLockAndReleaseTemplate.h"
 #include "SVConfigurationLibrary\SVConfigurationTags.h"
+#include "SVUtilityLibrary\NaturalStringCompare.h"
 #include "SVObserver.h"
 #include "SVGetObjectDequeByTypeVisitor.h"
 #include "SVToolSet.h"
@@ -4840,11 +4842,18 @@ long  SVInspectionProcess::GetResultDataIndex() const
 	return m_runStatus.m_lResultDataIndex; 
 }
 
+SVStringArray SVInspectionProcess::GetPPQInputNames() const
+{
+	return getPPQVariableNames();
+}
 
+SvOi::ITaskObject* SVInspectionProcess::GetToolSetInterface() const
+{
+	return GetToolSet();
+}
 
 bool SVInspectionProcess::IsEnabledPPQVariable(SVValueObjectClass* pValueObject)
 {
-
 	for( size_t i = 0; i < m_PPQInputs.size(); i++ )
 	{	
 		SVIOEntryHostStructPtr ioEntryPtr = m_PPQInputs[i].m_IOEntryPtr;
@@ -4856,15 +4865,11 @@ bool SVInspectionProcess::IsEnabledPPQVariable(SVValueObjectClass* pValueObject)
 			}
 		}
 	}// end for
-
-return false;
-
+	return false;
 }
-
 
 bool SVInspectionProcess::IsDisabledPPQVariable(SVValueObjectClass* pValueObject)
 {
-
 	for( size_t i = 0; i < m_PPQInputs.size(); i++ )
 	{	
 		SVIOEntryHostStructPtr ioEntryPtr = m_PPQInputs[i].m_IOEntryPtr;
@@ -4877,14 +4882,8 @@ bool SVInspectionProcess::IsDisabledPPQVariable(SVValueObjectClass* pValueObject
 			}
 		}
 	}// end for
-
 	return false;
-
 }
-
-
-
-
 
 SVStringArray SVInspectionProcess::getPPQVariableNames() const
 {
@@ -4898,21 +4897,21 @@ SVStringArray SVInspectionProcess::getPPQVariableNames() const
 		//check if input is enable for this inspection
 		if( ioEntryPtr->m_Enabled )
 		{
-			PPQVariables.push_back( ioEntryPtr );
+			retVals.push_back(ioEntryPtr.get()->m_pValueObject->GetCompleteObjectName());
 		}
 	}// end for
 
-	std::sort( PPQVariables.begin(), PPQVariables.end(), &SVIOEntryHostStruct::PtrGreater );
-
-	SVIOEntryHostStructPtrList::iterator Iter( PPQVariables.begin() );
-	while( Iter != PPQVariables.end() )
+	//Need to replace the inspection name with the PPQ Variables name
+	// Only DIO and Remote Input, but is all that is in this list?
+	SVString InspectionName = GetName();
+	std::transform(retVals.begin(), retVals.end(), retVals.begin(), [&InspectionName](const SVString& Name)->SVString 
 	{
-		SVString Name = Iter->get()->m_pValueObject->GetCompleteObjectName();
-		retVals.push_back( Name );
+		SVString newName(Name);
+		newName.replace(InspectionName.c_str(), SvOl::FqnPPQVariables);
+		return newName;
+	});
 
-		++Iter;
-	}
-
+	std::sort( retVals.begin(), retVals.end(), SvUl::NaturalStringCompare<SVString>()); // sort strings
 	return retVals;
 }
 
@@ -4920,7 +4919,6 @@ DWORD SVInspectionProcess::GetObjectColor() const
 {
 	return SV_DEFAULT_WHITE_COLOR;
 }
-
 
 //******************************************************************************
 //* LOG HISTORY:

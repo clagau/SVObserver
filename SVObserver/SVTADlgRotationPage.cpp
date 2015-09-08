@@ -211,13 +211,15 @@ BOOL SVToolAdjustmentDialogRotationPageClass::OnInitDialog()
 
 void SVToolAdjustmentDialogRotationPageClass::OnAngleFormulaButton() 
 {
-	if( m_pEvaluateRotationAngle )
+	if( m_pEvaluateRotationAngle ) //SEJ99 - This needs to change
 	{
-		CString strCaption = m_pEvaluateRotationAngle->GetName();
+		CString strCaption = m_pEvaluateRotationAngle->GetName(); //SEJ99 - This needs to change
 		strCaption += _T( " Formula" );
-		SVFormulaEditorSheetClass dlg( strCaption );
-		dlg.SetTaskObject( m_pEvaluateRotationAngle );
 
+		const GUID& rInspectionID = m_pParentDialog->GetInspectionID();
+		const GUID& rObjectID = m_pParentDialog->GetToolID();
+		SVObjectTypeInfoStruct info(SVMathContainerObjectType, SVEvaluateRotationAngleObjectType);
+		SVFormulaEditorSheetClass dlg( rInspectionID, rObjectID, info, strCaption );
 		dlg.DoModal();
 
 		refresh();
@@ -226,13 +228,15 @@ void SVToolAdjustmentDialogRotationPageClass::OnAngleFormulaButton()
 
 void SVToolAdjustmentDialogRotationPageClass::OnXFormulaButton() 
 {
-	if( m_pEvaluateRotationX )
+	if( m_pEvaluateRotationX ) //SEJ99 - This needs to change
 	{
-		CString strCaption = m_pEvaluateRotationX->GetName();
+		CString strCaption = m_pEvaluateRotationX->GetName(); //SEJ99 - This needs to change
 		strCaption += _T( " Formula" );
-		SVFormulaEditorSheetClass dlg( strCaption );
-		dlg.SetTaskObject( m_pEvaluateRotationX );
 
+		const GUID& rInspectionID = m_pParentDialog->GetInspectionID();
+		const GUID& rObjectID = m_pParentDialog->GetToolID();
+		SVObjectTypeInfoStruct info(SVMathContainerObjectType, SVEvaluateRotationXObjectType);
+		SVFormulaEditorSheetClass dlg( rInspectionID, rObjectID, info, strCaption );
 		dlg.DoModal();
 
 		refresh();
@@ -241,13 +245,15 @@ void SVToolAdjustmentDialogRotationPageClass::OnXFormulaButton()
 
 void SVToolAdjustmentDialogRotationPageClass::OnYFormulaButton() 
 {
-	if( m_pEvaluateRotationY )
+	if( m_pEvaluateRotationY ) //SEJ99 - This needs to change
 	{
-		CString strCaption = m_pEvaluateRotationY->GetName();
+		CString strCaption = m_pEvaluateRotationY->GetName(); //SEJ99 - This needs to change
 		strCaption += _T( " Formula" );
-		SVFormulaEditorSheetClass dlg( strCaption );
-		dlg.SetTaskObject( m_pEvaluateRotationY );
 
+		const GUID& rInspectionID = m_pParentDialog->GetInspectionID();
+		const GUID& rObjectID = m_pParentDialog->GetToolID();
+		SVObjectTypeInfoStruct info(SVMathContainerObjectType, SVEvaluateRotationYObjectType);
+		SVFormulaEditorSheetClass dlg( rInspectionID, rObjectID, info, strCaption );
 		dlg.DoModal();
 
 		refresh();

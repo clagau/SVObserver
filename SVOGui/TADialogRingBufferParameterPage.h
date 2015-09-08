@@ -8,6 +8,7 @@
 #pragma once
 
 #pragma region Includes
+#include <boost\function.hpp>
 #include "ObjectInterfaces\IRingBufferTool.h"
 #include "ISVPropertyPageDialog.h"
 #include "PictureDisplay.h"
@@ -17,6 +18,7 @@ namespace Seidenader
 {
 	namespace SVOGui
 	{
+		typedef boost::function<void(const GUID&, const GUID&)> RingBufferSelectorFunc;
 		class TADialogRingBufferParameterPage : public CPropertyPage, public ISVPropertyPageDialog
 		{
 #pragma region Declarations
@@ -29,7 +31,7 @@ namespace Seidenader
 #pragma region Constructor
 		public:
 			// Standard constructor
-			TADialogRingBufferParameterPage( SvOi::IRingBufferTool& rTool );
+			TADialogRingBufferParameterPage( SvOi::IRingBufferTool& rTool, RingBufferSelectorFunc func );
 
 			// Standard destructor
 			virtual ~TADialogRingBufferParameterPage();
@@ -91,6 +93,7 @@ namespace Seidenader
 			CButton m_ButtonImageIndex1;
 			CButton m_ButtonImageIndex2;
 			CBitmap m_downArrowBitmap;
+			RingBufferSelectorFunc m_selectorFunc;
 #pragma endregion Member Variables
 		};
 	}

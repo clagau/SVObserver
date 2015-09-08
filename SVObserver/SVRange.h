@@ -14,9 +14,8 @@
 #pragma region Includes
 #include "SVTaskObject.h"
 #include "ISVCancel.h"
+#include "RangeEnum.h"
 #pragma endregion Includes
-
-enum ERange { ER_FailHigh = 0, ER_WarnHigh, ER_FailLow, ER_WarnLow, ER_COUNT = 4 };
 
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : Class SVRangeClass
@@ -82,14 +81,14 @@ public:
 	// Parameter:  ref <out>:  the returned indirect value string
 	// Returns:  HRESULT:  S_OK if successful
 	//************************************
-	HRESULT GetIndirectValue(enum ERange ra, CString& ref);
+	HRESULT GetIndirectValue(RangeEnum::ERange ra, CString& ref);
 
 	//************************************
 	// Description:  True if an indirect value exist.
 	// Parameter: enum ERange ra
 	// Returns:   bool
 	//************************************
-	bool HasIndirectValue(enum ERange ra);
+	bool HasIndirectValue(RangeEnum::ERange ra);
 	
 	//************************************
 	// Description:  retrieve the direct value string for Erange
@@ -97,14 +96,14 @@ public:
 	// Parameter: double & ref
 	// Returns:  HRESULT:  S_OK if successful
 	//************************************
-	HRESULT GetValue(enum ERange, double &ref);
+	HRESULT GetValue(RangeEnum::ERange, double &ref);
 	
 	//************************************
 	// Description:  retrieve the indirect object for ERange
 	// Parameter: enum ERange
 	// Returns:   SVStringValueObjectClass*
 	//************************************
-	SVStringValueObjectClass* GetIndirectObject(enum ERange);
+	SVStringValueObjectClass* GetIndirectObject(RangeEnum::ERange ra);
 
 	//************************************
 	// Description:  Set m_isValidRange to false.
@@ -147,9 +146,9 @@ public: // Bad
 	SVDoubleValueObjectClass WarnHigh;
 
 protected:
-	SVStringValueObjectClass m_ValueIndirect[ER_COUNT];
-	bool m_IsConnectedInput[ER_COUNT];
-	SVObjectReference m_ValueObjectReferences[ER_COUNT];
+	SVStringValueObjectClass m_ValueIndirect[RangeEnum::ER_COUNT];
+	bool m_IsConnectedInput[RangeEnum::ER_COUNT];
+	SVObjectReference m_ValueObjectReferences[RangeEnum::ER_COUNT];
 	bool m_isValidRange;
 	SVInObjectInfoStruct m_inputObjectInfo;
 };

@@ -6,7 +6,9 @@
 //******************************************************************************
 
 #pragma once
+#pragma region Includes
 #include "ISVFilter.h"
+#pragma endregion Includes
 
 namespace Seidenader
 {
@@ -15,6 +17,8 @@ namespace Seidenader
 		class IRankingFilter: virtual public ISVFilter
 		{
 		public:
+			virtual ~IRankingFilter() {}
+
 			/**********
 			 The method add a input request for the width parameter to the IP. 
 			 Add the end of setting the input request, you have to set AddInputRequestMarker.

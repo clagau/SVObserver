@@ -117,7 +117,6 @@ protected:
 //  :27.05.1997 RO			First Implementation
 //	:
 ////////////////////////////////////////////////////////////////////////////////
-// SEJ (OLD) class SVAnalyzeFeatureClass : public CObject, public SVObjectClass
 class SVAnalyzeFeatureClass : public SVTaskObjectClass
 {
 	SV_DECLARE_CLASS( SVAnalyzeFeatureClass );

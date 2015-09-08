@@ -6,7 +6,10 @@
 //******************************************************************************
 
 #pragma once
+
+#pragma region Includes
 #include "SVObjectTypeInfoStruct.h"
+#pragma endregion Includes
 
 namespace Seidenader
 {
@@ -19,15 +22,27 @@ namespace Seidenader
 		class IObjectClass
 		{
 		public:
+			virtual ~IObjectClass() {}
+
 			/**********
 			 The method gets the name of this object.
 			***********/
 			virtual LPCTSTR GetName() const = 0;
 
 			/**********
+			 This method gets the complete name of this object.
+			***********/
+			virtual SVString GetCompleteName() const = 0;
+
+			/**********
 			 The method gets the type of this object.
 			***********/
 			virtual const SVObjectTypeEnum& GetObjectType() const = 0;
+
+			/**********
+			 The method gets the parent or nullptr if no parent.
+			***********/
+			virtual const SVGUID& GetParentID() const = 0;
 
 			/**********
 			 The method gets the ancestor with a special type or nullptr if not found.
@@ -41,6 +56,11 @@ namespace Seidenader
 			***********/
 			virtual IObjectClass* GetFirstObject(const SVObjectTypeInfoStruct& type) = 0;
 
+			/**********
+			This method gets the attributes allowed for the object.
+			***********/
+			virtual const UINT ObjectAttributesAllowed() const = 0;
+
 			/*
 			This method returns the object's Global Unique Identifier (GUID) of this object instance.
 			*/
@@ -49,7 +69,7 @@ namespace Seidenader
 			/*
 			This method returns the creation state of the object.
 			*/
-			virtual BOOL IsCreated() const = 0;
+			virtual bool is_Created() const = 0;
 
 			/*
 			This method reset all object. 

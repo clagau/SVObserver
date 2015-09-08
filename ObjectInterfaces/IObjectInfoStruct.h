@@ -6,7 +6,10 @@
 //******************************************************************************
 
 #pragma once
+
+#pragma region Includes
 #include "IObjectClass.h"
+#pragma endregion Includes
 
 namespace Seidenader
 {
@@ -15,6 +18,8 @@ namespace Seidenader
 		class IObjectInfoStruct
 		{
 		public:
+			virtual ~IObjectInfoStruct() {}
+
 			//************************************
 			//! Get the object.
 			//! \returns IObjectClass*

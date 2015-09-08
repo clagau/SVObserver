@@ -321,13 +321,10 @@ void SVToolAdjustmentDialogThresholdPageClass::initThreshold()
 				strWhitePixel.Format( "White Pixel: %d", l_alHistValues[ 255 ] );
 			}
 		}
-
 		setImages();
 		UpdateData( FALSE ); // set data to dialog
 	}
 }
-
-
 
 BOOL SVToolAdjustmentDialogThresholdPageClass::OnSetActive()
 {
@@ -335,7 +332,6 @@ BOOL SVToolAdjustmentDialogThresholdPageClass::OnSetActive()
 	setImages();
 	return CPropertyPage::OnSetActive();
 }
-
 
 BOOL SVToolAdjustmentDialogThresholdPageClass::OnInitDialog()
 {
@@ -999,20 +995,20 @@ void SVToolAdjustmentDialogThresholdPageClass::OnUTFormulaButton()
 {
 	UpdateData( TRUE ); // get data of dialog
 
-	SVObjectTypeInfoStruct info;
-	info.ObjectType = SVEquationObjectType;
-	info.SubType    = SVUpperThresholdEquationObjectType;
+	//SEJ99 - This needs to change
+	SVObjectTypeInfoStruct info(SVEquationObjectType, SVUpperThresholdEquationObjectType);
 	SVUpperThresholdEquationClass* pEquation = reinterpret_cast<SVUpperThresholdEquationClass*>(SVSendMessage( pCurrentThreshold, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&info) ));
-	if( pEquation )
+	if( pEquation ) //SEJ99 - This needs to change
 	{
-		CString strCaption = pEquation->GetName();
+		CString strCaption = pEquation->GetName(); //SEJ99 - This needs to change
 		strCaption += _T( " Formula" );
-		SVFormulaEditorSheetClass dlg( strCaption );
-		dlg.SetTaskObject( pEquation );
 
+		const GUID& rInspectionID = pParentDialog->GetInspectionID();
+		const GUID& rObjectID = pCurrentThreshold->GetUniqueObjectID(); //SEJ99 - This needs to change
+		SVFormulaEditorSheetClass dlg( rInspectionID, rObjectID, info, strCaption );
 		dlg.DoModal();
 
-		long l_lResult = static_cast< long >( pEquation->GetYACCResult() );
+		long l_lResult = static_cast< long >( pEquation->GetYACCResult() ); //SEJ99 - This needs to change
 		csUpperThres.Format( _T("%ld") , l_lResult );
 
 		UpdateData(FALSE);
@@ -1051,17 +1047,17 @@ void SVToolAdjustmentDialogThresholdPageClass::OnATMFormulaButton()
 {
 	UpdateData( TRUE ); // get data of dialog
 
-	SVObjectTypeInfoStruct info;
-	info.ObjectType = SVEquationObjectType;
-	info.SubType    = SVAutoThresholdEquationObjectType;
+	//SEJ99 - This needs to change
+	SVObjectTypeInfoStruct info(SVEquationObjectType, SVAutoThresholdEquationObjectType);
 	SVAutoThresholdEquationClass* pEquation = reinterpret_cast<SVAutoThresholdEquationClass*>(SVSendMessage( pCurrentThreshold, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&info) ));
-	if( pEquation )
+	if( pEquation ) //SEJ99 - This needs to change
 	{
-		CString strCaption = pEquation->GetName();
+		CString strCaption = pEquation->GetName(); //SEJ99 - This needs to change
 		strCaption += _T( " Formula" );
-		SVFormulaEditorSheetClass dlg( strCaption );
-		dlg.SetTaskObject( pEquation );
 
+		const GUID& rInspectionID = pParentDialog->GetInspectionID();
+		const GUID& rObjectID = pCurrentThreshold->GetUniqueObjectID(); //SEJ99 - This needs to change
+		SVFormulaEditorSheetClass dlg( rInspectionID, rObjectID, info, strCaption );
 		dlg.DoModal();
 
 		initThreshold();
@@ -1072,20 +1068,20 @@ void SVToolAdjustmentDialogThresholdPageClass::OnLTFormulaButton()
 {
 	UpdateData( TRUE ); // get data of dialog
 
-	SVObjectTypeInfoStruct info;
-	info.ObjectType = SVEquationObjectType;
-	info.SubType    = SVLowerThresholdEquationObjectType;
+	//SEJ99 - This needs to change
+	SVObjectTypeInfoStruct info(SVEquationObjectType, SVLowerThresholdEquationObjectType);
 	SVLowerThresholdEquationClass* pEquation = reinterpret_cast<SVLowerThresholdEquationClass*>(SVSendMessage( pCurrentThreshold, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&info) ));
-	if( pEquation )
+	if( pEquation ) //SEJ99 - This needs to change
 	{
-		CString strCaption = pEquation->GetName();
+		CString strCaption = pEquation->GetName(); //SEJ99 - This needs to change
 		strCaption += _T( " Formula" );
-		SVFormulaEditorSheetClass dlg( strCaption );
-		dlg.SetTaskObject( pEquation );
 
+		const GUID& rInspectionID = pParentDialog->GetInspectionID();
+		const GUID& rObjectID = pCurrentThreshold->GetUniqueObjectID(); //SEJ99 - This needs to change
+		SVFormulaEditorSheetClass dlg( rInspectionID, rObjectID, info, strCaption );
 		dlg.DoModal();
 
-		long l_lResult = (long)pEquation->GetYACCResult();
+		long l_lResult = (long)pEquation->GetYACCResult(); //SEJ99 - This needs to change
 		csLowerThres.Format( _T("%ld") , l_lResult );
 
 		UpdateData(FALSE);

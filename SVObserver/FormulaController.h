@@ -8,38 +8,41 @@
 //* .Current Version : $Revision:   1.2  $
 //* .Check In Date   : $Date:   17 Jul 2014 17:39:42  $
 //******************************************************************************
-//Description:  FormulaController is the class to get/set and
-//              validate equation objects inside SVObserver.
-//              From outside SVObserver (in the GUI), use IFormulaController.
+//Description:  FormulaController is the class to get/set and validate equation objects from the GUI,
+//               IFormulaController is the interface.
 
 #pragma once
 
 #pragma region Includes
 #include "ObjectInterfaces/IFormulaController.h"
-#include "SVTaskObject.h"
-#include "SVMathContainer.h"
-#include "SVEquation.h"
+#include "SVOGui/GuiController.h"
+#include "ValuesAccessor.h"
+#include "SVOGui/BoundValue.h"
 #pragma endregion
 
 class FormulaController : public SvOi::IFormulaController
 {
 #pragma region Constructor
 public:
-	FormulaController( SVTaskObjectClass& pObject );
-	FormulaController();
+	FormulaController(const GUID& rInspectionID, const GUID& rTaskObjectId, const SVObjectTypeInfoStruct& rInfo, bool bEnabledReadOnly=true);
 #pragma endregion Constructor
+
+#pragma region Destructor
+	virtual ~FormulaController();
+#pragma endregion Destructor
 
 #pragma region Public Methods
 public:
 #pragma region Virtual Methods (IFormulaController)
-	virtual SVString getEquationText() const override;
-	virtual SVStringArray getPPQVariableNames() const override;
-	virtual SvOi::IInspectionProcess* getInspectionProcess() const override;
-	virtual SvOi::IOutputInfoListClass& GetToolSetOutputList( ) const override;
-	virtual HRESULT isToolAndEquationEnabled(bool& toolEnabled, bool& equationEnabled) const override;
+	virtual SVString GetInspectionName() const override;
+	virtual SVString GetPPQName() const override;
+	virtual SVString GetOwnerName() const override;
+	virtual SVString GetEquationText() const override;
 
-	virtual HRESULT setToolAndEquationEnabled(bool toolEnabled, bool equationEnabled) override;
-	virtual void setTaskObject( SvOi::IObjectClass& rObject ) override;
+	virtual void FormulaController::BuildSelectableItems() override;
+
+	virtual HRESULT IsOwnerAndEquationEnabled(bool& ownerEnabled, bool& equationEnabled) const override;
+	virtual HRESULT SetOwnerAndEquationEnabled(bool ownerEnabled, bool equationEnabled) override;
 
 	//**********
 	/// Validate an equationstring
@@ -48,32 +51,27 @@ public:
 	/// \param bRestore[in] boolean for determining whether to restore to the previous equation string. if the string is invalid the previous equation string is restored in every case 
 	/// \return return the position of the failure. If the validation is successful, the value will be "validateSuccessful".
 	//**********
-	virtual int validateEquation(const SVString &equationString, double& result, bool bRestore) const override;
-	virtual int validateAndSetEquation(const SVString &equationString, double& result) override;
+	virtual int ValidateEquation(const SVString &equationString, double& result, bool bRestore) const override;
+	virtual int ValidateAndSetEquation(const SVString &equationString, double& result) override;
+	virtual HRESULT SetDefaultInputs();
 #pragma endregion Virtual Methods (IFormulaController)
 #pragma endregion Public Methods
 
-#pragma region Protected Methods
-protected:
-	/**********
-	Set the task object which use the equation. The virtual protected method, is called from public version.
-	\param pObject [in] task object.
-	**********/
-	virtual void setTaskObjectClass( SVTaskObjectClass& rObject );
-
-	/**********
-	Set equation-class and struct.
-	\param pEquation [in] the equation class.
-	**********/
-	void setEquation( SVEquationClass* pEquation );
-#pragma endregion Protected Methods
-
 #pragma region Member Variables
 protected:
-	SVInspectionProcess* m_pInspection;
-	SVToolSetClass*      m_pToolSet;
-	SVEquationClass*     m_pEquation;
+	GUID m_InspectionID; // Instance ID of the Inspection
+	GUID m_TaskObjectID; // Instance ID of the Owner (Toolset or Tool or other TaskObject)
+	SVObjectTypeInfoStruct m_info;
+	GUID m_EquationID; // Instance ID of the Equation
+
+	typedef ValuesAccessor<SvoGui::BoundValues> FormulaCommand;
+	typedef SvoGui::GuiController<FormulaCommand, FormulaCommand::value_type> Controller;
+	Controller m_taskValues;
+	Controller m_equationValues;
 #pragma endregion Member Variables
+
+private:
+	void init();
 };
 
 //******************************************************************************

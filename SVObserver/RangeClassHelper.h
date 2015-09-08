@@ -17,7 +17,7 @@
 #pragma region Includes
 #include "SVTaskObjectInterfaceClass.h"
 #include "SVTaskObjectList.h"
-#include "SVRange.h"
+#include "RangeEnum.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -57,7 +57,7 @@ public:
 	// Parameter:  ra <in>:  what  limit 
 	// Returns:  HRESULT  S_OK if successful
 	//************************************
-	HRESULT GetInspectionData(enum ERange ra);
+	HRESULT GetInspectionData(RangeEnum::ERange ra);
 
 	//************************************
 	// Description: Check if data are plausible
@@ -72,7 +72,7 @@ public:
 	// Parameter:  lp <in>:  string what to set
 	// Returns:  void, but throw an Exception from type ExceptionMgr1 if set failed
 	//************************************
-	 void SetInternalData(ERange er, LPCTSTR lp);
+	 void SetInternalData(RangeEnum::ERange er, LPCTSTR lp);
 
 	//************************************
 	// Description:  set m_pRange as TaskObject
@@ -85,7 +85,7 @@ public:
 	// Parameter:  ra <in>:  the enum value of the object
 	// Returns:  CString   with the value 
 	//************************************
-	CString GetStringFromRange( ERange ra) const;
+	CString GetStringFromRange( RangeEnum::ERange ra ) const;
 
 	//************************************
 	// Description:  get the Owner name of the Range Object 
@@ -132,11 +132,6 @@ public:
 	//************************************
 	bool FillObjectSelector();
 
-	//************************************
-	// Description:  Translate enum to string
-	// Returns:  CString:  name of the range variable
-	//************************************
-	static CString ERange2String(ERange range);
 
 	//************************************
 	// Description:  Checks if the owner of ref is a SVRangeObjectType

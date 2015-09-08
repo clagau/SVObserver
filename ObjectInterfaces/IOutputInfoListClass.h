@@ -6,15 +6,23 @@
 //******************************************************************************
 
 #pragma once
+#pragma region Includes
 #include "IObjectInfoStruct.h"
+#include <boost\function.hpp>
+#include "SVUtilityLibrary\SVSharedPtr.h"
+#pragma endregion Includes
 
 namespace Seidenader
 {
 	namespace ObjectInterfaces
 	{	
+		typedef boost::function<bool (const IObjectInfoStruct& rInfo)> IsObjectInfoAllowed;
+
 		class IOutputInfoListClass
 		{
 		public:
+			virtual ~IOutputInfoListClass() {}
+
 			//************************************
 			//! Return the size of the list.
 			//! \returns int
@@ -28,6 +36,7 @@ namespace Seidenader
 			//************************************
 			virtual IObjectInfoStruct* GetInterfaceAt(int index) = 0;
 		};
+		typedef SVSharedPtr<IOutputInfoListClass> IOutputInfoListClassPtr;
 	}
 }
 

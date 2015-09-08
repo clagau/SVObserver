@@ -6,7 +6,9 @@
 //******************************************************************************
 
 #pragma once
+#pragma region Includes
 #include "ITaskObjectListClass.h"
+#pragma endregion Includes
 
 namespace Seidenader
 {
@@ -15,6 +17,8 @@ namespace Seidenader
 		class IRingBufferTool: virtual public ITaskObjectListClass
 		{
 		public:
+			virtual ~IRingBufferTool() {}
+
 			/**********
 			 The method set the ring buffer depth with an input request + marker to the IP. 
 			 /param value <in> the new value.

@@ -6,7 +6,9 @@
 //******************************************************************************
 
 #pragma once
+#pragma region Includes
 #include "IObjectClass.h"
+#pragma endregion Includes
 
 namespace Seidenader
 {
@@ -15,6 +17,8 @@ namespace Seidenader
 		class IObjectAppClass: virtual public IObjectClass
 		{
 		public:
+			virtual ~IObjectAppClass() {}
+
 			/**********
 			 The method gets the tool object of this object.
 			***********/

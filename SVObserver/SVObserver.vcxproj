@@ -320,7 +320,6 @@ echo %time%
   <ItemGroup>
     <ClCompile Include="ArchiveToolHelper.cpp" />
     <ClCompile Include="AutoSaver.cpp" />
-    <ClCompile Include="ConditionalController.cpp" />
     <ClCompile Include="BasicValueObject.cpp" />
     <ClCompile Include="BasicValueObjects.cpp" />
     <ClCompile Include="Custom2Filter.cpp" />
@@ -353,6 +352,9 @@ echo %time%
     <ClCompile Include="MonitorListSheet.cpp" />
     <ClCompile Include="MonitorListValuesPage.cpp" />
     <ClCompile Include="RangeClassHelper.cpp" />
+    <ClCompile Include="RangeController.cpp" />
+    <ClCompile Include="RangeSelectorFilter.cpp" />
+    <ClCompile Include="RangeValidator.cpp" />
     <ClCompile Include="RangeXDialogClass.cpp" />
     <ClCompile Include="RemoteCommand.cpp" />
     <ClCompile Include="RemoteMonitorListController.cpp" />
@@ -430,6 +432,7 @@ echo %time%
     <ClCompile Include="SVFailStatusStream.cpp" />
     <ClCompile Include="SVFailStatusStreamManager.cpp" />
     <ClCompile Include="SVFilterClass.cpp" />
+    <ClCompile Include="SVFormulaEditorPage.cpp" />
     <ClCompile Include="SVGigeCameraListCtrl.cpp" />
     <ClCompile Include="SVGigeCameraROIDlg.cpp" />
     <ClCompile Include="SVGigeCameraStructInterface.cpp" />
@@ -3804,7 +3807,6 @@ echo %time%
     <ClInclude Include="AutoSaver.h" />
     <ClInclude Include="BasicValueObject.h" />
     <ClInclude Include="BasicValueObjects.h" />
-    <ClInclude Include="ConditionalController.h" />
     <ClInclude Include="Custom2Filter.h" />
     <ClInclude Include="EQAdjustSize.h" />
     <ClInclude Include="EQAdjustSizeHeight.h" />
@@ -3813,6 +3815,7 @@ echo %time%
     <ClInclude Include="EQAdjustSizeWidth.h" />
     <ClInclude Include="FormulaController.h" />
     <ClInclude Include="GlobalConstantView.h" />
+    <ClInclude Include="GlobalSelector.h" />
     <ClInclude Include="ISVCancel.h" />
     <ClInclude Include="LinkedValue.h" />
     <ClInclude Include="ModelessMessageBox.h" />
@@ -3820,8 +3823,16 @@ echo %time%
     <ClInclude Include="MonitorListImagesPage.h" />
     <ClInclude Include="MonitorListSheet.h" />
     <ClInclude Include="MonitorListValuesPage.h" />
+    <ClInclude Include="NoSelector.h" />
     <ClInclude Include="ObjectNameHelper.h" />
+    <ClInclude Include="PPQNameSelector.h" />
+    <ClInclude Include="PPQVariablesSelector.h" />
+    <ClInclude Include="PublishSelector.h" />
     <ClInclude Include="RangeClassHelper.h" />
+    <ClInclude Include="RangeController.h" />
+    <ClInclude Include="RangeEnum.h" />
+    <ClInclude Include="RangeSelectorFilter.h" />
+    <ClInclude Include="RangeValidator.h" />
     <ClInclude Include="RangeXDialogClass.h" />
     <ClInclude Include="RemoteMonitorList.h" />
     <ClInclude Include="RemoteCommand.h" />
@@ -3833,6 +3844,7 @@ echo %time%
     <ClInclude Include="ResizeTool.h" />
     <ClInclude Include="ResultViewItemDef.h" />
     <ClInclude Include="ResultViewReferences.h" />
+    <ClInclude Include="GlobalAndToolSetSelector.h" />
     <ClInclude Include="RingBufferTool.h" />
     <ClInclude Include="RootChildren.h" />
     <ClInclude Include="RootObject.h" />
@@ -3864,6 +3876,7 @@ echo %time%
     <ClInclude Include="SVFailStatusStream.h" />
     <ClInclude Include="SVFailStatusStreamManager.h" />
     <ClInclude Include="SVFilterClass.h" />
+    <ClInclude Include="SVFormulaEditorPage.h" />
     <ClInclude Include="SVGigeCameraListCtrl.h" />
     <ClInclude Include="SVGigeCameraROIDlg.h" />
     <ClInclude Include="SVGigeCameraStructInterface.h" />
@@ -3899,6 +3912,7 @@ echo %time%
     <ClInclude Include="SVThresholdClass.h" />
     <ClInclude Include="SVToolAdjustmentDialogSizePage.h" />
     <ClInclude Include="SVToolGrouping.h" />
+    <ClInclude Include="ToolSetItemSelector.h" />
     <ClInclude Include="ToolSetView.h" />
     <ClInclude Include="SVTriggerConstants.h" />
     <ClInclude Include="SVTriggerSelectionDlg.h" />
@@ -4334,6 +4348,7 @@ echo %time%
     <ClInclude Include="ToolClipboard.h" />
     <ClInclude Include="ToolSizeAdjustTask.h" />
     <ClInclude Include="UseTypeExceptMatch.h" />
+    <ClInclude Include="ValuesAccessor.h" />
     <ClInclude Include="ZoomHelperEx.h" />
     <ClInclude Include="ZoomToolBar.h" />
   </ItemGroup>

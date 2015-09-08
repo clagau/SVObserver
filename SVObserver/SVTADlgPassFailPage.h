@@ -13,27 +13,20 @@
 #pragma region Includes
 #include "SVMFCControls\SVEditNumbers.h"
 #include "SVOGui\ISVPropertyPageDialog.h"
-#include "RangeClassHelper.h"
+#include "RangeController.h"
+#include "RangeEnum.h"
 #pragma endregion Includes
 
-#pragma region Declarations
-class SVToolClass;
-#pragma endregion Declarations
-
-class SVToolAdjustmentDialogPassFailPageClass : public CPropertyPage ,public SvOg::ISVPropertyPageDialog
+class SVToolAdjustmentDialogPassFailPageClass : public CPropertyPage, public SvOg::ISVPropertyPageDialog, public RangeController
 {
-#pragma region Constructor
 public:
-	// Standard constructor
-	SVToolAdjustmentDialogPassFailPageClass( SVToolClass* PTool );
+#pragma region Constructor
+	SVToolAdjustmentDialogPassFailPageClass(const GUID& rInspectionID, const GUID& rTaskObjectID);
 	SVToolAdjustmentDialogPassFailPageClass();
-	// Standard destructor
-	~SVToolAdjustmentDialogPassFailPageClass();
+	virtual ~SVToolAdjustmentDialogPassFailPageClass();
 #pragma endregion Constructor
 
 #pragma region Public Methods
-public:
-	// ISVPropertyPageDialog
 	virtual bool QueryAllowExit() override;
 #pragma endregion Public Methods
 
@@ -58,25 +51,12 @@ protected:
 #pragma region Protected Methods
 
 #pragma region Privated Methods
-	bool UpdateRangeValues();
-
-	//************************************
-	// Description:  Set the values from RangeHelper to the Dialog
-	//************************************
-	void SetDlgData();
-
-	//************************************
-	// Description:  Get the values from the Dialog and set them to the RangeHelper
-	// Returns:  bool:  
-	//************************************
-	bool GetDlgData();
-
 	//************************************
 	/// Open an object selector and set the chosen value to the control.
-	/// \param control [in] The control of the value
+	/// \param control [in] The erfernec to the value
 	/// \param fieldEnum [in] Enum of the value
 	//************************************
-	void setValuePerObjectSelector( CEdit& control, ERange fieldEnum);
+	void setValuePerObjectSelector(CString& rValue, RangeEnum::ERange fieldEnum);
 
 	//************************************
 	/// Show an object selector and return the name of the selection.
@@ -84,29 +64,31 @@ protected:
 	/// \param fieldEnum [in] Enum of the value
 	/// \returns bool true if a new object would selected.
 	//************************************
-	bool ShowObjectSelector(CString& name, ERange fieldEnum );
+	bool ShowObjectSelector(CString& name, RangeEnum::ERange fieldEnum);
 #pragma region Privated Methods
 
 #pragma region Member Variables
 protected:
 	//{{AFX_DATA(SVToolAdjustmentDialogPassFailPageClass)
 	enum { IDD = IDD_TA_PASS_FAIL_DIALOG };
-	CEdit m_EditFailHigh;
-	CEdit m_EditWarnHigh;
-	CEdit m_EditWarnLow;
-	CEdit m_EditFailLow;
 	CButton m_ButtonFailHigh;
 	CButton m_ButtonWarnHigh;
 	CButton m_ButtonWarnLow;
 	CButton m_ButtonFailLow;
-	CBitmap m_downArrowBitmap;
+	CString m_FailHigh;
+	CString m_FailLow;
+	CString m_WarnHigh;
+	CString m_WarnLow;
 	//}}AFX_DATA
 
 private:
-	RangeClassHelper m_RangeHelper;
+	HRESULT SetInspectionData(SVString& rMsg);
+	bool UpdateRangeValues();
+	void InitData();
+
+	CBitmap m_downArrowBitmap;
 #pragma endregion Member Variables
 };
-
 
 //******************************************************************************
 //* LOG HISTORY:

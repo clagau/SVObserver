@@ -21,6 +21,9 @@
 #include "SVSetupDialogManager.h"
 #include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
 #include "ObjectInterfaces\ErrorNumbers.h"
+#include "NoSelector.h"
+#include "ToolSetItemSelector.h"
+#include "PublishSelector.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -287,9 +290,7 @@ void SVToolAdjustmentDialogStatisticsPageClass::OnPublishButton()
 	SvOsl::ObjectTreeGenerator::Instance().setAttributeFilters( SV_PUBLISHABLE );
 	SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, pInspection->GetToolSet()->GetCompleteObjectName(), SVString( _T("") ) );
 
-	SVOutputInfoListClass OutputList;
-	m_pTool->GetOutputList( OutputList );
-	SvOsl::ObjectTreeGenerator::Instance().insertOutputList( OutputList );
+	PublishSelector(pInspection->GetUniqueObjectID(), m_pTool->GetUniqueObjectID());
 
 	CString PublishableResults;
 	PublishableResults.LoadString( IDS_PUBLISHABLE_RESULTS );
@@ -333,9 +334,7 @@ void SVToolAdjustmentDialogStatisticsPageClass::OnBtnObjectPicker()
 	SvOsl::ObjectTreeGenerator::Instance().setAttributeFilters( SV_SELECTABLE_FOR_STATISTICS );
 	SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, InspectionName, SVString( _T("") ) );
 
-	SVOutputInfoListClass OutputList;
-	m_pToolSet->GetOutputList( OutputList );
-	SvOsl::ObjectTreeGenerator::Instance().insertOutputList( OutputList );
+	SvOsl::ObjectTreeGenerator::Instance().BuildSelectableItems<NoSelector, NoSelector, NoSelector, ToolSetItemSelector<>>(pInspection->GetUniqueObjectID(), m_pToolSet->GetUniqueObjectID());
 
 	CString ToolsetOutput;
 	ToolsetOutput.LoadString( IDS_SELECT_TOOLSET_OUTPUT );

@@ -157,6 +157,7 @@
     <ClCompile Include="SVPoint.cpp" />
     <ClCompile Include="SVSafeArray.cpp" />
     <ClCompile Include="SVString.cpp" />
+    <ClCompile Include="SVStringLoader.cpp" />
     <ClCompile Include="SVUtilityGlobals.cpp" />
     <ClCompile Include="Unzip.cpp">
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -187,6 +188,7 @@
   <ItemGroup>
     <ClInclude Include="LoadDll.h" />
     <ClInclude Include="NameSelectionList.h" />
+    <ClInclude Include="NaturalStringCompare.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="StringToEnum.h" />
     <ClInclude Include="SVBitmapInfo.h" />
@@ -205,6 +207,7 @@
     <ClInclude Include="SVSharedPtr.h" />
     <ClInclude Include="SVString.h" />
     <ClInclude Include="SVStringConversions.h" />
+    <ClInclude Include="SVStringLoader.h" />
     <ClInclude Include="SVUniqueIDGenerator.h" />
     <ClInclude Include="SVUniqueObjectID.h" />
     <ClInclude Include="SVUtilityGlobals.h" />

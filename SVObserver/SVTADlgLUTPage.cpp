@@ -62,8 +62,10 @@ BOOL CALLBACK SVLutGraphMousePointFunction( POINT Point, LPVOID PUserData )
 //* Class Name : SVToolAdjustmentDialogLUTPageClass
 //* Note(s)    : Property Page
 //*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/
-SVToolAdjustmentDialogLUTPageClass::SVToolAdjustmentDialogLUTPageClass( SVToolAdjustmentDialogSheetClass* Parent )
+SVToolAdjustmentDialogLUTPageClass::SVToolAdjustmentDialogLUTPageClass( const GUID& rInspectionID, const GUID& rTaskObjectID, SVToolAdjustmentDialogSheetClass* Parent )
 	: CPropertyPage(SVToolAdjustmentDialogLUTPageClass::IDD)
+	, m_InspectionID(rInspectionID)
+	, m_TaskObjectID(rTaskObjectID) 
 {
 	//{{AFX_DATA_INIT(SVToolAdjustmentDialogLUTPageClass)
 	m_strUpperClipValue = _T("");
@@ -206,6 +208,7 @@ BOOL SVToolAdjustmentDialogLUTPageClass::OnInitDialog()
 		m_upperSlider.SetRange( 0, 255 );
 		m_lowerSlider.SetRange( 0, 255 );
 
+		 //SEJ99 - this needs to change
 		// Get LUT Operator...
 		SVObjectTypeInfoStruct lutObjectInfo;
 		lutObjectInfo.ObjectType = SVUnaryImageOperatorObjectType;
@@ -329,18 +332,19 @@ void SVToolAdjustmentDialogLUTPageClass::OnSelChangeLutModeCombo()
 
 void SVToolAdjustmentDialogLUTPageClass::OnLUTFormulaButton()
 {
-	if( m_pLUTEquation )
+	if( m_pLUTEquation ) //SEJ99 - this needs to change
 	{
 		CString l_Temp;
 		l_Temp.LoadString( IDS_FORMULA_STRING );
 
 		CString strCaption;
-		strCaption = m_pLUTEquation->GetName();
+		strCaption = m_pLUTEquation->GetName(); //SEJ99 - this needs to change
 		strCaption += _T( " " );
 		strCaption += l_Temp;
 
-		SVFormulaEditorSheetClass dlg( strCaption );
-		dlg.SetTaskObject( m_pLUTEquation );
+		const GUID& rObjectID = m_pLUTOperator->GetUniqueObjectID(); //SEJ99 - this needs to change
+		SVObjectTypeInfoStruct info(SVEquationObjectType, SVLUTEquationObjectType);
+		SVFormulaEditorSheetClass dlg( m_InspectionID, rObjectID, info, strCaption );
 
 		dlg.DoModal();
 

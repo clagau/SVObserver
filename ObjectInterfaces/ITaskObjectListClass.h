@@ -6,9 +6,11 @@
 //******************************************************************************
 
 #pragma once
+#pragma region Includes
 #include "ITaskObject.h"
 #include "IClassInfoStructList.h"
 #include "ISVImage.h"
+#pragma endregion Includes
 
 struct SVObjectTypeInfoStruct;
 
@@ -20,6 +22,8 @@ namespace Seidenader
 		class ITaskObjectListClass : virtual public ITaskObject
 		{
 		public:
+			virtual ~ITaskObjectListClass() {}
+
 			/**********
 			 The method gets a list of available objects.
 			 \param list <out>: list of available objects

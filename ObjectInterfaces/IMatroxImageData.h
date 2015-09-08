@@ -5,8 +5,10 @@
 /// This class provide the interface to get the image data of a matrox image.
 //******************************************************************************
 #pragma once
+#pragma region Includes
 #include "SVUtilityLibrary\SVBitmapInfo.h"
 #include "SVMatroxLibrary\SVMatroxBuffer.h"
+#pragma endregion Includes
 
 namespace Seidenader
 {
@@ -16,6 +18,8 @@ namespace Seidenader
 		class IMatroxImageData
 		{
 		public:
+			virtual ~IMatroxImageData() {}
+
 			//************************************
 			//! Return true if data container empty.
 			//! \returns bool

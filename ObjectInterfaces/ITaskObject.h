@@ -6,20 +6,22 @@
 //******************************************************************************
 
 #pragma once
+
+#pragma region Includes
 #include "IObjectAppClass.h"
 #include "IOutputInfoListClass.h"
-#include "SVUtilityLibrary\SVSharedPtr.h"
+#pragma endregion Includes
 
 namespace Seidenader
 {
 	namespace ObjectInterfaces
 	{	
-		typedef SVSharedPtr< IOutputInfoListClass > IOutputInfoListClassSmartPointer;
-
 		//this class is a interface. It should only have pure virtual public method and new member parameter
 		class ITaskObject : virtual public IObjectAppClass
 		{
 		public:
+			virtual ~ITaskObject() {}
+
 			/**********
 				The method add a input request marker to the IP.
 			***********/
@@ -33,9 +35,15 @@ namespace Seidenader
 
 			//************************************
 			/// Return the output list of this task object.
-			/// \returns Seidenader::ObjectInterfaces::IOutputInfoListClassSmartPointer
+			/// \returns Seidenader::ObjectInterfaces::IOutputInfoListClassPtr
 			//************************************
-			virtual IOutputInfoListClassSmartPointer GetOutputList( ) const = 0;
+			virtual IOutputInfoListClassPtr GetOutputList( ) const = 0;
+
+			//************************************
+			/// Return the output list of this task object, filtered by functor.
+			/// \returns Seidenader::ObjectInterfaces::IOutputInfoListClassPtr
+			//************************************
+			virtual IOutputInfoListClassPtr GetOutputList(IsObjectInfoAllowed func) const = 0;
 		};
 	}
 }

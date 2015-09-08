@@ -30,6 +30,13 @@ namespace Seidenader
 		//! \returns IObjectClass*
 		//************************************
 		IObjectClass* ConstructObject( const SVGUID& rClassID );
+
+		//************************************
+		//! Return a object defined by it's Object ID.
+		//! \param rObjectId [in] Instance GUID of the object.
+		//! \returns IObjectClass*
+		//************************************
+		IObjectClass* getObject( const SVGUID& rObjectID );
 	}
 }
 

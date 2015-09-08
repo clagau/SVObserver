@@ -96,40 +96,19 @@ namespace Seidenader
 			void insertTreeObjects( const SVStringArray& rLocationList );
 
 			/**********
-			 The method inserts a list of objects into the tree
-			 \param rObjectList <in> reference to the object list
+			/// This method inserts items in the tree
+			/// \param rInspectionID <in> Inspection Instance GUID
+			/// \param rInstanceID <in> TaskObject Instance GUID
 			***********/
-			void insertTreeObjects( const SVObjectReferenceVector& rObjectList );
-
-			/**********
-			 The method inserts a list of objects into the tree
-			 \param rTree <in> reference to the object tree list
-			***********/
-			void insertTreeObjects( const SvTrl::ObjectTreeItems& rTree );
-
-			/**********
-			 The method inserts an object into the tree list
-			 \param rObjectRef <in> reference to the object
-			***********/
-			void insertTreeObject( const SVObjectReference& rObjectRef );
-
-			/**********
-			 The method inserts an object into the tree list
-			 \param rLocation <in> reference to the item location
-			***********/
-			void insertTreeObject( const SVString& rLocation );
+			template <typename GlobalSelector, typename PPQNameSelector, typename PPQVariablesSelector, typename ToolsetSelector>
+			void BuildSelectableItems( const SVGUID& rInspectionID, const SVGUID& rInstanceID );
 
 			/**********
 			 The method inserts an object into the tree list
 			 \param rObjectItem <in> reference to a object selector item
 			***********/
-			void insertTreeObject( const SvTrl::ObjectSelectorItem& rObjectItem );
+//SEJ99			void insertTreeObject( const SvTrl::ObjectSelectorItem& rObjectItem );
 
-			/**********
-			 The method inserts the tool set output object list
-			 \param rOutputList <out> reference to the output list
-			***********/
-			void insertOutputList( SvOi::IOutputInfoListClass& rOutputList );
 
 			//**********
 			// Description:  The method displays the object selector dialog
@@ -211,6 +190,31 @@ namespace Seidenader
 
 		private:
 		#pragma region Private Methods
+			/**********
+			 The method inserts an object into the tree list
+			 \param rObjectRef <in> reference to the object
+			***********/
+			void insertTreeObject( const SVObjectReference& rObjectRef );
+
+			/**********
+			 The method inserts an object into the tree list
+			 \param rLocation <in> reference to the item location
+			***********/
+			void insertTreeObject( const SVString& rLocation );
+
+			/**********
+			 The method inserts the tool set output object list
+			 \param rOutputList <out> reference to the output list
+			***********/
+			void insertOutputList( SvOi::IOutputInfoListClass& rOutputList );
+
+			/**********
+			 The method inserts a list of objects into the tree
+			 \param rObjectList <in> reference to the object list
+			***********/
+			void insertTreeObjects( const SVObjectReferenceVector& rObjectList );
+
+
 			/**********
 			 The method filters the object list
 			 \param rOutputList <in> reference to the output list (Tried to make it const however failed due to methods not const)

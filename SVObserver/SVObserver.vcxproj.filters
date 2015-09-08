@@ -1382,9 +1382,6 @@
     <ClCompile Include="SVConditional.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ConditionalController.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="MonitorListView.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -1539,6 +1536,18 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVArchiveRecordsArray.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SVFormulaEditorPage.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RangeController.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RangeSelectorFilter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RangeValidator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -3009,9 +3018,6 @@
     <ClInclude Include="SVConditional.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ConditionalController.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVExtentPropertiesInfoStruct.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -3178,6 +3184,45 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ArchiveMethodEnum.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ValuesAccessor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVFormulaEditorPage.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RangeController.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GlobalSelector.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PPQNameSelector.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ToolSetItemSelector.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="NoSelector.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GlobalAndToolSetSelector.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PPQVariablesSelector.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PublishSelector.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RangeEnum.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RangeSelectorFilter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RangeValidator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

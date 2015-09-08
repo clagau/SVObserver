@@ -20,6 +20,8 @@ namespace Seidenader
 			static const long StandardKernelSize = 3;
 			static const int MaxKernelSize = 21;
 
+			virtual ~ICustom2Filter() {}
+
 			/**********
 			 The method add a input request for the kernel width parameter to the IP. 
 			 Add the end of setting the input request, you have to set AddInputRequestMarker.

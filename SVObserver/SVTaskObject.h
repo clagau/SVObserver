@@ -115,7 +115,8 @@ public:
 #pragma region virtual method (ITaskObject)
 	virtual HRESULT AddInputRequestMarker() override;
 	virtual HRESULT RunOnce(IObjectClass* pTool = nullptr) override;
-	virtual SvOi::IOutputInfoListClassSmartPointer GetOutputList( ) const override;
+	virtual SvOi::IOutputInfoListClassPtr GetOutputList( ) const override;
+	virtual SvOi::IOutputInfoListClassPtr GetOutputList(SvOi::IsObjectInfoAllowed func) const override;
 #pragma endregion virtual method (ITaskObject)
 
 protected:

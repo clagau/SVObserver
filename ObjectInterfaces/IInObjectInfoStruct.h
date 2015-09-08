@@ -6,7 +6,9 @@
 //******************************************************************************
 
 #pragma once
+#pragma region Includes
 #include "IObjectInfoStruct.h"
+#pragma endregion Includes
 
 namespace Seidenader
 {
@@ -15,6 +17,8 @@ namespace Seidenader
 		class IInObjectInfoStruct : virtual public IObjectInfoStruct
 		{
 		public:
+			virtual ~IInObjectInfoStruct() {}
+
 			//************************************
 			//! Is this object connected.
 			//! \returns bool

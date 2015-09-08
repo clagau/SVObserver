@@ -6,7 +6,10 @@
 //******************************************************************************
 
 #pragma once
+#pragma region Includes
 #include "IObjectClass.h"
+#include "ITaskObject.h"
+#pragma endregion Includes
 
 namespace Seidenader
 {
@@ -15,6 +18,7 @@ namespace Seidenader
 		class IInspectionProcess: virtual public IObjectClass
 		{
 		public:
+			virtual ~IInspectionProcess() {}
 			/**********
 			 The method gets the interface of this ppq-object.
 			***********/
@@ -24,6 +28,13 @@ namespace Seidenader
 			 The method set default inputs.
 			***********/
 			virtual void SetDefaultInputs() = 0;
+
+			/***********
+			This method gets the names of the PPQ inputs
+			***********/
+			virtual SVStringArray GetPPQInputNames() const = 0;
+
+			virtual ITaskObject* GetToolSetInterface() const = 0;
 		};
 	}
 }

@@ -6,7 +6,9 @@
 //******************************************************************************
 
 #pragma once
+#pragma region Includes
 #include "ITaskObjectListClass.h"
+#pragma endregion Includes
 
 namespace Seidenader
 {
@@ -16,6 +18,8 @@ namespace Seidenader
 		class IToolSet : virtual public ITaskObjectListClass
 		{
 		public:
+			virtual ~IToolSet() {}
+
 			/**********
 			 The method gets ?.
 			 \param rToolID <out>: tool id

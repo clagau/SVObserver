@@ -14,101 +14,96 @@
 #include "SVMFCControls/SVToolBar.h"
 #include "ObjectInterfaces/IFormulaController.h"
 
-namespace Seidenader
+class SVFormulaEditorPageClass : public CPropertyPage
 {
-	namespace SVOGui
-	{
-		class SVFormulaEditorPageClass : public CPropertyPage
-		{
-			// Construction
-		public:
-			SVFormulaEditorPageClass( SvOi::IFormulaController& rController, bool isDisableCheckboxesVisible = false, UINT captionID = IDS_FORMULA_STRING, UINT disableExtentionID = IDS_TOOL_STRING );   // standard constructor
+	// Construction
+public:
+	SVFormulaEditorPageClass( const GUID& rInspectionID, const GUID& rTaskObjectID, SvOi::IFormulaControllerPtr controller, bool isDisableCheckboxesVisible = false, UINT captionID = IDS_FORMULA_STRING, UINT disableExtentionID = IDS_TOOL_STRING );   // standard constructor
+	virtual ~SVFormulaEditorPageClass();
 
-			bool validateAndSetEquation();
+	CString GetOwnerName() const;
+	void SetDefaultInputs();
+	bool validateAndSetEquation();
 
-			// Dialog Data
-			//{{AFX_DATA(SVFormulaEditorPageClass)
-			enum { IDD = IDD_FORMULA_DIALOG };
-			CEdit	m_ConstantEditCtrl;
-			CButton	m_AddLocalVariableCtrl;
-			CButton	m_AddConstantCtrl;
-			CEdit	m_MathRichEditCtrl;
-			CString	m_StrConstantValue;
-			int		m_constantType;
-			CButton m_decimalRadioButton;
-			CButton m_hexadecimalRadioButton;
-			CButton m_binaryRadioButton;
-			CString	m_strToolsetOutputVariable;
-			CButton	m_ToolsetOutputSelectButton;
-			CButton m_DisableEquationCtrl;
-			CButton m_DisableToolCtrl;
-			BOOL	m_equationDisabled;
-			BOOL	m_toolDisabled;
-			//}}AFX_DATA
+	// Dialog Data
+	//{{AFX_DATA(SVFormulaEditorPageClass)
+	enum { IDD = IDD_FORMULA_DIALOG };
+	CEdit	m_ConstantEditCtrl;
+	CButton	m_AddLocalVariableCtrl;
+	CButton	m_AddConstantCtrl;
+	CEdit	m_MathRichEditCtrl;
+	CString	m_StrConstantValue;
+	int		m_constantType;
+	CButton m_decimalRadioButton;
+	CButton m_hexadecimalRadioButton;
+	CButton m_binaryRadioButton;
+	CString	m_strToolsetOutputVariable;
+	CButton	m_ToolsetOutputSelectButton;
+	CButton m_DisableEquationCtrl;
+	CButton m_DisableToolCtrl;
+	BOOL	m_equationDisabled;
+	BOOL	m_ownerDisabled;
+	//}}AFX_DATA
 
-		protected:
-			void backspaceRichEdit( long Pos );
-			void insertIntoRichEdit( LPCTSTR tszValue );
-			void advanceRichEdit( long Pos );
-			void deleteRichEdit( long Pos );
-			CString getEquationText();
-			void setEquationText();
-			BOOL createToolbars();
-			int GetComboBoxStringExtent( CComboBox& rComboBox, LPCTSTR szStr );
+protected:
+	void backspaceRichEdit( long Pos );
+	void insertIntoRichEdit( LPCTSTR tszValue );
+	void advanceRichEdit( long Pos );
+	void deleteRichEdit( long Pos );
+	CString getEquationText() const;
+	void setEquationText();
+	BOOL createToolbars();
+	int GetComboBoxStringExtent( CComboBox& rComboBox, LPCTSTR szStr );
 
-			void HandleValidateError( int posFailed );
+	void HandleValidateError( int posFailed );
 
-			void onValidate();
-			void onUndo();
+	void onValidate();
+	void onUndo();
 
-			void enableControls();
-			void enableUndoButton();
+	void enableControls();
+	void enableUndoButton();
 
-			// Overrides
-			// ClassWizard generated virtual function overrides
-			//{{AFX_VIRTUAL(SVFormulaEditorPageClass)
-		protected:
-			virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-			virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
-			//}}AFX_VIRTUAL
+	// Overrides
+	// ClassWizard generated virtual function overrides
+	//{{AFX_VIRTUAL(SVFormulaEditorPageClass)
+protected:
+	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
+	//}}AFX_VIRTUAL
 
-			// Generated message map functions
-			//{{AFX_MSG(SVFormulaEditorPageClass)
-			virtual void OnOK();
-			afx_msg void OnHelp();
-			afx_msg BOOL OnHelpInfo(HELPINFO* pHelpInfo);
-			afx_msg void OnAddLocalVariableButton();
-			afx_msg void OnAddConstantButton();
-			virtual BOOL OnInitDialog();
-			afx_msg void OnLocalVariableSelect();
-			afx_msg void OnDisable();
-			afx_msg void OnEquationFieldChanged();
-			virtual BOOL OnKillActive( );
-			//}}AFX_MSG
-			DECLARE_MESSAGE_MAP()
+	// Generated message map functions
+	//{{AFX_MSG(SVFormulaEditorPageClass)
+	virtual void OnOK();
+	afx_msg void OnHelp();
+	afx_msg BOOL OnHelpInfo(HELPINFO* pHelpInfo);
+	afx_msg void OnAddLocalVariableButton();
+	afx_msg void OnAddConstantButton();
+	virtual BOOL OnInitDialog();
+	afx_msg void OnLocalVariableSelect();
+	afx_msg void OnDisable();
+	afx_msg void OnEquationFieldChanged();
+	virtual BOOL OnKillActive( );
+	//}}AFX_MSG
+	DECLARE_MESSAGE_MAP()
 
-		protected:
-			SvMc::SVToolBarClass m_logicalOperatorBar;
-			SvMc::SVToolBarClass m_conditionalOperatorBar;
-			SvMc::SVToolBarClass m_trigOperatorBar;
-			SvMc::SVToolBarClass m_miscOperatorBar;
-			SvMc::SVToolBarClass m_basicOperatorBar;
-			SvMc::SVToolBarClass m_cursorBar;
-			SvMc::SVToolBarClass m_validateBar;
-			SvMc::SVToolBarClass m_punctuationBar;
-			SvMc::SVToolBarClass m_statisticsOperatorBar;
+protected:
+	SvMc::SVToolBarClass m_logicalOperatorBar;
+	SvMc::SVToolBarClass m_conditionalOperatorBar;
+	SvMc::SVToolBarClass m_trigOperatorBar;
+	SvMc::SVToolBarClass m_miscOperatorBar;
+	SvMc::SVToolBarClass m_basicOperatorBar;
+	SvMc::SVToolBarClass m_cursorBar;
+	SvMc::SVToolBarClass m_validateBar;
+	SvMc::SVToolBarClass m_punctuationBar;
+	SvMc::SVToolBarClass m_statisticsOperatorBar;
 
-		private:
-			SvOi::IFormulaController& m_rFormulaController;
-			int m_numChars;
-			bool m_isConditionalPage;
-			UINT m_disableExtentionID;
-			CBitmap m_downArrowBitmap;
-		};
-	}
-}
-
-namespace SvOg = Seidenader::SVOGui;
+private:
+	SvOi::IFormulaControllerPtr m_FormulaController;
+	int m_numChars;
+	bool m_isConditionalPage;
+	UINT m_disableExtentionID;
+	CBitmap m_downArrowBitmap;
+};
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.

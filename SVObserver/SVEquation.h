@@ -18,8 +18,6 @@
 #include "SVEquationLibrary/SVEquationYacc.h"
 #include "SVTaskObject.h"
 
-class SVIPDoc;
-
 /**
 @SVObjectName Equation Symbol Type Enumeration
 

@@ -38,7 +38,6 @@ ObjectSelectorItem::ObjectSelectorItem( const ObjectSelectorItem& rObject )
 
 ObjectSelectorItem::~ObjectSelectorItem()
 {
-	Clear();
 }
 #pragma endregion Constructor
 

@@ -11,9 +11,12 @@
 
 #pragma region Includes
 #include "stdafx.h"
+#include <algorithm>
 #include "ObjectTreeGenerator.h"
 
 #include "SVObjectLibrary\SVObjectManagerClass.h"
+#include "ObjectInterfaces\ITaskObject.h"
+#include "ObjectInterfaces\IOutputInfoListClass.h"
 #include "SVTreeLibrary\ObjectSelectorItem.h"
 #include "ResizablePropertySheet.h"
 #include "ObjectSelectorPpg.h"
@@ -87,6 +90,8 @@ void ObjectTreeGenerator::setAttributeFilters( UINT AttributesSetFilter, UINT At
 	}
 }
 
+/// Public
+/// SEJ999 - this appears to only be for the PPQ items...
 void ObjectTreeGenerator::insertTreeObjects( const SVString& rTreeName )
 {
 	SVObjectReferenceVector ObjectList;
@@ -95,44 +100,14 @@ void ObjectTreeGenerator::insertTreeObjects( const SVString& rTreeName )
 	insertTreeObjects( ObjectList );
 }
 
+/// Public
 void ObjectTreeGenerator::insertTreeObjects( const SVStringArray& rLocationList )
 {
-	SVStringArray::const_iterator Iter( rLocationList.begin() );
-
-	while( rLocationList.end() != Iter )
-	{
-		insertTreeObject( *Iter );
-		++Iter;
-	}
+	std::for_each(rLocationList.begin(), rLocationList.end(), [this](const SVString &rLocation){ insertTreeObject(rLocation); });
 }
 
-void ObjectTreeGenerator::insertTreeObjects( const SVObjectReferenceVector& rObjectList )
-{
-	SVObjectReferenceVector::const_iterator Iter( rObjectList.begin() );
-
-	while( rObjectList.end() != Iter )
-	{
-		insertTreeObject( *Iter );
-		++Iter;
-	}
-}
-
-void ObjectTreeGenerator::insertTreeObjects( const SvTrl::ObjectTreeItems& rTree )
-{
-	SvTrl::ObjectTreeItems::SVTree_const_pre_order_iterator Iter( rTree.pre_order_begin() );
-	
-	while( rTree.pre_order_end() != Iter )
-	{
-		if( Iter->second.isLeaf() )
-		{
-			//InsertLeaf needs a reference to a non const item
-			SvTrl::ObjectSelectorItem SelectorItem( Iter->second );
-			m_TreeContainer.insertLeaf( Iter->second.getDisplayLocation(), SelectorItem );
-		}
-		++Iter;
-	}
-}
-
+/// SEJ999 - THIS NEEDS TO CHANGE!!!
+/// Prvivate
 void ObjectTreeGenerator::insertTreeObject( const SVObjectReference& rObjectRef )
 {
 	SvTrl::ObjectSelectorItem SelectorItem;
@@ -171,6 +146,8 @@ void ObjectTreeGenerator::insertTreeObject( const SVObjectReference& rObjectRef 
 	m_TreeContainer.insertLeaf( Location, SelectorItem );
 }
 
+/// Prvivate
+/// SEJ999 - THIS NEEDS TO CHANGE!!!
 void ObjectTreeGenerator::insertTreeObject( const SVString& rLocation )
 {
 	SVObjectReference objectRef;
@@ -193,6 +170,16 @@ void ObjectTreeGenerator::insertTreeObject( const SVString& rLocation )
 	}
 }
 
+void ObjectTreeGenerator::insertTreeObjects( const SVObjectReferenceVector& rObjectList )
+{
+	std::for_each(rObjectList.begin(), rObjectList.end(), [this](const SVObjectReference& rRef)->void
+	{
+		insertTreeObject( rRef);
+	}
+	);
+}
+
+/*SEJ99 Not called - obsolete?
 void ObjectTreeGenerator::insertTreeObject( const SvTrl::ObjectSelectorItem& rObjectItem )
 {
 	SvTrl::ObjectSelectorItem SelectorItem(rObjectItem);
@@ -204,6 +191,7 @@ void ObjectTreeGenerator::insertTreeObject( const SvTrl::ObjectSelectorItem& rOb
 	SVString DisplayLocation = getFilteredLocation( m_LocationInputFilters, SelectorItem.getLocation() );
 	m_TreeContainer.insertLeaf( DisplayLocation, SelectorItem );
 }
+*/
 
 void ObjectTreeGenerator::insertOutputList( SvOi::IOutputInfoListClass& rOutputList )
 {
@@ -397,7 +385,7 @@ void ObjectTreeGenerator::filterObjects( SvOi::IOutputInfoListClass& rOutputList
 	int nCount = rOutputList.GetSize();
 	for( int i = 0; i < nCount; i++ )
 	{
-		const SVOutObjectInfoStruct* pInfoItem = NULL;
+		const SVOutObjectInfoStruct* pInfoItem = nullptr;
 
 		try
 		{
@@ -408,7 +396,7 @@ void ObjectTreeGenerator::filterObjects( SvOi::IOutputInfoListClass& rOutputList
 			::AfxMessageBox( "EXCEPTION: Error in getting Output Object Information Structure" );
 		}
 
-		if( pInfoItem != NULL )
+		if( nullptr != pInfoItem )
 		{
 			SVObjectReference ObjectRef;
 

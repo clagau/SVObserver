@@ -20,6 +20,9 @@
 #include "SVToolset.h"
 #include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
 #include "RootObject.h"
+#include "GlobalSelector.h"
+#include "NoSelector.h"
+#include "ToolSetItemSelector.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -111,14 +114,7 @@ void SVTADlgRemoteInputToolPage::OnBnClickedSelectInputButton()
 	SvOsl::ObjectTreeGenerator::Instance().setAttributeFilters( SV_ARCHIVABLE );
 	SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, InspectionName, SVString( _T("") ) );
 
-	SVStringArray ObjectNameList;
-	RootObject::getRootChildNameList( ObjectNameList, _T(""), SV_ARCHIVABLE );
-	SvOsl::ObjectTreeGenerator::Instance().insertTreeObjects( ObjectNameList );
-	ObjectNameList.clear();
-
-	SVOutputInfoListClass OutputList;
-	pToolSet->GetOutputList( OutputList );
-	SvOsl::ObjectTreeGenerator::Instance().insertOutputList( OutputList );
+	SvOsl::ObjectTreeGenerator::Instance().BuildSelectableItems<GlobalSelector, NoSelector, NoSelector, ToolSetItemSelector<>>(pToolSet->GetInspection()->GetUniqueObjectID(), pToolSet->GetUniqueObjectID());
 
 	if( nullptr !=  m_pTool->GetInputObject() )
 	{

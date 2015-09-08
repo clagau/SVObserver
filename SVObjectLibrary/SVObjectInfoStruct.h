@@ -51,7 +51,7 @@ struct SVObjectInfoStruct : virtual public SvOi::IObjectInfoStruct
 	BOOL CheckExistence();
 	
 #pragma region virtual method (IObjectInfoStruct)
-	virtual SvOi::IObjectClass* getObject() const override { return reinterpret_cast<SvOi::IObjectClass*>(PObject); };
+	virtual SvOi::IObjectClass* getObject() const override;
 #pragma endregion virtual method (IObjectInfoStruct)
 
 	SVObjectClass* PObject;					// Where I am

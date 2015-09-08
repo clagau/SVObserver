@@ -435,6 +435,17 @@ LPCTSTR SVObjectClass::GetName() const
 	return strName;
 }
 
+SVString SVObjectClass::GetCompleteName() const 
+{
+	CString name = GetCompleteObjectName();
+	return SVString(static_cast<LPCSTR>(name));
+}
+
+const SVGUID& SVObjectClass::GetParentID() const
+{
+	return GetOwnerID();
+}
+
 SvOi::IObjectClass* SVObjectClass::GetAncestorInterface(SVObjectTypeEnum ancestorObjectType)
 {
 	return GetAncestor(ancestorObjectType);

@@ -14,6 +14,8 @@ namespace Seidenader
 		class IClassInfoStructList
 		{
 		public:
+			virtual ~IClassInfoStructList() {}
+
 			/**********
 			 The method gets the size of the list.
 			***********/

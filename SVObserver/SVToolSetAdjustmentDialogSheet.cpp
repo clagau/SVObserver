@@ -11,26 +11,13 @@
 
 #include "stdafx.h"
 #include "SVToolSetAdjustmentDialogSheet.h"
-#include "SVInspectionProcess.h"
-#include "SVIPDoc.h"
-#include "SVToolSet.h"
-#include "SVConditional.h"
-#include "ConditionalController.h"
+#include "FormulaController.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
-
-//*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/
-//* Class Name : Class SVToolSetAdjustmentDialogSheetClass
-//* Note(s)    : Property Sheet Class
-//*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/*\*/
-
-//******************************************************************************
-// Adjustments
-//******************************************************************************
 
 IMPLEMENT_DYNAMIC(SVToolSetAdjustmentDialogSheetClass, CPropertySheet)
 
@@ -44,20 +31,20 @@ BEGIN_MESSAGE_MAP(SVToolSetAdjustmentDialogSheetClass, CPropertySheet)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
-//******************************************************************************
-// Constructor(s):
-//******************************************************************************
-
-SVToolSetAdjustmentDialogSheetClass::SVToolSetAdjustmentDialogSheetClass( SVConditionalClass& rCondition, UINT nIDCaption, CWnd* pParentWnd, UINT iSelectPage )
-	:CPropertySheet( nIDCaption, pParentWnd, iSelectPage )
-	, m_formulaPage( m_conditionalController, true, IDS_CONDITIONAL_STRING, IDS_CLASSNAME_SVTOOLSET )
+SVToolSetAdjustmentDialogSheetClass::SVToolSetAdjustmentDialogSheetClass( const GUID& rInspectionID, const GUID& rTaskObjectID, SVConditionalClass& rCondition, UINT nIDCaption, CWnd* pParentWnd, UINT iSelectPage )
+: CPropertySheet( nIDCaption, pParentWnd, iSelectPage )
+, m_InspectionID(rInspectionID)
+, m_TaskObjectID(rTaskObjectID)
+, m_pToolSet(nullptr)
 {
 	init( rCondition );
 }
 
-SVToolSetAdjustmentDialogSheetClass::SVToolSetAdjustmentDialogSheetClass( SVConditionalClass& rCondition, LPCTSTR pszCaption, CWnd* pParentWnd, UINT iSelectPage )
-	:CPropertySheet( pszCaption, pParentWnd, iSelectPage )
-	, m_formulaPage( m_conditionalController, true, IDS_CONDITIONAL_STRING, IDS_CLASSNAME_SVTOOLSET )
+SVToolSetAdjustmentDialogSheetClass::SVToolSetAdjustmentDialogSheetClass( const GUID& rInspectionID, const GUID& rTaskObjectID, SVConditionalClass& rCondition, LPCTSTR pszCaption, CWnd* pParentWnd, UINT iSelectPage )
+: CPropertySheet( pszCaption, pParentWnd, iSelectPage )
+, m_InspectionID(rInspectionID)
+, m_TaskObjectID(rTaskObjectID)
+, m_pToolSet(nullptr)
 {
 	init( rCondition );
 }
@@ -68,23 +55,16 @@ SVToolSetAdjustmentDialogSheetClass::~SVToolSetAdjustmentDialogSheetClass()
 
 void SVToolSetAdjustmentDialogSheetClass::init( SVConditionalClass& rCondition )
 {
-	m_pToolSet = dynamic_cast< SVToolSetClass* >( rCondition.GetOwner() );
+	m_formulaPage = FormulaEditorPagePtr(new SVFormulaEditorPageClass(m_InspectionID, m_TaskObjectID, 
+		new FormulaController(m_InspectionID, m_TaskObjectID, SVObjectTypeInfoStruct(SVEquationObjectType, SVConditionalObjectType), false),
+								true, IDS_CONDITIONAL_STRING, IDS_CLASSNAME_SVTOOLSET));
 
-	if( m_pToolSet )
-	{
-		addPages();
-	}
+	addPages();
 }
 
 void SVToolSetAdjustmentDialogSheetClass::addPages()
 {
-	ASSERT( m_pToolSet );
-	if( m_pToolSet )
-	{
-		m_conditionalController.setTaskObject( *m_pToolSet );
-
-		AddPage( &m_formulaPage );
-	}
+	AddPage( m_formulaPage.get() );
 }
 
 BOOL SVToolSetAdjustmentDialogSheetClass::OnInitDialog() 
@@ -102,19 +82,12 @@ BOOL SVToolSetAdjustmentDialogSheetClass::OnInitDialog()
 	// Remove Close Button
 	ModifyStyle( WS_SYSMENU, 0, SWP_FRAMECHANGED );
 
-	if( m_pToolSet )
-	{
-		CString l_Temp = _T( "ToolSet Adjustment: " );
-		l_Temp += m_pToolSet->GetName();
+	CString l_Temp = _T( "ToolSet Adjustment: " );
+	l_Temp += m_formulaPage->GetOwnerName();
 
-		SetWindowText( l_Temp );
+	SetWindowText( l_Temp );
 		
-		return bResult;
-	}
-
-	SendMessage( WM_CLOSE );
-
-	return FALSE;
+	return bResult;
 }
 
 void SVToolSetAdjustmentDialogSheetClass::OnDestroy() 
@@ -124,22 +97,12 @@ void SVToolSetAdjustmentDialogSheetClass::OnDestroy()
 
 void SVToolSetAdjustmentDialogSheetClass::OnOK()
 {
+	//SEJ99 - refactor...
 	// Try to validate the Conditional
-	if( m_formulaPage.validateAndSetEquation() )
+	if( m_formulaPage->validateAndSetEquation() )
 	{
-		ASSERT( m_pToolSet );
-		if( nullptr != m_pToolSet )
-		{
-			// Rebuild the Links
-			SVInspectionProcess* pInspection = m_pToolSet->GetInspection();
-			if( nullptr != pInspection )
-			{ 
-				pInspection->SetDefaultInputs(); 
-			}
-
-			EndDialog( IDOK );
-		}
-		EndDialog( IDCANCEL );
+		m_formulaPage->SetDefaultInputs();
+		EndDialog( IDOK );
 	}
 	else
 	{

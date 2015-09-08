@@ -453,7 +453,6 @@ BOOL SVObjectManagerClass::CreateUniqueObjectID( SVObjectClass* PObject )
 
 				if( l_Status )
 				{
-					// SEJ (OLD) pUniqueObject->ObjectList.Add( PObject );
 					pUniqueObject->PObject = PObject;
 					PObject->outObjectInfo.UniqueObjectID = pUniqueObject->ObjectUID; 
 					m_UniqueObjectEntries[ pUniqueObject->ObjectUID ] = pUniqueObject;
@@ -490,7 +489,6 @@ BOOL SVObjectManagerClass::OpenUniqueObjectID( SVObjectClass* PObject )
 
 				if( l_Status )
 				{
-					// SEJ (OLD) pUniqueObject->ObjectList.Add( PObject );
 					pUniqueObject->PObject = PObject;
 					pUniqueObject->ObjectUID = PObject->outObjectInfo.UniqueObjectID; 
 					m_UniqueObjectEntries[ pUniqueObject->ObjectUID ] = pUniqueObject;
@@ -1924,6 +1922,14 @@ SvOi::IObjectClass* SvOi::ConstructObject( const SVGUID& rClassID )
 	SVObjectManagerClass::Instance().ConstructObject(rClassID, pObject);
 	return pObject;
 }
+
+SvOi::IObjectClass* SvOi::getObject( const SVGUID& rObjectID )
+{
+	SVObjectClass* pObject = nullptr;
+	SVObjectManagerClass::Instance().GetObjectByIdentifier(rObjectID, pObject);
+	return pObject;
+}
+
 #pragma endregion IObjectManager-function
 //******************************************************************************
 //* LOG HISTORY:

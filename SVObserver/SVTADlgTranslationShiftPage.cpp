@@ -40,8 +40,8 @@ SVTADlgTranslationShiftPageClass::SVTADlgTranslationShiftPageClass(SVToolAdjustm
 , StrTranslationXValue(_T(""))
 , StrTranslationYValue(_T(""))
 , pParentDialog( Parent )
-, pTool( nullptr )
-, pEvaluateTranslationY( nullptr )
+, pTool( nullptr ) // This needs to change
+, pEvaluateTranslationY( nullptr ) // This needs to change
 , m_lShiftType( 0 )
 {
 }
@@ -279,13 +279,15 @@ void SVTADlgTranslationShiftPageClass::OnBnClickedPerformTranslation()
 
 void SVTADlgTranslationShiftPageClass::OnBnClickedTranslationXFormulaButton()
 {
-	if (pEvaluateTranslationX)
+	if (pEvaluateTranslationX) //SEJ99 - This needs to change
 	{
-		CString strCaption = pEvaluateTranslationX->GetName();
+		CString strCaption = pEvaluateTranslationX->GetName(); //SEJ99 - This needs to change
 		strCaption += _T(" Formula");
-		SVFormulaEditorSheetClass dlg(strCaption);
-		dlg.SetTaskObject(pEvaluateTranslationX);
-		
+
+		const GUID& rInspectionID = pParentDialog->GetInspectionID();
+		const GUID& rObjectID = pParentDialog->GetToolID();
+		SVObjectTypeInfoStruct info(SVMathContainerObjectType, SVEvaluateTranslationXObjectType);
+		SVFormulaEditorSheetClass dlg(rInspectionID, rObjectID, info, strCaption);
 		dlg.DoModal();
 		
 		refresh();
@@ -294,13 +296,15 @@ void SVTADlgTranslationShiftPageClass::OnBnClickedTranslationXFormulaButton()
 
 void SVTADlgTranslationShiftPageClass::OnBnClickedTranslationYFormulaButton()
 {
-	if (pEvaluateTranslationY)
+	if (pEvaluateTranslationY) //SEJ99 - this needs to change
 	{
-		CString strCaption = pEvaluateTranslationY->GetName();
+		CString strCaption = pEvaluateTranslationY->GetName(); //SEJ99 - This needs to change
 		strCaption += _T(" Formula");
-		SVFormulaEditorSheetClass dlg(strCaption);
-		dlg.SetTaskObject(pEvaluateTranslationY);
-		
+
+		const GUID& rInspectionID = pParentDialog->GetInspectionID();
+		const GUID& rObjectID = pParentDialog->GetToolID();
+		SVObjectTypeInfoStruct info(SVMathContainerObjectType, SVEvaluateTranslationYObjectType);
+		SVFormulaEditorSheetClass dlg(rInspectionID, rObjectID, info, strCaption);
 		dlg.DoModal();
 		
 		refresh();

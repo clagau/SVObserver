@@ -14,11 +14,30 @@
 
 #pragma region Includes
 #include "Stdafx.h"
+#include <string>
+#include <boost/assign/list_of.hpp>
 #include "FormulaController.h"
-#include "SVInspectionProcess.h"
-#include "SVObjectLibrary\SVObjectClass.h"
-#include "SVTool.h"
-#include "SVToolSet.h"
+#include "SvoGui/BoundValue.h"
+#include "GuiCommands/GetObjectName.h"
+#include "GuiCommands/GetPPQObjectName.h"
+#include "GuiCommands/GetPPQVariablesNames.h"
+#include "GuiCommands/GetTaskObjectInstanceID.h"
+#include "GuiCommands/GetEquation.h"
+#include "GuiCommands/SetEquation.h"
+#include "GuiCommands/ValidateEquation.h"
+#include "GuiCommands/TaskObjectGetEmbeddedValues.h"
+#include "GuiCommands/TaskObjectSetEmbeddedValues.h"
+#include "GuiCommands/ResetObject.h"
+#include "GuiCommands/SetDefaultInputs.h"
+#include "ObjectSelectorLibrary\ObjectTreeGenerator.h"
+#include "SVObjectLibrary\SVObjectSynchronousCommandTemplate.h"
+#include "GlobalSelector.h"
+#include "PPQNameSelector.h"
+#include "PPQVariablesSelector.h"
+#include "ToolSetItemSelector.h"
+#include "SVClsids.h"
+#include "SVEquation.h" // while SVEquation resides in the SVObserver project
+
 #pragma endregion
 
 #pragma region Declarations
@@ -29,169 +48,227 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-#pragma region Constructor
-FormulaController::FormulaController( SVTaskObjectClass& pObject )
-: m_pInspection(nullptr)
-, m_pToolSet(nullptr)
-, m_pEquation (nullptr)
-{
-	setTaskObject( pObject );
-}
+static const std::string EnabledTag("Enabled");
 
-FormulaController::FormulaController()
-: m_pInspection(nullptr)
-, m_pToolSet(nullptr)
-, m_pEquation (nullptr)
+#pragma region Constructor
+FormulaController::FormulaController(const GUID& rInspectionID, const GUID& rTaskObjectID, const SVObjectTypeInfoStruct& rInfo, bool bEnabledReadOnly)
+: m_InspectionID(rInspectionID)
+, m_TaskObjectID(rTaskObjectID)
+, m_info(rInfo)
+, m_EquationID(GUID_NULL)
+, m_taskValues(SvoGui::BoundValues(rInspectionID, rTaskObjectID, boost::assign::map_list_of(EnabledTag, SvoGui::BoundValue(SVToolEnabledObjectGuid, bEnabledReadOnly))))
+, m_equationValues(SvoGui::BoundValues(rInspectionID, rTaskObjectID, boost::assign::map_list_of(EnabledTag, SvoGui::BoundValue(SVEquationEnabledObjectGuid, bEnabledReadOnly))))
 {
+	init();
 }
 #pragma endregion Constructor
 
+#pragma region Destructor
+FormulaController::~FormulaController()
+{
+}
+#pragma endregion Destructor
+
 #pragma region Public Methods
 #pragma region virtual Methods IFormulaController
-SVString FormulaController::getEquationText() const
+SVString FormulaController::GetEquationText() const
 {
-	SVString equationText("");
-	ASSERT( m_pEquation );
-	if( nullptr != m_pEquation )
+	SVString equationText;
+	
+	typedef GuiCmd::GetEquation<SVEquationClass> Command;
+	typedef SVSharedPtr<Command> CommandPtr;
+
+	CommandPtr commandPtr = new Command(m_EquationID);
+	SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
+	HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
+	if (S_OK == hr)
 	{
-		m_pEquation->GetEquationText( equationText );
+		equationText = commandPtr->GetEquationString();
 	}
 	return equationText;
 }
 
-SVStringArray FormulaController::getPPQVariableNames() const
+void FormulaController::BuildSelectableItems()
 {
-	
-	if ( nullptr != m_pInspection )
+	SvOsl::ObjectTreeGenerator::Instance().BuildSelectableItems<GlobalSelector, PPQNameSelector, PPQVariablesSelector, ToolSetItemSelector<>>(m_InspectionID, m_InspectionID);
+}
+
+HRESULT FormulaController::IsOwnerAndEquationEnabled(bool& ownerEnabled, bool& equationEnabled) const
+{
+	ownerEnabled = m_taskValues.Get<bool>(EnabledTag);
+	equationEnabled = m_equationValues.Get<bool>(EnabledTag);
+	return S_OK;
+}
+
+HRESULT FormulaController::SetOwnerAndEquationEnabled(bool ownerEnabled, bool equationEnabled)
+{
+	HRESULT hr = S_OK;
+	if (SVConditionalObjectType == m_info.SubType)
 	{
-		return m_pInspection->getPPQVariableNames();
+		m_taskValues.Set<bool>(EnabledTag, ownerEnabled);
+		m_equationValues.Set<bool>(EnabledTag, equationEnabled);
+		m_taskValues.Commit();
+		m_equationValues.Commit();
 	}
-	else
-	{
-				std::vector<SVString> retVals;
-				return retVals;
-	}
-	
-	
+	return hr;
 }
 
-SvOi::IInspectionProcess* FormulaController::getInspectionProcess() const
-{
-	return m_pInspection;
-}
-
-SvOi::IOutputInfoListClass& FormulaController::GetToolSetOutputList( ) const
-{
-	//Need to be static not to loss information at return point
-	static SVOutputInfoListClass outputInfoList;
-	//Need to be deleted because it is static and can be used before.
-	outputInfoList.RemoveAll();
-	if (nullptr != m_pToolSet )
-	{
-		m_pToolSet->GetOutputList(outputInfoList);
-	}
-	
-	return outputInfoList;
-}
-
-HRESULT FormulaController::isToolAndEquationEnabled(bool& toolEnabled, bool& equationEnabled) const
-{
-	if ( nullptr != m_pToolSet && nullptr != m_pEquation )
-	{
-		toolEnabled = m_pToolSet->IsEnabled();
-		equationEnabled = (TRUE == m_pEquation->IsEnabled());
-		return S_OK;
-	}
-
-	return S_FALSE;
-}
-
-HRESULT FormulaController::setToolAndEquationEnabled(bool toolEnabled, bool equationEnabled)
-{
-	// to nothing, because for this class is the function invalid.
-	return S_FALSE;
-}
-
-void FormulaController::setTaskObject( SvOi::IObjectClass& rObject )
-{
-	SVTaskObjectClass &rTaskObject = dynamic_cast<SVTaskObjectClass&>(rObject);
-	setTaskObjectClass(rTaskObject);
-}
-
-int FormulaController::validateEquation( const SVString &equationString, double& result, bool bRestore ) const
+int FormulaController::ValidateEquation( const SVString &equationString, double& result, bool bRestore ) const
 {
 	int retValue = validateSuccessful;
-	SVString oldString("");	
-	//save old string
-	m_pEquation->GetEquationText(oldString);
+	typedef GuiCmd::ValidateEquation<SVEquationClass> Command; // while SVEquationClass resides in the SVObserver project
+	typedef SVSharedPtr<Command> CommandPtr;
 
-	m_pEquation->SetEquationText(equationString);
-
-	SVEquationTestResult testResult = m_pEquation->Test();
-	if (testResult.bPassed)
-	{// set result and set return value to successful
-		result = m_pEquation->GetYACCResult();
-		retValue = validateSuccessful;
-	}
-	else
-	{  // set return value to position of failed
-		retValue = testResult.iPositionFailed;
-	}
-	if (bRestore ||  retValue != validateSuccessful)
+	CommandPtr commandPtr(new Command(m_EquationID, equationString, bRestore));
+	SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
+	HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
+	if (S_OK == hr)
 	{
-		//reset old string
-		m_pEquation->SetEquationText(oldString);
+		retValue = commandPtr->GetValidateStatus();
+		result = commandPtr->GetResultValue();
 	}
 	return retValue;
 }
 
-int FormulaController::validateAndSetEquation( const SVString &equationString, double& result )
+int FormulaController::ValidateAndSetEquation( const SVString &equationString, double& result )
 {
-	int retValue = validateEquation( equationString, result, false);
+	int retValue = ValidateEquation(equationString, result, false);
 
-	if ( validateSuccessful == retValue )
+	if (validateSuccessful == retValue)
 	{
 		//set new equation text and reset all objects for using the new value
-		m_pEquation->SetEquationText(equationString);
-		SVObjectClass* object = dynamic_cast<SVObjectClass*>(m_pEquation->GetTool());
-		if( nullptr != object )
+		typedef GuiCmd::SetEquation<SVEquationClass> Command; // while SVEquationClass resides in the SVObserver project
+		typedef SVSharedPtr<Command> CommandPtr;
+
+		CommandPtr commandPtr(new Command(m_EquationID, equationString));
+		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
+		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
+		if (S_OK != hr)
 		{
-			DWORD_PTR l_dwRet = ::SVSendMessage( object, SVM_RESET_ALL_OBJECTS & ~SVM_NOTIFY_FRIENDS , 0, 0); // Do not reset friends because they may be invalid.
-			if( SVMR_SUCCESS != l_dwRet )
+			retValue = setFailed;
+		}
+		else
+		{
+			typedef GuiCmd::ResetObject ResetCommand;
+			typedef SVSharedPtr<ResetCommand> ResetCommandPtr;
+
+			ResetCommandPtr commandPtr(new ResetCommand(m_TaskObjectID, false));
+			SVObjectSynchronousCommandTemplate<ResetCommandPtr> cmd(m_InspectionID, commandPtr);
+			HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
+			if (S_OK != hr)
 			{
-				return setFailed;
+				retValue = setFailed; // maybe we need another value to indicate that the reset had an issue or do we ignore it?
 			}
 		}
 	}
 	return retValue;
 }
+
+HRESULT FormulaController::SetDefaultInputs()
+{
+	typedef GuiCmd::SetDefaultInputs<SvOi::IInspectionProcess> Command;
+	typedef SVSharedPtr<Command> CommandPtr;
+
+	CommandPtr commandPtr(new Command(m_InspectionID));
+	SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
+	HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
+	return hr;
+}
+
 #pragma endregion virtual Methods IFormulaController
+
+SVString FormulaController::GetOwnerName() const
+{
+	SVString name;
+	typedef GuiCmd::GetObjectName Command;
+	typedef SVSharedPtr<Command> CommandPtr;
+
+	CommandPtr commandPtr(new Command(m_TaskObjectID));
+	SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
+	HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
+	if (S_OK == hr)
+	{
+		name = commandPtr->GetName();
+	}
+	return name;
+}
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
-void FormulaController::setTaskObjectClass( SVTaskObjectClass& rObject )
+SVString FormulaController::GetInspectionName() const
 {
-	m_pInspection = rObject.GetInspection();
-	m_pToolSet = m_pInspection->GetToolSet();
+	SVString inspectionName;
+	typedef GuiCmd::GetObjectName Command;
+	typedef SVSharedPtr<Command> CommandPtr;
 
-	SVEquationClass* pEquation = dynamic_cast <SVEquationClass*> (&rObject);
-	if ( pEquation == nullptr )
+	CommandPtr commandPtr(new Command(m_InspectionID));
+	SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
+	HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
+	if (S_OK == hr)
 	{
-		SVObjectTypeInfoStruct info;
-		info.ObjectType = SVEquationObjectType;
-		info.SubType    = SVMathEquationObjectType;	// we are not looking for conditional equation !!!
-		pEquation = dynamic_cast < SVEquationClass* >
-			( reinterpret_cast < SVObjectClass* > (::SVSendMessage( &rObject, SVM_GETFIRST_OBJECT | SVM_NOTIFY_ONLY_FRIENDS, 0, reinterpret_cast<DWORD_PTR>( &info ) )));
+		inspectionName = commandPtr->GetName();
 	}
-	// Set the pointer to the Equation Class Object 
-	setEquation( pEquation );
+	return inspectionName;
 }
 
-void FormulaController::setEquation( SVEquationClass* pEquation )
+SVString FormulaController::GetPPQName() const
 {
-	m_pEquation = pEquation;
+	SVString PPQName;
+	typedef GuiCmd::GetPPQObjectName Command;
+	typedef SVSharedPtr<Command> CommandPtr;
+
+	CommandPtr commandPtr(new Command(m_InspectionID));
+	SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
+	HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
+	if (S_OK == hr)
+	{
+		PPQName = commandPtr->GetName();
+	}
+	return PPQName;
 }
+
 #pragma endregion Protected Methods
+
+void FormulaController::init()
+{
+	m_taskValues.Init();
+	m_equationValues.Init();
+
+	typedef GuiCmd::GetTaskObjectInstanceID Command;
+	typedef SVSharedPtr<Command> CommandPtr;
+	// check for Math Container...
+	if (SVMathContainerObjectType == m_info.ObjectType)
+	{
+		// Get the Math Container
+		CommandPtr commandPtr(new Command(m_TaskObjectID, m_info));
+		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
+		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
+		if (S_OK == hr)
+		{
+			// Get the Equation
+			SVObjectTypeInfoStruct info(SVEquationObjectType, SVMathEquationObjectType);
+			GUID containerID = commandPtr->GetInstanceID(); 
+			commandPtr = CommandPtr(new Command(containerID, info));
+			SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
+			HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
+			if (S_OK == hr)
+			{
+				m_EquationID = commandPtr->GetInstanceID();
+			}		
+		}
+	}
+	else
+	{
+		// Get the Equation
+		CommandPtr commandPtr(new Command(m_TaskObjectID, m_info));
+		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
+		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
+		if (S_OK == hr)
+		{
+			m_EquationID = commandPtr->GetInstanceID();
+		}
+	}
+}
 
 //******************************************************************************
 //* LOG HISTORY:

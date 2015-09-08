@@ -6,8 +6,10 @@
 //******************************************************************************
 
 #pragma once
+#pragma region Includes
 #include <vector>
 #include "ISVFilter.h"
+#pragma endregion Includes
 
 class SVString;
 
@@ -18,6 +20,8 @@ namespace Seidenader
 		class IWatershedFilter: virtual public ISVFilter
 		{
 		public:
+			virtual ~IWatershedFilter() {}
+
 			/**********
 			 The method add a input request for the control flag parameter to the IP. 
 			 Add the end of setting the input request, you have to set AddInputRequestMarker.

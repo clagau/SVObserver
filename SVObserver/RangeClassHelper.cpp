@@ -32,6 +32,11 @@
 #include "SVStatusLibrary\MessageManagerResource.h"
 #include "TextDefinesSvO.h"
 #include "RootObject.h"
+#include "GlobalSelector.h"
+#include "PPQNameSelector.h"
+#include "NoSelector.h"
+#include "ToolSetItemSelector.h"
+#include "RangeSelectorFilter.h"
 #pragma endregion Includes
 
 #pragma region Constructor
@@ -60,40 +65,40 @@ void RangeClassHelper::SetRangeTaskObject()
 	SetTaskObject(m_pRange);
 }
 
-HRESULT RangeClassHelper::GetInspectionData(enum ERange ra)
+HRESULT RangeClassHelper::GetInspectionData(RangeEnum::ERange ra)
 {
 	HRESULT hr = E_FAIL;
 	switch (ra)
 	{
-	case ER_FailHigh:
-		hr = m_pRange->GetValue(ER_FailHigh, m_FailHigh);
+	case RangeEnum::ER_FailHigh:
+		hr = m_pRange->GetValue(ra, m_FailHigh);
 		if( hr == S_OK )
 		{
-			hr = m_pRange->GetIndirectValue(ER_FailHigh, m_FailHighIndirect);
+			hr = m_pRange->GetIndirectValue(ra, m_FailHighIndirect);
 		}
 		break;
 
-	case ER_WarnHigh:
-		hr = m_pRange->GetValue(ER_WarnHigh, m_WarnHigh);
+	case RangeEnum::ER_WarnHigh:
+		hr = m_pRange->GetValue(ra, m_WarnHigh);
 		if( hr == S_OK )
 		{
-			hr = m_pRange->GetIndirectValue(ER_WarnHigh, m_WarnHighIndirect);
+			hr = m_pRange->GetIndirectValue(ra, m_WarnHighIndirect);
 		}
 		break;
 
-	case ER_FailLow:
-		hr = m_pRange->GetValue(ER_FailLow, m_FailLow);
+	case RangeEnum::ER_FailLow:
+		hr = m_pRange->GetValue(ra, m_FailLow);
 		if( hr == S_OK )
 		{
-			hr = m_pRange->GetIndirectValue(ER_FailLow, m_FailLowIndirect);
+			hr = m_pRange->GetIndirectValue(ra, m_FailLowIndirect);
 		}
 		break;
 
-	case ER_WarnLow:
-		hr = m_pRange->GetValue(ER_WarnLow, m_WarnLow);
+	case RangeEnum::ER_WarnLow:
+		hr = m_pRange->GetValue(ra, m_WarnLow);
 		if( hr == S_OK )
 		{
-			hr = m_pRange->GetIndirectValue(ER_WarnLow, m_WarnLowIndirect);
+			hr = m_pRange->GetIndirectValue(ra, m_WarnLowIndirect);
 		}
 		break;
 
@@ -108,11 +113,11 @@ HRESULT RangeClassHelper::GetInspectionData(enum ERange ra)
 HRESULT RangeClassHelper::GetAllInspectionData()
 {
 	HRESULT hr = S_OK;
-	for(int i = 0; i < ER_COUNT; i++)
+	for(int i = 0; i < RangeEnum::ER_COUNT; i++)
 	{
 		if(hr == S_OK)
 		{
-			hr = GetInspectionData(ERange(i));
+			hr = GetInspectionData(static_cast<RangeEnum::ERange>(i));
 		}
 		else
 		{
@@ -123,18 +128,19 @@ HRESULT RangeClassHelper::GetAllInspectionData()
 	return hr;
 }
 
-void RangeClassHelper::SetInternalData(ERange er, LPCTSTR lp)
+void RangeClassHelper::SetInternalData(RangeEnum::ERange er, LPCTSTR lp)
 {
 	CString csText = lp;
 	double val = 0.0;
 	const double s_RangeMax = 17000000;
 	const double s_RangeMin = -17000000;
 	int textLength = csText.GetLength();
+	HINSTANCE resHandle = AfxGetResourceHandle();
 
 	if( textLength == 0)
 	{
 		CString strText;
-		strText.Format(SvO::RangeValue_EmptyString, ERange2String(er).GetString());
+		strText.Format(SvO::RangeValue_EmptyString, RangeEnum::ERange2String(resHandle, er).c_str());
 		SvStl::MessageMgrNoDisplay Exception( SvStl::DataOnly );
 		Exception.setMessage( SVMSG_SVO_68_RANGE_VALUE_SET_FAILED, strText, StdMessageParams, SvOi::Err_16022, MB_OK | MB_ICONERROR );
 		Exception.Throw();
@@ -148,7 +154,7 @@ void RangeClassHelper::SetInternalData(ERange er, LPCTSTR lp)
 		if(val > s_RangeMax || val < s_RangeMin )
 		{
 			CString strText;
-			strText.Format(SvO::RangeValue_WrongRange, ERange2String(er).GetString(), static_cast< int >( s_RangeMin ), static_cast< int >( s_RangeMax ) );
+			strText.Format(SvO::RangeValue_WrongRange, RangeEnum::ERange2String(resHandle, er).c_str(), static_cast< int >( s_RangeMin ), static_cast< int >( s_RangeMax ) );
 			SvStl::MessageMgrNoDisplay Exception( SvStl::DataOnly );
 			Exception.setMessage( SVMSG_SVO_68_RANGE_VALUE_SET_FAILED, strText, StdMessageParams, SvOi::Err_16023, MB_OK | MB_ICONERROR );
 			Exception.Throw();
@@ -157,19 +163,19 @@ void RangeClassHelper::SetInternalData(ERange er, LPCTSTR lp)
 
 	switch (er)
 	{
-	case ER_FailHigh:
+	case RangeEnum::ER_FailHigh:
 		m_FailHigh = val;
 		m_FailHighIndirect = csText;
 		break;
-	case ER_WarnHigh:
+	case RangeEnum::ER_WarnHigh:
 		m_WarnHigh = val;
 		m_WarnHighIndirect = csText;
 		break;
-	case ER_FailLow:
+	case RangeEnum::ER_FailLow:
 		m_FailLow = val;
 		m_FailLowIndirect = csText;
 		break;
-	case ER_WarnLow:
+	case RangeEnum::ER_WarnLow:
 		m_WarnLow = val;
 		m_WarnLowIndirect = csText;
 		break;
@@ -323,7 +329,7 @@ HRESULT RangeClassHelper::SetInspectionData()
 		}
 		else
 		{
-			hr = AddInputRequest( m_pRange->GetIndirectObject(ER_FailHigh), m_FailHighIndirect );
+			hr = AddInputRequest( m_pRange->GetIndirectObject(RangeEnum::ER_FailHigh), m_FailHighIndirect );
 		}
 
 		if( hr != S_OK )
@@ -332,7 +338,7 @@ HRESULT RangeClassHelper::SetInspectionData()
 		}
 		else
 		{
-			hr = AddInputRequest( m_pRange->GetIndirectObject(ER_FailLow), m_FailLowIndirect );
+			hr = AddInputRequest( m_pRange->GetIndirectObject(RangeEnum::ER_FailLow), m_FailLowIndirect );
 		}
 
 		if( hr != S_OK )
@@ -341,7 +347,7 @@ HRESULT RangeClassHelper::SetInspectionData()
 		}
 		else
 		{
-			hr = AddInputRequest( m_pRange->GetIndirectObject(ER_WarnHigh), m_WarnHighIndirect );
+			hr = AddInputRequest( m_pRange->GetIndirectObject(RangeEnum::ER_WarnHigh), m_WarnHighIndirect );
 		}
 
 		if( hr != S_OK )
@@ -350,7 +356,7 @@ HRESULT RangeClassHelper::SetInspectionData()
 		}
 		else
 		{
-			hr = AddInputRequest( m_pRange->GetIndirectObject(ER_WarnLow), m_WarnLowIndirect );
+			hr = AddInputRequest( m_pRange->GetIndirectObject(RangeEnum::ER_WarnLow), m_WarnLowIndirect );
 		}
 
 		if( hr != S_OK )
@@ -380,30 +386,7 @@ HRESULT RangeClassHelper::SetInspectionData()
 	return hr;
 }
 
-CString RangeClassHelper::ERange2String(ERange range)
-{
-	CString ret;
-	switch (range)
-	{
-	case ER_FailHigh:
-		ret.LoadString(IDS_FAIL_HIGH);
-		break;
-	case ER_WarnHigh:
-		ret.LoadString(IDS_WARN_HIGH);
-		break;
-	case ER_FailLow:
-		ret.LoadString(IDS_FAIL_LOW);
-		break;
-	case ER_WarnLow:
-		ret.LoadStringA(IDS_WARN_LOW);
-		break;
-	default:
-		ret = _T("");
-	}
-	return ret;
-}
-
-CString RangeClassHelper::GetStringFromRange(enum ERange ra) const
+CString RangeClassHelper::GetStringFromRange(RangeEnum::ERange ra) const
 {
 	CString ret;
 	double val;
@@ -567,8 +550,7 @@ bool RangeClassHelper::FillObjectSelector()
 		csToolCompleteName += _T(".");
 	}
 
-	SVStringArray nameArray;
-	typedef std::insert_iterator<SVStringArray> Inserter;
+	
 	SVString InspectionName;
 	SVString PPQName = SvOl::FqnPPQVariables; 
 
@@ -585,7 +567,10 @@ bool RangeClassHelper::FillObjectSelector()
 
 	SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterOutput, PPQName, SVString( _T("")  ));
 	SvOsl::ObjectTreeGenerator::Instance().setSelectorType( SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeSingleObject );
-
+/*SEJ999
+	SVStringArray nameArray;
+	typedef std::insert_iterator<SVStringArray> Inserter;
+	
 	SVStringArray objectNameList;
 	SvOi::getRootChildNameList( objectNameList, _T(""), SV_SELECTABLE_FOR_EQUATION );
 	SvOsl::ObjectTreeGenerator::Instance().insertTreeObjects( objectNameList );
@@ -593,8 +578,11 @@ bool RangeClassHelper::FillObjectSelector()
 	// Insert Tool Set Objects
 	ObjectNameHelper::BuildObjectNameList(pTaskObjectList, Inserter(nameArray, nameArray.begin()), csToolCompleteName);
 	SvOsl::ObjectTreeGenerator::Instance().insertTreeObjects( nameArray );
+*/
+	SvOsl::ObjectTreeGenerator::Instance().BuildSelectableItems<GlobalSelector, NoSelector, NoSelector, ToolSetItemSelector<false, RangeSelectorFilter>>(pInspectionProcess->GetUniqueObjectID(), pTool->GetUniqueObjectID());
 	return true;
 }
+
 #pragma endregion Public Methods
 
 #pragma region Private Methods

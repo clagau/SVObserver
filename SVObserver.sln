@@ -558,6 +558,12 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SVOGui", "SVOGui\SVOGui.vcx
 		{2BFBF5FA-1947-4A24-9F5A-697FB3EF6671} = {2BFBF5FA-1947-4A24-9F5A-697FB3EF6671}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GuiCommands", "GuiCommands\GuiCommands.vcxproj", "{A505841E-F43F-472B-B6E0-D1110479621C}"
+	ProjectSection(ProjectDependencies) = postProject
+		{B022279A-59CD-41C3-9EA5-F9721FECAFDD} = {B022279A-59CD-41C3-9EA5-F9721FECAFDD}
+		{5796BBF7-F64D-4B14-816E-B9012A52A225} = {5796BBF7-F64D-4B14-816E-B9012A52A225}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -1718,6 +1724,19 @@ Global
 		{0F85D18D-A756-4009-B7DF-A035ABD9A162}.Unicode Release|Win32.Build.0 = Release|Win32
 		{0F85D18D-A756-4009-B7DF-A035ABD9A162}.Unicode Release|x64.ActiveCfg = Release|x64
 		{0F85D18D-A756-4009-B7DF-A035ABD9A162}.Unicode Release|x64.Build.0 = Release|x64
+		{A505841E-F43F-472B-B6E0-D1110479621C}.Debug|Win32.ActiveCfg = Debug|Win32
+		{A505841E-F43F-472B-B6E0-D1110479621C}.Debug|Win32.Build.0 = Debug|Win32
+		{A505841E-F43F-472B-B6E0-D1110479621C}.Debug|x64.ActiveCfg = Debug|x64
+		{A505841E-F43F-472B-B6E0-D1110479621C}.Debug|x64.Build.0 = Debug|x64
+		{A505841E-F43F-472B-B6E0-D1110479621C}.Release|Win32.ActiveCfg = Release|Win32
+		{A505841E-F43F-472B-B6E0-D1110479621C}.Release|Win32.Build.0 = Release|Win32
+		{A505841E-F43F-472B-B6E0-D1110479621C}.Release|x64.ActiveCfg = Release|Win32
+		{A505841E-F43F-472B-B6E0-D1110479621C}.Unicode Debug|Win32.ActiveCfg = Debug|Win32
+		{A505841E-F43F-472B-B6E0-D1110479621C}.Unicode Debug|Win32.Build.0 = Debug|Win32
+		{A505841E-F43F-472B-B6E0-D1110479621C}.Unicode Debug|x64.ActiveCfg = Debug|Win32
+		{A505841E-F43F-472B-B6E0-D1110479621C}.Unicode Release|Win32.ActiveCfg = Release|Win32
+		{A505841E-F43F-472B-B6E0-D1110479621C}.Unicode Release|Win32.Build.0 = Release|Win32
+		{A505841E-F43F-472B-B6E0-D1110479621C}.Unicode Release|x64.ActiveCfg = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

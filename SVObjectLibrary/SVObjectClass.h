@@ -109,7 +109,6 @@ public:
 	virtual void PutFriendGuidsInObjectScript( CString& RStrScript, CString& RStrAliasTable, int Indent );
 	virtual void MakeUniqueFriendAlias( CString& RStrScript );
 #endif
-	// SEJ 102 - new persistence methods
 	virtual void Persist( SVObjectWriter& rWriter );
 	virtual void PersistAttributes( SVObjectWriter& rWriter );
 
@@ -169,19 +168,22 @@ public:
 	SVObjectClass* GetOwner() const;
 	long GetObjectSubType() const;
 	SVOutObjectInfoStruct& GetObjectOutputInfo();
-
 	
 	const SVGUID& GetEmbeddedID() const;
 	const SVGUID& GetOwnerID() const;
+	BOOL IsCreated() const;
+
 #pragma region virtual method (IObjectClass)
 	virtual LPCTSTR GetName() const override;
+	virtual SVString GetCompleteName() const override;
 	virtual const SVObjectTypeEnum& GetObjectType() const override;
+	virtual const SVGUID& GetParentID() const override;
 	virtual SvOi::IObjectClass* GetAncestorInterface(SVObjectTypeEnum ancestorObjectType) override;
 	virtual SvOi::IObjectClass* GetFirstObject(const SVObjectTypeInfoStruct& type) override;
 	virtual const SVGUID& GetUniqueObjectID() const override;
-	virtual BOOL IsCreated() const override;
+	virtual bool is_Created() const override { return IsCreated() ? true : false; }
 	virtual DWORD_PTR resetAllObjects() override;
-#pragma region virtual method (IObjectClass)
+#pragma endregion virtual method (IObjectClass)
 	const SVObjectInfoStruct& GetOwnerInfo() const;
 	const SVObjectInfoStruct& GetObjectInfo() const;
 	const SVObjectInfoArrayClass& GetFriendList() const;

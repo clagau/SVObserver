@@ -19,6 +19,7 @@
 #include "SVShowDependentsDialog.h"
 #include "SVSetupDialogManager.h"
 #include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
+#include "PublishSelector.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -264,9 +265,7 @@ void SVChildrenSetupDialogClass::OnPublishButton()
 	SvOsl::ObjectTreeGenerator::Instance().setAttributeFilters( SV_PUBLISHABLE );
 	SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, m_pParentOwner->GetCompleteObjectName(), SVString( _T("") ) );
 
-	SVOutputInfoListClass OutputList;
-	m_pParentObject->GetOutputList( OutputList );
-	SvOsl::ObjectTreeGenerator::Instance().insertOutputList( OutputList );
+	PublishSelector(m_pDocument->GetInspectionID(), m_pParentObject->GetUniqueObjectID());
 
 	CString PublishableResults;
 	PublishableResults.LoadString( IDS_PUBLISHABLE_RESULTS );

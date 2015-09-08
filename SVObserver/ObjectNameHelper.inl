@@ -12,20 +12,47 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include "ObjectNameHelper.h"
-#include "ObjectInterfaces/SVObjectTypeInfoStruct.h"
-#include <vector>
 #include <set>
+#include <boost/assign/list_of.hpp> // for 'list_of()'
+#include "ObjectNameHelper.h"
+#include "ObjectInterfaces\SVObjectTypeInfoStruct.h"
+#include "ObjectInterfaces\ObjectDefines.h"
 #pragma endregion Includes
 
-#include <boost/assign/list_of.hpp> // for 'list_of()'
+typedef std::set<SVObjectTypeEnum> SVObjectTypeEnumSet;
+
+bool IsExcluded(SVObjectTypeEnum type, const SVObjectTypeEnumSet& rFilter)
+{
+	return (rFilter.size() > 0 && rFilter.end() == rFilter.find(type));
+}
+
+bool IsViewable(UINT attributesAllowed)
+{
+	return (attributesAllowed & SV_VIEWABLE);
+}
+
+bool IsSameLinage(const SVString& name, const SVString& excludedPath)
+{
+	bool bSame = false; 
+	size_t len = excludedPath.size();
+	if (len > 0)
+	{
+		bSame = (0 ==  name.Left(len).Compare(excludedPath));
+	}
+	return bSame;
+}
+
+bool IsAllowed(SVObjectTypeEnum type, UINT attributesAllowed, const CString& name, const SVObjectTypeEnumSet& filter, const SVString& excludePath)
+{
+	return (IsViewable(attributesAllowed) && !IsSameLinage(name, excludePath) && !IsExcluded(type, filter));
+}
 
 template<typename Inserter>
-int ObjectNameHelper::BuildObjectNameList( SVTaskObjectListClass* pTaskObjectList, Inserter inserter, const CString& ExcludedPath, ObjectNameFilter efilter )
+int ObjectNameHelper::BuildObjectNameList( SVTaskObjectListClass* pTaskObjectList, Inserter inserter, const CString& ExcludedPath, ObjectNameFilter efilter)
 {
 	int ret(0);
-	std::set<SVObjectTypeEnum> Filter;
-	switch(efilter)
+	SVObjectTypeEnumSet Filter;
+	switch (efilter)
 	{
 	case ENF_RANGE:
 		Filter = boost::assign::list_of(SVDWordValueObjectType)(SVLongValueObjectType)(SVDoubleValueObjectType)(SVBoolValueObjectType)(SVPointValueObjectType)(SVByteValueObjectType);
@@ -37,54 +64,26 @@ int ObjectNameHelper::BuildObjectNameList( SVTaskObjectListClass* pTaskObjectLis
 
 	SVOutputInfoListClass OutputList;
 	pTaskObjectList->GetOutputList( OutputList );
-	SVObjectReferenceVector objectList;
 
 	int nCount = OutputList.GetSize();
-	for(int i = 0; i < nCount; i++)
+	for (int i = 0; i < nCount; i++)
 	{
-		SVOutObjectInfoStruct* pInfoItem = nullptr;
-
-		pInfoItem = OutputList.GetAt(i);
-		//check pInfoItem
-		if( nullptr == pInfoItem )
+		SVOutObjectInfoStruct* pInfoItem = OutputList.GetAt(i);
+		if (pInfoItem)
 		{
-			continue;
-		}
+			SVObjectReference ref = pInfoItem->GetObjectReference();
 
-		bool bFilterExclude = ( Filter.size() > 0 && Filter.end() == Filter.find(pInfoItem->ObjectTypeInfo.ObjectType) );
-
-		if( bFilterExclude )
-		{
-			continue;
-		}
-
-		SVObjectReference ref = pInfoItem->GetObjectReference();
-
-		if(ref.Object() == nullptr)
-		{
-			continue;
-		}
-		
-		bool bViewable = (ref->ObjectAttributesAllowed() & SV_VIEWABLE);
-		if(bViewable == false)
-		{
-			continue;
-		}
-		//getCompleteObjectName returns a CString
-		CString CompleteName(ref->GetCompleteObjectName()); 
-		
-		int EPLen = ExcludedPath.GetLength();
-		if( EPLen >0 )
-		{
-			bool bIsExcludePath = (0 ==  CompleteName.Left(EPLen).Compare(ExcludedPath));
-			if( bIsExcludePath )
+			if (ref.Object())
 			{
-				continue;
+				CString CompleteName(ref->GetCompleteObjectName());
+				const SVObjectTypeInfoStruct& typeInfo = pInfoItem->ObjectTypeInfo;
+				if (IsAllowed(typeInfo.ObjectType, ref->ObjectAttributesAllowed(), CompleteName, Filter, ExcludedPath))
+				{
+					++ret;
+					inserter = CompleteName;
+				}
 			}
 		}
-
-		++ret;
-		inserter = CompleteName;
 	}
 	return ret;
 }

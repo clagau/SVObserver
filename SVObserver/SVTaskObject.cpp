@@ -335,11 +335,37 @@ HRESULT SVTaskObjectClass::RunOnce(IObjectClass* pTool)
 	return m_taskObjectValueInterface.RunOnce(pToolClass);
 }
 
-SvOi::IOutputInfoListClassSmartPointer SVTaskObjectClass::GetOutputList( ) const
+SvOi::IOutputInfoListClassPtr SVTaskObjectClass::GetOutputList( ) const
 {
 	SVOutputInfoListClass *outputlist = new SVOutputInfoListClass();
-	SvOi::IOutputInfoListClassSmartPointer retVal = static_cast<SvOi::IOutputInfoListClass*>(outputlist);
+	SvOi::IOutputInfoListClassPtr retVal = static_cast<SvOi::IOutputInfoListClass*>(outputlist);
 	GetOutputList(*outputlist);
+	return retVal;
+}
+
+SvOi::IOutputInfoListClassPtr SVTaskObjectClass::GetOutputList(SvOi::IsObjectInfoAllowed isAllowed) const
+{
+	SVOutputInfoListClass *outputlist = new SVOutputInfoListClass();
+	SvOi::IOutputInfoListClassPtr retVal = static_cast<SvOi::IOutputInfoListClass*>(outputlist);
+
+	if (isAllowed)
+	{
+		SVOutputInfoListClass list;
+		GetOutputList(list);
+		// Filter the list
+		std::for_each(list.begin(), list.end(), [&outputlist, &isAllowed](SVOutputInfoListClass::value_type info)->void
+		{
+			if (isAllowed(*info))
+			{
+				outputlist->Add(info);
+			}
+		});
+	}
+	else
+	{
+		assert(false);
+		::OutputDebugString(_T("SVTaskObjectClass::GetOutputList - empty functor"));
+	}
 	return retVal;
 }
 
@@ -1840,8 +1866,7 @@ DWORD_PTR SVTaskObjectClass::processMessage(DWORD DwMessageID, DWORD_PTR DwMessa
 					for (int i = 0; i < embeddedList.GetSize(); i++)
 					{
 						SVObjectClass* pEmbeddedObject = embeddedList.GetAt(i);
-						if ( pEmbeddedObject != NULL )
-							// SEJ (OLD) if( isObjectValid.GetEmbeddedID() == embeddedID )
+						if ( nullptr != pEmbeddedObject )
 						{
 							const GUID& ObjectID = pEmbeddedObject->GetEmbeddedID();
 
@@ -1852,8 +1877,6 @@ DWORD_PTR SVTaskObjectClass::processMessage(DWORD DwMessageID, DWORD_PTR DwMessa
 						}
 					}
 					break;
-					
-					// SEJ (OLD) return SVObjectClass::processMessage( DwMessageID, DwMessageValue, DwMessageContext );
 				}
 				
 			case SVMSGID_CONNECT_ALL_INPUTS:
@@ -1897,7 +1920,6 @@ DWORD_PTR SVTaskObjectClass::processMessage(DWORD DwMessageID, DWORD_PTR DwMessa
 					return SVMR_NO_SUCCESS;
 				}
 				
-				// SEJ - New Message
 			case SVMSGID_SET_OBJECT_VALUE:
 				{
 					// check our embedded objects to see if it's the one

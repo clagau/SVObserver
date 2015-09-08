@@ -10,11 +10,9 @@
 //******************************************************************************
 #pragma region Includes
 #include "stdafx.h"
+#include <string>
+#include <boost/assign/list_of.hpp>
 #include "SVTADlgPassFailPage.h"
-#include "SVObjectLibrary\SVObjectClass.h"
-#include "SVRange.h"
-#include "SVResult.h"
-#include "SVTool.h"
 #include "SVStatusLibrary\MessageHandler.h"
 #include "SVStatusLibrary\MessageManagerResource.h"
 #include "ObjectSelectorLibrary\ObjectTreeGenerator.h"
@@ -38,37 +36,57 @@ END_MESSAGE_MAP()
 #pragma endregion Declarations
 
 #pragma region Constructor
-SVToolAdjustmentDialogPassFailPageClass::SVToolAdjustmentDialogPassFailPageClass( SVToolClass* pTool ) 
-	: CPropertyPage( SVToolAdjustmentDialogPassFailPageClass::IDD )
+SVToolAdjustmentDialogPassFailPageClass::SVToolAdjustmentDialogPassFailPageClass(const GUID& rInspectionID, const GUID& rTaskObjectID)
+: CPropertyPage( SVToolAdjustmentDialogPassFailPageClass::IDD )
+, RangeController(rInspectionID, rTaskObjectID)
 {
-	if( pTool )
-	{
-		SVObjectTypeInfoStruct info;
-		info.ObjectType = SVResultObjectType;
-
-		SVResultClass* pResult = reinterpret_cast<SVResultClass *>(SVSendMessage( pTool, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&info) ));
-		if( pResult )
-		{
-			info.ObjectType = SVRangeObjectType;
-			SVRangeClass* pRange = reinterpret_cast<SVRangeClass *>(SVSendMessage( pResult, SVM_GETFIRST_OBJECT, NULL, reinterpret_cast<DWORD_PTR>(&info) ));
-			m_RangeHelper.setRangeObject(pRange);
-		}
-	}
+	//{{AFX_DATA_INIT(SVToolAdjustmentDialogPassFailPageClass)
+	//}}AFX_DATA_INIT
+	Init();
 }
+#pragma endregion Constructor
 
 SVToolAdjustmentDialogPassFailPageClass::~SVToolAdjustmentDialogPassFailPageClass()
 {
 }
-#pragma endregion Constructor
 
 #pragma region Public Methods
 bool SVToolAdjustmentDialogPassFailPageClass::QueryAllowExit()
 {
-	UpdateData(TRUE);
+	UpdateData(true);
 
 	return UpdateRangeValues();
 }
 #pragma endregion Public Methods
+
+HRESULT SVToolAdjustmentDialogPassFailPageClass::SetInspectionData(SVString& rMsg)
+{
+	UpdateData(true); // get data from dialog
+
+	HINSTANCE resHandle = AfxGetResourceHandle();
+	// Validate Entered data for existance and if within bounds
+	HRESULT hr = IsFieldValid(rMsg, RangeEnum::ERange2String(resHandle, RangeEnum::ER_FailHigh), static_cast<LPCSTR>(m_FailHigh));
+	if (S_OK == hr)
+	{
+		hr = IsFieldValid(rMsg, RangeEnum::ERange2String(resHandle, RangeEnum::ER_FailLow), static_cast<LPCSTR>(m_FailLow));
+	}
+	if (S_OK == hr)
+	{
+		hr = IsFieldValid(rMsg, RangeEnum::ERange2String(resHandle, RangeEnum::ER_WarnHigh), static_cast<LPCSTR>(m_WarnHigh));
+	}
+	if (S_OK == hr)
+	{
+		hr = IsFieldValid(rMsg, RangeEnum::ERange2String(resHandle, RangeEnum::ER_WarnLow), static_cast<LPCSTR>(m_WarnLow));
+	}
+	if (S_OK == hr)
+	{
+		Set(FailHigh, static_cast<LPCSTR>(m_FailHigh));
+		Set(FailLow, static_cast<LPCSTR>(m_FailLow));
+		Set(WarnHigh, static_cast<LPCSTR>(m_WarnHigh));
+		Set(WarnLow, static_cast<LPCSTR>(m_WarnLow));
+	}
+	return hr;
+}
 
 #pragma region Protected Methods
 void SVToolAdjustmentDialogPassFailPageClass::DoDataExchange(CDataExchange* pDX)
@@ -76,10 +94,10 @@ void SVToolAdjustmentDialogPassFailPageClass::DoDataExchange(CDataExchange* pDX)
 	CDialog::DoDataExchange(pDX);
 
 	//{{AFX_DATA_MAP(SVToolAdjustmentDialogPassFailPageClass)
-	DDX_Control(pDX, IDC_EDIT_FAILHIGH, m_EditFailHigh);
-	DDX_Control(pDX, IDC_EDIT_WARNHIGH, m_EditWarnHigh);
-	DDX_Control(pDX, IDC_EDIT_WARNLOW, m_EditWarnLow);
-	DDX_Control(pDX, IDC_EDIT_FAILLOW, m_EditFailLow);
+	DDX_Text(pDX, IDC_EDIT_FAILHIGH, m_FailHigh);
+	DDX_Text(pDX, IDC_EDIT_WARNHIGH, m_WarnHigh);
+	DDX_Text(pDX, IDC_EDIT_WARNLOW, m_WarnLow);
+	DDX_Text(pDX, IDC_EDIT_FAILLOW, m_FailLow);
 	DDX_Control(pDX, IDC_BUTTON_FAILHIGH, m_ButtonFailHigh);
 	DDX_Control(pDX, IDC_BUTTON_WARNHIGH, m_ButtonWarnHigh);
 	DDX_Control(pDX, IDC_BUTTON_WARNLOW, m_ButtonWarnLow);
@@ -87,178 +105,150 @@ void SVToolAdjustmentDialogPassFailPageClass::DoDataExchange(CDataExchange* pDX)
 	//}}AFX_DATA_MAP
 }
 
+void SVToolAdjustmentDialogPassFailPageClass::InitData()
+{
+	try
+	{
+		m_FailHigh = Get(FailHigh).c_str();
+		m_FailLow = Get(FailLow).c_str();
+		m_WarnHigh = Get(WarnHigh).c_str();
+		m_WarnLow  = Get(WarnLow).c_str();
+	}
+	catch (...) // find out what to catch here...
+	{
+	}
+}
+
 BOOL SVToolAdjustmentDialogPassFailPageClass::OnInitDialog() 
 {
 	CPropertyPage::OnInitDialog();
 
 	// Put the Down Arrow on the Button
-	m_downArrowBitmap.LoadOEMBitmap( OBM_DNARROW );
+	m_downArrowBitmap.LoadOEMBitmap(OBM_DNARROW);
 
 	//(HBITMAP) is a call to the overloaded function operator HBITMAP and no c style cast
-	m_ButtonFailHigh.SetBitmap( ( HBITMAP )m_downArrowBitmap );
-	m_ButtonWarnHigh.SetBitmap( ( HBITMAP )m_downArrowBitmap );
-	m_ButtonWarnLow.SetBitmap( ( HBITMAP )m_downArrowBitmap );
-	m_ButtonFailLow.SetBitmap( ( HBITMAP )m_downArrowBitmap );
+	// And it is NOT needed as the implicit cast will call the casting operator.
+	m_ButtonFailHigh.SetBitmap(m_downArrowBitmap);
+	m_ButtonWarnHigh.SetBitmap(m_downArrowBitmap);
+	m_ButtonWarnLow.SetBitmap(m_downArrowBitmap);
+	m_ButtonFailLow.SetBitmap(m_downArrowBitmap);
 
-	m_RangeHelper.SetRangeTaskObject();
-	m_RangeHelper.GetAllInspectionData();
+	InitData();
+	UpdateData(false); // set data to dialog
 
-	SetDlgData();
-
-	UpdateData( FALSE ); // set data to dialog
-
-	return TRUE;  // return TRUE unless you set the focus to a control
+	return true;  // return TRUE unless you set the focus to a control
 	              // EXCEPTION: OCX-Eigenschaftenseiten sollten FALSE zurückgeben
 }
 
 BOOL SVToolAdjustmentDialogPassFailPageClass::OnSetActive() 
 {
-	SetDlgData();
-
+	InitData();
 	return CPropertyPage::OnSetActive();
 }
 
 BOOL SVToolAdjustmentDialogPassFailPageClass::OnKillActive() 
 {
-	UpdateData(TRUE);
-
+	UpdateData(true);
 	bool bOk = UpdateRangeValues();
-	
+
 	if (bOk)
 	{
 		return CPropertyPage::OnKillActive();
 	}
-	else
-	{
-		return false;
-	}
+	return bOk;
 }
 
 void SVToolAdjustmentDialogPassFailPageClass::OnBnClickedFailHighIndirect()
 {
-	setValuePerObjectSelector( m_EditFailHigh, ER_FailHigh );
+	setValuePerObjectSelector(m_FailHigh, RangeEnum::ER_FailHigh);
 }
 
 void SVToolAdjustmentDialogPassFailPageClass::OnBnClickedWarnlHighIndirect()
 {
-	setValuePerObjectSelector( m_EditWarnHigh, ER_WarnHigh );
+	setValuePerObjectSelector(m_WarnHigh, RangeEnum::ER_WarnHigh);
 }
 
 void SVToolAdjustmentDialogPassFailPageClass::OnBnClickedWarnLowIndirect()
 {
-	setValuePerObjectSelector( m_EditWarnLow, ER_WarnLow );
+	setValuePerObjectSelector(m_WarnLow, RangeEnum::ER_WarnLow);
 }
 
 void SVToolAdjustmentDialogPassFailPageClass::OnBnClickedFailedLowIndirect()
 {
-	setValuePerObjectSelector( m_EditFailLow, ER_FailLow );
+	setValuePerObjectSelector(m_FailLow, RangeEnum::ER_FailLow);
 }
 #pragma endregion Protected Methods
 
-#pragma region Privated Methods
+#pragma region Private Methods
 bool SVToolAdjustmentDialogPassFailPageClass::UpdateRangeValues()
 {
-	CString errorMsg;
-	bool bOK = GetDlgData();
-
-	if(bOK)
+	bool bRetVal = true;
+	
+	SVString errorMsg;
+	HRESULT retVal = SetInspectionData(errorMsg);
+	if (S_OK != retVal)
 	{
-		HRESULT hres = m_RangeHelper.CheckInternalData(errorMsg);
-		if( S_OK != hres)
+		AfxMessageBox(errorMsg.c_str(), MB_OK | MB_ICONERROR);
+		bRetVal = false;
+	}
+	else
+	{
+		retVal = Validate(errorMsg, AfxGetResourceHandle());
+		if (S_OK != retVal)
 		{
-			bOK = false;
-			AfxMessageBox(errorMsg, MB_OK | MB_ICONERROR);
+			// Show error msg
+			AfxMessageBox(errorMsg.c_str(), MB_OK | MB_ICONERROR);
+			bRetVal = false;
+		}
+		else
+		{
+			Commit();
 		}
 	}
-
-	if (bOK)
-	{
-		m_RangeHelper.SetInspectionData();
-	}
-	return bOK;
+	return bRetVal;
 }
 
-void SVToolAdjustmentDialogPassFailPageClass::SetDlgData()
+void SVToolAdjustmentDialogPassFailPageClass::setValuePerObjectSelector(CString& value, RangeEnum::ERange fieldEnum)
 {
-	m_EditFailHigh.SetWindowText(m_RangeHelper.GetFailHighString().c_str());
-	m_EditWarnHigh.SetWindowText(m_RangeHelper.GetWarnHighString().c_str());
-	m_EditFailLow.SetWindowText(m_RangeHelper.GetFailLowString().c_str());
-	m_EditWarnLow.SetWindowText(m_RangeHelper.GetWarnLowString().c_str());
-}
-
-bool SVToolAdjustmentDialogPassFailPageClass::GetDlgData()
-{
-	bool res = false;
-	CString csText;
-
-	try
+	if (ShowObjectSelector(value, fieldEnum))
 	{
-		m_EditFailHigh.GetWindowText(csText);
-		m_RangeHelper.SetInternalData(ER_FailHigh, csText);
-		m_EditWarnHigh.GetWindowText(csText);
-		m_RangeHelper.SetInternalData(ER_WarnHigh, csText);
-		m_EditFailLow.GetWindowText(csText);
-		m_RangeHelper.SetInternalData(ER_FailLow, csText);
-		m_EditWarnLow.GetWindowText(csText);
-		m_RangeHelper.SetInternalData(ER_WarnLow, csText);
-		res = true;
-	}
-	catch ( const SvStl::MessageHandler& rSvE )
-	{
-		//Now that we have caught the exception we would like to display it
-		SvStl::MessageMgrStdDisplay Exception( SvStl::LogAndDisplay );
-		Exception.setMessage( rSvE.getMessage() );
-	}
-
-	return res;
-}
-
-void SVToolAdjustmentDialogPassFailPageClass::setValuePerObjectSelector( CEdit& control, ERange fieldEnum)
-{
-	CString csText;
-	control.GetWindowText(csText); 
-	if (ShowObjectSelector(csText, fieldEnum))
-	{
-		control.SetWindowText(csText);
+		 UpdateData(false);
 	}
 }
 
-bool SVToolAdjustmentDialogPassFailPageClass::ShowObjectSelector(CString& name, ERange fieldEnum )
+bool SVToolAdjustmentDialogPassFailPageClass::ShowObjectSelector(CString& name, RangeEnum::ERange fieldEnum)
 {
-	bool retValue = m_RangeHelper.FillObjectSelector();
+	bool retValue = false;
 
-	if ( !retValue )
-	{
-		return retValue;
-	}
+	FillObjectSelector();
 
-	if(name.GetLength() > 0)
+	if (name.GetLength() > 0)
 	{
 		SVStringSet nameSet;
 		nameSet.insert(name);
 		SvOsl::ObjectTreeGenerator::Instance().setCheckItems(nameSet);
 	}
 
-	CString Title = m_RangeHelper.GetOwnerName();
+	SVString Title = GetOwnerName();
 	Title += _T(": ");
-	Title += RangeClassHelper::ERange2String(fieldEnum);
+	Title += RangeEnum::ERange2String(AfxGetResourceHandle(), fieldEnum);
 
 	CString mainTabTitle;
-	mainTabTitle.LoadString( IDS_SELECT_TOOLSET_OUTPUT );
+	mainTabTitle.LoadString(IDS_SELECT_TOOLSET_OUTPUT);
 	CString FilterTab;
-	FilterTab.LoadString( IDS_FILTER );
+	FilterTab.LoadString(IDS_FILTER);
 
-	INT_PTR Result = SvOsl::ObjectTreeGenerator::Instance().showDialog( Title, mainTabTitle, FilterTab, this );
+	INT_PTR Result = SvOsl::ObjectTreeGenerator::Instance().showDialog(Title, mainTabTitle, FilterTab, this);
 
-	if( IDOK == Result )
+	if (IDOK == Result)
 	{
 		name = SvOsl::ObjectTreeGenerator::Instance().getSingleObjectResult().getLocation().c_str(); // @TODO:  Should we check the return values of getSingleObjectResult and getLocation?
-		return true;
+		retValue = true;
 	}
-
-	return false;
+	return retValue;
 }
-#pragma endregion Privated Methods
+
+#pragma endregion Private Methods
 
 //******************************************************************************
 //* LOG HISTORY:

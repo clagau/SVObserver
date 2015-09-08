@@ -42,9 +42,10 @@ namespace Seidenader
 		END_MESSAGE_MAP()
 
 #pragma region Constructor
-		TADialogRingBufferParameterPage::TADialogRingBufferParameterPage( SvOi::IRingBufferTool& rTool) 
+		TADialogRingBufferParameterPage::TADialogRingBufferParameterPage( SvOi::IRingBufferTool& rTool, RingBufferSelectorFunc func) 
 			: CPropertyPage(TADialogRingBufferParameterPage::IDD)
 			,m_rTool(rTool)
+			, m_selectorFunc(func)
 		{
 		}
 
@@ -169,21 +170,13 @@ namespace Seidenader
 				PPQName = ppq->GetName();
 			}
 
-			SVStringArray nameArray;
-			typedef std::insert_iterator<SVStringArray> Inserter;
-	
 			SvOsl::ObjectTreeGenerator::Instance().setAttributeFilters( SV_SELECTABLE_FOR_EQUATION );
 			SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, InspectionName, SVString( _T("") ) );
 			SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterOutput, InspectionName, SVString( _T("") ) );
 			SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterOutput, PPQName, SVString( _T("")  ));
 			SvOsl::ObjectTreeGenerator::Instance().setSelectorType( SvOsl::ObjectTreeGenerator::TypeSingleObject );
 
-			SVStringArray objectNameList;
-			SvOi::getRootChildNameList( objectNameList, _T(""), SV_SELECTABLE_FOR_EQUATION );
-			SvOsl::ObjectTreeGenerator::Instance().insertTreeObjects( objectNameList );
-
-			SvOi::IOutputInfoListClassSmartPointer outputList = pToolSet->GetOutputList();
-			SvOsl::ObjectTreeGenerator::Instance().insertOutputList( *(outputList.get()) );
+			m_selectorFunc(inspection->GetUniqueObjectID(), pToolSet->GetUniqueObjectID());
 
 			if(name.GetLength() > 0)
 			{

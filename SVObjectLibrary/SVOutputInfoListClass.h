@@ -14,8 +14,10 @@
 
 #pragma warning( disable : 4786 )
 
+#pragma region Includes
 #include "ObjectInterfaces\IOutputInfoListClass.h"
 #include "SVOutObjectInfoStruct.h"
+#pragma endregion Includes
 
 class SVOutputInfoListClass : public SvOi::IOutputInfoListClass
 {
@@ -23,12 +25,15 @@ public:
 	typedef SVOutObjectInfoStructPtrArray::value_type value_type;
 	typedef SVOutObjectInfoStructPtrArray::arg_type arg_type;
 	typedef SVOutObjectInfoStructPtrArray::iterator iterator;
+	typedef SVOutObjectInfoStructPtrArray::const_iterator const_iterator;
 
 	SVOutputInfoListClass();
 	virtual ~SVOutputInfoListClass();
 
 	iterator begin();
 	iterator end();
+	const_iterator begin() const;
+	const_iterator end() const;
 
 	iterator erase( iterator p_Where );
 

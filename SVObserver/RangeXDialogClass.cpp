@@ -36,7 +36,7 @@ IMPLEMENT_DYNAMIC(RangeXDialogClass, CDialog)
 RangeXDialogClass::RangeXDialogClass(SVRangeClass* range, CWnd* parent /*=NULL*/)
 : CDialog(RangeXDialogClass::IDD, parent)
 , m_RangeClassHelper(range)
-, m_LastSelected(ER_COUNT)
+, m_LastSelected(RangeEnum::ER_COUNT)
 {
 }
 
@@ -152,13 +152,13 @@ bool RangeXDialogClass::GetDlgData()
 	try
 	{
 		m_EditFailHigh.GetWindowText(csText);
-		m_RangeClassHelper.SetInternalData(ER_FailHigh, csText);
+		m_RangeClassHelper.SetInternalData(RangeEnum::ER_FailHigh, csText);
 		m_EditWarnHigh.GetWindowText(csText);
-		m_RangeClassHelper.SetInternalData(ER_WarnHigh, csText);
+		m_RangeClassHelper.SetInternalData(RangeEnum::ER_WarnHigh, csText);
 		m_EditFailLow.GetWindowText(csText);
-		m_RangeClassHelper.SetInternalData(ER_FailLow, csText);
+		m_RangeClassHelper.SetInternalData(RangeEnum::ER_FailLow, csText);
 		m_EditWarnLow.GetWindowText(csText);
-		m_RangeClassHelper.SetInternalData(ER_WarnLow, csText);
+		m_RangeClassHelper.SetInternalData(RangeEnum::ER_WarnLow, csText);
 		res = true;
 	}
 	catch ( const SvStl::MessageHandler& rSvE )
@@ -187,9 +187,10 @@ bool RangeXDialogClass::ShowObjectSelector(CString& name)
 		SvOsl::ObjectTreeGenerator::Instance().setCheckItems(nameSet);
 	}
 
+	HINSTANCE resHandle = AfxGetResourceHandle();
 	CString Title = m_RangeClassHelper.GetOwnerName();
 	Title += _T(": ");
-	Title += RangeClassHelper::ERange2String(m_LastSelected);
+	Title += RangeEnum::ERange2String(resHandle, m_LastSelected).c_str();
 
 	CString mainTabTitle;
 	mainTabTitle.LoadString( IDS_SELECT_TOOLSET_OUTPUT );
@@ -210,7 +211,7 @@ bool RangeXDialogClass::ShowObjectSelector(CString& name)
 // @TODO:  The next 4 methods are very similar.  Consider refactoring to call a common method.  Otherwise, clean up the camelcase and result checking in all the methods.
 void RangeXDialogClass::OnBnClickedFailHighIndirect()
 {
-	m_LastSelected = ER_FailHigh;
+	m_LastSelected = RangeEnum::ER_FailHigh;
 	CString csText;
 	m_EditFailHigh.GetWindowText(csText); // @TODO:  Should check to see if GetWindowText worked before using the value it returned.
 	if (ShowObjectSelector(csText))
@@ -221,7 +222,7 @@ void RangeXDialogClass::OnBnClickedFailHighIndirect()
 
 void RangeXDialogClass::OnBnClickedWarnlHighIndirect()
 {
-	m_LastSelected = ER_WarnHigh;
+	m_LastSelected = RangeEnum::ER_WarnHigh;
 	CString csText;
 	m_EditWarnHigh.GetWindowText(csText);
 	if (ShowObjectSelector(csText) )
@@ -232,7 +233,7 @@ void RangeXDialogClass::OnBnClickedWarnlHighIndirect()
 
 void RangeXDialogClass::OnBnClickedWarnLowIndirect()
 {
-	m_LastSelected = ER_WarnLow;
+	m_LastSelected = RangeEnum::ER_WarnLow;
 	CString csText;
 	m_EditWarnLow.GetWindowText(csText);
 	if (ShowObjectSelector(csText) )
@@ -243,7 +244,7 @@ void RangeXDialogClass::OnBnClickedWarnLowIndirect()
 
 void RangeXDialogClass::OnBnClickedFailedLowIndirect()
 {
-	m_LastSelected = ER_FailLow;
+	m_LastSelected = RangeEnum::ER_FailLow;
 	CString csText;
 	m_EditFailLow.GetWindowText(csText);
 	if (ShowObjectSelector(csText) )

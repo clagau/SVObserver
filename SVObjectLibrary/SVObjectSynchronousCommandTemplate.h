@@ -12,6 +12,7 @@
 #ifndef SVOBJECTSYNCHRONOUSCOMMANDTEMPLATE_H
 #define SVOBJECTSYNCHRONOUSCOMMANDTEMPLATE_H
 
+#include "SVUtilityLibrary/SVGUID.h"
 template< typename SVCommandPtr >
 class SVObjectSynchronousCommandTemplate
 {
@@ -27,7 +28,11 @@ private:
 
 	SVGUID m_ObjectID;
 	SVCommandPtr m_CommandPtr;
+};
 
+enum 
+{
+	TWO_MINUTE_CMD_TIMEOUT = 120000
 };
 
 #include "SVObjectSynchronousCommandTemplate.inl"

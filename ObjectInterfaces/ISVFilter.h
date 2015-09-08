@@ -6,7 +6,9 @@
 //******************************************************************************
 
 #pragma once
+#pragma region Includes
 #include "ITaskObject.h"
+#pragma endregion Includes
 
 namespace Seidenader
 {
@@ -15,6 +17,8 @@ namespace Seidenader
 		class ISVFilter: virtual public ITaskObject
 		{
 		public:
+			virtual ~ISVFilter() {}
+
 			/**********
 			 The method gets if the inspection should reset if this filter is destroyed.
 			***********/

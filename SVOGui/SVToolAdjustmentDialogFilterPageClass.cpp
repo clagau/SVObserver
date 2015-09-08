@@ -222,7 +222,8 @@ namespace Seidenader
 
 							// And last - Create (initialize) it
 
-							if( ! pFilter->IsCreated() )
+							//if( ! pFilter->IsCreated() )
+							if( ! pFilter->is_Created() )
 							{
 								// SEJ 
 								// And finally try to create the child object...

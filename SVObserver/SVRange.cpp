@@ -77,10 +77,10 @@ void SVRangeClass::init()
 	RegisterEmbeddedObject( &WarnHigh, SVRangeClassWarnHighObjectGuid, IDS_OBJECTNAME_WARN_HIGH, false, SVResetItemNone );
 	RegisterEmbeddedObject( &FailLow, SVRangeClassFailLowObjectGuid, IDS_OBJECTNAME_FAIL_LOW, false, SVResetItemNone );
 	RegisterEmbeddedObject( &WarnLow, SVRangeClassWarnLowObjectGuid, IDS_OBJECTNAME_WARN_LOW, false, SVResetItemNone );
-	RegisterEmbeddedObject( &m_ValueIndirect[ER_FailHigh], SVRangeClassFailHighIndirectObjectGuid, IDS_OBJECTNAME_FAIL_HIGH_INDIRECT, false, SVResetItemOwner );
-	RegisterEmbeddedObject( &m_ValueIndirect[ER_WarnHigh], SVRangeClassWarnHighIndirectObjectGuid, IDS_OBJECTNAME_WARN_HIGH_INDIRECT, false, SVResetItemOwner );
-	RegisterEmbeddedObject( &m_ValueIndirect[ER_FailLow], SVRangeClassFailLowIndirectObjectGuid, IDS_OBJECTNAME_FAIL_LOW_INDIRECT, false, SVResetItemOwner);
-	RegisterEmbeddedObject( &m_ValueIndirect[ER_WarnLow], SVRangeClassWarnLowIndirectObjectGuid, IDS_OBJECTNAME_WARN_LOW_INDIRECT, false, SVResetItemOwner);
+	RegisterEmbeddedObject( &m_ValueIndirect[RangeEnum::ER_FailHigh], SVRangeClassFailHighIndirectObjectGuid, IDS_OBJECTNAME_FAIL_HIGH_INDIRECT, false, SVResetItemOwner );
+	RegisterEmbeddedObject( &m_ValueIndirect[RangeEnum::ER_WarnHigh], SVRangeClassWarnHighIndirectObjectGuid, IDS_OBJECTNAME_WARN_HIGH_INDIRECT, false, SVResetItemOwner );
+	RegisterEmbeddedObject( &m_ValueIndirect[RangeEnum::ER_FailLow], SVRangeClassFailLowIndirectObjectGuid, IDS_OBJECTNAME_FAIL_LOW_INDIRECT, false, SVResetItemOwner);
+	RegisterEmbeddedObject( &m_ValueIndirect[RangeEnum::ER_WarnLow], SVRangeClassWarnLowIndirectObjectGuid, IDS_OBJECTNAME_WARN_LOW_INDIRECT, false, SVResetItemOwner);
 
 	// Set Embedded defaults
 	FailLow.SetDefaultValue( lowDef, TRUE );
@@ -88,7 +88,7 @@ void SVRangeClass::init()
 	WarnLow.SetDefaultValue( lowDef, TRUE );
 	WarnHigh.SetDefaultValue( highDef, TRUE );
 
-	for(int i = 0; i < ER_COUNT; i++)
+	for(int i = 0; i < RangeEnum::ER_COUNT; i++)
 	{
 		m_ValueIndirect[i].SetDefaultValue( _T(""), TRUE );
 	}
@@ -115,7 +115,7 @@ BOOL SVRangeClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
 	FailLow.ObjectAttributesAllowedRef() |= SV_PRINTABLE | SV_SETABLE_ONLINE | SV_REMOTELY_SETABLE;
 	WarnLow.ObjectAttributesAllowedRef() |= SV_PRINTABLE | SV_SETABLE_ONLINE | SV_REMOTELY_SETABLE;
 
-	for(int i = 0; i < ER_COUNT; i++)
+	for(int i = 0; i < RangeEnum::ER_COUNT; i++)
 	{
 		m_ValueIndirect[i].ObjectAttributesAllowedRef() |= SV_PRINTABLE | SV_REMOTELY_SETABLE;
 	}
@@ -177,7 +177,7 @@ HRESULT SVRangeClass::InitReferencesAndInputs()
 	}
 	InspectionName += _T(".");
 
-	for(int i = 0; i < ER_COUNT; i++)
+	for(int i = 0; i < RangeEnum::ER_COUNT; i++)
 	{
 		csValueIndirect.Empty();
 		m_ValueObjectReferences[i] = emptyRef;
@@ -273,17 +273,17 @@ BOOL SVRangeClass::onRun(SVRunStatusClass& RRunStatus)
 			double InputValue;
 			getInputValue(InputValue);
 
-			if( nullptr != m_ValueObjectReferences[ER_FailLow].Object() )
+			if( nullptr != m_ValueObjectReferences[RangeEnum::ER_FailLow].Object() )
 			{
-				if(!HasIndirectValue(ER_FailLow))
+				if(!HasIndirectValue(RangeEnum::ER_FailLow))
 				{
 					throw(1);
 				}
-				if( SVValueObjectClass* pValueObject = dynamic_cast<SVValueObjectClass*> (m_ValueObjectReferences[ER_FailLow].Object()) )
+				if( SVValueObjectClass* pValueObject = dynamic_cast<SVValueObjectClass*> (m_ValueObjectReferences[RangeEnum::ER_FailLow].Object()) )
 				{
 					pValueObject->GetValue( failLow );
 				}
-				else if( BasicValueObject* pBasicValueObject = dynamic_cast<BasicValueObject*> (m_ValueObjectReferences[ER_FailLow].Object()) )
+				else if( BasicValueObject* pBasicValueObject = dynamic_cast<BasicValueObject*> (m_ValueObjectReferences[RangeEnum::ER_FailLow].Object()) )
 				{
 					pBasicValueObject->getValue( failLow );
 				}
@@ -294,17 +294,17 @@ BOOL SVRangeClass::onRun(SVRunStatusClass& RRunStatus)
 				FailLow.GetValue( failLow );
 			}
 
-			if( nullptr != m_ValueObjectReferences[ER_FailHigh].Object() )
+			if( nullptr != m_ValueObjectReferences[RangeEnum::ER_FailHigh].Object() )
 			{
-				if(!HasIndirectValue(ER_FailHigh))
+				if(!HasIndirectValue(RangeEnum::ER_FailHigh))
 				{
 					throw(1);
 				}
-				if( SVValueObjectClass* pValueObject = dynamic_cast<SVValueObjectClass*> (m_ValueObjectReferences[ER_FailHigh].Object()) )
+				if( SVValueObjectClass* pValueObject = dynamic_cast<SVValueObjectClass*> (m_ValueObjectReferences[RangeEnum::ER_FailHigh].Object()) )
 				{
 					pValueObject->GetValue( failHigh );
 				}
-				else if( BasicValueObject* pBasicValueObject = dynamic_cast<BasicValueObject*> (m_ValueObjectReferences[ER_FailHigh].Object()) )
+				else if( BasicValueObject* pBasicValueObject = dynamic_cast<BasicValueObject*> (m_ValueObjectReferences[RangeEnum::ER_FailHigh].Object()) )
 				{
 					pBasicValueObject->getValue( failHigh );
 				}
@@ -315,17 +315,17 @@ BOOL SVRangeClass::onRun(SVRunStatusClass& RRunStatus)
 				FailHigh.GetValue( failHigh );
 			}
 
-			if( nullptr !=m_ValueObjectReferences[ER_WarnLow].Object() )
+			if( nullptr !=m_ValueObjectReferences[RangeEnum::ER_WarnLow].Object() )
 			{
-				if(!HasIndirectValue(ER_WarnLow))
+				if(!HasIndirectValue(RangeEnum::ER_WarnLow))
 				{
 					throw(1);
 				}
-				if( SVValueObjectClass* pValueObject = dynamic_cast<SVValueObjectClass*> (m_ValueObjectReferences[ER_WarnLow].Object()) )
+				if( SVValueObjectClass* pValueObject = dynamic_cast<SVValueObjectClass*> (m_ValueObjectReferences[RangeEnum::ER_WarnLow].Object()) )
 				{
 					pValueObject->GetValue( warnLow );
 				}
-				else if( BasicValueObject* pBasicValueObject = dynamic_cast<BasicValueObject*> (m_ValueObjectReferences[ER_WarnLow].Object()) )
+				else if( BasicValueObject* pBasicValueObject = dynamic_cast<BasicValueObject*> (m_ValueObjectReferences[RangeEnum::ER_WarnLow].Object()) )
 				{
 					pBasicValueObject->getValue( warnLow );
 				}
@@ -336,17 +336,17 @@ BOOL SVRangeClass::onRun(SVRunStatusClass& RRunStatus)
 				WarnLow.GetValue( warnLow );
 			}
 
-			if( nullptr !=m_ValueObjectReferences[ER_WarnHigh].Object() )
+			if( nullptr !=m_ValueObjectReferences[RangeEnum::ER_WarnHigh].Object() )
 			{
-				if(! HasIndirectValue(ER_WarnHigh))
+				if(! HasIndirectValue(RangeEnum::ER_WarnHigh))
 				{
 					throw(1);
 				}
-				if( SVValueObjectClass* pValueObject = dynamic_cast<SVValueObjectClass*> (m_ValueObjectReferences[ER_WarnHigh].Object()) )
+				if( SVValueObjectClass* pValueObject = dynamic_cast<SVValueObjectClass*> (m_ValueObjectReferences[RangeEnum::ER_WarnHigh].Object()) )
 				{
 					pValueObject->GetValue( warnHigh );
 				}
-				else if( BasicValueObject* pBasicValueObject = dynamic_cast<BasicValueObject*> (m_ValueObjectReferences[ER_WarnHigh].Object()) )
+				else if( BasicValueObject* pBasicValueObject = dynamic_cast<BasicValueObject*> (m_ValueObjectReferences[RangeEnum::ER_WarnHigh].Object()) )
 				{
 					pBasicValueObject->getValue( warnHigh );
 				}
@@ -526,7 +526,7 @@ BOOL SVRangeClass::getInputValue( double& RVal )
 
 void SVRangeClass::ConnectAllInputObjects()
 {
-	for(int i = 0; i < ER_COUNT; i++)
+	for(int i = 0; i < RangeEnum::ER_COUNT; i++)
 	{
 		m_IsConnectedInput[i] = false;
 
@@ -551,7 +551,7 @@ void SVRangeClass::ConnectAllInputObjects()
 
 void SVRangeClass::DisconnectAllInputObjects()
 {
-	for(int i = 0; i < ER_COUNT; i++)
+	for(int i = 0; i < RangeEnum::ER_COUNT; i++)
 	{
 		if(nullptr != m_ValueObjectReferences[i].Object() && m_IsConnectedInput[i] == true)
 		{
@@ -573,12 +573,12 @@ void SVRangeClass::DisconnectAllInputObjects()
 	}
 }
 
-HRESULT SVRangeClass::GetIndirectValue(enum ERange ra, CString &ref)
+HRESULT SVRangeClass::GetIndirectValue(RangeEnum::ERange ra, CString &ref)
 {
 	return m_ValueIndirect[ra].GetValue(ref);
 };
 
-bool SVRangeClass::HasIndirectValue(enum ERange ra)
+bool SVRangeClass::HasIndirectValue(RangeEnum::ERange ra)
 {
 	bool res = false;
 	CString cs;
@@ -590,30 +590,30 @@ bool SVRangeClass::HasIndirectValue(enum ERange ra)
 	return res;
 };
 
-HRESULT SVRangeClass::GetValue(enum ERange ra, double &ref)
+HRESULT SVRangeClass::GetValue(RangeEnum::ERange ra, double &ref)
 {
 	switch (ra)
 	{
-	case ER_FailHigh:
+	case RangeEnum::ER_FailHigh:
 		return FailHigh.GetValue(ref);
 		break;
 
-	case ER_WarnHigh:
+	case RangeEnum::ER_WarnHigh:
 		return WarnHigh.GetValue(ref);
 		break;
 
-	case ER_FailLow:
+	case RangeEnum::ER_FailLow:
 		return FailLow.GetValue(ref);
 		break;
 
-	case ER_WarnLow:
+	case RangeEnum::ER_WarnLow:
 		return WarnLow.GetValue(ref);
 		break;
 	}
 	return E_FAIL;
 };
 
-SVStringValueObjectClass* SVRangeClass::GetIndirectObject( enum ERange ra )
+SVStringValueObjectClass* SVRangeClass::GetIndirectObject( RangeEnum::ERange ra )
 {
 	return &(m_ValueIndirect[ra]);
 };
@@ -627,12 +627,12 @@ const SVDoubleValueObjectClass& SVRangeClass::getUpdatedFailLow( int bucket )
 {
 	double value;
 	
-	if( SVValueObjectClass* pValueObject = dynamic_cast<SVValueObjectClass*> (m_ValueObjectReferences[ER_FailLow].Object()) )
+	if( SVValueObjectClass* pValueObject = dynamic_cast<SVValueObjectClass*> (m_ValueObjectReferences[RangeEnum::ER_FailLow].Object()) )
 	{
 		pValueObject->GetValue( value );
 		FailLow.SetValue( bucket, value );
 	}
-	else if( BasicValueObject* pBasicValueObject = dynamic_cast<BasicValueObject*> (m_ValueObjectReferences[ER_FailLow].Object()) )
+	else if( BasicValueObject* pBasicValueObject = dynamic_cast<BasicValueObject*> (m_ValueObjectReferences[RangeEnum::ER_FailLow].Object()) )
 	{
 		pBasicValueObject->getValue( value );
 		FailLow.SetValue( bucket, value );
@@ -645,12 +645,12 @@ const SVDoubleValueObjectClass& SVRangeClass::getUpdatedFailHigh( int bucket )
 {
 	double value;
 
-	if( SVValueObjectClass* pValueObject = dynamic_cast<SVValueObjectClass*> (m_ValueObjectReferences[ER_FailHigh].Object()) )
+	if( SVValueObjectClass* pValueObject = dynamic_cast<SVValueObjectClass*> (m_ValueObjectReferences[RangeEnum::ER_FailHigh].Object()) )
 	{
 		pValueObject->GetValue( value );
 		FailLow.SetValue( bucket, value );
 	}
-	else if( BasicValueObject* pBasicValueObject = dynamic_cast<BasicValueObject*> (m_ValueObjectReferences[ER_FailHigh].Object()) )
+	else if( BasicValueObject* pBasicValueObject = dynamic_cast<BasicValueObject*> (m_ValueObjectReferences[RangeEnum::ER_FailHigh].Object()) )
 	{
 		pBasicValueObject->getValue( value );
 		FailHigh.SetValue( bucket, value );

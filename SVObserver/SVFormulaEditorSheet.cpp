@@ -22,19 +22,22 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-using namespace SvOg;
 #pragma endregion Declarations
 
-SVFormulaEditorSheetClass::SVFormulaEditorSheetClass(UINT nIDCaption, CWnd* pParentWnd, UINT iSelectPage)
-	:CPropertySheet(nIDCaption, pParentWnd, iSelectPage)
-	, m_formulaPage(m_formulaController)
+SVFormulaEditorSheetClass::SVFormulaEditorSheetClass(const GUID& rInspectionID, const GUID& rTaskObjectID, const SVObjectTypeInfoStruct& rInfo, UINT nIDCaption, CWnd* pParentWnd, UINT iSelectPage)
+: CPropertySheet(nIDCaption, pParentWnd, iSelectPage)
+, m_InspectionID(rInspectionID)
+, m_TaskObjectID(rTaskObjectID)
+, m_info(rInfo)
 {
 	init();
 }
 
-SVFormulaEditorSheetClass::SVFormulaEditorSheetClass(LPCTSTR pszCaption, CWnd* pParentWnd, UINT iSelectPage)
-	:CPropertySheet(pszCaption, pParentWnd, iSelectPage)
-	, m_formulaPage(m_formulaController)
+SVFormulaEditorSheetClass::SVFormulaEditorSheetClass(const GUID& rInspectionID, const GUID& rTaskObjectID, const SVObjectTypeInfoStruct& rInfo, LPCTSTR pszCaption, CWnd* pParentWnd, UINT iSelectPage)
+: CPropertySheet(pszCaption, pParentWnd, iSelectPage)
+, m_InspectionID(rInspectionID)
+, m_TaskObjectID(rTaskObjectID)
+, m_info(rInfo)
 {
 	init();
 }
@@ -45,16 +48,9 @@ SVFormulaEditorSheetClass::~SVFormulaEditorSheetClass()
 
 void SVFormulaEditorSheetClass::init()
 {
+	m_formulaPage = FormulaEditorPagePtr(new SVFormulaEditorPageClass(m_InspectionID, m_TaskObjectID, new FormulaController(m_InspectionID, m_TaskObjectID, m_info)));
 	m_psh.dwFlags |= PSH_NOAPPLYNOW;
-	AddPage( &m_formulaPage );
-}
-
-void SVFormulaEditorSheetClass::SetTaskObject( SVTaskObjectClass* pObject )
-{
-	if ( pObject != nullptr )
-	{
-		m_formulaController.setTaskObject( *pObject );
-	}
+	AddPage( m_formulaPage.get() );
 }
 
 ////////////////////////////////////////////////////////////////////////////////

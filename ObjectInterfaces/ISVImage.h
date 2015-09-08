@@ -6,10 +6,12 @@
 //******************************************************************************
 
 #pragma once
+#pragma region Includes
 #include "SVImageEnums.h"
 #include "IObjectAppClass.h"
 #include "IMatroxImageData.h"
 #include "SVUtilityLibrary\SVSharedPtr.h"
+#pragma endregion Includes
 
 namespace Seidenader
 {
@@ -20,6 +22,8 @@ namespace Seidenader
 		class ISVImage : virtual public IObjectAppClass
 		{
 		public:
+			virtual ~ISVImage() {}
+
 			//************************************
 			/// Return the image type.
 			/// \returns SVImageTypeEnum

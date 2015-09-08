@@ -12,14 +12,13 @@
 #pragma once
 
 #pragma region Includes
-#include "SVConditional.h"
-#include "ConditionalController.h"
-#include "SVOGui/SVFormulaEditorPage.h"
+#include "SVUtilityLibrary/SVSharedPtr.h"
+#include "SVFormulaEditorPage.h"
+#include "SVConditional.h" //SEJ99 - this needs to go
 #pragma endregion Includes
 
 class SVToolSetAdjustmentDialogSheetClass : public CPropertySheet
 {
-
 //******************************************************************************
 // MFC Declarations:
 //******************************************************************************
@@ -36,38 +35,15 @@ protected:
 
 	DECLARE_MESSAGE_MAP()
 
-//******************************************************************************
-// Friend Declaration(s):
-//******************************************************************************
-
-//******************************************************************************
-// Constructor(s):
-//******************************************************************************
 public:
-// Standard constructor
-	SVToolSetAdjustmentDialogSheetClass( SVConditionalClass& rCondition, UINT nIDCaption, CWnd* pParentWnd = NULL, UINT iSelectPage = 0 );
-	SVToolSetAdjustmentDialogSheetClass( SVConditionalClass& rCondition, LPCTSTR pszCaption, CWnd* pParentWnd = NULL, UINT iSelectPage = 0 );
-
-//******************************************************************************
-// Destructor(s):
-//******************************************************************************
-public:
-// Standard destructor
+	SVToolSetAdjustmentDialogSheetClass( const GUID& rInspectionID, const GUID& rTaskObjectID, SVConditionalClass& rCondition, UINT nIDCaption, CWnd* pParentWnd = NULL, UINT iSelectPage = 0 );
+	SVToolSetAdjustmentDialogSheetClass( const GUID& rInspectionID, const GUID& rTaskObjectID, SVConditionalClass& rCondition, LPCTSTR pszCaption, CWnd* pParentWnd = NULL, UINT iSelectPage = 0 );
 	virtual ~SVToolSetAdjustmentDialogSheetClass();
 
-//******************************************************************************
-// Operator(s):
-//******************************************************************************
 protected:
 	virtual void init( SVConditionalClass& rCondition );
-
-//******************************************************************************
-// Operation(s) Of Writing Access And Data Exchange:
-//******************************************************************************
-protected:
 	void addPages();
 
-protected:
     afx_msg void OnOK();
     afx_msg void OnCancel();
 
@@ -85,13 +61,13 @@ protected:
 	//{{AFX_DATA(<ClassName>)
 	//}}AFX_DATA
 
-//******************************************************************************
-// Data Element(s):
-//******************************************************************************
 private:
-	SvOg::SVFormulaEditorPageClass m_formulaPage;
-	ConditionalController m_conditionalController;
-	SVToolSetClass* m_pToolSet;
+	GUID m_InspectionID;
+	GUID m_TaskObjectID;
+
+	typedef SVSharedPtr<SVFormulaEditorPageClass> FormulaEditorPagePtr;
+	FormulaEditorPagePtr m_formulaPage;
+	SVToolSetClass* m_pToolSet; //SEJ99 - this needs to go
 };
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -34,7 +34,7 @@ class SVToolAdjustmentDialogLUTPageClass : public CPropertyPage, public SVTaskOb
 {
 #pragma region Constructor
 public:
-	SVToolAdjustmentDialogLUTPageClass( SVToolAdjustmentDialogSheetClass* Parent );
+	SVToolAdjustmentDialogLUTPageClass( const GUID& rInspectionID, const GUID& rTaskObjectID, SVToolAdjustmentDialogSheetClass* Parent );
 #pragma endregion Constructor
 
 #pragma region Public Methods
@@ -161,6 +161,9 @@ private:
 	SVLongValueObjectClass*         m_pLUTUpperClip;
 	SVLongValueObjectClass*         m_pLUTLowerClip;
 	SVBoolValueObjectClass*			m_pIsLUTFormulaClipped;
+
+	GUID m_InspectionID;
+	GUID m_TaskObjectID;
 #pragma endregion Member variables
 };
 

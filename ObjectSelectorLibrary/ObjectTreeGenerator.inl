@@ -40,6 +40,29 @@ inline void ObjectTreeGenerator::setSelectorType( const SelectorTypeEnum& rSelec
 {
 	m_SelectorType = rSelectorType;
 }
+
+///SEJ99 - This method should be refactored to trim down the insert methods in the object selector to only one...
+template <typename GlobalSelector, typename PPQSelector, typename PPQVariablesSelector, typename ToolsetItemSelector>
+void ObjectTreeGenerator::BuildSelectableItems( const SVGUID& rInspectionID, const SVGUID& rInstanceID )
+{
+	GlobalSelector globalSelector;
+	PPQSelector ppqSelector;
+	PPQVariablesSelector ppqVariablesSelector;
+	ToolsetItemSelector toolsetItemSelector;
+
+	insertTreeObjects(globalSelector(m_AttributesAllowedFilter));
+	insertTreeObjects(ppqSelector(rInspectionID));
+	insertTreeObjects(ppqVariablesSelector(rInspectionID));
+	SvOi::IOutputInfoListClassPtr outputList = toolsetItemSelector(rInspectionID, rInstanceID);
+	if (!outputList.empty())
+	{
+		insertOutputList(*outputList.get());
+	}
+	else
+	{
+		assert(false); // Shouldn't happen...
+	}
+}
 #pragma endregion Public Methods
 
 //******************************************************************************

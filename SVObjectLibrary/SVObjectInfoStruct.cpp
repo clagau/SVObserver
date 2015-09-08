@@ -286,6 +286,11 @@ BOOL SVObjectInfoStruct::CheckExistence()
 	return l_bOk;
 }
 
+SvOi::IObjectClass* SVObjectInfoStruct::getObject() const 
+{ 
+	return dynamic_cast<SvOi::IObjectClass*>(PObject); 
+}
+
 //******************************************************************************
 //* LOG HISTORY:
 //******************************************************************************

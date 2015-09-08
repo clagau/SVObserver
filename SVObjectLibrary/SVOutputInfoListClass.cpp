@@ -9,6 +9,7 @@
 //* .Check In Date   : $Date:   08 May 2013 15:26:24  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVOutputInfoListClass.h"
 #include "SVUtilityLibrary/SVString.h"
@@ -18,6 +19,7 @@
 #include "SVObjectInfoStruct.h"
 #include "SVObjectLibrary.h"
 #include "SVObjectManagerClass.h"
+#pragma endregion Includes
 
 namespace
 {
@@ -83,6 +85,16 @@ SVOutputInfoListClass::iterator SVOutputInfoListClass::begin()
 }
 
 SVOutputInfoListClass::iterator SVOutputInfoListClass::end()
+{
+	return m_svObjectArray.end();
+}
+
+SVOutputInfoListClass::const_iterator SVOutputInfoListClass::begin() const
+{
+	return m_svObjectArray.begin();
+}
+
+SVOutputInfoListClass::const_iterator SVOutputInfoListClass::end() const
 {
 	return m_svObjectArray.end();
 }

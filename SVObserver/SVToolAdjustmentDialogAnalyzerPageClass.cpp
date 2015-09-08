@@ -27,6 +27,7 @@
 #include "SVToolSet.h"
 #include "SVSetupDialogManager.h"
 #include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
+#include "PublishSelector.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -430,9 +431,7 @@ void SVToolAdjustmentDialogAnalyzerPageClass::OnPublishButton()
 	SvOsl::ObjectTreeGenerator::Instance().setAttributeFilters( SV_PUBLISHABLE );
 	SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, m_pTool->GetCompleteObjectName(), SVString( _T("") ) );
 
-	SVOutputInfoListClass OutputList;
-	m_pCurrentAnalyzer->GetOutputList( OutputList );
-	SvOsl::ObjectTreeGenerator::Instance().insertOutputList( OutputList );
+	PublishSelector(pInspection->GetUniqueObjectID(), m_pCurrentAnalyzer->GetUniqueObjectID());
 
 	CString PublishableResults;
 	PublishableResults.LoadString( IDS_PUBLISHABLE_RESULTS );

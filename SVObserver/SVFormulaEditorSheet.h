@@ -12,44 +12,17 @@
 #pragma once
 
 #pragma region Includes
-#include "SVOGui/SVFormulaEditorPage.h"
-#include "FormulaController.h"
+#include "SVFormulaEditorPage.h"
+#include "SVUtilityLibrary/SVSharedPtr.h"
 #pragma endregion Includes
-
-class SVTaskObjectClass;
-
-//******************************************************************************
-//* CLASS(ES) & TYPE(S):
-//* STRUCTURE(S) & TYPE(S):
-//* UNION(S) & TYPE(S):
-//******************************************************************************
 
 class SVFormulaEditorSheetClass : public CPropertySheet
 {
-
-//******************************************************************************
-// Friend Declaration(s):
-//******************************************************************************
-
-//******************************************************************************
-// Constructor(s):
-//******************************************************************************
-// Construction
 public:
-	SVFormulaEditorSheetClass(UINT nIDCaption, CWnd* pParentWnd = NULL, UINT iSelectPage = 0);
-	SVFormulaEditorSheetClass(LPCTSTR pszCaption, CWnd* pParentWnd = NULL, UINT iSelectPage = 0);
+	SVFormulaEditorSheetClass(const GUID& rInspectionID, const GUID& rTaskOjectID, const SVObjectTypeInfoStruct& rInfo, UINT nIDCaption, CWnd* pParentWnd = NULL, UINT iSelectPage = 0);
+	SVFormulaEditorSheetClass(const GUID& rInspectionID, const GUID& rTaskOjectID, const SVObjectTypeInfoStruct& rInfo, LPCTSTR pszCaption, CWnd* pParentWnd = NULL, UINT iSelectPage = 0);
 
-//******************************************************************************
-// Destructor(s):
-//******************************************************************************
-public:
 	virtual ~SVFormulaEditorSheetClass();
-
-//******************************************************************************
-// Operator(s):
-//******************************************************************************
-public:
-	void SetTaskObject( SVTaskObjectClass* taskObject );
 
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(SVFormulaEditorSheetClass)
@@ -68,13 +41,11 @@ protected:
 protected:
     afx_msg void OnOK();
 
-//******************************************************************************
-// Data Element(s):
-//******************************************************************************
-protected:
-
-	SvOg::SVFormulaEditorPageClass	m_formulaPage;
-	FormulaController m_formulaController;
+	typedef SVSharedPtr<SVFormulaEditorPageClass> FormulaEditorPagePtr;
+	FormulaEditorPagePtr m_formulaPage;
+	GUID m_InspectionID;
+	GUID m_TaskObjectID;
+	SVObjectTypeInfoStruct m_info;
 };
 
 //{{AFX_INSERT_LOCATION}}

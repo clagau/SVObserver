@@ -15,6 +15,8 @@ namespace Seidenader
 		class ICustomFilter: virtual public ISVFilter
 		{
 		public:
+			virtual ~ICustomFilter() {}
+
 			/**********
 			 The method add a input request for the kernel width parameter to the IP. 
 			 Add the end of setting the input request, you have to set AddInputRequestMarker.

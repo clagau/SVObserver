@@ -118,6 +118,8 @@ public:
 #pragma region virtual method (IInspectionProcess)
 	virtual SvOi::IObjectClass* GetPPQInterface() const override;
 	virtual void SetDefaultInputs() override;
+	virtual SVStringArray GetPPQInputNames() const override;
+	virtual SvOi::ITaskObject* GetToolSetInterface() const override;
 #pragma region virtual method (IInspectionProcess)
 
 	bool IsCameraInInspection( const CString& p_rName ) const;

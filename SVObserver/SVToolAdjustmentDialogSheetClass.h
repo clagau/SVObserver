@@ -11,9 +11,7 @@
 
 #pragma once
 
-#include "ObjectInterfaces/IFormulaController.h"
 #include "FormulaController.h"
-#include "ConditionalController.h"
 class SVIPDoc;
 class SVToolClass;
 
@@ -36,42 +34,42 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 public:
-	SVToolAdjustmentDialogSheetClass( SVIPDoc* p_pIPDoc, SVToolClass& rTool, UINT nIDCaption, CWnd* pParentWnd = NULL, UINT iSelectPage = 0);
-	SVToolAdjustmentDialogSheetClass( SVIPDoc* p_pIPDoc, SVToolClass& rTool, LPCTSTR pszCaption, CWnd* pParentWnd = NULL, UINT iSelectPage = 0);
+	SVToolAdjustmentDialogSheetClass( SVIPDoc* p_pIPDoc, const GUID& rInspectionID, const GUID& rTaskObjectID, UINT nIDCaption, CWnd* pParentWnd = NULL, UINT iSelectPage = 0);
+	SVToolAdjustmentDialogSheetClass( SVIPDoc* p_pIPDoc, const GUID& rInspectionID, const GUID& rTaskObjectID, LPCTSTR pszCaption, CWnd* pParentWnd = NULL, UINT iSelectPage = 0);
 
 	virtual ~SVToolAdjustmentDialogSheetClass();
 
 	SVIPDoc* GetIPDoc() const;
-	SVToolClass* GetTool() const;
-
+	SVToolClass* GetTool() const; //SEJ99 - this needs to go
+	const GUID& GetInspectionID() const;
+	const GUID& GetToolID() const;
+	
+	//SEJ99 - This needs to go
 	template< typename SVToolType >
-	HRESULT GetToolByType( SVToolType*& p_rpTool ) const
+	HRESULT GetToolByType( SVToolType*& rpTool ) const
 	{
 		HRESULT l_Status = S_OK;
 
-		p_rpTool = dynamic_cast< SVToolType* >( &m_rTool );
+		rpTool = dynamic_cast< SVToolType* >( GetTool() );
 
-		if( p_rpTool == NULL )
+		if( nullptr == rpTool )
 		{
 			l_Status = E_FAIL;
 		}
-
 		return l_Status;
 	}
-
+	
 protected:
 	void init();
 	void addPages();
 
 private:
-	// For saving the Tool Set Object Script
-	CString script;
-	CString alias;
-
 	SVIPDoc* m_pIPDoc;
-	SVToolClass& m_rTool;
-	FormulaController m_formulaController;
-	ConditionalController m_conditionalController;
+	GUID m_InspectionID;
+	GUID m_TaskObjectID;
+
+	typedef SVSharedPtr<FormulaController> ControllerPtr;
+	ControllerPtr m_conditionalController;
 };
 
 //{{AFX_INSERT_LOCATION}}

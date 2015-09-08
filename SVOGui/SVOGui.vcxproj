@@ -222,7 +222,6 @@
     <ClCompile Include="SVAvailableFilterListComboBoxClass.cpp" />
     <ClCompile Include="SVCustomFilterDlg.cpp" />
     <ClCompile Include="SVFilterListBoxClass.cpp" />
-    <ClCompile Include="SVFormulaEditorPage.cpp" />
     <ClCompile Include="SVRankingFilterDlg.cpp" />
     <ClCompile Include="SVThickeningFilterDlg.cpp" />
     <ClCompile Include="SVThinningFilterDlg.cpp" />
@@ -231,8 +230,10 @@
     <ClCompile Include="TADialogRingBufferParameterPage.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BoundValue.h" />
     <ClInclude Include="CDSVPictureDisplay.h" />
     <ClInclude Include="Custom2FilterDlg.h" />
+    <ClInclude Include="GuiController.h" />
     <ClInclude Include="GlobalConstantConflictDlg.h" />
     <ClInclude Include="GlobalConstantDlg.h" />
     <ClInclude Include="ISVPropertyPageDialog.h" />
@@ -241,7 +242,6 @@
     <ClInclude Include="SVAvailableFilterListComboBoxClass.h" />
     <ClInclude Include="SVCustomFilterDlg.h" />
     <ClInclude Include="SVFilterListBoxClass.h" />
-    <ClInclude Include="SVFormulaEditorPage.h" />
     <ClInclude Include="SVRankingFilterDlg.h" />
     <ClInclude Include="SVThickeningFilterDlg.h" />
     <ClInclude Include="SVThinningFilterDlg.h" />

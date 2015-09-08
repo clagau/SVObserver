@@ -65,7 +65,7 @@ public:
 	afx_msg void OnBnClickedFailedLowIndirect();
 
 protected:
-	ERange m_LastSelected;
+	RangeEnum::ERange m_LastSelected;
 
 	CEdit m_EditFailHigh;
 	CEdit m_EditWarnHigh;

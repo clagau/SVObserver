@@ -27,6 +27,10 @@
 #include "SVPPQObject.h"
 #include "SVObjectLibrary\GlobalConst.h"
 #include "RootObject.h"
+#include "GlobalSelector.h"
+#include "PPQNameSelector.h"
+#include "ToolSetItemSelector.h"
+#include "NoSelector.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -290,25 +294,9 @@ int SVExternalToolInputSelectPage::SelectObject( CString& rObjectName, SVRProper
 
 	SvOsl::ObjectTreeGenerator::Instance().setSelectorType( SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeSingleObject );
 	SvOsl::ObjectTreeGenerator::Instance().setAttributeFilters( SV_ARCHIVABLE );
-
 	SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, InspectionName, SVString( _T("") ) );
 
-	SVStringArray ObjectNameList;
-	RootObject::getRootChildNameList( ObjectNameList, _T(""), SV_ARCHIVABLE );
-	SvOsl::ObjectTreeGenerator::Instance().insertTreeObjects( ObjectNameList );
-	ObjectNameList.clear();
-
-	if (nullptr != m_pTool)
-	{
-		SVPPQObject* pPPQ = m_pTool->GetInspection()->GetPPQ();
-		SVString PPQName;
-		if( nullptr != pPPQ ){ PPQName = pPPQ->GetName(); }
-		SvOsl::ObjectTreeGenerator::Instance().insertTreeObjects( PPQName );
-	}
-
-	SVOutputInfoListClass OutputList;
-	pToolSet->GetOutputList( OutputList );
-	SvOsl::ObjectTreeGenerator::Instance().insertOutputList( OutputList );
+	SvOsl::ObjectTreeGenerator::Instance().BuildSelectableItems<GlobalSelector, PPQNameSelector, NoSelector, ToolSetItemSelector<>>(pToolSet->GetInspection()->GetUniqueObjectID(), pToolSet->GetUniqueObjectID());
 
 	SVStringSet Items;
 
