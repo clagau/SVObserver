@@ -1567,13 +1567,13 @@ void SVIPDoc::OnResultsPicker()
 			SVStringSet SelectedNames;
 			SVStringSet SelectedNamesRaw;
 			pResultList->GetNameSet(SelectedNamesRaw);
-			//Need to replace  the PPQ Variables name with  the inspection name
+			//Need to replace the PPQ Variables name with the inspection name
 			typedef std::insert_iterator<SVStringSet> Insertor;
 			std::transform(SelectedNamesRaw.begin(), SelectedNamesRaw.end(), Insertor(SelectedNames, SelectedNames.end()), [&InspectionName](const SVString& name)->SVString
 			{
 				SVString St(name);
-				// check to .DIO or .Remote Input
-				if (St.find_first_of(".DIO") != SVString::npos || St.find_first_of(".Remote Input") != SVString::npos)
+				// check for .DIO or .Remote Input
+				if (SVString::npos != St.find(".DIO") || SVString::npos != St.find(".Remote Input"))
 				{
 					St.replace( InspectionName.c_str(), SvOl::FqnPPQVariables );
 				}
