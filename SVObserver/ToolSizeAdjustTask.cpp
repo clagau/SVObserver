@@ -436,46 +436,58 @@ HRESULT ToolSizeAdjustTask::ResetObject()
 
 
 
-DWORD_PTR	ToolSizeAdjustTask::processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext ) 
+DWORD_PTR	ToolSizeAdjustTask::PreProcessMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext ) 
 {
-
-	DWORD_PTR DwResult = SVTaskObjectClass::processMessage( DwMessageID, DwMessageValue, DwMessageContext );
-
-	// Try to process message by yourself...
+	DWORD_PTR DwResult = SVMR_SUCCESS;
 	DWORD dwPureMessageID = DwMessageID & SVM_PURE_MESSAGE;
-	switch (dwPureMessageID)
+	if(dwPureMessageID == SVMSGID_RESET_ALL_OBJECTS)
 	{
-	case SVMSGID_RESET_ALL_OBJECTS:
+		DwResult = SVTaskObjectClass::processMessage( DwMessageID, DwMessageValue, DwMessageContext );
+		HRESULT ResetStatus = ResetObject();
+		if( ResetStatus != S_OK )
 		{
-			HRESULT ResetStatus = ResetObject();
-			if( ResetStatus != S_OK )
+			SetInvalid();
+			if(GetTool())
 			{
-				SetInvalid();
-				if(GetTool())
-				{
-					GetTool()->SetInvalid();
-				}
-				BOOL SilentReset = static_cast<BOOL> (DwMessageValue);
-				CString ErrorMsg(_T("Error in Reset"));
-				if(GetTool()->GetName())
-				{
-					ErrorMsg.Format(_T("The new extents for the %s are not valid"), GetTool()->GetName());
-				}
-				SvStl::MsgTypeEnum mode = SilentReset ? SvStl::LogOnly :  SvStl::LogAndDisplay;
-				SvStl::MessageMgrStdDisplay Exception(mode);
-				Exception.setMessage( SVMSG_SVO_58_TOOLADJUST_RESET_ERROR, ErrorMsg.GetString(), StdMessageParams, ResetStatus, 0, MB_OK );
-				DwResult = SVMR_NO_SUCCESS | DwResult;
+				GetTool()->SetInvalid();
 			}
-			else
+			BOOL SilentReset = static_cast<BOOL> (DwMessageValue);
+			CString ErrorMsg(_T("Error in Reset"));
+			if(GetTool()->GetName())
 			{
-				DwResult = SVMR_SUCCESS| DwResult;
+				ErrorMsg.Format(_T("The new extents for the %s are not valid"), GetTool()->GetName());
 			}
-			break;
+			SvStl::MsgTypeEnum mode = SilentReset ? SvStl::LogOnly :  SvStl::LogAndDisplay;
+			SvStl::MessageMgrStdDisplay Exception(mode);
+			Exception.setMessage( SVMSG_SVO_58_TOOLADJUST_RESET_ERROR, ErrorMsg.GetString(), StdMessageParams, ResetStatus, 0, MB_OK );
+			DwResult = SVMR_NO_SUCCESS | DwResult;
 		}
-
+		else
+		{
+			DwResult = SVMR_SUCCESS| DwResult;
+		}
+		
 	}
 	return  DwResult  ;
 }
+
+
+DWORD_PTR	ToolSizeAdjustTask::processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext ) 
+{
+
+	DWORD dwPureMessageID = DwMessageID & SVM_PURE_MESSAGE;
+	if(dwPureMessageID == SVMSGID_RESET_ALL_OBJECTS)
+	{
+		return SVMR_SUCCESS;
+	}
+	else
+	{
+		return  SVTaskObjectClass::processMessage( DwMessageID, DwMessageValue, DwMessageContext );
+	}
+}
+
+
+
 
 SVDoubleValueObjectClass* ToolSizeAdjustTask::GetDResultObjects(ToolSizeAdjustTask::TSValues val) const
 {
