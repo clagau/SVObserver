@@ -50,10 +50,6 @@ public:
 	//************************************
 	static ToolSizeAdjustTask* GetToolSizeAdjustTask(SVObjectClass *pObject);
 	
-	
-	
-
-	
 	//************************************
 	//! Non routing version  
 	//!	return false if last ResetObject did fail 
@@ -121,10 +117,7 @@ public:
 	//! return white color
 	//! \returns DWORD
 	//************************************
-	virtual DWORD GetObjectColor() const override; 
-
-
-	DWORD_PTR	PreProcessMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext ); 
+	virtual DWORD ToolSizeAdjustTask::GetObjectColor() const override; 
 
 protected:
 	
@@ -150,8 +143,12 @@ protected:
 	//************************************
 	virtual BOOL Run( SVRunStatusClass& RRunStatus ) override;
 
-	virtual DWORD_PTR	processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext ) override;
 
+
+
+protected:
+	virtual DWORD_PTR	processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext ) override;
+	
 	//************************************
 	//! retrieves the inputmodes. Check for consistency 
 	//! \param rModeWidth [out]
