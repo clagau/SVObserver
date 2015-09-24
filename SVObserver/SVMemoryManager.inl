@@ -10,7 +10,7 @@
 //******************************************************************************
 
 template <typename OWNERTYPE>
-inline HRESULT SVMemoryManager<OWNERTYPE>::CreatePool( const SVString& strPoolName, __int64 lPoolSizeKBytes, long buffer )
+inline HRESULT SVMemoryManager<OWNERTYPE>::CreatePool( const SVString& strPoolName, __int64 lPoolSizeKBytes )
 {
 	HRESULT hr = S_FALSE;
 
@@ -20,13 +20,13 @@ inline HRESULT SVMemoryManager<OWNERTYPE>::CreatePool( const SVString& strPoolNa
 		//m_mapPools[ strPoolName ] = new SVMemoryPool;
 		//hr = m_mapPools[ strPoolName ]->Create( lPoolSizeKBytes );
 		TRACE(_T("SVMemoryManager::CreatePool(%s, %d)\n"), strPoolName.c_str(), lPoolSizeKBytes*1024);
-		hr = m_mapPools[ strPoolName ].Create( lPoolSizeKBytes ,buffer);
+		hr = m_mapPools[ strPoolName ].Create( lPoolSizeKBytes );
 	}
 	return hr;
 }
 
 template <typename OWNERTYPE>
-inline HRESULT SVMemoryManager<OWNERTYPE>::ReservePoolMemory( const SVString& strPoolName, OWNERTYPE owner, __int64 lSizeInBytes, long buffer )
+inline HRESULT SVMemoryManager<OWNERTYPE>::ReservePoolMemory( const SVString& strPoolName, OWNERTYPE owner, __int64 lSizeInBytes )
 {
 	HRESULT hr = S_FALSE;
 
@@ -34,7 +34,7 @@ inline HRESULT SVMemoryManager<OWNERTYPE>::ReservePoolMemory( const SVString& st
 	if ( iter != m_mapPools.end() )// make sure it exists
 	{
 		TRACE(_T("SVMemoryManager::ReservePoolMemory(%s, %08X, %d)\n"), strPoolName.c_str(), owner, lSizeInBytes);
-		hr = iter->second.ReservePoolMemory( owner, lSizeInBytes,buffer );
+		hr = iter->second.ReservePoolMemory( owner, lSizeInBytes );
 	}
 
 	return hr;
@@ -56,7 +56,7 @@ inline HRESULT SVMemoryManager<OWNERTYPE>::ReleasePoolMemory( const SVString& st
 }
 
 template <typename OWNERTYPE>
-inline HRESULT SVMemoryManager<OWNERTYPE>::ReleasePoolMemory( const SVString& strPoolName, OWNERTYPE owner, long lSizeInBytes, long buffer )
+inline HRESULT SVMemoryManager<OWNERTYPE>::ReleasePoolMemory( const SVString& strPoolName, OWNERTYPE owner, long lSizeInBytes )
 {
 	HRESULT hr = S_FALSE;
 
@@ -64,24 +64,17 @@ inline HRESULT SVMemoryManager<OWNERTYPE>::ReleasePoolMemory( const SVString& st
 	if ( iter != m_mapPools.end() )// make sure it exists
 	{
 		TRACE(_T("SVMemoryManager::ReleasePoolMemory(%s, %08X, %d)\n"), strPoolName.c_str(), owner, lSizeInBytes);
-		hr = iter->second.ReleasePoolMemory( owner, lSizeInBytes, buffer );
+		hr = iter->second.ReleasePoolMemory( owner, lSizeInBytes );
 	}
 
 	return hr;
 }
 
 template <typename OWNERTYPE>
-bool SVMemoryManager<OWNERTYPE>::CanReservePoolMemory( const SVString& strPoolName, __int64 lReserveSizeInBytes,long buffer )
+bool SVMemoryManager<OWNERTYPE>::CanReservePoolMemory( const SVString& strPoolName, __int64 lReserveSizeInBytes )
 {
-	 
 	__int64 lFreeBytes = FreeBytes( strPoolName );
-	bool bret = (lFreeBytes - lReserveSizeInBytes > 0);
-	if(buffer >0 )
-	{
-		if (FreeBuffer(strPoolName) < buffer) 
-			bret =  false;
-	}
-		return bret;
+	return lFreeBytes - lReserveSizeInBytes > 0;
 }
 
 
@@ -99,38 +92,6 @@ inline __int64 SVMemoryManager<OWNERTYPE>::FreeBytes( const SVString& strPoolNam
 
 	return lSize;
 }
-
-template <typename OWNERTYPE>
-inline long SVMemoryManager<OWNERTYPE>::FreeBuffer( const SVString& strPoolName )
-{
-	long buffer= 0;
-
-	SVMemoryPoolMap::iterator iter = m_mapPools.find( strPoolName );
-	if ( iter != m_mapPools.end() )// make sure it exists
-	{
-		buffer = iter->second.FreeBuffer();
-		
-	}
-
-	return buffer;
-}
-
-template <typename OWNERTYPE>
-inline long SVMemoryManager<OWNERTYPE>::Buffer( const SVString& strPoolName )
-{
-	long buffer= 0;
-
-	SVMemoryPoolMap::iterator iter = m_mapPools.find( strPoolName );
-	if ( iter != m_mapPools.end() )// make sure it exists
-	{
-		buffer = iter->second.Buffer();
-
-	}
-
-	return buffer;
-}
-
-
 
 template <typename OWNERTYPE>
 inline __int64 SVMemoryManager<OWNERTYPE>::SizeOfPoolBytes( const SVString& strPoolName )

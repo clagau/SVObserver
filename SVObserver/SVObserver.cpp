@@ -120,7 +120,6 @@
 #include "SVStatusLibrary\MessageManagerResource.h"
 #include "ObjectInterfaces\ErrorNumbers.h"
 #include "TextDefinesSvO.h"
-#include "SVToolArchivePage.h"
 #include "SVObjectLibrary\SVObjectXMLWriter.h"
 #pragma endregion Includes
 
@@ -3304,15 +3303,15 @@ BOOL SVObserverApp::InitInstance()
 	{
 		iGoOfflineBufferSize = INI().GetValueInt( _T("Settings"), _T("ArchiveToolGoOfflineBufferSize"), GoOfflineDefault16GB );
 		iAsyncBufferSize = INI().GetValueInt( _T("Settings"), _T("ArchiveToolAsyncBufferSize"), AsyncDefault16GB);
-		TheSVMemoryManager().CreatePool(ARCHIVE_TOOL_MEMORY_POOL_GO_OFFLINE_NAME, iGoOfflineBufferSize * 1024, SVToolAdjustmentArchivePage::AvailableBufferHandles);
-		TheSVMemoryManager().CreatePool(ARCHIVE_TOOL_MEMORY_POOL_ONLINE_ASYNC_NAME, iAsyncBufferSize * 1024,0);
+		TheSVMemoryManager().CreatePool(ARCHIVE_TOOL_MEMORY_POOL_GO_OFFLINE_NAME, iGoOfflineBufferSize * 1024);
+		TheSVMemoryManager().CreatePool(ARCHIVE_TOOL_MEMORY_POOL_ONLINE_ASYNC_NAME, iAsyncBufferSize * 1024);
 	}
 	else
 	{
 		iGoOfflineBufferSize = INI().GetValueInt( _T("Settings"), _T("ArchiveToolGoOfflineBufferSize"), GoOfflineDefault4GB );
 		iAsyncBufferSize = INI().GetValueInt( _T("Settings"), _T("ArchiveToolAsyncBufferSize"), AsyncDefault4GB );
-		TheSVMemoryManager().CreatePool(ARCHIVE_TOOL_MEMORY_POOL_GO_OFFLINE_NAME, iGoOfflineBufferSize * 1024, SVToolAdjustmentArchivePage::AvailableBufferHandles);
-		TheSVMemoryManager().CreatePool(ARCHIVE_TOOL_MEMORY_POOL_ONLINE_ASYNC_NAME, iAsyncBufferSize * 1024, 0);
+		TheSVMemoryManager().CreatePool(ARCHIVE_TOOL_MEMORY_POOL_GO_OFFLINE_NAME, iGoOfflineBufferSize * 1024);
+		TheSVMemoryManager().CreatePool(ARCHIVE_TOOL_MEMORY_POOL_ONLINE_ASYNC_NAME, iAsyncBufferSize * 1024);
 	}
 	// Das Hauptfenster ist initialisiert und kann jetzt angezeigt und aktualisiert werden.
 #ifdef _DEBUG

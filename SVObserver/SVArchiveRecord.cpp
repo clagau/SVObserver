@@ -325,12 +325,12 @@ HRESULT SVArchiveRecord::AllocateBuffers( long lBufferSize )
 
 		m_lImageSize = SVArchiveTool::CalculateImageMemory( pImage );
 		__int64 l_lImageBufferSize = m_lImageSize * lBufferSize;
-
+		
 		// reserve memory
 		HRESULT hrAllocate = TheSVMemoryManager().ReleasePoolMemory(ARCHIVE_TOOL_MEMORY_POOL_GO_OFFLINE_NAME, this);
 		if ( m_eArchiveMethod == SVArchiveGoOffline )
 		{
-			hrAllocate = TheSVMemoryManager().ReservePoolMemory(ARCHIVE_TOOL_MEMORY_POOL_GO_OFFLINE_NAME, this, l_lImageBufferSize, lBufferSize );
+			hrAllocate = TheSVMemoryManager().ReservePoolMemory(ARCHIVE_TOOL_MEMORY_POOL_GO_OFFLINE_NAME, this, l_lImageBufferSize );
 			hr = hrAllocate;
 		}
 		else

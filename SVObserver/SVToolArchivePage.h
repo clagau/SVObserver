@@ -40,7 +40,6 @@ public:
 #pragma endregion Public Methods
 	
 #pragma region Public Members
-	const static int AvailableBufferHandles;	
 	SVToolAdjustmentDialogSheetClass* m_pParentDialog;
 #pragma endregion Public Members
 
@@ -75,16 +74,13 @@ protected:
 	__int64 m_lInitialArchiveImageMemoryUsageExcludingThisTool;
 	__int64 m_lInitialToolImageMemoryUsage;
 	__int64 m_lToolImageMemoryUsage;
-	long m_ToolImageBufferUsage;
-	long m_FreeImageBuffer;
-
 
 	typedef std::map <SVImageClass*, long> MapSelectedImageType;
 	MapSelectedImageType m_mapSelectedImageMemUsage;
 	MapSelectedImageType m_mapInitialSelectedImageMemUsage;
 
 	__int64 CalculateToolMemoryUsage();
-	__int64 CalculateFreeMem( int &FreeBufferHandles);
+	__int64 CalculateFreeMem();
 
 	// Generated message map functions
 
