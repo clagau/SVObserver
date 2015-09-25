@@ -20,6 +20,7 @@
 #include "SVInspectionProcess.h"
 #include "SVToolImage.h"
 #include "SVToolSet.h"
+#include "ToolSizeAdjustTask.h"
 
 SV_IMPLEMENT_CLASS( SVToolClass, SVToolClassGuid );
 
@@ -729,6 +730,12 @@ DWORD_PTR SVToolClass::processMessage( DWORD DwMessageID, DWORD_PTR DwMessageVal
 	{
 	case SVMSGID_RESET_ALL_OBJECTS:
 		{
+			ToolSizeAdjustTask* pToolSizeAdjustTask = nullptr;
+			pToolSizeAdjustTask = ToolSizeAdjustTask::GetToolSizeAdjustTask(this);
+			if(nullptr != pToolSizeAdjustTask)
+			{
+				pToolSizeAdjustTask->ProcessResetAllObject(DwMessageID,DwMessageValue, DwMessageContext);
+			}
 			HRESULT l_ResetStatus = ResetObject();
 			if( l_ResetStatus != S_OK )
 			{

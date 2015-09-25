@@ -117,7 +117,18 @@ public:
 	//! return white color
 	//! \returns DWORD
 	//************************************
-	virtual DWORD ToolSizeAdjustTask::GetObjectColor() const override; 
+	virtual DWORD GetObjectColor() const override; 
+
+
+	//************************************
+	//! Called by ProcessMessagefunction in SVToolclass before ResetObject 
+	//! Functionality was moved from processMessage 
+	//! \param DwMessageID [in]
+	//! \param DwMessageValue [in]
+	//! \param DwMessageContext [in]
+	//! \returns DWORD_PTR
+	//************************************
+	DWORD_PTR	ProcessResetAllObject( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext ); 
 
 protected:
 	
@@ -142,13 +153,9 @@ protected:
 	//! \returns TRUE
 	//************************************
 	virtual BOOL Run( SVRunStatusClass& RRunStatus ) override;
-
-
-
-
-protected:
-	virtual DWORD_PTR	processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext ) override;
 	
+	
+	virtual DWORD_PTR	processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext ) override;
 	//************************************
 	//! retrieves the inputmodes. Check for consistency 
 	//! \param rModeWidth [out]

@@ -436,17 +436,13 @@ HRESULT ToolSizeAdjustTask::ResetObject()
 
 
 
-DWORD_PTR	ToolSizeAdjustTask::processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext ) 
+DWORD_PTR	ToolSizeAdjustTask::ProcessResetAllObject( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext ) 
 {
-
-	DWORD_PTR DwResult = SVTaskObjectClass::processMessage( DwMessageID, DwMessageValue, DwMessageContext );
-
-	// Try to process message by yourself...
+	DWORD_PTR DwResult = SVMR_SUCCESS;
 	DWORD dwPureMessageID = DwMessageID & SVM_PURE_MESSAGE;
-	switch (dwPureMessageID)
-	{
-	case SVMSGID_RESET_ALL_OBJECTS:
+	if(dwPureMessageID == SVMSGID_RESET_ALL_OBJECTS)
 		{
+		DwResult = SVTaskObjectClass::processMessage( DwMessageID, DwMessageValue, DwMessageContext );
 			HRESULT ResetStatus = ResetObject();
 			if( ResetStatus != S_OK )
 			{
@@ -470,12 +466,28 @@ DWORD_PTR	ToolSizeAdjustTask::processMessage( DWORD DwMessageID, DWORD_PTR DwMes
 			{
 				DwResult = SVMR_SUCCESS| DwResult;
 			}
-			break;
-		}
-
+		
 	}
 	return  DwResult  ;
+		}
+
+
+DWORD_PTR	ToolSizeAdjustTask::processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext ) 
+{
+
+	DWORD dwPureMessageID = DwMessageID & SVM_PURE_MESSAGE;
+	if(dwPureMessageID == SVMSGID_RESET_ALL_OBJECTS)
+	{
+		return SVMR_SUCCESS;
+	}
+	else
+	{
+		return  SVTaskObjectClass::processMessage( DwMessageID, DwMessageValue, DwMessageContext );
+	}
 }
+
+
+
 
 SVDoubleValueObjectClass* ToolSizeAdjustTask::GetDResultObjects(ToolSizeAdjustTask::TSValues val) const
 {
