@@ -84,12 +84,9 @@ INT_PTR DisplayMessageBox::showDialog( HWND hParent, LPCTSTR Message, LPCTSTR Me
 {
 	INT_PTR Result( IDCANCEL );
 
+	//The setting for hParent can influence the behavior of modal dialogs which call this method to display a message (eg. setting hParent to the main window)
 	CWnd* pParent( nullptr );
-	if( NULL == hParent )
-	{
-		pParent = AfxGetMainWnd();
-	}
-	else
+	if( NULL != hParent )
 	{
 		pParent = CWnd::FromHandle( hParent );
 	}
