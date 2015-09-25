@@ -429,7 +429,7 @@ bool SVToolAdjustmentDialogSizePage::QueryAllowExit()
 					pEQ->GetEquationText(csEqText);
 					if(csEqText.IsEmpty())
 					{
-						SvStl::MessageMgrStdDisplay Exception( SvStl::LogAndDisplay );
+						SvStl::MessageMgrDisplayAndNotify Exception( SvStl::LogAndDisplay );
 						Exception.setMessage( SVMSG_SVO_64_EMPTY_FORMULAS_ARE_NOT_ALLOWED, nullptr, StdMessageParams, SvOi::Err_16038_EmptyFormula );
 						return false;
 					}

@@ -164,7 +164,7 @@ bool RangeXDialogClass::GetDlgData()
 	catch ( const SvStl::MessageHandler& rSvE )
 	{
 		//Now that we have caught the exception we would like to display it
-		SvStl::MessageMgrStdDisplay Exception( SvStl::LogAndDisplay );
+		SvStl::MessageMgrDisplayAndNotify Exception( SvStl::LogAndDisplay );
 		Exception.setMessage( rSvE.getMessage() );
 	}
 

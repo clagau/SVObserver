@@ -28,6 +28,7 @@
 #include "SVDataDefinitionStruct.h"
 #include "RemoteMonitorNamedList.h"
 #include "SVUtilityLibrary/SVGUID.h"
+#include "MessageNotification.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -98,7 +99,14 @@ public:
 
 	HRESULT SetLastModifiedTime();
 	HRESULT FireModeChanged(svModeEnum mode);
-
+	//************************************
+	//! Starts an Message notification via SVRC
+	//! \param type 
+	//! \param ErrorNumber 
+	//! \param errormessage 
+	//! \returns HRESULT
+	//************************************
+	HRESULT FireMessageNotification(SvStl::NotificationEnum type, int ErrorNumber, LPCTSTR errormessage  );
 	HRESULT QueryProductList( const SVString& rListName, SVNameSet& rNames ) const;
 	HRESULT QueryRejectCondList( const SVString& rListName, SVNameSet& rNames ) const;
 	HRESULT QueryFailStatusList( const SVString& rListName, SVNameSet& rNames ) const;
@@ -177,7 +185,7 @@ protected:
 	svModeEnum m_lastMode;
 
 	SVAsyncProcedure< SVAPCSignalHandler, SVThreadProcessHandler > m_AsyncProcedure;
-
+	
 private:
 #pragma region Private Methods
 	SVVisionProcessorHelper( const SVVisionProcessorHelper& p_rObject );
@@ -200,6 +208,7 @@ private:
 #pragma region Private Members
 private:   //Data
 	SVErrorMap m_ToolErrorMap;
+	MessageNotification m_MessageNotification;
 #pragma endregion Private Members
 };
 

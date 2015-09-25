@@ -334,6 +334,7 @@ echo %time%
     <ClCompile Include="EQAdjustSizePositionX.cpp" />
     <ClCompile Include="EQAdjustSizePositionY.cpp" />
     <ClCompile Include="EQAdjustSizeWidth.cpp" />
+    <ClCompile Include="MessageNotification.cpp" />
     <ClCompile Include="FormulaController.cpp" />
     <ClCompile Include="GlobalConstantView.cpp" />
     <ClCompile Include="LinkedValue.cpp" />
@@ -3813,6 +3814,7 @@ echo %time%
     <ClInclude Include="EQAdjustSizePositionX.h" />
     <ClInclude Include="EQAdjustSizePositionY.h" />
     <ClInclude Include="EQAdjustSizeWidth.h" />
+    <ClInclude Include="MessageNotification.h" />
     <ClInclude Include="FormulaController.h" />
     <ClInclude Include="GlobalConstantView.h" />
     <ClInclude Include="GlobalSelector.h" />

@@ -32,6 +32,7 @@
 #include "SVObjectLibrary\GlobalConst.h"
 #include "SVObjectLibrary\SVObjectLibrary.h"
 #include "ObjectInterfaces\SVUserMessage.h"
+#include "MessageNotification.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -1157,7 +1158,13 @@ HRESULT SVVisionProcessorHelper::FireModeChanged(svModeEnum mode)
 	HRESULT status = m_AsyncProcedure.Signal(nullptr);
 	return status;
 }
+HRESULT SVVisionProcessorHelper::FireMessageNotification(SvStl::NotificationEnum type, int ErrorNumber, LPCTSTR errormessage  )
+{
+	m_MessageNotification.SetNotification(type, ErrorNumber, errormessage  );
+	HRESULT status = m_AsyncProcedure.Signal(nullptr);
+	return status;
 
+}
 void CALLBACK SVVisionProcessorHelper::APCThreadProcess( DWORD_PTR dwParam )
 {
 }
@@ -1166,6 +1173,7 @@ void SVVisionProcessorHelper::ThreadProcess( bool& p_WaitForEvents )
 {
 	ProcessLastModified( p_WaitForEvents );
 	NotifyModeChanged( p_WaitForEvents );
+	m_MessageNotification.ProcessNotification();
 }
 
 void SVVisionProcessorHelper::ProcessLastModified( bool& p_WaitForEvents )

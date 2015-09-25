@@ -243,7 +243,7 @@ namespace Seidenader
 			if(S_OK != hResult)
 			{
 				m_EditRingDepth.SetFocus();
-				SvStl::MessageMgrStdDisplay Exception( SvStl::LogAndDisplay );
+				SvStl::MessageMgrDisplayAndNotify Exception( SvStl::LogAndDisplay );
 				CString strText;
 				strText.Format(RingBuffer_Depth_Invalid_ValueString, SvOi::IRingBufferTool::m_minRingBufferDepth, SvOi::IRingBufferTool::m_maxRingBufferDepth, csText);
 				Exception.setMessage( SVMSG_SVO_62_RINGBUFFER_INVALID_VALUE, strText, StdMessageParams, hResult, MB_OK | MB_ICONERROR );
@@ -259,7 +259,7 @@ namespace Seidenader
 			if(S_OK != hResult)
 			{
 				m_EditImageIndex[indexNumber].SetFocus();
-				SvStl::MessageMgrStdDisplay Exception( SvStl::LogAndDisplay );
+				SvStl::MessageMgrDisplayAndNotify Exception( SvStl::LogAndDisplay );
 				CString strText;
 				strText.Format(RingBuffer_ImageIndex_Invalid_ValueString, indexNumber+1);
 				Exception.setMessage( SVMSG_SVO_62_RINGBUFFER_INVALID_VALUE, strText, StdMessageParams, hResult, MB_OK | MB_ICONERROR );

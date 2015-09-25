@@ -1550,6 +1550,9 @@
     <ClCompile Include="RangeValidator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="MessageNotification.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Midl Include="SVObserver.odl">
@@ -3223,6 +3226,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="RangeValidator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MessageNotification.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

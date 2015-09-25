@@ -112,7 +112,7 @@ HRESULT ToolClipboard::writeToClipboard( const SVGUID& rToolGuid ) const
 	}
 	catch( const SvStl::MessageHandler& rSvE )
 	{
-		SvStl::MessageMgrStdDisplay e( SvStl::LogAndDisplay );
+		SvStl::MessageMgrDisplayAndNotify e( SvStl::LogAndDisplay );
 		e.setMessage( rSvE.getMessage() );
 	}
 
@@ -186,7 +186,7 @@ HRESULT ToolClipboard::readFromClipboard( int ToolListindex, SVGUID& rToolGuid )
 	}
 	catch( const SvStl::MessageHandler& rSvE )
 	{
-		SvStl::MessageMgrStdDisplay e( SvStl::LogAndDisplay );
+		SvStl::MessageMgrDisplayAndNotify e( SvStl::LogAndDisplay );
 		e.setMessage( rSvE.getMessage() );
 	}
 

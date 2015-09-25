@@ -316,7 +316,7 @@ void CSVOInspectionSourceDlg::OnBtnImportIpd()
 					::SVGetVersionString( strApp, TheSVObserverApp.getCurrentVersion() );
 					::SVGetVersionString( strFile, l_VersionNumber );
 					strText.Format(SvO::c_textImportInspectionError, strFile, strApp);
-					SvStl::MessageMgrStdDisplay Exception( SvStl::LogAndDisplay );
+					SvStl::MessageMgrDisplayAndNotify Exception( SvStl::LogAndDisplay );
 					Exception.setMessage( SVMSG_SVO_56_INSPECTION_IMPORT_ERROR, strText, StdMessageParams, SvOi::Err_10008_ImportInspectionWrongVersion );
 
 					OnBtnDeleteVi();

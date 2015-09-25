@@ -9,13 +9,18 @@
 #pragma region Includes
 #include "MessageManager.h"
 #include "SVOMFCLibrary/DisplayMessageBox.h"
+#include "SVObserver/MessageNotification.h"
 #pragma endregion Includes
+
 
 namespace Seidenader { namespace SVStatusLibrary
 {
 #pragma region Declarations
 	//This declares message manager standard display which uses MessageHandler, MessageData and DisplayMessageBox::showDialog as the template parameters
-	typedef MessageManager<MessageHandler, MessageData, &SvOml::DisplayMessageBox::showDialog> MessageMgrStdDisplay;
+	typedef MessageManager<MessageHandler, MessageData, &SvOml::DisplayMessageBox::showDialog,nullptr> MessageMgrStdDisplay;
+	
+	//This declares message manager standard display which uses MessageHandler, MessageData and DisplayMessageBox::showDialog, MessageNotification::FireNotify as the template parameters a
+	typedef MessageManager<MessageHandler, MessageData, &SvOml::DisplayMessageBox::showDialog,&MessageNotification::FireNotify> MessageMgrDisplayAndNotify;
 #pragma endregion Declarations
 } /* namespace SVStatusLibrary */ } /* namespace Seidenader */
 

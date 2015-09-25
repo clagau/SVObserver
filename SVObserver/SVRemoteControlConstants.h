@@ -177,6 +177,10 @@ namespace SVRC
 		const std::string dataitems = "DataItems";
 		const std::string timestamp = "TimeStamp";
 		const std::string mode = "Mode";
+		const std::string	MessageType  =  "MessageType" ;
+		const std::string	MessageNumber = "MessageNumber" ;
+		const std::string	MessageText =	"MessageText" ;
+		const std::string	MessageNotification = "MessageNotification";
 	}
 }
 

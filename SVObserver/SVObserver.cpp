@@ -2084,7 +2084,7 @@ void SVObserverApp::OnGoOnline()
 						"unknown error when the system was going online." );
 				}
 				INT_PTR Res(0);
-				SvStl::MessageMgrStdDisplay Exception(SvStl::LogAndDisplay);
+				SvStl::MessageMgrDisplayAndNotify Exception(SvStl::LogAndDisplay);
 
 				Res = Exception.setMessage(SVMSG_SVO_54_EMPTY,l_csMessage,StdMessageParams, SvOi::Err_45000, 0, MB_OK);
 				SVSVIMStateClass::AddState( l_lPrevState );
@@ -3420,7 +3420,7 @@ BOOL SVObserverApp::InitInstance()
 
 	if ( !TheSVOLicenseManager().HasMatroxLicense() )
 	{
-		SvStl::MessageMgrStdDisplay Exception( SvStl::LogAndDisplay );
+		SvStl::MessageMgrDisplayAndNotify Exception( SvStl::LogAndDisplay );
 		Exception.setMessage( SVMSG_SVO_52_NOMATROX_DONGLE, nullptr, StdMessageParams, SvOi::Err_25013_NoMatroxDongle );
 	}
 
@@ -3564,7 +3564,7 @@ int SVObserverApp::Run()
 	catch( const SvStl::MessageHandler& rExp )
 	{
 		//This is the topmost catch for MessageHandler exceptions
-		SvStl::MessageMgrStdDisplay Exception( SvStl::LogAndDisplay );
+		SvStl::MessageMgrDisplayAndNotify Exception( SvStl::LogAndDisplay );
 		//Set the error code to unhandled exception but use the rest of the data from the original exception
 		SVString OrgMessageCode;
 		SvStl::MessageData Msg( rExp.getMessage() );
@@ -3733,7 +3733,7 @@ HRESULT SVObserverApp::OpenSVXFile(LPCTSTR PathName)
 					{
 						if( SVMSG_SVO_70_DUPLICATE_DISCRETE_OUTPUT == pConfig->ValidateOutputList() )
 						{
-							SvStl::MessageMgrStdDisplay Exception( SvStl::LogAndDisplay );
+							SvStl::MessageMgrDisplayAndNotify Exception( SvStl::LogAndDisplay );
 							Exception.setMessage( SVMSG_SVO_70_DUPLICATE_DISCRETE_OUTPUT, nullptr, StdMessageParams );
 						}
 					}
@@ -6049,7 +6049,7 @@ BOOL SVObserverApp::ShowConfigurationAssistant( int Page /*= 3*/,
 		// Validate Output List TB
 		if( SVMSG_SVO_70_DUPLICATE_DISCRETE_OUTPUT == pConfig->ValidateOutputList() )
 		{
-			SvStl::MessageMgrStdDisplay Exception( SvStl::LogAndDisplay );
+			SvStl::MessageMgrDisplayAndNotify Exception( SvStl::LogAndDisplay );
 			Exception.setMessage( SVMSG_SVO_70_DUPLICATE_DISCRETE_OUTPUT, nullptr, StdMessageParams );
 		}
 	}// end if DoModal == IDOK
@@ -6994,7 +6994,7 @@ HRESULT SVObserverApp::CheckDrive(const CString& p_strDrive) const
 		l_strDrive = l_strDrive.Left(1);
 		l_strTmp.Format(_T("%s - Drive does not exist"), l_strDrive);
 
-		SvStl::MessageMgrStdDisplay Exception( SvStl::LogAndDisplay );
+		SvStl::MessageMgrDisplayAndNotify Exception( SvStl::LogAndDisplay );
 		Exception.setMessage( SVMSG_SVO_47_EXCEPTION_SYSTEM_SETUP, l_strTmp, StdMessageParams );
 	}
 	TCHAR szVolumeName[100];

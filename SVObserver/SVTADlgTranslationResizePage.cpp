@@ -108,7 +108,7 @@ BOOL SVTADlgTranslationResizePage::OnInitDialog()
 
 	if (S_OK != hr)
 	{
-		SvStl::MessageMgrStdDisplay Exception(  SvStl::LogAndDisplay );
+		SvStl::MessageMgrDisplayAndNotify Exception(  SvStl::LogAndDisplay );
 		Exception.setMessage( hr, nullptr, StdMessageParams, 5015);
 	}
 

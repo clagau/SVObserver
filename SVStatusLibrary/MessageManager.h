@@ -25,6 +25,16 @@ namespace Seidenader { namespace SVStatusLibrary
 			LogAndDisplay
 		};
 		typedef INT_PTR (*ShowDialog)( HWND, LPCTSTR, LPCTSTR, UINT ); 
+
+		enum NotificationEnum
+		{
+				MsgUknown =0,	
+				StartMsgBox =1,
+				EndMsgBox =2,
+				MsgLog =3
+		};
+		typedef INT_PTR (*Notify)(NotificationEnum, int, LPCTSTR );
+	
 #pragma endregion Declarations
 
 	//************************************
@@ -33,7 +43,7 @@ namespace Seidenader { namespace SVStatusLibrary
 	//! \param M_Struct [in] the message data structure
 	//! \param M_Display [in] the message display class
 	//************************************
-	template <typename M_Handler, typename M_Data, ShowDialog M_Display>
+	template <typename M_Handler, typename M_Data, ShowDialog M_Display, Notify M_Notify >
 	class MessageManager
 	{
 #pragma region Constructor
@@ -131,7 +141,7 @@ namespace Seidenader { namespace SVStatusLibrary
 #pragma region Declarations
 	//Note the resource dependent message managers are declared in the header file MessageManagerResource.h
 	//This declares message manager no display which uses MessageHandler, MessageData and nullptr (no display method) as the template parameters
-	typedef MessageManager<MessageHandler, MessageData, nullptr> MessageMgrNoDisplay;
+	typedef MessageManager<MessageHandler, MessageData, nullptr,nullptr> MessageMgrNoDisplay;
 #pragma endregion Declarations
 
 } /* namespace SVStatusLibrary */ } /* namespace Seidenader */

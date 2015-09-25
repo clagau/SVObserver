@@ -169,7 +169,7 @@ namespace Seidenader { namespace SVOGui
 				{
 					if( !NewValue.matchesRegularExpression( RegExp_AllRealNumbers ) )
 					{
-						SvStl::MessageMgrStdDisplay Exception( SvStl::LogAndDisplay );
+						SvStl::MessageMgrDisplayAndNotify Exception( SvStl::LogAndDisplay );
 						Exception.setMessage( SVMSG_SVO_65_ENTERED_VALUE_INVALID, m_Value, StdMessageParams, SvOi::Err_25014_GlobalConstantNumber );
 						pDX->Fail();
 					}
@@ -194,7 +194,7 @@ namespace Seidenader { namespace SVOGui
 			{
 				if( rName == *Iter )
 				{
-					SvStl::MessageMgrStdDisplay Exception( SvStl::LogAndDisplay );
+					SvStl::MessageMgrDisplayAndNotify Exception( SvStl::LogAndDisplay );
 					Exception.setMessage( SVMSG_SVO_66_GLOBAL_NAME_INVALID, rName.c_str(), StdMessageParams, SvOi::Err_25015_GlobalNameAlreadyUsed );
 					Failed = true;
 					break;
@@ -209,7 +209,7 @@ namespace Seidenader { namespace SVOGui
 			{
 				if( !NewName.matchesRegularExpression( RegExp_Name ) )
 				{
-					SvStl::MessageMgrStdDisplay Exception( SvStl::LogAndDisplay );
+					SvStl::MessageMgrDisplayAndNotify Exception( SvStl::LogAndDisplay );
 					Exception.setMessage( SVMSG_SVO_65_ENTERED_VALUE_INVALID, NewName.c_str(), StdMessageParams, SvOi::Err_25016_GlobalNameInvalid );
 					Failed = true;
 				}

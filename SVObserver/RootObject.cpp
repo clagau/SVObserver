@@ -257,7 +257,7 @@ bool RootObject::createRootChild( LPCTSTR ChildName, SVObjectTypeEnum ObjectType
 	}
 	else
 	{
-		SvStl::MessageMgrStdDisplay Exception( SvStl::LogAndDisplay );
+		SvStl::MessageMgrDisplayAndNotify Exception( SvStl::LogAndDisplay );
 		Exception.setMessage( SVMSG_SVO_67_MAIN_BRANCH_NOT_CREATED, ChildName, StdMessageParams, SvOi::Err_25017_RootChildCreate );
 	}
 	
