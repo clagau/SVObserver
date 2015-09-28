@@ -2991,6 +2991,9 @@ BOOL SVObserverApp::InitInstance()
 		return FALSE;
 	}
 
+	//Initializing  must be before first use of  MessageNotification::FireNotify which is i.e called from CheckDrive 
+	SVVisionProcessorHelper::Instance().Startup();
+
 	// Check for proper setup of V: for SVRemoteControl
 	if( CheckDrive(_T("v:\\")) != S_OK)
 	{
@@ -3429,7 +3432,7 @@ BOOL SVObserverApp::InitInstance()
 		AfxMessageBox("Matrox GigE License not found");
 	}
 
-	SVVisionProcessorHelper::Instance().Startup();
+	
 
 	return TRUE;
 }
