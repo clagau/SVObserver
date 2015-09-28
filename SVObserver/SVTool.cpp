@@ -721,7 +721,6 @@ bool SVToolClass::getConditionalResult(long p_lIndex) const
 DWORD_PTR SVToolClass::processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext )
 {
 	DWORD_PTR DwResult = NULL;
-
 	SVToolLevelCreateStruct createStruct;
 
 	// Try to process message by yourself...
@@ -734,18 +733,18 @@ DWORD_PTR SVToolClass::processMessage( DWORD DwMessageID, DWORD_PTR DwMessageVal
 			pToolSizeAdjustTask = ToolSizeAdjustTask::GetToolSizeAdjustTask(this);
 			if(nullptr != pToolSizeAdjustTask)
 			{
-				pToolSizeAdjustTask->ProcessResetAllObject(DwMessageID,DwMessageValue, DwMessageContext);
+				DwResult = pToolSizeAdjustTask->ProcessResetAllObject(DwMessageID,DwMessageValue, DwMessageContext);
 			}
 			HRESULT l_ResetStatus = ResetObject();
 			if( l_ResetStatus != S_OK )
 			{
 				ASSERT( SUCCEEDED( l_ResetStatus ) );
 
-				DwResult = SVMR_NO_SUCCESS;
+				DwResult |= SVMR_NO_SUCCESS;
 			}
 			else
 			{
-				DwResult = SVMR_SUCCESS;
+				DwResult |= SVMR_SUCCESS;
 			}
 			break;
 		}
@@ -819,9 +818,8 @@ DWORD_PTR SVToolClass::processMessage( DWORD DwMessageID, DWORD_PTR DwMessageVal
 		}
 	}
 
-	DWORD_PTR l_Status = ( SVTaskObjectListClass::processMessage( DwMessageID, DwMessageValue, DwMessageContext ) | DwResult );
-
-	return l_Status;
+	DWORD_PTR Status = ( SVTaskObjectListClass::processMessage( DwMessageID, DwMessageValue, DwMessageContext ) | DwResult );
+	return Status;
 }
 
 HRESULT SVToolClass::GetImageExtentProperty( SVExtentPropertyEnum p_eProperty, SVValueObjectClass *&p_rpsvValue )
