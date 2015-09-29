@@ -6990,15 +6990,12 @@ HRESULT SVObserverApp::CheckDrive(const CString& p_strDrive) const
 	// Check if exists
 	if( PathFileExists(p_strDrive) == FALSE )
 	{
-		CString l_strTmp;
 		CString l_strDrive;
 		l_strDrive = p_strDrive;
 		l_strDrive.MakeUpper();
-		l_strDrive = l_strDrive.Left(1);
-		l_strTmp.Format(_T("%s - Drive does not exist"), l_strDrive);
 
 		SvStl::MessageMgrDisplayAndNotify Exception( SvStl::LogAndDisplay );
-		Exception.setMessage( SVMSG_SVO_47_EXCEPTION_SYSTEM_SETUP, l_strTmp, StdMessageParams );
+		Exception.setMessage( SVMSG_SVO_5051_DRIVEDOESNOTEXIST, l_strDrive.Left(1), StdMessageParams );
 	}
 	TCHAR szVolumeName[100];
 	TCHAR szFileSystemName[32];
@@ -7019,19 +7016,17 @@ HRESULT SVObserverApp::CheckDrive(const CString& p_strDrive) const
 		if( l_strName.Find(_T("NTFS")) < 0)
 		{
 			CString l_strDrive;
-			CString l_strTmp;
 			l_strDrive = p_strDrive;
 			l_strDrive.MakeUpper();
 			l_strDrive = l_strDrive.Left(1);
-			l_strTmp.Format(_T("%s - Drive is not NTFS"), l_strDrive);
 
 			SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
-			Exception.setMessage( SVMSG_SVO_47_EXCEPTION_SYSTEM_SETUP, l_strTmp, StdMessageParams );
+			Exception.setMessage( SVMSG_SVO_5052_DRIVENOTNTFSFORMAT, l_strDrive, StdMessageParams );
 		
 #ifndef _DEBUG
-			AfxMessageBox( l_strTmp );
+			AfxMessageBox( l_strDrive );
 #else
-			::OutputDebugString(l_strTmp);
+			::OutputDebugString(l_strDrive);
 #endif
 		}
 	}
