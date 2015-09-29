@@ -1019,19 +1019,19 @@ HRESULT SVImageClass::GetChildImageHandle( const GUID& p_rChildID, SVSmartHandle
 			if ( l_hrOk == S_FALSE )
 			{
 				CString sMsgStr;
-				sMsgStr.Format("**GetChildImageHandle** l_hrOk = l_pParentImage->GetChildImageHandle( m_svChildIndexArray[ p_lChildIndex ], p_rsvBufferHandle ) == S_FALSE");
+				sMsgStr.Format("l_pParentImage->GetChildImageHandle( p_rChildID, p_rsvBufferHandle ) == S_FALSE");
 
 				SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
-				Exception.setMessage( SVMSG_SVO_43_GENERAL, sMsgStr, StdMessageParams );
+				Exception.setMessage( SVMSG_SVO_5053_CHILDIMAGEHANDLESFALSE, sMsgStr, StdMessageParams );
 			}
 		}
 		else
 		{
 			CString sMsgStr;
-			sMsgStr.Format("**GetChildImageHandle** l_pParentImage == NULL");
+			sMsgStr.Format("l_pParentImage == NULL");
 
 			SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
-			Exception.setMessage( SVMSG_SVO_43_GENERAL, sMsgStr, StdMessageParams );
+			Exception.setMessage( SVMSG_SVO_5054_NULLPARENTIMAGE, sMsgStr, StdMessageParams );
 
 			l_hrOk = S_FALSE;
 		}
@@ -1051,10 +1051,10 @@ HRESULT SVImageClass::GetChildImageHandle( const GUID& p_rChildID, SVSmartHandle
 				else
 				{
 					CString sMsgStr;
-					sMsgStr.Format("**GetChildImageHandle** if ( m_svChildBufferArrays[ p_lChildIndex ]->GetValue( p_rsvBufferHandle ) )");
+					sMsgStr.Format("if (l_Iter->second.m_pImageHandles->GetImageHandle( p_rsvBufferHandle )");
 
 					SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
-					Exception.setMessage( SVMSG_SVO_43_GENERAL, sMsgStr, StdMessageParams );
+					Exception.setMessage( SVMSG_SVO_5055_NULLCHILDHANDLE, sMsgStr, StdMessageParams );
 				}
 
 			}
@@ -1084,20 +1084,20 @@ HRESULT SVImageClass::GetChildImageHandle( const GUID& p_rChildID, SVImageIndexS
 			if ( l_hrOk == S_FALSE )
 			{
 				CString sMsgStr;
-				sMsgStr.Format("**GetChildImageHandle 2 ** l_hrOk = l_pParentImage->GetChildImageHandle( m_svChildIndexArray[ p_lChildIndex ], p_rsvBufferHandle ) == S_FALSE");
+				sMsgStr.Format("l_pParentImage->GetChildImageHandle( m_svChildIndexArray[ p_lChildIndex ], p_rsvBufferHandle ) == S_FALSE");
 
 				SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
-				Exception.setMessage( SVMSG_SVO_43_GENERAL, sMsgStr, StdMessageParams );
+				Exception.setMessage( SVMSG_SVO_5056_CHILDIMAGEHANDLESFALSE, sMsgStr, StdMessageParams );
 			}
 
 		}
 		else
 		{
 			CString sMsgStr;
-			sMsgStr.Format("**GetChildImageHandle 2 ** l_pParentImage == NULL");
+			sMsgStr.Format("l_pParentImage == NULL");
 
 			SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
-			Exception.setMessage( SVMSG_SVO_43_GENERAL, sMsgStr, StdMessageParams );
+			Exception.setMessage( SVMSG_SVO_5057_NULLPARENTIMAGE, sMsgStr, StdMessageParams );
 			l_hrOk = S_FALSE;
 		}
 	}
@@ -1120,10 +1120,10 @@ HRESULT SVImageClass::GetChildImageHandle( const GUID& p_rChildID, SVImageIndexS
 				else
 				{
 					CString sMsgStr;
-					sMsgStr.Format("**GetChildImageHandle** if ( m_svChildBufferArrays[ p_lChildIndex ]->GetValue( p_rsvBufferHandle ) )");
+					sMsgStr.Format("l_Iter->second.m_pImageHandles->GetImageHandle( l_Handle.GetIndex(), p_rsvBufferHandle ) == NULL");
 
 					SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
-					Exception.setMessage( SVMSG_SVO_43_GENERAL, sMsgStr, StdMessageParams );
+					Exception.setMessage( SVMSG_SVO_5058_NULLCHILDHANDLE, sMsgStr, StdMessageParams );
 				}
 
 			}
@@ -1151,11 +1151,8 @@ HRESULT SVImageClass::GetParentImageHandle( SVSmartHandlePointer &p_rsvBufferHan
 
 		if( l_hrOk != S_OK )
 		{
-			CString sMsgStr;
-			sMsgStr.Format("ERROR: Cannot Get Default Child Image Handle");
-			
 			SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
-			Exception.setMessage( SVMSG_SVO_43_GENERAL, sMsgStr, StdMessageParams );
+			Exception.setMessage( SVMSG_SVO_5059_GETCHILDERROR, nullptr, StdMessageParams );
 		}
 
 	}
@@ -1183,7 +1180,7 @@ HRESULT SVImageClass::GetParentImageHandle( SVImageIndexStruct p_svBufferIndex, 
 			sMsgStr.Format("ERROR: Cannot Get Indexed Child Image Handle");
 
 			SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
-			Exception.setMessage( SVMSG_SVO_43_GENERAL, sMsgStr, StdMessageParams );
+			Exception.setMessage( SVMSG_SVO_5060_GETCHILDERROR, sMsgStr, StdMessageParams );
 		}
 	}
 
