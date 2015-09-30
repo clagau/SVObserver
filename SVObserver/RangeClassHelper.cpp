@@ -142,7 +142,7 @@ void RangeClassHelper::SetInternalData(RangeEnum::ERange er, LPCTSTR lp)
 		CString strText;
 		strText.Format(SvO::RangeValue_EmptyString, RangeEnum::ERange2String(resHandle, er).c_str());
 		SvStl::MessageMgrNoDisplay Exception( SvStl::DataOnly );
-		Exception.setMessage( SVMSG_SVO_68_RANGE_VALUE_SET_FAILED, strText, StdMessageParams, SvOi::Err_16022, MB_OK | MB_ICONERROR );
+		Exception.setMessage( SVMSG_SVO_68_RANGE_VALUE_SET_FAILED, strText, StdMessageParams, SvOi::Err_16022 );
 		Exception.Throw();
 	}
 
@@ -156,7 +156,7 @@ void RangeClassHelper::SetInternalData(RangeEnum::ERange er, LPCTSTR lp)
 			CString strText;
 			strText.Format(SvO::RangeValue_WrongRange, RangeEnum::ERange2String(resHandle, er).c_str(), static_cast< int >( s_RangeMin ), static_cast< int >( s_RangeMax ) );
 			SvStl::MessageMgrNoDisplay Exception( SvStl::DataOnly );
-			Exception.setMessage( SVMSG_SVO_68_RANGE_VALUE_SET_FAILED, strText, StdMessageParams, SvOi::Err_16023, MB_OK | MB_ICONERROR );
+			Exception.setMessage( SVMSG_SVO_68_RANGE_VALUE_SET_FAILED, strText, StdMessageParams, SvOi::Err_16023 );
 			Exception.Throw();
 		}
 	}
@@ -181,7 +181,7 @@ void RangeClassHelper::SetInternalData(RangeEnum::ERange er, LPCTSTR lp)
 		break;
 	default:
 		SvStl::MessageMgrNoDisplay Exception( SvStl::DataOnly );
-		Exception.setMessage( SVMSG_SVO_68_RANGE_VALUE_SET_FAILED, SvO::ErrorUnknownEnum, StdMessageParams, SvOi::Err_16024, MB_OK | MB_ICONERROR );
+		Exception.setMessage( SVMSG_SVO_68_RANGE_VALUE_SET_FAILED, SvO::ErrorUnknownEnum, StdMessageParams, SvOi::Err_16024 );
 		Exception.Throw();
 		break;
 	}

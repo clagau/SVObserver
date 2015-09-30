@@ -246,7 +246,7 @@ namespace Seidenader
 				SvStl::MessageMgrDisplayAndNotify Exception( SvStl::LogAndDisplay );
 				CString strText;
 				strText.Format(RingBuffer_Depth_Invalid_ValueString, SvOi::IRingBufferTool::m_minRingBufferDepth, SvOi::IRingBufferTool::m_maxRingBufferDepth, csText);
-				Exception.setMessage( SVMSG_SVO_62_RINGBUFFER_INVALID_VALUE, strText, StdMessageParams, hResult, MB_OK | MB_ICONERROR );
+				Exception.setMessage( SVMSG_SVO_62_RINGBUFFER_INVALID_VALUE, strText, StdMessageParams, hResult );
 			}
 			return hResult;
 		}
@@ -262,7 +262,7 @@ namespace Seidenader
 				SvStl::MessageMgrDisplayAndNotify Exception( SvStl::LogAndDisplay );
 				CString strText;
 				strText.Format(RingBuffer_ImageIndex_Invalid_ValueString, indexNumber+1);
-				Exception.setMessage( SVMSG_SVO_62_RINGBUFFER_INVALID_VALUE, strText, StdMessageParams, hResult, MB_OK | MB_ICONERROR );
+				Exception.setMessage( SVMSG_SVO_62_RINGBUFFER_INVALID_VALUE, strText, StdMessageParams, hResult );
 			}
 			return hResult;
 		}

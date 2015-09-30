@@ -2086,7 +2086,7 @@ void SVObserverApp::OnGoOnline()
 				INT_PTR Res(0);
 				SvStl::MessageMgrDisplayAndNotify Exception(SvStl::LogAndDisplay);
 
-				Res = Exception.setMessage(SVMSG_SVO_54_EMPTY,l_csMessage,StdMessageParams, SvOi::Err_45000, 0, MB_OK);
+				Res = Exception.setMessage(SVMSG_SVO_54_EMPTY,l_csMessage,StdMessageParams, SvOi::Err_45000);
 				SVSVIMStateClass::AddState( l_lPrevState );
 			}
 		}
