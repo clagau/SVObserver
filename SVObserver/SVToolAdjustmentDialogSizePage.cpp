@@ -319,8 +319,9 @@ void SVToolAdjustmentDialogSizePage::OnBnClickedButtonFormula(ToolSizeAdjustTask
 
 		SVObjectTypeInfoStruct info(m_pEQAdjustSize[mode]->GetObjectType(), m_pEQAdjustSize[mode]->GetObjectSubType());
 		const GUID& rInspectionID = m_pParentDialog->GetInspectionID();
-		//const GUID& rObjectID = m_pEQAdjustSize[mode]->GetUniqueObjectID(); //SEJ99 - This needs to change
-		const GUID& rObjectID = m_pParentDialog->GetToolID(); //SEJ99 - maybe - test!
+		const GUID& rObjectID = m_pEQAdjustSize[mode]->GetUniqueObjectID(); //SEJ99 - This needs to change
+		//MEC next line does not work after closing the Editor the  ResetObject from toolSizeAdjust is called but not from the Friends and not from Equation class   
+		//const GUID& rObjectID = m_pParentDialog->GetToolID(); //SEJ99 - maybe - test!  
 		SVFormulaEditorSheetClass dlg(rInspectionID, rObjectID, info, strCaption);
 		dlg.DoModal();
 		Refresh(true);
