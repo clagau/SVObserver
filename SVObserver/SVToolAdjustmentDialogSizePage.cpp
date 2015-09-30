@@ -18,6 +18,7 @@
 #include "EQAdjustSize.h"
 #include "SVStatusLibrary\MessageManagerResource.h"
 #include "SVGuiExtentUpdater.h"
+#include "TextDefinesSvO.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -103,6 +104,15 @@ BOOL SVToolAdjustmentDialogSizePage::OnInitDialog()
 				CString csMode;
 				m_pToolSizeAdjustTask->m_InputModes[vType].GetEnumTypes(csMode);
 				m_ComboBox[vType].SetEnumTypes(csMode);
+				if(m_pToolSizeAdjustTask->m_AllowFullSize == false )
+				{
+					///Remove Fullsize from combobox
+					int index = m_ComboBox[vType].FindString(-1, SvO::SizeAdjustTextFullSize);
+					if(index >= 0)
+					{
+						m_ComboBox[vType].DeleteString(index);
+					}
+				}
 			}
 		}
 		
