@@ -126,7 +126,10 @@ namespace Seidenader { namespace ObjectInterfaces
 	static const int Err_16036_InvalidMode = Mec_ErrorBase + 36;
 	static const int Err_16037_InvalidSelection = Mec_ErrorBase + 37;
 	static const int Err_16038_EmptyFormula = Mec_ErrorBase + 38;
-	static const int LastErrorAdjustTool  = Mec_ErrorBase + 38;
+	static const int Err_16039_NegativePosition = Mec_ErrorBase + 39;
+	static const int Err_16040_ToLargePosition = Mec_ErrorBase + 40;
+
+	static const int LastErrorAdjustTool  = Mec_ErrorBase + 40;
 	
 
 	// Ben Walter

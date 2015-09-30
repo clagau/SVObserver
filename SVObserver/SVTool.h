@@ -168,7 +168,9 @@ enum EAutoSize
 	EnableNone = 0x0, 
 	EnableSize = 0x1, 
 	EnablePosition = 0x2, 
-	EnableSizeAndPosition = 0x3
+	EnableSizeAndPosition = 0x3,
+	EnableNegativePosition = 0x4,
+	EnableAll  =  	0x3 | 0x4
 };
 
 class SVToolClass : public SVTaskObjectListClass

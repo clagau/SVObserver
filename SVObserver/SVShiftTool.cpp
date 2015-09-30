@@ -630,7 +630,7 @@ EAutoSize SVShiftTool::GetAutoSizeEnabled()
 	}
 	else
 	{
-		return (EnableSizeAndPosition);
+		return EnableAll;
 	}
 }
 

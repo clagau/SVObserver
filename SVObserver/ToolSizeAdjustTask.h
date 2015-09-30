@@ -172,6 +172,10 @@ protected:
 	//************************************
 	SVToolClass*  GetTool() const; 
 	
+public:
+	const static long MaxToolSize; //< Maximum allowed WindowSize 
+	const static long MinToolSize; //< Maximum allowed WindowSize 
+
 protected:
 
 	SVEnumerateValueObjectClass  m_InputModes[TSValuesCount]; //< the four input modes None=0,Full Size,Formula

@@ -37,6 +37,9 @@ static char THIS_FILE[] = __FILE__;
 SV_IMPLEMENT_CLASS( ToolSizeAdjustTask, ToolSizeAdjustTaskGuid )
 
 
+	const long ToolSizeAdjustTask::MinToolSize = 1; //< Minimum  allowed WindowSize
+	const long ToolSizeAdjustTask::MaxToolSize = 100000; //< Maximum allowed WindowSize 
+
 	ToolSizeAdjustTask::ToolSizeAdjustTask(bool AllowFullsize , bool AllowAdjustSize, bool AllowAdjustPosition , SVObjectClass* POwner , int StringResourceID )  : SVTaskObjectClass(POwner, StringResourceID),
 	m_AllowFullSize(AllowFullsize), m_AllowAdjustSize(AllowAdjustSize), m_AllowAdjustPosition(AllowAdjustPosition)
 {
@@ -221,20 +224,27 @@ HRESULT ToolSizeAdjustTask::GetResultValue( TSValues val, long &value) const
 	{
 		if( val == TSValues::TSHeight  || val == TSValues::TSWidth )
 		{
-			if(value  < 1 )
+			if(value  < MinToolSize )
 			{
 				hresult = SvOi::Err_16031_InvalidSize;
 			}
+			else if (value > MaxToolSize)
+			{
+				hresult = SvOi::Err_16032_InvalidSize;
+			}
 		}
+		else
+		{
 
-		if (value < 0)
-		{
-			hresult = SvOi::Err_16032_InvalidSize;
+			if (value < 0)
+			{
+				hresult = SvOi::Err_16039_NegativePosition;
+			}
+			else if (value > MaxToolSize)
+			{
+				hresult = SvOi::Err_16040_ToLargePosition;
+			}
 		}
-		else if (value > 100000)
-		{
-			hresult = SvOi::Err_16032_InvalidSize;
-		}	
 	}
 	return hresult;
 
@@ -271,6 +281,7 @@ HRESULT ToolSizeAdjustTask::ResetObject()
 		AutoSizeEnable = pTool->GetAutoSizeEnabled();
 	}
 
+	bool bAllowNegativePostion = (AutoSizeEnable &  EnableNegativePosition) ==  EnableNegativePosition ; 
 
 	long ModeWidth(TSNone), ModeHeight(TSNone), ModeX(TSNone), ModeY(TSNone);
 	bool bDone = false;
@@ -384,8 +395,15 @@ HRESULT ToolSizeAdjustTask::ResetObject()
 		{
 			long  PosX ;
 			hresult =  GetResultValue(TSPositionX,PosX);
+			
+			if(SvOi::Err_16039_NegativePosition == hresult && bAllowNegativePostion)
+			{
+				hresult = S_OK;
+			}
 
-			if((S_OK  == hresult) && (oldPosX != PosX))
+
+
+			if((S_OK  == hresult  ) && (oldPosX != PosX))
 			{
 				hresult = ImageExtent.SetExtentProperty(SVExtentPropertyPositionPointX, PosX);
 				bSetImageExtend = true;
@@ -395,7 +413,13 @@ HRESULT ToolSizeAdjustTask::ResetObject()
 		{
 			long  PosY ;
 			hresult =  GetResultValue(TSPositionY,PosY);
-
+			
+			if(SvOi::Err_16039_NegativePosition == hresult && bAllowNegativePostion)
+			{
+				hresult = S_OK;
+			}
+			
+			
 			if((S_OK  == hresult) && (oldPosY != PosY))
 			{
 				hresult = ImageExtent.SetExtentProperty(SVExtentPropertyPositionPointY, PosY);
