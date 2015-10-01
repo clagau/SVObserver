@@ -35,6 +35,14 @@ SVMatroxDigitizerInterface::SVStatusCode SVMatroxDigitizerInterface::Allocate(co
 		if (l_Code == SVMEE_STATUS_OK)
 		{
 			digitizerID.m_DigitizerIdentifier = l_digitizerID;
+			// for camera teaming to make sure the settings are the same after a reboot 
+			// works even if not using teaming
+			MdigControl (digitizerID.m_DigitizerIdentifier, M_GC_FRAME_MAX_RETRIES, 30);
+			MdigControl (digitizerID.m_DigitizerIdentifier, M_GC_FRAME_TIMEOUT, 100);
+			MdigControl (digitizerID.m_DigitizerIdentifier, M_GC_PACKET_MAX_RETRIES, 3);
+			MdigControl (digitizerID.m_DigitizerIdentifier, M_GC_PACKET_TIMEOUT, 10); 
+			MdigControl (digitizerID.m_DigitizerIdentifier, M_GC_MAX_LEADING_PACKET_MISSED, 0x7FFFFFFF);
+			MdigControl (digitizerID.m_DigitizerIdentifier, M_GC_MAX_NBR_PACKETS_OUT_OF_ORDER, 0x7FFFFFFF);
 		}
 	}
 #ifdef USE_TRY_BLOCKS
@@ -74,6 +82,14 @@ SVMatroxDigitizerInterface::SVStatusCode SVMatroxDigitizerInterface::Allocate(co
 		if (l_Code == SVMEE_STATUS_OK)
 		{
 			digitizerID.m_DigitizerIdentifier = l_digitizerID;
+			// for camera teaming to make sure the settings are the same after a reboot 
+			// works even if not using teaming
+			MdigControl (digitizerID.m_DigitizerIdentifier, M_GC_FRAME_MAX_RETRIES, 30);
+			MdigControl (digitizerID.m_DigitizerIdentifier, M_GC_FRAME_TIMEOUT, 100);
+			MdigControl (digitizerID.m_DigitizerIdentifier, M_GC_PACKET_MAX_RETRIES, 3);
+			MdigControl (digitizerID.m_DigitizerIdentifier, M_GC_PACKET_TIMEOUT, 10); 
+			MdigControl (digitizerID.m_DigitizerIdentifier, M_GC_MAX_LEADING_PACKET_MISSED, 0x7FFFFFFF);
+			MdigControl (digitizerID.m_DigitizerIdentifier, M_GC_MAX_NBR_PACKETS_OUT_OF_ORDER, 0x7FFFFFFF); 				
 		}
 		delete [] pDataFormatStr;
 	}
